@@ -241,6 +241,17 @@ class ManifestWorkflowTest(unittest.TestCase):
         extra.write_text('{"word":"new"}')
         self.assertNotEqual(manifest.fingerprint(self.document, conversion), before)
 
+    def test_registry_imported_by_a_converter_does_not_stale_its_tables(self):
+        conversion = self.document['conversions'][0]
+        code = self.code/'fiscal/layouts/csv/convert.py'
+        code.write_text(code.read_text() + '\nfrom ingestion.fiscal.manifest import validate_metadata\n')
+        self.assertNotIn('fiscal/manifest.py', manifest.dependencies(conversion))
+        registry = self.code/'fiscal/manifest.py'
+        registry.write_text('SCHEMA = "manifest.schema.json"\n')
+        before = manifest.fingerprint(self.document, conversion)
+        registry.write_text('SCHEMA = "manifest.schema.json"  # edited\n')
+        self.assertEqual(manifest.fingerprint(self.document, conversion), before)
+
     def test_saved_table_keys_ownership_completeness_and_empty_outputs(self):
         result = convert(self.path, self.files, self.root/'candidate')
         candidate = json.loads(Path(result['candidate']).read_text())

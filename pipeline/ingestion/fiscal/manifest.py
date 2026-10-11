@@ -62,6 +62,11 @@ def options_schema(conversion: dict) -> str:
     return str(Path(conversion['converter']).with_name('options.schema.json'))
 
 
+# manifest.py validates converter outputs and resolves paths but never shapes table bytes;
+# fingerprinting it would stale every table of a converter that imports it on each schema edit.
+FINGERPRINT_EXCLUDED = frozenset({'fiscal/manifest.py'})
+
+
 def dependencies(conversion: dict) -> list[str]:
     pending = [conversion['converter'], options_schema(conversion)]
     found = set()
@@ -97,7 +102,7 @@ def dependencies(conversion: dict) -> list[str]:
                     continue
                 target = INGESTION / Path(*module.split('.')[1:])
                 candidate = target / '__init__.py' if target.is_dir() else target.with_suffix('.py')
-                if candidate.is_file():
+                if candidate.is_file() and str(candidate.relative_to(INGESTION)) not in FINGERPRINT_EXCLUDED:
                     pending.append(str(candidate.relative_to(INGESTION)))
     return sorted(found)
 
