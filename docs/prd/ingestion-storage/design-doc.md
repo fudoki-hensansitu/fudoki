@@ -21,7 +21,7 @@
 
 対象と原典の選定は [source_selection/schema.ts](../../../pipeline/source_selection/schema.ts) が管理する。対象は団体・年度・資料区分・補正号、会計と方向と物理頁は原典ファイルのscopeである。Bは選定を再判断せず、選定済みかつ保存済みの原典を使う。
 
-dbt（C）は対象別のJSONと、その保存参照が指すParquetを読む。
+dbt（C）へ保存済みParquetを渡す入力連携は未実装である。現在は取り込みのCLIが対象別JSONの検査と保存済みParquetの復元（`ingestion:restore`）を行う。
 
 ## Design
 
