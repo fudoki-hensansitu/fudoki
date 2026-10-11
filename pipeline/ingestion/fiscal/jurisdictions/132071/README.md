@@ -4,7 +4,7 @@
 2026-10-11時点で取り込んでいるのは、2025年度当初予算の一般会計の歳出（`2025/initial/`、書式 `layouts/text_budget/`、7,060ノード・7,629金額）と、
 2025年度決算の下水道事業会計の歳出（`2025/settlement/`、書式 `layouts/enterprise_statement/`、明細2表のノードと金額の組）である。
 原典の選定は `pipeline/source_selection/132071.json` にあり、2020年度以降の一般・特別・公営企業会計の資料を保存している。
-取り込み表の検査は `bun run --cwd pipeline ingestion:verify --manifest <管理JSON>`（宣言は `sum_checks/`）。
+取り込み表の検査は `bun run --cwd pipeline ingestion:verify --manifest <管理JSON>`（共通の木の検査 `check_tree`）。
 
 保存済み当初予算のノードの組は `layouts/text_budget/README.md` を参照。変換器は款・項・目の番号と名称、各印字セルの物理頁・座標を保持し、説明・節・財源を独立した枝として共通の移行処理へ渡す。2026-10-11に共通の木の検査2,747件の一致を確認し、ノードの組をR2へ保存・採用した。決算の明細2表も31件・17件の一致を確認して採用済みである。
 
