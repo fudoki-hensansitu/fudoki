@@ -16,7 +16,9 @@ with pdf as (
 select u.* exclude (document_kind), c.cofog_status, c.cofog_code,
     t.account_kind,
     t.is_interfund_transfer,
-    t.interfund_transfer_to
+    t.interfund_transfer_to,
+    s.expenditure_setsu_id
 from unioned u
 left join {{ ref('int_fiscal__settlement_expenditure_cofog') }} c using (node_id, document_kind)
 left join {{ ref('int_fiscal__expenditure_transfers') }} t using (node_id, document_kind)
+left join {{ ref('int_fiscal__expenditure_setsu') }} s using (node_id, document_kind)
