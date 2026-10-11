@@ -92,14 +92,32 @@ class NodeTablesTests(unittest.TestCase):
         self.assertEqual(mismatch['parent_node_key'],'a')
         self.assertEqual(mismatch['difference'],-1)
 
-    def test_missing_print_is_not_zero_and_units_are_not_converted(self):
+    def test_missing_leaf_print_is_zero_and_units_are_not_converted(self):
         nodes=[node('p'),node('a','p'),node('b','p')]
-        amounts=[amount('p','10'),amount('a','10')]
-        self.assertEqual(check_tree(nodes,amounts)['counts'],{})
-        amounts+=[amount('b','0',unit='千円')]
-        self.assertEqual(check_tree(nodes,amounts)['counts'],{})
+        amounts=[amount('p','15'),amount('a','10')]
+        self.assertEqual(check_tree(nodes,amounts)['counts'],{'不一致':1})
+        amounts+=[amount('b','5',unit='千円')]
+        self.assertEqual(check_tree(nodes,amounts)['counts'],{'不一致':1})
+        amounts[0]=amount('p','10')
         amounts[-1]=amount('b','－')
         self.assertEqual(check_tree(nodes,amounts)['counts'],{'一致':1})
+
+    def test_unprinted_heading_uses_child_sum_with_header_reading(self):
+        nodes=[node('p'),node('heading','p','備考'),node('a','heading','備考'),node('b','heading','備考')]
+        amounts=[amount('p','10'),amount('a','3','備考'),amount('b','7','備考')]
+        checked=check_tree(nodes,amounts)
+        self.assertTrue(checked['passed'])
+        self.assertEqual(checked['counts'],{'一致':1})
+        self.assertEqual(checked['results'][0]['child_sum'],10)
+
+    def test_unprinted_intermediate_level_is_checked_by_printed_ancestor(self):
+        nodes=[node('p'),node('middle','p'),node('leaf','middle')]
+        amounts=[amount('p','10'),amount('leaf','9')]
+        checked=check_tree(nodes,amounts)
+        self.assertEqual(checked['counts'],{'不一致':1})
+        self.assertEqual(checked['results'][0]['difference'],-1)
+        amounts[-1]=amount('leaf','10')
+        self.assertTrue(check_tree(nodes,amounts)['passed'])
 
     def test_blank_annotations_need_no_header_and_printed_annotations_are_not_execution(self):
         metadata={'column_contexts':[
@@ -115,7 +133,7 @@ class NodeTablesTests(unittest.TestCase):
             migrated=migrate_rows([{**base,'款_備考_注記金額':value}],metadata)
             self.assertFalse(migrated.issues)
             check=check_tree(migrated.nodes,migrated.amounts)
-            self.assertTrue(check['passed'])
+            self.assertEqual(check['passed'],value is None)
             self.assertEqual(check['results'][0]['parent_amount'],10)
             if value is not None:
                 annotation=next(a for a in migrated.amounts if a['amount_text']=='999')

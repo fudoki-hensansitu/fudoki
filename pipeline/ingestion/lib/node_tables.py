@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from collections import Counter, defaultdict
 from dataclasses import dataclass
+from functools import cache
 import hashlib
 import json
 from pathlib import Path
@@ -226,8 +227,9 @@ def _add_amount(amounts, seen, unread, key, header, text, unit, pos, issues):
 def check_tree(nodes: list[dict], amounts: list[dict]) -> dict:
     """Check every direct-child group separately by axis, printed header and unit.
 
-    A missing printed amount is not zero. Compare only groups where parent and
-    every child carry a comparable amount. Also validate keys, links and cycles.
+    A node without print takes its same-axis children's value, or zero at a leaf.
+    Check every printed parent amount, including groups with missing child print.
+    Also validate keys, links and cycles.
     """
     by_key = {n['node_key']: n for n in nodes}
     issues, results = [], []
@@ -257,27 +259,42 @@ def check_tree(nodes: list[dict], amounts: list[dict]) -> dict:
         if ident in values[key] and values[key][ident] != value:
             issues.append(f'同じノード・見出しの金額が一致しない: {key}')
         values[key][ident] = value
-    for (parent, axis), children in groups.items():
-        def comparable(key):
-            result = {}
-            for (header, unit), value in values[key].items():
-                label = header
-                if header == '節／金額':
-                    label = '予算現額／計'
-                elif by_key[key]['axis_header'] == axis and (header == axis or header.startswith(axis + '／')):
-                    last = header.split('／')[-1]
-                    generic = header in (axis, axis + '／事業説明') or last == by_key[key]['level_header']
-                    label = ('支出済額' if generic or last in ('支出済額', '本年度支出額') else last)
-                # Prior-year carryover execution and current-year execution are
-                # separately printed parts of the generic executed total.
-                result[label, unit] = result.get((label, unit), 0) + value
-            return result
-        parent_values = comparable(parent)
-        child_values = [comparable(child) for child in children]
-        headers = set(parent_values).intersection(*(set(v) for v in child_values))
-        for header, unit in sorted(headers):
+    @cache
+    def comparable(key, axis):
+        result = {}
+        for (header, unit), value in values[key].items():
+            label = header
+            if header == '節／金額':
+                label = '予算現額／計'
+            elif by_key[key]['axis_header'] == axis and (header == axis or header.startswith(axis + '／')):
+                last = header.split('／')[-1]
+                generic = header in (axis, axis + '／事業説明') or last == by_key[key]['level_header']
+                label = ('支出済額' if generic or last in ('支出済額', '本年度支出額') else last)
+            # Prior-year carryover execution and current-year execution are
+            # separately printed parts of the generic executed total.
+            result[label, unit] = result.get((label, unit), 0) + value
+        return result
+
+    evaluating = set()
+
+    @cache
+    def value(key, axis, header, unit):
+        printed = comparable(key, axis)
+        if (header, unit) in printed:
+            return printed[header, unit]
+        identity = (key, axis, header, unit)
+        if identity in evaluating:
+            return 0  # The structural cycle check already makes this tree fail.
+        evaluating.add(identity)
+        total = sum(value(child, axis, header, unit) for child in groups[key, axis])
+        evaluating.remove(identity)
+        return total
+
+    for (parent, axis), children in list(groups.items()):
+        parent_values = comparable(parent, axis)
+        for header, unit in sorted(parent_values):
             expected = parent_values[header, unit]
-            total = sum(v[header, unit] for v in child_values)
+            total = sum(value(child, axis, header, unit) for child in children)
             results.append({'parent_node_key': parent, 'axis_header': axis, 'header_path': header,
                             'unit_text': unit, 'children': len(children), 'parent_amount': expected,
                             'child_sum': total, 'difference': total - expected,
