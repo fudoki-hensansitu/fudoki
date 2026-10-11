@@ -74,7 +74,7 @@ models:
   - name: amount_source_page
     description: 採用した実績金額の物理頁。不明ならNULL。繰越内訳を足す場合は、全額の頁が既知のときだけ最初の頁。
   - name: account_kind
-    description: 団体共通の会計の種類（一般会計・国民健康保険・介護保険・後期高齢者医療・その他）。原典の会計名を account_kind_map の語で対応づけた風土記の判断。団体をまたぐ比較はこの列で行う。辞書に無い会計名は構築を止める。
+    description: 団体共通の会計の種類（一般会計・国民健康保険・介護保険・後期高齢者医療・用地・駐車場・下水道・介護サービス事業）。原典の会計名を account_kind_map の語で対応づけた風土記の判断。団体をまたぐ比較はこの列で行う。辞書に無い会計名は構築を止める。
     data_tests:
     - not_null
   - name: is_interfund_transfer
@@ -166,7 +166,7 @@ models:
   - name: amount_source_page
     description: 採用した当初予算額の物理頁（PDF）または物理行（CSV）。CSVの親の集計額はNULL。不明ならNULL。
   - name: account_kind
-    description: 団体共通の会計の種類（一般会計・国民健康保険・介護保険・後期高齢者医療・その他）。原典の会計名を account_kind_map の語で対応づけた風土記の判断。団体をまたぐ比較はこの列で行う。辞書に無い会計名は構築を止める。決算の表と同じ共有 intermediate から付ける。
+    description: 団体共通の会計の種類（一般会計・国民健康保険・介護保険・後期高齢者医療・用地・駐車場・下水道・介護サービス事業）。原典の会計名を account_kind_map の語で対応づけた風土記の判断。団体をまたぐ比較はこの列で行う。辞書に無い会計名は構築を止める。決算の表と同じ共有 intermediate から付ける。
     data_tests:
     - not_null
   - name: is_interfund_transfer
