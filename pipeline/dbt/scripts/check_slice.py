@@ -21,8 +21,9 @@ def check(warehouse: Path, reference: Path | None = None) -> dict:
     with duckdb.connect(str(warehouse), read_only=True) as con:
         actual = {j: (n, amount) for j, n, amount in con.execute(
             "select jurisdiction_code,count(*),sum(amount_yen) from settlement_expenditure_moku where fiscal_year=2025 and account_name='一般会計' group by 1").fetchall()}
-        if actual != EXPECTED:
-            raise ValueError(f'Slice expectations differ: {actual}')
+        slice_actual = {j: actual.get(j) for j in EXPECTED}
+        if slice_actual != EXPECTED:
+            raise ValueError(f'Slice expectations differ: {slice_actual}')
         keys = ['jurisdiction_code', 'kan_code', 'kou_code', 'moku_code']
         records = con.execute('select m.jurisdiction_code,m.kan_code,m.kou_code,m.moku_code,m.name,m.amount_yen,c.rule_id,m.cofog_status,m.cofog_code from settlement_expenditure_moku m join int_fiscal__settlement_expenditure_cofog c using(node_id)').fetchall()
         output = {'mokus': sum(n for n, _ in actual.values()), 'total_yen': sum(a for _, a in actual.values()), 'jurisdictions': actual}

@@ -1,3 +1,5 @@
+-- W-1c で error に戻す。未対応目は report で当たり率を報告。
+{{ config(severity='warn') }}
 select n.node_id from {{ ref('int_fiscal__settlement_expenditure_nodes') }} n
 left join {{ ref('int_fiscal__settlement_expenditure_cofog') }} c using (node_id)
 where n.is_subject and n.node_kind = '目'

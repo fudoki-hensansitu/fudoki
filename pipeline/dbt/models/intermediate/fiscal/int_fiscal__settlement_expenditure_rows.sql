@@ -1,23 +1,32 @@
 -- Keep source rows until cross-table identity and value checks have passed.
-with recursive mapped_nodes as (
+-- Level names follow one shared rule (ADR 0022): the axis carrying 款 is the subject axis
+-- and its depths 1/2/3 are 款・項・目; any other axis uses its printed level_header,
+-- or 内訳{depth} when nothing is printed.
+with recursive subject_axes as (
+    select source_table_key, min(axis_header) as subject_axis
+    from {{ ref('stg_fiscal__nodes') }}
+    where level_header = '款'
+    group by source_table_key
+), mapped_nodes as (
     select n.*, t.jurisdiction_code, t.fiscal_year, t.account_name, t.origin_id,
-        case when n.level_header in ('款', '項', '目', '事業', '項目', '節', '細目')
-             then n.level_header
-             when n.level_header is null and n.axis_header = '節' and n.depth = 1 then '節'
-             else l.node_kind end as node_kind,
-        l.node_kind as declared_kind, {{ fiscal_name('n.name_text') }} as name
+        case when n.level_header in ('款', '項', '目') and n.axis_header <> s.subject_axis
+             then error('Subject level outside the subject axis: ' || n.source_table_key || '/' || n.node_key)
+             when n.axis_header = s.subject_axis and n.depth in (1, 2, 3)
+                  and n.level_header is not null and n.level_header not in ('款', '項', '目')
+             then error('Subject level disagrees with depth: ' || n.source_table_key || '/' || n.node_key)
+             when n.level_header in ('款', '項', '目') then n.level_header
+             when n.axis_header = s.subject_axis and n.depth = 1 then '款'
+             when n.axis_header = s.subject_axis and n.depth = 2 then '項'
+             when n.axis_header = s.subject_axis and n.depth = 3 then '目'
+             when n.level_header is not null then n.level_header
+             else '内訳' || n.depth::varchar end as node_kind,
+        {{ fiscal_name('n.name_text') }} as name
     from {{ ref('stg_fiscal__nodes') }} n
     join {{ source('fiscal_metadata', 'tables') }} t using (source_table_key)
-    left join {{ ref('fiscal_level_map') }} l
-      on t.jurisdiction_code = l.jurisdiction_code and t.table_id = l.table_id
-      and n.axis_header = l.axis_header and n.depth = l.depth
+    join subject_axes s using (source_table_key)
     where t.document_kind = 'settlement' and t.direction = 'expenditure'
 ), checked_nodes as (
-    select * exclude (node_kind),
-        case when node_kind is null then error('Unmapped node level: ' || source_table_key || '/' || node_key)
-             when level_header is not null and declared_kind is not null and level_header <> declared_kind
-             then error('Printed and declared levels disagree') else node_kind end as node_kind
-    from mapped_nodes
+    select * from mapped_nodes
 ), mapped_amounts as (
     select a.*, case when m.header is not null then m.phase
              when starts_with(a.header_path, n.axis_header || '/')

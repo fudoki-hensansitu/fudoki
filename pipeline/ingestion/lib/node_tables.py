@@ -7,12 +7,11 @@ from dataclasses import dataclass
 from functools import cache
 import hashlib
 import json
-import re
-import unicodedata
 from pathlib import Path
 
 import duckdb
 
+from shared.amount import number, parse_amount
 from ingestion.lib.parquet import ParquetColumn, write_parquet
 
 NODE_COLUMNS = tuple(ParquetColumn(name, kind) for name, kind in (
@@ -29,38 +28,11 @@ MIGRATION_NOTE = ('旧変換器は未読・所属未確認を数えていない�
                   '0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。')
 
 
-def parse_amount(value: object) -> int | None:
-    """Printed amount as an integer, or None when the text is not a single amount.
-
-    Whitespace, digit grouping, a 円 unit mark before or after the number and one enclosing
-    bracket pair are layout; △/▲/- is a printed minus sign. Absent values are never read as 0.
-    """
-    if value is None:
-        return None
-    text = unicodedata.normalize('NFKC', str(value))
-    text = re.sub(r'\s+', '', text).replace('−', '-').removeprefix('円').removesuffix('円')
-    for opening, closing in (('(', ')'), ('<', '>'), ('[', ']')):
-        if text.startswith(opening) and text.endswith(closing):
-            text = text[1:-1]
-            break
-    match = re.fullmatch(r'(?P<sign>[△▲\-])?(?P<digits>[0-9]{1,3}(?:,[0-9]{3})*|[0-9]+)', text)
-    if match is None:
-        return None
-    number = int(match['digits'].replace(',', ''))
-    return -number if match['sign'] else number
-
-
 def read_rows(path: Path) -> list[dict]:
     with duckdb.connect() as con:
         cursor = con.execute('select * from read_parquet(?, hive_partitioning=false)', [str(path)])
         names = [item[0] for item in cursor.description]
         return [dict(zip(names, row)) for row in cursor.fetchall()]
-
-
-def number(text):
-    if text is not None and str(text).strip() in ('－', '―', '—', '-', 'ー'):
-        return 0
-    return parse_amount(text)
 
 
 @dataclass
