@@ -29,4 +29,4 @@
 
 ## 改訂2（2026-10-11）
 
-段の名前への対応も seed をやめ、共通規則にした（[ADR 0022](0022-level-names-by-shared-rule.md)）。`fiscal_level_map` は削除。金額の段階への対応は共有辞書のまま。
+段の名前への対応も seed をやめ、共通規則にした（[ADR 0024](0024-level-names-by-shared-rule.md)）。`fiscal_level_map` は削除。金額の段階への対応は共有辞書のまま。

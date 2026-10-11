@@ -12,7 +12,7 @@
 
 1. PDF の取り込みの出力: 原典に印字された項目を1行とするノードの表と、印字された金額を1行とする金額の表。CSV は原文の表のまま取り込む（[ADR 0020](../../adr/0020-ingestion-outputs-node-tables.md)）。
 2. 提供用データの形: 決算の木の表と、木の目ノードを選ぶ比較用のビュー。判断は COFOG だけを同じ表の列に持つ。
-3. dbt の各層の責務と、段の名前を共通規則（[ADR 0022](../../adr/0022-level-names-by-shared-rule.md)）・金額の段階への対応を共有辞書に置くこと（[ADR 0021](../../adr/0021-level-and-phase-map-in-dbt-seed.md)）。
+3. dbt の各層の責務と、段の名前を共通規則（[ADR 0024](../../adr/0024-level-names-by-shared-rule.md)）・金額の段階への対応を共有辞書に置くこと（[ADR 0021](../../adr/0021-level-and-phase-map-in-dbt-seed.md)）。
 4. 最初に通す縦の一本（slice）: 2025年度決算・歳出・一般会計で、131041 新宿区・132021 立川市・131156 杉並区。
 
 レビューで決めたいのは、取り込みの出力の形（ノードの表と金額の表の列）、提供用データの列、取り込み側（B）への変更要求の優先順位の3点である。
@@ -31,7 +31,7 @@
 
 ### 現状
 
-dbt（`pipeline/dbt`）は 2025年度決算・歳出の PDF 40表を入力にし、staging 2モデル・intermediate・マーツ（木の表・比較ビュー・原典の表）を持つ。入力の宣言 `_sources.yml` は `dbt/scripts/generate_sources.py` が管理 JSON から生成する（手書きしない）。取り込みは16宣言・47表を管理している（PDF のみ。CSV2表は別作業）。段の名前は共通規則で付ける（[ADR 0022](../../adr/0022-level-names-by-shared-rule.md)）。会計名は管理 JSON の原文のまま持ち、団体共通の種類（`account_kind`）を語の辞書（`account_kind_map`）で付ける（[ADR 0023](../../adr/0023-account-kind-and-no-consolidation.md)）。要件は [fiscal-records の PRD](../fiscal-records/prd.md)、概念は [ドメインモデル](../fiscal-records/fiscal-domain-model.md)、現行の取り込み表の保存と metadata は [保存設計](../ingestion-storage/design-doc.md) を参照する。
+dbt（`pipeline/dbt`）は 2025年度決算・歳出の PDF 40表を入力にし、staging 2モデル・intermediate・マーツ（木の表・比較ビュー・原典の表）を持つ。入力の宣言 `_sources.yml` は `dbt/scripts/generate_sources.py` が管理 JSON から生成する（手書きしない）。取り込みは16宣言・47表を管理している（PDF のみ。CSV2表は別作業）。段の名前は共通規則で付ける（[ADR 0024](../../adr/0024-level-names-by-shared-rule.md)）。会計名は管理 JSON の原文のまま持ち、団体共通の種類（`account_kind`）を語の辞書（`account_kind_map`）で付ける（[ADR 0023](../../adr/0023-account-kind-and-no-consolidation.md)）。要件は [fiscal-records の PRD](../fiscal-records/prd.md)、概念は [ドメインモデル](../fiscal-records/fiscal-domain-model.md)、現行の取り込み表の保存と metadata は [保存設計](../ingestion-storage/design-doc.md) を参照する。
 
 PDF の取り込みの出力は、原典に印字された項目を1行とするノードの表と、印字された金額を1行とする金額の表である。表が属する会計名と注記は管理 JSON の `tables[]` にある。階層別の合計検査と変換器の修正は #88 で取り込まれた。ノードと金額の表に対する共通の木の検査を使い、表をまたぐ照合・分解軸の対応・抜粋の検査は別に残す。
 
@@ -247,7 +247,7 @@ erDiagram
 | `is_interfund_transfer` | BOOLEAN | 会計間の繰出の印。科目の目で名称が「<会計名>繰出金」の形のものと、科目以外の軸で名称が「繰出金」または「<会計名>繰出金」のもの（法定の節・備考や説明の内訳）に付ける。節・備考の同名でも会計で終わらない内訳（例：保険基盤安定繰出金）は一会計の中の法定の負担で移転ではないため含まない。印は枝の最も上だけに付け、同じ目の下で節と備考の両方には付けない（節が優先）。節も備考も無い団体（132012）は拾えず、印は網羅ではない。印の付いた金額はそのまま足せる | 名称の規則から機械的に判定 |
 | `axis` | VARCHAR | 分解の軸（例 科目・備考・節・説明） | 原典の見出し |
 | `is_subject` | BOOLEAN | 表の根ノードと同じ軸か。軸名の印字を保持して科目の枝を識別する | 親子関係から機械的に判定 |
-| `node_kind` | VARCHAR | 段の名前（例 款・項・目・内訳1）。科目軸の深さ1/2/3は款・項・目、それ以外の軸は印字見出し、なければ内訳＋深さ（[ADR 0022](../../adr/0022-level-names-by-shared-rule.md)） | 原典の見出し、または共通規則 |
+| `node_kind` | VARCHAR | 段の名前（例 款・項・目・内訳1）。科目軸の深さ1/2/3は款・項・目、それ以外の軸は印字見出し、なければ内訳＋深さ（[ADR 0024](../../adr/0024-level-names-by-shared-rule.md)） | 原典の見出し、または共通規則 |
 | `code` | VARCHAR | 原典の番号。表記のまま（範囲の表記 `2～6` も含む）。番号がなければ NULL | 原典 |
 | `name` | VARCHAR | 原典の名称。字間の空白と折り返しの改行を除く | 原典（表記の正規化だけ） |
 | `amount_yen` | BIGINT | 支出済額（円）。千円単位の原典は1000倍する。支出済額の印字がない段は NULL | 原典（どの見出しを支出済額とするかは判断・共有辞書） |
@@ -291,7 +291,7 @@ erDiagram
 
 - `int_fiscal__csv_expenditure_nodes`: CSV の staging から、会計/款/項/目/事項/節/細々節の列を group by して木を作る。CSV の行は葉の粒度で経路が完全なので、PDF のノードの表を経由せず直接ノードの形にし、款・項・目の `node_id` の導出は PDF と共通にする。CSV では親子は列から機械的に決まり、原典の事実の復元ではなく正規化なので、取り込みではなくここで行う。葉の金額は千円を1000倍し、親は子の和の集計を持つ（印字ではない）。番号の印字がない目は親基準の ID で保つ。
 - `int_fiscal__settlement_expenditure_nodes`（決算・当初予算の PDF 共通。`document_kind` を列として流し、決算は支出済額・当初予算は当初予算額を選ぶ）:
-  - 共通規則で `node_kind` を決める（[ADR 0022](../../adr/0022-level-names-by-shared-rule.md)）。科目軸の深さと印字見出しが食い違えば止める。
+  - 共通規則で `node_kind` を決める（[ADR 0024](../../adr/0024-level-names-by-shared-rule.md)）。科目軸の深さと印字見出しが食い違えば止める。
   - 共有辞書（`pipeline/shared/fiscal_amount_map.csv`）で各ノードの支出済額を一つ選ぶ。宣言にない金額の見出しがあれば止める。
   - 表をまたいだ同じ款・項・目のノードを、団体・年度・会計・款・項・目の番号で一つにまとめ、`node_id` を作る。まとめる前に、名称と支出済額が表の間で一致することを検査し、食い違えば止める。原典の位置は、原典ファイル・物理頁・`y0` の順で最初のものを採る。祖先の款・項・目の番号を各ノードへ反復する。
   - 金額を円へ換算し（円は1倍、千円は1000倍、それ以外の単位は止める）、名称から字間の空白と改行を除く。
