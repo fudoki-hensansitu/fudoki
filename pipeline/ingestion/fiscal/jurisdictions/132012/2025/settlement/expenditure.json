@@ -374,7 +374,7 @@
     {
       "table_id": "general-detail",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "67a5c62d85a97bcb19e37a3b7741ab7efad82d9c8884f57689cd9775d47f30c4",
+      "input_fingerprint": "d535fd13b0fad1425f610bacca1fbcd4fd2c9cef9b2c48084a89a5fe02a717dd",
       "object": {
         "key": "fiscal/ingestion/132012/2025/settlement/expenditure/general-detail.parquet",
         "sha256": "6db5af21b258fd012e10cca640b0be1368791a23c9713ec8f3eb64ef0d2c29f4",
@@ -529,7 +529,7 @@
     {
       "table_id": "general-funding",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "67a5c62d85a97bcb19e37a3b7741ab7efad82d9c8884f57689cd9775d47f30c4",
+      "input_fingerprint": "d535fd13b0fad1425f610bacca1fbcd4fd2c9cef9b2c48084a89a5fe02a717dd",
       "object": {
         "key": "fiscal/ingestion/132012/2025/settlement/expenditure/general-funding.parquet",
         "sha256": "acabf049040f089d8465aaa75f6c25ba1f22f91e7483ef197ef88c49171ceed1",
@@ -583,7 +583,7 @@
     {
       "table_id": "general-annex",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "67a5c62d85a97bcb19e37a3b7741ab7efad82d9c8884f57689cd9775d47f30c4",
+      "input_fingerprint": "d535fd13b0fad1425f610bacca1fbcd4fd2c9cef9b2c48084a89a5fe02a717dd",
       "object": {
         "key": "fiscal/ingestion/132012/2025/settlement/expenditure/general-annex.parquet",
         "sha256": "26767ca7e0cd50f48b12b5d012cc21d87aa0bbc084e4ab4492f4b94064128b55",
@@ -623,7 +623,7 @@
     {
       "table_id": "kaigo-detail",
       "conversion_id": "kaigo-settlement-detail",
-      "input_fingerprint": "1161ec0ee87db5fe8db7a68db0654a27ed09f34e38547590c051531a6bdb3b92",
+      "input_fingerprint": "a5ad5fb2de9c7c93600b833764e7350d762ce2a7594cd88660943ae41df02d08",
       "object": {
         "key": "fiscal/ingestion/132012/2025/settlement/expenditure/kaigo-detail.parquet",
         "sha256": "6c7327a2ee40c7204023863d03004a52460b6c51a2656d4aafc32560238239fc",
@@ -778,7 +778,7 @@
     {
       "table_id": "kaigo-funding",
       "conversion_id": "kaigo-settlement-funding",
-      "input_fingerprint": "5ec5572011c62fd1be20310f2db5b18570f7575cd57f9514ac1a3ff289ee2d19",
+      "input_fingerprint": "2fa309d8768c399e2109fa9a433b052d35d746199300c3712c9724f08c67dffd",
       "object": {
         "key": "fiscal/ingestion/132012/2025/settlement/expenditure/kaigo-funding.parquet",
         "sha256": "b7cd9af9c274acab3a107fa0c22bd7cf61c89343f5441cc349ba70df903a86b4",
@@ -832,7 +832,7 @@
     {
       "table_id": "kaigo-annex",
       "conversion_id": "kaigo-settlement-annex",
-      "input_fingerprint": "63f7a9f149b8876e526e60b1bd8a29d7a0cbd186f8cd308af975847224c9fd27",
+      "input_fingerprint": "27836848554521b7c75d23cba102b238726fdcf4a79b349d1dd8e3713f74227b",
       "object": {
         "key": "fiscal/ingestion/132012/2025/settlement/expenditure/kaigo-annex.parquet",
         "sha256": "bdd440d70b50b64211cf7f37288525c7c1700881292e00dadd828d5cae596f27",
@@ -872,7 +872,7 @@
     {
       "table_id": "kariire-detail",
       "conversion_id": "kariire-settlement-detail",
-      "input_fingerprint": "8af4703e0d52f4ff5a07b4c48971a8915acd0c73513a249f923171bd9619680f",
+      "input_fingerprint": "58354f1f780112fc9e69e2d7f5af4ef6475ad77151369e3392bf0a8d631249b2",
       "object": {
         "key": "fiscal/ingestion/132012/2025/settlement/expenditure/kariire-detail.parquet",
         "sha256": "45237071fab4ba328113e00577ca243ce8c298bc3e85db72128f36b3dd9d6a77",
@@ -1027,7 +1027,7 @@
     {
       "table_id": "kariire-funding",
       "conversion_id": "kariire-settlement-funding",
-      "input_fingerprint": "3bb6ec072504960b79b372a6e3fc103174fd09f391abc212423c318ae64e65dc",
+      "input_fingerprint": "da6a27d9936242a123e9c93ee505b96c983d1c14223c8b883e3341ba6e2fc16c",
       "object": {
         "key": "fiscal/ingestion/132012/2025/settlement/expenditure/kariire-funding.parquet",
         "sha256": "881e0be450283711b237344ec7ecef6e2b2586b5919eb7863d5b45fb58ca69ca",
@@ -1081,7 +1081,7 @@
     {
       "table_id": "kariire-annex",
       "conversion_id": "kariire-settlement-annex",
-      "input_fingerprint": "e66b572e6a294f8513ab8a8131575637725d1a123b2c399c2ff7614765715a2a",
+      "input_fingerprint": "0ede9b48b0d70c1e1e74c03ca1fc67ca28fe3326fcd2d578eef538d30ce94aec",
       "object": {
         "key": "fiscal/ingestion/132012/2025/settlement/expenditure/kariire-annex.parquet",
         "sha256": "b1ca012234b357b2344c077c644b9a86d61129ef9ed19a8c859724ff6e867e2a",
@@ -1121,7 +1121,7 @@
     {
       "table_id": "kouki-detail",
       "conversion_id": "kouki-settlement-detail",
-      "input_fingerprint": "01ee110365ef32671deddf966da0950e23f12a171c038f31458878fcca1001bc",
+      "input_fingerprint": "402684f6a3fe1289eb5d684f7a6d289cfb20db6c3f986d98ec3f998240904b6c",
       "object": {
         "key": "fiscal/ingestion/132012/2025/settlement/expenditure/kouki-detail.parquet",
         "sha256": "6ef84b1a98cf89b0c39e6b31b95f63fdea480bb859317b32d9d116cf2cb4649a",
@@ -1276,7 +1276,7 @@
     {
       "table_id": "kouki-funding",
       "conversion_id": "kouki-settlement-funding",
-      "input_fingerprint": "067fb50267bdaaf4d82e8420fe5cd13d8d223cc32a60ac7f03c5504719e9dbdd",
+      "input_fingerprint": "bc1545fb1a12c207dd4986c2f76326b516f7e58b2453f2b6c87a8cb1c28a9c84",
       "object": {
         "key": "fiscal/ingestion/132012/2025/settlement/expenditure/kouki-funding.parquet",
         "sha256": "4f0c9b109813b40813dc0c5f82b8a05e36500e23693ceef075f6c9967ae7db3f",
@@ -1330,7 +1330,7 @@
     {
       "table_id": "kouki-annex",
       "conversion_id": "kouki-settlement-annex",
-      "input_fingerprint": "713228ebd537bb755914f1f2427f886595ee6c4816b0587a8a98ef7f3572b445",
+      "input_fingerprint": "13fa53522a23417ec58369a40ac0d8786411bf5ea8639c094b6a56b3447c1c96",
       "object": {
         "key": "fiscal/ingestion/132012/2025/settlement/expenditure/kouki-annex.parquet",
         "sha256": "db97418df33d19152899580ce5a25bd0a9122ce15d5c832cbcbb356a27d7f627",
@@ -1370,7 +1370,7 @@
     {
       "table_id": "kokuho-detail",
       "conversion_id": "kokuho-settlement-detail",
-      "input_fingerprint": "5c42f0f60beb671538fdb206cc095017119ed2d137374f2e028a6980bcaeb86c",
+      "input_fingerprint": "38a2b0d3b7b77ba901f2cbeced6bb056fd6eee88fc8b8beb11bd124809e20eaf",
       "object": {
         "key": "fiscal/ingestion/132012/2025/settlement/expenditure/kokuho-detail.parquet",
         "sha256": "9331655a17be5dd2dfb160ac2d2c38233f2aac68a98edcde0ec86a21def24b84",
@@ -1525,7 +1525,7 @@
     {
       "table_id": "kokuho-funding",
       "conversion_id": "kokuho-settlement-funding",
-      "input_fingerprint": "499260d499f03f41e1e57f2071bd0e3980262c75c49ee7a6c7a7b5aeb9b08e81",
+      "input_fingerprint": "57f2c21ada825659f18e309d6726c37044b7fddf4518f50b042333ec026f8fe4",
       "object": {
         "key": "fiscal/ingestion/132012/2025/settlement/expenditure/kokuho-funding.parquet",
         "sha256": "3cda46aeb446cacb6b91af9bda837780f4022d379b6ea8fab5c20e32d3d756dd",
@@ -1579,7 +1579,7 @@
     {
       "table_id": "kokuho-annex",
       "conversion_id": "kokuho-settlement-annex",
-      "input_fingerprint": "dbea0e79e81e3c5d0eb83c146176a5e00b00e16a2c4dd878fcd6d79a05370817",
+      "input_fingerprint": "b944153b43496db1627c6fc7a0f53cd6e932032dcb8f94b42be37ad1adbcf7f1",
       "object": {
         "key": "fiscal/ingestion/132012/2025/settlement/expenditure/kokuho-annex.parquet",
         "sha256": "1468eb64b8d71830f7fb7107ad47f3675283629e90a7d5c37c3a2e1ffcac8d1d",

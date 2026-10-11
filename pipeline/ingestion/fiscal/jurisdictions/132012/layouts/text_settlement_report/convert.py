@@ -1092,7 +1092,7 @@ def convert(inputs, destination, options):
 def detail_metadata(columns, funds, scope_label=None, stat_titles=None):
     # 款の資金分解5列は会計別に名称が異なる（fund_columns）。既定5名は一般会計と
     # 同一で、それ以外（kaigo の保険料、kokuho の保険税など）も units 対象にする。
-    # 款_決算額・款_執行率は units 対象外（決算額は集計行の金額、執行率は％）。
+    # 款_執行率（％）だけは units 対象外。款_決算額は金額なので対象に含める。
     kan_funds = {'款_' + n for n in (list(funds) + DEFAULT_FUNDS)}
     amounts = [c for c in columns
                if c.endswith(('決算額', '予算現額', '前年度決算額', '金額')) or c in kan_funds]
