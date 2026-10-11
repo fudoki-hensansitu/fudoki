@@ -46,7 +46,6 @@ pipeline/ingestion/
     manifest.schema.json         # 管理JSONの正本
     manifest.py                  # schemaと対象間の制約、fingerprint
     run.py                       # 変換、保存、復元、掃除、合計検査の入口
-    sum_check.py                 # PDF表の階層ごとの合計検査（型は sum_check.schema.json）
     storage.py                   # private R2への入出力
     layouts/
       csv/                       # convert.py + options.schema.json
@@ -55,9 +54,7 @@ pipeline/ingestion/
       132071/
         README.md
         layouts/<書式>/          # 団体固有のコード・訂正・宣言
-        2025/initial/expenditure.json
         2025/settlement/expenditure.json
-        sum_checks/2025/initial/expenditure.json   # 合計検査の宣言（管理JSONと同じ対象・方向）
 ```
 
 対象別JSONは原典対象と方向の組ごとに作る。設定用 `config.toml` は必須にしない。JSONの `conversions` に使用する変換コード、入力SHA、書式設定、期待する表をまとめ、`tables` に保存参照を持つ。列名・型はParquetから取得し、管理JSONへ複製しない。
@@ -74,7 +71,7 @@ PDFの取り込みの表（表ID）一つは、原典に印字された項目を
 
 既存の表は横持ちの形式で保存されており、その `tables[].metadata`（`units`・`notes`・`column_contexts`）は移行が済むまで有効である。横持ちの表と metadata からノードの表と金額の表を作る共通の変換で移行し、新しい変換器はノードの表と金額の表を直接出す。管理JSONのschemaは旧形式を受け入れつつ、新形式では `nodes`・`amounts` にそれぞれ `object`（key・SHA・サイズ）と `row_count` を持つ。表には `account`・`notes`・`unread_amount_count`・`unresolved_parent_count` を置く。旧形式の `object`・`row_count`・`metadata` と新形式の2参照は混在させない。
 
-管理形式は `schema_version: 1`。`expected_tables` は管理側が採用する表IDだけを持ち、変換器が生成した余分な補助表は採用しない。期待した表の欠落は停止する。支出額の集計に使わない補助表は管理JSONと合計検査の宣言から外すが、R2の実体の削除は別の操作にする。後工程の `declaration`・`definition_files`・`legacy_path` はschemaで拒否する。`inputs` は原典SHAだけを保持する。形式・会計・ページ範囲はselectionから解決し、抽出をさらに絞る設定は変換器のoptionsに置く。取り込みfingerprintは原典・変換設定・取り込みコードから作り、dbtの宣言やモデルを含めない。
+管理形式は `schema_version: 1`。`expected_tables` は管理側が採用する表IDだけを持ち、変換器が生成した余分な補助表は採用しない。期待した表の欠落は停止する。支出額の集計に使わない補助表は管理JSONから外すが、R2の実体の削除は別の操作にする。後工程の `declaration`・`definition_files`・`legacy_path` はschemaで拒否する。`inputs` は原典SHAだけを保持する。形式・会計・ページ範囲はselectionから解決し、抽出をさらに絞る設定は変換器のoptionsに置く。取り込みfingerprintは原典・変換設定・取り込みコードから作り、dbtの宣言やモデルを含めない。
 
 書式は年度・会計ごとに増やさない。設定値の違いで対応できる場合は同じコードを使う。別団体で同じ規則を使えることを確認した書式は `fiscal/layouts/` へ置く。団体固有の処理はその団体の `layouts/` に置き、歳入・歳出で規則が異なる場合は別の書式や設定を選ぶ。
 
