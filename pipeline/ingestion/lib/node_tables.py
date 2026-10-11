@@ -256,7 +256,7 @@ def amount_phase(header: str, document_kind: str, axis: str, level: str | None) 
     # An amount labelled with its own declared level inherits the axis's
     # dictionary meaning (e.g. current year inside a project breakdown).
     if header.startswith(axis + '／') and last == level:
-        return dictionary.get((document_kind, axis), dictionary.get(('', axis)))
+        return dictionary.get((document_kind, axis), dictionary.get(('', axis))) or None
     # A trailing Japanese-era year/period word (e.g. past-year breakdown columns)
     # names no current-year phase. Keep after inheritance so the current year keeps
     # the axis meaning; keep the same rule in dbt SQL (see FISCAL_YEAR_PATTERN).

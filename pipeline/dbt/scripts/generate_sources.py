@@ -49,7 +49,7 @@ def collect() -> list[dict]:
         direction = document['direction']
         for table in document['tables']:
             if 'nodes' not in table:
-                continue
+                raise ValueError(f"Non-PDF table in settlement input: {path} {table.get('table_id')}")
             if (target['jurisdiction'], table['table_id']) in EXCLUDE:
                 continue
             prefix = relation_name(target['jurisdiction'], table['table_id'])

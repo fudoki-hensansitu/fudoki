@@ -17,9 +17,8 @@ class GenerateSourcesTest(unittest.TestCase):
             document = json.loads(path.read_text())
             jurisdiction = document['target']['jurisdiction']
             for table in document['tables']:
-                if 'nodes' not in table:
-                    continue
                 key = (jurisdiction, table['table_id'])
+                self.assertIn('nodes', table, f'Non-PDF table is neither collected nor excluded: {key}')
                 entry = generate_sources.relation_name(*key) + '_nodes'
                 if key in generate_sources.EXCLUDE:
                     self.assertTrue(generate_sources.EXCLUDE[key])

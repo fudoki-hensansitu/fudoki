@@ -9,7 +9,9 @@ with recursive subject_axes as (
     group by source_table_key
 ), mapped_nodes as (
     select n.*, t.jurisdiction_code, t.fiscal_year, t.account_name, t.origin_id,
-        case when n.level_header in ('款', '項', '目') and n.axis_header <> s.subject_axis
+        case when s.subject_axis is null
+             then error('No subject axis (no 款 nodes): ' || n.source_table_key)
+             when n.level_header in ('款', '項', '目') and n.axis_header <> s.subject_axis
              then error('Subject level outside the subject axis: ' || n.source_table_key || '/' || n.node_key)
              when n.axis_header = s.subject_axis and n.depth in (1, 2, 3)
                   and n.level_header is not null and n.level_header not in ('款', '項', '目')
@@ -18,12 +20,14 @@ with recursive subject_axes as (
              when n.axis_header = s.subject_axis and n.depth = 1 then '款'
              when n.axis_header = s.subject_axis and n.depth = 2 then '項'
              when n.axis_header = s.subject_axis and n.depth = 3 then '目'
+             when n.axis_header = s.subject_axis and n.depth > 3
+             then error('Subject axis deeper than 目: ' || n.source_table_key || '/' || n.node_key)
              when n.level_header is not null then n.level_header
              else '内訳' || n.depth::varchar end as node_kind,
         {{ fiscal_name('n.name_text') }} as name
     from {{ ref('stg_fiscal__nodes') }} n
     join {{ source('fiscal_metadata', 'tables') }} t using (source_table_key)
-    join subject_axes s using (source_table_key)
+    left join subject_axes s using (source_table_key)
     where t.document_kind = 'settlement' and t.direction = 'expenditure'
 ), checked_nodes as (
     select * from mapped_nodes

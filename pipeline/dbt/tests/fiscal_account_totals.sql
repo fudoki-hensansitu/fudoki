@@ -16,3 +16,5 @@ select jurisdiction_code, fiscal_year, account_name, 'account_level_sums' as fai
     kan_sum, kou_sum, moku_sum
 from account_sums
 where case when moku_count > 0 then moku_sum else kou_sum end is distinct from kan_sum
+  and kan_sum is not null
+  and (moku_count > 0 or kou_sum is not null)
