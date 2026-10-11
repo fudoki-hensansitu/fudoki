@@ -25,6 +25,14 @@ class BackendSelection(unittest.TestCase):
         self.assertEqual(paddle.call_count, 0)
         self.assertIsInstance(vision.call_args.kwargs["config"], VisionConfig)
 
+    def test_vision_is_the_default_for_images(self):
+        with patch("ingestion.lib.scan_ocr.vision_ocr.recognize_image",
+                   return_value={"engine": {"name": "vision"}}) as vision, \
+                patch("ingestion.lib.scan_ocr.paddle_ocr.recognize_image",
+                      return_value={"engine": {"name": "paddle"}}) as paddle:
+            self.assertEqual(recognize_image(Path("input.png"))["engine"]["name"], "vision")
+            self.assertEqual((vision.call_count, paddle.call_count), (1, 0))
+
     def test_paddle_is_selected_by_backend_name(self):
         name, vision, paddle = self.call(backend="paddle")
         self.assertEqual(name, "paddle")

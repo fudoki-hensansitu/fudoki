@@ -146,15 +146,24 @@ class AmountCorrections(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     load_amount_dictionary(path)
 
-    def test_tree_check_rejects_a_wrong_amount_declaration(self):
+    def test_tree_check_accepts_a_right_and_rejects_a_wrong_amount_declaration(self):
         nodes = [{'node_key': 'do-1', 'parent_node_key': None, 'axis_header': '款', 'level_header': '款'},
                  {'node_key': 'do-1/moku-1', 'parent_node_key': 'do-1', 'axis_header': '款', 'level_header': '目'}]
-        def amounts(value):
-            return [{'node_key': 'do-1', 'header_path': '支出済額', 'unit_text': '円', 'amount_text': '1000'},
-                    {'node_key': 'do-1/moku-1', 'header_path': '支出済額', 'unit_text': '円', 'amount_text': value}]
-        self.assertTrue(check_tree(nodes, amounts('1000'))['passed'])
-        self.assertFalse(check_tree(nodes, amounts('900'))['passed'])
+        def checked(corrected):
+            dictionary = self.dictionary([{'id': 'amount-1', 'page': 3, 'observation_id': 'r7',
+                'observed_amount': '1,600', 'corrected_amount': corrected, 'reason': 'test'}])
+            moku = correct_amount('1,600', page=3, observation_id='r7', dictionary=dictionary)['corrected_amount']
+            amounts = [{'node_key': 'do-1', 'header_path': '支出済額', 'unit_text': '円', 'amount_text': '1,000'},
+                       {'node_key': 'do-1/moku-1', 'header_path': '支出済額', 'unit_text': '円', 'amount_text': moku}]
+            return check_tree(nodes, amounts)['passed']
+        self.assertTrue(checked('1,000'))
+        self.assertFalse(checked('900'))
 
+    def test_correction_location_types_are_checked(self):
+        dictionary = self.dictionary([])
+        for kwargs in [{'page': '1', 'observation_id': 'r1'}, {'page': 1, 'observation_id': 1}]:
+            with self.assertRaises(TypeError):
+                correct_amount('1,000', dictionary=dictionary, **kwargs)
 
 if __name__ == '__main__':
     unittest.main()

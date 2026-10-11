@@ -177,6 +177,8 @@ def correct_amount(observed_amount: str, *, page: int, observation_id: str,
     """
     if not isinstance(observed_amount, str):
         raise TypeError("observed_amount must be a string")
+    if type(page) is not int or not isinstance(observation_id, str):
+        raise TypeError("page must be an int and observation_id a string")
     rule = next((r for r in dictionary.rules
                  if r.page == page and r.observation_id == observation_id), None)
     if rule is not None and _amount_key(rule.observed_amount) != _key(observed_amount):
