@@ -45,7 +45,8 @@ pipeline/ingestion/
   fiscal/
     manifest.schema.json         # 管理JSONの正本
     manifest.py                  # schemaと対象間の制約、fingerprint
-    run.py                       # 変換、保存、復元、掃除の入口
+    run.py                       # 変換、保存、復元、掃除、合計検査の入口
+    sum_check.py                 # PDF表の階層ごとの合計検査（型は sum_check.schema.json）
     storage.py                   # private R2への入出力
     layouts/
       csv/                       # convert.py + options.schema.json
@@ -55,8 +56,8 @@ pipeline/ingestion/
         README.md
         layouts/<書式>/          # 団体固有のコード・訂正・宣言
         2025/initial/expenditure.json
-        2024/settlement/expenditure.json
-        2024/settlement/revenue.json
+        2025/settlement/expenditure.json
+        sum_checks/2025/initial/expenditure.json   # 合計検査の宣言（管理JSONと同じ対象・方向）
 ```
 
 対象別JSONは原典対象と方向の組ごとに作る。設定用 `config.toml` は必須にしない。JSONの `conversions` に使用する変換コード、入力SHA、書式設定、期待する表をまとめ、`tables` に保存参照を持つ。列名・型はParquetから取得し、管理JSONへ複製しない。
@@ -69,11 +70,11 @@ PDFの取り込みの表（表ID）一つは、原典に印字された項目を
 - 金額の表は、属するノード、金額が印字された欄の原典の見出し（上位から「／」で連結。必須）、金額と単位の原文、物理頁と印字範囲の座標を持つ。見開きでは、金額が属するノードと違う頁に印字されることがある。
 - 同じ支出の独立した分解（節の一覧と事業の説明など）は、別の軸の枝にする。
 
-表の単位で決まる事実は、Parquetの行に反復せず管理JSONの `tables[]` に置く。対象・方向・表ID・保存参照（SHA・サイズ・行数）に加えて、表が属する原典の会計名（`ingestion:check` で選定のscopeと照合する）と、原典由来の注記（`notes`）、読み取れなかった金額と所属を確認できない項目の件数を持つ。一つの表は原典ファイル一つから作る。原典ファイルのSHAは変換の `inputs` にあり、表へ複製しない。変換が複数の原典を受け取る場合は、表ごとにどの原典から作ったかを管理JSONに持つ。分冊をまたいで続く款・項・目は、各分冊の表に同じノードを置き、dbtで一つにまとめる。原典にない関係、単位の換算倍率、段の名前・金額の段階への対応、共通分類、集計方法は取り込みに入れず、dbtの宣言で扱う（[ADR 0019](../../adr/0019-level-and-phase-map-in-dbt-seed.md)）。
+表の単位で決まる事実は、Parquetの行に反復せず管理JSONの `tables[]` に置く。対象・方向・表ID・保存参照（SHA・サイズ・行数）に加えて、表が属する原典の会計名（`ingestion:check` で選定のscopeと照合する）と、原典由来の注記（`notes`）、読み取れなかった金額と所属を確認できない項目の件数を持つ。一つの表は原典ファイル一つから作る。原典ファイルのSHAは変換の `inputs` にあり、表へ複製しない。変換が複数の原典を受け取る場合は、表ごとにどの原典から作ったかを管理JSONに持つ。分冊をまたいで続く款・項・目は、各分冊の表に同じノードを置き、dbtで一つにまとめる。原典にない関係、単位の換算倍率、段の名前・金額の段階への対応、共通分類、集計方法は取り込みに入れず、dbtの宣言で扱う（[ADR 0021](../../adr/0021-level-and-phase-map-in-dbt-seed.md)）。
 
 既存の表は横持ちの形式で保存されており、その `tables[].metadata`（`units`・`notes`・`column_contexts`）は移行が済むまで有効である。横持ちの表と metadata からノードの表と金額の表を作る共通の変換で移行し、新しい変換器はノードの表と金額の表を直接出す。管理JSONのschemaは旧形式を受け入れつつ、新形式では `nodes`・`amounts` にそれぞれ `object`（key・SHA・サイズ）と `row_count` を持つ。表には `account`・`notes`・`unread_amount_count`・`unresolved_parent_count` を置く。旧形式の `object`・`row_count`・`metadata` と新形式の2参照は混在させない。
 
-管理形式は `schema_version: 1`。`expected_tables` は表IDだけを持ち、後工程の `declaration`・`definition_files`・`legacy_path` はschemaで拒否する。`inputs` は原典SHAだけを保持する。形式・会計・ページ範囲はselectionから解決し、抽出をさらに絞る設定は変換器のoptionsに置く。取り込みfingerprintは原典・変換設定・取り込みコードから作り、dbtの宣言やモデルを含めない。
+管理形式は `schema_version: 1`。`expected_tables` は管理側が採用する表IDだけを持ち、変換器が生成した余分な補助表は採用しない。期待した表の欠落は停止する。支出額の集計に使わない補助表は管理JSONと合計検査の宣言から外すが、R2の実体の削除は別の操作にする。後工程の `declaration`・`definition_files`・`legacy_path` はschemaで拒否する。`inputs` は原典SHAだけを保持する。形式・会計・ページ範囲はselectionから解決し、抽出をさらに絞る設定は変換器のoptionsに置く。取り込みfingerprintは原典・変換設定・取り込みコードから作り、dbtの宣言やモデルを含めない。
 
 書式は年度・会計ごとに増やさない。設定値の違いで対応できる場合は同じコードを使う。別団体で同じ規則を使えることを確認した書式は `fiscal/layouts/` へ置く。団体固有の処理はその団体の `layouts/` に置き、歳入・歳出で規則が異なる場合は別の書式や設定を選ぶ。
 
@@ -91,7 +92,7 @@ JSON Schemaは未知の管理項目、型、識別子の文字を検査する。
 
 変換器の入口は `convert(inputs, destination, options)` で、表IDとParquetのパスの対応を返す。新しい変換器は、表IDごとにノードの表と金額の表のパスと、表の会計名・notesを返す。移行前の横持ちの表を出す変換器は、パスの代わりに `{"path": path, "metadata": metadata}` を返せる。管理側はschemaと実際のParquet列への参照を検査し、表の保存情報へmetadataを含める。パスだけを返す既存の変換器も使える。再変換でmetadataを省略した場合、入力fingerprintとParquet SHAがともに同じなら既存metadataを保持し、変わっていれば古い情報を引き継がず、新しいmetadataの提出を要求して保存前に止める。入力には選定から解決した原典参照とscope、受け取った対象・方向、SHA照合済みのローカルパスが入る。変換器は原典の選定、Gitへの登録、R2への保存を行わない。
 
-CSVは [csv/convert.py](../../../pipeline/ingestion/fiscal/layouts/csv/convert.py) を使う。金額のカンマや空文字を含め原文を保持する。text PDFとscan PDFは書式別のコードで表を組み立て、[conversion.py](../../../pipeline/ingestion/lib/conversion.py) と [parquet.py](../../../pipeline/ingestion/lib/parquet.py) を使う。scan PDFの文字・位置の取得は共通入口の [scan_ocr](../../../pipeline/ingestion/lib/scan_ocr.md) に任せる。既定はPaddleOCR small（[ADR 0018](../../adr/0018-paddle-small-for-scan-pdf.md)）。OCRは変換器の外で取得し、凍結した観測を補助入力として変換器へ渡す（[ADR 0019](../../adr/0019-freeze-scan-ocr-observations.md)）。
+CSVは [csv/convert.py](../../../pipeline/ingestion/fiscal/layouts/csv/convert.py) を使う。金額のカンマや空文字を含め原文を保持する。text PDFとscan PDFは書式別のコードで表を組み立て、[conversion.py](../../../pipeline/ingestion/lib/conversion.py) と [parquet.py](../../../pipeline/ingestion/lib/parquet.py) を使う。scan PDFの文字・位置の取得は共通入口の [scan_ocr](../../../pipeline/ingestion/lib/scan_ocr.md) に任せる。既定はPaddleOCR small（[ADR 0018](../../adr/0018-paddle-small-for-scan-pdf.md)）。OCRは変換器の外で取得し、凍結した観測を補助入力として変換器へ渡す（[ADR 0019](../../adr/0019-freeze-scan-ocr-observations.md)。補助入力の保存・取得は未実装で、現在のscan PDFの変換器はローカルの凍結観測をパスで受け取る）。
 
 ヘッダー付きCSVは変換後に原典を再読し、列名・順序・VARCHAR型、全セル値、行順・重複・空文字、追加の物理行範囲列をParquetと照合する。不一致では変換を失敗にし、検査で拒否した新規Parquetを除去して保存前に停止する。原典SHAは管理入口で変換前後に照合する。検査結果は候補dirの `<表ID>.checks.json` に再生成し、管理JSONのschemaは変更しない。この保持検査でCSVの取り込みを完了とし、合計一致や独立した再抽出を必須条件にしない。年度・会計・単位・段階の解釈は後段で確認する。PDFは同じ軸で子の金額の和と親の金額を全段で照合する。未読・所属未確認・構造の不整合・合計不一致がある表は保存しない。原典で金額の印字がない箇所は比較の対象から外す。注記金額は支出済額に足さず、備考欄の金額として保持する。
 
@@ -153,4 +154,4 @@ LLMのcontextへ表やOCRの全量を出さず、詳細はファイルへ、CLI�
 
 ## Validation / Rollout
 
-`ingestion:check` をCIで実行し、全管理JSONの構造・選定との対応・保存済み表の入力条件を確認する。変換テストでは複数原典、原文保持、対象・key・所有者の違反、局所再実行の欠落、アップロード失敗を検査する。
+`ingestion:check` をCIで実行し、全管理JSONの構造・選定との対応・保存済み表の入力条件と、合計検査の宣言の型を確認する。PDF表の合計は `ingestion:verify` で、R2の表を復元できる環境で確かめる（CIでは回さない）。変換テストでは複数原典、原文保持、対象・key・所有者の違反、局所再実行の欠落、アップロード失敗を検査する。

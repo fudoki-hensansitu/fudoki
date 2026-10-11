@@ -30,25 +30,6 @@
       ]
     },
     {
-      "id": "general-settlement-summary",
-      "converter": "fiscal/jurisdictions/132021/layouts/text_settlement/convert.py",
-      "inputs": [
-        {
-          "sha256": "71b7aa9ebd5359cc35dd8fc938d3eb9c2578b5de34c241c9e6bd92a8ee25fcc7"
-        }
-      ],
-      "options": {
-        "account": "一般会計",
-        "part": "summary",
-        "table_id": "general-summary"
-      },
-      "expected_tables": [
-        {
-          "table_id": "general-summary"
-        }
-      ]
-    },
-    {
       "id": "kouki-settlement-details",
       "converter": "fiscal/jurisdictions/132021/layouts/text_settlement/convert.py",
       "inputs": [
@@ -89,45 +70,6 @@
       "expected_tables": [
         {
           "table_id": "kouki-expenditure-notes"
-        }
-      ]
-    },
-    {
-      "id": "kouki-settlement-summary",
-      "converter": "fiscal/jurisdictions/132021/layouts/text_settlement/convert.py",
-      "inputs": [
-        {
-          "sha256": "71b7aa9ebd5359cc35dd8fc938d3eb9c2578b5de34c241c9e6bd92a8ee25fcc7"
-        }
-      ],
-      "options": {
-        "account": "後期高齢者医療事業特別会計",
-        "part": "summary",
-        "table_id": "kouki-summary"
-      },
-      "expected_tables": [
-        {
-          "table_id": "kouki-summary"
-        }
-      ]
-    },
-    {
-      "id": "chushajo-settlement-summary",
-      "converter": "fiscal/jurisdictions/132021/layouts/text_settlement/convert.py",
-      "inputs": [
-        {
-          "sha256": "71b7aa9ebd5359cc35dd8fc938d3eb9c2578b5de34c241c9e6bd92a8ee25fcc7"
-        }
-      ],
-      "options": {
-        "account": "駐車場事業特別会計",
-        "part": "summary",
-        "table_id": "chushajo-summary",
-        "exclude_total_row": true
-      },
-      "expected_tables": [
-        {
-          "table_id": "chushajo-summary"
         }
       ]
     },
@@ -568,68 +510,6 @@
       }
     },
     {
-      "table_id": "general-summary",
-      "conversion_id": "general-settlement-summary",
-      "input_fingerprint": "a1d90241f8a619a607f03a54fa4c41d370c2644cb53eec8a33374db3cbd904ce",
-      "object": {
-        "key": "fiscal/ingestion/132021/2025/settlement/expenditure/general-summary.parquet",
-        "sha256": "e46e54f68aa864ccc06b2520e47153c9db0f0022ea9de5fe8916c3e06fb6ff18",
-        "bytes": 4403
-      },
-      "row_count": 41,
-      "metadata": {
-        "units": [
-          {
-            "text": "円",
-            "scope": {
-              "kind": "columns",
-              "columns": [
-                "予算現額",
-                "支出済額",
-                "翌年度繰越額",
-                "不用額",
-                "予算現額と支出済額との比較"
-              ]
-            }
-          }
-        ],
-        "notes": [
-          {
-            "text": "歳出決算款項表。款・項の印字行と歳出合計（番号なし・名称「歳出合計」の制御行）。項行には印字順序で一意に決まる款のlineage（款_番号・款_名称）を付与。左頁の款項名称・予算現額と右頁の支出済額・翌年度繰越額・不用額・比較を同じ見開き行へ対応。比較列は明細書にない独立した印字列。",
-            "scope": {
-              "kind": "table"
-            }
-          }
-        ],
-        "column_contexts": [
-          {
-            "columns": [
-              "款_番号",
-              "款_名称"
-            ],
-            "header_path": [
-              "款"
-            ],
-            "grain_columns": [
-              "款_番号"
-            ]
-          },
-          {
-            "columns": [
-              "項_番号",
-              "項_名称"
-            ],
-            "header_path": [
-              "項"
-            ],
-            "grain_columns": [
-              "項_番号"
-            ]
-          }
-        ]
-      }
-    },
-    {
       "table_id": "kouki-expenditure-details",
       "conversion_id": "kouki-settlement-details",
       "input_fingerprint": "7d76d8f4231824eabc474e01ff3c8479830c54ff600b43ec400a8e25b6b510d0",
@@ -1013,130 +893,6 @@
             "grain_columns": [
               "説明4_物理頁",
               "説明4_上端"
-            ]
-          }
-        ]
-      }
-    },
-    {
-      "table_id": "kouki-summary",
-      "conversion_id": "kouki-settlement-summary",
-      "input_fingerprint": "5858a063eb0a76b1c74f7d6ada5d286fed90be46cae319a2bdfce30db02fc4e6",
-      "object": {
-        "key": "fiscal/ingestion/132021/2025/settlement/expenditure/kouki-summary.parquet",
-        "sha256": "9ea19d1316967e26b906cc236bca39bd914c9ba13d450b34a9b6431f91242347",
-        "bytes": 2954
-      },
-      "row_count": 15,
-      "metadata": {
-        "units": [
-          {
-            "text": "円",
-            "scope": {
-              "kind": "columns",
-              "columns": [
-                "予算現額",
-                "支出済額",
-                "翌年度繰越額",
-                "不用額",
-                "予算現額と支出済額との比較"
-              ]
-            }
-          }
-        ],
-        "notes": [
-          {
-            "text": "歳出決算款項表。款・項の印字行と歳出合計（番号なし・名称「歳出合計」の制御行）。項行には印字順序で一意に決まる款のlineage（款_番号・款_名称）を付与。左頁の款項名称・予算現額と右頁の支出済額・翌年度繰越額・不用額・比較を同じ見開き行へ対応。比較列は明細書にない独立した印字列。",
-            "scope": {
-              "kind": "table"
-            }
-          }
-        ],
-        "column_contexts": [
-          {
-            "columns": [
-              "款_番号",
-              "款_名称"
-            ],
-            "header_path": [
-              "款"
-            ],
-            "grain_columns": [
-              "款_番号"
-            ]
-          },
-          {
-            "columns": [
-              "項_番号",
-              "項_名称"
-            ],
-            "header_path": [
-              "項"
-            ],
-            "grain_columns": [
-              "項_番号"
-            ]
-          }
-        ]
-      }
-    },
-    {
-      "table_id": "chushajo-summary",
-      "conversion_id": "chushajo-settlement-summary",
-      "input_fingerprint": "5616bbc160424b1513ca0b7a7ce6c87ad8d1cc510b4d5f1c252eabdc9065799b",
-      "object": {
-        "key": "fiscal/ingestion/132021/2025/settlement/expenditure/chushajo-summary.parquet",
-        "sha256": "51ed46b8500084ed72a80318ef990614f4e370d4008a84d2abe2360d33ebe854",
-        "bytes": 2391
-      },
-      "row_count": 6,
-      "metadata": {
-        "units": [
-          {
-            "text": "円",
-            "scope": {
-              "kind": "columns",
-              "columns": [
-                "予算現額",
-                "支出済額",
-                "翌年度繰越額",
-                "不用額",
-                "予算現額と支出済額との比較"
-              ]
-            }
-          }
-        ],
-        "notes": [
-          {
-            "text": "歳出決算款項表。款・項の印字行。歳出合計（番号なし・名称「歳出合計」の制御行）はraw行に含めずobservations/summary-checks.jsonのcontrol_rowsに記録。項行には印字順序で一意に決まる款のlineage（款_番号・款_名称）を付与。左頁の款項名称・予算現額と右頁の支出済額・翌年度繰越額・不用額・比較を同じ見開き行へ対応。比較列は明細書にない独立した印字列。",
-            "scope": {
-              "kind": "table"
-            }
-          }
-        ],
-        "column_contexts": [
-          {
-            "columns": [
-              "款_番号",
-              "款_名称"
-            ],
-            "header_path": [
-              "款"
-            ],
-            "grain_columns": [
-              "款_番号"
-            ]
-          },
-          {
-            "columns": [
-              "項_番号",
-              "項_名称"
-            ],
-            "header_path": [
-              "項"
-            ],
-            "grain_columns": [
-              "項_番号"
             ]
           }
         ]
