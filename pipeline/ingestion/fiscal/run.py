@@ -109,6 +109,18 @@ def node_receipt(document: dict, conversion: dict, table_id: str, tables: node_t
                          'row_count': inspect_table(path)}
     return receipt, paths
 
+def unchanged_legacy_receipt(document: dict, conversion: dict, table_id: str, file: Path,
+                             fingerprint: str, *, remote: bool) -> dict:
+    """Retain a failed migration only when its wide bytes match the saved object."""
+    previous = next((t for t in document['tables'] if t['table_id'] == table_id), None)
+    if previous is None or 'nodes' in previous or previous['conversion_id'] != conversion['id']:
+        raise ValueError(f'Failed node migration has no saved legacy table: {table_id}')
+    verify(file, previous['object'])
+    verify(fetch(previous['object'], remote=remote), previous['object'])
+    receipt = deepcopy(previous)
+    receipt['input_fingerprint'] = fingerprint
+    return receipt
+
 def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bool = False,
             conversion_ids: list[str] | None = None, extend_plan: Path | None = None) -> dict:
     document = manifest.read(path)
@@ -199,17 +211,24 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
                 # Conversions may separate details and notes for the same account.
                 initial = node_tables.migrate_rows(rows, metadata or {})
                 account = pdf_account(document, conversion, initial.nodes)
-                pending_pdf.append((conversion, ident, rows, metadata, account))
+                pending_pdf.append((conversion, ident, rows, metadata, account, file))
         else:
             for ident, (file, metadata) in prepared.items():
                 outputs[ident] = file
                 tables.append(table_receipt(document, conversion, ident, file,
                                             input_fingerprint=before[conversion['id']], metadata=metadata))
-    for conversion, ident, rows, metadata, account in pending_pdf:
-        siblings = [other_rows for _, other_ident, other_rows, _, other_account in pending_pdf
+    for conversion, ident, rows, metadata, account, file in pending_pdf:
+        siblings = [other_rows for _, other_ident, other_rows, _, other_account, _ in pending_pdf
                     if other_ident != ident and other_account == account]
         rows = complete_subject_rows(rows, siblings)
         migrated = node_tables.migrate_rows(rows, metadata or {})
+        checked = node_tables.check_tree(migrated.nodes, migrated.amounts)
+        if (not migrated.nodes or not migrated.amounts or migrated.issues or migrated.unread_amount_count
+                or migrated.unresolved_parent_count or not checked['passed']):
+            tables.append(unchanged_legacy_receipt(document, conversion, ident, file,
+                          before[conversion['id']], remote=remote))
+            outputs[ident] = file
+            continue
         receipt, pair = node_receipt(document, conversion, ident, migrated, output,
                                      input_fingerprint=before[conversion['id']],
                                      notes=[n['text'] for n in (metadata or {}).get('notes', [])])
@@ -239,9 +258,7 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
         if original_bytes is not None and path.read_bytes() != original_bytes:
             raise ValueError('Saved manifest changed before extension registration')
         manifest.write(path, result)
-        # Removing legacy wide tables is a separately authorized migration step.
-        if not any('nodes' in table for table in result['tables']):
-            cleanup(result)
+        # Deletion is always a separate operation, including legacy-only documents.
     return {'status': 'saved' if remote else 'candidate', 'tables': len(tables),
             'rows': sum(r['row_count'] for t in tables for r in manifest.table_references(t).values()), 'candidate': str(candidate)}
 

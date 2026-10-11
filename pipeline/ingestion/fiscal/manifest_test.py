@@ -350,7 +350,7 @@ class ManifestWorkflowTest(unittest.TestCase):
             self.assertEqual(published['tables'][:2], saved['tables'])
             self.assertEqual(published['conversions'], plan['conversions'])
             self.assertEqual({key: value for key, value in manifest.fingerprints(published).items() if key in fingerprints}, fingerprints)
-            self.assertEqual(cleanup.call_args.args[0]['tables'], published['tables'])
+            cleanup.assert_not_called()
             self.assertEqual({sha: path.read_bytes() for sha, path in local.items()}, old_bytes)
             manifest.require_current(published)
 
