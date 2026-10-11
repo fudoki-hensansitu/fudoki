@@ -83,4 +83,4 @@ native JSON（現行の `indent=2` 出力）の大きさは、132039の10頁で1
 - 実行コード: `scripts/run_ocr.py`（SHA-256 `5880ae20944e1a60cb51e5c1cb3b083920e0f3ea915bd380b00cb876781e81a2`）、`scripts/batch.sh`（`28660d8ee709b4d8ea2e65dcec311be249565c57ec5b1ec7d5f9df390485c09c`）。
 - 比較コード: `scripts/compare.py`（`c4d78e232a3fe8f2972aea53caae891b025a58752c5538e47aaba122082a4c41`）、凍結済み設定の再生: `scripts/replay_132039.py`（`a53d321dc4b9c88bcecd96af2b9a8adeafec8824ff97ab5e8701d50da6a31a11`）。
 - 比較結果: `reports/132039.json`、`reports/132101.json`、`reports/132039-replay-proc1.json`。
-- 各実行のnative・所要時間・ログ: `runs/<団体>/<実行>/`。
+- 各実行の所要時間・ログ: `runs/<団体>/<実行>/summary.json` と `runs/<団体>/<実行>.log`。比較後、再生成できる各実行のnative（計約67MB）と原典PDFの複製は削除した。作り直すときは原典をR2から取得し、`scripts/batch.sh` を実行する。

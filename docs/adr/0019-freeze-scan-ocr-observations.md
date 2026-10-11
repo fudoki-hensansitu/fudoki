@@ -31,7 +31,7 @@ scan PDFの取り込みでは、OCRの結果をどう変換の入力にするか
 
 OCRは変換器の外で、共通の取得入口から実行する。結果のnativeは**OCR観測の補助入力**として非公開R2に保存し、管理JSONの変換に原典と同じくSHAで宣言する。変換器はOCRを呼ばず、宣言された補助入力だけを読む。方式Aを基本とし、次の点を加える。
 
-1. **nativeを再現可能なバイト列にする。** 所要時間・キャッシュ状態・絶対パスは実行記録として別ファイルに分け、補助入力に含めない。同じMacで取り直せば同じSHAになり、ファイルのSHAがOCRの内容を識別する。
+1. **補助入力のSHAはOCRの内容だけを表す。** 補助入力には、どの原典のどの頁を読んだか（原典SHA・物理頁・読み取り領域）と、OCRの結果（描画画素のSHA・頁の寸法、観測、nativeの結果）だけを入れる。所要時間・キャッシュ状態・絶対パス・PIDと、実行した環境（package版・モデルとコードのSHA・OS・rendererのbuild）は実行記録として別ファイルに分ける。実行記録は補助入力と同じ場所に保存するが、SHAの対象にも宣言にも含めない。同じMacで取り直せば同じSHAになり、版を上げても結果が同じならSHAは変わらない。SHAが異なれば結果が異なる。所要時間などを含む形式の補助入力は保存・宣言しない。
 2. **取得の条件をGitで宣言する。** 原典SHA・物理頁・OCR設定・読み取り領域・再読領域を取得の依頼として宣言し、補助入力はその依頼から作られたものとして管理する。
 3. **再取得は検証と更新に限る。** 通常の変換・再構築はR2の補助入力を使う。OCRの結果を変える要因を更新したときは同じ依頼で取り直し、SHAが一致すればそのまま使う。異なれば差分を確認し、訂正の結び付けを見直してから補助入力を差し替える。
 4. **保存は最新版だけにする。** 取り込み表と同じく、対象・方向・補助入力のIDで決まる固定keyへ上書きし、全保存の成功後に管理JSONを更新する。1つの依頼を1つのgzipファイルにし、頁ごとには分けない。
@@ -56,7 +56,7 @@ OCRは変換器の外で、共通の取得入口から実行する。結果のna
 - **fingerprintと整合する。** 補助入力のSHAは変換の宣言に含まれるため、fingerprintに入る。fingerprintは実行環境を含めない設計であり、方式Bではpaddle系の版やOSの違いで出力が変わっても変換を古いと判定できない。補助入力を固定すれば、表の入力条件がすべてfingerprintで表される。
 - **費用は小さい。** 685頁でも未圧縮で約0.7〜1.2GB、gzipで約50〜85MBの見込みである。
 
-決定論的な出力にする理由は、実測で内容が同じでもファイルのSHAが毎回変わったためである。現在の形式のままでは、取り直すたびに訂正22件のSHAを書き換える必要があり、内容が変わったかどうかをSHAで判定できない。
+SHAを内容だけに限る理由は、実測で内容が同じでもファイルのSHAが毎回変わったためである。所要時間を含む形式では、取り直すたびに訂正22件のSHAを書き換える必要があり、内容が変わったかどうかをSHAで判定できない。
 
 固定keyにする理由は、取り込み表と同じく最新版だけを保持すれば足りるためである。内容ハッシュのkeyなら上書き途中の失敗でも旧版が残るが、古いkeyの掃除が別に必要になる。対象・方向ごとの逐次実行を前提にする限り、表と同じ手順で十分である。取得したnativeは管理JSONのSHAと照合するため、上書きの途中で失敗しても、古いnativeを黙って使うことはない。
 
@@ -77,22 +77,22 @@ OCRは変換器の外で、共通の取得入口から実行する。結果のna
 
 - scan PDFの変換器は、OCR観測の補助入力・原典・書式設定から表を作る処理になり、変換器の中でOCRを実行しない。新しい団体の変換器は、OCR取得の依頼を宣言し、共通入口で観測を取ってから変換を書く。
 - OCRのコード・モデル・依存の更新は、表を自動で古くしない。更新するときは補助入力の再取得と差分確認を明示的に行う。古い観測のまま変換を続けることは許容する。
-- 132039の現在の凍結native（SHA-256 `41956f0115d9bac0835fa38959ce1ef96a4ed6a534fd99cf83a5f782d466b2b8`）は、所要時間を含む旧形式のままR2へ移せる。訂正の結び付けは変えずに済む。新形式で取り直す場合は、同じ観測であることを比較してから訂正のSHAを機械的に更新する。
+- 132039の現在の凍結native（SHA-256 `41956f0115d9bac0835fa38959ce1ef96a4ed6a534fd99cf83a5f782d466b2b8`）と追加cropのnativeは所要時間を含むため、そのままでは保存しない。OCRを再実行せず、既存のファイルから実行ごとに変わる欄を取り除いて新しい形式へ変換する。観測は変わらないため、訂正と見出しの対応のSHAを新しいSHAへ機械的に置き換え、同じ表が再生成されることを確認してから保存する。
 - 補助入力の保存・宣言・取得入口が実装されるまで、新しいscan PDFの変換器は凍結したnativeをローカルで受け取る現在の形式で作ってよい。宣言は後で補助入力の参照へ置き換える。
 
 ## 実装に必要な変更
 
 | ファイル | 変更内容 |
 | --- | --- |
-| `pipeline/ingestion/lib/paddle_ocr.py` | 結果を観測（native）と実行記録に分ける。所要時間、`cache_hit`、絶対パス、PID・RSSなどは実行記録へ移す。観測は決定的な順序・書式で書き出す。テストで、同じ入力の2回の結果が同じバイト列になることを検査する |
+| `pipeline/ingestion/lib/paddle_ocr.py` | 結果を観測（native）と実行記録に分ける。所要時間、`cache_hit`、絶対パス、PID・RSS、package版・モデル／コードのSHA・OS・rendererのbuildは実行記録へ移す。観測は決定的な順序・書式で書き出す。テストで、同じ入力の2回の結果が同じバイト列になることを検査する |
 | `pipeline/ingestion/lib/scan_ocr.py`、`scan_ocr.md` | OCR取得の共通入口を追加する。取得の依頼（原典SHA、物理頁、設定、読み取り領域、再読領域）を受け取り、原典SHAを照合して観測と実行記録を返す。1つの依頼を1つの観測ファイルにし、追加のcrop読み取りは別の依頼として扱う |
 | `pipeline/ingestion/fiscal/manifest.schema.json` | 変換に任意の `ocr_inputs` を追加する。要素は `id`、`origin_sha256`、`request`（Git管理の依頼ファイルのパス）、展開後の観測JSONの `sha256` と `bytes`。gzipの保存物自体のSHA・サイズは管理JSONに持たず、取得時は展開後のバイト列で照合する。保存keyは対象・方向・`id` から導き、宣言しない |
 | `pipeline/ingestion/fiscal/manifest.py` | `ocr_inputs` の `origin_sha256` が同じ変換の `inputs` に含まれること、`id` の一意性、依頼ファイルの存在を検査する。依頼ファイルをfingerprintの依存に含める |
-| `pipeline/ingestion/fiscal/storage.py` | 補助入力のgzip保存・取得・SHA照合を追加する（固定key `fiscal/ingestion/<団体>/<年度>/<資料区分>/<方向>/ocr/<id>.json.gz`）。SHA・サイズは展開後のバイト列で照合する。掃除の対象を `ocr/` まで広げる |
+| `pipeline/ingestion/fiscal/storage.py` | 補助入力のgzip保存・取得・SHA照合を追加する（固定key `fiscal/ingestion/<団体>/<年度>/<資料区分>/<方向>/ocr/<id>.json.gz`、実行記録は同じ場所の `<id>.run.json`）。SHA・サイズは展開後のバイト列で照合する。掃除の対象を `ocr/` まで広げる |
 | `pipeline/ingestion/fiscal/run.py` | `originals` で補助入力もローカルへ復元し、入力の対応JSONに含める。`convert` は補助入力のローカルパスを、対応する原典の入力に付けて変換器へ渡す。新しい `ocr` サブコマンドで、宣言した依頼から観測を取得してローカルに書き出し、`--verify` で宣言済みのSHAと比べる。`--remote` で新しい補助入力を表より先に保存し、全保存成功後に管理JSONを更新する |
 | `pipeline/package.json` | `ingestion:ocr` scriptを追加する |
 | `pipeline/ingestion/fiscal/jurisdictions/132039/layouts/enterprise_statement/` | `convert.py` と `options.schema.json` の `native.path` / `supplemental_native.path` を、変換器へ渡された補助入力の参照に置き換える。`ocr.py` は共通入口へ移し、10頁の通常読み取りと物理42頁のcropを依頼ファイルとして宣言する。`README.md` の再構築手順を更新する |
-| `pipeline/ingestion/fiscal/jurisdictions/132039/2025/settlement/expenditure.json` | 凍結native 2件を `ocr_inputs` として宣言し、R2へ保存する（旧形式のまま）。fingerprintが変わるため、同じ表が再生成されることを確認して保存参照を更新する |
+| `pipeline/ingestion/fiscal/jurisdictions/132039/2025/settlement/expenditure.json` | 凍結native 2件を新しい形式へ変換して `ocr_inputs` として宣言し、R2へ保存する。`settlement-84743fdd.json` の訂正・見出しの対応のSHAを新しいSHAへ置き換える。fingerprintが変わるため、同じ表が再生成されることを確認して保存参照を更新する |
 | `pipeline/ingestion/fiscal/*_test.py`、`pipeline/ingestion/lib/paddle_ocr_test.py` | 補助入力の宣言検査、保存・復元・掃除、変換器への受け渡し、決定的な出力を検査する |
 | `docs/prd/ingestion-storage/design-doc.md`、`pipeline/AGENTS.md`、`.agents/skills/pipeline/references/ingestion.md` | 保存先の表とscan PDFの手順に、補助入力の保存と取得・再取得の流れを追加する |
 
