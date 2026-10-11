@@ -1,0 +1,14 @@
+version: 2
+models:
+- name: stg_fiscal__amounts
+  columns:
+  - name: physical_page
+    description: 金額自身の印字頁。不明ならNULL。名称の頁は流用しない。
+  - name: x0
+    description: 金額自身の矩形の左端。不明ならNULL。
+  - name: y0
+    description: 金額自身の矩形の上端。不明ならNULL。
+  - name: x1
+    description: 金額自身の矩形の右端。不明ならNULL。
+  - name: y1
+    description: 金額自身の矩形の下端。不明ならNULL。

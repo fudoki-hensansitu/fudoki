@@ -64,6 +64,8 @@ REPAIR_CHARS = {
 # legitimately appear (誰/劇/閲/盤/最/圃/青/連/進/士/医/両/卜) stay scoped to
 # the render-verified wrong contexts only.
 REPAIR_WORDS = [
+    # Physical page 49, printed pages 324–325: exact subject-name repair.
+    ('馬齢者福祉普', '高齢者福祉費'),
     # 幣 misencodes 整 in compounds and 費 in 施設費; longest first.
     ('施設幣備', '施設整備'), ('幣備', '整備'), ('調幣', '調整'),
     # A line wrap can split 幣備 across tokens (学校施設幣/備費), which the
@@ -804,6 +806,8 @@ def build(pages):
                         leaf[prefix + '番号'] = node['番号']
                     leaf[prefix + '名称'] = repair_name(node['名称'], node['level'] == 0)
                     leaf[prefix + '金額'] = node['金額']
+                    for field in ('物理頁', '上端', '下端'):
+                        leaf[prefix + field] = node[field]
                 leaf['物理頁'] = it['物理頁']
                 leaf['上端'] = it['上端']
                 leaf['下端'] = it['下端']
@@ -858,7 +862,9 @@ SETSU_COLUMNS = (LINEAGE + [f'節_{k}' for k in ('番号', '名称', '金額', *
                                                 '物理頁', '上端', '下端')])
 BREAKDOWN_COLUMNS = (LINEAGE + ['実施事業_名称', '実施事業_金額', '項目_番号',
                                 '項目_名称', '項目_金額', '細目_番号', '細目_名称',
-                                '細目_金額', '物理頁', '上端', '下端'])
+                                '細目_金額', '物理頁', '上端', '下端'] +
+                     [f'{level}_{field}' for level in ('実施事業', '項目', '細目')
+                      for field in ('物理頁', '上端', '下端')])
 
 
 def metadata(columns, account, kind):
@@ -874,9 +880,10 @@ def metadata(columns, account, kind):
                          'header_path': ['節'], 'semantic_role': 'setsu',
                          'grain_columns': ['目_物理頁', '目_上端', '節_番号']})
     else:
-        contexts.append({'columns': [c for c in columns if c.startswith(('実施事業_', '項目_', '細目_'))],
-                         'header_path': ['備考'],
-                         'grain_columns': ['物理頁', '上端']})
+        for level in ('実施事業', '項目', '細目'):
+            contexts.append({'columns': [c for c in columns if c.startswith(level + '_')],
+                             'header_path': ['備考'],
+                             'grain_columns': [level + '_物理頁', level + '_上端']})
     note = ('原典の同一目には節の財政明細行と目単位の事業内訳という親子関係のない2つの印字分解が併記される。'
             '所属する款・項・目の予算5列・執行3列・備考・印字位置を反復する。'
             '内訳項目行は備考欄の罫線セルに印字される支出済額の階層内訳で、'

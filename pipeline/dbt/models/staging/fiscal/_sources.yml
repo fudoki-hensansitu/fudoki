@@ -1,0 +1,90 @@
+version: 2
+sources:
+- name: fiscal_pdf
+  schema: ingestion
+  tables:
+  - name: j131041_general_expenditure_detail_nodes
+    meta:
+      jurisdiction: '131041'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-detail
+      kind: nodes
+  - name: j131041_general_expenditure_detail_amounts
+    meta:
+      jurisdiction: '131041'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-detail
+      kind: amounts
+  - name: j131156_general_expenditure_details_nodes
+    meta:
+      jurisdiction: '131156'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-details
+      kind: nodes
+  - name: j131156_general_expenditure_details_amounts
+    meta:
+      jurisdiction: '131156'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-details
+      kind: amounts
+  - name: j131156_general_expenditure_notes_nodes
+    meta:
+      jurisdiction: '131156'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-notes
+      kind: nodes
+  - name: j131156_general_expenditure_notes_amounts
+    meta:
+      jurisdiction: '131156'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-notes
+      kind: amounts
+  - name: j132021_general_expenditure_details_nodes
+    meta:
+      jurisdiction: '132021'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-details
+      kind: nodes
+  - name: j132021_general_expenditure_details_amounts
+    meta:
+      jurisdiction: '132021'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-details
+      kind: amounts
+  - name: j132021_general_expenditure_notes_nodes
+    meta:
+      jurisdiction: '132021'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-notes
+      kind: nodes
+  - name: j132021_general_expenditure_notes_amounts
+    meta:
+      jurisdiction: '132021'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-notes
+      kind: amounts
+- name: fiscal_metadata
+  schema: ingestion
+  tables:
+  - name: tables
+  - name: origin

@@ -2,7 +2,7 @@
 
 担当者: wwwyo / Codex
 更新日: `2026-10-11`
-状態: Accepted（保存経路を実装済み。旧経路と移行済みの旧表は削除した）。2026-10-11 に取り込み表の形をノードの表と金額の表へ改めた（ADR 0020、移行は未実装）
+状態: Accepted（保存経路を実装済み。旧経路と移行済みの旧表は削除した）。2026-10-11 に取り込み表の形をノードの表と金額の表へ改めた（ADR 0020、共通の移行とローカル候補の検査を実装。R2での採用は別途行う）
 
 ## Summary
 
@@ -72,9 +72,9 @@ PDFの取り込みの表（表ID）一つは、原典に印字された項目を
 
 表の単位で決まる事実は、Parquetの行に反復せず管理JSONの `tables[]` に置く。対象・方向・表ID・保存参照（SHA・サイズ・行数）に加えて、表が属する原典の会計名（`ingestion:check` で選定のscopeと照合する）と、原典由来の注記（`notes`）、読み取れなかった金額と所属を確認できない項目の件数を持つ。一つの表は原典ファイル一つから作る。原典ファイルのSHAは変換の `inputs` にあり、表へ複製しない。変換が複数の原典を受け取る場合は、表ごとにどの原典から作ったかを管理JSONに持つ。分冊をまたいで続く款・項・目は、各分冊の表に同じノードを置き、dbtで一つにまとめる。原典にない関係、単位の換算倍率、段の名前・金額の段階への対応、共通分類、集計方法は取り込みに入れず、dbtの宣言で扱う（[ADR 0021](../../adr/0021-level-and-phase-map-in-dbt-seed.md)）。
 
-既存の表は横持ちの形式で保存されており、その `tables[].metadata`（`units`・`notes`・`column_contexts`）は移行が済むまで有効である。横持ちの表と metadata からノードの表と金額の表を作る共通の変換で移行し、新しい変換器はノードの表と金額の表を直接出す。管理JSONのschemaを、一つの表IDに2つの保存参照と会計名を持てる形へ改めるのは、この移行の実装で行う。
+既存の表は横持ちの形式で保存されており、その `tables[].metadata`（`units`・`notes`・`column_contexts`）は移行が済むまで有効である。横持ちの表と metadata からノードの表と金額の表を作る共通の変換で移行し、新しい変換器はノードの表と金額の表を直接出す。管理JSONのschemaは旧形式を受け入れつつ、新形式では `nodes`・`amounts` にそれぞれ `object`（key・SHA・サイズ）と `row_count` を持つ。表には `account`・`notes`・`unread_amount_count`・`unresolved_parent_count` を置く。旧形式の `object`・`row_count`・`metadata` と新形式の2参照は混在させない。
 
-管理形式は `schema_version: 1`。`expected_tables` は表IDだけを持ち、後工程の `declaration`・`definition_files`・`legacy_path` はschemaで拒否する。`inputs` は原典SHAだけを保持する。形式・会計・ページ範囲はselectionから解決し、抽出をさらに絞る設定は変換器のoptionsに置く。取り込みfingerprintは原典・変換設定・取り込みコードから作り、dbtの宣言やモデルを含めない。
+管理形式は `schema_version: 1`。`expected_tables` は管理側が採用する表IDだけを持ち、変換器が生成した余分な補助表は採用しない。期待した表の欠落は停止する。支出額の集計に使わない補助表は管理JSONと合計検査の宣言から外すが、R2の実体の削除は別の操作にする。後工程の `declaration`・`definition_files`・`legacy_path` はschemaで拒否する。`inputs` は原典SHAだけを保持する。形式・会計・ページ範囲はselectionから解決し、抽出をさらに絞る設定は変換器のoptionsに置く。取り込みfingerprintは原典・変換設定・取り込みコードから作り、dbtの宣言やモデルを含めない。
 
 書式は年度・会計ごとに増やさない。設定値の違いで対応できる場合は同じコードを使う。別団体で同じ規則を使えることを確認した書式は `fiscal/layouts/` へ置く。団体固有の処理はその団体の `layouts/` に置き、歳入・歳出で規則が異なる場合は別の書式や設定を選ぶ。
 
@@ -94,7 +94,7 @@ JSON Schemaは未知の管理項目、型、識別子の文字を検査する。
 
 CSVは [csv/convert.py](../../../pipeline/ingestion/fiscal/layouts/csv/convert.py) を使う。金額のカンマや空文字を含め原文を保持する。text PDFとscan PDFは書式別のコードで表を組み立て、[conversion.py](../../../pipeline/ingestion/lib/conversion.py) と [parquet.py](../../../pipeline/ingestion/lib/parquet.py) を使う。scan PDFの文字・位置の取得は共通入口の [scan_ocr](../../../pipeline/ingestion/lib/scan_ocr.md) に任せる。既定はPaddleOCR small（[ADR 0018](../../adr/0018-paddle-small-for-scan-pdf.md)）。OCRは変換器の外で取得し、凍結した観測を補助入力として変換器へ渡す（[ADR 0019](../../adr/0019-freeze-scan-ocr-observations.md)。補助入力の保存・取得は未実装で、現在のscan PDFの変換器はローカルの凍結観測をパスで受け取る）。
 
-ヘッダー付きCSVは変換後に原典を再読し、列名・順序・VARCHAR型、全セル値、行順・重複・空文字、追加の物理行範囲列をParquetと照合する。不一致では変換を失敗にし、検査で拒否した新規Parquetを除去して保存前に停止する。原典SHAは管理入口で変換前後に照合する。検査結果は候補dirの `<表ID>.checks.json` に再生成し、管理JSONのschemaは変更しない。この保持検査でCSVの取り込みを完了とし、合計一致や独立した再抽出を必須条件にしない。年度・会計・単位・段階の解釈は後段で確認する。PDFは、保存した表に対する階層ごとの合計検査（`ingestion:verify`、表ごとの宣言は `jurisdictions/<団体>/sum_checks/`）で確かめる。
+ヘッダー付きCSVは変換後に原典を再読し、列名・順序・VARCHAR型、全セル値、行順・重複・空文字、追加の物理行範囲列をParquetと照合する。不一致では変換を失敗にし、検査で拒否した新規Parquetを除去して保存前に停止する。原典SHAは管理入口で変換前後に照合する。検査結果は候補dirの `<表ID>.checks.json` に再生成し、管理JSONのschemaは変更しない。この保持検査でCSVの取り込みを完了とし、合計一致や独立した再抽出を必須条件にしない。年度・会計・単位・段階の解釈は後段で確認する。PDFは同じ軸で子の金額の和と親の金額を全段で照合する。未読・所属未確認・構造の不整合・合計不一致がある表は保存しない。原典で金額の印字がない箇所は比較の対象から外す。注記金額は支出済額に足さず、備考欄の金額として保持する。
 
 ### 原典と現在の取り込み表をprivate R2で分ける
 
@@ -106,17 +106,20 @@ fudoki-inputs/
     settlement-2.pdf
     supplementary-<号>.pdf
   fiscal/ingestion/<団体>/<年度>/<initial|settlement|supplementary-号>/
-    expenditure/<表ID>.parquet
-    revenue/<表ID>.parquet
+    expenditure/<表ID>-nodes.parquet
+    expenditure/<表ID>-amounts.parquet
+    revenue/<表ID>-nodes.parquet
+    revenue/<表ID>-amounts.parquet
+    # CSVと移行前のPDFは <方向>/<表ID>.parquet
 ```
 
 原典のkeyはsource_selectionの保存記録を使い、Bで作り直さない。表は同じ役割の固定keyへ上書きする。方向が違えば同じ表IDでも衝突しない。表の保存参照にはSHA・サイズ・行数を記録する。列名・型はParquetから取得する。使用した原典のSHAは `conversions.inputs` で管理し、表ごとに複製しない。OCR・bbox・描画キャッシュは `.cache/` または `.agent/` に置き、Gitへ追加しない。
 
-現在の保存実装は表の単一ファイルアップロードを使う。300MBを超えるParquetは保存前に停止する。multipartと補助入力（凍結したOCR観測など）のR2保存は未実装である。補助入力の保存方式は [ADR 0019](../../adr/0019-freeze-scan-ocr-observations.md) で決めた。
+現在の保存実装はParquetごとの単一ファイルアップロードを使い、PDFの一つの表IDでは2ファイルを保存する。保存直前にも木の検査を行う。移行後の横持ちの表の削除は自動では行わず、検査済みの2表を採用してから別に実行する。300MBを超えるParquetは保存前に停止する。multipartと補助入力（凍結したOCR観測など）のR2保存は未実装である。補助入力の保存方式は [ADR 0019](../../adr/0019-freeze-scan-ocr-observations.md) で決めた。
 
 ### fingerprintで入力条件の変更を検知する
 
-fingerprintは、対象・方向、使用した原典SHAとscope、変換設定、参照するコード・設定ファイルのハッシュから計算する。同じ原典でもコードや設定が変われば表を古いものと判定する。関連するローカルimportとコードに明記した設定ファイルを辿る。管理側のモジュール（`fiscal/manifest.py`）は、変換器がmetadataの検証やパスの解決のためにimportしても辿らない。表のバイト列を変えず、辿るとschemaを変えるたびに、それをimportする変換器の表が古くなるためである。手動の依存指定は現在提供しない。
+fingerprintは、対象・方向、使用した原典SHAとscope、変換設定、参照するコード・設定ファイルのハッシュから計算する。同じ原典でもコードや設定が変われば表を古いものと判定する。関連するローカルimportとコードに明記した設定ファイルを辿る。手動の依存指定は現在提供しない。
 
 実行環境は管理JSONとfingerprintに含めない。OS・Python・DuckDBの版だけが変わっても再変換の判定は変わらない。
 

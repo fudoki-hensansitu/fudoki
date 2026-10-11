@@ -456,20 +456,29 @@ def _block_text(owner):
 
 
 COLUMNS = (
-    ["款番号", "款名称", "款_計", "款_当初予算額", "款_補正予算額",
+    ["款_番号", "款_名称", "款_計", "款_当初予算額", "款_補正予算額",
      "款_継続費及び繰越事業費繰越額", "款_予備費支出及び流用増減",
      "款_支出済額", "款_執行率", "款_翌年度繰越額", "款_不用額"]
-    + ["項番号", "項名称", "項_計", "項_当初予算額", "項_補正予算額",
+    + ["項_番号", "項_名称", "項_計", "項_当初予算額", "項_補正予算額",
        "項_継続費及び繰越事業費繰越額", "項_予備費支出及び流用増減",
        "項_支出済額", "項_執行率", "項_翌年度繰越額", "項_不用額"]
-    + ["目番号", "目名称", "目_計", "目_当初予算額", "目_補正予算額",
+    + ["目_番号", "目_名称", "目_計", "目_当初予算額", "目_補正予算額",
        "目_継続費及び繰越事業費繰越額", "目_予備費支出及び流用増減",
        "目_支出済額", "目_執行率", "目_翌年度繰越額", "目_不用額",
        "目_備考", "目_施策番号"]
-    + ["節番号", "節名称", "節_金額", "節_支出済額",
+    + ["節_番号", "節_名称", "節_金額", "節_支出済額",
        "節_翌年度繰越額", "節_不用額", "節_備考"]
     + ["unit", "物理頁", "bbox"]
 )
+
+POSITION_SUFFIXES = ("物理頁", "左端", "上端", "右端", "下端")
+COLUMNS += [f"{level}_{suffix}" for level in "款項目節" for suffix in POSITION_SUFFIXES]
+COLUMN_CONTEXTS = [
+    {"columns": [c for c in COLUMNS if c.startswith(level + "_")],
+     "header_path": ["款項目", level] if level != "節" else ["節", "区分"],
+     "grain_columns": [level + "_物理頁", level + "_上端"]}
+    for level in "款項目節"
+]
 
 AMOUNT_COLUMNS = [c for c in COLUMNS if any(
     k in c for k in ("計", "予算額", "繰越", "流用", "金額", "支出済額", "不用額"))]
@@ -575,11 +584,12 @@ def convert(inputs, destination, options):
                                  sha256=source.get("sha256", "0" * 64),
                                  bytes=Path(source["path"]).stat().st_size),),
     )
-    columns = tuple(ParquetColumn(name, "BIGINT" if name == "物理頁" else "VARCHAR")
+    columns = tuple(ParquetColumn(name, "BIGINT" if name.endswith("物理頁") else
+                                 "DOUBLE" if name.endswith(("左端", "上端", "右端", "下端")) else "VARCHAR")
                     for name in COLUMNS)
     result = write_conversion(result_dir / f"{table_id}.parquet", rows,
                               columns=columns, context=context)
-    metadata = {"units": [{"text": "円", "scope": {"kind": "columns",
+    metadata = {"column_contexts": COLUMN_CONTEXTS, "units": [{"text": "円", "scope": {"kind": "columns",
                                                   "columns": AMOUNT_COLUMNS}}],
                 "notes": [{"text": "法定節が行。節を持たない25款5項5目予備費は目行。款・項・目の金額・執行額は所属contextとして各行へ反復。右頁備考の経費内訳ブロック（見出し・項目・合計）は事業別の分解で節対応未確認のため行化せず、属する目の目_備考へ印字行の改行のまま保持。末尾の施策番号は目_施策番号へカンマ結合で保持し、目_備考の行内にも残る。歳出合計統制行は行化せずlocal観測。執行率は原典の百分率表記を保持。継続費繰越・予備費流用欄は対象範囲で印字なしのため全行NULL。物理頁は左頁、bboxは左頁の行bounds。",
                              "scope": {"kind": "table"}}]}
@@ -629,4 +639,14 @@ def _emit_row(owner, setsu, kan, kou, moku, by_id, executed_moku, remarks, polic
     row.update({"unit": "円", "物理頁": owner["page"],
                 "bbox": f"{min(xs):.1f},{owner['top']:.1f},{max(xe):.1f},"
                         f"{owner.get('bottom', owner['top']):.1f}"})
+    for level, node in zip("款項目節", (kan, kou, moku, setsu)):
+        position = {level + "_" + suffix: None for suffix in POSITION_SUFFIXES}
+        if node is not None:
+            words = node.get("bbox") or node["words"]
+            words = [w for w in words if (w["xMin"] >= 330 if level == "節" else w["xMin"] < 330)]
+            position.update(dict(zip(
+                (level + "_" + suffix for suffix in POSITION_SUFFIXES),
+                (node["page"], min(w["xMin"] for w in words), min(w["yMin"] for w in words),
+                 max(w["xMax"] for w in words), max(w["yMax"] for w in words)))))
+        row.update(position)
     return row

@@ -3,12 +3,15 @@ version: "0.1.0"
 profile: fudoki
 model-paths: ["models"]
 test-paths: ["tests"]
-seed-paths: ["seeds"]
+seed-paths: ["seeds", "../shared"]
 target-path: "../.build/dbt"
 clean-targets: ["target", "dbt_packages"]
 
 models:
   fudoki:
     staging:
-      # view だと Parquet への相対パスが dbt の作業ディレクトリに縛られるため実体を持たせる。
+      +materialized: table
+    intermediate:
+      +materialized: table
+    marts:
       +materialized: table

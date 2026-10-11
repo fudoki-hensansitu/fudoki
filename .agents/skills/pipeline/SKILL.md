@@ -6,7 +6,7 @@ user-invocable: false
 
 # pipeline
 
-全体の流れを確認するときは [形式別のフロー](references/workflow.md) を読み、作業する工程の reference へ進む。CSVは変換時の全セル保持検査で取り込みを完了する。PDFは階層ごとの合計検査→不一致の修正→再検査で確かめる。
+全体の流れを確認するときは [形式別のフロー](references/workflow.md) を読み、作業する工程の reference へ進む。CSVは変換時の全セル保持検査で取り込みを完了する。PDFはノードの表・金額の表にし、全段の木の検査（保存前に必須）→不一致の修正→再検査で確かめる。
 
 ## Routing table
 

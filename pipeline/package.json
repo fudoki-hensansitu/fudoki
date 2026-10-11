@@ -11,7 +11,10 @@
     "ingestion:verify": "uv run python -m ingestion.fiscal.run verify",
     "ingestion:restore": "uv run python -m ingestion.fiscal.run restore",
     "ingestion:cleanup": "uv run python -m ingestion.fiscal.run cleanup",
-    "ingestion:originals": "uv run python -m ingestion.fiscal.run originals"
+    "ingestion:originals": "uv run python -m ingestion.fiscal.run originals",
+    "dbt:prepare": "uv run python dbt/scripts/prepare.py",
+    "dbt:build": "uv run python dbt/scripts/prepare.py --build",
+    "test:dbt": "uv run python -m unittest discover -s dbt/scripts -p '*_test.py'"
   },
   "dependencies": {
     "@fudoki/fiscal": "workspace:*",

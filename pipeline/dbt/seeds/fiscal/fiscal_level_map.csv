@@ -1,0 +1,9 @@
+jurisdiction_code,table_id,axis_header,depth,node_kind,basis
+131041,general-expenditure-detail,備考,1,事業,備考欄の事業。全140目で子の和＝支出済額。
+131156,general-expenditure-notes,備考,1,事業,実施事業の段。全98目で末端の和＝支出済額。
+131156,general-expenditure-notes,備考,2,項目,実施事業の下の項目。原典の段の宣言と親子一致。
+131156,general-expenditure-notes,備考,3,細目,項目の下の細目。原典の段の宣言と親子一致。
+132021,general-expenditure-notes,備考,1,事業,事業説明の段。全101目で末端の和＝支出済額。
+132021,general-expenditure-notes,備考,2,節,事業説明の中の節見出し。法定節の軸とは独立。
+132021,general-expenditure-notes,備考,3,細目,説明の節の下の細目。親子一致。
+132021,general-expenditure-notes,備考,4,細目,字下げした細々目。金額内訳見出しはノードに含めない。

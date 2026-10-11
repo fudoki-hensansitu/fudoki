@@ -45,10 +45,15 @@ def manifest_path(target: dict, direction: str, root: Path | None = None) -> Pat
     return root / target['jurisdiction'] / str(target['fiscal_year']) / document_slot(target) / f'{direction}.json'
 
 
-def object_key(document: dict, table_id: str) -> str:
+def object_key(document: dict, table_id: str, kind: str | None = None) -> str:
     target = document['target']
     return (f'fiscal/ingestion/{target["jurisdiction"]}/{target["fiscal_year"]}/'
-            f'{document_slot(target)}/{document["direction"]}/{table_id}.parquet')
+            f'{document_slot(target)}/{document["direction"]}/{table_id}{'-' + kind if kind else ''}.parquet')
+
+
+def table_references(table: dict) -> dict[str | None, dict]:
+    return ({kind: table[kind] for kind in ('nodes', 'amounts')} if 'nodes' in table
+            else {None: table})
 
 
 def code_path(value: str) -> Path:
@@ -166,8 +171,15 @@ def validate(document: dict, *, path: Path | None = None, check_code: bool = Tru
         if ident in seen or expected.get(ident) != table['conversion_id']:
             raise ValueError('Duplicate, unexpected or incorrectly owned saved table')
         seen.add(ident)
-        if table['object']['key'] != object_key(document, ident):
-            raise ValueError('Saved table key differs from its target/direction/table ID')
+        for kind, reference in table_references(table).items():
+            if reference['object']['key'] != object_key(document, ident, kind):
+                raise ValueError('Saved table key differs from its target/direction/table ID')
+        if 'nodes' in table:
+            origins = resolved_inputs(document, conversions[table['conversion_id']])
+            if not all(item['format'] == 'pdf' for item in origins):
+                raise ValueError('Node tables require PDF inputs')
+            if table['account'] not in {scope['account'] for item in origins for scope in item['scope']}:
+                raise ValueError('Saved table account is outside selected input scopes')
         if 'metadata' in table:
             validate_metadata(table['metadata'])
     if seen and seen != set(expected):

@@ -82,9 +82,17 @@ def position(page, footer, band):
     return {'物理頁': page, '印刷頁': footer, '原典位置_上端': band.top, '原典位置_下端': band.bottom}
 
 
+def printed_position(page, tokens):
+    """Enclose the observed print, retaining the first printed ancestor on repeats."""
+    return {'物理頁': page, '左端': min(t.bbox.left for t in tokens),
+            '上端': min(t.bbox.top for t in tokens),
+            '右端': max(t.bbox.right for t in tokens),
+            '下端': max(t.bbox.bottom for t in tokens)}
+
+
 def detail(pdf, pages, origin, directory):
     output, observations = [], []
-    context = {}
+    context, positions = {}, {}
     for index, page in enumerate(pages):
         tokens, rules = observe(pdf, page, origin, directory)
         if text([t for t in tokens if '消費税' in t.raw_text]) != '（消費税抜き）':
@@ -129,7 +137,9 @@ def detail(pdf, pages, origin, directory):
                 for key in lower[lower.index(level):]:
                     context.pop(key, None)
                     context.pop(key + '_金額', None)
+                    positions.pop(key, None)
                 context.update({level: label, level + '_金額': amount})
+                positions[level] = printed_position(page, record['_tokens']['名称'] + record['_tokens']['金額（円）'])
                 observations.append({'page': page, 'kind': level, 'name': label, 'amount': amount, 'top': band.top, 'bottom': band.bottom})
                 continue
             if not section or not all(key in context for key in ('款', '項', '目')):
@@ -142,7 +152,7 @@ def detail(pdf, pages, origin, directory):
                 if not remark_lines or t.bbox.top - remark_lines[-1][0].bbox.top > 1:
                     remark_lines.append([])
                 remark_lines[-1].append(t)
-            budget, leaves = None, []
+            budget, budget_position, leaves, leaf_positions = None, None, [], []
             for line in remark_lines:
                 amounts = [t for t in line if AMOUNT.fullmatch(t.raw_text)]
                 names = [t for t in line if t not in amounts]
@@ -153,16 +163,70 @@ def detail(pdf, pages, origin, directory):
                     if budget is not None:
                         raise ValueError('Repeated remark budget')
                     budget = value
+                    budget_position = printed_position(page, line)
                 else:
                     leaves.append((name, value))
+                    leaf_positions.append(printed_position(page, line))
             observations.append({'page': page, 'kind': '節', 'name': section, 'amount': amount,
                                  'context': dict(context), 'budget': budget, 'remarks': leaves,
                                  'top': band.top, 'bottom': band.bottom})
-            for name, value in leaves or [(None, None)]:
+            section_position = printed_position(page, record['_tokens']['節'] + record['_tokens']['金額（円）'])
+            for (name, value), leaf_position in zip(leaves or [(None, None)], leaf_positions or [None], strict=True):
                 output.append({**context, '節': section, '金額（円）': amount, '備考_予算額': budget,
                                '備考_名称': name, '備考_金額': value,
-                               **position(page, printed_page(tokens), band)})
+                               **position(page, printed_page(tokens), band),
+                               '_positions': {**positions, '節': section_position,
+                                              '備考': leaf_position, '予算額': budget_position}})
     return output, observations
+
+
+def migration_detail_rows(rows):
+    """Declare the printed hierarchy for the common node-table migration.
+
+    Enterprise sections are children of moku, and their remarks are children of
+    the section. Budget annotations belong to that section rather than to a
+    remark leaf. Position grains distinguish printed items with equal names.
+    The internal 科目 prefixes also keep independent revenue/capital statements
+    out of the manager's 款_/項_/目_ sibling-completion path.
+    """
+    output = []
+    for row in rows:
+        record = {}
+        for level in ('款', '項', '目', '節'):
+            prefix = '科目' + level + '_'
+            record[prefix + '名称'] = row[level]
+            record[prefix + '金額（円）'] = row['金額（円）' if level == '節' else level + '_金額']
+            record.update({prefix + k: v for k, v in row['_positions'][level].items()})
+        record.update({'備考_名称': row['備考_名称'], '備考_金額（円）': row['備考_金額'],
+                       '備考_予算額': row['備考_予算額']})
+        for key in ('物理頁', '左端', '上端', '右端', '下端'):
+            record['備考_' + key] = (row['_positions']['備考'] or {}).get(key)
+            record[key] = (row['_positions']['予算額'] or {}).get(key)
+        output.append(record)
+    return output
+
+
+def detail_metadata():
+    amounts, contexts = [], []
+    for level in ('款', '項', '目', '節'):
+        prefix = '科目' + level + '_'
+        amount = prefix + '金額（円）'
+        positions = [prefix + k for k in ('物理頁', '左端', '上端', '右端', '下端')]
+        amounts.append(amount)
+        contexts.append({'columns': [prefix + '名称', amount, *positions],
+                         'header_path': ['款項', level], 'grain_columns': positions, 'amount_position_prefix': prefix})
+    amounts += ['備考_金額（円）', '備考_予算額']
+    contexts += [
+        {'columns': ['備考_名称', '備考_金額（円）'], 'header_path': ['備考'], 'amount_position_prefix': '備考_',
+         'grain_columns': ['備考_物理頁', '備考_上端', '備考_左端']},
+        {'columns': ['備考_予算額'], 'header_path': ['備考'], 'amount_position_prefix': '',
+         'grain_columns': ['科目節_物理頁', '科目節_上端', '科目節_左端']},
+    ]
+    note = ('（消費税抜き）。款項・目・節の金額（円）は決算の実績。'
+            '備考の予算額は同じ節の別金額欄、その他の備考金額は同じ節の実績内訳。'
+            '企業会計の節は原典のまま保持する。収益的支出と資本的支出は独立した表。')
+    return {'units': [{'text': '円', 'scope': {'kind': 'columns', 'columns': amounts}}],
+            'notes': [{'text': note, 'scope': {'kind': 'table'}}], 'column_contexts': contexts}
 
 
 REVENUE_LEFT = [Column('区分', 40, 170, 'left'), Column('当初予算額', 170, 247, 'right'),
@@ -234,31 +298,21 @@ def report(pdf, pages, origin, directory, capital):
     return result, records
 
 
-def metadata(rows, detail_table, capital):
+def report_metadata(rows, capital):
     amounts = [k for k, v in rows[0].items() if isinstance(v, str) and AMOUNT.fullmatch(v)]
-    if detail_table:
-        amounts = ['款_金額', '項_金額', '目_金額', '金額（円）', '備考_予算額', '備考_金額']
     contexts = []
-    if detail_table:
-        for level, grain in [('款', ['款']), ('項', ['款', '項']), ('目', ['款', '項', '目'])]:
-            contexts.append({'columns': [level, level + '_金額'], 'header_path': ['款' if level == '款' else level, '金額（円）'], 'grain_columns': grain})
-        contexts += [{'columns': ['節', '金額（円）'], 'header_path': ['節', '金額（円）'], 'grain_columns': ['款', '項', '目', '節']},
-                     {'columns': ['備考_予算額'], 'header_path': ['備考', '予算額'], 'grain_columns': ['款', '項', '目', '節']},
-                     {'columns': ['備考_名称', '備考_金額'], 'header_path': ['備考'], 'grain_columns': ['款', '項', '目', '節', '備考_名称']}]
-        note = '（消費税抜き）。金額（円）は決算の節額。備考の予算額は同じ節の予算、備考のその他の金額は決算内訳。原典に備考内訳がある節はその末端を行にし、款・項・目・節額と備考予算額を所属する末端へ反復。原典の節は企業会計の区分であり一般会計の法定節へ変換していない。'
-    else:
-        note = '（消費税込み 単位：円）。区分の項を一行とし、款の原典値を区分_款_補助列へ反復する。予算額の各欄と決算額・繰越額・不用額、備考うち仮払消費税は独立した原典の欄である。'
-        budget_columns = {c.name for c in (CAPITAL_LEFT if capital else REVENUE_LEFT) if c.name != '区分'}
-        budget_columns |= {'合計', '継続費逓次繰越額'}
-        if not capital:
-            budget_columns |= {'小計', '地方公営企業法第26条第２項の規定による繰越額'}
-        for k in rows[0]:
-            base = k.removeprefix('区分_款_')
-            if base in (*POSITION_COLUMNS, '右物理頁', '右印刷頁') or k in ('区分_款', '区分_項'):
-                continue
-            path = ['翌年度繰越額'] if base.startswith('翌年度繰越額_') else ['備考'] if base.startswith('備考_') else ['予算額'] if base in budget_columns else []
-            grain = ['区分_款'] if k.startswith('区分_款_') else ['区分_款', '区分_項']
-            contexts.append({'columns': [k], 'header_path': path, 'grain_columns': grain})
+    note = '（消費税込み 単位：円）。区分の項を一行とし、款の原典値を区分_款_補助列へ反復する。予算額の各欄と決算額・繰越額・不用額、備考うち仮払消費税は独立した原典の欄である。'
+    budget_columns = {c.name for c in (CAPITAL_LEFT if capital else REVENUE_LEFT) if c.name != '区分'}
+    budget_columns |= {'合計', '継続費逓次繰越額'}
+    if not capital:
+        budget_columns |= {'小計', '地方公営企業法第26条第２項の規定による繰越額'}
+    for k in rows[0]:
+        base = k.removeprefix('区分_款_')
+        if base in (*POSITION_COLUMNS, '右物理頁', '右印刷頁') or k in ('区分_款', '区分_項'):
+            continue
+        path = ['翌年度繰越額'] if base.startswith('翌年度繰越額_') else ['備考'] if base.startswith('備考_') else ['予算額'] if base in budget_columns else []
+        grain = ['区分_款'] if k.startswith('区分_款_') else ['区分_款', '区分_項']
+        contexts.append({'columns': [k], 'header_path': path, 'grain_columns': grain})
     return {'units': [{'text': '円', 'scope': {'kind': 'columns', 'columns': amounts}}],
             'notes': [{'text': note, 'scope': {'kind': 'table'}}], 'column_contexts': contexts}
 
@@ -289,8 +343,10 @@ def convert(inputs, destination, options):
         rows, observed = detail(pdf, pages, origin, observations) if is_detail else report(pdf, pages, origin, observations, capital)
         table_id = options['table_prefix'] + '-' + suffix
         (observations / (suffix + '.json')).write_text(json.dumps(observed, ensure_ascii=False, indent=2) + '\n')
-        columns = tuple(ParquetColumn(k, 'BIGINT' if k.endswith('物理頁') else 'DOUBLE' if k.endswith(('上端', '下端')) else 'VARCHAR') for k in rows[0])
+        if is_detail:
+            rows = migration_detail_rows(rows)
+        columns = tuple(ParquetColumn(k, 'BIGINT' if k.endswith('物理頁') else 'DOUBLE' if k.endswith(('左端', '上端', '右端', '下端')) else 'VARCHAR') for k in rows[0])
         info = write_conversion(destination / (table_id + '.parquet'), rows, columns=columns,
                                 context=ConversionContext(origin, table_id, __file__))
-        result[table_id] = {'path': Path(info.path), 'metadata': metadata(rows, is_detail, capital)}
+        result[table_id] = {'path': Path(info.path), 'metadata': detail_metadata() if is_detail else report_metadata(rows, capital)}
     return result

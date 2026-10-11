@@ -8,7 +8,7 @@ import subprocess
 import tempfile
 from pathlib import Path, PurePosixPath
 
-from ingestion.fiscal.manifest import BUCKET, object_key, sha_file
+from ingestion.fiscal.manifest import BUCKET, object_key, sha_file, table_references
 from ingestion.paths import CACHE
 
 OBJECTS = CACHE / 'objects'
@@ -54,22 +54,32 @@ def fetch(reference: dict, *, remote: bool = False) -> Path:
     return path
 
 
-def save(document: dict, table: dict, path: Path, *, remote: bool) -> None:
-    key = object_key(document, table['table_id'])
-    reference = table['object']
-    if reference['key'] != key:
-        raise ValueError('Wrong current-table key')
-    verify(path, reference)
+def save(document: dict, table: dict, path: Path | dict[str, Path], *, remote: bool) -> None:
     if not remote:
         raise ValueError('A saved manifest requires successful private R2 uploads')
-    if path.stat().st_size > 300_000_000:
-        raise ValueError('cf REST upload limit exceeded; configure a file-based S3 multipart transport')
-    subprocess.run(['cf', 'r2', 'objects', 'put', key, '--bucket-name', BUCKET,
-                    '--file', str(path), '--quiet'], check=True, stdout=subprocess.DEVNULL)
-    cached = OBJECTS / key
-    cached.parent.mkdir(parents=True, exist_ok=True)
-    if cached.resolve() != path.resolve():
-        shutil.copyfile(path, cached)
+    if 'nodes' in table:
+        from ingestion.lib.node_tables import check_tree, read_rows
+        checked = check_tree(read_rows(path['nodes']), read_rows(path['amounts']), document['target']['document_kind'])
+        if not checked['passed'] or table['unread_amount_count'] or table['unresolved_parent_count']:
+            raise ValueError('Node table failed the mandatory pre-save tree check')
+    prepared = []
+    for kind, receipt in table_references(table).items():
+        file = path[kind] if kind is not None else path
+        reference = receipt['object']
+        key = object_key(document, table['table_id'], kind)
+        if reference['key'] != key:
+            raise ValueError('Wrong current-table key')
+        verify(file, reference)
+        if file.stat().st_size > 300_000_000:
+            raise ValueError('cf REST upload limit exceeded; configure a file-based S3 multipart transport')
+        prepared.append((key, file))
+    for key, file in prepared:
+        subprocess.run(['cf', 'r2', 'objects', 'put', key, '--bucket-name', BUCKET,
+                        '--file', str(file), '--quiet'], check=True, stdout=subprocess.DEVNULL)
+        cached = OBJECTS / key
+        cached.parent.mkdir(parents=True, exist_ok=True)
+        if cached.resolve() != file.resolve():
+            shutil.copyfile(file, cached)
 
 
 def cleanup(document: dict) -> int:
@@ -77,7 +87,8 @@ def cleanup(document: dict) -> int:
     validate(document)
     require_current(document)
     prefix = object_key(document, 'placeholder').rsplit('/', 1)[0] + '/'
-    wanted = {table['object']['key'] for table in document['tables']}
+    wanted = {reference['object']['key'] for table in document['tables']
+              for reference in table_references(table).values()}
     removed = 0
     after = None
     while True:
