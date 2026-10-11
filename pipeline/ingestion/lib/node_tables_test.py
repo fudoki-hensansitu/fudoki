@@ -252,6 +252,9 @@ class NodeTablesTests(unittest.TestCase):
             path=Path(tmp)
             with self.assertRaises(ValueError):write_tables(path,'bad',NodeTables(nodes,[amount('p','2'),amount('a','1')]))
             self.assertFalse(list(path.iterdir()))
+            pair=write_tables(path,'ok',NodeTables(nodes,[amount('p','1'),amount('a','1')]))
+            self.assertEqual(len(read_rows(pair['nodes'])),2)
+            self.assertEqual(set(read_rows(pair['amounts'])[0]),set(amount('a','1')))
 
 
 class ParseAmountTest(unittest.TestCase):
@@ -265,9 +268,6 @@ class ParseAmountTest(unittest.TestCase):
         for text in (None, '', '－', '103,371,120,00', '繰越明許費', '1,000 千円'):
             with self.subTest(text=text):
                 self.assertIsNone(parse_amount(text))
-            pair=write_tables(path,'ok',NodeTables(nodes,[amount('p','1'),amount('a','1')]))
-            self.assertEqual(len(read_rows(pair['nodes'])),2)
-            self.assertEqual(set(read_rows(pair['amounts'])[0]),set(amount('a','1')))
 
 
 if __name__=='__main__':unittest.main()
