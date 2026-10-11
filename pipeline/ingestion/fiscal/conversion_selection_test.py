@@ -13,6 +13,7 @@ from pathlib import Path
 from ingestion.lib.parquet import write_parquet, ParquetColumn
 
 def convert(inputs, destination, options):
+    (destination / 'shared-observations').mkdir()
     path = destination / (options['id'] + '.parquet')
     write_parquet(path, options['rows'], columns=[ParquetColumn(c, 'VARCHAR') for c in options['columns']])
     return {options['id']: {'path': path, 'metadata': options['metadata']},

@@ -184,7 +184,12 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
         spec = importlib.util.spec_from_file_location('ingestion_converter_' + conversion['id'], code)
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
-        generated = module.convert(inputs, output, conversion['options'])
+        destination = output
+        if {item['format'] for item in inputs} == {'pdf'}:
+            # Several account conversions may use the same observation filenames.
+            destination = output / conversion['id']
+            destination.mkdir()
+        generated = module.convert(inputs, destination, conversion['options'])
         expected = {item['table_id'] for item in conversion['expected_tables']}
         if not isinstance(generated, dict) or not expected <= set(generated):
             raise ValueError('Converter did not produce all its declared tables')
