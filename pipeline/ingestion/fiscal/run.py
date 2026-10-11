@@ -438,6 +438,9 @@ def main() -> None:
             for item in results:
                 summary[item['status']] = summary.get(item['status'], 0) + 1
                 failed |= item['status'] == MISMATCH
+                # Candidate coverage reruns stop here too; saved tables keep
+                # no word scope, so their reports carry no coverage status.
+                failed |= item.get('coverage', {}).get('status') == MISMATCH
         print(json.dumps({'manifests': len(runs), 'tables': summary}, ensure_ascii=False))
         raise SystemExit(1 if failed else 0)
     elif args.command == 'restore':

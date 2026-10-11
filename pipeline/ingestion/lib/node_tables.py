@@ -231,8 +231,9 @@ CODE_WORD = re.compile(r'[0-9０-９]+[^0-9０-９,△▲\-－―—\.\(\)（）
 
 
 # Bare folios live in the footer strip. All processed PDFs are ~842pt tall
-# with body bottoms at or below 800; a bare integer below the strip is an
-# amount or a code, never a folio.
+# with body bottoms at or below 800 (converters read body bands only, and no
+# adopted amount prints with top > 795); a bare integer below the strip is an
+# amount or a code, never a folio. Revisit if a taller page scope arrives.
 FOOTER_TOP = 795.0
 
 
@@ -249,19 +250,6 @@ def check_digit_coverage(words, tables, *, tolerance=0.5):
     pattern (folio, era/year/date, glued percent, code glued to characters,
     footer folio, percent pair), (d) it shares a control-total baseline, or
     (e) a merged word split into adopted amounts rejoins exactly.
-    Leftovers split by band: inside an amount band they are BLOCKED prints
-    (a dropped amount in amount territory stops the save); outside bands
-    they are REPORTED prose (counted with examples, never blocking).
-    Never guesses: words sticking out of amount boxes stay uncovered.
-    """
-    """Every printed digit in scope is an amount row or a known non-amount.
-
-    words are the printed words of the pages and regions the converter
-    processed (headers it never read stay out of scope). tables are migrated
-    node tables whose amount rows carry their own printed positions.
-    A digit word is covered when (a) it sits inside an amount's own box and
-    its digits join that amount's digits, (b) it sits inside its node's box
-    and reads as the node's code or name, or (c) it fullmatches a
     Leftovers split by band: inside an amount band they are BLOCKED prints
     (a dropped amount in amount territory stops the save); outside bands
     they are REPORTED prose (counted with examples, never blocking).
