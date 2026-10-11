@@ -28,8 +28,9 @@ class PrepareTest(unittest.TestCase):
             with duckdb.connect() as con:
                 schema = ','.join(f'{c.name} {c.type}' for c in columns)
                 con.execute(f'create table raw ({schema})')
+                con.execute('insert into raw default values')
                 con.execute('copy raw to ? (format parquet)', [str(path)])
-            self.table[kind] = {'row_count': 0, 'object': {'key': f'{kind}.parquet',
+            self.table[kind] = {'row_count': 1, 'object': {'key': f'{kind}.parquet',
                                 'sha256': hashlib.sha256(path.read_bytes()).hexdigest(), 'bytes': path.stat().st_size}}
         self.document = {'target': self.target, 'direction': 'expenditure',
                          'conversions': [{'id': 'detail'}], 'tables': [self.table]}
@@ -83,7 +84,7 @@ class PrepareTest(unittest.TestCase):
         with duckdb.connect() as con:
             prepare.inspect(con, path, self.table['nodes'], 'nodes')
             with self.assertRaisesRegex(ValueError, 'Row count'):
-                prepare.inspect(con, path, {'row_count': 1}, 'nodes')
+                prepare.inspect(con, path, {'row_count': 0}, 'nodes')
             with self.assertRaisesRegex(ValueError, 'columns/types'):
                 prepare.inspect(con, path, {'row_count': 0}, 'amounts')
 
@@ -97,7 +98,7 @@ class PrepareTest(unittest.TestCase):
                 self.table[field] = previous
 
     def test_failed_second_input_rolls_back_first_replacement(self):
-        self.table['amounts']['row_count'] = 1
+        self.table['amounts']['row_count'] = 2
         with self.assertRaisesRegex(ValueError, 'Row count'):
             self.load()
         with duckdb.connect(str(self.warehouse)) as con:
@@ -105,7 +106,7 @@ class PrepareTest(unittest.TestCase):
 
     def test_success_loads_original_and_metadata(self):
         result = self.load()
-        self.assertEqual((result['tables'], result['origins'], result['nodes'], result['amounts']), (1, 1, 0, 0))
+        self.assertEqual((result['tables'], result['origins'], result['nodes'], result['amounts']), (1, 1, 1, 1))
         self.assertIn('return(["fixture"])', (self.dbt / 'macros/fiscal_pdf_relations.sql').read_text())
         with duckdb.connect(str(self.warehouse)) as con:
             self.assertEqual(con.execute('select title,sha256 from ingestion.origin').fetchone(), ('original', 'a' * 64))

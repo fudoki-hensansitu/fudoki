@@ -264,6 +264,24 @@ class ManifestWorkflowTest(unittest.TestCase):
             with self.assertRaises((ValueError, jsonschema.ValidationError)):
                 manifest.validate(bad)
 
+    def test_zero_row_node_or_amount_receipt_is_rejected(self):
+        result = convert(self.path, self.files, self.root/'paired-candidate')
+        candidate = json.loads(Path(result['candidate']).read_text())
+        table = candidate['tables'][0]
+        reference = {'object': table.pop('object'), 'row_count': table.pop('row_count')}
+        table.pop('metadata', None)
+        table.update(account='一般会計', notes=[], unread_amount_count=0, unresolved_parent_count=0)
+        for kind in ('nodes', 'amounts'):
+            table[kind] = deepcopy(reference)
+            table[kind]['object']['key'] = manifest.object_key(candidate, table['table_id'], kind)
+        with patch.object(manifest, 'resolved_inputs', return_value=[{'format':'pdf','scope':[{'account':'一般会計'}]}]):
+            manifest.validate(candidate)
+            for kind in ('nodes', 'amounts'):
+                bad = deepcopy(candidate)
+                bad['tables'][0][kind]['row_count'] = 0
+                with self.subTest(kind=kind), self.assertRaises(jsonschema.ValidationError):
+                    manifest.validate(bad)
+
     def test_partial_execution_cannot_drop_unsaved_tables(self):
         with self.assertRaises(ValueError):
             convert(self.path, self.files, self.root/'partial', conversion_ids=['one'])
