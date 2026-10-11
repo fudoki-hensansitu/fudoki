@@ -1,7 +1,8 @@
-"""Generate the dbt PDF source declarations from the ingestion management JSONs.
+"""Generate the dbt source declarations from the ingestion management JSONs.
 
 The table list is never written by hand: adding a jurisdiction or table only needs
-its management JSON (``ingestion/fiscal/jurisdictions/<団体>/<年度>/settlement/expenditure.json``).
+its management JSON (``ingestion/fiscal/jurisdictions/<団体>/<年度>/{settlement,initial}/expenditure.json``).
+PDF node tables go to the ``fiscal_pdf`` source, raw CSV tables to ``fiscal_csv``.
 Run ``uv run python dbt/scripts/generate_sources.py`` after the manifests change and
 commit the result; ``--check`` only verifies the committed file matches.
 """
@@ -42,31 +43,43 @@ def relation_name(jurisdiction: str, table_id: str) -> str:
 
 def collect() -> list[dict]:
     entries = []
-    manifests = sorted((PIPELINE / 'ingestion/fiscal/jurisdictions').glob('*/*/settlement/expenditure.json'))
+    patterns = ('*/*/settlement/expenditure.json', '*/*/initial/expenditure.json')
+    manifests = sorted({p for pattern in patterns
+                        for p in (PIPELINE / 'ingestion/fiscal/jurisdictions').glob(pattern)})
     for path in manifests:
         document = json.loads(path.read_text())
         target = document['target']
         direction = document['direction']
         for table in document['tables']:
-            if 'nodes' not in table:
-                raise ValueError(f"Non-PDF table in settlement input: {path} {table.get('table_id')}")
             if (target['jurisdiction'], table['table_id']) in EXCLUDE:
                 continue
             prefix = relation_name(target['jurisdiction'], table['table_id'])
-            for kind in ('nodes', 'amounts'):
-                entries.append({'name': f'{prefix}_{kind}', 'meta': {
-                    'jurisdiction': target['jurisdiction'], 'fiscal_year': target['fiscal_year'],
+            meta = {'jurisdiction': target['jurisdiction'], 'fiscal_year': target['fiscal_year'],
                     'document_kind': target['document_kind'], 'direction': direction,
-                    'table_id': table['table_id'], 'kind': kind}})
+                    'table_id': table['table_id']}
+            if 'nodes' in table:
+                for kind in ('nodes', 'amounts'):
+                    entries.append({'name': f'{prefix}_{kind}', 'source': 'fiscal_pdf',
+                                    'meta': {**meta, 'kind': kind}})
+            elif 'object' in table:
+                entries.append({'name': prefix, 'source': 'fiscal_csv', 'meta': meta})
+            else:
+                raise ValueError(f"Table is neither PDF nodes nor raw CSV: {path} {table.get('table_id')}")
     entries.sort(key=lambda e: e['name'])
     return entries
 
 
 def render() -> str:
+    collected = collect()
     declaration = {'sources': [
-        {'name': 'fiscal_pdf', 'schema': 'ingestion', 'tables': collect()},
+        {'name': 'fiscal_pdf', 'schema': 'ingestion',
+         'tables': [{k: v for k, v in e.items() if k != 'source'}
+                     for e in collected if e['source'] == 'fiscal_pdf']},
+        {'name': 'fiscal_csv', 'schema': 'ingestion',
+         'tables': [{k: v for k, v in e.items() if k != 'source'}
+                     for e in collected if e['source'] == 'fiscal_csv']},
         {'name': 'fiscal_metadata', 'schema': 'ingestion',
-         'tables': [{'name': 'tables'}, {'name': 'origin'}]}]}
+         'tables': [{'name': 'tables'}, {'name': 'csv_tables'}, {'name': 'origin'}]}]}
     return HEADER + yaml.safe_dump(declaration, allow_unicode=True, sort_keys=False)
 
 

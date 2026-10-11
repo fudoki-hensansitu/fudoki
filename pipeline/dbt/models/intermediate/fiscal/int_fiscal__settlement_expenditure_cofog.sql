@@ -1,6 +1,8 @@
--- MVP classifies subject moku nodes; setsu-dependent rules await a finer grain.
+-- MVP classifies subject moku nodes of every document kind; setsu-dependent rules await a finer grain.
+-- Settlement and initial budgets share subject node_ids, so deduplicate before joining rules.
+-- CSV trees live in their own intermediate; union them here so initial-budget 目 classify too.
 with mokus as (
-    select node_id,
+    select distinct node_id,
         {{ fiscal_match_text('jurisdiction_code') }} as jurisdiction_code,
         {{ fiscal_match_text('account_name') }} as fund_name,
         {{ fiscal_match_text('kan_name') }} as kan_name,
@@ -8,6 +10,16 @@ with mokus as (
         {{ fiscal_match_text('kan_code') }} as kan_code,
         {{ fiscal_match_text('name') }} as moku_name, '' as setsu_name
     from {{ ref('int_fiscal__settlement_expenditure_nodes') }}
+    where is_subject and node_kind = '目'
+    union all
+    select node_id,
+        {{ fiscal_match_text('jurisdiction_code') }} as jurisdiction_code,
+        {{ fiscal_match_text('account_name') }} as fund_name,
+        {{ fiscal_match_text('kan_name') }} as kan_name,
+        {{ fiscal_match_text('kou_name') }} as kou_name,
+        {{ fiscal_match_text('kan_code') }} as kan_code,
+        {{ fiscal_match_text('name') }} as moku_name, '' as setsu_name
+    from {{ ref('int_fiscal__csv_expenditure_nodes') }}
     where is_subject and node_kind = '目'
 ), rules as (
     select rule_id, priority, status, cofog_code, moku_mode, coalesce(tentative, false) as tentative,

@@ -2,9 +2,10 @@
 -- shared name rules (ADR 0023). Amounts are never eliminated. A mark sits only on
 -- the topmost transfer-named node of a branch, so marked amounts sum without doubles.
 with recursive base as (
-    select n.* exclude (kan_name, kou_name), c.cofog_status, c.cofog_code
+    select n.* exclude (kan_name, kou_name, document_kind), c.cofog_status, c.cofog_code
     from {{ ref('int_fiscal__settlement_expenditure_nodes') }} n
     left join {{ ref('int_fiscal__settlement_expenditure_cofog') }} c using (node_id)
+    where n.document_kind = 'settlement'
 ), transfer_named as (
     -- A transfer 目, or an off-subject breakdown (節・備考・説明) named exactly
     -- 繰出金 or matching the account pattern. Subject 項・款 never qualify, so a

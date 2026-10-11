@@ -1,10 +1,10 @@
 # C. dbt側で保存済み取り込みJSONとParquetを読み、構築する
 
-`pipeline/dbt/` は、入力準備（`scripts/prepare.py`）、staging（`models/staging/fiscal/`）、intermediate、marts、seeds、検査（`tests/`）を持つ。入口は `bun run --cwd pipeline dbt:build`（保存済みの表。未キャッシュなら `--remote`、候補は `--candidate-dir <dir>`）。入力準備は SHA・行数・会計名・未読と所属未確認0を検査し、失敗したら止める。slice の期待値は `uv run python pipeline/dbt/scripts/check_slice.py` で確かめる。
+`pipeline/dbt/` は、入力準備（`scripts/prepare.py`）、staging（`models/staging/fiscal/`）、intermediate、marts、seeds、検査（`tests/`）を持つ。入口は `bun run --cwd pipeline dbt:build`（保存済みの表。未キャッシュなら `--remote`、候補は `--candidate-dir <dir>`）。入力準備は SHA・行数、PDF は会計名・未読と所属未確認0、CSV は会計が選定 scope 内にあることを検査し、失敗したら止める。slice の期待値は `uv run python pipeline/dbt/scripts/check_slice.py` で確かめる。
 
 ## 入力を確認する
 
-1. `ingestion/fiscal/jurisdictions/<団体>/<年度>/<資料区分>/<方向>.json` を読み、そこで参照される保存済みParquetを `ingestion:restore` で復元して読む。`ingestion:check` で対象・原典選定・scope・fingerprintを検査する。dbt の入力宣言（`pipeline/dbt/models/staging/fiscal/_sources.yml`）は `dbt/scripts/generate_sources.py` が管理 JSON から生成する。手で表を足さない。通らない表の除外は同スクリプトの EXCLUDE に理由付きで宣言する。
+1. `ingestion/fiscal/jurisdictions/<団体>/<年度>/<資料区分>/<方向>.json` を読み、そこで参照される保存済みParquetを `ingestion:restore` で復元して読む。`ingestion:check` で対象・原典選定・scope・fingerprintを検査する。dbt の入力宣言（`pipeline/dbt/models/staging/fiscal/_sources.yml`）は `dbt/scripts/generate_sources.py` が管理 JSON から生成する（決算と当初予算の歳出。PDF はノードの表・金額の表、CSV は原文の表）。手で表を足さない。通らない表の除外は同スクリプトの EXCLUDE に理由付きで宣言する。
 2. 原典の抽出やBの検査は再実行しない。階層はノードの表の親子、単位と金額欄の見出しは金額の表、会計と注記は管理JSONの `tables[]` から取り、不足を推定値・空表で補わない。段の名前は共通規則で付ける（科目軸の深さ1/2/3は款・項・目、それ以外の軸は印字見出しか `内訳{深さ}`。[ADR 0022](../../../../docs/adr/0022-level-names-by-shared-rule.md)）。見出しから金額の段階への対応は取り込みと共通の辞書 `pipeline/shared/fiscal_amount_map.csv` に宣言する（[ADR 0021](../../../../docs/adr/0021-level-and-phase-map-in-dbt-seed.md)）。PDFの表はすべてノードの表に移行済み（横持ちの表は削除済み）。CSVは原文の表を読む。
 
 ## 構築結果を確認する

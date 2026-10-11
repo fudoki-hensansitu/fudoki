@@ -12,3 +12,28 @@ models:
     description: 金額自身の矩形の右端。不明ならNULL。
   - name: y1
     description: 金額自身の矩形の下端。不明ならNULL。
+- name: stg_fiscal__csv_expenditure
+  description: 原文のCSV行と1対1。当初予算の歳出（132047）は会計/款/項/目/事項/節/細々節の7階層で、各セルは番号+名称、08予算額が当初額（千円）。木への変換はintermediateで行う。
+  columns:
+  - name: account_raw
+    description: 01会計の原文（例01一般会計）。会計名は番号を除いた値。
+  - name: kan_raw
+    description: 02款の原文（番号+名称）。
+  - name: kou_raw
+    description: 03項の原文（番号+名称）。
+  - name: moku_raw
+    description: 04目の原文（番号+名称）。
+  - name: jika_raw
+    description: 05事項の原文（番号+名称）。目と節の間の予算事項。
+  - name: setsu_raw
+    description: 06節の原文（番号+名称）。
+  - name: saisai_raw
+    description: 07細々節の原文（番号+名称）。同じ節の下で番号が再利用されるため経路で識別する。
+  - name: amount_text
+    description: 08予算額の原文。当初予算額（千円）。
+  - name: amount
+    description: 08予算額の数値。読めない値はNULLにせず検査で止める。
+  - name: source_line_start
+    description: 原文CSVの物理行の開始。原典の位置の特定に使う。
+  - name: source_line_end
+    description: 原文CSVの物理行の終了。
