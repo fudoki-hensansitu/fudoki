@@ -142,6 +142,7 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
     output.mkdir(parents=True, exist_ok=False)
     outputs = {}
     tables = []
+    pending_pdf = []
     for conversion in document['conversions']:
         if conversion['id'] not in chosen:
             retained = [table for table in document['tables'] if table['conversion_id'] == conversion['id']]
@@ -173,8 +174,10 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
         spec.loader.exec_module(module)
         generated = module.convert(inputs, output, conversion['options'])
         expected = {item['table_id'] for item in conversion['expected_tables']}
-        if not isinstance(generated, dict) or set(generated) != expected:
-            raise ValueError('Converter did not produce exactly its declared tables')
+        if not isinstance(generated, dict) or not expected <= set(generated):
+            raise ValueError('Converter did not produce all its declared tables')
+        # expected_tables is the registry's allowlist; auxiliary outputs are not adopted.
+        generated = {ident: generated[ident] for ident in generated if ident in expected}
         prepared = {}
         for ident, file in generated.items():
             metadata = None
@@ -193,19 +196,25 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
             for ident, (file, metadata) in prepared.items():
                 inspect_table(file, metadata)
                 rows = sum_check.read_rows(file)
-                siblings = [sum_check.read_rows(other) for name, (other, _) in prepared.items() if name != ident]
-                rows = complete_subject_rows(rows, siblings)
-                migrated = node_tables.migrate_rows(rows, metadata or {})
-                receipt, pair = node_receipt(document, conversion, ident, migrated, output,
-                                             input_fingerprint=before[conversion['id']],
-                                             notes=[n['text'] for n in (metadata or {}).get('notes', [])])
-                outputs[ident] = pair
-                tables.append(receipt)
+                # Conversions may separate details and notes for the same account.
+                initial = node_tables.migrate_rows(rows, metadata or {})
+                account = pdf_account(document, conversion, initial.nodes)
+                pending_pdf.append((conversion, ident, rows, metadata, account))
         else:
             for ident, (file, metadata) in prepared.items():
                 outputs[ident] = file
                 tables.append(table_receipt(document, conversion, ident, file,
                                             input_fingerprint=before[conversion['id']], metadata=metadata))
+    for conversion, ident, rows, metadata, account in pending_pdf:
+        siblings = [other_rows for _, other_ident, other_rows, _, other_account in pending_pdf
+                    if other_ident != ident and other_account == account]
+        rows = complete_subject_rows(rows, siblings)
+        migrated = node_tables.migrate_rows(rows, metadata or {})
+        receipt, pair = node_receipt(document, conversion, ident, migrated, output,
+                                     input_fingerprint=before[conversion['id']],
+                                     notes=[n['text'] for n in (metadata or {}).get('notes', [])])
+        outputs[ident] = pair
+        tables.append(receipt)
     result = deepcopy(document)
     result['tables'] = tables
     manifest.validate(result)

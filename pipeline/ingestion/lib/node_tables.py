@@ -55,7 +55,8 @@ def migrate_rows(rows: list[dict], metadata: dict) -> NodeTables:
     """Deduplicate repeated ancestors by declared grain and parent, never by name.
 
     Unsupported column groups fail explicitly instead of silently dropping print.
-    The caller supplies corrected per-level positions when the old table lacks them.
+    A grouped context is split by column prefixes. Without per-level positions,
+    consecutive equal level values under one parent identify a repeated ancestor.
     """
     contexts = metadata.get('column_contexts', [])
     if not contexts:
@@ -68,17 +69,31 @@ def migrate_rows(rows: list[dict], metadata: dict) -> NodeTables:
     specs = []
     for context in contexts:
         names = [c for c in context['columns'] if c.endswith('_名称') and c.count('_') == 1]
-        if len(names) > 1:
-            raise ValueError(f'一つの段に複数の名称列: {names}')
         if not names:
-            # Amount-only supplements can be attached to an existing declared grain.
             specs.append((context, None))
             continue
-        prefix = names[0].removesuffix('名称')
-        path = context['header_path']
-        if not path:
-            raise ValueError(f'段の見出し不明: {prefix}')
-        specs.append((context, prefix))
+        for name in names:
+            prefix = name.removesuffix('名称')
+            path = context['header_path']
+            if not path:
+                raise ValueError(f'段の見出し不明: {prefix}')
+            own = dict(context)
+            if len(names) > 1:
+                own['columns'] = [c for c in context['columns'] if c.startswith(prefix)]
+                level = prefix[:-1]
+                own['header_path'] = path[:path.index(level) + 1] if level in path else [*path, level]
+                # Shared row coordinates describe the leaf, not its ancestors.
+                own['grain_columns'] = [c for c in context['grain_columns'] if c.startswith(prefix)]
+                positions = [c for c in own['columns'] if c.endswith(('物理頁', '上端', '原典yMin', 'yMin'))]
+                if positions:
+                    own['grain_columns'] = positions
+                own['_contiguous'] = not positions
+            elif any(c.endswith('_名称') for c in context['grain_columns']):
+                own['_contiguous'] = True
+            specs.append((own, prefix))
+    principal_axis = next((c['header_path'][0] for c, p in specs if p is not None
+                           and any(r.get(p + '名称') is not None or r.get(p + '番号') is not None for r in rows)), None)
+    runs = {}
     nodes, amounts, seen, amount_seen = [], [], {}, {}
     issues = []
     unread = unresolved = 0
@@ -87,7 +102,7 @@ def migrate_rows(rows: list[dict], metadata: dict) -> NodeTables:
     for row_index, row in enumerate(rows):
         active = {}
         previous_by_axis = {}
-        subject = None
+        subject = branch = None
         for context_index, (context, prefix) in enumerate(specs):
             if prefix is None:
                 continue
@@ -108,12 +123,20 @@ def migrate_rows(rows: list[dict], metadata: dict) -> NodeTables:
                 used.add(column)
                 continue
             parent = previous_by_axis.get(axis)
-            if axis == '科目':
+            if axis == principal_axis:
                 parent = subject
             elif parent is None:
-                parent = subject
+                # Statutory setsu are an independent breakdown; other successive
+                # explanation axes continue the previously printed explanation.
+                parent = subject if axis == '節' or context.get('semantic_role') == 'setsu' else branch or subject
             own_grain = [row.get(c) for c in context['grain_columns']]
-            if all(v is None for v in own_grain):
+            if context.get('_contiguous'):
+                signature = (parent, tuple(row.get(c) for c in context['columns']))
+                previous = runs.get(context_index)
+                first_row = previous[2] if previous and previous[:2] == (signature, row_index - 1) else row_index
+                runs[context_index] = (signature, row_index, first_row)
+                own_grain = [first_row]
+            if not own_grain or all(v is None for v in own_grain):
                 unresolved += 1; issues.append(f'{prefix}: 項目の識別位置がない')
                 continue
             identity = (context_index, parent, *own_grain)
@@ -132,13 +155,15 @@ def migrate_rows(rows: list[dict], metadata: dict) -> NodeTables:
                 if any(seen[key][field] != node[field] for field in ('code_text', 'name_text')):
                     issues.append(f'反復した項目の名称・番号が一致しない: {key}')
             else:
-                if parent is None and axis != '科目':
+                if parent is None and axis != principal_axis:
                     unresolved += 1; issues.append(f'{prefix}: 科目の親がない')
                 seen[key] = node; nodes.append(node)
             active[prefix] = key
             previous_by_axis[axis] = key
-            if axis == '科目':
+            if axis == principal_axis:
                 subject = key
+            elif axis != '節' and context.get('semantic_role') != 'setsu':
+                branch = key
             for column in context['columns']:
                 if column not in units or column in context['grain_columns'] or column.endswith(('番号', '名称')):
                     continue
@@ -241,7 +266,7 @@ def check_tree(nodes: list[dict], amounts: list[dict]) -> dict:
                     label = '予算現額／計'
                 elif by_key[key]['axis_header'] == axis and (header == axis or header.startswith(axis + '／')):
                     last = header.split('／')[-1]
-                    generic = header in (axis, axis + '／事業説明', axis + '／' + (by_key[key]['level_header'] or ''))
+                    generic = header in (axis, axis + '／事業説明') or last == by_key[key]['level_header']
                     label = ('支出済額' if generic or last in ('支出済額', '本年度支出額') else last)
                 # Prior-year carryover execution and current-year execution are
                 # separately printed parts of the generic executed total.

@@ -36,6 +36,51 @@ class NodeTablesTests(unittest.TestCase):
         self.assertIsNone(result.nodes[1]['x0'])
         self.assertEqual(result.nodes[1]['depth'],1)
 
+    def test_grouped_levels_without_positions_keep_contiguous_runs_and_same_name_siblings(self):
+        metadata = {'column_contexts': [
+            {'columns':['款_番号','款_名称'], 'header_path':['科目','款'], 'grain_columns':['款_番号']},
+            {'columns':['事業_名称','事業_金額','細目_名称','細目_金額'],
+             'header_path':['備考','説明'], 'grain_columns':['物理頁','上端']}],
+            'units':[{'text':'円','scope':{'kind':'columns','columns':['事業_金額','細目_金額']}}]}
+        rows = [{'款_番号':'1','款_名称':'款','事業_名称':name,'事業_金額':total,
+                 '細目_名称':'同名','細目_金額':value,'物理頁':1,'上端':i}
+                for i,(name,total,value) in enumerate([('同名','10','3'),('同名','10','7'),
+                                                       ('別名','2','2'),('同名','10','10')])]
+        migrated = migrate_rows(rows,metadata)
+        parents = [n for n in migrated.nodes if n['level_header']=='事業']
+        self.assertEqual(len(parents),3)
+        self.assertEqual(migrated.amounts[0]['header_path'],'備考／説明／事業')
+        self.assertNotEqual(parents[0]['node_key'],parents[2]['node_key'])
+        children = [n for n in migrated.nodes if n['parent_node_key']==parents[0]['node_key']]
+        self.assertEqual(len(children),2)
+        self.assertTrue(check_tree(migrated.nodes,migrated.amounts)['passed'])
+
+    def test_successive_explanation_axes_continue_the_branch_after_independent_setsu(self):
+        contexts = [context('款',['科目','款']), context('節',['節']),
+                    context('事業',['事業','事業']), context('内訳',['内訳','内訳'])]
+        metadata = {'column_contexts':contexts, 'units':[]}
+        row = {}
+        for i,prefix in enumerate(['款','節','事業','内訳']):
+            row.update({prefix+'_名称':prefix,prefix+'_物理頁':1,prefix+'_上端':float(i)})
+        migrated = migrate_rows([row],metadata)
+        root, setsu, project, detail = migrated.nodes
+        self.assertEqual(setsu['parent_node_key'],root['node_key'])
+        self.assertEqual(project['parent_node_key'],root['node_key'])
+        self.assertEqual(detail['parent_node_key'],project['node_key'])
+
+    def test_non_subject_root_and_absent_upper_levels_use_first_populated_axis(self):
+        for include_upper in (True,False):
+            metadata = {'column_contexts':[context('款',['款項','款']),context('区分',['節'])],
+                        'units':[{'text':'円','scope':{'kind':'columns','columns':['款_金額','区分_金額']}}]}
+            row = {'款_名称':'親' if include_upper else None,'款_金額':'10' if include_upper else None,
+                   '款_物理頁':1 if include_upper else None,'款_上端':1. if include_upper else None,
+                   '区分_名称':'子','区分_金額':'10','区分_物理頁':1,'区分_上端':2.}
+            migrated = migrate_rows([row],metadata)
+            self.assertEqual(migrated.unresolved_parent_count,0)
+            self.assertFalse(migrated.issues)
+            self.assertIsNone(migrated.nodes[0]['parent_node_key'])
+            if include_upper:self.assertEqual(migrated.nodes[1]['parent_node_key'],migrated.nodes[0]['node_key'])
+
     def test_axes_are_checked_independently_and_all_depths_are_checked(self):
         nodes=[node('p'),node('a','p','備考'),node('b','p','備考'),node('s','p','節'),node('aa','a','備考')]
         amounts=[amount('p','10'),amount('a','3','備考'),amount('b','7','備考'),
