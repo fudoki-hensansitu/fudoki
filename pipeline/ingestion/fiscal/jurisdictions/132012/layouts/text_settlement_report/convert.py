@@ -79,7 +79,7 @@ def table_start(words):
 DETAIL_COLUMNS = [
     '款_番号', '款_名称', '款_決算額', '款_国庫支出金', '款_都支出金', '款_市債',
     '款_その他', '款_一般財源', '款_執行率', '款_物理頁', '款_上端', '款_下端',
-    '項_番号', '項_名称', '項_物理頁', '項_上端', '項_下端',
+    '項_番号', '項_名称', '項_予算現額', '項_当年度決算額', '項_前年度決算額', '項_物理頁', '項_上端', '項_下端',
     '目_番号', '目_名称', '目_予算現額', '目_当年度決算額', '目_前年度決算額',
     '目_物理頁', '目_上端', '目_下端',
     '事業_番号', '事業_名称', '事業_担当課', '事業_予算現額', '事業_当年度決算額',
@@ -424,6 +424,7 @@ class Builder:
         self.funding = []
         self.annex = []
         self.obs_kan, self.obs_kou, self.obs_moku, self.obs_jigyo, self.obs_total = [], [], [], [], []
+        self.subject_rows = []
         self.kan_amount_cells = []
         self.kan = self.kou = self.moku = self.jigyo = None
         self.item = None          # open （n）内訳項目
@@ -440,6 +441,15 @@ class Builder:
         self.declared_stats = False  # options stat_titles ありのときのみ表題機構を使う
         self.pending_leaf = None  # 「名称行+金額行」wrap型leafの名称行待ち
         self.right_extra = []  # marker/sub行の中段付随fundラベル。次right_lineへ渡す
+
+    def capture_subject(self):
+        """Keep every printed heading even when no selected project follows it."""
+        row = {k: None for k in self.detail_cols if k.startswith(('款_', '項_', '目_'))}
+        for level, subject in (('款', self.kan), ('項', self.kou), ('目', self.moku)):
+            if subject:
+                row.update({level + '_' + k.lstrip('_'): v for k, v in subject.items()
+                            if not k.startswith('_') or k in ('_予算現額', '_当年度決算額', '_前年度決算額')})
+        self.subject_rows.append(row)
 
     def path_cols(self, allowed=None):
         out = {}
@@ -476,7 +486,8 @@ class Builder:
             row.update({'款_' + k: v for k, v in self.kan.items()})
         kodirect = self.jigyo is not None and self.jigyo.get('_kodirect')
         if self.kou and not kodirect:
-            row.update({'項_' + k: v for k, v in self.kou.items() if not k.startswith('_')})
+            row.update({'項_' + k.lstrip('_'): v for k, v in self.kou.items()
+                        if not k.startswith('_') or k in ('_予算現額', '_当年度決算額', '_前年度決算額')})
         if self.moku:
             row.update({'目_' + k: v for k, v in self.moku.items()})
         if self.jigyo:
@@ -998,6 +1009,7 @@ def convert(inputs, destination, options):
                     b.kan.update(vals)
                     b.obs_kan.append({'page': page, '番号': b.kan['番号'], '名称': b.kan['名称'],
                                       **vals, **position(page, line)})
+                    b.capture_subject()
                     b.kan_amount_cells = []
                     label_state = None
                 b.emit_annex(page, line)
@@ -1043,6 +1055,7 @@ def convert(inputs, destination, options):
                                        '項': b.kou['番号'], '目': pm['番号'], '名称': pm['名称'],
                                        '予算現額': pm['予算現額'], '当年度決算額': pm['当年度決算額'],
                                        '前年度決算額': pm['前年度決算額']})
+                    b.capture_subject()
                     continue
                 b.emit_annex(b.pending_moku['物理頁'], b.pending_moku['words'])
                 b.pending_moku = None
@@ -1057,6 +1070,7 @@ def convert(inputs, destination, options):
                                    '項': b.kou['番号'], '目': moku['番号'], '名称': moku['名称'],
                                    '予算現額': moku['予算現額'], '当年度決算額': moku['当年度決算額'],
                                    '前年度決算額': moku['前年度決算額']})
+                b.capture_subject()
                 continue
             pending = parse_moku_pending(line, page)
             if pending:
@@ -1076,6 +1090,7 @@ def convert(inputs, destination, options):
                                    '予算現額': kou['予算現額'],
                                    '当年度決算額': kou['当年度決算額'],
                                    '前年度決算額': kou['前年度決算額']})
+                b.capture_subject()
                 continue
             jigyo = parse_jigyo_heading(line, page)
             if jigyo:
@@ -1140,11 +1155,15 @@ def convert(inputs, destination, options):
     if 'detail' in emit:
         if not options.get('detail_table_id'):
             raise ValueError('emit detail requires detail_table_id')
+        # The report lists selected projects; only its complete printed subjects
+        # form an additive tree. Repeated ancestors keep their printed positions.
+        subject_columns = [c for c in b.detail_cols if c.startswith(('款_', '項_', '目_'))]
+        subject_rows = [{c: row.get(c) for c in subject_columns} for row in b.subject_rows]
         outputs[options['detail_table_id']] = {
             'path': Path(write_conversion(destination / (options['detail_table_id'] + '.parquet'),
-                         b.detail, columns=cols(b.detail_cols),
+                         subject_rows, columns=cols(subject_columns),
                          context=context(options['detail_table_id'])).path),
-            'metadata': detail_metadata(b.detail_cols, funds, options.get('scope_label'),
+            'metadata': detail_metadata(subject_columns, funds, options.get('scope_label'),
                                         options.get('stat_titles'))}
     if 'funding' in emit:
         if not options.get('funding_table_id'):
@@ -1187,27 +1206,12 @@ def detail_metadata(columns, funds, scope_label=None, stat_titles=None):
     contexts = [{'columns': [c for c in columns if c.startswith(level + '_')],
                  'header_path': ['科目', level] if level != '事業' else ['事業', level],
                  'grain_columns': [level + '_物理頁', level + '_上端']}
-                for level in ('款', '項', '目', '事業')]
-    contexts.append({'columns': [c for c in columns if c.startswith(('内訳_', '細目_'))],
-                     'header_path': ['内訳', '細目'],
-                     'grain_columns': ['細目_物理頁', '細目_上端']})
-    contexts.append({'columns': [c for c in columns if c.startswith('細々目_')],
-                     'header_path': ['内訳', '細目', '細々目'],
-                     'grain_columns': ['細々目_物理頁', '細々目_上端']})
+                for level in ('款', '項', '目') if any(c.startswith(level + '_') for c in columns)]
     note = ('「主要な施策の成果・事務報告書」の歳出部（' + (scope_label or '物理148-464頁') + '）。'
-            '行は最細の印字金額明細: 事業が（n）内訳項目＋アイウ細目を持てば細目行、'
-            '内訳項目のみなら内訳行、内訳のない事業は事業行が葉。'
-            '細目の下に字下げし金額を一段左に印字する行は細々目とし、細目を親として反復する。'
-            '番号のない見出し金額の下に一段左の（n）が並ぶ事業は、見出しを内訳（番号なし）、'
-            '（n）を細目とする。金額の段は右端位置（約70pt刻み）で判定し、ア・イ・ウの番号行は字下げで兄弟とする。'
-            '金額のない番号行の次に字下げした金額行が1行だけ続く場合はその番号行の名称の続き（数量を伴えば数量）と金額、'
-            '2行以上続く場合は各行をその番号行の細々目とする。'
-            '款・項・目・事業・内訳の名称・印字金額・位置を葉行へ反復する。'
-            '項は独立した金額行を持たず、見出し行の金額3列は目の値。'
-            '款_決算額等7列は款の先頭頁の集計行（単位 円、執行率は％）。'
-            '事業の財源内訳は別表 funding、内表・歳出合計・決算総括・給与費決算明細は別表 annex。'
-            '本資料は主要施策の抜粋であり、目→事業・款→目の合計検算は原則不成立。'
-            '（予算現額）・<前年度決算額>は括弧・不等号を含む印字通りの文字列。')
+            '款・項・目の印字された名称・金額・位置を保持する。項の金額は印字されない場合がある。'
+            '目の下の事業は主要施策の抜粋であるため、この表には含めない。'
+            '範囲番号の目は一つの目として保持する。款の財源内訳は別の金額欄である。'
+            '（予算現額）・<前年度決算額>は印字通りの文字列。')
     if funds != DEFAULT_FUNDS:
         note += ('款の資金分解5列は原典款見出しの印字どおり（' + '・'.join(funds) + '）で、'
                  '一般会計の分解（国庫支出金・都支出金・市債・その他・一般財源）とは列名が異なる。'
