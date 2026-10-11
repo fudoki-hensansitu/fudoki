@@ -73,3 +73,21 @@ seeds:
       - name: keyword
         data_tests: [unique, not_null]
 
+  - name: setsu_name_variants
+    meta:
+      # **判断そのもの。** 原典と法定の表記差の寄せ方は自治体が言っていないこと。
+      role: judgment-rule
+    description: |
+      原典の節の名称と法定の節の名称の表記差の対応。区切りの記号を除いた形で引く。
+      **fudoki の判断。** 異体字・ひらがな表記（寄付→寄附、補てん・補塡→補填）を
+      法定の表記に寄せる。ここに無い表記差は黙って寄せず、節の軸に未知の名称が
+      現れたら構築を止める。
+    config:
+      column_types:
+        variant: varchar
+        canonical: varchar
+        basis: varchar
+    columns:
+      - name: variant
+        data_tests: [unique, not_null]
+

@@ -83,6 +83,13 @@ models:
     - not_null
   - name: interfund_transfer_to
     description: 繰出の受け手の会計の種類（account_kind_map で引く）。受け手が入力に無い会計（例：下水道）でも付ける。名称が「繰出金」の節などは親の目の名称から引き、引けなければ印だけ付けて NULL（例：他会計繰出金、費の目の下の節繰出金）。
+  - name: expenditure_setsu_id
+    description: 節の軸のノードの法定の節の ID（setsu-master の expenditure_setsu_id。年度に合う定義を選ぶ）。節以外の軸は NULL。備考・事業説明の中の節の見出しは軸が違うため今回の範囲外とした。
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('setsu_master')
+          field: expenditure_setsu_id
   - name: cofog_status
     description: 風土記の判断。目だけにassigned・tentative・unclassifiable・out-of-scopeを付け、他の段はNULL。tentativeは境界の判断で確信が持てないままコードを付けた暫定の割り当て。
   - name: cofog_code
@@ -175,6 +182,13 @@ models:
     - not_null
   - name: interfund_transfer_to
     description: 繰出の受け手の会計の種類（account_kind_map で引く）。受け手が入力に無い会計（例：下水道）でも付ける。名称が「繰出金」の節などは親の目の名称から引き、引けなければ印だけ付けて NULL（例：他会計繰出金）。
+  - name: expenditure_setsu_id
+    description: 節の軸のノードの法定の節の ID。決算の表と同じ規則・同じ共有 intermediate から付ける。節以外の軸は NULL。備考・事業説明の中の節の見出しは軸が違うため今回の範囲外とした。
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('setsu_master')
+          field: expenditure_setsu_id
   - name: cofog_status
     description: 風土記の判断。目だけにassigned・tentative・unclassifiable・out-of-scopeを付け、他の段はNULL。
   - name: cofog_code
