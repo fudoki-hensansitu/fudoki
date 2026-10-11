@@ -12,6 +12,11 @@ import duckdb
 EXPECTED = {'131041': (141, 187801267640), '131156': (102, 260972903444), '132021': (102, 93876812014)}
 
 
+def _assigned(status: str) -> str:
+    # 暫定の割り当てはコード付きの割り当てとして参照と同一視する。
+    return 'assigned' if status in ('assigned', 'tentative') else status
+
+
 def check(warehouse: Path, reference: Path | None = None) -> dict:
     with duckdb.connect(str(warehouse), read_only=True) as con:
         actual = {j: (n, amount) for j, n, amount in con.execute(
@@ -30,7 +35,7 @@ def check(warehouse: Path, reference: Path | None = None) -> dict:
                 if r is None:
                     differences.append({'key': identity, 'name': name, 'actual': [amount, rule, status, code], 'expected': None})
                     continue
-                if (amount, rule, status, code or '') != (int(r['amount_yen']), r['rule_id'], r['status'], r['cofog_code']):
+                if (amount, rule, _assigned(status), code or '') != (int(r['amount_yen']), r['rule_id'], _assigned(r['status']), r['cofog_code']):
                     differences.append({'key': identity, 'name': name, 'actual': [amount, rule, status, code], 'expected': r})
             differences.extend({'key': key, 'actual': None, 'expected': r} for key, r in expected.items())
             if differences:

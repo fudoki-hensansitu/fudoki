@@ -12,6 +12,7 @@ seeds:
       ⚠️ **名称で当たらない団体がある。** 狛江市は款・項・目に名称の列が原典に無いので、
       名称を条件にした規則は1本も当たらない。名称を捏造せず `match_kan_code` で当て、
       何の款かとその出所を basis に書く。
+      `tentative` が true の規則が当たった目は、コードを付けたまま `cofog_status` を `tentative` にする。人が確かめたら印を外せば `assigned` に戻る。
     config:
       # 団体コードは数値ではなく識別子。推論に任せると先頭ゼロが落ち、
       # match_* も値によって型が揺れる。
@@ -32,6 +33,7 @@ seeds:
         decided_at_level: varchar
         counterpart_fund: varchar
         basis: varchar
+        tentative: boolean
     columns:
       - name: rule_id
         data_tests: [unique, not_null]
@@ -41,6 +43,8 @@ seeds:
         data_tests:
           - accepted_values:
               values: [assigned, unclassifiable, out-of-scope]
+      - name: tentative
+        data_tests: [not_null]
       - name: consolidation
         data_tests:
           - accepted_values:
