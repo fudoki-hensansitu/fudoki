@@ -1,5 +1,5 @@
-// The code/name definitions remain owned by packages/fiscal/detail.ts (ADR 0016).
-import { COFOG_NAMES } from '../../../packages/fiscal/detail'
+// The code/name definitions remain owned by packages/fiscal/cofog-master.ts (ADR 0016).
+import { COFOG_NAMES } from '../../../packages/fiscal/cofog-master'
 
 const names = Object.assign({}, ...Object.values(COFOG_NAMES)) as Record<string, string>
 const cell = (value: string) => `"${value.replaceAll('"', '""')}"`
