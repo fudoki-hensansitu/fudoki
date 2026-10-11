@@ -49,7 +49,11 @@ where not n.is_subject and n.axis <> '節'
     select 1 from eligible e
     join {{ ref('settlement_expenditure_node') }} eb on eb.node_id = e.node_id
     where eb.axis = '節'
-      and eb.parent_node_id in (
-        select ab.node_id from ancestors a
-        join {{ ref('settlement_expenditure_node') }} ab on ab.node_id = a.ancestor_id
-        where a.node_id = m.node_id and ab.is_subject and ab.node_kind = '目'))
+      and exists (
+        select 1 from ancestors a1
+        join {{ ref('settlement_expenditure_node') }} m1 on m1.node_id = a1.ancestor_id
+        where a1.node_id = eb.node_id and m1.is_subject and m1.node_kind = '目'
+          and m1.node_id in (
+            select ab.node_id from ancestors a2
+            join {{ ref('settlement_expenditure_node') }} ab on ab.node_id = a2.ancestor_id
+            where a2.node_id = m.node_id and ab.is_subject and ab.node_kind = '目')))

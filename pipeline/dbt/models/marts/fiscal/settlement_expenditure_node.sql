@@ -31,15 +31,21 @@ with recursive base as (
         where a.node_id = t.node_id)
       -- A descriptive breakdown defers to a 節 mark in the same 目 subtree, so one
       -- 目 never carries marks on two axes (e.g. 131156's 節 wins over its 備考).
+      -- Same-目 is judged by ancestor chains, not direct parents, so nested 節
+      -- (節 under 事業, 132021-style) also suppresses.
       and not (
         not t.is_subject and t.axis <> '節' and exists (
             select 1 from transfer_named s
             join base sb on sb.node_id = s.node_id
             where sb.axis = '節'
-              and sb.parent_node_id in (
-                select ab.node_id from ancestors a
-                join base ab on ab.node_id = a.ancestor_id
-                where a.node_id = t.node_id and ab.is_subject and ab.node_kind = '目')))
+              and exists (
+                select 1 from ancestors a1
+                join base m1 on m1.node_id = a1.ancestor_id
+                where a1.node_id = sb.node_id and m1.is_subject and m1.node_kind = '目'
+                  and m1.node_id in (
+                    select ab.node_id from ancestors a2
+                    join base ab on ab.node_id = a2.ancestor_id
+                    where a2.node_id = t.node_id and ab.is_subject and ab.node_kind = '目'))))
 ), nearest_moku as (
     select a.node_id, ab.name as moku_name
     from ancestors a
