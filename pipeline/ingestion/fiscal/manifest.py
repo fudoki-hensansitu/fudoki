@@ -62,7 +62,7 @@ def options_schema(conversion: dict) -> str:
     return str(Path(conversion['converter']).with_name('options.schema.json'))
 
 
-# The registry validates converter outputs and resolves paths but never shapes table bytes;
+# manifest.py validates converter outputs and resolves paths but never shapes table bytes;
 # fingerprinting it would stale every table of a converter that imports it on each schema edit.
 FINGERPRINT_EXCLUDED = frozenset({'fiscal/manifest.py'})
 
