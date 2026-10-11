@@ -1,7 +1,6 @@
--- W-1c で error に戻す。未対応目は report で当たり率を報告。
 -- 決算の intermediate の目と、当初予算の marts の目の両方を見る。CSV の
 -- 当初予算の目も initial_expenditure_node に入るため、ここの対象に含める。
-{{ config(severity='warn') }}
+{{ config(severity='error') }}
 select n.node_id from {{ ref('int_fiscal__settlement_expenditure_nodes') }} n
 left join {{ ref('int_fiscal__settlement_expenditure_cofog') }} c using (node_id, document_kind)
 where n.is_subject and n.node_kind = '目'
