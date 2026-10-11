@@ -39,7 +39,7 @@ dbt（`pipeline/dbt`）にはマスタの seeds と正規化 macro（`trim_cell`
 
 ### 実測した取り込み表の違い
 
-2026-10-11 に全80表を `ingestion.fiscal.run restore --remote` で復元し、duckdb で読んだ。全量は gitignore 配下の `pipeline/ingestion/fiscal/observations/dbt-output-contract/` にある。
+2026-10-11 に、132039 水道の7表を外す前の全80表を `ingestion.fiscal.run restore --remote` で復元し、duckdb で読んだ。全量は gitignore 配下の `pipeline/ingestion/fiscal/observations/dbt-output-contract/` にある。
 
 どの表も横持ちで、違うのは目より細かい末端の軸である。軸は、原典が目の下に何を印字しているかで決まる。
 
