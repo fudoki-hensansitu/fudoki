@@ -4,7 +4,6 @@ node_modules/
 .env
 .env.local
 *.log
-!/decision.log
 __pycache__/
 *.pyc
 *.tsbuildinfo
