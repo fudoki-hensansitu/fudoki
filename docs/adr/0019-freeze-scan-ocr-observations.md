@@ -1,6 +1,6 @@
 # ADR 0019: scan PDFのOCR観測を凍結した補助入力として変換に渡す
 
-状態: 採用（2026-10-11）。実装は未着手で、下の「実装に必要な変更」を別の作業で行う。
+状態: 採用（2026-10-11）。実装は未着手で、下の「実装に必要な変更」を別の作業で行う。2026-10-11に、凍結nativeがどのcheckoutにも残っていないことが分かったため、132039 水道の変換と7表を取り込みから外した（「結果」を参照）。
 
 ## 背景
 
@@ -77,7 +77,7 @@ SHAを内容だけに限る理由は、実測で内容が同じでもファイ�
 
 - scan PDFの変換器は、OCR観測の補助入力・原典・書式設定から表を作る処理になり、変換器の中でOCRを実行しない。新しい団体の変換器は、OCR取得の依頼を宣言し、共通入口で観測を取ってから変換を書く。
 - OCRのコード・モデル・依存の更新は、表を自動で古くしない。更新するときは補助入力の再取得と差分確認を明示的に行う。古い観測のまま変換を続けることは許容する。
-- 132039の現在の凍結native（SHA-256 `41956f0115d9bac0835fa38959ce1ef96a4ed6a534fd99cf83a5f782d466b2b8`）と追加cropのnativeは所要時間を含むため、そのままでは保存しない。OCRを再実行せず、既存のファイルから実行ごとに変わる欄を取り除いて新しい形式へ変換する。観測は変わらないため、訂正と見出しの対応のSHAを新しいSHAへ機械的に置き換え、同じ表が再生成されることを確認してから保存する。
+- 132039の凍結native（SHA-256 `41956f0115d9bac0835fa38959ce1ef96a4ed6a534fd99cf83a5f782d466b2b8`）と追加cropのnativeは、どのcheckoutにも残っていなかった。既存のファイルを新しい形式へ変換する手順は取れないため、水道の変換と7表を管理JSONとR2から外した（2026-10-11）。作り直しでは、共通の取得入口で10頁と物理42頁のcropを取り直し、補助入力として保存する。同じMac・同じ版の再取得では観測IDと文字が一致したため（[検証記録](../scan-ocr-determinism.md)）、書式設定の訂正と見出しの対応は、SHAを新しい補助入力のSHAへ置き換えて再利用する。物理42頁のcropは切り出し領域の宣言が残っていないため、原典で領域を決め直す。
 - 補助入力の保存・宣言・取得入口が実装されるまで、新しいscan PDFの変換器は凍結したnativeをローカルで受け取る現在の形式で作ってよい。宣言は後で補助入力の参照へ置き換える。
 
 ## 実装に必要な変更
@@ -92,7 +92,7 @@ SHAを内容だけに限る理由は、実測で内容が同じでもファイ�
 | `pipeline/ingestion/fiscal/run.py` | `originals` で補助入力もローカルへ復元し、入力の対応JSONに含める。`convert` は補助入力のローカルパスを、対応する原典の入力に付けて変換器へ渡す。新しい `ocr` サブコマンドで、宣言した依頼から観測を取得してローカルに書き出し、`--verify` で宣言済みのSHAと比べる。`--remote` で新しい補助入力を表より先に保存し、全保存成功後に管理JSONを更新する |
 | `pipeline/package.json` | `ingestion:ocr` scriptを追加する |
 | `pipeline/ingestion/fiscal/jurisdictions/132039/layouts/enterprise_statement/` | `convert.py` と `options.schema.json` の `native.path` / `supplemental_native.path` を、変換器へ渡された補助入力の参照に置き換える。`ocr.py` は共通入口へ移し、10頁の通常読み取りと物理42頁のcropを依頼ファイルとして宣言する。`README.md` の再構築手順を更新する |
-| `pipeline/ingestion/fiscal/jurisdictions/132039/2025/settlement/expenditure.json` | 凍結native 2件を新しい形式へ変換して `ocr_inputs` として宣言し、R2へ保存する。`settlement-84743fdd.json` の訂正・見出しの対応のSHAを新しいSHAへ置き換える。fingerprintが変わるため、同じ表が再生成されることを確認して保存参照を更新する |
+| `pipeline/ingestion/fiscal/jurisdictions/132039/2025/settlement/expenditure.json` | 水道の変換を足し直し、取り直した観測2件（10頁・物理42頁のcrop）を `ocr_inputs` として宣言してR2へ保存する。`settlement-84743fdd.json` の訂正・見出しの対応のSHAを新しいSHAへ置き換え、合計検査（`ingestion:verify`）と原典の目視で表を確かめてから保存する。合計検査の宣言（`sum_checks/`）も水道の7表の分を足し直す |
 | `pipeline/ingestion/fiscal/*_test.py`、`pipeline/ingestion/lib/paddle_ocr_test.py` | 補助入力の宣言検査、保存・復元・掃除、変換器への受け渡し、決定的な出力を検査する |
 | `docs/prd/ingestion-storage/design-doc.md`、`pipeline/AGENTS.md`、`.agents/skills/pipeline/references/ingestion.md` | 保存先の表とscan PDFの手順に、補助入力の保存と取得・再取得の流れを追加する |
 

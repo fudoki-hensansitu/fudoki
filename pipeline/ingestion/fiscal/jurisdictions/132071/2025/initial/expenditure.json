@@ -33,7 +33,7 @@
     {
       "table_id": "akishima-text-budget-expenditure",
       "conversion_id": "akishima-text-budget-expenditure",
-      "input_fingerprint": "843c48f192278cfed191d9fcfd834419475299151fbf8ed537de7a29d02baaf8",
+      "input_fingerprint": "7c833f6f27f737cffa5b8cd5d52f15ca02857b46b3b6d5ed4125dcb2bbab940e",
       "object": {
         "key": "fiscal/ingestion/132071/2025/initial/expenditure/akishima-text-budget-expenditure.parquet",
         "sha256": "727821f4763bcc50137bb448b90a26393f9319b332145f325ddf591b85d81068",

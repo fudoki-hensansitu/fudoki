@@ -24,7 +24,7 @@
     {
       "table_id": "late-elderly-medical-setsu",
       "conversion_id": "late-elderly-medical-settlement",
-      "input_fingerprint": "3251b1d0184d0db7eb9b5ed3df0c6c8420ce20ccf11138966a0be1bfda7b8f3c",
+      "input_fingerprint": "3eb31eeb0d31e45bba28b1edd5a2b0b1e433bba39ce5457c2135f99ec114399d",
       "object": {
         "key": "fiscal/ingestion/132217/2025/settlement/expenditure/late-elderly-medical-setsu.parquet",
         "sha256": "28ad56ec822a086b90e1b563f026c21fd931d0e1e289d83f0b5b9030ac4c4a98",
