@@ -77,14 +77,6 @@ def write_relations(declarations: list[dict]) -> None:
                 sorted(t['name'] for t in csv[0]['tables']) if csv else [])
 
 
-def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = False) -> dict:
-    declarations = yaml.safe_load((DBT / 'models/staging/fiscal/_sources.yml').read_text())['sources']
-    write_relations(declarations)
-    pdf_sources = [s for s in declarations if s['name'] == 'fiscal_pdf']
-    csv_sources = [s for s in declarations if s['name'] == 'fiscal_csv']
-    sources = pdf_sources[0]
-    documents, origins, tables, csv_tables = {}, {}, [], []
-    warehouse.parent.mkdir(parents=True, exist_ok=True)
 def write_macro(macro_name: str, relations: list[str]) -> None:
     macro = DBT / f'macros/{macro_name}.sql'
     macro.parent.mkdir(parents=True, exist_ok=True)

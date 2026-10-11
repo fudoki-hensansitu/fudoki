@@ -1,8 +1,10 @@
 -- MVP classifies subject moku nodes of every document kind; setsu-dependent rules await a finer grain.
--- Settlement and initial budgets share subject node_ids, so deduplicate before joining rules.
+-- COFOG is classified per document: settlement and initial budgets share subject
+-- node_ids, so the key is (node_id, document_kind) and each document's own names
+-- are used; names are never mixed across documents.
 -- CSV trees live in their own intermediate; union them here so initial-budget 目 classify too.
-with mokus as (
-    select distinct node_id,
+with unioned as (
+    select node_id, document_kind,
         {{ fiscal_match_text('jurisdiction_code') }} as jurisdiction_code,
         {{ fiscal_match_text('account_name') }} as fund_name,
         {{ fiscal_match_text('kan_name') }} as kan_name,
@@ -12,7 +14,7 @@ with mokus as (
     from {{ ref('int_fiscal__settlement_expenditure_nodes') }}
     where is_subject and node_kind = '目'
     union all
-    select node_id,
+    select node_id, document_kind,
         {{ fiscal_match_text('jurisdiction_code') }} as jurisdiction_code,
         {{ fiscal_match_text('account_name') }} as fund_name,
         {{ fiscal_match_text('kan_name') }} as kan_name,
@@ -21,6 +23,14 @@ with mokus as (
         {{ fiscal_match_text('name') }} as moku_name, '' as setsu_name
     from {{ ref('int_fiscal__csv_expenditure_nodes') }}
     where is_subject and node_kind = '目'
+), mokus as (
+    -- Upstream models already emit one row per (document_kind, node_id); this
+    -- deduplication only guards the union, keeping the alphabetically first name
+    -- when one document carries conflicting names for the same node_id.
+    select * from unioned
+    qualify row_number() over (
+        partition by node_id, document_kind
+        order by jurisdiction_code, fund_name, kan_name, kou_name, kan_code, moku_name) = 1
 ), rules as (
     select rule_id, priority, status, cofog_code, moku_mode, coalesce(tentative, false) as tentative,
     {% for col in ['applies_to', 'match_fund', 'match_kan', 'match_kou', 'match_kan_code', 'match_moku', 'match_setsu'] %}
@@ -28,7 +38,7 @@ with mokus as (
     {% endfor %}
     from {{ ref('cofog_rules') }}
 )
-select m.node_id, r.rule_id, case when r.tentative and r.status = 'assigned' then 'tentative' else r.status end as cofog_status, r.cofog_code
+select m.node_id, m.document_kind, r.rule_id, case when r.tentative and r.status = 'assigned' then 'tentative' else r.status end as cofog_status, r.cofog_code
 from mokus m join rules r on
 {% for rule_col, moku_col in [('applies_to', 'jurisdiction_code'), ('match_fund', 'fund_name'),
     ('match_kan', 'kan_name'), ('match_kou', 'kou_name'), ('match_kan_code', 'kan_code'),
@@ -42,4 +52,4 @@ from mokus m join rules r on
     )){% if not loop.last %} and {% endif %}
 {% endfor %}
 -- Specific rules precede the shared dictionary, regardless of numeric priority.
-qualify row_number() over (partition by m.node_id order by (r.applies_to = ''), r.priority) = 1
+qualify row_number() over (partition by m.node_id, m.document_kind order by (r.applies_to = ''), r.priority) = 1

@@ -4,7 +4,7 @@
 with recursive base as (
     select n.* exclude (kan_name, kou_name, document_kind), c.cofog_status, c.cofog_code
     from {{ ref('int_fiscal__settlement_expenditure_nodes') }} n
-    left join {{ ref('int_fiscal__settlement_expenditure_cofog') }} c using (node_id)
+    left join {{ ref('int_fiscal__settlement_expenditure_cofog') }} c using (node_id, document_kind)
     where n.document_kind = 'settlement'
 ), transfer_named as (
     -- A transfer 目, or an off-subject breakdown (節・備考・説明) named exactly

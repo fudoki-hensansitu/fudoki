@@ -44,8 +44,9 @@ with base as (
         kan_code, kan_name, kou_code, kou_name, moku_code, moku_name,
         jika_code, jika_name, setsu_code, setsu_name, saisai_code, saisai_name,
         6 as depth, '細々節' as node_kind, saisai_code as code, saisai_name as name,
-        amount_yen, true as is_leaf, source_line_start as source_page, source_line_start as amount_source_page
-    from leaves
+        sum(amount_yen) as amount_yen, true as is_leaf,
+        min(source_line_start) as source_page, min(source_line_start) as amount_source_page
+    from leaves group by all
     union all
     select jurisdiction_code, fiscal_year, document_kind, origin_id, account_name,
         kan_code, kan_name, kou_code, kou_name, moku_code, moku_name,

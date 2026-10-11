@@ -1,3 +1,7 @@
+-- Children sums must match the printed parent on the same axis. Axes without any
+-- printed amount (e.g. funding-source breakdowns excluded from totals) carry
+-- nothing to reconcile, so they never fail the sum check; a parent holding an
+-- amount while its same-axis subtree prints none is reported separately below.
 with recursive nodes as (select * from {{ ref('int_fiscal__settlement_expenditure_nodes') }}),
 child_values as (
     select parent_node_id as checked_node_id, document_kind, axis, node_id, amount_yen
@@ -30,3 +34,21 @@ join children c on c.checked_node_id = p.node_id and c.document_kind = p.documen
 join printed_axes a on a.checked_node_id = c.checked_node_id
     and a.document_kind = c.document_kind and a.axis = c.axis
 where p.amount_yen is not null and c.amount_yen <> p.amount_yen
+union all
+-- A parent with a nonzero printed amount whose same-axis subtree prints no amount
+-- at all would otherwise escape the sum check above, so it fails here as missing
+-- data. A zero-amount parent with an amount-less subtree is consistent (all zero)
+-- and stays out, as do axes that never carry amounts.
+select p.node_id, 'missing_child_amounts' as failure
+from nodes p
+where coalesce(p.amount_yen, 0) <> 0
+    and exists (
+        select 1 from nodes c
+        where c.parent_node_id = p.node_id and c.axis = p.axis
+            and c.document_kind = p.document_kind
+    )
+    and not exists (
+        select 1 from printed_axes a
+        where a.checked_node_id = p.node_id and a.document_kind = p.document_kind
+            and a.axis = p.axis
+    )
