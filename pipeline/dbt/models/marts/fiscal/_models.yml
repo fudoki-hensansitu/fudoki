@@ -1,0 +1,95 @@
+version: 2
+models:
+- name: settlement_expenditure_node
+  description: 原典の決算歳出の木。表をまたぐ同じ款・項・目だけをまとめ、備考・節を独立した軸で保持する。
+  columns:
+  - name: node_id
+    description: 団体・年度・会計・款項目番号、または親ID・軸・段・番号・名称から生成。重複兄弟は印字順の連番を含む。年度をまたいだ同一性は保証しない。
+    data_tests:
+    - not_null
+    - unique
+  - name: parent_node_id
+    description: 原典の親子。款はNULL。別の軸の子を同じ金額に混ぜて足さない。
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('settlement_expenditure_node')
+          field: node_id
+  - name: jurisdiction_code
+    description: 宣言の団体コード。
+    data_tests:
+    - not_null
+  - name: fiscal_year
+    description: 宣言の会計年度（西暦）。
+    data_tests:
+    - not_null
+  - name: account_name
+    description: 選定scope・管理JSONにある原典の会計名。
+    data_tests:
+    - not_null
+  - name: axis
+    description: 原典の分解の軸。科目・節・備考は同じ支出の独立した切り口で、軸をまたいで合算しない。
+    data_tests:
+    - not_null
+  - name: node_kind
+    description: 原典の段の見出し、または根拠付きseedで風土記が名付けた段。
+    data_tests:
+    - not_null
+  - name: code
+    description: 原典の番号をNFKC・前後trimした値。番号がない段はNULL。
+  - name: name
+    description: 原典の名称をNFKC・前後trimし、日本語の字間空白と折り返し改行を除いた値。英単語間の空白は保持。
+    data_tests:
+    - not_null
+  - name: amount_yen
+    description: 決算支出済額（円）。原典の金額を円換算し、見出しの対応を適用。立川の繰越内訳は支出済額＋本年度支出額。印字がない段はNULL。親と子を混ぜて合算しない。
+  - name: is_leaf
+    description: 同じ軸の子を持たないか。総額は一つの軸の末端を選んで求め、軸の異なる末端を混ぜない。
+    data_tests:
+    - not_null
+  - name: kan_code
+    description: 所属する原典の款番号。
+    data_tests:
+    - not_null
+  - name: kou_code
+    description: 所属する原典の項番号。款ではNULL。
+  - name: moku_code
+    description: 所属する原典の目番号。款・項ではNULL。
+  - name: origin_id
+    description: 原典選定のファイルを指すSHA由来のID。
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('origin')
+          field: origin_id
+  - name: source_page
+    description: 項目が印字された原典の物理頁。
+    data_tests:
+    - not_null
+  - name: amount_source_page
+    description: 採用した実績金額の物理頁。繰越内訳を足す場合は最初の頁。印字がない場合はNULL。
+  - name: cofog_status
+    description: 風土記の判断。目だけにassigned・unclassifiable・out-of-scopeを付け、他の段はNULL。
+  - name: cofog_code
+    description: 風土記が目に割り当てたCOFOGコード。一つのコードだけを持ち、上位は前方一致で求める。assignedのときだけ値を持つ。
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('cofog_master')
+          field: cofog_code
+- name: settlement_expenditure_moku
+  description: 科目の目ノードだけを選ぶ比較用のビュー。金額とCOFOGは木と同じ値。
+- name: origin
+  description: 原典選定から毎回生成する原典ファイルの表。独立した証跡ファイルを保存するものではない。
+  columns:
+  - name: origin_id
+    data_tests:
+    - unique
+    - not_null
+  - name: sha256
+    data_tests:
+    - not_null
+  - name: jurisdiction_code
+    data_tests:
+    - not_null

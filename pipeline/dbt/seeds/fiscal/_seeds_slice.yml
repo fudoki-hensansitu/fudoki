@@ -1,0 +1,67 @@
+version: 2
+seeds:
+- name: fiscal_level_map
+  description: 印字見出し・軸だけでは決まらない段の名前。根拠付きの判断。款・項・目・法定節の自明な対応は含めない。
+  config:
+    column_types:
+      jurisdiction_code: varchar
+      table_id: varchar
+      axis_header: varchar
+      depth: integer
+      node_kind: varchar
+      basis: varchar
+  columns:
+  - name: jurisdiction_code
+    data_tests:
+    - not_null
+  - name: table_id
+    data_tests:
+    - not_null
+  - name: axis_header
+    data_tests:
+    - not_null
+  - name: depth
+    data_tests:
+    - not_null
+  - name: node_kind
+    data_tests:
+    - not_null
+  - name: basis
+    data_tests:
+    - not_null
+- name: fiscal_amount_map
+  description: 見出しだけでは実績と決まらない備考の金額の解釈。原典の親子合計を根拠とする。
+  config:
+    column_types:
+      axis_header: varchar
+      header_path: varchar
+      amount_role: varchar
+      basis: varchar
+  columns:
+  - name: axis_header
+    data_tests:
+    - not_null
+  - name: header_path
+    data_tests:
+    - not_null
+  - name: amount_role
+    data_tests:
+    - not_null
+  - name: basis
+    data_tests:
+    - not_null
+- name: cofog_master
+  description: packages/fiscal/detail.ts のコードと名称から scripts/generate_cofog_master.ts
+    で生成（ADR 0016）。親はコードの末尾の段を削って求める。
+  config:
+    column_types:
+      cofog_code: varchar
+      name: varchar
+  columns:
+  - name: cofog_code
+    data_tests:
+    - unique
+    - not_null
+  - name: name
+    data_tests:
+    - not_null

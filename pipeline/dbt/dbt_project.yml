@@ -10,5 +10,8 @@ clean-targets: ["target", "dbt_packages"]
 models:
   fudoki:
     staging:
-      # view だと Parquet への相対パスが dbt の作業ディレクトリに縛られるため実体を持たせる。
+      +materialized: table
+    intermediate:
+      +materialized: table
+    marts:
       +materialized: table
