@@ -49,257 +49,57 @@
     {
       "table_id": "akishima-enterprise-expenditure-revenue-detail",
       "conversion_id": "akishima-enterprise-expenditure",
-      "input_fingerprint": "fd5ff1ef4c31e7b3a4175d67ab701f748a53ddd129afc7c750c2fecea7625dcc",
-      "object": {
-        "key": "fiscal/ingestion/132071/2025/settlement/expenditure/akishima-enterprise-expenditure-revenue-detail.parquet",
-        "sha256": "8f81e6d8ead18a2b6f896bcd8fef41e73e8f569bbc3d7ce5d13c8b52d8174a50",
-        "bytes": 5821
+      "input_fingerprint": "abc93d42bc5c26a88fe5ad30723b8fb68d2df1cfd79e6124313ff45da6604e6c",
+      "account": "下水道事業会計",
+      "notes": [
+        "（消費税抜き）。款項・目・節の金額（円）は決算の実績。備考の予算額は同じ節の別金額欄、その他の備考金額は同じ節の実績内訳。企業会計の節は原典のまま保持する。収益的支出と資本的支出は独立した表。",
+        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132071/2025/settlement/expenditure/akishima-enterprise-expenditure-revenue-detail-nodes.parquet",
+          "sha256": "18b5f5ffd7fd9bdab8aa1d8df6a1373b26cc8600a4d2cfcd83e32b6fb943d737",
+          "bytes": 7370
+        },
+        "row_count": 119
       },
-      "row_count": 88,
-      "metadata": {
-        "units": [
-          {
-            "text": "円",
-            "scope": {
-              "kind": "columns",
-              "columns": [
-                "款_金額",
-                "項_金額",
-                "目_金額",
-                "金額（円）",
-                "備考_予算額",
-                "備考_金額"
-              ]
-            }
-          }
-        ],
-        "notes": [
-          {
-            "text": "（消費税抜き）。金額（円）は決算の節額。備考の予算額は同じ節の予算、備考のその他の金額は決算内訳。原典に備考内訳がある節はその末端を行にし、款・項・目・節額と備考予算額を所属する末端へ反復。原典の節は企業会計の区分であり一般会計の法定節へ変換していない。",
-            "scope": {
-              "kind": "table"
-            }
-          }
-        ],
-        "column_contexts": [
-          {
-            "columns": [
-              "款",
-              "款_金額"
-            ],
-            "header_path": [
-              "款",
-              "金額（円）"
-            ],
-            "grain_columns": [
-              "款"
-            ]
-          },
-          {
-            "columns": [
-              "項",
-              "項_金額"
-            ],
-            "header_path": [
-              "項",
-              "金額（円）"
-            ],
-            "grain_columns": [
-              "款",
-              "項"
-            ]
-          },
-          {
-            "columns": [
-              "目",
-              "目_金額"
-            ],
-            "header_path": [
-              "目",
-              "金額（円）"
-            ],
-            "grain_columns": [
-              "款",
-              "項",
-              "目"
-            ]
-          },
-          {
-            "columns": [
-              "節",
-              "金額（円）"
-            ],
-            "header_path": [
-              "節",
-              "金額（円）"
-            ],
-            "grain_columns": [
-              "款",
-              "項",
-              "目",
-              "節"
-            ]
-          },
-          {
-            "columns": [
-              "備考_予算額"
-            ],
-            "header_path": [
-              "備考",
-              "予算額"
-            ],
-            "grain_columns": [
-              "款",
-              "項",
-              "目",
-              "節"
-            ]
-          },
-          {
-            "columns": [
-              "備考_名称",
-              "備考_金額"
-            ],
-            "header_path": [
-              "備考"
-            ],
-            "grain_columns": [
-              "款",
-              "項",
-              "目",
-              "節",
-              "備考_名称"
-            ]
-          }
-        ]
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132071/2025/settlement/expenditure/akishima-enterprise-expenditure-revenue-detail-amounts.parquet",
+          "sha256": "d009f9c3e504647d2f52a1e0a8a2eb05ead52a4dcbdc7f29760c8cd681f6aa16",
+          "bytes": 6172
+        },
+        "row_count": 134
       }
     },
     {
       "table_id": "akishima-enterprise-expenditure-capital-detail",
       "conversion_id": "akishima-enterprise-expenditure",
-      "input_fingerprint": "fd5ff1ef4c31e7b3a4175d67ab701f748a53ddd129afc7c750c2fecea7625dcc",
-      "object": {
-        "key": "fiscal/ingestion/132071/2025/settlement/expenditure/akishima-enterprise-expenditure-capital-detail.parquet",
-        "sha256": "ec8307d05985f00aa82b83ab84b48ee06e198aced0211b129fe479afaf9645c4",
-        "bytes": 4256
+      "input_fingerprint": "abc93d42bc5c26a88fe5ad30723b8fb68d2df1cfd79e6124313ff45da6604e6c",
+      "account": "下水道事業会計",
+      "notes": [
+        "（消費税抜き）。款項・目・節の金額（円）は決算の実績。備考の予算額は同じ節の別金額欄、その他の備考金額は同じ節の実績内訳。企業会計の節は原典のまま保持する。収益的支出と資本的支出は独立した表。",
+        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132071/2025/settlement/expenditure/akishima-enterprise-expenditure-capital-detail-nodes.parquet",
+          "sha256": "c676b7130e1aa4e3d8d4c4c0860212d1781d47d4d71d24ac494f7418b786b72d",
+          "bytes": 4621
+        },
+        "row_count": 41
       },
-      "row_count": 24,
-      "metadata": {
-        "units": [
-          {
-            "text": "円",
-            "scope": {
-              "kind": "columns",
-              "columns": [
-                "款_金額",
-                "項_金額",
-                "目_金額",
-                "金額（円）",
-                "備考_予算額",
-                "備考_金額"
-              ]
-            }
-          }
-        ],
-        "notes": [
-          {
-            "text": "（消費税抜き）。金額（円）は決算の節額。備考の予算額は同じ節の予算、備考のその他の金額は決算内訳。原典に備考内訳がある節はその末端を行にし、款・項・目・節額と備考予算額を所属する末端へ反復。原典の節は企業会計の区分であり一般会計の法定節へ変換していない。",
-            "scope": {
-              "kind": "table"
-            }
-          }
-        ],
-        "column_contexts": [
-          {
-            "columns": [
-              "款",
-              "款_金額"
-            ],
-            "header_path": [
-              "款",
-              "金額（円）"
-            ],
-            "grain_columns": [
-              "款"
-            ]
-          },
-          {
-            "columns": [
-              "項",
-              "項_金額"
-            ],
-            "header_path": [
-              "項",
-              "金額（円）"
-            ],
-            "grain_columns": [
-              "款",
-              "項"
-            ]
-          },
-          {
-            "columns": [
-              "目",
-              "目_金額"
-            ],
-            "header_path": [
-              "目",
-              "金額（円）"
-            ],
-            "grain_columns": [
-              "款",
-              "項",
-              "目"
-            ]
-          },
-          {
-            "columns": [
-              "節",
-              "金額（円）"
-            ],
-            "header_path": [
-              "節",
-              "金額（円）"
-            ],
-            "grain_columns": [
-              "款",
-              "項",
-              "目",
-              "節"
-            ]
-          },
-          {
-            "columns": [
-              "備考_予算額"
-            ],
-            "header_path": [
-              "備考",
-              "予算額"
-            ],
-            "grain_columns": [
-              "款",
-              "項",
-              "目",
-              "節"
-            ]
-          },
-          {
-            "columns": [
-              "備考_名称",
-              "備考_金額"
-            ],
-            "header_path": [
-              "備考"
-            ],
-            "grain_columns": [
-              "款",
-              "項",
-              "目",
-              "節",
-              "備考_名称"
-            ]
-          }
-        ]
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132071/2025/settlement/expenditure/akishima-enterprise-expenditure-capital-detail-amounts.parquet",
+          "sha256": "75c8f353c31fd41b7b93dd6025485b434ecb58495a0634edb6cacf9593794c00",
+          "bytes": 3462
+        },
+        "row_count": 44
       }
     }
   ]
