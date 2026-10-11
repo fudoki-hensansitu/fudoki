@@ -30,7 +30,8 @@ def check(warehouse: Path, reference: Path | None = None) -> dict:
         if slice_actual != EXPECTED:
             raise ValueError(f'Slice expectations differ: {slice_actual}')
         keys = ['jurisdiction_code', 'kan_code', 'kou_code', 'moku_code']
-        records = con.execute("select m.jurisdiction_code,m.kan_code,m.kou_code,m.moku_code,m.name,m.amount_yen,c.rule_id,m.cofog_status,m.cofog_code from settlement_expenditure_node m join int_fiscal__settlement_expenditure_cofog c using(node_id) where m.is_subject and m.node_kind='目'").fetchall()
+        # 参照の CSV は slice（3団体の一般会計）だけを持つので、比較も slice に絞る。
+        records = con.execute("select m.jurisdiction_code,m.kan_code,m.kou_code,m.moku_code,m.name,m.amount_yen,c.rule_id,m.cofog_status,m.cofog_code from settlement_expenditure_node m join int_fiscal__settlement_expenditure_cofog c using(node_id) where m.is_subject and m.node_kind='目' and m.fiscal_year=2025 and m.account_name='一般会計' and m.jurisdiction_code in ?", [list(EXPECTED)]).fetchall()
         output = {'mokus': sum(n for n, _ in actual.values()), 'total_yen': sum(a for _, a in actual.values()), 'jurisdictions': actual}
         if reference:
             with reference.open() as stream:
