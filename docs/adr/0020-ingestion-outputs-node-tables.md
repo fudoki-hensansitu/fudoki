@@ -21,5 +21,6 @@ PDF・CSV の取り込み（B）は、原典に印字された項目（款・項
 
 - OCR・PDF から表を作るコストのうち、消えるのは平らにする工程だけである。各数字がどの段のどの項目に属するかを決める作業は、出力の形によらず取り込みに残る。
 - 既存の80表と18の変換器はすぐには作り直さない。横持ちの表と metadata からノードの表と金額の表を作る共通の変換を取り込みに置き、移行する。新しい変換器はノードの表を直接出す。
-- 移行が済むまでは、[保存設計](../prd/ingestion-storage/design-doc.md) と取り込み・dbt の手順（`.agents/skills/pipeline/references/ingestion.md`・`dbt.md`）が記述する横持ちの表と `column_contexts` の規約が現行の出力として有効である。移行するときに、これらの文書の「末端の行に祖先の名称・金額を展開する」「dbt に親 ID を辿らせない」という規則を改める。
+- [保存設計](../prd/ingestion-storage/design-doc.md) と取り込み・dbt の手順（`.agents/skills/pipeline/references/ingestion.md`・`dbt.md`）は、2026-10-11 にノードの表を前提に改めた。新しい取り込みは横持ちの表を作らない。既存の横持ちの表と、それを作る変換器のコード・説明（[PDF の表の共通モジュール](../pdf-table-module.md) など）は、移行が済むまで旧形式として残る。
+- 表の単位で決まる事実（原典ファイルの SHA・会計名・注記）は管理 JSON に置き、ノードや金額の行へ反復しない。
 - dbt は構造の復元をしなくなり、金額の段階の選択・単位換算・団体の統合・COFOG の判断・検査を受け持つ。設計は [dbt モデルの設計](../prd/fiscal-dbt-models/design-doc.md) を参照する。
