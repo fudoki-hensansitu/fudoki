@@ -295,13 +295,14 @@ erDiagram
   - 共有辞書（`pipeline/shared/fiscal_amount_map.csv`）で各ノードの支出済額を一つ選ぶ。宣言にない金額の見出しがあれば止める。
   - 表をまたいだ同じ款・項・目のノードを、団体・年度・会計・款・項・目の番号で一つにまとめ、`node_id` を作る。まとめる前に、名称と支出済額が表の間で一致することを検査し、食い違えば止める。原典の位置は、原典ファイル・物理頁・`y0` の順で最初のものを採る。祖先の款・項・目の番号を各ノードへ反復する。
   - 金額を円へ換算し（円は1倍、千円は1000倍、それ以外の単位は止める）、名称から字間の空白と改行を除く。
-- `int_fiscal__settlement_expenditure_accounts`: 入力にある会計の一覧に、語の辞書（`account_kind_map`）で団体共通の種類を付ける。語に当たらない会計名があれば構築を止める。
+- `int_fiscal__expenditure_accounts`: PDF の木と CSV の木の両方にある会計の一覧に、語の辞書（`account_kind_map`）で団体共通の種類を付ける。語に当たらない会計名があれば構築を止める。
+- `int_fiscal__expenditure_transfers`: 会計の種類と会計間の繰出の印・受け手の種類を、資料区分を列に持って一つの表で付ける（決算・当初予算、PDF・CSV 共通。`node_id` が資料をまたいで同じ導出のためキーは `node_id` と `document_kind`）。印の規則はここだけに持ち、両 marts は結合するだけにする（[ADR 0023](../../adr/0023-account-kind-and-no-consolidation.md)）。
 - `int_fiscal__settlement_expenditure_cofog`: seed の `cofog_rules` を優先順に当て、目ノードに分類状態と COFOG コードを一つ付ける。PDF の木と CSV の木の両方の目を対象にする。どの規則にも当たらない目があれば構築を止める。特別区の款名は法定と違うため、汎用の款名の規則はあまり当たらない。slice の3団体の規則を、項・目の粒度で根拠付きで足す。
 
 #### marts: 木の表・原典の表を確定する
 
-- `settlement_expenditure_node`: intermediate の木に COFOG の列を結合した表（決算だけを残す）。
-- `initial_expenditure_node`: 当初予算の PDF の木と CSV の木を同じ列で合わせ、COFOG の列を結合した表。金額は当初予算額。歳入の CSV は marts にしない（未設計）。
+- `settlement_expenditure_node`: intermediate の木に COFOG の列と、共有の会計の種類・繰出の印（`int_fiscal__expenditure_transfers`）の列を結合した表（決算だけを残す）。
+- `initial_expenditure_node`: 当初予算の PDF の木と CSV の木を同じ列で合わせ、COFOG の列と共有の会計の種類・繰出の印の列を結合した表。金額は当初予算額。歳入の CSV は marts にしない（未設計）。
 - `origin`: 入力準備が原典選定の記録から作った表を整える。
 
 ### 検査
