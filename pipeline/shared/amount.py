@@ -15,6 +15,20 @@ import unicodedata
 _AMOUNT = re.compile(r'(?P<sign>[△▲\-])?(?P<digits>[0-9]{1,3}(?:,[0-9]{3})*|[0-9]+)')
 _BRACKETS = [('(', ')'), ('<', '>'), ('[', ']')]
 _DASHES = ('－', '―', '—', '-', 'ー')
+# Trailing-word Japanese-era year/period notation (e.g. 令和 6 年度, 令和 2 ~ 6 年度,
+# 平成30~令和4年度). Past-year breakdown columns carry no current-year phase.
+# Canonical form is NFKC (fullwidth tildes/digits/spaces are already folded).
+# The same literal is embedded in dbt SQL (regexp_full_match); keep both identical.
+FISCAL_YEAR_PATTERN = (r'^(?:明治|大正|昭和|平成|令和)\s*(?:元|\d+)'
+                       r'(?:\s*[~〜\-・,、]\s*(?:(?:明治|大正|昭和|平成|令和)\s*)?(?:元|\d+))*\s*年度$')
+_YEAR_NOTATION = re.compile(FISCAL_YEAR_PATTERN)
+
+
+def is_fiscal_year_notation(text: object) -> bool:
+    """Whether the trailing header word names a fiscal year or period, not an amount kind."""
+    if text is None:
+        return False
+    return _YEAR_NOTATION.match(unicodedata.normalize('NFKC', str(text)).strip()) is not None
 
 
 def parse_amount(value: object) -> int | None:

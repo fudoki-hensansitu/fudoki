@@ -11,7 +11,7 @@ from pathlib import Path
 
 import duckdb
 
-from shared.amount import number, parse_amount
+from shared.amount import is_fiscal_year_notation, number, parse_amount
 from ingestion.lib.parquet import ParquetColumn, write_parquet
 
 NODE_COLUMNS = tuple(ParquetColumn(name, kind) for name, kind in (
@@ -257,6 +257,11 @@ def amount_phase(header: str, document_kind: str, axis: str, level: str | None) 
     # dictionary meaning (e.g. current year inside a project breakdown).
     if header.startswith(axis + '／') and last == level:
         return dictionary.get((document_kind, axis), dictionary.get(('', axis)))
+    # A trailing Japanese-era year/period word (e.g. past-year breakdown columns)
+    # names no current-year phase. Keep after inheritance so the current year keeps
+    # the axis meaning; keep the same rule in dbt SQL (see FISCAL_YEAR_PATTERN).
+    if is_fiscal_year_notation(last):
+        return None
     return None
 
 
