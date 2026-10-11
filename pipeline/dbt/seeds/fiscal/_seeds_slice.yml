@@ -30,8 +30,9 @@ seeds:
     data_tests:
     - not_null
 - name: fiscal_amount_map
-  description: 取り込みと共有する資料区分・見出し経路または末尾の金額段階辞書。資料区分が空なら全資料共通。
+  description: 取り込みと共有する資料区分・見出し経路または末尾の金額段階辞書。資料区分が空なら全資料共通。空のphaseは段階を持たない合計欄。
   config:
+    fast: false
     column_types:
       document_kind: varchar
       header: varchar

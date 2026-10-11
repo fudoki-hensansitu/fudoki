@@ -23,7 +23,7 @@ AMOUNT_COLUMNS = tuple(ParquetColumn(name, kind) for name, kind in (
     ('x0', 'DOUBLE'), ('y0', 'DOUBLE'), ('x1', 'DOUBLE'), ('y1', 'DOUBLE')))
 BREAKDOWN_HEADERS = frozenset(('繰越明許費', '事故繰越', '支出済額', '不用額', '本年度支出額', '翌年度繰越額'))
 MIGRATION_NOTE = ('旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、'
-                  '0の根拠は金額が印字された親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。')
+                  '0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。')
 
 
 def number(text):
