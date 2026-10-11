@@ -30,26 +30,19 @@ seeds:
     data_tests:
     - not_null
 - name: fiscal_amount_map
-  description: 見出しだけでは実績と決まらない備考の金額の解釈。原典の親子合計を根拠とする。
+  description: 取り込みと共有する資料区分・見出し経路または末尾の金額段階辞書。資料区分が空なら全資料共通。
   config:
     column_types:
-      axis_header: varchar
-      header_path: varchar
-      amount_role: varchar
-      basis: varchar
+      document_kind: varchar
+      header: varchar
+      phase: varchar
   columns:
-  - name: axis_header
+  - name: header
+    data_tests: [not_null]
+  - name: phase
     data_tests:
-    - not_null
-  - name: header_path
-    data_tests:
-    - not_null
-  - name: amount_role
-    data_tests:
-    - not_null
-  - name: basis
-    data_tests:
-    - not_null
+    - accepted_values:
+        values: [proposed, approved, adjusted, adjusted-before-transfer, executed]
 - name: cofog_master
   description: packages/fiscal/detail.ts のコードと名称から scripts/generate_cofog_master.ts
     で生成（ADR 0016）。親はコードの末尾の段を削って求める。

@@ -1,5 +1,0 @@
-axis_header,header_path,amount_role,basis
-備考,備考,executed,備考の金額は支出済額。新宿・杉並で全段の親子一致。
-備考,備考／事業説明,executed,立川の事業説明の金額。全段の親子一致。
-備考,備考／事業説明／支出済額,executed_component,立川の繰越内訳の実績。この額と本年度支出額の和で細目・目の支出済額と一致。
-備考,備考／事業説明／本年度支出額,executed_component,立川の繰越内訳の本年度実績。支出済額と合算し繰越明許費・不用額を除く。

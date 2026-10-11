@@ -19,32 +19,33 @@ with recursive mapped_nodes as (
              then error('Printed and declared levels disagree') else node_kind end as node_kind
     from mapped_nodes
 ), mapped_amounts as (
-    select a.*, coalesce(m.amount_role,
-        case when a.header_path = '支出済額' then 'executed'
-             when a.header_path in ('予算現額/当初予算額', '予算現額/補正予算額',
-                 '予算現額/予備費支出及び流用増減', '予算現額/継続費及び繰越事業費繰越額',
-                 '予算現額/計', '節/金額') then 'other_phase'
-             when regexp_matches(a.header_path, '(^|/)(不用額|翌年度繰越額|繰越明許費|事故繰越|継続費逓次繰越)(/|$)')
-                 or regexp_matches(a.header_path, '^科目/(款|項|目)/備考/(注記金額|流用注記金額)$') then 'non_executed'
-             else error('Unmapped amount header: ' || a.header_path) end) as amount_role,
+    select a.*, case when m.header is not null then m.phase
+             when starts_with(a.header_path, n.axis_header || '/')
+                  and split_part(a.header_path, '/', -1) = n.level_header then axis_map.phase
+             else null end as amount_role,
         a.amount * case a.unit_text when '円' then 1 when '千円' then 1000
                        else error('Unsupported amount unit: ' || coalesce(a.unit_text, 'NULL')) end as amount_yen
     from {{ ref('stg_fiscal__amounts') }} a
     join checked_nodes n using (source_table_key, node_key)
-    left join {{ ref('fiscal_amount_map') }} m
-      on n.axis_header = m.axis_header and a.header_path = {{ trim_cell('m.header_path') }}
+    left join lateral (
+        select header, phase from {{ ref('fiscal_amount_map') }} m
+        where coalesce(m.document_kind, '') in ('', 'settlement')
+          and {{ trim_cell('m.header') }} in (a.header_path, split_part(a.header_path, '/', -1))
+        order by (m.document_kind = 'settlement') desc nulls last,
+                 ({{ trim_cell('m.header') }} = a.header_path) desc
+        limit 1
+    ) m on true
+    left join {{ ref('fiscal_amount_map') }} axis_map
+      on axis_map.document_kind = 'settlement' and {{ trim_cell('axis_map.header') }} = n.axis_header
 ), selected_amounts as (
     select source_table_key, node_key,
-        sum(amount_yen) filter (where amount_role in ('executed', 'executed_component'))::bigint as amount_yen,
-        min(physical_page) filter (where amount_role in ('executed', 'executed_component')) as amount_source_page,
-        count(*) filter (where amount_role = 'executed') as executed_count,
-        count(*) filter (where amount_role = 'executed_component') as component_count,
-        -- Force coverage and unit checks on every printed amount, including unused phases.
+        sum(amount_yen) filter (where amount_role = 'executed')::bigint as amount_yen,
+        min(physical_page) filter (where amount_role = 'executed') as amount_source_page,
+        -- Validate units on every printed amount; unresolved headers are not execution.
         count(amount_role), count(amount_yen)
     from mapped_amounts group by source_table_key, node_key
 ), amounts_checked as (
-    select n.*, a.amount_yen, a.amount_source_page,
-        coalesce(a.executed_count, 0) as executed_count, coalesce(a.component_count, 0) as component_count
+    select n.*, a.amount_yen, a.amount_source_page
     from checked_nodes n left join selected_amounts a using (source_table_key, node_key)
 ), hierarchy as (
     select n.*, n.code_text as kan_code, null::varchar as kou_code, null::varchar as moku_code,

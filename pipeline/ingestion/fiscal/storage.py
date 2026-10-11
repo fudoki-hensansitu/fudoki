@@ -59,7 +59,7 @@ def save(document: dict, table: dict, path: Path | dict[str, Path], *, remote: b
         raise ValueError('A saved manifest requires successful private R2 uploads')
     if 'nodes' in table:
         from ingestion.lib.node_tables import check_tree, read_rows
-        checked = check_tree(read_rows(path['nodes']), read_rows(path['amounts']))
+        checked = check_tree(read_rows(path['nodes']), read_rows(path['amounts']), document['target']['document_kind'])
         if not checked['passed'] or table['unread_amount_count'] or table['unresolved_parent_count']:
             raise ValueError('Node table failed the mandatory pre-save tree check')
     prepared = []

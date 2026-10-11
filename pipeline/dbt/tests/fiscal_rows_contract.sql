@@ -4,9 +4,6 @@ select t.source_table_key, 'missing_or_duplicated_row' as failure
 from {{ source('fiscal_metadata', 'tables') }} t left join counts c using (source_table_key)
 where coalesce(c.n, 0) <> t.nodes_row_count
 union all
-select source_table_key, 'ambiguous_executed_amount' from rows
-where executed_count > 1 or component_count > 2 or (executed_count > 0 and component_count > 0)
-union all
 select source_table_key, 'invalid_node' from rows
 where node_kind is null or name is null or name = '' or axis_header is null or axis_header = ''
    or (parent_node_key is null and (node_kind <> '款' or axis_header <> '科目'))

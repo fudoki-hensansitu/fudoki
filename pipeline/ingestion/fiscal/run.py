@@ -97,7 +97,7 @@ def complete_subject_rows(rows: list[dict], siblings: list[list[dict]]) -> list[
 def node_receipt(document: dict, conversion: dict, table_id: str, tables: node_tables.NodeTables,
                  output: Path, *, input_fingerprint: str | None = None, notes: list[str] | None = None) -> tuple[dict, dict]:
     account = pdf_account(document, conversion, tables.nodes)
-    paths = node_tables.write_tables(output, table_id, tables)
+    paths = node_tables.write_tables(output, table_id, tables, document['target']['document_kind'])
     receipt = {'table_id': table_id, 'conversion_id': conversion['id'],
                'input_fingerprint': input_fingerprint or manifest.fingerprint(document, conversion),
                'account': account, 'notes': [*(notes or []), node_tables.MIGRATION_NOTE],
@@ -236,7 +236,7 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
             migrated = node_tables.migrate_rows(rows, metadata or {})
         except ValueError:
             migrated = None
-        checked = node_tables.check_tree(migrated.nodes, migrated.amounts) if migrated else {'passed': False}
+        checked = node_tables.check_tree(migrated.nodes, migrated.amounts, document['target']['document_kind']) if migrated else {'passed': False}
         if (migrated is None or not migrated.nodes or not migrated.amounts or migrated.issues or migrated.unread_amount_count
                 or migrated.unresolved_parent_count or not checked['passed']):
             tables.append(unchanged_legacy_receipt(document, conversion, ident, file,
@@ -292,7 +292,7 @@ def verify_sums(document: dict, locate) -> list[dict]:
         if 'nodes' not in table:
             continue
         pair = locate(table)
-        checked = node_tables.check_tree(sum_check.read_rows(pair['nodes']), sum_check.read_rows(pair['amounts']))
+        checked = node_tables.check_tree(sum_check.read_rows(pair['nodes']), sum_check.read_rows(pair['amounts']), document['target']['document_kind'])
         passed = (checked['passed'] and not table['unread_amount_count'] and not table['unresolved_parent_count'])
         results.append({'table_id': table['table_id'], 'status': sum_check.MATCH if passed else sum_check.MISMATCH,
                         'counts': checked['counts'], 'issues': checked['issues'], 'checks': [],

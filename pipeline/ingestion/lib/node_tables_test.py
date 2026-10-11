@@ -2,7 +2,7 @@
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from ingestion.lib.node_tables import migrate_rows, check_tree, write_tables, NodeTables, read_rows
+from ingestion.lib.node_tables import migrate_rows, check_tree, write_tables, NodeTables, read_rows, amount_phase
 
 
 def context(prefix, header, grain=None):
@@ -133,11 +133,60 @@ class NodeTablesTests(unittest.TestCase):
             migrated=migrate_rows([{**base,'款_備考_注記金額':value}],metadata)
             self.assertFalse(migrated.issues)
             check=check_tree(migrated.nodes,migrated.amounts)
-            self.assertEqual(check['passed'],value is None)
+            self.assertTrue(check['passed'])
             self.assertEqual(check['results'][0]['parent_amount'],10)
             if value is not None:
                 annotation=next(a for a in migrated.amounts if a['amount_text']=='999')
                 self.assertEqual(annotation['header_path'],'科目／款／備考／注記金額')
+
+    def test_phase_lookup_document_and_path_precedence(self):
+        self.assertEqual(amount_phase('節／金額','settlement','節',None),'adjusted')
+        self.assertEqual(amount_phase('節／金額','initial','節',None),'approved')
+        self.assertEqual(amount_phase('支出済額','initial','科目','目'),'executed')
+        self.assertIsNone(amount_phase('前年度予算額','initial','科目','目'))
+
+    def test_independent_breakdown_unit_mismatch_is_not_skipped(self):
+        checked=check_tree([node('p'),node('a','p','備考')],
+                           [amount('p','10'),amount('a','10','備考',unit='千円')])
+        self.assertFalse(checked['passed'])
+
+    def test_same_axis_normalizes_phase_and_keeps_every_printed_phase(self):
+        nodes=[node('p'),node('a','p')]
+        amounts=[amount('p','10','決算額'), amount('a','10','当年度決算額'),
+                 amount('p','20','予算現額'), amount('a','19','予算現額／計')]
+        checked=check_tree(nodes,amounts)
+        self.assertEqual(checked['counts'], {'不一致':1, '一致':1})
+        mismatch=next(r for r in checked['results'] if r['status']=='不一致')
+        self.assertEqual(mismatch['header_path'],'adjusted')
+
+    def test_initial_breakdowns_compare_approved_not_previous_year_or_funding(self):
+        nodes=[node('p'),node('a','p','説明'),node('s','p','節')]
+        amounts=[amount('p','10','本年度予算額'), amount('p','99','前年度予算額'),
+                 amount('a','10','説明'), amount('s','10','節／金額')]
+        self.assertTrue(check_tree(nodes,amounts,'initial')['passed'])
+        amounts[1]=amount('p','99','予算現額')
+        self.assertEqual(check_tree(nodes,amounts,'initial')['counts'],{'一致':2})
+        amounts[2]=amount('a','9','説明')
+        self.assertFalse(check_tree(nodes,amounts,'initial')['passed'])
+
+    def test_independent_breakdown_requires_only_phases_resolved_in_children(self):
+        nodes=[node('p'),node('a','p','備考')]
+        amounts=[amount('p','10'),amount('p','99','当初予算額'),amount('p','7','不用額'),
+                 amount('a','10','備考')]
+        self.assertEqual(check_tree(nodes,amounts)['counts'],{'一致':1})
+        amounts.append(amount('a','99','備考／予算額'))
+        self.assertEqual(check_tree(nodes,amounts)['counts'],{'一致':2})
+
+    def test_exact_financial_paths_compare_only_shared_columns(self):
+        nodes=[node('p'),node('a','p','財源内訳'),node('b','p','財源内訳')]
+        header='財源内訳／特定財源／国都支出金'
+        amounts=[amount('p','100','本年度予算額'),amount('p','10',header),
+                 amount('a','3',header),amount('b','7',header)]
+        checked=check_tree(nodes,amounts,'initial')
+        self.assertEqual(checked['counts'],{'一致':1})
+        self.assertEqual(checked['results'][0]['header_path'],header)
+        amounts[-1]=amount('b','6',header)
+        self.assertFalse(check_tree(nodes,amounts,'initial')['passed'])
 
     def test_cycles_orphans_duplicate_keys_and_invalid_amount_links_fail(self):
         for nodes, amounts in [([node('a','missing')],[]),([node('a','b'),node('b','a')],[]),

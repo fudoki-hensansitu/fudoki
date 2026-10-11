@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from collections import Counter, defaultdict
+import csv
 from dataclasses import dataclass
 from functools import cache
 import hashlib
@@ -224,12 +225,33 @@ def _add_amount(amounts, seen, unread, key, header, text, unit, pos, issues):
     seen[identity] = record; amounts.append(record)
 
 
-def check_tree(nodes: list[dict], amounts: list[dict]) -> dict:
+@cache
+def phase_dictionary() -> dict[tuple[str, str], str]:
+    path = Path(__file__).resolve().parents[2] / 'shared/fiscal_amount_map.csv'
+    with path.open() as stream:
+        return {(row['document_kind'], row['header']): row['phase'] for row in csv.DictReader(stream)}
+
+
+def amount_phase(header: str, document_kind: str, axis: str, level: str | None) -> str | None:
+    header = header.replace('/', '／')
+    last = header.split('／')[-1]
+    dictionary = phase_dictionary()
+    for kind, label in ((document_kind, header), (document_kind, last), ('', header), ('', last)):
+        if (kind, label) in dictionary:
+            return dictionary[kind, label] or None
+    # An amount labelled with its own declared level inherits the axis's
+    # dictionary meaning (e.g. current year inside a project breakdown).
+    if header.startswith(axis + '／') and last == level:
+        return dictionary.get((document_kind, axis), dictionary.get(('', axis)))
+    return None
+
+
+def check_tree(nodes: list[dict], amounts: list[dict], document_kind: str = 'settlement') -> dict:
     """Check every direct-child group separately by axis, printed header and unit.
 
-    A node without print takes its same-axis children's value, or zero at a leaf.
-    Check every printed parent amount, including groups with missing child print.
-    Also validate keys, links and cycles.
+    Same-axis groups compare normalized phases; independent breakdowns compare
+    phases resolved in that breakdown and shared exact headers. Unprinted nodes take
+    same-axis child sums, and unprinted leaves take zero. Validate links/cycles.
     """
     by_key = {n['node_key']: n for n in nodes}
     issues, results = [], []
@@ -259,56 +281,71 @@ def check_tree(nodes: list[dict], amounts: list[dict]) -> dict:
         if ident in values[key] and values[key][ident] != value:
             issues.append(f'同じノード・見出しの金額が一致しない: {key}')
         values[key][ident] = value
+
     @cache
-    def comparable(key, axis):
+    def comparable(key):
         result = {}
+        node = by_key[key]
         for (header, unit), value in values[key].items():
-            label = header
-            if header == '節／金額':
-                label = '予算現額／計'
-            elif by_key[key]['axis_header'] == axis and (header == axis or header.startswith(axis + '／')):
-                last = header.split('／')[-1]
-                generic = header in (axis, axis + '／事業説明') or last == by_key[key]['level_header']
-                label = ('支出済額' if generic or last in ('支出済額', '本年度支出額') else last)
-            # Prior-year carryover execution and current-year execution are
-            # separately printed parts of the generic executed total.
-            result[label, unit] = result.get((label, unit), 0) + value
+            phase = amount_phase(header, document_kind, node['axis_header'], node['level_header'])
+            if phase is not None:
+                result[phase, unit] = result.get((phase, unit), 0) + value
         return result
 
     evaluating = set()
 
     @cache
-    def value(key, axis, header, unit):
-        printed = comparable(key, axis)
-        if (header, unit) in printed:
-            return printed[header, unit]
-        identity = (key, axis, header, unit)
+    def value(key, axis, label, unit, exact=False):
+        printed = values[key] if exact else comparable(key)
+        if (label, unit) in printed:
+            return printed[label, unit]
+        identity = (key, axis, label, unit, exact)
         if identity in evaluating:
-            return 0  # The structural cycle check already makes this tree fail.
+            return 0  # Structural cycle validation already makes the tree fail.
         evaluating.add(identity)
-        total = sum(value(child, axis, header, unit) for child in groups[key, axis])
+        total = sum(value(child, axis, label, unit, exact) for child in groups[key, axis])
         evaluating.remove(identity)
         return total
 
+    @cache
+    def descendants(key, axis):
+        result = {key}
+        if not cyclic:
+            for child in groups[key, axis]:
+                result.update(descendants(child, axis))
+        return frozenset(result)
+
+    cyclic = any('親の循環' in issue for issue in issues)
     for (parent, axis), children in list(groups.items()):
-        parent_values = comparable(parent, axis)
-        for header, unit in sorted(parent_values):
-            expected = parent_values[header, unit]
-            total = sum(value(child, axis, header, unit) for child in children)
-            results.append({'parent_node_key': parent, 'axis_header': axis, 'header_path': header,
+        same_axis = axis == by_key[parent]['axis_header']
+        parent_values = comparable(parent)
+        child_keys = set().union(*(descendants(child, axis) for child in children))
+        child_phases = {label for child in child_keys for label, _ in comparable(child)}
+        child_headers = {header for child in child_keys for header, _ in values[child]}
+        comparisons = [(label, unit, False) for label, unit in parent_values
+                       if same_axis or label in child_phases]
+        comparisons += [(header, unit, True) for header, unit in values[parent]
+                        if header in child_headers and
+                        amount_phase(header, document_kind, by_key[parent]['axis_header'],
+                                     by_key[parent]['level_header']) is None]
+        for label, unit, exact in sorted(comparisons):
+            expected = (values[parent] if exact else parent_values)[label, unit]
+            total = sum(value(child, axis, label, unit, exact) for child in children)
+            results.append({'parent_node_key': parent, 'axis_header': axis, 'header_path': label,
                             'unit_text': unit, 'children': len(children), 'parent_amount': expected,
                             'child_sum': total, 'difference': total - expected,
                             'status': '一致' if expected == total else '不一致'})
+
     counts = dict(Counter(r['status'] for r in results))
     return {'passed': not issues and not counts.get('不一致'), 'counts': counts,
             'issues': sorted(set(issues)), 'results': results}
 
 
-def write_tables(directory: Path, table_id: str, tables: NodeTables) -> dict[str, Path]:
+def write_tables(directory: Path, table_id: str, tables: NodeTables, document_kind: str = 'settlement') -> dict[str, Path]:
     """Write a verified candidate pair; failed tables never become saved candidates."""
     if not tables.nodes or not tables.amounts:
         raise ValueError('Empty node/amount output is not supported')
-    check = check_tree(tables.nodes, tables.amounts)
+    check = check_tree(tables.nodes, tables.amounts, document_kind)
     if tables.issues or tables.unread_amount_count or tables.unresolved_parent_count or not check['passed']:
         raise ValueError(f'Table failed node migration/tree check: {tables.issues}; '
                          f'unread={tables.unread_amount_count}; unresolved={tables.unresolved_parent_count}; '
