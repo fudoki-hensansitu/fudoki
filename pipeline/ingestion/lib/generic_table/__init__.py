@@ -16,7 +16,27 @@ from ingestion.lib.pdf_table import Box, Token, tokens_from_bbox_layout
 from ingestion.lib.node_tables import NodeTables, check_tree, number
 
 NUMBER_PART = re.compile(r'[△\-0-9,]+')
+GLUED = re.compile(r'(?P<first>[0-9][0-9,]*)(?P<second>△[0-9][0-9,]*)')
 CODE = re.compile(r'(?P<code>\(?[0-9]+\)?|[①-⑳]|[ア-ン][）)])(?P<rest>.*)')
+
+def split_glued(tokens):
+    """Split one word printed across two amount cells (`0△181,846,590`).
+
+    A sign right after a digit cannot start inside one amount, so the word is
+    two prints; boxes are apportioned by character count.
+    """
+    result = []
+    for token in tokens:
+        match = GLUED.fullmatch(token.raw_text) if token.bbox else None
+        if not match:
+            result.append(token)
+            continue
+        box, cut = token.bbox, len(match['first'])/len(token.raw_text)
+        middle = box.left + (box.right-box.left)*cut
+        result += [Token(token.id+'a', token.origin_id, token.page, match['first'], Box(box.left, box.top, middle, box.bottom)),
+                   Token(token.id+'b', token.origin_id, token.page, match['second'], Box(middle, box.top, box.right, box.bottom))]
+    return tuple(result)
+
 
 @dataclass
 class Result:
@@ -140,6 +160,7 @@ def extract(tokens: tuple[Token, ...], config: dict) -> Result:
     its label band and amount bands; channels share y on a spread but retain pages.
     No sums are used to synthesize missing text or amounts.
     """
+    tokens = split_glued(tokens)
     page_words = defaultdict(list)
     for word in tokens:
         page_words[word.page].append(word)
