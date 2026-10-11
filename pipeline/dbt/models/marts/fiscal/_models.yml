@@ -73,6 +73,16 @@ models:
     - not_null
   - name: amount_source_page
     description: 採用した実績金額の物理頁。不明ならNULL。繰越内訳を足す場合は、全額の頁が既知のときだけ最初の頁。
+  - name: account_kind
+    description: 団体共通の会計の種類（一般会計・国民健康保険・介護保険・後期高齢者医療・その他）。原典の会計名を account_kind_map の語で対応づけた風土記の判断。団体をまたぐ比較はこの列で行う。辞書に無い会計名は構築を止める。
+    data_tests:
+    - not_null
+  - name: is_interfund_transfer
+    description: 会計間の繰出の印。科目の目で名称が「<会計名>繰出金」の形のときに真。節・備考の同名の内訳（例：保険基盤安定繰出金）は一会計の中の法定の負担で移転ではないため含まない。真の目を除いて集計すると会計間の二重計上を避けられる。金額の消去はしない（ADR 0023）。
+    data_tests:
+    - not_null
+  - name: interfund_transfer_to
+    description: 繰出の受け手の会計の種類（account_kind_map で引く）。受け手が入力に無い会計（例：下水道）でも付ける。受け手が特定できない目（例：他会計繰出金）は印だけ付けて NULL。
   - name: cofog_status
     description: 風土記の判断。目だけにassigned・tentative・unclassifiable・out-of-scopeを付け、他の段はNULL。tentativeは境界の判断で確信が持てないままコードを付けた暫定の割り当て。
   - name: cofog_code
