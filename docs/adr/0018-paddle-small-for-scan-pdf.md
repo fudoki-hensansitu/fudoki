@@ -1,6 +1,6 @@
 # ADR 0018: scan PDFにはPaddle smallの縮小検出と原解像度の再読を使う
 
-状態: 採用（2026-10-09）。scan PDFの既定エンジンについて[ADR 0017](0017-vision-for-coordinate-preserving-ocr.md)を更新する。Apple Visionを取り込みで選べるとした点は、[ADR 0019](0019-freeze-scan-ocr-observations.md) で比較用に限った（2026-10-11）。
+状態: 採用（2026-10-09）。scan PDFの既定エンジンについて[ADR 0017](0017-vision-for-coordinate-preserving-ocr.md)を更新する。既定エンジンは、[ADR 0019](0019-freeze-scan-ocr-observations.md) の改訂で Apple Vision に戻した（2026-10-11）。Paddle small は `backend="paddle"` で選べるエンジンとして残る。
 
 scan PDFのOCRは、PaddleOCR PP-OCRv6 smallを既定にする。文字の位置を探す検出工程だけ長辺1280pxへ縮小し、文字の認識には元の300dpi画像から切り出した画素を使う。必要な見出し帯・セルは書式設定で領域を明示し、原解像度で順に再読する。Apple Visionも明示的に選べるエンジンとして残す。共通入口と設定は[scan_ocr](../../pipeline/ingestion/lib/scan_ocr.md)で扱う。
 
