@@ -1,6 +1,6 @@
 # 新宿区の text 決算書
 
-原典 SHA `ca3f8658f6dbe295978db484227ec1c7adbdc15eeb136f109fa406798511c1eb` の一般会計歳出、物理3頁と65–147頁で測定した書式。原典1頁に「令和７年度新宿区一般会計歳入歳出決算事項別明細書総括」と印字されている。処理範囲は管理側から渡された selection の一般会計 scope と照合する。同じ冊子の特別会計は処理しない。
+原典 SHA `ca3f8658f6dbe295978db484227ec1c7adbdc15eeb136f109fa406798511c1eb` の一般会計歳出、物理3頁と65–147頁で測定した書式。原典1頁に「令和７年度新宿区一般会計歳入歳出決算事項別明細書総括」と印字されている。処理範囲は管理側から渡された selection の一般会計 scope と照合する。同じ冊子の介護保険・国民健康保険・後期高齢者医療特別会計は、[text_settlement_scope](../text_settlement_scope/convert.py) が会計の範囲を設定してこの構築を使う。
 
 `convert.py` は Poppler の `pdftotext -bbox-layout` の単語から、右揃えの金額欄と番号の印字位置を読み取る。名称の印字上の折り返しは改行として保持する。金額のカンマと、数値の前の別行に印字された `△` は文字列として保持する。座標は PDF の左上を原点とするポイント、物理頁は1始まり。対象頁には印刷頁番号がないため、その列を作らない。
 
@@ -28,7 +28,7 @@ bun run ingestion:convert \
   --output ingestion/fiscal/observations/131041-settlement/new-candidate
 ```
 
-候補の `shinjuku-observations/` に全対象の Poppler 単語観測、親欄の観測 JSON、総括・法定節の検算用Parquetを残す。候補manifestの `tables` は正式明細1表だけ。構築器の動作確認を独立検査の代わりにしない。保存の可否、別経路の原典照合、各階層の比較と不一致一覧、R2 保存は検査 operator が担当する。
+候補の `shinjuku-observations/` に全対象の Poppler 単語観測、親欄の観測 JSON、総括・法定節の検算用Parquetを残す。候補manifestの `tables` は会計ごとの正式明細（一般会計と3特別会計の4表）だけ。保存した表の階層ごとの合計は `bun run --cwd pipeline ingestion:verify`（宣言は `131041/sum_checks/`）で確かめる。構築器の動作確認を独立検査の代わりにしない。保存の可否、別経路の原典照合、各階層の比較と不一致一覧、R2 保存は検査 operator が担当する。
 
 ## 独立検査
 

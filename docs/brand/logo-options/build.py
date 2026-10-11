@@ -7,7 +7,8 @@ from fontTools.pens.boundsPen import BoundsPen
 from fontTools.pens.transformPen import TransformPen
 ROOT=Path(__file__).resolve().parents[3]
 OUT=ROOT/'docs/brand/logo-options'
-FONTS=ROOT/'pipeline/verify/view/node_modules/@fontsource-variable/noto-sans-jp/files'
+# 以前の検証画面の依存（@fontsource-variable/noto-sans-jp 5.3.0）。apps/web/brand/fonts.py と同じ場所に展開する
+FONTS=ROOT/'.cache/logo-fonts/noto-sans-jp/files'
 INK='#2f5d43'; DARK='#8fbfa2'
 @lru_cache
 def glyphs(weight):

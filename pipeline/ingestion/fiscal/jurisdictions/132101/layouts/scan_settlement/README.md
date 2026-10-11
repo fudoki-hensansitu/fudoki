@@ -1,5 +1,7 @@
 # 小金井市 132101 settlement-3 議会費 scan converter
 
+**状態（2026-10-11）**: 管理JSONに未登録の書式。入力の凍結native OCRはgitignore配下のローカルファイルで、どのcheckoutにも残っていないため、この書式からは表を再構築できない。[ADR 0019](../../../../../../../docs/adr/0019-freeze-scan-ocr-observations.md) の補助入力の保存・取得を実装した後、OCRを取り直して登録する。
+
 `convert(inputs, destination, options)` は固定原典・凍結 native・書式設定の SHA を照合し、未使用 dir へ Parquet と検算用観測を生成する。OCR の起動・入力の取得・正式 manifest の更新は行わない。
 
 対象は FY2025 `settlement-3.pdf`（SHA `0b1af0ae…` 全文は layout.json の `origin_sha256`）、一般会計・歳出・議会費・物理 1–4 頁だけ。横長 1 頁に左右 2 表（左：科目・予算現額・節／右：支出・繰越・不用・備考）が載る。

@@ -30,6 +30,8 @@ mise exec -- uv run --project pipeline python -m ingestion.fiscal.layouts.statem
 
 ## 独立した原典観測・保存済み候補の検査
 
+保存した表の階層ごとの合計は、共通の `bun run --cwd pipeline ingestion:verify`（宣言は `132071/sum_checks/`）でも確かめる。
+
 検査コードの正本はこのdirの `inspect_origin.py`、`inspect_detail_origin.py`、`validate_candidate.py` である。構築moduleをimportせず、pdftotextの独立した原典文字・座標と保存済みParquetを読む。昭島の上記原典・頁・書式に固有であり、別の原典への一般化や全PDF共通の停止条件は未完了である。構築・修正はsubagent、候補の検査・不一致一覧・修正依頼・完了判断は親agentが担当する。
 
 下記は2026-10-09に実行したコマンド。repo rootで実行する例で、すべての入力・出力は引数で渡す。出力dirは存在しないpathに限り、再実行では新しいpathへ替える。絶対pathを使えば別cwdでも同じ入口を実行できる。観測の `--observations` は候補に付随する検査用Parquetであり、原典から新しく生成する `--origin-observations` と区別する。`--raw` は保存済みrawを直接指定し、表IDや原典・正式登録を変更しない。

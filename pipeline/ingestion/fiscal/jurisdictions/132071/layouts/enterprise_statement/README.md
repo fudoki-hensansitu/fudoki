@@ -20,6 +20,8 @@ pipelineをcwdにし、通常の `ingestion:check --manifest <対象JSON>` と `
 
 ## 構築と独立検査のコマンド例
 
+保存した表の階層ごとの合計は、共通の `bun run --cwd pipeline ingestion:verify`（宣言は `132071/sum_checks/`）でも確かめる。
+
 以下はpipelineをcwdとする。`candidate-new`、`origin-new`、`check-new` は毎回未使用のディレクトリを指定する。入力JSONは原典SHAから絶対ローカルPDFパスへのオブジェクトを持つ。
 
 ```sh

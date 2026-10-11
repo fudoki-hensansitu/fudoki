@@ -1,6 +1,6 @@
 # C. dbt側で保存済み取り込みJSONとParquetを読み、構築する
 
-現在の `pipeline/dbt/` は、マスタ（`seeds/`）と共通の正規化macro（`trim_cell`・`staging_amount`）だけを持つ。モデルと入力準備・構築の入口は、新しい取り込み表から作り直す。
+現在の `pipeline/dbt/` は、マスタ（`seeds/`）と共通の正規化macro（`trim_cell`・`staging_amount`）だけを持つ。モデルと入力準備・構築の入口は、新しい取り込み表から作り直す。以下はノードの表と金額の表を入力にする目標手順で（[ADR 0020](../../../../docs/adr/0020-ingestion-outputs-node-tables.md)、移行は未実装）、`models/staging/fiscal/` などはまだない。
 
 ## 入力を確認する
 
