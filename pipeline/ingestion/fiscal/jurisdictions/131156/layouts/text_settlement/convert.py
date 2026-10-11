@@ -287,9 +287,14 @@ def text(words):
     return '\n'.join(result) or None
 
 
+SHIFTED_GLYPHS = frozenset('•゜oO')
+
+
 def row_words(words, y):
-    """Words of one printed row; shifted glyphs (△/0) sit ~1.6pt off the line."""
-    return [w for w in words if y - 2.2 <= w['yMin'] < y + 3.2]
+    """Words of one printed row; shifted glyphs (△/0) sit up to ~4.2pt off the line
+    (a printed 0 can reach the text layer as an 'o' raised above the baseline)."""
+    return [w for w in words
+            if y - (4.6 if w['text'] in SHIFTED_GLYPHS else 2.2) <= w['yMin'] < y + 3.2]
 
 
 def band_amounts(row, bands, anomalies=None):
@@ -469,7 +474,7 @@ def parse_breakdown(cell, anomalies):
     remarks = []
     open_item = None    # deepest item still waiting for its amount
     saw_item = False
-    carry = None        # leading digit of an amount split across lines
+    carry = None        # lone glyph ending a name row (a misencoded 】 read as 1); never an amount digit
     annotation_zone = False
 
     def close_deeper(level):
@@ -484,18 +489,13 @@ def parse_breakdown(cell, anomalies):
             amounts = []
         elif carry is not None:
             anomalies.append({'page': cell['page'], 'y': row[0]['yMin'],
-                              'issue': 'dangling leading digit', 'text': carry['text']})
+                              'issue': 'lone glyph after name', 'text': carry['text']})
             carry = None
         if not names:
             if amounts:
                 value = amount_text(amounts)
                 if value is None:
                     raise ValueError(f'Unmeasured remarks amount at page {page}, y={row[0]["yMin"]}')
-                if carry is not None:
-                    value = carry['text'] + value
-                    anomalies.append({'page': page, 'y': row[0]['yMin'],
-                                      'issue': 'wrapped amount digit', 'value': value})
-                    carry = None
                 if open_item is None or open_item['金額'] is not None:
                     anomalies.append({'page': page, 'y': row[0]['yMin'],
                                       'issue': 'orphan amount', 'value': value})

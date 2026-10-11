@@ -181,7 +181,7 @@
     {
       "table_id": "general-expenditure-details",
       "conversion_id": "general-settlement-detail",
-      "input_fingerprint": "61a966844bcb29da08bc2d1fa7060d1e9f434dbd31b576979b323aa164761a92",
+      "input_fingerprint": "88f49fa4ecdf432b32b5b6c44c3588ece435b5d3a446973d3e90ab77c8b94e44",
       "object": {
         "key": "fiscal/ingestion/132021/2025/settlement/expenditure/general-expenditure-details.parquet",
         "sha256": "338a1a12f745dbad29ad30025c45040746fcc1330ef762cce23b93b395e4e70d",
@@ -349,13 +349,13 @@
     {
       "table_id": "general-expenditure-notes",
       "conversion_id": "general-settlement-detail",
-      "input_fingerprint": "61a966844bcb29da08bc2d1fa7060d1e9f434dbd31b576979b323aa164761a92",
+      "input_fingerprint": "88f49fa4ecdf432b32b5b6c44c3588ece435b5d3a446973d3e90ab77c8b94e44",
       "object": {
         "key": "fiscal/ingestion/132021/2025/settlement/expenditure/general-expenditure-notes.parquet",
-        "sha256": "f512a437c0db55130f83a528eea8a6d956376db28525a190d00d5b2bdfa6b1a6",
-        "bytes": 171762
+        "sha256": "52ccb4cf5a2bc74697b5c071894beae528e62db2f715197fec36369d102e7802",
+        "bytes": 171871
       },
-      "row_count": 4760,
+      "row_count": 4755,
       "metadata": {
         "units": [
           {
@@ -397,7 +397,7 @@
         ],
         "notes": [
           {
-            "text": "右頁備考結合セル内の事業説明の最細行（説明1=事業、説明2=セル内節見出し、説明3=細目、説明4=内訳行）。説明階層の見出し行で下位印字の無いものはその見出し自体を葉とする（金額0印字の事業・葉なし節見出し等）。説明内節見出し(説明2)と表グリッド節行の対応付けはraw列に実体化せず検査用観測に留める。説明3・説明4は同じ支出の別分解軸であり節表 general-expenditure-details とは合算しない。事業名の【所管】は名称の一部。金額は原典の桁区切り・△符号を保持。物理頁は各要素が印字された実頁（左頁・右頁それぞれ）。",
+            "text": "右頁備考結合セル内の事業説明の最細行（説明1=事業、説明2=セル内節見出し、説明3=細目、説明4=細目の下の行: 字下げして金額を一段左に印字する細々目、または繰越明許費・事故繰越の内訳行）。説明階層の見出し行で下位印字の無いものはその見出し自体を葉とする（金額0印字の事業・葉なし節見出し等）。説明内節見出し(説明2)と表グリッド節行の対応付けはraw列に実体化せず検査用観測に留める。説明3・説明4は同じ支出の別分解軸であり節表 general-expenditure-details とは合算しない。事業名の【所管】は名称の一部。金額は原典の桁区切り・△符号を保持。物理頁は各要素が印字された実頁（左頁・右頁それぞれ）。",
             "scope": {
               "kind": "table"
             }
@@ -570,7 +570,7 @@
     {
       "table_id": "general-summary",
       "conversion_id": "general-settlement-summary",
-      "input_fingerprint": "5a72724a8c0b88da2067cb71a80f6bfde576eda906e35d899096369b8aee3836",
+      "input_fingerprint": "a1d90241f8a619a607f03a54fa4c41d370c2644cb53eec8a33374db3cbd904ce",
       "object": {
         "key": "fiscal/ingestion/132021/2025/settlement/expenditure/general-summary.parquet",
         "sha256": "e46e54f68aa864ccc06b2520e47153c9db0f0022ea9de5fe8916c3e06fb6ff18",
@@ -632,7 +632,7 @@
     {
       "table_id": "kouki-expenditure-details",
       "conversion_id": "kouki-settlement-details",
-      "input_fingerprint": "6fc3cd239cbf4cca84e415160e6e8dbcb79d83bed1d4f8b89f27e905ae31d2a4",
+      "input_fingerprint": "7d76d8f4231824eabc474e01ff3c8479830c54ff600b43ec400a8e25b6b510d0",
       "object": {
         "key": "fiscal/ingestion/132021/2025/settlement/expenditure/kouki-expenditure-details.parquet",
         "sha256": "e4b58323edddfc666729ed1a2c8e5b6d46cb6a381a9648be2a1ff5248a26b87f",
@@ -800,7 +800,7 @@
     {
       "table_id": "kouki-expenditure-notes",
       "conversion_id": "kouki-settlement-notes",
-      "input_fingerprint": "9b40cdaa85cd691c5165b252d253f6d8394e8b3ed309670bba2f2911bfe609ca",
+      "input_fingerprint": "d089e5714132d489142e8be79d320c79cf8f6ce4fde368b328176abddc8d6df0",
       "object": {
         "key": "fiscal/ingestion/132021/2025/settlement/expenditure/kouki-expenditure-notes.parquet",
         "sha256": "bcd1ffb93d7ae27b53291e8b60b1864d3fb0eac53e064b29745a1b26794d3e7a",
@@ -848,7 +848,7 @@
         ],
         "notes": [
           {
-            "text": "右頁備考結合セル内の事業説明の最細行（説明1=事業、説明2=セル内節見出し、説明3=細目、説明4=内訳行）。説明階層の見出し行で下位印字の無いものはその見出し自体を葉とする（金額0印字の事業・葉なし節見出し等）。説明内節見出し(説明2)と表グリッド節行の対応付けはraw列に実体化せず検査用観測に留める。説明3・説明4は同じ支出の別分解軸であり節表 kouki-expenditure-details とは合算しない。事業名の【所管】は名称の一部。金額は原典の桁区切り・△符号を保持。物理頁は各要素が印字された実頁（左頁・右頁それぞれ）。",
+            "text": "右頁備考結合セル内の事業説明の最細行（説明1=事業、説明2=セル内節見出し、説明3=細目、説明4=細目の下の行: 字下げして金額を一段左に印字する細々目、または繰越明許費・事故繰越の内訳行）。説明階層の見出し行で下位印字の無いものはその見出し自体を葉とする（金額0印字の事業・葉なし節見出し等）。説明内節見出し(説明2)と表グリッド節行の対応付けはraw列に実体化せず検査用観測に留める。説明3・説明4は同じ支出の別分解軸であり節表 kouki-expenditure-details とは合算しない。事業名の【所管】は名称の一部。金額は原典の桁区切り・△符号を保持。物理頁は各要素が印字された実頁（左頁・右頁それぞれ）。",
             "scope": {
               "kind": "table"
             }
@@ -1021,7 +1021,7 @@
     {
       "table_id": "kouki-summary",
       "conversion_id": "kouki-settlement-summary",
-      "input_fingerprint": "e5d8aea55da88305e12addf39f421622d3eeba57dd7f4b1cfc66175e53e44c28",
+      "input_fingerprint": "5858a063eb0a76b1c74f7d6ada5d286fed90be46cae319a2bdfce30db02fc4e6",
       "object": {
         "key": "fiscal/ingestion/132021/2025/settlement/expenditure/kouki-summary.parquet",
         "sha256": "9ea19d1316967e26b906cc236bca39bd914c9ba13d450b34a9b6431f91242347",
@@ -1083,7 +1083,7 @@
     {
       "table_id": "chushajo-summary",
       "conversion_id": "chushajo-settlement-summary",
-      "input_fingerprint": "cb11f46f7fc4b48382636b3e729b2251f518260bbe29d5644162097718396252",
+      "input_fingerprint": "5616bbc160424b1513ca0b7a7ce6c87ad8d1cc510b4d5f1c252eabdc9065799b",
       "object": {
         "key": "fiscal/ingestion/132021/2025/settlement/expenditure/chushajo-summary.parquet",
         "sha256": "51ed46b8500084ed72a80318ef990614f4e370d4008a84d2abe2360d33ebe854",
@@ -1145,7 +1145,7 @@
     {
       "table_id": "chushajo-expenditure-details",
       "conversion_id": "chushajo-settlement-details",
-      "input_fingerprint": "8f1d4bd56fd50bccc097c53880458463e2688f332081b4c4364ea42041105fd7",
+      "input_fingerprint": "a56ef9d61159ce4587b20c2c9a7f81c76e0985f8d1849531993d80c0cce9c61b",
       "object": {
         "key": "fiscal/ingestion/132021/2025/settlement/expenditure/chushajo-expenditure-details.parquet",
         "sha256": "6204e7f8904ea0fe5c0f3c5769dd16b24fd868ba15a1075b06306f21fce83af1",
@@ -1313,7 +1313,7 @@
     {
       "table_id": "chushajo-expenditure-notes",
       "conversion_id": "chushajo-settlement-notes",
-      "input_fingerprint": "0653073eac704c214325f6a98c3fca6603c1a5e8dee718bce45966d478c91a66",
+      "input_fingerprint": "428266dde5d8ee5c77e4ac5a2bdb1cf807c7532b5ed6cd803e31b275bd7f01fa",
       "object": {
         "key": "fiscal/ingestion/132021/2025/settlement/expenditure/chushajo-expenditure-notes.parquet",
         "sha256": "668f2c1c7eca1e7a822676f187973cf27e716294ca2cd9e4e23d4a100d4b2262",
@@ -1361,7 +1361,7 @@
         ],
         "notes": [
           {
-            "text": "右頁備考結合セル内の事業説明の最細行（説明1=事業、説明2=セル内節見出し、説明3=細目、説明4=内訳行）。説明階層の見出し行で下位印字の無いものはその見出し自体を葉とする（金額0印字の事業・葉なし節見出し等）。説明内節見出し(説明2)と表グリッド節行の対応付けはraw列に実体化せず検査用観測に留める。説明3・説明4は同じ支出の別分解軸であり節表 chushajo-expenditure-details とは合算しない。事業名の【所管】は名称の一部。金額は原典の桁区切り・△符号を保持。物理頁は各要素が印字された実頁（左頁・右頁それぞれ）。",
+            "text": "右頁備考結合セル内の事業説明の最細行（説明1=事業、説明2=セル内節見出し、説明3=細目、説明4=細目の下の行: 字下げして金額を一段左に印字する細々目、または繰越明許費・事故繰越の内訳行）。説明階層の見出し行で下位印字の無いものはその見出し自体を葉とする（金額0印字の事業・葉なし節見出し等）。説明内節見出し(説明2)と表グリッド節行の対応付けはraw列に実体化せず検査用観測に留める。説明3・説明4は同じ支出の別分解軸であり節表 chushajo-expenditure-details とは合算しない。事業名の【所管】は名称の一部。金額は原典の桁区切り・△符号を保持。物理頁は各要素が印字された実頁（左頁・右頁それぞれ）。",
             "scope": {
               "kind": "table"
             }

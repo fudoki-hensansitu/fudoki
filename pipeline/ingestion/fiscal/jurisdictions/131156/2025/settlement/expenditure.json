@@ -159,11 +159,11 @@
     {
       "table_id": "general-expenditure-details",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "e28f656f5e5a95416e01da0995d44a4a7f65fb517b7a8bb575eea4693b8560ec",
+      "input_fingerprint": "c8f4e29a99854ec0b2354083725fb292ffad9db5cd38e7e0c3d09468703aa689",
       "object": {
         "key": "fiscal/ingestion/131156/2025/settlement/expenditure/general-expenditure-details.parquet",
-        "sha256": "afb91806cbdda789edb91212889b15da65007db9d9202606e923849230ae0acf",
-        "bytes": 45154
+        "sha256": "08f6664a54003c70bdd9d2973207bd8b45608b56fc518a6e7433520e30269bad",
+        "bytes": 45141
       },
       "row_count": 718,
       "metadata": {
@@ -328,11 +328,11 @@
     {
       "table_id": "general-expenditure-notes",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "e28f656f5e5a95416e01da0995d44a4a7f65fb517b7a8bb575eea4693b8560ec",
+      "input_fingerprint": "c8f4e29a99854ec0b2354083725fb292ffad9db5cd38e7e0c3d09468703aa689",
       "object": {
         "key": "fiscal/ingestion/131156/2025/settlement/expenditure/general-expenditure-notes.parquet",
-        "sha256": "0f6eb3ee3acedb0d5717a506349cada672e95a584ec5852f93d02a7241596a4e",
-        "bytes": 121794
+        "sha256": "1bde67c852dcebb8a7d7c118beb87eac4991dcd8e91687dbed7a367eb1791144",
+        "bytes": 121784
       },
       "row_count": 3031,
       "metadata": {
@@ -491,7 +491,7 @@
     {
       "table_id": "care-insurance-expenditure-details",
       "conversion_id": "care-insurance-settlement-details",
-      "input_fingerprint": "21c454eaf48995177cecacae8d2921be053c410a28179a17e00965dcf7e9f815",
+      "input_fingerprint": "9c8e93cf4ca3cf3faa346bfebb8c3ebf8cbe59d41fd32a5c351f92c9b616cea4",
       "object": {
         "key": "fiscal/ingestion/131156/2025/settlement/expenditure/care-insurance-expenditure-details.parquet",
         "sha256": "41d5b73328d9eb2c1e517d2ef8f2c5ac953c38d88caeff94668f4aec207efe07",
@@ -660,7 +660,7 @@
     {
       "table_id": "care-insurance-expenditure-notes",
       "conversion_id": "care-insurance-settlement-notes",
-      "input_fingerprint": "4090ec5add3b4f2fc1341e6657e98f35048f21e3ccd98545a2fe51c56e71fb08",
+      "input_fingerprint": "c99e38801e5c9f3233cb3a95c446a65cb7b9bd0fc539729396f673d40ae5b6fa",
       "object": {
         "key": "fiscal/ingestion/131156/2025/settlement/expenditure/care-insurance-expenditure-notes.parquet",
         "sha256": "39f6534be905b3de919c37c7b0b42fbcd67b34e317f73f5ed34485fc1ad8a9c6",
@@ -823,7 +823,7 @@
     {
       "table_id": "national-health-insurance-expenditure-details",
       "conversion_id": "national-health-insurance-settlement-details",
-      "input_fingerprint": "118d65e40726a7ce7fe97b5a729f6667058ffc1dd85fd3c4778afd6442aff8ee",
+      "input_fingerprint": "4071e19ffea8ad7de72a7df0f71cae7d8680441b021df548531cce3e37ae1ae6",
       "object": {
         "key": "fiscal/ingestion/131156/2025/settlement/expenditure/national-health-insurance-expenditure-details.parquet",
         "sha256": "8d8e43ca0d9d7924e2c3bc5d59947aae5db24f87978c23bbb31ee700306ea0a8",
@@ -992,7 +992,7 @@
     {
       "table_id": "national-health-insurance-expenditure-notes",
       "conversion_id": "national-health-insurance-settlement-notes",
-      "input_fingerprint": "e5dc5e654c00c7bdf830aa676b28ad99110c728299f47f04b3ed24ddfdca978a",
+      "input_fingerprint": "5ec24020c19349a38f3055ccfab070e416e7f226ee34e48dff1408fd89990642",
       "object": {
         "key": "fiscal/ingestion/131156/2025/settlement/expenditure/national-health-insurance-expenditure-notes.parquet",
         "sha256": "a82c42ae9288c6055219c78173b1aa765e92a01b9a9e9db067169dc24ae83884",
@@ -1155,7 +1155,7 @@
     {
       "table_id": "late-stage-elderly-expenditure-details",
       "conversion_id": "late-stage-elderly-settlement-details",
-      "input_fingerprint": "ad7b590bf98b8012b830240013567b87216ff9013b708e121ba76eec2f12f616",
+      "input_fingerprint": "7e43cb97ae438c1e611b5f984e402aad15d36aa1c9dc2ed15689a572d5eb9a86",
       "object": {
         "key": "fiscal/ingestion/131156/2025/settlement/expenditure/late-stage-elderly-expenditure-details.parquet",
         "sha256": "60086d27b5dbc8dc28c064cd18cb9272651a19340c6ade188d3318946a0d08d5",
@@ -1324,7 +1324,7 @@
     {
       "table_id": "late-stage-elderly-expenditure-notes",
       "conversion_id": "late-stage-elderly-settlement-notes",
-      "input_fingerprint": "9f64b8dfb521b61aaea5a66bae6d0d0c746509f66654208e1cc63b8816f4f663",
+      "input_fingerprint": "60a69cb3e8428a62e816dc033295dc758637a35d1e318e182823cdb0e14bf1d2",
       "object": {
         "key": "fiscal/ingestion/131156/2025/settlement/expenditure/late-stage-elderly-expenditure-notes.parquet",
         "sha256": "f2f8f7673833abffc4a90324ec82011140b06b9965cd0bf7c5bdd4fc1caa0b72",
