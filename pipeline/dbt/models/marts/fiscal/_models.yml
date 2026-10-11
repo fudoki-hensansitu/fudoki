@@ -74,9 +74,9 @@ models:
   - name: amount_source_page
     description: 採用した実績金額の物理頁。不明ならNULL。繰越内訳を足す場合は、全額の頁が既知のときだけ最初の頁。
   - name: cofog_status
-    description: 風土記の判断。目だけにassigned・unclassifiable・out-of-scopeを付け、他の段はNULL。
+    description: 風土記の判断。目だけにassigned・tentative・unclassifiable・out-of-scopeを付け、他の段はNULL。tentativeは境界の判断で確信が持てないままコードを付けた暫定の割り当て。
   - name: cofog_code
-    description: 風土記が目に割り当てたCOFOGコード。一つのコードだけを持ち、上位は前方一致で求める。assignedのときだけ値を持つ。
+    description: 風土記が目に割り当てたCOFOGコード。一つのコードだけを持ち、上位は前方一致で求める。assigned・tentativeのときだけ値を持つ。
     data_tests:
     - relationships:
         arguments:

@@ -10,13 +10,13 @@ with mokus as (
     from {{ ref('int_fiscal__settlement_expenditure_nodes') }}
     where is_subject and node_kind = '目'
 ), rules as (
-    select rule_id, priority, status, cofog_code, moku_mode,
+    select rule_id, priority, status, cofog_code, moku_mode, coalesce(tentative, false) as tentative,
     {% for col in ['applies_to', 'match_fund', 'match_kan', 'match_kou', 'match_kan_code', 'match_moku', 'match_setsu'] %}
         coalesce({{ fiscal_match_text(col) }}, '') as {{ col }}{% if not loop.last %},{% endif %}
     {% endfor %}
     from {{ ref('cofog_rules') }}
 )
-select m.node_id, r.rule_id, r.status as cofog_status, r.cofog_code
+select m.node_id, r.rule_id, case when r.tentative and r.status = 'assigned' then 'tentative' else r.status end as cofog_status, r.cofog_code
 from mokus m join rules r on
 {% for rule_col, moku_col in [('applies_to', 'jurisdiction_code'), ('match_fund', 'fund_name'),
     ('match_kan', 'kan_name'), ('match_kou', 'kou_name'), ('match_kan_code', 'kan_code'),

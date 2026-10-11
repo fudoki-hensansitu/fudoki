@@ -16,7 +16,7 @@ COFOG のコードと名称は共通マスタ `cofog_master` に置く。コー�
 
 分類規則は Git の宣言から中間処理で適用し、規則 ID も規則の根拠の文も提供用データへ含めない。追跡はコード版・固定入力とパイプラインの検証記録で扱う。金額・分類・連結判断を上流と照合し、生成済みの表を独立編集する正本にしない。
 
-COFOG を段ごとの列と規則の列で持っていた旧処理の配布契約（`packages/fiscal/detail.ts` など）は 2026-10-11 に削除し、COFOG のコードと名称は `packages/fiscal/cofog-master.ts` に残した。新しい提供用データの列は [dbt モデルの設計](../prd/fiscal-dbt-models/design-doc.md) を正とする。
+COFOG を段ごとの列と規則の列で持っていた旧処理の配布契約（`packages/fiscal/detail.ts` など）は 2026-10-11 に削除し、COFOG のコードと名称は `packages/fiscal/cofog-master.ts` に残した。新しい提供用データの列は [dbt モデルの設計](../prd/fiscal-dbt-models/design-doc.md) を正とする。境界の判断で確信が持てない割り当ては、コードを付けたまま分類状態を `tentative` として区別する。
 
 ## 結果と代替案
 

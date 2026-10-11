@@ -252,8 +252,8 @@ erDiagram
 | `origin_id` | VARCHAR | 印字された原典ファイル | 宣言（管理 JSON） |
 | `source_page` | INTEGER | 項目（番号と名称）が印字された原典の物理頁 | 原典 |
 | `amount_source_page` | INTEGER | 採った支出済額が印字された原典の物理頁。不明ならNULL。見開きでは `source_page` と違うことがある | 原典 |
-| `cofog_status` | VARCHAR | `assigned` / `unclassifiable` / `out-of-scope`。MVP では目ノードだけ値を持つ | 判断（`cofog_rules`） |
-| `cofog_code` | VARCHAR | 割り当てた COFOG コード（`01`・`01.1`・`04.1.2` のように深さが変わる）。`assigned` のときだけ値を持つ | 判断（`cofog_rules`） |
+| `cofog_status` | VARCHAR | `assigned` / `tentative` / `unclassifiable` / `out-of-scope`。MVP では目ノードだけ値を持つ。`tentative` は境界の判断で確信が持てないままコードを付けた暫定の割り当てで、`cofog_rules` の `tentative` が true の規則が当たった目に付く | 判断（`cofog_rules`） |
+| `cofog_code` | VARCHAR | 割り当てた COFOG コード（`01`・`01.1`・`04.1.2` のように深さが変わる）。`assigned`・`tentative` のときだけ値を持つ | 判断（`cofog_rules`） |
 
 金額の和は「同じ軸の末端（`is_leaf`）を足す」と決める。軸の違うノードや、親と子を混ぜて足すと二重計上になる。131041・131156 は目の下に2本の軸（事業と節）がぶら下がり、132021 は説明の軸の中で節が事業の子として現れる。この規則は列の説明として AI と利用者に渡す。
 
