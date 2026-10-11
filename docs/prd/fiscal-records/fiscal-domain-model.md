@@ -46,7 +46,6 @@ classDiagram
     }
     class CofogClassification["COFOG分類結果"] {
         分類状態
-        根拠
     }
     class CofogMaster["COFOG分類マスタ"] {
         コード
