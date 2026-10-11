@@ -122,7 +122,7 @@ B の外の上流（原典選定 A）にも、slice で影響する事実が一�
 #### intermediate: 目の粒度・円・共通科目・COFOG へ揃える
 
 - `int_fiscal__settlement_expenditure_moku`: staging から目の行を取り出して団体をまたいで `union all` する。粒度は (団体, 年度, 資料区分, 会計, 款番号, 項番号, 目番号)。反復した目の金額は `distinct` ではなく、目の鍵ごとに金額の組が一つであることを検査してから一行にする。金額は units に従って円へ換算し（円は1倍、千円は1000倍、それ以外の単位は止める）、支出済額に加えて照合用の予算現額・当初予算額などを、原典にある分だけ持つ。名称は、字間の空白と折り返しの改行を除いた表示用の名称を足す。
-- `int_fiscal__settlement_expenditure_standard`: seed の `account_map` で、団体の款を法定の款（`account_master`）へ対応づける。slice の3団体の行は seed にないので、根拠付きで足す。
+- `int_fiscal__settlement_expenditure_standard`: seed の `account_map` で、団体の款を法定の款（`account_master`）へ対応づける。slice の3団体の行は seed にないので、根拠付きで足す。`account_master` は施行規則別記の市町村の表から作られており、特別区の 131041 にそのまま当てはまるかは未確認である。
 - `int_fiscal__settlement_expenditure_cofog`: seed の `cofog_rules` を優先順に当て、各目に分類状態と COFOG コードを一つ付ける。どの規則にも当たらない目があれば構築を止める。目の粒度では節を条件にする規則（積立金・繰出金）が当たらない。
 - 予算現額などの照合用の値は intermediate に留め、marts には出さない（ドメインモデルの「予算の報告値は決算明細と分ける」に従う）。
 
