@@ -10,7 +10,7 @@ import json
 from pathlib import Path
 
 from ingestion.lib.conversion import ConversionContext, write_conversion
-from ingestion.lib.node_tables import write_coverage_words
+from ingestion.lib.node_tables import write_coverage_words, coverage_regions
 from ingestion.lib.parquet import ParquetColumn
 
 layout = import_module('ingestion.fiscal.jurisdictions.131041.layouts.text_settlement.convert')
@@ -21,6 +21,10 @@ layout = import_module('ingestion.fiscal.jurisdictions.131041.layouts.text_settl
 # general account pages.
 DETAIL_EDGES = [(94, 169), *layout.DETAIL_EDGES[1:-1], (790, 866)]
 NOTE_BOUNDS = (1090, 1177)
+AMOUNT_COLUMNS = ([{'header': key, 'x_range': list(edges)}
+                   for key, edges in zip(layout.PARENT_AMOUNTS, DETAIL_EDGES)] +
+                  [{'header': '金額', 'x_range': [490, 572]},
+                   {'header': '備考_金額', 'x_range': list(NOTE_BOUNDS)}])
 # Printed △ signs spill a few points left across each column's left edge on the
 # scoped pages (observed at x 165.7–174.7 before the amendment column and
 # 303.8–312.8 before the transfer column). Sign zones partition on boundaries
@@ -70,8 +74,10 @@ def convert(inputs, destination, options):
     for index, (first, last) in enumerate(options['detail_pages']):
         scoped_detail.extend(layout.observe(source['path'], first, last,
                                             observations / f'detail-{index}-bbox.html'))
+    exclusions = []
     sections, remarks, parents = layout.detail(scoped_detail, edges=DETAIL_EDGES,
-                                               note_bounds=NOTE_BOUNDS, sign_edges=SIGN_EDGES)
+                                               note_bounds=NOTE_BOUNDS, sign_edges=SIGN_EDGES,
+                                               coverage_exclusions=exclusions)
     if not remarks:
         raise ValueError('Configured detail scope has no leaf rows')
     (observations / 'parents.json').write_text(json.dumps(parents, ensure_ascii=False, indent=2) + '\n')
@@ -86,9 +92,14 @@ def convert(inputs, destination, options):
                                   context=ConversionContext(source['sha256'], prefix + '-' + suffix, __file__))
         if suffix == 'expenditure-detail':
             results[table_id] = {'path': Path(result.path), 'metadata': layout.metadata(observed, suffix)}
+            exclusions.extend(coverage_regions(
+                [(page, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text'])
+                 for page, words in scoped_summary for w in words], **layout.SUMMARY_EXCLUSION))
             write_coverage_words(Path(result.path),
                                  [(page, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text'])
                                   for page, words in scoped_summary for w in words if w['yMin'] > 145] +
                                  [(page, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text'])
-                                  for page, words in scoped_detail for w in words if w['yMin'] > 145])
+                                  for page, words in scoped_detail for w in words if w['yMin'] > 145],
+                                 amount_columns=AMOUNT_COLUMNS,
+                                 excluded_regions=exclusions)
     return results

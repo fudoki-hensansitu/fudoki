@@ -15,6 +15,9 @@ BUDGET = ['当初予算額', '補正予算額', '継続費及び繰越事業費�
 EXECUTED = ['支出済額', '継続費逓次繰越', '繰越明許費', '事故繰越し', '不用額']
 BUDGET_EDGES = [(104, 174), (174, 245), (245, 305), (305, 364), (364, 436)]
 EXECUTED_EDGES = [(559, 701), (701, 761), (761, 821), (821, 880), (880, 953)]
+AMOUNT_COLUMNS = ([{'header': key, 'x_range': list(edges)}
+                   for key, edges in zip(BUDGET + EXECUTED, BUDGET_EDGES + EXECUTED_EDGES)] +
+                  [{'header': '金額', 'x_range': [493.5, 559]}])
 
 
 def observe(pdf, first, last, path):
@@ -223,5 +226,6 @@ def convert(inputs, destination, options):
                               context=ConversionContext(source['sha256'], table_id, __file__))
     write_coverage_words(Path(output.path),
                          [(page, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text'])
-                          for page, words in pages for w in body(words)])
+                          for page, words in pages for w in body(words)],
+                         amount_columns=AMOUNT_COLUMNS)
     return {table_id: {'path': Path(output.path), 'metadata': metadata(list(sections[0]))}}

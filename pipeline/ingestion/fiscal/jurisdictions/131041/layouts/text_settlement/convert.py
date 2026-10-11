@@ -10,7 +10,7 @@ import subprocess
 import xml.etree.ElementTree as ET
 
 from ingestion.lib.conversion import ConversionContext, write_conversion
-from ingestion.lib.node_tables import amount_position_fields, null_position_fields, write_coverage_words
+from ingestion.lib.node_tables import amount_position_fields, null_position_fields, write_coverage_words, coverage_regions
 from ingestion.lib.parquet import ParquetColumn
 
 AMOUNT = re.compile(r"(?:△)?(?:[0-9]{1,3}(?:,[0-9]{3})+|[0-9]+)")
@@ -22,6 +22,18 @@ SUMMARY_AMOUNTS = PARENT_AMOUNTS[:6] + ['継続費逓次繰越', '繰越明許�
 CARRY_AMOUNTS = ['継続費逓次繰越', '繰越明許費', '事故繰越し']
 SUMMARY_EDGES = [(99, 192), (192, 278), (278, 362), (362, 446), (446, 544),
                  (544, 732), (732, 813), (813, 895), (895, 976), (976, 1058)]
+# Read-but-not-adopted section grid: kind and reason are hand-written next to
+# the layout decision that keeps sections auxiliary; pages come from the
+# processed scope at runtime. Marker/number/name/amount columns only: the
+# execution columns share adopted parent bands and stay in scope.
+SECTION_EXCLUSION = {'kind': '節の一覧',
+                     'reason': '節一覧と備考は同じ目の独立した分解であり、節表は検算観測のみで採用しない。'}
+SUMMARY_EXCLUSION = {'kind': '総括', 'reason': '款の総括は独立した検算観測。採用表に属する繰越額の印字は照合対象に残す。'}
+AMOUNT_COLUMNS = ([{'header': key, 'x_range': list(edges)}
+                   for key, edges in zip(PARENT_AMOUNTS, DETAIL_EDGES)] +
+                  [{'header': key, 'x_range': list(edges)}
+                   for key, edges in zip(SUMMARY_AMOUNTS, SUMMARY_EDGES)] +
+                  [{'header': '金額', 'x_range': [490, 572]}, {'header': '備考_金額', 'x_range': [1090, 1176]}])
 
 
 def observe(pdf, first, last, output):
@@ -115,7 +127,7 @@ def summary(pages, expected_rows=13):
     return result
 
 
-def detail(pages, edges=DETAIL_EDGES, note_bounds=(1090, 1176), sign_edges=None):
+def detail(pages, edges=DETAIL_EDGES, note_bounds=(1090, 1176), sign_edges=None, coverage_exclusions=None):
     sign_edges = edges if sign_edges is None else sign_edges
     parents, sections, remarks, moku_list = [], [], [], []
     current = {}
@@ -190,6 +202,18 @@ def detail(pages, edges=DETAIL_EDGES, note_bounds=(1090, 1176), sign_edges=None)
                               '翌年度繰越額_区分': string([w for w in body if 715 <= w['xMin'] and w['xMax'] < 790
                                                          and y-12 <= w['yMin'] < y and not AMOUNT.fullmatch(w['text'])]),
                               **position(page, [marker])}
+                    if coverage_exclusions is not None:
+                        section_words = [marker, *names]
+                        for column in ('金額', '支出済額', '翌年度繰越額', '不用額'):
+                            if values[column] is None:
+                                continue
+                            box = [values[f'{column}_{suffix}'] for suffix in ('左端', '上端', '右端', '下端')]
+                            section_words.extend(w for w in body if box[0] <= w['xMin']
+                                                 and w['xMax'] <= box[2] and box[1] <= w['yMin']
+                                                 and w['yMax'] <= box[3])
+                        coverage_exclusions.extend(coverage_regions(
+                            [(page, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text'])
+                             for w in section_words], **SECTION_EXCLUSION))
                     sections.append((moku, values))
                 else:
                     next_y = min([w['yMin'] for w in remark_markers + markers if w['yMin'] > y+.8] + [820])
@@ -287,7 +311,8 @@ def convert(inputs, destination, options):
     summary_pages = observe(source['path'], 3, 3, observations / 'summary-bbox.html')
     summary_rows = summary(summary_pages)
     detail_pages = observe(source['path'], 65, 147, observations / 'detail-bbox.html')
-    section_rows, remark_rows, parents = detail(detail_pages)
+    exclusions = []
+    section_rows, remark_rows, parents = detail(detail_pages, coverage_exclusions=exclusions)
     (observations / 'parents.json').write_text(json.dumps(parents, ensure_ascii=False, indent=2) + '\n')
     detail_rows = expenditure_detail(remark_rows, summary_rows)
     results = {}
@@ -301,9 +326,14 @@ def convert(inputs, destination, options):
             results[table_id] = {'path': Path(result.path), 'metadata': metadata(rows, suffix)}
             # Adopted detail rows carry summary-page amounts too, so the scope
             # covers the summary page as well as the detail body.
+            exclusions.extend(coverage_regions(
+                [(page, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text'])
+                 for page, words in summary_pages for w in words], **SUMMARY_EXCLUSION))
             write_coverage_words(Path(result.path),
                                  [(page, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text'])
                                   for page, words in summary_pages for w in words if w['yMin'] > 145] +
                                  [(page, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text'])
-                                  for page, words in detail_pages for w in words if w['yMin'] > 145])
+                                  for page, words in detail_pages for w in words if w['yMin'] > 145],
+                                 amount_columns=AMOUNT_COLUMNS,
+                                 excluded_regions=exclusions)
     return results

@@ -26,6 +26,15 @@ NOTE_RULE_LEFT, NOTE_RULE_RIGHT = 440, 568  # unshifted right-page x of the rema
 SEGMENT = re.compile(r'([ML])\s+(-?[\d.]+)\s+(-?[\d.]+)')
 
 
+# Declared amount-column geometry (display-page x; right-page edges unshifted
+# back like the amount boxes) for the coverage bands.
+AMOUNT_COLUMNS = ([{'header': key, 'x_range': [AMOUNT_LEFT, AMOUNT_RIGHT]} for key in BUDGET] +
+                  [{'header': key, 'x_range': [690 - PAGE_WIDTH, RIGHT_AMOUNTS_RIGHT - PAGE_WIDTH]}
+                   for key in EXECUTED] +
+                  [{'header': key, 'x_range': [600 - PAGE_WIDTH, RIGHT_AMOUNTS_RIGHT - PAGE_WIDTH]}
+                   for key in ['金額', *EXECUTED]])
+
+
 def observe(pdf, first, last, path):
     subprocess.run(['pdftotext', '-f', str(first), '-l', str(last), '-bbox-layout',
                     str(pdf), str(path)], check=True)
@@ -340,5 +349,5 @@ def convert(inputs, destination, options):
     columns = tuple(ParquetColumn(k, 'BIGINT' if k.endswith('物理頁') else 'DOUBLE' if k.endswith(('左端', '上端', '右端', '下端')) else 'VARCHAR') for k in sections[0])
     output = write_conversion(destination / (table_id + '.parquet'), sections, columns=columns,
                               context=ConversionContext(source['sha256'], table_id, __file__))
-    write_coverage_words(Path(output.path), coverage)
+    write_coverage_words(Path(output.path), coverage, amount_columns=AMOUNT_COLUMNS)
     return {table_id: {'path': Path(output.path), 'metadata': metadata(list(sections[0]), account)}}

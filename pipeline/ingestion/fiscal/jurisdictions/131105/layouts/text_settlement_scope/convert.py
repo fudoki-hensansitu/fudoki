@@ -52,5 +52,6 @@ def convert(inputs, destination, options):
                               context=ConversionContext(source['sha256'], table_id, __file__))
     write_coverage_words(Path(output.path),
                          [(page, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text'])
-                          for page, words in pages for w in layout.body(words)])
+                          for page, words in pages for w in layout.body(words)],
+                         amount_columns=layout.AMOUNT_COLUMNS)
     return {table_id: {'path': Path(output.path), 'metadata': layout.metadata(list(sections[0]))}}

@@ -37,9 +37,21 @@ PATH_RIGHT = 140.0
 BUDGET_BANDS = [(134.0, 205.0), (209.0, 275.0), (299.0, 340.0), (359.0, 395.0), (399.0, 460.0)]
 SETSU_LEFT, SETSU_RIGHT = 455.0, 850.0
 SETSU_MARK_RIGHT = 475.0
+# Read-but-not-adopted statutory-section numbers: the section list stays a local
+# observation (setsu-list.json), never detail rows. Marker columns only: names
+# and amounts share adopted parent bands and stay in scope.
+SETSU_MARK_EXCLUSION = {'kind': '法定節の観測',
+                        'reason': '法定節一覧は local 観測に留め明細行にしない。採用表は備考細目のみ。節番号の欄。',
+                        'x_range': [455.0, 530.0]}
 SETSU_NAME_LEFT = 460.0
 SETSU_AMOUNT_BANDS = [(530.0, 605.0), (605.0, 672.0), (735.0, 778.0), (786.0, 848.0)]
 SUBJECT_EXEC_BANDS = [(604.0, 672.0), (740.0, 775.0), (790.0, 845.0)]
+AMOUNT_COLUMNS = ([{'header': key, 'x_range': list(edges)}
+                   for key, edges in zip(BUDGET, BUDGET_BANDS)] +
+                  [{'header': key, 'x_range': list(edges)}
+                   for key, edges in zip(EXECUTED, SUBJECT_EXEC_BANDS)] +
+                  [{'header': key, 'x_range': list(edges)}
+                   for key, edges in zip(['金額', *EXECUTED], SETSU_AMOUNT_BANDS)])
 NOTE_LEFT = 848.0
 PROJECT_MARK_RIGHT = 858.0
 NOTE_SETSU_MARK_RIGHT = 876.0
@@ -603,7 +615,10 @@ def convert(inputs, destination, options):
                               context=ConversionContext(source['sha256'], table_id, __file__))
     write_coverage_words(Path(output.path),
                          [(page, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text'])
-                          for page, words in pages for w in words if w['yMin'] >= HEADER_TOP])
+                          for page, words in pages for w in words if w['yMin'] >= HEADER_TOP],
+                         amount_columns=AMOUNT_COLUMNS,
+                         excluded_regions=[{**SETSU_MARK_EXCLUSION,
+                                            'pages': [[selected[0], selected[-1]]]}])
     (observations / 'setsu-list.json').write_text(
         json.dumps(setsu_list, ensure_ascii=False, indent=2) + '\n')
     (observations / 'expenditure-total.json').write_text(

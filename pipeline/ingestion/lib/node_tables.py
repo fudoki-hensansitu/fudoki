@@ -9,6 +9,7 @@ import hashlib
 import json
 import math
 import re
+import time
 import unicodedata
 from pathlib import Path
 
@@ -140,7 +141,9 @@ def _word_key(text):
 # indistinguishable from amounts and stay uncovered for the converter to fix.
 NON_AMOUNT_WORD = re.compile(
     r'(?:[－―—–-][0-9０-９, ]+[－―—–-]'
-    r'|(?:令和|平成|昭和|大正|明治|[RHS])?[0-9０-９]+(?:年度|年|月|日))')
+    r'|(?:令和|平成|昭和|大正|明治|[RHS])?[0-9０-９]+(?:年度|年|月|日)'
+    r'|第[0-9０-９]+(?:款|項|目|節)'
+    r'|[(（]?[0-9]{1,4}[.．](?:0?[1-9]|1[0-2])[.．](?:0?[1-9]|[12][0-9]|3[01])[)）]?)')
 
 
 # Printed control totals. Every settlement prints its aggregate total row; the
@@ -153,22 +156,83 @@ TOTAL_LABELS = frozenset({'歳出合計', '歳出総計'})
 COVERAGE_SIDECAR_SUFFIX = '.coverage.json'
 
 
+# Out-of-scope table kinds, one shared vocabulary. Exclusion declarations
+# transcribe an existing "table excluded" decision with a kind from here
+# plus a free-text reason; an unknown kind or a missing reason stops the
+# save. Kinds are never invented per table: proposing a new table to exclude
+# goes through ask first.
+EXCLUSION_KINDS = frozenset({
+    '総括', '財源内訳', '節の一覧', '経費内訳', '数量表', '法定節の観測', '本文',
+    '予備費の充用', '職員', '貸付金', '反復見出し',
+})
+
+
+def validate_exclusions(exclusions):
+    """Every exclusion carries a known kind and a nonempty reason.
+
+    Two shapes: a zone ({pages, x_range}) for column-separated tables, or a
+    precise box ({page, bbox}) for blocks the converter identified row by row.
+    A straddling word stays in scope either way.
+    """
+    items = list(exclusions or [])
+    for entry in items:
+        if entry.get('kind') not in EXCLUSION_KINDS:
+            raise ValueError(f"Unknown coverage exclusion kind: {entry.get('kind')!r}; "
+                             f'choose from {sorted(EXCLUSION_KINDS)} or ask for a new table decision')
+        if not isinstance(entry.get('reason'), str) or not entry['reason'].strip():
+            raise ValueError(f'Coverage exclusion without a reason: {entry!r}')
+        if 'bbox' in entry:
+            box = entry['bbox']
+            if (type(entry.get('page')) is not int or entry['page'] < 1 or len(box) != 4
+                    or any(type(v) not in (int, float) or not math.isfinite(v) for v in box)
+                    or not (box[0] < box[2] and box[1] < box[3])):
+                raise ValueError(f'Coverage exclusion needs a page and a positive box: {entry!r}')
+        else:
+            if not entry.get('pages'):
+                raise ValueError(f'Coverage exclusion needs observed page ranges: {entry!r}')
+            for span in entry['pages']:
+                if (len(span) != 2 or any(type(v) is not int for v in span) or span[0] < 1
+                        or span[1] < span[0]):
+                    raise ValueError(f'Coverage exclusion needs ascending page ranges: {entry!r}')
+            xrange = entry.get('x_range')
+            if xrange is not None and (len(xrange) != 2
+                                       or any(type(v) not in (int, float) or not math.isfinite(v) for v in xrange)
+                                       or not xrange[0] < xrange[1]):
+                raise ValueError(f'Coverage exclusion needs an increasing x_range: {entry!r}')
+    return items
+
+
+def coverage_regions(words, *, kind, reason):
+    """Describe read-but-unadopted words with their measured boxes.
+
+    Callers supply words from their existing observation-only parser routes;
+    neither page numbers nor rectangle edges are editorial declarations.
+    """
+    return [{'kind': kind, 'reason': reason, 'page': page, 'bbox': list(box)}
+            for page, box, _ in map(_coverage_word, words)]
+
+
 def coverage_sidecar(wide_path):
     """Scope sidecar next to a converter's wide table."""
     path = Path(wide_path)
     return path.with_name(path.stem + COVERAGE_SIDECAR_SUFFIX)
 
 
-def write_coverage_words(wide_path, words):
+def write_coverage_words(wide_path, words, *, amount_columns=(), excluded_regions=()):
     """Write the processed word scope beside a wide table for the pre-save check.
 
     words are (physical page, display-page box, printed text) tuples in the
-    converter's native order. The digit coverage check reads this scope back
-    in run.py next to the tree check; converters declare scope by what they
-    write. Scope is normally every character-layer word read in the processed
-    pages and regions. A table adopting a declared subset (a 款項表 without
-    its narrative body) writes exactly the lines that formed adopted rows and
-    says so in its notes; narrowed-out digits stay visible as scope counts.
+    converter's native order. amount_columns are the converter's existing
+    amount-column geometries as {header, x_range} entries in display-page x
+    (spread converters unshift right-page edges back, like their amount
+    boxes); bands are built from them when present, else fall back to
+    clustering adopted amount rows (reported per table). Converters without
+    fixed amount columns (free-positioned business or note amounts) omit them.
+    excluded_regions are read-but-not-adopted blocks the converter identified
+    itself, each with a shared-vocabulary kind and a reason ({kind, reason}
+    plus {pages, x_range} or {page, bbox}); hand-written entries stay in code
+    next to the layout decision that skips them. Kind/reason validation
+    stops the save when missing.
     """
     normalized = []
     for word in words:
@@ -176,12 +240,47 @@ def write_coverage_words(wide_path, words):
         if not isinstance(text, str):
             raise ValueError('Coverage words require printed text')
         normalized.append({'page': page, 'bbox': list(box), 'text': text})
+    columns = []
+    for entry in amount_columns:
+        xrange = entry['x_range']
+        if len(xrange) != 2 or not xrange[0] < xrange[1]:
+            raise ValueError(f'Amount columns need increasing x ranges: {entry!r}')
+        columns.append({'header': entry.get('header'), 'x_range': list(xrange)})
+    regions = []
+    for entry in validate_exclusions(excluded_regions):
+        record = {'kind': entry['kind'], 'reason': entry['reason']}
+        if 'bbox' in entry:
+            record.update({'page': entry['page'], 'bbox': list(entry['bbox'])})
+        else:
+            record.update({'pages': [list(span) for span in entry['pages']],
+                           'x_range': list(entry['x_range']) if entry.get('x_range') else None})
+        regions.append(record)
     sidecar = coverage_sidecar(wide_path)
-    sidecar.write_text(json.dumps({'words': normalized}, ensure_ascii=False) + '\n')
-    return {'sidecar': str(sidecar), 'words': len(normalized)}
+    sidecar.write_text(json.dumps({'words': normalized, 'amount_columns': columns,
+                                   'excluded_regions': regions}, ensure_ascii=False) + '\n')
+    return {'sidecar': str(sidecar), 'words': len(normalized),
+            'amount_columns': len(columns), 'excluded_regions': len(regions)}
 
 
-def check_table_coverage(wide_path, tables, *, require=True):
+def combine_coverage_tables(tables):
+    """Collect adopted prints from one original, retaining each print once.
+
+    Coverage uses positions only; node keys from separate trees are unrelated.
+    Duplicate ancestors must not duplicate amounts during split-word matching.
+    """
+    nodes, amounts = {}, {}
+    for table in tables:
+        for node in table.nodes:
+            key = tuple(node.get(k) for k in ('physical_page', 'x0', 'y0', 'x1', 'y1',
+                                             'code_text', 'name_text'))
+            nodes[key] = node
+        for amount in table.amounts:
+            key = tuple(amount.get(k) for k in ('physical_page', 'x0', 'y0', 'x1', 'y1', 'amount_text'))
+            amounts[key] = amount
+    return NodeTables(list(nodes.values()), list(amounts.values()))
+
+
+def check_table_coverage(wide_path, tables, *, require=True, control_tables=()):
     """Pre-save digit coverage next to the tree check.
 
     Reads the converter's scope sidecar beside its wide table and requires
@@ -196,13 +295,16 @@ def check_table_coverage(wide_path, tables, *, require=True):
             raise ValueError(f'Digit coverage scope missing beside {wide_path}')
         return {'passed': True, 'counts': {}, 'digit_words': 0, 'uncovered': [],
                 'status': '対象外', 'reason': '文字層の処理対象外'}
-    words = json.loads(sidecar.read_text())['words']
-    result = check_digit_coverage(words, tables)
+    scope = json.loads(sidecar.read_text())
+    result = check_digit_coverage(scope['words'], tables, control_tables=control_tables,
+                                  exclusions=scope.get('excluded_regions', ()),
+                                  amount_columns=scope.get('amount_columns', ()))
     sidecar.with_name(sidecar.name.removesuffix(COVERAGE_SIDECAR_SUFFIX)
                       + '.coverage-uncovered.json').write_text(
         json.dumps({'counts': result['counts'], 'digit_words': result['digit_words'],
-                    'uncovered': result['uncovered'], 'reported': result['reported']},
-                   ensure_ascii=False) + '\n')
+                    'uncovered': result['uncovered'], 'reported': result['reported'],
+                    'bands_from': result['bands_from'], 'exclusions': result['exclusions'],
+                    'elapsed': result['elapsed']}, ensure_ascii=False) + '\n')
     if result['uncovered']:
         examples = ', '.join(
             f"p{u['page']}@{u['bbox'][0]:.1f},{u['bbox'][1]:.1f}={u['text']!r}"
@@ -230,6 +332,13 @@ PERCENT_WORD = re.compile(r'[△▲\-－―—]?[0-9][0-9,\.]*[％%]|[(（][0-9]
 CODE_WORD = re.compile(r'[0-9０-９]+[^0-9０-９,△▲\-－―—\.\(\)（）<>＜＞％%円]+')
 
 
+DOCUMENT_NUMBER = re.compile(
+    r'[・．.、,]?(?:(?:令和|平成|昭和|大正|明治)[0-9]+年)?第[0-9]+号'
+    r'(?:[・．.、,](?:(?:令和|平成|昭和|大正|明治)[0-9]+年)?第?[0-9]+号)*'
+    r'(?:(?:市|区|町|村)?議会議決)?'
+    r'|[0-9]+[^0-9,円△▲\-]+第[0-9]+号(?:市|区|町|村)長決定')
+
+
 # Bare folios live in the footer strip. All processed PDFs are ~842pt tall
 # with body bottoms at or below 800 (converters read body bands only, and no
 # adopted amount prints with top > 795); a bare integer below the strip is an
@@ -237,26 +346,161 @@ CODE_WORD = re.compile(r'[0-9０-９]+[^0-9０-９,△▲\-－―—\.\(\)（）
 FOOTER_TOP = 795.0
 
 
-def check_digit_coverage(words, tables, *, tolerance=0.5):
+def _exclusion_hit(word, exclusions, tolerance):
+    """Match a word against declared non-ingested table regions.
+
+    Zone form: the word's page sits in the entry's page ranges and its box
+    lies fully inside the x_range. Box form: same page and full containment
+    in the entry's box. A straddling word stays in scope either way.
+    Returns the entry index for hit counting.
+    """
+    for index, entry in enumerate(exclusions):
+        if not isinstance(word['page'], int):
+            continue
+        if 'bbox' in entry:
+            if word['page'] != entry['page']:
+                continue
+            if not _contains(tuple(entry['bbox']), tuple(word['bbox']), tolerance):
+                continue
+            return index
+        if not any(first <= word['page'] <= last for first, last in entry['pages']):
+            continue
+        xrange = entry.get('x_range')
+        if xrange is not None:
+            left, top, right, bottom = word['bbox']
+            if not (xrange[0] - tolerance <= left and right <= xrange[1] + tolerance):
+                continue
+        return index
+    return None
+
+
+# An amount-shaped token is never a label, even inside a node box and even
+# when it substrings the name: grouping separators, 円 glue and leading
+# signs mark prints, while bare codes stay label-eligible.
+def _amount_shaped(key):
+    return bool(re.search(r'[0-9]+(?:,[0-9]+)+|[0-9,]+円|[△▲\-－―—][0-9]', key))
+
+
+def _verified_total_boxes(words, tables, amount_columns, tolerance, candidate_baselines):
+    """Confirm unlabeled totals using direct siblings in one adopted tree.
+
+    An unlabeled row requires two independent nonzero columns, after all
+    their siblings. An explicit total label still requires the exact nonzero
+    sum. Match each column's complete print; a lone zero cannot establish a total.
+    """
+    baselines = defaultdict(list)
+    total_labels = defaultdict(list)
+    for raw in words:
+        page, box, text = _coverage_word(raw)
+        if _word_key(text) in ('計', '合計', '小計'):
+            total_labels[page, round(box[1])].append(box)
+        if (page, round(box[1])) in candidate_baselines and re.fullmatch(r'[0-9,△▲\-－―—]+', _word_key(text)):
+            baselines[page, round(box[1])].append((box, text))
+    verified = set()
+    for table in tables:
+        nodes = {n['node_key']: n for n in table.nodes}
+        siblings = defaultdict(list)
+        for amount in table.amounts:
+            node = nodes.get(amount['node_key'])
+            if (node is None or any(amount[k] is None for k in ('physical_page', 'x0', 'y0', 'x1', 'y1'))
+                    or number(amount['amount_text']) is None):
+                continue
+            identity = (node['parent_node_key'], node['axis_header'], node['level_header'],
+                        amount['header_path'], amount['unit_text'])
+            siblings[identity].append(amount)
+        groups = list(siblings.items())
+        for identity, amounts in siblings.items():
+            pages = defaultdict(list)
+            for amount in amounts:
+                pages[amount['physical_page']].append(amount)
+            if len(pages) > 1:
+                groups.extend(((*identity[:-2], 'page', page, *identity[-2:]), values)
+                              for page, values in pages.items())
+        totals = []
+        for identity, amounts in groups:
+            header = identity[-2]
+            columns = [entry['x_range'] for entry in amount_columns
+                       if entry.get('header') in (header, header.split('／')[-1])]
+            if len(columns) == 1:
+                left, right = columns[0]
+            else:
+                left, right = min(a['x0'] for a in amounts), max(a['x1'] for a in amounts)
+            totals.append((identity, sum(number(a['amount_text']) for a in amounts),
+                           max((a['physical_page'], a['y1']) for a in amounts), left, right, len(amounts)))
+        matched_rows = []
+        established = defaultdict(list)
+        for (page, y), row in baselines.items():
+            matches = defaultdict(list)
+            for identity, expected, last, left, right, sibling_count in totals:
+                if (page, y) <= last:
+                    continue
+                parts = sorted(((box, text) for box, text in row
+                                if left - tolerance <= (box[0] + box[2]) / 2 <= right + tolerance),
+                               key=lambda item: item[0][0])
+                labeled = parts and any(box[2] <= parts[0][0][0] for box in total_labels[page, y])
+                if parts and (sibling_count >= 2 or labeled) and number(''.join(text for _, text in parts)) == expected:
+                    matches[identity[:-2]].append((identity[-2], expected, parts))
+            for identity, group in matches.items():
+                nonzero = [(header, {tuple(box) for box, _ in parts})
+                           for header, expected, parts in group if expected != 0]
+                independent = any(left_header != right_header and not left_boxes.intersection(right_boxes)
+                                  for index, (left_header, left_boxes) in enumerate(nonzero)
+                                  for right_header, right_boxes in nonzero[index + 1:])
+                labeled = any(expected != 0 and any(label[2] <= parts[0][0][0]
+                                                    for label in total_labels[page, y])
+                              for _, expected, parts in group)
+                if independent or labeled:
+                    verified.update((page, tuple(box)) for _, expected, parts in group
+                                    if independent or expected != 0 for box, _ in parts)
+                    height = max(box[3] - box[1] for _, _, parts in group for box, _ in parts)
+                    established[page, identity].append((y, height))
+            matched_rows.append((page, y, matches))
+        # A wrapped total cell can print one row below the established total.
+        # Its nonzero value must match the same sibling group's sum exactly.
+        for page, y, matches in matched_rows:
+            for identity, group in matches.items():
+                if any(0 < y - top <= 2 * height for top, height in established[page, identity]):
+                    verified.update((page, tuple(box)) for _, expected, parts in group
+                                    if expected != 0 for box, _ in parts)
+    return verified
+
+
+def check_digit_coverage(words, tables, *, tolerance=0.5, exclusions=(), amount_columns=(), control_tables=()):
     """Every printed digit in scope is an amount row or a known non-amount.
 
     words are the printed words of the pages and regions the converter
     processed. tables are migrated node tables whose amount rows carry their
     own printed positions. Amount-column bands are built commonly from the
-    adopted amount rows' horizontal spans (no per-table declarations).
+    converter's amount-column geometry, with row spans as a visible fallback.
     A digit word is covered when (a) it sits inside an amount's own box as
     part of that print, (b) it sits inside its node's box and reads as the
     node's code or name, (c) it fullmatches a jurisdiction-common non-amount
     pattern (folio, era/year/date, glued percent, code glued to characters,
     footer folio, percent pair), (d) it shares a control-total baseline, or
-    (e) a merged word split into adopted amounts rejoins exactly.
+    (e) a merged word split into adopted amounts rejoins exactly, or (f) its
+    value is a verified sibling total. control_tables retain independent
+    trees for total arithmetic when tables contains pooled coverage prints.
     Leftovers split by band: inside an amount band they are BLOCKED prints
     (a dropped amount in amount territory stops the save); outside bands
     they are REPORTED prose (counted with examples, never blocking).
-    Never guesses: words sticking out of amount boxes stay uncovered.
+    Excluded regions (declared non-ingested tables with a kind and a reason)
+    are skipped with visible counts but never block. Amount bands come from
+    the converter's amount-column heading positions when supplied, else fall
+    back to clustering adopted amount rows. Returns
+    the elapsed seconds alongside the verdict for per-table timing reports.
+    Overhanging fragments require exact digit reconstruction; nearby unmatched prints stay uncovered.
     """
+    started = time.perf_counter()
     if tolerance < 0 or not math.isfinite(tolerance):
         raise ValueError('Coverage tolerance must be a nonnegative finite number')
+    exclusions = validate_exclusions(exclusions)
+    exclusion_counts = [0] * len(exclusions)
+    exclusions_by_page = defaultdict(list)
+    for index, entry in enumerate(exclusions):
+        pages = [entry['page']] if 'bbox' in entry else [
+            page for first, last in entry['pages'] for page in range(first, last + 1)]
+        for page in pages:
+            exclusions_by_page[page].append((index, entry))
     normalized = []
     for word in words:
         page, box, text = _coverage_word(word)
@@ -266,15 +510,33 @@ def check_digit_coverage(words, tables, *, tolerance=0.5):
                                'digits': digits, 'key': _word_key(text), 'covered': None})
     positioned = [a for a in tables.amounts
                   if a['physical_page'] is not None and None not in (a['x0'], a['y0'], a['x1'], a['y1'])]
-    # Amount-column bands from adopted rows' horizontal spans, clustered by
-    # overlap. A digit printing in amount territory without its own amount
-    # row is a dropped amount and blocks; prose outside bands only reports.
-    bands = []
-    for left, right in sorted((a['x0'], a['x1']) for a in positioned):
-        if bands and left <= bands[-1][1] + 10:
-            bands[-1][1] = max(bands[-1][1], right)
-        else:
-            bands.append([left, right])
+    positioned_by_page = defaultdict(list)
+    for a in positioned:
+        positioned_by_page[a['physical_page']].append(a)
+    # Amount-column bands from heading positions when the converter supplies
+    # them, else from adopted rows. Per-header spans never merge across
+    # headers; adopted rows cluster by overlap. Unlabeled fallback stays
+    # visible so converters without fixed columns are listed, not hidden.
+    bands, bands_from = [], 'rows'
+    if amount_columns:
+        bands_from = 'columns'
+        grouped = defaultdict(list)
+        for entry in amount_columns:
+            grouped[entry.get('header')].append(tuple(entry['x_range']))
+        for spans in grouped.values():
+            merged = []
+            for left, right in sorted(spans):
+                if merged and left <= merged[-1][1] + 10:
+                    merged[-1][1] = max(merged[-1][1], right)
+                else:
+                    merged.append([left, right])
+            bands.extend(merged)
+    else:
+        for left, right in sorted((a['x0'], a['x1']) for a in positioned):
+            if bands and left <= bands[-1][1] + 10:
+                bands[-1][1] = max(bands[-1][1], right)
+            else:
+                bands.append([left, right])
 
     def in_band(word):
         center = (word['bbox'][0] + word['bbox'][2]) / 2
@@ -293,6 +555,20 @@ def check_digit_coverage(words, tables, *, tolerance=0.5):
         # check owns value correctness; coverage owns the print's presence.
         for w in inside:
             w['covered'] = 'amount'
+    # Poppler glyph boxes can overhang a converter's cell boundary. Cover
+    # those fragments only when the complete overlapping print rejoins the
+    # adopted amount's digits exactly. A nearby extra digit fails this match.
+    for amount in positioned:
+        box = (amount['x0'], amount['y0'], amount['x1'], amount['y1'])
+        parts = sorted((w for w in words_by_page.get(amount['physical_page'], ())
+                        if w['bbox'][0] < box[2] + tolerance and box[0] - tolerance < w['bbox'][2]
+                        and min(box[3], w['bbox'][3]) - max(box[1], w['bbox'][1])
+                        >= min(box[3] - box[1], w['bbox'][3] - w['bbox'][1]) / 2),
+                       key=lambda w: (w['bbox'][0], w['bbox'][1]))
+        if parts and ''.join(w['digits'] for w in parts) == _word_digits(amount['amount_text']):
+            for word in parts:
+                if word['covered'] is None:
+                    word['covered'] = 'amount_fragments'
     # A word merged across two printed cells is covered when the amounts it
     # was split into sit inside its box and rejoin its digits exactly. Both
     # split amounts must exist as adopted rows; coincidence cannot cover.
@@ -300,8 +576,8 @@ def check_digit_coverage(words, tables, *, tolerance=0.5):
         if word['covered'] is not None:
             continue
         parts = sorted(
-            (a for a in positioned if a['physical_page'] == word['page']
-             and _contains(tuple(word['bbox']), (a['x0'], a['y0'], a['x1'], a['y1']), tolerance)),
+            (a for a in positioned_by_page.get(word['page'], [])
+             if _contains(tuple(word['bbox']), (a['x0'], a['y0'], a['x1'], a['y1']), tolerance)),
             key=lambda a: (a['x0'], a['y0']))
         if len(parts) >= 2 and ''.join(_word_digits(a['amount_text']) for a in parts) == word['digits']:
             word['covered'] = 'split_amount'
@@ -316,9 +592,18 @@ def check_digit_coverage(words, tables, *, tolerance=0.5):
             if not _contains((node['x0'], node['y0'], node['x1'], node['y1']), word['bbox'], tolerance):
                 continue
             printed = _word_key(str(node.get('code_text') or '') + str(node.get('name_text') or ''))
-            if word['key'] and word['key'] in printed:
+            if word['key'] and not _amount_shaped(word['key']) and word['key'] in printed:
                 word['covered'] = 'label'
                 break
+    # Adopted prints take precedence over an auxiliary block. An exclusion
+    # may span the same baseline, but must never hide adopted amounts/labels.
+    for word in normalized:
+        if word['covered'] is None:
+            candidates = exclusions_by_page.get(word['page'], ())
+            hit = _exclusion_hit(word, [entry for _, entry in candidates], tolerance)
+            if hit is not None:
+                word['covered'] = 'excluded'
+                exclusion_counts[candidates[hit][0]] += 1
     for word in normalized:
         if word['covered'] is None and NON_AMOUNT_WORD.fullmatch(_word_key(word['text'])):
             word['covered'] = 'non_amount'
@@ -332,10 +617,31 @@ def check_digit_coverage(words, tables, *, tolerance=0.5):
         if word['covered'] is None and re.fullmatch(r'[0-9０-９]+', _word_key(word['text'])) \
                 and isinstance(word['page'], int) and word['bbox'][3] > FOOTER_TOP:
             word['covered'] = 'non_amount'
+    # Printed document numbers and dates can be split by Poppler. Match an
+    # exact, spatially adjacent sequence; never exempt all digits on its row.
+    lines = defaultdict(list)
+    for raw in words:
+        page, box, text = _coverage_word(raw)
+        lines[(page, round(box[1]))].append((box, _word_key(text)))
+    non_amount_boxes = set()
+    for (page, _), line in lines.items():
+        line.sort(key=lambda item: item[0][0])
+        for start in range(len(line)):
+            joined = ''
+            for end in range(start, min(start + 16, len(line))):
+                if end > start and line[end][0][0] - line[end - 1][0][2] > 12:
+                    break
+                joined += line[end][1]
+                if NON_AMOUNT_WORD.fullmatch(joined) or DOCUMENT_NUMBER.fullmatch(joined):
+                    non_amount_boxes.update((page, tuple(box)) for box, _ in line[start:end + 1])
+    for word in normalized:
+        if word['covered'] is None and (word['page'], tuple(word['bbox'])) in non_amount_boxes:
+            word['covered'] = 'non_amount'
     # A bare number immediately followed by a percent word on its baseline is
     # an execution rate, never an adopted amount. Percent signs carry no
     # digits, so marks come from every scope word, not only digit words.
     percent_marks = defaultdict(list)
+    percent_units = defaultdict(list)
     for word in words:
         try:
             page, box, text = _coverage_word(word)
@@ -343,6 +649,7 @@ def check_digit_coverage(words, tables, *, tolerance=0.5):
             continue
         if isinstance(page, int) and re.fullmatch(r'[％%]', _word_key(text)):
             percent_marks[(page, round(box[1]))].append(box[0])
+            percent_units[page].append(box)
     for word in normalized:
         if word['covered'] is not None:
             continue
@@ -350,6 +657,16 @@ def check_digit_coverage(words, tables, *, tolerance=0.5):
             continue
         for mark_x in percent_marks.get((word['page'], round(word['bbox'][1])), []):
             if 0 <= mark_x - word['bbox'][2] <= 5:
+                word['covered'] = 'non_amount'
+                break
+    # A standalone percent unit just above the numeric cell is also an
+    # execution rate. The unit and value share the printed right alignment.
+    for word in normalized:
+        if word['covered'] is not None or not re.fullmatch(r'[0-9]+(?:\.[0-9]+)?', word['key']):
+            continue
+        for box in percent_units.get(word['page'], ()):
+            if (0 < word['bbox'][1] - box[1] <= 20
+                    and box[0] - 5 <= word['bbox'][2] <= box[2] + tolerance):
                 word['covered'] = 'non_amount'
                 break
     # Control-total baselines: group every scope word by printed page and
@@ -371,6 +688,12 @@ def check_digit_coverage(words, tables, *, tolerance=0.5):
         if word['covered'] is None and isinstance(word['page'], int) \
                 and (word['page'], round(word['bbox'][1])) in total_baselines:
             word['covered'] = 'total'
+    total_boxes = _verified_total_boxes(
+        words, control_tables or (tables,), amount_columns, tolerance,
+        {(word['page'], round(word['bbox'][1])) for word in normalized if word['covered'] is None})
+    for word in normalized:
+        if word['covered'] is None and (word['page'], tuple(word['bbox'])) in total_boxes:
+            word['covered'] = 'verified_total'
     for word in normalized:
         if word['covered'] is None:
             word['covered'] = 'blocked' if in_band(word) else 'reported'
@@ -381,8 +704,12 @@ def check_digit_coverage(words, tables, *, tolerance=0.5):
     blocked.sort(key=lambda w: (w['page'] if isinstance(w['page'], int) else 0, w['bbox'][1], w['bbox'][0]))
     reported.sort(key=lambda w: (w['page'] if isinstance(w['page'], int) else 0, w['bbox'][1], w['bbox'][0]))
     counts = dict(Counter(w['covered'] for w in normalized))
+    applied = [{'kind': e['kind'], 'reason': e['reason'], 'words': n}
+               for e, n in zip(exclusions, exclusion_counts)]
     return {'passed': not blocked, 'counts': counts,
-            'digit_words': len(normalized), 'uncovered': blocked, 'reported': reported}
+            'digit_words': len(normalized), 'uncovered': blocked, 'reported': reported,
+            'bands_from': bands_from, 'exclusions': applied,
+            'elapsed': time.perf_counter() - started}
 
 
 def migrate_rows(rows: list[dict], metadata: dict) -> NodeTables:

@@ -50,6 +50,13 @@ SUM_KAN = (36.0, 210.1)
 SUM_KOU = (210.1, 384.2)
 SUM_EDGES = [(384.2, 558.3), (638.7, 772.6), (772.6, 899.9), (899.9, 1027.1), (1027.1, 1154.3)]
 SUM_COLUMNS = ['予算現額', '支出済額', '翌年度繰越額', '不用額', '比較']
+DETAIL_AMOUNT_COLUMNS = ([{'header': key, 'x_range': list(edges)}
+                         for key, edges in zip(BUDGET, BUDGET_EDGES)] +
+                        [{'header': key, 'x_range': list(edges)}
+                         for key, edges in zip(EXECUTED, EXEC_EDGES)])
+AMOUNT_COLUMNS = (DETAIL_AMOUNT_COLUMNS +
+                  [{'header': key, 'x_range': list(edges)}
+                   for key, edges in zip(SUM_COLUMNS, SUM_EDGES)])
 SUM_BODY_TOP = 125.0
 
 
@@ -668,5 +675,8 @@ def convert(inputs, destination, options):
     write_coverage_words(Path(output.path),
                          [(page, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text'])
                           for page, entry in traced for w in entry['words']
-                          if threshold <= w['yMin'] < BODY_BOTTOM])
+                          if threshold <= w['yMin'] < BODY_BOTTOM],
+                         amount_columns=DETAIL_AMOUNT_COLUMNS if part == 'detail' else
+                         [{'header': key, 'x_range': list(edges)}
+                          for key, edges in zip(SUM_COLUMNS, SUM_EDGES)])
     return {table_id: {'path': Path(output.path), 'metadata': meta}}

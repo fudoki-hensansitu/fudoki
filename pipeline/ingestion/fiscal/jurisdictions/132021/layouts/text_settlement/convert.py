@@ -39,6 +39,12 @@ INNER_LABELS = ('繰越明許費', '事故繰越', '支出済額', '不用額', 
 # A 細々目 is indented under its 細目 (name x≈300 against 291) and right-aligns its
 # amount one step left (x≈516 against the 細目's x≈536).
 SUB_NAME_LEFT, SUB_AMOUNT_RIGHT = 298, 525
+AMOUNT_COLUMNS = ([{'header': key, 'x_range': list(edges)}
+                   for key, edges in zip(BUDGET, BUDGET_RULES)] +
+                  [{'header': '支出済額', 'x_range': [0, R_PAID_RIGHT]},
+                   {'header': '翌年度繰越額', 'x_range': [R_PAID_RIGHT, R_CARRY_RIGHT]},
+                   {'header': '不用額', 'x_range': [R_CARRY_RIGHT, R_UNUSED_RIGHT]},
+                   {'header': '金額', 'x_range': [SETSU_AMOUNT_LEFT, 585]}])
 
 
 def observe(pdf, first, last, path):
@@ -821,7 +827,8 @@ def convert_detail(source, destination, options, selected):
                                   columns=pq_columns,
                                   context=ConversionContext(source['sha256'],
                                                             table_id, __file__))
-        write_coverage_words(Path(output.path), coverage)
+        write_coverage_words(Path(output.path), coverage,
+                             amount_columns=AMOUNT_COLUMNS if kind == 'details' else ())
         results[table_id] = {'path': Path(output.path),
                              'metadata': detail_metadata(columns, kind, prefix,
                                                           setsu_reference)}

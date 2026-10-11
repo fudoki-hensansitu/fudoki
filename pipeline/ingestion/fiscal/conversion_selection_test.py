@@ -6,7 +6,7 @@ import unittest
 from unittest.mock import patch
 
 from ingestion.fiscal import manifest, run
-from ingestion.lib.node_tables import read_rows
+from ingestion.lib.node_tables import read_rows, NodeTables, check_digit_coverage
 
 CONVERTER = '''
 from pathlib import Path
@@ -64,6 +64,25 @@ class ConversionSelectionTests(unittest.TestCase):
             nodes = read_rows(root/'candidate/notes-nodes.parquet')
             self.assertEqual([n['name_text'] for n in nodes], ['親','明細','印字ゼロ'])
             self.assertFalse((root/'candidate/unused-supplement-nodes.parquet').exists())
+
+    def test_original_identity_bounds_coverage_across_separate_conversions(self):
+        def table(value):
+            return NodeTables([], [{'node_key': 'a', 'physical_page': 1, 'x0': 10., 'y0': 10.,
+                                    'x1': 30., 'y1': 19., 'amount_text': value}])
+        document = {'conversions': [
+            {'inputs': [{'sha256': origin}], 'expected_tables': [{'table_id': ident}]}
+            for ident, origin in [('details', 'original-a'), ('notes', 'original-a'),
+                                  ('other', 'original-b')]]}
+        peers = run.coverage_peers(document, {'details': NodeTables([], []),
+                                            'notes': table('10'), 'other': table('20')})
+        words = [(1, (10., 10., 30., 19.), '10')]
+        self.assertTrue(check_digit_coverage(words, peers['details'])['passed'])
+        self.assertEqual([a['amount_text'] for a in peers['details'].amounts], ['10'])
+        self.assertEqual([a['amount_text'] for a in peers['other'].amounts], ['20'])
+        peers = run.coverage_peers(document, {'details': NodeTables([], []), 'other': table('20')})
+        result = check_digit_coverage(words, peers['details'],
+                                     amount_columns=[{'header': '金額', 'x_range': [10, 30]}])
+        self.assertFalse(result['passed'])
 
 
 if __name__ == '__main__':

@@ -17,7 +17,7 @@ from collections import deque
 from pathlib import Path
 
 from ingestion.lib.conversion import ConversionContext, write_conversion
-from ingestion.lib.node_tables import AMOUNT_POSITION_SUFFIXES, amount_position_fields, null_position_fields, write_coverage_words
+from ingestion.lib.node_tables import AMOUNT_POSITION_SUFFIXES, amount_position_fields, null_position_fields, write_coverage_words, coverage_regions
 from ingestion.lib.parquet import ParquetColumn
 
 PAGE_WIDTH = 595.0
@@ -989,6 +989,11 @@ def convert(inputs, destination, options):
     b = Builder()
     b.detail_cols = detail_columns(funds)
     b.declared_stats = bool(stat_titles)
+    unadopted_words = []
+    def observe_unadopted(page, line):
+        unadopted_words.extend((page, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text'])
+                               for w in line)
+
     label_state = None          # None | 'kan'（款見出し済み・集計行待ち）| 'total'
     for page, words in pages:
         b.flush_funding()
@@ -1188,6 +1193,7 @@ def convert(inputs, destination, options):
                 continue
             jigyo = parse_jigyo_heading(line, page)
             if jigyo:
+                observe_unadopted(page, line)
                 b.close_jigyo()
                 # 款直轄事業: 事業決算が現項決算を上回り (containment違反)、
                 # かつ款決算と一致するときのみ項を継承しない。決算どうしで比べる。
@@ -1206,6 +1212,7 @@ def convert(inputs, destination, options):
                 continue
             cont = parse_jigyo_continuation(line)
             if cont and b.jigyo is not None and b.jigyo['前年度決算額'] is None and b.item is None:
+                observe_unadopted(page, line)
                 b.jigyo['前年度決算額'] = cont['前年']
                 if cont['課']:
                     b.jigyo['担当課'] = (b.jigyo['担当課'] + '\n' + cont['課']
@@ -1213,6 +1220,7 @@ def convert(inputs, destination, options):
                 if cont['annex']:
                     b.emit_annex(page, cont['annex'])
                 continue
+            observe_unadopted(page, line)
             left = [w for w in line if w['xMin'] < RIGHT_X]
             if b.left_line(left, page):
                 b.right_line(b.pop_right_extra() + [w for w in line if w['xMin'] >= RIGHT_X], page)
@@ -1262,7 +1270,10 @@ def convert(inputs, destination, options):
                                         options.get('stat_titles'))}
         write_coverage_words(detail_path,
                              [(pg, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text'])
-                              for pg, words in pages for w in words if w['yMin'] < FOOTER_TOP])
+                              for pg, words in pages for w in words if w['yMin'] < FOOTER_TOP],
+                             excluded_regions=coverage_regions(
+                                 unadopted_words, kind='本文',
+                                 reason='主要施策の事業説明・内訳・財源・付表は観測用に読む。抜粋で目の決算額に閉じないため、採用する款項目の表に含めない。'))
     if 'funding' in emit:
         if not options.get('funding_table_id'):
             raise ValueError('emit funding requires funding_table_id')

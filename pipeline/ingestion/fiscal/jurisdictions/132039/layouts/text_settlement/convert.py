@@ -26,6 +26,12 @@ PARENT_AMOUNTS = ['当初予算額', '補正予算額', '継続費及び繰越�
 AMOUNT_EDGES = [(142, 216), (218, 290), (290, 350), (350, 413),
                 (415, 482), (728, 792), (794, 862), (864, 925)]
 SETSU_AMOUNT_EDGE = (640, 722)
+AMOUNT_COLUMNS = ([{'header': key, 'x_range': list(edges)}
+                   for key, edges in zip(PARENT_AMOUNTS, AMOUNT_EDGES)] +
+                  [{'header': '金額', 'x_range': list(SETSU_AMOUNT_EDGE)},
+                   {'header': '支出済額', 'x_range': list(AMOUNT_EDGES[5])},
+                   {'header': '翌年度繰越額', 'x_range': list(AMOUNT_EDGES[6])},
+                   {'header': '不用額', 'x_range': list(AMOUNT_EDGES[7])}])
 SETSU_NAME_ZONE = (480, 600)
 SETSU_EVENT_X = (480, 550)
 KAN_NAME_X = (40, 66)
@@ -404,5 +410,6 @@ def convert(inputs, destination, options):
     write_coverage_words(Path(result.path),
                          [(page, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text'])
                           for page, words in pages for w in words
-                          if BODY_TOP < w['yMin'] < BODY_BOTTOM])
+                          if BODY_TOP < w['yMin'] < BODY_BOTTOM],
+                         amount_columns=AMOUNT_COLUMNS)
     return {table_id: {'path': Path(result.path), 'metadata': metadata(rows)}}

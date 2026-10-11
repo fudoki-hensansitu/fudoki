@@ -32,6 +32,11 @@ SETSU_NUM = (612, 641.5)
 SETSU_NAME = (640, 705)
 SETSU_BANDS = [(705, 775), (775, 843), (843, 910), (910, 980)]
 EXEC_BANDS = SETSU_BANDS[1:]
+AMOUNT_COLUMNS = ([{'header': key, 'x_range': list(edges)}
+                   for key, edges in zip(BUDGET, SUBJ_BANDS)] +
+                  [{'header': '金額', 'x_range': list(SETSU_BANDS[0])}] +
+                  [{'header': key, 'x_range': list(edges)}
+                   for key, edges in zip(EXECUTED, EXEC_BANDS)])
 NOTE_AMOUNT_LEFT = 1090
 AMOUNT = re.compile(r'[△]?(?:[0-9]{1,3}(?:,[0-9]{3})+|[0-9]+)')
 NUMBER = re.compile(r'[0-9]+')
@@ -1022,6 +1027,7 @@ def convert(inputs, destination, options):
         write_coverage_words(Path(output.path),
                              [(page, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text'])
                               for page, words in pages for w in words
-                              if BODY_TOP <= w['yMin'] < BODY_BOTTOM])
+                              if BODY_TOP <= w['yMin'] < BODY_BOTTOM],
+                             amount_columns=AMOUNT_COLUMNS if kind == 'details' else ())
         results[table_id] = {'path': Path(output.path), 'metadata': metadata(order, account, kind)}
     return results

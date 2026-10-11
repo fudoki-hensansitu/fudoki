@@ -22,7 +22,7 @@ from decimal import Decimal
 from pathlib import Path
 
 from ingestion.lib.conversion import ConversionContext, OriginReference, write_conversion
-from ingestion.lib.node_tables import AMOUNT_POSITION_SUFFIXES, amount_position_fields, write_coverage_words
+from ingestion.lib.node_tables import AMOUNT_POSITION_SUFFIXES, amount_position_fields, write_coverage_words, coverage_regions
 from ingestion.lib.parquet import ParquetColumn
 
 AMOUNT = re.compile(r"^[△\-]?[0-9]{1,3}(?:,[0-9]{3})*$|^[△\-]?[0-9]+$")
@@ -46,6 +46,11 @@ BUDGET_LABELS = {
 LEVEL_AMOUNTS = ["計", "当初予算額", "補正予算額", "継続費及び繰越事業費繰越額",
                  "予備費支出及び流用増減", "支出済額", "翌年度繰越額", "不用額"]
 SETSU_AMOUNTS = ["金額", "支出済額", "翌年度繰越額", "不用額"]
+# Read-but-not-adopted expense-breakdown blocks: membership in a setsu is
+# unconfirmed, so they stay inside 目_備考 and never become rows. Right-page
+# breakdown zone only: the left budget columns stay in scope.
+UCHIWAKE_EXCLUSION = {'kind': '経費内訳',
+                      'reason': '右頁備考の経費内訳ブロックは事業別の分解で節対応未確認のため行化せず、属する目の目_備考へ保持する。'}
 
 
 def _boxes(words):
@@ -389,7 +394,7 @@ def _split_notes(notes):
     return rest, None
 
 
-def _parse_right(pages, order_index, totals):
+def _parse_right(pages, order_index, totals, coverage_exclusions=None):
     exec_rows = []
     current = None
     _parse_right._last_total = None
@@ -433,7 +438,7 @@ def _parse_right(pages, order_index, totals):
                 exec_rows.append(entry)
                 current = entry
                 if block:
-                    _block_append(current, block)
+                    _block_append(current, block, page=page, coverage_exclusions=coverage_exclusions)
             elif rates and not carried and not unused and not notes:
                 if current is None and getattr(_parse_right, "_last_total", None):
                     tpage, ty, tobj = _parse_right._last_total
@@ -449,13 +454,18 @@ def _parse_right(pages, order_index, totals):
                 if current is None or current["row"].get("_block_owner") is None:
                     raise ValueError(f"Block line before any moku at p{page} y={y:.1f}")
                 _, block = _split_notes(notes)
-                _block_append(current, block if block is not None else notes)
+                _block_append(current, block if block is not None else notes,
+                              page=page, coverage_exclusions=coverage_exclusions)
             elif carried or unused:
                 raise ValueError(f"Carry/unused without spent at p{page} y={y:.1f}")
     return exec_rows
 
 
-def _block_append(entry, words):
+def _block_append(entry, words, *, page=None, coverage_exclusions=None):
+    if coverage_exclusions is not None:
+        coverage_exclusions.extend(coverage_regions(
+            [(page, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text']) for w in words],
+            **UCHIWAKE_EXCLUSION))
     owner = entry["row"].get("_block_owner")
     if owner is None:
         raise ValueError("Moku block line outside any moku")
@@ -576,7 +586,8 @@ def convert(inputs, destination, options):
             moku = next((h for h in reversed(prev) if h["level"] == "moku"), None)
             kid["_kan"], kid["_kou"], kid["_moku"] = kan, kou, moku
     order_index = headings + setsu
-    exec_rows = _parse_right(right, order_index, totals)
+    exclusions = []
+    exec_rows = _parse_right(right, order_index, totals, coverage_exclusions=exclusions)
     by_id = {id(r["row"]): r for r in exec_rows}
     if len(by_id) != len(order_index):
         missing = [f"{getattr(r, 'get', lambda k: '?')('number')}" for r in order_index
@@ -622,7 +633,8 @@ def convert(inputs, destination, options):
                           if BODY_TOP <= w["yMin"] < LEFT_BOTTOM] +
                          [(page, (w["xMin"], w["yMin"], w["xMax"], w["yMax"]), w["text"])
                           for page, words in right.items() for w in words
-                          if BODY_TOP <= w["yMin"] < RIGHT_BOTTOM])
+                          if BODY_TOP <= w["yMin"] < RIGHT_BOTTOM],
+                         excluded_regions=exclusions)
     metadata = {"column_contexts": COLUMN_CONTEXTS, "units": [{"text": "円", "scope": {"kind": "columns",
                                                   "columns": AMOUNT_COLUMNS}}],
                 "notes": [{"text": "法定節が行。節を持たない25款5項5目予備費は目行。款・項・目の金額・執行額は所属contextとして各行へ反復。右頁備考の経費内訳ブロック（見出し・項目・合計）は事業別の分解で節対応未確認のため行化せず、属する目の目_備考へ印字行の改行のまま保持。末尾の施策番号は目_施策番号へカンマ結合で保持し、目_備考の行内にも残る。歳出合計統制行は行化せずlocal観測。執行率は原典の百分率表記を保持。継続費繰越・予備費流用欄は対象範囲で印字なしのため全行NULL。物理頁は左頁、bboxは左頁の行bounds。",
