@@ -1,18 +1,24 @@
 # scan PDFのOCRを選ぶ
 
-共通入口は `ingestion.lib.scan_ocr`。エンジンはPaddleOCRのPP-OCRv6 small。`backend="vision"` でApple Visionも選べるが、比較用で、取り込みには使わない（[ADR 0019](../../../docs/adr/0019-freeze-scan-ocr-observations.md)）。失敗時に別エンジンへ自動で切り替えない。既存の `vision_ocr` のAPI・CLIも残す。
-
-採用理由と比較の限界は[ADR 0018](../../../docs/adr/0018-paddle-small-for-scan-pdf.md)に記録する。
+共通入口は `ingestion.lib.scan_ocr`。既定は **Apple Vision**（`vision_ocr`）。PaddleOCRのPP-OCRv6 smallは `backend="paddle"` で選ぶ。失敗時に別エンジンへ自動で切り替えない。既存の `vision_ocr`・`paddle_ocr` のAPI・CLIも残す。
 
 ```python
 from pathlib import Path
 from ingestion.lib.scan_ocr import OcrRegion, recognize_pdf
 
-result = recognize_pdf(Path("settlement.pdf"), pages=[1, 2])
-apple = recognize_pdf(Path("settlement.pdf"), pages=[1, 2], backend="vision")
+result = recognize_pdf(Path("settlement.pdf"), pages=[1, 2])          # 既定はVision
+paddle = recognize_pdf(Path("settlement.pdf"), pages=[1, 2], backend="paddle")
 ```
 
-## 縮小検出と原画像の再読を組み合わせる
+`backend` を省略して `config` に `PaddleConfig` を渡した場合はPaddleを選ぶ。型が使うエンジンを一意に決めるため、既存のPaddle取得scriptはそのまま動く。`backend` を明示して `config` の型と食い違う場合は拒否する。
+
+Visionを既定にする理由は、実スキャンの金額の読み取りでPaddle smallより明らかに良いためである。macOSでしか動かない弱点は、OCRを変換器の外で一度だけ実行し観測を固定して補助入力にする方針（[ADR 0019](../../../docs/adr/0019-freeze-scan-ocr-observations.md)）で消える。Visionは **accurate、revision 3、日本語・英語** を初期条件にし、OSの版・build、revision、言語補正を記録する。内部重みは固定できるとは扱わない。設定は [vision_ocr.md](vision_ocr.md) を参照する。
+
+## 単独の0を読めないことがある
+
+Visionは単独の「0」を検出しないことがある。数字の中の0（例 `10,500`）は読める。読めなかった金額は行を作らずNULLのままにし、合計の差から値を逆算しない。取り込みの木の検査は「印字された金額、なければ子の値の和、子もなければ0」で値を決めるため、集計と検査は影響を受けない。ただし印字された0と原典の空欄の区別（[設計書 N6](../../../docs/prd/fiscal-dbt-models/design-doc.md#取り込みの出力-ノードの表と金額の表)）はこの経路では失われる。
+
+## Paddleを選ぶ場合の縮小検出と原画像の再読
 
 Paddleは文字を探す検出工程だけ長辺1280pxへ縮小する。見つけた文字の認識には、元の画像から切り出した画像を使う。MacのPDF描画は実験と同じCoreGraphics・300dpiを既定とする。
 
@@ -36,14 +42,24 @@ result = recognize_pdf(
 
 ## インストールと結果の利用
 
-Paddleの任意依存は `mise exec -- uv sync --extra paddle-ocr --frozen` で導入する。実行時も `uv run --extra paddle-ocr --frozen` を使う。Appleで比較するだけなら不要。モデルは [固定宣言](paddle_ocr_models.json) のものをローカルへ明示的に用意する。OCR実行中のダウンロードは行わない。
+Paddleの任意依存は `mise exec -- uv sync --extra paddle-ocr --frozen` で導入する。Paddleを選ぶときは実行時も `uv run --extra paddle-ocr --frozen` を使う。既定のVisionでは不要。モデルは [固定宣言](paddle_ocr_models.json) のものをローカルへ明示的に用意する。OCR実行中のダウンロードは行わない。
 
 Paddleのモデル指定・常駐engine・CLIは [paddle_ocr.md](paddle_ocr.md)、Appleの設定・語彙・CLIは [vision_ocr.md](vision_ocr.md) を参照する。複数画像を処理する場合は `PaddleOcr` のcontext内でengineを使い回す。PDF入口は同じengineで全指定頁と再読を処理する。
 
 両エンジンの有効な観測は `pages[].regions[].observations[]` に返る。`pdf_table.tokens_from_ocr(result, kind="region", region_ids=["full-page"], unit="pt")` で表の組み立てへ渡せる。画像入力では `unit="px"` を指定する。原文・金額の補正は行わず、名称辞書の適用や原典照合は呼び出し側で行う。
 
-## OCR後の名称に共通訂正辞書を使う
+## OCR後の名称と金額に共通訂正辞書を使う
 
-PaddleとAppleのどちらでも、名称の補正には共通の `ingestion.lib.ocr_names` を使う。呼び出し側が折り返しを結合し、番号欄を確認して番号と名称を分けた後、名称全体を辞書と照合する。[節名称辞書](fiscal_setsu_name_corrections.json) と [科目名辞書](fiscal_subject_name_corrections.json) に、原典画像で確認した誤読パターンを蓄積し、条件が合う別PDFでも再利用する。
+PaddleとVisionのどちらでも、名称の補正には共通の `ingestion.lib.ocr_names` を使う。呼び出し側が折り返しを結合し、番号欄を確認して番号と名称を分けた後、名称全体を辞書と照合する。[節名称辞書](fiscal_setsu_name_corrections.json) と [科目名辞書](fiscal_subject_name_corrections.json) に、原典画像で確認した誤読パターンを蓄積し、条件が合う別PDFでも再利用する。
+
+金額の誤読も同じ宣言の形で直す。`AmountRule`（`id`・観測した金額・正しい金額・`reason`）に、頁と観測IDを足して一つの観測に結び付ける。同じ誤読文字列が別のセルにあっても、頁と観測IDが合う規則だけを適用する。生の観測は書き換えず、補正前後・rule ID・辞書SHAを候補に残す。宣言した観測文字列が実際の観測と食い違えばエラーにし、古い宣言を黙って通さない。金額の訂正は木の検査で正しさを確かめ、誤った宣言は検査を通らない。合計の差から値を逆算して埋めることはしない。
+
+```json
+{"schema_version": 1, "normalization": "NFKC_REMOVE_WHITESPACE", "rules": [
+  {"id": "amount-inter-digit-space", "page": 1,
+   "observation_id": "p1:full-page:r109", "observed_amount": "84, 365, 635",
+   "corrected_amount": "84,365,635", "reason": "OCRが数字の間に空白を入れた。桁と符号は原典画像で確認した。"}
+]}
+```
 
 辞書にない名称や複数の解釈がある名称だけ、意味の照合や必要な領域の再読へ進む。原典が使っている旧字を新字へ一括変換しない。未訂正のOCR文字・観測ID・位置を保持し、補正前後とrule ID・辞書SHAを候補に記録して原典照合へ渡す。認識用の [ocr_vocabulary.json](ocr_vocabulary.json) はAppleの `customWords` 用で、Paddleの事後訂正にはこの語彙だけを追加しても効果はない。
