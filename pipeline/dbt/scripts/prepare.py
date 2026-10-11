@@ -133,7 +133,7 @@ def main() -> None:
     result = prepare(warehouse, candidate, remote=args.remote)
     if args.build:
         subprocess.run(['dbt', 'build', '--project-dir', str(DBT), '--profiles-dir', str(DBT),
-                        '--select', '+settlement_expenditure_node', '+settlement_expenditure_moku', '+origin', 'cofog_master'],
+                        '--select', '+settlement_expenditure_node', '+origin', 'cofog_master'],
                        cwd=DBT, stdout=sys.stderr, check=True)
         result['dbt_build'] = 'passed'
     print(json.dumps(result, ensure_ascii=False))

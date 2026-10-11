@@ -186,7 +186,6 @@ erDiagram
   origin ||--o{ settlement_expenditure_node : "印字された原典"
   settlement_expenditure_node |o--o{ settlement_expenditure_node : "親子"
   cofog_master |o--o{ settlement_expenditure_node : "COFOG（判断）"
-  settlement_expenditure_node ||--o| settlement_expenditure_moku : "ビュー：目ノード"
 
   settlement_expenditure_node {
     string node_id PK
@@ -226,7 +225,7 @@ erDiagram
   }
 ```
 
-保存するのは、決算の木の表 `settlement_expenditure_node` と、原典選定の記録から作る原典の表 `origin` である。比較用の `settlement_expenditure_moku` は保存しないビューにする。比較用の値はすべて木から取るので、保存した値どうしが食い違うことはない。
+保存するのは、決算の木の表 `settlement_expenditure_node` と、原典選定の記録から作る原典の表 `origin` である。団体をまたいで比べるときは、木の表を根ノードと同じ軸（`is_subject`）かつ `node_kind = '目'` で絞る。比較用の値を別に保存しないので、値どうしが食い違うことはない。
 
 木の表は資料区分ごとに分ける。決算の木は、金額が支出済額だと表名で決まる。当初予算を入れるときは `initial_expenditure_node`（当初予算額）、補正予算を入れるときは補正号と増減額を持つ表を別に作る。一つの表で資料区分をまたぐと、同じ金額の列に実績・当初予算額・増減額が混ざり、段階の違う金額を足す危険があるためである。
 
@@ -263,9 +262,9 @@ erDiagram
 
 1行は原典ファイル一つで、団体・年度・資料区分・補正号（補正予算のときだけ）・資料名・公開 URL・形式（CSV か PDF か）・SHA-256 を持つ。原典選定の記録から毎回生成する派生の表で、独立した provenance ファイルを新しく保存するものではない。木のノードは `origin_id` と `source_page` で原典の位置を指し、分冊でもファイルと頁で位置が決まる。
 
-#### 比較ビュー `settlement_expenditure_moku`
+#### 目の絞り込み（比較の入口）
 
-木の表から 根ノードと同じ軸（`is_subject`）かつ `node_kind = '目'` のノードを選ぶビューである。団体をまたいで比べるときの入口で、目の支出済額と COFOG を並べる。款・項での集計は `kan_code`・`kou_code` で行い、款・項の名前は目ノードから親を2段辿って取る。
+団体をまたいで比べるときは、木の表を 根ノードと同じ軸（`is_subject`）かつ `node_kind = '目'` で絞る。目の支出済額と COFOG を並べる。款・項での集計は `kan_code`・`kou_code` で行い、款・項の名前は目ノードから親を2段辿って取る。
 
 #### COFOG 分類マスタ
 
@@ -292,10 +291,9 @@ erDiagram
   - 金額を円へ換算し（円は1倍、千円は1000倍、それ以外の単位は止める）、名称から字間の空白と改行を除く。
 - `int_fiscal__settlement_expenditure_cofog`: seed の `cofog_rules` を優先順に当て、目ノードに分類状態と COFOG コードを一つ付ける。どの規則にも当たらない目があれば構築を止める。特別区の款名は法定と違うため、汎用の款名の規則はあまり当たらない。slice の3団体の規則を、項・目の粒度で根拠付きで足す。
 
-#### marts: 木の表・比較ビュー・原典の表を確定する
+#### marts: 木の表・原典の表を確定する
 
 - `settlement_expenditure_node`: intermediate の木に COFOG の列を結合した表。
-- `settlement_expenditure_moku`: 木の目ノードを選ぶビュー。
 - `origin`: 入力準備が原典選定の記録から作った表を整える。
 
 ### 検査

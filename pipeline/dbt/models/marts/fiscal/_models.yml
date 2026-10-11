@@ -82,8 +82,6 @@ models:
         arguments:
           to: ref('cofog_master')
           field: cofog_code
-- name: settlement_expenditure_moku
-  description: 科目の目ノードだけを選ぶ比較用のビュー。金額とCOFOGは木と同じ値。
 - name: origin
   description: 原典選定から毎回生成する原典ファイルの表。独立した証跡ファイルを保存するものではない。
   columns:
