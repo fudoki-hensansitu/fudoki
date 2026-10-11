@@ -9,10 +9,12 @@ from pathlib import Path
 
 import duckdb
 
-from ingestion.fiscal import manifest, sum_check
+from ingestion.fiscal import manifest
 from ingestion.fiscal.storage import fetch, save, cleanup, verify
 from ingestion.paths import BUILD
 from ingestion.lib import node_tables
+
+MATCH, MISMATCH, NOT_APPLICABLE = '一致', '不一致', '対象外'
 
 
 def inspect_table(path: Path, metadata: dict | None = None) -> int:
@@ -212,7 +214,7 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
         if {item['format'] for item in inputs} == {'pdf'}:
             for ident, (file, metadata) in prepared.items():
                 inspect_table(file, metadata)
-                rows = sum_check.read_rows(file)
+                rows = node_tables.read_rows(file)
                 # Conversions may separate details and notes for the same account.
                 try:
                     initial = node_tables.migrate_rows(rows, metadata or {})
@@ -278,23 +280,21 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
 
 
 def verify_sums(document: dict, locate) -> list[dict]:
-    """Hierarchy sum checks of every PDF table; ``locate(table)`` gives its verified Parquet."""
+    """Tree checks of every PDF table; ``locate(table)`` gives its verified Parquet."""
     selection = manifest.selection_for(document)
     formats = {conversion['id']: {item['format'] for item in manifest.resolved_inputs(document, conversion, selection)}
                for conversion in document['conversions']}
-    skipped = {table['table_id']: 'CSVは変換時の全セル保持検査で確認する'
-               for table in document['tables'] if formats[table['conversion_id']] == {'csv'}}
-    by_id = {table['table_id']: table for table in document['tables']}
-    legacy = {**document, 'tables': [t for t in document['tables'] if 'nodes' not in t]}
-    results = sum_check.verify_tables(legacy, sum_check.read_declarations(document),
-                                    lambda ident: sum_check.read_rows(locate(by_id[ident])), skipped) if legacy['tables'] else []
+    results = []
     for table in document['tables']:
-        if 'nodes' not in table:
+        if formats[table['conversion_id']] == {'csv'}:
+            results.append({'table_id': table['table_id'], 'status': NOT_APPLICABLE,
+                            'reason': 'CSVは変換時の全セル保持検査で確認する',
+                            'counts': {}, 'checks': [], 'results': []})
             continue
         pair = locate(table)
-        checked = node_tables.check_tree(sum_check.read_rows(pair['nodes']), sum_check.read_rows(pair['amounts']), document['target']['document_kind'])
+        checked = node_tables.check_tree(node_tables.read_rows(pair['nodes']), node_tables.read_rows(pair['amounts']), document['target']['document_kind'])
         passed = (checked['passed'] and not table['unread_amount_count'] and not table['unresolved_parent_count'])
-        results.append({'table_id': table['table_id'], 'status': sum_check.MATCH if passed else sum_check.MISMATCH,
+        results.append({'table_id': table['table_id'], 'status': MATCH if passed else MISMATCH,
                         'counts': checked['counts'], 'issues': checked['issues'], 'checks': [],
                         'results': checked['results']})
     return results
@@ -355,7 +355,7 @@ def main() -> None:
         print(manifest.SCHEMA.read_text())
     elif args.command == 'check':
         paths = [args.manifest] if args.manifest else manifest.paths()
-        count = ready = tables = declared = 0
+        count = ready = tables = 0
         for path in paths:
             document = manifest.read(path)
             for conversion in document['conversions']:
@@ -365,9 +365,7 @@ def main() -> None:
                 ready += 1
             count += 1
             tables += len(document['tables'])
-            declared += sum_check.read_declarations(document) is not None
-        print(json.dumps({'valid': True, 'manifests': count, 'ready': ready, 'saved_tables': tables,
-                          'sum_check_files': declared}))
+        print(json.dumps({'valid': True, 'manifests': count, 'ready': ready, 'saved_tables': tables}))
     elif args.command == 'originals':
         print(json.dumps(originals(args.manifest, args.output, remote=args.remote)))
     elif args.command == 'convert':
@@ -396,7 +394,7 @@ def main() -> None:
             print(json.dumps(verify_report(path, document, results, output / f'{name}.json'), ensure_ascii=False))
             for item in results:
                 summary[item['status']] = summary.get(item['status'], 0) + 1
-                failed |= item['status'] in (sum_check.MISMATCH, sum_check.UNDECLARED, sum_check.INVALID)
+                failed |= item['status'] == MISMATCH
         print(json.dumps({'manifests': len(runs), 'tables': summary}, ensure_ascii=False))
         raise SystemExit(1 if failed else 0)
     elif args.command == 'restore':

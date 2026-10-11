@@ -10,7 +10,7 @@ from unittest.mock import patch
 import duckdb
 import jsonschema
 
-from ingestion.fiscal import manifest, sum_check
+from ingestion.fiscal import manifest
 from ingestion.fiscal.run import convert
 from ingestion.fiscal.run import table_receipt, verify_sums
 
@@ -123,26 +123,11 @@ class ManifestWorkflowTest(unittest.TestCase):
         self.assertEqual([row[0] for row in columns], ['名称', '金額', 'source_line_start', 'source_line_end'])
         self.assertEqual(values, [('1,000',)])
 
-    def test_sum_check_declarations_mirror_the_manifest_and_name_only_its_tables(self):
+    def test_csv_tables_are_out_of_scope_for_tree_checks(self):
         with patch('ingestion.fiscal.run.save'), patch('ingestion.fiscal.run.cleanup'):
             convert(self.path, self.files, self.root/'saved', remote=True)
         saved = manifest.read(self.path)
-        self.assertIsNone(sum_check.read_declarations(saved))
-        path = sum_check.declaration_path(self.target, 'expenditure')
-        self.assertEqual(path, self.root/'jurisdictions/131016/sum_checks/2024/initial/expenditure.json')
-        self.assertNotIn(path, manifest.paths())
-        checks = [{'name': '金額', 'parent': {'key': ['名称']}, 'child': {'key': ['名称']}, 'columns': [['金額', '金額']]}]
-        path.parent.mkdir(parents=True)
-        path.write_text(json.dumps({'tables': {'one': checks}}))
-        self.assertEqual(sum_check.read_declarations(saved), {'one': checks})
-        for invalid in ({'tables': {'unknown': checks}},
-                        {'tables': {'one': [{**checks[0], 'child': {**checks[0]['child'], 'table': 'unknown'}}]}},
-                        {'tables': {'one': [{'name': '金額', 'parent': {'key': ['名称']}}]}}):
-            path.write_text(json.dumps(invalid))
-            with self.subTest(invalid=invalid), self.assertRaises((ValueError, jsonschema.ValidationError)):
-                sum_check.read_declarations(saved)
         # CSV tables are verified by cell retention at conversion, not by printed sums.
-        path.write_text(json.dumps({'tables': {'one': checks}}))
         results = verify_sums(saved, lambda table: self.root/'saved'/f'{table["table_id"]}.parquet')
         self.assertEqual({item['status'] for item in results}, {'対象外'})
 

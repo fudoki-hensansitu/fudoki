@@ -28,7 +28,7 @@ bun run ingestion:convert \
   --output ingestion/fiscal/observations/131041-settlement/new-candidate
 ```
 
-候補の `shinjuku-observations/` に全対象の Poppler 単語観測、親欄の観測 JSON、総括・法定節の検算用Parquetを残す。候補manifestの `tables` は会計ごとの正式明細（一般会計と3特別会計の4表）だけ。保存した表の階層ごとの合計は `bun run --cwd pipeline ingestion:verify`（宣言は `131041/sum_checks/`）で確かめる。構築器の動作確認を独立検査の代わりにしない。保存の可否、別経路の原典照合、各階層の比較と不一致一覧、R2 保存は検査 operator が担当する。
+候補の `shinjuku-observations/` に全対象の Poppler 単語観測、親欄の観測 JSON、総括・法定節の検算用Parquetを残す。候補manifestの `tables` は会計ごとの正式明細（一般会計と3特別会計の4表）だけ。保存した表の階層ごとの合計は `bun run --cwd pipeline ingestion:verify`（木の検査 `check_tree`）で確かめる。構築器の動作確認を独立検査の代わりにしない。保存の可否、別経路の原典照合、各階層の比較と不一致一覧、R2 保存は検査 operator が担当する。
 
 ## 独立検査
 
