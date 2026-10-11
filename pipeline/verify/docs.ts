@@ -3,6 +3,7 @@ import { join } from 'node:path'
 import { REPO } from '../runtime_paths'
 
 // ADR は並行する PR が同じ次の番号を取り合う。番号の重複はファイル名の検査で防ぐ。
+// H1 に番号を書かない ADR（0009）があるため、タイトルの番号はあるときだけ照合する。
 const directory = join(REPO, 'docs/adr')
 const numbers = new Map<string, string>()
 let checked = 0
