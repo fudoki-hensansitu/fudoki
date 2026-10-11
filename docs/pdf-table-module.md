@@ -115,7 +115,7 @@ PDFの観測・セル・階層の処理は既存の共通関数を組み合わ�
 
 実データの確認出力はGit管理外の `.agent/pdf-table-module/` にある。[保存済みOCRの再検証コード](../.agent/pdf-table-module/verify_scan.py)、[再検証結果](../.agent/pdf-table-module/final/verification.json)、[取り込みParquet](../.agent/pdf-table-module/final/columns-with-retry.parquet)を残した。既存の抽出器・固定入力への採用と一般的なセル検出は、この検証の対象外である。
 
-変換入口の追加後は、`conversion_test` の6テストと `pdf_table_test` の13テストが通過した。CSVのcp932・区切り文字・引用符内の改行・物理行範囲・空文字・文字列のNULL・重複・型付き空表、失敗時の部分出力防止、PDFの組み立てた行と未検出NULL、出力情報のJSON化を確認した。既存の `ingestion.inputs_test` の10テストも通過し、追加したPythonファイルの構文検査と `git diff --check` を行った。
+変換入口の追加後は、`conversion_test` の6テストと `pdf_table_test` の13テストが通過した。CSVのcp932・区切り文字・引用符内の改行・物理行範囲・空文字・文字列のNULL・重複・型付き空表、失敗時の部分出力防止、PDFの組み立てた行と未検出NULL、出力情報のJSON化を確認した。
 
 昭島市の同じtext PDFの物理109頁を再度Popplerで抽出し、新しい `write_conversion()` で124単語の原文・頁・枠をParquetへ保存した。読み戻した全行・値の一致を確認した。[出力情報](../.agent/conversion-api/result.json)と[単語のParquet](../.agent/conversion-api/text-pdf-words.parquet)をGit管理外に残した。財政明細への意味付けやscan PDFのOCR再実行は、この追加検証に含めていない。R2操作・入力一覧の更新は行っていない。
 
