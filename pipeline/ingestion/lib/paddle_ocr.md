@@ -1,6 +1,6 @@
 # PaddleOCR の取り込み用入口
 
-`paddle_ocr` はPP-OCRv6 smallの検出・認識をCPUで実行する。通常は検出だけ長辺1280pxへ縮小し、認識には元画像から切り出した画素を渡す。原典の文字・符号を後処理で変更しない。Apple Visionの既存入口も残す。
+`paddle_ocr` はPP-OCRv6 smallの検出・認識をCPUで実行する。通常は検出だけ長辺1280pxへ縮小し、認識には元画像から切り出した画素を渡す。原典の文字・符号を後処理で変更しない。Apple Visionの既存入口も残す。scan PDFの共通入口では既定ではなく、`backend="paddle"` または `PaddleConfig` を渡して選ぶ（[scan_ocr.md](scan_ocr.md)）。
 
 optional依存を含めて実行する。
 

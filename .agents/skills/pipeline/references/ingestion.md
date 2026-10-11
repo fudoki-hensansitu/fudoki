@@ -57,10 +57,10 @@
 
 ### 文字・位置を取得する
 
-1. OCRは **共通入口** `pipeline/ingestion/lib/scan_ocr.py` を通して行う。エンジンはPaddleOCR small。Apple Vision（`backend="vision"`）は比較用で、取り込みには使わない。OCRは変換器の外で取得し、凍結した観測を補助入力として変換器へ渡す（[ADR 0019](../../../../docs/adr/0019-freeze-scan-ocr-observations.md)。補助入力の保存・取得は未実装）。原典別の抽出器にエンジン呼び出し・画像描画・座標復元を複製しない。入口と設定の詳細は [モジュールの説明](../../../../pipeline/ingestion/lib/scan_ocr.md) を参照する。
+1. OCRは **共通入口** `pipeline/ingestion/lib/scan_ocr.py` を通して行う。既定は **Apple Vision**（`backend` 省略または `backend="vision"`）。PaddleOCR smallは `backend="paddle"` で選ぶ。Visionは単独の0を読めないことがあり、読めなかった金額は行を作らずNULLのままにし、印字された0と原典の空欄の区別は失われる。OCRは変換器の外で取得し、凍結した観測を補助入力として変換器へ渡す（[ADR 0019](../../../../docs/adr/0019-freeze-scan-ocr-observations.md)。補助入力の保存・取得は未実装）。原典別の抽出器にエンジン呼び出し・画像描画・座標復元を複製しない。入口と設定の詳細は [モジュールの説明](../../../../pipeline/ingestion/lib/scan_ocr.md) を参照する。
 2. 対象の物理頁・領域を指定し、300dpiを初期条件にする。表示上のCropBox・回転を反映して描画し、切り出し後の座標を元の頁へ戻す。
-3. Paddleは **PP-OCRv6 small、検出長辺1280px、原解像度で文字認識** を初期条件にする。この条件だけで全セルの文字保持を保証しない。観測のないセルは下記の欠落セル再読へ、検出済み名称の誤読は意味照合による補正へ進む。必要な見出し帯・セルの再読領域は原典別に宣言し、原画の切り出しで読む。前後のnative出力・採用した観測・座標、版・固定モデルSHA・描画条件・読み取り領域を保持する。比較でAppleを使う場合は **accurate、revision 3、日本語・英語** を初期条件にし、OSの版・build、revision、言語補正も記録する。Appleの内部重みは固定できるとは扱わない。
-4. 比較でAppleの `usesLanguageCorrection` をonにする場合は、コードと別管理の `ocr_vocabulary.json` を `customWords` に渡す。辞書は正しい名称の候補であり、認識成功や単独の0の検出を保証しない。Paddleの原文をこの辞書で自動置換しない。
+3. Paddleを選ぶ場合は **PP-OCRv6 small、検出長辺1280px、原解像度で文字認識** を初期条件にする。この条件だけで全セルの文字保持を保証しない。観測のないセルは下記の欠落セル再読へ、検出済み名称の誤読は意味照合による補正へ進む。必要な見出し帯・セルの再読領域は原典別に宣言し、原画の切り出しで読む。前後のnative出力・採用した観測・座標、版・固定モデルSHA・描画条件・読み取り領域を保持する。Apple Visionは **accurate、revision 3、日本語・英語** を初期条件にし、OSの版・build、revision、言語補正も記録する。Appleの内部重みは固定できるとは扱わない。
+4. Apple Visionの `usesLanguageCorrection` をonにする場合は、コードと別管理の `ocr_vocabulary.json` を `customWords` に渡す。辞書は正しい名称の候補であり、認識成功や単独の0の検出を保証しない。Paddleの原文をこの辞書で自動置換しない。
 5. 原典の列・表領域を確認して切り出し、文字列・観測枠・単語／数値の部分枠を取得する。頁全体のOCRだけで、すべてのセルを検出できたとは判断しない。
 6. OCRの `raw_text`、候補のconfidence、観測ID、読み取り領域、元の頁での座標を保持する。枠が取れない文字も捨てず、座標なしとして残す。親候補から引き継いだconfidenceを文字単位の精度と解釈しない。
 
@@ -88,6 +88,8 @@ OCRモジュールは文字と位置を返す。**表の列・セル・階層の
 5. nativeの元文字・観測ID・頁・座標を上書きせず、補正前後、適用したルールと辞書の版またはSHA、理由と確認範囲を残す。訂正辞書は認識器へ渡す語彙辞書とは区別する。
 
 共通の後処理は [ocr_names.py](../../../../pipeline/ingestion/lib/ocr_names.py)、確認済みの名称パターンは [節名称辞書](../../../../pipeline/ingestion/lib/fiscal_setsu_name_corrections.json) と [科目名辞書](../../../../pipeline/ingestion/lib/fiscal_subject_name_corrections.json) を使う。番号を含む欄は呼び出し側で番号を分離し、名称全体だけを渡す。原文の空白・折り返しを保つ場合は `correct_name_preserving_layout` を使い、文字数が変わる規則の `layout_policy` も記録する。
+
+金額の誤読も同じ宣言の形で直す。`id`・観測した金額・正しい金額・`reason` に頁と観測IDを足した `AmountRule` を `AmountDictionary` に置き、`correct_amount` で生の観測を上書きせずに補正前後・rule ID・辞書SHA・位置を返す。同じ誤読文字列が別のセルにあっても頁と観測IDが合う規則だけを適用し、宣言した観測文字列が実際の観測と食い違えばエラーにする。名称の規則は文字を、金額の規則は数字を含んで文字を含まないことを検査し、種類の混ざった辞書キーを拒否する。金額の訂正は木の検査で正しさを確かめ、誤った宣言は合計と合わず検査を通らない。合計の差から値を逆算して埋めない。
 
 これは名称補正の手順であり、共通辞書の自動適用が全抽出器に実装済みという意味ではない。
 
@@ -173,7 +175,8 @@ PDFは原典の内部で重複して印字された数字どうしの一致で�
 
 ## 関連文書
 
-- 現行のPaddleOCR small選定の判断: [ADR 0018](../../../../docs/adr/0018-paddle-small-for-scan-pdf.md)
+- 現行のscan PDFのエンジン選定（Vision既定・Paddleは `backend="paddle"`）: [ADR 0019](../../../../docs/adr/0019-freeze-scan-ocr-observations.md)
+- Paddle small導入時の判断: [ADR 0018](../../../../docs/adr/0018-paddle-small-for-scan-pdf.md)
 - Apple Vision導入時の判断: [ADR 0017](../../../../docs/adr/0017-vision-for-coordinate-preserving-ocr.md)
 - 欠落セルの再読・前処理の比較結果と公開調査: [Vision OCRの検証記録](../../../../docs/vision-ocr-evaluation.md)
 

@@ -1,6 +1,6 @@
 # 再利用するVision OCR
 
-`ingestion.lib.vision_ocr` はmacOS上でPDFの指定頁・領域を読み、OCRエンジンが返した文字と座標を返す。特定の自治体・表書式に依存しない。後処理で原典の金額や名称を書き換えない。取り込みの経路では使わず、PaddleOCRとの比較用に残す（[ADR 0018](../../../docs/adr/0018-paddle-small-for-scan-pdf.md)・[ADR 0019](../../../docs/adr/0019-freeze-scan-ocr-observations.md)）。
+`ingestion.lib.vision_ocr` はmacOS上でPDFの指定頁・領域を読み、OCRエンジンが返した文字と座標を返す。特定の自治体・表書式に依存しない。後処理で原典の金額や名称を書き換えない。scan PDFの共通入口 `ingestion.lib.scan_ocr` の既定であり、[ADR 0019](../../../docs/adr/0019-freeze-scan-ocr-observations.md) の方針で取得した観測を補助入力にする。
 
 SwiftのApple Vision・CoreGraphics・ImageIOを使い、追加のPython依存やモデルのダウンロードは不要。macOSのCommand Line Tools（`xcrun swift`）が必要。Vision revision 3、accurate、日本語・英語、言語補正offを既定にする。設定は原典別に変更できる。
 
@@ -81,7 +81,7 @@ CLIは `config.language_correction`、`config.vocabulary_path`、`config.custom_
 
 比較コードと未訂正の出力は `.agent/pdf-samples/vision-real-scan/test_custom_words.py`、`custom-words-{off,on,on-vocabulary}.json`、`custom-words-evaluation.json`。300dpi・revision 3・日本語/英語、macOS 27.0 build 26A428で実測した。以前のPoppler描画での誤読とは区別する。
 
-## 名称を辞書で訂正する
+## 名称と金額を辞書で訂正する
 
 `ingestion.lib.ocr_names` はOCRとは別に使う。呼び出し側が行の結合・節コードの分離を行い、論理的な名称を作ってから適用する。
 
@@ -102,13 +102,25 @@ name = correct_name("備品入費", dictionary)
 
 `correct_name_preserving_layout` は同じ照合に加えて、訂正前後の文字数が対応するとき空白・改行・未変更の字形を保つ。文字の追加・削除が必要な規則では、辞書の名称全体を返し、その方針を `layout_policy` に記録する。AppleとPaddleの両方に使える後処理であり、各OCRの認識結果そのものは変えない。
 
+金額の誤読も同じ宣言の形で直す。`AmountRule`（`id`・観測した金額・正しい金額・`reason`）に `page` と `observation_id` を足して一つの観測に結び付け、`load_amount_dictionary` で読み、`correct_amount` で適用する。同じ誤読文字列が別の頁・セルにあっても、頁と観測IDが合う規則だけを適用する。生の観測は書き換えず、補正前後・rule ID・辞書SHA・位置を返す。宣言した観測文字列が実際の観測と食い違えばエラーにし、古い宣言を黙って通さない。名称の規則は文字を含み、金額の規則は数字を含んで文字を含まないことを検査し、種類の混ざった辞書キーを拒否する。
+
+金額の訂正は木の検査で正しさを確かめる。誤った宣言は合計と合わず検査を通らない。合計の差から値を逆算して埋めることはなく、原典画像で確認した観測だけを宣言する。
+
+```python
+from ingestion.lib.ocr_names import correct_amount, load_amount_dictionary
+
+amounts = load_amount_dictionary(Path("amount_corrections.json"))
+amount = correct_amount("84, 365, 635", page=1, observation_id="p1:full-page:r109", dictionary=amounts)
+# raw_amount: 84, 365, 635 / corrected_amount: 84,365,635 / rule_id / reason / dictionary_sha256
+```
+
 ## 再利用できる範囲
 
 読み取り可能な別のPDFでもOCRの入口と出力形式は再利用できる。PDFの文字層を優先する判断、表の列・セル・階層・見開きの復元は呼び出し側の責務である。暗号化PDFは拒否する。入力が処理中に変わった場合も結果を返さない。
 
-実スキャンの比較では、全ページで109金額セル中18セル、列ごとの切り出しでも2セルの0を検出できなかった。OCR成功は全セルの検出を意味しない。欠落を空欄や0で自動補完せず、原典との確認を別に行う。
+実スキャンの比較では、全ページで109金額セル中18セル、列ごとの切り出しでも2セルの0を検出できなかった。OCR成功は全セルの検出を意味しない。欠落を空欄や0で自動補完せず、原典との確認を別に行う。単独の0が読めない金額は行を作らずNULLのままにし、集計と木の検査は定義どおりに扱う。ただし印字された0と空欄の区別はこの経路では失われる。
 
-内部重みの名前・版は公開APIで取得できない。OS更新後の再評価は必要で、Linuxでは動かない。導入時の判断と実測は[ADR 0017](../../../docs/adr/0017-vision-for-coordinate-preserving-ocr.md)、現在の方針は ADR 0018・0019 を参照する。
+内部重みの名前・版は公開APIで取得できない。OS更新後の再評価は必要で、Linuxでは動かない。導入時の判断と実測は[ADR 0017](../../../docs/adr/0017-vision-for-coordinate-preserving-ocr.md)、現在の方針は ADR 0019 を参照する。
 
 ## 小さい文字の閾値と未検出セルの再読
 

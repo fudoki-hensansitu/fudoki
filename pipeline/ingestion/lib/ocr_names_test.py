@@ -1,9 +1,13 @@
 """Whole-label corrections preserve original text and avoid unrelated names."""
 from pathlib import Path
+import json
+import tempfile
 import unittest
 
-from ingestion.lib.ocr_names import (NameDictionary, NameRule, correct_name,
-    correct_name_preserving_layout, load_name_dictionary)
+from ingestion.lib.node_tables import check_tree
+from ingestion.lib.ocr_names import (AmountDictionary, AmountRule, NameDictionary, NameRule,
+    correct_amount, correct_name, correct_name_preserving_layout, load_amount_dictionary,
+    load_name_dictionary)
 
 
 class SharedNameCorrections(unittest.TestCase):
@@ -86,6 +90,80 @@ class SharedNameCorrections(unittest.TestCase):
         with self.assertRaises(ValueError):
             NameDictionary('test',(NameRule('a','徵収費','徴収費','test'),NameRule('b','徵 収費','別名','test')))
 
+
+class AmountCorrections(unittest.TestCase):
+    def dictionary(self, rules):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'amounts.json'
+            path.write_text(json.dumps({'schema_version': 1,
+                'normalization': 'NFKC_REMOVE_WHITESPACE', 'rules': rules}))
+            return load_amount_dictionary(path)
+
+    def test_declared_amount_is_applied_without_rewriting_the_observation(self):
+        dictionary = self.dictionary([{'id': 'amount-1', 'page': 1,
+            'observation_id': 'p1:full-page:a0:result0:r109',
+            'observed_amount': '84, 365, 635', 'corrected_amount': '84,365,635',
+            'reason': 'OCRが数字の間に空白を入れた。桁と符号は原典画像で確認した。'}])
+        result = correct_amount('84, 365, 635', page=1,
+            observation_id='p1:full-page:a0:result0:r109', dictionary=dictionary)
+        self.assertEqual(result['raw_amount'], '84, 365, 635')
+        self.assertEqual(result['corrected_amount'], '84,365,635')
+        self.assertEqual(result['rule_id'], 'amount-1')
+        self.assertEqual(result['dictionary_sha256'], dictionary.sha256)
+
+    def test_position_binds_the_correction(self):
+        dictionary = self.dictionary([{'id': 'amount-1', 'page': 1,
+            'observation_id': 'p1:full-page:a0:result0:r109',
+            'observed_amount': '1000', 'corrected_amount': '1000', 'reason': 'test'}])
+        for page, observation_id in [(2, 'p1:full-page:a0:result0:r109'),
+                                     (1, 'p1:full-page:a0:result0:r110')]:
+            result = correct_amount('1000', page=page, observation_id=observation_id, dictionary=dictionary)
+            self.assertIsNone(result['rule_id'])
+            self.assertEqual(result['corrected_amount'], '1000')
+
+    def test_stale_observed_declaration_does_not_pass_silently(self):
+        dictionary = self.dictionary([{'id': 'amount-1', 'page': 1,
+            'observation_id': 'r1', 'observed_amount': '1,000',
+            'corrected_amount': '1,001', 'reason': 'test'}])
+        with self.assertRaises(ValueError):
+            correct_amount('2,000', page=1, observation_id='r1', dictionary=dictionary)
+
+    def test_rule_shape_must_be_an_amount_and_location_is_unique(self):
+        with self.assertRaises(ValueError):
+            AmountDictionary('test', (AmountRule('a', 1, 'r1', '備品入費', '備品購入費', 'test'),))
+        with self.assertRaises(ValueError):
+            AmountDictionary('test', (AmountRule('a', 1, 'r1', '1,000', '2,000', 'test'),
+                AmountRule('b', 1, 'r1', '3,000', '4,000', 'test')))
+        with self.assertRaises(ValueError):
+            AmountDictionary('test', (AmountRule('a', 0, 'r1', '1,000', '2,000', 'test'),))
+
+    def test_unsupported_schema_is_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'amounts.json'
+            for payload in [{}, {'schema_version': 2, 'normalization': 'NFKC_REMOVE_WHITESPACE', 'rules': []},
+                            {'schema_version': 1, 'normalization': 'NONE', 'rules': []}]:
+                path.write_text(json.dumps(payload))
+                with self.assertRaises(ValueError):
+                    load_amount_dictionary(path)
+
+    def test_tree_check_accepts_a_right_and_rejects_a_wrong_amount_declaration(self):
+        nodes = [{'node_key': 'do-1', 'parent_node_key': None, 'axis_header': '款', 'level_header': '款'},
+                 {'node_key': 'do-1/moku-1', 'parent_node_key': 'do-1', 'axis_header': '款', 'level_header': '目'}]
+        def checked(corrected):
+            dictionary = self.dictionary([{'id': 'amount-1', 'page': 3, 'observation_id': 'r7',
+                'observed_amount': '1,600', 'corrected_amount': corrected, 'reason': 'test'}])
+            moku = correct_amount('1,600', page=3, observation_id='r7', dictionary=dictionary)['corrected_amount']
+            amounts = [{'node_key': 'do-1', 'header_path': '支出済額', 'unit_text': '円', 'amount_text': '1,000'},
+                       {'node_key': 'do-1/moku-1', 'header_path': '支出済額', 'unit_text': '円', 'amount_text': moku}]
+            return check_tree(nodes, amounts)['passed']
+        self.assertTrue(checked('1,000'))
+        self.assertFalse(checked('900'))
+
+    def test_correction_location_types_are_checked(self):
+        dictionary = self.dictionary([])
+        for kwargs in [{'page': '1', 'observation_id': 'r1'}, {'page': 1, 'observation_id': 1}]:
+            with self.assertRaises(TypeError):
+                correct_amount('1,000', dictionary=dictionary, **kwargs)
 
 if __name__ == '__main__':
     unittest.main()
