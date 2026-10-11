@@ -35,7 +35,7 @@ with account_kinds as (
     select u.*, k.account_kind
     from unioned u
     left join account_kinds k
-      on k.jurisdiction_code = u.jurisdiction_code
+      on {{ fiscal_match_text('k.jurisdiction_code') }} = {{ fiscal_match_text('u.jurisdiction_code') }}
      and {{ fiscal_match_text('k.account_name') }} = u.fund_name
     qualify row_number() over (
         partition by node_id, document_kind

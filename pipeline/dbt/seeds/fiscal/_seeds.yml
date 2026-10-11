@@ -21,6 +21,7 @@ seeds:
         rule_id: varchar
         applies_to: varchar
         match_fund: varchar
+        match_account_kind: varchar
         match_kan: varchar
         match_kou: varchar
         match_kan_code: varchar
