@@ -15,7 +15,8 @@ with setsu_nodes as (
 ), canonicalized as (
     select s.*, coalesce(v.canonical, s.stripped_name) as norm_name
     from stripped s
-    left join {{ ref('setsu_name_variants') }} v on v.variant = s.stripped_name
+    left join {{ ref('setsu_name_variants') }} v
+      on {{ fiscal_setsu_strip('v.variant') }} = s.stripped_name
 ), matched as (
     select c.*,
         (select m.expenditure_setsu_id from {{ ref('setsu_master') }} m

@@ -298,7 +298,7 @@ erDiagram
   - 金額を円へ換算し（円は1倍、千円は1000倍、それ以外の単位は止める）、名称から字間の空白と改行を除く。
 - `int_fiscal__expenditure_accounts`: PDF の木と CSV の木の両方にある会計の一覧に、語の辞書（`account_kind_map`）で団体共通の種類を付ける。語に当たらない会計名があれば構築を止める。
 - `int_fiscal__expenditure_transfers`: 会計の種類と会計間の繰出の印・受け手の種類を、資料区分を列に持って一つの表で付ける（決算・当初予算、PDF・CSV 共通。`node_id` が資料をまたいで同じ導出のためキーは `node_id` と `document_kind`）。印の規則はここだけに持ち、両 marts は結合するだけにする（[ADR 0023](../../adr/0023-account-kind-and-no-consolidation.md)）。
-- `int_fiscal__expenditure_setsu`: 節の軸のノードに法定の節の ID（`setsu_master` の `expenditure_setsu_id`）を付ける。区切りの記号を除き、小さな表記差の辞書（`setsu_name_variants`）を当て、法定名称との完全一致で引き、年度に合う定義を選ぶ。当たらない名称があれば構築を止める。両 marts は結合するだけにする。
+- `int_fiscal__expenditure_setsu`: 節の軸のノードに法定の節の ID（`setsu_master` の `expenditure_setsu_id`）を付ける。区切りの記号を除き、小さな表記差の辞書（`setsu_name_variants`）を当て、法定名称との完全一致で引き、年度に合う定義を選ぶ。当たらない名称があれば構築を止める。CSV の科目軸内の節や旧年度の表記（例: 職員手当・補償補及び賠償金）は対象外で、そのまま節の軸に現れれば構築が止まる。そのときに variant 行を足す。両 marts は結合するだけにする。
 - `int_fiscal__settlement_expenditure_cofog`: seed の `cofog_rules` を優先順に当て、目ノードに分類状態と COFOG コードを一つ付ける。PDF の木と CSV の木の両方の目を対象にする。どの規則にも当たらない目があれば構築を止める。団体限定の規則は足さず、共通の語の辞書で当てる。特別会計の目は会計の種類で受ける共通の fallback（国民健康保険・後期高齢者医療→07、介護保険・介護サービス事業→10.2、駐車場→04.5、下水道→05.2、用地→unclassifiable）を持ち、償還・積立・繰出など行き先が違う目は種類を問わない語の規則で先に分ける。一般会計の目は目の名称の語彙で当てる。境界の判断はコード付きのまま `tentative` にする。
 
 #### marts: 木の表・原典の表を確定する
