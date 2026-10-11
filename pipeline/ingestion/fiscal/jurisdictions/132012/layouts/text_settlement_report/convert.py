@@ -1090,9 +1090,12 @@ def convert(inputs, destination, options):
 
 
 def detail_metadata(columns, funds, scope_label=None, stat_titles=None):
-    amounts = [c for c in columns if c.endswith(('決算額', '予算現額', '前年度決算額',
-               '金額')) or c in ('款_国庫支出金', '款_都支出金', '款_市債', '款_その他', '款_一般財源',
-               '款_保険料', '款_一般会計繰入金')]
+    # 款の資金分解5列は会計別に名称が異なる（fund_columns）。既定5名は一般会計と
+    # 同一で、それ以外（kaigo の保険料、kokuho の保険税など）も units 対象にする。
+    # 款_執行率（％）だけは units 対象外。款_決算額は金額なので対象に含める。
+    kan_funds = {'款_' + n for n in (list(funds) + DEFAULT_FUNDS)}
+    amounts = [c for c in columns
+               if c.endswith(('決算額', '予算現額', '前年度決算額', '金額')) or c in kan_funds]
     contexts = [{'columns': [c for c in columns if c.startswith(level + '_')],
                  'header_path': ['科目', level] if level != '事業' else ['事業', level],
                  'grain_columns': [level + '_物理頁', level + '_上端']}

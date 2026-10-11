@@ -1,8 +1,8 @@
 # 選定済み原典から作る取り込み表を管理する
 
 担当者: wwwyo / Codex
-更新日: `2026-10-08`
-状態: In Review（新しい保存経路を実装、対応する824表を移行、F入口を変更。旧モデル削除後の全量構築・旧検査/Gの移行は未完了、保留339件の採否は未決定）
+更新日: `2026-10-11`
+状態: Accepted（保存経路を実装済み。旧経路と移行済みの旧表は削除した）
 
 ## Summary
 
@@ -15,13 +15,13 @@
 - 原典、使用する会計・頁範囲、変換コード、保存された表を対応付ける。
 - 複数ファイル・複数会計・複数表を一つの対象に登録できるようにする。
 - 未完成の保存、重複する表ID、対象外の原典・保存先を検査で拒否する。
-- dbtのモデル変更、C/Dの原典照合、全年度の収録完了は今回の移行に含めない。
+- dbtのモデル、全年度の収録完了はこの設計に含めない。
 
 ## Background
 
 対象と原典の選定は [source_selection/schema.ts](../../../pipeline/source_selection/schema.ts) が管理する。対象は団体・年度・資料区分・補正号、会計と方向と物理頁は原典ファイルのscopeである。Bは選定を再判断せず、選定済みかつ保存済みの原典を使う。
 
-旧経路は一つの `sources.lock.json` と内容ハッシュのR2 keyを使っていた。新しいBは対象別のJSONと固定keyへ移した。Fは自治体の対象別JSONと、その保存参照が指すParquetを読む。旧検査・通常監査の読み取りには旧入力一覧が残る。移行状況とこの互換境界は [移行記録](migration.md) に記載する。
+dbt（C）へ保存済みParquetを渡す入力連携は未実装である。現在は取り込みのCLIが対象別JSONの検査と保存済みParquetの復元（`ingestion:restore`）を行う。
 
 ## Design
 
@@ -47,14 +47,9 @@ pipeline/ingestion/
     manifest.py                  # schemaと対象間の制約、fingerprint
     run.py                       # 変換、保存、復元、掃除の入口
     storage.py                   # private R2への入出力
-    migrate.py                   # 旧表の移行
     layouts/
       csv/                       # convert.py + options.schema.json
-      statement/                 # 既存の見開き読み取り器への入口
-      fiscal_general/            # 既存の共通抽出処理
-      retained/                  # 既存Parquetを内容変更せず移行する宣言
-    management/                  # 既存の原典登録・収録監査
-    legacy/relocations.json      # 旧コード参照の移動先
+      statement/                 # 見開き表の共通読み取り
     jurisdictions/
       132071/
         README.md
@@ -107,16 +102,6 @@ pipeline/ingestion/
 
 管理形式は `schema_version: 1`。`expected_tables` は表IDだけを持ち、後工程の `declaration`・`definition_files`・`legacy_path` はschemaで拒否する。`inputs` は原典SHAだけを保持する。形式・会計・ページ範囲はselectionから解決し、抽出をさらに絞る設定は変換器のoptionsに置く。取り込みfingerprintは原典・変換設定・取り込みコードから作り、dbtの宣言やモデルを含めない。
 
-F側の入力対応は別に管理する。
-
-```text
-pipeline/dbt/inputs/
-  bindings.schema.json
-  <団体>/<年度>/<資料区分>/<方向>.json
-```
-
-このJSONは対象・方向と表IDをキーに、dbtへ渡す `raw_path` だけを保持する（schema_version 1）。表に付随する確認済みの補足情報は取り込みJSONの `tables[].metadata` から受け取り、入力catalogにも保持する。dbt専用の別ファイルの提出は要求しない。metadataから実際のdbtモデルを構築する接続は未完了である。表の保存先・SHA・サイズ・行数は取り込みJSONが所有し、F側には複製しない。使用していない旧 `declaration`・`definition_files` の複製は残さない。Fのコード依存は構築IDのコードfingerprintで識別する。
-
 書式は年度・会計ごとに増やさない。設定値の違いで対応できる場合は同じコードを使う。別団体で同じ規則を使えることを確認した書式は `fiscal/layouts/` へ置く。団体固有の処理はその団体の `layouts/` に置き、歳入・歳出で規則が異なる場合は別の書式や設定を選ぶ。
 
 ### 構造と対象間の制約を保存前に検査する
@@ -137,8 +122,6 @@ CSVは [csv/convert.py](../../../pipeline/ingestion/fiscal/layouts/csv/convert.p
 
 ヘッダー付きCSVは変換後に原典を再読し、列名・順序・VARCHAR型、全セル値、行順・重複・空文字、追加の物理行範囲列をParquetと照合する。不一致では変換を失敗にし、検査で拒否した新規Parquetを除去して保存前に停止する。原典SHAは管理入口で変換前後に照合する。検査結果は候補dirの `<表ID>.checks.json` に再生成し、管理JSONのschemaは変更しない。この保持検査でCSVの取り込みを完了とし、合計一致や独立した再抽出を必須条件にしない。年度・会計・単位・段階の解釈は後段で確認する。PDFの内容検査の共通フローは別途定める。
 
-既存表の移行用 `retained` は再抽出器ではない。元のParquetのSHA・サイズを照合して同じバイト列を保存する。原典から作り直す場合は実際の書式の入口へ設定を変更する。配置を移した旧抽出器のCLIも残すが、新しい保存はschemaを通る入口から行う。
-
 ### 原典と現在の取り込み表をprivate R2で分ける
 
 ```text
@@ -155,7 +138,7 @@ fudoki-inputs/
 
 原典のkeyはsource_selectionの保存記録を使い、Bで作り直さない。表は同じ役割の固定keyへ上書きする。方向が違えば同じ表IDでも衝突しない。表の保存参照にはSHA・サイズ・行数を記録する。列名・型はParquetから取得する。使用した原典のSHAは `conversions.inputs` で管理し、表ごとに複製しない。OCR・bbox・描画キャッシュは `.cache/` または `.agent/` に置き、Gitへ追加しない。
 
-現在の保存実装は表の単一ファイルアップロードを使う。300MBを超えるParquetは保存前に停止する。multipartと新しい補助入力のR2保存は未実装であり、旧経路の画像・文字観測は後段の依存を確認するまで削除しない。
+現在の保存実装は表の単一ファイルアップロードを使う。300MBを超えるParquetは保存前に停止する。multipartと補助入力（凍結したOCR観測など）のR2保存は未実装である。
 
 ### fingerprintで入力条件の変更を検知する
 
@@ -181,7 +164,7 @@ fingerprintは変更検知の仕組みである。固定keyへの上書きと保
 
 | 案 | 利点 | 採否 |
 | --- | --- | --- |
-| 旧ハッシュkeyと一つの入力一覧を維持 | 既存consumerを変更せず使える | Bの現在版管理には採用しない。旧検査・通常監査Gの読み取り用に一時保持する |
+| 内容ハッシュkeyと一つの入力一覧 | 全入力を一覧で固定できる | 対象ごとの現在版管理と掃除が難しいため採用しない |
 | 世代ごとのkeyとcurrent切替 | 複数表の切替を原子的にできる | privateかつ逐次実行の範囲では管理が増えるため採用しない |
 | 設定と保存情報を別JSONにする | 更新主体を分離できる | 対象ごとに確認する情報を一つにまとめる |
 | 団体・年度ごとにコードを複製する | 例外を閉じやすい | 同じ書式の修正が分散するため、差を設定で表せる限り再利用する |
@@ -195,15 +178,3 @@ LLMのcontextへ表やOCRの全量を出さず、詳細はファイルへ、CLI�
 ## Validation / Rollout
 
 `ingestion:check` をCIで実行し、全管理JSONの構造・選定との対応・保存済み表の入力条件を確認する。変換テストでは複数原典、原文保持、対象・key・所有者の違反、局所再実行の欠落、アップロード失敗を検査する。
-
-旧表は原典SHAと対象・方向が現在の選定に一致するものを移す。表IDが曖昧なものや選定が一致しないものは移行済みとしない。旧R2領域の一括削除は後段の依存を外した後に行う。実測した移行件数、検証範囲、認証による未完了は [移行記録](migration.md) に置く。
-
-## dbt入口へ保存済み入力を渡す
-
-Fの入口は `pipeline/build_inputs.py` と `build.ts`。自治体の対象別JSONと保存済みParquetを受け取り、別の `sources.json`・`history.json`、`--declarations`、宣言ディレクトリの環境変数は要求しない。Fで原典の抽出やCの検査を再実行しない。
-
-管理JSON全体・F側の配置対応・selectionから解決した原典情報を構築入力fingerprintに含め、 `.cache/inputs/<fingerprint>/` にcatalogとParquetを固定する。catalogは管理JSON・表・原典との対応を保持する再生成可能な入力一覧であり、独立したprovenanceの保存物ではない。コピー後と再利用時にSHA・サイズを照合し、準備中の管理情報変更を拒否する。
-
-`dbt_inputs.py` は配置対応JSONのschema・対象・方向・表ID集合・原典版に対応するパスを検査する。管理情報の `initial` はdbt内部の `budget` に対応する。
-
-旧宣言JSONの直接読み取りと、その依存先の381モデル・5検査は削除し、旧JSONの存在を要求する停止処理も外した。残る152モデルは既存のdbt設定・Parquet・共通マスタを使う。単位・金額段階・階層は必要なモデルの設定で解釈し、原典で確認する情報を出力JSONへ持たせる場合もdbt用の別形式は要求しない。旧処理で生成した全CSVの再生成や公開全年度の網羅を、残ったモデルの構築成功だけで認定しない。旧検査・通常監査Gの移行は別途必要である。
