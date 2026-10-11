@@ -54,4 +54,4 @@ uv run python "$LAYOUT/validation_smoke.py" \
 
 検査コードは構築moduleを使用せず、原典から別の規則で観測する。金額は原表記文字列の完全一致、名称・備考は非空白文字の一致を検査し、画像罫線から備考の所属を確認する。
 
-同書式の介護保険特別会計には `inspect_origin.py --summary-pages 138 139 --detail-pages 150 159` を指定する。備考観測はこの独立観測の範囲を読み、`validate_candidate.py` と `validation_smoke.py` には `--table-id long-term-care-setsu` を渡す。引数省略時の一般会計の範囲・表IDは維持する。名称に含む全角数字（例「第１号被保険」）は金額行として除外しない。
+同書式の介護保険特別会計には `inspect_origin.py --summary-pages 138 139 --detail-pages 150 159` を指定する。備考観測はこの独立観測の範囲を読み、`validate_candidate.py` と `validation_smoke.py` には `--table-id long-term-care-setsu` を渡す。国民健康保険特別会計は `--summary-pages 96 97 --detail-pages 107 115` と `--table-id national-health-insurance-setsu`、後期高齢者医療特別会計は `--summary-pages 119 119 --detail-pages 128 133` と `--table-id elderly-medical-setsu` を指定する。引数省略時の一般会計の範囲・表IDは維持する。保存した表の階層ごとの合計は `bun run --cwd pipeline ingestion:verify`（宣言は `131105/sum_checks/`）で確かめる。名称に含む全角数字（例「第１号被保険」）は金額行として除外しない。

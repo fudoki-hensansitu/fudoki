@@ -6,8 +6,6 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
-env:
-  MISE_DISABLE_TOOLS: llama.cpp
 jobs:
   fixture-and-code:
     name: Synthetic fixture and code (not full fiscal build)

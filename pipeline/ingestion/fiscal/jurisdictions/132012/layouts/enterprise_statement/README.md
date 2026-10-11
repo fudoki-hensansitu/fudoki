@@ -1,5 +1,7 @@
 # 企業会計の決算報告書と費用明細
 
+**状態（2026-10-11）**: 管理JSONに未登録の書式。入力の凍結native OCRはgitignore配下のローカルファイルで、どのcheckoutにも残っていないため、この書式からは表を再構築できない。[ADR 0019](../../../../../../../docs/adr/0019-freeze-scan-ocr-observations.md) の補助入力の保存・取得を実装した後、OCRを取り直して登録する。
+
 `convert(inputs, destination, options)` は保存済みPDF、凍結native OCR、書式設定を受け取り、新しいローカルParquetと原典で確認したmetadataを返す。共通 `scan_ocr`、`pdf_table`、`conversion` と `fiscal/layouts/statement/text_spread` を利用する。R2、選定、正式管理JSON、dbtは変更しない。
 
 年度・会計ごとのコード複製を行わず、支出の行帯・列境界、見開き対応、罫線の階層、継続頁、原典限定訂正を設定で渡す。別原典への適用には、その原典画像による設定と独立検査が必要。

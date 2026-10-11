@@ -13,13 +13,18 @@ from fontTools.ttLib import TTFont
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
 NAME = "風土記"
+# Noto Sans JP は以前の検証画面の依存（@fontsource-variable/noto-sans-jp 5.3.0）から読んでいた。
+NOTO_DIR = ROOT / ".cache/logo-fonts/noto-sans-jp/files"
 
 
 def font_paths(key: str) -> list[Path]:
     """固定ハッシュを検証して書体を用意する。"""
     if key == "noto":
-        directory = ROOT / "pipeline/verify/view/node_modules/@fontsource-variable/noto-sans-jp/files"
-        return sorted(directory.glob("*-wght-normal.woff2"))
+        paths = sorted(NOTO_DIR.glob("*-wght-normal.woff2"))
+        if not paths:
+            raise FileNotFoundError(
+                f"Noto Sans JP がない: @fontsource-variable/noto-sans-jp@5.3.0 のパッケージを {NOTO_DIR.parent} に展開する")
+        return paths
     source = next(s for s in json.loads((HERE / "type-fonts.json").read_text()) if s["id"] == key)
     cache = ROOT / ".cache/logo-fonts"
     cache.mkdir(parents=True, exist_ok=True)

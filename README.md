@@ -39,14 +39,14 @@ bun run --cwd pipeline ingestion:check   # 取り込みの宣言・選定・fing
 
 原典は自治体が公開した CSV・PDF そのもの、取り込みは原典の値と単位を保った表である。dbt の staging で列名・型を整え、intermediate で共通単位・科目・分類を揃え、marts で提供する列と粒度を確定する。詳細は [用語](AGENTS.md#glossary) と [決定の記録](docs/adr/) を参照。
 
-COFOG は歳出明細と同じ CSV に含め、原典由来の金額と分類などの判断を列の説明で区別する。名称の対応は `account_names.csv`・`project_names.csv` で配る。判断の根拠は Git にある規則表に残す。DuckDB は、その入力と宣言から生成する実行用の表である。
+提供用データでは、COFOG を歳出明細と同じ表に含め、原典由来の金額と分類などの判断を列の説明で区別する。判断の根拠は Git にある規則表に残す。DuckDB は、その入力と宣言から生成する実行用の表である（dbt のモデルは作り直し中。[dbt モデルの設計](docs/prd/fiscal-dbt-models/design-doc.md)）。
 
 歳出の款・項・目は目的・科目の階層で、款が最も粗い。節は目の内訳を経済的な性質で分ける法定区分である。
-「事業単位まで」というのは目とその下の事業階層に届くという意味で、既存のダッシュボードは款と項で止まっている。
+「事業単位まで」というのは目とその下の事業階層に届くという意味である。
 事業階層の名前は団体ごとに違う（三鷹市は「事項」、狛江市は「大事業・中事業・小事業」）。
 **COFOG への対応は風土記の判断**であり、原典の階層経路を保った歳出明細に分類列として加える。
 
-科目の名称が原典に無い団体（狛江市）は、市が公開している決算書 PDF の見出しから名称を解決している。これも判断なので、出所は規則の根拠に書いてある。
+科目の名称が原典に無い団体（狛江市）は、市が公開している決算書 PDF の見出しから名称を解決した。これも判断なので、出所は規則の根拠に書いてある。
 
 **COFOG**（Classification of the Functions of Government）は政府支出の機能別分類で、教育や保健といった10のディビジョンに分ける国際標準である。
 自治体をまたぐ比較にも将来の国際比較にも同じ写像が効くので、粒度と対にして作っている。
@@ -68,7 +68,7 @@ COFOG は歳出明細と同じ CSV に含め、原典由来の金額と分類な
 - [AGENTS.md](AGENTS.md): プロジェクトの identity・構造・セットアップ
 - [docs/adr/](docs/adr/): 設計上の決定の記録
 - [pipeline skill](.agents/skills/pipeline/SKILL.md): 原典選定・取り込み・dbt構築の手順
-- [apps/web/README.md](apps/web/README.md): ダッシュボードの構成
+- [apps/web/README.md](apps/web/README.md): 公開 web（現在は一時的に 500）
 - [pipeline/source_selection/](pipeline/source_selection/): 団体ごとの原典の選定。団体を足すときはここから
 
 名前は『風土記』から。
@@ -81,11 +81,11 @@ COFOG は歳出明細と同じ CSV に含め、原典由来の金額と分類な
 | 層 | 誰のものか | ライセンス |
 |---|---|---|
 | コード（`pipeline/` `packages/` `apps/`） | fudoki | [MIT](LICENSE) |
-| 風土記の判断（COFOG 分類列・科目や事業名の対応） | 風土記 | descriptor の列・リソースごとの宣言（現在は CC BY 4.0） |
+| 風土記の判断（COFOG 分類列・科目や事業名の対応） | 風土記 | 配布物の descriptor で列ごとに宣言する（CC BY 4.0 の予定） |
 | 原典・取り込み表・配布明細の原典由来の列 | **各自治体** | 各原典の利用条件 |
 
 ⚠️ **原典のライセンスは fudoki が選んだものではない。**
 著作権を持たないものにライセンスは与えられないので、正本の表示は原典に付いてくる条件を
 そのまま素通ししている。fudoki は原典を改変しているので、その旨も表示している（CC BY 4.0 §3(a)(1)(B)）。
 
-方針は [ライセンスの層別宣言](docs/adr/0006-license-per-layer.md)、正確な表示は各 `datapackage.json`（`licenses` / `sources` / `contributors` / `description`）。
+方針は [ライセンスの層別宣言](docs/adr/0006-license-per-layer.md)。配布を再開したら、正確な表示は配布物の descriptor（`licenses` / `sources` / `contributors` / `description`）に置く。

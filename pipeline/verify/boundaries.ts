@@ -42,9 +42,7 @@ for (const root of ['apps', 'packages'])
           : name
       if (
         root === 'apps' &&
-        (target.startsWith('pipeline/') ||
-          name === '@fudoki/report' ||
-          name.startsWith('@fudoki/report/'))
+        target.startsWith('pipeline/')
       )
         throw new Error(
           `Public app imports pipeline internals: ${relative(REPO, path)}`
@@ -53,7 +51,6 @@ for (const root of ['apps', 'packages'])
         root === 'packages' &&
         (target.startsWith('pipeline/') ||
           target.startsWith('apps/') ||
-          name === '@fudoki/report' ||
           /^@fudoki\/(?:api|pipeline)/.test(name))
       )
         throw new Error(

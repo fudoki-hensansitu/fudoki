@@ -19,17 +19,18 @@
 
 from __future__ import annotations
 
+import hashlib
 import io
 import json
 import math
 import pathlib
+import urllib.request
 import zipfile
-
-from ingestion.lib.http import http_get
-from ingestion.shared.jurisdictions import load_jurisdictions
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent.parent.parent
 OUT = ROOT / "apps" / "web" / "public" / "tokyo.geojson"
+JURISDICTIONS = ROOT / "packages" / "jurisdictions" / "jurisdictions.json"
+UA = "fudoki/0.1 (+https://github.com/wwwyo/fudoki)"
 
 URL = "https://nlftp.mlit.go.jp/ksj/gml/data/N03/N03-2026/N03-20260101_13_GML.zip"
 SHA256 = "94f10b26256566db970dd74b09d614f059c1e8a432f9244ac9c4add76c32ff16"
@@ -154,7 +155,7 @@ def _extract_geojson(zip_bytes: bytes) -> dict:
 
 
 def main() -> None:
-    jurisdictions = load_jurisdictions()
+    jurisdictions = json.loads(JURISDICTIONS.read_text(encoding="utf-8"))["jurisdictions"]
     # N03_007 は全国地方公共団体コード**から検査数字（末尾1桁）を除いた5桁**
     # （JIS X 0402 の行政区域コード）。fudoki の正本キーは6桁なので、
     # 5桁プレフィクスで対応を取る。62件が5桁の時点で重複しないことは
@@ -164,14 +165,16 @@ def main() -> None:
     if len(code5_to_code6) != len(jurisdictions):
         raise RuntimeError("5桁プレフィクスが重複する団体コードがある")
 
-    got = http_get(URL)
-    if got.sha256 != SHA256:
+    with urllib.request.urlopen(urllib.request.Request(URL, headers={"User-Agent": UA}), timeout=120) as response:
+        body = response.read()
+    digest = hashlib.sha256(body).hexdigest()
+    if digest != SHA256:
         raise RuntimeError(
-            f"原文の SHA-256 が変わっている（{got.sha256}）。"
+            f"原文の SHA-256 が変わっている（{digest}）。"
             "国土数値情報 N03 が更新された可能性がある。中身を確認したうえで "
             "URL と SHA256 を更新すること"
         )
-    src = _extract_geojson(got.body)
+    src = _extract_geojson(body)
 
     # 団体コードごとに Polygon をまとめる（飛び地・複数の島を1つの MultiPolygon へ）。
     grouped: dict[str, list] = {}

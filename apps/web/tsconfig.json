@@ -2,9 +2,6 @@
   "extends": "../../tsconfig.json",
   "include": [
     "worker.ts",
-    "cloudflare.config.ts",
-    "wrangler.config.ts",
-    "build.ts",
     "deploy/*.ts"
   ],
   "exclude": []

@@ -1,6 +1,6 @@
 # 再利用するVision OCR
 
-`ingestion.lib.vision_ocr` はmacOS上でPDFの指定頁・領域を読み、OCRエンジンが返した文字と座標を返す。特定の自治体・表書式に依存しない。後処理で原典の金額や名称を書き換えず、既存の抽出器・固定入力へはまだ接続していない。
+`ingestion.lib.vision_ocr` はmacOS上でPDFの指定頁・領域を読み、OCRエンジンが返した文字と座標を返す。特定の自治体・表書式に依存しない。後処理で原典の金額や名称を書き換えない。取り込みの経路では使わず、PaddleOCRとの比較用に残す（[ADR 0018](../../../docs/adr/0018-paddle-small-for-scan-pdf.md)・[ADR 0019](../../../docs/adr/0019-freeze-scan-ocr-observations.md)）。
 
 SwiftのApple Vision・CoreGraphics・ImageIOを使い、追加のPython依存やモデルのダウンロードは不要。macOSのCommand Line Tools（`xcrun swift`）が必要。Vision revision 3、accurate、日本語・英語、言語補正offを既定にする。設定は原典別に変更できる。
 
@@ -108,7 +108,7 @@ name = correct_name("備品入費", dictionary)
 
 実スキャンの比較では、全ページで109金額セル中18セル、列ごとの切り出しでも2セルの0を検出できなかった。OCR成功は全セルの検出を意味しない。欠落を空欄や0で自動補完せず、原典との確認を別に行う。
 
-内部重みの名前・版は公開APIで取得できない。OS更新後の再評価は必要で、Linuxでは動かない。方針と実測は[ADR 0017](../../../docs/adr/0017-vision-for-coordinate-preserving-ocr.md)を参照する。
+内部重みの名前・版は公開APIで取得できない。OS更新後の再評価は必要で、Linuxでは動かない。導入時の判断と実測は[ADR 0017](../../../docs/adr/0017-vision-for-coordinate-preserving-ocr.md)、現在の方針は ADR 0018・0019 を参照する。
 
 ## 小さい文字の閾値と未検出セルの再読
 

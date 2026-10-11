@@ -1,6 +1,6 @@
 # scan PDFのOCRを選ぶ
 
-共通入口は `ingestion.lib.scan_ocr`。既定はPaddleOCRのPP-OCRv6 small、`backend="vision"` でApple Visionを選ぶ。失敗時に別エンジンへ自動で切り替えない。既存の `vision_ocr` のAPI・CLIも残す。
+共通入口は `ingestion.lib.scan_ocr`。エンジンはPaddleOCRのPP-OCRv6 small。`backend="vision"` でApple Visionも選べるが、比較用で、取り込みには使わない（[ADR 0019](../../../docs/adr/0019-freeze-scan-ocr-observations.md)）。失敗時に別エンジンへ自動で切り替えない。既存の `vision_ocr` のAPI・CLIも残す。
 
 採用理由と比較の限界は[ADR 0018](../../../docs/adr/0018-paddle-small-for-scan-pdf.md)に記録する。
 
@@ -36,7 +36,7 @@ result = recognize_pdf(
 
 ## インストールと結果の利用
 
-Paddleの任意依存は `mise exec -- uv sync --extra paddle-ocr --frozen` で導入する。実行時も `uv run --extra paddle-ocr --frozen` を使う。Appleだけを使う場合は不要。モデルは [固定宣言](paddle_ocr_models.json) のものをローカルへ明示的に用意する。OCR実行中のダウンロードは行わない。
+Paddleの任意依存は `mise exec -- uv sync --extra paddle-ocr --frozen` で導入する。実行時も `uv run --extra paddle-ocr --frozen` を使う。Appleで比較するだけなら不要。モデルは [固定宣言](paddle_ocr_models.json) のものをローカルへ明示的に用意する。OCR実行中のダウンロードは行わない。
 
 Paddleのモデル指定・常駐engine・CLIは [paddle_ocr.md](paddle_ocr.md)、Appleの設定・語彙・CLIは [vision_ocr.md](vision_ocr.md) を参照する。複数画像を処理する場合は `PaddleOcr` のcontext内でengineを使い回す。PDF入口は同じengineで全指定頁と再読を処理する。
 

@@ -57,9 +57,11 @@ classDiagram
     Origin "1" <-- "0..*" SettlementRevenueDataset : 基づく
     SettlementExpenditureDataset "1" *-- "1..*" SettlementExpenditureLine : 明細を持つ
     SettlementRevenueDataset "1" *-- "1..*" SettlementRevenueLine : 明細を持つ
-    SettlementExpenditureLine "1" *-- "1" CofogClassification : 分類結果を持つ
+    SettlementExpenditureLine "1" *-- "0..1" CofogClassification : 分類結果を持つ
     CofogClassification "0..*" --> "0..1" CofogMaster : 割り当てる
 ```
+
+MVP の提供用データでは、COFOG の分類結果は目のノードだけが持つ（[dbt モデルの設計](../fiscal-dbt-models/design-doc.md)）。
 
 - 自治体は年度ごとに決算歳出／歳入データセットを持つ。財政データが未収録の自治体は、どちらも0件になる。この図は決算の提供用明細を示し、予算の管理は別にする。
 - 一つのデータセットは一団体・一年度・一文書種別・一原典版を対象にする。原典の実体と、その原典から収録する範囲を区別する。同じ PDF に歳出と歳入が載る場合は両データセットが同じ原典を参照し、別の資料で公開された場合は別の原典を参照する。
@@ -106,7 +108,7 @@ classDiagram
     ExpenditureBudgetItem "1" --> "0..*" ExpenditureBudgetChange : 増減を追跡する
 ```
 
-確認済みの予算対象は事業×歳出の節で区別する。細節・細々節等は明細の JSON 内訳に保存する。節不明や集約時の分類・連結判断が未確認の場合は、原典で確認できる粒度を保持する。歳入の節をこの共通マスタへ入れず、COFOG と歳出の節を独立した分類軸として扱う。GFSM は提供しない。
+確認済みの予算対象は事業×歳出の節で区別する。細節・細々節等は、原典に印字された段として親子のノードで保持する（[ADR 0020](../../adr/0020-ingestion-outputs-node-tables.md)）。JSON の内訳には入れない。節不明や集約時の分類・連結判断が未確認の場合は、原典で確認できる粒度を保持する。歳入の節をこの共通マスタへ入れず、COFOG と歳出の節を独立した分類軸として扱う。GFSM は提供しない。
 
 ## 明細に含まれる値の意味を分ける
 

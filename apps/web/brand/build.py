@@ -113,7 +113,7 @@ for suffix, ink in (("", INK), ("-dark", INK_DARK)):
     )
 (PUBLIC / "favicon.svg").write_text(svg(32, 32, mark(themed=True), INK, themed=True))
 
-for target in (ROOT / "pipeline/verify/view/public", ROOT / "apps/docs/public"):
+for target in (ROOT / "apps/docs/public",):
     for name in ("mark.svg", "mark-dark.svg", "wordmark.svg", "wordmark-dark.svg", "logo.svg", "logo-dark.svg", "favicon.svg"):
         shutil.copyfile(PUBLIC / name, target / name)
 

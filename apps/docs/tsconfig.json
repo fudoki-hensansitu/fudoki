@@ -3,9 +3,7 @@
   "include": [
     "worker.ts",
     "cloudflare.config.ts",
-    "wrangler.config.ts",
-    "build.ts",
-    "deploy/*.ts"
+    "wrangler.config.ts"
   ],
   "exclude": []
 }

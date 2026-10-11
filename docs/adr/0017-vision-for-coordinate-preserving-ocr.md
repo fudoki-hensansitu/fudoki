@@ -1,6 +1,6 @@
 # ADR 0017: 座標を保持するOCRの第一選択にApple Visionを使う
 
-状態: scan PDFの既定については[ADR 0018](0018-paddle-small-for-scan-pdf.md)で更新済み（2026-10-09）。Apple Visionも選択可能なエンジンとして残す。以下は2026-10-07の比較と決定、および2026-10-09のGoogle Cloud Visionの追加比較の記録。
+状態: scan PDFの既定については[ADR 0018](0018-paddle-small-for-scan-pdf.md)で更新済み（2026-10-09）。Apple Visionは比較用に残し、取り込みの経路では使わない（[ADR 0019](0019-freeze-scan-ocr-observations.md)、2026-10-11）。以下は2026-10-07の比較と決定、および2026-10-09のGoogle Cloud Visionの追加比較の記録。
 
 ## 決定
 
@@ -87,7 +87,7 @@ Visionを選ぶことでmacOSに依存する。LinuxやCloudflare上で同じOCR
 
 ## 実装状況と残る作業
 
-本ADRは選定の記録であり、`pipeline/ingestion/lib/ocr.py` のllama.cpp＋GLM-OCRはまだ変更していない。取り込みParquetの再生成・採用、dbtの変更もしていない。実装変更はこれまでのTODOとまとめて行う。
+本ADRは選定の記録であり、当時の `pipeline/ingestion/lib/ocr.py` のllama.cpp＋GLM-OCRはこのとき変更しなかった（その後、旧処理とともに削除した）。取り込みParquetの再生成・採用、dbtの変更もしていない。実装変更はこれまでのTODOとまとめて行う。
 
 本体へ反映する前に、別自治体と実スキャンを含む対象頁で、金額欠落・枠の広がり・階層境界の誤判定を確認する。薄い印字・傾き・小さい数字・見開きも対象にし、款・項・目の継承から取り込みParquetまでの対応を検査する。印字された合計や別欄の数字がない場合に、検算を精度保証の代わりにしない。長時間処理の速度とメモリも未評価である。
 

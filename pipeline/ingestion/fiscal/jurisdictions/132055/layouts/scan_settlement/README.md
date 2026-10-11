@@ -1,5 +1,7 @@
 # 青梅市の scan 決算見開き
 
+**状態（2026-10-11）**: 管理JSONに未登録の書式。入力の凍結native OCRはgitignore配下のローカルファイルで、どのcheckoutにも残っていないため、この書式からは表を再構築できない。[ADR 0019](../../../../../../../docs/adr/0019-freeze-scan-ocr-observations.md) の補助入力の保存・取得を実装した後、OCRを取り直して登録する。
+
 `convert(inputs, destination, options)` は選定済みPDFのSHAとscope、凍結したnative OCR、書式設定を照合し、未使用dirへParquetと検算用観測を生成する。年度・会計ごとにconverterを複製せず、原典ごとの頁・セル枠・説明階層はlayoutで宣言する。共通の `pdf_table`・`conversion.write_conversion` を使い、実行中のOCR・ネットワーク・正式manifest更新は行わない。
 
 現在のlayoutは132055 FY2025の `settlement-2.pdf`（SHA `1cbe6a08f3f3dd4dee36e61f6964d64107e81e9fe3dcc5c64def39e2743c7526`）、一般会計の議会費、物理1–4頁・印字92–95だけに対応する。一般会計全14PDF/274頁や他会計の収録完了を表さない。

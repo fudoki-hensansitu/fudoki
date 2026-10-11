@@ -1,6 +1,6 @@
 ---
 name: web-frontend-ops
-description: fudoki の apps/web（Vite + React、Cloudflare Workers 静的アセット配信）を触るときに参照する。デプロイ後の見た目を確認しようとして curl の結果に惑わされた、DESIGN.md に何を書くか迷った、といった非自明なハマりどころを持つ。
+description: fudoki の apps/web（Cloudflare Workers、現在は全パスで 500）と repo root の DESIGN.md を触るときに参照する。DESIGN.md に何を書くか迷った、といった非自明なハマりどころを持つ。
 user-invocable: false
 ---
 
@@ -12,7 +12,6 @@ user-invocable: false
 
 | やること | 読む reference |
 | --- | --- |
-| デプロイ後に本番の見た目・DOM を確認したい | [references/deploy-verification.md](references/deploy-verification.md) |
 | `DESIGN.md` に何を書くか・書かないかを判断したい | [references/design-md.md](references/design-md.md) |
 
 ## 関連 skill
