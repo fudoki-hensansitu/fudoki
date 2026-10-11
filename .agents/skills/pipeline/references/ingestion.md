@@ -25,7 +25,7 @@
 2. 呼び出し側が保存記録の原典をローカルへ用意する。Bは公式URLから再取得せず、取得済みファイルのSHA-256を保存記録と照合する。不一致は原典の差し替えとして停止し、現在の台帳へ勝手に合わせない。
 3. 対象JSONと原典SHAからローカルパスへの対応を `ingestion:convert` へ渡す。実行入口が現在の選定・保存記録とscopeを検査し、原典のSHAを照合する。分冊は別原典として保持し、会計名・非連続の物理頁範囲・text/scanの指定を受け渡す。TypeScript側から個別に受け渡す場合は `pipeline/ingestion/selection.ts` の `prepareIngestion()` を使う。
 4. PDFは渡された歳出の頁範囲だけを処理する。範囲内の文字層の状態に応じて抽出方法を切り替え、年度・会計を再判定しない。CSVは書式別コードで原典の会計・方向の列に対応させる。`convert_csv()` 自体は行を絞らないため、複数会計・歳入／歳出を含むCSVは原典の全行を保持し、対象行の対応を別に明示する。対応できなければ未確認として停止し、列の値から会計を推測しない。
-5. 表をまたぐ場合は使用した原典を列挙し、各行の原典IDを実ファイルのSHAへ対応させる。原典の頁番号は分冊ごとに1から数え、結合後の通し頁を原典頁として記録しない。別会計・独立した表では階層の文脈をリセットする。
+5. 一つの表は原典ファイル一つから作り、分冊を一つの表へ結合しない。分冊をまたいで続く款・項・目は、各分冊の表に同じノードを置き、後段で一つにまとめる。原典の頁番号は分冊ごとに1から数え、通し頁を原典頁として記録しない。別会計・独立した表では階層の文脈をリセットする。
 
 `prepareIngestion()` 単体はローカル原典の対応検査までを行う。R2からの復元と表の保存・登録は管理側のCLIを使う。PDFの自動書式選択や、取り込み表の検査・dbtへの採用をこの関数に任せない。
 
@@ -147,7 +147,7 @@ PDFは原典の内部で重複して印字された数字どうしの一致で�
 
 ## 変換結果の受け渡し
 
-`ConversionContext` で、原典ID・表ID、抽出コード・layout設定への参照を渡す。Aからの入力では `prepareIngestion()` の選定参照と、使用した全原典の保存参照を渡す。分冊を結合する表も、原典ごとのSHA・サイズを保持する。型は [conversion.py](../../../../pipeline/ingestion/lib/conversion.py) を参照する。`convert_csv()` と `write_conversion()` は、これらの参照とParquetのローカルパス・SHA-256・サイズ・行数を `ConversionResult` として返す。`dataclasses.asdict()` でJSONにできる辞書へ変換できる。
+`ConversionContext` で、原典ID・表ID、抽出コード・layout設定への参照を渡す。Aからの入力では `prepareIngestion()` の選定参照と、使用した全原典の保存参照を渡す。変換が複数の原典を受け取る場合は、表ごとにどの原典から作ったかを対応させる。型は [conversion.py](../../../../pipeline/ingestion/lib/conversion.py) を参照する。`convert_csv()` と `write_conversion()` は、これらの参照とParquetのローカルパス・SHA-256・サイズ・行数を `ConversionResult` として返す。`dataclasses.asdict()` でJSONにできる辞書へ変換できる。
 
 年度・会計等を推定・定義せず、受け取った対象・scopeと変換結果を表IDで対応させて管理側へ渡す。変換器は `convert(inputs, destination, options)` と同じフォルダの `options.schema.json` を定義し、表IDとローカルParquetの対応を返す。変換器からGitの管理JSONやR2を更新しない。型と制約は [管理schema](../../../../pipeline/ingestion/fiscal/manifest.schema.json) と [実行時検査](../../../../pipeline/ingestion/fiscal/manifest.py) を正本とする。
 
