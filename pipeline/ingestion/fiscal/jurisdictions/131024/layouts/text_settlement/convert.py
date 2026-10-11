@@ -12,6 +12,10 @@ import duckdb
 
 from ingestion.lib.pdf_table import tokens_from_bbox_layout
 
+from importlib import import_module
+
+monetary = import_module("ingestion.fiscal.jurisdictions.131024.layouts.text_settlement.monetary")
+
 
 AMOUNT = re.compile(r'^(?:[0-9]+(?:,[0-9]{3})*(?:\.[0-9]+)?|－|−|―|\（[0-9.]+\）)$')
 FINANCIAL = ['当初予算額', '補正予算額', '繰越事業費繰越額', '予備費支出', '流用増減',
@@ -1185,6 +1189,9 @@ def convert(inputs, destination, options):
             outputs.append((table_id, data, is_reserve, is_lending))
     for table_id, data, is_reserve, is_lending in outputs:
         output = destination / (table_id + '.parquet')
+        if not is_reserve and not is_lending:
+            data = monetary.prepare(data)
         columns = write_parquet(output, data)
-        result[table_id] = {'path': output, 'metadata': metadata(columns, reserve=is_reserve, lending=is_lending)}
+        result[table_id] = {'path': output, 'metadata': (metadata(columns, reserve=is_reserve, lending=is_lending)
+                                                   if is_reserve or is_lending else monetary.metadata(columns))}
     return result
