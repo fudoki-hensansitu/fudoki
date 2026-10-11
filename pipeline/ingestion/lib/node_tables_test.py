@@ -2,7 +2,7 @@
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from ingestion.lib.node_tables import migrate_rows, check_tree, write_tables, NodeTables, read_rows, amount_phase
+from ingestion.lib.node_tables import migrate_rows, check_tree, write_tables, NodeTables, read_rows, amount_phase, parse_amount
 
 
 def context(prefix, header, grain=None):
@@ -252,6 +252,19 @@ class NodeTablesTests(unittest.TestCase):
             path=Path(tmp)
             with self.assertRaises(ValueError):write_tables(path,'bad',NodeTables(nodes,[amount('p','2'),amount('a','1')]))
             self.assertFalse(list(path.iterdir()))
+
+
+class ParseAmountTest(unittest.TestCase):
+    def test_printed_layout_is_ignored_but_absent_or_ambiguous_text_is_not_an_amount(self):
+        cases = {'1,234,567': 1234567, '△1,000': -1000, '▲ 2,000': -2000, '-6,000,000': -6000000,
+                 '1,959,393, 091': 1959393091, '774,472,949 円': 774472949, '円\n174,501,657': 174501657,
+                 '(836,078)': 836078, '０': 0, '0': 0}
+        for text, expected in cases.items():
+            with self.subTest(text=text):
+                self.assertEqual(parse_amount(text), expected)
+        for text in (None, '', '－', '103,371,120,00', '繰越明許費', '1,000 千円'):
+            with self.subTest(text=text):
+                self.assertIsNone(parse_amount(text))
             pair=write_tables(path,'ok',NodeTables(nodes,[amount('p','1'),amount('a','1')]))
             self.assertEqual(len(read_rows(pair['nodes'])),2)
             self.assertEqual(set(read_rows(pair['amounts'])[0]),set(amount('a','1')))

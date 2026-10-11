@@ -9,7 +9,7 @@ script はこの package が所有する。実行は `bun run --cwd pipeline <na
 | group | scripts |
 |---|---|
 | 取り込み・保存 | `ingestion:schema` / `ingestion:check` / `ingestion:originals` / `ingestion:convert` / `ingestion:restore` / `ingestion:cleanup` |
-| 取り込み表の合計検査 | `ingestion:verify`（PDF表の木の検査と、表をまたぐ照合の宣言を保存済み・候補の表に当てる。CIでは回さない） |
+| 取り込み表の合計検査 | `ingestion:verify`（ノードの表・金額の表の全段の木の検査を保存済み・候補の表に当てる。CIでは回さない） |
 | dbt | `dbt:prepare`（入力準備だけ）/ `dbt:build`（入力準備から marts まで。候補は `--candidate-dir`、保存済みで未キャッシュなら `--remote`） |
 | 検査 | `test`（bun）/ `test:python`（unittest）/ `test:dbt`（入力準備の unittest） |
 
