@@ -12,6 +12,7 @@ import duckdb
 from ingestion.fiscal import manifest, sum_check
 from ingestion.fiscal.storage import fetch, save, cleanup, verify
 from ingestion.paths import BUILD
+from ingestion.lib import node_tables
 
 
 def inspect_table(path: Path, metadata: dict | None = None) -> int:
@@ -62,6 +63,52 @@ def table_receipt(document: dict, conversion: dict, table_id: str, path: Path, *
     return result
 
 
+
+def pdf_account(document: dict, conversion: dict, nodes: list[dict]) -> str:
+    inputs = manifest.resolved_inputs(document, conversion)
+    accounts = {scope['account'] for item in inputs for scope in item['scope']}
+    account = conversion['options'].get('account')
+    if account is None and len(accounts) == 1:
+        account = next(iter(accounts))
+    if account is None:
+        pages = {node['physical_page'] for node in nodes if node['physical_page'] is not None}
+        matches = {scope['account'] for item in inputs for scope in item['scope']
+                   if pages and pages <= {p for first, last in scope.get('pages', [])
+                                          for p in range(first, last + 1)}}
+        if len(matches) == 1:
+            account = next(iter(matches))
+    if account not in accounts:
+        raise ValueError('PDF table needs one account from selected input scopes')
+    return account
+
+
+def complete_subject_rows(rows: list[dict], siblings: list[list[dict]]) -> list[dict]:
+    """Include printed subjects with no explanation using the same account's detail table.
+
+    No branch or amount is invented: copy only already-extracted 款・項・目 cells.
+    The declared grains deduplicate repeated ancestor cells during migration.
+    """
+    columns = list(rows[0]) if rows else []
+    additions = [{c: row.get(c) if c.startswith(('款_', '項_', '目_')) else None for c in columns}
+                 for sibling in siblings for row in sibling]
+    return [*rows, *additions]
+
+
+def node_receipt(document: dict, conversion: dict, table_id: str, tables: node_tables.NodeTables,
+                 output: Path, *, input_fingerprint: str | None = None, notes: list[str] | None = None) -> tuple[dict, dict]:
+    account = pdf_account(document, conversion, tables.nodes)
+    paths = node_tables.write_tables(output, table_id, tables)
+    receipt = {'table_id': table_id, 'conversion_id': conversion['id'],
+               'input_fingerprint': input_fingerprint or manifest.fingerprint(document, conversion),
+               'account': account, 'notes': [*(notes or []), node_tables.MIGRATION_NOTE],
+               'unread_amount_count': tables.unread_amount_count,
+               'unresolved_parent_count': tables.unresolved_parent_count}
+    for kind, path in paths.items():
+        receipt[kind] = {'object': {'key': manifest.object_key(document, table_id, kind),
+                                   'sha256': manifest.sha_file(path), 'bytes': path.stat().st_size},
+                         'row_count': inspect_table(path)}
+    return receipt, paths
+
 def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bool = False,
             conversion_ids: list[str] | None = None, extend_plan: Path | None = None) -> dict:
     document = manifest.read(path)
@@ -103,12 +150,13 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
             for table in retained:
                 if table['input_fingerprint'] != before[conversion['id']]:
                     raise ValueError('An untouched table is stale; include its conversion')
-                stored = fetch(table['object'], remote=remote)
-                if extend_plan is not None:
-                    verify(stored, table['object'])
-                count = inspect_table(stored, table.get('metadata'))
-                if extend_plan is not None and count != table['row_count']:
-                    raise ValueError('Retained table row count differs from its receipt')
+                for reference in manifest.table_references(table).values():
+                    stored = fetch(reference['object'], remote=remote)
+                    if extend_plan is not None:
+                        verify(stored, reference['object'])
+                    count = inspect_table(stored, table.get('metadata'))
+                    if extend_plan is not None and count != reference['row_count']:
+                        raise ValueError('Retained table row count differs from its receipt')
             tables.extend(retained)
             continue
         inputs = manifest.resolved_inputs(document, conversion, selection)
@@ -127,6 +175,7 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
         expected = {item['table_id'] for item in conversion['expected_tables']}
         if not isinstance(generated, dict) or set(generated) != expected:
             raise ValueError('Converter did not produce exactly its declared tables')
+        prepared = {}
         for ident, file in generated.items():
             metadata = None
             if isinstance(file, dict):
@@ -139,9 +188,24 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
             file = Path(file)
             if not file.resolve().is_relative_to(output.resolve()) or file.is_symlink():
                 raise ValueError('Converter output is outside the candidate directory')
-            outputs[ident] = file
-            tables.append(table_receipt(document, conversion, ident, file,
-                                        input_fingerprint=before[conversion['id']], metadata=metadata))
+            prepared[ident] = (file, metadata)
+        if {item['format'] for item in inputs} == {'pdf'}:
+            for ident, (file, metadata) in prepared.items():
+                inspect_table(file, metadata)
+                rows = sum_check.read_rows(file)
+                siblings = [sum_check.read_rows(other) for name, (other, _) in prepared.items() if name != ident]
+                rows = complete_subject_rows(rows, siblings)
+                migrated = node_tables.migrate_rows(rows, metadata or {})
+                receipt, pair = node_receipt(document, conversion, ident, migrated, output,
+                                             input_fingerprint=before[conversion['id']],
+                                             notes=[n['text'] for n in (metadata or {}).get('notes', [])])
+                outputs[ident] = pair
+                tables.append(receipt)
+        else:
+            for ident, (file, metadata) in prepared.items():
+                outputs[ident] = file
+                tables.append(table_receipt(document, conversion, ident, file,
+                                            input_fingerprint=before[conversion['id']], metadata=metadata))
     result = deepcopy(document)
     result['tables'] = tables
     manifest.validate(result)
@@ -166,9 +230,11 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
         if original_bytes is not None and path.read_bytes() != original_bytes:
             raise ValueError('Saved manifest changed before extension registration')
         manifest.write(path, result)
-        cleanup(result)
+        # Removing legacy wide tables is a separately authorized migration step.
+        if not any('nodes' in table for table in result['tables']):
+            cleanup(result)
     return {'status': 'saved' if remote else 'candidate', 'tables': len(tables),
-            'rows': sum(t['row_count'] for t in tables), 'candidate': str(candidate)}
+            'rows': sum(r['row_count'] for t in tables for r in manifest.table_references(t).values()), 'candidate': str(candidate)}
 
 
 def verify_sums(document: dict, locate) -> list[dict]:
@@ -179,18 +245,32 @@ def verify_sums(document: dict, locate) -> list[dict]:
     skipped = {table['table_id']: 'CSVは変換時の全セル保持検査で確認する'
                for table in document['tables'] if formats[table['conversion_id']] == {'csv'}}
     by_id = {table['table_id']: table for table in document['tables']}
-    return sum_check.verify_tables(document, sum_check.read_declarations(document),
-                                   lambda ident: sum_check.read_rows(locate(by_id[ident])), skipped)
+    legacy = {**document, 'tables': [t for t in document['tables'] if 'nodes' not in t]}
+    results = sum_check.verify_tables(legacy, sum_check.read_declarations(document),
+                                    lambda ident: sum_check.read_rows(locate(by_id[ident])), skipped) if legacy['tables'] else []
+    for table in document['tables']:
+        if 'nodes' not in table:
+            continue
+        pair = locate(table)
+        checked = node_tables.check_tree(sum_check.read_rows(pair['nodes']), sum_check.read_rows(pair['amounts']))
+        passed = (checked['passed'] and not table['unread_amount_count'] and not table['unresolved_parent_count'])
+        results.append({'table_id': table['table_id'], 'status': sum_check.MATCH if passed else sum_check.MISMATCH,
+                        'counts': checked['counts'], 'issues': checked['issues'], 'checks': [],
+                        'results': checked['results']})
+    return results
 
 
 def candidate_locator(directory: Path):
     """Find candidate Parquet files by the SHA-256 recorded in the candidate manifest."""
     by_sha = {manifest.sha_file(path): path for path in directory.rglob('*.parquet') if not path.is_symlink()}
 
-    def locate(table: dict) -> Path:
-        if table['object']['sha256'] not in by_sha:
-            raise FileNotFoundError(f'Candidate Parquet missing: {table["table_id"]}')
-        return by_sha[table['object']['sha256']]
+    def locate(table: dict):
+        found = {}
+        for kind, reference in manifest.table_references(table).items():
+            if reference['object']['sha256'] not in by_sha:
+                raise FileNotFoundError(f'Candidate Parquet missing: {table["table_id"]}')
+            found[kind] = by_sha[reference['object']['sha256']]
+        return found if 'nodes' in table else found[None]
     return locate
 
 
@@ -264,7 +344,9 @@ def main() -> None:
             runs = []
             for path in args.manifest or manifest.paths():
                 document = manifest.read(path)
-                runs.append((path, document, lambda table: fetch(table['object'], remote=args.remote)))
+                runs.append((path, document, lambda table: ({kind: fetch(ref['object'], remote=args.remote)
+                    for kind, ref in manifest.table_references(table).items()} if 'nodes' in table
+                    else fetch(table['object'], remote=args.remote))))
         summary = {}
         failed = False
         for path, document, locate in runs:
@@ -281,8 +363,10 @@ def main() -> None:
         document = manifest.read(args.manifest)
         manifest.require_current(document)
         for table in document['tables']:
-            restored = fetch(table['object'], remote=args.remote)
-            inspect_table(restored, table.get('metadata'))
+            for reference in manifest.table_references(table).values():
+                restored = fetch(reference['object'], remote=args.remote)
+                if inspect_table(restored, table.get('metadata')) != reference['row_count']:
+                    raise ValueError('Restored table row count differs from receipt')
         print(json.dumps({'restored': len(document['tables'])}))
     else:
         print(json.dumps({'removed': cleanup(manifest.read(args.manifest))}))
