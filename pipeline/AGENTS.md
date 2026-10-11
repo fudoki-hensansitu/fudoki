@@ -9,6 +9,7 @@ script はこの package が所有する。実行は `bun run --cwd pipeline <na
 | group | scripts |
 |---|---|
 | 取り込み・保存 | `ingestion:schema` / `ingestion:check` / `ingestion:originals` / `ingestion:convert` / `ingestion:restore` / `ingestion:cleanup` |
+| 取り込み表の合計検査 | `ingestion:verify`（PDF表の階層ごとの合計を原典の印字金額と照合する。CIでは回さない） |
 | 検査 | `test`（bun）/ `test:python`（unittest） |
 
 原典選定は `bun pipeline/source_selection/check.ts` と `archive.ts`。dbt はマスタ（`dbt/seeds/`）と共通の正規化macroだけを持ち、モデルは新しい取り込み表から作り直す。
@@ -23,7 +24,7 @@ script はこの package が所有する。実行は `bun run --cwd pipeline <na
 
 - **汎用層として作る**: 団体ごとの差は原典選定の宣言・書式設定に置き、取得・変換の処理を再利用できる形にする。「他自治体でも動く」をコードで示す。
 - **schema・宣言は最小形から始める**: フィールドは原則 nullable にし、必須化・union 型化・汎用 scope 枠のような拡張は実例が出てから足す。最初から過剰な提案を出すとユーザーに削らせる往復になる（2026-10、source_selection schema の scope/inspection を連続して削らせた観測）。
-- **取り込み**: Bは選定済みのCSV/PDFと対象情報を受け取り、ローカルParquetへ変換する。管理JSONはschema_version 1で入出力と変換だけを持ち、型は `ingestion/fiscal/manifest.schema.json`、対象間の制約は `manifest.py`。CLIとCIで `ingestion:check` を実行する。配置と保存の手順は [ingestion手順](../.agents/skills/pipeline/references/ingestion.md)、判断は [保存設計](../docs/prd/ingestion-storage/design-doc.md) を参照する。
+- **取り込み**: Bは選定済みのCSV/PDFと対象情報を受け取り、ローカルParquetへ変換する。管理JSONはschema_version 1で入出力と変換だけを持ち、型は `ingestion/fiscal/manifest.schema.json`、対象間の制約は `manifest.py`。CLIとCIで `ingestion:check` を実行する。PDF表の階層ごとの合計検査は `ingestion:verify` で、表ごとの宣言は `ingestion/fiscal/jurisdictions/<団体>/sum_checks/`、型は `ingestion/fiscal/sum_check.schema.json`。配置と保存の手順は [ingestion手順](../.agents/skills/pipeline/references/ingestion.md)、判断は [保存設計](../docs/prd/ingestion-storage/design-doc.md) を参照する。
 - **コード配置**: 共通処理は `ingestion/lib/`、書式別の共通処理は `ingestion/fiscal/layouts/`、団体固有のコードと宣言は `ingestion/fiscal/jurisdictions/<団体>/layouts/`。年度・会計だけでコードを複製しない。
 - **OCR**: 新しいBの共通入口は `ingestion/lib/scan_ocr.py`。既定はPaddleOCR smallの縮小検出・原解像度認識で、再読領域は書式設定から渡す。Apple Visionも `backend="vision"` と既存の `vision_ocr.py` で使える。設定と検証範囲は [OCRの説明](ingestion/lib/scan_ocr.md)、実行と欠落セルの再読は `.agents/skills/pipeline/references/ingestion.md` を参照する。
 - **変換**: dbt-duckdb。モデルは新しい取り込み表から作り直す（現在はマスタseedsと正規化macroのみ）。
