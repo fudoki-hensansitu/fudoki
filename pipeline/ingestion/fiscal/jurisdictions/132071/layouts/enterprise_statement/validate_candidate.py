@@ -14,6 +14,67 @@ def read(path):
     if any(t[1] not in ('VARCHAR','BIGINT','DOUBLE') for t in types):raise ValueError('Non-scalar raw type')
     return rows
 
+def detail_rows(table, candidate):
+    """Read the saved pair and project its explicit links for the XML comparison."""
+    saved = {}
+    for kind in ('nodes', 'amounts'):
+        receipt = table[kind]
+        path = candidate / Path(receipt['object']['key']).name
+        if hashlib.sha256(path.read_bytes()).hexdigest() != receipt['object']['sha256'] or path.stat().st_size != receipt['object']['bytes']:
+            raise ValueError('Candidate identity differs')
+        saved[kind] = read(path)
+        if len(saved[kind]) != receipt['row_count']:
+            raise ValueError('Receipt rows differ')
+        for row in saved[kind]:
+            if any(row[k] is None for k in ('physical_page', 'x0', 'y0', 'x1', 'y1')) or not (0 <= row['x0'] < row['x1'] and 0 <= row['y0'] < row['y1']):
+                raise ValueError('Missing/invalid printed coordinates')
+    nodes = {n['node_key']: n for n in saved['nodes']}
+    if len(nodes) != len(saved['nodes']):
+        raise ValueError('Duplicate node')
+    amounts = collections.defaultdict(dict)
+    children = collections.defaultdict(list)
+    for a in saved['amounts']:
+        if a['node_key'] not in nodes or a['unit_text'] != '円' or a['header_path'] not in ('金額（円）', '備考／予算額'):
+            raise ValueError('Unknown amount owner/header/unit')
+        if a['header_path'] in amounts[a['node_key']]:
+            raise ValueError('Duplicate printed amount')
+        amounts[a['node_key']][a['header_path']] = a['amount_text']
+    for node in saved['nodes']:
+        children[node['parent_node_key']].append(node)
+    rows, used = [], set()
+    for section in saved['nodes']:
+        if section['axis_header'] != '款項' or section['level_header'] != '節':
+            continue
+        path = []
+        current = section
+        while current is not None:
+            if current['node_key'] in {n['node_key'] for n in path}:
+                raise ValueError('Parent cycle')
+            path.append(current)
+            current = nodes[current['parent_node_key']] if current['parent_node_key'] else None
+        path.reverse()
+        if [n['level_header'] for n in path] != ['款', '項', '目', '節'] or any(n['axis_header'] != '款項' for n in path):
+            raise ValueError('Incomplete enterprise hierarchy')
+        record = {}
+        for node in path:
+            used.add(node['node_key'])
+            level = node['level_header']
+            record[level] = node['name_text']
+            record['金額（円）' if level == '節' else level + '_金額'] = amounts[node['node_key']]['金額（円）']
+        record.update({'備考_予算額': amounts[section['node_key']].get('備考／予算額'),
+                       '物理頁': section['physical_page'], '印刷頁': '-' + str(section['physical_page'] - 3) + '-',
+                       '原典位置_上端': section['y0'], '原典位置_下端': section['y1']})
+        for remark in children[section['node_key']] or [None]:
+            if remark is not None:
+                if remark['axis_header'] != '備考' or children[remark['node_key']]:
+                    raise ValueError('Unexpected remark branch')
+                used.add(remark['node_key'])
+            rows.append({**record, '備考_名称': remark['name_text'] if remark else None,
+                         '備考_金額': amounts[remark['node_key']]['金額（円）'] if remark else None})
+    if used != set(nodes):
+        raise ValueError('Uncompared printed nodes')
+    return rows
+
 def validate(origin, manifest, candidate, out, pdf):
     document=json.loads(manifest.read_text());obs=json.loads(origin.read_text());issues=[];checks=[];cell_count=0;tables={}
     sha=hashlib.sha256(pdf.read_bytes()).hexdigest()
@@ -30,9 +91,13 @@ def validate(origin, manifest, candidate, out, pdf):
                 if got!=value:issues.append({'kind':'文字・所属','table':ident,'row':index,'column':key,'expected':value,'actual':got})
     for table in document['tables']:
         ident=table['table_id'];path=candidate/(ident+'.parquet')
-        if hashlib.sha256(path.read_bytes()).hexdigest()!=table['object']['sha256'] or path.stat().st_size!=table['object']['bytes']:raise ValueError('Candidate identity differs')
-        rows=read(path);tables[ident]=rows
-        if len(rows)!=table['row_count']:raise ValueError('Receipt rows differ')
+        if 'nodes' in table:
+            rows=detail_rows(table,candidate)
+        else:
+            if hashlib.sha256(path.read_bytes()).hexdigest()!=table['object']['sha256'] or path.stat().st_size!=table['object']['bytes']:raise ValueError('Candidate identity differs')
+            rows=read(path)
+            if len(rows)!=table['row_count']:raise ValueError('Receipt rows differ')
+        tables[ident]=rows
         if ident.endswith('-detail'):
             capital=ident.endswith('capital-detail');sections=[s for s in obs['sections'] if (s['page']>=30)==capital];expected=[]
             for section in sections:
