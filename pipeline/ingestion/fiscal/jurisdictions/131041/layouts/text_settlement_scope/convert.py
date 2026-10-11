@@ -10,6 +10,7 @@ import json
 from pathlib import Path
 
 from ingestion.lib.conversion import ConversionContext, write_conversion
+from ingestion.lib.node_tables import write_coverage_words
 from ingestion.lib.parquet import ParquetColumn
 
 layout = import_module('ingestion.fiscal.jurisdictions.131041.layouts.text_settlement.convert')
@@ -77,7 +78,7 @@ def convert(inputs, destination, options):
     rows = layout.expenditure_detail(remarks, summary)
     results = {}
     for suffix, observed in [('summary', summary), ('setsu', sections), ('expenditure-detail', rows)]:
-        columns = tuple(ParquetColumn(k, 'BIGINT' if k.endswith('物理頁') else 'DOUBLE' if k.endswith(('上端', '下端'))
+        columns = tuple(ParquetColumn(k, 'BIGINT' if k.endswith('物理頁') else 'DOUBLE' if k.endswith(('左端', '上端', '右端', '下端'))
                                       else 'VARCHAR') for k in observed[0])
         table_destination = destination if suffix == 'expenditure-detail' else observations
         result = write_conversion(table_destination / (prefix + '-' + suffix + '.parquet'), observed,
@@ -85,4 +86,9 @@ def convert(inputs, destination, options):
                                   context=ConversionContext(source['sha256'], prefix + '-' + suffix, __file__))
         if suffix == 'expenditure-detail':
             results[table_id] = {'path': Path(result.path), 'metadata': layout.metadata(observed, suffix)}
+            write_coverage_words(Path(result.path),
+                                 [(page, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text'])
+                                  for page, words in scoped_summary for w in words if w['yMin'] > 145] +
+                                 [(page, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text'])
+                                  for page, words in scoped_detail for w in words if w['yMin'] > 145])
     return results

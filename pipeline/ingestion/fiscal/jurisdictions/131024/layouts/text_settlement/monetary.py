@@ -34,6 +34,11 @@ def prepare(records):
         amount = '内表_給付額' if row.get('内表_給付額') is not None else '内表_金額'
         if row.get(amount) is not None:
             row['内表_金額'] = row[amount]
+            for k in POSITION:
+                # A mapped 給付額 keeps its own printed cell position under the
+                # adopted 金額 column; an unmapped 金額 already carries it.
+                if amount != '内表_金額':
+                    row['内表_金額_' + k] = row.get(amount + '_' + k)
             identity = tuple(row.get(amount + '_' + k) for k in POSITION)
             parent = tuple(row.get(p + '_' + k) for p in ('目', *BUSINESS) for k in POSITION[:3])
             groups[amount, parent, identity].append(row)
@@ -43,7 +48,14 @@ def prepare(records):
             if '施工概要_計' in row:
                 row['施工概要_施工概要／計'] = row['施工概要_計']
             for k in POSITION:
+                # The row bounds stay the grain; the adopted amount columns
+                # keep their own printed cell positions.
                 row['施工概要_' + k] = row.get(k)
+            if current is not None:
+                for k in POSITION:
+                    row['施工概要_金額_' + k] = row.get(current + '_' + k)
+                    if '施工概要_計' in row:
+                        row['施工概要_施工概要／計_' + k] = row.get('施工概要_計_' + k)
     for (amount, _, _), members in groups.items():
         fields = [c for c in members[0] if c.startswith('内表_') and c.count('_') == 1
                   and c not in ('内表_金額', '内表_給付額', '内表_月額', '内表_表題', '内表_名称')]
@@ -83,7 +95,7 @@ def metadata(columns):
         money.append('内表_金額')
     if '施工概要_名称' in columns:
         group = [c for c in columns if c.startswith('施工概要_')]
-        years = [c for c in group if '年度' in c]
+        years = [c for c in group if '年度' in c and c.rsplit('_', 1)[-1] not in POSITION]
         # The latest printed year is the current expenditure column. The raw
         # heading is kept; check_tree compares it via the printed level heading.
         current = current_year(years)

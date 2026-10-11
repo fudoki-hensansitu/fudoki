@@ -7,6 +7,9 @@ from dataclasses import dataclass
 from functools import cache
 import hashlib
 import json
+import math
+import re
+import unicodedata
 from pathlib import Path
 
 import duckdb
@@ -64,6 +67,334 @@ def _amount_position(row, column, context):
     if position['physical_page'] is None:
         return dict.fromkeys(position)
     return position
+
+
+AMOUNT_POSITION_SUFFIXES = ('物理頁', '左端', '上端', '右端', '下端')
+
+
+def amount_position_fields(column, page, boxes):
+    """Printed page and word union box for one wide-table amount column.
+
+    Converters call this with the physical page and the character-layer word
+    boxes that form the amount's text. Migration reads `<column>_物理頁/_左端/
+    _上端/_右端/_下端` as the amount's own position and never inherits the
+    node's label position, so every amount row keeps its printed place.
+    boxes are (left, top, right, bottom) display-page tuples; page mapping
+    (spread shifts, left/right facing pages) stays with the caller. Absent
+    amounts need no fields: without text no amount row is created.
+    """
+    if not isinstance(column, str) or not column:
+        raise ValueError('Amount column must be a nonempty name')
+    if type(page) is not int or page < 1:
+        raise ValueError('Amount position requires a positive physical page')
+    boxes = list(boxes)
+    if not boxes:
+        raise ValueError('Amount position requires at least one printed word box')
+    for box in boxes:
+        if (len(box) != 4 or any(type(v) not in (int, float) or not math.isfinite(v) for v in box)
+                or not (box[0] < box[2] and box[1] < box[3])):
+            raise ValueError('Amount word boxes must be four finite numbers with positive extent')
+    return {column + '_' + suffix: value for suffix, value in zip(
+        AMOUNT_POSITION_SUFFIXES,
+        (page, min(b[0] for b in boxes), min(b[1] for b in boxes),
+         max(b[2] for b in boxes), max(b[3] for b in boxes)), strict=True)}
+
+
+def null_position_fields(column):
+    """Absent-amount placeholder: keys keep wide rows homogeneous, NULLs create no row.
+
+    Migration skips NULL amount cells before reading positions, so an absent
+    amount never becomes a positionless amount row. Use only when the printed
+    cell itself is absent; a printed amount always uses amount_position_fields.
+    """
+    if not isinstance(column, str) or not column:
+        raise ValueError('Amount column must be a nonempty name')
+    return {column + '_' + suffix: None for suffix in AMOUNT_POSITION_SUFFIXES}
+
+
+def _coverage_word(word):
+    """Accept (page, bbox, text) tuples, shared {page, bbox, text} mappings
+    or Poppler-style word dicts."""
+    if isinstance(word, (tuple, list)):
+        page, box, text = word
+        return page, tuple(box), text
+    if 'bbox' in word:
+        page, box, text = word['page'], tuple(word['bbox']), word['text']
+    else:
+        page = word.get('page')
+        box = tuple(word[k] for k in ('xMin', 'yMin', 'xMax', 'yMax'))
+        text = word.get('text', word.get('raw_text'))
+    return page, box, text
+
+
+def _word_digits(text):
+    return re.sub(r'[^0-9]', '', unicodedata.normalize('NFKC', str(text)))
+
+
+def _word_key(text):
+    return re.sub(r'\s+', '', unicodedata.normalize('NFKC', str(text)))
+
+
+# Jurisdiction-common non-amount prints: a printed folio, or an era/year/date
+# word. Bare years and bare counts never match: without 年/月/日/年度 they are
+# indistinguishable from amounts and stay uncovered for the converter to fix.
+NON_AMOUNT_WORD = re.compile(
+    r'(?:[－―—–-][0-9０-９, ]+[－―—–-]'
+    r'|(?:令和|平成|昭和|大正|明治|[RHS])?[0-9０-９]+(?:年度|年|月|日))')
+
+
+# Printed control totals. Every settlement prints its aggregate total row; the
+# adopted tables keep it as an observation, not as amount rows, and every
+# converter asserts its shape. Digits sharing the total row's baseline are
+# classified as control totals, counted visibly, never silently passed.
+TOTAL_LABELS = frozenset({'歳出合計', '歳出総計'})
+
+
+COVERAGE_SIDECAR_SUFFIX = '.coverage.json'
+
+
+def coverage_sidecar(wide_path):
+    """Scope sidecar next to a converter's wide table."""
+    path = Path(wide_path)
+    return path.with_name(path.stem + COVERAGE_SIDECAR_SUFFIX)
+
+
+def write_coverage_words(wide_path, words):
+    """Write the processed word scope beside a wide table for the pre-save check.
+
+    words are (physical page, display-page box, printed text) tuples in the
+    converter's native order. The digit coverage check reads this scope back
+    in run.py next to the tree check; converters declare scope by what they
+    write. Scope is normally every character-layer word read in the processed
+    pages and regions. A table adopting a declared subset (a 款項表 without
+    its narrative body) writes exactly the lines that formed adopted rows and
+    says so in its notes; narrowed-out digits stay visible as scope counts.
+    """
+    normalized = []
+    for word in words:
+        page, box, text = _coverage_word(word)
+        if not isinstance(text, str):
+            raise ValueError('Coverage words require printed text')
+        normalized.append({'page': page, 'bbox': list(box), 'text': text})
+    sidecar = coverage_sidecar(wide_path)
+    sidecar.write_text(json.dumps({'words': normalized}, ensure_ascii=False) + '\n')
+    return {'sidecar': str(sidecar), 'words': len(normalized)}
+
+
+def check_table_coverage(wide_path, tables, *, require=True):
+    """Pre-save digit coverage next to the tree check.
+
+    Reads the converter's scope sidecar beside its wide table and requires
+    every printed digit in scope to be an amount row or a known non-amount.
+    Uncovered prints fail loudly with counts and page/box/text examples.
+    require=False (scan PDFs, out of this change's scope) reports without
+    tables instead of failing on a missing scope.
+    """
+    sidecar = coverage_sidecar(wide_path)
+    if not sidecar.is_file():
+        if require:
+            raise ValueError(f'Digit coverage scope missing beside {wide_path}')
+        return {'passed': True, 'counts': {}, 'digit_words': 0, 'uncovered': [],
+                'status': '対象外', 'reason': '文字層の処理対象外'}
+    words = json.loads(sidecar.read_text())['words']
+    result = check_digit_coverage(words, tables)
+    sidecar.with_name(sidecar.name.removesuffix(COVERAGE_SIDECAR_SUFFIX)
+                      + '.coverage-uncovered.json').write_text(
+        json.dumps({'counts': result['counts'], 'digit_words': result['digit_words'],
+                    'uncovered': result['uncovered'], 'reported': result['reported']},
+                   ensure_ascii=False) + '\n')
+    if result['uncovered']:
+        examples = ', '.join(
+            f"p{u['page']}@{u['bbox'][0]:.1f},{u['bbox'][1]:.1f}={u['text']!r}"
+            for u in result['uncovered'][:10])
+        raise ValueError(f"Uncovered printed digits: {result['counts']}, "
+                         f"{len(result['uncovered'])} blocked of {result['digit_words']} "
+                         f"({len(result['reported'])} reported prose) e.g. {examples}")
+    return result
+
+
+def _contains(outer, inner, tolerance):
+    return (outer[0] - tolerance <= inner[0] and outer[1] - tolerance <= inner[1]
+            and inner[2] <= outer[2] + tolerance and inner[3] <= outer[3] + tolerance)
+
+
+# A glued percent sign is never an adopted amount: converters keep rates as
+# text or drop them, and parse_amount rejects suffixed values. Bare 円 glue is
+# excluded: 円-suffixed prints are adopted amounts and must join their row.
+PERCENT_WORD = re.compile(r'[△▲\-－―—]?[0-9][0-9,\.]*[％%]|[(（][0-9][0-9,\.]*[％%][)）]')
+
+
+# A digit-leading word glued to non-amount characters (codes and counters:
+# １０款, １管, 11役, 1報, 1項). 円 glue is excluded (adopted amounts join
+# their row); dots and brackets are excluded (versions, decimals, annotations).
+CODE_WORD = re.compile(r'[0-9０-９]+[^0-9０-９,△▲\-－―—\.\(\)（）<>＜＞％%円]+')
+
+
+# Bare folios live in the footer strip. All processed PDFs are ~842pt tall
+# with body bottoms at or below 800; a bare integer below the strip is an
+# amount or a code, never a folio.
+FOOTER_TOP = 795.0
+
+
+def check_digit_coverage(words, tables, *, tolerance=0.5):
+    """Every printed digit in scope is an amount row or a known non-amount.
+
+    words are the printed words of the pages and regions the converter
+    processed. tables are migrated node tables whose amount rows carry their
+    own printed positions. Amount-column bands are built commonly from the
+    adopted amount rows' horizontal spans (no per-table declarations).
+    A digit word is covered when (a) it sits inside an amount's own box as
+    part of that print, (b) it sits inside its node's box and reads as the
+    node's code or name, (c) it fullmatches a jurisdiction-common non-amount
+    pattern (folio, era/year/date, glued percent, code glued to characters,
+    footer folio, percent pair), (d) it shares a control-total baseline, or
+    (e) a merged word split into adopted amounts rejoins exactly.
+    Leftovers split by band: inside an amount band they are BLOCKED prints
+    (a dropped amount in amount territory stops the save); outside bands
+    they are REPORTED prose (counted with examples, never blocking).
+    Never guesses: words sticking out of amount boxes stay uncovered.
+    """
+    """Every printed digit in scope is an amount row or a known non-amount.
+
+    words are the printed words of the pages and regions the converter
+    processed (headers it never read stay out of scope). tables are migrated
+    node tables whose amount rows carry their own printed positions.
+    A digit word is covered when (a) it sits inside an amount's own box and
+    its digits join that amount's digits, (b) it sits inside its node's box
+    and reads as the node's code or name, or (c) it fullmatches a
+    Leftovers split by band: inside an amount band they are BLOCKED prints
+    (a dropped amount in amount territory stops the save); outside bands
+    they are REPORTED prose (counted with examples, never blocking).
+    Never guesses: words sticking out of amount boxes stay uncovered.
+    """
+    if tolerance < 0 or not math.isfinite(tolerance):
+        raise ValueError('Coverage tolerance must be a nonnegative finite number')
+    normalized = []
+    for word in words:
+        page, box, text = _coverage_word(word)
+        digits = _word_digits(text)
+        if digits:
+            normalized.append({'page': page, 'bbox': list(box), 'text': text,
+                               'digits': digits, 'key': _word_key(text), 'covered': None})
+    positioned = [a for a in tables.amounts
+                  if a['physical_page'] is not None and None not in (a['x0'], a['y0'], a['x1'], a['y1'])]
+    # Amount-column bands from adopted rows' horizontal spans, clustered by
+    # overlap. A digit printing in amount territory without its own amount
+    # row is a dropped amount and blocks; prose outside bands only reports.
+    bands = []
+    for left, right in sorted((a['x0'], a['x1']) for a in positioned):
+        if bands and left <= bands[-1][1] + 10:
+            bands[-1][1] = max(bands[-1][1], right)
+        else:
+            bands.append([left, right])
+
+    def in_band(word):
+        center = (word['bbox'][0] + word['bbox'][2]) / 2
+        return any(left - tolerance <= center <= right + tolerance for left, right in bands)
+
+    words_by_page = defaultdict(list)
+    for w in normalized:
+        words_by_page[w['page']].append(w)
+    for amount in positioned:
+        box = (amount['x0'], amount['y0'], amount['x1'], amount['y1'])
+        inside = sorted(
+            (w for w in words_by_page.get(amount['physical_page'], [])
+             if w['covered'] is None and _contains(box, w['bbox'], tolerance)),
+            key=lambda w: (w['bbox'][1], w['bbox'][0]))
+        # Words inside an amount's own box are part of that print. The tree
+        # check owns value correctness; coverage owns the print's presence.
+        for w in inside:
+            w['covered'] = 'amount'
+    # A word merged across two printed cells is covered when the amounts it
+    # was split into sit inside its box and rejoin its digits exactly. Both
+    # split amounts must exist as adopted rows; coincidence cannot cover.
+    for word in normalized:
+        if word['covered'] is not None:
+            continue
+        parts = sorted(
+            (a for a in positioned if a['physical_page'] == word['page']
+             and _contains(tuple(word['bbox']), (a['x0'], a['y0'], a['x1'], a['y1']), tolerance)),
+            key=lambda a: (a['x0'], a['y0']))
+        if len(parts) >= 2 and ''.join(_word_digits(a['amount_text']) for a in parts) == word['digits']:
+            word['covered'] = 'split_amount'
+    boxed_by_page = defaultdict(list)
+    for n in tables.nodes:
+        if n['physical_page'] is not None and None not in (n['x0'], n['y0'], n['x1'], n['y1']):
+            boxed_by_page[n['physical_page']].append(n)
+    for word in normalized:
+        if word['covered'] is not None:
+            continue
+        for node in boxed_by_page.get(word['page'], []):
+            if not _contains((node['x0'], node['y0'], node['x1'], node['y1']), word['bbox'], tolerance):
+                continue
+            printed = _word_key(str(node.get('code_text') or '') + str(node.get('name_text') or ''))
+            if word['key'] and word['key'] in printed:
+                word['covered'] = 'label'
+                break
+    for word in normalized:
+        if word['covered'] is None and NON_AMOUNT_WORD.fullmatch(_word_key(word['text'])):
+            word['covered'] = 'non_amount'
+    for word in normalized:
+        if word['covered'] is None and PERCENT_WORD.fullmatch(_word_key(word['text'])):
+            word['covered'] = 'non_amount'
+    for word in normalized:
+        if word['covered'] is None and CODE_WORD.fullmatch(_word_key(word['text'])):
+            word['covered'] = 'non_amount'
+    for word in normalized:
+        if word['covered'] is None and re.fullmatch(r'[0-9０-９]+', _word_key(word['text'])) \
+                and isinstance(word['page'], int) and word['bbox'][3] > FOOTER_TOP:
+            word['covered'] = 'non_amount'
+    # A bare number immediately followed by a percent word on its baseline is
+    # an execution rate, never an adopted amount. Percent signs carry no
+    # digits, so marks come from every scope word, not only digit words.
+    percent_marks = defaultdict(list)
+    for word in words:
+        try:
+            page, box, text = _coverage_word(word)
+        except (KeyError, TypeError, ValueError):
+            continue
+        if isinstance(page, int) and re.fullmatch(r'[％%]', _word_key(text)):
+            percent_marks[(page, round(box[1]))].append(box[0])
+    for word in normalized:
+        if word['covered'] is not None:
+            continue
+        if not re.fullmatch(r'[0-9][0-9,\.]*', word['key']) or not isinstance(word['page'], int):
+            continue
+        for mark_x in percent_marks.get((word['page'], round(word['bbox'][1])), []):
+            if 0 <= mark_x - word['bbox'][2] <= 5:
+                word['covered'] = 'non_amount'
+                break
+    # Control-total baselines: group every scope word by printed page and
+    # baseline, and cover digits sharing a baseline with a total-dictionary
+    # label. Labels may split across words, so match against the joined
+    # baseline text. The label itself carries no digits, so grouping must see
+    # all words, not only digit words.
+    by_baseline = defaultdict(list)
+    for word in words:
+        try:
+            page, box, text = _coverage_word(word)
+        except (KeyError, TypeError, ValueError):
+            continue
+        if isinstance(page, int):
+            by_baseline[(page, round(box[1]))].append(_word_key(text))
+    total_baselines = {key for key, texts in by_baseline.items()
+                       if any(label in ''.join(texts) for label in TOTAL_LABELS)}
+    for word in normalized:
+        if word['covered'] is None and isinstance(word['page'], int) \
+                and (word['page'], round(word['bbox'][1])) in total_baselines:
+            word['covered'] = 'total'
+    for word in normalized:
+        if word['covered'] is None:
+            word['covered'] = 'blocked' if in_band(word) else 'reported'
+    blocked = [{'page': w['page'], 'bbox': w['bbox'], 'text': w['text']} for w in normalized
+               if w['covered'] == 'blocked']
+    reported = [{'page': w['page'], 'bbox': w['bbox'], 'text': w['text']} for w in normalized
+                if w['covered'] == 'reported']
+    blocked.sort(key=lambda w: (w['page'] if isinstance(w['page'], int) else 0, w['bbox'][1], w['bbox'][0]))
+    reported.sort(key=lambda w: (w['page'] if isinstance(w['page'], int) else 0, w['bbox'][1], w['bbox'][0]))
+    counts = dict(Counter(w['covered'] for w in normalized))
+    return {'passed': not blocked, 'counts': counts,
+            'digit_words': len(normalized), 'uncovered': blocked, 'reported': reported}
 
 
 def migrate_rows(rows: list[dict], metadata: dict) -> NodeTables:

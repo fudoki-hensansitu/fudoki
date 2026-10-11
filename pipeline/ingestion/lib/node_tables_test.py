@@ -2,7 +2,8 @@
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from ingestion.lib.node_tables import migrate_rows, check_tree, write_tables, NodeTables, read_rows, amount_phase, parse_amount
+from ingestion.lib.node_tables import migrate_rows, check_tree, write_tables, NodeTables, read_rows, amount_phase, amount_position_fields, null_position_fields, check_digit_coverage, write_coverage_words, check_table_coverage
+from shared.amount import parse_amount
 
 
 def context(prefix, header, grain=None):
@@ -255,6 +256,114 @@ class NodeTablesTests(unittest.TestCase):
             pair=write_tables(path,'ok',NodeTables(nodes,[amount('p','1'),amount('a','1')]))
             self.assertEqual(len(read_rows(pair['nodes'])),2)
             self.assertEqual(set(read_rows(pair['amounts'])[0]),set(amount('a','1')))
+
+    def test_amount_position_fields_keep_the_printed_page_and_word_union(self):
+        fields = amount_position_fields('款_金額', 3, [(10., 20., 30., 25.), (32., 21., 50., 26.)])
+        self.assertEqual(fields, {'款_金額_物理頁': 3, '款_金額_左端': 10., '款_金額_上端': 20.,
+                                  '款_金額_右端': 50., '款_金額_下端': 26.})
+        for page, boxes in [(0, [(1., 1., 2., 2.)]), (1, []), (1, [(2., 2., 1., 1.)])]:
+            with self.subTest(page=page):
+                with self.assertRaises(ValueError):
+                    amount_position_fields('款_金額', page, boxes)
+        self.assertEqual(null_position_fields('款_金額'),
+                         {'款_金額_物理頁': None, '款_金額_左端': None, '款_金額_上端': None,
+                          '款_金額_右端': None, '款_金額_下端': None})
+
+    def test_digit_coverage_covers_box_contents_and_blocks_band_misses(self):
+        nodes=[{**node('p'), 'x0': 1., 'y0': 1., 'x1': 40., 'y1': 9.},
+               {**node('a','p'), 'code_text': '12', 'name_text': '事業',
+                'x0': 1., 'y0': 10., 'x1': 40., 'y1': 18.}]
+        amounts=[{**amount('a','1,959,393, 091'), 'x0': 60., 'y0': 10., 'x1': 120., 'y1': 18.}]
+        words=[{'page': 1, 'bbox': [60., 10., 100., 18.], 'text': '1,959,393,'},
+               {'page': 1, 'bbox': [100., 10., 120., 18.], 'text': '091'},
+               {'page': 1, 'bbox': [1., 10., 8., 18.], 'text': '12'},
+               {'page': 1, 'bbox': [0., 0., 50., 5.], 'text': '－12－'},
+               {'page': 1, 'bbox': [0., 90., 50., 95.], 'text': '令和7年度'},
+               # In-band miss (amount territory, no amount row) blocks;
+               # out-of-band prose only reports.
+               {'page': 1, 'bbox': [70., 30., 110., 38.], 'text': '267,141,613'},
+               {'page': 1, 'bbox': [200., 30., 230., 38.], 'text': '99'}]
+        result = check_digit_coverage(words, NodeTables(nodes, amounts))
+        self.assertFalse(result['passed'])
+        self.assertEqual(result['counts'],
+                         {'amount': 2, 'label': 1, 'non_amount': 2,
+                          'blocked': 1, 'reported': 1})
+        self.assertEqual(result['uncovered'],
+                         [{'page': 1, 'bbox': [70., 30., 110., 38.], 'text': '267,141,613'}])
+        self.assertEqual(result['reported'],
+                         [{'page': 1, 'bbox': [200., 30., 230., 38.], 'text': '99'}])
+
+    def test_digit_coverage_covers_poppler_style_words_without_joining(self):
+        nodes=[{**node('p'), 'x0': 1., 'y0': 1., 'x1': 40., 'y1': 9.}]
+        amounts=[{**amount('p','10'), 'x0': 60., 'y0': 1., 'x1': 90., 'y1': 9.}]
+        words=[{'page': 1, 'xMin': 60., 'yMin': 1., 'xMax': 75., 'yMax': 9., 'text': '1'},
+               {'page': 1, 'xMin': 76., 'yMin': 1., 'xMax': 90., 'yMax': 9., 'text': '2'}]
+        result = check_digit_coverage(words, NodeTables(nodes, amounts))
+        self.assertTrue(result['passed'])
+        self.assertEqual(result['counts'], {'amount': 2})
+
+    def test_digit_coverage_covers_a_word_split_across_two_adopted_amounts(self):
+        nodes=[{**node('p'), 'x0': 1., 'y0': 1., 'x1': 40., 'y1': 9.}]
+        amounts=[{**amount('p','0', header='計'), 'x0': 60., 'y0': 1., 'x1': 80., 'y1': 9.},
+                 {**amount('p','△181', header='予備費支出'), 'x0': 80., 'y0': 1., 'x1': 110., 'y1': 9.}]
+        words=[{'page': 1, 'bbox': [60., 1., 110., 9.], 'text': '0△181'}]
+        result = check_digit_coverage(words, NodeTables(nodes, amounts))
+        self.assertTrue(result['passed'])
+        self.assertEqual(result['counts'], {'split_amount': 1})
+
+    def test_digit_coverage_covers_common_non_amount_prints(self):
+        tables = NodeTables([], [])
+        words=[{'page': 1, 'bbox': [10., 1., 60., 9.], 'text': '98.4％'},
+               {'page': 1, 'bbox': [70., 1., 90., 9.], 'text': '94.0'},
+               {'page': 1, 'bbox': [95., 1., 99., 9.], 'text': '％'},
+               {'page': 1, 'bbox': [110., 1., 140., 9.], 'text': '１０款'},
+               {'page': 1, 'bbox': [150., 1., 160., 9.], 'text': '104'},
+               {'page': 1, 'bbox': [150., 810., 160., 819.], 'text': '105'},
+               {'page': 1, 'bbox': [170., 1., 200., 9.], 'text': '1,000'}]
+        result = check_digit_coverage(words, tables)
+        self.assertTrue(result['passed'])
+        self.assertEqual(result['counts'], {'non_amount': 4, 'reported': 2})
+        self.assertEqual(result['reported'][0]['text'], '104')
+
+    def test_digit_coverage_covers_control_total_baselines(self):
+        tables = NodeTables([], [])
+        words=[{'page': 2, 'bbox': [10., 5., 60., 9.], 'text': '歳出合計'},
+               {'page': 2, 'bbox': [100., 5., 150., 9.], 'text': '1,000'},
+               {'page': 2, 'bbox': [300., 50., 350., 54.], 'text': '2,000'}]
+        result = check_digit_coverage(words, tables)
+        self.assertTrue(result['passed'])
+        # The digitless label only marks the baseline; only digits are counted.
+        self.assertEqual(result['counts'], {'total': 1, 'reported': 1})
+
+    def test_coverage_sidecar_roundtrip_and_pre_save_gate(self):
+        nodes=[{**node('p'), 'x0': 1., 'y0': 1., 'x1': 40., 'y1': 9.}]
+        tables = NodeTables(nodes, [{**amount('p','10'), 'x0': 60., 'y0': 1., 'x1': 90., 'y1': 9.}])
+        with TemporaryDirectory() as tmp:
+            wide = Path(tmp) / 'general-setsu.parquet'
+            wide.write_bytes(b'wide')
+            report = write_coverage_words(wide, [(1, (60., 1., 90., 9.), '10'),
+                                                 (1, (1., 1., 8., 9.), '12'),
+                                                 (1, (70., 30., 80., 38.), '77'),
+                                                 (1, (200., 30., 210., 38.), '99')])
+            self.assertEqual(report['words'], 4)
+            with self.assertRaises(ValueError):
+                check_table_coverage(wide, tables)
+            wide2 = Path(tmp) / 'general-notes.parquet'
+            wide2.write_bytes(b'wide')
+            write_coverage_words(wide2, [(1, (60., 1., 90., 9.), '10'),
+                                         (1, (1., 1., 8., 9.), '12'),
+                                         (1, (200., 30., 210., 38.), '99')])
+            passed = check_table_coverage(wide2, tables)
+            self.assertTrue(passed['passed'])
+            self.assertEqual(passed['counts'], {'amount': 1, 'reported': 2})
+            nodes[0]['code_text'] = '12'
+            relabeled = check_table_coverage(wide2, tables)
+            self.assertEqual(relabeled['counts'], {'amount': 1, 'label': 1, 'reported': 1})
+            missing = Path(tmp) / 'other.parquet'
+            missing.write_bytes(b'wide')
+            self.assertEqual(check_table_coverage(missing, tables, require=False)['status'], '対象外')
+            with self.assertRaises(ValueError):
+                check_table_coverage(missing, tables)
 
 
 class ParseAmountTest(unittest.TestCase):

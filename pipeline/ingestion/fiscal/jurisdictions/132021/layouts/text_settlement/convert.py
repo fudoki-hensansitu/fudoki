@@ -15,6 +15,7 @@ import tempfile
 import xml.etree.ElementTree as ET
 
 from ingestion.lib.conversion import ConversionContext, write_conversion
+from ingestion.lib.node_tables import AMOUNT_POSITION_SUFFIXES, amount_position_fields, null_position_fields, write_coverage_words
 from ingestion.lib.parquet import ParquetColumn
 
 AMOUNT = re.compile(r"△?(?:[0-9]{1,3}(?:,[0-9]{3})+|[0-9]+)")
@@ -123,14 +124,20 @@ def defrag_digits(text):
 
 
 def location(page, words):
-    return {'物理頁': page, '上端': min(w['yMin'] for w in words),
-            '下端': max(w['yMax'] for w in words)}
+    words = list(words)
+    return {'物理頁': page, '左端': min(w['xMin'] for w in words), '上端': min(w['yMin'] for w in words),
+            '右端': max(w['xMax'] for w in words), '下端': max(w['yMax'] for w in words)}
+
+
+def boxes(words):
+    return [[w['xMin'], w['yMin'], w['xMax'], w['yMax']] for w in words]
 
 
 def budget_amounts(words, unconfirmed, columns=BUDGET_RULES):
     """Assign amount fragments to the five printed budget columns by the
     measured vertical rules; fragments of one amount share its column."""
     values = {}
+    owners = {}
     for word in sorted((w for w in words if AMOUNT_PART.fullmatch(w['text'])),
                        key=lambda w: w['xMin']):
         mid = (word['xMin'] + word['xMax']) / 2
@@ -141,7 +148,8 @@ def budget_amounts(words, unconfirmed, columns=BUDGET_RULES):
             continue
         column = BUDGET[hits[0]]
         values[column] = (values.get(column) or '') + word['text']
-    return values
+        owners.setdefault(column, []).append(word)
+    return values, owners
 
 
 def executed_amounts(words):
@@ -160,16 +168,56 @@ def executed_amounts(words):
         if len(groups) > 1:
             raise ValueError(f'Multiple executed amounts in one row band: {zone_words}')
         if not groups:
-            return None
-        return ''.join(w['text'] for w in sorted(next(iter(groups.values())), key=lambda w: w['xMin']))
+            return None, []
+        found = sorted(next(iter(groups.values())), key=lambda w: w['xMin'])
+        return ''.join(w['text'] for w in found), found
+    paid, paid_words = join_single(paid)
+    carry, carry_words = join_single(carry_amount)
+    unused, unused_words = join_single(unused)
     result = {
-        '支出済額': join_single(paid),
-        '翌年度繰越額': join_single(carry_amount),
-        '不用額': join_single(unused),
+        '支出済額': paid,
+        '翌年度繰越額': carry,
+        '不用額': unused,
     }
     if carry_label:
         result['翌年度繰越額_区分'] = carry_label
-    return result
+    return result, {'支出済額': paid_words, '翌年度繰越額': carry_words, '不用額': unused_words}
+
+
+EXECUTED_KEYS = ['支出済額', '翌年度繰越額', '不用額']
+
+
+def amount_positions(keys, texts, owners, page):
+    """Amount texts with their own printed positions, keyed per amount column.
+
+    Every key is emitted so rows stay homogeneous; absent amounts keep NULL
+    positions and create no amount row. A printed amount without its words
+    is a converter bug, never a silent NULL.
+    """
+    record = {}
+    for key in keys:
+        value = texts.get(key)
+        words = owners.get(key, [])
+        record[key] = value
+        if value is not None:
+            if not words:
+                raise ValueError(f'Printed amount without word boxes: {key}')
+            record.update(amount_position_fields(key, page, boxes(words)))
+        else:
+            record.update(null_position_fields(key))
+    return record
+
+
+def subject_amount_cells(amount_words, right_words, page, unconfirmed, vcols):
+    """Budget texts from the left page and executed texts from the right page,
+    each with its own printed positions."""
+    budget_texts, budget_owners = budget_amounts(amount_words, unconfirmed, vcols)
+    exec_texts, exec_owners = executed_amounts(right_words)
+    record = amount_positions(BUDGET, budget_texts, budget_owners, page)
+    record.update(amount_positions(EXECUTED_KEYS, exec_texts, exec_owners, page + 1))
+    if '翌年度繰越額_区分' in exec_texts:
+        record['翌年度繰越額_区分'] = exec_texts['翌年度繰越額_区分']
+    return record
 
 
 def subject_record(left_words, right_words, page, top, bottom, unconfirmed, vcols=BUDGET_RULES):
@@ -188,7 +236,7 @@ def subject_record(left_words, right_words, page, top, bottom, unconfirmed, vcol
     compact_label = ''.join(w['text'] for w in label_words)
     if '歳出合計' in compact_label:
         return {'kind': 'total', 'top': top,
-                **budget_amounts(amount_words, unconfirmed, vcols), **executed_amounts(right_words),
+                **subject_amount_cells(amount_words, right_words, page, unconfirmed, vcols),
                 **location(page, left_words)}
     if not amount_words:
         numbers = [w for w in label_words if re.fullmatch(r'[0-9]+', w['text'])]
@@ -230,8 +278,8 @@ def subject_record(left_words, right_words, page, top, bottom, unconfirmed, vcol
                    {id(nw) for nw in nums}] + remainders)
     return {'kind': 'subject', 'level': level, '番号': marker_num,
             '名称': join_text(lines(name_words)), 'ancestors': ancestors,
-            **budget_amounts(amount_words, unconfirmed, vcols), **executed_amounts(right_words),
-            **location(page, left_words)}
+            **subject_amount_cells(amount_words, right_words, page, unconfirmed, vcols),
+            **location(page, label_words)}
 
 
 def setsu_record(left_words, right_words, page, top, bottom):
@@ -258,11 +306,14 @@ def setsu_record(left_words, right_words, page, top, bottom):
                            'yMin': min(w['yMin'] for w in num_words),
                            'yMax': max(w['yMax'] for w in num_words),
                            'text': rest})
+    exec_texts, exec_owners = executed_amounts(right_words)
+    amount_text = ''.join(w['text'] for w in sorted(amount_words, key=lambda w: w['xMin'])) or None
     return {'kind': 'setsu', '番号': digits,
             '名称': join_text(lines(name_words)),
-            '金額': ''.join(w['text'] for w in sorted(amount_words, key=lambda w: w['xMin'])) or None,
-            **executed_amounts(right_words),
-            **location(page, zone)}
+            **amount_positions(['金額'], {'金額': amount_text}, {'金額': amount_words}, page),
+            **amount_positions(EXECUTED_KEYS, exec_texts, exec_owners, page + 1),
+            **({'翌年度繰越額_区分': exec_texts['翌年度繰越額_区分']} if '翌年度繰越額_区分' in exec_texts else {}),
+            **location(page, [w for w in zone if w['xMax'] < SETSU_AMOUNT_LEFT])}
 
 
 # ---- remarks cell (備考結合セル) content: notes + 事業説明 ----
@@ -284,20 +335,23 @@ def split_amount(row):
             frags.insert(0, row.pop())
     # The head of an amount can merge into the name's last word
     # ("…人事課】112,408,0" + "43"). Split off a comma-bearing digit tail.
+    # The tail keeps its source word's box: it occupies the word's right
+    # part, so the union still covers the printed amount exactly.
     if row:
         m = re.search(r'([0-9][0-9,]{3,})$', row[-1]['text'])
         if m and ',' in m.group(1):
             tail = m.group(1)
-            leftover = row[-1]['text'][:-len(tail)]
+            source = row[-1]
+            leftover = source['text'][:-len(tail)]
             if leftover:
-                row[-1] = {**row[-1], 'text': leftover,
-                           'xMax': row[-1]['xMax'] - 4.5 * len(tail)}
+                row[-1] = {**source, 'text': leftover,
+                           'xMax': source['xMax'] - 4.5 * len(tail)}
             else:
                 row.pop()
-            frags.insert(0, {'text': tail})
+            frags.insert(0, {**source, 'text': tail})
     if not frags:
-        return row, None
-    return row, ''.join(w['text'] for w in frags)
+        return row, None, []
+    return row, ''.join(w['text'] for w in frags), frags
 
 
 def parse_cell(words, setsu_names, unconfirmed, items):
@@ -339,11 +393,12 @@ def parse_cell(words, setsu_names, unconfirmed, items):
         else:
             num_end = 0
         if num_text and num_end <= 272:
-            body, amount = split_amount(row[consumed:])
+            body, amount, frags = split_amount(row[consumed:])
             if remainder_word:
                 body = [remainder_word] + body
             items.append({'kind': 'jigyou', '番号': num_text,
-                          '名称': join_text(lines(body)), '金額': amount, 'row': row})
+                          '名称': join_text(lines(body)), '金額': amount, 'row': row,
+                          '_amount_words': frags})
             pending = len(items) - 1
             owner = None
             continue
@@ -353,18 +408,20 @@ def parse_cell(words, setsu_names, unconfirmed, items):
                 if not setsu_names:
                     unconfirmed.append({'reason': '節区分の無い目で節見出し候補を位置のみで判定',
                                         'text': text_row})
-                body, amount = split_amount(row[consumed:])
+                body, amount, frags = split_amount(row[consumed:])
                 if remainder_word:
                     body = [remainder_word] + body
                 items.append({'kind': 'desc_setsu', '番号': number,
-                              '名称': join_text(lines(body)), '金額': amount, 'row': row})
+                              '名称': join_text(lines(body)), '金額': amount, 'row': row,
+                              '_amount_words': frags})
                 pending = len(items) - 1
                 owner = None
                 continue
             unconfirmed.append({'reason': '番号行が目の節区分・事業判別に一致しない',
                                 'text': text_row, 'number': number,
                                 'setsu_names': sorted(setsu_names, key=int)})
-            items.append({'kind': 'leaf', '名称': text_row, '金額': None, 'row': row})
+            items.append({'kind': 'leaf', '名称': text_row, '金額': None, 'row': row,
+                          '_amount_words': []})
             pending = owner = None
             continue
         if all(AMOUNT_PART.fullmatch(w['text']) and w['xMin'] > 400 for w in row):
@@ -372,14 +429,15 @@ def parse_cell(words, setsu_names, unconfirmed, items):
             fragment = ''.join(w['text'] for w in row)
             if pending is not None:
                 items[pending]['金額'] = (items[pending]['金額'] or '') + fragment
+                items[pending].setdefault('_amount_words', []).extend(row)
             else:
                 notes.append(text_row)
                 unconfirmed.append({'reason': '孤立した金額片行', 'text': text_row})
             continue
         if first['xMin'] >= 300 and compact.startswith(INNER_LABELS):
-            body, amount = split_amount(row)
+            body, amount, frags = split_amount(row)
             items.append({'kind': 'inner', '名称': join_text(lines(body)),
-                          '金額': amount, 'row': row})
+                          '金額': amount, 'row': row, '_amount_words': frags})
             pending = None
             continue
         # Wrapped continuation of an open heading (a 事業 line whose 【所管】
@@ -390,18 +448,20 @@ def parse_cell(words, setsu_names, unconfirmed, items):
                 and ('【' in text_row
                      or (items[pending]['kind'] == 'jigyou'
                          and '】' not in (items[pending]['名称'] or ''))):
-            body, amount = split_amount(row)
+            body, amount, frags = split_amount(row)
             name = join_text(lines(body))
             items[pending]['名称'] = (items[pending]['名称'] or '') + '\n' + name
             if amount:
                 items[pending]['金額'] = amount
+                items[pending]['_amount_words'] = frags
             continue
         if first['xMin'] >= 296:
-            body, amount = split_amount(row)
+            body, amount, frags = split_amount(row)
             name = join_text(lines(body))
             if (amount is not None and owner is not None and first['xMin'] >= SUB_NAME_LEFT
                     and row[-1]['xMax'] <= SUB_AMOUNT_RIGHT):
-                items.append({'kind': 'inner', '名称': name, '金額': amount, 'row': row})
+                items.append({'kind': 'inner', '名称': name, '金額': amount, 'row': row,
+                              '_amount_words': frags})
                 pending = None
                 continue
             # A name-only line can continue a pending leaf's wrapped name, as
@@ -411,16 +471,18 @@ def parse_cell(words, setsu_names, unconfirmed, items):
                 items[pending]['名称'] = (items[pending]['名称'] or '') + '\n' + name
                 if amount:
                     items[pending]['金額'] = amount
+                    items[pending]['_amount_words'] = frags
                 continue
             items.append({'kind': 'leaf', '名称': name, '金額': amount, 'row': row,
+                          '_amount_words': frags,
                           '_owns_sub': amount is not None and row[-1]['xMax'] > SUB_AMOUNT_RIGHT})
             pending = len(items) - 1
             owner = pending if items[pending]['_owns_sub'] else None
             continue
         if first['xMin'] >= 282:
-            body, amount = split_amount(row)
+            body, amount, frags = split_amount(row)
             items.append({'kind': 'leaf', '名称': join_text(lines(body)),
-                          '金額': amount, 'row': row,
+                          '金額': amount, 'row': row, '_amount_words': frags,
                           '_owns_sub': amount is not None and row[-1]['xMax'] > SUB_AMOUNT_RIGHT})
             pending = len(items) - 1
             owner = pending if items[pending]['_owns_sub'] else None
@@ -457,18 +519,23 @@ def assemble_items(items, unconfirmed):
             open_heading = None
 
     for item in items:
+        # Node boxes span the printed line; the label conjunction in the
+        # coverage check keeps digits honest (amount words match amounts
+        # first, and only name/code text may cover the rest).
         pos = location(item['page'], item['row'])
+        amount_pos = amount_positions(['金額'], {'金額': item['金額']},
+                                      {'金額': item.get('_amount_words', [])}, item['page'])
         if item['kind'] == 'jigyou':
             flush_leaf()
             flush_heading(1)
             context = {'説明1': {'番号': item['番号'], '名称': item['名称'],
-                               '金額': item['金額'], **pos}}
+                               '金額': item['金額'], **pos, **amount_pos}}
             open_heading = (1, dict(context))
         elif item['kind'] == 'desc_setsu':
             flush_leaf()
             flush_heading(2)
             context['説明2'] = {'番号': item['番号'], '名称': item['名称'],
-                                '金額': item['金額'], **pos}
+                                '金額': item['金額'], **pos, **amount_pos}
             context.pop('説明3', None)
             context.pop('説明4', None)
             open_heading = (2, {k: v for k, v in context.items()
@@ -477,7 +544,7 @@ def assemble_items(items, unconfirmed):
             flush_leaf()
             open_heading = None
             entry = dict(context)
-            entry['説明3'] = {'名称': item['名称'], '金額': item['金額'], **pos}
+            entry['説明3'] = {'名称': item['名称'], '金額': item['金額'], **pos, **amount_pos}
             context['説明3'] = entry['説明3']
             context.pop('説明4', None)
             pending_leaf = entry
@@ -487,7 +554,7 @@ def assemble_items(items, unconfirmed):
                 unconfirmed.append({'reason': '内訳行の親細目が無い', 'text': item['名称'],
                                     'page': item.get('page')})
             entry = dict(context)
-            entry['説明4'] = {'名称': item['名称'], '金額': item['金額'], **pos}
+            entry['説明4'] = {'名称': item['名称'], '金額': item['金額'], **pos, **amount_pos}
             rows.append(entry)
             pending_leaf = None
     flush_leaf()
@@ -499,15 +566,22 @@ def expand(record, prefix, keys):
     return {f'{prefix}_{key}': (record or {}).get(key) for key in keys}
 
 
+SUBJECT_POS = [f'{c}_{s}' for c in (*BUDGET, '支出済額', '翌年度繰越額', '不用額')
+               for s in AMOUNT_POSITION_SUFFIXES]
+SETSU_POS = [f'{c}_{s}' for c in ('金額', '支出済額', '翌年度繰越額', '不用額')
+             for s in AMOUNT_POSITION_SUFFIXES]
+DESC_AMOUNT_POS = [f'金額_{s}' for s in AMOUNT_POSITION_SUFFIXES]
 SUBJECT_COLS = (['番号', '名称'] + BUDGET + ['支出済額', '翌年度繰越額',
-                '翌年度繰越額_区分', '不用額', '備考', '物理頁', '上端', '下端'])
+                '翌年度繰越額_区分', '不用額', '備考', '物理頁', '左端', '上端', '右端', '下端']
+                + SUBJECT_POS)
 SETSU_COLS = (['番号', '名称', '金額', '支出済額', '翌年度繰越額',
-              '翌年度繰越額_区分', '不用額', '物理頁', '上端', '下端'])
+              '翌年度繰越額_区分', '不用額', '物理頁', '左端', '上端', '右端', '下端']
+              + SETSU_POS)
 DESC_COLS = {
-    '説明1': ['番号', '名称', '金額', '物理頁', '上端', '下端'],
-    '説明2': ['番号', '名称', '金額', '物理頁', '上端', '下端'],
-    '説明3': ['名称', '金額', '物理頁', '上端', '下端'],
-    '説明4': ['名称', '金額', '物理頁', '上端', '下端'],
+    '説明1': ['番号', '名称', '金額', '物理頁', '左端', '上端', '右端', '下端'] + DESC_AMOUNT_POS,
+    '説明2': ['番号', '名称', '金額', '物理頁', '左端', '上端', '右端', '下端'] + DESC_AMOUNT_POS,
+    '説明3': ['名称', '金額', '物理頁', '左端', '上端', '右端', '下端'] + DESC_AMOUNT_POS,
+    '説明4': ['名称', '金額', '物理頁', '左端', '上端', '右端', '下端'] + DESC_AMOUNT_POS,
 }
 
 
@@ -725,6 +799,9 @@ def convert_detail(source, destination, options, selected):
     emit = options.get('emit') or ('details', 'notes')
     setsu_reference = options.get('notes_setsu_reference', f'{prefix}-details')
     results = {}
+    coverage = [(page, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text'])
+                for page in pages for w in pages_words[page]
+                if BODY_TOP <= w['yMin'] < BODY_BOTTOM]
     for kind, rows, leaf_cols in (
             ('details', detail_records, [f'節_{c}' for c in SETSU_COLS]),
             ('notes', notes_records,
@@ -737,13 +814,14 @@ def convert_detail(source, destination, options, selected):
                 record.setdefault(c, None)
         pq_columns = tuple(ParquetColumn(
             c, 'BIGINT' if c.endswith('物理頁')
-               else 'DOUBLE' if c.endswith(('上端', '下端')) else 'VARCHAR')
+               else 'DOUBLE' if c.endswith(('左端', '上端', '右端', '下端')) else 'VARCHAR')
             for c in columns)
         table_id = f'{prefix}-{kind}'
         output = write_conversion(destination / (table_id + '.parquet'), rows,
                                   columns=pq_columns,
                                   context=ConversionContext(source['sha256'],
                                                             table_id, __file__))
+        write_coverage_words(Path(output.path), coverage)
         results[table_id] = {'path': Path(output.path),
                              'metadata': detail_metadata(columns, kind, prefix,
                                                           setsu_reference)}

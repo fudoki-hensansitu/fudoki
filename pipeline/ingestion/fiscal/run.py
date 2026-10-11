@@ -157,6 +157,7 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
     outputs = {}
     tables = []
     pending_pdf = []
+    coverage_failures = []
     for conversion in document['conversions']:
         if conversion['id'] not in chosen:
             retained = [table for table in document['tables'] if table['conversion_id'] == conversion['id']]
@@ -245,11 +246,20 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
                           before[conversion['id']], remote=remote))
             outputs[ident] = file
             continue
+        inputs = manifest.resolved_inputs(document, conversion, selection)
+        text_only = all(item['format'] == 'pdf' and item.get('pdf_type') == 'text' for item in inputs)
+        try:
+            node_tables.check_table_coverage(file, migrated, require=text_only)
+        except ValueError as error:
+            coverage_failures.append(f'{ident}: {error}')
+            continue
         receipt, pair = node_receipt(document, conversion, ident, migrated, output,
                                      input_fingerprint=before[conversion['id']],
                                      notes=[n['text'] for n in (metadata or {}).get('notes', [])])
         outputs[ident] = pair
         tables.append(receipt)
+    if coverage_failures:
+        raise ValueError('Digit coverage failed:\n' + '\n'.join(coverage_failures))
     result = deepcopy(document)
     result['tables'] = tables
     manifest.validate(result)
@@ -312,6 +322,35 @@ def candidate_locator(directory: Path):
             found[kind] = by_sha[reference['object']['sha256']]
         return found if 'nodes' in table else found[None]
     return locate
+
+
+def verify_coverage(document: dict, locate, directory) -> dict:
+    """Digit coverage of candidate tables carrying a converter scope sidecar.
+
+    Saved tables keep no word scope (local-only sidecars are never uploaded),
+    so coverage is enforced at convert time and re-run here on candidates.
+    Never fails the report: uncovered tables are reported, not raised.
+    """
+    outcome = {}
+    for table in document['tables']:
+        if 'nodes' not in table or directory is None:
+            continue
+        sidecars = sorted(directory.rglob(table['table_id'] + node_tables.COVERAGE_SIDECAR_SUFFIX))
+        if not sidecars:
+            outcome[table['table_id']] = {'status': NOT_APPLICABLE, 'reason': '網羅検査の対象範囲がない'}
+            continue
+        try:
+            pair = locate(table)
+            words = json.loads(sidecars[0].read_text())['words']
+            result = node_tables.check_digit_coverage(words, node_tables.NodeTables(
+                node_tables.read_rows(pair['nodes']), node_tables.read_rows(pair['amounts'])))
+            outcome[table['table_id']] = {'status': MATCH if result['passed'] else MISMATCH,
+                                          'counts': result['counts'],
+                                          'uncovered': result['uncovered'][:10],
+                                          'reported': result['reported'][:10]}
+        except Exception as error:
+            outcome[table['table_id']] = {'status': MISMATCH, 'reason': str(error) or type(error).__name__}
+    return outcome
 
 
 def verify_report(path: Path, document: dict, results: list[dict], output: Path) -> dict:
@@ -391,6 +430,10 @@ def main() -> None:
             target = document['target']
             name = f'{target["jurisdiction"]}-{target["fiscal_year"]}-{manifest.document_slot(target)}-{document["direction"]}'
             results = verify_sums(document, locate)
+            coverage = verify_coverage(document, locate, args.candidate)
+            for item in results:
+                if item['table_id'] in coverage:
+                    item['coverage'] = coverage[item['table_id']]
             print(json.dumps(verify_report(path, document, results, output / f'{name}.json'), ensure_ascii=False))
             for item in results:
                 summary[item['status']] = summary.get(item['status'], 0) + 1

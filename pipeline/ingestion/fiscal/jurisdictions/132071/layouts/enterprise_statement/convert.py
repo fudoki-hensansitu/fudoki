@@ -10,6 +10,7 @@ import tempfile
 import xml.etree.ElementTree as ET
 
 from ingestion.lib.conversion import ConversionContext, write_conversion
+from ingestion.lib.node_tables import write_coverage_words
 from ingestion.lib.parquet import ParquetColumn
 from ingestion.lib.pdf_table import (Box, Column, Placement, RowBand, TableLayout,
                                     assemble_table, place_tokens, tokens_from_bbox_layout)
@@ -92,9 +93,12 @@ def printed_position(page, tokens):
 
 def detail(pdf, pages, origin, directory):
     output, observations = [], []
+    coverage = []
     context, positions = {}, {}
     for index, page in enumerate(pages):
         tokens, rules = observe(pdf, page, origin, directory)
+        coverage.extend((page, (t.bbox.left, t.bbox.top, t.bbox.right, t.bbox.bottom), t.raw_text)
+                        for t in tokens)
         if text([t for t in tokens if '消費税' in t.raw_text]) != '（消費税抜き）':
             raise ValueError('Expense detail tax heading differs')
         header = [t for t in tokens if 90 < t.bbox.top < 145 and t.raw_text in ('款項', '目', '節', '金', '額（円）', '備', '考')]
@@ -177,7 +181,7 @@ def detail(pdf, pages, origin, directory):
                                **position(page, printed_page(tokens), band),
                                '_positions': {**positions, '節': section_position,
                                               '備考': leaf_position, '予算額': budget_position}})
-    return output, observations
+    return output, observations, coverage
 
 
 def migration_detail_rows(rows):
@@ -254,6 +258,8 @@ def report(pdf, pages, origin, directory, capital):
     left_page, right_page = pages
     lt, lr = observe(pdf, left_page, origin, directory)
     rt, rr = observe(pdf, right_page, origin, directory)
+    coverage = ([(left_page, (t.bbox.left, t.bbox.top, t.bbox.right, t.bbox.bottom), t.raw_text) for t in lt] +
+                [(right_page, (t.bbox.left, t.bbox.top, t.bbox.right, t.bbox.bottom), t.raw_text) for t in rt])
     lc, rc = (CAPITAL_LEFT, CAPITAL_RIGHT) if capital else (REVENUE_LEFT, REVENUE_RIGHT)
     top, bottom = (535, 740) if capital else (460, 674)
     lb, rb = bands_at(lr, 200, top, bottom), bands_at(rr, 220, top, bottom)
@@ -295,7 +301,7 @@ def report(pdf, pages, origin, directory, capital):
         result.append({'区分_款': parent['区分'], '区分_項': child['区分'],
                        **{'区分_款_' + k: v for k, v in parent.items() if k != '区分'},
                        **{k: v for k, v in child.items() if k != '区分'}})
-    return result, records
+    return result, records, coverage
 
 
 def report_metadata(rows, capital):
@@ -340,7 +346,10 @@ def convert(inputs, destination, options):
             ('capital-detail', True, True, options['capital_expense_pages'])]
     result = {}
     for suffix, is_detail, capital, pages in jobs:
-        rows, observed = detail(pdf, pages, origin, observations) if is_detail else report(pdf, pages, origin, observations, capital)
+        if is_detail:
+            rows, observed, coverage = detail(pdf, pages, origin, observations)
+        else:
+            rows, observed, coverage = report(pdf, pages, origin, observations, capital)
         table_id = options['table_prefix'] + '-' + suffix
         (observations / (suffix + '.json')).write_text(json.dumps(observed, ensure_ascii=False, indent=2) + '\n')
         if is_detail:
@@ -348,5 +357,6 @@ def convert(inputs, destination, options):
         columns = tuple(ParquetColumn(k, 'BIGINT' if k.endswith('物理頁') else 'DOUBLE' if k.endswith(('左端', '上端', '右端', '下端')) else 'VARCHAR') for k in rows[0])
         info = write_conversion(destination / (table_id + '.parquet'), rows, columns=columns,
                                 context=ConversionContext(origin, table_id, __file__))
+        write_coverage_words(Path(info.path), coverage)
         result[table_id] = {'path': Path(info.path), 'metadata': detail_metadata() if is_detail else report_metadata(rows, capital)}
     return result

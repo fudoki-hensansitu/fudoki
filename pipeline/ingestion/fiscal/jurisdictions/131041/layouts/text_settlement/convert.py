@@ -10,6 +10,7 @@ import subprocess
 import xml.etree.ElementTree as ET
 
 from ingestion.lib.conversion import ConversionContext, write_conversion
+from ingestion.lib.node_tables import amount_position_fields, null_position_fields, write_coverage_words
 from ingestion.lib.parquet import ParquetColumn
 
 AMOUNT = re.compile(r"(?:△)?(?:[0-9]{1,3}(?:,[0-9]{3})+|[0-9]+)")
@@ -65,12 +66,27 @@ def amount(words, y, bounds, sign_bounds=None):
              and y - 12 <= w['yMin'] <= y + .8 and w['text'] == '△']
     if len(signs) > 1:
         raise ValueError('Repeated amount sign')
-    return ('△' if signs else '') + values[0]['text']
+    return ('△' if signs else '') + values[0]['text'], [*signs, values[0]]
+
+
+def boxes(words):
+    return [[w['xMin'], w['yMin'], w['xMax'], w['yMax']] for w in words]
+
+
+def amount_cells(words, page, y, keys, edges, sign_edges=None):
+    """Amount texts with their own printed positions, keyed per amount column."""
+    sign_edges = edges if sign_edges is None else sign_edges
+    record = {}
+    for key, bounds, sign_bounds in zip(keys, edges, sign_edges):
+        value, found = amount(words, y, bounds, sign_bounds)
+        record[key] = value
+        record.update(amount_position_fields(key, page, boxes(found)))
+    return record
 
 
 def position(page, words):
-    return {'物理頁': page, '上端': min(w['yMin'] for w in words),
-            '下端': max(w['yMax'] for w in words)}
+    return {'物理頁': page, '左端': min(w['xMin'] for w in words), '上端': min(w['yMin'] for w in words),
+            '右端': max(w['xMax'] for w in words), '下端': max(w['yMax'] for w in words)}
 
 
 def summary(pages, expected_rows=13):
@@ -92,7 +108,7 @@ def summary(pages, expected_rows=13):
                       and (previous + y) / 2 < w['yMin'] < end]
         row = {'款_番号': markers[i]['text'] if i < len(markers) else None,
                '款_名称': string(name_words) if i < len(markers) else string([w for w in words if w['xMax'] < 99 and y-1 < w['yMin'] < y+5]),
-               **{k: amount(words, y, b) for k, b in zip(SUMMARY_AMOUNTS, SUMMARY_EDGES)},
+               **amount_cells(words, page, y, SUMMARY_AMOUNTS, SUMMARY_EDGES),
                '備考': string([w for w in words if w['xMin'] >= 1058 and y-1 <= w['yMin'] < end]),
                **position(page, same_line(words, y, 99, 1058))}
         result.append(row)
@@ -129,15 +145,17 @@ def detail(pages, edges=DETAIL_EDGES, note_bounds=(1090, 1176), sign_edges=None)
                 annotations = [w for w in note_words if w['text'] == '前年度繰越事業費不用額']
                 if len(annotations) > 1:
                     raise ValueError('Multiple previous-year carry unused notes at one parent')
-                annotation_amount = None
+                annotation_amount, annotation_words = None, []
                 if annotations:
-                    annotation_amount = amount(body, annotations[0]['yMin'], note_bounds)
+                    annotation_amount, annotation_words = amount(body, annotations[0]['yMin'], note_bounds)
                 record = {'level': level, '番号': marker['text'], '名称': string(names),
-                          **{k: amount(body, y, b, sb) for k, b, sb in zip(PARENT_AMOUNTS, edges, sign_edges)},
+                          **amount_cells(body, page, y, PARENT_AMOUNTS, edges, sign_edges),
                           '備考': string(note_words),
                           '備考_注記名称': annotations[0]['text'] if annotations else None,
                           '備考_注記金額': annotation_amount,
+                          **(amount_position_fields('備考_注記金額', page, boxes(annotation_words)) if annotations else null_position_fields('備考_注記金額')),
                           '備考_流用注記名称': None, '備考_流用注記金額': None,
+                          **null_position_fields('備考_流用注記金額'),
                           '翌年度繰越額_区分': string([w for w in body if 715 <= w['xMin'] and w['xMax'] < 790
                                                      and y-12 <= w['yMin'] < y and not AMOUNT.fullmatch(w['text'])]),
                           **position(page, [marker])}
@@ -159,15 +177,16 @@ def detail(pages, edges=DETAIL_EDGES, note_bounds=(1090, 1176), sign_edges=None)
                     if moku['備考_流用注記名称'] is not None:
                         raise ValueError('Multiple printed transfer notes at one moku')
                     moku['備考_流用注記名称'] = marker['text']
-                    moku['備考_流用注記金額'] = amount(body, y, note_bounds)
+                    moku['備考_流用注記金額'], transfer_words = amount(body, y, note_bounds)
+                    moku.update(amount_position_fields('備考_流用注記金額', page, boxes(transfer_words)))
                     note = string(same_line(body, y, 867, note_bounds[1]))
                     moku['備考'] = '\n'.join(x for x in [moku['備考'], note] if x)
                 elif kind == 'section':
                     next_y = min([w['yMin'] for w in section_markers + markers if w['yMin'] > y+.8] + [820])
                     names = [w for w in body if w['xMin'] > marker['xMax'] and w['xMax'] < 516 and y-.8 <= w['yMin'] < next_y]
                     values = {'区分_番号': marker['text'], '区分_名称': string(names),
-                              '金額': amount(body, y, (490, 572)),
-                              **{k: amount(body, y, b, sb) for k, b, sb in zip(PARENT_AMOUNTS[-3:], edges[-3:], sign_edges[-3:])},
+                              **amount_cells(body, page, y, ['金額', *PARENT_AMOUNTS[-3:]],
+                                             [(490, 572), *edges[-3:]], [(490, 572), *sign_edges[-3:]]),
                               '翌年度繰越額_区分': string([w for w in body if 715 <= w['xMin'] and w['xMax'] < 790
                                                          and y-12 <= w['yMin'] < y and not AMOUNT.fullmatch(w['text'])]),
                               **position(page, [marker])}
@@ -180,21 +199,26 @@ def detail(pages, edges=DETAIL_EDGES, note_bounds=(1090, 1176), sign_edges=None)
                     names = [w for w in body if w['xMin'] > marker['xMax'] and w['xMax'] < 1176
                              and y-.8 <= w['yMin'] < next_y and w not in money]
                     values = {'備考_番号': marker['text'], '備考_名称': string(names), '備考_金額': money[0]['text'],
+                              **amount_position_fields('備考_金額', page, boxes(money)),
                               **position(page, [marker] + names + money)}
                     remarks.append((moku, values))
     section_keys = ['区分_番号', '区分_名称', '金額', '支出済額', '翌年度繰越額', '不用額', '翌年度繰越額_区分']
     remark_keys = ['備考_番号', '備考_名称', '備考_金額']
     for moku in moku_list:
-        for records, keys in [(sections, section_keys), (remarks, remark_keys)]:
+        for records, keys, amount_keys in [(sections, section_keys, ['金額', '支出済額', '翌年度繰越額', '不用額']),
+                                           (remarks, remark_keys, ['備考_金額'])]:
             if not any(parent is moku for parent, _ in records):
-                records.append((moku, {**dict.fromkeys(keys), **{k: moku[k] for k in ('物理頁', '上端', '下端')}}))
+                filler = {**dict.fromkeys(keys), **{k: moku[k] for k in ('物理頁', '左端', '上端', '右端', '下端')}}
+                for column in amount_keys:
+                    filler.update(null_position_fields(column))
+                records.append((moku, filler))
     def flatten(records):
         rows = []
         for moku, values in records:
             row = {}
             for level in ['款', '項', '目']:
                 parent = moku['path'][level]
-                row.update({level + '_' + k: parent[k] for k in ['番号', '名称', *PARENT_AMOUNTS, '備考', '備考_注記名称', '備考_注記金額', '備考_流用注記名称', '備考_流用注記金額', '翌年度繰越額_区分', '物理頁', '上端', '下端']})
+                row.update({level + '_' + k: parent[k] for k in parent if k not in ('level', 'path')})
             rows.append({**row, **values})
         return sorted(rows, key=lambda r: (r['物理頁'], r['上端']))
     observed_parents = [{k: v for k, v in parent.items() if k != 'path'} for parent in parents]
@@ -215,7 +239,9 @@ def expenditure_detail(remark_rows, summary_rows):
             raise ValueError('Summary and detail printed kan names differ')
         rows.append({**detail_row,
                      **{'款_' + column: parent[column] for column in CARRY_AMOUNTS},
-                     **{'款_総括_' + column: parent[column] for column in ('物理頁', '上端', '下端')}})
+                     **{f'款_{column}_{suffix}': parent[f'{column}_{suffix}']
+                        for column in CARRY_AMOUNTS for suffix in ('物理頁', '左端', '上端', '右端', '下端')},
+                     **{'款_総括_' + column: parent[column] for column in ('物理頁', '左端', '上端', '右端', '下端')}})
     return rows
 
 
@@ -224,7 +250,7 @@ def metadata(rows, suffix):
     contexts = []
     if suffix != 'summary':
         for level in ['款', '項', '目']:
-            columns = [k for k in rows[0] if k.startswith(level + '_') and not k.endswith(('物理頁', '上端', '下端'))]
+            columns = [k for k in rows[0] if k.startswith(level + '_') and not k.endswith(('物理頁', '左端', '上端', '右端', '下端'))]
             contexts.append({'columns': columns, 'header_path': ['科目', level],
                              'grain_columns': [x + '_番号' for x in ['款', '項', '目'][:['款', '項', '目'].index(level)+1]]})
         columns = ['区分_番号', '区分_名称', '金額', '支出済額', '翌年度繰越額', '不用額', '翌年度繰越額_区分'] if suffix == 'setsu' else ['備考_番号', '備考_名称', '備考_金額']
@@ -258,17 +284,26 @@ def convert(inputs, destination, options):
     destination = Path(destination)
     observations = destination / 'shinjuku-observations'
     observations.mkdir()
-    summary_rows = summary(observe(source['path'], 3, 3, observations / 'summary-bbox.html'))
-    section_rows, remark_rows, parents = detail(observe(source['path'], 65, 147, observations / 'detail-bbox.html'))
+    summary_pages = observe(source['path'], 3, 3, observations / 'summary-bbox.html')
+    summary_rows = summary(summary_pages)
+    detail_pages = observe(source['path'], 65, 147, observations / 'detail-bbox.html')
+    section_rows, remark_rows, parents = detail(detail_pages)
     (observations / 'parents.json').write_text(json.dumps(parents, ensure_ascii=False, indent=2) + '\n')
     detail_rows = expenditure_detail(remark_rows, summary_rows)
     results = {}
     for suffix, rows in [('summary', summary_rows), ('setsu', section_rows), ('expenditure-detail', detail_rows)]:
         table_id = options['table_prefix'] + '-' + suffix
-        columns = tuple(ParquetColumn(k, 'BIGINT' if k.endswith('物理頁') else 'DOUBLE' if k.endswith(('上端', '下端')) else 'VARCHAR') for k in rows[0])
+        columns = tuple(ParquetColumn(k, 'BIGINT' if k.endswith('物理頁') else 'DOUBLE' if k.endswith(('左端', '上端', '右端', '下端')) else 'VARCHAR') for k in rows[0])
         table_destination = destination if suffix == 'expenditure-detail' else observations
         result = write_conversion(table_destination / (table_id + '.parquet'), rows, columns=columns,
                                   context=ConversionContext(source['sha256'], table_id, __file__))
         if suffix == 'expenditure-detail':
             results[table_id] = {'path': Path(result.path), 'metadata': metadata(rows, suffix)}
+            # Adopted detail rows carry summary-page amounts too, so the scope
+            # covers the summary page as well as the detail body.
+            write_coverage_words(Path(result.path),
+                                 [(page, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text'])
+                                  for page, words in summary_pages for w in words if w['yMin'] > 145] +
+                                 [(page, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text'])
+                                  for page, words in detail_pages for w in words if w['yMin'] > 145])
     return results

@@ -22,6 +22,7 @@ import subprocess
 import xml.etree.ElementTree as ET
 
 from ingestion.lib.conversion import ConversionContext, write_conversion
+from ingestion.lib.node_tables import AMOUNT_POSITION_SUFFIXES, amount_position_fields, null_position_fields, write_coverage_words
 from ingestion.lib.parquet import ParquetColumn
 
 ORIGIN_SHA = "55219fb3c04d2cca0ecb4fea979111040beccafdedd596ec09a553317bbaeb3d"
@@ -81,6 +82,36 @@ def line_text(words):
     return value
 
 
+def _boxes(words):
+    return [[w['xMin'], w['yMin'], w['xMax'], w['yMax']] for w in words]
+
+
+def _node_words(first, head):
+    """Number plus name-zone words forming a left-page row's node box."""
+    return [first] + [w for w in head if w['xMin'] < 410]
+
+
+def _node_position(page, words):
+    union = _boxes(words)
+    return {'物理頁': page, '左端': min(b[0] for b in union), '上端': min(b[1] for b in union),
+            '右端': max(b[2] for b in union), '下端': max(b[3] for b in union)}
+
+
+def _left_amounts(keys, texts, owners, page):
+    """Left-page amount texts with their own printed positions."""
+    record = {}
+    for key, value in zip(keys, texts):
+        record[key] = value
+        words = owners.get(key, [])
+        if value is not None:
+            if not words:
+                raise ValueError(f'Printed amount without word boxes: {key}')
+            record.update(amount_position_fields(key, page, _boxes(words)))
+        else:
+            record.update(null_position_fields(key))
+    return record
+
+
 def split_amount_tail(words, page_number, y):
     """Split trailing amount words from name words on one 備考 baseline.
 
@@ -99,7 +130,7 @@ def split_amount_tail(words, page_number, y):
     if any(w["xMax"] > amounts[0]["xMin"] for w in tail):
         raise ValueError(f"備考 amount is not trailing at page {page_number},"
                          f" y={y}: {[w['text'] for w in words]}")
-    return tail, amounts[0]["text"]
+    return tail, amounts[0]["text"], amounts[0]
 
 
 def parse_left(page_number, words, current):
@@ -141,9 +172,15 @@ def parse_left(page_number, words, current):
             if len(amounts) != 3:
                 raise ValueError(f"款項目 row needs 3 printed amounts at page {page_number}, y={line[0]['yMin']}")
             name = line_text([w for w in head[1:] if w["xMin"] < 410])
+            node_words = _node_words(first, head[1:])
             record = {"level": level, "番号": match[1], "名称": name,
-                      "当初予算額": amounts[0]["text"], "補正予算額": amounts[1]["text"],
-                      "計": amounts[2]["text"],
+                      **_left_amounts(["当初予算額", "補正予算額", "計"],
+                                      [amounts[0]["text"], amounts[1]["text"], amounts[2]["text"]],
+                                      {"当初予算額": [amounts[0]], "補正予算額": [amounts[1]], "計": [amounts[2]]},
+                                      page_number),
+                      "_node_words": node_words,
+                      "_node_pos": _node_position(page_number, node_words),
+                      "_page": page_number,
                       "y_top": line[0]["yMin"], "y_bottom": max(w["yMax"] for w in line)}
             if level == "款":
                 current.clear()
@@ -168,7 +205,12 @@ def parse_left(page_number, words, current):
             name = line_text(head[1:])
             if not name:
                 raise ValueError(f"節 without a name at page {page_number}, y={line[0]['yMin']}")
-            rows.append({"level": "節", "番号": match[1], "名称": name, "金額": amounts[0]["text"],
+            node_words = _node_words(first, head[1:])
+            rows.append({"level": "節", "番号": match[1], "名称": name,
+                         **_left_amounts(["金額"], [amounts[0]["text"]], {"金額": [amounts[0]]}, page_number),
+                         "_node_words": node_words,
+                         "_node_pos": _node_position(page_number, node_words),
+                         "_page": page_number,
                          "path": dict(current),
                          "y_top": line[0]["yMin"], "y_bottom": max(w["yMax"] for w in line)})
         elif not match and not amounts:
@@ -176,6 +218,8 @@ def parse_left(page_number, words, current):
                 raise ValueError(f"Continuation without a printed row at page {page_number}, y={line[0]['yMin']}")
             target = rows[-1]
             target["名称"] = target["名称"] + "\n" + line_text(head)
+            target["_node_words"].extend(w for w in head if w["xMin"] < 410)
+            target["_node_pos"] = _node_position(target["_page"], target["_node_words"])
             target["y_bottom"] = max(target["y_bottom"], max(w["yMax"] for w in line))
         else:
             raise ValueError(f"Unrecognized left baseline at page {page_number}, y={line[0]['yMin']}:"
@@ -217,7 +261,8 @@ def parse_right(page_number, words):
             raise ValueError(f"Execution baseline needs 2 printed amounts at page {page_number},"
                              f" y={line[0]['yMin']}")
         if avals:
-            pairs.append({"支出済額": avals[0]["text"], "不用額": avals[1]["text"], "y": line[0]["yMin"]})
+            pairs.append({"支出済額": avals[0]["text"], "不用額": avals[1]["text"], "y": line[0]["yMin"],
+                          "_支出済額_words": [avals[0]], "_不用額_words": [avals[1]]})
         if not bwords:
             continue
         y, yb = line[0]["yMin"], max(w["yMax"] for w in bwords)
@@ -227,7 +272,7 @@ def parse_right(page_number, words):
                 raise ValueError(f"所属 with an amount at page {page_number}, y={y}")
             bnodes.append({"kind": "shozoku", "text": first_text, "y": y, "yb": yb, "page": page_number})
             continue
-        name_words, amount = split_amount_tail(bwords, page_number, y)
+        name_words, amount, amount_word = split_amount_tail(bwords, page_number, y)
         name = line_text(name_words)
         if RYUYO.match(name):
             bnodes.append({"kind": "ryuyo", "text": name, "amount": amount, "y": y, "yb": yb,
@@ -238,7 +283,7 @@ def parse_right(page_number, words):
         if depth is None or not NUMBERED.match(name):
             raise ValueError(f"Unrecognized 備考 baseline at page {page_number}, y={y}: {name!r}")
         bnodes.append({"kind": "node", "depth": depth, "text": name, "amount": amount, "y": y, "yb": yb,
-                         "page": page_number})
+                         "page": page_number, "_amount_words": [amount_word], "_name_words": name_words})
     return pairs, bnodes
 
 
@@ -254,7 +299,8 @@ def build_trees(bnodes):
             stack[0]["shozoku"] = node["text"]
             continue
         item = {"text": node["text"], "amount": node["amount"], "y": node["y"], "yb": node["yb"],
-                "page": node["page"], "children": []}
+                "page": node["page"], "children": [],
+                "_amount_words": node["_amount_words"], "_name_words": node["_name_words"]}
         if node["depth"] == 0:
             stack.clear()
             businesses.append({"node": item, "shozoku": None, "children": [],
@@ -315,17 +361,36 @@ def check_subtree_sums(business):
 
 COLUMNS = (
     ["款_番号", "款_名称", "款_当初予算額", "款_補正予算額", "款_計", "款_支出済額", "款_不用額"]
+    + [f"款_{k}_{s}" for k in ("当初予算額", "補正予算額", "計", "支出済額", "不用額")
+        for s in AMOUNT_POSITION_SUFFIXES]
+    + [f"款_{s}" for s in ("物理頁", "左端", "上端", "右端", "下端")]
     + ["項_番号", "項_名称", "項_当初予算額", "項_補正予算額", "項_計", "項_支出済額", "項_不用額"]
+    + [f"項_{k}_{s}" for k in ("当初予算額", "補正予算額", "計", "支出済額", "不用額")
+        for s in AMOUNT_POSITION_SUFFIXES]
+    + [f"項_{s}" for s in ("物理頁", "左端", "上端", "右端", "下端")]
     + ["目_番号", "目_名称", "目_当初予算額", "目_補正予算額", "目_計", "目_支出済額", "目_不用額", "目_備考"]
+    + [f"目_{k}_{s}" for k in ("当初予算額", "補正予算額", "計", "支出済額", "不用額")
+        for s in AMOUNT_POSITION_SUFFIXES]
+    + [f"目_{s}" for s in ("物理頁", "左端", "上端", "右端", "下端")]
     + ["節_番号", "節_名称", "節_金額", "節_支出済額", "節_不用額"]
+    + [f"節_{k}_{s}" for k in ("金額", "支出済額", "不用額") for s in AMOUNT_POSITION_SUFFIXES]
+    + [f"節_{s}" for s in ("物理頁", "左端", "上端", "右端", "下端")]
     + ["事業_名称", "事業_金額", "所属"]
+    + [f"事業_金額_{s}" for s in AMOUNT_POSITION_SUFFIXES]
+    + [f"事業_{s}" for s in ("物理頁", "左端", "上端", "右端", "下端")]
     + ["説明1_名称", "説明1_金額", "説明2_名称", "説明2_金額", "説明3_名称", "説明3_金額"]
+    + [f"説明{i}_{k}_{s}" for i in (1, 2, 3) for k in ("金額",) for s in AMOUNT_POSITION_SUFFIXES]
+    + [f"説明{i}_{s}" for i in (1, 2, 3) for s in ("物理頁", "左端", "上端", "右端", "下端")]
     + ["物理頁", "右_物理頁", "左_上端", "左_下端", "右_上端", "右_下端"]
 )
 
 
 def metadata_for():
-    amount_cols = [c for c in COLUMNS if any(k in c for k in ("当初予算額", "補正予算額", "計", "金額", "支出済額", "不用額"))]
+    # 位置列（_物理頁/_左端/_上端/_右端/_下端で終わる列）は金額そのものではないため
+    # units 対象外。金額テキスト列のみを金額として扱う。
+    amount_cols = [c for c in COLUMNS
+                   if c.rsplit("_", 1)[-1] not in (*AMOUNT_POSITION_SUFFIXES, "上端", "下端")
+                   and any(k in c for k in ("当初予算額", "補正予算額", "計", "金額", "支出済額", "不用額"))]
     note = ("後期高齢者医療特別会計の歳出事項別明細書（左右見開き）。左頁=科目・予算現額・節区分金額、"
             "右頁=支出済額・不用額（左頁明細行と同順・spread毎の系統的y差で対応）・備考フロー。"
             "備考の事業(x291)・節見出し(x299)・細目(x308)・細々目(x316)・所属・流用注記は"
@@ -358,6 +423,31 @@ def metadata_for():
     return {"units": [{"text": "円", "scope": {"kind": "columns", "columns": amount_cols}}],
             "notes": [{"text": note, "scope": {"kind": "table"}}],
             "column_contexts": contexts}
+
+
+def _item_node_position(item):
+    """A 備考 flow node's own printed page and name-word union box."""
+    union = _boxes(item["_name_words"])
+    return {"物理頁": item["page"], "左端": min(b[0] for b in union),
+            "上端": min(b[1] for b in union), "右端": max(b[2] for b in union),
+            "下端": max(b[3] for b in union)}
+
+
+def _exec_amount_positions(row, keys=("支出済額", "不用額")):
+    """Right-page execution amounts with their own printed positions."""
+    record = {}
+    for key in keys:
+        value = row.get(key)
+        words = (row.get("_exec_words") or {}).get(key, [])
+        page = row.get("_exec_page")
+        record[key] = value
+        if value is not None:
+            if not words or page is None:
+                raise ValueError(f'Printed amount without word boxes: {key}')
+            record.update(amount_position_fields(key, page, _boxes(words)))
+        else:
+            record.update(null_position_fields(key))
+    return record
 
 
 def convert(inputs, destination, options):
@@ -411,6 +501,9 @@ def convert(inputs, destination, options):
             row["支出済額"] = pair["支出済額"]
             row["不用額"] = pair["不用額"]
             row["_exec_pos"] = (right_no, pair["y"])
+            row["_exec_words"] = {"支出済額": pair["_支出済額_words"],
+                                   "不用額": pair["_不用額_words"]}
+            row["_exec_page"] = right_no
         if total is not None:
             totals.append({"page": left_no, **total, "exec": total_exec_pair})
 
@@ -590,6 +683,36 @@ def convert(inputs, destination, options):
             "左_上端": section["y_top"], "左_下端": section["y_bottom"],
             "右_上端": leaf["y"], "右_下端": leaf["yb"],
         }
+        for prefix, record in (("款_", moku["path"]["款"]), ("項_", moku["path"]["項"]),
+                               ("目_", moku), ("節_", section)):
+            for suffix in ("物理頁", "左端", "上端", "右端", "下端"):
+                row[prefix + suffix] = record["_node_pos"][suffix]
+        for prefix, record, keys in (("款_", moku["path"]["款"], ("当初予算額", "補正予算額", "計")),
+                                     ("項_", moku["path"]["項"], ("当初予算額", "補正予算額", "計")),
+                                     ("目_", moku, ("当初予算額", "補正予算額", "計")),
+                                     ("節_", section, ("金額",))):
+            for key in keys:
+                for suffix in AMOUNT_POSITION_SUFFIXES:
+                    row[f"{prefix}{key}_{suffix}"] = record[f"{key}_{suffix}"]
+        for prefix, record in (("款_", moku["path"]["款"]), ("項_", moku["path"]["項"]),
+                               ("目_", moku), ("節_", section)):
+            for key, value in _exec_amount_positions(record).items():
+                row[prefix + key] = value
+        biz = business["node"]
+        for suffix, value in _item_node_position(biz).items():
+            row[f"事業_{suffix}"] = value
+        row.update(amount_position_fields("事業_金額", biz["page"], _boxes(biz["_amount_words"])))
+        for index in range(3):
+            prefix, node = f"説明{index + 1}_", levels[index]
+            if node is None:
+                for suffix in ("物理頁", "左端", "上端", "右端", "下端"):
+                    row[prefix + suffix] = None
+                row.update(null_position_fields(prefix + "金額"))
+            else:
+                for suffix, value in _item_node_position(node).items():
+                    row[prefix + suffix] = value
+                row.update(amount_position_fields(prefix + "金額", node["page"],
+                                                  _boxes(node["_amount_words"])))
         records.append(row)
     if not records:
         raise ValueError("No explanation leaves in the measured scope")
@@ -599,11 +722,15 @@ def convert(inputs, destination, options):
         per_moku[key] = per_moku.get(key, 0) + 1
     (observations / "grain.json").write_text(json.dumps(
         {"rows": len(records), "per_moku": per_moku}, ensure_ascii=False, indent=2) + "\n")
-    columns = tuple(ParquetColumn(c, "BIGINT" if c in ("物理頁", "右_物理頁")
-                                else "DOUBLE" if c.endswith(("上端", "下端")) else "VARCHAR")
+    columns = tuple(ParquetColumn(c, "BIGINT" if c in ("物理頁", "右_物理頁") or c.endswith("_物理頁")
+                                else "DOUBLE" if c.endswith(("左端", "上端", "右端", "下端")) else "VARCHAR")
                     for c in COLUMNS)
     output = write_conversion(destination / (table_id + ".parquet"), records, columns=columns,
                               context=ConversionContext(source["sha256"], table_id, __file__))
+    write_coverage_words(Path(output.path),
+                         [(page, (w["xMin"], w["yMin"], w["xMax"], w["yMax"]), w["text"])
+                          for page, words in pages.items() for w in words
+                          if LEFT_BODY_TOP <= w["yMin"] < LEFT_BODY_BOTTOM])
     from ingestion.fiscal.manifest import validate_metadata
     validate_metadata(metadata_for(), list(COLUMNS))
     return {table_id: {"path": Path(output.path), "metadata": metadata_for()}}

@@ -22,6 +22,7 @@ from decimal import Decimal
 from pathlib import Path
 
 from ingestion.lib.conversion import ConversionContext, OriginReference, write_conversion
+from ingestion.lib.node_tables import AMOUNT_POSITION_SUFFIXES, amount_position_fields, write_coverage_words
 from ingestion.lib.parquet import ParquetColumn
 
 AMOUNT = re.compile(r"^[△\-]?[0-9]{1,3}(?:,[0-9]{3})*$|^[△\-]?[0-9]+$")
@@ -40,6 +41,22 @@ BUDGET_LABELS = {
     "予備費支出": "予備費支出及び流用増減",
     "予備費支出及び流用増減": "予備費支出及び流用増減",
 }
+
+
+LEVEL_AMOUNTS = ["計", "当初予算額", "補正予算額", "継続費及び繰越事業費繰越額",
+                 "予備費支出及び流用増減", "支出済額", "翌年度繰越額", "不用額"]
+SETSU_AMOUNTS = ["金額", "支出済額", "翌年度繰越額", "不用額"]
+
+
+def _boxes(words):
+    return [[w["xMin"], w["yMin"], w["xMax"], w["yMax"]] for w in words]
+
+
+def _amount_position(column, page, words):
+    """One amount column's own printed place; words are its exact word boxes."""
+    if not words:
+        return {f"{column}_{suffix}": None for suffix in AMOUNT_POSITION_SUFFIXES}
+    return amount_position_fields(column, page, _boxes(words))
 
 
 def _words(pdf: Path, first: int, last: int, path: Path):
@@ -183,6 +200,7 @@ def _parse_left(pages, numbers):
                 current = {"level": level, "page": page, "y": row["y"],
                            "number": number, "name": name,
                            "計": row["amount"]["text"],
+                           "計_word": row["amount"],
                            "当初予算額": None, "補正予算額": None,
                            "継続費及び繰越事業費繰越額": None,
                            "予備費支出及び流用増減": None,
@@ -202,6 +220,7 @@ def _parse_left(pages, numbers):
                 entry = {"page": page, "y": row["y"],
                          "number": row["number"]["text"], "name": name,
                          "金額": row["amount"]["text"],
+                         "金額_word": row["amount"],
                          "top": row["y"], "bottom": row["words"][-1]["yMax"],
                          "bbox": row["words"]}
                 setsu_rows.append(entry)
@@ -220,6 +239,7 @@ def _parse_left(pages, numbers):
                         if not same:
                             raise ValueError(f"Budget label without amount at y={row['y']:.1f}")
                         current[label] = same[-1]["text"]
+                        current[label + "_word"] = same[-1]
                 for word in row["words"]:
                     if word["xMin"] < 205 and not re.fullmatch(r"[0-9]+", word["text"]) \
                             and word["text"] not in BUDGET_LABELS \
@@ -402,10 +422,13 @@ def _parse_right(pages, order_index, totals):
                                      f"{len(match)} left rows")
                 row = match[0]
                 brief, block = _split_notes(notes)
-                entry = {"row": row, "spent": spent[0]["text"],
+                entry = {"row": row, "page": page, "spent": spent[0]["text"],
+                         "spent_word": spent[0],
                          "rate": rates[0]["text"] if rates else None,
                          "carried": carried[0]["text"] if carried else None,
+                         "carried_word": carried[0] if carried else None,
                          "unused": unused[0]["text"] if unused else None,
+                         "unused_word": unused[0] if unused else None,
                          "brief": _join(brief) if brief else None}
                 exec_rows.append(entry)
                 current = entry
@@ -473,6 +496,10 @@ COLUMNS = (
 
 POSITION_SUFFIXES = ("物理頁", "左端", "上端", "右端", "下端")
 COLUMNS += [f"{level}_{suffix}" for level in "款項目節" for suffix in POSITION_SUFFIXES]
+AMOUNT_POSITION_COLUMNS = (
+    [f"{level}_{key}_{suffix}" for level in "款項目" for key in LEVEL_AMOUNTS for suffix in POSITION_SUFFIXES]
+    + [f"節_{key}_{suffix}" for key in SETSU_AMOUNTS for suffix in POSITION_SUFFIXES])
+COLUMNS += AMOUNT_POSITION_COLUMNS
 COLUMN_CONTEXTS = [
     {"columns": [c for c in COLUMNS if c.startswith(level + "_")],
      "header_path": ["款項目", level] if level != "節" else ["節", "区分"],
@@ -480,7 +507,7 @@ COLUMN_CONTEXTS = [
     for level in "款項目節"
 ]
 
-AMOUNT_COLUMNS = [c for c in COLUMNS if any(
+AMOUNT_COLUMNS = [c for c in COLUMNS if c.rsplit("_", 1)[-1] not in POSITION_SUFFIXES and any(
     k in c for k in ("計", "予算額", "繰越", "流用", "金額", "支出済額", "不用額"))]
 
 
@@ -589,6 +616,13 @@ def convert(inputs, destination, options):
                     for name in COLUMNS)
     result = write_conversion(result_dir / f"{table_id}.parquet", rows,
                               columns=columns, context=context)
+    write_coverage_words(Path(result.path),
+                         [(page, (w["xMin"], w["yMin"], w["xMax"], w["yMax"]), w["text"])
+                          for page, words in left.items() for w in words
+                          if BODY_TOP <= w["yMin"] < LEFT_BOTTOM] +
+                         [(page, (w["xMin"], w["yMin"], w["xMax"], w["yMax"]), w["text"])
+                          for page, words in right.items() for w in words
+                          if BODY_TOP <= w["yMin"] < RIGHT_BOTTOM])
     metadata = {"column_contexts": COLUMN_CONTEXTS, "units": [{"text": "円", "scope": {"kind": "columns",
                                                   "columns": AMOUNT_COLUMNS}}],
                 "notes": [{"text": "法定節が行。節を持たない25款5項5目予備費は目行。款・項・目の金額・執行額は所属contextとして各行へ反復。右頁備考の経費内訳ブロック（見出し・項目・合計）は事業別の分解で節対応未確認のため行化せず、属する目の目_備考へ印字行の改行のまま保持。末尾の施策番号は目_施策番号へカンマ結合で保持し、目_備考の行内にも残る。歳出合計統制行は行化せずlocal観測。執行率は原典の百分率表記を保持。継続費繰越・予備費流用欄は対象範囲で印字なしのため全行NULL。物理頁は左頁、bboxは左頁の行bounds。",
@@ -649,4 +683,32 @@ def _emit_row(owner, setsu, kan, kou, moku, by_id, executed_moku, remarks, polic
                 (node["page"], min(w["xMin"] for w in words), min(w["yMin"] for w in words),
                  max(w["xMax"] for w in words), max(w["yMax"] for w in words)))))
         row.update(position)
+    exec_text = {"支出済額": "spent", "翌年度繰越額": "carried", "不用額": "unused"}
+    for level, node, exec_entry in (("款", kan, kan_exec), ("項", kou, kou_exec), ("目", moku, executed_moku)):
+        for key in LEVEL_AMOUNTS:
+            column = f"{level}_{key}"
+            if key in exec_text:
+                text = exec_entry.get(exec_text[key]) if exec_entry else None
+                found = [exec_entry[exec_text[key] + "_word"]] if exec_entry and exec_entry.get(exec_text[key] + "_word") else []
+                page = exec_entry["page"] if exec_entry else None
+            else:
+                text = node.get(key) if node else None
+                found = [node[key + "_word"]] if node and node.get(key + "_word") else []
+                page = node["page"] if node else None
+            if text is not None and not found:
+                raise ValueError(f"Printed amount without word boxes: {column}")
+            row.update(_amount_position(column, page, found))
+    for key in SETSU_AMOUNTS:
+        column = f"節_{key}"
+        if key == "金額":
+            text = setsu.get(key) if setsu else None
+            found = [setsu[key + "_word"]] if setsu and setsu.get(key + "_word") else []
+            page = setsu["page"] if setsu else None
+        else:
+            text = own_exec.get(exec_text[key]) if own_exec else None
+            found = [own_exec[exec_text[key] + "_word"]] if own_exec and own_exec.get(exec_text[key] + "_word") else []
+            page = own_exec["page"] if own_exec else None
+        if text is not None and not found:
+            raise ValueError(f"Printed amount without word boxes: {column}")
+        row.update(_amount_position(column, page, found))
     return row

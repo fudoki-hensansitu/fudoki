@@ -10,6 +10,7 @@ import xml.etree.ElementTree as ET
 
 import duckdb
 
+from ingestion.lib.node_tables import write_coverage_words
 from ingestion.lib.pdf_table import tokens_from_bbox_layout
 
 from importlib import import_module
@@ -97,6 +98,22 @@ def compact(value):
     return re.sub(r'\s+', '', value)
 
 
+def origin_position(column, page, words):
+    """One amount column's own printed place in this layout's 原典 coordinates.
+
+    Migration reads `<column>_原典物理頁/_原典xMin/...` as the amount's own
+    position, never inheriting the node's label position.
+    """
+    if not words:
+        return {f'{column}_{suffix}': None for suffix in
+                ('原典物理頁', '原典xMin', '原典yMin', '原典xMax', '原典yMax')}
+    boxes = [[w['x'], w['y'], w['xe'], w['ye']] for w in words]
+    return {column + '_原典物理頁': page, column + '_原典xMin': min(b[0] for b in boxes),
+            column + '_原典yMin': min(b[1] for b in boxes),
+            column + '_原典xMax': max(b[2] for b in boxes),
+            column + '_原典yMax': max(b[3] for b in boxes)}
+
+
 def rows(words, *, tolerance=4.1):
     result = []
     for word in sorted(words, key=lambda w: (w['y'], w['x'])):
@@ -119,6 +136,7 @@ def parent_event(row, page, page_words=None):
         return None
     values = []
     sign = ''
+    sign_words = []
     for w in row:
         if w['x'] < 130 or w['x'] > 1025:
             continue
@@ -126,11 +144,14 @@ def parent_event(row, page, page_words=None):
         for part in re.findall(r'△|[0-9]+(?:,[0-9]{3})*(?:\.[0-9]+)?|（[0-9.]+）|\([0-9.]+\)', w['text']):
             if part == '△':
                 sign = part
+                sign_words = [w]
             else:
-                values.append((sign + part) if sign else part)
+                words = [*sign_words, w] if sign else [w]
+                values.append(((sign + part) if sign else part, words))
                 sign = ''
+                sign_words = []
     if len(values) != len(FINANCIAL):
-        raise ValueError(f'Parent monetary columns are incomplete: page={page}, {text(row)}, values={values}')
+        raise ValueError(f'Parent monetary columns are incomplete: page={page}, {text(row)}, values={[v for v, _ in values]}')
     name = match[3]
     name_words = []
     if page_words:
@@ -142,7 +163,10 @@ def parent_event(row, page, page_words=None):
         if name_words:
             name = '\n'.join(text(r) for r in rows(name_words))
     return {'level': match[1], '番号': match[2], '名称': name,
-            **dict(zip(FINANCIAL, values, strict=True)), **coordinates([*row, *name_words], page)}
+            **{key: value for key, (value, _) in zip(FINANCIAL, values, strict=True)},
+            **{k: v for key, (_, words) in zip(FINANCIAL, values, strict=True)
+                for k, v in origin_position(key, page, words).items()},
+            **coordinates([*row, *name_words], page)}
 
 
 def annual_header(row):
@@ -161,7 +185,7 @@ def annual_header(row):
     return headers
 
 
-def annual_row(row, headers):
+def annual_row(row, headers, page):
     numbers = [w for w in row if AMOUNT.fullmatch(w['text'].removesuffix('円'))]
     if not numbers or len(numbers) != len(headers):
         return None
@@ -173,7 +197,9 @@ def annual_row(row, headers):
     for idx, (header, number) in enumerate(zip(headers, numbers, strict=True)):
         end = numbers[idx + 1]['x'] if idx + 1 < len(numbers) else float('inf')
         suffix = [w for w in row if w['text'] == '円' and number['xe'] <= w['x'] < end]
-        cells[header['name']] = number['text'] + (' 円' if suffix and not number['text'].endswith('円') else '')
+        words = [number, *suffix]
+        cells[header['name']] = (number['text'] + (' 円' if suffix and not number['text'].endswith('円') else ''),
+                                 coordinates(words, page))
     return name, cells
 
 
@@ -409,6 +435,8 @@ def node_context(node):
         result[prefix + '_番号'] = at['number']
         result[prefix + '_名称'] = at['name']
         result[prefix + '_金額'] = at['amount']
+        for key, value in at['amount_location'].items():
+            result[prefix + '_金額_' + key] = value
         for key, value in at['location'].items():
             result[prefix + '_' + key] = value
         result[prefix + '_所属'] = at['department']
@@ -437,6 +465,9 @@ def unexplained_sections(pages, parent, following, last):
                             '節_名称': '\n'.join(text(r) for r in rows(name_words)),
                             **dict(zip(['節_金額', '節_支出済額', '節_翌年度繰越額', '節_不用額'],
                                        [w['text'] for w in values], strict=True)),
+                            **{k2: v
+                               for k, w in zip(['節_金額', '節_支出済額', '節_翌年度繰越額', '節_不用額'], values)
+                               for k2, v in origin_position(k, page, [w]).items()},
                             '節_所属': text(department) or None,
                             **{'節_' + key: value for key, value in location.items()}, **location})
     return records
@@ -781,11 +812,13 @@ def assemble(pages, first, last, *, source, destination, reserve_kan='11', perso
                         awaiting_header = False
                     continue
                 if annual:
-                    item = annual_row(row, annual['headers'])
+                    item = annual_row(row, annual['headers'], page)
                     if item:
                         name, cells = item
                         record = {**node_context(annual['owner']), '施工概要_区分': name,
-                                  **{'施工概要_' + key: val for key, val in cells.items()},
+                                  **{('施工概要_' + key): val for key, (val, _) in cells.items()},
+                                  **{('施工概要_' + key + '_' + k): v
+                                     for key, (_, loc) in cells.items() for k, v in loc.items()},
                                   **coordinates(row, page)}
                         if compact(name) == '計':
                             annual_controls.append(record)
@@ -906,6 +939,7 @@ def assemble(pages, first, last, *, source, destination, reserve_kan='11', perso
                     parent_node['has_children'] = True
                 node = {'rank': rank, 'number': number, 'name': name, 'amount': payment['value'],
                         'department': department, 'name_x': name_x,
+                        'amount_location': coordinates([payment['number'], payment['circle']], page),
                         'location': coordinates([*row, *names], page), 'parent': parent_node,
                         'context': context(parents), 'has_children': False, 'annual_rows': []}
                 if pending_department and rank == 0:
@@ -1189,6 +1223,9 @@ def convert(inputs, destination, options):
             outputs.append((table_id, data, is_reserve, is_lending))
     for table_id, data, is_reserve, is_lending in outputs:
         output = destination / (table_id + '.parquet')
+        write_coverage_words(output, [(page, (w['x'], w['y'], w['xe'], w['ye']), w['text'])
+                                      for page, words in pages.items() for w in words
+                                      if 60 <= w['y'] < 790])
         if not is_reserve and not is_lending:
             data = monetary.prepare(data)
         columns = write_parquet(output, data)

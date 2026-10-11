@@ -15,6 +15,7 @@ import subprocess
 import xml.etree.ElementTree as ET
 
 from ingestion.lib.conversion import ConversionContext, write_conversion
+from ingestion.lib.node_tables import AMOUNT_POSITION_SUFFIXES, amount_position_fields, write_coverage_words
 from ingestion.lib.parquet import ParquetColumn
 
 ACCOUNT = '後期高齢者医療会計'
@@ -76,10 +77,30 @@ def joined(words):
 
 
 def cell_amount(words, y, bounds):
-    text = joined(same_line(words, y, *bounds)).replace(' ', '').replace('　', '')
+    found = same_line(words, y, *bounds)
+    text = joined(found).replace(' ', '').replace('　', '')
     if not AMOUNT.fullmatch(text):
         raise ValueError(f'Amount cell y={y} bounds={bounds} reads {text!r}')
-    return text
+    return text, found
+
+
+def boxes(words):
+    return [[w['xMin'], w['yMin'], w['xMax'], w['yMax']] for w in words]
+
+
+def amount_cells(words, page, y, keys, edges):
+    """Amount texts with their own printed positions, keyed per amount column."""
+    record = {}
+    for key, bounds in zip(keys, edges):
+        value, found = cell_amount(words, y, bounds)
+        record[key] = value
+        record.update(amount_position_fields(key, page, boxes(found)))
+    return record
+
+
+def positioned_names(event_word, name_words):
+    union = [event_word, *name_words]
+    return {'左端': min(w['xMin'] for w in union), '右端': max(w['xMax'] for w in union)}
 
 
 def events_on(pages):
@@ -178,12 +199,11 @@ def detail(pages):
             if matched is None:
                 raise ValueError(f"Setsu name at page {page}, y {y} reads {joined(name_words)!r}")
             values = {'区分_番号': matched.group(1), '区分_名称': matched.group(2),
-                      '金額': cell_amount(words, y, SETSU_AMOUNT_EDGE),
-                      '支出済額': cell_amount(words, y, AMOUNT_EDGES[5]),
-                      '翌年度繰越額': cell_amount(words, y, AMOUNT_EDGES[6]),
-                      '不用額': cell_amount(words, y, AMOUNT_EDGES[7]),
+                      **amount_cells(words, page, y, ['金額', '支出済額', '翌年度繰越額', '不用額'],
+                                     [SETSU_AMOUNT_EDGE, AMOUNT_EDGES[5], AMOUNT_EDGES[6], AMOUNT_EDGES[7]]),
                       '物理頁': page, '上端': event['word']['yMin'],
-                      '下端': max(w['yMax'] for w in name_words)}
+                      '下端': max(w['yMax'] for w in name_words),
+                      **positioned_names(event['word'], name_words)}
             setsu_rows.append((current['目'], values))
             continue
         shared = {e['kind'] for e in events if e is not event and e['page'] == page
@@ -200,15 +220,19 @@ def detail(pages):
                 raise ValueError(f'Unmeasured shared kan/kou line at page {page}, y {y}')
             record = {'level': kind, '番号': event['word']['text'],
                       **{k: current['款'][k] for k in PARENT_AMOUNTS},
-                      '物理頁': page, '上端': event['word']['yMin'], '下端': event['word']['yMax']}
+                      **{f'{k}_{suffix}': current['款'][f'{k}_{suffix}']
+                         for k in PARENT_AMOUNTS for suffix in AMOUNT_POSITION_SUFFIXES},
+                      '物理頁': page, '上端': event['word']['yMin'], '下端': event['word']['yMax'],
+                      **positioned_names(event['word'], [])}
             current.pop('項', None)
             current.pop('目', None)
             current[kind] = record
             parents.append(record)
             continue
         record = {'level': kind, '番号': event['word']['text'],
-                  **{k: cell_amount(words, y, b) for k, b in zip(PARENT_AMOUNTS, AMOUNT_EDGES)},
-                  '物理頁': page, '上端': event['word']['yMin'], '下端': event['word']['yMax']}
+                  **amount_cells(words, page, y, PARENT_AMOUNTS, AMOUNT_EDGES),
+                  '物理頁': page, '上端': event['word']['yMin'], '下端': event['word']['yMax'],
+                  **positioned_names(event['word'], [])}
         if kind == '目':
             record['ref'] = {'款': current['款'], '項': current['項']}
             current['目'] = record
@@ -263,19 +287,24 @@ def detail(pages):
         if not children:
             children = [(moku, {'区分_番号': None, '区分_名称': None, '金額': None,
                                 '支出済額': None, '翌年度繰越額': None, '不用額': None,
-                                '物理頁': moku['物理頁'], '上端': moku['上端'], '下端': moku['下端']})]
+                                **{f'{k}_{suffix}': None
+                                   for k in ('金額', '支出済額', '翌年度繰越額', '不用額')
+                                   for suffix in AMOUNT_POSITION_SUFFIXES},
+                                '物理頁': moku['物理頁'], '上端': moku['上端'], '下端': moku['下端'],
+                                '左端': moku.get('左端'), '右端': moku.get('右端')})]
         note = note_of(pages, moku['物理頁'], moku['上端'], limit)
         for _, values in children:
             row = {}
             for level in ('款', '項', '目'):
                 parent = moku['ref'][level] if level in moku['ref'] else moku
                 row.update({level + '_' + k: parent.get(k) for k in
-                            ['番号', '名称', *PARENT_AMOUNTS, '物理頁', '上端', '下端']})
+                            ['番号', '名称', *PARENT_AMOUNTS, '物理頁', '左端', '上端', '右端', '下端',
+                             *(f'{k}_{suffix}' for k in PARENT_AMOUNTS for suffix in AMOUNT_POSITION_SUFFIXES)]})
             row['目_備考'] = note
             rows.append({**row, **values})
     rows.sort(key=lambda r: (r['物理頁'], r['上端']))
     words = words_of(pages, total_page)
-    total = {k: cell_amount(words, total_y, b)
+    total = {k: cell_amount(words, total_y, b)[0]
              for k, b in zip(PARENT_AMOUNTS, AMOUNT_EDGES) if k != '翌年度繰越額'}
     zone = [w for w in words if 780 <= w['xMin'] and w['xMax'] < 870
             and total_y - 12 <= w['yMin'] <= total_y + 60]
@@ -321,7 +350,7 @@ def metadata(rows):
     contexts = []
     for index, level in enumerate(('款', '項', '目')):
         columns = [k for k in rows[0] if k.startswith(level + '_')
-                   and not k.endswith(('物理頁', '上端', '下端')) and k != '目_備考']
+                   and not k.endswith(('物理頁', '左端', '上端', '右端', '下端')) and k != '目_備考']
         contexts.append({'columns': columns, 'header_path': ['科目', level],
                          'grain_columns': [x + '_番号' for x in ('款', '項', '目')[:index + 1]]})
     contexts.append({'columns': ['区分_番号', '区分_名称', '金額', '支出済額', '翌年度繰越額', '不用額'],
@@ -368,8 +397,12 @@ def convert(inputs, destination, options):
     (observations / 'total.json').write_text(
         json.dumps(total, ensure_ascii=False, indent=2) + '\n')
     columns = tuple(ParquetColumn(k, 'BIGINT' if k.endswith('物理頁')
-                                  else 'DOUBLE' if k.endswith(('上端', '下端')) else 'VARCHAR')
+                                  else 'DOUBLE' if k.endswith(('左端', '上端', '右端', '下端')) else 'VARCHAR')
                     for k in rows[0])
     result = write_conversion(destination / (table_id + '.parquet'), rows, columns=columns,
                               context=ConversionContext(source['sha256'], table_id, __file__))
+    write_coverage_words(Path(result.path),
+                         [(page, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text'])
+                          for page, words in pages for w in words
+                          if BODY_TOP < w['yMin'] < BODY_BOTTOM])
     return {table_id: {'path': Path(result.path), 'metadata': metadata(rows)}}

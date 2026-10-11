@@ -24,6 +24,7 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 from ingestion.lib.conversion import ConversionContext, write_conversion
+from ingestion.lib.node_tables import AMOUNT_POSITION_SUFFIXES, amount_position_fields, null_position_fields, write_coverage_words
 from ingestion.lib.parquet import ParquetColumn
 
 BUDGET = ['当初予算額', '補正予算額', '継続費及び繰越事業費繰越額', '予備費支出及び流用増減', '計']
@@ -74,6 +75,37 @@ def observe(pdf, first, last, path):
     return pages
 
 
+def boxes(words):
+    return [[w['xMin'], w['yMin'], w['xMax'], w['yMax']] for w in words]
+
+
+def positioned_amounts(keys, texts, owners, page):
+    """Amount texts with their own printed positions, keyed per amount column.
+
+    Every key is emitted so rows stay homogeneous; absent amounts keep NULL
+    positions and create no amount row. A printed amount without its words
+    is a converter bug, never a silent NULL.
+    """
+    record = {}
+    for key in keys:
+        value = texts.get(key)
+        words = owners.get(key, [])
+        record[key] = value
+        if value is not None:
+            if not words:
+                raise ValueError(f'Printed amount without word boxes: {key}')
+            record.update(amount_position_fields(key, page, boxes(words)))
+        else:
+            record.update(null_position_fields(key))
+    return record
+
+
+def node_x(words):
+    """Name-zone horizontal extent for a node box (amount columns excluded)."""
+    words = list(words)
+    return {'左端': min(w['xMin'] for w in words), '右端': max(w['xMax'] for w in words)}
+
+
 def bands(words):
     rows = []
     for word in sorted(words, key=lambda w: (w['yMin'], w['xMin'])):
@@ -112,7 +144,7 @@ def cell_amount(words, left, right, page, y, what, right_limit=None):
     for first, second in zip(ordered, ordered[1:]):
         if first['xMax'] > second['xMin'] + 0.01 and first['_id'] != second['_id']:
             raise ValueError(f'Overlapping printed amounts at page {page}, y={y}')
-    return ''.join(w['text'] for w in ordered)
+    return ''.join(w['text'] for w in ordered), ordered
 
 
 def path_tokens(row):
@@ -168,11 +200,16 @@ def subject_amounts(row, page, y, level):
            and not FRAG.fullmatch(w['text']) for w in row):
         raise ValueError(f'Unexpected print between subject name and budget '
                          f'at page {page}, y={y}')
-    amounts = [cell_amount(row, left, right, page, y, f'{level}{key}', right_limit=455.0)
-               for (left, right), key in zip(BUDGET_BANDS, BUDGET)]
-    executed = [cell_amount(row, left, right, page, y, f'{level}{key}')
-                for (left, right), key in zip(SUBJECT_EXEC_BANDS, EXECUTED)]
-    return dict(zip(BUDGET, amounts)) | dict(zip(EXECUTED, executed))
+    record = {}
+    for (left, right), key in zip(BUDGET_BANDS, BUDGET):
+        value, found = cell_amount(row, left, right, page, y, f'{level}{key}', right_limit=455.0)
+        record[key] = value
+        record.update(amount_position_fields(key, page, boxes(found)))
+    for (left, right), key in zip(SUBJECT_EXEC_BANDS, EXECUTED):
+        value, found = cell_amount(row, left, right, page, y, f'{level}{key}')
+        record[key] = value
+        record.update(amount_position_fields(key, page, boxes(found)))
+    return record
 
 
 def subject_record(tokens, row, page, y):
@@ -183,7 +220,8 @@ def subject_record(tokens, row, page, y):
     number, name = path_name(tokens[level])
     return {'level': level, '番号': number, '名称': name,
             **subject_amounts(row, page, y, level),
-            '上端': y, '下端': max(w['yMax'] for w in row)}
+            '上端': y, '下端': max(w['yMax'] for w in row),
+            **node_x(tokens[level])}
 
 
 def setsu_row(row, page, y):
@@ -229,6 +267,7 @@ def note_parts(row, page, y):
     if current:
         clusters.append(current)
     amount, rest, merged = None, list(words), []
+    amount_words = []
     while clusters and amount is None:
         merged = clusters.pop() + merged
         joined = ''.join(w['text'] for w in merged)
@@ -237,19 +276,21 @@ def note_parts(row, page, y):
                 raise ValueError(f'Remark amount outside the amount column '
                                  f'at page {page}, y={y}: ' + join_text(row))
             amount = joined
+            amount_words = list(merged)
             rest = [w for w in words if w not in merged]
         elif not clusters:
             raise ValueError(f'Multiple remark amounts at page {page}, y={y}: ' + join_text(row))
-    return rest, amount
+    return rest, amount, amount_words
 
 
 def parse_note_band(row, page, y, state, setsu_names):
     """Classify one band's 備考 zone; mutate the 目 state; return events."""
-    rest, amount = note_parts(row, page, y)
+    rest, amount, amount_words = note_parts(row, page, y)
     if not rest and amount is None:
         return []
     if not rest:
         raise ValueError(f'Amount-only remarks band at page {page}, y={y}')
+    positions = positioned_amounts(['金額'], {'金額': amount}, {'金額': amount_words}, page)
     if rest and rest[0]['text'] == '(':
         marker = [w for w in rest if w['xMin'] < 885 and SUB_GROUP.fullmatch(w['text'])]
         if len(marker) != 1 or amount is None or not PAREN_AMOUNT.fullmatch(amount):
@@ -258,7 +299,8 @@ def parse_note_band(row, page, y, state, setsu_names):
         name = join_text([w for w in rest if w['xMin'] >= end - 1]) or None
         state['group'] = {'番号': SUB_GROUP.fullmatch(marker[0]['text'])[1],
                           '名称': name, '金額': amount,
-                          '上端': y, '下端': max(w['yMax'] for w in row)}
+                          '物理頁': page, '上端': y, '下端': max(w['yMax'] for w in row),
+                          **node_x(rest), **positions}
         state['setsu'] = None
         state['last'] = state['group']
         return [('group', state['group'])]
@@ -275,7 +317,8 @@ def parse_note_band(row, page, y, state, setsu_names):
         if amount is None or PAREN_AMOUNT.fullmatch(amount):
             raise ValueError(f'Project row without execution amount at page {page}, y={y}')
         state['project'] = {'番号': number, '名称': name, '金額': amount,
-                            '上端': y, '下端': max(w['yMax'] for w in row),
+                            '物理頁': page, '上端': y, '下端': max(w['yMax'] for w in row),
+                            **node_x(rest), **positions,
                             'sections': [], 'details': []}
         state['group'] = None
         state['setsu'] = None
@@ -291,7 +334,8 @@ def parse_note_band(row, page, y, state, setsu_names):
         if state['project'] is None:
             raise ValueError(f'Note section without a project at page {page}, y={y}')
         state['setsu'] = {'番号': number, '名称': name, '金額': amount,
-                          '上端': y, '下端': max(w['yMax'] for w in row), 'details': []}
+                          '物理頁': page, '上端': y, '下端': max(w['yMax'] for w in row),
+                          **node_x(rest), **positions, 'details': []}
         state['project']['sections'].append(state['setsu'])
         state['last'] = state['setsu']
         return [('setsu', state['setsu'])]
@@ -304,25 +348,37 @@ def parse_note_band(row, page, y, state, setsu_names):
             raise ValueError(f'Amount-less remarks opener at page {page}, y={y}')
         state['last']['名称'] = (state['last']['名称'] or '') + '\n' + (name or '')
         state['last']['下端'] = max(state['last']['下端'], max(w['yMax'] for w in row))
+        if rest:
+            state['last']['左端'] = min(state['last']['左端'], min(w['xMin'] for w in rest))
+            state['last']['右端'] = max(state['last']['右端'], max(w['xMax'] for w in rest))
         return [('continued', state['last'])]
     if state['setsu'] is None:
         raise ValueError(f'Detail print outside any note section at page {page}, y={y}: '
                          + join_text(row))
     detail = {'名称': name, '金額': amount,
-              '上端': y, '下端': max(w['yMax'] for w in row)}
+              '物理頁': page, '上端': y, '下端': max(w['yMax'] for w in row),
+              **node_x(rest), **positions}
     state['setsu']['details'].append(detail)
     state['last'] = detail
     return [('detail', detail)]
 
 
 COLUMNS = (
-    [f'款_{k}' for k in ['番号', '名称', *BUDGET, *EXECUTED, '物理頁', '上端', '下端']] +
-    [f'項_{k}' for k in ['番号', '名称', *BUDGET, *EXECUTED, '物理頁', '上端', '下端']] +
-    [f'目_{k}' for k in ['番号', '名称', *BUDGET, *EXECUTED, '備考', '物理頁', '上端', '下端']] +
-    ['事業_番号', '事業_名称', '事業_金額',
-     '事業群_番号', '事業群_名称', '事業群_金額',
-     '備考節_番号', '備考節_名称', '備考節_金額',
-     '細目_名称', '細目_金額', '葉_物理頁', '葉_上端', '葉_下端']
+    [f'款_{k}' for k in ['番号', '名称', *BUDGET, *EXECUTED, '物理頁', '左端', '上端', '右端', '下端',
+                        *[f'{c}_{s}' for c in (*BUDGET, *EXECUTED) for s in AMOUNT_POSITION_SUFFIXES]]] +
+    [f'項_{k}' for k in ['番号', '名称', *BUDGET, *EXECUTED, '物理頁', '左端', '上端', '右端', '下端',
+                        *[f'{c}_{s}' for c in (*BUDGET, *EXECUTED) for s in AMOUNT_POSITION_SUFFIXES]]] +
+    [f'目_{k}' for k in ['番号', '名称', *BUDGET, *EXECUTED, '備考', '物理頁', '左端', '上端', '右端', '下端',
+                        *[f'{c}_{s}' for c in (*BUDGET, *EXECUTED) for s in AMOUNT_POSITION_SUFFIXES]]] +
+    ['事業_番号', '事業_名称', '事業_金額', '事業_物理頁', '事業_左端', '事業_上端', '事業_右端', '事業_下端',
+     *[f'事業_金額_{s}' for s in AMOUNT_POSITION_SUFFIXES],
+     '事業群_番号', '事業群_名称', '事業群_金額', '事業群_物理頁', '事業群_左端', '事業群_上端', '事業群_右端', '事業群_下端',
+     *[f'事業群_金額_{s}' for s in AMOUNT_POSITION_SUFFIXES],
+     '備考節_番号', '備考節_名称', '備考節_金額', '備考節_物理頁', '備考節_左端', '備考節_上端', '備考節_右端', '備考節_下端',
+     *[f'備考節_金額_{s}' for s in AMOUNT_POSITION_SUFFIXES],
+     '細目_名称', '細目_金額', '細目_物理頁', '細目_左端', '細目_上端', '細目_右端', '細目_下端',
+     *[f'細目_金額_{s}' for s in AMOUNT_POSITION_SUFFIXES],
+     '葉_物理頁', '葉_上端', '葉_下端']
 )
 
 
@@ -333,17 +389,22 @@ def flatten(context, project, group, setsu, detail, memo, page, y, bottom):
         for key in ['番号', '名称', *BUDGET, *EXECUTED]:
             row[f'{level}_{key}'] = record[key]
         row[f'{level}_物理頁'] = record['page']
-        row[f'{level}_上端'] = record['上端']
-        row[f'{level}_下端'] = record['下端']
+        for key in ['左端', '上端', '右端', '下端']:
+            row[f'{level}_{key}'] = record[key]
+        for key in (*BUDGET, *EXECUTED):
+            for suffix in AMOUNT_POSITION_SUFFIXES:
+                row[f'{level}_{key}_{suffix}'] = record[f'{key}_{suffix}']
     row['目_備考'] = memo
-    row['事業_番号'], row['事業_名称'], row['事業_金額'] = (
-        (project['番号'], project['名称'], project['金額']) if project else (None, None, None))
-    row['事業群_番号'], row['事業群_名称'], row['事業群_金額'] = (
-        (group['番号'], group['名称'], group['金額']) if group else (None, None, None))
-    row['備考節_番号'], row['備考節_名称'], row['備考節_金額'] = (
-        (setsu['番号'], setsu['名称'], setsu['金額']) if setsu else (None, None, None))
-    row['細目_名称'], row['細目_金額'] = (
-        (detail['名称'], detail['金額']) if detail else (None, None))
+    for prefix, item, keys in (('事業_', project, ('番号', '名称', '金額')),
+                               ('事業群_', group, ('番号', '名称', '金額')),
+                               ('備考節_', setsu, ('番号', '名称', '金額')),
+                               ('細目_', detail, ('名称', '金額'))):
+        for key in keys:
+            row[prefix + key] = item[key] if item else None
+        for key in ('物理頁', '左端', '上端', '右端', '下端'):
+            row[prefix + key] = item[key] if item else None
+        for suffix in AMOUNT_POSITION_SUFFIXES:
+            row[f'{prefix}金額_{suffix}'] = item[f'金額_{suffix}'] if item else None
     row['葉_物理頁'], row['葉_上端'], row['葉_下端'] = page, y, bottom
     return row
 
@@ -530,7 +591,7 @@ def convert(inputs, destination, options):
 
     table_id = options['table_id']
     columns = tuple(ParquetColumn(k, 'BIGINT' if k.endswith('物理頁') else 'DOUBLE'
-                                  if k.endswith(('上端', '下端')) else 'VARCHAR')
+                                  if k.endswith(('左端', '上端', '右端', '下端')) else 'VARCHAR')
                     for k in COLUMNS)
     for leaf in leaves:
         for key in COLUMNS:
@@ -540,6 +601,9 @@ def convert(inputs, destination, options):
             raise ValueError(f'Undeclared columns: {sorted(extra)}')
     output = write_conversion(destination / (table_id + '.parquet'), leaves, columns=columns,
                               context=ConversionContext(source['sha256'], table_id, __file__))
+    write_coverage_words(Path(output.path),
+                         [(page, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text'])
+                          for page, words in pages for w in words if w['yMin'] >= HEADER_TOP])
     (observations / 'setsu-list.json').write_text(
         json.dumps(setsu_list, ensure_ascii=False, indent=2) + '\n')
     (observations / 'expenditure-total.json').write_text(

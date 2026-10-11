@@ -6,6 +6,7 @@ import subprocess
 
 from ingestion.fiscal.layouts.statement.text_document import build_document, lines, AMOUNT
 from ingestion.fiscal.manifest import sha_file, validate_metadata
+from ingestion.lib.node_tables import write_coverage_words
 from ingestion.lib.parquet import ParquetColumn, write_parquet
 from ingestion.lib.pdf_table import tokens_from_bbox_layout
 
@@ -204,5 +205,10 @@ def convert(inputs, destination, options):
     columns = [ParquetColumn(k, 'BIGINT' if k.endswith(('物理頁', '識別頁')) else 'DOUBLE'
                              if k.endswith(('左端', '上端', '右端', '下端')) else 'VARCHAR') for k in rows[0]]
     write_parquet(path, rows, columns=columns)
+    write_coverage_words(path,
+                         [(w['page'], tuple(json.loads(w['bbox'])), w['raw_text'])
+                          for w in tables['words']] +
+                         [(t.page, (t.bbox.left, t.bbox.top, t.bbox.right, t.bbox.bottom), t.raw_text)
+                          for t in control_tokens])
     (folder / 'printed-total.json').write_text(json.dumps({'amount_text': account_total, 'unit_text': bindings['current']['unit']}) + '\n')
     return {options['table_id']: {'path': path, 'metadata': metadata}}
