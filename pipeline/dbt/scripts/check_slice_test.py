@@ -46,6 +46,7 @@ class CheckSliceTest(unittest.TestCase):
                 connect.return_value.__enter__.return_value = con
                 output = check_slice.check(Path(directory) / 'warehouse', reference)
             self.assertEqual(output['cofog_reference_matches'], 1)
+            self.assertEqual(len(output['cofog_descendant_diffs']), 1)
 
     def test_unrelated_code_change_still_fails(self):
         with TemporaryDirectory() as directory:
