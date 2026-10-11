@@ -209,6 +209,7 @@ class NodeTablesTests(unittest.TestCase):
         contexts=[context('款',['科目','款']),context('説明3',['備考','事業説明','3']),
                   context('説明4',['備考','事業説明','4'])]
         metadata={'column_contexts':contexts,'units':[{'text':'円','scope':{'kind':'columns','columns':['款_金額','説明3_金額','説明4_金額']}}]}
+        contexts[-1]['amount_breakdown'] = {'parent_prefix':'説明3_', 'headers':['本年度支出額']}
         row={}
         for prefix,name,value,y in [('款','親','10',1.),('説明3','細目',None,2.),('説明4','本年度支出額','10',3.)]:
             row.update({prefix+'_番号':None,prefix+'_名称':name,prefix+'_金額':value,prefix+'_物理頁':1,prefix+'_上端':y})
@@ -217,6 +218,9 @@ class NodeTablesTests(unittest.TestCase):
         self.assertEqual(result.amounts[-1]['header_path'],'備考／事業説明／本年度支出額')
         self.assertEqual(result.amounts[-1]['node_key'],result.nodes[-1]['node_key'])
         self.assertEqual(result.amounts[-1]['y0'],3.)
+        # The same printed name is a node unless the converter declares otherwise.
+        del contexts[-1]['amount_breakdown']
+        self.assertEqual(len(migrate_rows([row],metadata).nodes),3)
 
     def test_current_year_and_carryover_execution_add_without_overwriting_raw_headers(self):
         nodes=[node('p'),node('a','p','備考')]

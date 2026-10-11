@@ -9,9 +9,3 @@
 {% macro fiscal_match_text(col) -%}
     regexp_replace({{ trim_cell(col) }}, '\s+', '', 'g')
 {%- endmacro %}
-
-{% macro fiscal_pdf_relations() %}
-    {{ return(['j131041_general_expenditure_detail', 'j131156_general_expenditure_details',
-               'j131156_general_expenditure_notes', 'j132021_general_expenditure_details',
-               'j132021_general_expenditure_notes']) }}
-{% endmacro %}

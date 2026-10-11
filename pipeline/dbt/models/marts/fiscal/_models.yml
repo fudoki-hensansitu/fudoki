@@ -31,6 +31,10 @@ models:
     description: 原典の分解の軸。科目・節・備考は同じ支出の独立した切り口で、軸をまたいで合算しない。
     data_tests:
     - not_null
+  - name: is_subject
+    description: 表の根ノードと同じ軸か。原典の軸名を保持したまま科目の枝を識別する。
+    data_tests:
+    - not_null
   - name: node_kind
     description: 原典の段の見出し、または根拠付きseedで風土記が名付けた段。
     data_tests:

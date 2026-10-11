@@ -271,6 +271,24 @@
             "project",
             "setsu"
           ]
+        },
+        "amount_breakdown": {
+          "description": "Printed amount headers within this level, owned by a preceding column prefix.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "parent_prefix": {
+              "type": "string",
+              "minLength": 1
+            },
+            "headers": {
+              "$ref": "#/$defs/column_names"
+            }
+          },
+          "required": [
+            "parent_prefix",
+            "headers"
+          ]
         }
       },
       "required": [

@@ -782,6 +782,9 @@ def detail_metadata(columns, kind, prefix='general-expenditure',
             contexts.append({'columns': [c for c in columns if c.startswith(prefix + '_')],
                              'header_path': ['備考', '事業説明', prefix[-1]],
                              'grain_columns': [prefix + '_物理頁', prefix + '_上端']})
+        contexts[-1]['amount_breakdown'] = {
+            'parent_prefix': '説明3_',
+            'headers': ['繰越明許費', '事故繰越', '支出済額', '不用額', '本年度支出額', '翌年度繰越額']}
         note = ('右頁備考結合セル内の事業説明の最細行（説明1=事業、説明2=セル内節見出し、'
                 '説明3=細目、説明4=細目の下の行: 字下げして金額を一段左に印字する細々目、'
                 'または繰越明許費・事故繰越の内訳行）。繰越明許費・事故繰越・支出済額・不用額・'

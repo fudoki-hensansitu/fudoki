@@ -38,7 +38,7 @@ class PrepareTest(unittest.TestCase):
         sources.parent.mkdir(parents=True)
         declared = [{'name': 'fixture_' + kind, 'meta': {**self.target, 'direction': 'expenditure',
                      'table_id': self.table['table_id'], 'kind': kind}} for kind in ('nodes', 'amounts')]
-        sources.write_text(yaml.safe_dump({'sources': [{'tables': declared}]}))
+        sources.write_text(yaml.safe_dump({'sources': [{'name': 'fiscal_pdf', 'tables': declared}]}))
         (self.candidate / '131041/manifest.json').write_text(json.dumps(self.document))
         self.warehouse = self.root / 'warehouse.duckdb'
         with duckdb.connect(str(self.warehouse)) as con:
@@ -53,6 +53,19 @@ class PrepareTest(unittest.TestCase):
              patch.object(prepare.manifest, 'resolved_inputs', return_value=[original]), \
              patch.object(prepare.manifest, 'selection_for', return_value={'candidates': [{'title': 'original'}]}):
             return prepare.prepare(self.warehouse, self.candidate)
+
+    def test_missing_conversion_identifies_table(self):
+        self.table['conversion_id'] = 'missing'
+        with self.assertRaisesRegex(ValueError, 'missing.*general-expenditure-detail'):
+            self.load()
+
+    def test_duplicate_pdf_source_stops(self):
+        path = self.dbt / 'models/staging/fiscal/_sources.yml'
+        declaration = yaml.safe_load(path.read_text())
+        declaration['sources'] *= 2
+        path.write_text(yaml.safe_dump(declaration))
+        with self.assertRaisesRegex(ValueError, 'exactly one fiscal_pdf'):
+            self.load()
 
     def test_hash_failure(self):
         path = prepare.input_path(self.document, self.table, 'nodes', self.candidate)
@@ -93,6 +106,7 @@ class PrepareTest(unittest.TestCase):
     def test_success_loads_original_and_metadata(self):
         result = self.load()
         self.assertEqual((result['tables'], result['origins'], result['nodes'], result['amounts']), (1, 1, 0, 0))
+        self.assertIn('return(["fixture"])', (self.dbt / 'macros/fiscal_pdf_relations.sql').read_text())
         with duckdb.connect(str(self.warehouse)) as con:
             self.assertEqual(con.execute('select title,sha256 from ingestion.origin').fetchone(), ('original', 'a' * 64))
             self.assertEqual(con.execute('select account_name from ingestion.tables').fetchone(), ('一般会計',))

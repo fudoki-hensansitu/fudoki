@@ -40,23 +40,21 @@ with recursive mapped_nodes as (
 ), selected_amounts as (
     select source_table_key, node_key,
         sum(amount_yen) filter (where amount_role = 'executed')::bigint as amount_yen,
-        min(physical_page) filter (where amount_role = 'executed') as amount_source_page,
-        -- Validate units on every printed amount; unresolved headers are not execution.
-        count(amount_role), count(amount_yen)
+        min(physical_page) filter (where amount_role = 'executed') as amount_source_page
     from mapped_amounts group by source_table_key, node_key
 ), amounts_checked as (
     select n.*, a.amount_yen, a.amount_source_page
     from checked_nodes n left join selected_amounts a using (source_table_key, node_key)
 ), hierarchy as (
     select n.*, n.code_text as kan_code, null::varchar as kou_code, null::varchar as moku_code,
-        n.name as kan_name, null::varchar as kou_name, [n.node_key] as visited
+        n.name as kan_name, null::varchar as kou_name, n.axis_header as subject_axis, [n.node_key] as visited
     from amounts_checked n where n.parent_node_key is null
     union all
     select n.*, h.kan_code,
-        case when n.node_kind = '項' and n.axis_header = '科目' then n.code_text else h.kou_code end,
-        case when n.node_kind = '目' and n.axis_header = '科目' then n.code_text else h.moku_code end,
-        h.kan_name, case when n.node_kind = '項' and n.axis_header = '科目' then n.name else h.kou_name end,
-        list_append(h.visited, n.node_key)
+        case when n.node_kind = '項' and n.axis_header = h.subject_axis then n.code_text else h.kou_code end,
+        case when n.node_kind = '目' and n.axis_header = h.subject_axis then n.code_text else h.moku_code end,
+        h.kan_name, case when n.node_kind = '項' and n.axis_header = h.subject_axis then n.name else h.kou_name end,
+        h.subject_axis, list_append(h.visited, n.node_key)
     from amounts_checked n join hierarchy h
       on n.source_table_key = h.source_table_key and n.parent_node_key = h.node_key
     where not list_contains(h.visited, n.node_key)
@@ -72,7 +70,7 @@ with recursive mapped_nodes as (
     from siblings n where parent_node_key is null
     union all
     select n.*,
-        case when n.axis_header = '科目' and n.node_kind in ('款', '項', '目')
+        case when n.axis_header = n.subject_axis and n.node_kind in ('款', '項', '目')
              then sha256(to_json([n.jurisdiction_code, n.fiscal_year::varchar, n.account_name, n.kan_code, n.kou_code, n.moku_code]))
              else sha256(to_json([p.node_id, n.axis_header, n.node_kind, n.code_text, n.name,
                  case when n.sibling_count > 1 then n.sibling_ordinal::varchar end])) end,

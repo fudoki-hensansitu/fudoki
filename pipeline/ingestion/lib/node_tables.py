@@ -21,7 +21,6 @@ AMOUNT_COLUMNS = tuple(ParquetColumn(name, kind) for name, kind in (
     ('node_key', 'VARCHAR'), ('header_path', 'VARCHAR'), ('amount_text', 'VARCHAR'),
     ('unit_text', 'VARCHAR'), ('physical_page', 'BIGINT'),
     ('x0', 'DOUBLE'), ('y0', 'DOUBLE'), ('x1', 'DOUBLE'), ('y1', 'DOUBLE')))
-BREAKDOWN_HEADERS = frozenset(('繰越明許費', '事故繰越', '支出済額', '不用額', '本年度支出額', '翌年度繰越額'))
 MIGRATION_NOTE = ('旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、'
                   '0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。')
 
@@ -114,10 +113,11 @@ def migrate_rows(rows: list[dict], metadata: dict) -> NodeTables:
             path = context['header_path']
             axis = path[0]
             # A header inside a leaf's amount breakdown is an amount, not another node.
-            if prefix == '説明4_' and name in BREAKDOWN_HEADERS:
-                parent = active.get('説明3_')
+            breakdown = context.get('amount_breakdown')
+            if breakdown and name in breakdown['headers']:
+                parent = active.get(breakdown['parent_prefix'])
                 if parent is None:
-                    unresolved += 1; issues.append('金額内訳の親細目がない')
+                    unresolved += 1; issues.append(f'金額内訳の親がない: {breakdown["parent_prefix"]}')
                     continue
                 column = prefix + '金額'
                 _add_amount(amounts, amount_seen, unread_seen, parent, '／'.join([p for p in path[:-1] if not p.isdigit()] + [name]),

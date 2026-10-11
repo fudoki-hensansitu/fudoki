@@ -24,13 +24,15 @@ def check(warehouse: Path, reference: Path | None = None) -> dict:
         if reference:
             with reference.open() as stream:
                 expected = {tuple(r[k] for k in keys): r for r in csv.DictReader(stream)}
-            if len(expected) != len(records):
-                raise ValueError('COFOG reference and warehouse counts differ')
             differences = []
             for *identity, name, amount, rule, status, code in records:
-                r = expected[tuple(identity)]
+                r = expected.pop(tuple(identity), None)
+                if r is None:
+                    differences.append({'key': identity, 'name': name, 'actual': [amount, rule, status, code], 'expected': None})
+                    continue
                 if (amount, rule, status, code or '') != (int(r['amount_yen']), r['rule_id'], r['status'], r['cofog_code']):
                     differences.append({'key': identity, 'name': name, 'actual': [amount, rule, status, code], 'expected': r})
+            differences.extend({'key': key, 'actual': None, 'expected': r} for key, r in expected.items())
             if differences:
                 raise ValueError(f'COFOG reference differs: {differences}')
             output['cofog_reference_matches'] = len(records)

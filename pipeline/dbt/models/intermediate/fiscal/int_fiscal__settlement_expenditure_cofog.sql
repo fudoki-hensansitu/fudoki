@@ -1,3 +1,4 @@
+-- MVP classifies subject moku nodes; setsu-dependent rules await a finer grain.
 with mokus as (
     select node_id,
         {{ fiscal_match_text('jurisdiction_code') }} as jurisdiction_code,
@@ -7,7 +8,7 @@ with mokus as (
         {{ fiscal_match_text('kan_code') }} as kan_code,
         {{ fiscal_match_text('name') }} as moku_name, '' as setsu_name
     from {{ ref('int_fiscal__settlement_expenditure_nodes') }}
-    where axis = '科目' and node_kind = '目'
+    where is_subject and node_kind = '目'
 ), rules as (
     select rule_id, priority, status, cofog_code, moku_mode,
     {% for col in ['applies_to', 'match_fund', 'match_kan', 'match_kou', 'match_kan_code', 'match_moku', 'match_setsu'] %}
