@@ -214,7 +214,13 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
                 inspect_table(file, metadata)
                 rows = sum_check.read_rows(file)
                 # Conversions may separate details and notes for the same account.
-                initial = node_tables.migrate_rows(rows, metadata or {})
+                try:
+                    initial = node_tables.migrate_rows(rows, metadata or {})
+                except ValueError:
+                    tables.append(unchanged_legacy_receipt(document, conversion, ident, file,
+                                  before[conversion['id']], remote=remote))
+                    outputs[ident] = file
+                    continue
                 account = pdf_account(document, conversion, initial.nodes)
                 pending_pdf.append((conversion, ident, rows, metadata, account, file))
         else:
@@ -226,9 +232,12 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
         siblings = [other_rows for _, other_ident, other_rows, _, other_account, _ in pending_pdf
                     if other_ident != ident and other_account == account]
         rows = complete_subject_rows(rows, siblings)
-        migrated = node_tables.migrate_rows(rows, metadata or {})
-        checked = node_tables.check_tree(migrated.nodes, migrated.amounts)
-        if (not migrated.nodes or not migrated.amounts or migrated.issues or migrated.unread_amount_count
+        try:
+            migrated = node_tables.migrate_rows(rows, metadata or {})
+        except ValueError:
+            migrated = None
+        checked = node_tables.check_tree(migrated.nodes, migrated.amounts) if migrated else {'passed': False}
+        if (migrated is None or not migrated.nodes or not migrated.amounts or migrated.issues or migrated.unread_amount_count
                 or migrated.unresolved_parent_count or not checked['passed']):
             tables.append(unchanged_legacy_receipt(document, conversion, ident, file,
                           before[conversion['id']], remote=remote))
