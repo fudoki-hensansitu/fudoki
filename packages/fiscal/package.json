@@ -3,11 +3,8 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./detail": "./detail.ts",
-    "./cofog": "./cofog.ts",
     "./cofog-master": "./cofog-master.ts",
-    "./setsu-master": "./setsu-master.ts",
-    "./types": "./types.ts"
+    "./setsu-master": "./setsu-master.ts"
   },
   "scripts": {
     "test": "bun test"

@@ -4,8 +4,7 @@
     "worker.ts",
     "cloudflare.config.ts",
     "wrangler.config.ts",
-    "build.ts",
-    "deploy/*.ts"
+    "build.ts"
   ],
   "exclude": []
 }

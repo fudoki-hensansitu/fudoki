@@ -17,20 +17,16 @@ dist/
 build/
 .build/
 .cache/
-.http-cache/
 .wrangler/
 .cloudflare/
 tmp/
 .agent/
 
-# Generated routes; the hand-written index pages remain tracked.
-pipeline/verify/view/pipeline/*/
 pipeline/dbt/.user.yml
 pipeline/dbt/logs/
 pipeline/dbt/dbt_packages/
 pipeline/dbt/target/
 pipeline/ingestion/**/observations/
 
-# Existing tracked data is retained until remote transfer and restore are verified.
-# Originals and ingestion tables use private input storage; selected provenance stays in ingestion.
+# Originals and ingestion tables use private input storage, not the repository.
 /data/

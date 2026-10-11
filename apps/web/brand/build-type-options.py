@@ -5,7 +5,7 @@ from fontTools.ttLib import TTFont
 from fontTools.pens.svgPathPen import SVGPathPen
 from fontTools.pens.boundsPen import BoundsPen
 from geometry import geometries
-from fonts import font_paths
+from fonts import NOTO_DIR, font_paths
 
 HERE=Path(__file__).resolve().parent
 ROOT=HERE.parents[2]
@@ -20,7 +20,6 @@ for source in SOURCES:
     license_file=CACHE/f'{source["id"]}-OFL.txt'
     font_paths(source['id'])
     if not license_file.exists():license_file.write_bytes(urllib.request.urlopen(source['url'].rsplit('/',1)[0]+'/OFL.txt',timeout=45).read())
-FONT_DIR=ROOT/'pipeline/verify/view/node_modules/@fontsource-variable/noto-sans-jp/files'
 
 
 def glyphs(paths):
@@ -40,7 +39,7 @@ def glyphs(paths):
     return [found[ch] for ch in NAME]
 
 
-noto=glyphs(sorted(FONT_DIR.glob('*-wght-normal.woff2')))
+noto=glyphs(font_paths('noto'))
 def extent(gs):return max(g['bounds'][3]/g['upm'] for g in gs)-min(g['bounds'][1]/g['upm'] for g in gs)
 TARGET_HEIGHT=extent(noto)*CONFIG['textSize']
 RECTS=geometries()[CONFIG['markProportion']]
@@ -95,7 +94,7 @@ for ident,label,key in CHOICES:
         shutil.copyfile(ROOT/f'.cache/logo-fonts/{key}-OFL.txt',d/'OFL.txt')
     else:
         meta['source']={'source':'https://github.com/notofonts/noto-cjk','package':'@fontsource-variable/noto-sans-jp'}
-        shutil.copyfile(FONT_DIR.parent/'LICENSE',d/'OFL.txt')
+        shutil.copyfile(NOTO_DIR.parent/'LICENSE',d/'OFL.txt')
     for dark in (False,True):
         suffix='-dark' if dark else ''
         for kind in ('mark','wordmark','logo'):(d/f'{kind}{suffix}.svg').write_text(svg(gs,size,kind,dark,.6))
