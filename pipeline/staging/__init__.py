@@ -1,9 +1,9 @@
 """Shared dbt staging normalization."""
 
-import re
 import unicodedata
 
 from dbt.adapters.duckdb.plugins import BasePlugin
+from shared.amount import number as parse_printed_amount
 
 
 def normalize_text(value: str) -> str:
@@ -11,11 +11,10 @@ def normalize_text(value: str) -> str:
 
 
 def normalize_amount(value: str) -> int:
-    text = normalize_text(value).removesuffix('円').strip().replace(',', '')
-    text = text.replace('△', '-').replace('−', '-')
-    if not re.fullmatch(r'[+-]?[0-9]+', text):
+    number = parse_printed_amount(value)
+    if number is None:
         raise ValueError(f'Invalid integer amount: {value!r}')
-    return int(text)
+    return number
 
 
 class Plugin(BasePlugin):

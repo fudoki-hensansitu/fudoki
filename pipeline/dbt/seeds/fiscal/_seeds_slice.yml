@@ -1,34 +1,5 @@
 version: 2
 seeds:
-- name: fiscal_level_map
-  description: 印字見出し・軸だけでは決まらない段の名前。根拠付きの判断。款・項・目・法定節の自明な対応は含めない。
-  config:
-    column_types:
-      jurisdiction_code: varchar
-      table_id: varchar
-      axis_header: varchar
-      depth: integer
-      node_kind: varchar
-      basis: varchar
-  columns:
-  - name: jurisdiction_code
-    data_tests:
-    - not_null
-  - name: table_id
-    data_tests:
-    - not_null
-  - name: axis_header
-    data_tests:
-    - not_null
-  - name: depth
-    data_tests:
-    - not_null
-  - name: node_kind
-    data_tests:
-    - not_null
-  - name: basis
-    data_tests:
-    - not_null
 - name: fiscal_amount_map
   description: 取り込みと共有する資料区分・見出し経路または末尾の金額段階辞書。資料区分が空なら全資料共通。空のphaseは段階を持たない合計欄。
   config:

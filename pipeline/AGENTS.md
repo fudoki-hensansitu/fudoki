@@ -29,7 +29,7 @@ script はこの package が所有する。実行は `bun run --cwd pipeline <na
 - **共通辞書**: 取り込みと dbt を横断する辞書は `shared/` に置き、取り込みは直接読み、dbt は seed として読む。
 - **コード配置**: 共通処理は `ingestion/lib/`、書式別の共通処理は `ingestion/fiscal/layouts/`、団体固有のコードと宣言は `ingestion/fiscal/jurisdictions/<団体>/layouts/`。年度・会計だけでコードを複製しない。
 - **OCR**: 新しいBの共通入口は `ingestion/lib/scan_ocr.py`。既定はPaddleOCR smallの縮小検出・原解像度認識で、再読領域は書式設定から渡す。Apple Vision（`backend="vision"`・`vision_ocr.py`）は比較用に残し、取り込みには使わない。OCRは変換器の外で取得し、凍結した観測を補助入力として変換器へ渡す（[ADR 0019](../docs/adr/0019-freeze-scan-ocr-observations.md)、補助入力の保存・取得は未実装）。設定と検証範囲は [OCRの説明](ingestion/lib/scan_ocr.md)、実行と欠落セルの再読は `.agents/skills/pipeline/references/ingestion.md` を参照する。
-- **変換**: dbt-duckdb。PDF はノードの表・金額の表を全団体共通の staging 2モデルで読み、intermediate で段の名前・支出済額の選択・表をまたぐ款項目の統合・円換算・COFOG を行い、marts（`settlement_expenditure_node`・`settlement_expenditure_moku`・`origin`）を作る。設計は [dbt モデルの設計](../docs/prd/fiscal-dbt-models/design-doc.md)。
+- **変換**: dbt-duckdb。入力宣言は `dbt/scripts/generate_sources.py` が管理 JSON から生成する。PDF はノードの表・金額の表を全団体共通の staging 2モデルで読み、intermediate で段の名前（共通規則）・支出済額の選択・表をまたぐ款項目の統合・円換算・COFOG を行い、marts（`settlement_expenditure_node`・`origin`）を作る。比較は木の表を目（`is_subject and node_kind='目'`）で絞って行う。設計は [dbt モデルの設計](../docs/prd/fiscal-dbt-models/design-doc.md)。
 - **保存**: Git はコード・宣言・判断・入力一覧、非公開 R2 は原典・取り込み表。`.cache/` と `.build/` は再生成可能なローカル作業領域。
 
   | 内容 | 保存先 | Git |
