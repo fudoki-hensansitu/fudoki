@@ -8,6 +8,7 @@
     "ingestion:schema": "uv run python -m ingestion.fiscal.run schema",
     "ingestion:check": "uv run python -m ingestion.fiscal.run check",
     "ingestion:convert": "uv run python -m ingestion.fiscal.run convert",
+    "ingestion:verify": "uv run python -m ingestion.fiscal.run verify",
     "ingestion:restore": "uv run python -m ingestion.fiscal.run restore",
     "ingestion:cleanup": "uv run python -m ingestion.fiscal.run cleanup",
     "ingestion:originals": "uv run python -m ingestion.fiscal.run originals"

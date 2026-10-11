@@ -35,6 +35,9 @@ _MARKER_LEAD = re.compile(r'^[（(](?:[0-9]{1,2}|[ア-ン])[)）]')
 COUNT_WORD = re.compile(r'^[0-9,]+[^\d,]+$')        # 「3人」「276件」など
 UNIT_SUFFIX = re.compile(r'(円|件|人|回|日|部|％|%|千円|万円|名|台|か所|箇所|世帯|戸|枚|本|席|時間|年度|年)$')
 AMOUNT_BAND = (225, 402)     # 内訳・細目の金額の右端帯（右寄せ）
+# 金額の右端は一段深いほど約70pt左（≈400・≈330・≈260）。ア・イ・ウの番号行は
+# 字下げで兄弟が決まり、金額だけ左へずれて組まれることがあるため段の判定に使わない。
+DEPTH_STEP = 30
 KAN_KEYS = ['決算額', '国庫支出金', '都支出金', '市債', 'その他', '一般財源', '執行率']
 DEFAULT_FUNDS = ['国庫支出金', '都支出金', '市債', 'その他', '一般財源']
 DEPT_SUFFIX = re.compile(r'(課|部|室|局|館|所|係|会|場|園|校|庁|院|センター|棟|大学|組合|本部|事務所|ホール)$')
@@ -83,6 +86,7 @@ DETAIL_COLUMNS = [
     '事業_前年度決算額', '事業_説明', '事業_物理頁', '事業_上端', '事業_下端',
     '内訳_番号', '内訳_名称', '内訳_金額', '内訳_物理頁', '内訳_上端', '内訳_下端',
     '細目_番号', '細目_名称', '細目_数量', '細目_金額', '細目_物理頁', '細目_上端', '細目_下端',
+    '細々目_名称', '細々目_数量', '細々目_金額', '細々目_物理頁', '細々目_上端', '細々目_下端',
 ]
 
 
@@ -168,6 +172,13 @@ def text_of(words):
         value += word['text']
         previous = word
     return value or None
+
+
+def amount_right(words):
+    """Right edge of the line's left-column amount, or None."""
+    edges = [w['xMax'] for w in words if AMOUNT_FULL.match(w['text'])
+             and AMOUNT_BAND[0] <= w['xMax'] <= AMOUNT_BAND[1] + 8]
+    return max(edges) if edges else None
 
 
 def position(page, words):
@@ -417,6 +428,7 @@ class Builder:
         self.kan = self.kou = self.moku = self.jigyo = None
         self.item = None          # open （n）内訳項目
         self.pending_sub = None   # 金額行待ちの細目
+        self.last_sub = None      # 直前に出した細目と行。一段左の金額の行はその細々目
         self.pending_funding = None
         self.pending_moku = None  # 金額行待ちの項・目見出し
         self.pending_kan = None   # 款見出しの保留行（番号+名称・続き行に本文が折り返す会計）
@@ -445,7 +457,20 @@ class Builder:
             out['事業_上端'] = self.jigyo['上端']
         return out
 
-    def emit_leaf(self, sub=None):
+    def emit_leaf(self, sub=None, under=None):
+        parent = {'node': under, 'row': None, 'children': True} if under is not None else None
+        if sub is not None and under is None:
+            last = self.last_sub
+            if (last is not None and not sub.get('_marker') and sub.get('_right') is not None
+                    and last['node'].get('_right') is not None
+                    and sub['_right'] <= last['node']['_right'] - DEPTH_STEP):
+                parent = last
+            else:
+                self.last_sub = None
+        if parent is not None and not parent['children']:
+            # 細々目を持つ細目は葉でなくなる。出した細目行を細々目の行に置き換える
+            self.detail.remove(parent['row'])
+            parent['children'] = True
         row = {k: None for k in (self.detail_cols or DETAIL_COLUMNS)}
         if self.kan:
             row.update({'款_' + k: v for k, v in self.kan.items()})
@@ -458,32 +483,65 @@ class Builder:
             row.update({'事業_' + k: v for k, v in self.jigyo.items() if not k.startswith('_')})
         if self.item:
             row.update({'内訳_' + k: v for k, v in self.item.items() if not k.startswith('_')})
-        if sub:
-            row.update({'細目_番号': sub.get('番号'), '細目_名称': sub.get('名称'),
-                        '細目_数量': sub.get('数量'), '細目_金額': sub.get('金額'),
-                        '細目_物理頁': sub['物理頁'], '細目_上端': sub['上端'],
-                        '細目_下端': sub['下端']})
+        owner = parent['node'] if parent is not None else sub
+        if owner:
+            row.update({'細目_番号': owner.get('番号'), '細目_名称': owner.get('名称'),
+                        '細目_数量': owner.get('数量'), '細目_金額': owner.get('金額'),
+                        '細目_物理頁': owner['物理頁'], '細目_上端': owner['上端'],
+                        '細目_下端': owner['下端']})
+        if parent is not None:
+            row.update({'細々目_名称': sub.get('名称'), '細々目_数量': sub.get('数量'),
+                        '細々目_金額': sub.get('金額'), '細々目_物理頁': sub['物理頁'],
+                        '細々目_上端': sub['上端'], '細々目_下端': sub['下端']})
         if self.jigyo:
             self.jigyo['_leaf'] = True
         if self.item:
             self.item['_leaf'] = True
         self.detail.append(row)
+        if sub is not None and parent is None:
+            self.last_sub = {'node': sub, 'row': row, 'children': False, 'item': self.item}
 
     def flush_sub(self):
         if self.pending_sub:
-            name = self.pending_sub['名称'] or ''
+            sub = self.pending_sub
+            self.pending_sub = None
+            children = sub.pop('_children', [])
+            if len(children) == 1:
+                # 金額のない番号行の次の字下げ1行は、その番号行の名称の続きか数量と金額
+                child = children[0]
+                if child.get('数量') is None:
+                    sub['名称'] = (sub['名称'] or '') + '\n' + (child['名称'] or '')
+                else:
+                    sub['数量'] = ' '.join(t for t in [child['名称'], child['数量']] if t)
+                sub.update({'金額': child['金額'], '_right': child.get('_right'),
+                            '下端': max(sub['下端'], child['下端'])})
+            name = sub['名称'] or ''
             if (re.search(r'(^|\s)[\d,]+(\s|$)', name)
                     or FUNDING_ECHO.match(name.replace(' ', ''))):
-                self.emit_annex(self.pending_sub['物理頁'], self.pending_sub['words'])
+                self.emit_annex(sub['物理頁'], sub['words'])
+            elif len(children) > 1:
+                # 金額のない番号行の下に字下げした金額行が並ぶ: 番号行が細目、各行が細々目
+                for child in children:
+                    self.emit_leaf(child, under=sub)
+                self.last_sub = None
             else:
-                self.emit_leaf(self.pending_sub)
-            self.pending_sub = None
+                self.emit_leaf(sub)
+
+    def absorb_into_sub(self, leaf, left):
+        """Hold an indented amount line under an open 番号行 that printed no amount."""
+        sub = self.pending_sub
+        if (sub is None or sub['金額'] is not None or leaf.get('金額') is None
+                or left <= sub['words'][0]['xMin'] + 5):
+            return False
+        sub.setdefault('_children', []).append(leaf)
+        return True
 
     def close_item(self):
         self.flush_sub()
         if self.item and not self.item.get('_leaf'):
             self.emit_leaf()            # 内訳項目自身が葉
         self.item = None
+        self.last_sub = None
 
     def close_jigyo(self):
         self.close_item()
@@ -575,9 +633,11 @@ class Builder:
                     and self.leaf_within_parent(num_or_none(first['text']))):
                 pl = self.pending_leaf
                 self.pending_leaf = None
-                self.emit_leaf({'番号': None, '名称': pl['名称'], '数量': None,
-                                '金額': first['text'], '物理頁': pl['物理頁'],
-                                '上端': pl['上端'], '下端': first['yMax']})
+                leaf = {'番号': None, '名称': pl['名称'], '数量': None,
+                        '金額': first['text'], '物理頁': pl['物理頁'],
+                        '上端': pl['上端'], '下端': first['yMax'], '_right': first['xMax']}
+                if not self.absorb_into_sub(leaf, pl['words'][0]['xMin']):
+                    self.emit_leaf(leaf)
                 return True
             self.emit_annex(self.pending_leaf['物理頁'], self.pending_leaf['words'])
             self.pending_leaf = None
@@ -592,6 +652,28 @@ class Builder:
             if amount is None and self.in_named_table and self.declared_stats:
                 return False
             self.in_table = False
+            right = amount_right(words) if amount is not None else None
+            last = self.last_sub
+            if (self.item is None and right is not None and last is not None and last['item'] is None
+                    and not last['children'] and not last['node'].get('_marker')
+                    and last['node'].get('_right') is not None
+                    and right <= last['node']['_right'] - DEPTH_STEP):
+                # 番号なしの見出し金額の下に一段左の（n）が並ぶ: 見出しが内訳、（n）が細目
+                heading = last['node']
+                self.detail.remove(last['row'])
+                self.last_sub = None
+                self.item = {'番号': None, '名称': heading['名称'], '金額': heading['金額'],
+                             '物理頁': heading['物理頁'], '上端': heading['上端'],
+                             '下端': heading['下端'], '_heading': True, '_right': heading['_right']}
+            if (self.item is not None and self.item.get('_heading') and right is not None
+                    and right <= self.item['_right'] - DEPTH_STEP):
+                self.flush_sub()
+                head = first['text'][marker.end():] or None
+                name = ' '.join(t for t in [head, text_of(body)] if t)
+                self.emit_leaf({'番号': marker.group(0), '名称': name or None, '数量': None,
+                                '金額': amount, '_marker': True, '_right': right,
+                                **position(page, words)})
+                return True
             self.close_item()
             parent = num_or_none(self.jigyo['当年度決算額'])
             if amount is not None and parent is not None \
@@ -630,7 +712,8 @@ class Builder:
             self.in_table = False
             self.flush_sub()
             self.pending_sub = {'番号': first['text'], '名称': text_of(body),
-                                '数量': count, '金額': amount, 'words': words,
+                                '数量': count, '金額': amount, 'words': words, '_marker': True,
+                                '_right': amount_right(words) if amount is not None else None,
                                 **position(page, words)}
             if amount is not None:
                 self.flush_sub()
@@ -656,6 +739,7 @@ class Builder:
                 and AMOUNT_BAND[0] <= first['xMax'] <= AMOUNT_BAND[1] + 8):
             if self.pending_sub and self.pending_sub['金額'] is None:
                 self.pending_sub['金額'] = first['text']
+                self.pending_sub['_right'] = first['xMax']
                 self.pending_sub['下端'] = max(self.pending_sub['下端'], first['yMax'])
                 self.flush_sub()
                 return True
@@ -687,16 +771,20 @@ class Builder:
                                     or re.match(r'^[\d,（()）<>＜＞〜～\-－]+$', w['text'])
                                     for w in names)
                         and self.leaf_within_parent(last)):
-                    self.flush_sub()
-                    self.emit_leaf({'番号': None, '名称': name_text, '数量': qty,
-                                    '金額': words[-1]['text'], **position(page, words)})
+                    leaf = {'番号': None, '名称': name_text, '数量': qty,
+                            '金額': words[-1]['text'], '_right': words[-1]['xMax'],
+                            **position(page, words)}
+                    if not self.absorb_into_sub(leaf, first['xMin']):
+                        self.flush_sub()
+                        self.emit_leaf(leaf)
                     return True
         # wrap型leafの名称行候補（金額が次行に折り返す形）。
         # 文末記号・ひらがな終わり（散文折り返し）は候補から外す
         if (self.jigyo is not None and len(words) == 1
                 and not is_amount(first['text'])
                 and 2 <= len(first['text']) <= 40
-                and not re.search(r'[。、※【]|ぁ-ん$', first['text'])
+                and not (re.search(r'[。、※【]|ぁ-ん$', first['text'])
+                         and not re.match(r'^[（(][ア-ン][)）]', first['text']))
                 and not LEAF_DENY.search(first['text'])):
             self.pending_leaf = {'名称': first['text'], 'words': words,
                                  **position(page, words)}
@@ -1103,9 +1191,17 @@ def detail_metadata(columns, funds, scope_label=None, stat_titles=None):
     contexts.append({'columns': [c for c in columns if c.startswith(('内訳_', '細目_'))],
                      'header_path': ['内訳', '細目'],
                      'grain_columns': ['細目_物理頁', '細目_上端']})
+    contexts.append({'columns': [c for c in columns if c.startswith('細々目_')],
+                     'header_path': ['内訳', '細目', '細々目'],
+                     'grain_columns': ['細々目_物理頁', '細々目_上端']})
     note = ('「主要な施策の成果・事務報告書」の歳出部（' + (scope_label or '物理148-464頁') + '）。'
             '行は最細の印字金額明細: 事業が（n）内訳項目＋アイウ細目を持てば細目行、'
             '内訳項目のみなら内訳行、内訳のない事業は事業行が葉。'
+            '細目の下に字下げし金額を一段左に印字する行は細々目とし、細目を親として反復する。'
+            '番号のない見出し金額の下に一段左の（n）が並ぶ事業は、見出しを内訳（番号なし）、'
+            '（n）を細目とする。金額の段は右端位置（約70pt刻み）で判定し、ア・イ・ウの番号行は字下げで兄弟とする。'
+            '金額のない番号行の次に字下げした金額行が1行だけ続く場合はその番号行の名称の続き（数量を伴えば数量）と金額、'
+            '2行以上続く場合は各行をその番号行の細々目とする。'
             '款・項・目・事業・内訳の名称・印字金額・位置を葉行へ反復する。'
             '項は独立した金額行を持たず、見出し行の金額3列は目の値。'
             '款_決算額等7列は款の先頭頁の集計行（単位 円、執行率は％）。'

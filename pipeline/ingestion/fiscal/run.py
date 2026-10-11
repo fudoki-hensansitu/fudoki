@@ -9,8 +9,9 @@ from pathlib import Path
 
 import duckdb
 
-from ingestion.fiscal import manifest
+from ingestion.fiscal import manifest, sum_check
 from ingestion.fiscal.storage import fetch, save, cleanup, verify
+from ingestion.paths import BUILD
 
 
 def inspect_table(path: Path, metadata: dict | None = None) -> int:
@@ -170,6 +171,37 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
             'rows': sum(t['row_count'] for t in tables), 'candidate': str(candidate)}
 
 
+def verify_sums(document: dict, locate) -> list[dict]:
+    """Hierarchy sum checks of every PDF table; ``locate(table)`` gives its verified Parquet."""
+    selection = manifest.selection_for(document)
+    formats = {conversion['id']: {item['format'] for item in manifest.resolved_inputs(document, conversion, selection)}
+               for conversion in document['conversions']}
+    skipped = {table['table_id']: 'CSVは変換時の全セル保持検査で確認する'
+               for table in document['tables'] if formats[table['conversion_id']] == {'csv'}}
+    by_id = {table['table_id']: table for table in document['tables']}
+    return sum_check.verify_tables(document, sum_check.read_declarations(document),
+                                   lambda ident: sum_check.read_rows(locate(by_id[ident])), skipped)
+
+
+def candidate_locator(directory: Path):
+    """Find candidate Parquet files by the SHA-256 recorded in the candidate manifest."""
+    by_sha = {manifest.sha_file(path): path for path in directory.rglob('*.parquet') if not path.is_symlink()}
+
+    def locate(table: dict) -> Path:
+        if table['object']['sha256'] not in by_sha:
+            raise FileNotFoundError(f'Candidate Parquet missing: {table["table_id"]}')
+        return by_sha[table['object']['sha256']]
+    return locate
+
+
+def verify_report(path: Path, document: dict, results: list[dict], output: Path) -> dict:
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(json.dumps({'manifest': str(path), 'target': document['target'], 'direction': document['direction'],
+                                  'tables': results}, ensure_ascii=False, indent=1, default=str) + '\n')
+    return {'manifest': str(path), 'output': str(output),
+            'tables': {item['table_id']: {'status': item['status'], **item['counts']} for item in results}}
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest='command', required=True)
@@ -191,6 +223,11 @@ def main() -> None:
     restore = sub.add_parser('restore')
     restore.add_argument('--manifest', type=Path, required=True)
     restore.add_argument('--remote', action='store_true')
+    check_sums = sub.add_parser('verify', help='Hierarchy sum checks of saved or candidate PDF tables; details go to files')
+    check_sums.add_argument('--manifest', type=Path, action='append', help='Saved manifest(s); default: all')
+    check_sums.add_argument('--candidate', type=Path, help='Candidate directory from convert (uses its manifest.json)')
+    check_sums.add_argument('--output', type=Path, help='Detail directory (default: .build/ingestion-verify)')
+    check_sums.add_argument('--remote', action='store_true', help='Restore missing saved tables from R2')
     clean = sub.add_parser('cleanup')
     clean.add_argument('--manifest', type=Path, required=True)
     args = parser.parse_args()
@@ -198,7 +235,7 @@ def main() -> None:
         print(manifest.SCHEMA.read_text())
     elif args.command == 'check':
         paths = [args.manifest] if args.manifest else manifest.paths()
-        count = ready = tables = 0
+        count = ready = tables = declared = 0
         for path in paths:
             document = manifest.read(path)
             for conversion in document['conversions']:
@@ -208,12 +245,38 @@ def main() -> None:
                 ready += 1
             count += 1
             tables += len(document['tables'])
-        print(json.dumps({'valid': True, 'manifests': count, 'ready': ready, 'saved_tables': tables}))
+            declared += sum_check.read_declarations(document) is not None
+        print(json.dumps({'valid': True, 'manifests': count, 'ready': ready, 'saved_tables': tables,
+                          'sum_check_files': declared}))
     elif args.command == 'originals':
         print(json.dumps(originals(args.manifest, args.output, remote=args.remote)))
     elif args.command == 'convert':
         print(json.dumps(convert(args.manifest, json.loads(args.inputs.read_text()), args.output,
                                  remote=args.remote, conversion_ids=args.conversion, extend_plan=args.extend_plan)))
+    elif args.command == 'verify':
+        output = args.output or BUILD / 'ingestion-verify'
+        if args.candidate is not None:
+            if args.manifest:
+                raise ValueError('Use either --candidate or --manifest')
+            document = manifest.validate(json.loads((args.candidate / 'manifest.json').read_text()))
+            runs = [(args.candidate / 'manifest.json', document, candidate_locator(args.candidate))]
+        else:
+            runs = []
+            for path in args.manifest or manifest.paths():
+                document = manifest.read(path)
+                runs.append((path, document, lambda table: fetch(table['object'], remote=args.remote)))
+        summary = {}
+        failed = False
+        for path, document, locate in runs:
+            target = document['target']
+            name = f'{target["jurisdiction"]}-{target["fiscal_year"]}-{manifest.document_slot(target)}-{document["direction"]}'
+            results = verify_sums(document, locate)
+            print(json.dumps(verify_report(path, document, results, output / f'{name}.json'), ensure_ascii=False))
+            for item in results:
+                summary[item['status']] = summary.get(item['status'], 0) + 1
+                failed |= item['status'] in (sum_check.MISMATCH, sum_check.UNDECLARED, sum_check.INVALID)
+        print(json.dumps({'manifests': len(runs), 'tables': summary}, ensure_ascii=False))
+        raise SystemExit(1 if failed else 0)
     elif args.command == 'restore':
         document = manifest.read(args.manifest)
         manifest.require_current(document)

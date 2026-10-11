@@ -7,15 +7,15 @@
 | 原典の形式 | 取り込み完了の条件 | 実装の状態 |
 | --- | --- | --- |
 | ヘッダー付きCSV | 原典を読み直した全セル・列・行順・重複・空欄・物理行範囲がParquetと一致する | 共通CSV変換で自動検査。不一致は保存前に停止する |
-| text PDF | 文字保持・原典との対応を確認し、階層ごとの合計検査→不一致の修正→再検査を行う | 共通実装・書式別の停止条件は未完了 |
-| scan PDF | OCRの観測と表への対応を確認し、階層ごとの合計検査→不一致の修正→再検査を行う | OCR・再読の手順はある。合計検査の共通実装は未完了 |
+| text PDF | 文字保持・原典との対応を確認し、階層ごとの合計検査→不一致の修正→再検査を行う | 共通の合計検査は `ingestion:verify`（表ごとの宣言は `jurisdictions/<団体>/sum_checks/`）。保存前に停止する条件は未実装 |
+| scan PDF | OCRの観測と表への対応を確認し、階層ごとの合計検査→不一致の修正→再検査を行う | OCR・再読の手順はある。合計検査はtext PDFと同じ `ingestion:verify`。保存前に停止する条件は未実装 |
 
 取り込みと形式別の検査は [ingestion](ingestion.md) を読む。
 
 ## 保存と採用の境界
 
 - 変換と保存の入口は `ingestion:convert`。ローカル実行は候補Parquet・候補manifest・形式別の検査結果を返し、`--remote` は全表の保存成功後に対象別JSONを更新する。手順は [ingestion](ingestion.md#管理jsonを確認して変換する)。
-- `ingestion:check` は管理情報・選定・scope・fingerprintの検査で、財政値の正しさを認定しない。
+- `ingestion:check` は管理情報・選定・scope・fingerprintと合計検査の宣言ファイルの型の検査で、財政値の正しさを認定しない。PDF表の合計は `ingestion:verify` で照合する。
 - 原典はsource_selection、表は対象・方向別のingestion領域に保存し、保存先と原典参照は対象別JSONに置く。独立したprovenanceファイルは作らない。
 - C（dbt）は対象別JSONと保存済みParquetを読む。
 

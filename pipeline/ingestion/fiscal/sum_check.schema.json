@@ -1,0 +1,255 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fudoki.local/schemas/ingestion-sum-checks-v1.json",
+  "title": "Printed hierarchy sums to verify in the saved PDF ingestion tables of one manifest",
+  "description": "Lives at jurisdictions/<jurisdiction>/sum_checks/<year>/<document slot>/<direction>.json, mirroring the manifest. Kept outside the manifest so declarations never change conversion fingerprints.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "tables": {
+      "description": "Checks per saved table ID of the manifest.",
+      "type": "object",
+      "propertyNames": {
+        "$ref": "#/$defs/id"
+      },
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "$ref": "#/$defs/sum_check"
+        },
+        "minItems": 1
+      }
+    }
+  },
+  "required": [
+    "tables"
+  ],
+  "$defs": {
+    "sum_check_where": {
+      "description": "Row conditions, all required: null, not_null, an equal value, a list of values, {contains} or {not_in}.",
+      "type": "object",
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": [
+              "string",
+              "number",
+              "boolean"
+            ]
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "number",
+                "boolean"
+              ]
+            },
+            "minItems": 1
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "contains": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "contains"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "not_in": {
+                "type": "array",
+                "items": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean"
+                  ]
+                },
+                "minItems": 1
+              }
+            },
+            "required": [
+              "not_in"
+            ]
+          }
+        ]
+      }
+    },
+    "sum_check_key": {
+      "description": "Columns identifying one printed node (usually its printed position); rows with a NULL key are not nodes.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "sum_check_parent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "table": {
+          "$ref": "#/$defs/id"
+        },
+        "key": {
+          "$ref": "#/$defs/sum_check_key"
+        },
+        "where": {
+          "$ref": "#/$defs/sum_check_where"
+        }
+      },
+      "required": [
+        "key"
+      ]
+    },
+    "sum_check_child": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "table": {
+          "$ref": "#/$defs/id"
+        },
+        "key": {
+          "$ref": "#/$defs/sum_check_key"
+        },
+        "where": {
+          "$ref": "#/$defs/sum_check_where"
+        },
+        "parent_key": {
+          "description": "Columns of the child rows holding the parent key, aligned with parent.key; defaults to the same column names.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "columns": {
+          "description": "Child amount columns aligned with the check columns, when this child kind prints its amount elsewhere.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "blank": {
+          "description": "Blank child amounts confirmed in the original as unprinted; any other blank stays pending.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "where": {
+                "$ref": "#/$defs/sum_check_where"
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "reason"
+            ]
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "key"
+      ]
+    },
+    "sum_check": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uncheckable": {
+              "description": "Why the original prints no total or complete breakdown to compare.",
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "name",
+            "uncheckable"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1
+            },
+            "parent": {
+              "$ref": "#/$defs/sum_check_parent"
+            },
+            "child": {
+              "description": "One child kind, or several kinds that together form the direct breakdown.",
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/sum_check_child"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/sum_check_child"
+                  },
+                  "minItems": 2
+                }
+              ]
+            },
+            "columns": {
+              "description": "Pairs of [parent amount column, child amount column].",
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "minItems": 1
+            },
+            "skip_leaves": {
+              "description": "Parents without printed children are leaves of a descriptive hierarchy, not checks.",
+              "type": "boolean"
+            },
+            "excerpt": {
+              "description": "The original prints only some children: a shortfall is uncheckable for this reason, an excess stays a mismatch.",
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "name",
+            "parent",
+            "child",
+            "columns"
+          ]
+        }
+      ]
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,95}$"
+    }
+  }
+}

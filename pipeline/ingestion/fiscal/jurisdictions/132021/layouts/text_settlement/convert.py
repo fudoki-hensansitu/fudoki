@@ -35,6 +35,9 @@ R_UNUSED_RIGHT = 257
 NOTE_LEFT = 257
 SEGMENT = re.compile(r'([ML])\s+(-?[\d.]+)\s+(-?[\d.]+)')
 INNER_LABELS = ('繰越明許費', '事故繰越', '支出済額', '不用額', '本年度支出額', '翌年度繰越額')
+# A 細々目 is indented under its 細目 (name x≈300 against 291) and right-aligns its
+# amount one step left (x≈516 against the 細目's x≈536).
+SUB_NAME_LEFT, SUB_AMOUNT_RIGHT = 298, 525
 
 
 def observe(pdf, first, last, path):
@@ -303,10 +306,13 @@ def parse_cell(words, setsu_names, unconfirmed, items):
 
     ``items`` is the accumulated item list for the whole 目 cell: ``pending``
     survives across band chunks so a wrapped continuation line can still reach
-    the heading/leaf it belongs to.
+    the heading/leaf it belongs to, and ``owner`` lets a 細々目 reach its 細目.
     """
     notes = []
     pending = len(items) - 1 if items else None
+    owner = next((index for index in range(len(items) - 1, -1, -1) if items[index]['kind'] != 'inner'), None)
+    if owner is not None and not items[owner].get('_owns_sub'):
+        owner = None
     for row in lines(words):
         first = row[0]
         text_row = ' '.join(w['text'] for w in row)
@@ -339,6 +345,7 @@ def parse_cell(words, setsu_names, unconfirmed, items):
             items.append({'kind': 'jigyou', '番号': num_text,
                           '名称': join_text(lines(body)), '金額': amount, 'row': row})
             pending = len(items) - 1
+            owner = None
             continue
         if num_text and num_end <= 282:
             number = num_text
@@ -352,12 +359,13 @@ def parse_cell(words, setsu_names, unconfirmed, items):
                 items.append({'kind': 'desc_setsu', '番号': number,
                               '名称': join_text(lines(body)), '金額': amount, 'row': row})
                 pending = len(items) - 1
+                owner = None
                 continue
             unconfirmed.append({'reason': '番号行が目の節区分・事業判別に一致しない',
                                 'text': text_row, 'number': number,
                                 'setsu_names': sorted(setsu_names, key=int)})
             items.append({'kind': 'leaf', '名称': text_row, '金額': None, 'row': row})
-            pending = None
+            pending = owner = None
             continue
         if all(AMOUNT_PART.fullmatch(w['text']) and w['xMin'] > 400 for w in row):
             # An amount wrapped onto its own line: append to the pending item.
@@ -391,26 +399,34 @@ def parse_cell(words, setsu_names, unconfirmed, items):
         if first['xMin'] >= 296:
             body, amount = split_amount(row)
             name = join_text(lines(body))
+            if (amount is not None and owner is not None and first['xMin'] >= SUB_NAME_LEFT
+                    and row[-1]['xMax'] <= SUB_AMOUNT_RIGHT):
+                items.append({'kind': 'inner', '名称': name, '金額': amount, 'row': row})
+                pending = None
+                continue
             # A name-only line can continue a pending leaf's wrapped name, as
-            # can the name-tail of a wrapped leaf line carrying the amount.
-            # A "（第Nブロック）" line with its own amount is a child leaf.
-            if pending is not None and items[pending]['金額'] is None \
-                    and not (amount is not None and compact.startswith('（第')):
+            # can the name-tail of a wrapped leaf line carrying the amount
+            # (e.g. "…管理運営委託料" + "（第１ブロック） 281,033,770").
+            if pending is not None and items[pending]['金額'] is None:
                 items[pending]['名称'] = (items[pending]['名称'] or '') + '\n' + name
                 if amount:
                     items[pending]['金額'] = amount
                 continue
-            items.append({'kind': 'leaf', '名称': name, '金額': amount, 'row': row})
+            items.append({'kind': 'leaf', '名称': name, '金額': amount, 'row': row,
+                          '_owns_sub': amount is not None and row[-1]['xMax'] > SUB_AMOUNT_RIGHT})
             pending = len(items) - 1
+            owner = pending if items[pending]['_owns_sub'] else None
             continue
         if first['xMin'] >= 282:
             body, amount = split_amount(row)
             items.append({'kind': 'leaf', '名称': join_text(lines(body)),
-                          '金額': amount, 'row': row})
+                          '金額': amount, 'row': row,
+                          '_owns_sub': amount is not None and row[-1]['xMax'] > SUB_AMOUNT_RIGHT})
             pending = len(items) - 1
+            owner = pending if items[pending]['_owns_sub'] else None
             continue
         notes.append(defrag_digits(text_row))
-        pending = None
+        pending = owner = None
     return notes
 
 
@@ -767,7 +783,8 @@ def detail_metadata(columns, kind, prefix='general-expenditure',
                              'header_path': ['備考', '事業説明', prefix[-1]],
                              'grain_columns': [prefix + '_物理頁', prefix + '_上端']})
         note = ('右頁備考結合セル内の事業説明の最細行（説明1=事業、説明2=セル内節見出し、'
-                '説明3=細目、説明4=内訳行）。説明階層の見出し行で下位印字の無いものは'
+                '説明3=細目、説明4=細目の下の行: 字下げして金額を一段左に印字する細々目、'
+                'または繰越明許費・事故繰越の内訳行）。説明階層の見出し行で下位印字の無いものは'
                 'その見出し自体を葉とする（金額0印字の事業・葉なし節見出し等）。'
                 '説明内節見出し(説明2)と表グリッド節行の対応付けはraw列に実体化せず'
                 '検査用観測に留める。説明3・説明4は同じ支出の別分解軸であり'
