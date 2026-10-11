@@ -1,7 +1,9 @@
 """Tests for the shared printed-amount reading (ingestion and dbt staging agree)."""
+import re
 import unittest
+from pathlib import Path
 
-from shared.amount import is_fiscal_year_notation, number, parse_amount
+from shared.amount import FISCAL_YEAR_PATTERN, is_fiscal_year_notation, number, parse_amount
 
 
 class AmountTest(unittest.TestCase):
@@ -31,6 +33,11 @@ class AmountTest(unittest.TestCase):
         for text in ('支出済額', '翌年度繰越額', '予算現額', '事業説明', '前年度決算額',
                      '予備費支出', '流用増減', '年度', '令和', '7年度', '令和7年', None):
             self.assertFalse(is_fiscal_year_notation(text), text)
+
+    def test_fiscal_year_pattern_matches_dbt_macro(self):
+        macro = Path(__file__).resolve().parents[1] / 'dbt/macros/fiscal_year_notation.sql'
+        literals = re.findall(r"'([^']*)'", macro.read_text())
+        self.assertIn(FISCAL_YEAR_PATTERN, literals)
 
     def test_unreadable_is_none(self):
         for text in (None, '', '見出し', '1,00', '12円34', '(100'):

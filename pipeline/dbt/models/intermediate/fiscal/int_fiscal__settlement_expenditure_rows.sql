@@ -38,9 +38,8 @@ with recursive subject_axes as (
              when starts_with(a.header_path, n.axis_header || '/')
                   and split_part(a.header_path, '/', -1) = n.level_header then axis_map.phase
              -- A trailing Japanese-era year/period word names no current-year phase
-             -- (same rule as shared/amount.py FISCAL_YEAR_PATTERN; null like the else).
-             when regexp_full_match(split_part(a.header_path, '/', -1),
-                  '^(?:明治|大正|昭和|平成|令和)\s*(?:元|\d+)(?:\s*[~〜\-・,、]\s*(?:(?:明治|大正|昭和|平成|令和)\s*)?(?:元|\d+))*\s*年度$')
+             -- (shared/fiscal_year_notation macro; null like the else).
+             when {{ fiscal_year_notation("split_part(a.header_path, '/', -1)") }}
              then null
              else null end as amount_role,
         a.amount * case a.unit_text when '円' then 1 when '千円' then 1000
