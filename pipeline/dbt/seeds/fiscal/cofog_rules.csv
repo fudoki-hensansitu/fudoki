@@ -139,13 +139,14 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 147,transfer-mitaka-sewer,132047,一般会計,,,,,下水道事業特別会計繰出金,eq,繰出金,assigned,05.2,eliminated,目,下水道事業特別会計,2014〜2019年度の原典に会計間繰出と受け側の一般会計繰入を確認。各年度の当初予算・決算を分けて同額を検算する。,false
 900,kind-x-fund-accumulation,,,,,,,積立金,contains,,out-of-scope,,retained,目,,基金への積立は金融資産への振替であり COFOG の集計対象ではない。目の名称に積立金を含むものを全部ここで受ける（節を見る規則は目の粒度では当たらない）。,false
 901,kind-x-interest,,,,,,,利子,contains,,assigned,01.7,retained,目,,借入金の利子は UN COFOG 01.7 公的債務取引。償還金の規則より先に置き、利子償還金をこちらで取る。,false
-902,kind-x-refund,,,,,,,償還金|還付|延滞金|小切手|拠出金|返還,contains,,out-of-scope,,retained,目,,過誤納金の還付・償還・返還・延滞金・小切手未済・基金拠出金は歳入の戻しや現金精算であり経費ではない。,false
+902,kind-x-refund,,,,,,,償還金|還付|延滞金|小切手|基金拠出金|共同事業拠出金|返還金,contains,,out-of-scope,,retained,目,,過誤納金の還付・償還・返還金、延滞金・小切手未済・基金への拠出金は歳入の戻しや現金精算であり経費ではない。将来の団体で事業への拠出に当たらないよう語は拠出の種類まで書く。,false
 903,kind-x-transfer-to-general,,,,,,,一般会計繰出金|他会計繰出金,eq,,out-of-scope,,retained,目,,特別会計から一般会計への精算返還は同一主体内の移転であり COFOG の対象（経費・非金融資産への純投資）ではない。,false
 904,kind-x-debt-combined,,,,,公債費,,公債費,eq,,unclassifiable,,retained,目,,元金（対象外）と利子（01.7）が一つの目に混ざり、目の名称だけでは分離できない。,false
 905,kind-x-insurance-medical-fund,,一般会計,,,,,保険医療費,eq,,unclassifiable,,retained,目,,国保・介護・後期高齢への繰出をまとめた目の可能性があるが原典の内訳が無く、07 と 10.2 を分離できない。,false
 906,kind-x-land-transfer,,,,,,,用地特別会計繰出金,eq,,unclassifiable,,retained,目,,用地特別会計への繰出。用地取得の対象事業が特定できず機能を決められない。,false
 907,kind-x-private-sewer,,,,,,,私道私下水,contains,,unclassifiable,,retained,目,,私道の道路改修と下水改修の補助が一つの目に混ざり分離できない。私道防犯灯は後の規則が取る。,false
 908,kind-x-parking-fund,,駐車場事業特別会計,,,,,,,,assigned,04.5.1,retained,目,,駐車場事業特別会計の運営は UN COFOG 04.5.1 道路交通（狛江市の駐車場規則と同じ扱い）。一般管理費・予備費は先の規則が取る。,false
+909,vocab-development-support,,一般会計,,,,,発達支援,contains,,assigned,10,retained,目,,発達支援センターは障害児通所支援を担い、障害（10.1）と児童（10.4）の境界のため暫定とする。子どもの規則より先に置く。,true
 910,vocab-kokuho-kouki-transfer,,一般会計,,,,,国民健康保険|後期高齢者医療,contains,,assigned,07,retained,目,,一般会計から医療給付を担う国保・後期高齢者医療への繰出は受け皿の機能に対応して COFOG 07 保健。,false
 911,vocab-kaigo-transfer,,一般会計,,,,,介護保険,contains,,assigned,10.2,retained,目,,一般会計から介護保険への繰出は長期介護の社会保障に対応する COFOG 10.2 高齢。,false
 912,vocab-info-system,,一般会計,,,,,情報システム,contains,,assigned,01.3.3,retained,目,,情報システムの運営は UN COFOG 01.3.3 その他一般サービス（情報管理の規則と同じ扱い）。,false
@@ -164,7 +165,7 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 925,vocab-environment-fund,,一般会計,,,,,環境費,eq,,assigned,05,retained,目,,環境費の目は環境行政であり COFOG 05 環境保護。生活環境費などの複合名が来たら再検討する。,false
 926,vocab-care-service,,一般会計,,,,,介護事業|介護サービス,contains,,assigned,10.2,retained,目,,一般会計の介護事業・介護サービスは高齢への福祉サービスであり COFOG 10.2。,false
 927,vocab-community-welfare,,一般会計,,,,,地域福祉,contains,,assigned,10,retained,目,,対象者を特定しない地域福祉は COFOG 10 社会保護。,false
-928,vocab-welfare-center,,一般会計,,,,,福祉センター|発達支援,contains,,assigned,10,retained,目,,福祉センター・発達支援センターは対象分野を特定しない福祉施設であり、障害（10.1）と児童（10.4）の境界のため暫定とする。,true
+928,vocab-welfare-center,,一般会計,,,,,福祉センター,contains,,assigned,10,retained,目,,福祉センターは対象分野を特定しない福祉施設であり暫定とする。発達支援センターは障害と児童の境界のため先の規則が取る。,true
 929,vocab-area-development,,一般会計,,,,,地域整備,contains,,assigned,06.2,retained,目,,地域整備は地域の開発であり UN COFOG 06.2 地域開発。,false
 930,vocab-machizukuri,,一般会計,,,,,まちづくり,contains,,assigned,06.2,retained,目,,まちづくりの計画・事業は地域の開発であり UN COFOG 06.2 地域開発。,false
 931,vocab-urban-improvement,,一般会計,,,,,都市整備,contains,,assigned,06.2,retained,目,,都市整備は地域の開発であり UN COFOG 06.2 地域開発。,false
@@ -206,4 +207,3 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 971,kind-fallback-kouki,,,後期高齢者医療,,,,,,,assigned,07,retained,目,,後期高齢者医療の目は医療給付とその運営であり COFOG 07 保健。償還・繰出など行き先が違う目は先の規則が取る。,false
 972,kind-fallback-kaigo,,,介護保険,,,,,,,assigned,10.2,retained,目,,介護保険の目は長期介護の社会保険であり COFOG 10.2 高齢。償還・積立・繰出など行き先が違う目は先の規則が取る。,false
 973,kind-fallback-other,,,その他,,,,,,,unclassifiable,,retained,目,,その他の小規模な特別会計は種類だけでは行き先を決められない。捨てずに分類不能として残す。,false
-909,vocab-development-support,,一般会計,,,,,発達支援,contains,,assigned,10,retained,目,,発達支援センターは障害児通所支援を担い、障害（10.1）と児童（10.4）の境界のため暫定とする。子どもの規則より先に置く。,true

@@ -36,8 +36,9 @@ class AmountTest(unittest.TestCase):
 
     def test_fiscal_year_pattern_matches_dbt_macro(self):
         macro = Path(__file__).resolve().parents[1] / 'dbt/macros/fiscal_year_notation.sql'
-        literals = re.findall(r"'([^']*)'", macro.read_text())
-        self.assertIn(FISCAL_YEAR_PATTERN, literals)
+        matches = re.findall(r"regexp_full_match\(\{\{ col \}\},\s*'([^']*)'\)", macro.read_text())
+        self.assertEqual(len(matches), 1)
+        self.assertEqual(matches[0], FISCAL_YEAR_PATTERN)
 
     def test_unreadable_is_none(self):
         for text in (None, '', '見出し', '1,00', '12円34', '(100'):
