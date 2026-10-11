@@ -8,9 +8,9 @@ with base as (
 ), transfer_nodes as (
     -- Only 目: same-named breakdowns (setsu・notes like 保険基盤安定繰出金) are
     -- statutory contributions inside one account, not transfers between accounts.
-    select node_id, regexp_extract(name, '^(.*)繰出金$', 1) as recipient_name
+    select node_id, regexp_extract(name, '^(.*会計)繰出金$', 1) as recipient_name
     from base
-    where is_subject and node_kind = '目' and regexp_matches(name, '^(.*)繰出金$')
+    where is_subject and node_kind = '目' and regexp_matches(name, '^(.*会計)繰出金$')
 ), transfer_recipients as (
     select t.node_id, t.recipient_name,
         nullif(m.account_kind, '') as recipient_kind, m.keyword

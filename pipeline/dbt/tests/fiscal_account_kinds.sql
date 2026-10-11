@@ -12,4 +12,8 @@ where interfund_transfer_to is not null
 union all
 select node_id, 'transfer_mark_mismatch', interfund_transfer_to
 from {{ ref('settlement_expenditure_node') }}
-where is_interfund_transfer <> (is_subject and node_kind = '目' and regexp_matches(name, '^(.*)繰出金$'))
+where is_interfund_transfer <> (is_subject and node_kind = '目' and regexp_matches(name, '^(.*会計)繰出金$'))
+union all
+select node_id, 'transfer_recipient_without_mark', interfund_transfer_to
+from {{ ref('settlement_expenditure_node') }}
+where interfund_transfer_to is not null and not is_interfund_transfer
