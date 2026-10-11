@@ -2,6 +2,15 @@ priority,rule_id,applies_to,match_fund,match_kan,match_kou,match_kan_code,match_
 -903,slice-132021-health-transfer,132021,一般会計,民生費,社会福祉費,,国民健康保険事業特別会計繰出金|後期高齢者医療事業特別会計繰出金,eq,,assigned,07,retained,目,,立川市 医療給付を担う国民健康保険・後期高齢者医療への繰出は受け皿の機能に対応して COFOG 07 保健。slice は一般会計のみで、連結消去は行わず retained とする。,false
 -902,slice-132021-care-transfer,132021,一般会計,民生費,社会福祉費,,介護保険事業特別会計繰出金,eq,,assigned,10.2,retained,目,,立川市 介護保険への繰出は長期介護の社会保障に対応する COFOG 10.2 高齢。slice は一般会計のみなので連結消去しない。,false
 -886,slice-132021-sewer-transfer,132021,一般会計,土木費,都市計画費,,下水道事業会計繰出金,eq,,assigned,05.2,retained,目,,立川市 下水道事業への繰出は受け皿の排水処理の機能に対応する COFOG 05.2 排水管理。下水道事業会計は slice へ収録しないので消去しない。,false
+-816,keyword-clinic,,一般会計,,,,診療所,contains,,assigned,07.2,retained,目,,診療所の外来診療を UN COFOG 07.2 外来サービスに分類する。名称からの判断で定義の確認が要るため暫定とする。,true
+-815,keyword-election,,一般会計,,,,選挙,contains,,assigned,01.6,retained,目,,選挙事務を UN COFOG 01.6 他に分類されない一般公共サービスに分類する。名称からの判断で定義の確認が要るため暫定とする。,true
+-814,keyword-planning,,一般会計,,,,企画,contains,,assigned,01.3.2,retained,目,,企画部門を UN COFOG 01.3.2 総合企画・統計サービスに分類する。名称からの判断で定義の確認が要るため暫定とする。,true
+-813,keyword-fiscal-admin,,一般会計,,,,財政管理|会計管理|監査,contains,,assigned,01.1.2,retained,目,,財政・会計の管理と監査を UN COFOG 01.1.2 財政・財務業務に分類する。名称からの判断で定義の確認が要るため暫定とする。,true
+-812,keyword-property-admin,,一般会計,,,,財産管理|庁舎管理|電子計算|情報管理,contains,,assigned,01.3.3,retained,目,,財産・庁舎・情報システムの管理を UN COFOG 01.3.3 その他一般サービスに分類する。,false
+-811,keyword-env-admin,,一般会計,,,,環境清掃総務|環境清掃職員,contains,,assigned,05.1,retained,目,,環境清掃の総務・職員経費を UN COFOG 05.1 廃棄物管理に分類する。名称からの判断で定義の確認が要るため暫定とする。,true
+-810,keyword-health-prevention,,一般会計,,,,予防費|感染症|保健所予防|母子保健,contains,,assigned,07.4,retained,目,,予防・感染症対策・母子保健を UN COFOG 07.4 公衆衛生サービスに分類する。名称からの判断で定義の確認が要るため暫定とする。,true
+-809,keyword-welfare-admin,,一般会計,,社会福祉費,,社会福祉総務|福祉総務,contains,,assigned,10.9,retained,目,,社会福祉の政策全体の運営を UN COFOG 10.9 他に分類されない社会保護に分類する。対象者別の総務（障害者・高齢者・児童）は先の規則が取り、ここは項が社会福祉費のものだけ当てる。,false
+-807,keyword-personnel,,一般会計,,,,人事管理|福利厚生,contains,,assigned,01.3.1,retained,目,,人事・福利厚生の管理を UN COFOG 01.3.1 一般人事サービスに分類する。名称からの判断で定義の確認が要るため暫定とする。教育総務費の福利厚生は項で限定した先の規則が取る。,true
 -805,keyword-mixed-learning-sport,,一般会計,,,,生涯学習スポーツ,contains,,unclassifiable,,retained,目,,学習とスポーツを一つの目に含み、機能を分離できない。,false
 -804,keyword-mixed-compound,,一般会計,,,,保育園・幼稚園|文化生涯学習|商工観光,contains,,unclassifiable,,retained,目,,異なる機能を組み合わせた目の名称からは金額を分離できない。,false
 -803,keyword-mixed-school-health,,一般会計,,,,学校保健体育|学校保健費,contains,,unclassifiable,,retained,目,,学校保健の医療・補助サービス等を名称だけでは分離できない。,false
@@ -10,18 +19,17 @@ priority,rule_id,applies_to,match_fund,match_kan,match_kou,match_kan_code,match_
 -800,keyword-fund-accumulation,,一般会計,,,,基金積立金|財政積立金|財産積立金,contains,,out-of-scope,,retained,目,,基金への積立は金融資産への振替として対象外とする。,false
 -799,keyword-disability,,一般会計,,,,障害者福祉|障害者施設,contains,,assigned,10.1,retained,目,,障害者への福祉サービスを社会保護に分類する。,false
 -798,keyword-elderly,,一般会計,,,,高齢者福祉|高齢者生きがい|高齢者施設|老人福祉,contains,,assigned,10.2,retained,目,,高齢者への福祉サービスを老齢の社会保護に分類する。,false
--797,keyword-maternal-health,,一般会計,,,,母子保健,contains,,assigned,07,retained,目,,母子の保健サービスを保健に分類する。,false
 -796,keyword-child-benefit,,一般会計,,,,物価高対応子育て応援手当|子ども家庭|児童福祉|児童育成|児童館|母子福祉|保育園|青少年対策,contains,,assigned,10.4,retained,目,,子育て・児童への支援を家族と子どもの社会保護に分類する。,false
 -795,keyword-price-benefit,,一般会計,,,,物価高騰対策臨時給付金,contains,,assigned,10,retained,目,,生活への臨時給付を社会保護に分類する。,false
 -794,keyword-public-assistance,,一般会計,,,,生活保護,contains,,assigned,10.7,retained,目,,生活保護を社会的排除への社会保護に分類する。,false
 -793,keyword-public-assistance-aid,,一般会計,,生活保護費,,扶助費,contains,,assigned,10.7,retained,目,,生活保護費に属する扶助を社会的排除への社会保護に分類する。,false
 -792,keyword-pension,,一般会計,,,,国民年金|基礎年金|年金総務,contains,,assigned,10,retained,目,,年金に関する事務を社会保護に分類する。,false
--791,keyword-disaster-aid,,一般会計,,,,災害救助|災害応急,contains,,assigned,10,retained,目,,被災者への救助・応急支援を社会保護に分類する。,true
+-791,keyword-disaster-aid,,一般会計,,,,災害救助|災害応急,contains,,assigned,10.9,retained,目,,被災者への救助・応急支援を UN COFOG 10.9 他に分類されない社会保護に分類する。03.2 防火サービスとの境界があるため暫定のまま。,true
 -790,keyword-school-food,,一般会計,,,,学校給食|共同調理場運営,contains,,assigned,09.6,retained,目,,給食を教育の補助サービスに分類する。,false
 -789,keyword-offsite-learning,,一般会計,,,,区外学習施設,contains,,assigned,09.6,retained,目,,学校に付随する区外学習施設を教育の補助サービスに分類する。,true
 -788,keyword-private-school-supervision,,一般会計,,,,私立学校指導監督,contains,,assigned,09.8,retained,目,,私立学校の指導監督を教育管理に分類する。,false
 -787,keyword-school-admin,,一般会計,,,,教育委員会|教育センター|教育指導|学校教育総務|地域家庭教育,contains,,assigned,09.8,retained,目,,教育の管理・指導を教育の管理的機能に分類する。,false
--786,keyword-education-office,,一般会計,,教育総務費,,事務局費|福利厚生費,contains,,assigned,09.8,retained,目,,教育総務費に属する事務局・職員福利を教育管理に分類する。,false
+-808,keyword-education-office,,一般会計,,教育総務費,,事務局費|福利厚生費,contains,,assigned,09.8,retained,目,,教育総務費に属する事務局・職員福利を教育管理に分類する。,false
 -785,keyword-school-primary-context,,一般会計,,小学校費|幼稚園費|幼児教育費,,学校管理|教育振興|学校施設|学校建設|営繕費,contains,,assigned,09.1,retained,目,,小学校・幼稚園の管理・整備・振興を初等教育に分類する。,false
 -784,keyword-school-secondary-context,,一般会計,,中学校費,,学校管理|教育振興|学校施設|学校建設|営繕費,contains,,assigned,09.2,retained,目,,中学校の管理・整備・振興を中等教育に分類する。,false
 -783,keyword-education-staff,,一般会計,,,,教育職員,contains,,assigned,09,retained,目,,学校段階を特定しない教育職員経費を教育に分類する。,false
@@ -33,14 +41,13 @@ priority,rule_id,applies_to,match_fund,match_kan,match_kou,match_kan_code,match_
 -777,keyword-health-pollution,,一般会計,,,,公害保健,contains,,assigned,07,retained,目,,公害による健康被害への保健サービスを保健に分類する。,false
 -776,keyword-pollution,,一般会計,,,,公害対策,contains,,assigned,05.3,retained,目,,公害対策を汚染防止に分類する。,true
 -775,keyword-night-soil,,一般会計,,,,し尿処理,contains,,assigned,05.2,retained,目,,し尿の処理を排水管理に分類する。,false
--774,keyword-environment-staff,,一般会計,,,,環境清掃職員,contains,,assigned,05,retained,目,,環境・清掃をまたぐ職員経費を環境保護に分類する。,false
--773,keyword-environment,,一般会計,,,,環境清掃総務|環境対策|環境保全,contains,,assigned,05,retained,目,,環境の総合的な対策・保全を環境保護に分類する。,false
+-773,keyword-environment,,一般会計,,,,環境対策|環境保全,contains,,assigned,05,retained,目,,環境の総合的な対策・保全を環境保護に分類する。,false
 -772,keyword-waste-facility,,一般会計,,,,環境清掃施設|リサイクル・清掃|資源清掃|ごみ処理|清掃総務,contains,,assigned,05.1,retained,目,,ごみ・資源回収と清掃施設を廃棄物管理に分類する。,false
--771,keyword-health-hokenjo,,一般会計,,,,保健所,contains,,assigned,07,retained,目,,保健所の予防・衛生は COFOG 07 保健。確かな割り当てであり暫定にしない。,false
--770,keyword-health-boundary,,一般会計,,,,保健衛生総務|保健費|予防費|環境衛生|診療所,contains,,assigned,07,retained,目,,立川の保健衛生5目は環境衛生に環境保護が混じる可能性など境界があるため暫定として COFOG 07 保健に置く。,true
--769,keyword-health,,一般会計,,,,健康推進|保健所|保健衛生|感染症|衛生監視,contains,,assigned,07,retained,目,,予防・診療・衛生を保健に分類する。,false
+-771,keyword-health-hokenjo,,一般会計,,,,保健所,contains,,assigned,07,retained,目,,保健所に属する衛生等を COFOG 07 保健に分類する。確かな割り当てであり暫定にしない。予防・母子保健は先の規則が取る。,false
+-770,keyword-health-boundary,,一般会計,,,,保健衛生総務|保健費|環境衛生,contains,,assigned,07,retained,目,,立川の保健衛生5目は環境衛生に環境保護が混じる可能性など境界があるため暫定として COFOG 07 保健に置く。,true
+-769,keyword-health,,一般会計,,,,健康推進|保健所|保健衛生|感染症|衛生監視,contains,,assigned,07,retained,目,,健康推進・保健衛生等を保健に分類する。予防・診療・感染症など機能が明確な語は先の規則が取る。,false
 -768,keyword-funeral,,一般会計,,,,葬祭,contains,,assigned,01.3,retained,目,,葬祭事務を一般公共サービスに分類する。,true
--767,keyword-street-lighting,,一般会計,,,,街路照明,contains,,assigned,06,retained,目,,街路照明を住宅・地域施設に分類する。,false
+-767,keyword-street-lighting,,一般会計,,,,街路照明,contains,,assigned,06.4,retained,目,,街路照明を UN COFOG 06.4 街路照明に分類する。名称からの判断で定義の確認が要るため暫定とする。,true
 -766,keyword-road,,一般会計,,,,道路|橋りょう|橋梁|街路|交通安全|私道助成,contains,,assigned,04.5.1,retained,目,,道路・橋梁・交通安全を道路輸送に分類する。,false
 -765,keyword-road-contracted,,一般会計,,道路橋りょう費|道路橋梁費,,受託事業,contains,,assigned,04.5.1,retained,目,,道路橋りょう費の受託事業を道路輸送に分類する。,false
 -764,keyword-river-uncertain,,一般会計,,,,河川,contains,,unclassifiable,,retained,目,,河川の治水・環境等の機能を名称だけでは分離できない。,false
@@ -50,7 +57,7 @@ priority,rule_id,applies_to,match_fund,match_kan,match_kou,match_kan_code,match_
 -760,keyword-urban-boundary,,一般会計,,,,都市計画,contains,,assigned,06.2,retained,目,,都市計画の総務・推進・事業は COFOG 06.2 地域開発。道路等の実施工事を含む場合の機能別分類が境界のため暫定とする。,true
 -759,keyword-urban,,一般会計,,,,都市整備総務|まちづくり推進|再開発,contains,,assigned,06.2,retained,目,,都市計画・地域整備を地域開発に分類する。,false
 -758,keyword-housing,,一般会計,,,,住宅,contains,,assigned,06.1,retained,目,,住宅の管理・助成・整備を住宅開発に分類する。,false
--757,keyword-building,,一般会計,,,,建築,contains,,assigned,04,retained,目,,建築行政を経済業務に分類する。,true
+-757,keyword-building,,一般会計,,,,建築,contains,,assigned,04.4,retained,目,,建築行政・建築指導を UN COFOG 04.4 鉱業・製造業・建設業に分類する。名称からの判断で定義の確認が要るため暫定のまま。,true
 -756,keyword-civil-admin,,一般会計,,,,土木総務|土木管理|土木事務所,contains,,assigned,04.5,retained,目,,土木管理を輸送に関する行政に分類する。,true
 -755,keyword-community-facility,,一般会計,,,,コミュニティ活動|地域センター|地域振興施設|区民生活施設|区民施設,contains,,assigned,06.2,retained,目,,地域の共同利用施設・活動を地域開発に分類する。,true
 -754,keyword-register-statistics,,一般会計,,,,戸籍|住民基本台帳|区民事務所|統計|国勢調査,contains,,assigned,01.3,retained,目,,戸籍・住民登録・統計を一般サービスに分類する。,false
@@ -68,9 +75,9 @@ priority,rule_id,applies_to,match_fund,match_kan,match_kou,match_kan_code,match_
 -742,keyword-council-office,,一般会計,,議会費,,事務局費,contains,,assigned,01.1,retained,目,,議会費に属する事務局を立法機関に分類する。,false
 -741,keyword-tax,,一般会計,,,,徴税|税務|賦課徴収,contains,,assigned,01.1,retained,目,,徴税・賦課徴収を財政業務に分類する。,false
 -740,keyword-general-admin-boundary,,一般会計,,,,総務職員,contains,,assigned,01,retained,目,,総務部門の職員人件費は境界の判断（防災等の職員を含む場合の機能別内訳は確認事項）のため暫定として COFOG 01 一般公共サービスに置く。,true
--739,keyword-general-admin,,一般会計,,,,一般管理|人事管理|企画|会計管理|庁舎管理|広報|男女共同参画|男女平等参画|福利厚生|財政管理|財産管理|電子計算|情報管理|政策経営|行政管理|総務管理|地域振興総務|多文化共生|特別出張所|住居表示|区民生活総務|選挙|監査,contains,,assigned,01,retained,目,,行政の総合管理・選挙・監査等を一般公共サービスに分類する。,false
+-739,keyword-general-admin,,一般会計,,,,一般管理|総務管理|政策経営|行政管理|広報|男女共同参画|男女平等参画|地域振興総務|多文化共生|特別出張所|住居表示|区民生活総務,contains,,assigned,01,retained,目,,行政の総合管理等を一般公共サービスに分類する。機能が明確な語（選挙・監査・企画・財政管理等）は先の規則が取る。,false
 -738,keyword-general-context,,一般会計,,総務管理費|選挙費|監査委員費,,事務局費|諸費|地域振興費,contains,,assigned,01,retained,目,,総務・選挙・監査に属する一般的な事務を一般公共サービスに分類する。,false
--737,keyword-welfare,,一般会計,,,,社会福祉|福祉総務|福祉施設,contains,,assigned,10,retained,目,,対象者を特定しない福祉の総務・施設を社会保護に分類する。,false
+-737,keyword-welfare,,一般会計,,,,社会福祉|福祉施設,contains,,assigned,10,retained,目,,対象者を特定しない福祉の総務・施設を社会保護に分類する。,false
 -736,keyword-debt-principal,,一般会計,,公債費,,元金,contains,,out-of-scope,,retained,目,,公債元金償還は金融負債の返済として対象外とする。,false
 -735,keyword-debt-cost,,一般会計,,公債費,,利子|公債諸費|発行及び償還手数料,contains,,assigned,01.7,retained,目,,公債の利子・発行償還費用を公的債務取引に分類する。,false
 -734,keyword-contingency,,一般会計,,,,予備費,contains,,unclassifiable,,retained,目,,執行先の機能が未確定の予備費は分類不能とする。,false

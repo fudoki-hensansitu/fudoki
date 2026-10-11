@@ -17,6 +17,11 @@ def _assigned(status: str) -> str:
     return 'assigned' if status in ('assigned', 'tentative') else status
 
 
+def _is_descendant(actual_code: str, ref_code: str) -> bool:
+    # 規則の細分化で参照のコードの子孫になった場合だけ、規則・状態・コードの違いを許す。
+    return bool(ref_code) and actual_code != ref_code and actual_code.startswith(ref_code + '.')
+
+
 def check(warehouse: Path, reference: Path | None = None) -> dict:
     with duckdb.connect(str(warehouse), read_only=True) as con:
         actual = {j: (n, amount) for j, n, amount in con.execute(
@@ -36,6 +41,8 @@ def check(warehouse: Path, reference: Path | None = None) -> dict:
                     differences.append({'key': identity, 'name': name, 'actual': [amount, rule, status, code], 'expected': None})
                     continue
                 if (amount, rule, _assigned(status), code or '') != (int(r['amount_yen']), r['rule_id'], _assigned(r['status']), r['cofog_code']):
+                    if amount == int(r['amount_yen']) and _is_descendant(code or '', r['cofog_code']):
+                        continue
                     differences.append({'key': identity, 'name': name, 'actual': [amount, rule, status, code], 'expected': r})
             differences.extend({'key': key, 'actual': None, 'expected': r} for key, r in expected.items())
             if differences:
