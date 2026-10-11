@@ -644,8 +644,35 @@ sources:
       direction: expenditure
       table_id: kouki-setsu
       kind: nodes
+  - name: j132071_akishima_text_budget_expenditure_amounts
+    meta:
+      jurisdiction: '132071'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: akishima-text-budget-expenditure
+      kind: amounts
+  - name: j132071_akishima_text_budget_expenditure_nodes
+    meta:
+      jurisdiction: '132071'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: akishima-text-budget-expenditure
+      kind: nodes
+- name: fiscal_csv
+  schema: ingestion
+  tables:
+  - name: j132047_csv_f9dcbc7e87143769
+    meta:
+      jurisdiction: '132047'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: csv-f9dcbc7e87143769
 - name: fiscal_metadata
   schema: ingestion
   tables:
   - name: tables
+  - name: csv_tables
   - name: origin

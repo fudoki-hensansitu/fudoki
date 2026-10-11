@@ -1,11 +1,15 @@
--- Distinct accounts in the settlement input with their cross-jurisdiction kind.
--- The kind comes from one shared keyword dictionary (account_kind_map): an account
--- name containing 国民健康保険 is 国民健康保険 no matter which jurisdiction prints it.
--- An account matching no keyword stops the build with its name; add an explicit
--- keyword row instead of silently grouping it into その他 (ADR 0023).
+-- Distinct accounts in every expenditure input (PDF trees and CSV trees) with
+-- their cross-jurisdiction kind. The kind comes from one shared keyword
+-- dictionary (account_kind_map): an account name containing 国民健康保険 is
+-- 国民健康保険 no matter which jurisdiction prints it. An account matching no
+-- keyword stops the build with its name; add an explicit keyword row instead
+-- of silently grouping it into その他 (ADR 0023).
 with accounts as (
     select distinct jurisdiction_code, fiscal_year, account_name
     from {{ ref('int_fiscal__settlement_expenditure_nodes') }}
+    union
+    select distinct jurisdiction_code, fiscal_year, account_name
+    from {{ ref('int_fiscal__csv_expenditure_nodes') }}
 ), matched as (
     select a.*,
         nullif(m.account_kind, '') as account_kind
