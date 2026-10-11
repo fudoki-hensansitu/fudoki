@@ -40,7 +40,9 @@ with recursive mapped_nodes as (
 ), selected_amounts as (
     select source_table_key, node_key,
         sum(amount_yen) filter (where amount_role = 'executed')::bigint as amount_yen,
-        min(physical_page) filter (where amount_role = 'executed') as amount_source_page
+        case when count(*) filter (where amount_role = 'executed')
+                  = count(physical_page) filter (where amount_role = 'executed')
+             then min(physical_page) filter (where amount_role = 'executed') end as amount_source_page
     from mapped_amounts group by source_table_key, node_key
 ), amounts_checked as (
     select n.*, a.amount_yen, a.amount_source_page

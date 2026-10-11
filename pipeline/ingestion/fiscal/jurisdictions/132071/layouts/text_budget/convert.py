@@ -130,7 +130,7 @@ def assemble(tables, bindings, control_tokens):
             path = bindings['explanation_name']['header_path']
         else:
             path = next(bindings[k]['header_path'] for k in funding if prefix == '財源' + bindings[k]['header_path'][-1] + '_')
-        contexts.append({'columns': columns, 'header_path': path,
+        contexts.append({'columns': columns, 'header_path': path, 'amount_position_prefix': prefix,
                          'grain_columns': [prefix + label for label in ('識別頁', '識別上端', '識別左端')]})
         for label in amount_labels:
             if prefix == '目_' and label in funding_labels:
@@ -139,7 +139,7 @@ def assemble(tables, bindings, control_tokens):
     for key in funding:
         label = bindings[key]['header_path'][-1]
         fields.append(label)
-        contexts.append({'columns': [label], 'header_path': bindings[key]['header_path'][:-1],
+        contexts.append({'columns': [label], 'header_path': bindings[key]['header_path'][:-1], 'amount_position_prefix': '',
                          'grain_columns': ['目_識別頁', '目_識別上端', '目_識別左端']})
         units.append({'text': bindings[key]['unit'], 'scope': {'kind': 'columns', 'columns': [label]}})
     fields.extend(POSITION)

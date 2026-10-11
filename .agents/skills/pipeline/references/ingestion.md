@@ -176,3 +176,5 @@ PDFは原典の内部で重複して印字された数字どうしの一致で�
 - 現行のPaddleOCR small選定の判断: [ADR 0018](../../../../docs/adr/0018-paddle-small-for-scan-pdf.md)
 - Apple Vision導入時の判断: [ADR 0017](../../../../docs/adr/0017-vision-for-coordinate-preserving-ocr.md)
 - 欠落セルの再読・前処理の比較結果と公開調査: [Vision OCRの検証記録](../../../../docs/vision-ocr-evaluation.md)
+
+金額の位置は金額列自身の `<金額列>_物理頁`（または `_原典物理頁`）と座標列から取る。行の位置が金額自身の位置であると変換器が確認済みなら、context の `amount_position_prefix` で位置列の接頭辞を宣言できる。金額自身の頁がない横持ちの表は、移行で金額の `physical_page`・座標をNULLにする。名称の頁や座標を流用しない。

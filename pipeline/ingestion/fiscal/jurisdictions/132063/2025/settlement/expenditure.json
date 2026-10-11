@@ -49,8 +49,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132063/2025/settlement/expenditure/kouki-setsu-amounts.parquet",
-          "sha256": "27a12f7a0e7d7dc9b45697890bed0817744495dfa043064482e6b2f6802ca66f",
-          "bytes": 4558
+          "sha256": "ced7069933b79744f90bebe6abcf412ba44157b03c22e98fa55348b7c221ffc8",
+          "bytes": 2954
         },
         "row_count": 233
       }

@@ -120,8 +120,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131148/2025/settlement/expenditure/general-setsu-amounts.parquet",
-          "sha256": "44ea187579cb2ee28fb15c9f4ebafbbaa295a6947d94047ae6991204a988e4e0",
-          "bytes": 26001
+          "sha256": "8641ea973894371f2f43045caf361ae68f232b91fdfc22634fe8acc28b77facb",
+          "bytes": 23706
         },
         "row_count": 4106
       }
@@ -148,8 +148,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131148/2025/settlement/expenditure/care-insurance-setsu-amounts.parquet",
-          "sha256": "47f83ae404cfc40b1d1c8791980d57ae8eab02c5ef31c5498b512c4fc9bb1a5f",
-          "bytes": 5140
+          "sha256": "e577d08c780bc5ba05bf8ba771d74cc435105c07f53394bfd02aaf36ff1591b0",
+          "bytes": 4051
         },
         "row_count": 530
       }
@@ -176,8 +176,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131148/2025/settlement/expenditure/national-health-insurance-setsu-amounts.parquet",
-          "sha256": "cf310c896abd59136fb67dce576a300ba295cb823cefe7e58accce116b7b8c10",
-          "bytes": 5405
+          "sha256": "3a35ef9747a68644e9d2d1578f094d40ff62d77f673842bbfea11894d78163c4",
+          "bytes": 4311
         },
         "row_count": 584
       }
@@ -204,8 +204,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131148/2025/settlement/expenditure/land-setsu-amounts.parquet",
-          "sha256": "6d002760a072f9d85729f5bde9cb0b92e4d447774fa87219fb7e9f3bb1b4b4ab",
-          "bytes": 2296
+          "sha256": "86b29557ef9695649fba9701f12a1c914549d12903da1d3b37a469c76fe1ed64",
+          "bytes": 1795
         },
         "row_count": 52
       }
@@ -232,8 +232,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131148/2025/settlement/expenditure/late-elderly-medical-setsu-amounts.parquet",
-          "sha256": "a28543c03d1f29f73c628cb44efea66bb6c7b714bde900f4b04d4e86454a61c7",
-          "bytes": 2608
+          "sha256": "860f81f08e1cb65856d55a607b5f8fdf162ec53a76ca47e814d6116eecf03519",
+          "bytes": 2062
         },
         "row_count": 108
       }

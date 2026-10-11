@@ -112,8 +112,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132012/2025/settlement/expenditure/general-detail-amounts.parquet",
-          "sha256": "b25952c2073ba35dbe21e56853ed354ad4d3b4e6fd0ac90aabfe8402ce2f1091",
-          "bytes": 8058
+          "sha256": "be3749fcd87da60d02f57c10bc3b3548a33ea3a684ea1918c68d8ddc453fe74b",
+          "bytes": 5976
         },
         "row_count": 387
       }
@@ -140,8 +140,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132012/2025/settlement/expenditure/kaigo-detail-amounts.parquet",
-          "sha256": "c95b4c130f5f2fd36e850d219449a3f8946ca6dbaaeb7ccdcd1834be7fbe43d8",
-          "bytes": 2826
+          "sha256": "c13b493e292b0f878e74da9e598da399012b418a6155e4b6944d4365f19b8569",
+          "bytes": 2146
         },
         "row_count": 60
       }
@@ -168,8 +168,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132012/2025/settlement/expenditure/kouki-detail-amounts.parquet",
-          "sha256": "adaba2e14dc151506a47372e40534b9431feff4002688802c8738d6d1685012e",
-          "bytes": 2564
+          "sha256": "48a1b59a5670de23e938369a28c2bd38831f19dd510b4d231d13c2f571e119ed",
+          "bytes": 1947
         },
         "row_count": 45
       }

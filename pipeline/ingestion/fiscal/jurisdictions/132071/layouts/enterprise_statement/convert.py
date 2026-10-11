@@ -214,12 +214,12 @@ def detail_metadata():
         positions = [prefix + k for k in ('物理頁', '左端', '上端', '右端', '下端')]
         amounts.append(amount)
         contexts.append({'columns': [prefix + '名称', amount, *positions],
-                         'header_path': ['款項', level], 'grain_columns': positions})
+                         'header_path': ['款項', level], 'grain_columns': positions, 'amount_position_prefix': prefix})
     amounts += ['備考_金額（円）', '備考_予算額']
     contexts += [
-        {'columns': ['備考_名称', '備考_金額（円）'], 'header_path': ['備考'],
+        {'columns': ['備考_名称', '備考_金額（円）'], 'header_path': ['備考'], 'amount_position_prefix': '備考_',
          'grain_columns': ['備考_物理頁', '備考_上端', '備考_左端']},
-        {'columns': ['備考_予算額'], 'header_path': ['備考'],
+        {'columns': ['備考_予算額'], 'header_path': ['備考'], 'amount_position_prefix': '',
          'grain_columns': ['科目節_物理頁', '科目節_上端', '科目節_左端']},
     ]
     note = ('（消費税抜き）。款項・目・節の金額（円）は決算の実績。'

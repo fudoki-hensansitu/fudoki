@@ -50,8 +50,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132039/2025/settlement/expenditure/kouki-expenditure-detail-amounts.parquet",
-          "sha256": "c26617dc377528967516c12ba0523374f625eb7302c2d5a27ec8647dd97ce823",
-          "bytes": 3921
+          "sha256": "e4c9ff5431ab475708891e0439699fe0c0f52711a0c44e39f91b94a632923cfc",
+          "bytes": 2903
         },
         "row_count": 240
       }

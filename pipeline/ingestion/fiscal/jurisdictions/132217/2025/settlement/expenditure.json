@@ -43,8 +43,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132217/2025/settlement/expenditure/late-elderly-medical-setsu-amounts.parquet",
-          "sha256": "0fde37d39d0511a82fcbe6af3cfcd69d9780c32c940be955352a07e54c41626f",
-          "bytes": 4784
+          "sha256": "f2b37d38775781a7b042a83b042bfad410c2db0f731a13542c7ead2b90bda772",
+          "bytes": 4600
         },
         "row_count": 273
       }

@@ -17,6 +17,7 @@ NODE_COLUMNS = tuple(ParquetColumn(name, kind) for name, kind in (
     ('depth', 'BIGINT'), ('level_header', 'VARCHAR'), ('code_text', 'VARCHAR'),
     ('name_text', 'VARCHAR'), ('physical_page', 'BIGINT'),
     ('x0', 'DOUBLE'), ('y0', 'DOUBLE'), ('x1', 'DOUBLE'), ('y1', 'DOUBLE')))
+# Amount positions are nullable: unknown pages never inherit a label position.
 AMOUNT_COLUMNS = tuple(ParquetColumn(name, kind) for name, kind in (
     ('node_key', 'VARCHAR'), ('header_path', 'VARCHAR'), ('amount_text', 'VARCHAR'),
     ('unit_text', 'VARCHAR'), ('physical_page', 'BIGINT'),
@@ -50,6 +51,16 @@ def _position(row, prefix):
     return {'physical_page': value('物理頁', '原典物理頁'),
             'x0': value('左端', '原典xMin', 'xMin'), 'y0': value('上端', '原典yMin', 'yMin'),
             'x1': value('右端', '原典xMax', 'xMax'), 'y1': value('下端', '原典yMax', 'yMax')}
+
+
+def _amount_position(row, column, context):
+    """Use only coordinates owned by the amount column, never its node's label."""
+    position = _position(row, column + '_')
+    if position['physical_page'] is None and 'amount_position_prefix' in context:
+        position = _position(row, context['amount_position_prefix'])
+    if position['physical_page'] is None:
+        return dict.fromkeys(position)
+    return position
 
 
 def migrate_rows(rows: list[dict], metadata: dict) -> NodeTables:
@@ -121,7 +132,7 @@ def migrate_rows(rows: list[dict], metadata: dict) -> NodeTables:
                     continue
                 column = prefix + '金額'
                 _add_amount(amounts, amount_seen, unread_seen, parent, '／'.join([p for p in path[:-1] if not p.isdigit()] + [name]),
-                            row.get(column), units.get(column), _position(row, prefix), issues)
+                            row.get(column), units.get(column), _amount_position(row, column, context), issues)
                 used.add(column)
                 continue
             parent = previous_by_axis.get(axis)
@@ -186,7 +197,7 @@ def migrate_rows(rows: list[dict], metadata: dict) -> NodeTables:
                 else:
                     header = suffix
                 _add_amount(amounts, amount_seen, unread_seen, key, header,
-                            row.get(column), units[column], pos, issues)
+                            row.get(column), units[column], _amount_position(row, column, context), issues)
         for context_index, (context, prefix) in enumerate(specs):
             if prefix is not None:
                 continue
@@ -202,7 +213,7 @@ def migrate_rows(rows: list[dict], metadata: dict) -> NodeTables:
                     if not path:
                         issues.append(f'金額の見出し不明: {column}'); continue
                     _add_amount(amounts, amount_seen, unread_seen, candidates[0], '／'.join([*path, column.split('_')[-1]]),
-                                row[column], units[column], _position(row, ''), issues)
+                                row[column], units[column], _amount_position(row, column, context), issues)
     unused = [c for c in units if c not in used and any(r.get(c) is not None for r in rows)]
     if unused:
         issues.append(f'金額の所属・見出しを解決できない列: {unused}')

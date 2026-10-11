@@ -178,8 +178,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131156/2025/settlement/expenditure/general-expenditure-details-amounts.parquet",
-          "sha256": "8094af6dea7297a59b9768787b7ff51d2329d2e03e422a0e8d8d06a4a1b1626f",
-          "bytes": 34610
+          "sha256": "444b6e22b252bacf6068739981a19e430c06ac0e5fdef2dc4b8eb77fa462a0da",
+          "bytes": 29531
         },
         "row_count": 4016
       }
@@ -206,8 +206,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131156/2025/settlement/expenditure/general-expenditure-notes-amounts.parquet",
-          "sha256": "4ddaea34fc064992d62b4584befdaf6faafe29f924a803532d4c3286cf357a4b",
-          "bytes": 112116
+          "sha256": "7da1d07bb54e3be1a82584f7d349fa243d7e7e9981e5f323aa64c873cf11b466",
+          "bytes": 95980
         },
         "row_count": 5437
       }
@@ -234,8 +234,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131156/2025/settlement/expenditure/care-insurance-expenditure-details-amounts.parquet",
-          "sha256": "05b24587d7e1d38e7b29fe3cc5c07541a83f4c0741548aedde124dfbefc6c701",
-          "bytes": 6948
+          "sha256": "d762eaab475486a9979af6ee708ecc70a0716b8db85ccd5e05c24c45dbff1375",
+          "bytes": 5078
         },
         "row_count": 604
       }
@@ -262,8 +262,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131156/2025/settlement/expenditure/care-insurance-expenditure-notes-amounts.parquet",
-          "sha256": "965aed0c8fd5d8e22f02d1a6fb52630e3c9abb856c912d8fe468e163593c0073",
-          "bytes": 7547
+          "sha256": "0304bce347131f8dd9fe512c85b1718aeb67f4e4d073032ac4019c503b1454ed",
+          "bytes": 5737
         },
         "row_count": 489
       }
@@ -290,8 +290,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131156/2025/settlement/expenditure/national-health-insurance-expenditure-details-amounts.parquet",
-          "sha256": "e35126b31c60f900e8b5d0203e69d079e1f899d10d17ceb7e85d51aabf222ac9",
-          "bytes": 6697
+          "sha256": "348b8ea572ef7311ece039901c322a5c7a8626e564286a544cda529aeb6effd5",
+          "bytes": 4825
         },
         "row_count": 604
       }
@@ -318,8 +318,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131156/2025/settlement/expenditure/national-health-insurance-expenditure-notes-amounts.parquet",
-          "sha256": "611bbe3ecec7385fd90a4a9ca987cd9775a5da822aa3ef05ad17064a7e74f2cd",
-          "bytes": 7194
+          "sha256": "36f3e16af68834311468605e665edccda1f7f3554bb1f92e9923251dc44631d8",
+          "bytes": 4817
         },
         "row_count": 482
       }
@@ -346,8 +346,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131156/2025/settlement/expenditure/late-stage-elderly-expenditure-details-amounts.parquet",
-          "sha256": "abc8aa9b86e4f9b912518c23410e8ace6e8f14a82c991c4149fa58351837f9e8",
-          "bytes": 3529
+          "sha256": "97ca0057a8abe74003f9aa689c46e363f0d9081a2b2dae43cee8c3b7534af301",
+          "bytes": 2647
         },
         "row_count": 216
       }
@@ -374,8 +374,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131156/2025/settlement/expenditure/late-stage-elderly-expenditure-notes-amounts.parquet",
-          "sha256": "62822aefad8017bbb9dac35cda4e5d3ceb699584e8f4dba79f71447a70b7becc",
-          "bytes": 3853
+          "sha256": "6f27b4f19b462219326218a1647be63884d6e499bad4a45a631da220ed8ef799",
+          "bytes": 2667
         },
         "row_count": 192
       }

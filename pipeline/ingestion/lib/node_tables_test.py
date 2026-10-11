@@ -217,10 +217,25 @@ class NodeTablesTests(unittest.TestCase):
         self.assertEqual(len(result.nodes),2)
         self.assertEqual(result.amounts[-1]['header_path'],'備考／事業説明／本年度支出額')
         self.assertEqual(result.amounts[-1]['node_key'],result.nodes[-1]['node_key'])
-        self.assertEqual(result.amounts[-1]['y0'],3.)
+        self.assertIsNone(result.amounts[-1]['physical_page'])
+        self.assertIsNone(result.amounts[-1]['y0'])
         # The same printed name is a node unless the converter declares otherwise.
         del contexts[-1]['amount_breakdown']
         self.assertEqual(len(migrate_rows([row],metadata).nodes),3)
+
+    def test_amount_owns_its_page_and_position_without_using_label_coordinates(self):
+        metadata = {'column_contexts':[context('款',['科目','款'])],
+                    'units':[{'text':'円','scope':{'kind':'columns','columns':['款_金額']}}]}
+        row = {'款_番号':'1','款_名称':'款','款_金額':'10','款_物理頁':1,'款_上端':1.,
+               '款_金額_物理頁':2,'款_金額_上端':3.}
+        result = migrate_rows([row],metadata)
+        self.assertEqual(result.nodes[0]['physical_page'],1)
+        self.assertEqual(result.amounts[0]['physical_page'],2)
+        self.assertEqual(result.amounts[0]['y0'],3.)
+        del row['款_金額_物理頁']
+        result = migrate_rows([row],metadata)
+        for field in ('physical_page','x0','y0','x1','y1'):
+            self.assertIsNone(result.amounts[0][field])
 
     def test_current_year_and_carryover_execution_add_without_overwriting_raw_headers(self):
         nodes=[node('p'),node('a','p','備考')]

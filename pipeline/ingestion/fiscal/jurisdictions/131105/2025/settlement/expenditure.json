@@ -138,8 +138,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131105/2025/settlement/expenditure/general-setsu-amounts.parquet",
-          "sha256": "cf650cc04269ef7924c6161f6fdd0b3d5f6bb8084700168cab22e43711868853",
-          "bytes": 43727
+          "sha256": "7f80a688440b12796a39bf52de90ea158f91ea2147803b38259d204795f06ec3",
+          "bytes": 38682
         },
         "row_count": 6856
       }
@@ -166,8 +166,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131105/2025/settlement/expenditure/long-term-care-setsu-amounts.parquet",
-          "sha256": "b42537789563796bf4de30f82d34c7e5183a85de9d3ee0dca3ae55872f36f808",
-          "bytes": 7405
+          "sha256": "1100e2c8212441a7c223d10626a54d45bcab5ef9e13f58957e9a7c489c766654",
+          "bytes": 5341
         },
         "row_count": 840
       }
@@ -194,8 +194,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131105/2025/settlement/expenditure/national-health-insurance-setsu-amounts.parquet",
-          "sha256": "8b8170e91b5e0e3e39bf2c22732f62b52ed2833dc318270799df7e54b14f2db3",
-          "bytes": 6825
+          "sha256": "aa9a74aaddea0b3155eb6747b5279d9f0a9e74a032e145c8054be5a5197530ed",
+          "bytes": 4988
         },
         "row_count": 820
       }
@@ -222,8 +222,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131105/2025/settlement/expenditure/elderly-medical-setsu-amounts.parquet",
-          "sha256": "bb25f8a4e34bf8ce28be723097daa67e85cb4402a6946b230f00bf94c32cb2a3",
-          "bytes": 4466
+          "sha256": "628be33aed28fb87e3e3029cbe7c0d96c9179a9a94cb431a1e667cb594e5edd1",
+          "bytes": 3330
         },
         "row_count": 408
       }

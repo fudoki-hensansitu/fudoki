@@ -289,6 +289,10 @@
             "parent_prefix",
             "headers"
           ]
+        },
+        "amount_position_prefix": {
+          "description": "Prefix of row coordinates confirmed to locate each printed amount in this context; omit when only label positions are known.",
+          "type": "string"
         }
       },
       "required": [

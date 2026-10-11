@@ -142,8 +142,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132021/2025/settlement/expenditure/general-expenditure-details-amounts.parquet",
-          "sha256": "1391eca69d2ee01433dd51bff99b64bc5a3f727cf1519216ca6bb9208285e2ef",
-          "bytes": 36794
+          "sha256": "f7853d6a4c85cd3c577de276aabe23fd36b863bc30a72afa169ffa04b838ed84",
+          "bytes": 31761
         },
         "row_count": 4280
       }
@@ -170,8 +170,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132021/2025/settlement/expenditure/general-expenditure-notes-amounts.parquet",
-          "sha256": "205d57ca5407e663a9acfd5a08e109040455837c5981d9b6554d99ffea042eb8",
-          "bytes": 174493
+          "sha256": "5cfb51b878626019e2a36538289a76c37fc9f8b962891d953a8b94d28d895217",
+          "bytes": 149061
         },
         "row_count": 8491
       }
@@ -198,8 +198,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132021/2025/settlement/expenditure/kouki-expenditure-details-amounts.parquet",
-          "sha256": "fd42b78a1642748bb063faaea94666d1629aa00a52cef500474ced1a783b9fa6",
-          "bytes": 4179
+          "sha256": "4c07b84b70c77f8a3893be30658bc7533a55ce7a7ff94d8d84c2d7ab9338a28f",
+          "bytes": 2979
         },
         "row_count": 260
       }
@@ -226,8 +226,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132021/2025/settlement/expenditure/kouki-expenditure-notes-amounts.parquet",
-          "sha256": "13d86cb113fbef3c68ef0419e7db3890cb512ba2ed4dbe9a266fb380eb22df26",
-          "bytes": 5431
+          "sha256": "1c6053362c21d04e570a1142e94647549aed9b3affbd839f093a98a7cdb07dd7",
+          "bytes": 3704
         },
         "row_count": 256
       }
@@ -254,8 +254,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132021/2025/settlement/expenditure/chushajo-expenditure-details-amounts.parquet",
-          "sha256": "9d7d799a5799bf815da879166587e0ec4e813bbd7182562530e0884d6c534c2c",
-          "bytes": 3144
+          "sha256": "e346fd2127c9349e27eaa0388047fdf9406a44c5614fde04627de0e7cb7e9818",
+          "bytes": 2319
         },
         "row_count": 124
       }
@@ -282,8 +282,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132021/2025/settlement/expenditure/chushajo-expenditure-notes-amounts.parquet",
-          "sha256": "55676627e22343fb0165479e6a636e2262b439bd9cb268dc9ebcc6a26ffa85bc",
-          "bytes": 3325
+          "sha256": "303637d5b22236f5b1f859c87c6b5da88e960446f6b1cedc0cc88f5d9f1eab18",
+          "bytes": 2427
         },
         "row_count": 104
       }
