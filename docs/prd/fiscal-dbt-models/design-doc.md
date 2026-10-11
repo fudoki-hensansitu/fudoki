@@ -24,7 +24,7 @@
 - Goal: 取り込みと dbt の境界を、「原典の事実（木）」と「判断・正規化・検査」で分ける。
 - Non-Goal: 予算現額などの決算書に載る予算の報告値。MVP の列は最小にし、提供用データには出さない。
 - Non-Goal: 特別会計・当初予算・補正予算。slice の次の段階で足す（[Validation / Rollout](#validation--rollout)）。
-- Non-Goal: 法定の科目マスタへの対応（`account_master`・`account_map`）。特別区の款は法定の款と大きく違い、MVP では COFOG だけで比べる。
+- Non-Goal だった法定の科目マスタへの対応（`account_master`・`account_map`）は削除した。復元は commit `2e9b29b` から。特別区の款は法定の款と大きく違い、MVP では COFOG だけで比べる。
 - Non-Goal: 配布物（Fiscal Data Package）と MCP の公開。どちらも提供用データから作る配布経路で、パイプライン完成後に扱う。
 
 ## Background
@@ -373,5 +373,5 @@ slice の期待値は、現行の横持ちの表の実測から次のとおり�
 - **年度をまたぐ明細の同一性**: `node_id` は番号の原文と名称から作るため、年度で番号が振り直されたり名称が変わったりすると、同じ項目でも ID が変わる。年度間の対応を別の表で持つかを決める。
 - **COFOG を目の粒度で当てる限界**: 節を条件にする規則（積立金・繰出金）が目では当たらない。事業・節のノードで分類するとき、どのノードの集合で足せば総額になるかの規則を決める。
 - **dbt を使い続けるか**: 構造の復元が取り込みへ移り、dbt の変換は少なくなる。seed・検査・列の説明（MCP で AI に渡す説明の元）を追加の仕組みなしで持てるため残すが、これらを使わないなら SQL を Python から回す形でも足りる。
-- **使わない seeds の扱い**: `account_master`・`account_map`・`fund_directory` は MVP で使わない。旧処理の連結・照合用の seed と `packages/fiscal` の旧配布契約は 2026-10-11 に削除した。`fund_directory` は団体×会計名の完全一致で団体ごとに行が要るため使わず、団体共通の語の辞書 `account_kind_map` を新設した（[ADR 0023](../../adr/0023-account-kind-and-no-consolidation.md)）。
+- **使わない seeds の扱い**: `account_master`・`account_map`・`fund_directory`・`expenditure_setsu_map` は削除した。復元は commit `2e9b29b` から。旧処理の連結・照合用の seed と `packages/fiscal` の旧配布契約は 2026-10-11 に削除した。`fund_directory` は団体×会計名の完全一致で団体ごとに行が要るため使わず、団体共通の語の辞書 `account_kind_map` を新設した（[ADR 0023](../../adr/0023-account-kind-and-no-consolidation.md)）。節の対応は団体ごとの表をやめ、区切り・異体字を除く共通の規則で法定の節に引く。
 - **表をまたぐ照合（軸どうしの節の一致・財源分解）は宣言ではなく dbt の共通の検査として作り直すか**: 2026-10 に PDF の旧合計検査の宣言（`sum_checks/` 14ファイル）を木の検査への置換として削除した。失った照合は 132021 の説明内節→法定節3件・132217 の同1件・132071-initial の財源分解4件で、いずれも旧横持ち列の参照でノードの表には効いていなかった。必要になれば個別宣言ではなく共通の検査として作り直す。
