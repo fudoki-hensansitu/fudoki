@@ -122,7 +122,7 @@
     {
       "table_id": "chuo-general-settlement",
       "conversion_id": "chuo-text-settlement-general",
-      "input_fingerprint": "d29c5598f5137e0ff318d221eedbcab5870488a26788f0aa772d5a765c987713",
+      "input_fingerprint": "ffddd27c3e5530870bd7b8db50e99cfe626e56d8ca40a6262acde3f9621f4ba2",
       "object": {
         "key": "fiscal/ingestion/131024/2025/settlement/expenditure/chuo-general-settlement.parquet",
         "sha256": "ce2e345959b50521ca2317cbce6c88430d80b977827a7a9fb312358b7917d5ab",
