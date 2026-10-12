@@ -78,11 +78,14 @@ def main() -> None:
         first = Path('.cache/generic-trial') / city['code'] / 'general-observed.json'
         if first.exists():
             shutil.copy(first, cache / 'general-observed.json')
+            if first.with_suffix('.sha256').exists():
+                shutil.copy(first.with_suffix('.sha256'), cache / 'general-observed.sha256')
         subprocess.run([*python, str(HERE / 'trial.py'), name, f".cache/generic-trial/{city['pdf']}", city['pages']],
                        check=True, capture_output=True)
         report = json.loads((cache / 'general-trial.json').read_text())
-        if not first.exists():
+        if not first.exists() or not first.with_suffix('.sha256').exists():
             shutil.copy(cache / 'general-observed.json', first)
+            shutil.copy(cache / 'general-observed.sha256', first.with_suffix('.sha256'))
         (trials / f"{city['code']}.json").write_text(json.dumps(
             {k: report.get(k) for k in ('subject_levels', 'tree_by_axis', 'units_check', 'axes', 'unowned', 'notes')}, ensure_ascii=False))
         shutil.copy(cache / 'general-rows.json', trials / f"{city['code']}.rows.json")
@@ -94,12 +97,20 @@ def main() -> None:
     base = ROOT / '.agent/loop' / against if against else None
     before = json.loads((base / 'summary.json').read_text()) if base else {}
     before = before.get('tables', before)
-    for key, row in now.items():
+    for key in sorted(set(before) | set(now)):
+        row = now.get(key)
+        if row is None:
+            print(key, 'only before')
+            continue
         changed = {k: (before.get(key, {}).get(k), v) for k, v in row.items() if before and before.get(key, {}).get(k) != v}
-        if base and row_file(base, key).exists() and row_file(out, key).exists():
-            diff = changes(from_json(json.loads(row_file(base, key).read_text())), from_json(json.loads(row_file(out, key).read_text())))
-            if diff['gone'] or diff['added']:
-                changed['rows'] = diff
+        if base:
+            old, new = row_file(base, key), row_file(out, key)
+            if old.exists() and new.exists():
+                diff = changes(from_json(json.loads(old.read_text())), from_json(json.loads(new.read_text())))
+                if diff['gone'] or diff['added']:
+                    changed['rows'] = diff
+            elif old.exists() != new.exists():
+                changed['rows'] = f'rows file only {"before" if old.exists() else "now"}'
         print(key, json.dumps(row, ensure_ascii=False) if not before else ('同じ' if not changed else json.dumps(changed, ensure_ascii=False)))
 
 

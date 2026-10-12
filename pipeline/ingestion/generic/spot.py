@@ -43,7 +43,13 @@ class Row:
     def has(self, amount: str) -> bool:
         """A token that is this number, whole (`10,000` is not in `110,000`); a number printed
         against the next column's text (`939,580,691明許`) counts by its whole leading number."""
-        return any((re.match(r'[△▲]?[0-9][0-9,]*', t) or [None])[0] == amount for t, _ in self.tokens)
+        return any(_number(t) == amount for t, _ in self.tokens)
+
+
+def _number(token: str) -> str | None:
+    """The whole leading number of a token (`939,580,691明許` → `939,580,691`)."""
+    found = re.match(r'[△▲]?[0-9][0-9,]*', token)
+    return found.group(0) if found else None
 
 
 def rows(words, page: int, tolerance: float = 2.0) -> list[Row]:
@@ -135,7 +141,7 @@ def verify(moku: dict, kan: dict, kou: dict, pages: dict[int, list[Row]], others
         # The 目's column: left of the first amount of its amount row, on that row, two rows above
         # and three below (a name may wrap around its number, `東久留米` / `6` / `市長選挙費`, or
         # run down a tall cell, `衆議院議` / `員選挙及` / `び国民審` / `査費`).
-        limit = min(x for t, x in page[index].tokens if t in (approved, adjusted))  # the budget columns start here
+        limit = min(x for t, x in page[index].tokens if _number(t) in (approved, adjusted))  # the budget columns start here
         end = min(len(page), index + 4)
         while end < len(page) and page[end].first_amount() is None and page[end].label(limit) and end < index + 8:
             end += 1  # a name running further down a tall cell (`年・町制` / `施行50周` / `年記念事` / `業費`)

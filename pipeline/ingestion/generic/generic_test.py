@@ -269,6 +269,16 @@ class SpotTest(unittest.TestCase):
         kan, kou, other, moku = self.nodes()
         self.assertEqual(verify(moku, kan, other, self.pages(), {'款': [kan], '項': [kou, other]}), ['親が違う（項）'])
 
+    def test_amounts_running_into_the_next_column_still_match_whole(self):
+        from ingestion.generic.spot import rows, verify
+        kan, kou, other, _ = self.nodes()
+        pages = self.pages()
+        pages[5] += rows([('3', 30, 300, 34, 309), ('電算管理費', 36, 300, 81, 309), ('20,000明許', 120, 300, 160, 309),
+                          ('30,000明許', 170, 300, 210, 309), ('25,000', 220, 300, 250, 309)], 5)
+        moku = {'key': 'm3', 'code': '3', 'name': '電算管理費', 'page': 5,
+                'amounts': {'approved': 20000, 'adjusted': 30000, 'executed': 25000}}
+        self.assertEqual(verify(moku, kan, kou, pages, {'款': [kan], '項': [kou, other]}), ['親が違う（項）'])  # read, then judged
+
     def test_a_number_inside_a_longer_number_does_not_match(self):
         from ingestion.generic.spot import verify
         kan, kou, other, _ = self.nodes()

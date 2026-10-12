@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter
+import hashlib
 import json
 from pathlib import Path
 
@@ -47,6 +48,12 @@ def main() -> None:
     args = parser.parse_args()
     out = Path('.cache/generic-trial') / args.name
     out.mkdir(parents=True, exist_ok=True)
+    # The observation cache belongs to one PDF: a replaced PDF with the same pages is observed again.
+    digest = hashlib.sha256(args.pdf.read_bytes()).hexdigest()
+    marker = out / 'general-observed.sha256'
+    if not marker.exists() or marker.read_text().strip() != digest:
+        (out / 'general-observed.json').unlink(missing_ok=True)
+    marker.write_text(digest)
     observed, repairs = repair(args.pdf, observe(args.pdf, page_list(args.pages), out / 'general-observed.json'))
     built, choice = choose_pattern(logical_pages(observed), args.kind)
     result = check(built, args.kind)

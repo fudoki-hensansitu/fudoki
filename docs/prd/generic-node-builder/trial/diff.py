@@ -52,14 +52,19 @@ def table_changes(ra: dict, rb: dict) -> list[str]:
 
 def main() -> None:
     before, after = load(sys.argv[1]), load(sys.argv[2])
-    for key in sorted(before):
-        found = table_changes(before[key], after.get(key, {}))
+    for key in sorted(set(before) | set(after)):
+        if key not in after or key not in before:
+            print(key, 'only before' if key in before else 'only after')
+            continue
+        found = table_changes(before[key], after[key])
         name = key.replace('/', '-') + '.rows.json'
         rows_a, rows_b = Path(sys.argv[1]) / name, Path(sys.argv[2]) / name
         if rows_a.exists() and rows_b.exists():
             diff = changes(from_json(json.loads(rows_a.read_text())), from_json(json.loads(rows_b.read_text())))
             if diff['gone'] or diff['added']:
                 found.append(f"rows: -{diff['gone']} +{diff['added']} gone {diff['gone_examples'][:3]} added {diff['added_examples'][:3]}")
+        elif rows_a.exists() != rows_b.exists():
+            found.append(f'rows file only {"before" if rows_a.exists() else "after"}')
         if found:
             print(key)
             for change in found:
