@@ -192,5 +192,49 @@ class SwapTest(unittest.TestCase):
         self.assertEqual(self.tables_of(con), set(self.tables) | {'control'})
 
 
+class ScopeTest(unittest.TestCase):
+    def test_where_is_none_when_not_specified(self):
+        self.assertEqual(sync_d1.scope_where(None), '')
+        self.assertEqual(sync_d1.scope_where([]), '')
+
+    def test_where_selects_same_rows_in_duckdb_and_sqlite(self):
+        import duckdb
+
+        rows = [('132039', 'a'), ('131016', 'b'), ("13'x", 'c'), ('132039', 'd')]
+        d = duckdb.connect()
+        d.execute('create table t (jurisdiction_code varchar, k varchar)')
+        d.executemany('insert into t values (?, ?)', rows)
+        q = sqlite3.connect(':memory:')
+        q.execute('create table t (jurisdiction_code text, k text)')
+        q.executemany('insert into t values (?, ?)', rows)
+        for scope in (['132039'], ['132039', "13'x"], ['999999']):
+            where = sync_d1.scope_where(scope)
+            sql = f'select k from t{where} order by k'
+            self.assertEqual(d.execute(sql).fetchall(), q.execute(sql).fetchall())
+        self.assertEqual(d.execute('select k from t' + sync_d1.scope_where(['132039']) + ' order by k').fetchall(), [('a',), ('d',)])
+
+    def test_bucket_rows_combines_where(self):
+        import duckdb
+
+        d = duckdb.connect()
+        d.execute('create table main."t" (jurisdiction_code varchar, node_id varchar)')
+        d.execute("insert into main.\"t\" values ('1','a1'), ('2','a2'), ('1','b1')")
+        where = sync_d1.scope_where(['1'])
+        self.assertEqual(sync_d1.bucket_chars(d, 't', 'node_id', where), {'a': 1, 'b': 1})
+        self.assertEqual(sync_d1.bucket_rows(d, 't', ['jurisdiction_code', 'node_id'], 'node_id', 'a', where), [['1', 'a1']])
+        self.assertEqual(sync_d1.bucket_chars(d, 't', 'node_id', sync_d1.scope_where(['9'])), {})
+
+    def test_swap_with_empty_tables(self):
+        """該当行が0件の表でも、空の表を作って入れ替えが通る。"""
+        tables = columns.load()
+        con = sqlite3.connect(':memory:')
+        for name, sp in tables.items():
+            con.execute(columns.create_table_sql(name, sp, f'{name}__new'))
+        for s in sync_d1.swap_statements(tables):
+            con.execute(s['sql'])
+        for name in tables:
+            self.assertEqual(con.execute(f'select count(*) from "{name}"').fetchone()[0], 0)
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -2,6 +2,7 @@
 
     bun run --cwd pipeline serving:sync -- --database-id <uuid> [--dry-run]
     bun run --cwd pipeline serving:sync -- --local [--persist-to <dir>] [--dry-run]
+    ... --jurisdiction 132039 [--jurisdiction ...]   # 一部の団体だけを入れる（動作確認用）
 
 手順:
 1. 開始時に、前回の失敗の残骸 `<表>__new`・`<表>__old` を無条件に drop する（本名の表には触らない）。
@@ -38,7 +39,7 @@ import tempfile
 import threading
 import time
 from pathlib import Path
-from typing import Any, Callable, Iterator
+from typing import Any, Callable, Iterator, Sequence
 
 import duckdb
 
@@ -141,8 +142,15 @@ def open_warehouse(path: Path) -> duckdb.DuckDBPyConnection:
     return duckdb.connect(str(path), read_only=True, config={'memory_limit': MEMORY_LIMIT, 'threads': 2})
 
 
-def table_rows(con: duckdb.DuckDBPyConnection, table: str, names: list[str], order: str) -> Iterator[tuple]:
-    cursor = con.execute(f'select {", ".join(chr(34) + n + chr(34) for n in names)} from main."{table}" order by {order}')
+def scope_where(jurisdictions: Sequence[str] | None) -> str:
+    """一部の団体だけを入れるときの絞り込み。木の表も origin も jurisdiction_code で絞る。DuckDB と SQLite のどちらでも同じ。"""
+    if not jurisdictions:
+        return ''
+    return ' where "jurisdiction_code" in (' + ', '.join(literal(j) for j in jurisdictions) + ')'
+
+
+def table_rows(con: duckdb.DuckDBPyConnection, table: str, names: list[str], order: str, where: str = '') -> Iterator[tuple]:
+    cursor = con.execute(f'select {", ".join(chr(34) + n + chr(34) for n in names)} from main."{table}"{where} order by {order}')
     while chunk := cursor.fetchmany(FETCH_ROWS):
         yield from chunk
 
@@ -152,15 +160,17 @@ def d1_value(value: Any) -> Any:
     return int(value) if isinstance(value, bool) else value
 
 
-def bucket_chars(con: duckdb.DuckDBPyConnection, table: str, key: str) -> dict[str, int]:
+def bucket_chars(con: duckdb.DuckDBPyConnection, table: str, key: str, where: str = '') -> dict[str, int]:
     """主キーの先頭1文字ごとの行数。"""
-    return dict(con.execute(f'select substr("{key}", 1, 1), count(*) from main."{table}" group by 1 order by 1').fetchall())
+    return dict(con.execute(f'select substr("{key}", 1, 1), count(*) from main."{table}"{where} group by 1 order by 1').fetchall())
 
 
-def bucket_rows(con: duckdb.DuckDBPyConnection, table: str, names: list[str], key: str, char: str) -> list[list]:
+def bucket_rows(con: duckdb.DuckDBPyConnection, table: str, names: list[str], key: str, char: str,
+                where: str = '') -> list[list]:
     cols = ', '.join(f'"{n}"' for n in names)
+    cond = f'{where.replace(" where ", " and ", 1)}' if where else ''
     return [[d1_value(v) for v in row] for row in con.execute(
-        f'select {cols} from main."{table}" where substr("{key}", 1, 1) = {literal(char)} order by "{key}"').fetchall()]
+        f'select {cols} from main."{table}" where substr("{key}", 1, 1) = {literal(char)}{cond} order by "{key}"').fetchall()]
 
 
 def compare_rows(names: list[str], key: str, got: list[list], want: list[list], limit: int = 5) -> list[str]:
@@ -227,6 +237,7 @@ class D1:
 
     def __init__(self, database_id: str, local: bool, persist_to: Path):
         self.command = ['cf', 'd1', 'raw', database_id]
+        self.local = local
         if local:
             self.command += ['--local', '--persist-to', str(persist_to)]
         self.calls = 0
@@ -250,7 +261,7 @@ class D1:
         return results
 
 
-def verify(d1: D1, con: duckdb.DuckDBPyConnection, tables: dict[str, Table]) -> list[str]:
+def verify(d1: D1, con: duckdb.DuckDBPyConnection, tables: dict[str, Table], where: str = '') -> list[str]:
     """`__new` の全行を主キーの先頭1文字ごとに読み戻し、warehouse の同じ行と全列で突き合わせる。
 
     1回の cf 呼び出しは READ_ROWS_PER_CALL 行ほどにまとめる。メモリにあるのはその分だけ。
@@ -260,7 +271,7 @@ def verify(d1: D1, con: duckdb.DuckDBPyConnection, tables: dict[str, Table]) -> 
         spec = tables[name]
         names = [c['name'] for c in spec['columns']]
         key = spec['primary_key']
-        buckets = bucket_chars(con, name, key)
+        buckets = bucket_chars(con, name, key, where)
         cols = ', '.join(f'"{n}"' for n in names)
         total = d1.batch([{'sql': f'select count(*) from "{new_name(name)}"'}])[0]['results']['rows'][0][0]
         if total != sum(buckets.values()):
@@ -274,11 +285,13 @@ def verify(d1: D1, con: duckdb.DuckDBPyConnection, tables: dict[str, Table]) -> 
             groups[-1].append(char)
             rows += count
         for group in groups:
+            if not group:  # 該当行が0件の表
+                continue
             results = d1.batch([{'sql': f'select {cols} from "{new_name(name)}" where substr("{key}", 1, 1) = {literal(c)} order by "{key}"'}
                                 for c in group])
             for char, result in zip(group, results):
                 got = result['results']['rows']
-                problems += [f'{name}: {p}' for p in compare_rows(names, key, got, bucket_rows(con, name, names, key, char))]
+                problems += [f'{name}: {p}' for p in compare_rows(names, key, got, bucket_rows(con, name, names, key, char, where))]
         log_rows = sum(buckets.values())
         print(f'  読み戻し {name}: {log_rows} 行 / {len(groups)} 回', flush=True)
     return problems
@@ -288,12 +301,15 @@ def rss_mb() -> float:
     return resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024 / 1024  # macOS は bytes
 
 
-def sync(d1: D1 | None, warehouse: Path, dry_run: bool, log: Callable[[str], None] = lambda m: print(m, flush=True)) -> int:
+def sync(d1: D1 | None, warehouse: Path, dry_run: bool, jurisdictions: Sequence[str] | None = None, log: Callable[[str], None] = lambda m: print(m, flush=True)) -> int:
     tables = contract.load()
     con = open_warehouse(warehouse)
     try:
         if contract.build(contract.warehouse_columns(warehouse, con)) != {'tables': tables}:
             raise SystemExit('columns.json が warehouse と食い違う。serving:columns で書き直す')
+        where = scope_where(jurisdictions)
+        if jurisdictions:
+            log(f'一部の団体だけを入れる: {", ".join(jurisdictions)}（D1 は全団体の写しにならない）')
         started = time.time()
         if d1 and not dry_run:
             d1.batch(cleanup_statements())
@@ -305,7 +321,7 @@ def sync(d1: D1 | None, warehouse: Path, dry_run: bool, log: Callable[[str], Non
             def statements(name=name, spec=spec, names=names, order=order) -> Iterator[str]:
                 yield f'drop table if exists "{new_name(name)}"'
                 yield contract.create_table_sql(name, spec, new_name(name))
-                yield from insert_statements(new_name(name), names, table_rows(con, name, names, order))
+                yield from insert_statements(new_name(name), names, table_rows(con, name, names, order, where))
 
             calls = size = 0
             for batch in pack(statements()):
@@ -313,17 +329,18 @@ def sync(d1: D1 | None, warehouse: Path, dry_run: bool, log: Callable[[str], Non
                 size += sum(len(s['sql'].encode()) for s in batch)
                 if d1 and not dry_run:
                     d1.batch(batch)
-            log(f'{name}: {con.execute(f'select count(*) from main."{name}"').fetchone()[0]} 行 / {calls} 回 / {size / 1e6:.1f}MB / RSS最大 {rss_mb():.0f}MB')
+            log(f'{name}: {con.execute(f'select count(*) from main."{name}"{where}').fetchone()[0]} 行 / {calls} 回 / {size / 1e6:.1f}MB / RSS最大 {rss_mb():.0f}MB')
         if dry_run:
             log('dry-run: D1 には書いていない')
             return 0
-        problems = verify(d1, con, tables)
+        problems = verify(d1, con, tables, where)
         if problems:
             for p in problems:
                 log(f'照合に失敗: {p}')
             log('rename せず中止（__new は残る）')
             return 1
-        d1.batch(swap_statements(tables), retries=1)  # 入れ替えは再送しない
+        # リモートの入れ替えは再送しない。ローカルの miniflare は batch が1つのトランザクションで、失敗は応答を失う散発エラー（起動時）なので再送する
+        d1.batch(swap_statements(tables), retries=3 if d1.local else 1)
         log(f'完了: cf {d1.calls} 回 / {time.time() - started:.0f} 秒 / RSS最大 {rss_mb():.0f}MB')
         return 0
     finally:
@@ -336,13 +353,15 @@ def main() -> int:
     parser.add_argument('--local', action='store_true', help='ローカルの D1（miniflare）に書く。リモートには触れない')
     parser.add_argument('--persist-to', type=Path, default=LOCAL_PERSIST_TO, help='--local の状態の置き場')
     parser.add_argument('--warehouse', type=Path, default=contract.WAREHOUSE)
+    parser.add_argument('--jurisdiction', action='append', metavar='団体コード',
+                        help='一部の団体だけを入れる（複数指定可）。木の表も origin も jurisdiction_code で絞る。省略は全件')
     parser.add_argument('--dry-run', action='store_true', help='文を作って数えるだけで、書かない')
     args = parser.parse_args()
     database_id = args.database_id or (LOCAL_DATABASE_ID if args.local else None)
     if not database_id and not args.dry_run:
         parser.error('--database-id か --local が要る')
     d1 = D1(database_id, args.local, args.persist_to) if database_id else None
-    return sync(d1, args.warehouse, args.dry_run)
+    return sync(d1, args.warehouse, args.dry_run, args.jurisdiction)
 
 
 if __name__ == '__main__':
