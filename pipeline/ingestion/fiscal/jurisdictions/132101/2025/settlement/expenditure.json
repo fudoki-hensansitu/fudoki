@@ -25,8 +25,8 @@
               1
             ]
           },
-          "sha256": "bfd5f9d5a1e53f0495a150350129c984c1626368a84160e043d5a81d689ae3f5",
-          "bytes": 98970
+          "sha256": "d7740c71dd82524dd66bdeca42ad7998cbb108c804ee97977b3e7d9db455a1a0",
+          "bytes": 122557
         }
       ],
       "options": {
@@ -47,6 +47,14 @@
             "observed_amount": "0A28,054,000",
             "corrected_amount": "28,054,000",
             "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 0A28,054,000）"
+          },
+          {
+            "id": "vlm-c4ebdcc0b1",
+            "page": 1,
+            "observation_id": "p1:full-page:r30:w0",
+            "observed_amount": "0A28,054,000",
+            "corrected_amount": "28,054,000",
+            "reason": "codex/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 0A28,054,000）"
           }
         ]
       },
@@ -76,8 +84,8 @@
               3
             ]
           },
-          "sha256": "972894040222cac830e60485d70312999ffb9ecd4834d645f44439913a19b32e",
-          "bytes": 811001
+          "sha256": "ee4ad639b90042d9c29cf35b2dd3ec687db541bc1a7193584fb0085dbc89174f",
+          "bytes": 1023950
         }
       ],
       "options": {
@@ -120,8 +128,8 @@
               4
             ]
           },
-          "sha256": "605f78489773b65b108b99b65a26ea26f117b92b2a2e6778822ceb04337a87c4",
-          "bytes": 745310
+          "sha256": "81e175dae76fa14d5df04de831403d5e212293594bcfb05220823efcdc281c14",
+          "bytes": 831871
         }
       ],
       "options": {
@@ -224,8 +232,8 @@
               56
             ]
           },
-          "sha256": "1608145433c2779082228eb651d048b8ec39956695e5439eaa9a1c362bc719b9",
-          "bytes": 10581625
+          "sha256": "058151580ab4e7d169dd1a5524c6a0b32efb69921ce4cf82d7baa4a254a70163",
+          "bytes": 11887314
         }
       ],
       "options": {
@@ -388,8 +396,8 @@
               4
             ]
           },
-          "sha256": "fba8d9fd44edfcbe83c74f4d1c3bc0836fe86bda4c572cb3ae3b3a3ee5872c31",
-          "bytes": 837788
+          "sha256": "40e3930b362de4e07cf7b40a375fc9885b197274c11dbf982e72b10f9addcaea",
+          "bytes": 949870
         }
       ],
       "options": {
@@ -420,8 +428,8 @@
               2
             ]
           },
-          "sha256": "c914c1fd150fe5403c00fda26a70145e20dd8cf303c1fcd0b9bead096ab98729",
-          "bytes": 366789
+          "sha256": "c72f1a604b5bc25587501ca7a7a0f733a26b5c9a92cf5f7aec40bf5338af19f2",
+          "bytes": 440826
         }
       ],
       "options": {
@@ -451,8 +459,8 @@
               1
             ]
           },
-          "sha256": "d0ea53708c2ae3c9b6bb29e35e565b470d985d8a08bd2f55e326f866cf2d25e5",
-          "bytes": 144116
+          "sha256": "acf1b3fa3d8adc10611779bae18e49de27d94addcdad31098b496bb950ca9225",
+          "bytes": 187814
         }
       ],
       "options": {
@@ -482,8 +490,8 @@
               1
             ]
           },
-          "sha256": "f569b7f54d7099d7a1a77ca9cad0555a372f2613146314d41b657d4b44e7736c",
-          "bytes": 149524
+          "sha256": "b240688c9a9132529b0726d9d332326dec0be7ea0314a6063858676767a44c13",
+          "bytes": 191488
         }
       ],
       "options": {
@@ -520,8 +528,8 @@
               8
             ]
           },
-          "sha256": "784669496fe15e985e202bba33ce1e19a2877c92f3d7a5d586991cd1a860e6a6",
-          "bytes": 2159604
+          "sha256": "2317d40b05199ad4acb0c81e5080f17e9bfaf8326e753cb875c44ca72d35e401",
+          "bytes": 2713290
         }
       ],
       "options": {
@@ -552,8 +560,8 @@
               2
             ]
           },
-          "sha256": "95ded314a015a939fd62ab2d560cf1af35f368ad907c575fc1d0c2e4428cbdd5",
-          "bytes": 506245
+          "sha256": "3e292dfc30a48b1745ed59e40d4d0087082bd379019e47a5d98d8b795faf40cc",
+          "bytes": 622305
         }
       ],
       "options": {
@@ -618,8 +626,8 @@
               36
             ]
           },
-          "sha256": "ec9c5af994bb19122dbb3f846074569c8b6087f949796c9c5f5edbbd89d994d8",
-          "bytes": 6407670
+          "sha256": "9bb3c97ebabd3348f3144f5fb47cb070252b39c40099275c7b20c3ffe991069e",
+          "bytes": 7004723
         }
       ],
       "options": {
@@ -723,8 +731,8 @@
               1
             ]
           },
-          "sha256": "4b56681c76ae846074904d884ec4760c87ada3cd87de3eec05e2b96e84c5b764",
-          "bytes": 98293
+          "sha256": "237a664086621dcbbd103c2f74f97827208cb9c73a242e805ef6f661cced67b2",
+          "bytes": 101003
         }
       ],
       "options": {
@@ -822,8 +830,8 @@
               69
             ]
           },
-          "sha256": "f9e148959d90a9653055aabdf4ab7bd43e1bb7d98fe1b859cdcc321e8d2a092f",
-          "bytes": 13382116
+          "sha256": "f4baa6dc0e51bf1d39a841b327bcb4d79e76cdfa659e1c0c65cfea7c880a1aab",
+          "bytes": 14247406
         }
       ],
       "options": {
@@ -989,8 +997,8 @@
               15
             ]
           },
-          "sha256": "8738c1c6a2ac47c9067aa2d3ff199ac57d1260ab2309cf398f9dd679f30b3585",
-          "bytes": 3731892
+          "sha256": "08a41e4d494599d0c642a131992cf0162dcc932c4999f2d9be5ba5aea2dc2596",
+          "bytes": 4592248
         }
       ],
       "options": {
@@ -1077,8 +1085,8 @@
               58
             ]
           },
-          "sha256": "84ee8b42602de0222d085df9cd714a308951cab31d9e5664b2753992c112786b",
-          "bytes": 11518327
+          "sha256": "598721fbec28da52d264c1657582608c014a1ae089f107c11baebdcfc5326d05",
+          "bytes": 12765666
         }
       ],
       "options": {
@@ -1112,8 +1120,8 @@
               5
             ]
           },
-          "sha256": "ae1b3554f4c4336d779e074ebb5c4730f750b17949d8af23f33eb8ed71633433",
-          "bytes": 914325
+          "sha256": "ea88f0aede6d4de37adee6d271ce353cddecc77f041f977dd781579b3b77150f",
+          "bytes": 1134214
         }
       ],
       "options": {
@@ -1162,8 +1170,8 @@
               2
             ]
           },
-          "sha256": "bc95d8a4933c0f4827935cec09abc500a43e2240c9bafa08fad0c083452337cc",
-          "bytes": 262590
+          "sha256": "3cf98733013c80cf82436cc6a4ef714340ef7a717f8afe4a8895e918f1ca6ce0",
+          "bytes": 264055
         }
       ],
       "options": {
@@ -1193,8 +1201,8 @@
               1
             ]
           },
-          "sha256": "0c27ee6ae92e282a39e597b727b0559b2b7415b141566cf39437135cea255da2",
-          "bytes": 134103
+          "sha256": "093e80f84b9e5a7a0c2df15db90b1cb7b14edcc2252f93bc58ecb2c410be22bd",
+          "bytes": 183409
         }
       ],
       "options": {
@@ -1245,8 +1253,8 @@
               22
             ]
           },
-          "sha256": "9622e1a1467fd06ed27f2d4a3b7738d1aa2f92265668825df42136453e0d0a50",
-          "bytes": 4536539
+          "sha256": "de375b0eba270ce2c0db37770e54a3002b507804375c991256a5f7cbd7771c89",
+          "bytes": 5121551
         }
       ],
       "options": {
@@ -1283,6 +1291,22 @@
             "observed_amount": "612,180",
             "corrected_amount": "612,480",
             "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 612,180）"
+          },
+          {
+            "id": "vlm-8d1f7b01de",
+            "page": 7,
+            "observation_id": "p1:ink-9:r0",
+            "observed_amount": "30,166,633",
+            "corrected_amount": "30,466,633",
+            "reason": "codex/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 30,166,633）"
+          },
+          {
+            "id": "vlm-f36171e7c8",
+            "page": 10,
+            "observation_id": "p1:ink-12:r0",
+            "observed_amount": "3,534,550",
+            "corrected_amount": "59,534,550",
+            "reason": "codex/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 3,534,550）"
           }
         ]
       },

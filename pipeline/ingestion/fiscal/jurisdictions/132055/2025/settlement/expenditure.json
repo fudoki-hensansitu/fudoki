@@ -34,12 +34,30 @@
               21
             ]
           },
-          "sha256": "c43788611f8bae3f8a0440012249836bca5e96c246ed38bb0d9735c42827a12a",
-          "bytes": 1248454
+          "sha256": "8cc2ee6da0a95ff38982957327b9745621effacf2847cccd37020e9ac28bf73a",
+          "bytes": 1327834
         }
       ],
       "options": {
-        "table_id": "expenditure-settlement-1"
+        "table_id": "expenditure-settlement-1",
+        "amount_corrections": [
+          {
+            "id": "vlm-a40ac127ee",
+            "page": 16,
+            "observation_id": "p16:full-page:r71",
+            "observed_amount": "21,000",
+            "corrected_amount": "27,000",
+            "reason": "codex/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 21,000）"
+          },
+          {
+            "id": "vlm-1018add2e7",
+            "page": 14,
+            "observation_id": "p14:full-page:r56",
+            "observed_amount": "3,543,000",
+            "corrected_amount": "5,543,000",
+            "reason": "codex/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 3,543,000）"
+          }
+        ]
       },
       "expected_tables": [
         {
@@ -68,8 +86,8 @@
               4
             ]
           },
-          "sha256": "baa2a8b2d6f804033c19c43ddf881d01426934ec71903d7283fc48d56257eac4",
-          "bytes": 450797
+          "sha256": "6a13d39cbf1a82b2dd2d830e62eb30b4792114b2c6d0a09f7d29c2ed812802bb",
+          "bytes": 478896
         }
       ],
       "options": {
@@ -126,8 +144,8 @@
               31
             ]
           },
-          "sha256": "4b8daa61e2690b9a11204179cc39bf9c074d8d3b2ac58e7ed44e43466593f40e",
-          "bytes": 2551826
+          "sha256": "077f02f7035e17927c57bf5eb7d328836cb955b708a0fc2def06b6a157b19dd6",
+          "bytes": 2715444
         }
       ],
       "options": {
@@ -186,12 +204,54 @@
               45
             ]
           },
-          "sha256": "15ef64016b79f3b495375c2bc5a3b595b698bc2d32c74ec812ca8edc854b1564",
-          "bytes": 4332722
+          "sha256": "bbac9ab3201c23d5c2add8bd3a0d590e28b8967a92f34316caa2f9e4a7f72ece",
+          "bytes": 4636622
         }
       ],
       "options": {
-        "table_id": "expenditure-settlement-4"
+        "table_id": "expenditure-settlement-4",
+        "amount_corrections": [
+          {
+            "id": "vlm-f0bfe66f64",
+            "page": 36,
+            "observation_id": "p36:full-page:r75",
+            "observed_amount": "49214,000",
+            "corrected_amount": "49,214,000",
+            "reason": "codex/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 49214,000）"
+          },
+          {
+            "id": "vlm-82a8cd8a89",
+            "page": 31,
+            "observation_id": "p31:full-page:r94",
+            "observed_amount": "4,513,361",
+            "corrected_amount": "4,513,367",
+            "reason": "codex/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 4,513,361）"
+          },
+          {
+            "id": "vlm-4e3609e06f",
+            "page": 37,
+            "observation_id": "p37:full-page:r106",
+            "observed_amount": "250,318",
+            "corrected_amount": "250,378",
+            "reason": "codex/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 250,318）"
+          },
+          {
+            "id": "vlm-04c0de8726",
+            "page": 42,
+            "observation_id": "p42:full-page:r108",
+            "observed_amount": "15,509,000",
+            "corrected_amount": "75,509,000",
+            "reason": "codex/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 15,509,000）"
+          },
+          {
+            "id": "vlm-fcfb790327",
+            "page": 30,
+            "observation_id": "p30:full-page:r18",
+            "observed_amount": "18,321,000",
+            "corrected_amount": "48,321,000",
+            "reason": "codex/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 18,321,000）"
+          }
+        ]
       },
       "expected_tables": [
         {
@@ -238,8 +298,8 @@
               22
             ]
           },
-          "sha256": "af1282a58ab125c9c672651cc5ec5d1d2ec7b457377c82bc0b7a703d0686d47c",
-          "bytes": 3264281
+          "sha256": "8ce49504afc048dcd96e4579179f16931787f4f21f182284142d4e19dc329053",
+          "bytes": 3369210
         }
       ],
       "options": {
@@ -292,8 +352,8 @@
               14
             ]
           },
-          "sha256": "36bb06a753d58d08a5a11b39b95f36b19d3e38841a7ffdd1e31cdb5bbd46cdc7",
-          "bytes": 1686215
+          "sha256": "51276152fab02d6132ecf4f308f59e2c503aaf41e88562873e5055b30f587045",
+          "bytes": 1738517
         }
       ],
       "options": {
@@ -382,8 +442,8 @@
               60
             ]
           },
-          "sha256": "0df9e8d80021e8be926e2b465d2a69e8bcef70dd055e37d861e779b2f3758eda",
-          "bytes": 8051556
+          "sha256": "3c4581b88d6ce726aeaf09a82011e48f460d6c9157f4d3ea7e6c57073c67b5ab",
+          "bytes": 8287595
         }
       ],
       "options": {
@@ -480,8 +540,8 @@
               2
             ]
           },
-          "sha256": "6b164c89d52def9177ac8287c6b1924254bb109d2a3220f6729f5de0b6c2a336",
-          "bytes": 269585
+          "sha256": "dd04b10a005e5060db6673bbd4c97e4a8631b43614e18dbe1d43c2a6e6a1f70c",
+          "bytes": 333132
         }
       ],
       "options": {
@@ -570,8 +630,8 @@
               60
             ]
           },
-          "sha256": "421aa10fb42ff78ae9eac4fe5a59d9a4fe6c60b475d43b7d072c0cf3052fc99f",
-          "bytes": 8123171
+          "sha256": "3055ac690d5b10ebc748f87fca22cbbf454fe502f71454a83d2b7b40a89f7ab1",
+          "bytes": 8347686
         }
       ],
       "options": {
@@ -632,6 +692,14 @@
             "observed_amount": "1 7,143,840",
             "corrected_amount": "7,143,840",
             "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 17,143,840）"
+          },
+          {
+            "id": "vlm-7bb0c6c140",
+            "page": 11,
+            "observation_id": "p11:full-page:r24",
+            "observed_amount": "21,200,000",
+            "corrected_amount": "27,200,000",
+            "reason": "codex/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 21,200,000）"
           }
         ]
       },
@@ -688,8 +756,8 @@
               30
             ]
           },
-          "sha256": "57ed83617c7c712e6f1da58f3748e6f5d5acd94b2c6e5c3c4e1fd2af7e2bc966",
-          "bytes": 3381406
+          "sha256": "b4b52072b603bd5f986a04d64a8b74a69d49f8ba8cea07ef37a8f7afcb8dc5ea",
+          "bytes": 3459689
         }
       ],
       "options": {
@@ -748,8 +816,8 @@
               12
             ]
           },
-          "sha256": "bcef8a615e82fd29b06aaabdffc279283d71ad4052ae4748104546842241b4e2",
-          "bytes": 1465784
+          "sha256": "7de49eefa45689a55c099b17da7b1d235c74f7f82e775c32bdb8bc3e3bf10441",
+          "bytes": 1517077
         }
       ],
       "options": {
@@ -808,8 +876,8 @@
               4
             ]
           },
-          "sha256": "b97456dc5497ae9256b725e261a9493d6e77d361bf5faaa7edf27c38c5f513a7",
-          "bytes": 655909
+          "sha256": "8fac7f27d3eb9d39b42372fb6161f3f747e954409867cca0a52b222861f2eff4",
+          "bytes": 698520
         }
       ],
       "options": {
@@ -908,8 +976,8 @@
               52
             ]
           },
-          "sha256": "5ac00d69e1da691572c4bf912949f86a0d9082ad5ebd496d3c56ec8fedda94ae",
-          "bytes": 6236667
+          "sha256": "7f1eb7ee7fb4b189fcf459f3f8a778ae4b9f2b93a7b90270d4d8ee5c589a5454",
+          "bytes": 6357585
         }
       ],
       "options": {
@@ -974,8 +1042,8 @@
               2
             ]
           },
-          "sha256": "f7011df4cdf51f829a808ebe53f36cb00f0493126ed66bc95fa25b444635ae1c",
-          "bytes": 123074
+          "sha256": "be9b7021f50c76db424265c4fb7a8a8464ff0900dcd5fae714b3d9494c86b6a5",
+          "bytes": 133532
         }
       ],
       "options": {
@@ -1006,8 +1074,8 @@
               2
             ]
           },
-          "sha256": "5daa04da9418e630131192a7d2d916a24555ae65ae42fd48ff0abe20b0be0592",
-          "bytes": 154158
+          "sha256": "8e604a347dfaecd17b303669be57917ea3db5e555aaf68d2935e9cd83c8c0404",
+          "bytes": 164718
         }
       ],
       "options": {
@@ -1044,8 +1112,8 @@
               8
             ]
           },
-          "sha256": "445d274aea2d66637685d7aafe65876187372d276512b5ebb1e22b900a5ee7ff",
-          "bytes": 896874
+          "sha256": "dde33cd7d85013ece9dafd7d659bdc98f7cd70e37ecdee86c28b5afcdb6ae64b",
+          "bytes": 926635
         }
       ],
       "options": {
@@ -1076,8 +1144,8 @@
               2
             ]
           },
-          "sha256": "09fed284e8ec65d8100a38f62d8d37d976cf7c36b64692db39484485117c339d",
-          "bytes": 139874
+          "sha256": "cb032d9450a61476be07539dedc33034dd4386397e69016553803e18acf36a20",
+          "bytes": 152007
         }
       ],
       "options": {
