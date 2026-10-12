@@ -247,9 +247,14 @@ def frames(rules: PageRules, boxes: list[Box]) -> list[Frame]:
     return outer
 
 
-def tables(pages: list[tuple[PageRules, list[Box]]]) -> list[Table]:
-    """Tables in page order. A table without amounts (a continuation half) takes the
-    header height of a same-width table elsewhere in the document."""
+def tables(pages: list[tuple[PageRules, list[Box]]]) -> tuple[list[Table], list[str]]:
+    """Tables in page order, and notes on the tables left out.
+
+    A table without amounts (a continuation half) takes the header height of a same-width
+    table elsewhere in the document. A table whose header OCR misread takes the columns of
+    a same-width table read elsewhere; with none, a table with neither a 節 nor a 備考
+    column is the account's summary (総括), not the statement, and is left out with a note.
+    """
     every = [f for rules, boxes in pages for f in frames(rules, boxes)]
     for frame in every:
         # A page whose only amounts are a bottom total row would put the header there;
@@ -258,7 +263,15 @@ def tables(pages: list[tuple[PageRules, list[Box]]]) -> list[Table]:
         if frame.header_bottom is not None and heights:
             wanted = frame.ys[0] + min(heights)
             frame.header_bottom = next((y for y in frame.ys if abs(y - wanted) <= TOLERANCE), frame.header_bottom)
-    found = []
+    found, misread, notes = [], [], []
+
+    def add(frame: Frame, templates: list[list[Column]] | None) -> None:
+        inside = [b for b in frame.boxes if frame.left <= b.xc <= frame.right and frame.ys[0] < b.yc < frame.ys[-1]]
+        table = build_table(frame.rules, inside, frame.left, frame.right, frame.ys[0], frame.header_bottom,
+                            frame.ys[-1], templates)
+        table.unit = table.unit or frame.unit
+        frame.table = table
+        found.append(table)
     for frame in sorted(every, key=lambda f: f.header_bottom is None):
         if frame.header_bottom is None:
             known = [g for g in every if g.header_bottom is not None and g.same_width(frame)]
@@ -269,16 +282,27 @@ def tables(pages: list[tuple[PageRules, list[Box]]]) -> list[Table]:
             frame.header_bottom = next((y for y in frame.ys if abs(y - frame.ys[0] - offset) <= TOLERANCE), None)
             if frame.header_bottom is None:
                 raise ValueError(f'Header band not found on page {frame.rules.page}')
-            templates = [g.table.columns for g in known if g.table is not None]
-        else:
-            templates = None
-        inside = [b for b in frame.boxes if frame.left <= b.xc <= frame.right and frame.ys[0] < b.yc < frame.ys[-1]]
-        table = build_table(frame.rules, inside, frame.left, frame.right, frame.ys[0], frame.header_bottom,
-                            frame.ys[-1], templates)
-        table.unit = table.unit or frame.unit
-        frame.table = table
-        found.append(table)
-    return sorted(found, key=lambda t: (t.page, t.columns[0].left))
+            add(frame, [g.table.columns for g in known if g.table is not None])
+            continue
+        try:
+            add(frame, None)
+        except ValueError as error:
+            if not str(error).startswith('Unknown legal-form column'):
+                raise
+            misread.append((frame, error))
+    for frame, error in misread:
+        templates = [g.table.columns for g in every if g.table is not None and g.same_width(frame)]
+        try:
+            add(frame, templates)
+            continue
+        except ValueError:
+            pass
+        header = normalize(''.join(b.text for b in frame.boxes if frame.left <= b.xc <= frame.right
+                                   and frame.ys[0] < b.yc < frame.header_bottom))
+        if '節' in header or '備考' in header:
+            raise error
+        notes.append(f'{frame.rules.page}頁の表は節・備考の列が無い総括表で、明細ではないため読まない')
+    return sorted(found, key=lambda t: (t.page, t.columns[0].left)), notes
 
 
 def build_table(rules: PageRules, boxes: list[Box], left: float, right: float, top: float,
@@ -591,7 +615,7 @@ def spreads(found: list[Table]) -> list[tuple[Table, Table]]:
 
 def build(table_id: str, pages: list[tuple[PageRules, list[Box]]],
           corrections: AmountDictionary | None = None) -> Result:
-    found = tables(pages)
+    found, skipped = tables(pages)
     pairs = spreads(found)
     remark_lines = []
     for left, right in pairs:
@@ -614,8 +638,8 @@ def build(table_id: str, pages: list[tuple[PageRules, list[Box]]],
         raise ValueError(f'Several units in one table: {sorted(units)}')
     if not units:
         raise ValueError('No printed unit found')
-    return Result(builder.tables(units.pop()), unresolved=builder.unresolved_lines, unread=builder.unread_items,
-                  sources=builder.sources)
+    return Result(builder.tables(units.pop()), notes=skipped, unresolved=builder.unresolved_lines,
+                  unread=builder.unread_items, sources=builder.sources)
 
 
 def remark_levels(lines: list[tuple[Column, Line]]) -> tuple[list[float], list[float]]:
