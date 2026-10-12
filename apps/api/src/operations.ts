@@ -99,15 +99,15 @@ async function encodeToken(offset: number, parts: unknown[]): Promise<string> {
   return b64(JSON.stringify({ o: offset, h: await fingerprint(parts) }))
 }
 
-async function decodeToken(token: string | undefined, parts: unknown[]): Promise<number> {
+export async function decodeToken(token: string | undefined, parts: unknown[]): Promise<number> {
   if (!token) return 0
-  let parsed: { o?: unknown; h?: unknown }
+  let parsed: { o?: unknown; h?: unknown } | null
   try {
     parsed = JSON.parse(unb64(token))
   } catch {
     throw invalid('page_token が不正です')
   }
-  if (typeof parsed.o !== 'number' || !Number.isSafeInteger(parsed.o) || parsed.o < 0)
+  if (typeof parsed !== 'object' || parsed === null || typeof parsed.o !== 'number' || !Number.isSafeInteger(parsed.o) || parsed.o < 0)
     throw invalid('page_token が不正です')
   if (parsed.h !== (await fingerprint(parts)))
     throw invalid('page_token は別の問い合わせのものです。filter と order_by を変えずに渡してください')
@@ -158,7 +158,7 @@ async function originsOf({ db }: Ctx, rows: Row[]) {
 }
 
 /** 最上位の AND から、表の選択に使った document_kind = "<kind>" の項を一つ除く（表の列ではないので SQL に入れない）。 */
-function withoutKindTerm(expr: Expr): Expr {
+export function withoutKindTerm(expr: Expr): Expr {
   const terms = conjuncts(expr)
   const i = terms.findIndex((e) => e.kind === 'cmp' && e.field === 'document_kind' && e.op === '=')
   return { kind: 'and', terms: terms.filter((_, j) => j !== i) }

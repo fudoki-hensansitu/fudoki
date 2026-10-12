@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import type { ColumnType } from './filter'
-import { FilterError, compileFilter, parseFilter, requireScope } from './filter'
+import { readdirSync, readFileSync } from 'node:fs'
+import { FilterError, MAX_DEPTH, TOKEN_PATTERNS, compileFilter, parseFilter, requireScope } from './filter'
 
 // 木の表の列（document_kind は表の列ではない）
 const COLUMN_TYPES = new Map<string, ColumnType>(
@@ -89,12 +90,12 @@ describe('requireScope', () => {
   const base = 'document_kind = "settlement" AND '
 
   test('fiscal_year の三つの形', () => {
-    expect(scope(base + 'fiscal_year = 2024')).toEqual({ documentKind: 'settlement', fiscalYears: [2024] })
-    expect(scope(base + '(fiscal_year = 2024 OR fiscal_year = 2022)').fiscalYears).toEqual([2022, 2024])
-    expect(scope(base + 'fiscal_year >= 2020 AND fiscal_year <= 2024').fiscalYears).toHaveLength(5)
-    expect(scope('document_kind = "initial" AND fiscal_year > 2019 AND fiscal_year < 2023').fiscalYears).toEqual([
-      2020, 2021, 2022,
-    ])
+    const ok = { documentKind: 'settlement' }
+    expect(scope(base + 'fiscal_year = 2024')).toEqual(ok)
+    expect(scope(base + '(fiscal_year = 2024 OR fiscal_year = 2022)')).toEqual(ok)
+    expect(scope(base + 'fiscal_year >= 2020 AND fiscal_year <= 2024')).toEqual(ok)
+    expect(scope(base + 'fiscal_year > 2019 AND fiscal_year < 2025')).toEqual(ok)
+    expect(scope('document_kind = "initial" AND fiscal_year > 2019 AND fiscal_year < 2023')).toEqual({ documentKind: 'initial' })
   })
 
   test('= の OR は5つまで', () => {
@@ -108,13 +109,13 @@ describe('requireScope', () => {
     expect(() => scope(base + 'fiscal_year >= 2019')).toThrow(FilterError)
   })
 
-  test('年の範囲外・巨大な値は 400 で、年を並べるループが止まらなくならない', () => {
+  test('年の範囲外・巨大な値は 400 で、算術だけで検査する', () => {
     const huge = '100000000000000000000'
     expect(() => scope(`${base}fiscal_year >= ${huge} AND fiscal_year <= ${huge}`)).toThrow(FilterError)
     expect(() => scope(`${base}fiscal_year = ${huge}`)).toThrow(FilterError)
     expect(() => scope(`${base}fiscal_year >= 0 AND fiscal_year <= 2`)).toThrow(FilterError)
     expect(() => scope(`${base}fiscal_year >= 9998 AND fiscal_year <= 10002`)).toThrow(FilterError)
-    expect(scope(`${base}fiscal_year >= 9998 AND fiscal_year <= 9999`).fiscalYears).toEqual([9998, 9999])
+    expect(() => scope(`${base}fiscal_year >= 9998 AND fiscal_year <= 9999`)).not.toThrow()
   })
 
   test('document_kind は一つ、受け付ける値だけ', () => {
@@ -129,5 +130,44 @@ describe('requireScope', () => {
     expect(() => scope(base + 'NOT fiscal_year = 2024')).toThrow(FilterError)
     expect(() => scope(base + '(fiscal_year = 2024 OR name = "x")')).toThrow(FilterError)
     expect(() => scope('(document_kind = "settlement" OR name = "x") AND fiscal_year = 2024')).toThrow(FilterError)
+  })
+})
+
+describe('停止性', () => {
+  test('字句の正規表現はどれも空文字列に一致しない', () => {
+    for (const [name, source] of TOKEN_PATTERNS)
+      expect(new RegExp(`^(?:${source})$`).test(''), name).toBe(false)
+  })
+
+  test('引用符の中のエスケープ', () => {
+    expect(compileFilter(parseFilter(String.raw`name = "a\"b" OR name = 'c\'d'`), COLUMN_TYPES).params).toEqual(['a"b', "c'd"])
+  })
+
+  test('閉じない引用符や病的な入力でも線形時間で 400', () => {
+    const started = performance.now()
+    for (const input of ['name = "' + '\\'.repeat(900), 'name = "' + '\\"'.repeat(900), '"'.repeat(1999), `name = "${'a'.repeat(1990)}`])
+      expect(() => parseFilter(input)).toThrow(FilterError)
+    expect(performance.now() - started).toBeLessThan(500)
+  })
+
+  test('括弧の入れ子は 16 段まで', () => {
+    const nest = (n: number) => '('.repeat(n) + 'name = "x"' + ')'.repeat(n)
+    expect(MAX_DEPTH).toBe(16)
+    expect(() => parseFilter(nest(16))).not.toThrow()
+    expect(() => parseFilter(nest(17))).toThrow('入れ子')
+    // 閉じ括弧の後で深さが戻るので、同じ段数のものを並べられる
+    expect(() => parseFilter(`${nest(16)} AND ${nest(16)}`)).not.toThrow()
+  })
+
+  test('api/src の本番コードに while・do・for (;...) が無い', () => {
+    const dir = new URL('.', import.meta.url).pathname
+    const files = readdirSync(dir).filter((f) => f.endsWith('.ts') && !f.endsWith('.test.ts') && f !== 'testing.ts')
+    expect(files).toContain('filter.ts')
+    for (const f of files) {
+      const code = readFileSync(dir + f, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '')
+      expect(code, f).not.toMatch(/\bwhile\s*\(/)
+      expect(code, f).not.toMatch(/\bdo\s*\{/)
+      expect(code, f).not.toMatch(/\bfor\s*\(\s*;/)
+    }
   })
 })

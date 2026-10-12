@@ -20,6 +20,7 @@ export class FilterError extends Error {}
 
 const MAX_LENGTH = 2000
 const MAX_RESTRICTIONS = 50
+export const MAX_DEPTH = 16 // 括弧の入れ子。再帰の深さを有限にする
 
 type Token =
   | { kind: 'word'; text: string; at: number }
@@ -27,39 +28,38 @@ type Token =
   | { kind: 'op'; text: Comparator; at: number }
   | { kind: '(' | ')'; at: number }
 
+// 字句の表。どの正規表現も1文字以上にしか一致しない（空一致しない）ので、走査は必ず進む。
+// 入れ子の量指定子は使わず、文字列リテラルの中の選択肢は互いに排他（線形）にする。
+export const TOKEN_PATTERNS = [
+  ['space', String.raw`\s+`],
+  ['string', String.raw`"(?:[^"\\]|\\[\s\S])*"|'(?:[^'\\]|\\[\s\S])*'`],
+  ['paren', String.raw`[()]`],
+  ['op', String.raw`!=|<=|>=|[=<>]`],
+  ['word', String.raw`[^\s()=!<>"':~]+`],
+  // 上のどれにも一致しない1文字（閉じていない引用符、`:`、`~`、単独の `!` など）
+  ['bad', String.raw`[\s\S]`],
+] as const
+
+for (const [name, source] of TOKEN_PATTERNS)
+  if (new RegExp(`^(?:${source})$`).test('')) throw new Error(`token pattern '${name}' matches the empty string`)
+
+const TOKEN_REGEX = new RegExp(TOKEN_PATTERNS.map(([name, source]) => `(?<${name}>${source})`).join('|'), 'g')
+
 function tokenize(input: string): Token[] {
   const tokens: Token[] = []
-  let i = 0
-  while (i < input.length) {
-    const ch = input[i]!
-    if (/\s/.test(ch)) {
-      i++
-    } else if (ch === '(' || ch === ')') {
-      tokens.push({ kind: ch, at: i++ })
-    } else if (ch === '"' || ch === "'") {
-      const start = i++
-      let text = ''
-      while (i < input.length && input[i] !== ch) {
-        if (input[i] === '\\' && i + 1 < input.length) i++
-        text += input[i++]
-      }
-      if (i >= input.length) throw new FilterError(`文字列が閉じていません（位置 ${start}）`)
-      i++
-      tokens.push({ kind: 'string', text, at: start })
-    } else if ('=!<>'.includes(ch)) {
-      const two = input.slice(i, i + 2)
-      const op = (['!=', '<=', '>='] as const).find((o) => o === two) ?? ch
-      if (!['=', '!=', '<', '<=', '>', '>='].includes(op))
-        throw new FilterError(`未対応の演算子です（位置 ${i}）`)
-      tokens.push({ kind: 'op', text: op as Comparator, at: i })
-      i += op.length
-    } else if (ch === ':' || ch === '~') {
-      throw new FilterError(`演算子 '${ch}' は使えません（位置 ${i}）`)
-    } else {
-      const start = i
-      while (i < input.length && !/[\s()=!<>"':~]/.test(input[i]!)) i++
-      tokens.push({ kind: 'word', text: input.slice(start, i), at: start })
-    }
+  // matchAll は一致が1文字以上なので位置が必ず進み、入力の長さで終わる。
+  for (const m of input.matchAll(TOKEN_REGEX)) {
+    const g = m.groups!
+    const at = m.index
+    if (g.space !== undefined) continue
+    if (g.string !== undefined)
+      tokens.push({ kind: 'string', text: g.string.slice(1, -1).replace(/\\([\s\S])/g, '$1'), at })
+    else if (g.paren !== undefined) tokens.push({ kind: g.paren as '(' | ')', at })
+    else if (g.op !== undefined) tokens.push({ kind: 'op', text: g.op as Comparator, at })
+    else if (g.word !== undefined) tokens.push({ kind: 'word', text: g.word, at })
+    else if (g.bad === '"' || g.bad === "'") throw new FilterError(`文字列が閉じていません（位置 ${at}）`)
+    else if (g.bad === ':' || g.bad === '~') throw new FilterError(`演算子 '${g.bad}' は使えません（位置 ${at}）`)
+    else throw new FilterError(`未対応の記号です（位置 ${at}）`)
   }
   return tokens
 }
@@ -70,13 +70,15 @@ export function parseFilter(input: string): Expr {
   const tokens = tokenize(input)
   let pos = 0
   let restrictions = 0
+  let depth = 0
   const peek = () => tokens[pos]
   const isWord = (t: Token | undefined, w: string): boolean =>
     t?.kind === 'word' && t.text === w
 
   const expression = (): Expr => {
     const terms = [factor()]
-    while (isWord(peek(), 'AND')) {
+    // 回数はトークン数で抑える（各回で1トークン以上進む）
+    for (let n = 0; n < tokens.length && isWord(peek(), 'AND'); n++) {
       pos++
       terms.push(factor())
     }
@@ -84,7 +86,7 @@ export function parseFilter(input: string): Expr {
   }
   const factor = (): Expr => {
     const terms = [term()]
-    while (isWord(peek(), 'OR')) {
+    for (let n = 0; n < tokens.length && isWord(peek(), 'OR'); n++) {
       pos++
       terms.push(term())
     }
@@ -106,8 +108,10 @@ export function parseFilter(input: string): Expr {
   const simple = (): Expr => {
     const t = peek()
     if (t?.kind === '(') {
+      if (++depth > MAX_DEPTH) throw new FilterError(`括弧の入れ子は ${MAX_DEPTH} 段までです`)
       pos++
       const inner = expression()
+      depth--
       if (peek()?.kind !== ')') throw new FilterError(`')' が必要です（位置 ${peek()?.at ?? input.length}）`)
       pos++
       return inner
@@ -232,7 +236,7 @@ export function requireScope(
   expr: Expr,
   acceptedKinds: readonly string[],
   maxYears = 5
-): { documentKind: string; fiscalYears: number[] } {
+): { documentKind: string } {
   const terms = conjuncts(expr)
   const cmp = (e: Expr): e is Extract<Expr, { kind: 'cmp' }> => e.kind === 'cmp'
   const kinds = terms.filter(
@@ -246,7 +250,7 @@ export function requireScope(
   if (!acceptedKinds.includes(kind))
     throw new FilterError(`document_kind は ${acceptedKinds.join('・')} のどれかです: ${kind}`)
 
-  // 年として妥当な整数だけを数える。範囲を年ごとに並べる処理が有限で終わるようにする。
+  // 年として妥当な整数だけを数える。幅は算術で検査し、年を並べる処理は持たない。
   const year = (e: Expr) => {
     if (!cmp(e) || e.field !== 'fiscal_year' || e.value.kind !== 'number') return undefined
     const y = Number(e.value.text)
@@ -258,10 +262,9 @@ export function requireScope(
         `fiscal_year = Y、fiscal_year = Y1 OR fiscal_year = Y2 ...、fiscal_year >= A AND fiscal_year <= B のどれかを書きます`
     )
   for (const e of terms) {
-    if (cmp(e) && e.op === '=' && year(e) !== undefined) return { documentKind: kind, fiscalYears: [year(e)!] }
+    if (cmp(e) && e.op === '=' && year(e) !== undefined) return { documentKind: kind }
     if (e.kind === 'or' && e.terms.every((t) => cmp(t) && t.op === '=' && year(t) !== undefined)) {
-      const years = [...new Set(e.terms.map((t) => year(t)!))]
-      if (years.length <= maxYears) return { documentKind: kind, fiscalYears: years.sort() }
+      if (new Set(e.terms.map((t) => year(t)!)).size <= maxYears) return { documentKind: kind }
     }
   }
   let low: number | undefined, high: number | undefined
@@ -272,7 +275,5 @@ export function requireScope(
     if (e.op === '<=' || e.op === '<') high = Math.min(high ?? Infinity, e.op === '<' ? y - 1 : y)
   }
   if (low === undefined || high === undefined || high - low + 1 > maxYears) throw fail()
-  const years: number[] = []
-  for (let y = low; y <= high; y++) years.push(y)
-  return { documentKind: kind, fiscalYears: years }
+  return { documentKind: kind }
 }
