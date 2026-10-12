@@ -12,7 +12,7 @@ import duckdb
 from ingestion.fiscal import manifest
 from ingestion.fiscal.storage import fetch, save, cleanup, verify
 from ingestion.paths import BUILD
-from ingestion.lib import node_tables
+from ingestion.lib import node_tables, jev_recheck
 
 MATCH, MISMATCH, NOT_APPLICABLE = '一致', '不一致', '対象外'
 
@@ -191,10 +191,12 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
             for table in retained:
                 if table['input_fingerprint'] != before[conversion['id']]:
                     raise ValueError('An untouched table is stale; include its conversion')
-                for reference in manifest.table_references(table).values():
+                for kind, reference in manifest.storage_references(table).items():
                     stored = fetch(reference['object'], remote=remote)
                     if extend_plan is not None:
                         verify(stored, reference['object'])
+                    if kind in manifest.auxiliary_references(table):
+                        continue
                     count = inspect_table(stored, table.get('metadata'))
                     if extend_plan is not None and count != reference['row_count']:
                         raise ValueError('Retained table row count differs from its receipt')
@@ -283,14 +285,34 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
         inputs = manifest.resolved_inputs(document, conversion, selection)
         text_only = all(item['format'] == 'pdf' and item.get('pdf_type') == 'text' for item in inputs)
         try:
-            node_tables.check_table_coverage(file, peers[ident], require=text_only,
-                                             control_tables=[adopted[ident]])
+            scope_path = node_tables.coverage_sidecar(file)
+            if scope_path.is_file():
+                scope = json.loads(scope_path.read_text())
+                coverage = node_tables.check_digit_coverage(
+                    scope['words'], peers[ident], control_tables=[adopted[ident]],
+                    exclusions=scope.get('excluded_regions', ()),
+                    amount_columns=scope.get('amount_columns', ()))
+                jev_path = jev_recheck.sidecar(file)
+                jev = jev_recheck.recheck(scope['words'], coverage, jev_path, allow_api=True, scope=scope)
+                report_path = file.with_name(file.stem + '.coverage-uncovered.json')
+                report_path.write_text(json.dumps({**coverage, 'jev': jev}, ensure_ascii=False) + '\n')
+                if not jev['passed']:
+                    raise ValueError(f"Digit coverage: {len(coverage['uncovered'])} blocked; "
+                                     f"Jev: {len(jev['stopped'])} additional stops; details: {report_path}")
+            else:
+                node_tables.check_table_coverage(file, peers[ident], require=text_only,
+                                                 control_tables=[adopted[ident]])
         except ValueError as error:
             coverage_failures.append(f'{ident}: {error}')
             continue
         receipt, pair = node_receipt(document, conversion, ident, migrated, output,
                                      input_fingerprint=before[conversion['id']],
                                      notes=[n['text'] for n in (metadata or {}).get('notes', [])])
+        jev_path = jev_recheck.sidecar(file)
+        if jev_path.is_file():
+            receipt['jev'] = {'object': {'key': manifest.object_key(document, ident, 'jev'),
+                                       'sha256': manifest.sha_file(jev_path), 'bytes': jev_path.stat().st_size}}
+            pair['jev'] = jev_path
         outputs[ident] = pair
         tables.append(receipt)
     if coverage_failures:
@@ -359,18 +381,16 @@ def candidate_locator(directory: Path):
     return locate
 
 
-def verify_coverage(document: dict, locate, directory) -> dict:
-    """Digit coverage of candidate tables carrying a converter scope sidecar.
+def verify_coverage(document: dict, locate, directory, *, remote=False) -> dict:
+    """Replay digit coverage and Jev from candidate/saved evidence without API calls.
 
-    Saved tables keep no word scope (local-only sidecars are never uploaded),
-    so coverage is enforced at convert time and re-run here on candidates.
-    Uncovered tables are returned as MISMATCH rather than raised; the
-    candidate verify command exits with code 1 for those mismatches.
+    Older saved tables lack the evidence sidecar and retain their tree-only check.
+    Every peer from the same original participates, including older peers.
     """
     outcome = {}
     adopted = {}
     for table in document['tables']:
-        if 'nodes' in table and directory is not None:
+        if 'nodes' in table and (directory is not None or any('jev' in t for t in document['tables'])):
             try:
                 pair = locate(table)
                 adopted[table['table_id']] = node_tables.NodeTables(
@@ -379,19 +399,30 @@ def verify_coverage(document: dict, locate, directory) -> dict:
                 outcome[table['table_id']] = {'status': MISMATCH, 'reason': str(error) or type(error).__name__}
     peers = coverage_peers(document, adopted)
     for table in document['tables']:
-        if 'nodes' not in table or directory is None or table['table_id'] in outcome:
+        if 'nodes' not in table or (directory is None and 'jev' not in table) or table['table_id'] in outcome:
             continue
-        sidecars = sorted(directory.rglob(table['table_id'] + node_tables.COVERAGE_SIDECAR_SUFFIX))
-        if not sidecars:
+        sidecars = sorted(directory.rglob(table['table_id'] + node_tables.COVERAGE_SIDECAR_SUFFIX)) if directory else []
+        if not sidecars and 'jev' not in table:
             outcome[table['table_id']] = {'status': NOT_APPLICABLE, 'reason': '網羅検査の対象範囲がない'}
             continue
         try:
-            scope = json.loads(sidecars[0].read_text())
+            if directory is None:
+                jev_path = fetch(table['jev']['object'], remote=remote)
+                cache = jev_recheck.load_cache(jev_path)
+                scope = cache['scope']
+            else:
+                scope = json.loads(sidecars[0].read_text())
+                jev_path = jev_recheck.sidecar(sidecars[0].with_name(table['table_id'] + '.parquet'))
+                cache = None
+                if 'jev' in table:
+                    verify(jev_path, table['jev']['object'])
             result = node_tables.check_digit_coverage(
                 scope['words'], peers[table['table_id']], control_tables=[adopted[table['table_id']]],
                 exclusions=scope.get('excluded_regions', ()),
                 amount_columns=scope.get('amount_columns', ()))
-            outcome[table['table_id']] = {'status': MATCH if result['passed'] else MISMATCH,
+            jev = jev_recheck.recheck(scope['words'], result, jev_path, cache=cache)
+            outcome[table['table_id']] = {'status': MATCH if jev['passed'] else MISMATCH,
+                                          'jev': jev,
                                           'counts': result['counts'],
                                           'uncovered': result['uncovered'][:10],
                                           'reported': result['reported'][:10],
@@ -480,7 +511,7 @@ def main() -> None:
             target = document['target']
             name = f'{target["jurisdiction"]}-{target["fiscal_year"]}-{manifest.document_slot(target)}-{document["direction"]}'
             results = verify_sums(document, locate)
-            coverage = verify_coverage(document, locate, args.candidate)
+            coverage = verify_coverage(document, locate, args.candidate, remote=args.remote)
             for item in results:
                 if item['table_id'] in coverage:
                     item['coverage'] = coverage[item['table_id']]
@@ -488,8 +519,7 @@ def main() -> None:
             for item in results:
                 summary[item['status']] = summary.get(item['status'], 0) + 1
                 failed |= item['status'] == MISMATCH
-                # Candidate coverage reruns stop here too; saved tables keep
-                # no word scope, so their reports carry no coverage status.
+                # Candidate and saved evidence replays stop on either check.
                 failed |= item.get('coverage', {}).get('status') == MISMATCH
         print(json.dumps({'manifests': len(runs), 'tables': summary}, ensure_ascii=False))
         raise SystemExit(1 if failed else 0)
@@ -497,8 +527,10 @@ def main() -> None:
         document = manifest.read(args.manifest)
         manifest.require_current(document)
         for table in document['tables']:
-            for reference in manifest.table_references(table).values():
+            for kind, reference in manifest.storage_references(table).items():
                 restored = fetch(reference['object'], remote=args.remote)
+                if kind in manifest.auxiliary_references(table):
+                    continue
                 if inspect_table(restored, table.get('metadata')) != reference['row_count']:
                     raise ValueError('Restored table row count differs from receipt')
         print(json.dumps({'restored': len(document['tables'])}))

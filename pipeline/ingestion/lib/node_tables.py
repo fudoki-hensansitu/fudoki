@@ -708,6 +708,7 @@ def check_digit_coverage(words, tables, *, tolerance=0.5, exclusions=(), amount_
                for e, n in zip(exclusions, exclusion_counts)]
     return {'passed': not blocked, 'counts': counts,
             'digit_words': len(normalized), 'uncovered': blocked, 'reported': reported,
+            'decisions': [{k: w[k] for k in ('page', 'bbox', 'text', 'covered')} for w in normalized],
             'bands_from': bands_from, 'exclusions': applied,
             'elapsed': time.perf_counter() - started}
 

@@ -162,6 +162,14 @@ PDFは原典の内部で重複して印字された数字どうしの一致で�
 4. `bun run ingestion:convert --manifest <対象JSON> --inputs <入力パスJSON> --output <新しい候補dir>` を実行する。件数とファイルパスだけをcontextへ返し、表・OCR・検査の詳細はファイルへ保存する。
 5. CSVは自動保持検査の結果を確認して保存へ進む。PDFは候補Parquetと未確認事項を原典照合へ渡す。R2へ保存する場合は次の手順へ進む。
 
+## Jev による網羅検査の聞き直し
+
+text PDF の `ingestion:convert` は網羅検査後に、金額でない形・合計行・注記の数字を `jev-1.13.0` に尋ねる。既存の blocked・reported は診断に回答を添えるだけ。金額の枠・ノードの名称・非採用範囲は問い合わせない。ルールと選択が異なり、選択の確率が共通閾値（初期 0.9）以上なら追加停止する。数字の一覧・確率は `<表ID>.coverage-uncovered.json` の `jev` にある。
+
+問い合わせには mise + age で注入した `TYPESAFE_API_KEY` が必要。キーはファイルやコマンド引数に置かない。回答は model・頁の state hash・質問 hash を鍵に `<表ID>.jev.json` に保存し、scope とともに候補の管理 JSON の `jev.object` 参照から保存・復元する。`ingestion:verify --candidate <dir>` と保存済み表の verify はキャッシュを読み直すだけで、API は呼ばない。キャッシュの不足・文字や質問の変更は不一致になる。変換時にもキャッシュとキーの両方がない場合は停止する。
+
+旧保存済み表は sidecar を持たず木の検査のみ。再変換すると再検査と sidecar が必要になる。判断は [ADR 0023](../../../../docs/adr/0023-jev-only-adds-coverage-stops.md)、共通定数は [jev_recheck.py](../../../../pipeline/ingestion/lib/jev_recheck.py)。
+
 ## 現在版の保存・差し替え
 
 1. 管理側から現在の選定・scope・設定を受け取り、入力条件を確定する。同じ対象の原典更新・変換・保存・後段処理は順番に実行し、並行更新しない。原典はAの保存先を使用し、Bで別の原典領域へ複製しない。

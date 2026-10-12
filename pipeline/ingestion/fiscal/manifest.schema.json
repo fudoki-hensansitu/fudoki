@@ -373,6 +373,18 @@
         "unresolved_parent_count": {
           "type": "integer",
           "minimum": 0
+        },
+        "jev": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "object": {
+              "$ref": "#/$defs/jev_object"
+            }
+          },
+          "required": [
+            "object"
+          ]
         }
       },
       "required": [
@@ -469,6 +481,28 @@
       "required": [
         "object",
         "row_count"
+      ]
+    },
+    "jev_object": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "type": "string",
+          "pattern": "^fiscal/ingestion/[0-9]{6}/[0-9]{4}/(?:initial|settlement|supplementary-[1-9][0-9]*)/(?:expenditure|revenue)/[a-z0-9][a-z0-9_-]{0,95}\\.jev\\.json$"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "key",
+        "sha256",
+        "bytes"
       ]
     }
   }

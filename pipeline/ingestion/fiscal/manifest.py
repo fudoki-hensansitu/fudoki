@@ -47,6 +47,8 @@ def manifest_path(target: dict, direction: str, root: Path | None = None) -> Pat
 
 def object_key(document: dict, table_id: str, kind: str | None = None) -> str:
     target = document['target']
+    if kind == 'jev':
+        return object_key(document, table_id).removesuffix('.parquet') + '.jev.json'
     return (f'fiscal/ingestion/{target["jurisdiction"]}/{target["fiscal_year"]}/'
             f'{document_slot(target)}/{document["direction"]}/{table_id}{'-' + kind if kind else ''}.parquet')
 
@@ -54,6 +56,14 @@ def object_key(document: dict, table_id: str, kind: str | None = None) -> str:
 def table_references(table: dict) -> dict[str | None, dict]:
     return ({kind: table[kind] for kind in ('nodes', 'amounts')} if 'nodes' in table
             else {None: table})
+
+
+def auxiliary_references(table: dict) -> dict[str, dict]:
+    return {'jev': table['jev']} if 'jev' in table else {}
+
+
+def storage_references(table: dict) -> dict:
+    return {**table_references(table), **auxiliary_references(table)}
 
 
 def code_path(value: str) -> Path:
@@ -171,7 +181,7 @@ def validate(document: dict, *, path: Path | None = None, check_code: bool = Tru
         if ident in seen or expected.get(ident) != table['conversion_id']:
             raise ValueError('Duplicate, unexpected or incorrectly owned saved table')
         seen.add(ident)
-        for kind, reference in table_references(table).items():
+        for kind, reference in storage_references(table).items():
             if reference['object']['key'] != object_key(document, ident, kind):
                 raise ValueError('Saved table key differs from its target/direction/table ID')
         if 'nodes' in table:

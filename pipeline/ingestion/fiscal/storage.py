@@ -8,7 +8,7 @@ import subprocess
 import tempfile
 from pathlib import Path, PurePosixPath
 
-from ingestion.fiscal.manifest import BUCKET, object_key, sha_file, table_references
+from ingestion.fiscal.manifest import BUCKET, object_key, sha_file, storage_references
 from ingestion.paths import CACHE
 
 OBJECTS = CACHE / 'objects'
@@ -63,7 +63,7 @@ def save(document: dict, table: dict, path: Path | dict[str, Path], *, remote: b
         if not checked['passed'] or table['unread_amount_count'] or table['unresolved_parent_count']:
             raise ValueError('Node table failed the mandatory pre-save tree check')
     prepared = []
-    for kind, receipt in table_references(table).items():
+    for kind, receipt in storage_references(table).items():
         file = path[kind] if kind is not None else path
         reference = receipt['object']
         key = object_key(document, table['table_id'], kind)
@@ -88,7 +88,7 @@ def cleanup(document: dict) -> int:
     require_current(document)
     prefix = object_key(document, 'placeholder').rsplit('/', 1)[0] + '/'
     wanted = {reference['object']['key'] for table in document['tables']
-              for reference in table_references(table).values()}
+              for reference in storage_references(table).values()}
     removed = 0
     after = None
     while True:
