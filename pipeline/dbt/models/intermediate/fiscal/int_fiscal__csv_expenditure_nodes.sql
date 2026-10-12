@@ -44,7 +44,7 @@ with base as (
         kan_code, kan_name, kou_code, kou_name, moku_code, moku_name,
         jika_code, jika_name, setsu_code, setsu_name, saisai_code, saisai_name,
         6 as depth, '細々節' as node_kind, saisai_code as code, saisai_name as name,
-        sum(amount_yen) as amount_yen, true as is_leaf,
+        sum(amount_yen)::bigint as amount_yen, true as is_leaf,
         min(source_line_start) as source_page, min(source_line_start) as amount_source_page
     from leaves group by all
     union all
@@ -52,35 +52,35 @@ with base as (
         kan_code, kan_name, kou_code, kou_name, moku_code, moku_name,
         jika_code, jika_name, setsu_code, setsu_name, null, null,
         5, '節', setsu_code, setsu_name,
-        sum(amount_yen), false, min(source_line_start), null
+        sum(amount_yen)::bigint, false, min(source_line_start), null
     from leaves group by all
     union all
     select jurisdiction_code, fiscal_year, document_kind, origin_id, account_name,
         kan_code, kan_name, kou_code, kou_name, moku_code, moku_name,
         jika_code, jika_name, null, null, null, null,
         4, '事項', jika_code, jika_name,
-        sum(amount_yen), false, min(source_line_start), null
+        sum(amount_yen)::bigint, false, min(source_line_start), null
     from leaves group by all
     union all
     select jurisdiction_code, fiscal_year, document_kind, origin_id, account_name,
         kan_code, kan_name, kou_code, kou_name, moku_code, moku_name,
         null, null, null, null, null, null,
         3, '目', moku_code, moku_name,
-        sum(amount_yen), false, min(source_line_start), null
+        sum(amount_yen)::bigint, false, min(source_line_start), null
     from leaves group by all
     union all
     select jurisdiction_code, fiscal_year, document_kind, origin_id, account_name,
         kan_code, kan_name, kou_code, kou_name, null, null,
         null, null, null, null, null, null,
         2, '項', kou_code, kou_name,
-        sum(amount_yen), false, min(source_line_start), null
+        sum(amount_yen)::bigint, false, min(source_line_start), null
     from leaves group by all
     union all
     select jurisdiction_code, fiscal_year, document_kind, origin_id, account_name,
         kan_code, kan_name, null, null, null, null,
         null, null, null, null, null, null,
         1, '款', kan_code, kan_name,
-        sum(amount_yen), false, min(source_line_start), null
+        sum(amount_yen)::bigint, false, min(source_line_start), null
     from leaves group by all
 ), keyed as (
     select g.*,

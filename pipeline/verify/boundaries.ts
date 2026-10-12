@@ -58,7 +58,7 @@ for (const root of ['apps', 'packages'])
         )
     }
   }
-for (const name of ['api', 'docs', 'web/deploy']) {
+for (const name of ['docs', 'web/deploy']) {
   const config = await readFile(
     join(REPO, 'apps', name, 'cloudflare.config.ts'),
     'utf8'

@@ -2,7 +2,7 @@
 -- from the shared intermediate (int_fiscal__expenditure_transfers); the rules
 -- live there alone so settlement and initial budgets cannot drift (ADR 0023).
 with base as (
-    select n.* exclude (kan_name, kou_name), c.cofog_status, c.cofog_code
+    select n.*, c.cofog_status, c.cofog_code
     from {{ ref('int_fiscal__settlement_expenditure_nodes') }} n
     left join {{ ref('int_fiscal__settlement_expenditure_cofog') }} c using (node_id, document_kind)
     where n.document_kind = 'settlement'

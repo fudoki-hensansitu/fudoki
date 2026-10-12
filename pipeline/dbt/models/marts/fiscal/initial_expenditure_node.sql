@@ -4,11 +4,11 @@
 -- Account kinds and interfund-transfer marks come from the shared intermediate
 -- (int_fiscal__expenditure_transfers), the same table the settlement marts uses.
 with pdf as (
-    select n.* exclude (kan_name, kou_name)
+    select n.*
     from {{ ref('int_fiscal__settlement_expenditure_nodes') }} n
     where n.document_kind = 'initial'
 ), csv as (
-    select n.* exclude (kan_name, kou_name)
+    select n.*
     from {{ ref('int_fiscal__csv_expenditure_nodes') }} n
 ), unioned as (
     select * from pdf union all select * from csv

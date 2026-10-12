@@ -1,6 +1,6 @@
 ---
 name: cloudflare-api-ops
-description: fudoki の apps/api（Cloudflare Workers、現在は全パスで 500）をデプロイ・運用するときに参照する。公開直後に想定外の 403 が出た、といった非自明なハマりどころを持つ。
+description: fudoki の apps/api（Cloudflare Workers + D1、REST と MCP）をデプロイ・運用するときに参照する。公開直後に想定外の 403 が出た、といった非自明なハマりどころを持つ。
 user-invocable: false
 ---
 

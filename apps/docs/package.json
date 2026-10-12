@@ -5,13 +5,14 @@
   "scripts": {
     "build": "mise exec -- cf deploy --dry-run",
     "deploy": "mise exec -- cf deploy",
-    "dev": "mise exec -- cf dev --host 127.0.0.1 --port 5175",
+    "dev": "mise exec -- cf dev",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "@cloudflare/config": "catalog:",
+    "@cloudflare/vite-plugin": "catalog:",
     "@types/bun": "catalog:",
     "typescript": "catalog:",
-    "wrangler": "catalog:",
-    "@cloudflare/config": "catalog:"
+    "vite": "catalog:"
   }
 }
