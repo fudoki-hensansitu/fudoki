@@ -24,18 +24,21 @@ from ingestion.lib.node_tables import AMOUNT_COLUMNS, NODE_COLUMNS, amount_phase
 from ingestion.lib.parquet import write_parquet
 from shared.amount import number
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from rows import as_json, identities  # noqa: E402
+from ingestion.generic.rows import as_json, identities  # noqa: E402
 
 
 def subject_rows(built, kind: str) -> list[dict]:
-    """款・項・目 and their printed amounts by phase (or by printed header when no phase resolves)."""
-    by_node = {}
+    """款・項・目, their printed amounts by phase (or by printed header when no phase resolves), and
+    where each phase's first amount is printed."""
+    by_node, places = {}, {}
     for a in built.amounts:
         phase = amount_phase(dictionary_header(a['header_path'], kind), kind, '科目', '款')
-        by_node.setdefault(a['node_key'], {})[phase or a['header_path']] = number(a['amount_text'])
+        by_node.setdefault(a['node_key'], {}).setdefault(phase or a['header_path'], number(a['amount_text']))
+        if phase:  # where the amount is printed, for the spot check
+            places.setdefault(a['node_key'], {}).setdefault(phase, [a['physical_page'], a['x0'], a['y0'], a['x1'], a['y1']])
     return [{'key': n['node_key'], 'parent': n['parent_node_key'], 'depth': n['depth'], 'level': n['level_header'],
-             'code': n['code_text'], 'name': n['name_text'], 'page': n['physical_page'], 'amounts': by_node.get(n['node_key'], {})}
+             'code': n['code_text'], 'name': n['name_text'], 'page': n['physical_page'], 'amounts': by_node.get(n['node_key'], {}),
+             'positions': places.get(n['node_key'], {})}
             for n in built.nodes if n['axis_header'] == '科目']
 
 
