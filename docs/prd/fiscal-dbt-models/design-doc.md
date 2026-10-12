@@ -206,8 +206,14 @@ erDiagram
     string origin_id FK
     int source_page
     int amount_source_page
-    double source_x0_y0_x1_y1
-    double amount_source_x0_y0_x1_y1
+    double source_x0
+    double source_y0
+    double source_x1
+    double source_y1
+    double amount_source_x0
+    double amount_source_y0
+    double amount_source_x1
+    double amount_source_y1
     string cofog_status
     string cofog_code FK
     boolean is_interfund_transfer
@@ -298,7 +304,7 @@ erDiagram
 - `int_fiscal__settlement_expenditure_nodes`（決算・当初予算の PDF 共通。`document_kind` を列として流し、決算は支出済額・当初予算は当初予算額を選ぶ）:
   - 共通規則で `node_kind` を決める（[ADR 0022](../../adr/0022-level-names-by-shared-rule.md)）。科目軸の深さと印字見出しが食い違えば止める。
   - 共有辞書（`pipeline/shared/fiscal_amount_map.csv`）で各ノードの支出済額を一つ選ぶ。宣言にない金額の見出しがあれば止める。
-  - 表をまたいだ同じ款・項・目のノードを、団体・年度・会計・款・項・目の番号で一つにまとめ、`node_id` を作る。まとめる前に、名称と支出済額が表の間で一致することを検査し、食い違えば止める。原典の位置は、原典ファイル・物理頁・`y0` の順で最初のものを採る。祖先の款・項・目の番号を各ノードへ反復する。
+  - 表をまたいだ同じ款・項・目のノードを、団体・年度・会計・款・項・目の番号で一つにまとめ、`node_id` を作る。まとめる前に、名称と支出済額が表の間で一致することを検査し、食い違えば止める。原典の位置は、原典ファイル・物理頁・`y0` の順で最初のものを採る。項目の枠と、採った金額の枠・頁も、その先頭行の印字のものになる。祖先の款・項・目の番号を各ノードへ反復する。
   - 金額を円へ換算し（円は1倍、千円は1000倍、それ以外の単位は止める）、名称から字間の空白と改行を除く。
 - `int_fiscal__expenditure_accounts`: PDF の木と CSV の木の両方にある会計の一覧に、語の辞書（`account_kind_map`）で団体共通の種類を付ける。語に当たらない会計名があれば構築を止める。
 - `int_fiscal__expenditure_transfers`: 会計の種類と会計間の繰出の印・受け手の種類を、資料区分を列に持って一つの表で付ける（決算・当初予算、PDF・CSV 共通。`node_id` が資料をまたいで同じ導出のためキーは `node_id` と `document_kind`）。印の規則はここだけに持ち、両 marts は結合するだけにする（[ADR 0023](../../adr/0023-account-kind-and-no-consolidation.md)）。

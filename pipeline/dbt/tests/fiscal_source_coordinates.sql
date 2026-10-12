@@ -9,7 +9,7 @@ where ((amount_source_x0 is null)::int + (amount_source_y0 is null)::int
          + (amount_source_x1 is null)::int + (amount_source_y1 is null)::int) not in (0, 4)
        or source_x0 > source_x1
        or amount_source_x0 > amount_source_x1 or amount_source_y0 > amount_source_y1
-       or ((source_x0 is not null or source_y0 is not null) and source_page is null)
+       or ((source_x0 is not null or source_y0 is not null or source_x1 is not null or source_y1 is not null) and source_page is null)
        or (amount_source_x0 is not null and amount_source_page is null)
 {% if not loop.last %}union all{% endif %}
 {% endfor %}

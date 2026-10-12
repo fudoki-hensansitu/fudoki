@@ -64,14 +64,31 @@ selected_amounts as (
         case when count(*) filter (where amount_role = target_phase)
                   = count(physical_page) filter (where amount_role = target_phase)
              then min(physical_page) filter (where amount_role = target_phase) end as amount_source_page,
-        -- The box is given only when one print is the whole amount; a sum of prints has no single box.
+        -- The box is given only when one print is the whole amount; a sum of prints has no single box,
+        -- and a partly stored box is dropped whole so the four stay all-or-nothing.
         case when count(*) filter (where amount_role = target_phase) = 1
+              and count(x0) filter (where amount_role = target_phase and physical_page is not null)
+                + count(y0) filter (where amount_role = target_phase and physical_page is not null)
+                + count(x1) filter (where amount_role = target_phase and physical_page is not null)
+                + count(y1) filter (where amount_role = target_phase and physical_page is not null) = 4
              then min(x0) filter (where amount_role = target_phase and physical_page is not null) end as amount_source_x0,
         case when count(*) filter (where amount_role = target_phase) = 1
+              and count(x0) filter (where amount_role = target_phase and physical_page is not null)
+                + count(y0) filter (where amount_role = target_phase and physical_page is not null)
+                + count(x1) filter (where amount_role = target_phase and physical_page is not null)
+                + count(y1) filter (where amount_role = target_phase and physical_page is not null) = 4
              then min(y0) filter (where amount_role = target_phase and physical_page is not null) end as amount_source_y0,
         case when count(*) filter (where amount_role = target_phase) = 1
+              and count(x0) filter (where amount_role = target_phase and physical_page is not null)
+                + count(y0) filter (where amount_role = target_phase and physical_page is not null)
+                + count(x1) filter (where amount_role = target_phase and physical_page is not null)
+                + count(y1) filter (where amount_role = target_phase and physical_page is not null) = 4
              then min(x1) filter (where amount_role = target_phase and physical_page is not null) end as amount_source_x1,
         case when count(*) filter (where amount_role = target_phase) = 1
+              and count(x0) filter (where amount_role = target_phase and physical_page is not null)
+                + count(y0) filter (where amount_role = target_phase and physical_page is not null)
+                + count(x1) filter (where amount_role = target_phase and physical_page is not null)
+                + count(y1) filter (where amount_role = target_phase and physical_page is not null) = 4
              then min(y1) filter (where amount_role = target_phase and physical_page is not null) end as amount_source_y1
     from mapped_amounts group by source_table_key, node_key, document_kind
 ), amounts_checked as (
