@@ -201,8 +201,9 @@ def add_annotations(tables, scope, *, raw_rows=(), adopted=None):
             if number(value) is None:
                 continue
             box = _union(cell)
-            if any(a['x0'] - .5 <= (box[0] + box[2]) / 2 <= a['x1'] + .5
-                   and abs(a['y0'] - box[1]) <= 2 for a in positioned[page]):
+            if any(_contains((a['x0'], a['y0'], a['x1'], a['y1']), box, .5)
+                   or (a['x0'] - .5 <= (box[0] + box[2]) / 2 <= a['x1'] + .5
+                       and abs(a['y0'] - box[1]) <= 2) for a in positioned[page]):
                 continue
             if any(n['physical_page'] == page and n['x0'] is not None
                    and _contains((n['x0'], n['y0'], n['x1'], n['y1']), box, .5)

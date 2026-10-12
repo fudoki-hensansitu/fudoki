@@ -92,6 +92,16 @@ class AnnotationTests(unittest.TestCase):
         table.nodes[0]['name_text'] = 'その他の費用'
         self.assertEqual(add_annotations(table,scope,raw_rows=[reserve,explicit]).amounts,table.amounts)
 
+    def test_signed_adopted_cell_with_a_raised_sign_is_not_a_new_remark(self):
+        adopted = {**amount('p',20.),'header_path':'予備費支出及び流用増減',
+                   'amount_text':'△500','y1':39.}
+        table = NodeTables([node('p')],[adopted])
+        scope = {'words':[word('500',110.,30.,140.),
+                          word('流用',50.,50.,99.),word('500',110.,50.,140.)]}
+        actual = add_annotations(table,scope,raw_rows=[remark('流用 500')])
+        self.assertEqual(len(actual.amounts),2)
+        self.assertEqual(actual.amounts[-1]['y0'],50.)
+
     def test_rate_requires_explicit_money_and_keeps_only_money_glyphs(self):
         table = NodeTables([node('p')], [amount('p')])
         table.nodes[0].update({'name_text':'見舞金（1回10,000円33人）','x0':50.,'y0':30.,'x1':145.,'y1':39.})
