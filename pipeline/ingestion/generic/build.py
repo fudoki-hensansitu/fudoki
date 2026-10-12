@@ -15,7 +15,7 @@ from pathlib import Path
 from ingestion.generic.layout import logical_pages, normalize
 from ingestion.generic.observe import observe
 from ingestion.generic.repair import repair
-from ingestion.generic.tree import Built, build
+from ingestion.generic.tree import DETAIL_PATTERNS, SUBJECT_PATTERNS, Built, build
 from ingestion.lib.node_tables import AMOUNT_COLUMNS, NODE_COLUMNS, amount_phase, check_tree, phase_dictionary
 from ingestion.lib.parquet import write_parquet
 
@@ -46,9 +46,61 @@ def run(pdf: Path, pages: list[int], cache: Path | None = None, judge=None) -> B
     return run_with_repairs(pdf, pages, cache, judge)[0]
 
 
-def run_with_repairs(pdf: Path, pages: list[int], cache: Path | None = None, judge=None):
+def run_with_repairs(pdf: Path, pages: list[int], cache: Path | None = None, judge=None,
+                     document_kind: str = 'settlement'):
     observed, report = repair(pdf, observe(pdf, pages, cache))
-    return build(logical_pages(observed), judge), report
+    built, choice = choose_pattern(logical_pages(observed), document_kind, judge)
+    report.pattern = choice
+    return built, report
+
+
+def closure(built: Built, document_kind: str) -> dict:
+    """How well a tree closes: the selection criterion, kept in one place.
+
+    The subject pattern decides the 款・項・目 levels, so the score is the
+    subject axis's own closure: parent/child groups on the subject axis whose
+    sums agree, minus twice those that disagree. Ties go to the whole tree's
+    closure, then to the number of named subject nodes. A pattern that finds
+    no subject column gets no score. (Scoring the whole tree let a pattern that
+    found 7 of 25 subject nodes win on the breakdown axes alone, 131148.)
+    """
+    result = check(built, document_kind)
+    subject_results = [r for r in result['results'] if r['axis_header'] == '科目']
+    agree = sum(1 for r in subject_results if r['status'] == '一致')
+    disagree = len(subject_results) - agree
+    total_agree, total_disagree = result['counts'].get('一致', 0), result['counts'].get('不一致', 0)
+    subject = sum(1 for n in built.nodes if n['axis_header'] == '科目')
+    named = sum(1 for n in built.nodes if n['axis_header'] == '科目' and n['name_text'])
+    return {'subject_agree': agree, 'subject_disagree': disagree, 'agree': total_agree, 'disagree': total_disagree,
+            'issues': len(result['issues']), 'subject_nodes': subject, 'named_subject_nodes': named,
+            'score': (agree - 2 * disagree, total_agree - 2 * total_disagree, named)}
+
+
+def choose_pattern(logicals, document_kind: str = 'settlement', judge=None) -> tuple[Built, dict]:
+    """Build the tree with every subject pattern and keep the one that closes best."""
+    trials = {}
+    for pattern in SUBJECT_PATTERNS:
+        built = build(logicals, judge, pattern)
+        trials[pattern] = (built, closure(built, document_kind))
+    # A pattern that finds no subject column is not a reading of this document.
+    eligible = [p for p in trials if trials[p][1]['subject_nodes']] or list(trials)
+    best = max(eligible, key=lambda p: (*trials[p][1]['score'], -SUBJECT_PATTERNS.index(p)))
+    # Breakdown levels per axis: indentation or numbering shapes, whichever closes a larger
+    # share of that axis's parent/child groups. A share, not a count: flattening an axis
+    # removes comparisons and would win a count (杉並の備考: 6,670 items on one level).
+    per_axis = {}
+    for detail in DETAIL_PATTERNS:
+        built = trials[best][0] if detail == 'indent' else build(logicals, judge, best, detail)
+        for result in check(built, document_kind)['results']:
+            if result['axis_header'] != '科目':
+                counts = per_axis.setdefault(result['axis_header'], {d: [0, 0] for d in DETAIL_PATTERNS})
+                counts[detail][0 if result['status'] == '一致' else 1] += 1
+    share = lambda c: (c[0] / (c[0] + c[1]) if c[0] + c[1] else 0, c[0])
+    chosen = {axis: max(DETAIL_PATTERNS, key=lambda d: (*share(counts[d]), -DETAIL_PATTERNS.index(d)))
+              for axis, counts in per_axis.items()}
+    built = trials[best][0] if all(d == 'indent' for d in chosen.values()) else build(logicals, judge, best, chosen)
+    return built, {'chosen': best, 'detail': chosen, 'detail_scores': per_axis,
+                   'trials': {p: c for p, (_, c) in trials.items()}}
 
 
 def check(built: Built, document_kind: str = 'settlement') -> dict:

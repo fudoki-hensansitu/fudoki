@@ -128,3 +128,28 @@ class RepairTest(unittest.TestCase):
         self.assertEqual([w.text for w in words_from_glyphs(glyphs, Report())], ['105'])
         split = words_from_glyphs(glyphs, Report(), [Rule(19, 90, 19, 120)])
         self.assertEqual(sorted(w.text for w in split), ['10', '5'])
+
+
+class PatternTest(unittest.TestCase):
+    def test_vertical_characters_in_one_column_read_as_one_word(self):
+        from ingestion.generic.observe import Page, Rule, Word
+        from ingestion.generic.repair import Report, join_vertical
+        page = Page(1, 600, 800, [Word('保', 68, 174.6, 77, 183.6), Word('健', 68, 183.6, 77, 192.6),
+                                  Word('費', 68, 192.6, 77, 201.6), Word('1', 82.6, 186.8, 87.1, 195.8)],
+                    [Rule(80, 150, 80, 300)])
+        join_vertical(page, Report())
+        self.assertIn('保健費', [w.text for w in page.words])
+
+    def test_prefix_marks_give_the_level(self):
+        from ingestion.generic.tree import prefix_items
+        band = Band(20, 130, 1, ('科目',), [], 140, 700)
+        band.words = [glyph('（款）1', 22, 150, 30), glyph('議会費', 60, 150), glyph('（目）1', 22, 180, 30), glyph('議会費', 60, 180)]
+        found = prefix_items(Group([band], '科目', True, 'prefix', 3))
+        self.assertEqual([(i.level_name, i.code, i.name) for i in found], [('款', '1', '議会費'), ('目', '1', '議会費')])
+
+    def test_numbering_shapes(self):
+        from ingestion.generic.tree import Item, shape_of
+        band = Band(0, 100, 1, ('備考',), [], 0, 100)
+        shape = lambda value: shape_of(Item(Group([band], '備考', False), 1, [[glyph(value, 0, 0)]], None, value, 0))
+        self.assertEqual([shape('○事業'), shape('(1)運営'), shape('①旅費'), shape('ア 郵便料'), shape('12委託料'), shape('アシスタント')],
+                         ['bullet', 'paren', 'circled', 'kana', 'number', None])
