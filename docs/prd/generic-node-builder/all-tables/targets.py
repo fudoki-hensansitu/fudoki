@@ -23,7 +23,7 @@ for target in sorted(os.listdir(FINAL)):
         pages = sorted({w['page'] for w in json.load(open(coverage[0]))['words']}) if coverage else None
         pdfs = [p for p in inputs if p and p.endswith('.pdf')]
         rows.append({'target': target, 'jurisdiction': jurisdiction, 'table_id': table_id,
-                     'document_kind': manifest['target']['document_kind'],
+                     'document_kind': manifest['target']['document_kind'], 'account': table.get('account'),
                      'converter': conversion['converter'], 'pdf': pdfs[0] if len(pdfs) == 1 else None,
                      'inputs': len(inputs), 'pages': pages, 'scan': jurisdiction in SCAN,
                      'expected': f'{FINAL}/{target}/inspection/{table_id}'})

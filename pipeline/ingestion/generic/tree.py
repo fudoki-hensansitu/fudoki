@@ -92,8 +92,7 @@ class Item:
 
 # How a document marks subject (款・項・目) levels. Each is tried on every
 # document and the tree that closes best wins (build.choose_pattern).
-SUBJECT_PATTERNS = ('bands', 'names', 'prefix', 'indent')
-PREFIX = re.compile(r'^[(（]\s*(款|項|目)\s*[)）]')
+SUBJECT_PATTERNS = ('bands', 'names', 'indent')
 SUBJECT_HEADER = re.compile(r'[款項目]|科目')
 
 
@@ -112,7 +111,6 @@ def groups(logical: Logical, pattern: str = 'bands') -> list[Group]:
 
     bands  – 款・項・目 each have a band; the band where a code starts is the level.
     names  – as bands, plus the neighbouring name band that the codes share.
-    prefix – one subject column whose lines start with (款)(項)(目).
     indent – one subject column; levels by indentation (codes optional).
     """
     bands = sorted((b for b in logical.bands), key=lambda b: b.x0)
@@ -134,18 +132,6 @@ def groups(logical: Logical, pattern: str = 'bands') -> list[Group]:
                 subject_bands.append(bands[following])
             else:
                 subject_bands = []
-    elif pattern == 'prefix':
-        for band in labels:
-            marked = sum(1 for line in lines(band.words) if PREFIX.match(normalize(text(line))))
-            if marked >= 2 or (marked and not subject_bands):
-                subject_bands = [band]
-                break
-        if subject_bands:  # the name may continue in neighbouring bands under the same header
-            index = bands.index(subject_bands[0])
-            while index + 1 < len(bands) and bands[index + 1].kind == 'label' and bands[index + 1].header == subject_bands[0].header:
-                index += 1
-                subject_bands.append(bands[index])
-        count = 3
     elif pattern == 'indent':
         for band in labels:
             if band.header and SUBJECT_HEADER.search(''.join(band.header)):
@@ -444,24 +430,6 @@ def subject_items(group: Group) -> list[Item]:
     return result
 
 
-def prefix_items(group: Group) -> list[Item]:
-    """Subject lines marked (款)(項)(目): the mark is the level; a line without a mark continues the item above."""
-    result: list[Item] = []
-    for line in lines([w for band in group.bands for w in band.words]):
-        value = normalize(text(line))
-        found = PREFIX.match(value)
-        if found is None:
-            if result and _cell(group.bands[0], result[-1].anchor) == _cell(group.bands[0], line[0].y0):
-                result[-1].lines.append(line)
-                result[-1].name += value
-            continue
-        code, name = _split_code(value[found.end():])
-        item = Item(group, line[0].page, [line], code, name, line[0].x0,
-                    level=SUBJECT_LEVELS.index(found.group(1)), level_name=found.group(1))
-        result.append(item)
-    return result
-
-
 def heading_names(logical: Logical) -> dict[tuple[str, str], str]:
     """Running headings above a table (`款（7）商工費`, `(項) 1 総務管理費`): level and code to name."""
     found = {}
@@ -557,8 +525,6 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 roles = judged_roles(judge, group, margins.get(group.axis))
             if not group.subject:
                 group_items = items(group, header, margins.get(group.axis), roles)
-            elif group.mode == 'prefix':
-                group_items = prefix_items(group)
             elif group.mode == 'indent':
                 group_items = items(group, group.axis)
                 for item in group_items:

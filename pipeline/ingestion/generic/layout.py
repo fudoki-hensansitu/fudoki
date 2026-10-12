@@ -19,8 +19,7 @@ AMOUNT = re.compile(r'[△▲\-]?(?:[0-9]{1,3}(?:,[0-9]{3})+|[0-9]+)')
 DASHES = {'－', '―', '—', '-', 'ー'}
 SIGNS = {'△', '▲'}
 SUBJECT_LEVELS = ('款', '項', '目')
-UNIT = re.compile(r'単位\s*[:：]?\s*(千円|円)')
-UNIT_MARK = re.compile(r'[(（](千円|円)[)）]')
+UNIT = re.compile(r'単位\s*[:：]?\s*(百万円|千円|円)')  # the shared rule is in units.py
 
 
 def normalize(text: str) -> str:
@@ -296,21 +295,4 @@ def logical_pages(pages: list[Page]) -> list[Logical]:
             previous.outside.extend(glyphs)
             continue
         result.append(Logical([page.number], bands, unit, glyphs))
-    # Without a printed 単位, the unit marks printed at the top of amount columns
-    # (円 in each column, or 金額(円) in the header) give it.
-    for logical in result:
-        if logical.unit:
-            continue
-        for band in logical.bands:
-            if band.kind != 'amount':
-                continue
-            marked = UNIT_MARK.search(''.join(band.header)) or next(
-                (w.text for w in sorted(band.words, key=lambda w: w.y0)[:1] if w.text in ('円', '千円')), None)
-            if marked:
-                logical.unit = marked if isinstance(marked, str) else marked.group(1)
-                break
-    carried = None
-    for logical in result:
-        logical.unit = logical.unit or carried
-        carried = logical.unit
     return result
