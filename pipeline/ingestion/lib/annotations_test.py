@@ -39,6 +39,20 @@ class AnnotationTests(unittest.TestCase):
         self.assertEqual(check_tree(actual.nodes,actual.amounts),check_tree(table.nodes,table.amounts))
         self.assertTrue(check_digit_coverage(scope['words'],actual)['passed'])
 
+    def test_era_years_and_decision_numbers_never_become_annotation_amounts(self):
+        table = NodeTables([node('p')],[amount('p')])
+        pieces = [('繰越額',50.,69.),('令和',70.,79.),('7',80.,84.),('年',85.,89.),
+                  ('第',90.,94.),('28',95.,103.),('号．第',104.,116.),
+                  ('57',117.,125.),('号',126.,130.),('980',150.,170.)]
+        words=[word(text,left,30.,right) for text,left,right in pieces]
+        words += [word('不用額',50.,50.,95.),word('28',110.,50.,140.),
+                  word('繰越額',50.,70.,95.),word('7',110.,70.,140.)]
+        actual=add_annotations(table,{'words':words},raw_rows=[remark(
+            '繰越額 令和7年第28号．第57号 980\n不用額28\n繰越額7')])
+        self.assertEqual([a['amount_text'] for a in actual.amounts[1:]],['980','28','7'])
+        self.assertEqual([a['y0'] for a in actual.amounts[1:]],[30.,50.,70.])
+        self.assertTrue(check_digit_coverage(words,actual)['passed'])
+
     def test_equal_value_in_a_later_subject_is_not_an_inherited_remark(self):
         table = NodeTables([node('p'),node('q',50.,code='2')], [amount('p'),amount('q',50.)])
         scope = {'words':[word('500',110.,70.,140.)]}

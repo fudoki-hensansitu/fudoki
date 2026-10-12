@@ -9,7 +9,7 @@ import re
 import unicodedata
 
 from shared.amount import number
-from ingestion.lib.node_tables import NodeTables, _coverage_word, _exclusion_hit, _position, _contains, _word_key
+from ingestion.lib.node_tables import NodeTables, _coverage_word, _exclusion_hit, _position, _contains, _word_key, _notation_context, _document_notation
 
 DICTIONARY = Path(__file__).resolve().parents[2] / 'shared/fiscal_annotation_map.csv'
 
@@ -39,6 +39,7 @@ def add_annotations(tables, scope, *, raw_rows=(), adopted=None):
     A continuation inherits a heading only in the same printed column. Existing
     adopted prints and observation-only regions never become new annotations.
     """
+    notation_boxes, _, _ = _notation_context(scope['words'], _document_notation)
     by_key = {n['node_key']: n for n in tables.nodes}
     def subject(key):
         while key is not None:
@@ -177,7 +178,7 @@ def add_annotations(tables, scope, *, raw_rows=(), adopted=None):
         parts = []
         for w in words:
             key = unicodedata.normalize('NFKC', w[2])
-            if re.fullmatch(r'[△▲\-0-9,()]+', key):
+            if re.fullmatch(r'[△▲\-0-9,()]+', key) and (page, tuple(w[1])) not in notation_boxes:
                 if parts and w[1][0] - parts[-1][-1][1][2] <= 12:
                     parts[-1].append(w)
                 else:

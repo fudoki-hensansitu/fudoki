@@ -344,6 +344,37 @@ DOCUMENT_NUMBER = re.compile(
     r'|[0-9]+[^0-9,円△▲\-]+第[0-9]+号(?:市|区|町|村)長決定')
 
 
+def _notation_context(words, matches):
+    """Locate whole, spatially adjacent notation fragments without exempting a row."""
+    lines = defaultdict(list)
+    for raw in words:
+        page, box, text = _coverage_word(raw)
+        lines[(page, round(box[1]))].append((box, _word_key(text)))
+    matched = set()
+    merged_lines = {}
+    for (page, y), line in sorted(lines.items()):
+        if not merged_lines or page != anchor[0] or y - anchor[1] > 2:
+            anchor = (page, y)
+            merged_lines[anchor] = []
+        merged_lines[anchor].extend(line)
+    for (page, _), line in merged_lines.items():
+        line.sort(key=lambda item: item[0][0])
+        for start in range(len(line)):
+            joined = ''
+            for end in range(start, min(start + 16, len(line))):
+                if end > start and line[end][0][0] - line[end - 1][0][2] > 12:
+                    break
+                joined += line[end][1]
+                if matches(joined):
+                    matched.update((page, tuple(box)) for box, _ in line[start:end + 1])
+    return matched, lines, merged_lines
+
+
+def _document_notation(text):
+    return (NON_AMOUNT_WORD.fullmatch(text) or DOCUMENT_NUMBER.fullmatch(text)
+            or is_fiscal_year_notation(text))
+
+
 # Bare folios live in the footer strip. All processed PDFs are ~842pt tall
 # with body bottoms at or below 800 (converters read body bands only, and no
 # adopted amount prints with top > 795); a bare integer below the strip is an
@@ -793,29 +824,8 @@ def check_digit_coverage(words, tables, *, tolerance=0.5, exclusions=(), amount_
             word['covered'] = 'non_amount'
     # Printed document numbers and dates can be split by Poppler. Match an
     # exact, spatially adjacent sequence; never exempt all digits on its row.
-    lines = defaultdict(list)
-    for raw in words:
-        page, box, text = _coverage_word(raw)
-        lines[(page, round(box[1]))].append((box, _word_key(text)))
-    non_amount_boxes = set()
-    merged_lines = {}
-    for (page, y), line in sorted(lines.items()):
-        if not merged_lines or page != anchor[0] or y - anchor[1] > 2:
-            anchor = (page, y)
-            merged_lines[anchor] = []
-        merged_lines[anchor].extend(line)
-    for (page, _), line in merged_lines.items():
-        line.sort(key=lambda item: item[0][0])
-        for start in range(len(line)):
-            joined = ''
-            for end in range(start, min(start + 16, len(line))):
-                if end > start and line[end][0][0] - line[end - 1][0][2] > 12:
-                    break
-                joined += line[end][1]
-                if (NON_AMOUNT_WORD.fullmatch(joined) or DOCUMENT_NUMBER.fullmatch(joined)
-                        or is_fiscal_year_notation(joined) or QUANTITY_PHRASE.fullmatch(joined)
-                        or ORDINAL_PHRASE.fullmatch(joined)):
-                    non_amount_boxes.update((page, tuple(box)) for box, _ in line[start:end + 1])
+    non_amount_boxes, lines, merged_lines = _notation_context(words, lambda text: _document_notation(text)
+                                     or QUANTITY_PHRASE.fullmatch(text) or ORDINAL_PHRASE.fullmatch(text))
     for word in normalized:
         if word['covered'] is None and (word['page'], tuple(word['bbox'])) in non_amount_boxes:
             word['covered'] = 'non_amount'
