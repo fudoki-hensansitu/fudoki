@@ -1,9 +1,9 @@
 import unittest
 
-from ingestion.generic.layout import Band, Glyph, is_amount
-from ingestion.generic.observe import Rule, merge_rules
+from ingestion.generic.layout import Band, Glyph, is_amount, logical_pages, split_digits_at_rules
+from ingestion.generic.observe import Page, Rule, Word, merge_rules
 from ingestion.generic.sums import bracket
-from ingestion.generic.tree import Group, _split_line, subject_items
+from ingestion.generic.tree import Group, Item, _leading_amount, _split_line, shape_depth, subject_items
 
 
 def glyph(text, x0, y0, width=None):
@@ -32,6 +32,50 @@ class LineTest(unittest.TestCase):
         label, money = _split_line([glyph('議長', 291, 100), glyph('7,956,000', 493, 100)])
         self.assertEqual([g.text for g in label], ['議長'])
         self.assertTrue(is_amount(money[0][0].text))
+
+
+class TrialRulesTest(unittest.TestCase):
+    """Shared rules added after trying three jurisdictions the rules had not seen (trial.md)."""
+
+    def test_a_line_of_only_a_grouped_amount_is_an_amount_not_an_item_numbered_10(self):
+        label, money = _split_line([glyph('10', 1127, 685, 9), glyph(',000', 1136, 685, 18)])
+        self.assertEqual(label, [])
+        self.assertEqual(''.join(g.text for run in money for g in run), '10,000')
+        label, money = _split_line([glyph('10', 1127, 685, 9)])
+        self.assertEqual([g.text for g in label], ['10'])
+
+    def test_digits_split_only_where_a_rule_runs_between_characters(self):
+        joined = Word('１１', 21.14, 120.6, 40.94, 129.6)  # 項1・目1 joined by Poppler across the rule at 31.2
+        self.assertEqual([w.text for w in split_digits_at_rules(joined, [Rule(31.2, 50, 31.2, 800)])], ['１', '１'])
+        overrun = Word('10', 22.0, 120.6, 31.0, 129.6)  # a 10 overrunning a narrow band: the rule crosses the 0
+        self.assertEqual([w.text for w in split_digits_at_rules(overrun, [Rule(28.8, 50, 28.8, 800)])], ['10'])
+
+    def test_an_amount_running_into_the_next_band_keeps_its_digits(self):
+        self.assertEqual(_leading_amount(glyph('44,406,439,217明許', 662, 700)).text, '44,406,439,217')
+        self.assertEqual(_leading_amount(glyph('301,286,948', 662, 700)).text, '301,286,948')
+
+    def test_numbers_of_one_shape_at_another_position_are_another_level(self):
+        group = Group([], '備考', False)
+        item = lambda code, name, x: Item(group, 1, [[glyph(code, x, 0, 4.5 * len(code)), glyph(name, x + 4.5 * len(code) + 2, 0)]],
+                                          code, name, x)
+        order, anchors = [], {}
+        depths = [shape_depth(item(code, name, x), 1, order, [], anchors)
+                  for code, name, x in (('1', '財政管理事務', 944), ('8', '旅費', 962), ('10', '需用費', 958),
+                                        ('2', '契約事務', 944), ('4', '共済費', 962.5))]
+        self.assertEqual(depths, [1, 2, 2, 1, 2])  # right-aligned 8 and 10 share a level below 事業
+
+    def test_a_header_printed_again_mid_page_is_not_body_and_its_title_names_the_kan(self):
+        verticals = [Rule(x, 50, x, 400) for x in (10, 100, 200)]
+        horizontals = [Rule(10, y, 200, y) for y in (50, 70, 100, 150, 170, 200, 400)]
+        header = lambda y: [Word('科', 20, y, 29, y + 9), Word('目', 40, y, 49, y + 9),
+                            Word('支出', 110, y, 128, y + 9), Word('済額', 130, y, 148, y + 9)]
+        words = header(55) + [Word('1', 20, 80, 24.5, 89), Word('総務費', 30, 80, 57, 89), Word('1,000', 150, 80, 172.5, 89),
+                              Word('第2款', 20, 155, 47, 164), Word('民生費', 50, 155, 77, 164)] + header(175) + \
+            [Word('1', 20, 210, 24.5, 219), Word('社会福祉費', 30, 210, 75, 219), Word('2,000', 150, 210, 172.5, 219)]
+        logical = logical_pages([Page(1, 300, 500, words, verticals + horizontals)])[0]
+        body = [w.text for band in logical.bands for w in band.words]
+        self.assertEqual(body, ['1', '総務費', '1', '社会福祉費', '1,000', '2,000'])
+        self.assertEqual([(code, name) for code, name, _ in logical.titles], [('2', '民生費')])
 
 
 class SubjectTest(unittest.TestCase):

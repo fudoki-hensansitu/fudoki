@@ -2,7 +2,7 @@
 
 担当者: wwwyo / Claude
 更新日: `2026-10-12`
-状態: 計測のみ（規則は足していない。`pipeline/ingestion/generic/` は無変更）
+状態: ループで進行中（未知の団体で測る → 共通の規則を足す → 代表の表と試した団体で確かめる）
 
 ## Summary
 
@@ -39,12 +39,12 @@
 
 ```bash
 cd pipeline
-uv run python ../.agent/generic-trial/trial.py 132225 .cache/generic-trial/132225/r7ippannsaisyutujikoubetu.pdf 1-162
-uv run python ../.agent/generic-trial/trial.py 132250 .cache/generic-trial/132250/r7_kessan_ippannkaikei.pdf 9-11,48-155
-uv run python ../.agent/generic-trial/trial.py 132195 .cache/generic-trial/132195/20260911-134217.pdf 39-266
+uv run python ../docs/prd/generic-node-builder/trial/trial.py 132225 .cache/generic-trial/132225/r7ippannsaisyutujikoubetu.pdf 1-162
+uv run python ../docs/prd/generic-node-builder/trial/trial.py 132250 .cache/generic-trial/132250/r7_kessan_ippannkaikei.pdf 9-11,48-155
+uv run python ../docs/prd/generic-node-builder/trial/trial.py 132195 .cache/generic-trial/132195/20260911-134217.pdf 39-266
 ```
 
-`trial.py` は `ingestion.generic.build.run_with_repairs`（パターンの選択まで含む汎用の流れ）をそのまま呼び、表を `.cache/generic-trial/<団体コード>/general-{nodes,amounts}.parquet` に、木の検査（`check_tree`）・単位の確かめ（`units.check`）・款と科目の金額・選んだパターンを `general-trial.json` に書く。設定は頁の範囲だけ。スクリプトの本文は[付録](#付録-trialpy)に載せる（`.agent/` は git に入らないため）。正解の表は無いので、次の4つで確かめた。
+`trial.py`（[trial/](trial/)）は観測・修復・パターンの選択まで含む汎用の流れをそのまま呼び、表を `.cache/generic-trial/<団体コード>/general-{nodes,amounts}.parquet` に、木の検査（`check_tree`）・単位の確かめ（`units.check`）・款と科目の金額・選んだパターンを `general-trial.json` に書く。設定は頁の範囲だけ。正解の表は無いので、次の4つで確かめた。
 
 1. 木の検査（親＝直下の子の和）の組の一致・不一致・問題の数（軸ごと）。
 2. 款の支出済額の和と、原典に印字された歳出合計の一致（`units.check`）。
@@ -123,81 +123,43 @@ uv run python ../.agent/generic-trial/trial.py 132195 .cache/generic-trial/13219
 - 町田（令和7年度）: 款の支出済額の和が印字の歳出合計 202,880,996,944 円と一致、目の抜き取り10/10一致。備考の2段（「1.議員人件費」→ 1字下げた「議員報酬等事務」）が平らになり、和が2倍の組が多い（備考 1/129 一致）。子の字下げが親の番号の位置より深く、名前の位置より浅いため、字下げでも番号の形でも子にならない。名前に番号の区切りの「.」が残る（「.議会費」）。令和6年度（様式が A4 縦に変わる）でも同じ結果で、令和6年度の決算カードと比べると議会費 −8,269 千円・公債費 +3,668 千円の差（普通会計との違いの範囲）。
 - 調布: CropBox で A3 の見開きを左右の頁に分けた PDF で、観測が CropBox を見ないので全頁が二重になった。重複を除いても、款項目の見出しが1つの枠に斜めに「款 項 目」と並び番号の3つの帯がすべて「款項目」になって科目の欄が見つからず、予算現額の5欄が「円」の印の行を文字と数えて名前の帯になった。案: 観測で CropBox の外の字・罫線を捨てる、帯の種類の集計で単位の印（円・千円）を数えない。
 
-## 付録: trial.py
+## ループ1: 共通の規則を足した結果
 
-`.agent/generic-trial/trial.py`（`pipeline/` から実行）:
+実測 2026-10-12。上の案のうち狛江向け（型を足すとき）以外を `pipeline/ingestion/generic/` に入れた。団体名・座標は含まない。単体テストは `generic_test.py` の `TrialRulesTest`。
 
-```python
-"""汎用のノード生成機を未取り込みの団体で試す（規則は足さず、測るだけ）。
+| 規則 | 段 | 場所 |
+| --- | --- | --- |
+| R1 行全体が桁区切りの金額だけの行は、番号の項目ではなく上の項目の金額 | 項目 | `tree._split_line` |
+| R2 番号の形が同じでも、始まり・終わりのどちらの位置もそろわない番号は別の段（左揃えの 4 と 18、右揃えの 1 と 10 は同じ段） | 関係 | `tree.shape_depth` |
+| R3 本文の数字の語は、縦罫線が字の境目（1pt 以内）を通るときだけ割る | 帯 | `layout.split_digits_at_rules` |
+| R4 表の本文の中に見出しの語が6割以上の行（4語以上）が再び現れたら見出しとして本文から外し、直前の「第n款 名前」の行は表の題にする。款の列が無い表は、題を款の項目にし、題の金額（「決算額 …」）を款の金額にする | 帯・見出し・関係 | `layout.repeated_header`・`Logical.titles`・`tree.untitled` |
+| R5 金額の欄の語が隣の欄の字とつながっていれば（「…217明許」）、先頭の金額の部分を取る | 項目 | `tree._leading_amount` |
 
-Usage (pipeline/ で): uv run python ../.agent/generic-trial/trial.py <code> <pdf> <pages> [--kind settlement]
-出力: .cache/generic-trial/<code>/general-{nodes,amounts}.parquet・general-trial.json
-"""
-from __future__ import annotations
+最初の R2（位置が違えば字下げに戻す）は東久留米で悪くなり（備考の字下げの段は 62/767 しか閉じない）、次の版（終わりの位置だけで分ける）は稲城の左揃えの節番号を割って悪くした（1652→833）。始まりか終わりのどちらかがそろえば同じ段、とした3つ目で両方が良くなった。
 
-import argparse
-from collections import Counter
-import json
-from pathlib import Path
+### 試した団体
 
-from ingestion.generic import units
-from ingestion.generic.build import check, dictionary_header, page_list, run_with_repairs
-from ingestion.lib.node_tables import AMOUNT_COLUMNS, NODE_COLUMNS, amount_phase
-from ingestion.lib.parquet import write_parquet
-from shared.amount import number
+| 団体 | 前 | 後 | 木の検査（軸ごとの一致/不一致） | 歳出合計 | 分類 |
+| --- | --- | --- | --- | --- | --- |
+| 132225 東久留米 | 科目 422/0・節 666/0・備考 1352/204 | 科目 422/0・節 666/0・**備考 2248/38**（98.3%） | 3336/38 | 一致 | (b) のまま（備考の残り38組） |
+| 132250 稲城 | 科目 216/195・項 133（偽の項63）・止める | **科目 319/0**・款12/項31/目95（目はすべて名前と支出済額あり）・備考 1653/188・節 113/55・区分 486/66 | 2571/309 | **一致** 44,406,439,217 円 | **(c)→(b)**（科目と目の金額は閉じる。差は備考・節・区分） |
+| 132195 狛江 | 科目 58/67 | 科目 61/87 | 187/475 | 確かめられない | 型が違う（変わらず） |
 
+稲城の目の抜き取り（10か所、原典の行と名前・当初予算額・予算現額・支出済額を照合）はすべて一致。支出済額が「939,580,691明許」とつながっていた電算管理費も R5 で取れた。
 
-def subject_rows(built, kind: str) -> list[dict]:
-    """款・項・目の各ノードと、その段階ごとの金額（印字の値）。"""
-    by_node = {}
-    for a in built.amounts:
-        phase = amount_phase(dictionary_header(a['header_path'], kind), kind, '科目', '款')
-        by_node.setdefault(a['node_key'], {})[phase or a['header_path']] = number(a['amount_text'])
-    return [{'key': n['node_key'], 'parent': n['parent_node_key'], 'depth': n['depth'], 'level': n['level_header'],
-             'code': n['code_text'], 'name': n['name_text'], 'page': n['physical_page'], 'amounts': by_node.get(n['node_key'], {})}
-            for n in built.nodes if n['axis_header'] == '科目']
+### 回帰（既存の全45表）
 
+origin/main（#111）の汎用で全45表を測り直すと a7/b23/c1/例外13/後回し1 を再現した。規則を入れた後も **a7/b23/c1/例外13/後回し1 で、分類は下がらない**。(a)・(b) の表で再現（matched）が下がった指標は無い。変わった表:
 
-def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument('code')
-    parser.add_argument('pdf', type=Path)
-    parser.add_argument('pages')
-    parser.add_argument('--kind', default='settlement')
-    args = parser.parse_args()
-    out = Path('.cache/generic-trial') / args.code
-    out.mkdir(parents=True, exist_ok=True)
-    built, repairs = run_with_repairs(args.pdf, page_list(args.pages), out / 'general-observed.json', None, args.kind)
-    result = check(built, args.kind)
-    for kind in ('nodes', 'amounts'):
-        (out / f'general-{kind}.parquet').unlink(missing_ok=True)
-    write_parquet(out / 'general-nodes.parquet', built.nodes, columns=NODE_COLUMNS)
-    write_parquet(out / 'general-amounts.parquet', built.amounts, columns=AMOUNT_COLUMNS)
-    subjects = subject_rows(built, args.kind)
-    report = {
-        'code': args.code, 'pdf': str(args.pdf), 'pages': args.pages,
-        'nodes': len(built.nodes), 'amounts': len(built.amounts),
-        'axes': dict(Counter(n['axis_header'] for n in built.nodes)),
-        'subject_levels': dict(Counter(s['level'] for s in subjects)),
-        'unowned': dict(Counter(u['kind'] for u in built.unowned)),
-        'notes': dict(Counter(n['kind'] for n in built.notes)),
-        'tree_check': {'passed': result['passed'], 'counts': result['counts'], 'issues': len(result['issues']),
-                       'issue_examples': result['issues'][:20]},
-        'units_check': units.check(built, args.kind),
-        'mismatches': [r for r in result['results'] if r['status'] != '一致'],
-        'kan': [s for s in subjects if s['parent'] is None],
-        'subjects': subjects,
-        'unowned_examples': built.unowned[:50],
-        'pattern': repairs.as_dict().get('pattern'),
-        'repairs': {k: v for k, v in repairs.as_dict().items() if k not in ('pattern', 'examples')},
-    }
-    (out / 'general-trial.json').write_text(json.dumps(report, ensure_ascii=False, indent=1, default=str))
-    print(json.dumps({k: report[k] for k in ('nodes', 'amounts', 'axes', 'subject_levels', 'unowned', 'tree_check', 'units_check')},
-                     ensure_ascii=False, default=str))
+- 131156 杉並（例外）: 備考の作りの表が大きく上がった（一般の備考 77→1320/4371、介護 0→29/137、国保 2→24/85。R1 で金額だけの行が項目にならなくなった）。明細の木の検査も 676/509→1339/313。後期は木の検査が通過に変わった。
+- 132217 後期: 備考 83→86/143、木の検査 126/6→132/3。132128 後期: 木の検査 177/8→193/8。
+- 131148 一般: 目の金額（値）の生成が 318→325 で適合が 99.1%→96.9% に見えるが、中身は1つの見出しに連結されていた流用・充用の注記7件が正しく分かれた分（例: 総務費の「備考／注記／前年度繰越事業費不用額78,405,993予備費から充用…」→ 3件）。正解の表は注記を別の軸に持つので分母に入らない。
+- 中央区（例外）・八王子（例外）・昭島の当初予算書（後回し）は数が動くが分類は同じ。
 
+以降のループの回帰は、代表の8表（131041 一般、132021 一般の明細・備考、131172 一般、131148 一般、132128 後期、132217 後期、132071 公営企業1表）と試した団体だけを `trial/loop.py` で回す（観測のキャッシュから約2分）。全45表は PR の前に1回だけ回す。
 
-if __name__ == '__main__':
-    main()
+```bash
+cd pipeline
+uv run python ../docs/prd/generic-node-builder/trial/loop.py loop1                     # 基準
+uv run python ../docs/prd/generic-node-builder/trial/loop.py loop2 --against loop1     # 変わった所だけ出す
 ```
-
-同じディレクトリの `axes.py`（木の検査の組を軸ごとに数える）・`spot.py`（目の抜き取り）・`bands.py`（論理頁の帯の一覧）・`show.py`（ノードの子を金額つきで出す）は調べるための補助で、結果の数字は `trial.py` と `axes.py` の出力から取った。

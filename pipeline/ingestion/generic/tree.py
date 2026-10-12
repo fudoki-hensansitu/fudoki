@@ -165,6 +165,9 @@ def groups(logical: Logical, pattern: str = 'bands') -> list[Group]:
 
 
 BULLET = re.compile(r'^[〇○●◎□■◇◆]')
+GROUPED = re.compile(r'[△▲]?[0-9]{1,3}(?:,[0-9]{3})+')
+# An amount printed against text spilling in from the next band (`44,406,439,217明許`).
+LEADING_AMOUNT = re.compile(r'([△▲]?[0-9]{1,3}(?:,[0-9]{3})+)(?=[^0-9,])')
 
 
 def _split_code(line_text: str) -> tuple[str | None, str]:
@@ -189,6 +192,10 @@ def _split_line(line: list[Glyph]) -> tuple[list[Glyph], list[list[Glyph]]]:
     money = []
     while parts and is_amount(text(parts[-1])) and len(parts) > 1:
         money.insert(0, parts.pop())
+    if len(parts) == 1 and GROUPED.fullmatch(normalize(text(parts[0]))):
+        # A line that is only a grouped amount (`10,000` under a long name) is the
+        # amount of the item above, not an item numbered 10. A bare `10` stays a label.
+        return [], [parts[0]]
     if not money and parts:
         # A grouped amount printed flush against the name (`…】112,408,043`),
         # possibly starting inside a Poppler word: split that word proportionally.
@@ -211,6 +218,15 @@ def _split_line(line: list[Glyph]) -> tuple[list[Glyph], list[list[Glyph]]]:
                     break
                 consumed += len(glyph.text)
     return [g for part in parts for g in part], money
+
+
+def _leading_amount(glyph: Glyph) -> Glyph:
+    """The amount part of a word in an amount band that runs on into text; other words unchanged."""
+    found = LEADING_AMOUNT.match(glyph.text)
+    if not found:
+        return glyph
+    width = (glyph.x1 - glyph.x0) / len(glyph.text)
+    return Glyph(found.group(1), glyph.x0, glyph.y0, glyph.x0 + len(found.group(1)) * width, glyph.y1, glyph.page, glyph.offset)
 
 
 def is_amount_kind(label: str) -> bool:
@@ -448,6 +464,12 @@ def subject_items(group: Group) -> list[Item]:
     return result
 
 
+def untitled(group: Group) -> bool:
+    """A subject group in bands whose first column is not 款 (its 款 is printed as a title)."""
+    return group.mode in ('bands', 'names') and bool(group.bands) and bool(group.bands[0].header) \
+        and group.bands[0].header[-1] in SUBJECT_LEVELS[1:]
+
+
 def heading_names(logical: Logical) -> dict[tuple[str, str], str]:
     """Running headings above a table (`款（7）商工費`, `(項) 1 総務管理費`): level and code to name."""
     found = {}
@@ -514,16 +536,34 @@ def shape_of(item: Item) -> str | None:
     return None
 
 
-def shape_depth(item: Item, indent_depth: int, order: list[str], open_items: list) -> int:
+def shape_depth(item: Item, indent_depth: int, order: list[str], open_items: list,
+                anchors: dict[str, tuple[float, float]] | None = None) -> int:
     """Depth by numbering shape: each shape keeps the level where it first appeared on the
     axis (numbering restarts under each parent); unnumbered lines sit under the last open item
-    when indented deeper, otherwise they keep the indentation level."""
+    when indented deeper, otherwise they keep the indentation level.
+
+    A shape is one level where its numbers start or end at one position (left-aligned 4 and
+    18 start together, right-aligned 1 and 10 end together). The same shape whose start and
+    end are both more than 1.5 characters away from every position seen for it is another
+    level (事業「1 …」 and 節「8 旅費」 indented below it)."""
     shape = shape_of(item)
     if shape is None:
         last = next((p for p in reversed(open_items) if p is not None), None)
         if last is not None and item.indent > last.indent + 2:
             return len(open_items) + 1
         return indent_depth
+    if anchors is not None and item.lines and item.lines[0]:
+        first = item.lines[0][0]
+        width = (first.x1 - first.x0) / max(len(first.text), 1)
+        start, end = first.x0, _margins(item.lines[0])[1] - 10000
+        seen = [key for key, (x0, x1) in anchors.items() if key.split('@')[0] == shape
+                and min(abs(start - x0), abs(end - x1)) <= 1.5 * width]
+        if seen:
+            shape = seen[0]
+        else:
+            if any(key.split('@')[0] == shape for key in anchors):
+                shape = f'{shape}@{len(anchors)}'
+            anchors[shape] = (start, end)
     if shape not in order:
         order.append(shape)
     return order.index(shape) + 1
@@ -533,6 +573,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
     """`detail` is one breakdown pattern for every axis, or a mapping axis → pattern."""
     """`judge(lines) -> {line id: (role, confidence)}` replaces the codeless-line rules (variant B)."""
     shapes: dict[str, list[str]] = {}  # numbering shapes per breakdown axis, in order of first use
+    anchors: dict[str, dict[str, tuple[float, float]]] = {}  # where each shape's numbers start and end, per axis
     stack: list[Item] = []  # open subject items by depth
     branch: dict[str, list[Item]] = {}  # open items per other axis
     levels: dict[str, list[float]] = {}
@@ -568,6 +609,16 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 elif item.code is None and not item.amounts and not group.subject:
                     item.role = 'note'
             found[id(group)] = group_items
+        subject = next((g for g in ordered if g.subject), None)
+        if subject is not None and untitled(subject):
+            # A table without a 款 column under a title naming its 款: the title is the 款 item.
+            for code, name, line in logical.titles:
+                title = Item(subject, line[0].page, [line], code, name, line[0].x0, level=-1, level_name='款')
+                kind = re.search(r'([^(（0-9,]+?)[0-9]', normalize(text(line))[len(code) + len(name):])
+                money = [g for g in line if GROUPED.fullmatch(normalize(g.text))]
+                if kind and money:  # `（決算額 4,764,369,474 円）`: the 款 amount, named in the title
+                    title.amounts.append((kind.group(1).strip('(（第款'), money[:1]))
+                found[id(subject)].insert(0, title)
         # A codeless line whose row holds amounts in an amount band is an item
         # (a 節 column printed without numbers), not a note.
         for band in logical.bands:
@@ -647,6 +698,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     continue
                 kept.append(item)
             found[id(group)] = kept
+    # 款 come from titles in this document: the 項・目 columns of untitled tables sit one level down.
+    titled = any(i.level == -1 for _, ordered, found in all_items for g in ordered if g.subject for i in found[id(g)])
     for logical, ordered, found in all_items:
         # A subject item opens at the top of its rule-bounded row: its label may be
         # centred lower than the first remark of its block.
@@ -655,7 +708,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                          for group in ordered for item in found[id(group)]), key=lambda e: e[:4])
         events = [(e[0], e[1], e[4]) for e in events]
         headings = heading_names(logical)
-        subject_depth = max((g.levels or len(g.bands) for g in ordered if g.subject), default=3)
+        subject_depth = max((g.levels or len(g.bands) for g in ordered if g.subject), default=3) \
+            + any(titled and untitled(g) for g in ordered if g.subject)
         row = None  # (subject item, top, bottom) of the latest subject row
         for _, _, item in events:
             if not item.group.subject and item.role in ('node', 'note') and row is not None \
@@ -678,7 +732,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                               'amounts': [text(r) for _, r in item.amounts]})
                 continue
             if item.group.subject:
-                depth = item.level + 1
+                depth = item.level + 1 + (titled and untitled(item.group))
                 previous = stack[depth - 1] if len(stack) >= depth else None
                 if previous is not None and previous.code == item.code and (
                         not item.name or normalize(previous.name) == normalize(item.name)):
@@ -702,7 +756,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 depth = 1 + min(range(len(ranks)), key=lambda i: abs(ranks[i] - item.indent)) if ranks else 1
                 if (detail if isinstance(detail, str) else detail.get(item.group.axis, 'indent')) == 'shape':
                     depth = shape_depth(item, depth, shapes.setdefault(item.group.axis, []),
-                                        branch.get(item.group.axis, []))
+                                        branch.get(item.group.axis, []), anchors.setdefault(item.group.axis, {}))
                 open_items = branch.setdefault(item.group.axis, [])
                 del open_items[depth - 1:]
                 while len(open_items) < depth - 1:
@@ -733,6 +787,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     continue
                 sign = None
                 for line in lines(band.words):
+                    line = [_leading_amount(g) for g in line]
                     money = [g for g in line if is_amount(g.text) or re.fullmatch(r'[0-9,△▲\-]+', g.text)]
                     if [g.text for g in money] in (['△'], ['▲']):
                         sign = money[0]  # a minus sign printed above its number
