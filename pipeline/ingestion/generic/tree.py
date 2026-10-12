@@ -718,7 +718,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                         unowned.append({'kind': 'unreadable amount', 'page': money[0].page, 'text': candidate}); continue
                     target = owner(money, band, ordered, found)
                     if target is not None and target.role == 'total':
-                        notes.append({'kind': 'total amount', 'page': money[0].page, 'text': candidate})
+                        notes.append({'kind': 'total amount', 'page': money[0].page, 'text': candidate,
+                                      'header': '／'.join(band.header), 'unit': logical.unit, 'label': target.name})
                         continue
                     if target is None or target.key is None:
                         unowned.append({'kind': 'amount without row', 'page': money[0].page, 'text': candidate,
