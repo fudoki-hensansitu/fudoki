@@ -9,6 +9,7 @@
 
 ## 構築結果を確認する
 
+- marts の木の表は原典の位置として頁（`source_page`・`amount_source_page`）と印字の枠（`source_x0`〜`source_y1`・`amount_source_x0`〜`amount_source_y1`、左上原点の pt）を持つ。座標は PDF だけで、CSV は NULL。金額の枠は印字が一つで全額のときだけ入り、複数の印字を足した額は頁が最初の頁でも NULL（検査は `tests/fiscal_source_coordinates.sql`）。R2 の取り込み表で金額の位置が未保存なら金額の座標は NULL になる。
 - 原典行の対応、値と単位、欠落・二重収録、集約を確認する。stagingの行数一致だけで全値一致としない。単位・金額段階の根拠は原典から取り、宣言どうしの一致だけで済ませない。
 - コード・宣言・判断はGitで管理する。DB・CSV・検査結果は再生成するローカル領域（`pipeline/.build/`）に置く。
 - 構築成功を全公開資料の収録完了と扱わない。

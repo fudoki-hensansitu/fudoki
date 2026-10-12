@@ -113,5 +113,10 @@ select case node_kind
        end as node_id,
     parent_node_id, jurisdiction_code, fiscal_year, document_kind, account_name,
     '科目' as axis, true as is_subject, node_kind, code, name, amount_yen, is_leaf,
-    kan_code, kou_code, moku_code, origin_id, source_page, amount_source_page, kan_name, kou_name
+    kan_code, kou_code, moku_code, origin_id, source_page,
+    null::double as source_x0, null::double as source_y0, null::double as source_x1, null::double as source_y1,
+    amount_source_page,
+    null::double as amount_source_x0, null::double as amount_source_y0,
+    null::double as amount_source_x1, null::double as amount_source_y1,
+    kan_name, kou_name
 from linked

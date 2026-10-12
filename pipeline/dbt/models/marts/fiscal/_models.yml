@@ -73,6 +73,22 @@ models:
     - not_null
   - name: amount_source_page
     description: 採用した実績金額の物理頁。不明ならNULL。繰越内訳を足す場合は、全額の頁が既知のときだけ最初の頁。
+  - name: source_x0
+    description: 項目の印字の枠の左端。PDFだけ（頁`source_page`の左上原点のpt）。保存済みの取り込み表で値が無ければNULL（団体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
+  - name: source_y0
+    description: 項目の印字の枠の上端。PDFだけ（頁`source_page`の左上原点のpt）。保存済みの取り込み表で値が無ければNULL（団体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
+  - name: source_x1
+    description: 項目の印字の枠の右端。PDFだけ（頁`source_page`の左上原点のpt）。保存済みの取り込み表で値が無ければNULL（団体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
+  - name: source_y1
+    description: 項目の印字の枠の下端。PDFだけ（頁`source_page`の左上原点のpt）。保存済みの取り込み表で値が無ければNULL（団体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
+  - name: amount_source_x0
+    description: 採用した実績金額の印字の枠の左端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。
+  - name: amount_source_y0
+    description: 採用した実績金額の印字の枠の上端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。
+  - name: amount_source_x1
+    description: 採用した実績金額の印字の枠の右端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。
+  - name: amount_source_y1
+    description: 採用した実績金額の印字の枠の下端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。
   - name: account_kind
     description: 団体共通の会計の種類（一般会計・国民健康保険・介護保険・後期高齢者医療・用地・駐車場・下水道・介護サービス事業）。原典の会計名を account_kind_map の語で対応づけた風土記の判断。団体をまたぐ比較はこの列で行う。辞書に無い会計名は構築を止める。
     data_tests:
@@ -172,6 +188,22 @@ models:
     - not_null
   - name: amount_source_page
     description: 採用した当初予算額の物理頁（PDF）または物理行（CSV）。CSVの親の集計額はNULL。不明ならNULL。
+  - name: source_x0
+    description: 項目の印字の枠の左端。PDFだけ（頁`source_page`の左上原点のpt）。CSVは座標を持たずNULL。保存済みの取り込み表で値が無ければNULL（団体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
+  - name: source_y0
+    description: 項目の印字の枠の上端。PDFだけ（頁`source_page`の左上原点のpt）。CSVは座標を持たずNULL。保存済みの取り込み表で値が無ければNULL（団体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
+  - name: source_x1
+    description: 項目の印字の枠の右端。PDFだけ（頁`source_page`の左上原点のpt）。CSVは座標を持たずNULL。保存済みの取り込み表で値が無ければNULL（団体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
+  - name: source_y1
+    description: 項目の印字の枠の下端。PDFだけ（頁`source_page`の左上原点のpt）。CSVは座標を持たずNULL。保存済みの取り込み表で値が無ければNULL（団体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
+  - name: amount_source_x0
+    description: 採用した当初予算額の印字の枠の左端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。
+  - name: amount_source_y0
+    description: 採用した当初予算額の印字の枠の上端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。
+  - name: amount_source_x1
+    description: 採用した当初予算額の印字の枠の右端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。
+  - name: amount_source_y1
+    description: 採用した当初予算額の印字の枠の下端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。
   - name: account_kind
     description: 団体共通の会計の種類（一般会計・国民健康保険・介護保険・後期高齢者医療・用地・駐車場・下水道・介護サービス事業）。原典の会計名を account_kind_map の語で対応づけた風土記の判断。団体をまたぐ比較はこの列で行う。辞書に無い会計名は構築を止める。決算の表と同じ共有 intermediate から付ける。
     data_tests:
