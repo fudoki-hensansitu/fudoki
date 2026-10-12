@@ -150,7 +150,7 @@ LENDING_EXCLUSION = {'kind': '貸付金',
 
 
 SECTION_EXCLUSION = {'kind': '節の一覧',
-                     'reason': '事業説明のある目は別軸の法定節一覧を採用しない。事業説明のない目だけは法定節を採用する。'}
+                     'reason': '事業説明のない目は法定節を採用済み。事業説明のある目の法定節一覧は、節の軸の取り込みが未実装のための一時的な除外。次の作業で節の軸として取り込む。'}
 
 
 def parent_event(row, page, page_words=None):
@@ -367,8 +367,12 @@ def grid_table(words, header, headers, lines, page, *, column_bounds=None, body_
             nums = [w for w in row if bounds[-2] <= (w['x'] + w['xe']) / 2 < bounds[-1] and AMOUNT.fullmatch(w['text'])]
             if nums:
                 kept = [w for w in row if w['x'] < bounds[-1]]
+                locations = {('内表_' + h['name']): coordinates([w for w in row
+                            if bounds[idx] <= (w['x'] + w['xe']) / 2 < bounds[idx + 1]], page)
+                            for idx, h in enumerate(headers)
+                            if any(bounds[idx] <= (w['x'] + w['xe']) / 2 < bounds[idx + 1] for w in row)}
                 result.append({'cells': cells, 'location': coordinates(kept, page),
-                               'money_location': coordinates(nums[-1:], page)})
+                               'cell_locations': locations, 'money_location': coordinates(nums[-1:], page)})
                 if compact(cells['内表_' + headers[0]['name']]) == '計':
                     return result, max(w['ye'] for w in row)
         raise ValueError(f'Unruled monetary table has no total on page {page}')
@@ -813,6 +817,12 @@ def assemble(pages, first, last, *, source, destination, reserve_kan='11', perso
                                             'title': title})
                         record = {**node_context(owner), **item['cells'], **item['location'],
                                   **{amount_column + '_' + k: v for k, v in item['money_location'].items()}}
+                        for column, location in (item.get('cell_locations') or {}).items():
+                            if location:
+                                record.update({column + '_' + key: value for key, value in location.items()})
+                                if column != amount_column and re.sub(r'（[^）]*）|等$', '', column).endswith(('件数', '数量', '者数', '児童数', '施工数')):
+                                    excluded.append({**QUANTITY_EXCLUSION, 'page': page,
+                                        'bbox': [location[k] for k in coordinates_keys()[1:]]})
                         if title:
                             # The caption's own measured position travels with
                             # the inner table's finest rows as a native title.
@@ -822,6 +832,10 @@ def assemble(pages, first, last, *, source, destination, reserve_kan='11', perso
                         non_amount = ''.join(compact(v) for k, v in item['cells'].items() if k != amount_column)
                         if '計' in non_amount and not any(c for c in non_amount.replace('計', '') if not c.isdigit() and c not in ',－件人'):
                             inner_controls.append(record)
+                            if is_lending:
+                                loc = item['location']
+                                excluded.append({**LENDING_EXCLUSION, 'page':page,
+                                    'bbox':[loc[k] for k in coordinates_keys()[1:]]})
                         elif is_lending:
                             lending.append(record)
                             loc = item['location']

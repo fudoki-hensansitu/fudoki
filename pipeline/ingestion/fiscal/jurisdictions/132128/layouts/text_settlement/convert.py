@@ -10,8 +10,8 @@ The 備考 column holds a 事業 -> optional (N) sub-group -> 備考節見出し
 hierarchy whose amounts partition the 目's 支出済額 by 事業×節. Leaf raw rows
 are the 備考細目; a 目 whose 備考 holds bare 事業 without 節見出し (the 予備費目)
 is a 目-grain row with 目_備考 (coordinator-approved 0069 design; 0047 precedent).
-The 法定節 list and the 歳出合計統制行 are local inspection observations, not
-raw rows. Amounts keep their printed text (△, commas, parens).
+The 法定節 list is a separate adopted axis. The 歳出合計統制行 stays a
+local inspection observation. Amounts keep their printed text (△, commas, parens).
 
 Shared print baselines carry no meaning: subject/budget, 節, and 備考 zones of
 one band are parsed independently by x position, never linked by equal y.
@@ -37,12 +37,6 @@ PATH_RIGHT = 140.0
 BUDGET_BANDS = [(134.0, 205.0), (209.0, 275.0), (299.0, 340.0), (359.0, 395.0), (399.0, 460.0)]
 SETSU_LEFT, SETSU_RIGHT = 455.0, 850.0
 SETSU_MARK_RIGHT = 475.0
-# Read-but-not-adopted statutory-section numbers: the section list stays a local
-# observation (setsu-list.json), never detail rows. Marker columns only: names
-# and amounts share adopted parent bands and stay in scope.
-SETSU_MARK_EXCLUSION = {'kind': '法定節の観測',
-                        'reason': '法定節一覧は local 観測に留め明細行にしない。採用表は備考細目のみ。節番号の欄。',
-                        'x_range': [455.0, 530.0]}
 SETSU_NAME_LEFT = 460.0
 SETSU_AMOUNT_BANDS = [(530.0, 605.0), (605.0, 672.0), (735.0, 778.0), (786.0, 848.0)]
 SUBJECT_EXEC_BANDS = [(604.0, 672.0), (740.0, 775.0), (790.0, 845.0)]
@@ -310,7 +304,7 @@ def parse_note_band(row, page, y, state, setsu_names):
         end = max(w['xMax'] for w in rest if w['xMin'] < 885)
         name = join_text([w for w in rest if w['xMin'] >= end - 1]) or None
         state['group'] = {'番号': SUB_GROUP.fullmatch(marker[0]['text'])[1],
-                          '名称': name, '金額': amount,
+                          '名称': name or join_text(rest), '金額': amount,
                           '物理頁': page, '上端': y, '下端': max(w['yMax'] for w in row),
                           **node_x(rest), **positions}
         state['setsu'] = None
@@ -394,6 +388,10 @@ COLUMNS = (
 )
 
 
+COLUMNS += ([f'節_{k}' for k in ('番号', '名称', '金額', *EXECUTED, '物理頁', '左端', '上端', '右端', '下端')]
+            + [f'節_{k}_{s}' for k in ('金額', *EXECUTED) for s in AMOUNT_POSITION_SUFFIXES])
+
+
 def flatten(context, project, group, setsu, detail, memo, page, y, bottom):
     row = {}
     for level in ('款', '項', '目'):
@@ -475,6 +473,7 @@ def convert(inputs, destination, options):
         raise ValueError('No printed 法定節 list observed')
 
     leaves, setsu_list, totals, footers = [], [], [], []
+    statutory_rows = []
     context, current_moku = {}, None
     state = {'project': None, 'group': None, 'setsu': None, 'last': None}
     consumed = set()
@@ -493,8 +492,9 @@ def convert(inputs, destination, options):
                     raise ValueError('Project mixes bare and sectioned remarks')
                 parts.append(f"{project['番号']} {project['名称']} {project['金額']}")
             record = current_moku['record']
-            leaves.append(flatten(context, None, None, None, None, '\n'.join(parts),
-                                  record['page'], record['上端'], record['下端']))
+            for project in current_moku['projects']:
+                leaves.append(flatten(context, project, None, None, None, '\n'.join(parts),
+                                      project['物理頁'], project['上端'], project['下端']))
             return
         for project in current_moku['projects']:
             if not project['sections']:
@@ -541,6 +541,17 @@ def convert(inputs, destination, options):
                 record['page'] = page
                 record['path'] = tuple(context[level]['番号'] for level in ('款', '項', '目'))
                 setsu_list.append(record)
+                adopted = flatten(context, None, None, None, None, None, page, y, record['下端'])
+                adopted.update({'節_番号': record['区分_番号'], '節_名称': record['区分_名称'],
+                                '節_物理頁': page, '節_上端': y, '節_下端': record['下端'],
+                                **{'節_' + k: v for k, v in node_x(
+                                    [w for w in row if SETSU_LEFT <= w['xMin'] < SETSU_MARK_RIGHT
+                                     or SETSU_MARK_RIGHT <= w['xMin'] < SETSU_RIGHT and not FRAG.fullmatch(w['text'])]).items()}})
+                for key in ('金額', *EXECUTED):
+                    text, found = record[key]
+                    adopted['節_' + key] = text
+                    adopted.update(amount_position_fields('節_' + key, page, boxes(found)))
+                statutory_rows.append(adopted)
             elif kind == 'continuation':
                 name_words = [w for w in row
                               if SETSU_NAME_LEFT <= w['xMin'] < SETSU_RIGHT]
@@ -548,6 +559,8 @@ def convert(inputs, destination, options):
                     raise ValueError('Section continuation without an open section '
                                      f'at page {page}, y={y}')
                 setsu_list[-1]['区分_名称'] += '\n' + join_text(name_words)
+                statutory_rows[-1]['節_名称'] = setsu_list[-1]['区分_名称']
+                statutory_rows[-1]['節_下端'] = max(statutory_rows[-1]['節_下端'], max(w['yMax'] for w in name_words))
                 setsu_list[-1]['下端'] = max(setsu_list[-1]['下端'],
                                             max(w['yMax'] for w in name_words))
             if tokens:
@@ -601,6 +614,7 @@ def convert(inputs, destination, options):
     if not leaves:
         raise ValueError('No detail leaves assembled')
 
+    leaves.extend(statutory_rows)
     table_id = options['table_id']
     columns = tuple(ParquetColumn(k, 'BIGINT' if k.endswith('物理頁') else 'DOUBLE'
                                   if k.endswith(('左端', '上端', '右端', '下端')) else 'VARCHAR')
@@ -616,9 +630,7 @@ def convert(inputs, destination, options):
     write_coverage_words(Path(output.path),
                          [(page, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text'])
                           for page, words in pages for w in words if w['yMin'] >= HEADER_TOP],
-                         amount_columns=AMOUNT_COLUMNS,
-                         excluded_regions=[{**SETSU_MARK_EXCLUSION,
-                                            'pages': [[selected[0], selected[-1]]]}])
+                         amount_columns=AMOUNT_COLUMNS)
     (observations / 'setsu-list.json').write_text(
         json.dumps(setsu_list, ensure_ascii=False, indent=2) + '\n')
     (observations / 'expenditure-total.json').write_text(
@@ -636,6 +648,9 @@ def metadata(columns, account):
         contexts.append({'columns': [c for c in columns if c.startswith(level + '_')],
                          'header_path': ['科目', level],
                          'grain_columns': [level + '_番号', level + '_物理頁', level + '_上端']})
+    contexts.append({'columns': [c for c in columns if c.startswith('節_')],
+                     'header_path': ['節'], 'semantic_role': 'setsu',
+                     'grain_columns': ['目_番号', '目_物理頁', '目_上端', '節_番号']})
     contexts.append({'columns': ['事業_番号', '事業_名称', '事業_金額'],
                      'header_path': ['説明', '事業'],
                      'grain_columns': ['目_番号', '目_物理頁', '目_上端', '事業_番号']})
@@ -654,7 +669,7 @@ def metadata(columns, account):
             '金額は印字原文（△・桁区切り・括弧のまま）。事業_名称は担当課の括弧書きを含む原文。'
             '予備費目は目の粒度とし、備考の bare 事業文を目_備考へ保持する（0069承認・0047先例）。'
             '同一印字行帯の科目・節・備考はx帯で独立に解釈し、高さの一致を対応の根拠にしない。'
-            '法定節一覧と歳出合計はlocal観測（observations/）に留め、明細行へ加えない。'
+            '法定節一覧は説明と独立した節の軸として保持し、歳出合計はlocal観測に留める。'
             'p2は款1項2目1の備考溢れ頁で、前頁の文脈を継承する。'
             '頁頭の「後期 (単位：円)」は単位の根拠、会計の同定は上流scopeによる。'
             f'対象会計は{account}。')

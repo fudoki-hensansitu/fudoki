@@ -408,6 +408,10 @@ def subject_record(words, row, page, y, name_high, anomalies, next_row=None):
     labels = [w for w in row if w['xMin'] < SUBJ_BANDS[0][0]]
     joined = ''.join(w['text'] for w in labels)
     if joined.startswith('歳出') and '計' in joined:
+        # The 合 glyph splits into misencoded strokes in the text layer.
+        # Keep the observed total's known printed caption in coverage too.
+        for index, word in enumerate(labels):
+            word['coverage_text'] = '歳出合計' if index == 0 else ''
         near = row_words(words, y)
         texts, owners = band_amounts(near, SUBJ_BANDS, anomalies)
         exec_texts, exec_owners = executed(words, y, anomalies)
@@ -541,7 +545,22 @@ def parse_breakdown(cell, anomalies):
         names, amounts = split_row(row)
         if names and len(amounts) == 1 and len(amounts[0]['text']) == 1 and amounts[0]['xMin'] >= 1100:
             carry = amounts[0]
-            amounts = []
+            raw_name = ''.join(w['text'] for w in names)
+            repaired = repair_brackets(raw_name + carry['text'])
+            if repaired.endswith('】') and repaired != raw_name + carry['text']:
+                carry['coverage_text'] = '】'
+                names = [*names, carry]
+                carry = None
+                amounts = []
+            elif re.search(r'[（(][^()（）]*$', raw_name):
+                # A wrapped parenthesized identifier owns its trailing digit.
+                # It is not a lone money cell (e.g. （１５ followed by １）).
+                names = [*names, carry]
+                carry = None
+                amounts = []
+            else:
+                # A single printed 0/1 can be a real monetary cell.
+                carry = None
         elif carry is not None:
             anomalies.append({'page': cell['page'], 'y': row[0]['yMin'],
                               'issue': 'lone glyph after name', 'text': carry['text']})
@@ -1025,7 +1044,7 @@ def convert(inputs, destination, options):
         output = write_conversion(destination / (table_id + '.parquet'), rows, columns=columns,
                                   context=ConversionContext(source['sha256'], table_id, __file__))
         write_coverage_words(Path(output.path),
-                             [(page, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text'])
+                             [(page, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w.get('coverage_text', w['text']))
                               for page, words in pages for w in words
                               if BODY_TOP <= w['yMin'] < BODY_BOTTOM],
                              amount_columns=AMOUNT_COLUMNS if kind == 'details' else ())

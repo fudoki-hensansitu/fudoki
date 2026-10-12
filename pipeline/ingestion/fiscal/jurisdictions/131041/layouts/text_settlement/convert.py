@@ -22,12 +22,12 @@ SUMMARY_AMOUNTS = PARENT_AMOUNTS[:6] + ['継続費逓次繰越', '繰越明許�
 CARRY_AMOUNTS = ['継続費逓次繰越', '繰越明許費', '事故繰越し']
 SUMMARY_EDGES = [(99, 192), (192, 278), (278, 362), (362, 446), (446, 544),
                  (544, 732), (732, 813), (813, 895), (895, 976), (976, 1058)]
-# Read-but-not-adopted section grid: kind and reason are hand-written next to
-# the layout decision that keeps sections auxiliary; pages come from the
+# Read-but-not-adopted section grid (temporary until the setsu axis is ingested):
+# kind and reason are hand-written here; pages come from the
 # processed scope at runtime. Marker/number/name/amount columns only: the
 # execution columns share adopted parent bands and stay in scope.
 SECTION_EXCLUSION = {'kind': '節の一覧',
-                     'reason': '節一覧と備考は同じ目の独立した分解であり、節表は検算観測のみで採用しない。'}
+                     'reason': '節の軸の取り込みが未実装のための一時的な除外。次の作業で節の軸として取り込む。'}
 SUMMARY_EXCLUSION = {'kind': '総括', 'reason': '款の総括は独立した検算観測。採用表に属する繰越額の印字は照合対象に残す。'}
 AMOUNT_COLUMNS = ([{'header': key, 'x_range': list(edges)}
                    for key, edges in zip(PARENT_AMOUNTS, DETAIL_EDGES)] +
@@ -289,7 +289,7 @@ def metadata(rows, suffix):
     note = ('一般会計歳出総括。歳出合計は款番号が空欄の印字合計行。' if suffix == 'summary' else
             '款・項・目の印字欄を所属する葉へ反復。節一覧と備考は同じ目の独立した分解であり相互の対応を推定していない。葉の欄が印字されない目は目の粒度で残し、葉の番号・名称・金額をNULLとする。備考_注記名称・備考_注記金額は親欄に印字された前年度繰越事業費不用額、備考_流用注記名称・備考_流用注記金額は目の備考欄の流用注記であり、いずれも支出済額の内訳ではない。金額は円の原表記である。')
     if suffix == 'expenditure-detail':
-        note += ('正式rawは備考の最細説明・事業明細であり、法定節一覧・総括表は独立したローカル検算観測に残す。'
+        note += ('正式rawは備考の最細説明・事業明細。法定節一覧は節の軸として取り込む予定で、現時点では未取り込み。総括表は独立したローカル検算観測に残す。'
                  '款_継続費逓次繰越・款_繰越明許費・款_事故繰越しは、総括の同じ印字款番号・名称への所属を確認して反復した親金額。'
                  '款_総括_物理頁・上端・下端はその総括行の原典位置。これらの繰越額と反復親金額は備考_金額へ加算しない。')
     return {'units': [{'text': '円', 'scope': {'kind': 'columns', 'columns': amounts}}],
