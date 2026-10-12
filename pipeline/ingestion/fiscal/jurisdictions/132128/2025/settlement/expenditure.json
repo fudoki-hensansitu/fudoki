@@ -25,10 +25,10 @@
     {
       "table_id": "late-elderly-medical-setsu",
       "conversion_id": "late-elderly-medical-settlement",
-      "input_fingerprint": "731161d6fcfbbf33bdd1a1e5b7323a3f70e32a710255a41422470d6d36c3aeca",
+      "input_fingerprint": "aa260c1b23ad83881d122df61fe4134cd41fdc8ae112e541e41b81eebcea5d8f",
       "account": "後期高齢者医療特別会計",
       "notes": [
-        "日野市決算歳出事項別明細書（A3横単票）の備考細目を行とする。名称は単語間隔が2pt超の箇所を空白、欄内折返しを改行で保持する（印字のまま）。款・項・目の予算5列・執行3列・印字位置を反復し、事業・事業群・備考節を展開する。金額は印字原文（△・桁区切り・括弧のまま）。事業_名称は担当課の括弧書きを含む原文。予備費目は目の粒度とし、備考の bare 事業文を目_備考へ保持する（0069承認・0047先例）。同一印字行帯の科目・節・備考はx帯で独立に解釈し、高さの一致を対応の根拠にしない。法定節一覧と歳出合計はlocal観測（observations/）に留め、明細行へ加えない。p2は款1項2目1の備考溢れ頁で、前頁の文脈を継承する。頁頭の「後期 (単位：円)」は単位の根拠、会計の同定は上流scopeによる。対象会計は後期高齢者医療特別会計。",
+        "日野市決算歳出事項別明細書（A3横単票）の備考細目を行とする。名称は単語間隔が2pt超の箇所を空白、欄内折返しを改行で保持する（印字のまま）。款・項・目の予算5列・執行3列・印字位置を反復し、事業・事業群・備考節を展開する。金額は印字原文（△・桁区切り・括弧のまま）。事業_名称は担当課の括弧書きを含む原文。予備費目は目の粒度とし、備考の bare 事業文を目_備考へ保持する（0069承認・0047先例）。同一印字行帯の科目・節・備考はx帯で独立に解釈し、高さの一致を対応の根拠にしない。法定節一覧は説明と独立した節の軸として保持し、歳出合計はlocal観測に留める。p2は款1項2目1の備考溢れ頁で、前頁の文脈を継承する。頁頭の「後期 (単位：円)」は単位の根拠、会計の同定は上流scopeによる。対象会計は後期高齢者医療特別会計。",
         "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
       ],
       "unread_amount_count": 0,
@@ -36,18 +36,18 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/132128/2025/settlement/expenditure/late-elderly-medical-setsu-nodes.parquet",
-          "sha256": "309e3a8826d2189b33b5ae14ccba3693d046f0d649e7f3512ab10d3fa45c1833",
-          "bytes": 7125
+          "sha256": "c240490304fc7fd3362a73ea49e512193d52c52c9d32ec8fe2a7160936bb996b",
+          "bytes": 8641
         },
-        "row_count": 121
+        "row_count": 144
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132128/2025/settlement/expenditure/late-elderly-medical-setsu-amounts.parquet",
-          "sha256": "efee7ba8a5ed7ecbfaf67d0f64c8a610d579115e5cd890fca1a9315efe6b7596",
-          "bytes": 4140
+          "sha256": "7f84c52f6669f52fb06eff4fd9bd4cb928e20ce74778e5eb7039bbf06da1ced3",
+          "bytes": 7340
         },
-        "row_count": 275
+        "row_count": 364
       }
     }
   ],

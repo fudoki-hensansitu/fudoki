@@ -30,7 +30,7 @@
     {
       "table_id": "kouki-setsu",
       "conversion_id": "kouki-settlement",
-      "input_fingerprint": "8bd1008ba3fb29e9f844360cee693cf23b9a5ab2e55b668a3524ac8f75fa6bc4",
+      "input_fingerprint": "e7cdde8df2a3aea767a6a971432b8343e084556f520ecec8486041bb2bd4bd3a",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "法定節が行。節を持たない25款5項5目予備費は目行。款・項・目の金額・執行額は所属contextとして各行へ反復。右頁備考の経費内訳ブロック（見出し・項目・合計）は事業別の分解で節対応未確認のため行化せず、属する目の目_備考へ印字行の改行のまま保持。末尾の施策番号は目_施策番号へカンマ結合で保持し、目_備考の行内にも残る。歳出合計統制行は行化せずlocal観測。執行率は原典の百分率表記を保持。継続費繰越・予備費流用欄は対象範囲で印字なしのため全行NULL。物理頁は左頁、bboxは左頁の行bounds。",
@@ -49,8 +49,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132063/2025/settlement/expenditure/kouki-setsu-amounts.parquet",
-          "sha256": "ced7069933b79744f90bebe6abcf412ba44157b03c22e98fa55348b7c221ffc8",
-          "bytes": 2954
+          "sha256": "3459752902329d459c23151d7e41d6e1eb19714d7c5f952d75e5ea335b5e9993",
+          "bytes": 5370
         },
         "row_count": 233
       }

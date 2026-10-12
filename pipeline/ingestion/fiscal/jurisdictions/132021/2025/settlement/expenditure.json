@@ -123,7 +123,7 @@
     {
       "table_id": "general-expenditure-details",
       "conversion_id": "general-settlement-detail",
-      "input_fingerprint": "c8a19454857029679caa5cf0f83b0d883e1decf4f65ddf7c43d9801d1736570a",
+      "input_fingerprint": "6d20456a6b5a6001c13f1131bf1402dd1345e2ee30a4fa05d8c202002d0820c2",
       "account": "一般会計",
       "notes": [
         "左頁グリッドの法定最細行=節行（節_*列が印字値）。節を印字しない目はその科目行自体が葉（節_*列NULL）。款・項・目_*列は行が属する科目行の印字値（denorm、再掲行は同一値）。右頁備考結合セルのうち説明階層を構成しない行（流用注記・予備費支出先一覧等）は目_備考に原文改行で保持。説明分解は別表 general-expenditure-notes にあり、この表とは同一支出の別軸で合算しない。金額は原典の桁区切り・△符号を保持。歳出合計行・款（N）項（N）再掲見出し・会計標は観測に留め行にしない。",
@@ -134,24 +134,24 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/132021/2025/settlement/expenditure/general-expenditure-details-nodes.parquet",
-          "sha256": "d612441bc38478226847b945c9a7df0cd66d03dfea11b3b8c31c6f2d659fbc3a",
-          "bytes": 25730
+          "sha256": "4912e8ea32ed2f22b93ba3794c2af30ead4d50160a074c9e381f5342c257042b",
+          "bytes": 42576
         },
-        "row_count": 928
+        "row_count": 1422
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132021/2025/settlement/expenditure/general-expenditure-details-amounts.parquet",
-          "sha256": "f7853d6a4c85cd3c577de276aabe23fd36b863bc30a72afa169ffa04b838ed84",
-          "bytes": 31761
+          "sha256": "f2b0dfd7e1470925d26b726a00bc0e5c49bdafd85ed416e6485638d3f7abcd47",
+          "bytes": 62457
         },
-        "row_count": 4280
+        "row_count": 4774
       }
     },
     {
       "table_id": "general-expenditure-notes",
       "conversion_id": "general-settlement-detail",
-      "input_fingerprint": "c8a19454857029679caa5cf0f83b0d883e1decf4f65ddf7c43d9801d1736570a",
+      "input_fingerprint": "6d20456a6b5a6001c13f1131bf1402dd1345e2ee30a4fa05d8c202002d0820c2",
       "account": "一般会計",
       "notes": [
         "右頁備考結合セル内の事業説明の最細行（説明1=事業、説明2=セル内節見出し、説明3=細目、説明4=細目の下の行: 字下げして金額を一段左に印字する細々目、または繰越明許費・事故繰越の内訳行）。繰越明許費・事故繰越・支出済額・不用額・本年度支出額・翌年度繰越額は項目ではなく説明3の金額欄の見出しであり、ノードへの移行時は説明3の金額として保持する。説明階層の見出し行で下位印字の無いものはその見出し自体を葉とする（金額0印字の事業・葉なし節見出し等）。説明内節見出し(説明2)と表グリッド節行の対応付けはraw列に実体化せず検査用観測に留める。説明3・説明4は同じ支出の別分解軸であり節表 general-expenditure-details とは合算しない。事業名の【所管】は名称の一部。金額は原典の桁区切り・△符号を保持。物理頁は各要素が印字された実頁（左頁・右頁それぞれ）。",
@@ -162,24 +162,24 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/132021/2025/settlement/expenditure/general-expenditure-notes-nodes.parquet",
-          "sha256": "f261a31f17cd7376c09c55dd4f1ea99a3320f782c9d0da1edb515e32f805c835",
-          "bytes": 244578
+          "sha256": "0a2647ce0fd8d7d89945c04d1288937c5be9f5f390f2293de39851cf571ad4d3",
+          "bytes": 269286
         },
-        "row_count": 7432
+        "row_count": 7926
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132021/2025/settlement/expenditure/general-expenditure-notes-amounts.parquet",
-          "sha256": "5cfb51b878626019e2a36538289a76c37fc9f8b962891d953a8b94d28d895217",
-          "bytes": 149061
+          "sha256": "66c5498f87619213510762051a2219ea783aa89c58a4a1723513379386d8aa85",
+          "bytes": 190610
         },
-        "row_count": 8491
+        "row_count": 8985
       }
     },
     {
       "table_id": "kouki-expenditure-details",
       "conversion_id": "kouki-settlement-details",
-      "input_fingerprint": "2431f3f6e52427dc93ebecacf3325d4b3baa2932e3129d9b18419789dd39f08c",
+      "input_fingerprint": "f3c73945abe1d2cef8d5c1bbc4f655b25603a9b296b432ac60100f0a76257ce7",
       "account": "後期高齢者医療事業特別会計",
       "notes": [
         "左頁グリッドの法定最細行=節行（節_*列が印字値）。節を印字しない目はその科目行自体が葉（節_*列NULL）。款・項・目_*列は行が属する科目行の印字値（denorm、再掲行は同一値）。右頁備考結合セルのうち説明階層を構成しない行（流用注記・予備費支出先一覧等）は目_備考に原文改行で保持。説明分解は別表 kouki-expenditure-notes にあり、この表とは同一支出の別軸で合算しない。金額は原典の桁区切り・△符号を保持。歳出合計行・款（N）項（N）再掲見出し・会計標は観測に留め行にしない。",
@@ -190,24 +190,24 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/132021/2025/settlement/expenditure/kouki-expenditure-details-nodes.parquet",
-          "sha256": "88136309e6ce11c0f05d23b122235db2259e96c92b8fe70f4b2a158360c9b854",
-          "bytes": 4261
+          "sha256": "487e9e54a56b35d176366e3b0eb34c97d8b080e5efe3d18d5ab685e2bf108eec",
+          "bytes": 4872
         },
-        "row_count": 43
+        "row_count": 47
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132021/2025/settlement/expenditure/kouki-expenditure-details-amounts.parquet",
-          "sha256": "4c07b84b70c77f8a3893be30658bc7533a55ce7a7ff94d8d84c2d7ab9338a28f",
-          "bytes": 2979
+          "sha256": "7f3388441d2101678b9c4fb2763206c767df519c1fccd4bcc4ee278689dfb432",
+          "bytes": 5908
         },
-        "row_count": 260
+        "row_count": 264
       }
     },
     {
       "table_id": "kouki-expenditure-notes",
       "conversion_id": "kouki-settlement-notes",
-      "input_fingerprint": "9f144de408dd552e6a4e04c4247006b236cccba8202283ebc68959c412046342",
+      "input_fingerprint": "a98f4500b9b9481708dbcaa2168c6313f03906b7303cbb92011399954d504057",
       "account": "後期高齢者医療事業特別会計",
       "notes": [
         "右頁備考結合セル内の事業説明の最細行（説明1=事業、説明2=セル内節見出し、説明3=細目、説明4=細目の下の行: 字下げして金額を一段左に印字する細々目、または繰越明許費・事故繰越の内訳行）。繰越明許費・事故繰越・支出済額・不用額・本年度支出額・翌年度繰越額は項目ではなく説明3の金額欄の見出しであり、ノードへの移行時は説明3の金額として保持する。説明階層の見出し行で下位印字の無いものはその見出し自体を葉とする（金額0印字の事業・葉なし節見出し等）。説明内節見出し(説明2)と表グリッド節行の対応付けはraw列に実体化せず検査用観測に留める。説明3・説明4は同じ支出の別分解軸であり節表 kouki-expenditure-details とは合算しない。事業名の【所管】は名称の一部。金額は原典の桁区切り・△符号を保持。物理頁は各要素が印字された実頁（左頁・右頁それぞれ）。",
@@ -218,24 +218,24 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/132021/2025/settlement/expenditure/kouki-expenditure-notes-nodes.parquet",
-          "sha256": "4623db9202aecad1a39fd451821c604063b543541580a6876bda074af3c174ae",
-          "bytes": 7399
+          "sha256": "34e8793c4ff6fc21e3937e9e17e3a0ceac9d4b5ed5356fe9feb58a9dccc31262",
+          "bytes": 8194
         },
-        "row_count": 102
+        "row_count": 106
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132021/2025/settlement/expenditure/kouki-expenditure-notes-amounts.parquet",
-          "sha256": "1c6053362c21d04e570a1142e94647549aed9b3affbd839f093a98a7cdb07dd7",
-          "bytes": 3704
+          "sha256": "2cc56b8a85972a4c0cbaec28bb80b10f91c28d563627f915303d85cc6fe40c58",
+          "bytes": 7107
         },
-        "row_count": 256
+        "row_count": 260
       }
     },
     {
       "table_id": "chushajo-expenditure-details",
       "conversion_id": "chushajo-settlement-details",
-      "input_fingerprint": "91e8bb709e3f7322664d8f84a35fcb21aea030465632b9b49681253725e7846c",
+      "input_fingerprint": "f16478ca4b74ae74b54b5d6061db9a7f07b5d1694d00570a22cef5dee77de38f",
       "account": "駐車場事業特別会計",
       "notes": [
         "左頁グリッドの法定最細行=節行（節_*列が印字値）。節を印字しない目はその科目行自体が葉（節_*列NULL）。款・項・目_*列は行が属する科目行の印字値（denorm、再掲行は同一値）。右頁備考結合セルのうち説明階層を構成しない行（流用注記・予備費支出先一覧等）は目_備考に原文改行で保持。説明分解は別表 chushajo-expenditure-notes にあり、この表とは同一支出の別軸で合算しない。金額は原典の桁区切り・△符号を保持。歳出合計行・款（N）項（N）再掲見出し・会計標は観測に留め行にしない。",
@@ -246,16 +246,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/132021/2025/settlement/expenditure/chushajo-expenditure-details-nodes.parquet",
-          "sha256": "b4caa12c38a6fbd7a18ab820e119880cdaa5284eba06ce0118d016b163a4cf9a",
-          "bytes": 3312
+          "sha256": "e1c3ce1897dccd59c38f8551c0bdc23605e04307705f6f4345ab18bf24cbf6bf",
+          "bytes": 3540
         },
         "row_count": 22
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132021/2025/settlement/expenditure/chushajo-expenditure-details-amounts.parquet",
-          "sha256": "e346fd2127c9349e27eaa0388047fdf9406a44c5614fde04627de0e7cb7e9818",
-          "bytes": 2319
+          "sha256": "55278feea5c62dceef1362f8550c0c14484dbaf1f7e4808bd1caca57284e9f97",
+          "bytes": 4035
         },
         "row_count": 124
       }
@@ -263,7 +263,7 @@
     {
       "table_id": "chushajo-expenditure-notes",
       "conversion_id": "chushajo-settlement-notes",
-      "input_fingerprint": "eb73b2cd06a0cffd8e0b5d32c09489f6eba693bf5fb82a643ec48a6713b146d5",
+      "input_fingerprint": "197989e590054b9f94c38412f2e51f3fd457620cf332c1c354aa0264324dc38b",
       "account": "駐車場事業特別会計",
       "notes": [
         "右頁備考結合セル内の事業説明の最細行（説明1=事業、説明2=セル内節見出し、説明3=細目、説明4=細目の下の行: 字下げして金額を一段左に印字する細々目、または繰越明許費・事故繰越の内訳行）。繰越明許費・事故繰越・支出済額・不用額・本年度支出額・翌年度繰越額は項目ではなく説明3の金額欄の見出しであり、ノードへの移行時は説明3の金額として保持する。説明階層の見出し行で下位印字の無いものはその見出し自体を葉とする（金額0印字の事業・葉なし節見出し等）。説明内節見出し(説明2)と表グリッド節行の対応付けはraw列に実体化せず検査用観測に留める。説明3・説明4は同じ支出の別分解軸であり節表 chushajo-expenditure-details とは合算しない。事業名の【所管】は名称の一部。金額は原典の桁区切り・△符号を保持。物理頁は各要素が印字された実頁（左頁・右頁それぞれ）。",
@@ -274,16 +274,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/132021/2025/settlement/expenditure/chushajo-expenditure-notes-nodes.parquet",
-          "sha256": "65b138954bf515456834fce049acde8a370680fdd8d80f4fd7236d734cf93179",
-          "bytes": 4486
+          "sha256": "f77efe9b783e273cc392d65674a72e41f872de8f392b6671077a92a3d4c6446a",
+          "bytes": 4810
         },
         "row_count": 41
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132021/2025/settlement/expenditure/chushajo-expenditure-notes-amounts.parquet",
-          "sha256": "303637d5b22236f5b1f859c87c6b5da88e960446f6b1cedc0cc88f5d9f1eab18",
-          "bytes": 2427
+          "sha256": "4ee5dede12ce4683afe6bbc42b398a5ce58a46c66d05ac3da9b0082d522f9c94",
+          "bytes": 4035
         },
         "row_count": 104
       }

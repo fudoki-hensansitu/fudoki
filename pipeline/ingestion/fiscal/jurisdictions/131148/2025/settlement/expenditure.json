@@ -101,7 +101,7 @@
     {
       "table_id": "general-setsu",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "5ff78b86fb7cda6770179ee268417d9faac7320deae8221c4d07d8e63bf18d02",
+      "input_fingerprint": "d6ccea3142899aba138a309a1a3fa8f0f10b06a8e8d2bc456cf6118fc8a65fa8",
       "account": "一般会計",
       "notes": [
         "法定節が原典の最細明細。所属する款・項・目の予算5列・執行5列・備考・印字位置を反復。節の金額は予算現額（右頁の節金額欄）、節の支出済額以下5列は執行実績。同じ欄の名称折り返しは改行、単語間の印字間隔は空白で保持。上端は印字先頭行の上端、下端は名称の全印字行を囲む下端。備考欄は水平罫線の結合セルが所属範囲を定め、セルが縦に覆う行のうち最上位の行（款・項・目のいずれか）の備考欄へセル全文を印字行の改行のまま保持する。節自身に所属する備考セルはこの原典に存在しない。原典は左右見開きで、科目・予算・節区分は左頁、節金額・執行・備考は右頁に印字される。物理頁は左頁を記録し、右側各欄は物理頁+1の頁に印字される。見開き末尾の「一般会計」会計標は行の備考ではないため除く。",
@@ -112,24 +112,24 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131148/2025/settlement/expenditure/general-setsu-nodes.parquet",
-          "sha256": "50800a4f3fec53765be76db6c8f510eb4c9a9c0f6b6f8ab1c6180b5e77bc0905",
-          "bytes": 16869
+          "sha256": "1dd00dbd502ff874428004bf883f3edfedc70155b2ccd7bee37d8b59a5e5fb67",
+          "bytes": 18896
         },
-        "row_count": 623
+        "row_count": 650
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131148/2025/settlement/expenditure/general-setsu-amounts.parquet",
-          "sha256": "8641ea973894371f2f43045caf361ae68f232b91fdfc22634fe8acc28b77facb",
-          "bytes": 23706
+          "sha256": "e96ef0e1817c3021db9e952c1bcdbef59be369ceb852ae49a0be0980fdc079a5",
+          "bytes": 30203
         },
-        "row_count": 4106
+        "row_count": 4133
       }
     },
     {
       "table_id": "care-insurance-setsu",
       "conversion_id": "care-insurance-settlement",
-      "input_fingerprint": "795cd19b9d6575a96894f680d6f73c78b1f326fe5f2ef8d5389e0ffcc9908b04",
+      "input_fingerprint": "b7feb44a65ff6c79dd36e1686003ebce6f6ea7441848eb4922fc46a51856c214",
       "account": "介護保険特別会計",
       "notes": [
         "法定節が原典の最細明細。所属する款・項・目の予算5列・執行5列・備考・印字位置を反復。節の金額は予算現額（右頁の節金額欄）、節の支出済額以下5列は執行実績。同じ欄の名称折り返しは改行、単語間の印字間隔は空白で保持。上端は印字先頭行の上端、下端は名称の全印字行を囲む下端。備考欄は水平罫線の結合セルが所属範囲を定め、セルが縦に覆う行のうち最上位の行（款・項・目のいずれか）の備考欄へセル全文を印字行の改行のまま保持する。節自身に所属する備考セルはこの原典に存在しない。原典は左右見開きで、科目・予算・節区分は左頁、節金額・執行・備考は右頁に印字される。物理頁は左頁を記録し、右側各欄は物理頁+1の頁に印字される。見開き末尾の「介護保険特別会計」会計標は行の備考ではないため除く。",
@@ -140,16 +140,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131148/2025/settlement/expenditure/care-insurance-setsu-nodes.parquet",
-          "sha256": "c3e29e76393968366f09a0a448f135506b0b82bfcb6bfc8c04e06ac31420e8ee",
-          "bytes": 4878
+          "sha256": "4d660d73c9bb812f27f827d4611a12225710189abc8dee5d94089651767b66ef",
+          "bytes": 5325
         },
         "row_count": 71
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131148/2025/settlement/expenditure/care-insurance-setsu-amounts.parquet",
-          "sha256": "e577d08c780bc5ba05bf8ba771d74cc435105c07f53394bfd02aaf36ff1591b0",
-          "bytes": 4051
+          "sha256": "cb12d05fe2e9437dbb0744ae3d497e2a6005dd8195a7f9f27484c4f8860dd52a",
+          "bytes": 6282
         },
         "row_count": 530
       }
@@ -157,7 +157,7 @@
     {
       "table_id": "national-health-insurance-setsu",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "20535b94297b37bb2ef799d2524aa5504085b5963790b2cac5cf181a89fa21ca",
+      "input_fingerprint": "48575f19fa9aad4af2f6c6228663b28ec517c201baa71aeb5139efedf9f9012b",
       "account": "国民健康保険事業特別会計",
       "notes": [
         "法定節が原典の最細明細。所属する款・項・目の予算5列・執行5列・備考・印字位置を反復。節の金額は予算現額（右頁の節金額欄）、節の支出済額以下5列は執行実績。同じ欄の名称折り返しは改行、単語間の印字間隔は空白で保持。上端は印字先頭行の上端、下端は名称の全印字行を囲む下端。備考欄は水平罫線の結合セルが所属範囲を定め、セルが縦に覆う行のうち最上位の行（款・項・目のいずれか）の備考欄へセル全文を印字行の改行のまま保持する。節自身に所属する備考セルはこの原典に存在しない。原典は左右見開きで、科目・予算・節区分は左頁、節金額・執行・備考は右頁に印字される。物理頁は左頁を記録し、右側各欄は物理頁+1の頁に印字される。見開き末尾の「国民健康保険事業特別会計」会計標は行の備考ではないため除く。",
@@ -168,16 +168,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131148/2025/settlement/expenditure/national-health-insurance-setsu-nodes.parquet",
-          "sha256": "dd865dcfbcb18d21dac46268ba4963e09c524dc8b2d9efe93d909b01e4e054bc",
-          "bytes": 5184
+          "sha256": "1bf8e32a0efe706d65a69969f7868ae26ebe74ba7c30aa6b2220160d4b485ea5",
+          "bytes": 5635
         },
         "row_count": 76
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131148/2025/settlement/expenditure/national-health-insurance-setsu-amounts.parquet",
-          "sha256": "3a35ef9747a68644e9d2d1578f094d40ff62d77f673842bbfea11894d78163c4",
-          "bytes": 4311
+          "sha256": "2dc73731c1f7153e6ebd5f96ca64a113eb3a157a7db999abd632d7c064c54a48",
+          "bytes": 6690
         },
         "row_count": 584
       }
@@ -185,7 +185,7 @@
     {
       "table_id": "land-setsu",
       "conversion_id": "land-settlement",
-      "input_fingerprint": "2762bf91df720b1c090809e5e51652fefe7f522b9a9558cce0fade55d7d7579c",
+      "input_fingerprint": "0c491ccf4290b9d5be4cf9c362853a7a3e1e6c8ff29e336bb28af40dbfa5db5f",
       "account": "用地特別会計",
       "notes": [
         "法定節が原典の最細明細。所属する款・項・目の予算5列・執行5列・備考・印字位置を反復。節の金額は予算現額（右頁の節金額欄）、節の支出済額以下5列は執行実績。同じ欄の名称折り返しは改行、単語間の印字間隔は空白で保持。上端は印字先頭行の上端、下端は名称の全印字行を囲む下端。備考欄は水平罫線の結合セルが所属範囲を定め、セルが縦に覆う行のうち最上位の行（款・項・目のいずれか）の備考欄へセル全文を印字行の改行のまま保持する。節自身に所属する備考セルはこの原典に存在しない。原典は左右見開きで、科目・予算・節区分は左頁、節金額・執行・備考は右頁に印字される。物理頁は左頁を記録し、右側各欄は物理頁+1の頁に印字される。見開き末尾の「用地特別会計」会計標は行の備考ではないため除く。",
@@ -196,16 +196,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131148/2025/settlement/expenditure/land-setsu-nodes.parquet",
-          "sha256": "332cf1f210f6af393ba6ba75b6e6e879a53a5406b899baa3f8be5d8121478475",
-          "bytes": 2277
+          "sha256": "d4d472173c845d81227268b177b10ba50297bf4b486a66e4e3b7b603c51e2d50",
+          "bytes": 2440
         },
         "row_count": 6
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131148/2025/settlement/expenditure/land-setsu-amounts.parquet",
-          "sha256": "86b29557ef9695649fba9701f12a1c914549d12903da1d3b37a469c76fe1ed64",
-          "bytes": 1795
+          "sha256": "5b2280dbeec197c3e54224ea27c76eb8516d9543efc39ae07682655945fb7a24",
+          "bytes": 2642
         },
         "row_count": 52
       }
@@ -213,7 +213,7 @@
     {
       "table_id": "late-elderly-medical-setsu",
       "conversion_id": "late-elderly-medical-settlement",
-      "input_fingerprint": "f0faf7cbcb0a85946105719c84435b95b5cbf456a5e3440d4dcfea882181be72",
+      "input_fingerprint": "1473609b4a05e738e0acf5c2e6a55e67415541fc99a7bbae37ecbcfb90c63ff1",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "法定節が原典の最細明細。所属する款・項・目の予算5列・執行5列・備考・印字位置を反復。節の金額は予算現額（右頁の節金額欄）、節の支出済額以下5列は執行実績。同じ欄の名称折り返しは改行、単語間の印字間隔は空白で保持。上端は印字先頭行の上端、下端は名称の全印字行を囲む下端。備考欄は水平罫線の結合セルが所属範囲を定め、セルが縦に覆う行のうち最上位の行（款・項・目のいずれか）の備考欄へセル全文を印字行の改行のまま保持する。節自身に所属する備考セルはこの原典に存在しない。原典は左右見開きで、科目・予算・節区分は左頁、節金額・執行・備考は右頁に印字される。物理頁は左頁を記録し、右側各欄は物理頁+1の頁に印字される。見開き末尾の「後期高齢者医療特別会計」会計標は行の備考ではないため除く。",
@@ -224,16 +224,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131148/2025/settlement/expenditure/late-elderly-medical-setsu-nodes.parquet",
-          "sha256": "341a3627dbf1ba31e12a5072c125472a9729f9cc48eb2e38d085ad568fb17b17",
-          "bytes": 2651
+          "sha256": "cc3f5ff5744c261b547e21d73f00707b10e6b8d612559d1e1a70bbd74d2439d6",
+          "bytes": 2840
         },
         "row_count": 12
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131148/2025/settlement/expenditure/late-elderly-medical-setsu-amounts.parquet",
-          "sha256": "860f81f08e1cb65856d55a607b5f8fdf162ec53a76ca47e814d6116eecf03519",
-          "bytes": 2062
+          "sha256": "1f00a204518b2d3b81d1da690ff40ecf449533771bf6791f12791a68a71302fe",
+          "bytes": 3214
         },
         "row_count": 108
       }
