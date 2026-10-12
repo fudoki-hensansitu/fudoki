@@ -49,6 +49,7 @@ class Report:
     composite_glyphs: int = 0
     joined_numbers: int = 0
     off_page_rules: int = 0
+    cropped_words: int = 0
     health: dict = field(default_factory=dict)
     broken: bool = False
     hits: Counter = field(default_factory=Counter)
@@ -58,7 +59,7 @@ class Report:
         return {'hidden_glyphs': self.hidden_glyphs, 'hidden_rules': self.hidden_rules,
                 'vertical_words': self.vertical_words, 'invisible_error': self.invisible_error, 'pattern': self.pattern, 'duplicate_words': self.duplicate_words,
                 'composite_glyphs': self.composite_glyphs, 'joined_numbers': self.joined_numbers,
-                'off_page_rules': self.off_page_rules,
+                'off_page_rules': self.off_page_rules, 'cropped_words': self.cropped_words,
                 'health': self.health, 'broken': self.broken, 'repairs': sum(self.hits.values()),
                 'hits': dict(self.hits.most_common()), 'examples': {k: v[:5] for k, v in self.examples.items()}}
 
@@ -379,6 +380,41 @@ def join_vertical(page: Page, report: Report) -> None:
     page.words = result
 
 
+def crop_to_box(pdf_path: Path, pages: list[Page], report: Report) -> None:
+    """Drop words and rules outside the page's CropBox.
+
+    Some PDFs cut one A3 spread into two pages by CropBox only (left half, right half),
+    each page still holding the whole spread (132080・132047). A viewer shows one half;
+    Poppler's words cover both, so every row would be read twice. The words are in the
+    displayed (rotated) page measured from its top-left; the CropBox is mapped there.
+    Applied only when the CropBox is smaller than the MediaBox and words lie outside it.
+    """
+    import pypdfium2 as pdfium
+    document = pdfium.PdfDocument(str(pdf_path))
+    try:
+        for page in pages:
+            handle = document[page.number - 1]
+            ml, mb, mr, mt = handle.get_mediabox()
+            cl, cb, cr, ct = handle.get_cropbox()
+            rotation = handle.get_rotation()
+            handle.close()
+            if (cr - cl) * (ct - cb) >= .9 * (mr - ml) * (mt - mb):
+                continue
+            x0, x1, y0, y1 = {0: (cl - ml, cr - ml, mt - ct, mt - cb), 90: (cb - mb, ct - mb, cl - ml, cr - ml),
+                              180: (mr - cr, mr - cl, cb - mb, ct - mb), 270: (mt - ct, mt - cb, mr - cr, mr - cl)}[rotation % 360]
+            inside = lambda x, y: x0 - 1 <= x <= x1 + 1 and y0 - 1 <= y <= y1 + 1
+            words = [w for w in page.words if inside((w.x0 + w.x1) / 2, (w.y0 + w.y1) / 2)]
+            if len(words) == len(page.words):
+                continue  # the words already keep to the box
+            report.cropped_words += len(page.words) - len(words)
+            page.words = words
+            page.rules = [Rule(max(r.x0, x0), max(r.y0, y0), min(r.x1, x1), min(r.y1, y1)) for r in page.rules
+                          if r.x0 <= x1 and r.x1 >= x0 and r.y0 <= y1 and r.y1 >= y0
+                          and (not r.vertical or x0 <= r.x0 <= x1) and (r.vertical or y0 <= r.y0 <= y1)]
+    finally:
+        document.close()
+
+
 def clip_to_page(page: Page, report: Report) -> None:
     """Keep the parts of rules inside the page box.
 
@@ -404,6 +440,7 @@ def clip_to_page(page: Page, report: Report) -> None:
 def repair(pdf_path: Path | None, pages: list[Page]) -> tuple[list[Page], Report]:
     report = Report()
     if pdf_path is not None and pdf_path.exists():
+        crop_to_box(pdf_path, pages, report)
         try:
             drop_invisible(pdf_path, pages, report)
         except Exception as error:  # pdfium's raw API failed: keep Poppler's words as they are

@@ -3,7 +3,7 @@ import unittest
 from ingestion.generic.layout import Band, Glyph, is_amount, logical_pages, split_digits_at_rules
 from ingestion.generic.observe import Page, Rule, Word, merge_rules
 from ingestion.generic.sums import bracket
-from ingestion.generic.repair import Report, clip_to_page
+from ingestion.generic.repair import Report, clip_to_page, crop_to_box
 from ingestion.generic.tree import (Built, Group, Item, _leading_amount, _split_code, _split_line, number_span, owner,
                                    same_position, shape_depth, subject_items)
 from ingestion.generic.units import check as check_units
@@ -90,6 +90,25 @@ class TrialRulesTest(unittest.TestCase):
         turned = Page(1, 842, 1191, [Word('備考', 1000, 100, 1020, 110)], [Rule(1150, 50, 1150, 800)])
         clip_to_page(turned, report)
         self.assertEqual(turned.rules, [Rule(1150, 50, 1150, 800)])
+
+    def test_a_page_cut_from_a_spread_by_its_cropbox_keeps_only_its_half(self):
+        import tempfile
+        from pathlib import Path
+        import pypdfium2 as pdfium
+        document = pdfium.PdfDocument.new()
+        for bottom, top in ((0, 595.5), (595.5, 1191)):  # one A3 spread turned 90°, cut in two by CropBox
+            page = document.new_page(842, 1191)
+            page.set_rotation(90)
+            page.set_cropbox(0, bottom, 842, top)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'spread.pdf'
+            document.save(path)
+            spread = lambda number: Page(number, 842, 1191, [Word('議会費', 60, 300, 90, 309), Word('支出済額', 700, 100, 740, 109)],
+                                         [Rule(50, 120, 1100, 120)])
+            pages = [spread(1), spread(2)]
+            crop_to_box(path, pages, Report())
+        self.assertEqual([[w.text for w in p.words] for p in pages], [['議会費'], ['支出済額']])
+        self.assertEqual(pages[1].rules, [Rule(595.5, 120, 1100, 120)])
 
     def test_an_amount_on_the_name_line_below_the_code_belongs_to_that_item(self):
         band = Band(30, 98, 54, ('科目', '目'), [213.4, 551.4], 101, 551.4)
