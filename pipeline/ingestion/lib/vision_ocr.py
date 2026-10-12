@@ -10,6 +10,7 @@ import argparse
 import hashlib
 import json
 import math
+import os
 import platform
 import subprocess
 import sys
@@ -28,6 +29,7 @@ class VisionConfig:
     custom_words: tuple[str, ...] = ()
     vocabulary_path: str | None = None
     minimum_text_height: float | None = None
+    region_padding_px: int = 0
 
     def __post_init__(self) -> None:
         if type(self.dpi) is not int or not 72 <= self.dpi <= 600:
@@ -47,6 +49,8 @@ class VisionConfig:
         if self.vocabulary_path is not None and (
                 not isinstance(self.vocabulary_path, str) or not self.vocabulary_path.strip()):
             raise ValueError("vocabulary_path must be a nonempty path string or null")
+        if type(self.region_padding_px) is not int or not 0 <= self.region_padding_px <= 1000:
+            raise ValueError("region_padding_px must be an integer between 0 and 1000")
         if type(self.max_pixels) is not int or self.max_pixels < 1:
             raise ValueError("max_pixels must be a positive integer")
         if self.minimum_text_height is not None and (
@@ -93,6 +97,24 @@ def _load_vocabulary(path: Path) -> tuple[list[str], dict]:
     return words, {"path": str(path), "sha256": hashlib.sha256(data).hexdigest()}
 
 
+def _compiled(helper: Path, sha256: str) -> Path:
+    """The Swift helper compiled once per source SHA; interpreting it costs seconds per call."""
+    target = Path(__file__).resolve().parents[2] / ".cache" / "vision_ocr" / sha256[:16] / "vision_ocr"
+    if target.exists():
+        return target
+    target.parent.mkdir(parents=True, exist_ok=True)
+    temporary = target.with_name(f"vision_ocr.{os.getpid()}")
+    try:
+        process = subprocess.run(["xcrun", "swiftc", "-O", str(helper), "-o", str(temporary)],
+                                 capture_output=True, text=True, check=False)
+        if process.returncode:
+            raise VisionOcrError(f"Cannot compile Vision helper: {process.stderr.strip()[-500:]}")
+        os.replace(temporary, target)  # atomic, so a concurrent caller never runs a half-written binary
+    finally:
+        temporary.unlink(missing_ok=True)
+    return target
+
+
 def _recognize(path: Path, kind: str, pages: Sequence[int], config: VisionConfig,
                regions: Sequence[OcrRegion] | None, timeout_seconds: float) -> dict:
     path = Path(path).resolve(strict=True)
@@ -123,7 +145,7 @@ def _recognize(path: Path, kind: str, pages: Sequence[int], config: VisionConfig
                "config": native_config, "regions": [asdict(area) for area in areas]}
     try:
         process = subprocess.run(
-            ["xcrun", "swift", str(helper)], input=json.dumps(request),
+            [str(_compiled(helper, code_hashes["backend_sha256"]))], input=json.dumps(request),
             capture_output=True, text=True, timeout=timeout_seconds, check=False,
         )
     except (OSError, subprocess.TimeoutExpired) as exc:

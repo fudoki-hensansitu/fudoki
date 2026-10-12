@@ -12,7 +12,7 @@ paddle = recognize_pdf(Path("settlement.pdf"), pages=[1, 2], backend="paddle")
 
 `backend` を省略して `config` に `PaddleConfig` を渡した場合はPaddleを選ぶ。型が使うエンジンを一意に決めるため、既存のPaddle取得scriptはそのまま動く。`backend` を明示して `config` の型と食い違う場合は拒否する。
 
-Visionを既定にする理由は、実スキャンの金額の読み取りでPaddle smallより明らかに良いためである。macOSでしか動かない弱点は、OCRを変換器の外で一度だけ実行し観測を固定して補助入力にする方針（[ADR 0019](../../../docs/adr/0019-freeze-scan-ocr-observations.md)）で消える。Visionは **accurate、revision 3、日本語・英語** を初期条件にし、OSの版・build、revision、言語補正を記録する。内部重みは固定できるとは扱わない。設定は [vision_ocr.md](vision_ocr.md) を参照する。
+Visionを既定にする理由は、実スキャンの金額の読み取りでPaddle smallより明らかに良いためである。macOSでしか動かない弱点は、OCRを変換器の外で一度だけ実行し観測を固定して補助入力にする方針（[ADR 0019](../../../docs/adr/0019-freeze-scan-ocr-observations.md)）で消える。取得の入口は `acquire`（`ingestion:ocr` から呼ぶ）で、観測は内容だけの正規化JSON、所要時間や環境は実行記録に分ける。Visionが頁全体を空で返したら、罫線で決めた列の帯で読み直し、それでも空なら止める。Visionは **accurate、revision 3、日本語・英語** を初期条件にし、OSの版・build、revision、言語補正を記録する。内部重みは固定できるとは扱わない。設定は [vision_ocr.md](vision_ocr.md) を参照する。
 
 ## 単独の0を読めないことがある
 

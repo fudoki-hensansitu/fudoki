@@ -12,7 +12,7 @@ class CleanupTest(unittest.TestCase):
     def setUp(self):
         self.document = {
             'target': {'jurisdiction': '131041', 'fiscal_year': 2025, 'document_kind': 'settlement'},
-            'direction': 'expenditure',
+            'direction': 'expenditure', 'conversions': [],
             'tables': [{'object': {'key': 'fiscal/ingestion/131041/2025/settlement/expenditure/current.parquet'}}],
         }
         self.prefix = manifest.object_key(self.document, 'placeholder').rsplit('/', 1)[0] + '/'

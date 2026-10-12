@@ -1,6 +1,6 @@
 # ADR 0019: scan PDFのOCR観測を凍結した補助入力として変換に渡す
 
-状態: 採用（2026-10-11）。実装は未着手で、下の「実装に必要な変更」を別の作業で行う。2026-10-11に、凍結nativeがどのcheckoutにも残っていないことが分かったため、132039 水道の変換と7表を取り込みから外した（「結果」を参照）。
+状態: 採用（2026-10-11）。保存・取得の入口は実装済み（下の「実装」）。2026-10-11に、凍結nativeがどのcheckoutにも残っていないことが分かったため、132039 水道の変換と7表を取り込みから外した（「結果」を参照）。
 
 ## 改訂（2026-10-11）: 既定エンジンをApple Visionにし、金額の訂正も宣言する
 
@@ -22,7 +22,7 @@ scan PDFの取り込みでは、OCRの結果をどう変換の入力にするか
 
 ### 前提
 
-- OCRエンジンはPaddleOCR small（[ADR 0018](0018-paddle-small-for-scan-pdf.md)）だけを対象にする。Apple Visionは比較用に残っているが、取り込みの経路では使わない。
+- OCRエンジンはPaddleOCR small（[ADR 0018](0018-paddle-small-for-scan-pdf.md)）だけを対象にする。Apple Visionは比較用に残っているが、取り込みの経路では使わない。（冒頭の改訂でVisionを既定に改めた）
 - OCRを実行する環境は、当面は管理者のMac 1台に限る。別のマシン・LinuxでOCRを実行することは求めない。
 
 ### 実測
@@ -89,21 +89,17 @@ SHAを内容だけに限る理由は、実測で内容が同じでもファイ�
 - 132039の凍結native（SHA-256 `41956f0115d9bac0835fa38959ce1ef96a4ed6a534fd99cf83a5f782d466b2b8`）と追加cropのnativeは、どのcheckoutにも残っていなかった。既存のファイルを新しい形式へ変換する手順は取れないため、水道の変換と7表を管理JSONとR2から外した（2026-10-11）。作り直しでは、共通の取得入口で10頁と物理42頁のcropを取り直し、補助入力として保存する。同じMac・同じ版の再取得では観測IDと文字が一致したため（[検証記録](../scan-ocr-determinism.md)）、書式設定の訂正と見出しの対応は、SHAを新しい補助入力のSHAへ置き換えて再利用する。物理42頁のcropは切り出し領域の宣言が残っていないため、原典で領域を決め直す。
 - 補助入力の保存・宣言・取得入口が実装されるまで、新しいscan PDFの変換器は凍結したnativeをローカルで受け取る現在の形式で作ってよい。宣言は後で補助入力の参照へ置き換える。
 
-## 実装に必要な変更
+## 実装（2026-10-12）
 
-| ファイル | 変更内容 |
-| --- | --- |
-| `pipeline/ingestion/lib/paddle_ocr.py` | 結果を観測（native）と実行記録に分ける。所要時間、`cache_hit`、絶対パス、PID・RSS、package版・モデル／コードのSHA・OS・rendererのbuildは実行記録へ移す。観測は決定的な順序・書式で書き出す。テストで、同じ入力の2回の結果が同じバイト列になることを検査する |
-| `pipeline/ingestion/lib/scan_ocr.py`、`scan_ocr.md` | OCR取得の共通入口を追加する。取得の依頼（原典SHA、物理頁、設定、読み取り領域、再読領域）を受け取り、原典SHAを照合して観測と実行記録を返す。1つの依頼を1つの観測ファイルにし、追加のcrop読み取りは別の依頼として扱う |
-| `pipeline/ingestion/fiscal/manifest.schema.json` | 変換に任意の `ocr_inputs` を追加する。要素は `id`、`origin_sha256`、`request`（Git管理の依頼ファイルのパス）、展開後の観測JSONの `sha256` と `bytes`。gzipの保存物自体のSHA・サイズは管理JSONに持たず、取得時は展開後のバイト列で照合する。保存keyは対象・方向・`id` から導き、宣言しない |
-| `pipeline/ingestion/fiscal/manifest.py` | `ocr_inputs` の `origin_sha256` が同じ変換の `inputs` に含まれること、`id` の一意性、依頼ファイルの存在を検査する。依頼ファイルをfingerprintの依存に含める |
-| `pipeline/ingestion/fiscal/storage.py` | 補助入力のgzip保存・取得・SHA照合を追加する（固定key `fiscal/ingestion/<団体>/<年度>/<資料区分>/<方向>/ocr/<id>.json.gz`、実行記録は同じ場所の `<id>.run.json`）。SHA・サイズは展開後のバイト列で照合する。掃除の対象を `ocr/` まで広げる |
-| `pipeline/ingestion/fiscal/run.py` | `originals` で補助入力もローカルへ復元し、入力の対応JSONに含める。`convert` は補助入力のローカルパスを、対応する原典の入力に付けて変換器へ渡す。新しい `ocr` サブコマンドで、宣言した依頼から観測を取得してローカルに書き出し、`--verify` で宣言済みのSHAと比べる。`--remote` で新しい補助入力を表より先に保存し、全保存成功後に管理JSONを更新する |
-| `pipeline/package.json` | `ingestion:ocr` scriptを追加する |
-| `pipeline/ingestion/fiscal/jurisdictions/132039/layouts/enterprise_statement/` | `convert.py` と `options.schema.json` の `native.path` / `supplemental_native.path` を、変換器へ渡された補助入力の参照に置き換える。`ocr.py` は共通入口へ移し、10頁の通常読み取りと物理42頁のcropを依頼ファイルとして宣言する。`README.md` の再構築手順を更新する |
-| `pipeline/ingestion/fiscal/jurisdictions/132039/2025/settlement/expenditure.json` | 水道の変換を足し直し、取り直した観測2件（10頁・物理42頁のcrop）を `ocr_inputs` として宣言してR2へ保存する。`settlement-84743fdd.json` の訂正・見出しの対応のSHAを新しいSHAへ置き換え、合計検査（`ingestion:verify`）と原典の目視で表を確かめてから保存する。合計検査は旧 `sum_checks/` の宣言をやめて共通の木の検査に置き換え済みで、水道の7表も `expected_tables` と `tables` に足し直す |
-| `pipeline/ingestion/fiscal/*_test.py`、`pipeline/ingestion/lib/paddle_ocr_test.py` | 補助入力の宣言検査、保存・復元・掃除、変換器への受け渡し、決定的な出力を検査する |
-| `docs/prd/ingestion-storage/design-doc.md`、`pipeline/AGENTS.md`、`.agents/skills/pipeline/references/ingestion.md` | 保存先の表とscan PDFの手順に、補助入力の保存と取得・再取得の流れを追加する |
+決定どおり、OCRは変換器の外で取得し、観測を固定して変換器へ渡す。実装は次のとおりで、上の決定と次の点が異なる。
+
+- **依頼は管理JSONに直接書く。** 変換の `ocr_inputs[]` に `id`・`origin_sha256`・`request`（`engine`・`pages`・任意の `config`・`regions`）を置く。別の依頼ファイルは作らない。変換に含まれるのでfingerprintにも入る。
+- **SHAは `ingestion:ocr` が書き込む。** `ingestion:ocr --manifest … --inputs …` が依頼どおりにOCRし、観測（展開後のJSON）の `sha256`・`bytes` を管理JSONに書き、観測をローカルのキャッシュに置く。`--verify` は読み直して比べるだけで何も書かない。SHAが変われば、その変換の保存済みの表は古いと判定される。
+- **R2への保存は表と同時。** `convert --remote` が観測（`ocr/<id>.json.gz`）と実行記録（`ocr/<id>.run.json`）を表より先に上げる。保存先は対象・方向・`id` から導く。`cleanup` は宣言のない `ocr/` の物も消す。
+- **観測は内容だけ。** 依頼・原典のSHAとバイト数・頁ごとの観測を正規化したJSONにする。所要時間・ローカルのパス・OSなどの環境は実行記録へ分ける。描画画素のSHAは観測に入れていない。
+- **頁が空のOCRは固定しない。** Visionはエラーなしに頁全体を空で返すことがある。空の頁は観測にせず止める。
+
+同じMac・同じ版のVisionで同じ4頁を2回読み、所要時間とパスを除いて観測が一致することを確かめた（2026-10-11、青梅・小金井の各4頁）。
 
 ## 決めていないこと
 

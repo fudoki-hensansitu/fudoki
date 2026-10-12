@@ -30,7 +30,7 @@ script はこの package が所有する。実行は `bun run --cwd pipeline <na
 - **金額の注記**: 流用元・流用先や不用額、基準額の文言と金額・単位・印字位置を「注記」軸で保持する。`shared/fiscal_annotation_map.csv` の共通の見出しで種類を解き、phaseを付けず、木の合計・歳出のintermediateから外す。同じ備考欄の折返しだけを継承し、月額は既存の月額セル、回数単価は同じ括弧内の円付き金額に限定する（[ADR 0024](../docs/adr/0024-monetary-annotations-without-phase.md)）。
 - **共通辞書**: 取り込みと dbt を横断する辞書は `shared/` に置き、取り込みは直接読み、dbt は seed として読む。
 - **コード配置**: 共通処理は `ingestion/lib/`、書式別の共通処理は `ingestion/fiscal/layouts/`、団体固有のコードと宣言は `ingestion/fiscal/jurisdictions/<団体>/layouts/`。年度・会計だけでコードを複製しない。
-- **OCR**: 新しいBの共通入口は `ingestion/lib/scan_ocr.py`。既定はApple Vision（`vision_ocr.py`）で、PaddleOCR smallの縮小検出・原解像度認識は `backend="paddle"` で選ぶ。Visionは単独の0を読めないことがあり、その金額は行を作らずNULLのままにし、印字された0と空欄の区別は失われる。名称と金額の誤読は `ocr_names.py` の宣言で直し、生の観測は書き換えない。OCRは変換器の外で取得し、凍結した観測を補助入力として変換器へ渡す（[ADR 0019](../docs/adr/0019-freeze-scan-ocr-observations.md)、補助入力の保存・取得は未実装）。設定と検証範囲は [OCRの説明](ingestion/lib/scan_ocr.md)、実行と欠落セルの再読は `.agents/skills/pipeline/references/ingestion.md` を参照する。
+- **OCR**: 新しいBの共通入口は `ingestion/lib/scan_ocr.py`。既定はApple Vision（`vision_ocr.py`）で、PaddleOCR smallの縮小検出・原解像度認識は `backend="paddle"` で選ぶ。Visionは単独の0を読めないことがあり、その金額は行を作らずNULLのままにし、印字された0と空欄の区別は失われる。名称と金額の誤読は `ocr_names.py` の宣言で直し、生の観測は書き換えない。OCRは変換器の外で `ingestion:ocr` が取得し、観測のSHAを管理JSONの `ocr_inputs` に書く。観測は表と一緒に非公開R2へ保存し、変換器へ渡す（[ADR 0019](../docs/adr/0019-freeze-scan-ocr-observations.md)）。設定と検証範囲は [OCRの説明](ingestion/lib/scan_ocr.md)、実行と欠落セルの再読は `.agents/skills/pipeline/references/ingestion.md` を参照する。
 - **変換**: dbt-duckdb。入力宣言は `dbt/scripts/generate_sources.py` が管理 JSON から生成する。PDF はノードの表・金額の表を全団体共通の staging 2モデルで読み、CSV（当初予算の歳出）は書式ごとの staging で読む。intermediate で段の名前（共通規則）・資料区分ごとの金額の段階の選択（決算は支出済額・当初予算は当初予算額）・表をまたぐ款項目の統合・円換算・COFOG を行い、marts（`settlement_expenditure_node`・`initial_expenditure_node`・`origin`）を作る。木の表は原典の位置（`origin_id`・`source_page`・印字の枠 `source_x0`ほか、金額は `amount_source_*`。座標は PDF だけで、複数の印字を足した金額は NULL）を持ち、`origin.sha256` までたどれる。比較は木の表を目（`is_subject and node_kind='目'`）で絞って行う。設計は [dbt モデルの設計](../docs/prd/fiscal-dbt-models/design-doc.md)。
 - **配信**: `serving/` が marts の表（`settlement_expenditure_node`・`initial_expenditure_node`・`origin`）を同名・同列のまま D1 に写す（[ADR 0022](../docs/adr/0022-serve-marts-via-worker-d1-rest-and-mcp.md)）。列の契約は `serving/columns.py`、同期は `serving/sync_d1.py`（`<表>__new` に全件投入し、行数と金額の和が合ったときだけ rename。書き込むのはこの script だけで同時に2つ流さない）。D1 には control 以外の表を migration で作らない（`apps/api/migrations/`）。`--local` の状態は `apps/api/.cloudflare/state`（gitignore 済み）。
 - **保存**: Git はコード・宣言・判断・入力一覧、非公開 R2 は原典・取り込み表。`.cache/` と `.build/` は再生成可能なローカル作業領域。
@@ -39,6 +39,7 @@ script はこの package が所有する。実行は `bun run --cwd pipeline <na
   |---|---|---|
   | 原典 CSV/PDF | 非公開R2の `fiscal/source-selection/` | 選定・保存参照だけ |
   | 取り込みParquet | 非公開R2の `fiscal/ingestion/<対象>/<方向>/` の固定key | 対象別JSONだけ |
+  | scan PDFのOCR観測 | 非公開R2の `fiscal/ingestion/<対象>/<方向>/ocr/<id>.json.gz` | 依頼とSHA（`ocr_inputs`）だけ |
   | 変換設定・現在の表・ハッシュ・保存先 | `ingestion/fiscal/jurisdictions/<団体>/<年度>/<資料区分>/<方向>.json` | 管理する |
   | 分類・名称のマスタ | dbt seeds | 管理する |
   | 復元済み入力・PDF/OCR キャッシュ | `pipeline/.cache/` | 管理しない |

@@ -11,6 +11,7 @@ struct Config: Decodable {
     let max_pixels: Int
     let custom_words: [String]
     let minimum_text_height: Float?
+    let region_padding_px: Int?
 }
 struct Region: Decodable {
     let id: String
@@ -49,8 +50,11 @@ func recognize(_ image: CGImage, pageNumber: Int, pdfSize: CGSize?, input: Input
             let x1 = ceil(n[2] * width), y1 = ceil(n[3] * height)
             let crop = CGRect(x: x0, y: y0, width: x1-x0, height: y1-y0)
             guard let cut = image.cropping(to: crop) else { throw OcrFailure.invalid("Cannot crop region \(area.id)") }
-            let context = try rgbContext(width: cut.width, height: cut.height, maxPixels: input.config.max_pixels)
-            context.draw(cut, in: CGRect(x: 0, y: 0, width: cut.width, height: cut.height))
+            // White padding keeps text off the image edge, where Vision misreads digits.
+            let pad = max(0, input.config.region_padding_px ?? 0)
+            let context = try rgbContext(width: cut.width + 2*pad, height: cut.height + 2*pad, maxPixels: input.config.max_pixels)
+            context.draw(cut, in: CGRect(x: pad, y: pad, width: cut.width, height: cut.height))
+            let paddedWidth = Double(cut.width + 2*pad), paddedHeight = Double(cut.height + 2*pad)
             guard let rgb = context.makeImage() else { throw OcrFailure.invalid("Cannot draw RGB image") }
             let request = VNRecognizeTextRequest()
             guard VNRecognizeTextRequest.supportedRevisions.contains(input.config.revision) else {
@@ -80,10 +84,10 @@ func recognize(_ image: CGImage, pageNumber: Int, pdfSize: CGSize?, input: Input
                     "bbox_px": NSNull(), "bbox_normalized": NSNull(), "bbox_pdf_pt": NSNull()]
                 guard let bbox = bbox, bbox.width > 0, bbox.height > 0,
                       bbox.minX.isFinite, bbox.minY.isFinite, bbox.maxX.isFinite, bbox.maxY.isFinite else { return value }
-                let b = [x0 + Double(bbox.minX)*Double(cut.width),
-                         y0 + (1-Double(bbox.maxY))*Double(cut.height),
-                         x0 + Double(bbox.maxX)*Double(cut.width),
-                         y0 + (1-Double(bbox.minY))*Double(cut.height)]
+                let b = [x0 + Double(bbox.minX)*paddedWidth - Double(pad),
+                         y0 + (1-Double(bbox.maxY))*paddedHeight - Double(pad),
+                         x0 + Double(bbox.maxX)*paddedWidth - Double(pad),
+                         y0 + (1-Double(bbox.minY))*paddedHeight - Double(pad)]
                 let normalized = [b[0]/width, b[1]/height, b[2]/width, b[3]/height]
                 let pt: Any = pdfSize.map { size in
                     [b[0]*size.width/width, b[1]*size.height/height,

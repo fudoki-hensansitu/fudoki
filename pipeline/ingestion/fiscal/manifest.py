@@ -51,6 +51,17 @@ def object_key(document: dict, table_id: str, kind: str | None = None) -> str:
             f'{document_slot(target)}/{document["direction"]}/{table_id}{'-' + kind if kind else ''}.parquet')
 
 
+def ocr_key(document: dict, ocr_id: str, suffix: str = '.json.gz') -> str:
+    """Fixed key of an OCR observation (``.json.gz``) or its run record (``.run.json``)."""
+    table_key = object_key(document, 'placeholder')
+    return f'{table_key.rsplit("/", 1)[0]}/ocr/{ocr_id}{suffix}'
+
+
+def ocr_inputs(document: dict) -> list[tuple[dict, dict]]:
+    return [(conversion, item) for conversion in document['conversions']
+            for item in conversion.get('ocr_inputs', [])]
+
+
 def table_references(table: dict) -> dict[str | None, dict]:
     return ({kind: table[kind] for kind in ('nodes', 'amounts')} if 'nodes' in table
             else {None: table})
@@ -222,12 +233,21 @@ def validate(document: dict, *, path: Path | None = None, check_code: bool = Tru
             code_path(conversion['converter'])
             schema_path = code_path(options_schema(conversion))
             jsonschema.Draft202012Validator(json.loads(schema_path.read_text())).validate(conversion['options'])
+    ocr_ids = set()
+    for conversion, item in ocr_inputs(document):
+        if item['id'] in ocr_ids:
+            raise ValueError('Duplicate OCR input ID in the target/direction')
+        ocr_ids.add(item['id'])
+        if item['origin_sha256'] not in {i['sha256'] for i in conversion['inputs']}:
+            raise ValueError('OCR input must read an original of its own conversion')
     seen: set[str] = set()
     for table in document['tables']:
         ident = table['table_id']
         if ident in seen or expected.get(ident) != table['conversion_id']:
             raise ValueError('Duplicate, unexpected or incorrectly owned saved table')
         seen.add(ident)
+        if any('sha256' not in item for item in conversions[table['conversion_id']].get('ocr_inputs', [])):
+            raise ValueError('Saved table needs every OCR input of its conversion pinned')
         for kind, reference in table_references(table).items():
             if reference['object']['key'] != object_key(document, ident, kind):
                 raise ValueError('Saved table key differs from its target/direction/table ID')
