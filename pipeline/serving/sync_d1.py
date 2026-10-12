@@ -3,18 +3,17 @@
     bun run --cwd pipeline serving:sync -- --database-id <uuid> [--dry-run]
     bun run --cwd pipeline serving:sync -- --local [--persist-to <dir>] [--dry-run]
 
-手順: 表ごと（origin → 木の表）に `<表>__new` を drop → create → 全件投入する。次に `__new` から全行を主キーの
-先頭1文字ごと（sha の hex。団体・年度より偏りが少なく、1回の出力を抑えられる）に読み戻し、warehouse の同じ行と
-1行ずつ全列で突き合わせる（`verify`）。全部合ったときだけ入れ替える。1つでも違えば最初の数件の主キーと列名を
-出して止め、rename しない（`__new` は残り、次の実行の最初に捨てる）。
+手順:
+1. 開始時に、前回の失敗の残骸 `<表>__new`・`<表>__old` を無条件に drop する（本名の表には触らない）。
+2. 表ごと（origin → 木の表）に `<表>__new` を create し、全件投入する。
+3. `__new` から全行を主キーの先頭1文字ごと（sha の hex。1回の出力を抑えられる）に読み戻し、warehouse の同じ行と
+   1行ずつ全列で突き合わせる（`verify`）。1つでも違えば最初の数件の主キーと列名を出して止め、入れ替えない。
+4. 3表とも合ったら、1つの batch で表ごとに `drop table if exists <表>; alter table <表>__new rename to <表>;` と index の作成。
 
-入れ替えは `<表> → <表>__old`、`<表>__new → <表>`、`drop <表>__old`、index 作成の順。Cloudflare の公式文書は
-REST の query/raw に複数文を渡したときの原子性を保証していない（Worker の `D1Database.batch()` は
-"Batched statements are SQL transactions" と明記するが、REST は記述が無い）。そのため途中で止まっても
-旧表か新表のどちらかが残る順にする。照合が3表とも通った後、入れ替えの最初の文で `control` に
-`('swap', 'pending')` を書き、最後の文で消す。次の実行の最初に `recover_statements` で自動復旧する:
-印があれば前へ進めて3表をそろって新世代にし、印が無ければ照合前の残骸の `__new` を捨てて3表とも旧世代のままにする
-（世代が混ざらない）。
+可用性は担保しない。D1 は warehouse から作り直せる写しで、失敗した同期の途中や後では、API がエラーを返したり
+表の世代が混ざったりし得る（Cloudflare の公式文書は REST の query/raw に複数文を渡したときの原子性を保証していない）。
+そのときはもう一度同期を流す。(1) から作り直して直る。復旧処理は持たない。入れ替えの batch は再送しない
+（成功したのに応答だけ失った場合に、再送が失敗して表が欠けた状態を固定しないため）。
 
 前提:
 - 書き込むのはこの script だけで、同時に2つ以上実行しない（`__new` が衝突する）。
@@ -121,66 +120,18 @@ def old_name(table: str) -> str:
     return f'{table}__old'
 
 
-SWAP_PENDING = "insert or replace into control (key, value) values ('swap', 'pending')"
-SWAP_DONE = "delete from control where key = 'swap'"
+def cleanup_statements() -> list[dict]:
+    """前回の失敗の残骸を捨てる。本名の表には触らない。"""
+    return [{'sql': f'drop table if exists "{suffix(name)}"'} for name in TABLE_ORDER for suffix in (new_name, old_name)]
 
 
-def state_statements() -> list[dict]:
-    """D1 にある表の名前と、入れ替えの印（`control` の swap）。"""
-    return [{'sql': "select name from sqlite_master where type = 'table'"},
-            {'sql': "select value from control where key = 'swap'"}]
-
-
-def recover_statements(tables: dict[str, Table], existing: set[str], pending: bool = False) -> list[dict]:
-    """前回の同期が途中で止まった跡を直す。`existing` は D1 にある表の名前、`pending` は入れ替えの印の有無。
-
-    印がある（照合済みの `__new` が3表そろっていた）なら前へ進めて完了させる:
-    残りの `__new` を本名にし、`__old` を捨て、index を補い、印を消す。3表がそろって新世代になる。
-    印が無いなら入れ替えは始まっていない。照合前の残骸の `__new` を捨てるだけで、3表とも旧世代のまま。
-    """
+def swap_statements(tables: dict[str, Table]) -> list[dict]:
+    """照合済みの新表を本名にする。旧表を drop してから rename し、その後に index を作る（index 名の衝突を避ける）。"""
     out = []
     for name in TABLE_ORDER:
-        old, new = old_name(name), new_name(name)
-        has_table = name in existing
-        if pending:
-            if new in existing:
-                if has_table:
-                    out.append(f'alter table "{name}" rename to "{old}"')
-                out.append(f'alter table "{new}" rename to "{name}"')
-                has_old = has_table or old in existing
-            else:
-                has_old = old in existing
-            if has_old:
-                out.append(f'drop table "{old}"')
-        else:
-            if not has_table and old in existing:
-                out.append(f'alter table "{old}" rename to "{name}"')
-                has_table = True
-            elif has_table and old in existing:
-                out.append(f'drop table "{old}"')
-            out.append(f'drop table if exists "{new}"')
-        if pending or has_table:
-            out += [s.replace('create index', 'create index if not exists', 1)
-                    for s in contract.create_index_sql(name, tables[name])]
-    if pending:
-        out.append(SWAP_DONE)
-    return [{'sql': sql} for sql in out]
-
-
-def swap_statements(tables: dict[str, Table], existing: set[str]) -> list[dict]:
-    """照合済みの新表を入れ替える。最初の文で印を書き、最後の文で消す（途中で止まれば `recover_statements` が前へ進める）。
-
-    旧表を `__old` に退け、新表を本名にし、`__old` を捨ててから index を作る（index 名の衝突を避ける）。
-    """
-    out = [SWAP_PENDING]
-    for name in TABLE_ORDER:
-        if name in existing:
-            out.append(f'alter table "{name}" rename to "{old_name(name)}"')
+        out.append(f'drop table if exists "{name}"')
         out.append(f'alter table "{new_name(name)}" rename to "{name}"')
-        if name in existing:
-            out.append(f'drop table "{old_name(name)}"')
         out += contract.create_index_sql(name, tables[name])
-    out.append(SWAP_DONE)
     return [{'sql': sql} for sql in out]
 
 
@@ -280,17 +231,17 @@ class D1:
             self.command += ['--local', '--persist-to', str(persist_to)]
         self.calls = 0
 
-    def batch(self, statements: list[dict]) -> list[dict]:
+    def batch(self, statements: list[dict], retries: int = 3) -> list[dict]:
         self.calls += 1
         with tempfile.NamedTemporaryFile('w', suffix='.json', encoding='utf-8') as file:
             json.dump(statements, file, ensure_ascii=False)
             file.flush()
-            for attempt in range(3):
+            for attempt in range(retries):
                 code, stdout, stderr = run_until_json([*self.command, '--batch', f'@{file.name}'])
                 if code in (0, None):
                     break
                 print(f'  cf 失敗 {attempt + 1} 回目: {stdout[-200:]}{stderr[-200:]}'.replace(chr(10), ' '), flush=True)
-                if attempt == 2:
+                if attempt == retries - 1:
                     raise RuntimeError(f'cf d1 raw が失敗した: {stdout[:2000]}{stderr[:2000]}')
                 time.sleep(5)
         results = json.loads(stdout)
@@ -344,15 +295,8 @@ def sync(d1: D1 | None, warehouse: Path, dry_run: bool, log: Callable[[str], Non
         if contract.build(contract.warehouse_columns(warehouse, con)) != {'tables': tables}:
             raise SystemExit('columns.json が warehouse と食い違う。serving:columns で書き直す')
         started = time.time()
-        existing: set[str] = set()
         if d1 and not dry_run:
-            names, flag = d1.batch(state_statements())
-            existing = {row[0] for row in names['results']['rows']}
-            d1.batch(recover_statements(tables, existing, bool(flag['results']['rows'])))
-            pending = bool(flag['results']['rows'])
-            # 復旧後に残る本名の表
-            existing = {t for t in TABLE_ORDER
-                        if t in existing or old_name(t) in existing or (pending and new_name(t) in existing)}
+            d1.batch(cleanup_statements())
         for name in TABLE_ORDER:
             spec = tables[name]
             names = [c['name'] for c in spec['columns']]
@@ -379,7 +323,7 @@ def sync(d1: D1 | None, warehouse: Path, dry_run: bool, log: Callable[[str], Non
                 log(f'照合に失敗: {p}')
             log('rename せず中止（__new は残る）')
             return 1
-        d1.batch(swap_statements(tables, existing))
+        d1.batch(swap_statements(tables), retries=1)  # 入れ替えは再送しない
         log(f'完了: cf {d1.calls} 回 / {time.time() - started:.0f} 秒 / RSS最大 {rss_mb():.0f}MB')
         return 0
     finally:
