@@ -74,6 +74,10 @@ class ByteLimitTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             list(sync_d1.insert_statements('t', ['s'], iter([('あ' * 30_000,)])))
 
+    def test_oversized_row_after_small_row_stops(self):
+        with self.assertRaises(ValueError):
+            list(sync_d1.insert_statements('t', ['s'], iter([('x',), ('あ' * 40000,)])))
+
     def test_pack_counts_bytes(self):
         batches = list(sync_d1.pack(iter(['あ' * 200_000] * 3)))  # 1文 600KB
         self.assertEqual([len(b) for b in batches], [1, 1, 1])
@@ -128,6 +132,7 @@ class SwapTest(unittest.TestCase):
     def test_swap_with_existing_tables(self):
         spec = self.tables
         con = sqlite3.connect(':memory:')
+        con.execute('create table control (key text primary key, value text not null)')
         for name, sp in spec.items():
             con.execute(columns.create_table_sql(name, sp))
             for sql in columns.create_index_sql(name, sp):
@@ -135,7 +140,7 @@ class SwapTest(unittest.TestCase):
             con.execute(columns.create_table_sql(name, sp, f'{name}__new'))
             con.execute(f'insert into "{name}__new" ("{sp["primary_key"]}") values (\'new\')')
         self.run_sql(con, sync_d1.swap_statements(spec, set(spec)))
-        self.assertEqual(self.tables_of(con), set(spec))
+        self.assertEqual(self.tables_of(con), set(spec) | {'control'})
         for name, sp in spec.items():
             self.assertEqual(con.execute(f'select count(*) from "{name}"').fetchone()[0], 1)
             idx = {r[0] for r in con.execute("select name from sqlite_master where type='index' and name not like 'sqlite_%'")}
@@ -144,32 +149,55 @@ class SwapTest(unittest.TestCase):
     def test_swap_first_time(self):
         spec = self.tables
         con = sqlite3.connect(':memory:')
+        con.execute('create table control (key text primary key, value text not null)')
         for name, sp in spec.items():
             con.execute(columns.create_table_sql(name, sp, f'{name}__new'))
         self.run_sql(con, sync_d1.swap_statements(spec, set()))
-        self.assertEqual(self.tables_of(con), set(spec))
+        self.assertEqual(self.tables_of(con), set(spec) | {'control'})
 
-    def test_crash_at_every_statement_leaves_old_or_new_and_recovers(self):
-        spec = self.tables
-        statements = sync_d1.swap_statements(spec, set(spec))
-        for stop in range(len(statements) + 1):
-            con = sqlite3.connect(':memory:')
-            for name, sp in spec.items():
+    def state(self, con):
+        names = {r[0] for r in con.execute("select name from sqlite_master where type='table'")}
+        pending = bool(con.execute("select 1 from control where key = 'swap'").fetchall())
+        return names, pending
+
+    def build(self, spec, with_old_generation=True):
+        con = sqlite3.connect(':memory:')
+        con.execute('create table control (key text primary key, value text not null)')
+        con.execute("insert into control values ('serving', 'on')")
+        for name, sp in spec.items():
+            if with_old_generation:
                 con.execute(columns.create_table_sql(name, sp))
                 con.execute(f'insert into "{name}" ("{sp["primary_key"]}") values (\'old\')')
-                con.execute(columns.create_table_sql(name, sp, f'{name}__new'))
-                con.execute(f'insert into "{name}__new" ("{sp["primary_key"]}") values (\'new\')')
-            self.run_sql(con, statements[:stop])
-            existing = self.tables_of(con)
-            # どの時点でも、各表について本名・__old・__new のどれかにデータがある
-            for name in spec:
-                self.assertTrue({name, f'{name}__old', f'{name}__new'} & existing)
-            before = {n for n in spec if n in existing or f'{n}__old' in existing}
-            self.run_sql(con, sync_d1.recover_statements(spec, existing))
-            after = self.tables_of(con)
-            self.assertEqual(after & {f'{n}__old' for n in spec} | after & {f'{n}__new' for n in spec}, set(),
-                             f'stop={stop}')
-            self.assertEqual(before, {n for n in spec if n in after}, f'stop={stop}')
+                for sql in columns.create_index_sql(name, sp):
+                    con.execute(sql)
+            con.execute(columns.create_table_sql(name, sp, f'{name}__new'))
+            con.execute(f'insert into "{name}__new" ("{sp["primary_key"]}") values (\'new\')')
+        return con
+
+    def test_stop_at_every_boundary_recovers_to_one_generation(self):
+        spec = self.tables
+        for first_time in (False, True):
+            existing = set() if first_time else set(spec)
+            statements = sync_d1.swap_statements(spec, existing)
+            for stop in range(len(statements) + 1):
+                con = self.build(spec, with_old_generation=not first_time)
+                self.run_sql(con, statements[:stop])
+                names, pending = self.state(con)
+                self.run_sql(con, sync_d1.recover_statements(spec, names, pending))
+                names, pending = self.state(con)
+                label = f'first_time={first_time} stop={stop}'
+                self.assertFalse(pending, label)
+                if first_time and stop == 0:  # 入れ替え前に止まった初回: 表は無いまま（__new は捨てる）
+                    self.assertEqual(names, {'control'}, label)
+                    continue
+                self.assertEqual(names, set(spec) | {'control'}, label)  # __old・__new が残らない
+                generations = set()
+                for name, sp in spec.items():
+                    generations.add(con.execute(f'select "{sp["primary_key"]}" from "{name}"').fetchone()[0])
+                    idx = {r[0] for r in con.execute("select name from sqlite_master where type='index' and name not like 'sqlite_%'")}
+                    self.assertTrue({columns.index_name(name, c) for c in sp['indexes']} <= idx, label)
+                self.assertEqual(len(generations), 1, f'世代が混ざった {label}: {generations}')
+                self.assertEqual(generations, {'new'} if stop >= 1 else {'old'}, label)
 
 
 if __name__ == '__main__':

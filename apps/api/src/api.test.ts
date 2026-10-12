@@ -540,3 +540,70 @@ describe('ノードと原典は1つの batch で読む', () => {
     expect(p2.origins.map((o: { origin_id: string }) => o.origin_id)).toEqual(['o1'])
   })
 })
+
+describe('offset の上限', () => {
+  const MAX = 100_000
+  const fill = (parent: string | null) =>
+    sqlite
+      .query(
+        `WITH RECURSIVE n(i) AS (SELECT 1 UNION ALL SELECT i + 1 FROM n WHERE i < 102500)
+         INSERT INTO settlement_expenditure_node (node_id, parent_node_id, fiscal_year, jurisdiction_code)
+         SELECT '1' || substr(printf('%063x', i), 1, 63), ?, 2025, '132039' FROM n`
+      )
+      .run(parent)
+
+  test('search は次の位置が上限を超えるなら next_page_token を出さず、出した token は必ず使える', async () => {
+    fill(null)
+    const body = { document_kind: 'settlement', fiscal_year: { min: 2025, max: 2025 }, page_size: 1000 }
+    let token: string | null = null
+    let pages = 0
+    let last = 0
+    for (let i = 0; i < 200; i++) {
+      const res = await post(SEARCH, token ? { ...body, page_token: token } : body)
+      expect(res.status, `page ${i}`).toBe(200)
+      const json = await res.json()
+      last = json.nodes.length
+      pages++
+      token = json.next_page_token
+      if (token === null) break
+    }
+    expect(pages).toBe(MAX / 1000 + 1) // offset 0, 1000, ..., 100,000
+    expect(last).toBe(1000) // まだ行はあるのに打ち切る
+  }, 30000)
+
+  test('get の子も同じ', async () => {
+    fill(K1)
+    let token: string | null = null
+    let pages = 0
+    for (let i = 0; i < 200; i++) {
+      const res = await get(`/v1/expenditure/nodes/settlement/${K1}?page_size=1000${token ? `&page_token=${token}` : ''}`)
+      expect(res.status, `page ${i}`).toBe(200)
+      token = (await res.json()).next_page_token
+      pages++
+      if (token === null) break
+    }
+    expect(pages).toBe(MAX / 1000 + 1)
+  }, 30000)
+
+  test('打ち切りの説明が tool と OpenAPI にある', async () => {
+    const res = await mcp({ jsonrpc: '2.0', id: 1, method: 'tools/list' })
+    const body = await res.json()
+    for (const tool of body.result.tools.filter((t: { name: string }) => t.name !== "describe_expenditure_columns") as { name: string; description: string }[])
+      expect(tool.description, tool.name).toContain('それ以上')
+    const doc = await (await get('/openapi.json')).json()
+    const schema = doc.paths['/v1/expenditure/nodes:search'].post.responses['200'].content['application/json'].schema
+    expect(schema.properties.next_page_token.description).toContain('条件を絞って')
+  })
+})
+
+describe('JSON の重複キー', () => {
+  test('後勝ちで消えた側の __proto__ は検査しない。結果は where を空にした場合と同じ', async () => {
+    const dup = '{"document_kind":"settlement","fiscal_year":{"min":2024,"max":2024},"where":{"__proto__":1},"where":{}}'
+    const empty = '{"document_kind":"settlement","fiscal_year":{"min":2024,"max":2024},"where":{}}'
+    const a = await post(SEARCH, dup)
+    expect(a.status).toBe(200)
+    expect(await a.json()).toEqual(await (await post(SEARCH, empty)).json())
+    // 解析後に残っている __proto__ は 400
+    expect((await post(SEARCH, '{"document_kind":"settlement","fiscal_year":{"min":2024,"max":2024},"where":{},"where":{"__proto__":1}}')).status).toBe(400)
+  })
+})

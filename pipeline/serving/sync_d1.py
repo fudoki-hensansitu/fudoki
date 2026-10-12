@@ -11,8 +11,10 @@
 入れ替えは `<表> → <表>__old`、`<表>__new → <表>`、`drop <表>__old`、index 作成の順。Cloudflare の公式文書は
 REST の query/raw に複数文を渡したときの原子性を保証していない（Worker の `D1Database.batch()` は
 "Batched statements are SQL transactions" と明記するが、REST は記述が無い）。そのため途中で止まっても
-旧表か新表のどちらかが残る順にし、次の実行の最初に `recover_statements` で自動復旧する
-（`<表>` が無く `<表>__old` があれば戻す／両方あれば `__old` を捨てる／index を補う）。
+旧表か新表のどちらかが残る順にする。照合が3表とも通った後、入れ替えの最初の文で `control` に
+`('swap', 'pending')` を書き、最後の文で消す。次の実行の最初に `recover_statements` で自動復旧する:
+印があれば前へ進めて3表をそろって新世代にし、印が無ければ照合前の残骸の `__new` を捨てて3表とも旧世代のままにする
+（世代が混ざらない）。
 
 前提:
 - 書き込むのはこの script だけで、同時に2つ以上実行しない（`__new` が衝突する）。
@@ -86,7 +88,7 @@ def insert_statements(table: str, names: list[str], rows: Iterator[tuple]) -> It
     for row in rows:
         values = '(' + ','.join(literal(v) for v in row) + ')'
         width = len(values.encode()) + 1  # D1 の上限は UTF-8 のバイト数
-        if size + width > MAX_STATEMENT_BYTES and not parts:
+        if len(head.encode()) + width > MAX_STATEMENT_BYTES:  # 位置に関係なく、1行だけで上限を超える行は止める
             raise ValueError(f'1行だけで1文の上限 {MAX_STATEMENT_BYTES} バイトを超える: {values[:80]}...')
         if parts and (size + width > MAX_STATEMENT_BYTES or len(parts) >= MAX_ROWS_PER_STATEMENT):
             yield head + ','.join(parts)
@@ -119,33 +121,58 @@ def old_name(table: str) -> str:
     return f'{table}__old'
 
 
-def state_sql() -> dict:
-    return {'sql': "select name from sqlite_master where type = 'table'"}
+SWAP_PENDING = "insert or replace into control (key, value) values ('swap', 'pending')"
+SWAP_DONE = "delete from control where key = 'swap'"
 
 
-def recover_statements(tables: dict[str, Table], existing: set[str]) -> list[dict]:
-    """前回の同期が途中で止まった跡を直し、`__new` を捨てる。`existing` は D1 にある表の名前。
+def state_statements() -> list[dict]:
+    """D1 にある表の名前と、入れ替えの印（`control` の swap）。"""
+    return [{'sql': "select name from sqlite_master where type = 'table'"},
+            {'sql': "select value from control where key = 'swap'"}]
 
-    `<表>` が無く `<表>__old` があれば旧表へ戻す（入れ替えの途中。新表は次で作り直す）。
-    両方あれば入れ替えは済んでいて `__old` が残っただけなので捨てる。
+
+def recover_statements(tables: dict[str, Table], existing: set[str], pending: bool = False) -> list[dict]:
+    """前回の同期が途中で止まった跡を直す。`existing` は D1 にある表の名前、`pending` は入れ替えの印の有無。
+
+    印がある（照合済みの `__new` が3表そろっていた）なら前へ進めて完了させる:
+    残りの `__new` を本名にし、`__old` を捨て、index を補い、印を消す。3表がそろって新世代になる。
+    印が無いなら入れ替えは始まっていない。照合前の残骸の `__new` を捨てるだけで、3表とも旧世代のまま。
     """
     out = []
     for name in TABLE_ORDER:
-        old = old_name(name)
-        if name not in existing and old in existing:
-            out.append(f'alter table "{old}" rename to "{name}"')
-        elif name in existing and old in existing:
-            out.append(f'drop table "{old}"')
-        out.append(f'drop table if exists "{new_name(name)}"')
-        if name in existing or old in existing:
+        old, new = old_name(name), new_name(name)
+        has_table = name in existing
+        if pending:
+            if new in existing:
+                if has_table:
+                    out.append(f'alter table "{name}" rename to "{old}"')
+                out.append(f'alter table "{new}" rename to "{name}"')
+                has_old = has_table or old in existing
+            else:
+                has_old = old in existing
+            if has_old:
+                out.append(f'drop table "{old}"')
+        else:
+            if not has_table and old in existing:
+                out.append(f'alter table "{old}" rename to "{name}"')
+                has_table = True
+            elif has_table and old in existing:
+                out.append(f'drop table "{old}"')
+            out.append(f'drop table if exists "{new}"')
+        if pending or has_table:
             out += [s.replace('create index', 'create index if not exists', 1)
                     for s in contract.create_index_sql(name, tables[name])]
+    if pending:
+        out.append(SWAP_DONE)
     return [{'sql': sql} for sql in out]
 
 
 def swap_statements(tables: dict[str, Table], existing: set[str]) -> list[dict]:
-    """旧表を `__old` に退け、新表を本名にし、`__old` を捨ててから index を作る（index 名の衝突を避ける）。"""
-    out = []
+    """照合済みの新表を入れ替える。最初の文で印を書き、最後の文で消す（途中で止まれば `recover_statements` が前へ進める）。
+
+    旧表を `__old` に退け、新表を本名にし、`__old` を捨ててから index を作る（index 名の衝突を避ける）。
+    """
+    out = [SWAP_PENDING]
     for name in TABLE_ORDER:
         if name in existing:
             out.append(f'alter table "{name}" rename to "{old_name(name)}"')
@@ -153,6 +180,7 @@ def swap_statements(tables: dict[str, Table], existing: set[str]) -> list[dict]:
         if name in existing:
             out.append(f'drop table "{old_name(name)}"')
         out += contract.create_index_sql(name, tables[name])
+    out.append(SWAP_DONE)
     return [{'sql': sql} for sql in out]
 
 
@@ -318,9 +346,13 @@ def sync(d1: D1 | None, warehouse: Path, dry_run: bool, log: Callable[[str], Non
         started = time.time()
         existing: set[str] = set()
         if d1 and not dry_run:
-            existing = {row[0] for row in d1.batch([state_sql()])[0]['results']['rows']}
-            d1.batch(recover_statements(tables, existing))
-            existing = {t for t in TABLE_ORDER if t in existing or old_name(t) in existing}  # 復旧後に残る本名の表
+            names, flag = d1.batch(state_statements())
+            existing = {row[0] for row in names['results']['rows']}
+            d1.batch(recover_statements(tables, existing, bool(flag['results']['rows'])))
+            pending = bool(flag['results']['rows'])
+            # 復旧後に残る本名の表
+            existing = {t for t in TABLE_ORDER
+                        if t in existing or old_name(t) in existing or (pending and new_name(t) in existing)}
         for name in TABLE_ORDER:
             spec = tables[name]
             names = [c['name'] for c in spec['columns']]

@@ -50,6 +50,8 @@ export const SUM_RULES = [
 ]
 
 // Get の子のページング。MCP は型を強制しない整数、REST の query は文字列から整数にする（どちらも 1〜1000）。
+const NEXT_PAGE_TOKEN_HELP = `次のページの token。無ければ null。位置は ${MAX_OFFSET} 件目までで、それ以上は null になるので、条件を絞って問い合わせる。`
+
 const pageSizeDescription = `1ページの件数（1〜${MAX_PAGE_SIZE}、既定 ${DEFAULT_PAGE_SIZE}）。`
 const getPageSize = z.int().min(1).max(MAX_PAGE_SIZE).default(DEFAULT_PAGE_SIZE).describe(pageSizeDescription)
 const queryPageSize = z.coerce.number().int().min(1).max(MAX_PAGE_SIZE).default(DEFAULT_PAGE_SIZE).describe(pageSizeDescription)
@@ -111,6 +113,11 @@ async function encodeToken(offset: number, parts: unknown[]): Promise<string> {
   return b64(JSON.stringify({ o: offset, h: await fingerprint(parts) }))
 }
 
+/** 次の位置が上限を超えるなら token を出さない（出しても次の要求が 400 になるだけ）。 */
+async function nextToken(offset: number, parts: unknown[]): Promise<string | null> {
+  return offset > MAX_OFFSET ? null : encodeToken(offset, parts)
+}
+
 export async function decodeToken(token: string | undefined, parts: unknown[]): Promise<number> {
   if (!token) return 0
   let parsed: { o?: unknown; h?: unknown } | null
@@ -156,7 +163,7 @@ async function searchNodes(ctx: Ctx, raw: Record<string, unknown>) {
   const more = page!.results.length > limit
   return {
     nodes: page!.results.slice(0, limit).map((r) => withKind(t, r)),
-    next_page_token: more ? await encodeToken(offset + limit, fp) : null,
+    next_page_token: more ? await nextToken(offset + limit, fp) : null,
     origins: origins!.results,
   }
 }
@@ -193,7 +200,7 @@ async function getNode(ctx: Ctx, input: Record<string, unknown>) {
   return {
     node: withKind(t, raw),
     children,
-    next_page_token: more ? await encodeToken(offset + limit, fp) : null,
+    next_page_token: more ? await nextToken(offset + limit, fp) : null,
     origins: origins!.results,
   }
 }
@@ -245,7 +252,7 @@ const searchDescription =
   WHERE_HELP.combine +
   `例: ${JSON.stringify(SEARCH_EXAMPLE)}（2025年度の決算の目のうち COFOG が "10.4" で始まるものを金額順）。` +
   'order_by は [{column, desc}] で、末尾に node_id が足される。page_size は 1〜1000（既定 100）。' +
-  '応答は {nodes, next_page_token, origins}。origins は結果の行が指す原典（資料名・URL・SHA-256）で、行の origin_id から引く。' +
+  `応答は {nodes, next_page_token, origins}。next_page_token は ${MAX_OFFSET} 件目までで、それ以上は null になるので、条件を絞って問い合わせる。origins は結果の行が指す原典（資料名・URL・SHA-256）で、行の origin_id から引く。` +
   '金額の和は API では求めない。足すときの条件は describe_expenditure_columns の sum_rules に従う。'
 
 export const operations: Operation[] = [
@@ -259,7 +266,7 @@ export const operations: Operation[] = [
     input: searchInput,
     output: z.object({
       nodes: z.array(Node),
-      next_page_token: z.string().nullable(),
+      next_page_token: z.string().nullable().describe(NEXT_PAGE_TOKEN_HELP),
       origins: z.array(Origin),
     }),
     run: searchNodes,
@@ -273,7 +280,7 @@ export const operations: Operation[] = [
     description:
       'ノード一つ（document_kind と node_id で識別）と、その子を軸（axis）ごとに返す。' +
       '子は search_expenditure_nodes と同じ page_size の上限（1000）と page_token で読む。' +
-      '別の軸の子を同じ金額に混ぜて足さない。応答は {node, children: {<axis>: [...]}, next_page_token, origins}。',
+      `別の軸の子を同じ金額に混ぜて足さない。応答は {node, children: {<axis>: [...]}, next_page_token, origins}。子は ${MAX_OFFSET} 件目までで、それ以上は next_page_token が null になる。`,
     input: z.strictObject({
       document_kind: z.enum(DOCUMENT_KINDS).describe('資料区分（settlement か initial）。'),
       node_id: z.string().regex(/^[0-9a-f]{64}$/).describe('search の応答の node_id（小文字 16 進 64 文字）。'),
@@ -284,7 +291,7 @@ export const operations: Operation[] = [
     output: z.object({
       node: Node,
       children: z.record(z.string(), z.array(Node)),
-      next_page_token: z.string().nullable(),
+      next_page_token: z.string().nullable().describe(NEXT_PAGE_TOKEN_HELP),
       origins: z.array(Origin),
     }),
     run: getNode,
