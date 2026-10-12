@@ -105,6 +105,9 @@ class AcquireTest(unittest.TestCase):
         self.assertIsNone(scan_ocr._fill('修繰料品', tokens, (383, 0, 397, 10)))   # two changes
         self.assertIsNone(scan_ocr._fill('修繕料', tokens, (440, 0, 450, 10)))     # gap elsewhere
         self.assertEqual(scan_ocr._fill('0', [], (10, 0, 14, 10)), '0')
+        spaced = [('般', [385, 0, 402, 10]), ('職', [420, 0, 437, 10])]
+        self.assertEqual(scan_ocr._fill('ー般職', spaced, (355, 0, 369, 10)), '一')       # ー at the start is 一
+        self.assertEqual(scan_ocr._fill('コーヒー', [('コ', [0, 0, 5, 10]), ('ヒー', [12, 0, 22, 10])], (5, 0, 11, 10)), 'ー')
         self.assertIsNone(scan_ocr._fill('UNREADABLE', [], (10, 0, 14, 10)))
 
     def test_only_vision_is_acquired(self):

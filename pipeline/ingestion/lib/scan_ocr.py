@@ -307,12 +307,20 @@ def supplement(path: Path, page: dict, config: VisionConfig, previous: Mapping[s
     keys = [_key(number, area) for area in rest]
     lines = {key: _line(area, rules) for area, key in zip(rest, keys)}
     asked = [key for key in keys if key not in previous]
+    def ask(key: str) -> str | None:
+        try:
+            return vlm_ocr.read(path, number, lines[key], margin=2.0)
+        except RuntimeError:
+            return None  # the model did not answer; asked again on the next acquisition
     with ThreadPoolExecutor(4) as pool:
-        answers = dict(zip(asked, pool.map(lambda key: vlm_ocr.read(path, number, lines[key], margin=2.0), asked)))
-    unread, added = [], []
+        answers = dict(zip(asked, pool.map(ask, asked)))
+    unread, failed, added = [], [], []
     for index, (area, key) in enumerate(zip(rest, keys)):
         if key in previous:
             text = previous[key]
+        elif answers[key] is None:
+            failed.append([round(v, 1) for v in area])
+            continue
         else:
             text = _fill(answers[key], _tokens(page, lines[key]), area) or vlm_ocr.UNREADABLE
         if text == vlm_ocr.UNREADABLE:
@@ -324,6 +332,8 @@ def supplement(path: Path, page: dict, config: VisionConfig, previous: Mapping[s
     page["regions"].extend(added)
     if unread:
         page["unread_ink"] = unread
+    if failed:
+        page["vlm_failed"] = failed
     return page
 
 
@@ -356,7 +366,7 @@ def _fill(answer: str, tokens: Sequence[tuple[str, Sequence[float]]], area: Sequ
         return None
     observed = "".join(text for text, _ in tokens)
     if not observed:
-        return reading
+        return "一" + reading[1:] if reading.startswith("ー") else reading
     owners = [box for text, box in tokens for _ in text]
     changes = [op for op in SequenceMatcher(None, observed, reading, autojunk=False).get_opcodes() if op[0] != "equal"]
     if len(changes) != 1 or changes[0][0] != "insert":
@@ -367,7 +377,15 @@ def _fill(answer: str, tokens: Sequence[tuple[str, Sequence[float]]], area: Sequ
         return None
     if at < len(owners) and (owners[at][0] + owners[at][2]) / 2 < centre:
         return None
-    return reading[start:end]
+    inserted = reading[start:end]
+    # A long-vowel mark follows kana; at a word's start or after a kanji it is the kanji 一.
+    if inserted.startswith("ー") and (at == 0 or not _kana(observed[at - 1])):
+        inserted = "一" + inserted[1:]
+    return inserted
+
+
+def _kana(char: str) -> bool:
+    return "\u3041" <= char <= "\u30fa"
 
 
 def _vlm_identity() -> dict:
