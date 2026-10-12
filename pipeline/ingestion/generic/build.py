@@ -121,6 +121,7 @@ def main() -> None:
     parser.add_argument('out', type=Path)
     parser.add_argument('--kind', default='settlement')
     parser.add_argument('--table', default='generic')
+    parser.add_argument('--account', help='the account name (一般会計 turns on the digit check of the unit)')
     parser.add_argument('--jev', action='store_true', help='variant B: Jev chooses codeless remark line roles')
     args = parser.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
@@ -130,7 +131,8 @@ def main() -> None:
         from ingestion.generic.jev import Client, line_roles
         client = Client(args.out / f'{args.table}-jev-cache.json')
         judge = lambda features: line_roles(client, features)
-    built, repairs = run_with_repairs(args.pdf, page_list(args.pages), args.out / f'{args.table}-observed.json', judge)
+    built, repairs = run_with_repairs(args.pdf, page_list(args.pages), args.out / f'{args.table}-observed.json', judge,
+                                      document_kind=args.kind, account=args.account)
     result = check(built, args.kind)
     for kind in ('nodes', 'amounts'):
         (args.out / f'{args.table}-{kind}.parquet').unlink(missing_ok=True)
