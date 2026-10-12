@@ -15,7 +15,7 @@ causes = json.loads(Path(sys.argv[2]).read_text()) if len(sys.argv) > 2 and Path
 before = json.loads(Path(sys.argv[3]).read_text()) if len(sys.argv) > 3 and Path(sys.argv[3]).exists() else {}
 rows = []
 for path in sorted(results.glob('*.json')):
-    if path.name.endswith('.observed.json'):
+    if path.name.endswith(('.observed.json', '.rows.json')):
         continue
     r = json.loads(path.read_text())
     key = f"{r['jurisdiction']}/{r['table_id']}"

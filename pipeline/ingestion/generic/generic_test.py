@@ -1,9 +1,12 @@
 import unittest
 
-from ingestion.generic.layout import Band, Glyph, is_amount
-from ingestion.generic.observe import Rule, merge_rules
+from ingestion.generic.layout import Band, Glyph, is_amount, logical_pages, page_bands, split_digits_at_rules
+from ingestion.generic.observe import Page, Rule, Word, merge_rules
 from ingestion.generic.sums import bracket
-from ingestion.generic.tree import Group, _split_line, subject_items
+from ingestion.generic.repair import Report, clip_to_page, crop_to_box
+from ingestion.generic.tree import (Built, Group, Item, _leading_amount, _split_code, _split_line, number_span, owner,
+                                   same_position, shape_depth, subject_items)
+from ingestion.generic.units import check as check_units
 
 
 def glyph(text, x0, y0, width=None):
@@ -32,6 +35,256 @@ class LineTest(unittest.TestCase):
         label, money = _split_line([glyph('議長', 291, 100), glyph('7,956,000', 493, 100)])
         self.assertEqual([g.text for g in label], ['議長'])
         self.assertTrue(is_amount(money[0][0].text))
+
+
+class TrialRulesTest(unittest.TestCase):
+    """Shared rules added after trying three jurisdictions the rules had not seen (trial.md)."""
+
+    def test_a_line_of_only_a_grouped_amount_is_an_amount_not_an_item_numbered_10(self):
+        label, money = _split_line([glyph('10', 1127, 685, 9), glyph(',000', 1136, 685, 18)])
+        self.assertEqual(label, [])
+        self.assertEqual(''.join(g.text for run in money for g in run), '10,000')
+        label, money = _split_line([glyph('10', 1127, 685, 9)])
+        self.assertEqual([g.text for g in label], ['10'])
+
+    def test_digits_split_only_where_a_rule_runs_between_characters(self):
+        joined = Word('１１', 21.14, 120.6, 40.94, 129.6)  # 項1・目1 joined by Poppler across the rule at 31.2
+        self.assertEqual([w.text for w in split_digits_at_rules(joined, [Rule(31.2, 50, 31.2, 800)])], ['１', '１'])
+        overrun = Word('10', 22.0, 120.6, 31.0, 129.6)  # a 10 overrunning a narrow band: the rule crosses the 0
+        self.assertEqual([w.text for w in split_digits_at_rules(overrun, [Rule(28.8, 50, 28.8, 800)])], ['10'])
+
+    def test_only_a_rule_between_subject_columns_splits_digits_and_amounts_stay_whole(self):
+        rules = [Rule(x, 50, x, 200) for x in (10, 30, 50, 100, 150)] + [Rule(10, y, 150, y) for y in (50, 70, 200)]
+        words = [Word('項', 15, 55, 24, 64), Word('目', 35, 55, 44, 64), Word('支出済額', 55, 55, 91, 64), Word('不用額', 105, 55, 132, 64),
+                 Word('１１', 20, 80, 40, 89),                 # 項1・目1 joined across the rule at x=30
+                 Word('1000', 91, 80, 109, 89),                # an amount the rule at x=100 crosses between digits
+                 Word('2,000', 60, 95, 90, 104), Word('3,000', 110, 95, 140, 104)]
+        bands, _ = page_bands(Page(1, 200, 300, words, rules))
+        self.assertEqual({'／'.join(b.header): [w.text for w in b.words] for b in bands},
+                         {'項': ['１'], '目': ['１'], '支出済額': ['1000', '2,000'], '不用額': ['3,000']})
+
+    def test_an_amount_running_into_the_next_band_keeps_its_digits(self):
+        self.assertEqual(_leading_amount(glyph('44,406,439,217明許', 662, 700)).text, '44,406,439,217')
+        self.assertEqual(_leading_amount(glyph('301,286,948', 662, 700)).text, '301,286,948')
+
+    def test_numbers_of_one_shape_at_another_position_are_another_level(self):
+        group = Group([], '備考', False)
+        item = lambda code, name, x: Item(group, 1, [[glyph(code, x, 0, 4.5 * len(code)), glyph(name, x + 4.5 * len(code) + 2, 0)]],
+                                          code, name, x)
+        order, anchors = [], {}
+        depths = [shape_depth(item(code, name, x), 1, order, [], anchors)
+                  for code, name, x in (('1', '財政管理事務', 944), ('8', '旅費', 962), ('10', '需用費', 958),
+                                        ('2', '契約事務', 944), ('4', '共済費', 962.5))]
+        self.assertEqual(depths, [1, 2, 2, 1, 2])  # right-aligned 8 and 10 share a level below 事業
+
+    def test_a_header_printed_again_mid_page_is_not_body_and_its_title_names_the_kan(self):
+        verticals = [Rule(x, 50, x, 400) for x in (10, 100, 200)]
+        horizontals = [Rule(10, y, 200, y) for y in (50, 70, 100, 150, 170, 200, 400)]
+        header = lambda y: [Word('科', 20, y, 29, y + 9), Word('目', 40, y, 49, y + 9),
+                            Word('支出', 110, y, 128, y + 9), Word('済額', 130, y, 148, y + 9)]
+        words = header(55) + [Word('1', 20, 80, 24.5, 89), Word('総務費', 30, 80, 57, 89), Word('1,000', 150, 80, 172.5, 89),
+                              Word('第2款', 20, 155, 47, 164), Word('民生費', 50, 155, 77, 164)] + header(175) + \
+            [Word('1', 20, 210, 24.5, 219), Word('社会福祉費', 30, 210, 75, 219), Word('2,000', 150, 210, 172.5, 219)]
+        logical = logical_pages([Page(1, 300, 500, words, verticals + horizontals)])[0]
+        body = [w.text for band in logical.bands for w in band.words]
+        self.assertEqual(body, ['1', '総務費', '1', '社会福祉費', '1,000', '2,000'])
+        self.assertEqual([(code, name) for code, name, _ in logical.titles], [('2', '民生費')])
+
+    def test_rules_off_the_page_are_dropped_inside_the_box_the_pdf_displays(self):
+        import tempfile
+        from pathlib import Path
+        import pypdfium2 as pdfium
+        from ingestion.generic.repair import display_size
+        document = pdfium.PdfDocument.new()
+        for width, height, rotation in ((595, 842, 0), (842, 1191, 90), (842, 1191, 270), (595, 842, 0)):
+            page = document.new_page(width, height)
+            page.set_rotation(rotation)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'boxes.pdf'
+            document.save(path)
+            document.close()
+            sizes = display_size(path, [1, 2, 3, 4])
+        self.assertEqual(sizes, {1: (595, 842), 2: (1191, 842), 3: (1191, 842), 4: (595, 842)})
+        report = Report()
+        # The other half of a spread drawn off the page: cut at the box, a rule wholly outside dropped.
+        half = Page(4, 595, 842, [Word('支出済額', 40, 100, 80, 110)],
+                    [Rule(-300, 120, 500, 120), Rule(-200, 50, -200, 800), Rule(300, 50, 300, 800)])
+        clip_to_page(half, report, *sizes[4])
+        self.assertEqual(half.rules, [Rule(0, 120, 500, 120), Rule(300, 50, 300, 800)])
+        self.assertEqual(report.off_page_rules, 1)
+        # A word running past the edge of an unturned page does not turn the box.
+        upright = Page(1, 595, 842, [Word('備考', 585, 100, 600, 110)], [Rule(10, 650, 580, 650), Rule(300, 50, 300, 800)])
+        clip_to_page(upright, report, *sizes[1])
+        self.assertEqual(upright.rules, [Rule(10, 650, 580, 650), Rule(300, 50, 300, 800)])
+        # A turned page whose words all lie on the left keeps its rules on the right.
+        turned = Page(2, 842, 1191, [Word('議会費', 40, 100, 70, 110)], [Rule(1150, 50, 1150, 800)])
+        clip_to_page(turned, report, *sizes[2])
+        self.assertEqual(turned.rules, [Rule(1150, 50, 1150, 800)])
+
+    def test_a_page_cut_from_a_spread_by_its_cropbox_keeps_only_its_half(self):
+        import tempfile
+        from pathlib import Path
+        import pypdfium2 as pdfium
+        document = pdfium.PdfDocument.new()
+        for bottom, top in ((0, 595.5), (595.5, 1191)):  # one A3 spread turned 90°, cut in two by CropBox
+            page = document.new_page(842, 1191)
+            page.set_rotation(90)
+            page.set_cropbox(0, bottom, 842, top)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'spread.pdf'
+            document.save(path)
+            document.close()
+            spread = lambda number: Page(number, 842, 1191, [Word('議会費', 60, 300, 90, 309), Word('支出済額', 700, 100, 740, 109)],
+                                         [Rule(50, 120, 1100, 120)])
+            pages = [spread(1), spread(2)]
+            crop_to_box(path, pages, Report())
+        self.assertEqual([[w.text for w in p.words] for p in pages], [['議会費'], ['支出済額']])
+        self.assertEqual(pages[1].rules, [Rule(595.5, 120, 1100, 120)])
+
+    def test_an_amount_on_the_name_line_below_the_code_belongs_to_that_item(self):
+        band = Band(30, 98, 54, ('科目', '目'), [213.4, 551.4], 101, 551.4)
+        group = Group([band], '科目', True)
+        moku = Item(group, 54, [[glyph('1', 51, 221, 4)], [glyph('議会費', 51, 232)]], '1', '議会費', 51, level=0)
+        amount_band = Band(98, 151, 54, ('予算現額', '当初予算額'), [213.4, 551.4], 101, 551.4)
+        found = owner([glyph('82,694,000', 112, 232, 37)], amount_band, [group], {id(group): [moku]})
+        self.assertIs(found, moku)
+
+    def test_the_title_amount_keeps_zero_unseparated_and_signed_amounts(self):
+        from ingestion.generic.tree import title_amount
+        line = lambda *texts: [glyph(t, 20 + 40 * i, 10) for i, t in enumerate(texts)]
+        read = lambda *texts: (lambda kind, run: (kind, ''.join(g.text for g in run)))(*title_amount(line(*texts)))
+        self.assertEqual(read('第1款', '総務費', '（決算額', '0', '円）'), ('決算額', '0'))
+        self.assertEqual(read('第1款', '総務費', '（決算額', '999', '円）'), ('決算額', '999'))
+        self.assertEqual(read('第1款', '総務費', '（決算額', '△', '1,000', '円）'), ('決算額', '△1,000'))
+        self.assertEqual(read('第2款', '総務費（決算額4,764,369,474円）'), ('決算額', '4,764,369,474'))
+        self.assertEqual(title_amount(line('第1款', '総務費')), (None, []))
+
+    def test_a_kan_title_becomes_the_kan_node_with_its_amount(self):
+        from ingestion.generic.tree import build
+        rules = [Rule(x, 50, x, 200) for x in (10, 30, 100, 160)] + [Rule(10, y, 160, y) for y in (50, 70, 110, 200)]
+        title = [Word('第1款', 10, 30, 30, 39), Word('総務費', 32, 30, 59, 39), Word('（決算額', 61, 30, 97, 39),
+                 Word('0', 99, 30, 103, 39), Word('円）', 105, 30, 123, 39)]
+        body = [Word('項', 15, 55, 24, 64), Word('目', 50, 55, 59, 64), Word('支出済額', 110, 55, 146, 64),
+                Word('1', 12, 80, 16, 89), Word('総務管理費', 18, 80, 28, 89), Word('1', 32, 80, 36, 89), Word('一般管理費', 38, 80, 83, 89),
+                Word('0', 150, 80, 154, 89), Word('1,000', 130, 120, 155, 129)]
+        built = build(logical_pages([Page(1, 300, 300, title + body, rules)]))
+        kan = [n for n in built.nodes if n['level_header'] == '款']
+        self.assertEqual([(n['code_text'], n['name_text'], n['depth']) for n in kan], [('1', '総務費', 1)])
+        self.assertIn(('決算額', '0'), [(a['header_path'], a['amount_text']) for a in built.amounts if a['node_key'] == kan[0]['node_key']])
+        unreadable = build(logical_pages([Page(1, 300, 300, title[:3] + [Word('1,0', 99, 30, 110, 39), Word('O0円）', 111, 30, 135, 39)] + body, rules)]))
+        self.assertIn('unreadable amount', [u['kind'] for u in unreadable.unowned])
+
+    def test_a_parenthesised_transfer_remark_does_not_make_its_item_a_note(self):
+        from ingestion.generic.tree import PAREN_TAIL, TRANSFER
+        self.assertIsNone(TRANSFER.search(PAREN_TAIL.sub('', '需用費（同事業、委託料へ流用△1,815,000）')))
+        self.assertIsNotNone(TRANSFER.search(PAREN_TAIL.sub('', '○同目・旅費から同目・災害補償費へ流用')))
+
+    def test_the_separator_after_a_number_is_not_part_of_the_name(self):
+        self.assertEqual(_split_code('1.議会費'), ('1', '議会費'))
+        self.assertEqual(_split_code('01.01.01から流用'), ('01', '.01.01から流用'))  # a dotted code stays as printed
+
+    def test_a_summary_reprinting_the_detail_kan_counts_once_and_nothing_else_is_merged(self):
+        from ingestion.generic.units import general_total
+
+        def built(rows, total_text, total_unit='円'):
+            nodes = [{'node_key': f'k{i}', 'parent_node_key': None, 'axis_header': '科目', 'code_text': code, 'name_text': name}
+                     for i, (code, name, _, _) in enumerate(rows)]
+            amounts = [{'node_key': f'k{i}', 'header_path': '支出済額', 'amount_text': text, 'unit_text': unit}
+                       for i, (_, _, text, unit) in enumerate(rows)]
+            total = [{'kind': 'total amount', 'header': '支出済額', 'text': total_text, 'label': '歳出合計', 'unit': total_unit}]
+            return Built(nodes, amounts, [], total)
+
+        summary = [('1', '議会費', '139,266,890', '円'), ('2', '総務費', '1,954,817,466', '円')]
+        reprinted = built(summary + summary, '2,094,084,356')
+        self.assertTrue(check_units(reprinted, 'settlement')['sum_matches'])
+        self.assertEqual(general_total(reprinted.nodes, reprinted.amounts, 'settlement'), 2094084356)
+        # The same numbers in another unit are not the same 款: the yen sum no longer matches.
+        other_unit = built(summary + [(c, n, t, '千円') for c, n, t, _ in summary], '2,094,084,356')
+        self.assertTrue(check_units(other_unit, 'settlement')['stopped'])
+        # A detail that does not list the same 款 is no reprint: everything counts and the check stops.
+        partial = built(summary + summary[:1], '2,094,084,356')
+        self.assertTrue(check_units(partial, 'settlement')['stopped'])
+        # A 款 of 0 that only the summary prints does not break the reprint.
+        zero = built(summary + [('3', '災害復旧費', '0', '円')] + summary, '2,094,084,356')
+        self.assertTrue(check_units(zero, 'settlement')['sum_matches'])
+        # 款 with neither number nor name are never merged.
+        unnamed = built([(None, None, '139,266,890', '円')] * 2, '139,266,890')
+        self.assertEqual(check_units(unnamed, 'settlement')['kan_sum'], 2 * 139266890)
+
+    def test_an_amount_on_the_line_below_its_item_belongs_to_it_only_within_its_cell(self):
+        band = Band(40, 125, 50, ('科目', '目'), [213.4, 551.4], 101, 551.4)
+        group = Group([band], '科目', True)
+        moku = Item(group, 50, [[glyph('1.', 72, 230, 6), glyph('議会費', 80, 230)]], '1', '議会費', 72, level=0)
+        amount_band = Band(125, 186, 50, ('予算現額', '当初予算額'), [213.4, 551.4], 101, 551.4)
+        found = owner([glyph('142,678,000', 130, 242, 44)], amount_band, [group], {id(group): [moku]})
+        self.assertIs(found, moku)
+        # A rule at y=120 between the name (106–115) and the amount (122–131): another cell, unowned.
+        ruled = Band(125, 186, 50, ('予算現額', '当初予算額'), [100, 120, 200], 90, 300)
+        named = Item(group, 50, [[glyph('1', 72, 106, 6), glyph('議会費', 80, 106)]], '1', '議会費', 72, level=0)
+        self.assertIsNone(owner([glyph('1,000', 130, 122, 25)], ruled, [group], {id(group): [named]}))
+
+    def test_numbers_align_by_start_or_by_end_with_a_digit_more_or_less(self):
+        one, ten = glyph('1報酬', 795, 0, 22.5), glyph('10需用費', 790.3, 0, 31.5)  # right-aligned 1 and 10
+        self.assertTrue(same_position(number_span(ten), number_span(one), ten))
+        business, item = glyph('0106200広域', 782, 0, 54), glyph('01消耗品費', 801, 0, 45)  # ends meet by chance
+        self.assertFalse(same_position(number_span(item), number_span(business), item))
+        self.assertEqual(number_span(glyph('13使用料', 791, 0, 40)), (791, 800.0, 2))  # digits' own width, not the word's average
+
+
+class SpotTest(unittest.TestCase):
+    """The spot check must fail on a wrong amount, a wrong parent and a partial number."""
+
+    def pages(self):
+        from ingestion.generic.spot import rows
+        words = [('1', 10, 100, 14, 109), ('総務費', 16, 100, 43, 109), ('9,000,000', 120, 100, 160, 109),
+                 ('1', 20, 120, 24, 129), ('総務管理費', 26, 120, 71, 129), ('8,000,000', 120, 120, 160, 129),
+                 ('1', 30, 140, 34, 149), ('一般管理費', 36, 140, 81, 149), ('10,000', 120, 140, 150, 149), ('12,000', 170, 140, 200, 149),
+                 ('11,000', 220, 140, 250, 149),
+                 ('2', 20, 160, 24, 169), ('企画費', 26, 160, 53, 169), ('1,000,000', 120, 160, 160, 169),
+                 ('1', 30, 180, 34, 189), ('企画総務費', 36, 180, 81, 189), ('110,000', 120, 180, 155, 189), ('120,000', 170, 180, 205, 189),
+                 ('99,000', 220, 180, 250, 189)]
+        return {5: rows(words, 5)}
+
+    def nodes(self):
+        kan = {'key': 'kan', 'code': '1', 'name': '総務費'}
+        kou = {'key': 'kou1', 'code': '1', 'name': '総務管理費'}
+        other = {'key': 'kou2', 'code': '2', 'name': '企画費'}
+        moku = {'key': 'm', 'code': '1', 'name': '一般管理費', 'page': 5,
+                'amounts': {'approved': 10000, 'adjusted': 12000, 'executed': 11000}}
+        return kan, kou, other, moku
+
+    def test_a_correct_moku_passes(self):
+        from ingestion.generic.spot import verify
+        kan, kou, other, moku = self.nodes()
+        self.assertEqual(verify(moku, kan, kou, self.pages(), {'款': [kan], '項': [kou, other]}), [])
+
+    def test_an_amount_from_another_row_fails(self):
+        from ingestion.generic.spot import verify
+        kan, kou, other, moku = self.nodes()
+        moku['amounts']['executed'] = 99000  # printed, but on 企画総務費's row
+        self.assertEqual(verify(moku, kan, kou, self.pages(), {'款': [kan], '項': [kou, other]}), ['支出済額が同じ行に無い'])
+
+    def test_a_wrong_parent_fails(self):
+        from ingestion.generic.spot import verify
+        kan, kou, other, moku = self.nodes()
+        self.assertEqual(verify(moku, kan, other, self.pages(), {'款': [kan], '項': [kou, other]}), ['親が違う（項）'])
+
+    def test_amounts_running_into_the_next_column_still_match_whole(self):
+        from ingestion.generic.spot import rows, verify
+        kan, kou, other, _ = self.nodes()
+        pages = self.pages()
+        pages[5] += rows([('3', 30, 300, 34, 309), ('電算管理費', 36, 300, 81, 309), ('20,000明許', 120, 300, 160, 309),
+                          ('30,000明許', 170, 300, 210, 309), ('25,000', 220, 300, 250, 309)], 5)
+        moku = {'key': 'm3', 'code': '3', 'name': '電算管理費', 'page': 5,
+                'amounts': {'approved': 20000, 'adjusted': 30000, 'executed': 25000}}
+        self.assertEqual(verify(moku, kan, kou, pages, {'款': [kan], '項': [kou, other]}), ['親が違う（項）'])  # read, then judged
+
+    def test_a_number_inside_a_longer_number_does_not_match(self):
+        from ingestion.generic.spot import verify
+        kan, kou, other, _ = self.nodes()
+        moku = {'key': 'm2', 'code': '1', 'name': '企画総務費', 'page': 5,
+                'amounts': {'approved': 10000, 'adjusted': 20000, 'executed': 99000}}  # 110,000 and 120,000 are printed
+        self.assertEqual(verify(moku, kan, other, self.pages(), {'款': [kan], '項': [kou, other]}), ['当初予算額・予算現額の行が無い'])
 
 
 class SubjectTest(unittest.TestCase):
@@ -168,6 +421,16 @@ class UnitTest(unittest.TestCase):
 
 
 class SpreadAndOwnerTest(unittest.TestCase):
+    def test_a_subject_row_ignores_the_other_half_still_in_its_header(self):
+        from ingestion.generic.layout import Logical
+        from ingestion.generic.tree import subject_row
+        left = Band(99, 169, 248, ('予算現額', '当初予算額'), [148.0, 171.5, 195.0], 148.0, 800)
+        right = Band(600, 670, 249, ('支出済額',), [171.5, 195.0], 171.5, 800)  # a taller header on the right page
+        left.kind = right.kind = 'amount'
+        group = Group([Band(5, 20, 248, ('科目', '款'), [148.0, 171.5], 148.0, 800)], '科目', True)
+        repeat = Item(group, 248, [[glyph('4', 13, 155)]], '4', '', 13, level=0)  # `4 2 3 し尿処理費` above `5 労働費`
+        self.assertEqual(subject_row(repeat, Logical([248, 249], [left, right], '円', [])), (148.0, 171.5))
+
     def test_spread_halves_match_rows_under_one_shift(self):
         from ingestion.generic.layout import same_rows
         from ingestion.generic.observe import Page, Rule
@@ -191,6 +454,13 @@ class SpreadAndOwnerTest(unittest.TestCase):
                                   Word(',817', 126, 100, 140, 109)], [])
         repair_positions(page, Report())
         self.assertEqual([w.text for w in page.words], ['2,181,817'])
+
+    def test_a_number_ending_with_a_comma_continues_on_its_right(self):
+        from ingestion.generic.observe import Page, Word
+        from ingestion.generic.repair import Report, repair_positions
+        page = Page(1, 600, 800, [Word('5,', 1119.0, 345.2, 1124.7, 354), Word('184,344', 1128.4, 345.2, 1158.3, 354)], [])
+        repair_positions(page, Report())
+        self.assertEqual([w.text for w in page.words], ['5,184,344'])
 
     def test_amount_goes_to_the_item_on_its_line_before_its_cell(self):
         from ingestion.generic.tree import Group, Item, owner

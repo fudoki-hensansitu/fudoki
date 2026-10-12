@@ -19,6 +19,10 @@ AMOUNT = re.compile(r'[△▲\-]?(?:[0-9]{1,3}(?:,[0-9]{3})+|[0-9]+)')
 DASHES = {'－', '―', '—', '-', 'ー'}
 SIGNS = {'△', '▲'}
 SUBJECT_LEVELS = ('款', '項', '目')
+TITLE = re.compile(r'^第?([0-9]+)款([^(（0-9]+)')
+# Share of a body row's words that must repeat the table's header words for the row to be a
+# header printed again mid-page (a new table for the next 款 on the same page).
+REPEATED_HEADER = .6
 UNIT = re.compile(r'単位\s*[:：]?\s*(百万円|千円|円)')  # printed 単位; the rest of the unit rule is in units.py
 
 
@@ -72,6 +76,16 @@ class Logical:
     unit: str | None
     outside: list[Glyph]
 
+    @property
+    def titles(self) -> list[tuple[str, str, list[Glyph]]]:
+        """Table titles naming a 款 outside the table (`第２款 総務費（決算額 … 円）`): code, name, glyphs."""
+        found = []
+        for line in lines(self.outside):
+            match = TITLE.match(normalize(text(line)))
+            if match:
+                found.append((match.group(1), match.group(2), line))
+        return found
+
 
 def _crosses(rule: Rule, y: float) -> bool:
     return rule.y0 - 1 <= y <= rule.y1 + 1
@@ -96,6 +110,49 @@ def split_at_rules(word: Word, verticals: list[Rule]) -> list[Word]:
                                word.x0 + end * width, word.y1))
         start = end
     return pieces
+
+
+def repeated_header(page: Page, frame, header_bottom: float, body: list[tuple[int, Word]], header: set[str]) -> set[int]:
+    """Words of header rows printed again inside the table body, and of a 款 title row just above them.
+
+    A row is the space between full-width rules; it repeats the header when at least
+    REPEATED_HEADER of its (four or more) words are header words. Those words stay outside
+    the bands, so a title row becomes a table title (`Logical.titles`).
+    """
+    x0, x1, top, bottom, _ = frame
+    full = sorted(h.y0 for h in page.rules if not h.vertical and h.x0 <= x0 + 3 and h.x1 >= x1 - 3
+                  and header_bottom + 1 < h.y0 <= bottom + 1)
+    rows = list(zip([header_bottom] + full, full))
+    inside = lambda w, a, b: x0 < (w.x0 + w.x1) / 2 < x1 and a < (w.y0 + w.y1) / 2 < b
+    skip: set[int] = set()
+    for number, (upper, lower) in enumerate(rows):
+        words = [(i, w) for i, w in body if inside(w, upper, lower)]
+        if len(words) < 4 or sum(normalize(w.text) in header for _, w in words) < REPEATED_HEADER * len(words):
+            continue
+        skip.update(i for i, _ in words)
+        if number:
+            above = [(i, w) for i, w in body if inside(w, *rows[number - 1])]
+            if above and TITLE.match(normalize(reading([w for _, w in above]))):
+                skip.update(i for i, _ in above)
+    return skip
+
+
+def split_digits_at_rules(word: Word, verticals: list[Rule]) -> list[Word]:
+    """Split a body word of digits where a vertical rule runs between two of its characters
+    (the caller passes only the rules between two 款・項・目 columns).
+
+    Narrow code bands print `１ １` (項1・目1) that Poppler joins into one word. Only a
+    rule on a character boundary (within 1pt) splits, so a `10` overrunning a narrow
+    band (the rule crosses a character) stays whole.
+    """
+    raw = normalize(word.text)
+    if len(word.text) < 2 or not raw.isdigit():
+        return [word]
+    width = (word.x1 - word.x0) / len(word.text)
+    y = (word.y0 + word.y1) / 2
+    cuts = [r for r in verticals if word.x0 + 1 < r.x0 < word.x1 - 1 and _crosses(r, y)
+            and abs((r.x0 - word.x0) / width - round((r.x0 - word.x0) / width)) * width <= 1]
+    return split_at_rules(word, cuts) if cuts else [word]
 
 
 def reading(words: list[Word]) -> str:
@@ -170,6 +227,7 @@ def page_bands(page: Page) -> tuple[list[Band], list[Word]]:
     split = [(index, piece) for index, word in enumerate(page.words) for piece in split_at_rules(word, verticals)]
     used: set[int] = set()
     bands = []
+    whole = list(enumerate(page.words))
     for frame in _frames(page):
         x0, x1, top, bottom, edges = frame
         header_bottom = _header_bottom(page, frame)
@@ -186,13 +244,23 @@ def page_bands(page: Page) -> tuple[list[Band], list[Word]]:
             lower = min([h.y0 for h in horizontals if h.y0 >= cy and _covers(h, cx)] or [header_bottom])
             cells[left, right, upper, lower].append(word)
         header_cells = sorted(((key, normalize(reading(ws))) for key, ws in cells.items()), key=lambda c: c[0][2])
+        covering_of = lambda middle: [(key, text) for key, text in header_cells if key[0] - 1 <= middle <= key[1] + 1 and text]
+        # Only a rule between two 款・項・目 columns splits a body word of digits (`１１` = 項1・目1);
+        # amounts stay whole even when a rule crosses them.
+        subject = [bool(c) and c[-1][1] in SUBJECT_LEVELS
+                   for c in (covering_of((left + right) / 2) for left, right in zip(edges, edges[1:]))]
+        between = [Rule(x, top, x, bottom) for x, a, b in zip(edges[1:-1], subject, subject[1:]) if a and b]
+        body = [(index, piece) for index, word in whole for piece in split_digits_at_rules(word, between)]
+        skip = repeated_header(page, frame, header_bottom, body, {normalize(w.text) for ws in cells.values() for w in ws})
         for left, right in zip(edges, edges[1:]):
             middle = (left + right) / 2
-            covering = [(key, text) for key, text in header_cells if key[0] - 1 <= middle <= key[1] + 1 and text]
+            covering = covering_of(middle)
             rows = sorted(h.y0 for h in horizontals if _covers(h, middle) and header_bottom - 1 <= h.y0 <= bottom + 1)
             band = Band(left, right, page.number, tuple(text for _, text in covering), rows, header_bottom, bottom,
                         spans=[(key[0], key[1], text) for key, text in covering])
-            for index, word in enumerate(page.words):
+            for index, word in body:
+                if index in skip:
+                    continue
                 sx, cy = word.x0 + min(2, (word.x1 - word.x0) / 2), (word.y0 + word.y1) / 2
                 if left < sx < right and header_bottom < cy < bottom:
                     band.words.append(Glyph(word.text, word.x0, word.y0, word.x1, word.y1, page.number, 0))
@@ -235,6 +303,10 @@ def text(words: list[Glyph]) -> str:
 # (132217 prints its right pages 1.7pt higher).
 SPREAD_ROW_MATCH = 0.6
 SPREAD_MAX_SHIFT = 8.0
+
+
+def _subject(band: Band) -> bool:
+    return bool(band.header) and (band.header[-1] in SUBJECT_LEVELS or '科目' in band.header[0])
 
 
 def same_rows(left: Page, right: Page) -> bool:
@@ -303,7 +375,11 @@ def logical_pages(pages: list[Page]) -> list[Logical]:
             continue
         first = min(bands, key=lambda b: b.x0)
         previous_page = observed.get(result[-1].pages[-1]) if result else None
-        if (first.kind == 'amount' and result and len(result[-1].pages) == 1
+        # The right half of a spread starts with an amount column, or (when the 節 column
+        # opens the right page) at least carries no 款・項・目 column while the left half does.
+        continues = first.kind == 'amount' or (not any(_subject(b) for b in bands) and bool(result)
+                                               and any(_subject(b) for b in result[-1].bands))
+        if (continues and result and len(result[-1].pages) == 1
                 and previous_page is not None and same_rows(previous_page, page)):
             previous = result[-1]
             offset = max(b.x1 for b in previous.bands) + 10 - first.x0

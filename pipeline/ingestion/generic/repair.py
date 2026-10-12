@@ -25,7 +25,7 @@ from pathlib import Path
 import re
 import unicodedata
 
-from ingestion.generic.observe import Page, Word
+from ingestion.generic.observe import Page, Rule, Word
 
 REPAIRS = Path(__file__).resolve().parents[1] / 'lib/text_repairs.csv'
 NUMERIC = re.compile(r'^[0-9,△▲\-]+$')
@@ -48,6 +48,8 @@ class Report:
     duplicate_words: int = 0
     composite_glyphs: int = 0
     joined_numbers: int = 0
+    off_page_rules: int = 0
+    cropped_words: int = 0
     health: dict = field(default_factory=dict)
     broken: bool = False
     hits: Counter = field(default_factory=Counter)
@@ -57,6 +59,7 @@ class Report:
         return {'hidden_glyphs': self.hidden_glyphs, 'hidden_rules': self.hidden_rules,
                 'vertical_words': self.vertical_words, 'invisible_error': self.invisible_error, 'pattern': self.pattern, 'duplicate_words': self.duplicate_words,
                 'composite_glyphs': self.composite_glyphs, 'joined_numbers': self.joined_numbers,
+                'off_page_rules': self.off_page_rules, 'cropped_words': self.cropped_words,
                 'health': self.health, 'broken': self.broken, 'repairs': sum(self.hits.values()),
                 'hits': dict(self.hits.most_common()), 'examples': {k: v[:5] for k, v in self.examples.items()}}
 
@@ -267,8 +270,9 @@ def repair_positions(page: Page, report: Report) -> None:
                 report.composite_glyphs += 1  # one printed character drawn as two glyphs
                 continue
             # A word that starts with a comma continues the number on its left even across
-            # a printed space (`2 ,181 ,817`): no number begins with a comma.
-            comma_gap = 1.2 * (word.y1 - word.y0) if word.text.startswith(',') else 1.0
+            # a printed space (`2 ,181 ,817`): no number begins with a comma. Likewise a number
+            # ending with a comma continues on its right (`5,` `184,344`, 132209).
+            comma_gap = 1.2 * (word.y1 - word.y0) if word.text.startswith(',') or previous.text.endswith(',') else 1.0
             if (NUMERIC.match(previous.text) and NUMERIC.match(word.text) and word.x0 > previous.x0
                     and -.5 * (word.x1 - word.x0) <= word.x0 - previous.x1 <= comma_gap):
                 result[-1] = Word(previous.text + word.text, previous.x0, min(previous.y0, word.y0),
@@ -376,9 +380,85 @@ def join_vertical(page: Page, report: Report) -> None:
     page.words = result
 
 
+def crop_to_box(pdf_path: Path, pages: list[Page], report: Report) -> None:
+    """Drop words and rules outside the page's CropBox.
+
+    Some PDFs cut one A3 spread into two pages by CropBox only (left half, right half),
+    each page still holding the whole spread (132080・132047). A viewer shows one half;
+    Poppler's words cover both, so every row would be read twice. The words are in the
+    displayed (rotated) page measured from its top-left; the CropBox is mapped there.
+    Applied only when the CropBox is smaller than the MediaBox and words lie outside it.
+    """
+    import pypdfium2 as pdfium
+    document = pdfium.PdfDocument(str(pdf_path))
+    try:
+        for page in pages:
+            handle = document[page.number - 1]
+            ml, mb, mr, mt = handle.get_mediabox()
+            cl, cb, cr, ct = handle.get_cropbox()
+            rotation = handle.get_rotation()
+            handle.close()
+            if (cr - cl) * (ct - cb) >= .9 * (mr - ml) * (mt - mb):
+                continue
+            x0, x1, y0, y1 = {0: (cl - ml, cr - ml, mt - ct, mt - cb), 90: (cb - mb, ct - mb, cl - ml, cr - ml),
+                              180: (mr - cr, mr - cl, cb - mb, ct - mb), 270: (mt - ct, mt - cb, mr - cr, mr - cl)}[rotation % 360]
+            inside = lambda x, y: x0 - 1 <= x <= x1 + 1 and y0 - 1 <= y <= y1 + 1
+            words = [w for w in page.words if inside((w.x0 + w.x1) / 2, (w.y0 + w.y1) / 2)]
+            if len(words) == len(page.words):
+                continue  # the words already keep to the box
+            report.cropped_words += len(page.words) - len(words)
+            page.words = words
+            page.rules = [Rule(max(r.x0, x0), max(r.y0, y0), min(r.x1, x1), min(r.y1, y1)) for r in page.rules
+                          if r.x0 <= x1 and r.x1 >= x0 and r.y0 <= y1 and r.y1 >= y0
+                          and (not r.vertical or x0 <= r.x0 <= x1) and (r.vertical or y0 <= r.y0 <= y1)]
+    finally:
+        document.close()
+
+
+def display_size(pdf_path: Path, numbers: list[int]) -> dict[int, tuple[float, float]]:
+    """Width and height of each page as displayed: the MediaBox, turned by the page's rotation."""
+    import pypdfium2 as pdfium
+    document = pdfium.PdfDocument(str(pdf_path))
+    try:
+        sizes = {}
+        for number in numbers:
+            handle = document[number - 1]
+            left, bottom, right, top = handle.get_mediabox()
+            rotation = handle.get_rotation() % 180
+            handle.close()
+            sizes[number] = (top - bottom, right - left) if rotation else (right - left, top - bottom)
+        return sizes
+    finally:
+        document.close()
+
+
+def clip_to_page(page: Page, report: Report, width: float, height: float) -> None:
+    """Keep the parts of rules inside the displayed page box (`display_size`).
+
+    A spread cut into two pages may keep the whole spread's drawing on each page, the other
+    half lying off the page (x < 0 or beyond the width, 132276). Poppler drops the words there;
+    the rules drawn there would make empty bands and break the spread's pairing. The box comes
+    from the PDF's MediaBox and rotation, not from where words happen to lie.
+    """
+    kept = []
+    for rule in page.rules:
+        x0, x1 = max(rule.x0, 0.0), min(rule.x1, width)
+        y0, y1 = max(rule.y0, 0.0), min(rule.y1, height)
+        if x0 > x1 + .5 or y0 > y1 + .5 or (rule.vertical and not 0 <= rule.x0 <= width) \
+                or (not rule.vertical and not 0 <= rule.y0 <= height):
+            report.off_page_rules += 1
+            continue
+        kept.append(rule if (x0, y0, x1, y1) == (rule.x0, rule.y0, rule.x1, rule.y1) else Rule(x0, y0, x1, y1))
+    page.rules = kept
+
+
 def repair(pdf_path: Path | None, pages: list[Page]) -> tuple[list[Page], Report]:
     report = Report()
     if pdf_path is not None and pdf_path.exists():
+        sizes = display_size(pdf_path, [page.number for page in pages])
+        for page in pages:
+            clip_to_page(page, report, *sizes[page.number])
+        crop_to_box(pdf_path, pages, report)
         try:
             drop_invisible(pdf_path, pages, report)
         except Exception as error:  # pdfium's raw API failed: keep Poppler's words as they are
