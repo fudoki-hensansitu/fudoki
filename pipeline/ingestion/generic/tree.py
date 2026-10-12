@@ -20,6 +20,7 @@ from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 import hashlib
 import re
+import unicodedata
 
 from ingestion.lib.node_tables import phase_dictionary
 from ingestion.generic.layout import (SUBJECT_LEVELS, Band, Glyph, Logical, is_amount, lines, normalize,
@@ -35,6 +36,8 @@ class Group:
     bands: list[Band]
     axis: str
     subject: bool
+    mode: str = 'bands'  # how the subject group marks its levels (see SUBJECT_PATTERNS)
+    levels: int | None = None  # number of subject levels
 
     @property
     def x0(self) -> float:
@@ -53,7 +56,8 @@ class Item:
     code: str | None
     name: str
     indent: float
-    level: int | None = None  # subject band index
+    level: int | None = None  # subject level index (0 = 款)
+    level_name: str | None = None  # printed level name when it is not a band header
     amounts: list[tuple[str, list[Glyph]]] = field(default_factory=list)  # (header path, glyphs)
     role: str = 'node'  # node | note | total
     key: str | None = None
@@ -86,34 +90,91 @@ class Item:
         return sum((g.y0 + g.y1) / 2 for g in line) / len(line)
 
 
-def groups(logical: Logical) -> list[Group]:
+# How a document marks subject (款・項・目) levels. Each is tried on every
+# document and the tree that closes best wins (build.choose_pattern).
+SUBJECT_PATTERNS = ('bands', 'names', 'indent')
+SUBJECT_HEADER = re.compile(r'[款項目]|科目')
+
+
+def _breakdown_axis(band: Band, bands: list[Band]) -> str:
+    """The lowest header cell spanning this band and a neighbouring amount band.
+
+    A cell that the page edge cuts (a heading printed across a spread, 131148's
+    節 over 区分 | 金額) counts as spanning the amount band on the other page.
+    """
+    axis = band.header[-1] if band.header else '備考'
+    page_end = max(b.x1 for b in bands if b.page == band.page)
+    for x0, x1, label in reversed(band.spans[:-1]):
+        covered = [b for b in bands if x0 - 1 <= b.center <= x1 + 1]
+        if not all(b is band or b.kind != 'label' for b in covered):
+            continue
+        if any(b.kind == 'amount' for b in covered) or (x1 >= page_end - 1 and band.x1 >= page_end - 1):
+            return label
+    return axis
+
+
+def groups(logical: Logical, pattern: str = 'bands') -> list[Group]:
+    """Label bands into groups; `pattern` decides which bands carry the subject and how.
+
+    bands  – 款・項・目 each have a band; the band where a code starts is the level.
+    names  – as bands, plus the neighbouring name band that the codes share.
+    indent – one subject column; levels by indentation (codes optional).
+    """
     bands = sorted((b for b in logical.bands), key=lambda b: b.x0)
+    labels = [b for b in bands if b.kind == 'label']
+    subject_bands: list[Band] = []
+    mode, count = pattern, None
+    if pattern in ('bands', 'names'):
+        for index, band in enumerate(bands):
+            if band.kind == 'label' and band.header and band.header[-1] in SUBJECT_LEVELS:
+                if subject_bands and subject_bands[-1] is not bands[index - 1]:
+                    break
+                subject_bands.append(band)
+        count = len(subject_bands)
+        if pattern == 'names' and subject_bands:
+            following = bands.index(subject_bands[-1]) + 1
+            if following < len(bands) and bands[following].kind == 'label' and not (
+                    bands[following].header and bands[following].header[-1] in SUBJECT_LEVELS) and (
+                    not bands[following].header or SUBJECT_HEADER.search(''.join(bands[following].header))):
+                subject_bands.append(bands[following])
+            else:
+                subject_bands = []
+    elif pattern == 'indent':
+        # Every neighbouring label band headed by 款・項・目 (or 科目) is one subject
+        # column; a staircase of narrow level columns is read by indentation too.
+        for band in labels:
+            if band.header and SUBJECT_HEADER.search(''.join(band.header)):
+                subject_bands = [band]
+                index = bands.index(band)
+                while index + 1 < len(bands) and bands[index + 1].kind == 'label' and (
+                        bands[index + 1].header == band.header
+                        or (bands[index + 1].header and SUBJECT_HEADER.search(''.join(bands[index + 1].header)))):
+                    index += 1
+                    subject_bands.append(bands[index])
+                break
     result: list[Group] = []
-    for index, band in enumerate(bands):
+    for band in bands:
+        if band in subject_bands:
+            if band is subject_bands[0]:
+                result.append(Group(list(subject_bands), '科目', True, mode, count))
+            continue
         if band.kind != 'label':
             continue
-        subject = bool(band.header) and band.header[-1] in SUBJECT_LEVELS
-        if subject and result and result[-1].subject and result[-1].bands[-1] is bands[index - 1]:
-            result[-1].bands.append(band)
-            continue
-        if subject:
-            result.append(Group([band], '科目', True))
-            continue
-        # The lowest header cell spanning this band and a neighbouring amount band.
-        axis = band.header[-1] if band.header else '備考'
-        for x0, x1, label in reversed(band.spans[:-1]):
-            covered = [b for b in bands if x0 - 1 <= b.center <= x1 + 1]
-            if any(b.kind == 'amount' for b in covered) and all(b is band or b.kind != 'label' for b in covered):
-                axis = label
-                break
-        result.append(Group([band], axis, False))
+        result.append(Group([band], _breakdown_axis(band, bands), False))
     return result
 
 
+BULLET = re.compile(r'^[〇○●◎□■◇◆]')
+
+
 def _split_code(line_text: str) -> tuple[str | None, str]:
+    """A leading item number and the name. Numbers start from 1, so a leading 0 is a
+    bullet drawn as a digit; bullet marks (〇) mark a level and are not part of the name."""
     found = CODE.match(line_text)
-    if not found:
-        return None, line_text
+    if not found or int(unicodedata.normalize('NFKC', found.group(1))) == 0:
+        if found:
+            line_text = line_text[found.end():].strip()
+        return None, BULLET.sub('', line_text)
     return found.group(1), line_text[found.end():].strip()
 
 
@@ -398,16 +459,27 @@ def heading_names(logical: Logical) -> dict[tuple[str, str], str]:
     return found
 
 
-def owner(amount: list[Glyph], band: Band, ordered: list[Group], found: dict[int, list[Item]]) -> Item | None:
-    """The item, in the nearest label group to the left, printed in the amount's row."""
+def owner(amount: list[Glyph], band: Band, ordered: list[Group], found: dict[int, list[Item]],
+          roles: tuple[str, ...] = ('node', 'repeat', 'total')) -> Item | None:
+    """The item printed on the amount's own line in the nearest label group to its left;
+    failing that, the item in its rule-bounded row (a label centred in a tall cell).
+
+    The line comes first: when sub-rows carry no rules (131172 prints the 節 of a 目
+    inside the 目's ruled cell), the cell alone would hand the 目's amount to a 節.
+    """
     digits = [g for g in amount if g.text not in ('△', '▲')] or amount
     y = sum((g.y0 + g.y1) / 2 for g in digits) / len(digits)
+    reach = .6 * max(g.y1 - g.y0 for g in digits)
+    left = sorted((g for g in ordered if g.x1 <= band.x0 + 1), key=lambda g: -g.x0)
+    for group in left:
+        same_line = [i for i in found[id(group)] if abs(i.anchor - y) <= reach and i.role in roles]
+        if same_line:
+            return max(same_line, key=lambda i: (i.level or 0, -abs(i.anchor - y)))
     top, bottom = _cell(band, y)
     if bottom - top > 80:  # unruled: fall back to the printed line
         top, bottom = y - 4, y + 4
-    for group in sorted((g for g in ordered if g.x1 <= band.x0 + 1), key=lambda g: -g.x0):
-        candidates = [i for i in found[id(group)] if top - .5 <= i.anchor <= bottom + .5
-                      and i.role in ('node', 'repeat', 'total')]
+    for group in left:
+        candidates = [i for i in found[id(group)] if top - .5 <= i.anchor <= bottom + .5 and i.role in roles]
         if candidates:
             return max(candidates, key=lambda i: (i.level or 0, -abs(i.anchor - y)))
     return None
@@ -426,8 +498,41 @@ def node_key(item: Item) -> str:
     return 'n-' + hashlib.sha256(f'{item.page}:{x0:.2f}:{y0:.2f}:{item.group.axis}'.encode()).hexdigest()[:24]
 
 
-def build(logicals: list[Logical], judge=None) -> Built:
+DETAIL_PATTERNS = ('indent', 'shape')
+# Numbering shapes of breakdown items (事業・説明), in the order they are tried.
+SHAPES = (('bullet', re.compile(r'^[○〇●◎□■◇◆]')), ('paren', re.compile(r'^[(（][0-9]+[)）]')),
+          ('circled', re.compile(r'^[①-⑳]')), ('kana-paren', re.compile(r'^[(（][ア-ン][)）]')),
+          ('kana', re.compile(r'^[ア-ン](?=[\s　]|[^ァ-ヶー])')), ('number', re.compile(r'^[0-9]+')))
+
+
+def shape_of(item: Item) -> str | None:
+    raw = unicodedata.normalize('NFKC', text(item.lines[0])) if item.lines else ''
+    raw = raw.strip()
+    for name, pattern in SHAPES:
+        if pattern.match(raw if name not in ('circled',) else text(item.lines[0]).strip()):
+            return name
+    return None
+
+
+def shape_depth(item: Item, indent_depth: int, order: list[str], open_items: list) -> int:
+    """Depth by numbering shape: each shape keeps the level where it first appeared on the
+    axis (numbering restarts under each parent); unnumbered lines sit under the last open item
+    when indented deeper, otherwise they keep the indentation level."""
+    shape = shape_of(item)
+    if shape is None:
+        last = next((p for p in reversed(open_items) if p is not None), None)
+        if last is not None and item.indent > last.indent + 2:
+            return len(open_items) + 1
+        return indent_depth
+    if shape not in order:
+        order.append(shape)
+    return order.index(shape) + 1
+
+
+def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: str | dict = 'indent') -> Built:
+    """`detail` is one breakdown pattern for every axis, or a mapping axis → pattern."""
     """`judge(lines) -> {line id: (role, confidence)}` replaces the codeless-line rules (variant B)."""
+    shapes: dict[str, list[str]] = {}  # numbering shapes per breakdown axis, in order of first use
     stack: list[Item] = []  # open subject items by depth
     branch: dict[str, list[Item]] = {}  # open items per other axis
     levels: dict[str, list[float]] = {}
@@ -436,7 +541,7 @@ def build(logicals: list[Logical], judge=None) -> Built:
     all_items: list[tuple[Logical, list[Group], dict[int, list[Item]]]] = []
     margins = code_margins(logicals)
     for logical in logicals:
-        ordered = groups(logical)
+        ordered = groups(logical, pattern)
         found = {}
         for group in ordered:
             header = '／'.join(group.bands[0].header) if not group.subject else group.axis
@@ -447,16 +552,53 @@ def build(logicals: list[Logical], judge=None) -> Built:
             roles = None
             if judge is not None and not group.subject:
                 roles = judged_roles(judge, group, margins.get(group.axis))
-            group_items = subject_items(group) if group.subject else items(group, header, margins.get(group.axis), roles)
+            if not group.subject:
+                group_items = items(group, header, margins.get(group.axis), roles)
+            elif group.mode == 'indent':
+                group_items = items(group, group.axis)
+                for item in group_items:
+                    item.indent = item.glyphs[0].x0  # where the line starts, code or name
+            else:
+                group_items = subject_items(group)
             for item in group_items:
-                if TRANSFER.search(item.name) and item.code is None and not group.subject:
+                if TRANSFER.search(item.name) and not group.subject:  # 01.01.01.01から流用 starts with digits
                     item.role = 'annotation'  # a transfer note annotates the subject row
                 elif item.code is None and TOTAL.search(item.name):
                     item.role = 'total'
                 elif item.code is None and not item.amounts and not group.subject:
                     item.role = 'note'
             found[id(group)] = group_items
+        # A codeless line whose row holds amounts in an amount band is an item
+        # (a 節 column printed without numbers), not a note.
+        for band in logical.bands:
+            if band.kind != 'amount':
+                continue
+            for line in lines(band.words):
+                money = [g for g in line if is_amount(g.text)]
+                if not money:
+                    continue
+                target = owner(money, band, ordered, found, roles=('node', 'repeat', 'total', 'note'))
+                if target is not None and target.role == 'note':
+                    target.role = 'node'
         all_items.append((logical, ordered, found))
+    # Subject levels by indentation, learned over the document (pattern indent).
+    starts = sorted(i.indent for _, ordered, found in all_items for g in ordered if g.subject and g.mode == 'indent'
+                    for i in found[id(g)] if i.role == 'node')
+    subject_levels: list[list[float]] = []
+    for value in starts:
+        if subject_levels and value - subject_levels[-1][-1] <= 3:
+            subject_levels[-1].append(value)
+        else:
+            subject_levels.append([value])
+    subject_levels = [c for c in subject_levels if len(c) >= max(2, len(starts) // 100)]
+    centres = [sum(c) / len(c) for c in subject_levels]
+    for _, ordered, found in all_items:
+        for group in ordered:
+            if group.subject and group.mode == 'indent':
+                group.levels = len(centres) or 1
+                for item in found[id(group)]:
+                    item.level = min(range(len(centres)), key=lambda i: abs(centres[i] - item.indent)) if centres else 0
+                    item.level_name = SUBJECT_LEVELS[item.level] if item.level < len(SUBJECT_LEVELS) else None
     # Indentation levels per non-subject axis, learned over the document.
     indents: dict[str, list[float]] = defaultdict(list)
     for _, ordered, found in all_items:
@@ -513,7 +655,7 @@ def build(logicals: list[Logical], judge=None) -> Built:
                          for group in ordered for item in found[id(group)]), key=lambda e: e[:4])
         events = [(e[0], e[1], e[4]) for e in events]
         headings = heading_names(logical)
-        subject_depth = max((len(g.bands) for g in ordered if g.subject), default=3)
+        subject_depth = max((g.levels or len(g.bands) for g in ordered if g.subject), default=3)
         row = None  # (subject item, top, bottom) of the latest subject row
         for _, _, item in events:
             if not item.group.subject and item.role in ('node', 'note') and row is not None \
@@ -544,7 +686,8 @@ def build(logicals: list[Logical], judge=None) -> Built:
                     item.role = 'repeat'
                     continue
                 if not item.name:
-                    level = item.group.bands[item.level].header[-1]
+                    level = item.level_name or (item.group.bands[item.level].header[-1]
+                                                if item.group.mode in ('bands', 'names') else '')
                     item.name = headings.get((level, normalize(item.code or '')), '')
                 if depth > len(stack) + 1:
                     unowned.append({'kind': 'subject depth gap', 'page': item.page, 'text': item.name})
@@ -557,6 +700,9 @@ def build(logicals: list[Logical], judge=None) -> Built:
             else:
                 ranks = levels[item.group.axis]
                 depth = 1 + min(range(len(ranks)), key=lambda i: abs(ranks[i] - item.indent)) if ranks else 1
+                if (detail if isinstance(detail, str) else detail.get(item.group.axis, 'indent')) == 'shape':
+                    depth = shape_depth(item, depth, shapes.setdefault(item.group.axis, []),
+                                        branch.get(item.group.axis, []))
                 open_items = branch.setdefault(item.group.axis, [])
                 del open_items[depth - 1:]
                 while len(open_items) < depth - 1:
@@ -571,7 +717,9 @@ def build(logicals: list[Logical], judge=None) -> Built:
             x0, y0, x1, y1 = _bbox(item.glyphs)
             nodes.append({'node_key': item.key, 'parent_node_key': item.parent.key if item.parent else None,
                           'axis_header': item.group.axis, 'depth': item.depth,
-                          'level_header': (item.group.bands[item.level].header[-1] if item.group.subject else None),
+                          'level_header': (item.level_name or (item.group.bands[item.level].header[-1]
+                                                               if item.group.mode in ('bands', 'names') else None)
+                                           if item.group.subject else None),
                           'code_text': item.code, 'name_text': item.name or None, 'physical_page': item.page,
                           'x0': x0, 'y0': y0, 'x1': x1, 'y1': y1})
         for logical_, ordered_, found_ in [(logical, ordered, found)]:
@@ -599,7 +747,8 @@ def build(logicals: list[Logical], judge=None) -> Built:
                         unowned.append({'kind': 'unreadable amount', 'page': money[0].page, 'text': candidate}); continue
                     target = owner(money, band, ordered, found)
                     if target is not None and target.role == 'total':
-                        notes.append({'kind': 'total amount', 'page': money[0].page, 'text': candidate})
+                        notes.append({'kind': 'total amount', 'page': money[0].page, 'text': candidate,
+                                      'header': '／'.join(band.header), 'unit': logical.unit, 'label': target.name})
                         continue
                     if target is None or target.key is None:
                         unowned.append({'kind': 'amount without row', 'page': money[0].page, 'text': candidate,

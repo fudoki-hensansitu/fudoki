@@ -19,7 +19,7 @@ AMOUNT = re.compile(r'[△▲\-]?(?:[0-9]{1,3}(?:,[0-9]{3})+|[0-9]+)')
 DASHES = {'－', '―', '—', '-', 'ー'}
 SIGNS = {'△', '▲'}
 SUBJECT_LEVELS = ('款', '項', '目')
-UNIT = re.compile(r'単位\s*[:：]?\s*(千円|円)')
+UNIT = re.compile(r'単位\s*[:：]?\s*(百万円|千円|円)')  # printed 単位; the rest of the unit rule is in units.py
 
 
 def normalize(text: str) -> str:
@@ -98,6 +98,23 @@ def split_at_rules(word: Word, verticals: list[Rule]) -> list[Word]:
     return pieces
 
 
+def reading(words: list[Word]) -> str:
+    """Text of words in reading order: lines by vertical overlap, then left to right.
+
+    Rounding the top edge would split one printed line whose glyphs sit on
+    slightly different baselines and read 予算現額 as 算予現額.
+    """
+    rows: list[list[Word]] = []
+    for word in sorted(words, key=lambda w: ((w.y0 + w.y1) / 2, w.x0)):
+        if rows:
+            last = rows[-1][-1]
+            if min(last.y1, word.y1) - max(last.y0, word.y0) >= .5 * min(last.y1 - last.y0, word.y1 - word.y0):
+                rows[-1].append(word)
+                continue
+        rows.append([word])
+    return ''.join(w.text for row in rows for w in sorted(row, key=lambda w: w.x0))
+
+
 def _frames(page: Page) -> list[tuple[float, float, float, float, list[float]]]:
     """Frames as (x0, x1, top, bottom, band edges) from rules that bound a table."""
     verticals = [r for r in page.rules if r.vertical and r.y1 - r.y0 > 40]
@@ -168,8 +185,7 @@ def page_bands(page: Page) -> tuple[list[Band], list[Word]]:
             upper = max([h.y0 for h in horizontals if h.y0 <= cy and _covers(h, cx)] or [top])
             lower = min([h.y0 for h in horizontals if h.y0 >= cy and _covers(h, cx)] or [header_bottom])
             cells[left, right, upper, lower].append(word)
-        header_cells = sorted(((key, normalize(''.join(w.text for w in sorted(ws, key=lambda w: (round(w.y0), w.x0)))))
-                               for key, ws in cells.items()), key=lambda c: c[0][2])
+        header_cells = sorted(((key, normalize(reading(ws))) for key, ws in cells.items()), key=lambda c: c[0][2])
         for left, right in zip(edges, edges[1:]):
             middle = (left + right) / 2
             covering = [(key, text) for key, text in header_cells if key[0] - 1 <= middle <= key[1] + 1 and text]
@@ -211,6 +227,26 @@ def runs(line: list[Glyph], gap: float = 2.5) -> list[list[Glyph]]:
 
 def text(words: list[Glyph]) -> str:
     return ''.join(w.text for w in words)
+
+
+# A right-hand page joins the page before it only when their row rules line up:
+# the share of the shorter page's row rules found on the other page within 1pt,
+# after the one vertical shift (up to SPREAD_MAX_SHIFT) that lines up the most
+# (132217 prints its right pages 1.7pt higher).
+SPREAD_ROW_MATCH = 0.6
+SPREAD_MAX_SHIFT = 8.0
+
+
+def same_rows(left: Page, right: Page) -> bool:
+    """Whether two pages print the same rows, i.e. are the halves of one spread."""
+    rows = lambda page: sorted({round(r.y0, 1) for r in page.rules if not r.vertical and r.x1 - r.x0 > 50})
+    a, b = rows(left), rows(right)
+    if not a or not b:
+        return False
+    shorter, longer = (a, b) if len(a) <= len(b) else (b, a)
+    shifts = {round(y - x, 1) for x in shorter for y in longer if abs(y - x) <= SPREAD_MAX_SHIFT} or {0.0}
+    found = max(sum(1 for x in shorter if any(abs(x + shift - y) <= 1.0 for y in longer)) for shift in shifts)
+    return found / len(shorter) >= SPREAD_ROW_MATCH
 
 
 def logical_pages(pages: list[Page]) -> list[Logical]:
@@ -255,6 +291,7 @@ def logical_pages(pages: list[Page]) -> list[Logical]:
             else:
                 band.kind = 'label'
     result: list[Logical] = []
+    observed = {page.number: page for page, _, _ in per_page}
     for page, bands, outside in per_page:
         unit = None
         for line in lines([Glyph(w.text, w.x0, w.y0, w.x1, w.y1, page.number, 0) for w in outside]):
@@ -265,7 +302,9 @@ def logical_pages(pages: list[Page]) -> list[Logical]:
         if not bands:
             continue
         first = min(bands, key=lambda b: b.x0)
-        if first.kind == 'amount' and result and result[-1].pages[-1] == page.number - 1 and len(result[-1].pages) == 1:
+        previous_page = observed.get(result[-1].pages[-1]) if result else None
+        if (first.kind == 'amount' and result and len(result[-1].pages) == 1
+                and previous_page is not None and same_rows(previous_page, page)):
             previous = result[-1]
             offset = max(b.x1 for b in previous.bands) + 10 - first.x0
             for band in bands:
@@ -279,8 +318,4 @@ def logical_pages(pages: list[Page]) -> list[Logical]:
             previous.outside.extend(glyphs)
             continue
         result.append(Logical([page.number], bands, unit, glyphs))
-    carried = None
-    for logical in result:
-        logical.unit = logical.unit or carried
-        carried = logical.unit
     return result
