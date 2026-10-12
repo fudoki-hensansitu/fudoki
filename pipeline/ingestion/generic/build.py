@@ -15,6 +15,7 @@ from pathlib import Path
 from ingestion.generic.layout import logical_pages, normalize
 from ingestion.generic.observe import observe
 from ingestion.generic.repair import repair
+from ingestion.generic.units import resolve as resolve_units
 from ingestion.generic.tree import DETAIL_PATTERNS, SUBJECT_PATTERNS, Built, build
 from ingestion.lib.node_tables import AMOUNT_COLUMNS, NODE_COLUMNS, amount_phase, check_tree, phase_dictionary
 from ingestion.lib.parquet import write_parquet
@@ -77,7 +78,8 @@ def closure(built: Built, document_kind: str) -> dict:
 
 
 def choose_pattern(logicals, document_kind: str = 'settlement', judge=None) -> tuple[Built, dict]:
-    """Build the tree with every subject pattern and keep the one that closes best."""
+    """Decide the unit, build the tree with every subject pattern and keep the one that closes best."""
+    unit_sources = resolve_units(logicals, document_kind)
     trials = {}
     for pattern in SUBJECT_PATTERNS:
         built = build(logicals, judge, pattern)
@@ -99,7 +101,7 @@ def choose_pattern(logicals, document_kind: str = 'settlement', judge=None) -> t
     chosen = {axis: max(DETAIL_PATTERNS, key=lambda d: (*share(counts[d]), -DETAIL_PATTERNS.index(d)))
               for axis, counts in per_axis.items()}
     built = trials[best][0] if all(d == 'indent' for d in chosen.values()) else build(logicals, judge, best, chosen)
-    return built, {'chosen': best, 'detail': chosen, 'detail_scores': per_axis,
+    return built, {'chosen': best, 'detail': chosen, 'detail_scores': per_axis, 'units': unit_sources,
                    'trials': {p: c for p, (_, c) in trials.items()}}
 
 
