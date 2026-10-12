@@ -156,6 +156,17 @@ class AcquireTest(unittest.TestCase):
         self.assertEqual(len(read.call_args.args[0]), 2)
         self.assertEqual([(r['id'], r['observations'][0]['raw_text']) for r in page['regions']], [('digit-0', '0')])
 
+    def test_whitening_removes_rules_and_their_edges_but_keeps_text(self):
+        image = np.full((200, 200), 255, np.uint8)
+        image[:, 100:103] = 0          # a vertical rule, longer than 14pt at 72 dpi
+        image[:, 103] = 100            # its faint edge
+        image[50:60, 50:56] = 0        # a glyph
+        scan_ocr._whitened.cache_clear()
+        with patch.object(scan_ocr.pdf_rules, 'render', return_value=image):
+            clean = scan_ocr._whitened(Path('x.pdf'), 1, 72)
+        self.assertTrue((clean[:, 100:104] == 255).all())
+        self.assertTrue((clean[50:60, 50:56] == 0).all())
+
     def test_only_vision_is_acquired(self):
         with self.assertRaisesRegex(ValueError, 'Vision only'):
             scan_ocr.acquire(Path('x.pdf'), {'engine': 'paddle', 'pages': [1]})

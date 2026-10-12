@@ -259,7 +259,7 @@ def _whitened(path: Path, number: int, dpi: int) -> np.ndarray:
     image = pdf_rules.render(path, number, dpi)
     dark = image < pdf_rules.DARK
     clean = image.copy()
-    rule = dark & ~_strip_runs(dark, int(RULE_RUN_PT * config.dpi / 72))
+    rule = dark & ~_strip_runs(dark, int(RULE_RUN_PT * dpi / 72))
     edge = rule.copy()  # the faint edge left beside a whitened rule reads as ）
     for shift in (1, 2):
         edge[shift:] |= rule[:-shift]
