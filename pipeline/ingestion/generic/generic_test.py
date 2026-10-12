@@ -330,6 +330,21 @@ class SpotTest(unittest.TestCase):
         self.assertEqual(verify(moku, kan, kou, {5: rows(self.HEADER + one, 5)}, {'款': [kan], '項': [kou]}, stages),
                          ['列を確かめられない'])
 
+    def test_a_spent_amount_on_the_next_page_needs_a_spread(self):
+        from ingestion.generic.spot import rows, verify
+        kan = {'key': 'kan', 'code': '1', 'name': '総務費'}
+        kou = {'key': 'kou1', 'code': '1', 'name': '総務管理費'}
+        left = [w for w in self.WORDS if w[2] <= 149 and w[0] != '11,000']
+        right = [('支出済額', 22, 60, 58, 69), ('11,000', 20, 140, 50, 149), ('2,000', 60, 140, 90, 149)]
+        pages = {5: rows(self.HEADER + left, 5), 6: rows(right, 6)}
+        stages = {5: {'approved': (100, 160), 'adjusted': (160, 210)}, 6: {'executed': (10, 60)}}
+        box = {w[0]: [5, w[1], w[2], w[3], w[4]] for w in left}
+        moku = {'key': 'm', 'code': '1', 'name': '一般管理費', 'page': 5, 'amounts': {'approved': 10000, 'adjusted': 12000, 'executed': 11000},
+                'positions': {'approved': box['10,000'], 'adjusted': box['12,000'], 'executed': [6, 20, 140, 50, 149]}}
+        others = {'款': [kan], '項': [kou]}
+        self.assertEqual(verify(moku, kan, kou, pages, others, stages, spreads={(5, 6)}), [])
+        self.assertEqual(verify(moku, kan, kou, pages, others, stages), ['支出済額が同じ行に無い'])  # not a spread
+
     def test_a_page_without_the_stage_header_cannot_pass(self):
         from ingestion.generic.spot import rows, verify
         kan = {'key': 'kan', 'code': '1', 'name': '総務費'}

@@ -11,6 +11,7 @@ from pathlib import Path
 
 from ingestion.generic.observe import observe
 from ingestion.generic.repair import repair
+from ingestion.generic.layout import same_rows
 from ingestion.generic.spot import rows, stage_columns, verify
 
 
@@ -32,11 +33,12 @@ def main() -> None:
     observed, _ = repair(pdf, observe(pdf, numbers, Path('.cache/generic-trial') / name / 'spot-observed.json'))
     pages = {p.number: rows([(w.text, w.x0, w.y0, w.x1, w.y1) for w in p.words], p.number) for p in observed}
     stages = {p.number: stage_columns(p) for p in observed}  # from the source's headers, not the build
+    spreads = {(a.number, b.number) for a, b in zip(observed, observed[1:]) if b.number == a.number + 1 and same_rows(a, b)}
     passed, cache = 0, {}
     for s in chosen:
         kou = subjects.get(s['parent']) or {}
         kan = subjects.get(kou.get('parent')) or {}
-        reasons = verify(s, kan, kou, pages, others, stages, cache) if kan else ['款・項の親が無い']
+        reasons = verify(s, kan, kou, pages, others, stages, cache, spreads) if kan else ['款・項の親が無い']
         passed += not reasons
         path = ' > '.join(f"{x.get('code')}{x.get('name')}" for x in (kan, kou, s))
         a = s['amounts']

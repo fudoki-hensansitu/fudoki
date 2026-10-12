@@ -8,7 +8,7 @@ A 目 passes when all of these hold on the printed text (words after the text-la
   (`stage_columns`; a number running into the next column's text is placed by its start), so an
   amount the build read from another column fails;
 - the 当初予算額 and 予算現額 share one printed row, and the 支出済額 is on it or on the row at the
-  same height of the next page (the right half of a spread);
+  same height of the next page when the two pages are one spread (their row rules line up);
 - its number and its whole name are printed in the subject columns around that row, without
   crossing another item: a row with an amount in the budget columns or a row opening with another
   number ends the 目's rows (`1` / `議会費`, `東久留米` / `6` / `市長選挙費`, `衆議院議` / … / `査費`);
@@ -219,11 +219,13 @@ def _in_column(token: tuple[str, float, float], cell: tuple[float, float]) -> bo
 
 
 def verify(moku: dict, kan: dict, kou: dict, pages: dict[int, list[Row]], others: dict[str, list[dict]],
-           stages: dict[int, dict[str, tuple[float, float]]], cache: dict | None = None) -> list[str]:
+           stages: dict[int, dict[str, tuple[float, float]]], cache: dict | None = None,
+           spreads: set[tuple[int, int]] = frozenset()) -> list[str]:
     """Reasons the 目 fails, empty when it passes. `moku` carries its amounts and their printed
     places (`positions`: phase → (page, x0, y0, x1, y1)); `others` lists every built 款 and 項 by
-    level; `stages` maps each page to `stage_columns` of it. Pass one `cache` for every 目 of a
-    document."""
+    level; `stages` maps each page to `stage_columns` of it; `spreads` lists (left, right) pages
+    whose row rules line up (`layout.same_rows`), the only pages where a 支出済額 may sit on the
+    next page. Pass one `cache` for every 目 of a document."""
     cache = {} if cache is None else cache
     values = {phase: _amount(moku['amounts'].get(phase)) for phase in PHASES}
     places = moku.get('positions') or {}
@@ -250,7 +252,7 @@ def verify(moku: dict, kan: dict, kou: dict, pages: dict[int, list[Row]], others
         reasons.append('当初予算額と予算現額が別の行')
     spent_page, spent_index = found['executed']
     if not ((spent_page, spent_index) == (page_no, index) or
-            (spent_page == page_no + 1 and abs(pages[spent_page][spent_index].y - row.y) <= 3)):
+            ((page_no, spent_page) in spreads and abs(pages[spent_page][spent_index].y - row.y) <= 3)):
         reasons.append('支出済額が同じ行に無い')
     budget = [places['approved'][3], places['adjusted'][3]]
     limit = min(places['approved'][1], places['adjusted'][1])  # the budget columns start here
