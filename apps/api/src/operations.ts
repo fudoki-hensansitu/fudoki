@@ -241,7 +241,7 @@ const WHERE_HELP = {
   integer: `eq・not_eq（${MAX_LIST} 個まで）、min・max（以上・以下）、is_null`,
   number: 'min・max（以上・以下）、is_null',
   boolean: 'eq',
-  combine: `列どうしは AND。列をまたぐ OR と NOT は無いので、2回に分けて問い合わせる。値の合計は ${MAX_BINDS - 2} 個まで。`,
+  combine: `列どうしは AND。列をまたぐ OR と NOT は無いので、2回に分けて問い合わせる。fiscal_year の年数と条件の値の合計は ${MAX_BINDS} 個まで。`,
 }
 
 const searchDescription =
