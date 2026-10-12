@@ -62,7 +62,7 @@ def validate_answer(answer: dict) -> None:
                    for p in probabilities.values())
             or abs(sum(probabilities.values()) - 1) > 0.01
             or probabilities[answer['choice']] < max(probabilities.values())):
-        raise ValueError('Invalid Jev Choice answer')
+        raise ValueError(f'Invalid Jev Choice answer: {answer!r}')
 
 
 def call_api(state, questions, key):

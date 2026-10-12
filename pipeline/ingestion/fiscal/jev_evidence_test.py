@@ -68,6 +68,9 @@ class EvidenceTest(unittest.TestCase):
                 with patch.object(run,'fetch',return_value=evidence_path):
                     saved = run.verify_coverage(document, locate, None)
                 self.assertEqual(saved['one']['jev']['judgments'], replay['one']['jev']['judgments'])
+                (candidate / 'one/one.coverage.json').unlink()
+                without_scope = run.verify_coverage(document, locate, candidate)
+                self.assertEqual(without_scope['one']['jev']['judgments'], replay['one']['jev']['judgments'])
                 evidence_path.unlink()
                 missing = run.verify_coverage(document, locate, candidate)
                 self.assertEqual(missing['one']['status'],run.MISMATCH)

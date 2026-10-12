@@ -184,6 +184,8 @@ def validate(document: dict, *, path: Path | None = None, check_code: bool = Tru
         for kind, reference in storage_references(table).items():
             if reference['object']['key'] != object_key(document, ident, kind):
                 raise ValueError('Saved table key differs from its target/direction/table ID')
+        if 'jev' in table and 'nodes' not in table:
+            raise ValueError('Jev evidence requires a node table pair')
         if 'nodes' in table:
             origins = resolved_inputs(document, conversions[table['conversion_id']])
             if not all(item['format'] == 'pdf' for item in origins):

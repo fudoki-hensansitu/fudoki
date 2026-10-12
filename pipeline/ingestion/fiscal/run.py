@@ -411,11 +411,16 @@ def verify_coverage(document: dict, locate, directory, *, remote=False) -> dict:
                 cache = jev_recheck.load_cache(jev_path)
                 scope = cache['scope']
             else:
-                scope = json.loads(sidecars[0].read_text())
-                jev_path = jev_recheck.sidecar(sidecars[0].with_name(table['table_id'] + '.parquet'))
-                cache = None
+                if len(sidecars) > 1:
+                    raise ValueError('Ambiguous coverage scopes for candidate table')
+                cache_paths = sorted(directory.rglob(table['table_id'] + jev_recheck.SIDECAR_SUFFIX))
+                if len(cache_paths) != 1:
+                    raise ValueError('Jev cache missing or ambiguous for candidate table')
+                jev_path = cache_paths[0]
                 if 'jev' in table:
                     verify(jev_path, table['jev']['object'])
+                cache = jev_recheck.load_cache(jev_path)
+                scope = json.loads(sidecars[0].read_text()) if sidecars else cache['scope']
             result = node_tables.check_digit_coverage(
                 scope['words'], peers[table['table_id']], control_tables=[adopted[table['table_id']]],
                 exclusions=scope.get('excluded_regions', ()),
