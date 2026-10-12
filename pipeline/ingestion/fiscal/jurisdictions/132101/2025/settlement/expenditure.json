@@ -229,7 +229,137 @@
         }
       ],
       "options": {
-        "table_id": "expenditure-settlement-4"
+        "table_id": "expenditure-settlement-4",
+        "amount_corrections": [
+          {
+            "id": "vlm-67078e41f0",
+            "page": 32,
+            "observation_id": "p32:full-page:r58",
+            "observed_amount": "9,210,8871",
+            "corrected_amount": "9,210,887",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 9,210,8871）"
+          },
+          {
+            "id": "vlm-0f3efd112e",
+            "page": 2,
+            "observation_id": "p2:full-page:r138",
+            "observed_amount": "116,715, 158",
+            "corrected_amount": "146,715,458",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 116,715,158）"
+          },
+          {
+            "id": "vlm-91cb5057e8",
+            "page": 3,
+            "observation_id": "p3:full-page:r99",
+            "observed_amount": "2,151,800）",
+            "corrected_amount": "2,451,800",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 2,151,800)）"
+          },
+          {
+            "id": "vlm-e87779c07c",
+            "page": 3,
+            "observation_id": "p3:full-page:r102",
+            "observed_amount": "3,496,018）",
+            "corrected_amount": "3,496,048",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 3,496,018)）"
+          },
+          {
+            "id": "vlm-ae6f5af710",
+            "page": 15,
+            "observation_id": "p15:full-page:r40",
+            "observed_amount": "2,418,000",
+            "corrected_amount": "2,448,000",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 2,418,000）"
+          },
+          {
+            "id": "vlm-8967f8ea06",
+            "page": 16,
+            "observation_id": "p16:full-page:r139",
+            "observed_amount": "21,884",
+            "corrected_amount": "24,884",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 21,884）"
+          },
+          {
+            "id": "vlm-0b210f6451",
+            "page": 19,
+            "observation_id": "p19:full-page:r101",
+            "observed_amount": "36,150",
+            "corrected_amount": "36,450",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 36,150）"
+          },
+          {
+            "id": "vlm-a38083ce1e",
+            "page": 20,
+            "observation_id": "p20:full-page:r101",
+            "observed_amount": "991,620",
+            "corrected_amount": "994,620",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 991,620）"
+          },
+          {
+            "id": "vlm-23a48b6d77",
+            "page": 31,
+            "observation_id": "p31:full-page:r152",
+            "observed_amount": "189,588）",
+            "corrected_amount": "489,588",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 189,588)）"
+          },
+          {
+            "id": "vlm-e9cd52a1d2",
+            "page": 36,
+            "observation_id": "p36:full-page:r104",
+            "observed_amount": "1,674,100）",
+            "corrected_amount": "1,674,400",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 1,674,100)）"
+          },
+          {
+            "id": "vlm-86d10f0bea",
+            "page": 36,
+            "observation_id": "p36:full-page:r112",
+            "observed_amount": "1,334,122）",
+            "corrected_amount": "1,334,422",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 1,334,122)）"
+          },
+          {
+            "id": "vlm-55cd2ccd94",
+            "page": 41,
+            "observation_id": "p41:full-page:r99",
+            "observed_amount": "1,571,000）",
+            "corrected_amount": "1,577,000",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 1,571,000)）"
+          },
+          {
+            "id": "vlm-fcf9afb439",
+            "page": 45,
+            "observation_id": "p45:full-page:r112",
+            "observed_amount": "12,206,856）",
+            "corrected_amount": "42,206,856",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 12,206,856)）"
+          },
+          {
+            "id": "vlm-0c0bb4a452",
+            "page": 45,
+            "observation_id": "p45:full-page:r105",
+            "observed_amount": "127,518",
+            "corrected_amount": "427,548",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 127,518）"
+          },
+          {
+            "id": "vlm-fe86a7e6ea",
+            "page": 47,
+            "observation_id": "p47:full-page:r135",
+            "observed_amount": "499,115",
+            "corrected_amount": "499,445",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 499,115）"
+          },
+          {
+            "id": "vlm-f269c761db",
+            "page": 51,
+            "observation_id": "p51:full-page:r115",
+            "observed_amount": "241,090",
+            "corrected_amount": "244,090",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 241,090）"
+          }
+        ]
       },
       "expected_tables": [
         {
@@ -697,7 +827,129 @@
         }
       ],
       "options": {
-        "table_id": "expenditure-settlement-13"
+        "table_id": "expenditure-settlement-13",
+        "amount_corrections": [
+          {
+            "id": "vlm-5ff7925b5c",
+            "page": 11,
+            "observation_id": "p11:full-page:r51",
+            "observed_amount": "7,036,000l",
+            "corrected_amount": "7,036,000",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 7,036,000l）"
+          },
+          {
+            "id": "vlm-df55fb51d3",
+            "page": 2,
+            "observation_id": "p2:full-page:r118",
+            "observed_amount": "14,678）",
+            "corrected_amount": "44,678",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 14,678)）"
+          },
+          {
+            "id": "vlm-72a92d8e14",
+            "page": 11,
+            "observation_id": "p11:full-page:r53",
+            "observed_amount": "918,000",
+            "corrected_amount": "948,000",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 918,000）"
+          },
+          {
+            "id": "vlm-8671d7eadb",
+            "page": 14,
+            "observation_id": "p14:full-page:r95",
+            "observed_amount": "172,500",
+            "corrected_amount": "472,500",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 172,500）"
+          },
+          {
+            "id": "vlm-8b92683d85",
+            "page": 31,
+            "observation_id": "p31:tile-17-2:r18",
+            "observed_amount": "152,108）",
+            "corrected_amount": "152,408",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 152,108)）"
+          },
+          {
+            "id": "vlm-fce34ceb6e",
+            "page": 32,
+            "observation_id": "p32:full-page:r56",
+            "observed_amount": "100,000",
+            "corrected_amount": "400,000",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 100,000）"
+          },
+          {
+            "id": "vlm-42d8c7bacc",
+            "page": 53,
+            "observation_id": "p53:full-page:r12",
+            "observed_amount": "19,107,000",
+            "corrected_amount": "49,107,000",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 19,107,000）"
+          },
+          {
+            "id": "vlm-03b9f2520b",
+            "page": 59,
+            "observation_id": "p59:full-page:r44",
+            "observed_amount": "13,188,000/",
+            "corrected_amount": "13,488,000",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 13,188,000/）"
+          },
+          {
+            "id": "vlm-78ad7189b4",
+            "page": 48,
+            "observation_id": "p48:full-page:r88",
+            "observed_amount": "21,050,605）",
+            "corrected_amount": "24,050,605",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 21,050,605)）"
+          },
+          {
+            "id": "vlm-d12e848ede",
+            "page": 48,
+            "observation_id": "p48:full-page:r89",
+            "observed_amount": "15,915,736",
+            "corrected_amount": "15,945,736",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 15,915,736）"
+          },
+          {
+            "id": "vlm-2021e579b5",
+            "page": 58,
+            "observation_id": "p58:full-page:r109",
+            "observed_amount": "153,186",
+            "corrected_amount": "153,486",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 153,186）"
+          },
+          {
+            "id": "vlm-9528f90ab5",
+            "page": 59,
+            "observation_id": "p59:full-page:r65",
+            "observed_amount": "303,513,499",
+            "corrected_amount": "303,543,499",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 303,513,499）"
+          },
+          {
+            "id": "vlm-cc04dcad35",
+            "page": 60,
+            "observation_id": "p60:full-page:r137",
+            "observed_amount": "181,919",
+            "corrected_amount": "481,919",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 181,919）"
+          },
+          {
+            "id": "vlm-b41e314d62",
+            "page": 67,
+            "observation_id": "p67:full-page:r38",
+            "observed_amount": "5,115,000",
+            "corrected_amount": "5,445,000",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 5,115,000）"
+          },
+          {
+            "id": "vlm-2f1e9bf30f",
+            "page": 67,
+            "observation_id": "p67:full-page:r127:w3",
+            "observed_amount": "3,541,191,994",
+            "corrected_amount": "3,541,194,994",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 3,541,191,994）"
+          }
+        ]
       },
       "expected_tables": [
         {
