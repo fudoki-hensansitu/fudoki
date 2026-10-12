@@ -84,8 +84,10 @@ def recheck(document: dict, conversion: dict, pdf: Path, model: str = MODEL, lim
     score = problems(base)
     proposals, reads = [], []
     # An amount assembled from several OCR pieces has no single observation to bind.
-    boxes = [base.sources[key][0] for key in (failing_cells(base) if score else [])[:limit]
-             if len(base.sources[key]) == 1]
+    declared = {(r.page, r.observation_id) for r in existing}  # already corrected: not read again
+    boxes = [base.sources[key][0] for key in (failing_cells(base) if score else [])
+             if len(base.sources[key]) == 1 and (base.sources[key][0].page, base.sources[key][0].id) not in declared]
+    boxes = list({(b.page, b.id): b for b in boxes}.values())[:limit]  # one box may print two amounts
     with ThreadPoolExecutor(4) as pool:
         answers = list(pool.map(lambda box: read_cell(pdf, box, model), boxes))
     for box, answer in zip(boxes, answers):
@@ -125,9 +127,8 @@ def main() -> None:
         report = recheck(document, conversion, Path(local[conversion['inputs'][0]['sha256']]), args.model, args.limit)
         if args.write and report['added']:
             conversion['options'].setdefault('amount_corrections', []).extend(report['added'])
-        print(json.dumps(report, ensure_ascii=False))
-    if args.write:
-        manifest.write(args.manifest, document)
+            manifest.write(args.manifest, document)  # per table, so a later failure keeps these
+        print(json.dumps(report, ensure_ascii=False), flush=True)
 
 
 if __name__ == '__main__':
