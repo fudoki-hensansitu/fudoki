@@ -11,7 +11,7 @@ their printed path. Remarks annotations (注記) compare as one class.
 from __future__ import annotations
 
 import argparse
-from collections import Counter
+from collections import Counter, defaultdict
 import json
 from pathlib import Path
 
@@ -21,7 +21,9 @@ from ingestion.lib.node_tables import amount_phase, read_rows
 from shared.amount import number
 
 
-def paths(nodes: list[dict]) -> dict[str, tuple]:
+def paths(nodes: list[dict], signatures: dict[str, object] | None = None) -> dict[str, tuple]:
+    """Root-to-node identities. With `signatures`, a node that has one is named by it
+    instead of its printed name (misread names are tolerated; code, amount and parents must agree)."""
     by_key = {n['node_key']: n for n in nodes}
     result: dict[str, tuple] = {}
 
@@ -29,7 +31,12 @@ def paths(nodes: list[dict]) -> dict[str, tuple]:
         if key in result:
             return result[key]
         node = by_key[key]
-        own = (node['axis_header'], normalize(node['code_text'] or ''), normalize(node['name_text'] or ''))
+        name = normalize(node['name_text'] or '')
+        if signatures is not None and signatures.get(key) is not None:
+            name = signatures[key]
+        # Converters name the subject axis 科目, 款項 or 款項目; its levels are what matter.
+        axis = '科目' if node['level_header'] in ('款', '項', '目') else node['axis_header']
+        own = (axis, normalize(node['code_text'] or ''), name)
         parent = node['parent_node_key']
         result[key] = (path(parent) if parent in by_key else ()) + (own,)
         return result[key]
@@ -65,8 +72,22 @@ def load(prefixes: list[str], exclude_headers: tuple[str, ...] = ()) -> tuple[li
     return nodes, amounts
 
 
-def identities(nodes: list[dict], amounts: list[dict], document_kind: str):
-    node_paths = paths(nodes)
+def signatures(nodes: list[dict], amounts: list[dict], document_kind: str) -> dict[str, object]:
+    """A node's executed amount (or its first readable amount): what tolerant matching names it by."""
+    by_key = {n['node_key']: n for n in nodes}
+    found: dict[str, object] = {}
+    for amount in amounts:
+        node = by_key.get(amount['node_key'])
+        if node is None or number(amount['amount_text']) is None:
+            continue
+        kind = amount_class(amount, node, document_kind)
+        if kind == 'executed' or amount['node_key'] not in found:
+            found[amount['node_key']] = ('¥', number(amount['amount_text']), kind == 'executed')
+    return {key: value[:2] for key, value in found.items()}
+
+
+def identities(nodes: list[dict], amounts: list[dict], document_kind: str, lenient: bool = False):
+    node_paths = paths(nodes, signatures(nodes, amounts, document_kind) if lenient else None)
     by_key = {n['node_key']: n for n in nodes}
     node_ids = Counter(set(node_paths.values()))  # tables of one account share subject nodes
     amount_ids = Counter()
@@ -76,6 +97,66 @@ def identities(nodes: list[dict], amounts: list[dict], document_kind: str):
                     number(amount['amount_text']))] += 1
     amount_ids = Counter({k: 1 for k in amount_ids})
     return node_ids, amount_ids
+
+
+def tolerant(generated, expected, document_kind: str, kept) -> dict:
+    """Matching that tolerates misread names.
+
+    Nodes are grouped by their chain of (axis, code) from the root, so the
+    printed numbers of the node and of every ancestor must agree. Within a
+    group a generated node matches an expected one when the names agree or
+    they share any printed amount.
+    """
+    def entries(nodes, amounts):
+        by_key = {n['node_key']: n for n in nodes}
+        values = defaultdict(set)
+        for amount in amounts:
+            value = number(amount['amount_text'])
+            if value is not None:
+                values[amount['node_key']].add(value)
+        chains, full = {}, paths(nodes)
+
+        def chain(key):
+            if key not in chains:
+                node = by_key[key]
+                axis = '科目' if node['level_header'] in ('款', '項', '目') else node['axis_header']
+                parent = node['parent_node_key']
+                chains[key] = (chain(parent) if parent in by_key else ()) + ((axis, normalize(node['code_text'] or '')),)
+            return chains[key]
+        groups = defaultdict(list)
+        for key in by_key:
+            groups[chain(key)].append((normalize(by_key[key]['name_text'] or ''), values[key], full[key]))
+        return groups
+
+    got, want = entries(*generated), entries(*expected)
+    subject = lambda chain: all(axis == '科目' for axis, _ in chain)
+    result = {'subject_nodes': Counter(), 'detail_nodes_expected_axes': Counter()}
+    expected_axes = {chain[-1][0] for chain in want if not subject(chain)}
+    for chain in set(got) | set(want):
+        bucket = 'subject_nodes' if subject(chain) else 'detail_nodes_expected_axes'
+        if bucket != 'subject_nodes' and chain[-1][0] not in expected_axes:
+            continue
+        left, right = list(got.get(chain, [])), list(want.get(chain, []))
+        matched = 0
+        for rule in (lambda a, b: a[0] == b[0], lambda a, b: bool(a[1] & b[1])):
+            for item in list(right):
+                partner = next((g for g in left if rule(g, item)), None)
+                if partner is not None:
+                    left.remove(partner); right.remove(item); matched += 1
+        result[bucket]['matched'] += matched
+        result[bucket]['expected'] += len(want.get(chain, []))
+        result[bucket]['generated'] += len(got.get(chain, []))
+    # 目 amounts by value: header names differ between converters (款項／款 vs 金額).
+    values = {}
+    for side, groups in (('got', got), ('want', want)):
+        values[side] = Counter((chain, value) for chain, members in groups.items()
+                               if subject(chain) and len(chain) == 3 for _, found, _ in members for value in found)
+    result['moku_amount_values'] = Counter({'matched': sum((values['got'] & values['want']).values()),
+                                            'expected': sum(values['want'].values()),
+                                            'generated': sum(values['got'].values())})
+    return {k: {'expected': v['expected'], 'generated': v['generated'], 'matched': v['matched'],
+                'recall': round(v['matched'] / max(v['expected'], 1), 4),
+                'precision': round(v['matched'] / max(v['generated'], 1), 4)} for k, v in result.items()}
 
 
 def compare(generated: tuple[list[dict], list[dict]], expected: tuple[list[dict], list[dict]],
@@ -114,6 +195,7 @@ def compare(generated: tuple[list[dict], list[dict]], expected: tuple[list[dict]
         'detail_amounts': score(got_amounts, want_amounts, lambda k: not subject(node_of(k)) and k[1] != 'annotation'),
         'annotation_amounts': score(got_amounts, want_amounts, lambda k: k[1] == 'annotation'),
     }
+    report['tolerant'] = tolerant(generated, expected, document_kind, kept)
     missing = [k for k in (want_nodes - got_nodes)]
     extra = [k for k in (got_nodes - want_nodes)]
     report['examples'] = {

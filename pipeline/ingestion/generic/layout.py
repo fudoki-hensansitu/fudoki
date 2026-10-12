@@ -98,6 +98,23 @@ def split_at_rules(word: Word, verticals: list[Rule]) -> list[Word]:
     return pieces
 
 
+def reading(words: list[Word]) -> str:
+    """Text of words in reading order: lines by vertical overlap, then left to right.
+
+    Rounding the top edge would split one printed line whose glyphs sit on
+    slightly different baselines and read 予算現額 as 算予現額.
+    """
+    rows: list[list[Word]] = []
+    for word in sorted(words, key=lambda w: ((w.y0 + w.y1) / 2, w.x0)):
+        if rows:
+            last = rows[-1][-1]
+            if min(last.y1, word.y1) - max(last.y0, word.y0) >= .5 * min(last.y1 - last.y0, word.y1 - word.y0):
+                rows[-1].append(word)
+                continue
+        rows.append([word])
+    return ''.join(w.text for row in rows for w in sorted(row, key=lambda w: w.x0))
+
+
 def _frames(page: Page) -> list[tuple[float, float, float, float, list[float]]]:
     """Frames as (x0, x1, top, bottom, band edges) from rules that bound a table."""
     verticals = [r for r in page.rules if r.vertical and r.y1 - r.y0 > 40]
@@ -168,8 +185,7 @@ def page_bands(page: Page) -> tuple[list[Band], list[Word]]:
             upper = max([h.y0 for h in horizontals if h.y0 <= cy and _covers(h, cx)] or [top])
             lower = min([h.y0 for h in horizontals if h.y0 >= cy and _covers(h, cx)] or [header_bottom])
             cells[left, right, upper, lower].append(word)
-        header_cells = sorted(((key, normalize(''.join(w.text for w in sorted(ws, key=lambda w: (round(w.y0), w.x0)))))
-                               for key, ws in cells.items()), key=lambda c: c[0][2])
+        header_cells = sorted(((key, normalize(reading(ws))) for key, ws in cells.items()), key=lambda c: c[0][2])
         for left, right in zip(edges, edges[1:]):
             middle = (left + right) / 2
             covering = [(key, text) for key, text in header_cells if key[0] - 1 <= middle <= key[1] + 1 and text]

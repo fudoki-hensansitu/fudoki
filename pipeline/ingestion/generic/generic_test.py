@@ -85,3 +85,46 @@ class SumTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class RepairTest(unittest.TestCase):
+    def page(self, words):
+        from ingestion.generic.observe import Page, Word
+        return Page(1, 600, 800, [Word(*w) for w in words], [])
+
+    def test_touching_digits_join_but_never_backwards(self):
+        from ingestion.generic.repair import Report, repair_positions
+        page = self.page([('1', 10, 100, 14.4, 109), ('3', 14.4, 100, 18.8, 109), (',', 18.8, 100, 21, 109),
+                          ('0', 200, 100, 204, 109), ('272', 100, 100.4, 113, 109.4)])
+        report = Report()
+        repair_positions(page, report)
+        self.assertEqual(sorted(w.text for w in page.words), ['0', '13,', '272'])
+
+    def test_a_character_drawn_as_two_overlapping_glyphs_becomes_one_word(self):
+        from ingestion.generic.repair import Report, repair_positions
+        page = self.page([('八', 676.6, 130.5, 685.9, 139.2), ('刀', 676.6, 130.5, 684.4, 139.2)])
+        repair_positions(page, Report())
+        self.assertEqual([w.text for w in page.words], ['八刀'])
+
+    def test_dictionary_respects_context(self):
+        from ingestion.generic.repair import Report, apply_dictionary
+        page = self.page([('誰でも使える', 0, 0, 50, 9), ('介誰保険', 0, 20, 40, 29), ('１゜0', 0, 40, 20, 49), ('゜', 0, 60, 5, 69)])
+        report = Report()
+        apply_dictionary(page, report)
+        self.assertEqual([w.text for w in page.words], ['誰でも使える', '介護保険', '１00', '0'])
+        self.assertEqual(report.hits['誰→護'], 1)
+
+    def test_health_needs_misreadings_not_missing_headings(self):
+        from ingestion.generic.repair import health, is_broken
+        narrative = self.page([('動物の適正な捕獲を行った', 0, 0, 100, 9)])
+        self.assertFalse(is_broken(health([narrative])))
+        misread = self.page([('需用晋 旅晋 連営 施設幣備 健巌 派憤', 0, 0, 200, 9)])
+        self.assertTrue(is_broken(health([misread])))
+
+    def test_glyphs_never_join_across_a_vertical_rule(self):
+        from ingestion.generic.observe import Rule
+        from ingestion.generic.repair import Report, words_from_glyphs
+        glyphs = [((10, 100, 14, 106), '1'), ((14.5, 100, 18.5, 106), '0'), ((19.5, 100, 23.5, 106), '5')]
+        self.assertEqual([w.text for w in words_from_glyphs(glyphs, Report())], ['105'])
+        split = words_from_glyphs(glyphs, Report(), [Rule(19, 90, 19, 120)])
+        self.assertEqual(sorted(w.text for w in split), ['10', '5'])

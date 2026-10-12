@@ -11,6 +11,8 @@ from pathlib import Path
 
 results = Path(sys.argv[1])
 causes = json.loads(Path(sys.argv[2]).read_text()) if len(sys.argv) > 2 and Path(sys.argv[2]).exists() else {}
+# Optional: an earlier causes.json to show each table's class before → after.
+before = json.loads(Path(sys.argv[3]).read_text()) if len(sys.argv) > 3 and Path(sys.argv[3]).exists() else {}
 rows = []
 for path in sorted(results.glob('*.json')):
     if path.name.endswith('.observed.json'):
@@ -33,8 +35,8 @@ for path in sorted(results.glob('*.json')):
     rows.append((key, r, m, subject, moku, detail, detail_amounts, passed, causes.get(key, {}).get('class', kind), causes.get(key, {}).get('cause', '')))
 
 f = lambda v: '—' if v is None else f'{v[0]:.1%} / {v[1]:.1%}'
-print('| 表 | 頁 | 款項目 | 目の金額 | 目より下（正解の軸） | 目より下の金額 | 上乗せ（軸・ノード） | 木の検査 | 秒 | 分類 | 原因 |')
-print('| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |')
+print('| 表 | 頁 | 款項目 | 目の金額 | 目より下（正解の軸） | 目より下の金額 | 誤字を許した 款項目 / 目の金額（値） / 目より下 | 上乗せ（軸・ノード） | 木の検査 | 文字層 | 秒 | 分類 | 原因 |')
+print('| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |')
 for key, r, m, subject, moku, detail, detail_amounts, passed, kind, cause in rows:
     extra = m.get('extra_axes') or {}
     names = extra.get('axes', [])
@@ -45,7 +47,14 @@ for key, r, m, subject, moku, detail, detail_amounts, passed, kind, cause in row
     span = f"{pages[0]}–{pages[-1]}（{len(pages)}）" + ('※' if r.get('pages_from') == 'expected-span' else '')
     by_axis = m.get('detail_nodes_by_axis', {})
     detail_text = f(detail) + ('' if not by_axis else ' ' + ' '.join(f"{a}:{v['matched']}/{v['expected']}" for a, v in by_axis.items()))
-    print(f"| {key} | {span} | {f(subject)} | {f(moku)} | {detail_text} | {f(detail_amounts)} | {axes} {extra.get('nodes', 0) if extra else ''} | {tree_text} | {r['seconds']} | {kind} | {cause} |")
+    tolerant = m.get('tolerant') or {}
+    tolerant_text = (f"{f(pct(tolerant.get('subject_nodes')))} / {f(pct(tolerant.get('moku_amount_values')))} / "
+                     f"{f(pct(tolerant.get('detail_nodes_expected_axes')))}") if tolerant else '—'
+    repairs = r.get('repairs') or {}
+    layer = '—' if not repairs else ('壊れ・置換 {}'.format(repairs['repairs']) if repairs['broken'] else '') + \
+        ('・不可視 {}字'.format(repairs['hidden_glyphs']) if repairs['hidden_glyphs'] else '')
+    shift = f"{before[key]['class']}→{kind}" if key in before else kind
+    print(f"| {key} | {span} | {f(subject)} | {f(moku)} | {detail_text} | {f(detail_amounts)} | {tolerant_text} | {axes} {extra.get('nodes', 0) if extra else ''} | {tree_text} | {layer.lstrip('・') or '—'} | {r['seconds']} | {shift} | {cause} |")
 counts = {}
 for row in rows:
     counts[row[8]] = counts.get(row[8], 0) + 1
