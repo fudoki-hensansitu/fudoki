@@ -39,6 +39,7 @@ class EvidenceTest(unittest.TestCase):
             document = {'schema_version':1, 'target':{'jurisdiction':'131041','fiscal_year':2025,'document_kind':'settlement'},
                         'direction':'expenditure', 'conversions':[conversion], 'tables':[]}
             def service(state, questions, key):
+                self.assertTrue(any(word[-1] == 'Total' for word in state['words']))
                 return {'model':jev.MODEL, 'usage':{'input_tokens':100, 'output_tokens':10},
                         'answers':{q:{'type':'choice','choice':'non_amount',
                             'probabilities':{c: float(c == 'non_amount') for c in jev.CRITERIA}}
@@ -51,7 +52,8 @@ class EvidenceTest(unittest.TestCase):
                  patch.object(manifest,'code_path',return_value=converter), \
                  patch.object(manifest,'fingerprints',return_value={'one':'a'*64}), \
                  patch.object(manifest,'validate',side_effect=lambda d:validate(d,check_code=False)), \
-                 patch.object(jev,'call_api',side_effect=service), patch.dict('os.environ',{'TYPESAFE_API_KEY':'stub'}):
+                 patch.object(jev,'call_api',side_effect=service), \
+                 patch.object(jev,'read_page_words',return_value=[{'page':1,'bbox':[1,1,40,8],'text':'Total'}, {'page':1,'bbox':[10,10,80,20],'text':'2025年度'}]), patch.dict('os.environ',{'TYPESAFE_API_KEY':'stub'}):
                 result = run.convert(root / 'manifest.json', {sha:str(origin)}, root / 'candidate')
             candidate = root / 'candidate'
             document = json.loads((candidate / 'manifest.json').read_text())

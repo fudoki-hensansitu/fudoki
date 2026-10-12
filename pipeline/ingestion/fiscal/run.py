@@ -281,7 +281,7 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
         adopted[ident] = migrated
         checked_pdf.append((conversion, ident, migrated, metadata, file))
     peers = coverage_peers(document, adopted)
-    jev_entries = {}
+    jev_entries, jev_contexts = {}, {}
     for conversion, ident, migrated, metadata, file in checked_pdf:
         inputs = manifest.resolved_inputs(document, conversion, selection)
         text_only = all(item['format'] == 'pdf' and item.get('pdf_type') == 'text' for item in inputs)
@@ -294,7 +294,13 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
                     exclusions=scope.get('excluded_regions', ()),
                     amount_columns=scope.get('amount_columns', ()))
                 jev_path = jev_recheck.sidecar(file)
-                jev = jev_recheck.recheck(scope['words'], coverage, jev_path, allow_api=True, scope=scope, shared_entries=jev_entries)
+                origin = conversion['inputs'][0]['sha256']
+                pages = frozenset(w['page'] for w in scope['words'])
+                context_key = (origin, pages)
+                if context_key not in jev_contexts:
+                    jev_contexts[context_key] = jev_recheck.read_page_words(Path(local_files[origin]), pages)
+                jev = jev_recheck.recheck(jev_contexts[context_key], coverage, jev_path,
+                                          allow_api=True, scope=scope, shared_entries=jev_entries)
                 report_path = file.with_name(file.stem + '.coverage-uncovered.json')
                 report_path.write_text(json.dumps({**coverage, 'jev': jev}, ensure_ascii=False) + '\n')
                 if not jev['passed']:
@@ -428,7 +434,7 @@ def verify_coverage(document: dict, locate, directory, *, remote=False) -> dict:
                 scope['words'], peers[table['table_id']], control_tables=[adopted[table['table_id']]],
                 exclusions=scope.get('excluded_regions', ()),
                 amount_columns=scope.get('amount_columns', ()))
-            jev = jev_recheck.recheck(scope['words'], result, jev_path, cache=cache)
+            jev = jev_recheck.recheck(cache.get('state_words', scope['words']), result, jev_path, cache=cache)
             outcome[table['table_id']] = {'status': MATCH if jev['passed'] else MISMATCH,
                                           'jev': jev,
                                           'counts': result['counts'],

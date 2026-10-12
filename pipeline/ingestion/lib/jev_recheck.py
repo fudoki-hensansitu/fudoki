@@ -6,6 +6,8 @@ import hashlib
 import json
 import math
 import os
+import subprocess
+import xml.etree.ElementTree as ET
 from pathlib import Path
 import time
 import urllib.error
@@ -33,6 +35,24 @@ EXPECTED = {
     'annotation': {'annotation_amount', 'non_amount'},
 }
 DIAGNOSTIC_RULES = {'blocked', 'reported'}
+
+
+def read_page_words(original: Path, pages) -> list[dict]:
+    """Give Jev complete physical pages, including headings outside coverage scope."""
+    pages = set(pages)
+    if not pages:
+        return []
+    output = subprocess.check_output(['pdftotext', '-f', str(min(pages)), '-l', str(max(pages)),
+                                      '-bbox-layout', str(original), '-'])
+    words = []
+    for page, element in enumerate(ET.fromstring(output).findall('.//{*}page'), min(pages)):
+        if page in pages:
+            words.extend({'page': page, 'bbox': [float(word.get(k)) for k in ('xMin','yMin','xMax','yMax')],
+                          'text': ''.join(word.itertext())}
+                         for word in element.findall('.//{*}word'))
+    if {w['page'] for w in words} != pages:
+        raise ValueError('Jev full-page text context is missing requested pages')
+    return words
 
 
 def sidecar(table_path: Path) -> Path:
@@ -146,6 +166,7 @@ def recheck(words: list[dict], coverage: dict, cache_path: Path, *, allow_api=Fa
         cache['entries'].update(shared_entries)
     if scope is not None and allow_api:
         cache['scope'] = scope
+        cache['state_words'] = words
     by_page, targets = defaultdict(list), defaultdict(list)
     for word in words:
         by_page[word['page']].append(word)
