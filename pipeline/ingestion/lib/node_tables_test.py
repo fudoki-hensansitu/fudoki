@@ -460,6 +460,25 @@ class NodeTablesTests(unittest.TestCase):
             with self.subTest(words=invalid):
                 self.assertFalse(check_digit_coverage(invalid, tables, amount_columns=columns)['passed'])
 
+    def test_adjacent_total_words_stay_separate_when_column_spans_overlap(self):
+        tables = NodeTables([node('a'),node('b')],[
+            {**amount(k,v,h),'x0':x,'y0':y,'x1':x+25.,'y1':y+9.}
+            for k,y,a,b in [('a',10.,'3','4'),('b',30.,'7','8')]
+            for v,h,x in [(a,'支出済額',10.),(b,'当初予算額',30.)]])
+        words=[(1,(10.,60.,29.,69.),'10'),(1,(31.,60.,50.,69.),'12')]
+        self.assertTrue(check_digit_coverage(words,tables)['passed'])
+        self.assertFalse(check_digit_coverage([words[0],(1,words[1][1],'13')],tables)['passed'])
+
+    def test_parent_total_in_a_different_column_does_not_expand_zero_band(self):
+        tables = NodeTables([node('p'),node('a','p')],[
+            {**amount('p','0','比較'),'x0':110.,'y0':1.,'x1':119.,'y1':10.},
+            {**amount('a','0','比較'),'x0':50.,'y0':30.,'x1':59.,'y1':39.}])
+        words=[(1,(10.,60.,20.,69.),'計'),(1,(50.,60.,59.,69.),'0'),
+               (1,(80.,60.,89.,69.),'0'),(1,(110.,60.,119.,69.),'0')]
+        actual=check_digit_coverage(words,tables,amount_columns=[{'header':'比較','x_range':[40.,70.]}])
+        self.assertEqual(actual['counts'].get('verified_total'),2)
+        self.assertEqual(actual['reported'][0]['bbox'],[80.,60.,89.,69.])
+
     def test_one_print_under_two_headers_is_not_an_independent_total(self):
         tables = NodeTables([node('a'), node('b')], [
             {**amount(key, value, header), 'x0': 10., 'y0': y, 'x1': 30., 'y1': y + 9.}

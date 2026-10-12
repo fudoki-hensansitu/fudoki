@@ -475,7 +475,8 @@ def _verified_total_boxes(words, tables, amount_columns, tolerance, candidate_ba
                 left, right = min(a['x0'] for a in amounts), max(a['x1'] for a in amounts)
             expected = sum(number(a['amount_text']) for a in amounts)
             parent_prints = [a for a in amount_lookup[identity[0], header, identity[-1]]
-                             if number(a['amount_text']) == expected and a['x0'] is not None]
+                             if number(a['amount_text']) == expected and a['x0'] is not None
+                             and a['x0'] < right + tolerance and left - tolerance < a['x1']]
             if parent_prints:
                 left = min(left, min(a['x0'] for a in parent_prints))
                 right = max(right, max(a['x1'] for a in parent_prints))
@@ -513,7 +514,11 @@ def _verified_total_boxes(words, tables, amount_columns, tolerance, candidate_ba
                     if not runs or part[0][0] - runs[-1][-1][0][2] > 12:
                         runs.append([])
                     runs[-1].append(part)
-                exact = [run for run in runs if number(''.join(text for _, text in run)) == expected]
+                # A complete money word can touch an adjacent column's span.
+                # Match complete contiguous words, never a digit substring.
+                exact = [run[start:end] for run in runs
+                         for start in range(len(run)) for end in range(start + 1, len(run) + 1)
+                         if number(''.join(text for _, text in run[start:end])) == expected]
                 parts = exact[0] if len(exact) == 1 else []
                 labeled = parts and any(box[2] <= parts[0][0][0] for box in total_labels[page, y])
                 if parts and any(_word_key(identity[-2].split('／')[-1]) == text and box[2] <= parts[0][0][0]
