@@ -25,4 +25,4 @@
 
 網羅の照合は同じ原典・物理頁を読む全表を集めて行い、木の検査は各表に行う。非採用の表・ブロックの頁・矩形は観測用の読み分けから実行時に生成し、種類と理由だけを人が宣言する。金額帯の未網羅は停止したままにする。詳細は [取り込みの手順](ingestion.md)。
 
-流用・充用・不用額などの金額の注記は、原文・金額・単位・位置をノードと金額の表に保持する。種類は `pipeline/shared/fiscal_annotation_map.csv` で解き、金額の段階は付けない。木の親子合計と歳出のintermediateへ足さず、stagingには残す。基準額は印字された月額セルと同じ括弧内の「1回…円」の金額に限定する。判断は [ADR 0023](../../../../docs/adr/0023-monetary-annotations-without-phase.md)。
+流用・充用・不用額などの金額の注記は、原文・金額・単位・位置をノードと金額の表に保持する。種類は `pipeline/shared/fiscal_annotation_map.csv` で解き、金額の段階は付けない。木の親子合計と歳出のintermediateへ足さず、stagingには残す。基準額は印字された月額セルと同じ括弧内の「1回…円」の金額に限定する。判断は [ADR 0023](../../../../docs/adr/0024-monetary-annotations-without-phase.md)。

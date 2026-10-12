@@ -167,4 +167,4 @@ LLMのcontextへ表やOCRの全量を出さず、詳細はファイルへ、CLI�
 
 合計の和は、同じ親の全ての子、または同じ親の同じ頁の子で確かめる。2列以上で確かめた合計の直後に折り返された0以外の金額も、同じ和と一致する場合だけ網羅済みにする。「計」「合計」「小計」の印字が金額の左にある場合は、同じ親の採用金額の和と一致する0以外の列を照合する。0だけの一致で合計と認定しない。
 
-金額の注記は「注記」軸のノードに原文を持たせ、金額の表に金額・単位・印字位置を保持する。`pipeline/shared/fiscal_annotation_map.csv` で種類を解き、「注記金額」にphaseは付けない。木の親子合計・支出済額の選択に加算せず、stagingでは行を保ち、歳出のintermediateの対象から外す（[ADR 0023](../../adr/0023-monetary-annotations-without-phase.md)）。
+金額の注記は「注記」軸のノードに原文を持たせ、金額の表に金額・単位・印字位置を保持する。`pipeline/shared/fiscal_annotation_map.csv` で種類を解き、「注記金額」にphaseは付けない。木の親子合計・支出済額の選択に加算せず、stagingでは行を保ち、歳出のintermediateの対象から外す（[ADR 0024](../../adr/0024-monetary-annotations-without-phase.md)）。
