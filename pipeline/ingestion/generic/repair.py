@@ -8,7 +8,7 @@
 2. Position repairs: single glyphs overlapping at one position are one printed
    character split by the font (分 as 八 + 刀); digits, commas and minus signs
    touching on one line are one amount (`1 3 , 4 6 3` drawn glyph by glyph).
-3. Known misreadings: `pipeline/shared/text_repairs.csv` (wrong, right,
+3. Known misreadings: `pipeline/ingestion/lib/text_repairs.csv` (wrong, right,
    optional context regex, reason). They are applied only to documents judged
    broken by `is_broken`, whose criterion and threshold live here, so a
    legitimate word elsewhere is not rewritten. Every hit is counted with
@@ -27,7 +27,7 @@ import unicodedata
 
 from ingestion.generic.observe import Page, Word
 
-REPAIRS = Path(__file__).resolve().parents[2] / 'shared/text_repairs.csv'
+REPAIRS = Path(__file__).resolve().parents[1] / 'lib/text_repairs.csv'
 NUMERIC = re.compile(r'^[0-9,△▲\-]+$')
 # Health criteria (one place). A document is broken when known multi-character
 # misreadings are frequent. Pages without the common column headings are
