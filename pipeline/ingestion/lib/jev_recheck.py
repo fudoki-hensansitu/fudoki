@@ -7,11 +7,13 @@ import json
 import math
 import os
 import subprocess
-import xml.etree.ElementTree as ET
+import re
 from pathlib import Path
 import time
 import urllib.error
 import urllib.request
+
+from ingestion.lib.pdf_table import tokens_from_bbox_layout
 
 MODEL = 'jev-1.13.0'
 STOP_PROBABILITY = 0.9
@@ -44,12 +46,11 @@ def read_page_words(original: Path, pages) -> list[dict]:
         return []
     output = subprocess.check_output(['pdftotext', '-f', str(min(pages)), '-l', str(max(pages)),
                                       '-bbox-layout', str(original), '-'])
-    words = []
-    for page, element in enumerate(ET.fromstring(output).findall('.//{*}page'), min(pages)):
-        if page in pages:
-            words.extend({'page': page, 'bbox': [float(word.get(k)) for k in ('xMin','yMin','xMax','yMax')],
-                          'text': ''.join(word.itertext())}
-                         for word in element.findall('.//{*}word'))
+    # Poppler can emit invisible C0 font characters that are illegal in XML.
+    xml = re.sub(rb'[\x00-\x08\x0b\x0c\x0e-\x1f]', b'', output)
+    tokens = tokens_from_bbox_layout(xml, origin_id=str(original), first_page=min(pages))
+    words = [{'page': t.page, 'bbox': [t.bbox.left,t.bbox.top,t.bbox.right,t.bbox.bottom],
+              'text': t.raw_text} for t in tokens if t.page in pages]
     if {w['page'] for w in words} != pages:
         raise ValueError('Jev full-page text context is missing requested pages')
     return words

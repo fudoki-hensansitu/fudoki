@@ -134,7 +134,7 @@ class RecheckTest(unittest.TestCase):
         self.assertEqual(replay['judgments'],first['judgments'])
 
     def test_full_page_text_preserves_headers_and_physical_page_numbers(self):
-        xml = b'<html><page><word xMin="1" yMin="2" xMax="3" yMax="4">Total</word></page><page><word xMin="5" yMin="6" xMax="7" yMax="8">10</word></page></html>'
+        xml = b'<html><page><word xMin="1" yMin="2" xMax="3" yMax="4">Total\x03</word></page><page><word xMin="5" yMin="6" xMax="7" yMax="8">10</word></page></html>'
         with patch.object(jev.subprocess, 'check_output', return_value=xml) as poppler:
             words = jev.read_page_words(Path('fixed.pdf'), {7,8})
         self.assertEqual(words[0], {'page':7,'bbox':[1.,2.,3.,4.],'text':'Total'})
