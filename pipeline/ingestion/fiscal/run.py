@@ -261,10 +261,18 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
                 outputs[ident] = file
                 tables.append(table_receipt(document, conversion, ident, file,
                                             input_fingerprint=before[conversion['id']], metadata=metadata))
+    completed_by_id = {}
     for conversion, ident, rows, metadata, account, file in pending_pdf:
         siblings = [other_rows for _, other_ident, other_rows, _, other_account, _ in pending_pdf
                     if other_ident != ident and other_account == account]
         rows = complete_subject_rows(rows, siblings)
+        completed_by_id[ident] = rows
+        sidecar = node_tables.coverage_sidecar(file)
+        if sidecar.exists():
+            scope = json.loads(sidecar.read_text())
+            scope['excluded_regions'] = [*scope.get('excluded_regions', ()),
+                                         *node_tables.quantity_regions(rows, metadata or {})]
+            sidecar.write_text(json.dumps(scope, ensure_ascii=False) + '\n')
         try:
             migrated = node_tables.migrate_rows(rows, metadata or {})
         except ValueError:
@@ -279,7 +287,12 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
         adopted[ident] = migrated
         checked_pdf.append((conversion, ident, migrated, metadata, file))
     peers = coverage_peers(document, adopted)
+    raw_by_id = completed_by_id
+    for _, ident, migrated, _, file in checked_pdf:
+        adopted[ident] = node_tables.with_annotations(file, migrated, raw_rows=raw_by_id[ident], adopted=peers[ident])
+    peers = coverage_peers(document, adopted)
     for conversion, ident, migrated, metadata, file in checked_pdf:
+        migrated = adopted[ident]
         inputs = manifest.resolved_inputs(document, conversion, selection)
         text_only = all(item['format'] == 'pdf' and item.get('pdf_type') == 'text' for item in inputs)
         try:

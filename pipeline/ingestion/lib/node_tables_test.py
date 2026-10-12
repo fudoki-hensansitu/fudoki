@@ -496,7 +496,7 @@ class NodeTablesTests(unittest.TestCase):
         tables.nodes[1]['parent_node_key'] = 'different-parent'
         self.assertFalse(check_digit_coverage(words, tables, amount_columns=columns)['passed'])
 
-    def test_printed_total_label_requires_exact_nonzero_sibling_sum(self):
+    def test_printed_total_label_requires_exact_sibling_sum_including_zero(self):
         tables = NodeTables([node('a'), node('b')], [
             {**amount(key, value), 'x0': 50., 'y0': y, 'x1': 80., 'y1': y + 9.}
             for key, value, y in [('a', '3', 10.), ('b', '7', 30.)]])
@@ -504,7 +504,33 @@ class NodeTablesTests(unittest.TestCase):
         self.assertTrue(check_digit_coverage(words, tables)['passed'])
         self.assertFalse(check_digit_coverage([words[0], (1, words[1][1], '11')], tables)['passed'])
         only_zero = NodeTables([node('a')], [{**amount('a', '0'), 'x0': 50., 'y0': 10., 'x1': 80., 'y1': 19.}])
-        self.assertFalse(check_digit_coverage([words[0], (1, words[1][1], '0')], only_zero)['passed'])
+        self.assertTrue(check_digit_coverage([words[0], (1, words[1][1], '0')], only_zero)['passed'])
+        self.assertFalse(check_digit_coverage([(1, words[1][1], '0')], only_zero)['passed'])
+
+    def test_numeric_quantity_can_precede_a_unit_glued_to_an_amount_word(self):
+        tables = NodeTables([node('p')], [{**amount('p','53,236,000'),
+                            'x0':197., 'y0':30., 'x1':260., 'y1':39.}])
+        words = [(1,(170.,30.,196.,39.),'15,810'), (1,(197.,30.,260.,39.),'人）53,236,000')]
+        self.assertTrue(check_digit_coverage(words,tables,amount_columns=[{'header':'支出済額','x_range':[150.,270.]}])['passed'])
+        words[1] = (1,words[1][1],'円53,236,000')
+        self.assertFalse(check_digit_coverage(words,tables,amount_columns=[{'header':'支出済額','x_range':[150.,270.]}])['passed'])
+
+    def test_continued_ancestor_codes_join_overlapping_glyphs_exactly(self):
+        nodes = [{**node('k'), 'level_header':'款','code_text':'10','name_text':'教育費',
+                  'x0':20.,'y0':20.,'x1':29.,'y1':29.},
+                 {**node('h','k'), 'level_header':'項','code_text':'1','name_text':'体育費',
+                  'x0':31.,'y0':30.,'x1':35.5,'y1':39.},
+                 {**node('m','h'), 'level_header':'目','code_text':'3','name_text':'施設費',
+                  'x0':40.,'y0':40.,'x1':44.5,'y1':49.}]
+        tables = NodeTables(nodes,[{**amount('m','100'),'x0':100.,'y0':40.,'x1':120.,'y1':49.}])
+        words = [(1,(20.,20.,29.,29.),'10'),(1,(31.,30.,35.5,39.),'1'),(1,(40.,40.,44.5,49.),'3'),
+                 (2,(20.,10.,35.,19.),'款項'),(2,(50.,10.,59.,19.),'目'),
+                 (2,(20.,30.,24.5,39.),'1'),(2,(24.49,30.,29.,39.),'0'),
+                 (2,(31.,30.,35.5,39.),'1'),(2,(40.,30.,44.5,39.),'3')]
+        columns = [{'header':'支出済額','x_range':[15.,130.]}]
+        self.assertTrue(check_digit_coverage(words,tables,amount_columns=columns)['passed'])
+        words[-2] = (2,words[-2][1],'2')
+        self.assertFalse(check_digit_coverage(words,tables,amount_columns=columns)['passed'])
 
     def test_short_printed_date_is_non_amount_but_a_decimal_is_not(self):
         result = check_digit_coverage([(1, (10., 10., 30., 19.), '（8．3．31）'),

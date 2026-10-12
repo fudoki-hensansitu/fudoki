@@ -263,6 +263,9 @@ def fingerprints(document: dict, conversions: list[dict] | None = None) -> dict[
                     'conversion': conversion,
                     'origins': [{k: item[k] for k in ('sha256', 'format', 'scope', 'pdf_type')} for item in origins],
                     'code': [{'path': path, 'sha256': hashes[path]} for path in files]}
+        if any(origin.get('pdf_type') == 'text' for origin in origins):
+            material['annotation_dictionary_sha256'] = sha_file(
+                INGESTION.parent / 'shared/fiscal_annotation_map.csv')
         result[conversion['id']] = hashlib.sha256(canonical(material)).hexdigest()
     return result
 

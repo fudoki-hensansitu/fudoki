@@ -141,7 +141,7 @@ def _word_key(text):
 # indistinguishable from amounts and stay uncovered for the converter to fix.
 NON_AMOUNT_WORD = re.compile(
     r'(?:[－―—–-][0-9０-９, ]+[－―—–-]'
-    r'|(?:令和|平成|昭和|大正|明治|[RHS])?[0-9０-９]+(?:年度|年|月|日)'
+    r'|(?:令和|平成|昭和|大正|明治|[RHS])?[0-9０-９]+(?:年度|年(?:[0-9０-９]+月(?:[0-9０-９]+日)?)?|月|日)'
     r'|第[0-9０-９]+(?:款|項|目|節)'
     r'|[(（]?[0-9]{1,4}[.．](?:0?[1-9]|1[0-2])[.．](?:0?[1-9]|[12][0-9]|3[01])[)）]?)')
 
@@ -332,6 +332,11 @@ PERCENT_WORD = re.compile(r'[△▲\-－―—]?[0-9][0-9,\.]*[％%]|[(（][0-9]
 CODE_WORD = re.compile(r'[0-9０-９]+[^0-9０-９,△▲\-－―—\.\(\)（）<>＜＞％%円]+')
 
 
+QUANTITY_PHRASE = re.compile(
+    r'(?:[^0-9円]|[0-9][0-9,]*(?:人|名|件|食|回|日|個|台|戸|世帯|本|床|箇所|校|番|丁目|歳|か月|号|基|m2|㎡|km|m|ｍ|月|路線))+')
+ORDINAL_PHRASE = re.compile(r'(?:[^0-9,円]|第[0-9]+(?:款|項|目|節|土曜日|ブロック|期))+')
+
+
 DOCUMENT_NUMBER = re.compile(
     r'[・．.、,]?(?:(?:令和|平成|昭和|大正|明治)[0-9]+年)?第[0-9]+号'
     r'(?:[・．.、,](?:(?:令和|平成|昭和|大正|明治)[0-9]+年)?第?[0-9]+号)*'
@@ -385,14 +390,14 @@ def _verified_total_boxes(words, tables, amount_columns, tolerance, candidate_ba
     """Confirm unlabeled totals using direct siblings in one adopted tree.
 
     An unlabeled row requires two independent nonzero columns, after all
-    their siblings. An explicit total label still requires the exact nonzero
-    sum. Match each column's complete print; a lone zero cannot establish a total.
+    their siblings. An explicit total label still requires the exact
+    sum, including zero. Match each column's complete print; a lone zero cannot establish a total.
     """
     baselines = defaultdict(list)
     total_labels = defaultdict(list)
     for raw in words:
         page, box, text = _coverage_word(raw)
-        if _word_key(text) in ('計', '合計', '小計'):
+        if _word_key(text) in ('計', '合計', '小計') or _word_key(text) in TOTAL_LABELS:
             total_labels[page, round(box[1])].append(box)
         if (page, round(box[1])) in candidate_baselines and re.fullmatch(r'[0-9,△▲\-－―—]+', _word_key(text)):
             baselines[page, round(box[1])].append((box, text))
@@ -400,14 +405,42 @@ def _verified_total_boxes(words, tables, amount_columns, tolerance, candidate_ba
     for table in tables:
         nodes = {n['node_key']: n for n in table.nodes}
         siblings = defaultdict(list)
+        amount_lookup = defaultdict(list)
+        parent_amounts = defaultdict(list)
         for amount in table.amounts:
             node = nodes.get(amount['node_key'])
-            if (node is None or any(amount[k] is None for k in ('physical_page', 'x0', 'y0', 'x1', 'y1'))
+            if (node is None or node['axis_header'] == '注記' or any(amount[k] is None for k in ('physical_page', 'x0', 'y0', 'x1', 'y1'))
                     or number(amount['amount_text']) is None):
                 continue
             identity = (node['parent_node_key'], node['axis_header'], node['level_header'],
                         amount['header_path'], amount['unit_text'])
             siblings[identity].append(amount)
+            amount_lookup[amount['node_key'], amount['header_path'], amount['unit_text']].append(amount)
+            parent_amounts[amount['node_key'], amount['unit_text']].append(amount)
+        # Missing zero leaf cells have no amount rows. As in check_tree,
+        # their contribution is zero, but only an explicit 計 row may verify
+        # the zero and the header must exist on this same axis/level.
+        node_groups = defaultdict(list)
+        headers = defaultdict(set)
+        for node in table.nodes:
+            if node['axis_header'] != '注記':
+                node_groups[node['parent_node_key'], node['axis_header'], node['level_header']].append(node)
+        for identity in siblings:
+            headers[identity[1:3]].add(identity[-2:])
+        zero_groups = []
+        for identity, children in node_groups.items():
+            located = [n for n in children if n['physical_page'] is not None and n['y1'] is not None]
+            if not located:
+                continue
+            for header, unit in headers[identity[1:]]:
+                if (*identity, header, unit) in siblings:
+                    continue
+                columns = [c['x_range'] for c in amount_columns
+                           if c.get('header') in (header, header.split('／')[-1])]
+                if len(columns) == 1:
+                    zero_groups.append(((*identity, header, unit), 0,
+                                        max((n['physical_page'], n['y1']) for n in located),
+                                        *columns[0], len(children), None))
         groups = list(siblings.items())
         for identity, amounts in siblings.items():
             pages = defaultdict(list)
@@ -416,29 +449,93 @@ def _verified_total_boxes(words, tables, amount_columns, tolerance, candidate_ba
             if len(pages) > 1:
                 groups.extend(((*identity[:-2], 'page', page, *identity[-2:]), values)
                               for page, values in pages.items())
-        totals = []
+        # Multiple printed subtables can share one parent. Their explicit
+        # 計 rows delimit the sibling segments; keep each header independent.
+        for identity, amounts in siblings.items():
+            for page in {a['physical_page'] for a in amounts}:
+                values = [a for a in amounts if a['physical_page'] == page]
+                left = min(a['x0'] for a in values)
+                stops = sorted(y for (p, y), labels in total_labels.items()
+                               if p == page and any(b[2] <= left for b in labels))
+                previous = float('-inf')
+                for stop in stops:
+                    segment = [a for a in values if previous < a['y0'] < stop]
+                    if segment:
+                        groups.append(((*identity[:-2], 'segment', page, stop, *identity[-2:]), segment))
+                    previous = stop
+        totals = zero_groups
         for identity, amounts in groups:
             header = identity[-2]
             columns = [entry['x_range'] for entry in amount_columns
                        if entry.get('header') in (header, header.split('／')[-1])]
-            if len(columns) == 1:
-                left, right = columns[0]
+            aligned = [span for span in columns if all(span[0] - tolerance <= (a['x0'] + a['x1']) / 2 <= span[1] + tolerance for a in amounts)]
+            if len(aligned) == 1:
+                left, right = aligned[0]
             else:
                 left, right = min(a['x0'] for a in amounts), max(a['x1'] for a in amounts)
-            totals.append((identity, sum(number(a['amount_text']) for a in amounts),
-                           max((a['physical_page'], a['y1']) for a in amounts), left, right, len(amounts)))
+            expected = sum(number(a['amount_text']) for a in amounts)
+            parent_prints = [a for a in amount_lookup[identity[0], header, identity[-1]]
+                             if number(a['amount_text']) == expected and a['x0'] is not None]
+            if parent_prints:
+                left = min(left, min(a['x0'] for a in parent_prints))
+                right = max(right, max(a['x1'] for a in parent_prints))
+            totals.append((identity, expected,
+                           max((a['physical_page'], a['y1']) for a in amounts), left, right, len(amounts),
+                           {p:min(nodes[a['node_key']]['y0'] for a in amounts
+                                   if a['physical_page'] == p and nodes[a['node_key']]['y0'] is not None)
+                            for p in {a['physical_page'] for a in amounts}
+                            if any(a['physical_page'] == p and nodes[a['node_key']]['y0'] is not None for a in amounts)}))
+        named_lines = defaultdict(list)
+        for raw in words:
+            p, b, text = _coverage_word(raw)
+            named_lines[p, round(b[1])].append((b, _word_key(text)))
+        balance_cache = {(identity[0], expected, identity[-1]):
+                         any(number(a['amount_text']) == expected for a in parent_amounts[identity[0], identity[-1]])
+                         for identity, expected, *_ in totals}
         matched_rows = []
         established = defaultdict(list)
         for (page, y), row in baselines.items():
             matches = defaultdict(list)
-            for identity, expected, last, left, right, sibling_count in totals:
-                if (page, y) <= last:
-                    continue
+            for identity, expected, last, left, right, sibling_count, first in totals:
+                leading = first is not None and page in first and 0 < first[page] - y <= 30
+                after = (page, y) > last
+                parent_balance = balance_cache[identity[0], expected, identity[-1]]
+                if not after and not leading:
+                    label_possible = total_labels[page, y] or any(
+                        _word_key(identity[-2].split('／')[-1]) == text for _, text in named_lines[page, y])
+                    if not parent_balance or not label_possible:
+                        continue
                 parts = sorted(((box, text) for box, text in row
-                                if left - tolerance <= (box[0] + box[2]) / 2 <= right + tolerance),
+                                if box[0] < right + tolerance and left - tolerance < box[2]),
                                key=lambda item: item[0][0])
+                runs = []
+                for part in parts:
+                    if not runs or part[0][0] - runs[-1][-1][0][2] > 12:
+                        runs.append([])
+                    runs[-1].append(part)
+                exact = [run for run in runs if number(''.join(text for _, text in run)) == expected]
+                parts = exact[0] if len(exact) == 1 else []
                 labeled = parts and any(box[2] <= parts[0][0][0] for box in total_labels[page, y])
-                if parts and (sibling_count >= 2 or labeled) and number(''.join(text for _, text in parts)) == expected:
+                if parts and any(_word_key(identity[-2].split('／')[-1]) == text and box[2] <= parts[0][0][0]
+                                 for box, text in named_lines[page, y]):
+                    labeled = True
+                # In a multi-column page an explicit 計 can precede some
+                # siblings vertically while following them in reading order.
+                # Require the same balanced adopted parent to prove the sum.
+                if not after and not leading and not (labeled and parent_balance):
+                    continue
+                if leading:
+                    parent = nodes.get(identity[0])
+                    known = amount_lookup[identity[0], identity[-2], identity[-1]]
+                    if parent is None or len(known) != 1 or number(known[0]['amount_text']) != expected:
+                        continue
+                    # Only a continuation total of the same balanced parent
+                    # directly above its first child can repeat before leaves.
+                    labeled = True
+                if (parts and (sibling_count >= 2 or labeled)
+                        and number(''.join(text for _, text in parts)) == expected):
+                    if (leading or labeled) and expected != 0:
+                        verified.update((page, tuple(box)) for box, _ in parts)
                     matches[identity[:-2]].append((identity[-2], expected, parts))
             for identity, group in matches.items():
                 nonzero = [(header, {tuple(box) for box, _ in parts})
@@ -446,12 +543,12 @@ def _verified_total_boxes(words, tables, amount_columns, tolerance, candidate_ba
                 independent = any(left_header != right_header and not left_boxes.intersection(right_boxes)
                                   for index, (left_header, left_boxes) in enumerate(nonzero)
                                   for right_header, right_boxes in nonzero[index + 1:])
-                labeled = any(expected != 0 and any(label[2] <= parts[0][0][0]
+                labeled = any(any(label[2] <= parts[0][0][0]
                                                     for label in total_labels[page, y])
                               for _, expected, parts in group)
                 if independent or labeled:
                     verified.update((page, tuple(box)) for _, expected, parts in group
-                                    if independent or expected != 0 for box, _ in parts)
+                                    if independent or labeled for box, _ in parts)
                     height = max(box[3] - box[1] for _, _, parts in group for box, _ in parts)
                     established[page, identity].append((y, height))
             matched_rows.append((page, y, matches))
@@ -459,10 +556,82 @@ def _verified_total_boxes(words, tables, amount_columns, tolerance, candidate_ba
         # Its nonzero value must match the same sibling group's sum exactly.
         for page, y, matches in matched_rows:
             for identity, group in matches.items():
-                if any(0 < y - top <= 2 * height for top, height in established[page, identity]):
+                if any(0 < y - top <= 3 * height for top, height in established[page, identity]):
                     verified.update((page, tuple(box)) for _, expected, parts in group
                                     if expected != 0 for box, _ in parts)
     return verified
+
+
+def _continued_subject_boxes(words, control_tables, tolerance):
+    """Confirm repeated 款/項/目 codes against an adopted ancestor chain."""
+    by_page = defaultdict(list)
+    for raw in words:
+        page, box, text = _coverage_word(raw)
+        by_page[page].append((box, _word_key(text)))
+    page_headers = {}
+    page_codes = {}
+    for page, printed in by_page.items():
+        headers = [(box, text) for box, text in printed
+                   if text.strip('()（）') in ('款', '項', '目', '款項', '款項目')]
+        if {'款', '項', '目'} <= set(''.join(text.strip('()（）') for _, text in headers)):
+            page_headers[page] = headers
+            numeric = defaultdict(list)
+            # A code can be split into touching glyphs (10 -> 1, 0).
+            digits = sorted(((box, text) for box, text in printed if re.fullmatch(r'[0-9]+', text)), key=lambda item: (round(item[0][1]), item[0][0]))
+            for start, (box, text) in enumerate(digits):
+                numeric[text].append((box, [box]))
+                joined, parts = text, [box]
+                for next_box, next_text in digits[start + 1:start + 3]:
+                    if abs(next_box[1] - box[1]) > 2 or not -tolerance <= next_box[0] - parts[-1][2] <= tolerance:
+                        break
+                    joined += next_text
+                    parts.append(next_box)
+                    union = (box[0], min(b[1] for b in parts), next_box[2], max(b[3] for b in parts))
+                    numeric[joined].append((union, list(parts)))
+            fragments = {tuple(part) for values in numeric.values() for _, parts in values
+                         if len(parts) > 1 for part in parts}
+            page_codes[page] = {text:[(box, parts) for box, parts in values
+                                     if len(parts) > 1 or tuple(box) not in fragments]
+                                for text, values in numeric.items()}
+    matched = set()
+    for table in control_tables:
+        nodes = {n['node_key']: n for n in table.nodes}
+        code_columns = defaultdict(set)
+        for node in table.nodes:
+            if node['level_header'] not in ('款', '項', '目') or node['x0'] is None:
+                continue
+            for box, text in by_page.get(node['physical_page'], ()):
+                if text and _word_digits(text) and not _amount_shaped(text) and _word_key(str(node['code_text'] or '') + str(node['name_text'] or '')).startswith(text) and abs(box[0] - node['x0']) <= tolerance and node['y0'] - tolerance <= box[1] <= node['y1'] + tolerance:
+                    code_columns[node['level_header']].add(round(box[0], 1))
+        for moku in table.nodes:
+            if moku['level_header'] != '目':
+                continue
+            chain = [moku]
+            while chain[-1]['parent_node_key'] in nodes:
+                chain.append(nodes[chain[-1]['parent_node_key']])
+            chain.reverse()
+            if [n['level_header'] for n in chain] != ['款', '項', '目'] or any(
+                    n['code_text'] is None or n['x0'] is None for n in chain):
+                continue
+            for page, headers in page_headers.items():
+                candidates = [[(box, parts) for box, parts in page_codes[page].get(_word_key(n['code_text']), ())
+                               if any(abs(box[0] - x) <= max(tolerance, (box[2] - box[0]) / 2)
+                                      for x in code_columns[n['level_header']])] for n in chain]
+                for first, first_parts in candidates[0]:
+                    if not any(0 < first[1] - header[1] <= 6 * (header[3] - header[1])
+                               for header, _ in headers):
+                        continue
+                    row = list(first_parts)
+                    for column in candidates[1:]:
+                        hits = [(box, parts) for box, parts in column if abs(box[1] - first[1]) <= 2]
+                        if len(hits) != 1:
+                            break
+                        row.extend(hits[0][1])
+                    # A printed hierarchy header can carry a prefix (款/項)
+                    # while 目 starts on its own line. Match only observed
+                    # ancestor codes in their adopted column positions.
+                    matched.update((page, tuple(box)) for box in row)
+    return matched
 
 
 def check_digit_coverage(words, tables, *, tolerance=0.5, exclusions=(), amount_columns=(), control_tables=()):
@@ -624,7 +793,13 @@ def check_digit_coverage(words, tables, *, tolerance=0.5, exclusions=(), amount_
         page, box, text = _coverage_word(raw)
         lines[(page, round(box[1]))].append((box, _word_key(text)))
     non_amount_boxes = set()
-    for (page, _), line in lines.items():
+    merged_lines = {}
+    for (page, y), line in sorted(lines.items()):
+        if not merged_lines or page != anchor[0] or y - anchor[1] > 2:
+            anchor = (page, y)
+            merged_lines[anchor] = []
+        merged_lines[anchor].extend(line)
+    for (page, _), line in merged_lines.items():
         line.sort(key=lambda item: item[0][0])
         for start in range(len(line)):
             joined = ''
@@ -632,11 +807,23 @@ def check_digit_coverage(words, tables, *, tolerance=0.5, exclusions=(), amount_
                 if end > start and line[end][0][0] - line[end - 1][0][2] > 12:
                     break
                 joined += line[end][1]
-                if NON_AMOUNT_WORD.fullmatch(joined) or DOCUMENT_NUMBER.fullmatch(joined):
+                if (NON_AMOUNT_WORD.fullmatch(joined) or DOCUMENT_NUMBER.fullmatch(joined)
+                        or is_fiscal_year_notation(joined) or QUANTITY_PHRASE.fullmatch(joined)
+                        or ORDINAL_PHRASE.fullmatch(joined)):
                     non_amount_boxes.update((page, tuple(box)) for box, _ in line[start:end + 1])
     for word in normalized:
         if word['covered'] is None and (word['page'], tuple(word['bbox'])) in non_amount_boxes:
             word['covered'] = 'non_amount'
+    for word in normalized:
+        if word['covered'] is not None or not re.fullmatch(r'[0-9][0-9,]*', word['key']):
+            continue
+        adjacent = [part for offset in range(-2, 3)
+                    for part in lines.get((word['page'], round(word['bbox'][1]) + offset), ())]
+        for b, text in adjacent:
+            if abs(b[1] - word['bbox'][1]) <= 2 and 0 <= b[0] - word['bbox'][2] <= 5:
+                if re.match(r'(?:人|名|件|食|回|日|個|台|戸|世帯|本|床|箇所|校|番|丁目|歳|か月|号|基|㎡|km|路線)', _word_key(text)):
+                    word['covered'] = 'non_amount'
+                    break
     # A bare number immediately followed by a percent word on its baseline is
     # an execution rate, never an adopted amount. Percent signs carry no
     # digits, so marks come from every scope word, not only digit words.
@@ -681,19 +868,23 @@ def check_digit_coverage(words, tables, *, tolerance=0.5, exclusions=(), amount_
         except (KeyError, TypeError, ValueError):
             continue
         if isinstance(page, int):
-            by_baseline[(page, round(box[1]))].append(_word_key(text))
-    total_baselines = {key for key, texts in by_baseline.items()
-                       if any(label in ''.join(texts) for label in TOTAL_LABELS)}
+            by_baseline[(page, round(box[1]))].append((box, _word_key(text)))
+    total_baselines = {key for key, line in merged_lines.items()
+                       if any(label in ''.join(text for _, text in sorted(line)) for label in TOTAL_LABELS)}
     for word in normalized:
         if word['covered'] is None and isinstance(word['page'], int) \
-                and (word['page'], round(word['bbox'][1])) in total_baselines:
+                and any(p == word['page'] and abs(y - word['bbox'][1]) <= 2 for p, y in total_baselines):
             word['covered'] = 'total'
     total_boxes = _verified_total_boxes(
         words, control_tables or (tables,), amount_columns, tolerance,
-        {(word['page'], round(word['bbox'][1])) for word in normalized if word['covered'] is None})
+        {(word['page'], round(word['bbox'][1])) for word in normalized if word['covered'] is None or word['covered'] == 'total'})
     for word in normalized:
         if word['covered'] is None and (word['page'], tuple(word['bbox'])) in total_boxes:
             word['covered'] = 'verified_total'
+    repeated = _continued_subject_boxes(words, control_tables or (tables,), tolerance)
+    for word in normalized:
+        if word['covered'] is None and (word['page'], tuple(word['bbox'])) in repeated:
+            word['covered'] = 'label'
     for word in normalized:
         if word['covered'] is None:
             word['covered'] = 'blocked' if in_band(word) else 'reported'
@@ -710,6 +901,34 @@ def check_digit_coverage(words, tables, *, tolerance=0.5, exclusions=(), amount_
             'digit_words': len(normalized), 'uncovered': blocked, 'reported': reported,
             'bands_from': bands_from, 'exclusions': applied,
             'elapsed': time.perf_counter() - started}
+
+
+def quantity_regions(rows, metadata):
+    """Use existing typed quantity cells and their own measured positions."""
+    monetary = {c for item in metadata.get('units', [])
+                if item['text'] in ('円', '千円') and item['scope']['kind'] == 'columns'
+                for c in item['scope']['columns']}
+    kinds = ('件数', '人数', '回数', '人口', '数量', '対象者数', '受給者数', '延人数',
+             '世帯数', '児童数', '園児数', '教員数', '学級数', '生徒数', '事業所数', '者数', '施工数')
+    regions = {}
+    for row in rows:
+        for column, value in row.items():
+            if value is None or column in monetary or not (re.sub(r'（[^）]*）|等$', '', column).endswith(kinds) or column.startswith('数量表_')):
+                continue
+            pos = _position(row, column + '_')
+            if None in pos.values():
+                continue
+            key = tuple(pos.values())
+            regions[key] = {'kind': '数量表', 'reason': '既存の数量セルの印字位置。金額の欄ではない。',
+                            'page': pos['physical_page'], 'bbox': [pos[k] for k in ('x0', 'y0', 'x1', 'y1')]}
+    return list(regions.values())
+
+
+def with_annotations(wide_path, tables, *, raw_rows=(), adopted=None):
+    """Add non-additive annotation rows only when text-PDF scope is available."""
+    from ingestion.lib.annotations import add_annotations
+    sidecar = coverage_sidecar(wide_path)
+    return add_annotations(tables, json.loads(sidecar.read_text()), raw_rows=raw_rows, adopted=adopted) if sidecar.exists() else tables
 
 
 def migrate_rows(rows: list[dict], metadata: dict) -> NodeTables:
@@ -982,6 +1201,8 @@ def check_tree(nodes: list[dict], amounts: list[dict], document_kind: str = 'set
 
     cyclic = any('親の循環' in issue for issue in issues)
     for (parent, axis), children in list(groups.items()):
+        if axis == '注記':
+            continue
         same_axis = axis == by_key[parent]['axis_header']
         parent_values = comparable(parent)
         child_keys = set().union(*(descendants(child, axis) for child in children))
