@@ -45,7 +45,7 @@ import duckdb
 from serving import columns as contract
 
 LOCAL_PERSIST_TO = contract.PIPELINE.parent / 'apps/api/.cloudflare/state'
-LOCAL_DATABASE_ID = '00000000-0000-4000-8000-000000000001'
+LOCAL_DATABASE_ID = 'b9b6f209-083e-45b3-a896-1014a17a15f9'
 
 # D1 の1文 100KB の内側。1回の cf 呼び出しの大きさ
 MAX_STATEMENT_BYTES = 60_000

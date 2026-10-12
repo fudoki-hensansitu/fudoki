@@ -135,6 +135,8 @@ export function createApp() {
 
   // kill switch: control の serving が 'on' 以外なら 503。読めないときも止める。
   app.use('*', async (c, next) => {
+    // /health は D1 を読まない（叩かれても課金が増えず、kill switch が off でも Worker の生死を返す）
+    if (c.req.path === '/health') return next()
     let on = false
     try {
       const row = await c.env.DB.prepare(`SELECT value FROM control WHERE key = 'serving'`).first<{ value: string }>()
@@ -151,7 +153,7 @@ export function createApp() {
 
   // POST の body は、Content-Type・実際のバイト数・UTF-8・`__proto__` を検査してから使う。
   app.use('*', async (c, next) => {
-    if (c.req.method !== 'POST') return next()
+    if (c.req.method !== 'POST' || c.req.path === '/health') return next()
     const isMcp = new URL(c.req.url).pathname === '/mcp'
     try {
       if (!JSON_CONTENT_TYPE.test(c.req.header('content-type') ?? ''))
@@ -174,9 +176,23 @@ export function createApp() {
       name: '風土記 API',
       rest: `${origin}/v1/expenditure/nodes:search`,
       openapi: `${origin}/openapi.json`,
+      health: `${origin}/health`,
       mcp: `${origin}/mcp`,
     })
   })
+
+  app.openapi(
+    createRoute({
+      method: 'get',
+      path: '/health',
+      operationId: 'health',
+      summary: '死活確認',
+      description: 'Worker が応答できるかだけを返す。D1 は読まず、kill switch の状態に依らず 200 を返す。',
+      responses: { 200: { description: '稼働中', content: { 'application/json': { schema: z.object({ status: z.literal('ok') }) } } } },
+    }),
+    (c) => c.json({ status: 'ok' as const }, 200)
+  )
+  app.all('/health', (c) => c.json(errorBody('METHOD_NOT_ALLOWED', 'GET だけを受け付けます'), 405, { Allow: 'GET' }))
 
   for (const op of operations) registerRest(app, op)
 

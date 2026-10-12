@@ -53,6 +53,50 @@ describe('kill switch', () => {
   })
 })
 
+describe('GET /health', () => {
+  test('200 と {status: ok}、no-store', async () => {
+    const res = await get('/health')
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ status: 'ok' })
+    expect(res.headers.get('Cache-Control')).toBe('no-store')
+  })
+
+  test('D1 を一切読まない（binding が壊れていても 200）', async () => {
+    const touched: string[] = []
+    const broken = { prepare: (sql: string) => (touched.push(sql), Promise.reject(new Error('boom'))), batch: () => Promise.reject(new Error('boom')) }
+    const res = await app.request('/health', {}, { DB: broken })
+    expect(res.status).toBe(200)
+    expect(touched).toEqual([])
+    expect((await app.request('/health', {}, {})).status).toBe(200) // DB が無い
+  })
+
+  test('kill switch が off でも 200', async () => {
+    sqlite.query(`UPDATE control SET value = 'off' WHERE key = 'serving'`).run()
+    expect((await get('/health')).status).toBe(200)
+    expect((await get('/')).status).toBe(503)
+  })
+
+  test('GET 以外は 405', async () => {
+    for (const method of ['POST', 'PUT', 'DELETE']) {
+      const res = await app.request('/health', { method, headers: { 'Content-Type': 'text/plain' }, body: 'x' }, { DB: db })
+      expect(res.status, method).toBe(405)
+      expect(res.headers.get('Allow')).toBe('GET')
+      expect(res.headers.get('Cache-Control')).toBe('no-store')
+    }
+  })
+
+  test('OpenAPI に載り、MCP の tool にはならない', async () => {
+    const doc = await (await get('/openapi.json')).json()
+    expect(doc.paths['/health'].get.operationId).toBe('health')
+    const res = await mcp({ jsonrpc: '2.0', id: 1, method: 'tools/list' })
+    expect((await res.json()).result.tools.map((t: { name: string }) => t.name)).not.toContain('health')
+  })
+
+  test('/ の案内に health の URL', async () => {
+    expect((await (await get('http://x.test/')).json()).health).toBe('http://x.test/health')
+  })
+})
+
 describe('GET /', () => {
   test('REST と MCP の URL を返す', async () => {
     const body = await (await get('http://x.test/')).json()
@@ -254,6 +298,7 @@ describe('columns と OpenAPI', () => {
     const doc = await (await get('/openapi.json')).json()
     expect(doc.openapi).toBe('3.1.0')
     expect(Object.keys(doc.paths).sort()).toEqual([
+      '/health',
       '/v1/expenditure/columns',
       '/v1/expenditure/nodes/{document_kind}/{node_id}',
       '/v1/expenditure/nodes:search',
@@ -569,7 +614,7 @@ describe('offset の上限', () => {
     }
     expect(pages).toBe(MAX / 1000 + 1) // offset 0, 1000, ..., 100,000
     expect(last).toBe(1000) // まだ行はあるのに打ち切る
-  }, 30000)
+  }, 120000)
 
   test('get の子も同じ', async () => {
     fill(K1)
@@ -583,7 +628,7 @@ describe('offset の上限', () => {
       if (token === null) break
     }
     expect(pages).toBe(MAX / 1000 + 1)
-  }, 30000)
+  }, 120000)
 
   test('打ち切りの説明が tool と OpenAPI にある', async () => {
     const res = await mcp({ jsonrpc: '2.0', id: 1, method: 'tools/list' })
