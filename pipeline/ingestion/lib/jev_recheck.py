@@ -16,7 +16,7 @@ import urllib.request
 from ingestion.lib.pdf_table import tokens_from_bbox_layout
 
 MODEL = 'jev-1.13.0'
-STOP_PROBABILITY = 0.9
+STOP_PROBABILITY = 0.99
 # https://docs.typesafe.ai/models: charged per input token; output tokens are free.
 INPUT_USD_PER_MILLION = 0.042
 SIDECAR_SUFFIX = '.jev.json'
@@ -163,8 +163,6 @@ def recheck(words: list[dict], coverage: dict, cache_path: Path, *, allow_api=Fa
     cache = load_cache(cache_path) if cache is None else cache
     if cache.get('schema_version') != 1 or not isinstance(cache.get('entries'), dict):
         raise ValueError('Unsupported Jev cache')
-    if shared_entries is not None:
-        cache['entries'].update(shared_entries)
     if scope is not None and allow_api:
         cache['scope'] = scope
         cache['state_words'] = words
@@ -175,12 +173,17 @@ def recheck(words: list[dict], coverage: dict, cache_path: Path, *, allow_api=Fa
         if digit['covered'] in EXPECTED or digit['covered'] in DIAGNOSTIC_RULES:
             targets[digit['page']].append(digit)
     judgments, usage = [], Counter()
+    selected_entries = {}
     requests = 0
     for page in sorted(targets):
         for state, digits in page_states(by_page[page], targets[page]):
             state_hash = digest(state)
             queries = [(digit, question(digit)) for digit in digits]
             keyed = [(digit, q, digest([MODEL, state_hash, digest(q)])) for digit, q in queries]
+            if shared_entries is not None:
+                for _, _, cache_key in keyed:
+                    if cache_key not in cache['entries'] and cache_key in shared_entries:
+                        cache['entries'][cache_key] = shared_entries[cache_key]
             missing = [(digit, q, key) for digit, q, key in keyed if key not in cache['entries']]
             if missing and not allow_api:
                 raise ValueError(f'Jev cache missing/stale: {cache_path}, p{page}; verify never calls the API')
@@ -216,7 +219,7 @@ def recheck(words: list[dict], coverage: dict, cache_path: Path, *, allow_api=Fa
                     cache['entries'][cache_key] = {'model': MODEL, 'state_hash': state_hash,
                         'question_hash': digest(q), 'answer': response['answers'][str(i)]}
                 if shared_entries is not None:
-                    shared_entries.update(cache['entries'])
+                    shared_entries.update({key: cache['entries'][key] for _, _, key in batch})
                 write_cache(cache_path, cache)
                 requests += 1
                 usage.update(response['usage'])
@@ -224,6 +227,7 @@ def recheck(words: list[dict], coverage: dict, cache_path: Path, *, allow_api=Fa
                 entry = cache['entries'][cache_key]
                 if (entry['model'], entry['state_hash'], entry['question_hash']) != (MODEL, state_hash, digest(q)):
                     raise ValueError('Jev cache identity differs from request')
+                selected_entries[cache_key] = entry
                 answer = entry['answer']
                 validate_answer(answer)
                 # Low-probability service choices can differ from the distribution's
@@ -235,7 +239,7 @@ def recheck(words: list[dict], coverage: dict, cache_path: Path, *, allow_api=Fa
                 judgments.append({**digit, 'choice': choice, 'probability': probability,
                                   'probabilities': answer['probabilities'], 'stop': stop})
     if shared_entries is not None:
-        shared_entries.update(cache['entries'])
+        shared_entries.update(selected_entries)
     if (scope is not None or shared_entries is not None) and allow_api:
         write_cache(cache_path, cache)
     stopped = [j for j in judgments if j['stop']]

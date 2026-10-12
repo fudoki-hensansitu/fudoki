@@ -21,7 +21,7 @@ class RecheckTest(unittest.TestCase):
                 'decisions': [{**self.word, 'bbox': [1, i * 10, 3, i * 10 + 4], 'covered': rule}
                               for i, rule in enumerate(rules)]}
 
-    def service(self, choice='table_amount', probability=0.95):
+    def service(self, choice='table_amount', probability=1.0):
         def call(state, questions, key):
             return {'model': jev.MODEL, 'usage': {'input_tokens': 100, 'output_tokens': 10},
                     'answers': {q: {'type': 'choice', 'choice': choice,
@@ -46,7 +46,7 @@ class RecheckTest(unittest.TestCase):
         self.assertEqual(result['stopped'], [])
 
     def test_probability_boundary_and_expected_answers(self):
-        for probability, stopped in [(0.899, False), (0.9, True)]:
+        for probability, stopped in [(0.989, False), (0.99, True)]:
             self.path.unlink(missing_ok=True)
             result = jev.recheck([self.word], self.coverage('non_amount'), self.path,
                                  allow_api=True, transport=self.service(probability=probability))
@@ -123,12 +123,14 @@ class RecheckTest(unittest.TestCase):
         coverage = self.coverage('non_amount')
         first = jev.recheck([self.word], coverage, self.path, allow_api=True,
                             transport=self.service(), shared_entries=shared)
+        shared['unused'] = {'irrelevant': True}
         second_path = self.path.with_name('peer.jev.json')
         def no_call(*args):
             raise AssertionError('duplicate request for identical evidence')
         second = jev.recheck([self.word], coverage, second_path, allow_api=True,
                              transport=no_call, shared_entries=shared)
         self.assertEqual(second['requests'],0)
+        self.assertNotIn('unused', json.loads(second_path.read_text())['entries'])
         self.assertEqual(second['judgments'],first['judgments'])
         replay = jev.recheck([self.word], coverage, second_path)
         self.assertEqual(replay['judgments'],first['judgments'])
