@@ -103,6 +103,7 @@ class TrialRulesTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / 'spread.pdf'
             document.save(path)
+            document.close()
             spread = lambda number: Page(number, 842, 1191, [Word('議会費', 60, 300, 90, 309), Word('支出済額', 700, 100, 740, 109)],
                                          [Rule(50, 120, 1100, 120)])
             pages = [spread(1), spread(2)]
