@@ -18,6 +18,7 @@ from ingestion.generic.layout import logical_pages  # noqa: E402
 from ingestion.generic.observe import observe  # noqa: E402
 from ingestion.generic.repair import repair  # noqa: E402
 from ingestion.generic.build import choose_pattern  # noqa: E402
+from ingestion.generic.units import check as unit_check, general_total  # noqa: E402
 from ingestion.lib.node_tables import read_rows  # noqa: E402
 
 targets, out, index, workers = sys.argv[1], Path(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4])
@@ -63,6 +64,8 @@ for pdf, pages, kind in keys:
                 'metrics': {k: v for k, v in report.items() if k != 'examples'},
                 'examples': report['examples'],
                 'repairs': repairs.as_dict() if repairs else None,
+                'general_total_yen': general_total(built.nodes, built.amounts, kind) if row.get('account') == '一般会計' else None,
+                'unit_check': unit_check(built, kind),
             })
         (out / f"{row['jurisdiction']}-{row['table_id']}.json").write_text(json.dumps(record, ensure_ascii=False, indent=1, default=str))
         print(name, row['table_id'], seconds, 'error' if error else '', flush=True)

@@ -146,3 +146,22 @@ class PatternTest(unittest.TestCase):
         shape = lambda value: shape_of(Item(Group([band], '備考', False), 1, [[glyph(value, 0, 0)]], None, value, 0))
         self.assertEqual([shape('○事業'), shape('(1)運営'), shape('①旅費'), shape('ア 郵便料'), shape('12委託料'), shape('アシスタント')],
                          ['bullet', 'paren', 'circled', 'kana', 'number', None])
+
+
+class UnitTest(unittest.TestCase):
+    def test_default_by_document_kind_when_nothing_is_printed(self):
+        from ingestion.generic.layout import Logical
+        from ingestion.generic.units import resolve
+        pages = [Logical([1], [], None, []), Logical([2], [], None, [])]
+        self.assertEqual(resolve(pages, 'initial')['default'], 1)
+        self.assertEqual([p.unit for p in pages], ['千円', '千円'])
+
+    def test_kan_sum_must_equal_the_printed_total(self):
+        from ingestion.generic.tree import Built
+        from ingestion.generic.units import check
+        nodes = [{'node_key': 'k', 'axis_header': '科目', 'parent_node_key': None}]
+        amounts = [{'node_key': 'k', 'header_path': '本年度予算額', 'amount_text': '281,800,047', 'unit_text': '千円'}]
+        total = [{'kind': 'total amount', 'header': '本年度予算額', 'text': '56,360,000', 'label': '歳出合計'}]
+        result = check(Built(nodes, amounts, [], total), 'initial')
+        self.assertTrue(result['stopped'])
+        self.assertFalse(result['sum_matches'])

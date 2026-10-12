@@ -5,8 +5,9 @@
    A page without one carries the unit of the page before it.
 2. Otherwise the default of the document kind: a settlement (決算) prints
    円, a budget (当初・補正) prints 千円.
-3. A check: the general account's expenditure total divided by the population
-   must fall in PER_CAPITA_RANGE; outside it the unit is wrong and the build stops.
+3. Checks (one place, `check`): the sum of the 款 equals the printed 歳出合計,
+   and the printed total has the digits the unit implies (DIGITS). A failure
+   stops the build. (A per-capita check waits for a population source.)
 """
 from __future__ import annotations
 
@@ -18,9 +19,9 @@ PRINTED = re.compile(r'単位\s*[:：]?\s*(百万円|千円|円)')
 COLUMN_MARK = re.compile(r'[(（](百万円|千円|円)[)）]')
 DEFAULTS = {'settlement': '円', 'initial': '千円', 'supplementary': '千円'}
 MULTIPLIER = {'円': 1, '千円': 1_000, '百万円': 1_000_000}
-# Expenditure per resident of a general account: tens of thousands to a few
-# million yen (Tokyo's wards and cities print about 300,000–1,200,000).
-PER_CAPITA_RANGE = (30_000, 5_000_000)
+# Printed digits of an expenditure total: a settlement in 円 prints 億〜兆
+# (10^8 up to below 10^13), a budget in 千円 prints 十万〜十億 (10^5 up to below 10^10).
+DIGITS = {'settlement': (10 ** 8, 10 ** 13), 'initial': (10 ** 5, 10 ** 10), 'supplementary': (10 ** 5, 10 ** 10)}
 
 
 def column_mark(band: Band) -> str | None:
@@ -53,7 +54,58 @@ def resolve(logicals: list[Logical], document_kind: str) -> dict:
     return sources
 
 
-def per_capita(total_yen: int, population: int) -> dict:
-    value = total_yen / population
-    return {'per_capita_yen': round(value), 'range': PER_CAPITA_RANGE,
-            'plausible': PER_CAPITA_RANGE[0] <= value <= PER_CAPITA_RANGE[1]}
+def _phase(document_kind: str) -> str:
+    return 'executed' if document_kind == 'settlement' else 'approved'
+
+
+def general_total(nodes: list[dict], amounts: list[dict], document_kind: str) -> int | None:
+    """The expenditure total in yen: the executed (決算) or approved (予算) amounts of every 款."""
+    from ingestion.generic.build import dictionary_header
+    from ingestion.lib.node_tables import amount_phase
+    from shared.amount import number
+    phase = 'executed' if document_kind == 'settlement' else 'approved'
+    roots = {n['node_key'] for n in nodes if n['axis_header'] == '科目' and n['parent_node_key'] is None}
+    total, found = 0, False
+    for amount in amounts:
+        if amount['node_key'] not in roots or not amount['unit_text']:
+            continue
+        if amount_phase(dictionary_header(amount['header_path'], document_kind), document_kind, '科目', '款') != phase:
+            continue
+        value = number(amount['amount_text'])
+        if value is not None:
+            total += value * MULTIPLIER.get(amount['unit_text'], 1)
+            found = True
+    return total if found else None
+
+
+def check(built, document_kind: str) -> dict:
+    """款 sum = printed 歳出合計 (in the phase the document reports), and the total's digits fit the unit."""
+    from ingestion.generic.build import dictionary_header
+    from ingestion.lib.node_tables import amount_phase
+    from shared.amount import number
+    phase = _phase(document_kind)
+    printed = [n for n in built.notes if n.get('kind') == 'total amount' and n.get('header')
+               and amount_phase(dictionary_header(n['header'], document_kind), document_kind, '科目', '款') == phase]
+    raw_sum = sum(number(a['amount_text']) or 0 for a in built.amounts
+                  if a['node_key'] in {n['node_key'] for n in built.nodes if n['axis_header'] == '科目' and n['parent_node_key'] is None}
+                  and amount_phase(dictionary_header(a['header_path'], document_kind), document_kind, '科目', '款') == phase)
+    result = {'phase': phase, 'kan_sum': raw_sum, 'printed_total': None, 'sum_matches': None, 'digits': DIGITS.get(document_kind),
+              'digits_ok': None, 'stopped': False}
+    if printed:
+        # The grand total: a row named 合計 (歳出合計) if any, else the largest printed total
+        # (other 計 rows are subtotals).
+        named = [n for n in printed if '合計' in (n.get('label') or '')]
+        chosen = named[-1] if named else max(printed, key=lambda n: abs(number(n['text']) or 0))
+        total = number(chosen['text'])
+        result['total_label'] = chosen.get('label')
+        result['printed_total'] = total
+        result['sum_matches'] = total == raw_sum
+        low, high = DIGITS.get(document_kind, (0, float('inf')))
+        result['digits_ok'] = total is not None and low <= abs(total) < high
+        result['stopped'] = not result['sum_matches'] or not result['digits_ok']
+    elif raw_sum:
+        # No printed total in the pages read: only the digits of the 款 sum can be checked.
+        low, high = DIGITS.get(document_kind, (0, float('inf')))
+        result['digits_ok'] = low <= abs(raw_sum) < high
+        result['stopped'] = not result['digits_ok']
+    return result
