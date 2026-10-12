@@ -15,7 +15,7 @@ from pathlib import Path
 from ingestion.generic.layout import logical_pages, normalize
 from ingestion.generic.observe import observe
 from ingestion.generic.repair import repair
-from ingestion.generic.units import resolve as resolve_units
+from ingestion.generic.units import check as check_units, resolve as resolve_units
 from ingestion.generic.tree import DETAIL_PATTERNS, SUBJECT_PATTERNS, Built, build
 from ingestion.lib.node_tables import AMOUNT_COLUMNS, NODE_COLUMNS, amount_phase, check_tree, phase_dictionary
 from ingestion.lib.parquet import write_parquet
@@ -48,10 +48,14 @@ def run(pdf: Path, pages: list[int], cache: Path | None = None, judge=None) -> B
 
 
 def run_with_repairs(pdf: Path, pages: list[int], cache: Path | None = None, judge=None,
-                     document_kind: str = 'settlement'):
+                     document_kind: str = 'settlement', account: str | None = None):
+    """Build one table; stop when the unit check fails (款 sum ≠ printed total, or a general account's digits)."""
     observed, report = repair(pdf, observe(pdf, pages, cache))
     built, choice = choose_pattern(logical_pages(observed), document_kind, judge)
     report.pattern = choice
+    unit = check_units(built, document_kind, account)
+    if unit['stopped']:
+        raise ValueError(f'Unit check failed: {unit}')
     return built, report
 
 

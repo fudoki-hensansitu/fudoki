@@ -43,6 +43,7 @@ class Report:
     hidden_glyphs: int = 0
     hidden_rules: int = 0
     vertical_words: int = 0
+    invisible_error: str | None = None
     pattern: dict = field(default_factory=dict)
     duplicate_words: int = 0
     composite_glyphs: int = 0
@@ -54,7 +55,7 @@ class Report:
 
     def as_dict(self) -> dict:
         return {'hidden_glyphs': self.hidden_glyphs, 'hidden_rules': self.hidden_rules,
-                'vertical_words': self.vertical_words, 'pattern': self.pattern, 'duplicate_words': self.duplicate_words,
+                'vertical_words': self.vertical_words, 'invisible_error': self.invisible_error, 'pattern': self.pattern, 'duplicate_words': self.duplicate_words,
                 'composite_glyphs': self.composite_glyphs, 'joined_numbers': self.joined_numbers,
                 'health': self.health, 'broken': self.broken, 'repairs': sum(self.hits.values()),
                 'hits': dict(self.hits.most_common()), 'examples': {k: v[:5] for k, v in self.examples.items()}}
@@ -378,7 +379,11 @@ def join_vertical(page: Page, report: Report) -> None:
 def repair(pdf_path: Path | None, pages: list[Page]) -> tuple[list[Page], Report]:
     report = Report()
     if pdf_path is not None and pdf_path.exists():
-        drop_invisible(pdf_path, pages, report)
+        try:
+            drop_invisible(pdf_path, pages, report)
+        except Exception as error:  # pdfium's raw API failed: keep Poppler's words as they are
+            report.invisible_error = f'{type(error).__name__}: {error}'
+            report.hidden_glyphs = report.hidden_rules = 0
     for page in pages:
         repair_positions(page, report)
         join_vertical(page, report)

@@ -246,7 +246,7 @@ A の規則のままでは 0 件一致。崩れる箇所は次の3つで、い�
 
 ### 結果
 
-名前の一致は「完全一致」と「誤字を許した一致」の2つで出す。誤字を許した一致は、根からの（軸・番号）の並びが同じノードどうしで、名前が同じか金額を1つでも共有すれば一致とする（番号と親が同じなら名前の違いを許す）。目の金額は見出しの名前によらず値で比べる（変換器ごとに見出しの名付けが違うため）。分類の (a) は完全一致の基準のまま、(b) は誤字を許した一致で款項目 90% 以上・目の金額（値）80% 以上・目より下 50% 以上（正解の軸がある場合）とした。前回手で (b) にした3表（131148 一般・土地、132128）は軸の名前の違いが原因で修復とは関係しないので、分類を変えていない。
+名前の一致は「完全一致」と「誤字を許した一致」の2つで出す。分類は再現率で判定し、適合率は見ない。正解に無い軸の生成と、正解が持たない注記の金額（立川の流用の注記など）は「上乗せ」として別に数え、誤りに数えないためである（適合率の下限を置くと、注記を持つ立川の一般会計が (b) から落ちる）。誤字を許した一致は、根からの（軸・番号）の並びが同じノードどうしで、名前が同じか金額を1つでも共有すれば一致とする（番号と親が同じなら名前の違いを許す）。目の金額は見出しの名前によらず値で比べる（変換器ごとに見出しの名付けが違うため）。分類の (a) は完全一致の基準のまま、(b) は誤字を許した一致で款項目 90% 以上・目の金額（値）80% 以上・目より下 50% 以上（正解の軸がある場合）とした。前回手で (b) にした3表（131148 一般・土地、132128）は軸の名前の違いが原因で修復とは関係しないので、分類を変えていない。
 
 | 分類 | 前回 | 今回 | 変わった表 |
 | --- | --- | --- | --- |
@@ -388,7 +388,7 @@ A の規則のままでは 0 件一致。崩れる箇所は次の3つで、い�
 
 1. 頁に印字された単位を使う: 表の近くの「単位：円／千円／百万円」（printed）、金額の欄の上端の「円」や見出しの「金額(円)」（column mark）。単位の無い頁は前の頁の単位を引き継ぐ（carried）。
 2. どれも無ければ資料区分の既定値（default）: 決算は円、予算（当初・補正）は千円。
-3. 確かめ（どちらかが外れたら構築を止める）: 款の合計（決算は支出済額、予算は当初予算額）が印字の歳出合計に一致すること。合計の行は「合計」を含む行を選び、無ければ一番大きい「計」の行。合計の金額の桁が単位に合うこと（決算は円で億〜兆＝10^8 以上 10^13 未満、予算は千円で十万〜十億＝10^5 以上 10^10 未満）。合計の印字が読んだ頁に無い表は、款の合計の桁だけを確かめる。
+3. 確かめ（変換の入口 `build.run_with_repairs` はどちらかが外れたら止める。全表の計測は止めずに記録する）: 款の合計（決算は支出済額、予算は当初予算額）が印字の歳出合計に一致すること。合計の行は「合計」を含む行を選び、無ければ一番大きい「計」の行。一般会計では、合計の金額の桁が単位に合うこと（決算は円で億〜兆＝10^8 以上 10^13 未満、予算は千円で十万〜十億＝10^5 以上 10^10 未満。小さな特別会計はこの桁に収まらないので当てない）。合計の印字が読んだ頁に無い一般会計は、款の合計の桁だけを確かめる。
 
 結果（実測 2026-10-12）:
 
@@ -630,23 +630,29 @@ A の規則のままでは 0 件一致。崩れる箇所は次の3つで、い�
 
 ## Validation / Rollout
 
-再現の手順（原典はローカルキャッシュ、正解は #103 の候補の表を読むだけ）:
+再現の手順。正解は main に merge された保存済みの表（非公開 R2）を、原典は選定済みの PDF（非公開 R2）を、どちらも読むだけで自分の worktree の `pipeline/.cache/objects/` に取り直す（以下は repo root から）:
 
 ```bash
-S=<原典のキャッシュ>/fiscal/source-selection
-F=<#103 の候補>/.agent/w3c/final
-uv run python -m ingestion.generic.build $S/131041/2025/settlement.pdf 65-147 .cache/generic/131041 --table general
-uv run python -m ingestion.generic.evaluate .cache/generic/131041/general \
-  $F/131041-2025-settlement-expenditure/inspection/general-expenditure-detail --exclude-header 歳出総括
-uv run python -m ingestion.generic.build $S/132021/2025/settlement-1.pdf 82-441 .cache/generic/132021 --table general
-uv run python -m ingestion.generic.evaluate .cache/generic/132021/general \
-  $F/132021-2025-settlement-expenditure/inspection/general-expenditure-details \
-  $F/132021-2025-settlement-expenditure/inspection/general-expenditure-notes
-uv run python -m ingestion.generic.sums .cache/generic/132021/general <同じ正解>   # 和の3通り
-uv run python -m ingestion.generic.build ... --jev                                  # B（サンドボックス外。key は mise）
+# 1. 保存済みの表と原典を R2 から取り直す（読むだけ）
+for m in pipeline/ingestion/fiscal/jurisdictions/*/2025/*/expenditure.json; do
+  bun run --cwd pipeline ingestion:restore --manifest "$PWD/$m" --remote
+  bun run --cwd pipeline ingestion:originals --manifest "$PWD/$m" --output "$TMPDIR/inputs.json" --remote
+done
+# 2. 対象の一覧（表・原典・頁）を管理 JSON と取り直した表から作る
+uv run --project pipeline python docs/prd/generic-node-builder/all-tables/targets.py .agent/all-tables/targets.json
+# 3. 2プロセスで当てて測り、一覧にする（原因と分類は all-tables/causes.json）
+cd pipeline
+uv run python ../docs/prd/generic-node-builder/all-tables/run.py ../.agent/all-tables/targets.json ../.agent/all-tables/results 0 2 &
+uv run python ../docs/prd/generic-node-builder/all-tables/run.py ../.agent/all-tables/targets.json ../.agent/all-tables/results 1 2 &
+wait
+uv run python ../docs/prd/generic-node-builder/all-tables/summary.py ../.agent/all-tables/results ../docs/prd/generic-node-builder/all-tables/causes.json
 ```
 
-単体テストは `ingestion/generic/generic_test.py`（罫線の統合、金額の切り出し、科目の番号行の分け方、和の括弧付け）。
+1つの表だけなら、`ingestion.generic.build <原典> <頁> <出力>` で作り、`ingestion.generic.evaluate <出力> pipeline/.cache/objects/fiscal/ingestion/<団体>/2025/settlement/expenditure/<表ID>` で突き合わせる。和の3通りは `ingestion.generic.sums`、B は `build ... --jev`（サンドボックス外。key は mise）。
+
+頁は、正解の表が印字している物理頁に、3頁以内の欠けを埋めたもの（#103 の候補にあった coverage の記録は残っていない）。測った当時（2026-10-12）の正解は #103 の候補の表で、#103 の merge 後の保存済みの表は、金額の注記（流用・充用など）を「注記」の軸のノードとして持つ。汎用の生成は注記を科目のノードの金額（見出し「備考／注記／…」）として持つので、R2 の表で測り直すと注記の分だけ一致が下がる（2026-10-12 に新宿の4表で確かめた: 款項目・目の金額・備考・木の検査は同じで、注記が 一般 0/1・国保 0/4）。置き換えるときは注記の持ち方を保存済みの表に合わせる。
+
+単体テストは `ingestion/generic/generic_test.py`（罫線の統合、金額の切り出し、科目の番号行の分け方、和の括弧付け、文字層の修復、段のパターン、見開きの組、金額の持ち主、単位）。
 
 ## 未決
 

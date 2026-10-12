@@ -507,7 +507,7 @@ SHAPES = (('bullet', re.compile(r'^[○〇●◎□■◇◆]')), ('paren', re.c
 
 def shape_of(item: Item) -> str | None:
     raw = unicodedata.normalize('NFKC', text(item.lines[0])) if item.lines else ''
-    raw = raw.replace('(', '(').strip()
+    raw = raw.strip()
     for name, pattern in SHAPES:
         if pattern.match(raw if name not in ('circled',) else text(item.lines[0]).strip()):
             return name

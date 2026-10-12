@@ -19,7 +19,7 @@ AMOUNT = re.compile(r'[△▲\-]?(?:[0-9]{1,3}(?:,[0-9]{3})+|[0-9]+)')
 DASHES = {'－', '―', '—', '-', 'ー'}
 SIGNS = {'△', '▲'}
 SUBJECT_LEVELS = ('款', '項', '目')
-UNIT = re.compile(r'単位\s*[:：]?\s*(百万円|千円|円)')  # the shared rule is in units.py
+UNIT = re.compile(r'単位\s*[:：]?\s*(百万円|千円|円)')  # printed 単位; the rest of the unit rule is in units.py
 
 
 def normalize(text: str) -> str:

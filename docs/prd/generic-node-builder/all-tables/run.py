@@ -22,7 +22,7 @@ from ingestion.generic.units import check as unit_check, general_total  # noqa: 
 from ingestion.lib.node_tables import read_rows  # noqa: E402
 
 targets, out, index, workers = sys.argv[1], Path(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4])
-rows = [r for r in json.load(open(targets)) if not r['scan']]
+rows = [r for r in json.load(open(targets)) if not r['scan'] and r['pdf'] and r['pages']]  # restored from R2 only
 groups = {}
 for row in rows:
     if row['pages'] is None:  # no coverage record: the expected table's printed page span
@@ -65,7 +65,7 @@ for pdf, pages, kind in keys:
                 'examples': report['examples'],
                 'repairs': repairs.as_dict() if repairs else None,
                 'general_total_yen': general_total(built.nodes, built.amounts, kind) if row.get('account') == '一般会計' else None,
-                'unit_check': unit_check(built, kind),
+                'unit_check': unit_check(built, kind, row.get('account')),
             })
         (out / f"{row['jurisdiction']}-{row['table_id']}.json").write_text(json.dumps(record, ensure_ascii=False, indent=1, default=str))
         print(name, row['table_id'], seconds, 'error' if error else '', flush=True)

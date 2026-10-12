@@ -6,16 +6,18 @@
 2. Otherwise the default of the document kind: a settlement (決算) prints
    円, a budget (当初・補正) prints 千円.
 3. Checks (one place, `check`): the sum of the 款 equals the printed 歳出合計,
-   and the printed total has the digits the unit implies (DIGITS). A failure
-   stops the build. (A per-capita check waits for a population source.)
+   and, for a general account, the total has the digits the unit implies
+   (DIGITS assumes a general account; small special accounts print less).
+   The converter entry (`build.run_with_repairs`) stops on a failure; the
+   all-tables measurement records it instead. (A per-capita check waits for a
+   population source.)
 """
 from __future__ import annotations
 
 import re
 
-from ingestion.generic.layout import Band, Logical
+from ingestion.generic.layout import UNIT as PRINTED, Band, Logical  # PRINTED: read while laying out pages
 
-PRINTED = re.compile(r'単位\s*[:：]?\s*(百万円|千円|円)')
 COLUMN_MARK = re.compile(r'[(（](百万円|千円|円)[)）]')
 DEFAULTS = {'settlement': '円', 'initial': '千円', 'supplementary': '千円'}
 MULTIPLIER = {'円': 1, '千円': 1_000, '百万円': 1_000_000}
@@ -78,8 +80,8 @@ def general_total(nodes: list[dict], amounts: list[dict], document_kind: str) ->
     return total if found else None
 
 
-def check(built, document_kind: str) -> dict:
-    """款 sum = printed 歳出合計 (in the phase the document reports), and the total's digits fit the unit."""
+def check(built, document_kind: str, account: str | None = None) -> dict:
+    """款 sum = printed 歳出合計 (in the phase the document reports), and a general account's digits fit the unit."""
     from ingestion.generic.build import dictionary_header
     from ingestion.lib.node_tables import amount_phase
     from shared.amount import number
@@ -101,9 +103,10 @@ def check(built, document_kind: str) -> dict:
         result['printed_total'] = total
         result['sum_matches'] = total == raw_sum
         low, high = DIGITS.get(document_kind, (0, float('inf')))
-        result['digits_ok'] = total is not None and low <= abs(total) < high
-        result['stopped'] = not result['sum_matches'] or not result['digits_ok']
-    elif raw_sum:
+        if account == '一般会計':
+            result['digits_ok'] = total is not None and low <= abs(total) < high
+        result['stopped'] = not result['sum_matches'] or result['digits_ok'] is False
+    elif raw_sum and account == '一般会計':
         # No printed total in the pages read: only the digits of the 款 sum can be checked.
         low, high = DIGITS.get(document_kind, (0, float('inf')))
         result['digits_ok'] = low <= abs(raw_sum) < high
