@@ -29,6 +29,7 @@ with recursive subject_axes as (
     join {{ source('fiscal_metadata', 'tables') }} t using (source_table_key)
     left join subject_axes s using (source_table_key)
     where t.document_kind = 'settlement' and t.direction = 'expenditure'
+      and n.axis_header <> '注記'
 ), checked_nodes as (
     select * from mapped_nodes
 ), mapped_amounts as (
