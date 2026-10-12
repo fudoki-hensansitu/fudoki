@@ -13,6 +13,7 @@ import tempfile
 
 MODEL = 'opencode-go/gpt-6-luna'
 UNREADABLE = 'UNREADABLE'
+SYSTEM = 'You read printed text in images and answer only with that text.'
 TEXT_PROMPT = ('画像は日本の決算書の表の一部を切り出したものです。印字されている文字を原文のまま答えてください。'
                '横線1本だけの字や記号も文字として扱います。文字以外は書かないでください。'
                '読めない場合は UNREADABLE と答えてください。')
@@ -29,7 +30,10 @@ def read(pdf: Path, page: int, box: tuple[float, float, float, float], prompt: s
                         '-x', str(int(max(0.0, x0 - margin) * scale)), '-y', str(int(max(0.0, y0 - margin) * scale)),
                         '-W', str(int((x1 - x0 + 2 * margin) * scale)), '-H', str(int((y1 - y0 + 2 * margin) * scale)),
                         '-png', '-singlefile', str(pdf), str(root)], check=True)
+        # Without these flags pi sends its coding-agent prompt and AGENTS.md files: ~7,700 tokens
+        # and about 15 times the cost of the reading itself.
         run = subprocess.run(['pi', '-p', '--no-session', '--no-tools', '--no-extensions', '--no-skills',
+                              '--no-context-files', '--no-prompt-templates', '--system-prompt', SYSTEM,
                               '--model', model, '@' + str(root.with_suffix('.png')), prompt],
                              capture_output=True, text=True, timeout=300, stdin=subprocess.DEVNULL)
     if run.returncode:
