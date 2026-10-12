@@ -107,8 +107,28 @@ class AcquireTest(unittest.TestCase):
         self.assertEqual(scan_ocr._fill('0', [], (10, 0, 14, 10)), '0')
         spaced = [('般', [385, 0, 402, 10]), ('職', [420, 0, 437, 10])]
         self.assertEqual(scan_ocr._fill('ー般職', spaced, (355, 0, 369, 10)), '一')       # ー at the start is 一
+        self.assertEqual(scan_ocr._fill('―般職', spaced, (355, 0, 369, 10)), '一')
         self.assertEqual(scan_ocr._fill('コーヒー', [('コ', [0, 0, 5, 10]), ('ヒー', [12, 0, 22, 10])], (5, 0, 11, 10)), 'ー')
         self.assertIsNone(scan_ocr._fill('UNREADABLE', [], (10, 0, 14, 10)))
+
+    def test_a_whole_reread_replaces_the_piece_ocr_read_alone(self):
+        page = {'page_number': 1, 'regions': [{'id': 'full-page', 'observations': [
+            {'id': 'p1:full-page:r0', 'kind': 'region', 'parent_id': None, 'raw_text': '7)', 'bbox_pdf_pt': [120, 0, 126, 10]},
+            {'id': 'p1:full-page:r1', 'kind': 'region', 'parent_id': None, 'raw_text': '事業', 'bbox_pdf_pt': [10, 0, 30, 10]}]}]}
+        vision = {'page_number': 1, 'regions': [{'id': 'ink-0', 'observations': [
+            {'id': 'p1:ink-0:r0', 'kind': 'region', 'parent_id': None, 'raw_text': '1,796,817)', 'bbox_pdf_pt': [88, 0, 126, 10]},
+            {'id': 'p1:ink-0:r1', 'kind': 'region', 'parent_id': None, 'raw_text': '事', 'bbox_pdf_pt': [20, 0, 40, 10]}]}]}
+        rules = scan_ocr.pdf_rules.PageRules(1, 200.0, 100.0, (), ())
+        marks = [(90, 1, 118, 9), (32, 1, 39, 9)]
+        with patch.object(scan_ocr.pdf_rules, 'detect', return_value=rules), \
+                patch.object(scan_ocr.pdf_rules, 'render', return_value=np.zeros((200, 400), np.uint8)), \
+                patch.object(scan_ocr, 'missed_ink', side_effect=[marks, []]), \
+                patch.object(scan_ocr, '_read_without_rules', return_value=vision):
+            result = scan_ocr.supplement(Path('x.pdf'), deepcopy(page), scan_ocr.VisionConfig(), {})
+        added = result['regions'][-1]
+        self.assertEqual([o['raw_text'] for o in added['observations']], ['1,796,817)'])  # 事 cuts through 事業
+        self.assertEqual(added['supersedes'], ['p1:full-page:r0'])
+        self.assertEqual(scan_ocr.superseded(result), {'p1:full-page:r0'})
 
     def test_only_vision_is_acquired(self):
         with self.assertRaisesRegex(ValueError, 'Vision only'):

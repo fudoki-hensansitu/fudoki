@@ -196,8 +196,8 @@ def missed_ink(dark: np.ndarray, scale: float, boxes: Sequence[Sequence[float]])
 
 
 def ink_areas(marks: Sequence[Sequence[float]], rules: PageRules) -> list[tuple[float, float, float, float]]:
-    """Marks on one text line and in one cell become one area, kept clear of the cell's rules
-    (OCR reads the edge of a scanned rule as 1, l or 一 next to the digit)."""
+    """Marks on one text line and in one cell become one area: that line across the cell, so a
+    number OCR read only in part (its last digit) is read whole."""
     groups: list[list[float]] = []
     for mark in sorted(marks, key=lambda m: (round((m[1] + m[3]) / 8), m[0])):
         middle = (mark[1] + mark[3]) / 2
@@ -211,7 +211,7 @@ def ink_areas(marks: Sequence[Sequence[float]], rules: PageRules) -> list[tuple[
     for x0, y0, x1, y1 in groups:
         middle, half = (y0 + y1) / 2, max(y1 - y0, 10.0) / 2 + 2
         left, right = _cell(x0, x1, middle, rules)
-        areas.append((max(left, x0 - 3), max(0.0, middle - half), min(right, x1 + 3), min(rules.height, middle + half)))
+        areas.append((left, max(0.0, middle - half), right, min(rules.height, middle + half)))
     return areas
 
 
@@ -232,7 +232,14 @@ def _read_without_rules(path: Path, number: int, config: VisionConfig, regions: 
     image = pdf_rules.render(path, number, config.dpi)
     dark = image < pdf_rules.DARK
     clean = image.copy()
-    clean[dark & ~_strip_runs(dark, int(RULE_RUN_PT * config.dpi / 72))] = 255
+    rule = dark & ~_strip_runs(dark, int(RULE_RUN_PT * config.dpi / 72))
+    edge = rule.copy()  # the faint edge left beside a whitened rule reads as ）
+    for shift in (1, 2):
+        edge[shift:] |= rule[:-shift]
+        edge[:-shift] |= rule[shift:]
+        edge[:, shift:] |= rule[:, :-shift]
+        edge[:, :-shift] |= rule[:, shift:]
+    clean[edge] = 255
     with tempfile.TemporaryDirectory() as tmp:
         png = Path(tmp) / "page.png"
         _png(clean, png)
@@ -267,8 +274,22 @@ def _overlaps(box: Sequence[float], other: Sequence[float]) -> bool:
     return width * height > 0.3 * max((box[2] - box[0]) * (box[3] - box[1]), 1e-9)
 
 
+def superseded(page: dict) -> set[str]:
+    """Observations a fuller re-read replaced (and their words): readers skip them."""
+    ids = {i for region in page["regions"] for i in region.get("supersedes", ())}
+    return ids | {o["id"] for region in page["regions"] for o in region["observations"] if o.get("parent_id") in ids}
+
+
 def _boxes(page: dict) -> list[list[float]]:
-    return [o["bbox_pdf_pt"] for region in page["regions"] for o in region["observations"] if o.get("bbox_pdf_pt")]
+    gone = superseded(page)
+    return [o["bbox_pdf_pt"] for region in page["regions"] for o in region["observations"]
+            if o.get("bbox_pdf_pt") and o["id"] not in gone]
+
+
+def _inside(box: Sequence[float], outer: Sequence[float]) -> bool:
+    width = max(0.0, min(box[2], outer[2]) - max(box[0], outer[0]))
+    height = max(0.0, min(box[3], outer[3]) - max(box[1], outer[1]))
+    return width * height >= 0.8 * max((box[2] - box[0]) * (box[3] - box[1]), 1e-9)
 
 
 def _key(page: int, box: Sequence[float]) -> str:
@@ -278,8 +299,9 @@ def _key(page: int, box: Sequence[float]) -> str:
 def supplement(path: Path, page: dict, config: VisionConfig, previous: Mapping[str, str]) -> dict:
     """Read the ink OCR missed on one page: Vision on those areas, then the VLM on what remains.
 
-    Vision areas are new regions ``ink-<n>``; a reading that overlaps an existing box is a
-    duplicate and is dropped. For marks still uncovered, the VLM reads their whole line in
+    Vision reads each area's whole cell line as a new region ``ink-<n>``. A reading that
+    lies over missed ink is kept and replaces the readings it contains (``supersedes``, e.g.
+    the last digit OCR read alone); one that cuts through a reading it does not contain is dropped. For marks still uncovered, the VLM reads their whole line in
     the cell and the characters OCR lacked become regions ``vlm-<n>`` (``_fill``); what it
     cannot place is kept in ``unread_ink``. Answers are pinned by area, so re-acquiring
     reuses ``previous`` instead of asking again.
@@ -295,13 +317,24 @@ def supplement(path: Path, page: dict, config: VisionConfig, previous: Mapping[s
     regions = [OcrRegion(f"ink-{i}", (a[0] / rules.width, a[1] / rules.height, a[2] / rules.width, a[3] / rules.height))
                for i, a in enumerate(areas)]
     read = _read_without_rules(path, number, config, regions, rules.width)
-    existing = _boxes(page)
+    gone = superseded(page)
+    existing = [(o["id"], o["bbox_pdf_pt"]) for region in page["regions"] for o in region["observations"]
+                if o["kind"] == "region" and o.get("bbox_pdf_pt") and o["id"] not in gone]
     for region in read["regions"]:
-        kept = {o["id"] for o in region["observations"] if o["kind"] == "region" and o.get("bbox_pdf_pt")
-                and _covers_mark(o["bbox_pdf_pt"], marks)
-                and not any(_overlaps(o["bbox_pdf_pt"], box) for box in existing)}
+        kept, replaced = set(), set()
+        for o in region["observations"]:
+            box = o.get("bbox_pdf_pt")
+            if o["kind"] != "region" or not box or not _covers_mark(box, marks):
+                continue
+            inside = {key for key, other in existing if _inside(other, box)}
+            if any(_overlaps(other, box) or _overlaps(box, other) for key, other in existing if key not in inside):
+                continue  # it cuts through a reading it does not contain: not trusted
+            kept.add(o["id"])
+            replaced |= inside
         region["observations"] = [o for o in region["observations"] if o["id"] in kept or o.get("parent_id") in kept]
         if region["observations"]:
+            if replaced:
+                region["supersedes"] = sorted(replaced)
             page["regions"].append(region)
     rest = ink_areas(missed_ink(dark, scale, _boxes(page)), rules)
     keys = [_key(number, area) for area in rest]
@@ -345,11 +378,11 @@ def _line(area: Sequence[float], rules: PageRules) -> tuple[float, float, float,
 
 def _tokens(page: dict, line: Sequence[float]) -> list[tuple[str, list[float]]]:
     """OCR lines whose centre lies in ``line``, left to right, as (text without spaces, box)."""
-    found = []
+    found, gone = [], superseded(page)
     for region in page["regions"]:
         for o in region["observations"]:
             box = o.get("bbox_pdf_pt")
-            if o["kind"] == "region" and box and line[0] <= (box[0] + box[2]) / 2 <= line[2] \
+            if o["kind"] == "region" and o["id"] not in gone and box and line[0] <= (box[0] + box[2]) / 2 <= line[2] \
                     and line[1] <= (box[1] + box[3]) / 2 <= line[3]:
                 found.append(("".join(o["raw_text"].split()), box))
     return sorted(found, key=lambda item: item[1][0])
@@ -366,7 +399,7 @@ def _fill(answer: str, tokens: Sequence[tuple[str, Sequence[float]]], area: Sequ
         return None
     observed = "".join(text for text, _ in tokens)
     if not observed:
-        return "一" + reading[1:] if reading.startswith("ー") else reading
+        return "一" + reading[1:] if reading[:1] in DASHES and len(reading) > 1 else reading
     owners = [box for text, box in tokens for _ in text]
     changes = [op for op in SequenceMatcher(None, observed, reading, autojunk=False).get_opcodes() if op[0] != "equal"]
     if len(changes) != 1 or changes[0][0] != "insert":
@@ -378,10 +411,14 @@ def _fill(answer: str, tokens: Sequence[tuple[str, Sequence[float]]], area: Sequ
     if at < len(owners) and (owners[at][0] + owners[at][2]) / 2 < centre:
         return None
     inserted = reading[start:end]
-    # A long-vowel mark follows kana; at a word's start or after a kanji it is the kanji 一.
-    if inserted.startswith("ー") and (at == 0 or not _kana(observed[at - 1])):
+    # Models give the bare stroke of 一 as a dash or a long-vowel mark. A long-vowel mark follows
+    # kana; at a word's start or after a kanji the stroke is the kanji 一.
+    if inserted[:1] in DASHES and (at == 0 or not _kana(observed[at - 1])):
         inserted = "一" + inserted[1:]
     return inserted
+
+
+DASHES = "ー―‐－—─"
 
 
 def _kana(char: str) -> bool:
@@ -391,7 +428,7 @@ def _kana(char: str) -> bool:
 def _vlm_identity() -> dict:
     # ``read`` names how an answer becomes text; changing it invalidates pinned answers.
     return {"model": vlm_ocr.MODEL, "prompt_sha256": hashlib.sha256(vlm_ocr.TEXT_PROMPT.encode()).hexdigest(),
-            "read": "cell-line-minus-ocr-v3"}
+            "read": "cell-line-minus-ocr-v4"}
 
 
 def _pinned_answers(observation: Mapping | None) -> dict[str, str]:

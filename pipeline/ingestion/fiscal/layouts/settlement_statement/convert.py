@@ -13,17 +13,19 @@ from pathlib import Path
 from ingestion.fiscal.layouts.settlement_statement.statement import Box, build
 from ingestion.lib.ocr_names import AmountDictionary, AmountRule
 from ingestion.lib.pdf_rules import detect
+from ingestion.lib.scan_ocr import superseded
 
 
 def ocr_boxes(observation: dict, page: dict) -> list[Box]:
     """OCR lines of one page, each with its word pieces for splitting across columns.
 
     Regions are declared not to overlap (e.g. the two halves of a landscape spread),
-    so lines from every region are used together.
+    so lines from every region are used together; readings a fuller re-read replaced are left out.
     """
     boxes = []
+    gone = superseded(page)
     for region in page['regions']:
-        observations = region['observations']
+        observations = [o for o in region['observations'] if o['id'] not in gone]
         words: dict[str, list[dict]] = {}
         for item in observations:
             if item['kind'] == 'word' and item['parent_id'] and item['bbox_pdf_pt']:
