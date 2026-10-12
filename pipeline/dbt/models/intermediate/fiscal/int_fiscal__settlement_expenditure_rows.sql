@@ -1,5 +1,5 @@
 -- Keep source rows until cross-table identity and value checks have passed.
--- Level names follow one shared rule (ADR 0022): the axis carrying 款 is the subject axis
+-- Level names follow one shared rule (ADR 0025): the axis carrying 款 is the subject axis
 -- and its depths 1/2/3 are 款・項・目; any other axis uses its printed level_header,
 -- or 内訳{depth} when nothing is printed.
 with recursive subject_axes as (

@@ -101,7 +101,7 @@ SHAを内容だけに限る理由は、実測で内容が同じでもファイ�
 | `pipeline/ingestion/fiscal/run.py` | `originals` で補助入力もローカルへ復元し、入力の対応JSONに含める。`convert` は補助入力のローカルパスを、対応する原典の入力に付けて変換器へ渡す。新しい `ocr` サブコマンドで、宣言した依頼から観測を取得してローカルに書き出し、`--verify` で宣言済みのSHAと比べる。`--remote` で新しい補助入力を表より先に保存し、全保存成功後に管理JSONを更新する |
 | `pipeline/package.json` | `ingestion:ocr` scriptを追加する |
 | `pipeline/ingestion/fiscal/jurisdictions/132039/layouts/enterprise_statement/` | `convert.py` と `options.schema.json` の `native.path` / `supplemental_native.path` を、変換器へ渡された補助入力の参照に置き換える。`ocr.py` は共通入口へ移し、10頁の通常読み取りと物理42頁のcropを依頼ファイルとして宣言する。`README.md` の再構築手順を更新する |
-| `pipeline/ingestion/fiscal/jurisdictions/132039/2025/settlement/expenditure.json` | 水道の変換を足し直し、取り直した観測2件（10頁・物理42頁のcrop）を `ocr_inputs` として宣言してR2へ保存する。`settlement-84743fdd.json` の訂正・見出しの対応のSHAを新しいSHAへ置き換え、合計検査（`ingestion:verify`）と原典の目視で表を確かめてから保存する。合計検査の宣言（`sum_checks/`）も水道の7表の分を足し直す |
+| `pipeline/ingestion/fiscal/jurisdictions/132039/2025/settlement/expenditure.json` | 水道の変換を足し直し、取り直した観測2件（10頁・物理42頁のcrop）を `ocr_inputs` として宣言してR2へ保存する。`settlement-84743fdd.json` の訂正・見出しの対応のSHAを新しいSHAへ置き換え、合計検査（`ingestion:verify`）と原典の目視で表を確かめてから保存する。合計検査は旧 `sum_checks/` の宣言をやめて共通の木の検査に置き換え済みで、水道の7表も `expected_tables` と `tables` に足し直す |
 | `pipeline/ingestion/fiscal/*_test.py`、`pipeline/ingestion/lib/paddle_ocr_test.py` | 補助入力の宣言検査、保存・復元・掃除、変換器への受け渡し、決定的な出力を検査する |
 | `docs/prd/ingestion-storage/design-doc.md`、`pipeline/AGENTS.md`、`.agents/skills/pipeline/references/ingestion.md` | 保存先の表とscan PDFの手順に、補助入力の保存と取得・再取得の流れを追加する |
 
