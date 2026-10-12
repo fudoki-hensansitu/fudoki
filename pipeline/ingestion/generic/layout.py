@@ -249,7 +249,8 @@ def page_bands(page: Page) -> tuple[list[Band], list[Word]]:
         # amounts stay whole even when a rule crosses them.
         subject = [bool(c) and c[-1][1] in SUBJECT_LEVELS
                    for c in (covering_of((left + right) / 2) for left, right in zip(edges, edges[1:]))]
-        between = [Rule(x, top, x, bottom) for x, a, b in zip(edges[1:-1], subject, subject[1:]) if a and b]
+        between = [r for x, a, b in zip(edges[1:-1], subject, subject[1:]) if a and b
+                   for r in verticals if abs(r.x0 - x) <= 3]  # the rules as drawn: a rule ending early splits nothing below it
         body = [(index, piece) for index, word in whole for piece in split_digits_at_rules(word, between)]
         skip = repeated_header(page, frame, header_bottom, body, {normalize(w.text) for ws in cells.values() for w in ws})
         for left, right in zip(edges, edges[1:]):

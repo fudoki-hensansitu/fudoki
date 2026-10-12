@@ -12,8 +12,7 @@ from collections import Counter
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[4] / 'pipeline'))
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'trial'))
-from rows import as_json, identities  # noqa: E402
+from ingestion.generic.rows import as_json, identities  # noqa: E402
 from ingestion.generic.build import check  # noqa: E402
 from ingestion.generic.evaluate import compare, load  # noqa: E402
 from ingestion.generic.layout import logical_pages  # noqa: E402

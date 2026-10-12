@@ -17,8 +17,8 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[3]
-sys.path.insert(0, str(HERE))
-from rows import changes, from_json  # noqa: E402
+sys.path.insert(0, str(ROOT / 'pipeline'))
+from ingestion.generic.rows import changes, from_json  # noqa: E402
 REPRESENTATIVE = {('131041', 'general-expenditure-detail'), ('132021', 'general-expenditure-details'),
                   ('132021', 'general-expenditure-notes'), ('131172', 'general-setsu'), ('131148', 'general-setsu'),
                   ('132128', 'late-elderly-medical-setsu'), ('132217', 'late-elderly-medical-setsu'),

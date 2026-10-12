@@ -61,9 +61,14 @@ def _phase(document_kind: str) -> str:
     return 'executed' if document_kind == 'settlement' else 'approved'
 
 
-def kan_entries(nodes: list[dict], amounts: list[dict], document_kind: str) -> list[tuple[dict, int, str | None]]:
+def kan_entries(nodes: list[dict], amounts: list[dict], document_kind: str
+                ) -> tuple[list[tuple[dict, int, str | None]], list[dict]]:
     """Every 款 amount of the phase the document reports, as (root node, value, unit), each
-    printing counted once. Shared by `check` and `general_total`.
+    printing counted once, and the 款 whose printings of that phase disagree. Shared by `check`
+    and `general_total`.
+
+    A 款 may print the phase under two headers (支出済額 and 決算額): they count once when they
+    agree (the same yen), and disagreeing printings are returned, never dropped, so the check stops.
 
     A summary table (歳入歳出決算書) and the detail can print the same 款 twice. The roots are cut
     into runs in document order (a run ends where the 款 number stops increasing). A run that
@@ -76,12 +81,16 @@ def kan_entries(nodes: list[dict], amounts: list[dict], document_kind: str) -> l
     from ingestion.lib.node_tables import amount_phase
     from shared.amount import number
     phase = _phase(document_kind)
-    first: dict[str, tuple[int, str | None]] = {}
+    printed: dict[str, list[tuple[int, str | None]]] = {}
     for amount in amounts:
-        if amount['node_key'] not in first and number(amount['amount_text']) is not None and \
+        if number(amount['amount_text']) is not None and \
                 amount_phase(dictionary_header(amount['header_path'], document_kind), document_kind, '科目', '款') == phase:
-            first[amount['node_key']] = (number(amount['amount_text']), amount.get('unit_text'))
-    roots = [n for n in nodes if n['axis_header'] == '科目' and n['parent_node_key'] is None and n['node_key'] in first]
+            printed.setdefault(amount['node_key'], []).append((number(amount['amount_text']), amount.get('unit_text')))
+    yen = lambda value, unit: value * MULTIPLIER[unit] if unit in MULTIPLIER else (value, unit)
+    roots = [n for n in nodes if n['axis_header'] == '科目' and n['parent_node_key'] is None and n['node_key'] in printed]
+    conflicts = [{'node': n, 'printed': printed[n['node_key']]} for n in roots
+                 if len({yen(v, u) for v, u in printed[n['node_key']]}) > 1]
+    first = {key: values[0] for key, values in printed.items()}
     runs: list[list[dict]] = []
     for node in roots:
         code = normalize(node.get('code_text') or '')
@@ -100,12 +109,15 @@ def kan_entries(nodes: list[dict], amounts: list[dict], document_kind: str) -> l
             continue
         seen.add(key)
         entries += [(n, *first[n['node_key']]) for n in run]
-    return entries
+    return entries, conflicts
 
 
 def general_total(nodes: list[dict], amounts: list[dict], document_kind: str) -> int | None:
     """The expenditure total in yen: the executed (決算) or approved (予算) amounts of every 款."""
-    entries = [(value, unit) for _, value, unit in kan_entries(nodes, amounts, document_kind) if unit]
+    found, conflicts = kan_entries(nodes, amounts, document_kind)
+    entries = [(value, unit) for _, value, unit in found if unit]
+    if conflicts:
+        return None  # a 款 printed with two different amounts has no total
     return sum(value * MULTIPLIER.get(unit, 1) for value, unit in entries) if entries else None
 
 
@@ -117,13 +129,15 @@ def check(built, document_kind: str, account: str | None = None) -> dict:
     phase = _phase(document_kind)
     printed = [n for n in built.notes if n.get('kind') == 'total amount' and n.get('header')
                and amount_phase(dictionary_header(n['header'], document_kind), document_kind, '科目', '款') == phase]
-    entries = kan_entries(built.nodes, built.amounts, document_kind)
+    entries, conflicts = kan_entries(built.nodes, built.amounts, document_kind)
     units = {unit for _, _, unit in entries}
     # One unit: compare the printed numbers. Mixed units: compare in yen (an unknown unit fails).
     raw_sum = sum(value for _, value, _ in entries) if len(units) <= 1 else \
         sum(value * MULTIPLIER[unit] if unit in MULTIPLIER else 0 for _, value, unit in entries)
     result = {'phase': phase, 'kan_sum': raw_sum, 'printed_total': None, 'sum_matches': None, 'digits': DIGITS.get(document_kind),
-              'digits_ok': None, 'stopped': False}
+              'digits_ok': None, 'stopped': False,
+              'conflicts': [{'code': c['node'].get('code_text'), 'name': c['node'].get('name_text'), 'printed': c['printed']}
+                            for c in conflicts]}
     if printed:
         # The grand total: a row named 合計 (歳出合計) if any, else the largest printed total
         # (other 計 rows are subtotals).
@@ -146,4 +160,6 @@ def check(built, document_kind: str, account: str | None = None) -> dict:
         low, high = DIGITS.get(document_kind, (0, float('inf')))
         result['digits_ok'] = low <= abs(raw_sum) < high
         result['stopped'] = not result['digits_ok']
+    if conflicts:
+        result['stopped'] = True  # a 款 printed with two different amounts of the phase: never pick one
     return result

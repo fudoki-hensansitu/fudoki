@@ -1,8 +1,9 @@
 """Row identities of a built table, for comparing two builds row by row.
 
-A node row is (axis, path, page); an amount row adds (header, amount, unit). The path is the
-(axis, code, name) of every node from the root, so a node that moves to another parent, page
-or amount counts as one row gone and one row added.
+A node row is (axis, path, level, depth, page, box); an amount row is (path, header, amount, unit,
+page, box) with the amount's own printed page and box. The path is the (axis, code, name) of every
+node from the root. A node or amount that moves to another parent, page or printed place, or
+changes its value, counts as one row gone and one row added; boxes are compared to 0.5pt.
 """
 from collections import Counter
 
@@ -19,9 +20,11 @@ def identities(nodes: list[dict], amounts: list[dict]) -> Counter:
             key = node['parent_node_key']
         return tuple(reversed(chain))
 
-    rows = Counter(('node', path(n['node_key']), n.get('physical_page')) for n in nodes)
-    rows.update(('amount', path(a['node_key']), a.get('header_path'), a.get('amount_text'), a.get('unit_text'))
-                for a in amounts)
+    box = lambda r: tuple(None if r.get(k) is None else round(r[k] * 2) / 2 for k in ('x0', 'y0', 'x1', 'y1'))
+    rows = Counter(('node', path(n['node_key']), n.get('level_header'), n.get('depth'), n.get('physical_page'), box(n))
+                   for n in nodes)
+    rows.update(('amount', path(a['node_key']), a.get('header_path'), a.get('amount_text'), a.get('unit_text'),
+                 a.get('physical_page'), box(a)) for a in amounts)
     return rows
 
 
