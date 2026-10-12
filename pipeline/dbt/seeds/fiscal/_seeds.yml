@@ -21,6 +21,7 @@ seeds:
         rule_id: varchar
         applies_to: varchar
         match_fund: varchar
+        match_account_kind: varchar
         match_kan: varchar
         match_kou: varchar
         match_kan_code: varchar
@@ -50,110 +51,43 @@ seeds:
           - accepted_values:
               values: [retained, eliminated]
 
-  - name: account_master
+  - name: account_kind_map
     meta:
-      role: legal-reference
-    description: |
-      法定の科目マスタ。地方自治法施行規則 別記「歳入歳出予算の款項の区分及び目の区分」
-      （第15条関係）の市町村の表（歳入・歳出）を原文の PDF から起こしたもの
-      （生成した `pipeline/ingestion/fiscal/management/fetch_account_master.py` は旧処理とともに削除した。
-      再生成するときは commit 50ae4fe の親にあるそのスクリプトを使う。手で編集しない）。
-      **なぜ要るか: 款のコードは団体ごとにずれている。** 法定の款11は災害復旧費だが、
-      それを持たない三鷹市・狛江市はどちらも 11 が公債費で、以降が詰まっている。
-      コードでは団体をまたいで比較できないので、このマスタと対応表（account_map）を介す。
-      ⚠️ 適用範囲は**一般会計だけ**（様式の備考6: 特別会計は長が定めた区分による）。
-      is_personnel_moku は様式の※印（一般職の給料・職員手当等・共済費を計上する目。備考2）。
-    config:
-      column_types:
-        direction: varchar
-        kan_code: integer
-        kan_name: varchar
-        kou_code: integer
-        kou_name: varchar
-        moku_code: integer
-        moku_name: varchar
-        is_personnel_moku: boolean
-        basis: varchar
-
-  - name: account_map
-    meta:
+      # **判断そのもの。** 原典の会計名と団体共通の種類の対応。
       role: judgment-rule
     description: |
-      団体の科目コード・名称と法定マスタ（account_master）の対応。**fudoki の判断。**
-      kind=map はマスタの区分と同じだと決めたもの、kind=addition は法定に無い
-      団体固有の追加区分（施行規則の備考1が行政権能の差による追加を認めている）、
-      kind=historical は現行様式から削除された旧法定区分（例: 自動車取得税交付金）。
-      款の対応行は kou_name・kou_code が空。項の行は自動対応（名称の完全一致）で決まらない
-      ものだけ持つ — 項名がある団体は kou_name に帳簿の項名を、無い団体は kou_code に
-      項コードを書く（項コードの対応は項名が取れない会計にだけ使う）。
-      ⚠️ **ここに無い款が一般会計の歳出に現れたら構築を止める**（検査は新しい dbt モデルで作り直す）。
-      黙って未対応のまま配らないため。
-    config:
-      # ⚠️ dbt-duckdb の seed の COPY 経路（fast）は、この CSV で方言の自動判定に失敗する
-      # （full-refresh でも再現。空の多い列と長い日本語セルの組合せ）。INSERT 経路なら通る。
-      fast: false
-      column_types:
-        jurisdiction_code: varchar
-        direction: varchar
-        # ⚠️ **原典の表記そのまま。** 正規化しない — 取り込み表の款の番号が
-        # 原典の表記なので、揃えると join できなくなる。
-        # 表記が年度で割れる団体（多摩市はゼロ埋めが R3 の `01` から R4 の `1` へ変わる）は、
-        # 同じ款に両表記の行を持つ。**行が2つあること自体が原典の表記の記録**である。
-        kan_code: varchar
-        kou_name: varchar
-        # 項名が取れない団体（狛江市などコードのみ）が項の対応を書くための項コード列。
-        # kou_name が空の項行でだけ使う
-        kou_code: varchar
-        # ⚠️ **空は一般会計だけに効く。** 特別会計への対応は canonical_fund を書く。
-        # 「全会計に効く」ではない — 一般会計の款対応が特別会計の同名款に
-        # 誤って写るのを防ぐための区別。
-        fund: varchar
-        # 対応が効き始める年度（空 = 全年度）。⚠️ 款コードの意味が年度で変わる団体がある —
-        # 狛江市の歳入は 2019/2020 の境界で款の新設により以降のコードが繰り下がった。
-        # 特別会計は会計の科目体系自体が年度で変わる（狛江市の国保は 2018/2019 で款構成が違う）。
-        # ⚠️ integer にすると dbt-duckdb の seed が CSV の方言判定に失敗する（実測）。varchar で持ち、使うモデルで cast する
-        fiscal_year_from: varchar
-        fiscal_year_to: varchar
-        kind: varchar
-        master_kan_code: integer
-        master_kou_code: integer
-        basis: varchar
-
-  - name: fund_directory
-    meta:
-      # **判断そのもの。** 名寄せと枠組みの割り振りは自治体が言っていないこと。
-      role: judgment-rule
-    description: |
-      収録した会計の名寄せ辞書。fund_label（原典の会計名）を、制度として同じものを
-      指す canonical_fund へ対応づける。同じ制度の会計の呼び名は団体で違う
-      （「国民健康保険事業特別会計」「国民健康保険特別会計」）ので、
-      団体をまたぐ比較は canonical_fund で行う。
-      account_class は帳簿上の区分（一般会計 / 特別会計 / 公営企業会計）。
-      sector は地方財政状況調査の枠組み（futsu-kaikei = 普通会計の範囲、
-      koei-jigyo-kaikei = 公営事業会計相当）。**同じ制度が団体で違う会計形態
-      を取りうる**（狛江市の下水道は特別会計→公営企業会計へ移行）のが前提。
+      会計名に含まれる語と団体共通の会計の種類（一般会計・国民健康保険・介護保険・
+      後期高齢者医療・用地・駐車場・下水道・介護サービス事業）の対応。**fudoki の判断。** 同じ制度の会計の呼び名は
+      団体で違う（「介護保険特別会計」「介護保険事業会計」「介護保険会計」）ので、
+      団体ごとの行は持たず語で対応づける。`fund_directory` は団体×会計名の完全一致で
+      団体ごとに行が要るため使わない（[ADR 0023](../../../../docs/adr/0023-account-kind-and-no-consolidation.md)）。
+      account_kind が空の行（他会計）は、会計間の繰出の受け手が特定できないことを表す —
+      印は付けるが受け手の種類は付けない。語に当たらない会計名・受け手は構築を止める。
     config:
       fast: false
       column_types:
-        jurisdiction_code: varchar
-        fund_label: varchar
-        canonical_fund: varchar
-        account_class: varchar
-        sector: varchar
+        keyword: varchar
+        account_kind: varchar
         basis: varchar
+    columns:
+      - name: keyword
+        data_tests: [unique, not_null]
 
-  - name: expenditure_setsu_map
+  - name: setsu_name_variants
     meta:
+      # **判断そのもの。** 原典と法定の表記差の寄せ方は自治体が言っていないこと。
       role: judgment-rule
     description: |
-      原典が印字する歳出の節名称と法定区分（`packages/fiscal/setsu-master.ts`）の対応。
-      **fudoki の判断。** 原典の節コードは団体ごとの振り直しがありうる
-      （多摩市は予備費を29と印字する）ため、対応のキーは団体コードと
-      原典の節名称とする。対応を確かめられない節はここに書かず、
-      expenditure_setsu_id が NULL の原典行粒度として残る。
+      原典の節の名称と法定の節の名称の表記差の対応。区切りの記号を除いた形で引く。
+      **fudoki の判断。** 異体字・ひらがな表記（寄付→寄附、補てん・補填→補塡）を
+      法定の表記に寄せる。ここに無い表記差は黙って寄せず、節の軸に未知の名称が
+      現れたら構築を止める。
     config:
       column_types:
-        jurisdiction_code: varchar
-        setsu_label: varchar
-        expenditure_setsu_id: varchar
+        variant: varchar
+        canonical: varchar
         basis: varchar
+    columns:
+      - name: variant
+        data_tests: [unique, not_null]
+

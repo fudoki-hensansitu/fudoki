@@ -13,18 +13,25 @@ class GenerateSourcesTest(unittest.TestCase):
     def test_every_manifest_table_is_collected_or_excluded_with_reason(self):
         import json
         names = {e['name'] for e in generate_sources.collect()}
-        for path in sorted((generate_sources.PIPELINE / 'ingestion/fiscal/jurisdictions').glob('*/*/settlement/expenditure.json')):
+        patterns = ('*/*/settlement/expenditure.json', '*/*/initial/expenditure.json')
+        manifests = sorted({p for pattern in patterns
+                            for p in (generate_sources.PIPELINE / 'ingestion/fiscal/jurisdictions').glob(pattern)})
+        for path in manifests:
             document = json.loads(path.read_text())
             jurisdiction = document['target']['jurisdiction']
             for table in document['tables']:
                 key = (jurisdiction, table['table_id'])
-                self.assertIn('nodes', table, f'Non-PDF table is neither collected nor excluded: {key}')
-                entry = generate_sources.relation_name(*key) + '_nodes'
+                entry = generate_sources.relation_name(*key)
                 if key in generate_sources.EXCLUDE:
                     self.assertTrue(generate_sources.EXCLUDE[key])
+                    self.assertNotIn(entry + '_nodes', names)
                     self.assertNotIn(entry, names)
-                else:
+                elif 'nodes' in table:
+                    self.assertIn(entry + '_nodes', names)
+                elif 'object' in table:
                     self.assertIn(entry, names)
+                else:
+                    self.fail(f'Table is neither PDF nodes nor raw CSV: {key}')
 
 
 if __name__ == '__main__':

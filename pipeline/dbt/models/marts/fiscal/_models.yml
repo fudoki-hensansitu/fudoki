@@ -73,10 +73,158 @@ models:
     - not_null
   - name: amount_source_page
     description: 採用した実績金額の物理頁。不明ならNULL。繰越内訳を足す場合は、全額の頁が既知のときだけ最初の頁。
+  - name: source_x0
+    description: 項目の印字の枠の左端。PDFだけ（頁`source_page`の左上原点のpt）。保存済みの取り込み表で値が無ければNULL（団体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
+  - name: source_y0
+    description: 項目の印字の枠の上端。PDFだけ（頁`source_page`の左上原点のpt）。保存済みの取り込み表で値が無ければNULL（団体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
+  - name: source_x1
+    description: 項目の印字の枠の右端。PDFだけ（頁`source_page`の左上原点のpt）。保存済みの取り込み表で値が無ければNULL（団体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
+  - name: source_y1
+    description: 項目の印字の枠の下端。PDFだけ（頁`source_page`の左上原点のpt）。保存済みの取り込み表で値が無ければNULL（団体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
+  - name: amount_source_x0
+    description: 採用した実績金額の印字の枠の左端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。
+  - name: amount_source_y0
+    description: 採用した実績金額の印字の枠の上端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。
+  - name: amount_source_x1
+    description: 採用した実績金額の印字の枠の右端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。
+  - name: amount_source_y1
+    description: 採用した実績金額の印字の枠の下端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。
+  - name: account_kind
+    description: 団体共通の会計の種類（一般会計・国民健康保険・介護保険・後期高齢者医療・用地・駐車場・下水道・介護サービス事業）。原典の会計名を account_kind_map の語で対応づけた風土記の判断。団体をまたぐ比較はこの列で行う。辞書に無い会計名は構築を止める。
+    data_tests:
+    - not_null
+  - name: is_interfund_transfer
+    description: 会計間の繰出の印。科目の目で名称が「<会計名>繰出金」の形のものと、科目以外の軸で名称が「繰出金」または「<会計名>繰出金」のもの（法定の節・備考や説明の内訳）に付ける。節・備考の同名でも会計で終わらない内訳（例：保険基盤安定繰出金）は一会計の中の法定の負担で移転ではないため含まない。印は枝の最も上だけに付け、同じ目の下で節と備考の両方には付けない（節が優先）。節の軸が無い団体は備考・説明の軸で拾う（131041）。節も備考も無い団体（132012）は拾えない。印は網羅ではない。印の付いた金額はそのまま足せる（二重なし）。金額の消去はしない（ADR 0023）。
+    data_tests:
+    - not_null
+  - name: interfund_transfer_to
+    description: 繰出の受け手の会計の種類（account_kind_map で引く）。受け手が入力に無い会計（例：下水道）でも付ける。名称が「繰出金」の節などは親の目の名称から引き、引けなければ印だけ付けて NULL（例：他会計繰出金、費の目の下の節繰出金）。
+  - name: expenditure_setsu_id
+    description: 節の軸のノードの法定の節の ID（setsu-master の expenditure_setsu_id。年度に合う定義を選ぶ）。節以外の軸は NULL。備考・事業説明の中の節の見出しは軸が違うため今回の範囲外とした。
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('setsu_master')
+          field: expenditure_setsu_id
   - name: cofog_status
     description: 風土記の判断。目だけにassigned・tentative・unclassifiable・out-of-scopeを付け、他の段はNULL。tentativeは境界の判断で確信が持てないままコードを付けた暫定の割り当て。
   - name: cofog_code
     description: 風土記が目に割り当てたCOFOGコード。一つのコードだけを持ち、上位は前方一致で求める。assigned・tentativeのときだけ値を持つ。
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('cofog_master')
+          field: cofog_code
+- name: initial_expenditure_node
+  description: 原典の当初予算の歳出の木。PDF（132071）とCSV（132047）の両方を同じ列で持ち、金額は当初予算額。款・項・目のnode_idの導出は決算と共通。
+  columns:
+  - name: node_id
+    description: 団体・年度・会計・款項目番号、または親ID・軸・段・番号・名称から生成。決算の木と同じ導出。
+    data_tests:
+    - not_null
+    - unique
+  - name: parent_node_id
+    description: 原典の親子。款はNULL。CSVの親は経路から機械的に決まる。別の軸の子を同じ金額に混ぜて足さない。
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('initial_expenditure_node')
+          field: node_id
+  - name: jurisdiction_code
+    description: 宣言の団体コード。
+    data_tests:
+    - not_null
+  - name: fiscal_year
+    description: 宣言の会計年度（西暦）。
+    data_tests:
+    - not_null
+  - name: account_name
+    description: 原典の会計名。CSVは01会計の番号を除いた値。
+    data_tests:
+    - not_null
+  - name: axis
+    description: 原典の分解の軸。PDFは科目・節・備考など、CSVは科目だけ。軸をまたいで合算しない。
+    data_tests:
+    - not_null
+  - name: is_subject
+    description: 表の根ノードと同じ軸か。CSVはすべて科目軸なのでtrue。
+    data_tests:
+    - not_null
+  - name: node_kind
+    description: 款・項・目、またはPDFの印字見出し・CSVの事項・節・細々節。
+    data_tests:
+    - not_null
+  - name: code
+    description: 原典の番号。CSVは番号+名称のセルから番号を分けた値。番号がない段はNULL。
+  - name: name
+    description: 原典の名称を正規化した値。CSVは番号+名称のセルから名称を分けた値。
+    data_tests:
+    - not_null
+  - name: amount_yen
+    description: 当初予算額（円）。PDFは千円の印字を1000倍、CSVは千円の08予算額を1000倍。CSVの親の金額は子の和の集計で、印字ではない。印字がない段はNULL。親と子を混ぜて合算しない。
+  - name: is_leaf
+    description: 同じ軸の子を持たないか。総額は一つの軸の末端を選んで求め、軸の異なる末端を混ぜない。
+    data_tests:
+    - not_null
+  - name: kan_code
+    description: 所属する原典の款番号。
+    data_tests:
+    - not_null
+  - name: kou_code
+    description: 所属する原典の項番号。款ではNULL。
+  - name: moku_code
+    description: 所属する原典の目番号。款・項ではNULL。
+  - name: origin_id
+    description: 印字された原典ファイルを指すSHA由来のID。originのformatでPDFとCSVを区別できる。
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('origin')
+          field: origin_id
+  - name: source_page
+    description: PDFは項目が印字された原典の物理頁、CSVは原文の物理行の開始。
+    data_tests:
+    - not_null
+  - name: amount_source_page
+    description: 採用した当初予算額の物理頁（PDF）または物理行（CSV）。CSVの親の集計額はNULL。不明ならNULL。
+  - name: source_x0
+    description: 項目の印字の枠の左端。PDFだけ（頁`source_page`の左上原点のpt）。CSVは座標を持たずNULL。保存済みの取り込み表で値が無ければNULL（団体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
+  - name: source_y0
+    description: 項目の印字の枠の上端。PDFだけ（頁`source_page`の左上原点のpt）。CSVは座標を持たずNULL。保存済みの取り込み表で値が無ければNULL（団体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
+  - name: source_x1
+    description: 項目の印字の枠の右端。PDFだけ（頁`source_page`の左上原点のpt）。CSVは座標を持たずNULL。保存済みの取り込み表で値が無ければNULL（団体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
+  - name: source_y1
+    description: 項目の印字の枠の下端。PDFだけ（頁`source_page`の左上原点のpt）。CSVは座標を持たずNULL。保存済みの取り込み表で値が無ければNULL（団体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
+  - name: amount_source_x0
+    description: 採用した当初予算額の印字の枠の左端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。
+  - name: amount_source_y0
+    description: 採用した当初予算額の印字の枠の上端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。
+  - name: amount_source_x1
+    description: 採用した当初予算額の印字の枠の右端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。
+  - name: amount_source_y1
+    description: 採用した当初予算額の印字の枠の下端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。
+  - name: account_kind
+    description: 団体共通の会計の種類（一般会計・国民健康保険・介護保険・後期高齢者医療・用地・駐車場・下水道・介護サービス事業）。原典の会計名を account_kind_map の語で対応づけた風土記の判断。団体をまたぐ比較はこの列で行う。辞書に無い会計名は構築を止める。決算の表と同じ共有 intermediate から付ける。
+    data_tests:
+    - not_null
+  - name: is_interfund_transfer
+    description: 会計間の繰出の印。決算の表と同じ規則・同じ共有 intermediate から付ける。科目の目で名称が「<会計名>繰出金」の形のものと、科目以外の軸で名称が「繰出金」または「<会計名>繰出金」のもの（法定の節・備考や説明の内訳）に付ける。印は枝の最も上だけに付け、同じ目の下で節と備考の両方には付けない（節が優先）。印の付いた金額はそのまま足せる（二重なし）。金額の消去はしない（ADR 0023）。
+    data_tests:
+    - not_null
+  - name: interfund_transfer_to
+    description: 繰出の受け手の会計の種類（account_kind_map で引く）。受け手が入力に無い会計（例：下水道）でも付ける。名称が「繰出金」の節などは親の目の名称から引き、引けなければ印だけ付けて NULL（例：他会計繰出金）。
+  - name: expenditure_setsu_id
+    description: 節の軸のノードの法定の節の ID。決算の表と同じ規則・同じ共有 intermediate から付ける。節以外の軸は NULL。備考・事業説明の中の節の見出しは軸が違うため今回の範囲外とした。
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('setsu_master')
+          field: expenditure_setsu_id
+  - name: cofog_status
+    description: 風土記の判断。目だけにassigned・tentative・unclassifiable・out-of-scopeを付け、他の段はNULL。
+  - name: cofog_code
+    description: 風土記が目に割り当てたCOFOGコード。assigned・tentativeのときだけ値を持つ。
     data_tests:
     - relationships:
         arguments:

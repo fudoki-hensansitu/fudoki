@@ -9,3 +9,7 @@
 {% macro fiscal_match_text(col) -%}
     regexp_replace({{ trim_cell(col) }}, '\s+', '', 'g')
 {%- endmacro %}
+
+{% macro fiscal_setsu_strip(col) -%}
+    regexp_replace({{ col }}, '[、，,､・･·.．\s　]+', '', 'g')
+{%- endmacro %}

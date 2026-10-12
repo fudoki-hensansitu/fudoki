@@ -30,3 +30,22 @@ seeds:
   - name: name
     data_tests:
     - not_null
+- name: setsu_master
+  description: packages/fiscal/setsu-master.ts の法定の節の区分と適用期間から scripts/generate_setsu_master.ts
+    で生成（正本は ts のまま）。ID は現行体系が setsu-<番号>、令和元年度以前だけの区分が setsu-<番号>-2019。
+  config:
+    column_types:
+      expenditure_setsu_id: varchar
+      code: varchar
+      label: varchar
+      valid_from_fiscal_year: integer
+      valid_to_fiscal_year: integer
+      legal_basis: varchar
+  columns:
+  - name: expenditure_setsu_id
+    data_tests:
+    - unique
+    - not_null
+  - name: label
+    data_tests:
+    - not_null
