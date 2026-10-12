@@ -114,7 +114,8 @@ class AcquireTest(unittest.TestCase):
     def test_a_whole_reread_replaces_the_piece_ocr_read_alone(self):
         page = {'page_number': 1, 'regions': [{'id': 'full-page', 'observations': [
             {'id': 'p1:full-page:r0', 'kind': 'region', 'parent_id': None, 'raw_text': '7)', 'bbox_pdf_pt': [120, 0, 126, 10]},
-            {'id': 'p1:full-page:r1', 'kind': 'region', 'parent_id': None, 'raw_text': '事業', 'bbox_pdf_pt': [10, 0, 30, 10]}]}]}
+            {'id': 'p1:full-page:r1', 'kind': 'region', 'parent_id': None, 'raw_text': '事業', 'bbox_pdf_pt': [10, 0, 30, 10]},
+            {'id': 'p1:full-page:r2', 'kind': 'region', 'parent_id': None, 'raw_text': '（', 'bbox_pdf_pt': [60, 0, 64, 10]}]}]}
         vision = {'page_number': 1, 'regions': [{'id': 'ink-0', 'observations': [
             {'id': 'p1:ink-0:r0', 'kind': 'region', 'parent_id': None, 'raw_text': '1,796,817)', 'bbox_pdf_pt': [88, 0, 126, 10]},
             {'id': 'p1:ink-0:r1', 'kind': 'region', 'parent_id': None, 'raw_text': '事', 'bbox_pdf_pt': [20, 0, 40, 10]}]}]}
@@ -129,6 +130,15 @@ class AcquireTest(unittest.TestCase):
         self.assertEqual([o['raw_text'] for o in added['observations']], ['1,796,817)'])  # 事 cuts through 事業
         self.assertEqual(added['supersedes'], ['p1:full-page:r0'])
         self.assertEqual(scan_ocr.superseded(result), {'p1:full-page:r0'})
+
+    def test_a_closing_bracket_without_an_opening_one_is_dropped(self):
+        self.assertEqual(scan_ocr._balanced('0）', []), '0')
+        self.assertEqual(scan_ocr._balanced('22,572）', [('（', [0, 0, 4, 10])]), '22,572）')
+
+    def test_an_area_takes_in_the_piece_ocr_read_beside_the_marks(self):
+        rules = scan_ocr.pdf_rules.PageRules(1, 200.0, 100.0, (), ())
+        (area,) = scan_ocr.ink_areas([(90, 1, 118, 9)], rules, [[120, 0, 126, 10], [10, 0, 30, 10]])
+        self.assertEqual((area[0], area[2]), (87, 129))
 
     def test_only_vision_is_acquired(self):
         with self.assertRaisesRegex(ValueError, 'Vision only'):
