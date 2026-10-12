@@ -117,3 +117,18 @@ class RecheckTest(unittest.TestCase):
         answer['probabilities']['non_amount'] = 0.5
         with self.assertRaisesRegex(ValueError, 'Invalid Jev Choice'):
             jev.validate_answer(answer)
+
+    def test_peer_tables_reuse_identical_judgments_without_duplicate_requests(self):
+        shared = {}
+        coverage = self.coverage('non_amount')
+        first = jev.recheck([self.word], coverage, self.path, allow_api=True,
+                            transport=self.service(), shared_entries=shared)
+        second_path = self.path.with_name('peer.jev.json')
+        def no_call(*args):
+            raise AssertionError('duplicate request for identical evidence')
+        second = jev.recheck([self.word], coverage, second_path, allow_api=True,
+                             transport=no_call, shared_entries=shared)
+        self.assertEqual(second['requests'],0)
+        self.assertEqual(second['judgments'],first['judgments'])
+        replay = jev.recheck([self.word], coverage, second_path)
+        self.assertEqual(replay['judgments'],first['judgments'])

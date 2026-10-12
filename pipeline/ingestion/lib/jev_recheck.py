@@ -132,7 +132,7 @@ def write_cache(cache_path: Path, cache: dict) -> None:
 
 
 def recheck(words: list[dict], coverage: dict, cache_path: Path, *, allow_api=False, transport=None,
-            scope=None, cache=None) -> dict:
+            scope=None, cache=None, shared_entries=None) -> dict:
     """Use the cache in verify; convert may fill misses with an injected/API transport.
 
     Cache keys exclude coverage rules and thresholds: unchanged evidence/questions
@@ -142,6 +142,8 @@ def recheck(words: list[dict], coverage: dict, cache_path: Path, *, allow_api=Fa
     cache = load_cache(cache_path) if cache is None else cache
     if cache.get('schema_version') != 1 or not isinstance(cache.get('entries'), dict):
         raise ValueError('Unsupported Jev cache')
+    if shared_entries is not None:
+        cache['entries'].update(shared_entries)
     if scope is not None and allow_api:
         cache['scope'] = scope
     by_page, targets = defaultdict(list), defaultdict(list)
@@ -191,6 +193,8 @@ def recheck(words: list[dict], coverage: dict, cache_path: Path, *, allow_api=Fa
                 for i, (_, q, cache_key) in enumerate(batch):
                     cache['entries'][cache_key] = {'model': MODEL, 'state_hash': state_hash,
                         'question_hash': digest(q), 'answer': response['answers'][str(i)]}
+                if shared_entries is not None:
+                    shared_entries.update(cache['entries'])
                 write_cache(cache_path, cache)
                 requests += 1
                 usage.update(response['usage'])
@@ -208,7 +212,9 @@ def recheck(words: list[dict], coverage: dict, cache_path: Path, *, allow_api=Fa
                 stop = rule in EXPECTED and choice not in EXPECTED[rule] and probability >= STOP_PROBABILITY
                 judgments.append({**digit, 'choice': choice, 'probability': probability,
                                   'probabilities': answer['probabilities'], 'stop': stop})
-    if scope is not None and allow_api:
+    if shared_entries is not None:
+        shared_entries.update(cache['entries'])
+    if (scope is not None or shared_entries is not None) and allow_api:
         write_cache(cache_path, cache)
     stopped = [j for j in judgments if j['stop']]
     return {'passed': coverage['passed'] and not stopped, 'model': MODEL, 'threshold': STOP_PROBABILITY,

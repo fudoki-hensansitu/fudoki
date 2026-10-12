@@ -281,6 +281,7 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
         adopted[ident] = migrated
         checked_pdf.append((conversion, ident, migrated, metadata, file))
     peers = coverage_peers(document, adopted)
+    jev_entries = {}
     for conversion, ident, migrated, metadata, file in checked_pdf:
         inputs = manifest.resolved_inputs(document, conversion, selection)
         text_only = all(item['format'] == 'pdf' and item.get('pdf_type') == 'text' for item in inputs)
@@ -293,7 +294,7 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
                     exclusions=scope.get('excluded_regions', ()),
                     amount_columns=scope.get('amount_columns', ()))
                 jev_path = jev_recheck.sidecar(file)
-                jev = jev_recheck.recheck(scope['words'], coverage, jev_path, allow_api=True, scope=scope)
+                jev = jev_recheck.recheck(scope['words'], coverage, jev_path, allow_api=True, scope=scope, shared_entries=jev_entries)
                 report_path = file.with_name(file.stem + '.coverage-uncovered.json')
                 report_path.write_text(json.dumps({**coverage, 'jev': jev}, ensure_ascii=False) + '\n')
                 if not jev['passed']:

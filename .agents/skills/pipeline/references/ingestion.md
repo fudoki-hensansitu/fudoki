@@ -166,7 +166,7 @@ PDFは原典の内部で重複して印字された数字どうしの一致で�
 
 text PDF の `ingestion:convert` は網羅検査後に、金額でない形・合計行・注記の数字を `jev-1.13.0` に尋ねる。既存の blocked・reported は診断に回答を添えるだけ。金額の枠・ノードの名称・非採用範囲は問い合わせない。ルールと選択が異なり、選択の確率が共通閾値（初期 0.9）以上なら追加停止する。数字の一覧・確率は `<表ID>.coverage-uncovered.json` の `jev` にある。
 
-問い合わせには mise + age で注入した `TYPESAFE_API_KEY` が必要。キーはファイルやコマンド引数に置かない。回答は model・頁の state hash・質問 hash を鍵に `<表ID>.jev.json` に保存し、scope とともに候補の管理 JSON の `jev.object` 参照から保存・復元する。`ingestion:verify --candidate <dir>` と保存済み表の verify はキャッシュを読み直すだけで、API は呼ばない。キャッシュの不足・文字や質問の変更は不一致になる。変換時にもキャッシュとキーの両方がない場合は停止する。
+問い合わせには mise + age で注入した `TYPESAFE_API_KEY` が必要。キーはファイルやコマンド引数に置かない。回答は model・頁の state hash・質問 hash を鍵に `<表ID>.jev.json` に保存し、scope とともに候補の管理 JSON の `jev.object` 参照から保存・復元する。同じ変換操作内の複数表は同一の state・質問の回答を共有し、重複して問い合わせない。`ingestion:verify --candidate <dir>` と保存済み表の verify はキャッシュを読み直すだけで、API は呼ばない。キャッシュの不足・文字や質問の変更は不一致になる。変換時にもキャッシュとキーの両方がない場合は停止する。
 
 旧保存済み表は sidecar を持たず木の検査のみ。再変換すると再検査と sidecar が必要になる。判断は [ADR 0023](../../../../docs/adr/0023-jev-only-adds-coverage-stops.md)、共通定数は [jev_recheck.py](../../../../pipeline/ingestion/lib/jev_recheck.py)。
 
