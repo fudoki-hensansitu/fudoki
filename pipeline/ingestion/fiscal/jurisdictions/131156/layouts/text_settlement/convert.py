@@ -17,6 +17,7 @@ import json
 import xml.etree.ElementTree as ET
 
 from ingestion.lib.conversion import ConversionContext, write_conversion
+from ingestion.lib.node_tables import AMOUNT_POSITION_SUFFIXES, amount_position_fields, null_position_fields, write_coverage_words
 from ingestion.lib.parquet import ParquetColumn
 
 PAGE_WIDTH, PAGE_HEIGHT = 1190.61, 841.904
@@ -31,6 +32,11 @@ SETSU_NUM = (612, 641.5)
 SETSU_NAME = (640, 705)
 SETSU_BANDS = [(705, 775), (775, 843), (843, 910), (910, 980)]
 EXEC_BANDS = SETSU_BANDS[1:]
+AMOUNT_COLUMNS = ([{'header': key, 'x_range': list(edges)}
+                   for key, edges in zip(BUDGET, SUBJ_BANDS)] +
+                  [{'header': '金額', 'x_range': list(SETSU_BANDS[0])}] +
+                  [{'header': key, 'x_range': list(edges)}
+                   for key, edges in zip(EXECUTED, EXEC_BANDS)])
 NOTE_AMOUNT_LEFT = 1090
 AMOUNT = re.compile(r'[△]?(?:[0-9]{1,3}(?:,[0-9]{3})+|[0-9]+)')
 NUMBER = re.compile(r'[0-9]+')
@@ -299,11 +305,36 @@ def row_words(words, y):
             if y - (4.6 if w['text'] in SHIFTED_GLYPHS else 2.2) <= w['yMin'] < y + 3.2]
 
 
+def boxes(words):
+    return [[w['xMin'], w['yMin'], w['xMax'], w['yMax']] for w in words]
+
+
+def positioned_amounts(keys, texts, owners, page):
+    """Amount texts with their own printed positions, keyed per amount column.
+
+    Every key is emitted so rows stay homogeneous; absent amounts keep NULL
+    positions and create no amount row. A printed amount without its words
+    is a converter bug, never a silent NULL.
+    """
+    record = {}
+    for key, value in zip(keys, texts):
+        record[key] = value
+        words = owners.get(key, [])
+        if value is not None:
+            if not words:
+                raise ValueError(f'Printed amount without word boxes: {key}')
+            record.update(amount_position_fields(key, page, boxes(words)))
+        else:
+            record.update(null_position_fields(key))
+    return record
+
+
 def band_amounts(row, bands, anomalies=None):
     """Assign each amount token to its band by the token's center x, then
     join the band's tokens left to right. Tokens split one glyph per word.
     A △ sign (text layer '•') sits a few points left of its digits and can
-    drift into the previous band: it takes the band of the next token."""
+    drift into the previous band: it takes the band of the next token.
+    Returns (texts, owners) per band; owners keep the printed word boxes."""
     ordered = sorted(row, key=lambda w: w['xMin'])
     values = [[] for _ in bands]
     for index, w in enumerate(ordered):
@@ -317,9 +348,11 @@ def band_amounts(row, bands, anomalies=None):
             continue
         values[band].append(w)
     result = []
+    owners = []
     for tokens in values:
         if not tokens:
             result.append(None)
+            owners.append([])
             continue
         value = ''.join(normalize(DIGIT_FIX.get(w['text'], w['text'])) for w in tokens)
         if not AMOUNT.fullmatch(value):
@@ -329,19 +362,25 @@ def band_amounts(row, bands, anomalies=None):
                 anomalies.append({'issue': 'literal value in amount column',
                                   'value': value})
             result.append(value)
+            owners.append(tokens)
             continue
         result.append(value)
-    return result
+        owners.append(tokens)
+    return result, owners
 
 
 def location(page, y, words):
-    return {'物理頁': page, '上端': y, '下端': max(w['yMax'] for w in words)}
+    words = list(words)
+    return {'物理頁': page, '左端': min(w['xMin'] for w in words), '上端': y,
+            '右端': max(w['xMax'] for w in words), '下端': max(w['yMax'] for w in words)}
 
 
 def executed(words, y, anomalies):
     right = [w for w in row_words(words, y)
              if EXEC_BANDS[0][0] - 6 <= w['xMin'] and w['xMin'] < 980]
-    result = {key: value for key, value in zip(EXECUTED, band_amounts(right, EXEC_BANDS, anomalies))}
+    texts, band_owners = band_amounts(right, EXEC_BANDS, anomalies)
+    owners = dict(zip(EXECUTED, band_owners))
+    result = dict(zip(EXECUTED, texts))
     result['翌年度繰越額_区分'] = None
     # 繰越明許費 rows print the label on the row and the carried amount on a
     # sub-line ~12pt below it, inside the same column band. The printed literal
@@ -350,6 +389,7 @@ def executed(words, y, anomalies):
     if carryover is not None and not AMOUNT.fullmatch(carryover):
         result['翌年度繰越額_区分'] = carryover
         result['翌年度繰越額'] = None
+        owners['翌年度繰越額'] = []
         sub = [w for w in words if EXEC_BANDS[1][0] <= w['xMin'] < EXEC_BANDS[1][1] + 4
                and y + 6 <= w['yMin'] < y + 22]
         # The sub-line must not itself carry another carryover label.
@@ -360,16 +400,25 @@ def executed(words, y, anomalies):
                 anomalies.append({'issue': 'carryover subline merged', 'y': y,
                                   'value': value, 'label': carryover})
                 result['翌年度繰越額'] = value
-    return result
+                owners['翌年度繰越額'] = sub
+    return result, owners
 
 
 def subject_record(words, row, page, y, name_high, anomalies, next_row=None):
     labels = [w for w in row if w['xMin'] < SUBJ_BANDS[0][0]]
     joined = ''.join(w['text'] for w in labels)
     if joined.startswith('歳出') and '計' in joined:
+        # The 合 glyph splits into misencoded strokes in the text layer.
+        # Keep the observed total's known printed caption in coverage too.
+        for index, word in enumerate(labels):
+            word['coverage_text'] = '歳出合計' if index == 0 else ''
         near = row_words(words, y)
-        return 'total', {**{key: value for key, value in zip(BUDGET, band_amounts(near, SUBJ_BANDS, anomalies))},
-                         **executed(words, y, anomalies)}
+        texts, owners = band_amounts(near, SUBJ_BANDS, anomalies)
+        exec_texts, exec_owners = executed(words, y, anomalies)
+        return 'total', {**positioned_amounts(BUDGET, texts, dict(zip(BUDGET, owners)), page),
+                         **positioned_amounts(EXECUTED, [exec_texts[k] for k in EXECUTED],
+                                              exec_owners, page),
+                         '翌年度繰越額_区分': exec_texts['翌年度繰越額_区分']}
     # The marker is the leftmost label word that reads as a number. A parent's
     # wrapped name tail can sit further left on the same baseline (and a
     # printed '1' can reach the text layer as 'l'/'I').
@@ -396,9 +445,13 @@ def subject_record(words, row, page, y, name_high, anomalies, next_row=None):
         name_words.append({**marker, 'text': match[2],
                            'xMin': marker['xMin'] + 4.5 * len(match[1])})
     near = row_words(words, y)
+    texts, owners = band_amounts(near, SUBJ_BANDS, anomalies)
+    exec_texts, exec_owners = executed(words, y, anomalies)
     return 'subject', {'level': level, '番号': match[1], '名称': repair_name(''.join(w['text'] for w in sorted(name_words, key=lambda w: (w['yMin'], w['xMin'])))),
-                       **{key: value for key, value in zip(BUDGET, band_amounts(near, SUBJ_BANDS, anomalies))},
-                       **executed(words, y, anomalies),
+                       **positioned_amounts(BUDGET, texts, dict(zip(BUDGET, owners)), page),
+                       **positioned_amounts(EXECUTED, [exec_texts[k] for k in EXECUTED],
+                                            exec_owners, page),
+                       '翌年度繰越額_区分': exec_texts['翌年度繰越額_区分'],
                        '備考': None, **location(page, y, labels + name_words)}
 
 
@@ -409,9 +462,13 @@ def setsu_record(words, row, page, y, name_high, anomalies):
     name_words = [w for w in words if SETSU_NAME[0] <= w['xMin'] and w['xMax'] <= SETSU_BANDS[0][0]
                   and y - 7.5 <= w['yMin'] < name_high]
     near = row_words(words, y)
+    setsu_texts, setsu_owners = band_amounts(near, SETSU_BANDS, anomalies)
+    exec_texts, exec_owners = executed(words, y, anomalies)
     return {'区分_番号': markers[0]['text'], '区分_名称': repair_name(''.join(w['text'] for w in sorted(name_words, key=lambda w: (w['yMin'], w['xMin'])))),
-            '金額': band_amounts(near, SETSU_BANDS, anomalies)[0],
-            **executed(words, y, anomalies),
+            **positioned_amounts(['金額'], setsu_texts[:1], {'金額': setsu_owners[0]}, page),
+            **positioned_amounts(EXECUTED, [exec_texts[k] for k in EXECUTED],
+                                 exec_owners, page),
+            '翌年度繰越額_区分': exec_texts['翌年度繰越額_区分'],
             '備考': None, **location(page, y, markers + name_words)}
 
 
@@ -488,7 +545,22 @@ def parse_breakdown(cell, anomalies):
         names, amounts = split_row(row)
         if names and len(amounts) == 1 and len(amounts[0]['text']) == 1 and amounts[0]['xMin'] >= 1100:
             carry = amounts[0]
-            amounts = []
+            raw_name = ''.join(w['text'] for w in names)
+            repaired = repair_brackets(raw_name + carry['text'])
+            if repaired.endswith('】') and repaired != raw_name + carry['text']:
+                carry['coverage_text'] = '】'
+                names = [*names, carry]
+                carry = None
+                amounts = []
+            elif re.search(r'[（(][^()（）]*$', raw_name):
+                # A wrapped parenthesized identifier owns its trailing digit.
+                # It is not a lone money cell (e.g. （１５ followed by １）).
+                names = [*names, carry]
+                carry = None
+                amounts = []
+            else:
+                # A single printed 0/1 can be a real monetary cell.
+                carry = None
         elif carry is not None:
             anomalies.append({'page': cell['page'], 'y': row[0]['yMin'],
                               'issue': 'lone glyph after name', 'text': carry['text']})
@@ -504,6 +576,7 @@ def parse_breakdown(cell, anomalies):
                     remarks.append(value)
                 else:
                     open_item['金額'] = value
+                    open_item['_amount_words'] = amounts
                     open_item['下端'] = row[0]['yMax']
             continue
         # Multi-digit item numbers arrive as separate tokens ('1'+'7' for 17);
@@ -572,6 +645,8 @@ def parse_breakdown(cell, anomalies):
                     '名称': head_name if is_heading else ''.join(w['text'] for w in names[1:]),
                     '名称_x': names[1]['xMin'] if len(names) > 1 else leading['xMin'],
                     '金額': value, 'parent': parent,
+                    '_amount_words': amounts if value is not None else [],
+                    '_name_words': list(names),
                     '物理頁': page, '上端': row[0]['yMin'], '下端': row[0]['yMax']}
             stack.append(item)
             items.append(item)
@@ -589,10 +664,12 @@ def parse_breakdown(cell, anomalies):
             biz = next((it for it in reversed(stack) if it['level'] == 0), None)
             if biz is not None:
                 biz['名称'] += name_full
+                biz['_name_words'].extend(names)
                 biz['下端'] = row[0]['yMax']
                 if value is not None:
                     if biz['金額'] is None:
                         biz['金額'] = value
+                        biz['_amount_words'] = amounts
                     elif biz['金額'] != value:
                         anomalies.append({'page': page, 'y': row[0]['yMin'],
                                           'issue': 'conflicting biz total',
@@ -619,9 +696,11 @@ def parse_breakdown(cell, anomalies):
                 and (abs(leading['xMin'] - open_item['名称_x']) <= 9
                      or value is not None)):
             open_item['名称'] += name_full
+            open_item['_name_words'].extend(names)
             open_item['下端'] = row[0]['yMax']
             if value is not None:
                 open_item['金額'] = value
+                open_item['_amount_words'] = amounts
             continue
         # A new unnumbered item: name+amount on one line, or a name line
         # followed by an amount-only line.
@@ -635,6 +714,7 @@ def parse_breakdown(cell, anomalies):
             close_deeper(0)
             item = {'level': 0, '番号': None, '名称': name_full,
                     '名称_x': leading['xMin'], '金額': None, 'parent': None,
+                    '_amount_words': [], '_name_words': list(names),
                     '物理頁': page, '上端': row[0]['yMin'], '下端': row[0]['yMax']}
             stack.insert(0, item)
             items.append(item)
@@ -656,6 +736,8 @@ def parse_breakdown(cell, anomalies):
             item = {'level': level, '番号': None, '名称': name_full,
                     '名称_x': leading['xMin'], '金額': value,
                     'parent': parent,
+                    '_amount_words': amounts if value is not None else [],
+                    '_name_words': list(names),
                     '物理頁': page, '上端': row[0]['yMin'], '下端': row[0]['yMax']}
             stack.append(item)
             items.append(item)
@@ -669,6 +751,7 @@ def parse_breakdown(cell, anomalies):
         if (open_item is not None and value is None and len(name_full) <= 6
                 and abs(leading['xMin'] - open_item['名称_x']) <= 9):
             open_item['名称'] += name_full
+            open_item['_name_words'].extend(names)
             open_item['下端'] = row[0]['yMax']
             continue
         remarks.append(''.join(w['text'] for w in row))
@@ -808,6 +891,17 @@ def build(pages):
                     leaf[prefix + '金額'] = node['金額']
                     for field in ('物理頁', '上端', '下端'):
                         leaf[prefix + field] = node[field]
+                    name_boxes = boxes(node.get('_name_words', []))
+                    if name_boxes:
+                        leaf[prefix + '左端'] = min(b[0] for b in name_boxes)
+                        leaf[prefix + '右端'] = max(b[2] for b in name_boxes)
+                    else:
+                        leaf[prefix + '左端'] = leaf[prefix + '右端'] = None
+                    amount_words = node.get('_amount_words', [])
+                    if node['金額'] is not None and not amount_words:
+                        raise ValueError('Printed breakdown amount without word boxes')
+                    leaf.update(amount_position_fields(prefix + '金額', node['物理頁'], boxes(amount_words))
+                                if amount_words else null_position_fields(prefix + '金額'))
                 leaf['物理頁'] = it['物理頁']
                 leaf['上端'] = it['上端']
                 leaf['下端'] = it['下端']
@@ -856,15 +950,19 @@ def build(pages):
 
 LINEAGE = [f'{level}_{k}' for level in ('款', '項', '目')
            for k in ('番号', '名称', *BUDGET, *EXECUTED, '翌年度繰越額_区分',
-                     '備考', '物理頁', '上端', '下端')]
+                     '備考', '物理頁', '左端', '上端', '右端', '下端',
+                     *[f'{c}_{s}' for c in (*BUDGET, *EXECUTED) for s in AMOUNT_POSITION_SUFFIXES])]
 SETSU_COLUMNS = (LINEAGE + [f'節_{k}' for k in ('番号', '名称', '金額', *EXECUTED,
                                                 '翌年度繰越額_区分', '備考',
-                                                '物理頁', '上端', '下端')])
+                                                '物理頁', '左端', '上端', '右端', '下端',
+                                                *[f'{c}_{s}' for c in ('金額', *EXECUTED)
+                                                  for s in AMOUNT_POSITION_SUFFIXES])])
 BREAKDOWN_COLUMNS = (LINEAGE + ['実施事業_名称', '実施事業_金額', '項目_番号',
                                 '項目_名称', '項目_金額', '細目_番号', '細目_名称',
                                 '細目_金額', '物理頁', '上端', '下端'] +
                      [f'{level}_{field}' for level in ('実施事業', '項目', '細目')
-                      for field in ('物理頁', '上端', '下端')])
+                      for field in ('物理頁', '左端', '上端', '右端', '下端',
+                                    *[f'金額_{s}' for s in AMOUNT_POSITION_SUFFIXES])])
 
 
 def metadata(columns, account, kind):
@@ -939,10 +1037,16 @@ def convert(inputs, destination, options):
         if not rows:
             raise ValueError(f'No {kind} rows produced')
         columns = tuple(ParquetColumn(k, 'BIGINT' if k == '物理頁' or k.endswith('_物理頁')
-                                      else 'DOUBLE' if k in ('上端', '下端') or k.endswith(('_上端', '_下端'))
+                                      else 'DOUBLE' if k in ('左端', '上端', '右端', '下端')
+                                      or k.endswith(('_左端', '_上端', '_右端', '_下端'))
                                       else 'VARCHAR') for k in order)
         table_id = f'{prefix}-{kind}'
         output = write_conversion(destination / (table_id + '.parquet'), rows, columns=columns,
                                   context=ConversionContext(source['sha256'], table_id, __file__))
+        write_coverage_words(Path(output.path),
+                             [(page, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w.get('coverage_text', w['text']))
+                              for page, words in pages for w in words
+                              if BODY_TOP <= w['yMin'] < BODY_BOTTOM],
+                             amount_columns=AMOUNT_COLUMNS if kind == 'details' else ())
         results[table_id] = {'path': Path(output.path), 'metadata': metadata(order, account, kind)}
     return results

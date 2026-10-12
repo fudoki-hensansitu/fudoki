@@ -5,10 +5,11 @@
 ## 入力を確認する
 
 1. `ingestion/fiscal/jurisdictions/<団体>/<年度>/<資料区分>/<方向>.json` を読み、そこで参照される保存済みParquetを `ingestion:restore` で復元して読む。`ingestion:check` で対象・原典選定・scope・fingerprintを検査する。dbt の入力宣言（`pipeline/dbt/models/staging/fiscal/_sources.yml`）は `dbt/scripts/generate_sources.py` が管理 JSON から生成する（決算と当初予算の歳出。PDF はノードの表・金額の表、CSV は原文の表）。手で表を足さない。通らない表の除外は同スクリプトの EXCLUDE に理由付きで宣言する。
-2. 原典の抽出やBの検査は再実行しない。階層はノードの表の親子、単位と金額欄の見出しは金額の表、会計と注記は管理JSONの `tables[]` から取り、不足を推定値・空表で補わない。段の名前は共通規則で付ける（科目軸の深さ1/2/3は款・項・目、それ以外の軸は印字見出しか `内訳{深さ}`。[ADR 0024](../../../../docs/adr/0024-level-names-by-shared-rule.md)）。見出しから金額の段階への対応は取り込みと共通の辞書 `pipeline/shared/fiscal_amount_map.csv` に宣言する（[ADR 0021](../../../../docs/adr/0021-level-and-phase-map-in-dbt-seed.md)）。PDFの表はすべてノードの表に移行済み（横持ちの表は削除済み）。CSVは原文の表を読む。
+2. 原典の抽出やBの検査は再実行しない。階層はノードの表の親子、単位と金額欄の見出しは金額の表、会計と注記は管理JSONの `tables[]` から取り、不足を推定値・空表で補わない。段の名前は共通規則で付ける（科目軸の深さ1/2/3は款・項・目、それ以外の軸は印字見出しか `内訳{深さ}`。[ADR 0025](../../../../docs/adr/0025-level-names-by-shared-rule.md)）。見出しから金額の段階への対応は取り込みと共通の辞書 `pipeline/shared/fiscal_amount_map.csv` に宣言する（[ADR 0021](../../../../docs/adr/0021-level-and-phase-map-in-dbt-seed.md)）。PDFの表はすべてノードの表に移行済み（横持ちの表は削除済み）。CSVは原文の表を読む。
 
 ## 構築結果を確認する
 
+- marts の木の表は原典の位置として頁（`source_page`・`amount_source_page`）と印字の枠（`source_x0`〜`source_y1`・`amount_source_x0`〜`amount_source_y1`、左上原点の pt）を持つ。座標は PDF だけで、CSV は NULL。金額の枠は印字が一つで全額のときだけ入り、複数の印字を足した額は頁が最初の頁でも NULL（検査は `tests/fiscal_source_coordinates.sql`）。R2 の取り込み表で金額の位置が未保存なら金額の座標は NULL になる。
 - 原典行の対応、値と単位、欠落・二重収録、集約を確認する。stagingの行数一致だけで全値一致としない。単位・金額段階の根拠は原典から取り、宣言どうしの一致だけで済ませない。
 - コード・宣言・判断はGitで管理する。DB・CSV・検査結果は再生成するローカル領域（`pipeline/.build/`）に置く。
 - 構築成功を全公開資料の収録完了と扱わない。

@@ -660,6 +660,38 @@ sources:
       direction: expenditure
       table_id: akishima-text-budget-expenditure
       kind: nodes
+  - name: j132128_late_elderly_medical_setsu_amounts
+    meta:
+      jurisdiction: '132128'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: late-elderly-medical-setsu
+      kind: amounts
+  - name: j132128_late_elderly_medical_setsu_nodes
+    meta:
+      jurisdiction: '132128'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: late-elderly-medical-setsu
+      kind: nodes
+  - name: j132217_late_elderly_medical_setsu_amounts
+    meta:
+      jurisdiction: '132217'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: late-elderly-medical-setsu
+      kind: amounts
+  - name: j132217_late_elderly_medical_setsu_nodes
+    meta:
+      jurisdiction: '132217'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: late-elderly-medical-setsu
+      kind: nodes
 - name: fiscal_csv
   schema: ingestion
   tables:

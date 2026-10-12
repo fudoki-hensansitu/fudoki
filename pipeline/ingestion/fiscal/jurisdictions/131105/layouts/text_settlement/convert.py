@@ -7,6 +7,7 @@ import subprocess
 import xml.etree.ElementTree as ET
 
 from ingestion.lib.conversion import ConversionContext, write_conversion
+from ingestion.lib.node_tables import amount_position_fields, write_coverage_words
 from ingestion.lib.parquet import ParquetColumn
 
 AMOUNT = re.compile(r"△?(?:[0-9]{1,3}(?:,[0-9]{3})+|[0-9]+)")
@@ -14,6 +15,9 @@ BUDGET = ['当初予算額', '補正予算額', '継続費及び繰越事業費�
 EXECUTED = ['支出済額', '継続費逓次繰越', '繰越明許費', '事故繰越し', '不用額']
 BUDGET_EDGES = [(104, 174), (174, 245), (245, 305), (305, 364), (364, 436)]
 EXECUTED_EDGES = [(559, 701), (701, 761), (761, 821), (821, 880), (880, 953)]
+AMOUNT_COLUMNS = ([{'header': key, 'x_range': list(edges)}
+                   for key, edges in zip(BUDGET + EXECUTED, BUDGET_EDGES + EXECUTED_EDGES)] +
+                  [{'header': '金額', 'x_range': [493.5, 559]}])
 
 
 def observe(pdf, first, last, path):
@@ -63,22 +67,38 @@ def cell(words, y, edges):
     left, right = edges
     nearby = [w for w in words if abs(w['yMin'] - y) < .5]
     values = select(nearby, left, right, y - .5, y + .5)
+    boxes = [[w['xMin'], w['yMin'], w['xMax'], w['yMax']] for w in values]
     # The reserve has a printed 0 adjacent to a negative transfer. Poppler
     # combines those two cells into one word; split only this measured boundary.
+    # Text pieces are verified against their column ranges below; boxes clip at
+    # the measured boundary instead of estimating glyph widths.
     for word in nearby:
         if word['xMin'] < 305 < word['xMax'] and re.fullmatch(r'0△[0-9,]+', word['text']):
             if edges == (245, 305):
                 values.append({**word, 'text': '0', 'xMax': word['xMin'] + 4.5})
+                boxes.append([word['xMin'], word['yMin'], 305, word['yMax']])
             elif edges == (305, 364):
                 values.append({**word, 'text': word['text'][1:], 'xMin': word['xMin'] + 4.5})
+                boxes.append([305, word['yMin'], word['xMax'], word['yMax']])
     value = ''.join(w['text'] for w in sorted(values, key=lambda w: w['xMin']))
     if not AMOUNT.fullmatch(value):
         raise ValueError(f'Incomplete amount y={y}, bounds={edges}: {value!r}')
-    return value
+    return value, boxes
+
+
+def amount_cells(words, page, y, keys, edges_list):
+    """Amount texts with their own printed positions, keyed per amount column."""
+    record = {}
+    for key, edges in zip(keys, edges_list):
+        value, boxes = cell(words, y, edges)
+        record[key] = value
+        record.update(amount_position_fields(key, page, boxes))
+    return record
 
 
 def location(page, y, words):
-    return {'物理頁': page, '上端': y, '下端': max(w['yMax'] for w in words)}
+    return {'物理頁': page, '左端': min(w['xMin'] for w in words), '上端': y,
+            '右端': max(w['xMax'] for w in words), '下端': max(w['yMax'] for w in words)}
 
 
 def body(words):
@@ -112,7 +132,7 @@ def parent_record(words, page, y, name_high, note_high):
         name_words.append({**marker, 'text': match[2],
                            'xMin': marker['xMin'] + 4.5 * len(match[1])})
     return {'level': level, '番号': match[1], '名称': text(name_words),
-            **{key: cell(words, y, edge) for key, edge in zip(BUDGET + EXECUTED, BUDGET_EDGES + EXECUTED_EDGES)},
+            **amount_cells(words, page, y, BUDGET + EXECUTED, BUDGET_EDGES + EXECUTED_EDGES),
             '備考': text(select(words, 953, 1180, y - 7.5, note_high)),
             **location(page, y, labels)}
 
@@ -157,8 +177,7 @@ def detail(pages):
                 for level in ('款', '項', '目'):
                     row.update({level + '_' + k: v for k, v in current[level].items() if k != 'level'})
                 row.update({'区分_番号': match[1], '区分_名称': text(name_words),
-                            '金額': cell(words, y, (493.5, 559)),
-                            **{key: cell(words, y, edge) for key, edge in zip(EXECUTED, EXECUTED_EDGES)},
+                            **amount_cells(words, page, y, ['金額'] + EXECUTED, [(493.5, 559)] + EXECUTED_EDGES),
                             '備考': text(select(words, 953, 1180, y - 7.5, note_high)),
                             **location(page, y, markers)})
                 sections.append(row)
@@ -198,10 +217,15 @@ def convert(inputs, destination, options):
     destination = Path(destination)
     observations = destination / 'meguro-observations'
     observations.mkdir()
-    sections, parents = detail(observe(source['path'], 42, 91, observations / 'detail-bbox.html'))
+    pages = observe(source['path'], 42, 91, observations / 'detail-bbox.html')
+    sections, parents = detail(pages)
     (observations / 'parents.json').write_text(json.dumps({'detail': parents}, ensure_ascii=False, indent=2) + '\n')
     table_id = options['table_id']
-    columns = tuple(ParquetColumn(k, 'BIGINT' if k.endswith('物理頁') else 'DOUBLE' if k.endswith(('上端', '下端')) else 'VARCHAR') for k in sections[0])
+    columns = tuple(ParquetColumn(k, 'BIGINT' if k.endswith('物理頁') else 'DOUBLE' if k.endswith(('左端', '上端', '右端', '下端')) else 'VARCHAR') for k in sections[0])
     output = write_conversion(destination / (table_id + '.parquet'), sections, columns=columns,
                               context=ConversionContext(source['sha256'], table_id, __file__))
+    write_coverage_words(Path(output.path),
+                         [(page, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text'])
+                          for page, words in pages for w in body(words)],
+                         amount_columns=AMOUNT_COLUMNS)
     return {table_id: {'path': Path(output.path), 'metadata': metadata(list(sections[0]))}}

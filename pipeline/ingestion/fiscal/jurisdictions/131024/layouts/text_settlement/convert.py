@@ -10,6 +10,7 @@ import xml.etree.ElementTree as ET
 
 import duckdb
 
+from ingestion.lib.node_tables import write_coverage_words, coverage_regions
 from ingestion.lib.pdf_table import tokens_from_bbox_layout
 
 from importlib import import_module
@@ -97,6 +98,22 @@ def compact(value):
     return re.sub(r'\s+', '', value)
 
 
+def origin_position(column, page, words):
+    """One amount column's own printed place in this layout's 原典 coordinates.
+
+    Migration reads `<column>_原典物理頁/_原典xMin/...` as the amount's own
+    position, never inheriting the node's label position.
+    """
+    if not words:
+        return {f'{column}_{suffix}': None for suffix in
+                ('原典物理頁', '原典xMin', '原典yMin', '原典xMax', '原典yMax')}
+    boxes = [[w['x'], w['y'], w['xe'], w['ye']] for w in words]
+    return {column + '_原典物理頁': page, column + '_原典xMin': min(b[0] for b in boxes),
+            column + '_原典yMin': min(b[1] for b in boxes),
+            column + '_原典xMax': max(b[2] for b in boxes),
+            column + '_原典yMax': max(b[3] for b in boxes)}
+
+
 def rows(words, *, tolerance=4.1):
     result = []
     for word in sorted(words, key=lambda w: (w['y'], w['x'])):
@@ -112,6 +129,30 @@ def coordinates(words, page):
             '原典yMax': max(w['ye'] for w in words)}
 
 
+def rowbox(row, page):
+    """One printed row's display box for read-but-not-adopted regions."""
+    return [page, [min(w['x'] for w in row), min(w['y'] for w in row),
+                   max(w['xe'] for w in row), max(w['ye'] for w in row)]]
+
+
+# Read-but-not-adopted blocks: kinds and reasons are hand-written once next to
+# the layout decisions that skip them; pages and boxes come from the blocks
+# the converter identified at runtime. Quantity/personnel/lending/reserve
+# tables stay auxiliary observations and never become detail rows.
+QUANTITY_EXCLUSION = {'kind': '数量表',
+                      'reason': '数量表は原典の最細区分行を保持する独立した非金額の内訳であり、金額表に入れない。'}
+RESERVE_EXCLUSION = {'kind': '予備費の充用',
+                     'reason': '予備費の充用先は reserve 表に保持し、明細表の行にしない。'}
+PERSONNEL_EXCLUSION = {'kind': '職員',
+                       'reason': '職員人数は給与費の人数内訳であり、明細金額を付与しない。'}
+LENDING_EXCLUSION = {'kind': '貸付金',
+                     'reason': '貸付状況表は支出内訳とは異なる実績の表であり、明細表の行にしない。'}
+
+
+SECTION_EXCLUSION = {'kind': '節の一覧',
+                     'reason': '事業説明のない目は法定節を採用済み。事業説明のある目の法定節一覧は、節の軸の取り込みが未実装のための一時的な除外。次の作業で節の軸として取り込む。'}
+
+
 def parent_event(row, page, page_words=None):
     left = [w for w in row if w['x'] < 142 and (w['x'] < 60 or not AMOUNT.fullmatch(w['text']))]
     match = re.match(r'^（([款項目])）\s*([0-9]+)\s*(.*)$', text(left))
@@ -119,6 +160,7 @@ def parent_event(row, page, page_words=None):
         return None
     values = []
     sign = ''
+    sign_words = []
     for w in row:
         if w['x'] < 130 or w['x'] > 1025:
             continue
@@ -126,11 +168,14 @@ def parent_event(row, page, page_words=None):
         for part in re.findall(r'△|[0-9]+(?:,[0-9]{3})*(?:\.[0-9]+)?|（[0-9.]+）|\([0-9.]+\)', w['text']):
             if part == '△':
                 sign = part
+                sign_words = [w]
             else:
-                values.append((sign + part) if sign else part)
+                words = [*sign_words, w] if sign else [w]
+                values.append(((sign + part) if sign else part, words))
                 sign = ''
+                sign_words = []
     if len(values) != len(FINANCIAL):
-        raise ValueError(f'Parent monetary columns are incomplete: page={page}, {text(row)}, values={values}')
+        raise ValueError(f'Parent monetary columns are incomplete: page={page}, {text(row)}, values={[v for v, _ in values]}')
     name = match[3]
     name_words = []
     if page_words:
@@ -142,7 +187,10 @@ def parent_event(row, page, page_words=None):
         if name_words:
             name = '\n'.join(text(r) for r in rows(name_words))
     return {'level': match[1], '番号': match[2], '名称': name,
-            **dict(zip(FINANCIAL, values, strict=True)), **coordinates([*row, *name_words], page)}
+            **{key: value for key, (value, _) in zip(FINANCIAL, values, strict=True)},
+            **{k: v for key, (_, words) in zip(FINANCIAL, values, strict=True)
+                for k, v in origin_position(key, page, words).items()},
+            **coordinates([*row, *name_words], page)}
 
 
 def annual_header(row):
@@ -161,7 +209,7 @@ def annual_header(row):
     return headers
 
 
-def annual_row(row, headers):
+def annual_row(row, headers, page):
     numbers = [w for w in row if AMOUNT.fullmatch(w['text'].removesuffix('円'))]
     if not numbers or len(numbers) != len(headers):
         return None
@@ -173,7 +221,9 @@ def annual_row(row, headers):
     for idx, (header, number) in enumerate(zip(headers, numbers, strict=True)):
         end = numbers[idx + 1]['x'] if idx + 1 < len(numbers) else float('inf')
         suffix = [w for w in row if w['text'] == '円' and number['xe'] <= w['x'] < end]
-        cells[header['name']] = number['text'] + (' 円' if suffix and not number['text'].endswith('円') else '')
+        words = [number, *suffix]
+        cells[header['name']] = (number['text'] + (' 円' if suffix and not number['text'].endswith('円') else ''),
+                                 coordinates(words, page))
     return name, cells
 
 
@@ -317,8 +367,12 @@ def grid_table(words, header, headers, lines, page, *, column_bounds=None, body_
             nums = [w for w in row if bounds[-2] <= (w['x'] + w['xe']) / 2 < bounds[-1] and AMOUNT.fullmatch(w['text'])]
             if nums:
                 kept = [w for w in row if w['x'] < bounds[-1]]
+                locations = {('内表_' + h['name']): coordinates([w for w in row
+                            if bounds[idx] <= (w['x'] + w['xe']) / 2 < bounds[idx + 1]], page)
+                            for idx, h in enumerate(headers)
+                            if any(bounds[idx] <= (w['x'] + w['xe']) / 2 < bounds[idx + 1] for w in row)}
                 result.append({'cells': cells, 'location': coordinates(kept, page),
-                               'money_location': coordinates(nums[-1:], page)})
+                               'cell_locations': locations, 'money_location': coordinates(nums[-1:], page)})
                 if compact(cells['内表_' + headers[0]['name']]) == '計':
                     return result, max(w['ye'] for w in row)
         raise ValueError(f'Unruled monetary table has no total on page {page}')
@@ -409,6 +463,8 @@ def node_context(node):
         result[prefix + '_番号'] = at['number']
         result[prefix + '_名称'] = at['name']
         result[prefix + '_金額'] = at['amount']
+        for key, value in at['amount_location'].items():
+            result[prefix + '_金額_' + key] = value
         for key, value in at['location'].items():
             result[prefix + '_' + key] = value
         result[prefix + '_所属'] = at['department']
@@ -437,6 +493,9 @@ def unexplained_sections(pages, parent, following, last):
                             '節_名称': '\n'.join(text(r) for r in rows(name_words)),
                             **dict(zip(['節_金額', '節_支出済額', '節_翌年度繰越額', '節_不用額'],
                                        [w['text'] for w in values], strict=True)),
+                            **{k2: v
+                               for k, w in zip(['節_金額', '節_支出済額', '節_翌年度繰越額', '節_不用額'], values)
+                               for k2, v in origin_position(k, page, [w]).items()},
                             '節_所属': text(department) or None,
                             **{'節_' + key: value for key, value in location.items()}, **location})
     return records
@@ -447,7 +506,7 @@ def reading_position(location):
 
 
 def nonfinancial_facts(pages, nodes, source, destination, grids, handled, all_parents):
-    controls, observations, regions, office_headings = [], [], [], []
+    controls, observations, regions, office_headings, excluded = [], [], [], [], []
     ordered = sorted(nodes, key=lambda node: reading_position(node['location']))
     mokus = [p for p in all_parents if p['level'] == '目']
 
@@ -542,6 +601,10 @@ def nonfinancial_facts(pages, nodes, source, destination, grids, handled, all_pa
         owner['annual_rows'].extend(records)
         owner['has_children'] = True
         regions.append((page, pane, header_y - 1, end, xs[0], xs[-1]))
+        # Data rows only: the heading strip can share its baseline with an
+        # adopted business amount just above the ruled body.
+        excluded.append({**QUANTITY_EXCLUSION, 'page': page,
+                         'bbox': [xs[0], data_y - 7, xs[-1], end]})
 
     # These are original prose rows within the current printed monetary heading,
     # not allocation or a join to the independent legal section column.
@@ -595,7 +658,7 @@ def nonfinancial_facts(pages, nodes, source, destination, grids, handled, all_pa
                 # printed amount: the monetary parent row stays a leaf and
                 # is preserved once while the line repeats its context.
                 owner['annual_rows'].append({**node_context(owner), '補足_本文': value, **location})
-    return controls, observations, office_headings
+    return controls, observations, office_headings, excluded
 
 
 def assemble(pages, first, last, *, source, destination, reserve_kan='11', personnel_breakdown=False,
@@ -622,6 +685,7 @@ def assemble(pages, first, last, *, source, destination, reserve_kan='11', perso
     pending_department = []
     reserve_pending = []
     handled = []
+    excluded = []
 
     for page in range(first, last + 1):
         words = pages[page]
@@ -629,7 +693,13 @@ def assemble(pages, first, last, *, source, destination, reserve_kan='11', perso
         # a continuation spread instead uses both halves for business details.
         has_statement = any('当初予算額' in compact(text(row)) for row in rows(words))
         halves = [([w for w in words if w['x'] < 650], 0)]
-        if not has_statement:
+        if has_statement:
+            retained = {id(w) for w in halves[0][0]}
+            skipped = [w for w in words if id(w) not in retained]
+            excluded.extend(coverage_regions(
+                [(page, (w['x'], w['y'], w['xe'], w['ye']), w['text']) for w in skipped],
+                **SECTION_EXCLUSION))
+        else:
             halves.append(([w for w in words if w['x'] >= 650], 646))
         for half_words, offset in halves:
             skip_until = 0
@@ -669,6 +739,9 @@ def assemble(pages, first, last, *, source, destination, reserve_kan='11', perso
                     # they are already retained in the reserve transfer table.
                     handled.append((page, int(offset != 0),
                                     min(w['y'] for w in row), max(w['ye'] for w in row)))
+                    reserve_page, reserve_box = rowbox(row, page)
+                    excluded.append({**RESERVE_EXCLUSION, 'page': reserve_page,
+                                     'bbox': reserve_box})
                     payment = money(row)
                     if not payment:
                         reserve_pending.append(value)
@@ -744,6 +817,12 @@ def assemble(pages, first, last, *, source, destination, reserve_kan='11', perso
                                             'title': title})
                         record = {**node_context(owner), **item['cells'], **item['location'],
                                   **{amount_column + '_' + k: v for k, v in item['money_location'].items()}}
+                        for column, location in (item.get('cell_locations') or {}).items():
+                            if location:
+                                record.update({column + '_' + key: value for key, value in location.items()})
+                                if column != amount_column and re.sub(r'（[^）]*）|等$', '', column).endswith(('件数', '数量', '者数', '児童数', '施工数')):
+                                    excluded.append({**QUANTITY_EXCLUSION, 'page': page,
+                                        'bbox': [location[k] for k in coordinates_keys()[1:]]})
                         if title:
                             # The caption's own measured position travels with
                             # the inner table's finest rows as a native title.
@@ -753,8 +832,16 @@ def assemble(pages, first, last, *, source, destination, reserve_kan='11', perso
                         non_amount = ''.join(compact(v) for k, v in item['cells'].items() if k != amount_column)
                         if '計' in non_amount and not any(c for c in non_amount.replace('計', '') if not c.isdigit() and c not in ',－件人'):
                             inner_controls.append(record)
+                            if is_lending:
+                                loc = item['location']
+                                excluded.append({**LENDING_EXCLUSION, 'page':page,
+                                    'bbox':[loc[k] for k in coordinates_keys()[1:]]})
                         elif is_lending:
                             lending.append(record)
+                            loc = item['location']
+                            excluded.append({**LENDING_EXCLUSION, 'page': page,
+                                             'bbox': [loc['原典xMin'], loc['原典yMin'],
+                                                      loc['原典xMax'], loc['原典yMax']]})
                         else:
                             owner['annual_rows'].append(record)
                     pending = []
@@ -781,11 +868,13 @@ def assemble(pages, first, last, *, source, destination, reserve_kan='11', perso
                         awaiting_header = False
                     continue
                 if annual:
-                    item = annual_row(row, annual['headers'])
+                    item = annual_row(row, annual['headers'], page)
                     if item:
                         name, cells = item
                         record = {**node_context(annual['owner']), '施工概要_区分': name,
-                                  **{'施工概要_' + key: val for key, val in cells.items()},
+                                  **{('施工概要_' + key): val for key, (val, _) in cells.items()},
+                                  **{('施工概要_' + key + '_' + k): v
+                                     for key, (_, loc) in cells.items() for k, v in loc.items()},
                                   **coordinates(row, page)}
                         if compact(name) == '計':
                             annual_controls.append(record)
@@ -810,6 +899,9 @@ def assemble(pages, first, last, *, source, destination, reserve_kan='11', perso
                                 owner['annual_rows'].append({**node_context(owner), '職員_区分': count[1].rstrip(),
                                                              '職員_人数': value[count.start(2):],
                                                              '職員_現在日': None, **coordinates(row, page)})
+                                staff_page, staff_box = rowbox(row, page)
+                                excluded.append({**PERSONNEL_EXCLUSION, 'page': staff_page,
+                                                 'bbox': staff_box})
                                 pending = []
                                 continue
                             total = re.fullmatch(r'計\s*([0-9]+)\s*人\s*(（.*）)', value)
@@ -818,6 +910,9 @@ def assemble(pages, first, last, *, source, destination, reserve_kan='11', perso
                                     record['職員_現在日'] = total[2]
                                 personnel_controls.append({'parents': node_context(owner), 'value': value,
                                                            **coordinates(row, page)})
+                                staff_page, staff_box = rowbox(row, page)
+                                excluded.append({**PERSONNEL_EXCLUSION, 'page': staff_page,
+                                                 'bbox': staff_box})
                                 pending = []
                                 continue
                             dated = re.fullmatch(r'(?!計)(.+?)\s*([0-9]+)\s*人\s*(（[^）]*）)', value)
@@ -826,6 +921,9 @@ def assemble(pages, first, last, *, source, destination, reserve_kan='11', perso
                                 owner['annual_rows'].append({**node_context(owner), '職員_区分': dated[1].rstrip(),
                                                              '職員_人数': dated[2] + ' 人',
                                                              '職員_現在日': dated[3], **coordinates(row, page)})
+                                staff_page, staff_box = rowbox(row, page)
+                                excluded.append({**PERSONNEL_EXCLUSION, 'page': staff_page,
+                                                 'bbox': staff_box})
                                 pending = []
                                 continue
                     if value.startswith('［') and min(w['x'] for w in row) > offset + 395:
@@ -906,6 +1004,7 @@ def assemble(pages, first, last, *, source, destination, reserve_kan='11', perso
                     parent_node['has_children'] = True
                 node = {'rank': rank, 'number': number, 'name': name, 'amount': payment['value'],
                         'department': department, 'name_x': name_x,
+                        'amount_location': coordinates([payment['number'], payment['circle']], page),
                         'location': coordinates([*row, *names], page), 'parent': parent_node,
                         'context': context(parents), 'has_children': False, 'annual_rows': []}
                 if pending_department and rank == 0:
@@ -921,9 +1020,10 @@ def assemble(pages, first, last, *, source, destination, reserve_kan='11', perso
                 nodes.append(node)
                 current[rank] = node
                 pending = []
-    quantity_controls, quantity_cells, office_headings = (
+    quantity_controls, quantity_cells, office_headings, quantity_excluded = (
         nonfinancial_facts(pages, nodes, source, destination, grids, handled, all_parents)
-        if nonfinancial_breakdown else ([], [], []))
+        if nonfinancial_breakdown else ([], [], [], []))
+    excluded.extend(quantity_excluded)
     records = []
     for node in nodes:
         records.extend(node['annual_rows'])
@@ -1017,7 +1117,7 @@ def assemble(pages, first, last, *, source, destination, reserve_kan='11', perso
     if nonfinancial_breakdown:
         observations['quantity_totals'] = quantity_controls
         observations['quantity_cells'] = quantity_cells
-    return records, reserve, lending, observations
+    return records, reserve, lending, observations, excluded
 
 
 def coordinates_keys():
@@ -1163,7 +1263,7 @@ def convert(inputs, destination, options):
             box = token.bbox
             pages[token.page].append({'text': token.raw_text, 'x': box.left, 'xe': box.right,
                                        'y': box.top, 'ye': box.bottom})
-    records, reserve, lending, observations = assemble(pages, first, last, source=source['path'], destination=destination,
+    records, reserve, lending, observations, excluded = assemble(pages, first, last, source=source['path'], destination=destination,
                                                       reserve_kan=options.get('reserve_kan', '11'),
                                                       personnel_breakdown=options.get('personnel_breakdown', False),
                                                       unexplained_section_detail=options.get('unexplained_section_detail', False),
@@ -1189,6 +1289,10 @@ def convert(inputs, destination, options):
             outputs.append((table_id, data, is_reserve, is_lending))
     for table_id, data, is_reserve, is_lending in outputs:
         output = destination / (table_id + '.parquet')
+        write_coverage_words(output, [(page, (w['x'], w['y'], w['xe'], w['ye']), w['text'])
+                                      for page, words in pages.items() for w in words
+                                      if 60 <= w['y'] < 790],
+                             excluded_regions=[] if is_reserve or is_lending else excluded)
         if not is_reserve and not is_lending:
             data = monetary.prepare(data)
         columns = write_parquet(output, data)

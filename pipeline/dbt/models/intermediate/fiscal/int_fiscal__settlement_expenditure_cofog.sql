@@ -3,7 +3,12 @@
 -- node_ids, so the key is (node_id, document_kind) and each document's own names
 -- are used; names are never mixed across documents.
 -- CSV trees live in their own intermediate; union them here so initial-budget 目 classify too.
-with unioned as (
+with account_kinds as (
+    -- One kind per (jurisdiction, account): the keyword dictionary maps an
+    -- account name to one kind no matter which year prints it (ADR 0023).
+    select distinct jurisdiction_code, account_name, account_kind
+    from {{ ref('int_fiscal__expenditure_accounts') }}
+), unioned as (
     select node_id, document_kind,
         {{ fiscal_match_text('jurisdiction_code') }} as jurisdiction_code,
         {{ fiscal_match_text('account_name') }} as fund_name,
@@ -27,13 +32,17 @@ with unioned as (
     -- Upstream models already emit one row per (document_kind, node_id); this
     -- deduplication only guards the union, keeping the alphabetically first name
     -- when one document carries conflicting names for the same node_id.
-    select * from unioned
+    select u.*, k.account_kind
+    from unioned u
+    left join account_kinds k
+      on {{ fiscal_match_text('k.jurisdiction_code') }} = {{ fiscal_match_text('u.jurisdiction_code') }}
+     and {{ fiscal_match_text('k.account_name') }} = u.fund_name
     qualify row_number() over (
         partition by node_id, document_kind
-        order by jurisdiction_code, fund_name, kan_name, kou_name, kan_code, moku_name) = 1
+        order by u.jurisdiction_code, fund_name, kan_name, kou_name, kan_code, moku_name, account_kind) = 1
 ), rules as (
     select rule_id, priority, status, cofog_code, moku_mode, coalesce(tentative, false) as tentative,
-    {% for col in ['applies_to', 'match_fund', 'match_kan', 'match_kou', 'match_kan_code', 'match_moku', 'match_setsu'] %}
+    {% for col in ['applies_to', 'match_fund', 'match_account_kind', 'match_kan', 'match_kou', 'match_kan_code', 'match_moku', 'match_setsu'] %}
         coalesce({{ fiscal_match_text(col) }}, '') as {{ col }}{% if not loop.last %},{% endif %}
     {% endfor %}
     from {{ ref('cofog_rules') }}
@@ -41,6 +50,7 @@ with unioned as (
 select m.node_id, m.document_kind, r.rule_id, case when r.tentative and r.status = 'assigned' then 'tentative' else r.status end as cofog_status, r.cofog_code
 from mokus m join rules r on
 {% for rule_col, moku_col in [('applies_to', 'jurisdiction_code'), ('match_fund', 'fund_name'),
+    ('match_account_kind', 'account_kind'),
     ('match_kan', 'kan_name'), ('match_kou', 'kou_name'), ('match_kan_code', 'kan_code'),
     ('match_moku', 'moku_name'), ('match_setsu', 'setsu_name')] %}
     (r.{{ rule_col }} = '' or exists (

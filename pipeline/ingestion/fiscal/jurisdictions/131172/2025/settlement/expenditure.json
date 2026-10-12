@@ -88,7 +88,7 @@
     {
       "table_id": "general-setsu",
       "conversion_id": "general-setsu",
-      "input_fingerprint": "5c688adf85b7ccb63ecaef6dab0ec3dc95013727abb9456e09e94f31aa8cba4b",
+      "input_fingerprint": "611b82f48ebbee8bbebc96b1c067a17b0efa69d2d0d514bc53b922bc2ec5b2a7",
       "account": "一般会計",
       "notes": [
         "最細行のみ: 法定節（区分番号+区分名称）が原典の最細明細で、節のない目（予備費等）は目行が葉行（区分_列は空）。款・項・目・合計の印字行は行にせず、所属する行の番号・名称・予算5列・執行6列・備考・印字位置を款_/項_/目_列として各leaf行へ反復する。款・項・目・歳出合計の印字行自体はlocal観測 parents.json に保持する。左印字頁に科目・予算5列・節区分、右印字頁に節金額・執行6列・備考が印字される。備考欄は水平罫線の結合セルが所属範囲を定め、セルが縦に覆う行のうち最上位の行の備考欄へセル全文を印字行の改行のまま保持する。物理頁はPDFの物理頁。名称の折り返しは改行、字間の印字間隔は空白で保持。本文の文字は描画が二重（クリップ済みの幽霊層は含めない）。見開き末尾の「一般会計」会計標は行の備考ではないため除く。",
@@ -99,16 +99,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131172/2025/settlement/expenditure/general-setsu-nodes.parquet",
-          "sha256": "92e273ea8b15b65662489f95ddceb8901ac5419878c4f120fb6dfec4e9f28f45",
-          "bytes": 25688
+          "sha256": "a1cc91be078a0a40907d9ad1f7380d485fa83c78608cde07399dfd6fd20d46b6",
+          "bytes": 26522
         },
         "row_count": 1102
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131172/2025/settlement/expenditure/general-setsu-amounts.parquet",
-          "sha256": "1f9b240a25d6e9eeced6bc71f7c7452998a2f6a315ab32ab30cf4bc91204634d",
-          "bytes": 41402
+          "sha256": "e0e1db3af80e81b8d2b1611fa4a57d091505a0a8d470b314e923794ecb924a26",
+          "bytes": 48483
         },
         "row_count": 7457
       }
@@ -116,7 +116,7 @@
     {
       "table_id": "kaigo-setsu",
       "conversion_id": "kaigo-setsu",
-      "input_fingerprint": "1eef048a098b6277567f3c931b8ba3b27b4c36dc6874dc3b90507a06ef9c07b5",
+      "input_fingerprint": "52bad9308ca8fea185c4d2f9db7487cbd875d1eefd86c81801f279d2da54b225",
       "account": "介護保険会計",
       "notes": [
         "最細行のみ: 法定節（区分番号+区分名称）が原典の最細明細で、節のない目（予備費等）は目行が葉行（区分_列は空）。款・項・目・合計の印字行は行にせず、所属する行の番号・名称・予算5列・執行6列・備考・印字位置を款_/項_/目_列として各leaf行へ反復する。款・項・目・歳出合計の印字行自体はlocal観測 parents.json に保持する。左印字頁に科目・予算5列・節区分、右印字頁に節金額・執行6列・備考が印字される。備考欄は水平罫線の結合セルが所属範囲を定め、セルが縦に覆う行のうち最上位の行の備考欄へセル全文を印字行の改行のまま保持する。物理頁はPDFの物理頁。名称の折り返しは改行、字間の印字間隔は空白で保持。本文の文字は描画が二重（クリップ済みの幽霊層は含めない）。見開き末尾の「介護保険会計」会計標は行の備考ではないため除く。",
@@ -127,16 +127,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131172/2025/settlement/expenditure/kaigo-setsu-nodes.parquet",
-          "sha256": "c80363f37bac0a83fb3cbea46c9deae4d075865558b4d6d6a484003bca3c8b32",
-          "bytes": 6840
+          "sha256": "986db0049175d70379de6f9baf73c97c389f8450ee32f3955f109b85b520389d",
+          "bytes": 7249
         },
         "row_count": 123
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131172/2025/settlement/expenditure/kaigo-setsu-amounts.parquet",
-          "sha256": "3a392483b1c9814acfd4d7a0abeed360836411cc364bb8bd15a919064ddd62a8",
-          "bytes": 6012
+          "sha256": "63a658b3cea837abe22e5c89ab23268266c0a42677b1f9a2e147f62fbe83c1ee",
+          "bytes": 8844
         },
         "row_count": 988
       }
@@ -144,7 +144,7 @@
     {
       "table_id": "kokuho-setsu",
       "conversion_id": "kokuho-setsu",
-      "input_fingerprint": "24859a95a8b86bb166df92750ba77dd25b81da03d462d20bc8b7503af45b3fbf",
+      "input_fingerprint": "96265f412f7f1c46a47d919ebaf8ca442e8c3a264893681c79d30df1efcb0b52",
       "account": "国民健康保険事業会計",
       "notes": [
         "最細行のみ: 法定節（区分番号+区分名称）が原典の最細明細で、節のない目（予備費等）は目行が葉行（区分_列は空）。款・項・目・合計の印字行は行にせず、所属する行の番号・名称・予算5列・執行6列・備考・印字位置を款_/項_/目_列として各leaf行へ反復する。款・項・目・歳出合計の印字行自体はlocal観測 parents.json に保持する。左印字頁に科目・予算5列・節区分、右印字頁に節金額・執行6列・備考が印字される。備考欄は水平罫線の結合セルが所属範囲を定め、セルが縦に覆う行のうち最上位の行の備考欄へセル全文を印字行の改行のまま保持する。物理頁はPDFの物理頁。名称の折り返しは改行、字間の印字間隔は空白で保持。本文の文字は描画が二重（クリップ済みの幽霊層は含めない）。見開き末尾の「国民健康保険事業会計」会計標は行の備考ではないため除く。",
@@ -155,16 +155,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131172/2025/settlement/expenditure/kokuho-setsu-nodes.parquet",
-          "sha256": "614a17ced27732fbe34f3f55af13ffc8ed76be4390ecd9a717e4a216b1b0c4e7",
-          "bytes": 6579
+          "sha256": "dcb878dd61fe0f7a234abfff74c057dd3b4a9eade465bc8da42dbb2105d22a43",
+          "bytes": 6970
         },
         "row_count": 104
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131172/2025/settlement/expenditure/kokuho-setsu-amounts.parquet",
-          "sha256": "50c7238089c55a197c764768096f5b80c18b0c1d770f54ba6e3be15c472ce896",
-          "bytes": 5063
+          "sha256": "5cf53fa93c02a3aae0acf289a50f13ce029820c61685964445642e7332f0d079",
+          "bytes": 8091
         },
         "row_count": 904
       }
@@ -172,7 +172,7 @@
     {
       "table_id": "kouki-setsu",
       "conversion_id": "kouki-setsu",
-      "input_fingerprint": "edbfc7419f3d9124d10910e39125af1c9ddf45203b7a6c4988799f6be706ac0f",
+      "input_fingerprint": "e4f5f1ccf38a32480381acd5527b20d8de2bbb1e4fc5631dce78e668765b7412",
       "account": "後期高齢者医療会計",
       "notes": [
         "最細行のみ: 法定節（区分番号+区分名称）が原典の最細明細で、節のない目（予備費等）は目行が葉行（区分_列は空）。款・項・目・合計の印字行は行にせず、所属する行の番号・名称・予算5列・執行6列・備考・印字位置を款_/項_/目_列として各leaf行へ反復する。款・項・目・歳出合計の印字行自体はlocal観測 parents.json に保持する。左印字頁に科目・予算5列・節区分、右印字頁に節金額・執行6列・備考が印字される。備考欄は水平罫線の結合セルが所属範囲を定め、セルが縦に覆う行のうち最上位の行の備考欄へセル全文を印字行の改行のまま保持する。物理頁はPDFの物理頁。名称の折り返しは改行、字間の印字間隔は空白で保持。本文の文字は描画が二重（クリップ済みの幽霊層は含めない）。見開き末尾の「後期高齢者医療会計」会計標は行の備考ではないため除く。",
@@ -183,16 +183,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131172/2025/settlement/expenditure/kouki-setsu-nodes.parquet",
-          "sha256": "4ee2039494f6c14ad722c0f17b8cae1bacb243d05c397c66b668dad423d2fe79",
-          "bytes": 4306
+          "sha256": "babc809f016969d638e61334a24330b69d701429311fddb6da24d163e94423db",
+          "bytes": 4668
         },
         "row_count": 49
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131172/2025/settlement/expenditure/kouki-setsu-amounts.parquet",
-          "sha256": "10ac57245c29e381d22c6f3ada755cecc2739dc63d675459537f8ffe0f652557",
-          "bytes": 3325
+          "sha256": "d3d6581cfde94e59107556877d5b05e943dfc49891d2ea9e55bc34785dfdbb50",
+          "bytes": 5405
         },
         "row_count": 409
       }

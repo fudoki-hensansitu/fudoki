@@ -19,7 +19,6 @@ where a.unit_text is null or a.unit_text not in ('円', '千円')
                  and {{ trim_cell('m.header') }} = n.axis_header
            ))
        -- A trailing Japanese-era year/period word names no current-year phase
-       -- (same rule as shared/amount.py FISCAL_YEAR_PATTERN, kept after inheritance).
-       or regexp_full_match(split_part(a.header_path, '/', -1),
-           '^(?:明治|大正|昭和|平成|令和)\s*(?:元|\d+)(?:\s*[~〜\-・,、]\s*(?:(?:明治|大正|昭和|平成|令和)\s*)?(?:元|\d+))*\s*年度$')
+       -- (shared/fiscal_year_notation macro, kept after inheritance).
+       or {{ fiscal_year_notation("split_part(a.header_path, '/', -1)") }}
    )

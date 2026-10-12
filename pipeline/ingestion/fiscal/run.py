@@ -123,6 +123,29 @@ def unchanged_legacy_receipt(document: dict, conversion: dict, table_id: str, fi
     receipt['input_fingerprint'] = fingerprint
     return receipt
 
+def coverage_peers(document: dict, converted: dict) -> dict:
+    """Match all adopted tables from the same original, across conversions.
+
+    Every PDF table currently comes from one original. Physical page numbers
+    are meaningful only within that original, never across different PDFs.
+    """
+    groups, origins = {}, {}
+    for conversion in document['conversions']:
+        identifiers = [item['table_id'] for item in conversion['expected_tables']
+                       if item['table_id'] in converted]
+        if not identifiers:
+            continue
+        inputs = conversion['inputs']
+        if len(inputs) != 1:
+            raise ValueError('Coverage requires an unambiguous original for each table')
+        origin = inputs[0]['sha256']
+        for ident in identifiers:
+            origins[ident] = origin
+            groups.setdefault(origin, []).append(converted[ident])
+    pooled = {origin: node_tables.combine_coverage_tables(items) for origin, items in groups.items()}
+    return {ident: pooled[origin] for ident, origin in origins.items()}
+
+
 def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bool = False,
             conversion_ids: list[str] | None = None, extend_plan: Path | None = None) -> dict:
     document = manifest.read(path)
@@ -157,6 +180,9 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
     outputs = {}
     tables = []
     pending_pdf = []
+    coverage_failures = []
+    adopted = {}
+    checked_pdf = []
     for conversion in document['conversions']:
         if conversion['id'] not in chosen:
             retained = [table for table in document['tables'] if table['conversion_id'] == conversion['id']]
@@ -172,6 +198,11 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
                     count = inspect_table(stored, table.get('metadata'))
                     if extend_plan is not None and count != reference['row_count']:
                         raise ValueError('Retained table row count differs from its receipt')
+            for table in retained:
+                if 'nodes' in table:
+                    adopted[table['table_id']] = node_tables.NodeTables(
+                        node_tables.read_rows(fetch(table['nodes']['object'], remote=remote)),
+                        node_tables.read_rows(fetch(table['amounts']['object'], remote=remote)))
             tables.extend(retained)
             continue
         inputs = manifest.resolved_inputs(document, conversion, selection)
@@ -230,10 +261,18 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
                 outputs[ident] = file
                 tables.append(table_receipt(document, conversion, ident, file,
                                             input_fingerprint=before[conversion['id']], metadata=metadata))
+    completed_by_id = {}
     for conversion, ident, rows, metadata, account, file in pending_pdf:
         siblings = [other_rows for _, other_ident, other_rows, _, other_account, _ in pending_pdf
                     if other_ident != ident and other_account == account]
         rows = complete_subject_rows(rows, siblings)
+        completed_by_id[ident] = rows
+        sidecar = node_tables.coverage_sidecar(file)
+        if sidecar.exists():
+            scope = json.loads(sidecar.read_text())
+            scope['excluded_regions'] = [*scope.get('excluded_regions', ()),
+                                         *node_tables.quantity_regions(rows, metadata or {})]
+            sidecar.write_text(json.dumps(scope, ensure_ascii=False) + '\n')
         try:
             migrated = node_tables.migrate_rows(rows, metadata or {})
         except ValueError:
@@ -245,11 +284,30 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
                           before[conversion['id']], remote=remote))
             outputs[ident] = file
             continue
+        adopted[ident] = migrated
+        checked_pdf.append((conversion, ident, migrated, metadata, file))
+    peers = coverage_peers(document, adopted)
+    raw_by_id = completed_by_id
+    for _, ident, migrated, _, file in checked_pdf:
+        adopted[ident] = node_tables.with_annotations(file, migrated, raw_rows=raw_by_id[ident], adopted=peers[ident])
+    peers = coverage_peers(document, adopted)
+    for conversion, ident, migrated, metadata, file in checked_pdf:
+        migrated = adopted[ident]
+        inputs = manifest.resolved_inputs(document, conversion, selection)
+        text_only = all(item['format'] == 'pdf' and item.get('pdf_type') == 'text' for item in inputs)
+        try:
+            node_tables.check_table_coverage(file, peers[ident], require=text_only,
+                                             control_tables=[adopted[ident]])
+        except ValueError as error:
+            coverage_failures.append(f'{ident}: {error}')
+            continue
         receipt, pair = node_receipt(document, conversion, ident, migrated, output,
                                      input_fingerprint=before[conversion['id']],
                                      notes=[n['text'] for n in (metadata or {}).get('notes', [])])
         outputs[ident] = pair
         tables.append(receipt)
+    if coverage_failures:
+        raise ValueError('Digit coverage failed:\n' + '\n'.join(coverage_failures))
     result = deepcopy(document)
     result['tables'] = tables
     manifest.validate(result)
@@ -312,6 +370,50 @@ def candidate_locator(directory: Path):
             found[kind] = by_sha[reference['object']['sha256']]
         return found if 'nodes' in table else found[None]
     return locate
+
+
+def verify_coverage(document: dict, locate, directory) -> dict:
+    """Digit coverage of candidate tables carrying a converter scope sidecar.
+
+    Saved tables keep no word scope (local-only sidecars are never uploaded),
+    so coverage is enforced at convert time and re-run here on candidates.
+    Uncovered tables are returned as MISMATCH rather than raised; the
+    candidate verify command exits with code 1 for those mismatches.
+    """
+    outcome = {}
+    adopted = {}
+    for table in document['tables']:
+        if 'nodes' in table and directory is not None:
+            try:
+                pair = locate(table)
+                adopted[table['table_id']] = node_tables.NodeTables(
+                    node_tables.read_rows(pair['nodes']), node_tables.read_rows(pair['amounts']))
+            except Exception as error:
+                outcome[table['table_id']] = {'status': MISMATCH, 'reason': str(error) or type(error).__name__}
+    peers = coverage_peers(document, adopted)
+    for table in document['tables']:
+        if 'nodes' not in table or directory is None or table['table_id'] in outcome:
+            continue
+        sidecars = sorted(directory.rglob(table['table_id'] + node_tables.COVERAGE_SIDECAR_SUFFIX))
+        if not sidecars:
+            outcome[table['table_id']] = {'status': NOT_APPLICABLE, 'reason': '網羅検査の対象範囲がない'}
+            continue
+        try:
+            scope = json.loads(sidecars[0].read_text())
+            result = node_tables.check_digit_coverage(
+                scope['words'], peers[table['table_id']], control_tables=[adopted[table['table_id']]],
+                exclusions=scope.get('excluded_regions', ()),
+                amount_columns=scope.get('amount_columns', ()))
+            outcome[table['table_id']] = {'status': MATCH if result['passed'] else MISMATCH,
+                                          'counts': result['counts'],
+                                          'uncovered': result['uncovered'][:10],
+                                          'reported': result['reported'][:10],
+                                          'bands_from': result['bands_from'],
+                                          'exclusions': result['exclusions'],
+                                          'elapsed': result['elapsed']}
+        except Exception as error:
+            outcome[table['table_id']] = {'status': MISMATCH, 'reason': str(error) or type(error).__name__}
+    return outcome
 
 
 def verify_report(path: Path, document: dict, results: list[dict], output: Path) -> dict:
@@ -391,10 +493,17 @@ def main() -> None:
             target = document['target']
             name = f'{target["jurisdiction"]}-{target["fiscal_year"]}-{manifest.document_slot(target)}-{document["direction"]}'
             results = verify_sums(document, locate)
+            coverage = verify_coverage(document, locate, args.candidate)
+            for item in results:
+                if item['table_id'] in coverage:
+                    item['coverage'] = coverage[item['table_id']]
             print(json.dumps(verify_report(path, document, results, output / f'{name}.json'), ensure_ascii=False))
             for item in results:
                 summary[item['status']] = summary.get(item['status'], 0) + 1
                 failed |= item['status'] == MISMATCH
+                # Candidate coverage reruns stop here too; saved tables keep
+                # no word scope, so their reports carry no coverage status.
+                failed |= item.get('coverage', {}).get('status') == MISMATCH
         print(json.dumps({'manifests': len(runs), 'tables': summary}, ensure_ascii=False))
         raise SystemExit(1 if failed else 0)
     elif args.command == 'restore':

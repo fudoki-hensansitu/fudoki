@@ -17,6 +17,7 @@ from collections import deque
 from pathlib import Path
 
 from ingestion.lib.conversion import ConversionContext, write_conversion
+from ingestion.lib.node_tables import AMOUNT_POSITION_SUFFIXES, amount_position_fields, null_position_fields, write_coverage_words, coverage_regions
 from ingestion.lib.parquet import ParquetColumn
 
 PAGE_WIDTH = 595.0
@@ -79,15 +80,33 @@ def table_start(words):
 DETAIL_COLUMNS = [
     '款_番号', '款_名称', '款_決算額', '款_国庫支出金', '款_都支出金', '款_市債',
     '款_その他', '款_一般財源', '款_執行率', '款_物理頁', '款_上端', '款_下端',
+    '款_左端', '款_右端',
     '項_番号', '項_名称', '項_予算現額', '項_当年度決算額', '項_前年度決算額', '項_物理頁', '項_上端', '項_下端',
+    '項_左端', '項_右端',
     '目_番号', '目_名称', '目_予算現額', '目_当年度決算額', '目_前年度決算額',
     '目_物理頁', '目_上端', '目_下端',
+    '目_左端', '目_右端',
     '事業_番号', '事業_名称', '事業_担当課', '事業_予算現額', '事業_当年度決算額',
     '事業_前年度決算額', '事業_説明', '事業_物理頁', '事業_上端', '事業_下端',
     '内訳_番号', '内訳_名称', '内訳_金額', '内訳_物理頁', '内訳_上端', '内訳_下端',
     '細目_番号', '細目_名称', '細目_数量', '細目_金額', '細目_物理頁', '細目_上端', '細目_下端',
     '細々目_名称', '細々目_数量', '細々目_金額', '細々目_物理頁', '細々目_上端', '細々目_下端',
 ]
+
+
+def is_detail_amount(column, kan_funds):
+    return (column.endswith(('決算額', '予算現額', '前年度決算額', '金額'))
+            or column in kan_funds)
+
+
+def with_amount_positions(columns, kan_funds):
+    """Append per-amount print positions for every adopted amount column."""
+    return list(columns) + [f'{c}_{s}' for c in columns
+                            if is_detail_amount(c, kan_funds) for s in AMOUNT_POSITION_SUFFIXES]
+
+
+DETAIL_COLUMNS = with_amount_positions(
+    DETAIL_COLUMNS, {'款_' + n for n in DEFAULT_FUNDS})
 
 
 def detail_columns(funds):
@@ -97,12 +116,17 @@ def detail_columns(funds):
         return [c for c in DETAIL_COLUMNS]
     out = []
     skip = {'款_国庫支出金', '款_都支出金', '款_市債', '款_その他', '款_一般財源'}
-    inserted = False
+    inserted = inserted_pos = False
     for c in DETAIL_COLUMNS:
         if c in skip:
             if not inserted:
                 out.extend(fund_cols)
                 inserted = True
+            continue
+        if any(c == f'{s}_{suffix}' for s in skip for suffix in AMOUNT_POSITION_SUFFIXES):
+            if not inserted_pos:
+                out.extend(f'款_{n}_{suffix}' for n in funds for suffix in AMOUNT_POSITION_SUFFIXES)
+                inserted_pos = True
             continue
         out.append(c)
     return out
@@ -114,6 +138,42 @@ ANNEX_COLUMNS = [
     '款_番号', '項_番号', '目_番号', '事業_番号', '事業_物理頁', '事業_上端',
     '本文', '物理頁', '上端', '下端', '左端', '右端',
 ]
+
+
+def boxes(words):
+    return [[w['xMin'], w['yMin'], w['xMax'], w['yMax']] for w in words]
+
+
+def amount_cells(keys, texts, owners, page):
+    """Amount texts with their own printed positions, keyed per amount column.
+
+    Every key is emitted so rows stay homogeneous; absent amounts keep NULL
+    positions and create no amount row. A printed amount without its words
+    is a converter bug, never a silent NULL.
+    """
+    record = {}
+    for key in keys:
+        value = texts.get(key)
+        words = owners.get(key, [])
+        record[key] = value
+        if value is not None:
+            if not words:
+                raise ValueError(f'Printed amount without word boxes: {key}')
+            record.update(amount_position_fields(key, page, boxes(words)))
+        else:
+            record.update(null_position_fields(key))
+    return record
+
+
+def node_x(words):
+    """Name-zone horizontal extent for a heading's node box.
+
+    The shared position() keeps the full printed line for the vertical band;
+    the horizontal extent stays with the number/name words so amount columns
+    never fall inside a node's box in the coverage check.
+    """
+    words = list(words)
+    return {'左端': min(w['xMin'] for w in words), '右端': max(w['xMax'] for w in words)}
 
 
 def squashed(words):
@@ -240,8 +300,14 @@ def parse_kou_heading(words, page):
     if not name:
         return None
     return {'番号': m.group(1), '名称': name,
-            '予算現額': words[iparen]['text'], '当年度決算額': rest[0]['text'],
-            '前年度決算額': squashed(prev_words) or None,
+            **amount_cells(['予算現額', '当年度決算額', '前年度決算額'],
+                           {'予算現額': words[iparen]['text'],
+                            '当年度決算額': rest[0]['text'],
+                            '前年度決算額': squashed(prev_words) or None},
+                           {'予算現額': [words[iparen]], '当年度決算額': [rest[0]],
+                            '前年度決算額': prev_words},
+                           page),
+            **node_x(words[:iparen]),
             **position(page, words)}
 
 
@@ -270,9 +336,17 @@ def parse_moku_heading(words, page):
     return {'項_番号': words[0]['text'], '項_名称': text_of(words[1:split]),
             '項_物理頁': page, '項_上端': min(w['yMin'] for w in words[:split]),
             '項_下端': max(w['yMax'] for w in words[:split]),
+            '項_左端': min(w['xMin'] for w in words[:split]),
+            '項_右端': max(w['xMax'] for w in words[:split]),
             '番号': words[split]['text'], '名称': text_of(words[split + 1:iparen]),
-            '予算現額': words[iparen]['text'], '当年度決算額': rest[0]['text'],
-            '前年度決算額': squashed(rest[1:]) or None,
+            **amount_cells(['予算現額', '当年度決算額', '前年度決算額'],
+                           {'予算現額': words[iparen]['text'],
+                            '当年度決算額': rest[0]['text'],
+                            '前年度決算額': squashed(rest[1:]) or None},
+                           {'予算現額': [words[iparen]], '当年度決算額': [rest[0]],
+                            '前年度決算額': rest[1:]},
+                           page),
+            **node_x(words[split:iparen]),
             **position(page, words)}
 
 
@@ -301,10 +375,13 @@ def parse_moku_pending(words, page):
     return {'項_番号': words[0]['text'], '項_名称': text_of(words[1:split]),
             '項_物理頁': page, '項_上端': min(w['yMin'] for w in words[:split]),
             '項_下端': max(w['yMax'] for w in words[:split]),
+            '項_左端': min(w['xMin'] for w in words[:split]),
+            '項_右端': max(w['xMax'] for w in words[:split]),
             '番号': words[split]['text'] + (marks[0]['text'] + nums[0]['text'] if nums else ''),
             '名称': text_of(name_words),
             '物理頁': page, '上端': min(w['yMin'] for w in words),
-            '下端': max(w['yMax'] for w in words)}
+            '下端': max(w['yMax'] for w in words),
+            **node_x([words[split], *name_words])}
 
 
 def parse_moku_amounts(words):
@@ -317,8 +394,9 @@ def parse_moku_amounts(words):
     prev = rest[1:]
     if prev and not PREV_TEXT.match(squashed(prev)):
         return None
-    return {'予算現額': words[0]['text'], '当年度決算額': rest[0]['text'],
-            '前年度決算額': squashed(prev) or None}
+    return ({'予算現額': words[0]['text'], '当年度決算額': rest[0]['text'],
+             '前年度決算額': squashed(prev) or None},
+            {'予算現額': [words[0]], '当年度決算額': [rest[0]], '前年度決算額': prev})
 
 
 def parse_jigyo_heading(words, page):
@@ -448,7 +526,7 @@ class Builder:
         for level, subject in (('款', self.kan), ('項', self.kou), ('目', self.moku)):
             if subject:
                 row.update({level + '_' + k.lstrip('_'): v for k, v in subject.items()
-                            if not k.startswith('_') or k in ('_予算現額', '_当年度決算額', '_前年度決算額')})
+                            if not k.startswith('_')})
         self.subject_rows.append(row)
 
     def path_cols(self, allowed=None):
@@ -487,7 +565,7 @@ class Builder:
         kodirect = self.jigyo is not None and self.jigyo.get('_kodirect')
         if self.kou and not kodirect:
             row.update({'項_' + k.lstrip('_'): v for k, v in self.kou.items()
-                        if not k.startswith('_') or k in ('_予算現額', '_当年度決算額', '_前年度決算額')})
+                        if not k.startswith('_')})
         if self.moku:
             row.update({'目_' + k: v for k, v in self.moku.items()})
         if self.jigyo:
@@ -911,6 +989,11 @@ def convert(inputs, destination, options):
     b = Builder()
     b.detail_cols = detail_columns(funds)
     b.declared_stats = bool(stat_titles)
+    unadopted_words = []
+    def observe_unadopted(page, line):
+        unadopted_words.extend((page, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text'])
+                               for w in line)
+
     label_state = None          # None | 'kan'（款見出し済み・集計行待ち）| 'total'
     for page, words in pages:
         b.flush_funding()
@@ -956,7 +1039,8 @@ def convert(inputs, destination, options):
                         b.emit_annex(held_page, held_line)
                     b.kan = {'番号': pk['番号'], '名称': pk['名称'],
                              **{k: None for k in kan_keys},
-                             '物理頁': pk['物理頁'], '上端': pk['上端'], '下端': pk['下端']}
+                             '物理頁': pk['物理頁'], '上端': pk['上端'], '下端': pk['下端'],
+                             **node_x([w for _, held_line in pk['held'] for w in held_line if w['xMin'] < 115])}
                     b.kou = b.moku = None
                     b.kan_amount_cells = []
                     label_state = 'kan'
@@ -987,7 +1071,8 @@ def convert(inputs, destination, options):
                             break
                         name += w['text']
                     b.kan = {'番号': head[0]['text'], '名称': name or text_of(head[1:]),
-                             **{k: None for k in kan_keys}, **position(page, head)}
+                             **{k: None for k in kan_keys}, **position(page, head),
+                             **node_x(head)}
                     b.kou = b.moku = None
                     b.kan_amount_cells = []
                     label_state = 'kan'
@@ -1001,12 +1086,19 @@ def convert(inputs, destination, options):
                 # 款集計の金額行: 7セルを右端 (xMax) 順に固定順序へ割り当てる。
                 # 頁途中の款見出しではy jitterで行が割れるためxMax順で復元する。
                 # 単一行では従来の印字順と同一になる。
-                b.kan_amount_cells.extend((w['xMax'], w['text']) for w in line)
+                b.kan_amount_cells.extend((w['xMax'], w['text'], page, w) for w in line)
                 if len(b.kan_amount_cells) > 7:
-                    raise ValueError(f'款集計の金額セルが7超: {[t for _, t in b.kan_amount_cells]}')
+                    raise ValueError(f'款集計の金額セルが7超: {[t for _, t, _, _ in b.kan_amount_cells]}')
                 if len(b.kan_amount_cells) == 7:
-                    vals = dict(zip(kan_keys, [t for _, t in sorted(b.kan_amount_cells)]))
-                    b.kan.update(vals)
+                    ordered = sorted(b.kan_amount_cells, key=lambda c: c[0])
+                    vals = dict(zip(kan_keys, [t for _, t, _, _ in ordered]))
+                    owners = {k: [w] for k, (_, _, _, w) in zip(kan_keys, ordered)}
+                    # 執行率は金額ではないため印字テキストのみ保持し、位置は付けない。
+                    amount_keys = [k for k in kan_keys if k != '執行率']
+                    b.kan.update(amount_cells(amount_keys,
+                                              {k: vals[k] for k in amount_keys},
+                                              {k: owners[k] for k in amount_keys}, page))
+                    b.kan['執行率'] = vals['執行率']
                     b.obs_kan.append({'page': page, '番号': b.kan['番号'], '名称': b.kan['名称'],
                                       **vals, **position(page, line)})
                     b.capture_subject()
@@ -1041,15 +1133,18 @@ def convert(inputs, destination, options):
                 continue
             if b.pending_moku is not None:
                 if (all(w['xMax'] < 450 for w in line)
-                        and (amts := parse_moku_amounts(line))):
+                        and (parsed := parse_moku_amounts(line))):
+                    amts, owners = parsed
                     pm = b.pending_moku
                     b.pending_moku = None
                     pm.pop('words')
                     b.close_jigyo()
                     b.kou = {'番号': pm.pop('項_番号'), '名称': pm.pop('項_名称'),
                              '物理頁': pm.pop('項_物理頁'), '上端': pm.pop('項_上端'),
-                             '下端': pm.pop('項_下端')}
-                    pm.update(amts)
+                             '下端': pm.pop('項_下端'),
+                             '左端': pm.pop('項_左端'), '右端': pm.pop('項_右端')}
+                    pm.update(amount_cells(['予算現額', '当年度決算額', '前年度決算額'],
+                                           amts, owners, page))
                     b.moku = pm
                     b.obs_moku.append({'page': pm['物理頁'], '款': b.kan and b.kan['番号'],
                                        '項': b.kou['番号'], '目': pm['番号'], '名称': pm['名称'],
@@ -1064,7 +1159,8 @@ def convert(inputs, destination, options):
                 b.close_jigyo()
                 b.kou = {'番号': moku.pop('項_番号'), '名称': moku.pop('項_名称'),
                          '物理頁': moku.pop('項_物理頁'), '上端': moku.pop('項_上端'),
-                         '下端': moku.pop('項_下端')}
+                         '下端': moku.pop('項_下端'), '左端': moku.pop('項_左端'),
+                         '右端': moku.pop('項_右端')}
                 b.moku = moku
                 b.obs_moku.append({'page': page, '款': b.kan and b.kan['番号'],
                                    '項': b.kou['番号'], '目': moku['番号'], '名称': moku['名称'],
@@ -1082,8 +1178,11 @@ def convert(inputs, destination, options):
                 b.close_jigyo()
                 b.kou = {'番号': kou['番号'], '名称': kou['名称'], '物理頁': kou['物理頁'],
                          '上端': kou['上端'], '下端': kou['下端'],
-                         '_予算現額': kou['予算現額'], '_当年度決算額': kou['当年度決算額'],
-                         '_前年度決算額': kou['前年度決算額']}
+                         '左端': kou['左端'], '右端': kou['右端'],
+                         **{k: kou[k] for k in ('予算現額', '当年度決算額', '前年度決算額')},
+                         **{k: kou[k] for k in kou
+                            if any(k == f'{c}_{s}' for c in ('予算現額', '当年度決算額', '前年度決算額')
+                                   for s in AMOUNT_POSITION_SUFFIXES)}}
                 b.moku = None
                 b.obs_kou.append({'page': page, '款': b.kan and b.kan['番号'],
                                    '項': kou['番号'], '名称': kou['名称'],
@@ -1094,12 +1193,13 @@ def convert(inputs, destination, options):
                 continue
             jigyo = parse_jigyo_heading(line, page)
             if jigyo:
+                observe_unadopted(page, line)
                 b.close_jigyo()
                 # 款直轄事業: 事業決算が現項決算を上回り (containment違反)、
                 # かつ款決算と一致するときのみ項を継承しない。決算どうしで比べる。
                 if (b.kou is not None and b.kan is not None and b.kan.get('決算額') is not None
                         and (nd := num_or_none(jigyo['当年度決算額'])) is not None
-                        and (td := num_or_none(b.kou.get('_当年度決算額'))) is not None
+                        and (td := num_or_none(b.kou.get('当年度決算額'))) is not None
                         and (kd := num_or_none(b.kan['決算額'])) is not None
                         and nd > td and nd == kd):
                     jigyo['_kodirect'] = True
@@ -1112,6 +1212,7 @@ def convert(inputs, destination, options):
                 continue
             cont = parse_jigyo_continuation(line)
             if cont and b.jigyo is not None and b.jigyo['前年度決算額'] is None and b.item is None:
+                observe_unadopted(page, line)
                 b.jigyo['前年度決算額'] = cont['前年']
                 if cont['課']:
                     b.jigyo['担当課'] = (b.jigyo['担当課'] + '\n' + cont['課']
@@ -1119,6 +1220,7 @@ def convert(inputs, destination, options):
                 if cont['annex']:
                     b.emit_annex(page, cont['annex'])
                 continue
+            observe_unadopted(page, line)
             left = [w for w in line if w['xMin'] < RIGHT_X]
             if b.left_line(left, page):
                 b.right_line(b.pop_right_extra() + [w for w in line if w['xMin'] >= RIGHT_X], page)
@@ -1159,12 +1261,19 @@ def convert(inputs, destination, options):
         # form an additive tree. Repeated ancestors keep their printed positions.
         subject_columns = [c for c in b.detail_cols if c.startswith(('款_', '項_', '目_'))]
         subject_rows = [{c: row.get(c) for c in subject_columns} for row in b.subject_rows]
+        detail_path = destination / (options['detail_table_id'] + '.parquet')
         outputs[options['detail_table_id']] = {
-            'path': Path(write_conversion(destination / (options['detail_table_id'] + '.parquet'),
+            'path': Path(write_conversion(detail_path,
                          subject_rows, columns=cols(subject_columns),
                          context=context(options['detail_table_id'])).path),
             'metadata': detail_metadata(subject_columns, funds, options.get('scope_label'),
                                         options.get('stat_titles'))}
+        write_coverage_words(detail_path,
+                             [(pg, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text'])
+                              for pg, words in pages for w in words if w['yMin'] < FOOTER_TOP],
+                             excluded_regions=coverage_regions(
+                                 unadopted_words, kind='本文',
+                                 reason='主要施策の事業説明・内訳・財源・付表は観測用に読む。抜粋で目の決算額に閉じないため、採用する款項目の表に含めない。'))
     if 'funding' in emit:
         if not options.get('funding_table_id'):
             raise ValueError('emit funding requires funding_table_id')
@@ -1211,7 +1320,9 @@ def detail_metadata(columns, funds, scope_label=None, stat_titles=None):
             '款・項・目の印字された名称・金額・位置を保持する。項の金額は印字されない場合がある。'
             '目の下の事業は主要施策の抜粋であるため、この表には含めない。'
             '範囲番号の目は一つの目として保持する。款の財源内訳は別の金額欄である。'
-            '（予算現額）・<前年度決算額>は印字通りの文字列。')
+            '（予算現額）・<前年度決算額>は印字通りの文字列。'
+            '網羅検査の対象は処理した頁の文字層であり、採用表以外の事業説明・財源内訳・'
+            '内表・注記の数字は件数と例を報告する。')
     if funds != DEFAULT_FUNDS:
         note += ('款の資金分解5列は原典款見出しの印字どおり（' + '・'.join(funds) + '）で、'
                  '一般会計の分解（国庫支出金・都支出金・市債・その他・一般財源）とは列名が異なる。'

@@ -1,4 +1,5 @@
--- Every account carries a kind from the shared 5-term vocabulary, and every
+-- Every account carries a kind from the shared dictionary (account_kind_map is
+-- the source of truth; the vocabulary lives there, not here), and every
 -- identified transfer recipient does too. Unidentified recipients (他会計繰出金)
 -- keep the mark with a NULL recipient instead of a guessed kind.
 -- Marks sit only on transfer-named nodes, topmost per branch, one axis per 目.
@@ -19,12 +20,16 @@ with recursive eligible as (
 )
 select node_id, 'bad_account_kind' as failure, account_kind as value
 from {{ ref('settlement_expenditure_node') }}
-where account_kind not in ('一般会計', '国民健康保険', '介護保険', '後期高齢者医療', 'その他')
+where account_kind not in (
+    select account_kind from {{ ref('account_kind_map') }}
+    where account_kind is not null and account_kind <> '')
 union all
 select node_id, 'bad_transfer_recipient', interfund_transfer_to
 from {{ ref('settlement_expenditure_node') }}
 where interfund_transfer_to is not null
-  and interfund_transfer_to not in ('一般会計', '国民健康保険', '介護保険', '後期高齢者医療', 'その他')
+  and interfund_transfer_to not in (
+    select account_kind from {{ ref('account_kind_map') }}
+    where account_kind is not null and account_kind <> '')
 union all
 select node_id, 'transfer_recipient_without_mark', interfund_transfer_to
 from {{ ref('settlement_expenditure_node') }}

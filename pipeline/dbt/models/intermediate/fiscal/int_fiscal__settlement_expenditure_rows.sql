@@ -1,5 +1,5 @@
 -- Keep source rows until cross-table identity and value checks have passed.
--- Level names follow one shared rule (ADR 0024): the axis carrying 款 is the subject axis
+-- Level names follow one shared rule (ADR 0025): the axis carrying 款 is the subject axis
 -- and its depths 1/2/3 are 款・項・目; any other axis uses its printed level_header,
 -- or 内訳{depth} when nothing is printed.
 with recursive subject_axes as (
@@ -29,6 +29,7 @@ with recursive subject_axes as (
     join {{ source('fiscal_metadata', 'tables') }} t using (source_table_key)
     left join subject_axes s using (source_table_key)
     where t.document_kind in ('settlement', 'initial') and t.direction = 'expenditure'
+      and n.axis_header <> '注記'
 ), checked_nodes as (
     select * from mapped_nodes
 ), mapped_amounts as (
@@ -38,9 +39,8 @@ with recursive subject_axes as (
              when starts_with(a.header_path, n.axis_header || '/')
                   and split_part(a.header_path, '/', -1) = n.level_header then axis_map.phase
              -- A trailing Japanese-era year/period word names no current-year phase
-             -- (same rule as shared/amount.py FISCAL_YEAR_PATTERN; null like the else).
-             when regexp_full_match(split_part(a.header_path, '/', -1),
-                  '^(?:明治|大正|昭和|平成|令和)\s*(?:元|\d+)(?:\s*[~〜\-・,、]\s*(?:(?:明治|大正|昭和|平成|令和)\s*)?(?:元|\d+))*\s*年度$')
+             -- (shared/fiscal_year_notation macro; null like the else).
+             when {{ fiscal_year_notation("split_part(a.header_path, '/', -1)") }}
              then null
              else null end as amount_role,
         a.amount * case a.unit_text when '円' then 1 when '千円' then 1000
@@ -64,10 +64,37 @@ selected_amounts as (
         sum(amount_yen) filter (where amount_role = target_phase)::bigint as amount_yen,
         case when count(*) filter (where amount_role = target_phase)
                   = count(physical_page) filter (where amount_role = target_phase)
-             then min(physical_page) filter (where amount_role = target_phase) end as amount_source_page
+             then min(physical_page) filter (where amount_role = target_phase) end as amount_source_page,
+        -- The box is given only when one print is the whole amount; a sum of prints has no single box,
+        -- and a partly stored box is dropped whole so the four stay all-or-nothing.
+        case when count(*) filter (where amount_role = target_phase) = 1
+              and count(x0) filter (where amount_role = target_phase and physical_page is not null)
+                + count(y0) filter (where amount_role = target_phase and physical_page is not null)
+                + count(x1) filter (where amount_role = target_phase and physical_page is not null)
+                + count(y1) filter (where amount_role = target_phase and physical_page is not null) = 4
+             then min(x0) filter (where amount_role = target_phase and physical_page is not null) end as amount_source_x0,
+        case when count(*) filter (where amount_role = target_phase) = 1
+              and count(x0) filter (where amount_role = target_phase and physical_page is not null)
+                + count(y0) filter (where amount_role = target_phase and physical_page is not null)
+                + count(x1) filter (where amount_role = target_phase and physical_page is not null)
+                + count(y1) filter (where amount_role = target_phase and physical_page is not null) = 4
+             then min(y0) filter (where amount_role = target_phase and physical_page is not null) end as amount_source_y0,
+        case when count(*) filter (where amount_role = target_phase) = 1
+              and count(x0) filter (where amount_role = target_phase and physical_page is not null)
+                + count(y0) filter (where amount_role = target_phase and physical_page is not null)
+                + count(x1) filter (where amount_role = target_phase and physical_page is not null)
+                + count(y1) filter (where amount_role = target_phase and physical_page is not null) = 4
+             then min(x1) filter (where amount_role = target_phase and physical_page is not null) end as amount_source_x1,
+        case when count(*) filter (where amount_role = target_phase) = 1
+              and count(x0) filter (where amount_role = target_phase and physical_page is not null)
+                + count(y0) filter (where amount_role = target_phase and physical_page is not null)
+                + count(x1) filter (where amount_role = target_phase and physical_page is not null)
+                + count(y1) filter (where amount_role = target_phase and physical_page is not null) = 4
+             then min(y1) filter (where amount_role = target_phase and physical_page is not null) end as amount_source_y1
     from mapped_amounts group by source_table_key, node_key, document_kind
 ), amounts_checked as (
-    select n.*, a.amount_yen, a.amount_source_page
+    select n.*, a.amount_yen, a.amount_source_page,
+        a.amount_source_x0, a.amount_source_y0, a.amount_source_x1, a.amount_source_y1
     from checked_nodes n left join selected_amounts a using (source_table_key, node_key)
 ), hierarchy as (
     select n.*, n.code_text as kan_code, null::varchar as kou_code, null::varchar as moku_code,

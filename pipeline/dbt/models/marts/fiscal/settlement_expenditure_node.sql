@@ -10,6 +10,8 @@ with base as (
 select b.* exclude (document_kind),
     t.account_kind,
     t.is_interfund_transfer,
-    t.interfund_transfer_to
+    t.interfund_transfer_to,
+    s.expenditure_setsu_id
 from base b
 left join {{ ref('int_fiscal__expenditure_transfers') }} t using (node_id, document_kind)
+left join {{ ref('int_fiscal__expenditure_setsu') }} s using (node_id, document_kind)

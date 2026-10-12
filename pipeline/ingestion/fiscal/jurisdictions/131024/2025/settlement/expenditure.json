@@ -122,7 +122,7 @@
     {
       "table_id": "chuo-general-settlement",
       "conversion_id": "chuo-text-settlement-general",
-      "input_fingerprint": "e7d1c50836c40e57fafe44cad793c4fdead425cfb5391a14248a6717086fa08e",
+      "input_fingerprint": "d3a88cc74ede8e854daafae1ddeba23e2809070fbe6f15aaa80e7c40b7524bd4",
       "account": "一般会計",
       "notes": [
         "人数・件数・率・月額の基準および職員人数は金額の分解ではなく金額表に入れない。明細金額は最深の事業金額の反復であり二重計上しない。内表の縦結合金額は原典セルの位置で一度だけ数え、所属する印字区分の文字をまとめて保持する。",
@@ -133,24 +133,24 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131024/2025/settlement/expenditure/chuo-general-settlement-nodes.parquet",
-          "sha256": "896c31e83a64f681df8b7fda66840858fd469b616e2048a55f8dbe127a94a21a",
-          "bytes": 74531
+          "sha256": "0c17694dbda73dd86eb45c18195db7a9ba2edda3e2611f2ad2909a7b8a8d632f",
+          "bytes": 74666
         },
-        "row_count": 1695
+        "row_count": 1729
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131024/2025/settlement/expenditure/chuo-general-settlement-amounts.parquet",
-          "sha256": "db8602a2b924271777ee173e555a2a1cf6de01b7dc14ae21ea1f2b2ede5289cd",
-          "bytes": 41773
+          "sha256": "e918e4123a6dc5e646f202b7ff5b6725e72b37b3af613bd212646d8ab621c900",
+          "bytes": 67584
         },
-        "row_count": 2606
+        "row_count": 2640
       }
     },
     {
       "table_id": "chuo-care-settlement",
       "conversion_id": "chuo-text-settlement-care-detail",
-      "input_fingerprint": "3ab4a168c4093667831124c63746f2ad8e47391511443a68d36f090410c33e48",
+      "input_fingerprint": "08500858dde5ede56e69bde8f701300389c6a4ac23f27ce8ae73895b2adc3e48",
       "account": "介護保険事業会計",
       "notes": [
         "人数・件数・率・月額の基準および職員人数は金額の分解ではなく金額表に入れない。明細金額は最深の事業金額の反復であり二重計上しない。内表の縦結合金額は原典セルの位置で一度だけ数え、所属する印字区分の文字をまとめて保持する。",
@@ -169,8 +169,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131024/2025/settlement/expenditure/chuo-care-settlement-amounts.parquet",
-          "sha256": "2a671a4c558b37602e60a3108138fb5e56a4e77ef1b86e2f3221b2879b87aa4a",
-          "bytes": 5171
+          "sha256": "3bb7cf63ade03bc3c1fa778d3801774785ba17e1196a8c158b2bdc340e33f19c",
+          "bytes": 11051
         },
         "row_count": 526
       }
@@ -178,7 +178,7 @@
     {
       "table_id": "chuo-kokuho-settlement",
       "conversion_id": "chuo-text-settlement-kokuho-detail",
-      "input_fingerprint": "ed5a62cb2246e13f0b28fc03ec637ef57904ff9159edad3703aff801710fdb90",
+      "input_fingerprint": "372c00211acc48ac0a6958f166327b61f9396b67bf428a967392484bc19c7c1b",
       "account": "国民健康保険事業会計",
       "notes": [
         "人数・件数・率・月額の基準および職員人数は金額の分解ではなく金額表に入れない。明細金額は最深の事業金額の反復であり二重計上しない。内表の縦結合金額は原典セルの位置で一度だけ数え、所属する印字区分の文字をまとめて保持する。",
@@ -197,8 +197,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131024/2025/settlement/expenditure/chuo-kokuho-settlement-amounts.parquet",
-          "sha256": "fe7338e586cc550c73c610ea5e69060812fb9b8fbe87d54f7a73a6dc5704b9c9",
-          "bytes": 4414
+          "sha256": "6841ae7689d3b0d6c241d81836a8d7113f62a9472dbdbc8eb2dccf6adc8298b7",
+          "bytes": 10867
         },
         "row_count": 506
       }
@@ -206,7 +206,7 @@
     {
       "table_id": "chuo-kouki-settlement",
       "conversion_id": "chuo-text-settlement-kouki-detail",
-      "input_fingerprint": "d911d0a2836be3aad6c244033c454e318f7df1cd8fd60e0a9cc60ec21a58fce1",
+      "input_fingerprint": "4cb2e28c958c1b9f146a1777a5f64cbf75e120428190bbce4867a9798e214f72",
       "account": "後期高齢者医療会計",
       "notes": [
         "人数・件数・率・月額の基準および職員人数は金額の分解ではなく金額表に入れない。明細金額は最深の事業金額の反復であり二重計上しない。内表の縦結合金額は原典セルの位置で一度だけ数え、所属する印字区分の文字をまとめて保持する。",
@@ -225,8 +225,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131024/2025/settlement/expenditure/chuo-kouki-settlement-amounts.parquet",
-          "sha256": "8ed74632bf3a6d60f6faa69a8cb9466a85accd28f9fdb78dd911c267a46745c4",
-          "bytes": 2940
+          "sha256": "e31bd735c8b6e4811eebb8c442a1eb860b03ea895d356cf2123a94d4163853c9",
+          "bytes": 7171
         },
         "row_count": 239
       }

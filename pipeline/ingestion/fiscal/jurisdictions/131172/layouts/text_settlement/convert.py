@@ -25,6 +25,7 @@ import tempfile
 import xml.etree.ElementTree as ET
 
 from ingestion.lib.conversion import ConversionContext, write_conversion
+from ingestion.lib.node_tables import AMOUNT_POSITION_SUFFIXES, amount_position_fields, write_coverage_words
 from ingestion.lib.parquet import ParquetColumn
 
 AMOUNT = re.compile(r"△?(?:[0-9]{1,3}(?:,[0-9]{3})+|[0-9]+)")
@@ -49,6 +50,13 @@ SUM_KAN = (36.0, 210.1)
 SUM_KOU = (210.1, 384.2)
 SUM_EDGES = [(384.2, 558.3), (638.7, 772.6), (772.6, 899.9), (899.9, 1027.1), (1027.1, 1154.3)]
 SUM_COLUMNS = ['予算現額', '支出済額', '翌年度繰越額', '不用額', '比較']
+DETAIL_AMOUNT_COLUMNS = ([{'header': key, 'x_range': list(edges)}
+                         for key, edges in zip(BUDGET, BUDGET_EDGES)] +
+                        [{'header': key, 'x_range': list(edges)}
+                         for key, edges in zip(EXECUTED, EXEC_EDGES)])
+AMOUNT_COLUMNS = (DETAIL_AMOUNT_COLUMNS +
+                  [{'header': key, 'x_range': list(edges)}
+                   for key, edges in zip(SUM_COLUMNS, SUM_EDGES)])
 SUM_BODY_TOP = 125.0
 
 
@@ -202,11 +210,16 @@ def select(words, left, right, low, high):
             and low <= w['yMin'] < high]
 
 
+def boxes(words):
+    return [[w['xMin'], w['yMin'], w['xMax'], w['yMax']] for w in words]
+
+
 def cell_amounts(row, edges):
     """One printed amount per declared column band; None where unprinted.
 
     Amounts may be fragmented into several words; fragments are rejoined in x
     order. Fragments must tile the cell contiguously to count as one value.
+    Returns (text, word boxes) per band so the amount keeps its printed place.
     """
     values = []
     for left, right in edges:
@@ -223,8 +236,18 @@ def cell_amounts(row, edges):
             previous = w
         if value and not AMOUNT.fullmatch(value):
             raise ValueError(f'Non-amount text in amount column at y={row[0]["yMin"]}: {value!r}')
-        values.append(value or None)
+        values.append((value or None, boxes(pieces)))
     return values
+
+
+def amount_cells(row, page, keys, edges):
+    """Amount texts with their own printed positions, keyed per amount column."""
+    record = {}
+    for key, (value, word_boxes) in zip(keys, cell_amounts(row, edges)):
+        record[key] = value
+        record.update(amount_position_fields(key, page, word_boxes) if value is not None
+                      else {f'{key}_{suffix}': None for suffix in AMOUNT_POSITION_SUFFIXES})
+    return record
 
 
 def ruling_edges(pdf, page, workdir):
@@ -264,7 +287,8 @@ SEGMENT = re.compile(r"([ML])\s+(-?[\d.]+)\s+(-?[\d.]+)")
 
 
 def location(page, y, words):
-    return {'物理頁': page, '上端': y, '下端': max(w['yMax'] for w in words)}
+    return {'物理頁': page, '左端': min(w['xMin'] for w in words), '上端': y,
+            '右端': max(w['xMax'] for w in words), '下端': max(w['yMax'] for w in words)}
 
 
 def assign_notes(edges, words, anchors, account):
@@ -324,8 +348,8 @@ def parent_record(words, row, page, y, name_high):
                            'xMin': marker['xMin'] + 4.5 * len(match[1])})
     record = {'行種別': level, '番号': match[1] if match else None,
               '名称': '歳出合計' if level == '合計' else text(name_words),
-              **{key: value for key, value in zip(BUDGET, cell_amounts(row, BUDGET_EDGES))},
-              **{key: value for key, value in zip(EXECUTED, cell_amounts(row, EXEC_EDGES))},
+              **amount_cells(row, page, BUDGET, BUDGET_EDGES),
+              **amount_cells(row, page, EXECUTED, EXEC_EDGES),
               '備考': None,
               **location(page, y, labels + name_words)}
     return record
@@ -362,12 +386,14 @@ def section_record(words, row, page, y, name_high):
     return {'行種別': '節', '番号': None, '名称': None, '区分_番号': match[1],
             '区分_名称': text(name_words),
             **{key: None for key in BUDGET},
-            **{key: value for key, value in zip(EXECUTED, cell_amounts(row, EXEC_EDGES))},
+            **{f'{key}_{suffix}': None for key in BUDGET for suffix in AMOUNT_POSITION_SUFFIXES},
+            **amount_cells(row, page, EXECUTED, EXEC_EDGES),
             '備考': None,
             **location(page, y, taken + name_words)}
 
 
-PARENT_PREFIX_KEYS = ['番号', '名称', *BUDGET, *EXECUTED, '備考', '物理頁', '上端', '下端']
+PARENT_PREFIX_KEYS = ['番号', '名称', *BUDGET, *EXECUTED, '備考', '物理頁', '左端', '上端', '右端', '下端',
+                      *[f'{key}_{suffix}' for key in (*BUDGET, *EXECUTED) for suffix in AMOUNT_POSITION_SUFFIXES]]
 
 
 def lineage(context):
@@ -445,21 +471,22 @@ def detail(pages, edges, account):
             orphans.append({'物理頁': page, '行なし領域の文字': orphan})
         for record, context in delayed_moku:
             leaves.append({'区分_番号': None, '区分_名称': None,
-                           **{key: record.get(key) for key in EXECUTED},
-                           '備考': record.get('備考'), '物理頁': record['物理頁'],
-                           '上端': record['上端'], '下端': record['下端'],
+                           **{key: record.get(key) for key in
+                              (*EXECUTED, '備考', '物理頁', '左端', '上端', '右端', '下端',
+                               *(f'{k}_{s}' for k in EXECUTED for s in AMOUNT_POSITION_SUFFIXES))},
                            **lineage(context)})
         for record, context in pending:
             leaf = {key: record.get(key)
-                    for key in ('区分_番号', '区分_名称', *EXECUTED, '備考', '物理頁', '上端', '下端')}
+                    for key in ('区分_番号', '区分_名称', *EXECUTED, '備考', '物理頁', '左端', '上端', '右端', '下端',
+                                *(f'{k}_{s}' for k in EXECUTED for s in AMOUNT_POSITION_SUFFIXES))}
             leaf.update(lineage(context))
             leaves.append(leaf)
     if moku_leaf is not None:
         record, context = moku_leaf
         leaves.append({'区分_番号': None, '区分_名称': None,
-                       **{key: record.get(key) for key in EXECUTED},
-                       '備考': record.get('備考'), '物理頁': record['物理頁'],
-                       '上端': record['上端'], '下端': record['下端'],
+                       **{key: record.get(key) for key in
+                          (*EXECUTED, '備考', '物理頁', '左端', '上端', '右端', '下端',
+                           *(f'{k}_{s}' for k in EXECUTED for s in AMOUNT_POSITION_SUFFIXES))},
                        **lineage(context)})
     return leaves, parents, note_cells, orphans
 
@@ -473,14 +500,14 @@ def summary(pages, account):
         for row in lines(body):
             labels = [w for w in row if SUM_KAN[0] <= w['xMin'] < SUM_KOU[1]]
             amounts = cell_amounts(row, SUM_EDGES)
-            if not labels and not any(amounts):
+            if not labels and not all(value is None for value, _ in amounts):
                 continue
             marker = min(labels, key=lambda w: w['xMin']) if labels else None
             match = re.match(r'([0-9]+)(.*)', marker['text']) if marker else None
             joined = ''.join(w['text'] for w in labels).replace(' ', '')
             # A wrapped name prints its first line(s) above and its last line
             # below the numbered baseline; those lines hold labels only.
-            if labels and not any(amounts) and not match and joined != '歳出合計':
+            if labels and not any(value is not None for value, _ in amounts) and not match and joined != '歳出合計':
                 fragments.append({'yMin': row[0]['yMin'],
                                   'yMax': max(w['yMax'] for w in labels),
                                   'text': text(labels)})
@@ -517,9 +544,11 @@ def summary(pages, account):
                                  + [name] + [f['text'] for f in entry['suffix']] if part)
             record = {'番号': match[1] if match else None,
                       '名称': name,
-                      **{key: value for key, value in zip(SUM_COLUMNS, amounts)},
+                      **amount_cells(row, page, SUM_COLUMNS, SUM_EDGES),
                       '物理頁': page,
+                      '左端': row[0]['xMin'],
                       '上端': min([row[0]['yMin']] + [f['yMin'] for f in entry['prefix']]),
+                      '右端': max(w['xMax'] for w in labels) if labels else None,
                       '下端': max([w['yMax'] for w in labels
                                    + [w for w in row if AMOUNT.fullmatch(w['text'])]]
                                   + [f['yMax'] for f in entry['suffix']])}
@@ -533,14 +562,17 @@ def summary(pages, account):
     return rows
 
 
-DETAIL_COLUMNS = (['区分_番号', '区分_名称', *EXECUTED, '備考', '物理頁', '上端', '下端']
+DETAIL_COLUMNS = (['区分_番号', '区分_名称', *EXECUTED, '備考', '物理頁', '左端', '上端', '右端', '下端',
+                  *(f'{key}_{suffix}' for key in EXECUTED for suffix in AMOUNT_POSITION_SUFFIXES)]
                   + [f'{level}_{key}' for level in ('款', '項', '目') for key in PARENT_PREFIX_KEYS])
-KANKOU_COLUMNS = ['番号', '名称', *SUM_COLUMNS, '物理頁', '上端', '下端', '款_番号', '款_名称']
+KANKOU_COLUMNS = ['番号', '名称', *SUM_COLUMNS, '物理頁', '左端', '上端', '右端', '下端',
+                  *(f'{key}_{suffix}' for key in SUM_COLUMNS for suffix in AMOUNT_POSITION_SUFFIXES),
+                  '款_番号', '款_名称']
 
 
 def table_columns(keys):
     return tuple(ParquetColumn(k, 'BIGINT' if k == '物理頁' or k.endswith('_物理頁')
-                               else 'DOUBLE' if k.endswith(('上端', '下端')) else 'VARCHAR')
+                               else 'DOUBLE' if k.endswith(('左端', '上端', '右端', '下端')) else 'VARCHAR')
                  for k in keys)
 
 
@@ -639,4 +671,12 @@ def convert(inputs, destination, options):
                               [{key: row.get(key) for key in columns} for row in rows],
                               columns=table_columns(columns),
                               context=ConversionContext(source['sha256'], table_id, __file__))
+    threshold = SUM_BODY_TOP if part == 'summary' else BODY_TOP
+    write_coverage_words(Path(output.path),
+                         [(page, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text'])
+                          for page, entry in traced for w in entry['words']
+                          if threshold <= w['yMin'] < BODY_BOTTOM],
+                         amount_columns=DETAIL_AMOUNT_COLUMNS if part == 'detail' else
+                         [{'header': key, 'x_range': list(edges)}
+                          for key, edges in zip(SUM_COLUMNS, SUM_EDGES)])
     return {table_id: {'path': Path(output.path), 'metadata': meta}}

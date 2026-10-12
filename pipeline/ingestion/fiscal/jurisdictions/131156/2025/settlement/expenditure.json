@@ -159,7 +159,7 @@
     {
       "table_id": "general-expenditure-details",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "429d7a085777cf37b10b656380f40dd389fa9454182b0e0b0c2c8f57193f63ea",
+      "input_fingerprint": "86b563e5dcbab2cbf076dab4def0066d4961a6091b5f3e5cca8f69be16f3d4dc",
       "account": "一般会計",
       "notes": [
         "原典の同一目には節の財政明細行と目単位の事業内訳という親子関係のない2つの印字分解が併記される。所属する款・項・目の予算5列・執行3列・備考・印字位置を反復する。内訳項目行は備考欄の罫線セルに印字される支出済額の階層内訳で、事業（印字○、文字層では0）→番号付き項目→番号付き細目の最末端を葉とし、事業名【所管】・項目・細目の名称と金額を階層列へ展開する。内訳金額欄に印字見出しはなく、右端整列の金額を各項目へ対応させる。番号のない名称+金額行は番号NULLの内訳項目。節も内訳もない目は目自体を葉として節表に載せる。内訳項目の所属は罫線セルが覆う節ブロックの目まで（個々の節への割当は原典にない）。備考欄の金額構造を持たない単文はowner行の備考へ保持する。金額セルは1文字ずつの語に分かれるため列内で結合し、文字層の「•」「゜」は印字の「△」「0」へ復元する。原典は1物理頁=左右印字2頁の見開きで、左頁に科目・予算、右頁に節・執行・備考が印字される。見開き末尾の「一般会計」会計標・各頁の実行見出し・印字頁番号は明細ではないため除く。",
@@ -170,24 +170,24 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131156/2025/settlement/expenditure/general-expenditure-details-nodes.parquet",
-          "sha256": "0d16223108f554f754f4e29949eaaaecb2bb57eeda01b482a83690e277f4e7dd",
-          "bytes": 24166
+          "sha256": "a31ae46bf8f4b76d344cb95f7b3cf27722ec3996287f38b451d8534a93de9adb",
+          "bytes": 29691
         },
-        "row_count": 861
+        "row_count": 948
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131156/2025/settlement/expenditure/general-expenditure-details-amounts.parquet",
-          "sha256": "444b6e22b252bacf6068739981a19e430c06ac0e5fdef2dc4b8eb77fa462a0da",
-          "bytes": 29531
+          "sha256": "8a6a47347e317f71ab162797833e132decca1c3bcce6c41c83b480989a4435a4",
+          "bytes": 60567
         },
-        "row_count": 4016
+        "row_count": 4103
       }
     },
     {
       "table_id": "general-expenditure-notes",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "429d7a085777cf37b10b656380f40dd389fa9454182b0e0b0c2c8f57193f63ea",
+      "input_fingerprint": "86b563e5dcbab2cbf076dab4def0066d4961a6091b5f3e5cca8f69be16f3d4dc",
       "account": "一般会計",
       "notes": [
         "原典の同一目には節の財政明細行と目単位の事業内訳という親子関係のない2つの印字分解が併記される。所属する款・項・目の予算5列・執行3列・備考・印字位置を反復する。内訳項目行は備考欄の罫線セルに印字される支出済額の階層内訳で、事業（印字○、文字層では0）→番号付き項目→番号付き細目の最末端を葉とし、事業名【所管】・項目・細目の名称と金額を階層列へ展開する。内訳金額欄に印字見出しはなく、右端整列の金額を各項目へ対応させる。番号のない名称+金額行は番号NULLの内訳項目。節も内訳もない目は目自体を葉として節表に載せる。内訳項目の所属は罫線セルが覆う節ブロックの目まで（個々の節への割当は原典にない）。備考欄の金額構造を持たない単文はowner行の備考へ保持する。金額セルは1文字ずつの語に分かれるため列内で結合し、文字層の「•」「゜」は印字の「△」「0」へ復元する。原典は1物理頁=左右印字2頁の見開きで、左頁に科目・予算、右頁に節・執行・備考が印字される。見開き末尾の「一般会計」会計標・各頁の実行見出し・印字頁番号は明細ではないため除く。",
@@ -198,24 +198,24 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131156/2025/settlement/expenditure/general-expenditure-notes-nodes.parquet",
-          "sha256": "721ee43705a2ca002c8c5a00353108a2d6e7d310f2e9c348e0b6d0c8c2a7a82c",
-          "bytes": 151013
+          "sha256": "473e7d7dfafed921bc49e267149b219099c654f54aa9fd82b46a9583f6974792",
+          "bytes": 169673
         },
-        "row_count": 4436
+        "row_count": 4523
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131156/2025/settlement/expenditure/general-expenditure-notes-amounts.parquet",
-          "sha256": "7da1d07bb54e3be1a82584f7d349fa243d7e7e9981e5f323aa64c873cf11b466",
-          "bytes": 95980
+          "sha256": "1978bc411bab10860cb197cb3b60ccb38c6b47e58452d1f606600c64182286f6",
+          "bytes": 133857
         },
-        "row_count": 5437
+        "row_count": 5524
       }
     },
     {
       "table_id": "care-insurance-expenditure-details",
       "conversion_id": "care-insurance-settlement-details",
-      "input_fingerprint": "3db827962160aa43b5129ba66fe3aba9d772546194e78eb5779284b5e65c5dbb",
+      "input_fingerprint": "461c2e1b671302d833337015ec4156f39d5733283f5e78d0f351e23bdad97f98",
       "account": "介護保険事業会計",
       "notes": [
         "原典の同一目には節の財政明細行と目単位の事業内訳という親子関係のない2つの印字分解が併記される。所属する款・項・目の予算5列・執行3列・備考・印字位置を反復する。内訳項目行は備考欄の罫線セルに印字される支出済額の階層内訳で、事業（印字○、文字層では0）→番号付き項目→番号付き細目の最末端を葉とし、事業名【所管】・項目・細目の名称と金額を階層列へ展開する。内訳金額欄に印字見出しはなく、右端整列の金額を各項目へ対応させる。番号のない名称+金額行は番号NULLの内訳項目。節も内訳もない目は目自体を葉として節表に載せる。内訳項目の所属は罫線セルが覆う節ブロックの目まで（個々の節への割当は原典にない）。備考欄の金額構造を持たない単文はowner行の備考へ保持する。金額セルは1文字ずつの語に分かれるため列内で結合し、文字層の「•」「゜」は印字の「△」「0」へ復元する。原典は1物理頁=左右印字2頁の見開きで、左頁に科目・予算、右頁に節・執行・備考が印字される。見開き末尾の「介護保険事業会計」会計標・各頁の実行見出し・印字頁番号は明細ではないため除く。",
@@ -226,24 +226,24 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131156/2025/settlement/expenditure/care-insurance-expenditure-details-nodes.parquet",
-          "sha256": "d7d0265eb2153888369957074e1ba756e313a6bb4f42ef3fce0b593071189425",
-          "bytes": 6565
+          "sha256": "4b4006bb65f2c806b9f0ed757440edbfdc84ddf47c4616d4d45019e7d4f9dc9d",
+          "bytes": 7903
         },
-        "row_count": 106
+        "row_count": 114
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131156/2025/settlement/expenditure/care-insurance-expenditure-details-amounts.parquet",
-          "sha256": "d762eaab475486a9979af6ee708ecc70a0716b8db85ccd5e05c24c45dbff1375",
-          "bytes": 5078
+          "sha256": "9652eb434ce49afd1b11f8f21c6784883d9f75c10c31b6706733eea917e041a2",
+          "bytes": 12250
         },
-        "row_count": 604
+        "row_count": 612
       }
     },
     {
       "table_id": "care-insurance-expenditure-notes",
       "conversion_id": "care-insurance-settlement-notes",
-      "input_fingerprint": "93a81eb917d7c0510d5bd0ffcab5018a9233e2aeab2ecdffba1248ccc3a84ef1",
+      "input_fingerprint": "bba868ed7756908a20e768bf7e9fda199f60da0f55c5c18b6965c2f03bca3837",
       "account": "介護保険事業会計",
       "notes": [
         "原典の同一目には節の財政明細行と目単位の事業内訳という親子関係のない2つの印字分解が併記される。所属する款・項・目の予算5列・執行3列・備考・印字位置を反復する。内訳項目行は備考欄の罫線セルに印字される支出済額の階層内訳で、事業（印字○、文字層では0）→番号付き項目→番号付き細目の最末端を葉とし、事業名【所管】・項目・細目の名称と金額を階層列へ展開する。内訳金額欄に印字見出しはなく、右端整列の金額を各項目へ対応させる。番号のない名称+金額行は番号NULLの内訳項目。節も内訳もない目は目自体を葉として節表に載せる。内訳項目の所属は罫線セルが覆う節ブロックの目まで（個々の節への割当は原典にない）。備考欄の金額構造を持たない単文はowner行の備考へ保持する。金額セルは1文字ずつの語に分かれるため列内で結合し、文字層の「•」「゜」は印字の「△」「0」へ復元する。原典は1物理頁=左右印字2頁の見開きで、左頁に科目・予算、右頁に節・執行・備考が印字される。見開き末尾の「介護保険事業会計」会計標・各頁の実行見出し・印字頁番号は明細ではないため除く。",
@@ -254,24 +254,24 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131156/2025/settlement/expenditure/care-insurance-expenditure-notes-nodes.parquet",
-          "sha256": "c2fe917dd174a14f807c9e00a21dab8748052eb6db835ea8898a1cb582c33376",
-          "bytes": 9682
+          "sha256": "c460895fbced5f3dbfeb55b225039c23c989b71f1dc8e8735f95e32e364ccfa0",
+          "bytes": 11609
         },
-        "row_count": 174
+        "row_count": 182
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131156/2025/settlement/expenditure/care-insurance-expenditure-notes-amounts.parquet",
-          "sha256": "0304bce347131f8dd9fe512c85b1718aeb67f4e4d073032ac4019c503b1454ed",
-          "bytes": 5737
+          "sha256": "93f2e57c630255e076ddb90a16977e5c7c521702d78926ddbfb027c66c4d4f84",
+          "bytes": 11466
         },
-        "row_count": 489
+        "row_count": 497
       }
     },
     {
       "table_id": "national-health-insurance-expenditure-details",
       "conversion_id": "national-health-insurance-settlement-details",
-      "input_fingerprint": "df94c46d9cd7e7543ef10a020b2cf4ec514667830ad55f5792e61a6549745674",
+      "input_fingerprint": "51f6bcaadd1cd0e936ee7bd6121fec4e84f182cc6b87203742e7971664e0174b",
       "account": "国民健康保険事業会計",
       "notes": [
         "原典の同一目には節の財政明細行と目単位の事業内訳という親子関係のない2つの印字分解が併記される。所属する款・項・目の予算5列・執行3列・備考・印字位置を反復する。内訳項目行は備考欄の罫線セルに印字される支出済額の階層内訳で、事業（印字○、文字層では0）→番号付き項目→番号付き細目の最末端を葉とし、事業名【所管】・項目・細目の名称と金額を階層列へ展開する。内訳金額欄に印字見出しはなく、右端整列の金額を各項目へ対応させる。番号のない名称+金額行は番号NULLの内訳項目。節も内訳もない目は目自体を葉として節表に載せる。内訳項目の所属は罫線セルが覆う節ブロックの目まで（個々の節への割当は原典にない）。備考欄の金額構造を持たない単文はowner行の備考へ保持する。金額セルは1文字ずつの語に分かれるため列内で結合し、文字層の「•」「゜」は印字の「△」「0」へ復元する。原典は1物理頁=左右印字2頁の見開きで、左頁に科目・予算、右頁に節・執行・備考が印字される。見開き末尾の「国民健康保険事業会計」会計標・各頁の実行見出し・印字頁番号は明細ではないため除く。",
@@ -282,24 +282,24 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131156/2025/settlement/expenditure/national-health-insurance-expenditure-details-nodes.parquet",
-          "sha256": "e6ab2092e282b08db50aa8d0c464c2a9197ebf0223a8edeba8265566baa8ff6e",
-          "bytes": 6440
+          "sha256": "a0e9d4ba9d79c5e12708312eaa56f35ed9790788a59cb35066b0d00cb5f11885",
+          "bytes": 7350
         },
-        "row_count": 101
+        "row_count": 104
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131156/2025/settlement/expenditure/national-health-insurance-expenditure-details-amounts.parquet",
-          "sha256": "348b8ea572ef7311ece039901c322a5c7a8626e564286a544cda529aeb6effd5",
-          "bytes": 4825
+          "sha256": "22426de1adc6c97703faa9d1524719df40d4ba41556c364814f99da61f0ca4b0",
+          "bytes": 11938
         },
-        "row_count": 604
+        "row_count": 607
       }
     },
     {
       "table_id": "national-health-insurance-expenditure-notes",
       "conversion_id": "national-health-insurance-settlement-notes",
-      "input_fingerprint": "5737ae19324f01164bedd02c3b146364c5033eba701ffcba617abc3e91a46300",
+      "input_fingerprint": "f0efb9bd5721f713c918c4f6076515d0262a43444d0f28d7bc61f422ba5a2cd7",
       "account": "国民健康保険事業会計",
       "notes": [
         "原典の同一目には節の財政明細行と目単位の事業内訳という親子関係のない2つの印字分解が併記される。所属する款・項・目の予算5列・執行3列・備考・印字位置を反復する。内訳項目行は備考欄の罫線セルに印字される支出済額の階層内訳で、事業（印字○、文字層では0）→番号付き項目→番号付き細目の最末端を葉とし、事業名【所管】・項目・細目の名称と金額を階層列へ展開する。内訳金額欄に印字見出しはなく、右端整列の金額を各項目へ対応させる。番号のない名称+金額行は番号NULLの内訳項目。節も内訳もない目は目自体を葉として節表に載せる。内訳項目の所属は罫線セルが覆う節ブロックの目まで（個々の節への割当は原典にない）。備考欄の金額構造を持たない単文はowner行の備考へ保持する。金額セルは1文字ずつの語に分かれるため列内で結合し、文字層の「•」「゜」は印字の「△」「0」へ復元する。原典は1物理頁=左右印字2頁の見開きで、左頁に科目・予算、右頁に節・執行・備考が印字される。見開き末尾の「国民健康保険事業会計」会計標・各頁の実行見出し・印字頁番号は明細ではないため除く。",
@@ -310,24 +310,24 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131156/2025/settlement/expenditure/national-health-insurance-expenditure-notes-nodes.parquet",
-          "sha256": "750aa95e35e0e3a31e72ef264cd27c96b5bf2f5d532e444026d5b93efef8998c",
-          "bytes": 8012
+          "sha256": "554c3fb1219f6f1ae640e1ad7bc3281c7fb8c1f8aea07c2a2bb9f504731e008b",
+          "bytes": 9380
         },
-        "row_count": 132
+        "row_count": 135
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131156/2025/settlement/expenditure/national-health-insurance-expenditure-notes-amounts.parquet",
-          "sha256": "36f3e16af68834311468605e665edccda1f7f3554bb1f92e9923251dc44631d8",
-          "bytes": 4817
+          "sha256": "fea3d2f4e126cc760102887597fe358b78ba693f9114daca677a4414fbc94c85",
+          "bytes": 10470
         },
-        "row_count": 482
+        "row_count": 485
       }
     },
     {
       "table_id": "late-stage-elderly-expenditure-details",
       "conversion_id": "late-stage-elderly-settlement-details",
-      "input_fingerprint": "0e3d151733b5c002d6a6d827ab8a4ac97000fffde9c627b375d0763604b33fe0",
+      "input_fingerprint": "af9b2312fe401bcf6e360a2a6d0e8a84bb8dab9fe72f43ef2ef3ffa32d9aac7b",
       "account": "後期高齢者医療事業会計",
       "notes": [
         "原典の同一目には節の財政明細行と目単位の事業内訳という親子関係のない2つの印字分解が併記される。所属する款・項・目の予算5列・執行3列・備考・印字位置を反復する。内訳項目行は備考欄の罫線セルに印字される支出済額の階層内訳で、事業（印字○、文字層では0）→番号付き項目→番号付き細目の最末端を葉とし、事業名【所管】・項目・細目の名称と金額を階層列へ展開する。内訳金額欄に印字見出しはなく、右端整列の金額を各項目へ対応させる。番号のない名称+金額行は番号NULLの内訳項目。節も内訳もない目は目自体を葉として節表に載せる。内訳項目の所属は罫線セルが覆う節ブロックの目まで（個々の節への割当は原典にない）。備考欄の金額構造を持たない単文はowner行の備考へ保持する。金額セルは1文字ずつの語に分かれるため列内で結合し、文字層の「•」「゜」は印字の「△」「0」へ復元する。原典は1物理頁=左右印字2頁の見開きで、左頁に科目・予算、右頁に節・執行・備考が印字される。見開き末尾の「後期高齢者医療事業会計」会計標・各頁の実行見出し・印字頁番号は明細ではないため除く。",
@@ -338,24 +338,24 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131156/2025/settlement/expenditure/late-stage-elderly-expenditure-details-nodes.parquet",
-          "sha256": "a7bfdd449590cb65a4a0b54105add543e6d31899062a32d46bc00ec4020367ac",
-          "bytes": 3761
+          "sha256": "7a723b4098a96263222e3f29841084f12aac90ae59b9a562e7351ceea3e7e49b",
+          "bytes": 4311
         },
-        "row_count": 33
+        "row_count": 35
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131156/2025/settlement/expenditure/late-stage-elderly-expenditure-details-amounts.parquet",
-          "sha256": "97ca0057a8abe74003f9aa689c46e363f0d9081a2b2dae43cee8c3b7534af301",
-          "bytes": 2647
+          "sha256": "b4b46e422ce9a77962fc08f2f60077c3f25815e349d451621f434c1ed12e113d",
+          "bytes": 5407
         },
-        "row_count": 216
+        "row_count": 218
       }
     },
     {
       "table_id": "late-stage-elderly-expenditure-notes",
       "conversion_id": "late-stage-elderly-settlement-notes",
-      "input_fingerprint": "7e00c8edddebeaff988f382818256e4274ad962a2608909cb357e0d6868a6180",
+      "input_fingerprint": "a6263d4e478aa5f10b91f453448091cb4d6126eb70b3d37e7330e32dae6cc59b",
       "account": "後期高齢者医療事業会計",
       "notes": [
         "原典の同一目には節の財政明細行と目単位の事業内訳という親子関係のない2つの印字分解が併記される。所属する款・項・目の予算5列・執行3列・備考・印字位置を反復する。内訳項目行は備考欄の罫線セルに印字される支出済額の階層内訳で、事業（印字○、文字層では0）→番号付き項目→番号付き細目の最末端を葉とし、事業名【所管】・項目・細目の名称と金額を階層列へ展開する。内訳金額欄に印字見出しはなく、右端整列の金額を各項目へ対応させる。番号のない名称+金額行は番号NULLの内訳項目。節も内訳もない目は目自体を葉として節表に載せる。内訳項目の所属は罫線セルが覆う節ブロックの目まで（個々の節への割当は原典にない）。備考欄の金額構造を持たない単文はowner行の備考へ保持する。金額セルは1文字ずつの語に分かれるため列内で結合し、文字層の「•」「゜」は印字の「△」「0」へ復元する。原典は1物理頁=左右印字2頁の見開きで、左頁に科目・予算、右頁に節・執行・備考が印字される。見開き末尾の「後期高齢者医療事業会計」会計標・各頁の実行見出し・印字頁番号は明細ではないため除く。",
@@ -366,18 +366,18 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131156/2025/settlement/expenditure/late-stage-elderly-expenditure-notes-nodes.parquet",
-          "sha256": "55eef3334fa76a37325494a3bc3697e88d6fa2fa0435aa6f2f0ee705ba7f8889",
-          "bytes": 4469
+          "sha256": "fbc07fc6531b2b7e31cf71cfcf3f43cf1f3e2a9f91e93334274ea3f196dab773",
+          "bytes": 5197
         },
-        "row_count": 45
+        "row_count": 47
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131156/2025/settlement/expenditure/late-stage-elderly-expenditure-notes-amounts.parquet",
-          "sha256": "6f27b4f19b462219326218a1647be63884d6e499bad4a45a631da220ed8ef799",
-          "bytes": 2667
+          "sha256": "b8b490f4c10fec0ee8e0bb68c939b6306ae773817d46cb0c1bf0249643d960a9",
+          "bytes": 5070
         },
-        "row_count": 192
+        "row_count": 194
       }
     }
   ]

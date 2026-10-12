@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 
 from ingestion.lib.conversion import ConversionContext, write_conversion
+from ingestion.lib.node_tables import write_coverage_words
 from ingestion.lib.parquet import ParquetColumn
 
 layout = import_module('ingestion.fiscal.jurisdictions.131105.layouts.text_settlement.convert')
@@ -45,8 +46,12 @@ def convert(inputs, destination, options):
     if not sections:
         raise ValueError('Configured detail scope has no leaf rows')
     (observations / 'parents.json').write_text(json.dumps({'detail': parents}, ensure_ascii=False, indent=2) + '\n')
-    columns = tuple(ParquetColumn(k, 'BIGINT' if k.endswith('物理頁') else 'DOUBLE' if k.endswith(('上端', '下端'))
+    columns = tuple(ParquetColumn(k, 'BIGINT' if k.endswith('物理頁') else 'DOUBLE' if k.endswith(('左端', '上端', '右端', '下端'))
                                   else 'VARCHAR') for k in sections[0])
     output = write_conversion(destination / (table_id + '.parquet'), sections, columns=columns,
                               context=ConversionContext(source['sha256'], table_id, __file__))
+    write_coverage_words(Path(output.path),
+                         [(page, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text'])
+                          for page, words in pages for w in layout.body(words)],
+                         amount_columns=layout.AMOUNT_COLUMNS)
     return {table_id: {'path': Path(output.path), 'metadata': layout.metadata(list(sections[0]))}}

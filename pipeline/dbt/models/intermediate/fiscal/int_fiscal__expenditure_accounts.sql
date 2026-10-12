@@ -3,7 +3,7 @@
 -- dictionary (account_kind_map): an account name containing 国民健康保険 is
 -- 国民健康保険 no matter which jurisdiction prints it. An account matching no
 -- keyword stops the build with its name; add an explicit keyword row instead
--- of silently grouping it into その他 (ADR 0023).
+-- of silently grouping it into a catch-all kind (ADR 0023).
 with accounts as (
     select distinct jurisdiction_code, fiscal_year, account_name
     from {{ ref('int_fiscal__settlement_expenditure_nodes') }}

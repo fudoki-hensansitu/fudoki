@@ -1,8 +1,14 @@
 with rows as (select * from {{ ref('int_fiscal__settlement_expenditure_rows') }}),
-counts as (select source_table_key, count(*) as n from rows group by 1)
+counts as (select source_table_key, count(*) as n from rows group by 1),
+annotations as (
+    select source_table_key, count(*) as n from {{ ref('stg_fiscal__nodes') }}
+    where axis_header = '注記' group by 1
+)
 select t.source_table_key, 'missing_or_duplicated_row' as failure
-from {{ source('fiscal_metadata', 'tables') }} t left join counts c using (source_table_key)
-where coalesce(c.n, 0) <> t.nodes_row_count
+from {{ source('fiscal_metadata', 'tables') }} t
+left join counts c using (source_table_key)
+left join annotations a using (source_table_key)
+where coalesce(c.n, 0) <> t.nodes_row_count - coalesce(a.n, 0)
 union all
 select source_table_key, 'invalid_node' from rows
 where node_kind is null or name is null or name = '' or axis_header is null or axis_header = ''
