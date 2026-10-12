@@ -91,12 +91,14 @@ def check(built, document_kind: str, account: str | None = None) -> dict:
                and amount_phase(dictionary_header(n['header'], document_kind), document_kind, '科目', '款') == phase]
     roots = {n['node_key']: n for n in built.nodes if n['axis_header'] == '科目' and n['parent_node_key'] is None}
     # A summary table (歳入歳出決算書) and the detail print the same 款 twice: count a 款 with the
-    # same code, name and amount once.
-    seen = {(normalize(roots[a['node_key']].get('code_text') or ''), normalize(roots[a['node_key']].get('name_text') or ''),
-             number(a['amount_text']) or 0)
+    # same code, name and amount once. A root with neither code nor name is never the same 款.
+    def identity(node: dict) -> tuple:
+        code, name = normalize(node.get('code_text') or ''), normalize(node.get('name_text') or '')
+        return (code, name) if code or name else (node['node_key'],)
+    seen = {(identity(roots[a['node_key']]), number(a['amount_text']) or 0)
             for a in built.amounts if a['node_key'] in roots
             and amount_phase(dictionary_header(a['header_path'], document_kind), document_kind, '科目', '款') == phase}
-    raw_sum = sum(value for _, _, value in seen)
+    raw_sum = sum(value for _, value in seen)
     result = {'phase': phase, 'kan_sum': raw_sum, 'printed_total': None, 'sum_matches': None, 'digits': DIGITS.get(document_kind),
               'digits_ok': None, 'stopped': False}
     if printed:

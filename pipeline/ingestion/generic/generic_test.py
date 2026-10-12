@@ -135,6 +135,8 @@ class TrialRulesTest(unittest.TestCase):
                    for key in ('summary', 'detail')]
         total = [{'kind': 'total amount', 'header': '支出済額', 'text': '139,266,890', 'label': '歳出合計'}]
         self.assertTrue(check_units(Built(nodes, amounts, [], total), 'settlement')['sum_matches'])
+        unnamed = [{**node, 'code_text': None, 'name_text': None} for node in nodes]
+        self.assertEqual(check_units(Built(unnamed, amounts, [], total), 'settlement')['kan_sum'], 2 * 139266890)
 
     def test_an_amount_on_the_line_below_its_item_belongs_to_it(self):
         band = Band(40, 125, 50, ('科目', '目'), [213.4, 551.4], 101, 551.4)

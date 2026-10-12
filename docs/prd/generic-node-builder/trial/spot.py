@@ -15,17 +15,8 @@ from pathlib import Path
 from ingestion.generic.observe import observe
 from ingestion.generic.repair import repair
 
-name, pdf = sys.argv[1], sys.argv[2]
-n = int(sys.argv[3]) if len(sys.argv) > 3 else 10
-r = json.loads((Path('.cache/generic-trial') / name / 'general-trial.json').read_text())
-subjects = {s['key']: s for s in r['subjects']}
-moku = [s for s in r['subjects'] if s['level'] == '目']
-step = max(1, len(moku) // n)
-fmt = lambda v: None if v is None else (f'△{-v:,}' if v < 0 else f'{v:,}')
-
-
 @cache
-def page_text(number: int) -> str:
+def page_text(pdf: str, name: str, number: int) -> str:
     pages, _ = repair(Path(pdf), observe(Path(pdf), [number], Path('.cache/generic-trial') / name / f'spot-{number}.json'))
     rows: list[list] = []
     for word in sorted(pages[0].words if pages else [], key=lambda w: ((w.y0 + w.y1) / 2, w.x0)):
@@ -35,16 +26,29 @@ def page_text(number: int) -> str:
             rows.append([word])
     return '\n'.join(' '.join(w.text for w in sorted(row, key=lambda w: w.x0)) for row in rows)
 
-squash = lambda s: re.sub(r'\s', '', unicodedata.normalize('NFKC', s))
-for s in moku[::step][:n]:
-    chain, cur = [], s
-    while cur:
-        chain.append(f"{cur['code']}{cur['name']}"); cur = subjects.get(cur['parent'])
-    a = s['amounts']
-    approved, adjusted, executed = fmt(a.get('approved')), fmt(a.get('adjusted')), fmt(a.get('executed'))
-    lines = page_text(s['page']).splitlines()
-    budget = [i for i, l in enumerate(lines) if approved and adjusted and approved in l and adjusted in l]
-    named = any(squash(s['name'] or '')[:3] in squash(''.join(lines[max(0, i - 2):i + 3])) for i in budget)
-    spent = bool(executed) and any(executed in l for p in (s['page'], s['page'] + 1) for l in page_text(p).splitlines())
-    verdict = '一致' if budget and named and spent else ('名前が見つからない' if budget and spent else '金額が見つからない')
-    print(f"p{s['page']} {' > '.join(reversed(chain))} | 当初={approved} 予算現額={adjusted} 支出済額={executed} | {verdict}")
+
+def main() -> None:
+    name, pdf = sys.argv[1], sys.argv[2]
+    n = int(sys.argv[3]) if len(sys.argv) > 3 else 10
+    r = json.loads((Path('.cache/generic-trial') / name / 'general-trial.json').read_text())
+    subjects = {s['key']: s for s in r['subjects']}
+    moku = [s for s in r['subjects'] if s['level'] == '目']
+    step = max(1, len(moku) // n)
+    fmt = lambda v: None if v is None else (f'△{-v:,}' if v < 0 else f'{v:,}')
+    squash = lambda s: re.sub(r'\s', '', unicodedata.normalize('NFKC', s))
+    for s in moku[::step][:n]:
+        chain, cur = [], s
+        while cur:
+            chain.append(f"{cur['code']}{cur['name']}"); cur = subjects.get(cur['parent'])
+        a = s['amounts']
+        approved, adjusted, executed = fmt(a.get('approved')), fmt(a.get('adjusted')), fmt(a.get('executed'))
+        lines = page_text(pdf, name, s['page']).splitlines()
+        budget = [i for i, l in enumerate(lines) if approved and adjusted and approved in l and adjusted in l]
+        named = any(squash(s['name'] or '')[:3] in squash(''.join(lines[max(0, i - 2):i + 3])) for i in budget)
+        spent = bool(executed) and any(executed in l for p in (s['page'], s['page'] + 1) for l in page_text(pdf, name, p).splitlines())
+        verdict = '一致' if budget and named and spent else ('名前が見つからない' if budget and spent else '金額が見つからない')
+        print(f"p{s['page']} {' > '.join(reversed(chain))} | 当初={approved} 予算現額={adjusted} 支出済額={executed} | {verdict}")
+
+
+if __name__ == '__main__':
+    main()

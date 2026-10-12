@@ -20,36 +20,6 @@ REPRESENTATIVE = {('131041', 'general-expenditure-detail'), ('132021', 'general-
                   ('132071', 'akishima-enterprise-expenditure-revenue-detail')}
 KEYS = ('subject_nodes', 'moku_amounts', 'detail_nodes_expected_axes', 'detail_amounts_expected_axes')
 
-label = sys.argv[1]
-against = sys.argv[sys.argv.index('--against') + 1] if '--against' in sys.argv else None
-out = ROOT / '.agent/loop' / label
-saved, trials = out / 'saved', out / 'trials'
-if out.exists():
-    shutil.rmtree(out)
-saved.mkdir(parents=True)
-trials.mkdir(parents=True)
-targets = [t for t in json.loads((ROOT / '.agent/all-tables/targets.json').read_text())
-           if (t['jurisdiction'], t['table_id']) in REPRESENTATIVE]
-(out / 'targets.json').write_text(json.dumps(targets, ensure_ascii=False))
-for cache in (ROOT / '.agent/all-tables/results-base').glob('*.observed.json'):
-    shutil.copy(cache, saved / cache.name)
-subprocess.run(['uv', 'run', 'python', str(HERE.parent / 'all-tables/run.py'), str(out / 'targets.json'), str(saved), '0', '1'],
-               check=True, capture_output=True)
-for city in json.loads((HERE / 'cities.json').read_text()):
-    name = f"{label}-{city['code']}"
-    cache = Path('.cache/generic-trial') / name
-    cache.mkdir(parents=True, exist_ok=True)
-    first = Path('.cache/generic-trial') / city['code'] / 'general-observed.json'
-    if first.exists():
-        shutil.copy(first, cache / 'general-observed.json')
-    subprocess.run(['uv', 'run', 'python', str(HERE / 'trial.py'), name, f".cache/generic-trial/{city['pdf']}", city['pages']],
-                   check=True, capture_output=True)
-    report = json.loads((cache / 'general-trial.json').read_text())
-    if not first.exists():
-        shutil.copy(cache / 'general-observed.json', first)
-    (trials / f"{city['code']}.json").write_text(json.dumps(
-        {k: report[k] for k in ('subject_levels', 'tree_by_axis', 'units_check', 'axes', 'unowned')}, ensure_ascii=False))
-
 
 def summary(directory: Path) -> dict:
     rows = {}
@@ -69,9 +39,43 @@ def summary(directory: Path) -> dict:
     return rows
 
 
-now = summary(out)
-(out / 'summary.json').write_text(json.dumps(now, ensure_ascii=False, indent=1))
-before = summary(ROOT / '.agent/loop' / against) if against else {}
-for key, row in now.items():
-    changed = {k: (before.get(key, {}).get(k), v) for k, v in row.items() if before and before.get(key, {}).get(k) != v}
-    print(key, json.dumps(row, ensure_ascii=False) if not before else ('同じ' if not changed else json.dumps(changed, ensure_ascii=False)))
+def main() -> None:
+    label = sys.argv[1]
+    against = sys.argv[sys.argv.index('--against') + 1] if '--against' in sys.argv else None
+    out = ROOT / '.agent/loop' / label
+    saved, trials = out / 'saved', out / 'trials'
+    if out.exists():
+        shutil.rmtree(out)
+    saved.mkdir(parents=True)
+    trials.mkdir(parents=True)
+    targets = [t for t in json.loads((ROOT / '.agent/all-tables/targets.json').read_text())
+               if (t['jurisdiction'], t['table_id']) in REPRESENTATIVE]
+    (out / 'targets.json').write_text(json.dumps(targets, ensure_ascii=False))
+    for cache in (ROOT / '.agent/all-tables/results-base').glob('*.observed.json'):
+        shutil.copy(cache, saved / cache.name)
+    subprocess.run(['uv', 'run', 'python', str(HERE.parent / 'all-tables/run.py'), str(out / 'targets.json'), str(saved), '0', '1'],
+                   check=True, capture_output=True)
+    for city in json.loads((HERE / 'cities.json').read_text()):
+        name = f"{label}-{city['code']}"
+        cache = Path('.cache/generic-trial') / name
+        cache.mkdir(parents=True, exist_ok=True)
+        first = Path('.cache/generic-trial') / city['code'] / 'general-observed.json'
+        if first.exists():
+            shutil.copy(first, cache / 'general-observed.json')
+        subprocess.run(['uv', 'run', 'python', str(HERE / 'trial.py'), name, f".cache/generic-trial/{city['pdf']}", city['pages']],
+                       check=True, capture_output=True)
+        report = json.loads((cache / 'general-trial.json').read_text())
+        if not first.exists():
+            shutil.copy(cache / 'general-observed.json', first)
+        (trials / f"{city['code']}.json").write_text(json.dumps(
+            {k: report[k] for k in ('subject_levels', 'tree_by_axis', 'units_check', 'axes', 'unowned')}, ensure_ascii=False))
+    now = summary(out)
+    (out / 'summary.json').write_text(json.dumps(now, ensure_ascii=False, indent=1))
+    before = summary(ROOT / '.agent/loop' / against) if against else {}
+    for key, row in now.items():
+        changed = {k: (before.get(key, {}).get(k), v) for k, v in row.items() if before and before.get(key, {}).get(k) != v}
+        print(key, json.dumps(row, ensure_ascii=False) if not before else ('同じ' if not changed else json.dumps(changed, ensure_ascii=False)))
+
+
+if __name__ == '__main__':
+    main()
