@@ -364,7 +364,8 @@ def verify_coverage(document: dict, locate, directory) -> dict:
 
     Saved tables keep no word scope (local-only sidecars are never uploaded),
     so coverage is enforced at convert time and re-run here on candidates.
-    Never fails the report: uncovered tables are reported, not raised.
+    Uncovered tables are returned as MISMATCH rather than raised; the
+    candidate verify command exits with code 1 for those mismatches.
     """
     outcome = {}
     adopted = {}
