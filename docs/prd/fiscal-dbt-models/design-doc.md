@@ -206,6 +206,8 @@ erDiagram
     string origin_id FK
     int source_page
     int amount_source_page
+    double source_x0_y0_x1_y1
+    double amount_source_x0_y0_x1_y1
     string cofog_status
     string cofog_code FK
     boolean is_interfund_transfer
@@ -257,6 +259,8 @@ erDiagram
 | `origin_id` | VARCHAR | 印字された原典ファイル | 宣言（管理 JSON） |
 | `source_page` | INTEGER | 項目（番号と名称）が印字された原典の物理頁 | 原典 |
 | `amount_source_page` | INTEGER | 採った支出済額が印字された原典の物理頁。不明ならNULL。見開きでは `source_page` と違うことがある | 原典 |
+| `source_x0` / `source_y0` / `source_x1` / `source_y1` | DOUBLE | 項目の印字の枠（`source_page` の頁、PDF の左上原点の pt）。PDF だけで、CSV は NULL。取り込み表に値が無ければ NULL（団体により y0・y1 だけのことがある） | 原典 |
+| `amount_source_x0` / `amount_source_y0` / `amount_source_x1` / `amount_source_y1` | DOUBLE | 採った金額の印字の枠（`amount_source_page` の頁）。印字が一つで全額のときだけ入れ、複数の印字を足した額（頁が最初の頁でも）・位置が不明・CSV は NULL。一意に辿れないときは出さない | 原典 |
 | `cofog_status` | VARCHAR | `assigned` / `tentative` / `unclassifiable` / `out-of-scope`。MVP では目ノードだけ値を持つ。`tentative` は境界の判断で確信が持てないままコードを付けた暫定の割り当てで、`cofog_rules` の `tentative` が true の規則が当たった目に付く | 判断（`cofog_rules`） |
 | `cofog_code` | VARCHAR | 割り当てた COFOG コード（`01`・`01.1`・`04.1.2` のように深さが変わる）。`assigned`・`tentative` のときだけ値を持つ | 判断（`cofog_rules`） |
 | `interfund_transfer_to` | VARCHAR | 繰出の受け手の会計の種類（`account_kind_map` で引く）。受け手が入力に無い会計でも付ける。名称が「繰出金」の節などは親の目の名称から引き、引けなければ印だけ付けて NULL（例：他会計繰出金、費の目の下の節繰出金）。金額の消去はしない（[ADR 0023](../../adr/0023-account-kind-and-no-consolidation.md)） | 判断（`account_kind_map`） |
@@ -267,7 +271,7 @@ erDiagram
 
 #### 原典の表 `origin`
 
-1行は原典ファイル一つで、団体・年度・資料区分・補正号（補正予算のときだけ）・資料名・公開 URL・形式（CSV か PDF か）・SHA-256 を持つ。原典選定の記録から毎回生成する派生の表で、独立した provenance ファイルを新しく保存するものではない。木のノードは `origin_id` と `source_page` で原典の位置を指し、分冊でもファイルと頁で位置が決まる。
+1行は原典ファイル一つで、団体・年度・資料区分・補正号（補正予算のときだけ）・資料名・公開 URL・形式（CSV か PDF か）・SHA-256 を持つ。原典選定の記録から毎回生成する派生の表で、独立した provenance ファイルを新しく保存するものではない。木のノードは `origin_id`・`source_page` と印字の枠（`source_x0` ほか。PDF だけ）で原典の位置を指し、分冊でもファイルと頁で位置が決まる。`origin.sha256` までたどれる。
 
 #### 目の絞り込み（比較の入口）
 
@@ -334,7 +338,7 @@ slice の期待値は、現行の横持ちの表の実測から次のとおり�
 4. seed に段の対応と金額の対応を根拠付きで書き、木の intermediate を作る。親子・子の和・目と款の和の検査を通す。
 5. seed の `cofog_rules` に3団体の規則を根拠付きで足し、COFOG の intermediate を作る。
 6. marts の木の表・比較ビュー・原典の表を作り、期待値の検査を通す。
-7. 各団体から目を3件ずつ選び、目とその下のノードを `source_page` の頁で原典 PDF と目視で照合する。結果は PR に書く。
+7. 各団体から目を3件ずつ選び、目とその下のノードを `source_page` の頁と印字の枠で原典 PDF と目視で照合する。結果は PR に書く。
 
 ## Alternatives Considered
 
