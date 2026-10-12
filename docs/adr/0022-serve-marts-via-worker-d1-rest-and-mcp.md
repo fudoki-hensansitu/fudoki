@@ -58,7 +58,7 @@ API の filter は結合を持たないので、ノードの行に所属する�
 - WAF の rate limiting rule で、IP あたり20回/10秒に制限する。AI が普通に使う頻度（1秒に2回程度）は通る。Worker の前で弾くので、弾いた分は課金されない。Free プランの period は10秒だけなので、毎秒2回は10秒あたりの量で表す。データセンターごとに数えるので、厳密な上限ではない。
 - 必須の filter（`document_kind`・`fiscal_year`）と index で、1回あたりに走査する行を抑える。表は資料区分ごとに分かれているので、index は `document_kind` を含めない。団体の比較に使う `(fiscal_year, jurisdiction_code, node_kind)`、COFOG の比較に使う `(fiscal_year, cofog_code)`、子を辿る `(parent_node_id)` の3つにする。index を増やすと、同期で行を書くたびに index の分の書き込みも増えるので、問い合わせの形が増えるまで足さない。
 - `limits.cpu_ms` で、1回あたりの CPU を絞る。
-- kill switch を持つ。Worker の先頭で D1 の `control` 表の `serving` を読み、`on` 以外なら 503 を返す。migration は `control` だけである。予算超過の通知だけでは、リクエストの処理と課金は止まらないためである。
+- kill switch を持つ。Worker の先頭で D1 の `control` 表の `serving` を読み、`on` 以外なら 503 を返す。migration は `control` だけである。予算超過の通知だけでは、リクエストの処理と課金は止まらないためである。kill switch の読み取りは1リクエストあたり `control` の1行で、1回の問い合わせの走査（最悪で約2.1万行）に比べて無視できるため、費用の見積もりには含めない。
 - Budget alerts を、月の予算の50%と80%に設定する。
 
 今は決算が1年度分しか無いので、`fiscal_year` の必須条件は走査を減らさない。1回の最悪は1つの木の表の全行である。上の見積もりのとおり、20回/10秒に張り付く1つの IP で月に約$85 になり得る。実際の上限は、予算の通知と kill switch の運用で決まる。

@@ -108,6 +108,15 @@ describe('requireScope', () => {
     expect(() => scope(base + 'fiscal_year >= 2019')).toThrow(FilterError)
   })
 
+  test('年の範囲外・巨大な値は 400 で、年を並べるループが止まらなくならない', () => {
+    const huge = '100000000000000000000'
+    expect(() => scope(`${base}fiscal_year >= ${huge} AND fiscal_year <= ${huge}`)).toThrow(FilterError)
+    expect(() => scope(`${base}fiscal_year = ${huge}`)).toThrow(FilterError)
+    expect(() => scope(`${base}fiscal_year >= 0 AND fiscal_year <= 2`)).toThrow(FilterError)
+    expect(() => scope(`${base}fiscal_year >= 9998 AND fiscal_year <= 10002`)).toThrow(FilterError)
+    expect(scope(`${base}fiscal_year >= 9998 AND fiscal_year <= 9999`).fiscalYears).toEqual([9998, 9999])
+  })
+
   test('document_kind は一つ、受け付ける値だけ', () => {
     expect(() => scope('fiscal_year = 2024')).toThrow(FilterError)
     expect(() => scope('document_kind = "supplementary" AND fiscal_year = 2024')).toThrow(FilterError)

@@ -246,8 +246,12 @@ export function requireScope(
   if (!acceptedKinds.includes(kind))
     throw new FilterError(`document_kind は ${acceptedKinds.join('・')} のどれかです: ${kind}`)
 
-  const year = (e: Expr) =>
-    cmp(e) && e.field === 'fiscal_year' && e.value.kind === 'number' ? Number(e.value.text) : undefined
+  // 年として妥当な整数だけを数える。範囲を年ごとに並べる処理が有限で終わるようにする。
+  const year = (e: Expr) => {
+    if (!cmp(e) || e.field !== 'fiscal_year' || e.value.kind !== 'number') return undefined
+    const y = Number(e.value.text)
+    return Number.isSafeInteger(y) && y >= 1 && y <= 9999 ? y : undefined
+  }
   const fail = () =>
     new FilterError(
       `filter で fiscal_year を ${maxYears} 年以内に絞ってください。最上位の AND に ` +
