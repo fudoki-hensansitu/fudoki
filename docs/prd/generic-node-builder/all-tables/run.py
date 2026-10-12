@@ -17,7 +17,7 @@ from ingestion.generic.evaluate import compare, load  # noqa: E402
 from ingestion.generic.layout import logical_pages  # noqa: E402
 from ingestion.generic.observe import observe  # noqa: E402
 from ingestion.generic.repair import repair  # noqa: E402
-from ingestion.generic.tree import build  # noqa: E402
+from ingestion.generic.build import choose_pattern  # noqa: E402
 from ingestion.lib.node_tables import read_rows  # noqa: E402
 
 targets, out, index, workers = sys.argv[1], Path(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4])
@@ -43,7 +43,9 @@ for pdf, pages, kind in keys:
             observed, repairs = repair(Path(pdf), observed)
         else:
             repairs = None
-        built = build(logical_pages(observed))
+        built, choice = choose_pattern(logical_pages(observed), kind)
+        if repairs is not None:
+            repairs.pattern = choice
         result = check(built, kind)
         error = None
     except Exception:

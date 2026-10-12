@@ -42,6 +42,8 @@ REBUILD_SHARE = 0.2            # invisible share of a page's glyphs above which 
 class Report:
     hidden_glyphs: int = 0
     hidden_rules: int = 0
+    vertical_words: int = 0
+    pattern: dict = field(default_factory=dict)
     duplicate_words: int = 0
     composite_glyphs: int = 0
     joined_numbers: int = 0
@@ -51,7 +53,8 @@ class Report:
     examples: dict = field(default_factory=lambda: defaultdict(list))
 
     def as_dict(self) -> dict:
-        return {'hidden_glyphs': self.hidden_glyphs, 'hidden_rules': self.hidden_rules, 'duplicate_words': self.duplicate_words,
+        return {'hidden_glyphs': self.hidden_glyphs, 'hidden_rules': self.hidden_rules,
+                'vertical_words': self.vertical_words, 'pattern': self.pattern, 'duplicate_words': self.duplicate_words,
                 'composite_glyphs': self.composite_glyphs, 'joined_numbers': self.joined_numbers,
                 'health': self.health, 'broken': self.broken, 'repairs': sum(self.hits.values()),
                 'hits': dict(self.hits.most_common()), 'examples': {k: v[:5] for k, v in self.examples.items()}}
@@ -327,12 +330,55 @@ def apply_dictionary(page: Page, report: Report) -> None:
     page.words = repaired
 
 
+def join_vertical(page: Page, report: Report) -> None:
+    """Single characters stacked tightly in one column with no neighbour on their line are one
+    vertically printed word (款・項 names in a narrow column); read it top to bottom."""
+    singles = [w for w in page.words if len(w.text) == 1 and not NUMERIC.match(w.text) and w.text.strip()]
+    others = [w for w in page.words if w not in singles]
+    horizontals = [r for r in page.rules if not r.vertical]
+
+    verticals = [r for r in page.rules if r.vertical]
+
+    def walled(a: Word, b: Word) -> bool:
+        left, right = (a, b) if a.x0 < b.x0 else (b, a)
+        middle = (a.y0 + a.y1) / 2
+        return any(left.x1 - .5 <= r.x0 <= right.x0 + .5 and r.y0 <= middle <= r.y1 for r in verticals)
+
+    def alone(word: Word) -> bool:
+        """No neighbour on its line, unless a vertical rule separates them (another column)."""
+        reach = 1.5 * (word.x1 - word.x0)
+        return not any(_same_line(word, other) and other is not word and not walled(word, other) and
+                       (abs(other.x0 - word.x1) < reach or abs(word.x0 - other.x1) < reach)
+                       for other in page.words)
+
+    stacks: list[list[Word]] = []
+    for word in sorted(singles, key=lambda w: (round(w.x0), w.y0)):
+        if stacks:
+            last = stacks[-1][-1]
+            height = last.y1 - last.y0
+            if (abs(word.x0 - last.x0) <= 1.0 and 0 <= word.y0 - last.y1 <= .6 * height
+                    and not any(r.x0 <= word.x0 <= r.x1 and last.y1 <= r.y0 <= word.y0 for r in horizontals)):
+                stacks[-1].append(word)
+                continue
+        stacks.append([word])
+    result = list(others)
+    for stack in stacks:
+        if len(stack) >= 2 and all(alone(w) for w in stack):
+            result.append(Word(''.join(w.text for w in stack), min(w.x0 for w in stack), stack[0].y0,
+                               max(w.x1 for w in stack), stack[-1].y1))
+            report.vertical_words += 1
+        else:
+            result.extend(stack)
+    page.words = result
+
+
 def repair(pdf_path: Path | None, pages: list[Page]) -> tuple[list[Page], Report]:
     report = Report()
     if pdf_path is not None and pdf_path.exists():
         drop_invisible(pdf_path, pages, report)
     for page in pages:
         repair_positions(page, report)
+        join_vertical(page, report)
     report.health = health(pages)
     report.broken = is_broken(report.health)
     if report.broken:

@@ -35,8 +35,8 @@ for path in sorted(results.glob('*.json')):
     rows.append((key, r, m, subject, moku, detail, detail_amounts, passed, causes.get(key, {}).get('class', kind), causes.get(key, {}).get('cause', '')))
 
 f = lambda v: '—' if v is None else f'{v[0]:.1%} / {v[1]:.1%}'
-print('| 表 | 頁 | 款項目 | 目の金額 | 目より下（正解の軸） | 目より下の金額 | 誤字を許した 款項目 / 目の金額（値） / 目より下 | 上乗せ（軸・ノード） | 木の検査 | 文字層 | 秒 | 分類 | 原因 |')
-print('| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |')
+print('| 表 | 頁 | 款項目 | 目の金額 | 目より下（正解の軸） | 目より下の金額 | 誤字を許した 款項目 / 目の金額（値） / 目より下 | 上乗せ（軸・ノード） | 木の検査 | 文字層 | 段のパターン | 秒 | 分類 | 原因 |')
+print('| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |')
 for key, r, m, subject, moku, detail, detail_amounts, passed, kind, cause in rows:
     extra = m.get('extra_axes') or {}
     names = extra.get('axes', [])
@@ -54,7 +54,10 @@ for key, r, m, subject, moku, detail, detail_amounts, passed, kind, cause in row
     layer = '—' if not repairs else ('壊れ・置換 {}'.format(repairs['repairs']) if repairs['broken'] else '') + \
         ('・不可視 {}字'.format(repairs['hidden_glyphs']) if repairs['hidden_glyphs'] else '')
     shift = f"{before[key]['class']}→{kind}" if key in before else kind
-    print(f"| {key} | {span} | {f(subject)} | {f(moku)} | {detail_text} | {f(detail_amounts)} | {tolerant_text} | {axes} {extra.get('nodes', 0) if extra else ''} | {tree_text} | {layer.lstrip('・') or '—'} | {r['seconds']} | {shift} | {cause} |")
+    chosen = repairs.get('pattern') or {}
+    shapes = [axis for axis, mode in (chosen.get('detail') or {}).items() if mode == 'shape' and axis in ('節', '備考', '説明')]
+    pattern_text = (chosen.get('chosen') or '—') + (f"（形: {'・'.join(shapes)}）" if shapes else '')
+    print(f"| {key} | {span} | {f(subject)} | {f(moku)} | {detail_text} | {f(detail_amounts)} | {tolerant_text} | {axes} {extra.get('nodes', 0) if extra else ''} | {tree_text} | {layer.lstrip('・') or '—'} | {pattern_text} | {r['seconds']} | {shift} | {cause} |")
 counts = {}
 for row in rows:
     counts[row[8]] = counts.get(row[8], 0) + 1

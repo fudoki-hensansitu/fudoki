@@ -13,12 +13,23 @@ from __future__ import annotations
 import argparse
 from collections import Counter, defaultdict
 import json
+import re
 from pathlib import Path
 
 from ingestion.generic.build import dictionary_header
 from ingestion.generic.layout import normalize
 from ingestion.lib.node_tables import amount_phase, read_rows
 from shared.amount import number
+
+
+def code_and_name(node: dict) -> tuple[str, str]:
+    """Code and name, normalized; a converter that kept the code inside the name (１事業費) is split."""
+    code, name = normalize(node['code_text'] or ''), normalize(node['name_text'] or '')
+    if not code:
+        found = re.match(r'^([0-9]{1,4})(?=[^0-9,])', name)
+        if found:
+            code, name = found.group(1), name[found.end():]
+    return code, name
 
 
 def paths(nodes: list[dict], signatures: dict[str, object] | None = None) -> dict[str, tuple]:
@@ -31,12 +42,12 @@ def paths(nodes: list[dict], signatures: dict[str, object] | None = None) -> dic
         if key in result:
             return result[key]
         node = by_key[key]
-        name = normalize(node['name_text'] or '')
+        code, name = code_and_name(node)
         if signatures is not None and signatures.get(key) is not None:
             name = signatures[key]
         # Converters name the subject axis 科目, 款項 or 款項目; its levels are what matter.
         axis = '科目' if node['level_header'] in ('款', '項', '目') else node['axis_header']
-        own = (axis, normalize(node['code_text'] or ''), name)
+        own = (axis, code, name)
         parent = node['parent_node_key']
         result[key] = (path(parent) if parent in by_key else ()) + (own,)
         return result[key]
@@ -121,11 +132,11 @@ def tolerant(generated, expected, document_kind: str, kept) -> dict:
                 node = by_key[key]
                 axis = '科目' if node['level_header'] in ('款', '項', '目') else node['axis_header']
                 parent = node['parent_node_key']
-                chains[key] = (chain(parent) if parent in by_key else ()) + ((axis, normalize(node['code_text'] or '')),)
+                chains[key] = (chain(parent) if parent in by_key else ()) + ((axis, code_and_name(node)[0]),)
             return chains[key]
         groups = defaultdict(list)
         for key in by_key:
-            groups[chain(key)].append((normalize(by_key[key]['name_text'] or ''), values[key], full[key]))
+            groups[chain(key)].append((code_and_name(by_key[key])[1], values[key], full[key]))
         return groups
 
     got, want = entries(*generated), entries(*expected)
