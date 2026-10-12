@@ -56,12 +56,14 @@ def question(digit: dict) -> dict:
 
 
 def validate_answer(answer: dict) -> None:
+    # The service rounds probabilities to two decimals: four options can
+    # accumulate up to 0.02 of rounding error without an invalid distribution.
     probabilities = answer.get('probabilities', {})
     if (answer.get('type') != 'choice' or answer.get('choice') not in CRITERIA
             or set(probabilities) != set(CRITERIA)
             or any(type(p) not in (int, float) or not math.isfinite(p) or not 0 <= p <= 1
                    for p in probabilities.values())
-            or abs(sum(probabilities.values()) - 1) > 0.01):
+            or not math.isclose(sum(probabilities.values()), 1, abs_tol=0.020001)):
         raise ValueError(f'Invalid Jev Choice answer: {answer!r}')
 
 

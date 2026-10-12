@@ -108,3 +108,12 @@ class RecheckTest(unittest.TestCase):
                              allow_api=True, transport=service)
         self.assertTrue(result['passed'])
         self.assertEqual(result['judgments'][0]['probability'], 0.37)
+
+    def test_rounded_distribution_is_accepted_and_invalid_mass_is_rejected(self):
+        answer = {'type': 'choice', 'choice': 'non_amount',
+                  'probabilities': {'non_amount': 0.90, 'table_amount': 0.04,
+                                    'total_amount': 0.03, 'annotation_amount': 0.02}}
+        jev.validate_answer(answer)
+        answer['probabilities']['non_amount'] = 0.5
+        with self.assertRaisesRegex(ValueError, 'Invalid Jev Choice'):
+            jev.validate_answer(answer)
