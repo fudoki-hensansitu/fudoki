@@ -526,6 +526,31 @@ class PaddleOcr:
                                {} if retry_regions is None else retry_regions)
 
 
+_RECOGNIZER = None
+
+
+def recognize_crops(paths: Sequence[Path], config: PaddleConfig = PaddleConfig()) -> list[str]:
+    """Text of each cropped line image with the recognition model alone (no detection).
+
+    About 130 ms a crop after a one-time load of about 27 s; one recognizer is kept per process.
+    """
+    global _RECOGNIZER
+    if _RECOGNIZER is None:
+        directory = (Path(config.recognition_model_dir) if config.recognition_model_dir
+                     else Path.home() / ".paddlex/official_models" / config.recognition_model_name)
+        _checked_models([config.recognition_model_name], [directory])
+        try:
+            from paddleocr import TextRecognition
+        except ImportError as exc:
+            raise PaddleOcrError("PaddleOCR optional dependencies are not installed") from exc
+        _RECOGNIZER = TextRecognition(model_name=config.recognition_model_name, model_dir=str(directory.resolve()),
+                                      device="cpu", cpu_threads=config.cpu_threads)
+    if not paths:
+        return []
+    results = _RECOGNIZER.predict([str(p) for p in paths], batch_size=config.recognition_batch_size)
+    return [(r.json if hasattr(r, "json") else r)["res"]["rec_text"] for r in results]
+
+
 def recognize_image(path: Path, *, config: PaddleConfig = PaddleConfig(), regions=None, retry_regions=()) -> dict:
     with PaddleOcr(config) as ocr:
         return ocr.recognize_image(path, regions=regions, retry_regions=retry_regions)

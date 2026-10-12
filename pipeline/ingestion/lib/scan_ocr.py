@@ -16,6 +16,7 @@ import struct
 import tempfile
 import zlib
 from dataclasses import replace
+from functools import lru_cache
 from difflib import SequenceMatcher
 from pathlib import Path
 from typing import Mapping, Sequence
@@ -146,6 +147,7 @@ RULE_RUN_PT = 14.0   # a straight dark run this long is a rule or an underline, 
 BOX_PAD_PT = 1.5     # ink this close to an OCR box belongs to it
 JOIN_PX = 4          # pixels this close are one mark
 MIN_PIXELS = 12      # smaller marks are specks
+AREA_PAD_PT = 6.0    # Vision drops the leading 1 of an amount cut 3pt from it (measured: 21 → 39 of 45)
 
 
 def _strip_runs(dark: np.ndarray, minimum: int) -> np.ndarray:
@@ -218,7 +220,8 @@ def ink_areas(marks: Sequence[Sequence[float]], rules: PageRules,
             if box[1] <= middle <= box[3] and left <= (box[0] + box[2]) / 2 <= right and (
                     -6 <= box[0] - x1 <= 6 or -6 <= x0 - box[2] <= 6):
                 x0, x1 = min(x0, box[0]), max(x1, box[2])
-        areas.append((max(left, x0 - 3), max(0.0, middle - half), min(right, x1 + 3), min(rules.height, middle + half)))
+        areas.append((max(left, x0 - AREA_PAD_PT), max(0.0, middle - half), min(right, x1 + AREA_PAD_PT),
+                      min(rules.height, middle + half)))
     return areas
 
 
@@ -236,7 +239,24 @@ def _read_without_rules(path: Path, number: int, config: VisionConfig, regions: 
                         width_pt: float) -> dict:
     """Vision on the page with its rules whitened: next to a scanned rule it reads the rule's
     edge as 1, l or 一 however far the area keeps off the rule's nominal position."""
-    image = pdf_rules.render(path, number, config.dpi)
+    clean = _whitened(path, number, config.dpi)
+    with tempfile.TemporaryDirectory() as tmp:
+        png = Path(tmp) / "page.png"
+        _png(clean, png)
+        page = vision_ocr.recognize_image(png, config=replace(config, region_padding_px=60), regions=regions)["pages"][0]
+    scale = width_pt / clean.shape[1]
+    for region in page["regions"]:
+        for o in region["observations"]:
+            if o.get("bbox_px"):
+                o["bbox_pdf_pt"] = [v * scale for v in o["bbox_px"]]
+    page["page_number"] = number
+    return page
+
+
+@lru_cache(maxsize=2)
+def _whitened(path: Path, number: int, dpi: int) -> np.ndarray:
+    """The page rendered at ``dpi`` with its rules and their faint edges whitened."""
+    image = pdf_rules.render(path, number, dpi)
     dark = image < pdf_rules.DARK
     clean = image.copy()
     rule = dark & ~_strip_runs(dark, int(RULE_RUN_PT * config.dpi / 72))
@@ -247,17 +267,8 @@ def _read_without_rules(path: Path, number: int, config: VisionConfig, regions: 
         edge[:, shift:] |= rule[:, :-shift]
         edge[:, :-shift] |= rule[:, shift:]
     clean[edge] = 255
-    with tempfile.TemporaryDirectory() as tmp:
-        png = Path(tmp) / "page.png"
-        _png(clean, png)
-        page = vision_ocr.recognize_image(png, config=replace(config, region_padding_px=60), regions=regions)["pages"][0]
-    scale = width_pt / image.shape[1]
-    for region in page["regions"]:
-        for o in region["observations"]:
-            if o.get("bbox_px"):
-                o["bbox_pdf_pt"] = [v * scale for v in o["bbox_px"]]
-    page["page_number"] = number
-    return page
+    clean.setflags(write=False)
+    return clean
 
 
 def _cell(x0: float, x1: float, middle: float, rules: PageRules) -> tuple[float, float]:
@@ -346,6 +357,7 @@ def supplement(path: Path, page: dict, config: VisionConfig, previous: Mapping[s
             if replaced:
                 region["supersedes"] = sorted(replaced)
             page["regions"].append(region)
+    _read_zeros(path, number, config, page, missed_ink(dark, scale, _boxes(page)))
     rest = ink_areas(missed_ink(dark, scale, _boxes(page)), rules)
     keys = [_key(number, area) for area in rest]
     lines = {key: _line(area, rules) for area, key in zip(rest, keys)}
@@ -396,6 +408,35 @@ def _balanced(text: str, tokens: Sequence[tuple[str, Sequence[float]]]) -> str:
     if text.rstrip()[-1:] in ")）" and not any(c in line for c in "(（"):
         return text.rstrip()[:-1].rstrip()
     return text
+
+
+def _zero_shaped(mark: Sequence[float]) -> bool:
+    """One mark of a digit's size: almost always a lone 0 Vision dropped."""
+    return 2.0 <= mark[2] - mark[0] <= 6.5 and 3.5 <= mark[3] - mark[1] <= 9.0
+
+
+def _read_zeros(path: Path, number: int, config: VisionConfig, page: dict, marks: Sequence[Sequence[float]]) -> None:
+    """Digit-sized marks still uncovered go to Paddle's recogniser alone: it read all 345 such
+    marks of a trial as codex did, in about 130 ms each. A single digit becomes region ``digit-<n>``."""
+    shaped = [m for m in marks if _zero_shaped(m)]
+    if not shaped:
+        return
+    clean = _whitened(path, number, config.dpi)
+    scale = config.dpi / 72
+    with tempfile.TemporaryDirectory() as tmp:
+        files = []
+        for index, (x0, y0, x1, y1) in enumerate(shaped):
+            crop = clean[max(0, int((y0 - 2) * scale)):int((y1 + 2) * scale),
+                         max(0, int((x0 - 2) * scale)):int((x1 + 2) * scale)]
+            files.append(Path(tmp) / f"{index}.png")
+            _png(np.ascontiguousarray(crop), files[-1])
+        texts = paddle_ocr.recognize_crops(files)
+    for index, (mark, text) in enumerate(zip(shaped, texts)):
+        text = "".join(text.split())
+        if re.fullmatch(r"[0-9]", text):
+            page["regions"].append({"id": f"digit-{index}", "engine": "PP-OCRv6_small_rec", "observations": [
+                {"id": f"p{number}:digit-{index}:r0", "kind": "region", "parent_id": None, "raw_text": text,
+                 "bbox_pdf_pt": [round(v, 1) for v in mark], "bbox_status": "available"}]})
 
 
 def _line(area: Sequence[float], rules: PageRules) -> tuple[float, float, float, float]:
@@ -456,7 +497,7 @@ def _kana(char: str) -> bool:
 def _vlm_identity() -> dict:
     # ``read`` names how an answer becomes text; changing it invalidates pinned answers.
     return {"model": vlm_ocr.MODEL, "prompt_sha256": hashlib.sha256(vlm_ocr.TEXT_PROMPT.encode()).hexdigest(),
-            "read": "cell-line-minus-ocr-v6"}
+            "read": "cell-line-minus-ocr-v7", "digits": "PP-OCRv6_small_rec"}
 
 
 def _pinned_answers(observation: Mapping | None) -> dict[str, str]:

@@ -82,7 +82,7 @@ class AcquireTest(unittest.TestCase):
         rest = [(10.0, 50.0, 14.0, 52.0)]
         with patch.object(scan_ocr.pdf_rules, 'detect', return_value=rules), \
                 patch.object(scan_ocr.pdf_rules, 'render', return_value=np.zeros((200, 400), np.uint8)), \
-                patch.object(scan_ocr, 'missed_ink', side_effect=[[(100, 30, 104, 36)], rest]), \
+                patch.object(scan_ocr, 'missed_ink', side_effect=[[(100, 30, 104, 36)], [], rest]), \
                 patch.object(scan_ocr, '_read_without_rules', return_value=vision['pages'][0]), \
                 patch.object(scan_ocr.vlm_ocr, 'read', return_value='一') as ask:
             result = scan_ocr.supplement(Path('x.pdf'), deepcopy(page), scan_ocr.VisionConfig(), {})
@@ -93,7 +93,7 @@ class AcquireTest(unittest.TestCase):
         self.assertEqual(scan_ocr._pinned_answers({'vlm': {'model': 'other'}, 'pages': [result]}), {})
         with patch.object(scan_ocr.pdf_rules, 'detect', return_value=rules), \
                 patch.object(scan_ocr.pdf_rules, 'render', return_value=np.zeros((200, 400), np.uint8)), \
-                patch.object(scan_ocr, 'missed_ink', side_effect=[[(100, 30, 104, 36)], rest]), \
+                patch.object(scan_ocr, 'missed_ink', side_effect=[[(100, 30, 104, 36)], [], rest]), \
                 patch.object(scan_ocr, '_read_without_rules', return_value=deepcopy(vision)['pages'][0]), \
                 patch.object(scan_ocr.vlm_ocr, 'read') as again:
             scan_ocr.supplement(Path('x.pdf'), deepcopy(page), scan_ocr.VisionConfig(), pinned)
@@ -123,7 +123,7 @@ class AcquireTest(unittest.TestCase):
         marks = [(90, 1, 118, 9), (32, 1, 39, 9)]
         with patch.object(scan_ocr.pdf_rules, 'detect', return_value=rules), \
                 patch.object(scan_ocr.pdf_rules, 'render', return_value=np.zeros((200, 400), np.uint8)), \
-                patch.object(scan_ocr, 'missed_ink', side_effect=[marks, []]), \
+                patch.object(scan_ocr, 'missed_ink', side_effect=[marks, [], []]), \
                 patch.object(scan_ocr, '_read_without_rules', return_value=vision):
             result = scan_ocr.supplement(Path('x.pdf'), deepcopy(page), scan_ocr.VisionConfig(), {})
         added = result['regions'][-1]
@@ -138,7 +138,7 @@ class AcquireTest(unittest.TestCase):
     def test_an_area_takes_in_the_piece_ocr_read_beside_the_marks(self):
         rules = scan_ocr.pdf_rules.PageRules(1, 200.0, 100.0, (), ())
         (area,) = scan_ocr.ink_areas([(90, 1, 118, 9)], rules, [[120, 0, 126, 10], [10, 0, 30, 10]])
-        self.assertEqual((area[0], area[2]), (87, 129))
+        self.assertEqual((area[0], area[2]), (84, 132))   # 6pt beyond the piece and the marks
 
     def test_a_number_read_in_part_is_not_kept(self):
         self.assertTrue(scan_ocr._well_formed('（ 1,949,000）'))
@@ -146,6 +146,15 @@ class AcquireTest(unittest.TestCase):
         self.assertTrue(scan_ocr._well_formed('修繕料'))
         self.assertFalse(scan_ocr._well_formed('，949,000）'))
         self.assertFalse(scan_ocr._well_formed('1,540，（'))
+
+    def test_digit_sized_marks_go_to_paddle_and_only_a_single_digit_is_kept(self):
+        page = {'page_number': 1, 'regions': []}
+        marks = [(10, 10, 14, 16), (30, 10, 34, 16), (50, 10, 90, 16)]   # two digit-sized, one wide
+        with patch.object(scan_ocr, '_whitened', return_value=np.full((400, 400), 255, np.uint8)), \
+                patch.object(scan_ocr.paddle_ocr, 'recognize_crops', return_value=['0', 'o)']) as read:
+            scan_ocr._read_zeros(Path('x.pdf'), 1, scan_ocr.VisionConfig(), page, marks)
+        self.assertEqual(len(read.call_args.args[0]), 2)
+        self.assertEqual([(r['id'], r['observations'][0]['raw_text']) for r in page['regions']], [('digit-0', '0')])
 
     def test_only_vision_is_acquired(self):
         with self.assertRaisesRegex(ValueError, 'Vision only'):
