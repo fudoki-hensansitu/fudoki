@@ -138,7 +138,8 @@ def repeated_header(page: Page, frame, header_bottom: float, body: list[tuple[in
 
 
 def split_digits_at_rules(word: Word, verticals: list[Rule]) -> list[Word]:
-    """Split a body word of digits where a vertical rule runs between two of its characters.
+    """Split a body word of digits where a vertical rule runs between two of its characters
+    (the caller passes only the rules between two 款・項・目 columns).
 
     Narrow code bands print `１ １` (項1・目1) that Poppler joins into one word. Only a
     rule on a character boundary (within 1pt) splits, so a `10` overrunning a narrow
@@ -226,7 +227,7 @@ def page_bands(page: Page) -> tuple[list[Band], list[Word]]:
     split = [(index, piece) for index, word in enumerate(page.words) for piece in split_at_rules(word, verticals)]
     used: set[int] = set()
     bands = []
-    body = [(index, piece) for index, word in enumerate(page.words) for piece in split_digits_at_rules(word, verticals)]
+    whole = list(enumerate(page.words))
     for frame in _frames(page):
         x0, x1, top, bottom, edges = frame
         header_bottom = _header_bottom(page, frame)
@@ -243,10 +244,17 @@ def page_bands(page: Page) -> tuple[list[Band], list[Word]]:
             lower = min([h.y0 for h in horizontals if h.y0 >= cy and _covers(h, cx)] or [header_bottom])
             cells[left, right, upper, lower].append(word)
         header_cells = sorted(((key, normalize(reading(ws))) for key, ws in cells.items()), key=lambda c: c[0][2])
+        covering_of = lambda middle: [(key, text) for key, text in header_cells if key[0] - 1 <= middle <= key[1] + 1 and text]
+        # Only a rule between two 款・項・目 columns splits a body word of digits (`１１` = 項1・目1);
+        # amounts stay whole even when a rule crosses them.
+        subject = [bool(c) and c[-1][1] in SUBJECT_LEVELS
+                   for c in (covering_of((left + right) / 2) for left, right in zip(edges, edges[1:]))]
+        between = [Rule(x, top, x, bottom) for x, a, b in zip(edges[1:-1], subject, subject[1:]) if a and b]
+        body = [(index, piece) for index, word in whole for piece in split_digits_at_rules(word, between)]
         skip = repeated_header(page, frame, header_bottom, body, {normalize(w.text) for ws in cells.values() for w in ws})
         for left, right in zip(edges, edges[1:]):
             middle = (left + right) / 2
-            covering = [(key, text) for key, text in header_cells if key[0] - 1 <= middle <= key[1] + 1 and text]
+            covering = covering_of(middle)
             rows = sorted(h.y0 for h in horizontals if _covers(h, middle) and header_bottom - 1 <= h.y0 <= bottom + 1)
             band = Band(left, right, page.number, tuple(text for _, text in covering), rows, header_bottom, bottom,
                         spans=[(key[0], key[1], text) for key, text in covering])

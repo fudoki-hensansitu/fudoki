@@ -466,6 +466,37 @@ def subject_items(group: Group) -> list[Item]:
     return result
 
 
+TITLE_AMOUNT = re.compile(r'[(（]([^0-9△▲()（）]+?)([△▲]?[0-9][0-9,]*)')
+
+
+def title_amount(line: list[Glyph]) -> tuple[str | None, list[Glyph]]:
+    """The amount kind and the glyphs of the signed amount in a 款 title (`（決算額 △1,000 円）`).
+
+    The amount is cut out of the words that print it, by character position, so a sign printed
+    as its own word or a word that runs on into `円）` still gives just the number.
+    """
+    found = TITLE_AMOUNT.search(normalize(text(line)))
+    if not found:
+        return None, []
+    kind, amount = found.group(1).strip(), found.group(2)
+    # Positions of the amount in the concatenated glyph texts (NFKC keeps one character per character here).
+    texts = [unicodedata.normalize('NFKC', g.text) for g in line]
+    joined = ''.join(t.replace(' ', '').replace('\u3000', '') for t in texts)
+    start = joined.find(amount, joined.find(kind) + len(kind))
+    if start < 0:
+        return kind, []
+    run, position = [], 0
+    for glyph, raw in zip(line, texts):
+        compact = raw.replace(' ', '').replace('\u3000', '')
+        lo, hi = max(start, position), min(start + len(amount), position + len(compact))
+        if lo < hi:
+            width = (glyph.x1 - glyph.x0) / max(len(compact), 1)
+            a, b = lo - position, hi - position
+            run.append(Glyph(compact[a:b], glyph.x0 + a * width, glyph.y0, glyph.x0 + b * width, glyph.y1, glyph.page, glyph.offset))
+        position += len(compact)
+    return kind, run
+
+
 def untitled(group: Group) -> bool:
     """A subject group in bands whose first column is not 款 (its 款 is printed as a title)."""
     return group.mode in ('bands', 'names') and bool(group.bands) and bool(group.bands[0].header) \
@@ -514,11 +545,13 @@ def owner(amount: list[Glyph], band: Band, ordered: list[Group], found: dict[int
         if candidates:
             return max(candidates, key=lambda i: (i.level or 0, -abs(i.anchor - y)))
     # Amounts printed on the line below their item (`1. 議会費` / `142,678,000 …`, 133051):
-    # the nearest item whose last line ends within one line above the amount.
+    # the nearest item whose last line ends within one line above the amount, in the same
+    # ruled cell (no rule of the amount's column between them). Across a rule it stays unowned.
     height = max(g.y1 - g.y0 for g in digits)
     for group in left:
         above = [i for i in found[id(group)] if i.role in roles and i.lines and i.lines[-1]
-                 and 0 < y - centre(i.lines[-1]) <= 1.8 * height]
+                 and 0 < y - centre(i.lines[-1]) <= 1.8 * height
+                 and not any(centre(i.lines[-1]) < rule < y for rule in band.rows)]
         if above:
             return min(above, key=lambda i: y - centre(i.lines[-1]))
     return None
@@ -687,10 +720,11 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             # A table without a 款 column under a title naming its 款: the title is the 款 item.
             for code, name, line in logical.titles:
                 title = Item(subject, line[0].page, [line], code, name, line[0].x0, level=-1, level_name='款')
-                kind = re.search(r'([^(（0-9,]+?)[0-9]', normalize(text(line))[len(code) + len(name):])
-                money = [g for g in line if GROUPED.fullmatch(normalize(g.text))]
-                if kind and money:  # `（決算額 4,764,369,474 円）`: the 款 amount, named in the title
-                    title.amounts.append((kind.group(1).strip('(（第款'), money[:1]))
+                kind, run = title_amount(line)
+                if kind and run and is_amount(normalize(text(run))):  # `（決算額 4,764,369,474 円）`
+                    title.amounts.append((kind, run))
+                elif kind:
+                    unowned.append({'kind': 'unreadable amount', 'page': line[0].page, 'text': normalize(text(line))})
                 found[id(subject)].insert(0, title)
         # A codeless line whose row holds amounts in an amount band is an item
         # (a 節 column printed without numbers), not a note.
@@ -916,9 +950,11 @@ def judged_roles(judge, group: Group, margins: set[int] | None) -> dict[int, str
 
 
 def subject_row(item: Item, logical: Logical) -> tuple[float, float]:
-    """The narrowest rule-bounded row around a subject label among the amount bands."""
+    """The narrowest rule-bounded row around a subject label among the amount bands whose body
+    holds the label's height. (The other half of a spread may still be in its taller header at
+    that height and would give a cell of no height, 132276.)"""
     y = item.anchor
-    cells = [_cell(b, y) for b in logical.bands if b.kind == 'amount']
+    cells = [_cell(b, y) for b in logical.bands if b.kind == 'amount' and b.body_top < y < b.body_bottom]
     cells = [c for c in cells if c[1] - c[0] <= 80]
     return min(cells, key=lambda c: c[1] - c[0]) if cells else (y - 4, y + 4)
 

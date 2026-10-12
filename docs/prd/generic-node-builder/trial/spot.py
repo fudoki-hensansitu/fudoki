@@ -1,53 +1,46 @@
-"""Spot check: 款・項・目 and three amounts of evenly spaced 目, against the printed text of the source page.
+"""Spot check of evenly spaced 目 against the source pages (`ingestion.generic.spot.verify`).
 
 usage (from pipeline/): uv run python ../docs/prd/generic-node-builder/trial/spot.py <out name> <pdf> [n]
-The 目's name and its 当初予算額・予算現額 must share a printed line on its page; the 支出済額 is looked
-for on the same page or the next one (the right half of a spread). Names are compared after NFKC and removing spaces.
-Lines come from the observed words after the text-layer repair (hidden duplicate glyphs removed), not pdftotext.
+Reads .cache/generic-trial/<out name>/general-trial.json (trial.py). The printed rows come from the
+observed words after the text-layer repair, the same layer the build reads; the check is on where
+each number and name is printed, not on the text layer itself.
 """
 import json
-import re
 import sys
-import unicodedata
-from functools import cache
 from pathlib import Path
 
 from ingestion.generic.observe import observe
 from ingestion.generic.repair import repair
-
-@cache
-def page_text(pdf: str, name: str, number: int) -> str:
-    pages, _ = repair(Path(pdf), observe(Path(pdf), [number], Path('.cache/generic-trial') / name / f'spot-{number}.json'))
-    rows: list[list] = []
-    for word in sorted(pages[0].words if pages else [], key=lambda w: ((w.y0 + w.y1) / 2, w.x0)):
-        if rows and abs((rows[-1][-1].y0 + rows[-1][-1].y1) / 2 - (word.y0 + word.y1) / 2) <= 2:
-            rows[-1].append(word)
-        else:
-            rows.append([word])
-    return '\n'.join(' '.join(w.text for w in sorted(row, key=lambda w: w.x0)) for row in rows)
+from ingestion.generic.spot import rows, verify
 
 
 def main() -> None:
-    name, pdf = sys.argv[1], sys.argv[2]
+    name, pdf = sys.argv[1], Path(sys.argv[2])
     n = int(sys.argv[3]) if len(sys.argv) > 3 else 10
-    r = json.loads((Path('.cache/generic-trial') / name / 'general-trial.json').read_text())
-    subjects = {s['key']: s for s in r['subjects']}
-    moku = [s for s in r['subjects'] if s['level'] == '目']
-    step = max(1, len(moku) // n)
-    fmt = lambda v: None if v is None else (f'△{-v:,}' if v < 0 else f'{v:,}')
-    squash = lambda s: re.sub(r'\s', '', unicodedata.normalize('NFKC', s))
-    for s in moku[::step][:n]:
-        chain, cur = [], s
-        while cur:
-            chain.append(f"{cur['code']}{cur['name']}"); cur = subjects.get(cur['parent'])
+    report = json.loads((Path('.cache/generic-trial') / name / 'general-trial.json').read_text())
+    subjects = {s['key']: s for s in report['subjects']}
+    moku = [s for s in report['subjects'] if s['level'] == '目']
+    others = {level: [s for s in report['subjects'] if s['level'] == level] for level in ('款', '項')}
+    chosen = moku[::max(1, len(moku) // n)][:n]
+    first = min(s['page'] for s in report['subjects'])
+    import pypdfium2 as pdfium
+    document = pdfium.PdfDocument(str(pdf))
+    count = len(document)
+    document.close()
+    numbers = list(range(first, min(count, max(s['page'] for s in chosen) + 1) + 1))  # and the next page (a spread's right half)
+    observed, _ = repair(pdf, observe(pdf, numbers, Path('.cache/generic-trial') / name / 'spot-observed.json'))
+    pages = {p.number: rows([(w.text, w.x0, w.y0, w.x1, w.y1) for w in p.words], p.number) for p in observed}
+    passed, cache = 0, {}
+    for s in chosen:
+        kou = subjects.get(s['parent']) or {}
+        kan = subjects.get(kou.get('parent')) or {}
+        reasons = verify(s, kan, kou, pages, others, cache) if kan else ['款・項の親が無い']
+        passed += not reasons
+        path = ' > '.join(f"{x.get('code')}{x.get('name')}" for x in (kan, kou, s))
         a = s['amounts']
-        approved, adjusted, executed = fmt(a.get('approved')), fmt(a.get('adjusted')), fmt(a.get('executed'))
-        lines = page_text(pdf, name, s['page']).splitlines()
-        budget = [i for i, l in enumerate(lines) if approved and adjusted and approved in l and adjusted in l]
-        named = any(squash(s['name'] or '')[:3] in squash(''.join(lines[max(0, i - 2):i + 3])) for i in budget)
-        spent = bool(executed) and any(executed in l for p in (s['page'], s['page'] + 1) for l in page_text(pdf, name, p).splitlines())
-        verdict = '一致' if budget and named and spent else ('名前が見つからない' if budget and spent else '金額が見つからない')
-        print(f"p{s['page']} {' > '.join(reversed(chain))} | 当初={approved} 予算現額={adjusted} 支出済額={executed} | {verdict}")
+        print(f"p{s['page']} {path} | 当初={a.get('approved')} 予算現額={a.get('adjusted')} 支出済額={a.get('executed')} | "
+              f"{'一致' if not reasons else '・'.join(reasons)}")
+    print(f'{passed}/{len(chosen)}')
 
 
 if __name__ == '__main__':

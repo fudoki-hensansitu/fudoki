@@ -12,6 +12,8 @@ from collections import Counter
 import json
 from pathlib import Path
 
+import sys
+
 from ingestion.generic import units
 from ingestion.generic.build import check, choose_pattern, dictionary_header, page_list
 from ingestion.generic.layout import logical_pages
@@ -20,6 +22,9 @@ from ingestion.generic.repair import repair
 from ingestion.lib.node_tables import AMOUNT_COLUMNS, NODE_COLUMNS, amount_phase
 from ingestion.lib.parquet import write_parquet
 from shared.amount import number
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from rows import as_json, identities  # noqa: E402
 
 
 def subject_rows(built, kind: str) -> list[dict]:
@@ -56,6 +61,7 @@ def main() -> None:
         'axes': dict(Counter(n['axis_header'] for n in built.nodes)),
         'subject_levels': dict(Counter(s['level'] for s in subjects)),
         'unowned': dict(Counter(u['kind'] for u in built.unowned)),
+        'notes': dict(Counter(n['kind'] for n in built.notes)),
         'tree_by_axis': {f'{axis}:{status}': count for (axis, status), count in
                          Counter((r['axis_header'], r['status']) for r in result['results']).items()},
         'tree_check': {'passed': result['passed'], 'counts': result['counts'], 'issues': len(result['issues'])},
@@ -67,6 +73,7 @@ def main() -> None:
         'pattern': choice,
         'repairs': {k: v for k, v in repairs.as_dict().items() if k not in ('pattern', 'examples')},
     }
+    (out / 'general-rows.json').write_text(json.dumps(as_json(identities(built.nodes, built.amounts)), ensure_ascii=False))
     (out / 'general-trial.json').write_text(json.dumps(report, ensure_ascii=False, indent=1, default=str))
     print(json.dumps({k: report[k] for k in ('nodes', 'subject_levels', 'tree_by_axis', 'units_check')},
                      ensure_ascii=False, default=str))

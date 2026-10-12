@@ -12,6 +12,8 @@ from collections import Counter
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[4] / 'pipeline'))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'trial'))
+from rows import as_json, identities  # noqa: E402
 from ingestion.generic.build import check  # noqa: E402
 from ingestion.generic.evaluate import compare, load  # noqa: E402
 from ingestion.generic.layout import logical_pages  # noqa: E402
@@ -66,6 +68,10 @@ for pdf, pages, kind in keys:
                 'repairs': repairs.as_dict() if repairs else None,
                 'general_total_yen': general_total(built.nodes, built.amounts, kind) if row.get('account') == '一般会計' else None,
                 'unit_check': unit_check(built, kind, row.get('account')),
+                'notes': dict(Counter(n['kind'] for n in built.notes)),
             })
+            if os.environ.get('KEEP_ROWS'):  # row identities for loop.py's row-by-row comparison
+                (out / f"{row['jurisdiction']}-{row['table_id']}.rows.json").write_text(
+                    json.dumps(as_json(identities(built.nodes, built.amounts)), ensure_ascii=False))
         (out / f"{row['jurisdiction']}-{row['table_id']}.json").write_text(json.dumps(record, ensure_ascii=False, indent=1, default=str))
         print(name, row['table_id'], seconds, 'error' if error else '', flush=True)

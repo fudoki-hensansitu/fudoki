@@ -61,24 +61,52 @@ def _phase(document_kind: str) -> str:
     return 'executed' if document_kind == 'settlement' else 'approved'
 
 
-def general_total(nodes: list[dict], amounts: list[dict], document_kind: str) -> int | None:
-    """The expenditure total in yen: the executed (決算) or approved (予算) amounts of every 款."""
+def kan_entries(nodes: list[dict], amounts: list[dict], document_kind: str) -> list[tuple[dict, int, str | None]]:
+    """Every 款 amount of the phase the document reports, as (root node, value, unit), each
+    printing counted once. Shared by `check` and `general_total`.
+
+    A summary table (歳入歳出決算書) and the detail can print the same 款 twice. The roots are cut
+    into runs in document order (a run ends where the 款 number stops increasing). A run that
+    repeats an earlier run exactly, the same 款 (number and name) in the same order with the same
+    amounts and units (a 款 of 0 may be left out of either), is that printing again and is not
+    counted. Anything less (a different unit, a 款 with an amount missing or added, an unnamed
+    款) counts in full, so a doubtful sum stops the build.
+    """
     from ingestion.generic.build import dictionary_header
     from ingestion.lib.node_tables import amount_phase
     from shared.amount import number
-    phase = 'executed' if document_kind == 'settlement' else 'approved'
-    roots = {n['node_key'] for n in nodes if n['axis_header'] == '科目' and n['parent_node_key'] is None}
-    total, found = 0, False
+    phase = _phase(document_kind)
+    first: dict[str, tuple[int, str | None]] = {}
     for amount in amounts:
-        if amount['node_key'] not in roots or not amount['unit_text']:
+        if amount['node_key'] not in first and number(amount['amount_text']) is not None and \
+                amount_phase(dictionary_header(amount['header_path'], document_kind), document_kind, '科目', '款') == phase:
+            first[amount['node_key']] = (number(amount['amount_text']), amount.get('unit_text'))
+    roots = [n for n in nodes if n['axis_header'] == '科目' and n['parent_node_key'] is None and n['node_key'] in first]
+    runs: list[list[dict]] = []
+    for node in roots:
+        code = normalize(node.get('code_text') or '')
+        previous = normalize(runs[-1][-1].get('code_text') or '') if runs else ''
+        if not runs or not (code.isdigit() and previous.isdigit() and int(code) > int(previous)):
+            runs.append([])
+        runs[-1].append(node)
+    # A 款 of 0 adds nothing to the sum; the detail may leave it out (利島村の災害復旧費).
+    signature = lambda run: tuple((normalize(n.get('code_text') or ''), normalize(n.get('name_text') or ''), *first[n['node_key']])
+                                  for n in run if first[n['node_key']][0] != 0)
+    seen, entries = set(), []
+    for run in runs:
+        key = signature(run)
+        named = all(code and name for code, name, *_ in key)
+        if named and key in seen:
             continue
-        if amount_phase(dictionary_header(amount['header_path'], document_kind), document_kind, '科目', '款') != phase:
-            continue
-        value = number(amount['amount_text'])
-        if value is not None:
-            total += value * MULTIPLIER.get(amount['unit_text'], 1)
-            found = True
-    return total if found else None
+        seen.add(key)
+        entries += [(n, *first[n['node_key']]) for n in run]
+    return entries
+
+
+def general_total(nodes: list[dict], amounts: list[dict], document_kind: str) -> int | None:
+    """The expenditure total in yen: the executed (決算) or approved (予算) amounts of every 款."""
+    entries = [(value, unit) for _, value, unit in kan_entries(nodes, amounts, document_kind) if unit]
+    return sum(value * MULTIPLIER.get(unit, 1) for value, unit in entries) if entries else None
 
 
 def check(built, document_kind: str, account: str | None = None) -> dict:
@@ -89,16 +117,11 @@ def check(built, document_kind: str, account: str | None = None) -> dict:
     phase = _phase(document_kind)
     printed = [n for n in built.notes if n.get('kind') == 'total amount' and n.get('header')
                and amount_phase(dictionary_header(n['header'], document_kind), document_kind, '科目', '款') == phase]
-    roots = {n['node_key']: n for n in built.nodes if n['axis_header'] == '科目' and n['parent_node_key'] is None}
-    # A summary table (歳入歳出決算書) and the detail print the same 款 twice: count a 款 with the
-    # same code, name and amount once. A root with neither code nor name is never the same 款.
-    def identity(node: dict) -> tuple:
-        code, name = normalize(node.get('code_text') or ''), normalize(node.get('name_text') or '')
-        return (code, name) if code or name else (node['node_key'],)
-    seen = {(identity(roots[a['node_key']]), number(a['amount_text']) or 0)
-            for a in built.amounts if a['node_key'] in roots
-            and amount_phase(dictionary_header(a['header_path'], document_kind), document_kind, '科目', '款') == phase}
-    raw_sum = sum(value for _, value in seen)
+    entries = kan_entries(built.nodes, built.amounts, document_kind)
+    units = {unit for _, _, unit in entries}
+    # One unit: compare the printed numbers. Mixed units: compare in yen (an unknown unit fails).
+    raw_sum = sum(value for _, value, _ in entries) if len(units) <= 1 else \
+        sum(value * MULTIPLIER[unit] if unit in MULTIPLIER else 0 for _, value, unit in entries)
     result = {'phase': phase, 'kan_sum': raw_sum, 'printed_total': None, 'sum_matches': None, 'digits': DIGITS.get(document_kind),
               'digits_ok': None, 'stopped': False}
     if printed:
@@ -109,7 +132,11 @@ def check(built, document_kind: str, account: str | None = None) -> dict:
         total = number(chosen['text'])
         result['total_label'] = chosen.get('label')
         result['printed_total'] = total
-        result['sum_matches'] = total == raw_sum
+        if len(units) <= 1:
+            result['sum_matches'] = total == raw_sum
+        else:
+            result['sum_matches'] = chosen.get('unit') in MULTIPLIER and None not in units and \
+                total is not None and total * MULTIPLIER[chosen['unit']] == raw_sum
         low, high = DIGITS.get(document_kind, (0, float('inf')))
         if account == '一般会計':
             result['digits_ok'] = total is not None and low <= abs(total) < high

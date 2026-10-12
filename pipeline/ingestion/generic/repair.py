@@ -415,16 +415,31 @@ def crop_to_box(pdf_path: Path, pages: list[Page], report: Report) -> None:
         document.close()
 
 
-def clip_to_page(page: Page, report: Report) -> None:
-    """Keep the parts of rules inside the page box.
+def display_size(pdf_path: Path, numbers: list[int]) -> dict[int, tuple[float, float]]:
+    """Width and height of each page as displayed: the MediaBox, turned by the page's rotation."""
+    import pypdfium2 as pdfium
+    document = pdfium.PdfDocument(str(pdf_path))
+    try:
+        sizes = {}
+        for number in numbers:
+            handle = document[number - 1]
+            left, bottom, right, top = handle.get_mediabox()
+            rotation = handle.get_rotation() % 180
+            handle.close()
+            sizes[number] = (top - bottom, right - left) if rotation else (right - left, top - bottom)
+        return sizes
+    finally:
+        document.close()
+
+
+def clip_to_page(page: Page, report: Report, width: float, height: float) -> None:
+    """Keep the parts of rules inside the displayed page box (`display_size`).
 
     A spread cut into two pages may keep the whole spread's drawing on each page, the other
     half lying off the page (x < 0 or beyond the width, 132276). Poppler drops the words there;
-    the rules drawn there would make empty bands and break the spread's pairing.
+    the rules drawn there would make empty bands and break the spread's pairing. The box comes
+    from the PDF's MediaBox and rotation, not from where words happen to lie.
     """
-    width, height = page.width, page.height
-    if page.words and (max(w.x1 for w in page.words) > width + 1 or max(w.y1 for w in page.words) > height + 1):
-        width, height = height, width  # a rotated page: the words are laid out in the turned box
     kept = []
     for rule in page.rules:
         x0, x1 = max(rule.x0, 0.0), min(rule.x1, width)
@@ -440,6 +455,9 @@ def clip_to_page(page: Page, report: Report) -> None:
 def repair(pdf_path: Path | None, pages: list[Page]) -> tuple[list[Page], Report]:
     report = Report()
     if pdf_path is not None and pdf_path.exists():
+        sizes = display_size(pdf_path, [page.number for page in pages])
+        for page in pages:
+            clip_to_page(page, report, *sizes[page.number])
         crop_to_box(pdf_path, pages, report)
         try:
             drop_invisible(pdf_path, pages, report)
@@ -447,7 +465,6 @@ def repair(pdf_path: Path | None, pages: list[Page]) -> tuple[list[Page], Report
             report.invisible_error = f'{type(error).__name__}: {error}'
             report.hidden_glyphs = report.hidden_rules = 0
     for page in pages:
-        clip_to_page(page, report)
         repair_positions(page, report)
         join_vertical(page, report)
     report.health = health(pages)
