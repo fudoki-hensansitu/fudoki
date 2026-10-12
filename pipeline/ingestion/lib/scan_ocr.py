@@ -11,6 +11,7 @@ from collections import deque
 from concurrent.futures import ThreadPoolExecutor
 import hashlib
 import json
+import re
 import struct
 import tempfile
 import zlib
@@ -214,7 +215,7 @@ def ink_areas(marks: Sequence[Sequence[float]], rules: PageRules,
         middle, half = (y0 + y1) / 2, max(y1 - y0, 10.0) / 2 + 2
         left, right = _cell(x0, x1, middle, rules)
         for box in sorted(boxes, key=lambda b: b[0]):
-            if box[1] <= middle <= box[3] and left <= box[0] and box[2] <= right and (
+            if box[1] <= middle <= box[3] and left <= (box[0] + box[2]) / 2 <= right and (
                     -6 <= box[0] - x1 <= 6 or -6 <= x0 - box[2] <= 6):
                 x0, x1 = min(x0, box[0]), max(x1, box[2])
         areas.append((max(left, x0 - 3), max(0.0, middle - half), min(right, x1 + 3), min(rules.height, middle + half)))
@@ -336,6 +337,8 @@ def supplement(path: Path, page: dict, config: VisionConfig, previous: Mapping[s
             if any(_overlaps(other, box) or _overlaps(box, other) for key, other in existing if key not in inside):
                 continue  # it cuts through a reading it does not contain: not trusted
             o["raw_text"] = _balanced(o["raw_text"], _tokens(page, _line(box, rules)))
+            if not _well_formed(o["raw_text"]):
+                continue  # a number read in part ("，949,000"): left to the VLM's line reading
             kept.add(o["id"])
             replaced |= inside
         region["observations"] = [o for o in region["observations"] if o["id"] in kept or o.get("parent_id") in kept]
@@ -375,6 +378,15 @@ def supplement(path: Path, page: dict, config: VisionConfig, previous: Mapping[s
     if failed:
         page["vlm_failed"] = failed
     return page
+
+
+NUMERIC = re.compile(r"[0-9,，.△▲()（）\s]+")
+AMOUNT = re.compile(r"[（(]?\s*[△▲]?[0-9]{1,3}(?:[,，][0-9]{3})*\s*[)）]?")
+
+
+def _well_formed(text: str) -> bool:
+    """Text of digits and separators only must be one whole amount; other text passes."""
+    return not NUMERIC.fullmatch(text) or AMOUNT.fullmatch(text.strip()) is not None
 
 
 def _balanced(text: str, tokens: Sequence[tuple[str, Sequence[float]]]) -> str:
@@ -444,7 +456,7 @@ def _kana(char: str) -> bool:
 def _vlm_identity() -> dict:
     # ``read`` names how an answer becomes text; changing it invalidates pinned answers.
     return {"model": vlm_ocr.MODEL, "prompt_sha256": hashlib.sha256(vlm_ocr.TEXT_PROMPT.encode()).hexdigest(),
-            "read": "cell-line-minus-ocr-v5"}
+            "read": "cell-line-minus-ocr-v6"}
 
 
 def _pinned_answers(observation: Mapping | None) -> dict[str, str]:

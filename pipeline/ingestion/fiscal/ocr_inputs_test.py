@@ -140,6 +140,13 @@ class AcquireTest(unittest.TestCase):
         (area,) = scan_ocr.ink_areas([(90, 1, 118, 9)], rules, [[120, 0, 126, 10], [10, 0, 30, 10]])
         self.assertEqual((area[0], area[2]), (87, 129))
 
+    def test_a_number_read_in_part_is_not_kept(self):
+        self.assertTrue(scan_ocr._well_formed('（ 1,949,000）'))
+        self.assertTrue(scan_ocr._well_formed('0'))
+        self.assertTrue(scan_ocr._well_formed('修繕料'))
+        self.assertFalse(scan_ocr._well_formed('，949,000）'))
+        self.assertFalse(scan_ocr._well_formed('1,540，（'))
+
     def test_only_vision_is_acquired(self):
         with self.assertRaisesRegex(ValueError, 'Vision only'):
             scan_ocr.acquire(Path('x.pdf'), {'engine': 'paddle', 'pages': [1]})
