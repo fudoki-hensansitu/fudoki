@@ -96,3 +96,15 @@ class RecheckTest(unittest.TestCase):
         self.assertGreater(len(states), 1)
         self.assertEqual(sum(len(digits) for state, digits in states), 2)
         self.assertTrue(all(len(jev.encoded(state)) < jev.MAX_STATE_BYTES for state, digits in states))
+
+    def test_service_choice_need_not_be_distribution_argmax(self):
+        def service(state, questions, key):
+            return {'model': jev.MODEL, 'usage': {'input_tokens': 100, 'output_tokens': 10},
+                    'answers': {q: {'type': 'choice', 'choice': 'table_amount',
+                        'probabilities': {'annotation_amount': 0.23, 'non_amount': 0.38,
+                                          'table_amount': 0.37, 'total_amount': 0.02}}
+                                for q in questions}}
+        result = jev.recheck([self.word], self.coverage('non_amount'), self.path,
+                             allow_api=True, transport=service)
+        self.assertTrue(result['passed'])
+        self.assertEqual(result['judgments'][0]['probability'], 0.37)

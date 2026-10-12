@@ -61,8 +61,7 @@ def validate_answer(answer: dict) -> None:
             or set(probabilities) != set(CRITERIA)
             or any(type(p) not in (int, float) or not math.isfinite(p) or not 0 <= p <= 1
                    for p in probabilities.values())
-            or abs(sum(probabilities.values()) - 1) > 0.01
-            or probabilities[answer['choice']] < max(probabilities.values())):
+            or abs(sum(probabilities.values()) - 1) > 0.01):
         raise ValueError(f'Invalid Jev Choice answer: {answer!r}')
 
 
@@ -199,6 +198,8 @@ def recheck(words: list[dict], coverage: dict, cache_path: Path, *, allow_api=Fa
                     raise ValueError('Jev cache identity differs from request')
                 answer = entry['answer']
                 validate_answer(answer)
+                # Low-probability service choices can differ from the distribution's
+                # argmax; use the returned choice's probability for the stop policy.
                 choice = answer['choice']
                 probability = answer['probabilities'][choice]
                 rule = digit['covered']
