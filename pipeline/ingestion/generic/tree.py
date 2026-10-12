@@ -97,11 +97,18 @@ SUBJECT_HEADER = re.compile(r'[款項目]|科目')
 
 
 def _breakdown_axis(band: Band, bands: list[Band]) -> str:
-    """The lowest header cell spanning this band and a neighbouring amount band."""
+    """The lowest header cell spanning this band and a neighbouring amount band.
+
+    A cell that the page edge cuts (a heading printed across a spread, 131148's
+    節 over 区分 | 金額) counts as spanning the amount band on the other page.
+    """
     axis = band.header[-1] if band.header else '備考'
+    page_end = max(b.x1 for b in bands if b.page == band.page)
     for x0, x1, label in reversed(band.spans[:-1]):
         covered = [b for b in bands if x0 - 1 <= b.center <= x1 + 1]
-        if any(b.kind == 'amount' for b in covered) and all(b is band or b.kind != 'label' for b in covered):
+        if not all(b is band or b.kind != 'label' for b in covered):
+            continue
+        if any(b.kind == 'amount' for b in covered) or (x1 >= page_end - 1 and band.x1 >= page_end - 1):
             return label
     return axis
 
@@ -133,11 +140,15 @@ def groups(logical: Logical, pattern: str = 'bands') -> list[Group]:
             else:
                 subject_bands = []
     elif pattern == 'indent':
+        # Every neighbouring label band headed by 款・項・目 (or 科目) is one subject
+        # column; a staircase of narrow level columns is read by indentation too.
         for band in labels:
             if band.header and SUBJECT_HEADER.search(''.join(band.header)):
                 subject_bands = [band]
                 index = bands.index(band)
-                while index + 1 < len(bands) and bands[index + 1].kind == 'label' and bands[index + 1].header == band.header:
+                while index + 1 < len(bands) and bands[index + 1].kind == 'label' and (
+                        bands[index + 1].header == band.header
+                        or (bands[index + 1].header and SUBJECT_HEADER.search(''.join(bands[index + 1].header)))):
                     index += 1
                     subject_bands.append(bands[index])
                 break
@@ -153,10 +164,17 @@ def groups(logical: Logical, pattern: str = 'bands') -> list[Group]:
     return result
 
 
+BULLET = re.compile(r'^[〇○●◎□■◇◆]')
+
+
 def _split_code(line_text: str) -> tuple[str | None, str]:
+    """A leading item number and the name. Numbers start from 1, so a leading 0 is a
+    bullet drawn as a digit; bullet marks (〇) mark a level and are not part of the name."""
     found = CODE.match(line_text)
-    if not found:
-        return None, line_text
+    if not found or int(unicodedata.normalize('NFKC', found.group(1))) == 0:
+        if found:
+            line_text = line_text[found.end():].strip()
+        return None, BULLET.sub('', line_text)
     return found.group(1), line_text[found.end():].strip()
 
 
@@ -443,13 +461,24 @@ def heading_names(logical: Logical) -> dict[tuple[str, str], str]:
 
 def owner(amount: list[Glyph], band: Band, ordered: list[Group], found: dict[int, list[Item]],
           roles: tuple[str, ...] = ('node', 'repeat', 'total')) -> Item | None:
-    """The item, in the nearest label group to the left, printed in the amount's row."""
+    """The item printed on the amount's own line in the nearest label group to its left;
+    failing that, the item in its rule-bounded row (a label centred in a tall cell).
+
+    The line comes first: when sub-rows carry no rules (131172 prints the 節 of a 目
+    inside the 目's ruled cell), the cell alone would hand the 目's amount to a 節.
+    """
     digits = [g for g in amount if g.text not in ('△', '▲')] or amount
     y = sum((g.y0 + g.y1) / 2 for g in digits) / len(digits)
+    reach = .6 * max(g.y1 - g.y0 for g in digits)
+    left = sorted((g for g in ordered if g.x1 <= band.x0 + 1), key=lambda g: -g.x0)
+    for group in left:
+        same_line = [i for i in found[id(group)] if abs(i.anchor - y) <= reach and i.role in roles]
+        if same_line:
+            return max(same_line, key=lambda i: (i.level or 0, -abs(i.anchor - y)))
     top, bottom = _cell(band, y)
     if bottom - top > 80:  # unruled: fall back to the printed line
         top, bottom = y - 4, y + 4
-    for group in sorted((g for g in ordered if g.x1 <= band.x0 + 1), key=lambda g: -g.x0):
+    for group in left:
         candidates = [i for i in found[id(group)] if top - .5 <= i.anchor <= bottom + .5 and i.role in roles]
         if candidates:
             return max(candidates, key=lambda i: (i.level or 0, -abs(i.anchor - y)))

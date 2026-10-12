@@ -229,6 +229,26 @@ def text(words: list[Glyph]) -> str:
     return ''.join(w.text for w in words)
 
 
+# A right-hand page joins the page before it only when their row rules line up:
+# the share of the shorter page's row rules found on the other page within 1pt,
+# after the one vertical shift (up to SPREAD_MAX_SHIFT) that lines up the most
+# (132217 prints its right pages 1.7pt higher).
+SPREAD_ROW_MATCH = 0.6
+SPREAD_MAX_SHIFT = 8.0
+
+
+def same_rows(left: Page, right: Page) -> bool:
+    """Whether two pages print the same rows, i.e. are the halves of one spread."""
+    rows = lambda page: sorted({round(r.y0, 1) for r in page.rules if not r.vertical and r.x1 - r.x0 > 50})
+    a, b = rows(left), rows(right)
+    if not a or not b:
+        return False
+    shorter, longer = (a, b) if len(a) <= len(b) else (b, a)
+    shifts = {round(y - x, 1) for x in shorter for y in longer if abs(y - x) <= SPREAD_MAX_SHIFT} or {0.0}
+    found = max(sum(1 for x in shorter if any(abs(x + shift - y) <= 1.0 for y in longer)) for shift in shifts)
+    return found / len(shorter) >= SPREAD_ROW_MATCH
+
+
 def logical_pages(pages: list[Page]) -> list[Logical]:
     """Read each page's bands, classify them once per document, then join spreads."""
     per_page = [(page, *page_bands(page)) for page in pages]
@@ -271,6 +291,7 @@ def logical_pages(pages: list[Page]) -> list[Logical]:
             else:
                 band.kind = 'label'
     result: list[Logical] = []
+    observed = {page.number: page for page, _, _ in per_page}
     for page, bands, outside in per_page:
         unit = None
         for line in lines([Glyph(w.text, w.x0, w.y0, w.x1, w.y1, page.number, 0) for w in outside]):
@@ -281,7 +302,9 @@ def logical_pages(pages: list[Page]) -> list[Logical]:
         if not bands:
             continue
         first = min(bands, key=lambda b: b.x0)
-        if first.kind == 'amount' and result and result[-1].pages[-1] == page.number - 1 and len(result[-1].pages) == 1:
+        previous_page = observed.get(result[-1].pages[-1]) if result else None
+        if (first.kind == 'amount' and result and len(result[-1].pages) == 1
+                and previous_page is not None and same_rows(previous_page, page)):
             previous = result[-1]
             offset = max(b.x1 for b in previous.bands) + 10 - first.x0
             for band in bands:
