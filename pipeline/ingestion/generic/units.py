@@ -5,7 +5,8 @@
    A page without one carries the unit of the page before it.
 2. Otherwise the default of the document kind: a settlement (決算) prints
    円, a budget (当初・補正) prints 千円.
-3. Checks (one place, `check`): the sum of the 款 equals the printed 歳出合計,
+3. Checks (one place, `check`): the sum of the 款 (each 款 printed in both a summary
+   and the detail counted once) equals the printed 歳出合計,
    and, for a general account, the total has the digits the unit implies
    (DIGITS assumes a general account; small special accounts print less).
    The converter entry (`build.run_with_repairs`) stops on a failure; the
@@ -16,7 +17,7 @@ from __future__ import annotations
 
 import re
 
-from ingestion.generic.layout import UNIT as PRINTED, Band, Logical  # PRINTED: read while laying out pages
+from ingestion.generic.layout import UNIT as PRINTED, Band, Logical, normalize  # PRINTED: read while laying out pages
 
 COLUMN_MARK = re.compile(r'[(（](百万円|千円|円)[)）]')
 DEFAULTS = {'settlement': '円', 'initial': '千円', 'supplementary': '千円'}
@@ -88,9 +89,14 @@ def check(built, document_kind: str, account: str | None = None) -> dict:
     phase = _phase(document_kind)
     printed = [n for n in built.notes if n.get('kind') == 'total amount' and n.get('header')
                and amount_phase(dictionary_header(n['header'], document_kind), document_kind, '科目', '款') == phase]
-    raw_sum = sum(number(a['amount_text']) or 0 for a in built.amounts
-                  if a['node_key'] in {n['node_key'] for n in built.nodes if n['axis_header'] == '科目' and n['parent_node_key'] is None}
-                  and amount_phase(dictionary_header(a['header_path'], document_kind), document_kind, '科目', '款') == phase)
+    roots = {n['node_key']: n for n in built.nodes if n['axis_header'] == '科目' and n['parent_node_key'] is None}
+    # A summary table (歳入歳出決算書) and the detail print the same 款 twice: count a 款 with the
+    # same code, name and amount once.
+    seen = {(normalize(roots[a['node_key']].get('code_text') or ''), normalize(roots[a['node_key']].get('name_text') or ''),
+             number(a['amount_text']) or 0)
+            for a in built.amounts if a['node_key'] in roots
+            and amount_phase(dictionary_header(a['header_path'], document_kind), document_kind, '科目', '款') == phase}
+    raw_sum = sum(value for _, _, value in seen)
     result = {'phase': phase, 'kan_sum': raw_sum, 'printed_total': None, 'sum_matches': None, 'digits': DIGITS.get(document_kind),
               'digits_ok': None, 'stopped': False}
     if printed:

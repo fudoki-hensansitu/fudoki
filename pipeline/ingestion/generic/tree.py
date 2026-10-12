@@ -26,7 +26,8 @@ from ingestion.lib.node_tables import phase_dictionary
 from ingestion.generic.layout import (SUBJECT_LEVELS, Band, Glyph, Logical, is_amount, lines, normalize,
                                       runs, text)
 
-CODE = re.compile(r'^[(（]?([0-9０-９]{1,4})[)）]?(?=\D|$)')
+# A leading item number; the separator after it (`1.議会費`, `1．`) is not part of the name.
+CODE = re.compile(r'^[(（]?([0-9０-９]{1,4})[)）]?(?:[.．](?=[^0-9０-９]))?(?=\D|$)')
 TRANSFER = re.compile(r'(流用|充用|予備費支出|予備費充当|第[0-9０-９]+節[へか]|^第[0-9０-９]+[款項目節])')
 TOTAL = re.compile(r'(合計|総計|^計$)')
 
@@ -511,6 +512,14 @@ def owner(amount: list[Glyph], band: Band, ordered: list[Group], found: dict[int
         candidates = [i for i in found[id(group)] if top - .5 <= i.anchor <= bottom + .5 and i.role in roles]
         if candidates:
             return max(candidates, key=lambda i: (i.level or 0, -abs(i.anchor - y)))
+    # Amounts printed on the line below their item (`1. 議会費` / `142,678,000 …`, 133051):
+    # the nearest item whose last line ends within one line above the amount.
+    height = max(g.y1 - g.y0 for g in digits)
+    for group in left:
+        above = [i for i in found[id(group)] if i.role in roles and i.lines and i.lines[-1]
+                 and 0 < y - centre(i.lines[-1]) <= 1.8 * height]
+        if above:
+            return min(above, key=lambda i: y - centre(i.lines[-1]))
     return None
 
 

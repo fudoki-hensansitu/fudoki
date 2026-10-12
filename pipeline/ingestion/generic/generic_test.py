@@ -4,7 +4,8 @@ from ingestion.generic.layout import Band, Glyph, is_amount, logical_pages, spli
 from ingestion.generic.observe import Page, Rule, Word, merge_rules
 from ingestion.generic.sums import bracket
 from ingestion.generic.repair import Report, clip_to_page
-from ingestion.generic.tree import Group, Item, _leading_amount, _split_line, owner, shape_depth, subject_items
+from ingestion.generic.tree import Built, Group, Item, _leading_amount, _split_code, _split_line, owner, shape_depth, subject_items
+from ingestion.generic.units import check as check_units
 
 
 def glyph(text, x0, y0, width=None):
@@ -95,6 +96,26 @@ class TrialRulesTest(unittest.TestCase):
         moku = Item(group, 54, [[glyph('1', 51, 221, 4)], [glyph('議会費', 51, 232)]], '1', '議会費', 51, level=0)
         amount_band = Band(98, 151, 54, ('予算現額', '当初予算額'), [213.4, 551.4], 101, 551.4)
         found = owner([glyph('82,694,000', 112, 232, 37)], amount_band, [group], {id(group): [moku]})
+        self.assertIs(found, moku)
+
+    def test_the_separator_after_a_number_is_not_part_of_the_name(self):
+        self.assertEqual(_split_code('1.議会費'), ('1', '議会費'))
+        self.assertEqual(_split_code('01.01.01から流用'), ('01', '.01.01から流用'))  # a dotted code stays as printed
+
+    def test_a_kan_printed_in_the_summary_and_the_detail_counts_once(self):
+        nodes = [{'node_key': key, 'parent_node_key': None, 'axis_header': '科目', 'code_text': '1', 'name_text': name}
+                 for key, name in (('summary', '議会費'), ('detail', '議会費'))]
+        amounts = [{'node_key': key, 'header_path': '支出済額', 'amount_text': '139,266,890', 'unit_text': '円'}
+                   for key in ('summary', 'detail')]
+        total = [{'kind': 'total amount', 'header': '支出済額', 'text': '139,266,890', 'label': '歳出合計'}]
+        self.assertTrue(check_units(Built(nodes, amounts, [], total), 'settlement')['sum_matches'])
+
+    def test_an_amount_on_the_line_below_its_item_belongs_to_it(self):
+        band = Band(40, 125, 50, ('科目', '目'), [213.4, 551.4], 101, 551.4)
+        group = Group([band], '科目', True)
+        moku = Item(group, 50, [[glyph('1.', 72, 230, 6), glyph('議会費', 80, 230)]], '1', '議会費', 72, level=0)
+        amount_band = Band(125, 186, 50, ('予算現額', '当初予算額'), [213.4, 551.4], 101, 551.4)
+        found = owner([glyph('142,678,000', 130, 242, 44)], amount_band, [group], {id(group): [moku]})
         self.assertIs(found, moku)
 
 
