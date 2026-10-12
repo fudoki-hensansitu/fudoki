@@ -93,7 +93,19 @@ def compare(generated: tuple[list[dict], list[dict]], expected: tuple[list[dict]
 
     subject = lambda path: all(axis == '科目' for axis, _, _ in path)
     node_of = lambda key: key[0]
+    # Breakdown axes the expected table does not carry (e.g. a setsu list the old
+    # converter only kept as an observation) are counted apart, not as errors.
+    expected_axes = {p[-1][0] for p in want_nodes if not subject(p)}
+    kept = lambda path: subject(path) or path[-1][0] in expected_axes
+    moku = lambda path: subject(path) and len(path) == 3
     report = {
+        'moku_amounts': score(got_amounts, want_amounts, lambda k: moku(node_of(k)) and k[1] != 'annotation'),
+        'detail_nodes_expected_axes': score(got_nodes, want_nodes, lambda p: not subject(p) and kept(p)),
+        'detail_amounts_expected_axes': score(got_amounts, want_amounts,
+                                              lambda k: not subject(node_of(k)) and kept(node_of(k)) and k[1] != 'annotation'),
+        'extra_axes': {'nodes': sum(v for p, v in got_nodes.items() if not kept(p)),
+                       'amounts': sum(v for k, v in got_amounts.items() if not kept(node_of(k))),
+                       'axes': sorted({p[-1][0] for p in got_nodes if not kept(p)})},
         'subject_nodes': score(got_nodes, want_nodes, subject),
         'detail_nodes': score(got_nodes, want_nodes, lambda p: not subject(p)),
         'detail_nodes_by_axis': {axis: score(got_nodes, want_nodes, lambda p, a=axis: not subject(p) and p[-1][0] == a)
@@ -126,7 +138,7 @@ def main() -> None:
     report = compare(load([args.generated]), load(args.expected, tuple(args.exclude_header)), args.kind)
     if args.out:
         args.out.write_text(json.dumps(report, ensure_ascii=False, indent=1, default=str))
-    print(json.dumps({k: v for k, v in report.items() if k != 'examples'}, ensure_ascii=False, indent=1))
+    print(json.dumps({k: v for k, v in report.items() if k != 'examples'}, ensure_ascii=False, indent=1, default=str))
     print(json.dumps(report['examples'], ensure_ascii=False, indent=1, default=str)[:6000])
 
 
