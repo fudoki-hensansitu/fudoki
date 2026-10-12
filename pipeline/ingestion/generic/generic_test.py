@@ -259,8 +259,11 @@ class TrialRulesTest(unittest.TestCase):
 
 
 class SpotTest(unittest.TestCase):
-    """The spot check must fail on an amount from another row or column, a wrong parent and a partial number."""
+    """The spot check must fail on an amount from another row or column, a wrong parent and a partial
+    number. Columns come from the page's own header words, as the CLI computes them."""
 
+    HEADER = [('当初予算額', 112, 60, 148, 69), ('計', 182, 60, 188, 69), ('支', 222, 60, 227, 69), ('出', 228, 60, 233, 69),
+              ('済', 234, 60, 239, 69), ('額', 240, 60, 245, 69)]
     WORDS = [('1', 10, 100, 14, 109), ('総務費', 16, 100, 43, 109), ('9,000,000', 120, 100, 160, 109),
              ('1', 20, 120, 24, 129), ('総務管理費', 26, 120, 71, 129), ('8,000,000', 120, 120, 160, 129),
              ('1', 30, 140, 34, 149), ('一般管理費', 36, 140, 81, 149), ('10,000', 120, 140, 150, 149), ('12,000', 170, 140, 200, 149),
@@ -270,16 +273,26 @@ class SpotTest(unittest.TestCase):
              ('2', 20, 180, 24, 189), ('企画費', 26, 180, 53, 189), ('1,000,000', 110, 180, 150, 189),
              ('1', 30, 200, 34, 209), ('企画調整費', 36, 200, 81, 209), ('110,000', 115, 200, 150, 209), ('130,000', 165, 200, 200, 209),
              ('5,000明許', 210, 200, 250, 209)]
-    STAGES = {('approved', 1): 150, ('adjusted', 1): 200, ('executed', 1): 250}
+    RULES = [(x, 50, x, 300) for x in (100, 160, 210, 260)]
 
-    def check(self, code, name, kou, amounts, places):
-        from ingestion.generic.spot import rows, verify
+    def page(self, words):
+        return Page(5, 300, 400, [Word(*w) for w in self.HEADER + words], [Rule(*r) for r in self.RULES])
+
+    def check(self, code, name, kou, amounts, places, words=None):
+        from ingestion.generic.spot import rows, stage_columns, verify
+        words = words or self.WORDS
         kan = {'key': 'kan', 'code': '1', 'name': '総務費'}
         kous = [{'key': 'kou1', 'code': '1', 'name': '総務管理費'}, {'key': 'kou2', 'code': '2', 'name': '企画費'}]
-        box = {w[0]: [5, w[1], w[2], w[3], w[4]] for w in self.WORDS}
+        box = {w[0]: [5, w[1], w[2], w[3], w[4]] for w in words}
         moku = {'key': 'm', 'code': code, 'name': name, 'page': 5, 'amounts': dict(zip(('approved', 'adjusted', 'executed'), amounts)),
                 'positions': dict(zip(('approved', 'adjusted', 'executed'), (box[p] for p in places)))}
-        return verify(moku, kan, kous[kou], {5: rows(self.WORDS, 5)}, {'款': [kan], '項': kous}, self.STAGES)
+        page = self.page(words)
+        stages = {5: stage_columns(page)}  # as the CLI does: from the source's header, never from the build
+        return verify(moku, kan, kous[kou], {5: rows(self.HEADER + words, 5)}, {'款': [kan], '項': kous}, stages)
+
+    def test_columns_come_from_the_header(self):
+        from ingestion.generic.spot import stage_columns
+        self.assertEqual(stage_columns(self.page(self.WORDS)), {'approved': (100, 160), 'adjusted': (160, 210), 'executed': (210, 260)})
 
     def test_a_correct_moku_passes(self):
         self.assertEqual(self.check('1', '一般管理費', 0, (10000, 12000, 11000), ('10,000', '12,000', '11,000')), [])
@@ -293,11 +306,21 @@ class SpotTest(unittest.TestCase):
         result = self.check('1', '一般管理費', 0, (10000, 12000, 10000), ('10,000', '12,000', '10,000'))
         self.assertEqual(result, ['金額の列が違う'])
 
-    def test_a_number_running_into_the_next_column_is_placed_by_its_start(self):
-        from ingestion.generic.spot import _in_column
-        stages = {('approved', 1): 150, ('adjusted', 1): 200, ('executed', 1): 250}
-        self.assertTrue(_in_column(('5,000明許', 210, 258), 'executed', 1, stages))   # its right edge hides behind 明許
-        self.assertFalse(_in_column(('5,000明許', 160, 208), 'executed', 1, stages))  # starts in the 予算現額 column
+    def test_a_single_moku_reading_its_spent_amount_from_the_initial_column_fails(self):
+        # Codex: one 目 only, its 支出済額 read from the 当初予算額 box. Columns inferred from the
+        # build would accept it; columns from the header do not.
+        one = [w for w in self.WORDS if w[2] <= 149]
+        result = self.check('1', '一般管理費', 0, (10000, 12000, 10000), ('10,000', '12,000', '10,000'), words=one)
+        self.assertEqual(result, ['金額の列が違う'])
+
+    def test_a_page_without_the_stage_header_cannot_pass(self):
+        from ingestion.generic.spot import rows, verify
+        kan = {'key': 'kan', 'code': '1', 'name': '総務費'}
+        kou = {'key': 'kou1', 'code': '1', 'name': '総務管理費'}
+        box = {w[0]: [5, w[1], w[2], w[3], w[4]] for w in self.WORDS}
+        moku = {'key': 'm', 'code': '1', 'name': '一般管理費', 'page': 5, 'amounts': {'approved': 10000, 'adjusted': 12000, 'executed': 11000},
+                'positions': {'approved': box['10,000'], 'adjusted': box['12,000'], 'executed': box['11,000']}}
+        self.assertEqual(verify(moku, kan, kou, {5: rows(self.WORDS, 5)}, {'款': [kan], '項': [kou]}, {5: {}}), ['列を確かめられない'])
 
     def test_a_wrong_parent_fails(self):
         self.assertEqual(self.check('1', '一般管理費', 1, (10000, 12000, 11000), ('10,000', '12,000', '11,000')), ['親が違う（項）'])
@@ -305,6 +328,11 @@ class SpotTest(unittest.TestCase):
     def test_a_number_inside_a_longer_number_does_not_match(self):
         result = self.check('1', '企画調整費', 1, (10000, 130000, 5000), ('110,000', '130,000', '5,000明許'))
         self.assertEqual(result, ['金額がその位置に無い'])
+
+    def test_a_number_running_into_the_next_column_is_placed_by_its_start(self):
+        from ingestion.generic.spot import _in_column
+        self.assertTrue(_in_column(('5,000明許', 210, 258), (210, 260)))    # its right edge hides behind 明許
+        self.assertFalse(_in_column(('5,000明許', 165, 208), (210, 260)))   # starts in the 予算現額 column
 
 
 class RowsTest(unittest.TestCase):

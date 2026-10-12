@@ -11,7 +11,7 @@ from pathlib import Path
 
 from ingestion.generic.observe import observe
 from ingestion.generic.repair import repair
-from ingestion.generic.spot import columns, rows, verify
+from ingestion.generic.spot import rows, stage_columns, verify
 
 
 def main() -> None:
@@ -31,7 +31,8 @@ def main() -> None:
     numbers = list(range(first, min(count, last + 1) + 1))  # and the next page (a spread's right half)
     observed, _ = repair(pdf, observe(pdf, numbers, Path('.cache/generic-trial') / name / 'spot-observed.json'))
     pages = {p.number: rows([(w.text, w.x0, w.y0, w.x1, w.y1) for w in p.words], p.number) for p in observed}
-    passed, cache, stages = 0, {}, columns(moku)
+    stages = {p.number: stage_columns(p) for p in observed}  # from the source's headers, not the build
+    passed, cache = 0, {}
     for s in chosen:
         kou = subjects.get(s['parent']) or {}
         kan = subjects.get(kou.get('parent')) or {}

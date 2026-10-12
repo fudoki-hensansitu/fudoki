@@ -4,9 +4,9 @@ A 目 passes when all of these hold on the printed text (words after the text-la
 
 - each of its 当初予算額・予算現額・支出済額 is printed, as the whole number, at the place the build
   recorded for it (`10,000` never matches `110,000`);
-- each sits in its stage's column: the right edge where that stage's amounts of the document's 目
-  stand (per page side; a number running into the next column's text is placed by its start),
-  so an amount borrowed from another column of the row fails;
+- each sits in its stage's column, the cell under the source's own header word for that stage
+  (`stage_columns`; a number running into the next column's text is placed by its start), so an
+  amount the build read from another column fails;
 - the 当初予算額 and 予算現額 share one printed row, and the 支出済額 is on it or on the row at the
   same height of the next page (the right half of a spread);
 - its number and its whole name are printed in the subject columns around that row, without
@@ -157,39 +157,70 @@ def _hit(previous: Row | None, following: tuple[Row, ...], level: str, nodes: li
 
 
 PHASES = ('approved', 'adjusted', 'executed')
+MARKER = re.compile(r'[(（]?[A-Z][)）]?$')  # `支出済額(B)`
 
 
-def columns(moku: list[dict]) -> dict[tuple[str, int], float]:
-    """Where each stage's amounts stand: the most common right edge (1pt) of that stage's printed
-    amounts over the document's 目, per page side (a spread prints its halves on odd and even pages)."""
-    from collections import Counter
-    edges: dict[tuple[str, int], Counter] = {}
-    for m in moku:
-        for phase, place in (m.get('positions') or {}).items():
-            if phase in PHASES and place:
-                edges.setdefault((phase, place[0] % 2), Counter())[round(place[3])] += 1
-    return {key: counter.most_common(1)[0][0] for key, counter in edges.items()}
+def stage_columns(page) -> dict[str, tuple[float, float]]:
+    """Each stage's column on one observed page (words and rules after the repair), from the
+    source's own header: a header word the shared dictionary maps to the stage (当初予算額, 計,
+    予算現額, 支出済額, 決算額…) and the vertical rules on either side of it. The header is the part
+    above the page's first line with two grouped amounts (a 款 title above the table prints one);
+    spaced words of one cell read as one (`支 出 済 額`).
+    The column is the body cell under the header word (between the vertical rules crossing the
+    first amount's height); where headers stack, the lowest one naming a stage is its column
+    (計 under 予算現額).
+    Nothing here comes from the build, so a build that reads a column as the wrong stage fails."""
+    from ingestion.lib.node_tables import phase_dictionary
+    names = {header: phase for (kind, header), phase in phase_dictionary().items() if not kind and phase in PHASES}
+    words = sorted(page.words, key=lambda w: (round((w.y0 + w.y1) / 2 / 2), w.x0))  # a printed line, left to right
+    # The body starts at the first line with two grouped amounts (a 款 title above the table prints one).
+    lines: dict[int, int] = {}
+    for w in words:
+        if ',' in w.text and is_amount(unicodedata.normalize('NFKC', w.text)):
+            lines[round((w.y0 + w.y1) / 2 / 2)] = lines.get(round((w.y0 + w.y1) / 2 / 2), 0) + 1
+    first = min((key * 2 for key, count in lines.items() if count >= 2), default=None)
+    verticals = [r for r in page.rules if r.vertical]
+    ruled = lambda a, b, y: any(a <= r.x0 <= b and r.y0 - 1 <= y <= r.y1 + 1 for r in verticals)
+    phrases: list[list] = []
+    for word in words:
+        y = (word.y0 + word.y1) / 2
+        if first is None or y >= first - 1:
+            continue
+        last = phrases[-1] if phrases else None
+        # Words of one header cell join (`支 出 済 額`); a rule between them parts two cells.
+        if last and abs(last[2] - y) <= 2 and -2 <= word.x0 - last[1] <= 1.5 * (word.y1 - word.y0) and not ruled(last[1], word.x0, y):
+            last[1], last[3] = word.x1, last[3] + word.text
+        else:
+            phrases.append([word.x0, word.x1, y, word.text])
+    # The body's columns: rules crossing the height of the page's first amount.
+    body = [r.x0 for r in verticals if r.y0 - 1 <= first <= r.y1 + 1] if first is not None else []
+    cells: dict[str, tuple[float, float, float]] = {}
+    for x0, x1, y, text in phrases:
+        phase = names.get(MARKER.sub('', re.sub(r'\s', '', unicodedata.normalize('NFKC', text))))
+        if phase is None:
+            continue
+        centre = (x0 + x1) / 2
+        left, right = max([x for x in body if x <= centre], default=None), min([x for x in body if x >= centre], default=None)
+        # The lowest header naming a stage is its own column (計 under 予算現額).
+        if left is not None and right is not None and (phase not in cells or y > cells[phase][2]):
+            cells[phase] = (left, right, y)
+    return {phase: (left, right) for phase, (left, right, _) in cells.items()}
 
 
-def _in_column(token: tuple[str, float, float], phase: str, side: int, stages: dict[tuple[str, int], float]) -> bool:
-    """A printed number in its stage's column: a number alone ends at the column's right edge
-    (3pt); a number running into the next column's text (`939,580,691明許`), whose own right edge
-    the text hides, starts after the column to its left and before its column's edge."""
-    column = stages.get((phase, side))
-    if column is None:
-        return True
+def _in_column(token: tuple[str, float, float], cell: tuple[float, float]) -> bool:
+    """A printed number inside its stage's cell; a number running into the next column's text
+    (`939,580,691明許`), whose own right edge the text hides, by where it starts."""
     text, x0, x1 = token
-    if _number(text) == text:
-        return abs(x1 - column) <= 3
-    left = max((edge for (other, s), edge in stages.items() if s == side and edge < column - 3), default=float('-inf'))
-    return left < x0 < column
+    left, right = cell
+    return left - 1 <= x0 and (x1 <= right + 1 or _number(text) != text) and x0 < right
 
 
 def verify(moku: dict, kan: dict, kou: dict, pages: dict[int, list[Row]], others: dict[str, list[dict]],
-           stages: dict[tuple[str, int], float] | None = None, cache: dict | None = None) -> list[str]:
+           stages: dict[int, dict[str, tuple[float, float]]], cache: dict | None = None) -> list[str]:
     """Reasons the 目 fails, empty when it passes. `moku` carries its amounts and their printed
     places (`positions`: phase → (page, x0, y0, x1, y1)); `others` lists every built 款 and 項 by
-    level; `stages` comes from `columns`. Pass one `cache` for every 目 of a document."""
+    level; `stages` maps each page to `stage_columns` of it. Pass one `cache` for every 目 of a
+    document."""
     cache = {} if cache is None else cache
     values = {phase: _amount(moku['amounts'].get(phase)) for phase in PHASES}
     places = moku.get('positions') or {}
@@ -203,7 +234,10 @@ def verify(moku: dict, kan: dict, kou: dict, pages: dict[int, list[Row]], others
         index = next((i for i, r in enumerate(page) if abs(r.y - (y0 + y1) / 2) <= 2 and r.at(x0) is not None), None)
         if index is None or page[index].at(x0) != values[phase]:
             return ['金額がその位置に無い']
-        if not _in_column(page[index].token(x0), phase, number % 2, stages or {}):
+        cell = stages.get(number, {}).get(phase)
+        if cell is None:
+            reasons.append('列を確かめられない')  # no header naming the stage on that page
+        elif not _in_column(page[index].token(x0), cell):
             reasons.append('金額の列が違う')
         found[phase] = (number, index)
     (page_no, index), (adjusted_page, adjusted_index) = found['approved'], found['adjusted']
