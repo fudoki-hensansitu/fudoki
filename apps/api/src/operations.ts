@@ -14,25 +14,33 @@ import {
 } from './columns'
 import type { Db } from './db'
 import { ApiError, invalid } from './errors'
-import { FilterError, compileFilter, conjuncts, parseFilter, requireScope, type Expr } from './filter'
+import {
+  DEFAULT_PAGE_SIZE,
+  MAX_BINDS,
+  MAX_LIST,
+  MAX_PAGE_SIZE,
+  MAX_YEARS,
+  buildWhere,
+  canonicalJson,
+  searchInput,
+  type SearchInput,
+} from './search'
 
 // 操作は一度だけ定義し、REST の route と MCP の tool の両方に登録する（ADR 0022）。
 
-const DEFAULT_PAGE_SIZE = 100
-const MAX_PAGE_SIZE = 1000
-const MAX_ORDER_KEYS = 5
 const ORIGIN_CHUNK = 90 // D1 は1文の bind が100まで
 
-export const FILTER_HELP =
-  'filter は AIP-160 の部分集合。比較（= != < <= > >=）、AND・OR・NOT（大文字）、括弧、' +
-  '文字列の先頭か末尾の * による前方・後方・部分一致（例: cofog_code = "04.5*"）。' +
-  '`:`・関数・並べただけの暗黙の AND・未知の列は 400。'
-
 export const REQUIRED_HELP =
-  'filter の最上位の AND に次の2つが必須: ' +
-  '(1) document_kind = "settlement"（決算・支出済額）または "initial"（当初予算額）の一つ。意味の違う金額を足さない。' +
-  '(2) fiscal_year を5年以内に絞る。fiscal_year = 2024、fiscal_year = 2023 OR fiscal_year = 2024（5つまで）、' +
-  'fiscal_year >= 2022 AND fiscal_year <= 2024 のどれか。NOT の中は数えない。'
+  `必須は document_kind（"settlement" は決算・支出済額、"initial" は当初予算額。意味の違う金額を足さない）と、` +
+  `fiscal_year の {min, max}（西暦、幅 ${MAX_YEARS} 年以内）。`
+
+export const SEARCH_EXAMPLE = {
+  document_kind: 'settlement',
+  fiscal_year: { min: 2025, max: 2025 },
+  where: { node_kind: { eq: ['目'] }, cofog_code: { prefix: '10.4' } },
+  order_by: [{ column: 'amount_yen', desc: true }],
+  page_size: 50,
+}
 
 export const SUM_RULES = [
   '款・項・目の金額は原典に印字された値で、比較に和は要らない。',
@@ -42,7 +50,7 @@ export const SUM_RULES = [
   '軸（axis）の異なる末端（is_leaf = true）を混ぜて足さない。科目・節・備考は同じ支出の独立した切り口で、一つの軸の末端だけを足す。',
 ]
 
-// .int() は JSON Schema に ±9e15 の範囲を出すので使わない。小数は切り捨てる。
+// Get の子のページング。.int() は JSON Schema に ±9e15 の範囲を出すので使わず、小数は切り捨てる。
 const pageSize = z.coerce
   .number()
   .min(0)
@@ -50,7 +58,7 @@ const pageSize = z.coerce
   .describe(
     `1ページの件数（0 以上）。省略か 0 で既定の ${DEFAULT_PAGE_SIZE}。${MAX_PAGE_SIZE} を超えたら ${MAX_PAGE_SIZE} に丸める。`
   )
-const pageToken = (about: string) => z.string().optional().describe(`前回の応答の next_page_token。${about}`)
+const pageToken = z.string().max(512).optional().describe('前回の応答の next_page_token。document_kind と node_id は前回と同じにする。')
 
 const Origin = z.object(Object.fromEntries(ORIGIN_COLUMNS.map((c) => [c.name, nullableIf(zodOf(c.type), c)])))
 
@@ -73,6 +81,8 @@ export interface Ctx {
 export interface Operation {
   name: string
   summary: string
+  /** get は query と path、post は body に input を受ける */
+  method: 'get' | 'post'
   /** REST の path（OpenAPI の `{param}` 形式） */
   path: string
   /** input のうち path に入る項目。残りは query */
@@ -110,7 +120,7 @@ export async function decodeToken(token: string | undefined, parts: unknown[]): 
   if (typeof parsed !== 'object' || parsed === null || typeof parsed.o !== 'number' || !Number.isSafeInteger(parsed.o) || parsed.o < 0)
     throw invalid('page_token が不正です')
   if (parsed.h !== (await fingerprint(parts)))
-    throw invalid('page_token は別の問い合わせのものです。filter と order_by を変えずに渡してください')
+    throw invalid('page_token は別の問い合わせのものです。page_size 以外の入力を変えずに渡してください')
   return parsed.o
 }
 
@@ -119,25 +129,6 @@ function limitOf(size: unknown): number {
   if (n < 0) throw invalid('page_size は 0 以上です')
   const whole = Math.floor(n)
   return whole === 0 ? DEFAULT_PAGE_SIZE : Math.min(whole, MAX_PAGE_SIZE)
-}
-
-/** AIP-132 の order_by（`amount_yen desc, name`）。許可した列だけで、末尾に node_id を足して順序を決める。 */
-export function parseOrderBy(input: string | undefined, types: ReadonlyMap<string, unknown>): { sql: string; normalized: string } {
-  const keys: { column: string; desc: boolean }[] = []
-  for (const part of (input ?? '').split(',')) {
-    const text = part.trim()
-    if (text === '') continue
-    const m = /^([a-z_0-9]+)(?:\s+(asc|desc))?$/i.exec(text)
-    if (!m || !types.has(m[1]!)) throw invalid(`order_by に使えない指定です: ${text}`)
-    if (keys.some((k) => k.column === m[1])) throw invalid(`order_by に同じ列が複数あります: ${m[1]}`)
-    keys.push({ column: m[1]!, desc: m[2]?.toLowerCase() === 'desc' })
-  }
-  if (keys.length > MAX_ORDER_KEYS) throw invalid(`order_by は ${MAX_ORDER_KEYS} 列までです`)
-  if (!keys.some((k) => k.column === 'node_id')) keys.push({ column: 'node_id', desc: false })
-  return {
-    sql: keys.map((k) => `"${k.column}"${k.desc ? ' DESC' : ''}`).join(', '),
-    normalized: keys.map((k) => `${k.column} ${k.desc ? 'desc' : 'asc'}`).join(', '),
-  }
 }
 
 async function originsOf({ db }: Ctx, rows: Row[]) {
@@ -157,34 +148,21 @@ async function originsOf({ db }: Ctx, rows: Row[]) {
   return results.flatMap((r) => r.results)
 }
 
-/** 最上位の AND から、表の選択に使った document_kind = "<kind>" の項を一つ除く（表の列ではないので SQL に入れない）。 */
-export function withoutKindTerm(expr: Expr): Expr {
-  const terms = conjuncts(expr)
-  const i = terms.findIndex((e) => e.kind === 'cmp' && e.field === 'document_kind' && e.op === '=')
-  return { kind: 'and', terms: terms.filter((_, j) => j !== i) }
-}
-
-async function listNodes(ctx: Ctx, input: Record<string, unknown>) {
+async function searchNodes(ctx: Ctx, raw: Record<string, unknown>) {
   const { db } = ctx
-  const filter = (input.filter as string | undefined) ?? ''
-  if (filter.trim() === '') throw invalid('filter は必須です。' + REQUIRED_HELP)
-  let where, t: NodeTable
-  try {
-    const expr = parseFilter(filter)
-    const { documentKind } = requireScope(expr, DOCUMENT_KINDS)
-    t = NODE_TABLES.get(documentKind)!
-    where = compileFilter(withoutKindTerm(expr), t.types)
-  } catch (e) {
-    if (e instanceof FilterError) throw invalid(e.message)
-    throw e
-  }
-  const order = parseOrderBy(input.order_by as string | undefined, t.types)
-  const limit = limitOf(input.page_size)
-  const fp = ['list', filter, order.normalized]
-  const offset = await decodeToken(input.page_token as string | undefined, fp)
+  const input = raw as unknown as SearchInput
+  const t = NODE_TABLES.get(input.document_kind)
+  if (!t) throw invalid(`document_kind は ${DOCUMENT_KINDS.join('・')} のどれかです: ${input.document_kind}`)
+  const where = buildWhere(t, input.fiscal_year, input.where as never)
+  const order = [...(input.order_by ?? [])]
+  if (!order.some((k) => k.column === 'node_id')) order.push({ column: 'node_id' })
+  const orderSql = order.map((k) => `"${k.column}"${k.desc ? ' DESC' : ''}`).join(', ')
+  const { page_size: limit, page_token: token, ...query } = input
+  const fp = ['search', canonicalJson(query)]
+  const offset = await decodeToken(token, fp)
 
   const { results } = await db
-    .prepare(`SELECT ${t.selectList} FROM ${t.table} WHERE ${where.sql} ORDER BY ${order.sql} LIMIT ? OFFSET ?`)
+    .prepare(`SELECT ${t.selectList} FROM ${t.table} WHERE ${where.sql} ORDER BY ${orderSql} LIMIT ? OFFSET ?`)
     .bind(...where.params, limit + 1, offset)
     .all()
   const more = results.length > limit
@@ -249,61 +227,67 @@ async function describeColumns() {
       { name: 'settlement', description: '決算。amount_yen は支出済額（円）。' },
       { name: 'initial', description: '当初予算。amount_yen は当初予算額（円）。' },
     ],
-    filter_columns: names,
+    where_columns: names.filter((n) => n !== 'document_kind' && n !== 'fiscal_year'),
     order_by_columns: names.filter((n) => n !== 'document_kind'),
-    filter_syntax: FILTER_HELP,
-    required_filter: REQUIRED_HELP,
+    required_input: REQUIRED_HELP,
+    search_example: SEARCH_EXAMPLE,
+    where_conditions: WHERE_HELP,
     sum_rules: SUM_RULES,
     columns: [...columns.values()],
     origin_columns: ORIGIN_COLUMNS,
   }
 }
 
-const listDescription =
-  '歳出の木のノード（款・項・目と、節・備考など別の軸の内訳）を絞り込んで一覧する。' +
-  '団体の比較は node_kind = "目" などで科目の軸の款・項・目を絞って行い、詳細は get_expenditure_node で木を辿る。' +
-  FILTER_HELP +
+const WHERE_HELP = {
+  string: `eq・not_eq（${MAX_LIST} 個まで、eq は OR）、prefix・suffix・contains（前方・後方・部分一致）、is_null`,
+  integer: `eq・not_eq（${MAX_LIST} 個まで）、min・max（以上・以下）、is_null`,
+  number: 'min・max（以上・以下）、is_null',
+  boolean: 'eq',
+  combine: `列どうしは AND。列をまたぐ OR と NOT は無いので、2回に分けて問い合わせる。値の合計は ${MAX_BINDS - 2} 個まで。`,
+}
+
+const searchDescription =
+  '歳出の木のノード（款・項・目と、節・備考など別の軸の内訳）を条件で絞って一覧する。' +
+  '団体の比較は where で node_kind を "目" などに絞って行い、詳細は get_expenditure_node で木を辿る。' +
   REQUIRED_HELP +
-  '例1: document_kind = "settlement" AND fiscal_year = 2024 AND node_kind = "目" AND jurisdiction_code = "132039"。' +
-  '例2: document_kind = "settlement" AND fiscal_year >= 2022 AND fiscal_year <= 2024 AND cofog_code = "04.5*"。' +
-  'order_by は "amount_yen desc, name" の形（列は filter と同じ）。応答は {nodes, next_page_token, origins}。' +
-  'origins は結果の行が指す原典（資料名・URL・SHA-256）で、行の origin_id から引く。' +
+  `where は列ごとの条件で、string は ${WHERE_HELP.string}。integer は ${WHERE_HELP.integer}。number は ${WHERE_HELP.number}。boolean は eq。` +
+  WHERE_HELP.combine +
+  `例: ${JSON.stringify(SEARCH_EXAMPLE)}（2025年度の決算の目のうち COFOG が "10.4" で始まるものを金額順）。` +
+  'order_by は [{column, desc}] で、末尾に node_id が足される。page_size は 1〜1000（既定 100）。' +
+  '応答は {nodes, next_page_token, origins}。origins は結果の行が指す原典（資料名・URL・SHA-256）で、行の origin_id から引く。' +
   '金額の和は API では求めない。足すときの条件は describe_expenditure_columns の sum_rules に従う。'
 
 export const operations: Operation[] = [
   {
-    name: 'list_expenditure_nodes',
-    summary: '歳出の木のノードの一覧',
-    path: '/v1/expenditure/nodes',
+    name: 'search_expenditure_nodes',
+    summary: '歳出の木のノードの検索',
+    method: 'post',
+    path: '/v1/expenditure/nodes:search',
     pathParams: [],
-    description: listDescription,
-    input: z.object({
-      filter: z.string().describe('AIP-160 の部分集合。document_kind と fiscal_year の絞り込みが必須。'),
-      order_by: z.string().optional().describe('例: "amount_yen desc, name"。末尾に node_id が足される。'),
-      page_size: pageSize,
-      page_token: pageToken('filter と order_by は前回と同じにする。'),
-    }),
+    description: searchDescription,
+    input: searchInput,
     output: z.object({
       nodes: z.array(Node),
       next_page_token: z.string().nullable(),
       origins: z.array(Origin),
     }),
-    run: listNodes,
+    run: searchNodes,
   },
   {
     name: 'get_expenditure_node',
     summary: '歳出のノード一つと軸ごとの子',
+    method: 'get',
     path: '/v1/expenditure/nodes/{document_kind}/{node_id}',
     pathParams: ['document_kind', 'node_id'],
     description:
       'ノード一つ（document_kind と node_id で識別）と、その子を軸（axis）ごとに返す。' +
-      '子は list_expenditure_nodes と同じ page_size の上限と page_token で読む。' +
+      '子は search_expenditure_nodes と同じ page_size の上限（1000）と page_token で読む。' +
       '別の軸の子を同じ金額に混ぜて足さない。応答は {node, children: {<axis>: [...]}, next_page_token, origins}。',
     input: z.object({
       document_kind: z.enum(DOCUMENT_KINDS).describe('資料区分（settlement か initial）。'),
-      node_id: z.string().min(1).describe('list の応答の node_id。'),
+      node_id: z.string().regex(/^[0-9a-f]{64}$/).describe('search の応答の node_id（小文字 16 進 64 文字）。'),
       page_size: pageSize,
-      page_token: pageToken('document_kind と node_id は前回と同じにする。'),
+      page_token: pageToken,
     }),
     output: z.object({
       node: Node,
@@ -316,19 +300,21 @@ export const operations: Operation[] = [
   {
     name: 'describe_expenditure_columns',
     summary: '列の説明と金額の和の条件',
+    method: 'get',
     path: '/v1/expenditure/columns',
     pathParams: [],
     description:
-      '歳出の木の列の説明（資料区分ごと）、filter・order_by に使える列、受け付ける document_kind、' +
-      '金額を足すときの条件（sum_rules）を返す。filter を書く前に一度読む。' +
+      '歳出の木の列の説明（資料区分ごと）、where・order_by に使える列、受け付ける document_kind、' +
+      '金額を足すときの条件（sum_rules）、検索の入力の例（search_example）を返す。検索の前に一度読む。' +
       REQUIRED_HELP,
     input: z.object({}),
     output: z.object({
       document_kinds: z.array(z.object({ name: z.string(), description: z.string() })),
-      filter_columns: z.array(z.string()),
+      where_columns: z.array(z.string()),
       order_by_columns: z.array(z.string()),
-      filter_syntax: z.string(),
-      required_filter: z.string(),
+      required_input: z.string(),
+      search_example: z.record(z.string(), z.unknown()),
+      where_conditions: z.record(z.string(), z.string()),
       sum_rules: z.array(z.string()),
       columns: z.array(
         z.object({ name: z.string(), type: z.string(), description: z.record(z.string(), z.string()) })

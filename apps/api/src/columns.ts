@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import columnsJson from './columns.json'
-import type { ColumnType } from './filter'
+
+export type ColumnType = 'string' | 'integer' | 'number' | 'boolean'
 
 // columns.json は pipeline/serving の生成物（D1 の表と列の契約）。手で編集しない。
 // 表は marts と同名で、木の表は document_kind を持つ（表の列としては持たない）。
