@@ -9,6 +9,7 @@ import tempfile
 import xml.etree.ElementTree as ET
 
 from ingestion.lib.conversion import ConversionContext, write_conversion
+from ingestion.lib.node_tables import amount_position_fields, write_coverage_words
 from ingestion.lib.parquet import ParquetColumn
 
 AMOUNT = re.compile(r"△?(?:[0-9]{1,3}(?:,[0-9]{3})+|[0-9]+)")
@@ -25,6 +26,15 @@ NOTE_RULE_LEFT, NOTE_RULE_RIGHT = 440, 568  # unshifted right-page x of the rema
 SEGMENT = re.compile(r'([ML])\s+(-?[\d.]+)\s+(-?[\d.]+)')
 
 
+# Declared amount-column geometry (display-page x; right-page edges unshifted
+# back like the amount boxes) for the coverage bands.
+AMOUNT_COLUMNS = ([{'header': key, 'x_range': [AMOUNT_LEFT, AMOUNT_RIGHT]} for key in BUDGET] +
+                  [{'header': key, 'x_range': [690 - PAGE_WIDTH, RIGHT_AMOUNTS_RIGHT - PAGE_WIDTH]}
+                   for key in EXECUTED] +
+                  [{'header': key, 'x_range': [600 - PAGE_WIDTH, RIGHT_AMOUNTS_RIGHT - PAGE_WIDTH]}
+                   for key in ['金額', *EXECUTED]])
+
+
 def observe(pdf, first, last, path):
     subprocess.run(['pdftotext', '-f', str(first), '-l', str(last), '-bbox-layout',
                     str(pdf), str(path)], check=True)
@@ -38,6 +48,7 @@ def observe(pdf, first, last, path):
     if len(pages) != last - first + 1:
         raise ValueError('Incomplete Poppler page range')
     spreads = []
+    coverage = []
     for index in range(0, len(pages), 2):
         left, right = pages[index], pages[index + 1]
         if right[0] != left[0] + 1:
@@ -46,7 +57,11 @@ def observe(pdf, first, last, path):
         words += [{**w, 'xMin': w['xMin'] + PAGE_WIDTH, 'xMax': w['xMax'] + PAGE_WIDTH}
                   for w in right[1] if BODY_TOP <= w['yMin'] < BODY_BOTTOM]
         spreads.append((left[0], sorted(words, key=lambda w: (w['yMin'], w['xMin']))))
-    return spreads
+        coverage.extend((left[0], (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text'])
+                        for w in left[1] if BODY_TOP <= w['yMin'] < BODY_BOTTOM)
+        coverage.extend((left[0] + 1, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text'])
+                        for w in right[1] if BODY_TOP <= w['yMin'] < BODY_BOTTOM)
+    return spreads, coverage
 
 
 def ruling_edges(pdf, page, workdir):
@@ -121,7 +136,22 @@ def amounts(row, left, right, count):
         raise ValueError(f'Expected {count} printed amounts at y={row[0]["yMin"]}: {[w["text"] for w in row]}')
     if any(a['xMax'] >= b['xMin'] for a, b in zip(values, values[1:])):
         raise ValueError(f'Overlapping printed amounts at y={row[0]["yMin"]}')
-    return [w['text'] for w in values]
+    return [(w['text'], [w]) for w in values]
+
+
+def placed(column, page, words, right_page):
+    """Amount-owned print position; right-page words return to display coordinates."""
+    shift = PAGE_WIDTH if right_page else 0
+    boxes = [(w['xMin'] - shift, w['yMin'], w['xMax'] - shift, w['yMax']) for w in words]
+    return amount_position_fields(column, page + (1 if right_page else 0), boxes)
+
+
+def amount_cells(row, keys, left, right, count, *, page, right_page):
+    record = {}
+    for key, (text, words) in zip(keys, amounts(row, left, right, count)):
+        record[key] = text
+        record.update(placed(key, page, words, right_page))
+    return record
 
 
 def assign_notes(edges, words, anchors, account):
@@ -163,7 +193,8 @@ def assign_notes(edges, words, anchors, account):
 
 
 def location(page, y, words):
-    return {'物理頁': page, '上端': y, '下端': max(w['yMax'] for w in words)}
+    return {'物理頁': page, '左端': min(w['xMin'] for w in words), '上端': y,
+            '右端': max(w['xMax'] for w in words), '下端': max(w['yMax'] for w in words)}
 
 
 def parent_record(words, row, page, y, name_high):
@@ -184,8 +215,8 @@ def parent_record(words, row, page, y, name_high):
         name_words.append({**marker, 'text': match[2],
                            'xMin': marker['xMin'] + 4.5 * len(match[1])})
     return {'level': level, '番号': match[1], '名称': text(name_words),
-            **{key: value for key, value in zip(BUDGET, amounts(row, AMOUNT_LEFT, AMOUNT_RIGHT, 5))},
-            **{key: value for key, value in zip(EXECUTED, amounts(row, 690, RIGHT_AMOUNTS_RIGHT, 5))},
+            **amount_cells(row, BUDGET, AMOUNT_LEFT, AMOUNT_RIGHT, 5, page=page, right_page=False),
+            **amount_cells(row, EXECUTED, 690, RIGHT_AMOUNTS_RIGHT, 5, page=page, right_page=True),
             '備考': None,
             **location(page, y, labels + name_words)}
 
@@ -200,7 +231,7 @@ def section_record(words, row, page, y, name_high):
         raise ValueError(f'Missing section number at page {page}, y={y}')
     name_words = select(words, 509, SECTION_RIGHT, y - 7.5, name_high)
     return {'区分_番号': match[1], '区分_名称': text(name_words),
-            **{key: value for key, value in zip(['金額'] + EXECUTED, amounts(row, 600, RIGHT_AMOUNTS_RIGHT, 6))},
+            **amount_cells(row, ['金額'] + EXECUTED, 600, RIGHT_AMOUNTS_RIGHT, 6, page=page, right_page=True),
             '備考': None,
             **location(page, y, markers + name_words)}
 
@@ -305,7 +336,7 @@ def convert(inputs, destination, options):
     destination = Path(destination)
     observations = destination / 'nakano-observations'
     observations.mkdir()
-    spreads = observe(source['path'], detail_pages[0], detail_pages[-1], observations / 'detail-bbox.html')
+    spreads, coverage = observe(source['path'], detail_pages[0], detail_pages[-1], observations / 'detail-bbox.html')
     with tempfile.TemporaryDirectory() as workdir:
         edges = {page + 1: ruling_edges(source['path'], page + 1, workdir)
                  for page, _ in spreads}
@@ -315,7 +346,8 @@ def convert(inputs, destination, options):
         {'edges': {str(p): e for p, e in edges.items()}, 'cells': note_cells},
         ensure_ascii=False, indent=2) + '\n')
     table_id = options['table_id']
-    columns = tuple(ParquetColumn(k, 'BIGINT' if k.endswith('物理頁') else 'DOUBLE' if k.endswith(('上端', '下端')) else 'VARCHAR') for k in sections[0])
+    columns = tuple(ParquetColumn(k, 'BIGINT' if k.endswith('物理頁') else 'DOUBLE' if k.endswith(('左端', '上端', '右端', '下端')) else 'VARCHAR') for k in sections[0])
     output = write_conversion(destination / (table_id + '.parquet'), sections, columns=columns,
                               context=ConversionContext(source['sha256'], table_id, __file__))
+    write_coverage_words(Path(output.path), coverage, amount_columns=AMOUNT_COLUMNS)
     return {table_id: {'path': Path(output.path), 'metadata': metadata(list(sections[0]), account)}}

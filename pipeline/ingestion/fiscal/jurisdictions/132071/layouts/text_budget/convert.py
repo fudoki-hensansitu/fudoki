@@ -6,12 +6,14 @@ import subprocess
 
 from ingestion.fiscal.layouts.statement.text_document import build_document, lines, AMOUNT
 from ingestion.fiscal.manifest import sha_file, validate_metadata
+from ingestion.lib.node_tables import write_coverage_words
 from ingestion.lib.parquet import ParquetColumn, write_parquet
 from ingestion.lib.pdf_table import tokens_from_bbox_layout
 
 PROFILE = import_module('ingestion.fiscal.jurisdictions.132071.layouts.budget_spread').PROFILE
 POSITION = ('物理頁', '左端', '上端', '右端', '下端')
 BUDGET = ('本年度予算額', '前年度予算額', '比較')
+CONTROL_COLUMNS = ((275, 365), (365, 455), (455, 545))
 
 
 def position(words):
@@ -31,7 +33,7 @@ def controls(tokens):
                 continue
             names = [w for w in row if w.bbox.left < 275]
             columns = [[w for w in row if left <= w.bbox.left < right]
-                       for left, right in ((275, 365), (365, 455), (455, 545))]
+                       for left, right in CONTROL_COLUMNS]
             if not names or not all(columns):
                 continue
             text = ''.join(w.raw_text for w in names)
@@ -204,5 +206,15 @@ def convert(inputs, destination, options):
     columns = [ParquetColumn(k, 'BIGINT' if k.endswith(('物理頁', '識別頁')) else 'DOUBLE'
                              if k.endswith(('左端', '上端', '右端', '下端')) else 'VARCHAR') for k in rows[0]]
     write_parquet(path, rows, columns=columns)
+    write_coverage_words(path,
+                         [(w['page'], tuple(json.loads(w['bbox'])), w['raw_text'])
+                          for w in tables['words']] +
+                         [(t.page, (t.bbox.left, t.bbox.top, t.bbox.right, t.bbox.bottom), t.raw_text)
+                          for t in control_tokens],
+                         amount_columns=[{'header': bindings[c['key']]['header_path'][-1],
+                                          'x_range': [c['left'], c['right']]}
+                                         for c in profile['columns'] if bindings[c['key']]['unit'] is not None] +
+                                        [{'header': label, 'x_range': list(edges)}
+                                         for label, edges in zip(BUDGET, CONTROL_COLUMNS)])
     (folder / 'printed-total.json').write_text(json.dumps({'amount_text': account_total, 'unit_text': bindings['current']['unit']}) + '\n')
     return {options['table_id']: {'path': path, 'metadata': metadata}}

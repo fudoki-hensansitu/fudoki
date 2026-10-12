@@ -31,7 +31,7 @@
     {
       "table_id": "kouki-expenditure-detail",
       "conversion_id": "kouki-settlement",
-      "input_fingerprint": "37ddaf07796523dfe35643a0c1423805e0bb4f2575b623a4cda5963e1280d79d",
+      "input_fingerprint": "edd3dabd8fcefb8e6262b4f981f509374259f50464c15ab349bd700300ddb869",
       "account": "後期高齢者医療会計",
       "notes": [
         "武蔵野市後期高齢者医療会計の決算事項別明細書（歳出）。款・項・目の印字欄を所属する葉へ反復。最細は法定節（節がない予備費目は目）。節一覧と備考は同じ目の独立した分解であり相互の対応を推定していない。目_備考は目の備考欄の原文（□事業・○経費・積算）。金額は円の原表記（△は減額符号）。歳出合計はlocal観測に残しraw行にしない。",
@@ -42,18 +42,18 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/132039/2025/settlement/expenditure/kouki-expenditure-detail-nodes.parquet",
-          "sha256": "1c62f1f45f94da44e80984cbc863acafdc7168e622cc27b9e41e7f3213ff7c74",
-          "bytes": 4008
+          "sha256": "5e823adfd1adc14bbb6daaaa510471e3e678a503549773a1e1ab2470bfd9333e",
+          "bytes": 4849
         },
-        "row_count": 39
+        "row_count": 48
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132039/2025/settlement/expenditure/kouki-expenditure-detail-amounts.parquet",
-          "sha256": "e4c9ff5431ab475708891e0439699fe0c0f52711a0c44e39f91b94a632923cfc",
-          "bytes": 2903
+          "sha256": "a2b5c8efc8edc7c9dff604af706b994062f87e4fc31929599fe7fd22fcf4d136",
+          "bytes": 5049
         },
-        "row_count": 240
+        "row_count": 249
       }
     }
   ],
