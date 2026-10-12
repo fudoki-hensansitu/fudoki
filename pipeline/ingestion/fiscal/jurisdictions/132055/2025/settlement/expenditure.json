@@ -1,0 +1,1094 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132055",
+    "fiscal_year": 2025,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "settlement-1",
+      "converter": "fiscal/layouts/settlement_statement/convert.py",
+      "inputs": [
+        {
+          "sha256": "08974bda7129106fb2cd902eba31a9327eea6df4d2dc005784eff97bc20efef3"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-1-ocr",
+          "origin_sha256": "08974bda7129106fb2cd902eba31a9327eea6df4d2dc005784eff97bc20efef3",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              4,
+              5,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21
+            ]
+          },
+          "sha256": "c43788611f8bae3f8a0440012249836bca5e96c246ed38bb0d9735c42827a12a",
+          "bytes": 1248454
+        }
+      ],
+      "options": {
+        "table_id": "expenditure-settlement-1"
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-1"
+        }
+      ]
+    },
+    {
+      "id": "settlement-2",
+      "converter": "fiscal/layouts/settlement_statement/convert.py",
+      "inputs": [
+        {
+          "sha256": "1cbe6a08f3f3dd4dee36e61f6964d64107e81e9fe3dcc5c64def39e2743c7526"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-2-ocr",
+          "origin_sha256": "1cbe6a08f3f3dd4dee36e61f6964d64107e81e9fe3dcc5c64def39e2743c7526",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2,
+              3,
+              4
+            ]
+          },
+          "sha256": "baa2a8b2d6f804033c19c43ddf881d01426934ec71903d7283fc48d56257eac4",
+          "bytes": 450797
+        }
+      ],
+      "options": {
+        "table_id": "expenditure-settlement-2",
+        "amount_corrections": [
+          {
+            "id": "vlm-3b40c8e14c",
+            "page": 2,
+            "observation_id": "p2:full-page:r53",
+            "observed_amount": "009 480 TT",
+            "corrected_amount": "1,084,600",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 009480TT）"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-2"
+        }
+      ]
+    },
+    {
+      "id": "settlement-3",
+      "converter": "fiscal/layouts/settlement_statement/convert.py",
+      "inputs": [
+        {
+          "sha256": "20c93961b5833bbc26a52fa328da9b8b23dcc82a2ce040c543a025ef8f1b485e"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-3-ocr",
+          "origin_sha256": "20c93961b5833bbc26a52fa328da9b8b23dcc82a2ce040c543a025ef8f1b485e",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              4,
+              5,
+              6,
+              7,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31
+            ]
+          },
+          "sha256": "4b8daa61e2690b9a11204179cc39bf9c074d8d3b2ac58e7ed44e43466593f40e",
+          "bytes": 2551826
+        }
+      ],
+      "options": {
+        "table_id": "expenditure-settlement-3"
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-3"
+        }
+      ]
+    },
+    {
+      "id": "settlement-4",
+      "converter": "fiscal/layouts/settlement_statement/convert.py",
+      "inputs": [
+        {
+          "sha256": "21e3b6d3308b9916ab16af32c2227ae557ab8201be1c8372e0b5714124a4356e"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-4-ocr",
+          "origin_sha256": "21e3b6d3308b9916ab16af32c2227ae557ab8201be1c8372e0b5714124a4356e",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              4,
+              5,
+              6,
+              7,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45
+            ]
+          },
+          "sha256": "15ef64016b79f3b495375c2bc5a3b595b698bc2d32c74ec812ca8edc854b1564",
+          "bytes": 4332722
+        }
+      ],
+      "options": {
+        "table_id": "expenditure-settlement-4"
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-4"
+        }
+      ]
+    },
+    {
+      "id": "settlement-5",
+      "converter": "fiscal/layouts/settlement_statement/convert.py",
+      "inputs": [
+        {
+          "sha256": "35c8ee9fac0433c9974834ffca23b9310769e9ade0cbe8f2b9c57ab1f6f7261d"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-5-ocr",
+          "origin_sha256": "35c8ee9fac0433c9974834ffca23b9310769e9ade0cbe8f2b9c57ab1f6f7261d",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22
+            ]
+          },
+          "sha256": "af1282a58ab125c9c672651cc5ec5d1d2ec7b457377c82bc0b7a703d0686d47c",
+          "bytes": 3264281
+        }
+      ],
+      "options": {
+        "table_id": "expenditure-settlement-5",
+        "amount_corrections": [
+          {
+            "id": "vlm-226cd43959",
+            "page": 18,
+            "observation_id": "p18:full-page:r176",
+            "observed_amount": "23,158,714",
+            "corrected_amount": "23,158,774",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 23,158,714）"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-5"
+        }
+      ]
+    },
+    {
+      "id": "settlement-6",
+      "converter": "fiscal/layouts/settlement_statement/convert.py",
+      "inputs": [
+        {
+          "sha256": "566ee9572ca3467b4b6fb4c9c9eb6e708f2e31b34e8ae587a326ec3350ffc949"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-6-ocr",
+          "origin_sha256": "566ee9572ca3467b4b6fb4c9c9eb6e708f2e31b34e8ae587a326ec3350ffc949",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14
+            ]
+          },
+          "sha256": "36bb06a753d58d08a5a11b39b95f36b19d3e38841a7ffdd1e31cdb5bbd46cdc7",
+          "bytes": 1686215
+        }
+      ],
+      "options": {
+        "table_id": "expenditure-settlement-6"
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-6"
+        }
+      ]
+    },
+    {
+      "id": "settlement-7",
+      "converter": "fiscal/layouts/settlement_statement/convert.py",
+      "inputs": [
+        {
+          "sha256": "60eef4da7b0724bb5b7463854f3ef3ffb171c2a96d50097d9a7db855beda0393"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-7-ocr",
+          "origin_sha256": "60eef4da7b0724bb5b7463854f3ef3ffb171c2a96d50097d9a7db855beda0393",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60
+            ]
+          },
+          "sha256": "0df9e8d80021e8be926e2b465d2a69e8bcef70dd055e37d861e779b2f3758eda",
+          "bytes": 8051556
+        }
+      ],
+      "options": {
+        "table_id": "expenditure-settlement-7",
+        "amount_corrections": [
+          {
+            "id": "vlm-1e7a5b56dc",
+            "page": 8,
+            "observation_id": "p8:full-page:r36",
+            "observed_amount": "1,390, 1571",
+            "corrected_amount": "1,390,157",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 1,390,1571）"
+          },
+          {
+            "id": "vlm-bc9cda76aa",
+            "page": 41,
+            "observation_id": "p41:full-page:r15",
+            "observed_amount": "000 ‘9GI Z",
+            "corrected_amount": "2,156,000",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 000‘9GIZ）"
+          },
+          {
+            "id": "vlm-5ef8c03839",
+            "page": 45,
+            "observation_id": "p45:full-page:r11",
+            "observed_amount": "000 'LEZ ‘969",
+            "corrected_amount": "596,237,000",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 000'LEZ‘969）"
+          },
+          {
+            "id": "vlm-c99c4c22ab",
+            "page": 45,
+            "observation_id": "p45:full-page:r12",
+            "observed_amount": "000‘686‘9",
+            "corrected_amount": "6,989,000",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 000‘686‘9）"
+          },
+          {
+            "id": "vlm-1e07414cc9",
+            "page": 2,
+            "observation_id": "p2:full-page:r110",
+            "observed_amount": "1,044,142",
+            "corrected_amount": "1,044,742",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 1,044,142）"
+          },
+          {
+            "id": "vlm-78cec3e980",
+            "page": 5,
+            "observation_id": "p5:full-page:r31",
+            "observed_amount": "5,828,200",
+            "corrected_amount": "5,828,205",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 5,828,200）"
+          },
+          {
+            "id": "vlm-9f4bee2e7d",
+            "page": 29,
+            "observation_id": "p29:full-page:r28",
+            "observed_amount": "10,127,000",
+            "corrected_amount": "15,127,000",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 10,127,000）"
+          },
+          {
+            "id": "vlm-6e8bc7778f",
+            "page": 50,
+            "observation_id": "p50:full-page:r19",
+            "observed_amount": "6,292,170",
+            "corrected_amount": "6,292,770",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 6,292,170）"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-7"
+        }
+      ]
+    },
+    {
+      "id": "settlement-8",
+      "converter": "fiscal/layouts/settlement_statement/convert.py",
+      "inputs": [
+        {
+          "sha256": "6266ccf38743465845c691669c734dfc4d7a6209d5f2c8b5981a193343867da4"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-8-ocr",
+          "origin_sha256": "6266ccf38743465845c691669c734dfc4d7a6209d5f2c8b5981a193343867da4",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2
+            ]
+          },
+          "sha256": "6b164c89d52def9177ac8287c6b1924254bb109d2a3220f6729f5de0b6c2a336",
+          "bytes": 269585
+        }
+      ],
+      "options": {
+        "table_id": "expenditure-settlement-8"
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-8"
+        }
+      ]
+    },
+    {
+      "id": "settlement-9",
+      "converter": "fiscal/layouts/settlement_statement/convert.py",
+      "inputs": [
+        {
+          "sha256": "662e17b846fc3d43a1e976934945744ece6b75abdb1cae871b4c53a50741a859"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-9-ocr",
+          "origin_sha256": "662e17b846fc3d43a1e976934945744ece6b75abdb1cae871b4c53a50741a859",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60
+            ]
+          },
+          "sha256": "421aa10fb42ff78ae9eac4fe5a59d9a4fe6c60b475d43b7d072c0cf3052fc99f",
+          "bytes": 8123171
+        }
+      ],
+      "options": {
+        "table_id": "expenditure-settlement-9",
+        "amount_corrections": [
+          {
+            "id": "vlm-19b736de22",
+            "page": 17,
+            "observation_id": "p17:full-page:r36",
+            "observed_amount": "L,641,000",
+            "corrected_amount": "1,647,000",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は L,641,000）"
+          },
+          {
+            "id": "vlm-c04cd6a96b",
+            "page": 19,
+            "observation_id": "p19:full-page:r26",
+            "observed_amount": "000 :809 LFI",
+            "corrected_amount": "147,608,000",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 000:809LFI）"
+          },
+          {
+            "id": "vlm-772ccf71fd",
+            "page": 22,
+            "observation_id": "p22:full-page:r31",
+            "observed_amount": "9L6 ‘9L8‘9",
+            "corrected_amount": "6,875,975",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 9L6‘9L8‘9）"
+          },
+          {
+            "id": "vlm-615cc62dc6",
+            "page": 46,
+            "observation_id": "p46:full-page:r18",
+            "observed_amount": "FI8'99Z '6",
+            "corrected_amount": "9,255,814",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は FI8'99Z'6）"
+          },
+          {
+            "id": "vlm-617838626c",
+            "page": 46,
+            "observation_id": "p46:full-page:r19",
+            "observed_amount": "988 TIL ‘9EZ",
+            "corrected_amount": "246,711,336",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 988TIL‘9EZ）"
+          },
+          {
+            "id": "vlm-5394a6a6ef",
+            "page": 26,
+            "observation_id": "p26:full-page:r11",
+            "observed_amount": "211,200",
+            "corrected_amount": "277,200",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 211,200）"
+          },
+          {
+            "id": "vlm-95729e6b15",
+            "page": 40,
+            "observation_id": "p40:full-page:r74",
+            "observed_amount": "1 7,143,840",
+            "corrected_amount": "7,143,840",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 17,143,840）"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-9"
+        }
+      ]
+    },
+    {
+      "id": "settlement-10",
+      "converter": "fiscal/layouts/settlement_statement/convert.py",
+      "inputs": [
+        {
+          "sha256": "826c3cdc28b7eaca21fbdce79ff88b83a3fc4fa53691877eaa616b38e098e4f6"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-10-ocr",
+          "origin_sha256": "826c3cdc28b7eaca21fbdce79ff88b83a3fc4fa53691877eaa616b38e098e4f6",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30
+            ]
+          },
+          "sha256": "57ed83617c7c712e6f1da58f3748e6f5d5acd94b2c6e5c3c4e1fd2af7e2bc966",
+          "bytes": 3381406
+        }
+      ],
+      "options": {
+        "table_id": "expenditure-settlement-10",
+        "amount_corrections": [
+          {
+            "id": "vlm-c33671dc5c",
+            "page": 2,
+            "observation_id": "p2:full-page:r15",
+            "observed_amount": "08L 296",
+            "corrected_amount": "967,780",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 08L296）"
+          },
+          {
+            "id": "vlm-b6f1f1e17c",
+            "page": 24,
+            "observation_id": "p24:full-page:r42",
+            "observed_amount": "101,786,186",
+            "corrected_amount": "101,786,786",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 101,786,186）"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-10"
+        }
+      ]
+    },
+    {
+      "id": "settlement-11",
+      "converter": "fiscal/layouts/settlement_statement/convert.py",
+      "inputs": [
+        {
+          "sha256": "86578c822d891c53d0ea612a90b812d36008568d0c631eaad9dacada0e67a6bd"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-11-ocr",
+          "origin_sha256": "86578c822d891c53d0ea612a90b812d36008568d0c631eaad9dacada0e67a6bd",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ]
+          },
+          "sha256": "bcef8a615e82fd29b06aaabdffc279283d71ad4052ae4748104546842241b4e2",
+          "bytes": 1465784
+        }
+      ],
+      "options": {
+        "table_id": "expenditure-settlement-11",
+        "amount_corrections": [
+          {
+            "id": "vlm-2bfc683242",
+            "page": 2,
+            "observation_id": "p2:full-page:r122",
+            "observed_amount": "40,541",
+            "corrected_amount": "40,547",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 40,541）"
+          },
+          {
+            "id": "vlm-6a89f8afe8",
+            "page": 4,
+            "observation_id": "p4:full-page:r28",
+            "observed_amount": "19,144,000",
+            "corrected_amount": "19,744,000",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 19,144,000）"
+          },
+          {
+            "id": "vlm-80e90cf072",
+            "page": 10,
+            "observation_id": "p10:full-page:r29",
+            "observed_amount": "10,241,903",
+            "corrected_amount": "10,241,953",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 10,241,903）"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-11"
+        }
+      ]
+    },
+    {
+      "id": "settlement-15",
+      "converter": "fiscal/layouts/settlement_statement/convert.py",
+      "inputs": [
+        {
+          "sha256": "ba6ad1ef31217a506e294cddad422344b5f96c327b6d4135c47c8e64c0792d5e"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-15-ocr",
+          "origin_sha256": "ba6ad1ef31217a506e294cddad422344b5f96c327b6d4135c47c8e64c0792d5e",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2,
+              3,
+              4
+            ]
+          },
+          "sha256": "b97456dc5497ae9256b725e261a9493d6e77d361bf5faaa7edf27c38c5f513a7",
+          "bytes": 655909
+        }
+      ],
+      "options": {
+        "table_id": "expenditure-settlement-15",
+        "amount_corrections": [
+          {
+            "id": "vlm-992fed4e20",
+            "page": 3,
+            "observation_id": "p3:full-page:r36",
+            "observed_amount": "1,106,000",
+            "corrected_amount": "1,166,000",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 1,106,000）"
+          },
+          {
+            "id": "vlm-106b148caf",
+            "page": 2,
+            "observation_id": "p2:full-page:r48",
+            "observed_amount": "000",
+            "corrected_amount": "800",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 000）"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-15"
+        }
+      ]
+    },
+    {
+      "id": "settlement-16",
+      "converter": "fiscal/layouts/settlement_statement/convert.py",
+      "inputs": [
+        {
+          "sha256": "bf79d271f5dc0808cde92a98864d82a2a52804386c447b6631f3c2a192608bdb"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-16-ocr",
+          "origin_sha256": "bf79d271f5dc0808cde92a98864d82a2a52804386c447b6631f3c2a192608bdb",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52
+            ]
+          },
+          "sha256": "5ac00d69e1da691572c4bf912949f86a0d9082ad5ebd496d3c56ec8fedda94ae",
+          "bytes": 6236667
+        }
+      ],
+      "options": {
+        "table_id": "expenditure-settlement-16",
+        "amount_corrections": [
+          {
+            "id": "vlm-24b20fc919",
+            "page": 9,
+            "observation_id": "p9:full-page:r20",
+            "observed_amount": "ヘ158,457,000",
+            "corrected_amount": "158,457,000",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は ヘ158,457,000）"
+          },
+          {
+            "id": "vlm-7844a654d8",
+            "page": 1,
+            "observation_id": "p1:full-page:r36",
+            "observed_amount": "51,091,000",
+            "corrected_amount": "57,091,000",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 51,091,000）"
+          },
+          {
+            "id": "vlm-49903f0d10",
+            "page": 11,
+            "observation_id": "p11:full-page:r44",
+            "observed_amount": "3,021,000",
+            "corrected_amount": "5,021,000",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 3,021,000）"
+          },
+          {
+            "id": "vlm-38c5d93dc8",
+            "page": 46,
+            "observation_id": "p46:full-page:r111",
+            "observed_amount": "67,471,378",
+            "corrected_amount": "67,477,378",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 67,471,378）"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-16"
+        }
+      ]
+    },
+    {
+      "id": "settlement-17",
+      "converter": "fiscal/layouts/settlement_statement/convert.py",
+      "inputs": [
+        {
+          "sha256": "d2ba058d1dc08beaa83714b6fbbeae93447c6efffbc328808a3c4c34d248121b"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-17-ocr",
+          "origin_sha256": "d2ba058d1dc08beaa83714b6fbbeae93447c6efffbc328808a3c4c34d248121b",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2
+            ]
+          },
+          "sha256": "f7011df4cdf51f829a808ebe53f36cb00f0493126ed66bc95fa25b444635ae1c",
+          "bytes": 123074
+        }
+      ],
+      "options": {
+        "table_id": "expenditure-settlement-17"
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-17"
+        }
+      ]
+    },
+    {
+      "id": "settlement-18",
+      "converter": "fiscal/layouts/settlement_statement/convert.py",
+      "inputs": [
+        {
+          "sha256": "d55c574fa5f39f6f70faaf020f99add3f3259c79679a29d879f477964e7b81a1"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-18-ocr",
+          "origin_sha256": "d55c574fa5f39f6f70faaf020f99add3f3259c79679a29d879f477964e7b81a1",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2
+            ]
+          },
+          "sha256": "5daa04da9418e630131192a7d2d916a24555ae65ae42fd48ff0abe20b0be0592",
+          "bytes": 154158
+        }
+      ],
+      "options": {
+        "table_id": "expenditure-settlement-18"
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-18"
+        }
+      ]
+    },
+    {
+      "id": "settlement-19",
+      "converter": "fiscal/layouts/settlement_statement/convert.py",
+      "inputs": [
+        {
+          "sha256": "e94a0cbc27a7073979c562f7049ce986898a4a1990ab91aa08db01e76096330e"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-19-ocr",
+          "origin_sha256": "e94a0cbc27a7073979c562f7049ce986898a4a1990ab91aa08db01e76096330e",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ]
+          },
+          "sha256": "445d274aea2d66637685d7aafe65876187372d276512b5ebb1e22b900a5ee7ff",
+          "bytes": 896874
+        }
+      ],
+      "options": {
+        "table_id": "expenditure-settlement-19"
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-19"
+        }
+      ]
+    },
+    {
+      "id": "settlement-20",
+      "converter": "fiscal/layouts/settlement_statement/convert.py",
+      "inputs": [
+        {
+          "sha256": "ee453069baf530a51502dc0b4a06978582fd2c3625e804d1c0187710bc1b1753"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-20-ocr",
+          "origin_sha256": "ee453069baf530a51502dc0b4a06978582fd2c3625e804d1c0187710bc1b1753",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2
+            ]
+          },
+          "sha256": "09fed284e8ec65d8100a38f62d8d37d976cf7c36b64692db39484485117c339d",
+          "bytes": 139874
+        }
+      ],
+      "options": {
+        "table_id": "expenditure-settlement-20"
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-20"
+        }
+      ]
+    }
+  ],
+  "tables": []
+}
