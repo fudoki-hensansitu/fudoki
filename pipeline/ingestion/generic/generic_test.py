@@ -313,6 +313,23 @@ class SpotTest(unittest.TestCase):
         result = self.check('1', '一般管理費', 0, (10000, 12000, 10000), ('10,000', '12,000', '10,000'), words=one)
         self.assertEqual(result, ['金額の列が違う'])
 
+    def test_a_rule_ending_inside_the_header_leaves_the_stages_it_parts_unknown(self):
+        # Codex: the rule x=210 between 予算現額 and 支出済額 ends at y=90, above the body. Both
+        # headers fall in one body cell 160–260; a 支出済額 read from the 予算現額 box must not pass.
+        from ingestion.generic.spot import rows, stage_columns, verify
+        rules = [Rule(x, 50, x, 300) for x in (100, 160, 260)] + [Rule(210, 50, 210, 90)]
+        one = [w for w in self.WORDS if w[2] <= 149]
+        page = Page(5, 300, 400, [Word(*w) for w in self.HEADER + one], rules)
+        stages = {5: stage_columns(page)}
+        self.assertEqual(stages[5], {'approved': (100, 160)})
+        kan = {'key': 'kan', 'code': '1', 'name': '総務費'}
+        kou = {'key': 'kou1', 'code': '1', 'name': '総務管理費'}
+        box = {w[0]: [5, w[1], w[2], w[3], w[4]] for w in one}
+        moku = {'key': 'm', 'code': '1', 'name': '一般管理費', 'page': 5, 'amounts': {'approved': 10000, 'adjusted': 12000, 'executed': 12000},
+                'positions': {'approved': box['10,000'], 'adjusted': box['12,000'], 'executed': box['12,000']}}
+        self.assertEqual(verify(moku, kan, kou, {5: rows(self.HEADER + one, 5)}, {'款': [kan], '項': [kou]}, stages),
+                         ['列を確かめられない'])
+
     def test_a_page_without_the_stage_header_cannot_pass(self):
         from ingestion.generic.spot import rows, verify
         kan = {'key': 'kan', 'code': '1', 'name': '総務費'}

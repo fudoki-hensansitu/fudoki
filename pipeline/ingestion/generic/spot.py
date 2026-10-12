@@ -168,7 +168,7 @@ def stage_columns(page) -> dict[str, tuple[float, float]]:
     spaced words of one cell read as one (`支 出 済 額`).
     The column is the body cell under the header word (between the vertical rules crossing the
     first amount's height); where headers stack, the lowest one naming a stage is its column
-    (計 under 予算現額).
+    (計 under 予算現額). Stages whose cells overlap get no column.
     Nothing here comes from the build, so a build that reads a column as the wrong stage fails."""
     from ingestion.lib.node_tables import phase_dictionary
     names = {header: phase for (kind, header), phase in phase_dictionary().items() if not kind and phase in PHASES}
@@ -204,7 +204,10 @@ def stage_columns(page) -> dict[str, tuple[float, float]]:
         # The lowest header naming a stage is its own column (計 under 予算現額).
         if left is not None and right is not None and (phase not in cells or y > cells[phase][2]):
             cells[phase] = (left, right, y)
-    return {phase: (left, right) for phase, (left, right, _) in cells.items()}
+    # Two stages in overlapping cells (a rule between their columns ends inside the header) leave
+    # neither column known: both are dropped, and their amounts fail as unverifiable.
+    overlapping = {a for a in cells for b in cells if a != b and cells[a][0] < cells[b][1] and cells[b][0] < cells[a][1]}
+    return {phase: (left, right) for phase, (left, right, _) in cells.items() if phase not in overlapping}
 
 
 def _in_column(token: tuple[str, float, float], cell: tuple[float, float]) -> bool:
