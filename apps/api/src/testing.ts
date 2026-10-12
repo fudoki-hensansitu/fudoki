@@ -30,7 +30,7 @@ const TABLES = (columnsJson as unknown as { tables: Record<string, TableJson> })
 function createTables(sqlite: Database) {
   for (const [table, t] of Object.entries(TABLES)) {
     const key = table === 'origin' ? 'origin_id' : 'node_id'
-    const cols = t.columns.map((c) => `"${c.name}" ${c.type === 'string' ? 'text' : 'integer'}`)
+    const cols = t.columns.map((c) => `"${c.name}" ${c.type === 'string' ? 'text' : c.type === 'number' ? 'real' : 'integer'}`)
     sqlite.exec(`CREATE TABLE ${table} (${cols.join(', ')}, PRIMARY KEY (${key}))`)
     if (table !== 'origin') {
       sqlite.exec(`CREATE INDEX ${table}_scope ON ${table} (fiscal_year, jurisdiction_code, node_kind)`)

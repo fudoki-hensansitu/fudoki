@@ -7,6 +7,7 @@ import {
   ORIGIN_SELECT_LIST,
   ORIGIN_TABLE,
   toRow,
+  nullableIf,
   zodOf,
   type NodeTable,
   type Row,
@@ -41,20 +42,23 @@ export const SUM_RULES = [
   '軸（axis）の異なる末端（is_leaf = true）を混ぜて足さない。科目・節・備考は同じ支出の独立した切り口で、一つの軸の末端だけを足す。',
 ]
 
+// .int() は JSON Schema に ±9e15 の範囲を出すので使わない。小数は切り捨てる。
 const pageSize = z.coerce
   .number()
-  .int()
+  .min(0)
   .optional()
-  .describe(`1ページの件数。既定 ${DEFAULT_PAGE_SIZE}、上限 ${MAX_PAGE_SIZE}（超えたら上限に丸める）。`)
-const pageToken = z.string().optional().describe('前回の応答の next_page_token。filter・order_by は同じにする。')
+  .describe(
+    `1ページの件数（0 以上）。省略か 0 で既定の ${DEFAULT_PAGE_SIZE}。${MAX_PAGE_SIZE} を超えたら ${MAX_PAGE_SIZE} に丸める。`
+  )
+const pageToken = (about: string) => z.string().optional().describe(`前回の応答の next_page_token。${about}`)
 
-const Origin = z.object(Object.fromEntries(ORIGIN_COLUMNS.map((c) => [c.name, zodOf(c.type).nullable()])))
+const Origin = z.object(Object.fromEntries(ORIGIN_COLUMNS.map((c) => [c.name, nullableIf(zodOf(c.type), c)])))
 
 // 木の表の列は資料区分が違っても同じ集合（pipeline の生成器が検査する）。応答の行には document_kind を先頭に付ける。
 const anyTable = NODE_TABLES.values().next().value as NodeTable
 const Node = z.object({
   document_kind: z.string(),
-  ...Object.fromEntries(anyTable.columns.map((c) => [c.name, zodOf(c.type).nullable()])),
+  ...Object.fromEntries(anyTable.columns.map((c) => [c.name, nullableIf(zodOf(c.type), c)])),
 })
 
 const withKind = (t: NodeTable, raw: Record<string, unknown>): Row => ({
@@ -113,7 +117,8 @@ async function decodeToken(token: string | undefined, parts: unknown[]): Promise
 function limitOf(size: unknown): number {
   const n = size === undefined ? 0 : (size as number)
   if (n < 0) throw invalid('page_size は 0 以上です')
-  return n === 0 ? DEFAULT_PAGE_SIZE : Math.min(n, MAX_PAGE_SIZE)
+  const whole = Math.floor(n)
+  return whole === 0 ? DEFAULT_PAGE_SIZE : Math.min(whole, MAX_PAGE_SIZE)
 }
 
 /** AIP-132 の order_by（`amount_yen desc, name`）。許可した列だけで、末尾に node_id を足して順序を決める。 */
@@ -122,10 +127,10 @@ export function parseOrderBy(input: string | undefined, types: ReadonlyMap<strin
   for (const part of (input ?? '').split(',')) {
     const text = part.trim()
     if (text === '') continue
-    const m = /^([a-z_]+)(?:\s+(asc|desc))?$/.exec(text)
+    const m = /^([a-z_0-9]+)(?:\s+(asc|desc))?$/i.exec(text)
     if (!m || !types.has(m[1]!)) throw invalid(`order_by に使えない指定です: ${text}`)
     if (keys.some((k) => k.column === m[1])) throw invalid(`order_by に同じ列が複数あります: ${m[1]}`)
-    keys.push({ column: m[1]!, desc: m[2] === 'desc' })
+    keys.push({ column: m[1]!, desc: m[2]?.toLowerCase() === 'desc' })
   }
   if (keys.length > MAX_ORDER_KEYS) throw invalid(`order_by は ${MAX_ORDER_KEYS} 列までです`)
   if (!keys.some((k) => k.column === 'node_id')) keys.push({ column: 'node_id', desc: false })
@@ -276,7 +281,7 @@ export const operations: Operation[] = [
       filter: z.string().describe('AIP-160 の部分集合。document_kind と fiscal_year の絞り込みが必須。'),
       order_by: z.string().optional().describe('例: "amount_yen desc, name"。末尾に node_id が足される。'),
       page_size: pageSize,
-      page_token: pageToken,
+      page_token: pageToken('filter と order_by は前回と同じにする。'),
     }),
     output: z.object({
       nodes: z.array(Node),
@@ -298,7 +303,7 @@ export const operations: Operation[] = [
       document_kind: z.enum(DOCUMENT_KINDS).describe('資料区分（settlement か initial）。'),
       node_id: z.string().min(1).describe('list の応答の node_id。'),
       page_size: pageSize,
-      page_token: pageToken,
+      page_token: pageToken('document_kind と node_id は前回と同じにする。'),
     }),
     output: z.object({
       node: Node,

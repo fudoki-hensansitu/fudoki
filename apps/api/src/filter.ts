@@ -131,7 +131,7 @@ export function parseFilter(input: string): Expr {
     if (v.kind === 'string') return { kind: 'string', text: v.text }
     if (v.text === 'true' || v.text === 'false') return { kind: 'boolean', value: v.text === 'true' }
     if (v.text === 'null') return { kind: 'null' }
-    if (/^-?\d+$/.test(v.text)) return { kind: 'number', text: v.text }
+    if (/^-?\d+(\.\d+)?$/.test(v.text)) return { kind: 'number', text: v.text }
     if (v.text.includes('(')) throw new FilterError('関数は使えません')
     return { kind: 'string', text: v.text }
   }
@@ -154,7 +154,7 @@ export function conjuncts(expr: Expr): Expr[] {
   return expr.kind === 'and' ? expr.terms.flatMap(conjuncts) : [expr]
 }
 
-export type ColumnType = 'string' | 'integer' | 'boolean'
+export type ColumnType = 'string' | 'integer' | 'number' | 'boolean'
 
 export function compileFilter(
   expr: Expr,
@@ -190,9 +190,16 @@ export function compileFilter(
       return `${col} ${op} ?`
     }
     if (type === 'integer') {
-      if (value.kind !== 'number') throw new FilterError(`${e.field} は整数です`)
+      if (value.kind !== 'number' || !/^-?\d+$/.test(value.text)) throw new FilterError(`${e.field} は整数です`)
       const n = Number(value.text)
       if (!Number.isSafeInteger(n)) throw new FilterError(`${e.field} の整数が大きすぎます`)
+      params.push(n)
+      return `${col} ${op} ?`
+    }
+    if (type === 'number') {
+      if (value.kind !== 'number') throw new FilterError(`${e.field} は数値です`)
+      const n = Number(value.text)
+      if (!Number.isFinite(n)) throw new FilterError(`${e.field} の数値が大きすぎます`)
       params.push(n)
       return `${col} ${op} ?`
     }
@@ -200,10 +207,12 @@ export function compileFilter(
     const text = value.text
     const prefix = text.endsWith('*'),
       suffix = text.startsWith('*')
+    const core = value.kind === 'string' ? text.slice(suffix ? 1 : 0, prefix ? -1 : undefined) : text
+    if (core.includes('*'))
+      throw new FilterError(`* は値の先頭か末尾だけに書けます（前方・後方・部分一致）: ${e.field}`)
     if ((prefix || suffix) && value.kind === 'string') {
       if (op !== '=' && op !== '!=')
         throw new FilterError(`ワイルドカードは = と != だけです: ${e.field}`)
-      const core = text.slice(suffix ? 1 : 0, prefix ? -1 : undefined)
       if (core.length === 0) throw new FilterError(`ワイルドカードには値が必要です: ${e.field}`)
       // BINARY の index が前方一致に効き、= と同じ大文字小文字の区別になる GLOB を使う。
       params.push(`${suffix ? '*' : ''}${core.replace(/[*?[]/g, (m) => `[${m}]`)}${prefix ? '*' : ''}`)

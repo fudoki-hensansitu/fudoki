@@ -8,6 +8,8 @@ export interface ColumnSpec {
   name: string
   type: ColumnType
   description: string | null
+  /** 欠けているときは null になり得るものとして扱う */
+  nullable?: boolean
 }
 
 interface TableSpec {
@@ -63,4 +65,7 @@ export function toRow(columns: ColumnSpec[], raw: Record<string, unknown>): Row 
 }
 
 export const zodOf = (type: ColumnType) =>
-  type === 'string' ? z.string() : type === 'integer' ? z.number() : z.boolean()
+  type === 'string' ? z.string() : type === 'boolean' ? z.boolean() : z.number()
+
+/** nullable が false の列だけ非 null にする（OpenAPI の契約を締める）。 */
+export const nullableIf = (schema: z.ZodType, c: ColumnSpec) => (c.nullable === false ? schema : schema.nullable())

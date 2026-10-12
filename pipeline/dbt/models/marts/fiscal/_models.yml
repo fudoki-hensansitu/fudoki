@@ -246,12 +246,37 @@ models:
   description: 原典選定から毎回生成する原典ファイルの表。独立した証跡ファイルを保存するものではない。
   columns:
   - name: origin_id
+    description: 原典ファイルを指すSHA由来のID。木の表の origin_id が指す。
     data_tests:
     - unique
     - not_null
   - name: sha256
+    description: 原典ファイルの SHA-256。
     data_tests:
     - not_null
   - name: jurisdiction_code
+    description: 団体コード。
+    data_tests:
+    - not_null
+  - name: fiscal_year
+    description: 原典の年度。
+    data_tests:
+    - not_null
+  - name: document_kind
+    description: 資料区分（initial 当初予算・supplementary 補正予算・settlement 決算）。
+    data_tests:
+    - not_null
+  - name: amendment_number
+    description: 補正予算の号数。補正予算以外はNULL。
+  - name: title
+    description: 原典の資料名（前後の空白を除いたもの）。
+    data_tests:
+    - not_null
+  - name: url
+    description: 原典の公開URL。
+    data_tests:
+    - not_null
+  - name: format
+    description: 原典の形式（pdf か csv）。
     data_tests:
     - not_null

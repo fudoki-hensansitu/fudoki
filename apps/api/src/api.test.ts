@@ -103,6 +103,20 @@ describe('list', () => {
     expect(ids).toEqual(['k1', 'm1', 'm2', 's1']) // axis 科目 → 節、同じ軸は node_id 順
   })
 
+  test('order_by の方向は大文字小文字を問わない', async () => {
+    for (const dir of ['desc', 'DESC', 'Desc']) {
+      const body = await (await get('/v1/expenditure/nodes' + q({ filter: `${SCOPE} AND node_kind = "目"`, order_by: `amount_yen ${dir}` }))).json()
+      expect(body.nodes.map((n: { node_id: string }) => n.node_id)).toEqual(['m1', 'm2'])
+    }
+    expect((await get('/v1/expenditure/nodes' + q({ filter: SCOPE, order_by: 'amount_yen up' }))).status).toBe(400)
+  })
+
+  test('文字列の途中の * は 400', async () => {
+    const res = await get('/v1/expenditure/nodes' + q({ filter: `${SCOPE} AND name = "庁*管理費"` }))
+    expect(res.status).toBe(400)
+    expect((await res.json()).error.message).toContain('先頭か末尾')
+  })
+
   test('別の問い合わせの page_token は 400', async () => {
     const page1 = await (await get('/v1/expenditure/nodes' + q({ filter: SCOPE, page_size: '1' }))).json()
     const res = await get('/v1/expenditure/nodes' + q({ filter: `${SCOPE} AND amount_yen > 0`, page_size: '1', page_token: page1.next_page_token }))
@@ -178,6 +192,14 @@ describe('columns と OpenAPI', () => {
     expect(body.required_filter).toContain('document_kind')
   })
 
+  test('nullable が false の列は OpenAPI の応答で非 null', async () => {
+    const doc = await (await get('/openapi.json')).json()
+    const node = doc.paths['/v1/expenditure/nodes'].get.responses['200'].content['application/json'].schema.properties.nodes.items
+    expect(node.properties.node_id.type).toBe('string')
+    expect(JSON.stringify(node.properties.node_kind)).not.toContain('null')
+    expect(JSON.stringify(node.properties.cofog_code)).toContain('null')
+  })
+
   test('/openapi.json は 3.1', async () => {
     const doc = await (await get('/openapi.json')).json()
     expect(doc.openapi).toBe('3.1.0')
@@ -225,6 +247,19 @@ describe('MCP', () => {
     expect(JSON.parse(call.body.result.content[0].text).error.code).toBe('INVALID_ARGUMENT')
     const get404 = await rpc('tools/call', { name: 'get_expenditure_node', arguments: { document_kind: 'settlement', node_id: 'none' } })
     expect(JSON.parse(get404.body.result.content[0].text).error.code).toBe('NOT_FOUND')
+  })
+
+  test('tool の入力 schema に page_size の ±9e15 が出ず、page_token の説明が tool ごとに正しい', async () => {
+    const { body } = await rpc('tools/list')
+    const tools = Object.fromEntries(body.result.tools.map((t: { name: string }) => [t.name, t]))
+    const size = tools.list_expenditure_nodes.inputSchema.properties.page_size
+    expect(JSON.stringify(size)).not.toContain('9007199254740991')
+    expect(size.minimum).toBe(0)
+    expect(size.description).toContain('丸める')
+    expect(tools.list_expenditure_nodes.inputSchema.properties.page_token.description).toContain('filter')
+    const get = tools.get_expenditure_node.inputSchema.properties.page_token.description
+    expect(get).not.toContain('filter')
+    expect(get).toContain('node_id')
   })
 
   test('POST 以外は 405', async () => {

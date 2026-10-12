@@ -4,7 +4,7 @@
     bun run --cwd pipeline serving:sync -- --local [--persist-to <dir>] [--dry-run]
 
 手順: 表ごと（origin → 木の表）に `<表>__new` を drop → create → 全件投入し、行数と（木の表は）
-団体・年度ごとの amount_yen の和を warehouse と照合する。全部合ったときだけ、1つの batch で
+団体・年度ごと（origin は表全体）の列ごとの検査値（`check_sql`）を warehouse と照合する。全部合ったときだけ、1つの batch で
 `drop table if exists <表>; alter table <表>__new rename to <表>;` と index の作成を行う。
 合わなければ rename せず失敗する（`__new` は残り、次の実行の最初に捨てる）。
 
@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import os
 import resource
 import signal
@@ -59,6 +60,10 @@ def literal(value: Any) -> str:
         return '1' if value else '0'
     if isinstance(value, int):
         return str(value)
+    if isinstance(value, float):
+        if value != value or value in (float('inf'), float('-inf')):
+            raise ValueError(f'NaN・無限大は同期できない: {value!r}')
+        return repr(value)  # 往復で値が変わらない最短表現（1e-05 のような指数表記を含む）
     if isinstance(value, str):
         if '\x00' in value:
             raise ValueError('NUL を含む文字列は同期できない')
@@ -120,14 +125,55 @@ def table_rows(con: duckdb.DuckDBPyConnection, table: str, names: list[str], ord
         yield from chunk
 
 
+def group_columns(spec: Table) -> list[str]:
+    return ['jurisdiction_code', 'fiscal_year'] if spec.get('document_kind') else []
+
+
+def check_sql(ref: str, spec: Table) -> str:
+    """団体・年度ごと（origin は表全体）の行数と、列ごとの検査値。warehouse（DuckDB）と D1（SQLite）で同じ SQL を流す。
+
+    string は文字数の和（length はどちらも文字数）、integer・number は和、boolean は true の数、どれも NULL の数も。
+    escape 抜けや切り詰めは文字数の和に、NULL と空文字の取り違えは NULL の数に出る。
+    """
+    group = group_columns(spec)
+    parts = [f'"{g}"' for g in group] if group else ['0']
+    parts.append('count(*)')
+    for c in spec['columns']:
+        col = f'"{c["name"]}"'
+        value = {'string': f'length({col})', 'boolean': f'case when {col} then 1 else 0 end'}.get(c['type'], col)
+        parts += [f'sum({value})', f'sum(case when {col} is null then 1 else 0 end)']
+    return f'select {", ".join(parts)} from {ref} group by ' + ', '.join(str(i + 1) for i in range(max(len(group), 1)))
+
+
+def normalize(rows: list, spec: Table) -> dict:
+    """検査値の行を {グループ: [値...]} にする。NULL の和は 0、整数の和は int にそろえる。"""
+    width = max(len(group_columns(spec)), 1)
+    return {tuple(row[:width]): [0 if v is None else (v if isinstance(v, float) else int(v)) for v in row[width:]]
+            for row in rows}
+
+
+def same(a: Any, b: Any) -> bool:
+    if isinstance(a, float) or isinstance(b, float):
+        return math.isclose(a, b, rel_tol=1e-9, abs_tol=1e-6)
+    return a == b
+
+
 def expected(con: duckdb.DuckDBPyConnection, name: str, spec: Table) -> dict:
-    count = con.execute(f'select count(*) from main."{name}"').fetchone()[0]
-    sums = {}
-    if spec.get('document_kind'):
-        for code, year, total in con.execute(
-                f'select jurisdiction_code, fiscal_year, sum(amount_yen)::hugeint from main."{name}" group by 1, 2').fetchall():
-            sums[(code, year)] = int(total) if total is not None else None
-    return {'count': count, 'sums': sums}
+    return normalize(con.execute(check_sql(f'main."{name}"', spec)).fetchall(), spec)
+
+
+def differences(name: str, spec: Table, got: dict, want: dict) -> list[str]:
+    """違うグループと列を最大5件。"""
+    labels = ['count'] + [f'{c["name"]}.{kind}' for c in spec['columns'] for kind in ('sum', 'nulls')]
+    problems = []
+    for key in sorted(got.keys() | want.keys(), key=str):
+        g, w = got.get(key), want.get(key)
+        if g is None or w is None:
+            problems.append(f'{name} {key}: {"D1" if g is None else "warehouse"} に無いグループ')
+        else:
+            problems += [f'{name} {key} {label}: D1 {a} != warehouse {b}'
+                         for label, a, b in zip(labels, g, w) if not same(a, b)]
+    return problems[:5]
 
 
 # D1
@@ -189,23 +235,12 @@ class D1:
 
 
 def verify(d1: D1, tables: dict[str, Table], want: dict[str, dict]) -> list[str]:
-    """`__new` の行数と、団体・年度ごとの amount_yen の和を warehouse と照合する（1回の呼び出し）。"""
-    statements = []
-    for name in TABLE_ORDER:
-        statements.append({'sql': f'select count(*) from "{new_name(name)}"'})
-        if tables[name].get('document_kind'):
-            statements.append({'sql': f'select jurisdiction_code, fiscal_year, sum(amount_yen) from "{new_name(name)}" group by 1, 2'})
-    results = iter(d1.batch(statements))
+    """`__new` の行数と列ごとの検査値を warehouse と照合する（1回の呼び出し）。"""
+    results = d1.batch([{'sql': check_sql(f'"{new_name(name)}"', tables[name])} for name in TABLE_ORDER])
     problems = []
-    for name in TABLE_ORDER:
-        count = next(results)['results']['rows'][0][0]
-        if count != want[name]['count']:
-            problems.append(f'{name}: 行数 D1 {count} != warehouse {want[name]["count"]}')
-        if tables[name].get('document_kind'):
-            got = {(code, year): total for code, year, total in next(results)['results']['rows']}
-            if got != want[name]['sums']:
-                diff = sorted(k for k in got.keys() | want[name]['sums'].keys() if got.get(k) != want[name]['sums'].get(k))
-                problems.append(f'{name}: amount_yen の和が違う団体・年度 {diff[:5]}')
+    for name, result in zip(TABLE_ORDER, results):
+        got = normalize(result['results']['rows'], tables[name])
+        problems += differences(name, tables[name], got, want[name])
     return problems
 
 
@@ -237,7 +272,7 @@ def sync(d1: D1 | None, warehouse: Path, dry_run: bool, log: Callable[[str], Non
                 size += sum(len(s['sql']) for s in batch)
                 if d1 and not dry_run:
                     d1.batch(batch)
-            log(f'{name}: {want[name]["count"]} 行 / {calls} 回 / {size / 1e6:.1f}MB / RSS最大 {rss_mb():.0f}MB')
+            log(f'{name}: {sum(v[0] for v in want[name].values())} 行 / {calls} 回 / {size / 1e6:.1f}MB / RSS最大 {rss_mb():.0f}MB')
         if dry_run:
             log('dry-run: D1 には書いていない')
             return 0

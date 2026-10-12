@@ -6,7 +6,7 @@ import { FilterError, compileFilter, parseFilter, requireScope } from './filter'
 const COLUMN_TYPES = new Map<string, ColumnType>(
   Object.entries({
     node_id: 'string', name: 'string', code: 'string', moku_code: 'string', cofog_code: 'string',
-    fiscal_year: 'integer', amount_yen: 'integer', is_leaf: 'boolean',
+    latitude: 'number', fiscal_year: 'integer', amount_yen: 'integer', is_leaf: 'boolean',
   } as const)
 )
 const KINDS = ['settlement', 'initial']
@@ -54,7 +54,21 @@ describe('compileFilter', () => {
     expect(compile('cofog_code = "04.5*"')).toEqual({ sql: '"cofog_code" GLOB ?', params: ['04.5*'] })
     expect(compile('name = "*[a]?*"')).toEqual({ sql: '"name" GLOB ?', params: ['*[[]a][?]*'] })
     expect(compile('name != "*市"')).toEqual({ sql: '"name" NOT GLOB ?', params: ['*市'] })
-    expect(compile('name = "a*b*"').params).toEqual(['a[*]b*'])
+  })
+
+  test('途中の * は 400（先頭か末尾だけがワイルドカード）', () => {
+    expect(() => compile('name = "児*福祉費"')).toThrow('先頭か末尾')
+    expect(() => compile('name = "a*b*"')).toThrow(FilterError)
+    expect(() => compile('name > "a*b"')).toThrow(FilterError)
+  })
+
+  test('number は整数・小数・負数を受け、integer は小数を受けない', () => {
+    expect(compile('latitude > 35.5').params).toEqual([35.5])
+    expect(compile('latitude >= -139.25').params).toEqual([-139.25])
+    expect(compile('latitude = 36').params).toEqual([36])
+    expect(() => compile('latitude = "x"')).toThrow(FilterError)
+    expect(() => compile('fiscal_year = 2024.5')).toThrow(FilterError)
+    expect(compile('amount_yen > -5').params).toEqual([-5])
   })
 
   test('ワイルドカードは = と != だけ、* だけは不可', () => {

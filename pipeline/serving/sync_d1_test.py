@@ -15,6 +15,19 @@ class LiteralTest(unittest.TestCase):
         got = [r[0] for r in con.execute('select v from t order by rowid')]
         self.assertEqual(got, [int(v) if isinstance(v, bool) else v for v in values])
 
+    def test_number_roundtrip_through_sqlite(self):
+        values = [0.0, 1.5, -2.25, 1e-05, 1.2345678901234567e+20, -3e-7, 123456.789, None, 7]
+        con = sqlite3.connect(':memory:')
+        con.execute('create table t (v real)')
+        for v in values:
+            con.execute(f'insert into t values ({sync_d1.literal(v)})')
+        self.assertEqual([r[0] for r in con.execute('select v from t order by rowid')], values)
+
+    def test_nan_rejected(self):
+        for v in (float('nan'), float('inf')):
+            with self.assertRaises(ValueError):
+                sync_d1.literal(v)
+
     def test_nul_rejected(self):
         with self.assertRaises(ValueError):
             sync_d1.literal('a\x00b')
@@ -56,6 +69,38 @@ class StatementTest(unittest.TestCase):
             con.execute(columns.create_table_sql(name, spec))
             for sql in columns.create_index_sql(name, spec):
                 con.execute(sql)
+
+
+class CheckTest(unittest.TestCase):
+    def test_check_sql_same_in_duckdb_and_sqlite(self):
+        """日本語・絵文字・引用符・空文字・NULL・小数を含む表で、DuckDB と SQLite の検査値が一致する。"""
+        import duckdb
+
+        spec = {'document_kind': 'x', 'primary_key': 'k', 'indexes': [], 'columns': [
+            {'name': 'jurisdiction_code', 'type': 'string'}, {'name': 'fiscal_year', 'type': 'integer'},
+            {'name': 's', 'type': 'string'}, {'name': 'b', 'type': 'boolean'}, {'name': 'x', 'type': 'number'}]}
+        rows = [('1', 2025, '款😀ｱ', True, 1.5), ('1', 2025, "it's", False, None), ('1', 2025, '', None, 2.25),
+                ('2', 2025, None, True, -1e-5)]
+        d = duckdb.connect()
+        d.execute('create table t (jurisdiction_code varchar, fiscal_year integer, s varchar, b boolean, x double)')
+        d.executemany('insert into t values (?,?,?,?,?)', rows)
+        q = sqlite3.connect(':memory:')
+        q.execute('create table t (jurisdiction_code text, fiscal_year integer, s text, b integer, x real)')
+        q.executemany('insert into t values (?,?,?,?,?)', [(a, b, c, None if d_ is None else int(d_), e) for a, b, c, d_, e in rows])
+        sql = sync_d1.check_sql('t', spec)
+        want = sync_d1.normalize(d.execute(sql).fetchall(), spec)
+        got = sync_d1.normalize(q.execute(sql).fetchall(), spec)
+        self.assertEqual(sync_d1.differences('t', spec, got, want), [])
+        self.assertEqual(want[('1', 2025)][0], 3)
+        self.assertEqual(want[('1', 2025)][5:7], [7, 0])  # s の文字数の和（3+4+0）と NULL の数
+
+    def test_truncation_and_null_swap_are_detected(self):
+        spec = {'columns': [{'name': 's', 'type': 'string'}]}
+        base = {('a',): [2, 5, 0]}
+        self.assertTrue(sync_d1.differences('t', spec, {('a',): [2, 4, 0]}, base))  # 切り詰め
+        self.assertTrue(sync_d1.differences('t', spec, {('a',): [2, 5, 1]}, base))  # 空文字と NULL
+        self.assertTrue(sync_d1.differences('t', spec, {}, base))  # グループ欠落
+        self.assertEqual(sync_d1.differences('t', spec, base, base), [])
 
 
 if __name__ == '__main__':

@@ -35,8 +35,18 @@ NODE_INDEXES = [
 PRIMARY_KEYS = {'origin': 'origin_id'}
 DEFAULT_PRIMARY_KEY = 'node_id'
 
-TYPES = {'VARCHAR': 'string', 'INTEGER': 'integer', 'BIGINT': 'integer', 'BOOLEAN': 'boolean'}
-SQL_TYPES = {'string': 'text', 'integer': 'integer', 'boolean': 'integer'}
+TYPES = {'VARCHAR': 'string', 'INTEGER': 'integer', 'BIGINT': 'integer', 'HUGEINT': 'integer', 'BOOLEAN': 'boolean',
+         'DOUBLE': 'number', 'FLOAT': 'number'}
+SQL_TYPES = {'string': 'text', 'integer': 'integer', 'boolean': 'integer', 'number': 'real'}
+
+
+def json_type(table: str, column: str, data_type: str) -> str:
+    """DuckDB の型を JSON の型にする。対応が無い型は黙って string にせず止める。"""
+    if data_type in TYPES:
+        return TYPES[data_type]
+    if data_type.startswith('DECIMAL'):
+        return 'number'
+    raise SystemExit(f'{table}.{column}: 対応の無い型 {data_type}（columns.py の TYPES に足す）')
 
 
 def warehouse_columns(path: Path = WAREHOUSE, con=None) -> dict[str, list[tuple[str, str]]]:
@@ -52,7 +62,7 @@ def warehouse_columns(path: Path = WAREHOUSE, con=None) -> dict[str, list[tuple[
                 "where table_schema = 'main' and table_name = ? order by ordinal_position", [table]).fetchall()
             if not rows:
                 raise SystemExit(f'{path} に {table} が無い')
-            out[table] = [(name, TYPES[type_]) for name, type_ in rows]
+            out[table] = [(name, json_type(table, name, type_)) for name, type_ in rows]
         return out
     finally:
         if own:
@@ -64,9 +74,17 @@ def model_descriptions() -> dict[str, dict[str, str | None]]:
     return {m['name']: {c['name']: c.get('description') for c in m.get('columns', [])} for m in models}
 
 
+def model_not_null() -> dict[str, set[str]]:
+    """data_tests に not_null がある列。"""
+    models = yaml.safe_load(MODELS.read_text(encoding='utf-8'))['models']
+    return {m['name']: {c['name'] for c in m.get('columns', []) if 'not_null' in (c.get('data_tests') or [])}
+            for m in models}
+
+
 def build(columns: dict[str, list[tuple[str, str]]] | None = None) -> dict:
     columns = columns or warehouse_columns()
     descriptions = model_descriptions()
+    not_null = model_not_null()
     tables = {}
     for table, document_kind in TABLES.items():
         spec: dict = {}
@@ -74,7 +92,8 @@ def build(columns: dict[str, list[tuple[str, str]]] | None = None) -> dict:
             spec['document_kind'] = document_kind
         spec['primary_key'] = PRIMARY_KEYS.get(table, DEFAULT_PRIMARY_KEY)
         spec['indexes'] = NODE_INDEXES if document_kind else []
-        spec['columns'] = [{'name': name, 'type': type_, 'description': descriptions[table].get(name)}
+        spec['columns'] = [{'name': name, 'type': type_, 'nullable': name not in not_null[table],
+                            'description': descriptions[table].get(name)}
                            for name, type_ in columns[table]]
         tables[table] = spec
     return {'tables': tables}
