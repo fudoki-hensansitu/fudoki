@@ -14,6 +14,7 @@ from pathlib import Path
 
 from ingestion.generic.layout import logical_pages, normalize
 from ingestion.generic.observe import observe
+from ingestion.generic.repair import repair
 from ingestion.generic.tree import Built, build
 from ingestion.lib.node_tables import AMOUNT_COLUMNS, NODE_COLUMNS, amount_phase, check_tree, phase_dictionary
 from ingestion.lib.parquet import write_parquet
@@ -42,7 +43,12 @@ def dictionary_header(header: str, document_kind: str) -> str:
 
 
 def run(pdf: Path, pages: list[int], cache: Path | None = None, judge=None) -> Built:
-    return build(logical_pages(observe(pdf, pages, cache)), judge)
+    return run_with_repairs(pdf, pages, cache, judge)[0]
+
+
+def run_with_repairs(pdf: Path, pages: list[int], cache: Path | None = None, judge=None):
+    observed, report = repair(pdf, observe(pdf, pages, cache))
+    return build(logical_pages(observed), judge), report
 
 
 def check(built: Built, document_kind: str = 'settlement') -> dict:
@@ -66,7 +72,7 @@ def main() -> None:
         from ingestion.generic.jev import Client, line_roles
         client = Client(args.out / f'{args.table}-jev-cache.json')
         judge = lambda features: line_roles(client, features)
-    built = run(args.pdf, page_list(args.pages), args.out / f'{args.table}-observed.json', judge)
+    built, repairs = run_with_repairs(args.pdf, page_list(args.pages), args.out / f'{args.table}-observed.json', judge)
     result = check(built, args.kind)
     for kind in ('nodes', 'amounts'):
         (args.out / f'{args.table}-{kind}.parquet').unlink(missing_ok=True)
@@ -77,7 +83,7 @@ def main() -> None:
               'notes': dict(Counter(n['kind'] for n in built.notes)),
               'tree_check': {'passed': result['passed'], 'counts': result['counts'], 'issues': result['issues'][:20]},
               'mismatches': [r for r in result['results'] if r['status'] != '一致'][:50],
-              'unowned_examples': built.unowned[:50]}
+              'unowned_examples': built.unowned[:50], 'repairs': repairs.as_dict()}
     if client is not None:
         report['jev'] = {'model': 'jev-1.13.0', 'requests': client.requests, 'input_tokens': client.input_tokens,
                          'cost_usd': round(client.cost, 4), 'seconds': round(client.seconds, 1)}

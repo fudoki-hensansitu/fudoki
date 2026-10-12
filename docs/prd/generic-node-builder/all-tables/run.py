@@ -16,6 +16,7 @@ from ingestion.generic.build import check  # noqa: E402
 from ingestion.generic.evaluate import compare, load  # noqa: E402
 from ingestion.generic.layout import logical_pages  # noqa: E402
 from ingestion.generic.observe import observe  # noqa: E402
+from ingestion.generic.repair import repair  # noqa: E402
 from ingestion.generic.tree import build  # noqa: E402
 from ingestion.lib.node_tables import read_rows  # noqa: E402
 
@@ -37,11 +38,16 @@ for pdf, pages, kind in keys:
     name = f"{members[0]['jurisdiction']}-{members[0]['table_id']}"
     started = time.time()
     try:
-        built = build(logical_pages(observe(Path(pdf), list(pages), out / f'{name}.observed.json')))
+        observed = observe(Path(pdf), list(pages), out / f'{name}.observed.json')
+        if not os.environ.get('NO_REPAIR'):
+            observed, repairs = repair(Path(pdf), observed)
+        else:
+            repairs = None
+        built = build(logical_pages(observed))
         result = check(built, kind)
         error = None
     except Exception:
-        built, result, error = None, None, traceback.format_exc(limit=3)
+        built, result, error, repairs = None, None, traceback.format_exc(limit=3), None
     seconds = round(time.time() - started, 1)
     generated = (built.nodes, built.amounts) if built else ([], [])
     for row in members:
@@ -54,6 +60,7 @@ for pdf, pages, kind in keys:
                 'generated': {'nodes': len(built.nodes), 'amounts': len(built.amounts)},
                 'metrics': {k: v for k, v in report.items() if k != 'examples'},
                 'examples': report['examples'],
+                'repairs': repairs.as_dict() if repairs else None,
             })
         (out / f"{row['jurisdiction']}-{row['table_id']}.json").write_text(json.dumps(record, ensure_ascii=False, indent=1, default=str))
         print(name, row['table_id'], seconds, 'error' if error else '', flush=True)
