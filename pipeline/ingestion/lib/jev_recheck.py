@@ -13,6 +13,7 @@ import urllib.request
 
 MODEL = 'jev-1.13.0'
 STOP_PROBABILITY = 0.9
+# https://docs.typesafe.ai/models: charged per input token; output tokens are free.
 INPUT_USD_PER_MILLION = 0.042
 SIDECAR_SUFFIX = '.jev.json'
 # UTF-8 byte counts conservatively bound tokens, including request framing.
@@ -114,6 +115,12 @@ def page_states(words, digits):
 
 def load_cache(cache_path: Path) -> dict:
     return json.loads(cache_path.read_text()) if cache_path.is_file() else {'schema_version': 1, 'entries': {}, 'requests': []}
+
+
+def cached_scope(cache: dict) -> dict:
+    if not isinstance(cache.get('scope'), dict) or not isinstance(cache['scope'].get('words'), list):
+        raise ValueError('Jev evidence is missing a valid coverage scope; regenerate it with convert')
+    return cache['scope']
 
 
 def write_cache(cache_path: Path, cache: dict) -> None:

@@ -409,7 +409,7 @@ def verify_coverage(document: dict, locate, directory, *, remote=False) -> dict:
             if directory is None:
                 jev_path = fetch(table['jev']['object'], remote=remote)
                 cache = jev_recheck.load_cache(jev_path)
-                scope = cache['scope']
+                scope = jev_recheck.cached_scope(cache)
             else:
                 if len(sidecars) > 1:
                     raise ValueError('Ambiguous coverage scopes for candidate table')
@@ -420,7 +420,7 @@ def verify_coverage(document: dict, locate, directory, *, remote=False) -> dict:
                 if 'jev' in table:
                     verify(jev_path, table['jev']['object'])
                 cache = jev_recheck.load_cache(jev_path)
-                scope = json.loads(sidecars[0].read_text()) if sidecars else cache['scope']
+                scope = json.loads(sidecars[0].read_text()) if sidecars else jev_recheck.cached_scope(cache)
                 if 'scope' in cache and jev_recheck.digest(scope) != jev_recheck.digest(cache['scope']):
                     raise ValueError('Jev cached scope differs from candidate coverage scope')
             result = node_tables.check_digit_coverage(

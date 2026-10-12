@@ -56,6 +56,14 @@ class CleanupTest(unittest.TestCase):
         self.assertNotIn('--start-after', commands[1])
         self.assertIn('--start-after', commands[2])
 
+    def test_unreferenced_jev_sidecar_is_deleted_and_current_evidence_is_retained(self):
+        self.old = self.prefix + 'old.jev.json'
+        current = self.prefix + 'current.jev.json'
+        self.document['tables'][0]['jev'] = {'object': {'key': current}}
+        self.keys = {self.wanted, self.old, current, self.prefix + 'notes.json'}
+        self.assertEqual(storage.cleanup(self.document), 1)
+        self.assertEqual(self.keys, {self.wanted, current, self.prefix + 'notes.json'})
+
     def test_exit_zero_aborted_delete_is_rejected_when_key_remains(self):
         self.aborted = True
         before = set(self.keys)

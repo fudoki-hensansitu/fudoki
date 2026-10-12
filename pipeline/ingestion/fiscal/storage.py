@@ -110,7 +110,7 @@ def cleanup(document: dict) -> int:
             key = item['key']
             if not key.startswith(prefix):
                 raise ValueError('R2 list returned an object outside the target/direction')
-            if key not in wanted and key.endswith('.parquet') and '/' not in key[len(prefix):]:
+            if key not in wanted and key.endswith(('.parquet', '.jev.json')) and '/' not in key[len(prefix):]:
                 if read(manifest_path(document['target'], document['direction'])) != document:
                     raise ValueError('Saved manifest changed; cleanup stopped')
                 subprocess.run(['cf', 'r2', 'objects', 'delete', key, '--bucket-name', BUCKET, '--force', '--quiet'],
