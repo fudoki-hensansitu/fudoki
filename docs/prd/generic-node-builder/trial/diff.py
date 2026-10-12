@@ -9,8 +9,8 @@ import json
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from rows import changes, from_json  # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parents[4] / 'pipeline'))
+from ingestion.generic.rows import changes, from_json  # noqa: E402
 
 KEYS = ('subject_nodes', 'moku_amounts', 'detail_nodes_expected_axes', 'detail_amounts_expected_axes')
 TOLERANT = ('subject_nodes', 'moku_amount_values', 'detail_nodes_expected_axes')

@@ -466,7 +466,9 @@ def subject_items(group: Group) -> list[Item]:
     return result
 
 
-TITLE_AMOUNT = re.compile(r'[(（]([^0-9△▲()（）]+?)([△▲]?[0-9][0-9,]*)')
+# `（決算額 △1,000 円）`: the kind, then everything up to an optional unit and the closing bracket
+# (or the end), so a broken amount (`1,000O0円）`) is read whole and fails, not cut to `1,000`.
+TITLE_AMOUNT = re.compile(r'[(（]([^0-9△▲\-()（）]+?)([△▲\-]?[0-9][^()（）]*?)(?:百万円|千円|円)?(?:[)）]|$)')
 
 
 def title_amount(line: list[Glyph]) -> tuple[str | None, list[Glyph]]:
@@ -479,6 +481,8 @@ def title_amount(line: list[Glyph]) -> tuple[str | None, list[Glyph]]:
     if not found:
         return None, []
     kind, amount = found.group(1).strip(), found.group(2)
+    if not is_amount(amount):
+        return kind, []  # printed but unreadable: reported as such by the caller
     # Positions of the amount in the concatenated glyph texts (NFKC keeps one character per character here).
     texts = [unicodedata.normalize('NFKC', g.text) for g in line]
     joined = ''.join(t.replace(' ', '').replace('\u3000', '') for t in texts)

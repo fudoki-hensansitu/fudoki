@@ -4,6 +4,7 @@ from ingestion.generic.layout import Band, Glyph, is_amount, logical_pages, page
 from ingestion.generic.observe import Page, Rule, Word, merge_rules
 from ingestion.generic.sums import bracket
 from ingestion.generic.repair import Report, clip_to_page, crop_to_box
+from ingestion.generic.rows import identities
 from ingestion.generic.tree import (Built, Group, Item, _leading_amount, _split_code, _split_line, number_span, owner,
                                    same_position, shape_depth, subject_items)
 from ingestion.generic.units import check as check_units
@@ -62,6 +63,18 @@ class TrialRulesTest(unittest.TestCase):
         bands, _ = page_bands(Page(1, 200, 300, words, rules))
         self.assertEqual({'／'.join(b.header): [w.text for w in b.words] for b in bands},
                          {'項': ['１'], '目': ['１'], '支出済額': ['1000', '2,000'], '不用額': ['3,000']})
+
+    def test_digits_below_where_a_subject_rule_ends_stay_whole(self):
+        rules = [Rule(10, 50, 10, 200), Rule(30, 50, 30, 110), Rule(50, 50, 50, 200), Rule(100, 50, 100, 200)] + \
+            [Rule(10, y, 100, y) for y in (50, 70, 200)]
+        words = [Word('項', 15, 55, 24, 64), Word('目', 35, 55, 44, 64), Word('支出済額', 55, 55, 91, 64),
+                 Word('１１', 20, 80, 40, 89),   # crosses the rule x=30 (y 50–110): split
+                 Word('１１', 20, 150, 40, 159),  # below where that rule ends: one word
+                 Word('2,000', 60, 95, 90, 104)]
+        bands, _ = page_bands(Page(1, 200, 300, words, rules))
+        texts = {'／'.join(b.header): [w.text for w in b.words] for b in bands}
+        self.assertEqual(texts['項'], ['１', '１１'])
+        self.assertEqual(texts['目'], ['１'])
 
     def test_an_amount_running_into_the_next_band_keeps_its_digits(self):
         self.assertEqual(_leading_amount(glyph('44,406,439,217明許', 662, 700)).text, '44,406,439,217')
@@ -158,6 +171,9 @@ class TrialRulesTest(unittest.TestCase):
         self.assertEqual(read('第1款', '総務費', '（決算額', '△', '1,000', '円）'), ('決算額', '△1,000'))
         self.assertEqual(read('第2款', '総務費（決算額4,764,369,474円）'), ('決算額', '4,764,369,474'))
         self.assertEqual(title_amount(line('第1款', '総務費')), (None, []))
+        self.assertEqual(read('第1款総務費（決算額1,000O0円）'), ('決算額', ''))  # broken after a valid start: unreadable
+        self.assertEqual(read('第1款', '総務費', '（決算額', '-1,000', '円）'), ('決算額', '-1,000'))
+        self.assertEqual(read('第1款', '総務費', '（決算額', '－1,000', '円）'), ('決算額', '-1,000'))  # NFKC: the same minus
 
     def test_a_kan_title_becomes_the_kan_node_with_its_amount(self):
         from ingestion.generic.tree import build
@@ -207,6 +223,17 @@ class TrialRulesTest(unittest.TestCase):
         # A 款 of 0 that only the summary prints does not break the reprint.
         zero = built(summary + [('3', '災害復旧費', '0', '円')] + summary, '2,094,084,356')
         self.assertTrue(check_units(zero, 'settlement')['sum_matches'])
+        # One 款 printing the phase twice: agreeing printings count once, disagreeing ones stop the build.
+        def two(second_header, second_text):
+            nodes = [{'node_key': 'k', 'parent_node_key': None, 'axis_header': '科目', 'code_text': '1', 'name_text': '議会費'}]
+            amounts = [{'node_key': 'k', 'header_path': '支出済額', 'amount_text': '100', 'unit_text': '円'},
+                       {'node_key': 'k', 'header_path': second_header, 'amount_text': second_text, 'unit_text': '円'}]
+            return Built(nodes, amounts, [], [{'kind': 'total amount', 'header': '支出済額', 'text': '100', 'label': '歳出合計', 'unit': '円'}])
+        agree, disagree = check_units(two('決算額', '100'), 'settlement'), check_units(two('決算額', '200'), 'settlement')
+        self.assertTrue(agree['sum_matches'] and not agree['stopped'])
+        self.assertTrue(disagree['stopped'])
+        self.assertEqual(disagree['conflicts'][0]['printed'], [(100, '円'), (200, '円')])
+        self.assertIsNone(general_total(two('決算額', '200').nodes, two('決算額', '200').amounts, 'settlement'))
         # 款 with neither number nor name are never merged.
         unnamed = built([(None, None, '139,266,890', '円')] * 2, '139,266,890')
         self.assertEqual(check_units(unnamed, 'settlement')['kan_sum'], 2 * 139266890)
@@ -232,59 +259,136 @@ class TrialRulesTest(unittest.TestCase):
 
 
 class SpotTest(unittest.TestCase):
-    """The spot check must fail on a wrong amount, a wrong parent and a partial number."""
+    """The spot check must fail on an amount from another row or column, a wrong parent and a partial
+    number. Columns come from the page's own header words, as the CLI computes them."""
 
-    def pages(self):
-        from ingestion.generic.spot import rows
-        words = [('1', 10, 100, 14, 109), ('総務費', 16, 100, 43, 109), ('9,000,000', 120, 100, 160, 109),
-                 ('1', 20, 120, 24, 129), ('総務管理費', 26, 120, 71, 129), ('8,000,000', 120, 120, 160, 129),
-                 ('1', 30, 140, 34, 149), ('一般管理費', 36, 140, 81, 149), ('10,000', 120, 140, 150, 149), ('12,000', 170, 140, 200, 149),
-                 ('11,000', 220, 140, 250, 149),
-                 ('2', 20, 160, 24, 169), ('企画費', 26, 160, 53, 169), ('1,000,000', 120, 160, 160, 169),
-                 ('1', 30, 180, 34, 189), ('企画総務費', 36, 180, 81, 189), ('110,000', 120, 180, 155, 189), ('120,000', 170, 180, 205, 189),
-                 ('99,000', 220, 180, 250, 189)]
-        return {5: rows(words, 5)}
+    HEADER = [('当初予算額', 112, 60, 148, 69), ('計', 182, 60, 188, 69), ('支', 222, 60, 227, 69), ('出', 228, 60, 233, 69),
+              ('済', 234, 60, 239, 69), ('額', 240, 60, 245, 69)]
+    WORDS = [('1', 10, 100, 14, 109), ('総務費', 16, 100, 43, 109), ('9,000,000', 120, 100, 160, 109),
+             ('1', 20, 120, 24, 129), ('総務管理費', 26, 120, 71, 129), ('8,000,000', 120, 120, 160, 129),
+             ('1', 30, 140, 34, 149), ('一般管理費', 36, 140, 81, 149), ('10,000', 120, 140, 150, 149), ('12,000', 170, 140, 200, 149),
+             ('11,000', 220, 140, 250, 149),
+             ('2', 30, 160, 34, 169), ('企画総務費', 36, 160, 81, 169), ('100,000', 115, 160, 150, 169), ('120,000', 165, 160, 200, 169),
+             ('99,000', 220, 160, 250, 169),
+             ('2', 20, 180, 24, 189), ('企画費', 26, 180, 53, 189), ('1,000,000', 110, 180, 150, 189),
+             ('1', 30, 200, 34, 209), ('企画調整費', 36, 200, 81, 209), ('110,000', 115, 200, 150, 209), ('130,000', 165, 200, 200, 209),
+             ('5,000明許', 210, 200, 250, 209)]
+    RULES = [(x, 50, x, 300) for x in (100, 160, 210, 260)]
 
-    def nodes(self):
+    def page(self, words):
+        return Page(5, 300, 400, [Word(*w) for w in self.HEADER + words], [Rule(*r) for r in self.RULES])
+
+    def check(self, code, name, kou, amounts, places, words=None):
+        from ingestion.generic.spot import rows, stage_columns, verify
+        words = words or self.WORDS
         kan = {'key': 'kan', 'code': '1', 'name': '総務費'}
-        kou = {'key': 'kou1', 'code': '1', 'name': '総務管理費'}
-        other = {'key': 'kou2', 'code': '2', 'name': '企画費'}
-        moku = {'key': 'm', 'code': '1', 'name': '一般管理費', 'page': 5,
-                'amounts': {'approved': 10000, 'adjusted': 12000, 'executed': 11000}}
-        return kan, kou, other, moku
+        kous = [{'key': 'kou1', 'code': '1', 'name': '総務管理費'}, {'key': 'kou2', 'code': '2', 'name': '企画費'}]
+        box = {w[0]: [5, w[1], w[2], w[3], w[4]] for w in words}
+        moku = {'key': 'm', 'code': code, 'name': name, 'page': 5, 'amounts': dict(zip(('approved', 'adjusted', 'executed'), amounts)),
+                'positions': dict(zip(('approved', 'adjusted', 'executed'), (box[p] for p in places)))}
+        page = self.page(words)
+        stages = {5: stage_columns(page)}  # as the CLI does: from the source's header, never from the build
+        return verify(moku, kan, kous[kou], {5: rows(self.HEADER + words, 5)}, {'款': [kan], '項': kous}, stages)
+
+    def test_columns_come_from_the_header(self):
+        from ingestion.generic.spot import stage_columns
+        self.assertEqual(stage_columns(self.page(self.WORDS)), {'approved': (100, 160), 'adjusted': (160, 210), 'executed': (210, 260)})
 
     def test_a_correct_moku_passes(self):
-        from ingestion.generic.spot import verify
-        kan, kou, other, moku = self.nodes()
-        self.assertEqual(verify(moku, kan, kou, self.pages(), {'款': [kan], '項': [kou, other]}), [])
+        self.assertEqual(self.check('1', '一般管理費', 0, (10000, 12000, 11000), ('10,000', '12,000', '11,000')), [])
+        self.assertEqual(self.check('1', '企画調整費', 1, (110000, 130000, 5000), ('110,000', '130,000', '5,000明許')), [])
 
-    def test_an_amount_from_another_row_fails(self):
-        from ingestion.generic.spot import verify
-        kan, kou, other, moku = self.nodes()
-        moku['amounts']['executed'] = 99000  # printed, but on 企画総務費's row
-        self.assertEqual(verify(moku, kan, kou, self.pages(), {'款': [kan], '項': [kou, other]}), ['支出済額が同じ行に無い'])
+    def test_the_three_amounts_of_the_next_moku_fail(self):
+        result = self.check('1', '一般管理費', 0, (100000, 120000, 99000), ('100,000', '120,000', '99,000'))
+        self.assertEqual(result, ['番号と名前が行に無い'])
+
+    def test_an_amount_of_another_stage_on_the_same_row_fails(self):
+        result = self.check('1', '一般管理費', 0, (10000, 12000, 10000), ('10,000', '12,000', '10,000'))
+        self.assertEqual(result, ['金額の列が違う'])
+
+    def test_a_single_moku_reading_its_spent_amount_from_the_initial_column_fails(self):
+        # Codex: one 目 only, its 支出済額 read from the 当初予算額 box. Columns inferred from the
+        # build would accept it; columns from the header do not.
+        one = [w for w in self.WORDS if w[2] <= 149]
+        result = self.check('1', '一般管理費', 0, (10000, 12000, 10000), ('10,000', '12,000', '10,000'), words=one)
+        self.assertEqual(result, ['金額の列が違う'])
+
+    def test_a_rule_ending_inside_the_header_leaves_the_stages_it_parts_unknown(self):
+        # Codex: the rule x=210 between 予算現額 and 支出済額 ends at y=90, above the body. Both
+        # headers fall in one body cell 160–260; a 支出済額 read from the 予算現額 box must not pass.
+        from ingestion.generic.spot import rows, stage_columns, verify
+        rules = [Rule(x, 50, x, 300) for x in (100, 160, 260)] + [Rule(210, 50, 210, 90)]
+        one = [w for w in self.WORDS if w[2] <= 149]
+        page = Page(5, 300, 400, [Word(*w) for w in self.HEADER + one], rules)
+        stages = {5: stage_columns(page)}
+        self.assertEqual(stages[5], {'approved': (100, 160)})
+        kan = {'key': 'kan', 'code': '1', 'name': '総務費'}
+        kou = {'key': 'kou1', 'code': '1', 'name': '総務管理費'}
+        box = {w[0]: [5, w[1], w[2], w[3], w[4]] for w in one}
+        moku = {'key': 'm', 'code': '1', 'name': '一般管理費', 'page': 5, 'amounts': {'approved': 10000, 'adjusted': 12000, 'executed': 12000},
+                'positions': {'approved': box['10,000'], 'adjusted': box['12,000'], 'executed': box['12,000']}}
+        self.assertEqual(verify(moku, kan, kou, {5: rows(self.HEADER + one, 5)}, {'款': [kan], '項': [kou]}, stages),
+                         ['列を確かめられない'])
+
+    def test_a_spent_amount_on_the_next_page_needs_a_spread(self):
+        from ingestion.generic.spot import rows, verify
+        kan = {'key': 'kan', 'code': '1', 'name': '総務費'}
+        kou = {'key': 'kou1', 'code': '1', 'name': '総務管理費'}
+        left = [w for w in self.WORDS if w[2] <= 149 and w[0] != '11,000']
+        right = [('支出済額', 22, 60, 58, 69), ('11,000', 20, 140, 50, 149), ('2,000', 60, 140, 90, 149)]
+        pages = {5: rows(self.HEADER + left, 5), 6: rows(right, 6)}
+        stages = {5: {'approved': (100, 160), 'adjusted': (160, 210)}, 6: {'executed': (10, 60)}}
+        box = {w[0]: [5, w[1], w[2], w[3], w[4]] for w in left}
+        moku = {'key': 'm', 'code': '1', 'name': '一般管理費', 'page': 5, 'amounts': {'approved': 10000, 'adjusted': 12000, 'executed': 11000},
+                'positions': {'approved': box['10,000'], 'adjusted': box['12,000'], 'executed': [6, 20, 140, 50, 149]}}
+        others = {'款': [kan], '項': [kou]}
+        self.assertEqual(verify(moku, kan, kou, pages, others, stages, spreads={(5, 6)}), [])
+        self.assertEqual(verify(moku, kan, kou, pages, others, stages), ['支出済額が同じ行に無い'])  # not a spread
+
+    def test_a_page_without_the_stage_header_cannot_pass(self):
+        from ingestion.generic.spot import rows, verify
+        kan = {'key': 'kan', 'code': '1', 'name': '総務費'}
+        kou = {'key': 'kou1', 'code': '1', 'name': '総務管理費'}
+        box = {w[0]: [5, w[1], w[2], w[3], w[4]] for w in self.WORDS}
+        moku = {'key': 'm', 'code': '1', 'name': '一般管理費', 'page': 5, 'amounts': {'approved': 10000, 'adjusted': 12000, 'executed': 11000},
+                'positions': {'approved': box['10,000'], 'adjusted': box['12,000'], 'executed': box['11,000']}}
+        self.assertEqual(verify(moku, kan, kou, {5: rows(self.WORDS, 5)}, {'款': [kan], '項': [kou]}, {5: {}}), ['列を確かめられない'])
 
     def test_a_wrong_parent_fails(self):
-        from ingestion.generic.spot import verify
-        kan, kou, other, moku = self.nodes()
-        self.assertEqual(verify(moku, kan, other, self.pages(), {'款': [kan], '項': [kou, other]}), ['親が違う（項）'])
-
-    def test_amounts_running_into_the_next_column_still_match_whole(self):
-        from ingestion.generic.spot import rows, verify
-        kan, kou, other, _ = self.nodes()
-        pages = self.pages()
-        pages[5] += rows([('3', 30, 300, 34, 309), ('電算管理費', 36, 300, 81, 309), ('20,000明許', 120, 300, 160, 309),
-                          ('30,000明許', 170, 300, 210, 309), ('25,000', 220, 300, 250, 309)], 5)
-        moku = {'key': 'm3', 'code': '3', 'name': '電算管理費', 'page': 5,
-                'amounts': {'approved': 20000, 'adjusted': 30000, 'executed': 25000}}
-        self.assertEqual(verify(moku, kan, kou, pages, {'款': [kan], '項': [kou, other]}), ['親が違う（項）'])  # read, then judged
+        self.assertEqual(self.check('1', '一般管理費', 1, (10000, 12000, 11000), ('10,000', '12,000', '11,000')), ['親が違う（項）'])
 
     def test_a_number_inside_a_longer_number_does_not_match(self):
-        from ingestion.generic.spot import verify
-        kan, kou, other, _ = self.nodes()
-        moku = {'key': 'm2', 'code': '1', 'name': '企画総務費', 'page': 5,
-                'amounts': {'approved': 10000, 'adjusted': 20000, 'executed': 99000}}  # 110,000 and 120,000 are printed
-        self.assertEqual(verify(moku, kan, other, self.pages(), {'款': [kan], '項': [kou, other]}), ['当初予算額・予算現額の行が無い'])
+        result = self.check('1', '企画調整費', 1, (10000, 130000, 5000), ('110,000', '130,000', '5,000明許'))
+        self.assertEqual(result, ['金額がその位置に無い'])
+
+    def test_a_number_running_into_the_next_column_is_placed_by_its_start(self):
+        from ingestion.generic.spot import _in_column
+        self.assertTrue(_in_column(('5,000明許', 210, 258), (210, 260)))    # its right edge hides behind 明許
+        self.assertFalse(_in_column(('5,000明許', 165, 208), (210, 260)))   # starts in the 予算現額 column
+
+
+class RowsTest(unittest.TestCase):
+    """Two builds compare row by row: a value, a parent, a printed place or a count each shows."""
+
+    def table(self, value='100', parent='p1', page=1, box=(100, 20, 130, 30), copies=1):
+        nodes = [{'node_key': 'p1', 'parent_node_key': None, 'axis_header': '科目', 'code_text': '1', 'name_text': '総務費',
+                  'level_header': '款', 'depth': 1, 'physical_page': 1, 'x0': 10, 'y0': 20, 'x1': 40, 'y1': 30},
+                 {'node_key': 'p2', 'parent_node_key': None, 'axis_header': '科目', 'code_text': '2', 'name_text': '民生費',
+                  'level_header': '款', 'depth': 1, 'physical_page': 1, 'x0': 10, 'y0': 40, 'x1': 40, 'y1': 50},
+                 {'node_key': 'c', 'parent_node_key': parent, 'axis_header': '科目', 'code_text': '1', 'name_text': '一般管理費',
+                  'level_header': '項', 'depth': 2, 'physical_page': 1, 'x0': 20, 'y0': 60, 'x1': 60, 'y1': 70}]
+        amounts = [{'node_key': 'c', 'header_path': '支出済額', 'amount_text': value, 'unit_text': '円', 'physical_page': page,
+                    'x0': box[0], 'y0': box[1], 'x1': box[2], 'y1': box[3]}] * copies
+        return identities(nodes, amounts)
+
+    def test_each_kind_of_change_shows(self):
+        from ingestion.generic.rows import changes
+        base = self.table()
+        self.assertEqual(changes(base, self.table())['gone'], 0)
+        for changed in (self.table(value='200'), self.table(parent='p2'), self.table(page=2, box=(200, 80, 230, 90)),
+                        self.table(box=(100, 21, 130, 31)), self.table(copies=2)):
+            diff = changes(base, changed)
+            self.assertTrue(diff['gone'] or diff['added'])
 
 
 class SubjectTest(unittest.TestCase):
