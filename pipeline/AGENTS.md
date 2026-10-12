@@ -11,6 +11,7 @@ script はこの package が所有する。実行は `bun run --cwd pipeline <na
 | 取り込み・保存 | `ingestion:schema` / `ingestion:check` / `ingestion:originals` / `ingestion:convert` / `ingestion:restore` / `ingestion:cleanup` |
 | 取り込み表の合計検査 | `ingestion:verify`（ノードの表・金額の表の全段の木の検査を保存済み・候補の表に当てる。CIでは回さない） |
 | dbt | `dbt:prepare`（入力準備だけ）/ `dbt:build`（入力準備から marts まで。候補は `--candidate-dir`、保存済みで未キャッシュなら `--remote`） |
+| 配信 | `serving:columns`（`apps/api/src/columns.json` を warehouse の列と `_models.yml` の説明から生成。`--check` で最新か検査）/ `serving:sync`（marts の表を D1 へ同名・同列で写す。`--database-id <uuid>` か `--local`、`--persist-to`、`--dry-run`。ネットワーク・cf を使うので sandbox 外） |
 | 検査 | `test`（bun）/ `test:python`（unittest）/ `test:dbt`（入力準備の unittest） |
 
 原典選定は `bun pipeline/source_selection/check.ts` と `archive.ts`。dbt は入力準備（`dbt/scripts/`）、staging・intermediate・marts のモデル、seeds を持つ。
@@ -30,6 +31,7 @@ script はこの package が所有する。実行は `bun run --cwd pipeline <na
 - **コード配置**: 共通処理は `ingestion/lib/`、書式別の共通処理は `ingestion/fiscal/layouts/`、団体固有のコードと宣言は `ingestion/fiscal/jurisdictions/<団体>/layouts/`。年度・会計だけでコードを複製しない。
 - **OCR**: 新しいBの共通入口は `ingestion/lib/scan_ocr.py`。既定はApple Vision（`vision_ocr.py`）で、PaddleOCR smallの縮小検出・原解像度認識は `backend="paddle"` で選ぶ。Visionは単独の0を読めないことがあり、その金額は行を作らずNULLのままにし、印字された0と空欄の区別は失われる。名称と金額の誤読は `ocr_names.py` の宣言で直し、生の観測は書き換えない。OCRは変換器の外で取得し、凍結した観測を補助入力として変換器へ渡す（[ADR 0019](../docs/adr/0019-freeze-scan-ocr-observations.md)、補助入力の保存・取得は未実装）。設定と検証範囲は [OCRの説明](ingestion/lib/scan_ocr.md)、実行と欠落セルの再読は `.agents/skills/pipeline/references/ingestion.md` を参照する。
 - **変換**: dbt-duckdb。入力宣言は `dbt/scripts/generate_sources.py` が管理 JSON から生成する。PDF はノードの表・金額の表を全団体共通の staging 2モデルで読み、CSV（当初予算の歳出）は書式ごとの staging で読む。intermediate で段の名前（共通規則）・資料区分ごとの金額の段階の選択（決算は支出済額・当初予算は当初予算額）・表をまたぐ款項目の統合・円換算・COFOG を行い、marts（`settlement_expenditure_node`・`initial_expenditure_node`・`origin`）を作る。木の表は原典の位置（`origin_id`・`source_page`・印字の枠 `source_x0`ほか、金額は `amount_source_*`。座標は PDF だけで、複数の印字を足した金額は NULL）を持ち、`origin.sha256` までたどれる。比較は木の表を目（`is_subject and node_kind='目'`）で絞って行う。設計は [dbt モデルの設計](../docs/prd/fiscal-dbt-models/design-doc.md)。
+- **配信**: `serving/` が marts の表（`settlement_expenditure_node`・`initial_expenditure_node`・`origin`）を同名・同列のまま D1 に写す（[ADR 0022](../docs/adr/0022-serve-marts-via-worker-d1-rest-and-mcp.md)）。列の契約は `serving/columns.py`、同期は `serving/sync_d1.py`（`<表>__new` に全件投入し、行数と金額の和が合ったときだけ rename。書き込むのはこの script だけで同時に2つ流さない）。D1 には control 以外の表を migration で作らない（`apps/api/migrations/`）。`--local` の状態は `apps/api/.cloudflare/state`（gitignore 済み）。
 - **保存**: Git はコード・宣言・判断・入力一覧、非公開 R2 は原典・取り込み表。`.cache/` と `.build/` は再生成可能なローカル作業領域。
 
   | 内容 | 保存先 | Git |

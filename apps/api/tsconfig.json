@@ -1,10 +1,10 @@
 {
   "extends": "../../tsconfig.json",
   "include": [
-    "worker.ts",
+    "src",
     "cloudflare.config.ts",
-    "wrangler.config.ts",
-    "build.ts"
+    "build.ts",
+    "vite.config.ts"
   ],
   "exclude": []
 }

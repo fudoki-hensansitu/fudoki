@@ -55,8 +55,14 @@ models:
     description: 所属する原典の款番号。
     data_tests:
     - not_null
+  - name: kan_name
+    description: 所属する款の原典の名称（name と同じ正規化）。比較の絞り込みで親を辿らずに使う（ADR 0022）。
+    data_tests:
+    - not_null
   - name: kou_code
     description: 所属する原典の項番号。款ではNULL。
+  - name: kou_name
+    description: 所属する項の原典の名称。款ではNULL。
   - name: moku_code
     description: 所属する原典の目番号。款・項ではNULL。
   - name: origin_id
@@ -170,8 +176,14 @@ models:
     description: 所属する原典の款番号。
     data_tests:
     - not_null
+  - name: kan_name
+    description: 所属する款の原典の名称（name と同じ正規化）。比較の絞り込みで親を辿らずに使う（ADR 0022）。
+    data_tests:
+    - not_null
   - name: kou_code
     description: 所属する原典の項番号。款ではNULL。
+  - name: kou_name
+    description: 所属する項の原典の名称。款ではNULL。
   - name: moku_code
     description: 所属する原典の目番号。款・項ではNULL。
   - name: origin_id

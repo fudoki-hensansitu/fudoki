@@ -28,5 +28,5 @@ requires = ["uv_build==0.12.23"]
 build-backend = "uv_build"
 
 [tool.uv.build-backend]
-module-name = ["ingestion", "staging"]
+module-name = ["ingestion", "staging", "serving"]
 module-root = ""

@@ -3,7 +3,7 @@
   "include": [
     "worker.ts",
     "cloudflare.config.ts",
-    "wrangler.config.ts"
+    "vite.config.ts"
   ],
   "exclude": []
 }

@@ -1,5 +1,3 @@
-# 財政データのAPIの設計を再開する条件
+# 財政データのAPIの設計
 
-現在はingestion〜martsの完成を優先する。この機能の保存先・公開方式・URL・応答契約は未決定である。旧D1・配布版・API・toolの設計は採用しない。
-
-公開WorkerはHTTP 500と`Cache-Control: no-store`を返す。[PRD](prd.md) の再開条件を満たしてから、完成した提供用データに基づいて設計する。現在のパイプラインは [財政データのPRD](../fiscal-records/prd.md) と `docs/adr/` の各決定に従う。
+設計は [ADR 0022](../../adr/0022-serve-marts-via-worker-d1-rest-and-mcp.md) が正本である。要件は [PRD](prd.md) に置く。
