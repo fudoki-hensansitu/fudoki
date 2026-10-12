@@ -11,6 +11,7 @@ outside a sandbox.
 from __future__ import annotations
 
 import argparse
+from concurrent.futures import ThreadPoolExecutor
 import gzip
 import hashlib
 import json
@@ -28,6 +29,7 @@ from shared.amount import number
 MODEL = vlm_ocr.MODEL
 PROMPT = ('画像は日本の決算書の表の一部です。印字されている金額を、桁区切りのカンマを含めて原文のまま1つだけ答えて'
           'ください。数字以外は書かないでください。読めない場合は UNREADABLE と答えてください。')
+LIMIT = 60  # reads per table; a table needing more has errors of structure, not of digits
 MARGIN = 4.0  # points around the cell, so its edge digits are not cut
 
 
@@ -39,7 +41,8 @@ def problems(result) -> int:
 
 
 def failing_cells(result) -> list[tuple[str, str]]:
-    """(node, header) of unreadable amounts and of every amount in a rejected group."""
+    """(node, header) of unreadable amounts, then of every amount in a rejected group, smallest
+    groups first: a small group's misread is found with few reads."""
     tables = result.tables
     printed = {(a['node_key'], a['header_path']) for a in tables.amounts}
     cells = [key for key in result.sources if key not in printed]
@@ -47,9 +50,8 @@ def failing_cells(result) -> list[tuple[str, str]]:
     for node in tables.nodes:
         children.setdefault((node['parent_node_key'], node['axis_header']), []).append(node['node_key'])
     nodes = {node['node_key']: node for node in tables.nodes}
-    for item in check_tree(tables.nodes, tables.amounts)['results']:
-        if item['status'] != '不一致':
-            continue
+    rejected = [item for item in check_tree(tables.nodes, tables.amounts)['results'] if item['status'] == '不一致']
+    for item in sorted(rejected, key=lambda i: len(children[(i['parent_node_key'], i['axis_header'])])):
         group = {item['parent_node_key'], *children[(item['parent_node_key'], item['axis_header'])]}
         # Only the amounts the failing comparison adds up: its phase, or its exact header.
         cells.extend(key for key in result.sources if key[0] in group and key in printed and (
@@ -68,7 +70,7 @@ def rule(box, value: str, model: str) -> AmountRule:
                       f'{model} で読み直し、木の検査で確かめた（OCR は {normalize(box.text)}）')
 
 
-def recheck(document: dict, conversion: dict, pdf: Path, model: str = MODEL) -> dict:
+def recheck(document: dict, conversion: dict, pdf: Path, model: str = MODEL, limit: int = LIMIT) -> dict:
     ocr = conversion['ocr_inputs'][0]
     observation = json.loads(gzip.decompress(fetch_ocr(document, ocr).read_bytes()))
     pages = [(pdf_rules.detect(pdf, p['page_number']), ocr_boxes(observation, p)) for p in observation['pages']]
@@ -81,12 +83,12 @@ def recheck(document: dict, conversion: dict, pdf: Path, model: str = MODEL) -> 
     base = built(existing)
     score = problems(base)
     proposals, reads = [], []
-    for key in failing_cells(base) if score else []:
-        boxes = base.sources[key]
-        if len(boxes) != 1:
-            continue  # an amount assembled from several OCR pieces has no single observation to bind
-        box = boxes[0]
-        answer = read_cell(pdf, box, model)
+    # An amount assembled from several OCR pieces has no single observation to bind.
+    boxes = [base.sources[key][0] for key in (failing_cells(base) if score else [])[:limit]
+             if len(base.sources[key]) == 1]
+    with ThreadPoolExecutor(4) as pool:
+        answers = list(pool.map(lambda box: read_cell(pdf, box, model), boxes))
+    for box, answer in zip(boxes, answers):
         reads.append({'page': box.page, 'observation': box.id, 'ocr': box.text, 'read': answer})
         if number(answer) is not None and number(answer) != number(amount_text([box])):
             proposals.append(rule(box, answer, model))
@@ -112,6 +114,7 @@ def main() -> None:
     parser.add_argument('--inputs', type=Path, required=True, help='JSON: original SHA-256 to local file path')
     parser.add_argument('--conversion', action='append', required=True)
     parser.add_argument('--model', default=MODEL)
+    parser.add_argument('--limit', type=int, default=LIMIT, help='Most cells read per table')
     parser.add_argument('--write', action='store_true', help='Declare the kept corrections in the manifest')
     args = parser.parse_args()
     document = manifest.read(args.manifest)
@@ -119,7 +122,7 @@ def main() -> None:
     for conversion in document['conversions']:
         if conversion['id'] not in args.conversion:
             continue
-        report = recheck(document, conversion, Path(local[conversion['inputs'][0]['sha256']]), args.model)
+        report = recheck(document, conversion, Path(local[conversion['inputs'][0]['sha256']]), args.model, args.limit)
         if args.write and report['added']:
             conversion['options'].setdefault('amount_corrections', []).extend(report['added'])
         print(json.dumps(report, ensure_ascii=False))
