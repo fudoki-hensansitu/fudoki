@@ -165,3 +165,42 @@ class UnitTest(unittest.TestCase):
         result = check(Built(nodes, amounts, [], total), 'initial')
         self.assertTrue(result['stopped'])
         self.assertFalse(result['sum_matches'])
+
+
+class SpreadAndOwnerTest(unittest.TestCase):
+    def test_spread_halves_match_rows_under_one_shift(self):
+        from ingestion.generic.layout import same_rows
+        from ingestion.generic.observe import Page, Rule
+        rows = lambda ys: [Rule(10, y, 500, y) for y in ys]
+        left = Page(1, 600, 800, [], rows([140.8, 160.9, 181.1, 201.3, 221.4]))
+        right = Page(2, 600, 800, [], rows([139.0, 159.2, 179.3, 199.5, 219.6]))
+        other = Page(3, 600, 800, [], rows([300, 420, 600]))
+        self.assertTrue(same_rows(left, right))
+        self.assertFalse(same_rows(left, other))
+
+    def test_leading_zero_is_a_bullet_and_marks_leave_the_name(self):
+        from ingestion.generic.tree import _split_code
+        self.assertEqual(_split_code('0ごみ・資源の排出'), (None, 'ごみ・資源の排出'))
+        self.assertEqual(_split_code('〇区議会の運営'), (None, '区議会の運営'))
+        self.assertEqual(_split_code('12委託料'), ('12', '委託料'))
+
+    def test_a_word_starting_with_a_comma_continues_the_number(self):
+        from ingestion.generic.observe import Page, Word
+        from ingestion.generic.repair import Report, repair_positions
+        page = Page(1, 600, 800, [Word('2', 100, 100, 104, 109), Word(',181', 108, 100, 122, 109),
+                                  Word(',817', 126, 100, 140, 109)], [])
+        repair_positions(page, Report())
+        self.assertEqual([w.text for w in page.words], ['2,181,817'])
+
+    def test_amount_goes_to_the_item_on_its_line_before_its_cell(self):
+        from ingestion.generic.tree import Group, Item, owner
+        label = Band(0, 100, 1, ('目',), [100, 200], 90, 300)
+        money = Band(100, 200, 1, ('支出済額',), [100, 200], 90, 300)
+        subject = Group([label], '科目', True)
+        setsu_band = Band(50, 100, 1, ('節',), [100, 200], 90, 300)
+        setsu = Group([setsu_band], '節', False)
+        moku = Item(subject, 1, [[glyph('3趣旨普及費', 5, 108)]], '3', '趣旨普及費', 5, level=0)
+        sub = Item(setsu, 1, [[glyph('7報償費', 55, 150)]], '7', '報償費', 55)
+        found = {id(subject): [moku], id(setsu): [sub]}
+        self.assertIs(owner([glyph('2,260,000', 120, 108, 40)], money, [subject, setsu], found), moku)
+        self.assertIs(owner([glyph('1,000', 120, 150, 30)], money, [subject, setsu], found), sub)
