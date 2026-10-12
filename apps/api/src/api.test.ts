@@ -174,7 +174,7 @@ describe('search', () => {
   })
 
   test('bind がちょうど上限なら通る', async () => {
-    const eq = Array.from({ length: 88 }, (_, i) => `n${i}`) // fiscal_year の 2 つと合わせて 90
+    const eq = Array.from({ length: 89 }, (_, i) => `n${i}`) // 年 1 つと合わせて 90
     expect((await search({ where: { name: { eq } } })).status).toBe(200)
     expect((await search({ where: { name: { eq: [...eq, 'x'] } } })).status).toBe(400)
   })
@@ -330,5 +330,213 @@ describe('MCP', () => {
 
   test('POST 以外は 405', async () => {
     expect((await get('/mcp')).status).toBe(405)
+  })
+})
+
+const MCP_HEADERS = { 'Content-Type': 'application/json', Accept: 'application/json, text/event-stream' }
+const mcp = (body: string | unknown, headers: Record<string, string> = MCP_HEADERS) =>
+  app.request('/mcp', { method: 'POST', headers, body: typeof body === 'string' ? body : JSON.stringify(body) }, { DB: db })
+const toolCall = (args: unknown, id = 1) => ({ jsonrpc: '2.0', id, method: 'tools/call', params: { name: 'search_expenditure_nodes', arguments: args } })
+const valid = { document_kind: 'settlement', fiscal_year: { min: 2024, max: 2024 } }
+
+describe('MCP の batch', () => {
+  test('最上位が配列の要求は JSON-RPC のエラーで 400（検索は実行されない）', async () => {
+    const calls: string[] = []
+    const spy: Db = { prepare: (sql) => (calls.push(sql), db.prepare(sql)), batch: (s) => db.batch(s) }
+    const res = await app.request('/mcp', { method: 'POST', headers: MCP_HEADERS, body: JSON.stringify([toolCall(valid, 1), toolCall(valid, 2)]) }, { DB: spy })
+    expect(res.status).toBe(400)
+    const body = await res.json()
+    expect(body.jsonrpc).toBe('2.0')
+    expect(body.error.code).toBe(-32600)
+    expect(body.id).toBeNull()
+    expect(calls.filter((c) => c.includes('settlement_expenditure_node'))).toEqual([])
+    expect((await mcp([])).status).toBe(400)
+  })
+
+  test('単一の要求は通る', async () => {
+    const res = await mcp(toolCall(valid))
+    expect(res.status).toBe(200)
+    expect((await res.json()).result.isError).toBeUndefined()
+  })
+
+  test('壊れた JSON・巨大な body・JSON でない Content-Type は JSON-RPC のエラー', async () => {
+    const bad = await mcp('{nope')
+    expect(bad.status).toBe(400)
+    expect((await bad.json()).error.code).toBe(-32700)
+    expect((await mcp('x'.repeat(20000))).status).toBe(413)
+    const ct = await mcp(toolCall(valid), { 'Content-Type': 'text/plain', Accept: 'application/json' })
+    expect(ct.status).toBe(415)
+  })
+
+  test('想定外の例外の詳細は tool の結果に出さない', async () => {
+    sqlite.query('DROP TABLE settlement_expenditure_node').run()
+    const orig = console.error
+    const logged: unknown[] = []
+    console.error = (...a: unknown[]) => void logged.push(a)
+    try {
+      const res = await mcp(toolCall(valid))
+      const text = (await res.json()).result.content[0].text
+      expect(JSON.parse(text).error).toEqual({ code: 'INTERNAL', message: '内部エラー' })
+      expect(text).not.toContain('no such table')
+      expect(String(logged[0])).toContain('no such table')
+    } finally {
+      console.error = orig
+    }
+  })
+
+  test('REST も想定外の例外の詳細を返さない', async () => {
+    sqlite.query('DROP TABLE settlement_expenditure_node').run()
+    const orig = console.error
+    console.error = () => {}
+    try {
+      const res = await search({})
+      expect(res.status).toBe(500)
+      expect(JSON.stringify(await res.json())).not.toContain('no such table')
+    } finally {
+      console.error = orig
+    }
+  })
+
+  test('MCP の Get は page_size の型を強制しない', async () => {
+    for (const page_size of [true, [], null, '5', 1.5, 0, 1001]) {
+      const res = await mcp({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'get_expenditure_node', arguments: { document_kind: 'settlement', node_id: K1, page_size } } })
+      expect((await res.json()).result.isError, JSON.stringify(page_size)).toBe(true)
+    }
+  })
+})
+
+describe('REST の入口の検査', () => {
+  test('Content-Type が JSON でないと 415、壊れた JSON は 400', async () => {
+    const text = await app.request(SEARCH, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(valid) }, { DB: db })
+    expect(text.status).toBe(415)
+    expect((await text.json()).error.code).toBe('UNSUPPORTED_MEDIA_TYPE')
+    const none = await app.request(SEARCH, { method: 'POST', body: JSON.stringify(valid) }, { DB: db })
+    expect(none.status).toBe(415)
+    expect((await post(SEARCH, '{"a":')).status).toBe(400)
+    expect((await post(SEARCH, '')).status).toBe(400)
+  })
+
+  test('Content-Type の大文字小文字と charset は許す', async () => {
+    const res = await app.request(SEARCH, { method: 'POST', headers: { 'Content-Type': 'Application/JSON; charset=utf-8' }, body: JSON.stringify(valid) }, { DB: db })
+    expect(res.status).toBe(200)
+  })
+
+  test('body の上限は Content-Length ではなく読んだバイト数で検査する', async () => {
+    // Content-Length を小さく偽り、ストリームで大きな body を送る
+    const big = new TextEncoder().encode(JSON.stringify({ x: 'a'.repeat(20000) }))
+    const stream = new ReadableStream({ start(c) { c.enqueue(big.slice(0, 10000)); c.enqueue(big.slice(10000)); c.close() } })
+    const res = await app.request(SEARCH, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Content-Length': '10' }, body: stream, duplex: 'half' } as never, { DB: db })
+    expect(res.status).toBe(413)
+    // 上限ちょうどは読める
+    const ok = JSON.stringify({ ...valid, pad: '' })
+    expect((await post(SEARCH, ok)).status).toBe(400) // 未知のキーで 400（413 ではない）
+  })
+
+  test('UTF-8 として不正な body は 400', async () => {
+    const res = await app.request(SEARCH, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: new Uint8Array([0x7b, 0xff, 0xfe, 0x7d]) }, { DB: db })
+    expect(res.status).toBe(400)
+  })
+
+  test.each([
+    ['最上位', '{"__proto__":{"a":1},"document_kind":"settlement","fiscal_year":{"min":2024,"max":2024}}'],
+    ['where の中', '{"document_kind":"settlement","fiscal_year":{"min":2024,"max":2024},"where":{"name":{"__proto__":1}}}'],
+    ['配列の中', '{"document_kind":"settlement","fiscal_year":{"min":2024,"max":2024},"where":{"name":{"eq":[{"__proto__":1}]}}}'],
+  ])('__proto__ は %s でも 400', async (_, body) => {
+    const res = await post(SEARCH, body)
+    expect(res.status).toBe(400)
+    expect((await res.json()).error.message).toContain('__proto__')
+    expect((await mcp('{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{"__proto__":1}}')).status).toBe(400)
+  })
+
+  test('constructor などは今までどおり未知のキーとして 400', async () => {
+    expect((await search({ constructor: 1 })).status).toBe(400)
+    expect((await search({ where: { constructor: { eq: ['x'] } } })).status).toBe(400)
+  })
+
+  test('Get の query と path は strict', async () => {
+    expect((await get(`/v1/expenditure/nodes/settlement/${K1}?foo=1`)).status).toBe(400)
+    expect((await get(`/v1/expenditure/nodes/settlement/${K1}?page_size=abc`)).status).toBe(400)
+    expect((await get(`/v1/expenditure/nodes/settlement/${K1}?page_size=0`)).status).toBe(400)
+    expect((await get(`/v1/expenditure/nodes/settlement/${K1}?page_size=1001`)).status).toBe(400)
+    expect((await get(`/v1/expenditure/nodes/settlement/${K1}?page_size=2`)).status).toBe(200)
+    expect((await get('/v1/expenditure/columns?foo=1')).status).toBe(400)
+  })
+
+  test('存在しないパスは JSON の 404', async () => {
+    const res = await get('/nope')
+    expect(res.status).toBe(404)
+    expect((await res.json()).error.code).toBe('NOT_FOUND')
+  })
+})
+
+describe('応答のヘッダー', () => {
+  test('成功・エラー・404・MCP のすべてに Cache-Control: no-store', async () => {
+    const responses = [
+      await get('/'),
+      await get('/openapi.json'),
+      await get('/v1/expenditure/columns'),
+      await get(`/v1/expenditure/nodes/settlement/${K1}`),
+      await get(`/v1/expenditure/nodes/settlement/${id('ff')}`),
+      await get('/nope'),
+      await search({}),
+      await search({ where: { name: {} } }),
+      await post(SEARCH, '{bad'),
+      await mcp(toolCall(valid)),
+      await mcp('{bad'),
+      await get('/mcp'),
+    ]
+    for (const r of responses) expect(r.headers.get('Cache-Control'), String(r.status)).toBe('no-store')
+  })
+})
+
+describe('入力の文字と位置', () => {
+  test('NUL を含む制御文字は文字列入力で 400', async () => {
+    for (const bad of ['a\u0000b', 'a\u001fb', 'a\u007fb', '\u0000']) {
+      for (const where of [{ name: { eq: [bad] } }, { name: { not_eq: [bad] } }, { name: { prefix: bad } }, { name: { suffix: bad } }, { name: { contains: bad } }]) {
+        const res = await search({ where })
+        expect(res.status, JSON.stringify(where)).toBe(400)
+      }
+    }
+    expect((await search({ where: { name: { eq: ['タブ\u0009'] } } })).status).toBe(400)
+    expect((await search({ where: { name: { eq: ['通常 の 文字'] } } })).status).toBe(200)
+  })
+
+  test('GLOB のパターンが 50 バイトを超えると 400', async () => {
+    const res = await search({ where: { name: { prefix: 'a'.repeat(50) } } })
+    expect(res.status).toBe(400)
+    expect((await res.json()).error.message).toContain('50 バイト')
+    expect((await search({ where: { name: { prefix: 'a'.repeat(49) } } })).status).toBe(200)
+  })
+
+  test('page_token の位置は 100,000 まで', async () => {
+    const token = (o: number) => btoa(JSON.stringify({ o, h: 'x' })).replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '')
+    const over = await search({ page_token: token(100001) })
+    expect(over.status).toBe(400)
+    expect((await over.json()).error.message).toContain('100000')
+    // 上限以内なら指紋の検査に進む（別の問い合わせとして 400）
+    expect((await (await search({ page_token: token(100000) })).json()).error.message).toContain('別の問い合わせ')
+  })
+
+  test('page_token の形式は base64url だけ', async () => {
+    expect((await search({ page_token: 'a b' })).status).toBe(400)
+    expect((await search({ page_token: 'a=' })).status).toBe(400)
+  })
+})
+
+describe('ノードと原典は1つの batch で読む', () => {
+  test('search と get は D1 の batch を1回だけ使い、ノードと原典の文を同時に渡す', async () => {
+    const batches: number[] = []
+    const spy: Db = { prepare: (sql) => db.prepare(sql), batch: (s) => (batches.push(s.length), db.batch(s)) }
+    await app.request(SEARCH, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(valid) }, { DB: spy })
+    await app.request(`/v1/expenditure/nodes/settlement/${K1}`, {}, { DB: spy })
+    expect(batches).toEqual([2, 3])
+  })
+
+  test('原典は返したページの行が指すものだけ', async () => {
+    // 1ページ目の 1 件だけなら o1 だけ。2 ページ目に o2 が入る
+    const p1 = await (await search({ order_by: [{ column: 'name' }], page_size: 1, where: { node_kind: { eq: ['目', '節'] } } })).json()
+    expect(p1.origins.map((o: { origin_id: string }) => o.origin_id)).toEqual(['o2']) // 委託料（節）
+    const p2 = await (await search({ order_by: [{ column: 'name' }], page_size: 1, where: { node_kind: { eq: ['目', '節'] } }, page_token: p1.next_page_token })).json()
+    expect(p2.origins.map((o: { origin_id: string }) => o.origin_id)).toEqual(['o1'])
   })
 })

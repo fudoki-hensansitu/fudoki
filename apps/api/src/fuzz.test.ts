@@ -88,7 +88,7 @@ describe('schema の fuzz', () => {
       const result = searchInput.safeParse(input)
       if (result.success) {
         ok++
-        expect(countBinds(result.data.where as never)).toBeLessThanOrEqual(MAX_BINDS)
+        expect(countBinds(result.data.fiscal_year, result.data.where as never)).toBeLessThanOrEqual(MAX_BINDS)
         expect(result.data.fiscal_year.max - result.data.fiscal_year.min).toBeLessThan(5)
       }
     }

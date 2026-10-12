@@ -1,8 +1,8 @@
 // AIP-193 風のエラー。REST は 4xx/5xx の `{error: {code, message}}`、MCP は isError の tool 結果。
 export class ApiError extends Error {
   constructor(
-    readonly status: 400 | 404 | 503,
-    readonly code: 'INVALID_ARGUMENT' | 'NOT_FOUND' | 'UNAVAILABLE',
+    readonly status: 400 | 404 | 413 | 415 | 503,
+    readonly code: 'INVALID_ARGUMENT' | 'NOT_FOUND' | 'UNAVAILABLE' | 'PAYLOAD_TOO_LARGE' | 'UNSUPPORTED_MEDIA_TYPE',
     message: string
   ) {
     super(message)

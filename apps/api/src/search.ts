@@ -7,7 +7,9 @@ import { invalid } from './errors'
 
 export const MAX_LIST = 100 // eq / not_eq の個数
 export const MAX_TEXT = 200 // 文字列の長さ
-export const MAX_BINDS = 90 // fiscal_year と where の bind の総数。D1 は1文の bind が100までで、LIMIT・OFFSET に2つ使う
+export const MAX_BINDS = 90 // fiscal_year（IN の年）と where の bind の総数。D1 は1文の bind が100までで、LIMIT・OFFSET に2つ使う
+export const MAX_GLOB_BYTES = 50 // D1 の GLOB のパターンは50バイトまで
+export const MAX_OFFSET = 100_000 // page_token の位置の上限。走査する行を抑える
 export const MAX_YEARS = 5
 export const MAX_ORDER_KEYS = 5
 export const DEFAULT_PAGE_SIZE = 100
@@ -16,8 +18,11 @@ export const MAX_PAGE_SIZE = 1000
 const oneOrMore = (o: object) => Object.values(o).some((v) => v !== undefined)
 const KEYS_MESSAGE = '条件のキーが1つ以上必要です'
 
-const strings = z.array(z.string().max(MAX_TEXT)).min(1).max(MAX_LIST)
-const part = z.string().min(1).max(MAX_TEXT)
+// NUL を含む制御文字は拒否する（GLOB は NUL 以降を無視して意図しない一致になる）
+const NO_CONTROL = /^[^\u0000-\u001f\u007f]*$/
+const text = z.string().max(MAX_TEXT).regex(NO_CONTROL, '制御文字は使えません')
+const strings = z.array(text).min(1).max(MAX_LIST)
+const part = text.min(1)
 const ints = z.array(z.int()).min(1).max(MAX_LIST)
 
 const stringCondition = z
@@ -72,8 +77,11 @@ function bindsOf(c: Condition): number {
   return n
 }
 
-export function countBinds(where: Record<string, Condition | undefined> | undefined): number {
-  let n = 2 // fiscal_year の min / max
+export function countBinds(
+  fiscalYear: { min: number; max: number },
+  where: Record<string, Condition | undefined> | undefined
+): number {
+  let n = Math.max(0, fiscalYear.max - fiscalYear.min + 1) // fiscal_year の IN
   for (const c of Object.values(where ?? {})) if (c !== undefined) n += bindsOf(c)
   return n
 }
@@ -87,11 +95,19 @@ export function buildWhere(
   fiscalYear: { min: number; max: number },
   where: Record<string, Condition | undefined> | undefined
 ): { sql: string; params: (string | number)[] } {
-  const parts = ['"fiscal_year" >= ?', '"fiscal_year" <= ?']
-  const params: (string | number)[] = [fiscalYear.min, fiscalYear.max]
+  // 範囲（>= AND <=）にすると複合 index の後続の列が効かないので、幅が5年以内の年を IN に展開する。
+  const years = Array.from({ length: Math.min(MAX_YEARS, Math.max(0, fiscalYear.max - fiscalYear.min + 1)) }, (_, i) => fiscalYear.min + i)
+  const parts = [`"fiscal_year" IN (${years.map(() => '?').join(', ')})`]
+  const params: (string | number)[] = [...years]
   const bind = (column: string, op: string, value: string | number) => {
     parts.push(`"${column}" ${op} ?`)
     params.push(value)
+  }
+  const glob = (column: string, pattern: string) => {
+    // 生成後（escape と前後の * を含む）の UTF-8 バイト数で数える
+    if (new TextEncoder().encode(pattern).length > MAX_GLOB_BYTES)
+      throw invalid(`${column} の prefix・suffix・contains は escape 後に ${MAX_GLOB_BYTES} バイト以内にしてください（* ? [ は 3 バイトになります）`)
+    bind(column, 'GLOB', pattern)
   }
   for (const [column, cond] of Object.entries(where ?? {})) {
     if (cond === undefined) continue
@@ -113,9 +129,9 @@ export function buildWhere(
       list('not_eq', true)
     }
     if (type === 'string') {
-      if (cond.prefix !== undefined) bind(column, 'GLOB', `${globEscape(cond.prefix as string)}*`)
-      if (cond.suffix !== undefined) bind(column, 'GLOB', `*${globEscape(cond.suffix as string)}`)
-      if (cond.contains !== undefined) bind(column, 'GLOB', `*${globEscape(cond.contains as string)}*`)
+      if (cond.prefix !== undefined) glob(column, `${globEscape(cond.prefix as string)}*`)
+      if (cond.suffix !== undefined) glob(column, `*${globEscape(cond.suffix as string)}`)
+      if (cond.contains !== undefined) glob(column, `*${globEscape(cond.contains as string)}*`)
     } else {
       if (cond.min !== undefined) bind(column, '>=', cond.min as number)
       if (cond.max !== undefined) bind(column, '<=', cond.max as number)
@@ -168,16 +184,16 @@ export const searchInput = z
       .optional()
       .describe('並び順。末尾に node_id が足される。'),
     page_size: z.int().min(1).max(MAX_PAGE_SIZE).default(DEFAULT_PAGE_SIZE).describe('1ページの件数。'),
-    page_token: z.string().max(512).optional().describe('前回の応答の next_page_token。page_size 以外は前回と同じ入力にする。'),
+    page_token: z.string().max(512).regex(/^[A-Za-z0-9_-]*$/, 'page_token の形式が不正です').optional().describe('前回の応答の next_page_token。page_size 以外は前回と同じ入力にする。'),
   })
   .superRefine((v, ctx) => {
     if (v.fiscal_year.max < v.fiscal_year.min)
       ctx.addIssue({ code: 'custom', path: ['fiscal_year'], message: 'fiscal_year は max >= min にしてください' })
     else if (v.fiscal_year.max - v.fiscal_year.min + 1 > MAX_YEARS)
       ctx.addIssue({ code: 'custom', path: ['fiscal_year'], message: `fiscal_year は ${MAX_YEARS} 年以内にしてください` })
-    const binds = countBinds(v.where as Record<string, Condition | undefined> | undefined)
+    const binds = countBinds(v.fiscal_year, v.where as Record<string, Condition | undefined> | undefined)
     if (binds > MAX_BINDS)
-      ctx.addIssue({ code: 'custom', path: ['where'], message: `条件の値の合計は ${MAX_BINDS - 2} 個までです（今 ${binds - 2} 個）` })
+      ctx.addIssue({ code: 'custom', path: ['where'], message: `年と条件の値の合計は ${MAX_BINDS} 個までです（今 ${binds} 個）` })
     const seen = new Set<string>()
     for (const k of v.order_by ?? []) {
       if (seen.has(k.column)) ctx.addIssue({ code: 'custom', path: ['order_by'], message: `order_by に同じ列が複数あります: ${k.column}` })

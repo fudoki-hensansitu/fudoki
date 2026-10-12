@@ -18,6 +18,7 @@ import {
   DEFAULT_PAGE_SIZE,
   MAX_BINDS,
   MAX_LIST,
+  MAX_OFFSET,
   MAX_PAGE_SIZE,
   MAX_YEARS,
   buildWhere,
@@ -27,8 +28,6 @@ import {
 } from './search'
 
 // 操作は一度だけ定義し、REST の route と MCP の tool の両方に登録する（ADR 0022）。
-
-const ORIGIN_CHUNK = 90 // D1 は1文の bind が100まで
 
 export const REQUIRED_HELP =
   `必須は document_kind（"settlement" は決算・支出済額、"initial" は当初予算額。意味の違う金額を足さない）と、` +
@@ -50,15 +49,16 @@ export const SUM_RULES = [
   '軸（axis）の異なる末端（is_leaf = true）を混ぜて足さない。科目・節・備考は同じ支出の独立した切り口で、一つの軸の末端だけを足す。',
 ]
 
-// Get の子のページング。.int() は JSON Schema に ±9e15 の範囲を出すので使わず、小数は切り捨てる。
-const pageSize = z.coerce
-  .number()
-  .min(0)
+// Get の子のページング。MCP は型を強制しない整数、REST の query は文字列から整数にする（どちらも 1〜1000）。
+const pageSizeDescription = `1ページの件数（1〜${MAX_PAGE_SIZE}、既定 ${DEFAULT_PAGE_SIZE}）。`
+const getPageSize = z.int().min(1).max(MAX_PAGE_SIZE).default(DEFAULT_PAGE_SIZE).describe(pageSizeDescription)
+const queryPageSize = z.coerce.number().int().min(1).max(MAX_PAGE_SIZE).default(DEFAULT_PAGE_SIZE).describe(pageSizeDescription)
+const pageToken = z
+  .string()
+  .max(512)
+  .regex(/^[A-Za-z0-9_-]*$/, 'page_token の形式が不正です')
   .optional()
-  .describe(
-    `1ページの件数（0 以上）。省略か 0 で既定の ${DEFAULT_PAGE_SIZE}。${MAX_PAGE_SIZE} を超えたら ${MAX_PAGE_SIZE} に丸める。`
-  )
-const pageToken = z.string().max(512).optional().describe('前回の応答の next_page_token。document_kind と node_id は前回と同じにする。')
+  .describe('前回の応答の next_page_token。document_kind と node_id は前回と同じにする。')
 
 const Origin = z.object(Object.fromEntries(ORIGIN_COLUMNS.map((c) => [c.name, nullableIf(zodOf(c.type), c)])))
 
@@ -90,6 +90,8 @@ export interface Operation {
   /** MCP の tool の description。AI が使い方を tool 説明だけで分かるようにする */
   description: string
   input: z.ZodObject
+  /** get の REST の query。MCP と違い文字列から数値にする */
+  restQuery?: z.ZodObject
   output: z.ZodType
   run(ctx: Ctx, input: Record<string, unknown>): Promise<unknown>
 }
@@ -119,33 +121,11 @@ export async function decodeToken(token: string | undefined, parts: unknown[]): 
   }
   if (typeof parsed !== 'object' || parsed === null || typeof parsed.o !== 'number' || !Number.isSafeInteger(parsed.o) || parsed.o < 0)
     throw invalid('page_token が不正です')
+  if (parsed.o > MAX_OFFSET)
+    throw invalid(`page_token の位置が上限（${MAX_OFFSET}）を超えています。条件を絞ってください`)
   if (parsed.h !== (await fingerprint(parts)))
     throw invalid('page_token は別の問い合わせのものです。page_size 以外の入力を変えずに渡してください')
   return parsed.o
-}
-
-function limitOf(size: unknown): number {
-  const n = size === undefined ? 0 : (size as number)
-  if (n < 0) throw invalid('page_size は 0 以上です')
-  const whole = Math.floor(n)
-  return whole === 0 ? DEFAULT_PAGE_SIZE : Math.min(whole, MAX_PAGE_SIZE)
-}
-
-async function originsOf({ db }: Ctx, rows: Row[]) {
-  const ids = [...new Set(rows.map((r) => r.origin_id).filter((v): v is string => typeof v === 'string'))]
-  const chunks: string[][] = []
-  for (let i = 0; i < ids.length; i += ORIGIN_CHUNK) chunks.push(ids.slice(i, i + ORIGIN_CHUNK))
-  if (chunks.length === 0) return []
-  const results = await db.batch(
-    chunks.map((chunk) =>
-      db
-        .prepare(
-          `SELECT ${ORIGIN_SELECT_LIST} FROM ${ORIGIN_TABLE} WHERE origin_id IN (${chunk.map(() => '?').join(',')}) ORDER BY origin_id`
-        )
-        .bind(...chunk)
-    )
-  )
-  return results.flatMap((r) => r.results)
 }
 
 async function searchNodes(ctx: Ctx, raw: Record<string, unknown>) {
@@ -161,16 +141,23 @@ async function searchNodes(ctx: Ctx, raw: Record<string, unknown>) {
   const fp = ['search', canonicalJson(query)]
   const offset = await decodeToken(token, fp)
 
-  const { results } = await db
-    .prepare(`SELECT ${t.selectList} FROM ${t.table} WHERE ${where.sql} ORDER BY ${orderSql} LIMIT ? OFFSET ?`)
-    .bind(...where.params, limit + 1, offset)
-    .all()
-  const more = results.length > limit
-  const nodes = results.slice(0, limit).map((r) => withKind(t, r))
+  // ノードと原典は1つの batch（トランザクション）で読み、同期の入れ替えをまたいで食い違わないようにする。
+  const [page, origins] = await db.batch([
+    db
+      .prepare(`SELECT ${t.selectList} FROM ${t.table} WHERE ${where.sql} ORDER BY ${orderSql} LIMIT ? OFFSET ?`)
+      .bind(...where.params, limit + 1, offset),
+    db
+      .prepare(
+        `SELECT ${ORIGIN_SELECT_LIST} FROM ${ORIGIN_TABLE} WHERE origin_id IN ` +
+          `(SELECT origin_id FROM ${t.table} WHERE ${where.sql} ORDER BY ${orderSql} LIMIT ? OFFSET ?) ORDER BY origin_id`
+      )
+      .bind(...where.params, limit, offset),
+  ])
+  const more = page!.results.length > limit
   return {
-    nodes,
+    nodes: page!.results.slice(0, limit).map((r) => withKind(t, r)),
     next_page_token: more ? await encodeToken(offset + limit, fp) : null,
-    origins: await originsOf(ctx, nodes),
+    origins: origins!.results,
   }
 }
 
@@ -180,30 +167,34 @@ async function getNode(ctx: Ctx, input: Record<string, unknown>) {
   const nodeId = input.node_id as string
   const t = NODE_TABLES.get(kind)
   if (!t) throw invalid(`document_kind は ${DOCUMENT_KINDS.join('・')} のどれかです: ${kind}`)
-  const limit = limitOf(input.page_size)
+  const limit = (input.page_size as number | undefined) ?? DEFAULT_PAGE_SIZE
   const fp = ['get', kind, nodeId]
   const offset = await decodeToken(input.page_token as string | undefined, fp)
+  const childrenSql = `SELECT ${t.selectList} FROM ${t.table} WHERE parent_node_id = ? ORDER BY "axis", "node_id" LIMIT ? OFFSET ?`
 
-  const [self, kids] = await db.batch([
+  // ノード・子・原典を1つの batch で読む（search と同じく、入れ替えをまたいで食い違わない）。
+  const [self, kids, origins] = await db.batch([
     db.prepare(`SELECT ${t.selectList} FROM ${t.table} WHERE node_id = ?`).bind(nodeId),
+    db.prepare(childrenSql).bind(nodeId, limit + 1, offset),
     db
       .prepare(
-        `SELECT ${t.selectList} FROM ${t.table} WHERE parent_node_id = ? ORDER BY "axis", "node_id" LIMIT ? OFFSET ?`
+        `SELECT ${ORIGIN_SELECT_LIST} FROM ${ORIGIN_TABLE} WHERE origin_id IN ` +
+          `(SELECT origin_id FROM ${t.table} WHERE node_id = ? ` +
+          `UNION SELECT origin_id FROM (SELECT origin_id FROM ${t.table} WHERE parent_node_id = ? ORDER BY "axis", "node_id" LIMIT ? OFFSET ?)) ORDER BY origin_id`
       )
-      .bind(nodeId, limit + 1, offset),
+      .bind(nodeId, nodeId, limit, offset),
   ])
   const raw = self!.results[0]
   if (!raw) throw new ApiError(404, 'NOT_FOUND', `ノードが見つかりません: ${kind}/${nodeId}`)
-  const node = withKind(t, raw)
   const more = kids!.results.length > limit
   const rows = kids!.results.slice(0, limit).map((r) => withKind(t, r))
   const children: Record<string, Row[]> = {}
   for (const r of rows) (children[String(r.axis)] ??= []).push(r)
   return {
-    node,
+    node: withKind(t, raw),
     children,
     next_page_token: more ? await encodeToken(offset + limit, fp) : null,
-    origins: await originsOf(ctx, [node, ...rows]),
+    origins: origins!.results,
   }
 }
 
@@ -283,12 +274,13 @@ export const operations: Operation[] = [
       'ノード一つ（document_kind と node_id で識別）と、その子を軸（axis）ごとに返す。' +
       '子は search_expenditure_nodes と同じ page_size の上限（1000）と page_token で読む。' +
       '別の軸の子を同じ金額に混ぜて足さない。応答は {node, children: {<axis>: [...]}, next_page_token, origins}。',
-    input: z.object({
+    input: z.strictObject({
       document_kind: z.enum(DOCUMENT_KINDS).describe('資料区分（settlement か initial）。'),
       node_id: z.string().regex(/^[0-9a-f]{64}$/).describe('search の応答の node_id（小文字 16 進 64 文字）。'),
-      page_size: pageSize,
+      page_size: getPageSize,
       page_token: pageToken,
     }),
+    restQuery: z.strictObject({ page_size: queryPageSize, page_token: pageToken }),
     output: z.object({
       node: Node,
       children: z.record(z.string(), z.array(Node)),
@@ -307,7 +299,7 @@ export const operations: Operation[] = [
       '歳出の木の列の説明（資料区分ごと）、where・order_by に使える列、受け付ける document_kind、' +
       '金額を足すときの条件（sum_rules）、検索の入力の例（search_example）を返す。検索の前に一度読む。' +
       REQUIRED_HELP,
-    input: z.object({}),
+    input: z.strictObject({}),
     output: z.object({
       document_kinds: z.array(z.object({ name: z.string(), description: z.string() })),
       where_columns: z.array(z.string()),

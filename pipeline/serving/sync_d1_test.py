@@ -55,14 +55,6 @@ class StatementTest(unittest.TestCase):
         batches = list(sync_d1.pack(stmts))
         self.assertEqual([len(b) for b in batches], [2, 2, 1])
 
-    def test_swap_is_one_ordered_batch_with_indexes(self):
-        tables = columns.load()
-        sql = [s['sql'] for s in sync_d1.swap_statements(tables)]
-        self.assertEqual(sql[0], 'drop table if exists "origin"')
-        self.assertEqual(sql[1], 'alter table "origin__new" rename to "origin"')
-        self.assertEqual(sum(s.startswith('create index') for s in sql), 6)
-        self.assertEqual(sum(s.startswith('alter table') for s in sql), 3)
-
     def test_ddl_loads_in_sqlite(self):
         con = sqlite3.connect(':memory:')
         for name, spec in columns.load().items():
@@ -71,36 +63,113 @@ class StatementTest(unittest.TestCase):
                 con.execute(sql)
 
 
-class CheckTest(unittest.TestCase):
-    def test_check_sql_same_in_duckdb_and_sqlite(self):
-        """日本語・絵文字・引用符・空文字・NULL・小数を含む表で、DuckDB と SQLite の検査値が一致する。"""
-        import duckdb
+class ByteLimitTest(unittest.TestCase):
+    def test_multibyte_rows_split_within_byte_limit(self):
+        stmts = list(sync_d1.insert_statements('t', ['s'], iter([('あ' * 1000,)] * 50)))
+        self.assertGreater(len(stmts), 1)
+        self.assertTrue(all(len(s.encode()) <= sync_d1.MAX_STATEMENT_BYTES for s in stmts))
+        self.assertEqual(sum(s.count("'あ") for s in stmts), 50)
 
-        spec = {'document_kind': 'x', 'primary_key': 'k', 'indexes': [], 'columns': [
-            {'name': 'jurisdiction_code', 'type': 'string'}, {'name': 'fiscal_year', 'type': 'integer'},
-            {'name': 's', 'type': 'string'}, {'name': 'b', 'type': 'boolean'}, {'name': 'x', 'type': 'number'}]}
-        rows = [('1', 2025, '款😀ｱ', True, 1.5), ('1', 2025, "it's", False, None), ('1', 2025, '', None, 2.25),
-                ('2', 2025, None, True, -1e-5)]
-        d = duckdb.connect()
-        d.execute('create table t (jurisdiction_code varchar, fiscal_year integer, s varchar, b boolean, x double)')
-        d.executemany('insert into t values (?,?,?,?,?)', rows)
-        q = sqlite3.connect(':memory:')
-        q.execute('create table t (jurisdiction_code text, fiscal_year integer, s text, b integer, x real)')
-        q.executemany('insert into t values (?,?,?,?,?)', [(a, b, c, None if d_ is None else int(d_), e) for a, b, c, d_, e in rows])
-        sql = sync_d1.check_sql('t', spec)
-        want = sync_d1.normalize(d.execute(sql).fetchall(), spec)
-        got = sync_d1.normalize(q.execute(sql).fetchall(), spec)
-        self.assertEqual(sync_d1.differences('t', spec, got, want), [])
-        self.assertEqual(want[('1', 2025)][0], 3)
-        self.assertEqual(want[('1', 2025)][5:7], [7, 0])  # s の文字数の和（3+4+0）と NULL の数
+    def test_single_oversized_row_stops(self):
+        with self.assertRaises(ValueError):
+            list(sync_d1.insert_statements('t', ['s'], iter([('あ' * 30_000,)])))
 
-    def test_truncation_and_null_swap_are_detected(self):
-        spec = {'columns': [{'name': 's', 'type': 'string'}]}
-        base = {('a',): [2, 5, 0]}
-        self.assertTrue(sync_d1.differences('t', spec, {('a',): [2, 4, 0]}, base))  # 切り詰め
-        self.assertTrue(sync_d1.differences('t', spec, {('a',): [2, 5, 1]}, base))  # 空文字と NULL
-        self.assertTrue(sync_d1.differences('t', spec, {}, base))  # グループ欠落
-        self.assertEqual(sync_d1.differences('t', spec, base, base), [])
+    def test_pack_counts_bytes(self):
+        batches = list(sync_d1.pack(iter(['あ' * 200_000] * 3)))  # 1文 600KB
+        self.assertEqual([len(b) for b in batches], [1, 1, 1])
+
+
+class CompareTest(unittest.TestCase):
+    names = ['pk', 'sha', 'amt', 'flag']
+
+    def test_equal(self):
+        rows = [['a', 'x1', 10, 1], ['b', 'x2', 20, 0]]
+        self.assertEqual(sync_d1.compare_rows(self.names, 'pk', rows, [list(r) for r in rows]), [])
+
+    def test_same_length_string_replacement_detected(self):
+        got = [['a', 'x1', 10, 1]]
+        want = [['a', 'y1', 10, 1]]
+        problems = sync_d1.compare_rows(self.names, 'pk', got, want)
+        self.assertEqual(len(problems), 1)
+        self.assertIn('a.sha', problems[0])
+
+    def test_amount_swap_between_rows_detected(self):
+        got = [['a', 'x1', 20, 1], ['b', 'x2', 10, 0]]
+        want = [['a', 'x1', 10, 1], ['b', 'x2', 20, 0]]
+        self.assertEqual(len(sync_d1.compare_rows(self.names, 'pk', got, want)), 2)
+
+    def test_boolean_swap_detected(self):
+        got = [['a', 'x1', 10, 0], ['b', 'x2', 20, 1]]
+        want = [['a', 'x1', 10, 1], ['b', 'x2', 20, 0]]
+        self.assertEqual(len(sync_d1.compare_rows(self.names, 'pk', got, want)), 2)
+
+    def test_missing_extra_null_and_limit(self):
+        want = [['a', 'x1', 10, 1], ['b', None, 20, 0]]
+        got = [['b', '', 20, 0], ['c', 'x', 1, 1]]
+        problems = sync_d1.compare_rows(self.names, 'pk', got, want)
+        self.assertEqual(len(problems), 3)  # a 欠け・b.sha（NULL と空文字）・c 余り
+        self.assertEqual(len(sync_d1.compare_rows(self.names, 'pk', got, want, limit=2)), 2)
+
+    def test_bool_normalized(self):
+        self.assertEqual([sync_d1.d1_value(v) for v in (True, False, None, 3, 1.5)], [1, 0, None, 3, 1.5])
+
+
+class SwapTest(unittest.TestCase):
+    def setUp(self):
+        self.tables = columns.load()
+
+    def run_sql(self, con, statements):
+        for s in statements:
+            con.execute(s['sql'])
+
+    def tables_of(self, con):
+        return {r[0] for r in con.execute("select name from sqlite_master where type='table'")}
+
+    def test_swap_with_existing_tables(self):
+        spec = self.tables
+        con = sqlite3.connect(':memory:')
+        for name, sp in spec.items():
+            con.execute(columns.create_table_sql(name, sp))
+            for sql in columns.create_index_sql(name, sp):
+                con.execute(sql)
+            con.execute(columns.create_table_sql(name, sp, f'{name}__new'))
+            con.execute(f'insert into "{name}__new" ("{sp["primary_key"]}") values (\'new\')')
+        self.run_sql(con, sync_d1.swap_statements(spec, set(spec)))
+        self.assertEqual(self.tables_of(con), set(spec))
+        for name, sp in spec.items():
+            self.assertEqual(con.execute(f'select count(*) from "{name}"').fetchone()[0], 1)
+            idx = {r[0] for r in con.execute("select name from sqlite_master where type='index' and name not like 'sqlite_%'")}
+            self.assertTrue(set(columns.index_name(name, c) for c in sp['indexes']) <= idx)
+
+    def test_swap_first_time(self):
+        spec = self.tables
+        con = sqlite3.connect(':memory:')
+        for name, sp in spec.items():
+            con.execute(columns.create_table_sql(name, sp, f'{name}__new'))
+        self.run_sql(con, sync_d1.swap_statements(spec, set()))
+        self.assertEqual(self.tables_of(con), set(spec))
+
+    def test_crash_at_every_statement_leaves_old_or_new_and_recovers(self):
+        spec = self.tables
+        statements = sync_d1.swap_statements(spec, set(spec))
+        for stop in range(len(statements) + 1):
+            con = sqlite3.connect(':memory:')
+            for name, sp in spec.items():
+                con.execute(columns.create_table_sql(name, sp))
+                con.execute(f'insert into "{name}" ("{sp["primary_key"]}") values (\'old\')')
+                con.execute(columns.create_table_sql(name, sp, f'{name}__new'))
+                con.execute(f'insert into "{name}__new" ("{sp["primary_key"]}") values (\'new\')')
+            self.run_sql(con, statements[:stop])
+            existing = self.tables_of(con)
+            # どの時点でも、各表について本名・__old・__new のどれかにデータがある
+            for name in spec:
+                self.assertTrue({name, f'{name}__old', f'{name}__new'} & existing)
+            before = {n for n in spec if n in existing or f'{n}__old' in existing}
+            self.run_sql(con, sync_d1.recover_statements(spec, existing))
+            after = self.tables_of(con)
+            self.assertEqual(after & {f'{n}__old' for n in spec} | after & {f'{n}__new' for n in spec}, set(),
+                             f'stop={stop}')
+            self.assertEqual(before, {n for n in spec if n in after}, f'stop={stop}')
 
 
 if __name__ == '__main__':

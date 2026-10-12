@@ -3,10 +3,16 @@
     bun run --cwd pipeline serving:sync -- --database-id <uuid> [--dry-run]
     bun run --cwd pipeline serving:sync -- --local [--persist-to <dir>] [--dry-run]
 
-手順: 表ごと（origin → 木の表）に `<表>__new` を drop → create → 全件投入し、行数と（木の表は）
-団体・年度ごと（origin は表全体）の列ごとの検査値（`check_sql`）を warehouse と照合する。全部合ったときだけ、1つの batch で
-`drop table if exists <表>; alter table <表>__new rename to <表>;` と index の作成を行う。
-合わなければ rename せず失敗する（`__new` は残り、次の実行の最初に捨てる）。
+手順: 表ごと（origin → 木の表）に `<表>__new` を drop → create → 全件投入する。次に `__new` から全行を主キーの
+先頭1文字ごと（sha の hex。団体・年度より偏りが少なく、1回の出力を抑えられる）に読み戻し、warehouse の同じ行と
+1行ずつ全列で突き合わせる（`verify`）。全部合ったときだけ入れ替える。1つでも違えば最初の数件の主キーと列名を
+出して止め、rename しない（`__new` は残り、次の実行の最初に捨てる）。
+
+入れ替えは `<表> → <表>__old`、`<表>__new → <表>`、`drop <表>__old`、index 作成の順。Cloudflare の公式文書は
+REST の query/raw に複数文を渡したときの原子性を保証していない（Worker の `D1Database.batch()` は
+"Batched statements are SQL transactions" と明記するが、REST は記述が無い）。そのため途中で止まっても
+旧表か新表のどちらかが残る順にし、次の実行の最初に `recover_statements` で自動復旧する
+（`<表>` が無く `<表>__old` があれば戻す／両方あれば `__old` を捨てる／index を補う）。
 
 前提:
 - 書き込むのはこの script だけで、同時に2つ以上実行しない（`__new` が衝突する）。
@@ -15,13 +21,13 @@
   値は SQL の literal に埋め込む（D1 の REST は params に NULL を渡せない）。boolean は 0/1。
 - `cf d1 raw --local` は「Network connection lost」で散発的に失敗する（cf 1.0.0-beta の実測）ので3回まで再試行する。
   応答が失われただけで書き込みは済んでいた場合に備え、投入は `insert or replace`（流し直しても同じ結果）にし、最後の行数照合で重複や欠落を止める。
+- D1 の REST は1回の API 要求が30秒以内（公式 limits）。1回の cf 呼び出しは約1MBの batch と、読み戻し約4000行に抑える。
 - cf の呼び出し回数を減らすため、多数の文を1回の `cf d1 raw --batch` にまとめる（約1MBごと）。
 """
 from __future__ import annotations
 
 import argparse
 import json
-import math
 import os
 import resource
 import signal
@@ -46,6 +52,7 @@ MAX_ROWS_PER_STATEMENT = 100
 MAX_BATCH_BYTES = 1_000_000
 FETCH_ROWS = 500
 MEMORY_LIMIT = '1GB'
+READ_ROWS_PER_CALL = 4000
 
 # origin を先に、木の表を後に
 TABLE_ORDER = ['origin', 'settlement_expenditure_node', 'initial_expenditure_node']
@@ -75,14 +82,17 @@ def insert_statements(table: str, names: list[str], rows: Iterator[tuple]) -> It
     """1文が MAX_STATEMENT_BYTES か MAX_ROWS_PER_STATEMENT に達するごとに区切る。"""
     head = f'insert or replace into "{table}" ({", ".join(chr(34) + n + chr(34) for n in names)}) values '
     parts: list[str] = []
-    size = len(head)
+    size = len(head.encode())
     for row in rows:
         values = '(' + ','.join(literal(v) for v in row) + ')'
-        if parts and (size + len(values) + 1 > MAX_STATEMENT_BYTES or len(parts) >= MAX_ROWS_PER_STATEMENT):
+        width = len(values.encode()) + 1  # D1 の上限は UTF-8 のバイト数
+        if size + width > MAX_STATEMENT_BYTES and not parts:
+            raise ValueError(f'1行だけで1文の上限 {MAX_STATEMENT_BYTES} バイトを超える: {values[:80]}...')
+        if parts and (size + width > MAX_STATEMENT_BYTES or len(parts) >= MAX_ROWS_PER_STATEMENT):
             yield head + ','.join(parts)
-            parts, size = [], len(head)
+            parts, size = [], len(head.encode())
         parts.append(values)
-        size += len(values) + 1
+        size += width
     if parts:
         yield head + ','.join(parts)
 
@@ -91,11 +101,12 @@ def pack(statements: Iterator[str]) -> Iterator[list[dict]]:
     batch: list[dict] = []
     size = 0
     for sql in statements:
-        if batch and size + len(sql) > MAX_BATCH_BYTES:
+        width = len(sql.encode())
+        if batch and size + width > MAX_BATCH_BYTES:
             yield batch
             batch, size = [], 0
         batch.append({'sql': sql})
-        size += len(sql)
+        size += width
     if batch:
         yield batch
 
@@ -104,11 +115,43 @@ def new_name(table: str) -> str:
     return f'{table}__new'
 
 
-def swap_statements(tables: dict[str, Table]) -> list[dict]:
+def old_name(table: str) -> str:
+    return f'{table}__old'
+
+
+def state_sql() -> dict:
+    return {'sql': "select name from sqlite_master where type = 'table'"}
+
+
+def recover_statements(tables: dict[str, Table], existing: set[str]) -> list[dict]:
+    """前回の同期が途中で止まった跡を直し、`__new` を捨てる。`existing` は D1 にある表の名前。
+
+    `<表>` が無く `<表>__old` があれば旧表へ戻す（入れ替えの途中。新表は次で作り直す）。
+    両方あれば入れ替えは済んでいて `__old` が残っただけなので捨てる。
+    """
     out = []
     for name in TABLE_ORDER:
-        out.append(f'drop table if exists "{name}"')
+        old = old_name(name)
+        if name not in existing and old in existing:
+            out.append(f'alter table "{old}" rename to "{name}"')
+        elif name in existing and old in existing:
+            out.append(f'drop table "{old}"')
+        out.append(f'drop table if exists "{new_name(name)}"')
+        if name in existing or old in existing:
+            out += [s.replace('create index', 'create index if not exists', 1)
+                    for s in contract.create_index_sql(name, tables[name])]
+    return [{'sql': sql} for sql in out]
+
+
+def swap_statements(tables: dict[str, Table], existing: set[str]) -> list[dict]:
+    """旧表を `__old` に退け、新表を本名にし、`__old` を捨ててから index を作る（index 名の衝突を避ける）。"""
+    out = []
+    for name in TABLE_ORDER:
+        if name in existing:
+            out.append(f'alter table "{name}" rename to "{old_name(name)}"')
         out.append(f'alter table "{new_name(name)}" rename to "{name}"')
+        if name in existing:
+            out.append(f'drop table "{old_name(name)}"')
         out += contract.create_index_sql(name, tables[name])
     return [{'sql': sql} for sql in out]
 
@@ -125,58 +168,52 @@ def table_rows(con: duckdb.DuckDBPyConnection, table: str, names: list[str], ord
         yield from chunk
 
 
-def group_columns(spec: Table) -> list[str]:
-    return ['jurisdiction_code', 'fiscal_year'] if spec.get('document_kind') else []
+def d1_value(value: Any) -> Any:
+    """D1 に入れた形（boolean は 0/1）にそろえる。"""
+    return int(value) if isinstance(value, bool) else value
 
 
-def check_sql(ref: str, spec: Table) -> str:
-    """団体・年度ごと（origin は表全体）の行数と、列ごとの検査値。warehouse（DuckDB）と D1（SQLite）で同じ SQL を流す。
-
-    string は文字数の和（length はどちらも文字数）、integer・number は和、boolean は true の数、どれも NULL の数も。
-    escape 抜けや切り詰めは文字数の和に、NULL と空文字の取り違えは NULL の数に出る。
-    """
-    group = group_columns(spec)
-    parts = [f'"{g}"' for g in group] if group else ['0']
-    parts.append('count(*)')
-    for c in spec['columns']:
-        col = f'"{c["name"]}"'
-        value = {'string': f'length({col})', 'boolean': f'case when {col} then 1 else 0 end'}.get(c['type'], col)
-        parts += [f'sum({value})', f'sum(case when {col} is null then 1 else 0 end)']
-    return f'select {", ".join(parts)} from {ref} group by ' + ', '.join(str(i + 1) for i in range(max(len(group), 1)))
+def bucket_chars(con: duckdb.DuckDBPyConnection, table: str, key: str) -> dict[str, int]:
+    """主キーの先頭1文字ごとの行数。"""
+    return dict(con.execute(f'select substr("{key}", 1, 1), count(*) from main."{table}" group by 1 order by 1').fetchall())
 
 
-def normalize(rows: list, spec: Table) -> dict:
-    """検査値の行を {グループ: [値...]} にする。NULL の和は 0、整数の和は int にそろえる。"""
-    width = max(len(group_columns(spec)), 1)
-    return {tuple(row[:width]): [0 if v is None else (v if isinstance(v, float) else int(v)) for v in row[width:]]
-            for row in rows}
+def bucket_rows(con: duckdb.DuckDBPyConnection, table: str, names: list[str], key: str, char: str) -> list[list]:
+    cols = ', '.join(f'"{n}"' for n in names)
+    return [[d1_value(v) for v in row] for row in con.execute(
+        f'select {cols} from main."{table}" where substr("{key}", 1, 1) = {literal(char)} order by "{key}"').fetchall()]
 
 
-def same(a: Any, b: Any) -> bool:
-    if isinstance(a, float) or isinstance(b, float):
-        return math.isclose(a, b, rel_tol=1e-9, abs_tol=1e-6)
-    return a == b
-
-
-def expected(con: duckdb.DuckDBPyConnection, name: str, spec: Table) -> dict:
-    return normalize(con.execute(check_sql(f'main."{name}"', spec)).fetchall(), spec)
-
-
-def differences(name: str, spec: Table, got: dict, want: dict) -> list[str]:
-    """違うグループと列を最大5件。"""
-    labels = ['count'] + [f'{c["name"]}.{kind}' for c in spec['columns'] for kind in ('sum', 'nulls')]
+def compare_rows(names: list[str], key: str, got: list[list], want: list[list], limit: int = 5) -> list[str]:
+    """主キーで突き合わせ、全列を比べる。違い・欠け・余りを最初の数件だけ返す。"""
+    k = names.index(key)
+    got_by = {row[k]: row for row in got}
+    want_by = {row[k]: row for row in want}
     problems = []
-    for key in sorted(got.keys() | want.keys(), key=str):
-        g, w = got.get(key), want.get(key)
-        if g is None or w is None:
-            problems.append(f'{name} {key}: {"D1" if g is None else "warehouse"} に無いグループ')
+    if len(got_by) != len(got):
+        problems.append('D1 に主キーの重複')
+    for pk in sorted(want_by.keys() | got_by.keys()):
+        g, w = got_by.get(pk), want_by.get(pk)
+        if g is None:
+            problems.append(f'{pk}: D1 に無い')
+        elif w is None:
+            problems.append(f'{pk}: warehouse に無い余分な行')
         else:
-            problems += [f'{name} {key} {label}: D1 {a} != warehouse {b}'
-                         for label, a, b in zip(labels, g, w) if not same(a, b)]
-    return problems[:5]
+            problems += [f'{pk}.{n}: D1 {a!r} != warehouse {b!r}' for n, a, b in zip(names, g, w) if a != b]
+        if len(problems) >= limit:
+            break
+    return problems[:limit]
 
 
 # D1
+
+def kill_group(process: subprocess.Popen) -> None:
+    """応答と同時にプロセスが終わっていると killpg が拒まれる（macOS の実測）。終わっているなら何もしない。"""
+    try:
+        os.killpg(process.pid, signal.SIGKILL)
+    except (ProcessLookupError, PermissionError):
+        pass
+
 
 def run_until_json(command: list[str], timeout: float = 300) -> tuple[int | None, str, str]:
     """標準出力が JSON として閉じたら終了とみなす。
@@ -186,7 +223,7 @@ def run_until_json(command: list[str], timeout: float = 300) -> tuple[int | None
     """
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, start_new_session=True)
     errors: list[bytes] = []
-    watchdog = threading.Timer(timeout, lambda: os.killpg(process.pid, signal.SIGKILL))
+    watchdog = threading.Timer(timeout, lambda: kill_group(process))
     watchdog.start()
     threading.Thread(target=lambda: errors.append(process.stderr.read()), daemon=True).start()
     data = b''
@@ -198,7 +235,7 @@ def run_until_json(command: list[str], timeout: float = 300) -> tuple[int | None
             except ValueError:
                 continue
             watchdog.cancel()
-            os.killpg(process.pid, signal.SIGKILL)
+            kill_group(process)
             process.wait()
             return None, data.decode(), ''
     watchdog.cancel()
@@ -234,13 +271,37 @@ class D1:
         return results
 
 
-def verify(d1: D1, tables: dict[str, Table], want: dict[str, dict]) -> list[str]:
-    """`__new` の行数と列ごとの検査値を warehouse と照合する（1回の呼び出し）。"""
-    results = d1.batch([{'sql': check_sql(f'"{new_name(name)}"', tables[name])} for name in TABLE_ORDER])
+def verify(d1: D1, con: duckdb.DuckDBPyConnection, tables: dict[str, Table]) -> list[str]:
+    """`__new` の全行を主キーの先頭1文字ごとに読み戻し、warehouse の同じ行と全列で突き合わせる。
+
+    1回の cf 呼び出しは READ_ROWS_PER_CALL 行ほどにまとめる。メモリにあるのはその分だけ。
+    """
     problems = []
-    for name, result in zip(TABLE_ORDER, results):
-        got = normalize(result['results']['rows'], tables[name])
-        problems += differences(name, tables[name], got, want[name])
+    for name in TABLE_ORDER:
+        spec = tables[name]
+        names = [c['name'] for c in spec['columns']]
+        key = spec['primary_key']
+        buckets = bucket_chars(con, name, key)
+        cols = ', '.join(f'"{n}"' for n in names)
+        total = d1.batch([{'sql': f'select count(*) from "{new_name(name)}"'}])[0]['results']['rows'][0][0]
+        if total != sum(buckets.values()):
+            problems.append(f'{name}: 行数 D1 {total} != warehouse {sum(buckets.values())}')
+        groups: list[list[str]] = [[]]
+        rows = 0
+        for char, count in buckets.items():
+            if groups[-1] and rows + count > READ_ROWS_PER_CALL:
+                groups.append([])
+                rows = 0
+            groups[-1].append(char)
+            rows += count
+        for group in groups:
+            results = d1.batch([{'sql': f'select {cols} from "{new_name(name)}" where substr("{key}", 1, 1) = {literal(c)} order by "{key}"'}
+                                for c in group])
+            for char, result in zip(group, results):
+                got = result['results']['rows']
+                problems += [f'{name}: {p}' for p in compare_rows(names, key, got, bucket_rows(con, name, names, key, char))]
+        log_rows = sum(buckets.values())
+        print(f'  読み戻し {name}: {log_rows} 行 / {len(groups)} 回', flush=True)
     return problems
 
 
@@ -254,8 +315,12 @@ def sync(d1: D1 | None, warehouse: Path, dry_run: bool, log: Callable[[str], Non
     try:
         if contract.build(contract.warehouse_columns(warehouse, con)) != {'tables': tables}:
             raise SystemExit('columns.json が warehouse と食い違う。serving:columns で書き直す')
-        want = {name: expected(con, name, tables[name]) for name in TABLE_ORDER}
         started = time.time()
+        existing: set[str] = set()
+        if d1 and not dry_run:
+            existing = {row[0] for row in d1.batch([state_sql()])[0]['results']['rows']}
+            d1.batch(recover_statements(tables, existing))
+            existing = {t for t in TABLE_ORDER if t in existing or old_name(t) in existing}  # 復旧後に残る本名の表
         for name in TABLE_ORDER:
             spec = tables[name]
             names = [c['name'] for c in spec['columns']]
@@ -269,20 +334,20 @@ def sync(d1: D1 | None, warehouse: Path, dry_run: bool, log: Callable[[str], Non
             calls = size = 0
             for batch in pack(statements()):
                 calls += 1
-                size += sum(len(s['sql']) for s in batch)
+                size += sum(len(s['sql'].encode()) for s in batch)
                 if d1 and not dry_run:
                     d1.batch(batch)
-            log(f'{name}: {sum(v[0] for v in want[name].values())} 行 / {calls} 回 / {size / 1e6:.1f}MB / RSS最大 {rss_mb():.0f}MB')
+            log(f'{name}: {con.execute(f'select count(*) from main."{name}"').fetchone()[0]} 行 / {calls} 回 / {size / 1e6:.1f}MB / RSS最大 {rss_mb():.0f}MB')
         if dry_run:
             log('dry-run: D1 には書いていない')
             return 0
-        problems = verify(d1, tables, want)
+        problems = verify(d1, con, tables)
         if problems:
             for p in problems:
                 log(f'照合に失敗: {p}')
             log('rename せず中止（__new は残る）')
             return 1
-        d1.batch(swap_statements(tables))
+        d1.batch(swap_statements(tables, existing))
         log(f'完了: cf {d1.calls} 回 / {time.time() - started:.0f} 秒 / RSS最大 {rss_mb():.0f}MB')
         return 0
     finally:
