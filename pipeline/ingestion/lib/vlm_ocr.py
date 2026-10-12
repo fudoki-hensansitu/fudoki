@@ -8,13 +8,12 @@ converters never call a model.
 from __future__ import annotations
 
 from pathlib import Path
-import re
 import subprocess
 import tempfile
 import time
 
-# gpt-6-luna reads best. Through Codex while the OpenCode Go quota is spent (the free
-# longcat preview hung for minutes); back to 'opencode-go/gpt-6-luna' once it resets.
+# gpt-6-luna reads best. Through Codex while the OpenCode Go quota is spent; back to
+# 'opencode-go/gpt-6-luna' once it resets.
 MODEL = 'codex/gpt-6-luna'
 UNREADABLE = 'UNREADABLE'
 ATTEMPTS = 5
@@ -22,13 +21,6 @@ SYSTEM = 'You read printed text in images and answer only with that text.'
 TEXT_PROMPT = ('画像は日本の決算書の表の一部を切り出したものです。印字されている文字を原文のまま答えてください。'
                '横線1本だけの字や記号も文字として扱います。文字以外は書かないでください。'
                '読めない場合は UNREADABLE と答えてください。')
-
-
-def answer(text: str) -> str:
-    """The printed text of a reply: some models wrap it as LaTeX ``\\boxed{0}`` or in backticks."""
-    text = text.strip().strip('`').strip()
-    boxed = re.fullmatch(r'\\boxed\{(.*)\}', text, re.S)
-    return boxed.group(1).strip() if boxed else text
 
 
 def read(pdf: Path, page: int, box: tuple[float, float, float, float], prompt: str = TEXT_PROMPT, *,
@@ -65,7 +57,7 @@ def read(pdf: Path, page: int, box: tuple[float, float, float, float], prompt: s
                 error = 'timed out'
             else:
                 if not run.returncode:
-                    return answer(answer_file.read_text() if answer_file else run.stdout)
+                    return (answer_file.read_text() if answer_file else run.stdout).strip()
                 error = run.stderr[-300:]
                 # Busy models answer 429 or "unavailable"; other errors do not pass.
                 if not any(word in error for word in ('429', 'navailable', 'rate')):
