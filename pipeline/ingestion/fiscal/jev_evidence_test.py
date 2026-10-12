@@ -68,7 +68,14 @@ class EvidenceTest(unittest.TestCase):
                 with patch.object(run,'fetch',return_value=evidence_path):
                     saved = run.verify_coverage(document, locate, None)
                 self.assertEqual(saved['one']['jev']['judgments'], replay['one']['jev']['judgments'])
-                (candidate / 'one/one.coverage.json').unlink()
+                scope_path = candidate / 'one/one.coverage.json'
+                scope = json.loads(scope_path.read_text())
+                scope['words'][1]['text'] = 'changed'
+                scope_path.write_text(json.dumps(scope))
+                changed = run.verify_coverage(document, locate, candidate)
+                self.assertEqual(changed['one']['status'],run.MISMATCH)
+                self.assertIn('scope differs', changed['one']['reason'])
+                scope_path.unlink()
                 without_scope = run.verify_coverage(document, locate, candidate)
                 self.assertEqual(without_scope['one']['jev']['judgments'], replay['one']['jev']['judgments'])
                 evidence_path.unlink()

@@ -421,6 +421,8 @@ def verify_coverage(document: dict, locate, directory, *, remote=False) -> dict:
                     verify(jev_path, table['jev']['object'])
                 cache = jev_recheck.load_cache(jev_path)
                 scope = json.loads(sidecars[0].read_text()) if sidecars else cache['scope']
+                if 'scope' in cache and jev_recheck.digest(scope) != jev_recheck.digest(cache['scope']):
+                    raise ValueError('Jev cached scope differs from candidate coverage scope')
             result = node_tables.check_digit_coverage(
                 scope['words'], peers[table['table_id']], control_tables=[adopted[table['table_id']]],
                 exclusions=scope.get('excluded_regions', ()),
