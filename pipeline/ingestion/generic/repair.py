@@ -25,7 +25,7 @@ from pathlib import Path
 import re
 import unicodedata
 
-from ingestion.generic.observe import Page, Word
+from ingestion.generic.observe import Page, Rule, Word
 
 REPAIRS = Path(__file__).resolve().parents[1] / 'lib/text_repairs.csv'
 NUMERIC = re.compile(r'^[0-9,△▲\-]+$')
@@ -48,6 +48,7 @@ class Report:
     duplicate_words: int = 0
     composite_glyphs: int = 0
     joined_numbers: int = 0
+    off_page_rules: int = 0
     health: dict = field(default_factory=dict)
     broken: bool = False
     hits: Counter = field(default_factory=Counter)
@@ -57,6 +58,7 @@ class Report:
         return {'hidden_glyphs': self.hidden_glyphs, 'hidden_rules': self.hidden_rules,
                 'vertical_words': self.vertical_words, 'invisible_error': self.invisible_error, 'pattern': self.pattern, 'duplicate_words': self.duplicate_words,
                 'composite_glyphs': self.composite_glyphs, 'joined_numbers': self.joined_numbers,
+                'off_page_rules': self.off_page_rules,
                 'health': self.health, 'broken': self.broken, 'repairs': sum(self.hits.values()),
                 'hits': dict(self.hits.most_common()), 'examples': {k: v[:5] for k, v in self.examples.items()}}
 
@@ -376,6 +378,28 @@ def join_vertical(page: Page, report: Report) -> None:
     page.words = result
 
 
+def clip_to_page(page: Page, report: Report) -> None:
+    """Keep the parts of rules inside the page box.
+
+    A spread cut into two pages may keep the whole spread's drawing on each page, the other
+    half lying off the page (x < 0 or beyond the width, 132276). Poppler drops the words there;
+    the rules drawn there would make empty bands and break the spread's pairing.
+    """
+    width, height = page.width, page.height
+    if page.words and (max(w.x1 for w in page.words) > width + 1 or max(w.y1 for w in page.words) > height + 1):
+        width, height = height, width  # a rotated page: the words are laid out in the turned box
+    kept = []
+    for rule in page.rules:
+        x0, x1 = max(rule.x0, 0.0), min(rule.x1, width)
+        y0, y1 = max(rule.y0, 0.0), min(rule.y1, height)
+        if x0 > x1 + .5 or y0 > y1 + .5 or (rule.vertical and not 0 <= rule.x0 <= width) \
+                or (not rule.vertical and not 0 <= rule.y0 <= height):
+            report.off_page_rules += 1
+            continue
+        kept.append(rule if (x0, y0, x1, y1) == (rule.x0, rule.y0, rule.x1, rule.y1) else Rule(x0, y0, x1, y1))
+    page.rules = kept
+
+
 def repair(pdf_path: Path | None, pages: list[Page]) -> tuple[list[Page], Report]:
     report = Report()
     if pdf_path is not None and pdf_path.exists():
@@ -385,6 +409,7 @@ def repair(pdf_path: Path | None, pages: list[Page]) -> tuple[list[Page], Report
             report.invisible_error = f'{type(error).__name__}: {error}'
             report.hidden_glyphs = report.hidden_rules = 0
     for page in pages:
+        clip_to_page(page, report)
         repair_positions(page, report)
         join_vertical(page, report)
     report.health = health(pages)

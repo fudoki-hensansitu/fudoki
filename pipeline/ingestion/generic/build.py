@@ -65,9 +65,11 @@ def closure(built: Built, document_kind: str) -> dict:
     The subject pattern decides the 款・項・目 levels, so the score is the
     subject axis's own closure: parent/child groups on the subject axis whose
     sums agree, minus twice those that disagree. Ties go to the whole tree's
-    closure, then to the number of named subject nodes. A pattern that finds
-    no subject column gets no score. (Scoring the whole tree let a pattern that
-    found 7 of 25 subject nodes win on the breakdown axes alone, 131148.)
+    closure, then to named subject nodes minus unnamed ones (a pattern that splits
+    a code from the name printed below it makes a nameless node per code, 134015).
+    A pattern that finds no subject column gets no score. (Scoring the whole tree
+    let a pattern that found 7 of 25 subject nodes win on the breakdown axes
+    alone, 131148.)
     """
     result = check(built, document_kind)
     subject_results = [r for r in result['results'] if r['axis_header'] == '科目']
@@ -78,7 +80,7 @@ def closure(built: Built, document_kind: str) -> dict:
     named = sum(1 for n in built.nodes if n['axis_header'] == '科目' and n['name_text'])
     return {'subject_agree': agree, 'subject_disagree': disagree, 'agree': total_agree, 'disagree': total_disagree,
             'issues': len(result['issues']), 'subject_nodes': subject, 'named_subject_nodes': named,
-            'score': (agree - 2 * disagree, total_agree - 2 * total_disagree, named)}
+            'score': (agree - 2 * disagree, total_agree - 2 * total_disagree, named - (subject - named))}
 
 
 def choose_pattern(logicals, document_kind: str = 'settlement', judge=None) -> tuple[Built, dict]:

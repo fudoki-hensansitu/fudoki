@@ -3,7 +3,8 @@ import unittest
 from ingestion.generic.layout import Band, Glyph, is_amount, logical_pages, split_digits_at_rules
 from ingestion.generic.observe import Page, Rule, Word, merge_rules
 from ingestion.generic.sums import bracket
-from ingestion.generic.tree import Group, Item, _leading_amount, _split_line, shape_depth, subject_items
+from ingestion.generic.repair import Report, clip_to_page
+from ingestion.generic.tree import Group, Item, _leading_amount, _split_line, owner, shape_depth, subject_items
 
 
 def glyph(text, x0, y0, width=None):
@@ -76,6 +77,25 @@ class TrialRulesTest(unittest.TestCase):
         body = [w.text for band in logical.bands for w in band.words]
         self.assertEqual(body, ['1', '総務費', '1', '社会福祉費', '1,000', '2,000'])
         self.assertEqual([(code, name) for code, name, _ in logical.titles], [('2', '民生費')])
+
+    def test_rules_off_the_page_are_dropped_and_a_rotated_page_keeps_its_turned_box(self):
+        report = Report()
+        half = Page(77, 595, 842, [Word('支出済額', 40, 100, 80, 110)],
+                    [Rule(-300, 120, 500, 120), Rule(-200, 50, -200, 800), Rule(300, 50, 300, 800)])
+        clip_to_page(half, report)
+        self.assertEqual(half.rules, [Rule(0, 120, 500, 120), Rule(300, 50, 300, 800)])
+        self.assertEqual(report.off_page_rules, 1)
+        turned = Page(1, 842, 1191, [Word('備考', 1000, 100, 1020, 110)], [Rule(1150, 50, 1150, 800)])
+        clip_to_page(turned, report)
+        self.assertEqual(turned.rules, [Rule(1150, 50, 1150, 800)])
+
+    def test_an_amount_on_the_name_line_below_the_code_belongs_to_that_item(self):
+        band = Band(30, 98, 54, ('科目', '目'), [213.4, 551.4], 101, 551.4)
+        group = Group([band], '科目', True)
+        moku = Item(group, 54, [[glyph('1', 51, 221, 4)], [glyph('議会費', 51, 232)]], '1', '議会費', 51, level=0)
+        amount_band = Band(98, 151, 54, ('予算現額', '当初予算額'), [213.4, 551.4], 101, 551.4)
+        found = owner([glyph('82,694,000', 112, 232, 37)], amount_band, [group], {id(group): [moku]})
+        self.assertIs(found, moku)
 
 
 class SubjectTest(unittest.TestCase):

@@ -297,6 +297,10 @@ SPREAD_ROW_MATCH = 0.6
 SPREAD_MAX_SHIFT = 8.0
 
 
+def _subject(band: Band) -> bool:
+    return bool(band.header) and (band.header[-1] in SUBJECT_LEVELS or '科目' in band.header[0])
+
+
 def same_rows(left: Page, right: Page) -> bool:
     """Whether two pages print the same rows, i.e. are the halves of one spread."""
     rows = lambda page: sorted({round(r.y0, 1) for r in page.rules if not r.vertical and r.x1 - r.x0 > 50})
@@ -363,7 +367,11 @@ def logical_pages(pages: list[Page]) -> list[Logical]:
             continue
         first = min(bands, key=lambda b: b.x0)
         previous_page = observed.get(result[-1].pages[-1]) if result else None
-        if (first.kind == 'amount' and result and len(result[-1].pages) == 1
+        # The right half of a spread starts with an amount column, or (when the 節 column
+        # opens the right page) at least carries no 款・項・目 column while the left half does.
+        continues = first.kind == 'amount' or (not any(_subject(b) for b in bands) and bool(result)
+                                               and any(_subject(b) for b in result[-1].bands))
+        if (continues and result and len(result[-1].pages) == 1
                 and previous_page is not None and same_rows(previous_page, page)):
             previous = result[-1]
             offset = max(b.x1 for b in previous.bands) + 10 - first.x0

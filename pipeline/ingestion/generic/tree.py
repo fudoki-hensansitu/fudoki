@@ -497,6 +497,13 @@ def owner(amount: list[Glyph], band: Band, ordered: list[Group], found: dict[int
         same_line = [i for i in found[id(group)] if abs(i.anchor - y) <= reach and i.role in roles]
         if same_line:
             return max(same_line, key=lambda i: (i.level or 0, -abs(i.anchor - y)))
+    # The name may be printed on a line below its code (`1` / `議会費 82,694,000`): any line of the item.
+    centre = lambda line: sum((g.y0 + g.y1) / 2 for g in line) / len(line)
+    for group in left:
+        same_line = [i for i in found[id(group)] if i.role in roles
+                     and any(line and abs(centre(line) - y) <= reach for line in i.lines)]
+        if same_line:
+            return max(same_line, key=lambda i: (i.level or 0, -abs(i.anchor - y)))
     top, bottom = _cell(band, y)
     if bottom - top > 80:  # unruled: fall back to the printed line
         top, bottom = y - 4, y + 4

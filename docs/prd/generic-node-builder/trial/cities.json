@@ -1,5 +1,38 @@
 [
- {"code": "132225", "name": "東久留米市", "pdf": "132225/r7ippannsaisyutujikoubetu.pdf", "pages": "1-162"},
- {"code": "132250", "name": "稲城市", "pdf": "132250/r7_kessan_ippannkaikei.pdf", "pages": "9-11,48-155"},
- {"code": "132195", "name": "狛江市", "pdf": "132195/20260911-134217.pdf", "pages": "39-266"}
+ {
+  "code": "132225",
+  "name": "東久留米市",
+  "pdf": "132225/r7ippannsaisyutujikoubetu.pdf",
+  "pages": "1-162"
+ },
+ {
+  "code": "132250",
+  "name": "稲城市",
+  "pdf": "132250/r7_kessan_ippannkaikei.pdf",
+  "pages": "9-11,48-155"
+ },
+ {
+  "code": "132195",
+  "name": "狛江市",
+  "pdf": "132195/20260911-134217.pdf",
+  "pages": "39-266"
+ },
+ {
+  "code": "132241",
+  "name": "多摩市",
+  "pdf": "132241/source.pdf",
+  "pages": "8-19,51-127"
+ },
+ {
+  "code": "132276",
+  "name": "羽村市",
+  "pdf": "132276/source.pdf",
+  "pages": "72-363"
+ },
+ {
+  "code": "134015",
+  "name": "八丈町",
+  "pdf": "134015/source.pdf",
+  "pages": "54-149"
+ }
 ]
