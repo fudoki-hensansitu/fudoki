@@ -269,8 +269,9 @@ def repair_positions(page: Page, report: Report) -> None:
                 report.composite_glyphs += 1  # one printed character drawn as two glyphs
                 continue
             # A word that starts with a comma continues the number on its left even across
-            # a printed space (`2 ,181 ,817`): no number begins with a comma.
-            comma_gap = 1.2 * (word.y1 - word.y0) if word.text.startswith(',') else 1.0
+            # a printed space (`2 ,181 ,817`): no number begins with a comma. Likewise a number
+            # ending with a comma continues on its right (`5,` `184,344`, 132209).
+            comma_gap = 1.2 * (word.y1 - word.y0) if word.text.startswith(',') or previous.text.endswith(',') else 1.0
             if (NUMERIC.match(previous.text) and NUMERIC.match(word.text) and word.x0 > previous.x0
                     and -.5 * (word.x1 - word.x0) <= word.x0 - previous.x1 <= comma_gap):
                 result[-1] = Word(previous.text + word.text, previous.x0, min(previous.y0, word.y0),

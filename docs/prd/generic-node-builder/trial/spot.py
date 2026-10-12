@@ -3,13 +3,17 @@
 usage (from pipeline/): uv run python ../docs/prd/generic-node-builder/trial/spot.py <out name> <pdf> [n]
 The 目's name and its 当初予算額・予算現額 must share a printed line on its page; the 支出済額 is looked
 for on the same page or the next one (the right half of a spread). Names are compared after NFKC and removing spaces.
+Lines come from the observed words after the text-layer repair (hidden duplicate glyphs removed), not pdftotext.
 """
 import json
 import re
-import subprocess
 import sys
 import unicodedata
+from functools import cache
 from pathlib import Path
+
+from ingestion.generic.observe import observe
+from ingestion.generic.repair import repair
 
 name, pdf = sys.argv[1], sys.argv[2]
 n = int(sys.argv[3]) if len(sys.argv) > 3 else 10
@@ -18,8 +22,19 @@ subjects = {s['key']: s for s in r['subjects']}
 moku = [s for s in r['subjects'] if s['level'] == '目']
 step = max(1, len(moku) // n)
 fmt = lambda v: None if v is None else (f'△{-v:,}' if v < 0 else f'{v:,}')
-page_text = lambda p: subprocess.run(['pdftotext', '-f', str(p), '-l', str(p), '-layout', pdf, '-'],
-                                     capture_output=True, text=True).stdout
+
+
+@cache
+def page_text(number: int) -> str:
+    pages, _ = repair(Path(pdf), observe(Path(pdf), [number], Path('.cache/generic-trial') / name / f'spot-{number}.json'))
+    rows: list[list] = []
+    for word in sorted(pages[0].words if pages else [], key=lambda w: ((w.y0 + w.y1) / 2, w.x0)):
+        if rows and abs((rows[-1][-1].y0 + rows[-1][-1].y1) / 2 - (word.y0 + word.y1) / 2) <= 2:
+            rows[-1].append(word)
+        else:
+            rows.append([word])
+    return '\n'.join(' '.join(w.text for w in sorted(row, key=lambda w: w.x0)) for row in rows)
+
 squash = lambda s: re.sub(r'\s', '', unicodedata.normalize('NFKC', s))
 for s in moku[::step][:n]:
     chain, cur = [], s

@@ -4,7 +4,8 @@ from ingestion.generic.layout import Band, Glyph, is_amount, logical_pages, spli
 from ingestion.generic.observe import Page, Rule, Word, merge_rules
 from ingestion.generic.sums import bracket
 from ingestion.generic.repair import Report, clip_to_page
-from ingestion.generic.tree import Built, Group, Item, _leading_amount, _split_code, _split_line, owner, shape_depth, subject_items
+from ingestion.generic.tree import (Built, Group, Item, _leading_amount, _split_code, _split_line, number_span, owner,
+                                   same_position, shape_depth, subject_items)
 from ingestion.generic.units import check as check_units
 
 
@@ -98,6 +99,11 @@ class TrialRulesTest(unittest.TestCase):
         found = owner([glyph('82,694,000', 112, 232, 37)], amount_band, [group], {id(group): [moku]})
         self.assertIs(found, moku)
 
+    def test_a_parenthesised_transfer_remark_does_not_make_its_item_a_note(self):
+        from ingestion.generic.tree import PAREN_TAIL, TRANSFER
+        self.assertIsNone(TRANSFER.search(PAREN_TAIL.sub('', '需用費（同事業、委託料へ流用△1,815,000）')))
+        self.assertIsNotNone(TRANSFER.search(PAREN_TAIL.sub('', '○同目・旅費から同目・災害補償費へ流用')))
+
     def test_the_separator_after_a_number_is_not_part_of_the_name(self):
         self.assertEqual(_split_code('1.議会費'), ('1', '議会費'))
         self.assertEqual(_split_code('01.01.01から流用'), ('01', '.01.01から流用'))  # a dotted code stays as printed
@@ -117,6 +123,13 @@ class TrialRulesTest(unittest.TestCase):
         amount_band = Band(125, 186, 50, ('予算現額', '当初予算額'), [213.4, 551.4], 101, 551.4)
         found = owner([glyph('142,678,000', 130, 242, 44)], amount_band, [group], {id(group): [moku]})
         self.assertIs(found, moku)
+
+    def test_numbers_align_by_start_or_by_end_with_a_digit_more_or_less(self):
+        one, ten = glyph('1報酬', 795, 0, 22.5), glyph('10需用費', 790.3, 0, 31.5)  # right-aligned 1 and 10
+        self.assertTrue(same_position(number_span(ten), number_span(one), ten))
+        business, item = glyph('0106200広域', 782, 0, 54), glyph('01消耗品費', 801, 0, 45)  # ends meet by chance
+        self.assertFalse(same_position(number_span(item), number_span(business), item))
+        self.assertEqual(number_span(glyph('13使用料', 791, 0, 40)), (791, 800.0, 2))  # digits' own width, not the word's average
 
 
 class SubjectTest(unittest.TestCase):
@@ -276,6 +289,13 @@ class SpreadAndOwnerTest(unittest.TestCase):
                                   Word(',817', 126, 100, 140, 109)], [])
         repair_positions(page, Report())
         self.assertEqual([w.text for w in page.words], ['2,181,817'])
+
+    def test_a_number_ending_with_a_comma_continues_on_its_right(self):
+        from ingestion.generic.observe import Page, Word
+        from ingestion.generic.repair import Report, repair_positions
+        page = Page(1, 600, 800, [Word('5,', 1119.0, 345.2, 1124.7, 354), Word('184,344', 1128.4, 345.2, 1158.3, 354)], [])
+        repair_positions(page, Report())
+        self.assertEqual([w.text for w in page.words], ['5,184,344'])
 
     def test_amount_goes_to_the_item_on_its_line_before_its_cell(self):
         from ingestion.generic.tree import Group, Item, owner

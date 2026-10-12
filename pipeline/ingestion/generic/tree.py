@@ -166,6 +166,7 @@ def groups(logical: Logical, pattern: str = 'bands') -> list[Group]:
 
 
 BULLET = re.compile(r'^[〇○●◎□■◇◆]')
+PAREN_TAIL = re.compile(r'[(（][^()（）]*[)）]$')
 GROUPED = re.compile(r'[△▲]?[0-9]{1,3}(?:,[0-9]{3})+')
 # An amount printed against text spilling in from the next band (`44,406,439,217明許`).
 LEADING_AMOUNT = re.compile(r'([△▲]?[0-9]{1,3}(?:,[0-9]{3})+)(?=[^0-9,])')
@@ -536,7 +537,7 @@ def node_key(item: Item) -> str:
     return 'n-' + hashlib.sha256(f'{item.page}:{x0:.2f}:{y0:.2f}:{item.group.axis}'.encode()).hexdigest()[:24]
 
 
-DETAIL_PATTERNS = ('indent', 'shape')
+DETAIL_PATTERNS = ('indent', 'shape', 'position')
 # Numbering shapes of breakdown items (事業・説明), in the order they are tried.
 SHAPES = (('bullet', re.compile(r'^[○〇●◎□■◇◆]')), ('paren', re.compile(r'^[(（][0-9]+[)）]')),
           ('circled', re.compile(r'^[①-⑳]')), ('kana-paren', re.compile(r'^[(（][ア-ン][)）]')),
@@ -552,16 +553,37 @@ def shape_of(item: Item) -> str | None:
     return None
 
 
+def number_span(glyph: Glyph) -> tuple[float, float, int]:
+    """Where a leading number starts and ends, and its digit count. The end comes from the
+    digits' own widths (a half-width digit is half the line height, a full-width one the
+    height), not from the word's average character width, which a name joined to the number
+    (`13使用料…`) widens."""
+    height = glyph.y1 - glyph.y0
+    digits = len(glyph.text) - len(glyph.text.lstrip('0123456789０１２３４５６７８９'))
+    full = sum(1 for c in glyph.text[:digits] if not c.isascii())
+    return glyph.x0, glyph.x0 + (digits - full) * height / 2 + full * height, digits
+
+
+def same_position(number: tuple[float, float, int], anchor: tuple[float, float, int], glyph: Glyph) -> bool:
+    """Two numbers of one shape at one position: their starts align (left-aligned 4 and 18), or
+    their ends align with at most one digit more or less (right-aligned 1 and 10; a 7-digit
+    事業番号 ending where a 2-digit number ends is not aligned with it). Tolerance: one half-width
+    digit, from the line height (事業「2」 at x 936 and 節「10」 at 941 are two levels, 132209)."""
+    tolerance = .5 * (glyph.y1 - glyph.y0)
+    return abs(number[0] - anchor[0]) <= tolerance or (abs(number[1] - anchor[1]) <= tolerance
+                                                      and abs(number[2] - anchor[2]) <= 1)
+
+
 def shape_depth(item: Item, indent_depth: int, order: list[str], open_items: list,
-                anchors: dict[str, tuple[float, float]] | None = None) -> int:
+                anchors: dict[str, tuple[float, float, int]] | None = None) -> int:
     """Depth by numbering shape: each shape keeps the level where it first appeared on the
     axis (numbering restarts under each parent); unnumbered lines sit under the last open item
     when indented deeper, otherwise they keep the indentation level.
 
     A shape is one level where its numbers start or end at one position (left-aligned 4 and
     18 start together, right-aligned 1 and 10 end together). The same shape whose start and
-    end are both more than 1.5 characters away from every position seen for it is another
-    level (事業「1 …」 and 節「8 旅費」 indented below it)."""
+    end are not at `same_position` as any position seen for it is another level
+    (事業「1 …」 and 節「8 旅費」 indented below it)."""
     shape = shape_of(item)
     if shape is None:
         last = next((p for p in reversed(open_items) if p is not None), None)
@@ -570,26 +592,59 @@ def shape_depth(item: Item, indent_depth: int, order: list[str], open_items: lis
         return indent_depth
     if anchors is not None and item.lines and item.lines[0]:
         first = item.lines[0][0]
-        width = (first.x1 - first.x0) / max(len(first.text), 1)
-        start, end = first.x0, _margins(item.lines[0])[1] - 10000
-        seen = [key for key, (x0, x1) in anchors.items() if key.split('@')[0] == shape
-                and min(abs(start - x0), abs(end - x1)) <= 1.5 * width]
+        number = number_span(first)
+        seen = [key for key, anchor in anchors.items() if key.split('@')[0] == shape and same_position(number, anchor, first)]
         if seen:
             shape = seen[0]
         else:
             if any(key.split('@')[0] == shape for key in anchors):
                 shape = f'{shape}@{len(anchors)}'
-            anchors[shape] = (start, end)
+            anchors[shape] = number
     if shape not in order:
         order.append(shape)
     return order.index(shape) + 1
+
+
+def position_levels(all_items, levels: dict[str, list[float]], depth_of) -> tuple[dict, dict]:
+    """Levels of breakdown items by numbering shape and position (pattern position).
+
+    A numbered item's level is its shape at one aligned position (its numbers start or end
+    at `same_position`, as in `shape_depth`); a codeless item's level is its
+    indentation level. Levels rank by the x where their lines start, so a codeless 事業 line
+    (x 254) sits above 節「13 …」 (263), 細節「03 …」 (273) and the codeless lines under them
+    (282) (132276)."""
+    starts: dict[str, dict[tuple, float]] = defaultdict(dict)
+    numbers: dict[str, dict[tuple, tuple[float, float, int]]] = defaultdict(dict)
+    keys: dict[int, tuple] = {}
+    for _, ordered, found in all_items:
+        for group in ordered:
+            if group.subject or not levels.get(group.axis):
+                continue
+            for item in found[id(group)]:
+                if item.role not in ('node', 'note') or not item.lines or not item.lines[0]:
+                    continue
+                first = item.lines[0][0]
+                shape = shape_of(item)
+                if shape is None:
+                    key = ('plain', depth_of(item))
+                    starts[group.axis].setdefault(key, levels[group.axis][key[1] - 1])
+                else:
+                    number = number_span(first)
+                    key = next((k for k in starts[group.axis] if k[0] == shape
+                                and same_position(number, numbers[group.axis][k], first)), None)
+                    if key is None:
+                        key = (shape, len(starts[group.axis]))
+                        starts[group.axis][key], numbers[group.axis][key] = number[0], number
+                keys[id(item)] = key
+    ranks = {axis: {key: rank for rank, key in enumerate(sorted(found, key=found.get))} for axis, found in starts.items()}
+    return ranks, keys
 
 
 def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: str | dict = 'indent') -> Built:
     """`detail` is one breakdown pattern for every axis, or a mapping axis → pattern."""
     """`judge(lines) -> {line id: (role, confidence)}` replaces the codeless-line rules (variant B)."""
     shapes: dict[str, list[str]] = {}  # numbering shapes per breakdown axis, in order of first use
-    anchors: dict[str, dict[str, tuple[float, float]]] = {}  # where each shape's numbers start and end, per axis
+    anchors: dict[str, dict[str, tuple[float, float, int]]] = {}  # where each shape's numbers start and end, per axis
     stack: list[Item] = []  # open subject items by depth
     branch: dict[str, list[Item]] = {}  # open items per other axis
     levels: dict[str, list[float]] = {}
@@ -618,7 +673,9 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             else:
                 group_items = subject_items(group)
             for item in group_items:
-                if TRANSFER.search(item.name) and not group.subject:  # 01.01.01.01から流用 starts with digits
+                # 01.01.01.01から流用 starts with digits. A parenthesised remark joined to an item's
+                # name (`需用費（同事業、委託料へ流用 △1,815,000）`) does not make the item a note.
+                if TRANSFER.search(PAREN_TAIL.sub('', item.name)) and not group.subject:
                     item.role = 'annotation'  # a transfer note annotates the subject row
                 elif item.code is None and TOTAL.search(item.name):
                     item.role = 'total'
@@ -714,6 +771,9 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     continue
                 kept.append(item)
             found[id(group)] = kept
+    # Pattern position: a level is a numbering shape at one aligned position, or the
+    # indentation of codeless lines; levels rank by where their lines start.
+    position_rank, position_key = position_levels(all_items, levels, depth_of)
     # 款 come from titles in this document: the 項・目 columns of untitled tables sit one level down.
     titled = any(i.level == -1 for _, ordered, found in all_items for g in ordered if g.subject for i in found[id(g)])
     for logical, ordered, found in all_items:
@@ -770,7 +830,10 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             else:
                 ranks = levels[item.group.axis]
                 depth = 1 + min(range(len(ranks)), key=lambda i: abs(ranks[i] - item.indent)) if ranks else 1
-                if (detail if isinstance(detail, str) else detail.get(item.group.axis, 'indent')) == 'shape':
+                mode = detail if isinstance(detail, str) else detail.get(item.group.axis, 'indent')
+                if mode == 'position' and id(item) in position_key:
+                    depth = position_rank[item.group.axis][position_key[id(item)]] + 1
+                if mode == 'shape':
                     depth = shape_depth(item, depth, shapes.setdefault(item.group.axis, []),
                                         branch.get(item.group.axis, []), anchors.setdefault(item.group.axis, {}))
                 open_items = branch.setdefault(item.group.axis, [])
