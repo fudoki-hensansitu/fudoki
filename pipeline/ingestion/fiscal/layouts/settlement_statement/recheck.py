@@ -5,8 +5,8 @@ declared ``amount_corrections``. A cell is re-read when its amount is unreadable
 a parent/children group the tree check rejects. A re-read value is kept only when it differs
 from the OCR and the kept set reduces the table's problems; the tree check confirms it.
 
-The model is called through the ``pi`` coding agent on OpenCode Go (never its HTTP API
-directly). ``pi`` writes to ~/.pi, so run this outside a sandbox.
+The model is called through ``ingestion.lib.vlm_ocr`` (``pi`` on OpenCode Go); run this
+outside a sandbox.
 """
 from __future__ import annotations
 
@@ -15,19 +15,17 @@ import gzip
 import hashlib
 import json
 from pathlib import Path
-import subprocess
-import tempfile
 
 from ingestion.fiscal import manifest
 from ingestion.fiscal.layouts.settlement_statement.convert import ocr_boxes
 from ingestion.fiscal.layouts.settlement_statement.statement import amount_text, build, normalize
 from ingestion.fiscal.storage import fetch_ocr
-from ingestion.lib import pdf_rules
+from ingestion.lib import pdf_rules, vlm_ocr
 from ingestion.lib.node_tables import amount_phase, check_tree
 from ingestion.lib.ocr_names import AmountDictionary, AmountRule
 from shared.amount import number
 
-MODEL = 'opencode-go/gpt-6-luna'
+MODEL = vlm_ocr.MODEL
 PROMPT = ('画像は日本の決算書の表の一部です。印字されている金額を、桁区切りのカンマを含めて原文のまま1つだけ答えて'
           'ください。数字以外は書かないでください。読めない場合は UNREADABLE と答えてください。')
 MARGIN = 4.0  # points around the cell, so its edge digits are not cut
@@ -61,21 +59,7 @@ def failing_cells(result) -> list[tuple[str, str]]:
 
 
 def read_cell(pdf: Path, box, model: str) -> str:
-    with tempfile.TemporaryDirectory() as tmp:
-        dpi = 200
-        scale = dpi / 72
-        root = Path(tmp) / 'cell'
-        subprocess.run(['pdftoppm', '-r', str(dpi), '-f', str(box.page), '-l', str(box.page),
-                        '-x', str(int((box.x0 - MARGIN) * scale)), '-y', str(int((box.y0 - MARGIN) * scale)),
-                        '-W', str(int((box.x1 - box.x0 + 2 * MARGIN) * scale)),
-                        '-H', str(int((box.y1 - box.y0 + 2 * MARGIN) * scale)),
-                        '-png', '-singlefile', str(pdf), str(root)], check=True)
-        run = subprocess.run(['pi', '-p', '--no-session', '--no-tools', '--no-extensions', '--no-skills',
-                              '--model', model, '@' + str(root.with_suffix('.png')), PROMPT],
-                             capture_output=True, text=True, timeout=300, stdin=subprocess.DEVNULL)
-    if run.returncode:
-        raise RuntimeError(f'pi failed: {run.stderr[-300:]}')
-    return run.stdout.strip()
+    return vlm_ocr.read(pdf, box.page, (box.x0, box.y0, box.x1, box.y1), PROMPT, model=model, margin=MARGIN, dpi=200)
 
 
 def rule(box, value: str, model: str) -> AmountRule:

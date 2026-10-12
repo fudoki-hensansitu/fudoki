@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import gzip
 from copy import deepcopy
 import importlib.util
 import json
@@ -50,6 +51,14 @@ def originals(path: Path, output: Path, *, remote: bool = False) -> dict:
     return {'originals': len(files), 'inputs': str(output)}
 
 
+def pinned_observation(document: dict, item: dict) -> dict | None:
+    """The cached pinned observation, whose VLM answers a re-acquisition reuses."""
+    try:
+        return json.loads(gzip.decompress(fetch_ocr(document, item).read_bytes()))
+    except (ValueError, FileNotFoundError):
+        return None
+
+
 def acquire_ocr(path: Path, local_files: dict[str, str], *, verify_only: bool = False,
                 ids: list[str] | None = None) -> dict:
     """Read declared OCR requests outside the converters and pin their observation SHA.
@@ -71,7 +80,7 @@ def acquire_ocr(path: Path, local_files: dict[str, str], *, verify_only: bool = 
         source = Path(local_files[item['origin_sha256']])
         if manifest.sha_file(source) != item['origin_sha256']:
             raise ValueError('Supplied original differs from the selected byte identity')
-        data, run = acquire(source, item['request'])
+        data, run = acquire(source, item['request'], pinned_observation(result, item))
         sha = run['observation_sha256']
         status = 'unchanged' if item.get('sha256') == sha else ('new' if 'sha256' not in item else 'changed')
         report[item['id']] = {'status': status, 'sha256': sha, 'bytes': len(data)}

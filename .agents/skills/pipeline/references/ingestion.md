@@ -57,7 +57,7 @@
 
 ### 文字・位置を取得する
 
-1. OCRは **共通入口** `pipeline/ingestion/lib/scan_ocr.py` を通して行う。既定は **Apple Vision**（`backend` 省略または `backend="vision"`）。PaddleOCR smallは `backend="paddle"` で選ぶ。Visionは単独の0を読めないことがあり、読めなかった金額は行を作らずNULLのままにし、印字された0と原典の空欄の区別は失われる。OCRは変換器の外で取得し、固定した観測を変換器へ渡す（[ADR 0019](../../../../docs/adr/0019-freeze-scan-ocr-observations.md)）。依頼は管理JSONの `ocr_inputs` に書き、`ingestion:ocr` が観測を取得してSHAを書き込む。観測は `convert --remote` で表と一緒にR2へ保存される。原典別の抽出器にエンジン呼び出し・画像描画・座標復元を複製しない。入口と設定の詳細は [モジュールの説明](../../../../pipeline/ingestion/lib/scan_ocr.md) を参照する。
+1. OCRは **共通入口** `pipeline/ingestion/lib/scan_ocr.py` を通して行う。既定は **Apple Vision**（`backend` 省略または `backend="vision"`）。PaddleOCR smallは `backend="paddle"` で選ぶ。Visionは単独の0などを読み落とすことがある。現行の取得（`acquire`）は、OCRの箱にも罫線にも覆われない墨をVisionで読み直し、残りを行の文脈ごとVLMで読んで観測に固定する（下記「文字観測がないセルを再読する」の現行実装）。OCRは変換器の外で取得し、固定した観測を変換器へ渡す（[ADR 0019](../../../../docs/adr/0019-freeze-scan-ocr-observations.md)）。依頼は管理JSONの `ocr_inputs` に書き、`ingestion:ocr` が観測を取得してSHAを書き込む。観測は `convert --remote` で表と一緒にR2へ保存される。原典別の抽出器にエンジン呼び出し・画像描画・座標復元を複製しない。入口と設定の詳細は [モジュールの説明](../../../../pipeline/ingestion/lib/scan_ocr.md) を参照する。
 2. 対象の物理頁・領域を指定し、300dpiを初期条件にする。表示上のCropBox・回転を反映して描画し、切り出し後の座標を元の頁へ戻す。
 3. Paddleを選ぶ場合は **PP-OCRv6 small、検出長辺1280px、原解像度で文字認識** を初期条件にする。この条件だけで全セルの文字保持を保証しない。観測のないセルは下記の欠落セル再読へ、検出済み名称の誤読は意味照合による補正へ進む。必要な見出し帯・セルの再読領域は原典別に宣言し、原画の切り出しで読む。前後のnative出力・採用した観測・座標、版・固定モデルSHA・描画条件・読み取り領域を保持する。Apple Visionは **accurate、revision 3、日本語・英語** を初期条件にし、OSの版・build、revision、言語補正も記録する。Appleの内部重みは固定できるとは扱わない。
 4. Apple Visionの `usesLanguageCorrection` をonにする場合は、コードと別管理の `ocr_vocabulary.json` を `customWords` に渡す。辞書は正しい名称の候補であり、認識成功や単独の0の検出を保証しない。Paddleの原文をこの辞書で自動置換しない。
