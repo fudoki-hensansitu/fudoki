@@ -43,13 +43,15 @@ SUBJECT_LABELS = ('科目', '款項目', '款項', '目')
 RULE_ARTIFACTS = '|｜/'
 BRACKETS = '()（）'
 UNIT = re.compile(r'単位[:：]?(千円|円)')
-CODE = re.compile(r'^(?P<code>[0-9]+)\s*(?P<name>.*)$')
+# A number followed by 款・項・目・節 is a reference ("2款1項9目3節へ"), not the item's own number.
+CODE = re.compile(r'^(?P<code>[0-9]+)(?![0-9]|[款項目節][0-9])\s*(?P<name>.*)$')
 # 備考 start offsets are smoothed by this width (pt) before taking modes, and a mode holding
 # fewer than this share of the lines is no level; measured on the 2025 決算 of 青梅・小金井 (10 volumes).
 LEVEL_BANDWIDTH = 1.2
 LEVEL_MIN_SHARE = 0.02
 # Transfer notes of the budget, printed in 備考 beside the items.
 TRANSFER = re.compile(r'流用|充用|充当')
+DESTINATION = re.compile(r'[款項目節]へ$')  # "2款1項9目3節へ": where a transfer went
 # Annotation kinds come from the shared vocabulary (ADR 0024), longest keyword first.
 ANNOTATIONS = sorted(((row['keyword'], row['kind']) for row in csv.DictReader(
     (Path(__file__).resolve().parents[4] / 'shared/fiscal_annotation_map.csv').open())),
@@ -888,6 +890,8 @@ def remark_note(builder: Builder, target: Node, name: str, line: Line, amounts: 
         return True
     if target.key in builder.transfer_blocks or TRANSFER.search(name) or name.lstrip(MARKS) == '不用額':
         kind = annotation_kind(name, builder.transfer_blocks.get(target.key))
+    elif DESTINATION.search(name):
+        kind = '充用' if normalize(target.name) == '予備費' else '流用'
     else:
         return False
     if amounts:

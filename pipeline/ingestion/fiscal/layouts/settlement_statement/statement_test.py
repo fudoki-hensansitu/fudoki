@@ -151,6 +151,11 @@ class RemarkTreeTest(unittest.TestCase):
                                          ('注記', 1, '○不用額', '目', {'注記金額': '3,000'})])
         self.assertEqual([n.level for n in builder.nodes if n.axis == '注記'], ['流用', '充用', '不用額'])
 
+    def test_a_destination_reference_is_a_transfer_note_not_a_numbered_item(self):
+        builder, _ = remarks([('2款1項9目3節へ', 101, '△71,317,130')], [1, 10])
+        self.assertEqual([(a, n, am) for a, _, n, _, am in tree(builder)],
+                         [('注記', '2款1項9目3節へ', {'注記金額': '△71,317,130'})])
+
     def test_a_transfer_block_holds_notes_until_the_next_item(self):
         builder, _ = remarks([('1 事業', 101, '100'), ('［流用］', 120, None), ('24 積立金', 101, None),
                               ('1項6目24節から', 110, '22,960')], [1, 10])

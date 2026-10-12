@@ -11,6 +11,9 @@ from collections import deque
 from concurrent.futures import ThreadPoolExecutor
 import hashlib
 import json
+import struct
+import tempfile
+import zlib
 from dataclasses import replace
 from difflib import SequenceMatcher
 from pathlib import Path
@@ -193,8 +196,8 @@ def missed_ink(dark: np.ndarray, scale: float, boxes: Sequence[Sequence[float]])
 
 
 def ink_areas(marks: Sequence[Sequence[float]], rules: PageRules) -> list[tuple[float, float, float, float]]:
-    """Marks on one text line and in one cell become one area, kept 1pt inside the cell's rules
-    (OCR reads an edge rule as 1 or l and then drops the digit next to it)."""
+    """Marks on one text line and in one cell become one area, kept clear of the cell's rules
+    (OCR reads the edge of a scanned rule as 1, l or 一 next to the digit)."""
     groups: list[list[float]] = []
     for mark in sorted(marks, key=lambda m: (round((m[1] + m[3]) / 8), m[0])):
         middle = (mark[1] + mark[3]) / 2
@@ -207,11 +210,55 @@ def ink_areas(marks: Sequence[Sequence[float]], rules: PageRules) -> list[tuple[
     areas = []
     for x0, y0, x1, y1 in groups:
         middle, half = (y0 + y1) / 2, max(y1 - y0, 10.0) / 2 + 2
-        left = max([r.position + 1 for r in rules.vertical if r.position <= x0 and r.covers(middle)], default=0.0)
-        right = min([r.position - 1 for r in rules.vertical if r.position >= x1 and r.covers(middle)],
-                    default=rules.width)
+        left, right = _cell(x0, x1, middle, rules)
         areas.append((max(left, x0 - 3), max(0.0, middle - half), min(right, x1 + 3), min(rules.height, middle + half)))
     return areas
+
+
+def _png(image: np.ndarray, path: Path) -> None:
+    """An 8-bit grayscale PNG, written directly so no imaging library is needed."""
+    height, width = image.shape
+    raw = b"".join(b"\x00" + image[row].tobytes() for row in range(height))
+    chunk = lambda kind, data: (struct.pack(">I", len(data)) + kind + data
+                                + struct.pack(">I", zlib.crc32(kind + data) & 0xFFFFFFFF))
+    path.write_bytes(b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 0, 0, 0, 0))
+                     + chunk(b"IDAT", zlib.compress(raw, 6)) + chunk(b"IEND", b""))
+
+
+def _read_without_rules(path: Path, number: int, config: VisionConfig, regions: Sequence[OcrRegion],
+                        width_pt: float) -> dict:
+    """Vision on the page with its rules whitened: next to a scanned rule it reads the rule's
+    edge as 1, l or 一 however far the area keeps off the rule's nominal position."""
+    image = pdf_rules.render(path, number, config.dpi)
+    dark = image < pdf_rules.DARK
+    clean = image.copy()
+    clean[dark & ~_strip_runs(dark, int(RULE_RUN_PT * config.dpi / 72))] = 255
+    with tempfile.TemporaryDirectory() as tmp:
+        png = Path(tmp) / "page.png"
+        _png(clean, png)
+        page = vision_ocr.recognize_image(png, config=replace(config, region_padding_px=60), regions=regions)["pages"][0]
+    scale = width_pt / image.shape[1]
+    for region in page["regions"]:
+        for o in region["observations"]:
+            if o.get("bbox_px"):
+                o["bbox_pdf_pt"] = [v * scale for v in o["bbox_px"]]
+    page["page_number"] = number
+    return page
+
+
+def _cell(x0: float, x1: float, middle: float, rules: PageRules) -> tuple[float, float]:
+    """The inside of the cell around ``x0``..``x1`` at height ``middle``, off its rules' edges."""
+    margin = lambda rule: rule.thickness / 2 + 1.5
+    left = max([r.position + margin(r) for r in rules.vertical if r.position <= x0 and r.covers(middle)], default=0.0)
+    right = min([r.position - margin(r) for r in rules.vertical if r.position >= x1 and r.covers(middle)],
+                default=rules.width)
+    return left, right
+
+
+def _covers_mark(box: Sequence[float], marks: Sequence[Sequence[float]]) -> bool:
+    """A re-read counts only where it lies over missed ink, not over a sliver of a line already read."""
+    return any(max(0.0, min(box[2], m[2]) - max(box[0], m[0])) * max(0.0, min(box[3], m[3]) - max(box[1], m[1]))
+               >= 0.5 * (m[2] - m[0]) * (m[3] - m[1]) for m in marks)
 
 
 def _overlaps(box: Sequence[float], other: Sequence[float]) -> bool:
@@ -247,11 +294,11 @@ def supplement(path: Path, page: dict, config: VisionConfig, previous: Mapping[s
     areas = ink_areas(marks, rules)
     regions = [OcrRegion(f"ink-{i}", (a[0] / rules.width, a[1] / rules.height, a[2] / rules.width, a[3] / rules.height))
                for i, a in enumerate(areas)]
-    read = recognize_pdf(path, pages=[number], backend="vision", config=replace(config, region_padding_px=60),
-                         regions=regions)["pages"][0]
+    read = _read_without_rules(path, number, config, regions, rules.width)
     existing = _boxes(page)
     for region in read["regions"]:
         kept = {o["id"] for o in region["observations"] if o["kind"] == "region" and o.get("bbox_pdf_pt")
+                and _covers_mark(o["bbox_pdf_pt"], marks)
                 and not any(_overlaps(o["bbox_pdf_pt"], box) for box in existing)}
         region["observations"] = [o for o in region["observations"] if o["id"] in kept or o.get("parent_id") in kept]
         if region["observations"]:
@@ -282,10 +329,7 @@ def supplement(path: Path, page: dict, config: VisionConfig, previous: Mapping[s
 
 def _line(area: Sequence[float], rules: PageRules) -> tuple[float, float, float, float]:
     """The text line of ``area`` across its cell: the VLM reads it with its context."""
-    middle = (area[1] + area[3]) / 2
-    left = max([r.position + 1 for r in rules.vertical if r.position <= area[0] and r.covers(middle)], default=0.0)
-    right = min([r.position - 1 for r in rules.vertical if r.position >= area[2] and r.covers(middle)],
-                default=rules.width)
+    left, right = _cell(area[0], area[2], (area[1] + area[3]) / 2, rules)
     return (left, area[1], right, area[3])
 
 
@@ -329,7 +373,7 @@ def _fill(answer: str, tokens: Sequence[tuple[str, Sequence[float]]], area: Sequ
 def _vlm_identity() -> dict:
     # ``read`` names how an answer becomes text; changing it invalidates pinned answers.
     return {"model": vlm_ocr.MODEL, "prompt_sha256": hashlib.sha256(vlm_ocr.TEXT_PROMPT.encode()).hexdigest(),
-            "read": "cell-line-minus-ocr"}
+            "read": "cell-line-minus-ocr-v3"}
 
 
 def _pinned_answers(observation: Mapping | None) -> dict[str, str]:

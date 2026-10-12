@@ -83,7 +83,7 @@ class AcquireTest(unittest.TestCase):
         with patch.object(scan_ocr.pdf_rules, 'detect', return_value=rules), \
                 patch.object(scan_ocr.pdf_rules, 'render', return_value=np.zeros((200, 400), np.uint8)), \
                 patch.object(scan_ocr, 'missed_ink', side_effect=[[(100, 30, 104, 36)], rest]), \
-                patch.object(scan_ocr, 'recognize_pdf', return_value=vision), \
+                patch.object(scan_ocr, '_read_without_rules', return_value=vision['pages'][0]), \
                 patch.object(scan_ocr.vlm_ocr, 'read', return_value='一') as ask:
             result = scan_ocr.supplement(Path('x.pdf'), deepcopy(page), scan_ocr.VisionConfig(), {})
         texts = [(r['id'], [o['raw_text'] for o in r['observations']]) for r in result['regions']]
@@ -94,7 +94,7 @@ class AcquireTest(unittest.TestCase):
         with patch.object(scan_ocr.pdf_rules, 'detect', return_value=rules), \
                 patch.object(scan_ocr.pdf_rules, 'render', return_value=np.zeros((200, 400), np.uint8)), \
                 patch.object(scan_ocr, 'missed_ink', side_effect=[[(100, 30, 104, 36)], rest]), \
-                patch.object(scan_ocr, 'recognize_pdf', return_value=deepcopy(vision)), \
+                patch.object(scan_ocr, '_read_without_rules', return_value=deepcopy(vision)['pages'][0]), \
                 patch.object(scan_ocr.vlm_ocr, 'read') as again:
             scan_ocr.supplement(Path('x.pdf'), deepcopy(page), scan_ocr.VisionConfig(), pinned)
         again.assert_not_called()
