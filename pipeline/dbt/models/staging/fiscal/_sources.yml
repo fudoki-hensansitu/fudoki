@@ -628,6 +628,22 @@ sources:
       direction: expenditure
       table_id: kouki-expenditure-detail
       kind: nodes
+  - name: j132047_general_expenditure_amounts
+    meta:
+      jurisdiction: '132047'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j132047_general_expenditure_nodes
+    meta:
+      jurisdiction: '132047'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
   - name: j132063_kouki_setsu_amounts
     meta:
       jurisdiction: '132063'
@@ -676,6 +692,22 @@ sources:
       direction: expenditure
       table_id: late-elderly-medical-setsu
       kind: nodes
+  - name: j132209_general_expenditure_amounts
+    meta:
+      jurisdiction: '132209'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j132209_general_expenditure_nodes
+    meta:
+      jurisdiction: '132209'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
   - name: j132217_late_elderly_medical_setsu_amounts
     meta:
       jurisdiction: '132217'
@@ -691,6 +723,326 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: late-elderly-medical-setsu
+      kind: nodes
+  - name: j132225_general_expenditure_amounts
+    meta:
+      jurisdiction: '132225'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j132225_general_expenditure_nodes
+    meta:
+      jurisdiction: '132225'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
+  - name: j132241_general_expenditure_amounts
+    meta:
+      jurisdiction: '132241'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j132241_general_expenditure_nodes
+    meta:
+      jurisdiction: '132241'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
+  - name: j132250_general_expenditure_amounts
+    meta:
+      jurisdiction: '132250'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j132250_general_expenditure_nodes
+    meta:
+      jurisdiction: '132250'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
+  - name: j132292_general_expenditure_01_amounts
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-01
+      kind: amounts
+  - name: j132292_general_expenditure_01_nodes
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-01
+      kind: nodes
+  - name: j132292_general_expenditure_02_amounts
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-02
+      kind: amounts
+  - name: j132292_general_expenditure_02_nodes
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-02
+      kind: nodes
+  - name: j132292_general_expenditure_03_amounts
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-03
+      kind: amounts
+  - name: j132292_general_expenditure_03_nodes
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-03
+      kind: nodes
+  - name: j132292_general_expenditure_04_amounts
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-04
+      kind: amounts
+  - name: j132292_general_expenditure_04_nodes
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-04
+      kind: nodes
+  - name: j132292_general_expenditure_05_amounts
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-05
+      kind: amounts
+  - name: j132292_general_expenditure_05_nodes
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-05
+      kind: nodes
+  - name: j132292_general_expenditure_06_amounts
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-06
+      kind: amounts
+  - name: j132292_general_expenditure_06_nodes
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-06
+      kind: nodes
+  - name: j132292_general_expenditure_07_amounts
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-07
+      kind: amounts
+  - name: j132292_general_expenditure_07_nodes
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-07
+      kind: nodes
+  - name: j132292_general_expenditure_08_amounts
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-08
+      kind: amounts
+  - name: j132292_general_expenditure_08_nodes
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-08
+      kind: nodes
+  - name: j132292_general_expenditure_09_amounts
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-09
+      kind: amounts
+  - name: j132292_general_expenditure_09_nodes
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-09
+      kind: nodes
+  - name: j132292_general_expenditure_10_amounts
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-10
+      kind: amounts
+  - name: j132292_general_expenditure_10_nodes
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-10
+      kind: nodes
+  - name: j132292_general_expenditure_11_amounts
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-11
+      kind: amounts
+  - name: j132292_general_expenditure_11_nodes
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-11
+      kind: nodes
+  - name: j132292_general_expenditure_12_amounts
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-12
+      kind: amounts
+  - name: j132292_general_expenditure_12_nodes
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-12
+      kind: nodes
+  - name: j132292_general_expenditure_13_amounts
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-13
+      kind: amounts
+  - name: j132292_general_expenditure_13_nodes
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-13
+      kind: nodes
+  - name: j133035_general_expenditure_amounts
+    meta:
+      jurisdiction: '133035'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j133035_general_expenditure_nodes
+    meta:
+      jurisdiction: '133035'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
+  - name: j133051_general_expenditure_amounts
+    meta:
+      jurisdiction: '133051'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j133051_general_expenditure_nodes
+    meta:
+      jurisdiction: '133051'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
+  - name: j133621_general_expenditure_amounts
+    meta:
+      jurisdiction: '133621'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j133621_general_expenditure_nodes
+    meta:
+      jurisdiction: '133621'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
+  - name: j134015_general_expenditure_amounts
+    meta:
+      jurisdiction: '134015'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j134015_general_expenditure_nodes
+    meta:
+      jurisdiction: '134015'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
       kind: nodes
 - name: fiscal_csv
   schema: ingestion
