@@ -290,7 +290,12 @@ FUNDING_HEADINGS = {'その他', '一般会計繰入金', '一般財源', '国�
 
 
 def is_amount_kind(label: str) -> bool:
-    """A printed amount kind (支出済額・繰越明許費・不用額…) rather than an item name."""
+    """A printed amount kind (支出済額・繰越明許費・不用額…) rather than an item name.
+
+    A total word alone (`計`, 132055's 備考 ends each 目 with `計 449,855,116`) is a total row, though the
+    dictionary knows `予算現額／計`: read as an amount kind it hung the 目's total on the item above."""
+    if TOTAL.fullmatch(label):
+        return False
     known = {header for _, header in phase_dictionary()} - FUNDING_HEADINGS
     return label in known or re.fullmatch(r'(翌年度)?(繰越明許費?|事故繰越し?|継続費逓次繰越|不用額|本年度支出額|支出済額)', label) is not None
 
