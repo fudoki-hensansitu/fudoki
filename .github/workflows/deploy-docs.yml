@@ -23,6 +23,8 @@ concurrency:
   cancel-in-progress: false
 jobs:
   deploy:
+    # 手動実行でも main 以外の branch は出さない
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
