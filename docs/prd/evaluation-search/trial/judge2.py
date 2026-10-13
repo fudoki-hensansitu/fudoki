@@ -49,7 +49,17 @@ def judge_pages(qid):
     out = f'{W}/judge/pages/{qid}.json'
     done = json.load(open(out)) if os.path.exists(out) else {}
     for pid in a.get('pages', []):
-        if pid in q['truth'] or pid in done:
+        if pid in q['accept'] or pid in done:
+            continue
+        if q['set'].startswith('S5'):  # 目の問いは、目の対応づけの担当と同じ基準で問う
+            prompt = (f'次は自治体の事業の評価の資料の1頁の文字です（PDF から抜き出したもので、表の行と列の位置を空白で保っています）。\n'
+                      f'決算の目: {target(q)}\n\n'
+                      f'問い: この頁に評価が書かれた事業（主な事業の行を含む）のうち、その経費がこの款・項の下のこの目から支出されていると考えられるものがありますか。'
+                      f'根拠は名前・施策・所管課・特別区の予算科目の一般的な慣行。\n'
+                      f'答えは ```json {{"contains": true|false, "evidence": "<当たる事業の名前と根拠を短く>"}}``` の形だけで返してください。\n\n'
+                      f'--- 頁 {pid} ---\n{page_text(pid)}')
+            done[pid] = ask(prompt)
+            json.dump(done, open(out, 'w'), ensure_ascii=False)
             continue
         prompt = (f'次は自治体の事業の評価の資料の1頁の文字です（PDF から抜き出したもので、表の行と列の位置を空白で保っています）。\n'
                   f'目的の事業: {target(q)}\n\n'

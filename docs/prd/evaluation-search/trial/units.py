@@ -1,7 +1,8 @@
 """評価の資料の印字から、評価の単位（事業・施策・取組・主な事業・主な課題）の一覧を作る。第2段の問いと正解の元。
 
 使い方: uv run --project pipeline python units.py <北区のPDF> <中野区の本冊のPDF> <中野区の別冊のPDF> <出力dir>
-出力: units.json（各要素 {jurisdiction, kind, name, page_id, parent, section}）。名前と頁だけで、本文は持たない。
+出力: units.json（各要素 {jurisdiction, kind, name, page_id, parent, section}）と、目の対応づけの担当に渡した一覧
+units_kita.tsv・units_nakano.tsv。名前と頁だけで、本文は持たない。原典の抜き出しなので commit しない（PDF から作り直せる）。
 """
 import json, re, subprocess, sys
 import pdfplumber
@@ -104,6 +105,20 @@ def nakano_betsu(pdf):
 
 kita_pdf, hon_pdf, betsu_pdf, outdir = sys.argv[1:5]
 units = kita(kita_pdf) + nakano_hon(hon_pdf) + nakano_betsu(betsu_pdf)
-json.dump(units, open(f'{outdir}/units.json', 'w'), ensure_ascii=False, indent=1)
+json.dump(units, open(f'{outdir}/units.json', 'w'), ensure_ascii=False)
+for j, fn in [('131172', 'kita'), ('131148', 'nakano')]:
+    rows = []
+    for x in (u for u in units if u['jurisdiction'] == j):
+        if x['kind'] == '事業':
+            rows.append(f"{x['page_id']}\t事業\t{x['name']}\t施策:{x['parent']}\t主管課:{x['section']}")
+        elif x['kind'] == '施策':
+            rows.append(f"{','.join(x['pages'])}\t施策{x['no']}\t{x['name']}")
+        elif x['kind'] == '取組':
+            rows.append(f"{x['page_id']}\t 取組\t{x['name']}\t(施策:{x['parent']})")
+        elif x['kind'] == '主な事業':
+            rows.append(f"{x['page_id']}\t  主な事業\t{x['name']}\t所管課:{x['section']}\t(取組:{x.get('torikumi')})")
+        else:
+            rows.append(f"{x['page_id']}\t本冊・主な課題の実施状況\t{x['name']}\t課:{re.sub(r'\s', '', x['section'])}")
+    open(f'{outdir}/units_{fn}.tsv', 'w').write('\n'.join(rows) + '\n')
 from collections import Counter
 print(Counter((u['jurisdiction'], u['kind']) for u in units))

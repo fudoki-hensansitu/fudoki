@@ -1,0 +1,1649 @@
+[
+ {
+  "id": "m148-000",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "経費の性質のみ、または該当する評価頁なし"
+ },
+ {
+  "id": "m148-001",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:10",
+   "f3b089e84c0b:37",
+   "628b02ba7d8f:24",
+   "628b02ba7d8f:25"
+  ],
+  "medium": [],
+  "reason": "企画課の人権・UD・平和・SDGs・基本計画"
+ },
+ {
+  "id": "m148-002",
+  "none": false,
+  "high": [],
+  "medium": [
+   "628b02ba7d8f:24"
+  ],
+  "reason": "基本計画・区有施設整備計画(企画課・資産管理活用課)"
+ },
+ {
+  "id": "m148-003",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "経費の性質のみ、または該当する評価頁なし"
+ },
+ {
+  "id": "m148-004",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "経費の性質のみ、または該当する評価頁なし"
+ },
+ {
+  "id": "m148-005",
+  "none": false,
+  "high": [
+   "628b02ba7d8f:27"
+  ],
+  "medium": [],
+  "reason": "総務課の定額減税調整給付"
+ },
+ {
+  "id": "m148-006",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "経費の性質のみ、または該当する評価頁なし"
+ },
+ {
+  "id": "m148-007",
+  "none": false,
+  "high": [],
+  "medium": [
+   "f3b089e84c0b:69"
+  ],
+  "reason": "施設課の公共施設建設・整備"
+ },
+ {
+  "id": "m148-008",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "経費の性質のみ、または該当する評価頁なし"
+ },
+ {
+  "id": "m148-009",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:59",
+   "f3b089e84c0b:60",
+   "f3b089e84c0b:73",
+   "628b02ba7d8f:27"
+  ],
+  "medium": [],
+  "reason": "防災危機管理課の事業"
+ },
+ {
+  "id": "m148-010",
+  "none": false,
+  "high": [
+   "628b02ba7d8f:28"
+  ],
+  "medium": [],
+  "reason": "デジタル政策課"
+ },
+ {
+  "id": "m148-011",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "経費の性質のみ、または該当する評価頁なし"
+ },
+ {
+  "id": "m148-012",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "経費の性質のみ、または該当する評価頁なし"
+ },
+ {
+  "id": "m148-013",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "経費の性質のみ、または該当する評価頁なし"
+ },
+ {
+  "id": "m148-014",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:11",
+   "f3b089e84c0b:73",
+   "628b02ba7d8f:30"
+  ],
+  "medium": [],
+  "reason": "区民サービス課の事業"
+ },
+ {
+  "id": "m148-015",
+  "none": false,
+  "high": [
+   "628b02ba7d8f:30"
+  ],
+  "medium": [],
+  "reason": "戸籍住民課のマイナンバーカード"
+ },
+ {
+  "id": "m148-016",
+  "none": false,
+  "high": [
+   "628b02ba7d8f:31"
+  ],
+  "medium": [],
+  "reason": "特別区税収入率向上(税務課)"
+ },
+ {
+  "id": "m148-017",
+  "none": false,
+  "high": [
+   "628b02ba7d8f:31"
+  ],
+  "medium": [
+   "f3b089e84c0b:55"
+  ],
+  "reason": "国保料収入率向上(保険医療課)、データヘルス"
+ },
+ {
+  "id": "m148-018",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:18",
+   "f3b089e84c0b:19",
+   "f3b089e84c0b:42",
+   "628b02ba7d8f:31"
+  ],
+  "medium": [],
+  "reason": "産業振興課の事業"
+ },
+ {
+  "id": "m148-019",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:11",
+   "f3b089e84c0b:12",
+   "f3b089e84c0b:15",
+   "f3b089e84c0b:16",
+   "f3b089e84c0b:17",
+   "f3b089e84c0b:57",
+   "628b02ba7d8f:32"
+  ],
+  "medium": [],
+  "reason": "文化振興・多文化共生推進課の事業"
+ },
+ {
+  "id": "m148-020",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:22",
+   "f3b089e84c0b:24",
+   "f3b089e84c0b:37",
+   "f3b089e84c0b:38"
+  ],
+  "medium": [
+   "f3b089e84c0b:32",
+   "f3b089e84c0b:35",
+   "f3b089e84c0b:36"
+  ],
+  "reason": "子ども・教育政策課の子ども関連事業"
+ },
+ {
+  "id": "m148-021",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:33",
+   "628b02ba7d8f:34"
+  ],
+  "medium": [
+   "f3b089e84c0b:34"
+  ],
+  "reason": "保育園・幼稚園課"
+ },
+ {
+  "id": "m148-022",
+  "none": false,
+  "high": [],
+  "medium": [
+   "f3b089e84c0b:30"
+  ],
+  "reason": "子ども教育施設課(学校整備)"
+ },
+ {
+  "id": "m148-023",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:24",
+   "f3b089e84c0b:31",
+   "f3b089e84c0b:32",
+   "628b02ba7d8f:34"
+  ],
+  "medium": [],
+  "reason": "子育て支援課"
+ },
+ {
+  "id": "m148-024",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:31",
+   "f3b089e84c0b:36",
+   "628b02ba7d8f:35"
+  ],
+  "medium": [
+   "f3b089e84c0b:34",
+   "f3b089e84c0b:37"
+  ],
+  "reason": "育成活動推進課"
+ },
+ {
+  "id": "m148-025",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:25",
+   "f3b089e84c0b:38",
+   "f3b089e84c0b:45",
+   "628b02ba7d8f:35"
+  ],
+  "medium": [
+   "f3b089e84c0b:37"
+  ],
+  "reason": "子ども・若者支援課"
+ },
+ {
+  "id": "m148-026",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:25"
+  ],
+  "medium": [
+   "f3b089e84c0b:32"
+  ],
+  "reason": "児童福祉課(里親・社会的養護)、ひとり親/母子生活支援"
+ },
+ {
+  "id": "m148-027",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:57"
+  ],
+  "medium": [
+   "f3b089e84c0b:30"
+  ],
+  "reason": "子ども・教育政策課の図書館関連"
+ },
+ {
+  "id": "m148-028",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:15",
+   "f3b089e84c0b:22",
+   "f3b089e84c0b:23",
+   "f3b089e84c0b:26",
+   "f3b089e84c0b:27",
+   "f3b089e84c0b:28",
+   "f3b089e84c0b:29",
+   "f3b089e84c0b:30",
+   "f3b089e84c0b:73"
+  ],
+  "medium": [
+   "f3b089e84c0b:33",
+   "f3b089e84c0b:34",
+   "f3b089e84c0b:52"
+  ],
+  "reason": "指導室・学務課の学校教育事業"
+ },
+ {
+  "id": "m148-029",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:30"
+  ],
+  "medium": [
+   "f3b089e84c0b:72"
+  ],
+  "reason": "子ども教育施設課の学校整備・学校再編"
+ },
+ {
+  "id": "m148-030",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:12",
+   "f3b089e84c0b:13",
+   "f3b089e84c0b:14",
+   "f3b089e84c0b:42",
+   "628b02ba7d8f:39",
+   "628b02ba7d8f:40"
+  ],
+  "medium": [
+   "f3b089e84c0b:37",
+   "f3b089e84c0b:39",
+   "f3b089e84c0b:41",
+   "f3b089e84c0b:45",
+   "f3b089e84c0b:46",
+   "f3b089e84c0b:59"
+  ],
+  "reason": "地域活動推進課"
+ },
+ {
+  "id": "m148-031",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:32",
+   "f3b089e84c0b:38",
+   "f3b089e84c0b:39",
+   "f3b089e84c0b:40",
+   "f3b089e84c0b:41",
+   "f3b089e84c0b:42",
+   "f3b089e84c0b:43",
+   "f3b089e84c0b:45",
+   "f3b089e84c0b:47",
+   "f3b089e84c0b:51",
+   "628b02ba7d8f:38",
+   "628b02ba7d8f:39",
+   "628b02ba7d8f:40"
+  ],
+  "medium": [
+   "f3b089e84c0b:25",
+   "f3b089e84c0b:44",
+   "f3b089e84c0b:54",
+   "f3b089e84c0b:55"
+  ],
+  "reason": "地域包括ケア推進課、すこやか福祉センター"
+ },
+ {
+  "id": "m148-032",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:40",
+   "f3b089e84c0b:41",
+   "f3b089e84c0b:44"
+  ],
+  "medium": [
+   "f3b089e84c0b:43"
+  ],
+  "reason": "介護保険課"
+ },
+ {
+  "id": "m148-033",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:44",
+   "f3b089e84c0b:46"
+  ],
+  "medium": [],
+  "reason": "福祉推進課"
+ },
+ {
+  "id": "m148-034",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:52",
+   "f3b089e84c0b:53",
+   "628b02ba7d8f:42"
+  ],
+  "medium": [
+   "f3b089e84c0b:26"
+  ],
+  "reason": "スポーツ振興課"
+ },
+ {
+  "id": "m148-035",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:34",
+   "f3b089e84c0b:44",
+   "f3b089e84c0b:47",
+   "f3b089e84c0b:48",
+   "f3b089e84c0b:50",
+   "628b02ba7d8f:42"
+  ],
+  "medium": [],
+  "reason": "障害福祉課"
+ },
+ {
+  "id": "m148-036",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:49"
+  ],
+  "medium": [],
+  "reason": "生活援護課"
+ },
+ {
+  "id": "m148-037",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:54",
+   "f3b089e84c0b:55",
+   "f3b089e84c0b:56",
+   "628b02ba7d8f:43"
+  ],
+  "medium": [
+   "f3b089e84c0b:74"
+  ],
+  "reason": "保健企画課"
+ },
+ {
+  "id": "m148-038",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:45",
+   "f3b089e84c0b:46",
+   "f3b089e84c0b:54",
+   "f3b089e84c0b:56",
+   "f3b089e84c0b:74",
+   "628b02ba7d8f:43"
+  ],
+  "medium": [],
+  "reason": "保健予防課"
+ },
+ {
+  "id": "m148-039",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:56",
+   "f3b089e84c0b:75",
+   "628b02ba7d8f:43"
+  ],
+  "medium": [],
+  "reason": "生活衛生課"
+ },
+ {
+  "id": "m148-040",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:69",
+   "f3b089e84c0b:70",
+   "f3b089e84c0b:72",
+   "f3b089e84c0b:75",
+   "628b02ba7d8f:45",
+   "628b02ba7d8f:46"
+  ],
+  "medium": [],
+  "reason": "環境課"
+ },
+ {
+  "id": "m148-041",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:60",
+   "f3b089e84c0b:71",
+   "628b02ba7d8f:45",
+   "628b02ba7d8f:46",
+   "628b02ba7d8f:47"
+  ],
+  "medium": [],
+  "reason": "ごみゼロ推進課"
+ },
+ {
+  "id": "m148-042",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:65"
+  ],
+  "medium": [
+   "f3b089e84c0b:72"
+  ],
+  "reason": "都市計画課の景観・バリアフリー・土地利用"
+ },
+ {
+  "id": "m148-043",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:59",
+   "628b02ba7d8f:49"
+  ],
+  "medium": [
+   "f3b089e84c0b:66",
+   "f3b089e84c0b:68"
+  ],
+  "reason": "道路管理課(地籍調査・自転車駐車場・水防)"
+ },
+ {
+  "id": "m148-044",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:66",
+   "628b02ba7d8f:50"
+  ],
+  "medium": [],
+  "reason": "道路建設課"
+ },
+ {
+  "id": "m148-045",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:67",
+   "628b02ba7d8f:51"
+  ],
+  "medium": [
+   "f3b089e84c0b:16",
+   "f3b089e84c0b:36"
+  ],
+  "reason": "公園課"
+ },
+ {
+  "id": "m148-046",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:58",
+   "f3b089e84c0b:64",
+   "628b02ba7d8f:52"
+  ],
+  "medium": [],
+  "reason": "建築課の耐震化"
+ },
+ {
+  "id": "m148-047",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:68"
+  ],
+  "medium": [],
+  "reason": "自転車・公共交通(都市計画課・道路管理課)"
+ },
+ {
+  "id": "m148-048",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:35",
+   "f3b089e84c0b:41",
+   "f3b089e84c0b:64",
+   "628b02ba7d8f:53"
+  ],
+  "medium": [],
+  "reason": "住宅課"
+ },
+ {
+  "id": "m148-049",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:61",
+   "f3b089e84c0b:62",
+   "f3b089e84c0b:63",
+   "628b02ba7d8f:56"
+  ],
+  "medium": [
+   "f3b089e84c0b:69",
+   "f3b089e84c0b:72"
+  ],
+  "reason": "まちづくり計画課"
+ },
+ {
+  "id": "m148-050",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:58",
+   "f3b089e84c0b:61",
+   "f3b089e84c0b:62",
+   "628b02ba7d8f:55",
+   "628b02ba7d8f:57"
+  ],
+  "medium": [],
+  "reason": "まちづくり事業課"
+ },
+ {
+  "id": "m148-051",
+  "none": false,
+  "high": [
+   "f3b089e84c0b:20",
+   "f3b089e84c0b:21",
+   "628b02ba7d8f:58"
+  ],
+  "medium": [],
+  "reason": "中野駅周辺まちづくり課"
+ },
+ {
+  "id": "m148-052",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "経費の性質のみ、または該当する評価頁なし"
+ },
+ {
+  "id": "m148-053",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "経費の性質のみ、または該当する評価頁なし"
+ },
+ {
+  "id": "m148-054",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "経費の性質のみ、または該当する評価頁なし"
+ },
+ {
+  "id": "m148-055",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "経費の性質のみ、または該当する評価頁なし"
+ },
+ {
+  "id": "m172-000",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-001",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-002",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-003",
+  "none": false,
+  "high": [
+   "80b62f85965f:102",
+   "80b62f85965f:103"
+  ],
+  "medium": [
+   "80b62f85965f:30",
+   "80b62f85965f:31"
+  ],
+  "reason": "広報課の発信・HP、シティプロモーション"
+ },
+ {
+  "id": "m172-004",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-005",
+  "none": false,
+  "high": [],
+  "medium": [
+   "80b62f85965f:106"
+  ],
+  "reason": "公共施設の再配置"
+ },
+ {
+  "id": "m172-006",
+  "none": false,
+  "high": [
+   "80b62f85965f:104",
+   "80b62f85965f:107"
+  ],
+  "medium": [],
+  "reason": "DX推進・情報システム担当"
+ },
+ {
+  "id": "m172-007",
+  "none": false,
+  "high": [
+   "80b62f85965f:68",
+   "80b62f85965f:69",
+   "80b62f85965f:70",
+   "80b62f85965f:71"
+  ],
+  "medium": [],
+  "reason": "防災・危機管理課、地域防災推進課"
+ },
+ {
+  "id": "m172-008",
+  "none": false,
+  "high": [
+   "80b62f85965f:11"
+  ],
+  "medium": [
+   "80b62f85965f:10"
+  ],
+  "reason": "多様性社会推進課"
+ },
+ {
+  "id": "m172-009",
+  "none": false,
+  "high": [
+   "80b62f85965f:105"
+  ],
+  "medium": [],
+  "reason": "新庁舎の整備"
+ },
+ {
+  "id": "m172-010",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-011",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-012",
+  "none": false,
+  "high": [
+   "80b62f85965f:14",
+   "80b62f85965f:101"
+  ],
+  "medium": [
+   "80b62f85965f:12",
+   "80b62f85965f:13",
+   "80b62f85965f:26"
+  ],
+  "reason": "地域振興課、多文化共生、文化施策"
+ },
+ {
+  "id": "m172-013",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-014",
+  "none": false,
+  "high": [
+   "80b62f85965f:15",
+   "80b62f85965f:16",
+   "80b62f85965f:27"
+  ],
+  "medium": [
+   "80b62f85965f:25"
+  ],
+  "reason": "区民施設の整備・改修"
+ },
+ {
+  "id": "m172-015",
+  "none": false,
+  "high": [
+   "80b62f85965f:24"
+  ],
+  "medium": [],
+  "reason": "トップアスリートのまち"
+ },
+ {
+  "id": "m172-016",
+  "none": false,
+  "high": [
+   "80b62f85965f:23"
+  ],
+  "medium": [],
+  "reason": "桐ケ丘体育館の改築"
+ },
+ {
+  "id": "m172-017",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-018",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-019",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-020",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-021",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-022",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-023",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-024",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-025",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-026",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-027",
+  "none": false,
+  "high": [],
+  "medium": [
+   "80b62f85965f:62"
+  ],
+  "reason": "ひきこもり支援(生活福祉課)"
+ },
+ {
+  "id": "m172-028",
+  "none": false,
+  "high": [],
+  "medium": [
+   "80b62f85965f:48",
+   "80b62f85965f:50"
+  ],
+  "reason": "高齢福祉課"
+ },
+ {
+  "id": "m172-029",
+  "none": false,
+  "high": [
+   "80b62f85965f:48",
+   "80b62f85965f:49",
+   "80b62f85965f:50",
+   "80b62f85965f:51",
+   "80b62f85965f:52",
+   "80b62f85965f:53",
+   "80b62f85965f:58",
+   "80b62f85965f:59"
+  ],
+  "medium": [],
+  "reason": "高齢福祉課・長寿支援課の事業"
+ },
+ {
+  "id": "m172-030",
+  "none": false,
+  "high": [],
+  "medium": [
+   "80b62f85965f:56"
+  ],
+  "reason": "特別養護老人ホームの整備・改修"
+ },
+ {
+  "id": "m172-031",
+  "none": false,
+  "high": [],
+  "medium": [
+   "80b62f85965f:60",
+   "80b62f85965f:61"
+  ],
+  "reason": "障害福祉課"
+ },
+ {
+  "id": "m172-032",
+  "none": false,
+  "high": [
+   "80b62f85965f:60",
+   "80b62f85965f:61"
+  ],
+  "medium": [],
+  "reason": "障害福祉課"
+ },
+ {
+  "id": "m172-033",
+  "none": false,
+  "high": [],
+  "medium": [
+   "80b62f85965f:60"
+  ],
+  "reason": "地域生活基盤の整備"
+ },
+ {
+  "id": "m172-034",
+  "none": false,
+  "high": [
+   "80b62f85965f:36"
+  ],
+  "medium": [
+   "80b62f85965f:32",
+   "80b62f85965f:33",
+   "80b62f85965f:35"
+  ],
+  "reason": "子ども家庭支援・社会的養育・児相関連"
+ },
+ {
+  "id": "m172-035",
+  "none": false,
+  "high": [
+   "80b62f85965f:40"
+  ],
+  "medium": [],
+  "reason": "保育課の保育サービス"
+ },
+ {
+  "id": "m172-036",
+  "none": false,
+  "high": [
+   "80b62f85965f:37"
+  ],
+  "medium": [
+   "80b62f85965f:40"
+  ],
+  "reason": "児童館(子どもわくわく課)"
+ },
+ {
+  "id": "m172-037",
+  "none": false,
+  "high": [],
+  "medium": [
+   "80b62f85965f:36"
+  ],
+  "reason": "子どもの未来応援事業"
+ },
+ {
+  "id": "m172-038",
+  "none": false,
+  "high": [
+   "80b62f85965f:38",
+   "80b62f85965f:39"
+  ],
+  "medium": [
+   "80b62f85965f:36"
+  ],
+  "reason": "子育てひろば・伴走型支援"
+ },
+ {
+  "id": "m172-039",
+  "none": false,
+  "high": [
+   "80b62f85965f:34"
+  ],
+  "medium": [],
+  "reason": "児童相談所等複合施設の整備"
+ },
+ {
+  "id": "m172-040",
+  "none": false,
+  "high": [],
+  "medium": [
+   "80b62f85965f:62"
+  ],
+  "reason": "生活福祉課・北部地域保護担当課"
+ },
+ {
+  "id": "m172-041",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-042",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-043",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-044",
+  "none": false,
+  "high": [
+   "80b62f85965f:57"
+  ],
+  "medium": [
+   "80b62f85965f:55"
+  ],
+  "reason": "介護保険課"
+ },
+ {
+  "id": "m172-045",
+  "none": false,
+  "high": [],
+  "medium": [
+   "80b62f85965f:55",
+   "80b62f85965f:56"
+  ],
+  "reason": "地域密着型・特養の整備"
+ },
+ {
+  "id": "m172-046",
+  "none": false,
+  "high": [],
+  "medium": [
+   "80b62f85965f:47",
+   "80b62f85965f:54"
+  ],
+  "reason": "健康政策課"
+ },
+ {
+  "id": "m172-047",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-048",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-049",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-050",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-051",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-052",
+  "none": false,
+  "high": [
+   "80b62f85965f:38"
+  ],
+  "medium": [],
+  "reason": "妊娠期の伴走型支援"
+ },
+ {
+  "id": "m172-053",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-054",
+  "none": false,
+  "high": [
+   "80b62f85965f:98"
+  ],
+  "medium": [],
+  "reason": "ごみ減量・資源有効利用"
+ },
+ {
+  "id": "m172-055",
+  "none": false,
+  "high": [],
+  "medium": [
+   "80b62f85965f:98",
+   "80b62f85965f:99"
+  ],
+  "reason": "循環社会推進課"
+ },
+ {
+  "id": "m172-056",
+  "none": false,
+  "high": [
+   "80b62f85965f:95",
+   "80b62f85965f:96",
+   "80b62f85965f:97"
+  ],
+  "medium": [
+   "80b62f85965f:100"
+  ],
+  "reason": "環境政策課"
+ },
+ {
+  "id": "m172-057",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-058",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-059",
+  "none": false,
+  "high": [
+   "80b62f85965f:17",
+   "80b62f85965f:18",
+   "80b62f85965f:19",
+   "80b62f85965f:20",
+   "80b62f85965f:21",
+   "80b62f85965f:22",
+   "80b62f85965f:29"
+  ],
+  "medium": [],
+  "reason": "産業振興課"
+ },
+ {
+  "id": "m172-060",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-061",
+  "none": false,
+  "high": [],
+  "medium": [
+   "80b62f85965f:48"
+  ],
+  "reason": "高齢者の就労支援"
+ },
+ {
+  "id": "m172-062",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-063",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-064",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-065",
+  "none": false,
+  "high": [
+   "80b62f85965f:78",
+   "80b62f85965f:79",
+   "80b62f85965f:80",
+   "80b62f85965f:82"
+  ],
+  "medium": [
+   "80b62f85965f:81"
+  ],
+  "reason": "土木政策課の道路整備"
+ },
+ {
+  "id": "m172-066",
+  "none": false,
+  "high": [],
+  "medium": [
+   "80b62f85965f:83"
+  ],
+  "reason": "橋梁整備"
+ },
+ {
+  "id": "m172-067",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-068",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-069",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-070",
+  "none": false,
+  "high": [
+   "80b62f85965f:83"
+  ],
+  "medium": [],
+  "reason": "橋梁整備"
+ },
+ {
+  "id": "m172-071",
+  "none": false,
+  "high": [],
+  "medium": [
+   "80b62f85965f:94"
+  ],
+  "reason": "水辺空間"
+ },
+ {
+  "id": "m172-072",
+  "none": false,
+  "high": [],
+  "medium": [
+   "80b62f85965f:89"
+  ],
+  "reason": "飛鳥山公園"
+ },
+ {
+  "id": "m172-073",
+  "none": false,
+  "high": [
+   "80b62f85965f:89",
+   "80b62f85965f:90",
+   "80b62f85965f:91",
+   "80b62f85965f:92"
+  ],
+  "medium": [
+   "80b62f85965f:94"
+  ],
+  "reason": "公園整備"
+ },
+ {
+  "id": "m172-074",
+  "none": false,
+  "high": [
+   "80b62f85965f:93"
+  ],
+  "medium": [],
+  "reason": "トイレリフレッシュ"
+ },
+ {
+  "id": "m172-075",
+  "none": false,
+  "high": [
+   "80b62f85965f:72",
+   "80b62f85965f:73",
+   "80b62f85965f:74",
+   "80b62f85965f:75",
+   "80b62f85965f:76",
+   "80b62f85965f:77"
+  ],
+  "medium": [
+   "80b62f85965f:63",
+   "80b62f85965f:64",
+   "80b62f85965f:84",
+   "80b62f85965f:85"
+  ],
+  "reason": "まちづくり・バリアフリー・交通"
+ },
+ {
+  "id": "m172-076",
+  "none": false,
+  "high": [
+   "80b62f85965f:65",
+   "80b62f85965f:66",
+   "80b62f85965f:67"
+  ],
+  "medium": [],
+  "reason": "建築課"
+ },
+ {
+  "id": "m172-077",
+  "none": false,
+  "high": [
+   "80b62f85965f:87",
+   "80b62f85965f:88"
+  ],
+  "medium": [],
+  "reason": "住宅課"
+ },
+ {
+  "id": "m172-078",
+  "none": false,
+  "high": [],
+  "medium": [
+   "80b62f85965f:86"
+  ],
+  "reason": "公営住宅"
+ },
+ {
+  "id": "m172-079",
+  "none": false,
+  "high": [
+   "80b62f85965f:86"
+  ],
+  "medium": [],
+  "reason": "公営住宅の建替え・建設"
+ },
+ {
+  "id": "m172-080",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-081",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-082",
+  "none": false,
+  "high": [
+   "80b62f85965f:41",
+   "80b62f85965f:43",
+   "80b62f85965f:44"
+  ],
+  "medium": [
+   "80b62f85965f:42"
+  ],
+  "reason": "教育指導課・教育総合相談センター"
+ },
+ {
+  "id": "m172-083",
+  "none": false,
+  "high": [],
+  "medium": [
+   "80b62f85965f:45"
+  ],
+  "reason": "学校の改築"
+ },
+ {
+  "id": "m172-084",
+  "none": false,
+  "high": [],
+  "medium": [
+   "80b62f85965f:46"
+  ],
+  "reason": "学校施設長寿命化"
+ },
+ {
+  "id": "m172-085",
+  "none": false,
+  "high": [],
+  "medium": [
+   "80b62f85965f:41",
+   "80b62f85965f:42"
+  ],
+  "reason": "学力育成"
+ },
+ {
+  "id": "m172-086",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-087",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-088",
+  "none": false,
+  "high": [
+   "80b62f85965f:45"
+  ],
+  "medium": [
+   "80b62f85965f:46"
+  ],
+  "reason": "学校の改築"
+ },
+ {
+  "id": "m172-089",
+  "none": false,
+  "high": [],
+  "medium": [
+   "80b62f85965f:46"
+  ],
+  "reason": "学校施設長寿命化"
+ },
+ {
+  "id": "m172-090",
+  "none": false,
+  "high": [],
+  "medium": [
+   "80b62f85965f:41",
+   "80b62f85965f:42"
+  ],
+  "reason": "学力育成・部活動"
+ },
+ {
+  "id": "m172-091",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-092",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-093",
+  "none": false,
+  "high": [
+   "80b62f85965f:45"
+  ],
+  "medium": [
+   "80b62f85965f:46"
+  ],
+  "reason": "学校の改築"
+ },
+ {
+  "id": "m172-094",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-095",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-096",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-097",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-098",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-099",
+  "none": false,
+  "high": [],
+  "medium": [
+   "80b62f85965f:28"
+  ],
+  "reason": "飛鳥山博物館"
+ },
+ {
+  "id": "m172-100",
+  "none": false,
+  "high": [
+   "80b62f85965f:28"
+  ],
+  "medium": [],
+  "reason": "飛鳥山博物館"
+ },
+ {
+  "id": "m172-101",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-102",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-103",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-104",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-105",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-106",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-107",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-108",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-109",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-110",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-111",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-112",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-113",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-114",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-115",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ },
+ {
+  "id": "m172-116",
+  "none": true,
+  "high": [],
+  "medium": [],
+  "reason": "該当する評価頁なし"
+ }
+]

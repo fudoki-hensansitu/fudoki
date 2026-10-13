@@ -45,7 +45,7 @@ def split_pages(text):
 
 
 def chunk_index():
-    """全 chunk の id → {pages: 含む（原典・頁）, lead: 頁の見出しより前の文の（原典・頁）, doc: 資料の種類}。
+    """全 chunk の id → {pages: 含む（原典・頁）, lead: 頁の見出しより前の文の（原典・頁）, doc: 資料の種類, item・start・sha・offset・text}。
 
     見出しより前の文は、同じファイルの直前の chunk の最後の頁の続きとして扱う。
     """
@@ -66,5 +66,6 @@ def chunk_index():
                 if p is not None:
                     last = p
             idx[c['id']] = {'pages': sorted(page_id(it['metadata'], p) for p in pages if p), 'lead': lead,
-                            'doc': it['metadata'].get('document')}
+                            'doc': it['metadata'].get('document'), 'item': it['key'], 'start': c['start_byte'],
+                            'sha': it['metadata']['origin_sha256'][:12], 'offset': int(it['metadata'].get('page_offset', 0)), 'text': c['text']}
     return idx
