@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, test } from 'bun:test'
 import type { Database } from 'bun:sqlite'
 import { createApp } from './app'
 import columnsJson from './columns.json'
+import { CfWorkerJsonSchemaValidator } from '@modelcontextprotocol/server/validators/cf-worker'
 import { operations } from './operations'
 import type { Db } from './db'
 import { insertNode, insertOrigin, testDb } from './testing'
@@ -824,5 +825,30 @@ describe('operation の応答は output の schema に合う', () => {
 
   test('describe_expenditure_columns', async () => {
     parse('describe_expenditure_columns', await run('describe_expenditure_columns', {}))
+  })
+
+  // client は tools/list の outputSchema（JSON Schema）で structuredContent を検証する。zod の parse は未知のキーを黙って落とすので、
+  // zod だけだと「データにあるのに schema に無い」ずれを見逃す。client が見るものを、本物の JSON Schema の validator で確かめる。
+  test('tools/call の structuredContent が tools/list の outputSchema（JSON Schema）に通る', async () => {
+    const list = await rpcBody(await mcp({ jsonrpc: '2.0', id: 1, method: 'tools/list' }))
+    const validators = new CfWorkerJsonSchemaValidator()
+    const validate = (name: string, data: unknown) => {
+      const schema = list.result.tools.find((t: { name: string }) => t.name === name).outputSchema
+      const result = validators.getValidator(schema)(data)
+      expect(result.valid, `${name}: ${result.valid ? '' : result.errorMessage}`).toBe(true)
+    }
+    const call = async (name: string, args: unknown) => {
+      const body = await rpcBody(await mcp({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name, arguments: args } }))
+      expect(body.result.isError, name).toBeUndefined()
+      return body.result.structuredContent
+    }
+    for (const document_kind of ['settlement', 'initial']) {
+      validate('search_expenditure_nodes', await call('search_expenditure_nodes', { document_kind, fiscal_year: year, page_size: 1 }))
+      for (const node_id of [P, C]) validate('get_expenditure_node', await call('get_expenditure_node', { document_kind, node_id }))
+    }
+    validate('describe_expenditure_columns', await call('describe_expenditure_columns', {}))
+    // 検査自体が効いていること: schema に無いキーは落とす
+    const schema = list.result.tools.find((t: { name: string }) => t.name === 'describe_expenditure_columns').outputSchema
+    expect(validators.getValidator(schema)({ ...(await call('describe_expenditure_columns', {})), extra: 1 }).valid).toBe(false)
   })
 })

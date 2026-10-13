@@ -64,13 +64,13 @@ const pageToken = z
 
 // meta の id を付けると、JSON Schema では $defs に一度だけ出て $ref で参照される（tools/list と OpenAPI が小さくなる）。
 const Origin = z
-  .object(Object.fromEntries(ORIGIN_COLUMNS.map((c) => [c.name, nullableIf(zodOf(c.type), c)])))
+  .strictObject(Object.fromEntries(ORIGIN_COLUMNS.map((c) => [c.name, nullableIf(zodOf(c.type), c)])))
   .meta({ id: 'Origin', description: '原典（資料名・URL・SHA-256）。' })
 
 // 木の表の列は資料区分が違っても同じ集合（pipeline の生成器が検査する）。応答の行には document_kind を先頭に付ける。
 const anyTable = NODE_TABLES.values().next().value as NodeTable
 const Node = z
-  .object({
+  .strictObject({
     document_kind: z.string(),
     ...Object.fromEntries(anyTable.columns.map((c) => [c.name, nullableIf(zodOf(c.type), c)])),
   })
@@ -265,7 +265,7 @@ export const operations: Operation[] = [
     pathParams: [],
     description: searchDescription,
     input: searchInput,
-    output: z.object({
+    output: z.strictObject({
       nodes: z.array(Node),
       next_page_token: z.string().nullable().describe(NEXT_PAGE_TOKEN_HELP),
       origins: z.array(Origin).describe(ORIGINS_HELP),
@@ -286,7 +286,7 @@ export const operations: Operation[] = [
       page_token: pageToken,
     }),
     restQuery: z.strictObject({ page_size: queryPageSize, page_token: pageToken }),
-    output: z.object({
+    output: z.strictObject({
       node: Node,
       children: z.record(z.string(), z.array(Node)).describe('軸（axis）ごとの子。別の軸の子を同じ金額に混ぜて足さない。'),
       next_page_token: z.string().nullable().describe(NEXT_PAGE_TOKEN_HELP),
@@ -302,8 +302,8 @@ export const operations: Operation[] = [
     pathParams: [],
     description: '歳出の木の列の説明と、金額を足すときの条件（sum_rules）、検索の入力の例（search_example）を返す。検索の前に一度読む。',
     input: z.strictObject({}),
-    output: z.object({
-      document_kinds: z.array(z.object({ name: z.string(), description: z.string() })),
+    output: z.strictObject({
+      document_kinds: z.array(z.strictObject({ name: z.string(), description: z.string() })),
       where_columns: z.array(z.string()),
       order_by_columns: z.array(z.string()),
       required_input: z.string(),
@@ -311,9 +311,9 @@ export const operations: Operation[] = [
       where_conditions: z.record(z.string(), z.string()),
       sum_rules: z.array(z.string()),
       columns: z.array(
-        z.object({ name: z.string(), type: z.string(), description: z.record(z.string(), z.string()) })
+        z.strictObject({ name: z.string(), type: z.string(), description: z.record(z.string(), z.string()) })
       ),
-      origin_columns: z.array(z.object({ name: z.string(), type: z.string(), description: z.string().nullable() })),
+      origin_columns: z.array(z.strictObject({ name: z.string(), type: z.string(), description: z.string().nullable(), nullable: z.boolean().optional() })),
     }),
     run: describeColumns,
   },
