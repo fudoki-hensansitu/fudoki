@@ -94,8 +94,10 @@ with recursive unioned as (
     -- A mark whose own name (and nearest 目) leaves the recipient open (NULL or 不明)
     -- reads the account names printed on its ancestors: 国民健康保険事業費 above a
     -- bare 節 繰出金. The nearest ancestor naming any account kind decides; two kinds
-    -- in that one name decide nothing. Printed names are evidence, so a mark with no
-    -- such ancestor stays as it is (no inference from the account count etc.).
+    -- in that one name decide nothing, and neither does a name of the account's own
+    -- kind (the sender's business, not the recipient: 国民健康保険事業費 inside the
+    -- 国民健康保険 account). Printed names are evidence, so a mark with no such
+    -- ancestor stays as it is (no inference from the account count etc.).
     select r.document_kind, r.node_id, a.depth, k.account_kind, ab.name as ancestor_name
     from recipient_kinds r
     join ancestors a
@@ -122,7 +124,8 @@ select u.node_id, u.document_kind,
     case when r.node_id is null then null
          when r.recipient_name is not null and r.keyword is null
          then error('Unknown transfer recipient (no account_kind_map keyword matches): ' || r.recipient_name)
-         when ak.ancestor_kind is not null and (r.recipient_kind is null or r.recipient_kind = '不明')
+         when ak.ancestor_kind is not null and ak.ancestor_kind <> a.account_kind
+              and (r.recipient_kind is null or r.recipient_kind = '不明')
          then ak.ancestor_kind
          else r.recipient_kind end as interfund_transfer_to
 from unioned u
