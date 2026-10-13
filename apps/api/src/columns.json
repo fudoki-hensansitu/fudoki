@@ -507,6 +507,94 @@
           "description": "原典ファイルの SHA-256。"
         }
       ]
+    },
+    "jurisdiction_master": {
+      "primary_key": "jurisdiction_code",
+      "indexes": [],
+      "columns": [
+        {
+          "name": "jurisdiction_code",
+          "type": "string",
+          "nullable": false,
+          "description": "全国地方公共団体コード（6桁、末尾は検査数字）。木の表・origin の jurisdiction_code と同じ値。検査数字を除いた先頭5桁でも一意に決まる。"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "nullable": false,
+          "description": "団体の名称（例：武蔵野市）。全国では一意でない（府中市は東京都と広島県にある）ので、都道府県と合わせて区別する。"
+        },
+        {
+          "name": "prefecture_code",
+          "type": "string",
+          "nullable": false,
+          "description": "都道府県コード（JIS X 0401）。団体コードの先頭2桁。"
+        },
+        {
+          "name": "prefecture_name",
+          "type": "string",
+          "nullable": false,
+          "description": "都道府県の名称。団体マスタには無いので、団体コードの先頭2桁から引いた値。"
+        },
+        {
+          "name": "ocd_id",
+          "type": "string",
+          "nullable": false,
+          "description": "Open Civic Data 形式の識別子。OCD の本家に未登録の市区町村は、同じ形式で風土記が定めた値。"
+        }
+      ]
+    },
+    "expenditure_coverage": {
+      "primary_key": "coverage_id",
+      "indexes": [
+        [
+          "jurisdiction_code"
+        ]
+      ],
+      "columns": [
+        {
+          "name": "coverage_id",
+          "type": "string",
+          "nullable": false,
+          "description": "団体・年度・資料区分・会計名・origin_id から生成した ID。"
+        },
+        {
+          "name": "jurisdiction_code",
+          "type": "string",
+          "nullable": false,
+          "description": "団体コード。木の表の jurisdiction_code。"
+        },
+        {
+          "name": "fiscal_year",
+          "type": "integer",
+          "nullable": false,
+          "description": "会計年度（西暦）。木の表の fiscal_year。"
+        },
+        {
+          "name": "document_kind",
+          "type": "string",
+          "nullable": false,
+          "description": "資料区分。settlement は決算（settlement_expenditure_node）、initial は当初予算（initial_expenditure_node）。"
+        },
+        {
+          "name": "account_name",
+          "type": "string",
+          "nullable": false,
+          "description": "原典の会計名。木の表の account_name と同じ値で、明細の検索の条件にそのまま使える。"
+        },
+        {
+          "name": "account_kind",
+          "type": "string",
+          "nullable": false,
+          "description": "団体共通の会計の種類。木の表の account_kind（風土記の判断）。"
+        },
+        {
+          "name": "origin_id",
+          "type": "string",
+          "nullable": false,
+          "description": "この団体・年度・資料区分・会計の明細が指す原典。分冊などで一つの会計に複数の原典があれば、原典ごとに行がある。"
+        }
+      ]
     }
   }
 }

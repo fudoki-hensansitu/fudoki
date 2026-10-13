@@ -280,3 +280,46 @@ models:
     description: 原典の形式（pdf か csv）。
     data_tests:
     - not_null
+- name: expenditure_coverage
+  description: 収録範囲。歳出の木（決算・当初予算）に明細がある団体・年度・資料区分・会計と、その明細が指す原典の組。木の表から作るので、同じ構築の木の検索で返る範囲と一致する。明細があることを示し、会計全体・全事業を収録し終えたことは保証しない。原典の選定結果は使わないので、収録が無い理由（未収録か原典が無いか）は区別しない。
+  columns:
+  - name: coverage_id
+    description: 団体・年度・資料区分・会計名・origin_id から生成した ID。
+    data_tests:
+    - not_null
+    - unique
+  - name: jurisdiction_code
+    description: 団体コード。木の表の jurisdiction_code。
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('jurisdiction_master')
+          field: jurisdiction_code
+  - name: fiscal_year
+    description: 会計年度（西暦）。木の表の fiscal_year。
+    data_tests:
+    - not_null
+  - name: document_kind
+    description: 資料区分。settlement は決算（settlement_expenditure_node）、initial は当初予算（initial_expenditure_node）。
+    data_tests:
+    - not_null
+    - accepted_values:
+        arguments:
+          values: [settlement, initial]
+  - name: account_name
+    description: 原典の会計名。木の表の account_name と同じ値で、明細の検索の条件にそのまま使える。
+    data_tests:
+    - not_null
+  - name: account_kind
+    description: 団体共通の会計の種類。木の表の account_kind（風土記の判断）。
+    data_tests:
+    - not_null
+  - name: origin_id
+    description: この団体・年度・資料区分・会計の明細が指す原典。分冊などで一つの会計に複数の原典があれば、原典ごとに行がある。
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('origin')
+          field: origin_id

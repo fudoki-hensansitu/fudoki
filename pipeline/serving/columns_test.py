@@ -30,7 +30,7 @@ class ColumnsTest(unittest.TestCase):
         self.assertEqual(columns.OUTPUT.read_text(encoding='utf-8'), columns.render())
 
     def test_no_public_marker_in_models_yml(self):
-        models = yaml.safe_load(columns.MODELS.read_text(encoding='utf-8'))['models']
+        models = columns.models()
         for model in models:
             self.assertNotIn('public', (model.get('meta') or {}))
 

@@ -1,7 +1,7 @@
 """D1 に写す表の契約と、API が読む `apps/api/src/columns.json` の生成器（ADR 0022）。
 
 D1 の表は marts の表を同名・同列・同順で写したもの。列・順序・型は warehouse の information_schema から、
-説明は marts の `_models.yml` から引く。warehouse は read_only で開く（構築は dbt:build）。
+説明は marts の `_models.yml`（財政と団体マスタ）から引く。warehouse は read_only で開く（構築は dbt:build）。
 
     bun run --cwd pipeline serving:columns           # columns.json を書き直す
     bun run --cwd pipeline serving:columns -- --check  # 最新かだけ検査する
@@ -16,15 +16,17 @@ from pathlib import Path
 import yaml
 
 PIPELINE = Path(__file__).resolve().parents[1]
-MODELS = PIPELINE / 'dbt/models/marts/fiscal/_models.yml'
+MODELS = [PIPELINE / 'dbt/models/marts/fiscal/_models.yml', PIPELINE / 'dbt/models/marts/jurisdiction/_models.yml']
 WAREHOUSE = PIPELINE / '.build/warehouse.duckdb'
 OUTPUT = PIPELINE.parent / 'apps/api/src/columns.json'
 
-# marts の表 → 資料区分（木の表）。origin は資料区分を持たない
+# marts の表 → 資料区分（木の表）。木の表以外は資料区分を持たない
 TABLES = {
     'settlement_expenditure_node': 'settlement',
     'initial_expenditure_node': 'initial',
     'origin': None,
+    'jurisdiction_master': None,
+    'expenditure_coverage': None,
 }
 # 木の表の index（ADR 0022 の v3 改訂）。主キーは node_id、origin は origin_id
 NODE_INDEXES = [
@@ -32,7 +34,9 @@ NODE_INDEXES = [
     ['fiscal_year', 'cofog_code'],
     ['parent_node_id'],
 ]
-PRIMARY_KEYS = {'origin': 'origin_id'}
+PRIMARY_KEYS = {'origin': 'origin_id', 'jurisdiction_master': 'jurisdiction_code', 'expenditure_coverage': 'coverage_id'}
+# 木の表以外の index。収録範囲は団体のページごとに団体コードで引く
+INDEXES = {'expenditure_coverage': [['jurisdiction_code']]}
 DEFAULT_PRIMARY_KEY = 'node_id'
 
 TYPES = {'VARCHAR': 'string', 'INTEGER': 'integer', 'BIGINT': 'integer', 'HUGEINT': 'integer', 'BOOLEAN': 'boolean',
@@ -69,16 +73,18 @@ def warehouse_columns(path: Path = WAREHOUSE, con=None) -> dict[str, list[tuple[
             con.close()
 
 
+def models() -> list[dict]:
+    return [m for path in MODELS for m in yaml.safe_load(path.read_text(encoding='utf-8'))['models']]
+
+
 def model_descriptions() -> dict[str, dict[str, str | None]]:
-    models = yaml.safe_load(MODELS.read_text(encoding='utf-8'))['models']
-    return {m['name']: {c['name']: c.get('description') for c in m.get('columns', [])} for m in models}
+    return {m['name']: {c['name']: c.get('description') for c in m.get('columns', [])} for m in models()}
 
 
 def model_not_null() -> dict[str, set[str]]:
     """data_tests に not_null がある列。"""
-    models = yaml.safe_load(MODELS.read_text(encoding='utf-8'))['models']
     return {m['name']: {c['name'] for c in m.get('columns', []) if 'not_null' in (c.get('data_tests') or [])}
-            for m in models}
+            for m in models()}
 
 
 def build(columns: dict[str, list[tuple[str, str]]] | None = None) -> dict:
@@ -91,7 +97,7 @@ def build(columns: dict[str, list[tuple[str, str]]] | None = None) -> dict:
         if document_kind:
             spec['document_kind'] = document_kind
         spec['primary_key'] = PRIMARY_KEYS.get(table, DEFAULT_PRIMARY_KEY)
-        spec['indexes'] = NODE_INDEXES if document_kind else []
+        spec['indexes'] = NODE_INDEXES if document_kind else INDEXES.get(table, [])
         spec['columns'] = [{'name': name, 'type': type_, 'nullable': name not in not_null[table],
                             'description': descriptions[table].get(name)}
                            for name, type_ in columns[table]]

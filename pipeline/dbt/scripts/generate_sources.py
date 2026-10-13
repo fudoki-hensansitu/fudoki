@@ -75,7 +75,8 @@ def render() -> str:
          'tables': [{k: v for k, v in e.items() if k != 'source'}
                      for e in collected if e['source'] == 'fiscal_csv']},
         {'name': 'fiscal_metadata', 'schema': 'ingestion',
-         'tables': [{'name': 'tables'}, {'name': 'csv_tables'}, {'name': 'origin'}]}]}
+         'tables': [{'name': 'tables'}, {'name': 'csv_tables'}, {'name': 'origin'}]},
+        {'name': 'registry', 'schema': 'ingestion', 'tables': [{'name': 'jurisdiction'}]}]}
     return HEADER + yaml.safe_dump(declaration, allow_unicode=True, sort_keys=False)
 
 

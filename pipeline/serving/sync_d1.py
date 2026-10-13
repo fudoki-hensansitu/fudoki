@@ -2,14 +2,14 @@
 
     bun run --cwd pipeline serving:sync -- --database-id <uuid> [--dry-run]
     bun run --cwd pipeline serving:sync -- --local [--persist-to <dir>] [--dry-run]
-    ... --jurisdiction 132039 [--jurisdiction ...]   # 一部の団体だけを入れる（動作確認用）
+    ... --jurisdiction 132039 [--jurisdiction ...]   # 一部の団体だけを入れる（動作確認用。団体マスタも絞られる）
 
 手順:
 1. 開始時に、前回の失敗の残骸 `<表>__new`・`<表>__old` を無条件に drop する（本名の表には触らない）。
-2. 表ごと（origin → 木の表）に `<表>__new` を create し、全件投入する。
+2. 表ごと（TABLE_ORDER の順）に `<表>__new` を create し、全件投入する。
 3. `__new` から全行を主キーの先頭1文字ごと（sha の hex。1回の出力を抑えられる）に読み戻し、warehouse の同じ行と
    1行ずつ全列で突き合わせる（`verify`）。1つでも違えば最初の数件の主キーと列名を出して止め、入れ替えない。
-4. 3表とも合ったら、1つの batch で表ごとに `drop table if exists <表>; alter table <表>__new rename to <表>;` と index の作成。
+4. 全表が合ったら、1つの batch で表ごとに `drop table if exists <表>; alter table <表>__new rename to <表>;` と index の作成。
 
 可用性は担保しない。D1 は warehouse から作り直せる写しで、失敗した同期の途中や後では、API がエラーを返したり
 表の世代が混ざったりし得る（Cloudflare の公式文書は REST の query/raw に複数文を渡したときの原子性を保証していない）。
@@ -56,8 +56,8 @@ FETCH_ROWS = 500
 MEMORY_LIMIT = '1GB'
 READ_ROWS_PER_CALL = 4000
 
-# origin を先に、木の表を後に
-TABLE_ORDER = ['origin', 'settlement_expenditure_node', 'initial_expenditure_node']
+# 参照される表（団体マスタ・origin）を先に、参照する表を後に。収録範囲は木の表と同じ warehouse から同じ同期で入れ替える
+TABLE_ORDER = ['jurisdiction_master', 'origin', 'settlement_expenditure_node', 'initial_expenditure_node', 'expenditure_coverage']
 
 Table = dict  # columns.json の1表
 
@@ -143,7 +143,7 @@ def open_warehouse(path: Path) -> duckdb.DuckDBPyConnection:
 
 
 def scope_where(jurisdictions: Sequence[str] | None) -> str:
-    """一部の団体だけを入れるときの絞り込み。木の表も origin も jurisdiction_code で絞る。DuckDB と SQLite のどちらでも同じ。"""
+    """一部の団体だけを入れるときの絞り込み。どの表も jurisdiction_code で絞る。DuckDB と SQLite のどちらでも同じ。"""
     if not jurisdictions:
         return ''
     return ' where "jurisdiction_code" in (' + ', '.join(literal(j) for j in jurisdictions) + ')'
@@ -354,7 +354,7 @@ def main() -> int:
     parser.add_argument('--persist-to', type=Path, default=LOCAL_PERSIST_TO, help='--local の状態の置き場')
     parser.add_argument('--warehouse', type=Path, default=contract.WAREHOUSE)
     parser.add_argument('--jurisdiction', action='append', metavar='団体コード',
-                        help='一部の団体だけを入れる（複数指定可）。木の表も origin も jurisdiction_code で絞る。省略は全件')
+                        help='一部の団体だけを入れる（複数指定可）。どの表も jurisdiction_code で絞る。省略は全件')
     parser.add_argument('--dry-run', action='store_true', help='文を作って数えるだけで、書かない')
     args = parser.parse_args()
     database_id = args.database_id or (LOCAL_DATABASE_ID if args.local else None)

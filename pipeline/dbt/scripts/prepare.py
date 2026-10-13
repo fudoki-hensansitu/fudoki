@@ -17,6 +17,7 @@ from ingestion.lib.node_tables import AMOUNT_COLUMNS, NODE_COLUMNS
 
 DBT = Path(__file__).resolve().parents[1]
 PIPELINE = DBT.parent
+JURISDICTIONS = PIPELINE.parent / 'packages/jurisdictions/jurisdictions.json'
 
 
 def identifier(value: str) -> str:
@@ -110,6 +111,12 @@ def original_for(document: dict, table: dict) -> dict:
     return inputs[0]
 
 
+def load_jurisdictions(path: Path) -> list[tuple[str, str, str]]:
+    """団体マスタ（ADR 0015）の団体コード・名称・OCD ID。団体コードと名称の検査は dbt の marts が持つ。"""
+    registry = json.loads(path.read_text(encoding='utf-8'))['jurisdictions']
+    return [(code, entry['name'], entry['ocdId']) for code, entry in sorted(registry.items())]
+
+
 def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = False) -> dict:
     declarations = yaml.safe_load((DBT / 'models/staging/fiscal/_sources.yml').read_text())['sources']
     write_relations(declarations)
@@ -175,9 +182,12 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
             con.executemany('insert into ingestion.csv_tables values (?,?,?,?,?,?,?,?,?)', csv_tables)
         con.execute('create or replace table ingestion.origin (origin_id varchar, jurisdiction_code varchar, fiscal_year integer, document_kind varchar, amendment_number integer, title varchar, url varchar, format varchar, sha256 varchar)')
         con.executemany('insert into ingestion.origin values (?,?,?,?,?,?,?,?,?)', list(origins.values()))
+        jurisdictions = load_jurisdictions(JURISDICTIONS)
+        con.execute('create or replace table ingestion.jurisdiction (jurisdiction_code varchar, name varchar, ocd_id varchar)')
+        con.executemany('insert into ingestion.jurisdiction values (?,?,?)', jurisdictions)
         con.commit()
     return {'warehouse': str(warehouse), 'tables': len(tables), 'csv_tables': len(csv_tables),
-            'origins': len(origins),
+            'origins': len(origins), 'jurisdictions': len(jurisdictions),
             'nodes': sum(t[-2] for t in tables), 'amounts': sum(t[-1] for t in tables)}
 
 
@@ -198,7 +208,7 @@ def main() -> None:
         # --full-refresh: a seed that gains a column would otherwise fail against the table of an earlier build.
         subprocess.run(['dbt', 'build', '--full-refresh', '--project-dir', str(DBT), '--profiles-dir', str(DBT),
                         '--select', '+settlement_expenditure_node', '+initial_expenditure_node',
-                        '+origin', 'cofog_master'],
+                        '+origin', '+expenditure_coverage', '+jurisdiction_master', 'cofog_master'],
                        cwd=DBT, stdout=sys.stderr, check=True)
         result['dbt_build'] = 'passed'
     print(json.dumps(result, ensure_ascii=False))

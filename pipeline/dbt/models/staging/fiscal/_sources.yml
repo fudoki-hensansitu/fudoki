@@ -1076,3 +1076,7 @@ sources:
   - name: tables
   - name: csv_tables
   - name: origin
+- name: registry
+  schema: ingestion
+  tables:
+  - name: jurisdiction
