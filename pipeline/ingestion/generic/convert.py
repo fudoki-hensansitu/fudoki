@@ -189,6 +189,7 @@ def frame_words(observed, logicals) -> list[tuple]:
     return words
 
 
+BULLET_BEFORE_DIGIT = re.compile(r'^[〇○●◎□■◇◆・]+(?=[0-9０-９])')
 GLUED_AMOUNT = re.compile(r'^(.*[^0-9,△▲])([△▲]?[0-9]{1,3}(?:,[0-9]{3})+)$')
 
 
@@ -197,6 +198,8 @@ def _glued_amount_split(page: int, word) -> list[tuple]:
     name has digits of its own: the builder reads the amount apart (proportionally, as the printed word has
     no gap), and the name's digits are the name's."""
     text = ITEM_NUMBER.sub(r'\1', word.text)
+    # A bullet before a count (`○1消耗品費`) is punctuation: the builder keeps the name without it.
+    text = BULLET_BEFORE_DIGIT.sub('', text)
     found = GLUED_AMOUNT.match(text)
     if not found or not re.search(r'[0-9]', found.group(1)):
         return [(page, (word.x0, word.y0, word.x1, word.y1), text)]
