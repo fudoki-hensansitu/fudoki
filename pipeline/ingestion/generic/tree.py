@@ -25,7 +25,7 @@ import unicodedata
 from ingestion.generic.notes import kind_of, reads_as_note
 from ingestion.lib.node_tables import phase_dictionary
 from shared.amount import number
-from ingestion.generic.layout import (SUBJECT_LEVELS, Band, Glyph, Logical, is_amount, lines, normalize,
+from ingestion.generic.layout import (SUBJECT_LEVELS, UNIT_CELL, Band, Glyph, Logical, is_amount, lines, normalize,
                                       runs, text)
 
 # A leading item number; the separator after it (`1.議会費`, `1．`) is not part of the name.
@@ -372,15 +372,27 @@ def line_limits(logicals: list[Logical]) -> dict[str, float]:
     second runs up to that limit (within a character or two). A short line followed by an indented line
     with an amount is two items, not a wrapped name (`02 管理用備品` / `ICカードリーダーライター 5,280`).
     """
-    limit: dict[str, float] = {}
+    ends: dict[str, list[float]] = defaultdict(list)
     for logical in logicals:
         for group in groups(logical):
             if group.subject:
                 continue
             for line in lines([w for band in group.bands for w in band.words]):
                 label, money = _split_line(line)
-                if label:
-                    limit[group.axis] = max(limit.get(group.axis, 0), max(g.x1 for g in label))
+                # A unit printed alone at the top of a cell (`円`, 132101) is no name: it would set the limit
+                # at the cell's right edge, and no wrapped line would ever reach it.
+                if label and not UNIT_CELL.match(normalize(text(label))):
+                    ends[group.axis].append(max(g.x1 for g in label))
+    # OCR only: the limit is reached by many long names, and a few lines running past it are misreads (an
+    # amount read into the label, `4,26L400`, 132101), so it is the rightmost end that enough lines reach.
+    # Printed text keeps the longest line (a text table with few long names would wrap too much, 132021).
+    ocr = any(logical.ocr for logical in logicals)
+    limit: dict[str, float] = {}
+    for axis, values in ends.items():
+        values.sort()
+        enough = max(3, len(values) // 200) if ocr else 1
+        reached = [v for i, v in enumerate(values) if i + 1 >= enough and v - values[i + 1 - enough] <= 3]
+        limit[axis] = reached[-1] if reached else values[-1]
     return limit
 
 
@@ -522,7 +534,9 @@ def items(group: Group, header: str, margins: set[int] | None = None,
         # (`02 管理用備品` / `ICカードリーダーライター 5,280`, 132276).
         reaches = (previous is not None and bool(money) and bool(previous.lines)
                    and (limit is None or max(g.x1 for g in previous.lines[-1]) >= limit - 4 * (previous.lines[-1][0].y1 - previous.lines[-1][0].y0)))
-        wrapped = (previous is not None and code is None and label and not previous.amounts
+        # A line led by a mark (`○あそべえ事業 222,656,920` under its heading, 132039) is an item of its own.
+        marked = bool(label) and re.match(r'[〇○●◎□■◇◆]', label[0].text) is not None
+        wrapped = (previous is not None and code is None and label and not previous.amounts and not marked
                    and label[0].x0 >= previous.lines[0][0].x0 - 3
                    and (not money or bracketed
                         or (reaches and (abs(label[0].x0 - previous.indent) <= 3

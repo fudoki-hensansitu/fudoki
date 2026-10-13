@@ -806,3 +806,42 @@ class ScanRulesTest(unittest.TestCase):
         from ingestion.generic.layout import UNIT_CELL
         self.assertEqual(self.kind([('円', 125), ('需用費', 140), ('役務費', 155)]), 'label')
         self.assertIsNone(UNIT_CELL.match('1,000円'))
+
+
+class LevelAndWrapRulesTest(unittest.TestCase):
+    """Rules found while tracing why scanned statements put a breakdown on the wrong level (132055, 132101, 132039)."""
+
+    def test_a_chain_of_starts_wider_than_a_step_is_cut_at_its_valley(self):
+        from ingestion.generic.tree import split_wide
+        # OCR spreads 補助金 (856) and its parts (866) and a few lines between them (861-863), 132055.
+        starts = sorted([855.0] * 10 + [856.0] * 500 + [857.0] * 300 + [861.0] * 11 + [862.0] * 3 + [866.0] * 58)
+        self.assertEqual([(min(c), max(c)) for c in split_wide(starts)], [(855.0, 857.0), (861.0, 866.0)])
+        # Printed text gives a level one x: a narrow chain stays one level.
+        self.assertEqual(len(split_wide([100.0, 100.0, 101.5, 102.9])), 1)
+
+    def test_a_repeated_heading_is_the_same_subject_one_character_apart(self):
+        from ingestion.generic.tree import same_heading
+        self.assertTrue(same_heading('秘書広報費', '秘書広银費'))  # OCR misread of a continuation page, 132055
+        self.assertFalse(same_heading('公債費', '元金'))
+        self.assertFalse(same_heading('衛生費', '衛生総務費'))
+        self.assertFalse(same_heading('予備', '予算'))  # names this short carry no evidence
+
+    def test_a_line_led_by_a_mark_is_an_item_not_the_wrapped_name_of_the_heading_above(self):
+        from ingestion.generic.tree import items
+        # `あそべえ及び学童クラブの運営に要した経費` / `○あそべえ事業 222,656,920` (132039).
+        band = Band(900, 1170, 1, ('備考',), [], 100, 700)
+        band.words = [glyph('あそべえ及び学童クラブの運営に要した経費', 926, 100, 180),
+                      glyph('○あそべえ事業', 935, 112, 60), glyph('222,656,920', 1100, 112, 50)]
+        found = items(Group([band], '備考', False), '備考', None, None, 1110)
+        self.assertEqual([i.name for i in found], ['あそべえ及び学童クラブの運営に要した経費', 'あそべえ事業'])
+
+    def test_the_wrap_limit_ignores_a_lone_unit_and_a_few_misread_lines(self):
+        from ingestion.generic.layout import Logical
+        from ingestion.generic.tree import line_limits
+        band = Band(660, 840, 1, ('備考',), [], 100, 700)
+        band.kind = 'label'
+        band.words = [glyph('円', 825, 100, 8)] + [glyph('障害者青年学級講師謝礼', 702, 110 + 12 * i, 78) for i in range(5)] \
+            + [glyph('度任用職員報酬2人4,26L400', 701, 200, 129)]  # an amount OCR read into the label, 132101
+        self.assertAlmostEqual(line_limits([Logical([1], [band], '円', [], ocr=True)])['備考'], 780, places=0)
+        # Printed text keeps its longest line as the limit; only the lone unit is left out.
+        self.assertAlmostEqual(line_limits([Logical([1], [band], '円', [])])['備考'], 830, places=0)

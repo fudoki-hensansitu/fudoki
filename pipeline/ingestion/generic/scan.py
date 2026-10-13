@@ -153,3 +153,12 @@ def agreed_headers(pages: list[Page]) -> list[Page]:
 
 def pages(observation: dict, pdf: Path) -> list[Page]:
     return agreed_headers([page(p, pdf) for p in observation['pages']])
+
+
+def logicals(observation: dict, pdf: Path) -> list:
+    """The logical pages of an OCR observation, marked as OCR so the builder's rules for misreads apply."""
+    from ingestion.generic.layout import logical_pages
+    found = logical_pages(pages(observation, pdf))
+    for logical in found:
+        logical.ocr = True
+    return found

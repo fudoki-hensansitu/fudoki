@@ -82,6 +82,7 @@ class Logical:
     bands: list[Band]
     unit: str | None
     outside: list[Glyph]
+    ocr: bool = False  # the words came from OCR (`ingestion/generic/scan.py`): rules for its misreads apply
 
     @property
     def titles(self) -> list[tuple[str, str, list[Glyph]]]:
