@@ -75,4 +75,6 @@ test('evaluation selections evaluate a selected settlement and need hashes but n
     { ...explanation, archive: {} },
   ]) expect(jurisdictionSelectionsSchema.safeParse({ ...ledger, evaluation_selections: [changed] }).success).toBe(false)
   expect(jurisdictionSelectionsSchema.safeParse({ ...ledger, evaluation_selections: [explanation, explanation] }).success).toBe(false)
+  const duplicated = { ...explanation.candidates[0]!, files: [file, { ...file, download_url: 'https://example.com/copy.pdf' }] }
+  expect(jurisdictionSelectionsSchema.safeParse({ ...ledger, evaluation_selections: [{ ...explanation, candidates: [duplicated] }] }).success).toBe(false)
 })

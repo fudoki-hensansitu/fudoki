@@ -1,16 +1,22 @@
-import json,subprocess,sys
-SP=sys.argv[1]; INST='fudoki-eval-trial-v1'  # SP は作業dir。trial/ の JSON を <SP>/trial/ に置き、結果もそこへ書く
-cm=json.load(open(SP+'/trial/chunk_pages.json'))
-meta={m['id']:m for m in json.load(open(SP+'/trial/retry_meta.json'))}
-truth={e['id']:e for e in json.load(open(SP+'/trial/exact.json'))}
-hit=0
-for r in json.load(open(SP+'/trial/retry_queries.json')):
-    m=meta[r['id']]; tp=set(truth[r['id']]['pages']); found=[]
-    for q in r['queries']:
-        body={'messages':[{'role':'user','content':q}],'ai_search_options':{'retrieval':{'filters':{'jurisdiction':m['jurisdiction']},'max_num_results':10,'score_threshold':0,'keyword_match_mode':'or'}}}
-        d=json.loads(subprocess.run(['cf','ai-search','search',INST,q,'--name','default','--body',json.dumps(body,ensure_ascii=False)],capture_output=True,text=True).stdout or '{}')
-        rank=next((i+1 for i,c in enumerate(d.get('chunks',[])) if set(cm.get(c['id'],[]))&tp),None)
-        found.append((q,len(d.get('chunks',[])),rank))
-    ok=any(f[2] for f in found); hit+=ok
-    print('○' if ok else '×', truth[r['id']]['name'],'|',m['query'],'|',found)
-print('retry recovered',hit,'/',len(meta))
+"""参考: run.py で外れた言い換えの問いを、retry_queries.json の別の検索語で引き直す。
+retry_queries.json は初版の採点で外れた11問について、問いだけを LLM に渡して作らせたもの。今の採点で外れた問いのうち、検索語の無いものは数えない。
+使い方: python retry.py <作業dir>（run.py の後）"""
+import json, sys
+from common import search
+
+SP = sys.argv[1]
+cm = json.load(open(SP + '/trial/chunk_pages.json'))
+truth = {e['id']: e for e in json.load(open(SP + '/trial/exact.json'))}
+missed = {r['id']: r for r in json.load(open(SP + '/trial/results.json')) if r['qtype'] == 'para' and not r['rank']}
+queries = {r['id']: r['queries'] for r in json.load(open(SP + '/trial/retry_queries.json'))}
+hit = 0
+for qid, m in missed.items():
+    if qid not in queries:
+        print('-', truth[qid]['name'], '| 検索語なし'); continue
+    tp, found = set(truth[qid]['pages']), []
+    for q in queries[qid]:
+        chunks = search(q, m['jurisdiction'])
+        found.append((q, len(chunks), next((i + 1 for i, c in enumerate(chunks) if set(cm.get(c['id'], [])) & tp), None)))
+    ok = any(f[2] for f in found); hit += ok
+    print('○' if ok else '×', truth[qid]['name'], '|', m['query'], '|', found)
+print('retry recovered', hit, '/', sum(1 for q in missed if q in queries), '(missed', len(missed), ')')

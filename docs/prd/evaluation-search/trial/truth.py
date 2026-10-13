@@ -29,7 +29,8 @@ for p in range(1, pages(nakano) + 1):
         cur['pages'].append(p)  # 施策の見出しが無い頁は、直前の施策の続き
     for g in re.findall(r'^\s*([①-⑳])(\S[^\s].*?)\s*$', t, re.M):
         name = g[1].strip()
-        if len(name) >= 4 and not re.match(r'^[\d,.%\s]+$', name) and '年度' not in name:
+        # 成果指標の行（「17.9% ②18.6% …」）も丸数字で始まるので、数字で始まる名前は除く
+        if len(name) >= 4 and not re.match(r'^[\d,.%\s]', name) and '年度' not in name:
             n.append({'kind': '取組', 'name': name, 'page': p, 'pages': [p]})
 json.dump(k, open(f'{out}/kita_truth.json', 'w'), ensure_ascii=False, indent=1)
 json.dump(n, open(f'{out}/nakano_truth.json', 'w'), ensure_ascii=False, indent=1)

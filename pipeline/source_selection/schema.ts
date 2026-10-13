@@ -22,11 +22,13 @@ const targetFields = {
   fiscal_year: z.number().int().positive(),
 }
 
+const settlementTargetSchema = z.object({ ...targetFields, document_kind: z.literal('settlement') }).strict()
+
 /** 資料区分は金額の段階（phase）とは別。補正だけに原典の号数を持つ。 */
 export const sourceTargetSchema = z.discriminatedUnion('document_kind', [
   z.object({ ...targetFields, document_kind: z.literal('initial') }).strict(),
   z.object({ ...targetFields, document_kind: z.literal('supplementary'), amendment_number: z.number().int().positive() }).strict(),
-  z.object({ ...targetFields, document_kind: z.literal('settlement') }).strict(),
+  settlementTargetSchema,
 ])
 export type SourceTarget = z.infer<typeof sourceTargetSchema>
 
@@ -79,10 +81,8 @@ export const sourceFileSchema = z.discriminatedUnion('format', [
 ])
 export type SourceFile = z.infer<typeof sourceFileSchema>
 
-export const sourceCandidateSchema = z.object({
-  ...candidateFields,
-  files: z.array(sourceFileSchema).min(1),
-}).strict().superRefine((candidate, ctx) => {
+/** 同じ候補に同じURL・同じバイト列のファイルを重ねない。 */
+function rejectDuplicateFiles(candidate: { files: { download_url: string; sha256: string | null }[] }, ctx: z.RefinementCtx) {
   const urls = new Set<string>()
   const hashes = new Set<string>()
   for (const [index, file] of candidate.files.entries()) {
@@ -92,7 +92,12 @@ export const sourceCandidateSchema = z.object({
     urls.add(file.download_url)
     if (file.sha256 !== null) hashes.add(file.sha256)
   }
-})
+}
+
+export const sourceCandidateSchema = z.object({
+  ...candidateFields,
+  files: z.array(sourceFileSchema).min(1),
+}).strict().superRefine(rejectDuplicateFiles)
 export type SourceCandidate = z.infer<typeof sourceCandidateSchema>
 
 /** 原典対象の情報が不足している候補。対象を確定してから選定一覧へ移す。 */
@@ -191,12 +196,12 @@ export const evaluationFileSchema = z.object({
 export const evaluationCandidateSchema = z.object({
   ...candidateFields,
   files: z.array(evaluationFileSchema).min(1),
-}).strict()
+}).strict().superRefine(rejectDuplicateFiles)
 export type EvaluationCandidate = z.infer<typeof evaluationCandidateSchema>
 
 /** 事業の評価の資料の選定。targetは評価する実績の決算。保存は未対応なのでarchiveはnullだけ。 */
 export const evaluationSelectionSchema = z.object({
-  target: sourceTargetSchema.options[2],
+  target: settlementTargetSchema,
   candidates: z.array(evaluationCandidateSchema),
   selected_candidate_id: nonEmptyString.nullable(),
   archive: z.null(),
