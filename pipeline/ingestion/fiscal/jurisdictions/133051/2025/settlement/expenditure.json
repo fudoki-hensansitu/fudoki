@@ -84,7 +84,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "916f1a920e40d57e8104c3ad6660ac388e0b1e04069974425b368d1704f22096",
+      "input_fingerprint": "e5978e4540d7cdce7b7cd5c0368383cce2e670384666c6663fbb256ccd488f93",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent'}。",
@@ -97,16 +97,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/133051/2025/settlement/expenditure/general-expenditure-nodes.parquet",
-          "sha256": "e3355395d860bc07ba26c67405785fa01feb37d32ba0da658c75e538c7a2c429",
-          "bytes": 102438
+          "sha256": "d94f2e5c2cdeba64da30c63f52f10c631da4043bb453449baf18a039ba94b33f",
+          "bytes": 100365
         },
-        "row_count": 3510
+        "row_count": 3373
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/133051/2025/settlement/expenditure/general-expenditure-amounts.parquet",
-          "sha256": "fd684c0188f0e0e959a681742c868b89e9e353fa8f25693ebf18181ea6f8b66c",
-          "bytes": 95163
+          "sha256": "1ab7bb0edf4c77554ac6057212c8c315141dc9c135bf701b40fd2751cb37a624",
+          "bytes": 95158
         },
         "row_count": 6793
       }
@@ -114,7 +114,7 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "9a4b4434fe3355eaed31dcc09db904968a3bb6446f00df152cb4fb11624c8d16",
+      "input_fingerprint": "b9453c95b10f524586eb6c93e91c4de7c9a4f11924cd6752b1e1b428e99a509f",
       "account": "日の出町国民健康保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent'}。",
@@ -127,16 +127,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/133051/2025/settlement/expenditure/national-health-insurance-expenditure-nodes.parquet",
-          "sha256": "601b9baac51bb16d4cbfdacb2188520dffade81208c5ddf2b661cd5943a371e4",
-          "bytes": 10184
+          "sha256": "5bbd31b3784ed2d456a62185f37beab365050c5076247f6e0f26e7cee28bcb11",
+          "bytes": 10100
         },
-        "row_count": 197
+        "row_count": 194
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/133051/2025/settlement/expenditure/national-health-insurance-expenditure-amounts.parquet",
-          "sha256": "c4a2a4747aa4e47fddeda000a7b521c86fdb2c773355a01ae9f9f0febab7087a",
-          "bytes": 10012
+          "sha256": "2ef89f3ffe81bb965cd1378d06e83868e2c9919b9084d2b161457f875c922776",
+          "bytes": 10013
         },
         "row_count": 786
       }
@@ -144,7 +144,7 @@
     {
       "table_id": "long-term-care-expenditure",
       "conversion_id": "long-term-care-settlement",
-      "input_fingerprint": "cecb2cc61756a6d1d3db1910b67d7a5e1902bd74fd44eede629568a9f0ff49fb",
+      "input_fingerprint": "9d03a8aa1c5310ed1396eb71049f5f93248ec4b3d346c682423e080c44863058",
       "account": "日の出町介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent'}。",
@@ -157,16 +157,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/133051/2025/settlement/expenditure/long-term-care-expenditure-nodes.parquet",
-          "sha256": "6e816675c13d88488183eecead0e69d33d3bba9db5d2bd7b3ebd082be5a733f0",
-          "bytes": 12522
+          "sha256": "303a22844f106240af2455d574f893e13b9addc9b4220a2f8ab5d9ab39befc95",
+          "bytes": 12455
         },
-        "row_count": 265
+        "row_count": 262
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/133051/2025/settlement/expenditure/long-term-care-expenditure-amounts.parquet",
-          "sha256": "c1dace4be2ceacc33b8bc69fa4c2144b02e8133dc7acfa09f23b9565dbb7ab60",
-          "bytes": 12062
+          "sha256": "cfaf12bc8b1e8e01a8c44b2a5ef22027d2a6d8078fdf42d14306ffb6374c3ce5",
+          "bytes": 12064
         },
         "row_count": 961
       }
@@ -174,7 +174,7 @@
     {
       "table_id": "elderly-medical-expenditure",
       "conversion_id": "elderly-medical-settlement",
-      "input_fingerprint": "cf5ebcdafb49bec438c1cb42cc39646ca042e04dd43c95f2ed26b2ca29501f01",
+      "input_fingerprint": "91b3a4c5c6765ba10ea84bb088664f507e472b82189868f8d8ffc6cb1bb3dfe4",
       "account": "日の出町後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent'}。",
