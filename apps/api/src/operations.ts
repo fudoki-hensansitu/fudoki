@@ -99,6 +99,8 @@ export interface Operation {
   /** MCP の tool の description。AI が使い方を tool 説明だけで分かるようにする */
   description: string
   input: z.ZodObject
+  /** REST の body の例（OpenAPI の example）。文書の code sample に使う */
+  example?: Record<string, unknown>
   /** get の REST の query。MCP と違い文字列から数値にする */
   restQuery?: z.ZodObject
   output: z.ZodType
@@ -265,6 +267,7 @@ export const operations: Operation[] = [
     pathParams: [],
     description: searchDescription,
     input: searchInput,
+    example: SEARCH_EXAMPLE,
     output: z.strictObject({
       nodes: z.array(Node),
       next_page_token: z.string().nullable().describe(NEXT_PAGE_TOKEN_HELP),

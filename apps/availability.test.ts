@@ -1,8 +1,7 @@
 import { expect, test } from 'bun:test'
 import web from './web/worker'
-import docs from './docs/worker'
 
-for (const [name, worker] of Object.entries({ web, docs })) {
+for (const [name, worker] of Object.entries({ web })) {
   test(`${name} returns an uncached server error without service bindings`, async () => {
     const response = worker.fetch()
     expect(response.status).toBe(500)

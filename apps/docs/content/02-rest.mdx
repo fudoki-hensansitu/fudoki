@@ -1,0 +1,76 @@
+---
+title: REST で使う
+description: https://api.fudoki.dev に JSON で問い合わせ、歳出の木のノードを検索・取得する。
+---
+
+ベース URL は `https://api.fudoki.dev` です。認証は要りません。応答はすべて JSON で、キャッシュさせません（`Cache-Control: no-store`）。
+
+## 最初の問い合わせ
+
+<Steps>
+  <Step title="列の説明を読む">
+    ```bash
+    curl https://api.fudoki.dev/v1/expenditure/columns
+    ```
+
+    列の意味、`where` で使える条件、金額を足すときの条件（`sum_rules`）、検索の入力の例が返ります。
+  </Step>
+  <Step title="ノードを検索する">
+    ```bash
+    curl -X POST 'https://api.fudoki.dev/v1/expenditure/nodes:search' \
+      -H 'Content-Type: application/json' \
+      -d '{
+        "document_kind": "settlement",
+        "fiscal_year": { "min": 2025, "max": 2025 },
+        "where": { "node_kind": { "eq": ["目"] }, "cofog_code": { "prefix": "10.4" } },
+        "order_by": [{ "column": "amount_yen", "desc": true }],
+        "page_size": 50
+      }'
+    ```
+
+    `document_kind`（`settlement` は決算、`initial` は当初予算）と `fiscal_year` の範囲（西暦、5 年以内）が必須です。
+  </Step>
+  <Step title="内訳を辿る">
+    ```bash
+    curl 'https://api.fudoki.dev/v1/expenditure/nodes/settlement/<node_id>'
+    ```
+
+    検索の応答の `node_id` を渡すと、そのノードと子を軸（`axis`）ごとに返します。
+  </Step>
+</Steps>
+
+## 検索の条件
+
+`where` は列名をキーにした条件で、列どうしは AND です。
+
+| 列の型 | 使える条件 |
+| --- | --- |
+| string | `eq`・`not_eq`（100 個まで、`eq` は OR）、`prefix`・`suffix`・`contains`、`is_null` |
+| integer | `eq`・`not_eq`（100 個まで、`eq` は OR）、`min`・`max`、`is_null` |
+| number | `min`・`max`、`is_null` |
+| boolean | `eq` |
+
+列をまたぐ OR と NOT はないので、2 回に分けて問い合わせてください。`fiscal_year` の年数と条件の値の合計は 90 個までなので、`eq`・`not_eq` に入れられる値は実際にはこの合計で決まります。文字列の条件の値は 200 文字までです。
+
+## ページング
+
+検索と、ノード取得の子の一覧はページで返ります。応答の `next_page_token` が null でなければ、次の要求に `page_token` として渡します（ノード取得では query に付けます）。`page_size` は 1〜1000（既定 100）です。位置は 100,000 件目までなので、それより先が要るときは条件を絞ってください。
+
+## 原典
+
+応答の `origins` には、結果の行が指す原典（資料名・公開 URL・形式・SHA-256）が入ります。行の `origin_id` から引いてください。
+
+## エラー
+
+エラーは `{"error": {"code": "...", "message": "..."}}` の形で返ります。主なものは次のとおりです。
+
+| HTTP | code | 起きるとき |
+| --- | --- | --- |
+| 400 | `INVALID_ARGUMENT` | 入力が schema に合わない |
+| 404 | `NOT_FOUND` | ノードや path が見つからない |
+| 405 | `METHOD_NOT_ALLOWED` | 操作が受け付けないメソッドで送った |
+| 413 | `PAYLOAD_TOO_LARGE` | body が 16 KiB を超える |
+| 415 | `UNSUPPORTED_MEDIA_TYPE` | `Content-Type` が `application/json` でない |
+| 503 | `UNAVAILABLE` | 提供を止めている |
+
+各操作の入力と応答の詳細は [API リファレンス](/reference)にあります。

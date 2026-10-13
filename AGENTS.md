@@ -1,6 +1,6 @@
 # 風土記
 
-日本の地方自治体の**歳出の予算・決算額を事業単位（目）まで**構造化し、AI ready なデータとして配布する。
+町の家計簿を作る。日本の地方自治体の**歳出の予算・決算額を事業単位（目とその下の事業階層）まで**集約し、AI ready なデータとして配布する。
 
 713年の官命により、諸国へ地名の由来や産物を**同じ様式で報告させて集めた**地誌『風土記』と呼んでいたことから名付けている。
 
@@ -159,7 +159,7 @@ _Avoid_: ログ
 .
 ├── pipeline/         # source_selection、ingestion/fiscal、dbt（マスタと正規化macro）
 ├── packages/         # fiscal の純粋な型・名称、jurisdictions
-├── apps/             # web、api、docs の一時的な 500 応答
+├── apps/             # web（一時的な 500 応答）、api、docs
 ├── docs/             # 設計・調査文書
 └── .agent/           # 個人メモ・試作（gitignore）
 ```
@@ -191,7 +191,7 @@ uv add --exclude-newer $(date -v-7d +%Y-%m-%d) <package>
 ## 技術スタック
 
 - **パイプライン**（取得・OCR・dbt 変換・検証・保存・一時検証の規則）→ `pipeline/AGENTS.md`
-- **公開面**（web・api・docs、現在は一時的に HTTP 500）→ `apps/AGENTS.md`
+- **公開面**（web・api・docs、web は現在一時的に HTTP 500）→ `apps/AGENTS.md`
 - **言語・依存**: TypeScript は Bun workspaces（共有版は `catalog:` で集約）、Python は uv workspace。exact ピン留め・cooldown 7日
 - **保存の大原則**: Git はコード・宣言・判断・入力一覧、非公開 R2 は原典・取り込み表。`.cache/`・`.build/` は再生成可能なローカル作業領域
 - **script の置き場**: package の作業はその package.json が所有し、root は `pipeline:*`・`dev:*` などの入口と orchestration だけを持つ
