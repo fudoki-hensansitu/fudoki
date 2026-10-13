@@ -280,14 +280,16 @@ def combine_coverage_tables(tables):
     return NodeTables(list(nodes.values()), list(amounts.values()))
 
 
-def check_table_coverage(wide_path, tables, *, require=True, control_tables=()):
+def check_table_coverage(wide_path, tables, *, require=True, control_tables=(), recheck=None):
     """Pre-save digit coverage next to the tree check.
 
     Reads the converter's scope sidecar beside its wide table and requires
     every printed digit in scope to be an amount row or a known non-amount.
     Uncovered prints fail loudly with counts and page/box/text examples.
     require=False (scan PDFs, out of this change's scope) reports without
-    tables instead of failing on a missing scope.
+    tables instead of failing on a missing scope. recheck (a
+    digit_recheck.Recheck) adds Jev stops for weakly passed and out-of-band
+    digits; it never clears a stop.
     """
     sidecar = coverage_sidecar(wide_path)
     if not sidecar.is_file():
@@ -298,19 +300,21 @@ def check_table_coverage(wide_path, tables, *, require=True, control_tables=()):
     scope = json.loads(sidecar.read_text())
     result = check_digit_coverage(scope['words'], tables, control_tables=control_tables,
                                   exclusions=scope.get('excluded_regions', ()),
-                                  amount_columns=scope.get('amount_columns', ()))
+                                  amount_columns=scope.get('amount_columns', ()), recheck=recheck)
     sidecar.with_name(sidecar.name.removesuffix(COVERAGE_SIDECAR_SUFFIX)
                       + '.coverage-uncovered.json').write_text(
         json.dumps({'counts': result['counts'], 'digit_words': result['digit_words'],
                     'uncovered': result['uncovered'], 'reported': result['reported'],
                     'bands_from': result['bands_from'], 'exclusions': result['exclusions'],
-                    'elapsed': result['elapsed']}, ensure_ascii=False) + '\n')
+                    'jev': result['jev'], 'elapsed': result['elapsed']}, ensure_ascii=False) + '\n')
     if result['uncovered']:
         examples = ', '.join(
             f"p{u['page']}@{u['bbox'][0]:.1f},{u['bbox'][1]:.1f}={u['text']!r}"
+            + (f" jev={u['jev']:.2f}" if u.get('jev') is not None else '')
             for u in result['uncovered'][:10])
+        stopped = sum(1 for u in result['uncovered'] if u.get('rule'))
         raise ValueError(f"Uncovered printed digits: {result['counts']}, "
-                         f"{len(result['uncovered'])} blocked of {result['digit_words']} "
+                         f"{len(result['uncovered'])} blocked ({stopped} by Jev) of {result['digit_words']} "
                          f"({len(result['reported'])} reported prose) e.g. {examples}")
     return result
 
@@ -344,8 +348,12 @@ DOCUMENT_NUMBER = re.compile(
     r'|[0-9]+[^0-9,円△▲\-]+第[0-9]+号(?:市|区|町|村)長決定')
 
 
-def _notation_context(words, matches):
-    """Locate whole, spatially adjacent notation fragments without exempting a row."""
+def _notation_context(words, matches, strong=None, strong_boxes=None):
+    """Locate whole, spatially adjacent notation fragments without exempting a row.
+
+    strong (optional) is a stricter predicate; the boxes of its matches are
+    also added to strong_boxes.
+    """
     lines = defaultdict(list)
     for raw in words:
         page, box, text = _coverage_word(raw)
@@ -367,6 +375,8 @@ def _notation_context(words, matches):
                 joined += line[end][1]
                 if matches(joined):
                     matched.update((page, tuple(box)) for box, _ in line[start:end + 1])
+                    if strong is not None and strong(joined):
+                        strong_boxes.update((page, tuple(box)) for box, _ in line[start:end + 1])
     return matched, lines, merged_lines
 
 
@@ -408,6 +418,16 @@ def _exclusion_hit(word, exclusions, tolerance):
                 continue
         return index
     return None
+
+
+LEVEL_MARKS = ('款', '項', '目', '節')
+
+
+def _level_marks(code, level):
+    """A subject's own code printed with its level mark: 1項, 第1項, （目）2."""
+    if not code or level not in LEVEL_MARKS:
+        return ()
+    return (f'{code}{level}', f'第{code}{level}', f'({level}){code}')
 
 
 # An amount-shaped token is never a label, even inside a node box and even
@@ -670,7 +690,47 @@ def _continued_subject_boxes(words, control_tables, tolerance):
     return matched
 
 
-def check_digit_coverage(words, tables, *, tolerance=0.5, exclusions=(), amount_columns=(), control_tables=()):
+# Digits a weak rule passed or that no band owns: the only ones Jev is asked.
+RECHECKED = ('non_amount', 'reported')
+
+
+def _apply_recheck(normalized, words, amount_columns, recheck):
+    """Stop weakly passed and out-of-band digits Jev reads as amounts to ingest.
+
+    Mutates covered to 'jev_blocked' (never the other way) and attaches the
+    probability as 'jev'. Returns the persistable answers and a short summary.
+    """
+    index = recheck.context_index((_coverage_word(w) for w in words), amount_columns)
+
+    def context(w):
+        return index.context(w['page'], w['bbox'], w['text'])
+    asked = [w for w in normalized if w['covered'] in RECHECKED and w.get('form') != 'document_number']
+    blocked = [w for w in normalized if w['covered'] == 'blocked']
+    contexts = [context(w) for w in asked]
+    try:
+        probabilities = recheck.answers(contexts)
+    except recheck.unavailable:
+        # A table with a band stop fails anyway, and the stop is the clearer reason.
+        if not blocked:
+            raise
+        asked, contexts, probabilities = [], [], []
+    answers, stopped = {}, 0
+    for w, c, p in zip(asked, contexts, probabilities):
+        answers[recheck.fingerprint(c)] = p
+        w['jev'] = p
+        if p >= recheck.threshold:
+            w['rule'], w['covered'] = w['covered'], 'jev_blocked'
+            stopped += 1
+    hints = recheck.answers([context(w) for w in blocked], required=False) if blocked else []
+    for w, p in zip(blocked, hints):
+        if p is not None:
+            w['jev'] = p
+    return {'answers': answers, 'asked': len(asked), 'stopped': stopped,
+            'hinted': sum(p is not None for p in hints)}
+
+
+def check_digit_coverage(words, tables, *, tolerance=0.5, exclusions=(), amount_columns=(), control_tables=(),
+                         recheck=None):
     """Every printed digit in scope is an amount row or a known non-amount.
 
     words are the printed words of the pages and regions the converter
@@ -694,6 +754,13 @@ def check_digit_coverage(words, tables, *, tolerance=0.5, exclusions=(), amount_
     back to clustering adopted amount rows. Returns
     the elapsed seconds alongside the verdict for per-table timing reports.
     Overhanging fragments require exact digit reconstruction; nearby unmatched prints stay uncovered.
+    recheck (digit_recheck.Recheck) asks Jev about exactly two kinds of digit:
+    those a weak rule passed (non_amount) and those reported outside every
+    band. An answer at or above its threshold stops the save ('jev_blocked',
+    listed with the rule that passed it); a lower one clears nothing. Digits
+    explained by adopted amounts, labels, totals or declared exclusions are
+    never asked, and a digit already blocked in a band stays blocked whatever
+    Jev says (its probability is only attached as a hint).
     """
     started = time.perf_counter()
     if tolerance < 0 or not math.isfinite(tolerance):
@@ -796,8 +863,10 @@ def check_digit_coverage(words, tables, *, tolerance=0.5, exclusions=(), amount_
         for node in boxed_by_page.get(word['page'], []):
             if not _contains((node['x0'], node['y0'], node['x1'], node['y1']), word['bbox'], tolerance):
                 continue
-            printed = _word_key(str(node.get('code_text') or '') + str(node.get('name_text') or ''))
-            if word['key'] and not _amount_shaped(word['key']) and word['key'] in printed:
+            code = _word_key(str(node.get('code_text') or ''))
+            printed = code + _word_key(str(node.get('name_text') or ''))
+            if word['key'] and not _amount_shaped(word['key']) and (
+                    word['key'] in printed or word['key'] in _level_marks(code, node.get('level_header'))):
                 word['covered'] = 'label'
                 break
     # Adopted prints take precedence over an auxiliary block. An exclusion
@@ -824,8 +893,16 @@ def check_digit_coverage(words, tables, *, tolerance=0.5, exclusions=(), amount_
             word['covered'] = 'non_amount'
     # Printed document numbers and dates can be split by Poppler. Match an
     # exact, spatially adjacent sequence; never exempt all digits on its row.
-    non_amount_boxes, lines, merged_lines = _notation_context(words, lambda text: _document_notation(text)
-                                     or QUANTITY_PHRASE.fullmatch(text) or ORDINAL_PHRASE.fullmatch(text))
+    # A resolution/decision number (令和7年第7号・第54号) cannot read as an
+    # amount, so it is explained outright instead of being left for recheck.
+    document_boxes = set()
+    non_amount_boxes, lines, merged_lines = _notation_context(
+        words, lambda text: _document_notation(text) or QUANTITY_PHRASE.fullmatch(text) or ORDINAL_PHRASE.fullmatch(text),
+        strong=lambda text: bool(DOCUMENT_NUMBER.fullmatch(text)), strong_boxes=document_boxes)
+    for word in normalized:
+        # A fragment (7号) may already read as a glued code; the number still explains it.
+        if word['covered'] in (None, 'non_amount') and (word['page'], tuple(word['bbox'])) in document_boxes:
+            word['covered'], word['form'] = 'non_amount', 'document_number'
     for word in normalized:
         if word['covered'] is None and (word['page'], tuple(word['bbox'])) in non_amount_boxes:
             word['covered'] = 'non_amount'
@@ -903,10 +980,17 @@ def check_digit_coverage(words, tables, *, tolerance=0.5, exclusions=(), amount_
     for word in normalized:
         if word['covered'] is None:
             word['covered'] = 'blocked' if in_band(word) else 'reported'
-    blocked = [{'page': w['page'], 'bbox': w['bbox'], 'text': w['text']} for w in normalized
-               if w['covered'] == 'blocked']
-    reported = [{'page': w['page'], 'bbox': w['bbox'], 'text': w['text']} for w in normalized
-                if w['covered'] == 'reported']
+    jev = _apply_recheck(normalized, words, amount_columns, recheck) if recheck is not None else None
+
+    def listed(w):
+        item = {'page': w['page'], 'bbox': w['bbox'], 'text': w['text']}
+        if w.get('jev') is not None:
+            item['jev'] = w['jev']
+        if w.get('rule'):
+            item['rule'] = w['rule']
+        return item
+    blocked = [listed(w) for w in normalized if w['covered'] in ('blocked', 'jev_blocked')]
+    reported = [listed(w) for w in normalized if w['covered'] == 'reported']
     blocked.sort(key=lambda w: (w['page'] if isinstance(w['page'], int) else 0, w['bbox'][1], w['bbox'][0]))
     reported.sort(key=lambda w: (w['page'] if isinstance(w['page'], int) else 0, w['bbox'][1], w['bbox'][0]))
     counts = dict(Counter(w['covered'] for w in normalized))
@@ -914,7 +998,7 @@ def check_digit_coverage(words, tables, *, tolerance=0.5, exclusions=(), amount_
                for e, n in zip(exclusions, exclusion_counts)]
     return {'passed': not blocked, 'counts': counts,
             'digit_words': len(normalized), 'uncovered': blocked, 'reported': reported,
-            'bands_from': bands_from, 'exclusions': applied,
+            'bands_from': bands_from, 'exclusions': applied, 'jev': jev,
             'elapsed': time.perf_counter() - started}
 
 

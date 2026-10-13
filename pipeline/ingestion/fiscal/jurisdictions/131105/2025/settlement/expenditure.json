@@ -119,7 +119,7 @@
     {
       "table_id": "general-setsu",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "a98d1c641a87f7a7e52e1bf7191c6951b9a66e69ea894d3babe5e97a9ec7ec0c",
+      "input_fingerprint": "5c5d5de139069e59085f2bb29fc011f94fa47b132c58d36333f440cc78ec8545",
       "account": "一般会計",
       "notes": [
         "法定節が原典の最細明細。所属する款・項・目の予算現額5列と支出済額・繰越3列・不用額・備考を反復。節の金額は予算現額、節の支出済額は執行実績。同じ欄の名称折り返しは改行、単語間の印字間隔は空白で保持。備考は各印字行の欄へ対応し、節への推定配賦を行わない。",
@@ -130,24 +130,24 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131105/2025/settlement/expenditure/general-setsu-nodes.parquet",
-          "sha256": "6cf2db520fe74548930b8e73592a95c6ea419415ff420ea048581a83a19659f3",
-          "bytes": 30334
+          "sha256": "0001d655d7df58e168d165f0e95a02c920f1a4454d4ca9c8ece33b2bc7a17e2a",
+          "bytes": 37591
         },
-        "row_count": 1032
+        "row_count": 1201
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131105/2025/settlement/expenditure/general-setsu-amounts.parquet",
-          "sha256": "6fbf6c80879b0c9685de42815660bd35d9583afba82ebad1970527f38dffb97c",
-          "bytes": 65472
+          "sha256": "7f63b3023e0b3cc9d416e3db0bc0c9b8f65dd36260dd1af561d8daf48598cded",
+          "bytes": 72687
         },
-        "row_count": 6856
+        "row_count": 7025
       }
     },
     {
       "table_id": "long-term-care-setsu",
       "conversion_id": "long-term-care-settlement",
-      "input_fingerprint": "d13126fd06154a9cf3e442c74020894cf44a20dc5d535d9c8e6f66466ee87a68",
+      "input_fingerprint": "806cd745cf8cebd107f3fe69d22cc39146e9f05a3b9335a32baa903b8cbc0f47",
       "account": "介護保険特別会計",
       "notes": [
         "法定節が原典の最細明細。所属する款・項・目の予算現額5列と支出済額・繰越3列・不用額・備考を反復。節の金額は予算現額、節の支出済額は執行実績。同じ欄の名称折り返しは改行、単語間の印字間隔は空白で保持。備考は各印字行の欄へ対応し、節への推定配賦を行わない。",
@@ -158,24 +158,24 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131105/2025/settlement/expenditure/long-term-care-setsu-nodes.parquet",
-          "sha256": "61e89dcbe843b082d5b1b0f1b61b2bec752ed5243c80c5b1a0d9ca31cc650fd4",
-          "bytes": 7531
+          "sha256": "cb5572166160a3b1584e603e87bc416686b63368e7e6f1345818c793bb83db3e",
+          "bytes": 7958
         },
-        "row_count": 108
+        "row_count": 117
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131105/2025/settlement/expenditure/long-term-care-setsu-amounts.parquet",
-          "sha256": "acf3256fe09bbd019af6f7c71fa5fe5f116f3695922a8a06c5be7c8ec1848639",
-          "bytes": 12154
+          "sha256": "928e7046cd4a0fd6bed22aa8f69abddd1b2442758cc78bb8c613cadd4fd01592",
+          "bytes": 12509
         },
-        "row_count": 840
+        "row_count": 849
       }
     },
     {
       "table_id": "national-health-insurance-setsu",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "98bb697a6fa5bfb7a3aec551356558209070e873878d856a67b6465f01cc5e2c",
+      "input_fingerprint": "4f270e89a85508fe5ef7d0912ab18676cca52e33f495e369a49bd15c8d0f2624",
       "account": "国民健康保険特別会計",
       "notes": [
         "法定節が原典の最細明細。所属する款・項・目の予算現額5列と支出済額・繰越3列・不用額・備考を反復。節の金額は予算現額、節の支出済額は執行実績。同じ欄の名称折り返しは改行、単語間の印字間隔は空白で保持。備考は各印字行の欄へ対応し、節への推定配賦を行わない。",
@@ -186,24 +186,24 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131105/2025/settlement/expenditure/national-health-insurance-setsu-nodes.parquet",
-          "sha256": "69dc0e6421da974613e8ac1f6066d4b758b49461ea76d730fafc5c46cb595fb5",
-          "bytes": 7216
+          "sha256": "fa00633e7525769c0a4d36bc919f30128b397c4117b24965ae600edb5a12c158",
+          "bytes": 7396
         },
-        "row_count": 102
+        "row_count": 104
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131105/2025/settlement/expenditure/national-health-insurance-setsu-amounts.parquet",
-          "sha256": "96597b712e22bbb24f89130fe88ab7f5a00fa7321ad743b987150296a087ccb5",
-          "bytes": 11772
+          "sha256": "3ab69725fe05cda68d45f3d328494cb3a47c395b370f8d1d800a5f184806ce2d",
+          "bytes": 11904
         },
-        "row_count": 820
+        "row_count": 822
       }
     },
     {
       "table_id": "elderly-medical-setsu",
       "conversion_id": "elderly-medical-settlement",
-      "input_fingerprint": "28b5ca4d3fc5d5466bb2a3dd6280bb5e818a27f3bd6021ea4c0d6a2e2f072309",
+      "input_fingerprint": "933f4277794cf24422880d0d0cc3aff68690a1de68c9dd6e9beda375a776f425",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "法定節が原典の最細明細。所属する款・項・目の予算現額5列と支出済額・繰越3列・不用額・備考を反復。節の金額は予算現額、節の支出済額は執行実績。同じ欄の名称折り返しは改行、単語間の印字間隔は空白で保持。備考は各印字行の欄へ対応し、節への推定配賦を行わない。",

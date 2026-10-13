@@ -11,6 +11,12 @@ import unicodedata
 from shared.amount import number
 from ingestion.lib.node_tables import NodeTables, _coverage_word, _exclusion_hit, _position, _contains, _word_key, _notation_context, _document_notation
 
+# A printed amount cell: signs, digits and separators, optionally with a glued 円.
+CELL = re.compile(r'[△▲\-0-9,()]+円?')
+
+# 第2款総務費216,665,000円: a charged 款/項/目 and its amount, nothing else.
+DESTINATION = re.compile(r'第[0-9]+[款項目][^0-9,円]+[△▲-]?[0-9][0-9,]*円')
+
 DICTIONARY = Path(__file__).resolve().parents[2] / 'shared/fiscal_annotation_map.csv'
 
 
@@ -31,6 +37,34 @@ def _text(words):
             parts.append(' ')
         parts.append(text)
     return ''.join(parts)
+
+
+def remark_prose_lines(lines):
+    """Leading lines of one retained remark that name no annotation kind.
+
+    lines are the cell's printed lines top to bottom, each a list of
+    (page, box, text) words. Until a dictionary keyword (流用・充用・不用額…)
+    appears, the remark is prose such as an expense breakdown; from the first
+    keyword on, following lines can inherit its kind and stay in scope, so
+    they are never returned. A converter declares the words of the returned
+    lines, minus any it adopted, as a non-adopted 経費内訳 range of text it
+    retained verbatim.
+    """
+    keywords = [r['keyword'] for r in annotation_dictionary()]
+    compacts = [re.sub(r'\s+', '', unicodedata.normalize('NFKC', ''.join(word[2] for word in line)))
+                for line in lines]
+    # A keyword can wrap across two printed lines (…へ流 / 用50,000,000), so
+    # search the joined text and keep only lines ending before its start.
+    joined = ''.join(compacts)
+    starts = [joined.find(keyword) for keyword in keywords]
+    first = min((start for start in starts if start >= 0), default=len(joined) + 1)
+    prose, end = [], 0
+    for line, compact in zip(lines, compacts):
+        end += len(compact)
+        if end > first:
+            break
+        prose.append(line)
+    return prose
 
 
 def add_annotations(tables, scope, *, raw_rows=(), adopted=None):
@@ -61,6 +95,10 @@ def add_annotations(tables, scope, *, raw_rows=(), adopted=None):
         compact = _word_key(text)
         if '事業へ支出' in compact:
             return next((r['kind'] for r in remark_dictionary if r['keyword'] == '事業へ支出'), None)
+        # A reserve's remark that lists each charged section with its amount
+        # (第2款 総務費 216,665,000円) names the destination without a keyword.
+        if DESTINATION.fullmatch(compact):
+            return next((r['kind'] for r in remark_dictionary if r['keyword'] == '予備費充用'), None)
         destination = re.sub(r'[△▲-]?[0-9][0-9,]*$', '', compact)
         if destination.endswith('へ') and any(kind == '充用' and other != owner
                 and (name := _word_key(by_key[other]['name_text'] or '')) and name in destination
@@ -69,13 +107,25 @@ def add_annotations(tables, scope, *, raw_rows=(), adopted=None):
         return None
     index = {(n['level_header'], n['code_text'], n['physical_page'], n['y0']): n['node_key']
              for n in tables.nodes if n['level_header'] in ('款', '項', '目')}
-    for row in raw_rows:
-        for column, text in row.items():
-            if not column.endswith('_備考') or not text:
-                continue
-            prefix = column.removesuffix('備考')
+    def row_owner(row, prefixes):
+        for prefix in prefixes:
             pos = _position(row, prefix)
             owner = index.get((prefix[:-1], row.get(prefix + '番号'), pos['physical_page'], pos['y0']))
+            if owner is not None:
+                return owner
+        return None
+    for row in raw_rows:
+        for column, text in row.items():
+            if not text:
+                continue
+            if column.endswith('_備考'):
+                owner = row_owner(row, [column.removesuffix('備考')])
+            elif column == '備考':
+                # The whole remark of a row below its subject (a 節 line); it
+                # belongs to the nearest printed subject (目, then 項, then 款).
+                owner = row_owner(row, ('目_', '項_', '款_'))
+            else:
+                continue
             if owner is None:
                 continue
             inherited_kind = None
@@ -132,10 +182,45 @@ def add_annotations(tables, scope, *, raw_rows=(), adopted=None):
     for n in tables.nodes:
         if n['level_header'] in ('款', '項', '目') and n['physical_page'] is not None:
             subject_nodes[n['level_header']].append(n)
-    def active_owner(key, page, y):
+    # The printed row at (page, y), by its own amounts. A spread's remark
+    # sits on the right page while its subject label is on the left page, so
+    # node positions alone cannot say whose row a remark line is in.
+    rows = sorted((a['physical_page'], a['y0'], a['node_key']) for a in tables.amounts
+                  if a['physical_page'] is not None and a['y0'] is not None and a['node_key'] in by_key)
+    row_positions = [(p, y) for p, y, _ in rows]
+
+    def in_row_of(key, page, y):
+        index_ = bisect_right(row_positions, (page, y + 2)) - 1
+        if index_ < 0 or rows[index_][0] != page:
+            return False
+        node = rows[index_][2]
+        while node is not None:
+            if node == key:
+                return True
+            node = by_key[node]['parent_node_key']
+        return False
+
+    def active_owner(key, page, y, extended=False):
         level = by_key[key]['level_header']
         active = [n for n in subject_nodes[level] if (n['physical_page'], n['y0']) <= (page, y + 2)]
-        return active and max(active, key=lambda n: (n['physical_page'], n['y0']))['node_key'] == key
+        if active and max(active, key=lambda n: (n['physical_page'], n['y0']))['node_key'] == key:
+            return True
+        if not extended:
+            return False
+        # Only for a bare amount with no printed label of its own, whose owner
+        # the node positions cannot give (a spread's right page, a remark
+        # centred on its row, an amount wrapped to the next line).
+        if in_row_of(key, page, y):
+            return True
+        node = by_key[key]
+        if node['physical_page'] != page or node['y0'] is None or node['y1'] is None:
+            return False
+        if not 0 < node['y0'] - y <= 2 * (node['y1'] - node['y0']):
+            return False
+        # A multi-line remark's first lines sit above its subject's printed row;
+        # they still belong to it when no other subject starts in between.
+        return not any(n['physical_page'] == page and n['node_key'] != key and y < n['y0'] < node['y0'] - 2
+                       for nodes_ in subject_nodes.values() for n in nodes_)
     excluded = defaultdict(list)
     for entry in scope.get('excluded_regions', ()):
         pages = [entry['page']] if 'bbox' in entry else [
@@ -154,8 +239,8 @@ def add_annotations(tables, scope, *, raw_rows=(), adopted=None):
         compact = unicodedata.normalize('NFKC', ''.join(w[2] for w in line))
         kind = next((r['kind'] for r in scope_dictionary if r['keyword'] in compact), None)
         if kind is not None:
-            label_edge = max((w[1][2] for w in line if not re.fullmatch(
-                r'[△▲\-0-9,()]+', unicodedata.normalize('NFKC', w[2]))), default=0)
+            label_edge = max((w[1][2] for w in line if not CELL.fullmatch(
+                unicodedata.normalize('NFKC', w[2]))), default=0)
             for w in line:
                 if w[1][0] >= label_edge and number(w[2].strip('()（）')) is not None:
                     anchors[kind].add(w[1][2])
@@ -178,7 +263,7 @@ def add_annotations(tables, scope, *, raw_rows=(), adopted=None):
         parts = []
         for w in words:
             key = unicodedata.normalize('NFKC', w[2])
-            if re.fullmatch(r'[△▲\-0-9,()]+', key) and (page, tuple(w[1])) not in notation_boxes:
+            if CELL.fullmatch(key) and (page, tuple(w[1])) not in notation_boxes:
                 if parts and w[1][0] - parts[-1][-1][1][2] <= 12:
                     parts[-1].append(w)
                 else:
@@ -223,9 +308,20 @@ def add_annotations(tables, scope, *, raw_rows=(), adopted=None):
             if matches:
                 kind = max(matches)[2]
             candidates = contexts.get(number(value), [])
+            # A label-only line right above a bare amount owns it (the remark
+            # wraps its amount onto the next line, which may be a later row).
+            label_above = None
+            if not names:
+                above = [h for h in label_only if h['page'] == page
+                         and 0 < box[1] - h['box'][1] <= 2 * (h['box'][3] - h['box'][1])
+                         and h['box'][0] <= box[0] <= h['box'][2] + 5 * (h['box'][3] - h['box'][1])]
+                label_above = max(above, key=lambda h: h['y']) if above else None
             if candidates:
+                bare = not names
                 candidates = [c for c in candidates if by_key[c[0]]['physical_page'] is not None
-                              and active_owner(c[0], page, box[1])]
+                              and (active_owner(c[0], page, box[1], bare)
+                                   or (label_above is not None
+                                       and active_owner(c[0], page, label_above['y'], True)))]
             printed_label = _word_key(_text(names))
             def context_match(item):
                 compact = _word_key(item[1])
@@ -238,14 +334,11 @@ def add_annotations(tables, scope, *, raw_rows=(), adopted=None):
                                   if p == page and abs(right - box[2]) <= 3
                                   and h['y'] < y and not any(
                                       w[1][0] >= h['left'] - .5 and w not in cell
-                                      and not re.fullmatch(r'[△▲\-0-9,()]+', unicodedata.normalize('NFKC', w[2]))
+                                      and not CELL.fullmatch(unicodedata.normalize('NFKC', w[2]))
                                       for w in words)), None)
                 if inherited is None and context is None:
-                    above = [h for h in label_only if h['page'] == page
-                             and 0 < box[1] - h['box'][1] <= 2 * (h['box'][3] - h['box'][1])
-                             and h['box'][0] <= box[0] <= h['box'][2] + 5 * (h['box'][3] - h['box'][1])]
-                    if above:
-                        h = max(above, key=lambda h:h['y'])
+                    if label_above is not None:
+                        h = label_above
                         inherited = {**h, 'left':h['box'][0], 'parent':owners[bisect_right(owner_positions, (page, box[1] + 2)) - 1][2]}
                 if inherited is None and context is None:
                     continue

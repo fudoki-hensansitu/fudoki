@@ -17,7 +17,9 @@ import json
 import xml.etree.ElementTree as ET
 
 from ingestion.lib.conversion import ConversionContext, write_conversion
-from ingestion.lib.node_tables import AMOUNT_POSITION_SUFFIXES, amount_position_fields, null_position_fields, write_coverage_words
+from ingestion.lib.annotations import remark_prose_lines
+from ingestion.lib.node_tables import (AMOUNT_POSITION_SUFFIXES, amount_position_fields, coverage_regions,
+                                        null_position_fields, write_coverage_words)
 from ingestion.lib.parquet import ParquetColumn
 
 PAGE_WIDTH, PAGE_HEIGHT = 1190.61, 841.904
@@ -525,6 +527,23 @@ ANNOTATION = re.compile(r'流用|充当|繰越分不用額|前年度繰越|議�
 DATED = re.compile(r'[0-9]+年|[0-9]+号')
 
 
+UCHIWAKE_REASON = ('備考欄の内訳（事業・項目・細目）のうち、行にも金額にもならず原文のまま備考へ保持した語。'
+                   '注記の語を含む行以降は範囲に含めない。')
+
+
+def retained_remark_words(page_rows, adopted_words):
+    """Printed words of a remark cell kept only as 備考 text.
+
+    The leading lines that name no annotation kind, minus the words an
+    item adopted as its name or amount (or merged into one)."""
+    lines = [[(page, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text']) for w in row]
+             for page, row in page_rows]
+    adopted = [(w['xMin'] - .5, w['yMin'] - .5, w['xMax'] + .5, w['yMax'] + .5) for w in adopted_words]
+    return [word for line in remark_prose_lines(lines) for word in line
+            if not any(b[0] <= word[1][0] and b[1] <= word[1][1] and word[1][2] <= b[2] and word[1][3] <= b[3]
+                       for b in adopted)]
+
+
 def parse_breakdown(cell, anomalies):
     """Parse one breakdown stream into the item tree; returns (items, remarks).
     cell['rows'] are (page, words) pairs so items keep their own print page."""
@@ -577,6 +596,7 @@ def parse_breakdown(cell, anomalies):
                 else:
                     open_item['金額'] = value
                     open_item['_amount_words'] = amounts
+                    open_item['_amount_page'] = page
                     open_item['下端'] = row[0]['yMax']
             continue
         # Multi-digit item numbers arrive as separate tokens ('1'+'7' for 17);
@@ -670,6 +690,7 @@ def parse_breakdown(cell, anomalies):
                     if biz['金額'] is None:
                         biz['金額'] = value
                         biz['_amount_words'] = amounts
+                        biz['_amount_page'] = page
                     elif biz['金額'] != value:
                         anomalies.append({'page': page, 'y': row[0]['yMin'],
                                           'issue': 'conflicting biz total',
@@ -701,6 +722,7 @@ def parse_breakdown(cell, anomalies):
             if value is not None:
                 open_item['金額'] = value
                 open_item['_amount_words'] = amounts
+                open_item['_amount_page'] = page
             continue
         # A new unnumbered item: name+amount on one line, or a name line
         # followed by an amount-only line.
@@ -777,6 +799,7 @@ def build(pages):
     subject_anchors = []  # subject anchors only, document order
     streams = {}          # subject record id -> {record, context, rows, page}
     stream_order = []
+    retained = []         # remark words kept only as 備考 text (declared non-adopted)
 
     for page, words in pages:
         body = [w for w in words if BODY_TOP <= w['yMin'] < BODY_BOTTOM]
@@ -867,6 +890,8 @@ def build(pages):
         pseudo = {'rows': stream['rows'], 'page': stream['page']}
         if is_breakdown(pseudo):
             items, remarks = parse_breakdown(pseudo, anomalies)
+            retained.extend(retained_remark_words(
+                stream['rows'], [w for it in items for w in (*it['_name_words'], *it['_amount_words'])]))
             cells_seen.append({'kind': 'breakdown', 'page': stream['page'],
                                'owner': record['番号'], 'items': len(items)})
             if remarks:
@@ -900,7 +925,7 @@ def build(pages):
                     amount_words = node.get('_amount_words', [])
                     if node['金額'] is not None and not amount_words:
                         raise ValueError('Printed breakdown amount without word boxes')
-                    leaf.update(amount_position_fields(prefix + '金額', node['物理頁'], boxes(amount_words))
+                    leaf.update(amount_position_fields(prefix + '金額', node.get('_amount_page', node['物理頁']), boxes(amount_words))
                                 if amount_words else null_position_fields(prefix + '金額'))
                 leaf['物理頁'] = it['物理頁']
                 leaf['上端'] = it['上端']
@@ -908,6 +933,7 @@ def build(pages):
                 breakdown_rows.append((it['物理頁'], it['上端'], leaf))
         else:
             remarks = [repair_name(''.join(w['text'] for w in row[1])) for row in stream['rows']]
+            retained.extend(retained_remark_words(stream['rows'], []))
             cells_seen.append({'kind': 'remark', 'page': stream['page'], 'owner': record['番号']})
             if remarks:
                 # A remark confined to one 節 band belongs to that 節.
@@ -945,7 +971,7 @@ def build(pages):
         leaf.update({'節_' + k.removeprefix('区分_'): v for k, v in record.items()
                      if k != 'level'})
         out.append((page, y, leaf))
-    return out, breakdown_rows, parents, cells_seen, total_rows, anomalies
+    return out, breakdown_rows, parents, cells_seen, total_rows, anomalies, retained
 
 
 LINEAGE = [f'{level}_{k}' for level in ('款', '項', '目')
@@ -1017,7 +1043,7 @@ def convert(inputs, destination, options):
     observations = destination / 'suginami-observations'
     observations.mkdir(parents=True, exist_ok=True)
     pages = observe(source['path'], selected[0], selected[-1], observations / 'detail-bbox.html')
-    setsu_rows, breakdown_rows, parents, cells_seen, total_rows, anomalies = build(pages)
+    setsu_rows, breakdown_rows, parents, cells_seen, total_rows, anomalies, retained = build(pages)
     (observations / 'parents.json').write_text(json.dumps({'detail': parents}, ensure_ascii=False, indent=2) + '\n')
     (observations / 'note-cells.json').write_text(json.dumps(
         {'cells': cells_seen}, ensure_ascii=False, indent=2) + '\n')
@@ -1047,6 +1073,7 @@ def convert(inputs, destination, options):
                              [(page, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w.get('coverage_text', w['text']))
                               for page, words in pages for w in words
                               if BODY_TOP <= w['yMin'] < BODY_BOTTOM],
-                             amount_columns=AMOUNT_COLUMNS if kind == 'details' else ())
+                             amount_columns=AMOUNT_COLUMNS if kind == 'details' else (),
+                             excluded_regions=coverage_regions(retained, kind='経費内訳', reason=UCHIWAKE_REASON))
         results[table_id] = {'path': Path(output.path), 'metadata': metadata(order, account, kind)}
     return results
