@@ -93,6 +93,13 @@ function registerRest(app: OpenAPIHono<AppEnv>, op: Operation) {
       200: { description: '成功', content: { 'application/json': { schema: op.output } } },
       400: { description: '入力が不正', content: { 'application/json': { schema: ErrorBody } } },
       404: { description: '見つからない', content: { 'application/json': { schema: ErrorBody } } },
+      ...(post
+        ? {
+            413: { description: `body が ${MAX_BODY_BYTES} バイトを超える`, content: { 'application/json': { schema: ErrorBody } } },
+            415: { description: 'Content-Type が application/json でない', content: { 'application/json': { schema: ErrorBody } } },
+          }
+        : {}),
+      503: { description: '提供を止めている', content: { 'application/json': { schema: ErrorBody } } },
     },
   })
   app.openapi(route as never, (async (c: Context<AppEnv>) => {
