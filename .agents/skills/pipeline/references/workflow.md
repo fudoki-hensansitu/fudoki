@@ -15,7 +15,7 @@
 ## 保存と採用の境界
 
 - 変換と保存の入口は `ingestion:convert`。ローカル実行は候補Parquet・候補manifest・形式別の検査結果を返し、`--remote` は全表の保存成功後に対象別JSONを更新する。手順は [ingestion](ingestion.md#管理jsonを確認して変換する)。
-- `ingestion:check` は管理情報・選定・scope・fingerprintの検査で、財政値の正しさを認定しない。PDF表の木と印字された数字の網羅は保存時に必ず検査され、`ingestion:verify` で保存済み・候補の表に当て直せる（網羅の再検査は候補の scope 付きのみ）。
+- `ingestion:check` は管理情報・選定・scope・fingerprintの検査で、財政値の正しさを認定しない。fingerprintが古いときは `ingestion:refresh --remote` が再変換して保存済みの表と中身を比べ、同じなら指紋だけを書き換える（違えば `ingestion:convert --remote`。手順は [ingestion](ingestion.md#指紋が古くなったとき)）。PDF表の木と印字された数字の網羅は保存時に必ず検査され、`ingestion:verify` で保存済み・候補の表に当て直せる（網羅の再検査は候補の scope 付きのみ）。
 - 原典はsource_selection、表は対象・方向別のingestion領域に保存し、保存先と原典参照は対象別JSONに置く。独立したprovenanceファイルは作らない。
 - C（dbt）は対象別JSONと保存済みParquetを読む。入口は `dbt:build`（[dbt](dbt.md)）。
 

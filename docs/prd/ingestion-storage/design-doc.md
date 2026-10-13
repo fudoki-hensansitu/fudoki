@@ -45,7 +45,8 @@ pipeline/ingestion/
   fiscal/
     manifest.schema.json         # 管理JSONの正本
     manifest.py                  # schemaと対象間の制約、fingerprint
-    run.py                       # 変換、保存、復元、掃除、合計検査の入口
+    run.py                       # 変換、保存、復元、掃除、合計検査、指紋の更新の入口
+    refresh.py                   # 指紋が古い表を再変換し、保存済みの表と中身で比べる
     storage.py                   # private R2への入出力
     layouts/
       csv/                       # convert.py + options.schema.json
@@ -121,6 +122,8 @@ fingerprintは、対象・方向、使用した原典SHAとscope、変換設定�
 実行環境は管理JSONとfingerprintに含めない。OS・Python・DuckDBの版だけが変わっても再変換の判定は変わらない。
 
 fingerprintは変更検知の仕組みである。固定keyへの上書きと保存参照の置換により、同じ入力の再実行で表が重複しない。OCRの出力が常に同じバイト列になることは保証しない。
+
+fingerprintは「変わったかもしれない」という合図であり、表の中身が変わった証拠ではない。古いときは `ingestion:refresh` が変換をローカルでやり直し、保存済みの表と中身（列・型・行とその順序・値と、変換が管理JSONへ書くメタデータ）を比べる。全表が同じなら管理JSONの `input_fingerprint` だけを書き換え、保存済みのParquetとその `sha256`・サイズ、R2は変えない。違う表が1つでもあれば管理JSONは書き換えず、増えた・消えた・変わった行の数と例を出す。保存前の関門は `storage.prepare_save` を共有して当て直す。中身が違う表は、これまでどおり `ingestion:convert --remote` で全表を保存し直す。表を作らず合否だけを決める検査のコード（`*_checks.py`）は指紋の対象外とし、書き込みの関数・呼び出しがあれば `manifest.dependencies` が停止する。検査を厳しくしたときは保存済みの表が古く見えないので、`ingestion:verify --remote` を保存済みの全表に当てて確かめる。共有のコードを直す PR は、この比べ直しで指紋を更新した管理JSONを含める。判断は [ADR 0027](../../adr/0027-refresh-fingerprints-by-table-content.md)。
 
 ### 全表を保存してから管理情報を更新する
 

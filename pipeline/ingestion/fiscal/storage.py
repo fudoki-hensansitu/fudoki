@@ -54,9 +54,12 @@ def fetch(reference: dict, *, remote: bool = False) -> Path:
     return path
 
 
-def save(document: dict, table: dict, path: Path | dict[str, Path], *, remote: bool) -> None:
-    if not remote:
-        raise ValueError('A saved manifest requires successful private R2 uploads')
+def prepare_save(document: dict, table: dict, path: Path | dict[str, Path]) -> list[tuple[str, Path]]:
+    """The gate every table passes before upload: tree check, keys, hash/size and upload limit.
+
+    ``ingestion:refresh`` applies the same gate before it rewrites a fingerprint, so a table the
+    current checks would refuse to save never gets a fresh fingerprint.
+    """
     if 'nodes' in table:
         from ingestion.lib.node_tables import check_tree, read_rows
         checked = check_tree(read_rows(path['nodes']), read_rows(path['amounts']), document['target']['document_kind'])
@@ -73,6 +76,13 @@ def save(document: dict, table: dict, path: Path | dict[str, Path], *, remote: b
         if file.stat().st_size > 300_000_000:
             raise ValueError('cf REST upload limit exceeded; configure a file-based S3 multipart transport')
         prepared.append((key, file))
+    return prepared
+
+
+def save(document: dict, table: dict, path: Path | dict[str, Path], *, remote: bool) -> None:
+    if not remote:
+        raise ValueError('A saved manifest requires successful private R2 uploads')
+    prepared = prepare_save(document, table, path)
     for key, file in prepared:
         subprocess.run(['cf', 'r2', 'objects', 'put', key, '--bucket-name', BUCKET,
                         '--file', str(file), '--quiet'], check=True, stdout=subprocess.DEVNULL)
