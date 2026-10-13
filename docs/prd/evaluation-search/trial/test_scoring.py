@@ -106,7 +106,7 @@ class ScoringTest(unittest.TestCase):
 
     def test_usage_limit_is_unfinished_not_an_unanswered_trial(self):
         self.log = []
-        self.write('agent/q.run.json', {'result': "You've hit your session limit", 'total_cost_usd': 0})
+        self.write('agent/q.run.json', {'result': "You've hit your session limit · resets 1am (Asia/Tokyo)", 'total_cost_usd': 0})
         result = self.run_script('score2.py', str(self.work))
         self.assertEqual(result.returncode, 2)
         self.assertIn('回答 1 件', result.stderr)

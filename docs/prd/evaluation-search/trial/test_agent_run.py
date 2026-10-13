@@ -18,7 +18,7 @@ mode = os.environ['TEST_MODE']
 rows = [{'kind': 'search', 'query': 'test', 'chunks': [], 'pages': []}]
 if mode == 'success': rows.append({'kind': 'answer', 'answer': {'status': 'not_found'}})
 (w / 'agent' / (qid + '.jsonl')).write_text(''.join(json.dumps(r) + '\\n' for r in rows))
-print(json.dumps({'result': "You've hit your session limit" if mode == 'limit' else 'done',
+print(json.dumps({'result': "You've hit your session limit · resets 1am (Asia/Tokyo)" if mode == 'limit' else 'done',
                   'total_cost_usd': 0.1, 'num_turns': 1}))
 '''
 
