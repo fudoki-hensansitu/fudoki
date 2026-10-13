@@ -2050,5 +2050,41 @@
       }
     }
   ],
-  "unresolved_candidates": []
+  "unresolved_candidates": [],
+  "evaluation_selections": [
+    {
+      "target": {
+        "jurisdiction": "131148",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和7年度主要施策の成果（本冊・別冊）",
+          "landing_url": "https://www.city.tokyo-nakano.lg.jp/kusei/zaisei/kessan/R7kessan.html",
+          "inspected_at": "2026-10-13T00:00:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.tokyo-nakano.lg.jp/kusei/zaisei/kessan/R7kessan.files/R7shuyosesaku.pdf",
+              "sha256": "628b02ba7d8faafa8476a45d353a2ff850e275d5b0e941b0a80ef66bf3ec98b5",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tokyo-nakano.lg.jp/kusei/zaisei/kessan/R7kessan.files/R7shuyosesaku-bessatsu.pdf",
+              "sha256": "f3b089e84c0b3bc3d1189f125028d9be28427f4652ae9f40d120bd5e8beb9e5c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": null,
+      "reason": "決算書と同じ頁に本冊（63頁。決算の概要と部ごとの主な課題の実施状況）と別冊（75頁。施策ごとの成果指標・分析・今後の戦略と主な事業）を掲載。地方自治法第233条第5項に基づく提出の文言を本冊で確認。どちらも文字として読める。同じ別冊が令和8年度行政評価の頁（https://www.city.tokyo-nakano.lg.jp/kusei/kousou/seido/gyousei/gyouseihyouka/r8gyouseihyouka.html）にも別のURL・別のバイト列で載るが、文字にすると全文が一致する（2026-10-13確認）。"
+    }
+  ]
 }

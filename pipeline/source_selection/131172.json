@@ -2561,5 +2561,34 @@
       }
     }
   ],
-  "unresolved_candidates": []
+  "unresolved_candidates": [],
+  "evaluation_selections": [
+    {
+      "target": {
+        "jurisdiction": "131172",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和8年度北区事務事業評価",
+          "landing_url": "https://www.city.kita.lg.jp/city-information/evaluation/1011919/1026599.html",
+          "inspected_at": "2026-10-13T00:00:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.kita.lg.jp/_res/projects/default_project/_page_/001/026/599/r08_jimujigyohyoka.pdf",
+              "sha256": "80b62f85965f7b88f5e9d2c4129ed685a488d1acfd4c11c6c5b877bba1302fd9",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": null,
+      "reason": "評価対象年度を令和7年度とする事務事業評価（108頁、2026-10-01更新）。1事業1頁で、事業の位置づけ・目的、予算額・決算額、アウトプット・アウトカムの計画と実績、事業の状況（総括と要因・課題と改善）、進捗度（S〜E）と評価区分を載せる。文字として読める。"
+    }
+  ]
 }
