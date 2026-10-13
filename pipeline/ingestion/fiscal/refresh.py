@@ -19,7 +19,8 @@ import time
 
 import duckdb
 
-from ingestion.fiscal import manifest, run, storage
+from ingestion.fiscal import manifest, run, storage, unit_checks
+from ingestion.lib import node_tables
 from ingestion.paths import PIPELINE
 
 CURRENT, REFRESHED, WOULD_REFRESH = 'current', 'refreshed', 'would-refresh'
@@ -204,7 +205,8 @@ def refresh_manifest(path: Path, *, remote: bool, dry_run: bool, work: Path) -> 
     output = work / name
     shutil.rmtree(output, ignore_errors=True)
     try:
-        run.convert(path, originals, output, remote=False, conversion_ids=stale)
+        converted = run.convert(path, originals, output, remote=False, conversion_ids=stale)
+        result['units'] = converted.get('units', {}).get('counts', {})
         candidate = json.loads((output / 'manifest.json').read_text())
     except Exception as error:
         # The converter or a save gate (tree check, digit coverage) refuses the table today.
@@ -220,7 +222,10 @@ def refresh_manifest(path: Path, *, remote: bool, dry_run: bool, work: Path) -> 
         try:
             new = by_id[table['table_id']]
             located = locate(new)
-            storage.prepare_save(candidate, new, located)
+            sidecars = sorted(output.rglob(table['table_id'] + node_tables.COVERAGE_SIDECAR_SUFFIX))
+            storage.prepare_save(candidate, new, located,
+                                 scope=unit_checks.read_scope(sidecars[0]) if sidecars else None)
+            entry['units'] = converted.get('units', {}).get('tables', {}).get(table['table_id'])
         except Exception as error:
             entry.update(status=BLOCKED, reason=f'{type(error).__name__}: {error}')
             continue

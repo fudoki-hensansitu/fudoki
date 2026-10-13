@@ -37,8 +37,9 @@ class ConversionSelectionTests(unittest.TestCase):
                 {'columns': columns[:4], 'header_path': ['科目', '款'], 'grain_columns': ['款_番号']},
                 {'columns': columns[4:], 'header_path': ['科目', '目'], 'grain_columns': ['目_番号']}],
                 'units': [{'text': '円', 'scope': {'kind': 'columns', 'columns': [columns[i] for i in (2,3,6,7)]}}]}
-            base = dict(zip(columns, ['1', '親', '10', '12', '1', '明細', '10', '10']))
-            zero = {**base, '目_番号': '2', '目_名称': '印字ゼロ', '目_支出済額': '0', '目_当初予算額': '2'}
+            # Amounts with the digits of a general account's settlement in 円 (the unit check is part of the gate).
+            base = dict(zip(columns, ['1', '親', '1,000,000,000', '1,200,000,000', '1', '明細', '1,000,000,000', '1,000,000,000']))
+            zero = {**base, '目_番号': '2', '目_名称': '印字ゼロ', '目_支出済額': '0', '目_当初予算額': '200,000,000'}
             foreign = {**base, '款_名称': '別会計', '目_名称': '別明細'}
             conversions = [
                 {'id': ident, 'converter': 'fiscal/layouts/csv/convert.py', 'inputs': [{'sha256': sha}],
