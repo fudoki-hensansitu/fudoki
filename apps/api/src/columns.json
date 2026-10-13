@@ -118,7 +118,7 @@
           "name": "source_page",
           "type": "integer",
           "nullable": false,
-          "description": "項目が印字された原典の物理頁。"
+          "description": "項目が印字された頁。原典ファイル（origin_id が指す1つの PDF）の1始まりのページ番号で、紙面に印刷されたページ番号ではない。分冊・抜粋のファイルでは、そのファイルの中での番号。"
         },
         {
           "name": "source_x0",
@@ -148,7 +148,7 @@
           "name": "amount_source_page",
           "type": "integer",
           "nullable": true,
-          "description": "採用した実績金額の物理頁。不明ならNULL。繰越内訳を足す場合は、全額の頁が既知のときだけ最初の頁。"
+          "description": "採用した実績金額が印字された頁（source_page と同じ数え方の、原典ファイルの1始まりのページ番号）。不明ならNULL。繰越内訳を足す場合は、全額の頁が既知のときだけ最初の頁。"
         },
         {
           "name": "amount_source_x0",
@@ -342,7 +342,7 @@
           "name": "source_page",
           "type": "integer",
           "nullable": false,
-          "description": "PDFは項目が印字された原典の物理頁、CSVは原文の物理行の開始。"
+          "description": "PDFは項目が印字された頁で、原典ファイル（origin_id が指す1つの PDF）の1始まりのページ番号。紙面に印刷されたページ番号ではなく、分冊・抜粋のファイルではそのファイルの中での番号。CSVは原典ファイルの1始まりの物理行（見出しの行が1行目）で、末端は印字された行の開始行、CSVに行の無い親（款〜節）は子孫の行のうち最も小さい開始行。"
         },
         {
           "name": "source_x0",
@@ -372,7 +372,7 @@
           "name": "amount_source_page",
           "type": "integer",
           "nullable": true,
-          "description": "採用した当初予算額の物理頁（PDF）または物理行（CSV）。CSVの親の集計額はNULL。不明ならNULL。"
+          "description": "採用した当初予算額の位置。PDFは source_page と同じ数え方の、原典ファイルの1始まりのページ番号。CSVは1始まりの物理行。CSVの親の集計額はNULL。不明ならNULL。"
         },
         {
           "name": "amount_source_x0",
