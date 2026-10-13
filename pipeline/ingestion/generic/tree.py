@@ -225,8 +225,10 @@ def has_text(name: str) -> bool:
 
 def is_account_code(name: str) -> bool:
     """A printed account code (`・020601【010261】`): digits and punctuation only, four digits or more. A
-    lone `)` that closes a wrapped name is no code."""
-    return not has_text(name) and sum(c.isdigit() for c in normalize(name)) >= 4
+    lone `)` that closes a wrapped name and an amount with grouping or a negative mark are no codes."""
+    value = normalize(name)
+    return (not has_text(value) and not value.startswith('-') and not any(c in value for c in ',△▲')
+            and sum(c.isdigit() for c in value) >= 4)
 
 
 def note_breakdown(items: list['Item']) -> None:

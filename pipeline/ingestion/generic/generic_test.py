@@ -869,6 +869,15 @@ class BreakdownRulesTest(unittest.TestCase):
         self.assertEqual([(i.name, [''.join(g.text for g in r) for _, r in i.amounts]) for i in found],
                          [('・020601【010261】020000へ予算流用減', ['△28,800'])])
 
+    def test_amount_marks_do_not_make_an_account_code(self):
+        from ingestion.generic.tree import is_account_code
+        for value in ('△28,800', '12,846', '1,000', '▲１２８４６', '１２，８４６', '-12846', '－１２８４６'):
+            with self.subTest(value=value):
+                self.assertFalse(is_account_code(value))
+        for value in ('020000', '02-01-02-15-11-01', '・020601【010261】'):
+            with self.subTest(value=value):
+                self.assertTrue(is_account_code(value))
+
     def test_a_carry_over_tag_printed_after_an_amount_leaves_the_amount_the_last_run_of_the_line(self):
         label, money = _split_line([glyph('通信運搬費', 300, 100, 45), glyph('597,301', 450, 100, 35),
                                     glyph('一部繰越明許', 500, 100, 60)])
@@ -984,6 +993,14 @@ class SubjectContinuationTest(unittest.TestCase):
 
 
 class HeaderCharactersTest(unittest.TestCase):
+    def test_ambiguous_character_decomposition_keeps_the_printed_heading(self):
+        from ingestion.generic.headers import by_characters, canonical
+        known = {'前年度予算額', '決算額', '予算額', '前年度決算額'}
+        path = '前／年／度／予／算／額／決／算／額'
+        self.assertIsNone(by_characters(path, frozenset(known)))
+        self.assertEqual(canonical(path, None, known), path)
+        self.assertIsNone(by_characters('乙／甲', frozenset({'甲乙', '乙甲'})))
+
     def test_a_heading_printed_a_character_or_two_to_a_line_is_the_heading_its_characters_make(self):
         from ingestion.generic.headers import canonical
         known = {'不用額', '予算現額／補正予算額', '翌年度繰越額', '繰越明許費', '継続費逓次繰越', '節／金額'}

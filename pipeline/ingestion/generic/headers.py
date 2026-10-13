@@ -56,15 +56,16 @@ def _letters(heading: str) -> tuple:
 @lru_cache(maxsize=256)
 def by_characters(path: str, known: frozenset[str]) -> str | None:
     """The known heading (or two joined) whose characters, counted, are the path's. The path's own
-    separators fall away; the first match in a fixed order wins (one heading, then two: the longer first)."""
+    separators fall away. One whole heading precedes pairs; an ambiguous decomposition is unreadable."""
     wanted = _letters(path)
     if sum(count for _, count in wanted) < 2:
         return None
     ordered = sorted(known, key=lambda h: (-len(h), h))
-    for heading in ordered:
-        if _letters(heading) == wanted:
-            return heading
+    whole = [heading for heading in ordered if _letters(heading) == wanted]
+    if whole:
+        return whole[0] if len(whole) == 1 else None
     singles = [h for h in ordered if SEPARATOR not in h]
+    pairs = set()
     for first in singles:
         rest = Counter(dict(wanted))
         rest.subtract(dict(_letters(first)))
@@ -73,12 +74,15 @@ def by_characters(path: str, known: frozenset[str]) -> str | None:
         remaining = tuple(sorted((c, n) for c, n in rest.items() if n))
         for second in singles:
             if _letters(second) == remaining:
-                # The group heading is the one whose characters start the path.
-                text = path.replace(SEPARATOR, '')
-                where = lambda h: min(text.find(c) for c in set(h) if c in text)
-                a, b = (first, second) if where(first) <= where(second) else (second, first)
-                return f'{a}{SEPARATOR}{b}'
-    return None
+                pairs.add(tuple(sorted((first, second), key=lambda h: (-len(h), h))))
+    if len(pairs) != 1:
+        return None
+    # The group heading is the one whose characters start the path.
+    first, second = next(iter(pairs))
+    text = path.replace(SEPARATOR, '')
+    where = lambda h: min(text.find(c) for c in set(h) if c in text)
+    a, b = (first, second) if where(first) <= where(second) else (second, first)
+    return f'{a}{SEPARATOR}{b}'
 
 
 def canonical(path: str, axis: str | None, known: set[str]) -> str:
