@@ -814,6 +814,14 @@ def owner(amount: list[Glyph], band: Band, ordered: list[Group], found: dict[int
         candidates = [i for i in found[id(group)] if top - .5 <= i.anchor <= bottom + .5 and i.role in roles]
         if candidates:
             return max(candidates, key=lambda i: (i.level or 0, -abs(i.anchor - y)))
+    # A name printed on two lines with its amount at the height between them (`1衛生施設災` / `害復旧費`)
+    # in a cell too tall to count as ruled: the item whose lines span the amount, with no rule between.
+    for group in left:
+        spanning = [i for i in found[id(group)] if i.role in roles and len(i.lines) > 1 and i.lines[0] and i.lines[-1]
+                    and min(g.y0 for g in i.lines[0]) <= y <= max(g.y1 for g in i.lines[-1])
+                    and not any(min(g.y0 for g in i.lines[0]) < rule < y for rule in band.rows)]
+        if spanning:
+            return max(spanning, key=lambda i: (i.level or 0, -abs(i.anchor - y)))
     # Amounts printed on the line below their item (`1. 議会費` / `142,678,000 …`, 133051):
     # the nearest item whose last line ends within one line above the amount, in the same
     # ruled cell (no rule of the amount's column between them). Across a rule it stays unowned.

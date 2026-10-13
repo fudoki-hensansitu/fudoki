@@ -750,3 +750,35 @@ class ConvertRulesTest(unittest.TestCase):
         band = self.band([glyph('13使用料及び賃借料', 941, 100, 80), glyph('66,000)', 941, 115, 30)], 900, 1100)
         found = entries_of(Group([band], '備考', False), {941, 10950})
         self.assertEqual([(code, name) for _, _, code, name in found], [('13', '使用料及び賃借料'), (None, '66,000)')])
+
+
+class ScanRulesTest(unittest.TestCase):
+    """Rules found by running the builder on scanned statements (`ingestion/generic/scan.py`)."""
+
+    def test_an_amount_between_the_two_lines_of_a_name_belongs_to_it_unless_a_rule_parts_them(self):
+        label = Band(0, 100, 1, ('目',), [100, 250], 90, 300)  # one cell 150pt tall: too tall to count as ruled
+        money = Band(100, 200, 1, ('当初予算額',), [100, 250], 90, 300)
+        subject = Group([label], '科目', True)
+        moku = Item(subject, 1, [[glyph('1衛生施設災', 5, 108)], [glyph('害復旧費', 12, 130)]], '1', '衛生施設災害復旧費', 5,
+                    level=0)
+        found = {id(subject): [moku]}
+        self.assertIs(owner([glyph('1,000', 150, 119, 30)], money, [subject], found), moku)
+        money.rows = [100, 120, 250]  # a rule between the name's first line and the amount
+        self.assertIsNone(owner([glyph('1,000', 150, 122, 30)], money, [subject], found))
+
+    def page(self, body):
+        rules = [Rule(x, 100, x, 300) for x in (10, 50, 100)] + [Rule(10, y, 100, y) for y in (100, 120, 300)]
+        words = [Word('目', 20, 105, 30, 115), Word('金額', 60, 105, 80, 115), Word('1', 20, 140, 25, 149)]
+        return Page(1, 200, 400, words + [Word(text, 60, y, 95, y + 9) for text, y in body], rules)
+
+    def kind(self, body):
+        band = next(b for b in logical_pages([self.page(body)])[0].bands if b.header == ('金額',))
+        return band.kind
+
+    def test_a_unit_printed_alone_in_the_body_does_not_make_an_amount_column_a_label_column(self):
+        self.assertEqual(self.kind([('円', 125), ('1,000', 140)]), 'amount')
+
+    def test_a_name_column_stays_a_label_column_and_an_amount_with_its_unit_is_no_unit_mark(self):
+        from ingestion.generic.layout import UNIT_CELL
+        self.assertEqual(self.kind([('円', 125), ('需用費', 140), ('役務費', 155)]), 'label')
+        self.assertIsNone(UNIT_CELL.match('1,000円'))
