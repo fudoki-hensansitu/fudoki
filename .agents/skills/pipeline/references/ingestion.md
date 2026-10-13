@@ -183,6 +183,16 @@ PDFは原典の内部で重複して印字された数字どうしの一致で�
 5. PDFの新形式では保存後に自動で掃除しない。2表の保存と管理JSONの採用を確認してから、移行した横持ちの表を別の操作で削除する。対象かつ指定した方向のingestion領域だけを一覧取得し、削除直前にも現在の参照を確認する。旧形式の掃除に失敗したら `bun run ingestion:cleanup --manifest <対象JSON>` を実行する。別年度・別補正号・別方向を削除しない。
 取り込みは表と管理情報の保存・差し替えまでで完了する。保存済みの管理情報とParquetの読み込み、入力条件・SHA・サイズの照合はdbt側の入力準備で行う。保存途中の表を読み始めない。
 
+## 指紋が古くなったとき
+
+`ingestion:check` が `Stale saved table` で止まるのは、表を作ったコード・設定・原典・scopeのどれかが変わったという合図であり、表の中身が変わった証拠ではない。次の順で、中身で決める（[ADR 0027](../../../../docs/adr/0027-refresh-fingerprints-by-table-content.md)）。
+
+1. `bun run ingestion:refresh --remote` を `pipeline/` から実行する（対象を絞るなら `--manifest <対象JSON>`、書き換えずに見るだけなら `--dry-run`）。指紋が古い管理JSONだけが対象で、原典と保存済みの表をR2から読み（書かない）、変換をローカルでやり直して、表ごとに列・型・行の順序・値と、管理JSONへ書く表のメタデータを比べる。保存前の関門（木の検査・網羅の検査）も当て直す。
+2. 全表が「same」の管理JSONは、`input_fingerprint` だけを書き換える。保存済みのParquetとその `sha256`・サイズは変えない。結果は `.build/ingestion-refresh/report.json`（管理JSON・表ごとの `same`／`different`／`blocked`と、増えた・消えた・変わった行の数と例）に残り、標準出力には件数と対象だけを返す。
+3. 「different」か「blocked」の管理JSONは書き換えない。`different` は本当の変更なので、件数と差分を確かめ、許可を取って `ingestion:convert --remote` で保存し直す。`blocked` は今の検査で止まるので、変換コードか宣言を直す。
+4. 共有のコード（`ingestion/lib/`・`ingestion/generic/`・書式別の共通処理）を直す PR は、手順1を回して更新した管理JSONを含める。PRの差分が、どの表の中身が変わったかを示す。
+5. 表を作らず合否だけを決める検査のコードは、表を作るコードと別の `*_checks.py` に置く。このモジュールは指紋の対象外で、変更しても表は古くならない（表を書く関数・呼び出しがあれば `manifest.dependencies` が停止する）。そのため検査を厳しくした PR は、`bun run ingestion:verify --remote` を保存済みの全表に当てて通ることを確かめる。落ちる表は変換コードか宣言を直して保存し直す。
+
 保存キー・管理情報の置き場は [設計書](../../../../docs/prd/ingestion-storage/design-doc.md) を参照する。局所再処理は `--conversion <ID>` を使う。説明のない科目の補完が必要なら、同じ会計の明細表を生成するconversionも選ぶ。変更しない表が現在の条件と一致していることを確認する。
 
 ## 関連文書

@@ -28,14 +28,21 @@ def inspect_table(path: Path, metadata: dict | None = None) -> int:
     return count
 
 
-def originals(path: Path, output: Path, *, remote: bool = False) -> dict:
-    document = manifest.read(path)
+def original_files(document: dict, *, remote: bool = False, conversion_ids: set[str] | None = None) -> dict[str, str]:
+    """Original SHA-256 to its verified local path, restoring missing objects from R2 when ``remote``."""
     selection = manifest.selection_for(document)
     files = {}
     for conversion in document['conversions']:
+        if conversion_ids is not None and conversion['id'] not in conversion_ids:
+            continue
         for item in manifest.resolved_inputs(document, conversion, selection):
             if item['sha256'] not in files:
                 files[item['sha256']] = str(fetch(item, remote=remote))
+    return files
+
+
+def originals(path: Path, output: Path, *, remote: bool = False) -> dict:
+    files = original_files(manifest.read(path), remote=remote)
     output.parent.mkdir(parents=True, exist_ok=True)
     with output.open('x') as stream:
         json.dump(files, stream, ensure_ascii=False, indent=2)
@@ -486,6 +493,11 @@ def main() -> None:
     check_sums.add_argument('--candidate', type=Path, help='Candidate directory from convert (uses its manifest.json)')
     check_sums.add_argument('--output', type=Path, help='Detail directory (default: .build/ingestion-verify)')
     check_sums.add_argument('--remote', action='store_true', help='Restore missing saved tables from R2')
+    refresh = sub.add_parser('refresh', help='Re-convert stale tables, compare contents with the saved ones, and rewrite only the fingerprints of unchanged manifests')
+    refresh.add_argument('--manifest', type=Path, action='append', help='Saved manifest(s); default: all')
+    refresh.add_argument('--output', type=Path, help='Report file (default: .build/ingestion-refresh/report.json)')
+    refresh.add_argument('--remote', action='store_true', help='Restore missing originals and saved tables from R2 (read only; nothing is uploaded)')
+    refresh.add_argument('--dry-run', action='store_true', help='Compare only; do not rewrite any manifest')
     clean = sub.add_parser('cleanup')
     clean.add_argument('--manifest', type=Path, required=True)
     args = parser.parse_args()
@@ -551,6 +563,12 @@ def main() -> None:
                 if inspect_table(restored, table.get('metadata')) != reference['row_count']:
                     raise ValueError('Restored table row count differs from receipt')
         print(json.dumps({'restored': len(document['tables'])}))
+    elif args.command == 'refresh':
+        from ingestion.fiscal.refresh import refresh_all
+        report = refresh_all(args.manifest or manifest.paths(), remote=args.remote, dry_run=args.dry_run,
+                             output=args.output or BUILD / 'ingestion-refresh' / 'report.json')
+        print(json.dumps(report['summary'], ensure_ascii=False))
+        raise SystemExit(0 if report['ok'] else 1)
     else:
         print(json.dumps({'removed': cleanup(manifest.read(args.manifest))}))
 

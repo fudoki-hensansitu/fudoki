@@ -22,7 +22,7 @@ class SqliteStatement implements Statement {
 }
 
 interface TableJson {
-  columns: { name: string; type: string }[]
+  columns: { name: string; type: string; nullable?: boolean }[]
 }
 const TABLES = (columnsJson as unknown as { tables: Record<string, TableJson> }).tables
 
@@ -61,7 +61,11 @@ export function insertNode(
   row: Record<string, string | number | null> & { document_kind: keyof typeof NODE_TABLE }
 ) {
   const { document_kind, ...rest } = row
-  const full = { jurisdiction_code: '132039', fiscal_year: 2024, account_name: '一般会計', ...rest }
+  // 非 NULL の列は、指定が無ければ型ごとの既定値で埋める（MCP の outputSchema の検査に通る行にする）
+  const required = Object.fromEntries(
+    TABLES[NODE_TABLE[document_kind]]!.columns.filter((c) => c.nullable === false).map((c) => [c.name, c.type === 'string' ? 'x' : 1])
+  )
+  const full = { ...required, jurisdiction_code: '132039', fiscal_year: 2024, account_name: '一般会計', ...rest }
   const keys = Object.keys(full)
   sqlite
     .query(`INSERT INTO ${NODE_TABLE[document_kind]} (${keys.join(',')}) VALUES (${keys.map(() => '?').join(',')})`)

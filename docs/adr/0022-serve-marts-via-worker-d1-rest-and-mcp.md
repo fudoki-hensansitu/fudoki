@@ -75,6 +75,8 @@ API の検索は結合を持たないので、ノードの行に所属する款�
 
 キャッシュは持たない。必要になれば、GET のまま CDN に載せられる。
 
+Worker の observability を有効にし（`headSamplingRate: 1`）、要求ごとの CPU 時間（`limits.cpuMs` に対する余裕）とエラーをログで見る。Workers Paid の Workers Logs は月 2,000 万件が含まれ、超過は 100 万件あたり $0.60 である（保持は7日。2026年12月1日から Cloudflare Observability の料金に移る）。今の利用の量なら含まれる量に収まる見込みで、デプロイ後の実測で確かめる。WAF の rate limit は IP ごと（データセンターごと）なので、ログの総量の上限にはならない。総量の異常は従来の Budget alert（$1）で気づき、kill switch で止める（超過の単価は小さい）。2026年12月1日に料金の体系が変わるので、そのときにアカウント全体のログの量と保存量を見て見積もりを見直し、必要なら `headSamplingRate` を下げる。トレースは有効にしない。
+
 ## 更新は表ごとの全件の入れ替えで行う
 
 dbt build の後に、同期の script を手元で手動で実行する。まず前回の失敗の残骸 `<表>__new`・`<表>__old` を捨て、表ごとに `<表>__new` へ全件を入れる。次に `__new` の全行を読み戻し、warehouse の同じ行と主キーで突き合わせて全列を比べる。3表とも合えば、1つの batch で drop・rename・index の作成を行う。合わなければ入れ替えずに失敗する。
@@ -95,7 +97,16 @@ slice の3団体の木を SQLite に入れ、3つの index を張って測ると
 
 Worker のビルドは cf と `@cloudflare/vite-plugin` で行い、wrangler は使わない。
 
-REST の route と OpenAPI 3.1 の文書は `@hono/zod-openapi` で作り、MCP は `@modelcontextprotocol/sdk` を `@hono/mcp` で同じ Hono に載せる。
+REST の route と OpenAPI 3.1 の文書は `@hono/zod-openapi` で作り、MCP は `@modelcontextprotocol/server`（v2 の SDK）の `createMcpHandler` を同じ Hono の `/mcp` から呼ぶ（`@modelcontextprotocol/sdk` と `@hono/mcp` は使わない）。
+
+- **規格**: MCP の 2026-07-28 の規格（initialize の握手も `Mcp-Session-Id` も無く、要求ごとに `_meta` の envelope と `MCP-Protocol-Version`・`Mcp-Method` のヘッダを付ける。`server/discover` で能力を返す）を話す。2025 年代の client（現行の Claude など）は `legacy: 'stateless'` で、要求ごとに新しい server を作って捌く。この経路の応答は SDK の都合で JSON ではなく SSE（`event: message` の `data:`）で返る。
+- **状態**: Workers は要求をまたいで状態を持てないので、handler と server は要求ごとに作る。body の検査（Content-Type・実バイト数 16KB・UTF-8・`__proto__`・batch の拒否）は Hono 側で済ませ、parse 済みの値を `parsedBody` で渡す。
+- **tool の注釈**: すべての tool は D1 の読み取りだけなので、`title`（操作の summary）と `readOnlyHint: true`・`destructiveHint: false`・`idempotentHint: true`・`openWorldHint: false` を MCP の登録の箇所で一括して付ける。
+- **outputSchema を宣言する**: 各 operation の `output`（zod）から tool の `outputSchema` を出し、成功時は `structuredContent` に結果の object を返す。`content` の text は同じ JSON の写しで、`structuredContent` を読めない client のためのもの（MCP の SHOULD）。二重に読まないのは client の責任とする。エラーは従来どおり `isError` と text だけで、`structuredContent` は付けない。応答の形は outputSchema が正本で、tool の説明文には schema で表せないこと（何のための tool か、いつ使うか、足してはいけない金額、sum_rules への誘導）だけを書く。フィールドの意味は zod の `.describe()` で schema 側に置く。SDK は `structuredContent` を outputSchema で検証するので、marts の列と `columns.json` のずれは実行時にも検出され、テストでも全 operation の応答を `output` に通して落とす。output の zod は `strictObject` にする（`object` は未知のキーを黙って落とし、JSON Schema の `additionalProperties: false` と食い違うため）。さらに、`tools/list` の outputSchema を本物の JSON Schema の validator に通して、client が見る `structuredContent` を検査する。
+- **共通の schema は $defs に一度だけ**: `Node`・`Origin` と where の条件（`StringCondition` など）は zod の `.meta({ id })` で名前を付け、JSON Schema では `$defs` と `$ref` にする。33 列に同じ条件の schema が繰り返し出るのを避け、`tools/list` の応答は約 24,000 字（outputSchema なし）から約 15,100 字（outputSchema あり）になった。OpenAPI では components に出る。
+- **Origin では絞らない**: 2026-07-28 の規格は不正な Origin に 403 を求めるが、これは主にローカルの server を DNS rebinding から守るための規則である。この API は認証なしで誰でも読める公開の読み取り専用なので、どの Origin も正当とみなす。curl などは Origin を付けずに送れるので、絞っても守りは増えない。
+- **長い接続は持たない**: `subscriptions/listen` は Hono 側で 400 にする（Workers で SSE を開いたままにできず、通知の元も無い）。`tools.listChanged` は false にする。
+- **初回の CPU**: SDK v2 は内部の schema を初回の要求で作るため、module scope で `preloadSchemas()` を呼び、要求ごとの CPU（`limits.cpuMs`）から外す。bun での冷えた初回の CPU は、v1 が tools/list 59ms・tools/call 55ms、v2（対策後）が 62ms・76ms だった。workerd での実測はデプロイ後に確かめる。
 
 ## Considered Options
 
