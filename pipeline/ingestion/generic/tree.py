@@ -1038,6 +1038,25 @@ def split_wide(cluster: list[float]) -> list[list[float]]:
     return split_wide(left) + split_wide(right)
 
 
+def same_heading(first: str, second: str) -> bool:
+    """Two printings of one subject name: equal, or (names of three characters or more) one character apart.
+
+    A continuation page repeats the subject heading; OCR may misread a character of it (`秘書広银費` for
+    秘書広報費, 132055). The codes already agree, so one character is the misread, not another subject."""
+    a, b = normalize(first or ''), normalize(second or '')
+    if a == b:
+        return True
+    if min(len(a), len(b)) < 3 or abs(len(a) - len(b)) > 1:
+        return False
+    previous = list(range(len(b) + 1))
+    for i, ca in enumerate(a, 1):
+        row = [i]
+        for j, cb in enumerate(b, 1):
+            row.append(min(row[-1] + 1, previous[j] + 1, previous[j - 1] + (ca != cb)))
+        previous = row
+    return previous[-1] <= 1
+
+
 def stacked_columns(logicals: list[Logical]) -> set[str]:
     """Amount columns (by heading) that print two or more amounts in one cell somewhere in the document.
 
@@ -1310,7 +1329,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 depth = item.level + 1 + (titled and untitled(item.group))
                 previous = stack[depth - 1] if len(stack) >= depth else None
                 if previous is not None and previous.code == item.code and (
-                        not item.name or normalize(previous.name) == normalize(item.name)):
+                        not item.name or same_heading(previous.name, item.name)):
                     item.key = previous.key  # a repeated subject heading on a continuation page
                     item.role = 'repeat'
                     continue
