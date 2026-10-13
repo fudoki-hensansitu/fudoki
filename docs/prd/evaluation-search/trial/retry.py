@@ -1,5 +1,5 @@
 import json,subprocess,sys
-SP=sys.argv[1]  # 作業dir。trial/ の JSON を <SP>/trial/ に置き、結果もそこへ書く; INST='fudoki-eval-trial-v1'
+SP=sys.argv[1]; INST='fudoki-eval-trial-v1'  # SP は作業dir。trial/ の JSON を <SP>/trial/ に置き、結果もそこへ書く
 cm=json.load(open(SP+'/trial/chunk_pages.json'))
 meta={m['id']:m for m in json.load(open(SP+'/trial/retry_meta.json'))}
 truth={e['id']:e for e in json.load(open(SP+'/trial/exact.json'))}

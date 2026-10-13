@@ -1,6 +1,6 @@
 import json,subprocess,re,sys,random
 from concurrent.futures import ThreadPoolExecutor
-SP=sys.argv[1]  # 作業dir。trial/ の JSON を <SP>/trial/ に置き、結果もそこへ書く; INST='fudoki-eval-trial-v1'
+SP=sys.argv[1]; INST='fudoki-eval-trial-v1'  # SP は作業dir。trial/ の JSON を <SP>/trial/ に置き、結果もそこへ書く
 res=json.load(open(SP+'/trial/results.json')); cm=json.load(open(SP+'/trial/chunk_pages.json'))
 exact=json.load(open(SP+'/trial/exact.json')); random.seed(3)
 neg=[dict(e,jurisdiction='131148',qtype='neg',query=e['name'],pages=[]) for e in random.sample([e for e in exact if e['jurisdiction']=='131172'],15)]

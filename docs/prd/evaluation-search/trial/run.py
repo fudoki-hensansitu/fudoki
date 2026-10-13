@@ -1,11 +1,11 @@
 import json,subprocess,re,sys
 from concurrent.futures import ThreadPoolExecutor
-SP=sys.argv[1]  # 作業dir。trial/ の JSON を <SP>/trial/ に置き、結果もそこへ書く; INST='fudoki-eval-trial-v1'
+SP=sys.argv[1]; INST='fudoki-eval-trial-v1'  # SP は作業dir。trial/ の JSON を <SP>/trial/ に置き、結果もそこへ書く
 def cf(*a): return json.loads(subprocess.run(['cf','ai-search',*a,'--name','default'],capture_output=True,text=True).stdout)
 items=cf('items','list','--id',INST)
 cmap={}
 for it in items:
-    off=int(it['metadata'].get('page_offset',0)); last=None
+    off=int(it['metadata'].get('page_offset',0)); sha=it['metadata']['origin_sha256'][:12]; last=None
     allc=[];o=0
     while True:
         page=cf('items','chunks',it['id'],'--id',INST,'--limit','50','--offset',str(o))
@@ -16,7 +16,7 @@ for it in items:
         ps=[int(x) for x in re.findall(r'### Page (\d+)',c['text'])]
         pages=set(ps)|({last} if last and not c['text'].lstrip().startswith('### Page') else set())
         if ps: last=ps[-1]
-        cmap[c['id']]=sorted(p+off for p in pages if p)
+        cmap[c['id']]=sorted(f'{sha}:{p+off}' for p in pages if p)  # 本冊と別冊で頁番号が重なるので、原典の sha256 と組にする
 json.dump(cmap,open(SP+'/trial/chunk_pages.json','w'))
 exact=json.load(open(SP+'/trial/exact.json')); by={e['id']:e for e in exact}
 para=json.load(open(SP+'/trial/para_queries.json'))

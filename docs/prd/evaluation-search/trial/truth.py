@@ -23,10 +23,10 @@ for p in range(1, pages(nakano) + 1):
     t = page_text(nakano, p)
     m = re.search(r'^\s*施策\s+(\d+)\s+(\S.*?)\s*$', t, re.M)
     if m:
-        cur = {'kind': '施策', 'no': int(m.group(1)), 'name': ' '.join(m.group(2).split()), 'page': p}
-        n.append(dict(cur, pages=[p]))
+        cur = {'kind': '施策', 'no': int(m.group(1)), 'name': ' '.join(m.group(2).split()), 'page': p, 'pages': [p]}
+        n.append(cur)
     elif cur and len(t.strip()) > 500:
-        n[-1]['pages'].append(p)
+        cur['pages'].append(p)  # 施策の見出しが無い頁は、直前の施策の続き
     for g in re.findall(r'^\s*([①-⑳])(\S[^\s].*?)\s*$', t, re.M):
         name = g[1].strip()
         if len(name) >= 4 and not re.match(r'^[\d,.%\s]+$', name) and '年度' not in name:
