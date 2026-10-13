@@ -95,7 +95,12 @@ slice の3団体の木を SQLite に入れ、3つの index を張って測ると
 
 Worker のビルドは cf と `@cloudflare/vite-plugin` で行い、wrangler は使わない。
 
-REST の route と OpenAPI 3.1 の文書は `@hono/zod-openapi` で作り、MCP は `@modelcontextprotocol/sdk` を `@hono/mcp` で同じ Hono に載せる。
+REST の route と OpenAPI 3.1 の文書は `@hono/zod-openapi` で作り、MCP は `@modelcontextprotocol/server`（v2 の SDK）の `createMcpHandler` を同じ Hono の `/mcp` から呼ぶ（`@modelcontextprotocol/sdk` と `@hono/mcp` は使わない）。
+
+- **規格**: MCP の 2026-07-28 の規格（initialize の握手も `Mcp-Session-Id` も無く、要求ごとに `_meta` の envelope と `MCP-Protocol-Version`・`Mcp-Method` のヘッダを付ける。`server/discover` で能力を返す）を話す。2025 年代の client（現行の Claude など）は `legacy: 'stateless'` で、要求ごとに新しい server を作って捌く。この経路の応答は SDK の都合で JSON ではなく SSE（`event: message` の `data:`）で返る。
+- **状態**: Workers は要求をまたいで状態を持てないので、handler と server は要求ごとに作る。body の検査（Content-Type・実バイト数 16KB・UTF-8・`__proto__`・batch の拒否）は Hono 側で済ませ、parse 済みの値を `parsedBody` で渡す。
+- **tool の注釈**: すべての tool は D1 の読み取りだけなので、`title`（操作の summary）と `readOnlyHint: true`・`destructiveHint: false`・`idempotentHint: true`・`openWorldHint: false` を MCP の登録の箇所で一括して付ける。
+- **outputSchema は宣言しない**: 宣言すると `tools/list` の応答が約40%増え、client が毎回読むトークンが増える。応答は従来どおり JSON の文字列を text content で返す（`structuredContent` も付けない）。応答の形は REST の OpenAPI と、テストで `output` の schema に通して保証する。
 
 ## Considered Options
 

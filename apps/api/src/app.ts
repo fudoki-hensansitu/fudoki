@@ -1,6 +1,5 @@
 import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
-import { StreamableHTTPTransport } from '@hono/mcp'
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
+import { McpServer, createMcpHandler } from '@modelcontextprotocol/server'
 import type { Context } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import type { Env } from './db'
@@ -101,7 +100,13 @@ function mcpServer(ctx: Ctx): McpServer {
   for (const op of operations) {
     server.registerTool(
       op.name,
-      { description: op.description, inputSchema: op.input },
+      {
+        title: op.summary,
+        description: op.description,
+        inputSchema: op.input,
+        // すべての tool は D1 の読み取りだけで、状態を変えず、外部にも出ない
+        annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+      },
       async (args: Record<string, unknown>) => {
         try {
           const out = await op.run(ctx, args)
@@ -201,17 +206,25 @@ export function createApp() {
     info: { title: '風土記 API', version: '1.0.0', description: '自治体の歳出の予算・決算を事業単位（目）まで構造化したデータ。' },
   })
 
-  // Workers はリクエストをまたいで状態を持てないので、リクエストごとに server と transport を作る。
+  // Workers はリクエストをまたいで状態を持てないので、リクエストごとに handler を作る。
+  // 2026-07-28 の規格（initialize なし・Mcp-Session-Id なし）を話し、2025 年代の client も legacy: 'stateless' で1要求ずつ捌く。
   app.all('/mcp', async (c) => {
     if (c.req.method !== 'POST')
       return c.json(errorBody('INVALID_ARGUMENT', 'MCP は POST だけを受け付けます'), 405, { Allow: 'POST' })
     // JSON-RPC の batch は1回の HTTP で検索を何十件も実行できるので、単一の要求だけを受ける。
     const body = c.get('json')
     if (Array.isArray(body)) return c.json(jsonRpcError(-32600, 'JSON-RPC の batch は受け付けません。要求を1つずつ送ってください'), 400)
-    const server = mcpServer(c.get('ctx'))
-    const transport = new StreamableHTTPTransport({ sessionIdGenerator: undefined, enableJsonResponse: true })
-    await server.connect(transport)
-    return (await transport.handleRequest(c, body)) ?? c.body(null, 204)
+    const ctx = c.get('ctx')
+    const handler = createMcpHandler(() => mcpServer(ctx), {
+      legacy: 'stateless',
+      // 'json' だと要求ごとに「通知が落ちる」警告が console に出る。tool は途中の通知を出さないので auto でも JSON 1つで返る
+      responseMode: 'auto',
+      maxRequestBodySize: MAX_BODY_BYTES,
+      // 内部エラーの詳細は応答に出さず、ログにだけ残す
+      onerror: (e) => console.error(e),
+    })
+    // body は上で検査済み。handler には parse 済みの値を渡し、二重に読ませない
+    return handler.fetch(c.req.raw, { parsedBody: body })
   })
 
   app.notFound((c) => c.json(errorBody('NOT_FOUND', '存在しないパスです'), 404))

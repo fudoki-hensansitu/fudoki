@@ -1,6 +1,8 @@
 import { beforeEach, describe, expect, test } from 'bun:test'
 import type { Database } from 'bun:sqlite'
 import { createApp } from './app'
+import columnsJson from './columns.json'
+import { operations } from './operations'
 import type { Db } from './db'
 import { insertNode, insertOrigin, testDb } from './testing'
 
@@ -11,6 +13,13 @@ const app = createApp()
 // node_id は小文字 16 進 64 文字
 const id = (prefix: string) => prefix.padEnd(64, '0')
 const [K1, M1, M2, S1, OLD] = [id('a1'), id('b1'), id('b2'), id('c1'), id('d1')]
+
+/** MCP の応答の body。2025 年代の client には SDK が SSE（`data: {...}`）で返し、2026-07-28 の要求には JSON で返す。 */
+const rpcBody = async (res: Response) => {
+  const text = await res.text()
+  const data = /^data: (.*)$/m.exec(text)
+  return JSON.parse(data ? data[1]! : text)
+}
 
 const get = (path: string) => app.request(path, {}, { DB: db })
 const post = (path: string, body: unknown, headers: Record<string, string> = {}) =>
@@ -89,7 +98,7 @@ describe('GET /health', () => {
     const doc = await (await get('/openapi.json')).json()
     expect(doc.paths['/health'].get.operationId).toBe('health')
     const res = await mcp({ jsonrpc: '2.0', id: 1, method: 'tools/list' })
-    expect((await res.json()).result.tools.map((t: { name: string }) => t.name)).not.toContain('health')
+    expect((await rpcBody(res)).result.tools.map((t: { name: string }) => t.name)).not.toContain('health')
   })
 
   test('/ の案内に health の URL', async () => {
@@ -321,7 +330,7 @@ describe('MCP', () => {
       },
       { DB: db }
     )
-    return { res, body: res.status === 200 ? await res.json() : null }
+    return { res, body: res.status === 200 ? await rpcBody(res) : null }
   }
   const call = (name: string, args: unknown) => rpc('tools/call', { name, arguments: args })
   const base = { document_kind: 'settlement', fiscal_year: { min: 2024, max: 2024 } }
@@ -401,7 +410,7 @@ describe('MCP の batch', () => {
   test('単一の要求は通る', async () => {
     const res = await mcp(toolCall(valid))
     expect(res.status).toBe(200)
-    expect((await res.json()).result.isError).toBeUndefined()
+    expect((await rpcBody(res)).result.isError).toBeUndefined()
   })
 
   test('壊れた JSON・巨大な body・JSON でない Content-Type は JSON-RPC のエラー', async () => {
@@ -420,7 +429,7 @@ describe('MCP の batch', () => {
     console.error = (...a: unknown[]) => void logged.push(a)
     try {
       const res = await mcp(toolCall(valid))
-      const text = (await res.json()).result.content[0].text
+      const text = (await rpcBody(res)).result.content[0].text
       expect(JSON.parse(text).error).toEqual({ code: 'INTERNAL', message: '内部エラー' })
       expect(text).not.toContain('no such table')
       expect(String(logged[0])).toContain('no such table')
@@ -445,7 +454,7 @@ describe('MCP の batch', () => {
   test('MCP の Get は page_size の型を強制しない', async () => {
     for (const page_size of [true, [], null, '5', 1.5, 0, 1001]) {
       const res = await mcp({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'get_expenditure_node', arguments: { document_kind: 'settlement', node_id: K1, page_size } } })
-      expect((await res.json()).result.isError, JSON.stringify(page_size)).toBe(true)
+      expect((await rpcBody(res)).result.isError, JSON.stringify(page_size)).toBe(true)
     }
   })
 })
@@ -632,7 +641,7 @@ describe('offset の上限', () => {
 
   test('打ち切りの説明が tool と OpenAPI にある', async () => {
     const res = await mcp({ jsonrpc: '2.0', id: 1, method: 'tools/list' })
-    const body = await res.json()
+    const body = await rpcBody(res)
     for (const tool of body.result.tools.filter((t: { name: string }) => t.name !== "describe_expenditure_columns") as { name: string; description: string }[])
       expect(tool.description, tool.name).toContain('それ以上')
     const doc = await (await get('/openapi.json')).json()
@@ -650,5 +659,141 @@ describe('JSON の重複キー', () => {
     expect(await a.json()).toEqual(await (await post(SEARCH, empty)).json())
     // 解析後に残っている __proto__ は 400
     expect((await post(SEARCH, '{"document_kind":"settlement","fiscal_year":{"min":2024,"max":2024},"where":{},"where":{"__proto__":1}}')).status).toBe(400)
+  })
+})
+
+describe('MCP 2026-07-28', () => {
+  // 2026-07-28 の要求は initialize なしで、毎回 _meta の envelope と標準ヘッダを付ける
+  const meta = { 'io.modelcontextprotocol/protocolVersion': '2026-07-28', 'io.modelcontextprotocol/clientCapabilities': {} }
+  const modern = (method: string, params: Record<string, unknown> = {}, extra: Record<string, string> = {}) =>
+    mcp(
+      { jsonrpc: '2.0', id: 1, method, params: { ...params, _meta: meta } },
+      { ...MCP_HEADERS, 'MCP-Protocol-Version': '2026-07-28', 'Mcp-Method': method, ...extra }
+    )
+
+  test('server/discover は 2026-07-28 を名乗り、JSON で返る', async () => {
+    const res = await modern('server/discover')
+    expect(res.status).toBe(200)
+    expect(res.headers.get('Content-Type')).toContain('application/json')
+    const body = await rpcBody(res)
+    expect(body.result.supportedVersions).toContain('2026-07-28')
+    expect(body.result._meta['io.modelcontextprotocol/serverInfo'].name).toBe('fudoki-api')
+  })
+
+  test('initialize なしで tools/list と tools/call が通る', async () => {
+    const list = await rpcBody(await modern('tools/list'))
+    expect(list.result.tools.map((t: { name: string }) => t.name).sort()).toEqual([
+      'describe_expenditure_columns',
+      'get_expenditure_node',
+      'search_expenditure_nodes',
+    ])
+    const res = await modern('tools/call', { name: 'search_expenditure_nodes', arguments: valid }, { 'Mcp-Name': 'search_expenditure_nodes' })
+    const body = await rpcBody(res)
+    expect(body.result.isError).toBeUndefined()
+    expect(JSON.parse(body.result.content[0].text).nodes.length).toBeGreaterThan(0)
+  })
+
+  test('Mcp-Method ヘッダが無い要求は検索を実行せずに断る', async () => {
+    const calls: string[] = []
+    const spy: Db = { prepare: (sql) => (calls.push(sql), db.prepare(sql)), batch: (s) => db.batch(s) }
+    const orig = console.error
+    console.error = () => {} // SDK が拒否を onerror 経由でログに出す
+    let res: Response
+    try {
+      res = await app.request(
+        '/mcp',
+        {
+          method: 'POST',
+          headers: { ...MCP_HEADERS, 'MCP-Protocol-Version': '2026-07-28' },
+          body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'search_expenditure_nodes', arguments: valid, _meta: meta } }),
+        },
+        { DB: spy }
+      )
+    } finally {
+      console.error = orig
+    }
+    expect(res.status).toBe(400)
+    expect(calls.filter((c) => c.includes('settlement_expenditure_node'))).toEqual([])
+  })
+
+  test('2025 年代の要求（initialize → tools/call）も1要求ずつ通る', async () => {
+    const init = await rpcBody(await mcp({ jsonrpc: '2.0', id: 1, method: 'initialize', params: { protocolVersion: '2025-03-26', capabilities: {}, clientInfo: { name: 't', version: '0' } } }))
+    expect(init.result.protocolVersion).toBe('2025-03-26')
+    expect(init.result.serverInfo.name).toBe('fudoki-api')
+    const res = await mcp(toolCall(valid))
+    expect(res.status).toBe(200)
+    expect(JSON.parse((await rpcBody(res)).result.content[0].text).nodes.length).toBeGreaterThan(0)
+  })
+
+  test('tools/list の tool に title と読み取り専用の注釈があり、outputSchema は無い', async () => {
+    for (const body of [await rpcBody(await modern('tools/list')), await rpcBody(await mcp({ jsonrpc: '2.0', id: 1, method: 'tools/list' }))]) {
+      expect(body.result.tools).toHaveLength(operations.length)
+      for (const tool of body.result.tools as { name: string; title: string; annotations: unknown; outputSchema?: unknown }[]) {
+        const op = operations.find((o) => o.name === tool.name)!
+        expect(tool.title, tool.name).toBe(op.summary)
+        expect(tool.annotations, tool.name).toEqual({ readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false })
+        expect(tool.outputSchema, tool.name).toBeUndefined()
+      }
+    }
+  })
+
+  test('batch は 2026-07-28 の形でも 400 で、検索は実行されない', async () => {
+    const calls: string[] = []
+    const spy: Db = { prepare: (sql) => (calls.push(sql), db.prepare(sql)), batch: (s) => db.batch(s) }
+    const one = (id: number) => ({ jsonrpc: '2.0', id, method: 'tools/call', params: { name: 'search_expenditure_nodes', arguments: valid, _meta: meta } })
+    const res = await app.request('/mcp', { method: 'POST', headers: { ...MCP_HEADERS, 'MCP-Protocol-Version': '2026-07-28' }, body: JSON.stringify([one(1), one(2)]) }, { DB: spy })
+    expect(res.status).toBe(400)
+    expect(calls.filter((c) => c.includes('settlement_expenditure_node'))).toEqual([])
+  })
+})
+
+describe('operation の応答は output の schema に合う', () => {
+  // marts の列と columns.json がずれたら、実行時ではなくここで落とす。
+  // 上の fixture は列を疎にしているので、この describe では非 NULL の列を columns.json から全部埋めた行を使う。
+  const [P, C] = [id('e1'), id('e2')]
+  const filled = (table: string, row: Record<string, string | number>) => {
+    const cols = (columnsJson as unknown as { tables: Record<string, { columns: { name: string; type: string; nullable: boolean }[] }> }).tables[table]!.columns
+    const dflt = (type: string) => (type === 'string' ? 'x' : 1)
+    return { ...Object.fromEntries(cols.filter((c) => !c.nullable).map((c) => [c.name, dflt(c.type)])), ...row }
+  }
+  beforeEach(() => {
+    insertOrigin(sqlite, filled('origin', { origin_id: 'of', fiscal_year: 2023, sha256: 'f'.repeat(64) }))
+    for (const document_kind of ['settlement', 'initial'] as const) {
+      const table = `${document_kind}_expenditure_node`
+      insertNode(sqlite, { document_kind, ...filled(table, { node_id: P, fiscal_year: 2023, origin_id: 'of', node_kind: '款', is_leaf: 0 }) })
+      insertNode(sqlite, { document_kind, ...filled(table, { node_id: C, parent_node_id: P, fiscal_year: 2023, origin_id: 'of', node_kind: '目', is_leaf: 1 }) })
+    }
+  })
+
+  const run = (name: string, input: unknown) => {
+    const op = operations.find((o) => o.name === name)!
+    return op.run({ db }, op.input.parse(input) as never)
+  }
+  const parse = (name: string, out: unknown) => {
+    const result = operations.find((o) => o.name === name)!.output.safeParse(out)
+    expect(result.success, result.success ? '' : JSON.stringify(result.error.issues)).toBe(true)
+  }
+  const year = { min: 2023, max: 2023 }
+
+  test('search_expenditure_nodes（決算・当初予算・空の結果・次ページ）', async () => {
+    for (const document_kind of ['settlement', 'initial']) {
+      const out = (await run('search_expenditure_nodes', { document_kind, fiscal_year: year })) as { nodes: unknown[]; origins: unknown[] }
+      expect(out.nodes).toHaveLength(2)
+      expect(out.origins).toHaveLength(1)
+      parse('search_expenditure_nodes', out)
+    }
+    parse('search_expenditure_nodes', await run('search_expenditure_nodes', { document_kind: 'settlement', fiscal_year: year, where: { name: { eq: ['存在しない'] } } }))
+    const paged = (await run('search_expenditure_nodes', { document_kind: 'settlement', fiscal_year: year, page_size: 1 })) as { next_page_token: string | null }
+    expect(paged.next_page_token).toBeString()
+    parse('search_expenditure_nodes', paged)
+  })
+
+  test('get_expenditure_node（子のある款・子のない目）', async () => {
+    for (const document_kind of ['settlement', 'initial'])
+      for (const node_id of [P, C]) parse('get_expenditure_node', await run('get_expenditure_node', { document_kind, node_id }))
+  })
+
+  test('describe_expenditure_columns', async () => {
+    parse('describe_expenditure_columns', await run('describe_expenditure_columns', {}))
   })
 })
