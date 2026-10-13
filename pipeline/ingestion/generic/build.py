@@ -47,15 +47,60 @@ def run(pdf: Path, pages: list[int], cache: Path | None = None, judge=None) -> B
     return run_with_repairs(pdf, pages, cache, judge)[0]
 
 
+DIRECTION_TITLES = {'歳入': 'revenue', '歳出': 'expenditure'}
+
+
+def page_titles(pages) -> dict[int, str | None]:
+    """Each page's direction as printed: the page's own title line (`歳 入`, `歳 出`, above the table), or, for
+    a page with none (the right half of a spread, a continued page), the title of the page before it."""
+    result, current = {}, None
+    for page in sorted(pages, key=lambda p: p.number):
+        top = sorted((w for w in page.words if w.y0 < page.height * 0.25), key=lambda w: (w.y0, w.x0))
+        rows: list[list] = []
+        for word in top:
+            if rows and abs(rows[-1][0].y0 - word.y0) <= 2:
+                rows[-1].append(word)
+            else:
+                rows.append([word])
+        for row in rows:
+            title = DIRECTION_TITLES.get(normalize(''.join(w.text for w in sorted(row, key=lambda w: w.x0))))
+            if title:
+                current = title
+                break
+        result[page.number] = current
+    return result
+
+
+def run_pages(pdf: Path, pages: list[int], cache: Path | None = None, judge=None,
+              document_kind: str = 'settlement', account: str | None = None, stop: bool = True,
+              partial: bool = False, direction: str | None = None):
+    """Build one table and keep what the converter needs next to it: the repaired pages (their
+    words are the digit-coverage scope), the logical pages (their amount bands) and the unit check.
+
+    A page that is printed as the other direction (a revenue page of a scope that shares its pages with the
+    summary, `歳 入` over a 款・項 table) is not read: `report.skipped_pages` lists them.
+    Stops when the unit check fails (款 sum ≠ printed total, or a general account's digits);
+    `stop=False` returns the check in `report.unit` instead, for a measurement that goes on."""
+    printed = observe(pdf, pages, cache)
+    titles = page_titles(printed) if direction else {}  # before the repair: it drops what is outside the frame
+    observed, report = repair(pdf, printed)
+    if direction:
+        report.skipped_pages = [number for number, title in titles.items() if title not in (None, direction)]
+        observed = [page for page in observed if page.number not in report.skipped_pages]
+    logicals = logical_pages(observed)
+    built, choice = choose_pattern(logicals, document_kind, judge)
+    report.pattern = choice
+    unit = check_units(built, document_kind, account, partial)
+    if unit['stopped'] and stop:
+        raise ValueError(f'Unit check failed: {unit}')
+    report.unit = unit
+    return built, report, observed, logicals
+
+
 def run_with_repairs(pdf: Path, pages: list[int], cache: Path | None = None, judge=None,
                      document_kind: str = 'settlement', account: str | None = None):
     """Build one table; stop when the unit check fails (款 sum ≠ printed total, or a general account's digits)."""
-    observed, report = repair(pdf, observe(pdf, pages, cache))
-    built, choice = choose_pattern(logical_pages(observed), document_kind, judge)
-    report.pattern = choice
-    unit = check_units(built, document_kind, account)
-    if unit['stopped']:
-        raise ValueError(f'Unit check failed: {unit}')
+    built, report, _, _ = run_pages(pdf, pages, cache, judge, document_kind, account)
     return built, report
 
 

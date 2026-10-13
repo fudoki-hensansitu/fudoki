@@ -195,7 +195,8 @@ def main() -> None:
     candidate = args.candidate_dir.resolve() if args.candidate_dir else None
     result = prepare(warehouse, candidate, remote=args.remote)
     if args.build:
-        subprocess.run(['dbt', 'build', '--project-dir', str(DBT), '--profiles-dir', str(DBT),
+        # --full-refresh: a seed that gains a column would otherwise fail against the table of an earlier build.
+        subprocess.run(['dbt', 'build', '--full-refresh', '--project-dir', str(DBT), '--profiles-dir', str(DBT),
                         '--select', '+settlement_expenditure_node', '+initial_expenditure_node',
                         '+origin', 'cofog_master'],
                        cwd=DBT, stdout=sys.stderr, check=True)

@@ -24,6 +24,9 @@ TITLE = re.compile(r'^第?([0-9]+)款([^(（0-9]+)')
 # header printed again mid-page (a new table for the next 款 on the same page).
 REPEATED_HEADER = .6
 UNIT = re.compile(r'単位\s*[:：]?\s*(百万円|千円|円)')  # printed 単位; the rest of the unit rule is in units.py
+# A header cell that is only the unit of the column below it (`円`, `（千円）`): the unit of the amounts,
+# not a level of their heading.
+UNIT_CELL = re.compile(r'^[(（]?(百万円|千円|円)[)）]?$')
 
 
 def normalize(text: str) -> str:
@@ -63,6 +66,10 @@ class Band:
     words: list[Glyph] = field(default_factory=list)
     kind: str | None = None  # 'amount' | 'label' | None (empty)
     spans: list[tuple[float, float, str]] = field(default_factory=list)  # header cells over the band
+    offset: float = 0.0  # how far a spread's right page was moved to the right
+    top: float | None = None  # top of the ruled frame (the header cells sit between it and `body_top`)
+    left_rules: list[tuple[float, float]] = field(default_factory=list)  # (top, bottom) of each rule drawn on its left edge
+    unit_mark: str | None = None  # a header cell that only names the unit (`円`), kept apart from the heading
 
     @property
     def center(self) -> float:
@@ -257,12 +264,20 @@ def page_bands(page: Page) -> tuple[list[Band], list[Word]]:
             middle = (left + right) / 2
             covering = covering_of(middle)
             rows = sorted(h.y0 for h in horizontals if _covers(h, middle) and header_bottom - 1 <= h.y0 <= bottom + 1)
+            marks = [text for _, text in covering if UNIT_CELL.match(text)]
+            covering = [(key, text) for key, text in covering if not UNIT_CELL.match(text)]
             band = Band(left, right, page.number, tuple(text for _, text in covering), rows, header_bottom, bottom,
-                        spans=[(key[0], key[1], text) for key, text in covering])
+                        spans=[(key[0], key[1], text) for key, text in covering], top=top,
+                        left_rules=[(r.y0, r.y1) for r in verticals if abs(r.x0 - left) <= 3],
+                        unit_mark=UNIT_CELL.match(marks[-1]).group(1) if marks else None)
             for index, word in body:
                 if index in skip:
                     continue
                 sx, cy = word.x0 + min(2, (word.x1 - word.x0) / 2), (word.y0 + word.y1) / 2
+                if re.match(r'^[△▲]|.*,[0-9]{3}', word.text) and is_amount(word.text):
+                    # A grouped or signed amount belongs to the column that holds most of it: its sign or
+                    # first digits can overhang the column on its left (`△22,990,000`, 133051).
+                    sx = (word.x0 + word.x1) / 2
                 if left < sx < right and header_bottom < cy < bottom:
                     band.words.append(Glyph(word.text, word.x0, word.y0, word.x1, word.y1, page.number, 0))
                     used.add(index)
@@ -385,7 +400,7 @@ def logical_pages(pages: list[Page]) -> list[Logical]:
             previous = result[-1]
             offset = max(b.x1 for b in previous.bands) + 10 - first.x0
             for band in bands:
-                band.x0 += offset; band.x1 += offset
+                band.x0 += offset; band.x1 += offset; band.offset = offset
                 band.spans = [(a + offset, b + offset, t) for a, b, t in band.spans]
                 for word in band.words:
                     word.x0 += offset; word.x1 += offset; word.offset = offset

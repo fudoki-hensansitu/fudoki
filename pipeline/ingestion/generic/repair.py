@@ -29,6 +29,7 @@ from ingestion.generic.observe import Page, Rule, Word
 
 REPAIRS = Path(__file__).resolve().parents[1] / 'lib/text_repairs.csv'
 NUMERIC = re.compile(r'^[0-9,△▲\-]+$')
+SIGN_INSIDE = re.compile(r'(?<=[0-9,])[△▲](?=[0-9])')
 # Health criteria (one place). A document is broken when known multi-character
 # misreadings are frequent. Pages without the common column headings are
 # recorded but do not decide: a narrative report (132012) has none, and judging
@@ -45,6 +46,7 @@ class Report:
     vertical_words: int = 0
     invisible_error: str | None = None
     pattern: dict = field(default_factory=dict)
+    unit: dict = field(default_factory=dict)
     duplicate_words: int = 0
     composite_glyphs: int = 0
     joined_numbers: int = 0
@@ -52,15 +54,16 @@ class Report:
     cropped_words: int = 0
     health: dict = field(default_factory=dict)
     broken: bool = False
+    skipped_pages: list = field(default_factory=list)  # pages printed as the other direction
     hits: Counter = field(default_factory=Counter)
     examples: dict = field(default_factory=lambda: defaultdict(list))
 
     def as_dict(self) -> dict:
         return {'hidden_glyphs': self.hidden_glyphs, 'hidden_rules': self.hidden_rules,
-                'vertical_words': self.vertical_words, 'invisible_error': self.invisible_error, 'pattern': self.pattern, 'duplicate_words': self.duplicate_words,
+                'vertical_words': self.vertical_words, 'invisible_error': self.invisible_error, 'pattern': self.pattern, 'unit': self.unit, 'duplicate_words': self.duplicate_words,
                 'composite_glyphs': self.composite_glyphs, 'joined_numbers': self.joined_numbers,
                 'off_page_rules': self.off_page_rules, 'cropped_words': self.cropped_words,
-                'health': self.health, 'broken': self.broken, 'repairs': sum(self.hits.values()),
+                'health': self.health, 'broken': self.broken, 'skipped_pages': self.skipped_pages, 'repairs': sum(self.hits.values()),
                 'hits': dict(self.hits.most_common()), 'examples': {k: v[:5] for k, v in self.examples.items()}}
 
 
@@ -251,7 +254,18 @@ def _same_line(a: Word, b: Word) -> bool:
 
 
 def repair_positions(page: Page, report: Report) -> None:
-    words = sorted(page.words, key=lambda w: (round((w.y0 + w.y1) / 2), w.x0))
+    # A minus sign starts a number, it is never inside one: `0△22,990,000` is `0` and `△22,990,000`.
+    split: list[Word] = []
+    for word in page.words:
+        found = SIGN_INSIDE.search(word.text)
+        if found and found.start() > 0:
+            width = (word.x1 - word.x0) / len(word.text)
+            cut = word.x0 + found.start() * width
+            split += [Word(word.text[:found.start()], word.x0, word.y0, cut, word.y1),
+                      Word(word.text[found.start():], cut, word.y0, word.x1, word.y1)]
+        else:
+            split.append(word)
+    words = sorted(split, key=lambda w: (round((w.y0 + w.y1) / 2), w.x0))
     result: list[Word] = []
     for word in words:
         twin = next((w for w in result[-6:] if w.text == word.text and abs(w.x0 - word.x0) < .6
@@ -269,18 +283,44 @@ def repair_positions(page: Page, report: Report) -> None:
                                   max(previous.x1, word.x1), max(previous.y1, word.y1))
                 report.composite_glyphs += 1  # one printed character drawn as two glyphs
                 continue
-            # A word that starts with a comma continues the number on its left even across
-            # a printed space (`2 ,181 ,817`): no number begins with a comma. Likewise a number
-            # ending with a comma continues on its right (`5,` `184,344`, 132209).
-            comma_gap = 1.2 * (word.y1 - word.y0) if word.text.startswith(',') or previous.text.endswith(',') else 1.0
-            if (NUMERIC.match(previous.text) and NUMERIC.match(word.text) and word.x0 > previous.x0
-                    and -.5 * (word.x1 - word.x0) <= word.x0 - previous.x1 <= comma_gap):
+            if _continues(previous, word):
                 result[-1] = Word(previous.text + word.text, previous.x0, min(previous.y0, word.y0),
                                   max(previous.x1, word.x1), max(previous.y1, word.y1))
                 report.joined_numbers += 1
                 continue
         result.append(word)
-    page.words = result
+    # Numbers again, over the words of one printed line left to right. A line is the words that share the
+    # vertical extent of its first word, not the same rounded centre: a smaller digit group (`11,148,` +
+    # `119`) can centre half a point off, round to the next line, and sit before the digits it continues
+    # (132209).
+    rows: list[list[Word]] = []
+    for word in sorted(result, key=lambda w: ((w.y0 + w.y1) / 2, w.x0)):
+        if rows and _same_line(rows[-1][0], word):
+            rows[-1].append(word)
+        else:
+            rows.append([word])
+    joined: list[Word] = []
+    for row in rows:
+        for word in sorted(row, key=lambda w: w.x0):
+            if joined and _same_line(joined[-1], word) and _continues(joined[-1], word):
+                previous = joined[-1]
+                joined[-1] = Word(previous.text + word.text, previous.x0, min(previous.y0, word.y0),
+                                  max(previous.x1, word.x1), max(previous.y1, word.y1))
+                report.joined_numbers += 1
+            else:
+                joined.append(word)
+    page.words = joined
+
+
+def _continues(previous: Word, word: Word) -> bool:
+    """Whether `word` is the rest of the number `previous` ends: a word that starts with a comma continues the
+    number on its left even across a printed space (`2 ,181 ,817`: no number begins with a comma), a number
+    ending with a comma continues on its right (`5,` `184,344`, 132209), and touching digit groups join. A minus
+    sign never continues a number."""
+    comma_gap = 1.2 * (word.y1 - word.y0) if word.text.startswith(',') or previous.text.endswith(',') else 1.0
+    return bool(NUMERIC.match(previous.text) and NUMERIC.match(word.text) and word.x0 > previous.x0
+                and not (word.text[:1] in '△▲' and previous.text[-1:] not in '△▲')
+                and -.5 * (word.x1 - word.x0) <= word.x0 - previous.x1 <= comma_gap)
 
 
 # --- 3. health and known misreadings --------------------------------------------

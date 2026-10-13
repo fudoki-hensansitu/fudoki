@@ -31,6 +31,8 @@ def column_mark(band: Band) -> str | None:
     found = COLUMN_MARK.search(''.join(band.header))
     if found:
         return found.group(1)
+    if band.unit_mark:
+        return band.unit_mark
     top = sorted(band.words, key=lambda w: w.y0)[:1]
     return top[0].text if top and top[0].text in MULTIPLIER else None
 
@@ -121,8 +123,12 @@ def general_total(nodes: list[dict], amounts: list[dict], document_kind: str) ->
     return sum(value * MULTIPLIER.get(unit, 1) for value, unit in entries) if entries else None
 
 
-def check(built, document_kind: str, account: str | None = None) -> dict:
-    """款 sum = printed 歳出合計 (in the phase the document reports), and a general account's digits fit the unit."""
+def check(built, document_kind: str, account: str | None = None, partial: bool = False) -> dict:
+    """款 sum = printed 歳出合計 (in the phase the document reports), and a general account's digits fit the unit.
+
+    `partial`: the original holds one volume of an account printed in several (西東京's 13 files). Its
+    款 are some of the account's, so neither the sum against the printed total nor the digits of the sum say
+    anything: both are reported and never stop the table. A 款 printed with two amounts still does."""
     from ingestion.generic.build import dictionary_header
     from ingestion.lib.node_tables import amount_phase
     from shared.amount import number
@@ -152,14 +158,15 @@ def check(built, document_kind: str, account: str | None = None) -> dict:
             result['sum_matches'] = chosen.get('unit') in MULTIPLIER and None not in units and \
                 total is not None and total * MULTIPLIER[chosen['unit']] == raw_sum
         low, high = DIGITS.get(document_kind, (0, float('inf')))
-        if account == '一般会計':
+        if account == '一般会計' and not partial:
             result['digits_ok'] = total is not None and low <= abs(total) < high
-        result['stopped'] = not result['sum_matches'] or result['digits_ok'] is False
-    elif raw_sum and account == '一般会計':
+        result['stopped'] = not partial and (not result['sum_matches'] or result['digits_ok'] is False)
+    elif raw_sum and account == '一般会計' and not partial:
         # No printed total in the pages read: only the digits of the 款 sum can be checked.
         low, high = DIGITS.get(document_kind, (0, float('inf')))
         result['digits_ok'] = low <= abs(raw_sum) < high
         result['stopped'] = not result['digits_ok']
     if conflicts:
         result['stopped'] = True  # a 款 printed with two different amounts of the phase: never pick one
+    result['partial'] = partial
     return result

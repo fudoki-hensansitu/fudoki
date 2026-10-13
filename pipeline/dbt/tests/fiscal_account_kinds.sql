@@ -22,7 +22,7 @@ select node_id, 'bad_account_kind' as failure, account_kind as value
 from {{ ref('settlement_expenditure_node') }}
 where account_kind not in (
     select account_kind from {{ ref('account_kind_map') }}
-    where account_kind is not null and account_kind <> '')
+    where account_kind is not null and account_kind <> '' and coalesce(scope, '') = '')
 union all
 select node_id, 'bad_transfer_recipient', interfund_transfer_to
 from {{ ref('settlement_expenditure_node') }}

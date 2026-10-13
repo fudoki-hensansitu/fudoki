@@ -83,7 +83,10 @@ with recursive unioned as (
     from recipients r
     left join {{ ref('account_kind_map') }} k
       on r.recipient_name is not null
-         and contains({{ fiscal_match_text('r.recipient_name') }}, {{ fiscal_match_text('k.keyword') }})
+         -- a `recipient` row names the whole recipient (`特別会計`: no account is identified), the others a word in it
+         and case when coalesce(k.scope, '') = 'recipient'
+                  then {{ fiscal_match_text('r.recipient_name') }} = {{ fiscal_match_text('k.keyword') }}
+                  else contains({{ fiscal_match_text('r.recipient_name') }}, {{ fiscal_match_text('k.keyword') }}) end
     qualify row_number() over (partition by r.document_kind, r.node_id order by len(k.keyword) desc) = 1
 )
 select u.node_id, u.document_kind,

@@ -104,12 +104,14 @@ def complete_subject_rows(rows: list[dict], siblings: list[list[dict]]) -> list[
 
 
 def node_receipt(document: dict, conversion: dict, table_id: str, tables: node_tables.NodeTables,
-                 output: Path, *, input_fingerprint: str | None = None, notes: list[str] | None = None) -> tuple[dict, dict]:
+                 output: Path, *, input_fingerprint: str | None = None, notes: list[str] | None = None,
+                 migrated: bool = True) -> tuple[dict, dict]:
     account = pdf_account(document, conversion, tables.nodes)
     paths = node_tables.write_tables(output, table_id, tables, document['target']['document_kind'])
+    # A direct converter never counted anything while migrating a wide table: no migration note.
     receipt = {'table_id': table_id, 'conversion_id': conversion['id'],
                'input_fingerprint': input_fingerprint or manifest.fingerprint(document, conversion),
-               'account': account, 'notes': [*(notes or []), node_tables.MIGRATION_NOTE],
+               'account': account, 'notes': [*(notes or []), *([node_tables.MIGRATION_NOTE] if migrated else [])],
                'unread_amount_count': tables.unread_amount_count,
                'unresolved_parent_count': tables.unresolved_parent_count}
     for kind, path in paths.items():
@@ -193,9 +195,12 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
     outputs = {}
     tables = []
     pending_pdf = []
+    pending_direct = []
     coverage_failures = []
     adopted = {}
     checked_pdf = []
+    direct = {}
+    direct_notes = {}
     for conversion in document['conversions']:
         if conversion['id'] not in chosen:
             retained = [table for table in document['tables'] if table['conversion_id'] == conversion['id']]
@@ -244,6 +249,17 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
         prepared = {}
         for ident, file in generated.items():
             metadata = None
+            if isinstance(file, dict) and {'nodes', 'amounts'} <= set(file) <= {'nodes', 'amounts', 'notes'}:
+                # A converter that builds node/amount tables itself: no wide table to migrate. The scope
+                # sidecar is named after the table (`<table_id>.coverage.json`) in the same directory.
+                pair = {kind: Path(file[kind]) for kind in ('nodes', 'amounts')}
+                direct_notes[ident] = [str(note) for note in file.get('notes', [])]
+                for item in pair.values():
+                    if not item.resolve().is_relative_to(output.resolve()) or item.is_symlink():
+                        raise ValueError('Converter output is outside the candidate directory')
+                direct[ident] = (pair, pair['nodes'].with_name(f'{ident}.parquet'))
+                prepared[ident] = (direct[ident][1], None)
+                continue
             if isinstance(file, dict):
                 if 'path' not in file or set(file).difference({'path', 'metadata'}):
                     raise ValueError('Converter table descriptor requires path and optional metadata only')
@@ -257,6 +273,13 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
             prepared[ident] = (file, metadata)
         if {item['format'] for item in inputs} == {'pdf'}:
             for ident, (file, metadata) in prepared.items():
+                if ident in direct:
+                    pair = direct[ident][0]
+                    inspect_table(pair['nodes']), inspect_table(pair['amounts'])
+                    built = node_tables.NodeTables(node_tables.read_rows(pair['nodes']),
+                                                   node_tables.read_rows(pair['amounts']))
+                    pending_direct.append((conversion, ident, built, file))
+                    continue
                 inspect_table(file, metadata)
                 rows = node_tables.read_rows(file)
                 # Conversions may separate details and notes for the same account.
@@ -299,6 +322,14 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
             continue
         adopted[ident] = migrated
         checked_pdf.append((conversion, ident, migrated, metadata, file))
+    for conversion, ident, built, file in pending_direct:
+        # No saved legacy table to fall back to: a table that fails its tree check is a failure.
+        checked = node_tables.check_tree(built.nodes, built.amounts, document['target']['document_kind'])
+        if not built.nodes or not built.amounts or not checked['passed']:
+            raise ValueError(f'Table failed the tree check: {ident}: {checked["counts"]}; {checked["issues"][:5]}')
+        completed_by_id[ident] = []
+        adopted[ident] = built
+        checked_pdf.append((conversion, ident, built, None, file))
     peers = coverage_peers(document, adopted)
     raw_by_id = completed_by_id
     for _, ident, migrated, _, file in checked_pdf:
@@ -340,7 +371,9 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
             raise
         receipt, pair = node_receipt(document, conversion, ident, migrated, output,
                                      input_fingerprint=before[conversion['id']],
-                                     notes=[n['text'] for n in (metadata or {}).get('notes', [])])
+                                     notes=direct_notes.get(ident) if ident in direct
+                                     else [n['text'] for n in (metadata or {}).get('notes', [])],
+                                     migrated=ident not in direct)
         outputs[ident] = pair
         tables.append(receipt)
     write_answers()
