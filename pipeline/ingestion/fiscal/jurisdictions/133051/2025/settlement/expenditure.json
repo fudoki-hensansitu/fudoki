@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "133051",
+    "fiscal_year": 2025,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "9ca52e6a7b7f195d3c73568bcf5965f7069e707f1a21b102ccf65eda8d7b7a3c"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure"
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure"
+        }
+      ]
+    }
+  ],
+  "tables": []
+}

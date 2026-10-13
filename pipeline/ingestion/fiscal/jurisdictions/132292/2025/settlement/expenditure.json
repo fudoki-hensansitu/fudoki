@@ -1,0 +1,259 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132292",
+    "fiscal_year": 2025,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-settlement-01",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "dc2990a09f81255ed3cc182f2ade06393e7b40997ce53d7e2839337217401c2a"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure-01",
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-01"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-02",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "9a85c26e359682c9217c1da5f83a31d824dcef421abaaf11122c7ac384e47608"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure-02",
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-02"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-03",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "a737553a793cbfca6686bc43a2addb2f303523cbc080ad74a621863d7cbc6829"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure-03",
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-03"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-04",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ab654acd2c6aa5e54db248a615b35503134023bc6c67612fa3985aa207de76d7"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure-04",
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-04"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-05",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "774ab76203cc711a2315fa8acec6a4052dcbac072794bdf67d5839dd96f1df7f"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure-05",
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-05"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-06",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "b5ce912f88c628b3ffe0e80ec72306242317e030f9d7266c95fd41e786eb0b68"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure-06",
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-06"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-07",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "a8714329e26e2d57188cb16ac5ec06dedd3edb9d946a5ecba0097dd7792f49be"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure-07",
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-07"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-08",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "95fe7a74d040543ce58d4e5bd796453a0a881581a6c2e5a3af6bedbd4f84de2b"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure-08",
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-08"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-09",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "421fec56e9cea29101bc753b366bf90890428b179d2bfde4f38586503eeb1479"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure-09",
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-09"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-10",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "395f81f5d8c2fd53199c14aaa8d006f1d9a580cdab802c985ffa72267843cec7"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure-10",
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-10"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-11",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "9ef86a4b2c0050588fd44796166609d4d8f06c393b186711e490c2159d5ff6a0"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure-11",
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-11"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-12",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "d4e52b6a22657249c82b06c3ff91f7bbb9589d7d5cc966caa70a26c23d78299d"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure-12",
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-12"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-13",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "c18065d03d9b1f33ad3ac8cbbacc777d53de038f9467e93993b79f608ad1e0e8"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure-13",
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-13"
+        }
+      ]
+    }
+  ],
+  "tables": []
+}

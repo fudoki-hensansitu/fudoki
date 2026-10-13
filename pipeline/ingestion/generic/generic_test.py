@@ -193,6 +193,9 @@ class TrialRulesTest(unittest.TestCase):
     def test_a_parenthesised_transfer_remark_does_not_make_its_item_a_note(self):
         from ingestion.generic.tree import PAREN_TAIL, TRANSFER
         self.assertIsNone(TRANSFER.search(PAREN_TAIL.sub('', '需用費（同事業、委託料へ流用△1,815,000）')))
+        # More than one remark: an item with its own amount does not become a note (132209).
+        self.assertIsNone(TRANSFER.search(PAREN_TAIL.sub(
+            '', '委託料（同事業、備品購入費へ流用△280,000）（同事業、需用費から流用1,815,000）')))
         self.assertIsNotNone(TRANSFER.search(PAREN_TAIL.sub('', '○同目・旅費から同目・災害補償費へ流用')))
 
     def test_the_separator_after_a_number_is_not_part_of_the_name(self):
@@ -500,9 +503,13 @@ class PatternTest(unittest.TestCase):
     def test_numbering_shapes(self):
         from ingestion.generic.tree import Item, shape_of
         band = Band(0, 100, 1, ('備考',), [], 0, 100)
-        shape = lambda value: shape_of(Item(Group([band], '備考', False), 1, [[glyph(value, 0, 0)]], None, value, 0))
-        self.assertEqual([shape('○事業'), shape('(1)運営'), shape('①旅費'), shape('ア 郵便料'), shape('12委託料'), shape('アシスタント')],
+        shape = lambda value, code=None: shape_of(Item(Group([band], '備考', False), 1, [[glyph(value, 0, 0)]], code, value, 0))
+        self.assertEqual([shape('○事業'), shape('(1)運営'), shape('①旅費'), shape('ア 郵便料'), shape('12委託料', '12'),
+                          shape('アシスタント')],
                          ['bullet', 'paren', 'circled', 'kana', 'number', None])
+        # A name that begins with a digit but has no code is no number (`３階ホール吊り物設備`, 132276).
+        self.assertIsNone(shape('３階ホール吊り物設備等保守管理委託料'))
+        self.assertEqual(shape('㉓災害急患対応手当'), 'circled')
 
 
 class UnitTest(unittest.TestCase):
@@ -578,3 +585,122 @@ class SpreadAndOwnerTest(unittest.TestCase):
         found = {id(subject): [moku], id(setsu): [sub]}
         self.assertIs(owner([glyph('2,260,000', 120, 108, 40)], money, [subject, setsu], found), moku)
         self.assertIs(owner([glyph('1,000', 120, 150, 30)], money, [subject, setsu], found), sub)
+
+
+class ConvertRulesTest(unittest.TestCase):
+    """Rules found by connecting the builder to the ingestion entry on 11 jurisdictions (`convert/`)."""
+
+    def page(self, words):
+        return Page(1, 1200, 800, [Word(*w) for w in words], [])
+
+    def band(self, words, x0=0, x1=600, header=('備考',)):
+        band = Band(x0, x1, 1, header, [], 100, 700)
+        band.words = words
+        return band
+
+    def test_a_smaller_digit_group_centred_off_the_line_still_joins_the_number_it_continues(self):
+        from ingestion.generic.repair import Report, repair_positions
+        # `11,148,` and `119` print on one line; the smaller group's centre rounds to the next line, and it
+        # was read before the digits it continues (132209).
+        page = self.page([('11,148,', 1101.4, 609.8, 1128.6, 617.7), ('119', 1132.3, 609.8, 1144.4, 616.5)])
+        repair_positions(page, Report())
+        self.assertEqual([w.text for w in page.words], ['11,148,119'])
+
+    def test_a_minus_sign_starts_a_number_and_is_never_inside_one(self):
+        from ingestion.generic.repair import Report, repair_positions
+        page = self.page([('0△22,990,000', 304.0, 610.8, 358.0, 619.8)])
+        repair_positions(page, Report())
+        self.assertEqual([w.text for w in page.words], ['0', '△22,990,000'])
+        # A sign printed as its own word still joins the number on its right, and a sign never joins backwards.
+        page = self.page([('0', 304.0, 610.8, 308.5, 619.8), ('△22,990,000', 308.5, 610.8, 358.0, 619.8)])
+        repair_positions(page, Report())
+        self.assertEqual([w.text for w in page.words], ['0', '△22,990,000'])
+
+    def test_a_number_takes_the_position_it_fits_best_and_a_start_weighs_more_than_an_end(self):
+        from ingestion.generic.tree import nearest_position
+        word = lambda text, x: Glyph(text, x, 0, x + 4.2 * len(text), 8.4, 1, 0)
+        anchors = [('事業', (936.7, 940.8, 1)), ('節', (944.9, 949.1, 1))]
+        # A right-aligned `26`: starts 3.8 from the 事業, ends 0.2 from the 節 (132209).
+        self.assertEqual(nearest_position(number_span(word('26', 940.5)), anchors, word('26', 940.5)), '節')
+        # A left-aligned `99` between a 事業's start and a 節's end is the 事業 (132217).
+        anchors = [('事業', (788.4, 792.6, 1)), ('節', (796.8, 801.0, 1)), ('細節', (805.2, 813.6, 2))]
+        self.assertEqual(nearest_position(number_span(word('99', 791.2)), anchors, word('99', 791.2)), '事業')
+        self.assertEqual(nearest_position(number_span(word('1', 801.7)), anchors, word('1', 801.7)), '細節')
+        self.assertIsNone(nearest_position(number_span(word('1', 700)), anchors, word('1', 700)))
+
+    def test_a_bracket_before_a_number_is_not_part_of_where_the_number_starts(self):
+        item, number = glyph('(1)学校行事', 938, 0, 36), glyph('3小学校', 943, 0, 27)
+        self.assertAlmostEqual(number_span(item)[0], 942.5, places=1)
+        self.assertEqual(number_span(item)[2], 1)
+        self.assertTrue(same_position(number_span(item), number_span(number), item))
+
+    def test_a_name_wrapped_in_the_kou_column_stays_with_it_through_the_rows_of_the_moku_column(self):
+        bands = [Band(19.8, 28.8, 1, ('款',), [160.7, 187.5], 160.7, 776.8),
+                 Band(28.8, 170, 1, ('項',), [160.7, 187.5], 160.7, 776.8),
+                 Band(170, 260, 1, ('目',), [160.7, 187.5, 198.5, 250], 160.7, 776.8)]
+        bands[1].words = [glyph('4', 116, 190, 4), glyph('その他公共', 123, 190, 40), glyph('、公用施設', 123, 199.4, 40),
+                          glyph('災害復旧費', 123, 208.7, 40)]
+        bands[2].words = [glyph('1', 172, 208.7, 4), glyph('その他公共', 180, 208.7, 40), glyph('施設、公用', 180, 218, 40)]
+        found = subject_items(Group(bands, '科目', True))
+        self.assertEqual([(i.level, i.code, i.name) for i in found],
+                         [(1, '4', 'その他公共、公用施設災害復旧費'), (2, '1', 'その他公共施設、公用')])
+
+    def test_the_unit_mark_after_an_amount_is_no_part_of_the_name_or_the_amount(self):
+        label, money = _split_line([glyph('12,409,365', 1108, 100, 52), glyph('円', 1161, 100, 9)])
+        self.assertEqual(label, [])
+        self.assertEqual(''.join(g.text for run in money for g in run), '12,409,365')
+        label, money = _split_line([glyph('前年度繰越事業費不用額', 900, 100, 99), glyph('393,230円', 1108, 100, 50)])
+        self.assertEqual(''.join(g.text for g in label), '前年度繰越事業費不用額')
+        self.assertEqual(''.join(g.text for run in money for g in run), '393,230')
+
+    def test_a_total_row_ends_in_the_word_for_it(self):
+        from ingestion.generic.tree import TOTAL
+        self.assertIsNotNone(TOTAL.search('歳出合計'))
+        self.assertIsNotNone(TOTAL.search('合計'))
+        self.assertIsNone(TOTAL.search('0102410長期総合計画に要する経費(企画政策課)'))
+
+    def test_an_item_whose_name_starts_with_a_count_has_no_number(self):
+        from ingestion.generic.tree import COUNTED, YEAR_LED
+        self.assertIsNotNone(COUNTED.match('110番非常通報装置保守点検委託'))
+        self.assertIsNotNone(COUNTED.match('3歳児健康診査'))
+        self.assertIsNone(COUNTED.match('06番号制度整備事業委託料'))  # 番号 is a name, not a count
+        self.assertEqual(YEAR_LED.match('42025年農林業センサス費').group(1), '4')
+
+    def test_a_name_that_wraps_runs_to_the_limit_and_a_short_line_before_an_indented_amount_is_two_items(self):
+        from ingestion.generic.tree import items
+        header = ('備考',)
+        # `02 管理用備品` is short; `ICカードリーダーライター 5,280` is indented under it: two items.
+        band = self.band([glyph('02管理用備品', 272.8, 100, 56), glyph('ICカードリーダーライター', 282.2, 112, 112),
+                          glyph('5,280', 561.8, 112, 23)], 250, 590)
+        found = items(Group([band], '備考', False), '備考', {273, 10282, 283}, None, 583.0)
+        self.assertEqual([(i.code, i.name, [''.join(g.text for g in r) for _, r in i.amounts]) for i in found],
+                         [('02', '管理用備品', []), (None, 'ICカードリーダーライター', ['5,280'])])
+        # The same two lines when the first runs up to the limit are one wrapped name.
+        band = self.band([glyph('公共施設等総合管理計画の推進に要する経費（公共施設マネジメント', 291.6, 100, 291.4),
+                          glyph('課）', 291.6, 112, 18.8), glyph('35,029', 556.8, 112, 28.2)], 250, 590)
+        found = items(Group([band], '備考', False), '備考', set(), None, 583.0)
+        self.assertEqual([(i.name, [''.join(g.text for g in r) for _, r in i.amounts]) for i in found],
+                         [('公共施設等総合管理計画の推進に要する経費(公共施設マネジメント課)', ['35,029'])])
+
+    def test_a_department_in_brackets_with_its_own_amount_is_a_heading(self):
+        from ingestion.generic.tree import department_heading
+        item = Item(Group([self.band([])], '備考', False), 1, [[glyph('(財政課)', 956, 100, 36)]], None, '(財政課)', 956)
+        item.amounts.append(('備考', [glyph('138,154,166', 1089, 100, 50)]))
+        self.assertTrue(department_heading(item))
+        item.amounts.clear()
+        self.assertFalse(department_heading(item))
+
+    def test_a_note_word_over_or_under_an_amount_belongs_to_the_amount_next_to_it(self):
+        from ingestion.generic.tree import items
+        # `12,409,365 円` / `流用`: the amount is printed above its word.
+        band = self.band([glyph('02管理費', 900, 80, 40), glyph('1,000', 1100, 80, 25),
+                          glyph('12,409,365', 1108, 100, 52), glyph('円', 1161, 100, 9), glyph('流用', 1134, 112, 18)], 880, 1170)
+        found = items(Group([band], '備考', False), '備考', {900}, None)
+        note = next(i for i in found if i.name == '流用')
+        self.assertEqual([''.join(g.text for g in r) for _, r in note.amounts], ['12,409,365'])
+        # `第３款総務費へ充用` / `△152,462,000` / `第７款…へ充用`: the amount is under its own name.
+        band = self.band([glyph('第３款総務費へ充用', 440, 142, 81), glyph('△152,462,000', 507, 154, 59),
+                          glyph('第７款健康福祉費へ充用', 440, 165, 99), glyph('△9,233,000', 516, 177, 50)], 430, 600)
+        found = items(Group([band], '備考', False), '備考', set(), None)
+        self.assertEqual([(i.name, [''.join(g.text for g in r) for _, r in i.amounts]) for i in found],
+                         [('第3款総務費へ充用', ['△152,462,000']), ('第7款健康福祉費へ充用', ['△9,233,000'])])

@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "account": {"type": "string", "minLength": 1},
+    "table_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_-]{0,95}$"},
+    "partial": {"const": true, "description": "The original is one volume of an account printed in several originals: its 款 are some of the account's, so the sum and digit checks of the unit are reported, not enforced."}
+  },
+  "required": ["account", "table_id"]
+}
