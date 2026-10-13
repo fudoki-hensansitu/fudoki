@@ -106,3 +106,41 @@ class FrameWordsTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class HeadingTest(unittest.TestCase):
+    def known(self):
+        from ingestion.lib.node_tables import phase_dictionary
+        return {label for kind, label in phase_dictionary() if kind in ('', 'settlement')}
+
+    def test_a_heading_the_dictionary_knows_is_never_touched(self):
+        from ingestion.generic.headers import canonical
+        known = self.known()
+        for path in ('予算現額／補正予算額', '予算現額／計', '節／金額', '翌年度繰越額／継続費逓次繰越', '支出済額'):
+            self.assertEqual(canonical(path, '節', known), path)
+
+    def test_an_unknown_path_is_brought_to_the_heading_it_prints(self):
+        from ingestion.generic.headers import canonical
+        known = self.known()
+        cases = [('予算現額／節／金額', '節'), ('金額', '節'), ('節／金額', '節')]
+        self.assertEqual([canonical(path, axis, known) for path, axis in cases], ['節／金額', '節／金額', '節／金額'])
+        # the symbols of a heading are not part of it
+        self.assertEqual(canonical('予算現額(A)', '科目', known), '予算現額')
+        self.assertEqual(canonical('不用額(A)-(B)-(C)', '科目', known), '不用額')
+        self.assertEqual(canonical('予算現額と支出済額との比較(E)(A)-(B)', '科目', known), '比較')
+        # kinds a cell prints joined together are one column: the group above it, or the first of them
+        self.assertEqual(canonical('翌年度繰越額継続費逓次繰越繰越明許費事故繰越し', '節', known), '翌年度繰越額')
+        self.assertEqual(canonical('翌年度繰越額／継続費逓次繰越(逓)繰越明許費(明)事故繰越(事)', '節', known), '翌年度繰越額')
+        self.assertEqual(canonical('継続費逓次繰越繰越明許費', '節', known), '継続費逓次繰越')
+
+    def test_a_page_with_no_title_has_the_direction_of_the_page_before_it(self):
+        from ingestion.generic.build import page_titles
+        from ingestion.generic.observe import Page, Word
+        pages = [Page(9, 595, 842, [Word('歳', 109, 100, 120, 110), Word('入', 146, 100, 157, 110)], []),
+                 Page(10, 595, 842, [Word('款', 147, 133, 160, 143)], []),
+                 Page(51, 595, 842, [Word('歳', 78, 75, 90, 85), Word('出', 101, 75, 112, 85), Word('1議会費', 59, 88, 100, 98)], []),
+                 Page(52, 595, 842, [Word('款', 77, 153, 90, 163)], [])]
+        self.assertEqual(page_titles(pages), {9: 'revenue', 10: 'revenue', 51: 'expenditure', 52: 'expenditure'})
+        # a summary page titled `歳入歳出…` is neither
+        pages = [Page(8, 595, 842, [Word('歳入歳出決算事項別明細書', 156, 371, 400, 385)], [])]
+        self.assertEqual(page_titles(pages), {8: None})

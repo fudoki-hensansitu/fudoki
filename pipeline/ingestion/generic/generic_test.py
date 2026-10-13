@@ -5,8 +5,8 @@ from ingestion.generic.observe import Page, Rule, Word, merge_rules
 from ingestion.generic.sums import bracket
 from ingestion.generic.repair import Report, clip_to_page, crop_to_box
 from ingestion.generic.rows import identities
-from ingestion.generic.tree import (Built, Group, Item, _leading_amount, _split_code, _split_line, number_span, owner,
-                                   same_position, shape_depth, subject_items)
+from ingestion.generic.tree import (Built, Group, Item, _leading_amount, _split_code, _split_line, groups, number_span,
+                                   owner, same_position, shape_depth, subject_items)
 from ingestion.generic.units import check as check_units
 
 
@@ -704,3 +704,49 @@ class ConvertRulesTest(unittest.TestCase):
         found = items(Group([band], '備考', False), '備考', set(), None)
         self.assertEqual([(i.name, [''.join(g.text for g in r) for _, r in i.amounts]) for i in found],
                          [('第3款総務費へ充用', ['△152,462,000']), ('第7款健康福祉費へ充用', ['△9,233,000'])])
+
+    def test_a_line_with_an_amount_closing_the_numbered_items_under_it_is_the_name_of_the_item_above(self):
+        from ingestion.generic.tree import items
+        money = lambda text, y: glyph(text, 1100, y, 44)
+        # `9 …運営` / `・補助事業費 38,343,659` / `18 負担金… 38,343,659` (132209): the bullet line is the item's own
+        # amount line, since the numbered item under it adds up to it.
+        band = self.band([glyph('9東大和市シルバー人材センター運営', 936, 100, 149), glyph('・補助事業費', 948, 115, 49),
+                          money('38,343,659', 115), glyph('18負担金補助及び交付金', 941, 144, 100), money('38,343,659', 144),
+                          glyph('10東大和市社会福祉協議会', 932, 173, 100)], 920, 1170)
+        found = items(Group([band], '備考', False), '備考', {936, 10282, 941, 932}, None)
+        self.assertEqual([(i.code, i.name, [''.join(g.text for g in r) for _, r in i.amounts]) for i in found[:2]],
+                         [('9', '東大和市シルバー人材センター運営・補助事業費', ['38,343,659']),
+                          ('18', '負担金補助及び交付金', ['38,343,659'])])
+        # A sub-heading whose amount the numbered items under it do not add up to stays an item.
+        band = self.band([glyph('9東大和市シルバー人材センター運営', 936, 100, 149), glyph('・補助事業費', 948, 115, 49),
+                          money('40,000,000', 115), glyph('18負担金補助及び交付金', 941, 144, 100), money('38,343,659', 144)],
+                         920, 1170)
+        found = items(Group([band], '備考', False), '備考', {936, 10282, 941}, None)
+        self.assertEqual([i.name for i in found], ['東大和市シルバー人材センター運営', '・補助事業費', '負担金補助及び交付金'])
+
+    def test_a_number_that_is_a_word_of_its_own_before_a_name_that_starts_with_a_count_is_a_number(self):
+        from ingestion.generic.tree import entries_of
+        # `8` `2歳児歯科健診事業` (132225): the number is not `82`, and no number before it is needed to say so.
+        band = self.band([glyph('8', 944.3, 350, 4.5), glyph('2歳児', 953.3, 350, 22.5), glyph('歯科健診事業(健康課)', 975.8, 350, 90)],
+                         900, 1100)
+        found = entries_of(Group([band], '備考', False), {944, 945, 10949})
+        self.assertEqual([(code, name) for _, _, code, name in found], [('8', '2歳児歯科健診事業(健康課)')])
+
+    def test_the_numbers_column_a_rule_splits_off_its_names_is_one_column(self):
+        from ingestion.generic.layout import Logical
+        number = Band(415.9, 422.6, 1, ('節', '区分'), [], 100, 700)
+        name = Band(422.6, 482.9, 1, ('節', '区分'), [], 100, 700)
+        amount = Band(482.9, 547.6, 1, ('節', '金額'), [], 100, 700)
+        amount.kind = 'amount'
+        for band in (number, name):
+            band.kind = 'label'
+        found = groups(Logical([1], [number, name, amount], None, []))
+        self.assertEqual([[(b.x0, b.x1) for b in g.bands] for g in found if not g.subject],
+                         [[(415.9, 422.6), (422.6, 482.9)]])
+
+    def test_the_end_of_a_bracketed_amount_on_a_wrapped_line_is_not_an_item_number(self):
+        from ingestion.generic.tree import entries_of
+        # `(同事業、使用料及び賃借料へ流用△` / `66,000)` (132209): `66` is no item, `,000)` no name.
+        band = self.band([glyph('13使用料及び賃借料', 941, 100, 80), glyph('66,000)', 941, 115, 30)], 900, 1100)
+        found = entries_of(Group([band], '備考', False), {941, 10950})
+        self.assertEqual([(code, name) for _, _, code, name in found], [('13', '使用料及び賃借料'), (None, '66,000)')])

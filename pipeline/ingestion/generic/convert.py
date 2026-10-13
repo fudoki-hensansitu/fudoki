@@ -19,16 +19,17 @@ check rather than becoming an amount of something.
 from __future__ import annotations
 
 from collections import Counter, defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import hashlib
 import json
 from pathlib import Path
 import re
 
 from ingestion.generic.build import run_pages
+from ingestion.generic.headers import canonical
 from ingestion.generic.layout import normalize
 from ingestion.generic.notes import kind_of
-from ingestion.lib.node_tables import AMOUNT_COLUMNS, NODE_COLUMNS, coverage_regions, write_coverage_words
+from ingestion.lib.node_tables import AMOUNT_COLUMNS, NODE_COLUMNS, coverage_regions, phase_dictionary, write_coverage_words
 from ingestion.lib.parquet import write_parquet
 from ingestion.paths import CACHE
 
@@ -36,7 +37,7 @@ NOTE_SEPARATOR = '／注記／'
 # An account code joined by hyphens (`02-01-02-15-11-01`): printed text in a transfer note's label, and
 # amount-shaped to the coverage check, which never lets a hyphen-and-digits word be a label.
 ACCOUNT_CODE = re.compile(r'[0-9０-９][-－―—][0-9０-９]')
-TOTAL_ROW = re.compile(r'(?:合計|総計)$')
+TOTAL_ROW = re.compile(r'(?:合計|総計)$|^計$')
 FOOTNOTE_MARK = re.compile(r'[※＊*][0-9]+')
 ITEM_NUMBER = re.compile(r'^([0-9０-９]{1,4})[.．]$')
 RATIO_HEADER = re.compile(r'割合|比率|構成比|率$')
@@ -134,7 +135,7 @@ def excluded_regions(built, logicals, codes, observed) -> list[dict]:
     - the account codes in a laid note's label (`02-01-02-15-11-01から流用`): 本文;
     - a ratio column (見出しが割合・率): 数量表, the whole column of that page;
     - a footnote mark (`※1`): 本文;
-    - the 合計 row (歳出合計): 総括;
+    - the 合計 row (歳出合計) and a 計 row (a subtotal): 総括;
     - a frame that is no expenditure detail (no 款・項・目 column, no 予算現額・支出済額… column): 総括. On a spread its label is printed on the other physical page than its
       amounts, so the coverage check's own same-baseline rule cannot see the label.
     """
@@ -184,8 +185,24 @@ def frame_words(observed, logicals) -> list[tuple]:
             if any(left <= x <= right and top <= y <= bottom for left, top, right, bottom in frames.get(page.number, ())):
                 # An item number printed with its separator (`1.` `1．`) is the number `1`: the separator is
                 # punctuation, and the builder keeps the number without it.
-                words.append((page.number, (word.x0, word.y0, word.x1, word.y1), ITEM_NUMBER.sub(r'\1', word.text)))
+                words.extend(_glued_amount_split(page.number, word))
     return words
+
+
+GLUED_AMOUNT = re.compile(r'^(.*[^0-9,△▲])([△▲]?[0-9]{1,3}(?:,[0-9]{3})+)$')
+
+
+def _glued_amount_split(page: int, word) -> list[tuple]:
+    """A word printed with its amount touching its name (`…（会長1人・委員9人）134,200`) is two words when the
+    name has digits of its own: the builder reads the amount apart (proportionally, as the printed word has
+    no gap), and the name's digits are the name's."""
+    text = ITEM_NUMBER.sub(r'\1', word.text)
+    found = GLUED_AMOUNT.match(text)
+    if not found or not re.search(r'[0-9]', found.group(1)):
+        return [(page, (word.x0, word.y0, word.x1, word.y1), text)]
+    width = (word.x1 - word.x0) / len(text)
+    cut = word.x0 + len(found.group(1)) * width
+    return [(page, (word.x0, word.y0, cut, word.y1), found.group(1)), (page, (cut, word.y0, word.x1, word.y1), found.group(2))]
 
 
 def observation_cache(source: dict, pages: list[int]) -> Path:
@@ -204,6 +221,7 @@ class Table:
     report: object
     observed: list
     logicals: list
+    headings: dict = field(default_factory=dict)  # `{(printed heading path, heading kept): count}`
 
 
 def build_table(source: dict, options: dict, *, stop: bool = True) -> Table:
@@ -215,10 +233,37 @@ def build_table(source: dict, options: dict, *, stop: bool = True) -> Table:
     built, report, observed, logicals = run_pages(
         Path(source['path']), pages, observation_cache(source, pages),
         document_kind=source['target']['document_kind'], account=account, stop=stop,
-        partial=bool(options.get('partial')))
+        partial=bool(options.get('partial')), direction=source.get('direction'))
     kept, nodes, amounts, unresolved, codes = split_notes(built)
-    return Table([*built.nodes, *nodes], [*kept, *amounts], unresolved,
-                 excluded_regions(built, logicals, codes, observed), built, report, observed, logicals)
+    all_nodes = [*built.nodes, *nodes]
+    all_amounts, headings = canonical_headings([*kept, *amounts], all_nodes, source['target']['document_kind'])
+    fine_sections(all_nodes)
+    return Table(all_nodes, all_amounts, unresolved, excluded_regions(built, logicals, codes, observed),
+                 built, report, observed, logicals, headings)
+
+
+def fine_sections(nodes: list[dict]) -> None:
+    """The items printed under a 節 in the 節 column (`10 需用費` / `1 消耗品費`) are 細節 of it, not 節: the 節
+    axis holds the legal 節 only (`int_fiscal__expenditure_setsu` names each of its nodes). They go on an axis of
+    their own, parent unchanged, depth counted from that axis."""
+    for node in nodes:
+        if node['axis_header'] == '節' and node['depth'] >= 2:
+            node['axis_header'] = '細節'
+            node['depth'] -= 1
+
+
+def canonical_headings(amounts: list[dict], nodes: list[dict], document_kind: str) -> tuple[list[dict], dict]:
+    """The amounts with a heading path the shared dictionary does not know, brought to the heading they print
+    (`ingestion/generic/headers.py`). Returns the amounts and what was changed, `{(printed, kept): count}`."""
+    known = {label for kind, label in phase_dictionary() if kind in ('', document_kind)}
+    axis = {n['node_key']: n['axis_header'] for n in nodes}
+    changed: Counter = Counter()
+    for amount in amounts:
+        path = canonical(amount['header_path'], axis.get(amount['node_key']), known)
+        if path != amount['header_path']:
+            changed[(amount['header_path'], path)] += 1
+            amount['header_path'] = path
+    return amounts, changed
 
 
 def write_files(destination: Path, table_id: str, table: Table) -> dict:
@@ -247,13 +292,19 @@ def receipt_notes(table: Table) -> list[str]:
     else:
         check = f'款の和 {unit.get("kan_sum"):,}（頁に歳出合計の印字なし。桁だけを確かめた）'
     kinds = Counter(n['level_header'] for n in table.nodes if n['axis_header'] == '注記')
-    return [
+    notes = [
         '汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。'
         f'科目の段は {pattern.get("chosen")}、内訳の段は {pattern.get("detail")}。',
         f'金額の単位は {named} から決めた。{check}。',
         f'金額の注記 {sum(kinds.values())} 件（{"・".join(f"{k} {v}" for k, v in sorted(kinds.items())) or "なし"}）を注記軸に置いた。'
         + (f'種類を決められなかった注記 {len(table.unresolved)} 件は取り込んでいない。' if table.unresolved else ''),
     ]
+    if table.headings:
+        moved = '・'.join(f'{printed}→{kept}' for printed, kept in sorted(table.headings))
+        notes.append(f'共有辞書に無い金額の見出し {len(table.headings)} 種（{sum(table.headings.values())} 件）を、印字された語から辞書の見出しに寄せた: {moved}。')
+    if table.report.skipped_pages:
+        notes.append(f'選定の scope が共有していた別の方向（歳入）の頁 {len(table.report.skipped_pages)} 頁は読んでいない。')
+    return notes
 
 
 def convert(inputs: list[dict], destination: Path, options: dict) -> dict:

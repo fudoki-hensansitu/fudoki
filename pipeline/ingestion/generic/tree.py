@@ -113,13 +113,29 @@ def _breakdown_axis(band: Band, bands: list[Band]) -> str:
     """
     axis = band.header[-1] if band.header else '備考'
     page_end = max(b.x1 for b in bands if b.page == band.page)
+    column = _column(band, bands)
     for x0, x1, label in reversed(band.spans[:-1]):
         covered = [b for b in bands if x0 - 1 <= b.center <= x1 + 1]
-        if not all(b is band or b.kind != 'label' for b in covered):
+        if not all(any(b is c for c in column) or b.kind != 'label' for b in covered):
             continue
         if any(b.kind == 'amount' for b in covered) or (x1 >= page_end - 1 and band.x1 >= page_end - 1):
             return label
     return axis
+
+
+def _column(band: Band, bands: list[Band]) -> list[Band]:
+    """The label bands that are one column with this one: a column that a rule splits in two (the numbers
+    of the 節 left of their names) has the same heading over both parts, and they touch."""
+    ordered = sorted((b for b in bands if b.kind == 'label' and b.page == band.page and b.header == band.header),
+                     key=lambda b: b.x0)
+    if band not in ordered:
+        return [band]
+    start = end = ordered.index(band)
+    while start > 0 and abs(ordered[start - 1].x1 - ordered[start].x0) < 1.5:
+        start -= 1
+    while end + 1 < len(ordered) and abs(ordered[end].x1 - ordered[end + 1].x0) < 1.5:
+        end += 1
+    return ordered[start:end + 1]
 
 
 def groups(logical: Logical, pattern: str = 'bands') -> list[Group]:
@@ -168,6 +184,12 @@ def groups(logical: Logical, pattern: str = 'bands') -> list[Group]:
                 result.append(Group(list(subject_bands), '科目', True, mode, count))
             continue
         if band.kind != 'label':
+            continue
+        last = result[-1] if result else None
+        if (last is not None and not last.subject and any(last.bands[-1] is b for b in _column(band, bands))
+                and last.bands[-1] is not band):
+            # A column that a rule splits in two (the numbers of the 節 left of its names): one column.
+            last.bands.append(band)
             continue
         result.append(Group([band], _breakdown_axis(band, bands), False))
     return result
@@ -256,9 +278,13 @@ def _leading_amount(glyph: Glyph) -> Glyph:
     return Glyph(found.group(1), glyph.x0, glyph.y0, glyph.x0 + len(found.group(1)) * width, glyph.y1, glyph.page, glyph.offset)
 
 
+# Headings of an amount column that sort by source of funds: names of items as well (`保険料` under `通信運搬費`).
+FUNDING_HEADINGS = {'その他', '一般会計繰入金', '一般財源', '国庫支出金', '国都支出金', '都支出金', '地方債', '市債', '保険料'}
+
+
 def is_amount_kind(label: str) -> bool:
     """A printed amount kind (支出済額・繰越明許費・不用額…) rather than an item name."""
-    known = {header for _, header in phase_dictionary()}
+    known = {header for _, header in phase_dictionary()} - FUNDING_HEADINGS
     return label in known or re.fullmatch(r'(翌年度)?(繰越明許費?|事故繰越し?|継続費逓次繰越|不用額|本年度支出額|支出済額)', label) is not None
 
 
@@ -311,6 +337,11 @@ def entries_of(group: Group, margins: set[int] | None = None) -> list[tuple]:
         if script and margins is not None and margins & set(_margins(label)):
             # `11３歳児健康診査事業`: half-width digits are the number and the full-width ones start the name.
             code, name = script.group(1), normalize(raw_text[len(script.group(1)):])
+        if (not script and len(label) > 1 and margins is not None and margins & set(_margins(label))
+                and re.fullmatch(r'[0-9]{1,3}', normalize(label[0].text)) and re.match(r'[0-9０-９]', label[1].text)
+                and label[1].x0 - label[0].x1 >= 2):
+            # `8` `2歳児歯科健診事業`: the number is a word of its own, and the name begins with a count.
+            code, name, script = normalize(label[0].text), normalize(text(label[1:])), True
         if code is not None and margins is not None and not margins & set(_margins(label)):
             code, name = None, line_text  # a name that begins with a digit
         if code is None and label and margins is not None and margins & set(_margins(label)):
@@ -321,6 +352,8 @@ def entries_of(group: Group, margins: set[int] | None = None) -> list[tuple]:
             code, name = None, line_text  # `110番非常通報装置`, `3歳児健康診査`: a count, not an item number
         if code is not None and not name and money:
             code = None  # a lone number left of an amount is not a code
+        if code is not None and re.match(r'[0-9]{1,3}(?:,[0-9]{3})+', line_text):
+            code, name = None, line_text  # `66,000)`: the end of a bracketed amount (`(翌年度へ繰越明許費`), not an item `66`
         entries.append((label, money, code, name))
     return entries
 
@@ -481,6 +514,10 @@ def items(group: Group, header: str, margins: set[int] | None = None,
                         or (reaches and (abs(label[0].x0 - previous.indent) <= 3
                                          or abs(label[0].x0 - _name_start(previous)) <= 3)))
                    and _cell(band_of(label[0]), label[0].y0) == _cell(band_of(previous.lines[-1][0]), previous.lines[-1][0].y0))
+        # (Not only the rule-bounded cell: the name and the amount of a 備考 can have grids of their own.)
+        wrapped = wrapped or (previous is not None and code is None and bool(label) and bool(money) and previous.code is not None
+                              and not previous.amounts and label[0].x0 >= previous.lines[0][0].x0 - 3
+                              and closes_parts(entries, index, previous))
         if wrapped:  # a wrapped name; its amount may be printed on the last line
             previous.lines.append(label)
             previous.name += normalize(text(label))
@@ -514,6 +551,31 @@ def items(group: Group, header: str, margins: set[int] | None = None,
         _measure(item, label, code)
         result.append(item)
     return result
+
+
+def closes_parts(entries: list[tuple], index: int, previous: Item) -> bool:
+    """Whether the amount printed on this codeless line is the amount of the numbered item above, whose
+    name goes on (`9 …運営` / `・補助事業費 38,343,659` / `（地域福祉課）`): the item above prints no amount,
+    and the numbered items under it, at their own margin, add up to this amount. A sub-heading of its own
+    would also have parts that add up to it; the item above that prints nothing is then no item."""
+    amount = number(normalize(text(entries[index][1][0]))) if entries[index][1] else None
+    if amount is None or not entries[index][0]:
+        return False
+    start = previous.lines[0][0].x0
+    parts: list[tuple[float, int]] = []
+    for label, money, code, _ in entries[index + 1:]:
+        if not label:
+            continue
+        if label[0].x0 <= start + 3 and (code is not None or not money):
+            break
+        if code is not None and money:
+            value = number(normalize(text(money[0])))
+            if value is not None:
+                parts.append((label[0].x0, value))
+    if not parts:
+        return False
+    margin = min(x for x, _ in parts)
+    return sum(v for x, v in parts if x <= margin + 3) == amount
 
 
 def line_of(label: list[Glyph], money: list[list[Glyph]]) -> list[Glyph]:
@@ -1264,7 +1326,10 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 sign = None
                 stacked = None  # (kind word, rule-bounded cell) of the last kind word printed in this column
                 for line in lines(band.words):
-                    line = [_leading_amount(g) for g in line]
+                    printed = {}  # the amount of a word that runs on into text, by the word it was cut from
+                    cut = [_leading_amount(g) for g in line]
+                    printed.update({id(new): old for new, old in zip(cut, line)})
+                    line = cut
                     money = [g for g in line if is_amount(g.text) or re.fullmatch(r'[0-9,△▲\-]+', g.text)]
                     if [g.text for g in money] in (['△'], ['▲']):
                         sign = money[0]  # a minus sign printed above its number
@@ -1287,7 +1352,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     if target is not None and target.role == 'total':
                         notes.append({'kind': 'total amount', 'page': money[0].page, 'text': candidate,
                                       'header': '／'.join(band.header), 'unit': logical.unit, 'label': target.name,
-                                      'box': _bbox(money)})
+                                      'box': _bbox([printed.get(id(g), g) for g in money])})
                         continue
                     if target is None or target.key is None:
                         unowned.append({'kind': 'amount without row', 'page': money[0].page, 'text': candidate,

@@ -54,6 +54,7 @@ class Report:
     cropped_words: int = 0
     health: dict = field(default_factory=dict)
     broken: bool = False
+    skipped_pages: list = field(default_factory=list)  # pages printed as the other direction
     hits: Counter = field(default_factory=Counter)
     examples: dict = field(default_factory=lambda: defaultdict(list))
 
@@ -62,7 +63,7 @@ class Report:
                 'vertical_words': self.vertical_words, 'invisible_error': self.invisible_error, 'pattern': self.pattern, 'unit': self.unit, 'duplicate_words': self.duplicate_words,
                 'composite_glyphs': self.composite_glyphs, 'joined_numbers': self.joined_numbers,
                 'off_page_rules': self.off_page_rules, 'cropped_words': self.cropped_words,
-                'health': self.health, 'broken': self.broken, 'repairs': sum(self.hits.values()),
+                'health': self.health, 'broken': self.broken, 'skipped_pages': self.skipped_pages, 'repairs': sum(self.hits.values()),
                 'hits': dict(self.hits.most_common()), 'examples': {k: v[:5] for k, v in self.examples.items()}}
 
 
