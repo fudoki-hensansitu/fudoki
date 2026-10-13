@@ -29,10 +29,16 @@ def write(row):
         f.write(json.dumps(row, ensure_ascii=False) + '\n')
 
 
+def require_read():
+    if os.path.exists(PENDING) and json.load(open(PENDING)):
+        sys.exit('候補の続きが未読です。more で全部読んでから回答・引き直しをしてください。')
+
+
 def do_search(query):
     rows = log_rows()
     if any(r['kind'] == 'answer' for r in rows):
         sys.exit('回答済みです。これ以上は何もしないでください。')
+    require_read()
     n = sum(1 for r in rows if r['kind'] == 'search')
     if n >= MAX_SEARCHES:
         sys.exit(f'検索は{MAX_SEARCHES}回までです。answer で回答してください。')
@@ -100,6 +106,7 @@ def do_answer(raw):
     rows = log_rows()
     if any(r['kind'] == 'answer' for r in rows):
         sys.exit('回答済みです。')
+    require_read()
     try:
         a = json.loads(raw)
     except json.JSONDecodeError as e:

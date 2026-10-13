@@ -2,11 +2,13 @@
 
 担当者: wwwyo / Claude / Codex
 更新日: `2026-10-13`
-状態: 第2段は検索の比較まで完了。AI の回答は227/271問、引用の帰属の判定は未完了
+状態: 第2段は検索の比較まで完了。旧実行は227/271問、読了を検査する修正版の測定と引用の帰属の判定は未完了
 
 ## Summary
 
 **第2段の結果は、まだ公開・拡大の判断に使えない。** 271問のうち227問に回答があり、残り44問は Claude の利用上限で止まった。回答した頁の追加判定13件と引用の帰属の判定が未完了で、取り違えの率を確定できない。回答記録では227問中205問が候補の出力の続きを最後まで読んでおらず、全文を読む利用手順との違いも残る。
+
+この違いを解消するため、候補を読み終えるまで回答・引き直しを拒むように道具を修正した。旧実行を `run2` に保存し、同じ固定入力と索引を参照する `run3` を用意した。修正版の271問の測定は利用上限で未実行であり、旧実行の回答を流用せずに測り直す。
 
 **検索の比較から言えることは、この設定では全文検索だけで足りないこと。** 同じ検索語を1回ずつ引くと、言い換え80問では正解が上位10件に入ったのが全文検索0件・hybrid 56件（70.0%）、略称40問では7件（17.5%）・33件（82.5%）だった。事前に固定した「5ポイント以上の差」の閾値を満たす。AI が引き直して正しい事業を選び、正しい年度・項目を引用する割合とは別の結果である（[第2段の結果と未完了の項目](#第2段の結果と未完了の項目2026-10-13)）。
 
@@ -117,7 +119,7 @@ S1〜S3 の正答、S1〜S4 の取り違え、負例、引用がすべて閾値�
 
 2026-10-13 に227/271問へ回答した。残り44問はすべて S6（N1 32問・N2 12問）で、Claude の利用上限による中断である。同日、再開の確認のため1問を実行したが、`You've hit your session limit · resets 1am (Asia/Tokyo)` と返り、回答は増えなかった。停止の判定は前半の `hit your session limit` を使い、解除時刻の表示に依存しない。中断による未実行と、会話を1回やり直しても回答しなかった誤りを分けて数える。
 
-以下は `score2.py --partial` の暫定集計である。13頁（12回答）の追加判定前なので、「判定待ち」を正答にも取り違えにも入れていない。
+以下は旧実行 `run2` の `score2.py --partial` の暫定集計である。13頁（12回答）の追加判定前なので、「判定待ち」を正答にも取り違えにも入れていない。
 
 | 集合 | 問い | 正答 | 曖昧 | 該当なし | 部分 | 頁判定待ち | 未完了 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -157,31 +159,32 @@ S2・S3・S5 のすべてで hybrid が5ポイント以上高く、固定した�
 
 - 最初の実行は、長い検索出力が Claude Code の Bash に省略されたため破棄した。`c03dc6f` で約24KBごとに分け、`more` で続きが読める形にしてから実行し直した。破棄した実行を集計に含めていない。
 - 実行し直した227回答のうち205回答は、`more` の続きを全部読んでいない（S1 39/40、S2 77/80、S3 39/40、S4a 9/10、S4b 9/9、S5 30/39、採点対象外の目1/1、S6-N1 1/8）。候補の全文を読み終えた利用手順の成績としては扱えない。選択した `found` の頁が一度も表示されていない回答は見つからなかったが、読まなかった候補に同名の事業がある可能性は残る。
+- 続きが未読なら `answer` と次の `search` を拒む検査を追加した。読了・引き直し・回答の順序はネットワークを使わないCLI検査で確認した。旧実行は参考として残し、修正版は別の作業dir `run3` で271問を測り直す。検索の設定・問い・正解・閾値は変えていない。
 - 旧採点は未判定の頁を取り違えとし、未判定の引用を誤りなしとして集計していた。現在は判定待ちを分け、判定が未完了なら採点を止める。`--partial` を明示したときだけ暫定値を出す。
 - 引用判定と採点が同じ頁の追加・人の訂正を使うようにした。引用の照合範囲をその問いの候補に限定し、部分回答と正解の定まらない目を引用の分母から外した。
 - 未回答を無制限に再実行し、前の検索・費用の記録を上書きする作りを直した。通常の未回答は初回と1回の再実行まで。利用上限は未実行として残し、残りの問いを止める。再実行前の記録は `agent/attempts/` に残す。旧実行で上書きされた費用は完全には復元できないため、保存された会話の費用だけで総費用を確定しない。
 
 ### 再開と再現の手順
 
-現在の作業データは repo の `.cache/evaluation-search/run2/` に置いた（Git 管理外）。Claude の一時領域から、保存された回答・固定した問い・3冊のPDF・検索比較を移し、3冊の sha256 全体が原典の選定の宣言と一致することを確かめた。原典の本文を含む会話・chunk は commit しない。
+旧実行の作業データは repo の `.cache/evaluation-search/run2/` に置いた（Git 管理外）。Claude の一時領域から、保存された回答・固定した問い・3冊のPDF・検索比較を移し、3冊の sha256 全体が原典の選定の宣言と一致することを確かめた。修正版の `.cache/evaluation-search/run3/` は、`trial/`・`pdf/`・`agent/chunk_index.json` を旧実行からsymlinkで参照し、回答と判定を新しく保存する。原典・索引の本文を複製せず、旧回答を上書きしない。原典の本文を含む会話・chunk は commit しない。
 
 repo root から再開する。利用上限の解除後もモデルは Sonnet を使う。
 
 ```bash
-mise exec -- python3 docs/prd/evaluation-search/trial/agent_run.py .cache/evaluation-search/run2 --parallel 3
-mise exec -- python3 docs/prd/evaluation-search/trial/judge2.py pages .cache/evaluation-search/run2
+mise exec -- python3 docs/prd/evaluation-search/trial/agent_run.py .cache/evaluation-search/run3 --parallel 3
+mise exec -- python3 docs/prd/evaluation-search/trial/judge2.py pages .cache/evaluation-search/run3
 ```
 
 頁の判定を全件読み直し、訂正があれば作業dirに `overrides2.json` を作る。引用の判定には同じ訂正を渡す。
 
 ```bash
-mise exec -- python3 docs/prd/evaluation-search/trial/judge2.py quotes .cache/evaluation-search/run2 .cache/evaluation-search/run2/overrides2.json
-mise exec -- python3 docs/prd/evaluation-search/trial/score2.py .cache/evaluation-search/run2 .cache/evaluation-search/run2/overrides2.json
+mise exec -- python3 docs/prd/evaluation-search/trial/judge2.py quotes .cache/evaluation-search/run3 .cache/evaluation-search/run3/overrides2.json
+mise exec -- python3 docs/prd/evaluation-search/trial/score2.py .cache/evaluation-search/run3 .cache/evaluation-search/run3/overrides2.json
 mise exec -- python3 docs/prd/evaluation-search/trial/compare2.py .cache/evaluation-search/run2 --summarize
-mise exec -- python3 docs/prd/evaluation-search/trial/audit2.py .cache/evaluation-search/run2
+mise exec -- python3 docs/prd/evaluation-search/trial/audit2.py .cache/evaluation-search/run3
 ```
 
-訂正が無ければ `overrides2.json` の引数を省く。引用の取り違え全件と、無作為の30件を読み直してから確定する。中断中の採点は `score2.py --partial` で確認できる。
+訂正が無ければ `overrides2.json` の引数を省く。引用の取り違え全件と、無作為の30件を読み直してから確定する。中断中の採点は `score2.py --partial` で確認できる。旧実行の暫定値と読了状況を見直すときは、作業dirに `run2` を指定する。旧実行の残り44問だけを埋めても、固定した利用手順の測定は完了しない。
 
 問いの集合を作り直すときは、選定の `evaluation_selections` の選択した候補からPDFを取得して sha256 を照合し、作業dirの `pdf/<sha12>.pdf` に置く。`units.py` に北区・中野区本冊・別冊の3冊と出力dir `<作業dir>/trial` を渡して `units.json` を作り、Git にある `trial/` の固定入力を同じdirにコピーして `questions2.py <作業dir>/trial` を回す。`units.json` は原典から再生成し、Git に保存しない。`agent_run.py` は索引の chunk 一覧を取得するので、同じインスタンスが必要である。`compare2.py` は `--summarize` を省くと検索をやり直す。索引を作り直した場合は新しい作業dirで測り、それまでの観測と混ぜない。
 
