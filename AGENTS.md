@@ -178,11 +178,7 @@ uv sync
 bun run --cwd pipeline ingestion:check   # 取り込みの宣言・選定・fingerprint を検査
 ```
 
-依存は exact ピン留めで、更新するときは cooldown を明示する。
-
-```bash
-uv add --exclude-newer $(date -v-7d +%Y-%m-%d) <package>
-```
+依存は exact ピン留めにする。公開から7日未満の版は `bunfig.toml`（`minimumReleaseAge`）と root の `pyproject.toml`（`exclude-newer`）で解決から外す。
 
 ## 現在の優先範囲
 
@@ -203,6 +199,8 @@ uv add --exclude-newer $(date -v-7d +%Y-%m-%d) <package>
 - パイプラインの実装・script・技術スタック → `pipeline/AGENTS.md`。
 - パイプライン（取得・PDF抽出・staging・dbt）の手順 → `.agents/skills/pipeline/`
 - データ源の実測 → `docs/survey/`
+- 外部から取り込んだ skill → `.agents/skills/shadcn/`（`shadcn/ui` から skillctrl で取得。取得元と hash は `skills-lock.json`・`.agents/skillctrl/lock.json`）。他の `.agents/skills/` は repo で書いたもの。Claude Code へは `.claude/skills/` の相対 symlink で渡す
+- PR レビュー → Pullfrog。設定の正本は `.github/pullfrog.config.sh`（backend の値は git から見えないので、変えるときはこの script を直して実行する）。public repo なので追加コミットも自動で再レビューし（`review.re-review=true`）、`@pullfrog` で手動依頼もできる
 - 設計の記録 → `docs/prd/<topic>/prd.md`（要件）・`docs/prd/<topic>/design-doc.md`（設計書。同じ topic に併置）・`docs/adr/`（決定）。判断の記録はコードと同じ寿命を持ち、git 管理する
 
 歳出・歳入のドメインモデルとクラス図 → `docs/prd/fiscal-records/fiscal-domain-model.md`。取り込み表の保存設計 → `docs/prd/ingestion-storage/design-doc.md`。現行の実行手順 → `.agents/skills/pipeline/`。

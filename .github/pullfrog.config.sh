@@ -7,13 +7,13 @@
 # backend and are invisible to git — this script records and reapplies them.
 #
 # Apply:  .github/pullfrog.config.sh        (uses gh auth)
-# Audit:  npx -y pullfrog@0.1.82 config list --repo wwwyo/fudoki
+# Audit:  mise exec -- pullfrog config list --repo wwwyo/fudoki
 #
 # BYOK keys are org-scoped (OPENCODE_API_KEY inherited) — see `pf secret list`.
 set -euo pipefail
 
 REPO="wwwyo/fudoki"
-PF=(npx -y pullfrog@0.1.82)
+PF=(mise exec -- pullfrog)
 
 pf_set()   { "${PF[@]}" config set   "$1" "$2" --repo "$REPO" --yes; }
 pf_unset() { "${PF[@]}" config unset "$1"     --repo "$REPO" --yes; }
@@ -21,7 +21,7 @@ pf_unset() { "${PF[@]}" config unset "$1"     --repo "$REPO" --yes; }
 
 pf_set enabled 'true'
 pf_set model 'opencode-go/muse-spark-1.3-contributor'
-pf_set effort '1'
+pf_set effort '0.5' # Pullfrog's `high` alias（delegate skill の public repo 既定）
 pf_set progress-comments 'true'
 pf_set oss 'true'
 pf_set push 'enabled'

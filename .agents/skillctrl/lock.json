@@ -1,0 +1,22 @@
+{
+  "acceptedHashes": {},
+  "upstreams": {
+    "shadcn": {
+      "computedHash": "da388f632cd83783c02967446e21941c9ee8291ccb43ba74c23f7d4e9b7c298c",
+      "installedAt": "2026-10-13T05:31:11.819Z",
+      "native": {
+        "computedHash": "da388f632cd83783c02967446e21941c9ee8291ccb43ba74c23f7d4e9b7c298c",
+        "skillPath": "skills/shadcn/SKILL.md",
+        "source": "shadcn/ui",
+        "sourceType": "github"
+      },
+      "skillFolderHash": "58cbb5c7712d2f1ba359892c8c693d0efe96c829",
+      "skillPath": "skills/shadcn/SKILL.md",
+      "source": "shadcn/ui",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/shadcn/ui.git",
+      "updatedAt": "2026-10-13T05:31:11.819Z"
+    }
+  },
+  "version": 1
+}

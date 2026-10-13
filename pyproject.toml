@@ -1,2 +1,6 @@
 [tool.uv.workspace]
 members = ["pipeline"]
+
+[tool.uv]
+# 公開から7日経っていない版は解決しない（supply chain の cooldown）
+exclude-newer = "7 days"
