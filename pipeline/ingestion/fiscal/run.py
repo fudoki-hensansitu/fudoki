@@ -380,11 +380,16 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
             'rows': sum(r['row_count'] for t in tables for r in manifest.table_references(t).values()), 'candidate': str(candidate)}
 
 
+# Converters that build the node and amount tables themselves (no wide table): `tree_check` is their tree check.
+DIRECT_CONVERTERS = {'fiscal/layouts/generic_text/convert.py'}
+
+
 def verify_sums(document: dict, locate) -> list[dict]:
     """Tree checks of every PDF table; ``locate(table)`` gives its verified Parquet."""
     selection = manifest.selection_for(document)
     formats = {conversion['id']: {item['format'] for item in manifest.resolved_inputs(document, conversion, selection)}
                for conversion in document['conversions']}
+    converters = {conversion['id']: conversion['converter'] for conversion in document['conversions']}
     results = []
     for table in document['tables']:
         if formats[table['conversion_id']] == {'csv'}:
@@ -393,7 +398,10 @@ def verify_sums(document: dict, locate) -> list[dict]:
                             'counts': {}, 'checks': [], 'results': []})
             continue
         pair = locate(table)
-        checked = tree_check.check_tree(node_tables.read_rows(pair['nodes']), node_tables.read_rows(pair['amounts']), document['target']['document_kind'])
+        # Only a table a direct converter built is checked leniently (a parent whose children print nothing is
+        # not compared); a migrated wide table keeps the strict check that found its missing amounts.
+        check = tree_check.check_tree if converters[table['conversion_id']] in DIRECT_CONVERTERS else node_tables.check_tree
+        checked = check(node_tables.read_rows(pair['nodes']), node_tables.read_rows(pair['amounts']), document['target']['document_kind'])
         passed = (checked['passed'] and not table['unread_amount_count'] and not table['unresolved_parent_count'])
         results.append({'table_id': table['table_id'], 'status': MATCH if passed else MISMATCH,
                         'counts': checked['counts'], 'issues': checked['issues'], 'checks': [],

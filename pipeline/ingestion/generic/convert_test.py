@@ -104,10 +104,6 @@ class FrameWordsTest(unittest.TestCase):
         self.assertEqual([(w[0], w[2]) for w in words], [(1, '1'), (1, '款')])
 
 
-if __name__ == '__main__':
-    unittest.main()
-
-
 class HeadingTest(unittest.TestCase):
     def known(self):
         from ingestion.lib.node_tables import phase_dictionary
@@ -144,3 +140,7 @@ class HeadingTest(unittest.TestCase):
         # a summary page titled `歳入歳出…` is neither
         pages = [Page(8, 595, 842, [Word('歳入歳出決算事項別明細書', 156, 371, 400, 385)], [])]
         self.assertEqual(page_titles(pages), {8: None})
+
+
+if __name__ == '__main__':
+    unittest.main()
