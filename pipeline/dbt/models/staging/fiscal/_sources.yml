@@ -644,6 +644,22 @@ sources:
       direction: expenditure
       table_id: general-expenditure
       kind: nodes
+  - name: j132055_expenditure_settlement_1_amounts
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-1
+      kind: amounts
+  - name: j132055_expenditure_settlement_1_nodes
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-1
+      kind: nodes
   - name: j132063_kouki_setsu_amounts
     meta:
       jurisdiction: '132063'

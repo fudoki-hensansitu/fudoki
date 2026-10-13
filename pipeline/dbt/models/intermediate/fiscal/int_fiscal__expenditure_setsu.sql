@@ -6,10 +6,14 @@
 -- shifted up). A name that matches no legal label exactly is read as a name cut
 -- short at the foot of a page (`職員手当` for 職員手当等) when it is the beginning
 -- of exactly one legal label of that fiscal year (`setsu_match` = 'prefix');
--- several labels, or none, stop the build instead of going NULL. Non-節 axes
+-- several labels, or none, stop the build instead of going NULL. Last, a name OCR
+-- misread (`報價費`, `還金利子及び割引料`) resolves by its printed 節 number when the one
+-- legal setsu of that number and year is within 2 characters of the stripped name
+-- (`setsu_match` = 'code'): number and name must both agree, so neither a misread number
+-- nor a near name alone moves a row. The printed name stays as it is. Non-節 axes
 -- (備考・事業説明・CSV の科目など) are out of scope.
 with setsu_nodes as (
-    select node_id, document_kind, fiscal_year, name
+    select node_id, document_kind, fiscal_year, name, code
     from {{ ref('int_fiscal__settlement_expenditure_nodes') }}
     where axis = '節'
 ), stripped as (
@@ -27,15 +31,34 @@ with setsu_nodes as (
            and c.fiscal_year >= coalesce(m.valid_from_fiscal_year, -2147483648)
            and c.fiscal_year <= coalesce(m.valid_to_fiscal_year, 2147483647)) as expenditure_setsu_id
     from canonicalized c
-), resolved as (
-    select m.*, {{ fiscal_setsu_prefix_ids('m.norm_name', 'm.fiscal_year') }} as prefix_ids
+), by_code as (
+    -- The legal setsu sharing the printed number in that fiscal year, with the name distance.
+    select m.node_id, l.expenditure_setsu_id,
+        {{ fiscal_char_distance(fiscal_setsu_strip('l.label'), 'm.norm_name') }} as distance
     from matched m
+    join {{ ref('setsu_master') }} l
+      on try_cast(l.code as integer) = try_cast(m.code as integer)
+     and m.fiscal_year >= coalesce(l.valid_from_fiscal_year, -2147483648)
+     and m.fiscal_year <= coalesce(l.valid_to_fiscal_year, 2147483647)
+    where m.expenditure_setsu_id is null
+), code_match as (
+    select node_id, count(*) as code_count,
+        list(expenditure_setsu_id) filter (where distance <= 2) as code_ids
+    from by_code group by node_id
+), resolved as (
+    select m.*, {{ fiscal_setsu_prefix_ids('m.norm_name', 'm.fiscal_year') }} as prefix_ids,
+        c.code_ids, c.code_count
+    from matched m
+    left join code_match c using (node_id)
 )
 select node_id, document_kind,
     case when expenditure_setsu_id is not null then expenditure_setsu_id
          when len(prefix_ids) = 1 then prefix_ids[1]
          when len(prefix_ids) > 1
          then error('Ambiguous setsu name (several legal setsu begin with it): ' || name)
+         when code_count = 1 and len(code_ids) = 1 then code_ids[1]
          else error('Unknown setsu name (no legal setsu matches): ' || name) end as expenditure_setsu_id,
-    case when expenditure_setsu_id is not null then 'exact' else 'prefix' end as setsu_match
+    case when expenditure_setsu_id is not null then 'exact'
+         when len(prefix_ids) = 1 then 'prefix'
+         else 'code' end as setsu_match
 from resolved
