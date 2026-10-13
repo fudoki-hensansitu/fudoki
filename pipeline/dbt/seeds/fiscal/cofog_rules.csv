@@ -210,3 +210,38 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 974,kind-fallback-parking,,,駐車場,,,,,,,assigned,04.5,retained,目,,駐車場の整備・運営の事業会計は UN COFOG 04.5 運輸。償還・積立・繰出など行き先が違う目は先の規則が取る。,false
 975,kind-fallback-sewer,,,下水道,,,,,,,assigned,05.2,retained,目,,下水道事業の会計は UN COFOG 05.2 排水管理。償還・積立・繰出など行き先が違う目は先の規則が取る。,false
 976,kind-fallback-kaigo-service,,,介護サービス事業,,,,,,,assigned,10.2,retained,目,,介護サービス事業の会計は長期介護の社会保障であり COFOG 10.2 高齢。償還・積立・繰出など行き先が違う目は先の規則が取る。,false
+1000,vocab-disaster-public-facility,,一般会計,,災害復旧費,,,公共施設|公用施設,contains,,unclassifiable,,retained,目,,「その他公共施設・公用施設」の災害復旧は施設の機能を名称から分けられない。既存の公共施設災害復旧費（unclassifiable）に合わせる。,false
+1001,vocab-disaster-welfare-facility,,一般会計,,災害復旧費,,,民生施設,contains,,assigned,10,retained,目,,民生施設（社会福祉施設）の災害復旧を社会保護に分類する。,false
+1002,vocab-disaster-sanitation-facility,,一般会計,,災害復旧費,,,衛生施設,contains,,assigned,07,retained,目,,衛生施設（保健・環境衛生施設）の災害復旧を保健に置く。清掃施設なら 05.1 廃棄物管理との境界のため暫定とする。,true
+1003,vocab-agri-fishery-name,,一般会計,,,,,農林水産,contains,,assigned,04.2,retained,目,,農林水産を名に持つ目（災害復旧を含む）を農業・林業・漁業に分類する。,false
+1004,vocab-fund-contribution,,一般会計,,諸支出金,,,基金費,contains,,out-of-scope,,retained,目,,諸支出金の基金費は基金への積立で金融資産への振替として対象外とする。積立金の規則（keyword-fund-accumulation）に合わせる。,false
+1005,vocab-development-corporation,,一般会計,,,,,開発公社,contains,,unclassifiable,,retained,目,,開発公社への出資・補助は行き先の事業の機能を名称から分けられない。,false
+1006,vocab-property-acquisition,,一般会計,,諸支出金,普通財産取得費,,,eq,,assigned,01.3.3,retained,目,,諸支出金の普通財産取得費（項）に属する目を財産管理（01.3.3 その他一般サービス）に置く。取得した土地の用途で機能が変わる境界のため暫定とする。,true
+1007,vocab-transfer-recipient-unknown,,一般会計,,,,,特別会計繰出金,eq,,unclassifiable,,retained,目,,受け手が「特別会計」とだけ印字された繰出金は受け手の機能を特定できない（account_kind_map の recipient「不明」）。,false
+1008,vocab-hospital,,一般会計,,,,,病院,contains,,assigned,07,retained,目,,病院事業・病院への繰出を保健に分類する（07.3 病院サービスだが、マスタに 07.3 を収録していないため 07 止まり）。,false
+1009,vocab-holiday-clinic,,一般会計,,,,,休日診療|急患|夜間診療,contains,,assigned,07.2,retained,目,,休日・夜間の診療を 07.2 外来サービスに分類する。診療所の規則（keyword-clinic）と同じ。名称からの判断のため暫定とする。,true
+1010,vocab-health-promotion,,一般会計,,,,,健康増進,contains,,assigned,07,retained,目,,健康増進（健康推進と同じ事業）を保健に分類する。,false
+1011,vocab-animal-registration,,一般会計,,,,,犬登録|狂犬病,contains,,assigned,07.4,retained,目,,犬の登録・狂犬病予防を 07.4 公衆衛生サービスに分類する。動物管理として 05 環境保護との境界のため暫定とする。,true
+1012,vocab-slaughterhouse,,一般会計,,,,,と畜,contains,,assigned,07.4,retained,目,,と畜場の管理を食肉衛生として 07.4 公衆衛生サービスに分類する。産業施設として 04.2 との境界のため暫定とする。,true
+1013,vocab-hot-spring,,一般会計,,,,,温泉,contains,,assigned,08.1,retained,目,,温泉施設の管理を保養・入浴の娯楽施設として 08.1 に分類する。観光（04.7）・公衆浴場（保健）との境界のため暫定とする。,true
+1014,vocab-waste-collection,,一般会計,,,,,じんかい|じん芥|じんあい,contains,,assigned,05.1,retained,目,,じんかい（じん芥）の処理を廃棄物管理に分類する。既存の塵芥・ごみの規則の別の表記。,false
+1015,vocab-beautification,,一般会計,,,,,美化,contains,,assigned,05.1,retained,目,,環境美化（ポイ捨て防止・清掃活動）を 05.1 廃棄物管理（街路清掃を含む）に置く。名称からの判断のため暫定とする。,true
+1016,vocab-septic-tank,,一般会計,,,,,浄化槽,contains,,assigned,05.2,retained,目,,浄化槽（合併処理を含む）を排水管理に分類する。,false
+1017,vocab-simple-waterworks,,一般会計,,,,,簡易水道,contains,,assigned,06,retained,目,,簡易水道を水道供給に分類する（06.3 水道供給だが、マスタに 06.3 を収録していないため 06 止まり）。,false
+1018,vocab-harbour,,一般会計,,,,,港湾,contains,,assigned,04.5,retained,目,,港湾の管理を水運に分類する（04.5.2 水運だが、マスタに未収録のため 04.5 止まり）。,false
+1019,vocab-public-transport,,一般会計,,,,,公共交通,contains,,assigned,04.5,retained,目,,公共交通（コミュニティバス・運行補助）を運輸に置く。交通総務の規則（vocab-transport-admin）と同じ。名称からの判断のため暫定とする。,true
+1020,vocab-preschool-aid,,一般会計,,,,,幼児教育援助|就園奨励,contains,,assigned,09.1,retained,目,,幼児教育の就園援助を 09.1 就学前教育に置く。保護者への補助のため教育段階との対応が境界で暫定とする。,true
+1021,vocab-education-aid,,一般会計,,,,,教育援助|就学援助,contains,,assigned,09,retained,目,,就学の援助（学用品・給食費の補助）を教育に置く。段階を特定できないため 09 止まりで暫定とする（奨学の規則と同じ）。,true
+1022,vocab-archive-museum,,一般会計,,,,,資料館|資料室|民俗,contains,,assigned,08.2,retained,目,,資料館・資料室・民俗資料を文化サービスに分類する（博物館の規則と同じ）。,false
+1023,vocab-hall,,一般会計,,,,,ホール,contains,,assigned,08.2,retained,目,,ホールの運営を文化サービスに置く。集会・貸館の施設として 01.3 や 06.2 との境界があるため暫定とする。,true
+1024,vocab-wildlife-damage,,一般会計,,,,,鳥獣,contains,,assigned,04.2,retained,目,,鳥獣害の対策を農作物被害の防止として 04.2 に置く。野生生物の保護として 05.4 との境界のため暫定とする。,true
+1025,vocab-cadastral-survey,,一般会計,,,,,地籍,contains,,assigned,04.2,retained,目,,地籍調査を農林行政の枠（農地・山林の調査）として 04.2 に置く。土地登記の整備として 01 との境界のため暫定とする。,true
+1026,fallback-kou-primary,,一般会計,,,小学校費|幼稚園費,,,eq,,assigned,09.1,retained,目,,小学校費・幼稚園費の項に属し語の規則に当たらない目を就学前・初等教育に分類する。,false
+1027,fallback-kou-secondary,,一般会計,,,中学校費,,,eq,,assigned,09.2,retained,目,,中学校費の項に属し語の規則に当たらない目を中等教育に分類する。,false
+1028,fallback-kou-education-admin,,一般会計,,,教育総務費,,,eq,,assigned,09.8,retained,目,,教育総務費の項に属し語の規則に当たらない目を教育管理に分類する。,false
+1029,fallback-kou-social-education,,一般会計,,,社会教育費,,,eq,,assigned,09.5,retained,目,,社会教育費の項に属し語の規則に当たらない目を 09.5 に置く。施設の運営は文化（08.2）・スポーツ（08.1）との境界のため暫定とする。,true
+1030,fallback-kou-health-sports,,一般会計,,,保健体育費,,,eq,,assigned,08.1,retained,目,,保健体育費の項に属し語の規則に当たらない目を 08.1 スポーツに置く。学校の保健・給食は先の規則が取る。学校の体育として 09 との境界のため暫定とする。,true
+1031,fallback-kou-urban-planning,,一般会計,,,都市計画費,,,eq,,assigned,06.2,retained,目,,都市計画費の項に属し語の規則に当たらない目を地域開発に置く（akishima-toshikeikaku-other と同じ）。緑地・公園・街路の整備なら 08.1・04.5.1 との境界のため暫定とする。,true
+1032,fallback-kou-public-works-admin,,一般会計,,,土木管理費,,,eq,,assigned,04.5,retained,目,,土木管理費の項に属し語の規則に当たらない目を運輸に置く（doboku-kanri と同じ）。用地・管理の対象施設で機能が変わるため暫定とする。,true
+1033,fallback-kou-river,,一般会計,,,河川費,,,eq,,unclassifiable,,retained,目,,河川費の項に属し語の規則に当たらない目を分類不能とする（河川の規則 keyword-river-uncertain と同じ。治水・親水・環境が混じる）。,false
+1034,fallback-kan-agri-forest-fishery,,一般会計,,農林水産業費|農林業費,,,,eq,,assigned,04.2,retained,目,,農林水産業・農林業の款に属し語の規則に当たらない目を農業・林業・漁業に分類する。,false
