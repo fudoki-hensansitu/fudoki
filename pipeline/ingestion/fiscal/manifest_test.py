@@ -263,7 +263,9 @@ class ManifestWorkflowTest(unittest.TestCase):
                 ('def check(path):\n    path.write_text("x")\n', 'write_text'),
                 ('def check(path):\n    open(path, "w")\n', 'for writing'),
                 ('def check(path):\n    open(path, mode="a")\n', 'for writing'),
-                ('def check(con):\n    con.execute("copy t to \'x.parquet\' (format parquet)")\n', 'Parquet')):
+                ('def check(con):\n    con.execute("copy t to \'x.parquet\' (format parquet)")\n', 'Parquet'),
+                ('def check(con, path):\n    con.execute(f"copy t to \'{path}\' (format parquet)")\n', 'Parquet'),
+                ('import shutil\ndef check(a, b):\n    shutil.move(a, b)\n', 'move')):
             with self.subTest(reason=reason):
                 (self.code/'lib/tree_checks.py').write_text(source)
                 with self.assertRaisesRegex(ValueError, f'tree_checks.py must not produce tables.*{reason}'):

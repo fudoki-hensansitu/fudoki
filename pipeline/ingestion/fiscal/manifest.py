@@ -77,11 +77,18 @@ FINGERPRINT_EXCLUDED = frozenset({'fiscal/manifest.py'})
 # refuses a ``*_checks.py`` that writes when a converter imports it (standalone scripts that no
 # converter imports are not constrained). A stricter check no longer shows up as a stale fingerprint:
 # run ``ingestion:verify`` against the saved tables instead (ADR 0027).
+# A check module's own imports are not walked: code reachable only through it cannot shape a table,
+# because a converter may use the module for verdicts only. Anything a converter also imports
+# directly is still fingerprinted by that other path.
 CHECK_MODULE_SUFFIX = '_checks.py'
-# Calls that write or remove files; a check module may read tables, never produce them.
+# Calls that write or remove files; a check module may read tables, never produce them. This is a
+# heuristic over representative calls, not a proof: it catches the usual ways of writing a table by
+# accident, and the contract (verdicts only) is what the ADR relies on.
 CHECK_FORBIDDEN_CALLS = frozenset({
     'write_parquet', 'write_tables', 'write_conversion', 'write_text', 'write_bytes', 'write', 'writelines',
-    'to_parquet', 'dump', 'mkdir', 'unlink', 'rmtree', 'copyfile', 'copy2', 'copytree', 'rename'})
+    'write_table', 'to_parquet', 'dump', 'mkdir', 'makedirs', 'touch', 'unlink', 'rmtree', 'move',
+    'copyfile', 'copy2', 'copytree', 'rename'})
+COPY_TO_PARQUET = re.compile(r'(?is)\bcopy\b.*\bto\b.*\bformat\s+parquet\b')
 
 
 def is_check_module(relative: str) -> bool:
@@ -104,9 +111,12 @@ def check_module_violations(path: Path) -> list[str]:
                     (item.value for item in node.keywords if item.arg == 'mode'), None)
                 if isinstance(mode, ast.Constant) and isinstance(mode.value, str) and set(mode.value) & set('wax+'):
                     found.append('opens a file for writing')
-        elif (isinstance(node, ast.Constant) and isinstance(node.value, str)
-              and re.search(r'(?is)\bcopy\b.*\bto\b.*\bformat\s+parquet\b', node.value)):
-            found.append('copies a table to Parquet')
+        elif isinstance(node, (ast.Constant, ast.JoinedStr)):
+            text = (node.value if isinstance(node, ast.Constant) and isinstance(node.value, str)
+                    else ''.join(part.value if isinstance(part, ast.Constant) else '{}' for part in node.values)
+                    if isinstance(node, ast.JoinedStr) else '')
+            if COPY_TO_PARQUET.search(text):
+                found.append('copies a table to Parquet')
     return sorted(set(found))
 
 

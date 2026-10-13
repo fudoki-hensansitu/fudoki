@@ -143,7 +143,7 @@ def compare_table(saved: dict, candidate: dict, saved_paths: dict, candidate_pat
         diff['receipt'] = receipt
     content = {}
     for kind in kinds:
-        new = candidate_paths[kind] if 'nodes' in candidate else candidate_paths
+        new = candidate_paths[kind] if isinstance(candidate_paths, dict) else candidate_paths
         found = compare_parquet(saved_paths[kind], new)
         if not found['same']:
             content[kind or 'table'] = found
