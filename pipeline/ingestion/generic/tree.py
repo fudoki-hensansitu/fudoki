@@ -557,28 +557,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
             item.amounts.append((header, run))
         _measure(item, label, code)
         result.append(item)
-    return _join_remarks(result)
-
-
-# A remark that is one bracket from its first word to its last (`（同款、同項、…福祉用具購入費、…へ流用` /
-# `△102,000）`), whose lines the name wrapping joined into one codeless name.
-WHOLE_REMARK = re.compile(r'(?:[(（][^()（）]*[)）])+')
-
-
-def _join_remarks(items_: list[Item]) -> list[Item]:
-    """A bracketed remark of several lines that prints an amount of its own belongs to the item above, as the
-    one-line remark does (`items`: "a parenthesised remark on the previous item, not an amount of it"). Left a
-    codeless note, its amount would be dropped with it. A remark with no amount keeps being a note."""
-    joined: list[Item] = []
-    for item in items_:
-        previous = joined[-1] if joined else None
-        if (previous is not None and item.code is None and not item.amounts and not item.decided
-                and len(item.lines) > 1 and WHOLE_REMARK.fullmatch(item.name) and GROUPED.search(item.name)):
-            previous.lines += item.lines
-            previous.name += item.name
-            continue
-        joined.append(item)
-    return joined
+    return result
 
 
 def closes_parts(entries: list[tuple], index: int, previous: Item) -> bool:
