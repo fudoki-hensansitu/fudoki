@@ -290,12 +290,7 @@ FUNDING_HEADINGS = {'その他', '一般会計繰入金', '一般財源', '国�
 
 
 def is_amount_kind(label: str) -> bool:
-    """A printed amount kind (支出済額・繰越明許費・不用額…) rather than an item name.
-
-    A total word alone (`計`, 132055's 備考 ends each 目 with `計 449,855,116`) is a total row, though the
-    dictionary knows `予算現額／計`: read as an amount kind it hung the 目's total on the item above."""
-    if TOTAL.fullmatch(label):
-        return False
+    """A printed amount kind (支出済額・繰越明許費・不用額…) rather than an item name."""
     known = {header for _, header in phase_dictionary()} - FUNDING_HEADINGS
     return label in known or re.fullmatch(r'(翌年度)?(繰越明許費?|事故繰越し?|継続費逓次繰越|不用額|本年度支出額|支出済額)', label) is not None
 
@@ -388,21 +383,15 @@ def line_limits(logicals: list[Logical]) -> dict[str, float]:
                 # at the cell's right edge, and no wrapped line would ever reach it.
                 if label and not UNIT_CELL.match(normalize(text(label))):
                     ends[group.axis].append(max(g.x1 for g in label))
-    # OCR only: the limit is reached by many long names, and a few lines running past it are misreads (an
-    # amount read into the label, `4,26L400`, 132101), so it is the rightmost end that enough lines reach.
-    # Printed text keeps the longest line (a text table with few long names would wrap too much, 132021).
-    ocr = any(logical.ocr for logical in logicals)
-    limit: dict[str, float] = {}
-    for axis, values in ends.items():
-        values.sort()
-        enough = max(3, len(values) // 200) if ocr else 1
-        reached = [v for i, v in enumerate(values) if i + 1 >= enough and v - values[i + 1 - enough] <= 3]
-        limit[axis] = reached[-1] if reached else values[-1]
-    return limit
+    # Printed text: the longest line. OCR: `scan.dense_limit`, past a few misread lines (132101).
+    if any(logical.ocr for logical in logicals):
+        from ingestion.generic.scan import dense_limit
+        return {axis: dense_limit(values) for axis, values in ends.items()}
+    return {axis: max(values) for axis, values in ends.items()}
 
 
 def items(group: Group, header: str, margins: set[int] | None = None,
-          roles: dict[int, str] | None = None, limit: float | None = None) -> list[Item]:
+          roles: dict[int, str] | None = None, limit: float | None = None, ocr: bool = False) -> list[Item]:
     """Lines of a label group into items; amounts printed inside the group stay on their item.
 
     `roles` (variant B) replaces the geometric decisions for codeless lines.
@@ -523,7 +512,11 @@ def items(group: Group, header: str, margins: set[int] | None = None,
             previous.name += whole  # a parenthesised remark on the previous item, not an amount of it
             continue
         label_text = normalize(text(label))
-        if previous is not None and code is None and money and is_amount_kind(label_text):
+        # OCR: `scan.total_row` (a lone `計` closing a 備考 is a total, 132055); printed text keeps it a kind.
+        if ocr:
+            from ingestion.generic.scan import total_row
+        total_row_here = ocr and total_row(label_text)
+        if previous is not None and code is None and money and is_amount_kind(label_text) and not total_row_here:
             for run in money:  # `繰越明許費 302,000`: an amount kind of the item above
                 previous.amounts.append((f'{header}／{label_text}', run))
                 previous.kinds.append((label, run, f'{header}／{label_text}'))
@@ -1086,11 +1079,8 @@ def repeats(previous: Item, item: Item, ocr: bool = False) -> bool:
         return True
     if not ocr:
         return False
-    from ingestion.generic.scan import near_code
-    # A one-character "name" beside the codes is an OCR scrap (`10 -`, `2 コ`, 132101), not a name.
-    if len(normalize(item.name or '')) < 2:
-        return near_code(previous.code, item.code)
-    return len(normalize(item.name)) >= 3 and same_heading(previous.name, item.name)
+    from ingestion.generic.scan import misread_repeat
+    return misread_repeat(previous.code, previous.name, item.code, item.name)
 
 
 def stacked_columns(logicals: list[Logical]) -> set[str]:
@@ -1193,7 +1183,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             if judge is not None and not group.subject:
                 roles = judged_roles(judge, group, margins.get(group.axis))
             if not group.subject:
-                group_items = items(group, header, margins.get(group.axis), roles, limits.get(group.axis))
+                group_items = items(group, header, margins.get(group.axis), roles, limits.get(group.axis), logical.ocr)
             elif group.mode == 'indent':
                 group_items = items(group, group.axis)
                 for item in group_items:

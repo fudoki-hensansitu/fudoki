@@ -174,3 +174,35 @@ def near_code(first: str | None, second: str | None) -> bool:
         return True
     a, b = sorted((first.lstrip('0') or '0', second.lstrip('0') or '0'), key=len)
     return len(b) - len(a) == 1 and (b.startswith(a) or b.endswith(a))
+
+
+def misread_repeat(previous_code: str | None, previous_name: str, code: str | None, name: str) -> bool:
+    """A subject line OCR misread that still repeats the open heading of its level on a continuation page.
+
+    Codes only (`10 2 3` at the top of a page, or with a one-character scrap beside them, `10 -`, 132101):
+    a near code (`near_code`). With a name of three characters or more: the names agree to one character,
+    whatever the code reads (`13 小学校特別支援教育費` for `3`, 132055)."""
+    from ingestion.generic.layout import normalize
+    from ingestion.generic.tree import same_heading
+    if len(normalize(name or '')) < 2:
+        return near_code(previous_code, code)
+    return len(normalize(name)) >= 3 and same_heading(previous_name, name)
+
+
+def dense_limit(values: list[float]) -> float:
+    """The right limit of a breakdown's names under OCR: the rightmost end that enough lines reach.
+
+    Many long names reach the limit; a few lines run past it because OCR read an amount into the label
+    (`度任用職員報酬2人4,26L400`, 132101). Printed text uses the longest line (`tree.line_limits`)."""
+    values = sorted(values)
+    enough = max(3, len(values) // 200)
+    reached = [v for i, v in enumerate(values) if i + 1 >= enough and v - values[i + 1 - enough] <= 3]
+    return reached[-1] if reached else values[-1]
+
+
+def total_row(label: str) -> bool:
+    """A total word alone on a line under OCR (`計 449,855,116` closing a 備考, 132055): a total row, though
+    the shared dictionary knows `予算現額／計` as an amount kind. Printed text stacks `補正予算額` / `計` as
+    kinds in one cell (132063), so this stays with OCR."""
+    from ingestion.generic.tree import TOTAL
+    return TOTAL.fullmatch(label) is not None
