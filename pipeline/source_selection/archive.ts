@@ -177,13 +177,14 @@ async function runCf(args: string[], allowMissing = false, capture = false): Pro
  * 原典の取得に送る User-Agent。UA の無いリクエスト（または既知のツール UA）を CDN が 403 で弾き、
  * 返ったエラーページを原典として読ませることがある（CloudFront の Browser Integrity Check など）。
  * 取得元は自治体の公開資料なので、ブラウザ相当の UA を明示して弾かれないようにする。
+ * UA はブラウザの版に依存するので、古い UA 自体が弾かれるようになったら最新へ見直す。
  */
 export const ORIGIN_USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
 
 /** 原典を取得し、バイト列と最終 URL を返す。HTTP エラーと上限はここで止める。 */
 export async function downloadOriginal(url: string, request: typeof fetch = fetch): Promise<{ body: Uint8Array; final_url: string }> {
   const response = await request(url, { headers: { 'User-Agent': ORIGIN_USER_AGENT }, signal: AbortSignal.timeout(120_000) })
-  if (!response.ok || !response.body) throw new Error(`Original download failed (HTTP ${response.status})`)
+  if (!response.ok || !response.body) throw new Error(`Original download failed (HTTP ${response.status}): ${url}`)
   const reader = response.body.getReader()
   const chunks: Uint8Array[] = []
   let size = 0
