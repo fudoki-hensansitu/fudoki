@@ -15,7 +15,9 @@ import subprocess
 import xml.etree.ElementTree as ET
 
 from ingestion.lib.conversion import ConversionContext, write_conversion
-from ingestion.lib.node_tables import AMOUNT_POSITION_SUFFIXES, amount_position_fields, write_coverage_words
+from ingestion.lib.annotations import remark_prose_lines
+from ingestion.lib.node_tables import (AMOUNT_POSITION_SUFFIXES, amount_position_fields, coverage_regions,
+                                        write_coverage_words)
 from ingestion.lib.parquet import ParquetColumn
 
 ACCOUNT = '後期高齢者医療会計'
@@ -38,6 +40,8 @@ KAN_NAME_X = (40, 66)
 KOU_NAME_X = (60, 80)
 MOKU_NAME_X = (88, 150)
 NOTE_LEFT = 925
+UCHIWAKE_REASON = ('備考欄の経費内訳（□事業・○経費・積算）は原文のまま目_備考へ保持し、'
+                   '節との対応が未確認のため行化しない。注記の語を含む行以降は範囲に含めない。')
 BODY_TOP, BODY_BOTTOM = 150, 770
 AMOUNT = re.compile(r'△?(?:[0-9]{1,3}(?:,[0-9]{3})*|[0-9]+)')
 SETSU_SPLIT = re.compile(r'([0-9]+)(.+)')
@@ -286,6 +290,7 @@ def detail(pages):
             for member in members:
                 member['名称'] = next(iter(names))
     rows = []
+    retained = []
     for moku in moku_list:
         end = level_end(moku['物理頁'], moku['上端'], events, ('款', '項', '目'))
         limit = end if end[0] == moku['物理頁'] else (moku['物理頁'], BODY_BOTTOM + 1)
@@ -299,6 +304,11 @@ def detail(pages):
                                 '物理頁': moku['物理頁'], '上端': moku['上端'], '下端': moku['下端'],
                                 '左端': moku.get('左端'), '右端': moku.get('右端')})]
         note = note_of(pages, moku['物理頁'], moku['上端'], limit)
+        # The note is kept verbatim in 目_備考 and never becomes rows; its
+        # prose words (no annotation keyword) are a non-adopted breakdown.
+        retained.extend(word for line in remark_prose_lines(
+            [[(moku['物理頁'], (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text']) for w in line]
+             for line in note_lines(pages, moku['物理頁'], moku['上端'], limit)]) for word in line)
         for _, values in children:
             row = {}
             for level in ('款', '項', '目'):
@@ -332,10 +342,11 @@ def detail(pages):
     total = {'物理頁': total_page, '上端': total_y, **total,
              '翌年度繰越額_内訳': carry}
     observed = [{k: v for k, v in record.items() if k != 'ref'} for record in parents]
-    return rows, observed, total
+    return rows, observed, total, retained
 
 
-def note_of(pages, page, y, limit):
+def note_lines(pages, page, y, limit):
+    """Printed lines (words left to right) of the 目's 備考 cell, top to bottom."""
     words = words_of(pages, page)
     lines = {}
     for w in words:
@@ -344,8 +355,11 @@ def note_of(pages, page, y, limit):
         if not (y - 1.2 <= w['yMin'] < limit[1] - 1.2):
             continue
         lines.setdefault(round(w['yMin'], 1), []).append(w)
-    textual = [''.join(w['text'] for w in sorted(lines[key], key=lambda w: w['xMin']))
-               for key in sorted(lines)]
+    return [sorted(lines[key], key=lambda w: w['xMin']) for key in sorted(lines)]
+
+
+def note_of(pages, page, y, limit):
+    textual = [''.join(w['text'] for w in line) for line in note_lines(pages, page, y, limit)]
     return '\n'.join(textual) or None
 
 
@@ -395,7 +409,7 @@ def convert(inputs, destination, options):
     for index, (first, last) in enumerate(options['detail_pages']):
         pages.extend(observe(source['path'], first, last,
                              observations / f'detail-{index}-bbox.xml'))
-    rows, parents, total = detail(pages)
+    rows, parents, total, retained = detail(pages)
     if not rows:
         raise ValueError('Configured detail scope has no leaf rows')
     (observations / 'parents.json').write_text(
@@ -411,5 +425,6 @@ def convert(inputs, destination, options):
                          [(page, (w['xMin'], w['yMin'], w['xMax'], w['yMax']), w['text'])
                           for page, words in pages for w in words
                           if BODY_TOP < w['yMin'] < BODY_BOTTOM],
-                         amount_columns=AMOUNT_COLUMNS)
+                         amount_columns=AMOUNT_COLUMNS,
+                         excluded_regions=coverage_regions(retained, kind='経費内訳', reason=UCHIWAKE_REASON))
     return {table_id: {'path': Path(result.path), 'metadata': metadata(rows)}}
