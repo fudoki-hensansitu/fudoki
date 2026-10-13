@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto'
 import { expect, test } from 'bun:test'
-import { archiveGroup, archiveSelected, isMissingR2ObjectError, planArchives, planFiles, isArchived, type ArchiveTransport } from './archive'
+import { archiveGroup, archiveSelected, downloadOriginal, isMissingR2ObjectError, ORIGIN_USER_AGENT, planArchives, planFiles, isArchived, type ArchiveTransport } from './archive'
 import { sourceSelectionsSchema, type SourceFile, type SourceSelection } from './schema'
 import { originObjectKey } from './storage'
 
@@ -28,6 +28,18 @@ function transport(previous: string[] = []) {
 test('missing-object cleanup ignores only genuine key-not-found errors', () => {
   for (const error of ['[10007] The specified key does not exist.', 'HTTP status 404', 'NoSuchKey']) expect(isMissingR2ObjectError(error)).toBe(true)
   for (const error of ['HTTP 403', '[10007] Permission denied.', '[10000] The specified key does not exist.', 'Network timeout']) expect(isMissingR2ObjectError(error)).toBe(false)
+})
+
+test('origin downloads send a browser User-Agent and reject non-2xx responses', async () => {
+  const payload = new TextEncoder().encode('pdf bytes')
+  const seen: (RequestInit | undefined)[] = []
+  const fakeFetch = (async (_url: string, init?: RequestInit) => { seen.push(init); return new Response(payload, { status: 200 }) }) as unknown as typeof fetch
+  const result = await downloadOriginal('https://example.com/a.pdf', fakeFetch)
+  expect((seen[0]!.headers as Record<string, string>)['User-Agent']).toBe(ORIGIN_USER_AGENT)
+  expect(ORIGIN_USER_AGENT.startsWith('Mozilla/5.0')).toBe(true)
+  expect(result.body).toEqual(payload)
+  const forbidden = (async () => new Response('nope', { status: 403 })) as unknown as typeof fetch
+  await expect(downloadOriginal('https://example.com/a.pdf', forbidden)).rejects.toThrow('HTTP 403')
 })
 
 test('unselected targets cause no transfer and uploaded receipts are trusted without readback', async () => {

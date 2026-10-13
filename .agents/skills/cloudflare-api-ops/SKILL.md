@@ -13,6 +13,7 @@ user-invocable: false
 | やること | 読む reference |
 | --- | --- |
 | 公開直後に特定クライアントだけ 403 になる | [references/cloudflare-zone.md](references/cloudflare-zone.md) |
+| `cf deploy` が 504 で止まる・`cf dev` の local D1 を見たい | [references/deploy.md](references/deploy.md) |
 
 ## 関連 skill
 
