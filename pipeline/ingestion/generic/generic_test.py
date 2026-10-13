@@ -845,3 +845,67 @@ class LevelAndWrapRulesTest(unittest.TestCase):
         self.assertAlmostEqual(line_limits([Logical([1], [band], '円', [], ocr=True)])['備考'], 780, places=0)
         # Printed text keeps its longest line as the limit; only the lone unit is left out.
         self.assertAlmostEqual(line_limits([Logical([1], [band], '円', [])])['備考'], 830, places=0)
+
+
+class BreakdownRulesTest(unittest.TestCase):
+    """Rules found by connecting the builder to seven more text PDFs (港区・町田・東村山・武蔵野・府中・日野・清瀬)."""
+
+    def band(self, words, x0=0, x1=600, header=('備考',)):
+        band = Band(x0, x1, 1, header, [], 100, 700)
+        band.words = words
+        return band
+
+    def found(self, words, x0=250, x1=590, margins=None, limit=None):
+        from ingestion.generic.tree import items
+        return items(Group([self.band(words, x0, x1)], '備考', False), '備考', margins, None, limit)
+
+    def test_a_name_without_a_letter_is_an_account_code_and_its_transfer_words_below_are_one_note(self):
+        from ingestion.generic.tree import is_account_code
+        self.assertTrue(is_account_code('・020601【010261】'))
+        self.assertFalse(is_account_code('役務費'))
+        self.assertFalse(is_account_code('）'))  # the last character of a wrapped name, printed with its amount
+        found = self.found([glyph('・020601【010261】', 300, 100, 100), glyph('△28,800', 520, 100, 40),
+                            glyph('020000へ予算流用減', 300, 112, 100)])
+        self.assertEqual([(i.name, [''.join(g.text for g in r) for _, r in i.amounts]) for i in found],
+                         [('・020601【010261】020000へ予算流用減', ['△28,800'])])
+
+    def test_a_carry_over_tag_printed_after_an_amount_leaves_the_amount_the_last_run_of_the_line(self):
+        label, money = _split_line([glyph('通信運搬費', 300, 100, 45), glyph('597,301', 450, 100, 35),
+                                    glyph('一部繰越明許', 500, 100, 60)])
+        self.assertEqual(''.join(g.text for run in money for g in run), '597,301')
+        self.assertEqual(''.join(g.text for g in label), '通信運搬費')
+
+    def test_lines_that_add_up_to_a_note_are_its_parts_and_a_single_equal_line_is_not(self):
+        from ingestion.generic.tree import note_breakdown
+        group = Group([self.band([])], '備考', False)
+
+        def item(name, value, role='node'):
+            i = Item(group, 1, [[glyph(name, 300, 100, 60)]], None, name, 300, role=role)
+            i.amounts.append(('備考', [glyph(value, 520, 100, 40)]))
+            return i
+        note = item('繰越事業費不用額', '308,157,706', 'annotation')
+        parts = [item('役務費', '3,897,706'), item('負担金、補助及び交付金', '304,260,000')]
+        note_breakdown([note, *parts])
+        self.assertEqual([p.role for p in parts], ['annotation', 'annotation'])
+        self.assertEqual({p.hint for p in parts}, {'不用額'})
+        single = [item('繰越事業費不用額', '100', 'annotation'), item('委託料', '100')]
+        note_breakdown(single)
+        self.assertEqual(single[1].role, 'node')
+
+    def test_item_numbers_are_the_numbers_alone_and_a_bracketed_code_is_no_amount(self):
+        from ingestion.generic.convert import BRACKET_CODE, ITEM_NUMBER
+        self.assertEqual([ITEM_NUMBER.sub(r'\1', s) for s in ('1.', '1.職員人件費', '（１）消耗品費', '2.5倍')],
+                         ['1', '1職員人件費', '１消耗品費', '2.5倍'])
+        self.assertTrue(BRACKET_CODE.fullmatch('【010111】'))
+        self.assertIsNone(BRACKET_CODE.fullmatch('【人事課】'))
+
+
+class HeaderCharactersTest(unittest.TestCase):
+    def test_a_heading_printed_a_character_or_two_to_a_line_is_the_heading_its_characters_make(self):
+        from ingestion.generic.headers import canonical
+        known = {'不用額', '予算現額／補正予算額', '翌年度繰越額', '繰越明許費', '継続費逓次繰越', '節／金額'}
+        self.assertEqual(canonical('不額／用', None, known), '不用額')
+        self.assertEqual(canonical('予現額／算／補正予算額', None, known), '予算現額／補正予算額')
+        self.assertEqual(canonical('翌年度越額／繰／越／繰明／許／費', None, known), '翌年度繰越額／繰越明許費')
+        self.assertEqual(canonical('翌年度越額／繰／継逓／続／費／次越／繰', None, known), '翌年度繰越額／継続費逓次繰越')
+        self.assertEqual(canonical('見知らぬ／見出し', None, known), '見知らぬ／見出し')

@@ -73,6 +73,7 @@ class Item:
     depth: int | None = None
     fixed_anchor: float | None = None
     decided: bool = False  # role chosen by a judgment, not by the geometric rules
+    hint: str | None = None  # the kind of the note whose parts this item prints (`note_breakdown`)
     kinds: list[tuple[list[Glyph], list[Glyph], str]] = field(default_factory=list)  # (label, amount run, heading) of kind lines
 
     @property
@@ -203,6 +204,8 @@ def groups(logical: Logical, pattern: str = 'bands') -> list[Group]:
 
 
 BULLET = re.compile(r'^[〇○●◎□■◇◆]')
+# The words that qualify a printed amount as carried over (`一部繰越明許`, `逓次繰越`), printed after it.
+CARRY_OVER_TAG = re.compile(r'[(（]?(?:一部)?(?:繰越明許費?|逓次繰越|事故繰越し?)[)）]?')
 # Every parenthesised remark at the end of a name (`委託料（…へ流用△280,000）（…から流用1,815,000）`).
 PAREN_TAIL = re.compile(r'(?:[(（][^()（）]*[)）])+$')
 # A number printed against a counter word (`110番`, `3歳児`, `3階`, `2025年`) is a count in a name.
@@ -213,6 +216,51 @@ GROUPED = re.compile(r'[△▲]?[0-9]{1,3}(?:,[0-9]{3})+')
 YEN_AMOUNT = re.compile(r'[△▲]?[0-9]{1,3}(?:,[0-9]{3})+円')
 # An amount printed against text spilling in from the next band (`44,406,439,217明許`).
 LEADING_AMOUNT = re.compile(r'([△▲]?[0-9]{1,3}(?:,[0-9]{3})+)(?=[^0-9,])')
+
+
+def has_text(name: str) -> bool:
+    """Whether a name has a letter (kana, kanji, latin)."""
+    return any(c.isalpha() for c in normalize(name))
+
+
+def is_account_code(name: str) -> bool:
+    """A printed account code (`・020601【010261】`): digits and punctuation only, four digits or more. A
+    lone `)` that closes a wrapped name is no code."""
+    return not has_text(name) and sum(c.isdigit() for c in normalize(name)) >= 4
+
+
+def note_breakdown(items: list['Item']) -> None:
+    """Lines printed under a note that add up to its amount are its parts, not items of the breakdown.
+
+    `繰越事業費不用額 308,157,706 円` over `役務費 3,897,706 円` and `負担金、補助及び交付金 304,260,000 円`:
+    the two lines are the note's own breakdown. They take the note's kind (a wrapped line of a note's cell
+    inherits it, ADR 0024). Two or more lines whose sum is exactly the note's amount: a single line of the
+    same amount could as well be an item that costs what the note says.
+    """
+    for index, note in enumerate(items):
+        if note.role != 'annotation' or note.code is not None or len(note.amounts) != 1:
+            continue
+        header, run = note.amounts[0]
+        total = number(normalize(text(run)))
+        kind = kind_of(PAREN_TAIL.sub('', note.name), words=True)
+        if not total or total < 0 or kind is None:
+            continue
+        taken, running = [], 0
+        for follower in items[index + 1:]:
+            if follower.role != 'node' or follower.code is not None or len(follower.amounts) != 1 \
+                    or follower.amounts[0][0] != header or follower.kinds or not has_text(follower.name):
+                break
+            value = number(normalize(text(follower.amounts[0][1])))
+            if value is None or value < 0 or running + value > total:
+                break
+            taken.append(follower)
+            running += value
+            if running == total:
+                break
+        if running == total and len(taken) >= 2:
+            for follower in taken:
+                follower.role = 'annotation'
+                follower.hint = kind
 
 
 def _split_code(line_text: str) -> tuple[str | None, str]:
@@ -241,6 +289,10 @@ def _split_line(line: list[Glyph]) -> tuple[list[Glyph], list[list[Glyph]]]:
         width = (glyph.x1 - glyph.x0) / len(glyph.text)
         keep = len(glyph.text) - 1
         parts[-1] = [Glyph(glyph.text[:keep], glyph.x0, glyph.y0, glyph.x0 + keep * width, glyph.y1, glyph.page, glyph.offset)]
+    # The carry-over a printed amount partly is (`通信運搬費 597,301 一部繰越明許`): a word after the amount that
+    # is no part of the item's name or of the amount. The amount stays the line's last run.
+    if len(parts) >= 3 and CARRY_OVER_TAG.fullmatch(normalize(text(parts[-1]))) and is_amount(text(parts[-2])):
+        parts.pop()
     while parts and len(parts[-1]) > 1 and normalize(parts[-1][-1].text) == '円' and is_amount(text(parts[-1][:-1])):
         parts[-1] = parts[-1][:-1]
     while len(parts) > 1 and normalize(text(parts[-1])) == '円' and is_amount(text(parts[-2])):
@@ -512,6 +564,13 @@ def items(group: Group, header: str, margins: set[int] | None = None,
             previous.name += whole  # a parenthesised remark on the previous item, not an amount of it
             continue
         label_text = normalize(text(label))
+        if (previous is not None and label and not money and previous.code is None and previous.amounts
+                and is_account_code(previous.name) and kind_of(label_text, words=True) is not None):
+            # An account code printed with the amount of a transfer (`・020601【010261】 △28,800`) and the
+            # words that say where it went on the line below (`020000へ予算流用減`): one note.
+            previous.lines.append(label)
+            previous.name += label_text
+            continue
         # OCR: `scan.total_row` (a lone `計` closing a 備考 is a total, 132055); printed text keeps it a kind.
         if ocr:
             from ingestion.generic.scan import total_row
@@ -1202,7 +1261,12 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 elif (item.code is None and item.amounts and not group.subject and not item.kinds
                       and kind_of(PAREN_TAIL.sub('', item.name)) is not None):
                     item.role = 'annotation'  # `前年度繰越事業費不用額 393,230`: a note, not an item of the breakdown
+                elif item.code is None and item.amounts and not group.subject and not item.kinds \
+                        and is_account_code(item.name):
+                    item.role = 'annotation'  # `・020601【010261】 △28,800`: where money moved, no item of the breakdown
             found[id(group)] = group_items
+            if not group.subject:
+                note_breakdown(group_items)
         subject = next((g for g in ordered if g.subject), None)
         if subject is not None and untitled(subject):
             # A table without a 款 column under a title naming its 款: the title is the 款 item.
@@ -1227,6 +1291,22 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 if target is not None and target.role == 'note':
                     target.role = 'node'
         all_items.append((logical, ordered, found))
+    # An account code printed with the amount of a transfer at the foot of a page and the words that say where
+    # it went on the first line of the next table page (`030201【111412】 △33,630` / `020000へ予算流用減`; a
+    # page of headings only may lie between): the kind is the next page's. (Joining the two lines would put one
+    # item's glyphs on two pages.)
+    for (_, ordered, found), (_, next_ordered, next_found) in zip(all_items, all_items[1:]):
+        for group in ordered:
+            tail = found[id(group)][-1] if not group.subject and found[id(group)] else None
+            if tail is None or tail.role != 'annotation' or tail.code is not None or tail.hint is not None \
+                    or not is_account_code(tail.name):
+                continue
+            for other in next_ordered:
+                head = next_found[id(other)][0] if not other.subject and other.axis == group.axis \
+                    and next_found[id(other)] else None
+                if head is not None and head.code is None and not head.amounts and 0 <= head.page - tail.page <= 2:
+                    tail.hint = kind_of(head.name, words=True)
+                    break
     # Subject levels by indentation, learned over the document (pattern indent).
     starts = sorted(i.indent for _, ordered, found in all_items for g in ordered if g.subject and g.mode == 'indent'
                     for i in found[id(g)] if i.role == 'node')
@@ -1341,7 +1421,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     for header, run in item.amounts:
                         annotations.append((target, f'{header}／注記／{label}', run, logical.unit))
                     remarks.append({'kind': 'annotation', 'target': target, 'heading': None,
-                                    'hint': '充用' if normalize(target.name) == '予備費' else None,
+                                    'hint': item.hint or ('充用' if normalize(target.name) == '予備費' else None),
                                     'label': [g for g in item.glyphs if not any(g in r for _, r in item.amounts)],
                                     'runs': [run for _, run in item.amounts], 'unit': logical.unit})
                 continue
