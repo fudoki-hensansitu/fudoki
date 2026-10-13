@@ -15,7 +15,8 @@ with accounts as (
         nullif(m.account_kind, '') as account_kind
     from accounts a
     left join {{ ref('account_kind_map') }} m
-      on contains({{ fiscal_match_text('a.account_name') }}, {{ fiscal_match_text('m.keyword') }})
+      on coalesce(m.scope, '') = ''  -- a recipient-only row (特別会計) never names an account
+         and contains({{ fiscal_match_text('a.account_name') }}, {{ fiscal_match_text('m.keyword') }})
     qualify row_number() over (
         partition by a.jurisdiction_code, a.fiscal_year, a.account_name
         order by len(m.keyword) desc) = 1

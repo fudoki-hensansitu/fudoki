@@ -57,18 +57,21 @@ seeds:
       role: judgment-rule
     description: |
       会計名に含まれる語と団体共通の会計の種類（一般会計・国民健康保険・介護保険・
-      後期高齢者医療・用地・駐車場・下水道・介護サービス事業・土地区画整理）の対応。**fudoki の判断。** 同じ制度の会計の呼び名は
+      後期高齢者医療・用地・駐車場・下水道・介護サービス事業・土地区画整理。受け手だけに「不明」）の対応。**fudoki の判断。** 同じ制度の会計の呼び名は
       団体で違う（「介護保険特別会計」「介護保険事業会計」「介護保険会計」）ので、
       団体ごとの行は持たず語で対応づける。`fund_directory` は団体×会計名の完全一致で
       団体ごとに行が要るため使わない（[ADR 0023](../../../../docs/adr/0023-account-kind-and-no-consolidation.md)）。
       account_kind が空の行（他会計）は、会計間の繰出の受け手が特定できないことを表す —
-      印は付けるが受け手の種類は付けない。語に当たらない会計名・受け手は構築を止める。
+      印は付けるが受け手の種類は付けない。受け手が「特別会計」とだけ印字され会計を特定できない
+      繰出金は、推測せず受け手の種類を「不明」にする（`scope` が `recipient` の行。受け手の名前が語と
+      完全に一致するときだけ当たり、会計名には当たらない）。語に当たらない会計名・受け手は構築を止める。
     config:
       fast: false
       column_types:
         keyword: varchar
         account_kind: varchar
         basis: varchar
+        scope: varchar
     columns:
       - name: keyword
         data_tests: [unique, not_null]
