@@ -101,6 +101,9 @@ REST の route と OpenAPI 3.1 の文書は `@hono/zod-openapi` で作り、MCP 
 - **状態**: Workers は要求をまたいで状態を持てないので、handler と server は要求ごとに作る。body の検査（Content-Type・実バイト数 16KB・UTF-8・`__proto__`・batch の拒否）は Hono 側で済ませ、parse 済みの値を `parsedBody` で渡す。
 - **tool の注釈**: すべての tool は D1 の読み取りだけなので、`title`（操作の summary）と `readOnlyHint: true`・`destructiveHint: false`・`idempotentHint: true`・`openWorldHint: false` を MCP の登録の箇所で一括して付ける。
 - **outputSchema は宣言しない**: 宣言すると `tools/list` の応答が約40%増え、client が毎回読むトークンが増える。応答は従来どおり JSON の文字列を text content で返す（`structuredContent` も付けない）。応答の形は REST の OpenAPI と、テストで `output` の schema に通して保証する。
+- **Origin では絞らない**: 2026-07-28 の規格は不正な Origin に 403 を求めるが、これは主にローカルの server を DNS rebinding から守るための規則である。この API は認証なしで誰でも読める公開の読み取り専用なので、どの Origin も正当とみなす。curl などは Origin を付けずに送れるので、絞っても守りは増えない。
+- **長い接続は持たない**: `subscriptions/listen` は Hono 側で 400 にする（Workers で SSE を開いたままにできず、通知の元も無い）。`tools.listChanged` は false にする。
+- **初回の CPU**: SDK v2 は内部の schema を初回の要求で作るため、module scope で `preloadSchemas()` を呼び、要求ごとの CPU（`limits.cpuMs`）から外す。bun での冷えた初回の CPU は、v1 が tools/list 59ms・tools/call 55ms、v2（対策後）が 62ms・76ms だった。workerd での実測はデプロイ後に確かめる。
 
 ## Considered Options
 
