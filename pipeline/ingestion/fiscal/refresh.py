@@ -222,9 +222,8 @@ def refresh_manifest(path: Path, *, remote: bool, dry_run: bool, work: Path) -> 
         try:
             new = by_id[table['table_id']]
             located = locate(new)
-            sidecars = sorted(output.rglob(table['table_id'] + node_tables.COVERAGE_SIDECAR_SUFFIX))
-            storage.prepare_save(candidate, new, located,
-                                 scope=unit_checks.read_scope(sidecars[0]) if sidecars else None)
+            storage.prepare_save(candidate, new, located, scope=unit_checks.find_scope(
+                output, table['table_id'], node_tables.COVERAGE_SIDECAR_SUFFIX))
             entry['units'] = converted.get('units', {}).get('tables', {}).get(table['table_id'])
         except Exception as error:
             entry.update(status=BLOCKED, reason=f'{type(error).__name__}: {error}')

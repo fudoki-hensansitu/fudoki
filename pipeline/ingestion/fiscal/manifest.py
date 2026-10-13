@@ -174,15 +174,15 @@ def dependencies(conversion: dict) -> list[str]:
                 candidate = target / '__init__.py' if target.is_dir() else target.with_suffix('.py')
                 if not candidate.is_file():
                     continue
-                relative = str(candidate.relative_to(INGESTION))
-                if relative in FINGERPRINT_EXCLUDED:
+                dependency = str(candidate.relative_to(INGESTION))
+                if dependency in FINGERPRINT_EXCLUDED:
                     continue
-                if is_check_module(relative) and (importer, relative) not in RESULT_SHAPES_TABLE:
+                if is_check_module(dependency) and (importer, dependency) not in RESULT_SHAPES_TABLE:
                     violations = check_module_violations(candidate)
                     if violations:
-                        raise ValueError(f'Check module {relative} must not produce tables: {"; ".join(violations)}')
+                        raise ValueError(f'Check module {dependency} must not produce tables: {"; ".join(violations)}')
                     continue
-                pending.append(relative)
+                pending.append(dependency)
     return sorted(found)
 
 

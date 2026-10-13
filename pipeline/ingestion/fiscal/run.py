@@ -146,7 +146,7 @@ def unit_gate(document: dict, conversion: dict, table_id: str, tables: node_tabl
         account=pdf_account(document, conversion, tables.nodes),
         partial=bool(conversion['options'].get('partial')), scope=scope)
     if result['stopped']:
-        raise ValueError(f'Unit check failed: {unit_checks.describe(result)}')
+        raise ValueError(f'Unit check failed: {table_id}: {unit_checks.describe(result)}')
     return result
 
 
@@ -452,7 +452,7 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
         try:
             unit_results[ident] = unit_gate(document, conversion, ident, migrated, scope)
         except ValueError as error:
-            unit_failures.append(f'{ident}: {error}')
+            unit_failures.append(str(error))
             continue
         scopes[ident] = scope
         receipt, pair = node_receipt(document, conversion, ident, migrated, output,
@@ -467,7 +467,7 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
         raise ValueError('Digit coverage failed:\n' + '\n'.join(coverage_failures)
                          + '\nJev recheck: ' + json.dumps(recheck.summary(), ensure_ascii=False))
     if unit_failures:
-        raise ValueError('Unit check failed:\n' + '\n'.join(unit_failures))
+        raise ValueError('\n'.join(unit_failures))
     result = deepcopy(document)
     result['tables'] = tables
     manifest.validate(result)
@@ -525,11 +525,10 @@ def verify_sums(document: dict, locate, directory: Path | None = None) -> list[d
         nodes, amounts = node_tables.read_rows(pair['nodes']), node_tables.read_rows(pair['amounts'])
         checked = tree_checks.check_tree(nodes, amounts, document['target']['document_kind'])
         passed = (checked['passed'] and not table['unread_amount_count'] and not table['unresolved_parent_count'])
-        sidecars = sorted(directory.rglob(table['table_id'] + node_tables.COVERAGE_SIDECAR_SUFFIX)) if directory else []
         unit = unit_checks.check_table(
             nodes, amounts, document_kind=document['target']['document_kind'], account=table.get('account'),
             partial=bool(conversions[table['conversion_id']]['options'].get('partial')),
-            scope=unit_checks.read_scope(sidecars[0]) if sidecars else None)
+            scope=unit_checks.find_scope(directory, table['table_id'], node_tables.COVERAGE_SIDECAR_SUFFIX))
         item = {'table_id': table['table_id'], 'status': MATCH if passed and not unit['stopped'] else MISMATCH,
                 'counts': checked['counts'], 'issues': checked['issues'], 'checks': [],
                 'results': checked['results'],

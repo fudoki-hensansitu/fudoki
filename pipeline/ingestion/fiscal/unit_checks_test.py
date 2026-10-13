@@ -133,6 +133,20 @@ class UnitCheckTest(unittest.TestCase):
                                                  scope=scope(('100,000,000', 300.0, 360.0)))
                 self.assertEqual((result['status'], result['kan_sum']), ('matched', 100_000_000))
 
+    def test_a_scope_is_found_by_the_table_id_and_two_of_one_name_are_refused(self):
+        import json
+        import tempfile
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            (root / 'a').mkdir()
+            self.assertIsNone(unit_checks.find_scope(root, 'one'))
+            (root / 'a/one.coverage.json').write_text(json.dumps({'words': []}))
+            self.assertEqual(unit_checks.find_scope(root, 'one'), {'words': []})
+            (root / 'one.coverage.json').write_text('{}')
+            with self.assertRaisesRegex(ValueError, 'Several coverage scopes'):
+                unit_checks.find_scope(root, 'one')
+
 
 if __name__ == '__main__':
     unittest.main()

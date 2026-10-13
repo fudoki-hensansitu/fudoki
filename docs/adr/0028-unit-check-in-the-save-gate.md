@@ -26,7 +26,7 @@
 
 - 比べる強さは、表が対象範囲を持つかで決まる。`convert`・`refresh`・`verify --candidate` は款の和と印字の合計を比べる。保存済みの表だけを当てる `verify` は桁だけで、特別会計は桁の規則が無いので確かめられない。
 - scan（settlement_statement）は歳出合計の行を捨てるので、桁だけを確かめる。scan の款の和を印字の合計と比べるには、変換器が合計を返す作業が別に要る。
-- 単位の確かめは `unit_checks.py` で直すので、直しても保存済みの表は古く見えない。厳しくしたときは `ingestion:refresh --remote`（変換をやり直して当てる）で確かめる。
+- 単位の確かめは `unit_checks.py` で直すので、直しても保存済みの表は古く見えず、`ingestion:refresh` は変換をやり直さない（指紋が現在の管理 JSON は対象外）。厳しくしたときは、桁は `ingestion:verify --remote` で、款の和と印字の合計の比較は `ingestion:convert`（ローカルの候補）→ `ingestion:verify --candidate <候補dir>` で全表に当て直す。
 - 結果の種類: `matched`（款の和＝印字の合計）、`digits`（一般会計の桁が単位に合う）、`partial`（分冊。報告だけ）、`unchecked`（比べるものが無い）、`stopped`。
 
 ## 実測

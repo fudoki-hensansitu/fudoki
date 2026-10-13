@@ -158,5 +158,13 @@ def read_scope(sidecar: Path) -> dict | None:
     return json.loads(sidecar.read_text()) if sidecar.is_file() else None
 
 
+def find_scope(directory: Path | None, table_id: str, suffix: str = '.coverage.json') -> dict | None:
+    """The coverage scope of one table under a candidate directory; two of one name would be ambiguous."""
+    found = sorted(directory.rglob(table_id + suffix)) if directory else []
+    if len(found) > 1:
+        raise ValueError(f'Several coverage scopes for {table_id}: {[str(path) for path in found]}')
+    return read_scope(found[0]) if found else None
+
+
 def summarize(results: dict[str, dict]) -> dict[str, int]:
     return dict(Counter(item['status'] for item in results.values()))

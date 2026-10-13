@@ -128,13 +128,14 @@ def prepare_save(document: dict, table: dict, path: Path | dict[str, Path], *,
     if 'nodes' in table:
         from ingestion.lib.node_tables import read_rows
         from ingestion.lib.tree_checks import check_tree
-        checked = check_tree(read_rows(path['nodes']), read_rows(path['amounts']), document['target']['document_kind'])
+        nodes, amounts = read_rows(path['nodes']), read_rows(path['amounts'])
+        checked = check_tree(nodes, amounts, document['target']['document_kind'])
         if not checked['passed'] or table['unread_amount_count'] or table['unresolved_parent_count']:
             raise ValueError('Node table failed the mandatory pre-save tree check')
         from ingestion.fiscal import unit_checks
         conversion = next(item for item in document['conversions'] if item['id'] == table['conversion_id'])
         unit = unit_checks.check_table(
-            read_rows(path['nodes']), read_rows(path['amounts']), document_kind=document['target']['document_kind'],
+            nodes, amounts, document_kind=document['target']['document_kind'],
             account=table.get('account'), partial=bool(conversion['options'].get('partial')), scope=scope)
         if unit['stopped']:
             raise ValueError(f'Node table failed the mandatory pre-save unit check: {unit_checks.describe(unit)}')
