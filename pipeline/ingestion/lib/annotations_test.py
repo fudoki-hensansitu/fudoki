@@ -2,7 +2,9 @@
 import unittest
 
 from ingestion.lib.annotations import add_annotations, remark_prose_lines
-from ingestion.lib.node_tables import NodeTables, amount_phase, check_tree, check_digit_coverage
+from ingestion.lib.node_tables import NodeTables, amount_phase
+from ingestion.lib.tree_checks import check_tree
+from ingestion.lib.coverage_checks import check_digit_coverage
 
 
 def node(key, y=10., name='総務費', code='1'):

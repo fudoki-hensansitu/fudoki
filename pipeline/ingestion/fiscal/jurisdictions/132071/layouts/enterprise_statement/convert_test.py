@@ -8,7 +8,8 @@ import unittest
 import duckdb
 from ingestion.fiscal.manifest import PIPELINE
 from ingestion.fiscal.run import complete_subject_rows
-from ingestion.lib.node_tables import migrate_rows, check_tree, number
+from ingestion.lib.node_tables import migrate_rows, number
+from ingestion.lib.tree_checks import check_tree
 
 
 class EnterpriseStatementTest(unittest.TestCase):

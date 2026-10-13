@@ -114,17 +114,31 @@ def fetch(reference: dict, *, remote: bool = False) -> Path:
     return path
 
 
-def prepare_save(document: dict, table: dict, path: Path | dict[str, Path]) -> list[tuple[str, Path]]:
-    """The gate every table passes before upload: tree check, keys, hash/size and upload limit.
+def prepare_save(document: dict, table: dict, path: Path | dict[str, Path], *,
+                 scope: dict | None = None) -> list[tuple[str, Path]]:
+    """The gate every table passes before upload: tree check, unit check, keys, hash/size and upload limit.
+
+    The unit check compares the 款 sum with the printed 歳出合計 when ``scope`` (the converter's digit-coverage
+    scope, which holds the printed words) is given; a saved table keeps none, so without it only the digits
+    of the unit are checked.
 
     ``ingestion:refresh`` applies the same gate before it rewrites a fingerprint, so a table the
     current checks would refuse to save never gets a fresh fingerprint.
     """
     if 'nodes' in table:
-        from ingestion.lib.node_tables import check_tree, read_rows
-        checked = check_tree(read_rows(path['nodes']), read_rows(path['amounts']), document['target']['document_kind'])
+        from ingestion.lib.node_tables import read_rows
+        from ingestion.lib.tree_checks import check_tree
+        nodes, amounts = read_rows(path['nodes']), read_rows(path['amounts'])
+        checked = check_tree(nodes, amounts, document['target']['document_kind'])
         if not checked['passed'] or table['unread_amount_count'] or table['unresolved_parent_count']:
             raise ValueError('Node table failed the mandatory pre-save tree check')
+        from ingestion.fiscal import unit_checks
+        conversion = next(item for item in document['conversions'] if item['id'] == table['conversion_id'])
+        unit = unit_checks.check_table(
+            nodes, amounts, document_kind=document['target']['document_kind'],
+            account=table.get('account'), partial=bool(conversion['options'].get('partial')), scope=scope)
+        if unit['stopped']:
+            raise ValueError(f'Node table failed the mandatory pre-save unit check: {unit_checks.describe(unit)}')
     prepared = []
     for kind, receipt in table_references(table).items():
         file = path[kind] if kind is not None else path
@@ -139,10 +153,10 @@ def prepare_save(document: dict, table: dict, path: Path | dict[str, Path]) -> l
     return prepared
 
 
-def save(document: dict, table: dict, path: Path | dict[str, Path], *, remote: bool) -> None:
+def save(document: dict, table: dict, path: Path | dict[str, Path], *, remote: bool, scope: dict | None = None) -> None:
     if not remote:
         raise ValueError('A saved manifest requires successful private R2 uploads')
-    prepared = prepare_save(document, table, path)
+    prepared = prepare_save(document, table, path, scope=scope)
     for key, file in prepared:
         subprocess.run(['cf', 'r2', 'objects', 'put', key, '--bucket-name', BUCKET,
                         '--file', str(file), '--quiet'], check=True, stdout=subprocess.DEVNULL)

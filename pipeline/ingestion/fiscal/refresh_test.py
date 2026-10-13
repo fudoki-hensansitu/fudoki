@@ -221,15 +221,42 @@ class SaveGateTest(unittest.TestCase):
                  'unread_amount_count': 0, 'unresolved_parent_count': 0}
         paths = {'nodes': Path('n'), 'amounts': Path('a')}
         with patch('ingestion.lib.node_tables.read_rows', return_value=[]), \
-             patch('ingestion.lib.node_tables.check_tree', return_value={'passed': False}):
+             patch('ingestion.lib.tree_checks.check_tree', return_value={'passed': False}):
             with self.assertRaisesRegex(ValueError, 'tree check'):
                 storage.prepare_save(document, table, paths)
             with self.assertRaisesRegex(ValueError, 'tree check'):
                 storage.save(document, table, paths, remote=True)
         with patch('ingestion.lib.node_tables.read_rows', return_value=[]), \
-             patch('ingestion.lib.node_tables.check_tree', return_value={'passed': True}):
+             patch('ingestion.lib.tree_checks.check_tree', return_value={'passed': True}):
             with self.assertRaisesRegex(ValueError, 'tree check'):
                 storage.prepare_save(document, {**table, 'unread_amount_count': 1}, paths)
+
+    def test_unit_check_is_part_of_the_gate(self):
+        from ingestion.fiscal import unit_checks_test as fixtures
+        document = {'target': {'jurisdiction': '131016', 'fiscal_year': 2024, 'document_kind': 'settlement'},
+                    'direction': 'expenditure', 'conversions': [{'id': 'c', 'options': {}}]}
+        table = {'table_id': 'one', 'conversion_id': 'c', 'account': '一般会計',
+                 'nodes': {'object': {'key': 'x'}}, 'amounts': {'object': {'key': 'y'}},
+                 'unread_amount_count': 0, 'unresolved_parent_count': 0}
+        paths = {'nodes': Path('n'), 'amounts': Path('a')}
+
+        def gate(nodes, amounts, table=table, scope=None):
+            rows = {'n': nodes, 'a': amounts}
+            with patch('ingestion.lib.node_tables.read_rows', side_effect=lambda path: rows[path.name]):
+                return storage.prepare_save(document, table, paths, scope=scope)
+
+        # 千円 printed, read as 円: the tree is consistent, the digits of a general account's total are not.
+        nodes, amounts = fixtures.table('100,000', '50,000')
+        with self.assertRaisesRegex(ValueError, 'unit check'):
+            gate(nodes, amounts)
+        # A special account has no digits rule; the printed total is what shows the mistake.
+        special = {**table, 'account': '国民健康保険特別会計'}
+        printed = fixtures.scope(('150', 300.0, 360.0))
+        with self.assertRaisesRegex(ValueError, 'unit check'):
+            gate(nodes, amounts, special, printed)
+        # The same table passes the unit check when the total agrees (the key check stops it next).
+        with self.assertRaisesRegex(ValueError, 'Wrong current-table key'):
+            gate(nodes, amounts, special, fixtures.scope(('150,000', 300.0, 360.0)))
 
 
 if __name__ == '__main__':

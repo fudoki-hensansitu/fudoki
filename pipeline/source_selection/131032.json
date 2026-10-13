@@ -1610,10 +1610,157 @@
         "fiscal_year": 2025,
         "document_kind": "settlement"
       },
-      "candidates": [],
-      "reason": "令和7年度（2025年度）決算は、決算書一覧（https://www.city.minato.tokyo.jp/kaikeikanri/291020.html）で令和6年度が最新で令和7年度分が未掲載（2026-10-08確認。年度末後の議会認定・公表前と考えられるが、未公開の断定はしない）。公開を確認できないため未選定。",
-      "selected_candidate_id": null,
-      "archive": null
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和7年度（2025年度）各会計歳入歳出決算事項別明細書",
+          "landing_url": "https://www.city.minato.tokyo.jp/kaikeikanri/291020.html",
+          "inspected_at": "2026-10-13T08:25:36.217819+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.minato.tokyo.jp/documents/77605/02r7zikoubetu.pdf",
+              "sha256": "834af589eb18ff2b4946aa2315e796f9d50a73daeb7d02efa42ccf0dfdfce470",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 4,
+                      "end": 46
+                    }
+                  ]
+                },
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 47,
+                      "end": 106
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.minato.tokyo.jp/documents/77605/03r7kokuhozikoubetu.pdf",
+              "sha256": "5f9c4e7cc18f57bb125c11549ecf9e0d1598748230d3fb414ce3558f20703587",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "国民健康保険事業会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 10
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険事業会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 11,
+                      "end": 18
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.minato.tokyo.jp/documents/77605/04r7koukizikoubetu.pdf",
+              "sha256": "c7b8f885d7d16270fe3c0a502fb6dcedff616c5ed542c737933527a4d7852cc1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "後期高齢者医療会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 8
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 9,
+                      "end": 14
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.minato.tokyo.jp/documents/77605/05r7kaigozikoubetu.pdf",
+              "sha256": "b0686e8049d20e43d669dc722791cf6aaafb6c2dc98b0e149af2af730e32b613",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "介護保険会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 13
+                    }
+                  ]
+                },
+                {
+                  "account": "介護保険会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 14,
+                      "end": 20
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "令和7年度（2025年度）決算を決算書一覧（kaikeikanri/291020.html、2026-10-13確認）に掲載された会計別の歳入歳出決算事項別明細書PDF4冊で選定（一般会計・国民健康保険事業会計・後期高齢者医療会計・介護保険会計。決算書一覧の令和7年度の掲載はこの4会計の明細書のほか、款項総括のみの各会計歳入歳出決算書、実質収支調書、財産に関する調書、公共用地買収基金運用状況調書で、他の会計は無い）。各冊は歳入→歳出の順で、款・項・目の科目名と節に当初予算額・補正予算額・予算現額と収入済額・支出済額（円）を同一明細に持つ。全冊の文字層を確認でき text。範囲は物理頁で、一般会計は歳入4〜46頁・歳出47〜106頁（1〜3頁は表紙・区切り・題名のみ）、国保は歳入3〜10頁・歳出11〜18頁、後期高齢者医療は歳入3〜8頁・歳出9〜14頁、介護保険は歳入3〜13頁・歳出14〜20頁（各冊の先頭の表紙・区切りの頁は除く）。各会計歳入歳出決算書（01r7kessannsyo.pdf）は款項の総括のみで、明細書の方を採用した。",
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131032/2025/settlement-2.pdf",
+            "sha256": "834af589eb18ff2b4946aa2315e796f9d50a73daeb7d02efa42ccf0dfdfce470",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/77605/02r7zikoubetu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131032/2025/settlement-1.pdf",
+            "sha256": "5f9c4e7cc18f57bb125c11549ecf9e0d1598748230d3fb414ce3558f20703587",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/77605/03r7kokuhozikoubetu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131032/2025/settlement-4.pdf",
+            "sha256": "c7b8f885d7d16270fe3c0a502fb6dcedff616c5ed542c737933527a4d7852cc1",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/77605/04r7koukizikoubetu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131032/2025/settlement-3.pdf",
+            "sha256": "b0686e8049d20e43d669dc722791cf6aaafb6c2dc98b0e149af2af730e32b613",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/77605/05r7kaigozikoubetu.pdf"
+          }
+        ],
+        "archived_at": "2026-10-13T08:28:58.855Z"
+      }
     },
     {
       "target": {

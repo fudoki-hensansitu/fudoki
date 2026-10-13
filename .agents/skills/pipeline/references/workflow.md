@@ -7,7 +7,7 @@
 | 原典の形式 | 取り込み完了の条件 | 実装の状態 |
 | --- | --- | --- |
 | ヘッダー付きCSV | 原典を読み直した全セル・列・行順・重複・空欄・物理行範囲がParquetと一致する | 共通CSV変換で自動検査。不一致は保存前に停止する |
-| text PDF | 文字保持・原典との対応を確認し、ノードの表・金額の表にして全段の木の検査（印字された親＝子の値の和）と印字された数字の網羅の検査→不一致の修正→再検査を行う | 木の検査と網羅の検査は `ingestion/lib/node_tables.py` の共通処理で、保存の前に必須（通らない表は保存しない）。比べる金額の段階は `pipeline/shared/fiscal_amount_map.csv` |
+| text PDF | 文字保持・原典との対応を確認し、ノードの表・金額の表にして全段の木の検査（印字された親＝子の値の和）と印字された数字の網羅の検査→不一致の修正→再検査を行う | 木の検査（`ingestion/lib/tree_checks.py`）・網羅の検査（`ingestion/lib/coverage_checks.py`）・単位の確かめ（`ingestion/fiscal/unit_checks.py`）は共通処理で、保存の前に必須（通らない表は保存しない）。比べる金額の段階は `pipeline/shared/fiscal_amount_map.csv` |
 | scan PDF | OCRの観測と表への対応を確認し、text PDFと同じ木の検査→不一致の修正→再検査を行う | OCR・再読の手順はある。木の検査と保存前の停止はtext PDFと同じ |
 
 取り込みと形式別の検査は [ingestion](ingestion.md) を読む。

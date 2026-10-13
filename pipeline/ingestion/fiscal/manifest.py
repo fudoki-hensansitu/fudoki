@@ -92,6 +92,11 @@ FINGERPRINT_EXCLUDED = frozenset({'fiscal/manifest.py'})
 # because a converter may use the module for verdicts only. Anything a converter also imports
 # directly is still fingerprinted by that other path.
 CHECK_MODULE_SUFFIX = '_checks.py'
+# A check module whose result the importer uses to choose what the table holds, not only to pass or stop.
+# The generic builder keeps the subject pattern whose tree closes best, so it reads `check_tree`'s
+# comparison; for that importer the module stays in the fingerprint, otherwise a rule change there would
+# change tables without a stale mark. (importing module, check module), paths relative to `ingestion/`.
+RESULT_SHAPES_TABLE = frozenset({('generic/build.py', 'lib/tree_checks.py')})
 # Calls that write or remove files; a check module may read tables, never produce them. This is a
 # heuristic over representative calls, not a proof: it catches the usual ways of writing a table by
 # accident, and the contract (verdicts only) is what the ADR relies on.
@@ -142,6 +147,7 @@ def dependencies(conversion: dict) -> list[str]:
         path = code_path(relative)
         if path.suffix != '.py':
             continue
+        importer = relative
         tree = ast.parse(path.read_text())
         for node in ast.walk(tree):
             modules = []
@@ -168,15 +174,15 @@ def dependencies(conversion: dict) -> list[str]:
                 candidate = target / '__init__.py' if target.is_dir() else target.with_suffix('.py')
                 if not candidate.is_file():
                     continue
-                relative = str(candidate.relative_to(INGESTION))
-                if relative in FINGERPRINT_EXCLUDED:
+                dependency = str(candidate.relative_to(INGESTION))
+                if dependency in FINGERPRINT_EXCLUDED:
                     continue
-                if is_check_module(relative):
+                if is_check_module(dependency) and (importer, dependency) not in RESULT_SHAPES_TABLE:
                     violations = check_module_violations(candidate)
                     if violations:
-                        raise ValueError(f'Check module {relative} must not produce tables: {"; ".join(violations)}')
+                        raise ValueError(f'Check module {dependency} must not produce tables: {"; ".join(violations)}')
                     continue
-                pending.append(relative)
+                pending.append(dependency)
     return sorted(found)
 
 

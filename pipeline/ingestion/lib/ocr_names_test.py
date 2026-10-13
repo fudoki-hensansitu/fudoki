@@ -4,7 +4,7 @@ import json
 import tempfile
 import unittest
 
-from ingestion.lib.node_tables import check_tree
+from ingestion.lib.tree_checks import check_tree
 from ingestion.lib.ocr_names import (AmountDictionary, AmountRule, NameDictionary, NameRule,
     correct_amount, correct_name, correct_name_preserving_layout, load_amount_dictionary,
     load_name_dictionary)

@@ -25,7 +25,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[4] / 'pipeline'))
 
 from ingestion.fiscal import manifest  # noqa: E402
 from ingestion.generic.convert import build_table, write_files  # noqa: E402
-from ingestion.lib import node_tables  # noqa: E402
+from ingestion.lib import coverage_checks, node_tables, tree_checks  # noqa: E402
 from ingestion.lib.annotations import add_annotations  # noqa: E402
 
 
@@ -70,7 +70,7 @@ def measure(job: tuple[str, str, str, str]) -> dict:
         result['annotations'] = [
             {'kind': n['level_header'], 'label': n['name_text'], 'page': n['physical_page'], 'added': i >= len(tables.nodes)}
             for i, n in enumerate(annotated.nodes) if n['axis_header'] == '注記'][:300]
-        checked = node_tables.check_tree(annotated.nodes, annotated.amounts, kind)
+        checked = tree_checks.check_tree(annotated.nodes, annotated.amounts, kind)
         by_axis = defaultdict(lambda: {'一致': 0, '不一致': 0})
         for r in checked['results']:
             by_axis[r['axis_header']][r['status']] += 1
@@ -94,7 +94,7 @@ def measure(job: tuple[str, str, str, str]) -> dict:
                                'child_items': [f"{c['code_text'] or ''} {c['name_text'] or ''} {printed.get(c['node_key'], [])}"[:90]
                                                for c in children[r['parent_node_key'], r['axis_header']]][:14]})
         result['mismatches'] = mismatches[:400]
-        coverage = node_tables.check_digit_coverage(scope['words'], annotated, control_tables=[annotated],
+        coverage = coverage_checks.check_digit_coverage(scope['words'], annotated, control_tables=[annotated],
                                                     exclusions=scope.get('excluded_regions', ()),
                                                     amount_columns=scope.get('amount_columns', ()))
         result['coverage'] = {'passed': coverage['passed'], 'counts': coverage['counts'], 'digit_words': coverage['digit_words'],

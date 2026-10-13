@@ -16,14 +16,15 @@ def node(key, parent, name, depth):
             'physical_page': 1, 'x0': 1.0, 'y0': 2.0, 'x1': 3.0, 'y1': 4.0}
 
 
-def amount(key, text):
-    return {'node_key': key, 'header_path': '支出済額', 'amount_text': text, 'unit_text': '円',
+def amount(key, text, header):
+    return {'node_key': key, 'header_path': header, 'amount_text': text, 'unit_text': '円',
             'physical_page': 1, 'x0': 5.0, 'y0': 2.0, 'x1': 9.0, 'y1': 4.0}
 
 
 def convert(inputs, destination, options):
     nodes = [node('k', None, '議会費', 1), node('k-1', 'k', '議会費', 2)]
-    amounts = [amount('k', '1,000'), amount('k-1', options['child'])]
+    header = options.get('header', '支出済額')
+    amounts = [amount('k', options.get('parent', '1,000'), header), amount('k-1', options['child'], header)]
     return {options['table_id']: {'node_tables': NodeTables(nodes, amounts), 'notes': ['原典の注記']}}
 '''
 
@@ -65,6 +66,25 @@ class DirectNodeTest(unittest.TestCase):
         save.assert_not_called()
         self.assertEqual(self.path.read_bytes(), before)
         self.assertFalse(Path(self.root / 'rejected/manifest.json').exists())
+
+    def test_a_wrong_unit_stops_a_tree_that_is_consistent(self):
+        # A budget in 千円 printed with too few digits: the tree sums, the unit check does not pass.
+        self.document['conversions'][0]['options'] = {'table_id': 'one', 'header': '当初予算額', 'parent': '1,000', 'child': '1,000'}
+        manifest.write(self.path, self.document)
+        before = self.path.read_bytes()
+        with patch('ingestion.fiscal.run.save') as save:
+            with self.assertRaisesRegex(ValueError, 'Unit check failed'):
+                run.convert(self.path, self.files, self.root / 'wrong-unit', remote=True)
+        save.assert_not_called()
+        self.assertEqual(self.path.read_bytes(), before)
+        self.assertFalse(Path(self.root / 'wrong-unit/manifest.json').exists())
+
+    def test_the_unit_check_result_is_reported_for_a_passing_table(self):
+        self.document['conversions'][0]['options'] = {'table_id': 'one', 'header': '当初予算額', 'parent': '500,000', 'child': '500,000'}
+        manifest.write(self.path, self.document)
+        with patch('ingestion.fiscal.run.save'):
+            result = run.convert(self.path, self.files, self.root / 'right-unit', remote=True)
+        self.assertEqual(result['units'], {'tables': {'one': 'digits'}, 'counts': {'digits': 1}})
 
 
 if __name__ == '__main__':

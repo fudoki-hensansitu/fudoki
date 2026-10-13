@@ -2,7 +2,9 @@
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from ingestion.lib.node_tables import migrate_rows, check_tree, write_tables, NodeTables, read_rows, amount_phase, amount_position_fields, null_position_fields, check_digit_coverage, write_coverage_words, check_table_coverage, combine_coverage_tables
+from ingestion.lib.node_tables import migrate_rows, write_tables, NodeTables, read_rows, amount_phase, amount_position_fields, null_position_fields, write_coverage_words, check_table_coverage, combine_coverage_tables
+from ingestion.lib.tree_checks import check_tree
+from ingestion.lib.coverage_checks import check_digit_coverage
 from shared.amount import parse_amount
 
 
