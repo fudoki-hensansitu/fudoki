@@ -847,7 +847,8 @@ def code_start(line: Line, steps: list[Rule] = ()) -> float:
 def subject_code(line: Line, steps: list[Rule] = ()) -> tuple[str | None, str]:
     """The last of the leading numbers is the item's code (``13 1 7 名称`` is 目 7)."""
     text = unicodedata.normalize('NFKC', line.text).strip()
-    match = re.match(r'^((?:[0-9]+[\s()（）]*)+)(.*)$', text)
+    # One run of digits and separators, not nested repeats (those backtrack exponentially on long digit runs).
+    match = re.match(r'^([0-9][0-9\s()（）]*)(.*)$', text)
     if match is None:
         return None, normalize(text)
     codes = leading_codes(line, steps)
