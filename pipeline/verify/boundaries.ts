@@ -58,7 +58,6 @@ for (const root of ['apps', 'packages'])
         )
     }
   }
-// 提供を止めている app だけを見る。docs は文書を assets で配る公開 app なので外す
 for (const name of ['web/deploy']) {
   const config = await readFile(
     join(REPO, 'apps', name, 'cloudflare.config.ts'),
@@ -69,6 +68,14 @@ for (const name of ['web/deploy']) {
       `Unavailable public app must not bind data or assets: ${name}`
     )
 }
+// docs は文書を assets で配る。assets 以外の binding（D1 などのデータ）は持たせない
+const docsConfig = await readFile(
+  join(REPO, 'apps', 'docs', 'cloudflare.config.ts'),
+  'utf8'
+)
+for (const [, kind] of docsConfig.matchAll(/\bbindings\.(\w+)/g))
+  if (kind !== 'assets')
+    throw new Error(`Docs app must bind only static assets: bindings.${kind}`)
 console.log(
   JSON.stringify({
     publicAppsIndependent: true,

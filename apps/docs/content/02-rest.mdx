@@ -46,7 +46,7 @@ description: https://api.fudoki.dev に JSON で問い合わせ、歳出の木�
 | 列の型 | 使える条件 |
 | --- | --- |
 | string | `eq`・`not_eq`（100 個まで、`eq` は OR）、`prefix`・`suffix`・`contains`、`is_null` |
-| integer | `eq`・`not_eq`（100 個まで）、`min`・`max`、`is_null` |
+| integer | `eq`・`not_eq`（100 個まで、`eq` は OR）、`min`・`max`、`is_null` |
 | number | `min`・`max`、`is_null` |
 | boolean | `eq` |
 
@@ -62,12 +62,13 @@ description: https://api.fudoki.dev に JSON で問い合わせ、歳出の木�
 
 ## エラー
 
-エラーは `{"error": {"code": "...", "message": "..."}}` の形で返ります。
+エラーは `{"error": {"code": "...", "message": "..."}}` の形で返ります。主なものは次のとおりです。
 
 | HTTP | code | 起きるとき |
 | --- | --- | --- |
 | 400 | `INVALID_ARGUMENT` | 入力が schema に合わない |
 | 404 | `NOT_FOUND` | ノードが見つからない |
+| 405 | `METHOD_NOT_ALLOWED` | 操作が受け付けないメソッドで送った |
 | 413 | `PAYLOAD_TOO_LARGE` | body が 16 KiB を超える |
 | 415 | `UNSUPPORTED_MEDIA_TYPE` | `Content-Type` が `application/json` でない |
 | 503 | `UNAVAILABLE` | 提供を止めている |
