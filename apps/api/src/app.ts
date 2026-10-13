@@ -1,5 +1,5 @@
 import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
-import { McpServer, createMcpHandler } from '@modelcontextprotocol/server'
+import { McpServer, createMcpHandler, preloadSchemas } from '@modelcontextprotocol/server'
 import type { Context } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import type { Env } from './db'
@@ -94,6 +94,10 @@ function registerRest(app: OpenAPIHono<AppEnv>, op: Operation) {
     return c.json(await op.run(c.get('ctx'), input))
   }) as never)
 }
+
+// SDK の schema 群は初回の要求で遅延構築される（冷えた isolate の初回で CPU 約 40ms）。
+// module scope なら起動時の処理で、要求ごとの cpuMs に数えられない。
+preloadSchemas()
 
 function mcpServer(ctx: Ctx): McpServer {
   const server = new McpServer(
