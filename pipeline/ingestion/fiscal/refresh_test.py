@@ -221,13 +221,13 @@ class SaveGateTest(unittest.TestCase):
                  'unread_amount_count': 0, 'unresolved_parent_count': 0}
         paths = {'nodes': Path('n'), 'amounts': Path('a')}
         with patch('ingestion.lib.node_tables.read_rows', return_value=[]), \
-             patch('ingestion.lib.node_tables.check_tree', return_value={'passed': False}):
+             patch('ingestion.lib.tree_checks.check_tree', return_value={'passed': False}):
             with self.assertRaisesRegex(ValueError, 'tree check'):
                 storage.prepare_save(document, table, paths)
             with self.assertRaisesRegex(ValueError, 'tree check'):
                 storage.save(document, table, paths, remote=True)
         with patch('ingestion.lib.node_tables.read_rows', return_value=[]), \
-             patch('ingestion.lib.node_tables.check_tree', return_value={'passed': True}):
+             patch('ingestion.lib.tree_checks.check_tree', return_value={'passed': True}):
             with self.assertRaisesRegex(ValueError, 'tree check'):
                 storage.prepare_save(document, {**table, 'unread_amount_count': 1}, paths)
 

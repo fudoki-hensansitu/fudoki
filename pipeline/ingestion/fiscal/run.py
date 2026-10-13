@@ -13,7 +13,7 @@ import duckdb
 from ingestion.fiscal import manifest
 from ingestion.fiscal.storage import fetch, fetch_ocr, save, save_ocr, cleanup, verify, write_ocr
 from ingestion.paths import BUILD
-from ingestion.lib import digit_recheck, node_tables
+from ingestion.lib import coverage_checks, digit_recheck, node_tables, tree_checks
 
 MATCH, MISMATCH, NOT_APPLICABLE = '一致', '不一致', '対象外'
 
@@ -372,7 +372,7 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
             migrated = node_tables.migrate_rows(rows, metadata or {})
         except ValueError:
             migrated = None
-        checked = node_tables.check_tree(migrated.nodes, migrated.amounts, document['target']['document_kind']) if migrated else {'passed': False}
+        checked = tree_checks.check_tree(migrated.nodes, migrated.amounts, document['target']['document_kind']) if migrated else {'passed': False}
         if (migrated is None or not migrated.nodes or not migrated.amounts or migrated.issues or migrated.unread_amount_count
                 or migrated.unresolved_parent_count or not checked['passed']):
             tables.append(unchanged_legacy_receipt(document, conversion, ident, file,
@@ -383,7 +383,7 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
         checked_pdf.append((conversion, ident, migrated, metadata, file))
     for conversion, ident, built, file in pending_direct:
         # No saved legacy table to fall back to: a table that fails its tree check is a failure.
-        checked = node_tables.check_tree(built.nodes, built.amounts, document['target']['document_kind'])
+        checked = tree_checks.check_tree(built.nodes, built.amounts, document['target']['document_kind'])
         if not built.nodes or not built.amounts or not checked['passed']:
             raise ValueError(f'Table failed the tree check: {ident}: {checked["counts"]}; {checked["issues"][:5]}')
         completed_by_id[ident] = []
@@ -485,7 +485,7 @@ def verify_sums(document: dict, locate) -> list[dict]:
                             'counts': {}, 'checks': [], 'results': []})
             continue
         pair = locate(table)
-        checked = node_tables.check_tree(node_tables.read_rows(pair['nodes']), node_tables.read_rows(pair['amounts']), document['target']['document_kind'])
+        checked = tree_checks.check_tree(node_tables.read_rows(pair['nodes']), node_tables.read_rows(pair['amounts']), document['target']['document_kind'])
         passed = (checked['passed'] and not table['unread_amount_count'] and not table['unresolved_parent_count'])
         results.append({'table_id': table['table_id'], 'status': MATCH if passed else MISMATCH,
                         'counts': checked['counts'], 'issues': checked['issues'], 'checks': [],
@@ -539,7 +539,7 @@ def verify_coverage(document: dict, locate, directory, recheck=None) -> dict:
             continue
         try:
             scope = json.loads(sidecars[0].read_text())
-            result = node_tables.check_digit_coverage(
+            result = coverage_checks.check_digit_coverage(
                 scope['words'], peers[table['table_id']], control_tables=[adopted[table['table_id']]],
                 exclusions=scope.get('excluded_regions', ()),
                 amount_columns=scope.get('amount_columns', ()), recheck=recheck)

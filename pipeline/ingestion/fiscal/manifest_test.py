@@ -252,6 +252,19 @@ class ManifestWorkflowTest(unittest.TestCase):
         (self.code/'lib/shaping.py').write_text('VALUE = 2\n')
         self.assertNotEqual(manifest.fingerprint(self.document, conversion), before)
 
+    def test_check_module_whose_result_shapes_the_table_stays_in_the_fingerprint(self):
+        conversion = self.document['conversions'][0]
+        code = self.code/'fiscal/layouts/csv/convert.py'
+        (self.code/'generic').mkdir(exist_ok=True)
+        (self.code/'generic/build.py').write_text('from ingestion.lib.tree_checks import check_tree\n')
+        (self.code/'lib/tree_checks.py').write_text('def check_tree(rows):\n    return bool(rows)\n')
+        code.write_text(code.read_text() + '\nfrom ingestion.generic import build\n')
+        self.assertIn('generic/build.py', manifest.dependencies(conversion))
+        self.assertIn('lib/tree_checks.py', manifest.dependencies(conversion))
+        before = manifest.fingerprint(self.document, conversion)
+        (self.code/'lib/tree_checks.py').write_text('def check_tree(rows):\n    return len(rows) > 1\n')
+        self.assertNotEqual(manifest.fingerprint(self.document, conversion), before)
+
     def test_check_module_that_produces_tables_is_refused(self):
         conversion = self.document['conversions'][0]
         code = self.code/'fiscal/layouts/csv/convert.py'

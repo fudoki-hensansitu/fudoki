@@ -2,7 +2,8 @@
 from importlib import import_module
 import unittest
 
-from ingestion.lib.node_tables import check_tree, migrate_rows
+from ingestion.lib.node_tables import migrate_rows
+from ingestion.lib.tree_checks import check_tree
 
 monetary = import_module('ingestion.fiscal.jurisdictions.131024.layouts.text_settlement.monetary')
 

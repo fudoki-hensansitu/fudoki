@@ -22,7 +22,8 @@ from ingestion.fiscal.layouts.settlement_statement.convert import ocr_boxes
 from ingestion.fiscal.layouts.settlement_statement.statement import amount_text, build, normalize
 from ingestion.fiscal.storage import fetch_ocr
 from ingestion.lib import pdf_rules, vlm_ocr
-from ingestion.lib.node_tables import amount_phase, check_tree
+from ingestion.lib.node_tables import amount_phase
+from ingestion.lib.tree_checks import check_tree
 from ingestion.lib.ocr_names import AmountDictionary, AmountRule
 from shared.amount import number
 

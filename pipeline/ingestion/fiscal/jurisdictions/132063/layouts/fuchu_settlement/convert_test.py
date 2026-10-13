@@ -5,7 +5,8 @@ from tempfile import TemporaryDirectory
 import unittest
 
 from ingestion.fiscal import manifest
-from ingestion.lib.node_tables import check_tree, migrate_rows, number, read_rows
+from ingestion.lib.node_tables import migrate_rows, number, read_rows
+from ingestion.lib.tree_checks import check_tree
 
 reader = import_module('ingestion.fiscal.jurisdictions.132063.layouts.fuchu_settlement.convert')
 

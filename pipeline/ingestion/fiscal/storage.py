@@ -121,7 +121,8 @@ def prepare_save(document: dict, table: dict, path: Path | dict[str, Path]) -> l
     current checks would refuse to save never gets a fresh fingerprint.
     """
     if 'nodes' in table:
-        from ingestion.lib.node_tables import check_tree, read_rows
+        from ingestion.lib.node_tables import read_rows
+        from ingestion.lib.tree_checks import check_tree
         checked = check_tree(read_rows(path['nodes']), read_rows(path['amounts']), document['target']['document_kind'])
         if not checked['passed'] or table['unread_amount_count'] or table['unresolved_parent_count']:
             raise ValueError('Node table failed the mandatory pre-save tree check')

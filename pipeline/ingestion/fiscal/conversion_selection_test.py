@@ -6,7 +6,8 @@ import unittest
 from unittest.mock import patch
 
 from ingestion.fiscal import manifest, run
-from ingestion.lib.node_tables import read_rows, NodeTables, check_digit_coverage
+from ingestion.lib.node_tables import read_rows, NodeTables
+from ingestion.lib.coverage_checks import check_digit_coverage
 
 CONVERTER = '''
 from pathlib import Path
