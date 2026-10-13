@@ -102,7 +102,7 @@ describe('団体と収録範囲（GET /v1/jurisdictions・list_jurisdictions）'
     expect(body.jurisdictions).toEqual([expect.objectContaining({ name: '千代田区', coverage: [] })])
   })
 
-  test('全角の文字と前後の空白は揃えて比べる', async () => {
+  test('前後の空白（全角を含む）は除いて比べる', async () => {
     expect(names(await list(`?name=${encodeURIComponent(' 武蔵野市　')}`))).toEqual(['武蔵野市'])
   })
 

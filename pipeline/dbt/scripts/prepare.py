@@ -6,6 +6,7 @@ import json
 import re
 import subprocess
 import sys
+import unicodedata
 from pathlib import Path
 
 import duckdb
@@ -112,8 +113,14 @@ def original_for(document: dict, table: dict) -> dict:
 
 
 def load_jurisdictions(path: Path) -> list[tuple[str, str, str]]:
-    """団体マスタ（ADR 0015）の団体コード・名称・OCD ID。団体コードと名称の検査は dbt の marts が持つ。"""
+    """団体マスタ（ADR 0015）の団体コード・名称・OCD ID。団体コードの検査は dbt の marts が持つ。
+
+    API は入力の団体名だけを NFKC で揃えて部分一致で引くので、マスタの名称が NFKC で変わる字を含むと当たらない。そのときは止める。
+    """
     registry = json.loads(path.read_text(encoding='utf-8'))['jurisdictions']
+    changed = [code for code, entry in registry.items() if unicodedata.normalize('NFKC', entry['name']) != entry['name']]
+    if changed:
+        raise ValueError(f'Jurisdiction names must be NFKC-normalized: {sorted(changed)}')
     return [(code, entry['name'], entry['ocdId']) for code, entry in sorted(registry.items())]
 
 

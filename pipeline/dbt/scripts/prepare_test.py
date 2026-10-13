@@ -104,6 +104,12 @@ class PrepareTest(unittest.TestCase):
         with duckdb.connect(str(self.warehouse)) as con:
             self.assertEqual(con.execute('select marker from ingestion.fixture_nodes').fetchone(), ('preserved',))
 
+    def test_jurisdiction_names_must_be_nfkc(self):
+        registry = self.root / 'jurisdictions.json'
+        registry.write_text(json.dumps({'jurisdictions': {'132039': {'name': 'ﾑｻｼﾉ市', 'ocdId': 'x'}}}))
+        with self.assertRaisesRegex(ValueError, 'NFKC.*132039'):
+            prepare.load_jurisdictions(registry)
+
     def test_success_loads_original_and_metadata(self):
         result = self.load()
         self.assertEqual((result['tables'], result['origins'], result['nodes'], result['amounts']), (1, 1, 1, 1))

@@ -166,7 +166,7 @@ function renderJurisdictions(data: Json, append: boolean) {
   for (const j of list) {
     const row = h(
       'tr',
-      { class: 'row', 'data-search': `${j.name} ${j.prefecture_name} ${j.jurisdiction_code}`, tabindex: '0' },
+      { class: 'row', 'data-search': `${j.name} ${j.prefecture_name} ${j.jurisdiction_code}`.normalize('NFKC'), tabindex: '0' },
       h('td', { class: 'nowrap' }, j.name),
       h('td', { class: 'nowrap' }, j.prefecture_name),
       h('td', { class: 'mono' }, j.jurisdiction_code),
