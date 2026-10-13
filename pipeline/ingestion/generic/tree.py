@@ -1218,6 +1218,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
     annotations: list[tuple[Item, str, list[Glyph], str | None]] = []
     remarks: list[dict] = []  # `Built.annotations` before the items have keys
     all_items: list[tuple[Logical, list[Group], dict[int, list[Item]]]] = []
+    column_amount_items: set[int] = set()
     margins = code_margins(logicals)
     limits = line_limits(logicals)
     stacking = stacked_columns(logicals)
@@ -1259,11 +1260,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 elif item.code is None and not item.amounts and not group.subject:
                     item.role = 'note'
                 elif (item.code is None and item.amounts and not group.subject and not item.kinds
-                      and kind_of(PAREN_TAIL.sub('', item.name)) is not None):
-                    item.role = 'annotation'  # `前年度繰越事業費不用額 393,230`: a note, not an item of the breakdown
-                elif item.code is None and item.amounts and not group.subject and not item.kinds \
-                        and is_account_code(item.name):
-                    item.role = 'annotation'  # `・020601【010261】 △28,800`: where money moved, no item of the breakdown
+                      and (kind_of(PAREN_TAIL.sub('', item.name)) is not None or is_account_code(item.name))):
+                    item.role = 'annotation'  # An amount note or a transfer's account code, no item of the breakdown.
             found[id(group)] = group_items
             if not group.subject:
                 note_breakdown(group_items)
@@ -1288,9 +1286,56 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 if not money:
                     continue
                 target = owner(money, band, ordered, found, roles=('node', 'repeat', 'total', 'note'))
+                if target is not None:
+                    column_amount_items.add(id(target))
                 if target is not None and target.role == 'note':
                     target.role = 'node'
         all_items.append((logical, ordered, found))
+    # A subject's name can cross a rule of its narrow name column while its amount cell stays whole.
+    # The next line without a code or amount is still the name, not a deeper subject (`センタ－費`).
+    for _, ordered, found in all_items:
+        for group in ordered:
+            if not group.subject or group.mode not in ('bands', 'names'):
+                continue
+            kept = []
+            for item in found[id(group)]:
+                previous = kept[-1] if kept else None
+                if (previous is not None and previous.code is not None and previous.name
+                        and previous.role == item.role == 'node' and item.code is None and item.name
+                        and not item.amounts and id(item) not in column_amount_items
+                        and not TOTAL.search(item.name) and item.page == previous.page
+                        and group.bands[item.level].header[-1] == group.bands[previous.level].header[-1]
+                        and 0 <= item.y0 - previous.y1 <= max(g.y1 - g.y0 for g in item.glyphs)):
+                    previous.name += item.name
+                    previous.lines += item.lines
+                    continue
+                kept.append(item)
+            found[id(group)] = kept
+    # A subject name cut at the foot of a page continues without a number or amount at the next page's
+    # start (`8 市立社会福祉` / `センター費`). Keep its first-page position; a box cannot span two pages.
+    for (_, ordered, found), (_, next_ordered, next_found) in zip(all_items, all_items[1:]):
+        for group in ordered:
+            tail = found[id(group)][-1] if group.subject and found[id(group)] else None
+            if tail is None or tail.role != 'node' or tail.code is None or not tail.name:
+                continue
+            for other in next_ordered:
+                if not other.subject or not next_found[id(other)]:
+                    continue
+                previous_head = None
+                for head in list(next_found[id(other)]):
+                    if (head.code is not None or head.amounts or id(head) in column_amount_items
+                            or head.role != 'node' or not head.name or TOTAL.search(head.name)
+                            or not 0 < head.page - tail.page <= 2
+                            or [b.header for b in other.bands] != [b.header for b in group.bands]):
+                        break
+                    if previous_head is not None and (head.page != previous_head.page
+                            or head.level != previous_head.level
+                            or not 0 <= head.y0 - previous_head.y1 <= max(g.y1 - g.y0 for g in head.glyphs)):
+                        break
+                    tail.name += head.name
+                    next_found[id(other)].remove(head)
+                    previous_head = head
+                break
     # An account code printed with the amount of a transfer at the foot of a page and the words that say where
     # it went on the first line of the next table page (`030201【111412】 △33,630` / `020000へ予算流用減`; a
     # page of headings only may lie between): the kind is the next page's. (Joining the two lines would put one

@@ -848,7 +848,7 @@ class LevelAndWrapRulesTest(unittest.TestCase):
 
 
 class BreakdownRulesTest(unittest.TestCase):
-    """Rules found by connecting the builder to seven more text PDFs (港区・町田・東村山・武蔵野・府中・日野・清瀬)."""
+    """Account codes, carry-over labels, and annotation breakdown rules."""
 
     def band(self, words, x0=0, x1=600, header=('備考',)):
         band = Band(x0, x1, 1, header, [], 100, 700)
@@ -898,6 +898,89 @@ class BreakdownRulesTest(unittest.TestCase):
                          ['1', '1職員人件費', '１消耗品費', '2.5倍'])
         self.assertTrue(BRACKET_CODE.fullmatch('【010111】'))
         self.assertIsNone(BRACKET_CODE.fullmatch('【人事課】'))
+
+
+class PatternNamesTest(unittest.TestCase):
+    def test_equal_subject_balances_prefer_complete_names_over_more_breakdown_comparisons(self):
+        from ingestion.generic.build import closure
+        def node(key, parent, axis, name):
+            return {'node_key': key, 'parent_node_key': parent, 'axis_header': axis,
+                    'level_header': None, 'name_text': name}
+        def amount(key, value):
+            return {'node_key': key, 'header_path': '支出済額', 'unit_text': '円', 'amount_text': str(value)}
+        nodes = [node('parent', None, '科目', '総務費'), node('child', 'parent', '科目', '一般管理費')]
+        amounts = [amount('parent', 100), amount('child', 100)]
+        complete = Built(nodes, amounts, [], [])
+        separated = Built(nodes + [node('code', None, '科目', None),
+                                  node('setsu', 'child', '節', '委託料')],
+                          amounts + [amount('setsu', 100)], [], [])
+        a, b = closure(complete, 'settlement'), closure(separated, 'settlement')
+        self.assertEqual(a['subject_agree'], b['subject_agree'])
+        self.assertGreater(b['agree'], a['agree'])
+        self.assertGreater(a['score'], b['score'])
+
+
+class SubjectContinuationTest(unittest.TestCase):
+    def build_crossing_rule(self, amount=None, gap=3):
+        from ingestion.generic.layout import Logical
+        from ingestion.generic.tree import build
+        code = Band(0, 10, 1, ('科目', '目', '目'), [70, 100, 200], 70, 200, kind='label')
+        name = Band(10, 120, 1, ('科目', '目'), [70, 100, 200], 70, 200, kind='label')
+        value = Band(120, 200, 1, ('支出済額',), [70, 200], 70, 200, kind='amount')
+        code.words = [glyph('8', 2, 94, 5)]
+        name.words = [glyph('市立社会福祉', 12, 94, 90), glyph('センタ－費', 12, 103 + gap, 70)]
+        value.words = [glyph('1,000', 140, 94, 50)]
+        if amount:
+            value.words.append(glyph(amount, 140, 103 + gap, 50))
+        return build([Logical([1], [code, name, value], '円', [])])
+
+    def test_name_crossing_its_column_rule_stays_with_the_number_and_keeps_both_lines_position(self):
+        built = self.build_crossing_rule()
+        self.assertEqual([(n['code_text'], n['name_text'], n['depth']) for n in built.nodes],
+                         [('8', '市立社会福祉センタ-費', 1)])
+        self.assertEqual((built.nodes[0]['y0'], built.nodes[0]['y1']), (94, 115))
+        self.assertEqual([a['amount_text'] for a in built.amounts], ['1,000'])
+
+    def test_an_amount_or_gap_after_a_column_rule_preserves_the_separate_item(self):
+        for options in ({'amount': '2,000'}, {'gap': 30}):
+            with self.subTest(options=options):
+                self.assertEqual(len(self.build_crossing_rule(**options).nodes), 2)
+
+    def build_pages(self, continuation='センター費', amount=None, page=2, header='目', following=None):
+        from ingestion.generic.layout import Logical
+        from ingestion.generic.tree import build
+
+        def logical(number, name, y, money, heading):
+            label = Band(0, 120, number, (heading,), [70, 200], 70, 200)
+            value = Band(120, 200, number, ('支出済額',), [70, 200], 70, 200)
+            label.kind, value.kind = 'label', 'amount'
+            label.words = [Glyph(name, 5, y, 110, y + 9, number, 0)]
+            value.words = [Glyph(money, 140, y, 190, y + 9, number, 0)] if money else []
+            return Logical([number], [label, value], '円', [])
+
+        next_page = logical(page, continuation, 80, amount, header)
+        if following:
+            next_page.bands[0].rows = [70, 90, 200]
+            next_page.bands[0].words.append(Glyph(following, 5, 92, 110, 101, page, 0))
+        return build([logical(1, '8市立社会福祉', 180, '1,000', '目'), next_page])
+
+    def test_codeless_amountless_subject_name_at_next_page_start_completes_the_previous_name(self):
+        built = self.build_pages()
+        self.assertEqual([(n['code_text'], n['name_text'], n['physical_page']) for n in built.nodes],
+                         [('8', '市立社会福祉センター費', 1)])
+        self.assertEqual([(a['amount_text'], a['physical_page']) for a in built.amounts], [('1,000', 1)])
+        self.assertEqual(built.unowned, [])
+
+    def test_number_amount_other_column_or_distant_page_does_not_complete_the_name(self):
+        for options in ({'continuation': '9センター費'}, {'amount': '1,000'},
+                        {'header': '項'}, {'page': 4}, {'continuation': '歳出合計'}):
+            with self.subTest(options=options):
+                built = self.build_pages(**options)
+                self.assertEqual(built.nodes[0]['name_text'], '市立社会福祉')
+
+    def test_all_adjacent_codeless_lines_at_next_page_start_complete_the_name(self):
+        built = self.build_pages(continuation='センター', following='費')
+        self.assertEqual([n['name_text'] for n in built.nodes], ['市立社会福祉センター費'])
 
 
 class HeaderCharactersTest(unittest.TestCase):

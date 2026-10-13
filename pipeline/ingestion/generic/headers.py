@@ -25,7 +25,7 @@ A path that the dictionary already knows (or whose last segment it knows) is nev
 from __future__ import annotations
 
 from collections import Counter
-from functools import cache
+from functools import cache, lru_cache
 import re
 
 SYMBOL = re.compile(r'(?:[（(][A-ZＡ-Ｚ][)）][-－−]?)+|[（(][^0-9０-９()（）][)）]')
@@ -53,6 +53,7 @@ def _letters(heading: str) -> tuple:
     return tuple(sorted(Counter(c for c in heading if c not in SEPARATOR and not c.isspace()).items()))
 
 
+@lru_cache(maxsize=256)
 def by_characters(path: str, known: frozenset[str]) -> str | None:
     """The known heading (or two joined) whose characters, counted, are the path's. The path's own
     separators fall away; the first match in a fixed order wins (one heading, then two: the longer first)."""

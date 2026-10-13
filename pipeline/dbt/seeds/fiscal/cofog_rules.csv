@@ -180,7 +180,7 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 940,vocab-community-medical,,一般会計,,,,,地域医療,contains,,assigned,07,retained,目,,地域医療の推進は保健であり COFOG 07 保健。,false
 941,vocab-health-program,,一般会計,,,,,保健事業,contains,,assigned,07,retained,目,,保健事業は保健であり COFOG 07 保健。,false
 942,vocab-health-admin,,一般会計,,,,,健康衛生,contains,,assigned,07,retained,目,,健康衛生の総務は保健の管理であり COFOG 07 保健。,false
-943,vocab-pollution-compensation,,一般会計,,,,,公害補償,contains,,assigned,07,retained,目,,公害補償（健康被害への補償）は保健に寄せた境界の判断のため暫定とする。,true
+943,vocab-pollution-compensation,,一般会計,,,,,公害補償|公害病補償,contains,,assigned,07,retained,目,,公害補償・公害病補償（健康被害への補償）は保健に寄せた境界の判断のため暫定とする。,true
 944,vocab-family-welfare,,一般会計,,,,,家庭福祉,contains,,assigned,10.4,retained,目,,家庭福祉は家族への支援であり COFOG 10.4 家族及び児童。,false
 945,vocab-temporary-benefit,,一般会計,,,,,臨時給付金,contains,,assigned,10,retained,目,,臨時給付金は生活への一時的な給付であり社会保護に寄せた境界の判断のため暫定とする。,true
 946,vocab-culture-facility,,一般会計,,,,,文化施設|文化振興,contains,,assigned,08.2,retained,目,,文化施設・文化振興は UN COFOG 08.2 文化サービス。,false
@@ -201,7 +201,7 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 961,vocab-sewerage,,一般会計,,,,,下水道,contains,,assigned,05.2,retained,目,,下水道は UN COFOG 05.2 排水管理。私道の私下水改修は先の規則が取る。,false
 962,vocab-nursing-school,,一般会計,,,,,看護学校,contains,,assigned,09,retained,目,,看護学校は教育水準を特定しない養成機関であり COFOG 09 教育の division 止まりで暫定とする。,true
 963,vocab-park-toilet-green,,一般会計,,,緑化公園費,,公衆便所,contains,,assigned,08.1,retained,目,,緑化公園費に属する公衆便所は公園の付帯施設であり UN COFOG 08.1（公園費・緑化費の規則と同じ扱い）。,false
-964,vocab-private-road,,一般会計,,,,,私道整備,contains,,assigned,04.5.1,retained,目,,私道整備の助成は道路の整備であり UN COFOG 04.5.1 道路交通。,false
+964,vocab-private-road,,一般会計,,,,,私道整備|私道等整備,contains,,assigned,04.5.1,retained,目,,私道整備・私道等整備を道路輸送に置く。私下水や防犯灯は行き先が違うためこの語に含めない。,false
 965,vocab-private-light,,一般会計,,,,,私道防犯灯,contains,,assigned,06.4,retained,目,,私道の防犯灯改修は街路照明に寄せた境界の判断のため暫定とする。,true
 970,kind-fallback-kokuho,,,国民健康保険,,,,,,,assigned,07,retained,目,,国民健康保険の目は医療給付とその運営であり COFOG 07 保健。償還・積立・繰出など行き先が違う目は先の規則が取る。,false
 971,kind-fallback-kouki,,,後期高齢者医療,,,,,,,assigned,07,retained,目,,後期高齢者医療の目は医療給付とその運営であり COFOG 07 保健。償還・繰出など行き先が違う目は先の規則が取る。,false
@@ -241,8 +241,12 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 1027,fallback-kou-secondary,,一般会計,,,中学校費,,,eq,,assigned,09.2,retained,目,,中学校費の項に属し語の規則に当たらない目を中等教育に分類する。,false
 1028,fallback-kou-education-admin,,一般会計,,,教育総務費,,,eq,,assigned,09.8,retained,目,,教育総務費の項に属し語の規則に当たらない目を教育管理に分類する。,false
 1029,fallback-kou-social-education,,一般会計,,,社会教育費,,,eq,,assigned,09.5,retained,目,,社会教育費の項に属し語の規則に当たらない目を 09.5 に置く。施設の運営は文化（08.2）・スポーツ（08.1）との境界のため暫定とする。,true
-1030,fallback-kou-health-sports,,一般会計,,,保健体育費,,,eq,,assigned,08.1,retained,目,,保健体育費の項に属し語の規則に当たらない目を 08.1 スポーツに置く。学校の保健・給食は先の規則が取る。学校の体育として 09 との境界のため暫定とする。,true
+1030,fallback-kou-health-sports,,一般会計,,,保健体育費|社会体育費,,,eq,,assigned,08.1,retained,目,,保健体育費・社会体育費の項に属し語の規則に当たらない目を 08.1 スポーツに置く。学校の保健・給食は先の規則が取る。学校の体育として 09 との境界のため暫定とする。,true
 1031,fallback-kou-urban-planning,,一般会計,,,都市計画費,,,eq,,assigned,06.2,retained,目,,都市計画費の項に属し語の規則に当たらない目を地域開発に置く（akishima-toshikeikaku-other と同じ）。緑地・公園・街路の整備なら 08.1・04.5.1 との境界のため暫定とする。,true
 1032,fallback-kou-public-works-admin,,一般会計,,,土木管理費,,,eq,,assigned,04.5,retained,目,,土木管理費の項に属し語の規則に当たらない目を運輸に置く（doboku-kanri と同じ）。用地・管理の対象施設で機能が変わるため暫定とする。,true
 1033,fallback-kou-river,,一般会計,,,河川費,,,eq,,unclassifiable,,retained,目,,河川費の項に属し語の規則に当たらない目を分類不能とする（河川の規則 keyword-river-uncertain と同じ。治水・親水・環境が混じる）。,false
-1034,fallback-kan-agri-forest-fishery,,一般会計,,農林水産業費|農林業費,,,,eq,,assigned,04.2,retained,目,,農林水産業・農林業の款に属し語の規則に当たらない目を農業・林業・漁業に分類する。,false
+1034,fallback-kan-agri-forest-fishery,,一般会計,,農林水産業費|農林業費|農業費,,,,eq,,assigned,04.2,retained,目,,農林水産業・農林業・農業の款に属し語の規則に当たらない目を農業・林業・漁業に分類する。,false
+1035,fallback-kou-cleaning,,一般会計,,,清掃費,,,eq,,assigned,05.1,retained,目,,清掃費の項に属し語の規則に当たらない目を廃棄物管理に置く。周辺対策など施設の支援を含むため名称からの判断は暫定とする。,true
+1036,fallback-kou-offsite-education,,一般会計,,,校外施設費,,,eq,,assigned,09.6,retained,目,,校外施設費の項に属し語の規則に当たらない目を区外学習施設と同じ教育の補助サービスに置く。学習と宿泊等の境界のため暫定とする。,true
+1037,fallback-kou-special-support-education,,一般会計,,,特別支援教育費,,,eq,,assigned,09,retained,目,,特別支援教育費の項に属し語の規則に当たらない目を教育に置く。学校段階を特定できないため特別支援学校の語の規則と同じ division 止まりとする。,false
+1038,fallback-kou-parks,,一般会計,,,公園費,,,eq,,assigned,08.1,retained,目,,公園費の項に属し語の規則に当たらない目を公園の娯楽サービスに置く。児童福祉費の児童遊園など項の異なる目へ広げない。,false
