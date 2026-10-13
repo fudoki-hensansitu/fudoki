@@ -3,7 +3,7 @@ title: REST で使う
 description: https://api.fudoki.dev に JSON で問い合わせ、歳出の木のノードを検索・取得する。
 ---
 
-ベース URL は `https://api.fudoki.dev` です。認証は要りません。応答はすべて JSON で、キャッシュさせません（`Cache-Control: no-store`）。
+ベース URL は `https://api.fudoki.dev` です。認証は要りません。財政データの応答は JSON、原典 PDF の中継は `application/pdf` で返します。応答はキャッシュさせません（`Cache-Control: no-store`）。
 
 ## 最初の問い合わせ
 
@@ -69,6 +69,8 @@ description: https://api.fudoki.dev に JSON で問い合わせ、歳出の木�
 
 応答の `origins` には、結果の行が指す原典（資料名・公開 URL・形式・SHA-256）が入ります。行の `origin_id` から引いてください。団体の一覧では、原典（`origin_id`・資料名・公開 URL・形式）は会計ごとに `coverage[].accounts[].origins` に入っています。
 
+`GET /v1/origins/{origin_id}/pdf` で自治体の公開 PDF を表示用に中継します。任意 URL や query は指定できません。取得 URL は percent-encoding した `X-Origin-Url`、取得日時は ISO 8601 UTC の `X-Origin-Fetched-At` ヘッダーで返します。取り込み時の内容との一致は検査しません。保持期限と上限は [MCP の PDF 表示](/mcp#表で見るmcp-apps)を参照してください。
+
 ## エラー
 
 エラーは `{"error": {"code": "...", "message": "..."}}` の形で返ります。主なものは次のとおりです。
@@ -80,6 +82,9 @@ description: https://api.fudoki.dev に JSON で問い合わせ、歳出の木�
 | 405 | `METHOD_NOT_ALLOWED` | 操作が受け付けないメソッドで送った |
 | 413 | `PAYLOAD_TOO_LARGE` | body が 16 KiB を超える |
 | 415 | `UNSUPPORTED_MEDIA_TYPE` | `Content-Type` が `application/json` でない |
+| 429 | `PDF_UNAVAILABLE` | PDF 中継の頻度・保持件数の上限を超える |
+| 502 | `PDF_UNAVAILABLE` | PDF を取得できない、形式が不正、32 MiBを超える |
+| 504 | `PDF_UNAVAILABLE` | PDF の取得が20秒を超える |
 | 503 | `UNAVAILABLE` | 提供を止めている |
 
 各操作の入力と応答の詳細は [API リファレンス](/reference)にあります。

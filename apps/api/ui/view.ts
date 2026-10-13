@@ -1,6 +1,7 @@
 // MCP Apps の View（host の iframe の中で動く）。tool の structuredContent を受けて、団体と収録範囲・歳出の木のノードを表にする。
 // 表示だけを担い、データの意味は REST・MCP の応答と同じ。追加のデータは fetch せず（既定の CSP で connect-src 'none'）、host 経由で tool を呼ぶ。
 import { App, applyDocumentTheme, applyHostFonts, applyHostStyleVariables, type McpUiHostContext } from '@modelcontextprotocol/ext-apps'
+import { closePdf, showPdf, type PdfLocation } from './pdf-view'
 
 type Json = Record<string, unknown>
 
@@ -11,7 +12,7 @@ interface Origin {
   format: string
 }
 
-interface TreeNode {
+interface TreeNode extends PdfLocation {
   document_kind: string
   node_id: string
   jurisdiction_code: string
@@ -40,6 +41,7 @@ const KIND_LABEL: Record<string, string> = { settlement: '決算', initial: '当
 
 const root = document.getElementById('root')!
 const app = new App({ name: 'fudoki-view', version: '1.0.0' })
+let apiOrigin = 'https://api.fudoki.dev'
 
 // 結果を描いた tool と、その入力。「次のページ」は同じ入力に page_token を足して同じ tool を呼ぶ。
 // tool は結果の形から決める（host が hostContext.toolInfo を渡すとは限らない）
@@ -67,12 +69,18 @@ function originLink(url: string, text: string, label: string) {
  * 明細の原典の位置。PDF は #page= で頁を開ける（Chrome・Edge・Firefox・Acrobat）が、Safari やダウンロードされた PDF では効かないので、頁番号も書く。
  * 頁が無い明細と CSV（頁ではなく行）には #page を付けない。
  */
-function located(origin: Origin | undefined, page: number | null, prefix: string, text = '原典') {
+function located(origin: Origin | undefined, page: number | null, prefix: string, text = '原典', node?: TreeNode) {
   if (!origin) return null
   const pdf = origin.format === 'pdf'
   const url = pdf && page !== null ? `${origin.url}#page=${page}` : origin.url
   const where = page === null ? '' : pdf ? `${page}ページ` : `${page}行目`
-  return h('span', { class: 'loc' }, prefix, originLink(url, text, origin.title), where ? ' ' : '', where ? h('span', { class: 'nowrap' }, where) : '')
+  let action: HTMLElement = originLink(url, text, origin.title)
+  if (pdf && page !== null && node) {
+    const button = h('button', { type: 'button', class: 'link', 'aria-label': `${prefix.trim()}の原典を表示: ${node.name}` }, '原典を表示')
+    button.onclick = () => void showPdf(origin, node, page, apiOrigin, (url) => { void app.openLink({ url }) }, button)
+    action = button
+  }
+  return h('span', { class: 'loc' }, prefix, action, where ? ' ' : '', where ? h('span', { class: 'nowrap' }, where) : '')
 }
 
 const wrap = (table: HTMLTableElement) => h('div', { class: 'table-wrap' }, table)
@@ -95,6 +103,7 @@ async function call(tool: string, args: Json, push: boolean) {
   let message: string
   try {
     const result = await app.callServerTool({ name: tool, arguments: args })
+    if (typeof result._meta?.apiOrigin === 'string') apiOrigin = result._meta.apiOrigin
     if (!result.isError && result.structuredContent) {
       if (push) stack.push({ ...current, data: lastData })
       current = { tool, args }
@@ -212,9 +221,9 @@ function nodePath(n: TreeNode) {
 
 function nodeRow(n: TreeNode, origins: Map<string, Origin>, withScope: boolean) {
   const origin = origins.get(n.origin_id)
-  const loc = h('td', { class: 'locs' }, located(origin, n.source_page, '項目 '))
+  const loc = h('td', { class: 'locs' }, located(origin, n.source_page, '項目 ', '原典', n))
   // 金額の位置は、項目と同じ頁なら繰り返さない
-  if (n.amount_yen !== null && n.amount_source_page !== null && n.amount_source_page !== n.source_page) loc.append(h('br'), located(origin, n.amount_source_page, '金額 ')!)
+  if (n.amount_yen !== null && n.amount_source_page !== null && n.amount_source_page !== n.source_page) loc.append(h('br'), located(origin, n.amount_source_page, '金額 ', '原典', n)!)
   const drill = h('button', { type: 'button', class: 'link' }, '内訳')
   drill.addEventListener('click', async () => {
     const data = await call('get_expenditure_node', { document_kind: n.document_kind, node_id: n.node_id }, true)
@@ -273,7 +282,7 @@ function renderNode(data: Json, append: boolean) {
         h('h3', {}, h('span', { class: 'kind' }, node.node_kind), ' ', nodePath(node) || node.name),
         h('div', { class: 'num big' }, yen(node.amount_yen)),
         h('div', { class: 'muted' }, origin?.title ?? ''),
-        h('div', {}, located(origin, node.source_page, '項目 '), node.amount_source_page !== null && node.amount_source_page !== node.source_page ? h('span', {}, ' ・ ', located(origin, node.amount_source_page, '金額 ')!) : null)
+        h('div', {}, located(origin, node.source_page, '項目 ', '原典', node), node.amount_source_page !== null && node.amount_source_page !== node.source_page ? h('span', {}, ' ・ ', located(origin, node.amount_source_page, '金額 ', '原典', node)!) : null)
       )
     )
   }
@@ -306,6 +315,7 @@ function backButton() {
 }
 
 function render(data: Json, append: boolean) {
+  closePdf()
   lastData = data
   root.querySelector('.call-error')?.remove()
   if (Array.isArray(data.jurisdictions)) {
@@ -332,6 +342,7 @@ app.ontoolinput = (params) => {
   current.args = (params.arguments ?? {}) as Json
 }
 app.ontoolresult = (result) => {
+  if (typeof result._meta?.apiOrigin === 'string') apiOrigin = result._meta.apiOrigin
   if (result.isError || !result.structuredContent) {
     const text = result.content?.find((c) => c.type === 'text')
     showError(text && 'text' in text ? String(text.text) : '結果がありません')

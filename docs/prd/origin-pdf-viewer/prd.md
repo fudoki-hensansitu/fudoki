@@ -1,5 +1,5 @@
 ---
-status: ready
+status: in-progress
 ---
 
 # 原典 PDF の該当箇所の表示
