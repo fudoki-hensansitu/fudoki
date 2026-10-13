@@ -96,7 +96,11 @@ function registerRest(app: OpenAPIHono<AppEnv>, op: Operation) {
 }
 
 function mcpServer(ctx: Ctx): McpServer {
-  const server = new McpServer({ name: 'fudoki-api', version: '1.0.0' })
+  const server = new McpServer(
+    { name: 'fudoki-api', version: '1.0.0' },
+    // stateless で tool の一覧は変わらず、通知を送る経路も無いので、listChanged は名乗らない
+    { capabilities: { tools: { listChanged: false } } }
+  )
   for (const op of operations) {
     server.registerTool(
       op.name,
@@ -214,6 +218,9 @@ export function createApp() {
     // JSON-RPC の batch は1回の HTTP で検索を何十件も実行できるので、単一の要求だけを受ける。
     const body = c.get('json')
     if (Array.isArray(body)) return c.json(jsonRpcError(-32600, 'JSON-RPC の batch は受け付けません。要求を1つずつ送ってください'), 400)
+    // subscriptions/listen は SSE を開いたままにする長い接続で、Workers では持てない（通知を流す元も無い）。
+    if ((body as { method?: unknown } | null)?.method === 'subscriptions/listen')
+      return c.json({ ...jsonRpcError(-32601, 'subscriptions/listen は受け付けません'), id: (body as { id?: unknown }).id ?? null }, 400)
     const ctx = c.get('ctx')
     const handler = createMcpHandler(() => mcpServer(ctx), {
       legacy: 'stateless',

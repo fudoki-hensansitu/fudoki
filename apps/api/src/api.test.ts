@@ -737,6 +737,15 @@ describe('MCP 2026-07-28', () => {
     }
   })
 
+  test('subscriptions/listen は長い SSE を開かずに 400 で断る。listChanged は名乗らない', async () => {
+    const res = await modern('subscriptions/listen', { notifications: { toolsListChanged: true } })
+    expect(res.status).toBe(400)
+    expect(res.headers.get('Content-Type')).toContain('application/json')
+    expect((await res.json()).error.code).toBe(-32601)
+    const discover = await rpcBody(await modern('server/discover'))
+    expect(discover.result.capabilities.tools.listChanged).toBe(false)
+  })
+
   test('batch は 2026-07-28 の形でも 400 で、検索は実行されない', async () => {
     const calls: string[] = []
     const spy: Db = { prepare: (sql) => (calls.push(sql), db.prepare(sql)), batch: (s) => db.batch(s) }
