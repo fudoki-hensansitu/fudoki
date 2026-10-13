@@ -14,10 +14,18 @@ read the printed words only:
 4. `…との比較` is `比較`; a column whose last segment the dictionary knows is that segment; a path whose
    last segment is none but whose first segments are a heading is that heading.
 
+5. a column heading printed in a narrow cell, one character or two to a line, comes out of the text layer
+   with its characters in the order of the cells (`不額／用`, `翌年度越額／繰／越／繰明／許／費`): when the
+   characters of the whole path, taken together, are exactly the characters of one known heading or of two,
+   the path is that heading (`不用額`, `翌年度繰越額／繰越明許費`). The match is on the characters as a set
+   with their counts; it is tried last, and only for a path that none of the rules above reads.
+
 A path that the dictionary already knows (or whose last segment it knows) is never touched.
 """
 from __future__ import annotations
 
+from collections import Counter
+from functools import cache
 import re
 
 SYMBOL = re.compile(r'(?:[（(][A-ZＡ-Ｚ][)）][-－−]?)+|[（(][^0-9０-９()（）][)）]')
@@ -37,6 +45,38 @@ def parse(text: str, known: set[str]) -> list[str] | None:
             rest = parse(text[end:], known)
             if rest is not None:
                 return [text[:end], *rest]
+    return None
+
+
+@cache
+def _letters(heading: str) -> tuple:
+    return tuple(sorted(Counter(c for c in heading if c not in SEPARATOR and not c.isspace()).items()))
+
+
+def by_characters(path: str, known: frozenset[str]) -> str | None:
+    """The known heading (or two joined) whose characters, counted, are the path's. The path's own
+    separators fall away; the first match in a fixed order wins (one heading, then two: the longer first)."""
+    wanted = _letters(path)
+    if sum(count for _, count in wanted) < 2:
+        return None
+    ordered = sorted(known, key=lambda h: (-len(h), h))
+    for heading in ordered:
+        if _letters(heading) == wanted:
+            return heading
+    singles = [h for h in ordered if SEPARATOR not in h]
+    for first in singles:
+        rest = Counter(dict(wanted))
+        rest.subtract(dict(_letters(first)))
+        if any(count < 0 for count in rest.values()):
+            continue
+        remaining = tuple(sorted((c, n) for c, n in rest.items() if n))
+        for second in singles:
+            if _letters(second) == remaining:
+                # The group heading is the one whose characters start the path.
+                text = path.replace(SEPARATOR, '')
+                where = lambda h: min(text.find(c) for c in set(h) if c in text)
+                a, b = (first, second) if where(first) <= where(second) else (second, first)
+                return f'{a}{SEPARATOR}{b}'
     return None
 
 
@@ -69,4 +109,5 @@ def canonical(path: str, axis: str | None, known: set[str]) -> str:
         prefix = SEPARATOR.join(segments[:end])
         if prefix in known:
             return prefix
-    return joined
+    found = by_characters(joined, frozenset(known))
+    return found if found is not None else joined
