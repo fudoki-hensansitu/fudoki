@@ -59,7 +59,7 @@
   #pdf-view button[aria-pressed="true"] { border-color: var(--accent); }
   #pdf-view h3 { overflow-wrap: anywhere; min-width: 0; }
   .pdf-url { color: var(--accent); overflow-wrap: anywhere; }
-  .pdf-scroll { overflow: auto; max-height: 70vh; border: 1px solid var(--line); }
+  .pdf-scroll { overflow: auto; max-height: min(70vh, 480px); border: 1px solid var(--line); }
   .pdf-stage { position: relative; background: var(--pdf-paper); line-height: 0; }
   .pdf-stage canvas { width: 100%; height: auto; }
   .pdf-frame { position: absolute; box-sizing: border-box; border: 2px solid var(--item-frame); background: color-mix(in srgb, var(--item-frame) 12%, transparent); pointer-events: none; }

@@ -74,6 +74,8 @@ if (process.env.REAL_PDF_QA === '1') test('自治体の公開PDFと提供済み�
   await expect(ui.getByRole('img', '原典 PDF 1ページ')).toBeVisible()
   await expect(ui.getByRole('img', '項目の印字枠')).toBeVisible()
   await expect(ui.getByRole('img', '金額の印字枠')).toBeVisible()
+  const frame = await ui.getByRole('img', '項目の印字枠').boundingBox()
+  expect(frame!.y).toBeLessThan(700)
   await app.screenshot('real-origin-pdf')
 })
 
