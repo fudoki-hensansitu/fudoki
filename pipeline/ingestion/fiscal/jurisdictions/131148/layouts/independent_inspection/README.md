@@ -6,4 +6,4 @@
 2. `inspect_notes.py --pdf <原典PDF> --origin <観測JSON> --output <備考JSON>`: 印字された水平罫線から備考の所属を決める。
 3. `validate_candidate.py --origin <観測JSON> --notes <備考JSON> --parquet <候補Parquet> --output <結果JSON>`: 候補の表を読み戻し、観測と照合する。`hierarchy.py` は款・項・目・節の独立した印字金額との照合に使う。
 
-保存した表の階層ごとの合計は、共通の `bun run --cwd pipeline ingestion:verify`（`ingestion/lib/node_tables.py` の木の検査 `check_tree`）で確かめる。
+保存した表の階層ごとの合計は、共通の `bun run --cwd pipeline ingestion:verify`（`ingestion/lib/tree_checks.py` の木の検査 `check_tree`）で確かめる。

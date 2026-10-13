@@ -7,7 +7,8 @@ from pathlib import Path
 from ingestion.fiscal import manifest, run
 from ingestion.lib import digit_recheck
 from ingestion.lib.digit_recheck import ContextIndex, Recheck, RecheckUnavailable
-from ingestion.lib.node_tables import NodeTables, check_digit_coverage, check_table_coverage, write_coverage_words
+from ingestion.lib.node_tables import NodeTables, check_table_coverage, write_coverage_words
+from ingestion.lib.coverage_checks import check_digit_coverage
 
 
 def node(key='n1', y=10., code='1', name='総務費'):

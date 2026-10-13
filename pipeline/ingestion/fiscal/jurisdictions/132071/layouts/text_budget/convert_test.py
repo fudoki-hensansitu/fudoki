@@ -5,7 +5,8 @@ import xml.etree.ElementTree as ET
 
 from ingestion.fiscal.layouts.statement.text_document import build_document
 from ingestion.fiscal.layouts.statement.text_document_test import fixture
-from ingestion.lib.node_tables import migrate_rows, check_tree
+from ingestion.lib.node_tables import migrate_rows
+from ingestion.lib.tree_checks import check_tree
 from ingestion.lib.pdf_table import tokens_from_bbox_layout
 
 converter = import_module('ingestion.fiscal.jurisdictions.132071.layouts.text_budget.convert')

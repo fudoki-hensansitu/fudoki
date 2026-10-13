@@ -10,10 +10,10 @@ from pathlib import Path
 
 import duckdb
 
-from ingestion.fiscal import manifest
+from ingestion.fiscal import manifest, unit_checks
 from ingestion.fiscal.storage import fetch, fetch_ocr, save, save_ocr, cleanup, verify, write_ocr
 from ingestion.paths import BUILD
-from ingestion.lib import digit_recheck, node_tables
+from ingestion.lib import coverage_checks, digit_recheck, node_tables, tree_checks
 
 MATCH, MISMATCH, NOT_APPLICABLE = '一致', '不一致', '対象外'
 
@@ -134,6 +134,22 @@ def pdf_account(document: dict, conversion: dict, nodes: list[dict]) -> str:
     return account
 
 
+def unit_gate(document: dict, conversion: dict, table_id: str, tables: node_tables.NodeTables,
+              scope: dict | None = None) -> dict:
+    """The unit check of one node table (款 sum against the printed 歳出合計, digits of the unit); stops on failure.
+
+    ``scope`` is the converter's digit-coverage scope (its printed words), which is where the printed total
+    comes from; a table without one (a scan PDF) is checked on the digits of the unit only.
+    """
+    result = unit_checks.check_table(
+        tables.nodes, tables.amounts, document_kind=document['target']['document_kind'],
+        account=pdf_account(document, conversion, tables.nodes),
+        partial=bool(conversion['options'].get('partial')), scope=scope)
+    if result['stopped']:
+        raise ValueError(f'Unit check failed: {table_id}: {unit_checks.describe(result)}')
+    return result
+
+
 def complete_subject_rows(rows: list[dict], siblings: list[list[dict]]) -> list[dict]:
     """Include printed subjects with no explanation using the same account's detail table.
 
@@ -240,6 +256,9 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
     pending_pdf = []
     pending_direct = []
     coverage_failures = []
+    unit_failures = []
+    unit_results = {}
+    scopes = {}
     adopted = {}
     checked_pdf = []
     direct = {}
@@ -300,6 +319,7 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
             # New converters hand over the printed tree itself; write_tables runs the tree check.
             if set(value) - {'node_tables', 'notes'} or not isinstance(value['node_tables'], node_tables.NodeTables):
                 raise ValueError('Node converter descriptor requires node_tables and optional notes only')
+            unit_results[ident] = unit_gate(document, conversion, ident, value['node_tables'])
             receipt, pair = node_receipt(document, conversion, ident, value['node_tables'], destination,
                                          input_fingerprint=before[conversion['id']],
                                          notes=list(value.get('notes', [])), migrated=False)
@@ -372,7 +392,7 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
             migrated = node_tables.migrate_rows(rows, metadata or {})
         except ValueError:
             migrated = None
-        checked = node_tables.check_tree(migrated.nodes, migrated.amounts, document['target']['document_kind']) if migrated else {'passed': False}
+        checked = tree_checks.check_tree(migrated.nodes, migrated.amounts, document['target']['document_kind']) if migrated else {'passed': False}
         if (migrated is None or not migrated.nodes or not migrated.amounts or migrated.issues or migrated.unread_amount_count
                 or migrated.unresolved_parent_count or not checked['passed']):
             tables.append(unchanged_legacy_receipt(document, conversion, ident, file,
@@ -383,7 +403,7 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
         checked_pdf.append((conversion, ident, migrated, metadata, file))
     for conversion, ident, built, file in pending_direct:
         # No saved legacy table to fall back to: a table that fails its tree check is a failure.
-        checked = node_tables.check_tree(built.nodes, built.amounts, document['target']['document_kind'])
+        checked = tree_checks.check_tree(built.nodes, built.amounts, document['target']['document_kind'])
         if not built.nodes or not built.amounts or not checked['passed']:
             raise ValueError(f'Table failed the tree check: {ident}: {checked["counts"]}; {checked["issues"][:5]}')
         completed_by_id[ident] = []
@@ -428,6 +448,13 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
                 jev_answers[ident] = used
             write_answers()
             raise
+        scope = unit_checks.read_scope(node_tables.coverage_sidecar(file))
+        try:
+            unit_results[ident] = unit_gate(document, conversion, ident, migrated, scope)
+        except ValueError as error:
+            unit_failures.append(str(error))
+            continue
+        scopes[ident] = scope
         receipt, pair = node_receipt(document, conversion, ident, migrated, output,
                                      input_fingerprint=before[conversion['id']],
                                      notes=direct_notes.get(ident) if ident in direct
@@ -439,6 +466,8 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
     if coverage_failures:
         raise ValueError('Digit coverage failed:\n' + '\n'.join(coverage_failures)
                          + '\nJev recheck: ' + json.dumps(recheck.summary(), ensure_ascii=False))
+    if unit_failures:
+        raise ValueError('\n'.join(unit_failures))
     result = deepcopy(document)
     result['tables'] = tables
     manifest.validate(result)
@@ -462,19 +491,27 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
         for table in tables:
             if table['conversion_id'] not in chosen:
                 continue
-            save(result, table, outputs[table['table_id']], remote=True)
+            save(result, table, outputs[table['table_id']], remote=True, scope=scopes.get(table['table_id']))
         manifest.require_current(result)
         if original_bytes is not None and path.read_bytes() != original_bytes:
             raise ValueError('Saved manifest changed before extension registration')
         manifest.write(path, result)
         # Deletion is always a separate operation, including legacy-only documents.
     return {'status': 'saved' if remote else 'candidate', 'tables': len(tables), 'jev': recheck.summary(),
+            'units': {'tables': {ident: item['status'] for ident, item in sorted(unit_results.items())},
+                      'counts': unit_checks.summarize(unit_results)},
             'rows': sum(r['row_count'] for t in tables for r in manifest.table_references(t).values()), 'candidate': str(candidate)}
 
 
-def verify_sums(document: dict, locate) -> list[dict]:
-    """Tree checks of every PDF table; ``locate(table)`` gives its verified Parquet."""
+def verify_sums(document: dict, locate, directory: Path | None = None) -> list[dict]:
+    """Tree and unit checks of every PDF table; ``locate(table)`` gives its verified Parquet.
+
+    The unit check compares the 款 sum with the printed 歳出合計 when the candidate directory holds the
+    table's coverage scope (where the printed words are); a saved table keeps none, so only the digits
+    of the unit are checked there.
+    """
     selection = manifest.selection_for(document)
+    conversions = {conversion['id']: conversion for conversion in document['conversions']}
     formats = {conversion['id']: {item['format'] for item in manifest.resolved_inputs(document, conversion, selection)}
                for conversion in document['conversions']}
     results = []
@@ -485,11 +522,21 @@ def verify_sums(document: dict, locate) -> list[dict]:
                             'counts': {}, 'checks': [], 'results': []})
             continue
         pair = locate(table)
-        checked = node_tables.check_tree(node_tables.read_rows(pair['nodes']), node_tables.read_rows(pair['amounts']), document['target']['document_kind'])
+        nodes, amounts = node_tables.read_rows(pair['nodes']), node_tables.read_rows(pair['amounts'])
+        checked = tree_checks.check_tree(nodes, amounts, document['target']['document_kind'])
         passed = (checked['passed'] and not table['unread_amount_count'] and not table['unresolved_parent_count'])
-        results.append({'table_id': table['table_id'], 'status': MATCH if passed else MISMATCH,
-                        'counts': checked['counts'], 'issues': checked['issues'], 'checks': [],
-                        'results': checked['results']})
+        unit = unit_checks.check_table(
+            nodes, amounts, document_kind=document['target']['document_kind'], account=table.get('account'),
+            partial=bool(conversions[table['conversion_id']]['options'].get('partial')),
+            scope=unit_checks.find_scope(directory, table['table_id'], node_tables.COVERAGE_SIDECAR_SUFFIX))
+        item = {'table_id': table['table_id'], 'status': MATCH if passed and not unit['stopped'] else MISMATCH,
+                'counts': checked['counts'], 'issues': checked['issues'], 'checks': [],
+                'results': checked['results'],
+                'units': {key: unit.get(key) for key in ('status', 'kan_sum', 'printed_total', 'sum_matches', 'digits_ok',
+                                                          'printed_totals', 'partial')}}
+        if unit['stopped']:
+            item['reason'] = f'単位の確かめで止まった: {unit_checks.describe(unit)}'
+        results.append(item)
     return results
 
 
@@ -539,7 +586,7 @@ def verify_coverage(document: dict, locate, directory, recheck=None) -> dict:
             continue
         try:
             scope = json.loads(sidecars[0].read_text())
-            result = node_tables.check_digit_coverage(
+            result = coverage_checks.check_digit_coverage(
                 scope['words'], peers[table['table_id']], control_tables=[adopted[table['table_id']]],
                 exclusions=scope.get('excluded_regions', ()),
                 amount_columns=scope.get('amount_columns', ()), recheck=recheck)
@@ -562,7 +609,9 @@ def verify_report(path: Path, document: dict, results: list[dict], output: Path)
     output.write_text(json.dumps({'manifest': str(path), 'target': document['target'], 'direction': document['direction'],
                                   'tables': results}, ensure_ascii=False, indent=1, default=str) + '\n')
     return {'manifest': str(path), 'output': str(output),
-            'tables': {item['table_id']: {'status': item['status'], **item['counts']} for item in results}}
+            'tables': {item['table_id']: {'status': item['status'], **item['counts'],
+                                          **({'units': item['units']['status']} if item.get('units') else {})}
+                       for item in results}}
 
 
 def main() -> None:
@@ -646,7 +695,7 @@ def main() -> None:
         for path, document, locate in runs:
             target = document['target']
             name = f'{target["jurisdiction"]}-{target["fiscal_year"]}-{manifest.document_slot(target)}-{document["direction"]}'
-            results = verify_sums(document, locate)
+            results = verify_sums(document, locate, args.candidate)
             recheck = digit_recheck.Recheck.from_store(recheck_store_path(document), ask_missing=False)
             coverage = verify_coverage(document, locate, args.candidate, recheck)
             for item in results:
