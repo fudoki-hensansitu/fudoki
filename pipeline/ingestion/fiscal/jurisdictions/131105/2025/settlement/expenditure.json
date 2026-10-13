@@ -119,7 +119,7 @@
     {
       "table_id": "general-setsu",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "72549065f71ca513da2848782b26db69a0d48876fa9302fc33d828bebc6db057",
+      "input_fingerprint": "ac9f89410454bce357f3fd0c740dae7ea1d1844c50be8aba4071b09b22bce637",
       "account": "一般会計",
       "notes": [
         "法定節が原典の最細明細。所属する款・項・目の予算現額5列と支出済額・繰越3列・不用額・備考を反復。節の金額は予算現額、節の支出済額は執行実績。同じ欄の名称折り返しは改行、単語間の印字間隔は空白で保持。備考は各印字行の欄へ対応し、節への推定配賦を行わない。",
@@ -147,7 +147,7 @@
     {
       "table_id": "long-term-care-setsu",
       "conversion_id": "long-term-care-settlement",
-      "input_fingerprint": "bbf17195d2d6309796c45ba31dc7885d9a96b77e5dbe2af42e9ffa02b1ee4ae7",
+      "input_fingerprint": "4050062c959c138d7af574bdb8258458d30f9ef0eca3dea116b3a72874a0be1a",
       "account": "介護保険特別会計",
       "notes": [
         "法定節が原典の最細明細。所属する款・項・目の予算現額5列と支出済額・繰越3列・不用額・備考を反復。節の金額は予算現額、節の支出済額は執行実績。同じ欄の名称折り返しは改行、単語間の印字間隔は空白で保持。備考は各印字行の欄へ対応し、節への推定配賦を行わない。",
@@ -175,7 +175,7 @@
     {
       "table_id": "national-health-insurance-setsu",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "32c756580360990134f843f2e6dae5fa4d39d14d0890f99c3ab3ae7654939b15",
+      "input_fingerprint": "7dbdfa23018a0f80c528ac3111ab05df3a29567c62700578a1e6bf888b17c1e6",
       "account": "国民健康保険特別会計",
       "notes": [
         "法定節が原典の最細明細。所属する款・項・目の予算現額5列と支出済額・繰越3列・不用額・備考を反復。節の金額は予算現額、節の支出済額は執行実績。同じ欄の名称折り返しは改行、単語間の印字間隔は空白で保持。備考は各印字行の欄へ対応し、節への推定配賦を行わない。",
@@ -203,7 +203,7 @@
     {
       "table_id": "elderly-medical-setsu",
       "conversion_id": "elderly-medical-settlement",
-      "input_fingerprint": "dbc4a50035215a30919cdbb693285ac9b4a2514d542c7fb2377ca95a9262d7af",
+      "input_fingerprint": "bb932b06d5ac07ffd034f915023c2da50defda3bdd7dd4af235f46b6103cae43",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "法定節が原典の最細明細。所属する款・項・目の予算現額5列と支出済額・繰越3列・不用額・備考を反復。節の金額は予算現額、節の支出済額は執行実績。同じ欄の名称折り返しは改行、単語間の印字間隔は空白で保持。備考は各印字行の欄へ対応し、節への推定配賦を行わない。",
