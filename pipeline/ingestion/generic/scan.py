@@ -162,3 +162,15 @@ def logicals(observation: dict, pdf: Path) -> list:
     for logical in found:
         logical.ocr = True
     return found
+
+
+def near_code(first: str | None, second: str | None) -> bool:
+    """Two printings of one code, or a code and its OCR misreading: equal as numbers (`02` and `2`), or one
+    digit dropped or added at either end (`10` read `1`, `3` read `13`, 132055). A code not read is no evidence
+    against it."""
+    if second is None or first is None:
+        return True
+    if first == second or (first.isdigit() and second.isdigit() and int(first) == int(second)):
+        return True
+    a, b = sorted((first.lstrip('0') or '0', second.lstrip('0') or '0'), key=len)
+    return len(b) - len(a) == 1 and (b.startswith(a) or b.endswith(a))

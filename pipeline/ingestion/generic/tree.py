@@ -1076,6 +1076,22 @@ def same_heading(first: str, second: str) -> bool:
     return previous[-1] <= 1
 
 
+def repeats(previous: Item, item: Item, ocr: bool = False) -> bool:
+    """Whether a subject line repeats the open heading of its level on a continuation page.
+
+    Printed text repeats the code (and the name). For OCR (`scan.near_code`), a line of codes only (`10 2 3`
+    at the top of a page) repeats the open heading when its code is near, and a line with a name of three
+    characters or more repeats it when the names agree to one character, whatever its code reads (132055)."""
+    if previous.code == item.code and (not item.name or same_heading(previous.name, item.name)):
+        return True
+    if not ocr:
+        return False
+    from ingestion.generic.scan import near_code
+    if not item.name:
+        return near_code(previous.code, item.code)
+    return len(normalize(item.name)) >= 3 and same_heading(previous.name, item.name)
+
+
 def stacked_columns(logicals: list[Logical]) -> set[str]:
     """Amount columns (by heading) that print two or more amounts in one cell somewhere in the document.
 
@@ -1347,8 +1363,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             if item.group.subject:
                 depth = item.level + 1 + (titled and untitled(item.group))
                 previous = stack[depth - 1] if len(stack) >= depth else None
-                if previous is not None and previous.code == item.code and (
-                        not item.name or same_heading(previous.name, item.name)):
+                if previous is not None and repeats(previous, item, logical.ocr):
                     item.key = previous.key  # a repeated subject heading on a continuation page
                     item.role = 'repeat'
                     continue
