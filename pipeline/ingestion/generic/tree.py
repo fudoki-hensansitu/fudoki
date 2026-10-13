@@ -102,7 +102,14 @@ class Item:
 # How a document marks subject (款・項・目) levels. Each is tried on every
 # document and the tree that closes best wins (build.choose_pattern).
 SUBJECT_PATTERNS = ('bands', 'names', 'indent')
-SUBJECT_HEADER = re.compile(r'[款項目]|科目')
+# A header cell that names the subject column: 科目, or the levels themselves (`款`, `項・目`, `(款)(項)(目)`).
+# A cell that only contains 項目 inside a longer name (`予備費充当項目`) names something else.
+SUBJECT_CELL = re.compile(r'(?:[(（]?[款項目][)）]?[・･、,，]?)+')
+
+
+def subject_header(header: tuple[str, ...]) -> bool:
+    cells = [re.sub(r'\s+', '', cell) for cell in header]
+    return any('科目' in cell or SUBJECT_CELL.fullmatch(cell) for cell in cells)
 
 
 def _breakdown_axis(band: Band, bands: list[Band]) -> str:
@@ -160,7 +167,7 @@ def groups(logical: Logical, pattern: str = 'bands') -> list[Group]:
             following = bands.index(subject_bands[-1]) + 1
             if following < len(bands) and bands[following].kind == 'label' and not (
                     bands[following].header and bands[following].header[-1] in SUBJECT_LEVELS) and (
-                    not bands[following].header or SUBJECT_HEADER.search(''.join(bands[following].header))):
+                    not bands[following].header or subject_header(bands[following].header)):
                 subject_bands.append(bands[following])
             else:
                 subject_bands = []
@@ -168,12 +175,12 @@ def groups(logical: Logical, pattern: str = 'bands') -> list[Group]:
         # Every neighbouring label band headed by 款・項・目 (or 科目) is one subject
         # column; a staircase of narrow level columns is read by indentation too.
         for band in labels:
-            if band.header and SUBJECT_HEADER.search(''.join(band.header)):
+            if band.header and subject_header(band.header):
                 subject_bands = [band]
                 index = bands.index(band)
                 while index + 1 < len(bands) and bands[index + 1].kind == 'label' and (
                         bands[index + 1].header == band.header
-                        or (bands[index + 1].header and SUBJECT_HEADER.search(''.join(bands[index + 1].header)))):
+                        or (bands[index + 1].header and subject_header(bands[index + 1].header))):
                     index += 1
                     subject_bands.append(bands[index])
                 break
