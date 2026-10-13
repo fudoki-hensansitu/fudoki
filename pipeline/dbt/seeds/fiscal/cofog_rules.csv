@@ -210,6 +210,7 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 974,kind-fallback-parking,,,駐車場,,,,,,,assigned,04.5,retained,目,,駐車場の整備・運営の事業会計は UN COFOG 04.5 運輸。償還・積立・繰出など行き先が違う目は先の規則が取る。,false
 975,kind-fallback-sewer,,,下水道,,,,,,,assigned,05.2,retained,目,,下水道事業の会計は UN COFOG 05.2 排水管理。償還・積立・繰出など行き先が違う目は先の規則が取る。,false
 976,kind-fallback-kaigo-service,,,介護サービス事業,,,,,,,assigned,10.2,retained,目,,介護サービス事業の会計は長期介護の社会保障であり COFOG 10.2 高齢。償還・積立・繰出など行き先が違う目は先の規則が取る。,false
+977,kind-fallback-land-readjustment,,,土地区画整理,,,,,,,assigned,06.2,retained,目,,土地区画整理事業の会計（組合施行・公共団体施行などの事業費）は UN COFOG 06.2 地域開発。一般会計の土地区画整理（vocab-land-readjustment）と同じ。償還・積立・繰出など行き先が違う目は先の規則が取る。,false
 1000,vocab-disaster-public-facility,,一般会計,,災害復旧費,,,公共施設|公用施設,contains,,unclassifiable,,retained,目,,「その他公共施設・公用施設」の災害復旧は施設の機能を名称から分けられない。既存の公共施設災害復旧費（unclassifiable）に合わせる。,false
 1001,vocab-disaster-welfare-facility,,一般会計,,災害復旧費,,,民生施設,contains,,assigned,10,retained,目,,民生施設（社会福祉施設）の災害復旧を社会保護に分類する。,false
 1002,vocab-disaster-sanitation-facility,,一般会計,,災害復旧費,,,衛生施設,contains,,assigned,07,retained,目,,衛生施設（保健・環境衛生施設）の災害復旧を保健に置く。清掃施設なら 05.1 廃棄物管理との境界のため暫定とする。,true
