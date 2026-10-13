@@ -87,7 +87,7 @@ function registerRest(app: OpenAPIHono<AppEnv>, op: Operation) {
     request: {
       ...(params ? { params } : {}),
       ...(query ? { query } : {}),
-      ...(post ? { body: { required: true, content: { 'application/json': { schema: op.input } } } } : {}),
+      ...(post ? { body: { required: true, content: { 'application/json': { schema: op.input, ...(op.example ? { example: op.example } : {}) } } } } : {}),
     },
     responses: {
       200: { description: '成功', content: { 'application/json': { schema: op.output } } },
