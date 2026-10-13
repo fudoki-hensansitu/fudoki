@@ -24,6 +24,7 @@ export async function checkSelections(directory = import.meta.dir) {
       storage_slots: archives.length,
       selected_files: archives.reduce((total, group) => total + planFiles(group).length, 0),
       unresolved_candidates: ledger.unresolved_candidates.length,
+      evaluation_selected: (ledger.evaluation_selections ?? []).filter(record => record.selected_candidate_id !== null).length,
     })
   }
   return reports

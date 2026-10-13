@@ -24,7 +24,7 @@ test('selection checks work with municipality files alone and reject a mismatche
     await writeFile(join(directory, '132241.json'), JSON.stringify(ledger))
     expect(await checkSelections(directory)).toEqual([{
       jurisdiction: '132241', targets: 1, candidates: 1, selected: 1,
-      storage_slots: 1, selected_files: 1, unresolved_candidates: 1,
+      storage_slots: 1, selected_files: 1, unresolved_candidates: 1, evaluation_selected: 0,
     }])
     await rm(join(directory, '132241.json'))
     await writeFile(join(directory, '132047.json'), JSON.stringify(ledger))

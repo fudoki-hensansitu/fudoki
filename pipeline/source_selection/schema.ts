@@ -22,11 +22,13 @@ const targetFields = {
   fiscal_year: z.number().int().positive(),
 }
 
+const settlementTargetSchema = z.object({ ...targetFields, document_kind: z.literal('settlement') }).strict()
+
 /** 資料区分は金額の段階（phase）とは別。補正だけに原典の号数を持つ。 */
 export const sourceTargetSchema = z.discriminatedUnion('document_kind', [
   z.object({ ...targetFields, document_kind: z.literal('initial') }).strict(),
   z.object({ ...targetFields, document_kind: z.literal('supplementary'), amendment_number: z.number().int().positive() }).strict(),
-  z.object({ ...targetFields, document_kind: z.literal('settlement') }).strict(),
+  settlementTargetSchema,
 ])
 export type SourceTarget = z.infer<typeof sourceTargetSchema>
 
@@ -79,10 +81,8 @@ export const sourceFileSchema = z.discriminatedUnion('format', [
 ])
 export type SourceFile = z.infer<typeof sourceFileSchema>
 
-export const sourceCandidateSchema = z.object({
-  ...candidateFields,
-  files: z.array(sourceFileSchema).min(1),
-}).strict().superRefine((candidate, ctx) => {
+/** 同じ候補に同じURL・同じバイト列のファイルを重ねない。 */
+function rejectDuplicateFiles(candidate: { files: { download_url: string; sha256: string | null }[] }, ctx: z.RefinementCtx) {
   const urls = new Set<string>()
   const hashes = new Set<string>()
   for (const [index, file] of candidate.files.entries()) {
@@ -92,7 +92,12 @@ export const sourceCandidateSchema = z.object({
     urls.add(file.download_url)
     if (file.sha256 !== null) hashes.add(file.sha256)
   }
-})
+}
+
+export const sourceCandidateSchema = z.object({
+  ...candidateFields,
+  files: z.array(sourceFileSchema).min(1),
+}).strict().superRefine(rejectDuplicateFiles)
 export type SourceCandidate = z.infer<typeof sourceCandidateSchema>
 
 /** 原典対象の情報が不足している候補。対象を確定してから選定一覧へ移す。 */
@@ -180,6 +185,53 @@ export const sourceSelectionsSchema = z.array(sourceSelectionSchema).superRefine
   }
 })
 
+/** 事業の評価の資料（主要施策の成果説明書・事務事業評価）のPDF。会計・お金の向きを持たず、頁範囲が無ければ全頁。 */
+export const evaluationFileSchema = z.object({
+  ...fileFields,
+  format: z.literal('pdf'),
+  pdf_type: pdfTypeSchema,
+  pages: pdfScopeSchema.nullable(),
+}).strict()
+
+export const evaluationCandidateSchema = z.object({
+  ...candidateFields,
+  files: z.array(evaluationFileSchema).min(1),
+}).strict().superRefine(rejectDuplicateFiles)
+export type EvaluationCandidate = z.infer<typeof evaluationCandidateSchema>
+
+/** 事業の評価の資料の選定。targetは評価する実績の決算。保存は未対応なのでarchiveはnullだけ。 */
+export const evaluationSelectionSchema = z.object({
+  target: settlementTargetSchema,
+  candidates: z.array(evaluationCandidateSchema),
+  selected_candidate_id: nonEmptyString.nullable(),
+  archive: z.null(),
+  reason: nonEmptyString,
+}).strict()
+export type EvaluationSelection = z.infer<typeof evaluationSelectionSchema>
+
+export const evaluationSelectionsSchema = z.array(evaluationSelectionSchema).superRefine((selections, ctx) => {
+  const targets = new Set<string>()
+  for (const [index, selection] of selections.entries()) {
+    const key = targetKey(selection.target)
+    if (targets.has(key)) ctx.addIssue({ code: 'custom', path: [index, 'target'], message: 'Duplicate target' })
+    targets.add(key)
+    const ids = selection.candidates.map(candidate => candidate.id)
+    if (new Set(ids).size !== ids.length) ctx.addIssue({ code: 'custom', path: [index, 'candidates'], message: 'Duplicate candidate ID' })
+    if (selection.selected_candidate_id === null) continue
+    const selectedIndex = ids.indexOf(selection.selected_candidate_id)
+    if (selectedIndex < 0) {
+      ctx.addIssue({ code: 'custom', path: [index, 'selected_candidate_id'], message: 'Selected candidate is missing' })
+      continue
+    }
+    if (selection.candidates.length !== 1) ctx.addIssue({ code: 'custom', path: [index, 'candidates'], message: 'Selected target keeps one candidate' })
+    for (const [fileIndex, file] of selection.candidates[selectedIndex]!.files.entries()) {
+      if (file.sha256 === null) {
+        ctx.addIssue({ code: 'custom', path: [index, 'candidates', selectedIndex, 'files', fileIndex, 'sha256'], message: 'Selected file needs inspected byte identity' })
+      }
+    }
+  }
+})
+
 /** ファイルや列挙順によらない原典対象の識別。 */
 export function targetKey(target: SourceTarget): string {
   return JSON.stringify([
@@ -195,10 +247,20 @@ export const jurisdictionSelectionsSchema = z.object({
   official_url: z.httpUrl(),
   selections: sourceSelectionsSchema,
   unresolved_candidates: unresolvedCandidatesSchema,
+  /** 金額の原典とは別の、事業の評価の原典。取り込み・dbtは読まない。 */
+  evaluation_selections: evaluationSelectionsSchema.optional(),
 }).strict().superRefine((file, ctx) => {
-  for (const [index, selection] of file.selections.entries()) {
-    if (selection.target.jurisdiction !== file.jurisdiction) {
-      ctx.addIssue({ code: 'custom', path: ['selections', index, 'target', 'jurisdiction'], message: 'Target belongs to another jurisdiction' })
+  for (const [field, selections] of [['selections', file.selections], ['evaluation_selections', file.evaluation_selections ?? []]] as const) {
+    for (const [index, selection] of selections.entries()) {
+      if (selection.target.jurisdiction !== file.jurisdiction) {
+        ctx.addIssue({ code: 'custom', path: [field, index, 'target', 'jurisdiction'], message: 'Target belongs to another jurisdiction' })
+      }
+    }
+  }
+  const settlements = new Set(file.selections.map(selection => targetKey(selection.target)))
+  for (const [index, selection] of (file.evaluation_selections ?? []).entries()) {
+    if (!settlements.has(targetKey(selection.target))) {
+      ctx.addIssue({ code: 'custom', path: ['evaluation_selections', index, 'target'], message: 'Evaluated settlement is not a selection target' })
     }
   }
 })
