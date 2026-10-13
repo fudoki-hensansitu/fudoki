@@ -1,6 +1,7 @@
 """AI の利用手順で AI に渡す道具。検索と回答だけを持ち、正解は読まない。
 
   python3 agent_tool.py search "<検索語>"   上位10件の chunk の全文を（原典・頁）ごとに出す。1問あたり MAX_SEARCHES 回まで
+  python3 agent_tool.py more                 検索の出力の続き（検索回数に数えない）
   python3 agent_tool.py answer '<JSON>'      最終の回答を1回だけ記録する
 
 問いと作業dirは環境変数で受ける（AGENT_WORK: 作業dir、AGENT_QID: 問いの id）。
@@ -10,9 +11,13 @@ import json, os, sys, time
 from common import search, split_pages
 
 MAX_SEARCHES = 3
+# Claude Code の Bash は、出力が約25〜37KB を超えるとファイルに逃がして先頭2KBしか見せない（2026-10-13 観測）。
+# 上位10件の全文は約14万バイトあるので、この大きさごとに分けて more で続きを出す。
+PAGE_BYTES = 24000
 FIELDS = ('目標', '実績', '評価区分', '課題', '方向性')
 WORK, QID = os.environ['AGENT_WORK'], os.environ['AGENT_QID']
 LOG = f'{WORK}/agent/{QID}.jsonl'
+PENDING = f'{WORK}/agent/{QID}.pending.json'
 
 
 def log_rows():
@@ -38,26 +43,54 @@ def do_search(query):
     seen = {c for r in rows if r['kind'] == 'search' for c in r['chunks']}
     meta = {}
     chunks = search(query, q['jurisdiction'], meta=meta)
-    shown_pages = []
-    print(f'検索 {n + 1}/{MAX_SEARCHES}: 「{query}」 候補 {len(chunks)} 件（chunk）')
+    shown_pages, blocks = [], []
+    head = f'検索 {n + 1}/{MAX_SEARCHES}: 「{query}」 候補 {len(chunks)} 件（chunk）'
     if not chunks:
-        print('候補は0件でした。0件は資料に無いことを意味しません（語の一致と意味の近さのどちらにも当たらなかっただけ）。')
+        head += '\n候補は0件でした。0件は資料に無いことを意味しません（語の一致と意味の近さのどちらにも当たらなかっただけ）。'
     for i, c in enumerate(chunks, 1):
         info = idx[c['id']]
         if c['id'] in seen:
-            print(f'\n=== 候補 {i}: 既出の chunk（{info["doc"]}、頁 {", ".join(info["pages"])}）。本文は前の検索の結果を見てください。')
+            blocks.append(f'\n=== 候補 {i}: 既出の chunk（{info["doc"]}、頁 {", ".join(info["pages"])}）。本文は前の検索の結果を見てください。')
             shown_pages += info['pages']
             continue
-        print(f'\n=== 候補 {i}: 資料「{info["doc"]}」')
+        blocks.append(f'\n=== 候補 {i}: 資料「{info["doc"]}」')
         for p, text in split_pages(c['text']):
             pid = info['lead'] if p is None else f'{info["pages"][0].split(":")[0]}:{p + _offset(c)}'
             if pid is None:
                 continue
             shown_pages.append(pid)
-            print(f'--- [頁 {pid}]')
-            print(text.strip())
+            blocks.append(f'--- [頁 {pid}]\n{text.strip()}')
+    pages, cur = [], head
+    for b in blocks:
+        if len((cur + '\n' + b).encode()) > PAGE_BYTES and cur:
+            pages.append(cur); cur = b
+        else:
+            cur = cur + '\n' + b
+    pages.append(cur)
+    json.dump(pages[1:], open(PENDING, 'w'), ensure_ascii=False)
+    emit(pages[0], len(pages) - 1)
     write({'kind': 'search', 'n': n + 1, 'query': query, 'chunks': [c['id'] for c in chunks], 'pages': sorted(set(shown_pages)),
-           'meta': meta, 'ts': time.time()})
+           'meta': meta, 'out_pages': len(pages), 'ts': time.time()})
+
+
+def emit(text, rest):
+    print(text)
+    if rest:
+        print(f'\n（続きがあります。残り {rest} 回分。`python3 {sys.argv[0]} more` で続きを出す。more は検索回数に数えない）')
+    else:
+        print('\n（この検索の候補はここまで）')
+
+
+def do_more(_):
+    if not os.path.exists(PENDING):
+        sys.exit('続きはありません。')
+    pages = json.load(open(PENDING))
+    if not pages:
+        sys.exit('この検索の候補はもう全部出しました。')
+    json.dump(pages[1:], open(PENDING, 'w'), ensure_ascii=False)
+    with open(LOG, 'a') as f:
+        f.write(json.dumps({'kind': 'more', 'ts': time.time()}) + '\n')
+    emit(pages[0], len(pages) - 1)
 
 
 def _offset(chunk):
@@ -95,4 +128,4 @@ def do_answer(raw):
 
 if __name__ == '__main__':
     cmd, arg = sys.argv[1], ' '.join(sys.argv[2:])
-    {'search': do_search, 'answer': do_answer}[cmd](arg)
+    {'search': do_search, 'more': do_more, 'answer': do_answer}[cmd](arg)

@@ -40,7 +40,7 @@ def run(q):
         os.remove(f'{AG}/{q["id"]}.jsonl')
     system = template.format(jurisdiction_name=NAMES[q['jurisdiction']], jurisdiction=q['jurisdiction'], tool=tool)
     cmd = ['claude', '-p', '--model', a.model, '--system-prompt', system, '--tools', 'Bash',
-           '--allowedTools', f'Bash(python3 {tool} search:*)', f'Bash(python3 {tool} answer:*)',
+           '--allowedTools', f'Bash(python3 {tool} search:*)', f'Bash(python3 {tool} more:*)', f'Bash(python3 {tool} answer:*)',
            '--setting-sources', '', '--strict-mcp-config', '--no-session-persistence', '--output-format', 'json',
            q['ask']]
     env = dict(os.environ, AGENT_WORK=a.work, AGENT_QID=q['id'])
