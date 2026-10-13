@@ -8,7 +8,6 @@
     "deploy": "bun run openapi && blume build && mise exec -- cf deploy",
     "dev": "bun run openapi && blume dev",
     "doctor": "bun run openapi && blume doctor",
-    "test": "bun test",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

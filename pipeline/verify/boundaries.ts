@@ -68,14 +68,13 @@ for (const name of ['web/deploy']) {
       `Unavailable public app must not bind data or assets: ${name}`
     )
 }
-// docs は文書を assets で配る。assets 以外の binding（D1 などのデータ）は持たせない
+// docs は静的ファイルだけを配る。Worker のコードも binding（D1 などのデータ）も持たせない
 const docsConfig = await readFile(
   join(REPO, 'apps', 'docs', 'cloudflare.config.ts'),
   'utf8'
 )
-for (const [, kind] of docsConfig.matchAll(/\bbindings\.(\w+)/g))
-  if (kind !== 'assets')
-    throw new Error(`Docs app must bind only static assets: bindings.${kind}`)
+if (/\b(?:bindings|entrypoint)\s*[:.]/.test(docsConfig))
+  throw new Error('Docs app must serve static assets only (no entrypoint or bindings)')
 console.log(
   JSON.stringify({
     publicAppsIndependent: true,

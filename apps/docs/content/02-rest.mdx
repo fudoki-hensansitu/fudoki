@@ -50,11 +50,11 @@ description: https://api.fudoki.dev に JSON で問い合わせ、歳出の木�
 | number | `min`・`max`、`is_null` |
 | boolean | `eq` |
 
-列をまたぐ OR と NOT はないので、2 回に分けて問い合わせてください。`fiscal_year` の年数と条件の値の合計は 90 個までです。
+列をまたぐ OR と NOT はないので、2 回に分けて問い合わせてください。`fiscal_year` の年数と条件の値の合計は 90 個までなので、`eq`・`not_eq` に入れられる値は実際にはこの合計で決まります。文字列の条件の値は 200 文字までです。
 
 ## ページング
 
-応答の `next_page_token` が null でなければ、次の要求に `page_token` として渡します。`page_size` は 1〜1000（既定 100）です。位置は 100,000 件目までなので、それより先が要るときは条件を絞ってください。
+検索と、ノード取得の子の一覧はページで返ります。応答の `next_page_token` が null でなければ、次の要求に `page_token` として渡します（ノード取得では query に付けます）。`page_size` は 1〜1000（既定 100）です。位置は 100,000 件目までなので、それより先が要るときは条件を絞ってください。
 
 ## 原典
 
@@ -67,7 +67,7 @@ description: https://api.fudoki.dev に JSON で問い合わせ、歳出の木�
 | HTTP | code | 起きるとき |
 | --- | --- | --- |
 | 400 | `INVALID_ARGUMENT` | 入力が schema に合わない |
-| 404 | `NOT_FOUND` | ノードが見つからない |
+| 404 | `NOT_FOUND` | ノードや path が見つからない |
 | 405 | `METHOD_NOT_ALLOWED` | 操作が受け付けないメソッドで送った |
 | 413 | `PAYLOAD_TOO_LARGE` | body が 16 KiB を超える |
 | 415 | `UNSUPPORTED_MEDIA_TYPE` | `Content-Type` が `application/json` でない |
