@@ -1,16 +1,23 @@
 """第2段の判定。AI の回答を、原典の頁の文字（pdftotext -layout）を見る別の会話（headless の Claude Code、Sonnet、道具なし）に判定させる。
 
   python3 judge2.py pages <作業dir>    found で T の外の頁を選んだ回答について「その頁に目的の事業の評価が載るか」
-  python3 judge2.py quotes <作業dir>   正答した回答の引用の各項目の帰属（正しい・別の事業の行・別の年度・列・別の項目・原典に無い・判断できない）
+  python3 judge2.py quotes <作業dir> [overrides2.json]   正答した回答の引用の各項目の帰属（正しい・別の事業の行・別の年度・列・別の項目・原典に無い・判断できない）
 
 <作業dir>/pdf/<sha12>.pdf に原典を置く。<作業dir>/trial/questions2.json と <作業dir>/agent/<qid>.jsonl を読み、
 <作業dir>/judge/{pages,quotes}/<qid>.json に書く。判定済みは飛ばす。AI の判断の理由（note）は渡さない。
 """
-import json, os, re, subprocess, sys
+import argparse, json, os, re, subprocess
 from concurrent.futures import ThreadPoolExecutor
+from common import QUOTE_LABELS, classify_answer, quote_items
 
-MODE, W = sys.argv[1], sys.argv[2]
-LABELS = ('正しい', '別の事業の行', '別の年度・列', '別の項目', '原典に無い', '判断できない')
+ap = argparse.ArgumentParser()
+ap.add_argument('mode', choices=('pages', 'quotes'))
+ap.add_argument('work')
+ap.add_argument('overrides', nargs='?')
+args = ap.parse_args()
+MODE, W = args.mode, args.work
+overrides = json.load(open(args.overrides)) if args.overrides else {}
+LABELS = QUOTE_LABELS
 qs = {q['id']: q for q in json.load(open(f'{W}/trial/questions2.json'))}
 os.makedirs(f'{W}/judge/{MODE}', exist_ok=True)
 
@@ -44,7 +51,7 @@ def target(q):
 
 def judge_pages(qid):
     q, a = qs[qid], answer(qid)
-    if not a or a.get('status') != 'found':
+    if not a or a.get('status') != 'found' or q['set'] == 'S5-undetermined':
         return
     out = f'{W}/judge/pages/{qid}.json'
     done = json.load(open(out)) if os.path.exists(out) else {}
@@ -58,15 +65,13 @@ def judge_pages(qid):
                       f'根拠は名前・施策・所管課・特別区の予算科目の一般的な慣行。\n'
                       f'答えは ```json {{"contains": true|false, "evidence": "<当たる事業の名前と根拠を短く>"}}``` の形だけで返してください。\n\n'
                       f'--- 頁 {pid} ---\n{page_text(pid)}')
-            done[pid] = ask(prompt)
-            json.dump(done, open(out, 'w'), ensure_ascii=False)
-            continue
-        prompt = (f'次は自治体の事業の評価の資料の1頁の文字です（PDF から抜き出したもので、表の行と列の位置を空白で保っています）。\n'
-                  f'目的の事業: {target(q)}\n\n'
-                  f'問い: この頁に、目的の事業についての評価（目標、実績、評価の区分、課題、今後の方向のどれか）が書かれていますか。'
-                  f'名前が一覧に出るだけ・金額だけは「載らない」とします。同じ名前の別の事業（別の施策・別の場所）は「載らない」とします。\n'
-                  f'答えは ```json {{"contains": true|false, "evidence": "<根拠の行を短く>"}}``` の形だけで返してください。\n\n'
-                  f'--- 頁 {pid} ---\n{page_text(pid)}')
+        else:
+            prompt = (f'次は自治体の事業の評価の資料の1頁の文字です（PDF から抜き出したもので、表の行と列の位置を空白で保っています）。\n'
+                      f'目的の事業: {target(q)}\n\n'
+                      f'問い: この頁に、目的の事業についての評価（目標、実績、評価の区分、課題、今後の方向のどれか）が書かれていますか。'
+                      f'名前が一覧に出るだけ・金額だけは「載らない」とします。同じ名前の別の事業（別の施策・別の場所）は「載らない」とします。\n'
+                      f'答えは ```json {{"contains": true|false, "evidence": "<根拠の行を短く>"}}``` の形だけで返してください。\n\n'
+                      f'--- 頁 {pid} ---\n{page_text(pid)}')
         done[pid] = ask(prompt)
         json.dump(done, open(out, 'w'), ensure_ascii=False)
     print(qid, done, flush=True)
@@ -77,12 +82,12 @@ def judge_quotes(qid):
     out = f'{W}/judge/quotes/{qid}.json'
     if not a or a.get('status') != 'found' or os.path.exists(out):
         return
-    accept = set(q['accept']) | set(q.get('accept_added', []))
-    items = []
-    for pr in a.get('projects', []):
-        for field, v in (pr.get('fields') or {}).items():
-            if v and v.get('page') in accept:
-                items.append({'field': field, 'page': v['page'], 'quote': v.get('quote'), 'reading': v.get('reading')})
+    page_path = f'{W}/judge/pages/{qid}.json'
+    pages_judged = json.load(open(page_path)) if os.path.exists(page_path) else {}
+    classification = classify_answer(q, a, pages_judged, overrides.get('pages'))
+    if not classification['quote_eligible']:
+        return
+    items = [item for item in quote_items(a) if item['page'] in classification['accept']]
     if not items:
         return
     pages = sorted({i['page'] for i in items})

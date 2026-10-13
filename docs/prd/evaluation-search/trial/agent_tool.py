@@ -88,8 +88,7 @@ def do_more(_):
     if not pages:
         sys.exit('この検索の候補はもう全部出しました。')
     json.dump(pages[1:], open(PENDING, 'w'), ensure_ascii=False)
-    with open(LOG, 'a') as f:
-        f.write(json.dumps({'kind': 'more', 'ts': time.time()}) + '\n')
+    write({'kind': 'more', 'ts': time.time()})
     emit(pages[0], len(pages) - 1)
 
 

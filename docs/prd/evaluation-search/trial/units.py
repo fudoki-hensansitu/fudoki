@@ -5,13 +5,21 @@
 units_kita.tsv・units_nakano.tsv。名前と頁だけで、本文は持たない。原典の抜き出しなので commit しない（PDF から作り直せる）。
 """
 import json, re, subprocess, sys
+from functools import lru_cache
 import pdfplumber
 
 KITA_SHA, HON_SHA, BETSU_SHA = '80b62f85965f', '628b02ba7d8f', 'f3b089e84c0b'
 
 
+@lru_cache(maxsize=3)
+def pdf_text_pages(pdf):
+    text = subprocess.run(['pdftotext', '-layout', pdf, '-'], capture_output=True, text=True).stdout
+    return [page + '\f' for page in text.split('\f')[:-1]]
+
+
 def page_text(pdf, p):
-    return subprocess.run(['pdftotext', '-f', str(p), '-l', str(p), '-layout', pdf, '-'], capture_output=True, text=True).stdout
+    pages = pdf_text_pages(pdf)
+    return pages[p - 1] if 0 < p <= len(pages) else ''
 
 
 def field(t, label):
