@@ -13,4 +13,5 @@
 - 置き場は Cloudflare。
 - 配信は Cloudflare Workers（`web/deploy/cloudflare.config.ts`、`domains: ['fudoki.dev']`）。現在は `web/worker.ts` が 500 を返す
 - build/deploy は公開 app のコードだけを扱い、dbt・原典の全量生成は実行しない
+- api・docs は main に入ると GitHub Actions がデプロイする（`.github/workflows/deploy-api.yml`・`deploy-docs.yml`、パスで対象を分ける）。認証は repo の secret `CLOUDFLARE_API_TOKEN`・`CLOUDFLARE_ACCOUNT_ID`。手元の `deploy:*` は手動で出し直すときだけ使う。D1 の migration とデータの投入は自動では行わない
 - 公開 app は `pipeline/` を import しない（`pipeline/verify/boundaries.ts` が検査する）
