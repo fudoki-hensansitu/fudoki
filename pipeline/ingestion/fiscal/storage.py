@@ -33,9 +33,14 @@ def fetch(reference: dict, *, remote: bool = False) -> Path:
     if path.is_symlink() or not path.resolve().is_relative_to(OBJECTS.resolve()):
         raise ValueError('Object cache path escapes its root')
     if path.exists():
-        verify(path, reference)
-        return path
-    if not remote:
+        try:
+            verify(path, reference)
+            return path
+        except ValueError:
+            # Keys are fixed per target, so a re-save overwrites the object a local cache still holds.
+            if not remote:
+                raise ValueError(f'Cached object differs from its reference (re-saved?); fetch with --remote: {reference["key"]}')
+    elif not remote:
         raise FileNotFoundError(f'Object is not cached: {reference["key"]}')
     path.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as stream:

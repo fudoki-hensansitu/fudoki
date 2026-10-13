@@ -1,11 +1,51 @@
 """Cleanup confirms deletion without touching current tables or other object scopes."""
 from copy import deepcopy
+import hashlib
 import json
+from pathlib import Path
 import subprocess
+import tempfile
 import unittest
 from unittest.mock import patch
 
 from ingestion.fiscal import manifest, storage
+
+
+class FetchTest(unittest.TestCase):
+    def setUp(self):
+        self.root = Path(self.enterContext(tempfile.TemporaryDirectory()))
+        self.enterContext(patch.object(storage, 'OBJECTS', self.root))
+        self.body = b'current table'
+        self.reference = {'key': 'fiscal/ingestion/131041/t.parquet', 'sha256': hashlib.sha256(self.body).hexdigest(),
+                          'bytes': len(self.body)}
+        self.cached = self.root / self.reference['key']
+        self.cached.parent.mkdir(parents=True)
+        self.cached.write_bytes(b'table before re-save')
+
+    def get(self, command, stdout, check):
+        self.assertEqual(command[:5], ['cf', 'r2', 'objects', 'get', self.reference['key']])
+        stdout.write(self.body)
+
+    def test_remote_refetches_an_object_whose_cache_is_stale(self):
+        with patch.object(storage.subprocess, 'run', side_effect=self.get) as run:
+            path = storage.fetch(self.reference, remote=True)
+        run.assert_called_once()
+        self.assertEqual(path.read_bytes(), self.body)
+
+    def test_local_stale_cache_stops_and_names_the_remedy(self):
+        with patch.object(storage.subprocess, 'run') as run:
+            with self.assertRaisesRegex(ValueError, '--remote'):
+                storage.fetch(self.reference)
+        run.assert_not_called()
+        self.assertEqual(self.cached.read_bytes(), b'table before re-save')
+
+    def test_remote_download_that_still_differs_stops_and_keeps_the_cache(self):
+        self.body, wanted = b'other bytes', self.body
+        with patch.object(storage.subprocess, 'run', side_effect=self.get):
+            with self.assertRaisesRegex(ValueError, 'differs'):
+                storage.fetch({**self.reference, 'sha256': hashlib.sha256(wanted).hexdigest(), 'bytes': len(wanted)},
+                              remote=True)
+        self.assertEqual(self.cached.read_bytes(), b'table before re-save')
 
 
 class CleanupTest(unittest.TestCase):
