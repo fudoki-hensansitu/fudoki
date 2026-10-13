@@ -25,6 +25,7 @@ const strings = z.array(text).min(1).max(MAX_LIST)
 const part = text.min(1)
 const ints = z.array(z.int()).min(1).max(MAX_LIST)
 
+// meta の id で、33 列に同じ条件の schema が繰り返し出ないよう $defs に一度だけ出す（tools/list を小さくする）。
 const stringCondition = z
   .strictObject({
     eq: strings.optional().describe('いずれかに等しい（OR）'),
@@ -35,6 +36,7 @@ const stringCondition = z
     is_null: z.boolean().optional().describe('true で NULL、false で NULL でない'),
   })
   .refine(oneOrMore, KEYS_MESSAGE)
+  .meta({ id: 'StringCondition' })
 
 const integerCondition = z
   .strictObject({
@@ -45,6 +47,7 @@ const integerCondition = z
     is_null: z.boolean().optional(),
   })
   .refine(oneOrMore, KEYS_MESSAGE)
+  .meta({ id: 'IntegerCondition' })
 
 const numberCondition = z
   .strictObject({
@@ -53,8 +56,9 @@ const numberCondition = z
     is_null: z.boolean().optional(),
   })
   .refine(oneOrMore, KEYS_MESSAGE)
+  .meta({ id: 'NumberCondition' })
 
-const booleanCondition = z.strictObject({ eq: z.boolean() })
+const booleanCondition = z.strictObject({ eq: z.boolean() }).meta({ id: 'BooleanCondition' })
 
 export const conditionOf = (type: ColumnSpec['type']) =>
   type === 'string'

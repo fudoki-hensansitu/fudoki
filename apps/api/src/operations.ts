@@ -62,14 +62,21 @@ const pageToken = z
   .optional()
   .describe('前回の応答の next_page_token。document_kind と node_id は前回と同じにする。')
 
-const Origin = z.object(Object.fromEntries(ORIGIN_COLUMNS.map((c) => [c.name, nullableIf(zodOf(c.type), c)])))
+// meta の id を付けると、JSON Schema では $defs に一度だけ出て $ref で参照される（tools/list と OpenAPI が小さくなる）。
+const Origin = z
+  .object(Object.fromEntries(ORIGIN_COLUMNS.map((c) => [c.name, nullableIf(zodOf(c.type), c)])))
+  .meta({ id: 'Origin', description: '原典（資料名・URL・SHA-256）。' })
 
 // 木の表の列は資料区分が違っても同じ集合（pipeline の生成器が検査する）。応答の行には document_kind を先頭に付ける。
 const anyTable = NODE_TABLES.values().next().value as NodeTable
-const Node = z.object({
-  document_kind: z.string(),
-  ...Object.fromEntries(anyTable.columns.map((c) => [c.name, nullableIf(zodOf(c.type), c)])),
-})
+const Node = z
+  .object({
+    document_kind: z.string(),
+    ...Object.fromEntries(anyTable.columns.map((c) => [c.name, nullableIf(zodOf(c.type), c)])),
+  })
+  .meta({ id: 'Node', description: '歳出の木のノード。列の意味は describe_expenditure_columns。' })
+
+const ORIGINS_HELP = '結果の行が指す原典。行の origin_id から引く。'
 
 const withKind = (t: NodeTable, raw: Record<string, unknown>): Row => ({
   document_kind: t.documentKind,
@@ -245,15 +252,9 @@ const WHERE_HELP = {
 }
 
 const searchDescription =
-  '歳出の木のノード（款・項・目と、節・備考など別の軸の内訳）を条件で絞って一覧する。' +
-  '団体の比較は where で node_kind を "目" などに絞って行い、詳細は get_expenditure_node で木を辿る。' +
-  REQUIRED_HELP +
-  `where は列ごとの条件で、string は ${WHERE_HELP.string}。integer は ${WHERE_HELP.integer}。number は ${WHERE_HELP.number}。boolean は eq。` +
-  WHERE_HELP.combine +
-  `例: ${JSON.stringify(SEARCH_EXAMPLE)}（2025年度の決算の目のうち COFOG が "10.4" で始まるものを金額順）。` +
-  'order_by は [{column, desc}] で、末尾に node_id が足される。page_size は 1〜1000（既定 100）。' +
-  `応答は {nodes, next_page_token, origins}。next_page_token は ${MAX_OFFSET} 件目までで、それ以上は null になるので、条件を絞って問い合わせる。origins は結果の行が指す原典（資料名・URL・SHA-256）で、行の origin_id から引く。` +
-  '金額の和は API では求めない。足すときの条件は describe_expenditure_columns の sum_rules に従う。'
+  '歳出の木のノード（款・項・目と、節・備考など別の軸の内訳）を条件で絞って一覧する。検索の前に describe_expenditure_columns を一度読む。' +
+  '団体の比較は node_kind を "目" などに絞って行い、詳細は get_expenditure_node で木を辿る。' +
+  '資料区分や軸の違う金額を足さない。足すときは describe_expenditure_columns の sum_rules に従う。where は列をまたぐ OR・NOT が無いので、2回に分けて問い合わせる。'
 
 export const operations: Operation[] = [
   {
@@ -267,7 +268,7 @@ export const operations: Operation[] = [
     output: z.object({
       nodes: z.array(Node),
       next_page_token: z.string().nullable().describe(NEXT_PAGE_TOKEN_HELP),
-      origins: z.array(Origin),
+      origins: z.array(Origin).describe(ORIGINS_HELP),
     }),
     run: searchNodes,
   },
@@ -277,10 +278,7 @@ export const operations: Operation[] = [
     method: 'get',
     path: '/v1/expenditure/nodes/{document_kind}/{node_id}',
     pathParams: ['document_kind', 'node_id'],
-    description:
-      'ノード一つ（document_kind と node_id で識別）と、その子を軸（axis）ごとに返す。' +
-      '子は search_expenditure_nodes と同じ page_size の上限（1000）と page_token で読む。' +
-      `別の軸の子を同じ金額に混ぜて足さない。応答は {node, children: {<axis>: [...]}, next_page_token, origins}。子は ${MAX_OFFSET} 件目までで、それ以上は next_page_token が null になる。`,
+    description: 'ノード一つ（document_kind と node_id で識別）と、その子を軸（axis）ごとに返す。search_expenditure_nodes で見つけたノードの内訳を辿るときに使う。',
     input: z.strictObject({
       document_kind: z.enum(DOCUMENT_KINDS).describe('資料区分（settlement か initial）。'),
       node_id: z.string().regex(/^[0-9a-f]{64}$/).describe('search の応答の node_id（小文字 16 進 64 文字）。'),
@@ -290,9 +288,9 @@ export const operations: Operation[] = [
     restQuery: z.strictObject({ page_size: queryPageSize, page_token: pageToken }),
     output: z.object({
       node: Node,
-      children: z.record(z.string(), z.array(Node)),
+      children: z.record(z.string(), z.array(Node)).describe('軸（axis）ごとの子。別の軸の子を同じ金額に混ぜて足さない。'),
       next_page_token: z.string().nullable().describe(NEXT_PAGE_TOKEN_HELP),
-      origins: z.array(Origin),
+      origins: z.array(Origin).describe(ORIGINS_HELP),
     }),
     run: getNode,
   },
@@ -302,10 +300,7 @@ export const operations: Operation[] = [
     method: 'get',
     path: '/v1/expenditure/columns',
     pathParams: [],
-    description:
-      '歳出の木の列の説明（資料区分ごと）、where・order_by に使える列、受け付ける document_kind、' +
-      '金額を足すときの条件（sum_rules）、検索の入力の例（search_example）を返す。検索の前に一度読む。' +
-      REQUIRED_HELP,
+    description: '歳出の木の列の説明と、金額を足すときの条件（sum_rules）、検索の入力の例（search_example）を返す。検索の前に一度読む。',
     input: z.strictObject({}),
     output: z.object({
       document_kinds: z.array(z.object({ name: z.string(), description: z.string() })),

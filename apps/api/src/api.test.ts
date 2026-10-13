@@ -21,6 +21,12 @@ const rpcBody = async (res: Response) => {
   return JSON.parse(data ? data[1]! : text)
 }
 
+/** JSON Schema の `$ref`（`#/...`）を root から辿って開く。共通の schema は $defs / components に一度だけ出る。 */
+const deref = (root: unknown, node: any): any => {
+  if (typeof node?.$ref !== 'string') return node
+  return deref(root, node.$ref.slice(2).split('/').reduce((o: any, k: string) => o[k], root))
+}
+
 const get = (path: string) => app.request(path, {}, { DB: db })
 const post = (path: string, body: unknown, headers: Record<string, string> = {}) =>
   app.request(
@@ -297,7 +303,7 @@ describe('columns と OpenAPI', () => {
 
   test('nullable が false の列は OpenAPI の応答で非 null', async () => {
     const doc = await (await get('/openapi.json')).json()
-    const node = doc.paths['/v1/expenditure/nodes:search'].post.responses['200'].content['application/json'].schema.properties.nodes.items
+    const node = deref(doc, doc.paths['/v1/expenditure/nodes:search'].post.responses['200'].content['application/json'].schema.properties.nodes.items)
     expect(node.properties.node_id.type).toBe('string')
     expect(JSON.stringify(node.properties.node_kind)).not.toContain('null')
     expect(JSON.stringify(node.properties.cofog_code)).toContain('null')
@@ -362,11 +368,12 @@ describe('MCP', () => {
     expect(schema.properties.page_size.maximum).toBe(1000)
     expect(schema.properties.order_by.maxItems).toBe(5)
     expect(schema.properties.where.additionalProperties).toBe(false)
-    expect(schema.properties.where.properties.name.properties.eq.maxItems).toBe(100)
-    expect(schema.properties.where.properties.name.properties.eq.minItems).toBe(1)
+    const name = deref(schema, schema.properties.where.properties.name)
+    expect(name.properties.eq.maxItems).toBe(100)
+    expect(name.properties.eq.minItems).toBe(1)
     expect(schema.properties.fiscal_year.properties.min.minimum).toBe(1)
     expect(schema.properties.fiscal_year.properties.max.maximum).toBe(9999)
-    expect(tools.search_expenditure_nodes.description).toContain('"settlement"')
+    expect(tools.search_expenditure_nodes.description).toContain('sum_rules')
     const getToken = tools.get_expenditure_node.inputSchema.properties.page_token.description
     expect(getToken).toContain('node_id')
     expect(getToken).not.toContain('filter')
@@ -642,8 +649,8 @@ describe('offset の上限', () => {
   test('打ち切りの説明が tool と OpenAPI にある', async () => {
     const res = await mcp({ jsonrpc: '2.0', id: 1, method: 'tools/list' })
     const body = await rpcBody(res)
-    for (const tool of body.result.tools.filter((t: { name: string }) => t.name !== "describe_expenditure_columns") as { name: string; description: string }[])
-      expect(tool.description, tool.name).toContain('それ以上')
+    for (const tool of body.result.tools.filter((t: { name: string }) => t.name !== 'describe_expenditure_columns') as { name: string; outputSchema: any }[])
+      expect(tool.outputSchema.properties.next_page_token.description, tool.name).toContain('それ以上')
     const doc = await (await get('/openapi.json')).json()
     const schema = doc.paths['/v1/expenditure/nodes:search'].post.responses['200'].content['application/json'].schema
     expect(schema.properties.next_page_token.description).toContain('条件を絞って')
@@ -725,16 +732,29 @@ describe('MCP 2026-07-28', () => {
     expect(JSON.parse((await rpcBody(res)).result.content[0].text).nodes.length).toBeGreaterThan(0)
   })
 
-  test('tools/list の tool に title と読み取り専用の注釈があり、outputSchema は無い', async () => {
+  test('tools/list の tool に title・読み取り専用の注釈・outputSchema があり、共通の schema は $defs に一度だけ出る', async () => {
     for (const body of [await rpcBody(await modern('tools/list')), await rpcBody(await mcp({ jsonrpc: '2.0', id: 1, method: 'tools/list' }))]) {
       expect(body.result.tools).toHaveLength(operations.length)
       for (const tool of body.result.tools as { name: string; title: string; annotations: unknown; outputSchema?: unknown }[]) {
         const op = operations.find((o) => o.name === tool.name)!
         expect(tool.title, tool.name).toBe(op.summary)
         expect(tool.annotations, tool.name).toEqual({ readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false })
-        expect(tool.outputSchema, tool.name).toBeUndefined()
+        expect(tool.outputSchema, tool.name).toBeObject()
       }
+      const search = body.result.tools.find((t: { name: string }) => t.name === 'search_expenditure_nodes')
+      expect(Object.keys(search.outputSchema.$defs).sort()).toEqual(['Node', 'Origin'])
+      expect(JSON.stringify(search.outputSchema).match(/"Node"/g)).toHaveLength(1)
     }
+  })
+
+  test('tools/call は structuredContent を返し、text はその写し。エラーは isError の text だけ', async () => {
+    for (const body of [await rpcBody(await modern('tools/call', { name: 'get_expenditure_node', arguments: { document_kind: 'settlement', node_id: K1 } }, { 'Mcp-Name': 'get_expenditure_node' })), await rpcBody(await mcp(toolCall(valid)))]) {
+      expect(body.result.isError).toBeUndefined()
+      expect(body.result.structuredContent).toEqual(JSON.parse(body.result.content[0].text))
+    }
+    const err = await rpcBody(await modern('tools/call', { name: 'get_expenditure_node', arguments: { document_kind: 'settlement', node_id: id('ff') } }, { 'Mcp-Name': 'get_expenditure_node' }))
+    expect(err.result.isError).toBe(true)
+    expect(err.result.structuredContent).toBeUndefined()
   })
 
   test('subscriptions/listen は長い SSE を開かずに 400 で断る。listChanged は名乗らない', async () => {

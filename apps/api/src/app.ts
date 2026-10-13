@@ -112,13 +112,15 @@ function mcpServer(ctx: Ctx): McpServer {
         title: op.summary,
         description: op.description,
         inputSchema: op.input,
+        outputSchema: op.output,
         // すべての tool は D1 の読み取りだけで、状態を変えず、外部にも出ない
         annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
       },
       async (args: Record<string, unknown>) => {
         try {
           const out = await op.run(ctx, args)
-          return { content: [{ type: 'text' as const, text: JSON.stringify(out) }] }
+          // structuredContent が正本。text は structuredContent を読めない client のための同じ内容の写し（MCP の SHOULD）
+          return { content: [{ type: 'text' as const, text: JSON.stringify(out) }], structuredContent: out as Record<string, unknown> }
         } catch (e) {
           // 想定外の例外の詳細（SQL のエラーなど）は返さず、ログにだけ出す
           if (!(e instanceof ApiError)) console.error(e)
