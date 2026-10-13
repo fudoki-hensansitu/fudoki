@@ -121,9 +121,11 @@ class AmountRule:
     reason: str
 
 
-def _amount_key(amount: str) -> str:
+def _amount_key(amount: str, *, observed: bool = False) -> str:
+    """A corrected amount has a digit and no letter. The observed side is whatever OCR
+    returned (e.g. ``009 480 TT``), so it only needs a digit."""
     key = _key(amount)
-    if not any(char.isdigit() for char in key) or any(char.isalpha() for char in key):
+    if not any(char.isdigit() for char in key) or (not observed and any(char.isalpha() for char in key)):
         raise ValueError("An amount rule must contain a digit and no letter")
     return key
 
@@ -144,7 +146,7 @@ class AmountDictionary:
             if type(rule.page) is not int or rule.page < 1:
                 raise ValueError("An amount rule requires a positive physical page")
             # Amounts must not smuggle a name correction, and vice versa.
-            _amount_key(rule.observed_amount)
+            _amount_key(rule.observed_amount, observed=True)
             _amount_key(rule.corrected_amount)
             location = (rule.page, rule.observation_id)
             if rule.id in ids:
@@ -181,7 +183,7 @@ def correct_amount(observed_amount: str, *, page: int, observation_id: str,
         raise TypeError("page must be an int and observation_id a string")
     rule = next((r for r in dictionary.rules
                  if r.page == page and r.observation_id == observation_id), None)
-    if rule is not None and _amount_key(rule.observed_amount) != _key(observed_amount):
+    if rule is not None and _amount_key(rule.observed_amount, observed=True) != _key(observed_amount):
         raise ValueError("Declared observed amount differs from the observation")
     return {
         "raw_amount": observed_amount,

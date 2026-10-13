@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import gzip
 from copy import deepcopy
 import importlib.util
 import json
@@ -10,7 +11,7 @@ from pathlib import Path
 import duckdb
 
 from ingestion.fiscal import manifest
-from ingestion.fiscal.storage import fetch, save, cleanup, verify
+from ingestion.fiscal.storage import fetch, fetch_ocr, save, save_ocr, cleanup, verify, write_ocr
 from ingestion.paths import BUILD
 from ingestion.lib import digit_recheck, node_tables
 
@@ -48,6 +49,48 @@ def originals(path: Path, output: Path, *, remote: bool = False) -> dict:
         json.dump(files, stream, ensure_ascii=False, indent=2)
         stream.write('\n')
     return {'originals': len(files), 'inputs': str(output)}
+
+
+def pinned_observation(document: dict, item: dict) -> dict | None:
+    """The cached pinned observation, whose VLM answers a re-acquisition reuses."""
+    try:
+        return json.loads(gzip.decompress(fetch_ocr(document, item).read_bytes()))
+    except (ValueError, FileNotFoundError):
+        return None
+
+
+def acquire_ocr(path: Path, local_files: dict[str, str], *, verify_only: bool = False,
+                ids: list[str] | None = None) -> dict:
+    """Read declared OCR requests outside the converters and pin their observation SHA.
+
+    ``verify_only`` re-reads and compares with the pinned SHA without writing anything.
+    Pinning a different SHA makes the conversion's saved tables stale on purpose.
+    """
+    from ingestion.lib.scan_ocr import acquire
+    document = manifest.read(path)
+    declared = manifest.ocr_inputs(document)
+    chosen = set(ids) if ids is not None else {item['id'] for _, item in declared}
+    if not chosen or not chosen <= {item['id'] for _, item in declared}:
+        raise ValueError('Unknown or empty OCR input selection')
+    result = deepcopy(document)
+    report = {}
+    for conversion, item in manifest.ocr_inputs(result):
+        if item['id'] not in chosen:
+            continue
+        source = Path(local_files[item['origin_sha256']])
+        if manifest.sha_file(source) != item['origin_sha256']:
+            raise ValueError('Supplied original differs from the selected byte identity')
+        data, run = acquire(source, item['request'], pinned_observation(result, item))
+        sha = run['observation_sha256']
+        status = 'unchanged' if item.get('sha256') == sha else ('new' if 'sha256' not in item else 'changed')
+        report[item['id']] = {'status': status, 'sha256': sha, 'bytes': len(data)}
+        if verify_only:
+            continue
+        write_ocr(result, item, data, run)
+        item['sha256'], item['bytes'] = sha, len(data)
+    if not verify_only and result != document:
+        manifest.write(path, result)
+    return {'verified' if verify_only else 'pinned': report}
 
 
 def table_receipt(document: dict, conversion: dict, table_id: str, path: Path, *, input_fingerprint: str | None = None,
@@ -231,6 +274,9 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
             item['path'] = source
             item['target'] = document['target']
             item['direction'] = document['direction']
+            item['ocr'] = [{'id': ocr['id'], 'request': ocr['request'], 'sha256': ocr.get('sha256'),
+                            'path': fetch_ocr(document, ocr, remote=remote)}
+                           for ocr in conversion.get('ocr_inputs', []) if ocr['origin_sha256'] == item['sha256']]
         code = manifest.code_path(conversion['converter'])
         spec = importlib.util.spec_from_file_location('ingestion_converter_' + conversion['id'], code)
         module = importlib.util.module_from_spec(spec)
@@ -247,6 +293,19 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
         # expected_tables is the registry's allowlist; auxiliary outputs are not adopted.
         generated = {ident: generated[ident] for ident in generated if ident in expected}
         prepared = {}
+        # Not `direct`: that one collects the generic converter's tables across conversions.
+        descriptors = {ident: value for ident, value in generated.items()
+                       if isinstance(value, dict) and 'node_tables' in value}
+        for ident, value in descriptors.items():
+            # New converters hand over the printed tree itself; write_tables runs the tree check.
+            if set(value) - {'node_tables', 'notes'} or not isinstance(value['node_tables'], node_tables.NodeTables):
+                raise ValueError('Node converter descriptor requires node_tables and optional notes only')
+            receipt, pair = node_receipt(document, conversion, ident, value['node_tables'], destination,
+                                         input_fingerprint=before[conversion['id']],
+                                         notes=list(value.get('notes', [])), migrated=False)
+            outputs[ident] = pair
+            tables.append(receipt)
+        generated = {ident: value for ident, value in generated.items() if ident not in descriptors}
         for ident, file in generated.items():
             metadata = None
             if isinstance(file, dict) and {'nodes', 'amounts'} <= set(file) <= {'nodes', 'amounts', 'notes'}:
@@ -396,6 +455,10 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
     if remote:
         if original_bytes is not None and path.read_bytes() != original_bytes:
             raise ValueError('Saved manifest changed before extension upload')
+        # Observations go first so a saved table never points at a missing OCR input.
+        for conversion, item in manifest.ocr_inputs(result):
+            if conversion['id'] in chosen:
+                save_ocr(result, item)
         for table in tables:
             if table['conversion_id'] not in chosen:
                 continue
@@ -533,6 +596,11 @@ def main() -> None:
     refresh.add_argument('--output', type=Path, help='Report file (default: .build/ingestion-refresh/report.json)')
     refresh.add_argument('--remote', action='store_true', help='Restore missing originals and saved tables from R2 (read only; nothing is uploaded)')
     refresh.add_argument('--dry-run', action='store_true', help='Compare only; do not rewrite any manifest')
+    ocr = sub.add_parser('ocr', help='Read declared OCR requests and pin observation SHA (Vision; run outside the sandbox)')
+    ocr.add_argument('--manifest', type=Path, required=True)
+    ocr.add_argument('--inputs', type=Path, required=True, help='JSON: original SHA-256 to local file path')
+    ocr.add_argument('--id', action='append', help='Only these OCR input IDs')
+    ocr.add_argument('--verify', action='store_true', help='Re-read and compare with the pinned SHA; write nothing')
     clean = sub.add_parser('cleanup')
     clean.add_argument('--manifest', type=Path, required=True)
     args = parser.parse_args()
@@ -551,6 +619,9 @@ def main() -> None:
             count += 1
             tables += len(document['tables'])
         print(json.dumps({'valid': True, 'manifests': count, 'ready': ready, 'saved_tables': tables}))
+    elif args.command == 'ocr':
+        print(json.dumps(acquire_ocr(args.manifest, json.loads(args.inputs.read_text()),
+                                     verify_only=args.verify, ids=args.id), ensure_ascii=False))
     elif args.command == 'originals':
         print(json.dumps(originals(args.manifest, args.output, remote=args.remote)))
     elif args.command == 'convert':

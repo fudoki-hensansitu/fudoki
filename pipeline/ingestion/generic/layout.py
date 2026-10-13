@@ -351,7 +351,9 @@ def logical_pages(pages: list[Page]) -> list[Logical]:
                 kinds = set()
                 for run in runs(line):
                     value = normalize(text(run))
-                    if value in SIGNS:
+                    # A unit printed alone in the body (`円` at the top of each 款 row's cells) names the unit,
+                    # not a label: counted as text, it turned amount columns into label columns.
+                    if value in SIGNS or UNIT_CELL.match(value):
                         continue
                     if not is_amount(value):
                         kinds.add('text')

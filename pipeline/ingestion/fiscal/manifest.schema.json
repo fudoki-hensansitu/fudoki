@@ -142,6 +142,94 @@
         "sha256"
       ]
     },
+    "ocr_input": {
+      "description": "OCR observation acquired outside the converter (ADR 0019). sha256/bytes are of the uncompressed observation JSON and are pinned by `ingestion:ocr`; the stored key derives from target/direction/id.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "origin_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "request": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "engine": {
+              "enum": [
+                "vision"
+              ]
+            },
+            "pages": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "config": {
+              "type": "object"
+            },
+            "regions": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "bbox_normalized": {
+                    "type": "array",
+                    "items": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "minItems": 4,
+                    "maxItems": 4
+                  }
+                },
+                "required": [
+                  "id",
+                  "bbox_normalized"
+                ]
+              }
+            }
+          },
+          "required": [
+            "engine",
+            "pages"
+          ]
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "id",
+        "origin_sha256",
+        "request"
+      ],
+      "dependentRequired": {
+        "sha256": [
+          "bytes"
+        ],
+        "bytes": [
+          "sha256"
+        ]
+      }
+    },
     "expected_table": {
       "type": "object",
       "additionalProperties": false,
@@ -168,6 +256,13 @@
           "type": "array",
           "items": {
             "$ref": "#/$defs/input"
+          },
+          "minItems": 1
+        },
+        "ocr_inputs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ocr_input"
           },
           "minItems": 1
         },

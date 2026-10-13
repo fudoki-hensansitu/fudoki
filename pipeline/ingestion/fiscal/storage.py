@@ -8,7 +8,10 @@ import subprocess
 import tempfile
 from pathlib import Path, PurePosixPath
 
-from ingestion.fiscal.manifest import BUCKET, object_key, sha_file, table_references
+import gzip
+import hashlib
+
+from ingestion.fiscal.manifest import BUCKET, object_key, ocr_key, sha_file, table_references
 from ingestion.paths import CACHE
 
 OBJECTS = CACHE / 'objects'
@@ -17,6 +20,58 @@ OBJECTS = CACHE / 'objects'
 def verify(path: Path, reference: dict) -> None:
     if ('bytes' in reference and path.stat().st_size != reference['bytes']) or sha_file(path) != reference['sha256']:
         raise ValueError('Stored object hash/size differs')
+
+
+def verify_ocr(path: Path, reference: dict) -> bytes:
+    """OCR observations are stored gzipped; their SHA and size are of the JSON bytes."""
+    data = gzip.decompress(path.read_bytes())
+    if len(data) != reference['bytes'] or hashlib.sha256(data).hexdigest() != reference['sha256']:
+        raise ValueError('OCR observation hash/size differs')
+    return data
+
+
+def write_ocr(document: dict, item: dict, data: bytes, run: dict) -> Path:
+    """Cache a freshly acquired observation at its fixed key; uploading happens with the tables."""
+    path = OBJECTS / safe_relative(ocr_key(document, item['id']))
+    path.parent.mkdir(parents=True, exist_ok=True)
+    # mtime=0 keeps the gzip bytes stable for identical observations.
+    path.write_bytes(gzip.compress(data, mtime=0))
+    path.with_name(item['id'] + '.run.json').write_text(json.dumps(run, ensure_ascii=False, indent=1) + '\n')
+    return path
+
+
+def fetch_ocr(document: dict, item: dict, *, remote: bool = False) -> Path:
+    if 'sha256' not in item:
+        raise ValueError(f'OCR input is not pinned; run ingestion:ocr: {item["id"]}')
+    path = OBJECTS / safe_relative(ocr_key(document, item['id']))
+    if not path.exists():
+        if not remote:
+            raise FileNotFoundError(f'OCR observation is not cached: {item["id"]}')
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as stream:
+            temporary = Path(stream.name)
+            try:
+                subprocess.run(['cf', 'r2', 'objects', 'get', ocr_key(document, item['id']), '--bucket-name',
+                                BUCKET, '--quiet'], stdout=stream, check=True)
+                verify_ocr(temporary, item)
+                os.replace(temporary, path)
+            finally:
+                temporary.unlink(missing_ok=True)
+    verify_ocr(path, item)
+    return path
+
+
+def save_ocr(document: dict, item: dict) -> None:
+    """Upload a pinned observation (and its run record when cached) to its fixed key."""
+    path = fetch_ocr(document, item)
+    if path.stat().st_size > 300_000_000:
+        raise ValueError('cf REST upload limit exceeded; configure a file-based S3 multipart transport')
+    subprocess.run(['cf', 'r2', 'objects', 'put', ocr_key(document, item['id']), '--bucket-name', BUCKET,
+                    '--file', str(path), '--quiet'], check=True, stdout=subprocess.DEVNULL)
+    run = path.with_name(item['id'] + '.run.json')
+    if run.exists():
+        subprocess.run(['cf', 'r2', 'objects', 'put', ocr_key(document, item['id'], '.run.json'), '--bucket-name',
+                        BUCKET, '--file', str(run), '--quiet'], check=True, stdout=subprocess.DEVNULL)
 
 
 def safe_relative(value: str) -> str:
@@ -104,6 +159,9 @@ def cleanup(document: dict) -> int:
     prefix = object_key(document, 'placeholder').rsplit('/', 1)[0] + '/'
     wanted = {reference['object']['key'] for table in document['tables']
               for reference in table_references(table).values()}
+    from ingestion.fiscal.manifest import ocr_inputs
+    wanted |= {ocr_key(document, item['id'], suffix) for _, item in ocr_inputs(document)
+               for suffix in ('.json.gz', '.run.json')}
     removed = 0
     after = None
     while True:
@@ -125,7 +183,11 @@ def cleanup(document: dict) -> int:
             key = item['key']
             if not key.startswith(prefix):
                 raise ValueError('R2 list returned an object outside the target/direction')
-            if key not in wanted and key.endswith('.parquet') and '/' not in key[len(prefix):]:
+            name = key[len(prefix):]
+            stored_table = name.endswith('.parquet') and '/' not in name
+            stored_ocr = (name.startswith('ocr/') and '/' not in name[4:]
+                          and name.endswith(('.json.gz', '.run.json')))
+            if key not in wanted and (stored_table or stored_ocr):
                 if read(manifest_path(document['target'], document['direction'])) != document:
                     raise ValueError('Saved manifest changed; cleanup stopped')
                 subprocess.run(['cf', 'r2', 'objects', 'delete', key, '--bucket-name', BUCKET, '--force', '--quiet'],

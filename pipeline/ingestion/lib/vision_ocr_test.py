@@ -18,6 +18,7 @@ class VocabularyLoading(unittest.TestCase):
             path = Path(directory) / "input.pdf"
             path.write_bytes(b"native invocation is mocked")
             with patch("ingestion.lib.vision_ocr.platform.system", return_value="Darwin"), \
+                    patch("ingestion.lib.vision_ocr._compiled", return_value=Path("vision_ocr")), \
                     patch("ingestion.lib.vision_ocr.subprocess.run",
                           return_value=SimpleNamespace(returncode=0, stdout='{"engine":{}}')) as native:
                 result = recognize_pdf(path, pages=[1], config=config)

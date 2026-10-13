@@ -13,6 +13,7 @@
     "ingestion:cleanup": "uv run python -m ingestion.fiscal.run cleanup",
     "ingestion:originals": "uv run python -m ingestion.fiscal.run originals",
     "ingestion:refresh": "uv run python -m ingestion.fiscal.run refresh",
+    "ingestion:ocr": "uv run --extra paddle-ocr python -m ingestion.fiscal.run ocr",
     "dbt:prepare": "uv run python dbt/scripts/prepare.py",
     "dbt:build": "uv run python dbt/scripts/prepare.py --build",
     "serving:columns": "uv run python -m serving.columns",
