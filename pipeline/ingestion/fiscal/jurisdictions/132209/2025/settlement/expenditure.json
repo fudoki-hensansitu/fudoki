@@ -24,13 +24,49 @@
           "table_id": "general-expenditure"
         }
       ]
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "518df25498a1dffa1d4f7c7ee051c3bf2aaf9a85f3e3bbd62839eb5df054940c"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "national-health-insurance-expenditure"
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "518df25498a1dffa1d4f7c7ee051c3bf2aaf9a85f3e3bbd62839eb5df054940c"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-expenditure"
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-expenditure"
+        }
+      ]
     }
   ],
   "tables": [
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "0742e319150981120475c0240e83a499166763b20694c462a4c11d0095e1426d",
+      "input_fingerprint": "1a1b524c29c55e8ad1c093ca8bcb0579387189730a94b4a5a72bd709876b3445",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'shape', '節': 'indent'}。",
@@ -55,6 +91,66 @@
           "bytes": 108855
         },
         "row_count": 8859
+      }
+    },
+    {
+      "table_id": "national-health-insurance-expenditure",
+      "conversion_id": "national-health-insurance-settlement",
+      "input_fingerprint": "b77ed1611633ffb8351c43c27030d76662891fd692713779d433af3590a05e2b",
+      "account": "国民健康保険事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'shape', '節': 'indent'}。",
+        "金額の単位は printed 9頁 から決めた。款の和 8,293,452,547 と印字の「歳出合計」8,293,452,547 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（64 件）を、印字された語から辞書の見出しに寄せた: 予算現額と支出済額との比較→比較・予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2025/settlement/expenditure/national-health-insurance-expenditure-nodes.parquet",
+          "sha256": "3152369f0b73c9f1a88e109ee76c6f13f8d0ae6a445766e752d911463fce51fd",
+          "bytes": 10036
+        },
+        "row_count": 192
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2025/settlement/expenditure/national-health-insurance-expenditure-amounts.parquet",
+          "sha256": "fcaded78f4575c9d98b28b3106061e857ba0c42f4ed34b026d116caae3d03fb6",
+          "bytes": 12357
+        },
+        "row_count": 910
+      }
+    },
+    {
+      "table_id": "elderly-medical-expenditure",
+      "conversion_id": "elderly-medical-settlement",
+      "input_fingerprint": "0c85786619f364f117070f4abc5fd82a5cb4eab49c71ed647faec89779477932",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'shape', '節': 'indent'}。",
+        "金額の単位は printed 8頁 から決めた。款の和 2,767,399,705 と印字の「歳出合計」2,767,399,705 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（41 件）を、印字された語から辞書の見出しに寄せた: 予算現額と支出済額との比較→比較・予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2025/settlement/expenditure/elderly-medical-expenditure-nodes.parquet",
+          "sha256": "eb0d1366d4ef41b1190153af0aa890f2220fa9a648a388ba3aef67ebee9cdc30",
+          "bytes": 7574
+        },
+        "row_count": 124
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2025/settlement/expenditure/elderly-medical-expenditure-amounts.parquet",
+          "sha256": "0e108fb44e54bbcb1df6120320c352e275bc06f9bfcdf75ff1370d55c395b98e",
+          "bytes": 8471
+        },
+        "row_count": 538
       }
     }
   ]

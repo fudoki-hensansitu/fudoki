@@ -6,7 +6,7 @@ from ingestion.generic.sums import bracket
 from ingestion.generic.repair import Report, clip_to_page, crop_to_box
 from ingestion.generic.rows import identities
 from ingestion.generic.tree import (Built, Group, Item, _leading_amount, _split_code, _split_line, groups, number_span,
-                                   owner, same_position, shape_depth, subject_items)
+                                   owner, same_position, shape_depth, subject_header, subject_items)
 from ingestion.generic.units import check as check_units
 
 
@@ -441,6 +441,21 @@ class SumTest(unittest.TestCase):
 
     def test_unclosed_sequence_reports_no_bracketing(self):
         self.assertEqual(bracket([1000, 500], [None, None], 2000, 'sum'), (None, 0))
+
+
+class SubjectHeaderTest(unittest.TestCase):
+    def test_a_header_cell_that_only_contains_the_word_item_is_no_subject_column(self):
+        # `予備費充当項目` (132047): the list of a reserve's uses, not the 款・項・目 column.
+        self.assertFalse(subject_header(('予備費充当項目',)))
+        self.assertFalse(subject_header(('金額',)))
+        self.assertTrue(subject_header(('科目',)))
+        self.assertTrue(subject_header(('予算科目',)))
+        self.assertTrue(subject_header(('款',)) and subject_header(('項',)) and subject_header(('目',)))
+        self.assertTrue(subject_header(('款　項　目',)))
+        self.assertTrue(subject_header(('歳出', '(款)(項)(目)')))
+        # Known gap: a cell that is only `項目` still reads as the 項・目 column (it was so before), so a list
+        # whose heading is a bare `項目` would be read as a subject column too.
+        self.assertTrue(subject_header(('項目',)))
 
 
 if __name__ == '__main__':

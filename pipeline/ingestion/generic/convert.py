@@ -27,7 +27,7 @@ import re
 
 from ingestion.generic.build import run_pages
 from ingestion.generic.headers import canonical
-from ingestion.generic.layout import normalize
+from ingestion.generic.layout import is_amount, lines, normalize
 from ingestion.generic.notes import kind_of
 from ingestion.lib.node_tables import AMOUNT_COLUMNS, NODE_COLUMNS, coverage_regions, phase_dictionary, write_coverage_words
 from ingestion.lib.parquet import write_parquet
@@ -41,6 +41,7 @@ TOTAL_ROW = re.compile(r'(?:合計|総計)$|^計$')
 FOOTNOTE_MARK = re.compile(r'[※＊*][0-9]+')
 ITEM_NUMBER = re.compile(r'^([0-9０-９]{1,4})[.．]$')
 RATIO_HEADER = re.compile(r'割合|比率|構成比|率$')
+ZERO_MARK = re.compile(r'^0+$')
 
 
 def scope_pages(source: dict, account: str) -> list[int]:
@@ -135,6 +136,8 @@ def excluded_regions(built, logicals, codes, observed) -> list[dict]:
     - the account codes in a laid note's label (`02-01-02-15-11-01から流用`): 本文;
     - a ratio column (見出しが割合・率): 数量表, the whole column of that page;
     - a footnote mark (`※1`): 本文;
+    - a number of zeros printed before a name (`00 一般会計繰出金`): the bullet of a remark drawn as digits, which
+      the builder takes off the name (item numbers start from 1): 本文;
     - the 合計 row (歳出合計) and a 計 row (a subtotal): 総括;
     - a frame that is no expenditure detail (no 款・項・目 column, no 予算現額・支出済額… column): 総括. On a spread its label is printed on the other physical page than its
       amounts, so the coverage check's own same-baseline rule cannot see the label.
@@ -149,6 +152,8 @@ def excluded_regions(built, logicals, codes, observed) -> list[dict]:
     marks = [(page.number, (w.x0, w.y0, w.x1, w.y1), w.text) for page in observed for w in page.words
              if FOOTNOTE_MARK.fullmatch(normalize(w.text))]
     regions += coverage_regions(marks, kind='本文', reason='脚注の番号（※1）。金額ではない。')
+    regions += coverage_regions(zero_marks(logicals), kind='本文',
+                                reason='名前の前に数字で描かれた箇条書きの印（00）。項目の番号は1から始まり、金額ではない。')
     for logical in built.skipped:
         by_page = defaultdict(list)
         for band in logical.bands:
@@ -163,6 +168,22 @@ def excluded_regions(built, logicals, codes, observed) -> list[dict]:
     regions += [{'kind': '総括', 'reason': '合計の行。款の和には入れない統制値。見開きでは見出しの語が反対の頁にある。',
                  'page': note['page'], 'bbox': list(note['box'])} for note in totals]
     return regions
+
+
+def zero_marks(logicals) -> list[tuple]:
+    """The first word of a band's line when it is only zeros and a name follows it on the line: the item
+    numbers of the builder start from 1 (`tree._split_code`), so such a number is a bullet. A cell of an
+    amount column that prints a lone 0 is no mark: nothing but amounts follows it in its band."""
+    found, seen = [], set()
+    for logical in logicals:
+        for band in logical.bands:
+            for line in lines(band.words):
+                first = line[0]
+                if (ZERO_MARK.match(normalize(first.text)) and any(not is_amount(g.text) for g in line[1:])
+                        and (first.page, first.x0, first.y0) not in seen):
+                    seen.add((first.page, first.x0, first.y0))
+                    found.append((first.page, first.original, first.text))
+    return found
 
 
 def frame_words(observed, logicals) -> list[tuple]:

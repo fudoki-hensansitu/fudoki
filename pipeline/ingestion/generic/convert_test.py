@@ -1,6 +1,6 @@
 import unittest
 
-from ingestion.generic.convert import (excluded_regions, frame_words, lay_notes, scope_pages, split_notes)
+from ingestion.generic.convert import (excluded_regions, frame_words, lay_notes, scope_pages, split_notes, zero_marks)
 from ingestion.generic.layout import Band, Glyph, Logical
 from ingestion.generic.notes import kind_of, reads_as_note
 from ingestion.generic.observe import Page, Word
@@ -147,6 +147,18 @@ class HeadingTest(unittest.TestCase):
         band = Band(900, 1100, 1, ('備考',), [], 100, 700)
         found = frame_words(observed, [Logical([1], [band], None, [])])
         self.assertEqual([text for _, _, text in found], ['1消耗品費'])
+
+    def test_zeros_before_a_name_are_a_bullet_and_a_lone_zero_amount_is_not(self):
+        # `00 一般会計繰出金 39,261,493` (132209): the builder takes the zeros off the name (item numbers start
+        # from 1), so the digits are no amount. A 0 printed alone in an amount cell stays in front of the check.
+        band = Band(900, 1200, 1, ('備考',), [], 100, 700)
+        band.words = [glyph('00', 931, 477, 9), glyph('一般会計繰出金', 944, 477, 63), glyph('39,261,493', 1100, 477, 45),
+                      glyph('0', 931, 520, 5), glyph('0', 931, 560, 5), glyph('給与', 944, 560, 18)]
+        logicals = [Logical([1], [band], None, [])]
+        self.assertEqual([(page, text) for page, _, text in zero_marks(logicals)], [(1, '00'), (1, '0')])
+        regions = excluded_regions(Built([], [], [], [], []), logicals, [], [])
+        self.assertEqual([r['kind'] for r in regions], ['本文', '本文'])
+        validate_exclusions(regions)
 
 
 if __name__ == '__main__':
