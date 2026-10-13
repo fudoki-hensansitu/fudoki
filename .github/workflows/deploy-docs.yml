@@ -1,0 +1,36 @@
+name: deploy-docs
+# main に入った文書の変更を docs.fudoki.dev へデプロイする。
+# API リファレンスは apps/api の route 定義から作るので、API の変更でもデプロイする
+on:
+  push:
+    branches: [main]
+    paths:
+      - apps/docs/**
+      - apps/api/src/**
+      - apps/api/openapi.ts
+      - apps/api/package.json
+      - package.json
+      - bun.lock
+      - bunfig.toml
+      - mise.toml
+      - tsconfig.json
+      - .github/workflows/deploy-docs.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: deploy-docs
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: jdx/mise-action@v5
+        with:
+          version: 2026.8.6
+      - run: bun install --frozen-lockfile
+      - run: bun run deploy:docs
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
