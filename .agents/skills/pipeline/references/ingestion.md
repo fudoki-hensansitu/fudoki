@@ -183,6 +183,10 @@ PDFは原典の内部で重複して印字された数字どうしの一致で�
 5. PDFの新形式では保存後に自動で掃除しない。2表の保存と管理JSONの採用を確認してから、移行した横持ちの表を別の操作で削除する。対象かつ指定した方向のingestion領域だけを一覧取得し、削除直前にも現在の参照を確認する。旧形式の掃除に失敗したら `bun run ingestion:cleanup --manifest <対象JSON>` を実行する。別年度・別補正号・別方向を削除しない。
 取り込みは表と管理情報の保存・差し替えまでで完了する。保存済みの管理情報とParquetの読み込み、入力条件・SHA・サイズの照合はdbt側の入力準備で行う。保存途中の表を読み始めない。
 
+## 保存済みの団体へ会計を足す
+
+保存済みの表（一般会計など）と未保存の新しい変換は、同じ管理 JSON に共存できない（`Saved manifest must contain every expected table`）。会計を足すときは、管理 JSON を直接編集せず、現在の管理 JSON に変換を1つだけ追加し `tables` を空にした計画の JSON を作って `ingestion:convert --manifest <対象JSON> --inputs <入力パスJSON> --output <新しい候補dir> --extend-plan <計画JSON>` に渡す。既存の変換・表は変えずに保持され、新しい表だけを変換して関門を当てる。`--remote` を付けると保存して管理 JSON に登録する（付けなければ候補だけ）。1回に足せる変換は1つなので、複数の会計は順に回す（登録のたびに管理 JSON が変わるので、計画は毎回その時点の管理 JSON から作る）。`generic/` を直した後の保存済みの表は、先に `ingestion:refresh --remote` で指紋を合わせる。
+
 ## 指紋が古くなったとき
 
 `ingestion:check` が `Stale saved table` で止まるのは、表を作ったコード・設定・原典・scopeのどれかが変わったという合図であり、表の中身が変わった証拠ではない。次の順で、中身で決める（[ADR 0027](../../../../docs/adr/0027-refresh-fingerprints-by-table-content.md)）。

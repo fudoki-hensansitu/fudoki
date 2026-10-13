@@ -24,6 +24,24 @@
           "table_id": "general-expenditure"
         }
       ]
+    },
+    {
+      "id": "long-term-care-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e1e01aba79941e5b1f650b426abfbb53053c36acb035f3a62315425085a60189"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-expenditure"
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-expenditure"
+        }
+      ]
     }
   ],
   "tables": [
@@ -55,6 +73,36 @@
           "bytes": 58781
         },
         "row_count": 5063
+      }
+    },
+    {
+      "table_id": "long-term-care-expenditure",
+      "conversion_id": "long-term-care-settlement",
+      "input_fingerprint": "0b4c93745aed3a0a2b7a6c244744ea68f8a10f0fada3433a6b55244b87398ef2",
+      "account": "介護保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape'}。",
+        "金額の単位は printed 18頁 から決めた。款の和 1,022,840,739 と印字の「歳出合計」1,022,840,739 が一致。",
+        "金額の注記 7 件（充用 1・流用 6）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（75 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/134015/2025/settlement/expenditure/long-term-care-expenditure-nodes.parquet",
+          "sha256": "fe2fcb6afa7041f5f63ba9354df7dd0a1dc8755764237f54c315c51f05a6ce44",
+          "bytes": 9081
+        },
+        "row_count": 160
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/134015/2025/settlement/expenditure/long-term-care-expenditure-amounts.parquet",
+          "sha256": "24aecc97c86b2072b317f908b42a71356e04d4693dbb9307b064bd85848ef1da",
+          "bytes": 10653
+        },
+        "row_count": 851
       }
     }
   ]
