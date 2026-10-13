@@ -2,7 +2,7 @@ import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
 import { McpServer, createMcpHandler, preloadSchemas } from '@modelcontextprotocol/server'
 import type { Context } from 'hono'
 import { HTTPException } from 'hono/http-exception'
-import iconSvg from '../../web/public/favicon.svg' with { type: 'text' }
+import iconSvg from './favicon.svg' with { type: 'text' }
 import type { Env } from './db'
 import { ApiError, errorBody, invalid } from './errors'
 import { operations, type Ctx, type Operation } from './operations'
