@@ -17,8 +17,7 @@ from ingestion.generic.observe import observe
 from ingestion.generic.repair import repair
 from ingestion.generic.units import check as check_units, resolve as resolve_units
 from ingestion.generic.tree import DETAIL_PATTERNS, SUBJECT_PATTERNS, Built, build
-from ingestion.lib.node_tables import AMOUNT_COLUMNS, NODE_COLUMNS, amount_phase, phase_dictionary
-from ingestion.lib.tree_check import check_tree
+from ingestion.lib.node_tables import AMOUNT_COLUMNS, NODE_COLUMNS, amount_phase, check_tree, phase_dictionary
 from ingestion.lib.parquet import write_parquet
 
 

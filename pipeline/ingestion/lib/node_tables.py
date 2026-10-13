@@ -1151,6 +1151,11 @@ def check_tree(nodes: list[dict], amounts: list[dict], document_kind: str = 'set
     Same-axis groups compare normalized phases; independent breakdowns compare
     phases resolved in that breakdown and shared exact headers. Unprinted nodes take
     same-axis child sums, and unprinted leaves take zero. Validate links/cycles.
+
+    A group whose children (and their same-axis descendants) print no amount at all has
+    nothing to compare and is skipped: a lone 細節 that leaves its amount out because it equals
+    the 節's (羽村). Zero is not what the document says there. A group where at least one
+    child or descendant prints still compares in full, the unprinted ones counting zero.
     """
     by_key = {n['node_key']: n for n in nodes}
     issues, results = [], []
@@ -1221,6 +1226,8 @@ def check_tree(nodes: list[dict], amounts: list[dict], document_kind: str = 'set
         same_axis = axis == by_key[parent]['axis_header']
         parent_values = comparable(parent)
         child_keys = set().union(*(descendants(child, axis) for child in children))
+        if not any(values[child] for child in child_keys):
+            continue
         child_phases = {label for child in child_keys for label, _ in comparable(child)}
         child_headers = {header for child in child_keys for header, _ in values[child]}
         comparisons = [(label, unit, False) for label, unit in parent_values

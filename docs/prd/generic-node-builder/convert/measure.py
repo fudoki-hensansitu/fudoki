@@ -27,7 +27,6 @@ from ingestion.fiscal import manifest  # noqa: E402
 from ingestion.generic.convert import build_table, write_files  # noqa: E402
 from ingestion.lib import node_tables  # noqa: E402
 from ingestion.lib.annotations import add_annotations  # noqa: E402
-from ingestion.lib import tree_check  # noqa: E402
 
 
 def measure(job: tuple[str, str, str, str]) -> dict:
@@ -71,7 +70,7 @@ def measure(job: tuple[str, str, str, str]) -> dict:
         result['annotations'] = [
             {'kind': n['level_header'], 'label': n['name_text'], 'page': n['physical_page'], 'added': i >= len(tables.nodes)}
             for i, n in enumerate(annotated.nodes) if n['axis_header'] == '注記'][:300]
-        checked = tree_check.check_tree(annotated.nodes, annotated.amounts, kind)
+        checked = node_tables.check_tree(annotated.nodes, annotated.amounts, kind)
         by_axis = defaultdict(lambda: {'一致': 0, '不一致': 0})
         for r in checked['results']:
             by_axis[r['axis_header']][r['status']] += 1

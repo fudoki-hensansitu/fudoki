@@ -12,7 +12,7 @@ import duckdb
 from ingestion.fiscal import manifest
 from ingestion.fiscal.storage import fetch, save, cleanup, verify
 from ingestion.paths import BUILD
-from ingestion.lib import node_tables, tree_check
+from ingestion.lib import node_tables
 
 MATCH, MISMATCH, NOT_APPLICABLE = '一致', '不一致', '対象外'
 
@@ -107,10 +107,7 @@ def node_receipt(document: dict, conversion: dict, table_id: str, tables: node_t
                  output: Path, *, input_fingerprint: str | None = None, notes: list[str] | None = None,
                  migrated: bool = True) -> tuple[dict, dict]:
     account = pdf_account(document, conversion, tables.nodes)
-    # A direct converter builds the tree itself and is checked by `tree_check` (a parent whose children print
-    # nothing is not compared); a migrated wide table keeps the strict `node_tables` check.
-    write = node_tables.write_tables if migrated else tree_check.write_tables
-    paths = write(output, table_id, tables, document['target']['document_kind'])
+    paths = node_tables.write_tables(output, table_id, tables, document['target']['document_kind'])
     # A direct converter never counted anything while migrating a wide table: no migration note.
     receipt = {'table_id': table_id, 'conversion_id': conversion['id'],
                'input_fingerprint': input_fingerprint or manifest.fingerprint(document, conversion),
@@ -321,7 +318,7 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
         checked_pdf.append((conversion, ident, migrated, metadata, file))
     for conversion, ident, built, file in pending_direct:
         # No saved legacy table to fall back to: a table that fails its tree check is a failure.
-        checked = tree_check.check_tree(built.nodes, built.amounts, document['target']['document_kind'])
+        checked = node_tables.check_tree(built.nodes, built.amounts, document['target']['document_kind'])
         if not built.nodes or not built.amounts or not checked['passed']:
             raise ValueError(f'Table failed the tree check: {ident}: {checked["counts"]}; {checked["issues"][:5]}')
         completed_by_id[ident] = []
@@ -380,16 +377,11 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
             'rows': sum(r['row_count'] for t in tables for r in manifest.table_references(t).values()), 'candidate': str(candidate)}
 
 
-# Converters that build the node and amount tables themselves (no wide table): `tree_check` is their tree check.
-DIRECT_CONVERTERS = {'fiscal/layouts/generic_text/convert.py'}
-
-
 def verify_sums(document: dict, locate) -> list[dict]:
     """Tree checks of every PDF table; ``locate(table)`` gives its verified Parquet."""
     selection = manifest.selection_for(document)
     formats = {conversion['id']: {item['format'] for item in manifest.resolved_inputs(document, conversion, selection)}
                for conversion in document['conversions']}
-    converters = {conversion['id']: conversion['converter'] for conversion in document['conversions']}
     results = []
     for table in document['tables']:
         if formats[table['conversion_id']] == {'csv'}:
@@ -398,10 +390,7 @@ def verify_sums(document: dict, locate) -> list[dict]:
                             'counts': {}, 'checks': [], 'results': []})
             continue
         pair = locate(table)
-        # Only a table a direct converter built is checked leniently (a parent whose children print nothing is
-        # not compared); a migrated wide table keeps the strict check that found its missing amounts.
-        check = tree_check.check_tree if converters[table['conversion_id']] in DIRECT_CONVERTERS else node_tables.check_tree
-        checked = check(node_tables.read_rows(pair['nodes']), node_tables.read_rows(pair['amounts']), document['target']['document_kind'])
+        checked = node_tables.check_tree(node_tables.read_rows(pair['nodes']), node_tables.read_rows(pair['amounts']), document['target']['document_kind'])
         passed = (checked['passed'] and not table['unread_amount_count'] and not table['unresolved_parent_count'])
         results.append({'table_id': table['table_id'], 'status': MATCH if passed else MISMATCH,
                         'counts': checked['counts'], 'issues': checked['issues'], 'checks': [],

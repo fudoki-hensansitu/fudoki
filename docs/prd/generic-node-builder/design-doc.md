@@ -601,13 +601,13 @@ A の規則のままでは 0 件一致。崩れる箇所は次の3つで、い�
 | converter | `ingestion/generic/convert.py` の `convert(inputs, destination, options)`。layout の入口は manifest の制約（`fiscal/layouts/<名>/convert.py`）のため `fiscal/layouts/generic_text/convert.py` に薄く置く |
 | 宣言（options） | `account`・`table_id`（分冊は `partial: true`）だけ。頁は選定の scope の会計・方向の頁をそのまま使う。座標・列名・段の名前は無い |
 | 返し方 | `{table_id: {nodes, amounts, notes}}`。wide 表も metadata も作らない。`run.py` の直接の経路が木の検査 → 注記 → 網羅の検査 → 受領書へ進める |
-| 木の検査 | `ingestion/lib/tree_check.py`。`node_tables.check_tree` の結果から「子孫のどこにも金額の印字が無い親」の不一致だけを落とす（羽村型。一部の子だけ印字が無い場合は今どおり不一致。印字の無い子の金額は NULL のまま補わない）。負例と正例のテストを付けた |
+| 木の検査 | `node_tables.check_tree` の1つ（表の作り手で検査を分けない）。「子と同じ軸の子孫のどこにも金額の印字が無い親」は比べない（羽村型。一部の子だけ印字が無い場合は今どおり不一致。印字の無い子の金額は NULL のまま補わない）。負例と正例のテストは `node_tables_test.py`。保存済みの45表に `ingestion:verify --remote` を当て、45表すべて一致 |
 | 網羅の scope | `<table_id>.coverage.json`。語は罫線の枠の内側（見出し含む）、金額帯は金額の欄の位置、非採用範囲は `EXCLUSION_KINDS` の既存の種類（`本文`・`数量表`・`総括`）だけ。新しい種類は作っていない |
 | 金額の見出し | 共有辞書（`shared/fiscal_amount_map.csv`）に無い見出しの経路（`予算現額／節／金額`・`支出済額(B)`・積んだ種類を文字層が連結した `翌年度繰越額継続費逓次繰越繰越明許費事故繰越し`）は、dbt の金額の契約（`fiscal_amounts_contract`）を通らない。印字された語だけから辞書の見出しに寄せる（`ingestion/generic/headers.py`）。辞書に載る経路・末尾の語が載る経路は触らない。寄せた件数と語は受領書の notes に残す |
 | 別の方向の頁 | 選定の scope が歳入と歳出で頁を共有する原典（総括の頁）では、`歳 入` と題された頁（右半分・続きの頁は前の頁の題を引き継ぐ）を歳出の変換で読まない（`build.page_titles`）。読んだ頁と網羅の scope は読んだ頁だけ |
 | 注記 | 共有辞書の kind の注記ノード（親は注記される科目、名前は原文、金額の見出しは「注記金額」）。科目・節・備考の金額には載せず木の和に入れない（[ADR 0024](../../adr/0024-monetary-annotations-without-phase.md)） |
 
-`check_tree` を `node_tables.py` の中で直さず、同じ検査を `tree_check.py` に置いたのは、`node_tables.py` が保存済みの全 PDF 変換器の fingerprint（依存を AST で辿る）に入るためである。直接直すと保存済み14管理 JSON が stale になり、`ingestion:check`（CI）が落ちる（実測: `Stale saved table: chuo-general-settlement` ほか14件）。再保存は R2 への書き込みなので、この作業では行えない。保存済みの変換器を新しい検査へ移すときに、`tree_check.check_tree` を `node_tables` へ戻す。
+`check_tree` は `node_tables.py` の中で直した（ユーザー決定）。`node_tables.py` は保存済みの全 PDF 変換器の fingerprint に入るので、保存済み14管理 JSON が stale になる（`ingestion:check` は `Stale saved table: chuo-general-settlement` ほかで止まる）。指紋は [ADR 0027](../../adr/0027-refresh-fingerprints-by-table-content.md) の `ingestion:refresh --remote` で、表の中身が同じことを確かめて更新する（#116 の merge 後に main へ rebase して回す）。当面は、表の作り手で検査を変える二重の基準（別ファイルの `tree_check.py` と `DIRECT_CONVERTERS` の分岐）を持たないことを優先した。
 
 ### 結果
 
@@ -702,7 +702,7 @@ A の規則のままでは 0 件一致。崩れる箇所は次の3つで、い�
 - 受け手が `特別会計` とだけ印字された繰出金の受け手の種類（「不明」を足すか）。
 - 新10団体の72目の COFOG の規則。
 - 羽村型（細節の金額を印字しない）は dbt の `fiscal_tree_balances`（`missing_child_amounts`）に当たる。羽村は別の理由で止まっているが、通す場合は dbt 側の扱いを決める。
-- 保存済みの変換器を `tree_check` に移し、`node_tables.check_tree` へ戻す時期（保存済みの表の再保存を伴う）。
+- 指紋の更新（`ingestion:refresh --remote`）の時期。#116（`check_digit_coverage` の変更）の merge 後に main へ rebase して回す。
 
 ## 推奨の流れ
 
