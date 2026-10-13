@@ -1,27 +1,45 @@
-# 風土記（fudoki）
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="apps/web/public/logo-dark.svg">
+  <img src="apps/web/public/logo.svg" alt="風土記" height="64">
+</picture>
 
-<img src="apps/web/public/hero.webp" alt="713年の官命により諸国から集められた、地名の由来や産物を記した巻物を役人が受け取る場面を描いた墨絵" width="100%">
+[![CI](https://github.com/wwwyo/fudoki/actions/workflows/verify.yml/badge.svg)](https://github.com/wwwyo/fudoki/actions/workflows/verify.yml)
+[![License: MIT (code)](https://img.shields.io/badge/license-MIT%20(code)-blue)](#license)
+
+[ドキュメント](https://docs.fudoki.dev/) · [MCP で使う](https://docs.fudoki.dev/mcp) · [REST で使う](https://docs.fudoki.dev/rest) · [データの読み方](https://docs.fudoki.dev/data)
 
 **あなたの街の家計簿をオープンに。**
 
-公開されているのに読めない。
-自治体の予算は PDF か、自治体ごとに違う形の CSV で出ている。
-だから「この市はこの事業にいくら使っているか」を機械で引けないし、市をまたぐ比較も年をまたぐ比較も事実上できない。
+自治体の予算・決算は公開されているのに、PDF か団体ごとに形の違う CSV なので、「この市はこの事業にいくら使っているか」を機械で引けず、市や年をまたいで比べることも事実上できない。
+風土記は、日本の地方自治体の**歳出の予算・決算額を事業の単位まで**構造化し、AI からそのまま問い合わせられるデータとして配る。
+デジタル庁のダッシュボードが目的別・性質別まで出している以上、欠けているのは**粒度**と**横断性**の2つで、風土記はそこだけを埋める。
 
-風土記は日本の地方自治体の**歳出の予算・決算額を事業単位まで**構造化し、AI ready なデータとして配布する。
-デジタル庁のダッシュボードが目的別と性質別まで出している以上、欠けているのは**粒度**と**横断性**の2つだけで、そこだけを埋める。
+⚠️ いまの API は動作確認用に、武蔵野市の 2025 年度決算の歳出の一部（後期高齢者医療会計）だけを載せている。東京都の全区市町村（62団体）を最初の網羅範囲として、原典の取り込みから提供用データまでのパイプラインの完成を優先しており、配る範囲はその後に広げる。Web サイト（`fudoki.dev`）は一時的に HTTP 500 を返す。
 
-## 現在の優先範囲
+## QuickStart
 
-東京都の全区市町村（62団体）を最初の網羅範囲とし、収録できた団体から原典の取り込みと変換を進める。まず **ingestion → staging → intermediate → marts** を完成させる。
+MCP に対応した AI クライアントに `https://api.fudoki.dev/mcp` を登録する。認証は要らない。Claude Code なら次のとおり。
 
-原典の値・単位・階層を保ち、団体間で列・金額単位・分類を揃え、提供用データの金額・粒度・出典を検査する。配布・検索の保存先や公開方式は、パイプライン完成後に検討する。
+```bash
+claude mcp add --transport http fudoki https://api.fudoki.dev/mcp
+```
 
-原典の選定は [`source_selection/`](pipeline/source_selection/)、取り込みの宣言は団体別の [`jurisdictions/`](pipeline/ingestion/fiscal/jurisdictions/) にある。原典と取り込み済み Parquet は非公開 R2 に保存する。dbt のモデルは新しい取り込み表から作り直している。
+登録したら、会話で頼む。
+
+> 武蔵野市の 2025 年度の決算で、金額の大きい目を 5 件出して、COFOG の分類と原典の URL も添えて
+
+目の名前・金額と原典の URL が返れば使えている。Cursor・Codex などの登録方法と REST での使い方は[ドキュメント](https://docs.fudoki.dev/)にある。
+
+## Features
+
+- **事業の単位まで 🔍**: 款・項・目と、その下の事業・節・備考の内訳まで金額を引ける。
+- **団体・年度をまたいで比べる 🗾**: 科目体系の違う団体どうしを同じ物差しで比べられるよう、目に COFOG（政府支出の機能別分類）を付けている。
+- **原典に戻れる 📄**: すべての行が原典の資料名・公開 URL・SHA-256 を指し、PDF なら金額が印字された頁と位置まで辿れる。
+- **原典の値と風土記の判断を分ける 🧭**: 款・項・目の金額は原典の値のまま。COFOG の分類など原典にない対応は、列の説明で判断と分かるようにしている。
 
 ## 開発
 
-前提: [mise](https://mise.jdx.dev/) と、全量入力を復元する場合は非公開 R2 の読取権限。
+前提: [mise](https://mise.jdx.dev/)。原典と取り込み表の全量を復元するには、非公開 R2 の読取権限も要る。
 
 ```bash
 mise install
@@ -29,63 +47,20 @@ bun install --frozen-lockfile
 uv sync --frozen
 
 bun run --cwd pipeline ingestion:check   # 取り込みの宣言・選定・fingerprint を検査
+bun run typecheck:all
+bun run test
 ```
 
-公開 web・API・MCP・docs は一時的に HTTP 500 を返す。
-
-パイプラインの工程と実行手順は [pipeline skill](.agents/skills/pipeline/SKILL.md) を参照。
-
-## 用語
-
-原典は自治体が公開した CSV・PDF そのもの、取り込みは原典の値と単位を保った表である。dbt の staging で列名・型を整え、intermediate で共通単位・科目・分類を揃え、marts で提供する列と粒度を確定する。詳細は [用語](AGENTS.md#glossary) と [決定の記録](docs/adr/) を参照。
-
-提供用データでは、COFOG を歳出明細と同じ表に含め、原典由来の金額と分類などの判断を列の説明で区別する。判断の根拠は Git にある規則表に残す。DuckDB は、その入力と宣言から生成する実行用の表である（dbt のモデルは作り直し中。[dbt モデルの設計](docs/prd/fiscal-dbt-models/design-doc.md)）。
-
-歳出の款・項・目は目的・科目の階層で、款が最も粗い。節は目の内訳を経済的な性質で分ける法定区分である。
-「事業単位まで」というのは目とその下の事業階層に届くという意味である。
-事業階層の名前は団体ごとに違う（三鷹市は「事項」、狛江市は「大事業・中事業・小事業」）。
-**COFOG への対応は風土記の判断**であり、原典の階層経路を保った歳出明細に分類列として加える。
-
-科目の名称が原典に無い団体（狛江市）は、市が公開している決算書 PDF の見出しから名称を解決した。これも判断なので、出所は規則の根拠に書いてある。
-
-**COFOG**（Classification of the Functions of Government）は政府支出の機能別分類で、教育や保健といった10のディビジョンに分ける国際標準である。
-自治体をまたぐ比較にも将来の国際比較にも同じ写像が効くので、粒度と対にして作っている。
-
-## 将来展望
-
-予算・決算と調達を、それぞれ既存の標準に載せて繋ぐ。
-
-| レイヤ | 標準 | 状態 |
-|---|---|---|
-| ① 何にいくら（予算） | [Fiscal Data Package](https://fiscal.datapackage.org/) | ingestion〜marts を優先して整備中 |
-| ② いつ何が公告されたか（調達） | [OCDS](https://standard.open-contracting.org/) | 未着手 |
-
-- コードは MIT。データは原典のライセンスに従う（下記）
-- MCP サーバとしても配布し、AI エージェントが直接読める形にする
-
-## もっと読む
-
-- [AGENTS.md](AGENTS.md): プロジェクトの identity・構造・セットアップ
-- [docs/adr/](docs/adr/): 設計上の決定の記録
-- [pipeline skill](.agents/skills/pipeline/SKILL.md): 原典選定・取り込み・dbt構築の手順
-- [apps/web/README.md](apps/web/README.md): 公開 web（現在は一時的に 500）
-- [pipeline/source_selection/](pipeline/source_selection/): 団体ごとの原典の選定。団体を足すときはここから
-
-名前は『風土記』から。
-713年の官命により、諸国へ地名の由来や産物を**同じ様式で報告させて集めた**地誌で、各自治体から同じ形式でデータを集めるという本 PJ の構造がそのまま重なる。
+いずれも終了コード 0 で終われば環境は整っている。パイプラインの工程と実行手順は [pipeline skill](.agents/skills/pipeline/SKILL.md)、構造と用語は [AGENTS.md](AGENTS.md)、設計上の決定は [docs/adr/](docs/adr/) にある。団体を足すときは [pipeline/source_selection/](pipeline/source_selection/) から始める。
 
 ## License
 
-**1つのライセンスでは表せない**ので、層ごとに分けてある。
+ライセンスは1つでは表せないので、層ごとに分けている。
 
 | 層 | 誰のものか | ライセンス |
 |---|---|---|
-| コード（`pipeline/` `packages/` `apps/`） | fudoki | [MIT](LICENSE) |
+| コード（`pipeline/` `packages/` `apps/`） | 風土記 | [MIT](LICENSE) |
 | 風土記の判断（COFOG 分類列・科目や事業名の対応） | 風土記 | 配布物の descriptor で列ごとに宣言する（CC BY 4.0 の予定） |
 | 原典・取り込み表・配布明細の原典由来の列 | **各自治体** | 各原典の利用条件 |
 
-⚠️ **原典のライセンスは fudoki が選んだものではない。**
-著作権を持たないものにライセンスは与えられないので、正本の表示は原典に付いてくる条件を
-そのまま素通ししている。fudoki は原典を改変しているので、その旨も表示している（CC BY 4.0 §3(a)(1)(B)）。
-
-方針は [ライセンスの層別宣言](docs/adr/0006-license-per-layer.md)。配布を再開したら、正確な表示は配布物の descriptor（`licenses` / `sources` / `contributors` / `description`）に置く。
+⚠️ **原典のライセンスは風土記が選んだものではない。** 著作権を持たないものにライセンスは与えられないので、原典に付いてくる条件をそのまま表示している。風土記は原典を改変しているので、その旨も表示している（CC BY 4.0 §3(a)(1)(B)）。方針は [ライセンスの層別宣言](docs/adr/0006-license-per-layer.md) を参照。
