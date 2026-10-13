@@ -765,6 +765,8 @@ class ScanRulesTest(unittest.TestCase):
         self.assertIs(owner([glyph('1,000', 150, 119, 30)], money, [subject], found), moku)
         money.rows = [100, 120, 250]  # a rule between the name's first line and the amount
         self.assertIsNone(owner([glyph('1,000', 150, 122, 30)], money, [subject], found))
+        money.rows = [20, 128, 250]  # a rule between the amount and the name's second line, the cell still tall
+        self.assertIsNone(owner([glyph('1,000', 150, 115, 30)], money, [subject], found))
 
     def page(self, body):
         rules = [Rule(x, 100, x, 300) for x in (10, 50, 100)] + [Rule(10, y, 100, y) for y in (100, 120, 300)]

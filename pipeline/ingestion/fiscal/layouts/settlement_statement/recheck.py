@@ -71,6 +71,8 @@ def rule(box, value: str, model: str) -> AmountRule:
 
 
 def recheck(document: dict, conversion: dict, pdf: Path, model: str = MODEL, limit: int = LIMIT) -> dict:
+    if len(conversion['ocr_inputs']) != 1:
+        raise ValueError('The recheck reads a conversion with one OCR input')
     ocr = conversion['ocr_inputs'][0]
     observation = json.loads(gzip.decompress(fetch_ocr(document, ocr).read_bytes()))
     pages = [(pdf_rules.detect(pdf, p['page_number']), ocr_boxes(observation, p)) for p in observation['pages']]

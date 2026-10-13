@@ -53,7 +53,9 @@ def convert(inputs: list[dict], destination: Path, options: dict) -> dict:
         if observation['origin']['sha256'] != item['sha256']:
             raise ValueError(f'OCR input {ocr["id"]} reads another original')
         for page in observation['pages']:
-            observed.setdefault(page['page_number'], ocr_boxes(observation, page))
+            if page['page_number'] in observed:
+                raise ValueError(f'Page {page["page_number"]} is read by more than one OCR input')
+            observed[page['page_number']] = ocr_boxes(observation, page)
     missing = [p for p in pages if p not in observed]
     if missing:
         raise ValueError(f'No pinned OCR for pages {missing}')

@@ -225,3 +225,26 @@ class RuleTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class InputsTest(unittest.TestCase):
+    def test_two_ocr_inputs_on_one_page_stop_the_conversion(self):
+        import gzip, json, tempfile
+        from pathlib import Path
+        from ingestion.fiscal.layouts.settlement_statement.convert import convert
+        with tempfile.TemporaryDirectory() as tmp:
+            paths = []
+            for name in ('a', 'b'):
+                path = Path(tmp) / f'{name}.json.gz'
+                path.write_bytes(gzip.compress(json.dumps(
+                    {'origin': {'sha256': 'x'}, 'pages': [{'page_number': 1, 'regions': []}]}).encode()))
+                paths.append({'id': name, 'path': str(path)})
+            item = {'sha256': 'x', 'pdf_type': 'scan', 'scope': [{'pages': [[1, 1]]}], 'ocr': paths}
+            with self.assertRaisesRegex(ValueError, 'more than one OCR input'):
+                convert([item], Path(tmp), {'table_id': 't'})
+
+    def test_the_recheck_reads_a_conversion_with_one_ocr_input(self):
+        from pathlib import Path
+        from ingestion.fiscal.layouts.settlement_statement.recheck import recheck
+        with self.assertRaisesRegex(ValueError, 'one OCR input'):
+            recheck({}, {'ocr_inputs': [{'id': 'a'}, {'id': 'b'}]}, Path('x.pdf'))
