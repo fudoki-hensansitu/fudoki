@@ -9,7 +9,7 @@ script はこの package が所有する。実行は `bun run --cwd pipeline <na
 | group | scripts |
 |---|---|
 | 取り込み・保存 | `ingestion:schema` / `ingestion:check` / `ingestion:originals` / `ingestion:convert` / `ingestion:restore` / `ingestion:refresh`（指紋が古い管理 JSON の表を再変換して保存済みの表と中身で比べ、同じなら指紋だけを書き換える。R2 は読むだけ。`--remote`・`--dry-run`）/ `ingestion:cleanup` |
-| 取り込み表の合計検査 | `ingestion:verify`（ノードの表・金額の表の全段の木の検査（保存済み可）と印字された数字の網羅の検査（候補の scope 付きのみ。弱い規則で通した数字と帯の外の数字を Jev が金額と読めば止める）を保存済み・候補の表に当てる。CIでは回さない） |
+| 取り込み表の合計検査 | `ingestion:verify`（ノードの表・金額の表の全段の木の検査（保存済み可）と印字された数字の網羅の検査（候補の scope 付きのみ。弱い規則で通した数字と帯の外の数字を Jev が金額と読めば止める。convert が聞いて保存した答えを verify は API なしで再現し、無ければ止める）を保存済み・候補の表に当てる。CIでは回さない） |
 | dbt | `dbt:prepare`（入力準備だけ）/ `dbt:build`（入力準備から marts まで。候補は `--candidate-dir`、保存済みで未キャッシュなら `--remote`） |
 | 配信 | `serving:columns`（`apps/api/src/columns.json` を warehouse の列と `_models.yml` の説明から生成。`--check` で最新か検査）/ `serving:sync`（marts の表を D1 へ同名・同列で写す。`--database-id <uuid>` か `--local`、`--persist-to`、`--dry-run`。ネットワーク・cf を使うので sandbox 外） |
 | 検査 | `test`（bun）/ `test:python`（unittest）/ `test:dbt`（入力準備の unittest） |

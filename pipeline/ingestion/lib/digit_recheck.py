@@ -187,9 +187,10 @@ class Recheck:
         self._used: dict[str, float] = {}
 
     @classmethod
-    def from_store(cls, path: Path | None, *, environ=None):
+    def from_store(cls, path: Path | None, *, environ=None, ask_missing: bool = True):
+        """Answers from a store. ask_missing=False (verify) never calls the API: a missing answer stops."""
         rows = read_store(path) if path is not None and Path(path).is_file() else []
-        key = (os.environ if environ is None else environ).get(KEY_ENV)
+        key = (os.environ if environ is None else environ).get(KEY_ENV) if ask_missing else None
         return cls({row['fp']: row['p'] for row in rows}, ask=HttpAsk(key) if key else None)
 
     # node_tables.py is a converter dependency (its hash is in every saved
@@ -272,10 +273,17 @@ def read_store(path: Path) -> list[dict]:
 
 
 def merged_rows(existing: list[dict], answers_by_table: dict[str, dict[str, float]]) -> list[dict]:
-    """Rows of re-run tables become exactly the answers they used; other tables keep theirs."""
-    rows = [row for row in existing if row['t'] not in answers_by_table]
+    """Rows of re-run tables become exactly the answers they used; other tables keep theirs.
+
+    One fingerprint has one answer in a store: a run reads every row by
+    fingerprint, so other tables' rows for a re-asked fingerprint take the
+    new value instead of silently disagreeing with it.
+    """
+    latest = {fp: p for answers in answers_by_table.values() for fp, p in answers.items()}
+    rows = [dict(row, p=latest.get(row['fp'], row['p']))
+            for row in existing if row['t'] not in answers_by_table]
     for table, answers in answers_by_table.items():
-        rows.extend({'t': table, 'fp': fp, 'p': round(p, 4)} for fp, p in answers.items())
+        rows.extend({'t': table, 'fp': fp, 'p': p} for fp, p in answers.items())
     return sorted(rows, key=lambda row: (row['t'], row['fp']))
 
 

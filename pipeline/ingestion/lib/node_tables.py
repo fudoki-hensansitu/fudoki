@@ -900,7 +900,8 @@ def check_digit_coverage(words, tables, *, tolerance=0.5, exclusions=(), amount_
         words, lambda text: _document_notation(text) or QUANTITY_PHRASE.fullmatch(text) or ORDINAL_PHRASE.fullmatch(text),
         strong=lambda text: bool(DOCUMENT_NUMBER.fullmatch(text)), strong_boxes=document_boxes)
     for word in normalized:
-        if word['covered'] is None and (word['page'], tuple(word['bbox'])) in document_boxes:
+        # A fragment (7号) may already read as a glued code; the number still explains it.
+        if word['covered'] in (None, 'non_amount') and (word['page'], tuple(word['bbox'])) in document_boxes:
             word['covered'], word['form'] = 'non_amount', 'document_number'
     for word in normalized:
         if word['covered'] is None and (word['page'], tuple(word['bbox'])) in non_amount_boxes:

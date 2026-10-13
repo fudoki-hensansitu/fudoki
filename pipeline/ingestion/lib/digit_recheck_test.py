@@ -75,8 +75,11 @@ class StoreTests(unittest.TestCase):
 
     def test_rows_round_trip_and_rerun_tables_keep_only_used_answers(self):
         existing = [{'t': 'a', 'fp': 'old', 'p': 0.1}, {'t': 'b', 'fp': 'keep', 'p': 0.2}]
-        rows = digit_recheck.merged_rows(existing, {'a': {'new': 0.31234}})
-        self.assertEqual(rows, [{'t': 'a', 'fp': 'new', 'p': 0.3123}, {'t': 'b', 'fp': 'keep', 'p': 0.2}])
+        rows = digit_recheck.merged_rows(existing, {'a': {'new': 0.69999}})
+        self.assertEqual(rows, [{'t': 'a', 'fp': 'new', 'p': 0.69999}, {'t': 'b', 'fp': 'keep', 'p': 0.2}])
+        # One fingerprint has one answer: another table's row follows a re-asked value.
+        again = digit_recheck.merged_rows(rows, {'c': {'keep': 0.9}})
+        self.assertEqual({r['p'] for r in again if r['fp'] == 'keep'}, {0.9})
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / 'x.digit-recheck.jsonl'
             digit_recheck.write_store(path, rows)
@@ -200,6 +203,21 @@ class StopOnlyTests(unittest.TestCase):
         self.assertEqual(spy.asked, ['7,777'])
         self.assertTrue(result['passed'] is False)  # 7,777 is stopped by its Jev answer; the number is not
         self.assertEqual([u['text'] for u in result['uncovered']], ['7,777'])
+
+    def test_a_split_decision_number_fragment_is_not_asked(self):
+        tables = NodeTables([node()], [amount()])
+        words = [word('第', 230., 30., 236.), word('7号', 237., 30., 250.), word('7,777', 300., 50., 340.)]
+        spy = Spy()
+        check_digit_coverage(words, tables, recheck=Recheck(ask=spy))
+        self.assertEqual(spy.asked, ['7,777'])
+
+    def test_verify_store_never_asks_and_stops_on_a_missing_answer(self):
+        with tempfile.TemporaryDirectory() as directory:
+            recheck = Recheck.from_store(Path(directory) / 'none.jsonl', environ={'TYPESAFE_API_KEY': 'x'},
+                                         ask_missing=False)
+            self.assertIsNone(recheck.ask)
+            with self.assertRaises(RecheckUnavailable):
+                recheck.answers([{'対象の数字': '5'}])
 
     def test_missing_questions_are_batched_in_fingerprint_order(self):
         seen = []

@@ -307,6 +307,16 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
     store = recheck_store_path(document)
     recheck = digit_recheck.Recheck.from_store(store)
     jev_answers = {}
+
+    def write_answers():
+        # Answers are a judgment kept in Git, so they follow every run,
+        # candidate or saved, failed or passing. Re-run tables keep only the
+        # answers they used.
+        if jev_answers:
+            rows = digit_recheck.read_store(store) if store.is_file() else []
+            merged = digit_recheck.merged_rows(rows, jev_answers)
+            if merged or store.is_file():
+                digit_recheck.write_store(store, merged)
     for conversion, ident, migrated, metadata, file in checked_pdf:
         migrated = adopted[ident]
         inputs = manifest.resolved_inputs(document, conversion, selection)
@@ -322,18 +332,18 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
             if used := recheck.take_used():
                 jev_answers[ident] = used
             continue
+        except BaseException:
+            # An API failure aborts the run; the answers already paid for stay.
+            if used := recheck.take_used():
+                jev_answers[ident] = used
+            write_answers()
+            raise
         receipt, pair = node_receipt(document, conversion, ident, migrated, output,
                                      input_fingerprint=before[conversion['id']],
                                      notes=[n['text'] for n in (metadata or {}).get('notes', [])])
         outputs[ident] = pair
         tables.append(receipt)
-    # Answers are a judgment kept in Git, so they follow every run, candidate
-    # or saved, failed or passing. Re-run tables keep only the answers they used.
-    if jev_answers:
-        rows = digit_recheck.read_store(store) if store.is_file() else []
-        merged = digit_recheck.merged_rows(rows, jev_answers)
-        if merged or store.is_file():
-            digit_recheck.write_store(store, merged)
+    write_answers()
     if coverage_failures:
         raise ValueError('Digit coverage failed:\n' + '\n'.join(coverage_failures)
                          + '\nJev recheck: ' + json.dumps(recheck.summary(), ensure_ascii=False))
@@ -420,10 +430,10 @@ def verify_coverage(document: dict, locate, directory, recheck=None) -> dict:
             except Exception as error:
                 outcome[table['table_id']] = {'status': MISMATCH, 'reason': str(error) or type(error).__name__}
     peers = coverage_peers(document, adopted)
-    # Read-only: answers come from the manifest's store, or from the API when
-    # a key is set. Missing answers with no key stop the table.
+    # Read-only: answers come from the manifest's store only (convert asks and
+    # writes them). A missing answer stops the table.
     if recheck is None:
-        recheck = digit_recheck.Recheck.from_store(recheck_store_path(document))
+        recheck = digit_recheck.Recheck.from_store(recheck_store_path(document), ask_missing=False)
     for table in document['tables']:
         if 'nodes' not in table or directory is None or table['table_id'] in outcome:
             continue
@@ -533,7 +543,7 @@ def main() -> None:
             target = document['target']
             name = f'{target["jurisdiction"]}-{target["fiscal_year"]}-{manifest.document_slot(target)}-{document["direction"]}'
             results = verify_sums(document, locate)
-            recheck = digit_recheck.Recheck.from_store(recheck_store_path(document))
+            recheck = digit_recheck.Recheck.from_store(recheck_store_path(document), ask_missing=False)
             coverage = verify_coverage(document, locate, args.candidate, recheck)
             for item in results:
                 if item['table_id'] in coverage:
