@@ -1,6 +1,6 @@
 # ADR 0027: 取り込み表の指紋はコード変化の合図とし、保存し直すかは表の中身で決める。検査だけのコードは指紋から外す
 
-状態: 採用（2026-10-13）。[保存設計](../prd/ingestion-storage/design-doc.md)の「fingerprintで入力条件の変更を検知する」を補う。fingerprintの計算（原典SHA・scope・変換設定・参照するコードの中身のハッシュ）は変えない。
+状態: 採用（2026-10-13）。[保存設計](../prd/ingestion-storage/dd.md)の「fingerprintで入力条件の変更を検知する」を補う。fingerprintの計算（原典SHA・scope・変換設定・参照するコードの中身のハッシュ）は変えない。
 
 fingerprintは「表が変わったかもしれない」という合図として持ち続ける。`ingestion:check` は今までどおり、古ければ止める。合図が出たら `ingestion:refresh` が変換をローカルでやり直し、保存済みの表と**中身**を比べる。全表が同じなら管理JSONの `input_fingerprint` だけを書き換える（Gitのみ。R2には書かない）。違う表が1つでもあれば、その管理JSONは書き換えず、増えた・消えた・変わった行の数と例を出す。違いは本当の変更なので、件数と差分を見せ、許可を取って `ingestion:convert --remote` で保存し直す。
 

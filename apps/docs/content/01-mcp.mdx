@@ -1,0 +1,57 @@
+---
+title: MCP で使う
+description: AI クライアントに風土記の MCP サーバーを登録し、会話から歳出のデータを問い合わせる。
+---
+
+MCP サーバーの URL は `https://api.fudoki.dev/mcp` です。Streamable HTTP で話し、認証は要りません。
+
+## クライアントに登録する
+
+各クライアントの手順は 2026 年 10 月時点のものです。画面や設定の書式が変わっていたら、そのクライアントの公式文書に従ってください。
+
+<Tabs>
+  <Tab title="Claude Code">
+    ```bash
+    claude mcp add --transport http fudoki https://api.fudoki.dev/mcp
+    ```
+  </Tab>
+  <Tab title="Claude（Web・Desktop）">
+    設定の「コネクタ」から「カスタムコネクタを追加」を選び、URL に `https://api.fudoki.dev/mcp` を入れます。
+  </Tab>
+  <Tab title="Cursor">
+    `~/.cursor/mcp.json` に追加します。
+
+    ```json
+    {
+      "mcpServers": {
+        "fudoki": { "url": "https://api.fudoki.dev/mcp" }
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="Codex">
+    ```bash
+    codex mcp add fudoki --url https://api.fudoki.dev/mcp
+    ```
+  </Tab>
+</Tabs>
+
+## tool
+
+すべて読み取りだけで、状態を変えません（`readOnlyHint: true`）。入力と応答の schema は REST と同じ定義から作っていて、[API リファレンス](/reference)で確かめられます。
+
+| tool | 使いどころ |
+| --- | --- |
+| `describe_expenditure_columns` | 列の説明・金額を足すときの条件（`sum_rules`）・検索の入力の例を返す。検索の前に一度読む。 |
+| `search_expenditure_nodes` | 団体・年度・段（款・項・目）・COFOG などの条件でノードを絞って一覧する。 |
+| `get_expenditure_node` | ノード一つと、その子を軸（科目・節・備考など）ごとに返す。内訳を辿るときに使う。 |
+
+tool の説明だけで使い方が分かるように書いてあるので、たとえば次のように頼めます。
+
+> 2025 年度の決算で、COFOG の社会保護（10）に分類された目を金額の大きい順に 10 件出して、原典の URL も添えて
+
+## 制約
+
+- POST だけを受け付けます。JSON-RPC の batch と `subscriptions/listen` は受け付けません。
+- リクエストの body は 16 KiB までです。
+- 提供を止めているあいだは HTTP 503 を返します。

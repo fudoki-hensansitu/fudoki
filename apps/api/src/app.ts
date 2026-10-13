@@ -65,6 +65,13 @@ const jsonRpcError = (code: number, message: string) => ({ jsonrpc: '2.0', error
 
 const ErrorBody = z.object({ error: z.object({ code: z.string(), message: z.string() }) })
 
+/** `/openapi.json` と apps/docs の API リファレンスが同じ文書を使う */
+export const OPENAPI_CONFIG = {
+  openapi: '3.1.0',
+  info: { title: '風土記 API', version: '1.0.0', description: '町の家計簿を作る。自治体の歳出の予算・決算を事業の単位まで集約したデータ。' },
+  servers: [{ url: 'https://api.fudoki.dev' }],
+}
+
 const mask = (keys: readonly string[]) => Object.fromEntries(keys.map((k) => [k, true])) as Record<string, true>
 
 function registerRest(app: OpenAPIHono<AppEnv>, op: Operation) {
@@ -80,12 +87,19 @@ function registerRest(app: OpenAPIHono<AppEnv>, op: Operation) {
     request: {
       ...(params ? { params } : {}),
       ...(query ? { query } : {}),
-      ...(post ? { body: { required: true, content: { 'application/json': { schema: op.input } } } } : {}),
+      ...(post ? { body: { required: true, content: { 'application/json': { schema: op.input, ...(op.example ? { example: op.example } : {}) } } } } : {}),
     },
     responses: {
       200: { description: '成功', content: { 'application/json': { schema: op.output } } },
       400: { description: '入力が不正', content: { 'application/json': { schema: ErrorBody } } },
       404: { description: '見つからない', content: { 'application/json': { schema: ErrorBody } } },
+      ...(post
+        ? {
+            413: { description: `body が ${MAX_BODY_BYTES} バイトを超える`, content: { 'application/json': { schema: ErrorBody } } },
+            415: { description: 'Content-Type が application/json でない', content: { 'application/json': { schema: ErrorBody } } },
+          }
+        : {}),
+      503: { description: '提供を止めている', content: { 'application/json': { schema: ErrorBody } } },
     },
   })
   app.openapi(route as never, (async (c: Context<AppEnv>) => {
@@ -211,10 +225,7 @@ export function createApp() {
 
   for (const op of operations) registerRest(app, op)
 
-  app.doc31('/openapi.json', {
-    openapi: '3.1.0',
-    info: { title: '風土記 API', version: '1.0.0', description: '自治体の歳出の予算・決算を事業単位（目）まで構造化したデータ。' },
-  })
+  app.doc31('/openapi.json', OPENAPI_CONFIG)
 
   // Workers はリクエストをまたいで状態を持てないので、リクエストごとに handler を作る。
   // 2026-07-28 の規格（initialize なし・Mcp-Session-Id なし）を話し、2025 年代の client も legacy: 'stateless' で1要求ずつ捌く。
