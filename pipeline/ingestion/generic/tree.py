@@ -457,6 +457,13 @@ def items(group: Group, header: str, margins: set[int] | None = None,
             members = single[index]
             done.update(members)
             code_index = next(i for i in members if entries[i][2] is not None)
+            # A bracketed department (`(市民生活課)`) printed on a line of its own above the number ends the
+            # name of the item before it, not the name of this one.
+            while (result and members[0] != code_index and not entries[members[0]][1] and entries[members[0]][0]
+                   and re.fullmatch(r'[(（][^()（）]+[)）]', normalize(text(entries[members[0]][0])))):
+                result[-1].lines.append(entries[members[0]][0])
+                result[-1].name += normalize(text(entries[members[0]][0]))
+                members = members[1:]
             all_lines = [entries[i][0] for i in members if entries[i][0]]
             name = ''.join(entries[i][3] if i == code_index else normalize(text(entries[i][0])) for i in members)
             item = Item(group, all_lines[0][0].page, all_lines, entries[code_index][2], name, 0)

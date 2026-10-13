@@ -31,7 +31,7 @@
 
 ### 現状
 
-dbt（`pipeline/dbt`）は 2025年度決算・歳出の PDF 42表を入力にし、staging 2モデル・intermediate・マーツ（木の表・比較ビュー・原典の表）を持つ。入力の宣言 `_sources.yml` は `dbt/scripts/generate_sources.py` が管理 JSON から生成する（手書きしない）。取り込みはPDF 14宣言・45表とCSV 2宣言・2表を管理している。段の名前は共通規則で付ける（[ADR 0025](../../adr/0025-level-names-by-shared-rule.md)）。会計名は管理 JSON の原文のまま持ち、団体共通の種類（`account_kind`）を語の辞書（`account_kind_map`）で付ける（[ADR 0023](../../adr/0023-account-kind-and-no-consolidation.md)）。要件は [fiscal-records の PRD](../fiscal-records/prd.md)、概念は [ドメインモデル](../fiscal-records/fiscal-domain-model.md)、現行の取り込み表の保存と metadata は [保存設計](../ingestion-storage/design-doc.md) を参照する。
+dbt（`pipeline/dbt`）は 2025年度決算・歳出の PDF 42表を入力にし、staging 2モデル・intermediate・マーツ（木の表・比較ビュー・原典の表）を持つ。入力の宣言 `_sources.yml` は `dbt/scripts/generate_sources.py` が管理 JSON から生成する（手書きしない）。取り込みはPDF 14宣言・45表とCSV 2宣言・2表を管理している。段の名前は共通規則で付ける（[ADR 0025](../../adr/0025-level-names-by-shared-rule.md)）。会計名は管理 JSON の原文のまま持ち、団体共通の種類（`account_kind`）を語の辞書（`account_kind_map`）で付ける（[ADR 0023](../../adr/0023-account-kind-and-no-consolidation.md)）。要件は [fiscal-records の PRD](../fiscal-records/prd.md)、概念は [ドメインモデル](../fiscal-records/fiscal-domain-model.md)、現行の取り込み表の保存と metadata は [保存設計](../ingestion-storage/dd.md) を参照する。
 
 PDF の取り込みの出力は、原典に印字された項目を1行とするノードの表と、印字された金額を1行とする金額の表である。表が属する会計名と注記は管理 JSON の `tables[]` にある。階層別の合計検査と変換器の修正は #88 で取り込まれた。ノードと金額の表に対する共通の木の検査を使い、表をまたぐ照合・分解軸の対応・抜粋の検査は別に残す。
 
@@ -251,7 +251,7 @@ erDiagram
 | `jurisdiction_code` | VARCHAR | 団体コード。団体マスタを参照する | 宣言 |
 | `fiscal_year` | INTEGER | 会計年度（西暦） | 宣言 |
 | `account_name` | VARCHAR | 原典の会計名（例「一般会計」） | 原典（選定の scope） |
-| `account_kind` | VARCHAR | 団体共通の会計の種類（一般会計・国民健康保険・介護保険・後期高齢者医療・用地・駐車場・下水道・介護サービス事業）。団体をまたぐ比較はこの列で行う | 判断（`account_kind_map`） |
+| `account_kind` | VARCHAR | 団体共通の会計の種類（一般会計・国民健康保険・介護保険・後期高齢者医療・用地・駐車場・下水道・介護サービス事業・土地区画整理）。団体をまたぐ比較はこの列で行う | 判断（`account_kind_map`） |
 | `expenditure_setsu_id` | VARCHAR | 節の軸のノードの法定の節の ID。節以外の軸は NULL | 共通規則と判断（`setsu_master`・`setsu_name_variants`） |
 | `is_interfund_transfer` | BOOLEAN | 会計間の繰出の印。科目の目で名称が「<会計名>繰出金」の形のものと、科目以外の軸で名称が「繰出金」または「<会計名>繰出金」のもの（法定の節・備考や説明の内訳）に付ける。節・備考の同名でも会計で終わらない内訳（例：保険基盤安定繰出金）は一会計の中の法定の負担で移転ではないため含まない。印は枝の最も上だけに付け、同じ目の下で節と備考の両方には付けない（節が優先）。節も備考も無い団体（132012）は拾えず、印は網羅ではない。印の付いた金額はそのまま足せる | 名称の規則から機械的に判定 |
 | `axis` | VARCHAR | 分解の軸（例 科目・備考・節・説明） | 原典の見出し |
@@ -309,7 +309,7 @@ erDiagram
 - `int_fiscal__expenditure_accounts`: PDF の木と CSV の木の両方にある会計の一覧に、語の辞書（`account_kind_map`）で団体共通の種類を付ける。語に当たらない会計名があれば構築を止める。
 - `int_fiscal__expenditure_transfers`: 会計の種類と会計間の繰出の印・受け手の種類を、資料区分を列に持って一つの表で付ける（決算・当初予算、PDF・CSV 共通。`node_id` が資料をまたいで同じ導出のためキーは `node_id` と `document_kind`）。印の規則はここだけに持ち、両 marts は結合するだけにする（[ADR 0023](../../adr/0023-account-kind-and-no-consolidation.md)）。
 - `int_fiscal__expenditure_setsu`: 節の軸のノードに法定の節の ID（`setsu_master` の `expenditure_setsu_id`）を付ける。区切りの記号を除き、小さな表記差の辞書（`setsu_name_variants`）を当て、法定名称との完全一致で引き、年度に合う定義を選ぶ。当たらない名称があれば構築を止める。CSV の科目軸内の節や旧年度の表記（例: 職員手当・補償補及び賠償金）は対象外で、そのまま節の軸に現れれば構築が止まる。そのときに variant 行を足す。両 marts は結合するだけにする。
-- `int_fiscal__settlement_expenditure_cofog`: seed の `cofog_rules` を優先順に当て、目ノードに分類状態と COFOG コードを一つ付ける。PDF の木と CSV の木の両方の目を対象にする。どの規則にも当たらない目があれば構築を止める。団体限定の規則は足さず、共通の語の辞書で当てる。特別会計の目は会計の種類で受ける共通の fallback（国民健康保険・後期高齢者医療→07、介護保険・介護サービス事業→10.2、駐車場→04.5、下水道→05.2、用地→unclassifiable）を持ち、償還・積立・繰出など行き先が違う目は種類を問わない語の規則で先に分ける。一般会計の目は目の名称の語彙で当てる。境界の判断はコード付きのまま `tentative` にする。
+- `int_fiscal__settlement_expenditure_cofog`: seed の `cofog_rules` を優先順に当て、目ノードに分類状態と COFOG コードを一つ付ける。PDF の木と CSV の木の両方の目を対象にする。どの規則にも当たらない目があれば構築を止める。団体限定の規則は足さず、共通の語の辞書で当てる。特別会計の目は会計の種類で受ける共通の fallback（国民健康保険・後期高齢者医療→07、介護保険・介護サービス事業→10.2、駐車場→04.5、下水道→05.2、用地→unclassifiable）を持ち、償還・積立・繰出など行き先が違う目は種類を問わない語の規則で先に分ける。一般会計の目は目の名称の語彙で当てる。語で当たらない目の受け皿として、項・款が機能を決める場合だけ項（小学校費→09.1、中学校費→09.2、教育総務費→09.8 など）・款（農林水産業費→04.2）で当てる共通の fallback 規則（`fallback-kou-*`・`fallback-kan-*`）を持つ。fallback は priority を既存の語の規則より大きくして最後に当て、既存の目の割り当てを変えない。項の中身が混じる項（社会教育費→09.5、保健体育費→08.1、都市計画費→06.2、土木管理費→04.5）の fallback は `tentative` にする。境界の判断はコード付きのまま `tentative` にする。
 
 #### marts: 木の表・原典の表を確定する
 
@@ -374,7 +374,8 @@ slice の期待値は、現行の横持ちの表の実測から次のとおり�
 2. 同じ3団体の特別会計を足す。会計の名寄せと連結判断の列は、このときに決める。→ 2026-10 に特別会計を含めて全団体へ広げた。会計の種類は語の辞書（`account_kind_map`）で付け、連結（消去）はせず繰出の印と受け手の種類を付けた（目は名称、節・備考は内訳まで。印は網羅ではない）（[ADR 0023](../../adr/0023-account-kind-and-no-consolidation.md)）。
 3. 2025年度決算の一般会計がある残りの団体（131024・131105・131148・131172）の表を、共通の変換でノードの表にして足す。→ 2026-10 に132012を含めて済み。入力は決算・歳出の PDF 42表（132071の公営企業会計2表は科目番号が印字されず共通モデルで通らないため除外。132128と132217の後期高齢者医療は取り込みを修正して入力に戻した。理由は `generate_sources.py` の EXCLUDE）。COFOG は 2026-10 に共通の辞書を育てて全目に状態を付け、`covers_moku` を error に戻した。金額比の当たり率（assigned+tentative ÷ 総額）は 131041 94%・131105 96%・131156 90%・131172 94%・132012 95%・132021 97%・132039 100%・132063 100%、131024 89%・131148 78%。残りは終端状態（複合の目・積立・償還・元金の unclassifiable / out-of-scope）で、分類可能な金額は全団体で100%コード付き。取り込みの管理に無い団体（131016・132195・132241）の団体限定の規則は同月に削除した。
 4. B の修正後に、132071 の当初予算で `initial_expenditure_node` を作り、千円の換算を確かめる。→ 2026-10 に済み。132071 の PDF（110目、563.6億円）と 132047 の CSV 歳出（167目、5会計1229.1億円）を同じ表に入れた。千円は1000倍し、款の印字と一致。132047 は歳出合計が歳入 CSV の合計と会計ごとに一致した。COFOG は既存規則のまま両団体とも目に100%当たった（132071: assigned 95・tentative 11、132047: assigned 151・tentative 6）。歳入の marts は未設計のため作らない。
-5. 移行が済んだら、文書と実装の整合を確かめ、旧形式（横持ちの表と `column_contexts`）の説明を整理する（ADR 0020）。
+5. 汎用のノード生成機で作った新しい10団体（132209・132225・132241・132250・132292・133035・133051・133621・134015・132047。132047 は当初予算の CSV だけが保存済みで、2025年度決算の表は今回の候補）の候補が、目の72件（名称64種）で `covers_moku` に止まった。共通の語の規則と項・款の fallback を35本足して全件に状態を付けた（assigned 39・tentative 25・unclassifiable 5・out-of-scope 3）。既存の2265目の規則ID・コード・状態は足す前後で変わらず、`check_slice` と候補を含む `dbt:build`（103件）が通る。規則は団体を限定せず、保存済みの団体の目は変えない。
+6. 移行が済んだら、文書と実装の整合を確かめ、旧形式（横持ちの表と `column_contexts`）の説明を整理する（ADR 0020）。
 
 ## Open Questions
 

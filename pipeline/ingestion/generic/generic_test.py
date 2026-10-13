@@ -751,6 +751,13 @@ class ConvertRulesTest(unittest.TestCase):
         found = entries_of(Group([band], '備考', False), {941, 10950})
         self.assertEqual([(code, name) for _, _, code, name in found], [('13', '使用料及び賃借料'), (None, '66,000)')])
 
+    def test_a_bracketed_department_above_the_number_ends_the_name_of_the_item_before(self):
+        from ingestion.generic.tree import items
+        # `1 市民協働事業費` / `(市民生活課)` / `7 報償費` in one cell (132209): the department belongs to item 1.
+        band = self.band([glyph('1市民協働事業費', 937, 100, 80), glyph('10,959,820', 1100, 100, 50),
+                          glyph('(市民生活課)', 945, 115, 55), glyph('7報償費', 945, 130, 30), glyph('0', 1160, 130, 4)], 900, 1170)
+        found = items(Group([band], '備考', False), '備考', {937, 945, 10941, 10949}, None)
+        self.assertEqual([(i.code, i.name) for i in found], [('1', '市民協働事業費(市民生活課)'), ('7', '報償費')])
 
 class ScanRulesTest(unittest.TestCase):
     """Rules found by running the builder on scanned statements (`ingestion/generic/scan.py`)."""

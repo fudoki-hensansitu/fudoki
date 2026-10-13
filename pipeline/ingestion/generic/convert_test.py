@@ -141,6 +141,13 @@ class HeadingTest(unittest.TestCase):
         pages = [Page(8, 595, 842, [Word('歳入歳出決算事項別明細書', 156, 371, 400, 385)], [])]
         self.assertEqual(page_titles(pages), {8: None})
 
+    def test_a_bullet_before_a_count_is_no_part_of_the_scope_word(self):
+        # `○1消耗品費` (132209): the builder keeps the name `1消耗品費`; the printed word must read as that name.
+        observed = [Page(1, 1200, 800, [Word('○1消耗品費', 954.1, 417.7, 1000, 426.7)], [])]
+        band = Band(900, 1100, 1, ('備考',), [], 100, 700)
+        found = frame_words(observed, [Logical([1], [band], None, [])])
+        self.assertEqual([text for _, _, text in found], ['1消耗品費'])
+
 
 if __name__ == '__main__':
     unittest.main()

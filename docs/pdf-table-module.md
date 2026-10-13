@@ -103,7 +103,7 @@ result = write_conversion(pdf_parquet_path, records, columns=columns, context=pd
 
 PDFの観測・セル・階層の処理は既存の共通関数を組み合わせ、Parquetへの保存と出力情報の返却にこの入口を使う。一般的なPDF書式の自動選択や罫線の自動検出は、この入口の機能ではない。
 
-変換モジュールは受け取った原典参照を保持し、R2や管理JSONを更新しない。非公開R2への保存と管理JSONの更新は管理側の `ingestion:convert --remote` が行う（[取り込み保存の設計](prd/ingestion-storage/design-doc.md)）。
+変換モジュールは受け取った原典参照を保持し、R2や管理JSONを更新しない。非公開R2への保存と管理JSONの更新は管理側の `ingestion:convert --remote` が行う（[取り込み保存の設計](prd/ingestion-storage/dd.md)）。
 
 ## 検証記録（2026-10-07）
 

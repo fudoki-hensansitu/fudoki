@@ -26,5 +26,36 @@
       ]
     }
   ],
-  "tables": []
+  "tables": [
+    {
+      "table_id": "general-expenditure",
+      "conversion_id": "general-settlement",
+      "input_fingerprint": "1750f8fffd66c021f1a38811e720e759750ea58e141ad6c5b773ea5475bf5029",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は column mark 61頁 から決めた。款の和 86,852,424,416 と印字の「歳出合計」86,852,424,416 が一致。",
+        "金額の注記 50 件（不用額 12・充用 2・流用 36）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（895 件）を、印字された語から辞書の見出しに寄せた: 金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132047/2025/settlement/expenditure/general-expenditure-nodes.parquet",
+          "sha256": "9618542759ad6945b569cf9dba5bd6c8385c321c23217d5d7fe450e7e92d22cd",
+          "bytes": 27274
+        },
+        "row_count": 1096
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132047/2025/settlement/expenditure/general-expenditure-amounts.parquet",
+          "sha256": "13e70da906998f91367a0a85b5f4c0887f9b2f8461444c8589c40ec95002a78a",
+          "bytes": 53189
+        },
+        "row_count": 6930
+      }
+    }
+  ]
 }

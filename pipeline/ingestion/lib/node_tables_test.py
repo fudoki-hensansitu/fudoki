@@ -606,9 +606,6 @@ class ParseAmountTest(unittest.TestCase):
                 self.assertIsNone(parse_amount(text))
 
 
-if __name__=='__main__':unittest.main()
-
-
 class UnprintedChildrenTests(unittest.TestCase):
     """A parent whose children print nothing is not compared; every other group is checked as before."""
 
@@ -646,3 +643,6 @@ class UnprintedChildrenTests(unittest.TestCase):
         checked = check_tree(nodes, [amount('p', '1')])
         self.assertFalse(checked['passed'])
         self.assertTrue(checked['issues'])
+
+
+if __name__=='__main__':unittest.main()

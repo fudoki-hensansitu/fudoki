@@ -1,9 +1,9 @@
 {
   "extends": "../../tsconfig.json",
   "include": [
-    "worker.ts",
     "cloudflare.config.ts",
-    "vite.config.ts"
+    "vite.config.ts",
+    "blume.config.ts"
   ],
   "exclude": []
 }

@@ -5,7 +5,7 @@ description = "風土記の取得層。原典を非公開 R2 に保存し、取�
 # dbt-duckdb 1.11.0 は classifiers が 3.13 止まりで 3.14 を宣言していないため上限を切る
 requires-python = ">=3.13,<3.14"
 # exact ピン留め（supply chain リスクを避けるため範囲指定は使わない）
-# 更新は uv add --exclude-newer <7日前> で cooldown を明示する
+# cooldown（公開から7日未満の版を外す）は root の pyproject.toml の exclude-newer で効かせる
 dependencies = [
     "dbt-core==1.12.3",
     "dbt-duckdb==1.11.0",
