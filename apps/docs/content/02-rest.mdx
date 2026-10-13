@@ -8,6 +8,13 @@ description: https://api.fudoki.dev に JSON で問い合わせ、歳出の木�
 ## 最初の問い合わせ
 
 <Steps>
+  <Step title="団体と収録範囲を確かめる">
+    ```bash
+    curl 'https://api.fudoki.dev/v1/jurisdictions?name=%E6%AD%A6%E8%94%B5%E9%87%8E%E5%B8%82'
+    ```
+
+    `name`（団体名の部分一致。例は「武蔵野市」）か `code`（団体コード。6 桁でも、検査数字を除いた 5 桁でもよい）で絞ると、団体の 6 桁のコード・都道府県と、収録している年度・資料区分・会計とその原典が返ります。絞らなければ全団体を団体コード順に返し、収録の無い団体は `coverage` が空です。
+  </Step>
   <Step title="列の説明を読む">
     ```bash
     curl https://api.fudoki.dev/v1/expenditure/columns
@@ -54,7 +61,7 @@ description: https://api.fudoki.dev に JSON で問い合わせ、歳出の木�
 
 ## ページング
 
-検索と、ノード取得の子の一覧はページで返ります。応答の `next_page_token` が null でなければ、次の要求に `page_token` として渡します（ノード取得では query に付けます）。`page_size` は 1〜1000（既定 100）です。位置は 100,000 件目までなので、それより先が要るときは条件を絞ってください。
+検索と、ノード取得の子の一覧と、団体の一覧はページで返ります。応答の `next_page_token` が null でなければ、次の要求に `page_token` として渡します（ノード取得と団体の一覧では query に付けます）。`page_size` は 1〜1000（既定 100）、団体の一覧では 1〜100（既定 20）です。位置は 100,000 件目までなので、それより先が要るときは条件を絞ってください。
 
 ## 原典
 
