@@ -269,7 +269,7 @@ erDiagram
 | `amount_source_x0` / `amount_source_y0` / `amount_source_x1` / `amount_source_y1` | DOUBLE | 採った金額の印字の枠（`amount_source_page` の頁）。印字が一つで全額のときだけ入れ、複数の印字を足した額（頁が最初の頁でも）・位置が不明・CSV は NULL。一意に辿れないときは出さない | 原典 |
 | `cofog_status` | VARCHAR | `assigned` / `tentative` / `unclassifiable` / `out-of-scope`。MVP では目ノードだけ値を持つ。`tentative` は境界の判断で確信が持てないままコードを付けた暫定の割り当てで、`cofog_rules` の `tentative` が true の規則が当たった目に付く | 判断（`cofog_rules`） |
 | `cofog_code` | VARCHAR | 割り当てた COFOG コード（`01`・`01.1`・`04.1.2` のように深さが変わる）。`assigned`・`tentative` のときだけ値を持つ | 判断（`cofog_rules`） |
-| `interfund_transfer_to` | VARCHAR | 繰出の受け手の会計の種類（`account_kind_map` で引く）。受け手が入力に無い会計でも付ける。名称が「繰出金」の節などは親の目の名称から引き、引けなければ印だけ付けて NULL（例：他会計繰出金、費の目の下の節繰出金）。受け手が「特別会計」とだけ印字された繰出金は印を付け、種類を「不明」にする。金額の消去はしない（[ADR 0023](../../adr/0023-account-kind-and-no-consolidation.md)） | 判断（`account_kind_map`） |
+| `interfund_transfer_to` | VARCHAR | 繰出の受け手の会計の種類（`account_kind_map` で引く）。受け手が入力に無い会計でも付ける。名称が「繰出金」の節などは、親・祖父の名称に印字された会計名（一番近い祖先から。国民健康保険事業費の下の節繰出金なら国民健康保険）から引き、引けなければ印だけ付けて NULL（例：他会計繰出金、福祉総務費の下の節繰出金）。受け手が「特別会計」とだけ印字された繰出金は印を付け、親・祖父にも会計名が無ければ種類を「不明」にする。祖先の名前の種類が送り出す会計自身の種類と同じときは使わない。金額の消去はしない（[ADR 0023](../../adr/0023-account-kind-and-no-consolidation.md)） | 判断（`account_kind_map`） |
 
 金額の和は「同じ軸の末端（`is_leaf`）を足す」と決める。軸の違うノードや、親と子を混ぜて足すと二重計上になる。131041・131156 は目の下に2本の軸（事業と節）がぶら下がり、132021 は説明の軸の中で節が事業の子として現れる。この規則は列の説明として AI と利用者に渡す。
 

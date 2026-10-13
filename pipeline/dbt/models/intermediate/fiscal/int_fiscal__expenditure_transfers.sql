@@ -6,6 +6,8 @@
 -- Account kinds come from the shared keyword dictionary, and interfund marks from
 -- shared name rules. Amounts are never eliminated. A mark sits only on
 -- the topmost transfer-named node of a branch, so marked amounts sum without doubles.
+-- A recipient the mark's own name leaves open is read from the nearest ancestor name
+-- that prints an account kind (ancestor_name_kinds); with none it stays NULL / 不明.
 with recursive unioned as (
     select node_id, parent_node_id, jurisdiction_code, fiscal_year, document_kind,
         account_name, axis, is_subject, node_kind, code, name
@@ -88,16 +90,46 @@ with recursive unioned as (
                   then {{ fiscal_match_text('r.recipient_name') }} = {{ fiscal_match_text('k.keyword') }}
                   else contains({{ fiscal_match_text('r.recipient_name') }}, {{ fiscal_match_text('k.keyword') }}) end
     qualify row_number() over (partition by r.document_kind, r.node_id order by len(k.keyword) desc) = 1
+), ancestor_name_kinds as (
+    -- A mark whose own name (and nearest 目) leaves the recipient open (NULL or 不明)
+    -- reads the account names printed on its ancestors: 国民健康保険事業費 above a
+    -- bare 節 繰出金. The nearest ancestor naming any account kind decides; two kinds
+    -- in that one name decide nothing, and neither does a name of the account's own
+    -- kind (the sender's business, not the recipient: 国民健康保険事業費 inside the
+    -- 国民健康保険 account). Printed names are evidence, so a mark with no such
+    -- ancestor stays as it is (no inference from the account count etc.).
+    select r.document_kind, r.node_id, a.depth, k.account_kind, ab.name as ancestor_name
+    from recipient_kinds r
+    join ancestors a
+      on a.document_kind = r.document_kind and a.node_id = r.node_id
+    join unioned ab
+      on ab.document_kind = a.document_kind and ab.node_id = a.ancestor_id
+    join {{ ref('account_kind_map') }} k
+      on coalesce(k.scope, '') = '' and nullif(k.account_kind, '') is not null
+         and contains({{ fiscal_match_text('ab.name') }}, {{ fiscal_match_text('k.keyword') }})
+    where r.recipient_kind is null or r.recipient_kind = '不明'
+), ancestor_kinds as (
+    select c.document_kind, c.node_id,
+        min(c.account_kind) as ancestor_kind, min(c.ancestor_name) as ancestor_name
+    from ancestor_name_kinds c
+    join (select document_kind, node_id, min(depth) as depth
+          from ancestor_name_kinds group by document_kind, node_id) n
+      using (document_kind, node_id, depth)
+    group by c.document_kind, c.node_id
+    having count(distinct c.account_kind) = 1
 )
 select u.node_id, u.document_kind,
     a.account_kind,
     r.node_id is not null as is_interfund_transfer,
     case when r.node_id is null then null
-         when r.recipient_name is null then null
-         when r.keyword is null
+         when r.recipient_name is not null and r.keyword is null
          then error('Unknown transfer recipient (no account_kind_map keyword matches): ' || r.recipient_name)
+         when ak.ancestor_kind is not null and ak.ancestor_kind <> a.account_kind
+              and (r.recipient_kind is null or r.recipient_kind = '不明')
+         then ak.ancestor_kind
          else r.recipient_kind end as interfund_transfer_to
 from unioned u
 left join {{ ref('int_fiscal__expenditure_accounts') }} a
   using (jurisdiction_code, fiscal_year, account_name)
 left join recipient_kinds r using (node_id, document_kind)
+left join ancestor_kinds ak using (node_id, document_kind)
