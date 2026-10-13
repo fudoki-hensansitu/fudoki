@@ -1087,7 +1087,8 @@ def repeats(previous: Item, item: Item, ocr: bool = False) -> bool:
     if not ocr:
         return False
     from ingestion.generic.scan import near_code
-    if not item.name:
+    # A one-character "name" beside the codes is an OCR scrap (`10 -`, `2 コ`, 132101), not a name.
+    if len(normalize(item.name or '')) < 2:
         return near_code(previous.code, item.code)
     return len(normalize(item.name)) >= 3 and same_heading(previous.name, item.name)
 

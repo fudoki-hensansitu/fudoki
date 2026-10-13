@@ -44,3 +44,27 @@ class AgreedHeadersTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class RepeatedHeadingTest(unittest.TestCase):
+    """OCR misreads of the codes and names a continuation page repeats (132055, 132101)."""
+
+    def test_near_codes_are_one_digit_dropped_or_added_or_a_leading_zero(self):
+        from ingestion.generic.scan import near_code
+        self.assertTrue(near_code('10', '1'))
+        self.assertTrue(near_code('2', '02'))
+        self.assertTrue(near_code('3', '13'))
+        self.assertTrue(near_code('1', None))
+        self.assertFalse(near_code('3', '4'))
+        self.assertFalse(near_code('12', '21'))
+
+    def test_only_ocr_pages_repeat_a_heading_whose_code_was_misread(self):
+        from ingestion.generic.tree import Group, Item, repeats
+        group = Group([], '科目', True)
+        open_kan = Item(group, 1, [], '10', '教育費', 0)
+        self.assertTrue(repeats(open_kan, Item(group, 25, [], '1', '', 0), ocr=True))  # `10 2 3` read `1 2 3`
+        self.assertTrue(repeats(open_kan, Item(group, 4, [], '10', '-', 0), ocr=True))  # a scrap beside the code
+        self.assertFalse(repeats(open_kan, Item(group, 25, [], '1', '', 0), ocr=False))  # printed text: codes agree or not
+        open_moku = Item(group, 23, [], '3', '小学校特別支援教育費', 0)
+        self.assertTrue(repeats(open_moku, Item(group, 25, [], '13', '小学校特別支援教育費', 0), ocr=True))
+        self.assertFalse(repeats(open_moku, Item(group, 25, [], '4', '小学校指導費', 0), ocr=True))
