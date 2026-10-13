@@ -21,7 +21,7 @@
 
 対象と原典の選定は [source_selection/schema.ts](../../../pipeline/source_selection/schema.ts) が管理する。対象は団体・年度・資料区分・補正号、会計と方向と物理頁は原典ファイルのscopeである。Bは選定を再判断せず、選定済みかつ保存済みの原典を使う。
 
-dbt（C）へ保存済みParquetを渡す入力連携は `pipeline/dbt/scripts/prepare.py` が行う。対象別JSONと保存済みParquetを読み、SHA・行数を検査して warehouse の `ingestion` schema に置く（[dbt の設計](../fiscal-dbt-models/design-doc.md)）。取り込みのCLIは対象別JSONの検査と保存済みParquetの復元（`ingestion:restore`）を行う。
+dbt（C）へ保存済みParquetを渡す入力連携は `pipeline/dbt/scripts/prepare.py` が行う。対象別JSONと保存済みParquetを読み、SHA・行数を検査して warehouse の `ingestion` schema に置く（[dbt の設計](../fiscal-dbt-models/dd.md)）。取り込みのCLIは対象別JSONの検査と保存済みParquetの復元（`ingestion:restore`）を行う。
 
 ## Design
 
@@ -62,7 +62,7 @@ pipeline/ingestion/
 
 ### 取り込み表はノードの表と金額の表の組で保存する
 
-PDFの取り込みの表（表ID）一つは、原典に印字された項目を1行とするノードの表と、印字された金額を1行とする金額の表の組である。CSVの原典は対象外で、原文の行と1対1の表のまま保存する（[ADR 0020](../../adr/0020-ingestion-outputs-node-tables.md)）。末端の行に祖先の名称・金額を反復する横持ちの表は、新しい出力にしない。列の定義と、後段（dbt）が求める条件は [dbt モデルの設計](../fiscal-dbt-models/design-doc.md#取り込みの出力-ノードの表と金額の表) を正本とする。
+PDFの取り込みの表（表ID）一つは、原典に印字された項目を1行とするノードの表と、印字された金額を1行とする金額の表の組である。CSVの原典は対象外で、原文の行と1対1の表のまま保存する（[ADR 0020](../../adr/0020-ingestion-outputs-node-tables.md)）。末端の行に祖先の名称・金額を反復する横持ちの表は、新しい出力にしない。列の定義と、後段（dbt）が求める条件は [dbt モデルの設計](../fiscal-dbt-models/dd.md#取り込みの出力-ノードの表と金額の表) を正本とする。
 
 - ノードの表は、親ノード、分解の軸（項目が印字された欄の原典の見出し）、軸の中での深さ、段の見出しの印字、番号・名称の原文、物理頁と印字範囲の座標を持つ。座標は表示頁の左上を原点とする PDF の point 単位に揃える。款・項・目のノードは同じ会計の各表に含め、各表を款を根とする木にする。
 - 金額の表は、属するノード、金額が印字された欄の原典の見出し（上位から「／」で連結。必須）、金額と単位の原文、物理頁と印字範囲の座標を持つ。見開きでは、金額が属するノードと違う頁に印字されることがある。

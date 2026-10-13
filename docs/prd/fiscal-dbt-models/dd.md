@@ -31,7 +31,7 @@
 
 ### 現状
 
-dbt（`pipeline/dbt`）は 2025年度決算・歳出の PDF 42表を入力にし、staging 2モデル・intermediate・マーツ（木の表・比較ビュー・原典の表）を持つ。入力の宣言 `_sources.yml` は `dbt/scripts/generate_sources.py` が管理 JSON から生成する（手書きしない）。取り込みはPDF 14宣言・45表とCSV 2宣言・2表を管理している。段の名前は共通規則で付ける（[ADR 0025](../../adr/0025-level-names-by-shared-rule.md)）。会計名は管理 JSON の原文のまま持ち、団体共通の種類（`account_kind`）を語の辞書（`account_kind_map`）で付ける（[ADR 0023](../../adr/0023-account-kind-and-no-consolidation.md)）。要件は [fiscal-records の PRD](../fiscal-records/prd.md)、概念は [ドメインモデル](../fiscal-records/fiscal-domain-model.md)、現行の取り込み表の保存と metadata は [保存設計](../ingestion-storage/design-doc.md) を参照する。
+dbt（`pipeline/dbt`）は 2025年度決算・歳出の PDF 42表を入力にし、staging 2モデル・intermediate・マーツ（木の表・比較ビュー・原典の表）を持つ。入力の宣言 `_sources.yml` は `dbt/scripts/generate_sources.py` が管理 JSON から生成する（手書きしない）。取り込みはPDF 14宣言・45表とCSV 2宣言・2表を管理している。段の名前は共通規則で付ける（[ADR 0025](../../adr/0025-level-names-by-shared-rule.md)）。会計名は管理 JSON の原文のまま持ち、団体共通の種類（`account_kind`）を語の辞書（`account_kind_map`）で付ける（[ADR 0023](../../adr/0023-account-kind-and-no-consolidation.md)）。要件は [fiscal-records の PRD](../fiscal-records/prd.md)、概念は [ドメインモデル](../fiscal-records/fiscal-domain-model.md)、現行の取り込み表の保存と metadata は [保存設計](../ingestion-storage/dd.md) を参照する。
 
 PDF の取り込みの出力は、原典に印字された項目を1行とするノードの表と、印字された金額を1行とする金額の表である。表が属する会計名と注記は管理 JSON の `tables[]` にある。階層別の合計検査と変換器の修正は #88 で取り込まれた。ノードと金額の表に対する共通の木の検査を使い、表をまたぐ照合・分解軸の対応・抜粋の検査は別に残す。
 
