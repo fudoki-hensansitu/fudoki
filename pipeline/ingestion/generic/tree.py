@@ -1010,6 +1010,34 @@ def position_levels(all_items, levels: dict[str, list[float]], depth_of) -> tupl
     return ranks, keys
 
 
+INDENT_SPAN = 6.0  # one indentation step is a character (about 10pt); a level is narrower than this
+
+
+def split_wide(cluster: list[float]) -> list[list[float]]:
+    """Split a chain of starts wider than one indentation step at its emptiest point between two peaks.
+
+    Starts within 3pt chain into one level. Printed text gives each level one x; OCR spreads a level over a
+    few points and a handful of lines in between (a bracket, a letter-spaced name) can bridge two levels
+    10pt apart (`補助金` at 856 and its parts at 866, 132055), so a chain that spans more than a step is cut
+    at the least-used whole point between its most used start and the most used one a step away from it."""
+    if cluster[-1] - cluster[0] <= INDENT_SPAN:
+        return [cluster]
+    counts = Counter(round(v) for v in cluster)
+    peak = max(counts, key=lambda b: (counts[b], -b))
+    far = [b for b in counts if abs(b - peak) >= INDENT_SPAN]
+    if not far:
+        return [cluster]
+    other = max(far, key=lambda b: (counts[b], -abs(b - peak)))
+    low, high = sorted((peak, other))
+    middle = (low + high) / 2
+    valley = min(range(low + 1, high), key=lambda b: (counts.get(b, 0), abs(b - middle)))
+    left = [v for v in cluster if v < valley + .5]
+    right = [v for v in cluster if v >= valley + .5]
+    if not left or not right:
+        return [cluster]
+    return split_wide(left) + split_wide(right)
+
+
 def stacked_columns(logicals: list[Logical]) -> set[str]:
     """Amount columns (by heading) that print two or more amounts in one cell somewhere in the document.
 
@@ -1185,6 +1213,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 clusters[-1].append(value)
             else:
                 clusters.append([value])
+        clusters = [part for cluster in clusters for part in split_wide(cluster)]
         minimum = max(2, len(values) // 200)
         kept = [c for c in clusters if len(c) >= minimum]
         centres = [sum(c) / len(c) for c in kept]
