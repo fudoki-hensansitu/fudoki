@@ -96,7 +96,7 @@ models:
   - name: amount_source_y1
     description: 採用した実績金額の印字の枠の下端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。
   - name: account_kind
-    description: 団体共通の会計の種類（一般会計・国民健康保険・介護保険・後期高齢者医療・用地・駐車場・下水道・介護サービス事業）。原典の会計名を account_kind_map の語で対応づけた風土記の判断。団体をまたぐ比較はこの列で行う。辞書に無い会計名は構築を止める。
+    description: 団体共通の会計の種類（一般会計・国民健康保険・介護保険・後期高齢者医療・用地・駐車場・下水道・介護サービス事業・土地区画整理）。原典の会計名を account_kind_map の語で対応づけた風土記の判断。団体をまたぐ比較はこの列で行う。辞書に無い会計名は構築を止める。
     data_tests:
     - not_null
   - name: is_interfund_transfer
@@ -104,7 +104,7 @@ models:
     data_tests:
     - not_null
   - name: interfund_transfer_to
-    description: 繰出の受け手の会計の種類（account_kind_map で引く）。受け手が入力に無い会計（例：下水道）でも付ける。名称が「繰出金」の節などは親の目の名称から引き、引けなければ印だけ付けて NULL（例：他会計繰出金、費の目の下の節繰出金）。
+    description: 繰出の受け手の会計の種類（account_kind_map で引く）。受け手が入力に無い会計（例：下水道）でも付ける。名称が「繰出金」の節などは親の目の名称から引き、引けなければ印だけ付けて NULL（例：他会計繰出金、費の目の下の節繰出金）。受け手が「特別会計」とだけ印字され会計を特定できない繰出金は、推測せず「不明」（会計の種類の語彙に無い、受け手だけの値）。
   - name: expenditure_setsu_id
     description: 節の軸のノードの法定の節の ID（setsu-master の expenditure_setsu_id。年度に合う定義を選ぶ）。節以外の軸は NULL。備考・事業説明の中の節の見出しは軸が違うため今回の範囲外とした。
     data_tests:
@@ -217,7 +217,7 @@ models:
   - name: amount_source_y1
     description: 採用した当初予算額の印字の枠の下端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。
   - name: account_kind
-    description: 団体共通の会計の種類（一般会計・国民健康保険・介護保険・後期高齢者医療・用地・駐車場・下水道・介護サービス事業）。原典の会計名を account_kind_map の語で対応づけた風土記の判断。団体をまたぐ比較はこの列で行う。辞書に無い会計名は構築を止める。決算の表と同じ共有 intermediate から付ける。
+    description: 団体共通の会計の種類（一般会計・国民健康保険・介護保険・後期高齢者医療・用地・駐車場・下水道・介護サービス事業・土地区画整理）。原典の会計名を account_kind_map の語で対応づけた風土記の判断。団体をまたぐ比較はこの列で行う。辞書に無い会計名は構築を止める。決算の表と同じ共有 intermediate から付ける。
     data_tests:
     - not_null
   - name: is_interfund_transfer
@@ -225,7 +225,7 @@ models:
     data_tests:
     - not_null
   - name: interfund_transfer_to
-    description: 繰出の受け手の会計の種類（account_kind_map で引く）。受け手が入力に無い会計（例：下水道）でも付ける。名称が「繰出金」の節などは親の目の名称から引き、引けなければ印だけ付けて NULL（例：他会計繰出金）。
+    description: 繰出の受け手の会計の種類（account_kind_map で引く）。受け手が入力に無い会計（例：下水道）でも付ける。名称が「繰出金」の節などは親の目の名称から引き、引けなければ印だけ付けて NULL（例：他会計繰出金）。受け手が「特別会計」とだけ印字され会計を特定できない繰出金は、推測せず「不明」（会計の種類の語彙に無い、受け手だけの値）。
   - name: expenditure_setsu_id
     description: 節の軸のノードの法定の節の ID。決算の表と同じ規則・同じ共有 intermediate から付ける。節以外の軸は NULL。備考・事業説明の中の節の見出しは軸が違うため今回の範囲外とした。
     data_tests:
