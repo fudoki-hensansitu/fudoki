@@ -66,3 +66,41 @@ test('CSVは原典リンク・行番号、320/375/414/768pxでも表示領域は
     await ui.getByRole('button', '閉じる').tap()
   }
 })
+
+if (process.env.REAL_PDF_QA === '1') test('自治体の公開PDFと提供済み明細で日本語・項目金額の枠を表示', async ({ app, browser }) => {
+  await app.open('/?real')
+  const ui = browser.frameLocator('iframe')
+  await ui.getByRole('button', '項目の原典を表示: 備品購入費').tap()
+  await expect(ui.getByRole('img', '原典 PDF 1ページ')).toBeVisible()
+  await expect(ui.getByRole('img', '項目の印字枠')).toBeVisible()
+  await expect(ui.getByRole('img', '金額の印字枠')).toBeVisible()
+  await app.screenshot('real-origin-pdf')
+})
+
+test('取得サイズ上限を超えた場合もURLと頁番号を案内', async ({ browser }) => {
+  const ui = browser.frameLocator('iframe')
+  await ui.getByRole('button', '項目の原典を表示: サイズ上限').tap()
+  await expect(ui.getByRole('status')).toContainText('32 MiB')
+  await expect(ui.getByRole('status')).toContainText('項目: 1ページ')
+  await expect(ui.getByRole('link', 'https://city.fudoki.dev/big-header.pdf')).toBeVisible()
+})
+
+test('取得頻度の上限を超えた場合もURLと頁番号を案内', async ({ browser, app }) => {
+  for (let i = 0; i < 6; i++) await fetch(new URL(`/v1/origins/extra-${i}/pdf`, app.baseUrl))
+  const ui = browser.frameLocator('iframe')
+  await ui.getByRole('button', '項目の原典を表示: 頻度上限').tap()
+  await expect(ui.getByRole('status')).toContainText('取得頻度の上限')
+  await expect(ui.getByRole('status')).toContainText('項目: 1ページ')
+  await expect(ui.getByRole('link', 'https://city.fudoki.dev/extra-6.pdf')).toBeVisible()
+})
+
+test('回転頁の表示後の左上原点ptに枠を対応させる', async ({ browser, app }) => {
+  const ui = browser.frameLocator('iframe')
+  await ui.getByRole('button', '項目の原典を表示: 回転頁').tap()
+  const canvas = ui.getByRole('img', '原典 PDF 1ページ')
+  await expect(canvas).toBeVisible()
+  await expect(canvas).toHaveAttribute('width', '1600')
+  await expect(canvas).toHaveAttribute('height', '1200')
+  await expect(ui.getByRole('img', '項目の印字枠')).toHaveAttribute('style', /left: 91.25%/)
+  await app.screenshot('rotated-origin-pdf')
+})

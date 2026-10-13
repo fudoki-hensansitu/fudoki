@@ -3,10 +3,10 @@ import columns from '../src/columns.json'
 import { readFileSync } from 'node:fs'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 
-export function samplePdf() {
+export function samplePdf(rotated = false) {
   const objects = ['<< /Type /Catalog /Pages 2 0 R >>', '<< /Type /Pages /Kids [3 0 R 5 0 R] /Count 2 >>']
   for (let p = 0; p < 2; p++) {
-    objects.push(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 600 800] /Resources << /Font << /F1 7 0 R >> >> /Contents ${4 + p * 2} 0 R >>`)
+    objects.push(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 600 800] ${rotated ? '/Rotate 90' : ''} /Resources << /Font << /F1 7 0 R >> >> /Contents ${4 + p * 2} 0 R >>`)
     const stream = `BT /F1 20 Tf 40 740 Td (PAGE ${p + 1} - Item) Tj 0 -100 Td (Amount 12345) Tj ET`
     objects.push(`<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`)
   }
@@ -25,12 +25,25 @@ export async function fixture(real = false) {
   const upstream = Bun.serve({ port: 0, idleTimeout: 30, async fetch(req) {
     const path = new URL(req.url).pathname
     hits.set(path, (hits.get(path) ?? 0) + 1)
+    if (path === '/rotated.pdf') return new Response(samplePdf(true), { headers: { 'Content-Type': 'application/pdf' } })
     if (path === '/missing.pdf') return new Response('gone', { status: 404 })
     if (path === '/recover.pdf' && fail) { fail = false; return new Response('gone', { status: 404 }) }
     if (path === '/redirect.pdf') return new Response(null, { status: 302, headers: { Location: 'http://127.0.0.1/private.pdf' } })
     if (path === '/html.pdf') return new Response('HTML', { headers: { 'Content-Type': 'text/html' } })
     if (path === '/fake.pdf') return new Response('fake', { headers: { 'Content-Type': 'application/pdf' } })
+    if (path === '/limit.pdf') {
+      const bytes = new Uint8Array(32 * 1024 * 1024)
+      bytes.set(new TextEncoder().encode(samplePdf()))
+      return new Response(bytes, { headers: { 'Content-Type': 'application/pdf' } })
+    }
     if (path === '/big-header.pdf') return new Response(new Uint8Array(33 * 1024 * 1024), { headers: { 'Content-Type': 'application/pdf', 'Content-Length': String(33 * 1024 * 1024) } })
+    if (path === '/slow-body.pdf') {
+      return new Response(new ReadableStream({ async start(controller) {
+        controller.enqueue(new TextEncoder().encode('%PDF-1.7\n'))
+        await new Promise((resolve) => setTimeout(resolve, 21_000))
+        try { controller.enqueue(new Uint8Array([0])); controller.close() } catch {}
+      } }), { headers: { 'Content-Type': 'application/pdf' } })
+    }
     if (path === '/slow.pdf') { await new Promise((resolve) => setTimeout(resolve, 21_000)); return new Response(samplePdf(), { headers: { 'Content-Type': 'application/pdf' } }) }
     if (path === '/big-stream.pdf') {
       let sent = 0
@@ -64,7 +77,7 @@ export async function fixture(real = false) {
     Object.assign(data, row)
     await db.prepare(`INSERT INTO ${table} (${Object.keys(data).join(',')}) VALUES (${Object.keys(data).map(() => '?').join(',')})`).bind(...Object.values(data) as never[]).run()
   }
-  const paths = ['ok', 'missing', 'recover', 'redirect', 'html', 'fake', 'big-header', 'big-stream', 'slow', ...Array.from({ length: 18 }, (_, i) => `extra-${i}`)]
+  const paths = ['ok', 'rotated', 'missing', 'recover', 'redirect', 'html', 'fake', 'big-header', 'big-stream', 'limit', 'slow', 'slow-body', ...Array.from({ length: 18 }, (_, i) => `extra-${i}`)]
   for (const path of paths) await insert('origin', { origin_id: path, title: `試験原典 ${path}`, url: `https://city.fudoki.dev/${path}.pdf`, format: 'pdf' })
   await insert('origin', { origin_id: 'same', title: '同じ URL', url: 'https://city.fudoki.dev/ok.pdf', format: 'pdf' })
   await insert('origin', { origin_id: 'csv', title: 'CSV', url: 'https://city.fudoki.dev/csv', format: 'csv' })
@@ -72,10 +85,13 @@ export async function fixture(real = false) {
   const scenarios = [
     { name: '枠あり', origin_id: 'ok', source_page: 1, source_x0: 35, source_y0: 40, source_x1: 240, source_y1: 80, amount_source_page: 1, amount_source_x0: 35, amount_source_y0: 140, amount_source_x1: 240, amount_source_y1: 180 },
     { name: '別頁の金額', origin_id: 'ok', source_page: 1, source_x0: 35, source_y0: 40, source_x1: 240, source_y1: 80, amount_source_page: 2, amount_source_x0: 35, amount_source_y0: 140, amount_source_x1: 240, amount_source_y1: 180 },
+    { name: '回転頁', origin_id: 'rotated', source_page: 1, source_x0: 730, source_y0: 35, source_x1: 770, source_y1: 240 },
     { name: '枠欠損', origin_id: 'ok', source_page: 1, source_y0: 40, source_y1: 80 },
     { name: '次頁継続', origin_id: 'ok', source_page: 1, source_x0: 35, source_y0: 740, source_x1: 240, source_y1: 80 },
     { name: '取得失敗', origin_id: 'missing', source_page: 1, amount_source_page: 2 },
     { name: 'CSV原典', origin_id: 'csv', source_page: 8 },
+    { name: 'サイズ上限', origin_id: 'big-header', source_page: 1 },
+    { name: '頻度上限', origin_id: 'extra-6', source_page: 1 },
     { name: '頁が変わった', origin_id: 'ok', source_page: 3 },
   ]
   for (const [i, row] of scenarios.entries()) await insert('settlement_expenditure_node', { jurisdiction_code: '000001', fiscal_year: 2024, account_name: '一般会計', kan_name: '総務費', node_kind: '目', axis: '科目', amount_yen: 12345, node_id: String(i + 1).padStart(64, '0'), ...row })

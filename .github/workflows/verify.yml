@@ -24,7 +24,8 @@ jobs:
       - run: bun run --cwd pipeline test:python
       - run: bun run build:web
       - run: bun run build:api
-      - run: bun run --cwd apps/api node_modules/playwright/cli.js install chromium --with-deps
+      - run: node node_modules/playwright/cli.js install chromium --with-deps
+        working-directory: apps/api
       - run: bun run --cwd apps/api test:e2e
       - run: bun run build:docs
       - run: bun run pipeline/verify/boundaries.ts

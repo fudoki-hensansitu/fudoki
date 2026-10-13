@@ -1,8 +1,9 @@
 import type { Db } from './db'
-import { ApiError, invalid } from './errors'
+import { ApiError, errorBody, invalid } from './errors'
 
 export const PDF_LIMITS = { bytes: 32 * 1024 * 1024, timeoutMs: 20_000, ttlMs: 24 * 60 * 60 * 1000, requests: 120, fetches: 6, entries: 16 } as const
 const CHUNK_BYTES = 64 * 1024
+const CHUNK_BATCH = 16
 
 export interface RelayNamespace {
   idFromName(name: string): unknown
@@ -11,7 +12,9 @@ export interface RelayNamespace {
 
 interface Storage {
   get<T>(key: string): Promise<T | undefined>
+  get<T>(keys: string[]): Promise<Map<string, T>>
   put(key: string, value: unknown): Promise<void>
+  put(entries: Record<string, unknown>): Promise<void>
   delete(keys: string[]): Promise<number>
   transaction<T>(fn: (storage: Storage) => Promise<T>): Promise<T>
   setAlarm(time: number): Promise<void>
@@ -46,7 +49,7 @@ export async function originPdf(db: Db, relay: RelayNamespace | undefined, reque
   return new Response(response.body, response)
 }
 
-const failure = (status: number, message: string) => Response.json({ error: { code: 'PDF_UNAVAILABLE', message } }, { status })
+const failure = (status: number, message: string) => Response.json(errorBody('PDF_UNAVAILABLE', message), { status })
 const chunkKey = (url: string, i: number) => `pdf:${url}:${i}`
 
 /** 表示専用の短期キャッシュ。R2・取り込み時の内容にはアクセスしない。 */
@@ -98,7 +101,11 @@ export class OriginPdfRelay {
         if (new TextDecoder().decode(bytes.subarray(0, 5)) !== '%PDF-') return failure(502, '取得した内容が PDF ではありません')
         const pdf: CachedPdf = { url, size, fetchedAt: Date.now(), chunks: Math.ceil(size / CHUNK_BYTES) }
         await this.state.storage.transaction(async (storage) => {
-          for (let i = 0; i < pdf.chunks; i++) await storage.put(chunkKey(url, i), bytes.slice(i * CHUNK_BYTES, (i + 1) * CHUNK_BYTES))
+          for (let i = 0; i < pdf.chunks; i += CHUNK_BATCH) {
+            const entries = Object.fromEntries(Array.from({ length: Math.min(CHUNK_BATCH, pdf.chunks - i) }, (_, j) =>
+              [chunkKey(url, i + j), bytes.slice((i + j) * CHUNK_BYTES, (i + j + 1) * CHUNK_BYTES)]))
+            await storage.put(entries)
+          }
           await storage.put('cache', [...cache, pdf])
           await storage.setAlarm(Math.min(...cache.map((p) => p.fetchedAt), pdf.fetchedAt) + PDF_LIMITS.ttlMs)
         })
@@ -119,10 +126,14 @@ export class OriginPdfRelay {
 
   private async response(pdf: CachedPdf) {
     const bytes = new Uint8Array(pdf.size)
-    for (let i = 0; i < pdf.chunks; i++) {
-      const part = await this.state.storage.get<Uint8Array>(chunkKey(pdf.url, i))
-      if (!part) return failure(502, '保持した PDF を読めません')
-      bytes.set(part, i * CHUNK_BYTES)
+    for (let i = 0; i < pdf.chunks; i += CHUNK_BATCH) {
+      const keys = Array.from({ length: Math.min(CHUNK_BATCH, pdf.chunks - i) }, (_, j) => chunkKey(pdf.url, i + j))
+      const parts = await this.state.storage.get<Uint8Array>(keys)
+      for (const [j, key] of keys.entries()) {
+        const part = parts.get(key)
+        if (!part) return failure(502, '保持した PDF を読めません')
+        bytes.set(part, (i + j) * CHUNK_BYTES)
+      }
     }
     return this.pdfResponse(pdf, bytes)
   }
@@ -135,9 +146,9 @@ export class OriginPdfRelay {
         for (let i = 0; i < p.chunks; i += 128) await storage.delete(Array.from({ length: Math.min(128, p.chunks - i) }, (_, j) => chunkKey(p.url, i + j)))
       }
       await storage.put('cache', live)
+      if (live.length) await storage.setAlarm(Math.min(...live.map((p) => p.fetchedAt)) + PDF_LIMITS.ttlMs)
+      else await storage.deleteAlarm()
     })
-    if (live.length) await this.state.storage.setAlarm(Math.min(...live.map((p) => p.fetchedAt)) + PDF_LIMITS.ttlMs)
-    else await this.state.storage.deleteAlarm()
     return live
   }
 

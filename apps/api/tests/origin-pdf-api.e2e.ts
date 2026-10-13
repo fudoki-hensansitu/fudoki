@@ -27,7 +27,11 @@ test('原典IDから中継・同時要求と同URL別IDを24h再利用・期限�
 })
 
 test('任意URL/query・CSV・内部URL・未知ID・POSTを拒否', async ({ app }) => {
-  for (const [id, status] of [['ok?url=https://attacker.com/private', 400], [encodeURIComponent('https://attacker.com/a.pdf'), 404], ['csv', 400], ['private', 400], ['unknown', 404]] as const) expect((await get(app.baseUrl!, id)).status).toBe(status)
+  for (const [id, status] of [['ok?url=https://attacker.com/private', 400], [encodeURIComponent('https://attacker.com/a.pdf'), 404], ['csv', 400], ['private', 400], ['unknown', 404]] as const) {
+    const r = await get(app.baseUrl!, id)
+    expect(r.status).toBe(status)
+    expect(r.headers.get('access-control-allow-origin')).toBe('*')
+  }
   expect((await fetch(new URL('/v1/origins/ok/pdf', app.baseUrl!), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })).status).toBe(405)
   expect(await hits(app.baseUrl!)).toEqual({})
 })
@@ -78,4 +82,22 @@ test('保持16URLに達したら有効なPDFを追い出さず新規を拒否、
   expect((await hits(app.baseUrl!))['/extra-0.pdf']).toBe(1)
   await advance(app.baseUrl!, 24 * 60 * 60 * 1000 + 180_000)
   expect((await get(app.baseUrl!, 'extra-16')).status).toBe(200)
+})
+
+// 上限での成功も検証し、分割保存・再利用の境界を確かめる。
+test('32MiBちょうどを中継・保持・再利用できる', async ({ app }) => {
+  for (let i = 0; i < 2; i++) {
+    const r = await get(app.baseUrl!, 'limit')
+    expect(r.status).toBe(200)
+    expect((await r.arrayBuffer()).byteLength).toBe(32 * 1024 * 1024)
+  }
+  expect((await hits(app.baseUrl!))['/limit.pdf']).toBe(1)
+})
+
+test('headersと本文先頭を受信後に止まっても20秒で失敗', async ({ app }) => {
+  const start = performance.now()
+  const r = await get(app.baseUrl!, 'slow-body')
+  expect(r.status).toBe(504)
+  expect(performance.now() - start).toBeLessThan(23_000)
+  expect(r.headers.get('access-control-allow-origin')).toBe('*')
 })

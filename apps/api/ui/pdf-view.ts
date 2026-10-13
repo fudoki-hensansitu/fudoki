@@ -111,6 +111,8 @@ export async function showPdf(origin: Origin, location: PdfLocation, selectedPag
       stage.replaceChildren(canvas)
       const item = highlight('source', points.width, points.height)
       const amount = highlight('amount_source', points.width, points.height)
+      const frame = stage.querySelector<HTMLElement>('.pdf-frame')
+      content.scrollTop = frame ? Math.max(0, frame.offsetTop - (content.clientHeight - frame.offsetHeight) / 2) : 0
       status.textContent = `PDF ファイルの ${pageNumber} / ${pdf.numPages}ページ（紙面の印刷頁番号とは別） ・ ${[item ? '項目の枠' : '', amount ? '金額の枠' : ''].filter(Boolean).join('・') || '強調できる単一頁の枠はありません'}`
       page.cleanup()
       panel.removeAttribute('aria-busy')
