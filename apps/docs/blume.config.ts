@@ -2,7 +2,7 @@ import { defineConfig } from 'blume'
 import { openapi } from 'blume/reference'
 
 export default defineConfig({
-  title: '風土記',
+  title: '風土記 API Docs',
   description: '町の家計簿を作る。自治体の歳出の予算・決算を事業の単位まで集約したデータを、MCP と REST で取得するための文書。',
   logo: { image: { light: '/logo.svg', dark: '/logo-dark.svg', alt: '風土記' }, text: '' },
   content: { root: 'content' },
