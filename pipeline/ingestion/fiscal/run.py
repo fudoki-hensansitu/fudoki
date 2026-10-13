@@ -12,7 +12,7 @@ import duckdb
 from ingestion.fiscal import manifest
 from ingestion.fiscal.storage import fetch, save, cleanup, verify
 from ingestion.paths import BUILD
-from ingestion.lib import node_tables
+from ingestion.lib import digit_recheck, node_tables
 
 MATCH, MISMATCH, NOT_APPLICABLE = '一致', '不一致', '対象外'
 
@@ -129,6 +129,12 @@ def unchanged_legacy_receipt(document: dict, conversion: dict, table_id: str, fi
     receipt = deepcopy(previous)
     receipt['input_fingerprint'] = fingerprint
     return receipt
+
+def recheck_store_path(document: dict) -> Path:
+    """Jev answers live beside the manifest. The suffix keeps manifest.paths() (`*.json`) from reading them."""
+    path = manifest.manifest_path(document['target'], document['direction'])
+    return path.with_name(path.stem + digit_recheck.STORE_SUFFIX)
+
 
 def coverage_peers(document: dict, converted: dict) -> dict:
     """Match all adopted tables from the same original, across conversions.
@@ -298,23 +304,49 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
     for _, ident, migrated, _, file in checked_pdf:
         adopted[ident] = node_tables.with_annotations(file, migrated, raw_rows=raw_by_id[ident], adopted=peers[ident])
     peers = coverage_peers(document, adopted)
+    store = recheck_store_path(document)
+    recheck = digit_recheck.Recheck.from_store(store)
+    jev_answers = {}
+
+    def write_answers():
+        # Answers are a judgment kept in Git, so they follow every run,
+        # candidate or saved, failed or passing. Re-run tables keep only the
+        # answers they used.
+        if jev_answers:
+            rows = digit_recheck.read_store(store) if store.is_file() else []
+            merged = digit_recheck.merged_rows(rows, jev_answers)
+            if merged or store.is_file():
+                digit_recheck.write_store(store, merged)
     for conversion, ident, migrated, metadata, file in checked_pdf:
         migrated = adopted[ident]
         inputs = manifest.resolved_inputs(document, conversion, selection)
         text_only = all(item['format'] == 'pdf' and item.get('pdf_type') == 'text' for item in inputs)
         try:
             node_tables.check_table_coverage(file, peers[ident], require=text_only,
-                                             control_tables=[adopted[ident]])
+                                             control_tables=[adopted[ident]],
+                                             recheck=recheck if text_only else None)
+            jev_answers[ident] = recheck.take_used()
         except ValueError as error:
             coverage_failures.append(f'{ident}: {error}')
+            # Asked answers survive a failed run, so fixing a rule never asks twice.
+            if used := recheck.take_used():
+                jev_answers[ident] = used
             continue
+        except BaseException:
+            # An API failure aborts the run; the answers already paid for stay.
+            if used := recheck.take_used():
+                jev_answers[ident] = used
+            write_answers()
+            raise
         receipt, pair = node_receipt(document, conversion, ident, migrated, output,
                                      input_fingerprint=before[conversion['id']],
                                      notes=[n['text'] for n in (metadata or {}).get('notes', [])])
         outputs[ident] = pair
         tables.append(receipt)
+    write_answers()
     if coverage_failures:
-        raise ValueError('Digit coverage failed:\n' + '\n'.join(coverage_failures))
+        raise ValueError('Digit coverage failed:\n' + '\n'.join(coverage_failures)
+                         + '\nJev recheck: ' + json.dumps(recheck.summary(), ensure_ascii=False))
     result = deepcopy(document)
     result['tables'] = tables
     manifest.validate(result)
@@ -340,7 +372,7 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
             raise ValueError('Saved manifest changed before extension registration')
         manifest.write(path, result)
         # Deletion is always a separate operation, including legacy-only documents.
-    return {'status': 'saved' if remote else 'candidate', 'tables': len(tables),
+    return {'status': 'saved' if remote else 'candidate', 'tables': len(tables), 'jev': recheck.summary(),
             'rows': sum(r['row_count'] for t in tables for r in manifest.table_references(t).values()), 'candidate': str(candidate)}
 
 
@@ -379,7 +411,7 @@ def candidate_locator(directory: Path):
     return locate
 
 
-def verify_coverage(document: dict, locate, directory) -> dict:
+def verify_coverage(document: dict, locate, directory, recheck=None) -> dict:
     """Digit coverage of candidate tables carrying a converter scope sidecar.
 
     Saved tables keep no word scope (local-only sidecars are never uploaded),
@@ -398,6 +430,10 @@ def verify_coverage(document: dict, locate, directory) -> dict:
             except Exception as error:
                 outcome[table['table_id']] = {'status': MISMATCH, 'reason': str(error) or type(error).__name__}
     peers = coverage_peers(document, adopted)
+    # Read-only: answers come from the manifest's store only (convert asks and
+    # writes them). A missing answer stops the table.
+    if recheck is None:
+        recheck = digit_recheck.Recheck.from_store(recheck_store_path(document), ask_missing=False)
     for table in document['tables']:
         if 'nodes' not in table or directory is None or table['table_id'] in outcome:
             continue
@@ -410,13 +446,15 @@ def verify_coverage(document: dict, locate, directory) -> dict:
             result = node_tables.check_digit_coverage(
                 scope['words'], peers[table['table_id']], control_tables=[adopted[table['table_id']]],
                 exclusions=scope.get('excluded_regions', ()),
-                amount_columns=scope.get('amount_columns', ()))
+                amount_columns=scope.get('amount_columns', ()), recheck=recheck)
+            jev = {k: v for k, v in (result['jev'] or {}).items() if k != 'answers'}
             outcome[table['table_id']] = {'status': MATCH if result['passed'] else MISMATCH,
                                           'counts': result['counts'],
                                           'uncovered': result['uncovered'][:10],
                                           'reported': result['reported'][:10],
                                           'bands_from': result['bands_from'],
                                           'exclusions': result['exclusions'],
+                                          'jev': jev,
                                           'elapsed': result['elapsed']}
         except Exception as error:
             outcome[table['table_id']] = {'status': MISMATCH, 'reason': str(error) or type(error).__name__}
@@ -505,11 +543,15 @@ def main() -> None:
             target = document['target']
             name = f'{target["jurisdiction"]}-{target["fiscal_year"]}-{manifest.document_slot(target)}-{document["direction"]}'
             results = verify_sums(document, locate)
-            coverage = verify_coverage(document, locate, args.candidate)
+            recheck = digit_recheck.Recheck.from_store(recheck_store_path(document), ask_missing=False)
+            coverage = verify_coverage(document, locate, args.candidate, recheck)
             for item in results:
                 if item['table_id'] in coverage:
                     item['coverage'] = coverage[item['table_id']]
-            print(json.dumps(verify_report(path, document, results, output / f'{name}.json'), ensure_ascii=False))
+            report = verify_report(path, document, results, output / f'{name}.json')
+            if recheck.stats['questions']:
+                report['jev'] = recheck.summary()
+            print(json.dumps(report, ensure_ascii=False))
             for item in results:
                 summary[item['status']] = summary.get(item['status'], 0) + 1
                 failed |= item['status'] == MISMATCH
