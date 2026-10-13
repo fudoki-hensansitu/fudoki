@@ -2,12 +2,15 @@ import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
 import { McpServer, createMcpHandler, preloadSchemas } from '@modelcontextprotocol/server'
 import type { Context } from 'hono'
 import { HTTPException } from 'hono/http-exception'
+import iconSvg from './favicon.svg' with { type: 'text' }
 import type { Env } from './db'
 import { ApiError, errorBody, invalid } from './errors'
 import { operations, type Ctx, type Operation } from './operations'
 import { VIEW_HTML, VIEW_URI } from './view.generated'
 
 type AppEnv = { Bindings: Env; Variables: { ctx: Ctx; json: unknown } }
+
+const MCP_ICON_SRC = `data:image/svg+xml;base64,${btoa(String.fromCharCode(...new TextEncoder().encode(iconSvg)))}`
 
 const MAX_BODY_BYTES = 16 * 1024
 
@@ -119,7 +122,12 @@ export const VIEW_MIME_TYPE = 'text/html;profile=mcp-app'
 
 function mcpServer(ctx: Ctx): McpServer {
   const server = new McpServer(
-    { name: 'fudoki-api', version: '1.0.0' },
+    {
+      name: 'fudoki-api',
+      title: '風土記(fudoki)',
+      version: '1.0.0',
+      icons: [{ src: MCP_ICON_SRC, mimeType: 'image/svg+xml', sizes: ['any'] }],
+    },
     // stateless で tool・resource の一覧は変わらず、通知を送る経路も無いので、listChanged は名乗らない
     { capabilities: { tools: { listChanged: false }, resources: { listChanged: false } } }
   )
