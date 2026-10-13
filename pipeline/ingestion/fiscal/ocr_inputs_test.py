@@ -64,6 +64,12 @@ class AcquireTest(unittest.TestCase):
         marks = scan_ocr.missed_ink(dark, 0.5, [[9, 4, 14, 11]])
         self.assertEqual(marks, [(50.0, 5.0, 53.0, 10.0)])
 
+    def test_a_thin_1_is_ink_and_a_bracket_tip_is_a_speck(self):
+        dark = np.zeros((100, 200), bool)
+        dark[10:19, 40] = True             # a 1, one pixel wide and 9 tall
+        dark[30:35, 80] = True             # the tip of a bracket left outside an OCR box
+        self.assertEqual(scan_ocr.missed_ink(dark, 0.5, []), [(20.0, 5.0, 20.5, 9.5)])
+
     def test_ink_areas_join_one_line_within_a_cell(self):
         rule = scan_ocr.pdf_rules.Rule(60.0, 0.0, 100.0)
         rules = scan_ocr.pdf_rules.PageRules(1, 200.0, 100.0, (rule,), ())
@@ -149,12 +155,14 @@ class AcquireTest(unittest.TestCase):
 
     def test_digit_sized_marks_go_to_paddle_and_only_a_single_digit_is_kept(self):
         page = {'page_number': 1, 'regions': []}
-        marks = [(10, 10, 14, 16), (30, 10, 34, 16), (50, 10, 90, 16)]   # two digit-sized, one wide
+        # two digit-sized, a thin 1, a thin bracket, one wide
+        marks = [(10, 10, 14, 16), (30, 10, 34, 16), (40, 10, 41.5, 16), (45, 10, 46.5, 16), (50, 10, 90, 16)]
         with patch.object(scan_ocr, '_whitened', return_value=np.full((400, 400), 255, np.uint8)), \
-                patch.object(scan_ocr.paddle_ocr, 'recognize_crops', return_value=['0', 'o)']) as read:
+                patch.object(scan_ocr.paddle_ocr, 'recognize_crops', return_value=['0', 'o)', '1', '(']) as read:
             scan_ocr._read_zeros(Path('x.pdf'), 1, scan_ocr.VisionConfig(), page, marks)
-        self.assertEqual(len(read.call_args.args[0]), 2)
-        self.assertEqual([(r['id'], r['observations'][0]['raw_text']) for r in page['regions']], [('digit-0', '0')])
+        self.assertEqual(len(read.call_args.args[0]), 4)
+        self.assertEqual([(r['id'], r['observations'][0]['raw_text']) for r in page['regions']],
+                         [('digit-0', '0'), ('digit-2', '1')])
 
     def test_whitening_removes_rules_and_their_edges_but_keeps_text(self):
         image = np.full((200, 200), 255, np.uint8)

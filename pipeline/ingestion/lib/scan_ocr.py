@@ -146,7 +146,7 @@ def column_tiles(rules: PageRules, ink, height: float = 150.0) -> list[OcrRegion
 RULE_RUN_PT = 14.0   # a straight dark run this long is a rule or an underline, not a glyph
 BOX_PAD_PT = 1.5     # ink this close to an OCR box belongs to it
 JOIN_PX = 4          # pixels this close are one mark
-MIN_PIXELS = 12      # smaller marks are specks
+MIN_PIXELS = 9       # smaller marks are specks; a thin 1 or a lone 0 is 9-11 px at 144 dpi, a bracket's tip 4-8
 AREA_PAD_PT = 6.0    # Vision drops the leading 1 of an amount cut 3pt from it (measured: 21 → 39 of 45)
 
 
@@ -411,8 +411,9 @@ def _balanced(text: str, tokens: Sequence[tuple[str, Sequence[float]]]) -> str:
 
 
 def _zero_shaped(mark: Sequence[float]) -> bool:
-    """One mark of a digit's size: almost always a lone 0 Vision dropped."""
-    return 2.0 <= mark[2] - mark[0] <= 6.5 and 3.5 <= mark[3] - mark[1] <= 9.0
+    """One mark of a digit's size: almost always a lone 0 or a code's 1 Vision dropped (a 1 is
+    1.0-1.5pt wide; a bracket as thin is read as a bracket and left to the VLM)."""
+    return 1.0 <= mark[2] - mark[0] <= 6.5 and 3.5 <= mark[3] - mark[1] <= 9.0
 
 
 def _read_zeros(path: Path, number: int, config: VisionConfig, page: dict, marks: Sequence[Sequence[float]]) -> None:
