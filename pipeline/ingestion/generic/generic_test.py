@@ -453,6 +453,9 @@ class SubjectHeaderTest(unittest.TestCase):
         self.assertTrue(subject_header(('款',)) and subject_header(('項',)) and subject_header(('目',)))
         self.assertTrue(subject_header(('款　項　目',)))
         self.assertTrue(subject_header(('歳出', '(款)(項)(目)')))
+        # Known gap: a cell that is only `項目` still reads as the 項・目 column (it was so before), so a list
+        # whose heading is a bare `項目` would be read as a subject column too.
+        self.assertTrue(subject_header(('項目',)))
 
 
 if __name__ == '__main__':
