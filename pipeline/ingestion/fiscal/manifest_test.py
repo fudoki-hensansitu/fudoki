@@ -237,6 +237,41 @@ class ManifestWorkflowTest(unittest.TestCase):
         registry.write_text('SCHEMA = "manifest.schema.json"  # edited\n')
         self.assertEqual(manifest.fingerprint(self.document, conversion), before)
 
+    def test_check_only_module_is_left_out_of_fingerprint_but_table_code_is_not(self):
+        conversion = self.document['conversions'][0]
+        code = self.code/'fiscal/layouts/csv/convert.py'
+        (self.code/'lib/tree_checks.py').write_text('def check_tree(rows):\n    return bool(rows)\n')
+        (self.code/'lib/shaping.py').write_text('VALUE = 1\n')
+        code.write_text(code.read_text() + '\nfrom ingestion.lib.tree_checks import check_tree\n'
+                        'from ingestion.lib import shaping\n')
+        self.assertNotIn('lib/tree_checks.py', manifest.dependencies(conversion))
+        self.assertIn('lib/shaping.py', manifest.dependencies(conversion))
+        before = manifest.fingerprint(self.document, conversion)
+        (self.code/'lib/tree_checks.py').write_text('def check_tree(rows):\n    return len(rows) > 1\n')
+        self.assertEqual(manifest.fingerprint(self.document, conversion), before)
+        (self.code/'lib/shaping.py').write_text('VALUE = 2\n')
+        self.assertNotEqual(manifest.fingerprint(self.document, conversion), before)
+
+    def test_check_module_that_produces_tables_is_refused(self):
+        conversion = self.document['conversions'][0]
+        code = self.code/'fiscal/layouts/csv/convert.py'
+        code.write_text(code.read_text() + '\nfrom ingestion.lib import tree_checks\n')
+        for source, reason in (
+                ('def write_tables(rows):\n    return rows\n', 'write_tables'),
+                ('from ingestion.lib.parquet import write_parquet\n'
+                 'def check(rows, path):\n    write_parquet(path, rows)\n', 'write_parquet'),
+                ('def check(path):\n    path.write_text("x")\n', 'write_text'),
+                ('def check(path):\n    open(path, "w")\n', 'for writing'),
+                ('def check(path):\n    open(path, mode="a")\n', 'for writing'),
+                ('def check(con):\n    con.execute("copy t to \'x.parquet\' (format parquet)")\n', 'Parquet')):
+            with self.subTest(reason=reason):
+                (self.code/'lib/tree_checks.py').write_text(source)
+                with self.assertRaisesRegex(ValueError, f'tree_checks.py must not produce tables.*{reason}'):
+                    manifest.dependencies(conversion)
+        (self.code/'lib/tree_checks.py').write_text(
+            'def check(path):\n    with open(path) as stream:\n        return stream.read() == ""\n')
+        self.assertNotIn('lib/tree_checks.py', manifest.dependencies(conversion))
+
     def test_saved_table_keys_ownership_completeness_and_empty_outputs(self):
         result = convert(self.path, self.files, self.root/'candidate')
         candidate = json.loads(Path(result['candidate']).read_text())

@@ -71,6 +71,44 @@ def options_schema(conversion: dict) -> str:
 # fingerprinting it would stale every table of a converter that imports it on each schema edit.
 FINGERPRINT_EXCLUDED = frozenset({'fiscal/manifest.py'})
 
+# A module named ``*_checks.py`` only decides pass/fail (tree check, digit coverage); it never builds
+# or writes a table. It is left out of the fingerprint so that tightening a check does not stale
+# every table. The exclusion is only sound while the module stays check-only, so ``dependencies``
+# refuses a ``*_checks.py`` that writes when a converter imports it (standalone scripts that no
+# converter imports are not constrained). A stricter check no longer shows up as a stale fingerprint:
+# run ``ingestion:verify`` against the saved tables instead (ADR 0027).
+CHECK_MODULE_SUFFIX = '_checks.py'
+# Calls that write or remove files; a check module may read tables, never produce them.
+CHECK_FORBIDDEN_CALLS = frozenset({
+    'write_parquet', 'write_tables', 'write_conversion', 'write_text', 'write_bytes', 'write', 'writelines',
+    'to_parquet', 'dump', 'mkdir', 'unlink', 'rmtree', 'copyfile', 'copy2', 'copytree', 'rename'})
+
+
+def is_check_module(relative: str) -> bool:
+    return relative.endswith(CHECK_MODULE_SUFFIX)
+
+
+def check_module_violations(path: Path) -> list[str]:
+    """Reasons ``path`` is not a check-only module (empty when it is)."""
+    found = []
+    for node in ast.walk(ast.parse(path.read_text())):
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name.startswith('write'):
+            found.append(f'defines {node.name}()')
+        elif isinstance(node, ast.Call):
+            func = node.func
+            name = func.id if isinstance(func, ast.Name) else func.attr if isinstance(func, ast.Attribute) else None
+            if name in CHECK_FORBIDDEN_CALLS:
+                found.append(f'calls {name}()')
+            elif name == 'open':
+                mode = node.args[1] if len(node.args) > 1 else next(
+                    (item.value for item in node.keywords if item.arg == 'mode'), None)
+                if isinstance(mode, ast.Constant) and isinstance(mode.value, str) and set(mode.value) & set('wax+'):
+                    found.append('opens a file for writing')
+        elif (isinstance(node, ast.Constant) and isinstance(node.value, str)
+              and re.search(r'(?is)\bcopy\b.*\bto\b.*\bformat\s+parquet\b', node.value)):
+            found.append('copies a table to Parquet')
+    return sorted(set(found))
+
 
 def dependencies(conversion: dict) -> list[str]:
     pending = [conversion['converter'], options_schema(conversion)]
@@ -107,8 +145,17 @@ def dependencies(conversion: dict) -> list[str]:
                     continue
                 target = INGESTION / Path(*module.split('.')[1:])
                 candidate = target / '__init__.py' if target.is_dir() else target.with_suffix('.py')
-                if candidate.is_file() and str(candidate.relative_to(INGESTION)) not in FINGERPRINT_EXCLUDED:
-                    pending.append(str(candidate.relative_to(INGESTION)))
+                if not candidate.is_file():
+                    continue
+                relative = str(candidate.relative_to(INGESTION))
+                if relative in FINGERPRINT_EXCLUDED:
+                    continue
+                if is_check_module(relative):
+                    violations = check_module_violations(candidate)
+                    if violations:
+                        raise ValueError(f'Check module {relative} must not produce tables: {"; ".join(violations)}')
+                    continue
+                pending.append(relative)
     return sorted(found)
 
 
