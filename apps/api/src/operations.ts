@@ -413,7 +413,7 @@ const listJurisdictionsDescription =
   '団体（自治体）の名称・6桁の団体コード・都道府県と、その団体の収録範囲（明細を検索できる年度・資料区分・会計と、明細の出典の原典の標題・URL）を返す。' +
   '歳出を検索する前に、団体コードと、比べたい年度・資料区分が収録されているかをここで確かめる。' +
   '名称（部分一致）か団体コード（5桁・6桁）で絞り、絞らなければ全団体を団体コード順に返す。収録の無い団体は coverage が空。' +
-  '返った jurisdiction_code・fiscal_year・document_kind・account_name は search_expenditure_nodes の条件にそのまま使える。'
+  '返った jurisdiction_code（6桁）・fiscal_year・document_kind・account_name は search_expenditure_nodes の条件にそのまま使える。検索は5桁のコードを受け付けず0件になるので、ここで6桁を引いてから渡す。名前とコードの両方を渡すと AND。'
 
 export const operations: Operation[] = [
   {
