@@ -164,7 +164,7 @@ class SwapTest(unittest.TestCase):
         self.assert_all_new(con, 'first')
 
     def test_next_sync_rebuilds_after_swap_stopped_at_any_statement(self):
-        """入れ替えがどの文で止まっても（成功後に応答を失って再送が失敗する場合を含む）、次の同期で3表とも作り直される。"""
+        """入れ替えがどの文で止まっても（成功後に応答を失って再送が失敗する場合を含む）、次の同期で全表とも作り直される。"""
         statements = sync_d1.swap_statements(self.tables)
         for first_time in (False, True):
             for stop in range(len(statements) + 1):

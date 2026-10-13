@@ -20,6 +20,8 @@ interface TableSpec {
 
 const TABLES = (columnsJson as unknown as { tables: Record<string, TableSpec> }).tables
 
+const selectList = (columns: ColumnSpec[]) => columns.map((c) => `"${c.name}"`).join(', ')
+
 export interface NodeTable {
   documentKind: string
   table: string
@@ -39,7 +41,7 @@ export const NODE_TABLES: ReadonlyMap<string, NodeTable> = new Map(
         table,
         columns: t.columns,
         types: new Map(t.columns.map((c) => [c.name, c.type])),
-        selectList: t.columns.map((c) => `"${c.name}"`).join(', '),
+        selectList: selectList(t.columns),
       },
     ])
 )
@@ -48,7 +50,16 @@ export const DOCUMENT_KINDS = [...NODE_TABLES.keys()] as [string, ...string[]]
 
 export const ORIGIN_TABLE = 'origin'
 export const ORIGIN_COLUMNS = TABLES[ORIGIN_TABLE]!.columns
-export const ORIGIN_SELECT_LIST = ORIGIN_COLUMNS.map((c) => `"${c.name}"`).join(', ')
+export const ORIGIN_SELECT_LIST = selectList(ORIGIN_COLUMNS)
+
+/** 団体マスタ。収録の無い団体も含む全団体 */
+export const JURISDICTION_TABLE = 'jurisdiction_master'
+export const JURISDICTION_COLUMNS = TABLES[JURISDICTION_TABLE]!.columns
+export const JURISDICTION_SELECT_LIST = selectList(JURISDICTION_COLUMNS)
+
+/** 収録範囲。木の表に明細がある団体・年度・資料区分・会計と原典の組 */
+export const COVERAGE_TABLE = 'expenditure_coverage'
+export const COVERAGE_COLUMNS = TABLES[COVERAGE_TABLE]!.columns
 
 export const DOCUMENT_KIND_DESCRIPTION =
   '資料区分。settlement は決算（金額は支出済額）、initial は当初予算（金額は当初予算額）。意味の違う金額を足さない。'

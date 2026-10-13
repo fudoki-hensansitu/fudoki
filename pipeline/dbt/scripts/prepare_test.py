@@ -104,6 +104,12 @@ class PrepareTest(unittest.TestCase):
         with duckdb.connect(str(self.warehouse)) as con:
             self.assertEqual(con.execute('select marker from ingestion.fixture_nodes').fetchone(), ('preserved',))
 
+    def test_jurisdiction_names_must_be_nfkc(self):
+        registry = self.root / 'jurisdictions.json'
+        registry.write_text(json.dumps({'jurisdictions': {'132039': {'name': 'ﾑｻｼﾉ市', 'ocdId': 'x'}}}))
+        with self.assertRaisesRegex(ValueError, 'NFKC.*132039'):
+            prepare.load_jurisdictions(registry)
+
     def test_success_loads_original_and_metadata(self):
         result = self.load()
         self.assertEqual((result['tables'], result['origins'], result['nodes'], result['amounts']), (1, 1, 1, 1))
@@ -111,6 +117,11 @@ class PrepareTest(unittest.TestCase):
         with duckdb.connect(str(self.warehouse)) as con:
             self.assertEqual(con.execute('select title,sha256 from ingestion.origin').fetchone(), ('original', 'a' * 64))
             self.assertEqual(con.execute('select account_name from ingestion.tables').fetchone(), ('一般会計',))
+            # 団体マスタは収録の有無に関わらず全団体を読む
+            registry = json.loads(prepare.JURISDICTIONS.read_text())['jurisdictions']
+            self.assertEqual(result['jurisdictions'], len(registry))
+            self.assertEqual(con.execute("select name, ocd_id from ingestion.jurisdiction where jurisdiction_code = '132039'").fetchone(),
+                             ('武蔵野市', 'ocd-division/country:jp/prefecture:13/city:132039'))
 
 
 if __name__ == '__main__':

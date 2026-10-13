@@ -1,5 +1,5 @@
 ---
-status: ready
+status: done
 ---
 
 # 団体と収録範囲の参照

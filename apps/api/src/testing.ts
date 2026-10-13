@@ -22,21 +22,18 @@ class SqliteStatement implements Statement {
 }
 
 interface TableJson {
+  primary_key: string
+  indexes: string[][]
   columns: { name: string; type: string; nullable?: boolean }[]
 }
 const TABLES = (columnsJson as unknown as { tables: Record<string, TableJson> }).tables
 
-/** columns.json から表を作る。木の表の主キーは node_id、origin は origin_id（index は問い合わせの形の分だけ）。 */
+/** columns.json の主キーと index で表を作る（D1 と同じ形）。 */
 function createTables(sqlite: Database) {
   for (const [table, t] of Object.entries(TABLES)) {
-    const key = table === 'origin' ? 'origin_id' : 'node_id'
     const cols = t.columns.map((c) => `"${c.name}" ${c.type === 'string' ? 'text' : c.type === 'number' ? 'real' : 'integer'}`)
-    sqlite.exec(`CREATE TABLE ${table} (${cols.join(', ')}, PRIMARY KEY (${key}))`)
-    if (table !== 'origin') {
-      sqlite.exec(`CREATE INDEX ${table}_scope ON ${table} (fiscal_year, jurisdiction_code, node_kind)`)
-      sqlite.exec(`CREATE INDEX ${table}_cofog ON ${table} (fiscal_year, cofog_code)`)
-      sqlite.exec(`CREATE INDEX ${table}_parent ON ${table} (parent_node_id)`)
-    }
+    sqlite.exec(`CREATE TABLE ${table} (${cols.join(', ')}, PRIMARY KEY (${t.primary_key}))`)
+    for (const index of t.indexes) sqlite.exec(`CREATE INDEX ${table}_${index.join('_')} ON ${table} (${index.join(', ')})`)
   }
 }
 
@@ -79,4 +76,23 @@ export function insertOrigin(sqlite: Database, row: Record<string, string | numb
   sqlite
     .query(`INSERT INTO origin (${full.map(([k]) => k).join(',')}) VALUES (${full.map(() => '?').join(',')})`)
     .run(...(full.map(([, v]) => v) as never[]))
+}
+
+/** 団体マスタの1行。 */
+export function insertJurisdiction(sqlite: Database, row: { jurisdiction_code: string; name: string; prefecture_name?: string }) {
+  const prefecture_code = row.jurisdiction_code.slice(0, 2)
+  sqlite
+    .query('INSERT INTO jurisdiction_master (jurisdiction_code, name, prefecture_code, prefecture_name, ocd_id) VALUES (?, ?, ?, ?, ?)')
+    .run(row.jurisdiction_code, row.name, prefecture_code, row.prefecture_name ?? '東京都', `ocd-division/country:jp/prefecture:${prefecture_code}/city:${row.jurisdiction_code}`)
+}
+
+/** 収録範囲の1行。coverage_id は行の中身から作る（一意であればよい）。 */
+export function insertCoverage(
+  sqlite: Database,
+  row: { jurisdiction_code: string; fiscal_year: number; document_kind: string; account_name: string; account_kind?: string; origin_id: string }
+) {
+  const full = { account_kind: row.account_name, ...row }
+  sqlite
+    .query('INSERT INTO expenditure_coverage (coverage_id, jurisdiction_code, fiscal_year, document_kind, account_name, account_kind, origin_id) VALUES (?, ?, ?, ?, ?, ?, ?)')
+    .run(JSON.stringify(full), full.jurisdiction_code, full.fiscal_year, full.document_kind, full.account_name, full.account_kind, full.origin_id)
 }

@@ -2,6 +2,7 @@
   "extends": "../../tsconfig.json",
   "include": [
     "src",
+    "ui",
     "cloudflare.config.ts",
     "build.ts",
     "openapi.ts",

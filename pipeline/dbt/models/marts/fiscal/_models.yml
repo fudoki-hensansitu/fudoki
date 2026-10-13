@@ -74,11 +74,11 @@ models:
           to: ref('origin')
           field: origin_id
   - name: source_page
-    description: 項目が印字された原典の物理頁。
+    description: 項目が印字された頁。原典ファイル（origin_id が指す1つの PDF）の1始まりのページ番号で、紙面に印刷されたページ番号ではない。分冊・抜粋のファイルでは、そのファイルの中での番号。
     data_tests:
     - not_null
   - name: amount_source_page
-    description: 採用した実績金額の物理頁。不明ならNULL。繰越内訳を足す場合は、全額の頁が既知のときだけ最初の頁。
+    description: 採用した実績金額が印字された頁（source_page と同じ数え方の、原典ファイルの1始まりのページ番号）。不明ならNULL。繰越内訳を足す場合は、全額の頁が既知のときだけ最初の頁。
   - name: source_x0
     description: 項目の印字の枠の左端。PDFだけ（頁`source_page`の左上原点のpt）。保存済みの取り込み表で値が無ければNULL（団体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
   - name: source_y0
@@ -195,11 +195,11 @@ models:
           to: ref('origin')
           field: origin_id
   - name: source_page
-    description: PDFは項目が印字された原典の物理頁、CSVは原文の物理行の開始。
+    description: PDFは項目が印字された頁で、原典ファイル（origin_id が指す1つの PDF）の1始まりのページ番号。紙面に印刷されたページ番号ではなく、分冊・抜粋のファイルではそのファイルの中での番号。CSVは原典ファイルの1始まりの物理行（見出しの行が1行目）で、末端は印字された行の開始行、CSVに行の無い親（款〜節）は子孫の行のうち最も小さい開始行。
     data_tests:
     - not_null
   - name: amount_source_page
-    description: 採用した当初予算額の物理頁（PDF）または物理行（CSV）。CSVの親の集計額はNULL。不明ならNULL。
+    description: 採用した当初予算額の位置。PDFは source_page と同じ数え方の、原典ファイルの1始まりのページ番号。CSVは1始まりの物理行。CSVの親の集計額はNULL。不明ならNULL。
   - name: source_x0
     description: 項目の印字の枠の左端。PDFだけ（頁`source_page`の左上原点のpt）。CSVは座標を持たずNULL。保存済みの取り込み表で値が無ければNULL（団体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
   - name: source_y0
@@ -280,3 +280,46 @@ models:
     description: 原典の形式（pdf か csv）。
     data_tests:
     - not_null
+- name: expenditure_coverage
+  description: 収録範囲。歳出の木（決算・当初予算）に明細がある団体・年度・資料区分・会計と、その明細が指す原典の組。木の表から作るので、同じ構築の木の検索で返る範囲と一致する。明細があることを示し、会計全体・全事業を収録し終えたことは保証しない。原典の選定結果は使わないので、収録が無い理由（未収録か原典が無いか）は区別しない。
+  columns:
+  - name: coverage_id
+    description: 団体・年度・資料区分・会計名・origin_id から生成した ID。
+    data_tests:
+    - not_null
+    - unique
+  - name: jurisdiction_code
+    description: 団体コード。木の表の jurisdiction_code。
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('jurisdiction_master')
+          field: jurisdiction_code
+  - name: fiscal_year
+    description: 会計年度（西暦）。木の表の fiscal_year。
+    data_tests:
+    - not_null
+  - name: document_kind
+    description: 資料区分。settlement は決算（settlement_expenditure_node）、initial は当初予算（initial_expenditure_node）。
+    data_tests:
+    - not_null
+    - accepted_values:
+        arguments:
+          values: [settlement, initial]
+  - name: account_name
+    description: 原典の会計名。木の表の account_name と同じ値で、明細の検索の条件にそのまま使える。
+    data_tests:
+    - not_null
+  - name: account_kind
+    description: 団体共通の会計の種類。木の表の account_kind（風土記の判断）。
+    data_tests:
+    - not_null
+  - name: origin_id
+    description: この団体・年度・資料区分・会計の明細が指す原典。分冊などで一つの会計に複数の原典があれば、原典ごとに行がある。
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('origin')
+          field: origin_id

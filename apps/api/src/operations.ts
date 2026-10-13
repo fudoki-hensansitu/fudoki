@@ -1,7 +1,12 @@
 import { z } from 'zod'
 import {
+  COVERAGE_COLUMNS,
+  COVERAGE_TABLE,
   DOCUMENT_KINDS,
   DOCUMENT_KIND_DESCRIPTION,
+  JURISDICTION_COLUMNS,
+  JURISDICTION_SELECT_LIST,
+  JURISDICTION_TABLE,
   NODE_TABLES,
   ORIGIN_COLUMNS,
   ORIGIN_SELECT_LIST,
@@ -9,6 +14,7 @@ import {
   toRow,
   nullableIf,
   zodOf,
+  type ColumnSpec,
   type NodeTable,
   type Row,
 } from './columns'
@@ -104,6 +110,8 @@ export interface Operation {
   /** get の REST の query。MCP と違い文字列から数値にする */
   restQuery?: z.ZodObject
   output: z.ZodType
+  /** MCP Apps の View で結果を表にするか（MCP だけ。REST には影響しない） */
+  view?: boolean
   run(ctx: Ctx, input: Record<string, unknown>): Promise<unknown>
 }
 
@@ -214,6 +222,149 @@ async function getNode(ctx: Ctx, input: Record<string, unknown>) {
   }
 }
 
+// --- 団体と収録範囲 ---
+
+const MAX_JURISDICTION_PAGE_SIZE = 100
+const DEFAULT_JURISDICTION_PAGE_SIZE = 20
+const MAX_NAME = 50
+const jurisdictionPageSizeDescription = `1ページの団体の数（1〜${MAX_JURISDICTION_PAGE_SIZE}、既定 ${DEFAULT_JURISDICTION_PAGE_SIZE}）。`
+
+const describeColumn = (columns: ColumnSpec[], name: string) => columns.find((c) => c.name === name)?.description ?? ''
+/** columns.json の列から、型・null の可否・説明の付いた schema を作る */
+const field = (columns: ColumnSpec[], name: string) => {
+  const c = columns.find((c) => c.name === name)!
+  return nullableIf(zodOf(c.type), c).describe(c.description ?? '')
+}
+const pick = (columns: ColumnSpec[], names: string[]) => Object.fromEntries(names.map((n) => [n, field(columns, n)]))
+
+const CoverageOrigin = z
+  .strictObject(pick(ORIGIN_COLUMNS, ['origin_id', 'title', 'url', 'format']))
+  .meta({ id: 'CoverageOrigin', description: '明細の出典の原典。' })
+
+const Coverage = z
+  .strictObject({
+    fiscal_year: z.int().describe(describeColumn(COVERAGE_COLUMNS, 'fiscal_year')),
+    document_kind: z.enum(DOCUMENT_KINDS).describe(DOCUMENT_KIND_DESCRIPTION),
+    accounts: z
+      .array(
+        z.strictObject({
+          account_name: z.string().describe(describeColumn(COVERAGE_COLUMNS, 'account_name')),
+          account_kind: z.string().describe(describeColumn(COVERAGE_COLUMNS, 'account_kind')),
+          origins: z.array(CoverageOrigin).describe('この会計の明細が指す原典すべて。'),
+        })
+      )
+      .describe('明細がある会計。一般会計が先。'),
+  })
+  .meta({ id: 'Coverage', description: '明細がある年度・資料区分と、その会計。' })
+
+const Jurisdiction = z
+  .strictObject({
+    ...pick(JURISDICTION_COLUMNS, ['jurisdiction_code', 'name', 'prefecture_code', 'prefecture_name', 'ocd_id']),
+    coverage: z
+      .array(Coverage)
+      .describe('収録範囲（年度の昇順、同じ年度は当初予算・決算の順）。空なら、この団体の明細は収録していない。明細があることを示し、会計全体・全事業を収録し終えたことは保証しない。'),
+  })
+  .meta({ id: 'Jurisdiction', description: '団体と、その収録範囲。' })
+
+interface CoverageRow {
+  jurisdiction_code: string
+  fiscal_year: number
+  document_kind: string
+  account_name: string
+  account_kind: string
+  origin_id: string
+  title: string
+  url: string
+  format: string
+}
+
+/** 団体コード順に並んだ行を、団体 → 年度・資料区分 → 会計 → 原典の入れ子にする（行の順を保つ）。 */
+function nestCoverage(rows: CoverageRow[]) {
+  const out = new Map<string, z.infer<typeof Coverage>[]>()
+  for (const r of rows) {
+    const list = out.get(r.jurisdiction_code) ?? []
+    out.set(r.jurisdiction_code, list)
+    let cov = list.at(-1)
+    if (!cov || cov.fiscal_year !== r.fiscal_year || cov.document_kind !== r.document_kind) {
+      cov = { fiscal_year: r.fiscal_year, document_kind: r.document_kind, accounts: [] }
+      list.push(cov)
+    }
+    let account = cov.accounts.at(-1)
+    if (!account || account.account_name !== r.account_name) {
+      account = { account_name: r.account_name, account_kind: r.account_kind, origins: [] }
+      cov.accounts.push(account)
+    }
+    account.origins.push({ origin_id: r.origin_id, title: r.title, url: r.url, format: r.format })
+  }
+  return out
+}
+
+async function listJurisdictions(ctx: Ctx, input: Record<string, unknown>) {
+  const { db } = ctx
+  const name = (input.name as string | undefined)?.normalize('NFKC').trim() || undefined
+  const code = input.code as string | undefined
+  const limit = (input.page_size as number | undefined) ?? DEFAULT_JURISDICTION_PAGE_SIZE
+  const conds: string[] = []
+  const params: string[] = []
+  if (name !== undefined) {
+    conds.push('instr("name", ?) > 0')
+    params.push(name)
+  }
+  if (code !== undefined) {
+    // 5桁は検査数字を除いた同じコード。検査数字は先頭5桁で決まるので、先頭5桁の一致で一つに決まる
+    conds.push(code.length === 5 ? 'substr("jurisdiction_code", 1, 5) = ?' : '"jurisdiction_code" = ?')
+    params.push(code)
+  }
+  const where = conds.length > 0 ? conds.join(' AND ') : '1 = 1'
+  const fp = ['jurisdictions', name ?? null, code ?? null]
+  const offset = await decodeToken(input.page_token as string | undefined, fp)
+  const pageSql = `SELECT "jurisdiction_code" FROM ${JURISDICTION_TABLE} WHERE ${where} ORDER BY "jurisdiction_code" LIMIT ? OFFSET ?`
+
+  // 団体と収録範囲を1つの batch で読み、同期の入れ替えをまたいで食い違わないようにする。集計は marts で済ませてあり、ここでは並べ替えて入れ子にするだけ。
+  const [page, coverage] = await db.batch([
+    db
+      .prepare(`SELECT ${JURISDICTION_SELECT_LIST} FROM ${JURISDICTION_TABLE} WHERE ${where} ORDER BY "jurisdiction_code" LIMIT ? OFFSET ?`)
+      .bind(...params, limit + 1, offset),
+    db
+      .prepare(
+        `SELECT c."jurisdiction_code", c."fiscal_year", c."document_kind", c."account_name", c."account_kind", o."origin_id", o."title", o."url", o."format" ` +
+          `FROM ${COVERAGE_TABLE} c JOIN ${ORIGIN_TABLE} o ON o."origin_id" = c."origin_id" ` +
+          `WHERE c."jurisdiction_code" IN (${pageSql}) ` +
+          `ORDER BY c."jurisdiction_code", c."fiscal_year", c."document_kind", c."account_kind" <> '一般会計', c."account_name", o."title", o."origin_id"`
+      )
+      .bind(...params, limit, offset),
+  ])
+  const more = page!.results.length > limit
+  const nested = nestCoverage(coverage!.results as unknown as CoverageRow[])
+  return {
+    jurisdictions: page!.results.slice(0, limit).map((r) => ({
+      ...toRow(JURISDICTION_COLUMNS, r),
+      coverage: nested.get(String(r.jurisdiction_code)) ?? [],
+    })),
+    next_page_token: more ? await nextToken(offset + limit, fp) : null,
+  }
+}
+
+const listJurisdictionsInput = {
+  name: z
+    .string()
+    .max(MAX_NAME)
+    .regex(/^[^\u0000-\u001f\u007f]*$/, '制御文字は使えません')
+    .optional()
+    .describe('団体名の部分一致（例: "武蔵野市"、"府中"）。全角・半角の違いは NFKC で揃えて比べる。同名の団体はすべて返るので、prefecture_name と jurisdiction_code で区別する。'),
+  code: z
+    .string()
+    .regex(/^[0-9]{5,6}$/, 'code は5桁か6桁の数字です')
+    .optional()
+    .describe('全国地方公共団体コード。6桁（末尾は検査数字）でも、検査数字を除いた5桁でもよい。'),
+  page_token: z
+    .string()
+    .max(512)
+    .regex(/^[A-Za-z0-9_-]*$/, 'page_token の形式が不正です')
+    .optional()
+    .describe('前回の応答の next_page_token。name と code は前回と同じにする。'),
+}
+
 async function describeColumns() {
   // 資料区分ごとの説明を列名でまとめる（列の集合は表をまたいで同じ）
   const columns = new Map<string, { name: string; type: string; description: Record<string, string> }>()
@@ -258,7 +409,35 @@ const searchDescription =
   '団体の比較は node_kind を "目" などに絞って行い、詳細は get_expenditure_node で木を辿る。' +
   '資料区分や軸の違う金額を足さない。足すときは describe_expenditure_columns の sum_rules に従う。where は列をまたぐ OR・NOT が無いので、2回に分けて問い合わせる。'
 
+const listJurisdictionsDescription =
+  '団体（自治体）の名称・6桁の団体コード・都道府県と、その団体の収録範囲（明細を検索できる年度・資料区分・会計と、明細の出典の原典の標題・URL）を返す。' +
+  '歳出を検索する前に、団体コードと、比べたい年度・資料区分が収録されているかをここで確かめる。' +
+  '名称（部分一致）か団体コード（5桁・6桁）で絞り、絞らなければ全団体を団体コード順に返す。収録の無い団体は coverage が空。' +
+  '返った jurisdiction_code（6桁）・fiscal_year・document_kind・account_name は search_expenditure_nodes の条件にそのまま使える。検索は5桁のコードを受け付けず0件になるので、ここで6桁を引いてから渡す。名前とコードの両方を渡すと AND。'
+
 export const operations: Operation[] = [
+  {
+    name: 'list_jurisdictions',
+    summary: '団体と収録範囲',
+    method: 'get',
+    path: '/v1/jurisdictions',
+    pathParams: [],
+    description: listJurisdictionsDescription,
+    input: z.strictObject({
+      ...listJurisdictionsInput,
+      page_size: z.int().min(1).max(MAX_JURISDICTION_PAGE_SIZE).default(DEFAULT_JURISDICTION_PAGE_SIZE).describe(jurisdictionPageSizeDescription),
+    }),
+    restQuery: z.strictObject({
+      ...listJurisdictionsInput,
+      page_size: z.coerce.number().int().min(1).max(MAX_JURISDICTION_PAGE_SIZE).default(DEFAULT_JURISDICTION_PAGE_SIZE).describe(jurisdictionPageSizeDescription),
+    }),
+    output: z.strictObject({
+      jurisdictions: z.array(Jurisdiction).describe('団体コードの昇順。'),
+      next_page_token: z.string().nullable().describe(NEXT_PAGE_TOKEN_HELP),
+    }),
+    view: true,
+    run: listJurisdictions,
+  },
   {
     name: 'search_expenditure_nodes',
     summary: '歳出の木のノードの検索',
@@ -273,6 +452,7 @@ export const operations: Operation[] = [
       next_page_token: z.string().nullable().describe(NEXT_PAGE_TOKEN_HELP),
       origins: z.array(Origin).describe(ORIGINS_HELP),
     }),
+    view: true,
     run: searchNodes,
   },
   {
@@ -295,6 +475,7 @@ export const operations: Operation[] = [
       next_page_token: z.string().nullable().describe(NEXT_PAGE_TOKEN_HELP),
       origins: z.array(Origin).describe(ORIGINS_HELP),
     }),
+    view: true,
     run: getNode,
   },
   {

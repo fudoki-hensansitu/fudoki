@@ -5,6 +5,7 @@ import { HTTPException } from 'hono/http-exception'
 import type { Env } from './db'
 import { ApiError, errorBody, invalid } from './errors'
 import { operations, type Ctx, type Operation } from './operations'
+import { VIEW_HTML, VIEW_URI } from './view.generated'
 
 type AppEnv = { Bindings: Env; Variables: { ctx: Ctx; json: unknown } }
 
@@ -113,11 +114,23 @@ function registerRest(app: OpenAPIHono<AppEnv>, op: Operation) {
 // module scope なら起動時の処理で、要求ごとの cpuMs に数えられない。
 preloadSchemas()
 
+/** MCP Apps（io.modelcontextprotocol/ui）の View の HTML の MIME type */
+export const VIEW_MIME_TYPE = 'text/html;profile=mcp-app'
+
 function mcpServer(ctx: Ctx): McpServer {
   const server = new McpServer(
     { name: 'fudoki-api', version: '1.0.0' },
-    // stateless で tool の一覧は変わらず、通知を送る経路も無いので、listChanged は名乗らない
-    { capabilities: { tools: { listChanged: false } } }
+    // stateless で tool・resource の一覧は変わらず、通知を送る経路も無いので、listChanged は名乗らない
+    { capabilities: { tools: { listChanged: false }, resources: { listChanged: false } } }
+  )
+  // MCP Apps に対応した host は、tool の _meta.ui.resourceUri の View に結果を描く。非対応の client は _meta を無視し、structuredContent と text だけを使う。
+  // stateless なので client の対応を見て出し分けられない（2025 年代の client は要求ごとに initialize を送らない）。そのため常に付ける
+  server.registerResource(
+    'view',
+    VIEW_URI,
+    { title: '風土記の表示', description: '団体と収録範囲・歳出のノードを表にする View（MCP Apps）。', mimeType: VIEW_MIME_TYPE },
+    // URI に中身のハッシュを入れてあり、同じ URI の中身は変わらない
+    async (uri) => ({ contents: [{ uri: uri.href, mimeType: VIEW_MIME_TYPE, text: VIEW_HTML, _meta: { ui: { prefersBorder: true } } }] })
   )
   for (const op of operations) {
     server.registerTool(
@@ -129,6 +142,8 @@ function mcpServer(ctx: Ctx): McpServer {
         outputSchema: op.output,
         // すべての tool は D1 の読み取りだけで、状態を変えず、外部にも出ない
         annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+        // 旧キー ui/resourceUri は ext-apps の registerAppTool と同じく併記する（仕様では GA 前に外す deprecated）
+        ...(op.view ? { _meta: { ui: { resourceUri: VIEW_URI }, 'ui/resourceUri': VIEW_URI } } : {}),
       },
       async (args: Record<string, unknown>) => {
         try {
@@ -204,6 +219,7 @@ export function createApp() {
     return c.json({
       name: '風土記 API',
       rest: `${origin}/v1/expenditure/nodes:search`,
+      jurisdictions: `${origin}/v1/jurisdictions`,
       openapi: `${origin}/openapi.json`,
       health: `${origin}/health`,
       mcp: `${origin}/mcp`,

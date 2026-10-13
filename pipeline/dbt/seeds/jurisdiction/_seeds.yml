@@ -1,0 +1,17 @@
+version: 2
+
+seeds:
+  - name: prefecture_master
+    description: |
+      都道府県コード（JIS X 0401。全国地方公共団体コードの先頭2桁）と都道府県の名称。
+      団体マスタ（packages/jurisdictions/jurisdictions.json）は都道府県の名称を持たないので、
+      団体コードの先頭2桁から引く。
+    config:
+      column_types:
+        prefecture_code: varchar
+        prefecture_name: varchar
+    columns:
+      - name: prefecture_code
+        data_tests: [unique, not_null]
+      - name: prefecture_name
+        data_tests: [unique, not_null]

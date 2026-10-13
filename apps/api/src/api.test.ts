@@ -118,6 +118,7 @@ describe('GET /', () => {
     const body = await (await get('http://x.test/')).json()
     expect(body.mcp).toBe('http://x.test/mcp')
     expect(body.rest).toBe('http://x.test/v1/expenditure/nodes:search')
+    expect(body.jurisdictions).toBe('http://x.test/v1/jurisdictions')
   })
 })
 
@@ -318,6 +319,7 @@ describe('columns と OpenAPI', () => {
       '/v1/expenditure/columns',
       '/v1/expenditure/nodes/{document_kind}/{node_id}',
       '/v1/expenditure/nodes:search',
+      '/v1/jurisdictions',
     ])
     const schema = doc.paths['/v1/expenditure/nodes:search'].post.requestBody.content['application/json'].schema
     expect(schema.additionalProperties).toBe(false)
@@ -349,6 +351,7 @@ describe('MCP', () => {
     expect(list.body.result.tools.map((t: { name: string }) => t.name).sort()).toEqual([
       'describe_expenditure_columns',
       'get_expenditure_node',
+      'list_jurisdictions',
       'search_expenditure_nodes',
     ])
     const res = await call('search_expenditure_nodes', { ...base, where: { node_kind: { eq: ['目'] } }, page_size: 1 })
@@ -693,6 +696,7 @@ describe('MCP 2026-07-28', () => {
     expect(list.result.tools.map((t: { name: string }) => t.name).sort()).toEqual([
       'describe_expenditure_columns',
       'get_expenditure_node',
+      'list_jurisdictions',
       'search_expenditure_nodes',
     ])
     const res = await modern('tools/call', { name: 'search_expenditure_nodes', arguments: valid }, { 'Mcp-Name': 'search_expenditure_nodes' })
