@@ -6,6 +6,7 @@
     "build": "bun run build.ts",
     "deploy": "bun run build.ts --deploy",
     "dev": "mise exec -- cf dev",
+    "openapi": "bun openapi.ts",
     "test": "bun test",
     "typecheck": "tsc --noEmit"
   },

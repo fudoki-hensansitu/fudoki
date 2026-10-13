@@ -58,7 +58,8 @@ for (const root of ['apps', 'packages'])
         )
     }
   }
-for (const name of ['docs', 'web/deploy']) {
+// 提供を止めている app だけを見る。docs は文書を assets で配る公開 app なので外す
+for (const name of ['web/deploy']) {
   const config = await readFile(
     join(REPO, 'apps', name, 'cloudflare.config.ts'),
     'utf8'

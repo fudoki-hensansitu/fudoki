@@ -4,6 +4,7 @@
     "src",
     "cloudflare.config.ts",
     "build.ts",
+    "openapi.ts",
     "vite.config.ts"
   ],
   "exclude": []

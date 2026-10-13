@@ -1,11 +1,6 @@
+// 文書は Blume が書き出した静的ファイル（assets）。assets に無いパスだけがここに来る。
 export default {
-  fetch() {
-    return new Response('Temporarily unavailable\n', {
-      status: 500,
-      headers: {
-        'Content-Type': 'text/plain; charset=utf-8',
-        'Cache-Control': 'no-store',
-      },
-    })
+  fetch(request: Request, env: { ASSETS: { fetch(request: Request): Promise<Response> } }) {
+    return env.ASSETS.fetch(request)
   },
 }
