@@ -113,7 +113,7 @@ fudoki-inputs/
 
 原典のkeyはsource_selectionの保存記録を使い、Bで作り直さない。表は同じ役割の固定keyへ上書きする。方向が違えば同じ表IDでも衝突しない。表の保存参照にはSHA・サイズ・行数を記録する。列名・型はParquetから取得する。使用した原典のSHAは `conversions.inputs` で管理し、表ごとに複製しない。OCR・bbox・描画キャッシュは `.cache/` または `.agent/` に置き、Gitへ追加しない。
 
-現在の保存実装はParquetごとの単一ファイルアップロードを使い、PDFの一つの表IDでは2ファイルを保存する。保存直前にも木の検査と印字された数字の網羅の検査を行う（網羅は text PDF のみ）。移行後の横持ちの表の削除は自動では行わず、検査済みの2表を採用してから別に実行する。300MBを超えるParquetは保存前に停止する。multipartのR2保存は未実装である。scan PDFのOCR観測は、表より先に同じ領域の `ocr/<id>.json.gz` へ保存する（[ADR 0019](../../adr/0019-freeze-scan-ocr-observations.md)）。網羅検査の語の対象範囲（`<表ID>.coverage.json`）はローカルの候補に残し、R2へは保存しない。
+現在の保存実装はParquetごとの単一ファイルアップロードを使い、PDFの一つの表IDでは2ファイルを保存する。保存直前にも木の検査・単位の確かめ（款の和と印字の歳出合計、一般会計の桁。[ADR 0028](../../adr/0028-unit-check-in-the-save-gate.md)）・印字された数字の網羅の検査を行う（網羅は text PDF のみ）。移行後の横持ちの表の削除は自動では行わず、検査済みの2表を採用してから別に実行する。300MBを超えるParquetは保存前に停止する。multipartのR2保存は未実装である。scan PDFのOCR観測は、表より先に同じ領域の `ocr/<id>.json.gz` へ保存する（[ADR 0019](../../adr/0019-freeze-scan-ocr-observations.md)）。網羅検査の語の対象範囲（`<表ID>.coverage.json`）はローカルの候補に残し、R2へは保存しない。
 
 ### fingerprintで入力条件の変更を検知する
 
@@ -123,7 +123,7 @@ fingerprintは、対象・方向、使用した原典SHAとscope、変換設定�
 
 fingerprintは変更検知の仕組みである。固定keyへの上書きと保存参照の置換により、同じ入力の再実行で表が重複しない。OCRの出力が常に同じバイト列になることは保証しない。
 
-fingerprintは「変わったかもしれない」という合図であり、表の中身が変わった証拠ではない。古いときは `ingestion:refresh` が変換をローカルでやり直し、保存済みの表と中身（列・型・行とその順序・値と、変換が管理JSONへ書くメタデータ）を比べる。全表が同じなら管理JSONの `input_fingerprint` だけを書き換え、保存済みのParquetとその `sha256`・サイズ、R2は変えない。違う表が1つでもあれば管理JSONは書き換えず、増えた・消えた・変わった行の数と例を出す。保存前の関門は `storage.prepare_save` を共有して当て直す。中身が違う表は、これまでどおり `ingestion:convert --remote` で全表を保存し直す。表を作らず合否だけを決める検査のコード（`*_checks.py`）は指紋の対象外とし、書き込みの関数・呼び出しがあれば `manifest.dependencies` が停止する。検査を厳しくしたときは保存済みの表が古く見えないので、`ingestion:verify --remote` を保存済みの全表に当てて確かめる。共有のコードを直す PR は、この比べ直しで指紋を更新した管理JSONを含める。判断は [ADR 0027](../../adr/0027-refresh-fingerprints-by-table-content.md)。
+fingerprintは「変わったかもしれない」という合図であり、表の中身が変わった証拠ではない。古いときは `ingestion:refresh` が変換をローカルでやり直し、保存済みの表と中身（列・型・行とその順序・値と、変換が管理JSONへ書くメタデータ）を比べる。全表が同じなら管理JSONの `input_fingerprint` だけを書き換え、保存済みのParquetとその `sha256`・サイズ、R2は変えない。違う表が1つでもあれば管理JSONは書き換えず、増えた・消えた・変わった行の数と例を出す。保存前の関門は `storage.prepare_save` を共有して当て直す。中身が違う表は、これまでどおり `ingestion:convert --remote` で全表を保存し直す。表を作らず合否だけを決める検査のコード（`tree_checks.py`・`coverage_checks.py`・`fiscal/unit_checks.py`）は `*_checks.py` と名付けて指紋の対象外とし、書き込みの関数・呼び出しがあれば `manifest.dependencies` が停止する。検査の戻り値で段のパターンを選ぶ汎用の組み立てだけは、`manifest.RESULT_SHAPES_TABLE` で `tree_checks.py` を指紋に残す。検査を厳しくしたときは保存済みの表が古く見えないので、`ingestion:verify --remote` を保存済みの全表に当てて確かめる。共有のコードを直す PR は、この比べ直しで指紋を更新した管理JSONを含める。判断は [ADR 0027](../../adr/0027-refresh-fingerprints-by-table-content.md)。
 
 ### 全表を保存してから管理情報を更新する
 

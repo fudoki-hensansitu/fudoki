@@ -6,7 +6,7 @@ fingerprintは「表が変わったかもしれない」という合図として
 
 共有のコードを直す PR は、`ingestion:refresh` を回して指紋を更新した管理JSONを含める。PR の差分が「どの表の中身が変わったか」を示し、回帰の検査を兼ねる。
 
-あわせて、表の中身を作らず合否だけを決める検査のコード（木の検査 `check_tree`・印字された数字の網羅の検査 `check_digit_coverage` など）を、表を作るコード（`write_tables` など）と別のモジュールに分け、指紋の対象から外す。外すモジュールは `*_checks.py` と名付ける。名前の規則だけでは「検査だけ」を保証できないので、`manifest.dependencies` が `*_checks.py` を見つけたときに、表を書く関数・呼び出し（`write_*`・`write_parquet`・書き込みの `open`・`COPY … (FORMAT PARQUET)` など）がないことを検査し、あれば停止する。検査の関数の移動は、`node_tables.py` を別の作業が直している間は行わず、その merge 後に別の PR で行う（その PR で、`refresh` により全表が「同じ」になることを確かめる）。
+あわせて、表の中身を作らず合否だけを決める検査のコード（木の検査 `check_tree`・印字された数字の網羅の検査 `check_digit_coverage` など）を、表を作るコード（`write_tables` など）と別のモジュールに分け、指紋の対象から外す。外すモジュールは `*_checks.py` と名付ける。名前の規則だけでは「検査だけ」を保証できないので、`manifest.dependencies` が `*_checks.py` を見つけたときに、表を書く関数・呼び出し（`write_*`・`write_parquet`・書き込みの `open`・`COPY … (FORMAT PARQUET)` など）がないことを検査し、あれば停止する。検査の関数の移動は、`node_tables.py` を別の作業が直している間は行わず、その merge 後に別の PR で行う（その PR で、`refresh` により全表が「同じ」になることを確かめる）。移動は済んだ: `check_tree` は `ingestion/lib/tree_checks.py`、`check_digit_coverage` と専用の補助は `ingestion/lib/coverage_checks.py` にある。
 
 ## 理由
 
