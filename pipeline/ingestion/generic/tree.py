@@ -17,6 +17,7 @@
 from __future__ import annotations
 
 from collections import Counter, defaultdict
+from bisect import bisect_right
 from dataclasses import dataclass, field
 import hashlib
 import re
@@ -231,7 +232,7 @@ def is_account_code(name: str) -> bool:
             and sum(c.isdigit() for c in value) >= 4)
 
 
-def note_breakdown(items: list['Item']) -> None:
+def note_breakdown(items: list['Item'], subject_starts: tuple[float, ...] = ()) -> None:
     """Lines printed under a note that add up to its amount are its parts, not items of the breakdown.
 
     `繰越事業費不用額 308,157,706 円` over `役務費 3,897,706 円` and `負担金、補助及び交付金 304,260,000 円`:
@@ -248,14 +249,20 @@ def note_breakdown(items: list['Item']) -> None:
         if not total or total < 0 or kind is None:
             continue
         taken, running = [], 0
+        subject = bisect_right(subject_starts, note.anchor)
+        previous = note
         for follower in items[index + 1:]:
             if follower.role != 'node' or follower.code is not None or len(follower.amounts) != 1 \
                     or follower.amounts[0][0] != header or follower.kinds or not has_text(follower.name):
+                break
+            if (bisect_right(subject_starts, follower.anchor) != subject or follower.page != previous.page
+                    or follower.y0 - previous.y1 > 1.8 * max(g.y1 - g.y0 for g in follower.glyphs)):
                 break
             value = number(normalize(text(follower.amounts[0][1])))
             if value is None or value < 0 or running + value > total:
                 break
             taken.append(follower)
+            previous = follower
             running += value
             if running == total:
                 break
@@ -1265,8 +1272,6 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                       and (kind_of(PAREN_TAIL.sub('', item.name)) is not None or is_account_code(item.name))):
                     item.role = 'annotation'  # An amount note or a transfer's account code, no item of the breakdown.
             found[id(group)] = group_items
-            if not group.subject:
-                note_breakdown(group_items)
         subject = next((g for g in ordered if g.subject), None)
         if subject is not None and untitled(subject):
             # A table without a 款 column under a title naming its 款: the title is the 款 item.
@@ -1278,6 +1283,13 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 elif kind:
                     unowned.append({'kind': 'unreadable amount', 'page': line[0].page, 'text': normalize(text(line))})
                 found[id(subject)].insert(0, title)
+        # Use the same opening positions as the subject events below. A note's parts cannot cross
+        # into another subject merely because that subject's expenditure happens to add up to the note.
+        subject_starts = tuple(sorted({subject_row(i, logical)[0] for g in ordered if g.subject
+                                       for i in found[id(g)] if i.role == 'node'}))
+        for group in ordered:
+            if not group.subject:
+                note_breakdown(found[id(group)], subject_starts)
         # A codeless line whose row holds amounts in an amount band is an item
         # (a 節 column printed without numbers), not a note.
         for band in logical.bands:
@@ -1320,6 +1332,9 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             tail = found[id(group)][-1] if group.subject and found[id(group)] else None
             if tail is None or tail.role != 'node' or tail.code is None or not tail.name:
                 continue
+            tail_band = group.bands[tail.level or 0]
+            if abs(_cell(tail_band, tail.anchor)[1] - tail_band.body_bottom) > .5:
+                continue
             for other in next_ordered:
                 if not other.subject or not next_found[id(other)]:
                     continue
@@ -1329,6 +1344,9 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                             or head.role != 'node' or not head.name or TOTAL.search(head.name)
                             or not 0 < head.page - tail.page <= 2
                             or [b.header for b in other.bands] != [b.header for b in group.bands]):
+                        break
+                    head_band = other.bands[head.level or 0]
+                    if previous_head is None and abs(_cell(head_band, head.anchor)[0] - head_band.body_top) > .5:
                         break
                     if previous_head is not None and (head.page != previous_head.page
                             or head.level != previous_head.level

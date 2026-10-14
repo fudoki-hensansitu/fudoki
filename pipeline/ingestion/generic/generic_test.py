@@ -908,6 +908,34 @@ class BreakdownRulesTest(unittest.TestCase):
         self.assertTrue(BRACKET_CODE.fullmatch('【010111】'))
         self.assertIsNone(BRACKET_CODE.fullmatch('【人事課】'))
 
+    def test_note_parts_cannot_cross_a_subject_boundary_or_a_gap(self):
+        from ingestion.generic.tree import note_breakdown
+        group = Group([self.band([])], '備考', False)
+        def item(name, value, y, role='node'):
+            i = Item(group, 1, [[glyph(name, 300, y, 60)]], None, name, 300, role=role)
+            i.amounts.append(('備考', [glyph(value, 520, y, 40)]))
+            return i
+        for boundary, gap in ((110, 0), (200, 40)):
+            note = item('繰越事業費不用額', '100', 100, 'annotation')
+            parts = [item('役務費', '40', 112 + gap), item('負担金', '60', 124 + gap)]
+            note_breakdown([note, *parts], (70, boundary))
+            self.assertEqual([p.role for p in parts], ['node', 'node'])
+
+    def test_note_breakdown_keeps_expenditure_under_the_next_subject(self):
+        from ingestion.generic.layout import Logical
+        from ingestion.generic.tree import build
+        subject = Band(0, 200, 1, ('目',), [70, 115, 170], 70, 170)
+        subject.kind = 'label'
+        subject.words = [glyph('1第一費', 5, 80), glyph('2第二費', 5, 121)]
+        remark = self.band([glyph('繰越事業費不用額', 300, 105, 100), glyph('100', 520, 105, 40),
+                            glyph('役務費', 300, 117, 60), glyph('40', 520, 117, 40),
+                            glyph('負担金', 300, 129, 60), glyph('60', 520, 129, 40)], 250, 590)
+        remark.kind = 'label'
+        built = build([Logical([1], [subject, remark], '円', [])])
+        second = next(n for n in built.nodes if n['name_text'] == '第二費')
+        self.assertEqual({n['name_text'] for n in built.nodes if n['parent_node_key'] == second['node_key']},
+                         {'役務費', '負担金'})
+
 
 class PatternNamesTest(unittest.TestCase):
     def test_equal_subject_balances_prefer_complete_names_over_more_breakdown_comparisons(self):
@@ -955,7 +983,8 @@ class SubjectContinuationTest(unittest.TestCase):
             with self.subTest(options=options):
                 self.assertEqual(len(self.build_crossing_rule(**options).nodes), 2)
 
-    def build_pages(self, continuation='センター費', amount=None, page=2, header='目', following=None):
+    def build_pages(self, continuation='センター費', amount=None, page=2, header='目', following=None,
+                    tail_row_end=200, head_row_start=70):
         from ingestion.generic.layout import Logical
         from ingestion.generic.tree import build
 
@@ -968,10 +997,18 @@ class SubjectContinuationTest(unittest.TestCase):
             return Logical([number], [label, value], '円', [])
 
         next_page = logical(page, continuation, 80, amount, header)
+        next_page.bands[0].rows = sorted({70, head_row_start, 200})
         if following:
             next_page.bands[0].rows = [70, 90, 200]
             next_page.bands[0].words.append(Glyph(following, 5, 92, 110, 101, page, 0))
-        return build([logical(1, '8市立社会福祉', 180, '1,000', '目'), next_page])
+        previous_page = logical(1, '8市立社会福祉', 180, '1,000', '目')
+        previous_page.bands[0].rows = sorted({70, tail_row_end, 200})
+        return build([previous_page, next_page])
+
+    def test_names_in_rows_away_from_the_table_edges_are_not_joined(self):
+        for options in ({'tail_row_end': 195}, {'head_row_start': 75}):
+            with self.subTest(options=options):
+                self.assertEqual(len(self.build_pages(**options).nodes), 2)
 
     def test_codeless_amountless_subject_name_at_next_page_start_completes_the_previous_name(self):
         built = self.build_pages()
