@@ -1152,7 +1152,7 @@ def repeats(previous: Item, item: Item, ocr: bool = False) -> bool:
 
     Printed text repeats the code (and the name). For OCR (`scan.near_code`), a line of codes only (`10 2 3`
     at the top of a page) repeats the open heading when its code is near, and a line with a name of three
-    characters or more repeats it when the names agree to one character, whatever its code reads (132055)."""
+    characters or more repeats it when its code is near and its name agrees to one character."""
     if previous.code == item.code and (not item.name or same_heading(previous.name, item.name)):
         return True
     if not ocr:

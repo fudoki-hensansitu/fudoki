@@ -196,3 +196,12 @@ class RepeatedHeadingTest(unittest.TestCase):
         open_moku = Item(group, 23, [], '3', '小学校特別支援教育費', 0)
         self.assertTrue(repeats(open_moku, Item(group, 25, [], '13', '小学校特別支援教育費', 0), ocr=True))
         self.assertFalse(repeats(open_moku, Item(group, 25, [], '4', '小学校指導費', 0), ocr=True))
+
+    def test_similar_subject_names_with_distinct_codes_keep_separate_amount_owners(self):
+        from ingestion.generic.tree import Group, Item, repeats
+        group = Group([], '科目', True)
+        for first, second in [('1', '2'), ('6', '7')]:
+            names = ('常備消防費', '非常備消防費') if first == '1' else ('社会教育費', '社会体育費')
+            previous = Item(group, 1, [], first, names[0], 0)
+            item = Item(group, 2, [], second, names[1], 0)
+            self.assertFalse(repeats(previous, item, ocr=True))

@@ -502,13 +502,14 @@ def misread_repeat(previous_code: str | None, previous_name: str, code: str | No
     """A subject line OCR misread that still repeats the open heading of its level on a continuation page.
 
     Codes only (`10 2 3` at the top of a page, or with a one-character scrap beside them, `10 -`, 132101):
-    a near code (`near_code`). With a name of three characters or more: the names agree to one character,
-    whatever the code reads (`13 小学校特別支援教育費` for `3`, 132055)."""
+    a near code (`near_code`). With a name of three characters or more, both the code and name must agree
+    within those OCR errors (`13 小学校特別支援教育費` for `3`). Similar names with distinct codes are
+    separate subjects, such as 常備消防費 and 非常備消防費."""
     from ingestion.generic.layout import normalize
     from ingestion.generic.tree import same_heading
     if len(normalize(name or '')) < 2:
         return near_code(previous_code, code)
-    return len(normalize(name)) >= 3 and same_heading(previous_name, name)
+    return near_code(previous_code, code) and len(normalize(name)) >= 3 and same_heading(previous_name, name)
 
 
 def dense_limit(values: list[float]) -> float:
