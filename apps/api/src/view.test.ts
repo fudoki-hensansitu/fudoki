@@ -1,11 +1,13 @@
 import { beforeEach, describe, expect, test } from 'bun:test'
 import { createApp } from './app'
 import type { Db } from './db'
-import { testDb } from './testing'
+import type { Database } from 'bun:sqlite'
+import { insertJurisdiction, insertNode, testDb } from './testing'
 import { VIEW_HTML, VIEW_URI } from './view.generated'
 import { OUTPUT, render } from '../ui/build'
 
 let db: Db
+let sqlite: Database
 const app = createApp()
 
 const rpc = async (method: string, params: unknown = {}) => {
@@ -24,7 +26,7 @@ const rpc = async (method: string, params: unknown = {}) => {
 }
 
 beforeEach(() => {
-  ;({ db } = testDb())
+  ;({ db, sqlite } = testDb())
 })
 
 describe('MCP Apps の View', () => {
@@ -33,6 +35,14 @@ describe('MCP Apps の View', () => {
     const withView = tools.filter((t) => t._meta).map((t) => t.name).sort()
     expect(withView).toEqual(['get_expenditure_node', 'list_jurisdictions', 'search_expenditure_nodes'])
     for (const t of tools.filter((t) => t._meta)) expect(t._meta).toEqual({ ui: { resourceUri: VIEW_URI }, 'ui/resourceUri': VIEW_URI })
+  })
+
+  test('View を持つ tool は、結果の団体コードに対応する団体名を _meta にだけ載せる', async () => {
+    insertJurisdiction(sqlite, { jurisdiction_code: '132039', name: '武蔵野市' })
+    insertNode(sqlite, { document_kind: 'settlement', node_id: 'n1', name: '総務費', node_kind: '款', amount_yen: 100 })
+    const res = (await rpc('tools/call', { name: 'search_expenditure_nodes', arguments: { document_kind: 'settlement', fiscal_year: { min: 2024, max: 2024 } } })).result
+    expect(res._meta.jurisdictionNames).toEqual({ '132039': '武蔵野市' })
+    expect(JSON.stringify(res.structuredContent)).not.toContain('武蔵野市')
   })
 
   test('resources/read で View の HTML を MCP Apps の MIME type で返す', async () => {

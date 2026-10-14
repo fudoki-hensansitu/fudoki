@@ -8,6 +8,7 @@ import { ApiError, errorBody, invalid } from './errors'
 import { operations, type Ctx, type Operation } from './operations'
 import { VIEW_HTML, VIEW_URI } from './view.generated'
 import { originPdf } from './origin-pdf'
+import { JURISDICTION_TABLE } from './columns'
 
 type AppEnv = { Bindings: Env; Variables: { ctx: Ctx; json: unknown } }
 
@@ -121,6 +122,21 @@ preloadSchemas()
 /** MCP Apps（io.modelcontextprotocol/ui）の View の HTML の MIME type */
 export const VIEW_MIME_TYPE = 'text/html;profile=mcp-app'
 
+/** View が団体コードの代わりに団体名を出すための対応。structuredContent の契約は変えず、MCP の _meta にだけ載せる */
+async function jurisdictionNames(ctx: Ctx, out: unknown): Promise<Record<string, string>> {
+  const o = out as { nodes?: { jurisdiction_code: string }[]; node?: { jurisdiction_code: string } }
+  const codes = [...new Set([...(o.nodes ?? []), ...(o.node ? [o.node] : [])].map((n) => n.jurisdiction_code))]
+  if (!codes.length) return {}
+  // D1 は1文の bind を100個までに制限するので、100件ずつに分けて1つの batch で読む
+  const chunks = Array.from({ length: Math.ceil(codes.length / 100) }, (_, i) => codes.slice(i * 100, i * 100 + 100))
+  const pages = await ctx.db.batch<{ jurisdiction_code: string; name: string }>(
+    chunks.map((c) =>
+      ctx.db.prepare(`SELECT "jurisdiction_code", "name" FROM ${JURISDICTION_TABLE} WHERE "jurisdiction_code" IN (${c.map(() => '?').join(', ')})`).bind(...c)
+    )
+  )
+  return Object.fromEntries(pages.flatMap((p) => p.results).map((r) => [r.jurisdiction_code, r.name]))
+}
+
 function mcpServer(ctx: Ctx, apiOrigin: string): McpServer {
   const server = new McpServer(
     {
@@ -158,7 +174,8 @@ function mcpServer(ctx: Ctx, apiOrigin: string): McpServer {
         try {
           const out = await op.run(ctx, args)
           // structuredContent が正本。text は structuredContent を読めない client のための同じ内容の写し（MCP の SHOULD）
-          return { content: [{ type: 'text' as const, text: JSON.stringify(out) }], structuredContent: out as Record<string, unknown>, _meta: { apiOrigin } }
+          const meta = op.view ? { apiOrigin, jurisdictionNames: await jurisdictionNames(ctx, out) } : { apiOrigin }
+          return { content: [{ type: 'text' as const, text: JSON.stringify(out) }], structuredContent: out as Record<string, unknown>, _meta: meta }
         } catch (e) {
           // 想定外の例外の詳細（SQL のエラーなど）は返さず、ログにだけ出す
           if (!(e instanceof ApiError)) console.error(e)

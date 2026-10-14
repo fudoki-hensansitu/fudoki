@@ -47,15 +47,27 @@ const policy = `default-src 'none'; script-src 'unsafe-inline'; style-src 'unsaf
 const bridge = new AppBridge(
   null,
   { name: '風土記 試験host', version: '1' },
-  { openLinks: {}, serverTools: {}, logging: {} },
+  { openLinks: {}, serverTools: {}, logging: {}, updateModelContext: { text: {} } },
+  { hostContext: { displayMode: 'inline', availableDisplayModes: ['inline', 'fullscreen'] } },
 )
+const contexts: string[] = []
+let displayMode = 'inline'
+bridge.onupdatemodelcontext = async ({ content }) => {
+  contexts.push(content?.map((c) => ('text' in c ? c.text : '')).join('') ?? '')
+  return {}
+}
+bridge.onrequestdisplaymode = async ({ mode }) => {
+  displayMode = mode
+  bridge.setHostContext({ displayMode: mode, availableDisplayModes: ['inline', 'fullscreen'] })
+  return { mode }
+}
 const calls: { name: string; arguments?: unknown }[] = []
 let release: (() => void) | undefined
 let failures = 0
 const toolResult = (data: unknown) => ({
   content: [],
   structuredContent: data,
-  _meta: { apiOrigin: location.origin },
+  _meta: { apiOrigin: location.origin, jurisdictionNames: { '000001': '試験市', '000002': '未収録町', '000003': '比較市' } },
 })
 bridge.oncalltool = async (params) => {
   if (!scenario) return rpc('tools/call', params)
@@ -89,6 +101,8 @@ bridge.oncalltool = async (params) => {
 // 試験host側から通常のbridge通知を送り、遅い応答とテーマ更新を検査する。
 const qa = {
   calls: () => calls,
+  contexts: () => contexts,
+  displayMode: () => displayMode,
   release: () => {
     release?.()
     release = undefined

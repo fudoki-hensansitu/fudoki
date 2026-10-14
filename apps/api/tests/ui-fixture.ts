@@ -16,7 +16,7 @@ export const node: TreeNode = {
   node_kind: '目',
   code: null,
   name: '総務管理',
-  amount_yen: 12345,
+  amount_yen: 1_234_567_000,
   kan_name: '総務費',
   kou_name: '総務管理費',
   origin_id: 'ok',
@@ -51,6 +51,11 @@ const jurisdiction = (
               origins: [origin],
             },
           ],
+        },
+        {
+          fiscal_year: 2025,
+          document_kind: 'initial',
+          accounts: [{ account_name: '一般会計', account_kind: '一般会計', origins: [origin] }],
         },
       ]
     : [],
@@ -113,7 +118,7 @@ export function uiData(scenario: string, more = false, nodeId?: string): ViewDat
                 ...child,
                 node_id: 'ui-more-child',
                 name: '備品購入費',
-                amount_yen: 2345,
+                amount_yen: 234_500_000,
               },
             ],
           }
@@ -137,7 +142,7 @@ export function uiData(scenario: string, more = false, nodeId?: string): ViewDat
 
 const fiscal = (id: string, name: string, kind: string, amount: number | null, parent: string | null,
   kan = name, kou: string | null = null): TreeNode => ({
-  ...node, node_id: id, name, node_kind: kind, amount_yen: amount,
+  ...node, node_id: id, name, node_kind: kind, amount_yen: amount === null ? null : amount * 1_000_000,
   parent_node_id: parent, is_subject: true, kan_name: kan, kou_name: kou,
 })
 const kanGeneral = fiscal('kan-general', '総務費', '款', 6000, null)
@@ -156,6 +161,12 @@ export function chartData(scenario: string, id?: string, more = false): ViewData
     const children = hierarchy.filter((n) => n.parent_node_id === id)
     return { node: self, children: children.length ? { 科目: children } : {}, origins: [origin], next_page_token: null }
   }
+  if (scenario === 'chart-many') return { nodes: MANY_KAN.map(([name, oku], i) => fiscal(`many-${i}`, name, '款', oku * 100, null)), origins: [origin], next_page_token: null }
+  if (scenario === 'chart-compare') return { nodes: [
+    { ...kanWelfare, node_id: 'cmp-1' },
+    { ...kanWelfare, node_id: 'cmp-2', jurisdiction_code: '000003', amount_yen: 9_870_000_000, parent_node_id: null },
+    { ...kanWelfare, node_id: 'cmp-3', fiscal_year: 2023, amount_yen: 3_650_000_000 },
+  ], origins: [origin], next_page_token: null }
   if (scenario === 'chart-kan') return { nodes: [kouAdmin, kouTax], origins: [origin], next_page_token: null }
   if (scenario === 'chart-partial') return { nodes: more ? [kanWelfare] : [kanGeneral], origins: [origin], next_page_token: more ? null : 'chart-next' }
   if (scenario === 'chart-mixed') return { nodes: [kanGeneral, kanWelfare, kouAdmin,
@@ -164,3 +175,10 @@ export function chartData(scenario: string, id?: string, more = false): ViewData
   if (scenario === 'chart-invalid') return { nodes: [kanGeneral, { ...kanWelfare, amount_yen: null }], origins: [origin], next_page_token: null }
   return { nodes: [kanGeneral, kanWelfare], origins: [origin], next_page_token: null }
 }
+
+/** 市の一般会計の款と金額（億円）。件数の多い円や棒の見え方を確かめる */
+const MANY_KAN: [string, number][] = [
+  ['議会費', 4.8], ['総務費', 98.2], ['民生費', 412.5], ['衛生費', 86.1], ['労働費', 1.2],
+  ['農林水産業費', 6.4], ['商工費', 21.9], ['土木費', 133.7], ['消防費', 38.0], ['教育費', 142.3],
+  ['災害復旧費', 0.3], ['公債費', 61.5], ['諸支出金', 0.02], ['予備費', 0],
+]

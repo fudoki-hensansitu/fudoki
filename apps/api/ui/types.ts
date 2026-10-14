@@ -69,6 +69,19 @@ export const KIND_LABEL: Record<string, string> = {
 }
 export const yen = (value: number | null) =>
   value === null ? '—' : `${value.toLocaleString('ja-JP')}円`
+/** 桁数の大きい金額を兆・億・万で丸める。正確な額は yen で title などに併記する。 */
+export function shortYen(value: number | null) {
+  if (value === null) return '—'
+  const abs = Math.abs(value)
+  const round = (v: number, unit: string) =>
+    `${(Math.round(v * 10) / 10).toLocaleString('ja-JP', { maximumFractionDigits: Math.abs(v) >= 100 ? 0 : 1 })}${unit}円`
+  if (abs >= 1e12) return round(value / 1e12, '兆')
+  if (abs >= 1e8) return round(value / 1e8, '億')
+  if (abs >= 1e4) return `${Math.round(value / 1e4).toLocaleString('ja-JP')}万円`
+  return yen(value)
+}
+export const percent = (share: number) =>
+  share > 0 && share < 0.001 ? '0.1%未満' : `${(share * 100).toFixed(share >= 0.1 ? 0 : 1)}%`
 export const nodePath = (node: TreeNode) =>
   [
     node.kan_name,

@@ -19,6 +19,14 @@ interface State {
   busy: boolean
   error?: string
   apiOrigin: string
+  /** 団体コード → 団体名。server が結果の _meta に載せる */
+  names: Record<string, string>
+  fullscreen: { available: boolean; active: boolean }
+}
+
+const namesOf = (meta: Record<string, unknown> | undefined) => {
+  const names = meta?.jurisdictionNames
+  return names && typeof names === 'object' ? (names as Record<string, string>) : {}
 }
 
 function appendData(previous: ViewData, next: ViewData): ViewData {
@@ -51,13 +59,15 @@ function appendData(previous: ViewData, next: ViewData): ViewData {
 export function createBridge() {
   const app = new App(
     { name: 'fudoki-view', version: '1.0.0' },
-    {},
+    { availableDisplayModes: ['inline', 'fullscreen'] },
     { autoResize: false },
   )
   let state: State = {
     history: [],
     busy: true,
     apiOrigin: 'https://api.fudoki.dev',
+    names: {},
+    fullscreen: { available: false, active: false },
   }
   const listeners = new Set<() => void>()
   let args: Json = {}
@@ -97,6 +107,12 @@ export function createBridge() {
     if (ctx.theme) applyDocumentTheme(ctx.theme)
     if (ctx.styles?.variables) applyHostStyleVariables(ctx.styles.variables)
     if (ctx.styles?.css?.fonts) applyHostFonts(ctx.styles.css.fonts)
+    update({
+      fullscreen: {
+        available: !!ctx.availableDisplayModes?.includes('fullscreen'),
+        active: ctx.displayMode === 'fullscreen',
+      },
+    })
   }
   const message = (result: { content?: unknown[] }) => {
     const item = result.content?.find(
@@ -135,6 +151,7 @@ export function createBridge() {
       busy: false,
       error: undefined,
       apiOrigin: origin,
+      names: { ...state.names, ...namesOf(result._meta) },
     })
   }
   app.ontoolcancelled = () => {
@@ -169,10 +186,9 @@ export function createBridge() {
         .catch((error) => {
           update({ busy: false, error: `接続に失敗しました: ${String(error)}` })
         })),
-    async call(tool: string, input: Json, mode: 'drill' | 'append', historyIndex?: number) {
+    async call(tool: string, input: Json, mode: 'drill' | 'append') {
       if (disposed || state.busy || !state.entry) return
-      const previous = historyIndex === undefined ? state.entry : state.history[historyIndex]
-      if (!previous) return
+      const previous = state.entry
       const id = ++epoch
       request = new AbortController()
       update({ busy: true, error: undefined })
@@ -196,10 +212,8 @@ export function createBridge() {
             data: combined,
             revision: mode === 'append' ? previous.revision : id,
           },
-          history:
-            mode === 'drill'
-              ? [...(historyIndex === undefined ? state.history : state.history.slice(0, historyIndex)), previous]
-              : state.history,
+          history: mode === 'drill' ? [...state.history, previous] : state.history,
+          names: { ...state.names, ...namesOf(result._meta) },
           apiOrigin:
             typeof result._meta?.apiOrigin === 'string'
               ? result._meta.apiOrigin
@@ -227,6 +241,19 @@ export function createBridge() {
           busy: false,
           error: undefined,
         })
+    },
+    /** 全画面に対応しない host では何もしない（View はその場で表示を差し替える） */
+    setFullscreen(active: boolean) {
+      if (!state.fullscreen.available || state.fullscreen.active === active) return
+      void app
+        .requestDisplayMode({ mode: active ? 'fullscreen' : 'inline' })
+        .then(({ mode }) => update({ fullscreen: { ...state.fullscreen, active: mode === 'fullscreen' } }))
+        .catch(() => {})
+    },
+    /** 利用者が View で見ている対象を AI に伝え、続けてチャットで聞かれたときに指せるようにする */
+    tellModel(text: string) {
+      if (disposed) return
+      void app.updateModelContext({ content: [{ type: 'text', text }] }).catch(() => {})
     },
     openLink: (url: string) => {
       void app

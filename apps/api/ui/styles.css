@@ -1,4 +1,3 @@
-/* Hallmark · pre-emit critique: P5 H4 E4 S4 R5 V3 · design-system: DESIGN.md */
 @import "@fudoki/ui/styles.css";
 @source "./";
 
@@ -6,42 +5,69 @@
   --item-frame: #2f5d43;
   --amount-frame: #c1553a;
   --pdf-paper: #fff;
-  --expenditure-1: #2563eb;
-  --expenditure-2: #c2410c;
-  --expenditure-3: #15803d;
-  --expenditure-4: #9333ea;
-  --expenditure-5: #854d0e;
-  --expenditure-6: #dc2626;
-  --expenditure-7: #0e7490;
-  --expenditure-8: #be185d;
-  --expenditure-9: #4f46e5;
-  --expenditure-10: #047857;
-  --expenditure-11: #7e22ce;
-  --expenditure-12: #9a3412;
-  --expenditure-label: #fff;
+  /* 棒は一色で、長さだけで金額を比べる */
+  --bar: color-mix(in oklab, var(--primary) 78%, var(--background));
+  --bar-hover: var(--primary);
+  --bar-track: color-mix(in oklab, var(--foreground) 7%, transparent);
 }
 @layer base {
   html, body { overflow-x: clip; }
-  body { margin: 0; padding: 12px 16px; background: var(--background); color: var(--foreground); font: var(--font-text-sm-size, 14px) / var(--font-text-sm-line-height, 1.5) var(--view-font); }
-  h3 { font-size: 20px; font-weight: var(--font-weight-semibold, 600); overflow-wrap: anywhere; min-width: 0; }
-  h4 { font-weight: var(--font-weight-medium, 500); }
-  a:focus-visible, .pdf-scroll:focus-visible { outline: 2px solid var(--ring); outline-offset: -2px; }
+  body { margin: 0; padding: 14px 16px 16px; background: var(--background); color: var(--foreground); font: var(--font-text-sm-size, 14px) / var(--font-text-sm-line-height, 1.5) var(--view-font); font-variant-numeric: lining-nums; }
+  h2 { font-size: 22px; line-height: 1.3; font-weight: var(--font-weight-semibold, 600); overflow-wrap: anywhere; }
+  h3 { font-size: 13px; font-weight: var(--font-weight-medium, 500); color: var(--muted-foreground); }
+  a:focus-visible, button:focus-visible, .pdf-scroll:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
 }
 [data-slot="button"][data-variant="link"] { height: auto; padding: 0; font: inherit; }
-.mono { font-family: var(--view-mono); }
-.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.big { font-size: 20px; text-align: left; }
-a.origin { color: var(--primary); display: inline-block; max-width: 24em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom; }
-td.name { min-width: 8em; }
-td.locs { min-width: 7em; }
-.small { font-size: 12px; }
+
+.view { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.result { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.head { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.scope, .crumbs { font-size: 12px; color: var(--muted-foreground); overflow-wrap: anywhere; }
+.total { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin: 2px 0 6px; }
+.total-short { font-size: 30px; line-height: 1.2; font-weight: var(--font-weight-semibold, 600); font-variant-numeric: lining-nums tabular-nums; }
+.total-exact { font-size: 12px; color: var(--muted-foreground); font-variant-numeric: lining-nums tabular-nums; }
+.section { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.quiet { color: var(--muted-foreground); }
+.loading { display: flex; flex-direction: column; gap: 8px; }
+
+.bars { display: flex; flex-direction: column; min-width: 0; }
+.bar {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "label figures" "track track";
+  align-items: baseline; column-gap: 12px; row-gap: 4px; width: 100%; padding: 8px 6px; margin: 0 -6px; box-sizing: content-box;
+  border: 0; border-radius: 6px; background: none; color: inherit; font: inherit; text-align: left;
+}
+button.bar { cursor: pointer; }
+button.bar:hover:not(:disabled) { background: var(--muted); }
+button.bar:hover:not(:disabled) .bar-fill { background: var(--bar-hover); }
+button.bar:disabled { cursor: progress; }
+.bar-label { grid-area: label; display: flex; flex-direction: column; min-width: 0; }
+.bar-name { overflow-wrap: anywhere; }
+button.bar .bar-name::after { content: " ›"; color: var(--muted-foreground); }
+.bar-note { font-size: 12px; color: var(--muted-foreground); }
+.bar-figures { grid-area: figures; display: flex; gap: 10px; align-items: baseline; white-space: nowrap; font-variant-numeric: lining-nums tabular-nums; }
+.bar-share { font-size: 12px; color: var(--muted-foreground); }
+.bar-amount { font-weight: var(--font-weight-medium, 500); }
+.bar-track { grid-area: track; height: 8px; border-radius: 4px; background: var(--bar-track); overflow: hidden; }
+.bar-fill { display: block; height: 100%; min-width: 2px; border-radius: 4px; background: var(--bar); }
+.bar-more { align-self: flex-start; margin-top: 4px; padding: 6px 0; border: 0; background: none; color: var(--primary); font: inherit; font-size: 13px; cursor: pointer; }
+
+.coverage { display: grid; min-width: 0; overflow-x: auto; }
+.coverage-row { display: contents; }
+.coverage-row > * { padding: 8px 8px 8px 0; border-bottom: 1px solid var(--border); }
+.coverage-year { font-size: 12px; color: var(--muted-foreground); }
+.coverage-name { display: flex; flex-direction: column; }
+.coverage-cell { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.chip { font-size: 12px; padding: 1px 8px; border-radius: 999px; background: color-mix(in oklab, var(--primary) 14%, transparent); color: var(--foreground); white-space: nowrap; }
+
 .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-#pdf-view [data-slot="button"] { min-height: 44px; }
+#pdf-view [data-slot="button"] { min-height: 40px; }
+.small { font-size: 12px; }
 .pdf-url { color: var(--primary); overflow-wrap: anywhere; }
-.pdf-scroll { overflow: auto; max-height: min(70vh, 480px); border: 1px solid var(--border); }
+.pdf-scroll { overflow: auto; max-height: min(70vh, 520px); border: 1px solid var(--border); }
+.view[data-fullscreen] .pdf-scroll { max-height: calc(100vh - 140px); }
 .pdf-spread { display: flex; gap: 12px; position: relative; align-items: flex-start; }
 .pdf-sheet { flex: 1; min-width: 0; }
-.pdf-sheet h4 { margin: 4px 8px; line-height: 1.5; }
+.pdf-sheet h4 { margin: 4px 8px; line-height: 1.5; font-size: 12px; }
 .pdf-stage { position: relative; background: var(--pdf-paper); line-height: 0; }
 .pdf-stage canvas { width: 100%; height: auto; }
 .pdf-frame { position: absolute; pointer-events: none; color: var(--item-frame); }
@@ -51,31 +77,3 @@ td.locs { min-width: 7em; }
 .pdf-guide-x { left: 0; right: 0; border-top: 1px dashed currentColor; }
 .pdf-guide-y { top: 0; bottom: 0; border-left: 1px dashed currentColor; }
 #pdf-view summary { cursor: pointer; }
-#pdf-view summary:focus-visible { outline: 2px solid var(--ring); }
-
-
-.expenditure-panel { min-width: 0; display: flex; flex-direction: column; gap: 8px; }
-.expenditure-visual { display: grid; grid-template-columns: minmax(0, 220px) minmax(0, 1fr); align-items: start; gap: 16px; }
-.expenditure-pie { height: 220px; width: 100%; aspect-ratio: 1; }
-.expenditure-browser { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 24px; }
-.expenditure-browser[data-history="true"] .expenditure-visual { grid-template-columns: minmax(0, 1fr); }
-[data-selected="true"] { background: var(--muted); }
-@media (max-width: 480px) { .expenditure-visual { grid-template-columns: minmax(0, 1fr); } }
-.dark {
-  --expenditure-1: #60a5fa;
-  --expenditure-2: #fb923c;
-  --expenditure-3: #4ade80;
-  --expenditure-4: #c084fc;
-  --expenditure-5: #facc15;
-  --expenditure-6: #f87171;
-  --expenditure-7: #22d3ee;
-  --expenditure-8: #f472b6;
-  --expenditure-9: #a5b4fc;
-  --expenditure-10: #34d399;
-  --expenditure-11: #d8b4fe;
-  --expenditure-12: #fdba74;
-  --expenditure-label: #171717;
-}
-.expenditure-key { display: flex; align-items: center; gap: 8px; }
-.expenditure-marker { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 20px; height: 20px; border-radius: 4px; color: var(--expenditure-label); font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; }
-.expenditure-label { font-size: 12px; font-weight: 600; }

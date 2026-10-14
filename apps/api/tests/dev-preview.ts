@@ -6,6 +6,8 @@ export const PATTERNS = [
   ['chart-kan', '款で絞ったチャート'],
   ['chart-partial', '取得途中のチャート'],
   ['chart-invalid', '金額欠損のチャート'],
+  ['chart-many', '款が14件'],
+  ['chart-compare', '団体・年度をまたぐ比較'],
   ['detail', '明細・軸ごとの内訳'],
   ['leaf', '末端の明細'],
   ['', 'PDF・原典の各ケース'],
