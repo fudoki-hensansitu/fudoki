@@ -18,6 +18,21 @@ class TextTest(unittest.TestCase):
 
 
 class CorrectionTest(unittest.TestCase):
+    def test_a_contained_comma_in_another_tile_is_kept_in_its_complete_amount(self):
+        from ingestion.generic import scan
+        from ingestion.lib.pdf_rules import PageRules
+        from pathlib import Path
+        complete = {'id': 'full', 'kind': 'region', 'raw_text': '80.000', 'bbox_pdf_pt': [10, 20, 40, 30]}
+        comma = {'id': 'comma', 'kind': 'region', 'raw_text': '，', 'bbox_pdf_pt': [20, 27, 23, 30.3]}
+        separate = {**comma, 'id': 'separate', 'bbox_pdf_pt': [20, 47, 23, 50.3]}
+        zero = {**comma, 'id': 'zero', 'raw_text': 'C'}
+        observation = {'page_number': 1, 'regions': [{'id': 'upper', 'observations': [complete]},
+            {'id': 'lower', 'observations': [comma, separate, zero]}]}
+        original = deepcopy(observation)
+        result = scan.page(observation, Path('x.pdf'), detected=PageRules(1, 100, 100, (), ()))
+        self.assertEqual([w.text for w in result.words], ['80,000', ',', 'C'])
+        self.assertEqual(observation, original)
+
     def test_an_intact_line_amount_keeps_the_sign_missing_from_its_word_range(self):
         from ingestion.generic import scan
         from ingestion.lib.pdf_rules import PageRules

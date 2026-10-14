@@ -115,9 +115,24 @@ def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None
     rules += [Rule(r.start, r.position, r.end, r.position) for r in detected.horizontal]
     cuts = sorted(r.position for r in detected.vertical)
     gone = superseded(observation_page)
+    # Adjacent OCR tiles can both read a comma's descender. Keep its complete number;
+    # a punctuation fragment contained in that number's box is no second amount.
+    readings = [(index, o) for index, region in enumerate(observation_page['regions']) for o in region['observations']
+                if o['kind'] == 'region' and o['id'] not in gone and o.get('bbox_pdf_pt')]
+    complete = [(region, o) for region, o in readings if _amount(o['raw_text'])
+                and not any(o['bbox_pdf_pt'][0] + 1 < x < o['bbox_pdf_pt'][2] - 1 for x in cuts)]
+    declared = {r.observation_id for r in corrections.rules if r.page == number} if corrections else set()
+    fragments = {o['id'] for region, o in readings if _text(o['raw_text']) == ',' and o['id'] not in declared
+                 and any(region != other and ',' in _text(full['raw_text'])
+                         and full['bbox_pdf_pt'][0] - 1 <= o['bbox_pdf_pt'][0]
+                         and full['bbox_pdf_pt'][1] - 1 <= o['bbox_pdf_pt'][1]
+                         and o['bbox_pdf_pt'][2] <= full['bbox_pdf_pt'][2] + 1
+                         and o['bbox_pdf_pt'][3] <= full['bbox_pdf_pt'][3] + 1 for other, full in complete)}
+    gone |= fragments
     words: list[Word] = []
     for region in observation_page['regions']:
-        items = [o for o in region['observations'] if o['id'] not in gone and o['bbox_pdf_pt'] and o['raw_text'].strip()]
+        items = [o for o in region['observations'] if o['id'] not in gone
+                 and o.get('parent_id') not in fragments and o['bbox_pdf_pt'] and o['raw_text'].strip()]
         corrected_regions = set()
         corrected_word_parents = set()
         if corrections:
