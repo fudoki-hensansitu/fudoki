@@ -1,0 +1,520 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132152",
+    "fiscal_year": 2025,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "scan-1",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "07383e3a59124efacb1ebf072f1ee6bd0758837b469901b42c83b9b8824fde1d"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "scan-1",
+        "amount_corrections": [
+          {
+            "id": "vlm-1e89b57a08",
+            "page": 31,
+            "observation_id": "p1:ink-8:r0",
+            "observed_amount": "J",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は J）"
+          },
+          {
+            "id": "vlm-15c39b043e",
+            "page": 31,
+            "observation_id": "p1:ink-42:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-0d5c5a3049",
+            "page": 31,
+            "observation_id": "p1:ink-58:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-ed68b66c65",
+            "page": 31,
+            "observation_id": "p1:ink-61:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-f7c01d36ea",
+            "page": 31,
+            "observation_id": "p1:ink-79:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-3e5a308e10",
+            "page": 31,
+            "observation_id": "p1:ink-82:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-580441d0bd",
+            "page": 31,
+            "observation_id": "p1:ink-34:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-7ebc98889e",
+            "page": 31,
+            "observation_id": "p1:ink-10:r0",
+            "observed_amount": "J",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は J）"
+          },
+          {
+            "id": "vlm-f51f8e225a",
+            "page": 31,
+            "observation_id": "p1:ink-26:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-108031cb7f",
+            "page": 31,
+            "observation_id": "p1:ink-35:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-ef9ea93e5f",
+            "page": 31,
+            "observation_id": "p1:ink-44:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-803c54798d",
+            "page": 31,
+            "observation_id": "p1:ink-46:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-aca3aa5f12",
+            "page": 31,
+            "observation_id": "p1:ink-54:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-c1499eecc4",
+            "page": 31,
+            "observation_id": "p1:ink-60:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-b3d49714bd",
+            "page": 31,
+            "observation_id": "p1:ink-63:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-35bc1d078b",
+            "page": 31,
+            "observation_id": "p1:ink-66:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-5b3f165d00",
+            "page": 31,
+            "observation_id": "p1:ink-71:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-aebbec1849",
+            "page": 31,
+            "observation_id": "p1:ink-75:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-eac94a024c",
+            "page": 31,
+            "observation_id": "p1:ink-81:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-87a5c6ee81",
+            "page": 31,
+            "observation_id": "p1:ink-84:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-b1c0399e35",
+            "page": 31,
+            "observation_id": "p1:ink-87:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-ba6d832f6d",
+            "page": 32,
+            "observation_id": "p1:ink-8:r0",
+            "observed_amount": "J",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は J）"
+          },
+          {
+            "id": "vlm-d7d17de03c",
+            "page": 32,
+            "observation_id": "p1:ink-53:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-6d6e7e76a5",
+            "page": 32,
+            "observation_id": "p1:ink-56:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-e1aead44ec",
+            "page": 32,
+            "observation_id": "p1:ink-76:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-daa3edf827",
+            "page": 32,
+            "observation_id": "p1:ink-79:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-7d848d7f83",
+            "page": 32,
+            "observation_id": "p1:ink-26:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-1324feee91",
+            "page": 32,
+            "observation_id": "p1:ink-66:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-f0daffa6fe",
+            "page": 32,
+            "observation_id": "p1:ink-10:r0",
+            "observed_amount": "J",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は J）"
+          },
+          {
+            "id": "vlm-7255730a6a",
+            "page": 32,
+            "observation_id": "p1:ink-18:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-6239c9d774",
+            "page": 32,
+            "observation_id": "p1:ink-27:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-f189641bdc",
+            "page": 32,
+            "observation_id": "p1:ink-35:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-a0a5a95bb2",
+            "page": 32,
+            "observation_id": "p1:ink-37:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-0f34a9e670",
+            "page": 32,
+            "observation_id": "p1:ink-49:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-47ef7b123c",
+            "page": 32,
+            "observation_id": "p1:ink-55:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-903e5bc59a",
+            "page": 32,
+            "observation_id": "p1:ink-58:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-d76e71fe28",
+            "page": 32,
+            "observation_id": "p1:ink-61:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-bbfb2dc1a9",
+            "page": 32,
+            "observation_id": "p1:ink-67:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-709a3ae6c4",
+            "page": 32,
+            "observation_id": "p1:ink-70:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-9c6cd7ca57",
+            "page": 32,
+            "observation_id": "p1:ink-78:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-f1d812f975",
+            "page": 32,
+            "observation_id": "p1:ink-81:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-776f66ebab",
+            "page": 32,
+            "observation_id": "p1:ink-84:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-6ba801726e",
+            "page": 33,
+            "observation_id": "p1:ink-6:r0",
+            "observed_amount": "J",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は J）"
+          },
+          {
+            "id": "vlm-fc14ecc02a",
+            "page": 33,
+            "observation_id": "p1:ink-35:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-626a398a29",
+            "page": 33,
+            "observation_id": "p1:ink-55:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-81506d8089",
+            "page": 33,
+            "observation_id": "p1:ink-58:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-19cb20f683",
+            "page": 33,
+            "observation_id": "p1:ink-79:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          },
+          {
+            "id": "vlm-330f0dba2b",
+            "page": 33,
+            "observation_id": "p1:ink-82:r0",
+            "observed_amount": "C",
+            "corrected_amount": "0",
+            "reason": "paddle-small で読み直し、木の検査で確かめた（OCR は C）"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "scan-1-ocr-vision-1",
+          "origin_sha256": "07383e3a59124efacb1ebf072f1ee6bd0758837b469901b42c83b9b8824fde1d",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "f964e1afac60654dad728146928f9f94104b5d1d33d4e55761d038b84918a6d2",
+          "bytes": 2633032
+        },
+        {
+          "id": "scan-1-ocr-vision-2",
+          "origin_sha256": "07383e3a59124efacb1ebf072f1ee6bd0758837b469901b42c83b9b8824fde1d",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "1fd1a2e52136dba5a2289f8a8127dd4c104358af5ff262894aa1cc27c711e170",
+          "bytes": 2679637
+        },
+        {
+          "id": "scan-1-ocr-vision-3",
+          "origin_sha256": "07383e3a59124efacb1ebf072f1ee6bd0758837b469901b42c83b9b8824fde1d",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "c6c2c9b38aeaf9838f9fda13b4b233509f6d68d3c94bdf78bba3b8c7d6ed3776",
+          "bytes": 2724184
+        },
+        {
+          "id": "scan-1-ocr-vision-4",
+          "origin_sha256": "07383e3a59124efacb1ebf072f1ee6bd0758837b469901b42c83b9b8824fde1d",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              61,
+              62,
+              63,
+              64,
+              65,
+              66,
+              67,
+              68,
+              69,
+              70
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "779e847391d870c1d43f7dfda666a7ebe5dcb497c1822cedba2ea5dbfcf6622a",
+          "bytes": 2666536
+        },
+        {
+          "id": "scan-1-ocr-vision-5",
+          "origin_sha256": "07383e3a59124efacb1ebf072f1ee6bd0758837b469901b42c83b9b8824fde1d",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              71,
+              72
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "dd003928ff3ecff2e073ca089e9b7100bba974aac2b80d6a037d9e6ec05021c9",
+          "bytes": 477514
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "scan-1"
+        }
+      ]
+    }
+  ],
+  "tables": []
+}

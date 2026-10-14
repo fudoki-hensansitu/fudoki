@@ -2,9 +2,21 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "breakdown"],
+  "required": ["schema_version"],
   "properties": {
     "schema_version": {"const": 1},
+    "columns": {
+      "type": "object",
+      "propertyNames": {"minLength": 1},
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kind": {"enum": ["amount", "label"]},
+          "axis_header": {"type": "string", "minLength": 1}
+        }
+      }
+    },
     "breakdown": {
       "type": "object",
       "propertyNames": {"minLength": 1},

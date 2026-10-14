@@ -1,0 +1,1199 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132101",
+    "fiscal_year": 2025,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "settlement-1",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "01447ab37f9ab61a44aec25408fa92656a3fb9b19761d9b32a1f673c7f0a9259"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-1-ocr-vision-1",
+          "origin_sha256": "01447ab37f9ab61a44aec25408fa92656a3fb9b19761d9b32a1f673c7f0a9259",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "7a4ee75862b353619c1b69747723bb8233ad062d013375ce6b2721ed1d3e7c04",
+          "bytes": 124650
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "expenditure-settlement-1",
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-1"
+        }
+      ]
+    },
+    {
+      "id": "settlement-2",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "092597a4cdecb2ab9bec5954037f660ad18e229674dd20e5501250c3bf1bc2b0"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-2-ocr",
+          "origin_sha256": "092597a4cdecb2ab9bec5954037f660ad18e229674dd20e5501250c3bf1bc2b0",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2,
+              3
+            ]
+          },
+          "sha256": "ee4ad639b90042d9c29cf35b2dd3ec687db541bc1a7193584fb0085dbc89174f",
+          "bytes": 1023950
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "expenditure-settlement-2",
+        "amount_corrections": [
+          {
+            "id": "vlm-03d8b4bc6b",
+            "page": 1,
+            "observation_id": "p1:full-page:r60",
+            "observed_amount": "7,050,000",
+            "corrected_amount": "7,060,000",
+            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 7,050,000）"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-2"
+        }
+      ]
+    },
+    {
+      "id": "settlement-3",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "0b1af0ae74a6964525621308a1390afa66d735edfd2ca534de8cd64230522b3c"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-3-ocr-vision-1",
+          "origin_sha256": "0b1af0ae74a6964525621308a1390afa66d735edfd2ca534de8cd64230522b3c",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "a7af33591de1937777e976347b2469efede8f84802c1ea0218a6aaf06c66ce9a",
+          "bytes": 852571
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "expenditure-settlement-3",
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-3"
+        }
+      ]
+    },
+    {
+      "id": "settlement-4",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "1ca1e9ff6daedbb806493d70fc163599ef9de8c10733c70e9bb2cf259f75dee4"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-4-ocr-vision-1",
+          "origin_sha256": "1ca1e9ff6daedbb806493d70fc163599ef9de8c10733c70e9bb2cf259f75dee4",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "9193301d4bf61c73d41b51a78ee75705ae697050076d41288a28b4c282c8c83a",
+          "bytes": 2162734
+        },
+        {
+          "id": "settlement-4-ocr-vision-2",
+          "origin_sha256": "1ca1e9ff6daedbb806493d70fc163599ef9de8c10733c70e9bb2cf259f75dee4",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "fe11514122f362775d112f4c2da6784532cf00216fc2893f5e0cbca96f71165c",
+          "bytes": 1951796
+        },
+        {
+          "id": "settlement-4-ocr-vision-3",
+          "origin_sha256": "1ca1e9ff6daedbb806493d70fc163599ef9de8c10733c70e9bb2cf259f75dee4",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "c69c621fb1a6c4299334f2ed294c56feff9c90755ba33edc662c97704dd0a8c4",
+          "bytes": 2346976
+        },
+        {
+          "id": "settlement-4-ocr-vision-4",
+          "origin_sha256": "1ca1e9ff6daedbb806493d70fc163599ef9de8c10733c70e9bb2cf259f75dee4",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "f3de7fb65ca3ad8b3744f326b8e47c543874f703b49aa177cf4f42fea6575543",
+          "bytes": 2225889
+        },
+        {
+          "id": "settlement-4-ocr-vision-5",
+          "origin_sha256": "1ca1e9ff6daedbb806493d70fc163599ef9de8c10733c70e9bb2cf259f75dee4",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "a3ea3f676d13833eb1eb0107db61763f84d2370721ad5a4d76e59cf8a74bb822",
+          "bytes": 2182023
+        },
+        {
+          "id": "settlement-4-ocr-vision-6",
+          "origin_sha256": "1ca1e9ff6daedbb806493d70fc163599ef9de8c10733c70e9bb2cf259f75dee4",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              51,
+              52,
+              53,
+              54,
+              55,
+              56
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "b9ed299403f3a159e43d09d55dcd3966281734c71910afd6fef534abfaa77355",
+          "bytes": 1093112
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "expenditure-settlement-4",
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-4"
+        }
+      ]
+    },
+    {
+      "id": "settlement-5",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "21ae69f707011445c58d9fe020455d2eee566d6ac5ddd826ef74ef0ab491c8bb"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-5-ocr-vision-1",
+          "origin_sha256": "21ae69f707011445c58d9fe020455d2eee566d6ac5ddd826ef74ef0ab491c8bb",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "c9e5e6df964ec72df5920497028a21d27ffcb7565f4ae516141f82920ce414a9",
+          "bytes": 967909
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "expenditure-settlement-5",
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-5"
+        }
+      ]
+    },
+    {
+      "id": "settlement-6",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "35fd578c29ea3b94513e724559d9719c8a1d2190455de5d2595dfc913eb25faf"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-6-ocr-vision-1",
+          "origin_sha256": "35fd578c29ea3b94513e724559d9719c8a1d2190455de5d2595dfc913eb25faf",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "e636852b50e05cf944c77f3482a19e2ed88ef58808fda62ea14e94eef79a0119",
+          "bytes": 458018
+        }
+      ],
+      "options": {
+        "account": "下水道事業会計",
+        "table_id": "expenditure-settlement-6",
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-6"
+        }
+      ]
+    },
+    {
+      "id": "settlement-7",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "41796e3329a77b87edabf00027a667f5e038550960021af8a7f970628b253990"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-7-ocr-vision-1",
+          "origin_sha256": "41796e3329a77b87edabf00027a667f5e038550960021af8a7f970628b253990",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "9b92c3cb75240ce87a4bcd85edeacbc1b197a2a18422ae81879852ccda53270f",
+          "bytes": 193673
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "expenditure-settlement-7",
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-7"
+        }
+      ]
+    },
+    {
+      "id": "settlement-8",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "4c0fc03fd2f5be5563f9450b929944b0c6f72ab3115875772f89796c8ca7baef"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-8-ocr-vision-1",
+          "origin_sha256": "4c0fc03fd2f5be5563f9450b929944b0c6f72ab3115875772f89796c8ca7baef",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "2ed721fc1dab963603eca1eece082b4f4e6b331658ba09ac272e030726d233ee",
+          "bytes": 197676
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "expenditure-settlement-8",
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-8"
+        }
+      ]
+    },
+    {
+      "id": "settlement-9",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "4ec973ba37ab06ca09de6b61379e03c9bddde12f0d28a42c1ac0bbbdef2394d4"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-9-ocr",
+          "origin_sha256": "4ec973ba37ab06ca09de6b61379e03c9bddde12f0d28a42c1ac0bbbdef2394d4",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ]
+          },
+          "sha256": "4cba3fa13588e10525d0406f68dcc424ac1a42b346d62bde97f608f928b9972d",
+          "bytes": 2713548
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "expenditure-settlement-9"
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-9"
+        }
+      ]
+    },
+    {
+      "id": "settlement-10",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "6aa8bdbf6f935d50dd62204b0edfd5ba16cbe35423a3a2a30603ebcedc832ebb"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-10-ocr-vision-1",
+          "origin_sha256": "6aa8bdbf6f935d50dd62204b0edfd5ba16cbe35423a3a2a30603ebcedc832ebb",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "a8e4f38ce6fb8170464e44d820c5127a07c27f502d3e47f2d2f108c6f610ca31",
+          "bytes": 632418
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "expenditure-settlement-10",
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-10"
+        }
+      ]
+    },
+    {
+      "id": "settlement-11",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "6ef99a9ffd61f3a1c673d7265782843d691ba1a4df46b50db0e239fe33560b9f"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-11-ocr-vision-1",
+          "origin_sha256": "6ef99a9ffd61f3a1c673d7265782843d691ba1a4df46b50db0e239fe33560b9f",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "3e17de35d15d76c82e43bb89fb580ebd4b7bbdde3421f58aff1299d6a31d0ebc",
+          "bytes": 1929520
+        },
+        {
+          "id": "settlement-11-ocr-vision-2",
+          "origin_sha256": "6ef99a9ffd61f3a1c673d7265782843d691ba1a4df46b50db0e239fe33560b9f",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "0c774dca7a24954f0ba48463045360443cc1fde9d6b008c93aa24388965aabf1",
+          "bytes": 1921651
+        },
+        {
+          "id": "settlement-11-ocr-vision-3",
+          "origin_sha256": "6ef99a9ffd61f3a1c673d7265782843d691ba1a4df46b50db0e239fe33560b9f",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "64a18e1ea3f999d39bfc295bf025de4b758dc86eb5f1ec2357f1067a85831959",
+          "bytes": 2204888
+        },
+        {
+          "id": "settlement-11-ocr-vision-4",
+          "origin_sha256": "6ef99a9ffd61f3a1c673d7265782843d691ba1a4df46b50db0e239fe33560b9f",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              31,
+              32,
+              33,
+              34,
+              35,
+              36
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "aff6259a0553f78bb2ffa99fd2de585fb998f79a2f0dc365ceebe11692f00938",
+          "bytes": 1027068
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "expenditure-settlement-11",
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-11"
+        }
+      ]
+    },
+    {
+      "id": "settlement-12",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7c2107e75de46c5256e00caefc1f84ccdbdac878f10830d49e3fb1697f7edfdc"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-12-ocr-vision-1",
+          "origin_sha256": "7c2107e75de46c5256e00caefc1f84ccdbdac878f10830d49e3fb1697f7edfdc",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "d8328098903f5d39275f4f0d832306fb43e63527cab0773f1592707e882f5c09",
+          "bytes": 101024
+        }
+      ],
+      "options": {
+        "account": "下水道事業会計",
+        "table_id": "expenditure-settlement-12",
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-12"
+        }
+      ]
+    },
+    {
+      "id": "settlement-13",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "92ee9177e55d79fbad3824f124db2080d50c3880c6509aaf5f5ea57f0f6a104e"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-13-ocr-vision-1",
+          "origin_sha256": "92ee9177e55d79fbad3824f124db2080d50c3880c6509aaf5f5ea57f0f6a104e",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "58267a3ebec69c39a2d918d6ffe3daad6ec6fbb4d0e20db3aa94a885739ff685",
+          "bytes": 1987698
+        },
+        {
+          "id": "settlement-13-ocr-vision-2",
+          "origin_sha256": "92ee9177e55d79fbad3824f124db2080d50c3880c6509aaf5f5ea57f0f6a104e",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "3b158338e3f1680b01d415a1da31da6af717e648cba49910c4abd0410662474f",
+          "bytes": 2107061
+        },
+        {
+          "id": "settlement-13-ocr-vision-3",
+          "origin_sha256": "92ee9177e55d79fbad3824f124db2080d50c3880c6509aaf5f5ea57f0f6a104e",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "65e426463c3cd78a7445a4b5d9000983b94167600a973f4438f2d83485fdfc48",
+          "bytes": 1761121
+        },
+        {
+          "id": "settlement-13-ocr-vision-4",
+          "origin_sha256": "92ee9177e55d79fbad3824f124db2080d50c3880c6509aaf5f5ea57f0f6a104e",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "62638e4b85c0d6c23ea79cc332ae0bddd9ae74c19c6a177047382c1c1ea694f4",
+          "bytes": 2366900
+        },
+        {
+          "id": "settlement-13-ocr-vision-5",
+          "origin_sha256": "92ee9177e55d79fbad3824f124db2080d50c3880c6509aaf5f5ea57f0f6a104e",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "50cd2742d050aee4792acf2f25e1b2bf39acca3b7ec4146b2b12524476f9341e",
+          "bytes": 1799944
+        },
+        {
+          "id": "settlement-13-ocr-vision-6",
+          "origin_sha256": "92ee9177e55d79fbad3824f124db2080d50c3880c6509aaf5f5ea57f0f6a104e",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "0d011a9168b1114311f2418b53873c3cf338099385bdb2d32513fe279a6533b7",
+          "bytes": 2285897
+        },
+        {
+          "id": "settlement-13-ocr-vision-7",
+          "origin_sha256": "92ee9177e55d79fbad3824f124db2080d50c3880c6509aaf5f5ea57f0f6a104e",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              61,
+              62,
+              63,
+              64,
+              65,
+              66,
+              67,
+              68,
+              69
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "3a7bacf4cb1f1782ca33e519bf5bc8b28cc1aca49e4c82d1693113639f454e71",
+          "bytes": 2044861
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "expenditure-settlement-13",
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-13"
+        }
+      ]
+    },
+    {
+      "id": "settlement-14",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "9978297a1e0dbd21684c4c1a67207e7b89c01849f82d0a9f7f763991ee62a9ad"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-14-ocr-vision-1",
+          "origin_sha256": "9978297a1e0dbd21684c4c1a67207e7b89c01849f82d0a9f7f763991ee62a9ad",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "ba997fc8fd80fb5923cd2cb6fc0059ca0af52802c2cf780d797198ffa979d480",
+          "bytes": 3392771
+        },
+        {
+          "id": "settlement-14-ocr-vision-2",
+          "origin_sha256": "9978297a1e0dbd21684c4c1a67207e7b89c01849f82d0a9f7f763991ee62a9ad",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "e07f3c4176b545fba3beaebcd276e5e9742bf03975ac9e0e16a020ceb355ac13",
+          "bytes": 1197883
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "expenditure-settlement-14"
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-14"
+        }
+      ]
+    },
+    {
+      "id": "settlement-15",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "afa69e1ef26553d8bf7ee4dacfa386c7d5cd37c57da2517579fe32e0b7ddf468"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-15-ocr-vision-1",
+          "origin_sha256": "afa69e1ef26553d8bf7ee4dacfa386c7d5cd37c57da2517579fe32e0b7ddf468",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "7a64f62eba1e467f8f5c96562ffd7ba79319cdd94c33aa0a21e6f0c01b14c42b",
+          "bytes": 2138654
+        },
+        {
+          "id": "settlement-15-ocr-vision-2",
+          "origin_sha256": "afa69e1ef26553d8bf7ee4dacfa386c7d5cd37c57da2517579fe32e0b7ddf468",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "6662e76a44b2072c8070b40bfd256198c9becc03bcc4a81c6426b00c43b01ea3",
+          "bytes": 1819413
+        },
+        {
+          "id": "settlement-15-ocr-vision-3",
+          "origin_sha256": "afa69e1ef26553d8bf7ee4dacfa386c7d5cd37c57da2517579fe32e0b7ddf468",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "d9185abed6000abcda845cf9238e8c8b0a39b1f087993a11454198ecd6f8d50f",
+          "bytes": 2299828
+        },
+        {
+          "id": "settlement-15-ocr-vision-4",
+          "origin_sha256": "afa69e1ef26553d8bf7ee4dacfa386c7d5cd37c57da2517579fe32e0b7ddf468",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "39c9c7467673501d8fade048942106cb600f895907cf94850c4919b6b3015f69",
+          "bytes": 2352343
+        },
+        {
+          "id": "settlement-15-ocr-vision-5",
+          "origin_sha256": "afa69e1ef26553d8bf7ee4dacfa386c7d5cd37c57da2517579fe32e0b7ddf468",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "e2f81c4fed9dd9c2571d1124f7cf78649b6afe0da6528ca5ba43deb283b91fc5",
+          "bytes": 2351279
+        },
+        {
+          "id": "settlement-15-ocr-vision-6",
+          "origin_sha256": "afa69e1ef26553d8bf7ee4dacfa386c7d5cd37c57da2517579fe32e0b7ddf468",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "9fbc9382f2855ffefc9a88edddc73d9142810ac696f41ad5d4a4e77152d44e54",
+          "bytes": 1928151
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "expenditure-settlement-15",
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-15"
+        }
+      ]
+    },
+    {
+      "id": "settlement-16",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "bb78211be53fe8448451110dfbdf22a16543319f2f275077f09f062bc3cb53b2"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-16-ocr-vision-1",
+          "origin_sha256": "bb78211be53fe8448451110dfbdf22a16543319f2f275077f09f062bc3cb53b2",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "3efb86e60aac6efcee29184e4345e81b24457c869ae3d2438ce15a03e11ad5c3",
+          "bytes": 1148510
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "expenditure-settlement-16",
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-16"
+        }
+      ]
+    },
+    {
+      "id": "settlement-17",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "dd751d842400b28c3abe4955ea4674b35c927f8cf8519f48ae6ddf7fc0de887d"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-17-ocr-vision-1",
+          "origin_sha256": "dd751d842400b28c3abe4955ea4674b35c927f8cf8519f48ae6ddf7fc0de887d",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "fefafa8d18c7d27f6ace6b302778e6ad45596edafa13c8609411cb9acb96bd31",
+          "bytes": 264117
+        }
+      ],
+      "options": {
+        "account": "下水道事業会計",
+        "table_id": "expenditure-settlement-17",
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-17"
+        }
+      ]
+    },
+    {
+      "id": "settlement-18",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "e7516eb665447bc4b0b530e9094ae476e59412c169d384f26e2fce953620ac21"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-18-ocr-vision-1",
+          "origin_sha256": "e7516eb665447bc4b0b530e9094ae476e59412c169d384f26e2fce953620ac21",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "37c01d1c944b209f92e04cf5697fa6ed58349afb1f190ddb4d8717f76846c447",
+          "bytes": 189831
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "expenditure-settlement-18",
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-18"
+        }
+      ]
+    },
+    {
+      "id": "settlement-19",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "fbb1dd63fcd2fbc8d16d4892b3ff7ac29898d4465161002f6f82009a490ffb52"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "settlement-19-ocr-vision-1",
+          "origin_sha256": "fbb1dd63fcd2fbc8d16d4892b3ff7ac29898d4465161002f6f82009a490ffb52",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "0a89e0d4a2b99d48083a96231377ea2ecd792ba1dab7a0c87972766f60f24ab2",
+          "bytes": 2462583
+        },
+        {
+          "id": "settlement-19-ocr-vision-2",
+          "origin_sha256": "fbb1dd63fcd2fbc8d16d4892b3ff7ac29898d4465161002f6f82009a490ffb52",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "d8fbe6b1cbdb3157442008f383e5a3df0b589f24b4cb50782bed01f0780ad23f",
+          "bytes": 2379887
+        },
+        {
+          "id": "settlement-19-ocr-vision-3",
+          "origin_sha256": "fbb1dd63fcd2fbc8d16d4892b3ff7ac29898d4465161002f6f82009a490ffb52",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              21,
+              22
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "c4b05d82da10b83415f7cbbc20cb989090ee46632c65cc215cabeae4b5477cff",
+          "bytes": 326729
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "expenditure-settlement-19",
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "expenditure-settlement-19"
+        }
+      ]
+    }
+  ],
+  "tables": []
+}

@@ -10,13 +10,18 @@ they nearly touch, unless one of them is an amount.
 from __future__ import annotations
 
 from collections import Counter
+import gzip
+import hashlib
+import json
 from pathlib import Path
+from functools import cache
 import re
 
 from ingestion.generic.layout import _frames, _header_bottom, normalize
 from ingestion.generic.observe import Page, Rule, Word
 from ingestion.lib import pdf_rules
 from ingestion.lib.scan_ocr import superseded
+from ingestion.lib.ocr_names import AmountDictionary, AmountRule, correct_amount, correct_name, load_name_dictionary
 
 # Vision reads the minus sign △ as a letter.
 MINUS = re.compile(r'^[AΔ▲]\s*(?=[0-9])')
@@ -24,6 +29,24 @@ NUMBER = re.compile(r'△?[0-9][0-9,.]*')
 AMOUNT = re.compile(r'△?[0-9]{1,3}([,.][0-9]{3})+|△?[0-9]{4,}')
 # Pieces closer than this share of the line height belong to one word.
 JOIN_GAP = .6
+HEADER_NAMES = Path(__file__).with_name('scan_header_corrections.json')
+
+
+@cache
+def header_names():
+    return load_name_dictionary(HEADER_NAMES)
+
+
+def repair_header_names(page_: Page) -> Page:
+    """Verified OCR word corrections apply inside header cells only, never to a subject's name."""
+    frames = [(f, _header_bottom(page_, f)) for f in _frames(page_)]
+    words = []
+    for word in page_.words:
+        cx, cy = (word.x0 + word.x1) / 2, (word.y0 + word.y1) / 2
+        inside = any(f[0] < cx < f[1] and f[2] < cy < bottom for f, bottom in frames)
+        text = correct_name(word.text, header_names())['corrected_name'] if inside else word.text
+        words.append(Word(text, word.x0, word.y0, word.x1, word.y1))
+    return Page(page_.number, page_.width, page_.height, words, page_.rules)
 
 
 def _text(raw: str) -> str:
@@ -75,9 +98,10 @@ def _cell_words(pieces: list[Word], cuts: list[float]) -> list[Word]:
     return [Word(_text(w.text), w.x0, w.y0, w.x1, w.y1) for w in words if w.text.strip()]
 
 
-def page(observation_page: dict, pdf: Path) -> Page:
+def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None = None,
+         used: set[str] | None = None, detected: pdf_rules.PageRules | None = None) -> Page:
     number = observation_page['page_number']
-    detected = pdf_rules.detect(pdf, number)
+    detected = detected or pdf_rules.detect(pdf, number)
     rules = [Rule(r.position, r.start, r.position, r.end) for r in detected.vertical]
     rules += [Rule(r.start, r.position, r.end, r.position) for r in detected.horizontal]
     cuts = sorted(r.position for r in detected.vertical)
@@ -85,13 +109,28 @@ def page(observation_page: dict, pdf: Path) -> Page:
     words: list[Word] = []
     for region in observation_page['regions']:
         items = [o for o in region['observations'] if o['id'] not in gone and o['bbox_pdf_pt'] and o['raw_text'].strip()]
+        corrected_regions = set()
+        if corrections:
+            fixed = []
+            declared = {r.observation_id for r in corrections.rules if r.page == number}
+            for item in items:
+                if item['id'] in declared:
+                    result = correct_amount(item['raw_text'], page=number, observation_id=item['id'], dictionary=corrections)
+                    item = {**item, 'raw_text': result['corrected_amount']}
+                    if used is not None:
+                        used.add(result['rule_id'])
+                    if item['kind'] == 'region':
+                        corrected_regions.add(item['id'])
+                fixed.append(item)
+            items = fixed
         parts: dict[str, list[Word]] = {}
         for item in items:
             if item['kind'] == 'word' and item.get('parent_id'):
                 parts.setdefault(item['parent_id'], []).append(Word(item['raw_text'], *item['bbox_pdf_pt']))
         for item in items:
             if item['kind'] == 'region':
-                words += _cell_words(parts.get(item['id']) or [Word(item['raw_text'], *item['bbox_pdf_pt'])], cuts)
+                pieces = None if item['id'] in corrected_regions else parts.get(item['id'])
+                words += _cell_words(pieces or [Word(item['raw_text'], *item['bbox_pdf_pt'])], cuts)
     return Page(number, detected.width, detected.height, words, rules)
 
 
@@ -151,17 +190,262 @@ def agreed_headers(pages: list[Page]) -> list[Page]:
     return [Page(p.number, p.width, p.height, replaced[i], p.rules) for i, p in enumerate(pages)]
 
 
-def pages(observation: dict, pdf: Path) -> list[Page]:
-    return agreed_headers([page(p, pdf) for p in observation['pages']])
+def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = None,
+          columns: dict | None = None, rules: dict | None = None) -> list[Page]:
+    digitless = [r for r in corrections.rules if not any(c.isdigit() for c in r.observed_amount)] if corrections else []
+    if digitless:
+        from ingestion.generic.layout import page_bands
+        plain = agreed_headers([page(p, pdf, detected=(rules or {}).get(p['page_number'])) for p in observation['pages']])
+        units = unit_glyphs(plain, columns)
+        bands = {p.number: page_bands(p)[0] for p in plain}
+        boxes = {(p['page_number'], o['id']): o['bbox_pdf_pt'] for p in observation['pages']
+                 for region in p['regions'] for o in region['observations']}
+        for rule in digitless:
+            if normalize(rule.observed_amount) == '円':
+                raise ValueError(f'A unit is not an amount correction: {rule.id}')
+            box = boxes.get((rule.page, rule.observation_id))
+            if box and any(p == rule.page and all(abs(a - b) < 1 for a, b in zip(box, bounds)) for p, bounds in units):
+                raise ValueError(f'A unit glyph is not an amount correction: {rule.id}')
+            if not box or not any((columns or {}).get('／'.join(b.header), {}).get('kind') == 'amount'
+                                  and b.x0 <= (box[0] + box[2]) / 2 <= b.x1
+                                  and b.body_top <= (box[1] + box[3]) / 2 <= b.body_bottom
+                                  for b in bands.get(rule.page, [])):
+                raise ValueError(f'Digitless correction needs a declared amount column: {rule.id}')
+    used = set()
+    found = [page(p, pdf, corrections, used, (rules or {}).get(p['page_number'])) for p in observation['pages']]
+    unused = {r.id for r in corrections.rules} - used if corrections else set()
+    if unused:
+        raise ValueError(f'Amount corrections matched no observation: {sorted(unused)}')
+    found = [repair_header_names(p) for p in agreed_headers(found)]
+    units = unit_glyphs(found, columns)
+    return [Page(p.number, p.width, p.height,
+                 [Word('円', w.x0, w.y0, w.x1, w.y1) if w.text == '门' and (p.number, (w.x0, w.y0, w.x1, w.y1)) in units else w
+                  for w in p.words], p.rules) for p in found]
 
 
-def logicals(observation: dict, pdf: Path) -> list:
+def unit_glyphs(observed: list[Page], columns: dict | None = None) -> set[tuple]:
+    """A row of small currency marks above the first named subject row is a unit row.
+
+    At least three read 円 marks on the same baseline establish it. Digitless OCR glyphs
+    on that row (门 for 円) cannot be values; inline units beside actual money are below
+    the first subject row and do not qualify. The amount rereader uses this same boundary.
+    """
+    from ingestion.generic.layout import logical_pages
+    return logical_units(logical_pages(observed, columns))
+
+
+def logical_units(logicals_: list) -> set[tuple]:
+    from ingestion.generic.tree import subject_header
+    found = set()
+    for logical in logicals_:
+        names = [g.y0 for b in logical.bands if b.header and subject_header(b.header)
+                 for g in b.words if re.search(r'[\u3040-\u30ff\u3400-\u9fff]', g.text)]
+        if not names:
+            continue
+        first = min(names)
+        glyphs = [g for b in logical.bands for g in b.words]
+        for page_number in logical.pages:
+            yen = [g for g in glyphs if g.page == page_number and g.text == '円' and (g.y0 + g.y1) / 2 < first]
+            for glyph in [g for g in glyphs if g.page == page_number and len(g.text) == 1 and g.text.isalpha()]:
+                cy = (glyph.y0 + glyph.y1) / 2
+                if cy < first and sum(abs(cy - (g.y0 + g.y1) / 2) <= 2 for g in yen) >= 3:
+                    found.add((page_number, glyph.original))
+    return found
+
+
+def logicals(observation: dict, pdf: Path, corrections: AmountDictionary | None = None,
+             columns: dict | None = None, *, recover: bool = False, recovered: list | None = None) -> list:
     """The logical pages of an OCR observation, marked as OCR so the builder's rules for misreads apply."""
     from ingestion.generic.layout import logical_pages
-    found = logical_pages(pages(observation, pdf))
+    observed = pages(observation, pdf, corrections, columns)
+    if recover:
+        observed, fills = recover_codes(observed, pdf, columns)
+        if recovered is not None:
+            recovered.extend(fills)
+    found = logical_pages(observed, columns)
     for logical in found:
         logical.ocr = True
     return found
+
+
+def code_holes(logical_pages_: list) -> list[dict]:
+    """Only a numbered subject sequence with one missing row warrants an ink search.
+
+    A 6 / unnumbered name / 8, or an unnumbered name followed by 2 at the start of a
+    sequence, locates the missing code. Wrapped names in the same ruled cell do not.
+    This does not supply the missing number: recovery must also read ink at its position.
+    """
+    from ingestion.generic.layout import lines, text
+    from ingestion.generic.tree import _cell, _split_code, groups, subject_items
+    holes = []
+    for logical in logical_pages_:
+        for group in groups(logical):
+            if not group.subject:
+                continue
+            items = subject_items(group)
+            for level, band in enumerate(group.bands):
+                members = [i for i in items if i.level == level and i.lines]
+                for index, item in enumerate(members[:-1]):
+                    following = members[index + 1]
+                    if (item.code or len(item.name) < 2 or not re.match(r'[\u3040-\u30ff\u3400-\u9fff]', item.name)
+                            or not following.code or not following.code.isdigit()):
+                        continue
+                    if _cell(band, item.anchor) == _cell(band, following.anchor):
+                        continue
+                    previous = members[index - 1] if index else None
+                    next_code = int(following.code)
+                    if previous and previous.code and previous.code.isdigit() and next_code == int(previous.code) + 2:
+                        expected = next_code - 1
+                    elif next_code == 2 and (previous is None or (previous.code and previous.code != '1')):
+                        expected = 1
+                    else:
+                        continue
+                    glyph = following.lines[0][0]
+                    x = glyph.x0 - glyph.offset
+                    height = item.y1 - item.y0
+                    holes.append({'page': item.page, 'expected': expected, 'name': item.name,
+                                  'box': (x - 2, item.y0 - 1, x + height, item.y1 + 1), 'height': height})
+                # A narrow code column can have no observation at all in the first cell.
+                # Its name lives in a neighbouring subject column; the next printed 2 and
+                # the preceding ruled cell locate that single hole before any ink is read.
+                events = [(line, _split_code(normalize(text(line)))[0]) for line in lines(band.words)]
+                known = [(line, int(code)) for line, code in events if code and code.isdigit()]
+                for position, (line, code) in enumerate(known):
+                    if code != 2 or position and known[position - 1][1] == 1:
+                        continue
+                    span = _cell(band, (line[0].y0 + line[0].y1) / 2)
+                    boundaries = sorted({band.body_top, *band.rows, band.body_bottom})
+                    prior = [y for y in boundaries if y < span[0] - .5]
+                    if not prior:
+                        continue
+                    upper, lower = prior[-1], span[0]
+                    if any(upper <= (g.y0 + g.y1) / 2 < lower and re.search(r'[0-9]', g.text) for g in band.words):
+                        continue
+                    names = [g for other in group.bands[level:] for g in other.words
+                             if upper <= (g.y0 + g.y1) / 2 < lower and re.search(r'[\u3040-\u30ff\u3400-\u9fff]', g.text)]
+                    if not names:
+                        continue
+                    hint = min(names, key=lambda g: (g.y0, g.x0))
+                    height, x = hint.y1 - hint.y0, line[0].x0 - line[0].offset
+                    holes.append({'page': hint.page, 'expected': 1, 'name': hint.text,
+                                  'box': (x - 2, hint.y0 - 1, x + height, hint.y1 + 1), 'height': height})
+    return list({(h['page'], tuple(round(v, 1) for v in h['box'])): h for h in holes}.values())
+
+
+def recover_codes(observed: list[Page], pdf: Path, columns: dict | None = None) -> tuple[list[Page], list[dict]]:
+    """Read a thin vertical 1 only inside a sequence hole. No whole-page ink check or inferred number.
+
+    The component must have digit height, be narrow, stay off the crop edges, and be
+    separate from the name. Other digits and ambiguous marks are left for explicit OCR.
+    """
+    from ingestion.generic.layout import logical_pages
+    from ingestion.lib.scan_ocr import missed_ink
+    holes = [h for h in code_holes(logical_pages(observed, columns)) if h['expected'] == 1]
+    images, filled, words = {}, [], {p.number: list(p.words) for p in observed}
+    for hole in holes:
+        number = hole['page']
+        if number not in images:
+            images[number] = pdf_rules.render(pdf, number)
+        image = images[number]
+        page_ = next(p for p in observed if p.number == number)
+        scale = page_.width / image.shape[1]
+        x0, y0, x1, y1 = hole['box']
+        left, top = max(0, int(x0 / scale)), max(0, int(y0 / scale))
+        right, bottom = min(image.shape[1], int(x1 / scale) + 1), min(image.shape[0], int(y1 / scale) + 1)
+        crop = image[top:bottom, left:right] < pdf_rules.DARK
+        marks = missed_ink(crop, scale, [])
+        thin = [m for m in marks if m[2] - m[0] <= .28 * (m[3] - m[1])
+                and .6 * hole['height'] <= m[3] - m[1] <= 1.3 * hole['height']
+                and m[0] > scale and m[2] < crop.shape[1] * scale - scale]
+        if len(thin) != 1:
+            continue
+        m = thin[0]
+        # A name's stroke, bracket, or numeral fragment touching other ink is not an isolated digit.
+        if any(other != m and other[0] - m[2] < .3 * hole['height'] for other in marks):
+            continue
+        box = (m[0] + left * scale, m[1] + top * scale, m[2] + left * scale, m[3] + top * scale)
+        if any(re.search(r'[0-9]', w.text) and w.x0 - .5 <= box[0] <= w.x1 + .5
+               and w.y0 - .5 <= (box[1] + box[3]) / 2 <= w.y1 + .5 for w in words[number]):
+            continue
+        words[number].append(Word('1', *box))
+        filled.append({**hole, 'box': box, 'kind': 'recovered subject code'})
+    return [Page(p.number, p.width, p.height, words[p.number], p.rules) for p in observed], filled
+
+
+def amount_dictionary(rules: list[dict]) -> AmountDictionary | None:
+    return (AmountDictionary(hashlib.sha256(json.dumps(rules, ensure_ascii=False, sort_keys=True).encode()).hexdigest(),
+                             tuple(AmountRule(**r) for r in rules)) if rules else None)
+
+
+def declared_unread(built, logicals_: list, columns: dict | None) -> None:
+    """A digitless glyph in a declared amount column must not silently disappear as an empty cell."""
+    units = logical_units(logicals_)
+    for logical in logicals_:
+        for band in logical.bands:
+            if (columns or {}).get('／'.join(band.header), {}).get('kind') != 'amount':
+                continue
+            for glyph in band.words:
+                if (len(glyph.text.strip()) == 1 and glyph.text.isalpha() and glyph.text != '円'
+                        and (glyph.page, glyph.original) not in units):
+                    built.unowned.append({'kind': 'unreadable declared amount cell', 'page': glyph.page,
+                                          'text': glyph.text, 'box': glyph.original})
+
+
+def pinned(source: dict, selected_pages: list[int]) -> dict:
+    """Combine declared observations; enforce origin, page ownership, and the selection's scope."""
+    observed = {}
+    for item in source.get('ocr', []):
+        observation = json.loads(gzip.decompress(Path(item['path']).read_bytes()))
+        if observation['origin']['sha256'] != source['sha256']:
+            raise ValueError(f'OCR input {item["id"]} reads another original')
+        for p in observation['pages']:
+            number = p['page_number']
+            if number in observed:
+                raise ValueError(f'Page {number} is read by more than one OCR input')
+            observed[number] = p
+    missing = set(selected_pages) - observed.keys()
+    if missing:
+        raise ValueError(f'No pinned OCR for pages {sorted(missing)}')
+    return {'pages': [observed[p] for p in selected_pages]}
+
+
+def build_table(source: dict, options: dict, *, stop: bool = True, rules: dict | None = None):
+    """The scan entry of the same builder and finalization as text; the converter never runs OCR or VLM."""
+    from ingestion.generic.build import choose_pattern, page_titles
+    from ingestion.generic.convert import Table, canonical_headings, excluded_regions, fine_sections, scope_pages, split_notes
+    from ingestion.generic.layout import logical_pages
+    from ingestion.generic.layout_settings import load
+    from ingestion.generic.repair import Report
+    from ingestion.generic.units import check as check_units
+    if source.get('format') != 'pdf' or source.get('pdf_type') != 'scan':
+        raise ValueError('The scan builder requires a scan PDF')
+    selected = scope_pages(source, options['account'])
+    observation = pinned(source, selected)
+    settings = load(source['target'], source.get('direction') or 'expenditure')
+    columns = (settings or {}).get('columns')
+    printed = pages(observation, Path(source['path']), amount_dictionary(options.get('amount_corrections', [])), columns, rules)
+    printed, recovered = recover_codes(printed, Path(source['path']), columns)
+    report = Report()
+    direction = source.get('direction')
+    titles = page_titles(printed) if direction else {}
+    report.skipped_pages = [p for p, title in titles.items() if title not in (None, direction)]
+    observed = [p for p in printed if p.number not in report.skipped_pages]
+    logical = logical_pages(observed, columns)
+    for p in logical:
+        p.ocr = True
+    kind = source['target']['document_kind']
+    built, report.pattern = choose_pattern(logical, kind, layout=(settings or {}).get('breakdown'))
+    declared_unread(built, logical, columns)
+    built.notes.extend(recovered)
+    report.unit = check_units(built, kind, options['account'], bool(options.get('partial')))
+    if report.unit['stopped'] and stop:
+        raise ValueError(f'Unit check failed: {report.unit}')
+    kept, notes, amounts, unresolved, codes = split_notes(built)
+    nodes = [*built.nodes, *notes]
+    amounts, headings = canonical_headings([*kept, *amounts], nodes, kind)
+    fine_sections(nodes)
+    return Table(nodes, amounts, unresolved, excluded_regions(built, logical, codes, observed),
+                 built, report, observed, logical, headings)
 
 
 def near_code(first: str | None, second: str | None) -> bool:

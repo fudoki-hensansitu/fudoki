@@ -123,9 +123,10 @@ class AmountRule:
 
 def _amount_key(amount: str, *, observed: bool = False) -> str:
     """A corrected amount has a digit and no letter. The observed side is whatever OCR
-    returned (e.g. ``009 480 TT``), so it only needs a digit."""
+    returned (e.g. ``009 480 TT`` or ``C`` for 0). The caller must restrict digitless
+    observations to a declared amount column."""
     key = _key(amount)
-    if not any(char.isdigit() for char in key) or (not observed and any(char.isalpha() for char in key)):
+    if not observed and (not any(char.isdigit() for char in key) or any(char.isalpha() for char in key)):
         raise ValueError("An amount rule must contain a digit and no letter")
     return key
 

@@ -2,6 +2,8 @@ import unittest
 
 from ingestion.generic.observe import Page, Rule, Word
 from ingestion.generic.scan import _cell_words, _text, agreed_headers
+from unittest.mock import patch
+from copy import deepcopy
 
 
 class TextTest(unittest.TestCase):
@@ -11,6 +13,103 @@ class TextTest(unittest.TestCase):
         self.assertEqual(_text('3，995,000'), '3,995,000')
         self.assertEqual(_text('0'), '0')
         self.assertEqual(_text('予備費'), '予備費')
+
+
+class CorrectionTest(unittest.TestCase):
+    def test_unit_row_is_not_reread_as_money_and_thousands_mark_is_kept(self):
+        from pathlib import Path
+        from ingestion.generic import scan
+        from ingestion.lib.pdf_rules import PageRules, Rule as ImageRule
+        words = [Word('款', 5, 15, 25, 25), Word('支出済額', 45, 15, 75, 25),
+                 Word('不用額', 85, 15, 115, 25), Word('比較', 125, 15, 155, 25),
+                 Word('繰越', 162, 15, 178, 25), Word('1民生費', 5, 50, 35, 59),
+                 Word('千', 62, 31, 66, 35), Word('円', 70, 31, 75, 35), Word('円', 110, 31, 115, 35),
+                 Word('円', 150, 31, 155, 35), Word('门', 170, 31, 175, 35), Word('C', 170, 50, 175, 59)]
+        observations = [{'id': str(i), 'kind': 'region', 'raw_text': w.text,
+                         'bbox_pdf_pt': [w.x0, w.y0, w.x1, w.y1]} for i, w in enumerate(words)]
+        observation = {'pages': [{'page_number': 1, 'regions': [{'observations': observations}]}]}
+        rules = PageRules(1, 200, 120, tuple(ImageRule(x, 10, 100) for x in (0, 40, 80, 120, 160, 180)),
+                          tuple(ImageRule(y, 0, 180) for y in (10, 30, 100)))
+        correction = scan.amount_dictionary([{'id': 'bad-unit', 'page': 1, 'observation_id': '10',
+            'observed_amount': '门', 'corrected_amount': '0', 'reason': 'wrong target'}])
+        with patch.object(scan.pdf_rules, 'detect', return_value=rules):
+            found = scan.pages(observation, Path('x.pdf'))
+            self.assertIn('千', [w.text for w in found[0].words])
+            self.assertIn('C', [w.text for w in found[0].words])
+            self.assertNotIn('门', [w.text for w in found[0].words])
+            with self.assertRaisesRegex(ValueError, 'unit glyph'):
+                scan.pages(observation, Path('x.pdf'), correction, {'繰越': {'kind': 'amount'}})
+
+    def test_a_region_correction_replaces_its_word_pieces_without_changing_the_observation(self):
+        from ingestion.generic import scan
+        from ingestion.lib.pdf_rules import PageRules
+        from pathlib import Path
+        item = {'id': 'r', 'kind': 'region', 'raw_text': '21,000', 'bbox_pdf_pt': [10, 20, 50, 30]}
+        child = {**item, 'id': 'w', 'kind': 'word', 'parent_id': 'r'}
+        observation = {'pages': [{'page_number': 1, 'regions': [{'observations': [item, child]}]}]}
+        original = deepcopy(observation)
+        rule = {'id': 'fixed', 'page': 1, 'observation_id': 'r', 'observed_amount': '21,000',
+                'corrected_amount': '27,000', 'reason': '原典で確認'}
+        dictionary = scan.amount_dictionary([rule])
+        with patch.object(scan.pdf_rules, 'detect', return_value=PageRules(1, 100, 100, (), ())):
+            pages = scan.pages(observation, Path('x.pdf'), dictionary)
+            self.assertEqual([w.text for w in pages[0].words], ['27,000'])
+            self.assertEqual(observation, original)
+            with self.assertRaisesRegex(ValueError, 'differs from the observation'):
+                scan.pages(observation, Path('x.pdf'), scan.amount_dictionary([{**rule, 'observed_amount': '20,000'}]))
+            with self.assertRaisesRegex(ValueError, 'matched no observation'):
+                scan.pages(observation, Path('x.pdf'), scan.amount_dictionary([{**rule, 'page': 2}]))
+
+    def test_digitless_reading_cannot_change_a_name_column(self):
+        from ingestion.generic import scan
+        from ingestion.generic.layout import Band
+        from ingestion.lib.pdf_rules import PageRules
+        from pathlib import Path
+        item = {'id': 'r', 'kind': 'region', 'raw_text': 'C', 'bbox_pdf_pt': [10, 20, 15, 30]}
+        observation = {'pages': [{'page_number': 1, 'regions': [{'observations': [item]}]}]}
+        dictionary = scan.amount_dictionary([{'id': 'zero', 'page': 1, 'observation_id': 'r',
+            'observed_amount': 'C', 'corrected_amount': '0', 'reason': '原典で確認'}])
+        band = Band(0, 40, 1, ('事故繰越',), [], 10, 50)
+        with patch.object(scan.pdf_rules, 'detect', return_value=PageRules(1, 100, 100, (), ())), \
+                patch('ingestion.generic.layout.page_bands', return_value=([band], [])):
+            with self.assertRaisesRegex(ValueError, 'declared amount column'):
+                scan.pages(observation, Path('x.pdf'), dictionary)
+            result = scan.pages(observation, Path('x.pdf'), dictionary, {'事故繰越': {'kind': 'amount'}})
+            self.assertEqual(result[0].words[0].text, '0')
+
+
+class SequenceInkTest(unittest.TestCase):
+    def test_empty_code_cell_is_located_by_the_next_two_and_a_neighbouring_name(self):
+        from ingestion.generic.layout import Band, Glyph, Logical
+        from ingestion.generic.scan import code_holes
+        code = Band(0, 15, 1, ('項',), [10, 30, 60, 90], 10, 90, kind='label')
+        name = Band(15, 100, 1, ('目',), [10, 30, 60, 90], 10, 90, kind='label')
+        code.words = [Glyph('2', 5, 65, 10, 74, 1, 0)]
+        name.words = [Glyph('一般管理費', 20, 35, 65, 44, 1, 0)]
+        logical = Logical([1], [code, name], '円', [], ocr=True)
+        holes = code_holes([logical])
+        self.assertEqual([(h['page'], h['expected']) for h in holes], [(1, 1)])
+        code.words.insert(0, Glyph('1', 5, 35, 8, 44, 1, 0))
+        self.assertEqual(code_holes([logical]), [])
+
+    def test_only_an_isolated_thin_one_in_a_located_hole_is_added(self):
+        import numpy as np
+        from pathlib import Path
+        from ingestion.generic import scan
+        image = np.full((100, 100), 255, np.uint8)
+        image[22:35, 22:24] = 0
+        page = Page(1, 50, 50, [Word('諸費', 15, 10, 25, 20)])
+        hole = {'page': 1, 'expected': 1, 'name': '諸費', 'box': (10, 10, 20, 20), 'height': 8}
+        with patch.object(scan, 'code_holes', return_value=[hole]), patch.object(scan.pdf_rules, 'render', return_value=image):
+            found, fills = scan.recover_codes([page], Path('x.pdf'))
+            self.assertEqual([w.text for w in found[0].words], ['諸費', '1'])
+            self.assertEqual(len(fills), 1)
+            self.assertEqual([w.text for w in page.words], ['諸費'])
+            image[33:35, 22:32] = 0  # bracket, not a thin digit
+            self.assertEqual(scan.recover_codes([page], Path('x.pdf'))[1], [])
+        with patch.object(scan, 'code_holes', return_value=[]), patch.object(scan.pdf_rules, 'render') as render:
+            self.assertEqual(scan.recover_codes([page], Path('x.pdf'))[1], [])
+            render.assert_not_called()
 
 
 class CellWordsTest(unittest.TestCase):

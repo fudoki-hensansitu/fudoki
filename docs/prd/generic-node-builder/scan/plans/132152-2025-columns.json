@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132152",
+    "fiscal_year": 2025,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "scan-1",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "07383e3a59124efacb1ebf072f1ee6bd0758837b469901b42c83b9b8824fde1d"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "scan-1"
+      },
+      "ocr_inputs": [
+        {
+          "id": "scan-1-ocr-columns-1",
+          "origin_sha256": "07383e3a59124efacb1ebf072f1ee6bd0758837b469901b42c83b9b8824fde1d",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "e3aa5871e471aaf6300722262cf491aab2e42a2c7df015a27304057ae909d25a",
+          "bytes": 2667575
+        },
+        {
+          "id": "scan-1-ocr-columns-2",
+          "origin_sha256": "07383e3a59124efacb1ebf072f1ee6bd0758837b469901b42c83b9b8824fde1d",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          }
+        },
+        {
+          "id": "scan-1-ocr-columns-3",
+          "origin_sha256": "07383e3a59124efacb1ebf072f1ee6bd0758837b469901b42c83b9b8824fde1d",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          }
+        },
+        {
+          "id": "scan-1-ocr-columns-4",
+          "origin_sha256": "07383e3a59124efacb1ebf072f1ee6bd0758837b469901b42c83b9b8824fde1d",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              61,
+              62,
+              63,
+              64,
+              65,
+              66,
+              67,
+              68,
+              69,
+              70
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          }
+        },
+        {
+          "id": "scan-1-ocr-columns-5",
+          "origin_sha256": "07383e3a59124efacb1ebf072f1ee6bd0758837b469901b42c83b9b8824fde1d",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              71,
+              72
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          }
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "scan-1"
+        }
+      ]
+    }
+  ],
+  "tables": []
+}

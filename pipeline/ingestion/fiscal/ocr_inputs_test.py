@@ -29,7 +29,7 @@ class AcquireTest(unittest.TestCase):
         outputs = []
         for seconds, path in ((0.5, '/a/x.pdf'), (2.0, '/b/x.pdf')):
             with patch.object(scan_ocr, 'recognize_pdf', return_value=fake_result(seconds, path)), \
-                    patch.object(scan_ocr, 'supplement', side_effect=lambda path, page, *_: page):
+                    patch.object(scan_ocr, 'supplement', side_effect=lambda path, page, *_, **kwargs: page):
                 outputs.append(scan_ocr.acquire(Path('x.pdf'), request))
         (first, run_a), (second, run_b) = outputs
         self.assertEqual(first, second)
@@ -46,7 +46,7 @@ class AcquireTest(unittest.TestCase):
         with patch.object(scan_ocr, 'recognize_pdf', side_effect=[deepcopy(empty), filled]) as read, \
                 patch.object(scan_ocr.pdf_rules, 'detect'), patch.object(scan_ocr.pdf_rules, 'render', return_value=np.zeros((4, 4), np.uint8)), \
                 patch.object(scan_ocr, "column_tiles", return_value=[scan_ocr.OcrRegion("column-0", (0, 0, 1, 1))]):
-            with patch.object(scan_ocr, 'supplement', side_effect=lambda path, page, *_: page):
+            with patch.object(scan_ocr, 'supplement', side_effect=lambda path, page, *_, **kwargs: page):
                 data, _ = scan_ocr.acquire(Path('x.pdf'), {'engine': 'vision', 'pages': [1]})
         self.assertEqual(read.call_count, 2)
         self.assertIn(b'1,000', data)
@@ -111,6 +111,21 @@ class AcquireTest(unittest.TestCase):
         self.assertIsNone(scan_ocr._fill('修繰料品', tokens, (383, 0, 397, 10)))   # two changes
         self.assertIsNone(scan_ocr._fill('修繕料', tokens, (440, 0, 450, 10)))     # gap elsewhere
         self.assertEqual(scan_ocr._fill('0', [], (10, 0, 14, 10)), '0')
+
+    def test_vision_only_acquisition_keeps_unread_ink_without_calling_a_model(self):
+        page = {'page_number': 1, 'regions': []}
+        rules = scan_ocr.pdf_rules.PageRules(1, 200.0, 100.0, (), ())
+        rest = [(10.0, 50.0, 14.0, 52.0)]
+        with patch.object(scan_ocr.pdf_rules, 'detect', return_value=rules), \
+                patch.object(scan_ocr.pdf_rules, 'render', return_value=np.zeros((200, 400), np.uint8)), \
+                patch.object(scan_ocr, 'missed_ink', side_effect=[rest, [], rest]), \
+                patch.object(scan_ocr, '_read_without_rules', return_value={'regions': []}), \
+                patch.object(scan_ocr.vlm_ocr, 'read') as ask:
+            result = scan_ocr.supplement(Path('x.pdf'), page, scan_ocr.VisionConfig(), {}, vlm_fallback=False)
+        ask.assert_not_called()
+        self.assertEqual(len(result['unread_ink']), 1)
+        x0, y0, x1, y1 = result['unread_ink'][0]
+        self.assertTrue(x0 <= 10 and y0 <= 50 and x1 >= 14 and y1 >= 52)
         spaced = [('般', [385, 0, 402, 10]), ('職', [420, 0, 437, 10])]
         self.assertEqual(scan_ocr._fill('ー般職', spaced, (355, 0, 369, 10)), '一')       # ー at the start is 一
         self.assertEqual(scan_ocr._fill('―般職', spaced, (355, 0, 369, 10)), '一')

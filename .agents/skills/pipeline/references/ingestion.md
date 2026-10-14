@@ -189,6 +189,8 @@ PDFは原典の内部で重複して印字された数字どうしの一致で�
 
 ## 指紋が古くなったとき
 
+scan の測定用管理 JSON は `docs/prd/generic-node-builder/scan/plans/` に `tables=[]`・`ocr_inputs` 付きで保持する。`ingestion:cleanup` はこの参照も照合してOCRを保護する。採用した変換は正規manifestへ移し、plansから外す。取得は `scan/acquire.py --plan … --inputs-dir … --remote` で逐次固定・保存し、`request.vlm_fallback:false` はVisionの欠落再読までを行い、残りを金額検査後の有限のVLM再読へ渡す。
+
 `ingestion:check` が `Stale saved table` で止まるのは、表を作ったコード・設定・原典・scopeのどれかが変わったという合図であり、表の中身が変わった証拠ではない。次の順で、中身で決める（[ADR 0027](../../../../docs/adr/0027-refresh-fingerprints-by-table-content.md)）。
 
 1. `bun run ingestion:refresh --remote` を `pipeline/` から実行する（対象を絞るなら `--manifest <対象JSON>`、書き換えずに見るだけなら `--dry-run`）。指紋が古い管理JSONだけが対象で、原典と保存済みの表をR2から読み（書かない）、変換をローカルでやり直して、表ごとに列・型・行の順序・値と、管理JSONへ書く表のメタデータを比べる。保存前の関門（木の検査・網羅の検査）も当て直す。

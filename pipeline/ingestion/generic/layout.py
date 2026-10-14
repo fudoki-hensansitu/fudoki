@@ -70,6 +70,7 @@ class Band:
     top: float | None = None  # top of the ruled frame (the header cells sit between it and `body_top`)
     left_rules: list[tuple[float, float]] = field(default_factory=list)  # (top, bottom) of each rule drawn on its left edge
     unit_mark: str | None = None  # a header cell that only names the unit (`円`), kept apart from the heading
+    axis_header: str | None = None  # a declared printed axis spanning a spread's split header
 
     @property
     def center(self) -> float:
@@ -338,7 +339,7 @@ def same_rows(left: Page, right: Page) -> bool:
     return found / len(shorter) >= SPREAD_ROW_MATCH
 
 
-def logical_pages(pages: list[Page]) -> list[Logical]:
+def logical_pages(pages: list[Page], columns: dict | None = None) -> list[Logical]:
     """Read each page's bands, classify them once per document, then join spreads."""
     per_page = [(page, *page_bands(page)) for page in pages]
     # Band kind by content, learned per header path over the whole document so
@@ -381,6 +382,9 @@ def logical_pages(pages: list[Page]) -> list[Logical]:
                 band.kind = 'amount'
             else:
                 band.kind = 'label'
+            setting = (columns or {}).get('／'.join(band.header), {})
+            band.kind = setting.get('kind', band.kind)
+            band.axis_header = setting.get('axis_header')
     result: list[Logical] = []
     observed = {page.number: page for page, _, _ in per_page}
     for page, bands, outside in per_page:

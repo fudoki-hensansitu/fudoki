@@ -31,7 +31,7 @@ def verify_ocr(path: Path, reference: dict) -> bytes:
 
 
 def write_ocr(document: dict, item: dict, data: bytes, run: dict) -> Path:
-    """Cache a freshly acquired observation at its fixed key; uploading happens with the tables."""
+    """Cache a freshly acquired observation at its fixed key; save_ocr uploads it independently."""
     path = OBJECTS / safe_relative(ocr_key(document, item['id']))
     path.parent.mkdir(parents=True, exist_ok=True)
     # mtime=0 keeps the gzip bytes stable for identical observations.
@@ -173,9 +173,10 @@ def cleanup(document: dict) -> int:
     prefix = object_key(document, 'placeholder').rsplit('/', 1)[0] + '/'
     wanted = {reference['object']['key'] for table in document['tables']
               for reference in table_references(table).values()}
-    from ingestion.fiscal.manifest import ocr_inputs
+    from ingestion.fiscal.manifest import ocr_inputs, measurement_ocr_keys
     wanted |= {ocr_key(document, item['id'], suffix) for _, item in ocr_inputs(document)
                for suffix in ('.json.gz', '.run.json')}
+    wanted |= measurement_ocr_keys()
     removed = 0
     after = None
     while True:
@@ -204,6 +205,8 @@ def cleanup(document: dict) -> int:
             if key not in wanted and (stored_table or stored_ocr):
                 if read(manifest_path(document['target'], document['direction'])) != document:
                     raise ValueError('Saved manifest changed; cleanup stopped')
+                if key in measurement_ocr_keys():
+                    continue  # a measurement may have pinned another input while this listing ran
                 subprocess.run(['cf', 'r2', 'objects', 'delete', key, '--bucket-name', BUCKET, '--force', '--quiet'],
                                check=True, stdout=subprocess.DEVNULL)
                 # cf can abort a non-interactive delete with exit 0; confirm absence before counting it.

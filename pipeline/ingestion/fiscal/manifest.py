@@ -62,6 +62,21 @@ def ocr_inputs(document: dict) -> list[tuple[dict, dict]]:
             for item in conversion.get('ocr_inputs', [])]
 
 
+def measurement_ocr_keys() -> set[str]:
+    """Pinned scan experiments are references too, until their inputs move to an adopted manifest."""
+    from ingestion.paths import REPO
+    keys = set()
+    directory = REPO / 'docs/prd/generic-node-builder/scan/plans'
+    for path in sorted(directory.glob('*.json')):
+        document = json.loads(path.read_text())
+        validate(document, check_code=False)
+        if document['tables']:
+            raise ValueError(f'Measurement plan contains saved tables: {path}')
+        keys.update(ocr_key(document, item['id'], suffix) for _, item in ocr_inputs(document)
+                    for suffix in ('.json.gz', '.run.json'))
+    return keys
+
+
 def table_references(table: dict) -> dict[str | None, dict]:
     return ({kind: table[kind] for kind in ('nodes', 'amounts')} if 'nodes' in table
             else {None: table})
