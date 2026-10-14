@@ -9,7 +9,7 @@ from unittest.mock import patch
 
 from ingestion.generic.observe import Page, Rule, Word
 from ingestion.generic.scan import _layout, declared_unread
-from ingestion.generic.scan_recheck import amount_sources
+from ingestion.generic.scan_recheck import MODEL, amount_sources, recheck
 
 
 class AmountSourceTest(unittest.TestCase):
@@ -46,6 +46,31 @@ class AmountSourceTest(unittest.TestCase):
         glyph.text = '。'
         declared_unread(table.built, logicals, columns)
         self.assertTrue(any(r.get('text') == '。' for r in table.built.unowned))
+
+
+class BoundedCellTest(unittest.TestCase):
+    def test_only_the_selected_failing_print_can_call_the_reader(self):
+        boxes = [SimpleNamespace(page=1, id=name, text='1,000', x0=x, y0=20, x1=x+20, y1=30)
+                 for name, x in [('one', 10), ('two', 40)]]
+        sources = {(b.id, '支出済額'): [b] for b in boxes}
+        table = SimpleNamespace(nodes=[], amounts=[], built=SimpleNamespace(unowned=[]))
+        document = {'target': {'document_kind': 'settlement'}}
+        conversion = {'id': 'general', 'options': {}, 'ocr_inputs': [{'request': {'pages': [1]}}]}
+        with patch('ingestion.generic.scan_recheck.source_input', return_value={'sha256': 'f'*64}), \
+                patch('ingestion.generic.scan_recheck.pdf_rules.detect'), \
+                patch('ingestion.generic.scan_recheck.build_table', return_value=table), \
+                patch('ingestion.generic.scan_recheck.amount_sources', return_value=sources), \
+                patch('ingestion.generic.scan_recheck.problems', return_value=1), \
+                patch('ingestion.generic.scan_recheck.failing_cells', return_value=list(sources)), \
+                patch('ingestion.generic.scan_recheck.read_amount', return_value=('1,000', MODEL)) as reader:
+            report = recheck(document, conversion, Path('x.pdf'), cells={(1, 'two')})
+            self.assertEqual(reader.call_count, 1)
+            self.assertIs(reader.call_args.args[1], boxes[1])
+            self.assertEqual((report['new_vlm'], report['added']), (1, []))
+            reader.reset_mock()
+            with self.assertRaisesRegex(ValueError, 'not bound failing amounts'):
+                recheck(document, conversion, Path('x.pdf'), cells={(1, 'unit-or-unknown')})
+            reader.assert_not_called()
 
 
 if __name__ == '__main__':

@@ -117,7 +117,8 @@ def read_amount(pdf: Path, box, model: str, *, allow_vlm: bool = True) -> tuple[
 
 
 def recheck(document: dict, conversion: dict, pdf: Path, model: str = MODEL, limit: int = LIMIT,
-            *, cache_path: Path | None = None, vlm_limit: int = LIMIT) -> dict:
+            *, cache_path: Path | None = None, vlm_limit: int = LIMIT,
+            cells: set[tuple[int, str]] | None = None) -> dict:
     if limit < 1 or vlm_limit < 0:
         raise ValueError('Recheck limit must be positive and VLM limit nonnegative')
     source = source_input(document, conversion, pdf)
@@ -134,6 +135,11 @@ def recheck(document: dict, conversion: dict, pdf: Path, model: str = MODEL, lim
     boxes = { (sources[k][0].page, sources[k][0].id): sources[k][0]
               for k in (failing_cells(result) if before else [])
               if (sources[k][0].page, sources[k][0].id) not in targets}
+    if cells is not None:
+        missing = cells - boxes.keys()
+        if missing:
+            raise ValueError(f'Selected cells are not bound failing amounts: {sorted(missing)}')
+        boxes = {key: box for key, box in boxes.items() if key in cells}
     cache = {r['fingerprint']: r for line in (cache_path.read_text().splitlines() if cache_path and cache_path.exists() else [])
              if line.strip() for r in [json.loads(line)]}
     reads, proposals = [], []
@@ -208,6 +214,7 @@ def main() -> None:
     parser.add_argument('--model', default=MODEL)
     parser.add_argument('--limit', type=int, default=LIMIT)
     parser.add_argument('--vlm-limit', type=int, default=LIMIT, help='Maximum new VLM crops per conversion (local OCR/cache excluded)')
+    parser.add_argument('--cells', type=Path, help='JSON list of {page, observation_id}; restrict to these bound failing cells')
     parser.add_argument('--write', action='store_true')
     args = parser.parse_args()
     document = manifest.validate(json.loads(args.manifest.read_text()))
@@ -215,9 +222,19 @@ def main() -> None:
     if set(args.conversion) - {c['id'] for c in selected}:
         parser.error('Unknown conversion ID')
     files = json.loads(args.inputs.read_text())
+    cells = None
+    if args.cells is not None:
+        records = json.loads(args.cells.read_text())
+        if not isinstance(records, list) or not records or any(
+                not isinstance(r, dict) or set(r) != {'page', 'observation_id'}
+                or type(r['page']) is not int or r['page'] < 1
+                or not isinstance(r['observation_id'], str) or not r['observation_id'] for r in records):
+            parser.error('--cells must contain a nonempty list of page/observation_id pairs')
+        cells = {(r['page'], r['observation_id']) for r in records}
     for conversion in selected:
         report = recheck(document, conversion, Path(files[conversion['inputs'][0]['sha256']]), args.model, args.limit,
-                         cache_path=args.manifest.with_suffix('.amount-recheck.jsonl'), vlm_limit=args.vlm_limit)
+                         cache_path=args.manifest.with_suffix('.amount-recheck.jsonl'), vlm_limit=args.vlm_limit,
+                         cells=cells)
         if args.write and report['added']:
             conversion['options'].setdefault('amount_corrections', []).extend(report['added'])
             args.manifest.write_text(json.dumps(document, ensure_ascii=False, indent=2) + '\n')
