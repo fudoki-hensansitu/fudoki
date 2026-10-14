@@ -24,7 +24,7 @@ test('款を金額の棒で並べ、掘り下げた先で原典を全画面に�
   // View が報告する高さで iframe が決まるので、PDF の頁が潰れずに見えていること
   await expect(ui.getByRole('img', '原典 PDF 1ページ')).toBeVisible()
   expect(Number(await browser.evaluate("() => document.querySelector('iframe').getBoundingClientRect().height"))).toBeGreaterThan(400)
-  await ui.getByRole('button', '← 明細').tap()
+  await ui.getByRole('button', '← 戻る').tap()
   expect(await browser.evaluate('() => window.uiQA.displayMode()')).toBe('inline')
   // 経路の段を押すと、その画面に戻る
   await ui.getByRole('button', '一般会計に戻る').tap()
@@ -54,13 +54,10 @@ test('団体と年度の表に収録した資料の区分を置く', async ({ ap
   await expect(ui.getByRole('heading', '2団体の収録範囲')).toBeVisible()
   await expect(ui.getByRole('columnheader', '2025年度')).toBeVisible()
   await expect(ui.getByText('当初予算')).toBeVisible()
-  // 収録した資料を押すと、その団体・年度・資料の款の一覧を取得する
-  await ui.getByRole('button', '試験市 2024年度 決算の一般会計を見る').tap()
-  await expect(ui.getByRole('heading', '一般会計')).toBeVisible()
-  const call = await browser.evaluate('() => window.uiQA.calls().at(-1)') as { name: string; arguments: { where: Record<string, unknown> } }
-  expect(call.name).toBe('search_expenditure_nodes')
-  expect(call.arguments.where).toEqual({ jurisdiction_code: { eq: ['000001'] }, account_name: { eq: ['一般会計'] }, node_kind: { eq: ['款'] } })
-  await ui.getByRole('button', '団体一覧に戻る').tap()
+  // 収録した資料を押すと、View の中では移らず、チャットに問いを送って AI に呼び直させる
+  await ui.getByRole('button', '試験市 2024年度 決算の一般会計をチャットで聞く').tap()
+  expect(await browser.evaluate('() => window.uiQA.messages().at(-1)')).toBe('試験市（団体コード 000001）の2024年度 決算・一般会計の歳出を款ごとに見せて')
+  expect(await browser.evaluate('() => window.uiQA.calls().length')).toBe(0)
   await expect(ui.getByRole('heading', '2団体の収録範囲')).toBeVisible()
 })
 

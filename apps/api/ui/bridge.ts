@@ -186,7 +186,8 @@ export function createBridge() {
         .catch((error) => {
           update({ busy: false, error: `接続に失敗しました: ${String(error)}` })
         })),
-    async call(tool: string, input: Json, mode: 'drill' | 'append') {
+    /** drill は今の画面を履歴に積み、reset は履歴を捨てて移る（経路の根の会計へ移るとき）、append は続きを足す */
+    async call(tool: string, input: Json, mode: 'drill' | 'append' | 'reset') {
       if (disposed || state.busy || !state.entry) return
       const previous = state.entry
       const id = ++epoch
@@ -212,7 +213,7 @@ export function createBridge() {
             data: combined,
             revision: mode === 'append' ? previous.revision : id,
           },
-          history: mode === 'drill' ? [...state.history, previous] : state.history,
+          history: mode === 'drill' ? [...state.history, previous] : mode === 'reset' ? [] : state.history,
           names: { ...state.names, ...namesOf(result._meta) },
           apiOrigin:
             typeof result._meta?.apiOrigin === 'string'
@@ -290,6 +291,17 @@ export function createBridge() {
         .requestDisplayMode({ mode: active ? 'fullscreen' : 'inline' })
         .then(({ mode }) => update({ fullscreen: { ...state.fullscreen, active: mode === 'fullscreen' } }))
         .catch(() => {})
+    },
+    /**
+     * チャットに利用者のメッセージを送り、AI に tool を呼び直させる。View の中で画面を移すのではなく、
+     * 新しい問いとして会話に残し、AI が結果を受け取って続きを答えられるようにする。
+     */
+    ask(text: string) {
+      if (disposed) return
+      void app
+        .sendMessage({ role: 'user', content: [{ type: 'text', text }] })
+        .then((result) => { if (result.isError) update({ error: 'チャットに送れませんでした' }) })
+        .catch((error) => update({ error: `チャットに送れませんでした: ${String(error)}` }))
     },
     /** 利用者が View で見ている対象を AI に伝え、続けてチャットで聞かれたときに指せるようにする */
     tellModel(text: string) {

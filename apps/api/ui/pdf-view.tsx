@@ -278,7 +278,7 @@ export function PdfViewer({
     >
       <h3 id="pdf-title" className="sr-only">{origin.title}</h3>
       <div className="toolbar">
-        <Button ref={close} variant="ghost" size="sm" onClick={onClose}>← 明細</Button>
+        <Button ref={close} variant="ghost" size="sm" onClick={onClose}>← 戻る</Button>
         <span className="pager">
           <Button variant="outline" size="icon-sm" aria-label="前のページ" disabled={!ready || Math.min(...pages) <= 1}
             onClick={() => setSpreadStart(Math.max(1, Math.min(...pages) - 2))}>‹</Button>

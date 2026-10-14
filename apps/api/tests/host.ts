@@ -47,10 +47,16 @@ const policy = `default-src 'none'; script-src 'unsafe-inline'; style-src 'unsaf
 const bridge = new AppBridge(
   null,
   { name: '風土記 試験host', version: '1' },
-  { openLinks: {}, serverTools: {}, logging: {}, updateModelContext: { text: {} } },
+  { openLinks: {}, serverTools: {}, logging: {}, updateModelContext: { text: {} }, message: { text: {} } },
   { hostContext: { displayMode: 'inline', availableDisplayModes: ['inline', 'fullscreen'] } },
 )
 const contexts: string[] = []
+const messages: string[] = []
+bridge.onmessage = async ({ content }) => {
+  messages.push(content.map((c) => ('text' in c ? c.text : '')).join(''))
+  document.getElementById('opened')!.textContent = `チャットに送信: ${messages.at(-1)}`
+  return {}
+}
 let displayMode = 'inline'
 bridge.onupdatemodelcontext = async ({ content }) => {
   contexts.push(content?.map((c) => ('text' in c ? c.text : '')).join('') ?? '')
@@ -105,6 +111,7 @@ bridge.oncalltool = async (params) => {
 const qa = {
   calls: () => calls,
   contexts: () => contexts,
+  messages: () => messages,
   displayMode: () => displayMode,
   release: () => {
     release?.()

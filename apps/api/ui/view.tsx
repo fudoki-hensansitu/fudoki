@@ -45,27 +45,38 @@ const kindOf = (n: TreeNode) => (n.axis === '科目' ? n.node_kind : n.axis)
 interface Crumb { kind?: string; name: string; back?: () => void }
 
 /**
- * 見出しの経路。通ってきた画面（history）は押して戻れる段にし、通っていない上位の科目は表示だけにする。
- * 一覧 → 上位の科目 → 通ってきた明細 の順に並べる（一覧から目を直接開いたときも、款・項が一覧と目の間に入る）。
+ * 見出しの経路は 会計 › 款 › 項 › 目 の段だけにする（一覧の名前は入れない）。
+ * 通ってきた画面にある段はそこへ戻り、無い款・項は親を辿って、会計は款の一覧を取り直して移る。
  */
 function crumbsOf(node: TreeNode, history: { data: ViewData }[], bridge: Bridge): Crumb[] {
-  const all = historyCrumbs(history, bridge)
-  const lists = all.filter((c) => !c.kind)
-  const visited = all.filter((c) => c.kind)
-  const missing = ancestorsOf(node).filter((a) => !visited.some((v) => v.name === a.name))
-    .map((a) => ({ ...a, back: node.parent_node_id ? () => void bridge.climbTo(node, a.kind, a.name) : undefined }))
-  // 会計を経路の根に置く。一覧の見出しが会計から始まるなら、それが根になる
-  const root: Crumb[] = lists.some((l) => l.name.startsWith(node.account_name)) ? [] : [{ name: node.account_name }]
-  return [...lists, ...root, ...missing, ...visited]
+  const same = (n: TreeNode) => n.document_kind === node.document_kind && n.jurisdiction_code === node.jurisdiction_code &&
+    n.fiscal_year === node.fiscal_year && n.account_name === node.account_name
+  const visitedIndex = (kind: string, name: string) => history.findIndex(({ data }) =>
+    'node' in data && same(data.node) && kindOf(data.node) === kind && data.node.name === name)
+  const listIndex = history.findIndex(({ data }) => 'nodes' in data && siblings(data.nodes) && data.nodes[0]!.node_kind === '款' && same(data.nodes[0]!))
+  const root: Crumb = {
+    name: node.account_name,
+    back: listIndex >= 0 ? () => bridge.backTo(listIndex) : () => void bridge.call('search_expenditure_nodes', {
+      document_kind: node.document_kind,
+      fiscal_year: { min: node.fiscal_year, max: node.fiscal_year },
+      where: { jurisdiction_code: { eq: [node.jurisdiction_code] }, account_name: { eq: [node.account_name] }, node_kind: { eq: ['款'] } },
+      page_size: 100,
+    }, 'reset'),
+  }
+  const levels = ancestorsOf(node)
+  // 節・事業は目の名前を列に持たないので、通ってきた目があれば段に加える
+  if (node.axis !== '科目' || !['款', '項', '目'].includes(node.node_kind)) {
+    const moku = history.map(({ data }) => data).find((d): d is Extract<ViewData, { node: TreeNode }> =>
+      'node' in d && same(d.node) && d.node.node_kind === '目' && d.node.axis === '科目')
+    if (moku) levels.push({ kind: '目', name: moku.node.name })
+  }
+  return [root, ...levels.map((a) => {
+    const index = visitedIndex(a.kind, a.name)
+    return { ...a, back: index >= 0 ? () => bridge.backTo(index)
+      : node.parent_node_id ? () => void bridge.climbTo(node, a.kind, a.name) : undefined }
+  })]
 }
-/** 通ってきた画面を、押して戻れる経路の段にする */
-function historyCrumbs(history: { data: ViewData }[], bridge: Bridge): Crumb[] {
-  return history.map(({ data }, index) => {
-    const back = () => bridge.backTo(index)
-    if ('node' in data) return { kind: kindOf(data.node), name: data.node.name, back }
-    return { name: 'nodes' in data ? nodesTitle(data.nodes) : '団体一覧', back }
-  })
-}
+
 const pathOf = (n: TreeNode) => [...ancestorsOf(n), { kind: kindOf(n), name: n.name }].map((a) => `【${a.kind}】${a.name}`).join(' › ')
 
 
@@ -195,9 +206,8 @@ function nodesTitle(rows: TreeNode[]) {
   return [first.account_name, ...ancestorsOf(first).map((a) => a.name)].join(' › ')
 }
 
-function NodesResult({ rows, next, crumbs, names, bridge, busy }: {
+function NodesResult({ rows, next, names, bridge, busy }: {
   rows: TreeNode[]
-  crumbs: Crumb[]
   next?: string | null
   names: Names
   bridge: Bridge
@@ -212,7 +222,7 @@ function NodesResult({ rows, next, crumbs, names, bridge, busy }: {
   const total = share ? rows.reduce((sum, n) => sum + (n.amount_yen ?? 0), 0) : undefined
   return (
     <>
-      <PathHeader crumbs={crumbs} title={title} scope={common && (sibling ? headScopeOf(rows[0]!, names) : common)} busy={busy}>
+      <PathHeader crumbs={[]} title={title} scope={common && (sibling ? headScopeOf(rows[0]!, names) : common)} busy={busy}>
         {/* 兄弟が揃っているときだけ合計を主役に置く。途中や混在では合計に意味が無い */}
         {total !== undefined && <span className="total-short" title={yen(total)}>{shortYen(total)}</span>}
       </PathHeader>
@@ -255,21 +265,12 @@ function JurisdictionsResult({ list, bridge, busy }: { list: Jurisdiction[]; bri
                 <span role="cell" key={y} className="coverage-cell">
                   {covered.map((c) => {
                     const label = KIND_LABEL[c.document_kind] ?? c.document_kind
-                    // 一般会計を優先して款の一覧を開く。会計の選び直しはチャットで聞き直せばよい
+                    // View の中では移らず、チャットで AI に呼び直させる。一般会計を優先し、別の会計はチャットで聞き直せばよい
                     const account = c.accounts.find((a) => a.account_name === '一般会計') ?? c.accounts[0]
                     return (
-                      <button type="button" key={c.document_kind} className="chip" disabled={busy || !account}
-                        aria-label={`${j.name} ${y}年度 ${label}の${account?.account_name ?? ''}を見る`}
-                        onClick={() => account && void bridge.call('search_expenditure_nodes', {
-                          document_kind: c.document_kind,
-                          fiscal_year: { min: y, max: y },
-                          where: {
-                            jurisdiction_code: { eq: [j.jurisdiction_code] },
-                            account_name: { eq: [account.account_name] },
-                            node_kind: { eq: ['款'] },
-                          },
-                          page_size: 100,
-                        }, 'drill')}>
+                      <button type="button" key={c.document_kind} className="chip" disabled={!account}
+                        aria-label={`${j.name} ${y}年度 ${label}の${account?.account_name ?? ''}をチャットで聞く`}
+                        onClick={() => account && bridge.ask(`${j.name}（団体コード ${j.jurisdiction_code}）の${y}年度 ${label}・${account.account_name}の歳出を款ごとに見せて`)}>
                         {label}
                       </button>
                     )
@@ -319,7 +320,7 @@ function View({ bridge }: { bridge: Bridge }) {
       {entry && (
         <div key={entry.revision} className="result">
           {'jurisdictions' in entry.data ? <JurisdictionsResult list={entry.data.jurisdictions} bridge={bridge} busy={state.busy} />
-            : 'nodes' in entry.data ? <NodesResult rows={entry.data.nodes} next={entry.data.next_page_token} crumbs={historyCrumbs(state.history, bridge)} names={state.names} bridge={bridge} busy={state.busy} />
+            : 'nodes' in entry.data ? <NodesResult rows={entry.data.nodes} next={entry.data.next_page_token} names={state.names} bridge={bridge} busy={state.busy} />
             : <NodeResult data={entry.data} crumbs={crumbsOf(entry.data.node, state.history, bridge)} names={state.names} bridge={bridge} showPdf={showPdf} busy={state.busy} />}
         </div>
       )}
