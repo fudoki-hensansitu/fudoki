@@ -68,6 +68,22 @@ sources:
       direction: expenditure
       table_id: chuo-kouki-settlement
       kind: nodes
+  - name: j131032_general_expenditure_amounts
+    meta:
+      jurisdiction: '131032'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j131032_general_expenditure_nodes
+    meta:
+      jurisdiction: '131032'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
   - name: j131041_general_expenditure_detail_amounts
     meta:
       jurisdiction: '131041'
@@ -612,6 +628,22 @@ sources:
       direction: expenditure
       table_id: kouki-expenditure-notes
       kind: nodes
+  - name: j132039_general_expenditure_amounts
+    meta:
+      jurisdiction: '132039'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j132039_general_expenditure_nodes
+    meta:
+      jurisdiction: '132039'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
   - name: j132039_kouki_expenditure_detail_amounts
     meta:
       jurisdiction: '132039'
@@ -771,6 +803,22 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: late-elderly-medical-setsu
+      kind: nodes
+  - name: j132136_general_expenditure_amounts
+    meta:
+      jurisdiction: '132136'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j132136_general_expenditure_nodes
+    meta:
+      jurisdiction: '132136'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
       kind: nodes
   - name: j132209_elderly_medical_expenditure_amounts
     meta:

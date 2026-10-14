@@ -1,0 +1,20 @@
+{"criteria": {"false": "取り込むべきでない数字。例: 款・項・目・節・事業の番号、頁番号、年月日・年度・議決の号数（令和8年第6号）、住所の番地、人数・件数・回数・面積などの数量、率（％）、本文や注記の中の数字、「第10節へ同項同目第8節から流用 12,846」のような流用・充用の注記の金額。", "true": "表の項目（科目・事業）の金額として取り込むべき値。例: 予算額、補正額、決算額、支出済額、不用額、事業費、国・県支出金など、表の金額の欄に印字された円の金額（0 や 1,234,000 のような値も含む）。"}, "instructions": "日本の自治体の決算書（歳出）のある頁から、数字を1つ取り出した。文脈は `items.{id}` にある（同じ行の語を左から並べた文、列の見出し、上下の行）。取り出した数字 `items.{id}.対象の数字`（同じ行では【】で示す）は、表の項目の金額として取り込むべき値か。", "kind": "digit-recheck", "model": "jev-1.13.0", "threshold": 0.7, "version": 1}
+{"fp":"17e1c7daeb55eac875bbdb4a23b47649","p":0.05,"t":"general-expenditure"}
+{"fp":"1e2d8491eb20b272e182893444f76d30","p":0.05,"t":"general-expenditure"}
+{"fp":"1f6e6037bdb57cc37d36396b972ff1c8","p":0.05,"t":"general-expenditure"}
+{"fp":"3091f18ef6b6fd122681d41cf8bae68c","p":0.06,"t":"general-expenditure"}
+{"fp":"3b665ed8d1067935d74a0a97352e5235","p":0.06,"t":"general-expenditure"}
+{"fp":"4d27f853e742a6311206352b5c3c76ce","p":0.07,"t":"general-expenditure"}
+{"fp":"4e5ff6f90b8c041cfc565e36fba90347","p":0.63,"t":"general-expenditure"}
+{"fp":"57af373ab26f3e0bd1bd4989d5a9e300","p":0.06,"t":"general-expenditure"}
+{"fp":"7bbdca787c8b441c2272390dc1473d72","p":0.06,"t":"general-expenditure"}
+{"fp":"8635d2819320ec89fb25d23a86ccff32","p":0.09,"t":"general-expenditure"}
+{"fp":"97487dc5232331c6dcb8bc2fdd0bc956","p":0.07,"t":"general-expenditure"}
+{"fp":"b6ac07ef11f04f63848f0e749a36f5b5","p":0.09,"t":"general-expenditure"}
+{"fp":"bac10582e5c5f323d002255c797e2972","p":0.05,"t":"general-expenditure"}
+{"fp":"bcca2e172c5fd64afbe406e27cd546ff","p":0.08,"t":"general-expenditure"}
+{"fp":"c033843e287a4290fd3e04a9c5bb5712","p":0.06,"t":"general-expenditure"}
+{"fp":"d285ec91910d8ac02b5a145219260396","p":0.37,"t":"general-expenditure"}
+{"fp":"deab8bffcf08150ad65f3eecdc405f31","p":0.05,"t":"general-expenditure"}
+{"fp":"fb773b9e43c369dcdd6b9524379c4df2","p":0.05,"t":"general-expenditure"}
+{"fp":"fdf3167a6a0e7ee01f426429651038ea","p":0.06,"t":"general-expenditure"}

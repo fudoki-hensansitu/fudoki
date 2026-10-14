@@ -48,7 +48,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "990301793a58dce87bdbc683c9ee122e66764682f26b5388c6b213b8dfa8af8b",
+      "input_fingerprint": "2485d6af1bf23140f022c6ca86b3a33bd3595752320ead766f0052663ec6692d",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape'}。",
@@ -78,7 +78,7 @@
     {
       "table_id": "long-term-care-expenditure",
       "conversion_id": "long-term-care-settlement",
-      "input_fingerprint": "45ee1f6e3f3afdaf8b0a993e7b9fb40cbeb40482b4d096ad8c384043758f0d4b",
+      "input_fingerprint": "dc6110837fc10580a06054bc770d607053fb6de0f72f91f81c1c618de76e57fb",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape'}。",
@@ -91,10 +91,10 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/134015/2025/settlement/expenditure/long-term-care-expenditure-nodes.parquet",
-          "sha256": "fe2fcb6afa7041f5f63ba9354df7dd0a1dc8755764237f54c315c51f05a6ce44",
-          "bytes": 9081
+          "sha256": "727797f9363abf34592196f89131b0190b316b1664df9b582cb99bb023a682c8",
+          "bytes": 8887
         },
-        "row_count": 160
+        "row_count": 155
       },
       "amounts": {
         "object": {

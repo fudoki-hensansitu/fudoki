@@ -39,7 +39,10 @@ NOTE_SEPARATOR = '／注記／'
 ACCOUNT_CODE = re.compile(r'[0-9０-９][-－―—][0-9０-９]')
 TOTAL_ROW = re.compile(r'(?:合計|総計)$|^計$')
 FOOTNOTE_MARK = re.compile(r'[※＊*][0-9]+')
-ITEM_NUMBER = re.compile(r'^([0-9０-９]{1,4})[.．]$')
+# An item number printed with its separator (`1.`, `1.職員人件費`, `（1）消耗品費`): the builder keeps the number alone.
+ITEM_NUMBER = re.compile(r'^[(（]?([0-9０-９]{1,4})(?:[)）]|[.．](?=$|[^0-9０-９]))')
+# The 事業 number printed in brackets under a name (`【010111】`): an identifier, no amount.
+BRACKET_CODE = re.compile(r'[【\[][0-9０-９]+[】\]]')
 RATIO_HEADER = re.compile(r'割合|比率|構成比|率$')
 ZERO_MARK = re.compile(r'^0+$')
 
@@ -152,6 +155,9 @@ def excluded_regions(built, logicals, codes, observed) -> list[dict]:
     marks = [(page.number, (w.x0, w.y0, w.x1, w.y1), w.text) for page in observed for w in page.words
              if FOOTNOTE_MARK.fullmatch(normalize(w.text))]
     regions += coverage_regions(marks, kind='本文', reason='脚注の番号（※1）。金額ではない。')
+    codes_printed = [(page.number, (w.x0, w.y0, w.x1, w.y1), w.text) for page in observed for w in page.words
+                     if BRACKET_CODE.fullmatch(normalize(w.text))]
+    regions += coverage_regions(codes_printed, kind='本文', reason='事業の識別番号（【010111】）。金額ではない。')
     regions += coverage_regions(zero_marks(logicals), kind='本文',
                                 reason='名前の前に数字で描かれた箇条書きの印（00）。項目の番号は1から始まり、金額ではない。')
     for logical in built.skipped:
