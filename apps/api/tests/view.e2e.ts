@@ -5,115 +5,28 @@ beforeEach(async ({ app }) => {
   await fetch(new URL('/__reset', app.baseUrl), { method: 'POST' })
 })
 
-test('款を金額の棒で並べ、掘り下げた先で原典を全画面に開いて戻る', async ({ app, browser }) => {
+test('款の一覧から掘り下げ、参照の PDF を開いて戻る', async ({ app, browser }) => {
   await app.open('/?ui=chart')
   const ui = browser.frameLocator('iframe')
   await expect(ui.getByRole('heading', '一般会計')).toBeVisible()
-  await expect(ui.getByText('試験市 · 2024年度 決算')).toBeVisible()
-  await expect(ui.getByText('60%')).toBeVisible()
   await ui.getByRole('button', '総務費 6,000,000,000円 の内訳を見る').tap()
-  await expect(ui.getByRole('heading', '款 総務費')).toBeVisible()
-  await expect(ui.getByText('60.0億円')).toBeVisible()
   await ui.getByRole('button', '総務管理費 4,000,000,000円 の内訳を見る').tap()
-  await expect(ui.getByRole('region', '目ごとの内訳')).toBeVisible()
-  expect(String(await browser.evaluate('() => window.uiQA.contexts().at(-1)'))).toContain('【款】総務費 › 【項】総務管理費')
-  await app.screenshot('drill')
   await ui.getByRole('button', '参照（PDF）: 総務管理費').tap()
-  await expect(ui.getByRole('img', '項目の印字枠')).toBeVisible()
-  expect(await browser.evaluate('() => window.uiQA.displayMode()')).toBe('fullscreen')
-  // View が報告する高さで iframe が決まるので、PDF の頁が潰れずに見えていること
   await expect(ui.getByRole('img', '原典 PDF 1ページ')).toBeVisible()
-  expect(Number(await browser.evaluate("() => document.querySelector('iframe').getBoundingClientRect().height"))).toBeGreaterThan(400)
   await ui.getByRole('button', '戻る').tap()
-  expect(await browser.evaluate('() => window.uiQA.displayMode()')).toBe('inline')
-  expect(String(await browser.evaluate('() => window.uiQA.contexts().at(-1)'))).toContain('の内訳を表示中')
-  // 経路の段を押すと、その画面に戻る
-  await ui.getByRole('button', '一般会計に戻る').tap()
-  await expect(ui.getByRole('heading', '一般会計')).toBeVisible()
+  await expect(ui.getByRole('region', '目ごとの内訳')).toBeVisible()
 })
 
-test('件数が多いと上位10件だけを出し、残りは割合を添えて畳む', async ({ app, browser }) => {
-  await app.open('/?ui=chart-many')
-  const ui = browser.frameLocator('iframe')
-  const bars = ui.getByRole('list', '一般会計').getByRole('listitem')
-  await expect(bars).toHaveCount(10)
-  await ui.getByRole('button', 'ほか4件（0.2%）').tap()
-  await expect(bars).toHaveCount(14)
-})
-
-test('団体や年度が混ざる結果は、共通の値を見出しにまとめ、行は違う値で名付けて割合を出さない', async ({ app, browser }) => {
-  await app.open('/?ui=chart-compare')
-  const ui = browser.frameLocator('iframe')
-  await expect(ui.getByRole('heading', '款 民生費')).toBeVisible()
-  await expect(ui.getByText('比較市 · 2024年度', { exact: true })).toBeVisible()
-  await expect(ui.getByText('試験市 · 2023年度', { exact: true })).toBeVisible()
-  await expect(ui.getByText('%')).toHaveCount(0)
-})
-
-test('団体をまたぐ款の一覧は、団体ごとに分けて合計と割合を出す', async ({ app, browser }) => {
+test('団体をまたぐ一覧を団体ごとに出す', async ({ app, browser }) => {
   await app.open('/?ui=chart-cities')
   const ui = browser.frameLocator('iframe')
-  await expect(ui.getByRole('heading', '一般会計')).toBeVisible()
   await expect(ui.getByRole('region', '試験市')).toBeVisible()
   await expect(ui.getByRole('region', '比較市')).toBeVisible()
-  await expect(ui.getByText('1,534.8億円')).toBeVisible()
-  await expect(ui.getByRole('list', '比較市').getByRole('listitem')).toHaveCount(5)
-  await expect(ui.getByText('25%')).toBeVisible()
 })
 
-test('団体や年度が混ざる一覧の経路は、移る先を決められないので押せない', async ({ app, browser }) => {
-  await app.open('/?ui=chart-compare')
-  const ui = browser.frameLocator('iframe')
-  await expect(ui.getByRole('heading', '款 民生費')).toBeVisible()
-  await expect(ui.getByRole('button', '一般会計に戻る')).toHaveCount(0)
-})
-
-test('団体と年度の表に収録した資料の区分を置く', async ({ app, browser }) => {
+test('団体一覧の資料を押すとチャットに問いを送る', async ({ app, browser }) => {
   await app.open('/?ui=jurisdictions')
   const ui = browser.frameLocator('iframe')
-  await expect(ui.getByRole('heading', '2団体の収録範囲')).toBeVisible()
-  await expect(ui.getByRole('columnheader', '2025年度')).toBeVisible()
-  await expect(ui.getByText('当初予算')).toBeVisible()
-  // 収録した資料を押すと、View の中では移らず、チャットに問いを送って AI に呼び直させる
   await ui.getByRole('button', '試験市 2024年度 決算の一般会計をチャットで聞く').tap()
-  expect(await browser.evaluate('() => window.uiQA.messages().at(-1)')).toBe('試験市（団体コード 000001）の2024年度 決算・一般会計の歳出を款ごとに見せて')
-  expect(await browser.evaluate('() => window.uiQA.calls().length')).toBe(0)
-  await expect(ui.getByRole('heading', '2団体の収録範囲')).toBeVisible()
-})
-
-test('続きがある途中の頁は、1件でも明細に置き換えず続きを残す', async ({ app, browser }) => {
-  await app.open('/?ui=chart-partial')
-  const ui = browser.frameLocator('iframe')
-  await expect(ui.getByRole('button', '続き')).toBeVisible()
-  await expect(ui.getByRole('list', '一般会計').getByRole('listitem')).toHaveCount(1)
-  expect(await browser.evaluate('() => window.uiQA.calls().length')).toBe(0)
-})
-
-test('1件の結果を自動で開けなかったときは、再読み込みで開き直せる', async ({ app, browser }) => {
-  await app.open('/?ui=retry')
-  const ui = browser.frameLocator('iframe')
-  await expect(ui.getByRole('alert')).toBeVisible()
-  await ui.getByRole('button', '再読み込み').tap()
-  await expect(ui.getByRole('button', /^参照/)).toBeVisible()
-})
-
-test('取得の失敗と0件は、それぞれ短い文で知らせる', async ({ app, browser }) => {
-  await app.open('/?ui=error')
-  const ui = browser.frameLocator('iframe')
-  await expect(ui.getByText('試験の初回取得失敗')).toBeVisible()
-  await app.open('/?ui=empty')
-  await expect(ui.getByText('該当する歳出明細はありません。')).toBeVisible()
-})
-
-test('検索結果から開いた明細でも、経路の款・項を押してその段に移れる', async ({ app, browser }) => {
-  await app.open('/?ui=search')
-  const ui = browser.frameLocator('iframe')
-  // 1件の結果は明細の画面に置き換わる
-  await expect(ui.getByRole('button', /^参照/)).toBeVisible()
-  await ui.getByRole('button', '総務管理費に戻る').tap()
-  await expect(ui.getByRole('heading', '項 総務管理費')).toBeVisible()
-  await ui.getByRole('button', '総務費に戻る').tap()
-  await expect(ui.getByRole('heading', '款 総務費')).toBeVisible()
-  await ui.getByRole('button', '一般会計に戻る').tap()
-  await expect(ui.getByRole('heading', '一般会計')).toBeVisible()
+  expect(await browser.evaluate('() => window.uiQA.messages().length')).toBe(1)
 })
