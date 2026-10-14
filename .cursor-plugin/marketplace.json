@@ -1,0 +1,13 @@
+{
+  "name": "fudoki-plugins",
+  "owner": {
+    "name": "渡部唯登"
+  },
+  "plugins": [
+    {
+      "name": "fudoki",
+      "source": "./plugins/fudoki",
+      "description": "日本の自治体の歳出を事業の単位で検索し、収録範囲と原典を確かめて比較・集計する。"
+    }
+  ]
+}

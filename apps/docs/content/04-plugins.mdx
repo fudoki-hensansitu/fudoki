@@ -1,0 +1,26 @@
+---
+title: plugin で比較ルールを使う
+description: Codex・Claude Code・Cursorに共通skillとリモートMCP接続を届ける。
+---
+
+風土記の plugin は、既存 MCP の接続設定と、歳出を比較・集計するときの共通 skill を含みます。収録範囲を確認し、比較する団体または年度以外の条件（会計・資料区分・粒度）を揃え、親子や異なる切り口の二重集計を避けてから原典を確認します。
+
+接続先は `https://api.fudoki.dev/mcp`。認証、API key、ローカル MCP プログラムは不要です。URL だけで使う場合は [MCP の接続案内](/mcp)に従ってください。
+
+## 配布状況
+
+公開Gitの `wwwyo/fudoki` から共通skillとMCP接続設定を導入できます。2026-10-14時点でpackageの形式検査は成功していますが、各クライアントでの実インストールは未確認です。ChatGPT 公開 plugin と Claude connector＋plugin は未提出です。
+
+| host | パッケージの入口 | ローカル準備の確認 |
+| --- | --- | --- |
+| Codex | `.agents/plugins/marketplace.json` と Agent Plugins 形式 | JSON Schema・参照ファイルを検査。インストール未確認 |
+| Claude Code | `.claude-plugin/marketplace.json` と互換 manifest | `claude plugin validate` を実行。skillの実呼出し未確認 |
+| Cursor | `.cursor-plugin/marketplace.json` と Agent Plugins 形式 | JSON Schema・参照ファイルを検査。実機未確認 |
+
+ローカルではrepoの `docs/prd/mcp-distribution/install.md` を参照してください。Gitから導入するときは [導入ガイド](https://github.com/wwwyo/fudoki/blob/main/docs/prd/mcp-distribution/install.md)の Git 導入手順を使い、skill と4つの tool を確認してください。対象は Codex・Claude Code・Cursor で、Gemini・VS Code は今回の配布対象に含めません。
+
+## 更新する対象
+
+サーバーの API・MCP・UI と、インストール済みの skill・接続設定は別に更新されます。サーバー更新後も同じ URL を使い、host の tool metadata を必要に応じて再取得します。ChatGPT の個人用接続は Plugins の Refresh を使って新しい会話で確認します。公開 plugin には各社のレビュー手順が適用されます。
+
+plugin の package が変わった場合は、各 host の更新手順で取り直します。MCP の `serverInfo.version` は自動更新の通知ではありません。[OpenAI](https://developers.openai.com/plugins/deploy/connect-chatgpt)・[Claude Code](https://code.claude.com/docs/en/plugins/publish)・[Cursor](https://cursor.com/docs/plugins#keep-plugins-up-to-date)
