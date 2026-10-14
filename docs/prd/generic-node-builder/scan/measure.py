@@ -52,7 +52,7 @@ for path in manifests:
         recovered = []
         logicals = scan.logicals(observation, Path(files[conversion['inputs'][0]['sha256']]), rules,
                                 (layout or {}).get('columns'), recover=args.recover_codes, recovered=recovered,
-                                spread=(layout or {}).get('spread'))
+                                spread=(layout or {}).get('spread'), header=(layout or {}).get('header'))
         units = scan.logical_units(logicals)
         letter_cells = Counter(g.text for logical in logicals for band in logical.bands
                                if (layout or {}).get('columns', {}).get('／'.join(band.header), {}).get('kind') == 'amount'

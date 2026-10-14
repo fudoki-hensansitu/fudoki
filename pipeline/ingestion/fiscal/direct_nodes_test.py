@@ -67,6 +67,29 @@ class DirectNodeTest(unittest.TestCase):
         self.assertEqual(self.path.read_bytes(), before)
         self.assertFalse(Path(self.root / 'rejected/manifest.json').exists())
 
+    def test_candidate_scan_coverage_keeps_blocking_digits_without_text_recheck(self):
+        from ingestion.lib import coverage_checks, digit_recheck
+        destination = self.root / 'candidate'
+        result = run.convert(self.path, self.files, destination)
+        document = json.loads(Path(result['candidate']).read_text())
+        scope = {'words': [{'page': 1, 'text': '999', 'bbox': [20, 20, 30, 30]}],
+                 'amount_columns': [{'header': '支出済額', 'x_range': [15, 40]}]}
+        (destination / 'one.coverage.json').write_text(json.dumps(scope))
+        locate = run.candidate_locator(destination)
+        recheck = digit_recheck.Recheck.from_store(self.root / 'answers.jsonl', ask_missing=False)
+        with patch.object(coverage_checks, 'check_digit_coverage', wraps=coverage_checks.check_digit_coverage) as check:
+            outcome = run.verify_coverage(document, locate, destination, recheck)
+        self.assertIsNone(check.call_args.kwargs['recheck'])
+        self.assertEqual(outcome['one']['status'], run.MISMATCH)
+        self.assertEqual(outcome['one']['counts']['blocked'], 1)
+        # The same entry point still requires frozen Jev answers for text inputs.
+        for file in self.selection['candidates'][0]['files']:
+            file['pdf_type'] = 'text'
+        self.ledger.write_text(json.dumps({'selections': [self.selection]}))
+        with patch.object(coverage_checks, 'check_digit_coverage', wraps=coverage_checks.check_digit_coverage) as check:
+            run.verify_coverage(document, locate, destination, recheck)
+        self.assertIs(check.call_args.kwargs['recheck'], recheck)
+
     def test_a_wrong_unit_stops_a_tree_that_is_consistent(self):
         # A budget in 千円 printed with too few digits: the tree sums, the unit check does not pass.
         self.document['conversions'][0]['options'] = {'table_id': 'one', 'header': '当初予算額', 'parent': '1,000', 'child': '1,000'}

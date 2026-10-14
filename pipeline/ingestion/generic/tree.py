@@ -889,7 +889,7 @@ def heading_names(logical: Logical) -> dict[tuple[str, str], str]:
 
 
 def owner(amount: list[Glyph], band: Band, ordered: list[Group], found: dict[int, list[Item]],
-          roles: tuple[str, ...] = ('node', 'repeat', 'total')) -> Item | None:
+          roles: tuple[str, ...] = ('node', 'repeat', 'total'), *, ocr: bool = False) -> Item | None:
     """The item printed on the amount's own line in the nearest label group to its left;
     failing that, the item in its rule-bounded row (a label centred in a tall cell).
 
@@ -899,16 +899,20 @@ def owner(amount: list[Glyph], band: Band, ordered: list[Group], found: dict[int
     digits = [g for g in amount if g.text not in ('△', '▲')] or amount
     y = sum((g.y0 + g.y1) / 2 for g in digits) / len(digits)
     reach = .6 * max(g.y1 - g.y0 for g in digits)
+    if ocr:
+        from ingestion.generic.scan import line_reach
+    line_limit = lambda line: line_reach(digits, line) if ocr else reach
     left = sorted((g for g in ordered if g.x1 <= band.x0 + 1), key=lambda g: -g.x0)
     for group in left:
-        same_line = [i for i in found[id(group)] if abs(i.anchor - y) <= reach and i.role in roles]
+        same_line = [i for i in found[id(group)] if i.role in roles
+                     and abs(i.anchor - y) <= line_limit(i.lines[0])]
         if same_line:
             return max(same_line, key=lambda i: (i.level or 0, -abs(i.anchor - y)))
     # The name may be printed on a line below its code (`1` / `議会費 82,694,000`): any line of the item.
     centre = lambda line: sum((g.y0 + g.y1) / 2 for g in line) / len(line)
     for group in left:
         same_line = [i for i in found[id(group)] if i.role in roles
-                     and any(line and abs(centre(line) - y) <= reach for line in i.lines)]
+                     and any(line and abs(centre(line) - y) <= line_limit(line) for line in i.lines)]
         if same_line:
             return max(same_line, key=lambda i: (i.level or 0, -abs(i.anchor - y)))
     top, bottom = _cell(band, y)
@@ -1697,7 +1701,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     candidate = ''.join(g.text for g in money)
                     if not is_amount(candidate):
                         unowned.append({'kind': 'unreadable amount', 'page': money[0].page, 'text': candidate}); continue
-                    target = owner(money, band, ordered, found)
+                    target = owner(money, band, ordered, found, ocr=logical.ocr)
                     if target is not None and target.role == 'total':
                         notes.append({'kind': 'total amount', 'page': money[0].page, 'text': candidate,
                                       'header': '／'.join(band.header), 'unit': logical.unit, 'label': target.name,

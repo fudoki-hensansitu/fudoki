@@ -7,6 +7,23 @@ from copy import deepcopy
 
 
 class TextTest(unittest.TestCase):
+    def test_small_ocr_zero_matches_its_label_before_a_previous_wrapped_line(self):
+        from ingestion.generic.layout import Band, Glyph
+        from ingestion.generic.tree import Group, Item, owner
+        label = Band(0, 40, 1, ('節',), [0, 100], 0, 100)
+        group = Group([label], '節', False)
+        line = lambda value, y: [Glyph(value, 5, y, 35, y + 9, 1, 0)]
+        previous = Item(group, 1, [line('13委託料', 20), line('続き', 39)], '13', '委託料', 5)
+        current = Item(group, 1, [line('18負担金', 42)], '18', '負担金', 5)
+        money = Band(40, 70, 1, ('繰越額',), [0, 100], 0, 100)
+        zero = [Glyph('0', 60, 41.2, 63, 45.7, 1, 0)]
+        found = {id(group): [previous, current]}
+        self.assertIs(owner(zero, money, [group], found, ocr=True), current)
+        self.assertIs(owner(zero, money, [group], found), previous)
+        # A print on the earlier code line still belongs to that earlier item.
+        earlier = [Glyph('0', 60, 21.2, 63, 25.7, 1, 0)]
+        self.assertIs(owner(earlier, money, [group], found, ocr=True), previous)
+
     def test_minus_and_separators(self):
         self.assertEqual(_text('A80,636,880'), '△80,636,880')
         self.assertEqual(_text('15,936120'), '15,936,120')
