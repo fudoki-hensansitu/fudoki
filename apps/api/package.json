@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "bun run build.ts",
+    "build": "bun run view && bun run build.ts",
     "deploy": "bun run build.ts --deploy",
     "dev": "mise exec -- cf dev",
     "openapi": "bun openapi.ts",
@@ -11,7 +11,8 @@
     "typecheck": "tsc --noEmit",
     "view": "bun ui/build.ts",
     "test:e2e": "E2E_TELEMETRY_DISABLED=1 e2e run",
-    "inspect": "mcp-inspector --web --transport http --server-url https://api.fudoki.dev/mcp"
+    "inspect": "mcp-inspector --web --transport http --server-url https://api.fudoki.dev/mcp",
+    "dev:ui": "bun run view && bun --watch tests/server.ts --preview"
   },
   "devDependencies": {
     "@cloudflare/config": "catalog:",
@@ -20,11 +21,19 @@
     "@modelcontextprotocol/client": "2.3.1",
     "@modelcontextprotocol/ext-apps": "2.0.3",
     "@modelcontextprotocol/inspector": "2.9.0",
+    "@tailwindcss/postcss": "4.3.3",
     "@types/bun": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
     "e2e": "0.16.0",
     "miniflare": "4.20260730.0",
     "pdfjs-dist": "6.4.299",
     "playwright": "1.63.0",
+    "postcss": "8.5.29",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "shadcn": "catalog:",
+    "tailwindcss": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:"
   },
@@ -32,6 +41,8 @@
     "@hono/zod-openapi": "1.6.3",
     "@modelcontextprotocol/server": "2.3.1",
     "hono": "4.13.13",
-    "zod": "catalog:"
+    "zod": "catalog:",
+    "@fudoki/ui": "workspace:*",
+    "recharts": "catalog:"
   }
 }
