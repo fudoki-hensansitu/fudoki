@@ -54,6 +54,33 @@ class TextTest(unittest.TestCase):
 
 
 class CorrectionTest(unittest.TestCase):
+    def test_code_corrections_bind_raw_words_only_in_subject_columns(self):
+        from pathlib import Path
+        from ingestion.generic import scan
+        from ingestion.generic.layout import Band, Logical
+        from ingestion.lib.pdf_rules import PageRules
+        item = {'id': 'r', 'kind': 'region', 'raw_text': '712', 'bbox_pdf_pt': [10, 40, 35, 50]}
+        child = {**item, 'id': 'w', 'kind': 'word', 'parent_id': 'r'}
+        observation = {'pages': [{'page_number': 1, 'regions': [{'observations': [item, child]}]}]}
+        original = deepcopy(observation)
+        band = Band(0, 40, 1, ('科目', '目'), [30, 100], 30, 100, kind='label')
+        logical = Logical([1], [band], '円', [])
+        rule = {'id': 'code', 'page': 1, 'observation_id': 'w', 'observed_code': '712',
+                'corrected_code': '711', 'reason': '原画で7・1・1と確認'}
+        with patch.object(scan.pdf_rules, 'detect', return_value=PageRules(1, 100, 100, (), ())), \
+                patch.object(scan, '_layout', return_value=[logical]):
+            corrected = scan.pages(observation, Path('x.pdf'), code_corrections=[rule])
+            self.assertEqual([w.text for w in corrected[0].words], ['711'])
+            self.assertEqual(observation, original)
+            for changes in ({'observed_code': '７１２'}, {'observation_id': 'absent'}, {'page': 2},
+                            {'corrected_code': '7A1'}, {'observation_id': 'r'}):
+                with self.subTest(changes=changes), self.assertRaises(ValueError):
+                    scan.pages(observation, Path('x.pdf'), code_corrections=[{**rule, **changes}])
+            band.header = ('支出済額',)
+            band.kind = 'amount'
+            with self.assertRaisesRegex(ValueError, 'subject column'):
+                scan.pages(observation, Path('x.pdf'), code_corrections=[rule])
+
     def test_a_contained_comma_in_another_tile_is_kept_in_its_complete_amount(self):
         from ingestion.generic import scan
         from ingestion.lib.pdf_rules import PageRules

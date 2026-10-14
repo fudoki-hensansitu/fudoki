@@ -56,6 +56,48 @@
           "reason"
         ]
       }
+    },
+    "code_corrections": {
+      "description": "原画で確認した科目番号のOCR訂正。頁・単語ID・原文に結び付け、科目欄の数字だけへ適用する。",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "observation_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "observed_code": {
+            "type": "string",
+            "pattern": "^[0-9０-９]+$"
+          },
+          "corrected_code": {
+            "type": "string",
+            "pattern": "^[0-9０-９]+$"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "id",
+          "page",
+          "observation_id",
+          "observed_code",
+          "corrected_code",
+          "reason"
+        ]
+      }
     }
   },
   "required": [

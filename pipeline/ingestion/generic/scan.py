@@ -260,11 +260,35 @@ def agreed_headers(pages: list[Page]) -> list[Page]:
 
 def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = None,
           columns: dict | None = None, rules: dict | None = None, *, spread: dict | None = None,
-          header: dict | None = None) -> list[Page]:
+          header: dict | None = None, code_corrections: list[dict] | None = None) -> list[Page]:
     @cache
     def detected(number):
         return short_rows(pdf, (rules or {}).get(number) or pdf_rules.detect(pdf, number))
 
+    code_rules = []
+    if code_corrections:
+        from ingestion.generic.tree import groups
+        plain = agreed_headers([page(p, pdf, detected=detected(p['page_number'])) for p in observation['pages']])
+        subjects = [b for l in _layout(plain, columns, spread=spread, header=header)
+                    for g in groups(l) if g.subject for b in g.bands]
+        readings = {(p['page_number'], o['id']): o for p in observation['pages']
+                    for region in p['regions'] for o in region['observations']}
+        for rule in code_corrections:
+            item = readings.get((rule['page'], rule['observation_id']))
+            if item is None or item['raw_text'] != rule['observed_code']:
+                raise ValueError(f'Declared observed code differs from the observation: {rule["id"]}')
+            if item['kind'] != 'word' or not all(re.fullmatch(r'[0-9０-９]+', rule[key])
+                    for key in ('observed_code', 'corrected_code')):
+                raise ValueError(f'A code correction requires a numeric word: {rule["id"]}')
+            box = item['bbox_pdf_pt']
+            bands = [b for b in subjects if b.page == rule['page']]
+            cuts = sorted({x - b.offset for b in bands for x in (b.x0, b.x1)})
+            pieces = _split(Word(item['raw_text'], *box), cuts) if box else []
+            if not pieces or not all(any(b.x0 - b.offset <= (w.x0 + w.x1) / 2 <= b.x1 - b.offset
+                    and b.body_top <= (w.y0 + w.y1) / 2 <= b.body_bottom for b in bands) for w in pieces):
+                raise ValueError(f'A code correction needs a subject column: {rule["id"]}')
+            code_rules.append(AmountRule(rule['id'], rule['page'], rule['observation_id'],
+                                         rule['observed_code'], rule['corrected_code'], rule['reason']))
     if corrections:
         from ingestion.generic.layout import page_bands
         plain = agreed_headers([page(p, pdf, detected=detected(p['page_number'])) for p in observation['pages']])
@@ -284,6 +308,8 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
                                   and b.body_top <= (box[1] + box[3]) / 2 <= b.body_bottom
                                   for b in bands.get(rule.page, []))):
                 raise ValueError(f'Digitless correction needs a declared amount column: {rule.id}')
+    if code_rules:
+        corrections = amount_dictionary([r.__dict__ for r in [*(corrections.rules if corrections else ()), *code_rules]])
     used = set()
     found = [page(p, pdf, corrections, used, detected(p['page_number'])) for p in observation['pages']]
     unused = {r.id for r in corrections.rules} - used if corrections else set()
@@ -329,9 +355,10 @@ def logical_units(logicals_: list) -> set[tuple]:
 
 def logicals(observation: dict, pdf: Path, corrections: AmountDictionary | None = None,
              columns: dict | None = None, *, recover: bool = False, recovered: list | None = None,
-             spread: dict | None = None, header: dict | None = None) -> list:
+             spread: dict | None = None, header: dict | None = None, code_corrections: list[dict] | None = None) -> list:
     """The logical pages of an OCR observation, marked as OCR so the builder's rules for misreads apply."""
-    observed = pages(observation, pdf, corrections, columns, spread=spread, header=header)
+    observed = pages(observation, pdf, corrections, columns, spread=spread, header=header,
+                     code_corrections=code_corrections)
     if recover:
         observed, fills = recover_codes(observed, pdf, columns, spread=spread, header=header)
         if recovered is not None:
@@ -515,7 +542,7 @@ def build_table(source: dict, options: dict, *, stop: bool = True, rules: dict |
     spread = (settings or {}).get('spread')
     header = (settings or {}).get('header')
     printed = pages(observation, Path(source['path']), amount_dictionary(options.get('amount_corrections', [])), columns, rules,
-                    spread=spread, header=header)
+                    spread=spread, header=header, code_corrections=options.get('code_corrections'))
     printed, recovered = recover_codes(printed, Path(source['path']), columns, spread=spread, header=header)
     report = Report()
     direction = source.get('direction')

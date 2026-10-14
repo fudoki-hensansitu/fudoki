@@ -809,7 +809,17 @@
       "options": {
         "account": "一般会計",
         "table_id": "expenditure-settlement-10",
-        "partial": true
+        "partial": true,
+        "code_corrections": [
+          {
+            "id": "confirmed-continuation-codes",
+            "page": 21,
+            "observation_id": "p21:full-page:r11:w0",
+            "observed_code": "4212",
+            "corrected_code": "421",
+            "reason": "原画の継続頁の科目欄で款4・項2・目1と読んだ。Visionの融合単語の誤読を訂正し、番号条件を維持する。"
+          }
+        ]
       },
       "expected_tables": [
         {
@@ -866,7 +876,17 @@
       "options": {
         "account": "一般会計",
         "table_id": "expenditure-settlement-11",
-        "partial": true
+        "partial": true,
+        "code_corrections": [
+          {
+            "id": "confirmed-continuation-codes",
+            "page": 3,
+            "observation_id": "p3:full-page:r13:w0",
+            "observed_code": "712",
+            "corrected_code": "711",
+            "reason": "原画の継続頁の科目欄で款7・項1・目1と読んだ。Visionの融合単語の誤読を訂正し、番号条件を維持する。"
+          }
+        ]
       },
       "expected_tables": [
         {
