@@ -104,11 +104,14 @@ with recursive unioned as (
     left join {{ ref('int_fiscal__expenditure_accounts') }} a
       using (jurisdiction_code, fiscal_year, account_name)
 ), finest as (
+    -- Repeated names within an axis yield to an identified recipient below.
+    -- Keep 節 until identified_details proves a complete split in another axis.
     select c.* from classified c
     where not exists (
         select 1 from ancestors a join classified d
           on d.document_kind = a.document_kind and d.node_id = a.node_id
         where a.document_kind = c.document_kind and a.ancestor_id = c.node_id
+          and c.axis = d.axis
           and (c.recipient_kind is null or c.recipient_kind = '不明')
           and d.recipient_kind is not null and d.recipient_kind <> '不明')
 ), identified_details as (

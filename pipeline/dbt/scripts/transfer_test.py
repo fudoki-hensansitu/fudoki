@@ -38,6 +38,17 @@ class TransferTest(unittest.TestCase):
                 ('e', None, '科目', True, '目', '福祉総務費', 1000),
                 ('es', 'e', '節', False, '内訳1', '繰出金', 1000),
                 ('er', 'e', '備考', False, '内訳1', '介護保険会計繰出金', 25),
+                ('f', None, '科目', True, '目', '福祉総務費', 1000),
+                ('fs', 'f', '節', False, '内訳1', '繰出金', 1000),
+                ('fr', 'fs', '備考', False, '内訳1', '介護保険会計繰出金', 25),
+                ('g', None, '科目', True, '目', '医療費', 1000),
+                ('gs', 'g', '節', False, '内訳1', '繰出金', 1000),
+                ('gn', 'gs', '備考', False, '内訳1', '国民健康保険特別会計繰出金', 600),
+                ('gl', 'gs', '備考', False, '内訳1', '後期高齢者医療特別会計繰出金', 400),
+                ('h', None, '科目', True, '目', '諸支出金', 100),
+                ('hs', 'h', '節', False, '内訳1', '繰出金', 100),
+                ('hr', 'hs', '備考', False, '内訳1', '繰出金', 100),
+                ('hd', 'hr', '備考', False, '内訳2', '一般会計繰出金', 100),
             ]
             con.executemany('insert into int_fiscal__settlement_expenditure_nodes values (?,?,?,?,?,?,?,?,?,?,?,?)',
                             [(key, parent, 'fixture', 2025, 'settlement', '一般会計', axis, subject, kind, None, name, amount)
@@ -51,7 +62,7 @@ class TransferTest(unittest.TestCase):
             sql = Environment(undefined=StrictUndefined).from_string(source).render(ref=lambda name: name)
             con.execute('create table transfers as ' + sql)
             marked = con.execute('select node_id,interfund_transfer_to from transfers where is_interfund_transfer order by node_id').fetchall()
-            self.assertEqual(marked, [('as', None), ('bs', '国民健康保険'), ('cs', None), ('d', '介護保険'), ('es', None), ('l', '後期高齢者医療'), ('n', '国民健康保険')])
+            self.assertEqual(marked, [('as', None), ('bs', '国民健康保険'), ('cs', None), ('d', '介護保険'), ('es', None), ('fs', None), ('gl', '後期高齢者医療'), ('gn', '国民健康保険'), ('hd', '一般会計'), ('l', '後期高齢者医療'), ('n', '国民健康保険')])
             self.assertEqual(con.execute("select sum(n.amount_yen) from transfers t join int_fiscal__settlement_expenditure_nodes n using(node_id) where t.is_interfund_transfer and n.parent_node_id='m'").fetchone()[0], 8485855706)
 
 
