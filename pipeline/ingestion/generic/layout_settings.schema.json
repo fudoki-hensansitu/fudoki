@@ -25,6 +25,13 @@
         "gutter": {"type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1}
       }
     },
+    "header": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ignore_frame_title": {"type": "boolean"}
+      }
+    },
     "breakdown": {
       "type": "object",
       "propertyNames": {"minLength": 1},
