@@ -269,7 +269,8 @@ export function createBridge() {
         if (disposed || id !== epoch) return
         update({
           entry: { tool: 'get_expenditure_node', args, data: opened.data, revision: id },
-          history: [],
+          // 明細の履歴は別の枝なので捨て、来た一覧には経路の会計から戻れるように残す
+          history: state.history.filter((e) => !('node' in e.data)),
           names: { ...state.names, ...namesOf(opened.meta) },
         })
       } catch (error) {
@@ -307,11 +308,14 @@ export function createBridge() {
      * 新しい問いとして会話に残し、AI が結果を受け取って続きを答えられるようにする。
      */
     ask(text: string) {
-      if (disposed) return
+      // 送っている間は busy にして、連打で同じ問いを重ねて送らない
+      if (disposed || state.busy) return
+      update({ busy: true, error: undefined })
       void app
         .sendMessage({ role: 'user', content: [{ type: 'text', text }] })
         .then((result) => { if (result.isError) update({ error: 'チャットに送れませんでした' }) })
         .catch((error) => update({ error: `チャットに送れませんでした: ${String(error)}` }))
+        .finally(() => { if (!disposed) update({ busy: false }) })
     },
     /** 利用者が View で見ている対象を AI に伝え、続けてチャットで聞かれたときに指せるようにする */
     tellModel(text: string) {

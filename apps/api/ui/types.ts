@@ -90,3 +90,10 @@ export const nodePath = (node: TreeNode) =>
   ]
     .filter(Boolean)
     .join(' / ')
+
+/** 棒の長さ（%）。割合を出すときは合計に対する比、出さないときは最大の行に対する比 */
+export function barWidths(amounts: (number | null)[], share: boolean): number[] {
+  const positive = amounts.map((v) => v ?? 0).filter((v) => v > 0)
+  const base = share ? positive.reduce((sum, v) => sum + v, 0) : Math.max(0, ...positive)
+  return amounts.map((v) => (v !== null && v > 0 && base > 0 ? (v / base) * 100 : 0))
+}

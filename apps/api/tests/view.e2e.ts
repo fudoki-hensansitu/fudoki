@@ -81,6 +81,22 @@ test('団体と年度の表に収録した資料の区分を置く', async ({ ap
   await expect(ui.getByRole('heading', '2団体の収録範囲')).toBeVisible()
 })
 
+test('続きがある途中の頁は、1件でも明細に置き換えず続きを残す', async ({ app, browser }) => {
+  await app.open('/?ui=chart-partial')
+  const ui = browser.frameLocator('iframe')
+  await expect(ui.getByRole('button', '続き')).toBeVisible()
+  await expect(ui.getByRole('list', '一般会計').getByRole('listitem')).toHaveCount(1)
+  expect(await browser.evaluate('() => window.uiQA.calls().length')).toBe(0)
+})
+
+test('1件の結果を自動で開けなかったときは、再読み込みで開き直せる', async ({ app, browser }) => {
+  await app.open('/?ui=retry')
+  const ui = browser.frameLocator('iframe')
+  await expect(ui.getByRole('alert')).toBeVisible()
+  await ui.getByRole('button', '再読み込み').tap()
+  await expect(ui.getByRole('button', /^参照/)).toBeVisible()
+})
+
 test('取得の失敗と0件は、それぞれ短い文で知らせる', async ({ app, browser }) => {
   await app.open('/?ui=error')
   const ui = browser.frameLocator('iframe')

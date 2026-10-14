@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { percent, shortYen, yen } from './types'
+import { barWidths, percent, shortYen, yen } from './types'
 import { ChevronRight } from 'lucide-react'
 import { Kind } from './kind'
 
@@ -33,16 +33,16 @@ export function BarList({ bars, share, busy, label, keepOrder = false, fold = FO
   const [open, setOpen] = useState(false)
   const sorted = keepOrder ? bars : [...bars].sort((a, b) => (b.amount ?? -Infinity) - (a.amount ?? -Infinity))
   const positive = sorted.map((b) => b.amount ?? 0).filter((v) => v > 0)
-  const max = Math.max(0, ...positive)
   const total = positive.reduce((sum, v) => sum + v, 0)
   // 畳むのは2件以上隠れるときだけ。1件のために「残り1件」を押させない。
+  const lengths = barWidths(sorted.map((b) => b.amount), share)
+  const widths = new Map(sorted.map((bar, i) => [bar, lengths[i]!]))
   const shown = open || sorted.length <= fold + 1 ? sorted : sorted.slice(0, fold)
   const hidden = sorted.slice(shown.length)
   return (
     <div className="bars" role="list" aria-label={label}>
       {shown.map((bar) => {
-        const base = share ? total : max
-        const width = bar.amount !== null && bar.amount > 0 && base > 0 ? (bar.amount / base) * 100 : 0
+        const width = widths.get(bar)!
         const body = (
           <>
             <span className="bar-label">

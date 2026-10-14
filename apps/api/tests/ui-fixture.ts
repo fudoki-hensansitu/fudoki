@@ -137,7 +137,7 @@ export function uiData(scenario: string, more = false, nodeId?: string): ViewDat
       ? [{ ...node, node_id: 'ui-more', name: '追加された明細' }]
       : [node],
     origins: more ? [] : [origin],
-    next_page_token: more ? null : 'search-next',
+    next_page_token: null,
   }
 }
 

@@ -87,6 +87,9 @@ const shareable = (rows: TreeNode[], next?: string | null) =>
   !next && siblings(rows) && rows.every((n) => n.amount_yen !== null)
 
 /** 全行が同じ資料・会計・親・段にあるなら、割合を出せる兄弟とみなす */
+/** 検索結果が1件で続きも無いときだけ、明細の画面に置き換える */
+const autoOpens = (rows: TreeNode[], next?: string | null) => rows.length === 1 && !next
+
 /** 団体・年度・資料・会計ごとに分け、2つ以上のまとまりがどれも兄弟の一覧なら返す。年度、団体コードの順に並べる */
 function groupByScope(rows: TreeNode[]): TreeNode[][] | undefined {
   const map = new Map<string, TreeNode[]>()
@@ -269,8 +272,9 @@ function describeRows(rows: TreeNode[], names: Names) {
   }
 }
 
-function NodesResult({ rows, next, history, names, bridge, busy }: {
+function NodesResult({ rows, next, history, names, bridge, busy, failed }: {
   rows: TreeNode[]
+  failed: boolean
   history: { data: ViewData }[]
   next?: string | null
   names: Names
@@ -279,12 +283,15 @@ function NodesResult({ rows, next, history, names, bridge, busy }: {
 }) {
   if (!rows.length) return <p className="quiet">該当する歳出明細はありません。</p>
   const drill = (n: TreeNode) => () => void bridge.call('get_expenditure_node', { document_kind: n.document_kind, node_id: n.node_id }, 'drill')
-  // 1件だけなら View が内訳を取りに行き、明細の画面に置き換える。取得までの間は同じ見出しを出しておく
-  if (rows.length === 1) {
+  // 1件だけなら View が内訳を取りに行き、明細の画面に置き換える。取得までの間は同じ見出しを出しておく。
+  // 続きがある途中の頁は1件でも一覧として出す（置き換えると続きに辿り着けない）
+  if (autoOpens(rows, next)) {
     const n = rows[0]!
     return (
       <PathHeader crumbs={crumbsOf(n, history, bridge)} kind={kindOf(n)} title={n.name} scope={headScopeOf(n, names)} busy={busy}>
         <span className="total-short" title={yen(n.amount_yen)}>{shortYen(n.amount_yen)}</span>
+        {/* 自動の取得に失敗したときだけ、開き直す手段を置く */}
+        {failed && !busy && <button type="button" className="bar-more" onClick={drill(n)}>再読み込み</button>}
       </PathHeader>
     )
   }
@@ -391,7 +398,7 @@ function JurisdictionsResult({ list, bridge, busy }: { list: Jurisdiction[]; bri
                     // View の中では移らず、チャットで AI に呼び直させる。一般会計を優先し、別の会計はチャットで聞き直せばよい
                     const account = c.accounts.find((a) => a.account_name === '一般会計') ?? c.accounts[0]
                     return (
-                      <button type="button" key={c.document_kind} className="chip" disabled={!account}
+                      <button type="button" key={c.document_kind} className="chip" disabled={busy || !account}
                         aria-label={`${j.name} ${y}年度 ${label}の${account?.account_name ?? ''}をチャットで聞く`}
                         onClick={() => account && bridge.ask(`${j.name}（団体コード ${j.jurisdiction_code}）の${y}年度 ${label}・${account.account_name}の歳出を款ごとに見せて`)}>
                         {label}
@@ -417,7 +424,7 @@ function View({ bridge }: { bridge: Bridge }) {
   const moved = useRef(false)
   useEffect(() => {
     // 検索結果が1件なら、ボタンを押させずにその明細の内訳を開く
-    if (entry && 'nodes' in entry.data && entry.data.nodes.length === 1) {
+    if (entry && 'nodes' in entry.data && autoOpens(entry.data.nodes, entry.data.next_page_token)) {
       const n = entry.data.nodes[0]!
       void bridge.call('get_expenditure_node', { document_kind: n.document_kind, node_id: n.node_id }, 'reset')
     }
@@ -450,7 +457,7 @@ function View({ bridge }: { bridge: Bridge }) {
       {entry && (
         <div key={entry.revision} className="result">
           {'jurisdictions' in entry.data ? <JurisdictionsResult list={entry.data.jurisdictions} bridge={bridge} busy={state.busy} />
-            : 'nodes' in entry.data ? <NodesResult rows={entry.data.nodes} next={entry.data.next_page_token} history={state.history} names={state.names} bridge={bridge} busy={state.busy} />
+            : 'nodes' in entry.data ? <NodesResult rows={entry.data.nodes} next={entry.data.next_page_token} history={state.history} names={state.names} bridge={bridge} busy={state.busy} failed={!!state.error} />
             : <NodeResult data={entry.data} crumbs={crumbsOf(entry.data.node, state.history, bridge)} names={state.names} bridge={bridge} showPdf={showPdf} busy={state.busy} />}
         </div>
       )}
