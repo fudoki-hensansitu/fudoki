@@ -1,8 +1,8 @@
 import { createHash } from 'node:crypto'
 import { expect, test } from 'bun:test'
-import { archiveGroup, archiveSelected, isMissingR2ObjectError, planArchives, planFiles, isArchived, type ArchiveTransport } from './archive'
-import { sourceSelectionsSchema, type SourceFile, type SourceSelection } from './schema'
-import { originObjectKey } from './storage'
+import { archiveGroup, archiveSelected, evaluationKind, isMissingR2ObjectError, planArchives, planFiles, isArchived, type ArchiveTransport } from './archive'
+import { evaluationSelectionsSchema, sourceSelectionsSchema, type EvaluationSelection, type SourceFile, type SourceSelection } from './schema'
+import { evaluationObjectKey, originObjectKey } from './storage'
 
 const body = new TextEncoder().encode('名称,金額\n事業,100\n')
 const secondBody = new TextEncoder().encode('second part')
@@ -159,4 +159,79 @@ test('replacement next-part skips an unregistered fourth object and still refuse
   expect(fake.downloads).toHaveLength(1)
   for (const value of [0, 3, 4.5, Number.MAX_SAFE_INTEGER + 1]) expect(() => planFiles([replacement], previous, value)).toThrow('next-part')
   expect(() => planFiles([replacement], undefined, 5)).toThrow('next-part')
+})
+
+// 評価資料: 決算書と同じ団体・年度で、別の slot（evaluation-settlement）に保存する。
+const settlementTarget = { jurisdiction: '132047', fiscal_year: 2024, document_kind: 'settlement' as const }
+const evaluationFile = (data: Uint8Array, name: string) => ({ download_url: `https://example.com/${name}.pdf`, sha256: hash(data), format: 'pdf' as const, pdf_type: 'text' as const, pages: null })
+const evaluation = (files: ReturnType<typeof evaluationFile>[]): EvaluationSelection => ({ target: settlementTarget,
+  candidates: [{ id: 'results', title: '主要施策の成果', landing_url: 'https://example.com/results', inspected_at: '2026-10-13T00:00:00Z', files }],
+  selected_candidate_id: 'results', archive: null, reason: '決算と同じ頁に掲載。' })
+const settlementSelection: SourceSelection = { ...selection, target: settlementTarget, candidates: [{ ...selection.candidates[0]!, files: [{ ...pdf, sha256: hash(body) }] }] }
+
+/** prefix を実際に絞って返す、key の集合を持つ偽物。 */
+function store(initial: string[], bodies: Record<string, Uint8Array> = {}) {
+  const keys = new Set(initial)
+  const listed: string[] = []
+  const api: ArchiveTransport = {
+    async download(url) { return { body: bodies[url] ?? body, final_url: url } },
+    async put(key) { keys.add(key) },
+    async list(prefix) { listed.push(prefix); return [...keys].filter(key => key.startsWith(prefix)).sort() },
+    async remove(key) { keys.delete(key) },
+  }
+  return { api, keys, listed }
+}
+
+test('evaluation originals are saved under evaluation-settlement keys, numbered only when there are several', async () => {
+  const single = store([])
+  const one = await archiveSelected(evaluation([evaluationFile(body, 'results')]), single.api, evaluationKind)
+  expect(one.archive!.files.map(item => item.key)).toEqual(['fiscal/source-selection/132047/2024/evaluation-settlement.pdf'])
+  expect(evaluationObjectKey(settlementTarget, 'pdf')).toBe('fiscal/source-selection/132047/2024/evaluation-settlement.pdf')
+  expect(single.listed).toEqual(['fiscal/source-selection/132047/2024/evaluation-settlement-'])
+  expect(evaluationSelectionsSchema.safeParse([one]).success).toBe(true)
+  expect(isArchived([one], undefined, undefined, evaluationKind)).toBe(true)
+  const several = store([], { 'https://example.com/second.pdf': secondBody })
+  const two = await archiveSelected(evaluation([evaluationFile(body, 'results'), evaluationFile(secondBody, 'second')]), several.api, evaluationKind)
+  expect(new Set(two.archive!.files.map(item => item.key))).toEqual(new Set(['fiscal/source-selection/132047/2024/evaluation-settlement-1.pdf', 'fiscal/source-selection/132047/2024/evaluation-settlement-2.pdf']))
+  expect(evaluationSelectionsSchema.safeParse([two]).success).toBe(true)
+})
+
+test('an evaluation original whose bytes differ from the selection stops before any upload', async () => {
+  const fake = store([])
+  await expect(archiveSelected(evaluation([{ ...evaluationFile(body, 'results'), sha256: 'a'.repeat(64) }]), fake.api, evaluationKind)).rejects.toThrow('Original changed')
+  expect(fake.keys.size).toBe(0)
+})
+
+test('archiving a settlement document does not list or delete evaluation-settlement keys', async () => {
+  const evaluationKeys = ['fiscal/source-selection/132047/2024/evaluation-settlement.pdf', 'fiscal/source-selection/132047/2024/evaluation-settlement-1.pdf']
+  const fake = store([...evaluationKeys, 'fiscal/source-selection/132047/2024/settlement-1.pdf', 'fiscal/source-selection/132047/2024/settlement-2.pdf'])
+  const result = await archiveSelected(settlementSelection, fake.api)
+  expect(fake.listed).toEqual(['fiscal/source-selection/132047/2024/settlement-'])
+  expect(result.archive!.files.map(item => item.key)).toEqual(['fiscal/source-selection/132047/2024/settlement.pdf'])
+  for (const key of evaluationKeys) expect(fake.keys.has(key)).toBe(true)
+  expect([...fake.keys].filter(key => !evaluationKeys.includes(key)).sort()).toEqual(['fiscal/source-selection/132047/2024/settlement.pdf'])
+})
+
+test('archiving evaluation originals does not list or delete settlement keys', async () => {
+  const settlementKeys = ['fiscal/source-selection/132047/2024/settlement.pdf', 'fiscal/source-selection/132047/2024/settlement-1.pdf', 'fiscal/source-selection/132047/2024/settlement-2.pdf']
+  const fake = store([...settlementKeys, 'fiscal/source-selection/132047/2024/evaluation-settlement-3.pdf'])
+  const result = await archiveSelected(evaluation([evaluationFile(body, 'results')]), fake.api, evaluationKind)
+  expect(fake.listed).toEqual(['fiscal/source-selection/132047/2024/evaluation-settlement-'])
+  expect(result.archive!.files.map(item => item.key)).toEqual(['fiscal/source-selection/132047/2024/evaluation-settlement.pdf'])
+  for (const key of settlementKeys) expect(fake.keys.has(key)).toBe(true)
+  expect(fake.keys.has('fiscal/source-selection/132047/2024/evaluation-settlement-3.pdf')).toBe(false)
+})
+
+test('evaluation replacement keeps the saved keys and puts only the new original at the next part number', async () => {
+  const added = new TextEncoder().encode('added evaluation')
+  const prefix = 'fiscal/source-selection/132047/2024/evaluation-settlement'
+  const saved = [evaluationFile(body, 'results'), evaluationFile(secondBody, 'second')]
+  const previous = { ...evaluation(saved), archive: { bucket: 'fudoki-inputs' as const, candidate_id: 'results', archived_at: '2026-10-14T00:00:00Z',
+    files: saved.map((file, index) => ({ key: `${prefix}-${index + 1}.pdf`, sha256: file.sha256, final_url: file.download_url })) } }
+  const replacement = evaluation([...saved, evaluationFile(added, 'added')])
+  const fake = store(previous.archive.files.map(item => item.key), { 'https://example.com/added.pdf': added })
+  const result = (await archiveGroup([replacement], fake.api, previous, undefined, evaluationKind))[0]!
+  expect(result.archive!.files.map(item => item.key)).toEqual([1, 2, 3].map(n => `${prefix}-${n}.pdf`))
+  expect(evaluationSelectionsSchema.safeParse([result]).success).toBe(true)
+  expect(fake.keys.size).toBe(3)
 })
