@@ -87,6 +87,19 @@ const shareable = (rows: TreeNode[], next?: string | null) =>
   !next && siblings(rows) && rows.every((n) => n.amount_yen !== null)
 
 /** 全行が同じ資料・会計・親・段にあるなら、割合を出せる兄弟とみなす */
+/** 団体・年度・資料・会計ごとに分け、2つ以上のまとまりがどれも兄弟の一覧なら返す。年度、団体コードの順に並べる */
+function groupByScope(rows: TreeNode[]): TreeNode[][] | undefined {
+  const map = new Map<string, TreeNode[]>()
+  for (const n of rows) {
+    const key = JSON.stringify([n.fiscal_year, n.jurisdiction_code, n.document_kind, n.account_name])
+    map.set(key, [...(map.get(key) ?? []), n])
+  }
+  if (map.size < 2) return undefined
+  const groups = [...map.values()]
+  if (!groups.every((g) => siblings(g)) || groups.every((g) => g.length === 1)) return undefined
+  return groups.sort((a, b) => a[0]!.fiscal_year - b[0]!.fiscal_year || a[0]!.jurisdiction_code.localeCompare(b[0]!.jurisdiction_code))
+}
+
 function siblings(rows: TreeNode[]) {
   const key = (n: TreeNode) => JSON.stringify([n.document_kind, n.jurisdiction_code, n.fiscal_year,
     n.account_name, n.axis, n.node_kind, n.parent_node_id ?? null])
@@ -241,7 +254,10 @@ function describeRows(rows: TreeNode[], names: Names) {
     title: same.name ? first.name : undefined,
     kind: same.name ? kindOf(first) : undefined,
     // 違いが年度だけなら、年の順に並べて推移として読めるようにする
+    oneScope: same.jurisdiction && same.year && same.document,
     byYear: !same.year && same.jurisdiction && same.document && same.account && same.name,
+    /** 団体・年度ごとに分けたまとまりの名前。違う値だけを並べる */
+    groupLabel: (n: TreeNode) => [...scopeParts(n, false), ...(same.account ? [] : [n.account_name])].join(' · '),
     label: (n: TreeNode) => same.name
       ? [...scopeParts(n, false), ...(same.account ? [] : [n.account_name])].join(' · ')
       : n.name,
@@ -292,12 +308,48 @@ function NodesResult({ rows, next, history, names, bridge, busy }: {
       </>
     )
   }
+  const groups = groupByScope(rows)
+  if (groups) {
+    // 団体・年度ごとの兄弟の一覧を、それぞれ一つの画面と同じ形（合計・割合）で縦に並べる。
+    // 款の名前は団体ごとに違うので、行を混ぜて金額順に並べると比べられない
+    const d = describeRows(rows, names)
+    const first = rows[0]!
+    const parent = ancestorsOf(first).at(-1)
+    const sameParent = rows.every((n) => ancestorsOf(n).at(-1)?.name === parent?.name)
+    const title = sameParent && parent ? parent.name : first.account_name
+    // 経路は団体ごとに違う画面を指すので、段を押して移る先を決められない。文字だけ置く
+    const crumbs: Crumb[] = sameParent && parent ? [{ name: first.account_name }, ...ancestorsOf(first).slice(0, -1)] : []
+    return (
+      <>
+        <PathHeader crumbs={crumbs} kind={sameParent ? parent?.kind : undefined} title={title} scope={d.scope} busy={busy} />
+        {groups.map((group) => {
+          const g = group[0]!
+          const label = d.groupLabel(g)
+          const gShare = shareable(group, next)
+          const gTotal = group.reduce((sum, n) => sum + (n.amount_yen ?? 0), 0)
+          return (
+            <section className="group" key={`${g.jurisdiction_code}-${g.fiscal_year}-${g.document_kind}-${g.account_name}`} aria-label={label}>
+              <div className="group-head">
+                <h3>{label}</h3>
+                {gShare && <span className="group-total" title={yen(gTotal)}>{shortYen(gTotal)}</span>}
+              </div>
+              <BarList label={label} share={gShare} busy={busy} fold={5}
+                bars={group.map((n) => ({ key: `${n.document_kind}-${n.node_id}`, label: n.name, kind: kindOf(n), amount: n.amount_yen, onSelect: drill(n) }))} />
+            </section>
+          )
+        })}
+      </>
+    )
+  }
   const d = describeRows(rows, names)
   const title = d.title ?? `${rows.length}件の明細`
   const ordered = d.byYear ? [...rows].sort((a, b) => a.fiscal_year - b.fiscal_year) : rows
   return (
     <>
-      <PathHeader crumbs={d.commonLevels ? crumbsOf(rows[0]!, history, bridge, d.commonLevels) : []} kind={d.kind} title={title} scope={d.scope} busy={busy} />
+      <PathHeader crumbs={d.commonLevels
+        // 団体・年度・資料が混ざると、段を押して移る先を一つに決められないので文字だけ置く
+        ? crumbsOf(rows[0]!, history, bridge, d.commonLevels).map((c) => d.oneScope ? c : { ...c, back: undefined })
+        : []} kind={d.kind} title={title} scope={d.scope} busy={busy} />
       <BarList label={title} share={false} busy={busy} keepOrder={d.byYear}
         bars={ordered.map((n) => ({
           key: `${n.document_kind}-${n.node_id}`,

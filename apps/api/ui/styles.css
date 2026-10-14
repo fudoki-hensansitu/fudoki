@@ -54,6 +54,13 @@
 /* 区分のタグ。名前の前に置き、名前より一段小さく静かにする */
 .kind { display: inline-block; margin-right: 6px; padding: 0 4px; border: 1px solid var(--border); border-radius: 4px; font-size: 11px; line-height: 16px; font-weight: var(--font-weight-medium, 500); color: var(--sub); vertical-align: 1px; white-space: nowrap; }
 
+/* 団体・年度ごとのまとまり。見出しの金額は一画面の合計より一段小さくする */
+.group { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.group + .group { margin-top: 8px; }
+.group-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-bottom: 4px; border-bottom: 1px solid var(--border); }
+.group-head h3 { font-size: var(--text-body); color: var(--foreground); font-weight: var(--font-weight-semibold, 600); }
+.group-total { font-size: var(--text-heading); line-height: 1.3; font-weight: var(--font-weight-semibold, 600); font-variant-numeric: lining-nums tabular-nums; }
+
 /* 内訳 */
 .section { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .bars { display: flex; flex-direction: column; min-width: 0; }

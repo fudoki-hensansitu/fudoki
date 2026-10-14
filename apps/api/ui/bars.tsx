@@ -20,10 +20,12 @@ const FOLD = 10
  * 金額を横棒の長さで見せる。割合を出す兄弟の一覧では、棒も合計に対する比にして、% と長さを一致させる。
  * 割合を出さない一覧（団体・年度の混在、続きがある）では合計が意味を持たないので、最大の行に対する長さにする。
  */
-export function BarList({ bars, share, busy, label, keepOrder = false }: {
+export function BarList({ bars, share, busy, label, keepOrder = false, fold = FOLD }: {
   bars: Bar[]
   /** 年の推移など、並び自体に意味があるときは金額で並べ替えない */
   keepOrder?: boolean
+  /** これより多いと上位だけを出して残りを畳む */
+  fold?: number
   share: boolean
   busy: boolean
   label: string
@@ -34,7 +36,7 @@ export function BarList({ bars, share, busy, label, keepOrder = false }: {
   const max = Math.max(0, ...positive)
   const total = positive.reduce((sum, v) => sum + v, 0)
   // 畳むのは2件以上隠れるときだけ。1件のために「残り1件」を押させない。
-  const shown = open || sorted.length <= FOLD + 1 ? sorted : sorted.slice(0, FOLD)
+  const shown = open || sorted.length <= fold + 1 ? sorted : sorted.slice(0, fold)
   const hidden = sorted.slice(shown.length)
   return (
     <div className="bars" role="list" aria-label={label}>

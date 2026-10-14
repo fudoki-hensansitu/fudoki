@@ -177,6 +177,11 @@ export function chartData(scenario: string, id?: string, more = false): ViewData
     { ...kanWelfare, node_id: 'cmp-2', jurisdiction_code: '000003', amount_yen: 9_870_000_000, parent_node_id: null },
     { ...kanWelfare, node_id: 'cmp-3', fiscal_year: 2023, amount_yen: 3_650_000_000 },
   ], origins: [origin], next_page_token: null }
+  // 2団体の款（2025年度の中央区・新宿区の決算の金額）。款の名前は団体ごとに違う
+  if (scenario === 'chart-cities') return { nodes: [
+    ...CITY_KAN.A.map(([name, oku], i) => ({ ...fiscal(`city-a-${i}`, name, '款', oku * 100, null), fiscal_year: 2025 })),
+    ...CITY_KAN.B.map(([name, oku], i) => ({ ...fiscal(`city-b-${i}`, name, '款', oku * 100, null), fiscal_year: 2025, jurisdiction_code: '000003' })),
+  ], origins: [origin], next_page_token: null }
   if (scenario === 'chart-kan') return { nodes: [kouAdmin, kouTax], origins: [origin], next_page_token: null }
   if (scenario === 'chart-partial') return { nodes: more ? [kanWelfare] : [kanGeneral], origins: [origin], next_page_token: more ? null : 'chart-next' }
   if (scenario === 'chart-mixed') return { nodes: [kanGeneral, kanWelfare, kouAdmin,
@@ -192,3 +197,10 @@ const MANY_KAN: [string, number][] = [
   ['農林水産業費', 6.4], ['商工費', 21.9], ['土木費', 133.7], ['消防費', 38.0], ['教育費', 142.3],
   ['災害復旧費', 0.3], ['公債費', 61.5], ['諸支出金', 0.02], ['予備費', 0],
 ]
+
+const CITY_KAN: Record<'A' | 'B', [string, number][]> = {
+  A: [['議会費', 6.4], ['企画費', 70.7], ['総務費', 83.4], ['区民費', 140.2], ['福祉保健費', 483.7], ['環境土木費', 106.3],
+    ['都市整備費', 257.2], ['教育費', 206.0], ['公債費', 18.2], ['諸支出金', 162.7], ['予備費', 0]],
+  B: [['議会費', 7.7], ['総務費', 173.6], ['地域振興費', 94.5], ['文化観光産業費', 58.2], ['福祉費', 472.0], ['子ども家庭費', 394.8],
+    ['健康費', 185.8], ['環境清掃費', 101.2], ['土木費', 113.3], ['教育費', 197.0], ['公債費', 22.9], ['諸支出金', 57.0], ['予備費', 0]],
+}

@@ -50,6 +50,24 @@ test('団体や年度が混ざる結果は、共通の値を見出しにまと�
   await expect(ui.getByText('%')).toHaveCount(0)
 })
 
+test('団体をまたぐ款の一覧は、団体ごとに分けて合計と割合を出す', async ({ app, browser }) => {
+  await app.open('/?ui=chart-cities')
+  const ui = browser.frameLocator('iframe')
+  await expect(ui.getByRole('heading', '一般会計')).toBeVisible()
+  await expect(ui.getByRole('region', '試験市')).toBeVisible()
+  await expect(ui.getByRole('region', '比較市')).toBeVisible()
+  await expect(ui.getByText('1,534.8億円')).toBeVisible()
+  await expect(ui.getByRole('list', '比較市').getByRole('listitem')).toHaveCount(5)
+  await expect(ui.getByText('25%')).toBeVisible()
+})
+
+test('団体や年度が混ざる一覧の経路は、移る先を決められないので押せない', async ({ app, browser }) => {
+  await app.open('/?ui=chart-compare')
+  const ui = browser.frameLocator('iframe')
+  await expect(ui.getByRole('heading', '款 民生費')).toBeVisible()
+  await expect(ui.getByRole('button', '一般会計に戻る')).toHaveCount(0)
+})
+
 test('団体と年度の表に収録した資料の区分を置く', async ({ app, browser }) => {
   await app.open('/?ui=jurisdictions')
   const ui = browser.frameLocator('iframe')
