@@ -11,8 +11,8 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 -810,keyword-health-prevention,,一般会計,,,,,予防費|感染症|保健所予防|母子保健,contains,,assigned,07.4,retained,目,,予防・感染症対策・母子保健を UN COFOG 07.4 公衆衛生サービスに分類する。名称からの判断で定義の確認が要るため暫定とする。,true
 -809,keyword-welfare-admin,,一般会計,,,社会福祉費,,社会福祉総務|福祉総務,contains,,assigned,10.9,retained,目,,社会福祉の政策全体の運営を UN COFOG 10.9 他に分類されない社会保護に分類する。対象者別の総務（障害者・高齢者・児童）は先の規則が取り、ここは項が社会福祉費のものだけ当てる。,false
 -807,keyword-personnel,,一般会計,,,,,人事管理|福利厚生,contains,,assigned,01.3.1,retained,目,,人事・福利厚生の管理を UN COFOG 01.3.1 一般人事サービスに分類する。名称からの判断で定義の確認が要るため暫定とする。教育総務費の福利厚生は項で限定した先の規則が取る。,true
--805,keyword-mixed-learning-sport,,一般会計,,,,,生涯学習スポーツ,contains,,unclassifiable,,retained,目,,学習とスポーツを一つの目に含み、機能を分離できない。,false
 -806,keyword-grant-refund-unknown-function,,一般会計,,,,,国都支出金返納金|国庫支出金返納金|都支出金返納金,contains,,unclassifiable,,retained,目,,返す元の補助事業の機能が名前からは決まらないため分類不能。金額は保持する。,false
+-805,keyword-mixed-learning-sport,,一般会計,,,,,生涯学習スポーツ,contains,,unclassifiable,,retained,目,,学習とスポーツを一つの目に含み、機能を分離できない。,false
 -804,keyword-mixed-compound,,一般会計,,,,,保育園・幼稚園|文化生涯学習|商工観光,contains,,unclassifiable,,retained,目,,異なる機能を組み合わせた目の名称からは金額を分離できない。,false
 -803,keyword-mixed-school-health,,一般会計,,,,,学校保健体育|学校保健費,contains,,unclassifiable,,retained,目,,学校保健の医療・補助サービス等を名称だけでは分離できない。,false
 -802,keyword-mixed-staff,,一般会計,,,,,生活経済職員|保健福祉職員|都市整備職員|会計年度任用職員,contains,,unclassifiable,,retained,目,,複数機能の職員経費であり名称だけでは配賦できない。,false

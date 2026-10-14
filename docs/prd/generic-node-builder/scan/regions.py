@@ -115,6 +115,7 @@ def main() -> None:
             scan.page(raw[number], pdf, detected=detected[number]) for number in sorted(set(args.pages))])}
     conversion['ocr_inputs'] = []
     conversion['options'].pop('amount_corrections', None)  # corrections bind the former observation IDs
+    conversion['options'].pop('code_corrections', None)
     output = {**source, 'conversions': [conversion], 'tables': []}
     if args.output.exists():
         output = manifest.validate(json.loads(args.output.read_text()))
