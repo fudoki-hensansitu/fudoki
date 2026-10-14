@@ -27,6 +27,7 @@
     "deploy:web": "bun run --cwd apps/web deploy",
     "dev:api": "bun run --cwd apps/api dev",
     "dev:web": "bun run --cwd apps/web dev",
+    "inspect:mcp": "bun run --cwd apps/api inspect",
     "test": "bun test apps/availability.test.ts && bun run --filter '@fudoki/*' test",
     "typecheck": "tsc --noEmit",
     "typecheck:all": "bun run typecheck && bun run --filter '@fudoki/*' typecheck",

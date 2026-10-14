@@ -186,6 +186,7 @@ bun run test                             # テスト（web の 500 応答と各 
 bun run --cwd pipeline test:python       # パイプラインの Python テスト
 bun run build:web                        # build（api・docs も build:api・build:docs）
 bun run dev:api                          # API をローカルで起動（web は dev:web）
+bun run inspect:mcp                      # MCP Inspector を本番の MCP（api.fudoki.dev/mcp）向けに起動
 ```
 
 lint の script は持たない。
