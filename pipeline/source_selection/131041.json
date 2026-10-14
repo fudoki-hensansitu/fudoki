@@ -5240,6 +5240,44 @@
         "archived_at": "2026-10-14T10:00:39.330Z"
       },
       "reason": "令和8年度の内部評価実施結果（358頁、2026-08作成、同年8月25日更新）。令和7年度に実施した第三次実行計画の全計画事業（64事業、枝事業を含め88事業）と、外部評価委員会が設定した3つの重点テーマ（17の経常事業を含む）を評価する。計画事業ごとに、令和7年度当初時点と年度末時点の主な課題・取組方針、実績、評価（計画以上／計画どおり／計画以下）とその理由、指標の目標値と実績値、事業経費・執行率を載せる（1事業2〜3頁程度）。令和7年度の取組の評価で、文字として読める。主要施策の成果の概要は決算ページに16KBの要旨のみのため選ばなかった。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131041",
+        "fiscal_year": 2024,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和7年度内部評価実施結果（テーマ別評価・計画事業評価）",
+          "landing_url": "https://www.city.shinjuku.lg.jp/kusei/gyosei01_002682_00009.html",
+          "inspected_at": "2026-10-14T19:40:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.shinjuku.lg.jp/content/000433696.pdf",
+              "sha256": "ea1f54e1431c617ef8f995aa5b645deecf8966f3309b3f378188991fb99d86f1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131041/2024/evaluation-settlement.pdf",
+            "sha256": "ea1f54e1431c617ef8f995aa5b645deecf8966f3309b3f378188991fb99d86f1",
+            "final_url": "https://www.city.shinjuku.lg.jp/content/000433696.pdf"
+          }
+        ],
+        "archived_at": "2026-10-14T16:08:45.934Z"
+      },
+      "reason": "令和6年度に実施した第三次実行計画の計画事業と重点テーマの経常事業を令和7年度に評価した内部評価実施結果（332頁、令和7年8月作成）。テーマ別評価（3テーマ）と計画事業評価で、事業ごとに令和6年度当初時点と年度末時点の課題・取組方針、実績、評価（計画以上／計画どおり／計画以下）と理由、指標の目標値と実績値、事業経費・執行率を載せる（1事業2〜3頁）。文字として読める。主要施策の成果の概要は決算ページに要旨のみのため選ばなかった。"
     }
   ]
 }

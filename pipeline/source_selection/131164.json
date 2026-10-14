@@ -2269,5 +2269,45 @@
       }
     }
   ],
-  "unresolved_candidates": []
+  "unresolved_candidates": [],
+  "evaluation_selections": [
+    {
+      "target": {
+        "jurisdiction": "131164",
+        "fiscal_year": 2024,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和6年度（令和7年度実施）事務事業評価表【詳細】",
+          "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r07/2508291433.html",
+          "inspected_at": "2026-10-14T20:12:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/53895/20250905161631.pdf",
+              "sha256": "1297f0260b5b8a9508c1792e63ed259c393fd87e6f981c96ffe29d0f7a75e019",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131164/2024/evaluation-settlement.pdf",
+            "sha256": "1297f0260b5b8a9508c1792e63ed259c393fd87e6f981c96ffe29d0f7a75e019",
+            "final_url": "https://www.city.toshima.lg.jp/documents/53895/20250905161631.pdf"
+          }
+        ],
+        "archived_at": "2026-10-14T16:12:30.698Z"
+      },
+      "reason": "令和6年度に実施した事務事業を令和7年度に評価した事務事業評価表の詳細版（102頁）。事務事業ごとに事業概要・目的、事業費（R5〜7年度の予算・決算・執行率）、成果指標・活動指標の目標値と実績値・達成率、達成状況の分析、区が実施する必要性・業務改善の取組・課題と改善の予定、評価（A〜D）を載せる。文字として読める。同じ評価の施策評価・一覧・一般版は施策単位・概要のため、事業単位の詳細版を代表にした。"
+    }
+  ]
 }

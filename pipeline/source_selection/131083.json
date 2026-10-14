@@ -1670,5 +1670,45 @@
       }
     }
   ],
-  "unresolved_candidates": []
+  "unresolved_candidates": [],
+  "evaluation_selections": [
+    {
+      "target": {
+        "jurisdiction": "131083",
+        "fiscal_year": 2024,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "第6章 令和7年度行政評価 施策評価",
+          "landing_url": "https://www.city.koto.lg.jp/010162/kuse/shisaku/kekaku/kekakur0211/koki/tenkai/tenkai2026.html",
+          "inspected_at": "2026-10-14T20:30:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.koto.lg.jp/010162/kuse/shisaku/kekaku/kekakur0211/koki/tenkai/documents/chapter6-2.pdf",
+              "sha256": "ba7ed6f0c8a1319f3b662618263c210923344246181127feb909ed901acaff49",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131083/2024/evaluation-settlement.pdf",
+            "sha256": "ba7ed6f0c8a1319f3b662618263c210923344246181127feb909ed901acaff49",
+            "final_url": "https://www.city.koto.lg.jp/010162/kuse/shisaku/kekaku/kekakur0211/koki/tenkai/documents/chapter6-2.pdf"
+          }
+        ],
+        "archived_at": "2026-10-14T16:11:21.300Z"
+      },
+      "reason": "令和6年度実績を対象とする江東区長期計画の展開2026の第6章・施策評価（120頁）。施策ごとに目標（目指す姿・代表指標の目標値と実績値・達成度5段階）、コスト（R6予算・決算・R7〜8予算）、取組方針ごとの指標・実績・成果と課題、一次評価（主管部長）と二次評価（区の最終評価）・今後の方向性を載せる。文字として読める。同じ評価の事務事業評価（chapter6-3）は全事業のコストと改善方向の一覧表のみで目標・実績の記述が無いため、施策単位の評価シートを代表にした。"
+    }
+  ]
 }

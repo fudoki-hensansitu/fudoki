@@ -3183,6 +3183,272 @@
         "archived_at": "2026-10-14T10:05:35.200Z"
       },
       "reason": "2025年度決算の「主要な施策の成果に関する説明書」（地方自治法第233条第5項）として作成された課別・事業別行政評価シート（2026年8月作成、ページ更新 2026-09-16）。部課ごとの20分冊、合計425頁、文字の層あり。事業別シートは1事業あたり1頁前後で、事業目的、2024年度末の課題と取り組み状況、成果指標の目標と実績（2023〜2025年度と2026年度目標）、成果の説明、行政コスト計算書・貸借対照表（事業別）、総括（有効性・効率性の分析と課題）を載せる。課別シートは財務構造分析、個別分析、総括を載せる。分冊は部ごとのPDF（前半ページ=子ども生活部〜経済観光部、後半ページ=市民部〜会計課等）。目次（01）・勘定科目別／同種施設比較分析表（02〜04）・一般会計行政評価シート参考・用語解説（24）は評価の記述の本体ではないため含めない。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132098",
+        "fiscal_year": 2024,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和6年度（2024年度）町田市課別・事業別行政評価シート（主要な施策の成果に関する説明書）",
+          "landing_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_zenhan.html",
+          "inspected_at": "2026-10-14T19:56:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_zenhan.files/05_2024kodomo.pdf",
+              "sha256": "0cff5959d913fea7a3bb5555c126284f5c3bd31d8f20bacafbf09e7501c76eec",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_zenhan.files/gakkoukyouiku_zenhan2.pdf",
+              "sha256": "bf07cc9d9f901cf0a8191e7393cbd3a6b91dc08b05b99082716088681ac4c1ae",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_zenhan.files/gakkoukyouiku_kouhan2.pdf",
+              "sha256": "3d88eafc3e874e27215706420d4a677772d678e7c2fe40a2d66c3681aa22ef27",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_zenhan.files/08_2024syougaigakusyu.pdf",
+              "sha256": "1879d159ef78d8716e674ca553f3ead63ee7f454b7c9b1f7b71e67964fb797d1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_zenhan.files/09_2024chiikifukushi.pdf",
+              "sha256": "bec33e102514a53f909c413cba1ff0a83ac2096a1ee5e9af6e61023e4999f394",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_zenhan.files/10_2024ikiikiseikatu.pdf",
+              "sha256": "4a78b9e1cc242420227be07e0a83a29f8c1a29ea94b65eeda7387550185d2d26",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_zenhan.files/11_2024hokenzyo.pdf",
+              "sha256": "5affad66274a5907b742b47bb5a9f95b68eba16802497add8ff56c6da25d55cc",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_zenhan.files/12_bunkasupotu.pdf",
+              "sha256": "beeacda78f16775da88f61b51fd486c118e7faa8cff1f106777eebc7ef1b0b47",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_zenhan.files/13_2024keizzainougyou.pdf",
+              "sha256": "931a38644c6daab8cbd4604eed0b8abfda17aae40c627a6b9fc4a4a7dcd3e155",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_kouhan.files/14_shiminbu_zenhan.pdf",
+              "sha256": "075793f8fb771ee7c2527ded7c20794f8af136c6290510db6692cc527b7a48e6",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_kouhan.files/15_2024shiminbu_kouhan.pdf",
+              "sha256": "643dd0a872558689469f32ed6d0f07c6842384f716f1aef517a3272073a0f1a1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_kouhan.files/16_2024bousai.pdf",
+              "sha256": "1a78d1bcaa7ecf670965ac4af1d90ac87e9cfddf2a3a60faad75322bbec8578b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_kouhan.files/17_2024kankyoushigen.pdf",
+              "sha256": "cf6519b4af685b2f6f3c2dc9cef59400f1aa68452d741284b282500e29e9345f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_kouhan.files/18_2024douro.pdf",
+              "sha256": "35a43565731c5b2cffa1036da874820a7a8a92319100aa25ad538fbc202b37d1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_kouhan.files/19_2024toshidukuri.pdf",
+              "sha256": "09f6455af9a664e28b2531d288c06868096c006d7697decea70fdc25293fb240",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_kouhan.files/20_2024gesuidou.pdf",
+              "sha256": "8dc6b35ba9003a2b9643350e2841cdcc511a3fa0ad384b814111f3956c952ef6",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_kouhan.files/21_2024seisakukeiei.pdf",
+              "sha256": "cd7b9f405ad9f00b92bdb86f3badc84c4fcbb31d5d5ab4bbf6ebf743f10ee3be",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_kouhan.files/22_2024soumubu.pdf",
+              "sha256": "cec40a0e1e2ba859c3eb004ed6f4c1b76eb65aa34d8176ee10c407cec11f5f48",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_kouhan.files/2024zaimubu2.pdf",
+              "sha256": "e08f697430889cece03a7f7b9d301f6ad5d1f9de32f2f47d4b2c481cfb4e435d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_kouhan.files/24_2024kaikeisenkan.pdf",
+              "sha256": "41999ac7e9ecca192523ca2a84164c032db28372d45128621daad16ed3a7df12",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132098/2024/evaluation-settlement-3.pdf",
+            "sha256": "0cff5959d913fea7a3bb5555c126284f5c3bd31d8f20bacafbf09e7501c76eec",
+            "final_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_zenhan.files/05_2024kodomo.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132098/2024/evaluation-settlement-16.pdf",
+            "sha256": "bf07cc9d9f901cf0a8191e7393cbd3a6b91dc08b05b99082716088681ac4c1ae",
+            "final_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_zenhan.files/gakkoukyouiku_zenhan2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132098/2024/evaluation-settlement-7.pdf",
+            "sha256": "3d88eafc3e874e27215706420d4a677772d678e7c2fe40a2d66c3681aa22ef27",
+            "final_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_zenhan.files/gakkoukyouiku_kouhan2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132098/2024/evaluation-settlement-4.pdf",
+            "sha256": "1879d159ef78d8716e674ca553f3ead63ee7f454b7c9b1f7b71e67964fb797d1",
+            "final_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_zenhan.files/08_2024syougaigakusyu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132098/2024/evaluation-settlement-14.pdf",
+            "sha256": "bec33e102514a53f909c413cba1ff0a83ac2096a1ee5e9af6e61023e4999f394",
+            "final_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_zenhan.files/09_2024chiikifukushi.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132098/2024/evaluation-settlement-9.pdf",
+            "sha256": "4a78b9e1cc242420227be07e0a83a29f8c1a29ea94b65eeda7387550185d2d26",
+            "final_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_zenhan.files/10_2024ikiikiseikatu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132098/2024/evaluation-settlement-10.pdf",
+            "sha256": "5affad66274a5907b742b47bb5a9f95b68eba16802497add8ff56c6da25d55cc",
+            "final_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_zenhan.files/11_2024hokenzyo.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132098/2024/evaluation-settlement-15.pdf",
+            "sha256": "beeacda78f16775da88f61b51fd486c118e7faa8cff1f106777eebc7ef1b0b47",
+            "final_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_zenhan.files/12_bunkasupotu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132098/2024/evaluation-settlement-13.pdf",
+            "sha256": "931a38644c6daab8cbd4604eed0b8abfda17aae40c627a6b9fc4a4a7dcd3e155",
+            "final_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_zenhan.files/13_2024keizzainougyou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132098/2024/evaluation-settlement-1.pdf",
+            "sha256": "075793f8fb771ee7c2527ded7c20794f8af136c6290510db6692cc527b7a48e6",
+            "final_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_kouhan.files/14_shiminbu_zenhan.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132098/2024/evaluation-settlement-11.pdf",
+            "sha256": "643dd0a872558689469f32ed6d0f07c6842384f716f1aef517a3272073a0f1a1",
+            "final_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_kouhan.files/15_2024shiminbu_kouhan.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132098/2024/evaluation-settlement-5.pdf",
+            "sha256": "1a78d1bcaa7ecf670965ac4af1d90ac87e9cfddf2a3a60faad75322bbec8578b",
+            "final_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_kouhan.files/16_2024bousai.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132098/2024/evaluation-settlement-19.pdf",
+            "sha256": "cf6519b4af685b2f6f3c2dc9cef59400f1aa68452d741284b282500e29e9345f",
+            "final_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_kouhan.files/17_2024kankyoushigen.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132098/2024/evaluation-settlement-6.pdf",
+            "sha256": "35a43565731c5b2cffa1036da874820a7a8a92319100aa25ad538fbc202b37d1",
+            "final_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_kouhan.files/18_2024douro.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132098/2024/evaluation-settlement-2.pdf",
+            "sha256": "09f6455af9a664e28b2531d288c06868096c006d7697decea70fdc25293fb240",
+            "final_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_kouhan.files/19_2024toshidukuri.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132098/2024/evaluation-settlement-12.pdf",
+            "sha256": "8dc6b35ba9003a2b9643350e2841cdcc511a3fa0ad384b814111f3956c952ef6",
+            "final_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_kouhan.files/20_2024gesuidou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132098/2024/evaluation-settlement-17.pdf",
+            "sha256": "cd7b9f405ad9f00b92bdb86f3badc84c4fcbb31d5d5ab4bbf6ebf743f10ee3be",
+            "final_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_kouhan.files/21_2024seisakukeiei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132098/2024/evaluation-settlement-18.pdf",
+            "sha256": "cec40a0e1e2ba859c3eb004ed6f4c1b76eb65aa34d8176ee10c407cec11f5f48",
+            "final_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_kouhan.files/22_2024soumubu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132098/2024/evaluation-settlement-20.pdf",
+            "sha256": "e08f697430889cece03a7f7b9d301f6ad5d1f9de32f2f47d4b2c481cfb4e435d",
+            "final_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_kouhan.files/2024zaimubu2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132098/2024/evaluation-settlement-8.pdf",
+            "sha256": "41999ac7e9ecca192523ca2a84164c032db28372d45128621daad16ed3a7df12",
+            "final_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2024_gyouseihyouka_kouhan.files/24_2024kaikeisenkan.pdf"
+          }
+        ],
+        "archived_at": "2026-10-14T16:17:40.228Z"
+      },
+      "reason": "2024年度決算の「主要な施策の成果に関する説明書」（地方自治法第233条第5項）として作成された課別・事業別行政評価シート。部課ごとの20分冊、合計457頁、文字の層あり。事業別シートは1事業あたり1頁前後で、事業目的、2023年度末の課題と取り組み状況、成果指標の目標と実績、成果の説明、行政コスト計算書・貸借対照表（事業別）、総括（有効性・効率性の分析と課題）を載せる。課別シートは財務構造分析、個別分析、総括を載せる。目次・分析表・用語解説は評価の本体ではないため含めない。後半ページ（市民部〜会計課等11冊）も同じ説明書の一部として含めた。"
     }
   ]
 }
