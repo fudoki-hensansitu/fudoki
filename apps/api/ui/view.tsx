@@ -1,7 +1,7 @@
 import { createContext, Fragment, StrictMode, useContext, useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBridge, type Bridge } from './bridge'
-import { BarList } from './bars'
+import { BarList, FOLD } from './bars'
 import { Kind } from './kind'
 import { PdfViewer, type PdfSelection } from './pdf-view'
 import {
@@ -374,7 +374,11 @@ function NodesResult({ rows, next, history, names, bridge, busy, failed }: {
 }
 
 function JurisdictionsResult({ list, bridge, busy }: { list: Jurisdiction[]; bridge: Bridge; busy: boolean }) {
+  const [limit, setLimit] = useState(FOLD)
   if (!list.length) return <p className="quiet">団体はありません。</p>
+  // 絞らずに引くと収録の無い団体が大半になるので、収録のある団体を先に置き、最初は FOLD 件だけ出す
+  const ordered = [...list.filter((j) => j.coverage.length), ...list.filter((j) => !j.coverage.length)]
+  const hidden = ordered.length - Math.min(limit, ordered.length)
   const years = [...new Set(list.flatMap((j) => j.coverage.map((c) => c.fiscal_year)))].sort()
   return (
     <>
@@ -386,7 +390,7 @@ function JurisdictionsResult({ list, bridge, busy }: { list: Jurisdiction[]; bri
           {years.map((y) => <span role="columnheader" key={y} className="coverage-year">{y}年度</span>)}
           {!years.length && <span role="columnheader" />}
         </div>
-        {list.map((j) => (
+        {ordered.slice(0, limit).map((j) => (
           <div role="row" className="coverage-row" key={j.jurisdiction_code}>
             <span role="rowheader" className="coverage-name">
               {j.name}<span className="bar-note">{j.prefecture_name}</span>
@@ -414,6 +418,9 @@ function JurisdictionsResult({ list, bridge, busy }: { list: Jurisdiction[]; bri
           </div>
         ))}
       </div>
+      {hidden > 0 && (
+        <Button variant="link" className="bar-more" onClick={() => setLimit(limit + FOLD)}>もっと見る（残り{hidden}団体）</Button>
+      )}
     </>
   )
 }

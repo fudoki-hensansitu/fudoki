@@ -14,7 +14,7 @@ export interface Bar {
   onSelect?: () => void
 }
 
-const FOLD = 10
+export const FOLD = 10
 
 /**
  * 金額を横棒の長さで見せる。割合を出す兄弟の一覧では、棒も合計に対する比にして、% と長さを一致させる。
