@@ -2,9 +2,17 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "breakdown"],
+  "required": ["schema_version"],
   "properties": {
     "schema_version": {"const": 1},
+    "spread": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["gutter"],
+      "properties": {
+        "gutter": {"type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1}
+      }
+    },
     "breakdown": {
       "type": "object",
       "propertyNames": {"minLength": 1},

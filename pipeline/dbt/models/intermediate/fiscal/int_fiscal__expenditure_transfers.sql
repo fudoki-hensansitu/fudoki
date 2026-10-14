@@ -5,16 +5,16 @@
 -- this one table; the transfer-name rules live here alone (ADR 0023).
 -- Account kinds come from the shared keyword dictionary, and interfund marks from
 -- shared name rules. Amounts are never eliminated. A mark sits only on
--- the topmost transfer-named node of a branch, so marked amounts sum without doubles.
+-- the finest recipient-identifying breakdown, without marking its enclosing transfer twice.
 -- A recipient the mark's own name leaves open is read from the nearest ancestor name
 -- that prints an account kind (ancestor_name_kinds); with none it stays NULL / 不明.
 with recursive unioned as (
     select node_id, parent_node_id, jurisdiction_code, fiscal_year, document_kind,
-        account_name, axis, is_subject, node_kind, code, name
+        account_name, axis, is_subject, node_kind, code, name, amount_yen
     from {{ ref('int_fiscal__settlement_expenditure_nodes') }}
     union all
     select node_id, parent_node_id, jurisdiction_code, fiscal_year, document_kind,
-        account_name, axis, is_subject, node_kind, code, name
+        account_name, axis, is_subject, node_kind, code, name, amount_yen
     from {{ ref('int_fiscal__csv_expenditure_nodes') }}
 ), transfer_named as (
     -- A transfer 目, or an off-subject breakdown (節・備考・説明) named exactly
@@ -35,38 +35,8 @@ with recursive unioned as (
     join unioned b
       on b.document_kind = a.document_kind and b.node_id = a.ancestor_id
     where b.parent_node_id is not null
-), marked as (
-    select t.document_kind, t.node_id, t.own_recipient
-    from transfer_named t
-    where not exists (
-        select 1 from ancestors a
-        join transfer_named u
-          on u.document_kind = a.document_kind and u.node_id = a.ancestor_id
-        where a.document_kind = t.document_kind and a.node_id = t.node_id)
-      -- A descriptive breakdown defers to a 節 mark in the same 目 subtree, so one
-      -- 目 never carries marks on two axes (e.g. 131156's 節 wins over its 備考).
-      -- Same-目 is judged by ancestor chains, not direct parents, so nested 節
-      -- (節 under 事業, 132021-style) also suppresses.
-      and not (
-        not t.is_subject and t.axis <> '節' and exists (
-            select 1 from transfer_named s
-            join unioned sb
-              on sb.document_kind = s.document_kind and sb.node_id = s.node_id
-            where sb.axis = '節'
-              and exists (
-                select 1 from ancestors a1
-                join unioned m1
-                  on m1.document_kind = a1.document_kind and m1.node_id = a1.ancestor_id
-                where a1.document_kind = sb.document_kind and a1.node_id = sb.node_id
-                  and m1.is_subject and m1.node_kind = '目'
-                  and m1.node_id in (
-                    select ab.node_id from ancestors a2
-                    join unioned ab
-                      on ab.document_kind = a2.document_kind and ab.node_id = a2.ancestor_id
-                    where a2.document_kind = t.document_kind and a2.node_id = t.node_id
-                      and ab.is_subject and ab.node_kind = '目'))))
 ), nearest_moku as (
-    select a.document_kind, a.node_id, ab.name as moku_name
+    select a.document_kind, a.node_id, ab.node_id as moku_id, ab.name as moku_name
     from ancestors a
     join unioned ab
       on ab.document_kind = a.document_kind and ab.node_id = a.ancestor_id
@@ -77,7 +47,7 @@ with recursive unioned as (
         coalesce(m.own_recipient,
                  case when regexp_matches(nm.moku_name, '^(.*会計)繰出金$')
                       then regexp_extract(nm.moku_name, '^(.*会計)繰出金$', 1) end) as recipient_name
-    from marked m
+    from transfer_named m
     left join nearest_moku nm
       on nm.document_kind = m.document_kind and nm.node_id = m.node_id
 ), recipient_kinds as (
@@ -98,7 +68,7 @@ with recursive unioned as (
     -- kind (the sender's business, not the recipient: 国民健康保険事業費 inside the
     -- 国民健康保険 account). Printed names are evidence, so a mark with no such
     -- ancestor stays as it is (no inference from the account count etc.).
-    select r.document_kind, r.node_id, a.depth, k.account_kind, ab.name as ancestor_name
+    select r.document_kind, r.node_id, a.depth, k.account_kind
     from recipient_kinds r
     join ancestors a
       on a.document_kind = r.document_kind and a.node_id = r.node_id
@@ -110,13 +80,74 @@ with recursive unioned as (
     where r.recipient_kind is null or r.recipient_kind = '不明'
 ), ancestor_kinds as (
     select c.document_kind, c.node_id,
-        min(c.account_kind) as ancestor_kind, min(c.ancestor_name) as ancestor_name
+        min(c.account_kind) as ancestor_kind
     from ancestor_name_kinds c
     join (select document_kind, node_id, min(depth) as depth
           from ancestor_name_kinds group by document_kind, node_id) n
       using (document_kind, node_id, depth)
     group by c.document_kind, c.node_id
     having count(distinct c.account_kind) = 1
+), classified as (
+    -- Resolve every printed transfer name before choosing its level/axis. A
+    -- known recipient in the remarks can split a 節 that combines recipients.
+    select u.*, r.recipient_name, r.keyword,
+        coalesce(nm.moku_id, case when u.is_subject and u.node_kind = '目' then u.node_id end) as moku_id,
+        case when r.recipient_name is not null and r.keyword is null then null
+             when ak.ancestor_kind is not null and ak.ancestor_kind <> a.account_kind
+                  and (r.recipient_kind is null or r.recipient_kind = '不明')
+             then ak.ancestor_kind else r.recipient_kind end as recipient_kind
+    from transfer_named t
+    join unioned u using (node_id, document_kind)
+    left join nearest_moku nm using (node_id, document_kind)
+    left join recipient_kinds r using (node_id, document_kind)
+    left join ancestor_kinds ak using (node_id, document_kind)
+    left join {{ ref('int_fiscal__expenditure_accounts') }} a
+      using (jurisdiction_code, fiscal_year, account_name)
+), finest as (
+    select c.* from classified c
+    where not exists (
+        select 1 from ancestors a join classified d
+          on d.document_kind = a.document_kind and d.node_id = a.node_id
+        where a.document_kind = c.document_kind and a.ancestor_id = c.node_id
+          and (c.recipient_kind is null or c.recipient_kind = '不明')
+          and d.recipient_kind is not null and d.recipient_kind <> '不明')
+), identified_details as (
+    -- An incomplete recipient split cannot replace the whole section: keep
+    -- its mark when even one remaining recipient is unnamed or ambiguous.
+    select document_kind, moku_id, axis from finest
+    where not is_subject and axis <> '節'
+      and not exists (select 1 from classified s
+                      where s.document_kind = finest.document_kind and s.moku_id = finest.moku_id
+                        and s.axis = '節' and s.recipient_kind is not null and s.recipient_kind <> '不明')
+    group by document_kind, moku_id, axis
+    having bool_and(recipient_kind is not null and recipient_kind <> '不明')
+       and count(amount_yen) = count(*)
+       and sum(amount_yen) = (
+           select sum(s.amount_yen) from classified s
+           where s.document_kind = finest.document_kind and s.moku_id = finest.moku_id and s.axis = '節')
+), preferred as (
+    select c.* from finest c
+    where not (not c.is_subject and c.axis = '節' and exists (
+        select 1 from identified_details d
+        where d.document_kind = c.document_kind and d.moku_id = c.moku_id))
+      and not (not c.is_subject and c.axis <> '節' and exists (
+        select 1 from identified_details d
+        where d.document_kind = c.document_kind and d.moku_id = c.moku_id)
+        and not exists (select 1 from identified_details d
+                        where d.document_kind = c.document_kind and d.moku_id = c.moku_id and d.axis = c.axis))
+      and not (not c.is_subject and c.axis <> '節' and not exists (
+        select 1 from identified_details d
+        where d.document_kind = c.document_kind and d.moku_id = c.moku_id)
+        and exists (select 1 from classified s
+                    where s.document_kind = c.document_kind and s.moku_id = c.moku_id and s.axis = '節'))
+), marked as (
+    -- Topmost among the remaining candidates: when a known recipient below
+    -- replaced its parent, unknown sibling transfers still retain their marks.
+    select p.* from preferred p
+    where not exists (
+        select 1 from ancestors a join preferred u
+          on u.document_kind = a.document_kind and u.node_id = a.ancestor_id
+        where a.document_kind = p.document_kind and a.node_id = p.node_id)
 )
 select u.node_id, u.document_kind,
     a.account_kind,
@@ -124,12 +155,8 @@ select u.node_id, u.document_kind,
     case when r.node_id is null then null
          when r.recipient_name is not null and r.keyword is null
          then error('Unknown transfer recipient (no account_kind_map keyword matches): ' || r.recipient_name)
-         when ak.ancestor_kind is not null and ak.ancestor_kind <> a.account_kind
-              and (r.recipient_kind is null or r.recipient_kind = '不明')
-         then ak.ancestor_kind
          else r.recipient_kind end as interfund_transfer_to
 from unioned u
 left join {{ ref('int_fiscal__expenditure_accounts') }} a
   using (jurisdiction_code, fiscal_year, account_name)
-left join recipient_kinds r using (node_id, document_kind)
-left join ancestor_kinds ak using (node_id, document_kind)
+left join marked r using (node_id, document_kind)
