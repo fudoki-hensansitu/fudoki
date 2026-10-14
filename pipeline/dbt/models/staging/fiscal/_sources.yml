@@ -68,6 +68,22 @@ sources:
       direction: expenditure
       table_id: chuo-kouki-settlement
       kind: nodes
+  - name: j131032_elderly_medical_expenditure_amounts
+    meta:
+      jurisdiction: '131032'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: elderly-medical-expenditure
+      kind: amounts
+  - name: j131032_elderly_medical_expenditure_nodes
+    meta:
+      jurisdiction: '131032'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: elderly-medical-expenditure
+      kind: nodes
   - name: j131032_general_expenditure_amounts
     meta:
       jurisdiction: '131032'
@@ -83,6 +99,38 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: general-expenditure
+      kind: nodes
+  - name: j131032_long_term_care_expenditure_amounts
+    meta:
+      jurisdiction: '131032'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: long-term-care-expenditure
+      kind: amounts
+  - name: j131032_long_term_care_expenditure_nodes
+    meta:
+      jurisdiction: '131032'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: long-term-care-expenditure
+      kind: nodes
+  - name: j131032_national_health_insurance_expenditure_amounts
+    meta:
+      jurisdiction: '131032'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-insurance-expenditure
+      kind: amounts
+  - name: j131032_national_health_insurance_expenditure_nodes
+    meta:
+      jurisdiction: '131032'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-insurance-expenditure
       kind: nodes
   - name: j131041_general_expenditure_detail_amounts
     meta:
@@ -660,6 +708,38 @@ sources:
       direction: expenditure
       table_id: kouki-expenditure-detail
       kind: nodes
+  - name: j132039_long_term_care_expenditure_amounts
+    meta:
+      jurisdiction: '132039'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: long-term-care-expenditure
+      kind: amounts
+  - name: j132039_long_term_care_expenditure_nodes
+    meta:
+      jurisdiction: '132039'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: long-term-care-expenditure
+      kind: nodes
+  - name: j132039_national_health_insurance_expenditure_amounts
+    meta:
+      jurisdiction: '132039'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-insurance-expenditure
+      kind: amounts
+  - name: j132039_national_health_insurance_expenditure_nodes
+    meta:
+      jurisdiction: '132039'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-insurance-expenditure
+      kind: nodes
   - name: j132047_elderly_medical_expenditure_amounts
     meta:
       jurisdiction: '132047'
@@ -788,6 +868,38 @@ sources:
       direction: expenditure
       table_id: akishima-text-budget-expenditure
       kind: nodes
+  - name: j132098_elderly_medical_expenditure_amounts
+    meta:
+      jurisdiction: '132098'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: elderly-medical-expenditure
+      kind: amounts
+  - name: j132098_elderly_medical_expenditure_nodes
+    meta:
+      jurisdiction: '132098'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: elderly-medical-expenditure
+      kind: nodes
+  - name: j132098_land_readjustment_expenditure_amounts
+    meta:
+      jurisdiction: '132098'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: land-readjustment-expenditure
+      kind: amounts
+  - name: j132098_land_readjustment_expenditure_nodes
+    meta:
+      jurisdiction: '132098'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: land-readjustment-expenditure
+      kind: nodes
   - name: j132098_long_term_care_expenditure_amounts
     meta:
       jurisdiction: '132098'
@@ -803,6 +915,22 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: long-term-care-expenditure
+      kind: nodes
+  - name: j132098_national_health_insurance_expenditure_amounts
+    meta:
+      jurisdiction: '132098'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-insurance-expenditure
+      kind: amounts
+  - name: j132098_national_health_insurance_expenditure_nodes
+    meta:
+      jurisdiction: '132098'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-insurance-expenditure
       kind: nodes
   - name: j132128_land_readjustment_expenditure_amounts
     meta:
@@ -963,6 +1091,38 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: late-elderly-medical-setsu
+      kind: nodes
+  - name: j132217_national_health_insurance_expenditure_amounts
+    meta:
+      jurisdiction: '132217'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-insurance-expenditure
+      kind: amounts
+  - name: j132217_national_health_insurance_expenditure_nodes
+    meta:
+      jurisdiction: '132217'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-insurance-expenditure
+      kind: nodes
+  - name: j132217_parking_expenditure_amounts
+    meta:
+      jurisdiction: '132217'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: parking-expenditure
+      kind: amounts
+  - name: j132217_parking_expenditure_nodes
+    meta:
+      jurisdiction: '132217'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: parking-expenditure
       kind: nodes
   - name: j132225_elderly_medical_expenditure_amounts
     meta:

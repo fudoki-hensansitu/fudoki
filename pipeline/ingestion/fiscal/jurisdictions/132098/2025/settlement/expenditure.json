@@ -24,6 +24,60 @@
           "table_id": "long-term-care-expenditure"
         }
       ]
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "a8315debb114272c77e6d3c88a81490a712a75f3b995ba755c97438fcef8f0a0"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-insurance-expenditure"
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "a8315debb114272c77e6d3c88a81490a712a75f3b995ba755c97438fcef8f0a0"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療事業会計",
+        "table_id": "elderly-medical-expenditure"
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "land-readjustment-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "a8315debb114272c77e6d3c88a81490a712a75f3b995ba755c97438fcef8f0a0"
+        }
+      ],
+      "options": {
+        "account": "鶴川駅南土地区画整理事業会計",
+        "table_id": "land-readjustment-expenditure"
+      },
+      "expected_tables": [
+        {
+          "table_id": "land-readjustment-expenditure"
+        }
+      ]
     }
   ],
   "tables": [
@@ -55,6 +109,96 @@
           "bytes": 13224
         },
         "row_count": 614
+      }
+    },
+    {
+      "table_id": "national-health-insurance-expenditure",
+      "conversion_id": "national-health-insurance-settlement",
+      "input_fingerprint": "ae0d249cd8291388e9bc63f90d869c40ea500050308de26fbbb93694ed531769",
+      "account": "国民健康保険事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
+        "金額の単位は column mark 5頁 から決めた。款の和 39,569,525,456 と印字の「歳出合計」39,569,525,456 が一致。",
+        "金額の注記 1 件（流用 1）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（129 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・翌年度繰越額／継続費逓次繰越繰越明許費事故繰越→翌年度繰越額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132098/2025/settlement/expenditure/national-health-insurance-expenditure-nodes.parquet",
+          "sha256": "7c4683d5cfda083845e65bedd91e3fcf02e94aeea1f78b613a3254364ec0f9da",
+          "bytes": 9510
+        },
+        "row_count": 150
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132098/2025/settlement/expenditure/national-health-insurance-expenditure-amounts.parquet",
+          "sha256": "0f32772aae30a98832930fb00b2260530a77699926372d03bac9e11d8b214337",
+          "bytes": 12599
+        },
+        "row_count": 602
+      }
+    },
+    {
+      "table_id": "elderly-medical-expenditure",
+      "conversion_id": "elderly-medical-settlement",
+      "input_fingerprint": "097445e598d1c48fff718e2bbf09f79179e48651dabb05bc4688a5f6b88aeb52",
+      "account": "後期高齢者医療事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
+        "金額の単位は column mark 2頁 から決めた。款の和 15,124,016,462 と印字の「歳出合計」15,124,016,462 が一致。",
+        "金額の注記 1 件（流用 1）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（71 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・翌年度繰越額／継続費逓次繰越繰越明許費事故繰越→翌年度繰越額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132098/2025/settlement/expenditure/elderly-medical-expenditure-nodes.parquet",
+          "sha256": "53320fe93f6bc213f993ad42eea3c3de8a9c08e1a3f245fc8dfe1c5b7271746f",
+          "bytes": 6124
+        },
+        "row_count": 73
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132098/2025/settlement/expenditure/elderly-medical-expenditure-amounts.parquet",
+          "sha256": "0a118fdb3e976fd62e10a393994eb58965a43be6e0e9ef1325270ab5b7cbda88",
+          "bytes": 7800
+        },
+        "row_count": 306
+      }
+    },
+    {
+      "table_id": "land-readjustment-expenditure",
+      "conversion_id": "land-readjustment-settlement",
+      "input_fingerprint": "6515d79a7b120729951bc12ddffe17f450f2f60dc8a8cc9fbc6820ee53daa4f6",
+      "account": "鶴川駅南土地区画整理事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
+        "金額の単位は column mark 2頁 から決めた。款の和 1,888,298,350 と印字の「歳出合計」1,888,298,350 が一致。",
+        "金額の注記 1 件（不用額 1）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（40 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・翌年度繰越額／継続費逓次繰越繰越明許費事故繰越→翌年度繰越額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132098/2025/settlement/expenditure/land-readjustment-expenditure-nodes.parquet",
+          "sha256": "12dde0494fe0f30bfbd3343c77dec79d3a5758f9eb77d7b5790086473c80184f",
+          "bytes": 4724
+        },
+        "row_count": 43
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132098/2025/settlement/expenditure/land-readjustment-expenditure-amounts.parquet",
+          "sha256": "fa2fc1961ae8424fe11bfaef002abf92c663e4b8b963ef1371a801d9f820f279",
+          "bytes": 5916
+        },
+        "row_count": 191
       }
     }
   ]
