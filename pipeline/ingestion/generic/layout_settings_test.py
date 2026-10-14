@@ -242,6 +242,6 @@ class LayoutRegistryTest(unittest.TestCase):
     def test_schema_stops_invalid_marks_wrap_and_empty_notes(self):
         for hints in ({'marks': {'○': 0}}, {'wrap': 'always'}, {'notes': ['']},
                       {'fitted_names': {'chars': 0, 'overflow_left_chars': 1}},
-                      {'indent_chars': 0}, {'amount_brackets': 'true'}):
+                      {'indent_chars': 0}, {'indent_chars': 0.5}, {'amount_brackets': 'true'}):
             with self.subTest(hints=hints), self.assertRaises(jsonschema.ValidationError):
                 validator().validate({'schema_version': 1, 'breakdown': {'備考': hints}})

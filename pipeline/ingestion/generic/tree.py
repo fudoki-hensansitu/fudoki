@@ -291,7 +291,7 @@ def _cell(band: Band, y: float) -> tuple[float, float]:
 
 def _split_line(line: list[Glyph], amount_brackets: bool = False) -> tuple[list[Glyph], list[list[Glyph]]]:
     parts = runs(line)
-    if amount_brackets:
+    if amount_brackets and normalize(text(line)).endswith(')'):
         for start in range(len(parts) - 1, -1, -1):
             tail = [g for part in parts[start:] for g in part]
             shown = normalize(text(tail))
