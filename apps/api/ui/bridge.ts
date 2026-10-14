@@ -17,6 +17,8 @@ interface State {
   entry?: Entry
   history: Entry[]
   busy: boolean
+  /** 押した行。取得を待つ間も、移った先の見出しを先に出す */
+  pending?: TreeNode
   error?: string
   apiOrigin: string
   /** 団体コード → 団体名。server が結果の _meta に載せる */
@@ -83,7 +85,8 @@ export function createBridge() {
     resizeFrame = requestAnimationFrame(() => {
       resizeFrame = 0
       if (disposed) return
-      const height = Math.ceil(document.body.getBoundingClientRect().height)
+      // body は iframe の高さまで伸ばしているので、中身の #root を測る
+      const height = Math.ceil((document.getElementById('root') ?? document.body).getBoundingClientRect().height)
       const width = window.innerWidth
       const size = `${width}:${height}`
       if (size !== lastSize) {
@@ -179,7 +182,7 @@ export function createBridge() {
           }
           applyHost(app.getHostContext())
           observer = new ResizeObserver(resize)
-          observer.observe(document.body)
+          observer.observe(document.getElementById('root') ?? document.body)
           window.addEventListener('resize', resize)
           resize()
         })
@@ -187,12 +190,12 @@ export function createBridge() {
           update({ busy: false, error: `接続に失敗しました: ${String(error)}` })
         })),
     /** drill は今の画面を履歴に積み、reset は履歴を捨てて移る（経路の根の会計へ移るとき）、append は続きを足す */
-    async call(tool: string, input: Json, mode: 'drill' | 'append' | 'reset') {
+    async call(tool: string, input: Json, mode: 'drill' | 'append' | 'reset', pending?: TreeNode) {
       if (disposed || state.busy || !state.entry) return
       const previous = state.entry
       const id = ++epoch
       request = new AbortController()
-      update({ busy: true, error: undefined })
+      update({ busy: true, error: undefined, pending })
       try {
         const result = await app.callServerTool(
           { name: tool, arguments: input },
@@ -228,7 +231,7 @@ export function createBridge() {
       } finally {
         if (id === epoch) {
           request = undefined
-          update({ busy: false })
+          update({ busy: false, pending: undefined })
         }
       }
     },

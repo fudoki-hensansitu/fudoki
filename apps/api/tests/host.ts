@@ -78,6 +78,8 @@ const toolResult = (data: unknown) => ({
 bridge.oncalltool = async (params) => {
   if (!scenario) return rpc('tools/call', params)
   calls.push(params)
+  // プレビューでは本番に近い待ち時間を置き、取得中の見え方を確かめられるようにする
+  if (preview) await new Promise((resolve) => setTimeout(resolve, 500))
   const input = params.arguments ?? {}
   if (scenario === 'pdf-locations' && params.name === 'get_expenditure_node') {
     const data = uiData(scenario)

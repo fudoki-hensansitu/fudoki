@@ -28,14 +28,14 @@ export function BarList({ bars, share, busy, label, keepOrder = false, fold = FO
   busy: boolean
   label: string
 }) {
-  const [open, setOpen] = useState(false)
+  const [limit, setLimit] = useState(fold)
   const sorted = keepOrder ? bars : [...bars].sort((a, b) => (b.amount ?? -Infinity) - (a.amount ?? -Infinity))
   const positive = sorted.map((b) => b.amount ?? 0).filter((v) => v > 0)
   const total = positive.reduce((sum, v) => sum + v, 0)
-  // 畳むのは2件以上隠れるときだけ。1件のために「残り1件」を押させない。
   const lengths = barWidths(sorted.map((b) => b.amount), share)
   const widths = new Map(sorted.map((bar, i) => [bar, lengths[i]!]))
-  const shown = open || sorted.length <= fold + 1 ? sorted : sorted.slice(0, fold)
+  // 取得した件数によらず、最初は fold 件だけ出し、もっと見るで fold 件ずつ足す
+  const shown = sorted.slice(0, limit)
   const hidden = sorted.slice(shown.length)
   return (
     <div className="bars" role="list" aria-label={label}>
@@ -74,10 +74,10 @@ export function BarList({ bars, share, busy, label, keepOrder = false, fold = FO
         )
       })}
       {hidden.length > 0 && (
-        <button type="button" className="bar-more" onClick={() => setOpen(true)}>
-          ほか{hidden.length}件（{share && total > 0
-            ? percent(hidden.reduce((sum, b) => sum + Math.max(0, b.amount ?? 0), 0) / total)
-            : shortYen(hidden.reduce((sum, b) => sum + Math.max(0, b.amount ?? 0), 0))}）
+        <button type="button" className="bar-more" onClick={() => setLimit(limit + fold)}>
+          もっと見る（残り{hidden.length}件{share && total > 0
+            ? ` · ${percent(hidden.reduce((sum, b) => sum + Math.max(0, b.amount ?? 0), 0) / total)}`
+            : ''}）
         </button>
       )}
     </div>

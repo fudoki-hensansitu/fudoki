@@ -13,7 +13,8 @@
   --card-foreground: var(--foreground);
   --popover: var(--background);
   --popover-foreground: var(--foreground);
-  --primary: var(--color-text-info, #2f5d43);
+  /* 主色は host に合わせず風土記の緑に固定する（ChatGPT は info を青にする）。背景・文字・枠・フォントは host に合わせる */
+  --primary: #2f5d43;
   --primary-foreground: var(--color-background-primary, #f4f1e6);
   --secondary: var(--color-background-secondary, oklch(0.97 0 0));
   --secondary-foreground: var(--foreground);
@@ -25,7 +26,7 @@
   --destructive-foreground: oklch(1 0 0);
   --border: var(--color-border-primary, oklch(0.922 0 0));
   --input: var(--border);
-  --ring: var(--color-border-info, var(--primary));
+  --ring: var(--primary);
   --radius: var(--border-radius-md, 8px);
   --view-font: var(--font-sans, "Geist Variable", "Noto Sans JP Variable", "Hiragino Sans", system-ui, sans-serif);
   --view-mono: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace);
@@ -33,7 +34,7 @@
 :root[data-theme="dark"] {
   --background: var(--color-background-primary, oklch(0.145 0 0));
   --foreground: var(--color-text-primary, oklch(0.985 0 0));
-  --primary: var(--color-text-info, oklch(78% 0.07 157));
+  --primary: oklch(78% 0.07 157);
   --secondary: var(--color-background-secondary, oklch(0.205 0 0));
   --muted-foreground: var(--color-text-secondary, oklch(0.708 0 0));
   --border: var(--color-border-primary, oklch(0.35 0 0));
@@ -43,7 +44,7 @@
   :root:not([data-theme="light"]):not([data-theme="dark"]) {
     --background: var(--color-background-primary, oklch(0.145 0 0));
     --foreground: var(--color-text-primary, oklch(0.985 0 0));
-    --primary: var(--color-text-info, oklch(78% 0.07 157));
+    --primary: oklch(78% 0.07 157);
     --secondary: var(--color-background-secondary, oklch(0.205 0 0));
     --muted-foreground: var(--color-text-secondary, oklch(0.708 0 0));
     --border: var(--color-border-primary, oklch(0.35 0 0));

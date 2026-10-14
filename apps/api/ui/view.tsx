@@ -204,11 +204,13 @@ function NodeResult({ data, crumbs, names, bridge, showPdf, busy }: {
         <OriginButton node={node} origin={origin} bridge={bridge} showPdf={showPdf} />
       </PathHeader>
       {axes.map(([axis, rows]) => (
-        <section key={axis} className="section" aria-label={`${axis === '科目' ? rows[0]!.node_kind : axis}ごとの内訳`}>
+        <section key={axis} className="group" aria-label={`${axis === '科目' ? rows[0]!.node_kind : axis}ごとの内訳`}>
+          {/* 節と事業など軸が混ざると同じ一覧に見えるので、軸が2つ以上のときだけ見出しを置く */}
+          {axes.length > 1 && <div className="group-head"><h3>{axis === '科目' ? rows[0]!.node_kind : axis}ごとの内訳</h3></div>}
           <BarList label={`${node.name}の${axis}ごとの内訳`} share={shareable(rows, data.next_page_token)} busy={busy}
             bars={rows.map((n) => ({
               key: n.node_id, label: n.name, kind: kindOf(n), amount: n.amount_yen,
-              onSelect: () => void bridge.call('get_expenditure_node', { document_kind: n.document_kind, node_id: n.node_id }, 'drill'),
+              onSelect: () => void bridge.call('get_expenditure_node', { document_kind: n.document_kind, node_id: n.node_id }, 'drill', n),
             }))} />
         </section>
       ))}
@@ -275,7 +277,7 @@ function NodesResult({ rows, next, history, names, bridge, busy, failed }: {
   busy: boolean
 }) {
   if (!rows.length) return <p className="quiet">該当する歳出明細はありません。</p>
-  const drill = (n: TreeNode) => () => void bridge.call('get_expenditure_node', { document_kind: n.document_kind, node_id: n.node_id }, 'drill')
+  const drill = (n: TreeNode) => () => void bridge.call('get_expenditure_node', { document_kind: n.document_kind, node_id: n.node_id }, 'drill', n)
   // 明細の画面に置き換わるまでの間、同じ見出しを出しておく
   if (autoOpens(rows, next)) {
     const n = rows[0]!
@@ -414,7 +416,7 @@ function View({ bridge }: { bridge: Bridge }) {
   useEffect(() => {
     if (entry && 'nodes' in entry.data && autoOpens(entry.data.nodes, entry.data.next_page_token)) {
       const n = entry.data.nodes[0]!
-      void bridge.call('get_expenditure_node', { document_kind: n.document_kind, node_id: n.node_id }, 'reset')
+      void bridge.call('get_expenditure_node', { document_kind: n.document_kind, node_id: n.node_id }, 'reset', n)
     }
     setPdf(undefined)
     bridge.setFullscreen(false)
@@ -442,7 +444,18 @@ function View({ bridge }: { bridge: Bridge }) {
     )
   return (
     <main aria-busy={state.busy} className="view">
-      {entry && (
+      {state.pending ? (
+        <div className="result">
+          <PathHeader crumbs={crumbsOf(state.pending, entry ? [...state.history, entry] : state.history, bridge)}
+            kind={kindOf(state.pending)} title={state.pending.name} scope={headScopeOf(state.pending, state.names)} busy>
+            <span className="total-short" title={yen(state.pending.amount_yen)}>{shortYen(state.pending.amount_yen)}</span>
+          </PathHeader>
+          <div role="status" className="loading">
+            <span className="sr-only">読み込み中</span>
+            {[0, 1, 2].map((i) => <Fragment key={i}><Skeleton className="h-4 w-1/3" /><Skeleton className="h-1.5 w-full" /></Fragment>)}
+          </div>
+        </div>
+      ) : entry && (
         <div key={entry.revision} className="result">
           {'jurisdictions' in entry.data ? <JurisdictionsResult list={entry.data.jurisdictions} bridge={bridge} busy={state.busy} />
             : 'nodes' in entry.data ? <NodesResult rows={entry.data.nodes} next={entry.data.next_page_token} history={state.history} names={state.names} bridge={bridge} busy={state.busy} failed={!!state.error} />
@@ -455,7 +468,7 @@ function View({ bridge }: { bridge: Bridge }) {
           <AlertDescription>{state.error}</AlertDescription>
         </Alert>
       )}
-      {state.busy && (
+      {state.busy && !state.pending && (
         <div role="status" className="loading">
           <span className="sr-only">読み込み中</span>
           <Skeleton className="h-5 w-1/2" />
@@ -463,7 +476,7 @@ function View({ bridge }: { bridge: Bridge }) {
           <Skeleton className="h-3 w-4/5" />
         </div>
       )}
-      {typeof entry?.data.next_page_token === 'string' && (
+      {typeof entry?.data.next_page_token === 'string' && !state.pending && (
         <button type="button" className="bar-more" disabled={state.busy}
           onClick={() => void bridge.call(entry.tool, { ...entry.args, page_token: entry.data.next_page_token }, 'append')}>
           続き
