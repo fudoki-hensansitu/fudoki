@@ -14,7 +14,7 @@ API・MCP・UIはURLの先で更新されます。skillや接続設定はplugin�
 
 不具合・データ訂正は [GitHub Issues](https://github.com/wwwyo/fudoki/issues)、非公開の相談は [support@fudoki.dev](mailto:support@fudoki.dev) で受け付けます。
 
-For reviewers: This plugin searches Japanese municipal expenditure through a remote, read-only MCP endpoint. It bundles one comparison skill (with a reference for locating evaluation documents), checks coverage and accounting scope, and links amounts to original documents. The evaluation lookup returns only the location (URL, SHA-256, page) and a short excerpt of Kita and Nakano ward evaluation documents; content is read from the original PDF. It does not provide individual transactions, revenue, or write operations.
+For reviewers: This plugin searches Japanese municipal expenditure through a remote, read-only MCP endpoint. It bundles one comparison skill (with a reference for locating evaluation documents), checks coverage and accounting scope, and links amounts to original documents. The evaluation lookup returns only the location (URL, SHA-256, page) and a short excerpt of the selected municipalities' evaluation documents for the 2025 fiscal year settlement; content is read from the original PDF. It does not provide individual transactions, revenue, or write operations.
 
 ## License
 
