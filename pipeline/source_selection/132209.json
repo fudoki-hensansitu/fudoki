@@ -2460,5 +2460,177 @@
       }
     }
   ],
-  "unresolved_candidates": []
+  "unresolved_candidates": [],
+  "evaluation_selections": [
+    {
+      "target": {
+        "jurisdiction": "132209",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和7年度行政評価（リアルタイム事務事業評価調書）",
+          "landing_url": "https://www.city.higashiyamato.lg.jp/shisei/torikumi/1005026/1005048/1012262.html",
+          "inspected_at": "2026-10-14T12:00:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/012/262/02_farmerscenter.pdf",
+              "sha256": "3dceb4bbd86b5fc3d0b5cca65ee56e783b64323e4b5c6c306b1c15c2155e68bc",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/012/262/03_johocorner.pdf",
+              "sha256": "5ecc3380701f77f27f7d6f8b91b503861abdc06b74667007950e9ec60c7adcb7",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/012/262/04_densi_nyusatu.pdf",
+              "sha256": "7198d247200c1a0c9591d66ba55de73b1cefd32cbe786bf34ef3c7335dad9f45",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/012/262/rev_sogobousai2.pdf",
+              "sha256": "c1e751f075aa3d38807d810bdc11869e51c018e507e25f6813707a4f0793c020",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/012/262/rev_umabee.pdf",
+              "sha256": "7a67b5d80f00ea11be4e7482789c1e0319bcf0ad159ac57e227c753c31eb5af5",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/012/262/07_bookstart.pdf",
+              "sha256": "96effb3874d6334f3d14c18d093229b27e5a26856ea385e18ae52b1e2bf44bb9",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/012/262/rev_syuwa.pdf",
+              "sha256": "8d214bc4832b00293b71f047ae4e74a2856fd05c62d2938d2b4e679ad76e789a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/012/262/rev_koureisyaseikatusien.pdf",
+              "sha256": "c8a5e7e282146387c7b74f9b59c574ebc816dea536b80316ad91e664a9673f3a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/012/262/rev_monument.pdf",
+              "sha256": "56c92f319b32124129eb614fccac4ab73d2d6019b37a38869406f0314eba54ec",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/012/262/11_hermet_hojo.pdf",
+              "sha256": "db61a96ca61987906e8ae7dee9e6b48c09836c2474ee435acdda4e479de1b84b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/012/262/12_jinzaibank.pdf",
+              "sha256": "a0f1d416a1d94c6a6620d53a6ec3ff0d1fcdbae9a13d147d5d2ac65912f74283",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/012/262/13_kyukyuhouse.pdf",
+              "sha256": "4a6315c0d5a117e961cca07efcdd8f6dc2f64bb0b284395cf50d11e632da2e0d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132209/2025/evaluation-settlement-1.pdf",
+            "sha256": "3dceb4bbd86b5fc3d0b5cca65ee56e783b64323e4b5c6c306b1c15c2155e68bc",
+            "final_url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/012/262/02_farmerscenter.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132209/2025/evaluation-settlement-4.pdf",
+            "sha256": "5ecc3380701f77f27f7d6f8b91b503861abdc06b74667007950e9ec60c7adcb7",
+            "final_url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/012/262/03_johocorner.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132209/2025/evaluation-settlement-5.pdf",
+            "sha256": "7198d247200c1a0c9591d66ba55de73b1cefd32cbe786bf34ef3c7335dad9f45",
+            "final_url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/012/262/04_densi_nyusatu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132209/2025/evaluation-settlement-10.pdf",
+            "sha256": "c1e751f075aa3d38807d810bdc11869e51c018e507e25f6813707a4f0793c020",
+            "final_url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/012/262/rev_sogobousai2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132209/2025/evaluation-settlement-6.pdf",
+            "sha256": "7a67b5d80f00ea11be4e7482789c1e0319bcf0ad159ac57e227c753c31eb5af5",
+            "final_url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/012/262/rev_umabee.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132209/2025/evaluation-settlement-8.pdf",
+            "sha256": "96effb3874d6334f3d14c18d093229b27e5a26856ea385e18ae52b1e2bf44bb9",
+            "final_url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/012/262/07_bookstart.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132209/2025/evaluation-settlement-7.pdf",
+            "sha256": "8d214bc4832b00293b71f047ae4e74a2856fd05c62d2938d2b4e679ad76e789a",
+            "final_url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/012/262/rev_syuwa.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132209/2025/evaluation-settlement-11.pdf",
+            "sha256": "c8a5e7e282146387c7b74f9b59c574ebc816dea536b80316ad91e664a9673f3a",
+            "final_url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/012/262/rev_koureisyaseikatusien.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132209/2025/evaluation-settlement-3.pdf",
+            "sha256": "56c92f319b32124129eb614fccac4ab73d2d6019b37a38869406f0314eba54ec",
+            "final_url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/012/262/rev_monument.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132209/2025/evaluation-settlement-12.pdf",
+            "sha256": "db61a96ca61987906e8ae7dee9e6b48c09836c2474ee435acdda4e479de1b84b",
+            "final_url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/012/262/11_hermet_hojo.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132209/2025/evaluation-settlement-9.pdf",
+            "sha256": "a0f1d416a1d94c6a6620d53a6ec3ff0d1fcdbae9a13d147d5d2ac65912f74283",
+            "final_url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/012/262/12_jinzaibank.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132209/2025/evaluation-settlement-2.pdf",
+            "sha256": "4a6315c0d5a117e961cca07efcdd8f6dc2f64bb0b284395cf50d11e632da2e0d",
+            "final_url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/012/262/13_kyukyuhouse.pdf"
+          }
+        ],
+        "archived_at": "2026-10-14T10:06:30.171Z"
+      },
+      "reason": "令和7年度に実施した東大和市の行政評価（リアルタイム事務事業評価、ページ更新 2026-06-12）。各部の対象事業1件ごとに1冊のPDF（12冊、各2〜4頁、合計35頁、文字の層あり）。調書①【会議資料】（令和7年7〜10月作成:事業目的・概要、過去の成果（令和4〜6実績）、事業コスト、事業の課題、主管課の意向、評価会議での意見・助言）と、調書②【実績報告・取組予定】（令和8年4月作成:会議を踏まえた取組、R7年度の実績（目標値とR7実績値、R6実績値）と向上・低下の要因、予算反映状況）を載せ、令和7年度の実績に対する評価の記述がある。ただし対象は年度中に選んだ12事業（市民農園管理棟、市政情報コーナー、電子入札、総合防災訓練、観光キャラクター、ブックスタート、手話通訳者設置、高齢者日常生活支援・在宅障害者支援、美術工芸品の維持管理、自転車用ヘルメット購入費補助、生涯学習人材バンク、こまったときの救急ハウス）のみで、全事業の評価ではない。同ページの（1）施策評価（01_sisakuhyouka.pdf、評価方式の見直しの調書）は事業の成果の評価ではないため含めない。令和7年度の行政報告書（決算の主要施策の成果）は未公表（令和6年度版までを確認）。なお、年度中に選んだ12事業だけを対象とする。"
+    }
+  ]
 }
