@@ -44,6 +44,9 @@
 .crumb { padding: 0; border: 0; background: none; color: var(--primary); font: inherit; white-space: nowrap; cursor: pointer; text-decoration: underline; text-decoration-color: var(--link-line); text-underline-offset: 3px; }
 .crumb:hover:not(:disabled) { text-decoration-color: currentColor; }
 .crumb:disabled { cursor: progress; }
+.crumb-back-item { margin-right: 4px; padding-right: 10px; border-right: 1px solid var(--border); }
+.crumb-back { gap: 2px; text-decoration: none; }
+.crumb-back svg { width: 14px; height: 14px; }
 .total { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; margin-top: 4px; }
 .total-short { font-size: var(--text-hero); line-height: 1.2; font-weight: var(--font-weight-semibold, 600); font-variant-numeric: lining-nums tabular-nums; }
 .ref { flex: none; }

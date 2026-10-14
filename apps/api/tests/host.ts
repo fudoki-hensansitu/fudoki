@@ -93,6 +93,12 @@ bridge.oncalltool = async (params) => {
   // 団体一覧のチップから款の一覧を開き、そのまま掘り下げられるようにする
   if ((scenario === 'jurisdictions' || scenario === 'single') && params.name !== 'list_jurisdictions')
     return toolResult(chartData('chart', params.name === 'get_expenditure_node' ? String(input.node_id) : undefined))
+  // 比較や2団体の一覧の行は試験の階層に無いので、押した行そのものを内訳なしの明細として返す
+  if (scenario.startsWith('chart') && params.name === 'get_expenditure_node') {
+    const data = uiData(scenario)
+    const hit = 'nodes' in data ? data.nodes.find((n) => n.node_id === input.node_id) : undefined
+    if (hit) return toolResult({ node: hit, children: {}, origins: data.origins })
+  }
   if (scenario.startsWith('chart')) return toolResult(uiData(scenario, !!input.page_token, params.name === 'get_expenditure_node' ? String(input.node_id) : undefined))
   if (scenario === 'slow' || scenario === 'race')
     await new Promise<void>((resolve) => {

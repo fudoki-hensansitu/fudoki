@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { barWidths, percent, shortYen, yen } from './types'
+import { Button } from '@fudoki/ui/components/button'
 import { ChevronRight } from 'lucide-react'
 import { Kind } from './kind'
 
@@ -74,11 +75,11 @@ export function BarList({ bars, share, busy, label, keepOrder = false, fold = FO
         )
       })}
       {hidden.length > 0 && (
-        <button type="button" className="bar-more" onClick={() => setLimit(limit + fold)}>
+        <Button variant="link" className="bar-more" onClick={() => setLimit(limit + fold)}>
           もっと見る（残り{hidden.length}件{share && total > 0
             ? ` · ${percent(hidden.reduce((sum, b) => sum + Math.max(0, b.amount ?? 0), 0) / total)}`
             : ''}）
-        </button>
+        </Button>
       )}
     </div>
   )
