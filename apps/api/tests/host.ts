@@ -120,6 +120,8 @@ const qa = {
   theme: (theme: 'light' | 'dark', host: 'chatgpt' | 'claude') =>
     bridge.setHostContext({
       theme,
+      displayMode: displayMode as 'inline' | 'fullscreen',
+      availableDisplayModes: ['inline', 'fullscreen'],
       styles: {
         variables: (host === 'chatgpt'
           ? {

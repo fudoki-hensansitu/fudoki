@@ -304,10 +304,6 @@ export function PdfViewer({
         <div
           className="pdf-spread"
           data-pages={pages.length}
-          style={{
-            width: '100%',
-            minWidth: `${pages.length === 2 ? 640 : 280}px`,
-          }}
         >
           {sheets.map((sheet) => (
             <section

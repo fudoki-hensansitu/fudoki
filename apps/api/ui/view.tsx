@@ -1,4 +1,4 @@
-import { StrictMode, useEffect, useState, useSyncExternalStore } from 'react'
+import { StrictMode, useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBridge, type Bridge } from './bridge'
 import { BarList } from './bars'
@@ -25,6 +25,10 @@ const ancestorsOf = (n: TreeNode) =>
   [n.kan_name, n.kou_name].filter((v): v is string => !!v && v !== n.name)
 const pathOf = (n: TreeNode) => [...ancestorsOf(n), n.name].join(' › ')
 
+/** 割合は、続きが無く、金額がすべて分かる兄弟の中でだけ出す。途中や欠けがあると、合計が変わって割合が誤解を招く */
+const shareable = (rows: TreeNode[], next?: string | null) =>
+  !next && siblings(rows) && rows.every((n) => n.amount_yen !== null)
+
 /** 全行が同じ資料・会計・親・段にあるなら、割合を出せる兄弟とみなす */
 function siblings(rows: TreeNode[]) {
   const key = (n: TreeNode) => JSON.stringify([n.document_kind, n.jurisdiction_code, n.fiscal_year,
@@ -49,7 +53,7 @@ function OriginButton({ node, origin, bridge, showPdf }: {
   showPdf: (selection: PdfSelection) => void
 }) {
   if (!origin) return null
-  const page = [node.amount_source_page, node.source_page]
+  const page = [node.source_page, node.amount_source_page]
     .find((p): p is number => typeof p === 'number' && Number.isInteger(p) && p > 0)
   if (origin.format === 'pdf' && page)
     return (
@@ -96,7 +100,7 @@ function NodeResult({ data, parent, names, bridge, showPdf, busy }: {
       {axes.map(([axis, rows]) => (
         <section key={axis} className="section">
           <h3>{axis === '科目' ? `${rows[0]!.node_kind}ごとの内訳` : `${axis}ごとの内訳`}</h3>
-          <BarList label={`${node.name}の${axis}ごとの内訳`} share={siblings(rows)} busy={busy}
+          <BarList label={`${node.name}の${axis}ごとの内訳`} share={shareable(rows, data.next_page_token)} busy={busy}
             bars={rows.map((n) => ({
               key: n.node_id, label: n.name, amount: n.amount_yen,
               onSelect: () => void bridge.call('get_expenditure_node', { document_kind: n.document_kind, node_id: n.node_id }, 'drill'),
@@ -108,8 +112,16 @@ function NodeResult({ data, parent, names, bridge, showPdf, busy }: {
   )
 }
 
-function NodesResult({ rows, names, bridge, busy }: {
+/** 検索結果の見出し。戻るリンクの名前にも使う */
+function nodesTitle(rows: TreeNode[]) {
+  const first = rows[0]
+  if (!first || !siblings(rows)) return `${rows.length}件の明細`
+  return first.node_kind === '款' ? '款ごとの歳出' : `${ancestorsOf(first).join(' › ')} の${first.node_kind}ごとの内訳`
+}
+
+function NodesResult({ rows, next, names, bridge, busy }: {
   rows: TreeNode[]
+  next?: string | null
   names: Names
   bridge: Bridge
   busy: boolean
@@ -118,17 +130,14 @@ function NodesResult({ rows, names, bridge, busy }: {
   const scopes = new Set(rows.map((n) => scopeOf(n, names)))
   const common = scopes.size === 1 ? [...scopes][0] : undefined
   const sibling = siblings(rows)
-  const first = rows[0]!
-  const title = sibling
-    ? first.node_kind === '款' ? '款ごとの歳出' : `${ancestorsOf(first).join(' › ')} の${first.node_kind}ごとの内訳`
-    : `${rows.length}件の明細`
+  const title = nodesTitle(rows)
   return (
     <>
       <header className="head">
         {common && <div className="scope">{common}</div>}
         <h2>{title}</h2>
       </header>
-      <BarList label={title} share={sibling} busy={busy}
+      <BarList label={title} share={shareable(rows, next)} busy={busy}
         bars={rows.map((n) => ({
           key: `${n.document_kind}-${n.node_id}`,
           label: sibling ? n.name : pathOf(n),
@@ -150,7 +159,7 @@ function JurisdictionsResult({ list }: { list: Jurisdiction[] }) {
       <div className="coverage" role="table" aria-label="団体ごとの収録範囲"
         style={{ gridTemplateColumns: `minmax(7em, 1fr) repeat(${Math.max(1, years.length)}, minmax(4.5em, max-content))` }}>
         <div role="row" className="coverage-row">
-          <span role="columnheader" />
+          <span role="columnheader" className="coverage-year">団体</span>
           {years.map((y) => <span role="columnheader" key={y} className="coverage-year">{y}年度</span>)}
           {!years.length && <span role="columnheader" />}
         </div>
@@ -179,9 +188,13 @@ function View({ bridge }: { bridge: Bridge }) {
   const state = useSyncExternalStore(bridge.subscribe, bridge.getSnapshot)
   const [pdf, setPdf] = useState<PdfSelection>()
   const entry = state.entry
+  // 最初の結果は AI 自身が受け取っているので、利用者が画面で動かしたあとだけ伝える
+  const moved = useRef(false)
   useEffect(() => {
     setPdf(undefined)
-    if (entry) bridge.tellModel(describe(entry.data, state.names))
+    bridge.setFullscreen(false)
+    if (entry && moved.current) bridge.tellModel(describe(entry.data, state.names))
+    if (entry) moved.current = true
   }, [entry?.revision])
   function showPdf(selection: PdfSelection) {
     setPdf(selection)
@@ -201,7 +214,7 @@ function View({ bridge }: { bridge: Bridge }) {
       </main>
     )
   const previous = state.history.at(-1)?.data
-  const back = previous && ('node' in previous ? previous.node.name : '検索結果')
+  const back = previous && ('node' in previous ? previous.node.name : 'nodes' in previous ? nodesTitle(previous.nodes) : '団体一覧')
   return (
     <main aria-busy={state.busy} className="view">
       {back && (
@@ -210,7 +223,7 @@ function View({ bridge }: { bridge: Bridge }) {
       {entry && (
         <div key={entry.revision} className="result">
           {'jurisdictions' in entry.data ? <JurisdictionsResult list={entry.data.jurisdictions} />
-            : 'nodes' in entry.data ? <NodesResult rows={entry.data.nodes} names={state.names} bridge={bridge} busy={state.busy} />
+            : 'nodes' in entry.data ? <NodesResult rows={entry.data.nodes} next={entry.data.next_page_token} names={state.names} bridge={bridge} busy={state.busy} />
             : <NodeResult data={entry.data} parent={previous && 'node' in previous ? previous.node : undefined} names={state.names} bridge={bridge} showPdf={showPdf} busy={state.busy} />}
         </div>
       )}

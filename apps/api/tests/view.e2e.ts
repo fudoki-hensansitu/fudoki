@@ -21,6 +21,9 @@ test('款を金額の棒で並べ、掘り下げた先で原典を全画面に�
   await ui.getByRole('button', '原典を見る: 総務管理費').tap()
   await expect(ui.getByRole('img', '項目の印字枠')).toBeVisible()
   expect(await browser.evaluate('() => window.uiQA.displayMode()')).toBe('fullscreen')
+  // View が報告する高さで iframe が決まるので、PDF の頁が潰れずに見えていること
+  await expect(ui.getByRole('img', '原典 PDF 1ページ')).toBeVisible()
+  expect(Number(await browser.evaluate("() => document.querySelector('iframe').getBoundingClientRect().height"))).toBeGreaterThan(400)
   await ui.getByRole('button', '← 戻る').tap()
   expect(await browser.evaluate('() => window.uiQA.displayMode()')).toBe('inline')
   await ui.getByRole('button', '← 総務費に戻る').tap()
@@ -49,4 +52,12 @@ test('団体と年度の表に収録した資料の区分を置く', async ({ ap
   await expect(ui.getByRole('heading', '2団体の収録範囲')).toBeVisible()
   await expect(ui.getByRole('columnheader', '2025年度')).toBeVisible()
   await expect(ui.getByText('当初予算')).toBeVisible()
+})
+
+test('取得の失敗と0件は、それぞれ短い文で知らせる', async ({ app, browser }) => {
+  await app.open('/?ui=error')
+  const ui = browser.frameLocator('iframe')
+  await expect(ui.getByText('試験の初回取得失敗')).toBeVisible()
+  await app.open('/?ui=empty')
+  await expect(ui.getByText('該当する歳出明細はありません。')).toBeVisible()
 })
