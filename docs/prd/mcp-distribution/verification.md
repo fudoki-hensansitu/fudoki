@@ -45,7 +45,7 @@ package検査は既存uv環境のjsonschemaを `--no-sync` で使う。依存追
 
 ## 残る確認
 
-インストール後の各hostのskill読込み・4 toolの接続、5 positive / 3 negative case、Claude/Cursorの表示、提出用スクリーンショット3〜5枚、録画と閲覧可能なURL、発行者の本人確認、連絡先、support/privacy/termsの公開、mainへの反映、各portalの検査・提出・公開が残る。
+インストール後の各hostのskill読込み・4 toolの接続、5 positive / 3 negative case、Claude/Cursorの表示、提出用スクリーンショット3〜5枚、録画と閲覧可能なURL、発行者の本人確認、連絡先、support/privacy/termsの公開、各portalの検査・提出・公開が残る。
 
 コードの独立レビュー（再利用・品質・効率）はpackage.pyに指摘なし。文章レビューの3件（比較条件、未公開リンク、UI移管状態）を修正した。技術レビューの1件（CSVの親金額と行番号の説明）を修正し、APIのsum_rulesとデータ説明も列説明に合わせた。parent金額の計算やパイプラインは変更していない。plugin内にMITライセンスを同梱し、ClaudeのREADME要件を満たすためレビュー用の英語概要も追加した。
 

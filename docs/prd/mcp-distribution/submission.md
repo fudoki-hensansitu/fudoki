@@ -61,6 +61,6 @@ Computer pluginでの操作補助も可能だが、録画機能とは別であ�
 
 OpenAIは公開用ZIPをDeveloper PortalのPluginsへ読み込み、既存MCP URLを接続する。登録済みapp IDや `.app.json` はauthor提供ZIPには含めない。掲載URL、発行者、レビュー情報、録画、国設定を確認し、portal検査を完了してから提出する。個人用custom MCP接続は公開提出を兼ねない。[OpenAIの提出](https://developers.openai.com/plugins/deploy/submission)
 
-Claudeは `claude.ai/directory/manage` でMCP connectorとPlugin bundleをそれぞれ準備する。pluginのrepoは `wwwyo/fudoki`、pathは `plugins/fudoki`。Gitへの反映、GitHub連携・push権限の確認、連絡先、公開ポリシー、実機確認、portalのdata handling・complianceが残る。既存connectorとpluginを組み合わせる提出として扱う。[Claude connector](https://claude.com/docs/connectors/building/submission)・[Claude plugin](https://claude.com/docs/plugins/submit)
+Claudeは `claude.ai/directory/manage` でMCP connectorとPlugin bundleをそれぞれ準備する。pluginのrepoは `wwwyo/fudoki`、pathは `plugins/fudoki`。GitHub連携・push権限の確認、連絡先、公開ポリシー、実機確認、portalのdata handling・complianceが残る。既存connectorとpluginを組み合わせる提出として扱う。[Claude connector](https://claude.com/docs/connectors/building/submission)・[Claude plugin](https://claude.com/docs/plugins/submit)
 
 公開ポリシーには実際のデータ収集・保存・利用・削除・第三者への共有・連絡先を確認して記す。匿名接続であっても、Cloudflareやhostを含めたデータ取扱いを未確認のまま「一切保存しない」などと宣言しない。現時点では法的文書・complianceへの同意・公開URLを用意したとは扱わない。

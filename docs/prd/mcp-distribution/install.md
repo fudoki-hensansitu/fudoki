@@ -1,12 +1,12 @@
 # pluginの導入と更新
 
-2026-10-14の公式仕様で準備した、既存リモートMCPと共通skillのパッケージ。`plugins/fudoki/` が全host共通の正本。ローカルMCPサーバーのコピー、API key、起動コマンド、hooksは含めない。mainへの反映前はGit導入の既定branchから取得できない。以下のGit導入はmainへの反映後に行う。
+2026-10-14の公式仕様で準備した、既存リモートMCPと共通skillのパッケージ。`plugins/fudoki/` が全host共通の正本。ローカルMCPサーバーのコピー、API key、起動コマンド、hooksは含めない。Gitからの導入手順を以下に示す。各hostでの実インストールと更新は未検証。
 
 ## Codex
 
 このrepoの `.agents/plugins/marketplace.json` は `fudoki-plugins` というローカルsourceを宣言する。対応するChatGPT desktopのPlugins Directoryでこのsourceを選び、風土記をインストールする。必要なら先に `codex plugin marketplace add /absolute/path/to/fudoki` で登録する。登録・インストールは利用者の設定を変えるため、この作業では行っていない。
 
-Git公開後は `codex plugin marketplace add wwwyo/fudoki` でsourceを登録する。現在のCLIでは `codex plugin add fudoki@fudoki-plugins` でインストールできる（導入先で `codex plugin add --help` を確認）。desktopのPlugins Directoryでも `fudoki-plugins` を選んでインストールできる。`compare-expenditure` skillと4つのMCP toolが読み込まれたことを確認する。
+Gitから導入する場合は `codex plugin marketplace add wwwyo/fudoki` でsourceを登録する。現在のCLIでは `codex plugin add fudoki@fudoki-plugins` でインストールできる（導入先で `codex plugin add --help` を確認）。desktopのPlugins Directoryでも `fudoki-plugins` を選んでインストールできる。`compare-expenditure` skillと4つのMCP toolが読み込まれたことを確認する。
 
 更新は `codex plugin marketplace upgrade fudoki-plugins` でsourceを更新し、desktopを再起動してインストール済みpluginの内容を確認する。marketplaceの更新だけで全クライアントのインストール済みpackageが必ず更新されるとは扱わない。[OpenAI公式仕様](https://developers.openai.com/plugins/build/plugins)
 
@@ -14,7 +14,7 @@ Git公開後は `codex plugin marketplace add wwwyo/fudoki` でsourceを登録�
 
 一時的なローカル確認は `claude --plugin-dir ./plugins/fudoki`。ユーザー設定へ登録せず、開始したセッションで `/fudoki:compare-expenditure` を呼び出す。実際の呼出しは未検証。
 
-Git公開後の導入:
+Gitからの導入:
 
 ```bash
 claude plugin marketplace add wwwyo/fudoki
@@ -27,7 +27,7 @@ packageを変更して配るときは `plugins/fudoki/plugin.json` と `.claude-
 
 ## Cursor
 
-Git公開後、CustomizeのPluginsで追加元「From GitHub Repository」を選び、`https://github.com/wwwyo/fudoki` を指定する。repo rootの `.cursor-plugin/marketplace.json` にある風土記をプロジェクトまたはユーザーscopeへインストールする。共有skillと既存MCP URLが読み込まれたことを確認する。[Gitからのskill導入](https://cursor.com/docs/skills)・[manifest仕様](https://cursor.com/docs/reference/plugins)
+CustomizeのPluginsで追加元「From GitHub Repository」を選び、`https://github.com/wwwyo/fudoki` を指定する。repo rootの `.cursor-plugin/marketplace.json` にある風土記をプロジェクトまたはユーザーscopeへインストールする。共有skillと既存MCP URLが読み込まれたことを確認する。[Gitからのskill導入](https://cursor.com/docs/skills)・[manifest仕様](https://cursor.com/docs/reference/plugins)
 
 ローカル確認は `plugins/fudoki/` の中身を `~/.cursor/plugins/local/fudoki/` にコピーし、Developer: Reload Windowを実行する。外部を指すsymlinkは使わない。組織のAllow Local Plugin Imports設定が必要な場合がある。この作業ではユーザー設定もこのディレクトリも変更していない。[ローカルplugin](https://cursor.com/docs/plugins#test-plugins-locally)
 

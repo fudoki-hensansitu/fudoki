@@ -9,7 +9,7 @@ description: Codex・Claude Code・Cursorに共通skillとリモートMCP接続�
 
 ## 配布状況
 
-2026-10-14時点で package はローカル検証済みです。mainに反映されるまで、以下のGit導入の既定branchからは取得できません。ChatGPT 公開 plugin と Claude connector＋plugin も未提出です。
+公開Gitの `wwwyo/fudoki` から共通skillとMCP接続設定を導入できます。2026-10-14時点でpackageの形式検査は成功していますが、各クライアントでの実インストールは未確認です。ChatGPT 公開 plugin と Claude connector＋plugin は未提出です。
 
 | host | パッケージの入口 | ローカル準備の確認 |
 | --- | --- | --- |
@@ -17,7 +17,7 @@ description: Codex・Claude Code・Cursorに共通skillとリモートMCP接続�
 | Claude Code | `.claude-plugin/marketplace.json` と互換 manifest | `claude plugin validate` を実行。skillの実呼出し未確認 |
 | Cursor | `.cursor-plugin/marketplace.json` と Agent Plugins 形式 | JSON Schema・参照ファイルを検査。実機未確認 |
 
-ローカルではrepoの `docs/prd/mcp-distribution/install.md` を参照してください。Gitへの反映後は [導入ガイド](https://github.com/wwwyo/fudoki/blob/main/docs/prd/mcp-distribution/install.md)の Git 導入手順を使い、skill と4つの tool を確認してください。対象は Codex・Claude Code・Cursor で、Gemini・VS Code は今回の配布対象に含めません。
+ローカルではrepoの `docs/prd/mcp-distribution/install.md` を参照してください。Gitから導入するときは [導入ガイド](https://github.com/wwwyo/fudoki/blob/main/docs/prd/mcp-distribution/install.md)の Git 導入手順を使い、skill と4つの tool を確認してください。対象は Codex・Claude Code・Cursor で、Gemini・VS Code は今回の配布対象に含めません。
 
 ## 更新する対象
 

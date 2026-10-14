@@ -28,7 +28,7 @@ status: in-progress
 
 ## この作業の実施範囲（2026-10-14）
 
-ローカルの接続案内・skill・plugin・提出物を準備し、公式schemaと関連検証を行う。mainへの反映、公開申請、デプロイは別途行う。これらと未確認hostでの実機検証が残るため、statusはin-progressとする。PDF見開き・React＋shadcn/uiへの移行は別担当に移管した。
+ローカルの接続案内・skill・plugin・提出物を準備し、公式schemaと関連検証を行う。Git配布の入口を用意する。公式ディレクトリへの公開申請と未確認hostでの実機検証が残るため、statusはin-progressとする。PDF見開き・React＋shadcn/uiへの移行は別担当に移管した。
 
 ## Acceptance Criteria
 
