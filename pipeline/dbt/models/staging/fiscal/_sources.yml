@@ -532,6 +532,70 @@ sources:
       direction: expenditure
       table_id: kouki-setsu
       kind: nodes
+  - name: j131202_elderly_medical_expenditure_amounts
+    meta:
+      jurisdiction: '131202'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: elderly-medical-expenditure
+      kind: amounts
+  - name: j131202_elderly_medical_expenditure_nodes
+    meta:
+      jurisdiction: '131202'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: elderly-medical-expenditure
+      kind: nodes
+  - name: j131202_general_expenditure_amounts
+    meta:
+      jurisdiction: '131202'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j131202_general_expenditure_nodes
+    meta:
+      jurisdiction: '131202'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
+  - name: j131202_long_term_care_expenditure_amounts
+    meta:
+      jurisdiction: '131202'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: long-term-care-expenditure
+      kind: amounts
+  - name: j131202_long_term_care_expenditure_nodes
+    meta:
+      jurisdiction: '131202'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: long-term-care-expenditure
+      kind: nodes
+  - name: j131202_national_health_insurance_expenditure_amounts
+    meta:
+      jurisdiction: '131202'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-insurance-expenditure
+      kind: amounts
+  - name: j131202_national_health_insurance_expenditure_nodes
+    meta:
+      jurisdiction: '131202'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-insurance-expenditure
+      kind: nodes
   - name: j132012_general_detail_amounts
     meta:
       jurisdiction: '132012'
