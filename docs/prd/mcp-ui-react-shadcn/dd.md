@@ -46,7 +46,7 @@ shadcn CLI `4.21.3` の公式 `@shadcn` registryから、Table、Button、Input�
 
 ### 単体 HTML を再生成する
 
-`ui/build.ts` はBunでTSX・React・App SDK・PDF.jsのworker handlerをbundleし、PostCSS/TailwindでCSSを生成してHTMLへinline化する。通常はReact production版を使う。共有部品のクラスは`packages/ui/src/`から検出する。CSSに外部参照が残る場合はbuildを失敗させる。APIのbuildはViewの再生成を先に実行する。HTML内容からhash付きresource URIと`src/view.generated.ts`を生成する。CSPのAPI origin、MIME type、旧`ui/resourceUri`キーは既存のサーバー実装を維持する。Viewは`@modelcontextprotocol/ext-apps`経由でzodなどの依存をbundleするので、依存のminor bumpでも`view.generated.ts`の内容が変わり、生成物の差分検査（`view.test.ts`・`ui/build.ts --check`）が落ちる。落ちたら`bun run --cwd apps/api view`で作り直し、bundleに入った新しいシンボル（4.6系の`ZodIBAN`など）やサイズの変化を証拠にする。
+`ui/build.ts` はBunでTSX・React・App SDK・PDF.jsのworker handlerをbundleし、PostCSS/TailwindでCSSを生成してHTMLへinline化する。通常はReact production版を使う。共有部品のクラスは`packages/ui/src/`から検出する。CSSに外部参照が残る場合はbuildを失敗させる。APIのbuildはViewの再生成を先に実行する。HTML内容からhash付きresource URIと`src/view.generated.ts`を生成する。CSPのAPI origin、MIME type、旧`ui/resourceUri`キーは既存のサーバー実装を維持する。Viewは`@modelcontextprotocol/ext-apps`経由でzodなどの依存をbundleするので、依存のminor bumpでも`view.generated.ts`の内容が変わり、生成物の差分検査（`view.test.ts`・`ui/build.ts --check`）が落ちる。落ちたら`bun run --cwd apps/api view`で作り直し、bundleに入った新しいシンボル（例: 4.6系で足された`ZodIBAN`）やサイズの変化を証拠にする。
 
 ## Alternatives Considered
 

@@ -1,6 +1,6 @@
 import type { E2EConfig } from 'e2e'
 import { web } from '@e2e-dev/web'
-// `reuseExisting` は `dev:ui` や前回の実行が残した 4317 の server を再利用する。
+// `reuseExisting` は `dev:ui` や前回の実行が残した server（`PDF_QA_URL` の既定 port は 4317）を再利用する。
 // 残った server が古いと、無関係の変更で e2e が落ちる。落ちたら port を空けて（server を止めて）再実行する。
 export default {
   tests: 'tests/*.e2e.ts',
