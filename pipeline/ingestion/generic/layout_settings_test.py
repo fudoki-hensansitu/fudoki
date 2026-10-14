@@ -29,7 +29,7 @@ class LayoutHintsTest(unittest.TestCase):
                                 Word('1報酬', 5, 40, 25, 50), Word('C', 50, 40, 60, 50)], rules)
         plain = logical_pages([page])[0]
         self.assertEqual([b.kind for b in plain.bands], ['label', 'label'])
-        configured = logical_pages([page], {'区分': {'axis_header': '節'}, '事故繰越': {'kind': 'amount'}})[0]
+        configured = logical_pages([page], columns={'区分': {'axis_header': '節'}, '事故繰越': {'kind': 'amount'}})[0]
         self.assertEqual([b.kind for b in configured.bands], ['label', 'amount'])
         self.assertEqual(groups(configured)[0].axis, '節')
         validator().validate({'schema_version': 1, 'columns': {'事故繰越': {'kind': 'amount'}}})
@@ -259,3 +259,9 @@ class LayoutRegistryTest(unittest.TestCase):
                       {'indent_chars': 0}, {'indent_chars': 0.5}, {'amount_brackets': 'true'}):
             with self.subTest(hints=hints), self.assertRaises(jsonschema.ValidationError):
                 validator().validate({'schema_version': 1, 'breakdown': {'備考': hints}})
+
+    def test_spread_declares_a_gutter_inside_the_physical_page(self):
+        validator().validate({'schema_version': 1, 'spread': {'gutter': .5}})
+        for spread in ({}, {'gutter': 0}, {'gutter': 1}, {'gutter': 'middle'}, {'gutter': .5, 'unknown': True}):
+            with self.subTest(spread=spread), self.assertRaises(jsonschema.ValidationError):
+                validator().validate({'schema_version': 1, 'spread': spread})

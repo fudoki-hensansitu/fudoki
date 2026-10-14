@@ -3653,5 +3653,345 @@
       }
     }
   ],
-  "unresolved_candidates": []
+  "unresolved_candidates": [],
+  "evaluation_selections": [
+    {
+      "target": {
+        "jurisdiction": "131032",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和8年度港区政策評価シート・施策評価シート（政策No.1〜26、令和7年度実績）",
+          "landing_url": "https://www.city.minato.tokyo.jp/kuyakushokaikaku/8seisakuhyouka.html",
+          "inspected_at": "2026-10-14T18:16:33+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902144706.pdf",
+              "sha256": "35065e7777f149a7c34a99839532224f11a6d80de5a07e38a383d41a846ccd27",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902144740.pdf",
+              "sha256": "8862fd5510fdf396ffd4285fc9854c792db6f4fb90d93316b146bda9a5fce82f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902144813.pdf",
+              "sha256": "a17b47b154c3232d877d2d6dc70352fe0d3db86b5140af5a2b9cf000138de58e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902144901.pdf",
+              "sha256": "4a3359fdb39a71dd7144456db5010ff2f00391686a21b5ad547383652ed1496b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902144933.pdf",
+              "sha256": "d841c31b54d48252265e770ce6750bb2fcfb185bc44ab7ae65081923ef82994a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145054.pdf",
+              "sha256": "8b4bb937e88cdf6ce2f77be2c73f15b9be2d52c713ec46109361b308f8ef2a75",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145121.pdf",
+              "sha256": "e15af38fc2d9a96290cb651ce209f58bb2d6a0f1b20313f391cbb007d2807b4d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145146.pdf",
+              "sha256": "d6cd65d5825a171142a21b0476ba890dc4bb7868212b2064c49e7444af0cbc71",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145226.pdf",
+              "sha256": "7abf15c2c9bea450842d710ebf3d0e18231925ab09bff5b73b671d9015c3b494",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145251.pdf",
+              "sha256": "9d2ec9b2be510e952fbe37f408a2ea45cb7de99be1f534c39f53b9129214e5ef",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145315.pdf",
+              "sha256": "08dde3812f13e29ee848c2d8fc985eb41b4ceafe56140fc2c8dc2d10517e5906",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145335.pdf",
+              "sha256": "a7a8c19e4bf9ada9b397a9a676467a0ba687ae99b7da5fe2fddf273f058295d7",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145356.pdf",
+              "sha256": "aef144a9352f8474daedabd6b0e359f308a9bf0e97f2628b839fba0b9360fc4f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145416.pdf",
+              "sha256": "dba3167d2817295b0e483ffb0188661238428fb2f80bab61fe7b37480c9648c7",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145454.pdf",
+              "sha256": "0c2b03ec5ca7dd4deaffb43045ba8b0a57474c58711f076b0dd55e609e94b835",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145517.pdf",
+              "sha256": "e935dcdbd6152cf27afa3b2765477bcdba2968d6ef716a1819d380e9298e15b0",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145539.pdf",
+              "sha256": "1085293f228a5ccd6452797a9091412fd2829ceaa7cf14a470c3d2c035bd9fe2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145600.pdf",
+              "sha256": "1cffbc7b38946bc75f6ac9722d882391827a2b125ca847d471a6cf053032d1b2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145622.pdf",
+              "sha256": "5477e71e77042e528457de4c26df88f0347884ec3034a2c59ab6ad468b4a0ddd",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145651.pdf",
+              "sha256": "30eab777f1f53faa023f747f42596bb01dd9d35db5fe0ed3fe3e9f911c52b553",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145711.pdf",
+              "sha256": "e2489432a5f166c253f7be79b97ed50ed8f46c4a401de55f6dd6315e8815ec44",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145731.pdf",
+              "sha256": "f0b7fb6869c83b9a036625a104e0b09a5c6929420a354e8ce084ef5e2bf9810d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145753.pdf",
+              "sha256": "cbc13bd1fa1363ac2802edfcc438f42c3e939ba5634078721785f619ae163d58",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145824.pdf",
+              "sha256": "2da4ad4ac86c209a22cc605329163c5604315639a62f308343fc22316eb84258",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145846.pdf",
+              "sha256": "6a8d05a5fffd4bc7bec543be087f0d849316b0d8e50d40417b8820296094ee5f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145919.pdf",
+              "sha256": "08e4bca84971bc2ff484775aaeb3237524fb2b89aedd08d99426d2c3f8fec57e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131032/2025/evaluation-settlement-8.pdf",
+            "sha256": "35065e7777f149a7c34a99839532224f11a6d80de5a07e38a383d41a846ccd27",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902144706.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131032/2025/evaluation-settlement-13.pdf",
+            "sha256": "8862fd5510fdf396ffd4285fc9854c792db6f4fb90d93316b146bda9a5fce82f",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902144740.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131032/2025/evaluation-settlement-16.pdf",
+            "sha256": "a17b47b154c3232d877d2d6dc70352fe0d3db86b5140af5a2b9cf000138de58e",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902144813.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131032/2025/evaluation-settlement-9.pdf",
+            "sha256": "4a3359fdb39a71dd7144456db5010ff2f00391686a21b5ad547383652ed1496b",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902144901.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131032/2025/evaluation-settlement-21.pdf",
+            "sha256": "d841c31b54d48252265e770ce6750bb2fcfb185bc44ab7ae65081923ef82994a",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902144933.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131032/2025/evaluation-settlement-14.pdf",
+            "sha256": "8b4bb937e88cdf6ce2f77be2c73f15b9be2d52c713ec46109361b308f8ef2a75",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145054.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131032/2025/evaluation-settlement-23.pdf",
+            "sha256": "e15af38fc2d9a96290cb651ce209f58bb2d6a0f1b20313f391cbb007d2807b4d",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145121.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131032/2025/evaluation-settlement-20.pdf",
+            "sha256": "d6cd65d5825a171142a21b0476ba890dc4bb7868212b2064c49e7444af0cbc71",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145146.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131032/2025/evaluation-settlement-12.pdf",
+            "sha256": "7abf15c2c9bea450842d710ebf3d0e18231925ab09bff5b73b671d9015c3b494",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145226.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131032/2025/evaluation-settlement-15.pdf",
+            "sha256": "9d2ec9b2be510e952fbe37f408a2ea45cb7de99be1f534c39f53b9129214e5ef",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145251.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131032/2025/evaluation-settlement-1.pdf",
+            "sha256": "08dde3812f13e29ee848c2d8fc985eb41b4ceafe56140fc2c8dc2d10517e5906",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145315.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131032/2025/evaluation-settlement-17.pdf",
+            "sha256": "a7a8c19e4bf9ada9b397a9a676467a0ba687ae99b7da5fe2fddf273f058295d7",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145335.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131032/2025/evaluation-settlement-18.pdf",
+            "sha256": "aef144a9352f8474daedabd6b0e359f308a9bf0e97f2628b839fba0b9360fc4f",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145356.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131032/2025/evaluation-settlement-22.pdf",
+            "sha256": "dba3167d2817295b0e483ffb0188661238428fb2f80bab61fe7b37480c9648c7",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145416.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131032/2025/evaluation-settlement-3.pdf",
+            "sha256": "0c2b03ec5ca7dd4deaffb43045ba8b0a57474c58711f076b0dd55e609e94b835",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145454.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131032/2025/evaluation-settlement-25.pdf",
+            "sha256": "e935dcdbd6152cf27afa3b2765477bcdba2968d6ef716a1819d380e9298e15b0",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145517.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131032/2025/evaluation-settlement-4.pdf",
+            "sha256": "1085293f228a5ccd6452797a9091412fd2829ceaa7cf14a470c3d2c035bd9fe2",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145539.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131032/2025/evaluation-settlement-5.pdf",
+            "sha256": "1cffbc7b38946bc75f6ac9722d882391827a2b125ca847d471a6cf053032d1b2",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145600.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131032/2025/evaluation-settlement-10.pdf",
+            "sha256": "5477e71e77042e528457de4c26df88f0347884ec3034a2c59ab6ad468b4a0ddd",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145622.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131032/2025/evaluation-settlement-7.pdf",
+            "sha256": "30eab777f1f53faa023f747f42596bb01dd9d35db5fe0ed3fe3e9f911c52b553",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145651.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131032/2025/evaluation-settlement-24.pdf",
+            "sha256": "e2489432a5f166c253f7be79b97ed50ed8f46c4a401de55f6dd6315e8815ec44",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145711.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131032/2025/evaluation-settlement-26.pdf",
+            "sha256": "f0b7fb6869c83b9a036625a104e0b09a5c6929420a354e8ce084ef5e2bf9810d",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145731.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131032/2025/evaluation-settlement-19.pdf",
+            "sha256": "cbc13bd1fa1363ac2802edfcc438f42c3e939ba5634078721785f619ae163d58",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145753.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131032/2025/evaluation-settlement-6.pdf",
+            "sha256": "2da4ad4ac86c209a22cc605329163c5604315639a62f308343fc22316eb84258",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145824.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131032/2025/evaluation-settlement-11.pdf",
+            "sha256": "6a8d05a5fffd4bc7bec543be087f0d849316b0d8e50d40417b8820296094ee5f",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145846.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131032/2025/evaluation-settlement-2.pdf",
+            "sha256": "08e4bca84971bc2ff484775aaeb3237524fb2b89aedd08d99426d2c3f8fec57e",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/179907/20260902145919.pdf"
+          }
+        ],
+        "archived_at": "2026-10-14T10:00:26.499Z"
+      },
+      "reason": "令和8年度の港区政策評価（2026-09-15更新）の政策・施策評価シート26冊（各8〜14頁、計約270頁）。基本計画の政策ごとに、成果指標の推移（令和7年度実績）、施策ごとの当該年度（令和6・7年度）の取組と成果、課題と今後の方向性、予算額・決算額・執行率（令和7年度決算額を含む）、所管部の一次評価と行政評価委員会の二次評価（A〜C）を載せる。施策単位で事業の細目は無いが、目標・実績・評価・課題・方向がそろう。文字として読める。令和7年度港区事務事業評価結果（全事業の一覧）は一次〜三次評価の区分の一覧表のみで評価の記述が無いため選ばなかった。"
+    }
+  ]
 }

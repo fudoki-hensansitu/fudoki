@@ -1,4 +1,4 @@
-/* Hallmark · pre-emit critique: P4 H5 E4 S4 R5 V3 · design-system: DESIGN.md（文字 14/20/12・余白 4/8/12/16/24） */
+/* 文字と余白の段は DESIGN.md に合わせる（文字 14/20/12・余白 4/8/12/16/24） */
 @import "@fudoki/ui/styles.css";
 @source "./";
 
@@ -21,21 +21,21 @@
 }
 @layer base {
   html, body { overflow-x: clip; }
-  body { margin: 0; padding: 16px; background: var(--background); color: var(--foreground); font: var(--text-body) / 1.5 var(--view-font); font-variant-numeric: lining-nums; }
+  /* host によっては iframe に最小の高さがあるので、短い画面は上下の中央に置く。高さは #root で測るので、ここの vh は報告する高さに入らない */
+  body { margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; background: var(--background); color: var(--foreground); font: var(--text-body) / 1.5 var(--view-font); font-variant-numeric: lining-nums; }
   h2 { font-size: var(--text-heading); line-height: 1.4; font-weight: var(--font-weight-semibold, 600); overflow-wrap: anywhere; min-width: 0; }
   h3 { font-size: var(--text-caption); line-height: 1.5; font-weight: var(--font-weight-medium, 500); color: var(--sub); }
   a:focus-visible, button:focus-visible, .pdf-scroll:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
 }
 [data-slot="button"][data-variant="link"] { height: auto; padding: 0; font: inherit; }
 
-.view { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.view { display: flex; flex-direction: column; gap: 16px; min-width: 0; padding: 20px 16px; }
 .result { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .quiet { color: var(--sub); }
 .loading { display: flex; flex-direction: column; gap: 8px; }
 
-/* 見出し: 範囲 → 経路（今の段は太字）→ 金額と参照 */
 .head { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-/* 経路（または一覧の見出し）と範囲を1行に置き、範囲は右に寄せる。狭い幅では範囲だけ次の行の右に回る */
+/* 狭い幅では範囲だけ次の行の右に回る */
 .head-row { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 16px; min-width: 0; }
 .head-row > :first-child { min-width: 0; }
 .scope { margin-left: auto; font-size: var(--text-caption); color: var(--sub); white-space: nowrap; }
@@ -44,6 +44,9 @@
 .crumb { padding: 0; border: 0; background: none; color: var(--primary); font: inherit; white-space: nowrap; cursor: pointer; text-decoration: underline; text-decoration-color: var(--link-line); text-underline-offset: 3px; }
 .crumb:hover:not(:disabled) { text-decoration-color: currentColor; }
 .crumb:disabled { cursor: progress; }
+.crumb-back-item { margin-right: 4px; padding-right: 10px; border-right: 1px solid var(--border); }
+.crumb-back { gap: 2px; text-decoration: none; }
+.crumb-back svg { width: 14px; height: 14px; }
 .total { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; margin-top: 4px; }
 .total-short { font-size: var(--text-hero); line-height: 1.2; font-weight: var(--font-weight-semibold, 600); font-variant-numeric: lining-nums tabular-nums; }
 .ref { flex: none; }
@@ -51,7 +54,6 @@
 /* 形式の札。区分のタグと同じ形にそろえる */
 .ref-format { padding: 0 3px; border: 1px solid var(--border); border-radius: 3px; font-size: 10px; line-height: 14px; font-weight: var(--font-weight-semibold, 600); letter-spacing: .02em; color: var(--sub); }
 
-/* 区分のタグ。名前の前に置き、名前より一段小さく静かにする */
 .kind { display: inline-block; margin-right: 6px; padding: 0 4px; border: 1px solid var(--border); border-radius: 4px; font-size: 11px; line-height: 16px; font-weight: var(--font-weight-medium, 500); color: var(--sub); vertical-align: 1px; white-space: nowrap; }
 
 /* 団体・年度ごとのまとまり。見出しの金額は一画面の合計より一段小さくする */
@@ -61,7 +63,6 @@
 .group-head h3 { font-size: var(--text-body); color: var(--foreground); font-weight: var(--font-weight-semibold, 600); }
 .group-total { font-size: var(--text-heading); line-height: 1.3; font-weight: var(--font-weight-semibold, 600); font-variant-numeric: lining-nums tabular-nums; }
 
-/* 内訳 */
 .section { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .bars { display: flex; flex-direction: column; min-width: 0; }
 .bar {

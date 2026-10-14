@@ -84,7 +84,7 @@
     {
       "table_id": "long-term-care-expenditure",
       "conversion_id": "long-term-care-settlement",
-      "input_fingerprint": "160cc8f0e36bd80eaa78727c78628fd1a4f6e6cfb9865d04503dd2a649d3635a",
+      "input_fingerprint": "728092dc7ecdc4abd3773d74f82e1dfa6741537698adc0d32502874e663c6b34",
       "account": "介護保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
@@ -114,7 +114,7 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "7019e8127a1660a14b4ce3a2f049d48e73f6da6f4c0fb61b0127ce86ef0ca44a",
+      "input_fingerprint": "851ec6141af7d42f9f1ef1f11750cf5181f90c7ab6fc1020782d107126283fdf",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
@@ -144,7 +144,7 @@
     {
       "table_id": "elderly-medical-expenditure",
       "conversion_id": "elderly-medical-settlement",
-      "input_fingerprint": "12fd76f876c5621b1178259ef16fe0a4798e0256aa7be3780a86fedef380ecb1",
+      "input_fingerprint": "39dc5460c464491bf4cda37688262034a234ab600f198fd5910077ad27970d70",
       "account": "後期高齢者医療事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
@@ -174,7 +174,7 @@
     {
       "table_id": "land-readjustment-expenditure",
       "conversion_id": "land-readjustment-settlement",
-      "input_fingerprint": "24d6fd166ecaca04ed09768d569a2c990ac879cb291a860bba0073f975c13d3d",
+      "input_fingerprint": "ee8a043d98a328ecf7dcbc9eee0fa3e82dd551f0ff6a8771ca25ddbdca341137",
       "account": "鶴川駅南土地区画整理事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",

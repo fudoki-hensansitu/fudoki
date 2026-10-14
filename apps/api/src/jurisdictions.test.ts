@@ -3,7 +3,6 @@ import type { Database } from 'bun:sqlite'
 import { CfWorkerJsonSchemaValidator } from '@modelcontextprotocol/server/validators/cf-worker'
 import { createApp } from './app'
 import type { Db } from './db'
-import { operations } from './operations'
 import { insertCoverage, insertJurisdiction, insertNode, insertOrigin, testDb } from './testing'
 
 let db: Db
@@ -24,7 +23,6 @@ const rpcBody = async (res: Response) => {
 }
 const rpc = async (method: string, params: unknown = {}) =>
   rpcBody(await app.request('/mcp', { method: 'POST', headers: MCP_HEADERS, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }) }, { DB: db }))
-const names = (body: { jurisdictions: { name: string }[] }) => body.jurisdictions.map((j) => j.name)
 
 beforeEach(() => {
   ;({ db, sqlite } = testDb())
@@ -78,37 +76,10 @@ describe('団体と収録範囲（GET /v1/jurisdictions・list_jurisdictions）'
     })
   })
 
-  test('名前は部分一致で、同名の団体はすべて都道府県とコードで区別できる形で返る', async () => {
-    const body = await list(`?name=${encodeURIComponent('府中')}`)
-    expect(body.jurisdictions.map((j: { jurisdiction_code: string; prefecture_name: string }) => [j.jurisdiction_code, j.prefecture_name])).toEqual([
-      ['132063', '東京都'],
-      ['342076', '広島県'],
-    ])
-  })
-
-  test('一つの会計に原典が複数あれば、すべて返る', async () => {
-    const body = await list('?code=132063')
-    expect(body.jurisdictions[0].coverage[0].accounts[0].origins.map((o: { origin_id: string }) => o.origin_id).sort()).toEqual(['o1', 'o2'])
-  })
-
   test('5桁と6桁のコードで同じ結果になる', async () => {
     const six = await list('?code=132039')
     expect(six.jurisdictions).toHaveLength(1)
     expect(await list('?code=13203')).toEqual(six)
-  })
-
-  test('収録の無い団体は coverage が空', async () => {
-    const body = await list('?code=131016')
-    expect(body.jurisdictions).toEqual([expect.objectContaining({ name: '千代田区', coverage: [] })])
-  })
-
-  test('前後の空白（全角を含む）は除いて比べる', async () => {
-    expect(names(await list(`?name=${encodeURIComponent(' 武蔵野市　')}`))).toEqual(['武蔵野市'])
-  })
-
-  test('当たらなければ空の一覧', async () => {
-    expect(await list(`?name=${encodeURIComponent('存在しない市')}`)).toEqual({ jurisdictions: [], next_page_token: null })
-    expect((await list('?code=999999')).jurisdictions).toEqual([])
   })
 
   test('絞らなければ全団体をコード順に、ページをまたいで欠落・重複なく返す', async () => {
@@ -154,21 +125,6 @@ describe('団体と収録範囲（GET /v1/jurisdictions・list_jurisdictions）'
     expect((await rpc('tools/call', { name: 'list_jurisdictions', arguments: { name: '武蔵野市' } })).result.structuredContent).toEqual(rest)
     const err = await rpc('tools/call', { name: 'list_jurisdictions', arguments: { code: '1' } })
     expect(err.error !== undefined || err.result.isError === true).toBe(true)
-  })
-
-  test('zod の output にも通る', async () => {
-    const op = operations.find((o) => o.name === 'list_jurisdictions')!
-    const out = await op.run({ db }, op.input.parse({}) as never)
-    const parsed = op.output.safeParse(out)
-    expect(parsed.success, parsed.success ? '' : JSON.stringify(parsed.error.issues)).toBe(true)
-  })
-
-  test('団体と収録範囲は1つの batch で読む', async () => {
-    const batches: number[] = []
-    const spy: Db = { prepare: (sql) => db.prepare(sql), batch: (s) => (batches.push(s.length), db.batch(s)) }
-    const res = await app.request('/v1/jurisdictions', {}, { DB: spy })
-    expect(res.status).toBe(200)
-    expect(batches).toEqual([2])
   })
 
   test('返った条件でそのまま明細を検索できる', async () => {

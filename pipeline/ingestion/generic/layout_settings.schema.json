@@ -17,6 +17,14 @@
         }
       }
     },
+    "spread": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["gutter"],
+      "properties": {
+        "gutter": {"type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1}
+      }
+    },
     "breakdown": {
       "type": "object",
       "propertyNames": {"minLength": 1},

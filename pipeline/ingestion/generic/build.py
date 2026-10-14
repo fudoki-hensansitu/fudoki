@@ -75,7 +75,7 @@ def page_titles(pages) -> dict[int, str | None]:
 def run_pages(pdf: Path, pages: list[int], cache: Path | None = None, judge=None,
               document_kind: str = 'settlement', account: str | None = None, stop: bool = True,
               partial: bool = False, direction: str | None = None, layout: dict | None = None,
-              columns: dict | None = None):
+              columns: dict | None = None, spread: dict | None = None):
     """Build one table and keep what the converter needs next to it: the repaired pages (their
     words are the digit-coverage scope), the logical pages (their amount bands) and the unit check.
 
@@ -89,7 +89,7 @@ def run_pages(pdf: Path, pages: list[int], cache: Path | None = None, judge=None
     if direction:
         report.skipped_pages = [number for number, title in titles.items() if title not in (None, direction)]
         observed = [page for page in observed if page.number not in report.skipped_pages]
-    logicals = logical_pages(observed, columns)
+    logicals = logical_pages(observed, columns=columns, spread=spread)
     built, choice = choose_pattern(logicals, document_kind, judge, layout)
     report.pattern = choice
     unit = check_units(built, document_kind, account, partial)

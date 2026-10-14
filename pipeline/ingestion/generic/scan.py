@@ -42,9 +42,9 @@ def header_path(header: tuple[str, ...]) -> tuple[str, ...]:
     return tuple(correct_name(part, header_names())['corrected_name'] for part in header)
 
 
-def _layout(observed: list[Page], columns: dict | None) -> list:
+def _layout(observed: list[Page], columns: dict | None, *, spread: dict | None = None) -> list:
     from ingestion.generic.layout import logical_pages
-    found = logical_pages(observed, columns)
+    found = logical_pages(observed, columns=columns, spread=spread)
     for logical in found:
         logical.ocr = True
         for band in logical.bands:
@@ -210,7 +210,7 @@ def agreed_headers(pages: list[Page]) -> list[Page]:
 
 
 def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = None,
-          columns: dict | None = None, rules: dict | None = None) -> list[Page]:
+          columns: dict | None = None, rules: dict | None = None, *, spread: dict | None = None) -> list[Page]:
     @cache
     def detected(number):
         return (rules or {}).get(number) or pdf_rules.detect(pdf, number)
@@ -218,8 +218,8 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
     if corrections:
         from ingestion.generic.layout import page_bands
         plain = agreed_headers([page(p, pdf, detected=detected(p['page_number'])) for p in observation['pages']])
-        units = unit_glyphs(plain, columns)
-        bands = {p.number: page_bands(p)[0] for p in plain}
+        units = unit_glyphs(plain, columns, spread=spread)
+        bands = {p.number: page_bands(p, spread)[0] for p in plain}
         boxes = {(p['page_number'], o['id']): o['bbox_pdf_pt'] for p in observation['pages']
                  for region in p['regions'] for o in region['observations']}
         for rule in corrections.rules:
@@ -240,21 +240,20 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
     if unused:
         raise ValueError(f'Amount corrections matched no observation: {sorted(unused)}')
     found = agreed_headers(found)
-    units = unit_glyphs(found, columns)
+    units = unit_glyphs(found, columns, spread=spread)
     return [Page(p.number, p.width, p.height,
                  [Word('円', w.x0, w.y0, w.x1, w.y1) if w.text == '门' and (p.number, (w.x0, w.y0, w.x1, w.y1)) in units else w
                   for w in p.words], p.rules) for p in found]
 
 
-def unit_glyphs(observed: list[Page], columns: dict | None = None) -> set[tuple]:
+def unit_glyphs(observed: list[Page], columns: dict | None = None, *, spread: dict | None = None) -> set[tuple]:
     """A row of small currency marks above the first named subject row is a unit row.
 
     At least three read 円 marks on the same baseline next to the header establish it. OCR glyphs
     on that row (门 for 円) cannot be values; inline units beside actual money are below
     the first subject row and do not qualify. The amount rereader uses this same boundary.
     """
-    from ingestion.generic.layout import logical_pages
-    return logical_units(logical_pages(observed, columns))
+    return logical_units(_layout(observed, columns, spread=spread))
 
 
 def logical_units(logicals_: list) -> set[tuple]:
@@ -278,14 +277,15 @@ def logical_units(logicals_: list) -> set[tuple]:
 
 
 def logicals(observation: dict, pdf: Path, corrections: AmountDictionary | None = None,
-             columns: dict | None = None, *, recover: bool = False, recovered: list | None = None) -> list:
+             columns: dict | None = None, *, recover: bool = False, recovered: list | None = None,
+             spread: dict | None = None) -> list:
     """The logical pages of an OCR observation, marked as OCR so the builder's rules for misreads apply."""
-    observed = pages(observation, pdf, corrections, columns)
+    observed = pages(observation, pdf, corrections, columns, spread=spread)
     if recover:
-        observed, fills = recover_codes(observed, pdf, columns)
+        observed, fills = recover_codes(observed, pdf, columns, spread=spread)
         if recovered is not None:
             recovered.extend(fills)
-    return _layout(observed, columns)
+    return _layout(observed, columns, spread=spread)
 
 
 def code_holes(logical_pages_: list) -> list[dict]:
@@ -352,14 +352,15 @@ def code_holes(logical_pages_: list) -> list[dict]:
     return list({(h['page'], tuple(round(v, 1) for v in h['box'])): h for h in holes}.values())
 
 
-def recover_codes(observed: list[Page], pdf: Path, columns: dict | None = None) -> tuple[list[Page], list[dict]]:
+def recover_codes(observed: list[Page], pdf: Path, columns: dict | None = None,
+                  *, spread: dict | None = None) -> tuple[list[Page], list[dict]]:
     """Read a thin vertical 1 only inside a sequence hole. No whole-page ink check or inferred number.
 
     The component must have digit height, be narrow, stay off the crop edges, and be
     separate from the name. Other digits and ambiguous marks are left for explicit OCR.
     """
     from ingestion.lib.scan_ocr import missed_ink
-    holes = [h for h in code_holes(_layout(observed, columns)) if h['expected'] == 1]
+    holes = [h for h in code_holes(_layout(observed, columns, spread=spread)) if h['expected'] == 1]
     images, filled, words = {}, [], {p.number: list(p.words) for p in observed}
     last_hole = {h['page']: index for index, h in enumerate(holes)}
     for index, hole in enumerate(holes):
@@ -458,14 +459,16 @@ def build_table(source: dict, options: dict, *, stop: bool = True, rules: dict |
     observation = pinned(source, selected)
     settings = load(source['target'], source.get('direction') or 'expenditure')
     columns = (settings or {}).get('columns')
-    printed = pages(observation, Path(source['path']), amount_dictionary(options.get('amount_corrections', [])), columns, rules)
-    printed, recovered = recover_codes(printed, Path(source['path']), columns)
+    spread = (settings or {}).get('spread')
+    printed = pages(observation, Path(source['path']), amount_dictionary(options.get('amount_corrections', [])), columns, rules,
+                    spread=spread)
+    printed, recovered = recover_codes(printed, Path(source['path']), columns, spread=spread)
     report = Report()
     direction = source.get('direction')
     titles = page_titles(printed) if direction else {}
     report.skipped_pages = [p for p, title in titles.items() if title not in (None, direction)]
     observed = [p for p in printed if p.number not in report.skipped_pages]
-    logical = _layout(observed, columns)
+    logical = _layout(observed, columns, spread=spread)
     kind = source['target']['document_kind']
     built, report.pattern = choose_pattern(logical, kind, layout=(settings or {}).get('breakdown'))
     declared_unread(built, logical, columns, observation)

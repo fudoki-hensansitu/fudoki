@@ -4944,5 +4944,57 @@
       }
     }
   ],
-  "unresolved_candidates": []
+  "unresolved_candidates": [],
+  "evaluation_selections": [
+    {
+      "target": {
+        "jurisdiction": "132217",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和8年度清瀬市行政評価報告・外部評価報告（令和7年度事業）",
+          "landing_url": "https://www.city.kiyose.lg.jp/siseijouhou/zaisei/gyouzaiseikaikaku/1004570/1016224.html",
+          "inspected_at": "2026-10-14T12:00:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.kiyose.lg.jp/_res/projects/default_project/_page_/001/016/224/r8houkoku.pdf",
+              "sha256": "3151b1cca7553de6579566dbfbe19f32b06768314cbc1b703c1c9a3a3b355fa0",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.kiyose.lg.jp/_res/projects/default_project/_page_/001/016/224/r8gaibuhoukoku.pdf",
+              "sha256": "c91db9c74f3f4ce451bc5cabb707edfdb84bdfbee590dfec07685e223efee868",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132217/2025/evaluation-settlement-1.pdf",
+            "sha256": "3151b1cca7553de6579566dbfbe19f32b06768314cbc1b703c1c9a3a3b355fa0",
+            "final_url": "https://www.city.kiyose.lg.jp/_res/projects/default_project/_page_/001/016/224/r8houkoku.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132217/2025/evaluation-settlement-2.pdf",
+            "sha256": "c91db9c74f3f4ce451bc5cabb707edfdb84bdfbee590dfec07685e223efee868",
+            "final_url": "https://www.city.kiyose.lg.jp/_res/projects/default_project/_page_/001/016/224/r8gaibuhoukoku.pdf"
+          }
+        ],
+        "archived_at": "2026-10-14T10:06:38.223Z"
+      },
+      "reason": "令和7年度に実施した事業を評価した令和8年度（2026年9月）の清瀬市行政評価2冊、いずれも文字の層あり。(1)令和8年度清瀬市行政評価報告（20頁）は、一次・二次評価で見直しの対象とした30の事務事業（庁用車、学童クラブ、がん検診推進、市報発行など）について、事業概要、令和7年度決算額・特定財源、評価（見直しの方向性：現状維持・改善・廃止・縮小・統合・拡充・その他の区分と評価の文章）を1事業約1/3頁で載せる。(2)令和8年度清瀬市行政評価 外部評価報告（58頁）は、令和7年度の重点項目27事業について、担当課評価（事業説明、令和6・7年度決算額と令和8年度予算額、担当課の評価）と、公募市民12名の外部評価（認知度・10年後の姿への寄与度・評価の選択肢の人数、評価の理由の抜粋）を1事業約2頁で載せる。対象は全事業ではなく見直し対象30事業と重点27事業に限られ、目標値と実績の対比表は無い。この2冊で清瀬市の令和8年度行政評価の結果を構成する。なお、見直し対象・重点事業だけを対象とする。"
+    }
+  ]
 }

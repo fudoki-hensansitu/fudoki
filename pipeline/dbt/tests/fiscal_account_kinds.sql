@@ -2,7 +2,7 @@
 -- the source of truth; the vocabulary lives there, not here), and every
 -- identified transfer recipient does too. Unidentified recipients (他会計繰出金)
 -- keep the mark with a NULL recipient instead of a guessed kind.
--- Marks sit only on transfer-named nodes, topmost per branch, one axis per 目.
+-- Marks sit only on transfer-named nodes, without marking two axes of one 目.
 -- Eligibility mirrors the marts rule; nesting and axis checks are invariants.
 with recursive eligible as (
     select node_id from {{ ref('settlement_expenditure_node') }}
@@ -51,7 +51,7 @@ from marked m
 join {{ ref('settlement_expenditure_node') }} n on n.node_id = m.node_id
 where not n.is_subject and n.axis <> '節'
   and exists (
-    select 1 from eligible e
+    select 1 from marked e
     join {{ ref('settlement_expenditure_node') }} eb on eb.node_id = e.node_id
     where eb.axis = '節'
       and exists (
