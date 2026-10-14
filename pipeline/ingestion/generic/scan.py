@@ -407,13 +407,15 @@ def amount_dictionary(rules: list[dict]) -> AmountDictionary | None:
 
 def declared_unread(built, logicals_: list, columns: dict | None, observation: dict | None = None) -> None:
     """Known unread money glyphs/ink must not silently disappear as empty cells."""
+    from ingestion.generic.layout import is_amount
     units = logical_units(logicals_)
     for logical in logicals_:
         for band in logical.bands:
             if (columns or {}).get('／'.join(band.header), {}).get('kind') != 'amount':
                 continue
             for glyph in band.words:
-                if (len(glyph.text.strip()) == 1 and glyph.text.isalpha() and glyph.text != '円'
+                if (len(glyph.text.strip()) == 1 and not any(c.isdigit() for c in glyph.text) and glyph.text != '円'
+                        and not is_amount(glyph.text)
                         and (glyph.page, glyph.original) not in units):
                     built.unowned.append({'kind': 'unreadable declared amount cell', 'page': glyph.page,
                                           'text': glyph.text, 'box': glyph.original})
