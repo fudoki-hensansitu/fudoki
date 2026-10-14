@@ -2442,5 +2442,381 @@
       }
     }
   ],
-  "unresolved_candidates": []
+  "unresolved_candidates": [],
+  "evaluation_selections": [
+    {
+      "target": {
+        "jurisdiction": "131156",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和8年度杉並区事務事業評価シート（施策1〜29を構成する事務事業、令和7年度実績）",
+          "landing_url": "https://www.city.suginami.tokyo.jp/s001/29393.html",
+          "inspected_at": "2026-10-14T18:21:37+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu01.pdf",
+              "sha256": "79a80b0708256b93e4581d4f58e8a20c0bf67847fe28b4744ea2626e09e456a1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu02.pdf",
+              "sha256": "20d4c4cdf7ce05e1b858ab6344edef23936785bf35a768c491526d80fcd0f9f2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu03.pdf",
+              "sha256": "073982cd1fb30b9c4026173ff23caca40d8a03f61a52d9cfd8eae322dc79e94e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu04.pdf",
+              "sha256": "1f25de319ce5a1e59a5c1b96f1980b11bf780b70d354b7791e2e69b979408004",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu05.pdf",
+              "sha256": "a8f5f56fb7733f25e2ded52cabcf657ae2d874c4c17c639dfbf4705e94ca2cbd",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu06.pdf",
+              "sha256": "494e98e26795bab59f1f5bfc417db9b64a0fe09df5ea61732bc7af6b75c5df92",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu07.pdf",
+              "sha256": "18b745f0db61ee5a56914296a6dc549df85cf97079a0a0e1147e6986d1d85fff",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu08.pdf",
+              "sha256": "871049eea38205ca8df5f941584124b7bbbe153e38a009f223a190c670c57340",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.suginami.tokyo.jp/documents/29393/zimu09.pdf",
+              "sha256": "211d12351153b64b6284fb6e4024d8465c29f0be7adc3dba5e06c06498020522",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.suginami.tokyo.jp/documents/29393/zimu10.pdf",
+              "sha256": "ef773d75cf00a3c9298c31808a0a984a9aed55e18f680d25015743801c18f192",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.suginami.tokyo.jp/documents/29393/zimu11.pdf",
+              "sha256": "5b9d6e4b35e254dd33190cdeca043266cd1ae3d069dd93dd4a7d96370bdee779",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.suginami.tokyo.jp/documents/29393/zimu12.pdf",
+              "sha256": "f5852f65fc637b1824bcaab9ca5bdfa9f7eb1407a92275d6b74305520617d0b3",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.suginami.tokyo.jp/documents/29393/zimu13.pdf",
+              "sha256": "8e017baefea7bf97445de40b4306a1ae488ee8cbb79ce9f25063f688fff975e8",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.suginami.tokyo.jp/documents/29393/zimu14.pdf",
+              "sha256": "16acb74ca1f9a7112aaee22746371bfda3c0aa26cf8aa40f62427df8253883e7",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.suginami.tokyo.jp/documents/29393/zimu15.pdf",
+              "sha256": "7ea8213a640cecacf57164656b5d776477dd499937fc4802fdf512b7b7439572",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu16.pdf",
+              "sha256": "24e6a482d261241ceac7d6a570c93cc15c7cfdbb4cab4d27f5828a63f7c24d49",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu17.pdf",
+              "sha256": "56fac49e26b5ec882c5755262dffed3e252e5dd67a6b954cc3a9b901a3110919",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu18.pdf",
+              "sha256": "dfc9bebb54ae52903de80d4ad6ab4877bbf75f5e9bb5390586fdf6a2255bd283",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu19.pdf",
+              "sha256": "6b4209acbce1aefb816ffebf9b6a99bfecf22c1ba1a01ab51bea3fb065ba5f2f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu20.pdf",
+              "sha256": "0da0b0a7b12cc66d415f2c99c10002f05ceacee4a32dbf7ae68d61776f828cb9",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu21.pdf",
+              "sha256": "9fa21008f05e1fc41edb2cb889df9c833cca65131f2495438c08bf62a8d698a3",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu22.pdf",
+              "sha256": "5c2933e640cb7278865757010fb34f393d5a95ac7c4114bdcb2da33752f406cd",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu23.pdf",
+              "sha256": "4e077b502dbf4a503847dd9edefd60e6ad4a28057dd6ae953ca4e6be66aee246",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu24.pdf",
+              "sha256": "8979f90f78fc541171f0f7d4e41b6a57a8df4348d7674ede3ed2ddc66353588c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu25.pdf",
+              "sha256": "31cb9f38fdccde1849ca6a038152e1bcbf1ffe2b2160a2d71df237f858998d5e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu26.pdf",
+              "sha256": "aef0fd5d903cb7bb31fb605fbccab1e3b7770bdaac8071d56e134ba6334a7ac2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu27.pdf",
+              "sha256": "8918544129680cbe023ae3bb42b9d8a134fe3920ba3804f300690cd84ba39f68",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu28.pdf",
+              "sha256": "7de5a74b60fd512db00dbbbb5d37978371bcf78e8fe4e2ffba4f0a507230640e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu29.pdf",
+              "sha256": "7a7c784d48d1531692ab195b6ecef015eda35277e2c3fbb09dc0d6d3b517069f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131156/2025/evaluation-settlement-16.pdf",
+            "sha256": "79a80b0708256b93e4581d4f58e8a20c0bf67847fe28b4744ea2626e09e456a1",
+            "final_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu01.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131156/2025/evaluation-settlement-6.pdf",
+            "sha256": "20d4c4cdf7ce05e1b858ab6344edef23936785bf35a768c491526d80fcd0f9f2",
+            "final_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu02.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131156/2025/evaluation-settlement-1.pdf",
+            "sha256": "073982cd1fb30b9c4026173ff23caca40d8a03f61a52d9cfd8eae322dc79e94e",
+            "final_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu03.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131156/2025/evaluation-settlement-5.pdf",
+            "sha256": "1f25de319ce5a1e59a5c1b96f1980b11bf780b70d354b7791e2e69b979408004",
+            "final_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu04.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131156/2025/evaluation-settlement-25.pdf",
+            "sha256": "a8f5f56fb7733f25e2ded52cabcf657ae2d874c4c17c639dfbf4705e94ca2cbd",
+            "final_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu05.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131156/2025/evaluation-settlement-10.pdf",
+            "sha256": "494e98e26795bab59f1f5bfc417db9b64a0fe09df5ea61732bc7af6b75c5df92",
+            "final_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu06.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131156/2025/evaluation-settlement-4.pdf",
+            "sha256": "18b745f0db61ee5a56914296a6dc549df85cf97079a0a0e1147e6986d1d85fff",
+            "final_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu07.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131156/2025/evaluation-settlement-20.pdf",
+            "sha256": "871049eea38205ca8df5f941584124b7bbbe153e38a009f223a190c670c57340",
+            "final_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu08.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131156/2025/evaluation-settlement-7.pdf",
+            "sha256": "211d12351153b64b6284fb6e4024d8465c29f0be7adc3dba5e06c06498020522",
+            "final_url": "https://www.city.suginami.tokyo.jp/documents/29393/zimu09.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131156/2025/evaluation-settlement-28.pdf",
+            "sha256": "ef773d75cf00a3c9298c31808a0a984a9aed55e18f680d25015743801c18f192",
+            "final_url": "https://www.city.suginami.tokyo.jp/documents/29393/zimu10.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131156/2025/evaluation-settlement-13.pdf",
+            "sha256": "5b9d6e4b35e254dd33190cdeca043266cd1ae3d069dd93dd4a7d96370bdee779",
+            "final_url": "https://www.city.suginami.tokyo.jp/documents/29393/zimu11.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131156/2025/evaluation-settlement-29.pdf",
+            "sha256": "f5852f65fc637b1824bcaab9ca5bdfa9f7eb1407a92275d6b74305520617d0b3",
+            "final_url": "https://www.city.suginami.tokyo.jp/documents/29393/zimu12.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131156/2025/evaluation-settlement-23.pdf",
+            "sha256": "8e017baefea7bf97445de40b4306a1ae488ee8cbb79ce9f25063f688fff975e8",
+            "final_url": "https://www.city.suginami.tokyo.jp/documents/29393/zimu13.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131156/2025/evaluation-settlement-3.pdf",
+            "sha256": "16acb74ca1f9a7112aaee22746371bfda3c0aa26cf8aa40f62427df8253883e7",
+            "final_url": "https://www.city.suginami.tokyo.jp/documents/29393/zimu14.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131156/2025/evaluation-settlement-19.pdf",
+            "sha256": "7ea8213a640cecacf57164656b5d776477dd499937fc4802fdf512b7b7439572",
+            "final_url": "https://www.city.suginami.tokyo.jp/documents/29393/zimu15.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131156/2025/evaluation-settlement-8.pdf",
+            "sha256": "24e6a482d261241ceac7d6a570c93cc15c7cfdbb4cab4d27f5828a63f7c24d49",
+            "final_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu16.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131156/2025/evaluation-settlement-12.pdf",
+            "sha256": "56fac49e26b5ec882c5755262dffed3e252e5dd67a6b954cc3a9b901a3110919",
+            "final_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu17.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131156/2025/evaluation-settlement-27.pdf",
+            "sha256": "dfc9bebb54ae52903de80d4ad6ab4877bbf75f5e9bb5390586fdf6a2255bd283",
+            "final_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu18.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131156/2025/evaluation-settlement-15.pdf",
+            "sha256": "6b4209acbce1aefb816ffebf9b6a99bfecf22c1ba1a01ab51bea3fb065ba5f2f",
+            "final_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu19.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131156/2025/evaluation-settlement-2.pdf",
+            "sha256": "0da0b0a7b12cc66d415f2c99c10002f05ceacee4a32dbf7ae68d61776f828cb9",
+            "final_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu20.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131156/2025/evaluation-settlement-24.pdf",
+            "sha256": "9fa21008f05e1fc41edb2cb889df9c833cca65131f2495438c08bf62a8d698a3",
+            "final_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu21.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131156/2025/evaluation-settlement-14.pdf",
+            "sha256": "5c2933e640cb7278865757010fb34f393d5a95ac7c4114bdcb2da33752f406cd",
+            "final_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu22.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131156/2025/evaluation-settlement-11.pdf",
+            "sha256": "4e077b502dbf4a503847dd9edefd60e6ad4a28057dd6ae953ca4e6be66aee246",
+            "final_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu23.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131156/2025/evaluation-settlement-22.pdf",
+            "sha256": "8979f90f78fc541171f0f7d4e41b6a57a8df4348d7674ede3ed2ddc66353588c",
+            "final_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu24.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131156/2025/evaluation-settlement-9.pdf",
+            "sha256": "31cb9f38fdccde1849ca6a038152e1bcbf1ffe2b2160a2d71df237f858998d5e",
+            "final_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu25.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131156/2025/evaluation-settlement-26.pdf",
+            "sha256": "aef0fd5d903cb7bb31fb605fbccab1e3b7770bdaac8071d56e134ba6334a7ac2",
+            "final_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu26.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131156/2025/evaluation-settlement-21.pdf",
+            "sha256": "8918544129680cbe023ae3bb42b9d8a134fe3920ba3804f300690cd84ba39f68",
+            "final_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu27.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131156/2025/evaluation-settlement-18.pdf",
+            "sha256": "7de5a74b60fd512db00dbbbb5d37978371bcf78e8fe4e2ffba4f0a507230640e",
+            "final_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu28.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131156/2025/evaluation-settlement-17.pdf",
+            "sha256": "7a7c784d48d1531692ab195b6ecef015eda35277e2c3fbb09dc0d6d3b517069f",
+            "final_url": "https://www.city.suginami.tokyo.jp/documents/29393/jimu29.pdf"
+          }
+        ],
+        "archived_at": "2026-10-14T10:01:38.440Z"
+      },
+      "reason": "令和8年度の杉並区行政評価のうち事務事業評価シート（施策1〜29ごとの29冊、計666頁、2026-09-30更新）。事務事業ごとに2頁程度で、事業の目的・内容、活動指標・成果指標の計画と実績（令和5〜7年度）、令和7年度の事業費・執行率、主な取組と取組成果、課題の分析と方向性・改善策を載せる。令和7年度実績の評価で、文字として読める。第2段階評価時に入力する欄（現年度の取組成果見込み・事業の方向性・令和9年度の方針）は現時点で空欄で、後から更新される可能性がある。施策単位の令和8年度施策評価シート（8冊）と令和7年度区政経営報告書（決算の概要と主要施策の成果、310頁）は同じ実績の評価・成果を施策や事業群の単位で載せるが、事業単位の細かい事務事業評価シートを選び、これらは選ばなかった。目次に「評価対象外とした事務事業を除く」とあり、全事業ではなく令和8年度の評価対象にした事務事業のみを載せる。なお、第2段階評価の欄が空で、更新でバイト列が変わり得る。"
+    }
+  ]
 }
