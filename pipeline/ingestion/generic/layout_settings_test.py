@@ -245,3 +245,9 @@ class LayoutRegistryTest(unittest.TestCase):
                       {'indent_chars': 0}, {'indent_chars': 0.5}, {'amount_brackets': 'true'}):
             with self.subTest(hints=hints), self.assertRaises(jsonschema.ValidationError):
                 validator().validate({'schema_version': 1, 'breakdown': {'備考': hints}})
+
+    def test_spread_declares_a_gutter_inside_the_physical_page(self):
+        validator().validate({'schema_version': 1, 'spread': {'gutter': .5}})
+        for spread in ({}, {'gutter': 0}, {'gutter': 1}, {'gutter': 'middle'}, {'gutter': .5, 'unknown': True}):
+            with self.subTest(spread=spread), self.assertRaises(jsonschema.ValidationError):
+                validator().validate({'schema_version': 1, 'spread': spread})

@@ -16,6 +16,33 @@ def glyph(text, x0, y0, width=None):
 
 
 class RulesTest(unittest.TestCase):
+    def test_only_a_declared_gutter_keeps_its_open_amount_column(self):
+        horizontals = [Rule(10, y, 200, y) for y in (50, 70, 120, 200)]
+        words = [Word('支出済額', 20, 55, 56, 64), Word('不用額', 110, 55, 137, 64),
+                 Word('1,000', 40, 80, 70, 89), Word('2,000', 130, 80, 160, 89)]
+        for missing, gutter in ((10, 5 / 210), (200, 205 / 210)):
+            with self.subTest(missing=missing):
+                verticals = [Rule(x, 50, x, 200) for x in (10, 100, 200) if x != missing]
+                page = Page(1, 210, 300, words, verticals + horizontals)
+                unchanged, _ = page_bands(page)
+                self.assertEqual(len(unchanged), 1)
+                bands, _ = page_bands(page, {'gutter': gutter})
+                self.assertEqual([(b.header, [w.text for w in b.words]) for b in bands],
+                                 [(('支出済額',), ['1,000']), (('不用額',), ['2,000'])])
+
+    def test_a_short_horizontal_extension_does_not_create_an_extra_column(self):
+        rules = [Rule(x, 50, x, 200) for x in (10, 100)] + [Rule(10, y, 100, y) for y in (50, 70, 200)]
+        rules += [Rule(0, y, 100, y) for y in (55, 60)]
+        bands, _ = page_bands(Page(1, 110, 300, [], rules), {'gutter': .5})
+        self.assertEqual([(b.x0, b.x1) for b in bands], [(10, 100)])
+
+    def test_a_declared_gutter_does_not_split_at_internal_row_endpoints(self):
+        rules = [Rule(x, 50, x, 200) for x in (10, 100, 200, 300)]
+        rules += [Rule(10, y, 300, y) for y in (50, 70, 120, 200)]
+        rules += [Rule(140, y, 300, y) for y in (80, 180)]
+        bands, _ = page_bands(Page(1, 400, 300, [], rules), {'gutter': .9})
+        self.assertEqual([(b.x0, b.x1) for b in bands], [(10, 100), (100, 200), (200, 300)])
+
     def test_parallel_strokes_merge_into_one_rule(self):
         rules = merge_rules([Rule(89.6, 80, 89.6, 400), Rule(90.4, 80, 90.4, 400), Rule(91.2, 400, 91.2, 770)])
         self.assertEqual(len(rules), 1)

@@ -180,11 +180,24 @@ def reading(words: list[Word]) -> str:
     return ''.join(w.text for row in rows for w in sorted(row, key=lambda w: w.x0))
 
 
-def _frames(page: Page) -> list[tuple[float, float, float, float, list[float]]]:
+def _frames(page: Page, spread: dict | None = None) -> list[tuple[float, float, float, float, list[float]]]:
     """Frames as (x0, x1, top, bottom, band edges) from rules that bound a table."""
     verticals = [r for r in page.rules if r.vertical and r.y1 - r.y0 > 40]
     horizontals = [r for r in page.rules if not r.vertical]
-    xs = sorted({round(r.x0, 1) for r in verticals})
+    xs = {round(r.x0, 1) for r in verticals}
+    if spread is not None:
+        # Only the declared spread's gutter: never split a column at an
+        # interior row endpoint. The nearest repeated edge on each side bounds it.
+        gutter = page.width * spread['gutter']
+        endpoints: dict[float, list[float]] = defaultdict(list)
+        for rule in horizontals:
+            for x in (rule.x0, rule.x1):
+                endpoints[round(x, 1)].append(rule.y0)
+        repeated = [x for x, ys in endpoints.items() if max(ys) - min(ys) > 40]
+        edges = (max((x for x in repeated if x < gutter), default=None),
+                 min((x for x in repeated if x > gutter), default=None))
+        xs.update(x for x in edges if x is not None)
+    xs = sorted(xs)
     edges: list[float] = []
     for x in xs:
         if not edges or x - edges[-1] > 3:
@@ -225,7 +238,7 @@ def _header_bottom(page: Page, frame) -> float:
     return full[1] if len(full) > 1 else top
 
 
-def page_bands(page: Page) -> tuple[list[Band], list[Word]]:
+def page_bands(page: Page, spread: dict | None = None) -> tuple[list[Band], list[Word]]:
     """Bands of every frame on one physical page, and the words outside frames."""
     verticals = [r for r in page.rules if r.vertical]
     horizontals = [r for r in page.rules if not r.vertical]
@@ -236,7 +249,7 @@ def page_bands(page: Page) -> tuple[list[Band], list[Word]]:
     used: set[int] = set()
     bands = []
     whole = list(enumerate(page.words))
-    for frame in _frames(page):
+    for frame in _frames(page, spread):
         x0, x1, top, bottom, edges = frame
         header_bottom = _header_bottom(page, frame)
         # Header cells: the rule-bounded rectangle around each header word.
@@ -338,9 +351,9 @@ def same_rows(left: Page, right: Page) -> bool:
     return found / len(shorter) >= SPREAD_ROW_MATCH
 
 
-def logical_pages(pages: list[Page]) -> list[Logical]:
+def logical_pages(pages: list[Page], *, spread: dict | None = None) -> list[Logical]:
     """Read each page's bands, classify them once per document, then join spreads."""
-    per_page = [(page, *page_bands(page)) for page in pages]
+    per_page = [(page, *page_bands(page, spread)) for page in pages]
     # Band kind by content, learned per header path over the whole document so
     # that empty continuation pages keep it. A band is a label band when at least
     # half of its printed lines carry text; otherwise it holds amounts if any

@@ -25,12 +25,21 @@ def identifier(value: str) -> str:
     return '"' + value.replace('"', '""') + '"'
 
 
+def candidate_root(candidate: Path | None, target: dict, direction: str) -> Path | None:
+    if candidate is None:
+        return None
+    nested = candidate / target['jurisdiction'] / str(target['fiscal_year']) / manifest.document_slot(target) / direction
+    legacy = candidate / target['jurisdiction']
+    return next((p for p in (nested, legacy) if (p / 'manifest.json').is_file()), None)
+
+
 def input_path(document: dict, table: dict, kind: str, candidate: Path | None,
                *, remote: bool = False) -> Path:
     reference = table[kind]['object'] if kind in ('nodes', 'amounts') else table['object']
-    if candidate is None:
+    root = candidate_root(candidate, document['target'], document['direction'])
+    if root is None:
         return fetch(reference, remote=remote)
-    path = candidate / document['target']['jurisdiction'] / f'{table["table_id"]}-{kind}.parquet'
+    path = root / f'{table["table_id"]}-{kind}.parquet'
     verify(path, reference)
     return path
 
@@ -92,9 +101,9 @@ def load_document(documents: dict, spec: dict, candidate: Path | None) -> dict:
     target = {k: spec[k] for k in ('jurisdiction', 'fiscal_year', 'document_kind')}
     key = (target['jurisdiction'], target['fiscal_year'], target['document_kind'], spec['direction'])
     if key not in documents:
-        path = (candidate / target['jurisdiction'] / 'manifest.json' if candidate else
-                manifest.manifest_path(target, spec['direction']))
-        document = (manifest.validate(json.loads(path.read_text()), check_code=False) if candidate
+        root = candidate_root(candidate, target, spec['direction'])
+        path = root / 'manifest.json' if root else manifest.manifest_path(target, spec['direction'])
+        document = (manifest.validate(json.loads(path.read_text()), check_code=False) if root
                     else manifest.read(path, check_code=False))
         if document['target'] != target or document['direction'] != spec['direction']:
             raise ValueError(f'Manifest target differs: {path}')
@@ -127,6 +136,9 @@ def load_jurisdictions(path: Path) -> list[tuple[str, str, str]]:
 def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = False) -> dict:
     declarations = yaml.safe_load((DBT / 'models/staging/fiscal/_sources.yml').read_text())['sources']
     write_relations(declarations)
+    provided = set(candidate.rglob('manifest.json')) if candidate is not None else set()
+    if candidate is not None and not provided:
+        raise ValueError('Candidate directory contains no manifest.json')
     pdf_sources = [s for s in declarations if s['name'] == 'fiscal_pdf']
     csv_sources = [s for s in declarations if s['name'] == 'fiscal_csv']
     sources = pdf_sources[0]
@@ -192,6 +204,10 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
         jurisdictions = load_jurisdictions(JURISDICTIONS)
         con.execute('create or replace table ingestion.jurisdiction (jurisdiction_code varchar, name varchar, ocd_id varchar)')
         con.executemany('insert into ingestion.jurisdiction values (?,?,?)', jurisdictions)
+        used = {root / 'manifest.json' for document in documents.values()
+                if (root := candidate_root(candidate, document['target'], document['direction'])) is not None}
+        if provided - used:
+            raise ValueError(f'Unused candidate manifests: {sorted(str(p) for p in provided - used)}')
         con.commit()
     return {'warehouse': str(warehouse), 'tables': len(tables), 'csv_tables': len(csv_tables),
             'origins': len(origins), 'jurisdictions': len(jurisdictions),
@@ -200,7 +216,9 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--candidate-dir', type=Path, help='Read validated candidates instead of saved objects')
+    parser.add_argument('--candidate-dir', type=Path,
+                        help='Overlay candidates at jurisdiction/year/document-slot/direction/manifest.json '
+                             '(legacy jurisdiction/manifest.json also supported); other targets use cached saved objects')
     parser.add_argument('--remote', action='store_true', help='Restore missing saved objects with cf (read only)')
     parser.add_argument('--build', action='store_true', help='Build and test the expenditure marts after preparation')
     args = parser.parse_args()

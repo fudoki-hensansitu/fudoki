@@ -1,6 +1,7 @@
 """Input-contract failures must stop loading and preserve the previous warehouse."""
 import hashlib
 import json
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
@@ -78,6 +79,37 @@ class PrepareTest(unittest.TestCase):
         with patch.object(prepare, 'fetch', return_value=self.root / 'saved') as fetch:
             self.assertEqual(prepare.input_path(self.document, self.table, 'nodes', None, remote=True), self.root / 'saved')
             fetch.assert_called_once_with(self.table['nodes']['object'], remote=True)
+
+    def test_nested_candidate_distinguishes_another_year_of_the_same_jurisdiction(self):
+        old = self.candidate / '131041'
+        nested = old / '2025/settlement/expenditure'
+        files = list(old.iterdir())
+        nested.mkdir(parents=True)
+        for path in files:
+            shutil.move(path, nested / path.name)
+        self.assertEqual(self.load()['tables'], 1)
+        other = {**self.document, 'target': {**self.target, 'fiscal_year': 2024, 'document_kind': 'initial'}}
+        with patch.object(prepare, 'fetch', return_value=self.root / 'saved') as fetch:
+            path = prepare.input_path(other, self.table, 'nodes', self.candidate)
+            self.assertEqual(path, self.root / 'saved')
+            fetch.assert_called_once_with(self.table['nodes']['object'], remote=False)
+        # A provided target must not quietly substitute saved data for a missing candidate pair.
+        (nested / 'general-expenditure-detail-nodes.parquet').unlink()
+        with self.assertRaises(FileNotFoundError):
+            self.load()
+
+    def test_empty_or_unused_candidates_stop_and_leave_the_warehouse_unchanged(self):
+        extra = self.candidate / 'unused/manifest.json'
+        extra.parent.mkdir()
+        extra.write_text('{}')
+        with self.assertRaisesRegex(ValueError, 'Unused candidate'):
+            self.load()
+        with duckdb.connect(str(self.warehouse)) as con:
+            self.assertEqual(con.execute('select marker from ingestion.fixture_nodes').fetchone(), ('preserved',))
+        extra.unlink()
+        (self.candidate / '131041/manifest.json').unlink()
+        with self.assertRaisesRegex(ValueError, 'contains no manifest'):
+            self.load()
 
     def test_columns_and_row_count(self):
         path = prepare.input_path(self.document, self.table, 'nodes', self.candidate)
