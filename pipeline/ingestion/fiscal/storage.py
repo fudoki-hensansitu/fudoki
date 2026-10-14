@@ -136,7 +136,8 @@ def prepare_save(document: dict, table: dict, path: Path | dict[str, Path], *,
         conversion = next(item for item in document['conversions'] if item['id'] == table['conversion_id'])
         unit = unit_checks.check_table(
             nodes, amounts, document_kind=document['target']['document_kind'],
-            account=table.get('account'), partial=bool(conversion['options'].get('partial')), scope=scope)
+            account=table.get('account'), partial=bool(conversion['options'].get('partial')), scope=scope,
+            statement_kind=conversion.get('statement_kind', 'ordinary'))
         if unit['stopped']:
             raise ValueError(f'Node table failed the mandatory pre-save unit check: {unit_checks.describe(unit)}')
     prepared = []

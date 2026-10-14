@@ -10,11 +10,15 @@ check that stops a 千円 table read as 円. The rule is the generic builder's o
   read): the 歳出合計 row, its numbers cut into the amount columns. A table with no scope (a scan PDF, a
   saved table) or no such row has none, and only the digits of the unit are checked, as the generic
   builder does when a page prints no total;
-- one volume of an account printed in several (`partial`) is reported, never stopped.
+- one volume of an account printed in several (`partial`) has its unit mismatch reported.
+
+Ordinary settlement statements also pass the independent subject-presence check, even without
+a printed total or for a partial volume. A declared public-enterprise form keeps the existing
+tree, coverage and unit checks but is outside that ordinary executed-subject check.
 
 ``status`` tells what was established: ``matched`` (款 sum = printed total), ``digits`` (the digits of a
-general account's total fit the unit), ``partial`` (a volume: reported only), ``unchecked`` (nothing
-could be compared: no 款, or a special account with no printed total) and ``stopped``.
+general account's total fit the unit), ``partial`` (a volume: reported only), ``unchecked`` (a special
+account or enterprise form with no comparable printed total) and ``stopped``.
 """
 from __future__ import annotations
 
@@ -26,6 +30,7 @@ from types import SimpleNamespace
 
 from ingestion.generic.build import dictionary_header
 from ingestion.generic.units import _phase, check as check_units
+from ingestion.fiscal.subject_checks import check_subject
 from ingestion.lib.coverage_checks import TOTAL_LABELS
 from ingestion.lib.node_tables import _coverage_word, _word_key, amount_phase
 from shared.amount import number
@@ -110,7 +115,7 @@ def printed_totals(scope: dict, nodes: list[dict], amounts: list[dict]) -> list[
 
 
 def check_table(nodes: list[dict], amounts: list[dict], *, document_kind: str, account: str | None,
-                partial: bool = False, scope: dict | None = None) -> dict:
+                partial: bool = False, scope: dict | None = None, statement_kind: str = 'ordinary') -> dict:
     """The generic builder's unit check on a finished table, plus a ``status`` and where the total came from."""
     # The subject axis is named by the converter (科目, 款項, 款項目); the check reads the 款 roots.
     shaped = [{**node, 'axis_header': '科目'} if node['parent_node_key'] is None and node.get('level_header') == '款'
@@ -125,6 +130,8 @@ def check_table(nodes: list[dict], amounts: list[dict], *, document_kind: str, a
     if ambiguous:
         notes = [note for note in notes if note not in ofphase]
     result = check_units(SimpleNamespace(nodes=shaped, amounts=amounts, notes=notes), document_kind, account, partial)
+    result['subject_check'] = check_subject(nodes, amounts, document_kind, statement_kind)
+    result['stopped'] = result['stopped'] or not result['subject_check']['passed']
     result['printed_totals'] = len(notes)
     result['ambiguous_totals'] = ambiguous
     if result['stopped']:
@@ -151,6 +158,14 @@ def describe(result: dict) -> str:
         parts.append(f'桁が単位に合わない（{low:,}以上{high:,}未満のはず）')
     if result.get('conflicts'):
         parts.append(f'款の金額が二通りに印字されている: {len(result["conflicts"])}件')
+    subject = result.get('subject_check', {})
+    if subject.get('applicable') and not subject['passed']:
+        if not subject['kan']:
+            parts.append('款の科目軸がない')
+        elif not subject['executed_kan']:
+            parts.append('款の支出済額がない')
+        if subject['moku'] and subject['executed_moku'] * 2 <= subject['moku']:
+            parts.append(f'目の支出済額が過半に満たない（{subject["executed_moku"]}/{subject["moku"]}）')
     return '、'.join(parts)
 
 
