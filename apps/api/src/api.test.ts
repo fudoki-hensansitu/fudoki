@@ -251,7 +251,7 @@ describe('search', () => {
   test('SQL インジェクションの値は bind される', async () => {
     const body = await (await search({ where: { name: { eq: [`x' OR 1=1 --`], prefix: `"; DROP TABLE control; --` } } })).json()
     expect(body.nodes).toEqual([])
-    expect(sqlite.query('SELECT count(*) AS n FROM control').get()).toEqual({ n: 1 })
+    expect(sqlite.query('SELECT count(*) AS n FROM control').get()).toEqual({ n: 4 })
   })
 
   test('旧 GET の一覧は無い', async () => {
