@@ -4,7 +4,7 @@
 
 ## QuickStart
 
-ローカル開発時はrepoの `docs/prd/mcp-distribution/install.md` でCodex・Claude Code・Cursorを選んでください。Gitへの反映後は [導入ガイド](https://github.com/wwwyo/fudoki/blob/main/docs/prd/mcp-distribution/install.md)を利用できます。このパッケージはローカル検証済みで、mainへの反映と公開ディレクトリへの提出は未完了です。Gitへの反映後はClaude Codeで `/plugin install fudoki --marketplace wwwyo/fudoki` を実行できます。
+ローカル開発時はrepoの `docs/prd/mcp-distribution/install.md` でCodex・Claude Code・Cursorを選んでください。Gitへの反映後は [導入ガイド](https://github.com/wwwyo/fudoki/blob/main/docs/prd/mcp-distribution/install.md)を利用できます。このパッケージはローカル検証済みで、mainへの反映と公開ディレクトリへの提出は未完了です。Gitへの反映後はClaude Codeのセッション内で `/plugin install fudoki --marketplace wwwyo/fudoki` を実行できます（v2.1.275以降）。導入ガイドの `claude plugin marketplace add` と `claude plugin install` はshellで行う同じ導入の二段階手順です。
 
 共通skillは `skills/compare-expenditure/SKILL.md`。Claude Codeでは `/fudoki:compare-expenditure`、Codex・Cursorでは導入後のskill一覧から呼び出せます。収録範囲・列説明を確認してから検索・比較します。UI非対応hostでは構造化結果と原典リンクを使います。
 
