@@ -12,6 +12,7 @@ from ingestion.fiscal import manifest
 from ingestion.generic.layout import Band, Glyph, Logical
 from ingestion.generic.layout_settings import load, validator
 from ingestion.generic.tree import Group, Item, apply_layout, build
+from shared.amount import number
 
 
 class LayoutHintsTest(unittest.TestCase):
@@ -124,6 +125,49 @@ class LayoutHintsTest(unittest.TestCase):
         before = deepcopy(items)
         self.assertEqual(apply_layout(items, {}, set()), before)
 
+    def test_bracket_amounts_preserve_printed_text_and_boxes_only_on_configured_axis(self):
+        subject = Band(0, 40, 1, ('款',), [20, 100], 20, 100, kind='label')
+        remarks = Band(40, 200, 1, ('備考',), [20, 100], 20, 100, kind='label')
+        subject.words = [Glyph('1総務費', 5, 30, 35, 39, 1, 0)]
+        remarks.words = [Glyph('1事業', 50, 30, 95, 39, 1, 0),
+                         Glyph('(', 145, 30, 149, 39, 1, 0), Glyph('14,101,213)', 160, 30, 195, 39, 1, 0),
+                         Glyph('2事業', 50, 50, 95, 59, 1, 0),
+                         Glyph('(0)', 160, 63, 190, 72, 1, 0)]
+        logicals = [Logical([1], [subject, remarks], '円', [])]
+        result = build(logicals, layout={'備考': {'amount_brackets': True}})
+        self.assertEqual([a['amount_text'] for a in result.amounts], ['(14,101,213)', '(0)'])
+        self.assertEqual([number(a['amount_text']) for a in result.amounts], [14101213, 0])
+        self.assertEqual([(a['x0'], a['x1'], a['physical_page']) for a in result.amounts], [(145, 195, 1), (160, 190, 1)])
+        self.assertEqual([n['name_text'] for n in result.nodes], ['総務費', '事業', '事業'])
+        plain = build(logicals)
+        for layout in ({'備考': {'amount_brackets': False}}, {'説明': {'amount_brackets': True}}):
+            other = build(logicals, layout=layout)
+            self.assertEqual((other.nodes, other.amounts), (plain.nodes, plain.amounts))
+        remarks.words = [Glyph('1事業(管理課)', 50, 30, 135, 39, 1, 0), Glyph('100', 160, 30, 190, 39, 1, 0)]
+        result = build(logicals, layout={'備考': {'amount_brackets': True}})
+        self.assertEqual(result.nodes[-1]['name_text'], '事業(管理課)')
+        self.assertEqual(result.amounts[0]['amount_text'], '100')
+
+    def test_character_indents_keep_levels_when_the_page_frame_moves(self):
+        logicals = []
+        for page, shift in ((1, 0), (2, 34)):
+            subject = Band(0, 40 + shift, page, ('款',), [20, 100], 20, 100, kind='label')
+            remarks = Band(40 + shift, 200 + shift, page, ('備考',), [20, 100], 20, 100, kind='label')
+            subject.words = [Glyph('1総務費', 5, 30, 35, 39, page, 0)]
+            remarks.words = [Glyph(str(page), 50 + shift, 40, 54.5 + shift, 49, page, 0),
+                             Glyph('事業', 59 + shift, 40, 86 + shift, 49, page, 0),
+                             Glyph('100', 160 + shift, 40, 190 + shift, 49, page, 0),
+                             Glyph('10', 59 + shift, 60, 68 + shift, 69, page, 0),
+                             Glyph('需用費', 68 + shift, 60, 95 + shift, 69, page, 0),
+                             Glyph('100', 160 + shift, 60, 190 + shift, 69, page, 0)]
+            logicals.append(Logical([page], [subject, remarks], '円', []))
+        result = build(logicals, layout={'備考': {'indent_chars': 1}})
+        nodes = [n for n in result.nodes if n['axis_header'] == '備考']
+        self.assertEqual([n['depth'] for n in nodes], [1, 2, 1, 2])
+        self.assertEqual([n['physical_page'] for n in nodes], [1, 1, 2, 2])
+        self.assertEqual([a['amount_text'] for a in result.amounts], ['100'] * 4)
+        self.assertEqual(nodes[3]['parent_node_key'], nodes[2]['node_key'])
+
     def test_marks_apply_only_to_the_configured_axis_in_real_tree_build(self):
         subject = Band(0, 40, 1, ('款',), [20, 100], 20, 100, kind='label')
         remarks = Band(40, 200, 1, ('備考',), [20, 100], 20, 100, kind='label')
@@ -197,6 +241,7 @@ class LayoutRegistryTest(unittest.TestCase):
 
     def test_schema_stops_invalid_marks_wrap_and_empty_notes(self):
         for hints in ({'marks': {'○': 0}}, {'wrap': 'always'}, {'notes': ['']},
-                      {'fitted_names': {'chars': 0, 'overflow_left_chars': 1}}):
+                      {'fitted_names': {'chars': 0, 'overflow_left_chars': 1}},
+                      {'indent_chars': 0}, {'amount_brackets': 'true'}):
             with self.subTest(hints=hints), self.assertRaises(jsonschema.ValidationError):
                 validator().validate({'schema_version': 1, 'breakdown': {'備考': hints}})
