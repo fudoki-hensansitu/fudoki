@@ -16,6 +16,8 @@ import unicodedata
 from dataclasses import dataclass
 from pathlib import Path
 
+from shared.amount import parse_amount
+
 
 def _key(name: str) -> str:
     return "".join(unicodedata.normalize("NFKC", name).split())
@@ -130,6 +132,8 @@ def _amount_key(amount: str, *, observed: bool = False) -> str:
         raise ValueError('A digitless amount observation must be one glyph in a declared amount column')
     if not observed and (not any(char.isdigit() for char in key) or any(char.isalpha() for char in key)):
         raise ValueError("An amount rule must contain a digit and no letter")
+    if not observed and parse_amount(key) is None:
+        raise ValueError('A corrected amount must be one numeric value')
     return key
 
 

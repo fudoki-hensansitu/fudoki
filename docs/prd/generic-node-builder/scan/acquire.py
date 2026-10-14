@@ -58,10 +58,11 @@ def acquire_plan(path: Path, *, remote: bool, inputs_dir: Path, conversion_ids: 
                     try:
                         data, run = acquire(files[item['origin_sha256']], item['request'])
                         break
-                    except VisionOcrError:
+                    except VisionOcrError as error:
                         if attempt == 2:
                             raise
-                        print(json.dumps({'ocr': item['id'], 'retry': attempt + 1, 'error': 'VisionOcrError'}), flush=True)
+                        print(json.dumps({'ocr': item['id'], 'retry': attempt + 1,
+                                          'error': str(error)[-500:]}), flush=True)
                 item['sha256'], item['bytes'] = run['observation_sha256'], len(data)
                 write_ocr(document, item, data, run)
                 if remote:

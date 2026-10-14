@@ -11,11 +11,38 @@ class TextTest(unittest.TestCase):
         self.assertEqual(_text('A80,636,880'), '△80,636,880')
         self.assertEqual(_text('15,936120'), '15,936,120')
         self.assertEqual(_text('3，995,000'), '3,995,000')
+        self.assertEqual(_text('-101、 261,000'), '△101,261,000')
+        self.assertEqual(_text('一 般 管 理 費'), '一 般 管 理 費')
         self.assertEqual(_text('0'), '0')
         self.assertEqual(_text('予備費'), '予備費')
 
 
 class CorrectionTest(unittest.TestCase):
+    def test_an_intact_line_amount_keeps_the_sign_missing_from_its_word_range(self):
+        from ingestion.generic import scan
+        from ingestion.lib.pdf_rules import PageRules
+        from pathlib import Path
+        item = {'id': 'r', 'kind': 'region', 'raw_text': '-21,000', 'bbox_pdf_pt': [10, 20, 50, 30]}
+        child = {**item, 'id': 'w', 'kind': 'word', 'parent_id': 'r',
+                 'raw_text': '21,000', 'bbox_pdf_pt': [13, 20, 50, 30]}
+        observation = {'pages': [{'page_number': 1, 'regions': [{'observations': [item, child]}]}]}
+        with patch.object(scan.pdf_rules, 'detect', return_value=PageRules(1, 100, 100, (), ())):
+            self.assertEqual(scan.pages(observation, Path('x.pdf'))[0].words[0].text, '△21,000')
+            correction = scan.amount_dictionary([{'id': 'fixed', 'page': 1, 'observation_id': 'w',
+                'observed_amount': '21,000', 'corrected_amount': '27,000', 'reason': '原典で確認'}])
+            self.assertEqual(scan.pages(observation, Path('x.pdf'), correction)[0].words[0].text, '27,000')
+
+    def test_wrapped_header_correction_does_not_change_a_body_name(self):
+        from ingestion.generic import scan
+        rules = [Rule(x, 10, x, 100) for x in (0, 40, 80)] + [Rule(0, y, 80, y) for y in (10, 30, 100)]
+        page = Page(1, 100, 120, [Word('款', 5, 15, 25, 25), Word('当初', 45, 13, 65, 19),
+                                Word('子算額', 45, 22, 75, 28), Word('1当初子算額', 5, 40, 35, 50),
+                                Word('1,000', 45, 40, 75, 50)], rules)
+        logical = scan._layout([page], None)[0]
+        self.assertEqual(logical.bands[1].header, ('当初予算額',))
+        self.assertEqual(logical.bands[0].words[0].text, '1当初子算額')
+        self.assertEqual(page.words[2].text, '子算額')
+
     def test_unit_row_is_not_reread_as_money_and_thousands_mark_is_kept(self):
         from pathlib import Path
         from ingestion.generic import scan

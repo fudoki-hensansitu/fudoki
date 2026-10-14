@@ -19,7 +19,7 @@ from ingestion.fiscal import manifest
 from ingestion.fiscal.layouts.settlement_statement.convert import ocr_boxes
 from ingestion.fiscal.layouts.settlement_statement.recheck import LIMIT, MODEL, MARGIN, PROMPT, failing_cells, read_cell, rule
 from ingestion.fiscal.storage import fetch_ocr
-from ingestion.generic.scan import build_table
+from ingestion.generic.scan import build_table, logical_units
 from ingestion.generic.layout import normalize
 from ingestion.generic.layout_settings import load
 from ingestion.lib.node_tables import NodeTables
@@ -47,6 +47,7 @@ def amount_sources(table, source: dict, declared: list[dict]) -> dict:
             all_boxes = ocr_boxes(observation, page)
             boxes.setdefault(page['page_number'], []).extend(b for region in all_boxes for b in [region, *region.parts])
     targets = {(r['page'], r['observation_id']) for r in declared}
+    units = logical_units(table.logicals)
     sources = {}
     for amount in table.amounts:
         printed = [amount[k] for k in ('x0', 'y0', 'x1', 'y1')]
@@ -56,7 +57,8 @@ def amount_sources(table, source: dict, declared: list[dict]) -> dict:
                    if all(abs(a - v) <= .6 for a, v in zip(printed, (b.x0, b.y0, b.x1, b.y1)))]
         # A region and its single word may describe the same ink. Prefer an already declared
         # observation, then its word; never choose between distinct observed strings.
-        if matches and len({b.text for b in matches}) == 1:
+        if matches and len({b.text for b in matches}) == 1 and not any(
+                (b.page, (b.x0, b.y0, b.x1, b.y1)) in units for b in matches):
             matches.sort(key=lambda b: ((b.page, b.id) not in targets, ':w' not in b.id))
             sources[(amount['node_key'], amount['header_path'])] = [matches[0]]
     columns = (load(source['target'], source['direction']) or {}).get('columns', {})
@@ -70,13 +72,11 @@ def amount_sources(table, source: dict, declared: list[dict]) -> dict:
         for band in logical.bands:
             if columns.get('／'.join(band.header), {}).get('kind') != 'amount':
                 continue
-            first_subject = min((g.y0 for b in logical.bands if b.header and b.header[-1] in ('款', '項', '目')
-                                 for g in b.words if any(c.isalpha() for c in g.text)), default=band.body_top)
             for glyph in band.words:
                 if any(c.isdigit() for c in glyph.text) or len(glyph.text.strip()) != 1 or glyph.text == '円':
                     continue
-                if (glyph.y0 + glyph.y1) / 2 < first_subject:
-                    continue  # currency/unit marks above the first named account row are not value cells
+                if (glyph.page, glyph.original) in units:
+                    continue  # a confirmed unit row, rather than all values before a continued subject's name
                 matches = [b for b in boxes.get(glyph.page, []) if b.text == glyph.text
                            and all(abs(a - v) <= .6 for a, v in zip(glyph.original, (b.x0, b.y0, b.x1, b.y1)))]
                 if matches:
@@ -138,6 +138,7 @@ def recheck(document: dict, conversion: dict, pdf: Path, model: str = MODEL, lim
              if line.strip() for r in [json.loads(line)]}
     reads, proposals = [], []
     local_rules = set()
+    digitless_rules = set()
     enriched = False
     new_vlm, cached, deferred = 0, 0, 0
     for box in list(boxes.values())[:limit]:
@@ -157,7 +158,7 @@ def recheck(document: dict, conversion: dict, pdf: Path, model: str = MODEL, lim
                 deferred += 1
                 continue
             new_vlm += reader == model
-            entry = {'fingerprint': fingerprint, 'answer': answer if number(answer) is not None else 'UNREADABLE',
+            entry = {'fingerprint': fingerprint, 'answer': answer,
                      'reader': reader, 'request': payload}
             cache[fingerprint] = entry
             if cache_path:
@@ -169,6 +170,8 @@ def recheck(document: dict, conversion: dict, pdf: Path, model: str = MODEL, lim
             proposals.append(proposal)
             if reader == 'paddle-small':
                 local_rules.add(proposal['id'])
+            if not any(c.isdigit() for c in box.text):
+                digitless_rules.add(proposal['id'])
     if enriched and cache_path:
         temporary = cache_path.with_suffix('.tmp')
         temporary.write_text(''.join(json.dumps(entry, ensure_ascii=False) + '\n' for entry in cache.values()))
@@ -176,9 +179,11 @@ def recheck(document: dict, conversion: dict, pdf: Path, model: str = MODEL, lim
     kept, current = [], before
     identity = lambda r: (r['parent_node_key'], r['axis_header'], r['header_path'], r['unit_text'])
     matched = lambda t: {identity(r) for r in check_tree(t.nodes, t.amounts, kind)['results'] if r['status'] == '一致'}
-    # Keep the effect of local zero reads separate from VLM numeric rereads. A rejected
-    # VLM batch must not discard a verified local batch; neither can break an existing match.
-    batches = [[p for p in proposals if (p['id'] in local_rules) == local] for local in (True, False)]
+    # Keep local zeros, VLM unread glyphs and VLM numeric changes separate. A rejected
+    # numeric batch must not discard verified missing-cell reads; none can break an existing match.
+    batches = [[p for p in proposals if p['id'] in local_rules],
+               [p for p in proposals if p['id'] in digitless_rules - local_rules],
+               [p for p in proposals if p['id'] not in digitless_rules | local_rules]]
     for batch in batches:
         if not batch:
             continue
