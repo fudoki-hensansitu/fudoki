@@ -106,7 +106,7 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "5da62b0e6e580f41f15cb8006d676e5a332e54386388c83146395a780cce2e60",
+      "input_fingerprint": "a0c7dd4f8df8cfcd83c56b611201e344649e5435061e4a212a9756565a21f9e0",
       "account": "国民健康保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -136,7 +136,7 @@
     {
       "table_id": "parking-expenditure",
       "conversion_id": "parking-settlement",
-      "input_fingerprint": "a9671f8db89a1cbc8790fe282832962f6703bfe23b5b342b140e8303a4e916de",
+      "input_fingerprint": "16ee625d740986771b6f1364ecfe5d8e17ad517da71f5b97e17a27a45872735c",
       "account": "駐車場事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'備考': 'indent', '節': 'indent'}。",
@@ -166,7 +166,7 @@
     {
       "table_id": "long-term-care-expenditure",
       "conversion_id": "long-term-care-settlement",
-      "input_fingerprint": "f9d69e5d0b96723d37fba30e5ca0ceacba6ab3bc23138282ad65eebe91c8c890",
+      "input_fingerprint": "f8f9774629cf1d90d18270e43cf19825f24f01406bed6b8ef4a2766c56e968c5",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'indent', '備考': 'indent'}。",
