@@ -20,7 +20,7 @@ import {
 } from './columns'
 import type { Db } from './db'
 import { ApiError, invalid } from './errors'
-import type { EvaluationDeps } from './evaluations'
+import { searchEvaluationsOperation, type EvaluationDeps } from './evaluations'
 import {
   DEFAULT_PAGE_SIZE,
   MAX_BINDS,
@@ -506,4 +506,5 @@ export const operations: Operation[] = [
     }),
     run: describeColumns,
   },
+  searchEvaluationsOperation,
 ]

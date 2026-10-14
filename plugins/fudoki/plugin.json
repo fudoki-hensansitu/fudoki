@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "fudoki",
-  "version": "0.1.0",
-  "description": "日本の自治体の歳出を事業の単位で検索し、収録範囲と原典を確かめて比較・集計する。",
+  "version": "0.2.0",
+  "description": "日本の自治体の歳出を事業の単位で検索し、収録範囲と原典を確かめて比較・集計する。北区・中野区は事業の評価が載った原典の頁も探せる。",
   "author": {
     "name": "風土記",
     "email": "support@fudoki.dev"
@@ -14,7 +14,7 @@
       "interface": {
         "displayName": "風土記(fudoki)",
         "shortDescription": "Compare municipal spending",
-        "longDescription": "Search Japanese municipal expenditure in initial budgets and settlements, check coverage and accounting scope, inspect line-item breakdowns, and trace amounts to original documents. Only collected documents are available. COFOG classifications are Fudoki judgments and may be tentative. Revenue, individual transactions, and writes are outside the supported scope.",
+        "longDescription": "Search Japanese municipal expenditure in initial budgets and settlements, check coverage and accounting scope, inspect line-item breakdowns, and trace amounts to original documents. For Kita and Nakano wards, locate the pages of their program evaluation documents for the 2025 fiscal year settlement; only the location (document URL, SHA-256, page) and a short excerpt are returned, and the content is read from the original PDF, which remains the ward's copyright. Only collected documents are available. COFOG classifications are Fudoki judgments and may be tentative. Revenue, individual transactions, and writes are outside the supported scope.",
         "developerName": "風土記",
         "category": "Productivity",
         "capabilities": [
@@ -25,7 +25,7 @@
         "defaultPrompt": [
           "中野区で収録されている年度・資料区分・会計を教えて",
           "中野区の2025年度決算一般会計の目を金額の大きい順に3件見せて",
-          "この明細の内訳と原典PDFの項目・金額の位置を確認したい"
+          "北区の2025年度の事業評価で、防災分野におけるデジタル化の推進が載っている頁を探して"
         ],
         "logo": "./assets/icon.png",
         "composerIcon": "./assets/icon.png"
@@ -62,6 +62,12 @@
               "prompt": "中野区の2025年度決算一般会計について、COFOGの社会保護（10）の目を集計し、暫定分類と分類できない項目の扱いも説明して。",
               "tools_triggered": "list_jurisdictions, describe_expenditure_columns, search_expenditure_nodes",
               "expected_behavior": "同じ団体・年度・資料区分・会計の目に限定し、cofog_code prefix=10で検索する。next_page_tokenを辿り、分類状態と欠損を示す。全件取得できなければ取得分の小計と明記する。"
+            },
+            {
+              "description": "事業の評価の頁の所在を探す。収録は北区・中野区の2025年度決算を評価した資料のみ。公開データのみ、認証不要。",
+              "prompt": "北区の2025年度の事業評価で、防災分野におけるデジタル化の推進が載っている頁を教えて。",
+              "tools_triggered": "search_evaluations",
+              "expected_behavior": "jurisdiction=131172、fiscal_year=2025、query=防災分野におけるデジタル化の推進で検索する。候補の資料URL・origin_sha256・物理頁・page_urlを示し、抜粋だけを根拠に評価・目標値・実績を答えない。page_urlの頁を取得できれば読んで事業・年度の列・指標を確かめてから出典つきで答え、取得できなければpage_urlを示して確認を促す。"
             }
           ],
           "negative": [
@@ -76,6 +82,10 @@
             {
               "description": "書込みは対象外。toolで変更を試みず、公開資料の訂正には自治体側の手続が必要と説明する。",
               "prompt": "中野区のこの決算額を100万円に書き換えて保存して。"
+            },
+            {
+              "description": "評価資料の金額は財政データの答えに使わない。評価の検索の抜粋から決算額を断言せず、歳出の金額は歳出toolで取り、評価資料の数字は評価資料の記載として区別する。",
+              "prompt": "北区の防災分野におけるデジタル化の推進の決算額を、評価資料の抜粋から読み取って、歳出の決算額として断定して。"
             }
           ]
         },
@@ -86,11 +96,11 @@
         "countries": [
           "JP"
         ],
-        "release_notes": "初版。既存リモートMCPへの接続と歳出の比較・集計skillを同梱。",
+        "release_notes": "0.2.0: 北区・中野区の2025年度決算を評価した資料から、事業の評価が載った原典PDFの頁の所在を探すsearch_evaluations toolと、compare-expenditure skillの評価の検索の手順（references/evaluation.md）を追加。返すのは所在と短い抜粋だけで、内容は原典PDFで読む。0.1.0: 初版。既存リモートMCPへの接続と歳出の比較・集計skillを同梱。",
         "translations": {
           "ja-JP": {
             "subtitle": "自治体の歳出を比較し原典を確認",
-            "description": "自治体の当初予算・決算の歳出を検索し、収録範囲・会計・粒度を確かめて比較できます。内訳と原典の位置を確認できます。収録済み資料に限られ、COFOG分類は風土記の判断です。歳入・取引・書込みには対応しません。"
+            "description": "自治体の当初予算・決算の歳出を検索し、収録範囲・会計・粒度を確かめて比較できます。内訳と原典の位置を確認できます。北区・中野区は、2025年度決算を評価した資料から事業の評価が載った頁の所在を探せます（返すのは所在と短い抜粋のみ。内容は原典PDFで確認）。収録済み資料に限られ、COFOG分類は風土記の判断です。歳入・取引・書込みには対応しません。"
           }
         }
       }

@@ -14,7 +14,7 @@ SOURCE = REPO / "plugins/fudoki"
 SCHEMAS = Path(__file__).parent / "schemas"
 FILES = {
     "plugin.json", "mcp.json", ".claude-plugin/plugin.json", ".mcp.json",
-    "README.md", "LICENSE", "skills/compare-expenditure/SKILL.md", "assets/icon.png", "assets/icon.svg",
+    "README.md", "LICENSE", "skills/compare-expenditure/SKILL.md", "skills/compare-expenditure/references/evaluation.md", "assets/icon.png", "assets/icon.svg",
 }
 
 
@@ -59,9 +59,11 @@ def validate(files: dict[str, bytes]) -> dict:
     skill = files["skills/compare-expenditure/SKILL.md"].decode()
     if not skill.startswith("---\nname: compare-expenditure\ndescription:") or not skill.split("---", 2)[1].split("description:", 1)[1].strip():
         raise ValueError("Skill frontmatter is missing")
+    if "references/evaluation.md" not in skill:
+        raise ValueError("Skill must link the evaluation reference")
     cases = extension["review"]["test_cases"]
-    if len(cases["positive"]) != 5 or len(cases["negative"]) != 3:
-        raise ValueError("Review needs five positive and three negative cases")
+    if len(cases["positive"]) != 6 or len(cases["negative"]) != 4:
+        raise ValueError("Review needs six positive and four negative cases")
     for category in ["positive", "negative"]:
         keys = ["description", "prompt"] + (["tools_triggered", "expected_behavior"] if category == "positive" else [])
         for case in cases[category]:
