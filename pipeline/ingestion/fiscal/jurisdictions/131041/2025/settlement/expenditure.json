@@ -84,7 +84,7 @@
     {
       "table_id": "general-expenditure-detail",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "e52ea448a3216f178f766caaf543b2210abacef91ca258e61d4997ceb23749f6",
+      "input_fingerprint": "f18d4ee131e0d4d73ef4b259127e1fcf1979cb1a9f8b0152756e28105417f12e",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -114,7 +114,7 @@
     {
       "table_id": "kaigo-expenditure-detail",
       "conversion_id": "kaigo-settlement",
-      "input_fingerprint": "04616fc625f6317d95bf1b4c44c518f66d234a0863367df49962f26e1331e371",
+      "input_fingerprint": "e103aa7ab21c54862abafa3e9d2663d02d55655645dc3cb5a413e9b9ad66119d",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -144,7 +144,7 @@
     {
       "table_id": "kokuho-expenditure-detail",
       "conversion_id": "kokuho-settlement",
-      "input_fingerprint": "bb74409b38350b9b6ac98901dd9f49cff6711e779116dbb13335e50497623036",
+      "input_fingerprint": "bf461a93031e25ccc15fb6a9c1c8cdbd60a6a8831af4ab25ecdacaf3a6079da4",
       "account": "国民健康保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -174,7 +174,7 @@
     {
       "table_id": "kouki-expenditure-detail",
       "conversion_id": "kouki-settlement",
-      "input_fingerprint": "0f807ab2a94eaf2cd250888eeb07a3f8036687bf1f07837b9281b8011f30431f",
+      "input_fingerprint": "88e5f02166da3534dd085f4e70f63bd64fe941643dae9b3602370708baaa46f6",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",

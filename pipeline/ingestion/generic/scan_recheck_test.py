@@ -9,7 +9,7 @@ from unittest.mock import patch
 
 from ingestion.generic.observe import Page, Rule, Word
 from ingestion.generic.scan import _layout, declared_unread
-from ingestion.generic.scan_recheck import amount_sources
+from ingestion.generic.scan_recheck import MODEL, amount_sources, column_crop, recheck
 
 
 class AmountSourceTest(unittest.TestCase):
@@ -46,6 +46,70 @@ class AmountSourceTest(unittest.TestCase):
         glyph.text = '。'
         declared_unread(table.built, logicals, columns)
         self.assertTrue(any(r.get('text') == '。' for r in table.built.unowned))
+
+
+class BoundedCellTest(unittest.TestCase):
+    def test_the_column_crop_includes_a_separate_minus_and_stays_inside_the_row(self):
+        from ingestion.lib.pdf_rules import PageRules, Rule
+        box = SimpleNamespace(x0=30, y0=18, x1=45, y1=26)
+        rules = PageRules(1, 100, 200, tuple(Rule(x, 0, 200, 1) for x in (0, 50, 100)),
+                          tuple(Rule(y, 0, 100, 1) for y in (10, 30)))
+        x0, y0, x1, y1 = column_crop(box, rules)
+        self.assertLess(x0, 5)  # the minus at x=5 is outside the old word crop's margin
+        self.assertTrue(10 < y0 < y1 < 30 and x1 < 50)
+        with self.assertRaisesRegex(ValueError, 'both ruled edges'):
+            column_crop(box, PageRules(1, 100, 200, (), ()))
+
+    def test_only_the_selected_failing_print_can_call_the_reader(self):
+        boxes = [SimpleNamespace(page=1, id=name, text='1,000', x0=x, y0=20, x1=x+20, y1=30)
+                 for name, x in [('one', 10), ('two', 40)]]
+        sources = {(b.id, '支出済額'): [b] for b in boxes}
+        table = SimpleNamespace(nodes=[], amounts=[], built=SimpleNamespace(unowned=[]))
+        document = {'target': {'document_kind': 'settlement'}}
+        conversion = {'id': 'general', 'options': {}, 'ocr_inputs': [{'request': {'pages': [1]}}]}
+        with patch('ingestion.generic.scan_recheck.source_input', return_value={'sha256': 'f'*64}), \
+                patch('ingestion.generic.scan_recheck.pdf_rules.detect'), \
+                patch('ingestion.generic.scan_recheck.build_table', return_value=table), \
+                patch('ingestion.generic.scan_recheck.amount_sources', return_value=sources), \
+                patch('ingestion.generic.scan_recheck.problems', return_value=1), \
+                patch('ingestion.generic.scan_recheck.failing_cells', return_value=list(sources)), \
+                patch('ingestion.generic.scan_recheck.read_amount', return_value=('1,000', MODEL)) as reader:
+            report = recheck(document, conversion, Path('x.pdf'), cells={(1, 'two')})
+            self.assertEqual(reader.call_count, 1)
+            self.assertIs(reader.call_args.args[1], boxes[1])
+            self.assertEqual((report['new_vlm'], report['added']), (1, []))
+            reader.reset_mock()
+            with self.assertRaisesRegex(ValueError, 'not bound failing amounts'):
+                recheck(document, conversion, Path('x.pdf'), cells={(1, 'unit-or-unknown')})
+            reader.assert_not_called()
+
+    def test_a_bad_numeric_answer_does_not_discard_an_independent_verified_fix(self):
+        nodes = [{'node_key': key, 'parent_node_key': parent, 'axis_header': '科目', 'level_header': level}
+                 for key, parent, level in [('r', None, '款'), ('p', 'r', '項'), ('q', 'r', '項'),
+                                            ('c', 'p', '目'), ('d', 'q', '目')]]
+        boxes = {key: SimpleNamespace(page=1, id=key, text=value, x0=10, y0=20, x1=30, y1=30)
+                 for key, value in [('c', '80'), ('q', '50')]}
+        sources = {(key, '支出済額'): [box] for key, box in boxes.items()}
+
+        def build(source, options, **_):
+            values = dict(r='150', p='100', q='50', c='80', d='40')
+            values.update({r['observation_id']: r['corrected_amount'] for r in options.get('amount_corrections', [])})
+            amounts = [{'node_key': key, 'header_path': '支出済額', 'amount_text': value, 'unit_text': '円'}
+                       for key, value in values.items()]
+            return SimpleNamespace(nodes=nodes, amounts=amounts, built=SimpleNamespace(unowned=[]))
+
+        def read(pdf, box, model, **_):
+            return ('100' if box.id == 'c' else '60'), model
+
+        with patch('ingestion.generic.scan_recheck.source_input', return_value={'sha256': 'f'*64}), \
+                patch('ingestion.generic.scan_recheck.pdf_rules.detect'), \
+                patch('ingestion.generic.scan_recheck.build_table', side_effect=build), \
+                patch('ingestion.generic.scan_recheck.amount_sources', return_value=sources), \
+                patch('ingestion.generic.scan_recheck.read_amount', side_effect=read):
+            result = recheck({'target': {'document_kind': 'settlement'}},
+                             {'id': 'general', 'options': {}, 'ocr_inputs': [{'request': {'pages': [1]}}]}, Path('x.pdf'))
+        self.assertEqual((result['before'], result['after']), (2, 1))
+        self.assertEqual([(r['observation_id'], r['corrected_amount']) for r in result['added']], [('c', '100')])
 
 
 if __name__ == '__main__':

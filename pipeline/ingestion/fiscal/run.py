@@ -580,6 +580,7 @@ def verify_coverage(document: dict, locate, directory, recheck=None) -> dict:
     # writes them). A missing answer stops the table.
     if recheck is None:
         recheck = digit_recheck.Recheck.from_store(recheck_store_path(document), ask_missing=False)
+    conversions = {c['id']: c for c in document['conversions']}
     for table in document['tables']:
         if 'nodes' not in table or directory is None or table['table_id'] in outcome:
             continue
@@ -589,10 +590,12 @@ def verify_coverage(document: dict, locate, directory, recheck=None) -> dict:
             continue
         try:
             scope = json.loads(sidecars[0].read_text())
+            inputs = manifest.resolved_inputs(document, conversions[table['conversion_id']])
+            text_only = all(item['format'] == 'pdf' and item.get('pdf_type') == 'text' for item in inputs)
             result = coverage_checks.check_digit_coverage(
                 scope['words'], peers[table['table_id']], control_tables=[adopted[table['table_id']]],
                 exclusions=scope.get('excluded_regions', ()),
-                amount_columns=scope.get('amount_columns', ()), recheck=recheck)
+                amount_columns=scope.get('amount_columns', ()), recheck=recheck if text_only else None)
             jev = {k: v for k, v in (result['jev'] or {}).items() if k != 'answers'}
             outcome[table['table_id']] = {'status': MATCH if result['passed'] else MISMATCH,
                                           'counts': result['counts'],

@@ -123,6 +123,20 @@ def split_notes(built) -> tuple[list[dict], list[dict], list[dict], list[dict], 
     """Node amounts without the notes, the 注記 nodes and amounts, the notes left unadopted, and the
     account-code words printed in the labels of the notes that were laid."""
     nodes, amounts, unresolved, dropped, codes = lay_notes(built)
+    # Two separately printed notes may have the same words under one subject. They are not
+    # repeated subject amounts once both prints have their own note nodes. A missing print,
+    # contradictory readings at one position, or an ordinary amount still keeps its conflict.
+    position = lambda a: tuple(a[k] for k in ('physical_page', 'x0', 'y0', 'x1', 'y1'))
+    identity = lambda a: (*position(a), normalize(a['amount_text']), a['unit_text'])
+    adopted = {identity(a) for a in amounts}
+
+    def resolved_note_conflict(issue):
+        sources = issue.get('sources', [])
+        return (issue['kind'] == 'conflicting amount' and NOTE_SEPARATOR in issue.get('header', '')
+                and len(sources) == 2 and len({position(a) for a in sources}) == 2
+                and all(identity(a) in adopted for a in sources))
+
+    built.unowned[:] = [issue for issue in built.unowned if not resolved_note_conflict(issue)]
     kept = [a for a in built.amounts
             if NOTE_SEPARATOR not in a['header_path'] and (a['node_key'], a['header_path']) not in dropped]
     return kept, nodes, amounts, unresolved, codes

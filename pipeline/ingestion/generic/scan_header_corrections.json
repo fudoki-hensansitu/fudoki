@@ -7,6 +7,30 @@
       "observed_name": "当初子算額",
       "corrected_name": "当初予算額",
       "reason": "OCRが予を子と読む誤り。金額欄の見出しだけに適用する。原典の当初予算額の印字を確認した。"
+    },
+    {
+      "id": "reserve-transfer-heading",
+      "observed_name": "子備費支出及び流用増減",
+      "corrected_name": "予備費支出及び流用増減",
+      "reason": "OCRが予を子と読む見出しの誤り。金額欄の見出しだけに適用し、本文の名前は変えない。原典の印字を確認した。"
+    },
+    {
+      "id": "reserve-transfer-heading-variant",
+      "observed_name": "子備費支出及び流用增減",
+      "corrected_name": "予備費支出及び流用増減",
+      "reason": "同じ見出しを子・增と読むOCRの誤り。原典の予備費支出及び流用増減を確認した。"
+    },
+    {
+      "id": "reserve-transfer-heading-simplified",
+      "observed_name": "予備費支出及び流用增减",
+      "corrected_name": "予備費支出及び流用増減",
+      "reason": "OCRが増減を增减と読む見出しの誤り。原典の予備費支出及び流用増減を確認し、本文の名前は変えない。"
+    },
+    {
+      "id": "budget-amount-heading",
+      "observed_name": "算現",
+      "corrected_name": "予算現",
+      "reason": "見開きで額が右の枠に続く予算現の見出しの予をOCRが落とした。原典の印字を確認した。"
     }
   ]
 }

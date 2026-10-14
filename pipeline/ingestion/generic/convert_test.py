@@ -62,6 +62,28 @@ class NoteLayingTest(unittest.TestCase):
         hinted = self.built([self.record('annotation', label, [[glyph('1,630,000', 500, 544)]], hint='充用')])
         self.assertEqual([n['level_header'] for n in lay_notes(hinted)[0]], ['充用'])
 
+    def test_distinct_notes_keep_both_prints_and_only_resolve_their_own_conflict(self):
+        from ingestion.generic.tree import _amount, _dedupe
+        for header, second_y, keep_second, resolved in [
+            ('備考／注記／から流用', 140, True, True),
+            ('支出済額', 140, True, False),
+            ('備考／注記／から流用', 120, True, False),
+            ('備考／注記／から流用', 140, False, False),
+        ]:
+            with self.subTest(header=header, second_y=second_y, keep_second=keep_second):
+                runs = [[glyph('1,000', 500, 120)], [glyph('2,000', 500, second_y)]]
+                issues = []
+                raw = _dedupe([_amount('subject', header, run, '円') for run in runs], issues)
+                records = [self.record('annotation', [glyph('から流用', 400, run[0].y0)], [run])
+                           for run in runs[:2 if keep_second else 1]]
+                built = self.built(records, raw)
+                built.unowned = issues
+                _, nodes, amounts, _, _ = split_notes(built)
+                self.assertEqual(not built.unowned, resolved)
+                if resolved:
+                    self.assertEqual([a['amount_text'] for a in amounts], ['1,000', '2,000'])
+                    self.assertEqual(len({n['node_key'] for n in nodes}), 2)
+
 
 class ScopeTest(unittest.TestCase):
     def test_the_pages_are_the_selected_scope_of_the_account(self):

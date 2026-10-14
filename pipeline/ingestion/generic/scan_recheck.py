@@ -22,11 +22,17 @@ from ingestion.fiscal.storage import fetch_ocr
 from ingestion.generic.scan import build_table, logical_units
 from ingestion.generic.layout import normalize
 from ingestion.generic.layout_settings import load
-from ingestion.lib.node_tables import NodeTables
+from ingestion.lib.node_tables import NodeTables, amount_phase
 from ingestion.lib.paddle_ocr import recognize_crops
 from ingestion.lib import pdf_rules
+from ingestion.lib import vlm_ocr
+from ingestion.lib.scan_ocr import _cell
 from ingestion.lib.tree_checks import check_tree
 from shared.amount import number
+
+SIGNED_PROMPT = ('日本の決算書の金額セルです。印字された金額を1つだけ、桁区切りと負号を含めて原文のまま答えてください。'
+                 '数字の左のマイナス（-、−、△、▲）は金額の一部です。必ず残し、正の数にしないでください。'
+                 '罫線は負号ではありません。説明や単位は書かないでください。読めない場合はUNREADABLEと答えてください。')
 
 
 def source_input(document: dict, conversion: dict, pdf: Path) -> dict:
@@ -94,7 +100,60 @@ def problems(table, sources: dict, kind: str) -> int:
     return score(table.amounts, table.nodes, kind) + len(table.built.unowned) + len(sources.keys() - printed)
 
 
-def read_amount(pdf: Path, box, model: str, *, allow_vlm: bool = True) -> tuple[str | None, str]:
+def related_cells(result, kind: str) -> set[tuple[str, str]]:
+    """Same-column descendants of a failed comparison, including a matched child group.
+
+    A parent and its children can all miss their minus and still agree. Reading that parent
+    alone would break their existing match, so an explicit selection may read them together.
+    """
+    nodes = {n['node_key']: n for n in result.tables.nodes}
+    children = {}
+    for n in nodes.values():
+        children.setdefault((n['parent_node_key'], n['axis_header']), []).append(n['node_key'])
+    selected = set()
+    for comparison in check_tree(result.tables.nodes, result.tables.amounts, kind)['results']:
+        if comparison['status'] == '一致':
+            continue
+        pending, descendants = [comparison['parent_node_key']], set()
+        while pending:
+            key = pending.pop()
+            if key in descendants:
+                continue
+            descendants.add(key)
+            pending.extend(children.get((key, comparison['axis_header']), []))
+        selected.update(key for key in result.sources if key[0] in descendants and (
+            key[1] == comparison['header_path'] or amount_phase(key[1], kind, nodes[key[0]]['axis_header'],
+                                                               nodes[key[0]]['level_header']) == comparison['header_path']))
+    return selected
+
+
+def column_crop(box, rules) -> tuple[float, float, float, float]:
+    """The ruled column, around this printed line, including a separately aligned minus."""
+    cx, cy = (box.x0 + box.x1) / 2, (box.y0 + box.y1) / 2
+    verticals = [r for r in rules.vertical if r.covers(cy)]
+    if not any(r.position < cx for r in verticals) or not any(r.position > cx for r in verticals):
+        raise ValueError('A column crop requires both ruled edges')
+    left, right = _cell(cx, cx, cy, rules)
+    # Vision's missed-ink crop leaves 1.5pt clear of a rule. The amount reader needs
+    # edge digits too; keep the rule's inner face and let the model see the cell.
+    left -= 1.5
+    right += 1.5
+    above = [r for r in rules.horizontal if r.covers(cx) and r.position <= box.y0]
+    below = [r for r in rules.horizontal if r.covers(cx) and r.position >= box.y1]
+    top = max(above, key=lambda r: r.position) if above else None
+    bottom = min(below, key=lambda r: r.position) if below else None
+    upper = top.position + top.thickness / 2 if top else 0
+    lower = bottom.position - bottom.thickness / 2 if bottom else rules.height
+    height = box.y1 - box.y0 + 2 * MARGIN
+    if lower - upper > 2 * height:
+        upper, lower = max(upper, box.y0 - MARGIN), min(lower, box.y1 + MARGIN)
+    if not left < right or not upper < lower:
+        raise ValueError('Empty ruled-column crop')
+    return left, upper, right, lower
+
+
+def read_amount(pdf: Path, box, model: str, *, allow_vlm: bool = True,
+                crop_box: tuple | None = None) -> tuple[str | None, str]:
     """A declared amount column's single digitless glyph is tried by local OCR first.
 
     Only an exact 0 is kept from this attempt; any other reading goes to the existing VLM reader.
@@ -113,11 +172,14 @@ def read_amount(pdf: Path, box, model: str, *, allow_vlm: bool = True) -> tuple[
                 return answer, 'paddle-small'
     if not allow_vlm:
         return None, 'deferred'
+    if crop_box is not None:
+        return vlm_ocr.read(pdf, box.page, crop_box, SIGNED_PROMPT, model=model, margin=0, dpi=200), model
     return read_cell(pdf, box, model), model
 
 
 def recheck(document: dict, conversion: dict, pdf: Path, model: str = MODEL, limit: int = LIMIT,
-            *, cache_path: Path | None = None, vlm_limit: int = LIMIT) -> dict:
+            *, cache_path: Path | None = None, vlm_limit: int = LIMIT,
+            cells: set[tuple[int, str]] | None = None, column_crops: bool = False) -> dict:
     if limit < 1 or vlm_limit < 0:
         raise ValueError('Recheck limit must be positive and VLM limit nonnegative')
     source = source_input(document, conversion, pdf)
@@ -131,9 +193,17 @@ def recheck(document: dict, conversion: dict, pdf: Path, model: str = MODEL, lim
     result = SimpleNamespace(tables=NodeTables(table.nodes, table.amounts), sources=sources)
     before = problems(table, sources, kind)
     targets = {(r['page'], r['observation_id']) for r in existing}
+    eligible = list(failing_cells(result)) if before else []
+    if cells is not None:
+        eligible.extend(sorted(related_cells(result, kind)))
     boxes = { (sources[k][0].page, sources[k][0].id): sources[k][0]
-              for k in (failing_cells(result) if before else [])
+              for k in eligible
               if (sources[k][0].page, sources[k][0].id) not in targets}
+    if cells is not None:
+        missing = cells - boxes.keys()
+        if missing:
+            raise ValueError(f'Selected cells are not bound failing amounts: {sorted(missing)}')
+        boxes = {key: box for key, box in boxes.items() if key in cells}
     cache = {r['fingerprint']: r for line in (cache_path.read_text().splitlines() if cache_path and cache_path.exists() else [])
              if line.strip() for r in [json.loads(line)]}
     reads, proposals = [], []
@@ -142,8 +212,11 @@ def recheck(document: dict, conversion: dict, pdf: Path, model: str = MODEL, lim
     enriched = False
     new_vlm, cached, deferred = 0, 0, 0
     for box in list(boxes.values())[:limit]:
+        crop_box = column_crop(box, rules[box.page]) if column_crops else None
         payload = [source['sha256'], box.page, box.id, box.text, [box.x0, box.y0, box.x1, box.y1],
-                   model, PROMPT, MARGIN, 200, 'paddle-exact-zero-300dpi-v1']
+                   model, SIGNED_PROMPT if crop_box is not None else PROMPT, MARGIN, 200, 'paddle-exact-zero-300dpi-v1']
+        if crop_box is not None:
+            payload.extend([crop_box, 'ruled-column-line-v1'])
         fingerprint = hashlib.sha256(manifest.canonical(payload)).hexdigest()
         if fingerprint in cache:
             entry = cache[fingerprint]
@@ -153,7 +226,7 @@ def recheck(document: dict, conversion: dict, pdf: Path, model: str = MODEL, lim
             answer, reader = entry['answer'], entry['reader']
             cached += 1
         else:
-            answer, reader = read_amount(pdf, box, model, allow_vlm=new_vlm < vlm_limit)
+            answer, reader = read_amount(pdf, box, model, allow_vlm=new_vlm < vlm_limit, crop_box=crop_box)
             if answer is None:
                 deferred += 1
                 continue
@@ -184,9 +257,8 @@ def recheck(document: dict, conversion: dict, pdf: Path, model: str = MODEL, lim
     batches = [[p for p in proposals if p['id'] in local_rules],
                [p for p in proposals if p['id'] in digitless_rules - local_rules],
                [p for p in proposals if p['id'] not in digitless_rules | local_rules]]
-    for batch in batches:
-        if not batch:
-            continue
+    def retain(batch):
+        nonlocal table, current
         # Rebuild the bounded batch once. Retain it only if problems shrink and every previously
         # matching parent/child comparison still matches. A batch that fails stays undeclared.
         declarations = [*existing, *kept, *batch]
@@ -195,6 +267,15 @@ def recheck(document: dict, conversion: dict, pdf: Path, model: str = MODEL, lim
         if after < current and len(rebuilt.built.unowned) <= len(table.built.unowned) and matched(table) <= matched(rebuilt):
             kept.extend(batch)
             table, current = rebuilt, after
+            return True
+        return False
+
+    for index, batch in enumerate(batches):
+        if batch and not retain(batch) and index == 2 and len(batch) > 1:
+            # A mistaken numeric reread must not discard independent verified fixes. As in
+            # the statement rereader, try them individually, with the same conservation guards.
+            for proposal in batch:
+                retain([proposal])
     return {'conversion': conversion['id'], 'before': before, 'after': current, 'read': reads, 'added': kept,
             'remaining_cells': max(0, len(boxes) - limit) + deferred,
             'new_vlm': new_vlm, 'cached': cached, 'deferred': deferred}
@@ -208,6 +289,8 @@ def main() -> None:
     parser.add_argument('--model', default=MODEL)
     parser.add_argument('--limit', type=int, default=LIMIT)
     parser.add_argument('--vlm-limit', type=int, default=LIMIT, help='Maximum new VLM crops per conversion (local OCR/cache excluded)')
+    parser.add_argument('--cells', type=Path, help='JSON list of {page, observation_id}; bound cells in a failed comparison or its same-column descendants')
+    parser.add_argument('--column-crops', action='store_true', help='Read the ruled amount column around each selected line, including its minus sign')
     parser.add_argument('--write', action='store_true')
     args = parser.parse_args()
     document = manifest.validate(json.loads(args.manifest.read_text()))
@@ -215,9 +298,19 @@ def main() -> None:
     if set(args.conversion) - {c['id'] for c in selected}:
         parser.error('Unknown conversion ID')
     files = json.loads(args.inputs.read_text())
+    cells = None
+    if args.cells is not None:
+        records = json.loads(args.cells.read_text())
+        if not isinstance(records, list) or not records or any(
+                not isinstance(r, dict) or set(r) != {'page', 'observation_id'}
+                or type(r['page']) is not int or r['page'] < 1
+                or not isinstance(r['observation_id'], str) or not r['observation_id'] for r in records):
+            parser.error('--cells must contain a nonempty list of page/observation_id pairs')
+        cells = {(r['page'], r['observation_id']) for r in records}
     for conversion in selected:
         report = recheck(document, conversion, Path(files[conversion['inputs'][0]['sha256']]), args.model, args.limit,
-                         cache_path=args.manifest.with_suffix('.amount-recheck.jsonl'), vlm_limit=args.vlm_limit)
+                         cache_path=args.manifest.with_suffix('.amount-recheck.jsonl'), vlm_limit=args.vlm_limit,
+                         cells=cells, column_crops=args.column_crops)
         if args.write and report['added']:
             conversion['options'].setdefault('amount_corrections', []).extend(report['added'])
             args.manifest.write_text(json.dumps(document, ensure_ascii=False, indent=2) + '\n')

@@ -72,3 +72,22 @@ PaddleとVisionのどちらでも、名称の補正には共通の `ingestion.li
 ```
 
 辞書にない名称や複数の解釈がある名称だけ、意味の照合や必要な領域の再読へ進む。原典が使っている旧字を新字へ一括変換しない。未訂正のOCR文字・観測ID・位置を保持し、補正前後とrule ID・辞書SHAを候補に記録して原典照合へ渡す。認識用の [ocr_vocabulary.json](ocr_vocabulary.json) はAppleの `customWords` 用で、Paddleの事後訂正にはこの語彙だけを追加しても効果はない。
+
+## 汎用scanの科目番号の訂正
+
+`generic_scan` の管理JSONの `conversions[].options.code_corrections` は、原画で確認した科目番号の誤読だけを固定する。組版の設定ではなく、OCRの原文を保持した別の宣言である。数字だけのOCR単語が科目欄の中にあること、物理頁・単語ID・原文の完全一致を確かめる。対象がない、原文が違う、金額欄にある、文字を含む場合は停止する。金額の訂正には従来の `amount_corrections` を使う。
+
+```json
+{
+  "code_corrections": [{
+    "id": "confirmed-continuation-codes",
+    "page": 21,
+    "observation_id": "p21:full-page:r11:w0",
+    "observed_code": "4212",
+    "corrected_code": "421",
+    "reason": "原画の継続頁の科目欄で款4・項2・目1と読んだ。融合したOCR単語の誤読を訂正する。"
+  }]
+}
+```
+
+単語が複数の科目欄を横断した場合も、訂正した数字を同じ観測の枠のまま既存の列分割へ渡す。観測JSONを書き換えず、構築後は木・数字の網羅・単位・科目の検査を当てる。

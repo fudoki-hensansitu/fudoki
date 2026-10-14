@@ -889,7 +889,7 @@ def heading_names(logical: Logical) -> dict[tuple[str, str], str]:
 
 
 def owner(amount: list[Glyph], band: Band, ordered: list[Group], found: dict[int, list[Item]],
-          roles: tuple[str, ...] = ('node', 'repeat', 'total')) -> Item | None:
+          roles: tuple[str, ...] = ('node', 'repeat', 'total'), *, ocr: bool = False) -> Item | None:
     """The item printed on the amount's own line in the nearest label group to its left;
     failing that, the item in its rule-bounded row (a label centred in a tall cell).
 
@@ -899,16 +899,20 @@ def owner(amount: list[Glyph], band: Band, ordered: list[Group], found: dict[int
     digits = [g for g in amount if g.text not in ('△', '▲')] or amount
     y = sum((g.y0 + g.y1) / 2 for g in digits) / len(digits)
     reach = .6 * max(g.y1 - g.y0 for g in digits)
+    if ocr:
+        from ingestion.generic.scan import line_reach
+    line_limit = lambda line: line_reach(digits, line) if ocr else reach
     left = sorted((g for g in ordered if g.x1 <= band.x0 + 1), key=lambda g: -g.x0)
     for group in left:
-        same_line = [i for i in found[id(group)] if abs(i.anchor - y) <= reach and i.role in roles]
+        same_line = [i for i in found[id(group)] if i.role in roles
+                     and abs(i.anchor - y) <= line_limit(i.lines[0])]
         if same_line:
             return max(same_line, key=lambda i: (i.level or 0, -abs(i.anchor - y)))
     # The name may be printed on a line below its code (`1` / `議会費 82,694,000`): any line of the item.
     centre = lambda line: sum((g.y0 + g.y1) / 2 for g in line) / len(line)
     for group in left:
         same_line = [i for i in found[id(group)] if i.role in roles
-                     and any(line and abs(centre(line) - y) <= reach for line in i.lines)]
+                     and any(line and abs(centre(line) - y) <= line_limit(line) for line in i.lines)]
         if same_line:
             return max(same_line, key=lambda i: (i.level or 0, -abs(i.anchor - y)))
     top, bottom = _cell(band, y)
@@ -1155,7 +1159,7 @@ def repeats(previous: Item, item: Item, ocr: bool = False) -> bool:
 
     Printed text repeats the code (and the name). For OCR (`scan.near_code`), a line of codes only (`10 2 3`
     at the top of a page) repeats the open heading when its code is near, and a line with a name of three
-    characters or more repeats it when the names agree to one character, whatever its code reads (132055)."""
+    characters or more repeats it when its code is near and its name agrees to one character."""
     if previous.code == item.code and (not item.name or same_heading(previous.name, item.name)):
         return True
     if not ocr:
@@ -1697,7 +1701,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     candidate = ''.join(g.text for g in money)
                     if not is_amount(candidate):
                         unowned.append({'kind': 'unreadable amount', 'page': money[0].page, 'text': candidate}); continue
-                    target = owner(money, band, ordered, found)
+                    target = owner(money, band, ordered, found, ocr=logical.ocr)
                     if target is not None and target.role == 'total':
                         notes.append({'kind': 'total amount', 'page': money[0].page, 'text': candidate,
                                       'header': '／'.join(band.header), 'unit': logical.unit, 'label': target.name,
@@ -1779,7 +1783,10 @@ def _dedupe(amounts: list[dict], unowned: list[dict]) -> list[dict]:
             if normalize(seen[identity]['amount_text']) != normalize(amount['amount_text']):
                 unowned.append({'kind': 'conflicting amount', 'page': amount['physical_page'],
                                 'text': f"{seen[identity]['amount_text']} / {amount['amount_text']}",
-                                'header': amount['header_path']})
+                                'header': amount['header_path'],
+                                'sources': [{k: source[k] for k in ('physical_page', 'amount_text', 'unit_text',
+                                                                   'x0', 'y0', 'x1', 'y1')}
+                                            for source in (seen[identity], amount)]})
             continue
         seen[identity] = amount
     return list(seen.values())

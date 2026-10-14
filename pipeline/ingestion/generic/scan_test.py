@@ -7,6 +7,42 @@ from copy import deepcopy
 
 
 class TextTest(unittest.TestCase):
+    def test_only_horizontal_ink_joining_two_vertical_rules_closes_a_row(self):
+        from pathlib import Path
+        import numpy as np
+        from ingestion.generic import scan
+        from ingestion.lib import pdf_rules
+        image = np.full((200, 200), 255, dtype=np.uint8)
+        image[20:181, 20:22] = 0
+        image[20:181, 80:82] = 0
+        image[60:62, 20:82] = 0  # one complete short cell boundary
+        image[100:102, 30:70] = 0  # detached text stroke
+        image[140:142, 20:82] = 0
+        image[140:142, 45:48] = 255  # interrupted stroke cannot establish a rule
+        detected = pdf_rules.PageRules(1, 100, 100,
+            (pdf_rules.Rule(10.5, 10, 90), pdf_rules.Rule(40.5, 10, 90)), ())
+        with patch.object(pdf_rules, 'render', return_value=image):
+            result = scan.short_rows(Path('x.pdf'), detected)
+        self.assertEqual(result.vertical, detected.vertical)
+        self.assertEqual([(r.position, r.start, r.end) for r in result.horizontal], [(30.5, 10.5, 41.0)])
+
+    def test_small_ocr_zero_matches_its_label_before_a_previous_wrapped_line(self):
+        from ingestion.generic.layout import Band, Glyph
+        from ingestion.generic.tree import Group, Item, owner
+        label = Band(0, 40, 1, ('節',), [0, 100], 0, 100)
+        group = Group([label], '節', False)
+        line = lambda value, y: [Glyph(value, 5, y, 35, y + 9, 1, 0)]
+        previous = Item(group, 1, [line('13委託料', 20), line('続き', 39)], '13', '委託料', 5)
+        current = Item(group, 1, [line('18負担金', 42)], '18', '負担金', 5)
+        money = Band(40, 70, 1, ('繰越額',), [0, 100], 0, 100)
+        zero = [Glyph('0', 60, 41.2, 63, 45.7, 1, 0)]
+        found = {id(group): [previous, current]}
+        self.assertIs(owner(zero, money, [group], found, ocr=True), current)
+        self.assertIs(owner(zero, money, [group], found), previous)
+        # A print on the earlier code line still belongs to that earlier item.
+        earlier = [Glyph('0', 60, 21.2, 63, 25.7, 1, 0)]
+        self.assertIs(owner(earlier, money, [group], found, ocr=True), previous)
+
     def test_minus_and_separators(self):
         self.assertEqual(_text('A80,636,880'), '△80,636,880')
         self.assertEqual(_text('15,936120'), '15,936,120')
@@ -18,6 +54,48 @@ class TextTest(unittest.TestCase):
 
 
 class CorrectionTest(unittest.TestCase):
+    def test_code_corrections_bind_raw_words_only_in_subject_columns(self):
+        from pathlib import Path
+        from ingestion.generic import scan
+        from ingestion.generic.layout import Band, Logical
+        from ingestion.lib.pdf_rules import PageRules
+        item = {'id': 'r', 'kind': 'region', 'raw_text': '712', 'bbox_pdf_pt': [10, 40, 35, 50]}
+        child = {**item, 'id': 'w', 'kind': 'word', 'parent_id': 'r'}
+        observation = {'pages': [{'page_number': 1, 'regions': [{'observations': [item, child]}]}]}
+        original = deepcopy(observation)
+        band = Band(0, 40, 1, ('科目', '目'), [30, 100], 30, 100, kind='label')
+        logical = Logical([1], [band], '円', [])
+        rule = {'id': 'code', 'page': 1, 'observation_id': 'w', 'observed_code': '712',
+                'corrected_code': '711', 'reason': '原画で7・1・1と確認'}
+        with patch.object(scan.pdf_rules, 'detect', return_value=PageRules(1, 100, 100, (), ())), \
+                patch.object(scan, '_layout', return_value=[logical]):
+            corrected = scan.pages(observation, Path('x.pdf'), code_corrections=[rule])
+            self.assertEqual([w.text for w in corrected[0].words], ['711'])
+            self.assertEqual(observation, original)
+            for changes in ({'observed_code': '７１２'}, {'observation_id': 'absent'}, {'page': 2},
+                            {'corrected_code': '7A1'}, {'observation_id': 'r'}):
+                with self.subTest(changes=changes), self.assertRaises(ValueError):
+                    scan.pages(observation, Path('x.pdf'), code_corrections=[{**rule, **changes}])
+            band.header = ('支出済額',)
+            band.kind = 'amount'
+            with self.assertRaisesRegex(ValueError, 'subject column'):
+                scan.pages(observation, Path('x.pdf'), code_corrections=[rule])
+
+    def test_a_contained_comma_in_another_tile_is_kept_in_its_complete_amount(self):
+        from ingestion.generic import scan
+        from ingestion.lib.pdf_rules import PageRules
+        from pathlib import Path
+        complete = {'id': 'full', 'kind': 'region', 'raw_text': '80.000', 'bbox_pdf_pt': [10, 20, 40, 30]}
+        comma = {'id': 'comma', 'kind': 'region', 'raw_text': '，', 'bbox_pdf_pt': [20, 27, 23, 30.3]}
+        separate = {**comma, 'id': 'separate', 'bbox_pdf_pt': [20, 47, 23, 50.3]}
+        zero = {**comma, 'id': 'zero', 'raw_text': 'C'}
+        observation = {'page_number': 1, 'regions': [{'id': 'upper', 'observations': [complete]},
+            {'id': 'lower', 'observations': [comma, separate, zero]}]}
+        original = deepcopy(observation)
+        result = scan.page(observation, Path('x.pdf'), detected=PageRules(1, 100, 100, (), ()))
+        self.assertEqual([w.text for w in result.words], ['80,000', ',', 'C'])
+        self.assertEqual(observation, original)
+
     def test_an_intact_line_amount_keeps_the_sign_missing_from_its_word_range(self):
         from ingestion.generic import scan
         from ingestion.lib.pdf_rules import PageRules
@@ -59,7 +137,8 @@ class CorrectionTest(unittest.TestCase):
                           tuple(ImageRule(y, 0, 180) for y in (10, 30, 100)))
         correction = scan.amount_dictionary([{'id': 'bad-unit', 'page': 1, 'observation_id': '10',
             'observed_amount': '门', 'corrected_amount': '0', 'reason': 'wrong target'}])
-        with patch.object(scan.pdf_rules, 'detect', return_value=rules):
+        with patch.object(scan.pdf_rules, 'detect', return_value=rules), \
+                patch.object(scan, 'short_rows', side_effect=lambda pdf, rules: rules):
             found = scan.pages(observation, Path('x.pdf'))
             self.assertIn('千', [w.text for w in found[0].words])
             self.assertIn('C', [w.text for w in found[0].words])
@@ -158,6 +237,12 @@ class CellWordsTest(unittest.TestCase):
     def test_a_piece_across_a_rule_is_cut(self):
         self.assertEqual([w.text for w in _cell_words([Word('款項', 42, 122, 61, 133)], [42, 52, 60])], ['款', '項'])
 
+    def test_a_rule_that_removes_no_amount_character_does_not_change_its_source_box(self):
+        word = Word('18,802', 528.4, 352.8, 550.04, 363.1)
+        kept = _cell_words([word], [498, 549, 600])[0]
+        self.assertEqual((kept.text, kept.x0, kept.y0, kept.x1, kept.y1),
+                         (word.text, word.x0, word.y0, word.x1, word.y1))
+
 
 class AgreedHeadersTest(unittest.TestCase):
     def test_pages_on_one_frame_share_the_header_most_read(self):
@@ -196,3 +281,12 @@ class RepeatedHeadingTest(unittest.TestCase):
         open_moku = Item(group, 23, [], '3', '小学校特別支援教育費', 0)
         self.assertTrue(repeats(open_moku, Item(group, 25, [], '13', '小学校特別支援教育費', 0), ocr=True))
         self.assertFalse(repeats(open_moku, Item(group, 25, [], '4', '小学校指導費', 0), ocr=True))
+
+    def test_similar_subject_names_with_distinct_codes_keep_separate_amount_owners(self):
+        from ingestion.generic.tree import Group, Item, repeats
+        group = Group([], '科目', True)
+        for first, second in [('1', '2'), ('6', '7')]:
+            names = ('常備消防費', '非常備消防費') if first == '1' else ('社会教育費', '社会体育費')
+            previous = Item(group, 1, [], first, names[0], 0)
+            item = Item(group, 2, [], second, names[1], 0)
+            self.assertFalse(repeats(previous, item, ocr=True))
