@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "breakdown": {
+    "備考": {
+      "marks": {"1": 1},
+      "wrap": "amount_on_last_line"
+    }
+  }
+}

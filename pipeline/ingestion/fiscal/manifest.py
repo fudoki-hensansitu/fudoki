@@ -23,7 +23,7 @@ def paths(root: Path | None = None) -> list[Path]:
     root = JURISDICTIONS if root is None else root
     return sorted(path for jurisdiction in root.iterdir() if jurisdiction.is_dir()
                   for year in jurisdiction.iterdir() if year.is_dir() and year.name.isdigit()
-                  for path in year.rglob('*.json'))
+                  for path in year.rglob('*.json') if not path.name.endswith('.layout.json'))
 
 
 def canonical(value: object) -> bytes:
@@ -216,6 +216,9 @@ def validate_metadata(metadata: dict, columns: list[str] | None = None) -> None:
 
 def validate(document: dict, *, path: Path | None = None, check_code: bool = True) -> dict:
     validator().validate(document)
+    if check_code:
+        from ingestion.generic.layout_settings import load
+        load(document['target'], document['direction'])
     if path is not None:
         expected_path = manifest_path(document['target'], document['direction'])
         if path.resolve() != expected_path.resolve():
@@ -346,6 +349,9 @@ def fingerprints(document: dict, conversions: list[dict] | None = None) -> dict[
                     'conversion': conversion,
                     'origins': [{k: item[k] for k in ('sha256', 'format', 'scope', 'pdf_type')} for item in origins],
                     'code': [{'path': path, 'sha256': hashes[path]} for path in files]}
+        if 'generic/layout_settings.py' in files:
+            from ingestion.generic.layout_settings import load
+            material['layout_settings'] = load(document['target'], document['direction'])
         if any(origin.get('pdf_type') == 'text' for origin in origins):
             material['annotation_dictionary_sha256'] = sha_file(
                 INGESTION.parent / 'shared/fiscal_annotation_map.csv')

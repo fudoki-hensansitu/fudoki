@@ -1,4 +1,6 @@
 {"criteria": {"false": "取り込むべきでない数字。例: 款・項・目・節・事業の番号、頁番号、年月日・年度・議決の号数（令和8年第6号）、住所の番地、人数・件数・回数・面積などの数量、率（％）、本文や注記の中の数字、「第10節へ同項同目第8節から流用 12,846」のような流用・充用の注記の金額。", "true": "表の項目（科目・事業）の金額として取り込むべき値。例: 予算額、補正額、決算額、支出済額、不用額、事業費、国・県支出金など、表の金額の欄に印字された円の金額（0 や 1,234,000 のような値も含む）。"}, "instructions": "日本の自治体の決算書（歳出）のある頁から、数字を1つ取り出した。文脈は `items.{id}` にある（同じ行の語を左から並べた文、列の見出し、上下の行）。取り出した数字 `items.{id}.対象の数字`（同じ行では【】で示す）は、表の項目の金額として取り込むべき値か。", "kind": "digit-recheck", "model": "jev-1.13.0", "threshold": 0.7, "version": 1}
+{"fp":"781576409b18f2dd63fccf88b69dc571","p":0.15,"t":"land-readjustment-expenditure"}
+{"fp":"b9d2cd37b573b1da35a784a1963e931a","p":0.16,"t":"land-readjustment-expenditure"}
 {"fp":"050e35228940d0aec13d149c069666e0","p":0.06,"t":"late-elderly-medical-setsu"}
 {"fp":"0d0279434248eb7fe4a4932e2e9a3de0","p":0.06,"t":"late-elderly-medical-setsu"}
 {"fp":"33158ae3950ddbe3633b0652e6ce00ec","p":0.06,"t":"late-elderly-medical-setsu"}
@@ -15,3 +17,19 @@
 {"fp":"d3c09c8e7810b45eb03a87e712e05920","p":0.05,"t":"late-elderly-medical-setsu"}
 {"fp":"f8312ba97b764ddf693b3000832bf5e4","p":0.06,"t":"late-elderly-medical-setsu"}
 {"fp":"f86daebece48232f93b233f9e176afb2","p":0.08,"t":"late-elderly-medical-setsu"}
+{"fp":"1692bbda8c8709bf0d58afb53ff04f16","p":0.73,"t":"long-term-care-expenditure"}
+{"fp":"63bcb0bc1d5e7466990b7979815e410d","p":0.7,"t":"long-term-care-expenditure"}
+{"fp":"91efc6a3a90087bd9820a6692e4a9de6","p":0.08,"t":"long-term-care-expenditure"}
+{"fp":"ac786095911010abef5a01155077a010","p":0.76,"t":"long-term-care-expenditure"}
+{"fp":"b159d5d26f07dcf0601cfb1eb20e851d","p":0.77,"t":"long-term-care-expenditure"}
+{"fp":"dc35838795682e9e0aec5ad8c2733d45","p":0.08,"t":"long-term-care-expenditure"}
+{"fp":"efb49b79d6b5ee447cf2d9eb5be0162b","p":0.1,"t":"long-term-care-expenditure"}
+{"fp":"f153ee49390de5929d7dffc714692854","p":0.74,"t":"long-term-care-expenditure"}
+{"fp":"f5f6afea9eddef62b6fac6216c07fae4","p":0.72,"t":"long-term-care-expenditure"}
+{"fp":"f812b8b3a6ff74a10733ca2528a1c2fc","p":0.08,"t":"long-term-care-expenditure"}
+{"fp":"fd2f1ec5ab2931ac972aa798c608d81d","p":0.73,"t":"long-term-care-expenditure"}
+{"fp":"1bceb84e64fc2e35a67c8f986ba96fcf","p":0.74,"t":"national-health-insurance-expenditure"}
+{"fp":"32bec93498398534e8d815a8caaa9a48","p":0.08,"t":"national-health-insurance-expenditure"}
+{"fp":"9021ede258aabcc2d6f061f60c2f9ea5","p":0.1,"t":"national-health-insurance-expenditure"}
+{"fp":"afd145d717dea3533c27adef30f41d95","p":0.7,"t":"national-health-insurance-expenditure"}
+{"fp":"cc8d6fa727d23482077d431fd2fb34c9","p":0.11,"t":"national-health-insurance-expenditure"}

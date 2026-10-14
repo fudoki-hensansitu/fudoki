@@ -1215,7 +1215,69 @@ def prints_phase(logical: Logical) -> bool:
                for band in logical.bands)
 
 
-def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: str | dict = 'indent') -> Built:
+def layout_name_start(item: Item) -> float:
+    """A configured hanging name starts after its printed code, including its punctuation."""
+    if item.code is None:
+        return _name_start(item)
+    found = CODE.match(normalize(text(item.lines[0])))
+    if found is None:
+        return _name_start(item)
+    remaining = len(found.group())
+    for glyph in item.lines[0]:
+        if remaining < len(glyph.text):
+            prefix = glyph.text[:remaining]
+            return glyph.x0 + (glyph.y1 - glyph.y0) * sum(.5 if c.isascii() else 1 for c in prefix)
+        remaining -= len(glyph.text)
+    return item.indent
+
+
+def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int],
+                 subject_starts: tuple[float, ...] = ()) -> list[Item]:
+    """Apply declared hints after money ownership is known, before learning breakdown levels."""
+    result = []
+    marks = settings.get('marks', {})
+    ordered_marks = sorted(marks, key=lambda mark: (-len(normalize(mark)), mark))
+    shapes = {'1': 'number', '(1)': 'paren', 'ア': 'kana', '①': 'circled'}
+    prefixes = tuple(normalize(prefix) for prefix in settings.get('notes', []))
+    for item in items:
+        if settings.get('wrap'):
+            item.indent = layout_name_start(item)
+        raw = normalize(text(item.lines[0]))
+        note = raw.startswith(prefixes)
+        mark = next((m for m in ordered_marks
+                     if (shape_of(item) == shapes[m] if m in shapes else raw.startswith(normalize(m)))), None)
+        if note:
+            item.role = 'annotation'
+        elif mark is not None and item.role in ('node', 'note'):
+            if marks[mark] == '説明':
+                if item.amounts or id(item) in column_amount_items:
+                    raise ValueError(f'Configured explanation carries money: p{item.page} {item.name!r}')
+                item.role = 'note'
+            else:
+                item.level = marks[mark] - 1
+        previous = result[-1] if result else None
+        if (previous and not previous.amounts and id(previous) not in column_amount_items and item.code is None and mark is None and not note
+                and item.role in ('node', 'note') and previous.role in ('node', 'note', 'annotation')
+                and (settings.get('wrap') == 'amount_on_last_line' or normalize(text(previous.lines[0])).startswith(prefixes))
+                and item.page == previous.page and abs(item.indent - previous.indent) <= 3
+                and bisect_right(subject_starts, previous.anchor) == bisect_right(subject_starts, item.anchor)
+                and 0 <= item.y0 - previous.y1 <= max(g.y1 - g.y0 for g in item.glyphs)):
+            if item.role == 'node' and previous.role == 'note':
+                previous.role = 'node'
+            previous.name += item.name
+            previous.lines += item.lines
+            previous.amounts += item.amounts
+            previous.kinds += item.kinds
+            continue
+        fitted = settings.get('fitted_names')
+        if fitted and item.role == 'node' and len(item.name) > fitted['chars']:
+            item.indent += fitted['overflow_left_chars'] * (item.lines[0][0].y1 - item.lines[0][0].y0)
+        result.append(item)
+    return result
+
+
+def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: str | dict = 'indent',
+          layout: dict | None = None) -> Built:
     """`detail` is one breakdown pattern for every axis, or a mapping axis → pattern."""
     """`judge(lines) -> {line id: (role, confidence)}` replaces the codeless-line rules (variant B)."""
     shapes: dict[str, list[str]] = {}  # numbering shapes per breakdown axis, in order of first use
@@ -1375,6 +1437,9 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                                        for i in found[id(g)] if i.role == 'node'}))
         for group in ordered:
             if not group.subject:
+                if layout and group.axis in layout:
+                    found[id(group)] = apply_layout(found[id(group)], layout[group.axis], column_amount_items,
+                                                   subject_starts)
                 note_breakdown(found[id(group)], subject_starts)
     # Subject levels by indentation, learned over the document (pattern indent).
     starts = sorted(i.indent for _, ordered, found in all_items for g in ordered if g.subject and g.mode == 'indent'
@@ -1529,6 +1594,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 if mode == 'shape':
                     depth = shape_depth(item, depth, shapes.setdefault(item.group.axis, []),
                                         branch.get(item.group.axis, []), anchors.setdefault(item.group.axis, {}))
+                if item.level is not None:
+                    depth = item.level + 1  # the configured mark names a breakdown level
                 axis = item.group.axis
                 if id(item) in closing_headings:
                     open_headings[axis] = depth  # its parts follow one level down

@@ -74,7 +74,7 @@ def page_titles(pages) -> dict[int, str | None]:
 
 def run_pages(pdf: Path, pages: list[int], cache: Path | None = None, judge=None,
               document_kind: str = 'settlement', account: str | None = None, stop: bool = True,
-              partial: bool = False, direction: str | None = None):
+              partial: bool = False, direction: str | None = None, layout: dict | None = None):
     """Build one table and keep what the converter needs next to it: the repaired pages (their
     words are the digit-coverage scope), the logical pages (their amount bands) and the unit check.
 
@@ -89,7 +89,7 @@ def run_pages(pdf: Path, pages: list[int], cache: Path | None = None, judge=None
         report.skipped_pages = [number for number, title in titles.items() if title not in (None, direction)]
         observed = [page for page in observed if page.number not in report.skipped_pages]
     logicals = logical_pages(observed)
-    built, choice = choose_pattern(logicals, document_kind, judge)
+    built, choice = choose_pattern(logicals, document_kind, judge, layout)
     report.pattern = choice
     unit = check_units(built, document_kind, account, partial)
     if unit['stopped'] and stop:
@@ -129,12 +129,12 @@ def closure(built: Built, document_kind: str) -> dict:
             'score': (agree - 2 * disagree, named - (subject - named), total_agree - 2 * total_disagree)}
 
 
-def choose_pattern(logicals, document_kind: str = 'settlement', judge=None) -> tuple[Built, dict]:
+def choose_pattern(logicals, document_kind: str = 'settlement', judge=None, layout: dict | None = None) -> tuple[Built, dict]:
     """Decide the unit, build the tree with every subject pattern and keep the one that closes best."""
     unit_sources = resolve_units(logicals, document_kind)
     trials = {}
     for pattern in SUBJECT_PATTERNS:
-        built = build(logicals, judge, pattern)
+        built = build(logicals, judge, pattern, layout=layout)
         trials[pattern] = (built, closure(built, document_kind))
     # A pattern that finds no subject column is not a reading of this document.
     eligible = [p for p in trials if trials[p][1]['subject_nodes']] or list(trials)
@@ -144,7 +144,7 @@ def choose_pattern(logicals, document_kind: str = 'settlement', judge=None) -> t
     # removes comparisons and would win a count (杉並の備考: 6,670 items on one level).
     per_axis = {}
     for detail in DETAIL_PATTERNS:
-        built = trials[best][0] if detail == 'indent' else build(logicals, judge, best, detail)
+        built = trials[best][0] if detail == 'indent' else build(logicals, judge, best, detail, layout)
         for result in check(built, document_kind)['results']:
             if result['axis_header'] != '科目':
                 counts = per_axis.setdefault(result['axis_header'], {d: [0, 0] for d in DETAIL_PATTERNS})
@@ -152,7 +152,7 @@ def choose_pattern(logicals, document_kind: str = 'settlement', judge=None) -> t
     share = lambda c: (c[0] / (c[0] + c[1]) if c[0] + c[1] else 0, c[0])
     chosen = {axis: max(DETAIL_PATTERNS, key=lambda d: (*share(counts[d]), -DETAIL_PATTERNS.index(d)))
               for axis, counts in per_axis.items()}
-    built = trials[best][0] if all(d == 'indent' for d in chosen.values()) else build(logicals, judge, best, chosen)
+    built = trials[best][0] if all(d == 'indent' for d in chosen.values()) else build(logicals, judge, best, chosen, layout)
     return built, {'chosen': best, 'detail': chosen, 'detail_scores': per_axis, 'units': unit_sources,
                    'trials': {p: c for p, (_, c) in trials.items()}}
 
