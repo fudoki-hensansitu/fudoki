@@ -13,8 +13,8 @@ export interface Bar {
 const FOLD = 10
 
 /**
- * 金額を横棒の長さで見せる。棒は最大の行に対する長さ、割合は合計に対する比。
- * 割合は同じ親の兄弟だけで意味を持つので、share を渡したときだけ出す。
+ * 金額を横棒の長さで見せる。割合を出す兄弟の一覧では、棒も合計に対する比にして、% と長さを一致させる。
+ * 割合を出さない一覧（団体・年度の混在、続きがある）では合計が意味を持たないので、最大の行に対する長さにする。
  */
 export function BarList({ bars, share, busy, label }: {
   bars: Bar[]
@@ -33,7 +33,8 @@ export function BarList({ bars, share, busy, label }: {
   return (
     <div className="bars" role="list" aria-label={label}>
       {shown.map((bar) => {
-        const width = bar.amount !== null && bar.amount > 0 && max > 0 ? (bar.amount / max) * 100 : 0
+        const base = share ? total : max
+        const width = bar.amount !== null && bar.amount > 0 && base > 0 ? (bar.amount / base) * 100 : 0
         const body = (
           <>
             <span className="bar-label">
