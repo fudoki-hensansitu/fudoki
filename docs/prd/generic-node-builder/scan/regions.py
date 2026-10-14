@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import argparse
 from copy import deepcopy
-from dataclasses import asdict, replace
+from dataclasses import replace
 import json
 import math
 from pathlib import Path
@@ -27,7 +27,7 @@ from ingestion.lib.scan_ocr import column_tiles  # noqa: E402
 def regions(pdf: Path, number: int, width: float) -> list[dict]:
     rules = pdf_rules.detect(pdf, number)
     if not rules.vertical:
-        return [asdict(r) for r in column_tiles(rules, pdf_rules.render(pdf, number) < pdf_rules.DARK)]
+        return [{'id': 'full-page', 'bbox_normalized': [0, 0, 1, 1]}]
     top, bottom = min(r.start for r in rules.vertical), max(r.end for r in rules.vertical)
     columns = [r for r in rules.vertical if r.start <= top + .1 * (bottom - top)]
     page = Page(number, rules.width, rules.height, [],
@@ -46,7 +46,8 @@ def regions(pdf: Path, number: int, width: float) -> list[dict]:
     if not boundaries:
         raise ValueError(f'No ruled table frame on page {number}')
     grouped = replace(rules, vertical=tuple(r for r in rules.vertical if r not in columns or r.position in boundaries))
-    return [asdict(r) for r in column_tiles(grouped, pdf_rules.render(pdf, number) < pdf_rules.DARK)]
+    return [{'id': r.id, 'bbox_normalized': list(r.bbox_normalized)}
+            for r in column_tiles(grouped, pdf_rules.render(pdf, number) < pdf_rules.DARK)]
 
 
 def main() -> None:
