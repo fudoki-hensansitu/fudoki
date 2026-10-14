@@ -14,7 +14,7 @@ SOURCE = REPO / "plugins/fudoki"
 SCHEMAS = Path(__file__).parent / "schemas"
 FILES = {
     "plugin.json", "mcp.json", ".claude-plugin/plugin.json", ".mcp.json",
-    "README.md", "LICENSE", "skills/compare-expenditure/SKILL.md", "skills/find-evaluation/SKILL.md", "assets/icon.png", "assets/icon.svg",
+    "README.md", "LICENSE", "skills/compare-expenditure/SKILL.md", "skills/compare-expenditure/references/evaluation.md", "assets/icon.png", "assets/icon.svg",
 }
 
 
@@ -56,13 +56,14 @@ def validate(files: dict[str, bytes]) -> dict:
     png = files["assets/icon.png"]
     if png[:8] != b"\x89PNG\r\n\x1a\n" or struct.unpack(">II", png[16:24]) != (256, 256) or len(png) > 5 * 1024 * 1024:
         raise ValueError("Icon must be a square 256px PNG under 5 MiB")
-    for name in ["compare-expenditure", "find-evaluation"]:
-        skill = files[f"skills/{name}/SKILL.md"].decode()
-        if not skill.startswith(f"---\nname: {name}\ndescription:") or not skill.split("---", 2)[1].split("description:", 1)[1].strip():
-            raise ValueError(f"Skill frontmatter is missing: {name}")
+    skill = files["skills/compare-expenditure/SKILL.md"].decode()
+    if not skill.startswith("---\nname: compare-expenditure\ndescription:") or not skill.split("---", 2)[1].split("description:", 1)[1].strip():
+        raise ValueError("Skill frontmatter is missing")
+    if "references/evaluation.md" not in skill:
+        raise ValueError("Skill must link the evaluation reference")
     cases = extension["review"]["test_cases"]
-    if len(cases["positive"]) < 5 or len(cases["negative"]) < 3:
-        raise ValueError("Review needs at least five positive and three negative cases")
+    if len(cases["positive"]) != 6 or len(cases["negative"]) != 4:
+        raise ValueError("Review needs six positive and four negative cases")
     for category in ["positive", "negative"]:
         keys = ["description", "prompt"] + (["tools_triggered", "expected_behavior"] if category == "positive" else [])
         for case in cases[category]:
