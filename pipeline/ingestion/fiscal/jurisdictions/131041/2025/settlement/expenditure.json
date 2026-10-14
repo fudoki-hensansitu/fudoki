@@ -27,28 +27,15 @@
     },
     {
       "id": "kaigo-settlement",
-      "converter": "fiscal/jurisdictions/131041/layouts/text_settlement_scope/convert.py",
+      "converter": "fiscal/layouts/generic_text/convert.py",
       "inputs": [
         {
           "sha256": "ca3f8658f6dbe295978db484227ec1c7adbdc15eeb136f109fa406798511c1eb"
         }
       ],
       "options": {
-        "table_id": "kaigo-expenditure-detail",
         "account": "介護保険特別会計",
-        "summary_pages": [
-          [
-            162,
-            162
-          ]
-        ],
-        "detail_pages": [
-          [
-            170,
-            177
-          ]
-        ],
-        "summary_rows": 6
+        "table_id": "kaigo-expenditure-detail"
       },
       "expected_tables": [
         {
@@ -58,28 +45,15 @@
     },
     {
       "id": "kokuho-settlement",
-      "converter": "fiscal/jurisdictions/131041/layouts/text_settlement_scope/convert.py",
+      "converter": "fiscal/layouts/generic_text/convert.py",
       "inputs": [
         {
           "sha256": "ca3f8658f6dbe295978db484227ec1c7adbdc15eeb136f109fa406798511c1eb"
         }
       ],
       "options": {
-        "table_id": "kokuho-expenditure-detail",
         "account": "国民健康保険特別会計",
-        "summary_pages": [
-          [
-            149,
-            149
-          ]
-        ],
-        "detail_pages": [
-          [
-            154,
-            160
-          ]
-        ],
-        "summary_rows": 6
+        "table_id": "kokuho-expenditure-detail"
       },
       "expected_tables": [
         {
@@ -89,28 +63,15 @@
     },
     {
       "id": "kouki-settlement",
-      "converter": "fiscal/jurisdictions/131041/layouts/text_settlement_scope/convert.py",
+      "converter": "fiscal/layouts/generic_text/convert.py",
       "inputs": [
         {
           "sha256": "ca3f8658f6dbe295978db484227ec1c7adbdc15eeb136f109fa406798511c1eb"
         }
       ],
       "options": {
-        "table_id": "kouki-expenditure-detail",
         "account": "後期高齢者医療特別会計",
-        "summary_pages": [
-          [
-            179,
-            179
-          ]
-        ],
-        "detail_pages": [
-          [
-            184,
-            186
-          ]
-        ],
-        "summary_rows": 5
+        "table_id": "kouki-expenditure-detail"
       },
       "expected_tables": [
         {
@@ -120,90 +81,6 @@
     }
   ],
   "tables": [
-    {
-      "table_id": "kaigo-expenditure-detail",
-      "conversion_id": "kaigo-settlement",
-      "input_fingerprint": "3de5bef8b11ff6fd3ebe0507dd263927fb06d0677820624bb05c8d12941ea651",
-      "account": "介護保険特別会計",
-      "notes": [
-        "款・項・目の印字欄を所属する葉へ反復。節一覧と備考は同じ目の独立した分解であり相互の対応を推定していない。葉の欄が印字されない目は目の粒度で残し、葉の番号・名称・金額をNULLとする。備考_注記名称・備考_注記金額は親欄に印字された前年度繰越事業費不用額、備考_流用注記名称・備考_流用注記金額は目の備考欄の流用注記であり、いずれも支出済額の内訳ではない。金額は円の原表記である。正式rawは備考の最細説明・事業明細。法定節一覧は節の軸として取り込む予定で、現時点では未取り込み。総括表は独立したローカル検算観測に残す。款_継続費逓次繰越・款_繰越明許費・款_事故繰越しは、総括の同じ印字款番号・名称への所属を確認して反復した親金額。款_総括_物理頁・上端・下端はその総括行の原典位置。これらの繰越額と反復親金額は備考_金額へ加算しない。",
-        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/131041/2025/settlement/expenditure/kaigo-expenditure-detail-nodes.parquet",
-          "sha256": "d95122c0389a1afed51a61ff268e0535e589f73150015b86ad885ead8e086ff3",
-          "bytes": 7223
-        },
-        "row_count": 92
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/131041/2025/settlement/expenditure/kaigo-expenditure-detail-amounts.parquet",
-          "sha256": "e5bb46e1dc648763204cdb4eee372e48376d8849b3fe8a196e8b40e482ba1cb8",
-          "bytes": 7642
-        },
-        "row_count": 408
-      }
-    },
-    {
-      "table_id": "kokuho-expenditure-detail",
-      "conversion_id": "kokuho-settlement",
-      "input_fingerprint": "6cf492f2423db09c85b3f0ee553e2d22097448178a75fc4cf92ae05fa5e8199f",
-      "account": "国民健康保険特別会計",
-      "notes": [
-        "款・項・目の印字欄を所属する葉へ反復。節一覧と備考は同じ目の独立した分解であり相互の対応を推定していない。葉の欄が印字されない目は目の粒度で残し、葉の番号・名称・金額をNULLとする。備考_注記名称・備考_注記金額は親欄に印字された前年度繰越事業費不用額、備考_流用注記名称・備考_流用注記金額は目の備考欄の流用注記であり、いずれも支出済額の内訳ではない。金額は円の原表記である。正式rawは備考の最細説明・事業明細。法定節一覧は節の軸として取り込む予定で、現時点では未取り込み。総括表は独立したローカル検算観測に残す。款_継続費逓次繰越・款_繰越明許費・款_事故繰越しは、総括の同じ印字款番号・名称への所属を確認して反復した親金額。款_総括_物理頁・上端・下端はその総括行の原典位置。これらの繰越額と反復親金額は備考_金額へ加算しない。",
-        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/131041/2025/settlement/expenditure/kokuho-expenditure-detail-nodes.parquet",
-          "sha256": "07315bdd998902c05adc98f91a39305f9a5b41baaba6ad9e9f122c80d81c17d0",
-          "bytes": 7141
-        },
-        "row_count": 90
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/131041/2025/settlement/expenditure/kokuho-expenditure-detail-amounts.parquet",
-          "sha256": "47bdc331fea3ceff5f60d5e1cded0eded190d6f32706eadf378ad24b3a874132",
-          "bytes": 7637
-        },
-        "row_count": 430
-      }
-    },
-    {
-      "table_id": "kouki-expenditure-detail",
-      "conversion_id": "kouki-settlement",
-      "input_fingerprint": "5c9cab0c90b63ff30387e102f48bb10d36162efb8eb1388cfc78f73d38915406",
-      "account": "後期高齢者医療特別会計",
-      "notes": [
-        "款・項・目の印字欄を所属する葉へ反復。節一覧と備考は同じ目の独立した分解であり相互の対応を推定していない。葉の欄が印字されない目は目の粒度で残し、葉の番号・名称・金額をNULLとする。備考_注記名称・備考_注記金額は親欄に印字された前年度繰越事業費不用額、備考_流用注記名称・備考_流用注記金額は目の備考欄の流用注記であり、いずれも支出済額の内訳ではない。金額は円の原表記である。正式rawは備考の最細説明・事業明細。法定節一覧は節の軸として取り込む予定で、現時点では未取り込み。総括表は独立したローカル検算観測に残す。款_継続費逓次繰越・款_繰越明許費・款_事故繰越しは、総括の同じ印字款番号・名称への所属を確認して反復した親金額。款_総括_物理頁・上端・下端はその総括行の原典位置。これらの繰越額と反復親金額は備考_金額へ加算しない。",
-        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/131041/2025/settlement/expenditure/kouki-expenditure-detail-nodes.parquet",
-          "sha256": "be32ba738fbd0715b460914aa670266e31be0c8ceaa2d9eb765dff015c638743",
-          "bytes": 4590
-        },
-        "row_count": 36
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/131041/2025/settlement/expenditure/kouki-expenditure-detail-amounts.parquet",
-          "sha256": "a49ea219afedb841d54a816d97a3e3114e7df982ed8388bbf75e0b79c92f18e1",
-          "bytes": 4490
-        },
-        "row_count": 170
-      }
-    },
     {
       "table_id": "general-expenditure-detail",
       "conversion_id": "general-settlement",
@@ -232,6 +109,96 @@
           "bytes": 85343
         },
         "row_count": 7260
+      }
+    },
+    {
+      "table_id": "kaigo-expenditure-detail",
+      "conversion_id": "kaigo-settlement",
+      "input_fingerprint": "c5ba065ed27673160cc74ddeae229bce7618bfce342d050b3b80b6fd64787082",
+      "account": "介護保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
+        "金額の単位は printed 8頁・column mark 1頁 から決めた。款の和 27,272,698,949 と印字の「歳出合計」27,272,698,949 が一致。",
+        "金額の注記 4 件（流用 4）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 4 種（95 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・歳出／予算現額／予備費支出及び流用増減→予算現額／予備費支出及び流用増減・歳出／予算現額／継続費及び繰越事業費繰越額→予算現額／継続費及び繰越事業費繰越額・歳出／予算現額／補正予算額→予算現額／補正予算額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131041/2025/settlement/expenditure/kaigo-expenditure-detail-nodes.parquet",
+          "sha256": "42a2167196b9affa312d67c153a06a40f3709343079305df3c82aaedc67fd786",
+          "bytes": 9576
+        },
+        "row_count": 179
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131041/2025/settlement/expenditure/kaigo-expenditure-detail-amounts.parquet",
+          "sha256": "d0060e5bf84c735a7a7d191df5505e1b790b7498f7ab6660d57d9f9379d96dc3",
+          "bytes": 11268
+        },
+        "row_count": 758
+      }
+    },
+    {
+      "table_id": "kokuho-expenditure-detail",
+      "conversion_id": "kokuho-settlement",
+      "input_fingerprint": "06bc2d2d719cdfa4e86696130183c7e14da6298b911b65ec3f9d48953e88e239",
+      "account": "国民健康保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
+        "金額の単位は printed 7頁・column mark 1頁 から決めた。款の和 37,446,701,938 と印字の「歳出合計」37,446,701,938 が一致。",
+        "金額の注記 5 件（充用 5）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 4 種（68 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・歳出／予算現額／予備費支出及び流用増減→予算現額／予備費支出及び流用増減・歳出／予算現額／継続費及び繰越事業費繰越額→予算現額／継続費及び繰越事業費繰越額・歳出／予算現額／補正予算額→予算現額／補正予算額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131041/2025/settlement/expenditure/kokuho-expenditure-detail-nodes.parquet",
+          "sha256": "9cd01625db69e79e1dcdeafd615e7045d240c1b3b42028b5306d3e8931332b1b",
+          "bytes": 8597
+        },
+        "row_count": 147
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131041/2025/settlement/expenditure/kokuho-expenditure-detail-amounts.parquet",
+          "sha256": "05de3ef8e1a81c37e2c2d2a025552ceb5aeb9534c2556be1e3450ae5189e5d88",
+          "bytes": 10333
+        },
+        "row_count": 673
+      }
+    },
+    {
+      "table_id": "kouki-expenditure-detail",
+      "conversion_id": "kouki-settlement",
+      "input_fingerprint": "8f231933b1addb91484016cb96c2462fe051f38436c3283a8fee66062186d763",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
+        "金額の単位は printed 3頁・column mark 1頁 から決めた。款の和 9,312,423,258 と印字の「歳出合計」9,312,423,258 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 4 種（39 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・歳出／予算現額／予備費支出及び流用増減→予算現額／予備費支出及び流用増減・歳出／予算現額／継続費及び繰越事業費繰越額→予算現額／継続費及び繰越事業費繰越額・歳出／予算現額／補正予算額→予算現額／補正予算額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131041/2025/settlement/expenditure/kouki-expenditure-detail-nodes.parquet",
+          "sha256": "40689b121f0a05feb98d595010bc0d3b322c2e8d16be9828111974ca842a2abf",
+          "bytes": 5588
+        },
+        "row_count": 65
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131041/2025/settlement/expenditure/kouki-expenditure-detail-amounts.parquet",
+          "sha256": "2751c9d7cf54f0f12b126893098666aaa5c3fadc59010f08996247ff9c9ba00b",
+          "bytes": 6093
+        },
+        "row_count": 301
       }
     }
   ]
