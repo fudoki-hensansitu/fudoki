@@ -97,6 +97,7 @@ pdf_type は取り込み範囲の各頁の読取方法で判断し、表紙・�
 mise x -- bun pipeline/source_selection/check.ts
 mise x -- bun pipeline/source_selection/archive.ts
 mise x -- bun pipeline/source_selection/archive.ts --write --jurisdiction 132047
+mise x -- bun pipeline/source_selection/archive.ts --evaluation --write --jurisdiction 131172   # evaluation_selections だけを evaluation-settlement の key へ
 ```
 
 コマンドの終了コードを直接確認する。出力を grep や tail へパイプすると終了コードはパイプ末尾のものになるため、検査・保存コマンドはパイプに通さず実行する。通過後は変更や未解決の問題がなければ繰り返さない。必要な実物確認・範囲の記録・保存を終えたら、報告で担当を区切る。補足のためだけに全頁の回転・用紙サイズ・対象外の調書を分類し始めない。選定内容に具体的な矛盾が見つかった場合は、その箇所の修正と必要な再検査に絞る。
