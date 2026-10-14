@@ -21,7 +21,7 @@
 
 ## Design
 
-`plugins/fudoki/` の `plugin.json`・`mcp.json` はAgent Plugins 1.0.0形式。CodexとCursorで共通に使い、Claude Code向けに `.claude-plugin/plugin.json`・`.mcp.json`（type=http）を併置する。portableのtypeはstreamable-http。skillは `skills/compare-expenditure/SKILL.md` に一つだけ置く。URL直結の案内とplugin導入は別の入口として説明する。
+`plugins/fudoki/` の `plugin.json`・`mcp.json` はAgent Plugins 1.0.0形式。CodexとCursorで共通に使い、Claude Code向けに `.claude-plugin/plugin.json`・`.mcp.json`（type=http）を併置する。portableのtypeはstreamable-http。skillは `skills/compare-expenditure/SKILL.md` に一つだけ置く。URL直結の案内とplugin導入は別の入口として説明する。掲載名と対応するhostの表示名は、検索で日本語・英字の両方から見つけられるよう、MCPのtitleと同じ `風土記(fudoki)` にする。本文中の名称は「風土記」を使う。
 
 repo rootに各hostのmarketplace manifestを置く。Codexのsource.pathはrepo rootから、Claude/Cursorのsourceもrepo rootから `plugins/fudoki` を指す。OpenAI固有の掲載・review・publication metadataはportable manifestの `extensions.com.openai` に置く。ChatGPT公開提出用ZIPには `.app.json` や登録済みapp IDを含めない。
 

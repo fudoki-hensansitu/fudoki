@@ -11,7 +11,7 @@
   "extensions": {
     "com.openai": {
       "interface": {
-        "displayName": "風土記",
+        "displayName": "風土記(fudoki)",
         "shortDescription": "Compare municipal spending",
         "longDescription": "Search Japanese municipal expenditure in initial budgets and settlements, check coverage and accounting scope, inspect line-item breakdowns, and trace amounts to original documents. Only collected documents are available. COFOG classifications are Fudoki judgments and may be tentative. Revenue, individual transactions, and writes are outside the supported scope.",
         "developerName": "渡部唯登",

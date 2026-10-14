@@ -1,7 +1,7 @@
 {
   "name": "fudoki-plugins",
   "interface": {
-    "displayName": "風土記"
+    "displayName": "風土記(fudoki)"
   },
   "plugins": [
     {
