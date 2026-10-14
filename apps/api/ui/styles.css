@@ -67,7 +67,7 @@ button.bar .bar-name::after { content: " ›"; color: var(--muted-foreground); }
 .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 #pdf-view [data-slot="button"] { min-height: 40px; }
 .small { font-size: 12px; }
-.pdf-url { color: var(--primary); overflow-wrap: anywhere; }
+.pdf-url { margin-left: 4px; color: var(--primary); white-space: nowrap; }
 /* 高さは iframe の高さ（vh）から決めない。View が報告した高さで host が iframe を決めるので、vh を使うと縮み続ける */
 .pdf-scroll { overflow: auto; max-height: 560px; border: 1px solid var(--border); }
 .view[data-fullscreen] .pdf-scroll { max-height: none; }

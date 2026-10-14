@@ -284,15 +284,9 @@ export function PdfViewer({
         {!error && <span role="status" className="small">{status}</span>}
         <Button variant="outline" size="sm" disabled={!ready || !document || Math.max(...pages) >= document.numPages}
           onClick={() => setSpreadStart(Math.min(document!.numPages - 1, Math.max(...pages) + 1))}>次の頁</Button>
+        <a className="pdf-url" href={url} title={url} onClick={(event) => { event.preventDefault(); openLink(url) }}>参照元 ↗</a>
       </div>
       {error && <Alert variant="destructive" role="status"><AlertDescription>{status}</AlertDescription></Alert>}
-      <details className="small text-muted-foreground" open={error || undefined}>
-        <summary>取得情報</summary>
-        <a className="pdf-url" href={url} onClick={(event) => { event.preventDefault(); openLink(url) }}>{url}</a>
-        {fetched && <p>取得日時: {fetched.at}</p>}
-        <p>取り込み時の原典と内容が異なる可能性があります。</p>
-        <p>PDFの頁番号は紙面の印刷頁番号とは別です。項目の枠は緑、金額の枠は橙です。</p>
-      </details>
       {!ready && !error && <Skeleton className="h-6 w-full" />}
       <div
         ref={scroll}
