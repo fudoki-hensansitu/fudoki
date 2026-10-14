@@ -39,7 +39,7 @@ const ancestorsOf = (n: TreeNode): Named[] =>
     .filter((a) => !!a.name && a.name !== n.name)
 
 /** 区分のタグ。科目の軸は段（款・項・目）、それ以外の軸は軸の名前（節・事業）で呼ぶ */
-const kindOf = (n: TreeNode) => (n.axis === '科目' ? n.node_kind : n.axis)
+const kindOf = (n: TreeNode) => (n.is_subject ? n.node_kind : n.axis)
 
 interface Crumb { kind?: string; name: string; back?: () => void }
 
@@ -64,9 +64,9 @@ function crumbsOf(node: TreeNode, history: { data: ViewData }[], bridge: Bridge,
   }
   const levels = levelsOf(node)
   // 節・事業は目の名前を列に持たないので、通ってきた目があれば段に加える
-  if (node.axis !== '科目' || !['款', '項', '目'].includes(node.node_kind)) {
+  if (!node.is_subject || !['款', '項', '目'].includes(node.node_kind)) {
     const moku = history.map(({ data }) => data).find((d): d is Extract<ViewData, { node: TreeNode }> =>
-      'node' in d && same(d.node) && d.node.node_kind === '目' && d.node.axis === '科目')
+      'node' in d && same(d.node) && d.node.node_kind === '目' && d.node.is_subject === true)
     if (moku) levels.push({ kind: '目', name: moku.node.name })
   }
   return [root, ...levels.map((a) => {
@@ -217,9 +217,9 @@ function NodeResult({ data, crumbs, names, bridge, showPdf, busy }: {
         <OriginButton node={node} origin={origin} bridge={bridge} showPdf={showPdf} />
       </PathHeader>
       {axes.map(([axis, rows]) => (
-        <section key={axis} className="group" aria-label={`${axis === '科目' ? rows[0]!.node_kind : axis}ごとの内訳`}>
+        <section key={axis} className="group" aria-label={`${rows[0]!.is_subject ? rows[0]!.node_kind : axis}ごとの内訳`}>
           {/* 節と事業など軸が混ざると同じ一覧に見えるので、軸が2つ以上のときだけ見出しを置く */}
-          {axes.length > 1 && <div className="group-head"><h3>{axis === '科目' ? rows[0]!.node_kind : axis}ごとの内訳</h3></div>}
+          {axes.length > 1 && <div className="group-head"><h3>{rows[0]!.is_subject ? rows[0]!.node_kind : axis}ごとの内訳</h3></div>}
           <BarList label={`${node.name}の${axis}ごとの内訳`} share={shareable(rows, data.next_page_token)} busy={busy}
             bars={rows.map((n) => ({
               key: n.node_id, label: n.name, kind: kindOf(n), amount: n.amount_yen,
