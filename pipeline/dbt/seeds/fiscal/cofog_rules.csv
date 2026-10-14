@@ -250,3 +250,15 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 1036,fallback-kou-offsite-education,,一般会計,,,校外施設費,,,eq,,assigned,09.6,retained,目,,校外施設費の項に属し語の規則に当たらない目を区外学習施設と同じ教育の補助サービスに置く。学習と宿泊等の境界のため暫定とする。,true
 1037,fallback-kou-special-support-education,,一般会計,,,特別支援教育費,,,eq,,assigned,09,retained,目,,特別支援教育費の項に属し語の規則に当たらない目を教育に置く。学校段階を特定できないため特別支援学校の語の規則と同じ division 止まりとする。,false
 1038,fallback-kou-parks,,一般会計,,,公園費,,,eq,,assigned,08.1,retained,目,,公園費の項に属し語の規則に当たらない目を公園の娯楽サービスに置く。児童福祉費の児童遊園など項の異なる目へ広げない。,false
+1100,nerima-2024-01,131202,一般会計,,こども家庭費,,,保育委託費,eq,,assigned,10.4,retained,目,,練馬区 保育の委託は家族及び児童の社会保護。名称からの判断。,true
+1101,nerima-2024-02,131202,一般会計,,こども家庭費,,,青少年費,eq,,assigned,10.4,retained,目,,練馬区 青少年の育成・支援を家族及び児童に分類する。,true
+1102,nerima-2024-03,131202,一般会計,,保健福祉費,,,保健福祉総務費,eq,,unclassifiable,,retained,目,,練馬区 保健と福祉の管理を併せた目で、機能を分離できない。,false
+1103,nerima-2024-04,131202,一般会計,,保健福祉費,,,栄養指導費,eq,,assigned,07.4,retained,目,,練馬区 栄養指導は公衆衛生サービス。名称からの判断。,true
+1104,nerima-2024-05,131202,一般会計,,保健福祉費,,,保健予防対策費,eq,,assigned,07.4,retained,目,,練馬区 予防対策は公衆衛生サービス。名称からの判断。,true
+1105,nerima-2024-06,131202,一般会計,,区民費,,,区民総務費,eq,,unclassifiable,,retained,目,,練馬区 区民費の総務で、戸籍・地域・文化など複数の機能を含み分離できない。,false
+1106,nerima-2024-07,131202,一般会計,,土木費,,,公共駐車場運営費,eq,,assigned,04.5.1,retained,目,,練馬区 公共駐車場の運営を道路交通に分類する。名称からの判断。,true
+1107,nerima-2024-08,131202,一般会計,,土木費,,,交通対策費,eq,,assigned,04.5.1,retained,目,,練馬区 交通対策を道路交通に分類する。名称からの判断。,true
+1108,nerima-2024-09,131202,一般会計,,地域文化費,,,地域施設費,eq,,assigned,06.2,retained,目,,練馬区 地域の施設整備を地域開発に分類する。名称からの判断。,true
+1109,nerima-2024-10,131202,一般会計,,環境費,,,清掃施設費,eq,,assigned,05.1,retained,目,,練馬区 清掃施設を廃棄物管理に分類する。,false
+1110,nerima-2024-11,131202,一般会計,,産業経済費,,,勤労者福祉費,eq,,assigned,04.1.2,retained,目,,練馬区 勤労者の福祉を一般労働業務に分類する。名称からの判断。,true
+1111,nerima-2024-12,131202,一般会計,,産業経済費,,,農園費,eq,,assigned,04.2,retained,目,,練馬区 農園を農業に分類する。名称からの判断。,true

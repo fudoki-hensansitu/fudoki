@@ -954,6 +954,9 @@ class Built:
     # Logical pages that are not expenditure detail (no 款・項・目 column and no amount column the shared
     # dictionary knows): not read; `convert` declares their frames as excluded regions.
     skipped: list = field(default_factory=list)
+    # The printed code of a subject heading that a continuation page prints again (the same code and name as
+    # the one above it): no node of its own, its digits are the adopted heading's.
+    repeated_codes: list = field(default_factory=list)
 
 
 def node_key(item: Item) -> str:
@@ -1301,6 +1304,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
     branch: dict[str, list[Item]] = {}  # open items per other axis
     levels: dict[str, list[float]] = {}
     nodes, amounts, unowned, notes = [], [], [], []
+    repeated_codes: list = []
     annotations: list[tuple[Item, str, list[Glyph], str | None]] = []
     remarks: list[dict] = []  # `Built.annotations` before the items have keys
     all_items: list[tuple[Logical, list[Group], dict[int, list[Item]]]] = []
@@ -1602,6 +1606,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 if previous is not None and repeats(previous, item, logical.ocr):
                     item.key = previous.key  # a repeated subject heading on a continuation page
                     item.role = 'repeat'
+                    if item.glyphs and CODE.match(normalize(item.glyphs[0].text)):
+                        repeated_codes.append(item.glyphs[0])
                     continue
                 if not item.name:
                     level = item.level_name or (item.group.bands[item.level].header[-1]
@@ -1719,7 +1725,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
         marked.append({'kind': remark['kind'], 'node_key': remark['target'].key, 'parent_node_key': cursor.key,
                        'heading': remark['heading'], 'label': remark['label'], 'runs': remark['runs'],
                        'unit': remark['unit'], 'hint': remark.get('hint')})
-    return Built(nodes, _dedupe(amounts, unowned), unowned, notes, marked, skipped)
+    return Built(nodes, _dedupe(amounts, unowned), unowned, notes, marked, skipped, repeated_codes)
 
 
 def judged_roles(judge, group: Group, margins: set[int] | None) -> dict[int, str]:

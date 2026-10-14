@@ -151,6 +151,14 @@ class HeadingTest(unittest.TestCase):
         self.assertEqual(canonical('翌年度繰越額／継続費逓次繰越(逓)繰越明許費(明)事故繰越(事)', '節', known), '翌年度繰越額')
         self.assertEqual(canonical('継続費逓次繰越繰越明許費', '節', known), '継続費逓次繰越')
 
+    def test_a_subject_row_that_prints_its_total_in_the_setsu_amount_column_takes_its_level(self):
+        from ingestion.generic.convert import canonical_headings
+        nodes = [{'node_key': 'k', 'axis_header': '科目', 'level_header': '款'},
+                 {'node_key': 's', 'axis_header': '節', 'level_header': None}]
+        amounts = [{'node_key': 'k', 'header_path': '金額'}, {'node_key': 's', 'header_path': '金額'}]
+        kept, _ = canonical_headings(amounts, nodes, 'settlement')
+        self.assertEqual([a['header_path'] for a in kept], ['科目／款', '節／金額'])
+
     def test_a_page_with_no_title_has_the_direction_of_the_page_before_it(self):
         from ingestion.generic.build import page_titles
         from ingestion.generic.observe import Page, Word

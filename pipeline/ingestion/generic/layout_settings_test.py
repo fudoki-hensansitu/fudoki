@@ -33,6 +33,33 @@ class LayoutHintsTest(unittest.TestCase):
         self.assertEqual([b.kind for b in configured.bands], ['label', 'amount'])
         self.assertEqual(groups(configured)[0].axis, '節')
         validator().validate({'schema_version': 1, 'columns': {'事故繰越': {'kind': 'amount'}}})
+    def test_frame_title_names_no_column_only_when_the_document_says_so(self):
+        from ingestion.generic.layout import page_bands
+        from ingestion.generic.observe import Page, Rule, Word
+        rules = [Rule(x, 10, x, 90) for x in (0, 100)] + [Rule(50, 30, 50, 90)] + [Rule(0, y, 100, y) for y in (10, 30, 50, 90)]
+        words = [Word('歳出', 40, 15, 60, 25), Word('予算現額', 5, 35, 45, 45), Word('支出済額', 55, 35, 95, 45),
+                 Word('1,000', 5, 60, 45, 70), Word('2,000', 55, 60, 95, 70)]
+        page = Page(1, 100, 100, words, rules)
+        self.assertEqual([b.header for b in page_bands(page)[0]], [('歳出', '予算現額'), ('歳出', '支出済額')])
+        configured = page_bands(page, None, {'ignore_frame_title': True})[0]
+        self.assertEqual([b.header for b in configured], [('予算現額',), ('支出済額',)])
+        validator().validate({'schema_version': 1, 'header': {'ignore_frame_title': True}})
+
+    def test_a_note_and_its_amount_set_without_a_gap_are_two_words(self):
+        from ingestion.generic.repair import _amount_start
+        self.assertEqual(_amount_start('第1目地域振興総務費へ流用△100,325円'), len('第1目地域振興総務費へ流用'))
+        self.assertEqual(_amount_start('繰越事業費不用額55,753,516円'), len('繰越事業費不用額'))
+        self.assertEqual(_amount_start('0△22,990,000'), 1)
+        for text in ('1,150,000,000', '(△1,000)', '第3,000号', '△100,325円'):
+            self.assertEqual(_amount_start(text), 0)
+
+    def test_a_column_edge_drawn_in_pieces_is_one_edge(self):
+        from ingestion.generic.layout import _frames
+        from ingestion.generic.observe import Page, Rule
+        frame = [Rule(x, 10, x, 90) for x in (0, 100)] + [Rule(0, y, 100, y) for y in (10, 90)]
+        edge = [Rule(50, 10, 50, 35), Rule(50, 50, 50, 75)]
+        self.assertEqual(_frames(Page(1, 100, 100, [], frame + edge))[0][4], [0, 50, 100])
+        self.assertEqual(_frames(Page(1, 100, 100, [], frame + edge[:1]))[0][4], [0, 100])
 
     def item(self, raw, code, name, x, y, amount=None):
         glyph = Glyph(raw, x, y, x + len(raw) * 9, y + 9, 1, 0)
