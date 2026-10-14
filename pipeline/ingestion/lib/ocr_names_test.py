@@ -129,6 +129,10 @@ class AmountCorrections(unittest.TestCase):
             correct_amount('2,000', page=1, observation_id='r1', dictionary=dictionary)
 
     def test_rule_shape_must_be_an_amount_and_location_is_unique(self):
+        with self.assertRaisesRegex(ValueError, 'one numeric value'):
+            AmountDictionary('test', (AmountRule('a', 1, 'r1', 'C', '0!', 'test'),))
+        with self.assertRaisesRegex(ValueError, 'one glyph'):
+            AmountDictionary('test', (AmountRule('a', 1, 'r1', '備品入費', '0', 'test'),))
         with self.assertRaises(ValueError):
             AmountDictionary('test', (AmountRule('a', 1, 'r1', '備品入費', '備品購入費', 'test'),))
         with self.assertRaises(ValueError):

@@ -51,6 +51,7 @@ script はこの package が所有する。実行は `bun run --cwd pipeline <na
   | DuckDB・dbt manifest・検査結果・ローカル報告 | `pipeline/.build/` | 管理しない |
 
   再構築に必要な原典・取り込み表・コード・宣言を保持する。独立したprovenanceファイルは生成・保存しない。
+  scan測定の観測は `docs/prd/generic-node-builder/scan/plans/` の `tables=[]`・`ocr_inputs` 付き管理JSONで宣言し、取得時にR2へ保存できる。掃除はこの参照も保護し、採用時は正規管理JSONへ移して測定用から外す（[ADR 0019](../docs/adr/0019-freeze-scan-ocr-observations.md)）。
 - **一時検証の保存**: `.agent/` へ runtime・依存物・原典群・キャッシュ・全量 warehouse を検証ごとに複製しない。ハッシュ固定した既存原典を読み取り参照し、変更コードのスナップショット・ハッシュ一覧・対象範囲の再抽出と検査結果を保存する。全件走査・全ファイルのハッシュ計算は対象を絞る。採用後の再生成可能な一時DB・重複CSVは整理するが、未採用の原典・取り込み表・支持コード・証跡は保持する。
 
 **Python の版は 3.13 に固定してある。** dbt-duckdb 1.11.0 が classifiers で 3.14 を宣言していないため（`requires-python` は `>=3.10` なので入りはするが、テストされていない組み合わせになる）。

@@ -20,6 +20,20 @@ class LayoutHintsTest(unittest.TestCase):
         band = Band(0, 200, 1, ('備考',), [0, 100], 0, 100, kind='label')
         self.group = Group([band], '備考', False)
 
+    def test_column_role_and_split_axis_apply_to_text_pages_too(self):
+        from ingestion.generic.layout import logical_pages
+        from ingestion.generic.observe import Page, Rule, Word
+        from ingestion.generic.tree import groups
+        rules = [Rule(x, 10, x, 100) for x in (0, 40, 80)] + [Rule(0, y, 80, y) for y in (10, 30, 100)]
+        page = Page(1, 100, 120, [Word('区分', 5, 15, 25, 25), Word('事故繰越', 45, 15, 75, 25),
+                                Word('1報酬', 5, 40, 25, 50), Word('C', 50, 40, 60, 50)], rules)
+        plain = logical_pages([page])[0]
+        self.assertEqual([b.kind for b in plain.bands], ['label', 'label'])
+        configured = logical_pages([page], columns={'区分': {'axis_header': '節'}, '事故繰越': {'kind': 'amount'}})[0]
+        self.assertEqual([b.kind for b in configured.bands], ['label', 'amount'])
+        self.assertEqual(groups(configured)[0].axis, '節')
+        validator().validate({'schema_version': 1, 'columns': {'事故繰越': {'kind': 'amount'}}})
+
     def item(self, raw, code, name, x, y, amount=None):
         glyph = Glyph(raw, x, y, x + len(raw) * 9, y + 9, 1, 0)
         item = Item(self.group, 1, [[glyph]], code, name, x)

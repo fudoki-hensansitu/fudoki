@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "normalization": "NFKC_REMOVE_WHITESPACE",
+  "rules": [
+    {
+      "id": "initial-budget-heading",
+      "observed_name": "当初子算額",
+      "corrected_name": "当初予算額",
+      "reason": "OCRが予を子と読む誤り。金額欄の見出しだけに適用する。原典の当初予算額の印字を確認した。"
+    }
+  ]
+}

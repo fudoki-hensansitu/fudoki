@@ -64,6 +64,7 @@ class CleanupTest(unittest.TestCase):
         self.validate = self.enterContext(patch.object(manifest, 'validate'))
         self.current = self.enterContext(patch.object(manifest, 'require_current'))
         self.read = self.enterContext(patch.object(manifest, 'read', return_value=self.document))
+        self.plan_keys = self.enterContext(patch.object(manifest, 'measurement_ocr_keys', return_value=set()))
         self.list = self.enterContext(patch.object(storage.subprocess, 'check_output', side_effect=self.list_objects))
         self.delete = self.enterContext(patch.object(storage.subprocess, 'run', side_effect=self.delete_object))
 
@@ -104,6 +105,13 @@ class CleanupTest(unittest.TestCase):
         self.assertEqual(self.keys, before)
         self.delete.assert_called_once()
         self.assertEqual(self.list.call_count, 2)
+
+    def test_scan_measurement_inputs_are_not_deleted(self):
+        observation = self.prefix + 'ocr/measurement.json.gz'
+        self.keys.add(observation)
+        self.plan_keys.return_value = {observation}
+        self.assertEqual(storage.cleanup(self.document), 1)
+        self.assertIn(observation, self.keys)
 
     def test_invalid_deletion_confirmation_is_rejected(self):
         responses = ({'objects': []}, [{'key': 'outside.parquet'}],

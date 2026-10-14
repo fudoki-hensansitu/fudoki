@@ -314,7 +314,8 @@ def _key(page: int, box: Sequence[float]) -> str:
     return f"{page}:" + ",".join(f"{v:.1f}" for v in box)
 
 
-def supplement(path: Path, page: dict, config: VisionConfig, previous: Mapping[str, str]) -> dict:
+def supplement(path: Path, page: dict, config: VisionConfig, previous: Mapping[str, str], *,
+               vlm_fallback: bool = True) -> dict:
     """Read the ink OCR missed on one page: Vision on those areas, then the VLM on what remains.
 
     Vision reads each tight area (``ink_areas``) as a new region ``ink-<n>``. A reading that
@@ -359,6 +360,10 @@ def supplement(path: Path, page: dict, config: VisionConfig, previous: Mapping[s
             page["regions"].append(region)
     _read_zeros(path, number, config, page, missed_ink(dark, scale, _boxes(page)))
     rest = ink_areas(missed_ink(dark, scale, _boxes(page)), rules)
+    if not vlm_fallback:
+        if rest:
+            page['unread_ink'] = [[round(v, 1) for v in area] for area in rest]
+        return page
     keys = [_key(number, area) for area in rest]
     lines = {key: _line(area, rules) for area, key in zip(rest, keys)}
     asked = [key for key in keys if key not in previous]
@@ -530,7 +535,21 @@ def acquire(path: Path, request: Mapping, previous: Mapping | None = None) -> tu
     path = Path(path)
     regions = [OcrRegion(r["id"], tuple(r["bbox_normalized"])) for r in request["regions"]] \
         if "regions" in request else None
-    result = recognize_pdf(path, pages=request["pages"], backend="vision", config=config, regions=regions)
+    if request.get('column_tiles'):
+        if regions:
+            raise ValueError('Column tiles and explicit regions are alternative OCR requests')
+        result = None
+        for number in request['pages']:
+            rules = pdf_rules.detect(path, number)
+            tiles = column_tiles(rules, pdf_rules.render(path, number) < pdf_rules.DARK)
+            reading = recognize_pdf(path, pages=[number], backend='vision',
+                                    config=replace(config, region_padding_px=60), regions=tiles)
+            if result is None:
+                result = reading
+            else:
+                result['pages'].extend(reading['pages'])
+    else:
+        result = recognize_pdf(path, pages=request["pages"], backend="vision", config=config, regions=regions)
     # Vision can return nothing for a whole dense page without an error. Such a page is
     # read again in column tiles bounded by its rules; still empty, it stops here.
     for index, page in enumerate(result["pages"]):
@@ -545,7 +564,8 @@ def acquire(path: Path, request: Mapping, previous: Mapping | None = None) -> tu
     if empty:
         raise ValueError(f"OCR returned no text for pages {empty}")
     pinned = _pinned_answers(previous)
-    result["pages"] = [supplement(path, page, config, pinned) for page in result["pages"]]
+    result["pages"] = [supplement(path, page, config, pinned, vlm_fallback=request.get('vlm_fallback', True))
+                       for page in result["pages"]]
     observation = {"schema_version": 1, "request": dict(request), "vlm": _vlm_identity(),
                    "origin": {k: result["origin"][k] for k in ("sha256", "bytes")},
                    "pages": _content(result["pages"])}

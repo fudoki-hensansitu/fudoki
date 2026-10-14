@@ -266,7 +266,8 @@ def build_table(source: dict, options: dict, *, stop: bool = True) -> Table:
         Path(source['path']), pages, observation_cache(source, pages),
         document_kind=source['target']['document_kind'], account=account, stop=stop,
         partial=bool(options.get('partial')), direction=source.get('direction'),
-        layout=(layout or {}).get('breakdown'), spread=(layout or {}).get('spread'))
+        layout=(layout or {}).get('breakdown'), columns=(layout or {}).get('columns'),
+        spread=(layout or {}).get('spread'))
     kept, nodes, amounts, unresolved, codes = split_notes(built)
     all_nodes = [*built.nodes, *nodes]
     all_amounts, headings = canonical_headings([*kept, *amounts], all_nodes, source['target']['document_kind'])

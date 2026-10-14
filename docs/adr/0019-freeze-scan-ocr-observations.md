@@ -105,7 +105,7 @@ SHAを内容だけに限る理由は、実測で内容が同じでもファイ�
 
 - **依頼は管理JSONに直接書く。** 変換の `ocr_inputs[]` に `id`・`origin_sha256`・`request`（`engine`・`pages`・任意の `config`・`regions`）を置く。別の依頼ファイルは作らない。変換に含まれるのでfingerprintにも入る。
 - **SHAは `ingestion:ocr` が書き込む。** `ingestion:ocr --manifest … --inputs …` が依頼どおりにOCRし、観測（展開後のJSON）の `sha256`・`bytes` を管理JSONに書き、観測をローカルのキャッシュに置く。`--verify` は読み直して比べるだけで何も書かない。SHAが変われば、その変換の保存済みの表は古いと判定される。
-- **R2への保存は表と同時。** `convert --remote` が観測（`ocr/<id>.json.gz`）と実行記録（`ocr/<id>.run.json`）を表より先に上げる。保存先は対象・方向・`id` から導く。`cleanup` は宣言のない `ocr/` の物も消す。
+- **採用時のR2への保存は表と同時。** `convert --remote` が観測（`ocr/<id>.json.gz`）と実行記録（`ocr/<id>.run.json`）を表より先に上げる。保存先は対象・方向・`id` から導く。測定中の観測を失わないため、`docs/prd/generic-node-builder/scan/plans/` の管理JSON（`tables=[]`）に依頼とSHAを宣言した観測は、表の関門を待たず取得時にR2へ保存できる。`cleanup` は正規管理JSONとこの測定用管理JSONの `ocr_inputs` を参照元として数え、宣言のない物だけを消す。採用して正規管理JSONへ移した入力は測定用から外す。
 - **観測は内容だけ。** 依頼・原典のSHAとバイト数・頁ごとの観測を正規化したJSONにする。所要時間・ローカルのパス・OSなどの環境は実行記録へ分ける。描画画素のSHAは観測に入れていない。
 - **頁が空のOCRは固定しない。** Visionはエラーなしに頁全体を空で返すことがある。空の頁は観測にせず止める。
 

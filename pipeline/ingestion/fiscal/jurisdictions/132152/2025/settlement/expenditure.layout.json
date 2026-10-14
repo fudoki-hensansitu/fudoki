@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "columns": {
+    "予算現／区分": {"kind": "label", "axis_header": "節"},
+    "翌年度繰越額／継続費逓次繰越": {"kind": "amount"},
+    "翌年度繰越額／繰越明許費": {"kind": "amount"},
+    "翌年度繰越額／事故繰越": {"kind": "amount"}
+  }
+}

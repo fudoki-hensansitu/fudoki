@@ -120,6 +120,8 @@ def _breakdown_axis(band: Band, bands: list[Band]) -> str:
     A cell that the page edge cuts (a heading printed across a spread, 131148's
     節 over 区分 | 金額) counts as spanning the amount band on the other page.
     """
+    if band.axis_header:
+        return band.axis_header
     axis = band.header[-1] if band.header else '備考'
     page_end = max(b.x1 for b in bands if b.page == band.page)
     column = _column(band, bands)
