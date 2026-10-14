@@ -1773,7 +1773,10 @@ def _dedupe(amounts: list[dict], unowned: list[dict]) -> list[dict]:
             if normalize(seen[identity]['amount_text']) != normalize(amount['amount_text']):
                 unowned.append({'kind': 'conflicting amount', 'page': amount['physical_page'],
                                 'text': f"{seen[identity]['amount_text']} / {amount['amount_text']}",
-                                'header': amount['header_path']})
+                                'header': amount['header_path'],
+                                'sources': [{k: source[k] for k in ('physical_page', 'amount_text', 'unit_text',
+                                                                   'x0', 'y0', 'x1', 'y1')}
+                                            for source in (seen[identity], amount)]})
             continue
         seen[identity] = amount
     return list(seen.values())
