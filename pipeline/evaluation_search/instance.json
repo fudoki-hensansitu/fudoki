@@ -1,0 +1,49 @@
+{
+  "config": {
+    "name": "fudoki-evaluation-v1",
+    "embedding_model": "@cf/qwen/qwen3-embedding-0.6b",
+    "keyword_tokenizer": "trigram",
+    "chunk_size": 4096,
+    "chunk_overlap": 0,
+    "use_ocr": false,
+    "public_endpoint": false,
+    "custom_metadata": [
+      {
+        "field_name": "jurisdiction",
+        "data_type": "text"
+      },
+      {
+        "field_name": "fiscal_year",
+        "data_type": "text"
+      },
+      {
+        "field_name": "origin_sha256",
+        "data_type": "text"
+      },
+      {
+        "field_name": "page",
+        "data_type": "number"
+      }
+    ]
+  },
+  "registrations": [
+    {
+      "origin_sha256": "628b02ba7d8faafa8476a45d353a2ff850e275d5b0e941b0a80ef66bf3ec98b5",
+      "page_count": 63,
+      "plan_fingerprint": "2fa3cc7525ba6368a0a24d2cd26bb614476302d997bf3eda6ca7572454e83001",
+      "confirmed_at": "2026-10-14T08:15:34Z"
+    },
+    {
+      "origin_sha256": "f3b089e84c0b3bc3d1189f125028d9be28427f4652ae9f40d120bd5e8beb9e5c",
+      "page_count": 75,
+      "plan_fingerprint": "7a32baf1f25ae4d929e481539b5399edc17ff601543c5972f0309ff4ae047489",
+      "confirmed_at": "2026-10-14T08:23:33Z"
+    },
+    {
+      "origin_sha256": "80b62f85965f7b88f5e9d2c4129ed685a488d1acfd4c11c6c5b877bba1302fd9",
+      "page_count": 108,
+      "plan_fingerprint": "d2848c70f5d895cef3fb6357605c6f272979dcf59723cf68d4f19fb8e1c01515",
+      "confirmed_at": "2026-10-14T08:23:33Z"
+    }
+  ]
+}

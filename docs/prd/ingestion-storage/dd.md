@@ -103,6 +103,7 @@ fudoki-inputs/
     settlement-1.pdf
     settlement-2.pdf
     supplementary-<号>.pdf
+    evaluation-settlement[-<n>].pdf   # 事業の評価の資料（docs/prd/evaluation-search/dd.md）
   fiscal/ingestion/<団体>/<年度>/<initial|settlement|supplementary-号>/
     expenditure/<表ID>-nodes.parquet
     expenditure/<表ID>-amounts.parquet

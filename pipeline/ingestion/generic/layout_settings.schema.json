@@ -41,6 +41,8 @@
             }
           },
           "wrap": {"const": "amount_on_last_line"},
+          "amount_brackets": {"type": "boolean"},
+          "indent_chars": {"type": "integer", "minimum": 1},
           "notes": {"type": "array", "items": {"type": "string", "minLength": 1}}
         }
       }

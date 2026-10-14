@@ -277,6 +277,10 @@
         "options": {
           "type": "object"
         },
+        "statement_kind": {
+          "description": "Printed accounting statement form. Omitted means ordinary (歳入歳出決算の事項別明細); public-enterprise has a separate accounting form, without the ordinary executed-subject check.",
+          "enum": ["ordinary", "public-enterprise"]
+        },
         "expected_tables": {
           "type": "array",
           "items": {

@@ -33,6 +33,98 @@ def scope(*fragments, label=('歳', '出', '合', '計'), page=1):
 
 
 class UnitCheckTest(unittest.TestCase):
+    def test_settlement_needs_a_kan_axis_even_when_the_tree_and_digits_pass(self):
+        nodes = [node('detail', None, None, '説明', axis='備考')]
+        amounts = [amount('detail', '10', header='備考')]
+        self.assertTrue(check_tree(nodes, amounts)['passed'])
+        for partial in (False, True):
+            with self.subTest(partial=partial):
+                result = unit_checks.check_table(nodes, amounts, document_kind='settlement',
+                                                 account='介護保険特別会計', partial=partial)
+                self.assertEqual(result['status'], 'stopped')
+                self.assertIn('款の科目軸がない', unit_checks.describe(result))
+
+    def test_budget_amounts_cannot_stand_in_for_executed_subject_amounts(self):
+        nodes, amounts = table('100,000,000')
+        nodes.append(node('m1', 'k1-1', '目', '事業', depth=3))
+        amounts.append(amount('m1', '100,000,000'))
+        for a in amounts:
+            a['header_path'] = '予算現額'
+        self.assertTrue(check_tree(nodes, amounts)['passed'])
+        result = unit_checks.check_table(nodes, amounts, document_kind='settlement', account='一般会計')
+        self.assertEqual(result['status'], 'stopped')
+        self.assertEqual(result['subject_check']['executed_moku'], 0)
+        self.assertIn('款の支出済額がない', unit_checks.describe(result))
+        self.assertIn('目の支出済額が過半に満たない（0/1）', unit_checks.describe(result))
+
+    def test_moku_requires_more_than_half_and_counts_printed_zero_once(self):
+        nodes, amounts = table('100,000,000')
+        nodes += [node(f'm{i}', 'k1-1', '目', f'事業{i}', depth=3) for i in range(4)]
+        amounts += [amount('m0', '100,000,000'), amount('m1', '0'), amount('m1', '0')]
+        result = unit_checks.check_table(nodes, amounts, document_kind='settlement', account='一般会計')
+        self.assertEqual((result['status'], result['subject_check']['executed_moku']), ('stopped', 2))
+        amounts += [amount('m2', '0')]
+        result = unit_checks.check_table(nodes, amounts, document_kind='settlement', account='一般会計')
+        self.assertEqual((result['status'], result['subject_check']['executed_moku']), ('digits', 3))
+
+    def test_another_axis_and_annotations_do_not_fill_a_subjects_missing_amount(self):
+        nodes, amounts = table('100,000,000')
+        nodes += [node('m1', 'k1-1', None, '事業', depth=3),
+                  node('note', 'm1', '目', '注記', axis='注記', depth=3)]
+        amounts += [amount('m1', '100,000,000', header='不用額'), amount('note', '100,000,000')]
+        result = unit_checks.check_table(nodes, amounts, document_kind='settlement', account='一般会計')
+        self.assertEqual((result['status'], result['subject_check']['moku'],
+                          result['subject_check']['executed_moku']), ('stopped', 1, 0))
+        amounts.append(amount('m1', '100,000,000'))
+        self.assertEqual(unit_checks.check_table(nodes, amounts, document_kind='settlement',
+                                                 account='一般会計')['status'], 'digits')
+
+    def test_initial_budget_does_not_require_executed_amounts(self):
+        nodes, amounts = table('100,000', unit='千円')
+        for a in amounts:
+            a['header_path'] = '本年度予算額'
+        result = unit_checks.check_table(nodes, amounts, document_kind='initial', account='一般会計')
+        self.assertFalse(result['stopped'])
+        self.assertFalse(result['subject_check']['applicable'])
+
+    def test_revenue_does_not_get_the_new_expenditure_gate(self):
+        nodes, amounts = table('100,000,000')
+        nodes.append(node('m1', 'k1-1', '目', '収入', depth=3))
+        for a in amounts:
+            a['header_path'] = '予算現額'
+        result = unit_checks.check_table(nodes, amounts, document_kind='settlement', account='一般会計',
+                                         direction='revenue')
+        self.assertFalse(result['subject_check']['applicable'])
+        self.assertFalse(result['stopped'])
+
+    def test_a_missing_axis_is_stopped_as_a_missing_subject_axis(self):
+        from ingestion.fiscal.subject_checks import check_subject
+        nodes, amounts = table('100,000,000')
+        for n in nodes:
+            del n['axis_header']
+        result = check_subject(nodes, amounts, 'settlement')
+        self.assertFalse(result['passed'])
+        self.assertEqual(result['kan'], 0)
+
+    def test_declared_enterprise_form_keeps_tree_and_unit_checks(self):
+        nodes, amounts = table('100,000,000')
+        for a in amounts:
+            a['header_path'] = '金額（円）'
+        ordinary = unit_checks.check_table(nodes, amounts, document_kind='settlement', account='下水道事業会計')
+        enterprise = unit_checks.check_table(nodes, amounts, document_kind='settlement', account='下水道事業会計',
+                                            statement_kind='public-enterprise')
+        self.assertTrue(ordinary['stopped'])
+        self.assertFalse(enterprise['stopped'])
+        self.assertFalse(enterprise['subject_check']['applicable'])
+        self.assertTrue(check_tree(nodes, amounts)['passed'])
+        amounts[-1]['amount_text'] = '99,999,999'
+        self.assertFalse(check_tree(nodes, amounts)['passed'])
+        # The declaration exempts only subject presence; a comparable unit mismatch still stops.
+        nodes, amounts = table('100,000,000')
+        result = unit_checks.check_table(nodes, amounts, document_kind='settlement', account='下水道事業会計',
+                                         statement_kind='public-enterprise', scope=scope(('1', 300.0, 360.0)))
+        self.assertTrue(result['stopped'])
+
     def test_kan_sum_equal_to_the_printed_total_matches(self):
         nodes, amounts = table('100,000,000', '50,000,000')
         # The text layer cuts one number into fragments inside its column.

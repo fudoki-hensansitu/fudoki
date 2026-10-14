@@ -9,6 +9,7 @@ import { WorkerMessageHandler } from 'pdfjs-dist/build/pdf.worker.mjs'
 import { Button } from '@fudoki/ui/components/button'
 import { Alert, AlertDescription } from '@fudoki/ui/components/alert'
 import { Skeleton } from '@fudoki/ui/components/skeleton'
+import { ArrowLeft, ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react'
 import type { Origin, PdfLocation } from './types'
 
 Object.assign(globalThis, { pdfjsWorker: { WorkerMessageHandler } })
@@ -124,7 +125,7 @@ export function PdfViewer({
   const reportError = (error: unknown) => {
     setError(true)
     setStatus(
-      `原典 PDF を表示できません。項目: ${location.source_page ?? '不明'}ページ / 金額: ${location.amount_source_page ?? '不明'}ページ。${error instanceof Error ? error.message : ''}`,
+      `参照の PDF を表示できません。項目: ${location.source_page ?? '不明'}ページ / 金額: ${location.amount_source_page ?? '不明'}ページ。${error instanceof Error ? error.message : ''}`,
     )
   }
 
@@ -278,21 +279,17 @@ export function PdfViewer({
     >
       <h3 id="pdf-title" className="sr-only">{origin.title}</h3>
       <div className="toolbar">
-        <Button ref={close} variant="ghost" size="sm" onClick={onClose}>閉じる</Button>
-        <Button variant="outline" size="sm" disabled={!ready || Math.min(...pages) <= 1}
-          onClick={() => setSpreadStart(Math.max(1, Math.min(...pages) - 2))}>前の頁</Button>
-        {!error && <span role="status" className="small">{status}</span>}
-        <Button variant="outline" size="sm" disabled={!ready || !document || Math.max(...pages) >= document.numPages}
-          onClick={() => setSpreadStart(Math.min(document!.numPages - 1, Math.max(...pages) + 1))}>次の頁</Button>
+        <Button ref={close} variant="ghost" size="sm" onClick={onClose}><ArrowLeft aria-hidden="true" />戻る</Button>
+        <span className="pager">
+          <Button variant="outline" size="icon-sm" aria-label="前のページ" disabled={!ready || Math.min(...pages) <= 1}
+            onClick={() => setSpreadStart(Math.max(1, Math.min(...pages) - 2))}><ChevronLeft aria-hidden="true" /></Button>
+          {!error && <span role="status" className="pager-status">{status}</span>}
+          <Button variant="outline" size="icon-sm" aria-label="次のページ" disabled={!ready || !document || Math.max(...pages) >= document.numPages}
+            onClick={() => setSpreadStart(Math.min(document!.numPages - 1, Math.max(...pages) + 1))}><ChevronRight aria-hidden="true" /></Button>
+        </span>
+        <a className="pdf-url" href={url} title={url} onClick={(event) => { event.preventDefault(); openLink(url) }}>参照元<ExternalLink aria-hidden="true" /></a>
       </div>
       {error && <Alert variant="destructive" role="status"><AlertDescription>{status}</AlertDescription></Alert>}
-      <details className="small text-muted-foreground" open={error || undefined}>
-        <summary>取得情報</summary>
-        <a className="pdf-url" href={url} onClick={(event) => { event.preventDefault(); openLink(url) }}>{url}</a>
-        {fetched && <p>取得日時: {fetched.at}</p>}
-        <p>取り込み時の原典と内容が異なる可能性があります。</p>
-        <p>PDFの頁番号は紙面の印刷頁番号とは別です。項目の枠は緑、金額の枠は橙です。</p>
-      </details>
       {!ready && !error && <Skeleton className="h-6 w-full" />}
       <div
         ref={scroll}
@@ -304,10 +301,6 @@ export function PdfViewer({
         <div
           className="pdf-spread"
           data-pages={pages.length}
-          style={{
-            width: '100%',
-            minWidth: `${pages.length === 2 ? 640 : 280}px`,
-          }}
         >
           {sheets.map((sheet) => (
             <section

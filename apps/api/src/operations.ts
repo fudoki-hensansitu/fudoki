@@ -20,6 +20,7 @@ import {
 } from './columns'
 import type { Db } from './db'
 import { ApiError, invalid } from './errors'
+import { searchEvaluationsOperation, type EvaluationDeps } from './evaluations'
 import {
   DEFAULT_PAGE_SIZE,
   MAX_BINDS,
@@ -91,6 +92,8 @@ const withKind = (t: NodeTable, raw: Record<string, unknown>): Row => ({
 
 export interface Ctx {
   db: Db
+  /** 評価の検索の依存。AI Search・流量・日ごとの総数はここ越しに呼び、試験は偽物に差し替える。 */
+  evaluation?: EvaluationDeps
 }
 
 export interface Operation {
@@ -112,6 +115,8 @@ export interface Operation {
   output: z.ZodType
   /** MCP Apps の View で結果を表にするか（MCP だけ。REST には影響しない） */
   view?: boolean
+  /** 回数の上限で 429 を返し得るか（REST の応答一覧に 429 を足す） */
+  rateLimited?: boolean
   run(ctx: Ctx, input: Record<string, unknown>): Promise<unknown>
 }
 
@@ -501,4 +506,5 @@ export const operations: Operation[] = [
     }),
     run: describeColumns,
   },
+  searchEvaluationsOperation,
 ]

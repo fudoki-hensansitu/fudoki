@@ -2,7 +2,7 @@ import {
   AppBridge,
   PostMessageTransport,
 } from '@modelcontextprotocol/ext-apps/app-bridge'
-import { uiData } from './ui-fixture'
+import { chartData, hierarchyIds, levelData, uiData } from './ui-fixture'
 import type { McpUiStyles } from '@modelcontextprotocol/ext-apps'
 
 const frame = document.querySelector<HTMLIFrameElement>('iframe')!
@@ -47,15 +47,33 @@ const policy = `default-src 'none'; script-src 'unsafe-inline'; style-src 'unsaf
 const bridge = new AppBridge(
   null,
   { name: '風土記 試験host', version: '1' },
-  { openLinks: {}, serverTools: {}, logging: {} },
+  { openLinks: {}, serverTools: {}, logging: {}, updateModelContext: { text: {} }, message: { text: {} } },
+  { hostContext: { displayMode: 'inline', availableDisplayModes: ['inline', 'fullscreen'] } },
 )
+const contexts: string[] = []
+const messages: string[] = []
+bridge.onmessage = async ({ content }) => {
+  messages.push(content.map((c) => ('text' in c ? c.text : '')).join(''))
+  document.getElementById('opened')!.textContent = `チャットに送信: ${messages.at(-1)}`
+  return {}
+}
+let displayMode = 'inline'
+bridge.onupdatemodelcontext = async ({ content }) => {
+  contexts.push(content?.map((c) => ('text' in c ? c.text : '')).join('') ?? '')
+  return {}
+}
+bridge.onrequestdisplaymode = async ({ mode }) => {
+  displayMode = mode
+  bridge.setHostContext({ displayMode: mode, availableDisplayModes: ['inline', 'fullscreen'] })
+  return { mode }
+}
 const calls: { name: string; arguments?: unknown }[] = []
 let release: (() => void) | undefined
 let failures = 0
 const toolResult = (data: unknown) => ({
   content: [],
   structuredContent: data,
-  _meta: { apiOrigin: location.origin },
+  _meta: { apiOrigin: location.origin, jurisdictionNames: { '000001': '試験市', '000002': '未収録町', '000003': '比較市' } },
 })
 bridge.oncalltool = async (params) => {
   if (!scenario) return rpc('tools/call', params)
@@ -65,6 +83,14 @@ bridge.oncalltool = async (params) => {
     const data = uiData(scenario)
     if ('nodes' in data) return toolResult({ node: data.nodes.find((n) => n.node_id === input.node_id), children: {}, origins: data.origins })
   }
+  // 経路の款・項は名前で検索して開くので、どの場面でも試験の階層から答える
+  const level = params.name === 'search_expenditure_nodes' && input.where ? levelData(input.where as Record<string, { eq?: unknown[] }>) : undefined
+  if (level) return toolResult(level)
+  if (params.name === 'get_expenditure_node' && hierarchyIds.has(String(input.node_id)))
+    return toolResult(chartData('chart', String(input.node_id)))
+  // 団体一覧のチップから款の一覧を開き、そのまま掘り下げられるようにする
+  if ((scenario === 'jurisdictions' || scenario === 'single') && params.name !== 'list_jurisdictions')
+    return toolResult(chartData('chart', params.name === 'get_expenditure_node' ? String(input.node_id) : undefined))
   if (scenario.startsWith('chart')) return toolResult(uiData(scenario, !!input.page_token, params.name === 'get_expenditure_node' ? String(input.node_id) : undefined))
   if (scenario === 'slow' || scenario === 'race')
     await new Promise<void>((resolve) => {
@@ -89,6 +115,9 @@ bridge.oncalltool = async (params) => {
 // 試験host側から通常のbridge通知を送り、遅い応答とテーマ更新を検査する。
 const qa = {
   calls: () => calls,
+  contexts: () => contexts,
+  messages: () => messages,
+  displayMode: () => displayMode,
   release: () => {
     release?.()
     release = undefined
@@ -106,6 +135,8 @@ const qa = {
   theme: (theme: 'light' | 'dark', host: 'chatgpt' | 'claude') =>
     bridge.setHostContext({
       theme,
+      displayMode: displayMode as 'inline' | 'fullscreen',
+      availableDisplayModes: ['inline', 'fullscreen'],
       styles: {
         variables: (host === 'chatgpt'
           ? {

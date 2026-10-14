@@ -5,9 +5,11 @@ import { HTTPException } from 'hono/http-exception'
 import iconSvg from './favicon.svg' with { type: 'text' }
 import type { Env } from './db'
 import { ApiError, errorBody, invalid } from './errors'
-import { operations, type Ctx, type Operation } from './operations'
+import { operations as defaultOperations, type Ctx, type Operation } from './operations'
 import { VIEW_HTML, VIEW_URI } from './view.generated'
 import { originPdf } from './origin-pdf'
+import { JURISDICTION_TABLE } from './columns'
+import { quotaOf } from './evaluation-quota'
 
 type AppEnv = { Bindings: Env; Variables: { ctx: Ctx; json: unknown } }
 
@@ -69,6 +71,7 @@ const HTTP_CODES: Record<number, string> = {
 const jsonRpcError = (code: number, message: string) => ({ jsonrpc: '2.0', error: { code, message }, id: null })
 
 const ErrorBody = z.object({ error: z.object({ code: z.string(), message: z.string() }) })
+const RateLimitedBody = z.object({ error: z.object({ code: z.string(), message: z.string(), retry_after_seconds: z.int() }) })
 
 /** `/openapi.json` と apps/docs の API リファレンスが同じ文書を使う */
 export const OPENAPI_CONFIG = {
@@ -104,6 +107,7 @@ function registerRest(app: OpenAPIHono<AppEnv>, op: Operation) {
             415: { description: 'Content-Type が application/json でない', content: { 'application/json': { schema: ErrorBody } } },
           }
         : {}),
+      ...(op.rateLimited ? { 429: { description: '回数の上限を超えた。Retry-After 秒後に再試行する', headers: z.object({ 'Retry-After': z.string() }), content: { 'application/json': { schema: RateLimitedBody } } } } : {}),
       503: { description: '提供を止めている', content: { 'application/json': { schema: ErrorBody } } },
     },
   })
@@ -121,7 +125,22 @@ preloadSchemas()
 /** MCP Apps（io.modelcontextprotocol/ui）の View の HTML の MIME type */
 export const VIEW_MIME_TYPE = 'text/html;profile=mcp-app'
 
-function mcpServer(ctx: Ctx, apiOrigin: string): McpServer {
+/** View が団体コードの代わりに団体名を出すための対応。structuredContent の契約は変えず、MCP の _meta にだけ載せる */
+async function jurisdictionNames(ctx: Ctx, out: unknown): Promise<Record<string, string>> {
+  const o = out as { nodes?: { jurisdiction_code: string }[]; node?: { jurisdiction_code: string } }
+  const codes = [...new Set([...(o.nodes ?? []), ...(o.node ? [o.node] : [])].map((n) => n.jurisdiction_code))]
+  if (!codes.length) return {}
+  // D1 は1文の bind を100個までに制限するので、100件ずつに分けて1つの batch で読む
+  const chunks = Array.from({ length: Math.ceil(codes.length / 100) }, (_, i) => codes.slice(i * 100, i * 100 + 100))
+  const pages = await ctx.db.batch<{ jurisdiction_code: string; name: string }>(
+    chunks.map((c) =>
+      ctx.db.prepare(`SELECT "jurisdiction_code", "name" FROM ${JURISDICTION_TABLE} WHERE "jurisdiction_code" IN (${c.map(() => '?').join(', ')})`).bind(...c)
+    )
+  )
+  return Object.fromEntries(pages.flatMap((p) => p.results).map((r) => [r.jurisdiction_code, r.name]))
+}
+
+function mcpServer(ctx: Ctx, apiOrigin: string, operations: Operation[]): McpServer {
   const server = new McpServer(
     {
       name: 'fudoki-api',
@@ -149,7 +168,7 @@ function mcpServer(ctx: Ctx, apiOrigin: string): McpServer {
         description: op.description,
         inputSchema: op.input,
         outputSchema: op.output,
-        // すべての tool は D1 の読み取りだけで、状態を変えず、外部にも出ない
+        // どの tool も利用者の状態を変えない（評価の検索は回数の記録と AI Search の呼び出しを伴うが、風土記の内側で閉じる）
         annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
         // 旧キー ui/resourceUri は ext-apps の registerAppTool と同じく併記する（仕様では GA 前に外す deprecated）
         ...(op.view ? { _meta: { ui: { resourceUri: VIEW_URI }, 'ui/resourceUri': VIEW_URI } } : {}),
@@ -158,11 +177,12 @@ function mcpServer(ctx: Ctx, apiOrigin: string): McpServer {
         try {
           const out = await op.run(ctx, args)
           // structuredContent が正本。text は structuredContent を読めない client のための同じ内容の写し（MCP の SHOULD）
-          return { content: [{ type: 'text' as const, text: JSON.stringify(out) }], structuredContent: out as Record<string, unknown>, _meta: { apiOrigin } }
+          const meta = op.view ? { apiOrigin, jurisdictionNames: await jurisdictionNames(ctx, out) } : { apiOrigin }
+          return { content: [{ type: 'text' as const, text: JSON.stringify(out) }], structuredContent: out as Record<string, unknown>, _meta: meta }
         } catch (e) {
           // 想定外の例外の詳細（SQL のエラーなど）は返さず、ログにだけ出す
           if (!(e instanceof ApiError)) console.error(e)
-          const body = e instanceof ApiError ? errorBody(e.code, e.message) : errorBody('INTERNAL', '内部エラー')
+          const body = e instanceof ApiError ? errorBody(e.code, e.message, e.retryAfter) : errorBody('INTERNAL', '内部エラー')
           return { isError: true, content: [{ type: 'text' as const, text: JSON.stringify(body) }] }
         }
       }
@@ -171,7 +191,8 @@ function mcpServer(ctx: Ctx, apiOrigin: string): McpServer {
   return server
 }
 
-export function createApp() {
+/** 公開する操作を差し替えられる（試験が一部の操作だけで app を作る）。 */
+export function createApp(operations: Operation[] = defaultOperations) {
   const app = new OpenAPIHono<AppEnv>({
     defaultHook: (result, c) => {
       if (result.success) return
@@ -207,7 +228,10 @@ export function createApp() {
     if (!on) {
       return c.json(errorBody('UNAVAILABLE', '提供を停止しています'), 503, { 'Cache-Control': 'no-store' })
     }
-    c.set('ctx', { db: c.env.DB })
+    c.set('ctx', {
+      db: c.env.DB,
+      evaluation: { search: c.env.EVALUATION_SEARCH, rateLimit: c.env.EVALUATION_RATE_LIMIT, quota: quotaOf(c.env.EVALUATION_QUOTA), ip: c.req.header('CF-Connecting-IP') },
+    })
     await next()
   })
 
@@ -283,7 +307,7 @@ export function createApp() {
     if ((body as { method?: unknown } | null)?.method === 'subscriptions/listen')
       return c.json({ ...jsonRpcError(-32601, 'subscriptions/listen は受け付けません'), id: (body as { id?: unknown }).id ?? null }, 400)
     const ctx = c.get('ctx')
-    const handler = createMcpHandler(() => mcpServer(ctx, new URL(c.req.url).origin), {
+    const handler = createMcpHandler(() => mcpServer(ctx, new URL(c.req.url).origin, operations), {
       legacy: 'stateless',
       // 'json' だと要求ごとに「通知が落ちる」警告が console に出る。tool は途中の通知を出さないので auto でも JSON 1つで返る
       responseMode: 'auto',
@@ -298,7 +322,9 @@ export function createApp() {
   app.notFound((c) => c.json(errorBody('NOT_FOUND', '存在しないパスです'), 404))
 
   app.onError((e, c) => {
-    if (e instanceof ApiError) return c.json(errorBody(e.code, e.message), e.status)
+    if (e instanceof ApiError) {
+      return c.json(errorBody(e.code, e.message, e.retryAfter), e.status, e.retryAfter === undefined ? {} : { 'Retry-After': String(e.retryAfter) })
+    }
     if (e instanceof HTTPException) {
       // 415・406 などは 500 にしない。MCP の transport は JSON-RPC の形の応答を持っている
       if (e.res) return e.getResponse()

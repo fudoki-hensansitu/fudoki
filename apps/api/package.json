@@ -38,11 +38,11 @@
     "vite": "catalog:"
   },
   "dependencies": {
+    "@fudoki/ui": "workspace:*",
     "@hono/zod-openapi": "1.6.3",
     "@modelcontextprotocol/server": "2.3.1",
     "hono": "4.13.13",
-    "zod": "catalog:",
-    "@fudoki/ui": "workspace:*",
-    "recharts": "catalog:"
+    "lucide-react": "1.52.0",
+    "zod": "catalog:"
   }
 }

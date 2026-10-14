@@ -5,7 +5,7 @@ import {
   applyHostStyleVariables,
   type McpUiHostContext,
 } from '@modelcontextprotocol/ext-apps'
-import { toolFor, type Json, type ViewData } from './types'
+import { toolFor, type Json, type TreeNode, type ViewData } from './types'
 
 interface Entry {
   tool: string
@@ -19,6 +19,14 @@ interface State {
   busy: boolean
   error?: string
   apiOrigin: string
+  /** 団体コード → 団体名。server が結果の _meta に載せる */
+  names: Record<string, string>
+  fullscreen: { available: boolean; active: boolean }
+}
+
+const namesOf = (meta: Record<string, unknown> | undefined) => {
+  const names = meta?.jurisdictionNames
+  return names && typeof names === 'object' ? (names as Record<string, string>) : {}
 }
 
 function appendData(previous: ViewData, next: ViewData): ViewData {
@@ -51,13 +59,15 @@ function appendData(previous: ViewData, next: ViewData): ViewData {
 export function createBridge() {
   const app = new App(
     { name: 'fudoki-view', version: '1.0.0' },
-    {},
+    { availableDisplayModes: ['inline', 'fullscreen'] },
     { autoResize: false },
   )
   let state: State = {
     history: [],
     busy: true,
     apiOrigin: 'https://api.fudoki.dev',
+    names: {},
+    fullscreen: { available: false, active: false },
   }
   const listeners = new Set<() => void>()
   let args: Json = {}
@@ -97,6 +107,12 @@ export function createBridge() {
     if (ctx.theme) applyDocumentTheme(ctx.theme)
     if (ctx.styles?.variables) applyHostStyleVariables(ctx.styles.variables)
     if (ctx.styles?.css?.fonts) applyHostFonts(ctx.styles.css.fonts)
+    update({
+      fullscreen: {
+        available: !!ctx.availableDisplayModes?.includes('fullscreen'),
+        active: ctx.displayMode === 'fullscreen',
+      },
+    })
   }
   const message = (result: { content?: unknown[] }) => {
     const item = result.content?.find(
@@ -135,6 +151,7 @@ export function createBridge() {
       busy: false,
       error: undefined,
       apiOrigin: origin,
+      names: { ...state.names, ...namesOf(result._meta) },
     })
   }
   app.ontoolcancelled = () => {
@@ -169,10 +186,10 @@ export function createBridge() {
         .catch((error) => {
           update({ busy: false, error: `接続に失敗しました: ${String(error)}` })
         })),
-    async call(tool: string, input: Json, mode: 'drill' | 'append', historyIndex?: number) {
+    /** drill は今の画面を履歴に積み、reset は履歴を捨てて移る（経路の根の会計へ移るとき）、append は続きを足す */
+    async call(tool: string, input: Json, mode: 'drill' | 'append' | 'reset') {
       if (disposed || state.busy || !state.entry) return
-      const previous = historyIndex === undefined ? state.entry : state.history[historyIndex]
-      if (!previous) return
+      const previous = state.entry
       const id = ++epoch
       request = new AbortController()
       update({ busy: true, error: undefined })
@@ -196,10 +213,8 @@ export function createBridge() {
             data: combined,
             revision: mode === 'append' ? previous.revision : id,
           },
-          history:
-            mode === 'drill'
-              ? [...(historyIndex === undefined ? state.history : state.history.slice(0, historyIndex)), previous]
-              : state.history,
+          history: mode === 'drill' ? [...state.history, previous] : mode === 'reset' ? [] : state.history,
+          names: { ...state.names, ...namesOf(result._meta) },
           apiOrigin:
             typeof result._meta?.apiOrigin === 'string'
               ? result._meta.apiOrigin
@@ -217,16 +232,95 @@ export function createBridge() {
         }
       }
     },
-    back() {
+    /**
+     * 経路の款・項へ移る。同じ団体・年度・資料・会計の中から名前でその段を検索し、見つかった明細を開く。
+     * 親の ID を持たない明細（検索結果から開いたものなど）でも、どの段にも移れるようにする。
+     * 移った先より深い明細の履歴は経路と食い違うので捨てる。
+     */
+    async openLevel(from: TreeNode, kind: '款' | '項') {
+      if (disposed || state.busy || !state.entry) return
+      const id = ++epoch
+      request = new AbortController()
+      update({ busy: true, error: undefined })
+      const fetchTool = async (name: string, args: Json) => {
+        const result = await app.callServerTool({ name, arguments: args }, { signal: request!.signal })
+        const data = result.structuredContent as Json | undefined
+        if (result.isError || !data || toolFor(data) !== name) throw new Error(result.isError ? message(result) : '表示できない結果です')
+        return { data: data as ViewData, meta: result._meta }
+      }
+      try {
+        const found = await fetchTool('search_expenditure_nodes', {
+          document_kind: from.document_kind,
+          fiscal_year: { min: from.fiscal_year, max: from.fiscal_year },
+          where: {
+            jurisdiction_code: { eq: [from.jurisdiction_code] },
+            account_name: { eq: [from.account_name] },
+            node_kind: { eq: [kind] },
+            kan_name: { eq: [from.kan_name] },
+            ...(kind === '項' && from.kou_name ? { kou_name: { eq: [from.kou_name] } } : {}),
+          },
+          page_size: 1,
+        })
+        if (disposed || id !== epoch) return
+        const target = 'nodes' in found.data ? found.data.nodes[0] : undefined
+        if (!target) throw new Error(`${kind === '款' ? from.kan_name : from.kou_name}が見つかりませんでした`)
+        const args = { document_kind: target.document_kind, node_id: target.node_id }
+        const opened = await fetchTool('get_expenditure_node', args)
+        if (disposed || id !== epoch) return
+        update({
+          entry: { tool: 'get_expenditure_node', args, data: opened.data, revision: id },
+          // 明細の履歴は別の枝なので捨て、来た一覧には経路の会計から戻れるように残す
+          history: state.history.filter((e) => !('node' in e.data)),
+          names: { ...state.names, ...namesOf(opened.meta) },
+        })
+      } catch (error) {
+        if (!disposed && id === epoch)
+          update({ error: `取得に失敗しました: ${error instanceof Error ? error.message : String(error)}` })
+      } finally {
+        if (id === epoch) {
+          request = undefined
+          update({ busy: false })
+        }
+      }
+    },
+    /** 経路の index 番目の画面に戻り、その先の履歴を捨てる */
+    backTo(index: number) {
       invalidate()
-      const entry = state.history.at(-1)
+      const entry = state.history[index]
       if (entry)
         update({
           entry,
-          history: state.history.slice(0, -1),
+          history: state.history.slice(0, index),
           busy: false,
           error: undefined,
         })
+    },
+    /** 全画面に対応しない host では何もしない（View はその場で表示を差し替える） */
+    setFullscreen(active: boolean) {
+      if (!state.fullscreen.available || state.fullscreen.active === active) return
+      void app
+        .requestDisplayMode({ mode: active ? 'fullscreen' : 'inline' })
+        .then(({ mode }) => update({ fullscreen: { ...state.fullscreen, active: mode === 'fullscreen' } }))
+        .catch(() => {})
+    },
+    /**
+     * チャットに利用者のメッセージを送り、AI に tool を呼び直させる。View の中で画面を移すのではなく、
+     * 新しい問いとして会話に残し、AI が結果を受け取って続きを答えられるようにする。
+     */
+    ask(text: string) {
+      // 送っている間は busy にして、連打で同じ問いを重ねて送らない
+      if (disposed || state.busy) return
+      update({ busy: true, error: undefined })
+      void app
+        .sendMessage({ role: 'user', content: [{ type: 'text', text }] })
+        .then((result) => { if (result.isError) update({ error: 'チャットに送れませんでした' }) })
+        .catch((error) => update({ error: `チャットに送れませんでした: ${String(error)}` }))
+        .finally(() => { if (!disposed) update({ busy: false }) })
+    },
+    /** 利用者が View で見ている対象を AI に伝え、続けてチャットで聞かれたときに指せるようにする */
+    tellModel(text: string) {
+      if (disposed) return
+      void app.updateModelContext({ content: [{ type: 'text', text }] }).catch(() => {})
     },
     openLink: (url: string) => {
       void app

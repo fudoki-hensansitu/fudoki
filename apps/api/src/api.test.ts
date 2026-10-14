@@ -251,7 +251,7 @@ describe('search', () => {
   test('SQL インジェクションの値は bind される', async () => {
     const body = await (await search({ where: { name: { eq: [`x' OR 1=1 --`], prefix: `"; DROP TABLE control; --` } } })).json()
     expect(body.nodes).toEqual([])
-    expect(sqlite.query('SELECT count(*) AS n FROM control').get()).toEqual({ n: 1 })
+    expect(sqlite.query('SELECT count(*) AS n FROM control').get()).toEqual({ n: 4 })
   })
 
   test('旧 GET の一覧は無い', async () => {
@@ -316,6 +316,7 @@ describe('columns と OpenAPI', () => {
     expect(doc.openapi).toBe('3.1.0')
     expect(Object.keys(doc.paths).sort()).toEqual([
       '/health',
+      '/v1/evaluations:search',
       '/v1/expenditure/columns',
       '/v1/expenditure/nodes/{document_kind}/{node_id}',
       '/v1/expenditure/nodes:search',
@@ -353,6 +354,7 @@ describe('MCP', () => {
       'describe_expenditure_columns',
       'get_expenditure_node',
       'list_jurisdictions',
+      'search_evaluations',
       'search_expenditure_nodes',
     ])
     const res = await call('search_expenditure_nodes', { ...base, where: { node_kind: { eq: ['目'] } }, page_size: 1 })
@@ -654,7 +656,8 @@ describe('offset の上限', () => {
   test('打ち切りの説明が tool と OpenAPI にある', async () => {
     const res = await mcp({ jsonrpc: '2.0', id: 1, method: 'tools/list' })
     const body = await rpcBody(res)
-    for (const tool of body.result.tools.filter((t: { name: string }) => t.name !== 'describe_expenditure_columns') as { name: string; outputSchema: any }[])
+    // 評価の検索は頁を返す操作で、next_page_token を持たない
+    for (const tool of body.result.tools.filter((t: { name: string }) => !['describe_expenditure_columns', 'search_evaluations'].includes(t.name)) as { name: string; outputSchema: any }[])
       expect(tool.outputSchema.properties.next_page_token.description, tool.name).toContain('それ以上')
     const doc = await (await get('/openapi.json')).json()
     const schema = doc.paths['/v1/expenditure/nodes:search'].post.responses['200'].content['application/json'].schema
@@ -698,6 +701,7 @@ describe('MCP 2026-07-28', () => {
       'describe_expenditure_columns',
       'get_expenditure_node',
       'list_jurisdictions',
+      'search_evaluations',
       'search_expenditure_nodes',
     ])
     const res = await modern('tools/call', { name: 'search_expenditure_nodes', arguments: valid }, { 'Mcp-Name': 'search_expenditure_nodes' })
