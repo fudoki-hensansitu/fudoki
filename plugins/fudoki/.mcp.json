@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "fudoki": {
+      "type": "http",
+      "url": "https://api.fudoki.dev/mcp"
+    }
+  }
+}

@@ -48,7 +48,7 @@ export const SEARCH_EXAMPLE = {
 }
 
 export const SUM_RULES = [
-  '款・項・目の金額は原典に印字された値で、比較に和は要らない。',
+  '比較には提供された款・項・目の金額を使い、親と子を混ぜて合算しない。当初予算CSVの親金額は子の和から生成した値で、原典の印字値ではない。',
   'COFOG で比べるときは cofog_code の前方一致で目（node_kind = "目"）を集めて足す。assigned の目には COFOG のコードが一つだけ付くので二重計上は起きない。',
   'division のコードだけを持つ目（例: "10"）は配下のどの group に属するか決まっていない。"10.2*" の和にはそうした目を含めない。',
   '同じ団体・年度・資料区分・会計の目について、COFOG の全 division の和と、cofog_status が unclassifiable と out-of-scope の目の和を足すと歳出の総額になる。',

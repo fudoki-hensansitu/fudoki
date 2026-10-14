@@ -1,0 +1,12 @@
+{
+  "name": "fudoki",
+  "version": "0.1.0",
+  "description": "日本の自治体の歳出を事業の単位で検索し、収録範囲と原典を確かめて比較・集計する。",
+  "author": {
+    "name": "渡部唯登"
+  },
+  "homepage": "https://docs.fudoki.dev",
+  "repository": "https://github.com/wwwyo/fudoki",
+  "mcpServers": "./.mcp.json",
+  "license": "MIT"
+}
