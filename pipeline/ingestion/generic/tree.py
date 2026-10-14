@@ -1247,6 +1247,8 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
         mark = next((m for m in ordered_marks
                      if (shape_of(item) == shapes[m] if m in shapes else raw.startswith(normalize(m)))), None)
         if note:
+            if id(item) in column_amount_items:
+                raise ValueError(f'Configured note carries separate-column money: p{item.page} {item.name!r}')
             item.role = 'annotation'
         elif mark is not None and item.role in ('node', 'note'):
             if marks[mark] == '説明':
@@ -1262,6 +1264,8 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
                 and item.page == previous.page and abs(item.indent - previous.indent) <= 3
                 and bisect_right(subject_starts, previous.anchor) == bisect_right(subject_starts, item.anchor)
                 and 0 <= item.y0 - previous.y1 <= max(g.y1 - g.y0 for g in item.glyphs)):
+            if previous.role == 'annotation' and id(item) in column_amount_items:
+                raise ValueError(f'Configured note carries separate-column money: p{item.page} {item.name!r}')
             if item.role == 'node' and previous.role == 'note':
                 previous.role = 'node'
             previous.name += item.name
@@ -1269,10 +1273,11 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
             previous.amounts += item.amounts
             previous.kinds += item.kinds
             continue
-        fitted = settings.get('fitted_names')
+        result.append(item)
+    fitted = settings.get('fitted_names')
+    for item in result:
         if fitted and item.role == 'node' and len(item.name) > fitted['chars']:
             item.indent += fitted['overflow_left_chars'] * (item.lines[0][0].y1 - item.lines[0][0].y0)
-        result.append(item)
     return result
 
 
@@ -1357,6 +1362,12 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     column_amount_items.add(id(target))
                 if target is not None and target.role == 'note':
                     target.role = 'node'
+                if layout:
+                    note_target = owner(money, band, ordered, found, roles=('node', 'repeat', 'total', 'note', 'annotation'))
+                    prefixes = tuple(normalize(p) for p in layout.get(note_target.group.axis, {}).get('notes', [])) \
+                        if note_target is not None else ()
+                    if note_target is not None and normalize(text(note_target.lines[0])).startswith(prefixes):
+                        column_amount_items.add(id(note_target))
         all_items.append((logical, ordered, found))
     # A subject's name can cross a rule of its narrow name column while its amount cell stays whole.
     # The next line without a code or amount is still the name, not a deeper subject (`センタ－費`).

@@ -30,7 +30,7 @@
     {
       "table_id": "long-term-care-expenditure",
       "conversion_id": "long-term-care-settlement",
-      "input_fingerprint": "235479963128b68e765b7b2dbd180e3e3400f0af85360f326e47020c5c0e9d05",
+      "input_fingerprint": "04b2e831fdd898a3188d5f4df6308bdb2355086fb614f0d1fe6b851843cdf089",
       "account": "介護保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",

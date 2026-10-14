@@ -71,7 +71,7 @@
     {
       "table_id": "land-readjustment-expenditure",
       "conversion_id": "land-readjustment-settlement",
-      "input_fingerprint": "061112c42c9b57e012d0e60fc5b171f64af0d9251fe4ed2c18d18be2db55b2b8",
+      "input_fingerprint": "e0c5f2eafcd513b0eebc49617f3c6f0d46daaf8bf7f6716af059d13a2f9a3ce9",
       "account": "土地区画整理事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent'}。",

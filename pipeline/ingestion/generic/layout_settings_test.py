@@ -82,6 +82,43 @@ class LayoutHintsTest(unittest.TestCase):
         self.assertEqual([item.indent for item in result], [89, 89])
         self.assertEqual([(item.lines, item.amounts) for item in result], before)
 
+    def test_fitted_frame_is_applied_once_after_wrap_finishes(self):
+        for name in ('特定給付', '特定給付事業費'):
+            with self.subTest(first_name=name):
+                first = self.item('1.' + name, '1', name, 80, 10)
+                last = self.item('補助費', None, '補助費', 89, 23, '100')
+                result = apply_layout([first, last], {'wrap': 'amount_on_last_line',
+                                                    'fitted_names': {'chars': 5, 'overflow_left_chars': 1}}, set())
+                self.assertEqual([(item.name, item.indent) for item in result], [(name + '補助費', 98)])
+                self.assertEqual(result[0].amounts[0][1][0].text, '100')
+
+    def test_configured_note_with_separate_column_money_stops_real_build(self):
+        subject = Band(0, 40, 1, ('款',), [20, 100], 20, 100, kind='label')
+        remarks = Band(40, 140, 1, ('備考',), [20, 100], 20, 100, kind='label')
+        money = Band(140, 200, 1, ('支出済額',), [20, 100], 20, 100, kind='amount')
+        subject.words = [Glyph('1 民生費', 5, 30, 35, 39, 1, 0)]
+        remarks.words = [Glyph('※指定注記', 50, 50, 110, 59, 1, 0)]
+        money.words = [Glyph('100', 160, 50, 190, 59, 1, 0)]
+        logicals = [Logical([1], [subject, remarks, money], '円', [])]
+        self.assertEqual(build(logicals).amounts[0]['amount_text'], '100')
+        with self.assertRaisesRegex(ValueError, 'note carries separate-column money'):
+            build(logicals, layout={'備考': {'notes': ['※指定']}})
+        remarks.words = [Glyph('○同目へ流用', 50, 50, 110, 59, 1, 0)]
+        with self.assertRaisesRegex(ValueError, 'note carries separate-column money'):
+            build(logicals, layout={'備考': {'notes': ['○同目']}})
+
+    def test_note_continuation_with_separate_column_money_stops_before_join(self):
+        subject = Band(0, 40, 1, ('款',), [20, 100], 20, 100, kind='label')
+        remarks = Band(40, 140, 1, ('備考',), [20, 100], 20, 100, kind='label')
+        money = Band(140, 200, 1, ('支出済額',), [20, 100], 20, 100, kind='amount')
+        subject.words = [Glyph('1 民生費', 5, 30, 35, 39, 1, 0)]
+        remarks.words = [Glyph('※指定注記', 50, 50, 110, 59, 1, 0), Glyph('続き', 50, 63, 75, 72, 1, 0)]
+        money.words = [Glyph('100', 160, 63, 190, 72, 1, 0)]
+        logicals = [Logical([1], [subject, remarks, money], '円', [])]
+        self.assertEqual(build(logicals).amounts[0]['amount_text'], '100')
+        with self.assertRaisesRegex(ValueError, 'note carries separate-column money'):
+            build(logicals, layout={'備考': {'notes': ['※指定']}})
+
     def test_absent_hints_do_not_change_items(self):
         items = [self.item('1.事業', '1', '事業', 80, 10), self.item('費', None, '費', 89, 23, '100')]
         before = deepcopy(items)
