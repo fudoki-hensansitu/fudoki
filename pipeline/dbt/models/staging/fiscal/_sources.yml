@@ -804,6 +804,22 @@ sources:
       direction: expenditure
       table_id: late-elderly-medical-setsu
       kind: nodes
+  - name: j132136_elderly_medical_expenditure_amounts
+    meta:
+      jurisdiction: '132136'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: elderly-medical-expenditure
+      kind: amounts
+  - name: j132136_elderly_medical_expenditure_nodes
+    meta:
+      jurisdiction: '132136'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: elderly-medical-expenditure
+      kind: nodes
   - name: j132136_general_expenditure_amounts
     meta:
       jurisdiction: '132136'
@@ -819,6 +835,38 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: general-expenditure
+      kind: nodes
+  - name: j132136_long_term_care_expenditure_amounts
+    meta:
+      jurisdiction: '132136'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: long-term-care-expenditure
+      kind: amounts
+  - name: j132136_long_term_care_expenditure_nodes
+    meta:
+      jurisdiction: '132136'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: long-term-care-expenditure
+      kind: nodes
+  - name: j132136_national_health_insurance_expenditure_amounts
+    meta:
+      jurisdiction: '132136'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-insurance-expenditure
+      kind: amounts
+  - name: j132136_national_health_insurance_expenditure_nodes
+    meta:
+      jurisdiction: '132136'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-insurance-expenditure
       kind: nodes
   - name: j132209_elderly_medical_expenditure_amounts
     meta:

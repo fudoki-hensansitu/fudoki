@@ -958,6 +958,42 @@ class PatternNamesTest(unittest.TestCase):
 
 
 class SubjectContinuationTest(unittest.TestCase):
+    def build_indented_subjects(self, extra_x=65, extra_y=92, extra_amount=None):
+        from ingestion.generic.layout import Logical
+        from ingestion.generic.tree import build
+        logicals = []
+        for page in (1, 2):
+            label = Band(0, 140, page, ('科目',), [70, 90, 100, 110, 124, 180], 70, 180, kind='label')
+            value = Band(140, 220, page, ('支出済額',), [70, 100, 124, 180], 70, 180, kind='amount')
+            make = lambda text, x, y, width: Glyph(text, x, y, x + width, y + 9, page, 0)
+            label.words = [make(str(page), 5, 80, 5), make('分担金及び負', 65, 80, 60),
+                           make('担金', extra_x, extra_y, 20),
+                           make('1', 15, 104, 5), make('広域連合負担', 65, 104, 60),
+                           make('金', 65, 116, 10),
+                           make('1', 25, 128, 5), make('広域連合分賦金', 65, 128, 70)]
+            value.words = [make('100', 160, y, 30) for y in (80, 104, 128)]
+            if extra_amount:
+                value.words.append(make(extra_amount, 160, extra_y, 30))
+            logicals.append(Logical([page], [label, value], '円', []))
+        return build(logicals, pattern='indent')
+
+    def test_indented_names_join_before_learning_the_three_subject_levels(self):
+        built = self.build_indented_subjects()
+        self.assertEqual([(n['name_text'], n['depth']) for n in built.nodes],
+                         [('分担金及び負担金', 1), ('広域連合負担金', 2), ('広域連合分賦金', 3)] * 2)
+        self.assertEqual([a['amount_text'] for a in built.amounts], ['100'] * 6)
+        self.assertEqual((built.nodes[0]['y0'], built.nodes[0]['y1']), (80, 101))
+        self.assertEqual([n['parent_node_key'] for n in built.nodes[1:3]],
+                         [built.nodes[0]['node_key'], built.nodes[1]['node_key']])
+        self.assertEqual(built.unowned, [])
+
+    def test_indented_codeless_lines_at_another_name_position_or_with_money_stay_separate(self):
+        for options in ({'extra_x': 70}, {'extra_amount': '7'}):
+            with self.subTest(options=options):
+                built = self.build_indented_subjects(**options)
+                self.assertEqual(sum(n['name_text'] == '担金' for n in built.nodes), 2)
+                self.assertEqual(sum(n['name_text'] == '分担金及び負担金' for n in built.nodes), 0)
+
     def test_a_name_fragment_does_not_split_the_annotation_breakdown_of_its_subject(self):
         from ingestion.generic.layout import Logical
         from ingestion.generic.tree import build

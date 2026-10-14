@@ -1255,8 +1255,6 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 group_items = items(group, header, margins.get(group.axis), roles, limits.get(group.axis), logical.ocr)
             elif group.mode == 'indent':
                 group_items = items(group, group.axis)
-                for item in group_items:
-                    item.indent = item.glyphs[0].x0  # where the line starts, code or name
             else:
                 group_items = subject_items(group)
             for item in group_items:
@@ -1302,7 +1300,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
     # The next line without a code or amount is still the name, not a deeper subject (`センタ－費`).
     for _, ordered, found in all_items:
         for group in ordered:
-            if not group.subject or group.mode not in ('bands', 'names'):
+            if not group.subject:
                 continue
             kept = []
             for item in found[id(group)]:
@@ -1311,12 +1309,17 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                         and previous.role == item.role == 'node' and item.code is None and item.name
                         and not item.amounts and id(item) not in column_amount_items
                         and not TOTAL.search(item.name) and item.page == previous.page
-                        and group.bands[item.level].header[-1] == group.bands[previous.level].header[-1]
+                        and (abs(item.indent - previous.indent) <= 3 if group.mode == 'indent' else
+                             group.bands[item.level].header[-1] == group.bands[previous.level].header[-1])
                         and 0 <= item.y0 - previous.y1 <= max(g.y1 - g.y0 for g in item.glyphs)):
                     previous.name += item.name
                     previous.lines += item.lines
                     continue
                 kept.append(item)
+            if group.mode == 'indent':
+                # Join at the name's position before learning subject levels from the code's start.
+                for item in kept:
+                    item.indent = item.glyphs[0].x0
             found[id(group)] = kept
     # A subject name cut at the foot of a page continues without a number or amount at the next page's
     # start (`8 市立社会福祉` / `センター費`). Keep its first-page position; a box cannot span two pages.
