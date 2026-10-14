@@ -1,5 +1,5 @@
 import { Database } from 'bun:sqlite'
-import { readFileSync } from 'node:fs'
+import { readdirSync, readFileSync } from 'node:fs'
 import columnsJson from './columns.json'
 import type { Db, Statement } from './db'
 
@@ -39,7 +39,8 @@ function createTables(sqlite: Database) {
 
 export function testDb(): { db: Db; sqlite: Database } {
   const sqlite = new Database(':memory:')
-  sqlite.exec(readFileSync(new URL('../migrations/0001_init.sql', import.meta.url), 'utf8'))
+  const migrations = new URL('../migrations/', import.meta.url)
+  for (const file of readdirSync(migrations).filter((f) => f.endsWith('.sql')).sort()) sqlite.exec(readFileSync(new URL(file, migrations), 'utf8'))
   createTables(sqlite)
   const db: Db = {
     prepare: (sql) => new SqliteStatement(sqlite, sql),

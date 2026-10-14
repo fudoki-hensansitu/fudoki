@@ -13,6 +13,7 @@ user-invocable: false
 | やること | 読む reference |
 | --- | --- |
 | 公開直後に特定クライアントだけ 403 になる | [references/cloudflare-zone.md](references/cloudflare-zone.md) |
+| 事業の評価の検索を止める・上限を変える・migration を適用する | [references/evaluation-search.md](references/evaluation-search.md) |
 
 ## 関連 skill
 
