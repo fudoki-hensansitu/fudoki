@@ -289,8 +289,14 @@ def _cell(band: Band, y: float) -> tuple[float, float]:
     return (above[-1] if above else band.body_top, below[0] if below else band.body_bottom)
 
 
-def _split_line(line: list[Glyph]) -> tuple[list[Glyph], list[list[Glyph]]]:
+def _split_line(line: list[Glyph], amount_brackets: bool = False) -> tuple[list[Glyph], list[list[Glyph]]]:
     parts = runs(line)
+    if amount_brackets and normalize(text(line)).endswith(')'):
+        for start in range(len(parts) - 1, -1, -1):
+            tail = [g for part in parts[start:] for g in part]
+            shown = normalize(text(tail))
+            if shown.startswith('(') and shown.endswith(')') and number(shown) is not None:
+                return [g for part in parts[:start] for g in part], [tail]
     # The unit mark printed after an amount (`12,409,365 円`, or touching it: `393,230円`) is not part of the
     # name and not a digit: the amount stays the line's last run.
     if parts and len(parts[-1]) == 1 and YEN_AMOUNT.fullmatch(normalize(parts[-1][0].text)):
@@ -393,11 +399,11 @@ def _margins(label: list[Glyph]) -> tuple[int, int]:
     return round(first.x0), 10000 + round(first.x0 + width)
 
 
-def entries_of(group: Group, margins: set[int] | None = None) -> list[tuple]:
+def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: bool = False) -> list[tuple]:
     """Printed lines of a label group as (label glyphs, amount runs, code, name)."""
     entries = []
     for line in lines([w for band in group.bands for w in band.words]):
-        label, money = _split_line(line)
+        label, money = _split_line(line, amount_brackets)
         line_text = normalize(text(label))
         code, name = _split_code(line_text)
         raw_text = text(label).strip()
@@ -452,12 +458,13 @@ def line_limits(logicals: list[Logical]) -> dict[str, float]:
 
 
 def items(group: Group, header: str, margins: set[int] | None = None,
-          roles: dict[int, str] | None = None, limit: float | None = None, ocr: bool = False) -> list[Item]:
+          roles: dict[int, str] | None = None, limit: float | None = None, ocr: bool = False,
+          amount_brackets: bool = False) -> list[Item]:
     """Lines of a label group into items; amounts printed inside the group stay on their item.
 
     `roles` (variant B) replaces the geometric decisions for codeless lines.
     """
-    entries = entries_of(group, margins)
+    entries = entries_of(group, margins, amount_brackets)
     # A name that begins with a count, glued to its number (`82歳児歯科健診事業` = `8` + `2歳児…`,
     # `42025年農林業センサス費` = `4` + `2025年…`): the number is the one that follows the number before it
     # in this list. Only a line at a number's margin with a counter after its digits is read so.
@@ -568,7 +575,8 @@ def items(group: Group, header: str, margins: set[int] | None = None,
             result.append(item)
             continue
         whole = normalize(text(line_of(label, money)))
-        if previous is not None and code is None and whole[:1] in '(（' and whole[-1:] in ')）':
+        if (previous is not None and code is None and whole[:1] in '(（' and whole[-1:] in ')）'
+                and not (amount_brackets and money)):
             previous.lines.append(label + [g for run in money for g in run])
             previous.name += whole  # a parenthesised remark on the previous item, not an amount of it
             continue
@@ -1319,7 +1327,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             if judge is not None and not group.subject:
                 roles = judged_roles(judge, group, margins.get(group.axis))
             if not group.subject:
-                group_items = items(group, header, margins.get(group.axis), roles, limits.get(group.axis), logical.ocr)
+                group_items = items(group, header, margins.get(group.axis), roles, limits.get(group.axis), logical.ocr,
+                                    bool(layout and layout.get(group.axis, {}).get('amount_brackets')))
             elif group.mode == 'indent':
                 group_items = items(group, group.axis)
             else:
@@ -1452,6 +1461,15 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     found[id(group)] = apply_layout(found[id(group)], layout[group.axis], column_amount_items,
                                                    subject_starts)
                 note_breakdown(found[id(group)], subject_starts)
+    for axis, hints in (layout or {}).items():
+        if not (chars := hints.get('indent_chars')):
+            continue
+        axis_items = [i for _, ordered, found in all_items for g in ordered if not g.subject and g.axis == axis
+                      for i in found[id(g)] if i.role == 'node']
+        origin = min((i.indent - i.group.x0 for i in axis_items), default=0)
+        for item in axis_items:
+            if item.level is None:
+                item.level = round((item.indent - item.group.x0 - origin) / (chars * (item.lines[0][0].y1 - item.lines[0][0].y0)))
     # Subject levels by indentation, learned over the document (pattern indent).
     starts = sorted(i.indent for _, ordered, found in all_items for g in ordered if g.subject and g.mode == 'indent'
                     for i in found[id(g)] if i.role == 'node')
