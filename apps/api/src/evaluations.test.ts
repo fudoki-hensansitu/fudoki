@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, spyOn, test } from 'bun:test'
 import type { Database } from 'bun:sqlite'
+import { CfWorkerJsonSchemaValidator } from '@modelcontextprotocol/server/validators/cf-worker'
 import { createApp, OPENAPI_CONFIG } from './app'
 import type { Db } from './db'
 import { IP_RATE_LIMIT } from './evaluation-limits'
@@ -70,7 +71,7 @@ let searchImpl: (request: AiSearchRequest) => Promise<{ chunks?: AiSearchChunk[]
 let rateLimitImpl: () => Promise<{ success: boolean }>
 let doState: ReturnType<typeof fakeState>
 let logs: string[]
-const app = createApp([...operations, searchEvaluationsOperation])
+const app = createApp()
 
 const env = () => ({
   DB: db,
@@ -112,18 +113,48 @@ describe('公開の範囲', () => {
     expect(config.worker.env.EVALUATION_RATE_LIMIT.simple).toEqual(IP_RATE_LIMIT)
   })
 
-  test('operations の一覧に入っておらず、既定の app の REST・OpenAPI・MCP に出ない', async () => {
-    expect(operations.map((o) => o.name)).not.toContain('search_evaluations')
-    const plain = createApp()
-    const doc = await (await plain.request('/openapi.json', {}, { DB: db })).json()
-    expect(Object.keys(doc.paths).some((p) => p.includes('evaluations'))).toBe(false)
+  test('operations の一覧の末尾に登録してあり、既存の操作の順序は変わらない', () => {
+    expect(operations.map((o) => o.name)).toEqual([
+      'list_jurisdictions',
+      'search_expenditure_nodes',
+      'get_expenditure_node',
+      'describe_expenditure_columns',
+      'search_evaluations',
+    ])
+    expect(operations.at(-1)).toBe(searchEvaluationsOperation)
+  })
+
+  test('既定の app の REST・OpenAPI・MCP に出る。429 を持つのはこの操作と原典 PDF の中継だけ', async () => {
+    const doc = await (await app.request('/openapi.json', {}, { DB: db })).json()
+    expect(Object.keys(doc.paths)).toContain('/v1/evaluations:search')
     for (const [path, item] of Object.entries<any>(doc.paths)) {
       if (path.includes('/pdf')) continue
-      for (const operation of Object.values<any>(item)) expect(Object.keys(operation.responses), path).not.toContain('429')
+      for (const operation of Object.values<any>(item))
+        expect(Object.keys(operation.responses).includes('429'), path).toBe(path === '/v1/evaluations:search')
     }
-    expect((await plain.request('/v1/evaluations:search', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(valid) }, { DB: db })).status).toBe(404)
-    const list = await mcpRpc(plain, 'tools/list')
-    expect(list.result.tools.map((t: { name: string }) => t.name)).not.toContain('search_evaluations')
+    const list = await mcpRpc(app, 'tools/list')
+    expect(list.result.tools.map((t: { name: string }) => t.name)).toContain('search_evaluations')
+  })
+
+  test('evaluation_search が off（migration の初期値）なら REST は 503、MCP は isError と UNAVAILABLE。流量・総数・AI Search に届かない', async () => {
+    const fresh = testDb()
+    const e = { ...env(), DB: fresh.db }
+    expect(fresh.sqlite.query(`SELECT value FROM control WHERE key = 'evaluation_search'`).get()).toEqual({ value: 'off' })
+
+    const res = await post(valid, e)
+    expect(res.status).toBe(503)
+    expect((await res.json()).error.code).toBe('UNAVAILABLE')
+
+    const body = await mcpRpc(app, 'tools/call', { name: 'search_evaluations', arguments: valid }, e)
+    expect(body.result.isError).toBe(true)
+    expect(JSON.parse(body.result.content[0].text).error.code).toBe('UNAVAILABLE')
+
+    // 収録していない団体・年度でも、止まっているあいだは not_covered ではなく 503
+    expect((await post({ ...valid, fiscal_year: 2024 }, e)).status).toBe(503)
+
+    expect(order).toEqual([])
+    expect(requests).toEqual([])
+    expect(doState.map.size).toBe(0)
   })
 
   test('登録すると OpenAPI に 429 つきで出て、MCP の tool になる', async () => {
@@ -412,6 +443,22 @@ describe('抜粋', () => {
     expect(none.endsWith('…')).toBe(true)
   })
 
+  test('空白で分けた語は2文字以上だけを試す。1文字の語が先に一致して位置をずらさない', () => {
+    const pad = 'あ'.repeat(200)
+    // 「の」は先頭近くにあるが、検索文の語としては1文字なので使わない
+    const body = `この${pad}防災分野${pad}`
+    expect(makeExcerpt(body, 'の 防災分野')).toContain('防災分野')
+    expect(makeExcerpt(body, '防災分野 の')).toContain('防災分野')
+    // 2文字の語は試す
+    expect(makeExcerpt(`${pad}防災${pad}`, '無い 防災')).toContain('防災')
+    // 1文字の語しか無ければ、3文字の部分列も無いので本文の先頭
+    const none = makeExcerpt(`${'い'.repeat(200)}の${'い'.repeat(200)}`, 'の 無')
+    expect(none.startsWith('い')).toBe(true)
+    expect(none).not.toContain('の')
+    // 3文字以上の部分列は、空白をまたがない限り従来どおり使う
+    expect(makeExcerpt(`${pad}防災分野${pad}`, 'の ふが防災分野')).toContain('防災分')
+  })
+
   test('文字数は Unicode の文字（コードポイント）で数える', () => {
     const text = makeExcerpt('𠮷'.repeat(300), '𠮷')
     expect(len(text)).toBe(150)
@@ -592,6 +639,24 @@ describe('上限と kill switch の順序', () => {
     expect(body.result.isError).toBeUndefined()
     expect(body.result.structuredContent.status).toBe('candidates')
     expect(JSON.parse(body.result.content[0].text)).toEqual(body.result.structuredContent)
+  })
+
+  test('MCP の structuredContent が tools/list の outputSchema（JSON Schema）に通る', async () => {
+    const list = await mcpRpc(app, 'tools/list')
+    const schema = list.result.tools.find((t: { name: string }) => t.name === 'search_evaluations').outputSchema
+    const validator = new CfWorkerJsonSchemaValidator().getValidator(schema)
+    for (const [args, search] of [
+      [valid, undefined],
+      [{ ...valid, fiscal_year: 2024 }, undefined],
+      [valid, async () => ({ chunks: [] })],
+    ] as const) {
+      if (search) searchImpl = search
+      const body = await mcpRpc(app, 'tools/call', { name: 'search_evaluations', arguments: args }, env())
+      expect(body.result.isError).toBeUndefined()
+      const result = validator(body.result.structuredContent)
+      expect(result.valid, result.valid ? '' : result.errorMessage).toBe(true)
+    }
+    expect(validator({ status: 'candidates', documents: [], candidates: [], notes: [], extra: 1 }).valid).toBe(false)
   })
 })
 

@@ -2,7 +2,7 @@
 
 担当者: wwwyo / Claude
 更新日: `2026-10-14`
-状態: In Review — 実装設計。手順1（原典の保存）・手順2（頁単位の索引の登録・検索だけの比較）・手順3（検索の操作、未登録）は実装済み。手順4以降と公開は未着手
+状態: In Review — 実装設計。手順1（原典の保存）・手順2（頁単位の索引の登録・検索だけの比較）・手順3（検索の操作）は実装済み。手順5のうち、操作の登録・plugin の skill・docs とローカルの開発サーバーでの確かめも実装済み（`evaluation_search` は `off` のまま）。手順4（利用条件の確認の記録）、`on` への切り替えと公開直後の確かめ、手順6以降は未着手
 
 ## Summary
 
@@ -361,13 +361,35 @@ flowchart TD
 
 1. 原典の保存（小）: key・schema・`archive.ts` の一般化と試験、2団体の評価資料の保存。決算書と共有する保存の処理を変えるので、`archive.test.ts` の既存の試験を保つ。
 2. 索引の登録と検索だけの比較（小）: `instance.json`、登録の script と計画の単体試験、`fudoki-evaluation-v1` の作成。新しい索引で、text の `fiscal_year` で全文検索の側が返ることと、1頁の PDF の chunk の見出しの形を確かめ、[検証の1](#次の検証で確かめること)で頁単位と文書単位を比べる。実装済み（2026-10-14）。インスタンス `fudoki-evaluation-v1`（同日作成、公開エンドポイント無効）に、北区108頁・中野区の本冊63頁・別冊75頁の計246 item を R2 の原典から登録し、全件 completed・1 item が 1 chunk になった。`cf ai-search items upload` は item の key を `--file` の basename にして `/` で区切れないため、key は `<origin_sha256>_p<物理頁4桁>.pdf` とする。他の節の `<origin_sha256>/p…` は手順3の PR でこの形に直した。
-3. 検索の操作（中）: `evaluations.ts`・429・kill switch の key・回数の上限・binding（catalog の生成は手順2で済み）。実装済み（2026-10-14）。手順5までは `operations` の一覧に登録しない。main に入ると API は自動でデプロイされ、MCP の tool の一覧に出るためである。試験は偽の AI Search で、状態の分類・部分的な失敗と時間切れ・照合で捨てる chunk・全件を捨てたときの503・設定の固定・上限の順序を確かめる。
+3. 検索の操作（中）: `evaluations.ts`・429・kill switch の key・回数の上限・binding（catalog の生成は手順2で済み）。実装済み（2026-10-14）。手順5までは `operations` の一覧に登録しなかった（main に入ると API は自動でデプロイされ、MCP の tool の一覧に出るため）。試験は偽の AI Search で、状態の分類・部分的な失敗と時間切れ・照合で捨てる chunk・全件を捨てたときの503・設定の固定・上限の順序を確かめる。
 4. 利用条件の確認（小）: 2団体の資料の利用条件と、固定した原典への到達方法を決める。
-5. 試験公開: 操作を `operations` に登録し、binding・migration・plugin の skill・docs を足す。[公開の条件](#公開拡大の前に満たす条件)を確かめてから `evaluation_search` を `on` にする。
+5. 試験公開: 操作を `operations` に登録し、binding・migration・plugin の skill・docs を足す。[公開の条件](#公開拡大の前に満たす条件)を確かめてから `evaluation_search` を `on` にする。登録・skill・docs・ローカルでの確かめは実装済み（2026-10-14）。`operations` の末尾に足した（既存の操作の順序は変えない）。MCP Apps の View は対象外で、`search_evaluations` は構造化された結果だけを返す。plugin は `find-evaluation` skill を足し、version を 0.2.0 にした。docs は MCP の tool の表、データの読み方（収録範囲と、所在と短い抜粋だけを返すこと）、利用規約・プライバシーポリシーを直した。`evaluation_search` を `on` にすることと、公開の直後の確かめは未実施。[ローカルでの確かめ](#ローカルの開発サーバーでの確かめ)の結果は下にある。
 6. 精度の測定と改善（公開と並行）: [検証の3](#次の検証で確かめること)で回答と引用を測り、必要なら A・B・C を比べる。
 7. 拡大: ほかの団体・年度を足す。
 
 `fudoki-eval-trial-v1` は、手順2で文書単位の比較に使うまで残す。比較が2026-11-01より後になる場合でも、保存は原典の PDF で約13MB と無料枠に収まり、検索しなければ費用は増えない。比較は2026-10-14に終えた。削除は未実施で、2026-11-01の課金開始前に必要性を判断する。
+
+### ローカルの開発サーバーでの確かめ
+
+公開の条件の最後の項目のうち、AI Search を実際に呼ぶ部分を、ローカルの開発サーバー（`cf dev`）で確かめた（2026-10-14）。D1 はローカル（空の DB に `migrations/0001`・`0002` を当てた）、AI Search だけ remote binding で本番の索引 `fudoki-evaluation-v1` を読み取りで呼んだ（検索は16回）。本番の設定・資源は変えていない。方法とハマりどころは `.agents/skills/cloudflare-api-ops/references/evaluation-search.md` にある。
+
+| 確かめた項目 | 結果 |
+| --- | --- |
+| `evaluation_search` が `off` | REST は503 `UNAVAILABLE`、MCP は `isError` と `UNAVAILABLE`。ログは `stopped` だけで、検索に届かない |
+| 北区 131172・2025・「防災分野におけるデジタル化の推進」 | 200 `candidates`、5件（物理頁 3・70・7・8・69）。正解の事業の頁は70で順位は2。各候補は `page`・`page_url`（`url#page=頁`）・`origin_sha256` と、150文字以内の `excerpt` だけを持ち、本文の全文は無い |
+| 中野区 131148・2025・「防災対策・地域防災の推進」（本冊に載る施策名） | 200 `candidates`。本冊の物理頁27が先頭。`documents` に本冊・別冊の2件 |
+| 2024年度（収録なし） | 200 `not_covered`。ログに `not_covered` だけで検索のログが無く、AI Search を呼んでいない |
+| IP の流量（1分10回） | 同時に12件送り、10件が200、2件が429（`Retry-After: 60`、本文に `retry_after_seconds: 60`）。429の2件は AI Search を呼んでいない |
+| 日ごとの総数 | `control` の `evaluation_search_per_day` を `2` に下げると429（`Retry-After: 51546`、次の UTC 日までの秒数）。ログは `rate_limited`・`window: day` だけで検索に届かない。`1000` に戻すと200 |
+| MCP | `tools/list` に `search_evaluations` が出る。`tools/call` は `structuredContent` を返す |
+
+候補の例（北区の2位）: `{"rank": 2, "origin_sha256": "80b62f85…", "page": 70, "page_url": ".../r08_jimujigyohyoka.pdf#page=70", "excerpt": "事務事業評価 評価対象年度 令和7年度061 事業名︓ 防災分野におけるデジタル化の推進主管課︓■事業の位置づけ・目的 関連課︓基本目標 政策 施策 施策の めざす姿 施策の方向 ■事業の概要 対象 目的 取組み内容 令和8年度 ■予算額・決算額（単位︓千円） 当初予算 決算 当初予算 決算(見込…"}`（150文字）。
+
+ローカルで分かったこと:
+
+- AI Search の binding は simulation が無く、`bindings.aiSearch` に `dev: { remote: true }` が要る。要る設定は一時的に足し、コミットしていない。`cf dev` で評価の検索を試す人は同じ設定を足す。
+- 検索は1回5〜7秒（remote proxy 越し、同時10件のとき最大約7秒）で、8秒の打ち切りに近い。本番は Worker と AI Search が同じ Cloudflare の中なので速いはずだが、未測定である。公開の直後に所要時間（ログの `ms`）を見て、8秒を超えるものが出れば打ち切りの値を見直す。
+- `cloudflare.config.ts` が import したファイルは `cf dev` の Worker から読めない。流量の値は config と `src/evaluation-limits.ts` が二重に持ち、試験が一致を照合する。
 
 ### 次の検証で確かめること
 
@@ -402,6 +424,7 @@ flowchart TD
 - 2団体の原典の利用条件を確かめ、配布物としての扱いと、固定した原典への到達方法を決めている。
 - 評価資料の原典が R2 に保存され、索引を R2 から作り直す手順を一度通している。
 - 公開面で、`evaluation_search` が `off` のとき評価の検索だけが503になることを確かめている。`off` では処理が kill switch で止まり、回数の上限と binding に届かない。このため、回数の上限・binding・429の動作は、公開しない別名の Worker（custom domain を持たず、`workers.dev` も閉じる）またはローカルの開発サーバーで、AI Search を実際に呼んで確かめる。公開の直後に、`control` の日ごとの上限を一時的に小さくして429が返ることを確かめ、値を戻す。
+  - 確認済み（2026-10-14）: 登録した状態の試験（REST と MCP が `off` で503、回数の上限と AI Search に届かない）と、ローカルの開発サーバーでの確かめ（[結果](#ローカルの開発サーバーでの確かめ)）。未実施: 本番での `off` の確認、公開直後の日ごとの上限による429の確認。
 
 改善の目標は次のとおりで、検証の3で測って記録する。値は試行で事前に固定した閾値（[試行記録](trial.md)）を引き継ぎ、どれも実測の率で比べる。最後の2行は試行に無い指標で、値は選ぶ側の問いで測ってから決める。
 
