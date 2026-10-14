@@ -3,10 +3,6 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./jurisdictions.ts",
     "./registry": "./jurisdictions.json"
-  },
-  "dependencies": {
-    "zod": "catalog:"
   }
 }

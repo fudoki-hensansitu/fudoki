@@ -6,7 +6,6 @@ import { Kind } from './kind'
 export interface Bar {
   key: string
   label: string
-  /** 款・項・目・節・事業などの区分 */
   kind?: string
   /** 団体・年度など、行ごとに違うときだけ出す補足 */
   note?: string
@@ -24,7 +23,6 @@ export function BarList({ bars, share, busy, label, keepOrder = false, fold = FO
   bars: Bar[]
   /** 年の推移など、並び自体に意味があるときは金額で並べ替えない */
   keepOrder?: boolean
-  /** これより多いと上位だけを出して残りを畳む */
   fold?: number
   share: boolean
   busy: boolean
