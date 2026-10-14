@@ -145,7 +145,7 @@ def unit_gate(document: dict, conversion: dict, table_id: str, tables: node_tabl
         tables.nodes, tables.amounts, document_kind=document['target']['document_kind'],
         account=pdf_account(document, conversion, tables.nodes),
         partial=bool(conversion['options'].get('partial')), scope=scope,
-        statement_kind=conversion.get('statement_kind', 'ordinary'))
+        statement_kind=conversion.get('statement_kind', 'ordinary'), direction=document['direction'])
     if result['stopped']:
         raise ValueError(f'Unit check failed: {table_id}: {unit_checks.describe(result)}')
     return result
@@ -530,6 +530,7 @@ def verify_sums(document: dict, locate, directory: Path | None = None) -> list[d
             nodes, amounts, document_kind=document['target']['document_kind'], account=table.get('account'),
             partial=bool(conversions[table['conversion_id']]['options'].get('partial')),
             statement_kind=conversions[table['conversion_id']].get('statement_kind', 'ordinary'),
+            direction=document['direction'],
             scope=unit_checks.find_scope(directory, table['table_id'], node_tables.COVERAGE_SIDECAR_SUFFIX))
         item = {'table_id': table['table_id'], 'status': MATCH if passed and not unit['stopped'] else MISMATCH,
                 'counts': checked['counts'], 'issues': checked['issues'], 'checks': [],

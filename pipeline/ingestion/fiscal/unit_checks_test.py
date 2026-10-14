@@ -87,6 +87,25 @@ class UnitCheckTest(unittest.TestCase):
         self.assertFalse(result['stopped'])
         self.assertFalse(result['subject_check']['applicable'])
 
+    def test_revenue_does_not_get_the_new_expenditure_gate(self):
+        nodes, amounts = table('100,000,000')
+        nodes.append(node('m1', 'k1-1', '目', '収入', depth=3))
+        for a in amounts:
+            a['header_path'] = '予算現額'
+        result = unit_checks.check_table(nodes, amounts, document_kind='settlement', account='一般会計',
+                                         direction='revenue')
+        self.assertFalse(result['subject_check']['applicable'])
+        self.assertFalse(result['stopped'])
+
+    def test_a_missing_axis_is_stopped_as_a_missing_subject_axis(self):
+        from ingestion.fiscal.subject_checks import check_subject
+        nodes, amounts = table('100,000,000')
+        for n in nodes:
+            del n['axis_header']
+        result = check_subject(nodes, amounts, 'settlement')
+        self.assertFalse(result['passed'])
+        self.assertEqual(result['kan'], 0)
+
     def test_declared_enterprise_form_keeps_tree_and_unit_checks(self):
         nodes, amounts = table('100,000,000')
         for a in amounts:
