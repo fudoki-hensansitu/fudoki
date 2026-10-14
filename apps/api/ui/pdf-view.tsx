@@ -291,7 +291,7 @@ export function PdfViewer({
       {error && (
         <Alert role="status">
           <AlertDescription className="flex flex-col items-start gap-2">
-            <span>この PDF はここでは表示できません。参照元で{initialPages.join('・')}ページを開いて確かめてください。</span>
+            <span>この PDF はここでは表示できません。参照元{initialPages.length ? `の${initialPages.join('・')}ページ` : ''}を開いて確かめてください。</span>
             <Button size="sm" onClick={() => openLink(initialPages.length ? `${origin.url}#page=${initialPages[0]}` : origin.url)}>
               参照元の{initialPages[0] ? `${initialPages[0]}ページ` : 'PDF'}<ExternalLink aria-hidden="true" />
             </Button>
