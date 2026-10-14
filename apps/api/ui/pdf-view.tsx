@@ -124,7 +124,7 @@ export function PdfViewer({
   const reportError = (error: unknown) => {
     setError(true)
     setStatus(
-      `原典 PDF を表示できません。項目: ${location.source_page ?? '不明'}ページ / 金額: ${location.amount_source_page ?? '不明'}ページ。${error instanceof Error ? error.message : ''}`,
+      `参照の PDF を表示できません。項目: ${location.source_page ?? '不明'}ページ / 金額: ${location.amount_source_page ?? '不明'}ページ。${error instanceof Error ? error.message : ''}`,
     )
   }
 
@@ -278,12 +278,14 @@ export function PdfViewer({
     >
       <h3 id="pdf-title" className="sr-only">{origin.title}</h3>
       <div className="toolbar">
-        <Button ref={close} variant="ghost" size="sm" onClick={onClose}>← 戻る</Button>
-        <Button variant="outline" size="sm" disabled={!ready || Math.min(...pages) <= 1}
-          onClick={() => setSpreadStart(Math.max(1, Math.min(...pages) - 2))}>前の頁</Button>
-        {!error && <span role="status" className="small">{status}</span>}
-        <Button variant="outline" size="sm" disabled={!ready || !document || Math.max(...pages) >= document.numPages}
-          onClick={() => setSpreadStart(Math.min(document!.numPages - 1, Math.max(...pages) + 1))}>次の頁</Button>
+        <Button ref={close} variant="ghost" size="sm" onClick={onClose}>← 明細</Button>
+        <span className="pager">
+          <Button variant="outline" size="icon-sm" aria-label="前のページ" disabled={!ready || Math.min(...pages) <= 1}
+            onClick={() => setSpreadStart(Math.max(1, Math.min(...pages) - 2))}>‹</Button>
+          {!error && <span role="status" className="pager-status">{status}</span>}
+          <Button variant="outline" size="icon-sm" aria-label="次のページ" disabled={!ready || !document || Math.max(...pages) >= document.numPages}
+            onClick={() => setSpreadStart(Math.min(document!.numPages - 1, Math.max(...pages) + 1))}>›</Button>
+        </span>
         <a className="pdf-url" href={url} title={url} onClick={(event) => { event.preventDefault(); openLink(url) }}>参照元 ↗</a>
       </div>
       {error && <Alert variant="destructive" role="status"><AlertDescription>{status}</AlertDescription></Alert>}

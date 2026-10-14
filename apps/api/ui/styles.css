@@ -1,3 +1,4 @@
+/* Hallmark · pre-emit critique: P4 H5 E4 S4 R5 V3 · design-system: DESIGN.md（文字 14/20/12・余白 4/8/12/16/24） */
 @import "@fudoki/ui/styles.css";
 @source "./";
 
@@ -9,35 +10,53 @@
   --bar: color-mix(in oklab, var(--primary) 78%, var(--background));
   --bar-hover: var(--primary);
   --bar-track: color-mix(in oklab, var(--foreground) 7%, transparent);
-  /* 見出しの補足。host の secondary は小さな文字には薄すぎるので、本文色から少しだけ下げる */
-  --sub: color-mix(in oklab, var(--foreground) 76%, var(--background));
+  /* 補足の文字。host の secondary は小さな文字には薄すぎるので、本文色から少しだけ下げる */
+  --sub: color-mix(in oklab, var(--foreground) 72%, var(--background));
+  --link-line: color-mix(in oklab, var(--primary) 35%, transparent);
+  /* 文字の段。一番大きいのは金額だけにし、名前や経路は本文と同じ大きさで並べる */
+  --text-hero: 28px;
+  --text-heading: 20px;
+  --text-body: 14px;
+  --text-caption: 12px;
 }
 @layer base {
   html, body { overflow-x: clip; }
-  body { margin: 0; padding: 14px 16px 16px; background: var(--background); color: var(--foreground); font: var(--font-text-sm-size, 14px) / var(--font-text-sm-line-height, 1.5) var(--view-font); font-variant-numeric: lining-nums; }
-  h2 { font-size: 22px; line-height: 1.3; font-weight: var(--font-weight-semibold, 600); overflow-wrap: anywhere; }
-  h3 { font-size: 14px; font-weight: var(--font-weight-medium, 500); color: var(--sub); }
+  body { margin: 0; padding: 16px; background: var(--background); color: var(--foreground); font: var(--text-body) / 1.5 var(--view-font); font-variant-numeric: lining-nums; }
+  h2 { font-size: var(--text-heading); line-height: 1.4; font-weight: var(--font-weight-semibold, 600); overflow-wrap: anywhere; min-width: 0; }
+  h3 { font-size: var(--text-caption); line-height: 1.5; font-weight: var(--font-weight-medium, 500); color: var(--sub); }
   a:focus-visible, button:focus-visible, .pdf-scroll:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
 }
 [data-slot="button"][data-variant="link"] { height: auto; padding: 0; font: inherit; }
 
 .view { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
-.result { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
-.head { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.scope { font-size: 13px; color: var(--sub); overflow-wrap: anywhere; }
-.crumbs { display: flex; flex-wrap: wrap; gap: 2px 0; margin-top: 6px; font-size: 15px; color: var(--sub); }
-.crumbs .sep { margin: 0 8px; color: var(--muted-foreground); }
-.total { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin: 2px 0 6px; }
-.total-short { font-size: 30px; line-height: 1.2; font-weight: var(--font-weight-semibold, 600); font-variant-numeric: lining-nums tabular-nums; }
-.total-exact { font-size: 13px; color: var(--sub); font-variant-numeric: lining-nums tabular-nums; }
-.section { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-.quiet { color: var(--muted-foreground); }
+.result { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.quiet { color: var(--sub); }
 .loading { display: flex; flex-direction: column; gap: 8px; }
 
+/* 見出し: 範囲 → 経路（今の段は太字）→ 金額と参照 */
+.head { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+/* 経路（または一覧の見出し）と範囲を1行に置き、範囲は右に寄せる。狭い幅では範囲だけ次の行の右に回る */
+.head-row { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 16px; min-width: 0; }
+.head-row > :first-child { min-width: 0; }
+.scope { margin-left: auto; font-size: var(--text-caption); color: var(--sub); white-space: nowrap; }
+.crumb-list { font-size: var(--text-body); line-height: 1.6; color: var(--sub); gap: 2px 6px; }
+.crumbs .current h2 { display: inline; font-size: inherit; line-height: inherit; color: var(--foreground); }
+.crumb { padding: 0; border: 0; background: none; color: var(--primary); font: inherit; white-space: nowrap; cursor: pointer; text-decoration: underline; text-decoration-color: var(--link-line); text-underline-offset: 3px; }
+.crumb:hover:not(:disabled) { text-decoration-color: currentColor; }
+.crumb:disabled { cursor: progress; }
+.total { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; margin-top: 4px; }
+.total-short { font-size: var(--text-hero); line-height: 1.2; font-weight: var(--font-weight-semibold, 600); font-variant-numeric: lining-nums tabular-nums; }
+.ref { flex: none; }
+
+/* 区分のタグ。名前の前に置き、名前より一段小さく静かにする */
+.kind { display: inline-block; margin-right: 6px; padding: 0 4px; border: 1px solid var(--border); border-radius: 4px; font-size: 11px; line-height: 16px; font-weight: var(--font-weight-medium, 500); color: var(--sub); vertical-align: 1px; white-space: nowrap; }
+
+/* 内訳 */
+.section { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .bars { display: flex; flex-direction: column; min-width: 0; }
 .bar {
   display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "label figures" "track track";
-  align-items: baseline; column-gap: 12px; row-gap: 4px; width: 100%; padding: 8px 6px; margin: 0 -6px; box-sizing: content-box;
+  align-items: baseline; column-gap: 12px; row-gap: 6px; width: 100%; padding: 8px; margin: 0 -8px; box-sizing: content-box;
   border: 0; border-radius: 6px; background: none; color: inherit; font: inherit; text-align: left;
 }
 button.bar { cursor: pointer; }
@@ -46,36 +65,42 @@ button.bar:hover:not(:disabled) .bar-fill { background: var(--bar-hover); }
 button.bar:disabled { cursor: progress; }
 .bar-label { grid-area: label; display: flex; flex-direction: column; min-width: 0; }
 .bar-name { overflow-wrap: anywhere; }
-button.bar .bar-name::after { content: " ›"; color: var(--muted-foreground); }
-.bar-note { font-size: 12px; color: var(--muted-foreground); }
-.bar-figures { grid-area: figures; display: flex; gap: 10px; align-items: baseline; white-space: nowrap; font-variant-numeric: lining-nums tabular-nums; }
-.bar-share { font-size: 12px; color: var(--muted-foreground); }
+button.bar .bar-name::after { content: " ›"; color: var(--sub); }
+.bar-note { font-size: var(--text-caption); color: var(--sub); }
+.bar-figures { grid-area: figures; display: flex; gap: 8px; align-items: baseline; white-space: nowrap; font-variant-numeric: lining-nums tabular-nums; }
+.bar-share { font-size: var(--text-caption); color: var(--sub); }
 .bar-amount { font-weight: var(--font-weight-medium, 500); }
-.bar-track { grid-area: track; height: 8px; border-radius: 4px; background: var(--bar-track); overflow: hidden; }
-.bar-fill { display: block; height: 100%; min-width: 2px; border-radius: 4px; background: var(--bar); }
-.bar-more { align-self: flex-start; margin-top: 4px; padding: 6px 0; border: 0; background: none; color: var(--primary); font: inherit; font-size: 13px; cursor: pointer; }
+.bar-track { grid-area: track; height: 6px; border-radius: 3px; background: var(--bar-track); overflow: hidden; }
+.bar-fill { display: block; height: 100%; min-width: 2px; border-radius: 3px; background: var(--bar); }
+/* 畳んだ残りと続きの取得は、同じ控えめなリンクにする */
+.bar-more { align-self: flex-start; padding: 4px 0; border: 0; background: none; color: var(--primary); font: inherit; cursor: pointer; text-decoration: underline; text-decoration-color: var(--link-line); text-underline-offset: 3px; }
+.bar-more:disabled { cursor: progress; color: var(--sub); }
 
+/* 団体 × 年度 */
 .coverage { display: grid; min-width: 0; overflow-x: auto; }
 .coverage-row { display: contents; }
 .coverage-row > * { padding: 8px 8px 8px 0; border-bottom: 1px solid var(--border); }
-.coverage-year { font-size: 12px; color: var(--muted-foreground); }
+.coverage-year { font-size: var(--text-caption); color: var(--sub); }
 .coverage-name { display: flex; flex-direction: column; }
-.coverage-cell { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
-.chip { font-size: 12px; white-space: nowrap; }
-.chip::before { content: "● "; color: var(--primary); }
+.coverage-cell { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; }
+.chip { padding: 2px 0; border: 0; background: none; font: inherit; font-size: var(--text-caption); color: var(--primary); white-space: nowrap; cursor: pointer; text-decoration: underline; text-decoration-color: var(--link-line); text-underline-offset: 3px; }
+.chip:hover:not(:disabled) { text-decoration-color: currentColor; }
+.chip:disabled { cursor: progress; color: var(--sub); }
 
+/* 原典 PDF */
 .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-#pdf-view [data-slot="button"] { min-height: 40px; }
-.small { font-size: 12px; }
-.pdf-url { margin-left: 4px; color: var(--primary); white-space: nowrap; }
+.pager { display: inline-flex; align-items: center; gap: 4px; }
+.pager-status { min-width: 6.5em; text-align: center; font-size: var(--text-caption); color: var(--sub); font-variant-numeric: lining-nums tabular-nums; }
+.pdf-url { margin-left: auto; color: var(--primary); white-space: nowrap; text-decoration: underline; text-decoration-color: var(--link-line); text-underline-offset: 3px; }
+.small { font-size: var(--text-caption); }
 /* 高さは iframe の高さ（vh）から決めない。View が報告した高さで host が iframe を決めるので、vh を使うと縮み続ける */
-.pdf-scroll { overflow: auto; max-height: 560px; border: 1px solid var(--border); }
+.pdf-scroll { overflow: auto; max-height: 560px; border: 1px solid var(--border); border-radius: 6px; }
 .view[data-fullscreen] .pdf-scroll { max-height: none; }
 .pdf-spread { display: flex; gap: 12px; position: relative; align-items: flex-start; width: 100%; min-width: 280px; }
 /* 狭い幅では見開きを縦に積み、横スクロールの外に頁を置かない */
 @media (max-width: 560px) { .pdf-spread { flex-direction: column; } .pdf-sheet { width: 100%; } }
 .pdf-sheet { flex: 1; min-width: 0; }
-.pdf-sheet h4 { margin: 4px 8px; line-height: 1.5; font-size: 12px; }
+.pdf-sheet h4 { margin: 4px 8px; line-height: 1.5; font-size: var(--text-caption); color: var(--sub); }
 .pdf-stage { position: relative; background: var(--pdf-paper); line-height: 0; }
 .pdf-stage canvas { width: 100%; height: auto; }
 .pdf-frame { position: absolute; pointer-events: none; color: var(--item-frame); }
@@ -84,4 +109,3 @@ button.bar .bar-name::after { content: " ›"; color: var(--muted-foreground); }
 .pdf-guide { position: absolute; pointer-events: none; color: var(--item-frame); opacity: .7; }
 .pdf-guide-x { left: 0; right: 0; border-top: 1px dashed currentColor; }
 .pdf-guide-y { top: 0; bottom: 0; border-left: 1px dashed currentColor; }
-#pdf-view summary { cursor: pointer; }

@@ -1,9 +1,12 @@
 import { useState } from 'react'
 import { percent, shortYen, yen } from './types'
+import { Kind } from './kind'
 
 export interface Bar {
   key: string
   label: string
+  /** 款・項・目・節・事業などの区分 */
+  kind?: string
   /** 団体・年度など、行ごとに違うときだけ出す補足 */
   note?: string
   amount: number | null
@@ -38,7 +41,7 @@ export function BarList({ bars, share, busy, label }: {
         const body = (
           <>
             <span className="bar-label">
-              <span className="bar-name">{bar.label}</span>
+              <span className="bar-name">{bar.kind && <Kind kind={bar.kind} />}{bar.label}</span>
               {bar.note && <span className="bar-note">{bar.note}</span>}
             </span>
             <span className="bar-figures">
@@ -71,7 +74,7 @@ export function BarList({ bars, share, busy, label }: {
         <button type="button" className="bar-more" onClick={() => setOpen(true)}>
           ほか{hidden.length}件（{share && total > 0
             ? percent(hidden.reduce((sum, b) => sum + Math.max(0, b.amount ?? 0), 0) / total)
-            : shortYen(hidden.reduce((sum, b) => sum + Math.max(0, b.amount ?? 0), 0))}）を表示
+            : shortYen(hidden.reduce((sum, b) => sum + Math.max(0, b.amount ?? 0), 0))}）
         </button>
       )}
     </div>

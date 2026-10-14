@@ -1,7 +1,8 @@
-import { StrictMode, useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { Fragment, StrictMode, useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBridge, type Bridge } from './bridge'
 import { BarList } from './bars'
+import { Kind } from './kind'
 import { PdfViewer, type PdfSelection } from './pdf-view'
 import {
   KIND_LABEL,
@@ -15,15 +16,58 @@ import {
 import { Button } from '@fudoki/ui/components/button'
 import { Alert, AlertTitle, AlertDescription } from '@fudoki/ui/components/alert'
 import { Skeleton } from '@fudoki/ui/components/skeleton'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from '@fudoki/ui/components/breadcrumb'
 
 type Names = Record<string, string>
 
+/** 見出しの上の行。会計は見出しと経路の先頭に出るので、ここでは繰り返さない */
+const headScopeOf = (n: TreeNode, names: Names) =>
+  `${names[n.jurisdiction_code] ?? n.jurisdiction_code} · ${n.fiscal_year}年度 ${KIND_LABEL[n.document_kind] ?? n.document_kind}`
 const scopeOf = (n: TreeNode, names: Names) =>
   `${names[n.jurisdiction_code] ?? n.jurisdiction_code} · ${n.fiscal_year}年度 ${KIND_LABEL[n.document_kind] ?? n.document_kind} · ${n.account_name}`
 /** 自身より上の科目（款・項）。自身が款・項ならその手前まで */
-const ancestorsOf = (n: TreeNode) =>
-  [n.kan_name, n.kou_name].filter((v): v is string => !!v && v !== n.name)
-const pathOf = (n: TreeNode) => [...ancestorsOf(n), n.name].join(' › ')
+interface Named { kind: string; name: string }
+/** 自身より上の科目（款・項）と、その区分 */
+const ancestorsOf = (n: TreeNode): Named[] =>
+  [{ kind: '款', name: n.kan_name }, { kind: '項', name: n.kou_name ?? '' }]
+    .filter((a) => !!a.name && a.name !== n.name)
+
+/** 区分のタグ。科目の軸は段（款・項・目）、それ以外の軸は軸の名前（節・事業）で呼ぶ */
+const kindOf = (n: TreeNode) => (n.axis === '科目' ? n.node_kind : n.axis)
+
+/** 経路の1段。back があれば押してその画面に戻れる */
+interface Crumb { kind?: string; name: string; back?: () => void }
+
+/**
+ * 見出しの経路。通ってきた画面（history）は押して戻れる段にし、通っていない上位の科目は表示だけにする。
+ * 一覧 → 上位の科目 → 通ってきた明細 の順に並べる（一覧から目を直接開いたときも、款・項が一覧と目の間に入る）。
+ */
+function crumbsOf(node: TreeNode, history: { data: ViewData }[], bridge: Bridge): Crumb[] {
+  const all = historyCrumbs(history, bridge)
+  const lists = all.filter((c) => !c.kind)
+  const visited = all.filter((c) => c.kind)
+  const missing = ancestorsOf(node).filter((a) => !visited.some((v) => v.name === a.name))
+    .map((a) => ({ ...a, back: node.parent_node_id ? () => void bridge.climbTo(node, a.kind, a.name) : undefined }))
+  // 会計を経路の根に置く。一覧の見出しが会計から始まるなら、それが根になる
+  const root: Crumb[] = lists.some((l) => l.name.startsWith(node.account_name)) ? [] : [{ name: node.account_name }]
+  return [...lists, ...root, ...missing, ...visited]
+}
+/** 通ってきた画面を、押して戻れる経路の段にする */
+function historyCrumbs(history: { data: ViewData }[], bridge: Bridge): Crumb[] {
+  return history.map(({ data }, index) => {
+    const back = () => bridge.backTo(index)
+    if ('node' in data) return { kind: kindOf(data.node), name: data.node.name, back }
+    return { name: 'nodes' in data ? nodesTitle(data.nodes) : '団体一覧', back }
+  })
+}
+const pathOf = (n: TreeNode) => [...ancestorsOf(n), { kind: kindOf(n), name: n.name }].map((a) => `【${a.kind}】${a.name}`).join(' › ')
+
 
 /** 割合は、続きが無く、金額がすべて分かる兄弟の中でだけ出す。途中や欠けがあると、合計が変わって割合が誤解を招く */
 const shareable = (rows: TreeNode[], next?: string | null) =>
@@ -57,22 +101,62 @@ function OriginButton({ node, origin, bridge, showPdf }: {
     .find((p): p is number => typeof p === 'number' && Number.isInteger(p) && p > 0)
   if (origin.format === 'pdf' && page)
     return (
-      <Button variant="outline" size="sm" aria-label={`原典を見る: ${node.name}`}
+      <Button variant="outline" size="sm" className="ref" aria-label={`参照: ${node.name}`}
         onClick={(event) => showPdf({ origin, location: node, selectedPage: page, trigger: event.currentTarget })}>
-        原典を見る
+        参照
       </Button>
     )
   return (
-    <Button variant="outline" size="sm" onClick={() => bridge.openLink(origin.url)}>
-      原典を開く
+    <Button variant="outline" size="sm" className="ref" onClick={() => bridge.openLink(origin.url)}>
+      参照 ↗
     </Button>
   )
 }
 
-function NodeResult({ data, parent, names, bridge, showPdf, busy }: {
+/**
+ * 一覧と明細で共通の見出し。1行目は経路（今の画面は太字の見出し）と、右寄せの範囲。2行目は金額などの主役。
+ * 今の画面も経路の続きに同じ大きさで並べ、大きくするのは金額だけにする。
+ */
+function PathHeader({ crumbs, kind, title, scope, busy, children }: {
+  crumbs: Crumb[]
+  kind?: string
+  title: string
+  scope?: string
+  busy: boolean
+  children?: ReactNode
+}) {
+  return (
+    <header className="head">
+      <div className="head-row">
+        <Breadcrumb aria-label="経路" className="crumbs">
+          <BreadcrumbList className="crumb-list">
+            {crumbs.map((c, i) => (
+              <Fragment key={`${i}-${c.name}`}>
+                <BreadcrumbItem>
+                  {c.back
+                    ? <BreadcrumbLink render={<button type="button" disabled={busy} onClick={c.back} aria-label={`${c.name}に戻る`} />} className="crumb">
+                        {c.kind && <Kind kind={c.kind} />}{c.name}
+                      </BreadcrumbLink>
+                    : <span>{c.kind && <Kind kind={c.kind} />}{c.name}</span>}
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+              </Fragment>
+            ))}
+            <BreadcrumbItem aria-current="page" className="current">
+              <h2>{kind && <Kind kind={kind} />}{title}</h2>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        {scope && <div className="scope">{scope}</div>}
+      </div>
+      {children && <div className="total">{children}</div>}
+    </header>
+  )
+}
+
+function NodeResult({ data, crumbs, names, bridge, showPdf, busy }: {
   data: Extract<ViewData, { node: TreeNode }>
-  /** 掘り下げる前に見ていた明細。節・事業は目の名前を列に持たないので、経路の補いに使う */
-  parent?: TreeNode
+  crumbs: Crumb[]
   names: Names
   bridge: Bridge
   showPdf: (selection: PdfSelection) => void
@@ -81,32 +165,20 @@ function NodeResult({ data, parent, names, bridge, showPdf, busy }: {
   const node = data.node
   const origin = data.origins?.find((o) => o.origin_id === node.origin_id)
   const axes = Object.entries(data.children).filter(([, rows]) => rows.length)
-  const ancestors = ancestorsOf(node)
-  if (parent && parent.name !== node.name && !ancestors.includes(parent.name)) ancestors.push(parent.name)
   return (
     <>
-      <header className="head">
-        <div className="scope">{scopeOf(node, names)}</div>
-        {ancestors.length > 0 && (
-          <div className="crumbs">
-            {ancestors.map((name) => <span key={name}>{name}<span className="sep" aria-hidden="true">›</span></span>)}
-          </div>
+      <PathHeader crumbs={crumbs} kind={kindOf(node)} title={node.name} scope={headScopeOf(node, names)} busy={busy}>
+        {node.amount_yen === null ? <span className="quiet">金額の記載なし</span> : (
+          <span className="total-short" title={yen(node.amount_yen)}>{shortYen(node.amount_yen)}</span>
         )}
-        <h2>{node.name}</h2>
-        {node.amount_yen === null ? <p className="quiet">原典に金額の記載がありません。</p> : (
-          <div className="total">
-            <span className="total-short" title={yen(node.amount_yen)}>{shortYen(node.amount_yen)}</span>
-            {shortYen(node.amount_yen) !== yen(node.amount_yen) && <span className="total-exact">{yen(node.amount_yen)}</span>}
-          </div>
-        )}
-        <div><OriginButton node={node} origin={origin} bridge={bridge} showPdf={showPdf} /></div>
-      </header>
+        {/* 参照は金額の行の右に置き、参照のためだけに縦の行を使わない */}
+        <OriginButton node={node} origin={origin} bridge={bridge} showPdf={showPdf} />
+      </PathHeader>
       {axes.map(([axis, rows]) => (
-        <section key={axis} className="section">
-          <h3>{axis === '科目' ? `${rows[0]!.node_kind}ごとの内訳` : `${axis}ごとの内訳`}</h3>
+        <section key={axis} className="section" aria-label={`${axis === '科目' ? rows[0]!.node_kind : axis}ごとの内訳`}>
           <BarList label={`${node.name}の${axis}ごとの内訳`} share={shareable(rows, data.next_page_token)} busy={busy}
             bars={rows.map((n) => ({
-              key: n.node_id, label: n.name, amount: n.amount_yen,
+              key: n.node_id, label: n.name, kind: kindOf(n), amount: n.amount_yen,
               onSelect: () => void bridge.call('get_expenditure_node', { document_kind: n.document_kind, node_id: n.node_id }, 'drill'),
             }))} />
         </section>
@@ -120,11 +192,12 @@ function NodeResult({ data, parent, names, bridge, showPdf, busy }: {
 function nodesTitle(rows: TreeNode[]) {
   const first = rows[0]
   if (!first || !siblings(rows)) return `${rows.length}件の明細`
-  return first.node_kind === '款' ? '款ごとの歳出' : `${ancestorsOf(first).join(' › ')} の${first.node_kind}ごとの内訳`
+  return [first.account_name, ...ancestorsOf(first).map((a) => a.name)].join(' › ')
 }
 
-function NodesResult({ rows, next, names, bridge, busy }: {
+function NodesResult({ rows, next, crumbs, names, bridge, busy }: {
   rows: TreeNode[]
+  crumbs: Crumb[]
   next?: string | null
   names: Names
   bridge: Bridge
@@ -135,17 +208,21 @@ function NodesResult({ rows, next, names, bridge, busy }: {
   const common = scopes.size === 1 ? [...scopes][0] : undefined
   const sibling = siblings(rows)
   const title = nodesTitle(rows)
+  const share = shareable(rows, next)
+  const total = share ? rows.reduce((sum, n) => sum + (n.amount_yen ?? 0), 0) : undefined
   return (
     <>
-      <header className="head">
-        {common && <div className="scope">{common}</div>}
-        <h2>{title}</h2>
-      </header>
-      <BarList label={title} share={shareable(rows, next)} busy={busy}
+      <PathHeader crumbs={crumbs} title={title} scope={common && (sibling ? headScopeOf(rows[0]!, names) : common)} busy={busy}>
+        {/* 兄弟が揃っているときだけ合計を主役に置く。途中や混在では合計に意味が無い */}
+        {total !== undefined && <span className="total-short" title={yen(total)}>{shortYen(total)}</span>}
+      </PathHeader>
+      <BarList label={title} share={share} busy={busy}
         bars={rows.map((n) => ({
           key: `${n.document_kind}-${n.node_id}`,
-          label: sibling ? n.name : pathOf(n),
-          note: common ? undefined : scopeOf(n, names),
+          label: n.name,
+          kind: kindOf(n),
+          // 兄弟でなければ、どの科目の下か・どの団体と年度かを添える
+          note: [sibling ? '' : ancestorsOf(n).map((a) => a.name).join(' › '), common ? '' : scopeOf(n, names)].filter(Boolean).join('　') || undefined,
           amount: n.amount_yen,
           onSelect: () => void bridge.call('get_expenditure_node', { document_kind: n.document_kind, node_id: n.node_id }, 'drill'),
         }))} />
@@ -154,12 +231,12 @@ function NodesResult({ rows, next, names, bridge, busy }: {
 }
 
 /** 団体 × 年度の表に、収録した資料の区分を置く */
-function JurisdictionsResult({ list }: { list: Jurisdiction[] }) {
+function JurisdictionsResult({ list, bridge, busy }: { list: Jurisdiction[]; bridge: Bridge; busy: boolean }) {
   if (!list.length) return <p className="quiet">団体はありません。</p>
   const years = [...new Set(list.flatMap((j) => j.coverage.map((c) => c.fiscal_year)))].sort()
   return (
     <>
-      <header className="head"><h2>{list.length}団体の収録範囲</h2></header>
+      <PathHeader crumbs={[]} title={`${list.length}団体の収録範囲`} busy={busy} />
       <div className="coverage" role="table" aria-label="団体ごとの収録範囲"
         style={{ gridTemplateColumns: `minmax(7em, 1fr) repeat(${Math.max(1, years.length)}, minmax(4.5em, max-content))` }}>
         <div role="row" className="coverage-row">
@@ -173,10 +250,30 @@ function JurisdictionsResult({ list }: { list: Jurisdiction[] }) {
               {j.name}<span className="bar-note">{j.prefecture_name}</span>
             </span>
             {years.map((y) => {
-              const kinds = j.coverage.filter((c) => c.fiscal_year === y).map((c) => KIND_LABEL[c.document_kind] ?? c.document_kind)
+              const covered = j.coverage.filter((c) => c.fiscal_year === y)
               return (
                 <span role="cell" key={y} className="coverage-cell">
-                  {kinds.map((k) => <span key={k} className="chip">{k}</span>)}
+                  {covered.map((c) => {
+                    const label = KIND_LABEL[c.document_kind] ?? c.document_kind
+                    // 一般会計を優先して款の一覧を開く。会計の選び直しはチャットで聞き直せばよい
+                    const account = c.accounts.find((a) => a.account_name === '一般会計') ?? c.accounts[0]
+                    return (
+                      <button type="button" key={c.document_kind} className="chip" disabled={busy || !account}
+                        aria-label={`${j.name} ${y}年度 ${label}の${account?.account_name ?? ''}を見る`}
+                        onClick={() => account && void bridge.call('search_expenditure_nodes', {
+                          document_kind: c.document_kind,
+                          fiscal_year: { min: y, max: y },
+                          where: {
+                            jurisdiction_code: { eq: [j.jurisdiction_code] },
+                            account_name: { eq: [account.account_name] },
+                            node_kind: { eq: ['款'] },
+                          },
+                          page_size: 100,
+                        }, 'drill')}>
+                        {label}
+                      </button>
+                    )
+                  })}
                 </span>
               )
             })}
@@ -217,18 +314,13 @@ function View({ bridge }: { bridge: Bridge }) {
         <PdfViewer selection={pdf} apiOrigin={state.apiOrigin} onClose={closePdf} openLink={bridge.openLink} />
       </main>
     )
-  const previous = state.history.at(-1)?.data
-  const back = previous && ('node' in previous ? previous.node.name : 'nodes' in previous ? nodesTitle(previous.nodes) : '団体一覧')
   return (
     <main aria-busy={state.busy} className="view">
-      {back && (
-        <div><Button variant="link" size="sm" onClick={bridge.back} disabled={state.busy}>← {back}に戻る</Button></div>
-      )}
       {entry && (
         <div key={entry.revision} className="result">
-          {'jurisdictions' in entry.data ? <JurisdictionsResult list={entry.data.jurisdictions} />
-            : 'nodes' in entry.data ? <NodesResult rows={entry.data.nodes} next={entry.data.next_page_token} names={state.names} bridge={bridge} busy={state.busy} />
-            : <NodeResult data={entry.data} parent={previous && 'node' in previous ? previous.node : undefined} names={state.names} bridge={bridge} showPdf={showPdf} busy={state.busy} />}
+          {'jurisdictions' in entry.data ? <JurisdictionsResult list={entry.data.jurisdictions} bridge={bridge} busy={state.busy} />
+            : 'nodes' in entry.data ? <NodesResult rows={entry.data.nodes} next={entry.data.next_page_token} crumbs={historyCrumbs(state.history, bridge)} names={state.names} bridge={bridge} busy={state.busy} />
+            : <NodeResult data={entry.data} crumbs={crumbsOf(entry.data.node, state.history, bridge)} names={state.names} bridge={bridge} showPdf={showPdf} busy={state.busy} />}
         </div>
       )}
       {state.error && (
@@ -246,12 +338,10 @@ function View({ bridge }: { bridge: Bridge }) {
         </div>
       )}
       {typeof entry?.data.next_page_token === 'string' && (
-        <div>
-          <Button variant="ghost" size="sm" disabled={state.busy}
-            onClick={() => void bridge.call(entry.tool, { ...entry.args, page_token: entry.data.next_page_token }, 'append')}>
-            続きを読み込む
-          </Button>
-        </div>
+        <button type="button" className="bar-more" disabled={state.busy}
+          onClick={() => void bridge.call(entry.tool, { ...entry.args, page_token: entry.data.next_page_token }, 'append')}>
+          続き
+        </button>
       )}
     </main>
   )

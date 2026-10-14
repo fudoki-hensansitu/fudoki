@@ -5,7 +5,7 @@ import {
   applyHostStyleVariables,
   type McpUiHostContext,
 } from '@modelcontextprotocol/ext-apps'
-import { toolFor, type Json, type ViewData } from './types'
+import { toolFor, type Json, type TreeNode, type ViewData } from './types'
 
 interface Entry {
   tool: string
@@ -231,13 +231,54 @@ export function createBridge() {
         }
       }
     },
-    back() {
+    /**
+     * 通っていない上位の科目（款・項）へ、親を辿って移る。目から開いた明細でも款・項に上がれるようにする。
+     * 移った先より深い明細の履歴は経路と食い違うので捨て、一覧だけを残す。
+     */
+    async climbTo(from: TreeNode, kind: string, name: string) {
+      if (disposed || state.busy || !state.entry) return
+      const id = ++epoch
+      request = new AbortController()
+      update({ busy: true, error: undefined })
+      try {
+        let parentId = from.parent_node_id
+        // 節・事業から款までの段数に余裕を持たせた上限。データの循環で止まらなくならないようにする
+        for (let step = 0; step < 5 && parentId; step++) {
+          const args = { document_kind: from.document_kind, node_id: parentId }
+          const result = await app.callServerTool({ name: 'get_expenditure_node', arguments: args }, { signal: request.signal })
+          if (disposed || id !== epoch) return
+          const data = result.structuredContent as Json | undefined
+          if (result.isError || !data || toolFor(data) !== 'get_expenditure_node') throw new Error(result.isError ? message(result) : '表示できない結果です')
+          const node = (data as Extract<ViewData, { node: TreeNode }>).node
+          if (node.node_kind === kind && node.name === name) {
+            update({
+              entry: { tool: 'get_expenditure_node', args, data: data as ViewData, revision: id },
+              history: state.history.filter((e) => !('node' in e.data)),
+              names: { ...state.names, ...namesOf(result._meta) },
+            })
+            return
+          }
+          parentId = node.parent_node_id
+        }
+        throw new Error(`${name}まで辿れませんでした`)
+      } catch (error) {
+        if (!disposed && id === epoch)
+          update({ error: `取得に失敗しました: ${error instanceof Error ? error.message : String(error)}` })
+      } finally {
+        if (id === epoch) {
+          request = undefined
+          update({ busy: false })
+        }
+      }
+    },
+    /** 経路の index 番目の画面に戻り、その先の履歴を捨てる */
+    backTo(index: number) {
       invalidate()
-      const entry = state.history.at(-1)
+      const entry = state.history[index]
       if (entry)
         update({
           entry,
-          history: state.history.slice(0, -1),
+          history: state.history.slice(0, index),
           busy: false,
           error: undefined,
         })

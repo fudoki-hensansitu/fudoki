@@ -2,7 +2,7 @@ import {
   AppBridge,
   PostMessageTransport,
 } from '@modelcontextprotocol/ext-apps/app-bridge'
-import { uiData } from './ui-fixture'
+import { chartData, uiData } from './ui-fixture'
 import type { McpUiStyles } from '@modelcontextprotocol/ext-apps'
 
 const frame = document.querySelector<HTMLIFrameElement>('iframe')!
@@ -77,6 +77,9 @@ bridge.oncalltool = async (params) => {
     const data = uiData(scenario)
     if ('nodes' in data) return toolResult({ node: data.nodes.find((n) => n.node_id === input.node_id), children: {}, origins: data.origins })
   }
+  // 団体一覧のチップから款の一覧を開き、そのまま掘り下げられるようにする
+  if ((scenario === 'jurisdictions' || scenario === 'single') && params.name !== 'list_jurisdictions')
+    return toolResult(chartData('chart', params.name === 'get_expenditure_node' ? String(input.node_id) : undefined))
   if (scenario.startsWith('chart')) return toolResult(uiData(scenario, !!input.page_token, params.name === 'get_expenditure_node' ? String(input.node_id) : undefined))
   if (scenario === 'slow' || scenario === 'race')
     await new Promise<void>((resolve) => {
