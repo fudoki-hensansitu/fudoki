@@ -6026,5 +6026,753 @@
       }
     }
   ],
-  "unresolved_candidates": []
+  "unresolved_candidates": [],
+  "evaluation_selections": [
+    {
+      "target": {
+        "jurisdiction": "132292",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和8年度事務事業評価（中間結果）の報告（事務事業評価シート60事業）",
+          "landing_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.html",
+          "inspected_at": "2026-10-14T18:30:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/1.pdf",
+              "sha256": "4594a8465dc3090f10fc63e4d8ce502e0b6a988c5c4cf82b108047eabc8248a8",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/2.pdf",
+              "sha256": "db358eb43e8698169db70d5b37d76e528198c156eb20b25719f681db869bc096",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/3.pdf",
+              "sha256": "3a9da131c7ec1fa6c60202045a248bc96c19e00e5a44beb3b347cdc6adb0c320",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/4.pdf",
+              "sha256": "270be5956db1fa66d7d0f0961a0e4229cea3589c6712446c77fd0ccd6135c0b3",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/5.pdf",
+              "sha256": "631408f692cf28dffce5d919a04615225e6862cdd557bc36c04f1de2a9b993c3",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/6.pdf",
+              "sha256": "f420f9e6a53cfea0b94af4af02ad506d61fa732473008a73b3af27833a8296cd",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/7.pdf",
+              "sha256": "a66e525265c7fd1adac0fded83f7e5544bf5b040997f44d591cd0b457b19a3f7",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/8.pdf",
+              "sha256": "99ac984926fc659bca87962c490afe0af5fcb7ed3349797f56ab1ce046f829e7",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/9.pdf",
+              "sha256": "b5ac74295ad1269cb4d2a5c34a2904401be8dbbafb3a7a2990244bd50414f49c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/10.pdf",
+              "sha256": "3e30ee5f8ce77ce2cbb21e1d38ee44ce83163f7a3e55d9b7561af62f8c893cf4",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/11.pdf",
+              "sha256": "fc27465c069ad9fd9a598351f22f3e0dd3b0054d4ccb7910844ab46ca431f8f1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/12.pdf",
+              "sha256": "0befef8e8c4fc4f7c4138e4c67564a68c91b7599c38f2f74cc4025ada30aa84a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/13.pdf",
+              "sha256": "ace5acc3c1e1a6c4ea586d488c909c2243a7b23be051a987ad57baead9cee00b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/14.pdf",
+              "sha256": "cd6e75f7c3fcd39071f26b9d00195f09b649084afffa672ac04cd9b80ea0b47e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/15.pdf",
+              "sha256": "309b629a5860bb9729f62f1325c646223c00372f1d166c7d5c0b5601e874e12d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/16.pdf",
+              "sha256": "0ace0ab08ec927d2f9636ef84fac0a87e8d7a571aa81172cf8cc50138dbfd29f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/17.pdf",
+              "sha256": "659ceee7b6825d21fac5bc6f45fe3ac4cbdfbc96c92017f03d4a528955dfe9f7",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/18.pdf",
+              "sha256": "b56c9ddd8dd02f303b3ebcee64b3f6b66446edd9a2e23b044f7c85fcc05d62c8",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/19.pdf",
+              "sha256": "3a1fe6721a406e9a86c0c82d315883389338d33ad01c4a5ae5a93b9f3fc52c60",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/20.pdf",
+              "sha256": "c5934cfe6e4b84dea596a55d23790ec8d8d298147beed715854dba2b3af19344",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/21.pdf",
+              "sha256": "9351d3caf1fb69996b5dcac2e1771dd6d724f3677e15dd7403dae901b0e19a66",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/22.pdf",
+              "sha256": "268fe78eca9f8513a5e2194c327b75b0c652b4106743de43c214f1ccce4d32b0",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/23.pdf",
+              "sha256": "79e1a9112fe76917ac8ab44023cb9e6f44926a61da16ed870619f0a0083d33a7",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/24.pdf",
+              "sha256": "2af4a8a1970f443a79a50278e98605c8364579b0244b70c78db5942c9d5c891c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/25.pdf",
+              "sha256": "9e36b457feebb25161dab56d43307e1470b2407650cd2c446443b20828d048c0",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/26.pdf",
+              "sha256": "e4f0a05344889f9d2834c39d3d4d852c476f0efca172c9bfca13c22453122c35",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/27.pdf",
+              "sha256": "5abf0336afe1eb8375ab88ba04d3a9d750076ff635dd38f38b320f8530dd9d6b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/28.pdf",
+              "sha256": "a58c9b1f7554a9a12ef722b47dc2e363f9b471d47458bb8b57cc69c03cce2ef0",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/29.pdf",
+              "sha256": "afa10e4cb156205eecb541914435373a072e4938e0042e57f28bf4e45fbcb410",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/30.pdf",
+              "sha256": "7d8f8bcbd5ecb094fa5014448827582eb8327eaf0dac11ee3043f4d7164c28b7",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/31.pdf",
+              "sha256": "d8051e01cda834f16418ede14010f8389a18ad5a1c56c69033c28bed9fec14f2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/32.pdf",
+              "sha256": "a599b6817ac7bf6c431125063c4e6c8f284270d137f816c4c536681e521c0ec2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/33.pdf",
+              "sha256": "2d8096a7172f0ebc376159b11bb3466574a9b3eec1641e4cbbcdf94070530be3",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/34.pdf",
+              "sha256": "8b40739bcca6446aa69901a5bbb7b0194ca542e9edd1a18a3de8ffb001ddeb63",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/35.pdf",
+              "sha256": "e4cd334211ac46d6c98037bfd8707caba3c6dfabcc7d25fc4d8dead4c5b6e2b8",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/36.pdf",
+              "sha256": "ba317bb8bcef6dde9ee4a0bb9999ad7300b13c97f03911524d89408248cf939c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/37.pdf",
+              "sha256": "0118ad1e92d3d327d5b65abccfd8ab04f88b6fa1d60f5a417a382da2cbb9642a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/38.pdf",
+              "sha256": "5d7279eca2724b07496f2c4eaf5057496f1fb473265056b9643ec09caeb6b9e6",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/39.pdf",
+              "sha256": "737ba931dffb06a28b2f2e22d59804fb9b802a19a7a3b44514d227b47bb0ad83",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/40.pdf",
+              "sha256": "5137ad42732cdb4502722d495507aa109d674888e08ed3381c9d0b1aff248898",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/41.pdf",
+              "sha256": "b157c4c07da96760c0b5464b4a94b3fabd37fd659f5689b3edfde765786f753a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/42.pdf",
+              "sha256": "8504d28d83361c99e428e27ff68e41b1a575120bad5a32a7f8a24dfd36d4059e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/43.pdf",
+              "sha256": "f62e7af5cda9bee73e0e9d2296c7d6fd5ac69191a941029e298f3107db27e9d7",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/44.pdf",
+              "sha256": "11ae8e04cad452d59fd77cec05de45f79fada93c28d515ba34d1bef2e9d5a909",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/45.pdf",
+              "sha256": "3e51daeb012c29abd27cf7ed9ca70438be57e9d71c442ab31a42e7884bf6caec",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/46.pdf",
+              "sha256": "d5650c5e5244a8ca198a9cf016d799255f67184e89ca62ad3a41ead24a412607",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/47.pdf",
+              "sha256": "3284d95c68d710fa1df50be2f961738524f47fec4ad376d957e285b44c34f40a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/48.pdf",
+              "sha256": "8f54bbdb48b9865edc9c58e6f68f01af0fb4936a398671985b15a87e151641bf",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/49.pdf",
+              "sha256": "24bb4a9f0142b471c96ab3546ac26679c0dbc71391f64c53dbda6501451f018e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/50.pdf",
+              "sha256": "c06aa36096bda0774d74004272592f5560f7608ef66edcd667482407947850f5",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/51.pdf",
+              "sha256": "41602db86fe10970f7d7a963a7a20ab93793dc972c5743a90813a05ca5f71c48",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/52.pdf",
+              "sha256": "5b9a88ee869a6a39fad1f3a9916bb3dbb307ff096a670fca907cfa083b6646ee",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/53.pdf",
+              "sha256": "6a4a379e6fa74781cb4d4b10c245bd5abfa1a738f2015b15e4f18b2e143edb18",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/54.pdf",
+              "sha256": "4f39ca9a56a10c1f71b0930f83336a65145a2d0da1744c85593c42602be144fe",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/55.pdf",
+              "sha256": "916412ccb461060a6ad45211ab62b4eae9e377dd3a34a23c72699de41cce1e99",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/56.pdf",
+              "sha256": "6d244bac32b96e8c66524bc2e866b410e40b5ed3fd2f48f67636115cb88132d5",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/57.pdf",
+              "sha256": "11ef30857f35b430a8112f62fc256ba61faa59a345be828efb3bd9d4695f610c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/58.pdf",
+              "sha256": "f774e17e31025a4376dbe15aac4f7408e0fe81967438ff8048c3702e6db602a3",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/59.pdf",
+              "sha256": "caa236f07b68b56865c3a5da21a4032623b2ae12612b6eabd07db1f32b4c5b9e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/60.pdf",
+              "sha256": "8fe6fff5aeeb6904d92aed31f64116e79d5eb1026633714d08101d1403e7c3a6",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-18.pdf",
+            "sha256": "4594a8465dc3090f10fc63e4d8ce502e0b6a988c5c4cf82b108047eabc8248a8",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-54.pdf",
+            "sha256": "db358eb43e8698169db70d5b37d76e528198c156eb20b25719f681db869bc096",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-14.pdf",
+            "sha256": "3a9da131c7ec1fa6c60202045a248bc96c19e00e5a44beb3b347cdc6adb0c320",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/3.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-8.pdf",
+            "sha256": "270be5956db1fa66d7d0f0961a0e4229cea3589c6712446c77fd0ccd6135c0b3",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/4.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-24.pdf",
+            "sha256": "631408f692cf28dffce5d919a04615225e6862cdd557bc36c04f1de2a9b993c3",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/5.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-57.pdf",
+            "sha256": "f420f9e6a53cfea0b94af4af02ad506d61fa732473008a73b3af27833a8296cd",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/6.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-41.pdf",
+            "sha256": "a66e525265c7fd1adac0fded83f7e5544bf5b040997f44d591cd0b457b19a3f7",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/7.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-37.pdf",
+            "sha256": "99ac984926fc659bca87962c490afe0af5fcb7ed3349797f56ab1ce046f829e7",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/8.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-46.pdf",
+            "sha256": "b5ac74295ad1269cb4d2a5c34a2904401be8dbbafb3a7a2990244bd50414f49c",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/9.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-15.pdf",
+            "sha256": "3e30ee5f8ce77ce2cbb21e1d38ee44ce83163f7a3e55d9b7561af62f8c893cf4",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/10.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-60.pdf",
+            "sha256": "fc27465c069ad9fd9a598351f22f3e0dd3b0054d4ccb7910844ab46ca431f8f1",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/11.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-3.pdf",
+            "sha256": "0befef8e8c4fc4f7c4138e4c67564a68c91b7599c38f2f74cc4025ada30aa84a",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/12.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-42.pdf",
+            "sha256": "ace5acc3c1e1a6c4ea586d488c909c2243a7b23be051a987ad57baead9cee00b",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/13.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-51.pdf",
+            "sha256": "cd6e75f7c3fcd39071f26b9d00195f09b649084afffa672ac04cd9b80ea0b47e",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/14.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-11.pdf",
+            "sha256": "309b629a5860bb9729f62f1325c646223c00372f1d166c7d5c0b5601e874e12d",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/15.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-2.pdf",
+            "sha256": "0ace0ab08ec927d2f9636ef84fac0a87e8d7a571aa81172cf8cc50138dbfd29f",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/16.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-25.pdf",
+            "sha256": "659ceee7b6825d21fac5bc6f45fe3ac4cbdfbc96c92017f03d4a528955dfe9f7",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/17.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-45.pdf",
+            "sha256": "b56c9ddd8dd02f303b3ebcee64b3f6b66446edd9a2e23b044f7c85fcc05d62c8",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/18.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-13.pdf",
+            "sha256": "3a1fe6721a406e9a86c0c82d315883389338d33ad01c4a5ae5a93b9f3fc52c60",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/19.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-49.pdf",
+            "sha256": "c5934cfe6e4b84dea596a55d23790ec8d8d298147beed715854dba2b3af19344",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/20.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-36.pdf",
+            "sha256": "9351d3caf1fb69996b5dcac2e1771dd6d724f3677e15dd7403dae901b0e19a66",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/21.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-7.pdf",
+            "sha256": "268fe78eca9f8513a5e2194c327b75b0c652b4106743de43c214f1ccce4d32b0",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/22.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-29.pdf",
+            "sha256": "79e1a9112fe76917ac8ab44023cb9e6f44926a61da16ed870619f0a0083d33a7",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/23.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-9.pdf",
+            "sha256": "2af4a8a1970f443a79a50278e98605c8364579b0244b70c78db5942c9d5c891c",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/24.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-38.pdf",
+            "sha256": "9e36b457feebb25161dab56d43307e1470b2407650cd2c446443b20828d048c0",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/25.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-56.pdf",
+            "sha256": "e4f0a05344889f9d2834c39d3d4d852c476f0efca172c9bfca13c22453122c35",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/26.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-21.pdf",
+            "sha256": "5abf0336afe1eb8375ab88ba04d3a9d750076ff635dd38f38b320f8530dd9d6b",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/27.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-39.pdf",
+            "sha256": "a58c9b1f7554a9a12ef722b47dc2e363f9b471d47458bb8b57cc69c03cce2ef0",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/28.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-43.pdf",
+            "sha256": "afa10e4cb156205eecb541914435373a072e4938e0042e57f28bf4e45fbcb410",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/29.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-30.pdf",
+            "sha256": "7d8f8bcbd5ecb094fa5014448827582eb8327eaf0dac11ee3043f4d7164c28b7",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/30.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-53.pdf",
+            "sha256": "d8051e01cda834f16418ede14010f8389a18ad5a1c56c69033c28bed9fec14f2",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/31.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-40.pdf",
+            "sha256": "a599b6817ac7bf6c431125063c4e6c8f284270d137f816c4c536681e521c0ec2",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/32.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-10.pdf",
+            "sha256": "2d8096a7172f0ebc376159b11bb3466574a9b3eec1641e4cbbcdf94070530be3",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/33.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-32.pdf",
+            "sha256": "8b40739bcca6446aa69901a5bbb7b0194ca542e9edd1a18a3de8ffb001ddeb63",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/34.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-55.pdf",
+            "sha256": "e4cd334211ac46d6c98037bfd8707caba3c6dfabcc7d25fc4d8dead4c5b6e2b8",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/35.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-47.pdf",
+            "sha256": "ba317bb8bcef6dde9ee4a0bb9999ad7300b13c97f03911524d89408248cf939c",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/36.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-1.pdf",
+            "sha256": "0118ad1e92d3d327d5b65abccfd8ab04f88b6fa1d60f5a417a382da2cbb9642a",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/37.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-23.pdf",
+            "sha256": "5d7279eca2724b07496f2c4eaf5057496f1fb473265056b9643ec09caeb6b9e6",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/38.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-28.pdf",
+            "sha256": "737ba931dffb06a28b2f2e22d59804fb9b802a19a7a3b44514d227b47bb0ad83",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/39.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-20.pdf",
+            "sha256": "5137ad42732cdb4502722d495507aa109d674888e08ed3381c9d0b1aff248898",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/40.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-44.pdf",
+            "sha256": "b157c4c07da96760c0b5464b4a94b3fabd37fd659f5689b3edfde765786f753a",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/41.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-31.pdf",
+            "sha256": "8504d28d83361c99e428e27ff68e41b1a575120bad5a32a7f8a24dfd36d4059e",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/42.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-58.pdf",
+            "sha256": "f62e7af5cda9bee73e0e9d2296c7d6fd5ac69191a941029e298f3107db27e9d7",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/43.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-4.pdf",
+            "sha256": "11ae8e04cad452d59fd77cec05de45f79fada93c28d515ba34d1bef2e9d5a909",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/44.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-16.pdf",
+            "sha256": "3e51daeb012c29abd27cf7ed9ca70438be57e9d71c442ab31a42e7884bf6caec",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/45.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-52.pdf",
+            "sha256": "d5650c5e5244a8ca198a9cf016d799255f67184e89ca62ad3a41ead24a412607",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/46.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-12.pdf",
+            "sha256": "3284d95c68d710fa1df50be2f961738524f47fec4ad376d957e285b44c34f40a",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/47.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-33.pdf",
+            "sha256": "8f54bbdb48b9865edc9c58e6f68f01af0fb4936a398671985b15a87e151641bf",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/48.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-6.pdf",
+            "sha256": "24bb4a9f0142b471c96ab3546ac26679c0dbc71391f64c53dbda6501451f018e",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/49.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-48.pdf",
+            "sha256": "c06aa36096bda0774d74004272592f5560f7608ef66edcd667482407947850f5",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/50.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-17.pdf",
+            "sha256": "41602db86fe10970f7d7a963a7a20ab93793dc972c5743a90813a05ca5f71c48",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/51.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-22.pdf",
+            "sha256": "5b9a88ee869a6a39fad1f3a9916bb3dbb307ff096a670fca907cfa083b6646ee",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/52.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-26.pdf",
+            "sha256": "6a4a379e6fa74781cb4d4b10c245bd5abfa1a738f2015b15e4f18b2e143edb18",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/53.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-19.pdf",
+            "sha256": "4f39ca9a56a10c1f71b0930f83336a65145a2d0da1744c85593c42602be144fe",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/54.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-35.pdf",
+            "sha256": "916412ccb461060a6ad45211ab62b4eae9e377dd3a34a23c72699de41cce1e99",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/55.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-27.pdf",
+            "sha256": "6d244bac32b96e8c66524bc2e866b410e40b5ed3fd2f48f67636115cb88132d5",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/56.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-5.pdf",
+            "sha256": "11ef30857f35b430a8112f62fc256ba61faa59a345be828efb3bd9d4695f610c",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/57.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-59.pdf",
+            "sha256": "f774e17e31025a4376dbe15aac4f7408e0fe81967438ff8048c3702e6db602a3",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/58.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-50.pdf",
+            "sha256": "caa236f07b68b56865c3a5da21a4032623b2ae12612b6eabd07db1f32b4c5b9e",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/59.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/evaluation-settlement-34.pdf",
+            "sha256": "8fe6fff5aeeb6904d92aed31f64116e79d5eb1026633714d08101d1403e7c3a6",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r8zimuzigyou.files/60.pdf"
+          }
+        ],
+        "archived_at": "2026-10-14T10:08:27.089Z"
+      },
+      "reason": "令和8年度に実施した事務事業評価（対象60事業）の中間結果。パブリックコメント用に2026-08-10更新で公表され、事業ごとに2頁の評価シート1本（No.1〜60）になっている。各シートは事業の目的・内容、事業費（R5・R6決算額、R7決算見込額、R8予算額）、活動指標・成果指標のR5〜R7の目標値と実績値、事業の課題と改善への取組、必要性・有効性・効率性の検証項目の一次評価・二次評価・本部評価と評価コメントを載せ、文字として読める。評価の実績はR7年度まで入るが、R7の事業費は決算見込額。中間結果なので、検討結果（令和8年10月公表予定）や最終の報告書で変わりうる。全事業ではなく60事業のみ。なお、中間結果であり、パブリックコメント後の最終報告で差し替わり得る。"
+    }
+  ]
 }

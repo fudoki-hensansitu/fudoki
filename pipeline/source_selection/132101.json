@@ -4525,5 +4525,45 @@
       }
     }
   ],
-  "unresolved_candidates": []
+  "unresolved_candidates": [],
+  "evaluation_selections": [
+    {
+      "target": {
+        "jurisdiction": "132101",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和8年度小金井市行政評価結果（施策評価・事務事業評価、評価対象：令和7年度）",
+          "landing_url": "https://www.city.koganei.lg.jp/shisei/zaiseiyosan/kaikaku/hyoukasaikouchikur4/D01016012022100.html",
+          "inspected_at": "2026-10-14T12:00:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.koganei.lg.jp/shisei/zaiseiyosan/kaikaku/hyoukasaikouchikur4/D01016012022100.files/R8gyouseihyoukakekka.pdf",
+              "sha256": "a277574ebbbdd240a8b404ded7222d541434f109226e4d1a2beabacb97627fa3",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132101/2025/evaluation-settlement.pdf",
+            "sha256": "a277574ebbbdd240a8b404ded7222d541434f109226e4d1a2beabacb97627fa3",
+            "final_url": "https://www.city.koganei.lg.jp/shisei/zaiseiyosan/kaikaku/hyoukasaikouchikur4/D01016012022100.files/R8gyouseihyoukakekka.pdf"
+          }
+        ],
+        "archived_at": "2026-10-14T10:05:56.841Z"
+      },
+      "reason": "令和7年度に実施した行政活動を令和8年5月に所管課が自己評価した「令和8年度行政評価結果」（令和8年9月、ページ更新 2026-09-11）。107頁、文字の層あり。第5次基本構想・前期基本計画の29施策の施策評価シート（P.10〜、1施策1頁:令和7年度の主な取組と課題、指標のR3〜R7実績、総括・自己評価、達成度合い、長期計画審議会コメント、次年度の施策の方向性）と、評価対象とした31事務事業の事務事業評価シート（P.43〜、評価対象：令和7年度:基本情報、成果・経費、自己点検の評価と課題、改善提案、今後の方向性、行財政再建推進本部による判定）を1冊に収める。一方、同じ令和7年度決算の『主要な施策の成果に関する説明書』（R7shuyonashisaku.pdf、164頁）は事業名と1行の概要・予算執行状況のみで、目標・実績・評価・課題の記述が無いため選ばなかった。評価は所管課の自己評価で市の最終方針ではない（ページの注記）。"
+    }
+  ]
 }

@@ -244,6 +244,7 @@ describe('MCP', () => {
       'describe_expenditure_columns',
       'get_expenditure_node',
       'list_jurisdictions',
+      'search_evaluations',
       'search_expenditure_nodes',
     ])
     const res = await call('search_expenditure_nodes', { ...base, where: { node_kind: { eq: ['目'] } }, page_size: 1 })
@@ -470,6 +471,7 @@ describe('MCP 2026-07-28', () => {
       'describe_expenditure_columns',
       'get_expenditure_node',
       'list_jurisdictions',
+      'search_evaluations',
       'search_expenditure_nodes',
     ])
     const res = await modern('tools/call', { name: 'search_expenditure_nodes', arguments: valid }, { 'Mcp-Name': 'search_expenditure_nodes' })
