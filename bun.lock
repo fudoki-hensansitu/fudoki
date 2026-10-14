@@ -78,9 +78,6 @@
     },
     "packages/jurisdictions": {
       "name": "@fudoki/jurisdictions",
-      "dependencies": {
-        "zod": "catalog:",
-      },
     },
     "packages/ui": {
       "name": "@fudoki/ui",
