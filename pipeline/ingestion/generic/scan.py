@@ -85,6 +85,10 @@ def _split(word: Word, cuts: list[float]) -> list[Word]:
         if end > used:
             pieces.append(Word(word.text[used:end], start, word.y0, x, word.y1))
         start, used = x, end
+    if len(pieces) == 1 and pieces[0].text == word.text and _amount(word.text):
+        # A rule only clipped OCR padding, not a character. Keep the observed amount's
+        # box so its source remains one exact observation (grouped amounts may overhang).
+        return [word]
     return pieces
 
 

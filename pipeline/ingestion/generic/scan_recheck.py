@@ -30,6 +30,10 @@ from ingestion.lib.scan_ocr import _cell
 from ingestion.lib.tree_checks import check_tree
 from shared.amount import number
 
+SIGNED_PROMPT = ('日本の決算書の金額セルです。印字された金額を1つだけ、桁区切りと負号を含めて原文のまま答えてください。'
+                 '数字の左のマイナス（-、−、△、▲）は金額の一部です。必ず残し、正の数にしないでください。'
+                 '罫線は負号ではありません。説明や単位は書かないでください。読めない場合はUNREADABLEと答えてください。')
+
 
 def source_input(document: dict, conversion: dict, pdf: Path) -> dict:
     source = manifest.resolved_inputs(document, conversion)[0]
@@ -169,7 +173,7 @@ def read_amount(pdf: Path, box, model: str, *, allow_vlm: bool = True,
     if not allow_vlm:
         return None, 'deferred'
     if crop_box is not None:
-        return vlm_ocr.read(pdf, box.page, crop_box, PROMPT, model=model, margin=0, dpi=200), model
+        return vlm_ocr.read(pdf, box.page, crop_box, SIGNED_PROMPT, model=model, margin=0, dpi=200), model
     return read_cell(pdf, box, model), model
 
 
@@ -210,7 +214,7 @@ def recheck(document: dict, conversion: dict, pdf: Path, model: str = MODEL, lim
     for box in list(boxes.values())[:limit]:
         crop_box = column_crop(box, rules[box.page]) if column_crops else None
         payload = [source['sha256'], box.page, box.id, box.text, [box.x0, box.y0, box.x1, box.y1],
-                   model, PROMPT, MARGIN, 200, 'paddle-exact-zero-300dpi-v1']
+                   model, SIGNED_PROMPT if crop_box is not None else PROMPT, MARGIN, 200, 'paddle-exact-zero-300dpi-v1']
         if crop_box is not None:
             payload.extend([crop_box, 'ruled-column-line-v1'])
         fingerprint = hashlib.sha256(manifest.canonical(payload)).hexdigest()

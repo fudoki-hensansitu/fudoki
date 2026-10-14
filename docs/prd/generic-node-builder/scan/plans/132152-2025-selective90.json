@@ -3874,6 +3874,62 @@
             "observed_amount": "956,000",
             "corrected_amount": "-956,000",
             "reason": "codex/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 956,000）"
+          },
+          {
+            "id": "vlm-a645f76052",
+            "page": 57,
+            "observation_id": "p57:tile-4-1:r0:w1",
+            "observed_amount": "1,550,000",
+            "corrected_amount": "-1,550,000",
+            "reason": "codex/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 1,550,000）"
+          },
+          {
+            "id": "vlm-c4922bfc30",
+            "page": 61,
+            "observation_id": "p61:tile-9-2:r6:w0",
+            "observed_amount": "259,641",
+            "corrected_amount": "259,644",
+            "reason": "codex/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 259,641）"
+          },
+          {
+            "id": "vlm-babf11e58b",
+            "page": 38,
+            "observation_id": "p38:tile-3-0:r1:w0",
+            "observed_amount": "3,791,000",
+            "corrected_amount": "−3,791,000",
+            "reason": "codex/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 3,791,000）"
+          },
+          {
+            "id": "vlm-9115eb40bb",
+            "page": 56,
+            "observation_id": "p56:tile-3-2:r1:w0",
+            "observed_amount": "9,886,000",
+            "corrected_amount": "−9,886,000",
+            "reason": "codex/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 9,886,000）"
+          },
+          {
+            "id": "vlm-b53ae0e361",
+            "page": 59,
+            "observation_id": "p59:tile-3-1:r0:w0",
+            "observed_amount": "3,359,000",
+            "corrected_amount": "−3,359,000",
+            "reason": "codex/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 3,359,000）"
+          },
+          {
+            "id": "vlm-7c38518196",
+            "page": 56,
+            "observation_id": "p56:tile-3-3:r0:w0",
+            "observed_amount": "9,886,000",
+            "corrected_amount": "−9,886,000",
+            "reason": "codex/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 9,886,000）"
+          },
+          {
+            "id": "vlm-6a9d28e91e",
+            "page": 70,
+            "observation_id": "p70:tile-9-1:r6:w0",
+            "observed_amount": "18,802",
+            "corrected_amount": "48,802",
+            "reason": "codex/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 18,802）"
           }
         ]
       },

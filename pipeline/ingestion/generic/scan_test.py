@@ -173,6 +173,12 @@ class CellWordsTest(unittest.TestCase):
     def test_a_piece_across_a_rule_is_cut(self):
         self.assertEqual([w.text for w in _cell_words([Word('款項', 42, 122, 61, 133)], [42, 52, 60])], ['款', '項'])
 
+    def test_a_rule_that_removes_no_amount_character_does_not_change_its_source_box(self):
+        word = Word('18,802', 528.4, 352.8, 550.04, 363.1)
+        kept = _cell_words([word], [498, 549, 600])[0]
+        self.assertEqual((kept.text, kept.x0, kept.y0, kept.x1, kept.y1),
+                         (word.text, word.x0, word.y0, word.x1, word.y1))
+
 
 class AgreedHeadersTest(unittest.TestCase):
     def test_pages_on_one_frame_share_the_header_most_read(self):
