@@ -29,7 +29,7 @@ def run(r):
     out = dict(r)
     for rt in ('keyword', 'hybrid'):
         meta = {}
-        chunks = search(r['query'], r['jurisdiction'], retrieval_type=rt, meta=meta)
+        chunks = search(r['query'], r['jurisdiction'], retrieval_type=rt, meta=meta, max_num_results=10)
         rank = next((i + 1 for i, c in enumerate(chunks) if set(idx[c['id']]['pages']) & set(r['truth'])), None)
         out[rt] = {'rank': rank, 'n': len(chunks), 'meta': meta}
     return out

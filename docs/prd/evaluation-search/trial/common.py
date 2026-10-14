@@ -2,6 +2,7 @@
 import json, os, re, subprocess
 
 INST = 'fudoki-eval-trial-v1'
+MAX_RESULTS = 5
 QUOTE_LABELS = ('正しい', '別の事業の行', '別の年度・列', '別の項目', '原典に無い', '判断できない')
 # AI Search が PDF を Markdown にしたときの頁の見出し。OCR なしは `### Page N`、OCR ありは `<!-- page N -->`。
 PAGE_MARK = re.compile(r'(?:^|\n)(?:### Page (\d+)|<!-- page (\d+) -->)\n?')
@@ -83,8 +84,8 @@ def cf(*args):
     return json.loads(r.stdout)
 
 
-def search(query, jurisdiction, retrieval_type='hybrid', meta=None):
-    """団体で絞って上位10件の chunk を返す。失敗を0件と取り違えないよう、cf の失敗は例外にする。
+def search(query, jurisdiction, retrieval_type='hybrid', meta=None, max_num_results=MAX_RESULTS):
+    """団体で絞って指定した上限までの chunk を返す。失敗を0件と取り違えないよう、cf の失敗は例外にする。
 
     retrieval_type は hybrid（既定）・keyword（全文検索だけ）・vector。meta に dict を渡すと hybrid_meta を入れて返す。
 
@@ -93,7 +94,7 @@ def search(query, jurisdiction, retrieval_type='hybrid', meta=None):
     """
     body = {'messages': [{'role': 'user', 'content': query}], 'ai_search_options': {'retrieval': {
         'filters': {'jurisdiction': jurisdiction},
-        'max_num_results': 10, 'score_threshold': 0, 'keyword_match_mode': 'or', 'retrieval_type': retrieval_type}}}
+        'max_num_results': max_num_results, 'score_threshold': 0, 'keyword_match_mode': 'or', 'retrieval_type': retrieval_type}}}
     r = cf('search', INST, query, '--body', json.dumps(body, ensure_ascii=False))
     if meta is not None:
         meta.update(r.get('hybrid_meta') or {})

@@ -15,7 +15,7 @@ for qid, m in missed.items():
         print('-', truth[qid]['name'], '| 検索語なし'); continue
     tp, found = set(truth[qid]['pages']), []
     for q in queries[qid]:
-        chunks = search(q, m['jurisdiction'])
+        chunks = search(q, m['jurisdiction'], max_num_results=10)
         found.append((q, len(chunks), next((i + 1 for i, c in enumerate(chunks) if set(cm.get(c['id'], [])) & tp), None)))
     ok = any(f[2] for f in found); hit += ok
     print('○' if ok else '×', truth[qid]['name'], '|', m['query'], '|', found)

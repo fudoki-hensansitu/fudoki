@@ -30,7 +30,7 @@ qs = [dict(e, qtype='exact', query=e['name']) for e in exact] + [dict(by[p['id']
 
 
 def run(q):
-    chunks = search(q['query'], q['jurisdiction'])
+    chunks = search(q['query'], q['jurisdiction'], max_num_results=10)
     assert all(c['id'] in cmap for c in chunks), q['query']
     res = [{'pages': cmap[c['id']], 'v': c.get('scoring_details', {}).get('vector_score'),
             'k': c.get('scoring_details', {}).get('keyword_score'), 'id': c['id']} for c in chunks]

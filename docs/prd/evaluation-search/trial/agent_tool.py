@@ -1,6 +1,6 @@
 """AI の利用手順で AI に渡す道具。検索と回答だけを持ち、正解は読まない。
 
-  python3 agent_tool.py search "<検索語>"   上位10件の chunk の全文を（原典・頁）ごとに出す。1問あたり MAX_SEARCHES 回まで
+  python3 agent_tool.py search "<検索語>"   上位5件までの chunk の全文を（原典・頁）ごとに出す。1問あたり MAX_SEARCHES 回まで
   python3 agent_tool.py more                 検索の出力の続き（検索回数に数えない）
   python3 agent_tool.py answer '<JSON>'      最終の回答を1回だけ記録する
 
@@ -12,7 +12,7 @@ from common import search, split_pages
 
 MAX_SEARCHES = 3
 # Claude Code の Bash は、出力が約25〜37KB を超えるとファイルに逃がして先頭2KBしか見せない（2026-10-13 観測）。
-# 上位10件の全文は約14万バイトあるので、この大きさごとに分けて more で続きを出す。
+# 候補の全文は長いので、この大きさごとに分けて more で続きを出す。
 PAGE_BYTES = 24000
 FIELDS = ('目標', '実績', '評価区分', '課題', '方向性')
 WORK, QID = os.environ['AGENT_WORK'], os.environ['AGENT_QID']

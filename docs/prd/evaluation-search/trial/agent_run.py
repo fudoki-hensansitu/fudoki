@@ -10,7 +10,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-from common import attempt_results, chunk_index, usage_limited  # noqa: E402
+from common import MAX_RESULTS, attempt_results, chunk_index, usage_limited  # noqa: E402
 
 NAMES = {'131172': '東京都北区', '131148': '東京都中野区'}
 ap = argparse.ArgumentParser()
@@ -60,7 +60,8 @@ def answered(qid):
 def run(q):
     if limited.is_set() or answered(q['id']) or (only and q['id'] not in only):
         return None
-    system = template.format(jurisdiction_name=NAMES[q['jurisdiction']], jurisdiction=q['jurisdiction'], tool=tool)
+    system = template.format(jurisdiction_name=NAMES[q['jurisdiction']], jurisdiction=q['jurisdiction'], tool=tool,
+                             max_results=MAX_RESULTS)
     cmd = ['claude', '-p', '--model', a.model, '--system-prompt', system, '--tools', 'Bash',
            '--allowedTools', f'Bash(python3 {tool} search:*)', f'Bash(python3 {tool} more:*)', f'Bash(python3 {tool} answer:*)',
            '--setting-sources', '', '--strict-mcp-config', '--no-session-persistence', '--output-format', 'json',
