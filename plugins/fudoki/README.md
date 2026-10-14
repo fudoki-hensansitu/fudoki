@@ -12,6 +12,8 @@ API・MCP・UIはURLの先で更新されます。skillや接続設定はplugin�
 
 [利用者向け文書](https://docs.fudoki.dev) · [コード](https://github.com/wwwyo/fudoki)
 
+不具合・データ訂正は [GitHub Issues](https://github.com/wwwyo/fudoki/issues)、非公開の相談は [support@fudoki.dev](mailto:support@fudoki.dev) で受け付けます。
+
 For reviewers: This plugin searches Japanese municipal expenditure through a remote, read-only MCP endpoint. It bundles one comparison skill, checks coverage and accounting scope, and links amounts to original documents. It does not provide individual transactions, revenue, or write operations.
 
 ## License

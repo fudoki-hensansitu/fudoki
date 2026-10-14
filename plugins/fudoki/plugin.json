@@ -4,7 +4,8 @@
   "version": "0.1.0",
   "description": "日本の自治体の歳出を事業の単位で検索し、収録範囲と原典を確かめて比較・集計する。",
   "author": {
-    "name": "渡部唯登"
+    "name": "風土記",
+    "email": "support@fudoki.dev"
   },
   "homepage": "https://docs.fudoki.dev",
   "repository": "https://github.com/wwwyo/fudoki",
@@ -14,7 +15,7 @@
         "displayName": "風土記(fudoki)",
         "shortDescription": "Compare municipal spending",
         "longDescription": "Search Japanese municipal expenditure in initial budgets and settlements, check coverage and accounting scope, inspect line-item breakdowns, and trace amounts to original documents. Only collected documents are available. COFOG classifications are Fudoki judgments and may be tentative. Revenue, individual transactions, and writes are outside the supported scope.",
-        "developerName": "渡部唯登",
+        "developerName": "風土記",
         "category": "Productivity",
         "capabilities": [
           "Read",

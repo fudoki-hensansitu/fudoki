@@ -7,21 +7,23 @@
 | 項目 | 値・状態 |
 | --- | --- |
 | 名称 | 風土記(fudoki)（package ID: fudoki） |
-| 発行者 | 渡部唯登。本人確認は提出画面で未実施 |
+| 発行者 | 風土記。本人確認は提出画面で未実施 |
 | 提供国 | 日本（JP） |
 | 課金・購入 | なし |
 | MCP URL | https://api.fudoki.dev/mcp |
 | 認証 | 不要。公開データの読取りのみ |
 | Website / Documentation | https://docs.fudoki.dev （2026-10-14 HTTP 200、内容を確認） |
-| Support URL・連絡先 | 空欄 |
-| Privacy URL | 空欄 |
-| Terms URL | 空欄 |
+| Support URL・連絡先 | support@fudoki.dev（転送設定は有効）。GitHub Issues。/support のデプロイ後にURLを登録 |
+| Privacy URL | 公開用ページを作成済み。/privacy のデプロイ後にURLを登録 |
+| Terms URL | 公開用ページを作成済み。/terms のデプロイ後にURLを登録 |
 | アイコン | plugins/fudoki/assets/icon.png（256×256 PNG、既存markから作成） |
 | package | .build/plugins/fudoki-0.1.0.zip（再生成可能、未提出の準備用） |
 | 録画デモURL | 空欄。台本は下記、録画・公開未実施 |
 | 掲載用スクリーンショット | 下記3場面を撮影する。実hostの提出用画像は未作成 |
 
 OpenAIの英語subtitleは `Compare municipal spending`、日本語は「自治体の歳出を比較し原典を確認」。本文・starter prompts・5 positive / 3 negative case・課金なし・JP・release notesはportable manifestの `extensions.com.openai` に入れた。support/privacy/terms と録画URLは値を捏造せず、省略している。[OpenAIの提出metadata](https://developers.openai.com/plugins/deploy/submission)
+
+support/privacy/terms の項目調査・本番設定との照合・運用方針は [ポリシーの調査](policies.md)を参照する。ページは通常の公開 build に含める。ページの作成を、デプロイ後の公開 URL の確認や提出の完了とは扱わない。
 
 Claudeの掲載文案:
 
