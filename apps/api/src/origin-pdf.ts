@@ -43,58 +43,10 @@ export async function originPdf(db: Db, relay: RelayNamespace | undefined, reque
   if (!origin) throw new ApiError(404, 'NOT_FOUND', '原典が見つかりません')
   if (origin.format !== 'pdf' || !publicUrl(origin.url)) throw invalid('中継対象の公開 PDF ではありません')
   if (!relay) throw new ApiError(503, 'UNAVAILABLE', '原典 PDF の中継を利用できません')
-  const stub = relay.get(relay.idFromName('origin-pdf-v1'))
-  const response = await stub.fetch(new Request('https://relay.internal/pdf', {
+  const response = await relay.get(relay.idFromName('origin-pdf-v1')).fetch(new Request('https://relay.internal/pdf', {
     method: 'POST', body: JSON.stringify({ url: origin.url }),
   }))
-  if (response.status !== 204) return new Response(response.body, response)
-  // DO は1か所に固定され、日本の外にあると海外からの取得を拒む自治体がある（中央区は 403）。取得は利用者に近い Worker で行う
-  const fetched = await fetchUpstream(origin.url)
-  const stored = await stub.fetch(new Request('https://relay.internal/store', {
-    method: 'POST', headers: { 'X-Origin-Url': origin.url },
-    // 失敗も DO に伝え、同じ PDF を待っている要求を解く
-    body: fetched instanceof Response ? null : fetched.buffer as ArrayBuffer,
-  }))
-  if (fetched instanceof Response) return fetched
-  // DO が入れ替わって保持できなくても、取得できた PDF はそのまま返す
-  if (!stored.ok) return new Response(fetched.buffer as ArrayBuffer, { headers: {
-    'Content-Type': 'application/pdf', 'X-Origin-Url': encodeURIComponent(origin.url), 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff',
-  } })
-  return new Response(stored.body, stored)
-}
-
-async function fetchUpstream(url: string): Promise<Uint8Array | Response> {
-  const controller = new AbortController()
-  const timer = setTimeout(() => controller.abort(), PDF_LIMITS.timeoutMs)
-  try {
-    const upstream = await fetch(url, { redirect: 'manual', signal: controller.signal, headers: { Accept: 'application/pdf' } })
-    if (upstream.status !== 200 || !/^application\/pdf(?:\s*;|$)/i.test(upstream.headers.get('content-type') ?? '')) {
-      await upstream.body?.cancel()
-      // 自治体側の一時的な拒否・リダイレクト・形式の違いを、再発時に見分けられるよう status と形式を出す
-      console.error('origin pdf upstream', { url, status: upstream.status, type: upstream.headers.get('content-type') })
-      return failure(502, `自治体から PDF を取得できません（HTTP ${upstream.status}${upstream.status === 200 ? `、${upstream.headers.get('content-type') ?? '形式不明'}` : ''}）`)
-    }
-    if (Number(upstream.headers.get('content-length')) > PDF_LIMITS.bytes) {
-      await upstream.body?.cancel()
-      return failure(502, 'PDF が32 MiBの上限を超えています')
-    }
-    if (!upstream.body) return failure(502, 'PDF の本文がありません')
-    const parts: Uint8Array[] = []
-    let size = 0
-    for await (const value of upstream.body as unknown as AsyncIterable<Uint8Array>) {
-      size += value.byteLength
-      if (size > PDF_LIMITS.bytes) return failure(502, 'PDF が32 MiBの上限を超えています')
-      parts.push(value)
-    }
-    const bytes = new Uint8Array(size)
-    let at = 0
-    for (const p of parts) { bytes.set(p, at); at += p.byteLength }
-    if (new TextDecoder().decode(bytes.subarray(0, 5)) !== '%PDF-') return failure(502, '取得した内容が PDF ではありません')
-    return bytes
-  } catch (error) {
-    if (!controller.signal.aborted) console.error('origin pdf fetch', { url, error: String(error) })
-    return failure(controller.signal.aborted ? 504 : 502, controller.signal.aborted ? 'PDF の取得が20秒の上限を超えました' : '自治体から PDF を取得できません')
-  } finally { clearTimeout(timer) }
+  return new Response(response.body, response)
 }
 
 const failure = (status: number, message: string) => Response.json(errorBody('PDF_UNAVAILABLE', message), { status })
@@ -102,33 +54,11 @@ const chunkKey = (url: string, i: number) => `pdf:${url}:${i}`
 
 /** 表示専用の短期キャッシュ。R2・取り込み時の内容にはアクセスしない。 */
 export class OriginPdfRelay {
-  /** Worker が取得中の URL。同時の要求は取得を重ねず、終わるのを待ってキャッシュから返す */
-  private readonly inflight = new Map<string, { at: number; done: Promise<void>; resolve: () => void }>()
-
   constructor(private readonly state: State) {}
 
   async fetch(request: Request): Promise<Response> {
-    if (new URL(request.url).pathname === '/store') return this.store(request)
-    const body = await request.json() as { url: string }
-    const pending = this.inflight.get(body.url)
-    // Worker が /store に来ないまま落ちた許可は、取得の上限時間の倍を過ぎたら捨てて取り直す
-    if (pending && Date.now() - pending.at > PDF_LIMITS.timeoutMs * 2) this.inflight.delete(body.url)
-    else if (pending) {
-      await Promise.race([pending.done, new Promise((resolve) => setTimeout(resolve, PDF_LIMITS.timeoutMs + 5_000))])
-      return this.state.blockConcurrencyWhile(async () => {
-        const now = Date.now()
-        const window = await this.state.storage.get<Window>('window')
-        if (window && now < window.start + 60_000) {
-          window.requests++
-          await this.state.storage.put('window', window)
-          if (window.requests > PDF_LIMITS.requests) return failure(429, '閲覧頻度の上限を超えました')
-        }
-        const hit = (await this.expire(now)).find((p) => p.url === body.url)
-        return hit ? this.response(hit) : failure(502, '自治体から PDF を取得できません')
-      })
-    }
     return this.state.blockConcurrencyWhile(async () => {
-      const { url } = body
+      const { url } = await request.json() as { url: string }
       if (!publicUrl(url)) return failure(400, '中継対象の公開 PDF ではありません')
       const now = Date.now()
       const cache = await this.expire(now)
@@ -145,38 +75,47 @@ export class OriginPdfRelay {
       window.urls.push(url)
       await this.state.storage.put('window', window)
 
-      // 取得は利用者に近い Worker が行う（fetchUpstream）。ここでは許可だけ返す
-      let resolve = () => {}
-      const done = new Promise<void>((r) => { resolve = r })
-      this.inflight.set(url, { at: now, done, resolve })
-      return new Response(null, { status: 204 })
-    })
-  }
-
-  /** Worker が取得した PDF を保持して返す。取得の許可は /pdf で出したものに限る */
-  private store(request: Request): Promise<Response> {
-    return this.state.blockConcurrencyWhile(async () => {
-      const url = request.headers.get('X-Origin-Url') ?? ''
-      const inflight = this.inflight.get(url)
-      if (!inflight) return failure(400, '取得を許可していない PDF です')
-      this.inflight.delete(url)
+      const controller = new AbortController()
+      const timer = setTimeout(() => controller.abort(), PDF_LIMITS.timeoutMs)
       try {
-        const bytes = new Uint8Array(await request.arrayBuffer())
-        if (!bytes.byteLength) return failure(502, '自治体から PDF を取得できません')
-        if (bytes.byteLength > PDF_LIMITS.bytes || new TextDecoder().decode(bytes.subarray(0, 5)) !== '%PDF-') return failure(502, '取得した内容が PDF ではありません')
-        const cache = await this.expire(Date.now())
-        const pdf: CachedPdf = { url, size: bytes.byteLength, fetchedAt: Date.now(), chunks: Math.ceil(bytes.byteLength / CHUNK_BYTES) }
+        const upstream = await fetch(url, { redirect: 'manual', signal: controller.signal, headers: { Accept: 'application/pdf' } })
+        if (upstream.status !== 200 || !/^application\/pdf(?:\s*;|$)/i.test(upstream.headers.get('content-type') ?? '')) {
+          await upstream.body?.cancel()
+          // 自治体側の一時的な拒否・リダイレクト・形式の違いを、再発時に見分けられるよう status と形式を出す
+          console.error('origin pdf upstream', { url, status: upstream.status, type: upstream.headers.get('content-type') })
+          return failure(502, `自治体から PDF を取得できません（HTTP ${upstream.status}${upstream.status === 200 ? `、${upstream.headers.get('content-type') ?? '形式不明'}` : ''}）`)
+        }
+        if (Number(upstream.headers.get('content-length')) > PDF_LIMITS.bytes) {
+          await upstream.body?.cancel()
+          return failure(502, 'PDF が32 MiBの上限を超えています')
+        }
+        if (!upstream.body) return failure(502, 'PDF の本文がありません')
+        const parts: Uint8Array[] = []
+        let size = 0
+        for await (const value of upstream.body as unknown as AsyncIterable<Uint8Array>) {
+          size += value.byteLength
+          if (size > PDF_LIMITS.bytes) return failure(502, 'PDF が32 MiBの上限を超えています')
+          parts.push(value)
+        }
+        const bytes = new Uint8Array(size)
+        let at = 0
+        for (const p of parts) { bytes.set(p, at); at += p.byteLength }
+        if (new TextDecoder().decode(bytes.subarray(0, 5)) !== '%PDF-') return failure(502, '取得した内容が PDF ではありません')
+        const pdf: CachedPdf = { url, size, fetchedAt: Date.now(), chunks: Math.ceil(size / CHUNK_BYTES) }
         await this.state.storage.transaction(async (storage) => {
           for (let i = 0; i < pdf.chunks; i += CHUNK_BATCH) {
             const entries = Object.fromEntries(Array.from({ length: Math.min(CHUNK_BATCH, pdf.chunks - i) }, (_, j) =>
               [chunkKey(url, i + j), bytes.slice((i + j) * CHUNK_BYTES, (i + j + 1) * CHUNK_BYTES)]))
             await storage.put(entries)
           }
-          await storage.put('cache', [...cache.filter((p) => p.url !== url), pdf])
+          await storage.put('cache', [...cache, pdf])
           await storage.setAlarm(Math.min(...cache.map((p) => p.fetchedAt), pdf.fetchedAt) + PDF_LIMITS.ttlMs)
         })
         return this.pdfResponse(pdf, bytes)
-      } finally { inflight.resolve() }
+      } catch (error) {
+        if (!controller.signal.aborted) console.error('origin pdf fetch', { url, error: String(error) })
+        return failure(controller.signal.aborted ? 504 : 502, controller.signal.aborted ? 'PDF の取得が20秒の上限を超えました' : '自治体から PDF を取得できません')
+      } finally { clearTimeout(timer) }
     })
   }
 

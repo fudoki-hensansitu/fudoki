@@ -124,9 +124,8 @@ export function PdfViewer({
   const canvases = useRef(new Map<number, HTMLCanvasElement>())
   const reportError = (error: unknown) => {
     setError(true)
-    setStatus(
-      `参照の PDF を表示できません。項目: ${location.source_page ?? '不明'}ページ / 金額: ${location.amount_source_page ?? '不明'}ページ。${error instanceof Error ? error.message : ''}`,
-    )
+    // 原因は開発者向けに残し、画面では参照元の該当ページへ案内する
+    console.error('origin pdf', error)
   }
 
   useEffect(() => {
@@ -280,18 +279,27 @@ export function PdfViewer({
       <h3 id="pdf-title" className="sr-only">{origin.title}</h3>
       <div className="toolbar">
         <Button ref={close} variant="ghost" size="sm" onClick={onClose}><ArrowLeft aria-hidden="true" />戻る</Button>
-        <span className="pager">
+        {!error && <span className="pager">
           <Button variant="outline" size="icon-sm" aria-label="前のページ" disabled={!ready || Math.min(...pages) <= 1}
             onClick={() => setSpreadStart(Math.max(1, Math.min(...pages) - 2))}><ChevronLeft aria-hidden="true" /></Button>
-          {!error && <span role="status" className="pager-status">{status}</span>}
+          <span role="status" className="pager-status">{status}</span>
           <Button variant="outline" size="icon-sm" aria-label="次のページ" disabled={!ready || !document || Math.max(...pages) >= document.numPages}
             onClick={() => setSpreadStart(Math.min(document!.numPages - 1, Math.max(...pages) + 1))}><ChevronRight aria-hidden="true" /></Button>
-        </span>
-        <a className="pdf-url" href={url} title={url} onClick={(event) => { event.preventDefault(); openLink(url) }}>参照元<ExternalLink aria-hidden="true" /></a>
+        </span>}
+        {!error && <a className="pdf-url" href={url} title={url} onClick={(event) => { event.preventDefault(); openLink(url) }}>参照元<ExternalLink aria-hidden="true" /></a>}
       </div>
-      {error && <Alert variant="destructive" role="status"><AlertDescription>{status}</AlertDescription></Alert>}
+      {error && (
+        <Alert role="status">
+          <AlertDescription className="flex flex-col items-start gap-2">
+            <span>この PDF はここでは表示できません。参照元{initialPages.length ? `の${initialPages.join('・')}ページ` : ''}を開いて確かめてください。</span>
+            <Button size="sm" onClick={() => openLink(initialPages.length ? `${origin.url}#page=${initialPages[0]}` : origin.url)}>
+              参照元の{initialPages[0] ? `${initialPages[0]}ページ` : 'PDF'}<ExternalLink aria-hidden="true" />
+            </Button>
+          </AlertDescription>
+        </Alert>
+      )}
       {!ready && !error && <Skeleton className="h-6 w-full" />}
-      <div
+      {!error && <div
         ref={scroll}
         className="pdf-scroll"
         role="region"
@@ -333,7 +341,7 @@ export function PdfViewer({
             </section>
           ))}
         </div>
-      </div>
+      </div>}
     </section>
   )
 }
