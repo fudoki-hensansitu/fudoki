@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, spyOn, test } from 'bun:test'
 import type { Database } from 'bun:sqlite'
 import { createApp, OPENAPI_CONFIG } from './app'
 import type { Db } from './db'
+import { IP_RATE_LIMIT } from './evaluation-limits'
 import { EvaluationSearchQuota, quotaOf, type QuotaNamespace } from './evaluation-quota'
 import {
   makeExcerpt,
@@ -106,6 +107,11 @@ beforeEach(() => {
 afterEach(() => logSpy.mockRestore())
 
 describe('公開の範囲', () => {
+  test('rate limit binding の宣言は流量の定数と同じ', async () => {
+    const config = (await import('../cloudflare.config')).default as { worker: { env: { EVALUATION_RATE_LIMIT: { simple: unknown } } } }
+    expect(config.worker.env.EVALUATION_RATE_LIMIT.simple).toEqual(IP_RATE_LIMIT)
+  })
+
   test('operations の一覧に入っておらず、既定の app の REST・OpenAPI・MCP に出ない', async () => {
     expect(operations.map((o) => o.name)).not.toContain('search_evaluations')
     const plain = createApp()
@@ -508,8 +514,8 @@ describe('上限と kill switch の順序', () => {
     rateLimitImpl = async () => ({ success: false })
     const res = await post(valid)
     expect(res.status).toBe(429)
-    expect(res.headers.get('Retry-After')).toBe('60')
-    expect(await res.json()).toEqual({ error: { code: 'RESOURCE_EXHAUSTED', message: expect.any(String), retry_after_seconds: 60 } })
+    expect(res.headers.get('Retry-After')).toBe(String(IP_RATE_LIMIT.period))
+    expect(await res.json()).toEqual({ error: { code: 'RESOURCE_EXHAUSTED', message: expect.any(String), retry_after_seconds: IP_RATE_LIMIT.period } })
     expect(order).toEqual(['rate:203.0.113.7'])
     expect(doState.map.size).toBe(0)
   })
@@ -577,7 +583,7 @@ describe('上限と kill switch の順序', () => {
     const body = await mcpRpc(app, 'tools/call', { name: 'search_evaluations', arguments: valid }, env())
     expect(body.result.isError).toBe(true)
     const error = JSON.parse(body.result.content[0].text).error
-    expect(error).toMatchObject({ code: 'RESOURCE_EXHAUSTED', retry_after_seconds: 60 })
+    expect(error).toMatchObject({ code: 'RESOURCE_EXHAUSTED', retry_after_seconds: IP_RATE_LIMIT.period })
     expect(requests).toHaveLength(0)
   })
 
@@ -685,6 +691,9 @@ describe('日ごとの総数の Durable Object', () => {
   test('AI Search の binding が無いなら 503', async () => {
     const { EVALUATION_SEARCH: _omit, ...without } = env()
     expect((await post(valid, without)).status).toBe(503)
+    // 流量も総数も消費しない
+    expect(order).toEqual([])
+    expect(doState.map.size).toBe(0)
   })
 })
 

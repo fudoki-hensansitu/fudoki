@@ -2,6 +2,7 @@ import { z } from 'zod'
 import catalogJson from './evaluation-catalog.json'
 import type { QuotaLimits, SearchQuota } from './evaluation-quota'
 import { ApiError } from './errors'
+import { IP_RATE_LIMIT } from './evaluation-limits'
 import type { Ctx, Operation } from './operations'
 
 // 事業の評価の検索（docs/prd/evaluation-search/dd.md）。AI Search が返す頁単位の chunk を、原典の所在と短い抜粋に変える。
@@ -266,6 +267,9 @@ async function searchEvaluations(ctx: Ctx, raw: Record<string, unknown>): Promis
     return { status: 'not_covered', documents: [], candidates: [], notes: [NOTE_NOT_COVERED, NOTE_NO_PROOF, NOTE_LOCATION] }
   }
 
+  // 設定の誤りで binding が無いときは、流量も総数も消費せずに止める
+  if (!deps.search) throw unavailable('評価の検索を利用できません')
+
   // 3. IP あたりの流量（費用の上限ではない。データセンターごとに数える）
   if (!deps.rateLimit) throw unavailable('評価の検索の流量の制限を利用できません')
   let allowed: boolean
@@ -276,7 +280,7 @@ async function searchEvaluations(ctx: Ctx, raw: Record<string, unknown>): Promis
   }
   if (!allowed) {
     log({ status: 'rate_limited', window: 'ip' })
-    throw new ApiError(429, 'RESOURCE_EXHAUSTED', '検索の頻度が高すぎます。60秒後に再試行してください', 60)
+    throw new ApiError(429, 'RESOURCE_EXHAUSTED', `検索の頻度が高すぎます。${IP_RATE_LIMIT.period}秒後に再試行してください`, IP_RATE_LIMIT.period)
   }
 
   // 4. 全利用者の日ごと・分ごとの総数。数えて書いてから AI Search を呼ぶ
@@ -296,7 +300,6 @@ async function searchEvaluations(ctx: Ctx, raw: Record<string, unknown>): Promis
   }
 
   // 5. AI Search。再試行しない。binding に中断の指定が無いので、応答だけを打ち切る（検索は裏で続き得る）
-  if (!deps.search) throw unavailable('評価の検索を利用できません')
   let response: { chunks?: unknown }
   let timer: ReturnType<typeof setTimeout> | undefined
   try {
