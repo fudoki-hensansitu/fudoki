@@ -16,13 +16,13 @@
 
 ## View と描画
 
-PDF.js 6.4.299（2026-10-03公開、7日経過）を使う。HTML、描画コード、PDF worker のコードを同梱し、外部 CDN・iframe PDF・ブラウザ内蔵ビューアには依存しない。MCP Apps の CSP に API の origin だけを `connectDomains` として宣言する。sandbox で worker の起動許可に依存しないよう、PDF.js の worker handler を同梱して同じスレッドで処理する。PDF.js 6 は動的evalを使わない。外部フォント・Wasm取得なしで canvas を描く。文字選択・検索・注釈操作の層は作らない。Viewは約2.3 MBとなるが、hostによるURIキャッシュと、外部script/worker許可に依存せず描画できることを優先して同梱を選んだ。
+PDF.js 6.4.299（2026-10-03公開、7日経過）を使う。HTML、描画コード、PDF worker のコードを同梱し、外部 CDN・iframe PDF・ブラウザ内蔵ビューアには依存しない。MCP Apps の CSP に API の origin だけを `connectDomains` として宣言する。sandbox で worker の起動許可に依存しないよう、PDF.js の worker handler を同梱して同じスレッドで処理する。PDF.js 6 は動的evalを使わない。外部フォント・Wasm取得なしで canvas を描く。文字選択・検索・注釈操作の層は作らない。Viewの容量はReact移行後に約2.5 MBとなるが、hostによるURIキャッシュと、外部script/worker許可に依存せず描画できることを優先して同梱を選んだ。
 
-明細の「原典を表示」で既存結果の上に表示領域を開く。項目の頁と金額の頁を切り替えられ、同じ頁なら両方の枠を重ねる。頁はファイルの1始まり。座標は取り込みの左上原点ptを、表示頁の幅・高さに対する比率にして重ねる。4座標が有限・非負で、正の幅と高さがあり、頁内に収まる枠だけを表示する。項目の `source_y0 > source_y1`、欠損・不完全な枠は頁だけを表示する。金額は金額の頁・完全な枠があるときだけ重ねる。
+明細の頁番号で既存結果の上に表示領域を開く。項目と金額が別頁なら項目を左・金額を右に同時表示し、同じ頁なら同じcanvasに両方の枠を重ねる。単一の既知の頁は隣接頁と見開きにし、PDFが1頁だけなら1枚にする。閉じる・前の頁・次の頁を通常の操作とし、2頁ずつ送る。最後の見開きが1頁だけにならないよう末尾を調整する。頁はファイルの1始まり。座標は取り込みの左上原点ptを、表示頁の幅・高さに対する比率にして重ねる。4座標が有限・非負で、正の幅と高さがあり、頁内に収まる枠だけを表示する。項目の `source_y0 > source_y1`、欠損・不完全な枠は頁だけを表示する。金額は金額の頁・完全な枠があるときだけ重ねる。
 
-描画後は項目の枠（項目が無ければ金額の枠）が表示領域内に来るようスクロールする。拡大率は頁幅・150%・200%から選べる。表示領域は `min(70vh, 480px)` とし、hostの自動高さ調整とvhの循環で領域が伸びないようにする。canvasは最大400万pixelとし、頁切替・閉じる操作で旧描画をcancelする。
+描画後は項目の枠（項目が無ければ金額の枠）が表示領域内に来るようスクロールする。各頁の最小表示幅を保ち、狭いhostでは領域内を横スクロールする。拡大率の選択は置かない。表示領域は `min(70vh, 480px)` とし、hostの自動高さ調整とvhの循環で領域が伸びないようにする。canvasは表示中の頁の合計を最大400万pixel、各canvasの長辺を8192pixel以下とし、別の明細・閉じる操作で旧描画をcancelする。
 
-PDF の取得 URL・取得日時、取り込み時と異なる可能性を表示する。読込み・描画・頁範囲のエラーや上限超過でも原典リンクと項目/金額の頁番号を残す。閉じる操作と別の明細を開く操作で、進行中の取得・描画とPDFのメモリを解放し、遅い応答が新しい表示を上書きしないようにする。CSV・頁不明は既存の原典リンクを使う。
+PDF の取得 URL・取得日時、取り込み時と異なる可能性は「取得情報」にまとめ、通常は閉じる。失敗時は自動で開く。読込み・描画・頁範囲のエラーや上限超過でも原典リンクと項目/金額の頁番号を残す。閉じる操作と別の明細を開く操作で、進行中の取得・描画とPDFのメモリを解放し、遅い応答が新しい表示を上書きしないようにする。CSV・頁不明は既存の原典リンクを使う。
 
 ## 検証
 
@@ -30,10 +30,21 @@ PDF の取得 URL・取得日時、取り込み時と異なる可能性を表示
 
 参照: [PDF.js の描画例](https://mozilla.github.io/pdf.js/examples/)、[MCP Apps CSP](https://apps.extensions.modelcontextprotocol.io/api/interfaces/app.McpUiResourceCsp.html)、[Durable Objects の制約](https://developers.cloudflare.com/durable-objects/platform/limits/)、[SQLite storage](https://developers.cloudflare.com/durable-objects/api/sqlite-storage-api/)。
 
-## 検証結果（2026-10-14）
+## React移行前の検証結果（2026-10-14）
 
 - `mise x -- bun run typecheck:all`、`mise x -- bun run --cwd apps/api test`（138件）、`mise x -- bun run build:api`、`mise x -- bun run build:docs` が成功。APIテストには新旧MCP、既存REST/tool、表示情報、Viewの再生成検査を含む。
 - `mise x -- bun run --cwd apps/api test:e2e` は19件成功。実Worker/D1/DOとAppBridgeのsandbox/CSPでPRDの6受入条件を検証。32 MiBちょうどの成功、Content-Lengthと実読取のサイズ超過、headers前/本文先頭後の20秒タイムアウト、任意URL/query/CSV/内部URL/redirectの拒否、失敗非保持、同時要求/同URL別IDの再利用、24時間の期限、頻度・16件保持の上限を確認した。
 - 独立QA担当が製品実装を読まずに同じ19件を実行し、通常頁・別頁・枠欠損・次頁継続・回転頁・取得失敗・上限超過の画像を視認した。320/375/414/768 pxの表示も確認した。
 - 実在PDFは試験serverを `PORT=4318 mise x -- bun apps/api/tests/server.ts --real` で起動し、`PDF_QA_URL=http://127.0.0.1:4318 REAL_PDF_QA=1 mise x -- bun run --cwd apps/api test:e2e tests/origin-pdf.e2e.ts` で確認した。武蔵野市の公開APIにある備品購入費の明細と原典URLを試験D1にだけ読み込み、自治体へ実取得して日本語・項目/金額枠を描画した。本番D1/R2は変更していない。
 - Claude Web/Desktop・ChatGPTへの実接続、Cloudflare本番環境での実中継は未実施。Orcaのsnapshotでは操作できたが、screenshotが古い画像を返す場合があり、描画の視認にはe2eの実ブラウザ画像を使った。試験出力は非commitの `apps/api/.e2e/` に置く。
+
+## React移行と見開き表示
+
+表示・取得・描画の寿命をReactで管理する構成へ移した。狭い領域では見開きの内側で横スクロールし、既知の項目・金額の頁から見開きを開き、前後の頁へ送れる。詳細と今回のローカル検証は[React・shadcn/ui移行の設計](../mcp-ui-react-shadcn/dd.md)を参照する。上の移行前の確認結果を、移行後の実接続の根拠には使わない。
+
+
+## プレビューと頁送りへの整理
+
+2026-10-14の追加指定により、同頁・片方の頁が既知の場合も隣接頁と見開きにした。この指定は、移行当初の「既知の頁だけ」の制約を更新する。項目と金額が別頁なら、その既知の2頁を最初に並べる。頁送りは同じPDFDocumentから次の2頁を描画し、ネットワークで再取得しない。描画世代のcleanupは前のcanvasを解放し、合計400万pixel・長辺8192pixelの上限を続けて守る。
+
+枠の幾何は原典のptから求める。2pxの線をその領域から2px離して外側に描くため、枠の疑似要素を4px外へ広げる。中心座標に縦横の点線を頁の端まで引く。塗りは置かず、枠とガイドはpointer eventを受け取らない。有効な頁と座標が無ければ、枠とガイドの両方を描かない。

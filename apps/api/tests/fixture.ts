@@ -3,10 +3,10 @@ import columns from '../src/columns.json'
 import { readFileSync } from 'node:fs'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 
-export function samplePdf(rotated = false) {
-  const objects = ['<< /Type /Catalog /Pages 2 0 R >>', '<< /Type /Pages /Kids [3 0 R 5 0 R] /Count 2 >>']
-  for (let p = 0; p < 2; p++) {
-    objects.push(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 600 800] ${rotated ? '/Rotate 90' : ''} /Resources << /Font << /F1 7 0 R >> >> /Contents ${4 + p * 2} 0 R >>`)
+export function samplePdf(rotated = false, size: [number, number] = [600, 800], pageCount = 2) {
+  const objects = ['<< /Type /Catalog /Pages 2 0 R >>', `<< /Type /Pages /Kids [${Array.from({ length: pageCount }, (_, i) => `${3 + i * 2} 0 R`).join(' ')}] /Count ${pageCount} >>`]
+  for (let p = 0; p < pageCount; p++) {
+    objects.push(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${size.join(' ')}] ${rotated ? '/Rotate 90' : ''} /Resources << /Font << /F1 ${3 + pageCount * 2} 0 R >> >> /Contents ${4 + p * 2} 0 R >>`)
     const stream = `BT /F1 20 Tf 40 740 Td (PAGE ${p + 1} - Item) Tj 0 -100 Td (Amount 12345) Tj ET`
     objects.push(`<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`)
   }
@@ -22,9 +22,14 @@ export function samplePdf(rotated = false) {
 export async function fixture(real = false) {
   const hits = new Map<string, number>()
   let fail = true
+  let releasePdf = () => {}
+  let pendingPdf = new Promise<void>(resolve => { releasePdf = resolve })
   const upstream = Bun.serve({ port: 0, idleTimeout: 30, async fetch(req) {
     const path = new URL(req.url).pathname
     hits.set(path, (hits.get(path) ?? 0) + 1)
+    if (path === '/pending.pdf') await pendingPdf
+    if (path === '/navigation.pdf') return new Response(samplePdf(false, [600, 800], 6), { headers: { 'Content-Type': 'application/pdf' } })
+    if (path === '/skinny.pdf') return new Response(samplePdf(false, [3_000_000, 1]), { headers: { 'Content-Type': 'application/pdf' } })
     if (path === '/rotated.pdf') return new Response(samplePdf(true), { headers: { 'Content-Type': 'application/pdf' } })
     if (path === '/missing.pdf') return new Response('gone', { status: 404 })
     if (path === '/recover.pdf' && fail) { fail = false; return new Response('gone', { status: 404 }) }
@@ -77,12 +82,13 @@ export async function fixture(real = false) {
     Object.assign(data, row)
     await db.prepare(`INSERT INTO ${table} (${Object.keys(data).join(',')}) VALUES (${Object.keys(data).map(() => '?').join(',')})`).bind(...Object.values(data) as never[]).run()
   }
-  const paths = ['ok', 'rotated', 'missing', 'recover', 'redirect', 'html', 'fake', 'big-header', 'big-stream', 'limit', 'slow', 'slow-body', ...Array.from({ length: 18 }, (_, i) => `extra-${i}`)]
+  const paths = ['navigation', 'ok', 'rotated', 'pending', 'skinny', 'missing', 'recover', 'redirect', 'html', 'fake', 'big-header', 'big-stream', 'limit', 'slow', 'slow-body', ...Array.from({ length: 18 }, (_, i) => `extra-${i}`)]
   for (const path of paths) await insert('origin', { origin_id: path, title: `試験原典 ${path}`, url: `https://city.fudoki.dev/${path}.pdf`, format: 'pdf' })
   await insert('origin', { origin_id: 'same', title: '同じ URL', url: 'https://city.fudoki.dev/ok.pdf', format: 'pdf' })
   await insert('origin', { origin_id: 'csv', title: 'CSV', url: 'https://city.fudoki.dev/csv', format: 'csv' })
   await insert('origin', { origin_id: 'private', title: 'private', url: 'http://127.0.0.1/pdf', format: 'pdf' })
   const scenarios = [
+    { name: '頁送り', origin_id: 'navigation', source_page: 1, amount_source_page: 2, source_x0: 35, source_y0: 40, source_x1: 240, source_y1: 80 },
     { name: '枠あり', origin_id: 'ok', source_page: 1, source_x0: 35, source_y0: 40, source_x1: 240, source_y1: 80, amount_source_page: 1, amount_source_x0: 35, amount_source_y0: 140, amount_source_x1: 240, amount_source_y1: 180 },
     { name: '別頁の金額', origin_id: 'ok', source_page: 1, source_x0: 35, source_y0: 40, source_x1: 240, source_y1: 80, amount_source_page: 2, amount_source_x0: 35, amount_source_y0: 140, amount_source_x1: 240, amount_source_y1: 180 },
     { name: '回転頁', origin_id: 'rotated', source_page: 1, source_x0: 730, source_y0: 35, source_x1: 770, source_y1: 240 },
@@ -93,6 +99,9 @@ export async function fixture(real = false) {
     { name: 'サイズ上限', origin_id: 'big-header', source_page: 1 },
     { name: '頻度上限', origin_id: 'extra-6', source_page: 1 },
     { name: '頁が変わった', origin_id: 'ok', source_page: 3 },
+    { name: '頁内に収まらない枠', origin_id: 'ok', source_page: 1, source_x0: 35, source_y0: 40, source_x1: 601, source_y1: 80 },
+    { name: '取得待ち', origin_id: 'pending', source_page: 1 },
+    { name: '極端な用紙寸法', origin_id: 'skinny', source_page: 1 },
   ]
   for (const [i, row] of scenarios.entries()) await insert('settlement_expenditure_node', { jurisdiction_code: '000001', fiscal_year: 2024, account_name: '一般会計', kan_name: '総務費', node_kind: '目', axis: '科目', amount_yen: 12345, node_id: String(i + 1).padStart(64, '0'), ...row })
   if (real) {
@@ -102,7 +111,7 @@ export async function fixture(real = false) {
     for (const { document_kind, ...node } of data.nodes) await insert('settlement_expenditure_node', node)
   }
   return {
-    mf, hits, async reset() { await mf.dispatchFetch('http://localhost/__reset', { method: 'POST' }); hits.clear(); fail = true },
+    mf, hits, releasePdf: () => releasePdf(), async reset() { releasePdf(); pendingPdf = new Promise<void>(resolve => { releasePdf = resolve }); await mf.dispatchFetch('http://localhost/__reset', { method: 'POST' }); hits.clear(); fail = true },
     async advance(ms: number) { await mf.dispatchFetch('http://localhost/__advance', { method: 'POST', body: String(ms) }) },
     async dispose() { await mf.dispose(); upstream.stop(true) },
   }

@@ -3,13 +3,19 @@
     "target": "ESNext",
     "module": "Preserve",
     "moduleResolution": "bundler",
-    "types": ["bun"],
+    "types": [
+      "bun"
+    ],
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "resolveJsonModule": true,
     "noEmit": true,
     "skipLibCheck": true,
-    "allowImportingTsExtensions": true
+    "allowImportingTsExtensions": true,
+    "jsx": "react-jsx"
   },
-  "include": ["pipeline", "packages"]
+  "include": [
+    "pipeline",
+    "packages"
+  ]
 }

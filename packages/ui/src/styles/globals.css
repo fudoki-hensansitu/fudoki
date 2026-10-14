@@ -1,0 +1,92 @@
+@import "tailwindcss" source(none);
+@import "tw-animate-css";
+@source "../";
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Hallmark · pre-emit critique: P4 H4 E4 S5 R5 V3
+ * theme: DESIGN.md / hostContext · motion: reduced-motion対応 */
+:root {
+  color-scheme: light dark;
+  --background: var(--color-background-primary, oklch(1 0 0));
+  --foreground: var(--color-text-primary, oklch(0.145 0 0));
+  --card: var(--background);
+  --card-foreground: var(--foreground);
+  --popover: var(--background);
+  --popover-foreground: var(--foreground);
+  --primary: var(--color-text-info, #2f5d43);
+  --primary-foreground: var(--color-background-primary, #f4f1e6);
+  --secondary: var(--color-background-secondary, oklch(0.97 0 0));
+  --secondary-foreground: var(--foreground);
+  --muted: var(--secondary);
+  --muted-foreground: var(--color-text-secondary, oklch(0.556 0 0));
+  --accent: var(--secondary);
+  --accent-foreground: var(--foreground);
+  --destructive: var(--color-text-danger, oklch(0.577 0.245 27.325));
+  --destructive-foreground: oklch(1 0 0);
+  --border: var(--color-border-primary, oklch(0.922 0 0));
+  --input: var(--border);
+  --ring: var(--color-border-info, var(--primary));
+  --radius: var(--border-radius-md, 8px);
+  --view-font: var(--font-sans, "Geist Variable", "Noto Sans JP Variable", "Hiragino Sans", system-ui, sans-serif);
+  --view-mono: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace);
+}
+:root[data-theme="dark"] {
+  --background: var(--color-background-primary, oklch(0.145 0 0));
+  --foreground: var(--color-text-primary, oklch(0.985 0 0));
+  --primary: var(--color-text-info, oklch(78% 0.07 157));
+  --secondary: var(--color-background-secondary, oklch(0.205 0 0));
+  --muted-foreground: var(--color-text-secondary, oklch(0.708 0 0));
+  --border: var(--color-border-primary, oklch(0.35 0 0));
+  --destructive: var(--color-text-danger, oklch(0.704 0.191 22.216));
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="dark"]) {
+    --background: var(--color-background-primary, oklch(0.145 0 0));
+    --foreground: var(--color-text-primary, oklch(0.985 0 0));
+    --primary: var(--color-text-info, oklch(78% 0.07 157));
+    --secondary: var(--color-background-secondary, oklch(0.205 0 0));
+    --muted-foreground: var(--color-text-secondary, oklch(0.708 0 0));
+    --border: var(--color-border-primary, oklch(0.35 0 0));
+    --destructive: var(--color-text-danger, oklch(0.704 0.191 22.216));
+  }
+}
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 6px);
+  --font-sans: initial;
+  --font-mono: initial;
+  --default-font-family: var(--view-font);
+  --default-mono-font-family: var(--view-mono);
+  --text-sm: var(--font-text-sm-size, 14px);
+  --text-sm--line-height: var(--font-text-sm-line-height, 1.5);
+}
+@layer base {
+  * { border-color: var(--border); }
+  button:not(:disabled), [role="button"]:not(:disabled) { cursor: pointer; }
+  button:active:not(:disabled) { filter: brightness(0.95); }
+}
+[data-slot="table-cell"] { vertical-align: top; white-space: normal; }
+[data-slot="table-head"] { color: var(--muted-foreground); }
+[data-slot="alert-description"] { overflow-wrap: anywhere; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
