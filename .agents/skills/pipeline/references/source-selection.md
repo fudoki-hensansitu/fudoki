@@ -100,6 +100,8 @@ mise x -- bun pipeline/source_selection/archive.ts --write --jurisdiction 132047
 mise x -- bun pipeline/source_selection/archive.ts --evaluation --write --jurisdiction 131172   # evaluation_selections だけを evaluation-settlement の key へ
 ```
 
+評価資料の索引は、保存後に `bun run --cwd pipeline evaluation:index`（計画の表示）→ `--write`（sandbox の外）で AI Search へ頁ごとに登録し、`bun run --cwd pipeline serving:evaluation-catalog` で Worker の一覧を書き直す。item の key は `<原典のsha256>_p<物理頁4桁>.pdf`。`cf ai-search items upload` は key を `--file` の basename にするので `/` では区切れない。metadata の number（`page`）は文字列の数字で送る（number のままだと `invalid_metadata_format`）。`items list` は 1 回 50 件まで。選定の sha256 や pages を変えたら、`--write` を回すまで catalog から外れる（指紋が合わない）。
+
 コマンドの終了コードを直接確認する。出力を grep や tail へパイプすると終了コードはパイプ末尾のものになるため、検査・保存コマンドはパイプに通さず実行する。通過後は変更や未解決の問題がなければ繰り返さない。必要な実物確認・範囲の記録・保存を終えたら、報告で担当を区切る。補足のためだけに全頁の回転・用紙サイズ・対象外の調書を分類し始めない。選定内容に具体的な矛盾が見つかった場合は、その箇所の修正と必要な再検査に絞る。
 
 並行作業中、他自治体の更新途中のスキーマ不備で全体検査が失敗したら、他担当のファイルを修正したり、待機と全体検査を繰り返したりしない。自分の台帳だけを担当一時ディレクトリへコピーし、`checkSelections(directory)` をそのディレクトリで実行して同じ構造・保存計画検査を通す（`check.ts` の関数はディレクトリを受け取るがCLIは引数を受け取らない）。担当結果と他自治体の失敗を区別して報告し、全担当の更新後に監督側が全体検査を行う。selectionを追加するときは、スキーマで必須の`archive: null`も含めてから原子的に置き換える。

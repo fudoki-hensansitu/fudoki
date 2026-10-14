@@ -607,6 +607,7 @@ dependencies = [
     { name = "jsonschema" },
     { name = "numpy" },
     { name = "pdfplumber" },
+    { name = "pypdfium2" },
 ]
 
 [package.optional-dependencies]
@@ -629,6 +630,7 @@ requires-dist = [
     { name = "paddlex", marker = "extra == 'paddle-ocr'", specifier = "==3.7.2" },
     { name = "pdfplumber", specifier = "==0.11.10" },
     { name = "pillow", marker = "extra == 'paddle-ocr'", specifier = "==12.3.0" },
+    { name = "pypdfium2", specifier = "==5.13.0" },
 ]
 provides-extras = ["paddle-ocr"]
 
