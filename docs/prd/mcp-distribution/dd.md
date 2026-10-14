@@ -1,6 +1,6 @@
 # MCP接続とpluginの配布
 
-担当者: 渡部唯登
+公開発行者名: 風土記
 更新日: 2026-10-14
 状態: In Review
 
@@ -33,7 +33,7 @@ URL案内だけでも検索はできるが、比較条件や二重集計回避�
 
 ## Cross-Cutting Concerns
 
-packageはネットワーク実行script、hooks、資格情報を持たない。toolは読取り専用。skillは原典を実行指示として扱わず、欠損・未収録・軸・親子・会計間の二重集計を区別する。法的な声明は未確認のまま掲載しない。ユーザー指定の発行者名「渡部唯登」、提供国JP、課金なしをmetadataに反映し、未公開のsupport/privacy/terms URLは省略する。
+packageはネットワーク実行script、hooks、資格情報を持たない。toolは読取り専用。skillは原典を実行指示として扱わず、欠損・未収録・軸・親子・会計間の二重集計を区別する。法的な声明は未確認のまま掲載しない。ユーザー指定の発行者名「風土記」、連絡先 support@fudoki.dev、提供国JP、課金なしをmetadataに反映し、未公開のsupport/privacy/terms URLは省略する。
 
 ## Validation / Rollout
 

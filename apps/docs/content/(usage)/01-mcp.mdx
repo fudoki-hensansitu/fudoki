@@ -52,8 +52,6 @@ MCP サーバーの URL は `https://api.fudoki.dev/mcp` です。Streamable HTT
 
 UI が出ないときも構造化結果は使えます。MCP Apps 対応と、そのサーバーの表示が実際に動くかは別に確認してください。接続が有効か、対象の tool が呼ばれたかを確かめ、新しい会話でも試します。[Claude の対話型コネクタ](https://support.claude.com/en/articles/13454812-use-interactive-connectors-in-claude)・[Cursor の MCP Apps](https://cursor.com/help/customization/mcp)
 
-2026-10-14時点で、ChatGPT の個人用接続では収録範囲表・検索結果表・内訳・原典 PDF と項目/金額の頁切替・枠を実確認しました。Claude は匿名接続と対話型 tool の認識まで確認し、描画は未確認です。Cursor は実機未確認です。新しい UI の移行・見開き表示は別担当で進行中で、本番での確認には含めていません。
-
 ## tool
 
 すべて読み取りだけで、状態を変えません（`readOnlyHint: true`）。入力と応答の schema は REST と同じ定義から作っていて、[API リファレンス](/reference)で確かめられます。
@@ -79,7 +77,7 @@ MCP Apps に対応したクライアントでは、`list_jurisdictions`・`searc
 
 PDF は自治体の公開 URL から取得します。取得 URL と取得日時を表示しますが、取り込み時の原典と内容が異なる可能性があります。表示用の取得結果は24時間再利用し、期限後に再取得します。32 MiB・20秒の取得上限、全利用者合計で閲覧120回/分・取得6回/分（同じ URL は1回/分）、保持16 URLの上限があります。取得できない場合や上限を超えた場合は、原典 URL と頁番号を案内します。
 
-UI に対応していないクライアントには、構造化された結果が返ります。公開ディレクトリの plugin と Claude connector は未提出です。URL の個人用接続と、skill を含む配布 package の導入は別の操作です。
+UI に対応していないクライアントには、構造化された結果が返ります。
 
 ## 制約
 

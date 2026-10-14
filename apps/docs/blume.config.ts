@@ -16,6 +16,12 @@ export default defineConfig({
     ],
     repo: 'https://github.com/wwwyo/fudoki',
   },
+  footer: {
+    links: [
+      { label: 'プライバシーポリシー', href: '/privacy' },
+      { label: '利用規約', href: '/terms' },
+    ],
+  },
   // openapi.json は apps/api の route 定義から build の前に書き出す（package.json の openapi）。
   // API は CORS を返さないので、ブラウザから送る Try it は出さない。
   reference: [openapi({ spec: './openapi.json', playground: false })],
