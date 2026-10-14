@@ -159,6 +159,8 @@ def excluded_regions(built, logicals, codes, observed) -> list[dict]:
     codes_printed = [(page.number, (w.x0, w.y0, w.x1, w.y1), w.text) for page in observed for w in page.words
                      if BRACKET_CODE.fullmatch(normalize(w.text))]
     regions += coverage_regions(codes_printed, kind='本文', reason='事業の識別番号（【010111】）。金額ではない。')
+    regions += coverage_regions([(g.page, g.original, g.text) for g in built.repeated_codes], kind='本文',
+                                reason='継続頁に繰り返し印字された科目の番号。直前の同じ科目（番号・名称が一致）の金額と番号であり、新しい金額ではない。')
     regions += coverage_regions(zero_marks(logicals), kind='本文',
                                 reason='名前の前に数字で描かれた箇条書きの印（00）。項目の番号は1から始まり、金額ではない。')
     for logical in built.skipped:
@@ -267,7 +269,7 @@ def build_table(source: dict, options: dict, *, stop: bool = True) -> Table:
         document_kind=source['target']['document_kind'], account=account, stop=stop,
         partial=bool(options.get('partial')), direction=source.get('direction'),
         layout=(layout or {}).get('breakdown'), columns=(layout or {}).get('columns'),
-        spread=(layout or {}).get('spread'))
+        spread=(layout or {}).get('spread'), header=(layout or {}).get('header'))
     kept, nodes, amounts, unresolved, codes = split_notes(built)
     all_nodes = [*built.nodes, *nodes]
     all_amounts, headings = canonical_headings([*kept, *amounts], all_nodes, source['target']['document_kind'])
@@ -291,9 +293,13 @@ def canonical_headings(amounts: list[dict], nodes: list[dict], document_kind: st
     (`ingestion/generic/headers.py`). Returns the amounts and what was changed, `{(printed, kept): count}`."""
     known = {label for kind, label in phase_dictionary() if kind in ('', document_kind)}
     axis = {n['node_key']: n['axis_header'] for n in nodes}
+    level = {n['node_key']: n['level_header'] for n in nodes}
     changed: Counter = Counter()
     for amount in amounts:
         path = canonical(amount['header_path'], axis.get(amount['node_key']), known)
+        if path == '金額' and axis.get(amount['node_key']) == '科目' and level.get(amount['node_key']):
+            # A 款・項・目 row that prints its total in the 節 金額 column: the column of that level (`科目／款`).
+            path = f"科目／{level[amount['node_key']]}"
         if path != amount['header_path']:
             changed[(amount['header_path'], path)] += 1
             amount['header_path'] = path

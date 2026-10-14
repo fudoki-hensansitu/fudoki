@@ -29,7 +29,9 @@ from ingestion.generic.observe import Page, Rule, Word
 
 REPAIRS = Path(__file__).resolve().parents[1] / 'lib/text_repairs.csv'
 NUMERIC = re.compile(r'^[0-9,△▲\-]+$')
-SIGN_INSIDE = re.compile(r'(?<=[0-9,])[△▲](?=[0-9])')
+# A note's words with its amount set against them (`繰越事業費不用額55,753,516円`): the words and the amount.
+GLUED_AMOUNT = re.compile(r'^(.*[^0-9,０-９△▲\s])([△▲]?[0-9]{1,3}(?:,[0-9]{3})+円?)$')
+SIGN_INSIDE = re.compile(r'(?<=[^\s△▲(（\[「［])[△▲](?=[0-9])')
 # Health criteria (one place). A document is broken when known multi-character
 # misreadings are frequent. Pages without the common column headings are
 # recorded but do not decide: a narrative report (132012) has none, and judging
@@ -253,16 +255,30 @@ def _same_line(a: Word, b: Word) -> bool:
     return overlap >= .5 * min(a.y1 - a.y0, b.y1 - b.y0)
 
 
+def _amount_start(text: str) -> int:
+    """Where an amount starts inside a word that sets it against other characters, or 0."""
+    found = SIGN_INSIDE.search(text)
+    if found:
+        return found.start()
+    glued = GLUED_AMOUNT.match(text)
+    if glued:
+        from ingestion.generic.notes import kind_of  # only the words of a note keep an amount apart from them
+        if kind_of(glued.group(1)) is not None:
+            return glued.start(2)
+    return 0
+
+
 def repair_positions(page: Page, report: Report) -> None:
-    # A minus sign starts a number, it is never inside one: `0△22,990,000` is `0` and `△22,990,000`.
+    # A minus sign starts a number, it is never inside one: `0△22,990,000` is `0` and `△22,990,000`, and
+    # `…へ流用△100,325円` is the words of a note and its amount, set without a gap.
     split: list[Word] = []
     for word in page.words:
-        found = SIGN_INSIDE.search(word.text)
-        if found and found.start() > 0:
+        at = _amount_start(word.text)
+        if at:
             width = (word.x1 - word.x0) / len(word.text)
-            cut = word.x0 + found.start() * width
-            split += [Word(word.text[:found.start()], word.x0, word.y0, cut, word.y1),
-                      Word(word.text[found.start():], cut, word.y0, word.x1, word.y1)]
+            cut = word.x0 + at * width
+            split += [Word(word.text[:at], word.x0, word.y0, cut, word.y1),
+                      Word(word.text[at:], cut, word.y0, word.x1, word.y1)]
         else:
             split.append(word)
     words = sorted(split, key=lambda w: (round((w.y0 + w.y1) / 2), w.x0))

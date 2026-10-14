@@ -9,13 +9,14 @@
   "conversions": [
     {
       "id": "general-settlement",
-      "converter": "fiscal/jurisdictions/131105/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/generic_text/convert.py",
       "inputs": [
         {
           "sha256": "f519167e438c0ee25e1cfcae0d3c940e748002a02929c893cb727cb3fa8594fb"
         }
       ],
       "options": {
+        "account": "一般会計",
         "table_id": "general-setsu"
       },
       "expected_tables": [
@@ -26,27 +27,15 @@
     },
     {
       "id": "long-term-care-settlement",
-      "converter": "fiscal/jurisdictions/131105/layouts/text_settlement_scope/convert.py",
+      "converter": "fiscal/layouts/generic_text/convert.py",
       "inputs": [
         {
           "sha256": "f519167e438c0ee25e1cfcae0d3c940e748002a02929c893cb727cb3fa8594fb"
         }
       ],
       "options": {
-        "table_id": "long-term-care-setsu",
         "account": "介護保険特別会計",
-        "summary_pages": [
-          [
-            138,
-            139
-          ]
-        ],
-        "detail_pages": [
-          [
-            150,
-            159
-          ]
-        ]
+        "table_id": "long-term-care-setsu"
       },
       "expected_tables": [
         {
@@ -56,27 +45,15 @@
     },
     {
       "id": "national-health-insurance-settlement",
-      "converter": "fiscal/jurisdictions/131105/layouts/text_settlement_scope/convert.py",
+      "converter": "fiscal/layouts/generic_text/convert.py",
       "inputs": [
         {
           "sha256": "f519167e438c0ee25e1cfcae0d3c940e748002a02929c893cb727cb3fa8594fb"
         }
       ],
       "options": {
-        "table_id": "national-health-insurance-setsu",
         "account": "国民健康保険特別会計",
-        "summary_pages": [
-          [
-            96,
-            97
-          ]
-        ],
-        "detail_pages": [
-          [
-            107,
-            115
-          ]
-        ]
+        "table_id": "national-health-insurance-setsu"
       },
       "expected_tables": [
         {
@@ -86,27 +63,15 @@
     },
     {
       "id": "elderly-medical-settlement",
-      "converter": "fiscal/jurisdictions/131105/layouts/text_settlement_scope/convert.py",
+      "converter": "fiscal/layouts/generic_text/convert.py",
       "inputs": [
         {
           "sha256": "f519167e438c0ee25e1cfcae0d3c940e748002a02929c893cb727cb3fa8594fb"
         }
       ],
       "options": {
-        "table_id": "elderly-medical-setsu",
         "account": "後期高齢者医療特別会計",
-        "summary_pages": [
-          [
-            119,
-            119
-          ]
-        ],
-        "detail_pages": [
-          [
-            128,
-            133
-          ]
-        ]
+        "table_id": "elderly-medical-setsu"
       },
       "expected_tables": [
         {
@@ -119,113 +84,121 @@
     {
       "table_id": "general-setsu",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "ac9f89410454bce357f3fd0c740dae7ea1d1844c50be8aba4071b09b22bce637",
+      "input_fingerprint": "8cf18463cbe67b8332ff0922faa2413baee6385d40087d9ad1690206e2b74e76",
       "account": "一般会計",
       "notes": [
-        "法定節が原典の最細明細。所属する款・項・目の予算現額5列と支出済額・繰越3列・不用額・備考を反復。節の金額は予算現額、節の支出済額は執行実績。同じ欄の名称折り返しは改行、単語間の印字間隔は空白で保持。備考は各印字行の欄へ対応し、節への推定配賦を行わない。",
-        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape'}。",
+        "金額の単位は column mark 53頁 から決めた。款の和 137,450,779,287 と印字の「歳出合計」137,450,779,287 が一致。",
+        "金額の注記 169 件（不用額 19・充用 80・流用 70）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（915 件）を、印字された語から辞書の見出しに寄せた: 予算現額と支出済額との比較→比較・予算現額／節／金額→節／金額。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131105/2025/settlement/expenditure/general-setsu-nodes.parquet",
-          "sha256": "0001d655d7df58e168d165f0e95a02c920f1a4454d4ca9c8ece33b2bc7a17e2a",
-          "bytes": 37591
+          "sha256": "3336e7f7466eb51d12021092219d19bc287a19eccefdce02149cc45f786427d5",
+          "bytes": 38955
         },
-        "row_count": 1201
+        "row_count": 1253
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131105/2025/settlement/expenditure/general-setsu-amounts.parquet",
-          "sha256": "7f63b3023e0b3cc9d416e3db0bc0c9b8f65dd36260dd1af561d8daf48598cded",
-          "bytes": 72687
+          "sha256": "0b9392608384b2bbf8f1c27f2a77bb11631328a4e94c32240957ea81f8eea811",
+          "bytes": 84634
         },
-        "row_count": 7025
+        "row_count": 7273
       }
     },
     {
       "table_id": "long-term-care-setsu",
       "conversion_id": "long-term-care-settlement",
-      "input_fingerprint": "4050062c959c138d7af574bdb8258458d30f9ef0eca3dea116b3a72874a0be1a",
+      "input_fingerprint": "42bf776a26abf8889e990d33d26fbca96da2f3e58499f2658292b1ca5d32cc56",
       "account": "介護保険特別会計",
       "notes": [
-        "法定節が原典の最細明細。所属する款・項・目の予算現額5列と支出済額・繰越3列・不用額・備考を反復。節の金額は予算現額、節の支出済額は執行実績。同じ欄の名称折り返しは改行、単語間の印字間隔は空白で保持。備考は各印字行の欄へ対応し、節への推定配賦を行わない。",
-        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape'}。",
+        "金額の単位は column mark 12頁 から決めた。款の和 22,574,076,308 と印字の「歳出合計」22,574,076,308 が一致。",
+        "金額の注記 9 件（充用 9）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（84 件）を、印字された語から辞書の見出しに寄せた: 予算現額と支出済額との比較→比較・予算現額／節／金額→節／金額。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131105/2025/settlement/expenditure/long-term-care-setsu-nodes.parquet",
-          "sha256": "cb5572166160a3b1584e603e87bc416686b63368e7e6f1345818c793bb83db3e",
-          "bytes": 7958
+          "sha256": "bc722eff3c48c71f1c5072fb47262f91a14f8cc937246288c3ef65a61e3bfd77",
+          "bytes": 9028
         },
-        "row_count": 117
+        "row_count": 141
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131105/2025/settlement/expenditure/long-term-care-setsu-amounts.parquet",
-          "sha256": "928e7046cd4a0fd6bed22aa8f69abddd1b2442758cc78bb8c613cadd4fd01592",
-          "bytes": 12509
+          "sha256": "c34288136a7e7ecd24b99eebf10a55288eb3bbd6421c49382703734b703c7c9b",
+          "bytes": 14002
         },
-        "row_count": 849
+        "row_count": 969
       }
     },
     {
       "table_id": "national-health-insurance-setsu",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "7dbdfa23018a0f80c528ac3111ab05df3a29567c62700578a1e6bf888b17c1e6",
+      "input_fingerprint": "63ea39ffc41fece322df8153b20988b1a2f2b6102751832e37f1f7ae8887da04",
       "account": "国民健康保険特別会計",
       "notes": [
-        "法定節が原典の最細明細。所属する款・項・目の予算現額5列と支出済額・繰越3列・不用額・備考を反復。節の金額は予算現額、節の支出済額は執行実績。同じ欄の名称折り返しは改行、単語間の印字間隔は空白で保持。備考は各印字行の欄へ対応し、節への推定配賦を行わない。",
-        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape'}。",
+        "金額の単位は column mark 11頁 から決めた。款の和 25,238,685,295 と印字の「歳出合計」25,238,685,295 が一致。",
+        "金額の注記 2 件（流用 2）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（75 件）を、印字された語から辞書の見出しに寄せた: 予算現額と支出済額との比較→比較・予算現額／節／金額→節／金額。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131105/2025/settlement/expenditure/national-health-insurance-setsu-nodes.parquet",
-          "sha256": "fa00633e7525769c0a4d36bc919f30128b397c4117b24965ae600edb5a12c158",
-          "bytes": 7396
+          "sha256": "1b8613b2db11a80b630afe0bdb8beb263e5667f9f8220209a1f274673bf11414",
+          "bytes": 8539
         },
-        "row_count": 104
+        "row_count": 129
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131105/2025/settlement/expenditure/national-health-insurance-setsu-amounts.parquet",
-          "sha256": "3ab69725fe05cda68d45f3d328494cb3a47c395b370f8d1d800a5f184806ce2d",
-          "bytes": 11904
+          "sha256": "6e835c56dc5f8363d430a48836b0794ae7795143d6695733c5f2c035966a0858",
+          "bytes": 13731
         },
-        "row_count": 822
+        "row_count": 947
       }
     },
     {
       "table_id": "elderly-medical-setsu",
       "conversion_id": "elderly-medical-settlement",
-      "input_fingerprint": "bb932b06d5ac07ffd034f915023c2da50defda3bdd7dd4af235f46b6103cae43",
+      "input_fingerprint": "9ba271ee172ffbc10d19e2f0eeb864aa666dd3563b830270a3a52a18b8812f7c",
       "account": "後期高齢者医療特別会計",
       "notes": [
-        "法定節が原典の最細明細。所属する款・項・目の予算現額5列と支出済額・繰越3列・不用額・備考を反復。節の金額は予算現額、節の支出済額は執行実績。同じ欄の名称折り返しは改行、単語間の印字間隔は空白で保持。備考は各印字行の欄へ対応し、節への推定配賦を行わない。",
-        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape'}。",
+        "金額の単位は column mark 7頁 から決めた。款の和 8,418,937,824 と印字の「歳出合計」8,418,937,824 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（42 件）を、印字された語から辞書の見出しに寄せた: 予算現額と支出済額との比較→比較・予算現額／節／金額→節／金額。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131105/2025/settlement/expenditure/elderly-medical-setsu-nodes.parquet",
-          "sha256": "8282858fab64b38e9e93a3b6d42c7852fa70eb04f9bfa15528a1e2602210d750",
-          "bytes": 4815
+          "sha256": "728e70ca8cc40e76a7821f3a9d0cfcd016abbdc47804f0bce37bc4bca96533d5",
+          "bytes": 5525
         },
-        "row_count": 52
+        "row_count": 66
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131105/2025/settlement/expenditure/elderly-medical-setsu-amounts.parquet",
-          "sha256": "363c8a34b5bdc77668fddfb9e7a010610dca36b386791b4e3ff66da0c6c37086",
-          "bytes": 6360
+          "sha256": "5743a1cfa496a7d61747a594c05c47b9a6a3b340316a3f94e504ab5d4920ab7c",
+          "bytes": 7807
         },
-        "row_count": 408
+        "row_count": 478
       }
     }
   ]
