@@ -52,12 +52,6 @@ describe('MCP Apps の View', () => {
     expect(read.contents).toEqual([{ uri: VIEW_URI, mimeType: 'text/html;profile=mcp-app', text: VIEW_HTML, _meta: { ui: { prefersBorder: true, csp: { connectDomains: ['http://localhost'] } } } }])
   })
 
-  test('resource の一覧は変わらないので listChanged を名乗らない', async () => {
-    const init = await rpc('initialize', { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 't', version: '0' } })
-    expect(init.result.capabilities.resources).toEqual({ listChanged: false })
-    expect(init.result.capabilities.tools).toEqual({ listChanged: false })
-  })
-
   test('View は外部の script を持たず、URI は中身ごとに変わる', () => {
     expect(VIEW_URI).toMatch(/^ui:\/\/fudoki\/view-[0-9a-f]{12}\.html$/)
     expect(VIEW_HTML).not.toMatch(/<script[^>]+src=/i)

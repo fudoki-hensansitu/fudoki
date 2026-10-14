@@ -82,14 +82,6 @@ export function shortYen(value: number | null) {
 }
 export const percent = (share: number) =>
   share > 0 && share < 0.001 ? '0.1%未満' : `${(share * 100).toFixed(share >= 0.1 ? 0 : 1)}%`
-export const nodePath = (node: TreeNode) =>
-  [
-    node.kan_name,
-    node.kou_name,
-    ['款', '項'].includes(node.node_kind) ? null : node.name,
-  ]
-    .filter(Boolean)
-    .join(' / ')
 
 /** 棒の長さ（%）。割合を出すときは合計に対する比、出さないときは最大の行に対する比 */
 export function barWidths(amounts: (number | null)[], share: boolean): number[] {

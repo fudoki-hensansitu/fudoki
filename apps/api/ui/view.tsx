@@ -27,14 +27,13 @@ import {
 
 type Names = Record<string, string>
 
-/** 見出しの上の行。会計は見出しと経路の先頭に出るので、ここでは繰り返さない */
+/** 見出しの右に置く範囲。会計は経路の先頭に出るので繰り返さない */
 const headScopeOf = (n: TreeNode, names: Names) =>
   `${names[n.jurisdiction_code] ?? n.jurisdiction_code} · ${n.fiscal_year}年度 ${KIND_LABEL[n.document_kind] ?? n.document_kind}`
 const scopeOf = (n: TreeNode, names: Names) =>
   `${names[n.jurisdiction_code] ?? n.jurisdiction_code} · ${n.fiscal_year}年度 ${KIND_LABEL[n.document_kind] ?? n.document_kind} · ${n.account_name}`
-/** 自身より上の科目（款・項）。自身が款・項ならその手前まで */
 interface Named { kind: string; name: string }
-/** 自身より上の科目（款・項）と、その区分 */
+/** 自身より上の科目（款・項）。自身が款・項ならその手前まで */
 const ancestorsOf = (n: TreeNode): Named[] =>
   [{ kind: '款', name: n.kan_name }, { kind: '項', name: n.kou_name ?? '' }]
     .filter((a) => !!a.name && a.name !== n.name)
@@ -42,12 +41,11 @@ const ancestorsOf = (n: TreeNode): Named[] =>
 /** 区分のタグ。科目の軸は段（款・項・目）、それ以外の軸は軸の名前（節・事業）で呼ぶ */
 const kindOf = (n: TreeNode) => (n.axis === '科目' ? n.node_kind : n.axis)
 
-/** 経路の1段。back があれば押してその画面に戻れる */
 interface Crumb { kind?: string; name: string; back?: () => void }
 
 /**
  * 見出しの経路は 会計 › 款 › 項 › 目 の段だけにする（一覧の名前は入れない）。
- * 通ってきた画面にある段はそこへ戻り、無い款・項は親を辿って、会計は款の一覧を取り直して移る。
+ * 通ってきた画面にある段はそこへ戻り、無い款・項は名前で検索して開き直し、会計は款の一覧を取り直して移る。
  */
 function crumbsOf(node: TreeNode, history: { data: ViewData }[], bridge: Bridge, levelsOf: (n: TreeNode) => Named[] = ancestorsOf): Crumb[] {
   const same = (n: TreeNode) => n.document_kind === node.document_kind && n.jurisdiction_code === node.jurisdiction_code &&
@@ -86,7 +84,6 @@ const pathOf = (n: TreeNode) => [...ancestorsOf(n), { kind: kindOf(n), name: n.n
 const shareable = (rows: TreeNode[], next?: string | null) =>
   !next && siblings(rows) && rows.every((n) => n.amount_yen !== null)
 
-/** 全行が同じ資料・会計・親・段にあるなら、割合を出せる兄弟とみなす */
 /** 検索結果が1件で続きも無いときだけ、明細の画面に置き換える */
 const autoOpens = (rows: TreeNode[], next?: string | null) => rows.length === 1 && !next
 
@@ -103,6 +100,7 @@ function groupByScope(rows: TreeNode[]): TreeNode[][] | undefined {
   return groups.sort((a, b) => a[0]!.fiscal_year - b[0]!.fiscal_year || a[0]!.jurisdiction_code.localeCompare(b[0]!.jurisdiction_code))
 }
 
+/** 全行が同じ資料・会計・親・段にあるなら、割合を出せる兄弟とみなす */
 function siblings(rows: TreeNode[]) {
   const key = (n: TreeNode) => JSON.stringify([n.document_kind, n.jurisdiction_code, n.fiscal_year,
     n.account_name, n.axis, n.node_kind, n.parent_node_id ?? null])
@@ -203,7 +201,6 @@ function NodeResult({ data, crumbs, names, bridge, showPdf, busy }: {
         {node.amount_yen === null ? <span className="quiet">金額の記載なし</span> : (
           <span className="total-short" title={yen(node.amount_yen)}>{shortYen(node.amount_yen)}</span>
         )}
-        {/* 参照は金額の行の右に置き、参照のためだけに縦の行を使わない */}
         <OriginButton node={node} origin={origin} bridge={bridge} showPdf={showPdf} />
       </PathHeader>
       {axes.map(([axis, rows]) => (
@@ -219,7 +216,7 @@ function NodeResult({ data, crumbs, names, bridge, showPdf, busy }: {
   )
 }
 
-/** 検索結果の見出し。戻るリンクの名前にも使う */
+/** 兄弟の一覧の名前（BarList の aria-label） */
 function nodesTitle(rows: TreeNode[]) {
   const first = rows[0]
   if (!first || !siblings(rows)) return `${rows.length}件の明細`
@@ -246,20 +243,16 @@ function describeRows(rows: TreeNode[], names: Names) {
   const pathParts = (n: TreeNode, common: boolean) => ancestorsOf(n)
     .filter((a) => (a.kind === '款' ? same.kan : same.kou) === common).map((a) => a.name)
   return {
-    // 範囲の表記は他の画面（試験市 · 2024年度 決算）とそろえる
     scope: [same.jurisdiction && (names[first.jurisdiction_code] ?? first.jurisdiction_code),
       [same.year && `${first.fiscal_year}年度`, same.document && (KIND_LABEL[first.document_kind] ?? first.document_kind)].filter(Boolean).join(' ')]
       .filter(Boolean).join(' · ') || undefined,
-    // 会計と共通の上位科目は、経路として見出しの前に置く（明細の画面と同じ経路の作りを使う）
     commonLevels: same.account
       ? (n: TreeNode) => ancestorsOf(n).filter((a) => (a.kind === '款' ? same.kan : same.kou))
       : undefined,
     title: same.name ? first.name : undefined,
     kind: same.name ? kindOf(first) : undefined,
-    // 違いが年度だけなら、年の順に並べて推移として読めるようにする
     oneScope: same.jurisdiction && same.year && same.document,
     byYear: !same.year && same.jurisdiction && same.document && same.account && same.name,
-    /** 団体・年度ごとに分けたまとまりの名前。違う値だけを並べる */
     groupLabel: (n: TreeNode) => [...scopeParts(n, false), ...(same.account ? [] : [n.account_name])].join(' · '),
     label: (n: TreeNode) => same.name
       ? [...scopeParts(n, false), ...(same.account ? [] : [n.account_name])].join(' · ')
@@ -283,14 +276,12 @@ function NodesResult({ rows, next, history, names, bridge, busy, failed }: {
 }) {
   if (!rows.length) return <p className="quiet">該当する歳出明細はありません。</p>
   const drill = (n: TreeNode) => () => void bridge.call('get_expenditure_node', { document_kind: n.document_kind, node_id: n.node_id }, 'drill')
-  // 1件だけなら View が内訳を取りに行き、明細の画面に置き換える。取得までの間は同じ見出しを出しておく。
-  // 続きがある途中の頁は1件でも一覧として出す（置き換えると続きに辿り着けない）
+  // 明細の画面に置き換わるまでの間、同じ見出しを出しておく
   if (autoOpens(rows, next)) {
     const n = rows[0]!
     return (
       <PathHeader crumbs={crumbsOf(n, history, bridge)} kind={kindOf(n)} title={n.name} scope={headScopeOf(n, names)} busy={busy}>
         <span className="total-short" title={yen(n.amount_yen)}>{shortYen(n.amount_yen)}</span>
-        {/* 自動の取得に失敗したときだけ、開き直す手段を置く */}
         {failed && !busy && <button type="button" className="bar-more" onClick={drill(n)}>再読み込み</button>}
       </PathHeader>
     )
@@ -307,7 +298,6 @@ function NodesResult({ rows, next, history, names, bridge, busy, failed }: {
       <>
         <PathHeader crumbs={parent ? crumbsOf(first, history, bridge, (n) => ancestorsOf(n).slice(0, -1)) : []}
           kind={parent?.kind} title={parent?.name ?? first.account_name} scope={headScopeOf(first, names)} busy={busy}>
-          {/* 兄弟が揃っているときだけ合計を主役に置く。途中や混在では合計に意味が無い */}
           {total !== undefined && <span className="total-short" title={yen(total)}>{shortYen(total)}</span>}
         </PathHeader>
         <BarList label={title} share={share} busy={busy}
@@ -370,7 +360,6 @@ function NodesResult({ rows, next, history, names, bridge, busy, failed }: {
   )
 }
 
-/** 団体 × 年度の表に、収録した資料の区分を置く */
 function JurisdictionsResult({ list, bridge, busy }: { list: Jurisdiction[]; bridge: Bridge; busy: boolean }) {
   if (!list.length) return <p className="quiet">団体はありません。</p>
   const years = [...new Set(list.flatMap((j) => j.coverage.map((c) => c.fiscal_year)))].sort()
@@ -423,7 +412,6 @@ function View({ bridge }: { bridge: Bridge }) {
   // 最初の結果は AI 自身が受け取っているので、利用者が画面で動かしたあとだけ伝える
   const moved = useRef(false)
   useEffect(() => {
-    // 検索結果が1件なら、ボタンを押させずにその明細の内訳を開く
     if (entry && 'nodes' in entry.data && autoOpens(entry.data.nodes, entry.data.next_page_token)) {
       const n = entry.data.nodes[0]!
       void bridge.call('get_expenditure_node', { document_kind: n.document_kind, node_id: n.node_id }, 'reset')

@@ -191,6 +191,8 @@ bun run inspect:mcp                      # MCP Inspector を本番の MCP（api.
 
 lint の script は持たない。
 
+unit テストは、金額の正しさ・公開 API の安全性（認証・入力の上限・SQL の bind・停止スイッチなど）・壊すと利用者に届く契約（MCP の出力 schema など）のように、間違えると困るものに限って書く。画面や細かい振る舞いはローカルの e2e（smoke）で確かめ、CI では回さない。CI は速さを優先する。
+
 依存は exact ピン留めにする。公開から7日未満の版は `bunfig.toml`（`minimumReleaseAge`）と root の `pyproject.toml`（`exclude-newer`）で解決から外す。
 
 ## 現在の優先範囲
