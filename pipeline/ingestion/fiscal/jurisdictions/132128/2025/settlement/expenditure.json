@@ -17,6 +17,24 @@
         "account": "後期高齢者医療特別会計",
         "table_id": "late-elderly-medical-setsu"
       }
+    },
+    {
+      "id": "land-readjustment-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ceed3f02ebc3cf25a32d1fb1b754a5761730a638a0bb2f788b3a20ed03ffe603"
+        }
+      ],
+      "options": {
+        "account": "土地区画整理事業特別会計",
+        "table_id": "land-readjustment-expenditure"
+      },
+      "expected_tables": [
+        {
+          "table_id": "land-readjustment-expenditure"
+        }
+      ]
     }
   ],
   "direction": "expenditure",
@@ -48,6 +66,36 @@
           "bytes": 7340
         },
         "row_count": 364
+      }
+    },
+    {
+      "table_id": "land-readjustment-expenditure",
+      "conversion_id": "land-readjustment-settlement",
+      "input_fingerprint": "e0c5f2eafcd513b0eebc49617f3c6f0d46daaf8bf7f6716af059d13a2f9a3ce9",
+      "account": "土地区画整理事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent'}。",
+        "金額の単位は printed 6頁 から決めた。款の和 2,774,892,427 と印字の「歳出合計」2,774,892,427 が一致。",
+        "金額の注記 3 件（流用 1・繰越額 2）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（48 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2025/settlement/expenditure/land-readjustment-expenditure-nodes.parquet",
+          "sha256": "f0541557cb8a600ed273b9fcd93f1eb107e6ef82b7a6ecfc8a566f24114adb57",
+          "bytes": 9987
+        },
+        "row_count": 213
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2025/settlement/expenditure/land-readjustment-expenditure-amounts.parquet",
+          "sha256": "cd68bf6c8b6fc2dc334fe29cf357d48149a6c08852a843556719019153d262e1",
+          "bytes": 9214
+        },
+        "row_count": 483
       }
     }
   ],

@@ -28,6 +28,7 @@ import re
 from ingestion.generic.build import run_pages
 from ingestion.generic.headers import canonical
 from ingestion.generic.layout import is_amount, lines, normalize
+from ingestion.generic.layout_settings import load as load_layout
 from ingestion.generic.notes import kind_of
 from ingestion.lib.node_tables import AMOUNT_COLUMNS, NODE_COLUMNS, coverage_regions, phase_dictionary, write_coverage_words
 from ingestion.lib.parquet import write_parquet
@@ -260,10 +261,12 @@ def build_table(source: dict, options: dict, *, stop: bool = True) -> Table:
         raise ValueError('The generic builder reads text PDFs only')
     account = options['account']
     pages = scope_pages(source, account)
+    layout = load_layout(source['target'], source.get('direction', 'expenditure'))
     built, report, observed, logicals = run_pages(
         Path(source['path']), pages, observation_cache(source, pages),
         document_kind=source['target']['document_kind'], account=account, stop=stop,
-        partial=bool(options.get('partial')), direction=source.get('direction'))
+        partial=bool(options.get('partial')), direction=source.get('direction'),
+        layout=(layout or {}).get('breakdown'))
     kept, nodes, amounts, unresolved, codes = split_notes(built)
     all_nodes = [*built.nodes, *nodes]
     all_amounts, headings = canonical_headings([*kept, *amounts], all_nodes, source['target']['document_kind'])

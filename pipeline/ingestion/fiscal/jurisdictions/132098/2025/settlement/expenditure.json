@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132098",
+    "fiscal_year": 2025,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "long-term-care-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "a8315debb114272c77e6d3c88a81490a712a75f3b995ba755c97438fcef8f0a0"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業会計",
+        "table_id": "long-term-care-expenditure"
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-expenditure"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "long-term-care-expenditure",
+      "conversion_id": "long-term-care-settlement",
+      "input_fingerprint": "04b2e831fdd898a3188d5f4df6308bdb2355086fb614f0d1fe6b851843cdf089",
+      "account": "介護保険事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
+        "金額の単位は column mark 7頁 から決めた。款の和 40,648,455,051 と印字の「歳出合計」40,648,455,051 が一致。",
+        "金額の注記 2 件（流用 2）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（156 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・翌年度繰越額／継続費逓次繰越繰越明許費事故繰越→翌年度繰越額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132098/2025/settlement/expenditure/long-term-care-expenditure-nodes.parquet",
+          "sha256": "d12ab76d2ca8e4c1435143d76296dc9b02f823e1a315f2d3931e17fdc99a094d",
+          "bytes": 10369
+        },
+        "row_count": 171
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132098/2025/settlement/expenditure/long-term-care-expenditure-amounts.parquet",
+          "sha256": "0061742baef0f2b03544303636e2756569ad2ce5ebb390853e67cd741b407aa8",
+          "bytes": 13224
+        },
+        "row_count": 614
+      }
+    }
+  ]
+}
