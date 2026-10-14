@@ -107,7 +107,7 @@ def read_amount(pdf: Path, box, model: str, *, allow_vlm: bool = True) -> tuple[
             subprocess.run(['pdftoppm', '-f', str(box.page), '-l', str(box.page), '-r', '300', '-png', '-singlefile',
                 '-x', str(int(max(0, box.x0 - margin) * scale)), '-y', str(int(max(0, box.y0 - margin) * scale)),
                 '-W', str(int((box.x1 - box.x0 + 2 * margin) * scale)),
-                '-H', str(int((box.y1 - box.y0 + 2 * margin) * scale)), str(pdf), str(root)], check=True)
+                '-H', str(int((box.y1 - box.y0 + 2 * margin) * scale)), str(pdf), str(root)], check=True, timeout=60)
             answer = recognize_crops([root.with_suffix('.png')])[0].strip()
             if answer == '0':
                 return answer, 'paddle-small'
