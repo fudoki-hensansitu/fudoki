@@ -958,6 +958,28 @@ class PatternNamesTest(unittest.TestCase):
 
 
 class SubjectContinuationTest(unittest.TestCase):
+    def test_a_name_fragment_does_not_split_the_annotation_breakdown_of_its_subject(self):
+        from ingestion.generic.layout import Logical
+        from ingestion.generic.tree import build
+        from ingestion.generic.convert import split_notes
+        code = Band(0, 10, 1, ('科目', '目', '目'), [70, 100, 200], 70, 200, kind='label')
+        name = Band(10, 120, 1, ('科目', '目'), [70, 100, 200], 70, 200, kind='label')
+        value = Band(120, 200, 1, ('支出済額',), [70, 100, 200], 70, 200, kind='amount')
+        remark = Band(200, 600, 1, ('備考',), [70, 200], 70, 200, kind='label')
+        code.words = [glyph('8', 2, 94, 5)]
+        name.words = [glyph('市立社会福祉', 12, 94, 90), glyph('センタ－費', 12, 106, 70)]
+        value.words = [glyph('1,000', 140, 94, 50)]
+        remark.words = [glyph('繰越事業費不用額', 250, 94, 100), glyph('100', 520, 94, 40),
+                        glyph('役務費', 250, 106, 60), glyph('40', 520, 106, 40),
+                        glyph('負担金', 250, 118, 60), glyph('60', 520, 118, 40)]
+        built = build([Logical([1], [code, name, value, remark], '円', [])])
+        self.assertEqual([n['name_text'] for n in built.nodes], ['市立社会福祉センタ-費'])
+        kept, nodes, amounts, unresolved, _ = split_notes(built)
+        self.assertEqual([a['amount_text'] for a in kept], ['1,000'])
+        self.assertEqual(len(nodes), 3)
+        self.assertEqual([a['amount_text'] for a in amounts], ['100', '40', '60'])
+        self.assertEqual(unresolved, [])
+
     def build_crossing_rule(self, amount=None, gap=3):
         from ingestion.generic.layout import Logical
         from ingestion.generic.tree import build

@@ -1283,13 +1283,6 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 elif kind:
                     unowned.append({'kind': 'unreadable amount', 'page': line[0].page, 'text': normalize(text(line))})
                 found[id(subject)].insert(0, title)
-        # Use the same opening positions as the subject events below. A note's parts cannot cross
-        # into another subject merely because that subject's expenditure happens to add up to the note.
-        subject_starts = tuple(sorted({subject_row(i, logical)[0] for g in ordered if g.subject
-                                       for i in found[id(g)] if i.role == 'node'}))
-        for group in ordered:
-            if not group.subject:
-                note_breakdown(found[id(group)], subject_starts)
         # A codeless line whose row holds amounts in an amount band is an item
         # (a 節 column printed without numbers), not a note.
         for band in logical.bands:
@@ -1372,6 +1365,14 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 if head is not None and head.code is None and not head.amounts and 0 <= head.page - tail.page <= 2:
                     tail.hint = kind_of(head.name, words=True)
                     break
+    # Use the subject events after name continuations have been joined: a fragment is not a new
+    # subject boundary. A note's parts still cannot cross into another subject with a matching sum.
+    for logical, ordered, found in all_items:
+        subject_starts = tuple(sorted({subject_row(i, logical)[0] for g in ordered if g.subject
+                                       for i in found[id(g)] if i.role == 'node'}))
+        for group in ordered:
+            if not group.subject:
+                note_breakdown(found[id(group)], subject_starts)
     # Subject levels by indentation, learned over the document (pattern indent).
     starts = sorted(i.indent for _, ordered, found in all_items for g in ordered if g.subject and g.mode == 'indent'
                     for i in found[id(g)] if i.role == 'node')
