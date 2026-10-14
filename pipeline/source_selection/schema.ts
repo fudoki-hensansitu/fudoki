@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { ARCHIVE_BUCKET, originObjectKey, originObjectSlot } from './storage'
+import { ARCHIVE_BUCKET, evaluationObjectKey, evaluationObjectSlot, originObjectKey, originObjectSlot } from './storage'
 
 const nonEmptyString = z.string().min(1).refine(value => value.trim().length > 0, { message: 'Blank text is not allowed' })
 const sha256Schema = z.string().regex(/^[a-f0-9]{64}$/)
@@ -136,6 +136,33 @@ const selectionFields = {
   reason: nonEmptyString,
 }
 
+/** 保存記録が選定したファイルと1対1に対応し、key が slot の単独または番号付きの形であることを検査する。 */
+function checkArchive(
+  ctx: z.RefinementCtx,
+  path: (string | number)[],
+  selected: { id: string; files: { format: 'csv' | 'pdf'; sha256: string | null }[] } | undefined,
+  receipt: ArchivedOrigin,
+  slot: string,
+  singleKey: (format: 'csv' | 'pdf') => string,
+) {
+  if (!selected || receipt.candidate_id !== selected.id || receipt.files.length !== selected.files.length) {
+    ctx.addIssue({ code: 'custom', path, message: 'Archive differs from the selected candidate' })
+    return
+  }
+  const keys = new Set<string>()
+  for (const [fileIndex, file] of selected.files.entries()) {
+    const saved = receipt.files[fileIndex]!
+    const numberedPrefix = slot + '-'
+    const suffix = saved.key.startsWith(numberedPrefix) ? saved.key.slice(numberedPrefix.length) : ''
+    const numbered = /^[1-9]\d*\.(csv|pdf)$/.test(suffix) && suffix.endsWith(`.${file.format}`)
+    const single = selected.files.length === 1 && saved.key === singleKey(file.format)
+    if ((!single && !numbered) || saved.sha256 !== file.sha256 || keys.has(saved.key)) {
+      ctx.addIssue({ code: 'custom', path: [...path, 'files', fileIndex], message: 'Archive differs from the selected target or file' })
+    }
+    keys.add(saved.key)
+  }
+}
+
 export const sourceSelectionSchema = z.union([
   z.object({ ...selectionFields, selected_candidate_id: z.null(), archive: z.null() }).strict(),
   z.object({ ...selectionFields, candidates: z.array(sourceCandidateSchema).length(1), selected_candidate_id: nonEmptyString, archive: archivedOriginSchema.nullable() }).strict(),
@@ -164,23 +191,7 @@ export const sourceSelectionsSchema = z.array(sourceSelectionSchema).superRefine
       }
     }
     if (selection.archive) {
-      const receipt = selection.archive
-      if (!selected || receipt.candidate_id !== selected.id || receipt.files.length !== selected.files.length) {
-        ctx.addIssue({ code: 'custom', path: [index, 'archive'], message: 'Archive differs from the selected candidate' })
-      } else {
-        const keys = new Set<string>()
-        for (const [fileIndex, file] of selected.files.entries()) {
-          const saved = receipt.files[fileIndex]!
-          const numberedPrefix = originObjectSlot(selection.target) + '-'
-          const suffix = saved.key.startsWith(numberedPrefix) ? saved.key.slice(numberedPrefix.length) : ''
-          const numbered = /^[1-9]\d*\.(csv|pdf)$/.test(suffix) && suffix.endsWith(`.${file.format}`)
-          const single = selected.files.length === 1 && saved.key === originObjectKey(selection.target, file.format)
-          if ((!single && !numbered) || saved.sha256 !== file.sha256 || keys.has(saved.key)) {
-            ctx.addIssue({ code: 'custom', path: [index, 'archive', 'files', fileIndex], message: 'Archive differs from the selected target or file' })
-          }
-          keys.add(saved.key)
-        }
-      }
+      checkArchive(ctx, [index, 'archive'], selected, selection.archive, originObjectSlot(selection.target), format => originObjectKey(selection.target, format))
     }
   }
 })
@@ -199,12 +210,12 @@ export const evaluationCandidateSchema = z.object({
 }).strict().superRefine(rejectDuplicateFiles)
 export type EvaluationCandidate = z.infer<typeof evaluationCandidateSchema>
 
-/** 事業の評価の資料の選定。targetは評価する実績の決算。保存は未対応なのでarchiveはnullだけ。 */
+/** 事業の評価の資料の選定。targetは評価する実績の決算。保存先は決算書とは別のslot（`evaluation-settlement`）。 */
 export const evaluationSelectionSchema = z.object({
   target: settlementTargetSchema,
   candidates: z.array(evaluationCandidateSchema),
   selected_candidate_id: nonEmptyString.nullable(),
-  archive: z.null(),
+  archive: archivedOriginSchema.nullable(),
   reason: nonEmptyString,
 }).strict()
 export type EvaluationSelection = z.infer<typeof evaluationSelectionSchema>
@@ -217,7 +228,10 @@ export const evaluationSelectionsSchema = z.array(evaluationSelectionSchema).sup
     targets.add(key)
     const ids = selection.candidates.map(candidate => candidate.id)
     if (new Set(ids).size !== ids.length) ctx.addIssue({ code: 'custom', path: [index, 'candidates'], message: 'Duplicate candidate ID' })
-    if (selection.selected_candidate_id === null) continue
+    if (selection.selected_candidate_id === null) {
+      if (selection.archive) ctx.addIssue({ code: 'custom', path: [index, 'archive'], message: 'Unselected target cannot have an archive' })
+      continue
+    }
     const selectedIndex = ids.indexOf(selection.selected_candidate_id)
     if (selectedIndex < 0) {
       ctx.addIssue({ code: 'custom', path: [index, 'selected_candidate_id'], message: 'Selected candidate is missing' })
@@ -228,6 +242,9 @@ export const evaluationSelectionsSchema = z.array(evaluationSelectionSchema).sup
       if (file.sha256 === null) {
         ctx.addIssue({ code: 'custom', path: [index, 'candidates', selectedIndex, 'files', fileIndex, 'sha256'], message: 'Selected file needs inspected byte identity' })
       }
+    }
+    if (selection.archive) {
+      checkArchive(ctx, [index, 'archive'], selection.candidates[selectedIndex], selection.archive, evaluationObjectSlot(selection.target), () => evaluationObjectKey(selection.target, 'pdf'))
     }
   }
 })

@@ -12,9 +12,10 @@ script はこの package が所有する。実行は `bun run --cwd pipeline <na
 | 取り込み表の合計検査 | `ingestion:verify`（ノードの表・金額の表の全段の木の検査（保存済み可）と印字された数字の網羅の検査（候補の scope 付きのみ。弱い規則で通した数字と帯の外の数字を Jev が金額と読めば止める。convert が聞いて保存した答えを verify は API なしで再現し、無ければ止める）を保存済み・候補の表に当てる。CIでは回さない） |
 | dbt | `dbt:prepare`（入力準備だけ）/ `dbt:build`（入力準備から marts まで。候補は `--candidate-dir`、保存済みで未キャッシュなら `--remote`） |
 | 配信 | `serving:columns`（`apps/api/src/columns.json` を warehouse の列と `_models.yml` の説明から生成。`--check` で最新か検査）/ `serving:sync`（marts の表を D1 へ同名・同列で写す。`--database-id <uuid>` か `--local`、`--persist-to`、`--dry-run`。ネットワーク・cf を使うので sandbox 外） |
+| 評価の検索 | `evaluation:index`（保存済みの評価資料を R2 から取り、1頁ずつの PDF にして AI Search `fudoki-evaluation-v1` へ登録する。既定は計画の表示だけ、`--write` で書き、全 item が completed で数と metadata が計画と一致した原典の記録を `evaluation_search/instance.json` に書く。分割 PDF は保存しない。ネットワーク・cf を使うので sandbox 外）/ `serving:evaluation-catalog`（登録の記録があり指紋が今の選定と設定に一致する原典だけを `apps/api/src/evaluation-catalog.json` に生成。`--check` で最新か検査し、CI で回す） |
 | 検査 | `test`（bun）/ `test:python`（unittest）/ `test:dbt`（入力準備の unittest） |
 
-原典選定は `bun pipeline/source_selection/check.ts` と `archive.ts`。dbt は入力準備（`dbt/scripts/`）、staging・intermediate・marts のモデル、seeds を持つ。
+原典選定は `bun pipeline/source_selection/check.ts` と `archive.ts`。事業の評価の資料（`evaluation_selections`）は `archive.ts --evaluation` で決算書とは別の key（`.../evaluation-settlement[-<n>].pdf`）に保存する。`settlement-` で始めると決算書の保存が消す。dbt は入力準備（`dbt/scripts/`）、staging・intermediate・marts のモデル、seeds を持つ。
 
 ## 生成物・観測・取得の規約
 
@@ -42,6 +43,9 @@ script はこの package が所有する。実行は `bun run --cwd pipeline <na
   | scan PDFのOCR観測 | 非公開R2の `fiscal/ingestion/<対象>/<方向>/ocr/<id>.json.gz` | 依頼とSHA（`ocr_inputs`）だけ |
   | Jev の聞き直しの答え（入力の fingerprint と確率。原典の文字は持たない） | `ingestion/fiscal/jurisdictions/<団体>/<年度>/<資料区分>/<方向>.digit-recheck.jsonl` | 管理する |
   | 変換設定・現在の表・ハッシュ・保存先 | `ingestion/fiscal/jurisdictions/<団体>/<年度>/<資料区分>/<方向>.json` | 管理する |
+  | 評価資料の索引の設定と登録の記録（原典ごとの sha256・頁数・指紋・確認日時） | `evaluation_search/instance.json` | 管理する |
+  | 評価資料の頁ごとの PDF・chunk | AI Search `fudoki-evaluation-v1` の built-in storage | 管理しない（R2 の原典から `evaluation:index` で作り直す） |
+  | Worker が引く評価資料の一覧 | `apps/api/src/evaluation-catalog.json`（生成物） | 管理する |
   | 分類・名称のマスタ | dbt seeds | 管理する |
   | 復元済み入力・PDF/OCR キャッシュ | `pipeline/.cache/` | 管理しない |
   | DuckDB・dbt manifest・検査結果・ローカル報告 | `pipeline/.build/` | 管理しない |

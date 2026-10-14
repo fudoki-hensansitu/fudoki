@@ -17,6 +17,8 @@
     "dbt:prepare": "uv run python dbt/scripts/prepare.py",
     "dbt:build": "uv run python dbt/scripts/prepare.py --build",
     "serving:columns": "uv run python -m serving.columns",
+    "serving:evaluation-catalog": "uv run python -m serving.evaluation_catalog",
+    "evaluation:index": "uv run python -m evaluation_search.index",
     "serving:sync": "uv run python -m serving.sync_d1",
     "test:dbt": "uv run python -m unittest discover -s dbt/scripts -p '*_test.py'"
   },

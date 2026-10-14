@@ -1,0 +1,47 @@
+{
+  "instance": "fudoki-evaluation-v1",
+  "documents": [
+    {
+      "origin_sha256": "628b02ba7d8faafa8476a45d353a2ff850e275d5b0e941b0a80ef66bf3ec98b5",
+      "jurisdiction": "131148",
+      "fiscal_year": 2025,
+      "title": "令和7年度主要施策の成果（本冊・別冊）",
+      "url": "https://www.city.tokyo-nakano.lg.jp/kusei/zaisei/kessan/R7kessan.files/R7shuyosesaku.pdf",
+      "landing_url": "https://www.city.tokyo-nakano.lg.jp/kusei/zaisei/kessan/R7kessan.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 63
+        }
+      ]
+    },
+    {
+      "origin_sha256": "f3b089e84c0b3bc3d1189f125028d9be28427f4652ae9f40d120bd5e8beb9e5c",
+      "jurisdiction": "131148",
+      "fiscal_year": 2025,
+      "title": "令和7年度主要施策の成果（本冊・別冊）",
+      "url": "https://www.city.tokyo-nakano.lg.jp/kusei/zaisei/kessan/R7kessan.files/R7shuyosesaku-bessatsu.pdf",
+      "landing_url": "https://www.city.tokyo-nakano.lg.jp/kusei/zaisei/kessan/R7kessan.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 75
+        }
+      ]
+    },
+    {
+      "origin_sha256": "80b62f85965f7b88f5e9d2c4129ed685a488d1acfd4c11c6c5b877bba1302fd9",
+      "jurisdiction": "131172",
+      "fiscal_year": 2025,
+      "title": "令和8年度北区事務事業評価",
+      "url": "https://www.city.kita.lg.jp/_res/projects/default_project/_page_/001/026/599/r08_jimujigyohyoka.pdf",
+      "landing_url": "https://www.city.kita.lg.jp/city-information/evaluation/1011919/1026599.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 108
+        }
+      ]
+    }
+  ]
+}

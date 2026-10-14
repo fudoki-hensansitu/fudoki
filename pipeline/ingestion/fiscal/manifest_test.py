@@ -63,6 +63,15 @@ class ManifestWorkflowTest(unittest.TestCase):
         self.patch.stop()
         self.tmp.cleanup()
 
+    def test_statement_kind_is_a_shared_declared_form_not_a_free_gate_override(self):
+        document = deepcopy(self.document)
+        for kind in ('ordinary', 'public-enterprise'):
+            document['conversions'][0]['statement_kind'] = kind
+            manifest.validate(document)
+        document['conversions'][0]['statement_kind'] = 'skip-checks'
+        with self.assertRaises(jsonschema.ValidationError):
+            manifest.validate(document)
+
     def test_multiple_originals_and_conversions_preserve_raw_values_and_do_not_claim_saved(self):
         result = convert(self.path, self.files, self.root / 'candidate')
         self.assertEqual(result['status'], 'candidate')
