@@ -854,6 +854,15 @@ describe('operation の応答は output の schema に合う', () => {
     validate('describe_expenditure_columns', await call('describe_expenditure_columns', {}))
     // 検査自体が効いていること: schema に無いキーは落とす
     const schema = list.result.tools.find((t: { name: string }) => t.name === 'describe_expenditure_columns').outputSchema
-    expect(validators.getValidator(schema)({ ...(await call('describe_expenditure_columns', {})), extra: 1 }).valid).toBe(false)
+    const description = await call('describe_expenditure_columns', {})
+    const validator = validators.getValidator(schema)
+    expect(validator({ ...description, extra: 1 }).valid).toBe(false)
+    for (const search_example of [
+      { ...description.search_example, document_kind: 123 },
+      { ...description.search_example, page_size: '50' },
+      { ...description.search_example, fiscal_year: { min: '2025', max: 2025 } },
+      { ...description.search_example, where: { node_kind: { eq: [123] } } },
+      { ...description.search_example, order_by: [{ column: 'unknown_column' }] },
+    ]) expect(validator({ ...description, search_example }).valid).toBe(false)
   })
 })

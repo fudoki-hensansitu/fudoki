@@ -491,7 +491,7 @@ export const operations: Operation[] = [
       where_columns: z.array(z.string()),
       order_by_columns: z.array(z.string()),
       required_input: z.string(),
-      search_example: z.record(z.string(), z.unknown()),
+      search_example: searchInput,
       where_conditions: z.record(z.string(), z.string()),
       sum_rules: z.array(z.string()),
       columns: z.array(
