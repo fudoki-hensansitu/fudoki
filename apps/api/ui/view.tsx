@@ -1,4 +1,4 @@
-import { Fragment, StrictMode, useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from 'react'
+import { createContext, Fragment, StrictMode, useContext, useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBridge, type Bridge } from './bridge'
 import { BarList } from './bars'
@@ -14,7 +14,7 @@ import {
   type ViewData,
 } from './types'
 import { Button } from '@fudoki/ui/components/button'
-import { ExternalLink } from 'lucide-react'
+import { ArrowLeft, ExternalLink } from 'lucide-react'
 import { Alert, AlertTitle, AlertDescription } from '@fudoki/ui/components/alert'
 import { Skeleton } from '@fudoki/ui/components/skeleton'
 import {
@@ -147,6 +147,13 @@ function OriginButton({ node, origin, bridge, showPdf }: {
  * 一覧と明細で共通の見出し。1行目は経路（今の画面は太字の見出し）と、右寄せの範囲。2行目は金額などの主役。
  * 今の画面も経路の続きに同じ大きさで並べ、大きくするのは金額だけにする。
  */
+/** 前の画面がパンくずで辿れない（団体・年度をまたぐ一覧）ときだけ、見出しの頭に置く「戻る」 */
+const BackContext = createContext<(() => void) | undefined>(undefined)
+
+/** 全行が同じ団体・年度・資料なら、パンくずで辿れる一つの範囲とみなす */
+const oneScope = (rows: TreeNode[]) => rows.every((n) => n.jurisdiction_code === rows[0]!.jurisdiction_code &&
+  n.fiscal_year === rows[0]!.fiscal_year && n.document_kind === rows[0]!.document_kind)
+
 function PathHeader({ crumbs, kind, title, scope, busy, children }: {
   crumbs: Crumb[]
   kind?: string
@@ -155,11 +162,17 @@ function PathHeader({ crumbs, kind, title, scope, busy, children }: {
   busy: boolean
   children?: ReactNode
 }) {
+  const onBack = useContext(BackContext)
   return (
     <header className="head">
       <div className="head-row">
         <Breadcrumb aria-label="経路" className="crumbs">
           <BreadcrumbList className="crumb-list">
+            {onBack && (
+              <BreadcrumbItem className="crumb-back-item">
+                <Button variant="link" className="crumb crumb-back" disabled={busy} onClick={onBack}><ArrowLeft aria-hidden="true" />戻る</Button>
+              </BreadcrumbItem>
+            )}
             {crumbs.map((c, i) => (
               <Fragment key={`${i}-${c.name}`}>
                 <BreadcrumbItem>
@@ -204,11 +217,13 @@ function NodeResult({ data, crumbs, names, bridge, showPdf, busy }: {
         <OriginButton node={node} origin={origin} bridge={bridge} showPdf={showPdf} />
       </PathHeader>
       {axes.map(([axis, rows]) => (
-        <section key={axis} className="section" aria-label={`${axis === '科目' ? rows[0]!.node_kind : axis}ごとの内訳`}>
+        <section key={axis} className="group" aria-label={`${axis === '科目' ? rows[0]!.node_kind : axis}ごとの内訳`}>
+          {/* 節と事業など軸が混ざると同じ一覧に見えるので、軸が2つ以上のときだけ見出しを置く */}
+          {axes.length > 1 && <div className="group-head"><h3>{axis === '科目' ? rows[0]!.node_kind : axis}ごとの内訳</h3></div>}
           <BarList label={`${node.name}の${axis}ごとの内訳`} share={shareable(rows, data.next_page_token)} busy={busy}
             bars={rows.map((n) => ({
               key: n.node_id, label: n.name, kind: kindOf(n), amount: n.amount_yen,
-              onSelect: () => void bridge.call('get_expenditure_node', { document_kind: n.document_kind, node_id: n.node_id }, 'drill'),
+              onSelect: () => void bridge.call('get_expenditure_node', { document_kind: n.document_kind, node_id: n.node_id }, 'drill', n),
             }))} />
         </section>
       ))}
@@ -275,14 +290,14 @@ function NodesResult({ rows, next, history, names, bridge, busy, failed }: {
   busy: boolean
 }) {
   if (!rows.length) return <p className="quiet">該当する歳出明細はありません。</p>
-  const drill = (n: TreeNode) => () => void bridge.call('get_expenditure_node', { document_kind: n.document_kind, node_id: n.node_id }, 'drill')
+  const drill = (n: TreeNode) => () => void bridge.call('get_expenditure_node', { document_kind: n.document_kind, node_id: n.node_id }, 'drill', n)
   // 明細の画面に置き換わるまでの間、同じ見出しを出しておく
   if (autoOpens(rows, next)) {
     const n = rows[0]!
     return (
       <PathHeader crumbs={crumbsOf(n, history, bridge)} kind={kindOf(n)} title={n.name} scope={headScopeOf(n, names)} busy={busy}>
         <span className="total-short" title={yen(n.amount_yen)}>{shortYen(n.amount_yen)}</span>
-        {failed && !busy && <button type="button" className="bar-more" onClick={drill(n)}>再読み込み</button>}
+        {failed && !busy && <Button variant="link" className="bar-more" onClick={drill(n)}>再読み込み</Button>}
       </PathHeader>
     )
   }
@@ -314,11 +329,10 @@ function NodesResult({ rows, next, history, names, bridge, busy, failed }: {
     const parent = ancestorsOf(first).at(-1)
     const sameParent = rows.every((n) => ancestorsOf(n).at(-1)?.name === parent?.name)
     const title = sameParent && parent ? parent.name : first.account_name
-    // 経路は団体ごとに違う画面を指すので、段を押して移る先を決められない。文字だけ置く
-    const crumbs: Crumb[] = sameParent && parent ? [{ name: first.account_name }, ...ancestorsOf(first).slice(0, -1)] : []
     return (
       <>
-        <PathHeader crumbs={crumbs} kind={sameParent ? parent?.kind : undefined} title={title} scope={d.scope} busy={busy} />
+        <PathHeader crumbs={[]} kind={sameParent ? parent?.kind : undefined} title={title}
+          scope={[d.scope, sameParent && parent ? first.account_name : undefined].filter(Boolean).join(' · ')} busy={busy} />
         {groups.map((group) => {
           const g = group[0]!
           const label = d.groupLabel(g)
@@ -343,10 +357,9 @@ function NodesResult({ rows, next, history, names, bridge, busy, failed }: {
   const ordered = d.byYear ? [...rows].sort((a, b) => a.fiscal_year - b.fiscal_year) : rows
   return (
     <>
-      <PathHeader crumbs={d.commonLevels
-        // 団体・年度・資料が混ざると、段を押して移る先を一つに決められないので文字だけ置く
-        ? crumbsOf(rows[0]!, history, bridge, d.commonLevels).map((c) => d.oneScope ? c : { ...c, back: undefined })
-        : []} kind={d.kind} title={title} scope={d.scope} busy={busy} />
+      {/* 団体・年度・資料が混ざると、段を押して移る先を一つに決められないのでパンくずを置かない */}
+      <PathHeader crumbs={d.commonLevels && d.oneScope ? crumbsOf(rows[0]!, history, bridge, d.commonLevels) : []} kind={d.kind} title={title}
+        scope={[d.scope, !d.oneScope && d.commonLevels ? rows[0]!.account_name : undefined].filter(Boolean).join(' · ') || undefined} busy={busy} />
       <BarList label={title} share={false} busy={busy} keepOrder={d.byYear}
         bars={ordered.map((n) => ({
           key: `${n.document_kind}-${n.node_id}`,
@@ -387,11 +400,11 @@ function JurisdictionsResult({ list, bridge, busy }: { list: Jurisdiction[]; bri
                     // View の中では移らず、チャットで AI に呼び直させる。一般会計を優先し、別の会計はチャットで聞き直せばよい
                     const account = c.accounts.find((a) => a.account_name === '一般会計') ?? c.accounts[0]
                     return (
-                      <button type="button" key={c.document_kind} className="chip" disabled={busy || !account}
+                      <Button variant="link" key={c.document_kind} className="chip" disabled={busy || !account}
                         aria-label={`${j.name} ${y}年度 ${label}の${account?.account_name ?? ''}をチャットで聞く`}
                         onClick={() => account && bridge.ask(`${j.name}（団体コード ${j.jurisdiction_code}）の${y}年度 ${label}・${account.account_name}の歳出を款ごとに見せて`)}>
                         {label}
-                      </button>
+                      </Button>
                     )
                   })}
                 </span>
@@ -414,7 +427,7 @@ function View({ bridge }: { bridge: Bridge }) {
   useEffect(() => {
     if (entry && 'nodes' in entry.data && autoOpens(entry.data.nodes, entry.data.next_page_token)) {
       const n = entry.data.nodes[0]!
-      void bridge.call('get_expenditure_node', { document_kind: n.document_kind, node_id: n.node_id }, 'reset')
+      void bridge.call('get_expenditure_node', { document_kind: n.document_kind, node_id: n.node_id }, 'reset', n)
     }
     setPdf(undefined)
     bridge.setFullscreen(false)
@@ -434,6 +447,9 @@ function View({ bridge }: { bridge: Bridge }) {
     if (entry) bridge.tellModel(describe(entry.data, state.names))
     queueMicrotask(() => { if (trigger?.isConnected) trigger.focus() })
   }
+  const previous = state.history.at(-1)
+  const backToList = previous && 'nodes' in previous.data && !oneScope(previous.data.nodes)
+    ? () => bridge.backTo(state.history.length - 1) : undefined
   if (pdf)
     return (
       <main className="view" data-fullscreen={state.fullscreen.active || undefined}>
@@ -441,8 +457,20 @@ function View({ bridge }: { bridge: Bridge }) {
       </main>
     )
   return (
+    <BackContext.Provider value={backToList}>
     <main aria-busy={state.busy} className="view">
-      {entry && (
+      {state.pending ? (
+        <div className="result">
+          <PathHeader crumbs={crumbsOf(state.pending, entry ? [...state.history, entry] : state.history, bridge)}
+            kind={kindOf(state.pending)} title={state.pending.name} scope={headScopeOf(state.pending, state.names)} busy>
+            <span className="total-short" title={yen(state.pending.amount_yen)}>{shortYen(state.pending.amount_yen)}</span>
+          </PathHeader>
+          <div role="status" className="loading">
+            <span className="sr-only">読み込み中</span>
+            {[0, 1, 2].map((i) => <Fragment key={i}><Skeleton className="h-4 w-1/3" /><Skeleton className="h-1.5 w-full" /></Fragment>)}
+          </div>
+        </div>
+      ) : entry && (
         <div key={entry.revision} className="result">
           {'jurisdictions' in entry.data ? <JurisdictionsResult list={entry.data.jurisdictions} bridge={bridge} busy={state.busy} />
             : 'nodes' in entry.data ? <NodesResult rows={entry.data.nodes} next={entry.data.next_page_token} history={state.history} names={state.names} bridge={bridge} busy={state.busy} failed={!!state.error} />
@@ -455,7 +483,7 @@ function View({ bridge }: { bridge: Bridge }) {
           <AlertDescription>{state.error}</AlertDescription>
         </Alert>
       )}
-      {state.busy && (
+      {state.busy && !state.pending && (
         <div role="status" className="loading">
           <span className="sr-only">読み込み中</span>
           <Skeleton className="h-5 w-1/2" />
@@ -463,13 +491,14 @@ function View({ bridge }: { bridge: Bridge }) {
           <Skeleton className="h-3 w-4/5" />
         </div>
       )}
-      {typeof entry?.data.next_page_token === 'string' && (
-        <button type="button" className="bar-more" disabled={state.busy}
+      {typeof entry?.data.next_page_token === 'string' && !state.pending && (
+        <Button variant="link" className="bar-more" disabled={state.busy}
           onClick={() => void bridge.call(entry.tool, { ...entry.args, page_token: entry.data.next_page_token }, 'append')}>
           続き
-        </button>
+        </Button>
       )}
     </main>
+    </BackContext.Provider>
   )
 }
 

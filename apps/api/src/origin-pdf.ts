@@ -81,7 +81,9 @@ export class OriginPdfRelay {
         const upstream = await fetch(url, { redirect: 'manual', signal: controller.signal, headers: { Accept: 'application/pdf' } })
         if (upstream.status !== 200 || !/^application\/pdf(?:\s*;|$)/i.test(upstream.headers.get('content-type') ?? '')) {
           await upstream.body?.cancel()
-          return failure(502, '自治体から PDF を取得できません')
+          // 自治体側の一時的な拒否・リダイレクト・形式の違いを、再発時に見分けられるよう status と形式を出す
+          console.error('origin pdf upstream', { url, status: upstream.status, type: upstream.headers.get('content-type') })
+          return failure(502, `自治体から PDF を取得できません（HTTP ${upstream.status}${upstream.status === 200 ? `、${upstream.headers.get('content-type') ?? '形式不明'}` : ''}）`)
         }
         if (Number(upstream.headers.get('content-length')) > PDF_LIMITS.bytes) {
           await upstream.body?.cancel()
@@ -110,7 +112,8 @@ export class OriginPdfRelay {
           await storage.setAlarm(Math.min(...cache.map((p) => p.fetchedAt), pdf.fetchedAt) + PDF_LIMITS.ttlMs)
         })
         return this.pdfResponse(pdf, bytes)
-      } catch {
+      } catch (error) {
+        if (!controller.signal.aborted) console.error('origin pdf fetch', { url, error: String(error) })
         return failure(controller.signal.aborted ? 504 : 502, controller.signal.aborted ? 'PDF の取得が20秒の上限を超えました' : '自治体から PDF を取得できません')
       } finally { clearTimeout(timer) }
     })

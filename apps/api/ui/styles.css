@@ -21,14 +21,15 @@
 }
 @layer base {
   html, body { overflow-x: clip; }
-  body { margin: 0; padding: 16px; background: var(--background); color: var(--foreground); font: var(--text-body) / 1.5 var(--view-font); font-variant-numeric: lining-nums; }
+  /* host によっては iframe に最小の高さがあるので、短い画面は上下の中央に置く。高さは #root で測るので、ここの vh は報告する高さに入らない */
+  body { margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; background: var(--background); color: var(--foreground); font: var(--text-body) / 1.5 var(--view-font); font-variant-numeric: lining-nums; }
   h2 { font-size: var(--text-heading); line-height: 1.4; font-weight: var(--font-weight-semibold, 600); overflow-wrap: anywhere; min-width: 0; }
   h3 { font-size: var(--text-caption); line-height: 1.5; font-weight: var(--font-weight-medium, 500); color: var(--sub); }
   a:focus-visible, button:focus-visible, .pdf-scroll:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
 }
 [data-slot="button"][data-variant="link"] { height: auto; padding: 0; font: inherit; }
 
-.view { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.view { display: flex; flex-direction: column; gap: 16px; min-width: 0; padding: 20px 16px; }
 .result { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .quiet { color: var(--sub); }
 .loading { display: flex; flex-direction: column; gap: 8px; }
@@ -43,6 +44,9 @@
 .crumb { padding: 0; border: 0; background: none; color: var(--primary); font: inherit; white-space: nowrap; cursor: pointer; text-decoration: underline; text-decoration-color: var(--link-line); text-underline-offset: 3px; }
 .crumb:hover:not(:disabled) { text-decoration-color: currentColor; }
 .crumb:disabled { cursor: progress; }
+.crumb-back-item { margin-right: 4px; padding-right: 10px; border-right: 1px solid var(--border); }
+.crumb-back { gap: 2px; text-decoration: none; }
+.crumb-back svg { width: 14px; height: 14px; }
 .total { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; margin-top: 4px; }
 .total-short { font-size: var(--text-hero); line-height: 1.2; font-weight: var(--font-weight-semibold, 600); font-variant-numeric: lining-nums tabular-nums; }
 .ref { flex: none; }

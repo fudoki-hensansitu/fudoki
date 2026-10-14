@@ -140,6 +140,8 @@ async function jurisdictionNames(ctx: Ctx, out: unknown): Promise<Record<string,
   return Object.fromEntries(pages.flatMap((p) => p.results).map((r) => [r.jurisdiction_code, r.name]))
 }
 
+const VIEW_NOTE = ' MCP Apps に対応した client では、結果をこの tool の画面（View）に表とグラフで表示する。そのときは応答の文章で一覧や金額を繰り返さず、補足は問いへの答えと注意点だけの最小限にとどめる。'
+
 function mcpServer(ctx: Ctx, apiOrigin: string, operations: Operation[]): McpServer {
   const server = new McpServer(
     {
@@ -165,7 +167,8 @@ function mcpServer(ctx: Ctx, apiOrigin: string, operations: Operation[]): McpSer
       op.name,
       {
         title: op.summary,
-        description: op.description,
+        // View を持つ tool は結果を画面に出すので、AI の文章は表の繰り返しを避けて最小限にさせる（REST の説明には足さない）
+        description: op.view ? `${op.description}${VIEW_NOTE}` : op.description,
         inputSchema: op.input,
         outputSchema: op.output,
         // どの tool も利用者の状態を変えない（評価の検索は回数の記録と AI Search の呼び出しを伴うが、風土記の内側で閉じる）
