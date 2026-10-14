@@ -1,0 +1,87 @@
+import { useState } from 'react'
+import { barWidths, percent, shortYen, yen } from './types'
+import { ChevronRight } from 'lucide-react'
+import { Kind } from './kind'
+
+export interface Bar {
+  key: string
+  label: string
+  /** 款・項・目・節・事業などの区分 */
+  kind?: string
+  /** 団体・年度など、行ごとに違うときだけ出す補足 */
+  note?: string
+  amount: number | null
+  onSelect?: () => void
+}
+
+const FOLD = 10
+
+/**
+ * 金額を横棒の長さで見せる。割合を出す兄弟の一覧では、棒も合計に対する比にして、% と長さを一致させる。
+ * 割合を出さない一覧（団体・年度の混在、続きがある）では合計が意味を持たないので、最大の行に対する長さにする。
+ */
+export function BarList({ bars, share, busy, label, keepOrder = false, fold = FOLD }: {
+  bars: Bar[]
+  /** 年の推移など、並び自体に意味があるときは金額で並べ替えない */
+  keepOrder?: boolean
+  /** これより多いと上位だけを出して残りを畳む */
+  fold?: number
+  share: boolean
+  busy: boolean
+  label: string
+}) {
+  const [open, setOpen] = useState(false)
+  const sorted = keepOrder ? bars : [...bars].sort((a, b) => (b.amount ?? -Infinity) - (a.amount ?? -Infinity))
+  const positive = sorted.map((b) => b.amount ?? 0).filter((v) => v > 0)
+  const total = positive.reduce((sum, v) => sum + v, 0)
+  // 畳むのは2件以上隠れるときだけ。1件のために「残り1件」を押させない。
+  const lengths = barWidths(sorted.map((b) => b.amount), share)
+  const widths = new Map(sorted.map((bar, i) => [bar, lengths[i]!]))
+  const shown = open || sorted.length <= fold + 1 ? sorted : sorted.slice(0, fold)
+  const hidden = sorted.slice(shown.length)
+  return (
+    <div className="bars" role="list" aria-label={label}>
+      {shown.map((bar) => {
+        const width = widths.get(bar)!
+        const body = (
+          <>
+            <span className="bar-label">
+              <span className="bar-name">{bar.kind && <Kind kind={bar.kind} />}{bar.label}{bar.onSelect && <ChevronRight className="bar-chevron" aria-hidden="true" />}</span>
+              {bar.note && <span className="bar-note">{bar.note}</span>}
+            </span>
+            <span className="bar-figures">
+              {share && total > 0 && bar.amount !== null && bar.amount > 0 && (
+                <span className="bar-share">{percent(bar.amount / total)}</span>
+              )}
+              <span className="bar-amount" title={yen(bar.amount)}>{shortYen(bar.amount)}</span>
+            </span>
+            {sorted.length > 1 && (
+              <span className="bar-track" aria-hidden="true">
+                {width > 0 && <span className="bar-fill" style={{ width: `${width}%` }} />}
+              </span>
+            )}
+          </>
+        )
+        return (
+          <div role="listitem" key={bar.key}>
+            {bar.onSelect ? (
+              <button type="button" className="bar" disabled={busy} onClick={bar.onSelect}
+                aria-label={`${bar.label} ${yen(bar.amount)}${bar.note ? ` ${bar.note}` : ''} の内訳を見る`}>
+                {body}
+              </button>
+            ) : (
+              <div className="bar">{body}</div>
+            )}
+          </div>
+        )
+      })}
+      {hidden.length > 0 && (
+        <button type="button" className="bar-more" onClick={() => setOpen(true)}>
+          ほか{hidden.length}件（{share && total > 0
+            ? percent(hidden.reduce((sum, b) => sum + Math.max(0, b.amount ?? 0), 0) / total)
+            : shortYen(hidden.reduce((sum, b) => sum + Math.max(0, b.amount ?? 0), 0))}）
+        </button>
+      )}
+    </div>
+  )
+}

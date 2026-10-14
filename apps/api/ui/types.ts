@@ -69,6 +69,19 @@ export const KIND_LABEL: Record<string, string> = {
 }
 export const yen = (value: number | null) =>
   value === null ? '—' : `${value.toLocaleString('ja-JP')}円`
+/** 桁数の大きい金額を兆・億・万で丸める。兆・億は小数第1位まで出す。正確な額は yen で title に置く。 */
+export function shortYen(value: number | null) {
+  if (value === null) return '—'
+  const abs = Math.abs(value)
+  const round = (v: number, unit: string) =>
+    `${v.toLocaleString('ja-JP', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}${unit}円`
+  if (abs >= 1e12) return round(value / 1e12, '兆')
+  if (abs >= 1e8) return round(value / 1e8, '億')
+  if (abs >= 1e4) return `${Math.round(value / 1e4).toLocaleString('ja-JP')}万円`
+  return yen(value)
+}
+export const percent = (share: number) =>
+  share > 0 && share < 0.001 ? '0.1%未満' : `${(share * 100).toFixed(share >= 0.1 ? 0 : 1)}%`
 export const nodePath = (node: TreeNode) =>
   [
     node.kan_name,
@@ -77,3 +90,10 @@ export const nodePath = (node: TreeNode) =>
   ]
     .filter(Boolean)
     .join(' / ')
+
+/** 棒の長さ（%）。割合を出すときは合計に対する比、出さないときは最大の行に対する比 */
+export function barWidths(amounts: (number | null)[], share: boolean): number[] {
+  const positive = amounts.map((v) => v ?? 0).filter((v) => v > 0)
+  const base = share ? positive.reduce((sum, v) => sum + v, 0) : Math.max(0, ...positive)
+  return amounts.map((v) => (v !== null && v > 0 && base > 0 ? (v / base) * 100 : 0))
+}

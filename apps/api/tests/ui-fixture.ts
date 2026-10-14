@@ -16,7 +16,7 @@ export const node: TreeNode = {
   node_kind: '目',
   code: null,
   name: '総務管理',
-  amount_yen: 12345,
+  amount_yen: 1_234_567_000,
   kan_name: '総務費',
   kou_name: '総務管理費',
   origin_id: 'ok',
@@ -52,12 +52,18 @@ const jurisdiction = (
             },
           ],
         },
+        {
+          fiscal_year: 2025,
+          document_kind: 'initial',
+          accounts: [{ account_name: '一般会計', account_kind: '一般会計', origins: [origin] }],
+        },
       ]
     : [],
 })
 export const child = {
   ...node,
   node_id: 'ui-child',
+  axis: '節',
   node_kind: '節',
   name: '委託料',
   amount_yen: null,
@@ -113,13 +119,13 @@ export function uiData(scenario: string, more = false, nodeId?: string): ViewDat
                 ...child,
                 node_id: 'ui-more-child',
                 name: '備品購入費',
-                amount_yen: 2345,
+                amount_yen: 234_500_000,
               },
             ],
           }
         : {
             節: [child],
-            事業: [{ ...node, node_id: 'ui-project', name: '庁舎管理' }],
+            事業: [{ ...node, node_id: 'ui-project', name: '庁舎管理', axis: '事業', node_kind: '事業' }],
           },
       origins: [origin],
       next_page_token: more ? null : 'detail-next',
@@ -131,13 +137,13 @@ export function uiData(scenario: string, more = false, nodeId?: string): ViewDat
       ? [{ ...node, node_id: 'ui-more', name: '追加された明細' }]
       : [node],
     origins: more ? [] : [origin],
-    next_page_token: more ? null : 'search-next',
+    next_page_token: null,
   }
 }
 
 const fiscal = (id: string, name: string, kind: string, amount: number | null, parent: string | null,
   kan = name, kou: string | null = null): TreeNode => ({
-  ...node, node_id: id, name, node_kind: kind, amount_yen: amount,
+  ...node, node_id: id, name, node_kind: kind, amount_yen: amount === null ? null : amount * 1_000_000,
   parent_node_id: parent, is_subject: true, kan_name: kan, kou_name: kou,
 })
 const kanGeneral = fiscal('kan-general', '総務費', '款', 6000, null)
@@ -150,12 +156,32 @@ const mokuPlan = fiscal('moku-plan', '企画費', '目', 1500, 'kou-admin', '総
 const mokuTax = fiscal('moku-tax', '税務総務費', '目', 2000, 'kou-tax', '総務費', '徴税費')
 const mokuWelfare = fiscal('moku-welfare', '福祉総務費', '目', 4000, 'kou-welfare', '民生費', '社会福祉費')
 const hierarchy = [kanGeneral, kanWelfare, kouAdmin, kouTax, kouWelfare, mokuAdmin, mokuPlan, mokuTax, mokuWelfare]
+/** 経路の款・項を名前で引く検索に、試験の階層から答える */
+export function levelData(where: Record<string, { eq?: unknown[] } | undefined>): ViewData | undefined {
+  const kind = where.node_kind?.eq?.[0]
+  if (kind !== '款' && kind !== '項') return undefined
+  const match = (column: 'kan_name' | 'kou_name', n: TreeNode) => !where[column]?.eq || where[column]!.eq!.includes(n[column])
+  return { nodes: hierarchy.filter((n) => n.node_kind === kind && match('kan_name', n) && match('kou_name', n)), origins: [origin], next_page_token: null }
+}
+export const hierarchyIds = new Set(hierarchy.map((n) => n.node_id))
+
 export function chartData(scenario: string, id?: string, more = false): ViewData {
   if (id) {
     const self = hierarchy.find((n) => n.node_id === id)!
     const children = hierarchy.filter((n) => n.parent_node_id === id)
     return { node: self, children: children.length ? { 科目: children } : {}, origins: [origin], next_page_token: null }
   }
+  if (scenario === 'chart-many') return { nodes: MANY_KAN.map(([name, oku], i) => fiscal(`many-${i}`, name, '款', oku * 100, null)), origins: [origin], next_page_token: null }
+  if (scenario === 'chart-compare') return { nodes: [
+    { ...kanWelfare, node_id: 'cmp-1' },
+    { ...kanWelfare, node_id: 'cmp-2', jurisdiction_code: '000003', amount_yen: 9_870_000_000, parent_node_id: null },
+    { ...kanWelfare, node_id: 'cmp-3', fiscal_year: 2023, amount_yen: 3_650_000_000 },
+  ], origins: [origin], next_page_token: null }
+  // 2団体の款（2025年度の中央区・新宿区の決算の金額）。款の名前は団体ごとに違う
+  if (scenario === 'chart-cities') return { nodes: [
+    ...CITY_KAN.A.map(([name, oku], i) => ({ ...fiscal(`city-a-${i}`, name, '款', oku * 100, null), fiscal_year: 2025 })),
+    ...CITY_KAN.B.map(([name, oku], i) => ({ ...fiscal(`city-b-${i}`, name, '款', oku * 100, null), fiscal_year: 2025, jurisdiction_code: '000003' })),
+  ], origins: [origin], next_page_token: null }
   if (scenario === 'chart-kan') return { nodes: [kouAdmin, kouTax], origins: [origin], next_page_token: null }
   if (scenario === 'chart-partial') return { nodes: more ? [kanWelfare] : [kanGeneral], origins: [origin], next_page_token: more ? null : 'chart-next' }
   if (scenario === 'chart-mixed') return { nodes: [kanGeneral, kanWelfare, kouAdmin,
@@ -163,4 +189,18 @@ export function chartData(scenario: string, id?: string, more = false): ViewData
     { ...kanGeneral, node_id: 'other-account', account_name: '特別会計' }], origins: [origin], next_page_token: null }
   if (scenario === 'chart-invalid') return { nodes: [kanGeneral, { ...kanWelfare, amount_yen: null }], origins: [origin], next_page_token: null }
   return { nodes: [kanGeneral, kanWelfare], origins: [origin], next_page_token: null }
+}
+
+/** 市の一般会計の款と金額（億円）。件数の多い円や棒の見え方を確かめる */
+const MANY_KAN: [string, number][] = [
+  ['議会費', 4.8], ['総務費', 98.2], ['民生費', 412.5], ['衛生費', 86.1], ['労働費', 1.2],
+  ['農林水産業費', 6.4], ['商工費', 21.9], ['土木費', 133.7], ['消防費', 38.0], ['教育費', 142.3],
+  ['災害復旧費', 0.3], ['公債費', 61.5], ['諸支出金', 0.02], ['予備費', 0],
+]
+
+const CITY_KAN: Record<'A' | 'B', [string, number][]> = {
+  A: [['議会費', 6.4], ['企画費', 70.7], ['総務費', 83.4], ['区民費', 140.2], ['福祉保健費', 483.7], ['環境土木費', 106.3],
+    ['都市整備費', 257.2], ['教育費', 206.0], ['公債費', 18.2], ['諸支出金', 162.7], ['予備費', 0]],
+  B: [['議会費', 7.7], ['総務費', 173.6], ['地域振興費', 94.5], ['文化観光産業費', 58.2], ['福祉費', 472.0], ['子ども家庭費', 394.8],
+    ['健康費', 185.8], ['環境清掃費', 101.2], ['土木費', 113.3], ['教育費', 197.0], ['公債費', 22.9], ['諸支出金', 57.0], ['予備費', 0]],
 }
