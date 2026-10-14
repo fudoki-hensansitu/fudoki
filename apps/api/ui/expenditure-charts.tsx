@@ -7,7 +7,7 @@ import { Table, TableHeader, TableHead, TableRow, TableBody, TableCell } from '@
 import { KIND_LABEL, yen, type TreeNode } from './types'
 
 export function chartGroups(rows: TreeNode[]) {
-  const groups = new Map<string, TreeNode[]>()
+  const groups = new Map<string, { rows: TreeNode[]; ids: Set<string> }>()
   for (const row of rows) {
     // 原典の同じ親・軸・段に属する兄弟だけを一つの円にする。親と子を足さない。
     if (!['款', '項', '目'].includes(row.node_kind) || row.is_subject === false ||
@@ -15,12 +15,15 @@ export function chartGroups(rows: TreeNode[]) {
         (row.node_kind !== '款' && row.parent_node_id === null)) continue
     const key = JSON.stringify([row.document_kind, row.jurisdiction_code, row.fiscal_year,
       row.account_name, row.axis, row.node_kind, row.parent_node_id])
-    const group = groups.get(key) ?? []
+    const group = groups.get(key) ?? { rows: [], ids: new Set<string>() }
     // 追加ページに同じ明細があっても二重の扇形にしない。
-    if (!group.some((n) => n.node_id === row.node_id)) group.push(row)
+    if (!group.ids.has(row.node_id)) {
+      group.rows.push(row)
+      group.ids.add(row.node_id)
+    }
     groups.set(key, group)
   }
-  return [...groups].map(([key, rows]) => ({ key, rows }))
+  return [...groups].map(([key, { rows }]) => ({ key, rows }))
     .sort((a, b) => ['款', '項', '目'].indexOf(a.rows[0]!.node_kind) - ['款', '項', '目'].indexOf(b.rows[0]!.node_kind))
 }
 
@@ -59,7 +62,7 @@ export function ExpenditureCharts({ rows, partial, busy, selectedId, showScope =
           {groups.map((g) => {
             const n = g.rows[0]!
             return <NativeSelectOption key={g.key} value={g.key}>
-              {n.jurisdiction_code} / {n.fiscal_year} / {n.account_name} / {n.node_kind} / {n.kan_name}{n.kou_name && ` / ${n.kou_name}`}
+              {n.jurisdiction_code} / {n.fiscal_year} / {KIND_LABEL[n.document_kind]} / {n.account_name} / {n.node_kind} / {n.kan_name}{n.kou_name && ` / ${n.kou_name}`}
             </NativeSelectOption>
           })}
         </NativeSelect>

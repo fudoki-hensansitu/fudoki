@@ -208,8 +208,7 @@ if (preview) {
   const releaseButton = document.getElementById('preview-release')!
   releaseButton.hidden = !!scenario && !['race', 'slow'].includes(scenario)
   releaseButton.onclick = () => {
-    release?.()
-    release = undefined
+    qa.release()
     void fetch('/__release-pdf', { method: 'POST' })
   }
   const resultButton = document.getElementById('preview-result')!

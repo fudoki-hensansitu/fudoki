@@ -77,6 +77,7 @@ test('団体・年・会計・親・階層を混ぜず、欠損額を0円にし�
 test('各hostテーマと狭いiframeでチャートと選択操作が収まる', async ({ app, browser }) => {
   await app.open('/?ui=chart')
   const ui = browser.frameLocator('iframe')
+  await expect(ui.locator('.recharts-sector')).toHaveCount(2)
   for (const width of [320, 375, 414, 768]) {
     await browser.setViewport({ width, height: 900 })
     for (const host of ['chatgpt', 'claude']) for (const theme of ['light', 'dark']) {

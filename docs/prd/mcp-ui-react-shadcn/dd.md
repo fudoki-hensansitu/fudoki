@@ -30,11 +30,11 @@
 
 ### 公式部品とhostのスタイルを使う
 
-shadcn CLI `4.21.3` の公式 `@shadcn` registryから、Table、Button、Input、NativeSelect、Badge、Empty、Alert、Skeleton、Fieldと依存するLabel・Separatorを取得した。Label・Separator等のprimitiveにはRadixを使い、NativeSelect・Table等にはHTML要素を使う。React/React DOMは`19.3.0`、Tailwindは`4.3.3`。直接依存はexact指定とし、CLI・依存の公開から7日経過をnpm registryで確認した。`cn`はCLIが追加した公式shadcn-uiのclass結合ライブラリで、`0.4.0`に固定する。
+shadcn CLI `4.21.3` の公式 `@shadcn` registryから、Table、Button、Input、NativeSelect、Badge、Empty、Alert、Skeleton、Fieldと依存するLabel・Separatorを取得した。共有部品は公式のBase UI版（base-nova）を取得し、Button・Input・Separator・BadgeのprimitiveにはBase UIを使う。Label・NativeSelect・Table等にはHTML要素を使う。@base-ui/reactは7日経過版の1.8.0にexact固定し、Radixへの依存を除去した。ホストの意味別tokens・フォントは維持する。React/React DOMは`19.3.0`、Tailwindは`4.3.3`。直接依存はexact指定とし、CLI・依存の公開から7日経過をnpm registryで確認した。`cn`はCLIが追加した公式shadcn-uiのclass結合ライブラリで、`0.4.0`に固定する。
 
 `packages/ui/src/styles/globals.css` でDESIGN.mdの色・文字・角丸と、hostのbackground/text/border/font変数をshadcnの意味別tokensへ対応させる。light/darkはhostの明示値を優先し、値が無い場合はOS設定を使う。項目枠の緑と金額枠の橙、白いPDF紙面を維持する。hostのフォントCSSは既存SDK helperで反映し、外部フォントの許可domainは追加しない。
 
-参照: [shadcn Table](https://ui.shadcn.com/docs/components/radix/table)、[Native Select](https://ui.shadcn.com/docs/components/radix/native-select)、[Tailwind PostCSS](https://tailwindcss.com/docs/installation/using-postcss)。
+参照: [shadcn Table](https://ui.shadcn.com/docs/components/base/table)、[Native Select](https://ui.shadcn.com/docs/components/base/native-select)、[Tailwind PostCSS](https://tailwindcss.com/docs/installation/using-postcss)。
 
 ### PDF の既知の頁を並べる
 
@@ -112,7 +112,7 @@ UI・共有部品の保存では、ビルドキャッシュを無効にして再
 
 ## 歳出のチャートと原典確認の整理
 
-追加指定により、歳出検索結果の原典列を外した。原典は明細を開いて確認する。`ui/expenditure-charts.tsx`は公式CLIから取得した`packages/ui/src/components/chart.tsx`を使い、RechartsのPieで表示する。[shadcnのChart](https://ui.shadcn.com/docs/components/radix/chart)と[Pie例](https://ui.shadcn.com/charts/pie)を参照した。Chartの依存としてCardも公式CLIが追加した。Rechartsはnpm registryで公開日時と最新の7日経過版を確認し、`3.10.1`をroot catalogにexactで固定した。
+追加指定により、歳出検索結果の原典列を外した。原典は明細を開いて確認する。`ui/expenditure-charts.tsx`は公式CLIから取得した`packages/ui/src/components/chart.tsx`を使い、RechartsのPieで表示する。[shadcnのChart](https://ui.shadcn.com/docs/components/base/chart)と[Pie例](https://ui.shadcn.com/charts/pie)を参照した。Chartの依存としてCardも公式CLIが追加した。Rechartsはnpm registryで公開日時と最新の7日経過版を確認し、`3.10.1`をroot catalogにexactで固定した。
 
 一つの円には、団体・年度・資料区分・会計・軸・段・原典の親IDが同じ明細だけを渡す。款・項・目の印字額を直接使い、画面で親や会計の総額を計算しない。階層の情報が不足した結果や別の軸は表に残す。複数の範囲は選択で切り替える。親と子は別の円になり、別年度・会計・軸も混ざらない。取得済みの明細内の割合であり、未取得の続きがある場合は明示する。
 

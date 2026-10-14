@@ -400,7 +400,7 @@ function View({ bridge }: { bridge: Bridge }) {
     setPdf({ selection, id: ++pdfId.current })
   useEffect(() => {
     setPdf(undefined)
-  }, [state.entry])
+  }, [state.entry?.revision])
   function closePdf() {
     const trigger = pdf?.selection.trigger
     setPdf(undefined)

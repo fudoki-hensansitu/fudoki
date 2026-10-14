@@ -25,6 +25,14 @@ interface Sheet {
   height: number
 }
 
+function spreadPages(initial: number[], numPages?: number, start?: number) {
+  if (numPages === undefined) return initial
+  if (start !== undefined) return [start, start + 1].filter((page) => page <= numPages)
+  if (initial.length > 1 || numPages <= 1) return initial
+  const first = Math.min(initial[0]!, numPages - 1)
+  return [first, first + 1]
+}
+
 function frameStyle(
   location: PdfLocation,
   sheet: Sheet,
@@ -170,15 +178,7 @@ export function PdfViewer({
     }
   }, [selection, apiOrigin])
 
-  const pages = document
-    ? spreadStart !== undefined
-      ? [spreadStart, spreadStart + 1].filter((p) => p <= document.numPages)
-      : initialPages.length > 1
-        ? initialPages
-        : document.numPages > 1
-          ? [Math.min(initialPages[0]!, document.numPages - 1), Math.min(initialPages[0]!, document.numPages - 1) + 1]
-          : initialPages
-    : initialPages
+  const pages = spreadPages(initialPages, document?.numPages, spreadStart)
   const pageKey = pages.join(',')
   useEffect(() => {
     if (!document) return
