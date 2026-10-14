@@ -112,6 +112,35 @@ def _cell_words(pieces: list[Word], cuts: list[float]) -> list[Word]:
     return [Word(_text(w.text), w.x0, w.y0, w.x1, w.y1) for w in words if w.text.strip()]
 
 
+def short_rows(pdf: Path, detected: pdf_rules.PageRules) -> pdf_rules.PageRules:
+    """A continuous horizontal stroke joining two observed vertical rules closes their cell.
+
+    The page-wide detector deliberately omits short strokes. Here both ends must meet
+    table rules; isolated ink and text do not establish a row boundary.
+    """
+    from dataclasses import replace
+    import numpy as np
+    if len(detected.vertical) < 2:
+        return detected
+    image = pdf_rules.render(pdf, detected.page)
+    scale = pdf_rules.DPI / 72
+    vertical = sorted(detected.vertical, key=lambda r: r.position)
+    runs = []
+    for left, right in zip(vertical, vertical[1:]):
+        top, bottom = max(left.start, right.start), min(left.end, right.end)
+        x0, x1 = round(left.position * scale), round(right.position * scale)
+        if top >= bottom or x1 <= x0:
+            continue
+        y0, y1 = max(0, round(top * scale)), min(image.shape[0], round(bottom * scale))
+        joined = np.all(image[y0:y1, x0:x1 + 1] < pdf_rules.DARK, axis=1)
+        runs.extend((y0 + int(y), x0, x1 + 1) for y in np.flatnonzero(joined))
+    found = pdf_rules._merge(runs, 1 / scale)
+    extra = [r for r in found if not any(abs(old.position - r.position) <= 1
+             and old.start <= r.start + 1 and r.end <= old.end + 1 for old in detected.horizontal)]
+    return replace(detected, horizontal=tuple(sorted([*detected.horizontal, *extra],
+                    key=lambda r: (r.position, r.start))))
+
+
 def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None = None,
          used: set[str] | None = None, detected: pdf_rules.PageRules | None = None) -> Page:
     number = observation_page['page_number']
@@ -234,7 +263,7 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
           header: dict | None = None) -> list[Page]:
     @cache
     def detected(number):
-        return (rules or {}).get(number) or pdf_rules.detect(pdf, number)
+        return short_rows(pdf, (rules or {}).get(number) or pdf_rules.detect(pdf, number))
 
     if corrections:
         from ingestion.generic.layout import page_bands

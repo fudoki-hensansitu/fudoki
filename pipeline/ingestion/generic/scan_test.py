@@ -7,6 +7,25 @@ from copy import deepcopy
 
 
 class TextTest(unittest.TestCase):
+    def test_only_horizontal_ink_joining_two_vertical_rules_closes_a_row(self):
+        from pathlib import Path
+        import numpy as np
+        from ingestion.generic import scan
+        from ingestion.lib import pdf_rules
+        image = np.full((200, 200), 255, dtype=np.uint8)
+        image[20:181, 20:22] = 0
+        image[20:181, 80:82] = 0
+        image[60:62, 20:82] = 0  # one complete short cell boundary
+        image[100:102, 30:70] = 0  # detached text stroke
+        image[140:142, 20:82] = 0
+        image[140:142, 45:48] = 255  # interrupted stroke cannot establish a rule
+        detected = pdf_rules.PageRules(1, 100, 100,
+            (pdf_rules.Rule(10.5, 10, 90), pdf_rules.Rule(40.5, 10, 90)), ())
+        with patch.object(pdf_rules, 'render', return_value=image):
+            result = scan.short_rows(Path('x.pdf'), detected)
+        self.assertEqual(result.vertical, detected.vertical)
+        self.assertEqual([(r.position, r.start, r.end) for r in result.horizontal], [(30.5, 10.5, 41.0)])
+
     def test_small_ocr_zero_matches_its_label_before_a_previous_wrapped_line(self):
         from ingestion.generic.layout import Band, Glyph
         from ingestion.generic.tree import Group, Item, owner
@@ -91,7 +110,8 @@ class CorrectionTest(unittest.TestCase):
                           tuple(ImageRule(y, 0, 180) for y in (10, 30, 100)))
         correction = scan.amount_dictionary([{'id': 'bad-unit', 'page': 1, 'observation_id': '10',
             'observed_amount': '门', 'corrected_amount': '0', 'reason': 'wrong target'}])
-        with patch.object(scan.pdf_rules, 'detect', return_value=rules):
+        with patch.object(scan.pdf_rules, 'detect', return_value=rules), \
+                patch.object(scan, 'short_rows', side_effect=lambda pdf, rules: rules):
             found = scan.pages(observation, Path('x.pdf'))
             self.assertIn('千', [w.text for w in found[0].words])
             self.assertIn('C', [w.text for w in found[0].words])
