@@ -21,6 +21,12 @@
       "reason": "同じ見出しを子・增と読むOCRの誤り。原典の予備費支出及び流用増減を確認した。"
     },
     {
+      "id": "reserve-transfer-heading-simplified",
+      "observed_name": "予備費支出及び流用增减",
+      "corrected_name": "予備費支出及び流用増減",
+      "reason": "OCRが増減を增减と読む見出しの誤り。原典の予備費支出及び流用増減を確認し、本文の名前は変えない。"
+    },
+    {
       "id": "budget-amount-heading",
       "observed_name": "算現",
       "corrected_name": "予算現",
