@@ -26,12 +26,10 @@ interface Sheet {
   height: number
 }
 
-function spreadPages(initial: number[], numPages?: number, start?: number) {
-  if (numPages === undefined) return initial
-  if (start !== undefined) return [start, start + 1].filter((page) => page <= numPages)
-  if (initial.length > 1 || numPages <= 1) return initial
-  const first = Math.min(initial[0]!, numPages - 1)
-  return [first, first + 1]
+/** 1ページずつ見せる。初めは選んだページ、送ったあとはそのページ */
+function shownPage(selected: number, numPages?: number, moved?: number) {
+  const page = moved ?? selected
+  return numPages === undefined ? page : Math.min(Math.max(1, page), numPages)
 }
 
 function frameStyle(
@@ -113,7 +111,7 @@ export function PdfViewer({
   ]
   const [document, setDocument] = useState<PDFDocumentProxy>()
   const [sheets, setSheets] = useState<Sheet[]>([])
-  const [spreadStart, setSpreadStart] = useState<number>()
+  const [movedPage, setMovedPage] = useState<number>()
   const [status, setStatus] = useState('PDF を取得中…')
   const [error, setError] = useState(false)
   const [ready, setReady] = useState(false)
@@ -178,7 +176,7 @@ export function PdfViewer({
     }
   }, [selection, apiOrigin])
 
-  const pages = spreadPages(initialPages, document?.numPages, spreadStart)
+  const pages = [shownPage(selectedPage, document?.numPages, movedPage)]
   const pageKey = pages.join(',')
   useEffect(() => {
     if (!document) return
@@ -280,11 +278,11 @@ export function PdfViewer({
       <div className="toolbar">
         <Button ref={close} variant="ghost" size="sm" onClick={onClose}><ArrowLeft aria-hidden="true" />戻る</Button>
         {!error && <span className="pager">
-          <Button variant="outline" size="icon-sm" aria-label="前のページ" disabled={!ready || Math.min(...pages) <= 1}
-            onClick={() => setSpreadStart(Math.max(1, Math.min(...pages) - 2))}><ChevronLeft aria-hidden="true" /></Button>
+          <Button variant="outline" size="icon-sm" aria-label="前のページ" disabled={!ready || pages[0]! <= 1}
+            onClick={() => setMovedPage(pages[0]! - 1)}><ChevronLeft aria-hidden="true" /></Button>
           <span role="status" className="pager-status">{status}</span>
-          <Button variant="outline" size="icon-sm" aria-label="次のページ" disabled={!ready || !document || Math.max(...pages) >= document.numPages}
-            onClick={() => setSpreadStart(Math.min(document!.numPages - 1, Math.max(...pages) + 1))}><ChevronRight aria-hidden="true" /></Button>
+          <Button variant="outline" size="icon-sm" aria-label="次のページ" disabled={!ready || !document || pages[0]! >= document.numPages}
+            onClick={() => setMovedPage(pages[0]! + 1)}><ChevronRight aria-hidden="true" /></Button>
         </span>}
         {!error && <a className="pdf-url" href={url} title={url} onClick={(event) => { event.preventDefault(); openLink(url) }}>参照元<ExternalLink aria-hidden="true" /></a>}
       </div>
@@ -303,7 +301,7 @@ export function PdfViewer({
         ref={scroll}
         className="pdf-scroll"
         role="region"
-        aria-label="原典 PDF のページ（見開き・スクロール可能）"
+        aria-label="原典 PDF のページ（スクロール可能）"
         tabIndex={0}
       >
         <div
