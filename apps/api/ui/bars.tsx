@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { percent, shortYen, yen } from './types'
+import { ChevronRight } from 'lucide-react'
 import { Kind } from './kind'
 
 export interface Bar {
@@ -43,7 +44,7 @@ export function BarList({ bars, share, busy, label, keepOrder = false }: {
         const body = (
           <>
             <span className="bar-label">
-              <span className="bar-name">{bar.kind && <Kind kind={bar.kind} />}{bar.label}</span>
+              <span className="bar-name">{bar.kind && <Kind kind={bar.kind} />}{bar.label}{bar.onSelect && <ChevronRight className="bar-chevron" aria-hidden="true" />}</span>
               {bar.note && <span className="bar-note">{bar.note}</span>}
             </span>
             <span className="bar-figures">

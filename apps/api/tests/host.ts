@@ -2,7 +2,7 @@ import {
   AppBridge,
   PostMessageTransport,
 } from '@modelcontextprotocol/ext-apps/app-bridge'
-import { chartData, uiData } from './ui-fixture'
+import { chartData, hierarchyIds, levelData, uiData } from './ui-fixture'
 import type { McpUiStyles } from '@modelcontextprotocol/ext-apps'
 
 const frame = document.querySelector<HTMLIFrameElement>('iframe')!
@@ -83,6 +83,11 @@ bridge.oncalltool = async (params) => {
     const data = uiData(scenario)
     if ('nodes' in data) return toolResult({ node: data.nodes.find((n) => n.node_id === input.node_id), children: {}, origins: data.origins })
   }
+  // 経路の款・項は名前で検索して開くので、どの場面でも試験の階層から答える
+  const level = params.name === 'search_expenditure_nodes' && input.where ? levelData(input.where as Record<string, { eq?: unknown[] }>) : undefined
+  if (level) return toolResult(level)
+  if (params.name === 'get_expenditure_node' && hierarchyIds.has(String(input.node_id)))
+    return toolResult(chartData('chart', String(input.node_id)))
   // 団体一覧のチップから款の一覧を開き、そのまま掘り下げられるようにする
   if ((scenario === 'jurisdictions' || scenario === 'single') && params.name !== 'list_jurisdictions')
     return toolResult(chartData('chart', params.name === 'get_expenditure_node' ? String(input.node_id) : undefined))

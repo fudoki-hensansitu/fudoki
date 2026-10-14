@@ -18,13 +18,13 @@ test('款を金額の棒で並べ、掘り下げた先で原典を全画面に�
   await expect(ui.getByRole('region', '目ごとの内訳')).toBeVisible()
   expect(String(await browser.evaluate('() => window.uiQA.contexts().at(-1)'))).toContain('【款】総務費 › 【項】総務管理費')
   await app.screenshot('drill')
-  await ui.getByRole('button', '参照: 総務管理費').tap()
+  await ui.getByRole('button', '参照（PDF）: 総務管理費').tap()
   await expect(ui.getByRole('img', '項目の印字枠')).toBeVisible()
   expect(await browser.evaluate('() => window.uiQA.displayMode()')).toBe('fullscreen')
   // View が報告する高さで iframe が決まるので、PDF の頁が潰れずに見えていること
   await expect(ui.getByRole('img', '原典 PDF 1ページ')).toBeVisible()
   expect(Number(await browser.evaluate("() => document.querySelector('iframe').getBoundingClientRect().height"))).toBeGreaterThan(400)
-  await ui.getByRole('button', '← 戻る').tap()
+  await ui.getByRole('button', '戻る').tap()
   expect(await browser.evaluate('() => window.uiQA.displayMode()')).toBe('inline')
   expect(String(await browser.evaluate('() => window.uiQA.contexts().at(-1)'))).toContain('の内訳を表示中')
   // 経路の段を押すと、その画面に戻る
@@ -69,4 +69,17 @@ test('取得の失敗と0件は、それぞれ短い文で知らせる', async (
   await expect(ui.getByText('試験の初回取得失敗')).toBeVisible()
   await app.open('/?ui=empty')
   await expect(ui.getByText('該当する歳出明細はありません。')).toBeVisible()
+})
+
+test('検索結果から開いた明細でも、経路の款・項を押してその段に移れる', async ({ app, browser }) => {
+  await app.open('/?ui=search')
+  const ui = browser.frameLocator('iframe')
+  // 1件の結果は明細の画面に置き換わる
+  await expect(ui.getByRole('button', /^参照/)).toBeVisible()
+  await ui.getByRole('button', '総務管理費に戻る').tap()
+  await expect(ui.getByRole('heading', '項 総務管理費')).toBeVisible()
+  await ui.getByRole('button', '総務費に戻る').tap()
+  await expect(ui.getByRole('heading', '款 総務費')).toBeVisible()
+  await ui.getByRole('button', '一般会計に戻る').tap()
+  await expect(ui.getByRole('heading', '一般会計')).toBeVisible()
 })

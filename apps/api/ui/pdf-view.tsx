@@ -9,6 +9,7 @@ import { WorkerMessageHandler } from 'pdfjs-dist/build/pdf.worker.mjs'
 import { Button } from '@fudoki/ui/components/button'
 import { Alert, AlertDescription } from '@fudoki/ui/components/alert'
 import { Skeleton } from '@fudoki/ui/components/skeleton'
+import { ArrowLeft, ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react'
 import type { Origin, PdfLocation } from './types'
 
 Object.assign(globalThis, { pdfjsWorker: { WorkerMessageHandler } })
@@ -278,15 +279,15 @@ export function PdfViewer({
     >
       <h3 id="pdf-title" className="sr-only">{origin.title}</h3>
       <div className="toolbar">
-        <Button ref={close} variant="ghost" size="sm" onClick={onClose}>← 戻る</Button>
+        <Button ref={close} variant="ghost" size="sm" onClick={onClose}><ArrowLeft aria-hidden="true" />戻る</Button>
         <span className="pager">
           <Button variant="outline" size="icon-sm" aria-label="前のページ" disabled={!ready || Math.min(...pages) <= 1}
-            onClick={() => setSpreadStart(Math.max(1, Math.min(...pages) - 2))}>‹</Button>
+            onClick={() => setSpreadStart(Math.max(1, Math.min(...pages) - 2))}><ChevronLeft aria-hidden="true" /></Button>
           {!error && <span role="status" className="pager-status">{status}</span>}
           <Button variant="outline" size="icon-sm" aria-label="次のページ" disabled={!ready || !document || Math.max(...pages) >= document.numPages}
-            onClick={() => setSpreadStart(Math.min(document!.numPages - 1, Math.max(...pages) + 1))}>›</Button>
+            onClick={() => setSpreadStart(Math.min(document!.numPages - 1, Math.max(...pages) + 1))}><ChevronRight aria-hidden="true" /></Button>
         </span>
-        <a className="pdf-url" href={url} title={url} onClick={(event) => { event.preventDefault(); openLink(url) }}>参照元 ↗</a>
+        <a className="pdf-url" href={url} title={url} onClick={(event) => { event.preventDefault(); openLink(url) }}>参照元<ExternalLink aria-hidden="true" /></a>
       </div>
       {error && <Alert variant="destructive" role="status"><AlertDescription>{status}</AlertDescription></Alert>}
       {!ready && !error && <Skeleton className="h-6 w-full" />}

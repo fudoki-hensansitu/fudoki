@@ -233,35 +233,45 @@ export function createBridge() {
       }
     },
     /**
-     * 通っていない上位の科目（款・項）へ、親を辿って移る。目から開いた明細でも款・項に上がれるようにする。
-     * 移った先より深い明細の履歴は経路と食い違うので捨て、一覧だけを残す。
+     * 経路の款・項へ移る。同じ団体・年度・資料・会計の中から名前でその段を検索し、見つかった明細を開く。
+     * 親の ID を持たない明細（検索結果から開いたものなど）でも、どの段にも移れるようにする。
+     * 移った先より深い明細の履歴は経路と食い違うので捨てる。
      */
-    async climbTo(from: TreeNode, kind: string, name: string) {
+    async openLevel(from: TreeNode, kind: '款' | '項') {
       if (disposed || state.busy || !state.entry) return
       const id = ++epoch
       request = new AbortController()
       update({ busy: true, error: undefined })
+      const fetchTool = async (name: string, args: Json) => {
+        const result = await app.callServerTool({ name, arguments: args }, { signal: request!.signal })
+        const data = result.structuredContent as Json | undefined
+        if (result.isError || !data || toolFor(data) !== name) throw new Error(result.isError ? message(result) : '表示できない結果です')
+        return { data: data as ViewData, meta: result._meta }
+      }
       try {
-        let parentId = from.parent_node_id
-        // 節・事業から款までの段数に余裕を持たせた上限。データの循環で止まらなくならないようにする
-        for (let step = 0; step < 5 && parentId; step++) {
-          const args = { document_kind: from.document_kind, node_id: parentId }
-          const result = await app.callServerTool({ name: 'get_expenditure_node', arguments: args }, { signal: request.signal })
-          if (disposed || id !== epoch) return
-          const data = result.structuredContent as Json | undefined
-          if (result.isError || !data || toolFor(data) !== 'get_expenditure_node') throw new Error(result.isError ? message(result) : '表示できない結果です')
-          const node = (data as Extract<ViewData, { node: TreeNode }>).node
-          if (node.node_kind === kind && node.name === name) {
-            update({
-              entry: { tool: 'get_expenditure_node', args, data: data as ViewData, revision: id },
-              history: state.history.filter((e) => !('node' in e.data)),
-              names: { ...state.names, ...namesOf(result._meta) },
-            })
-            return
-          }
-          parentId = node.parent_node_id
-        }
-        throw new Error(`${name}まで辿れませんでした`)
+        const found = await fetchTool('search_expenditure_nodes', {
+          document_kind: from.document_kind,
+          fiscal_year: { min: from.fiscal_year, max: from.fiscal_year },
+          where: {
+            jurisdiction_code: { eq: [from.jurisdiction_code] },
+            account_name: { eq: [from.account_name] },
+            node_kind: { eq: [kind] },
+            kan_name: { eq: [from.kan_name] },
+            ...(kind === '項' && from.kou_name ? { kou_name: { eq: [from.kou_name] } } : {}),
+          },
+          page_size: 1,
+        })
+        if (disposed || id !== epoch) return
+        const target = 'nodes' in found.data ? found.data.nodes[0] : undefined
+        if (!target) throw new Error(`${kind === '款' ? from.kan_name : from.kou_name}が見つかりませんでした`)
+        const args = { document_kind: target.document_kind, node_id: target.node_id }
+        const opened = await fetchTool('get_expenditure_node', args)
+        if (disposed || id !== epoch) return
+        update({
+          entry: { tool: 'get_expenditure_node', args, data: opened.data, revision: id },
+          history: [],
+          names: { ...state.names, ...namesOf(opened.meta) },
+        })
       } catch (error) {
         if (!disposed && id === epoch)
           update({ error: `取得に失敗しました: ${error instanceof Error ? error.message : String(error)}` })

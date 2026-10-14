@@ -63,6 +63,7 @@ const jurisdiction = (
 export const child = {
   ...node,
   node_id: 'ui-child',
+  axis: '節',
   node_kind: '節',
   name: '委託料',
   amount_yen: null,
@@ -124,7 +125,7 @@ export function uiData(scenario: string, more = false, nodeId?: string): ViewDat
           }
         : {
             節: [child],
-            事業: [{ ...node, node_id: 'ui-project', name: '庁舎管理' }],
+            事業: [{ ...node, node_id: 'ui-project', name: '庁舎管理', axis: '事業', node_kind: '事業' }],
           },
       origins: [origin],
       next_page_token: more ? null : 'detail-next',
@@ -155,6 +156,15 @@ const mokuPlan = fiscal('moku-plan', '企画費', '目', 1500, 'kou-admin', '総
 const mokuTax = fiscal('moku-tax', '税務総務費', '目', 2000, 'kou-tax', '総務費', '徴税費')
 const mokuWelfare = fiscal('moku-welfare', '福祉総務費', '目', 4000, 'kou-welfare', '民生費', '社会福祉費')
 const hierarchy = [kanGeneral, kanWelfare, kouAdmin, kouTax, kouWelfare, mokuAdmin, mokuPlan, mokuTax, mokuWelfare]
+/** 経路の款・項を名前で引く検索に、試験の階層から答える */
+export function levelData(where: Record<string, { eq?: unknown[] } | undefined>): ViewData | undefined {
+  const kind = where.node_kind?.eq?.[0]
+  if (kind !== '款' && kind !== '項') return undefined
+  const match = (column: 'kan_name' | 'kou_name', n: TreeNode) => !where[column]?.eq || where[column]!.eq!.includes(n[column])
+  return { nodes: hierarchy.filter((n) => n.node_kind === kind && match('kan_name', n) && match('kou_name', n)), origins: [origin], next_page_token: null }
+}
+export const hierarchyIds = new Set(hierarchy.map((n) => n.node_id))
+
 export function chartData(scenario: string, id?: string, more = false): ViewData {
   if (id) {
     const self = hierarchy.find((n) => n.node_id === id)!
