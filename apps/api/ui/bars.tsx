@@ -19,14 +19,16 @@ const FOLD = 10
  * 金額を横棒の長さで見せる。割合を出す兄弟の一覧では、棒も合計に対する比にして、% と長さを一致させる。
  * 割合を出さない一覧（団体・年度の混在、続きがある）では合計が意味を持たないので、最大の行に対する長さにする。
  */
-export function BarList({ bars, share, busy, label }: {
+export function BarList({ bars, share, busy, label, keepOrder = false }: {
   bars: Bar[]
+  /** 年の推移など、並び自体に意味があるときは金額で並べ替えない */
+  keepOrder?: boolean
   share: boolean
   busy: boolean
   label: string
 }) {
   const [open, setOpen] = useState(false)
-  const sorted = [...bars].sort((a, b) => (b.amount ?? -Infinity) - (a.amount ?? -Infinity))
+  const sorted = keepOrder ? bars : [...bars].sort((a, b) => (b.amount ?? -Infinity) - (a.amount ?? -Infinity))
   const positive = sorted.map((b) => b.amount ?? 0).filter((v) => v > 0)
   const max = Math.max(0, ...positive)
   const total = positive.reduce((sum, v) => sum + v, 0)

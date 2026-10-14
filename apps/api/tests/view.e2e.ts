@@ -41,11 +41,12 @@ test('件数が多いと上位10件だけを出し、残りは割合を添えて
   await expect(bars).toHaveCount(14)
 })
 
-test('団体や年度が混ざる結果は割合を出さず、行ごとに団体と年度を添える', async ({ app, browser }) => {
+test('団体や年度が混ざる結果は、共通の値を見出しにまとめ、行は違う値で名付けて割合を出さない', async ({ app, browser }) => {
   await app.open('/?ui=chart-compare')
   const ui = browser.frameLocator('iframe')
-  await expect(ui.getByRole('heading', '3件の明細')).toBeVisible()
-  await expect(ui.getByText('比較市 · 2024年度 決算 · 一般会計')).toBeVisible()
+  await expect(ui.getByRole('heading', '款 民生費')).toBeVisible()
+  await expect(ui.getByText('比較市 · 2024年度', { exact: true })).toBeVisible()
+  await expect(ui.getByText('試験市 · 2023年度', { exact: true })).toBeVisible()
   await expect(ui.getByText('%')).toHaveCount(0)
 })
 

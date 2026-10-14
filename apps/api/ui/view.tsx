@@ -206,6 +206,48 @@ function nodesTitle(rows: TreeNode[]) {
   return [first.account_name, ...ancestorsOf(first).map((a) => a.name)].join(' › ')
 }
 
+/**
+ * 検索結果の行を、行ごとに違う値だけで名付ける。全行で同じ値（団体・年度・資料・会計・科目・名前）は見出しにまとめる。
+ * 例: 民生費を団体・年度で比べる結果は、見出しが「【款】民生費」、行が「比較市 · 2024年度」になる。
+ */
+function describeRows(rows: TreeNode[], names: Names) {
+  const all = <T,>(f: (n: TreeNode) => T) => rows.every((n) => f(n) === f(rows[0]!))
+  const first = rows[0]!
+  const same = {
+    jurisdiction: all((n) => n.jurisdiction_code), year: all((n) => n.fiscal_year),
+    document: all((n) => n.document_kind), account: all((n) => n.account_name),
+    kan: all((n) => n.kan_name), kou: all((n) => n.kou_name), name: all((n) => `${kindOf(n)}:${n.name}`),
+  }
+  const scopeParts = (n: TreeNode, common: boolean) => [
+    same.jurisdiction === common && (names[n.jurisdiction_code] ?? n.jurisdiction_code),
+    same.year === common && `${n.fiscal_year}年度`,
+    same.document === common && (KIND_LABEL[n.document_kind] ?? n.document_kind),
+  ].filter((v): v is string => !!v)
+  const pathParts = (n: TreeNode, common: boolean) => ancestorsOf(n)
+    .filter((a) => (a.kind === '款' ? same.kan : same.kou) === common).map((a) => a.name)
+  return {
+    // 範囲の表記は他の画面（試験市 · 2024年度 決算）とそろえる
+    scope: [same.jurisdiction && (names[first.jurisdiction_code] ?? first.jurisdiction_code),
+      [same.year && `${first.fiscal_year}年度`, same.document && (KIND_LABEL[first.document_kind] ?? first.document_kind)].filter(Boolean).join(' ')]
+      .filter(Boolean).join(' · ') || undefined,
+    // 会計と共通の上位科目は、経路として見出しの前に置く
+    crumbs: [...(same.account ? [{ name: first.account_name }] : []),
+      ...ancestorsOf(first).filter((a) => (a.kind === '款' ? same.kan : same.kou))] as Crumb[],
+    title: same.name ? first.name : undefined,
+    kind: same.name ? kindOf(first) : undefined,
+    // 違いが年度だけなら、年の順に並べて推移として読めるようにする
+    byYear: !same.year && same.jurisdiction && same.document && same.account && same.name,
+    label: (n: TreeNode) => same.name
+      ? [...scopeParts(n, false), ...(same.account ? [] : [n.account_name])].join(' · ')
+      : n.name,
+    note: (n: TreeNode) => [
+      ...pathParts(n, false),
+      ...(same.name ? [] : scopeParts(n, false)),
+      ...(same.account || same.name ? [] : [n.account_name]),
+    ].join(' · ') || undefined,
+  }
+}
+
 function NodesResult({ rows, next, names, bridge, busy }: {
   rows: TreeNode[]
   next?: string | null
@@ -214,27 +256,46 @@ function NodesResult({ rows, next, names, bridge, busy }: {
   busy: boolean
 }) {
   if (!rows.length) return <p className="quiet">該当する歳出明細はありません。</p>
-  const scopes = new Set(rows.map((n) => scopeOf(n, names)))
-  const common = scopes.size === 1 ? [...scopes][0] : undefined
+  const drill = (n: TreeNode) => () => void bridge.call('get_expenditure_node', { document_kind: n.document_kind, node_id: n.node_id }, 'drill')
+  // 1件だけなら View が内訳を取りに行き、明細の画面に置き換える。取得までの間は同じ見出しを出しておく
+  if (rows.length === 1) {
+    const n = rows[0]!
+    return (
+      <PathHeader crumbs={[{ name: n.account_name }, ...ancestorsOf(n)]} kind={kindOf(n)} title={n.name} scope={headScopeOf(n, names)} busy={busy}>
+        <span className="total-short" title={yen(n.amount_yen)}>{shortYen(n.amount_yen)}</span>
+      </PathHeader>
+    )
+  }
   const sibling = siblings(rows)
-  const title = nodesTitle(rows)
   const share = shareable(rows, next)
   const total = share ? rows.reduce((sum, n) => sum + (n.amount_yen ?? 0), 0) : undefined
+  if (sibling) {
+    const title = nodesTitle(rows)
+    return (
+      <>
+        <PathHeader crumbs={[]} title={title} scope={headScopeOf(rows[0]!, names)} busy={busy}>
+          {/* 兄弟が揃っているときだけ合計を主役に置く。途中や混在では合計に意味が無い */}
+          {total !== undefined && <span className="total-short" title={yen(total)}>{shortYen(total)}</span>}
+        </PathHeader>
+        <BarList label={title} share={share} busy={busy}
+          bars={rows.map((n) => ({ key: `${n.document_kind}-${n.node_id}`, label: n.name, kind: kindOf(n), amount: n.amount_yen, onSelect: drill(n) }))} />
+      </>
+    )
+  }
+  const d = describeRows(rows, names)
+  const title = d.title ?? `${rows.length}件の明細`
+  const ordered = d.byYear ? [...rows].sort((a, b) => a.fiscal_year - b.fiscal_year) : rows
   return (
     <>
-      <PathHeader crumbs={[]} title={title} scope={common && (sibling ? headScopeOf(rows[0]!, names) : common)} busy={busy}>
-        {/* 兄弟が揃っているときだけ合計を主役に置く。途中や混在では合計に意味が無い */}
-        {total !== undefined && <span className="total-short" title={yen(total)}>{shortYen(total)}</span>}
-      </PathHeader>
-      <BarList label={title} share={share} busy={busy}
-        bars={rows.map((n) => ({
+      <PathHeader crumbs={d.crumbs} kind={d.kind} title={title} scope={d.scope} busy={busy} />
+      <BarList label={title} share={false} busy={busy} keepOrder={d.byYear}
+        bars={ordered.map((n) => ({
           key: `${n.document_kind}-${n.node_id}`,
-          label: n.name,
-          kind: kindOf(n),
-          // 兄弟でなければ、どの科目の下か・どの団体と年度かを添える
-          note: [sibling ? '' : ancestorsOf(n).map((a) => a.name).join(' › '), common ? '' : scopeOf(n, names)].filter(Boolean).join('　') || undefined,
+          label: d.label(n),
+          kind: d.title ? undefined : kindOf(n),
+          note: d.note(n),
           amount: n.amount_yen,
-          onSelect: () => void bridge.call('get_expenditure_node', { document_kind: n.document_kind, node_id: n.node_id }, 'drill'),
+          onSelect: drill(n),
         }))} />
     </>
   )
@@ -293,6 +354,11 @@ function View({ bridge }: { bridge: Bridge }) {
   // 最初の結果は AI 自身が受け取っているので、利用者が画面で動かしたあとだけ伝える
   const moved = useRef(false)
   useEffect(() => {
+    // 検索結果が1件なら、ボタンを押させずにその明細の内訳を開く
+    if (entry && 'nodes' in entry.data && entry.data.nodes.length === 1) {
+      const n = entry.data.nodes[0]!
+      void bridge.call('get_expenditure_node', { document_kind: n.document_kind, node_id: n.node_id }, 'reset')
+    }
     setPdf(undefined)
     bridge.setFullscreen(false)
     if (entry && moved.current) bridge.tellModel(describe(entry.data, state.names))
