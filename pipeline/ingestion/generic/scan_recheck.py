@@ -226,8 +226,7 @@ def recheck(document: dict, conversion: dict, pdf: Path, model: str = MODEL, lim
             answer, reader = entry['answer'], entry['reader']
             cached += 1
         else:
-            answer, reader = read_amount(pdf, box, model, allow_vlm=new_vlm < vlm_limit,
-                                        **({'crop_box': crop_box} if crop_box is not None else {}))
+            answer, reader = read_amount(pdf, box, model, allow_vlm=new_vlm < vlm_limit, crop_box=crop_box)
             if answer is None:
                 deferred += 1
                 continue
@@ -272,7 +271,7 @@ def recheck(document: dict, conversion: dict, pdf: Path, model: str = MODEL, lim
         return False
 
     for index, batch in enumerate(batches):
-        if batch and not retain(batch) and index == 2:
+        if batch and not retain(batch) and index == 2 and len(batch) > 1:
             # A mistaken numeric reread must not discard independent verified fixes. As in
             # the statement rereader, try them individually, with the same conservation guards.
             for proposal in batch:
