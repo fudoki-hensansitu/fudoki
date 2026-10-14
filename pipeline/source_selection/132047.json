@@ -8469,5 +8469,81 @@
       }
     }
   ],
-  "unresolved_candidates": []
+  "unresolved_candidates": [],
+  "evaluation_selections": [
+    {
+      "target": {
+        "jurisdiction": "132047",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和7年度各会計決算概要 ― 主要施策の成果 ―（(1)〜(4)）",
+          "landing_url": "https://www.city.mitaka.lg.jp/c_service/004/004374.html",
+          "inspected_at": "2026-10-14T18:27:49+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.mitaka.lg.jp/c_service/004/attached/attach_4374_9.pdf",
+              "sha256": "f38b6db8f4da2d75b507b9db032f496694221014fe0b0f5af455c2a1c4b8c813",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.mitaka.lg.jp/c_service/004/attached/attach_4374_10.pdf",
+              "sha256": "2011fb766b1b0081d189f7e7394fbe3279b6db271440c27bc8f28ae21f83b95c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.mitaka.lg.jp/c_service/004/attached/attach_4374_11.pdf",
+              "sha256": "67b86ef5524b08bcc2de1b4b27d209df8e49b7b7026e3cce48a5803114fe49c5",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.mitaka.lg.jp/c_service/004/attached/attach_4374_12.pdf",
+              "sha256": "5a8e79bcf211405a93ad5110cae321ab89751ccf88d1d6a68d49477712100ea6",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132047/2025/evaluation-settlement-4.pdf",
+            "sha256": "f38b6db8f4da2d75b507b9db032f496694221014fe0b0f5af455c2a1c4b8c813",
+            "final_url": "https://www.city.mitaka.lg.jp/c_service/004/attached/attach_4374_9.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132047/2025/evaluation-settlement-1.pdf",
+            "sha256": "2011fb766b1b0081d189f7e7394fbe3279b6db271440c27bc8f28ae21f83b95c",
+            "final_url": "https://www.city.mitaka.lg.jp/c_service/004/attached/attach_4374_10.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132047/2025/evaluation-settlement-3.pdf",
+            "sha256": "67b86ef5524b08bcc2de1b4b27d209df8e49b7b7026e3cce48a5803114fe49c5",
+            "final_url": "https://www.city.mitaka.lg.jp/c_service/004/attached/attach_4374_11.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132047/2025/evaluation-settlement-2.pdf",
+            "sha256": "5a8e79bcf211405a93ad5110cae321ab89751ccf88d1d6a68d49477712100ea6",
+            "final_url": "https://www.city.mitaka.lg.jp/c_service/004/attached/attach_4374_12.pdf"
+          }
+        ],
+        "archived_at": "2026-10-14T10:03:13.821Z"
+      },
+      "reason": "令和7年度決算の「各会計決算概要 ― 主要施策の成果 ―」4分冊（計256頁）。市政運営の基本的な考え方とその成果、主要事業一覧、款ごとの主要事業の成果（一般会計・特別会計）、三鷹市都市経営アクションプラン2027の主な取組状況を載せる。主要事業ごとに事業概要・予算現額・決算額と、重点管理事業は「部の方針と重点管理事業 目標⇒達成状況」（計画した時期・内容に対する実績）と実績・内容を載せる（目標⇒達成状況の記載は約70事業）。文字として読める。ただし課題・今後の方向を事業ごとに体系立てて書く形ではなく、評価の記述は目標と達成状況・実績にとどまる。市全体の事務事業評価・行政評価は見つからなかった（行政評価の頁は基本的な考え方の文書のみ）ため、決算説明書の中で最も評価に近い資料としてこれを候補にする。分冊のうち(1)は決算の総括・一般会計の総括を含み、(4)は財政指標とアクションプランの取組状況で、評価の頁範囲は絞っていない。なお、評価は目標と達成状況で、課題・方向の欄は無い。"
+    }
+  ]
 }

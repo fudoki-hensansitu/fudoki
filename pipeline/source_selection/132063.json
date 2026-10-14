@@ -2672,5 +2672,369 @@
       ],
       "reason": "令和8年度9月補正予算の概要PDF（文字PDF）。「主な事業一覧」に款・項・目番号・事業名称・補正額（千円）があり一般会計分の部分選定は可能だが、原典・掲載ページのいずれにも補正号数の明記がなく、議案との対応も確認できないため補正対象の号数を確定できない。介護保険特別会計・下水道事業会計の補正額は会計別総額のみで事業別明細なし。"
     }
+  ],
+  "evaluation_selections": [
+    {
+      "target": {
+        "jurisdiction": "132063",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和7年度行政評価（第7次総合計画）事務事業評価シート",
+          "landing_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.html",
+          "inspected_at": "2026-10-14T12:00:00+09:00",
+          "files": [
+            {
+              "download_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e28administrative_evaluation.pdf",
+              "sha256": "6e18614f3653a295345b388948ff46e3e619f0c41ba21b491d62ee764b6e37e2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e29administrative_evaluation.pdf",
+              "sha256": "66f18a47c6f5177813043e1088e4cbb5339e4fbead86c614e10f05b6796aa13d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e30administrative_evaluation.pdf",
+              "sha256": "1ae68d9f19fa7adc5ffd23b1081557c96d1658018d6d152add4f52917d460f87",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e31administrative_evaluation.pdf",
+              "sha256": "a3da924db720ef559fde89233d090284cad9506e3866f22054b93f319bd43a3c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e32administrative_evaluation.pdf",
+              "sha256": "8a345329e11b6b5b57ba5d91a73596bfa6369faa2921a10dce6607e589f6b6db",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e33administrative_evaluation.pdf",
+              "sha256": "e95874c0ba654ed4bd3b85f1ab0697f15529f51fff0ab2f6408fec8dd9ad7c11",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e34administrative_evaluation.pdf",
+              "sha256": "b399c80cc3786d159dc9a133c688f481a8f03cb9a96d24a45f422999c9b13997",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e35administrative_evaluation.pdf",
+              "sha256": "496b9ae224b7f58f19ddccb2e2d1ed1395702e65ea005a1f1595eaf76b973827",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e36administrative_evaluation.pdf",
+              "sha256": "c5ef533fe8ed2920ac420b7e128192edca27ff2d1059287d69275cc312acdb88",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e37administrative_evaluation.pdf",
+              "sha256": "797ee2f1cebbe10c3d6db7a073d0ef37f8f6d5d11f2806a35a851ff14703ed56",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e38administrative_evaluation.pdf",
+              "sha256": "d65b664981f9a335a513b444e0cfad60823ce3afd0b12c3283c7f4c35eae011d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e39administrative_evaluation.pdf",
+              "sha256": "be09d5db03f6ab534e2551f5065eb8be1930b7a3068c5ea9b424065cdd1fce50",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e40administrative_evaluation.pdf",
+              "sha256": "474963413871435916a2775bb2c1e67e1d73dc41caa249eace03986058634585",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e41administrative_evaluation.pdf",
+              "sha256": "29b44e7be9363ee4d024b32b6f109b6029ade6796ca38437b25020f4cb523c59",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e42administrative_evaluation.pdf",
+              "sha256": "89c61032c846b6e151684642c107507132038f8a410f5b2d1525e7733ce075c3",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e43administrative_evaluation.pdf",
+              "sha256": "b4991f42d855baab514366a4099be5fdfc22533b4733a0d7139a012fb1d52531",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e44administrative_evaluation.pdf",
+              "sha256": "de2975e394849e5defc087c6c610022095373ac4c7ca917d841713960dcda0e0",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e45administrative_evaluation.pdf",
+              "sha256": "6e61978d6863ba85417c9f26953d47442fd92255c754bf74557dc05a8cc6cec1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e46administrative_evaluation.pdf",
+              "sha256": "6e457ac8138bba1a7e42b8500f39ff72a7dd55c7727e6b3f666bbbda15e29de1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e47administrative_evaluation.pdf",
+              "sha256": "8bef521d397b9f848f79c870effe7ec2c5f49d2365356b1c75b9abaf16ff802f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e48administrative_evaluation.pdf",
+              "sha256": "6d25487f1d323cf236db0ba296c6589a2eda152d0880bbbb64fc14f160b5d7ed",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e49administrative_evaluation.pdf",
+              "sha256": "60980fa4d84dfed190e5cb8d0a087fb6650bc99415c5785d01dafc3bfe83620a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e50administrative_evaluation.pdf",
+              "sha256": "353635e0f1491570a3c7136118967fd3e58ee34c01a3da98e42ff58885e58697",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e51administrative_evaluation.pdf",
+              "sha256": "40447671d2b3cb5ef05df001ecae7d1046201de2144238f095f6f2b96deb2e2b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e52administrative_evaluation.pdf",
+              "sha256": "4f852a8498c8706e62d4da3a32973eb72a6fb64ef6ee9a40907e4cb04c6cbc88",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e53administrative_evaluation.pdf",
+              "sha256": "f7210c8da85a8995c4a97707ad5a9878a1fa303aba67db96ea37375c10cd4ab6",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e54administrative_evaluation.pdf",
+              "sha256": "e4140d8d74786d1222b3f47ee975e062c83b849e84d8d609a7c0a323a95cb927",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e55administrative_evaluation.pdf",
+              "sha256": "540512906a86c750d03b4ae0e74c326ea802103f37e696e2539301c56e5b1150",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132063/2025/evaluation-settlement-12.pdf",
+            "sha256": "6e18614f3653a295345b388948ff46e3e619f0c41ba21b491d62ee764b6e37e2",
+            "final_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e28administrative_evaluation.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132063/2025/evaluation-settlement-10.pdf",
+            "sha256": "66f18a47c6f5177813043e1088e4cbb5339e4fbead86c614e10f05b6796aa13d",
+            "final_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e29administrative_evaluation.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132063/2025/evaluation-settlement-1.pdf",
+            "sha256": "1ae68d9f19fa7adc5ffd23b1081557c96d1658018d6d152add4f52917d460f87",
+            "final_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e30administrative_evaluation.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132063/2025/evaluation-settlement-19.pdf",
+            "sha256": "a3da924db720ef559fde89233d090284cad9506e3866f22054b93f319bd43a3c",
+            "final_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e31administrative_evaluation.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132063/2025/evaluation-settlement-17.pdf",
+            "sha256": "8a345329e11b6b5b57ba5d91a73596bfa6369faa2921a10dce6607e589f6b6db",
+            "final_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e32administrative_evaluation.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132063/2025/evaluation-settlement-27.pdf",
+            "sha256": "e95874c0ba654ed4bd3b85f1ab0697f15529f51fff0ab2f6408fec8dd9ad7c11",
+            "final_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e33administrative_evaluation.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132063/2025/evaluation-settlement-20.pdf",
+            "sha256": "b399c80cc3786d159dc9a133c688f481a8f03cb9a96d24a45f422999c9b13997",
+            "final_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e34administrative_evaluation.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132063/2025/evaluation-settlement-6.pdf",
+            "sha256": "496b9ae224b7f58f19ddccb2e2d1ed1395702e65ea005a1f1595eaf76b973827",
+            "final_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e35administrative_evaluation.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132063/2025/evaluation-settlement-23.pdf",
+            "sha256": "c5ef533fe8ed2920ac420b7e128192edca27ff2d1059287d69275cc312acdb88",
+            "final_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e36administrative_evaluation.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132063/2025/evaluation-settlement-15.pdf",
+            "sha256": "797ee2f1cebbe10c3d6db7a073d0ef37f8f6d5d11f2806a35a851ff14703ed56",
+            "final_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e37administrative_evaluation.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132063/2025/evaluation-settlement-24.pdf",
+            "sha256": "d65b664981f9a335a513b444e0cfad60823ce3afd0b12c3283c7f4c35eae011d",
+            "final_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e38administrative_evaluation.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132063/2025/evaluation-settlement-22.pdf",
+            "sha256": "be09d5db03f6ab534e2551f5065eb8be1930b7a3068c5ea9b424065cdd1fce50",
+            "final_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e39administrative_evaluation.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132063/2025/evaluation-settlement-5.pdf",
+            "sha256": "474963413871435916a2775bb2c1e67e1d73dc41caa249eace03986058634585",
+            "final_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e40administrative_evaluation.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132063/2025/evaluation-settlement-2.pdf",
+            "sha256": "29b44e7be9363ee4d024b32b6f109b6029ade6796ca38437b25020f4cb523c59",
+            "final_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e41administrative_evaluation.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132063/2025/evaluation-settlement-16.pdf",
+            "sha256": "89c61032c846b6e151684642c107507132038f8a410f5b2d1525e7733ce075c3",
+            "final_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e42administrative_evaluation.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132063/2025/evaluation-settlement-21.pdf",
+            "sha256": "b4991f42d855baab514366a4099be5fdfc22533b4733a0d7139a012fb1d52531",
+            "final_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e43administrative_evaluation.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132063/2025/evaluation-settlement-25.pdf",
+            "sha256": "de2975e394849e5defc087c6c610022095373ac4c7ca917d841713960dcda0e0",
+            "final_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e44administrative_evaluation.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132063/2025/evaluation-settlement-14.pdf",
+            "sha256": "6e61978d6863ba85417c9f26953d47442fd92255c754bf74557dc05a8cc6cec1",
+            "final_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e45administrative_evaluation.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132063/2025/evaluation-settlement-13.pdf",
+            "sha256": "6e457ac8138bba1a7e42b8500f39ff72a7dd55c7727e6b3f666bbbda15e29de1",
+            "final_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e46administrative_evaluation.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132063/2025/evaluation-settlement-18.pdf",
+            "sha256": "8bef521d397b9f848f79c870effe7ec2c5f49d2365356b1c75b9abaf16ff802f",
+            "final_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e47administrative_evaluation.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132063/2025/evaluation-settlement-11.pdf",
+            "sha256": "6d25487f1d323cf236db0ba296c6589a2eda152d0880bbbb64fc14f160b5d7ed",
+            "final_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e48administrative_evaluation.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132063/2025/evaluation-settlement-9.pdf",
+            "sha256": "60980fa4d84dfed190e5cb8d0a087fb6650bc99415c5785d01dafc3bfe83620a",
+            "final_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e49administrative_evaluation.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132063/2025/evaluation-settlement-3.pdf",
+            "sha256": "353635e0f1491570a3c7136118967fd3e58ee34c01a3da98e42ff58885e58697",
+            "final_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e50administrative_evaluation.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132063/2025/evaluation-settlement-4.pdf",
+            "sha256": "40447671d2b3cb5ef05df001ecae7d1046201de2144238f095f6f2b96deb2e2b",
+            "final_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e51administrative_evaluation.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132063/2025/evaluation-settlement-7.pdf",
+            "sha256": "4f852a8498c8706e62d4da3a32973eb72a6fb64ef6ee9a40907e4cb04c6cbc88",
+            "final_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e52administrative_evaluation.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132063/2025/evaluation-settlement-28.pdf",
+            "sha256": "f7210c8da85a8995c4a97707ad5a9878a1fa303aba67db96ea37375c10cd4ab6",
+            "final_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e53administrative_evaluation.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132063/2025/evaluation-settlement-26.pdf",
+            "sha256": "e4140d8d74786d1222b3f47ee975e062c83b849e84d8d609a7c0a323a95cb927",
+            "final_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e54administrative_evaluation.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132063/2025/evaluation-settlement-8.pdf",
+            "sha256": "540512906a86c750d03b4ae0e74c326ea802103f37e696e2539301c56e5b1150",
+            "final_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R7gyouseihyouka.files/fuc26b07a_e55administrative_evaluation.pdf"
+          }
+        ],
+        "archived_at": "2026-10-14T10:04:31.454Z"
+      },
+      "reason": "対象年度を令和7年度とする府中市の事務事業評価シート（記載年月 令和8年9月、ページ更新 2026-09-01）。基本施策ごとの28分冊で合計1,096頁、1事業2頁。1頁目に事業の概要・目標・内容、実施計画と実績（指標の計画値・実績・差異の要因の類型）、成果、R3〜R8年度の予算額・決算額・執行率、2頁目にPDCA（R6実績と評価、R7の実績と評価A〜D、R8の取組と方向性、事業の位置付け）を載せる。全28冊とも文字の層があり本文が取れる。同じ年度の施策評価シート27冊（基本施策単位）と一覧PDFもあるが、事業単位の細かい事務事業評価シートを代表にした（施策評価シートはnotes相当としてここに記す。https://www.city.fuchu.tokyo.jp/ 同ページ内 fuc26b07a_e01〜e27）。"
+    }
   ]
 }

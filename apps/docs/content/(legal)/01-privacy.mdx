@@ -41,7 +41,7 @@ GitHub Issues で投稿されたアカウント名、本文、添付、コメン
 
 ## 外部サービスが扱う情報
 
-- **Cloudflare**：サイト・API の配信、財政データの保持、実行ログの処理、問い合わせメールの転送を担います。通信情報や転送するメールなどは日本国外で処理される場合があります。[Cloudflare のプライバシーポリシー](https://www.cloudflare.com/privacypolicy/)も確認してください。
+- **Cloudflare**：サイト・API の配信、財政データの保持、実行ログの処理、問い合わせメールの転送を担います。事業の評価資料の検索では、検索文を Cloudflare の AI Search で処理し、流量の制限のために IP アドレスを Cloudflare の rate limit の key に使います。風土記の実行ログには検索文を残しません。通信情報や転送するメールなどは日本国外で処理される場合があります。[Cloudflare のプライバシーポリシー](https://www.cloudflare.com/privacypolicy/)も確認してください。
 - **Google（Gmail）**：問い合わせメールの受信・保存と返信に使用します。メールの内容などは日本国外で処理される場合があります。[Google のプライバシーポリシー](https://policies.google.com/privacy)も確認してください。
 - **GitHub**：コードと問い合わせの場を提供します。アカウント情報や投稿を GitHub が扱い、日本国外で処理する場合があります。[GitHub のプライバシー声明](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement)も確認してください。
 - **AI クライアント**：利用者が選んだ ChatGPT、Claude、Cursor 等は、会話、送信するツール引数、風土記の応答をそれぞれの規約・設定に基づいて扱います。風土記の検索 API 自体は、要求の処理に外部の生成 AI を呼び出しません。配布する skill は利用者のクライアント上で利用されます。

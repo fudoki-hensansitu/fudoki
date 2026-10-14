@@ -168,7 +168,7 @@ function mcpServer(ctx: Ctx, apiOrigin: string, operations: Operation[]): McpSer
         description: op.description,
         inputSchema: op.input,
         outputSchema: op.output,
-        // すべての tool は D1 の読み取りだけで、状態を変えず、外部にも出ない
+        // どの tool も利用者の状態を変えない（評価の検索は回数の記録と AI Search の呼び出しを伴うが、風土記の内側で閉じる）
         annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
         // 旧キー ui/resourceUri は ext-apps の registerAppTool と同じく併記する（仕様では GA 前に外す deprecated）
         ...(op.view ? { _meta: { ui: { resourceUri: VIEW_URI }, 'ui/resourceUri': VIEW_URI } } : {}),
@@ -191,7 +191,7 @@ function mcpServer(ctx: Ctx, apiOrigin: string, operations: Operation[]): McpSer
   return server
 }
 
-/** 公開する操作を差し替えられる（評価の検索は手順5まで operations に入れず、試験が足して使う）。 */
+/** 公開する操作を差し替えられる（試験が一部の操作だけで app を作る）。 */
 export function createApp(operations: Operation[] = defaultOperations) {
   const app = new OpenAPIHono<AppEnv>({
     defaultHook: (result, c) => {

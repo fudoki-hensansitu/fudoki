@@ -7,7 +7,7 @@ import type { Ctx, Operation } from './operations'
 
 // 事業の評価の検索（docs/prd/evaluation-search/dd.md）。AI Search が返す頁単位の chunk を、原典の所在と短い抜粋に変える。
 // 頁の全文は返さない（両区の利用条件が無断の転載を禁じているため）。内容は利用者が原典 PDF の該当頁を取って読む。
-// 手順5まで operations の一覧には入れない（main に入ると MCP の tool の一覧に出るため）。
+// operations の一覧に登録してあり、REST・OpenAPI・MCP の tool に出る。止めるときは control の evaluation_search を off にする。
 
 export const SEARCH_TIMEOUT_MS = 8_000
 export const EXCERPT_CHARS = 150
@@ -157,7 +157,7 @@ export function stripHeader(text: string, key: string): string {
   return end < 0 ? '' : lines.slice(end + 1).join('\n')
 }
 
-/** 一致した位置の前後を切り出した短い抜粋。検索文そのもの → 各語 → 検索文の3文字の部分列、の順で本文中に最初に見つかった位置を使う。 */
+/** 一致した位置の前後を切り出した短い抜粋。検索文そのもの → 各語（2文字以上） → 検索文の3文字の部分列、の順で本文中に最初に見つかった位置を使う。 */
 export function makeExcerpt(body: string, rawQuery: string): string {
   const text = Array.from(collapse(body))
   const n = text.length
@@ -167,7 +167,8 @@ export function makeExcerpt(body: string, rawQuery: string): string {
   const queryChars = Array.from(query)
   const candidates = function* () {
     yield query
-    yield* query.split(' ')
+    // 1文字の語（「の」など）は本文のどこにでも当たって位置がずれるので試さない
+    for (const word of query.split(' ')) if (Array.from(word).length >= 2) yield word
     for (let i = 0; i + 3 <= queryChars.length; i++) {
       const part = queryChars.slice(i, i + 3).join('')
       if (!part.includes(' ')) yield part

@@ -5418,5 +5418,201 @@
       }
     }
   ],
-  "unresolved_candidates": []
+  "unresolved_candidates": [],
+  "evaluation_selections": [
+    {
+      "target": {
+        "jurisdiction": "132021",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和8年度立川市行政評価 基本事業マネジメントシート（令和7年度実績、14分野）",
+          "landing_url": "https://www.city.tachikawa.lg.jp/shisei/sesaku/1006562/1006673/1028175.html",
+          "inspected_at": "2026-10-14T18:23:52+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/028/175/2026_4kodomokosodate.pdf",
+              "sha256": "7c4df212304e18721e945a1ec39441cd9a20df66af42e38812887d41711ed17a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/028/175/2026_5kyouiku.pdf.pdf",
+              "sha256": "a8d2d132b1667d5ee4e22ad483f0c51f05f1ecf6023df902b0620b840c3eb848",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/028/175/2026_6hokeniryou2.pdf",
+              "sha256": "b38b585d8e76ed6fa2bc87cbbfb5b59cd9e69cdff69da7d22ea78de37c0f9507",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/028/175/2026_7syakaihukushi.pdf",
+              "sha256": "b01a2160523c4fa7718c52b91ed64cda28a4baa230d6fd163102949c021d8c68",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/028/175/2026_8kankyo.pdf",
+              "sha256": "c3f2b007efb624f8cb55d4f1c8e7d2a8f56c2c9b2ae723bbcc676fa4df219a33",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/028/175/2026_9toshidukuri.pdf",
+              "sha256": "8a6c498b78d08f26bd62b908f5baf9f84594af5d486175186d380e5664ce76db",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/028/175/2026_10sangyomachidukuri.pdf",
+              "sha256": "00773f3f8cc6d141f3932df2991985bdf89698185a0a7b73d0031a71b6833360",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/028/175/2026_11shiminnokurashi.pdf",
+              "sha256": "fb0769462eac76f4e9bca946180ffdca4cf1cf4c949ea673fa1bc8973b863fc6",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/028/175/2026_12kikikannri.pdf",
+              "sha256": "6d988905503df012c6da50e48265a78f27b50604c87afaad4b9fb71cf1b57244",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/028/175/2026_13bunkasports.pdf",
+              "sha256": "5a66e95fd1dc4cf55b416c8ab961ffd12ad33cf1614853e86d4a9b576ec76450",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/028/175/2026_14sougousenryaku.pdf",
+              "sha256": "94f16f0c18c6e2be859c46c2900111b2d85f315d79bfbf78021dfe10931985c6",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/028/175/2026_15gyouseiunei.pdf",
+              "sha256": "8f52d1b216d079c33f6eee99331d20002bafbfa546f479c800f031be408b7e8b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/028/175/2026_16syuekijigyou.pdf",
+              "sha256": "6e8d91c4746e3fdfa6f4fd56755ac44f8a880204800c5dcfa663899d3b42a488",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/028/175/2026_17sonota.pdf",
+              "sha256": "1c9c61623c37220d52a1b7edf1a463b61c0ac41abdd15e388b493fb6001ba5da",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132021/2025/evaluation-settlement-6.pdf",
+            "sha256": "7c4df212304e18721e945a1ec39441cd9a20df66af42e38812887d41711ed17a",
+            "final_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/028/175/2026_4kodomokosodate.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132021/2025/evaluation-settlement-10.pdf",
+            "sha256": "a8d2d132b1667d5ee4e22ad483f0c51f05f1ecf6023df902b0620b840c3eb848",
+            "final_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/028/175/2026_5kyouiku.pdf.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132021/2025/evaluation-settlement-12.pdf",
+            "sha256": "b38b585d8e76ed6fa2bc87cbbfb5b59cd9e69cdff69da7d22ea78de37c0f9507",
+            "final_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/028/175/2026_6hokeniryou2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132021/2025/evaluation-settlement-11.pdf",
+            "sha256": "b01a2160523c4fa7718c52b91ed64cda28a4baa230d6fd163102949c021d8c68",
+            "final_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/028/175/2026_7syakaihukushi.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132021/2025/evaluation-settlement-13.pdf",
+            "sha256": "c3f2b007efb624f8cb55d4f1c8e7d2a8f56c2c9b2ae723bbcc676fa4df219a33",
+            "final_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/028/175/2026_8kankyo.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132021/2025/evaluation-settlement-7.pdf",
+            "sha256": "8a6c498b78d08f26bd62b908f5baf9f84594af5d486175186d380e5664ce76db",
+            "final_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/028/175/2026_9toshidukuri.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132021/2025/evaluation-settlement-1.pdf",
+            "sha256": "00773f3f8cc6d141f3932df2991985bdf89698185a0a7b73d0031a71b6833360",
+            "final_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/028/175/2026_10sangyomachidukuri.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132021/2025/evaluation-settlement-14.pdf",
+            "sha256": "fb0769462eac76f4e9bca946180ffdca4cf1cf4c949ea673fa1bc8973b863fc6",
+            "final_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/028/175/2026_11shiminnokurashi.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132021/2025/evaluation-settlement-4.pdf",
+            "sha256": "6d988905503df012c6da50e48265a78f27b50604c87afaad4b9fb71cf1b57244",
+            "final_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/028/175/2026_12kikikannri.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132021/2025/evaluation-settlement-3.pdf",
+            "sha256": "5a66e95fd1dc4cf55b416c8ab961ffd12ad33cf1614853e86d4a9b576ec76450",
+            "final_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/028/175/2026_13bunkasports.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132021/2025/evaluation-settlement-9.pdf",
+            "sha256": "94f16f0c18c6e2be859c46c2900111b2d85f315d79bfbf78021dfe10931985c6",
+            "final_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/028/175/2026_14sougousenryaku.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132021/2025/evaluation-settlement-8.pdf",
+            "sha256": "8f52d1b216d079c33f6eee99331d20002bafbfa546f479c800f031be408b7e8b",
+            "final_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/028/175/2026_15gyouseiunei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132021/2025/evaluation-settlement-5.pdf",
+            "sha256": "6e8d91c4746e3fdfa6f4fd56755ac44f8a880204800c5dcfa663899d3b42a488",
+            "final_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/028/175/2026_16syuekijigyou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132021/2025/evaluation-settlement-2.pdf",
+            "sha256": "1c9c61623c37220d52a1b7edf1a463b61c0ac41abdd15e388b493fb6001ba5da",
+            "final_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/028/175/2026_17sonota.pdf"
+          }
+        ],
+        "archived_at": "2026-10-14T10:02:15.249Z"
+      },
+      "reason": "令和8年度行政評価（令和7年度事後評価。2026-06作成、同年10月2日更新）の基本事業マネジメントシート14冊（計463頁。子ども・子育て、教育、保健・医療ほか14分野に分かれ、通し頁は129〜591）。基本事業ごとに2〜3頁で、目的、成果指標（令和7年度実績と目標値）、全体総括（成果目標の達成状況・成果のあった主な事務事業・課題のあった主な事務事業）、次年度の取組方針、事業費・人件費・総事業費（令和6・7年度実績、執行率）、構成する事務事業ごとの予算科目・事業費・活動指標・課題の有無（目的妥当性・有効性・効率性・公平性）を載せる。文字として読める。同じ評価の施策マネジメントシート（16MB）と第3次総合戦略の進捗状況は、施策単位のため選ばなかった。"
+    }
+  ]
 }

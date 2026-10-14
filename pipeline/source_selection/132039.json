@@ -2705,5 +2705,201 @@
       "archive": null
     }
   ],
-  "unresolved_candidates": []
+  "unresolved_candidates": [],
+  "evaluation_selections": [
+    {
+      "target": {
+        "jurisdiction": "132039",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和8年度事務事業評価（令和7年度実施事業）評価結果（概要・事業No.1〜297）",
+          "landing_url": "https://www.city.musashino.lg.jp/shiseijoho/shisaku_keikaku/sogoseisakubu_shisaku_keikaku/gyoseihyokaseido/1054972/1054973.html",
+          "inspected_at": "2026-10-14T18:25:53+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/973/R8_00_gaiyou.pdf",
+              "sha256": "15e9971060c8a5dbacb3eef9d0bbdd8f11af02397512ac4d95178515c43d2680",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/973/R8_01.pdf",
+              "sha256": "c64d544d5870fe1cfe0c58b6a666dddb646673ea5c494ae80761e6bf3ec5a263",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/973/R8_02.pdf",
+              "sha256": "60c788a22534badca13b65352de33d2c726a5dd98157a8e04d04829b7be9cffd",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/973/R8_03.pdf",
+              "sha256": "98c8aaaef95a5f38bf2d0bdeedede9ece028b77ca92d291089e9c6b4891d8cc9",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/973/R8_04.pdf",
+              "sha256": "5392190250e60f3a0e202f4bbb7b879758352809e34a84a6f966de0e0f244b28",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/973/R8_05.pdf",
+              "sha256": "77c2311cdfbd12d11b0b936134012ca8139529e7cf8805809b4765041bd34577",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/973/R8_06.pdf",
+              "sha256": "e19fd70751c0080a63a744080b76aee0d96f024aa6a5da8075827b84e920037f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/973/R8_07.pdf",
+              "sha256": "b54358266bc640aba50f45e1125f2acce6addf1eb0505400a1ee82c735b0ec60",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/973/R8_08.pdf",
+              "sha256": "2b7cf3673bd4cec333a865db0c1d229a6582cdf2004d8ca77e691e4446cd637b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/973/R8_09.pdf",
+              "sha256": "0b731fc21cff8ab6c0cd15de09f6eba797f95ee555dcf557577cf72600bd08d1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/973/R8_10.pdf",
+              "sha256": "0fd72bbef44f101c7e95f12b9793fd3b33f46fbd5c471ae1c8ac1c0d79833fbf",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/973/R8_11.pdf",
+              "sha256": "6367bf259e3a76f87a92f1d36a9338df45157b3712f1e9ccc172ed01dd79dacf",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/973/R8_12.pdf",
+              "sha256": "c42b387e876c3a895a1471c86d96aa8cce861aa17eafeedbf0deb30c46174958",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/973/R8_13.pdf",
+              "sha256": "26b2bd987d8e196260685b7d1bd7e1669f85bd4b3f04cf3834c811e5d5cf98f9",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132039/2025/evaluation-settlement-3.pdf",
+            "sha256": "15e9971060c8a5dbacb3eef9d0bbdd8f11af02397512ac4d95178515c43d2680",
+            "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/973/R8_00_gaiyou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132039/2025/evaluation-settlement-13.pdf",
+            "sha256": "c64d544d5870fe1cfe0c58b6a666dddb646673ea5c494ae80761e6bf3ec5a263",
+            "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/973/R8_01.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132039/2025/evaluation-settlement-7.pdf",
+            "sha256": "60c788a22534badca13b65352de33d2c726a5dd98157a8e04d04829b7be9cffd",
+            "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/973/R8_02.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132039/2025/evaluation-settlement-10.pdf",
+            "sha256": "98c8aaaef95a5f38bf2d0bdeedede9ece028b77ca92d291089e9c6b4891d8cc9",
+            "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/973/R8_03.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132039/2025/evaluation-settlement-6.pdf",
+            "sha256": "5392190250e60f3a0e202f4bbb7b879758352809e34a84a6f966de0e0f244b28",
+            "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/973/R8_04.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132039/2025/evaluation-settlement-9.pdf",
+            "sha256": "77c2311cdfbd12d11b0b936134012ca8139529e7cf8805809b4765041bd34577",
+            "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/973/R8_05.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132039/2025/evaluation-settlement-14.pdf",
+            "sha256": "e19fd70751c0080a63a744080b76aee0d96f024aa6a5da8075827b84e920037f",
+            "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/973/R8_06.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132039/2025/evaluation-settlement-11.pdf",
+            "sha256": "b54358266bc640aba50f45e1125f2acce6addf1eb0505400a1ee82c735b0ec60",
+            "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/973/R8_07.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132039/2025/evaluation-settlement-5.pdf",
+            "sha256": "2b7cf3673bd4cec333a865db0c1d229a6582cdf2004d8ca77e691e4446cd637b",
+            "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/973/R8_08.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132039/2025/evaluation-settlement-1.pdf",
+            "sha256": "0b731fc21cff8ab6c0cd15de09f6eba797f95ee555dcf557577cf72600bd08d1",
+            "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/973/R8_09.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132039/2025/evaluation-settlement-2.pdf",
+            "sha256": "0fd72bbef44f101c7e95f12b9793fd3b33f46fbd5c471ae1c8ac1c0d79833fbf",
+            "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/973/R8_10.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132039/2025/evaluation-settlement-8.pdf",
+            "sha256": "6367bf259e3a76f87a92f1d36a9338df45157b3712f1e9ccc172ed01dd79dacf",
+            "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/973/R8_11.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132039/2025/evaluation-settlement-12.pdf",
+            "sha256": "c42b387e876c3a895a1471c86d96aa8cce861aa17eafeedbf0deb30c46174958",
+            "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/973/R8_12.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132039/2025/evaluation-settlement-4.pdf",
+            "sha256": "26b2bd987d8e196260685b7d1bd7e1669f85bd4b3f04cf3834c811e5d5cf98f9",
+            "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/973/R8_13.pdf"
+          }
+        ],
+        "archived_at": "2026-10-14T10:03:02.133Z"
+      },
+      "reason": "令和7年度に実施した事業を対象とする令和8年度事務事業評価（2026-09、同月9日掲載）。概要（21頁）と、款別の事業評価シート13冊（計589頁）。全375事業のうち評価を行わない78事業を除く297事業（予算事業の中事業単位）を、1事業2頁程度のシートで載せる。事業の目的、実績と成果、成果を示す客観的データ（令和7年度までの推移）、必要性・有効性・効率性の評価と理由、所管課の総合判定（施策への貢献状況、今後の方向性）、事業を構成する業務ごとの活動量と実施状況を持つ。文字として読める。評価の対象外とされた事業（法令上の実施義務があるものなど）は載らない。決算ページには決算書・事項別明細書のみで、主要施策の成果の説明書は見つからなかった。"
+    }
+  ]
 }
