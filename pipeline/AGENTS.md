@@ -14,7 +14,7 @@ script はこの package が所有する。実行は `bun run --cwd pipeline <na
 | 配信 | `serving:columns`（`apps/api/src/columns.json` を warehouse の列と `_models.yml` の説明から生成。`--check` で最新か検査）/ `serving:sync`（marts の表を D1 へ同名・同列で写す。`--database-id <uuid>` か `--local`、`--persist-to`、`--dry-run`。ネットワーク・cf を使うので sandbox 外） |
 | 検査 | `test`（bun）/ `test:python`（unittest）/ `test:dbt`（入力準備の unittest） |
 
-原典選定は `bun pipeline/source_selection/check.ts` と `archive.ts`。dbt は入力準備（`dbt/scripts/`）、staging・intermediate・marts のモデル、seeds を持つ。
+原典選定は `bun pipeline/source_selection/check.ts` と `archive.ts`。事業の評価の資料（`evaluation_selections`）は `archive.ts --evaluation` で決算書とは別の key（`.../evaluation-settlement[-<n>].pdf`）に保存する。`settlement-` で始めると決算書の保存が消す。dbt は入力準備（`dbt/scripts/`）、staging・intermediate・marts のモデル、seeds を持つ。
 
 ## 生成物・観測・取得の規約
 

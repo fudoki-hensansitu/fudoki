@@ -1,5 +1,5 @@
 import { expect, test } from 'bun:test'
-import { jurisdictionSelectionsSchema, sourceCandidateSchema, sourceSelectionsSchema, sourceTargetSchema, type SourceCandidate, type SourceSelection } from './schema'
+import { evaluationSelectionsSchema, jurisdictionSelectionsSchema, sourceCandidateSchema, sourceSelectionsSchema, sourceTargetSchema, type SourceCandidate, type SourceSelection } from './schema'
 
 const target = { jurisdiction: '132047', fiscal_year: 2024, document_kind: 'initial' as const }
 const candidate: SourceCandidate = {
@@ -77,4 +77,23 @@ test('evaluation selections evaluate a selected settlement and need hashes but n
   expect(jurisdictionSelectionsSchema.safeParse({ ...ledger, evaluation_selections: [explanation, explanation] }).success).toBe(false)
   const duplicated = { ...explanation.candidates[0]!, files: [file, { ...file, download_url: 'https://example.com/copy.pdf' }] }
   expect(jurisdictionSelectionsSchema.safeParse({ ...ledger, evaluation_selections: [{ ...explanation, candidates: [duplicated] }] }).success).toBe(false)
+})
+
+test('an evaluation archive must use evaluation-settlement keys that match the selected files', () => {
+  const settlement = { jurisdiction: '132047', fiscal_year: 2024, document_kind: 'settlement' as const }
+  const file = { download_url: 'https://example.com/results.pdf', sha256: 'c'.repeat(64), format: 'pdf' as const, pdf_type: 'text' as const, pages: null }
+  const base = { target: settlement, candidates: [{ ...candidate, id: 'results', files: [file] }], selected_candidate_id: 'results', reason: '決算と同じ頁に掲載。' }
+  const receipt = (key: string, sha256 = file.sha256) => ({ bucket: 'fudoki-inputs' as const, candidate_id: 'results', archived_at: '2026-10-14T00:00:00Z', files: [{ key, sha256, final_url: file.download_url }] })
+  const prefix = 'fiscal/source-selection/132047/2024/'
+  expect(evaluationSelectionsSchema.safeParse([{ ...base, archive: receipt(`${prefix}evaluation-settlement.pdf`) }]).success).toBe(true)
+  expect(evaluationSelectionsSchema.safeParse([{ ...base, archive: receipt(`${prefix}evaluation-settlement-2.pdf`) }]).success).toBe(true)
+  for (const archive of [
+    receipt(`${prefix}settlement.pdf`),
+    receipt(`${prefix}settlement-evaluation.pdf`),
+    receipt(`${prefix}evaluation-settlement.csv`),
+    receipt('fiscal/source-selection/132047/2023/evaluation-settlement.pdf'),
+    receipt(`${prefix}evaluation-settlement.pdf`, 'd'.repeat(64)),
+    { ...receipt(`${prefix}evaluation-settlement.pdf`), candidate_id: 'other' },
+  ]) expect(evaluationSelectionsSchema.safeParse([{ ...base, archive }]).success).toBe(false)
+  expect(evaluationSelectionsSchema.safeParse([{ ...base, selected_candidate_id: null, archive: receipt(`${prefix}evaluation-settlement.pdf`) }]).success).toBe(false)
 })
