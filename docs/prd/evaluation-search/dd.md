@@ -136,7 +136,7 @@ script はネットワークと `cf` を使うので sandbox の外で手動で�
 
 ### Worker が使う原典の一覧（catalog）
 
-`evaluation-catalog.json` は、`columns.json` と同じく pipeline の script（`serving:evaluation-catalog`）が書く生成物である。`evaluation_selections` のうち、`instance.json` の登録の記録があり、その計画の指紋が現在の選定と設定から求めた指紋と一致する原典だけを載せる。原典ごとに sha256・団体・評価対象年度・資料の題・ファイルの URL・掲載頁の URL・対象の頁範囲を持つ。CI では `--check` で選定・登録の記録と一致するかを検査する。
+`evaluation-catalog.json` は、`columns.json` と同じく pipeline の script（`serving:evaluation-catalog`）が書く生成物である。`evaluation_selections` のうち、`instance.json` の登録の記録があり、その計画の指紋が現在の選定と設定から求めた指紋と一致する原典だけを載せる。原典ごとに sha256・団体・評価対象年度・資料の題・ファイルの URL・掲載頁の URL・対象の頁範囲を持つ。CI では `--check` で選定・登録の記録と一致するかを検査する。catalog の `fiscal_year` は評価対象の決算年度の整数で、索引の metadata の `fiscal_year`（text）とは型が違う。Worker は filter を組むときに文字列へ変換する。
 
 指紋の一致を条件にするのは、選定や索引の設定だけが先に変わったときに、索引に無い資料や確認していない索引を「収録済み」として検索させないためである。公開後に原典の差し替え、索引の設定の変更、作り直しを行うときは、`evaluation_search` を止め、登録・確認・catalog の生成・デプロイを終えてから再開する。評価資料は年に1回公表される資料なので、初期はこの停止を挟む運用とする。許容する停止時間は公開の前に決める。
 

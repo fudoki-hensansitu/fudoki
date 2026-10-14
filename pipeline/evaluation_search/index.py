@@ -73,8 +73,17 @@ def fetch_origin(origin: plan.Origin) -> Path:
     with tempfile.NamedTemporaryFile(dir=CACHE, delete=False) as stream:
         temporary = Path(stream.name)
         try:
-            subprocess.run(['cf', 'r2', 'objects', 'get', origin.r2_key, '--bucket-name', origin.bucket, '--quiet'],
-                           stdout=stream, check=True)
+            for attempt in range(3):  # cf() と同じ。途中まで書いた分は捨てて取り直す
+                stream.seek(0)
+                stream.truncate()
+                try:
+                    subprocess.run(['cf', 'r2', 'objects', 'get', origin.r2_key, '--bucket-name', origin.bucket, '--quiet'],
+                                   stdout=stream, check=True)
+                    break
+                except subprocess.CalledProcessError:
+                    if attempt == 2:
+                        raise
+                    time.sleep(2 * (attempt + 1))
         except BaseException:
             temporary.unlink(missing_ok=True)
             raise
@@ -88,9 +97,9 @@ def fetch_origin(origin: plan.Origin) -> Path:
 def split_page(document, page: int) -> bytes:
     """原典の 1 頁（1 始まり）だけの PDF。4MiB を超えれば止める。pdfium は thread safe ではないので主 thread で呼ぶ。"""
     single = pdfium.PdfDocument.new()
+    buffer = io.BytesIO()
     try:
         single.import_pages(document, [page - 1])
-        buffer = io.BytesIO()
         single.save(buffer)
     finally:
         single.close()
@@ -112,7 +121,7 @@ def check_instance(config: dict) -> None:
         'keyword_tokenizer': config['keyword_tokenizer'],
         'use_ocr': config['use_ocr'],
         'public_endpoint': config['public_endpoint'],
-        'custom_metadata': config['custom_metadata'],
+        'custom_metadata': sorted(config['custom_metadata'], key=lambda f: f['field_name']),
     }
     found = {
         'embedding_model': actual['embedding_model'],
@@ -121,7 +130,7 @@ def check_instance(config: dict) -> None:
         'keyword_tokenizer': actual['indexing_options']['keyword_tokenizer'],
         'use_ocr': actual['indexing_options']['use_ocr'],
         'public_endpoint': bool(actual['public_endpoint_params']['enabled']),
-        'custom_metadata': actual['custom_metadata'],
+        'custom_metadata': sorted(actual['custom_metadata'], key=lambda f: f['field_name']),
     }
     if actual.get('public_endpoint_id'):
         found['public_endpoint'] = True
@@ -169,8 +178,8 @@ def compare(origin_plan: OriginPlan, indexed: dict[str, dict]) -> None:
         found = indexed.get(item['key'])
         if found is None:
             origin_plan.add.append(item)
-        elif found['status'] in PENDING:
-            origin_plan.waiting += 1  # 取り込み中の metadata は null で返る。完了後に確かめる
+        elif found['status'] != 'completed' and found['status'] not in FAILED:
+            origin_plan.waiting += 1  # 取り込み中の metadata は null で返る。未知の状態も待ちに寄せ、完了後に確かめる
         elif found['status'] in FAILED:
             origin_plan.add.append(item)  # 同じ key の upload は item を取り込み直す。失敗した item の delete は 429・timeout になることがある
         elif not metadata_matches(found, item['metadata']):
@@ -235,7 +244,7 @@ def upload_all(instance_name: str, jobs: list[tuple[dict, Path]], workers: int) 
         item, path = job
         metadata = {k: str(v) for k, v in item['metadata'].items()}
         cf('ai-search', 'items', 'upload', instance_name, '--name', NAMESPACE, '--file', str(path),
-           '--metadata', json.dumps(metadata))
+           '--metadata', json.dumps(metadata), parse=False)
 
     with ThreadPoolExecutor(workers) as pool:
         for count, _ in enumerate(pool.map(upload, jobs), 1):

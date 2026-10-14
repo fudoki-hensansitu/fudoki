@@ -42,7 +42,9 @@ def load_origins(selection_dir: Path = SELECTION_DIR) -> list[Origin]:
             archive = selection.get('archive')
             if not archive or selection.get('selected_candidate_id') is None:
                 continue
-            candidate = next(c for c in selection['candidates'] if c['id'] == selection['selected_candidate_id'])
+            candidate = next((c for c in selection['candidates'] if c['id'] == selection['selected_candidate_id']), None)
+            if candidate is None:
+                raise ValueError(f'{path.name}: 選定の候補 {selection["selected_candidate_id"]} が candidates に無い')
             if len(candidate['files']) != len(archive['files']):
                 raise ValueError(f'{path.name}: 選定の files と保存の files の数が違う')
             target = selection['target']
@@ -73,8 +75,9 @@ def selected_pages(origin: Origin, page_count: int) -> list[int]:
     """索引に入れる物理頁（1 始まり）。選定が null なら全頁。原典の頁数を超える範囲は止める。"""
     if origin.pages is None:
         return list(range(1, page_count + 1))
-    if origin.pages[-1][1] > page_count:
-        raise ValueError(f'{origin.sha256[:12]}: 選定の頁 {origin.pages[-1][1]} が原典の頁数 {page_count} を超える')
+    for start, end in origin.pages:
+        if not 1 <= start <= end <= page_count:
+            raise ValueError(f'{origin.sha256[:12]}: 選定の頁範囲 {start}-{end} が 1 <= 始点 <= 終点 <= 原典の頁数 {page_count} を満たさない')
     return [page for start, end in origin.pages for page in range(start, end + 1)]
 
 

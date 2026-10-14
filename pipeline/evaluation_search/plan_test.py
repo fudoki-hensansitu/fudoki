@@ -54,6 +54,21 @@ class PlanTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             plan.selected_pages(origin, 10)
 
+    def test_invalid_ranges_stop_before_registration(self):
+        for ranges in ([{'start': 0, 'end': 3}], [{'start': 11, 'end': 12}, {'start': 13, 'end': 14}],
+                       [{'start': 5, 'end': 3}], [{'start': 1, 'end': 2}, {'start': 20, 'end': 30}]):
+            (origin,) = self.origins(pages=ranges)
+            with self.assertRaises(ValueError, msg=ranges):
+                plan.selected_pages(origin, 10)
+
+    def test_missing_selected_candidate_names_the_file(self):
+        with tempfile.TemporaryDirectory() as directory:
+            broken = selection('131172', A)
+            broken['selected_candidate_id'] = 'other'
+            write_selections(Path(directory), '131172', broken)
+            with self.assertRaisesRegex(ValueError, '131172.json'):
+                plan.load_origins(Path(directory))
+
     def test_unarchived_selection_is_not_planned(self):
         with tempfile.TemporaryDirectory() as directory:
             write_selections(Path(directory), '131172', selection('131172', A, archived=False))
