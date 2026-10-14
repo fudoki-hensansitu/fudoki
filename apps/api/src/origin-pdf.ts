@@ -103,7 +103,7 @@ const chunkKey = (url: string, i: number) => `pdf:${url}:${i}`
 /** 表示専用の短期キャッシュ。R2・取り込み時の内容にはアクセスしない。 */
 export class OriginPdfRelay {
   /** Worker が取得中の URL。同時の要求は取得を重ねず、終わるのを待ってキャッシュから返す */
-  private readonly inflight = new Map<string, { done: Promise<void>; resolve: () => void }>()
+  private readonly inflight = new Map<string, { at: number; done: Promise<void>; resolve: () => void }>()
 
   constructor(private readonly state: State) {}
 
@@ -111,12 +111,19 @@ export class OriginPdfRelay {
     if (new URL(request.url).pathname === '/store') return this.store(request)
     const body = await request.json() as { url: string }
     const pending = this.inflight.get(body.url)
-    if (pending) {
-      await Promise.race([pending.done, new Promise((resolve) => setTimeout(resolve, PDF_LIMITS.timeoutMs))])
-      // Worker が /store に来ないまま落ちた場合に、後の要求を待たせ続けない
-      if (this.inflight.get(body.url) === pending) this.inflight.delete(body.url)
+    // Worker が /store に来ないまま落ちた許可は、取得の上限時間の倍を過ぎたら捨てて取り直す
+    if (pending && Date.now() - pending.at > PDF_LIMITS.timeoutMs * 2) this.inflight.delete(body.url)
+    else if (pending) {
+      await Promise.race([pending.done, new Promise((resolve) => setTimeout(resolve, PDF_LIMITS.timeoutMs + 5_000))])
       return this.state.blockConcurrencyWhile(async () => {
-        const hit = (await this.expire(Date.now())).find((p) => p.url === body.url)
+        const now = Date.now()
+        const window = await this.state.storage.get<Window>('window')
+        if (window && now < window.start + 60_000) {
+          window.requests++
+          await this.state.storage.put('window', window)
+          if (window.requests > PDF_LIMITS.requests) return failure(429, '閲覧頻度の上限を超えました')
+        }
+        const hit = (await this.expire(now)).find((p) => p.url === body.url)
         return hit ? this.response(hit) : failure(502, '自治体から PDF を取得できません')
       })
     }
@@ -141,7 +148,7 @@ export class OriginPdfRelay {
       // 取得は利用者に近い Worker が行う（fetchUpstream）。ここでは許可だけ返す
       let resolve = () => {}
       const done = new Promise<void>((r) => { resolve = r })
-      this.inflight.set(url, { done, resolve })
+      this.inflight.set(url, { at: now, done, resolve })
       return new Response(null, { status: 204 })
     })
   }
