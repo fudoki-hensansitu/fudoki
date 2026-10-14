@@ -12,4 +12,5 @@ export interface Db {
 
 export interface Env {
   DB: Db
+  ORIGIN_PDF?: import('./origin-pdf').RelayNamespace
 }

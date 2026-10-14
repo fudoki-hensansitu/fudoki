@@ -320,6 +320,7 @@ describe('columns と OpenAPI', () => {
       '/v1/expenditure/nodes/{document_kind}/{node_id}',
       '/v1/expenditure/nodes:search',
       '/v1/jurisdictions',
+      '/v1/origins/{origin_id}/pdf',
     ])
     const schema = doc.paths['/v1/expenditure/nodes:search'].post.requestBody.content['application/json'].schema
     expect(schema.additionalProperties).toBe(false)

@@ -9,14 +9,20 @@
     "openapi": "bun openapi.ts",
     "test": "bun test",
     "typecheck": "tsc --noEmit",
-    "view": "bun ui/build.ts"
+    "view": "bun ui/build.ts",
+    "test:e2e": "E2E_TELEMETRY_DISABLED=1 e2e run"
   },
   "devDependencies": {
     "@cloudflare/config": "catalog:",
     "@cloudflare/vite-plugin": "catalog:",
+    "@e2e-dev/web": "0.11.2",
     "@modelcontextprotocol/client": "2.3.1",
     "@modelcontextprotocol/ext-apps": "2.0.3",
     "@types/bun": "catalog:",
+    "e2e": "0.16.0",
+    "miniflare": "4.20260730.0",
+    "pdfjs-dist": "6.4.299",
+    "playwright": "1.63.0",
     "typescript": "catalog:",
     "vite": "catalog:"
   },

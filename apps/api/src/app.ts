@@ -7,6 +7,7 @@ import type { Env } from './db'
 import { ApiError, errorBody, invalid } from './errors'
 import { operations, type Ctx, type Operation } from './operations'
 import { VIEW_HTML, VIEW_URI } from './view.generated'
+import { originPdf } from './origin-pdf'
 
 type AppEnv = { Bindings: Env; Variables: { ctx: Ctx; json: unknown } }
 
@@ -120,7 +121,7 @@ preloadSchemas()
 /** MCP Apps（io.modelcontextprotocol/ui）の View の HTML の MIME type */
 export const VIEW_MIME_TYPE = 'text/html;profile=mcp-app'
 
-function mcpServer(ctx: Ctx): McpServer {
+function mcpServer(ctx: Ctx, apiOrigin: string): McpServer {
   const server = new McpServer(
     {
       name: 'fudoki-api',
@@ -138,7 +139,7 @@ function mcpServer(ctx: Ctx): McpServer {
     VIEW_URI,
     { title: '風土記の表示', description: '団体と収録範囲・歳出のノードを表にする View（MCP Apps）。', mimeType: VIEW_MIME_TYPE },
     // URI に中身のハッシュを入れてあり、同じ URI の中身は変わらない
-    async (uri) => ({ contents: [{ uri: uri.href, mimeType: VIEW_MIME_TYPE, text: VIEW_HTML, _meta: { ui: { prefersBorder: true } } }] })
+    async (uri) => ({ contents: [{ uri: uri.href, mimeType: VIEW_MIME_TYPE, text: VIEW_HTML, _meta: { ui: { prefersBorder: true, csp: { connectDomains: [apiOrigin] } } } }] })
   )
   for (const op of operations) {
     server.registerTool(
@@ -157,7 +158,7 @@ function mcpServer(ctx: Ctx): McpServer {
         try {
           const out = await op.run(ctx, args)
           // structuredContent が正本。text は structuredContent を読めない client のための同じ内容の写し（MCP の SHOULD）
-          return { content: [{ type: 'text' as const, text: JSON.stringify(out) }], structuredContent: out as Record<string, unknown> }
+          return { content: [{ type: 'text' as const, text: JSON.stringify(out) }], structuredContent: out as Record<string, unknown>, _meta: { apiOrigin } }
         } catch (e) {
           // 想定外の例外の詳細（SQL のエラーなど）は返さず、ログにだけ出す
           if (!(e instanceof ApiError)) console.error(e)
@@ -183,6 +184,13 @@ export function createApp() {
   app.use('*', async (c, next) => {
     await next()
     c.res.headers.set('Cache-Control', 'no-store')
+  })
+
+  // sandbox iframe は opaque origin（Origin: null）。PDF の公開中継だけ資格情報なしで読ませる。
+  app.use('/v1/origins/:origin_id/pdf', async (c, next) => {
+    await next()
+    c.res.headers.set('Access-Control-Allow-Origin', '*')
+    c.res.headers.set('Access-Control-Expose-Headers', 'X-Origin-Url, X-Origin-Fetched-At')
   })
 
   // kill switch: control の serving が 'on' 以外なら 503。読めないときも止める。
@@ -249,6 +257,18 @@ export function createApp() {
 
   for (const op of operations) registerRest(app, op)
 
+  app.openapi(createRoute({
+    method: 'get', path: '/v1/origins/{origin_id}/pdf', operationId: 'get_origin_pdf',
+    summary: '原典 PDF の表示用中継',
+    description: '原典 ID が指す自治体の公開 PDF を中継する。32 MiB・20秒、取得6回/分（同一URL1回/分）、閲覧120回/分、成功PDFを24時間・最大16 URL保持。上限は全利用者合計。取得 URL（percent-encoding）と取得日時を X-Origin-Url・X-Origin-Fetched-At で返す。取り込み時の内容との一致は保証しない。query・任意 URL・リダイレクト・CSV は受け付けない。',
+    request: { params: z.object({ origin_id: z.string().min(1).max(256) }) },
+    responses: {
+      200: { description: 'PDF', content: { 'application/pdf': { schema: z.string().openapi({ format: 'binary' }) } } },
+      ...Object.fromEntries([400, 404, 429, 502, 503, 504].map((status) => [status, { description: '表示できない', content: { 'application/json': { schema: ErrorBody } } }])),
+    },
+  }), async (c) => originPdf(c.env.DB, c.env.ORIGIN_PDF, c.req.raw, c.req.param('origin_id')))
+  app.all('/v1/origins/:origin_id/pdf', (c) => c.json(errorBody('METHOD_NOT_ALLOWED', 'GET だけを受け付けます'), 405, { Allow: 'GET' }))
+
   app.doc31('/openapi.json', OPENAPI_CONFIG)
 
   // Workers はリクエストをまたいで状態を持てないので、リクエストごとに handler を作る。
@@ -263,7 +283,7 @@ export function createApp() {
     if ((body as { method?: unknown } | null)?.method === 'subscriptions/listen')
       return c.json({ ...jsonRpcError(-32601, 'subscriptions/listen は受け付けません'), id: (body as { id?: unknown }).id ?? null }, 400)
     const ctx = c.get('ctx')
-    const handler = createMcpHandler(() => mcpServer(ctx), {
+    const handler = createMcpHandler(() => mcpServer(ctx, new URL(c.req.url).origin), {
       legacy: 'stateless',
       // 'json' だと要求ごとに「通知が落ちる」警告が console に出る。tool は途中の通知を出さないので auto でも JSON 1つで返る
       responseMode: 'auto',
