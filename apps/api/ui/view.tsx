@@ -307,6 +307,8 @@ function View({ bridge }: { bridge: Bridge }) {
     const trigger = pdf?.trigger
     setPdf(undefined)
     bridge.setFullscreen(false)
+    // 文脈は最後の1件で上書きされるので、PDF を閉じたら明細を見ている状態に戻す
+    if (entry) bridge.tellModel(describe(entry.data, state.names))
     queueMicrotask(() => { if (trigger?.isConnected) trigger.focus() })
   }
   if (pdf)

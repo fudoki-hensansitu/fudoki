@@ -26,6 +26,7 @@ test('款を金額の棒で並べ、掘り下げた先で原典を全画面に�
   expect(Number(await browser.evaluate("() => document.querySelector('iframe').getBoundingClientRect().height"))).toBeGreaterThan(400)
   await ui.getByRole('button', '← 戻る').tap()
   expect(await browser.evaluate('() => window.uiQA.displayMode()')).toBe('inline')
+  expect(String(await browser.evaluate('() => window.uiQA.contexts().at(-1)'))).toContain('の内訳を表示中')
   // 経路の段を押すと、その画面に戻る
   await ui.getByRole('button', '一般会計に戻る').tap()
   await expect(ui.getByRole('heading', '一般会計')).toBeVisible()
