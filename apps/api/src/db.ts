@@ -13,4 +13,8 @@ export interface Db {
 export interface Env {
   DB: Db
   ORIGIN_PDF?: import('./origin-pdf').RelayNamespace
+  /** 評価の検索。手順5で operations に登録するまで、どの経路からも使わない。 */
+  EVALUATION_SEARCH?: import('./evaluations').EvaluationSearchClient
+  EVALUATION_RATE_LIMIT?: import('./evaluations').RateLimiter
+  EVALUATION_QUOTA?: import('./evaluation-quota').QuotaNamespace
 }
