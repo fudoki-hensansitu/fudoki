@@ -87,7 +87,11 @@ function NodeResult({ data, parent, names, bridge, showPdf, busy }: {
     <>
       <header className="head">
         <div className="scope">{scopeOf(node, names)}</div>
-        {ancestors.length > 0 && <div className="crumbs">{ancestors.join(' › ')} ›</div>}
+        {ancestors.length > 0 && (
+          <div className="crumbs">
+            {ancestors.map((name) => <span key={name}>{name}<span className="sep" aria-hidden="true">›</span></span>)}
+          </div>
+        )}
         <h2>{node.name}</h2>
         {node.amount_yen === null ? <p className="quiet">原典に金額の記載がありません。</p> : (
           <div className="total">
