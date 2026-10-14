@@ -364,6 +364,11 @@ def recover_codes(observed: list[Page], pdf: Path, columns: dict | None = None) 
         if any(other != m and other[0] - m[2] < .3 * hole['height'] for other in marks):
             continue
         box = (m[0] + left * scale, m[1] + top * scale, m[2] + left * scale, m[3] + top * scale)
+        # A tight crop can make a long vertical rule look digit-height. Its detected
+        # continuation outside the crop is geometric evidence that this ink is a rule.
+        if any(r.x0 == r.x1 and r.y0 <= box[1] and r.y1 >= box[3]
+               and abs(r.x0 - (box[0] + box[2]) / 2) <= max(1.0, box[2] - box[0]) for r in page_.rules):
+            continue
         if any(re.search(r'[0-9]', w.text) and w.x0 - .5 <= box[0] <= w.x1 + .5
                and w.y0 - .5 <= (box[1] + box[3]) / 2 <= w.y1 + .5 for w in words[number]):
             continue

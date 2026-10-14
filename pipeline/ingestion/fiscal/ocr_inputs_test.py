@@ -24,6 +24,22 @@ def fake_result(seconds: float, path: str) -> dict:
 
 
 class AcquireTest(unittest.TestCase):
+    def test_column_tiles_are_an_explicit_request_and_do_not_enable_vlm(self):
+        request = {'engine': 'vision', 'pages': [1], 'column_tiles': True, 'vlm_fallback': False}
+        tiles = [scan_ocr.OcrRegion('column-0', (0, 0, 1, 1))]
+        with patch.object(scan_ocr, 'recognize_pdf', return_value=fake_result(.1, '/a/x.pdf')) as read, \
+                patch.object(scan_ocr.pdf_rules, 'detect'), \
+                patch.object(scan_ocr.pdf_rules, 'render', return_value=np.zeros((4, 4), np.uint8)), \
+                patch.object(scan_ocr, 'column_tiles', return_value=tiles), \
+                patch.object(scan_ocr, 'supplement', side_effect=lambda path, page, *_, **kwargs: page) as supplement:
+            data, _ = scan_ocr.acquire(Path('x.pdf'), request)
+        self.assertEqual(read.call_args.kwargs['regions'], tiles)
+        self.assertEqual(read.call_args.kwargs['config'].region_padding_px, 60)
+        self.assertFalse(supplement.call_args.kwargs['vlm_fallback'])
+        self.assertEqual(json.loads(data)['request'], request)
+        with self.assertRaisesRegex(ValueError, 'alternative OCR requests'):
+            scan_ocr.acquire(Path('x.pdf'), {**request, 'regions': [{'id': 'x', 'bbox_normalized': [0, 0, 1, 1]}]})
+
     def test_run_dependent_fields_leave_the_observation_bytes_unchanged(self):
         request = {'engine': 'vision', 'pages': [1]}
         outputs = []

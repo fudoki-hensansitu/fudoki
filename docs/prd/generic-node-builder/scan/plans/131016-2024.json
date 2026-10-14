@@ -17,8 +17,7 @@
       ],
       "options": {
         "account": "一般会計",
-        "table_id": "scan-1",
-        "partial": true
+        "table_id": "scan-1"
       },
       "ocr_inputs": [
         {

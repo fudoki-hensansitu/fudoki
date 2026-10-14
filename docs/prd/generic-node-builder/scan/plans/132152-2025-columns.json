@@ -62,7 +62,9 @@
             ],
             "vlm_fallback": false,
             "column_tiles": true
-          }
+          },
+          "sha256": "831f85c8287914530b990971d868890d41576f64b323ad7de0491571f3484c92",
+          "bytes": 2711124
         },
         {
           "id": "scan-1-ocr-columns-3",
@@ -83,7 +85,9 @@
             ],
             "vlm_fallback": false,
             "column_tiles": true
-          }
+          },
+          "sha256": "8c63cca694417ad5ae7bc858aa09c28e77d3ea27f1a3c8ae2b0bb764273d7bb0",
+          "bytes": 2772405
         },
         {
           "id": "scan-1-ocr-columns-4",

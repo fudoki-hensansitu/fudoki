@@ -105,6 +105,8 @@ class SequenceInkTest(unittest.TestCase):
             self.assertEqual([w.text for w in found[0].words], ['諸費', '1'])
             self.assertEqual(len(fills), 1)
             self.assertEqual([w.text for w in page.words], ['諸費'])
+            ruled = Page(1, 50, 50, page.words, [Rule(11.5, 0, 11.5, 50)])
+            self.assertEqual(scan.recover_codes([ruled], Path('x.pdf'))[1], [])
             image[33:35, 22:32] = 0  # bracket, not a thin digit
             self.assertEqual(scan.recover_codes([page], Path('x.pdf'))[1], [])
         with patch.object(scan, 'code_holes', return_value=[]), patch.object(scan.pdf_rules, 'render') as render:

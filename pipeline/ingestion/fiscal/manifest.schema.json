@@ -156,6 +156,7 @@
         "request": {
           "type": "object",
           "additionalProperties": false,
+          "not": {"required": ["column_tiles", "regions"]},
           "properties": {
             "engine": {
               "enum": [

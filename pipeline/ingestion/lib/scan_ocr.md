@@ -1,5 +1,7 @@
 # scan PDFのOCRを選ぶ
 
+取得の依頼に `column_tiles:true` を書くと、罫線で区切った列を文字のない行間で分割し、白い余白を付けてVisionで読む。文書ごとに選ぶ取得条件であり、省略時の頁全体の読みは変えない。`regions` との併用は不可。`vlm_fallback:false` はVisionの再読までで止め、未読の墨を観測に残す。木の検査後に必要なセルだけ別途再読し、答えを固定する場合に使う。例: `{"engine":"vision","pages":[31,32],"column_tiles":true,"vlm_fallback":false}`。
+
 共通入口は `ingestion.lib.scan_ocr`。既定は **Apple Vision**（`vision_ocr`）。PaddleOCRのPP-OCRv6 smallは `backend="paddle"` で選ぶ。失敗時に別エンジンへ自動で切り替えない。既存の `vision_ocr`・`paddle_ocr` のAPI・CLIも残す。
 
 ```python

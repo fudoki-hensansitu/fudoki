@@ -32,6 +32,7 @@ def plan(document: dict, keep: list[str], *, generic: bool = False, account: str
                 mode = 'columns' if column_tiles else 'vision'
                 request = {**old['request'], 'pages': pages[first:first + 10], 'vlm_fallback': False}
                 if column_tiles:
+                    request.pop('regions', None)
                     request['column_tiles'] = True
                 inputs.append({'id': f'{old["id"]}-{mode}-{index}', 'origin_sha256': old['origin_sha256'], 'request': request})
         conversion['ocr_inputs'] = inputs
@@ -43,10 +44,7 @@ def plan(document: dict, keep: list[str], *, generic: bool = False, account: str
             options = {'account': name, **conversion['options']}
             copies = sum(any(s['direction'] == result['direction'] and s['account'] == name
                              for s in f.get('scope', []) or []) for f in selected_files)
-            scope_pages = {p for s in origin['scope'] if s['account'] == name
-                           for a, b in s['pages'] for p in range(a, b + 1)}
-            observed_pages = {p for i in conversion['ocr_inputs'] for p in i['request']['pages']}
-            if copies > 1 or observed_pages != scope_pages:
+            if copies > 1:
                 options['partial'] = True
             conversion.update(converter='fiscal/layouts/generic_scan/convert.py', options=options)
     return manifest.validate(result)

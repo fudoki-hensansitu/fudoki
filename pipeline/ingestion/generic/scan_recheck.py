@@ -1,8 +1,8 @@
 """Bounded VLM recheck of failing amount cells, outside the generic scan converter.
 
 The declaration and reader are shared with settlement_statement.recheck. Only a cell bound to
-one OCR observation is read; the frozen observation is unchanged. Each kept correction must
-reduce tree mismatches, and the rebuilt table must confirm the improvement before --write.
+one OCR observation is read; the frozen observation is unchanged. A retained batch must reduce
+tree failures/unowned or unread cells and preserve all existing matches before --write.
 """
 from __future__ import annotations
 

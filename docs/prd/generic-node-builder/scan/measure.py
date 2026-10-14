@@ -69,7 +69,8 @@ for path in manifests:
         unowned = Counter(u['kind'] for u in built.unowned)
         rows.append({'jurisdiction': j, 'conversion': conversion['id'], 'account': account, 'mismatches': mismatches,
                      'unowned': dict(unowned), 'passed': passed, 'recovered_codes': len(recovered),
-                     'amount_letter_cells': dict(letter_cells)})
+                     'amount_letter_cells': dict(letter_cells),
+                     'finalized_tree_passed': bool(result['passed']) and not built.unowned})
         if args.details_dir:
             args.details_dir.mkdir(parents=True, exist_ok=True)
             (args.details_dir / f'{j}-{conversion["id"]}.json').write_text(json.dumps(

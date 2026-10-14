@@ -126,6 +126,8 @@ def _amount_key(amount: str, *, observed: bool = False) -> str:
     returned (e.g. ``009 480 TT`` or ``C`` for 0). The caller must restrict digitless
     observations to a declared amount column."""
     key = _key(amount)
+    if observed and not any(char.isdigit() for char in key) and len(key) != 1:
+        raise ValueError('A digitless amount observation must be one glyph in a declared amount column')
     if not observed and (not any(char.isdigit() for char in key) or any(char.isalpha() for char in key)):
         raise ValueError("An amount rule must contain a digit and no letter")
     return key
