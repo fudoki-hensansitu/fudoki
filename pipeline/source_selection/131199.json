@@ -1749,6 +1749,152 @@
         "archived_at": "2026-10-14T16:14:25.365Z"
       },
       "reason": "令和6年度実績を令和7年度に評価した板橋区行政評価の概要（108頁、令和7年9月）。施策評価表（68施策の一次・二次評価）と事務事業評価結果、付録の事業別行政評価シートで、事務事業ごとに評価標語（順調・概ね順調・停滞・達成）と改善の方向性（工夫して継続・目標値見直し・手法見直し・廃止）を載せる。文字として読める。詳細な施策・事務事業評価表はGoogleドライブにも載るが、概要の1冊を代表にした。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131199",
+        "fiscal_year": 2023,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和6年度板橋区行政評価 施策評価表・事務事業評価表",
+          "landing_url": "https://www.city.itabashi.tokyo.jp/kusei/seisakukeiei/hyouka/kekka/1054920/1055271.html",
+          "inspected_at": "2026-10-15T13:30:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/055/271/1103182.pdf",
+              "sha256": "8fab742a2d5cb0452db4754c6aabbd6f6f81eb041891e30530817bdf2ec0c9f7",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/055/271/120318.pdf",
+              "sha256": "aefa952c93111abcd8d7b81e206cdcf8995b734f1cfb13fd767c6c35c113cd0f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/055/271/130318.pdf",
+              "sha256": "d26f07600306f74b885ff48115aabb92f08f020eb0f21183911094cbefffbe6c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/055/271/210318.pdf",
+              "sha256": "192b2f450425534a0073a926b44483afd57b2eec006261e68beb1443296e66b8",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/055/271/220318.pdf",
+              "sha256": "037448b257e4ba4df188516c526398b5a357695a053fe507eb031b90baa8d757",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/055/271/23.pdf",
+              "sha256": "f613580e92bfdffcebab66040550e87c42f7f967fe76ac694f5325fb1dabda21",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/055/271/31.pdf",
+              "sha256": "4ec3a6778b9a3a632a32ff9d72b200c2762a1dd6a3d13260f4e70ed94763abff",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/055/271/320318.pdf",
+              "sha256": "a4582baecb8ff8866f04f67ca255a3d15ff5e0632c9f7e0861ecee4688b33512",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/055/271/330318.pdf",
+              "sha256": "98f8caf9f5ebdf5f2bbbcb4c590ac747d222b316e08de6af5a24f23c9dd7fd47",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/055/271/99.pdf",
+              "sha256": "488446e7f0a4936fd5af50cbc1155a1ba8e13fc019378f2e0c1c2a90987a0d47",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131199/2023/evaluation-settlement-5.pdf",
+            "sha256": "8fab742a2d5cb0452db4754c6aabbd6f6f81eb041891e30530817bdf2ec0c9f7",
+            "final_url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/055/271/1103182.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131199/2023/evaluation-settlement-8.pdf",
+            "sha256": "aefa952c93111abcd8d7b81e206cdcf8995b734f1cfb13fd767c6c35c113cd0f",
+            "final_url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/055/271/120318.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131199/2023/evaluation-settlement-9.pdf",
+            "sha256": "d26f07600306f74b885ff48115aabb92f08f020eb0f21183911094cbefffbe6c",
+            "final_url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/055/271/130318.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131199/2023/evaluation-settlement-2.pdf",
+            "sha256": "192b2f450425534a0073a926b44483afd57b2eec006261e68beb1443296e66b8",
+            "final_url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/055/271/210318.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131199/2023/evaluation-settlement-1.pdf",
+            "sha256": "037448b257e4ba4df188516c526398b5a357695a053fe507eb031b90baa8d757",
+            "final_url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/055/271/220318.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131199/2023/evaluation-settlement-10.pdf",
+            "sha256": "f613580e92bfdffcebab66040550e87c42f7f967fe76ac694f5325fb1dabda21",
+            "final_url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/055/271/23.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131199/2023/evaluation-settlement-4.pdf",
+            "sha256": "4ec3a6778b9a3a632a32ff9d72b200c2762a1dd6a3d13260f4e70ed94763abff",
+            "final_url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/055/271/31.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131199/2023/evaluation-settlement-7.pdf",
+            "sha256": "a4582baecb8ff8866f04f67ca255a3d15ff5e0632c9f7e0861ecee4688b33512",
+            "final_url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/055/271/320318.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131199/2023/evaluation-settlement-6.pdf",
+            "sha256": "98f8caf9f5ebdf5f2bbbcb4c590ac747d222b316e08de6af5a24f23c9dd7fd47",
+            "final_url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/055/271/330318.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131199/2023/evaluation-settlement-3.pdf",
+            "sha256": "488446e7f0a4936fd5af50cbc1155a1ba8e13fc019378f2e0c1c2a90987a0d47",
+            "final_url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/055/271/99.pdf"
+          }
+        ],
+        "archived_at": "2026-10-15T12:47:06.467Z"
+      },
+      "reason": "令和5年度実績を令和6年度に評価した板橋区の施策評価表・事務事業評価表（基本政策ごとの10分冊）。表題「令和6年度施策評価表・事務事業評価表」。施策評価表の年度列は「令和3年度決算・令和4年度決算・令和5年度予算・令和5年度決算・令和6年度予算」で、最新の決算は令和5年度。施策ごとに目標、成果指標の実績値の推移、評価と改善の方向性を、事務事業ごとに評価標語と改善の方向性を載せる。別冊の事業別行政評価シート（1冊）は概要のため含めない。文字として読める。"
     }
   ]
 }

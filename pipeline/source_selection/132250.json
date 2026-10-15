@@ -2009,6 +2009,44 @@
         "archived_at": "2026-10-14T16:18:52.312Z"
       },
       "reason": "令和6年度に実施した11事業（各部1事業）を令和7年度に評価した事務事業評価（26頁、令和8年8月）。事業ごとに目的・概要、成果指標の目標値と実績値、特徴的な取組、行政コスト計算書・類似事業比較、目標・成果を踏まえた今後の課題、行政運営評価委員会による評価コメントと市の方針を載せる。文字として読める。同じ年度の事務報告書は活動報告が中心のため、事業単位の評価票を代表にした。なお、対象は選定した11事業だけ。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132250",
+        "fiscal_year": 2023,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和6年度地方公会計制度を活用した事務事業評価（令和5年度事務事業分）",
+          "landing_url": "https://www.city.inagi.tokyo.jp/shisei/keikaku_hokoku/1008971/1008973.html",
+          "inspected_at": "2026-10-15T13:00:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/008/973/r6jimujigyo.pdf",
+              "sha256": "ac3867b06dbfa003c14991de71b0dd5ab1e6ec2a2aa298bd0cc59fd5ac854ea9",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132250/2023/evaluation-settlement.pdf",
+            "sha256": "ac3867b06dbfa003c14991de71b0dd5ab1e6ec2a2aa298bd0cc59fd5ac854ea9",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/008/973/r6jimujigyo.pdf"
+          }
+        ],
+        "archived_at": "2026-10-15T12:54:07.048Z"
+      },
+      "reason": "令和5年度に実施した事業を令和6年度に評価した事務事業評価。本文に「令和５年度実績」とあり、事業ごとに目的・概要、成果指標の目標値と実績値（最新が令和5年度）、行政コスト計算書、今後の課題、行政運営評価委員会の評価コメントと市の方針を載せる。文字として読める。"
     }
   ]
 }

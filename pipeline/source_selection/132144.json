@@ -1644,6 +1644,188 @@
         "archived_at": "2026-10-14T16:17:59.789Z"
       },
       "reason": "令和6年度に実施した事務事業を令和7年度に評価した事務事業評価（11冊、計427頁）。事務事業ごとに目的・対象・概要、事業費（R5〜8年度の予算・決算・執行率）、重要業績評価指標（KPI）の目標値と実績値、現状分析（有効性・妥当性）、今後の進め方（現状維持・見直しと予算計上の考え方）を載せる。文字として読める。目次のPDFは評価の本体ではないため含めない。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132144",
+        "fiscal_year": 2023,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和6年度事務事業評価（令和5年度実績、13部署）",
+          "landing_url": "https://www.city.kokubunji.tokyo.jp/shisei/houshin/shiryou/1020308/1034122.html",
+          "inspected_at": "2026-10-15T13:00:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/01gikai.pdf",
+              "sha256": "55b6bd3609d3d5ba71c3e372b63212f11d70603d3b59dfe0bdcebec11fd3be51",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/02seisaku.pdf",
+              "sha256": "24716060a5586c4db5c7d11195dc31e07565b1733c5ac39bed5303c37f0162d0",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/03soumu.pdf",
+              "sha256": "5d66951950e348a23b3957077d9538aaeec63b5357c1267b4186fe21c709d7cf",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/04simin.pdf",
+              "sha256": "6e5783dda22915aaca18b63a9a678c25fc1f2a2047f96a902a0cc9edab4a3c84",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/05kenko.pdf",
+              "sha256": "97d454751b9f6cb4fa5edacbe928432cecd549cb2b84d0f0076621fcef2d3f73",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/06hukusi.pdf",
+              "sha256": "4847c40cde2ce93fa46d34e17f0a8dc547a6ef6d3a17d9aebccf06339aa6f711",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/07kodomo.pdf",
+              "sha256": "e62df5577aba07561d7a59e6e71cf2ab403f061443df8f7213e5c09194e2d27f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/08matidukuri.pdf",
+              "sha256": "67a93c586ad299c405bce61b19b602213800d7688b60840096702e25892c4a72",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/09kensetu.pdf",
+              "sha256": "9be35cc486be8de850c6c3a8a3d778cb72053214b5ea4d524a6447c9797ae375",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/10kaikei.pdf",
+              "sha256": "c4bd4312615da3d862a4a41655b7cee72578ed73475952b1cd290c81e666eca3",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/11senkan.pdf",
+              "sha256": "2a468f8d7edfcf649f6ab00a282175ef729f9261fb4db626c34d431cc47ab3c8",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/12kansa.pdf",
+              "sha256": "a3e11178749ca2999fba0892f42ec72d1c3015b9a9bbe995871c8cda39a0d0cd",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/13kyouiku.pdf",
+              "sha256": "8f6bbf37d098371dedb185029737ac79c4473ec427f0a155e23792a29656805c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132144/2023/evaluation-settlement-4.pdf",
+            "sha256": "55b6bd3609d3d5ba71c3e372b63212f11d70603d3b59dfe0bdcebec11fd3be51",
+            "final_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/01gikai.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132144/2023/evaluation-settlement-1.pdf",
+            "sha256": "24716060a5586c4db5c7d11195dc31e07565b1733c5ac39bed5303c37f0162d0",
+            "final_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/02seisaku.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132144/2023/evaluation-settlement-5.pdf",
+            "sha256": "5d66951950e348a23b3957077d9538aaeec63b5357c1267b4186fe21c709d7cf",
+            "final_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/03soumu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132144/2023/evaluation-settlement-7.pdf",
+            "sha256": "6e5783dda22915aaca18b63a9a678c25fc1f2a2047f96a902a0cc9edab4a3c84",
+            "final_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/04simin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132144/2023/evaluation-settlement-9.pdf",
+            "sha256": "97d454751b9f6cb4fa5edacbe928432cecd549cb2b84d0f0076621fcef2d3f73",
+            "final_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/05kenko.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132144/2023/evaluation-settlement-3.pdf",
+            "sha256": "4847c40cde2ce93fa46d34e17f0a8dc547a6ef6d3a17d9aebccf06339aa6f711",
+            "final_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/06hukusi.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132144/2023/evaluation-settlement-13.pdf",
+            "sha256": "e62df5577aba07561d7a59e6e71cf2ab403f061443df8f7213e5c09194e2d27f",
+            "final_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/07kodomo.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132144/2023/evaluation-settlement-6.pdf",
+            "sha256": "67a93c586ad299c405bce61b19b602213800d7688b60840096702e25892c4a72",
+            "final_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/08matidukuri.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132144/2023/evaluation-settlement-10.pdf",
+            "sha256": "9be35cc486be8de850c6c3a8a3d778cb72053214b5ea4d524a6447c9797ae375",
+            "final_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/09kensetu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132144/2023/evaluation-settlement-12.pdf",
+            "sha256": "c4bd4312615da3d862a4a41655b7cee72578ed73475952b1cd290c81e666eca3",
+            "final_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/10kaikei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132144/2023/evaluation-settlement-2.pdf",
+            "sha256": "2a468f8d7edfcf649f6ab00a282175ef729f9261fb4db626c34d431cc47ab3c8",
+            "final_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/11senkan.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132144/2023/evaluation-settlement-11.pdf",
+            "sha256": "a3e11178749ca2999fba0892f42ec72d1c3015b9a9bbe995871c8cda39a0d0cd",
+            "final_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/12kansa.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132144/2023/evaluation-settlement-8.pdf",
+            "sha256": "8f6bbf37d098371dedb185029737ac79c4473ec427f0a155e23792a29656805c",
+            "final_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/13kyouiku.pdf"
+          }
+        ],
+        "archived_at": "2026-10-15T12:53:14.220Z"
+      },
+      "reason": "令和5年度に実施した事務事業を令和6年度に評価した事務事業評価（13冊）。各票の事業費の列は「令和4年度 決算額／令和5年度 予算額・決算額・執行率／令和6年度 当初予算額／令和7年度 当初予算額」で、最新の決算額は令和5年度。KPIは「令和4年度・令和5年度の実績／令和6年度の上半期・下半期見込み／令和7年度目標値」。本文に「令和５年度は、新たな議事堂への移転に伴う備品購入費等により決算額が大きくなっている」とあり評価対象は令和5年度。事業の目的・対象・概要、事業費、KPIの目標値と実績値、現状分析（有効性・妥当性）、次年度の実施方針を載せる。文字として読める。"
     }
   ]
 }

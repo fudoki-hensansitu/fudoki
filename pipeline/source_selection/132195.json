@@ -5796,6 +5796,44 @@
         "archived_at": "2026-10-14T16:18:04.893Z"
       },
       "reason": "令和6年度に実施した予算事業を所管課が内部評価した令和7年度内部評価結果報告書（127頁、作成2025-10-24）。後期基本計画のまちの姿に沿って1事業あたり約1/3〜1頁で、予算科目・所管課・R6年度決算額、取組結果・評価、具体的な成果、4段階の評定と理由を載せる。文字として読める。同じ令和6年度決算の主要な施策の成果説明書より事業ごとに評定と理由を持つこちらを代表にした。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132195",
+        "fiscal_year": 2023,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和6年度内部評価結果報告書（令和5年度実施事業）",
+          "landing_url": "https://www.city.komae.tokyo.jp/index.cfm/46,0,362,3163,html",
+          "inspected_at": "2026-10-15T13:00:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.komae.tokyo.jp/index.cfm/46,117244,c,html/117244/20241106-094947.pdf",
+              "sha256": "c2977d345940e8af5ba30bc5632b88b2e39a5a62376790ea7f7f702b3d183073",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132195/2023/evaluation-settlement.pdf",
+            "sha256": "c2977d345940e8af5ba30bc5632b88b2e39a5a62376790ea7f7f702b3d183073",
+            "final_url": "https://www.city.komae.tokyo.jp/index.cfm/46,117244,c,html/117244/20241106-094947.pdf"
+          }
+        ],
+        "archived_at": "2026-10-15T12:53:26.964Z"
+      },
+      "reason": "令和5年度に実施した予算事業を所管課が内部評価した令和6年度内部評価結果報告書。2頁目に「（令和５年度実施事業）」とあり、評価対象は令和5年度。まちの姿に沿って1事業あたり約1/3〜1頁で、予算科目・所管課・令和5年度決算額、取組結果・評価、具体的な成果、4段階の評定と理由を載せる。文字として読める。"
     }
   ]
 }
