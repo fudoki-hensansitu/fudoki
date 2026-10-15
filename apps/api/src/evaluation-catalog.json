@@ -2,6 +2,20 @@
   "instance": "fudoki-evaluation-v1",
   "documents": [
     {
+      "origin_sha256": "24c19867467686285e3719a02b3a82b53c73fe17b28699c0c0a742a1457d419a",
+      "jurisdiction": "131016",
+      "fiscal_year": 2023,
+      "title": "令和5年度主要施策の成果（全体版）",
+      "url": "https://www.city.chiyoda.lg.jp/documents/31964/r5seika-zentai.pdf",
+      "landing_url": "https://www.city.chiyoda.lg.jp/koho/kuse/zaise/shisaku/r5-seika.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 155
+        }
+      ]
+    },
+    {
       "origin_sha256": "7f0eb9ad8d1b444fbf69c5ff78c7db00f35b9ef33a0e7edb5fca529ca9065915",
       "jurisdiction": "131016",
       "fiscal_year": 2024,
@@ -12,6 +26,20 @@
         {
           "start": 1,
           "end": 139
+        }
+      ]
+    },
+    {
+      "origin_sha256": "7a2519d559f184dc784065614d5c660f7ea5bc5da35de4faa6cc6c95b2bdc9ab",
+      "jurisdiction": "131024",
+      "fiscal_year": 2023,
+      "title": "令和6年度 主要な施策の成果 行政評価（令和5年度分）全体版",
+      "url": "https://www.city.chuo.lg.jp/documents/16489/r6gyouaseihyoukaall.pdf",
+      "landing_url": "https://www.city.chuo.lg.jp/a0001/kusei/gyouseihyouka/hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 386
         }
       ]
     },
@@ -408,6 +436,20 @@
       ]
     },
     {
+      "origin_sha256": "d5ae1b29f29a98408284febe1467ec90c8bddd5e00d3e8521859d4aa77747630",
+      "jurisdiction": "131041",
+      "fiscal_year": 2023,
+      "title": "令和6年度内部評価実施結果（施策評価・計画事業評価）",
+      "url": "https://www.city.shinjuku.lg.jp/content/000375605.pdf",
+      "landing_url": "https://www.city.shinjuku.lg.jp/kusei/gyosei01_002682_00005.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 318
+        }
+      ]
+    },
+    {
       "origin_sha256": "ea1f54e1431c617ef8f995aa5b645deecf8966f3309b3f378188991fb99d86f1",
       "jurisdiction": "131041",
       "fiscal_year": 2024,
@@ -446,6 +488,146 @@
         {
           "start": 1,
           "end": 141
+        }
+      ]
+    },
+    {
+      "origin_sha256": "5ffb9e5c6a9fc2d6bcf30be1beda475396b6c8d1b38f80082bfff57bfe410b4b",
+      "jurisdiction": "131067",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価シート（9部署＋一覧表、令和5年度実績）",
+      "url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/kako/R06gyouseihyouka.files/00_R6hyoukaitiran.pdf",
+      "landing_url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/kako/R06gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 57
+        }
+      ]
+    },
+    {
+      "origin_sha256": "5b43f3fbabe3f641521f262452c2e28cb41ecfa739447d7d88bed960a256ff14",
+      "jurisdiction": "131067",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価シート（9部署＋一覧表、令和5年度実績）",
+      "url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/kako/R06gyouseihyouka.files/01_R6kikakuzaiseibu.pdf",
+      "landing_url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/kako/R06gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 1
+        }
+      ]
+    },
+    {
+      "origin_sha256": "efcbe8954ef6511c4d974e6ffef65d4b4e44d48ba24acc76e4a4b63e61106e98",
+      "jurisdiction": "131067",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価シート（9部署＋一覧表、令和5年度実績）",
+      "url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/kako/R06gyouseihyouka.files/02_R6soumubu.pdf",
+      "landing_url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/kako/R06gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 10
+        }
+      ]
+    },
+    {
+      "origin_sha256": "483dfa6bc6ccf620005e8258ebe2912c83554fef4ba33487e09470f777e1d0da",
+      "jurisdiction": "131067",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価シート（9部署＋一覧表、令和5年度実績）",
+      "url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/kako/R06gyouseihyouka.files/03_R6kuminbu.pdf",
+      "landing_url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/kako/R06gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 34
+        }
+      ]
+    },
+    {
+      "origin_sha256": "a8dc28831d4bd02f91949c87d84bd99dc7c69d7874dac23d7c14b533ec0066ee",
+      "jurisdiction": "131067",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価シート（9部署＋一覧表、令和5年度実績）",
+      "url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/kako/R06gyouseihyouka.files/04_R6bunkasangyoukankoubu.pdf",
+      "landing_url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/kako/R06gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 13
+        }
+      ]
+    },
+    {
+      "origin_sha256": "89e85e82e1bb0bb4a8a5ff6ef620697fdb32a6aa20fd1728dd0a8a7871a843cf",
+      "jurisdiction": "131067",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価シート（9部署＋一覧表、令和5年度実績）",
+      "url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/kako/R06gyouseihyouka.files/05_R6hukusibu.pdf",
+      "landing_url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/kako/R06gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 85
+        }
+      ]
+    },
+    {
+      "origin_sha256": "6fc229f08bce7b04b8f14a6755f1948ccd4713d4bd6d34b5931d5e09795cb961",
+      "jurisdiction": "131067",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価シート（9部署＋一覧表、令和5年度実績）",
+      "url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/kako/R06gyouseihyouka.files/06_R6kenkoubu.pdf",
+      "landing_url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/kako/R06gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 45
+        }
+      ]
+    },
+    {
+      "origin_sha256": "2cf640afc4fc577894efd1dd060c02c1c1ca5797c9e1663a2e8be2b53a10b435",
+      "jurisdiction": "131067",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価シート（9部署＋一覧表、令和5年度実績）",
+      "url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/kako/R06gyouseihyouka.files/07_R6kankyouseisoubu.pdf",
+      "landing_url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/kako/R06gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "af7cd0348ac69b618a90298b1b726e70a30dafb282e5e403e304a8e7021cc3b2",
+      "jurisdiction": "131067",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価シート（9部署＋一覧表、令和5年度実績）",
+      "url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/kako/R06gyouseihyouka.files/08_R6tosidukuribu.pdf",
+      "landing_url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/kako/R06gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 11
+        }
+      ]
+    },
+    {
+      "origin_sha256": "a61f726ea106dd8275c35436a83fa8ef401bb84ca32f0e799632903ea84894f6",
+      "jurisdiction": "131067",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価シート（9部署＋一覧表、令和5年度実績）",
+      "url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/kako/R06gyouseihyouka.files/09_R6kyouikuiinkai.pdf",
+      "landing_url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/kako/R06gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 70
         }
       ]
     },
@@ -586,6 +768,692 @@
         {
           "start": 1,
           "end": 61
+        }
+      ]
+    },
+    {
+      "origin_sha256": "be5ae54c3fae4a6492890e51dfd84440fde277305ba8dea6979aad543534d1d1",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6kikaku_211.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 7
+        }
+      ]
+    },
+    {
+      "origin_sha256": "a5edaeeee33ed3d7e261ed7cb396d236e2170f3d3574659b09e26ed6a67aaac2",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6facility_542.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 4
+        }
+      ]
+    },
+    {
+      "origin_sha256": "0a5523e5a4a1daead079156ea69047974acd2db9e0f9964e737531d36f9d62d5",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6soumu_531v2.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 12
+        }
+      ]
+    },
+    {
+      "origin_sha256": "1edd3aed09af6e0389809f59207e04a38c70ebdc0efe903602fabf1bb898ac0f",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6chiiki_511.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 52
+        }
+      ]
+    },
+    {
+      "origin_sha256": "1d569de4af59c5b564f79e7f633b0c9f2248bfd4d6c8510d225c271695499752",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6chiiki_512.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 34
+        }
+      ]
+    },
+    {
+      "origin_sha256": "3321885214fec6d7cbbef6c22970568299fd9348a1d86949c094b89fa5e9b1c5",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6chiiki_521.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 6
+        }
+      ]
+    },
+    {
+      "origin_sha256": "aca54b5ccdcfa1347c14e031d193bcbb2549be23133cf4b2c73d6eda0a3c4614",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6chiiki_522.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 41
+        }
+      ]
+    },
+    {
+      "origin_sha256": "7a490f4af2625182d8b49ee95d958f44033d7bc01ef74a006a137dd499291e28",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6chiiki_542.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 6
+        }
+      ]
+    },
+    {
+      "origin_sha256": "69501f0a7eb79fcdc0338c5bbd7fb87db2a13ead7a430f1cdbb44b30ea6b9120",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6sangyou_121.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 12
+        }
+      ]
+    },
+    {
+      "origin_sha256": "3e88be91104bc38a034155ac0401482578af576081ea8c4fcd347bb256818897",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6sangyou_122.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 6
+        }
+      ]
+    },
+    {
+      "origin_sha256": "8da9660b5b3c8b06a5937fe1b8e8499b4e2a54c2f3946b32b661055c6aafecde",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6sangyou_123.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 6
+        }
+      ]
+    },
+    {
+      "origin_sha256": "a86f3f24b2c73564c4307da3502fd74993b5bf5a1ce214d0066c7c8da03f91b6",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6sangyou_311.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 35
+        }
+      ]
+    },
+    {
+      "origin_sha256": "68962a3d47b34e3215180d9c2451f64176a7e8d18a8662bb26f5472133fc5c0b",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6sangyou_312.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 22
+        }
+      ]
+    },
+    {
+      "origin_sha256": "acb5bedc4fb6ae6a317bca840b014bf933fd3fa974e5e09e6abb5dd792f43214",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6sangyou_313.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 34
+        }
+      ]
+    },
+    {
+      "origin_sha256": "30daf798cd2524a5d57b57be360c5a22d994d61cc795447b1b3e8ba7922bebb8",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6sangyou_321.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "1b60ad4cbf09456ed9fd664fca6c3be670ee59733d5e136c5294dd8acef98391",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6sangyou_322.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 35
+        }
+      ]
+    },
+    {
+      "origin_sha256": "1ff4f1d6c6a80f0f835e25a52de082804f30a9491cba2755654e8eba2e8c46ce",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6sangyou_331.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 14
+        }
+      ]
+    },
+    {
+      "origin_sha256": "27c49ab7a7ec95b3d981088f5dfbaa943173b0321225d54edccce29981121a89",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6sangyou_424.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 6
+        }
+      ]
+    },
+    {
+      "origin_sha256": "8d1a29911375abaa4bb8295ee8eb5796d1d873de4523b0a4069569223a1fc664",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6sangyou_542.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 4
+        }
+      ]
+    },
+    {
+      "origin_sha256": "729a397aacda0cae74cac11da2a93afd74679dcdd18d8fce020b528cce6456b8",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6fukushi_222.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 6
+        }
+      ]
+    },
+    {
+      "origin_sha256": "666dd673ff06682d0da8d325597531210776ea69d476db4b83599dcd9ffc0575",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6fukushi_421.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 30
+        }
+      ]
+    },
+    {
+      "origin_sha256": "30078cfe9c1191716eb67e3edd844d80eba1d9b4a34fe20ce57460f1bce0c08a",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6fukushi_422.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 14
+        }
+      ]
+    },
+    {
+      "origin_sha256": "606850bfa51a1b47d4bce4d22cf9e305eb70fb9c4db5f78845ef2483904b6ca5",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6fukushi_431.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 36
+        }
+      ]
+    },
+    {
+      "origin_sha256": "d7e6676906072774a92fbc41003409e9eb72a033195daf8c7fd6f08c912a81d0",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6fukushi_432.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 20
+        }
+      ]
+    },
+    {
+      "origin_sha256": "5ca5c3d64926f4321924bc4a053d09ad047ff37a3698db2123a5cf4d7af693e5",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6fukushi_433.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 26
+        }
+      ]
+    },
+    {
+      "origin_sha256": "e49470f9ff79c642dce2824c9ff5de3e30b3bf3a27c206edab4109068ab70d4f",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6fukushi_434.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 67
+        }
+      ]
+    },
+    {
+      "origin_sha256": "f13fcdf25403afa376e7891e582217172d075440d94f48eeb15ba34d442fd2a0",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6fukushi_463.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 8
+        }
+      ]
+    },
+    {
+      "origin_sha256": "6622805b370390165ff06fb4d7ad960114d89c1668e172b0227cb15c61c20999",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6hoken_442.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 14
+        }
+      ]
+    },
+    {
+      "origin_sha256": "2654cd043191334b6909c90a472335fa48937499a524c6ba74ba5ac3f16b7b50",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6hoken_452.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 26
+        }
+      ]
+    },
+    {
+      "origin_sha256": "680182da13ca686643f0cac5b75e87d286d5b7e357f2af2ccf7b6710330574dc",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6hoken_453.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 42
+        }
+      ]
+    },
+    {
+      "origin_sha256": "0d8c6d90f2272df1b9cdf44923732c5149ba12f6a6c8da26c9ea91c3a4ac65e7",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6hoken_454.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 28
+        }
+      ]
+    },
+    {
+      "origin_sha256": "d742075fceb0d32f6b3986ab74ead616ab1f90a5edd258e62443af0ef96ef22a",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6kodomo_461.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 188
+        }
+      ]
+    },
+    {
+      "origin_sha256": "29acd338f81449b63786d98a7d1d6381e35d53385224946ce11aa2ee76c60a9c",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6kodomo_462.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 38
+        }
+      ]
+    },
+    {
+      "origin_sha256": "b6ec89fcdb7a9e0589959b8bf8c580d608569424169c5f59643d2ed23f271081",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6kodomo_463.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 16
+        }
+      ]
+    },
+    {
+      "origin_sha256": "5f0fdef367cdac26e87ddc5c42a660b25c495cc4908a36bacb44ef1adf5382ef",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6toshikeikaku_131.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 6
+        }
+      ]
+    },
+    {
+      "origin_sha256": "4d576e58656cacba24706b9f74d69b2072e38f6c0cd60cd422d0e9d872281b48",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6toshikeikaku_132.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 4
+        }
+      ]
+    },
+    {
+      "origin_sha256": "e75ee60ecf888274330b166bce98241251f6ed6743fd5f08e8da4df6f02e28d4",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6toshikeikaku_211.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 8
+        }
+      ]
+    },
+    {
+      "origin_sha256": "aa02a63e6c0735bdfc41a51aea6840a01b1d4f2a089a585ce698de7e306007b7",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6toshikeikaku_212.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 75
+        }
+      ]
+    },
+    {
+      "origin_sha256": "3f59d65d479985be6b7538385fbb286f0f0a2f10608adf36afdb37d4a6eb1c77",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6toshikeikaku_222.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 10
+        }
+      ]
+    },
+    {
+      "origin_sha256": "2ced2397dba5e915205761ac99ad42b14843cc7e7656fd8dc273f89488d1d909",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6toshikeikaku_411.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 32
+        }
+      ]
+    },
+    {
+      "origin_sha256": "e6a9dcae7aa16cec797164484d97f1faf488648594833691f16482d3e07ab8d3",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6kiki_411.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 6
+        }
+      ]
+    },
+    {
+      "origin_sha256": "71462d76730ff1ebfe588236fc6443bce681db2cbb1aa427d5104f2296780d3e",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6kiki_412.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 67
+        }
+      ]
+    },
+    {
+      "origin_sha256": "44f3a4a63fb584abd88ba04c698a9f7c2c58677aff9a44e8b3da8e762fb7798d",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6kiki_413.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 8
+        }
+      ]
+    },
+    {
+      "origin_sha256": "64b34960819169d2aad6e462b5cb117017cd50e9e46819de2a2e8ac2accff140",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6rittai_221.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 12
+        }
+      ]
+    },
+    {
+      "origin_sha256": "7663ceccdb5611617f6c87bbe64592ea6f12e68edd3916fe49978857d6633235",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6rittai_222.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 6
+        }
+      ]
+    },
+    {
+      "origin_sha256": "2bc76fc48a93e7939fc0499cca57a763f9d5f3f2e0e35fce6c9e28b7af03b246",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6shigen_132.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 24
+        }
+      ]
+    },
+    {
+      "origin_sha256": "e3aba1cd3aa1b68c938cc0e7c28af2edc6b24d32f4a99670a044b6a9f2b73bc2",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6shigen_481.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 20
+        }
+      ]
+    },
+    {
+      "origin_sha256": "2c6b42293a34376eeecc74ddb7bb7915e678076bb476b5afe6ef2b4891290771",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6shigen_482.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 12
+        }
+      ]
+    },
+    {
+      "origin_sha256": "4aac371e369eccad8d227aa846d42b31eb8c1a93fd9e80b31ea8849d0623713f",
+      "jurisdiction": "131075",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価（施策評価・事務事業評価、令和5年度実施事業）",
+      "url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.files/r6shigen_483.pdf",
+      "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 28
         }
       ]
     },
@@ -1346,6 +2214,20 @@
       ]
     },
     {
+      "origin_sha256": "29456241b11c409d025ca3ea95dc6fc9ce99147ea52c53f078abffb6627fec3f",
+      "jurisdiction": "131083",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価 施策評価（令和5年度実施事業）",
+      "url": "https://www.city.koto.lg.jp/010100/documents/02_shisakuhyouka.pdf",
+      "landing_url": "https://www.city.koto.lg.jp/010100/r6gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 106
+        }
+      ]
+    },
+    {
       "origin_sha256": "ba7ed6f0c8a1319f3b662618263c210923344246181127feb909ed901acaff49",
       "jurisdiction": "131083",
       "fiscal_year": 2024,
@@ -1356,6 +2238,20 @@
         {
           "start": 1,
           "end": 120
+        }
+      ]
+    },
+    {
+      "origin_sha256": "ae4743f92c80b2449947a587bb88c16df155979f8e0950f112a1ddb4ef20348b",
+      "jurisdiction": "131091",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価シート（全部局、令和5年度実施事業）",
+      "url": "https://www.city.shinagawa.tokyo.jp/ct/pdf/20240222105532_19.pdf",
+      "landing_url": "https://www.city.shinagawa.tokyo.jp/PC/kuseizyoho/kuseizyoho-siryo/kuseizyoho-siryo-zaisei/kuseizyoho-siryo-zaisei-shinagawa/kuseizyoho-siryo-zaisei-shinagawa-gyouseihyoka/R6gyousei/20240222105532.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 670
         }
       ]
     },
@@ -1374,6 +2270,20 @@
       ]
     },
     {
+      "origin_sha256": "86df459e55933ee97432dc53a42d7d6f0aeee7963f3650ffc06419a5853e1696",
+      "jurisdiction": "131121",
+      "fiscal_year": 2023,
+      "title": "令和5年度主要事業の説明",
+      "url": "https://www.city.setagaya.lg.jp/documents/18562/2.pdf",
+      "landing_url": "https://www.city.setagaya.lg.jp/02022/18562.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 46
+        }
+      ]
+    },
+    {
       "origin_sha256": "a06b992fb2e2b86bde5eaff14c31b9ce8a43ba583129f7ebf511976adbff17d3",
       "jurisdiction": "131121",
       "fiscal_year": 2024,
@@ -1388,6 +2298,20 @@
       ]
     },
     {
+      "origin_sha256": "6d8e3ab9b886681c20a066edb6ca39d9c06a616dc35f6bbbb73df22f75becc30",
+      "jurisdiction": "131130",
+      "fiscal_year": 2023,
+      "title": "令和5年度主要な施策の成果に関する報告書",
+      "url": "https://files.city.shibuya.tokyo.jp/assets/12995aba8b194961be709ba879857f70/eb718b4a2c654ed59f5c07e4570dbc55/syuyounasesaku05.pdf",
+      "landing_url": "https://www.city.shibuya.tokyo.jp/kusei/zaisei/kessan-aramashi/kessan05.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 83
+        }
+      ]
+    },
+    {
       "origin_sha256": "f7bb8a2966ec3506ce5b815eafe38cd8150b743d65dd1093b9ab8afb34a1811c",
       "jurisdiction": "131130",
       "fiscal_year": 2024,
@@ -1398,6 +2322,20 @@
         {
           "start": 1,
           "end": 80
+        }
+      ]
+    },
+    {
+      "origin_sha256": "85efe5dad9b70fe0a71cba5c33b3b164db682081d0aab0d79e0d3d98f7db176e",
+      "jurisdiction": "131148",
+      "fiscal_year": 2023,
+      "title": "令和5年度主要施策の成果（決算説明資料）",
+      "url": "https://www.city.tokyo-nakano.lg.jp/kusei/zaisei/kessan/r5kessan.files/R5syuyousesakunoseika.pdf",
+      "landing_url": "https://www.city.tokyo-nakano.lg.jp/kusei/zaisei/kessan/r5kessan.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 150
         }
       ]
     },
@@ -2256,6 +3194,496 @@
       ]
     },
     {
+      "origin_sha256": "31c009bf2f4fdc1ca9dfcebb18ecbb8f8e12a7d910a706e24eb966766eebd1d4",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/01_tvkouhou.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "512757f79c8e6cc14d44d09c89c2a1661ea8f8a14c7f462a1a3571d3e45f0ef1",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/02_jyouhouka.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "bb4e04d2f26015b4a194089604aef85fe5b8bd56b5ed146ffc7ea8b498e7b66b",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/03_chiikibousai.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "390488a63c0363d56adcd9bd4122dd008fd2a6f3425309d682c5e23cd0f0a97d",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/04_dannjyobyoudou.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "6d6b755313f1bcb1ac81e9cd936d16c6ff2d60cd8854333f889e671ac38158a0",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/05_kuminkatudou.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "2e1bf31b4463c02b7bcd063670968e37df3799dfa50c06385a34e56583831b86",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/06_kuminhiroba.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "f19cfde68e1ed82e6bf939bc086dcaedc7904e3edae61708dc8ddf500059efa1",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/07_cashuless.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "1cbb7226dd1d45fd848661ca1cdfc89ddfb16f880fc0f2a7e5628f15869d3fa1",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/08_farmers.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "fa0967383a61669bdb9dd41ac110615eec9f88a0de2dfe20ba100f725617cb33",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/09_shutenngai.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "9277186c13f165136006a525b2c977e5bee5032ab73b54e947350ec63f908832",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/10_inbaunodo.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "fbb2a822bcef101283f3338a21cbc3a19048f4d4ce00486b99e3e15c579d3ea7",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/11_kituennjyo.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "05392b01795a1b1d1e120e81867920bda1face01336c31e205afce63341f0edf",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/12_seinenkouken.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 4
+        }
+      ]
+    },
+    {
+      "origin_sha256": "12691116921b794c9d0628e95da47aa69eef99e758f4c7e5fd0466e8296adc02",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/13ikidurasa.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "2bd1eb7832cfd7ae4b3cc46c6c30e9b4e6e05c48f732c4b7da9a476504f412a6",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/14yobousessyu.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "4b4a5221db5004dc6edd10497b9827afa189eb7c8d7026ab5954828258447a59",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/15supottokennsui.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "410d171a7a2b22cba6a4d6dd1848d1d09e966b6ed98ff1c254cae77fa979a455",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/16supottonagasaki.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "c375c47ba4a7bba8f66e39ec0b1038f579cf1eb28ecc04ae259796c9b865593d",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/17ikuziherupa-.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "d58166f9f718606a7903c47ec3f1239a8728a496e80296c0478c63172e535d4b",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/18hukutoshinn.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "fbeee8ce8702252b5422e1302bd924197733f477ac07cfbfc8faa015f322dd59",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/19annsinn.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "587493fbbac3b34984cd3d057ce96ac91c856ea54780e66b16eb5e48a54ebfa2",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/20zitensya.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "c9a6560cef7433b4e82a0dbd1864e11f7b333879b4c4352706f87d9cd764ab67",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/21sdgsninaite.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "de4a717e83d5e17d14dad68ed90b3e206055f20763db60977473af7050081e7c",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/22hatarakikata.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "25507fec3854259d63813c50fe2d5785868d2d67365e4d3316f91d101d40fafb",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/shinki01_ictsuisinkeihi.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "bf52bbdbe9cc2b29ecf669ebcba8ea8230f68d31db7b6e1cf1f01e9d387a567a",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/shinki02_sougoumadoguchigyoumuitaku.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "c953fd8dd558b0a54c4974b04f42da2a33a8910c779621958494270aeef59d1c",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/shinki03_tosimamiraibunkazaidankeihi.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "5bc44abf10b0d48eb3af0b85b203075b1808b0e21a6a563a2896b097ae054c51",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/shinki04_monodukurimesse.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "d635950969fb1d4931ea01266ce9d99b01f1b0cd2ee1fd859fe317b9ec7bc3d8",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/shinki05_ikebukurohigasiguchikannkouannnaijyo.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "f7c7c28e4812ded59f6c1dc8cf3579d57b5df7d69668eab704d601ce06bfc048",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/shinki06_poisute.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "a83f39177fd29cb736180305b2020b3ea6132aa810dd5fe910ea3e1d6346e79c",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/shinki07_patorol.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "0a8b73befb6a216313cd5c2fdda1ab0cde5a2c157f2edd978dbbaa68f2d158a1",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/shinki08_gankenshin.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "105622f5c9d3edc431696ad6afcf3dd7ed3f8c95dfc4e3ea111b2af60ea6714e",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/shinki09_rinjihoikujyo.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "ac1d4c97f0e9fe0bfb114a8a01d38bfb91562b66a80dc8e69c08a4b56239925b",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/shinki10_sirituhoikjyo.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "3d139a15995e0cc25108a3e287b29291bf3d672ec16a58f24b8e60dcfe4c415f",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/shinki11_chiikigatahoiku.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "3dde1e439c122dc97103bce0c0638f731b046502ee2bc008c9e38eb6f14049c1",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/shnki12_kouen.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "e44ce971b24627f9917bfb5bed663523c60d91726545ea46545bd8626e24bc97",
+      "jurisdiction": "131164",
+      "fiscal_year": 2023,
+      "title": "令和5年度（令和6年度実施）事務事業評価表",
+      "url": "https://www.city.toshima.lg.jp/documents/49231/shinki13_ictkatuyou.pdf",
+      "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
       "origin_sha256": "1297f0260b5b8a9508c1792e63ed259c393fd87e6f981c96ffe29d0f7a75e019",
       "jurisdiction": "131164",
       "fiscal_year": 2024,
@@ -3040,6 +4468,146 @@
       ]
     },
     {
+      "origin_sha256": "8fab742a2d5cb0452db4754c6aabbd6f6f81eb041891e30530817bdf2ec0c9f7",
+      "jurisdiction": "131199",
+      "fiscal_year": 2023,
+      "title": "令和6年度板橋区行政評価 施策評価表・事務事業評価表",
+      "url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/055/271/1103182.pdf",
+      "landing_url": "https://www.city.itabashi.tokyo.jp/kusei/seisakukeiei/hyouka/kekka/1054920/1055271.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 88
+        }
+      ]
+    },
+    {
+      "origin_sha256": "aefa952c93111abcd8d7b81e206cdcf8995b734f1cfb13fd767c6c35c113cd0f",
+      "jurisdiction": "131199",
+      "fiscal_year": 2023,
+      "title": "令和6年度板橋区行政評価 施策評価表・事務事業評価表",
+      "url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/055/271/120318.pdf",
+      "landing_url": "https://www.city.itabashi.tokyo.jp/kusei/seisakukeiei/hyouka/kekka/1054920/1055271.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 172
+        }
+      ]
+    },
+    {
+      "origin_sha256": "d26f07600306f74b885ff48115aabb92f08f020eb0f21183911094cbefffbe6c",
+      "jurisdiction": "131199",
+      "fiscal_year": 2023,
+      "title": "令和6年度板橋区行政評価 施策評価表・事務事業評価表",
+      "url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/055/271/130318.pdf",
+      "landing_url": "https://www.city.itabashi.tokyo.jp/kusei/seisakukeiei/hyouka/kekka/1054920/1055271.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 134
+        }
+      ]
+    },
+    {
+      "origin_sha256": "192b2f450425534a0073a926b44483afd57b2eec006261e68beb1443296e66b8",
+      "jurisdiction": "131199",
+      "fiscal_year": 2023,
+      "title": "令和6年度板橋区行政評価 施策評価表・事務事業評価表",
+      "url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/055/271/210318.pdf",
+      "landing_url": "https://www.city.itabashi.tokyo.jp/kusei/seisakukeiei/hyouka/kekka/1054920/1055271.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 102
+        }
+      ]
+    },
+    {
+      "origin_sha256": "037448b257e4ba4df188516c526398b5a357695a053fe507eb031b90baa8d757",
+      "jurisdiction": "131199",
+      "fiscal_year": 2023,
+      "title": "令和6年度板橋区行政評価 施策評価表・事務事業評価表",
+      "url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/055/271/220318.pdf",
+      "landing_url": "https://www.city.itabashi.tokyo.jp/kusei/seisakukeiei/hyouka/kekka/1054920/1055271.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 45
+        }
+      ]
+    },
+    {
+      "origin_sha256": "f613580e92bfdffcebab66040550e87c42f7f967fe76ac694f5325fb1dabda21",
+      "jurisdiction": "131199",
+      "fiscal_year": 2023,
+      "title": "令和6年度板橋区行政評価 施策評価表・事務事業評価表",
+      "url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/055/271/23.pdf",
+      "landing_url": "https://www.city.itabashi.tokyo.jp/kusei/seisakukeiei/hyouka/kekka/1054920/1055271.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 67
+        }
+      ]
+    },
+    {
+      "origin_sha256": "4ec3a6778b9a3a632a32ff9d72b200c2762a1dd6a3d13260f4e70ed94763abff",
+      "jurisdiction": "131199",
+      "fiscal_year": 2023,
+      "title": "令和6年度板橋区行政評価 施策評価表・事務事業評価表",
+      "url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/055/271/31.pdf",
+      "landing_url": "https://www.city.itabashi.tokyo.jp/kusei/seisakukeiei/hyouka/kekka/1054920/1055271.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 103
+        }
+      ]
+    },
+    {
+      "origin_sha256": "a4582baecb8ff8866f04f67ca255a3d15ff5e0632c9f7e0861ecee4688b33512",
+      "jurisdiction": "131199",
+      "fiscal_year": 2023,
+      "title": "令和6年度板橋区行政評価 施策評価表・事務事業評価表",
+      "url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/055/271/320318.pdf",
+      "landing_url": "https://www.city.itabashi.tokyo.jp/kusei/seisakukeiei/hyouka/kekka/1054920/1055271.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 81
+        }
+      ]
+    },
+    {
+      "origin_sha256": "98f8caf9f5ebdf5f2bbbcb4c590ac747d222b316e08de6af5a24f23c9dd7fd47",
+      "jurisdiction": "131199",
+      "fiscal_year": 2023,
+      "title": "令和6年度板橋区行政評価 施策評価表・事務事業評価表",
+      "url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/055/271/330318.pdf",
+      "landing_url": "https://www.city.itabashi.tokyo.jp/kusei/seisakukeiei/hyouka/kekka/1054920/1055271.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 97
+        }
+      ]
+    },
+    {
+      "origin_sha256": "488446e7f0a4936fd5af50cbc1155a1ba8e13fc019378f2e0c1c2a90987a0d47",
+      "jurisdiction": "131199",
+      "fiscal_year": 2023,
+      "title": "令和6年度板橋区行政評価 施策評価表・事務事業評価表",
+      "url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/055/271/99.pdf",
+      "landing_url": "https://www.city.itabashi.tokyo.jp/kusei/seisakukeiei/hyouka/kekka/1054920/1055271.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 119
+        }
+      ]
+    },
+    {
       "origin_sha256": "08934b21cb2cd294da48e8a4f2c9977877decf72df246a22062bb860fb60b513",
       "jurisdiction": "131199",
       "fiscal_year": 2024,
@@ -3050,6 +4618,48 @@
         {
           "start": 1,
           "end": 108
+        }
+      ]
+    },
+    {
+      "origin_sha256": "ce56a26bcd7acbb3b1293d83aa6976df75b4c39be860e863bac3c7ac2f9e5ad5",
+      "jurisdiction": "131211",
+      "fiscal_year": 2023,
+      "title": "令和6年度区民評価報告書（令和5年度実施事業分）",
+      "url": "https://www.city.adachi.tokyo.jp/documents/56050/6kekka_1.pdf",
+      "landing_url": "https://www.city.adachi.tokyo.jp/sesaku/ku/kuse/gyose-h28-kuminhyoka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 69
+        }
+      ]
+    },
+    {
+      "origin_sha256": "f7048bf2323659cbe534d58089c94f1deeaa7cf10a94b4a6ca5999cb0c72f493",
+      "jurisdiction": "131211",
+      "fiscal_year": 2023,
+      "title": "令和6年度区民評価報告書（令和5年度実施事業分）",
+      "url": "https://www.city.adachi.tokyo.jp/documents/56050/6kekka_2.pdf",
+      "landing_url": "https://www.city.adachi.tokyo.jp/sesaku/ku/kuse/gyose-h28-kuminhyoka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 20
+        }
+      ]
+    },
+    {
+      "origin_sha256": "aab91366f741380e9a717bd5bcff54fd6dd40b21ba31b690894f3e811b76e611",
+      "jurisdiction": "131211",
+      "fiscal_year": 2023,
+      "title": "令和6年度区民評価報告書（令和5年度実施事業分）",
+      "url": "https://www.city.adachi.tokyo.jp/documents/56050/6kekka_3.pdf",
+      "landing_url": "https://www.city.adachi.tokyo.jp/sesaku/ku/kuse/gyose-h28-kuminhyoka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 27
         }
       ]
     },
@@ -3082,6 +4692,20 @@
       ]
     },
     {
+      "origin_sha256": "25c72a017b74282f9ed15a74de715aceebbd00bf03885f441b7c14228d9aae5b",
+      "jurisdiction": "131229",
+      "fiscal_year": 2023,
+      "title": "令和6年度葛飾区行政評価 評価表（事務事業評価）",
+      "url": "https://www.city.katsushika.lg.jp/_res/projects/default_project/_page_/001/036/521/03r6_hyoukahyou1-133.pdf",
+      "landing_url": "https://www.city.katsushika.lg.jp/information/1000085/1006294/1006358/1036521.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 133
+        }
+      ]
+    },
+    {
       "origin_sha256": "e979da1ae48080011615b6cd549b86b816074efcd032664aa59a2269b486c791",
       "jurisdiction": "131229",
       "fiscal_year": 2024,
@@ -3096,6 +4720,20 @@
       ]
     },
     {
+      "origin_sha256": "dcb6808dffcf54300d88c9404a3e9ed32863fb5d44dd62309f78457e3f4801b8",
+      "jurisdiction": "131237",
+      "fiscal_year": 2023,
+      "title": "令和6年度江戸川区行政評価 実施報告書",
+      "url": "https://www.city.edogawa.tokyo.jp/documents/59207/2024hyouka.pdf",
+      "landing_url": "https://www.city.edogawa.tokyo.jp/e001/kuseijoho/zaisei/gyoseikaikaku/hyoka/2024hyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 77
+        }
+      ]
+    },
+    {
       "origin_sha256": "cb755b14ae90321886e4a4a944c0d827f485b2a10e44bab4e988a7d3cf0c9d6b",
       "jurisdiction": "131237",
       "fiscal_year": 2024,
@@ -3106,6 +4744,90 @@
         {
           "start": 1,
           "end": 67
+        }
+      ]
+    },
+    {
+      "origin_sha256": "0a0e7c448240f86d20f926bba0d18d6514bcd9bc8ca54105beb6ebb6fdec5f2b",
+      "jurisdiction": "132021",
+      "fiscal_year": 2023,
+      "title": "令和6年度立川市行政評価 基本事業マネジメントシート（令和5年度実績）",
+      "url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/022/706/2024_4kodomo.pdf",
+      "landing_url": "https://www.city.tachikawa.lg.jp/shisei/sesaku/1006562/1006673/1022706.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 277
+        }
+      ]
+    },
+    {
+      "origin_sha256": "26347f70f2ff1eab527a535650dd7f54b4038f20f295c3673739243aee77ff12",
+      "jurisdiction": "132021",
+      "fiscal_year": 2023,
+      "title": "令和6年度立川市行政評価 基本事業マネジメントシート（令和5年度実績）",
+      "url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/022/706/2024_5kankyou.pdf",
+      "landing_url": "https://www.city.tachikawa.lg.jp/shisei/sesaku/1006562/1006673/1022706.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 106
+        }
+      ]
+    },
+    {
+      "origin_sha256": "0a09d961cace4f44c4a65fb1a69361d17059aeeb101f56554e2ac27efb88fe21",
+      "jurisdiction": "132021",
+      "fiscal_year": 2023,
+      "title": "令和6年度立川市行政評価 基本事業マネジメントシート（令和5年度実績）",
+      "url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/022/706/2024_6tosikibann.pdf",
+      "landing_url": "https://www.city.tachikawa.lg.jp/shisei/sesaku/1006562/1006673/1022706.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 105
+        }
+      ]
+    },
+    {
+      "origin_sha256": "f74e1dcc3463d8833802e9ca3f73b4ea5e08335093d856863a8e77293f85601e",
+      "jurisdiction": "132021",
+      "fiscal_year": 2023,
+      "title": "令和6年度立川市行政評価 基本事業マネジメントシート（令和5年度実績）",
+      "url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/022/706/2024_7hukusihokenn.pdf",
+      "landing_url": "https://www.city.tachikawa.lg.jp/shisei/sesaku/1006562/1006673/1022706.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 208
+        }
+      ]
+    },
+    {
+      "origin_sha256": "64d4ddd144670d1ded4bbcf4680ed250ab8c201bf902bfdafb9fccfac834f73a",
+      "jurisdiction": "132021",
+      "fiscal_year": 2023,
+      "title": "令和6年度立川市行政評価 基本事業マネジメントシート（令和5年度実績）",
+      "url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/022/706/2024_8gyouseikeiei.pdf",
+      "landing_url": "https://www.city.tachikawa.lg.jp/shisei/sesaku/1006562/1006673/1022706.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 133
+        }
+      ]
+    },
+    {
+      "origin_sha256": "b8bffa12ee89f7ce6b92b23c359f0e6ee8bc7eb23ad19112c7c58d8b8286b9af",
+      "jurisdiction": "132021",
+      "fiscal_year": 2023,
+      "title": "令和6年度立川市行政評価 基本事業マネジメントシート（令和5年度実績）",
+      "url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/022/706/2024_9sonota.pdf",
+      "landing_url": "https://www.city.tachikawa.lg.jp/shisei/sesaku/1006562/1006673/1022706.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 16
         }
       ]
     },
@@ -3390,6 +5112,20 @@
       ]
     },
     {
+      "origin_sha256": "aacf237563424c4733e9f75f9af3ca1c265b072431bb549d31eb6b8b511a7bc4",
+      "jurisdiction": "132039",
+      "fiscal_year": 2023,
+      "title": "令和6年度 事務事業(補助金)評価実施結果集",
+      "url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/050/145/R6jisshikekkasyu.pdf",
+      "landing_url": "https://www.city.musashino.lg.jp/shiseijoho/shisaku_keikaku/sogoseisakubu_shisaku_keikaku/gyoseihyokaseido/jimujigyo_hojokinminaoshi/jimujigyo_hojokin_hyoka/1050145.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 108
+        }
+      ]
+    },
+    {
       "origin_sha256": "15e9971060c8a5dbacb3eef9d0bbdd8f11af02397512ac4d95178515c43d2680",
       "jurisdiction": "132039",
       "fiscal_year": 2025,
@@ -3586,6 +5322,48 @@
       ]
     },
     {
+      "origin_sha256": "b363a364ee8a6615514771796b2d114aa654c69c05f5c2e7f458425757e44cb4",
+      "jurisdiction": "132047",
+      "fiscal_year": 2023,
+      "title": "令和5年度各会計決算概要 ― 主要施策の成果 ―（(1)〜(3)）",
+      "url": "https://www.city.mitaka.lg.jp/c_service/004/attached/attach_4374_6.pdf",
+      "landing_url": "https://www.city.mitaka.lg.jp/c_service/004/004374.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 71
+        }
+      ]
+    },
+    {
+      "origin_sha256": "630a2bdce7e5acc34640fcf551da9669ab52320f607cfdabc463ea8b96b90ef8",
+      "jurisdiction": "132047",
+      "fiscal_year": 2023,
+      "title": "令和5年度各会計決算概要 ― 主要施策の成果 ―（(1)〜(3)）",
+      "url": "https://www.city.mitaka.lg.jp/c_service/004/attached/attach_4374_7.pdf",
+      "landing_url": "https://www.city.mitaka.lg.jp/c_service/004/004374.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 72
+        }
+      ]
+    },
+    {
+      "origin_sha256": "588c16e7021c3af29b1a0f2f251197f13835ae4ddf687c6e591e027a4f6f5d4a",
+      "jurisdiction": "132047",
+      "fiscal_year": 2023,
+      "title": "令和5年度各会計決算概要 ― 主要施策の成果 ―（(1)〜(3)）",
+      "url": "https://www.city.mitaka.lg.jp/c_service/004/attached/attach_4374_8.pdf",
+      "landing_url": "https://www.city.mitaka.lg.jp/c_service/004/004374.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 83
+        }
+      ]
+    },
+    {
       "origin_sha256": "72d29f6ab6621f5c47bfe4f8d7707f85a617ac9814acbbc72424889572273cbe",
       "jurisdiction": "132047",
       "fiscal_year": 2024,
@@ -3698,6 +5476,20 @@
       ]
     },
     {
+      "origin_sha256": "50ead6820a358c683fabcdaeff46a59056181c6653b054af86fc8a2f428dfd4d",
+      "jurisdiction": "132055",
+      "fiscal_year": 2023,
+      "title": "令和6年度青梅市行政評価シート（令和5年度実施事務事業）",
+      "url": "https://www.city.ome.tokyo.jp/uploaded/attachment/57561.pdf",
+      "landing_url": "https://www.city.ome.tokyo.jp/soshiki/80/65722.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 103
+        }
+      ]
+    },
+    {
       "origin_sha256": "57d955f88df7550a5bd8d0d57a66191256d28e22b802bc4c6391022348d124bf",
       "jurisdiction": "132055",
       "fiscal_year": 2024,
@@ -3708,6 +5500,398 @@
         {
           "start": 1,
           "end": 66
+        }
+      ]
+    },
+    {
+      "origin_sha256": "210c0f1593bf0248625b38ac0c76e7f96dd3b9b3c309a680955164a7f291cf98",
+      "jurisdiction": "132063",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（第7次総合計画）事務事業評価シート",
+      "url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.files/fuc24b07a_e28administrative_evaluation.pdf",
+      "landing_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 42
+        }
+      ]
+    },
+    {
+      "origin_sha256": "0f0626066e382c07cb4581ae3bfb20221cd08e3f95900de4c3500c17516b4dc1",
+      "jurisdiction": "132063",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（第7次総合計画）事務事業評価シート",
+      "url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.files/fuc24b07a_e29administrative_evaluation.pdf",
+      "landing_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 63
+        }
+      ]
+    },
+    {
+      "origin_sha256": "c336ceadb3abdf8b5aca328be0ea5f36879f5d51424d35bad80cb7ab382a46e0",
+      "jurisdiction": "132063",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（第7次総合計画）事務事業評価シート",
+      "url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.files/fuc24b07a_e30administrative_evaluation.pdf",
+      "landing_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 51
+        }
+      ]
+    },
+    {
+      "origin_sha256": "ea5e5cf7b62a9553f98c61dd195ef9b17d9153b8fa345c86c6326a3bcc274b74",
+      "jurisdiction": "132063",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（第7次総合計画）事務事業評価シート",
+      "url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.files/fuc24b07a_e31administrative_evaluation.pdf",
+      "landing_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 46
+        }
+      ]
+    },
+    {
+      "origin_sha256": "b9edf9d94cb591d907da6a975ae66457b2d143985b23bbabda015b407f0f9867",
+      "jurisdiction": "132063",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（第7次総合計画）事務事業評価シート",
+      "url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.files/fuc24b07a_e32administrative_evaluation.pdf",
+      "landing_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 39
+        }
+      ]
+    },
+    {
+      "origin_sha256": "794c749b7d88e2f435247e6a9d5e7d5dc62b8dc544abad4e0bb4f6b2be4a636e",
+      "jurisdiction": "132063",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（第7次総合計画）事務事業評価シート",
+      "url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.files/fuc24b07a_e33administrative_evaluation.pdf",
+      "landing_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 24
+        }
+      ]
+    },
+    {
+      "origin_sha256": "3c47e0f921ffe89de65d1b011222da1a3b911e425a16f243d58349660b51c081",
+      "jurisdiction": "132063",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（第7次総合計画）事務事業評価シート",
+      "url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.files/fuc24b07a_e34administrative_evaluation.pdf",
+      "landing_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 54
+        }
+      ]
+    },
+    {
+      "origin_sha256": "fcc87568cdfd760eea27af4ba8e42fc19c4cfc9132db1b4f3a478d79c0693cdb",
+      "jurisdiction": "132063",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（第7次総合計画）事務事業評価シート",
+      "url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.files/fuc24b07a_e35administrative_evaluation.pdf",
+      "landing_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 15
+        }
+      ]
+    },
+    {
+      "origin_sha256": "cc49c553d579f57ee7fe1ffa3c400511eb02f11bdd9c0b44f12bead4b8df7d3a",
+      "jurisdiction": "132063",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（第7次総合計画）事務事業評価シート",
+      "url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.files/fuc24b07a_e36administrative_evaluation.pdf",
+      "landing_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 45
+        }
+      ]
+    },
+    {
+      "origin_sha256": "bc8de875b6511cebd9e7ad353a57737d23a98780161e930c7a25284626316ace",
+      "jurisdiction": "132063",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（第7次総合計画）事務事業評価シート",
+      "url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.files/fuc24b07a_e37administrative_evaluation.pdf",
+      "landing_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 36
+        }
+      ]
+    },
+    {
+      "origin_sha256": "9f0ec2f50bff3d3b8d56cb20e7303b8ec02f73b64cac91eaac9cb817fda2a7ad",
+      "jurisdiction": "132063",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（第7次総合計画）事務事業評価シート",
+      "url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.files/fuc24b07a_e38administrative_evaluation.pdf",
+      "landing_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 27
+        }
+      ]
+    },
+    {
+      "origin_sha256": "887bea0983037c5bfda28335cfa20e845fe9847d49d0b1142404c485e5293add",
+      "jurisdiction": "132063",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（第7次総合計画）事務事業評価シート",
+      "url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.files/fuc24b07a_e39administrative_evaluation.pdf",
+      "landing_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 57
+        }
+      ]
+    },
+    {
+      "origin_sha256": "23f57370933cae5ef2ae0b846464dfc02e4dd06ec35fbb7cc6bbc0e5663fda36",
+      "jurisdiction": "132063",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（第7次総合計画）事務事業評価シート",
+      "url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.files/fuc24b07a_e40administrative_evaluation.pdf",
+      "landing_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 60
+        }
+      ]
+    },
+    {
+      "origin_sha256": "fc5f9e8761df9c263125317af18ce2d0e901c1d59c4747f29efff4e797228c3a",
+      "jurisdiction": "132063",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（第7次総合計画）事務事業評価シート",
+      "url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.files/fuc24b07a_e41administrative_evaluation.pdf",
+      "landing_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 33
+        }
+      ]
+    },
+    {
+      "origin_sha256": "51381085329552340b97454a4b5ecb6739f72d26b3b9c16b6ed84c503669ab32",
+      "jurisdiction": "132063",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（第7次総合計画）事務事業評価シート",
+      "url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.files/fuc24b07a_e42administrative_evaluation.pdf",
+      "landing_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 51
+        }
+      ]
+    },
+    {
+      "origin_sha256": "4a17f4faea4d0d6cd9dbfa3bfb9a4ea97c3e0c9ffd20c29d2ef9ec792f21e21d",
+      "jurisdiction": "132063",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（第7次総合計画）事務事業評価シート",
+      "url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.files/fuc24b07a_e43administrative_evaluation.pdf",
+      "landing_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 60
+        }
+      ]
+    },
+    {
+      "origin_sha256": "1045dbcd1b16fd4c18d8600e494be3473ad0346999b1e3336488ee04c09f9684",
+      "jurisdiction": "132063",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（第7次総合計画）事務事業評価シート",
+      "url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.files/fuc24b07a_e44administrative_evaluation.pdf",
+      "landing_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 36
+        }
+      ]
+    },
+    {
+      "origin_sha256": "7b3fe3509cc6998ea65252e5ea20974c106e45d20bc8c79c3bef7078e36004cb",
+      "jurisdiction": "132063",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（第7次総合計画）事務事業評価シート",
+      "url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.files/fuc24b07a_e45administrative_evaluation.pdf",
+      "landing_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 27
+        }
+      ]
+    },
+    {
+      "origin_sha256": "5f64df5dea27af3ec7af14f59683ed1c43ca9ef587160a5964dd3763c6787971",
+      "jurisdiction": "132063",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（第7次総合計画）事務事業評価シート",
+      "url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.files/fuc24b07a_e46administrative_evaluation.pdf",
+      "landing_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 54
+        }
+      ]
+    },
+    {
+      "origin_sha256": "088d19a0c5674b4d6d22e3f9434957585b99bb8f82452b9f67a8aa02a887549e",
+      "jurisdiction": "132063",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（第7次総合計画）事務事業評価シート",
+      "url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.files/fuc24b07a_e47administrative_evaluation.pdf",
+      "landing_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 18
+        }
+      ]
+    },
+    {
+      "origin_sha256": "acb2eb16f3e6cc1e8ea23e53372b9f61feeb0661c5b433f009b6d69426c30ebe",
+      "jurisdiction": "132063",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（第7次総合計画）事務事業評価シート",
+      "url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.files/fuc24b07a_e48administrative_evaluation.pdf",
+      "landing_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 39
+        }
+      ]
+    },
+    {
+      "origin_sha256": "7b7f4cf92245403bbb82e0eb3da3329f2f1e03ba7375f6fad38e7ad1db79c38a",
+      "jurisdiction": "132063",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（第7次総合計画）事務事業評価シート",
+      "url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.files/fuc24b07a_e49administrative_evaluation.pdf",
+      "landing_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 45
+        }
+      ]
+    },
+    {
+      "origin_sha256": "e0f89e4988930bf2f7cc287ad6e2bea7db57c80549fa7276bdd8a2c73a80a357",
+      "jurisdiction": "132063",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（第7次総合計画）事務事業評価シート",
+      "url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.files/fuc24b07a_e50administrative_evaluation.pdf",
+      "landing_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 24
+        }
+      ]
+    },
+    {
+      "origin_sha256": "ec6418d919430c44da2d6ec65832570bd48cc08468ab1c068a1428606d2284ee",
+      "jurisdiction": "132063",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（第7次総合計画）事務事業評価シート",
+      "url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.files/fuc24b07a_e51administrative_evaluation.pdf",
+      "landing_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 6
+        }
+      ]
+    },
+    {
+      "origin_sha256": "7ca7395f01481d203199233537c6b41da82a22f2a95dccfa7ace48e0b610f706",
+      "jurisdiction": "132063",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（第7次総合計画）事務事業評価シート",
+      "url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.files/fuc24b07a_e52administrative_evaluation.pdf",
+      "landing_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 21
+        }
+      ]
+    },
+    {
+      "origin_sha256": "557bd96053e7f415b0bb4a7062bbb57634ab84163961da84b5e1405f1adcc6a3",
+      "jurisdiction": "132063",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（第7次総合計画）事務事業評価シート",
+      "url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.files/fuc24b07a_e53administrative_evaluation.pdf",
+      "landing_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 46
+        }
+      ]
+    },
+    {
+      "origin_sha256": "3f420dea993097dc851cdfab9ce75ef37af7b87cdc433e9386a4403e831d70a5",
+      "jurisdiction": "132063",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（第7次総合計画）事務事業評価シート",
+      "url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.files/fuc24b07a_e54administrative_evaluation.pdf",
+      "landing_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 42
+        }
+      ]
+    },
+    {
+      "origin_sha256": "a3ffe9fa9c58949378d71f57ab08a1c3812bd31435b3201e22b7497e762cdc69",
+      "jurisdiction": "132063",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（第7次総合計画）事務事業評価シート",
+      "url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.files/fuc24b07a_e55administrative_evaluation.pdf",
+      "landing_url": "http://www.city.fuchu.tokyo.jp/gyosei/kekaku/kekaku/gyosei/gyosehyoka/R5gyouseihyouka.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 27
         }
       ]
     },
@@ -4496,6 +6680,118 @@
       ]
     },
     {
+      "origin_sha256": "d9512385dba5cdfff86c61238f0dae746ed3751648b889e1dfd9b0db82aa3ac4",
+      "jurisdiction": "132071",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価シート（8分野、令和5年度実施事業）",
+      "url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/408/1annzennannsinn.pdf",
+      "landing_url": "https://www.city.akishima.lg.jp/shisei/seisaku/1005384/1005399/1005407/1005408.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 13
+        }
+      ]
+    },
+    {
+      "origin_sha256": "d3810b702af79d5f0c843cba8d47ec1f52a3d86ba1027f68d1f763edaf39be3e",
+      "jurisdiction": "132071",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価シート（8分野、令和5年度実施事業）",
+      "url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/408/2sasaeaisonntyou.pdf",
+      "landing_url": "https://www.city.akishima.lg.jp/shisei/seisaku/1005384/1005399/1005407/1005408.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 25
+        }
+      ]
+    },
+    {
+      "origin_sha256": "aad82bc9237d838ab7b193657d7bdb2d44efa71003852d4082e1efd67dfd4e49",
+      "jurisdiction": "132071",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価シート（8分野、令和5年度実施事業）",
+      "url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/408/3miraiwoninau.pdf",
+      "landing_url": "https://www.city.akishima.lg.jp/shisei/seisaku/1005384/1005399/1005407/1005408.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 31
+        }
+      ]
+    },
+    {
+      "origin_sha256": "960bf6f8dfdbf938cb34c519522a4424aaa77f99b33b395f0f507fb08c8b4345",
+      "jurisdiction": "132071",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価シート（8分野、令和5年度実施事業）",
+      "url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/408/4bunnkageijutu.pdf",
+      "landing_url": "https://www.city.akishima.lg.jp/shisei/seisaku/1005384/1005399/1005407/1005408.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 17
+        }
+      ]
+    },
+    {
+      "origin_sha256": "557665a395022fda70af358f36fd596271434a954156c3a9be23fe51437fff3f",
+      "jurisdiction": "132071",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価シート（8分野、令和5年度実施事業）",
+      "url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/408/5kannkyouhuka.pdf",
+      "landing_url": "https://www.city.akishima.lg.jp/shisei/seisaku/1005384/1005399/1005407/1005408.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 10
+        }
+      ]
+    },
+    {
+      "origin_sha256": "8f888c4fee640d69bab3fa78b5220da5357f3d46d1cb2479a3f423ec274e80ff",
+      "jurisdiction": "132071",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価シート（8分野、令和5年度実施事業）",
+      "url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/408/6kaitekiribenn.pdf",
+      "landing_url": "https://www.city.akishima.lg.jp/shisei/seisaku/1005384/1005399/1005407/1005408.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 14
+        }
+      ]
+    },
+    {
+      "origin_sha256": "5471331d5a9178b617497ea7fb40ca89767bac740d5200e7ee5cb47c332a51c4",
+      "jurisdiction": "132071",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価シート（8分野、令和5年度実施事業）",
+      "url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/408/7seikatuwosasae.pdf",
+      "landing_url": "https://www.city.akishima.lg.jp/shisei/seisaku/1005384/1005399/1005407/1005408.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 20
+        }
+      ]
+    },
+    {
+      "origin_sha256": "999d28e8b472d535731035758883014d03e65d9d150dbaa0b129921ee35cd7ac",
+      "jurisdiction": "132071",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価シート（8分野、令和5年度実施事業）",
+      "url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/408/8keikakujitugenn.pdf",
+      "landing_url": "https://www.city.akishima.lg.jp/shisei/seisaku/1005384/1005399/1005407/1005408.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 7
+        }
+      ]
+    },
+    {
       "origin_sha256": "38a02f3a55c2e036fa104a8400719dac90dbf774ecf9ee106bbb884bfaac6e44",
       "jurisdiction": "132071",
       "fiscal_year": 2024,
@@ -4604,6 +6900,1140 @@
         {
           "start": 1,
           "end": 7
+        }
+      ]
+    },
+    {
+      "origin_sha256": "9349344f8fae8de0b8df09f769e4aeea7d8e57dbb9960d824d4d8248e82c23a4",
+      "jurisdiction": "132080",
+      "fiscal_year": 2023,
+      "title": "令和6年度 施策・事務事業マネジメントシート（令和5年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/12799/30-01_r5sesku01.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010010/p000399.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "581d5406b2f59caa51477ffcf657aaaf9ac448a8fa7103fddac96cd1a22c4677",
+      "jurisdiction": "132080",
+      "fiscal_year": 2023,
+      "title": "令和6年度 施策・事務事業マネジメントシート（令和5年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/12799/30-02_r5sesaku02.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010010/p000399.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "b631d3cc560e23cc0259f86d26c37c553a3f05d5941bf03a569fcaa36ddc3313",
+      "jurisdiction": "132080",
+      "fiscal_year": 2023,
+      "title": "令和6年度 施策・事務事業マネジメントシート（令和5年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/12799/30-03_r5sesaku03.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010010/p000399.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "05d4be323ce3a53617c96034376bc72eb83632ce5d6294ccc5d97d1c827ca17d",
+      "jurisdiction": "132080",
+      "fiscal_year": 2023,
+      "title": "令和6年度 施策・事務事業マネジメントシート（令和5年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/12799/30-04_r5sesaku04.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010010/p000399.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 4
+        }
+      ]
+    },
+    {
+      "origin_sha256": "a45e2d983fe04ba3ce3adcc2e2cec266f9a84b79b00c9aa0ae313fbf7e6e43b8",
+      "jurisdiction": "132080",
+      "fiscal_year": 2023,
+      "title": "令和6年度 施策・事務事業マネジメントシート（令和5年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/12799/30-05_r5sesaku05.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010010/p000399.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "2849b6030a003f23316b76eef0e8dc8dd28f3d71166a836923b6f34eedfe8194",
+      "jurisdiction": "132080",
+      "fiscal_year": 2023,
+      "title": "令和6年度 施策・事務事業マネジメントシート（令和5年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/12799/30-06_r5sesaku06.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010010/p000399.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "5334e460d34759cb66c72009c225e16729f32b7acd69bd2a1d75a3643956ed37",
+      "jurisdiction": "132080",
+      "fiscal_year": 2023,
+      "title": "令和6年度 施策・事務事業マネジメントシート（令和5年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/12799/30-07_r5sesaku07.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010010/p000399.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "f57d9b3e043face19c0da27fa4262be1e1bcd540ad589e5cd23a9d7f9c55f4ec",
+      "jurisdiction": "132080",
+      "fiscal_year": 2023,
+      "title": "令和6年度 施策・事務事業マネジメントシート（令和5年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/12799/30-08_r5sesaku08.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010010/p000399.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "2fb7367142130a31ee58fa9253956bdc4b1dfaaaee598e844a685f0a89ec395e",
+      "jurisdiction": "132080",
+      "fiscal_year": 2023,
+      "title": "令和6年度 施策・事務事業マネジメントシート（令和5年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/12799/30-09_r5sesaku09.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010010/p000399.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "6b76e439cd804ac3ffec11b15a9905d5e4a1326da53f81ebc06bbb3adfa5cd82",
+      "jurisdiction": "132080",
+      "fiscal_year": 2023,
+      "title": "令和6年度 施策・事務事業マネジメントシート（令和5年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/12799/30-10_r5sesaku10.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010010/p000399.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "458e24affe7a49c60e09ccdbd52c6d4c53138c8eadd3137914f0527325360853",
+      "jurisdiction": "132080",
+      "fiscal_year": 2023,
+      "title": "令和6年度 施策・事務事業マネジメントシート（令和5年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/12799/30-11_r5sesaku11.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010010/p000399.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "eea1ae0098730c672f66b4876f0c25487c347a83a183c90352dccd6226b85ca3",
+      "jurisdiction": "132080",
+      "fiscal_year": 2023,
+      "title": "令和6年度 施策・事務事業マネジメントシート（令和5年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/12799/30-12_r5sesaku12.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010010/p000399.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "86dffb9e2276b28d2920461c55d7229c130d1cd8cc2d7d3f02df9adfe5943699",
+      "jurisdiction": "132080",
+      "fiscal_year": 2023,
+      "title": "令和6年度 施策・事務事業マネジメントシート（令和5年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/12799/30-13_r5sesaku13.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010010/p000399.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "fb9bcfbd45408f07b3c18f3598844263bd482e56e54ed29dffd0eb686ba3ff3b",
+      "jurisdiction": "132080",
+      "fiscal_year": 2023,
+      "title": "令和6年度 施策・事務事業マネジメントシート（令和5年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/12799/30-14_r5sesaku14.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010010/p000399.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "210356c9518f954cfc51226e94d5c27929ba2d69cc0bc1fea68be2f380fc2943",
+      "jurisdiction": "132080",
+      "fiscal_year": 2023,
+      "title": "令和6年度 施策・事務事業マネジメントシート（令和5年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/12799/30-15_r5sesaku15.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010010/p000399.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "50543a8acc5be8c6cec793f58cb644800bc23dd5748e57854877850c9e23179d",
+      "jurisdiction": "132080",
+      "fiscal_year": 2023,
+      "title": "令和6年度 施策・事務事業マネジメントシート（令和5年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/12799/30-17_r5sesaku17.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010010/p000399.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "a7db2176b17480b56f45fc6979c342cd937eced09648c698eba0a597dc0e7c77",
+      "jurisdiction": "132080",
+      "fiscal_year": 2023,
+      "title": "令和6年度 施策・事務事業マネジメントシート（令和5年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/12799/30-18_r5sesaku18.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010010/p000399.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "fb7ecc7c86a9dfcd854854cba7df95771c6eb69ab9d583e5b7279120d5d39232",
+      "jurisdiction": "132080",
+      "fiscal_year": 2023,
+      "title": "令和6年度 施策・事務事業マネジメントシート（令和5年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/12799/30-19_r5sesaku19.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010010/p000399.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "118039919b5ed1852d67adfa651a769798998218cd102db10497803ba7d01bab",
+      "jurisdiction": "132080",
+      "fiscal_year": 2023,
+      "title": "令和6年度 施策・事務事業マネジメントシート（令和5年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/12799/30-20_r5sesaku20.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010010/p000399.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "9f23a27b90453dfc1bdb600bdb5f0b3e2c92cbc6b478aa52dc7656fed74dc412",
+      "jurisdiction": "132080",
+      "fiscal_year": 2023,
+      "title": "令和6年度 施策・事務事業マネジメントシート（令和5年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/12799/30-21_r5sesaku21.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010010/p000399.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "5a875fbc8bae0477b91b3a68ee3c59ef861615925600fef28f01f6d9cdda2a5c",
+      "jurisdiction": "132080",
+      "fiscal_year": 2023,
+      "title": "令和6年度 施策・事務事業マネジメントシート（令和5年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/12799/30-22_r5sesaku22.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010010/p000399.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "c8c70d0aa7719dd83e0b4e83cbbdd5af8d127c907a8d6cf2caf8afe626a9758a",
+      "jurisdiction": "132080",
+      "fiscal_year": 2023,
+      "title": "令和6年度 施策・事務事業マネジメントシート（令和5年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/12799/30-23_r5sesaku23.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010010/p000399.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "d0108f009b0a51eb0c12da7b27c14306a97d215c85ffe7ad9b55e84ce3ea2faa",
+      "jurisdiction": "132080",
+      "fiscal_year": 2023,
+      "title": "令和6年度 施策・事務事業マネジメントシート（令和5年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/12799/30-24_r5sesaku24.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010010/p000399.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "d1875921def6f069b307ba003f8bfb87f525cb3263be5e1f95a34d2ce43d48a8",
+      "jurisdiction": "132080",
+      "fiscal_year": 2023,
+      "title": "令和6年度 施策・事務事業マネジメントシート（令和5年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/12799/30-25_r5sesaku25.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010010/p000399.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "f502ed0213398827526a4151d3eccc652712373b7407a0bab42649cf1e10acb0",
+      "jurisdiction": "132080",
+      "fiscal_year": 2023,
+      "title": "令和6年度 施策・事務事業マネジメントシート（令和5年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/12799/30-26_r5sesaku26.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010010/p000399.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "8411199a4d1ab250556d355267b5ddb8b223c554be2edbc46f0445a95a05f8d1",
+      "jurisdiction": "132080",
+      "fiscal_year": 2023,
+      "title": "令和6年度 施策・事務事業マネジメントシート（令和5年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/12799/30-27_r5sesaku27.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010010/p000399.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "a86f13088195124764087a33ba37748278a3b7a1461ac7121fc3dd1dd01be98b",
+      "jurisdiction": "132080",
+      "fiscal_year": 2023,
+      "title": "令和6年度 施策・事務事業マネジメントシート（令和5年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/12799/30-28_r5sesaku28.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010010/p000399.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "bb69473ca9840f40485124ab6e66426a8d713fb31a4ae5865acc518fe753acf2",
+      "jurisdiction": "132080",
+      "fiscal_year": 2023,
+      "title": "令和6年度 施策・事務事業マネジメントシート（令和5年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/12799/30-29_r5sesaku29.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010010/p000399.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "2fcfa9ad9a09ea608c5b1ce8fa84bb67ae793d40a75779bdfb12726c0fe89afc",
+      "jurisdiction": "132080",
+      "fiscal_year": 2023,
+      "title": "令和6年度 施策・事務事業マネジメントシート（令和5年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/12799/30-30_r5sesaku30.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010010/p000399.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "0095800c642cb9cb3a7f3d498315ec589f57084036b5dea7d6e5b6b1283cf38d",
+      "jurisdiction": "132080",
+      "fiscal_year": 2023,
+      "title": "令和6年度 施策・事務事業マネジメントシート（令和5年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/12799/30-16_r6sesaku16.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010010/p000399.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "556d49e97888609f38f9b2bc01bf3a8cc119093a9743c912bb6abfa6258ceb09",
+      "jurisdiction": "132080",
+      "fiscal_year": 2024,
+      "title": "令和7年度 施策・事務事業マネジメントシート（令和6年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-1.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010050/p000436.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 4
+        }
+      ]
+    },
+    {
+      "origin_sha256": "85d75d79b19ae04170cfed2cb2566bdd18de14d2e86889860eee7539f86937c4",
+      "jurisdiction": "132080",
+      "fiscal_year": 2024,
+      "title": "令和7年度 施策・事務事業マネジメントシート（令和6年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-2.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010050/p000436.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "ae8945d2a1a3509b82cd440465b5ff5a839f82d58c3e756e5ccb8ffdc8df0cc2",
+      "jurisdiction": "132080",
+      "fiscal_year": 2024,
+      "title": "令和7年度 施策・事務事業マネジメントシート（令和6年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-3.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010050/p000436.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "3a41b49b1a78d3b65d7958ba3fcc74b56c3af1afbe612cd10d7cf72d1274b2cb",
+      "jurisdiction": "132080",
+      "fiscal_year": 2024,
+      "title": "令和7年度 施策・事務事業マネジメントシート（令和6年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-4.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010050/p000436.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 5
+        }
+      ]
+    },
+    {
+      "origin_sha256": "936abbee6f9671506ee51655e3f2309771f05cf17db4834aa35f3fd37e1377d8",
+      "jurisdiction": "132080",
+      "fiscal_year": 2024,
+      "title": "令和7年度 施策・事務事業マネジメントシート（令和6年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-5.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010050/p000436.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "fb8a6ee4c92a7170480db4f29f7d4de6cf6951aa030c132e13e90e1083ab0b01",
+      "jurisdiction": "132080",
+      "fiscal_year": 2024,
+      "title": "令和7年度 施策・事務事業マネジメントシート（令和6年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-6.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010050/p000436.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "4b6b2e3ea91a65712e95b4b9222842619bb3c83f3949d5c6d14f5046a593dc2b",
+      "jurisdiction": "132080",
+      "fiscal_year": 2024,
+      "title": "令和7年度 施策・事務事業マネジメントシート（令和6年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-7.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010050/p000436.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "300052fe486e338edfda2aa7b6140967c92acc3afa6d00bebfce91ebb6f2051b",
+      "jurisdiction": "132080",
+      "fiscal_year": 2024,
+      "title": "令和7年度 施策・事務事業マネジメントシート（令和6年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-8.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010050/p000436.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "d067305f7d79e5d1409a92e2a6f72c5fc8dd89c470d704555e7096fa9eb644e1",
+      "jurisdiction": "132080",
+      "fiscal_year": 2024,
+      "title": "令和7年度 施策・事務事業マネジメントシート（令和6年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-9.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010050/p000436.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "fa8cf6834134828b3439d12bc0d5633ed0a508ac158397762c966bd5e52c2b45",
+      "jurisdiction": "132080",
+      "fiscal_year": 2024,
+      "title": "令和7年度 施策・事務事業マネジメントシート（令和6年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-10.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010050/p000436.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "40a688a0a88bb6372f7586775eb912280dae7ed4767e1268fc432e8cfdcdff33",
+      "jurisdiction": "132080",
+      "fiscal_year": 2024,
+      "title": "令和7年度 施策・事務事業マネジメントシート（令和6年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-11.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010050/p000436.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "bebad7c4bb13f02dbe641fd0d393fca5cf0e46fe828853434fa23566ffcdabf4",
+      "jurisdiction": "132080",
+      "fiscal_year": 2024,
+      "title": "令和7年度 施策・事務事業マネジメントシート（令和6年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-12.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010050/p000436.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "c414c8d033d30ec0abfb7132105d656dc9b3767283726d387b32406db6b042c3",
+      "jurisdiction": "132080",
+      "fiscal_year": 2024,
+      "title": "令和7年度 施策・事務事業マネジメントシート（令和6年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-13.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010050/p000436.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "584f2c4fc54bc6aa8520acc70ba54cd79936268add6d4ae601c96983e7bb8f6e",
+      "jurisdiction": "132080",
+      "fiscal_year": 2024,
+      "title": "令和7年度 施策・事務事業マネジメントシート（令和6年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-14.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010050/p000436.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "696e11e8cf96b93eb240d9ab2022e154192d0d7afaca6a4aab27a9cf091c8a80",
+      "jurisdiction": "132080",
+      "fiscal_year": 2024,
+      "title": "令和7年度 施策・事務事業マネジメントシート（令和6年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-15.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010050/p000436.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "7e636ff38f981fe9e3c3b6eb3aa0bca6f3d6982cd99b8b1ea74139e9e946b2de",
+      "jurisdiction": "132080",
+      "fiscal_year": 2024,
+      "title": "令和7年度 施策・事務事業マネジメントシート（令和6年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-16.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010050/p000436.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "67ecdea1fceb8bcedc50f97bba0c7cba8402fda974ac8cdad625860c474c695f",
+      "jurisdiction": "132080",
+      "fiscal_year": 2024,
+      "title": "令和7年度 施策・事務事業マネジメントシート（令和6年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-17.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010050/p000436.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "9dd1a8203bed4f1babbee8294aec09fbf763d765955d6ecc6e80dfa931335291",
+      "jurisdiction": "132080",
+      "fiscal_year": 2024,
+      "title": "令和7年度 施策・事務事業マネジメントシート（令和6年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-18.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010050/p000436.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "c4074a62ec074af774491c7b92927cc500d6559b4557c2fc65cf6ed3355fd46a",
+      "jurisdiction": "132080",
+      "fiscal_year": 2024,
+      "title": "令和7年度 施策・事務事業マネジメントシート（令和6年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-19.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010050/p000436.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "bfdd5f2044b2700c082f48f295c9dcf87affcffc0cb5bf0c21caae7db1bb77df",
+      "jurisdiction": "132080",
+      "fiscal_year": 2024,
+      "title": "令和7年度 施策・事務事業マネジメントシート（令和6年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-20.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010050/p000436.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "87408783fb5296d8f885b6b904b7a7b0a1003277830aff807f19744da79aa1b5",
+      "jurisdiction": "132080",
+      "fiscal_year": 2024,
+      "title": "令和7年度 施策・事務事業マネジメントシート（令和6年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-21.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010050/p000436.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "d39055a1e02edceda290e227479d64b5091965d20b7f9ea448a47bd2acb5a350",
+      "jurisdiction": "132080",
+      "fiscal_year": 2024,
+      "title": "令和7年度 施策・事務事業マネジメントシート（令和6年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-22.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010050/p000436.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "df52f0447879f3bf9a5ae5f90db39655c7fab4f70f576a91350030757272587c",
+      "jurisdiction": "132080",
+      "fiscal_year": 2024,
+      "title": "令和7年度 施策・事務事業マネジメントシート（令和6年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-23.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010050/p000436.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "4d863d93d38601504c9d51e5fce91c90544bf1880e4063d8a7ea49537cec9f7d",
+      "jurisdiction": "132080",
+      "fiscal_year": 2024,
+      "title": "令和7年度 施策・事務事業マネジメントシート（令和6年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-24.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010050/p000436.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "0cfa0eba3f9404d598a79967c4df58eec5659dcaf32d6bcaf2d2aaa83be11cdb",
+      "jurisdiction": "132080",
+      "fiscal_year": 2024,
+      "title": "令和7年度 施策・事務事業マネジメントシート（令和6年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-25.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010050/p000436.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "30c3761ecb1e4d4ef119bd9f627e49aac5fef3a22c36d5cd7d2feedb59e9ca26",
+      "jurisdiction": "132080",
+      "fiscal_year": 2024,
+      "title": "令和7年度 施策・事務事業マネジメントシート（令和6年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-26.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010050/p000436.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "db578dbd0ecbca85f5f5a6076e6cdd57c4054ee4ecd57608b87af48810883f86",
+      "jurisdiction": "132080",
+      "fiscal_year": 2024,
+      "title": "令和7年度 施策・事務事業マネジメントシート（令和6年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-27.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010050/p000436.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "4de467c3477fa5d3c02c3ffed693c55eae132ffaf53a9eda2bf9d3cdf63401dc",
+      "jurisdiction": "132080",
+      "fiscal_year": 2024,
+      "title": "令和7年度 施策・事務事業マネジメントシート（令和6年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-28.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010050/p000436.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "a25b20546a88e3600905dda730a5e5e2b256e72ca86d77543f18d441f64800e4",
+      "jurisdiction": "132080",
+      "fiscal_year": 2024,
+      "title": "令和7年度 施策・事務事業マネジメントシート（令和6年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-29.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010050/p000436.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "fa3be33acbd6764b2d7e0d756d0e61331f63f9b76874995c9fa61d9b92ebfd68",
+      "jurisdiction": "132080",
+      "fiscal_year": 2024,
+      "title": "令和7年度 施策・事務事業マネジメントシート（令和6年度取組実績、30施策）",
+      "url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-30.pdf",
+      "landing_url": "https://www.city.chofu.lg.jp/010050/p000436.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "863c6a015c4ec37e1d1020193d6362bc3adb6fb9e1051d615f0da136872eb570",
+      "jurisdiction": "132098",
+      "fiscal_year": 2023,
+      "title": "令和5年度（2023年度）町田市課別・事業別行政評価シート（主要な施策の成果に関する説明書）",
+      "url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_zenhan.files/04_2023kodomo_zenhan.pdf",
+      "landing_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_zenhan.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 39
+        }
+      ]
+    },
+    {
+      "origin_sha256": "620e108742e6df2281fdc2d8e7a0f554aac48eb78b41b8ed8fa051825154bde9",
+      "jurisdiction": "132098",
+      "fiscal_year": 2023,
+      "title": "令和5年度（2023年度）町田市課別・事業別行政評価シート（主要な施策の成果に関する説明書）",
+      "url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_zenhan.files/04_2023kodomo_kouhan.pdf",
+      "landing_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_zenhan.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 19
+        }
+      ]
+    },
+    {
+      "origin_sha256": "90aed7acb8c9cafbaf0892ceabf8389ecb30a39e3c34b8d1a977fb555ec12f22",
+      "jurisdiction": "132098",
+      "fiscal_year": 2023,
+      "title": "令和5年度（2023年度）町田市課別・事業別行政評価シート（主要な施策の成果に関する説明書）",
+      "url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_zenhan.files/05_2023gakkou_zenhan.pdf",
+      "landing_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_zenhan.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 27
+        }
+      ]
+    },
+    {
+      "origin_sha256": "5ec7a388cc5e25b6dfc92494ed068822b8b3a2a479ca27e19d72020b5a34b9f3",
+      "jurisdiction": "132098",
+      "fiscal_year": 2023,
+      "title": "令和5年度（2023年度）町田市課別・事業別行政評価シート（主要な施策の成果に関する説明書）",
+      "url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_zenhan.files/05_2023gakkou_kouhan.pdf",
+      "landing_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_zenhan.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 15
+        }
+      ]
+    },
+    {
+      "origin_sha256": "3b7354c5abdade7675ce6bf458db31c0c7e0a9a92c28576bd3b739fb5c00751e",
+      "jurisdiction": "132098",
+      "fiscal_year": 2023,
+      "title": "令和5年度（2023年度）町田市課別・事業別行政評価シート（主要な施策の成果に関する説明書）",
+      "url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_zenhan.files/06_2023syougaigakusyuu.pdf",
+      "landing_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_zenhan.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 32
+        }
+      ]
+    },
+    {
+      "origin_sha256": "11356fae0bec848c69eb3d417b4d5fc87ae801b3c44d177afae0842a71b2eb78",
+      "jurisdiction": "132098",
+      "fiscal_year": 2023,
+      "title": "令和5年度（2023年度）町田市課別・事業別行政評価シート（主要な施策の成果に関する説明書）",
+      "url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_zenhan.files/07_2023tiiki.pdf",
+      "landing_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_zenhan.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 28
+        }
+      ]
+    },
+    {
+      "origin_sha256": "a03c20e7560790d98c5134b26bcaa5933756d00edc58e7386bce208200068e1e",
+      "jurisdiction": "132098",
+      "fiscal_year": 2023,
+      "title": "令和5年度（2023年度）町田市課別・事業別行政評価シート（主要な施策の成果に関する説明書）",
+      "url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_zenhan.files/08_2023ikiiki.pdf",
+      "landing_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_zenhan.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 32
+        }
+      ]
+    },
+    {
+      "origin_sha256": "f17f79abb0f5121affaff11415076376055a0ba18776522f31ed40b132f53553",
+      "jurisdiction": "132098",
+      "fiscal_year": 2023,
+      "title": "令和5年度（2023年度）町田市課別・事業別行政評価シート（主要な施策の成果に関する説明書）",
+      "url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_zenhan.files/09_2023hokenjo.pdf",
+      "landing_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_zenhan.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 22
+        }
+      ]
+    },
+    {
+      "origin_sha256": "d4230f29e5eb1e30230bddea6ce00b972ede2eecaf8ef88918e16ac40807e721",
+      "jurisdiction": "132098",
+      "fiscal_year": 2023,
+      "title": "令和5年度（2023年度）町田市課別・事業別行政評価シート（主要な施策の成果に関する説明書）",
+      "url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_zenhan.files/10_2023bunsupo.pdf",
+      "landing_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_zenhan.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 28
+        }
+      ]
+    },
+    {
+      "origin_sha256": "9fa8de1c1f266b13e1f8496f807a64be6f5c2b91c17d81b17804493e4fd52229",
+      "jurisdiction": "132098",
+      "fiscal_year": 2023,
+      "title": "令和5年度（2023年度）町田市課別・事業別行政評価シート（主要な施策の成果に関する説明書）",
+      "url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_zenhan.files/11_2023keizai.pdf",
+      "landing_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_zenhan.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 30
+        }
+      ]
+    },
+    {
+      "origin_sha256": "712b91e4423f640071e481bd5c5960cfe3e8ae39f8f72405de9af50a84af39b8",
+      "jurisdiction": "132098",
+      "fiscal_year": 2023,
+      "title": "令和5年度（2023年度）町田市課別・事業別行政評価シート（主要な施策の成果に関する説明書）",
+      "url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_kouhan.files/12_2023siminbu_zenhan.pdf",
+      "landing_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_zenhan.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 27
+        }
+      ]
+    },
+    {
+      "origin_sha256": "592b06ac932cc42bc64863f72287391986222d8e215b474d5633895b70f06d40",
+      "jurisdiction": "132098",
+      "fiscal_year": 2023,
+      "title": "令和5年度（2023年度）町田市課別・事業別行政評価シート（主要な施策の成果に関する説明書）",
+      "url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_kouhan.files/12_2023siminbu_kouhan.pdf",
+      "landing_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_zenhan.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 19
+        }
+      ]
+    },
+    {
+      "origin_sha256": "8daf068fe18ca2d660e11e8ab97011f4e91214e6b79ac55ffb21e6c11b7a4e16",
+      "jurisdiction": "132098",
+      "fiscal_year": 2023,
+      "title": "令和5年度（2023年度）町田市課別・事業別行政評価シート（主要な施策の成果に関する説明書）",
+      "url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_kouhan.files/13_2023bousai.pdf",
+      "landing_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_zenhan.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 12
+        }
+      ]
+    },
+    {
+      "origin_sha256": "6f97247e0bf01cdd1fc58b7d1bd8c2809ee0e6739ceff4092e6ba6445b629076",
+      "jurisdiction": "132098",
+      "fiscal_year": 2023,
+      "title": "令和5年度（2023年度）町田市課別・事業別行政評価シート（主要な施策の成果に関する説明書）",
+      "url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_kouhan.files/14_2023kankyou.pdf",
+      "landing_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_zenhan.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 20
+        }
+      ]
+    },
+    {
+      "origin_sha256": "4c01cc218a474f2e15c01fa4e45231305ca8788856871d4c68af2ef8f4f2673e",
+      "jurisdiction": "132098",
+      "fiscal_year": 2023,
+      "title": "令和5年度（2023年度）町田市課別・事業別行政評価シート（主要な施策の成果に関する説明書）",
+      "url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_kouhan.files/15_2023douro.pdf",
+      "landing_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_zenhan.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 18
+        }
+      ]
+    },
+    {
+      "origin_sha256": "1c6e75be2a05656105ffb498b1e35094cca45d56d26d6ab8d28394ba210f0dd5",
+      "jurisdiction": "132098",
+      "fiscal_year": 2023,
+      "title": "令和5年度（2023年度）町田市課別・事業別行政評価シート（主要な施策の成果に関する説明書）",
+      "url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_kouhan.files/16_2023toshi.pdf",
+      "landing_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_zenhan.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 36
+        }
+      ]
+    },
+    {
+      "origin_sha256": "eefb8c1b7e44b8d5e8d3772798f4f8b466aaccde542d70ec523ec4e196d97258",
+      "jurisdiction": "132098",
+      "fiscal_year": 2023,
+      "title": "令和5年度（2023年度）町田市課別・事業別行政評価シート（主要な施策の成果に関する説明書）",
+      "url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_kouhan.files/17_2023gesui.pdf",
+      "landing_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_zenhan.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 8
+        }
+      ]
+    },
+    {
+      "origin_sha256": "5ce5ba277575531b89ec8a854dc0a359f01e03873df4facac03376da2ee6f242",
+      "jurisdiction": "132098",
+      "fiscal_year": 2023,
+      "title": "令和5年度（2023年度）町田市課別・事業別行政評価シート（主要な施策の成果に関する説明書）",
+      "url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_kouhan.files/18_2023seisaku.pdf",
+      "landing_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_zenhan.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 20
+        }
+      ]
+    },
+    {
+      "origin_sha256": "70767f9247ff33f97dac828c248845b0e1cc9a3729f795e2120e2a40d765b43b",
+      "jurisdiction": "132098",
+      "fiscal_year": 2023,
+      "title": "令和5年度（2023年度）町田市課別・事業別行政評価シート（主要な施策の成果に関する説明書）",
+      "url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_kouhan.files/19_2023soumu.pdf",
+      "landing_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_zenhan.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 20
+        }
+      ]
+    },
+    {
+      "origin_sha256": "7d67a030270d4fa736a32ce2c8ed654c83ed0f7511c35c120e4eb0aa7779aded",
+      "jurisdiction": "132098",
+      "fiscal_year": 2023,
+      "title": "令和5年度（2023年度）町田市課別・事業別行政評価シート（主要な施策の成果に関する説明書）",
+      "url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_kouhan.files/20_2023zaimu.pdf",
+      "landing_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_zenhan.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 24
+        }
+      ]
+    },
+    {
+      "origin_sha256": "1e9076b6374bbd7556d0b8862ae6f023bf2bd850e7d205f912e71ba5f0db4ed0",
+      "jurisdiction": "132098",
+      "fiscal_year": 2023,
+      "title": "令和5年度（2023年度）町田市課別・事業別行政評価シート（主要な施策の成果に関する説明書）",
+      "url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_kouhan.files/21_2023gyousei.pdf",
+      "landing_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/shin_ko-kaikei/kessan/2023_gyouseihyouka_zenhan.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 9
         }
       ]
     },
@@ -5182,6 +8612,188 @@
       ]
     },
     {
+      "origin_sha256": "55b6bd3609d3d5ba71c3e372b63212f11d70603d3b59dfe0bdcebec11fd3be51",
+      "jurisdiction": "132144",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（令和5年度実績、13部署）",
+      "url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/01gikai.pdf",
+      "landing_url": "https://www.city.kokubunji.tokyo.jp/shisei/houshin/shiryou/1020308/1034122.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 6
+        }
+      ]
+    },
+    {
+      "origin_sha256": "24716060a5586c4db5c7d11195dc31e07565b1733c5ac39bed5303c37f0162d0",
+      "jurisdiction": "132144",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（令和5年度実績、13部署）",
+      "url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/02seisaku.pdf",
+      "landing_url": "https://www.city.kokubunji.tokyo.jp/shisei/houshin/shiryou/1020308/1034122.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 54
+        }
+      ]
+    },
+    {
+      "origin_sha256": "5d66951950e348a23b3957077d9538aaeec63b5357c1267b4186fe21c709d7cf",
+      "jurisdiction": "132144",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（令和5年度実績、13部署）",
+      "url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/03soumu.pdf",
+      "landing_url": "https://www.city.kokubunji.tokyo.jp/shisei/houshin/shiryou/1020308/1034122.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 52
+        }
+      ]
+    },
+    {
+      "origin_sha256": "6e5783dda22915aaca18b63a9a678c25fc1f2a2047f96a902a0cc9edab4a3c84",
+      "jurisdiction": "132144",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（令和5年度実績、13部署）",
+      "url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/04simin.pdf",
+      "landing_url": "https://www.city.kokubunji.tokyo.jp/shisei/houshin/shiryou/1020308/1034122.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 65
+        }
+      ]
+    },
+    {
+      "origin_sha256": "97d454751b9f6cb4fa5edacbe928432cecd549cb2b84d0f0076621fcef2d3f73",
+      "jurisdiction": "132144",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（令和5年度実績、13部署）",
+      "url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/05kenko.pdf",
+      "landing_url": "https://www.city.kokubunji.tokyo.jp/shisei/houshin/shiryou/1020308/1034122.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 98
+        }
+      ]
+    },
+    {
+      "origin_sha256": "4847c40cde2ce93fa46d34e17f0a8dc547a6ef6d3a17d9aebccf06339aa6f711",
+      "jurisdiction": "132144",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（令和5年度実績、13部署）",
+      "url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/06hukusi.pdf",
+      "landing_url": "https://www.city.kokubunji.tokyo.jp/shisei/houshin/shiryou/1020308/1034122.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 158
+        }
+      ]
+    },
+    {
+      "origin_sha256": "e62df5577aba07561d7a59e6e71cf2ab403f061443df8f7213e5c09194e2d27f",
+      "jurisdiction": "132144",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（令和5年度実績、13部署）",
+      "url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/07kodomo.pdf",
+      "landing_url": "https://www.city.kokubunji.tokyo.jp/shisei/houshin/shiryou/1020308/1034122.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 86
+        }
+      ]
+    },
+    {
+      "origin_sha256": "67a93c586ad299c405bce61b19b602213800d7688b60840096702e25892c4a72",
+      "jurisdiction": "132144",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（令和5年度実績、13部署）",
+      "url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/08matidukuri.pdf",
+      "landing_url": "https://www.city.kokubunji.tokyo.jp/shisei/houshin/shiryou/1020308/1034122.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 24
+        }
+      ]
+    },
+    {
+      "origin_sha256": "9be35cc486be8de850c6c3a8a3d778cb72053214b5ea4d524a6447c9797ae375",
+      "jurisdiction": "132144",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（令和5年度実績、13部署）",
+      "url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/09kensetu.pdf",
+      "landing_url": "https://www.city.kokubunji.tokyo.jp/shisei/houshin/shiryou/1020308/1034122.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 52
+        }
+      ]
+    },
+    {
+      "origin_sha256": "c4bd4312615da3d862a4a41655b7cee72578ed73475952b1cd290c81e666eca3",
+      "jurisdiction": "132144",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（令和5年度実績、13部署）",
+      "url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/10kaikei.pdf",
+      "landing_url": "https://www.city.kokubunji.tokyo.jp/shisei/houshin/shiryou/1020308/1034122.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 5
+        }
+      ]
+    },
+    {
+      "origin_sha256": "2a468f8d7edfcf649f6ab00a282175ef729f9261fb4db626c34d431cc47ab3c8",
+      "jurisdiction": "132144",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（令和5年度実績、13部署）",
+      "url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/11senkan.pdf",
+      "landing_url": "https://www.city.kokubunji.tokyo.jp/shisei/houshin/shiryou/1020308/1034122.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 8
+        }
+      ]
+    },
+    {
+      "origin_sha256": "a3e11178749ca2999fba0892f42ec72d1c3015b9a9bbe995871c8cda39a0d0cd",
+      "jurisdiction": "132144",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（令和5年度実績、13部署）",
+      "url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/12kansa.pdf",
+      "landing_url": "https://www.city.kokubunji.tokyo.jp/shisei/houshin/shiryou/1020308/1034122.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 5
+        }
+      ]
+    },
+    {
+      "origin_sha256": "8f6bbf37d098371dedb185029737ac79c4473ec427f0a155e23792a29656805c",
+      "jurisdiction": "132144",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（令和5年度実績、13部署）",
+      "url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/034/122/13kyouiku.pdf",
+      "landing_url": "https://www.city.kokubunji.tokyo.jp/shisei/houshin/shiryou/1020308/1034122.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 84
+        }
+      ]
+    },
+    {
       "origin_sha256": "0393c9a7256ef85d80a7f67b4aa4a282ec66846862b2c8959e893b12af8b85b4",
       "jurisdiction": "132144",
       "fiscal_year": 2024,
@@ -5336,6 +8948,20 @@
       ]
     },
     {
+      "origin_sha256": "c2977d345940e8af5ba30bc5632b88b2e39a5a62376790ea7f7f702b3d183073",
+      "jurisdiction": "132195",
+      "fiscal_year": 2023,
+      "title": "令和6年度内部評価結果報告書（令和5年度実施事業）",
+      "url": "https://www.city.komae.tokyo.jp/index.cfm/46,117244,c,html/117244/20241106-094947.pdf",
+      "landing_url": "https://www.city.komae.tokyo.jp/index.cfm/46,0,362,3163,html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 124
+        }
+      ]
+    },
+    {
       "origin_sha256": "6615be8d782badad54d4871c8090b395dbf9a53f26fe8309e5726f86b87a063f",
       "jurisdiction": "132195",
       "fiscal_year": 2024,
@@ -5360,6 +8986,230 @@
         {
           "start": 1,
           "end": 161
+        }
+      ]
+    },
+    {
+      "origin_sha256": "015e79806e2b3b649333534e6b8ebee458d17fcf9b57e4254ab12820a333d137",
+      "jurisdiction": "132209",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（リアルタイム事務事業評価調書）",
+      "url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/010/048/50.pdf",
+      "landing_url": "https://www.city.higashiyamato.lg.jp/shisei/torikumi/1005026/1005048/1010048.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 4
+        }
+      ]
+    },
+    {
+      "origin_sha256": "533cc0d1d6b50b88ff90b2fd07aa39ef258ef2fbeb5d2eae0f38ccda4a8518a7",
+      "jurisdiction": "132209",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（リアルタイム事務事業評価調書）",
+      "url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/010/048/60.pdf",
+      "landing_url": "https://www.city.higashiyamato.lg.jp/shisei/torikumi/1005026/1005048/1010048.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 4
+        }
+      ]
+    },
+    {
+      "origin_sha256": "5ec202b1b25fd71dc792fc8ebfc4a853f4b689f211620d9ca325ef447f5f4d62",
+      "jurisdiction": "132209",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（リアルタイム事務事業評価調書）",
+      "url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/010/048/70.pdf",
+      "landing_url": "https://www.city.higashiyamato.lg.jp/shisei/torikumi/1005026/1005048/1010048.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "8297a7c333347901e8a82a677ea605110ecdd37152eeadce47ef24725d194378",
+      "jurisdiction": "132209",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（リアルタイム事務事業評価調書）",
+      "url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/010/048/80.pdf",
+      "landing_url": "https://www.city.higashiyamato.lg.jp/shisei/torikumi/1005026/1005048/1010048.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "9c092152153d47745b755c27e7bb459f5f2229f5892edd7a52b6319c19177e34",
+      "jurisdiction": "132209",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（リアルタイム事務事業評価調書）",
+      "url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/010/048/90.pdf",
+      "landing_url": "https://www.city.higashiyamato.lg.jp/shisei/torikumi/1005026/1005048/1010048.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "0e4e6255837fe5a1ae86fd6786a96ebc053d633af949416747d5e65ece1500f3",
+      "jurisdiction": "132209",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（リアルタイム事務事業評価調書）",
+      "url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/010/048/100.pdf",
+      "landing_url": "https://www.city.higashiyamato.lg.jp/shisei/torikumi/1005026/1005048/1010048.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 5
+        }
+      ]
+    },
+    {
+      "origin_sha256": "d822d1a9de1e3debd6375e0121d10d7d19dee7b273f13e13a03a2d237af46eef",
+      "jurisdiction": "132209",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（リアルタイム事務事業評価調書）",
+      "url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/010/048/110.pdf",
+      "landing_url": "https://www.city.higashiyamato.lg.jp/shisei/torikumi/1005026/1005048/1010048.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 4
+        }
+      ]
+    },
+    {
+      "origin_sha256": "cf60e107bbe498bd61b0ce7290d86cc596fb46a7c014336fe09ab8a2d394cfb1",
+      "jurisdiction": "132209",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（リアルタイム事務事業評価調書）",
+      "url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/010/048/120.pdf",
+      "landing_url": "https://www.city.higashiyamato.lg.jp/shisei/torikumi/1005026/1005048/1010048.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "3343f8893cff64340b6d5f2b53d5147b0c7b17b3ea10fe62de7ed1cf75f391eb",
+      "jurisdiction": "132209",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（リアルタイム事務事業評価調書）",
+      "url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/010/048/130.pdf",
+      "landing_url": "https://www.city.higashiyamato.lg.jp/shisei/torikumi/1005026/1005048/1010048.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "c765abdd9132ff23e17f8cd7ac2da069c7c35f714301be6fb388c0da900a302d",
+      "jurisdiction": "132209",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（リアルタイム事務事業評価調書）",
+      "url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/010/048/140.pdf",
+      "landing_url": "https://www.city.higashiyamato.lg.jp/shisei/torikumi/1005026/1005048/1010048.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 4
+        }
+      ]
+    },
+    {
+      "origin_sha256": "5c0dbad699b25a30d3fb7ca898cb56c07274bc7204c16d83f81b01f45d7b6182",
+      "jurisdiction": "132209",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（リアルタイム事務事業評価調書）",
+      "url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/010/048/150.pdf",
+      "landing_url": "https://www.city.higashiyamato.lg.jp/shisei/torikumi/1005026/1005048/1010048.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "b4c3f2c4c4b3db91a57acbc20c5374517abc3a81d62fec07398232f3bdc10a2e",
+      "jurisdiction": "132209",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（リアルタイム事務事業評価調書）",
+      "url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/010/048/160.pdf",
+      "landing_url": "https://www.city.higashiyamato.lg.jp/shisei/torikumi/1005026/1005048/1010048.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "9a6eba57d1b3d0cf51a12e1881e2055bcd7b6e83770b663be00f1d763497d56a",
+      "jurisdiction": "132209",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（リアルタイム事務事業評価調書）",
+      "url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/010/048/170.pdf",
+      "landing_url": "https://www.city.higashiyamato.lg.jp/shisei/torikumi/1005026/1005048/1010048.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "ede3ccf82a13d4a0ed7cdeccdbaff7fb5c794e74482a8978ac4f64d8326b84c3",
+      "jurisdiction": "132209",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（リアルタイム事務事業評価調書）",
+      "url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/010/048/180.pdf",
+      "landing_url": "https://www.city.higashiyamato.lg.jp/shisei/torikumi/1005026/1005048/1010048.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "d03331b02521a7948b31777a44775e3ac8c50d800c58a64743ae66aaa7368e58",
+      "jurisdiction": "132209",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（リアルタイム事務事業評価調書）",
+      "url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/010/048/190.pdf",
+      "landing_url": "https://www.city.higashiyamato.lg.jp/shisei/torikumi/1005026/1005048/1010048.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
+        }
+      ]
+    },
+    {
+      "origin_sha256": "c3c03e4bb7d6fa0a196551c29e9501ad226f3094508a40be7a8270a45cf9968e",
+      "jurisdiction": "132209",
+      "fiscal_year": 2023,
+      "title": "令和5年度行政評価（リアルタイム事務事業評価調書）",
+      "url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/010/048/200.pdf",
+      "landing_url": "https://www.city.higashiyamato.lg.jp/shisei/torikumi/1005026/1005048/1010048.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 3
         }
       ]
     },
@@ -5770,6 +9620,34 @@
       ]
     },
     {
+      "origin_sha256": "eaeb3fe4a1d68643a9284c8f7ce14f2c0266ee555cc5023ef934f474c75ec6ae",
+      "jurisdiction": "132217",
+      "fiscal_year": 2023,
+      "title": "令和6年度清瀬市行政評価報告・外部評価市民アンケート報告（令和5年度事業）",
+      "url": "https://www.city.kiyose.lg.jp/_res/projects/default_project/_page_/001/014/828/r6sesakuhyoukasi-to.pdf",
+      "landing_url": "https://www.city.kiyose.lg.jp/siseijouhou/zaisei/gyouzaiseikaikaku/1004570/1014828.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 64
+        }
+      ]
+    },
+    {
+      "origin_sha256": "4c9626fbe6ec6f4e9b48edd7d0f6cc8c0edb23cb860cde0217587fd08af28c53",
+      "jurisdiction": "132217",
+      "fiscal_year": 2023,
+      "title": "令和6年度清瀬市行政評価報告・外部評価市民アンケート報告（令和5年度事業）",
+      "url": "https://www.city.kiyose.lg.jp/_res/projects/default_project/_page_/001/014/828/r6siminnannke-to.pdf",
+      "landing_url": "https://www.city.kiyose.lg.jp/siseijouhou/zaisei/gyouzaiseikaikaku/1004570/1014828.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 10
+        }
+      ]
+    },
+    {
       "origin_sha256": "42ebfb1fd985a8a9a73c81921b9786805b97bf074ff7c166e456a45067b0beb2",
       "jurisdiction": "132217",
       "fiscal_year": 2024,
@@ -5826,6 +9704,20 @@
       ]
     },
     {
+      "origin_sha256": "64be6134c134726ef26bef8c8f1e46e2f508de47784eec4324b7b97a82122f96",
+      "jurisdiction": "132233",
+      "fiscal_year": 2023,
+      "title": "令和6年度行政評価報告書",
+      "url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/020/968/r6houkokusho_3.pdf",
+      "landing_url": "https://www.city.musashimurayama.lg.jp/shisei/shisaku/gyouseihyouka/1020968.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 262
+        }
+      ]
+    },
+    {
       "origin_sha256": "6ba31de46bf676ad7153bd50f267b223b708fe1cfda897bd803e7f55893d99ca",
       "jurisdiction": "132233",
       "fiscal_year": 2024,
@@ -5840,6 +9732,20 @@
       ]
     },
     {
+      "origin_sha256": "ac3867b06dbfa003c14991de71b0dd5ab1e6ec2a2aa298bd0cc59fd5ac854ea9",
+      "jurisdiction": "132250",
+      "fiscal_year": 2023,
+      "title": "令和6年度地方公会計制度を活用した事務事業評価（令和5年度事務事業分）",
+      "url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/008/973/r6jimujigyo.pdf",
+      "landing_url": "https://www.city.inagi.tokyo.jp/shisei/keikaku_hokoku/1008971/1008973.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 37
+        }
+      ]
+    },
+    {
       "origin_sha256": "55eb6eea741d4ba98045d44a52f6331c8d1e79cacff0daab446ad8c6fc3c6128",
       "jurisdiction": "132250",
       "fiscal_year": 2024,
@@ -5850,6 +9756,104 @@
         {
           "start": 1,
           "end": 26
+        }
+      ]
+    },
+    {
+      "origin_sha256": "e7dab0f851bcda46c7adc13011d5557af3b522d4aec361ed449ea9be75c6fbbd",
+      "jurisdiction": "132276",
+      "fiscal_year": 2023,
+      "title": "令和5年度実施事業に係る事後評価シート（コンセプト3・4）",
+      "url": "https://www.city.hamura.tokyo.jp/cmsfiles/contents/0000019/19498/04-siryou3-2-1.pdf",
+      "landing_url": "https://www.city.hamura.tokyo.jp/0000019498.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 47
+        }
+      ]
+    },
+    {
+      "origin_sha256": "f0bf46de8251a2ff03e4361c9ee03f4dbb3b8497611ef57869bd066f95af4d06",
+      "jurisdiction": "132276",
+      "fiscal_year": 2023,
+      "title": "令和5年度実施事業に係る事後評価シート（コンセプト3・4）",
+      "url": "https://www.city.hamura.tokyo.jp/cmsfiles/contents/0000019/19498/04-siryou3-2-2.pdf",
+      "landing_url": "https://www.city.hamura.tokyo.jp/0000019498.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 8
+        }
+      ]
+    },
+    {
+      "origin_sha256": "c7cf360bd9b206a6a0837aa007fd992a94bd641e8a8dcac5c83a652081078b1c",
+      "jurisdiction": "132276",
+      "fiscal_year": 2023,
+      "title": "令和5年度実施事業に係る事後評価シート（コンセプト3・4）",
+      "url": "https://www.city.hamura.tokyo.jp/cmsfiles/contents/0000019/19498/04-siryou3-2-3.pdf",
+      "landing_url": "https://www.city.hamura.tokyo.jp/0000019498.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 20
+        }
+      ]
+    },
+    {
+      "origin_sha256": "42248cd5a4f2ab6336a357efdd969e85e636ea0a4af051efed4e38e5877f61ca",
+      "jurisdiction": "132276",
+      "fiscal_year": 2023,
+      "title": "令和5年度実施事業に係る事後評価シート（コンセプト3・4）",
+      "url": "https://www.city.hamura.tokyo.jp/cmsfiles/contents/0000019/19498/04-siryou3-2-4.pdf",
+      "landing_url": "https://www.city.hamura.tokyo.jp/0000019498.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 5
+        }
+      ]
+    },
+    {
+      "origin_sha256": "b0dc4f59b701b5ed82ecc9f83113cad3b58c8faaccaf39bbdcb4ccf4092ad99c",
+      "jurisdiction": "132276",
+      "fiscal_year": 2023,
+      "title": "令和5年度実施事業に係る事後評価シート（コンセプト3・4）",
+      "url": "https://www.city.hamura.tokyo.jp/cmsfiles/contents/0000019/19498/04-siryou3-2-5.pdf",
+      "landing_url": "https://www.city.hamura.tokyo.jp/0000019498.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 5
+        }
+      ]
+    },
+    {
+      "origin_sha256": "35985bf3c3d59a2e93c1dec42ffd6391aca421aaf94f2d6c67af14910c488803",
+      "jurisdiction": "132276",
+      "fiscal_year": 2023,
+      "title": "令和5年度実施事業に係る事後評価シート（コンセプト3・4）",
+      "url": "https://www.city.hamura.tokyo.jp/cmsfiles/contents/0000019/19498/04-siryou3-2-6.pdf",
+      "landing_url": "https://www.city.hamura.tokyo.jp/0000019498.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 8
+        }
+      ]
+    },
+    {
+      "origin_sha256": "55c3d27f583a7bb5deca79e2dd85caa2bcaab61c31dc3362d20e837fe004b7b3",
+      "jurisdiction": "132276",
+      "fiscal_year": 2023,
+      "title": "令和5年度実施事業に係る事後評価シート（コンセプト3・4）",
+      "url": "https://www.city.hamura.tokyo.jp/cmsfiles/contents/0000019/19498/04-siryou3-2-7.pdf",
+      "landing_url": "https://www.city.hamura.tokyo.jp/0000019498.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 5
         }
       ]
     },
@@ -5878,6 +9882,426 @@
         {
           "start": 1,
           "end": 10
+        }
+      ]
+    },
+    {
+      "origin_sha256": "c218b010a2b2859ea54d142267e369420b661b0461719379ffa6120fb109a632",
+      "jurisdiction": "132292",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（中間結果）の報告（事務事業評価シート30事業）",
+      "url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.files/01.pdf",
+      "landing_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "c4d7d105e229446ecb6d26c3782ec283464ec4a1bab874a7094ca0dd8cb7eb23",
+      "jurisdiction": "132292",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（中間結果）の報告（事務事業評価シート30事業）",
+      "url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.files/02.pdf",
+      "landing_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "2ec4a013f9c09bdf3fd4cf6fed101882f4de66f1d8d85b5601a07ebe36200d4f",
+      "jurisdiction": "132292",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（中間結果）の報告（事務事業評価シート30事業）",
+      "url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.files/03.pdf",
+      "landing_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "4321dd9052237a7001db819afa11e4aa6d263c13e8fabf0e6cddebbe185b7aed",
+      "jurisdiction": "132292",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（中間結果）の報告（事務事業評価シート30事業）",
+      "url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.files/04.pdf",
+      "landing_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "2a149dba957e2ced77fa903317749ef50e0502b77c034008a9df41572feb1e1e",
+      "jurisdiction": "132292",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（中間結果）の報告（事務事業評価シート30事業）",
+      "url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.files/05.pdf",
+      "landing_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "71cc7f85a8219fa88df778b0c63dd77ae19b3fa1cdfa4dadc667e50c9fea11ab",
+      "jurisdiction": "132292",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（中間結果）の報告（事務事業評価シート30事業）",
+      "url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.files/06.pdf",
+      "landing_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "8b35bff46157fc23c8a6dbc993f549fbb6aa2d03986ec66d4f3ae2598f11c9b1",
+      "jurisdiction": "132292",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（中間結果）の報告（事務事業評価シート30事業）",
+      "url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.files/07.pdf",
+      "landing_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "0c3c2d2468a1b3a17c9395bc064b0ed0d682c46806468d333730b7618db13447",
+      "jurisdiction": "132292",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（中間結果）の報告（事務事業評価シート30事業）",
+      "url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.files/08.pdf",
+      "landing_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "c31ad928742da9a008cdffe15d02b6b2d0e827b567162a56c9f32b2382fc0673",
+      "jurisdiction": "132292",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（中間結果）の報告（事務事業評価シート30事業）",
+      "url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.files/09.pdf",
+      "landing_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "8b5d105ae7ac8d7c227de25bcb1d7cba994dee3bd8de94cb57cae778de3766a7",
+      "jurisdiction": "132292",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（中間結果）の報告（事務事業評価シート30事業）",
+      "url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.files/10.pdf",
+      "landing_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "027860a3fe823400d83f5c98690bf6da65a9773c4ea56cac7e3f813ed34a02e2",
+      "jurisdiction": "132292",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（中間結果）の報告（事務事業評価シート30事業）",
+      "url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.files/11.pdf",
+      "landing_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "e922600088579bfea341ca824b96159ea86a72f2af2614012145b707af7bbe09",
+      "jurisdiction": "132292",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（中間結果）の報告（事務事業評価シート30事業）",
+      "url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.files/12.pdf",
+      "landing_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "5127faa19b83b1bb8ec55d76bd8a0d965c763c26de4293cf6e4b511cc702188d",
+      "jurisdiction": "132292",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（中間結果）の報告（事務事業評価シート30事業）",
+      "url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.files/13.pdf",
+      "landing_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "334a108175ba86abede3b0b16adce2c580c6c65c607faca96e18cea96d6ac3e6",
+      "jurisdiction": "132292",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（中間結果）の報告（事務事業評価シート30事業）",
+      "url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.files/14.pdf",
+      "landing_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "60d32b90be35d9b8ef5702b5ceabceef6ce0b40116653509c94f4150d5f7f0b4",
+      "jurisdiction": "132292",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（中間結果）の報告（事務事業評価シート30事業）",
+      "url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.files/15.pdf",
+      "landing_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "b88606e2777b51d897fd18aa34e1d2430dce7b7dc8161b5a215e8a73ee462d38",
+      "jurisdiction": "132292",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（中間結果）の報告（事務事業評価シート30事業）",
+      "url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.files/16.pdf",
+      "landing_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "ef7159d3a05e4d54467d4a2cb4d2055140b7bc2dd493cce523803cdbfafebd81",
+      "jurisdiction": "132292",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（中間結果）の報告（事務事業評価シート30事業）",
+      "url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.files/17.pdf",
+      "landing_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "b4e1c2e5f1c92b973a2af74b04b010ee495320f293160674d2f5fa7082114cc2",
+      "jurisdiction": "132292",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（中間結果）の報告（事務事業評価シート30事業）",
+      "url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.files/18.pdf",
+      "landing_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "5dff203d512e76154c884a0ca682395a36a861a0770d68502c0246e2b4fe2f16",
+      "jurisdiction": "132292",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（中間結果）の報告（事務事業評価シート30事業）",
+      "url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.files/19.pdf",
+      "landing_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "82b422834e37fbe6fb193c8d57a27e4bddae5a3b012c5b813ee97029503e1ff4",
+      "jurisdiction": "132292",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（中間結果）の報告（事務事業評価シート30事業）",
+      "url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.files/20.pdf",
+      "landing_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "f60e45582266a32b5307d233f87598f67afe594544d77823b1956822f3b60e12",
+      "jurisdiction": "132292",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（中間結果）の報告（事務事業評価シート30事業）",
+      "url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.files/21.pdf",
+      "landing_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "6aa7ac72e369bb8514a02a662d71fc93f12f02a8672ef300d056fa9878fa748c",
+      "jurisdiction": "132292",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（中間結果）の報告（事務事業評価シート30事業）",
+      "url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.files/22.pdf",
+      "landing_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "29e35cacce1b70c185df3e821ff34448f1532f80e01e8a19792104c6f0003369",
+      "jurisdiction": "132292",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（中間結果）の報告（事務事業評価シート30事業）",
+      "url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.files/23.pdf",
+      "landing_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "8a8177973df80ae4cbfd3457baa776bbe8d0a75c2feeb020f0e7ceff6552247a",
+      "jurisdiction": "132292",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（中間結果）の報告（事務事業評価シート30事業）",
+      "url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.files/24.pdf",
+      "landing_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "f72d972cc597def76d5f31279572fba46794cb3018cc5cf72e63359a8bf4b6e4",
+      "jurisdiction": "132292",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（中間結果）の報告（事務事業評価シート30事業）",
+      "url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.files/25.pdf",
+      "landing_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "41fc5edab8bd1aa6a1a3a81cf54e3cf7c1925de3c36c4d9435999922c6c59688",
+      "jurisdiction": "132292",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（中間結果）の報告（事務事業評価シート30事業）",
+      "url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.files/26.pdf",
+      "landing_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "c317b2d82ed4e39f8a8334b389b59a5d38ea2262d3de1b85c36bdc783b5b872d",
+      "jurisdiction": "132292",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（中間結果）の報告（事務事業評価シート30事業）",
+      "url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.files/27.pdf",
+      "landing_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "88a1dc24f0671e19826f12c6f09a99c0721bf7189fb0038e9bee80ebd3d6909d",
+      "jurisdiction": "132292",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（中間結果）の報告（事務事業評価シート30事業）",
+      "url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.files/28.pdf",
+      "landing_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "033449a932a9a70fa80e420c26f15dc1746bd8376d30def3441b48f0a427d71a",
+      "jurisdiction": "132292",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（中間結果）の報告（事務事業評価シート30事業）",
+      "url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.files/29.pdf",
+      "landing_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "origin_sha256": "bd380d236667a6f0a4de9aab6b8f3f692b05bd3a2fa2b9213a95c120b4caccae",
+      "jurisdiction": "132292",
+      "fiscal_year": 2023,
+      "title": "令和6年度事務事業評価（中間結果）の報告（事務事業評価シート30事業）",
+      "url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.files/30.pdf",
+      "landing_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/pub/kanren/r6zimuzigyou.html",
+      "pages": [
+        {
+          "start": 1,
+          "end": 2
         }
       ]
     },

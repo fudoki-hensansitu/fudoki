@@ -132,5 +132,20 @@ class PlanTest(unittest.TestCase):
         self.assertEqual({r['origin_sha256'] for r in instance['registrations']} - {o.sha256 for o in plan.load_origins()}, set())
 
 
+class ConvertedCharsTest(unittest.TestCase):
+    """取り込み後の本文の文字数。変換の見出しだけの頁を読めたと数えると、検索に出ない原典が catalog に載る。"""
+
+    HEADER = f'# {A}_p0001.pdf\n## Metadata\n- Creator=PDFium\n- Producer=PDFium\n\n\n\n## Contents\n### Page 1'
+
+    def test_header_only_is_empty(self):
+        from evaluation_search.index import converted_chars
+        self.assertEqual(converted_chars([{'text': self.HEADER}]), 0)
+        self.assertEqual(converted_chars([{'text': self.HEADER + '\n\u3000 \n'}]), 0)
+
+    def test_counts_body_across_chunks(self):
+        from evaluation_search.index import converted_chars
+        self.assertEqual(converted_chars([{'text': self.HEADER + '\n事業 名称'}, {'text': '評価'}]), 6)
+
+
 if __name__ == '__main__':
     unittest.main()
