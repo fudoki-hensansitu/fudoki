@@ -1,6 +1,6 @@
 # 公開提出の準備
 
-状態: 未提出。ローカルpackageは検査済みだが、提出に必要なURL・録画・host検証が不足しているため、提出可能とは扱わない。仕様確認日: 2026-10-14。
+状態: 未提出。manifestの掲載URL・録画URLは2026-10-16に揃い、package検査を通過した。残りは発行者の本人確認と各portalでの検査・提出。仕様確認日: 2026-10-14。
 
 ## 掲載する内容
 
@@ -13,15 +13,15 @@
 | MCP URL | https://api.fudoki.dev/mcp |
 | 認証 | 不要。公開データの読取りのみ |
 | Website / Documentation | https://docs.fudoki.dev （2026-10-14 HTTP 200、内容を確認） |
-| Support URL・連絡先 | support@fudoki.dev（転送設定は有効）。GitHub Issues。/support のデプロイ後にURLを登録 |
-| Privacy URL | 公開用ページを作成済み。/privacy のデプロイ後にURLを登録 |
-| Terms URL | 公開用ページを作成済み。/terms のデプロイ後にURLを登録 |
+| Support URL・連絡先 | https://docs.fudoki.dev/support （2026-10-15 HTTP 200）。support@fudoki.dev（転送設定は有効）。GitHub Issues |
+| Privacy URL | https://docs.fudoki.dev/privacy （2026-10-15 HTTP 200） |
+| Terms URL | https://docs.fudoki.dev/terms （2026-10-15 HTTP 200） |
 | アイコン | plugins/fudoki/assets/icon.png（256×256 PNG、既存markから作成） |
 | package | .build/plugins/fudoki-0.2.0.zip（再生成可能、未提出の準備用） |
-| 録画デモURL | 空欄。台本は下記、録画・公開未実施 |
-| 掲載用スクリーンショット | 下記3場面を撮影する。実hostの提出用画像は未作成 |
+| 録画デモURL | https://youtu.be/VX8z8EbJDyU （ChatGPTの北区の操作、89秒。2026-10-14に#197より前のUIで撮影） |
+| 掲載用スクリーンショット | Claudeで撮影済み（検索3件・節の内訳・COFOG 10の集計）。gitの外の `.agent/claude-submission-shots/` に置く |
 
-OpenAIの英語subtitleは `Compare municipal spending`、日本語は「自治体の歳出を比較し原典を確認」。本文・starter prompts・6 positive / 4 negative case（2026-10-14に事業の評価の検索を各1件足した）・課金なし・JP・release notesはportable manifestの `extensions.com.openai` に入れた。support/privacy/terms と録画URLは値を捏造せず、省略している。[OpenAIの提出metadata](https://developers.openai.com/plugins/deploy/submission)
+OpenAIの英語subtitleは `Compare municipal spending`、日本語は「自治体の歳出を比較し原典を確認」。本文・starter prompts・6 positive / 4 negative case（2026-10-14に事業の評価の検索を各1件足した）・課金なし・JP・release notesはportable manifestの `extensions.com.openai` に入れた。support/privacy/terms と録画URLは公開を確認してから入れた。[OpenAIの提出metadata](https://developers.openai.com/plugins/deploy/submission)
 
 support/privacy/terms の項目調査・本番設定との照合・運用方針は [ポリシーの調査](policies.md)を参照する。ページは通常の公開 build に含める。ページの作成を、デプロイ後の公開 URL の確認や提出の完了とは扱わない。
 
@@ -33,15 +33,16 @@ Claudeの掲載文案:
 
 ## レビュー用の接続とcase
 
-既存URLへ匿名で接続する。風土記用のアカウント、API key、test passwordは不要。レビューhost側の接続設定を済ませ、5つのtool、うち3つのUI（事業の評価の検索は表を持たない）、原典のリンクが使えることを確認する。公開PDFの中継には既存のサイズ・時間・頻度上限があり、取得時の内容が取り込み時と同じとは保証しない。
+既存URLへ匿名で接続する。風土記用のアカウント、API key、test passwordは不要。レビューhost側の接続設定を済ませ、6つのtool、うちUIを持つのは描画tool（render_expenditure_view）1つ、原典のリンクが使えることを確認する。データtoolは画面を出さず、モデルが描画toolを呼んだときだけUIが出る。公開PDFの中継には既存のサイズ・時間・頻度上限があり、取得時の内容が取り込み時と同じとは保証しない。
 
 実行caseの正本は `plugins/fudoki/plugin.json` の `review.test_cases`。6件のpositiveは収録範囲・条件検索・内訳・原典・COFOG集計・事業の評価の頁の検索、4件のnegativeは個別取引/銀行口座・歳入・書込み・評価資料の金額の断定。prompt、必要な前提、期待toolと引数、期待結果を記した。前の結果のnode_idは捏造せず、実際に返された値を使う。
 
 | case | ChatGPT | Claude | Codex / Claude Code / Cursor package |
 | --- | --- | --- | --- |
-| 収録範囲・3件の検索・内訳・原典 | 旧UIの個人用接続で確認済み。新packageを導入したreview実行は未実施 | 接続・対話型tool認識まで。応答・描画未確認 | インストールとskill実行は未実施 |
-| COFOG集計 | 未実施 | 未実施 | 未実施 |
-| negative 4件 | 未実施 | 未実施 | 未実施 |
+| 収録範囲・3件の検索・内訳・原典 | #197後の6 toolで描画を確認（「ツールを更新」が必要だった） | 合格。収録範囲だけ描画toolが呼ばれずUIが出なかった | インストールとskill実行は未実施 |
+| COFOG集計 | 未実施 | 合格 | 未実施 |
+| 事業の評価の頁 | 録画で確認 | 合格 | 未実施 |
+| negative 4件 | 未実施 | 合格（歳入は検索toolを1回呼んでから対象外と回答） | 未実施 |
 
 MCPのHTTP要求だけの確認、manifest検査、skill本文のレビューは、会話内のtool選択や描画を確かめた結果とは区別する。実行結果は [検証記録](verification.md) に追記する。新UIのデプロイと公開hostでの検証は別担当・別操作として残る。
 

@@ -55,3 +55,9 @@ package検査は既存uv環境のjsonschemaを `--no-sync` で使う。依存追
 このPRはpackage・接続案内・提出準備を対象とする。APIの変更はCSV親金額の説明の訂正で、データ・計算・応答schemaは変更しない。UIとPDF viewerの変更は別の作業に移管済み。
 
 pluginの実インストール・クライアントごとの更新は未検証。`codex plugin list --marketplace fudoki-plugins --available --json` は、source未登録のため installed/available とも空だった。公開ディレクトリへの提出とデプロイはこのPRでは実施しない。PRD全体のstatusはin-progressを維持する。
+
+## #197（データtoolと描画toolの分離）後の実機確認（2026-10-15〜16）
+
+- Claude: custom connectorが6 toolを認識し、「結果の表示」だけを対話型として登録。positive 6件・negative 4件を実行し、収録範囲以外ではUIの描画を確認した。収録範囲ではモデルが描画toolを呼ばず、文章だけで正しく答えた。歳入のnegativeは、検索toolで「区民税」を1回引いてから対象外と答えた。原典PDFの表示は、自動操作が入れ子のiframeに届かず未確認。
+- ChatGPT: dev modeのappが#197前のtool定義を保持し、検索toolの旧UI（`ui://fudoki/view-84bb47eb6ad9.html`）を開こうとして「開くことができませんでした」と表示した。設定の「ツールを更新」（`refresh_actions`）で解消した。更新後、描画toolを名指しするとUIが出た。`@fudoki`を付けない質問では、モデルが自前の表で答えることがある。
+- tool定義を変えたときは、ChatGPTのapp設定で「ツールを更新」を押す。押さないと、旧定義の検索toolがUIを開こうとして失敗する。
