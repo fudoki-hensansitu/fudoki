@@ -22,7 +22,8 @@
       "uniqueItems": true
     },
     "note_left": {
-      "type": "number"
+      "type": "number",
+      "description": "備考の欄の左端のx（既定 975）。不用額の右端の数字が備考の印に近い年の版で、数字を備考へ混ぜないために右へ寄せる。"
     }
   },
   "required": [

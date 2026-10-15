@@ -273,7 +273,8 @@ def split_glued_setsu(word):
     cut = word['xMin'] + unit * 0.5 * len(number)
     if cut > SETSU_NUM[1]:
         return [word]
-    return [{**word, 'text': number, 'xMax': cut}, {**word, 'text': name, 'xMin': cut}]
+    # The name keeps to the name band: setsu_record reads names from SETSU_NAME on.
+    return [{**word, 'text': number, 'xMax': cut}, {**word, 'text': name, 'xMin': max(cut, SETSU_NAME[0])}]
 
 
 def observe(pdf, first, last, path):
