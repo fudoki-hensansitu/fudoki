@@ -33,8 +33,13 @@ class Origin:
     pages: tuple[tuple[int, int], ...] | None
 
 
-def load_origins(selection_dir: Path = SELECTION_DIR) -> list[Origin]:
-    """保存済みの評価資料を団体・評価対象年度・選定の files の順に返す。保存の記録が無い選定は含めない。"""
+def load_origins(selection_dir: Path = SELECTION_DIR, *, use_ocr: bool = False) -> list[Origin]:
+    """保存済みの評価資料を団体・評価対象年度・選定の files の順に返す。保存の記録が無い選定は含めない。
+
+    OCR なしのインスタンス（`use_ocr: false`）には選定の `pdf_type: text` のファイルだけ、OCR ありには `scan` だけを返す。
+    scan を文字の層の無いまま登録しないための関門で、選定の判断だけに頼らない（dd.md「拡大の条件」）。
+    """
+    pdf_type = 'scan' if use_ocr else 'text'
     origins: list[Origin] = []
     for path in sorted(selection_dir.glob('*.json')):
         document = json.loads(path.read_text(encoding='utf-8'))
@@ -51,6 +56,10 @@ def load_origins(selection_dir: Path = SELECTION_DIR) -> list[Origin]:
             for file, saved in zip(candidate['files'], archive['files']):
                 if file['sha256'] != saved['sha256']:
                     raise ValueError(f'{path.name}: 選定と保存の sha256 が違う: {saved["key"]}')
+                if file['pdf_type'] not in ('text', 'scan'):
+                    raise ValueError(f'{path.name}: pdf_type が text でも scan でもない: {file["pdf_type"]}')
+                if file['pdf_type'] != pdf_type:
+                    continue
                 pages = file['pages']
                 origins.append(Origin(
                     jurisdiction=target['jurisdiction'], fiscal_year=target['fiscal_year'], sha256=file['sha256'],
