@@ -78,7 +78,7 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "dc38dc65c018a75cd2087c4fddc51c8cd96be061e9665dd0bd752cca2dd75f49",
+      "input_fingerprint": "fe006e2b0421a64c63f9d2ff916cfb2186eafd9d5130e80b4778b7a95db88774",
       "account": "国民健康保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'shape', '節': 'indent'}。",
