@@ -6773,6 +6773,44 @@
         "archived_at": "2026-10-14T10:08:27.089Z"
       },
       "reason": "令和8年度に実施した事務事業評価（対象60事業）の中間結果。パブリックコメント用に2026-08-10更新で公表され、事業ごとに2頁の評価シート1本（No.1〜60）になっている。各シートは事業の目的・内容、事業費（R5・R6決算額、R7決算見込額、R8予算額）、活動指標・成果指標のR5〜R7の目標値と実績値、事業の課題と改善への取組、必要性・有効性・効率性の検証項目の一次評価・二次評価・本部評価と評価コメントを載せ、文字として読める。評価の実績はR7年度まで入るが、R7の事業費は決算見込額。中間結果なので、検討結果（令和8年10月公表予定）や最終の報告書で変わりうる。全事業ではなく60事業のみ。なお、中間結果であり、パブリックコメント後の最終報告で差し替わり得る。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132292",
+        "fiscal_year": 2024,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和7年度西東京市施策評価報告書",
+          "landing_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/sesaku_keikaku/jigyou_hyouka/r7/R7sesakuhyoka.html",
+          "inspected_at": "2026-10-15T04:00:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/sesaku_keikaku/jigyou_hyouka/r7/R7sesakuhyoka.files/R7sesakuhyouka.pdf",
+              "sha256": "553da1b02f51c772ad08f942ae547dba69c26d21ac1749d7ae29dd44791447fc",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132292/2024/evaluation-settlement.pdf",
+            "sha256": "553da1b02f51c772ad08f942ae547dba69c26d21ac1749d7ae29dd44791447fc",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/sesaku_keikaku/jigyou_hyouka/r7/R7sesakuhyoka.files/R7sesakuhyouka.pdf"
+          }
+        ],
+        "archived_at": "2026-10-15T02:31:27.896Z"
+      },
+      "reason": "令和7年度時点の施策評価。第3次総合計画の37施策を対象に、施策ごとに目標、成果指標の実績（最新の列は令和6年度＝R6。成果指標一覧（物理頁52〜61）の注記「名称欄に●の表記がある指標については、R７の実績値をR６実績値として記載しています。」のとおり、●の12指標（市民満足度など市民意識調査の指標）はR6列が令和7年度の値）、市民意識調査の満足度・重要度、施策の成果と課題、行革本部評価（今後の方向性）を載せる（62頁、令和8年2月公表、成果指標一覧は令和7年10月現在）。文字として読める。西東京市の事務事業評価（中間結果）は令和5・6・8年度分のみで、令和7年度版（令和6年度実績を評価する版）は未公表のため、令和6年度実績（R6列）を評価する本施策評価を選定した。施策単位の評価。target は同じ団体の selections にある2024年度決算（settlement）の選定と同じ年度で、check.ts の対の検査を通ることを確認した。"
     }
   ]
 }

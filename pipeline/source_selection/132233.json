@@ -2459,5 +2459,45 @@
       }
     }
   ],
-  "unresolved_candidates": []
+  "unresolved_candidates": [],
+  "evaluation_selections": [
+    {
+      "target": {
+        "jurisdiction": "132233",
+        "fiscal_year": 2024,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和7年度行政評価報告書",
+          "landing_url": "https://www.city.musashimurayama.lg.jp/shisei/shisaku/gyouseihyouka/1021943.html",
+          "inspected_at": "2026-10-14T20:20:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/943/r7houkokusho.pdf",
+              "sha256": "6ba31de46bf676ad7153bd50f267b223b708fe1cfda897bd803e7f55893d99ca",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132233/2024/evaluation-settlement.pdf",
+            "sha256": "6ba31de46bf676ad7153bd50f267b223b708fe1cfda897bd803e7f55893d99ca",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/943/r7houkokusho.pdf"
+          }
+        ],
+        "archived_at": "2026-10-14T16:18:47.810Z"
+      },
+      "reason": "令和6年度に実施した事業を令和7年度に評価した行政評価報告書（270頁、令和8年3月）。内部評価・外部評価の総括、評価結果（今後の方向性）の一覧、事業別の行政評価調書（目的・実績・評価・課題・方向性）を載せる（調書は23頁以降）。文字として読める。部署別の評価調書17冊と同じ内容を1本にまとめた報告書を代表にした。"
+    }
+  ]
 }

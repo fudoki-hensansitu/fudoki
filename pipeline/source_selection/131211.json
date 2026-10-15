@@ -2835,5 +2835,57 @@
       }
     }
   ],
-  "unresolved_candidates": []
+  "unresolved_candidates": [],
+  "evaluation_selections": [
+    {
+      "target": {
+        "jurisdiction": "131211",
+        "fiscal_year": 2024,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和7年度区民評価報告書（重点プロジェクト・一般事務事業の評価結果）",
+          "landing_url": "https://www.city.adachi.tokyo.jp/ku/kuse/gyosehyoka/index.html",
+          "inspected_at": "2026-10-14T20:50:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.adachi.tokyo.jp/documents/33840/r7kuminhyokahoukoku_2.pdf",
+              "sha256": "ef38de5ca8712281ace3bf9e3cd0a1bb120ca7c85ba1f1663082f3a61a4738de",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.adachi.tokyo.jp/documents/33840/r7kuminhyokahoukoku_3.pdf",
+              "sha256": "bd890811eb1788c1b28924b1eaf7eb0759858babbd91a6eee046913fc9b54fc7",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131211/2024/evaluation-settlement-2.pdf",
+            "sha256": "ef38de5ca8712281ace3bf9e3cd0a1bb120ca7c85ba1f1663082f3a61a4738de",
+            "final_url": "https://www.city.adachi.tokyo.jp/documents/33840/r7kuminhyokahoukoku_2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131211/2024/evaluation-settlement-1.pdf",
+            "sha256": "bd890811eb1788c1b28924b1eaf7eb0759858babbd91a6eee046913fc9b54fc7",
+            "final_url": "https://www.city.adachi.tokyo.jp/documents/33840/r7kuminhyokahoukoku_3.pdf"
+          }
+        ],
+        "archived_at": "2026-10-14T16:14:31.953Z"
+      },
+      "reason": "令和6年度に実施した事業を区民評価委員会が令和7年度に評価した報告書のうち、重点プロジェクト事業評価調書（42頁）と一般事務事業の評価結果（54頁）の2冊。重点は事業ごとにロジックモデル・指標の達成度・事業費・評価を、一般は区民評価対象7事業について必要性・手法・負担・評価と理由、今後の方向性を載せる。文字として読める。なお、対象は重点プロジェクトと区民評価対象7事業に限られ、全650事業の事務事業評価調書自体は公表されていない。"
+    }
+  ]
 }
