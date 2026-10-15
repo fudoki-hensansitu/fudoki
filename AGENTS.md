@@ -177,8 +177,8 @@ docs/ は共有文書として Git で管理し、判断の記録はコードと
 
 ```bash
 mise install
-bun install
-uv sync
+bun install --frozen-lockfile
+uv sync --frozen
 
 bun run --cwd pipeline ingestion:check   # 取り込みの宣言・選定・fingerprint を検査
 bun run typecheck:all                    # 型検査（root と全 package）
