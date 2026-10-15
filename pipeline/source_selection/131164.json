@@ -2308,6 +2308,452 @@
         "archived_at": "2026-10-14T16:12:30.698Z"
       },
       "reason": "令和6年度に実施した事務事業を令和7年度に評価した事務事業評価表の詳細版（102頁）。事務事業ごとに事業概要・目的、事業費（R5〜7年度の予算・決算・執行率）、成果指標・活動指標の目標値と実績値・達成率、達成状況の分析、区が実施する必要性・業務改善の取組・課題と改善の予定、評価（A〜D）を載せる。文字として読める。同じ評価の施策評価・一覧・一般版は施策単位・概要のため、事業単位の詳細版を代表にした。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131164",
+        "fiscal_year": 2023,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和5年度（令和6年度実施）事務事業評価表",
+          "landing_url": "https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r05/zimuzigyouhyoukahyou.html",
+          "inspected_at": "2026-10-15T14:00:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/01_tvkouhou.pdf",
+              "sha256": "31c009bf2f4fdc1ca9dfcebb18ecbb8f8e12a7d910a706e24eb966766eebd1d4",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/02_jyouhouka.pdf",
+              "sha256": "512757f79c8e6cc14d44d09c89c2a1661ea8f8a14c7f462a1a3571d3e45f0ef1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/03_chiikibousai.pdf",
+              "sha256": "bb4e04d2f26015b4a194089604aef85fe5b8bd56b5ed146ffc7ea8b498e7b66b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/04_dannjyobyoudou.pdf",
+              "sha256": "390488a63c0363d56adcd9bd4122dd008fd2a6f3425309d682c5e23cd0f0a97d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/05_kuminkatudou.pdf",
+              "sha256": "6d6b755313f1bcb1ac81e9cd936d16c6ff2d60cd8854333f889e671ac38158a0",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/06_kuminhiroba.pdf",
+              "sha256": "2e1bf31b4463c02b7bcd063670968e37df3799dfa50c06385a34e56583831b86",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/07_cashuless.pdf",
+              "sha256": "f19cfde68e1ed82e6bf939bc086dcaedc7904e3edae61708dc8ddf500059efa1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/08_farmers.pdf",
+              "sha256": "1cbb7226dd1d45fd848661ca1cdfc89ddfb16f880fc0f2a7e5628f15869d3fa1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/09_shutenngai.pdf",
+              "sha256": "fa0967383a61669bdb9dd41ac110615eec9f88a0de2dfe20ba100f725617cb33",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/10_inbaunodo.pdf",
+              "sha256": "9277186c13f165136006a525b2c977e5bee5032ab73b54e947350ec63f908832",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/11_kituennjyo.pdf",
+              "sha256": "fbb2a822bcef101283f3338a21cbc3a19048f4d4ce00486b99e3e15c579d3ea7",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/12_seinenkouken.pdf",
+              "sha256": "05392b01795a1b1d1e120e81867920bda1face01336c31e205afce63341f0edf",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/13ikidurasa.pdf",
+              "sha256": "12691116921b794c9d0628e95da47aa69eef99e758f4c7e5fd0466e8296adc02",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/14yobousessyu.pdf",
+              "sha256": "2bd1eb7832cfd7ae4b3cc46c6c30e9b4e6e05c48f732c4b7da9a476504f412a6",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/15supottokennsui.pdf",
+              "sha256": "4b4a5221db5004dc6edd10497b9827afa189eb7c8d7026ab5954828258447a59",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/16supottonagasaki.pdf",
+              "sha256": "410d171a7a2b22cba6a4d6dd1848d1d09e966b6ed98ff1c254cae77fa979a455",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/17ikuziherupa-.pdf",
+              "sha256": "c375c47ba4a7bba8f66e39ec0b1038f579cf1eb28ecc04ae259796c9b865593d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/18hukutoshinn.pdf",
+              "sha256": "d58166f9f718606a7903c47ec3f1239a8728a496e80296c0478c63172e535d4b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/19annsinn.pdf",
+              "sha256": "fbeee8ce8702252b5422e1302bd924197733f477ac07cfbfc8faa015f322dd59",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/20zitensya.pdf",
+              "sha256": "587493fbbac3b34984cd3d057ce96ac91c856ea54780e66b16eb5e48a54ebfa2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/21sdgsninaite.pdf",
+              "sha256": "c9a6560cef7433b4e82a0dbd1864e11f7b333879b4c4352706f87d9cd764ab67",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/22hatarakikata.pdf",
+              "sha256": "de4a717e83d5e17d14dad68ed90b3e206055f20763db60977473af7050081e7c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/shinki01_ictsuisinkeihi.pdf",
+              "sha256": "25507fec3854259d63813c50fe2d5785868d2d67365e4d3316f91d101d40fafb",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/shinki02_sougoumadoguchigyoumuitaku.pdf",
+              "sha256": "bf52bbdbe9cc2b29ecf669ebcba8ea8230f68d31db7b6e1cf1f01e9d387a567a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/shinki03_tosimamiraibunkazaidankeihi.pdf",
+              "sha256": "c953fd8dd558b0a54c4974b04f42da2a33a8910c779621958494270aeef59d1c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/shinki04_monodukurimesse.pdf",
+              "sha256": "5bc44abf10b0d48eb3af0b85b203075b1808b0e21a6a563a2896b097ae054c51",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/shinki05_ikebukurohigasiguchikannkouannnaijyo.pdf",
+              "sha256": "d635950969fb1d4931ea01266ce9d99b01f1b0cd2ee1fd859fe317b9ec7bc3d8",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/shinki06_poisute.pdf",
+              "sha256": "f7c7c28e4812ded59f6c1dc8cf3579d57b5df7d69668eab704d601ce06bfc048",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/shinki07_patorol.pdf",
+              "sha256": "a83f39177fd29cb736180305b2020b3ea6132aa810dd5fe910ea3e1d6346e79c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/shinki08_gankenshin.pdf",
+              "sha256": "0a8b73befb6a216313cd5c2fdda1ab0cde5a2c157f2edd978dbbaa68f2d158a1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/shinki09_rinjihoikujyo.pdf",
+              "sha256": "105622f5c9d3edc431696ad6afcf3dd7ed3f8c95dfc4e3ea111b2af60ea6714e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/shinki10_sirituhoikjyo.pdf",
+              "sha256": "ac1d4c97f0e9fe0bfb114a8a01d38bfb91562b66a80dc8e69c08a4b56239925b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/shinki11_chiikigatahoiku.pdf",
+              "sha256": "3d139a15995e0cc25108a3e287b29291bf3d672ec16a58f24b8e60dcfe4c415f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/shnki12_kouen.pdf",
+              "sha256": "3dde1e439c122dc97103bce0c0638f731b046502ee2bc008c9e38eb6f14049c1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/49231/shinki13_ictkatuyou.pdf",
+              "sha256": "e44ce971b24627f9917bfb5bed663523c60d91726545ea46545bd8626e24bc97",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-9.pdf",
+            "sha256": "31c009bf2f4fdc1ca9dfcebb18ecbb8f8e12a7d910a706e24eb966766eebd1d4",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/01_tvkouhou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-15.pdf",
+            "sha256": "512757f79c8e6cc14d44d09c89c2a1661ea8f8a14c7f462a1a3571d3e45f0ef1",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/02_jyouhouka.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-22.pdf",
+            "sha256": "bb4e04d2f26015b4a194089604aef85fe5b8bd56b5ed146ffc7ea8b498e7b66b",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/03_chiikibousai.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-10.pdf",
+            "sha256": "390488a63c0363d56adcd9bd4122dd008fd2a6f3425309d682c5e23cd0f0a97d",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/04_dannjyobyoudou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-18.pdf",
+            "sha256": "6d6b755313f1bcb1ac81e9cd936d16c6ff2d60cd8854333f889e671ac38158a0",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/05_kuminkatudou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-8.pdf",
+            "sha256": "2e1bf31b4463c02b7bcd063670968e37df3799dfa50c06385a34e56583831b86",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/06_kuminhiroba.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-31.pdf",
+            "sha256": "f19cfde68e1ed82e6bf939bc086dcaedc7904e3edae61708dc8ddf500059efa1",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/07_cashuless.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-5.pdf",
+            "sha256": "1cbb7226dd1d45fd848661ca1cdfc89ddfb16f880fc0f2a7e5628f15869d3fa1",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/08_farmers.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-33.pdf",
+            "sha256": "fa0967383a61669bdb9dd41ac110615eec9f88a0de2dfe20ba100f725617cb33",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/09_shutenngai.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-19.pdf",
+            "sha256": "9277186c13f165136006a525b2c977e5bee5032ab73b54e947350ec63f908832",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/10_inbaunodo.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-34.pdf",
+            "sha256": "fbb2a822bcef101283f3338a21cbc3a19048f4d4ce00486b99e3e15c579d3ea7",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/11_kituennjyo.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-1.pdf",
+            "sha256": "05392b01795a1b1d1e120e81867920bda1face01336c31e205afce63341f0edf",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/12_seinenkouken.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-4.pdf",
+            "sha256": "12691116921b794c9d0628e95da47aa69eef99e758f4c7e5fd0466e8296adc02",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/13ikidurasa.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-7.pdf",
+            "sha256": "2bd1eb7832cfd7ae4b3cc46c6c30e9b4e6e05c48f732c4b7da9a476504f412a6",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/14yobousessyu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-14.pdf",
+            "sha256": "4b4a5221db5004dc6edd10497b9827afa189eb7c8d7026ab5954828258447a59",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/15supottokennsui.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-13.pdf",
+            "sha256": "410d171a7a2b22cba6a4d6dd1848d1d09e966b6ed98ff1c254cae77fa979a455",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/16supottonagasaki.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-24.pdf",
+            "sha256": "c375c47ba4a7bba8f66e39ec0b1038f579cf1eb28ecc04ae259796c9b865593d",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/17ikuziherupa-.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-27.pdf",
+            "sha256": "d58166f9f718606a7903c47ec3f1239a8728a496e80296c0478c63172e535d4b",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/18hukutoshinn.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-35.pdf",
+            "sha256": "fbeee8ce8702252b5422e1302bd924197733f477ac07cfbfc8faa015f322dd59",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/19annsinn.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-16.pdf",
+            "sha256": "587493fbbac3b34984cd3d057ce96ac91c856ea54780e66b16eb5e48a54ebfa2",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/20zitensya.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-26.pdf",
+            "sha256": "c9a6560cef7433b4e82a0dbd1864e11f7b333879b4c4352706f87d9cd764ab67",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/21sdgsninaite.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-29.pdf",
+            "sha256": "de4a717e83d5e17d14dad68ed90b3e206055f20763db60977473af7050081e7c",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/22hatarakikata.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-6.pdf",
+            "sha256": "25507fec3854259d63813c50fe2d5785868d2d67365e4d3316f91d101d40fafb",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/shinki01_ictsuisinkeihi.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-23.pdf",
+            "sha256": "bf52bbdbe9cc2b29ecf669ebcba8ea8230f68d31db7b6e1cf1f01e9d387a567a",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/shinki02_sougoumadoguchigyoumuitaku.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-25.pdf",
+            "sha256": "c953fd8dd558b0a54c4974b04f42da2a33a8910c779621958494270aeef59d1c",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/shinki03_tosimamiraibunkazaidankeihi.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-17.pdf",
+            "sha256": "5bc44abf10b0d48eb3af0b85b203075b1808b0e21a6a563a2896b097ae054c51",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/shinki04_monodukurimesse.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-28.pdf",
+            "sha256": "d635950969fb1d4931ea01266ce9d99b01f1b0cd2ee1fd859fe317b9ec7bc3d8",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/shinki05_ikebukurohigasiguchikannkouannnaijyo.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-32.pdf",
+            "sha256": "f7c7c28e4812ded59f6c1dc8cf3579d57b5df7d69668eab704d601ce06bfc048",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/shinki06_poisute.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-20.pdf",
+            "sha256": "a83f39177fd29cb736180305b2020b3ea6132aa810dd5fe910ea3e1d6346e79c",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/shinki07_patorol.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-2.pdf",
+            "sha256": "0a8b73befb6a216313cd5c2fdda1ab0cde5a2c157f2edd978dbbaa68f2d158a1",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/shinki08_gankenshin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-3.pdf",
+            "sha256": "105622f5c9d3edc431696ad6afcf3dd7ed3f8c95dfc4e3ea111b2af60ea6714e",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/shinki09_rinjihoikujyo.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-21.pdf",
+            "sha256": "ac1d4c97f0e9fe0bfb114a8a01d38bfb91562b66a80dc8e69c08a4b56239925b",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/shinki10_sirituhoikjyo.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-11.pdf",
+            "sha256": "3d139a15995e0cc25108a3e287b29291bf3d672ec16a58f24b8e60dcfe4c415f",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/shinki11_chiikigatahoiku.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-12.pdf",
+            "sha256": "3dde1e439c122dc97103bce0c0638f731b046502ee2bc008c9e38eb6f14049c1",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/shnki12_kouen.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131164/2023/evaluation-settlement-30.pdf",
+            "sha256": "e44ce971b24627f9917bfb5bed663523c60d91726545ea46545bd8626e24bc97",
+            "final_url": "https://www.city.toshima.lg.jp/documents/49231/shinki13_ictkatuyou.pdf"
+          }
+        ],
+        "archived_at": "2026-10-15T12:39:11.898Z"
+      },
+      "reason": "令和5年度に実施した事務事業を令和6年度に評価した事務事業評価表（35事業）。各表の表題は「令和5年度（令和6年度実施）事務事業評価」で、本文に「5年度の取組内容」「5年度に実施した」、指標の列は「4年度・5年度・6年度」で最新の実績は令和5年度。事業の目的・概要、事業費（決算・予算）、指標の目標値と実績値、達成状況分析、区が実施する必要性・業務改善の取組・課題と改善の予定、評価を載せる。文字として読める。"
     }
   ]
 }

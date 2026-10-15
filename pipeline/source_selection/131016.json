@@ -3203,6 +3203,44 @@
         "archived_at": "2026-10-14T16:08:16.020Z"
       },
       "reason": "令和6年度決算の主要な施策の成果（139頁、作成2025-10-03、令和7年9月17日提出の文言を2頁目で確認）。はじめにで「実績を踏まえた評価・課題、令和7年度の取組状況及び令和8年度予算への対応についても記載」と明記。事業ごとに事業概要・事業費（予算現額・決算額・執行率）、令和6年度実績、実績を踏まえた評価・課題と令和7・8年度の取組・対応を載せる（1事業1〜2頁）。文字として読める。分冊（9本）と同じ内容で1本にまとまる全体版を選んだ。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131016",
+        "fiscal_year": 2023,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和5年度主要施策の成果（全体版）",
+          "landing_url": "https://www.city.chiyoda.lg.jp/koho/kuse/zaise/shisaku/r5-seika.html",
+          "inspected_at": "2026-10-15T02:00:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.chiyoda.lg.jp/documents/31964/r5seika-zentai.pdf",
+              "sha256": "24c19867467686285e3719a02b3a82b53c73fe17b28699c0c0a742a1457d419a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131016/2023/evaluation-settlement.pdf",
+            "sha256": "24c19867467686285e3719a02b3a82b53c73fe17b28699c0c0a742a1457d419a",
+            "final_url": "https://www.city.chiyoda.lg.jp/documents/31964/r5seika-zentai.pdf"
+          }
+        ],
+        "archived_at": "2026-10-15T12:32:07.506Z"
+      },
+      "reason": "令和5年度決算の主要施策の成果（155頁、作成2024-08-28、令和6年9月提出の文言を2頁目で確認）。「実績を踏まえた評価・課題、令和6年度の取組状況及び令和7年度予算への対応」を事業ごとに、事業概要・事業費（予算現額・決算額・執行率）、実施内容・実績、評価・課題を載せる。文字として読める。分冊（9本）と同じ内容で1本にまとまる全体版を選んだ。"
     }
   ]
 }

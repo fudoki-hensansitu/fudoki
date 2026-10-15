@@ -2886,6 +2886,68 @@
         "archived_at": "2026-10-14T16:14:31.953Z"
       },
       "reason": "令和6年度に実施した事業を区民評価委員会が令和7年度に評価した報告書のうち、重点プロジェクト事業評価調書（42頁）と一般事務事業の評価結果（54頁）の2冊。重点は事業ごとにロジックモデル・指標の達成度・事業費・評価を、一般は区民評価対象7事業について必要性・手法・負担・評価と理由、今後の方向性を載せる。文字として読める。なお、対象は重点プロジェクトと区民評価対象7事業に限られ、全650事業の事務事業評価調書自体は公表されていない。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131211",
+        "fiscal_year": 2023,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和6年度区民評価報告書（令和5年度実施事業分）",
+          "landing_url": "https://www.city.adachi.tokyo.jp/sesaku/ku/kuse/gyose-h28-kuminhyoka.html",
+          "inspected_at": "2026-10-15T14:00:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.adachi.tokyo.jp/documents/56050/6kekka_1.pdf",
+              "sha256": "ce56a26bcd7acbb3b1293d83aa6976df75b4c39be860e863bac3c7ac2f9e5ad5",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.adachi.tokyo.jp/documents/56050/6kekka_2.pdf",
+              "sha256": "f7048bf2323659cbe534d58089c94f1deeaa7cf10a94b4a6ca5999cb0c72f493",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.adachi.tokyo.jp/documents/56050/6kekka_3.pdf",
+              "sha256": "aab91366f741380e9a717bd5bcff54fd6dd40b21ba31b690894f3e811b76e611",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131211/2023/evaluation-settlement-2.pdf",
+            "sha256": "ce56a26bcd7acbb3b1293d83aa6976df75b4c39be860e863bac3c7ac2f9e5ad5",
+            "final_url": "https://www.city.adachi.tokyo.jp/documents/56050/6kekka_1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131211/2023/evaluation-settlement-3.pdf",
+            "sha256": "f7048bf2323659cbe534d58089c94f1deeaa7cf10a94b4a6ca5999cb0c72f493",
+            "final_url": "https://www.city.adachi.tokyo.jp/documents/56050/6kekka_2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131211/2023/evaluation-settlement-1.pdf",
+            "sha256": "aab91366f741380e9a717bd5bcff54fd6dd40b21ba31b690894f3e811b76e611",
+            "final_url": "https://www.city.adachi.tokyo.jp/documents/56050/6kekka_3.pdf"
+          }
+        ],
+        "archived_at": "2026-10-15T12:47:19.133Z"
+      },
+      "reason": "令和5年度に実施した事業を区民評価委員会が令和6年度に評価した区民評価報告書3分冊。1冊目が「令和６年度（令和５年度実施事業分）」、残り2冊が「令和６年度重点プロジェクト事業評価調書（令和５年度事業分）」。一般事務事業は必要性・手法・負担・評価と理由・今後の方向性を、重点プロジェクトはロジックモデル・指標の達成度・事業費・評価を事業ごとに載せる。文字として読める。なお、対象は重点プロジェクトと区民評価対象事業に限られ、全650事業の事務事業評価調書は公表されていない。"
     }
   ]
 }

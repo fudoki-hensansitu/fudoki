@@ -48,7 +48,9 @@ union all
 -- A parent with a nonzero printed amount whose same-axis subtree prints no amount
 -- at all would otherwise escape the sum check above, so it fails here as missing
 -- data. A zero-amount parent with an amount-less subtree is consistent (all zero)
--- and stays out, as do axes that never carry amounts.
+-- and stays out, as do axes that never carry amounts. So does a parent with exactly
+-- one same-axis child that prints no amount: the original prints a lone child's
+-- amount once, on the parent row. The child stays NULL; nothing is distributed.
 select p.node_id, 'missing_child_amounts' as failure
 from nodes p
 where coalesce(p.amount_yen, 0) <> 0
@@ -61,4 +63,12 @@ where coalesce(p.amount_yen, 0) <> 0
         select 1 from printed_axes a
         where a.checked_node_id = p.node_id and a.document_kind = p.document_kind
             and a.axis = p.axis
+    )
+    and not exists (
+        select 1 from nodes c
+        where c.parent_node_id = p.node_id and c.axis = p.axis
+            and c.document_kind = p.document_kind and c.amount_yen is null
+            and (select count(*) from nodes s
+                where s.parent_node_id = p.node_id and s.axis = p.axis
+                    and s.document_kind = p.document_kind) = 1
     )

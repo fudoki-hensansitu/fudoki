@@ -2313,6 +2313,44 @@
         "archived_at": "2026-10-14T16:11:29.674Z"
       },
       "reason": "令和6年度決算の主要事業の説明（100頁）。世田谷区実施計画の施策を対象に、行政の活動と区民等への効果を量的に把握し、成果指標の目標達成度（186指標の達成状況A〜D・要因分析）、事業ごとの取組内容・実績、予算現額・決算額、今後の政策展開を載せる。文字として読める。予算の執行実績・目次は評価の本体ではないため含めない。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131121",
+        "fiscal_year": 2023,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和5年度主要事業の説明",
+          "landing_url": "https://www.city.setagaya.lg.jp/02022/18562.html",
+          "inspected_at": "2026-10-15T02:00:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.setagaya.lg.jp/documents/18562/2.pdf",
+              "sha256": "86df459e55933ee97432dc53a42d7d6f0aeee7963f3650ffc06419a5853e1696",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131121/2023/evaluation-settlement.pdf",
+            "sha256": "86df459e55933ee97432dc53a42d7d6f0aeee7963f3650ffc06419a5853e1696",
+            "final_url": "https://www.city.setagaya.lg.jp/documents/18562/2.pdf"
+          }
+        ],
+        "archived_at": "2026-10-15T12:37:31.406Z"
+      },
+      "reason": "令和5年度決算の主要事業の説明（46頁、作成2024-08-27）。世田谷区未来つながるプランの施策を対象に、成果指標（全77指標）の達成状況と要因分析、事業ごとの取組・実績、予算現額・決算額、今後の政策展開を載せる。文字として読める。予算の執行実績・目次は評価の本体ではないため含めない。"
     }
   ]
 }

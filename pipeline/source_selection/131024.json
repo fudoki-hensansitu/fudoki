@@ -2042,6 +2042,44 @@
         "archived_at": "2026-10-14T16:08:03.726Z"
       },
       "reason": "令和6年度決算の主要な施策の成果と行政評価を一冊にした全体版（389頁、作成2025-08-20、令和7年9月17日提出の文言を1頁目で確認、ページ更新2025-10-17）。頁5〜12が主要な施策の成果の一覧、頁13以降が事業別行政評価シート。事業ごとに2頁で、事業概要、財務情報（令和5・6年度の決算額と増減理由）、実施内容、関連データ、総括（現状・令和6年度の取組状況、課題、今後の方向性）を載せる。基本政策別の分冊（11本）と同じ内容で、1本にまとまる全体版を選んだ。文字として読める。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131024",
+        "fiscal_year": 2023,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和6年度 主要な施策の成果 行政評価（令和5年度分）全体版",
+          "landing_url": "https://www.city.chuo.lg.jp/a0001/kusei/gyouseihyouka/hyouka/r6gyouseihyouka.html",
+          "inspected_at": "2026-10-15T02:00:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.chuo.lg.jp/documents/16489/r6gyouaseihyoukaall.pdf",
+              "sha256": "7a2519d559f184dc784065614d5c660f7ea5bc5da35de4faa6cc6c95b2bdc9ab",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131024/2023/evaluation-settlement.pdf",
+            "sha256": "7a2519d559f184dc784065614d5c660f7ea5bc5da35de4faa6cc6c95b2bdc9ab",
+            "final_url": "https://www.city.chuo.lg.jp/documents/16489/r6gyouaseihyoukaall.pdf"
+          }
+        ],
+        "archived_at": "2026-10-15T12:32:15.546Z"
+      },
+      "reason": "令和5年度決算の主要な施策の成果と行政評価を一冊にした全体版（386頁、令和6年9月）。事業ごとに2頁で、事業概要、財務情報（令和4・5年度の決算額と増減理由）、実施内容、関連データ、総括（令和5年度の成果と課題）、今後の方向性を載せる。文字として読める。基本政策別の分冊（11本）と同じ内容で、1本にまとまる全体版を選んだ。"
     }
   ]
 }

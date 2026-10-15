@@ -4564,6 +4564,82 @@
         "archived_at": "2026-10-14T10:05:56.841Z"
       },
       "reason": "令和7年度に実施した行政活動を令和8年5月に所管課が自己評価した「令和8年度行政評価結果」（令和8年9月、ページ更新 2026-09-11）。107頁、文字の層あり。第5次基本構想・前期基本計画の29施策の施策評価シート（P.10〜、1施策1頁:令和7年度の主な取組と課題、指標のR3〜R7実績、総括・自己評価、達成度合い、長期計画審議会コメント、次年度の施策の方向性）と、評価対象とした31事務事業の事務事業評価シート（P.43〜、評価対象：令和7年度:基本情報、成果・経費、自己点検の評価と課題、改善提案、今後の方向性、行財政再建推進本部による判定）を1冊に収める。一方、同じ令和7年度決算の『主要な施策の成果に関する説明書』（R7shuyonashisaku.pdf、164頁）は事業名と1行の概要・予算執行状況のみで、目標・実績・評価・課題の記述が無いため選ばなかった。評価は所管課の自己評価で市の最終方針ではない（ページの注記）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132101",
+        "fiscal_year": 2024,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和7年度 行政評価結果（施策評価・事務事業評価）",
+          "landing_url": "https://www.city.koganei.lg.jp/shisei/zaiseiyosan/kaikaku/hyoukasaikouchikur4/D01016012022100.html",
+          "inspected_at": "2026-10-15T18:00:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.koganei.lg.jp/shisei/zaiseiyosan/kaikaku/hyoukasaikouchikur4/D01016012022100.files/R7gyouseihyoukakekka.pdf",
+              "sha256": "9435d566da19e5ed2d29e2c720f1e8757485f26cce62768ec06da015d2086934",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132101/2024/evaluation-settlement.pdf",
+            "sha256": "9435d566da19e5ed2d29e2c720f1e8757485f26cce62768ec06da015d2086934",
+            "final_url": "https://www.city.koganei.lg.jp/shisei/zaiseiyosan/kaikaku/hyoukasaikouchikur4/D01016012022100.files/R7gyouseihyoukakekka.pdf"
+          }
+        ],
+        "archived_at": "2026-10-15T12:52:45.106Z"
+      },
+      "reason": "小金井市の令和7年度行政評価結果（1冊・108頁、令和7年9月公表）。事務事業評価シートの表題は「令和7年度 事務事業評価シート（評価対象：令和6年度）」（48頁）で、決算額の列は「令和2年度〜令和6年度」（最新が令和6年度＝2024年度）と画像で確認した。施策評価シートと事務事業評価シートを収録。文字の層の状態: pdffonts は38フォントを持つが ToUnicode が壊れており pdftotext は文字化けする（例 政策→ᨻ⟇、令和7年度→௧࿴㸵ᖺᗘ）。漢字の抽出は1,247字のみで本文は読めないため pdf_type=scan。頁を100dpiで描画して目視で確認した。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132101",
+        "fiscal_year": 2023,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和6年度 行政評価結果（施策評価・事務事業評価）",
+          "landing_url": "https://www.city.koganei.lg.jp/shisei/zaiseiyosan/kaikaku/hyoukasaikouchikur4/D01016012022100.html",
+          "inspected_at": "2026-10-15T18:00:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.koganei.lg.jp/shisei/zaiseiyosan/kaikaku/hyoukasaikouchikur4/D01016012022100.files/R6gyouseihyoukakekka0612.pdf.pdf",
+              "sha256": "69950defda354801c41c428f6967eb816fd7149129f1b2a2b511cc2b8296307a",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132101/2023/evaluation-settlement.pdf",
+            "sha256": "69950defda354801c41c428f6967eb816fd7149129f1b2a2b511cc2b8296307a",
+            "final_url": "https://www.city.koganei.lg.jp/shisei/zaiseiyosan/kaikaku/hyoukasaikouchikur4/D01016012022100.files/R6gyouseihyoukakekka0612.pdf.pdf"
+          }
+        ],
+        "archived_at": "2026-10-15T12:52:50.095Z"
+      },
+      "reason": "小金井市の令和6年度行政評価結果（1冊・112頁、令和6年9月公表、令和6年12月訂正版）。事務事業評価シートの表題は「令和6年度 事務事業評価シート（評価対象：令和5年度）」（48頁）で、決算額の列は「令和元年度〜令和5年度」（最新が令和5年度＝2023年度）と画像で確認した。施策評価シートと事務事業評価シートを収録。文字の層の状態: pdffonts は38フォントを持つが ToUnicode が壊れており pdftotext は文字化けする（例 政策→ᨻ⟇）。漢字の抽出は2,407字のみで本文は読めないため pdf_type=scan。頁を100dpiで描画して目視で確認した。"
     }
   ]
 }

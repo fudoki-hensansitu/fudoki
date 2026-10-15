@@ -2609,6 +2609,44 @@
         "archived_at": "2026-10-14T16:08:56.220Z"
       },
       "reason": "令和6年度実績を対象とする「文の京」総合戦略の令和7年度戦略点検シート（141頁）。主要課題ごとに4年後の目指す姿・計画期間の方向性、紐づく計画事業の事業費（R6実績・当初予算）と主な取組実績（R4〜6年度）、社会環境の変化、成果や課題の点検・分析、今後の展開（次年度以降の進め方）を載せる。文字として読める。同じ令和6年度決算の主要施策の成果（予算執行の実績報告）は予算現額・決算額の款別表が中心で目標・評価の記述が無いため選ばなかった。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131059",
+        "fiscal_year": 2023,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和6年度進行管理 戦略点検シート",
+          "landing_url": "https://www.city.bunkyo.lg.jp/b001/p007667.html",
+          "inspected_at": "2026-10-15T18:00:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.bunkyo.lg.jp/documents/8570/zenntaiban20250228.pdf",
+              "sha256": "a53712732d3be805818a1da93b7b4a2345d0fb4253f12a6c491f095af612f99a",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131059/2023/evaluation-settlement.pdf",
+            "sha256": "a53712732d3be805818a1da93b7b4a2345d0fb4253f12a6c491f095af612f99a",
+            "final_url": "https://www.city.bunkyo.lg.jp/documents/8570/zenntaiban20250228.pdf"
+          }
+        ],
+        "archived_at": "2026-10-15T12:33:02.496Z"
+      },
+      "reason": "「文の京」総合戦略の令和6年度進行管理 戦略点検シート（1冊・166頁）。1頁目に「令和6年度進行管理 戦略点検シート」、施策のシートに「事業費（令和5年度）上段：実績 下段：当初予算」、主な取組実績の列は「R4(2022) R5(2023) R6(2024)」（最新の実績は令和5年度＝2023年度、R6は空欄）と画像で確認した。文字の層の状態: pdffonts に85フォントがあるが日本語のToUnicodeが無く、pdftotext の漢字は0字（数字と英字のみ・1750トークン）。本文は読めないため pdf_type=scan。頁を100dpiで描画して目視で確認した。"
     }
   ]
 }
