@@ -2419,5 +2419,153 @@
       }
     }
   ],
-  "unresolved_candidates": []
+  "unresolved_candidates": [],
+  "evaluation_selections": [
+    {
+      "target": {
+        "jurisdiction": "131067",
+        "fiscal_year": 2024,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和7年度事務事業評価シート（9部署＋一覧表、令和6年度実績）",
+          "landing_url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/R07gyouseihyouka.html",
+          "inspected_at": "2026-10-14T19:45:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/R07gyouseihyouka.files/00_R7hyoukaichiran.pdf",
+              "sha256": "34acfa2a670143dabb507bce45fcf1787b10063c47aeea00f8e97f82f2a8cb03",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/R07gyouseihyouka.files/01_R7kikakuzaiseibu.pdf",
+              "sha256": "58d93d1970e16301b0a52862e996d81f3f48116dbef48cd581a627a4accf09b5",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/R07gyouseihyouka.files/02_R7soumubu.pdf",
+              "sha256": "fa088a66b4dc605582104fe48a0827d66e69a1f2f5ffca2114f15cc7026bae1e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/R07gyouseihyouka.files/03_R7kuminbu.pdf",
+              "sha256": "788f372cff68e7781e30fec1270604b8e41ed99dac1527ee06e2a2a7dd8f6ae4",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/R07gyouseihyouka.files/04_R7bunkasangyoukankoubu.pdf",
+              "sha256": "317eb79b58ecc77e4ed62f464c66bbbce61c8bba1267cde201df83ae36166c21",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/R07gyouseihyouka.files/05_R7fukushibu.pdf",
+              "sha256": "dadaf8e1abf9bb26eb5a57914988159298a9bf1f9eb8b13b8ff71690b2b0d50f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/R07gyouseihyouka.files/06_R7kenkoubu.pdf",
+              "sha256": "f7cce6b57034721eb1b670a750daab8d7f8b60ef74cff8598f757a712e6d6a3e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/R07gyouseihyouka.files/07_R7kankyouseisoubu.pdf",
+              "sha256": "7d3aa40a25179d4d2a3efe6332567823704f603710da39aaec9c1fc0ef377858",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/R07gyouseihyouka.files/08_R7tosidukuribu.pdf",
+              "sha256": "15495cde91e4efc54d6d136e4bc50fc468614b4fc5653a6a94ace1ebe05c853b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/R07gyouseihyouka.files/09_R7kyouikuiinkai.pdf",
+              "sha256": "fc0f7f4b77b212823c4e93d4c3cf5c5f8f4e37f8e81631d0c7e0c5be7262b700",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131067/2024/evaluation-settlement-3.pdf",
+            "sha256": "34acfa2a670143dabb507bce45fcf1787b10063c47aeea00f8e97f82f2a8cb03",
+            "final_url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/R07gyouseihyouka.files/00_R7hyoukaichiran.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131067/2024/evaluation-settlement-4.pdf",
+            "sha256": "58d93d1970e16301b0a52862e996d81f3f48116dbef48cd581a627a4accf09b5",
+            "final_url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/R07gyouseihyouka.files/01_R7kikakuzaiseibu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131067/2024/evaluation-settlement-9.pdf",
+            "sha256": "fa088a66b4dc605582104fe48a0827d66e69a1f2f5ffca2114f15cc7026bae1e",
+            "final_url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/R07gyouseihyouka.files/02_R7soumubu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131067/2024/evaluation-settlement-5.pdf",
+            "sha256": "788f372cff68e7781e30fec1270604b8e41ed99dac1527ee06e2a2a7dd8f6ae4",
+            "final_url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/R07gyouseihyouka.files/03_R7kuminbu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131067/2024/evaluation-settlement-2.pdf",
+            "sha256": "317eb79b58ecc77e4ed62f464c66bbbce61c8bba1267cde201df83ae36166c21",
+            "final_url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/R07gyouseihyouka.files/04_R7bunkasangyoukankoubu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131067/2024/evaluation-settlement-7.pdf",
+            "sha256": "dadaf8e1abf9bb26eb5a57914988159298a9bf1f9eb8b13b8ff71690b2b0d50f",
+            "final_url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/R07gyouseihyouka.files/05_R7fukushibu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131067/2024/evaluation-settlement-8.pdf",
+            "sha256": "f7cce6b57034721eb1b670a750daab8d7f8b60ef74cff8598f757a712e6d6a3e",
+            "final_url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/R07gyouseihyouka.files/06_R7kenkoubu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131067/2024/evaluation-settlement-6.pdf",
+            "sha256": "7d3aa40a25179d4d2a3efe6332567823704f603710da39aaec9c1fc0ef377858",
+            "final_url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/R07gyouseihyouka.files/07_R7kankyouseisoubu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131067/2024/evaluation-settlement-1.pdf",
+            "sha256": "15495cde91e4efc54d6d136e4bc50fc468614b4fc5653a6a94ace1ebe05c853b",
+            "final_url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/R07gyouseihyouka.files/08_R7tosidukuribu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131067/2024/evaluation-settlement-10.pdf",
+            "sha256": "fc0f7f4b77b212823c4e93d4c3cf5c5f8f4e37f8e81631d0c7e0c5be7262b700",
+            "final_url": "https://www.city.taito.lg.jp/kusei/kunokeikaku/gyouseihyouka/R07gyouseihyouka.files/09_R7kyouikuiinkai.pdf"
+          }
+        ],
+        "archived_at": "2026-10-14T16:09:29.240Z"
+      },
+      "reason": "令和6年度に実施した事務事業を令和7年度に評価した事務事業評価（10冊、計377頁、2025-10-17公表）。一覧表（65頁、299事業）と部署別の評価シート9冊で、事務事業ごとに目的・内容、活動指標・成果指標のR4〜6年度実績と目標値・達成率、事務事業コスト・決算額、実績を踏まえた評価（必要性・効率性・手段の適切性・目的達成度の4段階と理由）、総合評価（事業の課題・方向性）を載せる（1事業2頁程度）。文字として読める。同じ令和6年度決算の主要施策の成果説明書は予算現額・決算額の款別表が中心で目標・評価の記述が無いため選ばなかった。"
+    }
+  ]
 }

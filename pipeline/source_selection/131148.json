@@ -2101,6 +2101,44 @@
         "archived_at": "2026-10-14T07:45:38.526Z"
       },
       "reason": "決算書と同じ頁に本冊（63頁。決算の概要と部ごとの主な課題の実施状況）と別冊（75頁。施策ごとの成果指標・分析・今後の戦略と主な事業）を掲載。地方自治法第233条第5項に基づく提出の文言を本冊で確認。どちらも文字として読める。同じ別冊が令和8年度行政評価の頁（https://www.city.tokyo-nakano.lg.jp/kusei/kousou/seido/gyousei/gyouseihyouka/r8gyouseihyouka.html）にも別のURL・別のバイト列で載るが、文字にすると全文が一致する（2026-10-13確認）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131148",
+        "fiscal_year": 2024,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和6年度主要施策の成果（決算説明資料）",
+          "landing_url": "https://www.city.tokyo-nakano.lg.jp/kusei/zaisei/kessan/R6kessan.html",
+          "inspected_at": "2026-10-14T19:19:30+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.tokyo-nakano.lg.jp/kusei/zaisei/kessan/R6kessan.files/R6shuyosesaku.pdf",
+              "sha256": "57ba2206bfa4e0f57d08757bd8dbc70beefc3b989ffa5d1bf237fc95b1d44742",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131148/2024/evaluation-settlement.pdf",
+            "sha256": "57ba2206bfa4e0f57d08757bd8dbc70beefc3b989ffa5d1bf237fc95b1d44742",
+            "final_url": "https://www.city.tokyo-nakano.lg.jp/kusei/zaisei/kessan/R6kessan.files/R6shuyosesaku.pdf"
+          }
+        ],
+        "archived_at": "2026-10-14T16:11:38.939Z"
+      },
+      "reason": "令和6年度決算の主要な施策の成果（148頁、作成2025-08-19、令和7年9月提出の文言を2頁目で確認）。頁17〜53が部ごとの主な課題の実施状況（事業の概要、R4〜6年度の活動内容・実績、R6年度予算現額・支出済額・執行率）、頁54〜137が令和7年度行政評価（令和6年度事業の評価）の実施状況で、内部評価票の見方と事業ごとの内部評価（事業概要・コスト・実績・効果、事業の方向6区分と理由）を載せる。文字として読める。同じ内容の行政評価頁への重複掲載の有無は未確認だが、決算説明資料の1冊を代表にした。"
     }
   ]
 }

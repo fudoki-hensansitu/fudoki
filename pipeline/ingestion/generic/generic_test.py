@@ -608,6 +608,15 @@ class SpreadAndOwnerTest(unittest.TestCase):
         repair_positions(page, Report())
         self.assertEqual([w.text for w in page.words], ['2,181,817'])
 
+    def test_the_last_character_of_a_letter_spaced_line_keeps_the_width_of_one_character(self):
+        from ingestion.generic.observe import Page, Word
+        from ingestion.generic.repair import Report, repair_positions
+        page = Page(1, 600, 800, [Word('増', 362.5, 128.5, 371.3, 137.3), Word('減', 397.8, 128.5, 433.1, 137.3)], [])
+        report = Report()
+        repair_positions(page, report)
+        self.assertEqual([(w.text, round(w.x1 - w.x0, 1)) for w in page.words], [('増', 8.8), ('減', 8.8)])
+        self.assertEqual(report.letterspaced_glyphs, 1)
+
     def test_a_number_ending_with_a_comma_continues_on_its_right(self):
         from ingestion.generic.observe import Page, Word
         from ingestion.generic.repair import Report, repair_positions

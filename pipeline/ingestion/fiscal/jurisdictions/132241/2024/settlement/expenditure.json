@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132241",
+    "fiscal_year": 2024,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "b85f78b54c97935a5a131d3039c5542c312b1e0cc974e3af03eeb5b27f4699c5"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure"
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-expenditure",
+      "conversion_id": "general-settlement",
+      "input_fingerprint": "080cd60a36404a5257f375875bbb9dc989c5e7a463734273b99ed8dc1405d15d",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は printed 37頁 から決めた。款の和 63,603,356,782 と印字の「歳出合計」63,603,356,782 が一致。",
+        "金額の注記 137 件（不用額 4・充用 32・流用 101）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 5 種（245 件）を、印字された語から辞書の見出しに寄せた: 不用額(A)-(B)-(C)→不用額・予算現額(A)→予算現額・予算現額と支出済額との比較(E)(A)-(B)→比較・支出済額(B)→支出済額・翌年度繰越額(C)→翌年度繰越額。",
+        "選定の scope が共有していた別の方向（歳入）の頁 6 頁は読んでいない。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132241/2024/settlement/expenditure/general-expenditure-nodes.parquet",
+          "sha256": "e115e7a045cc1997a5f5817b6e618b2df65a1c1ec48fdedbd1bff6fd74bde186",
+          "bytes": 30496
+        },
+        "row_count": 1076
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132241/2024/settlement/expenditure/general-expenditure-amounts.parquet",
+          "sha256": "f2da6d84e9a74ce2726bfe087aad5d3c4d2bbb15691ff3414ff32ef3ca49882a",
+          "bytes": 50076
+        },
+        "row_count": 4524
+      }
+    }
+  ]
+}

@@ -5758,6 +5758,44 @@
         "archived_at": "2026-10-14T10:06:02.579Z"
       },
       "reason": "令和7年度に実施した333の予算事業を所管課が内部評価した「令和8年度行政評価結果報告書」（令和8年9月、161頁、文字の層あり。狛江市の行政評価ページで公表）。後期基本計画の「まちの姿」1〜8に沿って、1事業あたり約1/3〜1頁で、予算科目・所管課・R7年度決算額、取組結果・評価（実施内容）、具体的な成果（件数・参加人数等）、4段階の評定（例: B）と評価の理由を載せる。巻末に指標の推移（154頁〜）。評価は庁内の内部評価で、行財政改革推進本部が最終決定した結果。同じ令和7年度決算の『主要な施策の成果説明書』（令和8年8月）もあるが、事業ごとに評定と理由を持つこちらを代表にした。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132195",
+        "fiscal_year": 2024,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和7年度内部評価結果報告書（令和6年度実施事業）",
+          "landing_url": "https://www.city.komae.tokyo.jp/index.cfm/46,0,362,3163,html",
+          "inspected_at": "2026-10-14T19:40:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.komae.tokyo.jp/index.cfm/46,117244,c,html/117244/20251112-165609.pdf",
+              "sha256": "6615be8d782badad54d4871c8090b395dbf9a53f26fe8309e5726f86b87a063f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132195/2024/evaluation-settlement.pdf",
+            "sha256": "6615be8d782badad54d4871c8090b395dbf9a53f26fe8309e5726f86b87a063f",
+            "final_url": "https://www.city.komae.tokyo.jp/index.cfm/46,117244,c,html/117244/20251112-165609.pdf"
+          }
+        ],
+        "archived_at": "2026-10-14T16:18:04.893Z"
+      },
+      "reason": "令和6年度に実施した予算事業を所管課が内部評価した令和7年度内部評価結果報告書（127頁、作成2025-10-24）。後期基本計画のまちの姿に沿って1事業あたり約1/3〜1頁で、予算科目・所管課・R6年度決算額、取組結果・評価、具体的な成果、4段階の評定と理由を載せる。文字として読める。同じ令和6年度決算の主要な施策の成果説明書より事業ごとに評定と理由を持つこちらを代表にした。"
     }
   ]
 }

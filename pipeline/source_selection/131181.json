@@ -1619,5 +1619,669 @@
       }
     }
   ],
-  "unresolved_candidates": []
+  "unresolved_candidates": [],
+  "evaluation_selections": [
+    {
+      "target": {
+        "jurisdiction": "131181",
+        "fiscal_year": 2024,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和7年度荒川区行政評価 事務事業分析シート（令和6年度実績、所管部課別）",
+          "landing_url": "https://www.city.arakawa.tokyo.jp/a001/gyouseihyouka/r7gyouseihyouka/r7jimujigyou.html",
+          "inspected_at": "2026-10-14T20:35:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/soumukikakuka.pdf",
+              "sha256": "af7c6471636815f08ebaba046c25c6b7fc855696888a1e4b1339ee21ddc2440f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/zaiseika.pdf",
+              "sha256": "37e5f520175b871508c4fc4441e93ea19fe00f2d8bfa1fc0df19d28d0bb0c155",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/hisyoka.pdf",
+              "sha256": "5a5ed0006b5df11b630286d4000a4505ea883e81222edd7b55c4f24797d39eed",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kouhouka.pdf",
+              "sha256": "d5539b05924803e9c1023721a8307fc1c9f56bb110abe5f0ca1d555f7711d689",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/keirika.pdf",
+              "sha256": "e27344b87d441dd1f9d3da2fc108a88e453649e7144851efd9fe4154dd583a08",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/shokuinka.pdf",
+              "sha256": "15802f03a09eb3371c6eb65c38f47d1b8382d907e0e0efb1690b4e0246345be1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/eizenka.pdf",
+              "sha256": "b3d19899227f8bb1d252792f74298685089b40b7f1c759ae15f10f87d5a67149",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/digitalsuishin.pdf",
+              "sha256": "cdbbffafa1bec0b7951d504e09588e293575076a9595ff1d3f6f44d223b0b848",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kuminka.pdf",
+              "sha256": "818628a5eb1cdb879a311290ad0b0cb28b39c562622a701c2d658b85815f7fd1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kuminsisetuka.pdf",
+              "sha256": "e745a28af3a4d63bc27760b1ed05efd0131857a4a9be82d21135188e43b198ff",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kosekijuminka.pdf",
+              "sha256": "1d90cf7a52612c69f780e3a439a81103ff54eecd904cd37028733fb35bb6a0cb",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/zeimuka.pdf",
+              "sha256": "8cd0d4a9e98578c734a3931c02190d09bf8366cb16f2e0f02e18280c72876a8f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/bousaika.pdf",
+              "sha256": "28d3088f4fef5af50bb32577a723d7951db7f28a300e22ed86dd18bb2b59bded",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/seikatuanzenka.pdf",
+              "sha256": "351b8478a0e8213638c42b9549c2ed9ed9215d56b555a0c99fdbed714f2442a3",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/bunkakouryuu.pdf",
+              "sha256": "0d4e9c5eeb8f7b840dc0ab9fc0493600546b04f4c30a81649799b44c19210496",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/syougaigakusyuu.pdf",
+              "sha256": "739318787a92f9446d55f0abae9c981afc675d3c797daee9b986e262fcb14a39",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/sportsshinkou.pdf",
+              "sha256": "81aeb17ce791223552ae3eb2987aae89c2a788156e58ea2b6680f636ba3300b1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/yuinomori.pdf",
+              "sha256": "0bd06a792f3160a616934eab8ca21c5bbf1089a90afc879e7b4f8d8cdd9f98f4",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/chiikitosyokan.pdf",
+              "sha256": "d74c91a5fed43dc6982de23dd1f7fddb52d0c8bb63494b5d5cfd3698e3b223eb",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/sangyoushinkou.pdf",
+              "sha256": "27f0f073555ced99909656b5053c8258f0f3c3f7668da87480eee0230fe5985e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/keieishien.pdf",
+              "sha256": "95d5844abe48b25cc72d23c136b1610e475758a4b9d51f817901c0f0b5f8f3c0",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/syuuroushien.pdf",
+              "sha256": "0623db89c01047c9389171a06a56bcf73e282cb28b3fe59dca1ac090bbf0a59e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kankoushinkou.pdf",
+              "sha256": "8807ed46cdd2fe77ff25a641744952d4d037335e6d753b6007c3f2973a51aa0f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kankyou.pdf",
+              "sha256": "2659220fc3d34da8a3bce04a37e6c2666d7823331b1e43f08b8412fd5e8895eb",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/seisourecycle.pdf",
+              "sha256": "399792353e19dbcf4264a710e8c719884da63cdefe5eefe9d865ed4f865af1eb",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/fukushisuishin.pdf",
+              "sha256": "6db16dcaebb1f9cb16cb959cf1dd932bc34b4494fb8f690d7247d53c57880e82",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/seikatsufukushi.pdf",
+              "sha256": "ea15b06ca45f17d26e583adf3195a534bb7a76242f77487ee80bcf9b55b03932",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kourerisyafukushi.pdf",
+              "sha256": "030c9d36f11fda81e6e2bdbbbe2678c328a410fa204214806bb17d5b78983fd2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kaigohoken.pdf",
+              "sha256": "132785b72ac37fe49c92423586d737f5c0d9a2a570bb3f8b5ec6e7d5b4c31c12",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/rev1_syougaisyafukushi.pdf",
+              "sha256": "0b5174e3cc6235c6b3ca982beb564512e5ce3088b531cb47ab15394d2682eaf0",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kokuhonenkin.pdf",
+              "sha256": "a0b5d03f693e9fbe77a13519ccc13a19a67ecc6177a8886a7a77d92b023ee50e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/seikatueiseika.pdf",
+              "sha256": "f34f57355b2321168c1725a0fdfd85b50c33ecad7b729e5bacf588d69c310094",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kenkousuisin.pdf",
+              "sha256": "ffe27df200da0a6b98d857f5bab2faa2960ab022d5ba89efa74be8a7b238013e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/hokenyoboka.pdf",
+              "sha256": "b73c453bdb715d83bb10da5a2770d879fc91c999eff4c1ca89baf2aafce1846c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kosodatesienka.pdf",
+              "sha256": "45827737d7677da6806202b8eb0b4225ed860381cef8dc65bc9a1b718dad5908",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/zidouseisyonen.pdf",
+              "sha256": "044ebbd98795642238c5ea607713e82ebd81ac0276e4454149adc8eaf0f4865a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/hoikuka.pdf",
+              "sha256": "ce273e4982bb14eb89ea2bff4f6a3c9dabcbe2838f907d01adc4f350fb683388",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/arakawayuuen.pdf",
+              "sha256": "155d982e04334a1ec85c75b3070093a9d0d89c568983ecc09df93f34176cafb2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kodomokateisougo.pdf",
+              "sha256": "0fa8b862722d63ebac90f9716d19841bb0d58be7a0f0caef9dec55e99d607c48",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/toshikeikakuka.pdf",
+              "sha256": "c0feaa099d6e5f44fad197d2007e635dc58fcaf80aa5937343c8a68ced9c7611",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/sumaimatidukuri.pdf",
+              "sha256": "7367e275e0cd22da453c1823adefcfe9aae9478273ca61fbb4437f860912af1f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/dobokukanri.pdf",
+              "sha256": "752ed63c817a9257db15ee1b2a44d3addae642a08640ad50e2ddf7bfab111b11",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kibanseibika.pdf",
+              "sha256": "a05f2970a10eb13ac63217dc3ffef7664780a64f145fbea468260950dac20dea",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kentikusidou.pdf",
+              "sha256": "79cf4c8a74837588e6675daaa1c7267eff106cfb202f69fe22f3f07faccf22dc",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kaikei.pdf",
+              "sha256": "7ba2f8518021c325ad4d9278505f97937f004567ec681c2c7b438df971841dae",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kyoikusoumuka.pdf",
+              "sha256": "4601605f1148101fcbeb3353b21d5d8edae690950b07b68c1fbcfe1ba363baf4",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kyouikushisetu.pdf",
+              "sha256": "0f70610e344b3a169555f8a159fd2dcb51764289b64c8e2288eb1c93c5f3848d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/gakumuka.pdf",
+              "sha256": "7d41e490fd5581998fd605ce3f131423de75d5ddee5309490ff3a318232af2a3",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/sidousitsu.pdf",
+              "sha256": "99d2f835fbf8a6998ff6898e72c6e915544401381397b6f44d09392e34d558b7",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kyoikusenta.pdf",
+              "sha256": "8815ef2985d1e09538d4d73fabf6b3d7e42601dbe3d65e7681b3265aa99c9903",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/senkyo.pdf",
+              "sha256": "b83a2ffee66e525ff5f53ad7206d8fd93f57dbfcdf4e51e35f7ad02d68482756",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kansa.pdf",
+              "sha256": "2d73a8bf639013e4183d099b5452467bb2527f140d721d31cca35083ca36d779",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/41906/gikai.pdf",
+              "sha256": "91e0200a414887975ccf7cce890b9ef0ce09fdbfb042436d65c9841b4d056442",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-40.pdf",
+            "sha256": "af7c6471636815f08ebaba046c25c6b7fc855696888a1e4b1339ee21ddc2440f",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/soumukikakuka.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-18.pdf",
+            "sha256": "37e5f520175b871508c4fc4441e93ea19fe00f2d8bfa1fc0df19d28d0bb0c155",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/zaiseika.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-22.pdf",
+            "sha256": "5a5ed0006b5df11b630286d4000a4505ea883e81222edd7b55c4f24797d39eed",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/hisyoka.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-47.pdf",
+            "sha256": "d5539b05924803e9c1023721a8307fc1c9f56bb110abe5f0ca1d555f7711d689",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kouhouka.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-49.pdf",
+            "sha256": "e27344b87d441dd1f9d3da2fc108a88e453649e7144851efd9fe4154dd583a08",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/keirika.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-11.pdf",
+            "sha256": "15802f03a09eb3371c6eb65c38f47d1b8382d907e0e0efb1690b4e0246345be1",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/shokuinka.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-41.pdf",
+            "sha256": "b3d19899227f8bb1d252792f74298685089b40b7f1c759ae15f10f87d5a67149",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/eizenka.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-45.pdf",
+            "sha256": "cdbbffafa1bec0b7951d504e09588e293575076a9595ff1d3f6f44d223b0b848",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/digitalsuishin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-30.pdf",
+            "sha256": "818628a5eb1cdb879a311290ad0b0cb28b39c562622a701c2d658b85815f7fd1",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kuminka.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-50.pdf",
+            "sha256": "e745a28af3a4d63bc27760b1ed05efd0131857a4a9be82d21135188e43b198ff",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kuminsisetuka.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-12.pdf",
+            "sha256": "1d90cf7a52612c69f780e3a439a81103ff54eecd904cd37028733fb35bb6a0cb",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kosekijuminka.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-34.pdf",
+            "sha256": "8cd0d4a9e98578c734a3931c02190d09bf8366cb16f2e0f02e18280c72876a8f",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/zeimuka.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-15.pdf",
+            "sha256": "28d3088f4fef5af50bb32577a723d7951db7f28a300e22ed86dd18bb2b59bded",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/bousaika.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-17.pdf",
+            "sha256": "351b8478a0e8213638c42b9549c2ed9ed9215d56b555a0c99fdbed714f2442a3",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/seikatuanzenka.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-6.pdf",
+            "sha256": "0d4e9c5eeb8f7b840dc0ab9fc0493600546b04f4c30a81649799b44c19210496",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/bunkakouryuu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-25.pdf",
+            "sha256": "739318787a92f9446d55f0abae9c981afc675d3c797daee9b986e262fcb14a39",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/syougaigakusyuu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-31.pdf",
+            "sha256": "81aeb17ce791223552ae3eb2987aae89c2a788156e58ea2b6680f636ba3300b1",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/sportsshinkou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-5.pdf",
+            "sha256": "0bd06a792f3160a616934eab8ca21c5bbf1089a90afc879e7b4f8d8cdd9f98f4",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/yuinomori.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-48.pdf",
+            "sha256": "d74c91a5fed43dc6982de23dd1f7fddb52d0c8bb63494b5d5cfd3698e3b223eb",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/chiikitosyokan.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-14.pdf",
+            "sha256": "27f0f073555ced99909656b5053c8258f0f3c3f7668da87480eee0230fe5985e",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/sangyoushinkou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-36.pdf",
+            "sha256": "95d5844abe48b25cc72d23c136b1610e475758a4b9d51f817901c0f0b5f8f3c0",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/keieishien.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-3.pdf",
+            "sha256": "0623db89c01047c9389171a06a56bcf73e282cb28b3fe59dca1ac090bbf0a59e",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/syuuroushien.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-32.pdf",
+            "sha256": "8807ed46cdd2fe77ff25a641744952d4d037335e6d753b6007c3f2973a51aa0f",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kankoushinkou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-13.pdf",
+            "sha256": "2659220fc3d34da8a3bce04a37e6c2666d7823331b1e43f08b8412fd5e8895eb",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kankyou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-19.pdf",
+            "sha256": "399792353e19dbcf4264a710e8c719884da63cdefe5eefe9d865ed4f865af1eb",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/seisourecycle.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-23.pdf",
+            "sha256": "6db16dcaebb1f9cb16cb959cf1dd932bc34b4494fb8f690d7247d53c57880e82",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/fukushisuishin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-51.pdf",
+            "sha256": "ea15b06ca45f17d26e583adf3195a534bb7a76242f77487ee80bcf9b55b03932",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/seikatsufukushi.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-1.pdf",
+            "sha256": "030c9d36f11fda81e6e2bdbbbe2678c328a410fa204214806bb17d5b78983fd2",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kourerisyafukushi.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-9.pdf",
+            "sha256": "132785b72ac37fe49c92423586d737f5c0d9a2a570bb3f8b5ec6e7d5b4c31c12",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kaigohoken.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-4.pdf",
+            "sha256": "0b5174e3cc6235c6b3ca982beb564512e5ce3088b531cb47ab15394d2682eaf0",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/rev1_syougaisyafukushi.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-39.pdf",
+            "sha256": "a0b5d03f693e9fbe77a13519ccc13a19a67ecc6177a8886a7a77d92b023ee50e",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kokuhonenkin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-52.pdf",
+            "sha256": "f34f57355b2321168c1725a0fdfd85b50c33ecad7b729e5bacf588d69c310094",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/seikatueiseika.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-53.pdf",
+            "sha256": "ffe27df200da0a6b98d857f5bab2faa2960ab022d5ba89efa74be8a7b238013e",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kenkousuisin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-42.pdf",
+            "sha256": "b73c453bdb715d83bb10da5a2770d879fc91c999eff4c1ca89baf2aafce1846c",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/hokenyoboka.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-20.pdf",
+            "sha256": "45827737d7677da6806202b8eb0b4225ed860381cef8dc65bc9a1b718dad5908",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kosodatesienka.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-2.pdf",
+            "sha256": "044ebbd98795642238c5ea607713e82ebd81ac0276e4454149adc8eaf0f4865a",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/zidouseisyonen.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-46.pdf",
+            "sha256": "ce273e4982bb14eb89ea2bff4f6a3c9dabcbe2838f907d01adc4f350fb683388",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/hoikuka.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-10.pdf",
+            "sha256": "155d982e04334a1ec85c75b3070093a9d0d89c568983ecc09df93f34176cafb2",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/arakawayuuen.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-8.pdf",
+            "sha256": "0fa8b862722d63ebac90f9716d19841bb0d58be7a0f0caef9dec55e99d607c48",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kodomokateisougo.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-44.pdf",
+            "sha256": "c0feaa099d6e5f44fad197d2007e635dc58fcaf80aa5937343c8a68ced9c7611",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/toshikeikakuka.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-24.pdf",
+            "sha256": "7367e275e0cd22da453c1823adefcfe9aae9478273ca61fbb4437f860912af1f",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/sumaimatidukuri.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-26.pdf",
+            "sha256": "752ed63c817a9257db15ee1b2a44d3addae642a08640ad50e2ddf7bfab111b11",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/dobokukanri.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-38.pdf",
+            "sha256": "a05f2970a10eb13ac63217dc3ffef7664780a64f145fbea468260950dac20dea",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kibanseibika.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-27.pdf",
+            "sha256": "79cf4c8a74837588e6675daaa1c7267eff106cfb202f69fe22f3f07faccf22dc",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kentikusidou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-28.pdf",
+            "sha256": "7ba2f8518021c325ad4d9278505f97937f004567ec681c2c7b438df971841dae",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kaikei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-21.pdf",
+            "sha256": "4601605f1148101fcbeb3353b21d5d8edae690950b07b68c1fbcfe1ba363baf4",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kyoikusoumuka.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-7.pdf",
+            "sha256": "0f70610e344b3a169555f8a159fd2dcb51764289b64c8e2288eb1c93c5f3848d",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kyouikushisetu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-29.pdf",
+            "sha256": "7d41e490fd5581998fd605ce3f131423de75d5ddee5309490ff3a318232af2a3",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/gakumuka.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-37.pdf",
+            "sha256": "99d2f835fbf8a6998ff6898e72c6e915544401381397b6f44d09392e34d558b7",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/sidousitsu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-33.pdf",
+            "sha256": "8815ef2985d1e09538d4d73fabf6b3d7e42601dbe3d65e7681b3265aa99c9903",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kyoikusenta.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-43.pdf",
+            "sha256": "b83a2ffee66e525ff5f53ad7206d8fd93f57dbfcdf4e51e35f7ad02d68482756",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/senkyo.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-16.pdf",
+            "sha256": "2d73a8bf639013e4183d099b5452467bb2527f140d721d31cca35083ca36d779",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/kansa.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131181/2024/evaluation-settlement-35.pdf",
+            "sha256": "91e0200a414887975ccf7cce890b9ef0ce09fdbfb042436d65c9841b4d056442",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/41906/gikai.pdf"
+          }
+        ],
+        "archived_at": "2026-10-14T16:14:18.228Z"
+      },
+      "reason": "令和6年度に実施した事務事業を令和7年度に評価した事務事業分析シート53冊（計1738頁）。事務事業ごとに目的・対象・内容、指標の推移（目標値・実績値）、予算・決算額の推移（R元〜7年度）、実績の推移、評価・課題・今後の方向性を載せる。文字として読める。同じ評価の政策・施策・施設分析シートは施策・施設単位のため、事業単位の事務事業分析シートを代表にした。"
+    }
+  ]
 }
