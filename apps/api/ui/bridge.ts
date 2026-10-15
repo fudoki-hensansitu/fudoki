@@ -7,9 +7,6 @@ import {
 } from '@modelcontextprotocol/ext-apps'
 import { toolFor, type Json, type TreeNode, type ViewData } from './types'
 
-/** 描画 tool の名前（src/app.ts の RENDER_TOOL と同じ）。View の取得は団体名を付けるため、データ tool でなくこの tool を通す */
-const RENDER_TOOL = 'render_expenditure_view'
-
 interface Entry {
   tool: string
   args: Json
@@ -203,7 +200,7 @@ export function createBridge() {
       update({ busy: true, error: undefined, pending })
       try {
         const result = await app.callServerTool(
-          { name: RENDER_TOOL, arguments: { tool, arguments: input } },
+          { name: tool, arguments: input },
           { signal: request.signal },
         )
         if (disposed || id !== epoch) return
@@ -251,7 +248,7 @@ export function createBridge() {
       request = new AbortController()
       update({ busy: true, error: undefined })
       const fetchTool = async (name: string, args: Json) => {
-        const result = await app.callServerTool({ name: RENDER_TOOL, arguments: { tool: name, arguments: args } }, { signal: request!.signal })
+        const result = await app.callServerTool({ name, arguments: args }, { signal: request!.signal })
         const data = result.structuredContent as Json | undefined
         if (result.isError || !data || toolFor(data) !== name) throw new Error(result.isError ? message(result) : '表示できない結果です')
         return { data: data as ViewData, meta: result._meta }

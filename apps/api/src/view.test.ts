@@ -43,7 +43,7 @@ describe('MCP Apps の View', () => {
     const direct = (await rpc('tools/call', { name: 'list_jurisdictions', arguments: {} })).result
     const rendered = (await rpc('tools/call', { name: 'render_expenditure_view', arguments: { tool: 'list_jurisdictions', arguments: {} } })).result
     expect(rendered.structuredContent).toEqual(direct.structuredContent)
-    expect(direct._meta.jurisdictionNames).toBeUndefined()
+    expect(rendered._meta).toEqual(direct._meta)
     const bad = (await rpc('tools/call', { name: 'render_expenditure_view', arguments: { tool: 'get_expenditure_node', arguments: {} } })).result
     expect(bad.isError).toBe(true)
   })
