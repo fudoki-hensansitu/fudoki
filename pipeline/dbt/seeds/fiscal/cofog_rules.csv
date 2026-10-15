@@ -38,14 +38,15 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 -781,keyword-primary,,一般会計,,,,,小学校|幼稚園,contains,,assigned,09.1,retained,目,,小学校・幼稚園を就学前と初等教育に分類する。,false
 -780,keyword-secondary,,一般会計,,,,,中学校|中等教育学校,contains,,assigned,09.2,retained,目,,中学校・中等教育学校を中等教育に分類する。,false
 -779,keyword-social-learning,,一般会計,,,,,社会教育|生涯学習|学習等供用,contains,,assigned,09.5,retained,目,,学校段階を特定しない社会教育・学習を教育に分類する。,true
--778,keyword-education-general,,一般会計,,,,,教育総務,contains,,assigned,09.8,retained,目,,教育総務を教育管理に分類する。,false
+-778,keyword-education-general,,一般会計,,,,,教育総務|学事費|学校づくり,contains,,assigned,09.8,retained,目,,教育総務・学事・学校づくりの推進を教育管理に分類する。,false
 -777,keyword-health-pollution,,一般会計,,,,,公害保健,contains,,assigned,07,retained,目,,公害による健康被害への保健サービスを保健に分類する。,false
 -776,keyword-pollution,,一般会計,,,,,公害対策,contains,,assigned,05.3,retained,目,,公害対策を汚染防止に分類する。,true
 -775,keyword-night-soil,,一般会計,,,,,し尿処理,contains,,assigned,05.2,retained,目,,し尿の処理を排水管理に分類する。,false
 -773,keyword-environment,,一般会計,,,,,環境対策|環境保全,contains,,assigned,05,retained,目,,環境の総合的な対策・保全を環境保護に分類する。,false
+-774,keyword-environment-policy-132098,132098,一般会計,,,,,環境政策,contains,,assigned,05,retained,目,,町田市の環境政策費（衛生費・保健衛生費）を環境保護に分類する。三鷹の環境政策費は規則 eisei-hoken で保健に分類済みなので団体限定にする。,false
 -772,keyword-waste-facility,,一般会計,,,,,環境清掃施設|リサイクル・清掃|資源清掃|ごみ処理|清掃総務,contains,,assigned,05.1,retained,目,,ごみ・資源回収と清掃施設を廃棄物管理に分類する。,false
 -771,keyword-health-hokenjo,,一般会計,,,,,保健所,contains,,assigned,07,retained,目,,保健所に属する衛生等を COFOG 07 保健に分類する。確かな割り当てであり暫定にしない。予防・母子保健は先の規則が取る。,false
--770,keyword-health-boundary,,一般会計,,,,,保健衛生総務|保健費|環境衛生,contains,,assigned,07,retained,目,,立川の保健衛生5目は環境衛生に環境保護が混じる可能性など境界があるため暫定として COFOG 07 保健に置く。,true
+-770,keyword-health-boundary,,一般会計,,,,,保健衛生総務|保健総務|保健費|環境衛生,contains,,assigned,07,retained,目,,立川の保健衛生5目は環境衛生に環境保護が混じる可能性など境界があるため暫定として COFOG 07 保健に置く。,true
 -769,keyword-health,,一般会計,,,,,健康推進|保健所|保健衛生|感染症|衛生監視,contains,,assigned,07,retained,目,,健康推進・保健衛生等を保健に分類する。予防・診療・感染症など機能が明確な語は先の規則が取る。,false
 -768,keyword-funeral,,一般会計,,,,,葬祭,contains,,assigned,01.3,retained,目,,葬祭事務を一般公共サービスに分類する。,true
 -767,keyword-street-lighting,,一般会計,,,,,街路照明,contains,,assigned,06.4,retained,目,,街路照明を UN COFOG 06.4 街路照明に分類する。名称からの判断で定義の確認が要るため暫定とする。,true
