@@ -77,6 +77,7 @@ class Item:
     decided: bool = False  # role chosen by a judgment, not by the geometric rules
     hint: str | None = None  # the kind of the note whose parts this item prints (`note_breakdown`)
     kinds: list[tuple[list[Glyph], list[Glyph], str]] = field(default_factory=list)  # (label, amount run, heading) of kind lines
+    late: list[tuple[str, list[Glyph]]] = field(default_factory=list)  # amounts printed on the next page
 
     @property
     def glyphs(self) -> list[Glyph]:
@@ -464,7 +465,7 @@ def line_limits(logicals: list[Logical]) -> dict[str, float]:
 
 def items(group: Group, header: str, margins: set[int] | None = None,
           roles: dict[int, str] | None = None, limit: float | None = None, ocr: bool = False,
-          amount_brackets: bool = False, settings: dict | None = None) -> list[Item]:
+          amount_brackets: bool = False, settings: dict | None = None, carry: Item | None = None) -> list[Item]:
     """Lines of a label group into items; amounts printed inside the group stay on their item.
 
     `roles` (variant B) replaces the geometric decisions for codeless lines.
@@ -664,6 +665,11 @@ def items(group: Group, header: str, margins: set[int] | None = None,
             if result:
                 for run in money:
                     result[-1].amounts.append((header, run))
+            elif carry is not None:
+                # The first line of the page: the amount of the item whose name ended the page before
+                # (`3 スクールソーシャルワーカー事業…` / next page `17,950,133`).
+                for run in money:
+                    carry.late.append((header, run))
             continue
         item = Item(group, label[0].page, [label], code, name, 0)
         for run in money:
@@ -1442,7 +1448,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             if not group.subject:
                 group_items = items(group, header, margins.get(group.axis), roles, limits.get(group.axis), logical.ocr,
                                     bool(layout and layout.get(group.axis, {}).get('amount_brackets')),
-                                    (layout or {}).get(group.axis))
+                                    (layout or {}).get(group.axis), page_tail(all_items, group.axis))
             elif group.mode == 'indent':
                 group_items = items(group, group.axis)
             else:
@@ -1781,7 +1787,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             for item in (i for g in ordered for i in found[id(g)]):
                 if item.role not in ('node', 'repeat') or item.key is None:
                     continue
-                for header, run in item.amounts:
+                for header, run in [*item.amounts, *item.late]:
                     amounts.append(_amount(item.key, header, run, logical.unit))
                 for label, run, heading in item.kinds:
                     remarks.append({'kind': 'kind line', 'target': item, 'heading': heading, 'label': label,
@@ -1884,6 +1890,17 @@ def subject_row(item: Item, logical: Logical) -> tuple[float, float]:
 def _bbox(glyphs: list[Glyph]) -> tuple[float, float, float, float]:
     boxes = [g.original for g in glyphs]
     return (min(b[0] for b in boxes), min(b[1] for b in boxes), max(b[2] for b in boxes), max(b[3] for b in boxes))
+
+
+def page_tail(all_items: list, axis: str) -> Item | None:
+    """The last item of the axis on the page before, when it prints no amount: its name ended the page and
+    its amount may open the next one."""
+    if not all_items:
+        return None
+    _, ordered, found = all_items[-1]
+    last = max((i for g in ordered if not g.subject and g.axis == axis for i in found[id(g)]
+                if i.role == 'node' and i.lines), default=None, key=lambda i: i.lines[-1][-1].y1)
+    return last if last is not None and last.code is not None and not last.amounts else None
 
 
 def repeated_parent_rows(nodes: list[dict], amounts: list[dict], unowned: list[dict],
