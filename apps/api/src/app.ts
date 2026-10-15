@@ -209,6 +209,7 @@ function mcpServer(ctx: Ctx, apiOrigin: string, operations: Operation[]): McpSer
           tool: z.enum(names).describe('表示する結果を返す tool の名前。'),
           arguments: z.record(z.string(), z.unknown()).describe('その tool に渡す入力（データ tool の呼び出しと同じもの）。'),
         }),
+        // outputSchema は付けない: 結果の形が tool 引数で変わる（対象 tool の output のどれか）ため、単一の schema にできない
         annotations,
         // 旧キー ui/resourceUri は ext-apps の registerAppTool と同じく併記する（仕様では GA 前に外す deprecated）
         _meta: { ui: { resourceUri: VIEW_URI }, 'ui/resourceUri': VIEW_URI },
