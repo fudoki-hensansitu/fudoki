@@ -32,6 +32,10 @@ POLL_SECONDS = 15
 DEFAULT_TIMEOUT_MINUTES = 30
 PENDING = {'queued', 'running'}
 FAILED = {'error', 'skipped', 'outdated'}
+# 手元で読める文字がこれ以上ある頁を、取り込み後の本文が空でないかの見本にする
+MIN_PROBE_CHARS = 50
+# 取り込み後の本文が手元の 1/10 未満なら読めていないとみなす（墨田区の2023年度は 1,000 字超が 1〜2 字になった）
+READABLE_RATIO = 10
 
 
 def log(message: str) -> None:
@@ -109,6 +113,17 @@ def split_page(document, page: int) -> bytes:
     return data
 
 
+def text_chars(document, page: int) -> int:
+    """手元の pdfium で読める、空白を除いた文字数。"""
+    return len(''.join(document[page - 1].get_textpage().get_text_range().split()))
+
+
+def converted_chars(chunks: list[dict]) -> int:
+    """取り込み後の chunk の本文の文字数。変換が付ける見出し（## Contents まで と ### Page N）は数えない。"""
+    body = ''.join(chunk['text'].split('## Contents', 1)[-1] for chunk in chunks)
+    return len(''.join(line for line in body.splitlines() if not line.startswith('### Page')).replace(' ', '').replace('\u3000', ''))
+
+
 # --- 索引 -------------------------------------------------------------------
 
 def check_instance(config: dict) -> None:
@@ -167,6 +182,8 @@ class OriginPlan:
     delete: list[dict] = field(default_factory=list)    # metadata が違う索引の item。消して add で登録し直す
     waiting: int = 0                                     # 正しいが完了していない
     ok: int = 0
+    probe_page: int = 0                                  # 手元の文字が最も多い頁。取り込み後の本文が空でないかを見る
+    probe_chars: int = 0
 
     @property
     def dirty(self) -> bool:
@@ -200,13 +217,17 @@ def build_plans(instance: dict, origins: list[plan.Origin]) -> tuple[list[Origin
         try:
             page_count = len(document)
             pages = plan.selected_pages(origin, page_count)
+            chars = {}
             for page in pages:
                 split_page(document, page)
+                chars[page] = text_chars(document, page)
         finally:
             document.close()
         items = plan.plan_items(origin, page_count)
         origin_plan = OriginPlan(origin, page_count, items, plan.fingerprint(config, items), pages,
                                  recorded=False)
+        origin_plan.probe_page = max(pages, key=lambda page: chars[page])
+        origin_plan.probe_chars = chars[origin_plan.probe_page]
         record = plan.registration(instance, origin)
         origin_plan.recorded = (record is not None and record['page_count'] == page_count
                                 and record['plan_fingerprint'] == origin_plan.fingerprint)
@@ -281,6 +302,27 @@ def apply(instance: dict, plans: list[OriginPlan], strays: list[dict], workers: 
         upload_all(name, jobs, workers)
 
 
+def readable(name: str, p: OriginPlan, indexed: dict[str, dict]) -> bool:
+    """手元で文字が読める頁の本文が、取り込み後に空になっていないか。
+
+    埋め込みの無い CID フォントで ToUnicode の無い PDF（UniJIS-UCS2-HW-H・UniJIS-UTF16-H など）は、
+    pdfium では読めても AI Search の変換では本文がほぼ空になり、completed のまま検索に出ない。
+    """
+    if p.probe_chars < MIN_PROBE_CHARS:
+        return True
+    key = next(item['key'] for item in p.items if item['metadata']['page'] == p.probe_page)
+    try:
+        chunks = search_cf(name, 'items', 'chunks', indexed[key]['id']) or []
+    except RuntimeError as error:  # 一時的な失敗では止めず、記録しないまま次の原典へ。再実行で確かめ直す
+        log(f'{p.origin.sha256[:12]}: chunk を取れず、本文を確かめられない: {error}')
+        return False
+    converted = converted_chars(chunks)
+    if converted * READABLE_RATIO >= p.probe_chars:
+        return True
+    log(f'{p.origin.sha256[:12]}: {p.probe_page} 頁は手元で {p.probe_chars} 文字読めるが、取り込み後は {converted} 文字')
+    return False
+
+
 def wait_and_confirm(instance: dict, plans: list[OriginPlan], timeout_minutes: int) -> bool:
     """全 item が completed になり、数と metadata が計画と一致した原典だけ記録を書く。"""
     name = instance['config']['name']
@@ -324,6 +366,8 @@ def wait_and_confirm(instance: dict, plans: list[OriginPlan], timeout_minutes: i
     ok = True
     for p in targets:
         extra = [k for k in indexed if k.startswith(p.origin.sha256 + '_') and k not in {i['key'] for i in p.items}]
+        if not results[p.origin.sha256] and not extra and not readable(name, p, indexed):
+            results[p.origin.sha256] = 'unreadable'
         if results[p.origin.sha256] or extra:
             log(f'{p.origin.sha256[:12]}: 確認できない（{results[p.origin.sha256] or "extra"}, 余分{len(extra)}）。記録は消したまま')
             ok = False
