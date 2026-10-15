@@ -1232,10 +1232,15 @@ def prints_phase(logical: Logical) -> bool:
                for band in logical.bands)
 
 
-def layout_name_start(item: Item) -> float:
-    """A configured hanging name starts after its printed code, including its punctuation."""
+def layout_name_start(item: Item, hang_chars: int | None = None) -> float:
+    """A configured hanging name starts after its printed code, including its punctuation. `hang_chars` is
+    the document's own hang: its wrapped lines start that many characters right of the numbered line's start,
+    whatever the number's width (a two-digit code is not one character wider)."""
     if item.code is None:
         return _name_start(item)
+    if hang_chars:
+        first = item.lines[0][0]
+        return first.x0 + (first.y1 - first.y0) * hang_chars
     found = CODE.match(normalize(text(item.lines[0])))
     if found is None:
         return _name_start(item)
@@ -1258,7 +1263,7 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
     prefixes = tuple(normalize(prefix) for prefix in settings.get('notes', []))
     for item in items:
         if settings.get('wrap'):
-            item.indent = layout_name_start(item)
+            item.indent = layout_name_start(item, settings.get('hang_chars'))
         raw = normalize(text(item.lines[0]))
         note = raw.startswith(prefixes)
         mark = next((m for m in ordered_marks

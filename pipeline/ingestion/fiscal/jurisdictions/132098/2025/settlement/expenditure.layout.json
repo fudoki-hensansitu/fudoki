@@ -3,7 +3,8 @@
   "breakdown": {
     "備考": {
       "notes": ["○同款", "○同項", "○同目"],
-      "wrap": "amount_on_last_line"
+      "wrap": "amount_on_last_line",
+      "hang_chars": 1
     }
   }
 }
