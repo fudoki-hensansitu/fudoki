@@ -288,7 +288,14 @@ def wait_and_confirm(instance: dict, plans: list[OriginPlan], timeout_minutes: i
     deadline = time.time() + timeout_minutes * 60
     results: dict[str, str] = {}
     while True:
-        indexed = {item['key']: item for item in list_items(name)}
+        try:
+            indexed = {item['key']: item for item in list_items(name)}
+        except RuntimeError as error:  # 待ちは数時間に及ぶので、一覧の一時的な失敗では止めずに次の回で取り直す
+            if time.time() > deadline:
+                raise
+            log(f'  一覧の取得に失敗。{POLL_SECONDS} 秒後に取り直す: {error}')
+            time.sleep(POLL_SECONDS)
+            continue
         pending = 0
         for p in targets:
             problems = []

@@ -150,7 +150,7 @@ describe('公開の範囲', () => {
     expect(JSON.parse(body.result.content[0].text).error.code).toBe('UNAVAILABLE')
 
     // 収録していない団体・年度でも、止まっているあいだは not_covered ではなく 503
-    expect((await post({ ...valid, fiscal_year: 2024 }, e)).status).toBe(503)
+    expect((await post({ ...valid, fiscal_year: 2010 }, e)).status).toBe(503)
 
     expect(order).toEqual([])
     expect(requests).toEqual([])
@@ -252,7 +252,7 @@ describe('状態の分類', () => {
   })
 
   test('not_covered: 収録の無い団体・年度は AI Search・流量・総数に届かない', async () => {
-    for (const body of [{ ...valid, jurisdiction: '131130' }, { ...valid, fiscal_year: 2024 }, { ...valid, fiscal_year: 2026 }]) {
+    for (const body of [{ ...valid, jurisdiction: '131130' }, { ...valid, fiscal_year: 2010 }, { ...valid, fiscal_year: 2026 }]) {
       const res = await post(body)
       expect(res.status).toBe(200)
       const out = await res.json()
@@ -647,7 +647,7 @@ describe('上限と kill switch の順序', () => {
     const validator = new CfWorkerJsonSchemaValidator().getValidator(schema)
     for (const [args, search] of [
       [valid, undefined],
-      [{ ...valid, fiscal_year: 2024 }, undefined],
+      [{ ...valid, fiscal_year: 2010 }, undefined],
       [valid, async () => ({ chunks: [] })],
     ] as const) {
       if (search) searchImpl = search
