@@ -1041,6 +1041,9 @@ class Built:
     # The printed code of a subject heading that a continuation page prints again (the same code and name as
     # the one above it): no node of its own, its digits are the adopted heading's.
     repeated_codes: list = field(default_factory=list)
+    # Glyphs of a row with no name whose every printed amount equals the amount of the account row above it in
+    # the same column (the 節 row of a 予備費, which prints no 節 name): the parent's amounts again, not new ones.
+    repeated_amounts: list = field(default_factory=list)
 
 
 def node_key(item: Item) -> str:
@@ -1415,6 +1418,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
     levels: dict[str, list[float]] = {}
     nodes, amounts, unowned, notes = [], [], [], []
     repeated_codes: list = []
+    unowned_runs: list[tuple[dict, list[Glyph]]] = []  # an amount no row owns, with its glyphs
     annotations: list[tuple[Item, str, list[Glyph], str | None]] = []
     remarks: list[dict] = []  # `Built.annotations` before the items have keys
     all_items: list[tuple[Logical, list[Group], dict[int, list[Item]]]] = []
@@ -1848,8 +1852,12 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                                       'box': _bbox([printed.get(id(g), g) for g in money])})
                         continue
                     if target is None or target.key is None:
-                        unowned.append({'kind': 'amount without row', 'page': money[0].page, 'text': candidate,
-                                        'header': '／'.join(band.header)})
+                        record = {'kind': 'amount without row', 'page': money[0].page, 'text': candidate,
+                                  'header': '／'.join(band.header)}
+                        unowned.append(record)
+                        centre = sum((g.y0 + g.y1) / 2 for g in money) / len(money)
+                        if stacked is None or stacked[1] != _cell(band, centre):  # a kind word names it otherwise
+                            unowned_runs.append((record, money))
                         continue
                     header = '／'.join(band.header)
                     y = sum((g.y0 + g.y1) / 2 for g in money) / len(money)
@@ -1869,7 +1877,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
         marked.append({'kind': remark['kind'], 'node_key': remark['target'].key, 'parent_node_key': cursor.key,
                        'heading': remark['heading'], 'label': remark['label'], 'runs': remark['runs'],
                        'unit': remark['unit'], 'hint': remark.get('hint')})
-    return Built(nodes, _dedupe(amounts, unowned), unowned, notes, marked, skipped, repeated_codes)
+    repeated_amounts = repeated_parent_rows(nodes, amounts, unowned, unowned_runs)
+    return Built(nodes, _dedupe(amounts, unowned), unowned, notes, marked, skipped, repeated_codes, repeated_amounts)
 
 
 def judged_roles(judge, group: Group, margins: set[int] | None) -> dict[int, str]:
@@ -1906,6 +1915,38 @@ def subject_row(item: Item, logical: Logical) -> tuple[float, float]:
 def _bbox(glyphs: list[Glyph]) -> tuple[float, float, float, float]:
     boxes = [g.original for g in glyphs]
     return (min(b[0] for b in boxes), min(b[1] for b in boxes), max(b[2] for b in boxes), max(b[3] for b in boxes))
+
+
+def repeated_parent_rows(nodes: list[dict], amounts: list[dict], unowned: list[dict],
+                         runs: list[tuple[dict, list[Glyph]]]) -> list[Glyph]:
+    """The unowned amount rows that print the amounts of the account row above them again.
+
+    A row has no name and no row of its own, and each of its printed amounts is equal, to the yen and in the
+    same column, to the amount of the nearest 款・項・目 row above it on the page. One amount that differs keeps
+    the whole row unowned (the check stops). The row is recorded, not dropped: its glyphs become an excluded
+    region of kind `親の繰り返し`.
+    """
+    if not runs:
+        return []
+    subject = {n['node_key'] for n in nodes if n['axis_header'] == '科目'}
+    rows: dict[tuple, list] = defaultdict(list)
+    for record, run in runs:
+        x0, y0, x1, y1 = _bbox(run)
+        rows[record['page'], round((y0 + y1) / 2)].append((record, run, y0))
+    repeated: list[Glyph] = []
+    for (page, _), row in rows.items():
+        matched = []
+        for record, run, y0 in row:
+            above = [a for a in amounts if a['node_key'] in subject and a['physical_page'] == page
+                     and a['header_path'] == record['header'] and a['y1'] is not None and a['y1'] <= y0 + 1]
+            nearest = max(above, key=lambda a: a['y1'], default=None)
+            same = nearest is not None and normalize(nearest['amount_text']) == normalize(record['text'])
+            matched.append(same)
+        if all(matched):
+            for record, run, _ in row:
+                repeated += run
+                unowned.remove(record)
+    return repeated
 
 
 def _amount(key: str, header: str, run: list[Glyph], unit: str | None) -> dict:
