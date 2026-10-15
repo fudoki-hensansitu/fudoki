@@ -218,6 +218,13 @@ def detail(pages):
             continue
         shared = {e['kind'] for e in events if e is not event and e['page'] == page
                   and abs(e['y'] - y) < 1.2 and e['kind'] in ('款', '項', '目')}
+        # A spread that only continues the open 目 reprints its bare 款・項・目
+        # numbers on one line, with no name or amount: nothing new is printed.
+        if kind in ('款', '項', '目') and shared == {'款', '項', '目'} - {kind}:
+            line = {e['kind']: e['word']['text'] for e in events
+                    if e['page'] == page and abs(e['y'] - y) < 1.2 and e['kind'] in ('款', '項', '目')}
+            if all(current.get(level, {}).get('番号') == number for level, number in line.items()):
+                continue
         if kind == '項' and shared == {'款'}:
             shared = set()
         elif shared:
