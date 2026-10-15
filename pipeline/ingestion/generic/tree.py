@@ -1598,7 +1598,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             previous = tails.get(group.axis)
             if ((layout or {}).get(group.axis, {}).get('wrap') == 'amount_on_last_line' and previous is not None
                     and mine and not mine[0].name and mine[0].amounts and mine[0].code is None
-                    and not previous.amounts and previous.code is None and previous.name
+                    and not previous.amounts and previous.name
                     and previous.role in ('node', 'note', 'annotation') and mine[0].page == previous.page + 1):
                 first = mine.pop(0)
                 previous.lines += first.lines

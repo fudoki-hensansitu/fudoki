@@ -17,7 +17,8 @@
       ],
       "note_kinds": {
         "市民プール高圧開閉装置等修繕": "債務負担行為"
-      }
+      },
+      "wrap": "amount_on_last_line"
     }
   },
   "source_inconsistencies": [

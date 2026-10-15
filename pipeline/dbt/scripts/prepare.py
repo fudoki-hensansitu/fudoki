@@ -15,6 +15,7 @@ import yaml
 from ingestion.fiscal import manifest
 from ingestion.fiscal.storage import fetch, verify
 from ingestion.lib.node_tables import AMOUNT_COLUMNS, NODE_COLUMNS
+from ingestion.lib.source_inconsistencies import declared_for
 
 DBT = Path(__file__).resolve().parents[1]
 PIPELINE = DBT.parent
@@ -144,7 +145,7 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
     pdf_sources = [s for s in declarations if s['name'] == 'fiscal_pdf']
     csv_sources = [s for s in declarations if s['name'] == 'fiscal_csv']
     sources = pdf_sources[0]
-    documents, origins, tables, csv_tables = {}, {}, [], []
+    documents, origins, tables, csv_tables, inconsistencies = {}, {}, [], [], []
     warehouse.parent.mkdir(parents=True, exist_ok=True)
     # One transaction: a failed input never leaves a partially replaced ingestion schema.
     with duckdb.connect(str(warehouse)) as con:
@@ -169,6 +170,10 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
             con.execute(f'create or replace table ingestion.{identifier(declared["name"])} as select * from read_parquet(?)', [str(path)])
             if kind == 'nodes':
                 source_key = manifest.object_key(document, table['table_id']).removesuffix('.parquet')
+                for entry in declared_for(document, table['table_id']):
+                    inconsistencies.append((target['jurisdiction'], target['fiscal_year'], target['document_kind'],
+                                            table['account'], entry['axis'], entry['page'], entry['parent']['code'],
+                                            entry['parent']['name'], entry['printed'], entry['children_sum']))
                 tables.append((source_key, declared['name'].removesuffix('_nodes'), target['jurisdiction'],
                                target['fiscal_year'], target['document_kind'], spec['direction'],
                                table['table_id'], table['account'], origin_id, json.dumps(table['notes'], ensure_ascii=False),
@@ -202,6 +207,9 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
         con.execute('create or replace table ingestion.csv_tables (source_table_key varchar, relation_prefix varchar, jurisdiction_code varchar, fiscal_year integer, document_kind varchar, direction varchar, table_id varchar, origin_id varchar, row_count bigint, amount_column varchar, amount_unit varchar)')
         if csv_tables:
             con.executemany('insert into ingestion.csv_tables values (?,?,?,?,?,?,?,?,?,?,?)', csv_tables)
+        con.execute('create or replace table ingestion.source_inconsistencies (jurisdiction_code varchar, fiscal_year integer, document_kind varchar, account_name varchar, axis varchar, page integer, parent_code varchar, parent_name varchar, printed_yen bigint, children_sum_yen bigint)')
+        if inconsistencies:
+            con.executemany('insert into ingestion.source_inconsistencies values (?,?,?,?,?,?,?,?,?,?)', inconsistencies)
         con.execute('create or replace table ingestion.origin (origin_id varchar, jurisdiction_code varchar, fiscal_year integer, document_kind varchar, amendment_number integer, title varchar, url varchar, format varchar, sha256 varchar)')
         con.executemany('insert into ingestion.origin values (?,?,?,?,?,?,?,?,?)', list(origins.values()))
         jurisdictions = load_jurisdictions(JURISDICTIONS)
