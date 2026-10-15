@@ -51,6 +51,7 @@ class Report:
     unit: dict = field(default_factory=dict)
     duplicate_words: int = 0
     composite_glyphs: int = 0
+    letterspaced_glyphs: int = 0
     joined_numbers: int = 0
     off_page_rules: int = 0
     cropped_words: int = 0
@@ -63,7 +64,7 @@ class Report:
     def as_dict(self) -> dict:
         return {'hidden_glyphs': self.hidden_glyphs, 'hidden_rules': self.hidden_rules,
                 'vertical_words': self.vertical_words, 'invisible_error': self.invisible_error, 'pattern': self.pattern, 'unit': self.unit, 'duplicate_words': self.duplicate_words,
-                'composite_glyphs': self.composite_glyphs, 'joined_numbers': self.joined_numbers,
+                'composite_glyphs': self.composite_glyphs, 'letterspaced_glyphs': self.letterspaced_glyphs, 'joined_numbers': self.joined_numbers,
                 'off_page_rules': self.off_page_rules, 'cropped_words': self.cropped_words,
                 'health': self.health, 'broken': self.broken, 'skipped_pages': self.skipped_pages, 'repairs': sum(self.hits.values()),
                 'hits': dict(self.hits.most_common()), 'examples': {k: v[:5] for k, v in self.examples.items()}}
@@ -273,6 +274,12 @@ def repair_positions(page: Page, report: Report) -> None:
     # `…へ流用△100,325円` is the words of a note and its amount, set without a gap.
     split: list[Word] = []
     for word in page.words:
+        # The last character of a letter-spaced line (`増　減`) comes out of the text layer with its box
+        # stretched across the spacing, into the next cell. A character is not wider than two of its heights.
+        height = word.y1 - word.y0
+        if len(word.text) == 1 and ord(word.text) >= 0x2E80 and height > 0 and word.x1 - word.x0 > 2 * height:
+            word = Word(word.text, word.x0, word.y0, word.x0 + height, word.y1)
+            report.letterspaced_glyphs += 1
         at = _amount_start(word.text)
         if at:
             width = (word.x1 - word.x0) / len(word.text)
