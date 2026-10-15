@@ -215,7 +215,7 @@ PAREN_TAIL = re.compile(r'(?:[(（][^()（）]*[)）])+$')
 # A number printed against a counter word (`110番`, `3歳児`, `3階`, `2025年`) is a count in a name.
 # An item number glued to a year it is followed by (`42025年…`: 4 and 2025年).
 YEAR_LED = re.compile(r'^([0-9]{1,2})(?:19|20)[0-9]{2}年')
-COUNTED = re.compile(r'^[0-9０-９]+(?:番(?!号)|歳|階|年|か月|ヶ月|箇所|世帯)')
+COUNTED = re.compile(r'^[0-9０-９]+(?:番(?!号)|歳|階|年|か月|ヶ月|箇所|世帯|ミリ|キロ|メートル|インチ)')
 GROUPED = re.compile(r'[△▲]?[0-9]{1,3}(?:,[0-9]{3})+')
 YEN_AMOUNT = re.compile(r'[△▲]?[0-9]{1,3}(?:,[0-9]{3})+円')
 # An amount printed against text spilling in from the next band (`44,406,439,217明許`).
@@ -319,6 +319,8 @@ def _split_line(line: list[Glyph], amount_brackets: bool = False) -> tuple[list[
     money = []
     while parts and is_amount(text(parts[-1])) and len(parts) > 1:
         money.insert(0, parts.pop())
+    if len(parts) == 1 and normalize(text(parts[0])) == '0':
+        return [], [parts[0]]  # a line that is only `0` is a printed zero amount: no item is numbered 0
     if len(parts) == 1 and GROUPED.fullmatch(normalize(text(parts[0]))):
         # A line that is only a grouped amount (`10,000` under a long name) is the
         # amount of the item above, not an item numbered 10. A bare `10` stays a label.
@@ -411,6 +413,8 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
         line_text = normalize(text(label))
         code, name = _split_code(line_text)
         raw_text = text(label).strip()
+        if code is not None and len(name) > 1 and re.match(r'[０-９]{3,}', raw_text):
+            code, name = None, line_text  # `２０３０ビジョン…`: three or more full-width digits begin a name, not an item number (a one-character name stays `161`/`人`)
         script = re.match(r'([0-9]+)(?=[０-９])', raw_text)
         if script and margins is not None and margins & set(_margins(label)):
             # `11３歳児健康診査事業`: half-width digits are the number and the full-width ones start the name.
