@@ -1097,5 +1097,779 @@
       "archive": null
     }
   ],
-  "unresolved_candidates": []
+  "unresolved_candidates": [],
+  "evaluation_selections": [
+    {
+      "target": {
+        "jurisdiction": "132080",
+        "fiscal_year": 2024,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和7年度 施策・事務事業マネジメントシート（令和6年度取組実績、30施策）",
+          "landing_url": "https://www.city.chofu.lg.jp/010050/p000436.html",
+          "inspected_at": "2026-10-15T21:35:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-1.pdf",
+              "sha256": "556d49e97888609f38f9b2bc01bf3a8cc119093a9743c912bb6abfa6258ceb09",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-2.pdf",
+              "sha256": "85d75d79b19ae04170cfed2cb2566bdd18de14d2e86889860eee7539f86937c4",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-3.pdf",
+              "sha256": "ae8945d2a1a3509b82cd440465b5ff5a839f82d58c3e756e5ccb8ffdc8df0cc2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-4.pdf",
+              "sha256": "3a41b49b1a78d3b65d7958ba3fcc74b56c3af1afbe612cd10d7cf72d1274b2cb",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-5.pdf",
+              "sha256": "936abbee6f9671506ee51655e3f2309771f05cf17db4834aa35f3fd37e1377d8",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-6.pdf",
+              "sha256": "fb8a6ee4c92a7170480db4f29f7d4de6cf6951aa030c132e13e90e1083ab0b01",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-7.pdf",
+              "sha256": "4b6b2e3ea91a65712e95b4b9222842619bb3c83f3949d5c6d14f5046a593dc2b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-8.pdf",
+              "sha256": "300052fe486e338edfda2aa7b6140967c92acc3afa6d00bebfce91ebb6f2051b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-9.pdf",
+              "sha256": "d067305f7d79e5d1409a92e2a6f72c5fc8dd89c470d704555e7096fa9eb644e1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-10.pdf",
+              "sha256": "fa8cf6834134828b3439d12bc0d5633ed0a508ac158397762c966bd5e52c2b45",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-11.pdf",
+              "sha256": "40a688a0a88bb6372f7586775eb912280dae7ed4767e1268fc432e8cfdcdff33",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-12.pdf",
+              "sha256": "bebad7c4bb13f02dbe641fd0d393fca5cf0e46fe828853434fa23566ffcdabf4",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-13.pdf",
+              "sha256": "c414c8d033d30ec0abfb7132105d656dc9b3767283726d387b32406db6b042c3",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-14.pdf",
+              "sha256": "584f2c4fc54bc6aa8520acc70ba54cd79936268add6d4ae601c96983e7bb8f6e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-15.pdf",
+              "sha256": "696e11e8cf96b93eb240d9ab2022e154192d0d7afaca6a4aab27a9cf091c8a80",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-16.pdf",
+              "sha256": "7e636ff38f981fe9e3c3b6eb3aa0bca6f3d6982cd99b8b1ea74139e9e946b2de",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-17.pdf",
+              "sha256": "67ecdea1fceb8bcedc50f97bba0c7cba8402fda974ac8cdad625860c474c695f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-18.pdf",
+              "sha256": "9dd1a8203bed4f1babbee8294aec09fbf763d765955d6ecc6e80dfa931335291",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-19.pdf",
+              "sha256": "c4074a62ec074af774491c7b92927cc500d6559b4557c2fc65cf6ed3355fd46a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-20.pdf",
+              "sha256": "bfdd5f2044b2700c082f48f295c9dcf87affcffc0cb5bf0c21caae7db1bb77df",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-21.pdf",
+              "sha256": "87408783fb5296d8f885b6b904b7a7b0a1003277830aff807f19744da79aa1b5",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-22.pdf",
+              "sha256": "d39055a1e02edceda290e227479d64b5091965d20b7f9ea448a47bd2acb5a350",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-23.pdf",
+              "sha256": "df52f0447879f3bf9a5ae5f90db39655c7fab4f70f576a91350030757272587c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-24.pdf",
+              "sha256": "4d863d93d38601504c9d51e5fce91c90544bf1880e4063d8a7ea49537cec9f7d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-25.pdf",
+              "sha256": "0cfa0eba3f9404d598a79967c4df58eec5659dcaf32d6bcaf2d2aaa83be11cdb",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-26.pdf",
+              "sha256": "30c3761ecb1e4d4ef119bd9f627e49aac5fef3a22c36d5cd7d2feedb59e9ca26",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-27.pdf",
+              "sha256": "db578dbd0ecbca85f5f5a6076e6cdd57c4054ee4ecd57608b87af48810883f86",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-28.pdf",
+              "sha256": "4de467c3477fa5d3c02c3ffed693c55eae132ffaf53a9eda2bf9d3cdf63401dc",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-29.pdf",
+              "sha256": "a25b20546a88e3600905dda730a5e5e2b256e72ca86d77543f18d441f64800e4",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-30.pdf",
+              "sha256": "fa3be33acbd6764b2d7e0d756d0e61331f63f9b76874995c9fa61d9b92ebfd68",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132080/2024/evaluation-settlement-9.pdf",
+            "sha256": "556d49e97888609f38f9b2bc01bf3a8cc119093a9743c912bb6abfa6258ceb09",
+            "final_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2024/evaluation-settlement-14.pdf",
+            "sha256": "85d75d79b19ae04170cfed2cb2566bdd18de14d2e86889860eee7539f86937c4",
+            "final_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2024/evaluation-settlement-19.pdf",
+            "sha256": "ae8945d2a1a3509b82cd440465b5ff5a839f82d58c3e756e5ccb8ffdc8df0cc2",
+            "final_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-3.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2024/evaluation-settlement-4.pdf",
+            "sha256": "3a41b49b1a78d3b65d7958ba3fcc74b56c3af1afbe612cd10d7cf72d1274b2cb",
+            "final_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-4.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2024/evaluation-settlement-16.pdf",
+            "sha256": "936abbee6f9671506ee51655e3f2309771f05cf17db4834aa35f3fd37e1377d8",
+            "final_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-5.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2024/evaluation-settlement-30.pdf",
+            "sha256": "fb8a6ee4c92a7170480db4f29f7d4de6cf6951aa030c132e13e90e1083ab0b01",
+            "final_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-6.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2024/evaluation-settlement-6.pdf",
+            "sha256": "4b6b2e3ea91a65712e95b4b9222842619bb3c83f3949d5c6d14f5046a593dc2b",
+            "final_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-7.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2024/evaluation-settlement-2.pdf",
+            "sha256": "300052fe486e338edfda2aa7b6140967c92acc3afa6d00bebfce91ebb6f2051b",
+            "final_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-8.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2024/evaluation-settlement-24.pdf",
+            "sha256": "d067305f7d79e5d1409a92e2a6f72c5fc8dd89c470d704555e7096fa9eb644e1",
+            "final_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-9.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2024/evaluation-settlement-29.pdf",
+            "sha256": "fa8cf6834134828b3439d12bc0d5633ed0a508ac158397762c966bd5e52c2b45",
+            "final_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-10.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2024/evaluation-settlement-5.pdf",
+            "sha256": "40a688a0a88bb6372f7586775eb912280dae7ed4767e1268fc432e8cfdcdff33",
+            "final_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-11.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2024/evaluation-settlement-20.pdf",
+            "sha256": "bebad7c4bb13f02dbe641fd0d393fca5cf0e46fe828853434fa23566ffcdabf4",
+            "final_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-12.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2024/evaluation-settlement-23.pdf",
+            "sha256": "c414c8d033d30ec0abfb7132105d656dc9b3767283726d387b32406db6b042c3",
+            "final_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-13.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2024/evaluation-settlement-10.pdf",
+            "sha256": "584f2c4fc54bc6aa8520acc70ba54cd79936268add6d4ae601c96983e7bb8f6e",
+            "final_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-14.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2024/evaluation-settlement-12.pdf",
+            "sha256": "696e11e8cf96b93eb240d9ab2022e154192d0d7afaca6a4aab27a9cf091c8a80",
+            "final_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-15.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2024/evaluation-settlement-13.pdf",
+            "sha256": "7e636ff38f981fe9e3c3b6eb3aa0bca6f3d6982cd99b8b1ea74139e9e946b2de",
+            "final_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-16.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2024/evaluation-settlement-11.pdf",
+            "sha256": "67ecdea1fceb8bcedc50f97bba0c7cba8402fda974ac8cdad625860c474c695f",
+            "final_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-17.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2024/evaluation-settlement-17.pdf",
+            "sha256": "9dd1a8203bed4f1babbee8294aec09fbf763d765955d6ecc6e80dfa931335291",
+            "final_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-18.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2024/evaluation-settlement-22.pdf",
+            "sha256": "c4074a62ec074af774491c7b92927cc500d6559b4557c2fc65cf6ed3355fd46a",
+            "final_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-19.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2024/evaluation-settlement-21.pdf",
+            "sha256": "bfdd5f2044b2700c082f48f295c9dcf87affcffc0cb5bf0c21caae7db1bb77df",
+            "final_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-20.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2024/evaluation-settlement-15.pdf",
+            "sha256": "87408783fb5296d8f885b6b904b7a7b0a1003277830aff807f19744da79aa1b5",
+            "final_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-21.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2024/evaluation-settlement-25.pdf",
+            "sha256": "d39055a1e02edceda290e227479d64b5091965d20b7f9ea448a47bd2acb5a350",
+            "final_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-22.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2024/evaluation-settlement-27.pdf",
+            "sha256": "df52f0447879f3bf9a5ae5f90db39655c7fab4f70f576a91350030757272587c",
+            "final_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-23.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2024/evaluation-settlement-7.pdf",
+            "sha256": "4d863d93d38601504c9d51e5fce91c90544bf1880e4063d8a7ea49537cec9f7d",
+            "final_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-24.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2024/evaluation-settlement-1.pdf",
+            "sha256": "0cfa0eba3f9404d598a79967c4df58eec5659dcaf32d6bcaf2d2aaa83be11cdb",
+            "final_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-25.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2024/evaluation-settlement-3.pdf",
+            "sha256": "30c3761ecb1e4d4ef119bd9f627e49aac5fef3a22c36d5cd7d2feedb59e9ca26",
+            "final_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-26.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2024/evaluation-settlement-26.pdf",
+            "sha256": "db578dbd0ecbca85f5f5a6076e6cdd57c4054ee4ecd57608b87af48810883f86",
+            "final_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-27.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2024/evaluation-settlement-8.pdf",
+            "sha256": "4de467c3477fa5d3c02c3ffed693c55eae132ffaf53a9eda2bf9d3cdf63401dc",
+            "final_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-28.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2024/evaluation-settlement-18.pdf",
+            "sha256": "a25b20546a88e3600905dda730a5e5e2b256e72ca86d77543f18d441f64800e4",
+            "final_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-29.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2024/evaluation-settlement-28.pdf",
+            "sha256": "fa3be33acbd6764b2d7e0d756d0e61331f63f9b76874995c9fa61d9b92ebfd68",
+            "final_url": "https://www.city.chofu.lg.jp/documents/15506/r6-30-30.pdf"
+          }
+        ],
+        "archived_at": "2026-10-15T12:50:49.366Z"
+      },
+      "reason": "令和6年度決算に係る調布市の行政評価報告書（施策・事務事業マネジメントシート30施策、30ファイル・78頁）。各シートの表題は「施策・事務事業マネジメントシート【令和7年度】」で、施策を構成する基本計画事業等に「令和6年度取組実績」「令和6年度の主要な取組説明」の列を持ち、まちづくり指標は実績値（令和5・6年度）と目標値を示す（令和6年度が最新の実績）。施策ごとに目的・方向、施策全体の考察、構成事業の取組実績と今後の方向を載せる。文字として読める。同じ令和6年度決算頁には資料の見方（r6-30.pdf）もあるが評価結果ではない。2024年度の見送り記録（selection-candidates-2024/_skipped.md）が2024年度として扱っていたr7_30_01〜30は令和8年度（2025年度）のシートで、2024年度の評価資料はこの r6-30-1〜30。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132080",
+        "fiscal_year": 2023,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和6年度 施策・事務事業マネジメントシート（令和5年度取組実績、30施策）",
+          "landing_url": "https://www.city.chofu.lg.jp/010010/p000399.html",
+          "inspected_at": "2026-10-15T15:00:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/12799/30-01_r5sesku01.pdf",
+              "sha256": "9349344f8fae8de0b8df09f769e4aeea7d8e57dbb9960d824d4d8248e82c23a4",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/12799/30-02_r5sesaku02.pdf",
+              "sha256": "581d5406b2f59caa51477ffcf657aaaf9ac448a8fa7103fddac96cd1a22c4677",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/12799/30-03_r5sesaku03.pdf",
+              "sha256": "b631d3cc560e23cc0259f86d26c37c553a3f05d5941bf03a569fcaa36ddc3313",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/12799/30-04_r5sesaku04.pdf",
+              "sha256": "05d4be323ce3a53617c96034376bc72eb83632ce5d6294ccc5d97d1c827ca17d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/12799/30-05_r5sesaku05.pdf",
+              "sha256": "a45e2d983fe04ba3ce3adcc2e2cec266f9a84b79b00c9aa0ae313fbf7e6e43b8",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/12799/30-06_r5sesaku06.pdf",
+              "sha256": "2849b6030a003f23316b76eef0e8dc8dd28f3d71166a836923b6f34eedfe8194",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/12799/30-07_r5sesaku07.pdf",
+              "sha256": "5334e460d34759cb66c72009c225e16729f32b7acd69bd2a1d75a3643956ed37",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/12799/30-08_r5sesaku08.pdf",
+              "sha256": "f57d9b3e043face19c0da27fa4262be1e1bcd540ad589e5cd23a9d7f9c55f4ec",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/12799/30-09_r5sesaku09.pdf",
+              "sha256": "2fb7367142130a31ee58fa9253956bdc4b1dfaaaee598e844a685f0a89ec395e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/12799/30-10_r5sesaku10.pdf",
+              "sha256": "6b76e439cd804ac3ffec11b15a9905d5e4a1326da53f81ebc06bbb3adfa5cd82",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/12799/30-11_r5sesaku11.pdf",
+              "sha256": "458e24affe7a49c60e09ccdbd52c6d4c53138c8eadd3137914f0527325360853",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/12799/30-12_r5sesaku12.pdf",
+              "sha256": "eea1ae0098730c672f66b4876f0c25487c347a83a183c90352dccd6226b85ca3",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/12799/30-13_r5sesaku13.pdf",
+              "sha256": "86dffb9e2276b28d2920461c55d7229c130d1cd8cc2d7d3f02df9adfe5943699",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/12799/30-14_r5sesaku14.pdf",
+              "sha256": "fb9bcfbd45408f07b3c18f3598844263bd482e56e54ed29dffd0eb686ba3ff3b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/12799/30-15_r5sesaku15.pdf",
+              "sha256": "210356c9518f954cfc51226e94d5c27929ba2d69cc0bc1fea68be2f380fc2943",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/12799/30-17_r5sesaku17.pdf",
+              "sha256": "50543a8acc5be8c6cec793f58cb644800bc23dd5748e57854877850c9e23179d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/12799/30-18_r5sesaku18.pdf",
+              "sha256": "a7db2176b17480b56f45fc6979c342cd937eced09648c698eba0a597dc0e7c77",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/12799/30-19_r5sesaku19.pdf",
+              "sha256": "fb7ecc7c86a9dfcd854854cba7df95771c6eb69ab9d583e5b7279120d5d39232",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/12799/30-20_r5sesaku20.pdf",
+              "sha256": "118039919b5ed1852d67adfa651a769798998218cd102db10497803ba7d01bab",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/12799/30-21_r5sesaku21.pdf",
+              "sha256": "9f23a27b90453dfc1bdb600bdb5f0b3e2c92cbc6b478aa52dc7656fed74dc412",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/12799/30-22_r5sesaku22.pdf",
+              "sha256": "5a875fbc8bae0477b91b3a68ee3c59ef861615925600fef28f01f6d9cdda2a5c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/12799/30-23_r5sesaku23.pdf",
+              "sha256": "c8c70d0aa7719dd83e0b4e83cbbdd5af8d127c907a8d6cf2caf8afe626a9758a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/12799/30-24_r5sesaku24.pdf",
+              "sha256": "d0108f009b0a51eb0c12da7b27c14306a97d215c85ffe7ad9b55e84ce3ea2faa",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/12799/30-25_r5sesaku25.pdf",
+              "sha256": "d1875921def6f069b307ba003f8bfb87f525cb3263be5e1f95a34d2ce43d48a8",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/12799/30-26_r5sesaku26.pdf",
+              "sha256": "f502ed0213398827526a4151d3eccc652712373b7407a0bab42649cf1e10acb0",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/12799/30-27_r5sesaku27.pdf",
+              "sha256": "8411199a4d1ab250556d355267b5ddb8b223c554be2edbc46f0445a95a05f8d1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/12799/30-28_r5sesaku28.pdf",
+              "sha256": "a86f13088195124764087a33ba37748278a3b7a1461ac7121fc3dd1dd01be98b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/12799/30-29_r5sesaku29.pdf",
+              "sha256": "bb69473ca9840f40485124ab6e66426a8d713fb31a4ae5865acc518fe753acf2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/12799/30-30_r5sesaku30.pdf",
+              "sha256": "2fcfa9ad9a09ea608c5b1ce8fa84bb67ae793d40a75779bdfb12726c0fe89afc",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/12799/30-16_r6sesaku16.pdf",
+              "sha256": "0095800c642cb9cb3a7f3d498315ec589f57084036b5dea7d6e5b6b1283cf38d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132080/2023/evaluation-settlement-16.pdf",
+            "sha256": "9349344f8fae8de0b8df09f769e4aeea7d8e57dbb9960d824d4d8248e82c23a4",
+            "final_url": "https://www.city.chofu.lg.jp/documents/12799/30-01_r5sesku01.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2023/evaluation-settlement-11.pdf",
+            "sha256": "581d5406b2f59caa51477ffcf657aaaf9ac448a8fa7103fddac96cd1a22c4677",
+            "final_url": "https://www.city.chofu.lg.jp/documents/12799/30-02_r5sesaku02.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2023/evaluation-settlement-21.pdf",
+            "sha256": "b631d3cc560e23cc0259f86d26c37c553a3f05d5941bf03a569fcaa36ddc3313",
+            "final_url": "https://www.city.chofu.lg.jp/documents/12799/30-03_r5sesaku03.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2023/evaluation-settlement-2.pdf",
+            "sha256": "05d4be323ce3a53617c96034376bc72eb83632ce5d6294ccc5d97d1c827ca17d",
+            "final_url": "https://www.city.chofu.lg.jp/documents/12799/30-04_r5sesaku04.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2023/evaluation-settlement-18.pdf",
+            "sha256": "a45e2d983fe04ba3ce3adcc2e2cec266f9a84b79b00c9aa0ae313fbf7e6e43b8",
+            "final_url": "https://www.city.chofu.lg.jp/documents/12799/30-05_r5sesaku05.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2023/evaluation-settlement-5.pdf",
+            "sha256": "2849b6030a003f23316b76eef0e8dc8dd28f3d71166a836923b6f34eedfe8194",
+            "final_url": "https://www.city.chofu.lg.jp/documents/12799/30-06_r5sesaku06.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2023/evaluation-settlement-10.pdf",
+            "sha256": "5334e460d34759cb66c72009c225e16729f32b7acd69bd2a1d75a3643956ed37",
+            "final_url": "https://www.city.chofu.lg.jp/documents/12799/30-07_r5sesaku07.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2023/evaluation-settlement-28.pdf",
+            "sha256": "f57d9b3e043face19c0da27fa4262be1e1bcd540ad589e5cd23a9d7f9c55f4ec",
+            "final_url": "https://www.city.chofu.lg.jp/documents/12799/30-08_r5sesaku08.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2023/evaluation-settlement-6.pdf",
+            "sha256": "2fb7367142130a31ee58fa9253956bdc4b1dfaaaee598e844a685f0a89ec395e",
+            "final_url": "https://www.city.chofu.lg.jp/documents/12799/30-09_r5sesaku09.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2023/evaluation-settlement-13.pdf",
+            "sha256": "6b76e439cd804ac3ffec11b15a9905d5e4a1326da53f81ebc06bbb3adfa5cd82",
+            "final_url": "https://www.city.chofu.lg.jp/documents/12799/30-10_r5sesaku10.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2023/evaluation-settlement-8.pdf",
+            "sha256": "458e24affe7a49c60e09ccdbd52c6d4c53138c8eadd3137914f0527325360853",
+            "final_url": "https://www.city.chofu.lg.jp/documents/12799/30-11_r5sesaku11.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2023/evaluation-settlement-26.pdf",
+            "sha256": "eea1ae0098730c672f66b4876f0c25487c347a83a183c90352dccd6226b85ca3",
+            "final_url": "https://www.city.chofu.lg.jp/documents/12799/30-12_r5sesaku12.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2023/evaluation-settlement-15.pdf",
+            "sha256": "86dffb9e2276b28d2920461c55d7229c130d1cd8cc2d7d3f02df9adfe5943699",
+            "final_url": "https://www.city.chofu.lg.jp/documents/12799/30-13_r5sesaku13.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2023/evaluation-settlement-30.pdf",
+            "sha256": "fb9bcfbd45408f07b3c18f3598844263bd482e56e54ed29dffd0eb686ba3ff3b",
+            "final_url": "https://www.city.chofu.lg.jp/documents/12799/30-14_r5sesaku14.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2023/evaluation-settlement-4.pdf",
+            "sha256": "210356c9518f954cfc51226e94d5c27929ba2d69cc0bc1fea68be2f380fc2943",
+            "final_url": "https://www.city.chofu.lg.jp/documents/12799/30-15_r5sesaku15.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2023/evaluation-settlement-9.pdf",
+            "sha256": "50543a8acc5be8c6cec793f58cb644800bc23dd5748e57854877850c9e23179d",
+            "final_url": "https://www.city.chofu.lg.jp/documents/12799/30-17_r5sesaku17.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2023/evaluation-settlement-19.pdf",
+            "sha256": "a7db2176b17480b56f45fc6979c342cd937eced09648c698eba0a597dc0e7c77",
+            "final_url": "https://www.city.chofu.lg.jp/documents/12799/30-18_r5sesaku18.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2023/evaluation-settlement-29.pdf",
+            "sha256": "fb7ecc7c86a9dfcd854854cba7df95771c6eb69ab9d583e5b7279120d5d39232",
+            "final_url": "https://www.city.chofu.lg.jp/documents/12799/30-19_r5sesaku19.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2023/evaluation-settlement-3.pdf",
+            "sha256": "118039919b5ed1852d67adfa651a769798998218cd102db10497803ba7d01bab",
+            "final_url": "https://www.city.chofu.lg.jp/documents/12799/30-20_r5sesaku20.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2023/evaluation-settlement-17.pdf",
+            "sha256": "9f23a27b90453dfc1bdb600bdb5f0b3e2c92cbc6b478aa52dc7656fed74dc412",
+            "final_url": "https://www.city.chofu.lg.jp/documents/12799/30-21_r5sesaku21.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2023/evaluation-settlement-12.pdf",
+            "sha256": "5a875fbc8bae0477b91b3a68ee3c59ef861615925600fef28f01f6d9cdda2a5c",
+            "final_url": "https://www.city.chofu.lg.jp/documents/12799/30-22_r5sesaku22.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2023/evaluation-settlement-23.pdf",
+            "sha256": "c8c70d0aa7719dd83e0b4e83cbbdd5af8d127c907a8d6cf2caf8afe626a9758a",
+            "final_url": "https://www.city.chofu.lg.jp/documents/12799/30-23_r5sesaku23.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2023/evaluation-settlement-24.pdf",
+            "sha256": "d0108f009b0a51eb0c12da7b27c14306a97d215c85ffe7ad9b55e84ce3ea2faa",
+            "final_url": "https://www.city.chofu.lg.jp/documents/12799/30-24_r5sesaku24.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2023/evaluation-settlement-25.pdf",
+            "sha256": "d1875921def6f069b307ba003f8bfb87f525cb3263be5e1f95a34d2ce43d48a8",
+            "final_url": "https://www.city.chofu.lg.jp/documents/12799/30-25_r5sesaku25.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2023/evaluation-settlement-27.pdf",
+            "sha256": "f502ed0213398827526a4151d3eccc652712373b7407a0bab42649cf1e10acb0",
+            "final_url": "https://www.city.chofu.lg.jp/documents/12799/30-26_r5sesaku26.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2023/evaluation-settlement-14.pdf",
+            "sha256": "8411199a4d1ab250556d355267b5ddb8b223c554be2edbc46f0445a95a05f8d1",
+            "final_url": "https://www.city.chofu.lg.jp/documents/12799/30-27_r5sesaku27.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2023/evaluation-settlement-20.pdf",
+            "sha256": "a86f13088195124764087a33ba37748278a3b7a1461ac7121fc3dd1dd01be98b",
+            "final_url": "https://www.city.chofu.lg.jp/documents/12799/30-28_r5sesaku28.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2023/evaluation-settlement-22.pdf",
+            "sha256": "bb69473ca9840f40485124ab6e66426a8d713fb31a4ae5865acc518fe753acf2",
+            "final_url": "https://www.city.chofu.lg.jp/documents/12799/30-29_r5sesaku29.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2023/evaluation-settlement-7.pdf",
+            "sha256": "2fcfa9ad9a09ea608c5b1ce8fa84bb67ae793d40a75779bdfb12726c0fe89afc",
+            "final_url": "https://www.city.chofu.lg.jp/documents/12799/30-30_r5sesaku30.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132080/2023/evaluation-settlement-1.pdf",
+            "sha256": "0095800c642cb9cb3a7f3d498315ec589f57084036b5dea7d6e5b6b1283cf38d",
+            "final_url": "https://www.city.chofu.lg.jp/documents/12799/30-16_r6sesaku16.pdf"
+          }
+        ],
+        "archived_at": "2026-10-15T12:51:43.493Z"
+      },
+      "reason": "令和5年度決算に係る調布市の行政評価報告書（施策・事務事業マネジメントシート30施策）。各シートの表題は「施策・事務事業マネジメントシート【令和6年度】」で、施策を構成する基本計画事業等の「Ｒ５取組実績」を載せ、まちづくり指標は実績値（令和3・4年度）と目標値を示す。施策ごとに目的・方向、施策全体の考察、構成事業の取組実績と今後の方向を載せる。文字として読める。施策16のみファイル名が令和6年度（30-16_r6sesaku16.pdf）で、内容は同じく令和6年度シート。"
+    }
+  ]
 }

@@ -2139,6 +2139,44 @@
         "archived_at": "2026-10-14T16:11:38.939Z"
       },
       "reason": "令和6年度決算の主要な施策の成果（148頁、作成2025-08-19、令和7年9月提出の文言を2頁目で確認）。頁17〜53が部ごとの主な課題の実施状況（事業の概要、R4〜6年度の活動内容・実績、R6年度予算現額・支出済額・執行率）、頁54〜137が令和7年度行政評価（令和6年度事業の評価）の実施状況で、内部評価票の見方と事業ごとの内部評価（事業概要・コスト・実績・効果、事業の方向6区分と理由）を載せる。文字として読める。同じ内容の行政評価頁への重複掲載の有無は未確認だが、決算説明資料の1冊を代表にした。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131148",
+        "fiscal_year": 2023,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和5年度主要施策の成果（決算説明資料）",
+          "landing_url": "https://www.city.tokyo-nakano.lg.jp/kusei/zaisei/kessan/r5kessan.html",
+          "inspected_at": "2026-10-15T12:00:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.tokyo-nakano.lg.jp/kusei/zaisei/kessan/r5kessan.files/R5syuyousesakunoseika.pdf",
+              "sha256": "85efe5dad9b70fe0a71cba5c33b3b164db682081d0aab0d79e0d3d98f7db176e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131148/2023/evaluation-settlement.pdf",
+            "sha256": "85efe5dad9b70fe0a71cba5c33b3b164db682081d0aab0d79e0d3d98f7db176e",
+            "final_url": "https://www.city.tokyo-nakano.lg.jp/kusei/zaisei/kessan/r5kessan.files/R5syuyousesakunoseika.pdf"
+          }
+        ],
+        "archived_at": "2026-10-15T12:37:37.923Z"
+      },
+      "reason": "令和5年度決算の主要な施策の成果（決算説明資料）。「令和５年度中野区各会計歳入歳出決算に係る主要な施策の成果」の文言と「令和５年度歳入歳出決算の概要」を1〜2頁目で確認。部ごとの主な課題の実施状況（事業の概要、活動内容・実績、予算現額・支出済額・執行率）と、令和6年度行政評価（令和5年度事業の評価）で事業ごとの内部評価（コスト・実績・効果、事業の方向と理由）を載せる。文字として読める。"
     }
   ]
 }

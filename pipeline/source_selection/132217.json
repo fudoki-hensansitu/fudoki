@@ -5045,6 +5045,56 @@
         "archived_at": "2026-10-14T16:18:41.915Z"
       },
       "reason": "令和6年度に実施した事業を評価した令和7年度（2025年9月）の清瀬市行政評価2冊（計94頁）、いずれも文字の層あり。(1)行政評価報告は全39施策の施策評価で、施策ごとにコスト（決算額）、成果（まちづくり指標の達成状況）、総合評価、課題・方向性を載せる。(2)外部評価市民アンケート報告は2施策（青少年健全育成・相談体制）について1000名中の317名の回答を載せる。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132217",
+        "fiscal_year": 2023,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和6年度清瀬市行政評価報告・外部評価市民アンケート報告（令和5年度事業）",
+          "landing_url": "https://www.city.kiyose.lg.jp/siseijouhou/zaisei/gyouzaiseikaikaku/1004570/1014828.html",
+          "inspected_at": "2026-10-15T13:00:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.kiyose.lg.jp/_res/projects/default_project/_page_/001/014/828/r6sesakuhyoukasi-to.pdf",
+              "sha256": "eaeb3fe4a1d68643a9284c8f7ce14f2c0266ee555cc5023ef934f474c75ec6ae",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.kiyose.lg.jp/_res/projects/default_project/_page_/001/014/828/r6siminnannke-to.pdf",
+              "sha256": "4c9626fbe6ec6f4e9b48edd7d0f6cc8c0edb23cb860cde0217587fd08af28c53",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132217/2023/evaluation-settlement-2.pdf",
+            "sha256": "eaeb3fe4a1d68643a9284c8f7ce14f2c0266ee555cc5023ef934f474c75ec6ae",
+            "final_url": "https://www.city.kiyose.lg.jp/_res/projects/default_project/_page_/001/014/828/r6sesakuhyoukasi-to.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132217/2023/evaluation-settlement-1.pdf",
+            "sha256": "4c9626fbe6ec6f4e9b48edd7d0f6cc8c0edb23cb860cde0217587fd08af28c53",
+            "final_url": "https://www.city.kiyose.lg.jp/_res/projects/default_project/_page_/001/014/828/r6siminnannke-to.pdf"
+          }
+        ],
+        "archived_at": "2026-10-15T12:53:59.957Z"
+      },
+      "reason": "令和5年度に実施した事業を評価した令和6年度の清瀬市行政評価。施策評価シートは「評価対象年度（令和5年度）」と明記し、事業ごとに「令和5年度決算額」と施策の方向性、課題・方向性を載せる。外部評価市民アンケート報告を合わせて選定。文字として読める。"
     }
   ]
 }
