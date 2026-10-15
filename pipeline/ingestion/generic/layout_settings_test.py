@@ -292,3 +292,10 @@ class LayoutRegistryTest(unittest.TestCase):
         for spread in ({}, {'gutter': 0}, {'gutter': 1}, {'gutter': 'middle'}, {'gutter': .5, 'unknown': True}):
             with self.subTest(spread=spread), self.assertRaises(jsonschema.ValidationError):
                 validator().validate({'schema_version': 1, 'spread': spread})
+
+    def test_accounts_scope_the_same_hints_to_one_account(self):
+        validator().validate({'schema_version': 1, 'accounts': {
+            '一般会計': {'breakdown': {'備考': {'single_part_notes': True, 'wrap': 'amount_on_last_line'}}}}})
+        for accounts in ({'': {}}, {'一般会計': {'unknown': {}}}, {'一般会計': {'breakdown': {'備考': {'wrap': 'always'}}}}):
+            with self.subTest(accounts=accounts), self.assertRaises(jsonschema.ValidationError):
+                validator().validate({'schema_version': 1, 'accounts': accounts})

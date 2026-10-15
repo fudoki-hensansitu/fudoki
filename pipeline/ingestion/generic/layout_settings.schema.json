@@ -5,6 +5,20 @@
   "required": ["schema_version"],
   "properties": {
     "schema_version": {"const": 1},
+    "accounts": {
+      "type": "object",
+      "propertyNames": {"minLength": 1},
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "columns": {"$ref": "#/properties/columns"},
+          "spread": {"$ref": "#/properties/spread"},
+          "header": {"$ref": "#/properties/header"},
+          "breakdown": {"$ref": "#/properties/breakdown"}
+        }
+      }
+    },
     "columns": {
       "type": "object",
       "propertyNames": {"minLength": 1},
@@ -68,6 +82,7 @@
           "plain_names": {"type": "array", "items": {"type": "string", "minLength": 2}},
           "amount_brackets": {"type": "boolean"},
           "indent_chars": {"type": "integer", "minimum": 1},
+          "single_part_notes": {"type": "boolean"},
           "notes": {"type": "array", "items": {"type": "string", "minLength": 1}}
         }
       }

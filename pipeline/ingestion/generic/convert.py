@@ -279,6 +279,10 @@ def build_table(source: dict, options: dict, *, stop: bool = True) -> Table:
     account = options['account']
     pages = scope_pages(source, account)
     layout = load_layout(source['target'], source.get('direction', 'expenditure'))
+    if layout and account in layout.get('accounts', {}):
+        # An account's own settings replace the document's, key by key: accounts of one
+        # original can print the same marks for different levels.
+        layout = {**layout, **layout['accounts'][account]}
     built, report, observed, logicals = run_pages(
         Path(source['path']), pages, observation_cache(source, pages),
         document_kind=source['target']['document_kind'], account=account, stop=stop,

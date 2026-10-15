@@ -148,6 +148,22 @@ sources:
       direction: expenditure
       table_id: elderly-medical-expenditure
       kind: nodes
+  - name: j131032_2024_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '131032'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j131032_2024_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '131032'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
   - name: j131032_2024_settlement_long_term_care_expenditure_amounts
     meta:
       jurisdiction: '131032'
@@ -1619,6 +1635,22 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: elderly-medical-expenditure
+      kind: nodes
+  - name: j132136_2024_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '132136'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j132136_2024_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '132136'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
       kind: nodes
   - name: j132136_2024_settlement_long_term_care_expenditure_amounts
     meta:
