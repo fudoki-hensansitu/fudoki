@@ -77,7 +77,6 @@ class Item:
     decided: bool = False  # role chosen by a judgment, not by the geometric rules
     hint: str | None = None  # the kind of the note whose parts this item prints (`note_breakdown`)
     kinds: list[tuple[list[Glyph], list[Glyph], str]] = field(default_factory=list)  # (label, amount run, heading) of kind lines
-    late: list[tuple[str, list[Glyph]]] = field(default_factory=list)  # amounts printed on the next page
 
     @property
     def glyphs(self) -> list[Glyph]:
@@ -236,13 +235,14 @@ def is_account_code(name: str) -> bool:
             and sum(c.isdigit() for c in value) >= 4)
 
 
-def note_breakdown(items: list['Item'], subject_starts: tuple[float, ...] = ()) -> None:
+def note_breakdown(items: list['Item'], subject_starts: tuple[float, ...] = (), min_parts: int = 2) -> None:
     """Lines printed under a note that add up to its amount are its parts, not items of the breakdown.
 
     `繰越事業費不用額 308,157,706 円` over `役務費 3,897,706 円` and `負担金、補助及び交付金 304,260,000 円`:
     the two lines are the note's own breakdown. They take the note's kind (a wrapped line of a note's cell
     inherits it, ADR 0024). Two or more lines whose sum is exactly the note's amount: a single line of the
-    same amount could as well be an item that costs what the note says.
+    same amount could as well be an item that costs what the note says. A document that prints one
+    part per note says so in its layout settings (`single_part_notes`: `min_parts` is 1).
     """
     for index, note in enumerate(items):
         if note.role != 'annotation' or note.code is not None or len(note.amounts) != 1:
@@ -270,7 +270,7 @@ def note_breakdown(items: list['Item'], subject_starts: tuple[float, ...] = ()) 
             running += value
             if running == total:
                 break
-        if running == total and len(taken) >= 2:
+        if running == total and len(taken) >= min_parts:
             for follower in taken:
                 follower.role = 'annotation'
                 follower.hint = kind
@@ -465,7 +465,7 @@ def line_limits(logicals: list[Logical]) -> dict[str, float]:
 
 def items(group: Group, header: str, margins: set[int] | None = None,
           roles: dict[int, str] | None = None, limit: float | None = None, ocr: bool = False,
-          amount_brackets: bool = False, settings: dict | None = None, carry: Item | None = None) -> list[Item]:
+          amount_brackets: bool = False, settings: dict | None = None) -> list[Item]:
     """Lines of a label group into items; amounts printed inside the group stay on their item.
 
     `roles` (variant B) replaces the geometric decisions for codeless lines.
@@ -665,11 +665,13 @@ def items(group: Group, header: str, margins: set[int] | None = None,
             if result:
                 for run in money:
                     result[-1].amounts.append((header, run))
-            elif carry is not None:
-                # The first line of the page: the amount of the item whose name ended the page before
-                # (`3 スクールソーシャルワーカー事業…` / next page `17,950,133`).
+            elif settings.get('wrap') == 'amount_on_last_line':
+                # The first line of a page carries the amount of a label that ended the page before:
+                # `apply_layout` joins the two. It stays a nameless item if there is no such label.
+                item = Item(group, money[0][0].page, [[g for run in money for g in run]], None, '', money[0][0].x0)
                 for run in money:
-                    carry.late.append((header, run))
+                    item.amounts.append((header, run))
+                result.append(item)
             continue
         item = Item(group, label[0].page, [label], code, name, 0)
         for run in money:
@@ -1039,9 +1041,6 @@ class Built:
     # The printed code of a subject heading that a continuation page prints again (the same code and name as
     # the one above it): no node of its own, its digits are the adopted heading's.
     repeated_codes: list = field(default_factory=list)
-    # Glyphs of a row with no name whose every printed amount equals the amount of the account row above it in
-    # the same column (the 節 row of a 予備費, which prints no 節 name): the parent's amounts again, not new ones.
-    repeated_amounts: list = field(default_factory=list)
 
 
 def node_key(item: Item) -> str:
@@ -1416,7 +1415,6 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
     levels: dict[str, list[float]] = {}
     nodes, amounts, unowned, notes = [], [], [], []
     repeated_codes: list = []
-    unowned_runs: list[tuple[dict, list[Glyph]]] = []  # an amount no row owns, with its glyphs
     annotations: list[tuple[Item, str, list[Glyph], str | None]] = []
     remarks: list[dict] = []  # `Built.annotations` before the items have keys
     all_items: list[tuple[Logical, list[Group], dict[int, list[Item]]]] = []
@@ -1448,7 +1446,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             if not group.subject:
                 group_items = items(group, header, margins.get(group.axis), roles, limits.get(group.axis), logical.ocr,
                                     bool(layout and layout.get(group.axis, {}).get('amount_brackets')),
-                                    (layout or {}).get(group.axis), page_tail(all_items, group.axis))
+                                    (layout or {}).get(group.axis))
             elif group.mode == 'indent':
                 group_items = items(group, group.axis)
             else:
@@ -1583,7 +1581,26 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 if layout and group.axis in layout:
                     found[id(group)] = apply_layout(found[id(group)], layout[group.axis], column_amount_items,
                                                    subject_starts)
-                note_breakdown(found[id(group)], subject_starts)
+                note_breakdown(found[id(group)], subject_starts,
+                               1 if (layout or {}).get(group.axis, {}).get('single_part_notes') else 2)
+    # The amount of a label that ends a page is the first line of the next page, under the subject's row
+    # repeated at its top (`wrap: amount_on_last_line`, `items` keeps that line as a nameless item).
+    tails: dict[str, Item] = {}
+    for _, ordered, found in all_items:
+        for group in ordered:
+            if group.subject:
+                continue
+            mine = found[id(group)]
+            previous = tails.get(group.axis)
+            if ((layout or {}).get(group.axis, {}).get('wrap') == 'amount_on_last_line' and previous is not None
+                    and mine and not mine[0].name and mine[0].amounts and mine[0].code is None
+                    and not previous.amounts and previous.code is None and previous.name
+                    and previous.role in ('node', 'note', 'annotation') and mine[0].page == previous.page + 1):
+                first = mine.pop(0)
+                previous.lines += first.lines
+                previous.amounts += first.amounts
+            if mine:
+                tails[group.axis] = mine[-1]
     for axis, hints in (layout or {}).items():
         if not (chars := hints.get('indent_chars')):
             continue
@@ -1713,7 +1730,11 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     for header, run in item.amounts:
                         annotations.append((target, f'{header}／注記／{label}', run, logical.unit))
                     remarks.append({'kind': 'annotation', 'target': target, 'heading': None,
-                                    'hint': item.hint or ('充用' if normalize(target.name) == '予備費' else None),
+                                    # A name that is only an account code (`・040102【151502】 400`) is the
+                                    # counterpart of a transfer: its words (`1200へ予算流用増`) may sit on the
+                                    # next page, so the amount is a 流用 note whichever way they read.
+                                    'hint': item.hint or ('充用' if normalize(target.name) == '予備費'
+                                                          else '流用' if is_account_code(item.name) else None),
                                     'label': [g for g in item.glyphs if not any(g in r for _, r in item.amounts)],
                                     'runs': [run for _, run in item.amounts], 'unit': logical.unit})
                 continue
@@ -1787,7 +1808,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             for item in (i for g in ordered for i in found[id(g)]):
                 if item.role not in ('node', 'repeat') or item.key is None:
                     continue
-                for header, run in [*item.amounts, *item.late]:
+                for header, run in item.amounts:
                     amounts.append(_amount(item.key, header, run, logical.unit))
                 for label, run, heading in item.kinds:
                     remarks.append({'kind': 'kind line', 'target': item, 'heading': heading, 'label': label,
@@ -1827,12 +1848,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                                       'box': _bbox([printed.get(id(g), g) for g in money])})
                         continue
                     if target is None or target.key is None:
-                        record = {'kind': 'amount without row', 'page': money[0].page, 'text': candidate,
-                                  'header': '／'.join(band.header)}
-                        unowned.append(record)
-                        centre = sum((g.y0 + g.y1) / 2 for g in money) / len(money)
-                        if stacked is None or stacked[1] != _cell(band, centre):  # a kind word names it otherwise
-                            unowned_runs.append((record, money))
+                        unowned.append({'kind': 'amount without row', 'page': money[0].page, 'text': candidate,
+                                        'header': '／'.join(band.header)})
                         continue
                     header = '／'.join(band.header)
                     y = sum((g.y0 + g.y1) / 2 for g in money) / len(money)
@@ -1852,8 +1869,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
         marked.append({'kind': remark['kind'], 'node_key': remark['target'].key, 'parent_node_key': cursor.key,
                        'heading': remark['heading'], 'label': remark['label'], 'runs': remark['runs'],
                        'unit': remark['unit'], 'hint': remark.get('hint')})
-    repeated_amounts = repeated_parent_rows(nodes, amounts, unowned, unowned_runs)
-    return Built(nodes, _dedupe(amounts, unowned), unowned, notes, marked, skipped, repeated_codes, repeated_amounts)
+    return Built(nodes, _dedupe(amounts, unowned), unowned, notes, marked, skipped, repeated_codes)
 
 
 def judged_roles(judge, group: Group, margins: set[int] | None) -> dict[int, str]:
@@ -1890,49 +1906,6 @@ def subject_row(item: Item, logical: Logical) -> tuple[float, float]:
 def _bbox(glyphs: list[Glyph]) -> tuple[float, float, float, float]:
     boxes = [g.original for g in glyphs]
     return (min(b[0] for b in boxes), min(b[1] for b in boxes), max(b[2] for b in boxes), max(b[3] for b in boxes))
-
-
-def page_tail(all_items: list, axis: str) -> Item | None:
-    """The last item of the axis on the page before, when it prints no amount: its name ended the page and
-    its amount may open the next one."""
-    if not all_items:
-        return None
-    _, ordered, found = all_items[-1]
-    last = max((i for g in ordered if not g.subject and g.axis == axis for i in found[id(g)]
-                if i.role == 'node' and i.lines), default=None, key=lambda i: i.lines[-1][-1].y1)
-    return last if last is not None and last.code is not None and not last.amounts else None
-
-
-def repeated_parent_rows(nodes: list[dict], amounts: list[dict], unowned: list[dict],
-                         runs: list[tuple[dict, list[Glyph]]]) -> list[Glyph]:
-    """The unowned amount rows that print the amounts of the account row above them again.
-
-    A row has no name and no row of its own, and each of its printed amounts is equal, to the yen and in the
-    same column, to the amount of the nearest 款・項・目 row above it on the page. One amount that differs keeps
-    the whole row unowned (the check stops). The row is recorded, not dropped: its glyphs become an excluded
-    region of kind `親の繰り返し`.
-    """
-    if not runs:
-        return []
-    subject = {n['node_key'] for n in nodes if n['axis_header'] == '科目'}
-    rows: dict[tuple, list] = defaultdict(list)
-    for record, run in runs:
-        x0, y0, x1, y1 = _bbox(run)
-        rows[record['page'], round((y0 + y1) / 2)].append((record, run, y0))
-    repeated: list[Glyph] = []
-    for (page, _), row in rows.items():
-        matched = []
-        for record, run, y0 in row:
-            above = [a for a in amounts if a['node_key'] in subject and a['physical_page'] == page
-                     and a['header_path'] == record['header'] and a['y1'] is not None and a['y1'] <= y0 + 1]
-            nearest = max(above, key=lambda a: a['y1'], default=None)
-            same = nearest is not None and normalize(nearest['amount_text']) == normalize(record['text'])
-            matched.append(same)
-        if all(matched):
-            for record, run, _ in row:
-                repeated += run
-                unowned.remove(record)
-    return repeated
 
 
 def _amount(key: str, header: str, run: list[Glyph], unit: str | None) -> dict:

@@ -60,13 +60,31 @@
           "table_id": "long-term-care-expenditure"
         }
       ]
+    },
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "dbc461f9232c5f815e55e0663bf8268cf6339f1fd5b25773e06d9b3cc17ea1f4"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure"
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure"
+        }
+      ]
     }
   ],
   "tables": [
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "967d8e710fb1a5bbbf9126405270b884af82baf0f4e94182d62cce341739f3d5",
+      "input_fingerprint": "b669bd49762f9ba57ba8f6ff15dbb6fdf49fafca137ab28a71eca518d9e613c5",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -96,7 +114,7 @@
     {
       "table_id": "elderly-medical-expenditure",
       "conversion_id": "elderly-medical-settlement",
-      "input_fingerprint": "7c5fcec8d9fe94ca125e7461624604efb719b8cdaa2b6e83e5557e675f4ba713",
+      "input_fingerprint": "0490ca395a18abdd389629acb9453773dd311dee3acf474cd92a7cdfcc7161ff",
       "account": "後期高齢者医療会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -126,7 +144,7 @@
     {
       "table_id": "long-term-care-expenditure",
       "conversion_id": "long-term-care-settlement",
-      "input_fingerprint": "c33ac51345538c0525f026e7a0612dff4a9a01ed7e5d85c85dd72b35e1cadb59",
+      "input_fingerprint": "5acf8624d64daf7f29a218dc19603d93789342ef54a8783c294973d22018db60",
       "account": "介護保険会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -151,6 +169,36 @@
           "bytes": 6449
         },
         "row_count": 522
+      }
+    },
+    {
+      "table_id": "general-expenditure",
+      "conversion_id": "general-settlement",
+      "input_fingerprint": "6b2b1cf935344aaba985a2c307cdc3ae990d5e1ea13fcb31537c7135fe28f426",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は column mark 59頁 から決めた。款の和 189,054,795,859 と印字の「歳出合計」189,054,795,859 が一致。",
+        "金額の注記 178 件（不用額 24・充用 25・流用 129）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（849 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131032/2024/settlement/expenditure/general-expenditure-nodes.parquet",
+          "sha256": "3abfc5b79af8ed056befaecacb5ee7fd5e540ca9c6002c16970cc69df27b4b1a",
+          "bytes": 30527
+        },
+        "row_count": 1184
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131032/2024/settlement/expenditure/general-expenditure-amounts.parquet",
+          "sha256": "32a1a95dc5c8e12cca19543f697bee4bab7504bcab275607fca0686678d8b25c",
+          "bytes": 57260
+        },
+        "row_count": 6842
       }
     }
   ]

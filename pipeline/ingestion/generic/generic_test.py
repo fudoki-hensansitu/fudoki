@@ -936,6 +936,9 @@ class BreakdownRulesTest(unittest.TestCase):
         single = [item('繰越事業費不用額', '100', 'annotation'), item('委託料', '100')]
         note_breakdown(single)
         self.assertEqual(single[1].role, 'node')
+        # A document that prints one part per note says so in its layout settings.
+        note_breakdown(single, min_parts=1)
+        self.assertEqual((single[1].role, single[1].hint), ('annotation', '不用額'))
 
     def test_item_numbers_are_the_numbers_alone_and_a_bracketed_code_is_no_amount(self):
         from ingestion.generic.convert import BRACKET_CODE, ITEM_NUMBER

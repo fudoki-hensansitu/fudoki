@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "accounts": {
+    "一般会計": {
+      "breakdown": {
+        "備考": {
+          "single_part_notes": true,
+          "wrap": "amount_on_last_line"
+        }
+      }
+    }
+  }
+}
