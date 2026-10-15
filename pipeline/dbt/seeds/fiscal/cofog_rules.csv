@@ -264,3 +264,4 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 1110,nerima-2024-11,131202,一般会計,,産業経済費,,,勤労者福祉費,eq,,assigned,04.1.2,retained,目,,練馬区 勤労者の福祉を一般労働業務に分類する。名称からの判断。,true
 1111,nerima-2024-12,131202,一般会計,,産業経済費,,,農園費,eq,,assigned,04.2,retained,目,,練馬区 農園を農業に分類する。名称からの判断。,true
 1200,vocab-special-temporary-benefit,,一般会計,,,,,臨時特別給付金,contains,,assigned,10,retained,目,,臨時特別給付金は生活への一時的な給付であり、臨時給付金と同じく社会保護に寄せた境界の判断のため暫定とする。,true
+1201,vocab-vaccination,,一般会計,,,,,ワクチン接種,contains,,assigned,07.4,retained,目,,ワクチン接種は公衆衛生サービスに分類する。名称からの判断。,true
