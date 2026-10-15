@@ -37,8 +37,8 @@ def build(origins: list[plan.Origin], instance: dict) -> dict:
 
 
 def render(origins: list[plan.Origin] | None = None, instance: dict | None = None) -> str:
-    catalog = build(plan.load_origins() if origins is None else origins,
-                    plan.load_instance() if instance is None else instance)
+    instance = plan.load_instance() if instance is None else instance
+    catalog = build(plan.load_origins(use_ocr=instance['config']['use_ocr']) if origins is None else origins, instance)
     return json.dumps(catalog, ensure_ascii=False, indent=2) + '\n'
 
 

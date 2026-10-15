@@ -82,6 +82,22 @@ class PlanTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 plan.load_origins(Path(directory))
 
+    def test_scan_files_go_only_to_an_ocr_instance(self):
+        with tempfile.TemporaryDirectory() as directory:
+            mixed = selection('131172', A, files=[(A, None), (B, None)])
+            mixed['candidates'][0]['files'][1]['pdf_type'] = 'scan'
+            write_selections(Path(directory), '131172', mixed)
+            self.assertEqual([o.sha256 for o in plan.load_origins(Path(directory))], [A])
+            self.assertEqual([o.sha256 for o in plan.load_origins(Path(directory), use_ocr=True)], [B])
+
+    def test_unknown_pdf_type_stops(self):
+        with tempfile.TemporaryDirectory() as directory:
+            broken = selection('131172', A)
+            broken['candidates'][0]['files'][0]['pdf_type'] = None
+            write_selections(Path(directory), '131172', broken)
+            with self.assertRaises(ValueError):
+                plan.load_origins(Path(directory))
+
     def test_files_keep_selection_order_and_origins_sort_by_jurisdiction(self):
         with tempfile.TemporaryDirectory() as directory:
             write_selections(Path(directory), '131172', selection('131172', A))

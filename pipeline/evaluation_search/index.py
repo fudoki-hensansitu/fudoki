@@ -339,7 +339,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     instance = plan.load_instance()
-    origins = plan.load_origins()
+    origins = plan.load_origins(use_ocr=instance['config']['use_ocr'])
     check_instance(instance['config'])
     plans, strays, _ = build_plans(instance, origins)
     describe(plans, strays)
