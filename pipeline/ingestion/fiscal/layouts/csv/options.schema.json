@@ -28,6 +28,16 @@
     "line_end_column": {
       "type": "string",
       "minLength": 1
+    },
+    "amount_column": {
+      "type": "string",
+      "minLength": 1
+    },
+    "amount_unit": {
+      "enum": [
+        "円",
+        "千円"
+      ]
     }
   },
   "required": [

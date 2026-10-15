@@ -45,6 +45,7 @@ def collect() -> list[dict]:
                         for p in (PIPELINE / 'ingestion/fiscal/jurisdictions').glob(pattern)})
     for path in manifests:
         document = json.loads(path.read_text())
+        conversions = {c['id']: c for c in document['conversions']}
         target = document['target']
         direction = document['direction']
         for table in document['tables']:
@@ -59,7 +60,12 @@ def collect() -> list[dict]:
                     entries.append({'name': f'{prefix}_{kind}', 'source': 'fiscal_pdf',
                                     'meta': {**meta, 'kind': kind}})
             elif 'object' in table:
-                entries.append({'name': prefix, 'source': 'fiscal_csv', 'meta': meta})
+                # The amount column and its unit are declared by the CSV conversion, never fixed in SQL.
+                options = conversions[table['conversion_id']]['options']
+                if direction == 'expenditure' and not {'amount_column', 'amount_unit'} <= options.keys():
+                    raise ValueError(f"Expenditure CSV conversion must declare amount_column and amount_unit: {path}")
+                declared = {k: options[k] for k in ('amount_column', 'amount_unit') if k in options}
+                entries.append({'name': prefix, 'source': 'fiscal_csv', 'meta': {**meta, **declared}})
             else:
                 raise ValueError(f"Table is neither PDF nodes nor raw CSV: {path} {table.get('table_id')}")
     entries.sort(key=lambda e: e['name'])
