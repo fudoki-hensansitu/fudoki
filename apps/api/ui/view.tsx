@@ -2,6 +2,9 @@ import { createContext, Fragment, StrictMode, useContext, useEffect, useRef, use
 import { createRoot } from 'react-dom/client'
 import { createBridge, type Bridge } from './bridge'
 import { BarList, FOLD } from './bars'
+
+/** インラインでは要約として上位の数行だけを出す。全画面では FOLD 件ずつ */
+const INLINE_FOLD = 5
 import { Kind } from './kind'
 import { PdfViewer, type PdfSelection } from './pdf-view'
 import {
@@ -280,8 +283,9 @@ function describeRows(rows: TreeNode[], names: Names) {
   }
 }
 
-function NodesResult({ rows, next, history, names, bridge, busy, failed }: {
+function NodesResult({ rows, next, history, names, bridge, busy, failed, fold }: {
   rows: TreeNode[]
+  fold: number
   failed: boolean
   history: { data: ViewData }[]
   next?: string | null
@@ -315,7 +319,7 @@ function NodesResult({ rows, next, history, names, bridge, busy, failed }: {
           kind={parent?.kind} title={parent?.name ?? first.account_name} scope={headScopeOf(first, names)} busy={busy}>
           {total !== undefined && <span className="total-short" title={yen(total)}>{shortYen(total)}</span>}
         </PathHeader>
-        <BarList label={title} share={share} busy={busy}
+        <BarList label={title} share={share} busy={busy} fold={fold}
           bars={rows.map((n) => ({ key: `${n.document_kind}-${n.node_id}`, label: n.name, kind: kindOf(n), amount: n.amount_yen, onSelect: drill(n) }))} />
       </>
     )
@@ -344,7 +348,7 @@ function NodesResult({ rows, next, history, names, bridge, busy, failed }: {
                 <h3>{label}</h3>
                 {gShare && <span className="group-total" title={yen(gTotal)}>{shortYen(gTotal)}</span>}
               </div>
-              <BarList label={label} share={gShare} busy={busy} fold={5}
+              <BarList label={label} share={gShare} busy={busy} fold={Math.min(5, fold)}
                 bars={group.map((n) => ({ key: `${n.document_kind}-${n.node_id}`, label: n.name, kind: kindOf(n), amount: n.amount_yen, onSelect: drill(n) }))} />
             </section>
           )
@@ -360,7 +364,7 @@ function NodesResult({ rows, next, history, names, bridge, busy, failed }: {
       {/* 団体・年度・資料が混ざると、段を押して移る先を一つに決められないのでパンくずを置かない */}
       <PathHeader crumbs={d.commonLevels && d.oneScope ? crumbsOf(rows[0]!, history, bridge, d.commonLevels) : []} kind={d.kind} title={title}
         scope={[d.scope, !d.oneScope && d.commonLevels ? rows[0]!.account_name : undefined].filter(Boolean).join(' · ') || undefined} busy={busy} />
-      <BarList label={title} share={false} busy={busy} keepOrder={d.byYear}
+      <BarList label={title} share={false} busy={busy} keepOrder={d.byYear} fold={fold}
         bars={ordered.map((n) => ({
           key: `${n.document_kind}-${n.node_id}`,
           label: d.label(n),
@@ -373,8 +377,8 @@ function NodesResult({ rows, next, history, names, bridge, busy, failed }: {
   )
 }
 
-function JurisdictionsResult({ list, bridge, busy }: { list: Jurisdiction[]; bridge: Bridge; busy: boolean }) {
-  const [limit, setLimit] = useState(FOLD)
+function JurisdictionsResult({ list, bridge, busy, fold }: { list: Jurisdiction[]; bridge: Bridge; busy: boolean; fold: number }) {
+  const [limit, setLimit] = useState(fold)
   if (!list.length) return <p className="quiet">団体はありません。</p>
   // 絞らずに引くと収録の無い団体が大半になるので、収録のある団体を先に置き、最初は FOLD 件だけ出す
   const ordered = [...list.filter((j) => j.coverage.length), ...list.filter((j) => !j.coverage.length)]
@@ -419,7 +423,7 @@ function JurisdictionsResult({ list, bridge, busy }: { list: Jurisdiction[]; bri
         ))}
       </div>
       {hidden > 0 && (
-        <Button variant="link" className="bar-more" onClick={() => setLimit(limit + FOLD)}>もっと見る（残り{hidden}団体）</Button>
+        <Button variant="link" className="bar-more" onClick={() => setLimit(limit + fold)}>もっと見る（残り{hidden}団体）</Button>
       )}
     </>
   )
@@ -431,13 +435,20 @@ function View({ bridge }: { bridge: Bridge }) {
   const entry = state.entry
   // 最初の結果は AI 自身が受け取っているので、利用者が画面で動かしたあとだけ伝える
   const moved = useRef(false)
+  // 利用者が「全画面で開く」を押したか。PDF や明細の切り替えで勝手にインラインへ戻さない
+  const manualFullscreen = useRef(false)
+  const inline = state.fullscreen.available && !state.fullscreen.active
+  const fold = inline ? INLINE_FOLD : FOLD
+  useEffect(() => {
+    if (!state.fullscreen.active) manualFullscreen.current = false
+  }, [state.fullscreen.active])
   useEffect(() => {
     if (entry && 'nodes' in entry.data && autoOpens(entry.data.nodes, entry.data.next_page_token)) {
       const n = entry.data.nodes[0]!
       void bridge.call('get_expenditure_node', { document_kind: n.document_kind, node_id: n.node_id }, 'reset', n)
     }
     setPdf(undefined)
-    bridge.setFullscreen(false)
+    if (!manualFullscreen.current) bridge.setFullscreen(false)
     if (entry && moved.current) bridge.tellModel(describe(entry.data, state.names))
     if (entry) moved.current = true
   }, [entry?.revision])
@@ -449,10 +460,14 @@ function View({ bridge }: { bridge: Bridge }) {
   function closePdf() {
     const trigger = pdf?.trigger
     setPdf(undefined)
-    bridge.setFullscreen(false)
+    if (!manualFullscreen.current) bridge.setFullscreen(false)
     // 文脈は最後の1件で上書きされるので、PDF を閉じたら明細を見ている状態に戻す
     if (entry) bridge.tellModel(describe(entry.data, state.names))
     queueMicrotask(() => { if (trigger?.isConnected) trigger.focus() })
+  }
+  const toggleFullscreen = () => {
+    manualFullscreen.current = inline
+    bridge.setFullscreen(inline)
   }
   const previous = state.history.at(-1)
   const backToList = previous && 'nodes' in previous.data && !oneScope(previous.data.nodes)
@@ -465,7 +480,12 @@ function View({ bridge }: { bridge: Bridge }) {
     )
   return (
     <BackContext.Provider value={backToList}>
-    <main aria-busy={state.busy} className="view">
+    <main aria-busy={state.busy} className="view" data-fullscreen={state.fullscreen.active || undefined}>
+      {state.fullscreen.available && entry && !state.pending && (
+        <Button variant="outline" size="sm" className="expand" onClick={toggleFullscreen}>
+          {inline ? '全画面で開く' : '元の大きさに戻す'}
+        </Button>
+      )}
       {state.pending ? (
         <div className="result">
           <PathHeader crumbs={crumbsOf(state.pending, entry ? [...state.history, entry] : state.history, bridge)}
@@ -479,8 +499,8 @@ function View({ bridge }: { bridge: Bridge }) {
         </div>
       ) : entry && (
         <div key={entry.revision} className="result">
-          {'jurisdictions' in entry.data ? <JurisdictionsResult list={entry.data.jurisdictions} bridge={bridge} busy={state.busy} />
-            : 'nodes' in entry.data ? <NodesResult rows={entry.data.nodes} next={entry.data.next_page_token} history={state.history} names={state.names} bridge={bridge} busy={state.busy} failed={!!state.error} />
+          {'jurisdictions' in entry.data ? <JurisdictionsResult list={entry.data.jurisdictions} bridge={bridge} busy={state.busy} fold={fold} />
+            : 'nodes' in entry.data ? <NodesResult rows={entry.data.nodes} next={entry.data.next_page_token} history={state.history} names={state.names} bridge={bridge} busy={state.busy} failed={!!state.error} fold={fold} />
             : <NodeResult data={entry.data} crumbs={crumbsOf(entry.data.node, state.history, bridge)} names={state.names} bridge={bridge} showPdf={showPdf} busy={state.busy} />}
         </div>
       )}
