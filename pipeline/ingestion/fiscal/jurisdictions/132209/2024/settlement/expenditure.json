@@ -24,6 +24,24 @@
           "table_id": "general-expenditure"
         }
       ]
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "8a668a6d59427aa65272171091e30d119a59b91852a9f4bb210ec72cb2fe994b"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "national-health-insurance-expenditure"
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-expenditure"
+        }
+      ]
     }
   ],
   "tables": [
@@ -55,6 +73,36 @@
           "bytes": 122968
         },
         "row_count": 9054
+      }
+    },
+    {
+      "table_id": "national-health-insurance-expenditure",
+      "conversion_id": "national-health-insurance-settlement",
+      "input_fingerprint": "dc38dc65c018a75cd2087c4fddc51c8cd96be061e9665dd0bd752cca2dd75f49",
+      "account": "国民健康保険事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'shape', '節': 'indent'}。",
+        "金額の単位は printed 9頁 から決めた。款の和 8,309,266,792 と印字の「歳出合計」8,309,266,792 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（43 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2024/settlement/expenditure/national-health-insurance-expenditure-nodes.parquet",
+          "sha256": "602162016c3790939352c03a9abee2ca572a96ed7e0b790a0405bccdb9b72095",
+          "bytes": 9522
+        },
+        "row_count": 179
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2024/settlement/expenditure/national-health-insurance-expenditure-amounts.parquet",
+          "sha256": "fb994e9db41179e25a18e0ad75bf8ae1c527778f1c2d14f755da9acabe765041",
+          "bytes": 10791
+        },
+        "row_count": 843
       }
     }
   ]
