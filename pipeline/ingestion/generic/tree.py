@@ -1119,6 +1119,18 @@ def same_position(number: tuple[float, float, int], anchor: tuple[float, float, 
     return position_gap(number, anchor, glyph) is not None
 
 
+def circled_continuation(number: tuple[float, float, int], matched, circled, glyph: Glyph):
+    """Circled numbers end at ⑳, so a series goes on in plain digits (`⑨宿日直手当` then `23災害急患対応手当`).
+    A plain number that fits a plain position only by where it ends, and starts where a circled number
+    starts, is that series' next item. Returns that circled key, or None."""
+    tolerance = .6 * (glyph.y1 - glyph.y0)
+    if matched is not None and abs(number[0] - matched[0]) <= tolerance:
+        return None
+    fits = [(abs(number[0] - anchor[0]), index, key) for index, (key, anchor) in enumerate(circled)
+            if abs(number[0] - anchor[0]) <= tolerance]
+    return min(fits)[2] if fits else None
+
+
 def nearest_position(number: tuple[float, float, int], anchors, glyph: Glyph):
     """The key among `anchors` (key, anchor) whose position the number fits best; the first among equals."""
     fits = [(gap, index, key) for index, (key, anchor) in enumerate(anchors)
@@ -1146,6 +1158,9 @@ def shape_depth(item: Item, indent_depth: int, order: list[str], open_items: lis
         first = item.lines[0][0]
         number = number_span(first)
         seen = nearest_position(number, [(key, anchor) for key, anchor in anchors.items() if key.split('@')[0] == shape], first)
+        if shape == 'number':
+            circled = [(key, anchor) for key, anchor in anchors.items() if key.split('@')[0] == 'circled']
+            seen = circled_continuation(number, anchors.get(seen), circled, first) or seen
         if seen is not None:
             shape = seen
         else:
@@ -1183,6 +1198,9 @@ def position_levels(all_items, levels: dict[str, list[float]], depth_of) -> tupl
                 else:
                     number = number_span(first)
                     key = nearest_position(number, [(k, numbers[group.axis][k]) for k in starts[group.axis] if k[0] == shape], first)
+                    if shape == 'number':
+                        circled = [(k, numbers[group.axis][k]) for k in starts[group.axis] if k[0] == 'circled']
+                        key = circled_continuation(number, numbers[group.axis].get(key), circled, first) or key
                     if key is None:
                         key = (shape, len(starts[group.axis]))
                         starts[group.axis][key], numbers[group.axis][key] = number[0], number
@@ -1826,6 +1844,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     continue
                 sign = None
                 stacked = None  # (kind word, rule-bounded cell) of the last kind word printed in this column
+                previous = None  # (item, rule-bounded cell) of the last amount this column gave to an item
                 for line in lines(band.words):
                     printed = {}  # the amount of a word that runs on into text, by the word it was cut from
                     cut = [_leading_amount(g) for g in line]
@@ -1850,6 +1869,12 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     if not is_amount(candidate):
                         unowned.append({'kind': 'unreadable amount', 'page': money[0].page, 'text': candidate}); continue
                     target = owner(money, band, ordered, found, ocr=logical.ocr)
+                    if target is None and stacked is not None and previous is not None:
+                        # `事故繰越` / `19,968,000` printed two lines below its 節 under `31,321,000`: the amount
+                        # under a kind word, in the same cell as the amount above it, belongs to that amount's item.
+                        cell = _cell(band, sum((g.y0 + g.y1) / 2 for g in money) / len(money))
+                        if stacked[1] == cell and previous[1] == cell:
+                            target = previous[0]
                     if target is not None and target.role == 'total':
                         notes.append({'kind': 'total amount', 'page': money[0].page, 'text': candidate,
                                       'header': '／'.join(band.header), 'unit': logical.unit, 'label': target.name,
@@ -1868,6 +1893,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     if stacked is not None and stacked[1] == _cell(band, y):
                         header = f'{header}／{stacked[0]}'
                     amounts.append(_amount(target.key, header, money, logical.unit))
+                    previous = (target, _cell(band, y))
     for target, header, run, unit in annotations:
         amounts.append(_amount(target.key, header, run, unit))
     marked = []

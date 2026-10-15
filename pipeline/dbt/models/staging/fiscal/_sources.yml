@@ -1476,6 +1476,22 @@ sources:
       direction: expenditure
       table_id: akishima-text-budget-expenditure
       kind: nodes
+  - name: j132098_2024_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '132098'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j132098_2024_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '132098'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
   - name: j132098_2025_settlement_elderly_medical_expenditure_amounts
     meta:
       jurisdiction: '132098'
@@ -3411,6 +3427,22 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: elderly-medical-expenditure
+      kind: nodes
+  - name: j133621_2024_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '133621'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j133621_2024_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '133621'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
       kind: nodes
   - name: j133621_2024_settlement_long_term_care_business_expenditure_amounts
     meta:
