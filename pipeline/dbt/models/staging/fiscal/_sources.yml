@@ -1268,6 +1268,22 @@ sources:
       direction: expenditure
       table_id: elderly-medical-expenditure
       kind: nodes
+  - name: j132098_2025_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '132098'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j132098_2025_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '132098'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
   - name: j132098_2025_settlement_land_readjustment_expenditure_amounts
     meta:
       jurisdiction: '132098'
@@ -1603,6 +1619,22 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: national-health-insurance-expenditure
+      kind: nodes
+  - name: j132217_2025_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '132217'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j132217_2025_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '132217'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
       kind: nodes
   - name: j132217_2025_settlement_late_elderly_medical_setsu_amounts
     meta:
