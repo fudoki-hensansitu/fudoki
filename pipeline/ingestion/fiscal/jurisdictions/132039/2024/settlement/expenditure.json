@@ -60,6 +60,30 @@
           "table_id": "long-term-care-expenditure"
         }
       ]
+    },
+    {
+      "converter": "fiscal/jurisdictions/132039/layouts/text_settlement/convert.py",
+      "expected_tables": [
+        {
+          "table_id": "kouki-expenditure-detail"
+        }
+      ],
+      "id": "kouki-settlement",
+      "inputs": [
+        {
+          "sha256": "4a9ed20e2219f0a39b06d87a1d238db73b7380cbe57fd5ab651bca27e0c69e3b"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療会計",
+        "detail_pages": [
+          [
+            1,
+            3
+          ]
+        ],
+        "table_id": "kouki-expenditure-detail"
+      }
     }
   ],
   "tables": [
@@ -151,6 +175,34 @@
           "bytes": 15518
         },
         "row_count": 516
+      }
+    },
+    {
+      "table_id": "kouki-expenditure-detail",
+      "conversion_id": "kouki-settlement",
+      "input_fingerprint": "e8be3db22520c2c45870904c9ad865a0821e6fb8340ce341c4ee79e4a0ac6e9f",
+      "account": "後期高齢者医療会計",
+      "notes": [
+        "武蔵野市後期高齢者医療会計の決算事項別明細書（歳出）。款・項・目の印字欄を所属する葉へ反復。最細は法定節（節がない予備費目は目）。節一覧と備考は同じ目の独立した分解であり相互の対応を推定していない。目_備考は目の備考欄の原文（□事業・○経費・積算）。金額は円の原表記（△は減額符号）。歳出合計はlocal観測に残しraw行にしない。",
+        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132039/2024/settlement/expenditure/kouki-expenditure-detail-nodes.parquet",
+          "sha256": "5e5abddde4b5753875e8d3716389e72028090d63deea7f54ec83538f1385ddb5",
+          "bytes": 4890
+        },
+        "row_count": 42
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132039/2024/settlement/expenditure/kouki-expenditure-detail-amounts.parquet",
+          "sha256": "cc2681d46953f15dccb8bca650c2ff3581e7fc9505240be9c4c96a3f3f67e516",
+          "bytes": 7842
+        },
+        "row_count": 240
       }
     }
   ]

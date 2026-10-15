@@ -836,6 +836,70 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure-notes
       kind: nodes
+  - name: j131172_2024_settlement_general_setsu_amounts
+    meta:
+      jurisdiction: '131172'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-setsu
+      kind: amounts
+  - name: j131172_2024_settlement_general_setsu_nodes
+    meta:
+      jurisdiction: '131172'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-setsu
+      kind: nodes
+  - name: j131172_2024_settlement_kaigo_setsu_amounts
+    meta:
+      jurisdiction: '131172'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kaigo-setsu
+      kind: amounts
+  - name: j131172_2024_settlement_kaigo_setsu_nodes
+    meta:
+      jurisdiction: '131172'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kaigo-setsu
+      kind: nodes
+  - name: j131172_2024_settlement_kokuho_setsu_amounts
+    meta:
+      jurisdiction: '131172'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kokuho-setsu
+      kind: amounts
+  - name: j131172_2024_settlement_kokuho_setsu_nodes
+    meta:
+      jurisdiction: '131172'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kokuho-setsu
+      kind: nodes
+  - name: j131172_2024_settlement_kouki_setsu_amounts
+    meta:
+      jurisdiction: '131172'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kouki-setsu
+      kind: amounts
+  - name: j131172_2024_settlement_kouki_setsu_nodes
+    meta:
+      jurisdiction: '131172'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kouki-setsu
+      kind: nodes
   - name: j131172_2025_settlement_general_setsu_amounts
     meta:
       jurisdiction: '131172'
@@ -1155,6 +1219,22 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: general-expenditure
+      kind: nodes
+  - name: j132039_2024_settlement_kouki_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132039'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kouki-expenditure-detail
+      kind: amounts
+  - name: j132039_2024_settlement_kouki_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132039'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kouki-expenditure-detail
       kind: nodes
   - name: j132039_2024_settlement_long_term_care_expenditure_amounts
     meta:

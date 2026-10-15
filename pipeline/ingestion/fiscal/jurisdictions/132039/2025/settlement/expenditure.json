@@ -85,7 +85,7 @@
     {
       "table_id": "kouki-expenditure-detail",
       "conversion_id": "kouki-settlement",
-      "input_fingerprint": "5ace7e56eab3231cd3c9f791d826a3d5757ce8a5e67e3596ff853fcaad067544",
+      "input_fingerprint": "356eef82c9cfa5b7fb3c2252f28fbd67529752177ec6a9c70ac7b75fed40cf9c",
       "account": "後期高齢者医療会計",
       "notes": [
         "武蔵野市後期高齢者医療会計の決算事項別明細書（歳出）。款・項・目の印字欄を所属する葉へ反復。最細は法定節（節がない予備費目は目）。節一覧と備考は同じ目の独立した分解であり相互の対応を推定していない。目_備考は目の備考欄の原文（□事業・○経費・積算）。金額は円の原表記（△は減額符号）。歳出合計はlocal観測に残しraw行にしない。",
