@@ -32,6 +32,32 @@
         "ignore_frame_title": {"type": "boolean"}
       }
     },
+    "source_inconsistencies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["table_id", "page", "axis", "parent", "printed", "children_sum", "difference", "basis"],
+        "properties": {
+          "table_id": {"type": "string", "minLength": 1},
+          "page": {"type": "integer", "minimum": 1},
+          "axis": {"type": "string", "minLength": 1},
+          "parent": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["code", "name"],
+            "properties": {
+              "code": {"type": ["string", "null"]},
+              "name": {"type": "string", "minLength": 1}
+            }
+          },
+          "printed": {"type": "integer"},
+          "children_sum": {"type": "integer"},
+          "difference": {"type": "integer"},
+          "basis": {"type": "string", "minLength": 10}
+        }
+      }
+    },
     "breakdown": {
       "type": "object",
       "propertyNames": {"minLength": 1},

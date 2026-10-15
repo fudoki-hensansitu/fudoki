@@ -71,7 +71,7 @@ def measure(job: tuple[str, str, str, str]) -> dict:
             {'kind': n['level_header'], 'label': n['name_text'], 'page': n['physical_page'], 'added': i >= len(tables.nodes)}
             for i, n in enumerate(annotated.nodes) if n['axis_header'] == '注記'][:300]
         checked = tree_checks.check_tree(annotated.nodes, annotated.amounts, kind)
-        by_axis = defaultdict(lambda: {'一致': 0, '不一致': 0})
+        by_axis = defaultdict(lambda: defaultdict(int))
         for r in checked['results']:
             by_axis[r['axis_header']][r['status']] += 1
         result['tree'] = {'passed': checked['passed'], 'by_axis': dict(by_axis), 'issues': checked['issues'][:10]}
@@ -117,7 +117,7 @@ def row(r: dict) -> str:
     if 'error' in r:
         return f"{r['jurisdiction']} {r['table_id']}: ERROR {r['error'][:200]}"
     tree = r['tree']['by_axis']
-    axes = ' '.join(f"{a}:{v['一致']}/{v['不一致']}" for a, v in sorted(tree.items()))
+    axes = ' '.join(f"{a}:{v.get('一致', 0)}/{v.get('不一致', 0)}" for a, v in sorted(tree.items()))
     unit = r['unit']
     cov = r['coverage']
     return (f"{r['jurisdiction']} {r['table_id']}: gate={'OK' if r['gate'] else 'NG'} nodes={r['counts']['nodes']} "

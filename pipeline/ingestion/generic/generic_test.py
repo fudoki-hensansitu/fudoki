@@ -1015,6 +1015,36 @@ class LayoutNoteSettingsTest(unittest.TestCase):
         unchanged = apply_layout(self.items(lines), {}, set())
         self.assertNotEqual(unchanged[0].indent, unchanged[1].indent)
 
+class RepeatedParentRowTest(unittest.TestCase):
+    """A row with no name that prints only the amounts of the account row above it, in the same columns."""
+
+    def run_rows(self, row_texts):
+        from ingestion.generic.tree import repeated_parent_rows
+        nodes = [{'node_key': 'm', 'axis_header': '科目'}]
+        amounts = [{'node_key': 'm', 'header_path': h, 'amount_text': t, 'physical_page': 1, 'y0': 100., 'y1': 109.}
+                   for h, t in (('支出済額', '0'), ('翌年度繰越額', '0'), ('不用額', '30,000,000'))]
+        unowned, runs = [], []
+        for header, text_ in row_texts:
+            record = {'kind': 'amount without row', 'page': 1, 'text': text_, 'header': header}
+            unowned.append(record)
+            runs.append((record, [glyph(text_, 300 if header == '不用額' else 100, 130, 40)]))
+        return repeated_parent_rows(nodes, amounts, unowned, runs), unowned
+
+    def test_a_row_that_repeats_every_amount_of_the_parent_is_recorded_and_no_longer_unowned(self):
+        repeated, unowned = self.run_rows([('支出済額', '0'), ('翌年度繰越額', '0'), ('不用額', '30,000,000')])
+        self.assertEqual(len(repeated), 3)
+        self.assertEqual(unowned, [])
+
+    def test_one_amount_that_differs_by_a_yen_keeps_the_whole_row_unowned(self):
+        repeated, unowned = self.run_rows([('支出済額', '0'), ('翌年度繰越額', '0'), ('不用額', '30,000,001')])
+        self.assertEqual(repeated, [])
+        self.assertEqual(len(unowned), 3)
+
+    def test_an_amount_in_a_column_the_parent_does_not_print_keeps_the_row_unowned(self):
+        repeated, unowned = self.run_rows([('支出済額', '0'), ('予算現額／計', '30,000,000')])
+        self.assertEqual(repeated, [])
+        self.assertEqual(len(unowned), 2)
+
 
 class PatternNamesTest(unittest.TestCase):
     def test_equal_subject_balances_prefer_complete_names_over_more_breakdown_comparisons(self):

@@ -129,7 +129,8 @@ def prepare_save(document: dict, table: dict, path: Path | dict[str, Path], *,
         from ingestion.lib.node_tables import read_rows
         from ingestion.lib.tree_checks import check_tree
         nodes, amounts = read_rows(path['nodes']), read_rows(path['amounts'])
-        checked = check_tree(nodes, amounts, document['target']['document_kind'])
+        from ingestion.lib.source_inconsistencies import declared_for
+        checked = check_tree(nodes, amounts, document['target']['document_kind'], declared_for(document, table.get('table_id')))
         if not checked['passed'] or table['unread_amount_count'] or table['unresolved_parent_count']:
             raise ValueError('Node table failed the mandatory pre-save tree check')
         from ingestion.fiscal import unit_checks

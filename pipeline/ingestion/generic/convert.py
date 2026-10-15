@@ -175,6 +175,8 @@ def excluded_regions(built, logicals, codes, observed) -> list[dict]:
     regions += coverage_regions(codes_printed, kind='本文', reason='事業の識別番号（【010111】）。金額ではない。')
     regions += coverage_regions([(g.page, g.original, g.text) for g in built.repeated_codes], kind='本文',
                                 reason='継続頁に繰り返し印字された科目の番号。直前の同じ科目（番号・名称が一致）の金額と番号であり、新しい金額ではない。')
+    regions += coverage_regions([(g.page, g.original, g.text) for g in built.repeated_amounts], kind='親の繰り返し',
+                                reason='名前のない行（予備費の節の行）。印字された金額はすべて、直上の款・項・目の同じ列の金額と一致する。親の金額の繰り返しで、新しい金額ではない。')
     regions += coverage_regions(zero_marks(logicals), kind='本文',
                                 reason='名前の前に数字で描かれた箇条書きの印（00）。項目の番号は1から始まり、金額ではない。')
     for logical in built.skipped:
