@@ -10,7 +10,14 @@
       "notes": [
         "(繰越明許費)"
       ],
-      "bracketed_remainder": true
+      "bracketed_remainder": true,
+      "name_columns": true,
+      "plain_names": [
+        "補充用備品"
+      ],
+      "note_kinds": {
+        "市民プール高圧開閉装置等修繕": "債務負担行為"
+      }
     }
   }
 }

@@ -303,6 +303,8 @@ def add_annotations(tables, scope, *, raw_rows=(), adopted=None):
                 left = max(c[-1][1][2] for c in preceding_money)
                 names = [w for w in names if w[1][0] >= left]
             caption = unicodedata.normalize('NFKC', _text(names))
+            if any(_word_key(plain) in _word_key(caption) for plain in scope.get('plain_names', ())):
+                continue  # a name the document's settings declare to be an item (`補充用備品`), not a note
             matches = [(m.end(), len(r['keyword']), r['kind']) for r in scope_dictionary
                        for m in re.finditer(re.escape(r['keyword']), caption)]
             if matches:

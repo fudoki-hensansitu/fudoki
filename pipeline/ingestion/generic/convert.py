@@ -269,6 +269,7 @@ class Table:
     observed: list
     logicals: list
     headings: dict = field(default_factory=dict)  # `{(printed heading path, heading kept): count}`
+    plain_names: list = field(default_factory=list)  # names the settings declare to be items, not notes
 
 
 def build_table(source: dict, options: dict, *, stop: bool = True) -> Table:
@@ -288,8 +289,9 @@ def build_table(source: dict, options: dict, *, stop: bool = True) -> Table:
     all_nodes = [*built.nodes, *nodes]
     all_amounts, headings = canonical_headings([*kept, *amounts], all_nodes, source['target']['document_kind'])
     fine_sections(all_nodes)
+    plain = [name for hints in ((layout or {}).get('breakdown') or {}).values() for name in hints.get('plain_names', ())]
     return Table(all_nodes, all_amounts, unresolved, excluded_regions(built, logicals, codes, observed),
-                 built, report, observed, logicals, headings)
+                 built, report, observed, logicals, headings, plain)
 
 
 def fine_sections(nodes: list[dict]) -> None:
@@ -330,7 +332,8 @@ def write_files(destination: Path, table_id: str, table: Table) -> dict:
     write_parquet(amounts_path, pick(AMOUNT_COLUMNS, table.amounts), columns=AMOUNT_COLUMNS)
     # The coverage sidecar is named after the table, not its files: `run.py` and `verify` look for it so.
     write_coverage_words(destination / f'{table_id}.parquet', frame_words(table.observed, table.logicals),
-                         amount_columns=amount_columns(table.logicals), excluded_regions=table.excluded)
+                         amount_columns=amount_columns(table.logicals), excluded_regions=table.excluded,
+                         plain_names=table.plain_names)
     return {table_id: {'nodes': nodes_path, 'amounts': amounts_path, 'notes': receipt_notes(table)}}
 
 
