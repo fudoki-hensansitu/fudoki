@@ -8,6 +8,24 @@
   "direction": "expenditure",
   "conversions": [
     {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "437fefea9a9ac01bfdc041c29fce0a6373a88d69086a5c9ce0faa718ec0d5cb7"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure"
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure"
+        }
+      ]
+    },
+    {
       "id": "national-health-insurance-business-settlement",
       "converter": "fiscal/layouts/generic_text/convert.py",
       "inputs": [
@@ -82,9 +100,39 @@
   ],
   "tables": [
     {
+      "table_id": "general-expenditure",
+      "conversion_id": "general-settlement",
+      "input_fingerprint": "d55dd2077479155361deba054452a2084c8e811833f0cd6e3c5738a2c3b23738",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'shape'}。",
+        "金額の単位は printed 57頁 から決めた。款の和 2,294,963,728 と印字の「歳出合計」2,294,963,728 が一致。",
+        "金額の注記 86 件（充用 34・流用 52）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 3 種（798 件）を、印字された語から辞書の見出しに寄せた: 予算現額と支出済額との比較→比較・予算現額／節／金額→節／金額・翌年度繰越額／繰明許越費→翌年度繰越額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/133621/2024/settlement/expenditure/general-expenditure-nodes.parquet",
+          "sha256": "5c58a0731922e9344295f121d37c9f28c47c289aaafbd75fdc94a02a56ccaf46",
+          "bytes": 66244
+        },
+        "row_count": 2040
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/133621/2024/settlement/expenditure/general-expenditure-amounts.parquet",
+          "sha256": "a68d1f4926c8ae155b5b48533d41a376a4bb1068a60e33a845582995a21319f3",
+          "bytes": 58544
+        },
+        "row_count": 4754
+      }
+    },
+    {
       "table_id": "national-health-insurance-business-expenditure",
       "conversion_id": "national-health-insurance-business-settlement",
-      "input_fingerprint": "0761037ff33f669add0f8abeae4acba07b9efda85fa36dee3f9c537554a467ca",
+      "input_fingerprint": "d0ef99a1ae0aea136b91698dba03f77319d1a0879090513ddc780bdf4fba9ca1",
       "account": "国民健康保険事業特別会計（事業勘定）",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'shape'}。",
@@ -114,7 +162,7 @@
     {
       "table_id": "national-health-insurance-clinic-expenditure",
       "conversion_id": "national-health-insurance-clinic-settlement",
-      "input_fingerprint": "aca31c19cd51d5ac24d0e1db1a505c97a5312d6b955539477d2c90771573a2d4",
+      "input_fingerprint": "6b4e86709f61a1256da4cbd6d29706fe2b58188dceb92d8a060d2a11b0f9a820",
       "account": "国民健康保険事業特別会計（直診勘定）",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'shape'}。",
@@ -144,7 +192,7 @@
     {
       "table_id": "long-term-care-business-expenditure",
       "conversion_id": "long-term-care-business-settlement",
-      "input_fingerprint": "a0367a0c5b5edb60a39269914bef7f3340f80f6b1816a0697f11175473778fa9",
+      "input_fingerprint": "6f835e1e7429c841f5fa670f5a742333a30bb8bb786008c15da1615c0c0ccb74",
       "account": "介護保険事業特別会計（事業勘定）",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -174,7 +222,7 @@
     {
       "table_id": "elderly-medical-expenditure",
       "conversion_id": "elderly-medical-settlement",
-      "input_fingerprint": "048cc106609b7f6817181939f1e9e0a55ca68f7aea9fb028753d360d7536df25",
+      "input_fingerprint": "e52d670e70ad8942da77ab6016073e97e6d6b094f568d60ad2493589a4aa4983",
       "account": "後期高齢者事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
