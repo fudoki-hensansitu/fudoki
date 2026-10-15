@@ -388,6 +388,22 @@ sources:
       direction: expenditure
       table_id: kouki-expenditure-detail
       kind: nodes
+  - name: j131067_2024_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '131067'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j131067_2024_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '131067'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
   - name: j131105_2024_settlement_elderly_medical_setsu_amounts
     meta:
       jurisdiction: '131105'
@@ -515,6 +531,38 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: national-health-insurance-setsu
+      kind: nodes
+  - name: j131121_2024_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '131121'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j131121_2024_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '131121'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
+  - name: j131148_2024_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '131148'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j131148_2024_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '131148'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
       kind: nodes
   - name: j131148_2025_settlement_care_insurance_setsu_amounts
     meta:
@@ -851,6 +899,22 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: national-health-insurance-expenditure-notes
+      kind: nodes
+  - name: j131164_2024_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '131164'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j131164_2024_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '131164'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
       kind: nodes
   - name: j131172_2024_settlement_general_setsu_amounts
     meta:
@@ -2099,6 +2163,22 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: national-health-insurance-expenditure
+      kind: nodes
+  - name: j132217_2024_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '132217'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j132217_2024_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '132217'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
       kind: nodes
   - name: j132217_2025_settlement_general_expenditure_amounts
     meta:

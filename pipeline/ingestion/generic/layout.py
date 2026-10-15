@@ -222,18 +222,41 @@ def _frames(page: Page, spread: dict | None = None) -> list[tuple[float, float, 
     result = []
     for frame in frames:
         middle = [(a + b) / 2 for a, b in zip(frame, frame[1:])]
+        # A rule that crosses the frame, or at least most of its columns (a free-text column at the right end that
+        # draws no row lines leaves the row rules short of the frame's edge).
         spanning = [h for h in horizontals if all(_covers(h, m) for m in middle)]
+        if len(spanning) < 2:
+            spanning = [h for h in horizontals if sum(1 for m in middle if _covers(h, m)) >= max(2, .6 * len(middle))]
         if len(spanning) < 2:
             continue
         result.append((frame[0], frame[-1], min(h.y0 for h in spanning), max(h.y0 for h in spanning), frame))
-    return result
+    # A column that draws no row rules at all (the 支出済額 column printed between two ruled halves of one wide
+    # page) splits a table in two. Two frames that start and end on the same rules, one column apart, with the
+    # figures of that column printed between them, are one.
+    merged: list = []
+    for frame in result:
+        if merged and abs(frame[2] - merged[-1][2]) <= 2 and abs(frame[3] - merged[-1][3]) <= 2 \
+                and 0 < frame[0] - merged[-1][1] <= 200 and sum(
+                    1 for w in page.words if merged[-1][1] < (w.x0 + w.x1) / 2 < frame[0]
+                    and frame[2] < w.y0 < frame[3] and re.search(r'[0-9０-９]', w.text)) >= 5:
+            previous = merged.pop()
+            merged.append((previous[0], frame[1], previous[2], previous[3], previous[4] + frame[4]))
+        else:
+            merged.append(frame)
+    return merged
 
 
 def _header_bottom(page: Page, frame) -> float:
     x0, x1, top, bottom, _ = frame
     horizontals = [r for r in page.rules if not r.vertical]
+    # A rule from the frame's left edge across most of it (a free-text column at the right end may draw none).
     full = sorted(h.y0 for h in horizontals
                   if h.x0 <= x0 + 3 and h.x1 >= x1 - 3 and top - 1 <= h.y0 <= bottom + 1)
+    if len(full) < 2:  # most of the frame's width (a free-text column at the right end may draw no row rules)
+        full = sorted(h.y0 for h in horizontals
+                      if h.x0 <= x0 + 3 and h.x1 - x0 >= .6 * (x1 - x0) and top - 1 <= h.y0 <= bottom + 1)
+    if len(full) < 2:  # two ruled halves of one frame (see `_frames`): the rules that touch either end
+        full = sorted({h.y0 for h in horizontals if (h.x0 <= x0 + 3 or h.x1 >= x1 - 3) and top - 1 <= h.y0 <= bottom + 1})
     digits = [w.y0 for w in page.words if x0 < (w.x0 + w.x1) / 2 < x1 and top + 1 < w.y0 < bottom
               and re.search(r'[0-9０-９]', w.text)]
     first = min(digits) if digits else bottom

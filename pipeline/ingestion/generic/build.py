@@ -7,6 +7,8 @@ declares. No coordinates, column names or level names are configured.
 """
 from __future__ import annotations
 
+import re
+
 import argparse
 from collections import Counter
 import json
@@ -64,7 +66,9 @@ def page_titles(pages) -> dict[int, str | None]:
             else:
                 rows.append([word])
         for row in rows:
-            title = DIRECTION_TITLES.get(normalize(''.join(w.text for w in sorted(row, key=lambda w: w.x0))))
+            line = normalize(''.join(w.text for w in sorted(row, key=lambda w: w.x0)))
+            # `歳入` / `歳出`, or the title of the detail (`(歳入事項別明細書)`).
+            title = DIRECTION_TITLES.get(re.sub(r'[()（）]|事項別明細書', '', line))
             if title:
                 current = title
                 break

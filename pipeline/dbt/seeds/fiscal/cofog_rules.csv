@@ -273,3 +273,23 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 1206,vocab-closed-landfill,,一般会計,,,,,廃棄物処分地,contains,,assigned,05.1,retained,目,,旧廃棄物処分地の管理は廃棄物管理に分類する。名称からの判断。,false
 1207,vocab-sports-ground-pool,,一般会計,,,,,グラウンド|プール|体育総務,contains,,assigned,08.1,retained,目,,市民グラウンド・プール・体育総務は運動施設・スポーツとして 08.1 に分類する。,false
 1208,vocab-environment-maintenance,,一般会計,,,,,環境整備費,eq,,unclassifiable,,retained,目,,環境整備費は環境衛生・環境保護のどちらか名称だけでは分けられないため分類不能。金額は保持する。,false
+1300,keyword-culture-admin,,一般会計,,,,,文化デザイン|文化総務|文化行政,contains,,assigned,08.2,retained,目,,文化の振興・行政を UN COFOG 08.2 文化サービスに分類する。名称からの判断で定義の確認が要るため暫定とする。,true
+1301,keyword-sewer-promotion,,一般会計,,,,,水洗化促進,contains,,assigned,05.2,retained,目,,水洗化（下水道接続）の促進を UN COFOG 05.2 排水管理に分類する。名称からの判断で定義の確認が要るため暫定とする。,true
+1302,keyword-staff-cleaning,,一般会計,,,,,清掃職員,contains,,assigned,05.1,retained,目,,清掃事業の職員経費を UN COFOG 05.1 廃棄物管理に分類する。名称からの判断で定義の確認が要るため暫定とする。,true
+1303,keyword-staff-health,,一般会計,,,,,衛生職員,contains,,assigned,07,retained,目,,衛生部門の職員経費を UN COFOG 07 保健に分類する。名称からの判断で定義の確認が要るため暫定とする。,true
+1304,keyword-staff-school,,一般会計,,,,,学校職員,contains,,assigned,09,retained,目,,学校の職員経費を UN COFOG 09 教育に分類する。名称からの判断で定義の確認が要るため暫定とする。,true
+1305,keyword-staff-environment,,一般会計,,,,,環境職員,contains,,assigned,05,retained,目,,環境部門の職員経費を UN COFOG 05 環境保護に分類する。名称からの判断で定義の確認が要るため暫定とする。,true
+1306,keyword-staff-mixed-works-welfare,,一般会計,,,,,土木職員|民生職員,contains,,unclassifiable,,retained,目,,複数機能にまたがる職員経費であり名称だけでは配賦できない。,false
+1307,keyword-education-admin,,一般会計,,教育費,,,指導費|学務費|庶務費,contains,,assigned,09.8,retained,目,,教育行政の指導・学務・庶務を UN COFOG 09.8 教育に分類されないものに分類する。名称からの判断で定義の確認が要るため暫定とする。,true
+1308,keyword-medicine-nutrition,,一般会計,,,,,医薬費|栄養指導|食品衛生|公害健康被害補償|健康相談,contains,,assigned,07.4,retained,目,,医薬・栄養・食品衛生・健康被害補償・健康相談を UN COFOG 07.4 公衆衛生サービスに分類する。名称からの判断で定義の確認が要るため暫定とする。,true
+1309,keyword-animal-welfare,,一般会計,,,,,動物愛護,contains,,assigned,05,retained,目,,動物愛護管理を UN COFOG 05 環境保護に分類する。名称からの判断で定義の確認が要るため暫定とする。,true
+1310,keyword-industry-admin,,一般会計,,,,,産業総務|生活産業,contains,,assigned,04.1,retained,目,,産業の総務・生活産業を UN COFOG 04.1 一般経済・商業・労働に分類する。名称からの判断で定義の確認が要るため暫定とする。,true
+1311,keyword-resident-service,,一般会計,,,,,区民活動推進|地域区民ひろば|総合窓口|区民相談|行政経営|秘書,contains,,assigned,01.3.3,retained,目,,区民活動・窓口・相談・行政経営・秘書を UN COFOG 01.3.3 その他一般サービスに分類する。名称からの判断で定義の確認が要るため暫定とする。,true
+1312,keyword-city-promotion,,一般会計,,,,,シティプロモーション,contains,,assigned,04.7,retained,目,,シティプロモーション（観光・産業の宣伝）を UN COFOG 04.7 その他の産業に分類する。名称からの判断で定義の確認が要るため暫定とする。,true
+1313,keyword-temporary-loan,,一般会計,,,,,一時借入金,contains,,assigned,01.7,retained,目,,一時借入金（公債の利子・手数料に準じる）を UN COFOG 01.7 公債取引に分類する。名称からの判断で定義の確認が要るため暫定とする。,true
+1314,keyword-childcare-consultation,,一般会計,,子ども家庭費,,,保育費|児童相談,contains,,assigned,10.4,retained,目,,保育・児童相談を UN COFOG 10.4 家族・児童に分類する。名称からの判断で定義の確認が要るため暫定とする。,true
+1315,keyword-livelihood-welfare,,一般会計,,福祉費,,,生活福祉,contains,,assigned,10.7,retained,目,,生活福祉（生活保護の実施）を UN COFOG 10.7 社会的排除に分類する。名称からの判断で定義の確認が要るため暫定とする。,true
+1316,keyword-environment-policy,,一般会計,,環境清掃費,,,環境政策|清掃事務所,contains,,assigned,05,retained,目,,環境政策・清掃事務所の経費を UN COFOG 05 環境保護に分類する。名称からの判断で定義の確認が要るため暫定とする。,true
+1317,keyword-elderly-medical-pension,,一般会計,,,,,高齢者医療年金,contains,,unclassifiable,,retained,目,,医療と年金の事務を一つの目に含み、名称だけでは機能を分離できない。,false
+1318,keyword-transfer-elderly-facility,,一般会計,,,,,老人保健施設会計繰出金,contains,,assigned,07.3,retained,目,,老人保健施設（入院サービス）への繰出を UN COFOG 07.3 入院サービスに分類する。連結消去は行わず retained とする。名称からの判断で定義の確認が要るため暫定とする。,true
+1319,keyword-welfare-kan-general-admin,,一般会計,,福祉費,,,福祉総務,contains,,assigned,10.9,retained,目,,福祉の総務を UN COFOG 10.9 社会保護に分類されないものに分類する。名称からの判断で定義の確認が要るため暫定とする。,true

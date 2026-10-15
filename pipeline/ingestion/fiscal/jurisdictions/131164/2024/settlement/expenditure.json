@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "131164",
+    "fiscal_year": 2024,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e185ff9a9bc1f23648791beee1aaba17c2bceb89457980531a64a1001b8dbbe1"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure"
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-expenditure",
+      "conversion_id": "general-settlement",
+      "input_fingerprint": "4f04f786bd0dacdbcc306be625034b4eeec38a1030d80ef29e73e9516182a249",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は column mark 40頁 から決めた。款の和 149,692,711,078 と印字の「歳出合計」149,692,711,078 が一致。",
+        "金額の注記 1409 件（充用 35・流用 1374）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（839 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131164/2024/settlement/expenditure/general-expenditure-nodes.parquet",
+          "sha256": "350cddaa1e9cb8c5dd420690c1651549327ca79eae348edd45468ee2b01ef40d",
+          "bytes": 49316
+        },
+        "row_count": 2347
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131164/2024/settlement/expenditure/general-expenditure-amounts.parquet",
+          "sha256": "e7cff9748433462ce63a05b0bc19eb1f44fd2e31cd2fe80348d0249cfe151b4f",
+          "bytes": 74181
+        },
+        "row_count": 7433
+      }
+    }
+  ]
+}

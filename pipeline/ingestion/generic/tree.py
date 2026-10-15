@@ -32,6 +32,7 @@ from ingestion.generic.layout import (SUBJECT_LEVELS, UNIT_CELL, Band, Glyph, Lo
 
 # A leading item number; the separator after it (`1.議会費`, `1．`) is not part of the name.
 CODE = re.compile(r'^[(（]?([0-9０-９]{1,4})[)）]?(?:[.．](?=[^0-9０-９]))?(?=\D|$)')
+BARE_CODE = re.compile(r'^[0-9０-９]{1,4}$')
 TRANSFER = re.compile(r'(流用|充用|充当|予備費支出|予備費充当|予備費[よか]り|第[0-9０-９]+節[へか]|^第[0-9０-９]+[款項目節]|^[○〇●]?同[款項目])')
 # A kind word printed above an amount inside an amount column's cell (a stacked carry-over column).
 STACKED_KIND = re.compile(r'(翌年度)?(繰越明許費?|事故繰越し?|継続費逓次繰越|不用額)')
@@ -405,6 +406,25 @@ def _margins(label: list[Glyph]) -> tuple[int, int]:
     return round(first.x0), 10000 + round(first.x0 + width)
 
 
+def strip_ancestor_codes(group: Group) -> list[Glyph]:
+    """The ancestors' codes a page prints before an item's own (`10 10 徴税費`: 款 10, then 項 10; `10 5 10 (文書広報課)`:
+    款, 項, then the 目 that the page goes on with; `10 1 2` alone, the name left out). Each is a bare number word of its own on the line's left;
+    all but the last are removed from the band words and returned, so the line reads as its own code and name."""
+    removed: list[Glyph] = []
+    for line in lines([w for band in group.bands for w in band.words]):
+        label = sorted(line, key=lambda w: w.x0)
+        leading = 0
+        while leading < len(label) and BARE_CODE.match(normalize(label[leading].text)):
+            leading += 1
+        if leading >= 2 and all(
+                label[i + 1].x0 - label[i].x1 >= 2 and label[i + 1].x0 > label[i].x0 for i in range(leading - 1)):
+            removed.extend(label[:leading - 1])
+    gone = {id(g) for g in removed}
+    for band in group.bands:
+        band.words = [w for w in band.words if id(w) not in gone]
+    return removed
+
+
 def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: bool = False) -> list[tuple]:
     """Printed lines of a label group as (label glyphs, amount runs, code, name)."""
     entries = []
@@ -765,6 +785,26 @@ def _measure(item: Item, label: list[Glyph], code: str | None) -> None:
             if band.x0 - 1 <= cx <= band.x1:
                 item.level = index
         item.level = item.level if item.level is not None else len(item.group.bands) - 1
+
+
+def join_transfer_tails(items_: list[Item], layout: dict | None) -> list[Item]:
+    """A transfer remark that prints its amount on its first line and ends on the next (`共済費から職員手当等・
+    時間外勤務手` `10,000` / `当へ流用`): the tail is the rest of that name, not a note of its own."""
+    result: list[Item] = []
+    for item in items_:
+        previous = result[-1] if result else None
+        if (previous is not None and item.code is None and not item.amounts and previous.code is None
+                and previous.amounts and not previous.kinds and item.lines and previous.lines
+                and abs(item.lines[0][0].x0 - previous.lines[0][0].x0) <= 2
+                and 0 < item.lines[0][0].y0 - previous.lines[-1][0].y0 <= 2.5 * (previous.lines[-1][0].y1 - previous.lines[-1][0].y0)
+                and not TRANSFER.search(PAREN_TAIL.sub('', previous.name))
+                and TRANSFER.search(PAREN_TAIL.sub('', previous.name + item.name))
+                and not is_plain_name(layout, previous)):
+            previous.name += item.name
+            previous.lines += item.lines
+            continue
+        result.append(item)
+    return result
 
 
 def note_prefixes(settings: dict) -> tuple[str, ...]:
@@ -1245,7 +1285,9 @@ def same_heading(first: str, second: str) -> bool:
 
     A continuation page repeats the subject heading; OCR may misread a character of it (`秘書広银費` for
     秘書広報費, 132055). The codes already agree, so one character is the misread, not another subject."""
-    a, b = normalize(first or ''), normalize(second or '')
+    a, b = (normalize(name or '') for name in (first, second))
+    # A page that goes on with the 目 prints its name in brackets (`10 (文書広報費)` under `10 文書広報費`).
+    a, b = (re.sub(r'^[(（]|[)）]$', '', name) for name in (a, b))
     if a == b:
         return True
     if min(len(a), len(b)) < 3 or abs(len(a) - len(b)) > 1:
@@ -1440,6 +1482,10 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
     levels: dict[str, list[float]] = {}
     nodes, amounts, unowned, notes = [], [], [], []
     repeated_codes: list = []
+    for logical in logicals:
+        for group in groups(logical, pattern):
+            if (group.subject and group.mode == 'indent') or (not group.subject and group.axis == '款項目'):
+                repeated_codes.extend(strip_ancestor_codes(group))
     unowned_runs: list[tuple[dict, list[Glyph]]] = []  # an amount no row owns, with its glyphs
     annotations: list[tuple[Item, str, list[Glyph], str | None]] = []
     remarks: list[dict] = []  # `Built.annotations` before the items have keys
@@ -1479,6 +1525,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 for band in group.bands:
                     band.words = split_glued_numbers(band.words, edges)
                 group_items = subject_items(group)
+            if not group.subject:
+                group_items = join_transfer_tails(group_items, layout)
             for item in group_items:
                 # 01.01.01.01から流用 starts with digits. A parenthesised remark joined to an item's
                 # name (`需用費（同事業、委託料へ流用 △1,815,000）`) does not make the item a note.
@@ -1527,6 +1575,20 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
         all_items.append((logical, ordered, found))
     # A subject's name can cross a rule of its narrow name column while its amount cell stays whole.
     # The next line without a code or amount is still the name, not a deeper subject (`センタ－費`).
+    # Codes set right in their column: a one-digit and a two-digit code of one level start a digit apart (4–6pt).
+    # A wider spread is names or other levels sharing the column, not alignment.
+    code_starts: dict[int, list[float]] = defaultdict(list)
+    for _, ordered, found in all_items:
+        for group in ordered:
+            if group.subject and group.mode == 'indent':
+                for item in found[id(group)]:
+                    if item.code is not None and item.role == 'node' and item.glyphs:
+                        code_starts[item.level].append(item.glyphs[0].x0)
+    right_set = set()
+    for level, xs in code_starts.items():
+        common = [x for x, n in Counter(round(x) for x in xs).items() if n >= 3]  # a stray start is not a column
+        if common and 3 < max(common) - min(common) <= 6.5:
+            right_set.add(level)
     for _, ordered, found in all_items:
         for group in ordered:
             if not group.subject:
@@ -1549,6 +1611,12 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 # Join at the name's position before learning subject levels from the code's start.
                 for item in kept:
                     item.indent = item.glyphs[0].x0
+                    band = group.bands[item.level] if 0 <= item.level < len(group.bands) else None
+                    narrow = len(group.bands) >= 3 and all(b.x1 - b.x0 < 20 for b in group.bands[:-1])
+                    if band is not None and item.code is not None and narrow and item.level in right_set:
+                        # A staircase of narrow level columns with the codes set right: the column is the level,
+                        # not where the digits start (`5` and `10` of one 目 start 5pt apart).
+                        item.indent = band.x0
             found[id(group)] = kept
     # A subject name cut at the foot of a page continues without a number or amount at the next page's
     # start (`8 市立社会福祉` / `センター費`). Keep its first-page position; a box cannot span two pages.
@@ -1773,11 +1841,14 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             if item.group.subject:
                 depth = item.level + 1 + (titled and untitled(item.group))
                 previous = stack[depth - 1] if len(stack) >= depth else None
+                if previous is None:  # bands that skip a level (a name band between the codes): find the open one by band
+                    previous = next((s for s in stack if s.level == item.level), None)
                 if previous is not None and repeats(previous, item, logical.ocr):
                     item.key = previous.key  # a repeated subject heading on a continuation page
                     item.role = 'repeat'
-                    if item.glyphs and CODE.match(normalize(item.glyphs[0].text)):
-                        repeated_codes.append(item.glyphs[0])
+                    shown = next((g for g in item.glyphs[:3] if CODE.match(normalize(g.text))), None)
+                    if shown is not None:  # `(1議会費)`: the bracket is a word of its own, the code follows it
+                        repeated_codes.append(shown)
                     continue
                 if not item.name:
                     level = item.level_name or (item.group.bands[item.level].header[-1]

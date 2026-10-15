@@ -123,7 +123,7 @@
     {
       "table_id": "general-expenditure-details",
       "conversion_id": "general-settlement-detail",
-      "input_fingerprint": "6729a8ea9820c54cbde746d15e657fdeb09ed86e7fba588e48adda0ffd267c80",
+      "input_fingerprint": "2b85c5d0c47f17ca003f2ac5963f403aa45942eee4cdae0e2df50b549388df50",
       "account": "一般会計",
       "notes": [
         "左頁グリッドの法定最細行=節行（節_*列が印字値）。節を印字しない目はその科目行自体が葉（節_*列NULL）。款・項・目_*列は行が属する科目行の印字値（denorm、再掲行は同一値）。右頁備考結合セルのうち説明階層を構成しない行（流用注記・予備費支出先一覧等）は目_備考に原文改行で保持。説明分解は別表 general-expenditure-notes にあり、この表とは同一支出の別軸で合算しない。金額は原典の桁区切り・△符号を保持。歳出合計行・款（N）項（N）再掲見出し・会計標は観測に留め行にしない。",
@@ -151,7 +151,7 @@
     {
       "table_id": "general-expenditure-notes",
       "conversion_id": "general-settlement-detail",
-      "input_fingerprint": "6729a8ea9820c54cbde746d15e657fdeb09ed86e7fba588e48adda0ffd267c80",
+      "input_fingerprint": "2b85c5d0c47f17ca003f2ac5963f403aa45942eee4cdae0e2df50b549388df50",
       "account": "一般会計",
       "notes": [
         "右頁備考結合セル内の事業説明の最細行（説明1=事業、説明2=セル内節見出し、説明3=細目、説明4=細目の下の行: 字下げして金額を一段左に印字する細々目、または繰越明許費・事故繰越の内訳行）。繰越明許費・事故繰越・支出済額・不用額・本年度支出額・翌年度繰越額は項目ではなく説明3の金額欄の見出しであり、ノードへの移行時は説明3の金額として保持する。説明階層の見出し行で下位印字の無いものはその見出し自体を葉とする（金額0印字の事業・葉なし節見出し等）。説明内節見出し(説明2)と表グリッド節行の対応付けはraw列に実体化せず検査用観測に留める。説明3・説明4は同じ支出の別分解軸であり節表 general-expenditure-details とは合算しない。事業名の【所管】は名称の一部。金額は原典の桁区切り・△符号を保持。物理頁は各要素が印字された実頁（左頁・右頁それぞれ）。",
@@ -179,7 +179,7 @@
     {
       "table_id": "kouki-expenditure-details",
       "conversion_id": "kouki-settlement-details",
-      "input_fingerprint": "a7f218b92d03ec5fa4ad16d7f5ae4af4a12d9a2ecfcdfb8b556ad1c37d695fb6",
+      "input_fingerprint": "59cbb1eb1abdd1f5c63aa94d99597648043272c35b8a87932cd28018d05200de",
       "account": "後期高齢者医療事業特別会計",
       "notes": [
         "左頁グリッドの法定最細行=節行（節_*列が印字値）。節を印字しない目はその科目行自体が葉（節_*列NULL）。款・項・目_*列は行が属する科目行の印字値（denorm、再掲行は同一値）。右頁備考結合セルのうち説明階層を構成しない行（流用注記・予備費支出先一覧等）は目_備考に原文改行で保持。説明分解は別表 kouki-expenditure-notes にあり、この表とは同一支出の別軸で合算しない。金額は原典の桁区切り・△符号を保持。歳出合計行・款（N）項（N）再掲見出し・会計標は観測に留め行にしない。",
@@ -207,7 +207,7 @@
     {
       "table_id": "kouki-expenditure-notes",
       "conversion_id": "kouki-settlement-notes",
-      "input_fingerprint": "d338ee560ef7a69a83fc5aa13373322c5e34df3f677c91dd0c120705a5ca1c40",
+      "input_fingerprint": "2e7bc0acd422c8df5773fe5bf8cc7d024d7dca02cbc402208435c126a5894e1a",
       "account": "後期高齢者医療事業特別会計",
       "notes": [
         "右頁備考結合セル内の事業説明の最細行（説明1=事業、説明2=セル内節見出し、説明3=細目、説明4=細目の下の行: 字下げして金額を一段左に印字する細々目、または繰越明許費・事故繰越の内訳行）。繰越明許費・事故繰越・支出済額・不用額・本年度支出額・翌年度繰越額は項目ではなく説明3の金額欄の見出しであり、ノードへの移行時は説明3の金額として保持する。説明階層の見出し行で下位印字の無いものはその見出し自体を葉とする（金額0印字の事業・葉なし節見出し等）。説明内節見出し(説明2)と表グリッド節行の対応付けはraw列に実体化せず検査用観測に留める。説明3・説明4は同じ支出の別分解軸であり節表 kouki-expenditure-details とは合算しない。事業名の【所管】は名称の一部。金額は原典の桁区切り・△符号を保持。物理頁は各要素が印字された実頁（左頁・右頁それぞれ）。",
@@ -235,7 +235,7 @@
     {
       "table_id": "chushajo-expenditure-details",
       "conversion_id": "chushajo-settlement-details",
-      "input_fingerprint": "44fa3e9e1d3e8aca38e8c2f5b10876d5ff800dd1d526b15defcbac4916d89085",
+      "input_fingerprint": "e99671217534eb2d8a0fc15dd8644c2ad119871de5d5c3d2e79d82fd5a0f6da6",
       "account": "駐車場事業特別会計",
       "notes": [
         "左頁グリッドの法定最細行=節行（節_*列が印字値）。節を印字しない目はその科目行自体が葉（節_*列NULL）。款・項・目_*列は行が属する科目行の印字値（denorm、再掲行は同一値）。右頁備考結合セルのうち説明階層を構成しない行（流用注記・予備費支出先一覧等）は目_備考に原文改行で保持。説明分解は別表 chushajo-expenditure-notes にあり、この表とは同一支出の別軸で合算しない。金額は原典の桁区切り・△符号を保持。歳出合計行・款（N）項（N）再掲見出し・会計標は観測に留め行にしない。",
@@ -263,7 +263,7 @@
     {
       "table_id": "chushajo-expenditure-notes",
       "conversion_id": "chushajo-settlement-notes",
-      "input_fingerprint": "ea18539865d8ab620b206d58c0655b4a5577c03d5458ec2e70d4a77164d009ad",
+      "input_fingerprint": "95a328e3ec046c3cda044da833384af23da9dbf622a77d43528795c0cc2862a3",
       "account": "駐車場事業特別会計",
       "notes": [
         "右頁備考結合セル内の事業説明の最細行（説明1=事業、説明2=セル内節見出し、説明3=細目、説明4=細目の下の行: 字下げして金額を一段左に印字する細々目、または繰越明許費・事故繰越の内訳行）。繰越明許費・事故繰越・支出済額・不用額・本年度支出額・翌年度繰越額は項目ではなく説明3の金額欄の見出しであり、ノードへの移行時は説明3の金額として保持する。説明階層の見出し行で下位印字の無いものはその見出し自体を葉とする（金額0印字の事業・葉なし節見出し等）。説明内節見出し(説明2)と表グリッド節行の対応付けはraw列に実体化せず検査用観測に留める。説明3・説明4は同じ支出の別分解軸であり節表 chushajo-expenditure-details とは合算しない。事業名の【所管】は名称の一部。金額は原典の桁区切り・△符号を保持。物理頁は各要素が印字された実頁（左頁・右頁それぞれ）。",

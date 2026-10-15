@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "columns": {
+    "翌年度繰越額": {
+      "kind": "amount"
+    }
+  },
+  "spread": {
+    "gutter": 0.5
+  }
+}
