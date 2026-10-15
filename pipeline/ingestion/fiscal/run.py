@@ -13,7 +13,7 @@ import duckdb
 from ingestion.fiscal import manifest, unit_checks
 from ingestion.fiscal.storage import fetch, fetch_ocr, save, save_ocr, cleanup, verify, write_ocr
 from ingestion.paths import BUILD
-from ingestion.lib import coverage_checks, digit_recheck, node_tables, tree_checks
+from ingestion.lib import coverage_checks, digit_recheck, node_tables, source_inconsistencies, tree_checks
 
 MATCH, MISMATCH, NOT_APPLICABLE = '一致', '不一致', '対象外'
 
@@ -167,7 +167,8 @@ def node_receipt(document: dict, conversion: dict, table_id: str, tables: node_t
                  output: Path, *, input_fingerprint: str | None = None, notes: list[str] | None = None,
                  migrated: bool = True) -> tuple[dict, dict]:
     account = pdf_account(document, conversion, tables.nodes)
-    paths = node_tables.write_tables(output, table_id, tables, document['target']['document_kind'])
+    paths = node_tables.write_tables(output, table_id, tables, document['target']['document_kind'],
+                                     source_inconsistencies.declared_for(document, table_id))
     # A direct converter never counted anything while migrating a wide table: no migration note.
     receipt = {'table_id': table_id, 'conversion_id': conversion['id'],
                'input_fingerprint': input_fingerprint or manifest.fingerprint(document, conversion),
@@ -404,7 +405,8 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
         checked_pdf.append((conversion, ident, migrated, metadata, file))
     for conversion, ident, built, file in pending_direct:
         # No saved legacy table to fall back to: a table that fails its tree check is a failure.
-        checked = tree_checks.check_tree(built.nodes, built.amounts, document['target']['document_kind'])
+        checked = tree_checks.check_tree(built.nodes, built.amounts, document['target']['document_kind'],
+                                         source_inconsistencies.declared_for(document, ident))
         if not built.nodes or not built.amounts or not checked['passed']:
             raise ValueError(f'Table failed the tree check: {ident}: {checked["counts"]}; {checked["issues"][:5]}')
         completed_by_id[ident] = []
@@ -524,7 +526,8 @@ def verify_sums(document: dict, locate, directory: Path | None = None) -> list[d
             continue
         pair = locate(table)
         nodes, amounts = node_tables.read_rows(pair['nodes']), node_tables.read_rows(pair['amounts'])
-        checked = tree_checks.check_tree(nodes, amounts, document['target']['document_kind'])
+        checked = tree_checks.check_tree(nodes, amounts, document['target']['document_kind'],
+                                         source_inconsistencies.declared_for(document, table['table_id']))
         passed = (checked['passed'] and not table['unread_amount_count'] and not table['unresolved_parent_count'])
         unit = unit_checks.check_table(
             nodes, amounts, document_kind=document['target']['document_kind'], account=table.get('account'),

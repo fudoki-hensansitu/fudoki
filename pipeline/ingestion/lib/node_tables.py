@@ -155,7 +155,7 @@ COVERAGE_SIDECAR_SUFFIX = '.coverage.json'
 # goes through ask first.
 EXCLUSION_KINDS = frozenset({
     '総括', '財源内訳', '節の一覧', '経費内訳', '数量表', '法定節の観測', '本文',
-    '予備費の充用', '職員', '貸付金', '反復見出し',
+    '予備費の充用', '職員', '貸付金', '反復見出し', '親の繰り返し',
 })
 
 
@@ -645,12 +645,13 @@ def amount_phase(header: str, document_kind: str, axis: str, level: str | None) 
 
 
 
-def write_tables(directory: Path, table_id: str, tables: NodeTables, document_kind: str = 'settlement') -> dict[str, Path]:
+def write_tables(directory: Path, table_id: str, tables: NodeTables, document_kind: str = 'settlement',
+                declared: list[dict] | None = None) -> dict[str, Path]:
     """Write a verified candidate pair; failed tables never become saved candidates."""
     if not tables.nodes or not tables.amounts:
         raise ValueError('Empty node/amount output is not supported')
     from ingestion.lib.tree_checks import check_tree  # imported here: the check module reads amount_phase of this one
-    check = check_tree(tables.nodes, tables.amounts, document_kind)
+    check = check_tree(tables.nodes, tables.amounts, document_kind, declared)
     if tables.issues or tables.unread_amount_count or tables.unresolved_parent_count or not check['passed']:
         raise ValueError(f'Table failed node migration/tree check: {tables.issues}; '
                          f'unread={tables.unread_amount_count}; unresolved={tables.unresolved_parent_count}; '

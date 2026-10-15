@@ -44,6 +44,8 @@ FOOTNOTE_MARK = re.compile(r'[※＊*][0-9]+')
 ITEM_NUMBER = re.compile(r'^[(（]?([0-9０-９]{1,4})(?:[)）]|[.．](?=$|[^0-9０-９]))')
 # The 事業 number printed in brackets under a name (`【010111】`): an identifier, no amount.
 BRACKET_CODE = re.compile(r'[【\[][0-9０-９]+[】\]]')
+# The part number a work's name ends with (`舗装補修工事(7-1)`): digits of a name, a hyphen between them.
+NAME_PART_NUMBER = re.compile(r'[^0-9０-９(（][(（][0-9０-９]{1,2}[-－][0-9０-９]{1,2}[)）]')
 RATIO_HEADER = re.compile(r'割合|比率|構成比|率$')
 ZERO_MARK = re.compile(r'^0+$')
 
@@ -170,11 +172,16 @@ def excluded_regions(built, logicals, codes, observed) -> list[dict]:
     marks = [(page.number, (w.x0, w.y0, w.x1, w.y1), w.text) for page in observed for w in page.words
              if FOOTNOTE_MARK.fullmatch(normalize(w.text))]
     regions += coverage_regions(marks, kind='本文', reason='脚注の番号（※1）。金額ではない。')
+    part_numbers = [(page.number, (w.x0, w.y0, w.x1, w.y1), w.text) for page in observed for w in page.words
+                    if NAME_PART_NUMBER.search(normalize(w.text)) and normalize(w.text).endswith((')', '）'))]
+    regions += coverage_regions(part_numbers, kind='本文', reason='工事名の末尾の枝番（(7-1)）。名称の一部で、金額ではない。')
     codes_printed = [(page.number, (w.x0, w.y0, w.x1, w.y1), w.text) for page in observed for w in page.words
                      if BRACKET_CODE.fullmatch(normalize(w.text))]
     regions += coverage_regions(codes_printed, kind='本文', reason='事業の識別番号（【010111】）。金額ではない。')
     regions += coverage_regions([(g.page, g.original, g.text) for g in built.repeated_codes], kind='本文',
                                 reason='継続頁に繰り返し印字された科目の番号。直前の同じ科目（番号・名称が一致）の金額と番号であり、新しい金額ではない。')
+    regions += coverage_regions([(g.page, g.original, g.text) for g in built.repeated_amounts], kind='親の繰り返し',
+                                reason='名前のない行（予備費の節の行）。印字された金額はすべて、直上の款・項・目の同じ列の金額と一致する。親の金額の繰り返しで、新しい金額ではない。')
     regions += coverage_regions(zero_marks(logicals), kind='本文',
                                 reason='名前の前に数字で描かれた箇条書きの印（00）。項目の番号は1から始まり、金額ではない。')
     for logical in built.skipped:

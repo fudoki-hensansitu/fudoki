@@ -34,6 +34,16 @@ join children c on c.checked_node_id = p.node_id and c.document_kind = p.documen
 join printed_axes a on a.checked_node_id = c.checked_node_id
     and a.document_kind = c.document_kind and a.axis = c.axis
 where p.amount_yen is not null and c.amount_yen <> p.amount_yen
+    -- A difference the original prints and the layout file declares (`source_inconsistencies`) passes only
+    -- when the page, parent, printed value and children's sum all match the declaration.
+    and not exists (
+        select 1 from {{ source('fiscal_metadata', 'source_inconsistencies') }} d
+        where d.jurisdiction_code = p.jurisdiction_code and d.fiscal_year = p.fiscal_year
+            and d.document_kind = p.document_kind and d.account_name = p.account_name
+            and d.axis = c.axis and d.page = p.source_page
+            and d.parent_code is not distinct from p.code and d.parent_name = p.name
+            and d.printed_yen = p.amount_yen and d.children_sum_yen = c.amount_yen
+    )
 union all
 -- A parent with a nonzero printed amount whose same-axis subtree prints no amount
 -- at all would otherwise escape the sum check above, so it fails here as missing

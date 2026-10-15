@@ -267,3 +267,9 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 1200,vocab-special-temporary-benefit,,一般会計,,,,,臨時特別給付金,contains,,assigned,10,retained,目,,臨時特別給付金は生活への一時的な給付であり、臨時給付金と同じく社会保護に寄せた境界の判断のため暫定とする。,true
 1201,vocab-vaccination,,一般会計,,,,,ワクチン接種,contains,,assigned,07.4,retained,目,,ワクチン接種は公衆衛生サービスに分類する。名称からの判断。,true
 1202,vocab-contract-deposit,,一般会計,,,,,契約保証金,contains,,unclassifiable,,retained,目,,契約保証金は契約の担保として預かり返す金銭で、行政の機能に分けられないため分類不能。金額は保持する。,false
+1203,vocab-health-checkup-control,,一般会計,,,,,健康管理|成人健康|がん早期発見|健康対策,contains,,assigned,07,retained,目,,健康管理・成人健康対策・がん検診など住民の健康の保持・増進を保健に分類する。名称からの判断。,false
+1204,vocab-maternal-dental-hygiene,,一般会計,,,,,母子衛生|歯科衛生,contains,,assigned,07.4,retained,目,,母子衛生・歯科衛生は公衆衛生サービスに分類する。名称からの判断。,true
+1205,vocab-food-education,,一般会計,,,,,食育,contains,,assigned,07,retained,目,,食育の推進は健康づくりの保健に寄せた境界の判断のため暫定とする。,true
+1206,vocab-closed-landfill,,一般会計,,,,,廃棄物処分地,contains,,assigned,05.1,retained,目,,旧廃棄物処分地の管理は廃棄物管理に分類する。名称からの判断。,false
+1207,vocab-sports-ground-pool,,一般会計,,,,,グラウンド|プール|体育総務,contains,,assigned,08.1,retained,目,,市民グラウンド・プール・体育総務は運動施設・スポーツとして 08.1 に分類する。,false
+1208,vocab-environment-maintenance,,一般会計,,,,,環境整備費,eq,,unclassifiable,,retained,目,,環境整備費は環境衛生・環境保護のどちらか名称だけでは分けられないため分類不能。金額は保持する。,false

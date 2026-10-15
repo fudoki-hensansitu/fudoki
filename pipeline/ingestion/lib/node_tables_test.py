@@ -648,3 +648,52 @@ class UnprintedChildrenTests(unittest.TestCase):
 
 
 if __name__=='__main__':unittest.main()
+
+class DeclaredInconsistencyTests(unittest.TestCase):
+    """A printed parent that differs from its children passes only as declared, to the yen."""
+
+    def tree(self):
+        parent = {**node('p', axis='備考'), 'code_text': '1', 'name_text': '事業', 'physical_page': 3}
+        children = [{**node('a', 'p', '備考'), 'physical_page': 3}, {**node('b', 'p', '備考'), 'physical_page': 3}]
+        amounts = [amount('p', '100'), amount('a', '60'), amount('b', '47')]
+        return [parent, *children], amounts
+
+    def entry(self, **changes):
+        base = {'table_id': 't', 'page': 3, 'axis': '備考', 'parent': {'code': '1', 'name': '事業'},
+                'printed': 100, 'children_sum': 107, 'difference': 7, 'basis': '印字の和が事業の印字値と一致しない'}
+        return {**base, **changes}
+
+    def test_an_undeclared_difference_stops(self):
+        nodes, amounts = self.tree()
+        self.assertFalse(check_tree(nodes, amounts)['passed'])
+
+    def test_the_exact_declared_difference_passes_and_the_values_are_untouched(self):
+        nodes, amounts = self.tree()
+        result = check_tree(nodes, amounts, 'settlement', [self.entry()])
+        self.assertTrue(result['passed'])
+        self.assertEqual(result['counts'], {'宣言済みのずれ': 1})
+        self.assertEqual([a['amount_text'] for a in amounts], ['100', '60', '47'])
+
+    def test_a_value_that_differs_by_one_yen_stops(self):
+        nodes, amounts = self.tree()
+        for change in ({'children_sum': 106}, {'printed': 101}, {'page': 4}, {'parent': {'code': '2', 'name': '事業'}},
+                       {'parent': {'code': '1', 'name': '別の事業'}}, {'axis': '節'}):
+            with self.subTest(change=change):
+                self.assertFalse(check_tree(nodes, amounts, 'settlement', [self.entry(**change)])['passed'])
+
+    def test_a_declaration_that_matches_nothing_stops(self):
+        nodes, amounts = self.tree()
+        amounts[2] = amount('b', '40')  # the children now add up
+        result = check_tree(nodes, amounts, 'settlement', [self.entry()])
+        self.assertFalse(result['passed'])
+        self.assertTrue(any('宣言したずれが現れない' in issue for issue in result['issues']))
+
+    def test_the_carry_over_not_spread_over_the_節_is_a_match_to_the_yen(self):
+        parent = {**node('m'), 'level_header': '目'}
+        children = [node('s1', 'm', '節'), node('s2', 'm', '節')]
+        base = [amount('m', '160', '予算現額／計'), amount('m', '10', '予算現額／継続費及び繰越事業費繰越額'),
+                amount('s1', '100', '予算現額／計'), amount('s2', '50', '予算現額／計')]
+        self.assertTrue(check_tree([parent, *children], base)['passed'])
+        short = [*base[:2], amount('s1', '99', '予算現額／計'), base[3]]
+        self.assertFalse(check_tree([parent, *children], short)['passed'])
+
