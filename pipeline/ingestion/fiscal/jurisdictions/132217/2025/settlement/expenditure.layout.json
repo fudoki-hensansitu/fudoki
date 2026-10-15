@@ -1,6 +1,9 @@
 {
   "schema_version": 1,
   "breakdown": {
-    "備考": {"indent_chars": 1}
+    "備考": {
+      "indent_chars": 1,
+      "names_end_with_kind_words": true
+    }
   }
 }
