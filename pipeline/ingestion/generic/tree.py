@@ -755,6 +755,11 @@ def _measure(item: Item, label: list[Glyph], code: str | None) -> None:
         item.level = item.level if item.level is not None else len(item.group.bands) - 1
 
 
+def note_prefixes(settings: dict) -> tuple[str, ...]:
+    """The words a configured note line starts with: `notes` and the words of `note_kinds`."""
+    return tuple(normalize(prefix) for prefix in [*settings.get('notes', []), *settings.get('note_kinds', {})])
+
+
 def is_plain_name(layout: dict | None, item: Item) -> bool:
     """A name the document's settings declare to be an item although it contains a note word
     (`補充用備品` holds `充用`)."""
@@ -1328,7 +1333,7 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
     ordered_marks = sorted(marks, key=lambda mark: (-len(normalize(mark)), mark))
     shapes = {'1': 'number', '(1)': 'paren', 'ア': 'kana', '①': 'circled'}
     note_kinds = {normalize(prefix): kind for prefix, kind in settings.get('note_kinds', {}).items()}
-    prefixes = tuple(normalize(prefix) for prefix in [*settings.get('notes', []), *settings.get('note_kinds', {})])
+    prefixes = note_prefixes(settings)
     for item in items:
         if settings.get('wrap'):
             item.indent = layout_name_start(item, settings.get('hang_chars'))
@@ -1482,8 +1487,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     target.role = 'node'
                 if layout:
                     note_target = owner(money, band, ordered, found, roles=('node', 'repeat', 'total', 'note', 'annotation'))
-                    prefixes = tuple(normalize(p) for p in layout.get(note_target.group.axis, {}).get('notes', [])) \
-                        if note_target is not None else ()
+                    prefixes = note_prefixes(layout.get(note_target.group.axis, {})) if note_target is not None else ()
                     if note_target is not None and normalize(text(note_target.lines[0])).startswith(prefixes):
                         column_amount_items.add(id(note_target))
         all_items.append((logical, ordered, found))
