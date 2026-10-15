@@ -2517,5 +2517,681 @@
       }
     }
   ],
-  "unresolved_candidates": []
+  "unresolved_candidates": [],
+  "evaluation_selections": [
+    {
+      "target": {
+        "jurisdiction": "131075",
+        "fiscal_year": 2024,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和7年度施策評価シート（54施策、令和6年度実績）",
+          "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.html",
+          "inspected_at": "2026-10-14T20:25:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-111.pdf",
+              "sha256": "51d6e4d43eab7167cad19311409b336d38b4dc14ab2fd081afb9d218f446fe0a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-112.pdf",
+              "sha256": "f3e451920592e30d05fb2350e1ba07a2449a5829578f1607c2a3ddf94700ea48",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-121.pdf",
+              "sha256": "fca791689922c019f6bc08e0c25e96fbc7006cf1e7b8e3bbcc8e388cb93bc6c1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-122.pdf",
+              "sha256": "02cdce28afeaca54ccc59ab5ea77b7494394d6fa28ebf3348c10f74319eaccf6",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-123.pdf",
+              "sha256": "e99c44f1fe22712f79bcefc8a2af2ae8212a38697f7e3d25ebc44875aaad02ca",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-131.pdf",
+              "sha256": "d50fa6f36c5d4aec4939451b061f0791f655376613a8f23c377ebfd8adf8476c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-132.pdf",
+              "sha256": "ac820891cbedbe06eb500be0e7dfe26290c0dd5d739287e5c4747196703ed43a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-211.pdf",
+              "sha256": "2edb3ee556e7fe8d684e4f5ead36f7d05051f2eb1275630f0229a052bbb14490",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-212.pdf",
+              "sha256": "d8fef644f7d3f1cd0ca1dc3eb5ddc31612053d64deaee1ead88fb635fa0399f2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-221.pdf",
+              "sha256": "7f200b7e4619eca682ccc7cbf6656b8f27878ab6fc1317e77169012a65eda941",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-222.pdf",
+              "sha256": "f256d539da2ab24decb6c604cf651aecc67f98e25d2ccb3caa53a2c2d05d6cb7",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-311.pdf",
+              "sha256": "b55c17c26573cd085fadb1aa472d496edcaed056adb52cde14c1293e282fa1eb",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-312.pdf",
+              "sha256": "c930daa36102f1be747b3fc47242939bd44c46370f29d0406c899b23dfce3dae",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-313.pdf",
+              "sha256": "93e1f47548f31a5ba72305c2657fb93255a6ddef1ce36b7c76c072889192d89f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-321.pdf",
+              "sha256": "3c43ea006eb1d1c5daa071ad704f6e2ba7b5adf0c40d8d4f9d955741c318f509",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-322.pdf",
+              "sha256": "1cc7fc7d943c83448efed506d79313c30136912222a667d2825e9baa834cad62",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-331.pdf",
+              "sha256": "3ed14306be17ec0d5799fe45f383b212d9285d5ecc180c2f8920ae6f4051a3e0",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-411.pdf",
+              "sha256": "b5d16556997eb6644225af570bcdd467c6619ccea893aecc44f39e25ecd02f74",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-412.pdf",
+              "sha256": "2719d569cb1f9e1a69bd9bffce8ff2afa8db9d39ecc0e6d0ebfd9ecc99663c8c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-413.pdf",
+              "sha256": "ddfdcdc81b3be87b7c3df53802c4db123caad05008737373467096a1ce275813",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-421.pdf",
+              "sha256": "55b82c892ad7bd7b4a10b9e80e673c374c930b022ddc40b7ef1c68bc44866a77",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-422.pdf",
+              "sha256": "ef8005f0cae9690f196183cfa52ea7e399842056f459290f4d23a7d9f440528a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-423.pdf",
+              "sha256": "d08bf436ad401fa9a07ae094cb42d56da38fe815e48bdf78c45c4831f0569cb4",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-424.pdf",
+              "sha256": "21893107554e7541e66f94cf48a727de7f681f78a76e1edfbfcf1b755ffcff5f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-431.pdf",
+              "sha256": "9dd7500da27f9880945af7787f86e0988f1bd958db47e8c0f23f3b13ef9ad849",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-432.pdf",
+              "sha256": "47252e673dae051ee2ed1c9d63dfd9f38cf73933b19f80c4d1c81a3d082d6862",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-433.pdf",
+              "sha256": "6e92c06d857c5f252db3321d90cbb9712f32e0211d562c8fe45ba9690c8ac580",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-434.pdf",
+              "sha256": "41ec640f3b171e63f7d80612d4f7fce04b5e6187a9c324330446d1a2edd99534",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-441.pdf",
+              "sha256": "13141578e311bf5172e6f7d7bfd20cde706d26b5d8e4b5a56841a0679f9e1873",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-442.pdf",
+              "sha256": "6dc7fe88c7b12670311983b5d4c7d0c9e9f6d04eb1c33fda92c8ae6d2e81e516",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-451.pdf",
+              "sha256": "8e50ac3137b35d33767e57097dcbe9ff3cff2c123fc7b21744a33430351f8e32",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-452.pdf",
+              "sha256": "30b8ad342ffb66838a506d1716b9e340da5ad20fe267fc69b978be0e05250a14",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-453.pdf",
+              "sha256": "1402545b3581afdc146f3f5df34e43a5eb1d0074805fdda08426deb136d7549e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-454.pdf",
+              "sha256": "ae6bbeaf5065316d745b26c0c88eb2d0ed0c8332e9fae44bb905fd6003835c70",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-461.pdf",
+              "sha256": "c1049afc893f8b9a0c4860ed0e31bb8f1a10dabec3ba39ec5a8805bccf32d3da",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-462.pdf",
+              "sha256": "a0c117fbdc7010a676761d5e591d6f9174dd1643b5044fb0ddd862198450e309",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-463.pdf",
+              "sha256": "e99c9101704d32e54e5d1b6d2d2d76b776c805657d12bcad3364c2272ec2b984",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-471.pdf",
+              "sha256": "9d76298d36ab010f92cb61f2de08085375e3c20b58171f13109de65a6ba5497a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-472.pdf",
+              "sha256": "73c6ad0abdd87948fdba231561751ab9cd4b49343bacd74a619db9ce05e6123c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-473.pdf",
+              "sha256": "aedc0f364935cb2e1d2752ad4aa2fe4a55b6cd93918d6645cfb1c9c2fefdf9d2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-474.pdf",
+              "sha256": "7027ab0fdf39078d44a602b4d17095cc0ac6e03b188bda02d19922e90207aefa",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-481.pdf",
+              "sha256": "090a472161df60c0d40fdc40cfe773cfe06af07e369bc5c020ee76e1043612e9",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-482.pdf",
+              "sha256": "fefc4bf9d8a36781bf6ed9f8de9f6a808cb3c7f78bd35f9313874c5c91154db2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-483.pdf",
+              "sha256": "8a27adefbc5ae1d932374ea496e7f005af7c81152e404560118150f9dc4697a6",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-511.pdf",
+              "sha256": "75ba38ec135aa3782d26b307c7c75a35ae2f623a2c5a793e97a2e9386bfc4725",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-512.pdf",
+              "sha256": "c6aa15eed7710f01118aa696d193eba62996f2f5c0a15a3f2eb5b73db31c4ef4",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-513.pdf",
+              "sha256": "f05980d5c511e5fa14606eea4507fbac6c49072cdc449805a1e32fc2b34f2daa",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-521.pdf",
+              "sha256": "5a3a61dd44a28175baae7663905cc02640f6f45e9936f5e2bd4c6368c1c4845b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-522.pdf",
+              "sha256": "cf5ca1d7213c064e758488ae2b898bd054eea9c7eae6bfd4b5e23458984fa9b6",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-531.pdf",
+              "sha256": "27c30f55b50dba6a1cce9c36238c289060857e75af01c1ce4fc0592b910155bb",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-532.pdf",
+              "sha256": "0d17d5a86b01802e2dfad0c678014d4c88b07f9e09e036421b223a8b0e5a1b0c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-533.pdf",
+              "sha256": "cdc02fec6f0f9361c13a39bbf102a062b7a5bb0e4649d4ea109259f7f0e4c83e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-541.pdf",
+              "sha256": "ed34ec078a380b2f4c60550f77a1f377b154c838d3cc40d1284bd1dea22271b2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-542.pdf",
+              "sha256": "b8686cf56ee3ddeb72b829b4038ef0069a9b19db59dceef72b3c428deecd6f3f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-16.pdf",
+            "sha256": "51d6e4d43eab7167cad19311409b336d38b4dc14ab2fd081afb9d218f446fe0a",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-111.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-52.pdf",
+            "sha256": "f3e451920592e30d05fb2350e1ba07a2449a5829578f1607c2a3ddf94700ea48",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-112.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-53.pdf",
+            "sha256": "fca791689922c019f6bc08e0c25e96fbc7006cf1e7b8e3bbcc8e388cb93bc6c1",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-121.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-1.pdf",
+            "sha256": "02cdce28afeaca54ccc59ab5ea77b7494394d6fa28ebf3348c10f74319eaccf6",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-122.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-46.pdf",
+            "sha256": "e99c44f1fe22712f79bcefc8a2af2ae8212a38697f7e3d25ebc44875aaad02ca",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-123.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-43.pdf",
+            "sha256": "d50fa6f36c5d4aec4939451b061f0791f655376613a8f23c377ebfd8adf8476c",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-131.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-31.pdf",
+            "sha256": "ac820891cbedbe06eb500be0e7dfe26290c0dd5d739287e5c4747196703ed43a",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-132.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-10.pdf",
+            "sha256": "2edb3ee556e7fe8d684e4f5ead36f7d05051f2eb1275630f0229a052bbb14490",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-211.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-44.pdf",
+            "sha256": "d8fef644f7d3f1cd0ca1dc3eb5ddc31612053d64deaee1ead88fb635fa0399f2",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-212.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-24.pdf",
+            "sha256": "7f200b7e4619eca682ccc7cbf6656b8f27878ab6fc1317e77169012a65eda941",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-221.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-51.pdf",
+            "sha256": "f256d539da2ab24decb6c604cf651aecc67f98e25d2ccb3caa53a2c2d05d6cb7",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-222.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-34.pdf",
+            "sha256": "b55c17c26573cd085fadb1aa472d496edcaed056adb52cde14c1293e282fa1eb",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-311.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-39.pdf",
+            "sha256": "c930daa36102f1be747b3fc47242939bd44c46370f29d0406c899b23dfce3dae",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-312.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-27.pdf",
+            "sha256": "93e1f47548f31a5ba72305c2657fb93255a6ddef1ce36b7c76c072889192d89f",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-313.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-12.pdf",
+            "sha256": "3c43ea006eb1d1c5daa071ad704f6e2ba7b5adf0c40d8d4f9d955741c318f509",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-321.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-6.pdf",
+            "sha256": "1cc7fc7d943c83448efed506d79313c30136912222a667d2825e9baa834cad62",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-322.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-13.pdf",
+            "sha256": "3ed14306be17ec0d5799fe45f383b212d9285d5ecc180c2f8920ae6f4051a3e0",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-331.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-35.pdf",
+            "sha256": "b5d16556997eb6644225af570bcdd467c6619ccea893aecc44f39e25ecd02f74",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-411.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-8.pdf",
+            "sha256": "2719d569cb1f9e1a69bd9bffce8ff2afa8db9d39ecc0e6d0ebfd9ecc99663c8c",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-412.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-45.pdf",
+            "sha256": "ddfdcdc81b3be87b7c3df53802c4db123caad05008737373467096a1ce275813",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-413.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-17.pdf",
+            "sha256": "55b82c892ad7bd7b4a10b9e80e673c374c930b022ddc40b7ef1c68bc44866a77",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-421.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-49.pdf",
+            "sha256": "ef8005f0cae9690f196183cfa52ea7e399842056f459290f4d23a7d9f440528a",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-422.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-42.pdf",
+            "sha256": "d08bf436ad401fa9a07ae094cb42d56da38fe815e48bdf78c45c4831f0569cb4",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-423.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-7.pdf",
+            "sha256": "21893107554e7541e66f94cf48a727de7f681f78a76e1edfbfcf1b755ffcff5f",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-424.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-29.pdf",
+            "sha256": "9dd7500da27f9880945af7787f86e0988f1bd958db47e8c0f23f3b13ef9ad849",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-431.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-15.pdf",
+            "sha256": "47252e673dae051ee2ed1c9d63dfd9f38cf73933b19f80c4d1c81a3d082d6862",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-432.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-20.pdf",
+            "sha256": "6e92c06d857c5f252db3321d90cbb9712f32e0211d562c8fe45ba9690c8ac580",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-433.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-14.pdf",
+            "sha256": "41ec640f3b171e63f7d80612d4f7fce04b5e6187a9c324330446d1a2edd99534",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-434.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-4.pdf",
+            "sha256": "13141578e311bf5172e6f7d7bfd20cde706d26b5d8e4b5a56841a0679f9e1873",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-441.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-19.pdf",
+            "sha256": "6dc7fe88c7b12670311983b5d4c7d0c9e9f6d04eb1c33fda92c8ae6d2e81e516",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-442.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-26.pdf",
+            "sha256": "8e50ac3137b35d33767e57097dcbe9ff3cff2c123fc7b21744a33430351f8e32",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-451.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-11.pdf",
+            "sha256": "30b8ad342ffb66838a506d1716b9e340da5ad20fe267fc69b978be0e05250a14",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-452.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-5.pdf",
+            "sha256": "1402545b3581afdc146f3f5df34e43a5eb1d0074805fdda08426deb136d7549e",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-453.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-32.pdf",
+            "sha256": "ae6bbeaf5065316d745b26c0c88eb2d0ed0c8332e9fae44bb905fd6003835c70",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-454.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-37.pdf",
+            "sha256": "c1049afc893f8b9a0c4860ed0e31bb8f1a10dabec3ba39ec5a8805bccf32d3da",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-461.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-30.pdf",
+            "sha256": "a0c117fbdc7010a676761d5e591d6f9174dd1643b5044fb0ddd862198450e309",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-462.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-47.pdf",
+            "sha256": "e99c9101704d32e54e5d1b6d2d2d76b776c805657d12bcad3364c2272ec2b984",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-463.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-28.pdf",
+            "sha256": "9d76298d36ab010f92cb61f2de08085375e3c20b58171f13109de65a6ba5497a",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-471.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-22.pdf",
+            "sha256": "73c6ad0abdd87948fdba231561751ab9cd4b49343bacd74a619db9ce05e6123c",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-472.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-33.pdf",
+            "sha256": "aedc0f364935cb2e1d2752ad4aa2fe4a55b6cd93918d6645cfb1c9c2fefdf9d2",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-473.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-21.pdf",
+            "sha256": "7027ab0fdf39078d44a602b4d17095cc0ac6e03b188bda02d19922e90207aefa",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-474.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-2.pdf",
+            "sha256": "090a472161df60c0d40fdc40cfe773cfe06af07e369bc5c020ee76e1043612e9",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-481.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-54.pdf",
+            "sha256": "fefc4bf9d8a36781bf6ed9f8de9f6a808cb3c7f78bd35f9313874c5c91154db2",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-482.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-25.pdf",
+            "sha256": "8a27adefbc5ae1d932374ea496e7f005af7c81152e404560118150f9dc4697a6",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-483.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-23.pdf",
+            "sha256": "75ba38ec135aa3782d26b307c7c75a35ae2f623a2c5a793e97a2e9386bfc4725",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-511.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-38.pdf",
+            "sha256": "c6aa15eed7710f01118aa696d193eba62996f2f5c0a15a3f2eb5b73db31c4ef4",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-512.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-50.pdf",
+            "sha256": "f05980d5c511e5fa14606eea4507fbac6c49072cdc449805a1e32fc2b34f2daa",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-513.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-18.pdf",
+            "sha256": "5a3a61dd44a28175baae7663905cc02640f6f45e9936f5e2bd4c6368c1c4845b",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-521.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-41.pdf",
+            "sha256": "cf5ca1d7213c064e758488ae2b898bd054eea9c7eae6bfd4b5e23458984fa9b6",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-522.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-9.pdf",
+            "sha256": "27c30f55b50dba6a1cce9c36238c289060857e75af01c1ce4fc0592b910155bb",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-531.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-3.pdf",
+            "sha256": "0d17d5a86b01802e2dfad0c678014d4c88b07f9e09e036421b223a8b0e5a1b0c",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-532.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-40.pdf",
+            "sha256": "cdc02fec6f0f9361c13a39bbf102a062b7a5bb0e4649d4ea109259f7f0e4c83e",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-533.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-48.pdf",
+            "sha256": "ed34ec078a380b2f4c60550f77a1f377b154c838d3cc40d1284bd1dea22271b2",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-541.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131075/2024/evaluation-settlement-36.pdf",
+            "sha256": "b8686cf56ee3ddeb72b829b4038ef0069a9b19db59dceef72b3c428deecd6f3f",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/gyousei_hyouka/R7_gyousei_hyouka.files/r7-542.pdf"
+          }
+        ],
+        "archived_at": "2026-10-14T16:11:17.876Z"
+      },
+      "reason": "令和6年度に実施した施策を令和7年度に評価した施策評価シート54冊（計1995頁、2025-10-08公表）。施策ごとに目標、基本計画の成果指標の目標値と実績値、目標と現状の分析・総事業費、施策の評価（A〜D）と理由、今後の運営方針（資源投入・現状維持・効率化・縮小）を載せる。文字として読める。事務事業単位の評価は同ページになく、施策単位の評価シートを代表にした。"
+    }
+  ]
 }

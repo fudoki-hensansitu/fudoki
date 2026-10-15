@@ -6523,5 +6523,45 @@
       }
     }
   ],
-  "unresolved_candidates": []
+  "unresolved_candidates": [],
+  "evaluation_selections": [
+    {
+      "target": {
+        "jurisdiction": "132055",
+        "fiscal_year": 2024,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和7年度青梅市行政評価シート（令和6年度実施事務事業）",
+          "landing_url": "https://www.city.ome.tokyo.jp/soshiki/80/65722.html",
+          "inspected_at": "2026-10-14T20:15:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.ome.tokyo.jp/uploaded/attachment/79021.pdf",
+              "sha256": "57d955f88df7550a5bd8d0d57a66191256d28e22b802bc4c6391022348d124bf",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132055/2024/evaluation-settlement.pdf",
+            "sha256": "57d955f88df7550a5bd8d0d57a66191256d28e22b802bc4c6391022348d124bf",
+            "final_url": "https://www.city.ome.tokyo.jp/uploaded/attachment/79021.pdf"
+          }
+        ],
+        "archived_at": "2026-10-14T16:15:21.448Z"
+      },
+      "reason": "令和6年度に実施した事務事業のうち19事業を抽出して令和7年度に評価した行政評価シート（66頁）。全事務事業の中から19事業を抽出し、公会計の行政コスト計算書と連動させたシートで、事業ごとに目的・概要・事業費（決算額）、成果指標の目標値と実績値、視点別事業評価（必要性・効率性・有効性の4段階と理由）、事業目標達成度評価（5段階）、今後の方向性（8段階）を載せる。文字として読める。"
+    }
+  ]
 }
