@@ -4,7 +4,7 @@ sources:
 - name: fiscal_pdf
   schema: ingestion
   tables:
-  - name: j131024_chuo_care_settlement_amounts
+  - name: j131024_2025_settlement_chuo_care_settlement_amounts
     meta:
       jurisdiction: '131024'
       fiscal_year: 2025
@@ -12,7 +12,7 @@ sources:
       direction: expenditure
       table_id: chuo-care-settlement
       kind: amounts
-  - name: j131024_chuo_care_settlement_nodes
+  - name: j131024_2025_settlement_chuo_care_settlement_nodes
     meta:
       jurisdiction: '131024'
       fiscal_year: 2025
@@ -20,7 +20,7 @@ sources:
       direction: expenditure
       table_id: chuo-care-settlement
       kind: nodes
-  - name: j131024_chuo_general_settlement_amounts
+  - name: j131024_2025_settlement_chuo_general_settlement_amounts
     meta:
       jurisdiction: '131024'
       fiscal_year: 2025
@@ -28,7 +28,7 @@ sources:
       direction: expenditure
       table_id: chuo-general-settlement
       kind: amounts
-  - name: j131024_chuo_general_settlement_nodes
+  - name: j131024_2025_settlement_chuo_general_settlement_nodes
     meta:
       jurisdiction: '131024'
       fiscal_year: 2025
@@ -36,7 +36,7 @@ sources:
       direction: expenditure
       table_id: chuo-general-settlement
       kind: nodes
-  - name: j131024_chuo_kokuho_settlement_amounts
+  - name: j131024_2025_settlement_chuo_kokuho_settlement_amounts
     meta:
       jurisdiction: '131024'
       fiscal_year: 2025
@@ -44,7 +44,7 @@ sources:
       direction: expenditure
       table_id: chuo-kokuho-settlement
       kind: amounts
-  - name: j131024_chuo_kokuho_settlement_nodes
+  - name: j131024_2025_settlement_chuo_kokuho_settlement_nodes
     meta:
       jurisdiction: '131024'
       fiscal_year: 2025
@@ -52,7 +52,7 @@ sources:
       direction: expenditure
       table_id: chuo-kokuho-settlement
       kind: nodes
-  - name: j131024_chuo_kouki_settlement_amounts
+  - name: j131024_2025_settlement_chuo_kouki_settlement_amounts
     meta:
       jurisdiction: '131024'
       fiscal_year: 2025
@@ -60,7 +60,7 @@ sources:
       direction: expenditure
       table_id: chuo-kouki-settlement
       kind: amounts
-  - name: j131024_chuo_kouki_settlement_nodes
+  - name: j131024_2025_settlement_chuo_kouki_settlement_nodes
     meta:
       jurisdiction: '131024'
       fiscal_year: 2025
@@ -68,7 +68,7 @@ sources:
       direction: expenditure
       table_id: chuo-kouki-settlement
       kind: nodes
-  - name: j131032_elderly_medical_expenditure_amounts
+  - name: j131032_2025_settlement_elderly_medical_expenditure_amounts
     meta:
       jurisdiction: '131032'
       fiscal_year: 2025
@@ -76,7 +76,7 @@ sources:
       direction: expenditure
       table_id: elderly-medical-expenditure
       kind: amounts
-  - name: j131032_elderly_medical_expenditure_nodes
+  - name: j131032_2025_settlement_elderly_medical_expenditure_nodes
     meta:
       jurisdiction: '131032'
       fiscal_year: 2025
@@ -84,7 +84,7 @@ sources:
       direction: expenditure
       table_id: elderly-medical-expenditure
       kind: nodes
-  - name: j131032_general_expenditure_amounts
+  - name: j131032_2025_settlement_general_expenditure_amounts
     meta:
       jurisdiction: '131032'
       fiscal_year: 2025
@@ -92,7 +92,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure
       kind: amounts
-  - name: j131032_general_expenditure_nodes
+  - name: j131032_2025_settlement_general_expenditure_nodes
     meta:
       jurisdiction: '131032'
       fiscal_year: 2025
@@ -100,7 +100,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure
       kind: nodes
-  - name: j131032_long_term_care_expenditure_amounts
+  - name: j131032_2025_settlement_long_term_care_expenditure_amounts
     meta:
       jurisdiction: '131032'
       fiscal_year: 2025
@@ -108,7 +108,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-expenditure
       kind: amounts
-  - name: j131032_long_term_care_expenditure_nodes
+  - name: j131032_2025_settlement_long_term_care_expenditure_nodes
     meta:
       jurisdiction: '131032'
       fiscal_year: 2025
@@ -116,7 +116,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-expenditure
       kind: nodes
-  - name: j131032_national_health_insurance_expenditure_amounts
+  - name: j131032_2025_settlement_national_health_insurance_expenditure_amounts
     meta:
       jurisdiction: '131032'
       fiscal_year: 2025
@@ -124,7 +124,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: amounts
-  - name: j131032_national_health_insurance_expenditure_nodes
+  - name: j131032_2025_settlement_national_health_insurance_expenditure_nodes
     meta:
       jurisdiction: '131032'
       fiscal_year: 2025
@@ -132,7 +132,23 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: nodes
-  - name: j131041_general_expenditure_detail_amounts
+  - name: j131041_2024_settlement_general_expenditure_detail_amounts
+    meta:
+      jurisdiction: '131041'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-detail
+      kind: amounts
+  - name: j131041_2024_settlement_general_expenditure_detail_nodes
+    meta:
+      jurisdiction: '131041'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-detail
+      kind: nodes
+  - name: j131041_2025_settlement_general_expenditure_detail_amounts
     meta:
       jurisdiction: '131041'
       fiscal_year: 2025
@@ -140,7 +156,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-detail
       kind: amounts
-  - name: j131041_general_expenditure_detail_nodes
+  - name: j131041_2025_settlement_general_expenditure_detail_nodes
     meta:
       jurisdiction: '131041'
       fiscal_year: 2025
@@ -148,7 +164,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-detail
       kind: nodes
-  - name: j131041_kaigo_expenditure_detail_amounts
+  - name: j131041_2025_settlement_kaigo_expenditure_detail_amounts
     meta:
       jurisdiction: '131041'
       fiscal_year: 2025
@@ -156,7 +172,7 @@ sources:
       direction: expenditure
       table_id: kaigo-expenditure-detail
       kind: amounts
-  - name: j131041_kaigo_expenditure_detail_nodes
+  - name: j131041_2025_settlement_kaigo_expenditure_detail_nodes
     meta:
       jurisdiction: '131041'
       fiscal_year: 2025
@@ -164,7 +180,7 @@ sources:
       direction: expenditure
       table_id: kaigo-expenditure-detail
       kind: nodes
-  - name: j131041_kokuho_expenditure_detail_amounts
+  - name: j131041_2025_settlement_kokuho_expenditure_detail_amounts
     meta:
       jurisdiction: '131041'
       fiscal_year: 2025
@@ -172,7 +188,7 @@ sources:
       direction: expenditure
       table_id: kokuho-expenditure-detail
       kind: amounts
-  - name: j131041_kokuho_expenditure_detail_nodes
+  - name: j131041_2025_settlement_kokuho_expenditure_detail_nodes
     meta:
       jurisdiction: '131041'
       fiscal_year: 2025
@@ -180,7 +196,7 @@ sources:
       direction: expenditure
       table_id: kokuho-expenditure-detail
       kind: nodes
-  - name: j131041_kouki_expenditure_detail_amounts
+  - name: j131041_2025_settlement_kouki_expenditure_detail_amounts
     meta:
       jurisdiction: '131041'
       fiscal_year: 2025
@@ -188,7 +204,7 @@ sources:
       direction: expenditure
       table_id: kouki-expenditure-detail
       kind: amounts
-  - name: j131041_kouki_expenditure_detail_nodes
+  - name: j131041_2025_settlement_kouki_expenditure_detail_nodes
     meta:
       jurisdiction: '131041'
       fiscal_year: 2025
@@ -196,7 +212,23 @@ sources:
       direction: expenditure
       table_id: kouki-expenditure-detail
       kind: nodes
-  - name: j131105_elderly_medical_setsu_amounts
+  - name: j131105_2024_settlement_general_setsu_amounts
+    meta:
+      jurisdiction: '131105'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-setsu
+      kind: amounts
+  - name: j131105_2024_settlement_general_setsu_nodes
+    meta:
+      jurisdiction: '131105'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-setsu
+      kind: nodes
+  - name: j131105_2025_settlement_elderly_medical_setsu_amounts
     meta:
       jurisdiction: '131105'
       fiscal_year: 2025
@@ -204,7 +236,7 @@ sources:
       direction: expenditure
       table_id: elderly-medical-setsu
       kind: amounts
-  - name: j131105_elderly_medical_setsu_nodes
+  - name: j131105_2025_settlement_elderly_medical_setsu_nodes
     meta:
       jurisdiction: '131105'
       fiscal_year: 2025
@@ -212,7 +244,7 @@ sources:
       direction: expenditure
       table_id: elderly-medical-setsu
       kind: nodes
-  - name: j131105_general_setsu_amounts
+  - name: j131105_2025_settlement_general_setsu_amounts
     meta:
       jurisdiction: '131105'
       fiscal_year: 2025
@@ -220,7 +252,7 @@ sources:
       direction: expenditure
       table_id: general-setsu
       kind: amounts
-  - name: j131105_general_setsu_nodes
+  - name: j131105_2025_settlement_general_setsu_nodes
     meta:
       jurisdiction: '131105'
       fiscal_year: 2025
@@ -228,7 +260,7 @@ sources:
       direction: expenditure
       table_id: general-setsu
       kind: nodes
-  - name: j131105_long_term_care_setsu_amounts
+  - name: j131105_2025_settlement_long_term_care_setsu_amounts
     meta:
       jurisdiction: '131105'
       fiscal_year: 2025
@@ -236,7 +268,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-setsu
       kind: amounts
-  - name: j131105_long_term_care_setsu_nodes
+  - name: j131105_2025_settlement_long_term_care_setsu_nodes
     meta:
       jurisdiction: '131105'
       fiscal_year: 2025
@@ -244,7 +276,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-setsu
       kind: nodes
-  - name: j131105_national_health_insurance_setsu_amounts
+  - name: j131105_2025_settlement_national_health_insurance_setsu_amounts
     meta:
       jurisdiction: '131105'
       fiscal_year: 2025
@@ -252,7 +284,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-setsu
       kind: amounts
-  - name: j131105_national_health_insurance_setsu_nodes
+  - name: j131105_2025_settlement_national_health_insurance_setsu_nodes
     meta:
       jurisdiction: '131105'
       fiscal_year: 2025
@@ -260,7 +292,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-setsu
       kind: nodes
-  - name: j131148_care_insurance_setsu_amounts
+  - name: j131148_2025_settlement_care_insurance_setsu_amounts
     meta:
       jurisdiction: '131148'
       fiscal_year: 2025
@@ -268,7 +300,7 @@ sources:
       direction: expenditure
       table_id: care-insurance-setsu
       kind: amounts
-  - name: j131148_care_insurance_setsu_nodes
+  - name: j131148_2025_settlement_care_insurance_setsu_nodes
     meta:
       jurisdiction: '131148'
       fiscal_year: 2025
@@ -276,7 +308,7 @@ sources:
       direction: expenditure
       table_id: care-insurance-setsu
       kind: nodes
-  - name: j131148_general_setsu_amounts
+  - name: j131148_2025_settlement_general_setsu_amounts
     meta:
       jurisdiction: '131148'
       fiscal_year: 2025
@@ -284,7 +316,7 @@ sources:
       direction: expenditure
       table_id: general-setsu
       kind: amounts
-  - name: j131148_general_setsu_nodes
+  - name: j131148_2025_settlement_general_setsu_nodes
     meta:
       jurisdiction: '131148'
       fiscal_year: 2025
@@ -292,7 +324,7 @@ sources:
       direction: expenditure
       table_id: general-setsu
       kind: nodes
-  - name: j131148_land_setsu_amounts
+  - name: j131148_2025_settlement_land_setsu_amounts
     meta:
       jurisdiction: '131148'
       fiscal_year: 2025
@@ -300,7 +332,7 @@ sources:
       direction: expenditure
       table_id: land-setsu
       kind: amounts
-  - name: j131148_land_setsu_nodes
+  - name: j131148_2025_settlement_land_setsu_nodes
     meta:
       jurisdiction: '131148'
       fiscal_year: 2025
@@ -308,7 +340,7 @@ sources:
       direction: expenditure
       table_id: land-setsu
       kind: nodes
-  - name: j131148_late_elderly_medical_setsu_amounts
+  - name: j131148_2025_settlement_late_elderly_medical_setsu_amounts
     meta:
       jurisdiction: '131148'
       fiscal_year: 2025
@@ -316,7 +348,7 @@ sources:
       direction: expenditure
       table_id: late-elderly-medical-setsu
       kind: amounts
-  - name: j131148_late_elderly_medical_setsu_nodes
+  - name: j131148_2025_settlement_late_elderly_medical_setsu_nodes
     meta:
       jurisdiction: '131148'
       fiscal_year: 2025
@@ -324,7 +356,7 @@ sources:
       direction: expenditure
       table_id: late-elderly-medical-setsu
       kind: nodes
-  - name: j131148_national_health_insurance_setsu_amounts
+  - name: j131148_2025_settlement_national_health_insurance_setsu_amounts
     meta:
       jurisdiction: '131148'
       fiscal_year: 2025
@@ -332,7 +364,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-setsu
       kind: amounts
-  - name: j131148_national_health_insurance_setsu_nodes
+  - name: j131148_2025_settlement_national_health_insurance_setsu_nodes
     meta:
       jurisdiction: '131148'
       fiscal_year: 2025
@@ -340,7 +372,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-setsu
       kind: nodes
-  - name: j131156_care_insurance_expenditure_details_amounts
+  - name: j131156_2025_settlement_care_insurance_expenditure_details_amounts
     meta:
       jurisdiction: '131156'
       fiscal_year: 2025
@@ -348,7 +380,7 @@ sources:
       direction: expenditure
       table_id: care-insurance-expenditure-details
       kind: amounts
-  - name: j131156_care_insurance_expenditure_details_nodes
+  - name: j131156_2025_settlement_care_insurance_expenditure_details_nodes
     meta:
       jurisdiction: '131156'
       fiscal_year: 2025
@@ -356,7 +388,7 @@ sources:
       direction: expenditure
       table_id: care-insurance-expenditure-details
       kind: nodes
-  - name: j131156_care_insurance_expenditure_notes_amounts
+  - name: j131156_2025_settlement_care_insurance_expenditure_notes_amounts
     meta:
       jurisdiction: '131156'
       fiscal_year: 2025
@@ -364,7 +396,7 @@ sources:
       direction: expenditure
       table_id: care-insurance-expenditure-notes
       kind: amounts
-  - name: j131156_care_insurance_expenditure_notes_nodes
+  - name: j131156_2025_settlement_care_insurance_expenditure_notes_nodes
     meta:
       jurisdiction: '131156'
       fiscal_year: 2025
@@ -372,7 +404,7 @@ sources:
       direction: expenditure
       table_id: care-insurance-expenditure-notes
       kind: nodes
-  - name: j131156_general_expenditure_details_amounts
+  - name: j131156_2025_settlement_general_expenditure_details_amounts
     meta:
       jurisdiction: '131156'
       fiscal_year: 2025
@@ -380,7 +412,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-details
       kind: amounts
-  - name: j131156_general_expenditure_details_nodes
+  - name: j131156_2025_settlement_general_expenditure_details_nodes
     meta:
       jurisdiction: '131156'
       fiscal_year: 2025
@@ -388,7 +420,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-details
       kind: nodes
-  - name: j131156_general_expenditure_notes_amounts
+  - name: j131156_2025_settlement_general_expenditure_notes_amounts
     meta:
       jurisdiction: '131156'
       fiscal_year: 2025
@@ -396,7 +428,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-notes
       kind: amounts
-  - name: j131156_general_expenditure_notes_nodes
+  - name: j131156_2025_settlement_general_expenditure_notes_nodes
     meta:
       jurisdiction: '131156'
       fiscal_year: 2025
@@ -404,7 +436,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-notes
       kind: nodes
-  - name: j131156_late_stage_elderly_expenditure_details_amounts
+  - name: j131156_2025_settlement_late_stage_elderly_expenditure_details_amounts
     meta:
       jurisdiction: '131156'
       fiscal_year: 2025
@@ -412,7 +444,7 @@ sources:
       direction: expenditure
       table_id: late-stage-elderly-expenditure-details
       kind: amounts
-  - name: j131156_late_stage_elderly_expenditure_details_nodes
+  - name: j131156_2025_settlement_late_stage_elderly_expenditure_details_nodes
     meta:
       jurisdiction: '131156'
       fiscal_year: 2025
@@ -420,7 +452,7 @@ sources:
       direction: expenditure
       table_id: late-stage-elderly-expenditure-details
       kind: nodes
-  - name: j131156_late_stage_elderly_expenditure_notes_amounts
+  - name: j131156_2025_settlement_late_stage_elderly_expenditure_notes_amounts
     meta:
       jurisdiction: '131156'
       fiscal_year: 2025
@@ -428,7 +460,7 @@ sources:
       direction: expenditure
       table_id: late-stage-elderly-expenditure-notes
       kind: amounts
-  - name: j131156_late_stage_elderly_expenditure_notes_nodes
+  - name: j131156_2025_settlement_late_stage_elderly_expenditure_notes_nodes
     meta:
       jurisdiction: '131156'
       fiscal_year: 2025
@@ -436,7 +468,7 @@ sources:
       direction: expenditure
       table_id: late-stage-elderly-expenditure-notes
       kind: nodes
-  - name: j131156_national_health_insurance_expenditure_details_amounts
+  - name: j131156_2025_settlement_national_health_insurance_expenditure_details_amounts
     meta:
       jurisdiction: '131156'
       fiscal_year: 2025
@@ -444,7 +476,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure-details
       kind: amounts
-  - name: j131156_national_health_insurance_expenditure_details_nodes
+  - name: j131156_2025_settlement_national_health_insurance_expenditure_details_nodes
     meta:
       jurisdiction: '131156'
       fiscal_year: 2025
@@ -452,7 +484,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure-details
       kind: nodes
-  - name: j131156_national_health_insurance_expenditure_notes_amounts
+  - name: j131156_2025_settlement_national_health_insurance_expenditure_notes_amounts
     meta:
       jurisdiction: '131156'
       fiscal_year: 2025
@@ -460,7 +492,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure-notes
       kind: amounts
-  - name: j131156_national_health_insurance_expenditure_notes_nodes
+  - name: j131156_2025_settlement_national_health_insurance_expenditure_notes_nodes
     meta:
       jurisdiction: '131156'
       fiscal_year: 2025
@@ -468,7 +500,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure-notes
       kind: nodes
-  - name: j131172_general_setsu_amounts
+  - name: j131172_2025_settlement_general_setsu_amounts
     meta:
       jurisdiction: '131172'
       fiscal_year: 2025
@@ -476,7 +508,7 @@ sources:
       direction: expenditure
       table_id: general-setsu
       kind: amounts
-  - name: j131172_general_setsu_nodes
+  - name: j131172_2025_settlement_general_setsu_nodes
     meta:
       jurisdiction: '131172'
       fiscal_year: 2025
@@ -484,7 +516,7 @@ sources:
       direction: expenditure
       table_id: general-setsu
       kind: nodes
-  - name: j131172_kaigo_setsu_amounts
+  - name: j131172_2025_settlement_kaigo_setsu_amounts
     meta:
       jurisdiction: '131172'
       fiscal_year: 2025
@@ -492,7 +524,7 @@ sources:
       direction: expenditure
       table_id: kaigo-setsu
       kind: amounts
-  - name: j131172_kaigo_setsu_nodes
+  - name: j131172_2025_settlement_kaigo_setsu_nodes
     meta:
       jurisdiction: '131172'
       fiscal_year: 2025
@@ -500,7 +532,7 @@ sources:
       direction: expenditure
       table_id: kaigo-setsu
       kind: nodes
-  - name: j131172_kokuho_setsu_amounts
+  - name: j131172_2025_settlement_kokuho_setsu_amounts
     meta:
       jurisdiction: '131172'
       fiscal_year: 2025
@@ -508,7 +540,7 @@ sources:
       direction: expenditure
       table_id: kokuho-setsu
       kind: amounts
-  - name: j131172_kokuho_setsu_nodes
+  - name: j131172_2025_settlement_kokuho_setsu_nodes
     meta:
       jurisdiction: '131172'
       fiscal_year: 2025
@@ -516,7 +548,7 @@ sources:
       direction: expenditure
       table_id: kokuho-setsu
       kind: nodes
-  - name: j131172_kouki_setsu_amounts
+  - name: j131172_2025_settlement_kouki_setsu_amounts
     meta:
       jurisdiction: '131172'
       fiscal_year: 2025
@@ -524,7 +556,7 @@ sources:
       direction: expenditure
       table_id: kouki-setsu
       kind: amounts
-  - name: j131172_kouki_setsu_nodes
+  - name: j131172_2025_settlement_kouki_setsu_nodes
     meta:
       jurisdiction: '131172'
       fiscal_year: 2025
@@ -532,7 +564,7 @@ sources:
       direction: expenditure
       table_id: kouki-setsu
       kind: nodes
-  - name: j131202_elderly_medical_expenditure_amounts
+  - name: j131202_2024_settlement_elderly_medical_expenditure_amounts
     meta:
       jurisdiction: '131202'
       fiscal_year: 2024
@@ -540,7 +572,7 @@ sources:
       direction: expenditure
       table_id: elderly-medical-expenditure
       kind: amounts
-  - name: j131202_elderly_medical_expenditure_nodes
+  - name: j131202_2024_settlement_elderly_medical_expenditure_nodes
     meta:
       jurisdiction: '131202'
       fiscal_year: 2024
@@ -548,7 +580,7 @@ sources:
       direction: expenditure
       table_id: elderly-medical-expenditure
       kind: nodes
-  - name: j131202_general_expenditure_amounts
+  - name: j131202_2024_settlement_general_expenditure_amounts
     meta:
       jurisdiction: '131202'
       fiscal_year: 2024
@@ -556,7 +588,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure
       kind: amounts
-  - name: j131202_general_expenditure_nodes
+  - name: j131202_2024_settlement_general_expenditure_nodes
     meta:
       jurisdiction: '131202'
       fiscal_year: 2024
@@ -564,7 +596,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure
       kind: nodes
-  - name: j131202_long_term_care_expenditure_amounts
+  - name: j131202_2024_settlement_long_term_care_expenditure_amounts
     meta:
       jurisdiction: '131202'
       fiscal_year: 2024
@@ -572,7 +604,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-expenditure
       kind: amounts
-  - name: j131202_long_term_care_expenditure_nodes
+  - name: j131202_2024_settlement_long_term_care_expenditure_nodes
     meta:
       jurisdiction: '131202'
       fiscal_year: 2024
@@ -580,7 +612,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-expenditure
       kind: nodes
-  - name: j131202_national_health_insurance_expenditure_amounts
+  - name: j131202_2024_settlement_national_health_insurance_expenditure_amounts
     meta:
       jurisdiction: '131202'
       fiscal_year: 2024
@@ -588,7 +620,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: amounts
-  - name: j131202_national_health_insurance_expenditure_nodes
+  - name: j131202_2024_settlement_national_health_insurance_expenditure_nodes
     meta:
       jurisdiction: '131202'
       fiscal_year: 2024
@@ -596,7 +628,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: nodes
-  - name: j132012_general_detail_amounts
+  - name: j132012_2025_settlement_general_detail_amounts
     meta:
       jurisdiction: '132012'
       fiscal_year: 2025
@@ -604,7 +636,7 @@ sources:
       direction: expenditure
       table_id: general-detail
       kind: amounts
-  - name: j132012_general_detail_nodes
+  - name: j132012_2025_settlement_general_detail_nodes
     meta:
       jurisdiction: '132012'
       fiscal_year: 2025
@@ -612,7 +644,7 @@ sources:
       direction: expenditure
       table_id: general-detail
       kind: nodes
-  - name: j132012_kaigo_detail_amounts
+  - name: j132012_2025_settlement_kaigo_detail_amounts
     meta:
       jurisdiction: '132012'
       fiscal_year: 2025
@@ -620,7 +652,7 @@ sources:
       direction: expenditure
       table_id: kaigo-detail
       kind: amounts
-  - name: j132012_kaigo_detail_nodes
+  - name: j132012_2025_settlement_kaigo_detail_nodes
     meta:
       jurisdiction: '132012'
       fiscal_year: 2025
@@ -628,7 +660,7 @@ sources:
       direction: expenditure
       table_id: kaigo-detail
       kind: nodes
-  - name: j132012_kouki_detail_amounts
+  - name: j132012_2025_settlement_kouki_detail_amounts
     meta:
       jurisdiction: '132012'
       fiscal_year: 2025
@@ -636,7 +668,7 @@ sources:
       direction: expenditure
       table_id: kouki-detail
       kind: amounts
-  - name: j132012_kouki_detail_nodes
+  - name: j132012_2025_settlement_kouki_detail_nodes
     meta:
       jurisdiction: '132012'
       fiscal_year: 2025
@@ -644,7 +676,7 @@ sources:
       direction: expenditure
       table_id: kouki-detail
       kind: nodes
-  - name: j132021_chushajo_expenditure_details_amounts
+  - name: j132021_2025_settlement_chushajo_expenditure_details_amounts
     meta:
       jurisdiction: '132021'
       fiscal_year: 2025
@@ -652,7 +684,7 @@ sources:
       direction: expenditure
       table_id: chushajo-expenditure-details
       kind: amounts
-  - name: j132021_chushajo_expenditure_details_nodes
+  - name: j132021_2025_settlement_chushajo_expenditure_details_nodes
     meta:
       jurisdiction: '132021'
       fiscal_year: 2025
@@ -660,7 +692,7 @@ sources:
       direction: expenditure
       table_id: chushajo-expenditure-details
       kind: nodes
-  - name: j132021_chushajo_expenditure_notes_amounts
+  - name: j132021_2025_settlement_chushajo_expenditure_notes_amounts
     meta:
       jurisdiction: '132021'
       fiscal_year: 2025
@@ -668,7 +700,7 @@ sources:
       direction: expenditure
       table_id: chushajo-expenditure-notes
       kind: amounts
-  - name: j132021_chushajo_expenditure_notes_nodes
+  - name: j132021_2025_settlement_chushajo_expenditure_notes_nodes
     meta:
       jurisdiction: '132021'
       fiscal_year: 2025
@@ -676,7 +708,7 @@ sources:
       direction: expenditure
       table_id: chushajo-expenditure-notes
       kind: nodes
-  - name: j132021_general_expenditure_details_amounts
+  - name: j132021_2025_settlement_general_expenditure_details_amounts
     meta:
       jurisdiction: '132021'
       fiscal_year: 2025
@@ -684,7 +716,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-details
       kind: amounts
-  - name: j132021_general_expenditure_details_nodes
+  - name: j132021_2025_settlement_general_expenditure_details_nodes
     meta:
       jurisdiction: '132021'
       fiscal_year: 2025
@@ -692,7 +724,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-details
       kind: nodes
-  - name: j132021_general_expenditure_notes_amounts
+  - name: j132021_2025_settlement_general_expenditure_notes_amounts
     meta:
       jurisdiction: '132021'
       fiscal_year: 2025
@@ -700,7 +732,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-notes
       kind: amounts
-  - name: j132021_general_expenditure_notes_nodes
+  - name: j132021_2025_settlement_general_expenditure_notes_nodes
     meta:
       jurisdiction: '132021'
       fiscal_year: 2025
@@ -708,7 +740,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-notes
       kind: nodes
-  - name: j132021_kouki_expenditure_details_amounts
+  - name: j132021_2025_settlement_kouki_expenditure_details_amounts
     meta:
       jurisdiction: '132021'
       fiscal_year: 2025
@@ -716,7 +748,7 @@ sources:
       direction: expenditure
       table_id: kouki-expenditure-details
       kind: amounts
-  - name: j132021_kouki_expenditure_details_nodes
+  - name: j132021_2025_settlement_kouki_expenditure_details_nodes
     meta:
       jurisdiction: '132021'
       fiscal_year: 2025
@@ -724,7 +756,7 @@ sources:
       direction: expenditure
       table_id: kouki-expenditure-details
       kind: nodes
-  - name: j132021_kouki_expenditure_notes_amounts
+  - name: j132021_2025_settlement_kouki_expenditure_notes_amounts
     meta:
       jurisdiction: '132021'
       fiscal_year: 2025
@@ -732,7 +764,7 @@ sources:
       direction: expenditure
       table_id: kouki-expenditure-notes
       kind: amounts
-  - name: j132021_kouki_expenditure_notes_nodes
+  - name: j132021_2025_settlement_kouki_expenditure_notes_nodes
     meta:
       jurisdiction: '132021'
       fiscal_year: 2025
@@ -740,7 +772,23 @@ sources:
       direction: expenditure
       table_id: kouki-expenditure-notes
       kind: nodes
-  - name: j132039_general_expenditure_amounts
+  - name: j132039_2024_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '132039'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j132039_2024_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '132039'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
+  - name: j132039_2025_settlement_general_expenditure_amounts
     meta:
       jurisdiction: '132039'
       fiscal_year: 2025
@@ -748,7 +796,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure
       kind: amounts
-  - name: j132039_general_expenditure_nodes
+  - name: j132039_2025_settlement_general_expenditure_nodes
     meta:
       jurisdiction: '132039'
       fiscal_year: 2025
@@ -756,7 +804,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure
       kind: nodes
-  - name: j132039_kouki_expenditure_detail_amounts
+  - name: j132039_2025_settlement_kouki_expenditure_detail_amounts
     meta:
       jurisdiction: '132039'
       fiscal_year: 2025
@@ -764,7 +812,7 @@ sources:
       direction: expenditure
       table_id: kouki-expenditure-detail
       kind: amounts
-  - name: j132039_kouki_expenditure_detail_nodes
+  - name: j132039_2025_settlement_kouki_expenditure_detail_nodes
     meta:
       jurisdiction: '132039'
       fiscal_year: 2025
@@ -772,7 +820,7 @@ sources:
       direction: expenditure
       table_id: kouki-expenditure-detail
       kind: nodes
-  - name: j132039_long_term_care_expenditure_amounts
+  - name: j132039_2025_settlement_long_term_care_expenditure_amounts
     meta:
       jurisdiction: '132039'
       fiscal_year: 2025
@@ -780,7 +828,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-expenditure
       kind: amounts
-  - name: j132039_long_term_care_expenditure_nodes
+  - name: j132039_2025_settlement_long_term_care_expenditure_nodes
     meta:
       jurisdiction: '132039'
       fiscal_year: 2025
@@ -788,7 +836,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-expenditure
       kind: nodes
-  - name: j132039_national_health_insurance_expenditure_amounts
+  - name: j132039_2025_settlement_national_health_insurance_expenditure_amounts
     meta:
       jurisdiction: '132039'
       fiscal_year: 2025
@@ -796,7 +844,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: amounts
-  - name: j132039_national_health_insurance_expenditure_nodes
+  - name: j132039_2025_settlement_national_health_insurance_expenditure_nodes
     meta:
       jurisdiction: '132039'
       fiscal_year: 2025
@@ -804,7 +852,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: nodes
-  - name: j132047_elderly_medical_expenditure_amounts
+  - name: j132047_2025_settlement_elderly_medical_expenditure_amounts
     meta:
       jurisdiction: '132047'
       fiscal_year: 2025
@@ -812,7 +860,7 @@ sources:
       direction: expenditure
       table_id: elderly-medical-expenditure
       kind: amounts
-  - name: j132047_elderly_medical_expenditure_nodes
+  - name: j132047_2025_settlement_elderly_medical_expenditure_nodes
     meta:
       jurisdiction: '132047'
       fiscal_year: 2025
@@ -820,7 +868,7 @@ sources:
       direction: expenditure
       table_id: elderly-medical-expenditure
       kind: nodes
-  - name: j132047_general_expenditure_amounts
+  - name: j132047_2025_settlement_general_expenditure_amounts
     meta:
       jurisdiction: '132047'
       fiscal_year: 2025
@@ -828,7 +876,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure
       kind: amounts
-  - name: j132047_general_expenditure_nodes
+  - name: j132047_2025_settlement_general_expenditure_nodes
     meta:
       jurisdiction: '132047'
       fiscal_year: 2025
@@ -836,7 +884,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure
       kind: nodes
-  - name: j132047_long_term_care_expenditure_amounts
+  - name: j132047_2025_settlement_long_term_care_expenditure_amounts
     meta:
       jurisdiction: '132047'
       fiscal_year: 2025
@@ -844,7 +892,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-expenditure
       kind: amounts
-  - name: j132047_long_term_care_expenditure_nodes
+  - name: j132047_2025_settlement_long_term_care_expenditure_nodes
     meta:
       jurisdiction: '132047'
       fiscal_year: 2025
@@ -852,7 +900,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-expenditure
       kind: nodes
-  - name: j132047_long_term_care_service_expenditure_amounts
+  - name: j132047_2025_settlement_long_term_care_service_expenditure_amounts
     meta:
       jurisdiction: '132047'
       fiscal_year: 2025
@@ -860,7 +908,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-service-expenditure
       kind: amounts
-  - name: j132047_long_term_care_service_expenditure_nodes
+  - name: j132047_2025_settlement_long_term_care_service_expenditure_nodes
     meta:
       jurisdiction: '132047'
       fiscal_year: 2025
@@ -868,7 +916,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-service-expenditure
       kind: nodes
-  - name: j132047_national_health_insurance_expenditure_amounts
+  - name: j132047_2025_settlement_national_health_insurance_expenditure_amounts
     meta:
       jurisdiction: '132047'
       fiscal_year: 2025
@@ -876,7 +924,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: amounts
-  - name: j132047_national_health_insurance_expenditure_nodes
+  - name: j132047_2025_settlement_national_health_insurance_expenditure_nodes
     meta:
       jurisdiction: '132047'
       fiscal_year: 2025
@@ -884,7 +932,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: nodes
-  - name: j132055_expenditure_settlement_1_amounts
+  - name: j132055_2025_settlement_expenditure_settlement_1_amounts
     meta:
       jurisdiction: '132055'
       fiscal_year: 2025
@@ -892,7 +940,7 @@ sources:
       direction: expenditure
       table_id: expenditure-settlement-1
       kind: amounts
-  - name: j132055_expenditure_settlement_1_nodes
+  - name: j132055_2025_settlement_expenditure_settlement_1_nodes
     meta:
       jurisdiction: '132055'
       fiscal_year: 2025
@@ -900,7 +948,7 @@ sources:
       direction: expenditure
       table_id: expenditure-settlement-1
       kind: nodes
-  - name: j132063_kouki_setsu_amounts
+  - name: j132063_2025_settlement_kouki_setsu_amounts
     meta:
       jurisdiction: '132063'
       fiscal_year: 2025
@@ -908,7 +956,7 @@ sources:
       direction: expenditure
       table_id: kouki-setsu
       kind: amounts
-  - name: j132063_kouki_setsu_nodes
+  - name: j132063_2025_settlement_kouki_setsu_nodes
     meta:
       jurisdiction: '132063'
       fiscal_year: 2025
@@ -916,7 +964,7 @@ sources:
       direction: expenditure
       table_id: kouki-setsu
       kind: nodes
-  - name: j132071_akishima_text_budget_expenditure_amounts
+  - name: j132071_2025_initial_akishima_text_budget_expenditure_amounts
     meta:
       jurisdiction: '132071'
       fiscal_year: 2025
@@ -924,7 +972,7 @@ sources:
       direction: expenditure
       table_id: akishima-text-budget-expenditure
       kind: amounts
-  - name: j132071_akishima_text_budget_expenditure_nodes
+  - name: j132071_2025_initial_akishima_text_budget_expenditure_nodes
     meta:
       jurisdiction: '132071'
       fiscal_year: 2025
@@ -932,7 +980,7 @@ sources:
       direction: expenditure
       table_id: akishima-text-budget-expenditure
       kind: nodes
-  - name: j132098_elderly_medical_expenditure_amounts
+  - name: j132098_2025_settlement_elderly_medical_expenditure_amounts
     meta:
       jurisdiction: '132098'
       fiscal_year: 2025
@@ -940,7 +988,7 @@ sources:
       direction: expenditure
       table_id: elderly-medical-expenditure
       kind: amounts
-  - name: j132098_elderly_medical_expenditure_nodes
+  - name: j132098_2025_settlement_elderly_medical_expenditure_nodes
     meta:
       jurisdiction: '132098'
       fiscal_year: 2025
@@ -948,7 +996,7 @@ sources:
       direction: expenditure
       table_id: elderly-medical-expenditure
       kind: nodes
-  - name: j132098_land_readjustment_expenditure_amounts
+  - name: j132098_2025_settlement_land_readjustment_expenditure_amounts
     meta:
       jurisdiction: '132098'
       fiscal_year: 2025
@@ -956,7 +1004,7 @@ sources:
       direction: expenditure
       table_id: land-readjustment-expenditure
       kind: amounts
-  - name: j132098_land_readjustment_expenditure_nodes
+  - name: j132098_2025_settlement_land_readjustment_expenditure_nodes
     meta:
       jurisdiction: '132098'
       fiscal_year: 2025
@@ -964,7 +1012,7 @@ sources:
       direction: expenditure
       table_id: land-readjustment-expenditure
       kind: nodes
-  - name: j132098_long_term_care_expenditure_amounts
+  - name: j132098_2025_settlement_long_term_care_expenditure_amounts
     meta:
       jurisdiction: '132098'
       fiscal_year: 2025
@@ -972,7 +1020,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-expenditure
       kind: amounts
-  - name: j132098_long_term_care_expenditure_nodes
+  - name: j132098_2025_settlement_long_term_care_expenditure_nodes
     meta:
       jurisdiction: '132098'
       fiscal_year: 2025
@@ -980,7 +1028,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-expenditure
       kind: nodes
-  - name: j132098_national_health_insurance_expenditure_amounts
+  - name: j132098_2025_settlement_national_health_insurance_expenditure_amounts
     meta:
       jurisdiction: '132098'
       fiscal_year: 2025
@@ -988,7 +1036,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: amounts
-  - name: j132098_national_health_insurance_expenditure_nodes
+  - name: j132098_2025_settlement_national_health_insurance_expenditure_nodes
     meta:
       jurisdiction: '132098'
       fiscal_year: 2025
@@ -996,7 +1044,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: nodes
-  - name: j132128_land_readjustment_expenditure_amounts
+  - name: j132128_2025_settlement_land_readjustment_expenditure_amounts
     meta:
       jurisdiction: '132128'
       fiscal_year: 2025
@@ -1004,7 +1052,7 @@ sources:
       direction: expenditure
       table_id: land-readjustment-expenditure
       kind: amounts
-  - name: j132128_land_readjustment_expenditure_nodes
+  - name: j132128_2025_settlement_land_readjustment_expenditure_nodes
     meta:
       jurisdiction: '132128'
       fiscal_year: 2025
@@ -1012,7 +1060,7 @@ sources:
       direction: expenditure
       table_id: land-readjustment-expenditure
       kind: nodes
-  - name: j132128_late_elderly_medical_setsu_amounts
+  - name: j132128_2025_settlement_late_elderly_medical_setsu_amounts
     meta:
       jurisdiction: '132128'
       fiscal_year: 2025
@@ -1020,7 +1068,7 @@ sources:
       direction: expenditure
       table_id: late-elderly-medical-setsu
       kind: amounts
-  - name: j132128_late_elderly_medical_setsu_nodes
+  - name: j132128_2025_settlement_late_elderly_medical_setsu_nodes
     meta:
       jurisdiction: '132128'
       fiscal_year: 2025
@@ -1028,7 +1076,7 @@ sources:
       direction: expenditure
       table_id: late-elderly-medical-setsu
       kind: nodes
-  - name: j132128_long_term_care_expenditure_amounts
+  - name: j132128_2025_settlement_long_term_care_expenditure_amounts
     meta:
       jurisdiction: '132128'
       fiscal_year: 2025
@@ -1036,7 +1084,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-expenditure
       kind: amounts
-  - name: j132128_long_term_care_expenditure_nodes
+  - name: j132128_2025_settlement_long_term_care_expenditure_nodes
     meta:
       jurisdiction: '132128'
       fiscal_year: 2025
@@ -1044,7 +1092,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-expenditure
       kind: nodes
-  - name: j132128_national_health_insurance_expenditure_amounts
+  - name: j132128_2025_settlement_national_health_insurance_expenditure_amounts
     meta:
       jurisdiction: '132128'
       fiscal_year: 2025
@@ -1052,7 +1100,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: amounts
-  - name: j132128_national_health_insurance_expenditure_nodes
+  - name: j132128_2025_settlement_national_health_insurance_expenditure_nodes
     meta:
       jurisdiction: '132128'
       fiscal_year: 2025
@@ -1060,7 +1108,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: nodes
-  - name: j132136_elderly_medical_expenditure_amounts
+  - name: j132136_2025_settlement_elderly_medical_expenditure_amounts
     meta:
       jurisdiction: '132136'
       fiscal_year: 2025
@@ -1068,7 +1116,7 @@ sources:
       direction: expenditure
       table_id: elderly-medical-expenditure
       kind: amounts
-  - name: j132136_elderly_medical_expenditure_nodes
+  - name: j132136_2025_settlement_elderly_medical_expenditure_nodes
     meta:
       jurisdiction: '132136'
       fiscal_year: 2025
@@ -1076,7 +1124,7 @@ sources:
       direction: expenditure
       table_id: elderly-medical-expenditure
       kind: nodes
-  - name: j132136_general_expenditure_amounts
+  - name: j132136_2025_settlement_general_expenditure_amounts
     meta:
       jurisdiction: '132136'
       fiscal_year: 2025
@@ -1084,7 +1132,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure
       kind: amounts
-  - name: j132136_general_expenditure_nodes
+  - name: j132136_2025_settlement_general_expenditure_nodes
     meta:
       jurisdiction: '132136'
       fiscal_year: 2025
@@ -1092,7 +1140,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure
       kind: nodes
-  - name: j132136_long_term_care_expenditure_amounts
+  - name: j132136_2025_settlement_long_term_care_expenditure_amounts
     meta:
       jurisdiction: '132136'
       fiscal_year: 2025
@@ -1100,7 +1148,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-expenditure
       kind: amounts
-  - name: j132136_long_term_care_expenditure_nodes
+  - name: j132136_2025_settlement_long_term_care_expenditure_nodes
     meta:
       jurisdiction: '132136'
       fiscal_year: 2025
@@ -1108,7 +1156,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-expenditure
       kind: nodes
-  - name: j132136_national_health_insurance_expenditure_amounts
+  - name: j132136_2025_settlement_national_health_insurance_expenditure_amounts
     meta:
       jurisdiction: '132136'
       fiscal_year: 2025
@@ -1116,7 +1164,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: amounts
-  - name: j132136_national_health_insurance_expenditure_nodes
+  - name: j132136_2025_settlement_national_health_insurance_expenditure_nodes
     meta:
       jurisdiction: '132136'
       fiscal_year: 2025
@@ -1124,7 +1172,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: nodes
-  - name: j132152_general_expenditure_detail_amounts
+  - name: j132152_2025_settlement_general_expenditure_detail_amounts
     meta:
       jurisdiction: '132152'
       fiscal_year: 2025
@@ -1132,7 +1180,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-detail
       kind: amounts
-  - name: j132152_general_expenditure_detail_nodes
+  - name: j132152_2025_settlement_general_expenditure_detail_nodes
     meta:
       jurisdiction: '132152'
       fiscal_year: 2025
@@ -1140,7 +1188,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-detail
       kind: nodes
-  - name: j132209_elderly_medical_expenditure_amounts
+  - name: j132209_2025_settlement_elderly_medical_expenditure_amounts
     meta:
       jurisdiction: '132209'
       fiscal_year: 2025
@@ -1148,7 +1196,7 @@ sources:
       direction: expenditure
       table_id: elderly-medical-expenditure
       kind: amounts
-  - name: j132209_elderly_medical_expenditure_nodes
+  - name: j132209_2025_settlement_elderly_medical_expenditure_nodes
     meta:
       jurisdiction: '132209'
       fiscal_year: 2025
@@ -1156,7 +1204,7 @@ sources:
       direction: expenditure
       table_id: elderly-medical-expenditure
       kind: nodes
-  - name: j132209_general_expenditure_amounts
+  - name: j132209_2025_settlement_general_expenditure_amounts
     meta:
       jurisdiction: '132209'
       fiscal_year: 2025
@@ -1164,7 +1212,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure
       kind: amounts
-  - name: j132209_general_expenditure_nodes
+  - name: j132209_2025_settlement_general_expenditure_nodes
     meta:
       jurisdiction: '132209'
       fiscal_year: 2025
@@ -1172,7 +1220,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure
       kind: nodes
-  - name: j132209_national_health_insurance_expenditure_amounts
+  - name: j132209_2025_settlement_national_health_insurance_expenditure_amounts
     meta:
       jurisdiction: '132209'
       fiscal_year: 2025
@@ -1180,7 +1228,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: amounts
-  - name: j132209_national_health_insurance_expenditure_nodes
+  - name: j132209_2025_settlement_national_health_insurance_expenditure_nodes
     meta:
       jurisdiction: '132209'
       fiscal_year: 2025
@@ -1188,7 +1236,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: nodes
-  - name: j132217_late_elderly_medical_setsu_amounts
+  - name: j132217_2025_settlement_late_elderly_medical_setsu_amounts
     meta:
       jurisdiction: '132217'
       fiscal_year: 2025
@@ -1196,7 +1244,7 @@ sources:
       direction: expenditure
       table_id: late-elderly-medical-setsu
       kind: amounts
-  - name: j132217_late_elderly_medical_setsu_nodes
+  - name: j132217_2025_settlement_late_elderly_medical_setsu_nodes
     meta:
       jurisdiction: '132217'
       fiscal_year: 2025
@@ -1204,7 +1252,7 @@ sources:
       direction: expenditure
       table_id: late-elderly-medical-setsu
       kind: nodes
-  - name: j132217_long_term_care_expenditure_amounts
+  - name: j132217_2025_settlement_long_term_care_expenditure_amounts
     meta:
       jurisdiction: '132217'
       fiscal_year: 2025
@@ -1212,7 +1260,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-expenditure
       kind: amounts
-  - name: j132217_long_term_care_expenditure_nodes
+  - name: j132217_2025_settlement_long_term_care_expenditure_nodes
     meta:
       jurisdiction: '132217'
       fiscal_year: 2025
@@ -1220,7 +1268,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-expenditure
       kind: nodes
-  - name: j132217_national_health_insurance_expenditure_amounts
+  - name: j132217_2025_settlement_national_health_insurance_expenditure_amounts
     meta:
       jurisdiction: '132217'
       fiscal_year: 2025
@@ -1228,7 +1276,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: amounts
-  - name: j132217_national_health_insurance_expenditure_nodes
+  - name: j132217_2025_settlement_national_health_insurance_expenditure_nodes
     meta:
       jurisdiction: '132217'
       fiscal_year: 2025
@@ -1236,23 +1284,23 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: nodes
-  - name: j132217_parking_expenditure_amounts
-    meta:
-      jurisdiction: '132217'
-      fiscal_year: 2025
-      document_kind: settlement
-      direction: expenditure
-      table_id: parking-expenditure
-      kind: amounts
-  - name: j132217_parking_expenditure_nodes
+  - name: j132217_2025_settlement_parking_expenditure_amounts
     meta:
       jurisdiction: '132217'
       fiscal_year: 2025
       document_kind: settlement
       direction: expenditure
       table_id: parking-expenditure
+      kind: amounts
+  - name: j132217_2025_settlement_parking_expenditure_nodes
+    meta:
+      jurisdiction: '132217'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: parking-expenditure
       kind: nodes
-  - name: j132225_elderly_medical_expenditure_amounts
+  - name: j132225_2025_settlement_elderly_medical_expenditure_amounts
     meta:
       jurisdiction: '132225'
       fiscal_year: 2025
@@ -1260,7 +1308,7 @@ sources:
       direction: expenditure
       table_id: elderly-medical-expenditure
       kind: amounts
-  - name: j132225_elderly_medical_expenditure_nodes
+  - name: j132225_2025_settlement_elderly_medical_expenditure_nodes
     meta:
       jurisdiction: '132225'
       fiscal_year: 2025
@@ -1268,7 +1316,7 @@ sources:
       direction: expenditure
       table_id: elderly-medical-expenditure
       kind: nodes
-  - name: j132225_general_expenditure_amounts
+  - name: j132225_2025_settlement_general_expenditure_amounts
     meta:
       jurisdiction: '132225'
       fiscal_year: 2025
@@ -1276,7 +1324,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure
       kind: amounts
-  - name: j132225_general_expenditure_nodes
+  - name: j132225_2025_settlement_general_expenditure_nodes
     meta:
       jurisdiction: '132225'
       fiscal_year: 2025
@@ -1284,7 +1332,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure
       kind: nodes
-  - name: j132225_long_term_care_expenditure_amounts
+  - name: j132225_2025_settlement_long_term_care_expenditure_amounts
     meta:
       jurisdiction: '132225'
       fiscal_year: 2025
@@ -1292,7 +1340,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-expenditure
       kind: amounts
-  - name: j132225_long_term_care_expenditure_nodes
+  - name: j132225_2025_settlement_long_term_care_expenditure_nodes
     meta:
       jurisdiction: '132225'
       fiscal_year: 2025
@@ -1300,7 +1348,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-expenditure
       kind: nodes
-  - name: j132225_national_health_insurance_expenditure_amounts
+  - name: j132225_2025_settlement_national_health_insurance_expenditure_amounts
     meta:
       jurisdiction: '132225'
       fiscal_year: 2025
@@ -1308,7 +1356,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: amounts
-  - name: j132225_national_health_insurance_expenditure_nodes
+  - name: j132225_2025_settlement_national_health_insurance_expenditure_nodes
     meta:
       jurisdiction: '132225'
       fiscal_year: 2025
@@ -1316,7 +1364,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: nodes
-  - name: j132241_elderly_medical_expenditure_amounts
+  - name: j132241_2025_settlement_elderly_medical_expenditure_amounts
     meta:
       jurisdiction: '132241'
       fiscal_year: 2025
@@ -1324,7 +1372,7 @@ sources:
       direction: expenditure
       table_id: elderly-medical-expenditure
       kind: amounts
-  - name: j132241_elderly_medical_expenditure_nodes
+  - name: j132241_2025_settlement_elderly_medical_expenditure_nodes
     meta:
       jurisdiction: '132241'
       fiscal_year: 2025
@@ -1332,7 +1380,7 @@ sources:
       direction: expenditure
       table_id: elderly-medical-expenditure
       kind: nodes
-  - name: j132241_general_expenditure_amounts
+  - name: j132241_2025_settlement_general_expenditure_amounts
     meta:
       jurisdiction: '132241'
       fiscal_year: 2025
@@ -1340,7 +1388,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure
       kind: amounts
-  - name: j132241_general_expenditure_nodes
+  - name: j132241_2025_settlement_general_expenditure_nodes
     meta:
       jurisdiction: '132241'
       fiscal_year: 2025
@@ -1348,7 +1396,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure
       kind: nodes
-  - name: j132241_long_term_care_expenditure_amounts
+  - name: j132241_2025_settlement_long_term_care_expenditure_amounts
     meta:
       jurisdiction: '132241'
       fiscal_year: 2025
@@ -1356,7 +1404,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-expenditure
       kind: amounts
-  - name: j132241_long_term_care_expenditure_nodes
+  - name: j132241_2025_settlement_long_term_care_expenditure_nodes
     meta:
       jurisdiction: '132241'
       fiscal_year: 2025
@@ -1364,7 +1412,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-expenditure
       kind: nodes
-  - name: j132241_national_health_insurance_expenditure_amounts
+  - name: j132241_2025_settlement_national_health_insurance_expenditure_amounts
     meta:
       jurisdiction: '132241'
       fiscal_year: 2025
@@ -1372,7 +1420,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: amounts
-  - name: j132241_national_health_insurance_expenditure_nodes
+  - name: j132241_2025_settlement_national_health_insurance_expenditure_nodes
     meta:
       jurisdiction: '132241'
       fiscal_year: 2025
@@ -1380,7 +1428,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: nodes
-  - name: j132250_elderly_medical_expenditure_amounts
+  - name: j132250_2025_settlement_elderly_medical_expenditure_amounts
     meta:
       jurisdiction: '132250'
       fiscal_year: 2025
@@ -1388,7 +1436,7 @@ sources:
       direction: expenditure
       table_id: elderly-medical-expenditure
       kind: amounts
-  - name: j132250_elderly_medical_expenditure_nodes
+  - name: j132250_2025_settlement_elderly_medical_expenditure_nodes
     meta:
       jurisdiction: '132250'
       fiscal_year: 2025
@@ -1396,7 +1444,7 @@ sources:
       direction: expenditure
       table_id: elderly-medical-expenditure
       kind: nodes
-  - name: j132250_general_expenditure_amounts
+  - name: j132250_2025_settlement_general_expenditure_amounts
     meta:
       jurisdiction: '132250'
       fiscal_year: 2025
@@ -1404,7 +1452,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure
       kind: amounts
-  - name: j132250_general_expenditure_nodes
+  - name: j132250_2025_settlement_general_expenditure_nodes
     meta:
       jurisdiction: '132250'
       fiscal_year: 2025
@@ -1412,7 +1460,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure
       kind: nodes
-  - name: j132250_land_readjustment_expenditure_amounts
+  - name: j132250_2025_settlement_land_readjustment_expenditure_amounts
     meta:
       jurisdiction: '132250'
       fiscal_year: 2025
@@ -1420,7 +1468,7 @@ sources:
       direction: expenditure
       table_id: land-readjustment-expenditure
       kind: amounts
-  - name: j132250_land_readjustment_expenditure_nodes
+  - name: j132250_2025_settlement_land_readjustment_expenditure_nodes
     meta:
       jurisdiction: '132250'
       fiscal_year: 2025
@@ -1428,7 +1476,7 @@ sources:
       direction: expenditure
       table_id: land-readjustment-expenditure
       kind: nodes
-  - name: j132250_long_term_care_expenditure_amounts
+  - name: j132250_2025_settlement_long_term_care_expenditure_amounts
     meta:
       jurisdiction: '132250'
       fiscal_year: 2025
@@ -1436,7 +1484,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-expenditure
       kind: amounts
-  - name: j132250_long_term_care_expenditure_nodes
+  - name: j132250_2025_settlement_long_term_care_expenditure_nodes
     meta:
       jurisdiction: '132250'
       fiscal_year: 2025
@@ -1444,7 +1492,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-expenditure
       kind: nodes
-  - name: j132250_national_health_insurance_expenditure_amounts
+  - name: j132250_2025_settlement_national_health_insurance_expenditure_amounts
     meta:
       jurisdiction: '132250'
       fiscal_year: 2025
@@ -1452,7 +1500,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: amounts
-  - name: j132250_national_health_insurance_expenditure_nodes
+  - name: j132250_2025_settlement_national_health_insurance_expenditure_nodes
     meta:
       jurisdiction: '132250'
       fiscal_year: 2025
@@ -1460,7 +1508,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: nodes
-  - name: j132292_elderly_medical_expenditure_amounts
+  - name: j132292_2025_settlement_elderly_medical_expenditure_amounts
     meta:
       jurisdiction: '132292'
       fiscal_year: 2025
@@ -1468,7 +1516,7 @@ sources:
       direction: expenditure
       table_id: elderly-medical-expenditure
       kind: amounts
-  - name: j132292_elderly_medical_expenditure_nodes
+  - name: j132292_2025_settlement_elderly_medical_expenditure_nodes
     meta:
       jurisdiction: '132292'
       fiscal_year: 2025
@@ -1476,7 +1524,7 @@ sources:
       direction: expenditure
       table_id: elderly-medical-expenditure
       kind: nodes
-  - name: j132292_general_expenditure_01_amounts
+  - name: j132292_2025_settlement_general_expenditure_01_amounts
     meta:
       jurisdiction: '132292'
       fiscal_year: 2025
@@ -1484,7 +1532,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-01
       kind: amounts
-  - name: j132292_general_expenditure_01_nodes
+  - name: j132292_2025_settlement_general_expenditure_01_nodes
     meta:
       jurisdiction: '132292'
       fiscal_year: 2025
@@ -1492,7 +1540,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-01
       kind: nodes
-  - name: j132292_general_expenditure_02_amounts
+  - name: j132292_2025_settlement_general_expenditure_02_amounts
     meta:
       jurisdiction: '132292'
       fiscal_year: 2025
@@ -1500,7 +1548,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-02
       kind: amounts
-  - name: j132292_general_expenditure_02_nodes
+  - name: j132292_2025_settlement_general_expenditure_02_nodes
     meta:
       jurisdiction: '132292'
       fiscal_year: 2025
@@ -1508,7 +1556,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-02
       kind: nodes
-  - name: j132292_general_expenditure_03_amounts
+  - name: j132292_2025_settlement_general_expenditure_03_amounts
     meta:
       jurisdiction: '132292'
       fiscal_year: 2025
@@ -1516,7 +1564,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-03
       kind: amounts
-  - name: j132292_general_expenditure_03_nodes
+  - name: j132292_2025_settlement_general_expenditure_03_nodes
     meta:
       jurisdiction: '132292'
       fiscal_year: 2025
@@ -1524,7 +1572,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-03
       kind: nodes
-  - name: j132292_general_expenditure_04_amounts
+  - name: j132292_2025_settlement_general_expenditure_04_amounts
     meta:
       jurisdiction: '132292'
       fiscal_year: 2025
@@ -1532,7 +1580,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-04
       kind: amounts
-  - name: j132292_general_expenditure_04_nodes
+  - name: j132292_2025_settlement_general_expenditure_04_nodes
     meta:
       jurisdiction: '132292'
       fiscal_year: 2025
@@ -1540,7 +1588,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-04
       kind: nodes
-  - name: j132292_general_expenditure_05_amounts
+  - name: j132292_2025_settlement_general_expenditure_05_amounts
     meta:
       jurisdiction: '132292'
       fiscal_year: 2025
@@ -1548,7 +1596,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-05
       kind: amounts
-  - name: j132292_general_expenditure_05_nodes
+  - name: j132292_2025_settlement_general_expenditure_05_nodes
     meta:
       jurisdiction: '132292'
       fiscal_year: 2025
@@ -1556,7 +1604,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-05
       kind: nodes
-  - name: j132292_general_expenditure_06_amounts
+  - name: j132292_2025_settlement_general_expenditure_06_amounts
     meta:
       jurisdiction: '132292'
       fiscal_year: 2025
@@ -1564,7 +1612,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-06
       kind: amounts
-  - name: j132292_general_expenditure_06_nodes
+  - name: j132292_2025_settlement_general_expenditure_06_nodes
     meta:
       jurisdiction: '132292'
       fiscal_year: 2025
@@ -1572,7 +1620,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-06
       kind: nodes
-  - name: j132292_general_expenditure_07_amounts
+  - name: j132292_2025_settlement_general_expenditure_07_amounts
     meta:
       jurisdiction: '132292'
       fiscal_year: 2025
@@ -1580,7 +1628,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-07
       kind: amounts
-  - name: j132292_general_expenditure_07_nodes
+  - name: j132292_2025_settlement_general_expenditure_07_nodes
     meta:
       jurisdiction: '132292'
       fiscal_year: 2025
@@ -1588,7 +1636,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-07
       kind: nodes
-  - name: j132292_general_expenditure_08_amounts
+  - name: j132292_2025_settlement_general_expenditure_08_amounts
     meta:
       jurisdiction: '132292'
       fiscal_year: 2025
@@ -1596,7 +1644,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-08
       kind: amounts
-  - name: j132292_general_expenditure_08_nodes
+  - name: j132292_2025_settlement_general_expenditure_08_nodes
     meta:
       jurisdiction: '132292'
       fiscal_year: 2025
@@ -1604,7 +1652,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-08
       kind: nodes
-  - name: j132292_general_expenditure_09_amounts
+  - name: j132292_2025_settlement_general_expenditure_09_amounts
     meta:
       jurisdiction: '132292'
       fiscal_year: 2025
@@ -1612,7 +1660,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-09
       kind: amounts
-  - name: j132292_general_expenditure_09_nodes
+  - name: j132292_2025_settlement_general_expenditure_09_nodes
     meta:
       jurisdiction: '132292'
       fiscal_year: 2025
@@ -1620,7 +1668,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-09
       kind: nodes
-  - name: j132292_general_expenditure_10_amounts
+  - name: j132292_2025_settlement_general_expenditure_10_amounts
     meta:
       jurisdiction: '132292'
       fiscal_year: 2025
@@ -1628,7 +1676,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-10
       kind: amounts
-  - name: j132292_general_expenditure_10_nodes
+  - name: j132292_2025_settlement_general_expenditure_10_nodes
     meta:
       jurisdiction: '132292'
       fiscal_year: 2025
@@ -1636,7 +1684,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-10
       kind: nodes
-  - name: j132292_general_expenditure_11_amounts
+  - name: j132292_2025_settlement_general_expenditure_11_amounts
     meta:
       jurisdiction: '132292'
       fiscal_year: 2025
@@ -1644,7 +1692,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-11
       kind: amounts
-  - name: j132292_general_expenditure_11_nodes
+  - name: j132292_2025_settlement_general_expenditure_11_nodes
     meta:
       jurisdiction: '132292'
       fiscal_year: 2025
@@ -1652,7 +1700,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-11
       kind: nodes
-  - name: j132292_general_expenditure_12_amounts
+  - name: j132292_2025_settlement_general_expenditure_12_amounts
     meta:
       jurisdiction: '132292'
       fiscal_year: 2025
@@ -1660,7 +1708,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-12
       kind: amounts
-  - name: j132292_general_expenditure_12_nodes
+  - name: j132292_2025_settlement_general_expenditure_12_nodes
     meta:
       jurisdiction: '132292'
       fiscal_year: 2025
@@ -1668,7 +1716,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-12
       kind: nodes
-  - name: j132292_general_expenditure_13_amounts
+  - name: j132292_2025_settlement_general_expenditure_13_amounts
     meta:
       jurisdiction: '132292'
       fiscal_year: 2025
@@ -1676,7 +1724,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-13
       kind: amounts
-  - name: j132292_general_expenditure_13_nodes
+  - name: j132292_2025_settlement_general_expenditure_13_nodes
     meta:
       jurisdiction: '132292'
       fiscal_year: 2025
@@ -1684,7 +1732,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure-13
       kind: nodes
-  - name: j132292_long_term_care_expenditure_amounts
+  - name: j132292_2025_settlement_long_term_care_expenditure_amounts
     meta:
       jurisdiction: '132292'
       fiscal_year: 2025
@@ -1692,7 +1740,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-expenditure
       kind: amounts
-  - name: j132292_long_term_care_expenditure_nodes
+  - name: j132292_2025_settlement_long_term_care_expenditure_nodes
     meta:
       jurisdiction: '132292'
       fiscal_year: 2025
@@ -1700,7 +1748,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-expenditure
       kind: nodes
-  - name: j132292_national_health_insurance_expenditure_amounts
+  - name: j132292_2025_settlement_national_health_insurance_expenditure_amounts
     meta:
       jurisdiction: '132292'
       fiscal_year: 2025
@@ -1708,7 +1756,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: amounts
-  - name: j132292_national_health_insurance_expenditure_nodes
+  - name: j132292_2025_settlement_national_health_insurance_expenditure_nodes
     meta:
       jurisdiction: '132292'
       fiscal_year: 2025
@@ -1716,7 +1764,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: nodes
-  - name: j132292_parking_expenditure_amounts
+  - name: j132292_2025_settlement_parking_expenditure_amounts
     meta:
       jurisdiction: '132292'
       fiscal_year: 2025
@@ -1724,7 +1772,7 @@ sources:
       direction: expenditure
       table_id: parking-expenditure
       kind: amounts
-  - name: j132292_parking_expenditure_nodes
+  - name: j132292_2025_settlement_parking_expenditure_nodes
     meta:
       jurisdiction: '132292'
       fiscal_year: 2025
@@ -1732,7 +1780,7 @@ sources:
       direction: expenditure
       table_id: parking-expenditure
       kind: nodes
-  - name: j133035_elderly_medical_expenditure_amounts
+  - name: j133035_2025_settlement_elderly_medical_expenditure_amounts
     meta:
       jurisdiction: '133035'
       fiscal_year: 2025
@@ -1740,7 +1788,7 @@ sources:
       direction: expenditure
       table_id: elderly-medical-expenditure
       kind: amounts
-  - name: j133035_elderly_medical_expenditure_nodes
+  - name: j133035_2025_settlement_elderly_medical_expenditure_nodes
     meta:
       jurisdiction: '133035'
       fiscal_year: 2025
@@ -1748,7 +1796,7 @@ sources:
       direction: expenditure
       table_id: elderly-medical-expenditure
       kind: nodes
-  - name: j133035_general_expenditure_amounts
+  - name: j133035_2025_settlement_general_expenditure_amounts
     meta:
       jurisdiction: '133035'
       fiscal_year: 2025
@@ -1756,7 +1804,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure
       kind: amounts
-  - name: j133035_general_expenditure_nodes
+  - name: j133035_2025_settlement_general_expenditure_nodes
     meta:
       jurisdiction: '133035'
       fiscal_year: 2025
@@ -1764,7 +1812,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure
       kind: nodes
-  - name: j133035_land_readjustment_expenditure_amounts
+  - name: j133035_2025_settlement_land_readjustment_expenditure_amounts
     meta:
       jurisdiction: '133035'
       fiscal_year: 2025
@@ -1772,7 +1820,7 @@ sources:
       direction: expenditure
       table_id: land-readjustment-expenditure
       kind: amounts
-  - name: j133035_land_readjustment_expenditure_nodes
+  - name: j133035_2025_settlement_land_readjustment_expenditure_nodes
     meta:
       jurisdiction: '133035'
       fiscal_year: 2025
@@ -1780,7 +1828,7 @@ sources:
       direction: expenditure
       table_id: land-readjustment-expenditure
       kind: nodes
-  - name: j133035_long_term_care_expenditure_amounts
+  - name: j133035_2025_settlement_long_term_care_expenditure_amounts
     meta:
       jurisdiction: '133035'
       fiscal_year: 2025
@@ -1788,7 +1836,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-expenditure
       kind: amounts
-  - name: j133035_long_term_care_expenditure_nodes
+  - name: j133035_2025_settlement_long_term_care_expenditure_nodes
     meta:
       jurisdiction: '133035'
       fiscal_year: 2025
@@ -1796,7 +1844,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-expenditure
       kind: nodes
-  - name: j133035_national_health_insurance_expenditure_amounts
+  - name: j133035_2025_settlement_national_health_insurance_expenditure_amounts
     meta:
       jurisdiction: '133035'
       fiscal_year: 2025
@@ -1804,7 +1852,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: amounts
-  - name: j133035_national_health_insurance_expenditure_nodes
+  - name: j133035_2025_settlement_national_health_insurance_expenditure_nodes
     meta:
       jurisdiction: '133035'
       fiscal_year: 2025
@@ -1812,7 +1860,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: nodes
-  - name: j133035_property_ward_hakonegasaki_expenditure_amounts
+  - name: j133035_2025_settlement_property_ward_hakonegasaki_expenditure_amounts
     meta:
       jurisdiction: '133035'
       fiscal_year: 2025
@@ -1820,7 +1868,7 @@ sources:
       direction: expenditure
       table_id: property-ward-hakonegasaki-expenditure
       kind: amounts
-  - name: j133035_property_ward_hakonegasaki_expenditure_nodes
+  - name: j133035_2025_settlement_property_ward_hakonegasaki_expenditure_nodes
     meta:
       jurisdiction: '133035'
       fiscal_year: 2025
@@ -1828,7 +1876,7 @@ sources:
       direction: expenditure
       table_id: property-ward-hakonegasaki-expenditure
       kind: nodes
-  - name: j133035_property_ward_ishihata_expenditure_amounts
+  - name: j133035_2025_settlement_property_ward_ishihata_expenditure_amounts
     meta:
       jurisdiction: '133035'
       fiscal_year: 2025
@@ -1836,7 +1884,7 @@ sources:
       direction: expenditure
       table_id: property-ward-ishihata-expenditure
       kind: amounts
-  - name: j133035_property_ward_ishihata_expenditure_nodes
+  - name: j133035_2025_settlement_property_ward_ishihata_expenditure_nodes
     meta:
       jurisdiction: '133035'
       fiscal_year: 2025
@@ -1844,7 +1892,7 @@ sources:
       direction: expenditure
       table_id: property-ward-ishihata-expenditure
       kind: nodes
-  - name: j133035_property_ward_nagaoka_expenditure_amounts
+  - name: j133035_2025_settlement_property_ward_nagaoka_expenditure_amounts
     meta:
       jurisdiction: '133035'
       fiscal_year: 2025
@@ -1852,7 +1900,7 @@ sources:
       direction: expenditure
       table_id: property-ward-nagaoka-expenditure
       kind: amounts
-  - name: j133035_property_ward_nagaoka_expenditure_nodes
+  - name: j133035_2025_settlement_property_ward_nagaoka_expenditure_nodes
     meta:
       jurisdiction: '133035'
       fiscal_year: 2025
@@ -1860,7 +1908,7 @@ sources:
       direction: expenditure
       table_id: property-ward-nagaoka-expenditure
       kind: nodes
-  - name: j133035_property_ward_tonogaya_expenditure_amounts
+  - name: j133035_2025_settlement_property_ward_tonogaya_expenditure_amounts
     meta:
       jurisdiction: '133035'
       fiscal_year: 2025
@@ -1868,7 +1916,7 @@ sources:
       direction: expenditure
       table_id: property-ward-tonogaya-expenditure
       kind: amounts
-  - name: j133035_property_ward_tonogaya_expenditure_nodes
+  - name: j133035_2025_settlement_property_ward_tonogaya_expenditure_nodes
     meta:
       jurisdiction: '133035'
       fiscal_year: 2025
@@ -1876,7 +1924,7 @@ sources:
       direction: expenditure
       table_id: property-ward-tonogaya-expenditure
       kind: nodes
-  - name: j133051_elderly_medical_expenditure_amounts
+  - name: j133051_2025_settlement_elderly_medical_expenditure_amounts
     meta:
       jurisdiction: '133051'
       fiscal_year: 2025
@@ -1884,7 +1932,7 @@ sources:
       direction: expenditure
       table_id: elderly-medical-expenditure
       kind: amounts
-  - name: j133051_elderly_medical_expenditure_nodes
+  - name: j133051_2025_settlement_elderly_medical_expenditure_nodes
     meta:
       jurisdiction: '133051'
       fiscal_year: 2025
@@ -1892,7 +1940,7 @@ sources:
       direction: expenditure
       table_id: elderly-medical-expenditure
       kind: nodes
-  - name: j133051_general_expenditure_amounts
+  - name: j133051_2025_settlement_general_expenditure_amounts
     meta:
       jurisdiction: '133051'
       fiscal_year: 2025
@@ -1900,7 +1948,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure
       kind: amounts
-  - name: j133051_general_expenditure_nodes
+  - name: j133051_2025_settlement_general_expenditure_nodes
     meta:
       jurisdiction: '133051'
       fiscal_year: 2025
@@ -1908,7 +1956,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure
       kind: nodes
-  - name: j133051_long_term_care_expenditure_amounts
+  - name: j133051_2025_settlement_long_term_care_expenditure_amounts
     meta:
       jurisdiction: '133051'
       fiscal_year: 2025
@@ -1916,7 +1964,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-expenditure
       kind: amounts
-  - name: j133051_long_term_care_expenditure_nodes
+  - name: j133051_2025_settlement_long_term_care_expenditure_nodes
     meta:
       jurisdiction: '133051'
       fiscal_year: 2025
@@ -1924,7 +1972,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-expenditure
       kind: nodes
-  - name: j133051_national_health_insurance_expenditure_amounts
+  - name: j133051_2025_settlement_national_health_insurance_expenditure_amounts
     meta:
       jurisdiction: '133051'
       fiscal_year: 2025
@@ -1932,7 +1980,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: amounts
-  - name: j133051_national_health_insurance_expenditure_nodes
+  - name: j133051_2025_settlement_national_health_insurance_expenditure_nodes
     meta:
       jurisdiction: '133051'
       fiscal_year: 2025
@@ -1940,7 +1988,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: nodes
-  - name: j133621_elderly_medical_expenditure_amounts
+  - name: j133621_2025_settlement_elderly_medical_expenditure_amounts
     meta:
       jurisdiction: '133621'
       fiscal_year: 2025
@@ -1948,7 +1996,7 @@ sources:
       direction: expenditure
       table_id: elderly-medical-expenditure
       kind: amounts
-  - name: j133621_elderly_medical_expenditure_nodes
+  - name: j133621_2025_settlement_elderly_medical_expenditure_nodes
     meta:
       jurisdiction: '133621'
       fiscal_year: 2025
@@ -1956,7 +2004,7 @@ sources:
       direction: expenditure
       table_id: elderly-medical-expenditure
       kind: nodes
-  - name: j133621_general_expenditure_amounts
+  - name: j133621_2025_settlement_general_expenditure_amounts
     meta:
       jurisdiction: '133621'
       fiscal_year: 2025
@@ -1964,7 +2012,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure
       kind: amounts
-  - name: j133621_general_expenditure_nodes
+  - name: j133621_2025_settlement_general_expenditure_nodes
     meta:
       jurisdiction: '133621'
       fiscal_year: 2025
@@ -1972,7 +2020,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure
       kind: nodes
-  - name: j133621_long_term_care_business_expenditure_amounts
+  - name: j133621_2025_settlement_long_term_care_business_expenditure_amounts
     meta:
       jurisdiction: '133621'
       fiscal_year: 2025
@@ -1980,7 +2028,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-business-expenditure
       kind: amounts
-  - name: j133621_long_term_care_business_expenditure_nodes
+  - name: j133621_2025_settlement_long_term_care_business_expenditure_nodes
     meta:
       jurisdiction: '133621'
       fiscal_year: 2025
@@ -1988,7 +2036,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-business-expenditure
       kind: nodes
-  - name: j133621_national_health_insurance_business_expenditure_amounts
+  - name: j133621_2025_settlement_national_health_insurance_business_expenditure_amounts
     meta:
       jurisdiction: '133621'
       fiscal_year: 2025
@@ -1996,7 +2044,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-business-expenditure
       kind: amounts
-  - name: j133621_national_health_insurance_business_expenditure_nodes
+  - name: j133621_2025_settlement_national_health_insurance_business_expenditure_nodes
     meta:
       jurisdiction: '133621'
       fiscal_year: 2025
@@ -2004,7 +2052,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-business-expenditure
       kind: nodes
-  - name: j133621_national_health_insurance_clinic_expenditure_amounts
+  - name: j133621_2025_settlement_national_health_insurance_clinic_expenditure_amounts
     meta:
       jurisdiction: '133621'
       fiscal_year: 2025
@@ -2012,7 +2060,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-clinic-expenditure
       kind: amounts
-  - name: j133621_national_health_insurance_clinic_expenditure_nodes
+  - name: j133621_2025_settlement_national_health_insurance_clinic_expenditure_nodes
     meta:
       jurisdiction: '133621'
       fiscal_year: 2025
@@ -2020,7 +2068,7 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-clinic-expenditure
       kind: nodes
-  - name: j134015_general_expenditure_amounts
+  - name: j134015_2025_settlement_general_expenditure_amounts
     meta:
       jurisdiction: '134015'
       fiscal_year: 2025
@@ -2028,7 +2076,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure
       kind: amounts
-  - name: j134015_general_expenditure_nodes
+  - name: j134015_2025_settlement_general_expenditure_nodes
     meta:
       jurisdiction: '134015'
       fiscal_year: 2025
@@ -2036,7 +2084,7 @@ sources:
       direction: expenditure
       table_id: general-expenditure
       kind: nodes
-  - name: j134015_long_term_care_expenditure_amounts
+  - name: j134015_2025_settlement_long_term_care_expenditure_amounts
     meta:
       jurisdiction: '134015'
       fiscal_year: 2025
@@ -2044,7 +2092,7 @@ sources:
       direction: expenditure
       table_id: long-term-care-expenditure
       kind: amounts
-  - name: j134015_long_term_care_expenditure_nodes
+  - name: j134015_2025_settlement_long_term_care_expenditure_nodes
     meta:
       jurisdiction: '134015'
       fiscal_year: 2025
@@ -2055,7 +2103,7 @@ sources:
 - name: fiscal_csv
   schema: ingestion
   tables:
-  - name: j132047_csv_f9dcbc7e87143769
+  - name: j132047_2024_initial_csv_f9dcbc7e87143769
     meta:
       jurisdiction: '132047'
       fiscal_year: 2024

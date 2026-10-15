@@ -18,10 +18,12 @@ class GenerateSourcesTest(unittest.TestCase):
                             for p in (generate_sources.PIPELINE / 'ingestion/fiscal/jurisdictions').glob(pattern)})
         for path in manifests:
             document = json.loads(path.read_text())
-            jurisdiction = document['target']['jurisdiction']
+            target = document['target']
+            jurisdiction = target['jurisdiction']
             for table in document['tables']:
                 key = (jurisdiction, table['table_id'])
-                entry = generate_sources.relation_name(*key)
+                entry = generate_sources.relation_name(
+                    jurisdiction, target['fiscal_year'], target['document_kind'], table['table_id'])
                 if key in generate_sources.EXCLUDE:
                     self.assertTrue(generate_sources.EXCLUDE[key])
                     self.assertNotIn(entry + '_nodes', names)
