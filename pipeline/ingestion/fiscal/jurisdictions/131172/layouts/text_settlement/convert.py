@@ -111,7 +111,11 @@ def trace_words(pdf, first, last):
                 ys = [float(v) for v in re.findall(r'y="(-?[\d.]+)"', m.group(4))]
                 if xs and ys:
                     dev = [(a * x + c * y + e, b * x + d * y + f) for x, y in zip(xs, ys)]
-                    entry = [max(y for _, y in dev) - min(y for _, y in dev) > 700,
+                    # A page-half clip is tall and narrower than the spread; a
+                    # clip around the whole spread (some printings add one) owns
+                    # no pass and must not count as an empty one.
+                    entry = [max(y for _, y in dev) - min(y for _, y in dev) > 700
+                             and max(x for x, _ in dev) - min(x for x, _ in dev) < 800,
                              min(x for x, _ in dev), max(x for x, _ in dev), 0]
                     stack.append(entry)
                     if entry[0]:
