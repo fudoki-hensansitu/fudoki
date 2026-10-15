@@ -1,0 +1,1074 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "131024",
+    "fiscal_year": 2024,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "chuo-text-settlement-general",
+      "converter": "fiscal/jurisdictions/131024/layouts/text_settlement/convert.py",
+      "inputs": [
+        {
+          "sha256": "4417470dc5e1fa3324a63fd1540330ba26f83f636814968bc7d6723398e7e334"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "detail_pages": [
+          95,
+          160
+        ],
+        "table_id": "chuo-general-settlement",
+        "reserve_table_id": "chuo-general-reserve-transfers",
+        "lending_table_id": "chuo-general-lending-status",
+        "personnel_breakdown": true,
+        "unexplained_section_detail": true,
+        "nonfinancial_breakdown": true,
+        "row_tolerance": 4.6,
+        "prose_lines": [
+          [
+            108,
+            0,
+            528.34
+          ],
+          [
+            124,
+            0,
+            521.6
+          ],
+          [
+            126,
+            1,
+            353.94
+          ],
+          [
+            131,
+            0,
+            317.19
+          ],
+          [
+            133,
+            0,
+            767.7
+          ],
+          [
+            133,
+            1,
+            491.9
+          ],
+          [
+            138,
+            0,
+            319.64
+          ],
+          [
+            138,
+            0,
+            368.14
+          ],
+          [
+            138,
+            0,
+            465.14
+          ],
+          [
+            138,
+            0,
+            567.64
+          ],
+          [
+            140,
+            0,
+            179.4
+          ],
+          [
+            145,
+            0,
+            568.48
+          ],
+          [
+            145,
+            1,
+            612.95
+          ],
+          [
+            155,
+            0,
+            361.51
+          ]
+        ],
+        "office_headings": [
+          [
+            131,
+            0,
+            317.19
+          ],
+          [
+            135,
+            0,
+            127.39
+          ],
+          [
+            136,
+            0,
+            254.45
+          ],
+          [
+            136,
+            1,
+            182.37
+          ]
+        ],
+        "auxiliary_tables": [
+          [
+            95,
+            0,
+            342.0,
+            360.0,
+            462.0,
+            "議員の報酬等",
+            [
+              "区分",
+              "人数"
+            ],
+            [
+              62.0,
+              150.0,
+              285.0
+            ],
+            [],
+            true
+          ],
+          [
+            95,
+            0,
+            468.0,
+            486.0,
+            517.0,
+            "定例会・臨時会運営",
+            [
+              "区分",
+              "回数"
+            ],
+            [
+              62.0,
+              150.0,
+              330.0
+            ],
+            [],
+            true
+          ],
+          [
+            95,
+            0,
+            541.0,
+            576.0,
+            681.0,
+            "開会回数",
+            [
+              "委員会区分",
+              "委員会名",
+              "回数"
+            ],
+            [
+              58.64,
+              130.61,
+              264.7,
+              309.69
+            ],
+            [
+              "回"
+            ],
+            false
+          ],
+          [
+            104,
+            0,
+            679.3,
+            697.3,
+            745.3,
+            "選挙管理委員会運営事業",
+            [
+              "区分",
+              "人数"
+            ],
+            [
+              65.0,
+              150.0,
+              300.0
+            ],
+            [],
+            true
+          ],
+          [
+            105,
+            0,
+            599.0,
+            617.0,
+            665.0,
+            "監査事務",
+            [
+              "区分",
+              "人数"
+            ],
+            [
+              65.0,
+              150.0,
+              300.0
+            ],
+            [],
+            true
+          ],
+          [
+            106,
+            0,
+            323.0,
+            355.0,
+            369.0,
+            "戸籍数及び戸籍人口",
+            [
+              "戸籍数",
+              "戸籍人口"
+            ],
+            [
+              45.21,
+              175.56,
+              305.9
+            ],
+            [
+              "戸籍",
+              "人"
+            ],
+            false
+          ],
+          [
+            106,
+            0,
+            397.0,
+            429.0,
+            459.0,
+            "住民基本台帳による世帯と人口",
+            [
+              "区分",
+              "京橋",
+              "日本橋",
+              "月島",
+              "計"
+            ],
+            [
+              45.21,
+              121.72,
+              198.23,
+              274.73,
+              351.24,
+              427.75
+            ],
+            [
+              "世帯",
+              "人"
+            ],
+            false
+          ],
+          [
+            109,
+            0,
+            313.4,
+            328.4,
+            487.4,
+            "区民館の管理運営",
+            [
+              "施設名",
+              "利用件数"
+            ],
+            [
+              45.21,
+              135.89,
+              189.72
+            ],
+            [
+              "件"
+            ],
+            false
+          ],
+          [
+            109,
+            0,
+            313.4,
+            328.4,
+            487.4,
+            "区民館の管理運営",
+            [
+              "施設名",
+              "利用件数"
+            ],
+            [
+              189.72,
+              280.4,
+              334.24
+            ],
+            [
+              "件"
+            ],
+            false
+          ],
+          [
+            109,
+            0,
+            711.4,
+            726.4,
+            742.4,
+            "中央会館「銀座ブロッサム」の管理運営",
+            [
+              "区分",
+              "ホール",
+              "結婚式場",
+              "集会室"
+            ],
+            [
+              45.01,
+              128.6,
+              195.19,
+              261.78,
+              328.36
+            ],
+            [
+              "件"
+            ],
+            false
+          ],
+          [
+            121,
+            1,
+            96.7,
+            111.7,
+            181.7,
+            "巡回型ホームヘルプサービス",
+            [
+              "区分",
+              "派遣世帯（延）",
+              "派遣回数（延）"
+            ],
+            [
+              697.68,
+              796.86,
+              864.86,
+              932.87
+            ],
+            [
+              "世帯",
+              "回"
+            ],
+            false
+          ],
+          [
+            125,
+            1,
+            111.0,
+            161.0,
+            465.0,
+            "保育園の園児数及び職員数",
+            [
+              "保育所名",
+              "園児数_3歳未満",
+              "園児数_3歳以上",
+              "園児数_計",
+              "職員数_保育士",
+              "職員数_技術・技能",
+              "職員数_計"
+            ],
+            [
+              695.77,
+              777.94,
+              834.61,
+              891.29,
+              947.96,
+              1004.63,
+              1061.3,
+              1117.97
+            ],
+            [
+              "人"
+            ],
+            false
+          ],
+          [
+            128,
+            0,
+            145.0,
+            178.0,
+            348.0,
+            "利用状況",
+            [
+              "児童館名",
+              "乳幼児",
+              "小学生",
+              "中学生",
+              "高校生",
+              "保護者",
+              "計"
+            ],
+            [
+              51.37,
+              164.71,
+              218.55,
+              272.38,
+              326.22,
+              380.06,
+              433.9,
+              487.73
+            ],
+            [
+              "人"
+            ],
+            false
+          ],
+          [
+            131,
+            0,
+            575.5,
+            595.5,
+            730.5,
+            "一般健康診査",
+            [
+              "健康診査等内訳",
+              "対象者",
+              "人数"
+            ],
+            [
+              42.63,
+              161.64,
+              323.15,
+              377.13
+            ],
+            [
+              "人"
+            ],
+            false
+          ],
+          [
+            133,
+            1,
+            235.0,
+            295.0,
+            371.0,
+            "内科・小児科診療",
+            [
+              "区分",
+              "昼間診療_初療受診者数",
+              "昼間診療_入院者数",
+              "昼間診療_実施回数",
+              "準夜間診療_初療受診者数",
+              "準夜間診療_実施回数",
+              "土曜準夜間診療_初療受診者数",
+              "土曜準夜間診療_実施回数"
+            ],
+            [
+              686.48,
+              794.43,
+              845.41,
+              896.39,
+              947.38,
+              998.36,
+              1049.34,
+              1100.32,
+              1151.3
+            ],
+            [
+              "人",
+              "回"
+            ],
+            false
+          ],
+          [
+            133,
+            1,
+            408.1,
+            426.1,
+            481.1,
+            "歯科診療（休日）",
+            [
+              "区分",
+              "受診者数",
+              "実施回数"
+            ],
+            [
+              686.48,
+              802.43,
+              856.41,
+              910.39
+            ],
+            [
+              "人",
+              "回"
+            ],
+            false
+          ],
+          [
+            133,
+            1,
+            546.6,
+            583.6,
+            638.6,
+            "調剤（休日，土曜準夜間）",
+            [
+              "区分",
+              "昼間調剤_初療調剤数",
+              "昼間調剤_実施回数",
+              "準夜間調剤_初療調剤数",
+              "準夜間調剤_実施回数",
+              "土曜準夜間調剤_初療調剤数",
+              "土曜準夜間調剤_実施回数"
+            ],
+            [
+              686.48,
+              812.43,
+              864.41,
+              916.39,
+              968.37,
+              1020.35,
+              1072.33,
+              1124.31
+            ],
+            [
+              "人",
+              "回"
+            ],
+            false
+          ],
+          [
+            134,
+            0,
+            115.0,
+            143.0,
+            157.0,
+            "認定状況",
+            [
+              "特級",
+              "1級",
+              "2級",
+              "3級",
+              "級外",
+              "計"
+            ],
+            [
+              41.92,
+              79.91,
+              117.89,
+              155.88,
+              193.86,
+              231.85,
+              269.84
+            ],
+            [
+              "人"
+            ],
+            false
+          ],
+          [
+            144,
+            0,
+            203.6,
+            218.6,
+            422.6,
+            "道路維持補修",
+            [
+              "施工",
+              "工種",
+              "実績"
+            ],
+            [
+              53.96,
+              96.46,
+              331.65,
+              410.62
+            ],
+            [],
+            false
+          ],
+          [
+            145,
+            1,
+            96.1,
+            111.1,
+            214.1,
+            "掘削道路復旧工事",
+            [
+              "施工",
+              "工種",
+              "実績"
+            ],
+            [
+              698.85,
+              741.36,
+              976.55,
+              1055.51
+            ],
+            [],
+            false
+          ],
+          [
+            145,
+            1,
+            257.6,
+            272.6,
+            324.6,
+            "特定道路舗装工事",
+            [
+              "工種",
+              "助成基準",
+              "件数",
+              "規模"
+            ],
+            [
+              698.85,
+              842.99,
+              913.83,
+              984.67,
+              1055.51
+            ],
+            [
+              "％",
+              "件",
+              "㎡"
+            ],
+            false
+          ],
+          [
+            150,
+            0,
+            415.5,
+            433.5,
+            482.5,
+            "教育委員会運営",
+            [
+              "区分",
+              "人数"
+            ],
+            [
+              65.0,
+              150.0,
+              325.0
+            ],
+            [],
+            true
+          ],
+          [
+            151,
+            0,
+            192.4,
+            226.4,
+            252.0,
+            "区立小学校の学級数・児童数及び教員数",
+            [
+              "学校数",
+              "学級数",
+              "児童数",
+              "教員数"
+            ],
+            [
+              53.27,
+              135.44,
+              217.62,
+              299.79,
+              381.97
+            ],
+            [
+              "校",
+              "学級",
+              "人"
+            ],
+            false
+          ],
+          [
+            152,
+            0,
+            599.3,
+            631.3,
+            644.3,
+            "宇佐美学園の学級数・児童数及び教員数",
+            [
+              "学級数",
+              "児童数",
+              "教員数"
+            ],
+            [
+              62.98,
+              147.99,
+              233.0,
+              318.0
+            ],
+            [
+              "学級",
+              "人"
+            ],
+            false
+          ],
+          [
+            152,
+            1,
+            96.0,
+            126.0,
+            154.0,
+            "区立中学校の学級数・生徒数及び教員数",
+            [
+              "学校数",
+              "学級数",
+              "生徒数",
+              "教員数"
+            ],
+            [
+              699.2,
+              781.4,
+              863.5,
+              945.7,
+              1027.9
+            ],
+            [
+              "校",
+              "学級",
+              "人"
+            ],
+            false
+          ],
+          [
+            153,
+            0,
+            93.1,
+            125.1,
+            138.1,
+            "区立幼稚園の学級数・園児数及び教員数",
+            [
+              "園数",
+              "学級数",
+              "園児数",
+              "教員数"
+            ],
+            [
+              63.88,
+              146.05,
+              228.23,
+              310.4,
+              392.57
+            ],
+            [
+              "園",
+              "学級",
+              "人"
+            ],
+            false
+          ],
+          [
+            156,
+            0,
+            173.0,
+            203.0,
+            288.0,
+            "区立図書館の現況",
+            [
+              "区分",
+              "個人貸出者数",
+              "購入図書数",
+              "蔵書数"
+            ],
+            [
+              53.32,
+              135.29,
+              217.26,
+              299.23,
+              381.2
+            ],
+            [
+              "人",
+              "冊"
+            ],
+            false
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "chuo-general-settlement"
+        }
+      ]
+    },
+    {
+      "id": "chuo-text-settlement-care-detail",
+      "converter": "fiscal/jurisdictions/131024/layouts/text_settlement/convert.py",
+      "inputs": [
+        {
+          "sha256": "4417470dc5e1fa3324a63fd1540330ba26f83f636814968bc7d6723398e7e334"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業会計",
+        "detail_pages": [
+          200,
+          211
+        ],
+        "reserve_kan": "8",
+        "personnel_breakdown": true,
+        "output_role": "detail",
+        "table_id": "chuo-care-settlement",
+        "unexplained_section_detail": true,
+        "row_tolerance": 4.6
+      },
+      "expected_tables": [
+        {
+          "table_id": "chuo-care-settlement"
+        }
+      ]
+    },
+    {
+      "id": "chuo-text-settlement-kokuho-detail",
+      "converter": "fiscal/jurisdictions/131024/layouts/text_settlement/convert.py",
+      "inputs": [
+        {
+          "sha256": "4417470dc5e1fa3324a63fd1540330ba26f83f636814968bc7d6723398e7e334"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "detail_pages": [
+          175,
+          184
+        ],
+        "reserve_kan": "7",
+        "personnel_breakdown": true,
+        "unexplained_section_detail": true,
+        "nonfinancial_breakdown": true,
+        "remark_column": true,
+        "output_role": "detail",
+        "table_id": "chuo-kokuho-settlement",
+        "remark_merged_cells": true,
+        "row_tolerance": 4.6,
+        "auxiliary_tables": [
+          [
+            177,
+            0,
+            218.3,
+            234.5,
+            343.8,
+            "療養の給付",
+            [
+              "区分",
+              "件数"
+            ],
+            [
+              58.1,
+              165.9,
+              211.4
+            ],
+            [
+              "件"
+            ],
+            false
+          ],
+          [
+            177,
+            0,
+            453.4,
+            469.5,
+            534.8,
+            "療養費の支給",
+            [
+              "区分",
+              "件数"
+            ],
+            [
+              58.1,
+              165.9,
+              211.4
+            ],
+            [
+              "件"
+            ],
+            false
+          ],
+          [
+            181,
+            0,
+            204.5,
+            221.8,
+            308.0,
+            "特定健康診査等",
+            [
+              "内訳",
+              "対象者",
+              "人数"
+            ],
+            [
+              57.7,
+              202.4,
+              362.3,
+              407.8
+            ],
+            [
+              "人"
+            ],
+            false
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "chuo-kokuho-settlement"
+        }
+      ]
+    },
+    {
+      "id": "chuo-text-settlement-kouki-detail",
+      "converter": "fiscal/jurisdictions/131024/layouts/text_settlement/convert.py",
+      "inputs": [
+        {
+          "sha256": "4417470dc5e1fa3324a63fd1540330ba26f83f636814968bc7d6723398e7e334"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療会計",
+        "detail_pages": [
+          222,
+          226
+        ],
+        "reserve_kan": "5",
+        "personnel_breakdown": true,
+        "nonfinancial_breakdown": true,
+        "unexplained_section_detail": true,
+        "remark_column": true,
+        "remark_min_x": 1020,
+        "output_role": "detail",
+        "table_id": "chuo-kouki-settlement",
+        "remark_merged_cells": true,
+        "row_tolerance": 4.6,
+        "prose_lines": [
+          [
+            224,
+            0,
+            336.79
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "chuo-kouki-settlement"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "chuo-general-settlement",
+      "conversion_id": "chuo-text-settlement-general",
+      "input_fingerprint": "98d78e1fced24cb7ed6f2871a7148848b3f005acf8e08d3845beeac52154e312",
+      "account": "一般会計",
+      "notes": [
+        "人数・件数・率・月額の基準および職員人数は金額の分解ではなく金額表に入れない。明細金額は最深の事業金額の反復であり二重計上しない。内表の縦結合金額は原典セルの位置で一度だけ数え、所属する印字区分の文字をまとめて保持する。",
+        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131024/2024/settlement/expenditure/chuo-general-settlement-nodes.parquet",
+          "sha256": "1e3dd4aa15ca6ce6686b0d33be65faa4460b0263edb45a22880e44dd3e37e08d",
+          "bytes": 75231
+        },
+        "row_count": 1688
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131024/2024/settlement/expenditure/chuo-general-settlement-amounts.parquet",
+          "sha256": "e61bc5a0b65a435b9eb705b129fc11d6a56c0f54c33673a4acce26b88517d298",
+          "bytes": 65539
+        },
+        "row_count": 2504
+      }
+    },
+    {
+      "table_id": "chuo-care-settlement",
+      "conversion_id": "chuo-text-settlement-care-detail",
+      "input_fingerprint": "12e4e13d773c8c6701be9cd874095de3b9726046a008a22a45f6cb3d21f3b6e1",
+      "account": "介護保険事業会計",
+      "notes": [
+        "人数・件数・率・月額の基準および職員人数は金額の分解ではなく金額表に入れない。明細金額は最深の事業金額の反復であり二重計上しない。内表の縦結合金額は原典セルの位置で一度だけ数え、所属する印字区分の文字をまとめて保持する。",
+        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131024/2024/settlement/expenditure/chuo-care-settlement-nodes.parquet",
+          "sha256": "e0c09b664d9c94ba014da262e27ad437f7b0e0549f65ebec2bd5a34ae7dcbd52",
+          "bytes": 10580
+        },
+        "row_count": 136
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131024/2024/settlement/expenditure/chuo-care-settlement-amounts.parquet",
+          "sha256": "be6e7071df60b771ae9eedfdf664904d3d3325804e6e89bc30d012a9c6f2dee1",
+          "bytes": 11008
+        },
+        "row_count": 529
+      }
+    },
+    {
+      "table_id": "chuo-kokuho-settlement",
+      "conversion_id": "chuo-text-settlement-kokuho-detail",
+      "input_fingerprint": "2a59e25a298af63cafb4de71efca7ffde6e5de04f55e15b6982ae0019fecb037",
+      "account": "国民健康保険事業会計",
+      "notes": [
+        "人数・件数・率・月額の基準および職員人数は金額の分解ではなく金額表に入れない。明細金額は最深の事業金額の反復であり二重計上しない。内表の縦結合金額は原典セルの位置で一度だけ数え、所属する印字区分の文字をまとめて保持する。",
+        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131024/2024/settlement/expenditure/chuo-kokuho-settlement-nodes.parquet",
+          "sha256": "fd55895715219f3c39e631b0a02a6e5dbbf3cc6c2a9207c6633b8ce807b6d696",
+          "bytes": 9079
+        },
+        "row_count": 106
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131024/2024/settlement/expenditure/chuo-kokuho-settlement-amounts.parquet",
+          "sha256": "f5a9897aadb771e2b6fb8c5e1c0a4b468abba298418406248d48d2a8bdb374af",
+          "bytes": 11224
+        },
+        "row_count": 504
+      }
+    },
+    {
+      "table_id": "chuo-kouki-settlement",
+      "conversion_id": "chuo-text-settlement-kouki-detail",
+      "input_fingerprint": "2f5fd00958e3697fbe0e3e50022ce60562739e2b34ca5470d35a98fa23830284",
+      "account": "後期高齢者医療会計",
+      "notes": [
+        "人数・件数・率・月額の基準および職員人数は金額の分解ではなく金額表に入れない。明細金額は最深の事業金額の反復であり二重計上しない。内表の縦結合金額は原典セルの位置で一度だけ数え、所属する印字区分の文字をまとめて保持する。",
+        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131024/2024/settlement/expenditure/chuo-kouki-settlement-nodes.parquet",
+          "sha256": "f9d02b4834b573cc68046d96e17dcaa47e885c3c7890aecd01a6c28a93e2d17a",
+          "bytes": 5096
+        },
+        "row_count": 41
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131024/2024/settlement/expenditure/chuo-kouki-settlement-amounts.parquet",
+          "sha256": "b59d1c7128207aab856e424929d61accc3c68327311847147a119e361a3d400d",
+          "bytes": 6852
+        },
+        "row_count": 239
+      }
+    }
+  ]
+}
