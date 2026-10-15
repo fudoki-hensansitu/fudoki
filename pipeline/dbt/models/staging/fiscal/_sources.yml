@@ -1188,6 +1188,22 @@ sources:
       direction: expenditure
       table_id: general-expenditure-detail
       kind: nodes
+  - name: j132209_2024_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '132209'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j132209_2024_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '132209'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
   - name: j132209_2025_settlement_elderly_medical_expenditure_amounts
     meta:
       jurisdiction: '132209'
@@ -1300,6 +1316,22 @@ sources:
       direction: expenditure
       table_id: parking-expenditure
       kind: nodes
+  - name: j132225_2024_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '132225'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j132225_2024_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '132225'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
   - name: j132225_2025_settlement_elderly_medical_expenditure_amounts
     meta:
       jurisdiction: '132225'
@@ -1364,6 +1396,22 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: nodes
+  - name: j132241_2024_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '132241'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j132241_2024_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '132241'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
   - name: j132241_2025_settlement_elderly_medical_expenditure_amounts
     meta:
       jurisdiction: '132241'
@@ -1427,6 +1475,22 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: national-health-insurance-expenditure
+      kind: nodes
+  - name: j132250_2024_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '132250'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j132250_2024_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '132250'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
       kind: nodes
   - name: j132250_2025_settlement_elderly_medical_expenditure_amounts
     meta:
