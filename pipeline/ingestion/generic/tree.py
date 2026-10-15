@@ -464,12 +464,15 @@ def line_limits(logicals: list[Logical]) -> dict[str, float]:
 
 def items(group: Group, header: str, margins: set[int] | None = None,
           roles: dict[int, str] | None = None, limit: float | None = None, ocr: bool = False,
-          amount_brackets: bool = False) -> list[Item]:
+          amount_brackets: bool = False, settings: dict | None = None) -> list[Item]:
     """Lines of a label group into items; amounts printed inside the group stay on their item.
 
     `roles` (variant B) replaces the geometric decisions for codeless lines.
     """
     entries = entries_of(group, margins, amount_brackets)
+    settings = settings or {}
+    kind_names = bool(settings.get('names_end_with_kind_words'))
+    remainder = bool(settings.get('bracketed_remainder'))
     # A name that begins with a count, glued to its number (`82歳児歯科健診事業` = `8` + `2歳児…`,
     # `42025年農林業センサス費` = `4` + `2025年…`): the number is the one that follows the number before it
     # in this list. Only a line at a number's margin with a counter after its digits is read so.
@@ -598,7 +601,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
             from ingestion.generic.scan import total_row
         total_row_here = ocr and total_row(label_text)
         if (previous is not None and code is None and money and is_amount_kind(label_text) and not total_row_here
-                and previous.amounts):  # an item with no amount yet is a wrapped name ending in `計` (`…実施設` / `計 9,900,000`)
+                and (previous.amounts or not kind_names)):  # with the setting, an item with no amount yet is a wrapped name ending in `計` (`…実施設` / `計 9,900,000`)
             for run in money:  # `繰越明許費 302,000`: an amount kind of the item above
                 previous.amounts.append((f'{header}／{label_text}', run))
                 previous.kinds.append((label, run, f'{header}／{label_text}'))
@@ -628,10 +631,10 @@ def items(group: Group, header: str, margins: set[int] | None = None,
         # (Not only the rule-bounded cell: the name and the amount of a 備考 can have grids of their own.)
         wrapped = wrapped or (previous is not None and code is None and bool(label) and bool(money) and previous.code is not None
                               and not previous.amounts and label[0].x0 >= previous.lines[0][0].x0 - left_slack
-                              and closes_parts(entries, index, previous))
+                              and closes_parts(entries, index, previous, remainder))
         # A bracketed remainder (`（選挙管理委員会事務局）`) that did not fit on the line of the name above: the name
         # would have run past the right limit of the column with it.
-        wrapped = wrapped or (previous is not None and code is None and bool(label) and bool(money) and bracketed
+        wrapped = wrapped or (remainder and previous is not None and code is None and bool(label) and bool(money) and bracketed
                               and previous.code is not None and not previous.amounts and limit is not None
                               and label[0].x0 >= previous.lines[0][0].x0 - left_slack
                               and max(g.x1 for g in previous.lines[-1]) + (label[-1].x1 - label[0].x0) > limit)
@@ -670,7 +673,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
     return result
 
 
-def closes_parts(entries: list[tuple], index: int, previous: Item) -> bool:
+def closes_parts(entries: list[tuple], index: int, previous: Item, right_aligned: bool = False) -> bool:
     """Whether the amount printed on this codeless line is the amount of the numbered item above, whose
     name goes on (`9 …運営` / `・補助事業費 38,343,659` / `（地域福祉課）`): the item above prints no amount,
     and the numbered items under it, at their own margin, add up to this amount. A sub-heading of its own
@@ -693,7 +696,7 @@ def closes_parts(entries: list[tuple], index: int, previous: Item) -> bool:
         return False
     margin = min(x for x, _ in parts)
     # Right-aligned numbers: a one-digit number starts half a character right of a two-digit one.
-    slack = max(3, (previous.lines[0][0].y1 - previous.lines[0][0].y0) / 2 + .5)
+    slack = max(3, (previous.lines[0][0].y1 - previous.lines[0][0].y0) / 2 + .5) if right_aligned else 3
     return sum(v for x, v in parts if x <= margin + slack) == amount
 
 
@@ -1401,7 +1404,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 roles = judged_roles(judge, group, margins.get(group.axis))
             if not group.subject:
                 group_items = items(group, header, margins.get(group.axis), roles, limits.get(group.axis), logical.ocr,
-                                    bool(layout and layout.get(group.axis, {}).get('amount_brackets')))
+                                    bool(layout and layout.get(group.axis, {}).get('amount_brackets')),
+                                    (layout or {}).get(group.axis))
             elif group.mode == 'indent':
                 group_items = items(group, group.axis)
             else:
