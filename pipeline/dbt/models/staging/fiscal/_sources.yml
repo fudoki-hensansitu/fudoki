@@ -4,6 +4,70 @@ sources:
 - name: fiscal_pdf
   schema: ingestion
   tables:
+  - name: j131024_2024_settlement_chuo_care_settlement_amounts
+    meta:
+      jurisdiction: '131024'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: chuo-care-settlement
+      kind: amounts
+  - name: j131024_2024_settlement_chuo_care_settlement_nodes
+    meta:
+      jurisdiction: '131024'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: chuo-care-settlement
+      kind: nodes
+  - name: j131024_2024_settlement_chuo_general_settlement_amounts
+    meta:
+      jurisdiction: '131024'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: chuo-general-settlement
+      kind: amounts
+  - name: j131024_2024_settlement_chuo_general_settlement_nodes
+    meta:
+      jurisdiction: '131024'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: chuo-general-settlement
+      kind: nodes
+  - name: j131024_2024_settlement_chuo_kokuho_settlement_amounts
+    meta:
+      jurisdiction: '131024'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: chuo-kokuho-settlement
+      kind: amounts
+  - name: j131024_2024_settlement_chuo_kokuho_settlement_nodes
+    meta:
+      jurisdiction: '131024'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: chuo-kokuho-settlement
+      kind: nodes
+  - name: j131024_2024_settlement_chuo_kouki_settlement_amounts
+    meta:
+      jurisdiction: '131024'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: chuo-kouki-settlement
+      kind: amounts
+  - name: j131024_2024_settlement_chuo_kouki_settlement_nodes
+    meta:
+      jurisdiction: '131024'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: chuo-kouki-settlement
+      kind: nodes
   - name: j131024_2025_settlement_chuo_care_settlement_amounts
     meta:
       jurisdiction: '131024'
@@ -1204,6 +1268,22 @@ sources:
       direction: expenditure
       table_id: elderly-medical-expenditure
       kind: nodes
+  - name: j132098_2025_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '132098'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j132098_2025_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '132098'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
   - name: j132098_2025_settlement_land_readjustment_expenditure_amounts
     meta:
       jurisdiction: '132098'
@@ -1539,6 +1619,22 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: national-health-insurance-expenditure
+      kind: nodes
+  - name: j132217_2025_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '132217'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j132217_2025_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '132217'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
       kind: nodes
   - name: j132217_2025_settlement_late_elderly_medical_setsu_amounts
     meta:

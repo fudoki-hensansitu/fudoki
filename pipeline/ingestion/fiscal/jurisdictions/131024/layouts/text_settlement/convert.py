@@ -30,64 +30,12 @@ INNER_HEADERS = [
     ['区分', '件数', '給付額'],
 ]
 
-# Measured original table regions. Values come from glyphs, never these bounds.
-# Duplicate leaf headings retain their printed upper headings in the column key.
-AUXILIARY_TABLES = [
-    (96, 0, 342, 360, 462, '議員の報酬等', ['区分', '人数'], [62, 150, 285], (), True),
-    (96, 0, 468, 486, 517, '定例会・臨時会運営', ['区分', '回数'], [62, 150, 330], (), True),
-    (96, 0, 541, 576, 681, '開会回数', ['委員会区分', '委員会名', '回数'], [58.64, 130.61, 264.70, 309.69], ('回',), False),
-    (105, 0, 519, 537, 585, '選挙管理委員会運営事業', ['区分', '人数'], [65, 150, 300], (), True),
-    (106, 0, 599, 617, 665, '監査事務', ['区分', '人数'], [65, 150, 300], (), True),
-    (107, 0, 323, 355, 369, '戸籍数及び戸籍人口', ['戸籍数', '戸籍人口'], [45.21, 175.56, 305.90], ('戸籍', '人'), False),
-    (107, 0, 397, 429, 459, '住民基本台帳による世帯と人口', ['区分', '京橋', '日本橋', '月島', '計'], [45.21, 121.72, 198.23, 274.73, 351.24, 427.75], ('世帯', '人'), False),
-    (110, 0, 351, 366, 525, '区民館の管理運営', ['施設名', '利用件数'], [45.21, 135.89, 189.72], ('件',), False),
-    (110, 0, 351, 366, 525, '区民館の管理運営', ['施設名', '利用件数'], [189.72, 280.40, 334.24], ('件',), False),
-    (110, 1, 709, 724, 740, '中央会館「銀座ブロッサム」の管理運営', ['区分', 'ホール', '結婚式場', '集会室'], [682.31, 765.90, 832.49, 899.08, 965.66], ('件',), False),
-    (123, 1, 531, 546, 616, '巡回型ホームヘルプサービス', ['区分', '派遣世帯（延）', '派遣回数（延）'], [688.68, 787.86, 855.86, 923.87], ('世帯', '回'), False),
-    (128, 1, 111, 161, 465, '保育園の園児数及び職員数', ['保育所名', '園児数_3歳未満', '園児数_3歳以上', '園児数_計', '職員数_保育士', '職員数_技術・技能', '職員数_計'], [695.77, 777.94, 834.61, 891.29, 947.96, 1004.63, 1061.30, 1117.97], ('人',), False),
-    (131, 0, 145, 178, 348, '利用状況', ['児童館名', '乳幼児', '小学生', '中学生', '高校生', '保護者', '計'], [51.37, 164.71, 218.55, 272.38, 326.22, 380.06, 433.90, 487.73], ('人',), False),
-    (134, 0, 545, 565, 700, '一般健康診査', ['健康診査等内訳', '対象者', '人数'], [42.63, 161.64, 323.15, 377.13], ('人',), False),
-    (136, 1, 217, 277, 353, '内科・小児科診療', ['区分', '昼間診療_初療受診者数', '昼間診療_入院者数', '昼間診療_実施回数', '準夜間診療_初療受診者数', '準夜間診療_実施回数', '土曜準夜間診療_初療受診者数', '土曜準夜間診療_実施回数'], [686.48, 794.43, 845.41, 896.39, 947.38, 998.36, 1049.34, 1100.32, 1151.30], ('人', '回'), False),
-    (136, 1, 389, 407, 462, '歯科診療（休日）', ['区分', '受診者数', '実施回数'], [686.48, 802.43, 856.41, 910.39], ('人', '回'), False),
-    (136, 1, 497, 534, 589, '調剤（休日，土曜準夜間）', ['区分', '昼間調剤_初療調剤数', '昼間調剤_実施回数', '準夜間調剤_初療調剤数', '準夜間調剤_実施回数', '土曜準夜間調剤_初療調剤数', '土曜準夜間調剤_実施回数'], [686.48, 812.43, 864.41, 916.39, 968.37, 1020.35, 1072.33, 1124.31], ('人', '回'), False),
-    (137, 0, 115, 143, 157, '認定状況', ['特級', '1級', '2級', '3級', '級外', '計'], [41.92, 79.91, 117.89, 155.88, 193.86, 231.85, 269.84], ('人',), False),
-    (147, 0, 188, 203, 407, '道路維持補修', ['施工', '工種', '実績'], [53.96, 96.46, 331.65, 410.62], (), False),
-    (148, 0, 461, 476, 579, '掘削道路復旧工事', ['施工', '工種', '実績'], [53.25, 95.76, 330.95, 409.91], (), False),
-    (148, 0, 624, 639, 691, '特定道路舗装工事', ['工種', '助成基準', '件数', '規模'], [53.25, 197.39, 268.23, 339.07, 409.91], ('％', '件', '㎡'), False),
-    (153, 0, 384, 402, 451, '教育委員会運営', ['区分', '人数'], [65, 150, 325], (), True),
-    (154, 0, 169, 203, 216, '区立小学校の学級数・児童数及び教員数', ['学校数', '学級数', '児童数', '教員数'], [63.17, 145.34, 227.52, 309.69, 391.87], ('校', '学級', '人'), False),
-    (155, 1, 89, 121, 134, '宇佐美学園の学級数・児童数及び教員数', ['学級数', '児童数', '教員数'], [698.98, 783.99, 869.00, 954.00], ('学級', '人'), False),
-    (155, 1, 201, 233, 246, '区立中学校の学級数・生徒数及び教員数', ['学校数', '学級数', '生徒数', '教員数'], [698.98, 783.99, 869.00, 954.00, 1039.01], ('校', '学級', '人'), False),
-    (156, 0, 361, 393, 406, '区立幼稚園の学級数・園児数及び教員数', ['園数', '学級数', '園児数', '教員数'], [63.88, 146.05, 228.23, 310.40, 392.57], ('園', '学級', '人'), False),
-    (159, 0, 173, 203, 288, '区立図書館の現況', ['区分', '個人貸出者数', '購入図書数', '蔵書数'], [53.32, 135.29, 217.26, 299.23, 381.20], ('人', '冊'), False),
-    (180, 0, 218.3, 234.5, 343.8, '療養の給付', ['区分', '件数'], [58.1, 165.9, 211.4], ('件',), False),
-    (180, 0, 453.4, 469.5, 534.8, '療養費の支給', ['区分', '件数'], [58.1, 165.9, 211.4], ('件',), False),
-    (184, 0, 204.5, 221.8, 308.0, '特定健康診査等', ['内訳', '対象者', '人数'], [57.7, 202.4, 362.3, 407.8], ('人',), False),
-]
-
-# Independently confirmed original prose lines whose text lacks the keyword or
-# count pattern, including unnumbered headings and name wrap lines. Positions
-# are measured from the original; glyphs and fiscal subjects are read from the
-# words there, never from these bounds.
-PROSE_LINES = [
-    (100, 0, 472.58), (109, 0, 528.33), (111, 0, 200.39), (128, 0, 376.69),
-    (129, 1, 353.94), (134, 0, 287.77), (136, 0, 753.53), (140, 0, 644.09),
-    (141, 0, 283.64), (141, 0, 332.14), (141, 0, 429.14), (141, 0, 531.64),
-    (143, 0, 172.10), (147, 0, 536.67), (147, 0, 583.17), (147, 0, 683.68),
-    (147, 0, 730.18), (148, 0, 113.96), (148, 0, 160.46), (148, 0, 224.96),
-    (148, 0, 271.47), (148, 0, 335.97), (148, 0, 400.47), (148, 1, 270.95),
-    (148, 1, 306.95), (148, 1, 342.95), (155, 1, 486.62), (158, 0, 343.51),
-    (227, 0, 335.20),
-]
-
-# Independently confirmed original office/department headings printed directly
-# under a moku heading. Each starts a scope that runs in original reading order
-# until the next office or moku heading; inside a moku the same business
-# number/name may repeat, so the scalar is repeated by origin position, not by
-# business. Positions are measured; glyphs are read from the words there.
-OFFICE_HEADINGS = [
-    (134, 0, 287.77), (138, 0, 127.39), (139, 0, 288.86), (139, 1, 182.37),
-]
+# Measured original regions (auxiliary quantity tables, prose lines, office
+# headings) are declared per year in the manifest options, never in this code:
+# `auxiliary_tables` rows are [page, pane, header_y, data_y, end, title, fields,
+# xs, units, unruled]; `prose_lines` and `office_headings` rows are
+# [page, pane, y]. Positions are measured from the original; glyphs and fiscal
+# subjects are read from the words there, never from these bounds.
 
 
 def text(words):
@@ -505,7 +453,7 @@ def reading_position(location):
     return location['原典物理頁'], int(location['原典xMin'] >= 650), location['原典yMin']
 
 
-def nonfinancial_facts(pages, nodes, source, destination, grids, handled, all_parents):
+def nonfinancial_facts(pages, nodes, source, destination, grids, handled, all_parents, declared):
     controls, observations, regions, office_headings, excluded = [], [], [], [], []
     ordered = sorted(nodes, key=lambda node: reading_position(node['location']))
     mokus = [p for p in all_parents if p['level'] == '目']
@@ -542,7 +490,7 @@ def nonfinancial_facts(pages, nodes, source, destination, grids, handled, all_pa
             return None, wanted
         raise ValueError(f'Measured prose has no business under its fiscal subject: page={page}, y={y}')
 
-    for page, pane, header_y, data_y, end, title, fields, xs, units, unruled in AUXILIARY_TABLES:
+    for page, pane, header_y, data_y, end, title, fields, xs, units, unruled in declared['auxiliary_tables']:
         if page not in pages:
             continue
         words = [word for word in pages[page] if int(word['x'] >= 650) == pane]
@@ -617,10 +565,10 @@ def nonfinancial_facts(pages, nodes, source, destination, grids, handled, all_pa
                 joined = compact(value)
                 measured = any(p == page and pn == pane
                                and abs(min(w['y'] for w in line) - y) < 2.5
-                               for p, pn, y in PROSE_LINES)
+                               for p, pn, y in declared['prose_lines'])
                 office = any(p == page and pn == pane
                              and abs(min(w['y'] for w in line) - y) < 2.5
-                             for p, pn, y in OFFICE_HEADINGS)
+                             for p, pn, y in declared['office_headings'])
                 if not (measured or office):
                     if money(line) or joined.startswith(('計', '（款）', '（項）', '（目）', '令和', '平成')):
                         continue
@@ -663,7 +611,7 @@ def nonfinancial_facts(pages, nodes, source, destination, grids, handled, all_pa
 
 def assemble(pages, first, last, *, source, destination, reserve_kan='11', personnel_breakdown=False,
              unexplained_section_detail=False, nonfinancial_breakdown=False, remark_column=False,
-             remark_min_x=1024):
+             remark_min_x=1024, remark_merged_cells=False, row_tolerance=4.1, measured):
     parents = {}
     nodes = []
     current = {}
@@ -703,7 +651,7 @@ def assemble(pages, first, last, *, source, destination, reserve_kan='11', perso
             halves.append(([w for w in words if w['x'] >= 650], 646))
         for half_words, offset in halves:
             skip_until = 0
-            for row in rows(half_words):
+            for row in rows(half_words, tolerance=row_tolerance):
                 if min(w['y'] for w in row) < 60 or min(w['y'] for w in row) > 790:
                     continue
                 if offset == 0:
@@ -795,7 +743,7 @@ def assemble(pages, first, last, *, source, destination, reserve_kan='11', perso
                         title_rows = [r for r in pending
                                       if any(p == page and pn == int(offset != 0)
                                              and abs(min(w['y'] for w in r) - y) < 2.5
-                                             for p, pn, y in PROSE_LINES)]
+                                             for p, pn, y in measured['prose_lines'])]
                         if title_rows:
                             handled_top = min(handled_top,
                                               min(min(w['y'] for w in r) for r in title_rows))
@@ -999,7 +947,7 @@ def assemble(pages, first, last, *, source, destination, reserve_kan='11', perso
                         current.pop(depth)
                 parent_node = current[max(current)] if current else None
                 if rank and parent_node is None:
-                    raise ValueError(f'Orphan monetary detail on page {page}: {name_text}')
+                    raise ValueError(f'Orphan monetary detail on page {page}: {name_text} row={text(row)}')
                 if parent_node:
                     parent_node['has_children'] = True
                 node = {'rank': rank, 'number': number, 'name': name, 'amount': payment['value'],
@@ -1021,7 +969,7 @@ def assemble(pages, first, last, *, source, destination, reserve_kan='11', perso
                 current[rank] = node
                 pending = []
     quantity_controls, quantity_cells, office_headings, quantity_excluded = (
-        nonfinancial_facts(pages, nodes, source, destination, grids, handled, all_parents)
+        nonfinancial_facts(pages, nodes, source, destination, grids, handled, all_parents, measured)
         if nonfinancial_breakdown else ([], [], [], []))
     excluded.extend(quantity_excluded)
     records = []
@@ -1089,11 +1037,13 @@ def assemble(pages, first, last, *, source, destination, reserve_kan='11', perso
                     upper = min((y for y in edges if y > middle), default=790)
                     if lower < center < upper:
                         hits.append((level, loc, entity))
-                if len(hits) != 1:
+                # A remark cell merged down a band of rows belongs to every
+                # row of the band; the document declares that it prints one.
+                if not hits or len(hits) > 1 and not remark_merged_cells:
                     raise ValueError(f'Remark line has {len(hits)} owning rows: page={page}, {text(line)}')
-                level, loc, _ = hits[0]
-                key = (level, page, round(loc['原典yMin'], 1))
-                remarks.setdefault(key, []).append(text(line))
+                for level, loc, _ in hits:
+                    key = (level, page, round(loc['原典yMin'], 1))
+                    remarks.setdefault(key, []).append(text(line))
         for record in [*records, *reserve, *lending]:
             for level in ['款', '項', '目', *LEVELS]:
                 page = record.get(level + '_原典物理頁')
@@ -1124,7 +1074,7 @@ def coordinates_keys():
     return ['原典物理頁', '原典xMin', '原典yMin', '原典xMax', '原典yMax']
 
 
-def metadata(columns, *, reserve=False, lending=False):
+def metadata(columns, *, auxiliary=(), reserve=False, lending=False):
     monetary = [c for c in columns if any(c.endswith('_' + f) for f in FINANCIAL[:-1])
                 or c.endswith('_金額') or c == '明細金額' or c.startswith('施工概要_') and c != '施工概要_区分'
                 or c in ('充用した科目（事業）及び金額', '内表_金額', '内表_給付額', '内表_月額')]
@@ -1183,7 +1133,7 @@ def metadata(columns, *, reserve=False, lending=False):
     quantity = [column for column in columns if column.startswith('数量表_')]
     if quantity:
         declared = set()
-        for _, _, _, _, _, title, fields, _, _, _ in AUXILIARY_TABLES:
+        for _, _, _, _, _, title, fields, _, _, _ in auxiliary:
             for field in fields:
                 prefix = '数量表_' + title + '_' + field
                 group = [column for column in quantity if column == prefix or column.startswith(prefix + '_原典')]
@@ -1263,13 +1213,18 @@ def convert(inputs, destination, options):
             box = token.bbox
             pages[token.page].append({'text': token.raw_text, 'x': box.left, 'xe': box.right,
                                        'y': box.top, 'ye': box.bottom})
+    measured = {k: [tuple(row) for row in options.get(k, [])]
+                for k in ('auxiliary_tables', 'prose_lines', 'office_headings')}
     records, reserve, lending, observations, excluded = assemble(pages, first, last, source=source['path'], destination=destination,
                                                       reserve_kan=options.get('reserve_kan', '11'),
                                                       personnel_breakdown=options.get('personnel_breakdown', False),
                                                       unexplained_section_detail=options.get('unexplained_section_detail', False),
                                                       nonfinancial_breakdown=options.get('nonfinancial_breakdown', False),
                                                       remark_column=options.get('remark_column', False),
-                                                      remark_min_x=options.get('remark_min_x', 1024))
+                                                      remark_min_x=options.get('remark_min_x', 1024),
+                                                      remark_merged_cells=options.get('remark_merged_cells', False),
+                                                      row_tolerance=options.get('row_tolerance', 4.1),
+                                                      measured=measured)
     (destination / 'builder-observations.json').write_text(json.dumps(observations, ensure_ascii=False, indent=2) + '\n')
     result = {}
     available = {'detail': (records, False, False), 'reserve': (reserve, True, False),
@@ -1296,6 +1251,6 @@ def convert(inputs, destination, options):
         if not is_reserve and not is_lending:
             data = monetary.prepare(data)
         columns = write_parquet(output, data)
-        result[table_id] = {'path': output, 'metadata': (metadata(columns, reserve=is_reserve, lending=is_lending)
+        result[table_id] = {'path': output, 'metadata': (metadata(columns, auxiliary=measured['auxiliary_tables'], reserve=is_reserve, lending=is_lending)
                                                    if is_reserve or is_lending else monetary.metadata(columns))}
     return result
