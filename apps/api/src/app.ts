@@ -140,7 +140,13 @@ async function jurisdictionNames(ctx: Ctx, out: unknown): Promise<Record<string,
   return Object.fromEntries(pages.flatMap((p) => p.results).map((r) => [r.jurisdiction_code, r.name]))
 }
 
-const VIEW_NOTE = ' MCP Apps に対応した client では、結果をこの tool の画面（View）に表とグラフで表示する。そのときは応答の文章で一覧や金額を繰り返さず、補足は問いへの答えと注意点だけの最小限にとどめる。'
+/** View を描く tool の名前。データを返す tool には View を付けず、この tool だけが View を指す（iframe を tool 呼び出しごとに作り直させないため） */
+export const RENDER_TOOL = 'render_expenditure_view'
+
+const RENDER_DESCRIPTION =
+  '結果を画面（View）に表とグラフで表示する。データを調べる tool（search_expenditure_nodes・get_expenditure_node・list_jurisdictions）は結果を返すだけで画面を出さない。' +
+  'ユーザーに結果を見せる最終段階で、その tool と同じ入力（tool と arguments）を渡してこの tool を一度だけ呼ぶ。' +
+  'MCP Apps に対応した client では結果が画面に出るので、応答の文章で一覧や金額を繰り返さず、補足は問いへの答えと注意点だけの最小限にとどめる。'
 
 function mcpServer(ctx: Ctx, apiOrigin: string, operations: Operation[]): McpServer {
   const server = new McpServer(
@@ -162,32 +168,59 @@ function mcpServer(ctx: Ctx, apiOrigin: string, operations: Operation[]): McpSer
     // URI に中身のハッシュを入れてあり、同じ URI の中身は変わらない
     async (uri) => ({ contents: [{ uri: uri.href, mimeType: VIEW_MIME_TYPE, text: VIEW_HTML, _meta: { ui: { prefersBorder: true, csp: { connectDomains: [apiOrigin] } } } }] })
   )
+  const toolResult = async (op: Operation, args: Record<string, unknown>, withNames: boolean) => {
+    try {
+      const out = await op.run(ctx, args)
+      // structuredContent が正本。text は structuredContent を読めない client のための同じ内容の写し（MCP の SHOULD）
+      const meta = withNames ? { apiOrigin, jurisdictionNames: await jurisdictionNames(ctx, out) } : { apiOrigin }
+      return { content: [{ type: 'text' as const, text: JSON.stringify(out) }], structuredContent: out as Record<string, unknown>, _meta: meta }
+    } catch (e) {
+      // 想定外の例外の詳細（SQL のエラーなど）は返さず、ログにだけ出す
+      if (!(e instanceof ApiError)) console.error(e)
+      const body = e instanceof ApiError ? errorBody(e.code, e.message, e.retryAfter) : errorBody('INTERNAL', '内部エラー')
+      return { isError: true, content: [{ type: 'text' as const, text: JSON.stringify(body) }] }
+    }
+  }
+  // どの tool も利用者の状態を変えない（評価の検索は回数の記録と AI Search の呼び出しを伴うが、風土記の内側で閉じる）
+  const annotations = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }
   for (const op of operations) {
     server.registerTool(
       op.name,
       {
         title: op.summary,
-        // View を持つ tool は結果を画面に出すので、AI の文章は表の繰り返しを避けて最小限にさせる（REST の説明には足さない）
-        description: op.view ? `${op.description}${VIEW_NOTE}` : op.description,
+        description: op.view ? `${op.description} 結果を画面に表示するときは、この tool ではなく ${RENDER_TOOL} を使う。` : op.description,
         inputSchema: op.input,
         outputSchema: op.output,
-        // どの tool も利用者の状態を変えない（評価の検索は回数の記録と AI Search の呼び出しを伴うが、風土記の内側で閉じる）
-        annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
-        // 旧キー ui/resourceUri は ext-apps の registerAppTool と同じく併記する（仕様では GA 前に外す deprecated）
-        ...(op.view ? { _meta: { ui: { resourceUri: VIEW_URI }, 'ui/resourceUri': VIEW_URI } } : {}),
+        annotations,
       },
-      async (args: Record<string, unknown>) => {
-        try {
-          const out = await op.run(ctx, args)
-          // structuredContent が正本。text は structuredContent を読めない client のための同じ内容の写し（MCP の SHOULD）
-          const meta = op.view ? { apiOrigin, jurisdictionNames: await jurisdictionNames(ctx, out) } : { apiOrigin }
-          return { content: [{ type: 'text' as const, text: JSON.stringify(out) }], structuredContent: out as Record<string, unknown>, _meta: meta }
-        } catch (e) {
-          // 想定外の例外の詳細（SQL のエラーなど）は返さず、ログにだけ出す
-          if (!(e instanceof ApiError)) console.error(e)
-          const body = e instanceof ApiError ? errorBody(e.code, e.message, e.retryAfter) : errorBody('INTERNAL', '内部エラー')
-          return { isError: true, content: [{ type: 'text' as const, text: JSON.stringify(body) }] }
+      (args: Record<string, unknown>) => toolResult(op, args, false)
+    )
+  }
+  // View を描く tool は1つだけ。データ tool と同じ問い合わせを受けて結果を返し、View のテンプレートを指す
+  const viewOps = operations.filter((op) => op.view)
+  if (viewOps.length > 0) {
+    const names = viewOps.map((op) => op.name) as [string, ...string[]]
+    server.registerTool(
+      RENDER_TOOL,
+      {
+        title: '結果の表示',
+        description: RENDER_DESCRIPTION,
+        inputSchema: z.strictObject({
+          tool: z.enum(names).describe('表示する結果を返す tool の名前。'),
+          arguments: z.record(z.string(), z.unknown()).describe('その tool に渡す入力（データ tool の呼び出しと同じもの）。'),
+        }),
+        annotations,
+        // 旧キー ui/resourceUri は ext-apps の registerAppTool と同じく併記する（仕様では GA 前に外す deprecated）
+        _meta: { ui: { resourceUri: VIEW_URI }, 'ui/resourceUri': VIEW_URI },
+      },
+      async (args: { tool: string; arguments: Record<string, unknown> }) => {
+        const op = viewOps.find((o) => o.name === args.tool)!
+        const parsed = op.input.safeParse(args.arguments)
+        if (!parsed.success) {
+          const message = parsed.error.issues.map((i) => (i.path.length > 0 ? `${i.path.join('.')}: ${i.message}` : i.message)).join('; ')
+          return { isError: true, content: [{ type: 'text' as const, text: JSON.stringify(errorBody('INVALID_ARGUMENT', message)) }] }
         }
+        return toolResult(op, parsed.data as Record<string, unknown>, true)
       }
     )
   }

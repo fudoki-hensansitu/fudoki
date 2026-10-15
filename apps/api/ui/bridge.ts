@@ -127,7 +127,9 @@ export function createBridge() {
   }
   app.ontoolinput = (params) => {
     invalidate()
-    args = (params.arguments ?? {}) as Json
+    // 描画 tool（render_expenditure_view）の入力は { tool, arguments }。データ tool の入力は arguments の中にある
+    const input = (params.arguments ?? {}) as Json
+    args = (input.arguments && typeof input.arguments === 'object' ? input.arguments : input) as Json
     update({ busy: true, error: undefined })
   }
   app.ontoolresult = (result) => {
