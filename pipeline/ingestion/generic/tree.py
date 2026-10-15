@@ -18,6 +18,7 @@ from __future__ import annotations
 
 from collections import Counter, defaultdict
 from bisect import bisect_right
+from math import floor
 from dataclasses import dataclass, field
 import hashlib
 import re
@@ -424,7 +425,9 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
             year = YEAR_LED.match(line_text)
             if year:  # `42025年農林業センサス費` is item `4` and `2025年…`
                 code, name = year.group(1), line_text[len(year.group(1)):]
-        if code is not None and COUNTED.match(line_text) and not YEAR_LED.match(line_text) and not script:
+        spaced = (len(label) > 1 and re.fullmatch(r'[0-9]{1,4}', normalize(label[0].text)) is not None
+                  and label[1].x0 - label[0].x1 >= 2)  # the number is a word of its own, set apart from the name
+        if code is not None and COUNTED.match(line_text) and not YEAR_LED.match(line_text) and not script and not spaced:
             code, name = None, line_text  # `110番非常通報装置`, `3歳児健康診査`: a count, not an item number
         if code is not None and not name and money:
             code = None  # a lone number left of an amount is not a code
@@ -594,7 +597,8 @@ def items(group: Group, header: str, margins: set[int] | None = None,
         if ocr:
             from ingestion.generic.scan import total_row
         total_row_here = ocr and total_row(label_text)
-        if previous is not None and code is None and money and is_amount_kind(label_text) and not total_row_here:
+        if (previous is not None and code is None and money and is_amount_kind(label_text) and not total_row_here
+                and previous.amounts):  # an item with no amount yet is a wrapped name ending in `計` (`…実施設` / `計 9,900,000`)
             for run in money:  # `繰越明許費 302,000`: an amount kind of the item above
                 previous.amounts.append((f'{header}／{label_text}', run))
                 previous.kinds.append((label, run, f'{header}／{label_text}'))
@@ -612,16 +616,25 @@ def items(group: Group, header: str, margins: set[int] | None = None,
                    and (limit is None or max(g.x1 for g in previous.lines[-1]) >= limit - 4 * (previous.lines[-1][0].y1 - previous.lines[-1][0].y0)))
         # A line led by a mark (`○あそべえ事業 222,656,920` under its heading, 132039) is an item of its own.
         marked = bool(label) and re.match(r'[〇○●◎□■◇◆]', label[0].text) is not None
+        # Numbers are right-aligned in their column: a wrapped line starts at the column's left edge, which is
+        # half a character left of a one-digit number (a half-width digit is half the line height).
+        left_slack = max(3, (label[0].y1 - label[0].y0) / 2 + .5) if label else 3
         wrapped = (previous is not None and code is None and label and not previous.amounts and not marked
-                   and label[0].x0 >= previous.lines[0][0].x0 - 3
+                   and label[0].x0 >= previous.lines[0][0].x0 - left_slack
                    and (not money or bracketed
                         or (reaches and (abs(label[0].x0 - previous.indent) <= 3
                                          or abs(label[0].x0 - _name_start(previous)) <= 3)))
                    and _cell(band_of(label[0]), label[0].y0) == _cell(band_of(previous.lines[-1][0]), previous.lines[-1][0].y0))
         # (Not only the rule-bounded cell: the name and the amount of a 備考 can have grids of their own.)
         wrapped = wrapped or (previous is not None and code is None and bool(label) and bool(money) and previous.code is not None
-                              and not previous.amounts and label[0].x0 >= previous.lines[0][0].x0 - 3
+                              and not previous.amounts and label[0].x0 >= previous.lines[0][0].x0 - left_slack
                               and closes_parts(entries, index, previous))
+        # A bracketed remainder (`（選挙管理委員会事務局）`) that did not fit on the line of the name above: the name
+        # would have run past the right limit of the column with it.
+        wrapped = wrapped or (previous is not None and code is None and bool(label) and bool(money) and bracketed
+                              and previous.code is not None and not previous.amounts and limit is not None
+                              and label[0].x0 >= previous.lines[0][0].x0 - left_slack
+                              and max(g.x1 for g in previous.lines[-1]) + (label[-1].x1 - label[0].x0) > limit)
         if wrapped:  # a wrapped name; its amount may be printed on the last line
             previous.lines.append(label)
             previous.name += normalize(text(label))
@@ -679,7 +692,9 @@ def closes_parts(entries: list[tuple], index: int, previous: Item) -> bool:
     if not parts:
         return False
     margin = min(x for x, _ in parts)
-    return sum(v for x, v in parts if x <= margin + 3) == amount
+    # Right-aligned numbers: a one-digit number starts half a character right of a two-digit one.
+    slack = max(3, (previous.lines[0][0].y1 - previous.lines[0][0].y0) / 2 + .5)
+    return sum(v for x, v in parts if x <= margin + slack) == amount
 
 
 def line_of(label: list[Glyph], money: list[list[Glyph]]) -> list[Glyph]:
@@ -716,6 +731,10 @@ def _measure(item: Item, label: list[Glyph], code: str | None) -> None:
         raw = ''.join(g.text for g in label)
         found = CODE.match(normalize(raw))
         length = found.end() if found else 0
+        head = normalize(first.text)
+        if (len(label) > 1 and re.fullmatch(r'[0-9]{1,4}', head) and length > len(head)
+                and label[1].x0 - first.x1 >= 2):
+            length = len(head)  # a number set apart from a name that begins with digits (`11 ２０歳のつどい事業`)
         for glyph in label:
             if consumed + len(glyph.text) > length:
                 width = (glyph.x1 - glyph.x0) / max(len(glyph.text), 1)
@@ -731,6 +750,44 @@ def _measure(item: Item, label: list[Glyph], code: str | None) -> None:
             if band.x0 - 1 <= cx <= band.x1:
                 item.level = index
         item.level = item.level if item.level is not None else len(item.group.bands) - 1
+
+
+def number_edges(logicals: list[Logical], pattern: str = 'bands') -> set[int]:
+    """Where printed numbers end (original x, rounded), over the subject columns of the whole document."""
+    edges: set[int] = set()
+    for logical in logicals:
+        for group in groups(logical, pattern):
+            if not group.subject or group.mode == 'indent':
+                continue
+            for band in group.bands:
+                for word in band.words:
+                    found = re.match(r'[0-9]+(?=[^0-9\s]|$)', word.text)
+                    if found:
+                        edges.add(round(word.original[0] + len(found.group()) * (word.y1 - word.y0) / 2))
+    return edges
+
+
+def split_glued_numbers(words: list[Glyph], edges: set[int]) -> list[Glyph]:
+    """Numbers of two columns printed as one run (`110車両管理費`: 項 `1` and 目 `10`, each right-aligned in
+    its own column). A run of digits is cut where a column's number ends, as other rows show."""
+    result = []
+    for word in words:
+        found = re.match(r'[0-9]{2,}(?=[^0-9\s])', word.text)
+        if found is None:
+            result.append(word)
+            continue
+        half = (word.y1 - word.y0) / 2
+        for cut in range(1, len(found.group())):
+            at = round(word.original[0] + cut * half)
+            if {at - 1, at, at + 1} & edges:
+                break
+        else:
+            result.append(word)
+            continue
+        middle = word.x0 + cut * half
+        result += [Glyph(word.text[:cut], word.x0, word.y0, middle, word.y1, word.page, word.offset),
+                   Glyph(word.text[cut:], middle, word.y0, word.x1, word.y1, word.page, word.offset)]
+    return result
 
 
 def subject_items(group: Group) -> list[Item]:
@@ -972,7 +1029,7 @@ DETAIL_PATTERNS = ('indent', 'shape', 'position')
 # Numbering shapes of breakdown items (事業・説明), in the order they are tried.
 SHAPES = (('bullet', re.compile(r'^[○〇●◎□■◇◆]')), ('paren', re.compile(r'^[(（][0-9]+[)）]')),
           ('circled', re.compile(r'^[⓪①-⑳㉑-㉟㊱-㊿❶-❿⓫-⓴]')), ('kana-paren', re.compile(r'^[(（][ア-ン][)）]')),
-          ('kana', re.compile(r'^[ア-ン](?=[\s　]|[^ァ-ヶー])')), ('number', re.compile(r'^[0-9]+')))
+          ('kana', re.compile(r'^[ア-ン](?=[\s　]|[^ぁ-ゟァ-ヶー])')), ('number', re.compile(r'^[0-9]+')))
 
 
 def shape_of(item: Item) -> str | None:
@@ -1319,6 +1376,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
     all_items: list[tuple[Logical, list[Group], dict[int, list[Item]]]] = []
     column_amount_items: set[int] = set()
     margins = code_margins(logicals)
+    edges = number_edges(logicals, pattern)
     limits = line_limits(logicals)
     stacking = stacked_columns(logicals)
     skipped: list[Logical] = []
@@ -1347,6 +1405,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             elif group.mode == 'indent':
                 group_items = items(group, group.axis)
             else:
+                for band in group.bands:
+                    band.words = split_glued_numbers(band.words, edges)
                 group_items = subject_items(group)
             for item in group_items:
                 # 01.01.01.01から流用 starts with digits. A parenthesised remark joined to an item's
@@ -1481,10 +1541,15 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             continue
         axis_items = [i for _, ordered, found in all_items for g in ordered if not g.subject and g.axis == axis
                       for i in found[id(g)] if i.role == 'node']
-        origin = min((i.indent - i.group.x0 for i in axis_items), default=0)
+        # Codes are set a whole step apart at every level, however wide the number (a name's start is not).
+        start = lambda i: i.lines[0][0].x0
+        origin = min((start(i) - i.group.x0 for i in axis_items), default=0)
         for item in axis_items:
             if item.level is None:
-                item.level = round((item.indent - item.group.x0 - origin) / (chars * (item.lines[0][0].y1 - item.lines[0][0].y0)))
+                # A level is a whole step: an item set half a character right of its siblings (`98 …（再配当用）`
+                # among `14 …`) is one of them, so only a shift of more than 60% of a step is a deeper level.
+                steps = (start(item) - item.group.x0 - origin) / (chars * (item.lines[0][0].y1 - item.lines[0][0].y0))
+                item.level = floor(steps + .4)
     # Subject levels by indentation, learned over the document (pattern indent).
     starts = sorted(i.indent for _, ordered, found in all_items for g in ordered if g.subject and g.mode == 'indent'
                     for i in found[id(g)] if i.role == 'node')
