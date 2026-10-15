@@ -68,6 +68,54 @@ sources:
       direction: expenditure
       table_id: chuo-kouki-settlement
       kind: nodes
+  - name: j131032_2024_settlement_elderly_medical_expenditure_amounts
+    meta:
+      jurisdiction: '131032'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: elderly-medical-expenditure
+      kind: amounts
+  - name: j131032_2024_settlement_elderly_medical_expenditure_nodes
+    meta:
+      jurisdiction: '131032'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: elderly-medical-expenditure
+      kind: nodes
+  - name: j131032_2024_settlement_long_term_care_expenditure_amounts
+    meta:
+      jurisdiction: '131032'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: long-term-care-expenditure
+      kind: amounts
+  - name: j131032_2024_settlement_long_term_care_expenditure_nodes
+    meta:
+      jurisdiction: '131032'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: long-term-care-expenditure
+      kind: nodes
+  - name: j131032_2024_settlement_national_health_insurance_expenditure_amounts
+    meta:
+      jurisdiction: '131032'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-insurance-expenditure
+      kind: amounts
+  - name: j131032_2024_settlement_national_health_insurance_expenditure_nodes
+    meta:
+      jurisdiction: '131032'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-insurance-expenditure
+      kind: nodes
   - name: j131032_2025_settlement_elderly_medical_expenditure_amounts
     meta:
       jurisdiction: '131032'
@@ -724,6 +772,38 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: nodes
+  - name: j132012_2024_settlement_kaigo_detail_amounts
+    meta:
+      jurisdiction: '132012'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kaigo-detail
+      kind: amounts
+  - name: j132012_2024_settlement_kaigo_detail_nodes
+    meta:
+      jurisdiction: '132012'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kaigo-detail
+      kind: nodes
+  - name: j132012_2024_settlement_kouki_detail_amounts
+    meta:
+      jurisdiction: '132012'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kouki-detail
+      kind: amounts
+  - name: j132012_2024_settlement_kouki_detail_nodes
+    meta:
+      jurisdiction: '132012'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kouki-detail
+      kind: nodes
   - name: j132012_2025_settlement_general_detail_amounts
     meta:
       jurisdiction: '132012'
@@ -1232,6 +1312,54 @@ sources:
     meta:
       jurisdiction: '132128'
       fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-insurance-expenditure
+      kind: nodes
+  - name: j132136_2024_settlement_elderly_medical_expenditure_amounts
+    meta:
+      jurisdiction: '132136'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: elderly-medical-expenditure
+      kind: amounts
+  - name: j132136_2024_settlement_elderly_medical_expenditure_nodes
+    meta:
+      jurisdiction: '132136'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: elderly-medical-expenditure
+      kind: nodes
+  - name: j132136_2024_settlement_long_term_care_expenditure_amounts
+    meta:
+      jurisdiction: '132136'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: long-term-care-expenditure
+      kind: amounts
+  - name: j132136_2024_settlement_long_term_care_expenditure_nodes
+    meta:
+      jurisdiction: '132136'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: long-term-care-expenditure
+      kind: nodes
+  - name: j132136_2024_settlement_national_health_insurance_expenditure_amounts
+    meta:
+      jurisdiction: '132136'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-insurance-expenditure
+      kind: amounts
+  - name: j132136_2024_settlement_national_health_insurance_expenditure_nodes
+    meta:
+      jurisdiction: '132136'
+      fiscal_year: 2024
       document_kind: settlement
       direction: expenditure
       table_id: national-health-insurance-expenditure
@@ -2691,6 +2819,70 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: national-health-insurance-expenditure
+      kind: nodes
+  - name: j133621_2024_settlement_elderly_medical_expenditure_amounts
+    meta:
+      jurisdiction: '133621'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: elderly-medical-expenditure
+      kind: amounts
+  - name: j133621_2024_settlement_elderly_medical_expenditure_nodes
+    meta:
+      jurisdiction: '133621'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: elderly-medical-expenditure
+      kind: nodes
+  - name: j133621_2024_settlement_long_term_care_business_expenditure_amounts
+    meta:
+      jurisdiction: '133621'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: long-term-care-business-expenditure
+      kind: amounts
+  - name: j133621_2024_settlement_long_term_care_business_expenditure_nodes
+    meta:
+      jurisdiction: '133621'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: long-term-care-business-expenditure
+      kind: nodes
+  - name: j133621_2024_settlement_national_health_insurance_business_expenditure_amounts
+    meta:
+      jurisdiction: '133621'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-insurance-business-expenditure
+      kind: amounts
+  - name: j133621_2024_settlement_national_health_insurance_business_expenditure_nodes
+    meta:
+      jurisdiction: '133621'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-insurance-business-expenditure
+      kind: nodes
+  - name: j133621_2024_settlement_national_health_insurance_clinic_expenditure_amounts
+    meta:
+      jurisdiction: '133621'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-insurance-clinic-expenditure
+      kind: amounts
+  - name: j133621_2024_settlement_national_health_insurance_clinic_expenditure_nodes
+    meta:
+      jurisdiction: '133621'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-insurance-clinic-expenditure
       kind: nodes
   - name: j133621_2025_settlement_elderly_medical_expenditure_amounts
     meta:
