@@ -1,0 +1,650 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132128",
+    "fiscal_year": 2024,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-settlement-01",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "187b208748de65afa6a75f41ee051b0e3ded687cb537a943e35173cf35a5c365"
+        }
+      ],
+      "options": {
+        "partial": true,
+        "account": "一般会計",
+        "table_id": "general-expenditure-01"
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-01"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-02",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "9980c10237325d6dfa9a39a05e7e2336ddd080509091a5716f9f4d503c93db77"
+        }
+      ],
+      "options": {
+        "partial": true,
+        "account": "一般会計",
+        "table_id": "general-expenditure-02"
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-02"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-03",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4c9ee1145223334fa99236bfa110fb2896718ab10a5a1b7b892fca2a13c3810a"
+        }
+      ],
+      "options": {
+        "partial": true,
+        "account": "一般会計",
+        "table_id": "general-expenditure-03"
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-03"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-04",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ab558c23f4934e068c4a6952ddb11bc041c64c2b97730781d984f24c02f2f850"
+        }
+      ],
+      "options": {
+        "partial": true,
+        "account": "一般会計",
+        "table_id": "general-expenditure-04"
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-04"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-05",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "a22673283898b1fde8785422e8412b479e571271a23d056e27ca68c594b66065"
+        }
+      ],
+      "options": {
+        "partial": true,
+        "account": "一般会計",
+        "table_id": "general-expenditure-05"
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-05"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-06",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "a95819c768a9cf1da2ce0d33c9c23a7a6c86588eca3ecedd05bf9115c3b3f0dc"
+        }
+      ],
+      "options": {
+        "partial": true,
+        "account": "一般会計",
+        "table_id": "general-expenditure-06"
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-06"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-07",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "954628369dfd4c42ec53daa2a4f90c32b2530d278ac949f5a9a56b56ff94e4ec"
+        }
+      ],
+      "options": {
+        "partial": true,
+        "account": "一般会計",
+        "table_id": "general-expenditure-07"
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-07"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-08",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "7a210dbde27db971168f8c429ddc69644ed544a5fb5044cd51113923078b83a2"
+        }
+      ],
+      "options": {
+        "partial": true,
+        "account": "一般会計",
+        "table_id": "general-expenditure-08"
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-08"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-09",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "3f9d025c6fab12c170a1a4b7e26b48afd15807fe230a03e8dd36cf2f99e027e5"
+        }
+      ],
+      "options": {
+        "partial": true,
+        "account": "一般会計",
+        "table_id": "general-expenditure-09"
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-09"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-10",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "2d59d30b53a93ffd53373c25eff0934bbaad1451435e70c5697e661720813c46"
+        }
+      ],
+      "options": {
+        "partial": true,
+        "account": "一般会計",
+        "table_id": "general-expenditure-10"
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-10"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-11",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "219ed5f246e139758f0b3fcba0abec4a92707526a52f58a409032f015db1478c"
+        }
+      ],
+      "options": {
+        "partial": true,
+        "account": "一般会計",
+        "table_id": "general-expenditure-11"
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-11"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-12",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "34e30c027e238ffee8376979072b9a227b1e2d178ede6bbd85461fe779e32c0f"
+        }
+      ],
+      "options": {
+        "partial": true,
+        "account": "一般会計",
+        "table_id": "general-expenditure-12"
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-12"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-13",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "8e0e0c8bc3e9e29da530a3d09d72ba17813fc761bb8c4f8ac67b7add09f91a13"
+        }
+      ],
+      "options": {
+        "partial": true,
+        "account": "一般会計",
+        "table_id": "general-expenditure-13"
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-13"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-expenditure-01",
+      "conversion_id": "general-settlement-01",
+      "input_fingerprint": "6ef03aa5af0430956e0385c8d893135c629830b09117a31ec861ee8b7cb70aab",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
+        "金額の単位は printed 2頁 から決めた。分冊のため款の和 440,837,279 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（13 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2024/settlement/expenditure/general-expenditure-01-nodes.parquet",
+          "sha256": "4d5e36c1cf21d6098f9e1c86136745b0bfe13dac4e2ec1ec652d228a8db84202",
+          "bytes": 6533
+        },
+        "row_count": 92
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2024/settlement/expenditure/general-expenditure-01-amounts.parquet",
+          "sha256": "d638711e9443e1950ae5626db9cb31f7480249c5b5d5412258a776a4cd2113f9",
+          "bytes": 4997
+        },
+        "row_count": 152
+      }
+    },
+    {
+      "table_id": "general-expenditure-02",
+      "conversion_id": "general-settlement-02",
+      "input_fingerprint": "847e9ba9921a22ae0ecbffa532d2ab2724a9edd9d2480277b31d0f274a6c44cf",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'position'}。",
+        "金額の単位は printed 37頁 から決めた。分冊のため款の和 9,288,269,082 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 24 件（充用 9・流用 14・繰越額 1）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（195 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2024/settlement/expenditure/general-expenditure-02-nodes.parquet",
+          "sha256": "da9d7cb1595061d881e581983d9dec1dd5d720f95e45bbc452dc4927fa8c5dfb",
+          "bytes": 55192
+        },
+        "row_count": 1737
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2024/settlement/expenditure/general-expenditure-02-amounts.parquet",
+          "sha256": "4427dfb28844993804ec67dde41adbadb37d40358ca253c96675ba8a56195ee7",
+          "bytes": 41851
+        },
+        "row_count": 2553
+      }
+    },
+    {
+      "table_id": "general-expenditure-03",
+      "conversion_id": "general-settlement-03",
+      "input_fingerprint": "65f1900ced55e8d9ce0ab6069d4281945c05f92726bcd6f52c820bd9cdd437e2",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'position'}。",
+        "金額の単位は printed 52頁 から決めた。分冊のため款の和 40,068,674,549 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 24 件（充用 7・流用 16・繰越額 1）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（167 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2024/settlement/expenditure/general-expenditure-03-nodes.parquet",
+          "sha256": "b74bc2e906ea61c584e06028f5f970161b842ab5f5c30f7c004ad92df9c0d0ca",
+          "bytes": 71311
+        },
+        "row_count": 2271
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2024/settlement/expenditure/general-expenditure-03-amounts.parquet",
+          "sha256": "c6fa23f9e28fa95c59c134040d6af7692d148dfc82c34ca7e018429dd0cbf134",
+          "bytes": 52401
+        },
+        "row_count": 2954
+      }
+    },
+    {
+      "table_id": "general-expenditure-04",
+      "conversion_id": "general-settlement-04",
+      "input_fingerprint": "deb680b42717c2f3b2bfe16c2c3a35d654793040339c03d5c039ead889a79919",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
+        "金額の単位は printed 20頁 から決めた。分冊のため款の和 6,398,686,068 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 10 件（充用 3・流用 7）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（82 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2024/settlement/expenditure/general-expenditure-04-nodes.parquet",
+          "sha256": "17465a86b6dd4352a54e7a5435a60d914fb0bee043862764dea7fa38ea1d05c9",
+          "bytes": 31088
+        },
+        "row_count": 901
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2024/settlement/expenditure/general-expenditure-04-amounts.parquet",
+          "sha256": "8671c18570646af7d882f9438376041d60c80346ebd13e633ef0611d38dfaba8",
+          "bytes": 23665
+        },
+        "row_count": 1252
+      }
+    },
+    {
+      "table_id": "general-expenditure-05",
+      "conversion_id": "general-settlement-05",
+      "input_fingerprint": "72436b50a37d1b08743eb269d6dc417bd9e903e07f4f7e2a5099cef93dd60bf4",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent'}。",
+        "金額の単位は printed 1頁 から決めた。分冊のため款の和 33,430,552 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（7 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2024/settlement/expenditure/general-expenditure-05-nodes.parquet",
+          "sha256": "9e00991123c90c46c33d42b4485938f1fa6e885112dd7cdad4507c07d986cfc1",
+          "bytes": 3805
+        },
+        "row_count": 25
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2024/settlement/expenditure/general-expenditure-05-amounts.parquet",
+          "sha256": "c267de5c595e2153edb6e6aa485d62bd683cc37c1ebd2d36fe3c4209c53e427e",
+          "bytes": 3197
+        },
+        "row_count": 74
+      }
+    },
+    {
+      "table_id": "general-expenditure-06",
+      "conversion_id": "general-settlement-06",
+      "input_fingerprint": "d8bdfafd0c90af818ce5c5739312c3b82a6182922e62d8166a5f259335996789",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
+        "金額の単位は printed 4頁 から決めた。分冊のため款の和 147,490,266 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（24 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2024/settlement/expenditure/general-expenditure-06-nodes.parquet",
+          "sha256": "7196a7fb3c73dbc07da6870be362744e76fc7ab44be0918ce20ef08c058f8ef1",
+          "bytes": 8941
+        },
+        "row_count": 163
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2024/settlement/expenditure/general-expenditure-06-amounts.parquet",
+          "sha256": "6caf03f4f33b07c9199fed648679dbf48a7f0a8549072c951f8702dd86bcb2e0",
+          "bytes": 7143
+        },
+        "row_count": 277
+      }
+    },
+    {
+      "table_id": "general-expenditure-07",
+      "conversion_id": "general-settlement-07",
+      "input_fingerprint": "d5ca0d706bdc7180ea19c0761ff436138dc60d201e986620934674484a4ef9ac",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
+        "金額の単位は printed 7頁 から決めた。分冊のため款の和 559,117,943 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 3 件（充用 2・流用 1）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（28 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2024/settlement/expenditure/general-expenditure-07-nodes.parquet",
+          "sha256": "077c0fca8d1035cd8a7cbbd6f2c17a1674e8ea256e1cfd52762be6faa84690d1",
+          "bytes": 13773
+        },
+        "row_count": 301
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2024/settlement/expenditure/general-expenditure-07-amounts.parquet",
+          "sha256": "76ee35be5faf7d32bb1fd01d5a39f0e0c3baa1aab233d1c58f14a023ced9e6cc",
+          "bytes": 10278
+        },
+        "row_count": 427
+      }
+    },
+    {
+      "table_id": "general-expenditure-08",
+      "conversion_id": "general-settlement-08",
+      "input_fingerprint": "62f814b91810c89e1f4f42f54c2090b95f3c6b09d6d4a5969c067d1ae7ade3ce",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
+        "金額の単位は printed 17頁 から決めた。分冊のため款の和 4,684,557,243 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 11 件（充用 5・流用 5・繰越額 1）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（136 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2024/settlement/expenditure/general-expenditure-08-nodes.parquet",
+          "sha256": "af0dff4f2457d184e720a9744dbfaf196b1409973eaa379e9a48a0a4754e25d0",
+          "bytes": 29199
+        },
+        "row_count": 818
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2024/settlement/expenditure/general-expenditure-08-amounts.parquet",
+          "sha256": "5646d5ab708e72d8ccc03d88e5b102aa88fae3fad96c2987e76d66a63fa55888",
+          "bytes": 23143
+        },
+        "row_count": 1422
+      }
+    },
+    {
+      "table_id": "general-expenditure-09",
+      "conversion_id": "general-settlement-09",
+      "input_fingerprint": "b676f7ea5a6e6ea9881dbe704e0446317cc393caf2ae611aed9856c196e1d52b",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
+        "金額の単位は printed 6頁 から決めた。分冊のため款の和 2,346,500,236 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 3 件（充用 2・繰越額 1）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（29 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2024/settlement/expenditure/general-expenditure-09-nodes.parquet",
+          "sha256": "83abdfc1580167c364cea894ee5a78cd21b1420f50d340acc2ff25155785dd08",
+          "bytes": 13020
+        },
+        "row_count": 277
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2024/settlement/expenditure/general-expenditure-09-amounts.parquet",
+          "sha256": "c607cd415337127dfbbc3a40b60fab6c3cc7e3ab44adf9ae7ed4c0953aed41bb",
+          "bytes": 9968
+        },
+        "row_count": 406
+      }
+    },
+    {
+      "table_id": "general-expenditure-10",
+      "conversion_id": "general-settlement-10",
+      "input_fingerprint": "16a4c8c227df564cec80ae4783f2771406e06771065cfe6f723f1560fef79983",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
+        "金額の単位は printed 51頁 から決めた。分冊のため款の和 9,009,509,384 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 27 件（充用 11・流用 15・繰越額 1）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（255 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2024/settlement/expenditure/general-expenditure-10-nodes.parquet",
+          "sha256": "15e1b731fc38a2702d18af5eb9e02c1776e5db1eb30a605187c2f6ea84be3664",
+          "bytes": 70846
+        },
+        "row_count": 2368
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2024/settlement/expenditure/general-expenditure-10-amounts.parquet",
+          "sha256": "dac73a01823e1bf2b8fe8658725994fe0daa438e533f35734b9267897f10f6f7",
+          "bytes": 55325
+        },
+        "row_count": 3371
+      }
+    },
+    {
+      "table_id": "general-expenditure-11",
+      "conversion_id": "general-settlement-11",
+      "input_fingerprint": "a7be61a793230b11413a525de98ccba73ab9296da2149a52b740462a40531a43",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent'}。",
+        "金額の単位は printed 1頁 から決めた。分冊のため款の和 3,484,347,610 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（2 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2024/settlement/expenditure/general-expenditure-11-nodes.parquet",
+          "sha256": "c6efac02547c784e3224540e1429fc6f3cce395ba8f505056bf7396c6a052c63",
+          "bytes": 4068
+        },
+        "row_count": 35
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2024/settlement/expenditure/general-expenditure-11-amounts.parquet",
+          "sha256": "11b75ec69345d416acdbc63623fb42368d293cb7bd94ee4e07a68caefdedd2e5",
+          "bytes": 3597
+        },
+        "row_count": 69
+      }
+    },
+    {
+      "table_id": "general-expenditure-12",
+      "conversion_id": "general-settlement-12",
+      "input_fingerprint": "31a4290416c546a3740648f9420704c020cb81863cf0234499a1c0c0d7555eba",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent'}。",
+        "金額の単位は printed 1頁 から決めた。分冊のため款の和 86,965,238 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（1 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2024/settlement/expenditure/general-expenditure-12-nodes.parquet",
+          "sha256": "f5af0b4cdb6e8721cbe419aefa8d12868fa2c473fb8b20cccb94f91c314bcb1f",
+          "bytes": 2648
+        },
+        "row_count": 8
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2024/settlement/expenditure/general-expenditure-12-amounts.parquet",
+          "sha256": "a52a3e03d160b5afae726c78cdb8e9f33e365d4f9fe45b7bcf84df5dbd7b3b69",
+          "bytes": 2476
+        },
+        "row_count": 32
+      }
+    },
+    {
+      "table_id": "general-expenditure-13",
+      "conversion_id": "general-settlement-13",
+      "input_fingerprint": "351b025a64ef6537bcfa6a3870a25299acd18825e93e99f323bdd6722e0cd15c",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は printed 2頁 から決めた。分冊のため款の和 0 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 41 件（充用 41）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（1 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2024/settlement/expenditure/general-expenditure-13-nodes.parquet",
+          "sha256": "4a1e88171677940d09e582c517435ec24383bc792c2226bf102450c9cad72443",
+          "bytes": 4345
+        },
+        "row_count": 45
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2024/settlement/expenditure/general-expenditure-13-amounts.parquet",
+          "sha256": "092b208e678823d252e87b48a8c572479a3cc1ffe47781b7d62d91caf15bce4e",
+          "bytes": 3795
+        },
+        "row_count": 69
+      }
+    }
+  ]
+}

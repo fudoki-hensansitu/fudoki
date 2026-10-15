@@ -84,7 +84,7 @@
     {
       "table_id": "national-health-insurance-business-expenditure",
       "conversion_id": "national-health-insurance-business-settlement",
-      "input_fingerprint": "42b2f23ab2f3f1e1f424aa025da4e00647669fc02fc51e0d1a950a696590af6c",
+      "input_fingerprint": "0761037ff33f669add0f8abeae4acba07b9efda85fa36dee3f9c537554a467ca",
       "account": "国民健康保険事業特別会計（事業勘定）",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'shape'}。",
@@ -114,7 +114,7 @@
     {
       "table_id": "national-health-insurance-clinic-expenditure",
       "conversion_id": "national-health-insurance-clinic-settlement",
-      "input_fingerprint": "766aab155fec1a700609c6bba9f755db22cabf064b300934b0f3008bbd2e9ac4",
+      "input_fingerprint": "aca31c19cd51d5ac24d0e1db1a505c97a5312d6b955539477d2c90771573a2d4",
       "account": "国民健康保険事業特別会計（直診勘定）",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'shape'}。",
@@ -144,7 +144,7 @@
     {
       "table_id": "long-term-care-business-expenditure",
       "conversion_id": "long-term-care-business-settlement",
-      "input_fingerprint": "d23eefe49511e26b352d9e68889f6e1d60d30c8a65463c5e3aa0b2917ada39cc",
+      "input_fingerprint": "a0367a0c5b5edb60a39269914bef7f3340f80f6b1816a0697f11175473778fa9",
       "account": "介護保険事業特別会計（事業勘定）",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -174,7 +174,7 @@
     {
       "table_id": "elderly-medical-expenditure",
       "conversion_id": "elderly-medical-settlement",
-      "input_fingerprint": "94d0d8c342828f501fc29fbfec19de022297a03b4db79085c19c4c8eae54ba39",
+      "input_fingerprint": "048cc106609b7f6817181939f1e9e0a55ca68f7aea9fb028753d360d7536df25",
       "account": "後期高齢者事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
