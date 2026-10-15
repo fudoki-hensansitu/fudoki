@@ -20,6 +20,12 @@ def convert(inputs: list[dict], destination: Path, options: dict) -> dict[str, P
                              delimiter=checks['delimiter'], quotechar=checks['quotechar'],
                              source_line_columns=(options.get('line_start_column', 'source_line_start'),
                                                   options.get('line_end_column', 'source_line_end')))
+        if 'amount_column' in options:
+            import duckdb
+            columns = [row[0] for row in duckdb.connect().execute(
+                'describe select * from read_parquet(?)', [str(output)]).fetchall()]
+            if options['amount_column'] not in columns:
+                raise ValueError(f"Declared amount column is not in the CSV: {options['amount_column']}")
     except Exception as error:
         report.write_text(json.dumps(checks | {'status': 'failed', 'error': str(error)},
                                      ensure_ascii=False, indent=2) + '\n')

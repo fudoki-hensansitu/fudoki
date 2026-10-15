@@ -2,10 +2,10 @@
 -- 会計/款/項/目/事項/節/細々節 path with a numeric prefix on each cell.
 -- Group by path prefixes to rebuild the tree in the PDF node shape,
 -- using the same subject node_id derivation so both feed one marts table.
--- Leaf amounts are千円 (per the 132047 README scale note); parents hold
--- the subtree sum, which is derived rather than printed.
+-- Leaf amounts carry the unit the CSV conversion declares (amount_unit); parents
+-- hold the subtree sum, which is derived rather than printed.
 with base as (
-    select s.*, t.jurisdiction_code, t.fiscal_year, t.document_kind, t.origin_id
+    select s.*, t.jurisdiction_code, t.fiscal_year, t.document_kind, t.origin_id, t.amount_unit
     from {{ ref('stg_fiscal__csv_expenditure') }} s
     join {{ source('fiscal_metadata', 'csv_tables') }} t using (source_table_key)
 ), validated as (
@@ -31,7 +31,8 @@ with base as (
         {{ fiscal_name("regexp_extract(setsu_raw, '^([0-9]+)(.*)$', 2)") }} as setsu_name,
         regexp_extract(saisai_raw, '^([0-9]+)(.*)$', 1) as saisai_code,
         {{ fiscal_name("regexp_extract(saisai_raw, '^([0-9]+)(.*)$', 2)") }} as saisai_name,
-        (amount * 1000)::bigint as amount_yen, source_line_start
+        (amount * case amount_unit when '千円' then 1000 when '円' then 1
+            else error('Unknown CSV amount unit: ' || coalesce(amount_unit, 'NULL')) end)::bigint as amount_yen, source_line_start
     from validated
 ), leaves as (
     select distinct jurisdiction_code, fiscal_year, document_kind, origin_id, account_name,

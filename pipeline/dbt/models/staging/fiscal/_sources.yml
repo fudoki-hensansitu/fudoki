@@ -3038,6 +3038,17 @@ sources:
       document_kind: initial
       direction: expenditure
       table_id: csv-f9dcbc7e87143769
+      amount_column: 08予算額
+      amount_unit: 千円
+  - name: j132047_2024_settlement_csv_9d65dcece1943882
+    meta:
+      jurisdiction: '132047'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: csv-9d65dcece1943882
+      amount_column: 08決算額
+      amount_unit: 円
 - name: fiscal_metadata
   schema: ingestion
   tables:
