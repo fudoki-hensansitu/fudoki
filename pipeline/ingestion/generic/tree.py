@@ -235,13 +235,14 @@ def is_account_code(name: str) -> bool:
             and sum(c.isdigit() for c in value) >= 4)
 
 
-def note_breakdown(items: list['Item'], subject_starts: tuple[float, ...] = ()) -> None:
+def note_breakdown(items: list['Item'], subject_starts: tuple[float, ...] = (), min_parts: int = 2) -> None:
     """Lines printed under a note that add up to its amount are its parts, not items of the breakdown.
 
     `繰越事業費不用額 308,157,706 円` over `役務費 3,897,706 円` and `負担金、補助及び交付金 304,260,000 円`:
     the two lines are the note's own breakdown. They take the note's kind (a wrapped line of a note's cell
     inherits it, ADR 0024). Two or more lines whose sum is exactly the note's amount: a single line of the
-    same amount could as well be an item that costs what the note says.
+    same amount could as well be an item that costs what the note says. A document that prints one
+    part per note says so in its layout settings (`single_part_notes`: `min_parts` is 1).
     """
     for index, note in enumerate(items):
         if note.role != 'annotation' or note.code is not None or len(note.amounts) != 1:
@@ -269,7 +270,7 @@ def note_breakdown(items: list['Item'], subject_starts: tuple[float, ...] = ()) 
             running += value
             if running == total:
                 break
-        if running == total and len(taken) >= 2:
+        if running == total and len(taken) >= min_parts:
             for follower in taken:
                 follower.role = 'annotation'
                 follower.hint = kind
@@ -664,6 +665,13 @@ def items(group: Group, header: str, margins: set[int] | None = None,
             if result:
                 for run in money:
                     result[-1].amounts.append((header, run))
+            elif settings.get('wrap') == 'amount_on_last_line':
+                # The first line of a page carries the amount of a label that ended the page before:
+                # `apply_layout` joins the two. It stays a nameless item if there is no such label.
+                item = Item(group, money[0][0].page, [[g for run in money for g in run]], None, '', money[0][0].x0)
+                for run in money:
+                    item.amounts.append((header, run))
+                result.append(item)
             continue
         item = Item(group, label[0].page, [label], code, name, 0)
         for run in money:
@@ -1539,7 +1547,26 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 if layout and group.axis in layout:
                     found[id(group)] = apply_layout(found[id(group)], layout[group.axis], column_amount_items,
                                                    subject_starts)
-                note_breakdown(found[id(group)], subject_starts)
+                note_breakdown(found[id(group)], subject_starts,
+                               1 if (layout or {}).get(group.axis, {}).get('single_part_notes') else 2)
+    # The amount of a label that ends a page is the first line of the next page, under the subject's row
+    # repeated at its top (`wrap: amount_on_last_line`, `items` keeps that line as a nameless item).
+    tails: dict[str, Item] = {}
+    for _, ordered, found in all_items:
+        for group in ordered:
+            if group.subject:
+                continue
+            mine = found[id(group)]
+            previous = tails.get(group.axis)
+            if ((layout or {}).get(group.axis, {}).get('wrap') == 'amount_on_last_line' and previous is not None
+                    and mine and not mine[0].name and mine[0].amounts and mine[0].code is None
+                    and not previous.amounts and previous.code is None and previous.name
+                    and previous.role in ('node', 'note', 'annotation') and mine[0].page == previous.page + 1):
+                first = mine.pop(0)
+                previous.lines += first.lines
+                previous.amounts += first.amounts
+            if mine:
+                tails[group.axis] = mine[-1]
     for axis, hints in (layout or {}).items():
         if not (chars := hints.get('indent_chars')):
             continue
@@ -1668,7 +1695,11 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     for header, run in item.amounts:
                         annotations.append((target, f'{header}／注記／{label}', run, logical.unit))
                     remarks.append({'kind': 'annotation', 'target': target, 'heading': None,
-                                    'hint': item.hint or ('充用' if normalize(target.name) == '予備費' else None),
+                                    # A name that is only an account code (`・040102【151502】 400`) is the
+                                    # counterpart of a transfer: its words (`1200へ予算流用増`) may sit on the
+                                    # next page, so the amount is a 流用 note whichever way they read.
+                                    'hint': item.hint or ('充用' if normalize(target.name) == '予備費'
+                                                          else '流用' if is_account_code(item.name) else None),
                                     'label': [g for g in item.glyphs if not any(g in r for _, r in item.amounts)],
                                     'runs': [run for _, run in item.amounts], 'unit': logical.unit})
                 continue
