@@ -3,18 +3,99 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
-    "account": {"type": "string", "minLength": 1},
-    "detail_pages": {"type": "array", "items": {"type": "integer", "minimum": 1}, "minItems": 2, "maxItems": 2},
-    "table_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_-]{0,95}$"},
-    "reserve_kan": {"type": "string", "pattern": "^[0-9]+$"},
-    "output_role": {"type": "string", "enum": ["detail", "reserve", "lending"]},
-    "personnel_breakdown": {"type": "boolean"},
-    "nonfinancial_breakdown": {"type": "boolean"},
-    "unexplained_section_detail": {"type": "boolean"},
-    "remark_column": {"type": "boolean"},
-    "remark_min_x": {"type": "number"},
-    "reserve_table_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_-]{0,95}$"},
-    "lending_table_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_-]{0,95}$"}
+    "account": {
+      "type": "string",
+      "minLength": 1
+    },
+    "detail_pages": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "table_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,95}$"
+    },
+    "reserve_kan": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
+    "output_role": {
+      "type": "string",
+      "enum": [
+        "detail",
+        "reserve",
+        "lending"
+      ]
+    },
+    "personnel_breakdown": {
+      "type": "boolean"
+    },
+    "nonfinancial_breakdown": {
+      "type": "boolean"
+    },
+    "unexplained_section_detail": {
+      "type": "boolean"
+    },
+    "remark_column": {
+      "type": "boolean"
+    },
+    "remark_min_x": {
+      "type": "number"
+    },
+    "reserve_table_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,95}$"
+    },
+    "lending_table_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,95}$"
+    },
+    "auxiliary_tables": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 10,
+        "maxItems": 10
+      }
+    },
+    "prose_lines": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "number"
+        },
+        "minItems": 3,
+        "maxItems": 3
+      }
+    },
+    "office_headings": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "number"
+        },
+        "minItems": 3,
+        "maxItems": 3
+      }
+    },
+    "remark_merged_cells": {
+      "type": "boolean"
+    },
+    "row_tolerance": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    }
   },
-  "required": ["account", "detail_pages", "table_id"]
+  "required": [
+    "account",
+    "detail_pages",
+    "table_id"
+  ]
 }

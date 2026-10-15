@@ -544,7 +544,8 @@ def check_digit_coverage(words, tables, *, tolerance=0.5, exclusions=(), amount_
         if word['covered'] is None and (word['page'], tuple(word['bbox'])) in non_amount_boxes:
             word['covered'] = 'non_amount'
     for word in normalized:
-        if word['covered'] is not None or not re.fullmatch(r'[0-9][0-9,]*', word['key']):
+        # A middle-dot list of days or counts (23・24日) is never an amount.
+        if word['covered'] is not None or not re.fullmatch(r'[0-9][0-9,]*(?:[・･][0-9][0-9,]*)*', word['key']):
             continue
         adjacent = [part for offset in range(-2, 3)
                     for part in lines.get((word['page'], round(word['bbox'][1]) + offset), ())]
