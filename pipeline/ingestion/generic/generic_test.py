@@ -975,6 +975,49 @@ class BreakdownRulesTest(unittest.TestCase):
         self.assertEqual({n['name_text'] for n in built.nodes if n['parent_node_key'] == second['node_key']},
                          {'役務費', '負担金'})
 
+class LayoutNoteSettingsTest(unittest.TestCase):
+    """Settings that change whether a line is an item or a note change amounts: they stay inside the axis
+    that declares them."""
+
+    def items(self, lines):
+        from ingestion.generic.tree import items
+        words = [glyph(text, x, y, width) for text, x, y, width in lines]
+        return items(Group([Band(0, 1200, 1, ('備考',), [], 100, 700, words)], '備考', False), '備考', None, None, None)
+
+    def test_a_configured_note_kind_makes_the_line_a_note_and_guards_its_amount_band(self):
+        from ingestion.generic.tree import apply_layout, note_prefixes
+        settings = {'note_kinds': {'市民プール高圧開閉装置等修繕': '債務負担行為'}}
+        found = self.items([('市民プール高圧開閉装置等修繕（債務負担行為分）', 300, 100, 200), ('1', 560, 100, 5)])
+        result = apply_layout(found, settings, set())
+        self.assertEqual([(i.role, i.hint) for i in result], [('annotation', '債務負担行為')])
+        self.assertEqual(note_prefixes(settings), ('市民プール高圧開閉装置等修繕',))
+        self.assertEqual(note_prefixes({'notes': ['○同目'], 'note_kinds': {'修繕': 'x'}}), ('○同目', '修繕'))
+
+    def test_a_configured_note_kind_does_not_touch_other_lines(self):
+        from ingestion.generic.tree import apply_layout
+        found = self.items([('修繕料', 300, 100, 30), ('1,000', 560, 100, 40)])
+        result = apply_layout(found, {'note_kinds': {'市民プール': '債務負担行為'}}, set())
+        self.assertEqual([(i.role, i.hint) for i in result], [('node', None)])
+
+    def test_a_plain_name_is_an_item_only_in_the_axis_that_declares_it(self):
+        from ingestion.generic.tree import is_plain_name
+        item = self.items([('補充用備品', 300, 100, 50), ('998,580', 560, 100, 40)])[0]
+        self.assertTrue(is_plain_name({'備考': {'plain_names': ['補充用備品']}}, item))
+        self.assertFalse(is_plain_name({'節': {'plain_names': ['補充用備品']}}, item))
+        self.assertFalse(is_plain_name({'備考': {'plain_names': ['備品購入']}}, item))
+        self.assertFalse(is_plain_name(None, item))
+
+    def test_the_lines_that_start_at_the_second_name_column_are_siblings_of_the_line_that_opened_it(self):
+        from ingestion.generic.tree import apply_layout
+        lines = [('給', 300, 100, 9), ('料', 330, 100, 9), ('市長', 360, 100, 18), ('11,580,750', 560, 100, 50),
+                 ('副市長', 360, 112, 27), ('9,377,714', 560, 112, 50)]
+        found = self.items(lines)
+        self.assertEqual(len(found), 2)
+        result = apply_layout(found, {'name_columns': True}, set())
+        self.assertEqual(result[0].indent, result[1].indent)
+        unchanged = apply_layout(self.items(lines), {}, set())
+        self.assertNotEqual(unchanged[0].indent, unchanged[1].indent)
+
 
 class PatternNamesTest(unittest.TestCase):
     def test_equal_subject_balances_prefer_complete_names_over_more_breakdown_comparisons(self):

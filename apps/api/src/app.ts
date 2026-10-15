@@ -193,7 +193,8 @@ function mcpServer(ctx: Ctx, apiOrigin: string, operations: Operation[]): McpSer
         outputSchema: op.output,
         annotations,
       },
-      (args: Record<string, unknown>) => toolResult(op, args, false)
+      // View が追加ページの取得や drill で直接呼ぶので、団体名の _meta はデータ tool にも付ける（描画 tool と同じ結果にする）
+      (args: Record<string, unknown>) => toolResult(op, args, !!op.view)
     )
   }
   // View を描く tool は1つだけ。データ tool と同じ問い合わせを受けて結果を返し、View のテンプレートを指す
