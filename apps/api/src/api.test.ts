@@ -244,6 +244,7 @@ describe('MCP', () => {
       'describe_expenditure_columns',
       'get_expenditure_node',
       'list_jurisdictions',
+      'render_expenditure_view',
       'search_evaluations',
       'search_expenditure_nodes',
     ])
@@ -471,6 +472,7 @@ describe('MCP 2026-07-28', () => {
       'describe_expenditure_columns',
       'get_expenditure_node',
       'list_jurisdictions',
+      'render_expenditure_view',
       'search_evaluations',
       'search_expenditure_nodes',
     ])

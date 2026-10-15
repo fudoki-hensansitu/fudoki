@@ -30,17 +30,28 @@ beforeEach(() => {
 })
 
 describe('MCP Apps の View', () => {
-  test('結果を表にする tool だけが _meta.ui.resourceUri（と旧キー）で View を指す', async () => {
+  test('View を指すのは描画 tool だけで、データ tool は _meta.ui を持たない', async () => {
     const tools = (await rpc('tools/list')).result.tools as { name: string; _meta?: Record<string, unknown> }[]
-    const withView = tools.filter((t) => t._meta).map((t) => t.name).sort()
-    expect(withView).toEqual(['get_expenditure_node', 'list_jurisdictions', 'search_expenditure_nodes'])
-    for (const t of tools.filter((t) => t._meta)) expect(t._meta).toEqual({ ui: { resourceUri: VIEW_URI }, 'ui/resourceUri': VIEW_URI })
+    const withView = tools.filter((t) => t._meta).map((t) => t.name)
+    expect(withView).toEqual(['render_expenditure_view'])
+    expect(tools.find((t) => t.name === 'render_expenditure_view')!._meta).toEqual({ ui: { resourceUri: VIEW_URI }, 'ui/resourceUri': VIEW_URI })
+    for (const name of ['get_expenditure_node', 'list_jurisdictions', 'search_expenditure_nodes']) expect(tools.some((t) => t.name === name)).toBe(true)
   })
 
-  test('View を持つ tool は、結果の団体コードに対応する団体名を _meta にだけ載せる', async () => {
+  test('描画 tool はデータ tool と同じ結果を返し、入力が不正なら isError', async () => {
+    insertJurisdiction(sqlite, { jurisdiction_code: '132039', name: '武蔵野市' })
+    const direct = (await rpc('tools/call', { name: 'list_jurisdictions', arguments: {} })).result
+    const rendered = (await rpc('tools/call', { name: 'render_expenditure_view', arguments: { tool: 'list_jurisdictions', arguments: {} } })).result
+    expect(rendered.structuredContent).toEqual(direct.structuredContent)
+    expect(direct._meta.jurisdictionNames).toBeUndefined()
+    const bad = (await rpc('tools/call', { name: 'render_expenditure_view', arguments: { tool: 'get_expenditure_node', arguments: {} } })).result
+    expect(bad.isError).toBe(true)
+  })
+
+  test('描画 tool は、結果の団体コードに対応する団体名を _meta にだけ載せる', async () => {
     insertJurisdiction(sqlite, { jurisdiction_code: '132039', name: '武蔵野市' })
     insertNode(sqlite, { document_kind: 'settlement', node_id: 'n1', name: '総務費', node_kind: '款', amount_yen: 100 })
-    const res = (await rpc('tools/call', { name: 'search_expenditure_nodes', arguments: { document_kind: 'settlement', fiscal_year: { min: 2024, max: 2024 } } })).result
+    const res = (await rpc('tools/call', { name: 'render_expenditure_view', arguments: { tool: 'search_expenditure_nodes', arguments: { document_kind: 'settlement', fiscal_year: { min: 2024, max: 2024 } } } })).result
     expect(res._meta.jurisdictionNames).toEqual({ '132039': '武蔵野市' })
     expect(JSON.stringify(res.structuredContent)).not.toContain('武蔵野市')
   })
