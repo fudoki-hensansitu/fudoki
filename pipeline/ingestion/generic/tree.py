@@ -755,6 +755,18 @@ def _measure(item: Item, label: list[Glyph], code: str | None) -> None:
         item.level = item.level if item.level is not None else len(item.group.bands) - 1
 
 
+def note_prefixes(settings: dict) -> tuple[str, ...]:
+    """The words a configured note line starts with: `notes` and the words of `note_kinds`."""
+    return tuple(normalize(prefix) for prefix in [*settings.get('notes', []), *settings.get('note_kinds', {})])
+
+
+def is_plain_name(layout: dict | None, item: Item) -> bool:
+    """A name the document's settings declare to be an item although it contains a note word
+    (`補充用備品` holds `充用`)."""
+    names = (layout or {}).get(item.group.axis, {}).get('plain_names')
+    return bool(names) and any(normalize(name) in normalize(item.name) for name in names)
+
+
 def number_edges(logicals: list[Logical], pattern: str = 'bands') -> set[int]:
     """Where printed numbers end (original x, rounded), over the subject columns of the whole document."""
     edges: set[int] = set()
@@ -1320,7 +1332,8 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
     marks = settings.get('marks', {})
     ordered_marks = sorted(marks, key=lambda mark: (-len(normalize(mark)), mark))
     shapes = {'1': 'number', '(1)': 'paren', 'ア': 'kana', '①': 'circled'}
-    prefixes = tuple(normalize(prefix) for prefix in settings.get('notes', []))
+    note_kinds = {normalize(prefix): kind for prefix, kind in settings.get('note_kinds', {}).items()}
+    prefixes = note_prefixes(settings)
     for item in items:
         if settings.get('wrap'):
             item.indent = layout_name_start(item, settings.get('hang_chars'))
@@ -1329,6 +1342,7 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
         mark = next((m for m in ordered_marks
                      if (shape_of(item) == shapes[m] if m in shapes else raw.startswith(normalize(m)))), None)
         if note:
+            item.hint = next((kind for prefix, kind in note_kinds.items() if raw.startswith(prefix)), item.hint)
             if id(item) in column_amount_items:
                 raise ValueError(f'Configured note carries separate-column money: p{item.page} {item.name!r}')
             item.role = 'annotation'
@@ -1357,9 +1371,28 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
             continue
         result.append(item)
     fitted = settings.get('fitted_names')
+    columned: list[tuple[Item, Item]] = []
+    if settings.get('name_columns'):
+        # A name set in columns (`給　料` | `市長　１人`): the next lines start at the second column and
+        # carry no first part (`副市長　１人`). They are siblings of the line that opened the columns.
+        base = None
+        for item in result:
+            if item.code is not None or item.role != 'node':
+                base = None
+                if item.code is None:
+                    continue
+                continue
+            if base is not None and any(abs(item.lines[0][0].x0 - word.x0) <= 1.5 for word in base.lines[0][1:]):
+                columned.append((item, base))
+            elif len(item.lines[0]) > 2:
+                base = item
+            else:
+                base = None
     for item in result:
         if fitted and item.role == 'node' and len(item.name) > fitted['chars']:
             item.indent += fitted['overflow_left_chars'] * (item.lines[0][0].y1 - item.lines[0][0].y0)
+    for item, base in columned:
+        item.indent = base.indent
     return result
 
 
@@ -1415,13 +1448,15 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             for item in group_items:
                 # 01.01.01.01から流用 starts with digits. A parenthesised remark joined to an item's
                 # name (`需用費（同事業、委託料へ流用 △1,815,000）`) does not make the item a note.
-                if TRANSFER.search(PAREN_TAIL.sub('', item.name)) and not group.subject:
+                if (TRANSFER.search(PAREN_TAIL.sub('', item.name)) and not group.subject
+                        and not is_plain_name(layout, item)):
                     item.role = 'annotation'  # a transfer note annotates the subject row
                 elif item.code is None and TOTAL.search(item.name):
                     item.role = 'total'
                 elif item.code is None and not item.amounts and not group.subject:
                     item.role = 'note'
                 elif (item.code is None and item.amounts and not group.subject and not item.kinds
+                      and not is_plain_name(layout, item)
                       and (kind_of(PAREN_TAIL.sub('', item.name)) is not None or is_account_code(item.name))):
                     item.role = 'annotation'  # An amount note or a transfer's account code, no item of the breakdown.
             found[id(group)] = group_items
@@ -1452,8 +1487,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     target.role = 'node'
                 if layout:
                     note_target = owner(money, band, ordered, found, roles=('node', 'repeat', 'total', 'note', 'annotation'))
-                    prefixes = tuple(normalize(p) for p in layout.get(note_target.group.axis, {}).get('notes', [])) \
-                        if note_target is not None else ()
+                    prefixes = note_prefixes(layout.get(note_target.group.axis, {})) if note_target is not None else ()
                     if note_target is not None and normalize(text(note_target.lines[0])).startswith(prefixes):
                         column_amount_items.add(id(note_target))
         all_items.append((logical, ordered, found))
@@ -1650,7 +1684,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             if not item.group.subject and item.role in ('node', 'note') and row is not None \
                     and (row[0].depth < subject_depth or item.code is None) \
                     and row[1] - .5 <= item.anchor <= row[2] + .5 \
-                    and (not item.amounts or kind_of(item.name, words=True) is not None):
+                    and (not item.amounts or (kind_of(item.name, words=True) is not None
+                                              and not is_plain_name(layout, item))):
                 # A line in a subject's row annotates it when it prints no amount (a list of 議決 numbers) or
                 # reads as a note (流用・充用・不用額…). A line with an amount that does not is an item, even
                 # when the row is as tall as the subject's whole breakdown and the subject's name is centred

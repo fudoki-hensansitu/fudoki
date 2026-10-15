@@ -210,7 +210,7 @@ def coverage_sidecar(wide_path):
     return path.with_name(path.stem + COVERAGE_SIDECAR_SUFFIX)
 
 
-def write_coverage_words(wide_path, words, *, amount_columns=(), excluded_regions=()):
+def write_coverage_words(wide_path, words, *, amount_columns=(), excluded_regions=(), plain_names=()):
     """Write the processed word scope beside a wide table for the pre-save check.
 
     words are (physical page, display-page box, printed text) tuples in the
@@ -248,8 +248,10 @@ def write_coverage_words(wide_path, words, *, amount_columns=(), excluded_region
                            'x_range': list(entry['x_range']) if entry.get('x_range') else None})
         regions.append(record)
     sidecar = coverage_sidecar(wide_path)
-    sidecar.write_text(json.dumps({'words': normalized, 'amount_columns': columns,
-                                   'excluded_regions': regions}, ensure_ascii=False) + '\n')
+    content = {'words': normalized, 'amount_columns': columns, 'excluded_regions': regions}
+    if plain_names:  # names the document's settings declare to be items although they hold a note word
+        content['plain_names'] = sorted(set(plain_names))
+    sidecar.write_text(json.dumps(content, ensure_ascii=False) + '\n')
     return {'sidecar': str(sidecar), 'words': len(normalized),
             'amount_columns': len(columns), 'excluded_regions': len(regions)}
 

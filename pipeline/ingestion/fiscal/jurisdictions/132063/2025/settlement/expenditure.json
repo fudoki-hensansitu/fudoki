@@ -30,7 +30,7 @@
     {
       "table_id": "kouki-setsu",
       "conversion_id": "kouki-settlement",
-      "input_fingerprint": "1c2da77e39926eaf6cf0b2fd42c0ecff548c02e34ea65e2813572af8eea18962",
+      "input_fingerprint": "c3a091681f61cf61aa045c1887a350fcc2d3f11a0a0fbe9c8f615d4863304d97",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "法定節が行。節を持たない25款5項5目予備費は目行。款・項・目の金額・執行額は所属contextとして各行へ反復。右頁備考の経費内訳ブロック（見出し・項目・合計）は事業別の分解で節対応未確認のため行化せず、属する目の目_備考へ印字行の改行のまま保持。末尾の施策番号は目_施策番号へカンマ結合で保持し、目_備考の行内にも残る。歳出合計統制行は行化せずlocal観測。執行率は原典の百分率表記を保持。継続費繰越・予備費流用欄は対象範囲で印字なしのため全行NULL。物理頁は左頁、bboxは左頁の行bounds。",
