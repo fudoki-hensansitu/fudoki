@@ -621,7 +621,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
         marked = bool(label) and re.match(r'[〇○●◎□■◇◆]', label[0].text) is not None
         # Numbers are right-aligned in their column: a wrapped line starts at the column's left edge, which is
         # half a character left of a one-digit number (a half-width digit is half the line height).
-        left_slack = max(3, (label[0].y1 - label[0].y0) / 2 + .5) if label else 3
+        left_slack = max(3, (label[0].y1 - label[0].y0) / 2 + .5) if label and remainder else 3
         wrapped = (previous is not None and code is None and label and not previous.amounts and not marked
                    and label[0].x0 >= previous.lines[0][0].x0 - left_slack
                    and (not money or bracketed
