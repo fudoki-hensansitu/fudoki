@@ -3241,6 +3241,216 @@
         "archived_at": "2026-10-15T12:32:07.506Z"
       },
       "reason": "令和5年度決算の主要施策の成果（155頁、作成2024-08-28、令和6年9月提出の文言を2頁目で確認）。「実績を踏まえた評価・課題、令和6年度の取組状況及び令和7年度予算への対応」を事業ごとに、事業概要・事業費（予算現額・決算額・執行率）、実施内容・実績、評価・課題を載せる。文字として読める。分冊（9本）と同じ内容で1本にまとまる全体版を選んだ。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131016",
+        "fiscal_year": 2022,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和4年度主要施策の成果（全体版）",
+          "landing_url": "https://www.city.chiyoda.lg.jp/koho/kuse/zaise/shisaku/r4-seika.html",
+          "inspected_at": "2026-10-15T23:30:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.chiyoda.lg.jp/documents/30592/r4seika-zentai.pdf",
+              "sha256": "6bc114e920fa04e3d45dba247d5d2975f7741d54519cfc0e5a8a9f2b503b4991",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131016/2022/evaluation-settlement.pdf",
+            "sha256": "6bc114e920fa04e3d45dba247d5d2975f7741d54519cfc0e5a8a9f2b503b4991",
+            "final_url": "https://www.city.chiyoda.lg.jp/documents/30592/r4seika-zentai.pdf"
+          }
+        ],
+        "archived_at": "2026-10-15T23:46:17.813Z"
+      },
+      "reason": "令和4年度決算の主要施策の成果（全体版、171頁、令和5年9月提出の文言を1頁目で確認）。1頁目が「主要施策の成果 令和4年度」、冒頭が「Ⅰ 令和4年度決算の状況」で、部別に施策の成果と事務事業評価を載せ、事業ごとに事業概要・事業費（決算額）・実施内容・実績・評価・課題を記載する。文字として読める。分冊（9本）と同じ内容で1本にまとまる全体版を選んだ。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131016",
+        "fiscal_year": 2021,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和3年度主要施策の成果（全体版）",
+          "landing_url": "https://www.city.chiyoda.lg.jp/koho/kuse/zaise/shisaku/r3-seika.html",
+          "inspected_at": "2026-10-15T23:30:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.chiyoda.lg.jp/documents/28464/r3seika-zentai.pdf",
+              "sha256": "8a04f280a7d19cd6e66a7d0e1af1a8e4d1160d458bb848dd54d61df9ea4215fe",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131016/2021/evaluation-settlement.pdf",
+            "sha256": "8a04f280a7d19cd6e66a7d0e1af1a8e4d1160d458bb848dd54d61df9ea4215fe",
+            "final_url": "https://www.city.chiyoda.lg.jp/documents/28464/r3seika-zentai.pdf"
+          }
+        ],
+        "archived_at": "2026-10-15T23:46:20.764Z"
+      },
+      "reason": "令和3年度決算の主要施策の成果（全体版、147頁、令和4年9月提出の文言を1頁目で確認）。1頁目が「主要施策の成果 令和3年度」、冒頭が「Ⅰ 令和3年度決算の状況」で、部別に施策の成果と事務事業評価を載せ、事業ごとに事業概要・事業費（決算額）・実施内容・実績・評価・課題を記載する。文字として読める。分冊（9本）と同じ内容で1本にまとまる全体版を選んだ。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131016",
+        "fiscal_year": 2020,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和2年度主要施策の成果（分冊1〜9）",
+          "landing_url": "https://www.city.chiyoda.lg.jp/koho/kuse/zaise/shisaku/r2-seika.html",
+          "inspected_at": "2026-10-15T23:30:00+09:00",
+          "files": [
+            {
+              "download_url": "https://web.archive.org/web/20251008040747id_/https://www.city.chiyoda.lg.jp/documents/27485/r2seika-1.pdf",
+              "sha256": "89af8a6a8a5efbd1e9f5fc0fbbc02f87f0d0b95ae485c1527e3254c180500ea4",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20251008040855id_/https://www.city.chiyoda.lg.jp/documents/27485/r2seika-2.pdf",
+              "sha256": "f665d0c0e80602c98e4c8da0422a2fff716809b517aa7d7bfa5a43b21513a9a4",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20251008040929id_/https://www.city.chiyoda.lg.jp/documents/27485/r2seika-3.pdf",
+              "sha256": "a0441ba80d68c65faa58aee5cc58e55c89d2f03c57e99ca8f685dea36a2d5186",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20251008041035id_/https://www.city.chiyoda.lg.jp/documents/27485/r2seika-4.pdf",
+              "sha256": "6c10c1acc552d587be807007445aa720851d4cfc1aab622710c70b5a3ec182cd",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20251008041109id_/https://www.city.chiyoda.lg.jp/documents/27485/r2seika-5.pdf",
+              "sha256": "d0851f80c78ee0ee91ab8357de057e30b5bc49e25857740626c6bd9ff8caf97d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20251008041143id_/https://www.city.chiyoda.lg.jp/documents/27485/r2seika-6.pdf",
+              "sha256": "539cfbd59c41715abfe67edb5cf25fe22a9967f09b6cc5504b1e46a54f5d101b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20251008041250id_/https://www.city.chiyoda.lg.jp/documents/27485/r2seika-7.pdf",
+              "sha256": "61a1e4cd880819b88cc08ac5bff749b6838a46ddce3fd88d5414ed1ce1262e25",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20251008041323id_/https://www.city.chiyoda.lg.jp/documents/27485/r2seika-8.pdf",
+              "sha256": "95ad9796e4c13d615ca0b0613939dabe3919fe3ae7d4a078e70337774642834b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20251008041429id_/https://www.city.chiyoda.lg.jp/documents/27485/r2seika-9.pdf",
+              "sha256": "c98ce9ff4e924255a9ca930ccbb6b7aabdb3a7c85eb30cc581a87b266edec252",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131016/2020/evaluation-settlement-4.pdf",
+            "sha256": "89af8a6a8a5efbd1e9f5fc0fbbc02f87f0d0b95ae485c1527e3254c180500ea4",
+            "final_url": "https://web.archive.org/web/20251008040747id_/https://www.city.chiyoda.lg.jp/documents/27485/r2seika-1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131016/2020/evaluation-settlement-9.pdf",
+            "sha256": "f665d0c0e80602c98e4c8da0422a2fff716809b517aa7d7bfa5a43b21513a9a4",
+            "final_url": "https://web.archive.org/web/20251008040855id_/https://www.city.chiyoda.lg.jp/documents/27485/r2seika-2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131016/2020/evaluation-settlement-6.pdf",
+            "sha256": "a0441ba80d68c65faa58aee5cc58e55c89d2f03c57e99ca8f685dea36a2d5186",
+            "final_url": "https://web.archive.org/web/20251008040929id_/https://www.city.chiyoda.lg.jp/documents/27485/r2seika-3.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131016/2020/evaluation-settlement-3.pdf",
+            "sha256": "6c10c1acc552d587be807007445aa720851d4cfc1aab622710c70b5a3ec182cd",
+            "final_url": "https://web.archive.org/web/20251008041035id_/https://www.city.chiyoda.lg.jp/documents/27485/r2seika-4.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131016/2020/evaluation-settlement-8.pdf",
+            "sha256": "d0851f80c78ee0ee91ab8357de057e30b5bc49e25857740626c6bd9ff8caf97d",
+            "final_url": "https://web.archive.org/web/20251008041109id_/https://www.city.chiyoda.lg.jp/documents/27485/r2seika-5.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131016/2020/evaluation-settlement-1.pdf",
+            "sha256": "539cfbd59c41715abfe67edb5cf25fe22a9967f09b6cc5504b1e46a54f5d101b",
+            "final_url": "https://web.archive.org/web/20251008041143id_/https://www.city.chiyoda.lg.jp/documents/27485/r2seika-6.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131016/2020/evaluation-settlement-2.pdf",
+            "sha256": "61a1e4cd880819b88cc08ac5bff749b6838a46ddce3fd88d5414ed1ce1262e25",
+            "final_url": "https://web.archive.org/web/20251008041250id_/https://www.city.chiyoda.lg.jp/documents/27485/r2seika-7.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131016/2020/evaluation-settlement-5.pdf",
+            "sha256": "95ad9796e4c13d615ca0b0613939dabe3919fe3ae7d4a078e70337774642834b",
+            "final_url": "https://web.archive.org/web/20251008041323id_/https://www.city.chiyoda.lg.jp/documents/27485/r2seika-8.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131016/2020/evaluation-settlement-7.pdf",
+            "sha256": "c98ce9ff4e924255a9ca930ccbb6b7aabdb3a7c85eb30cc581a87b266edec252",
+            "final_url": "https://web.archive.org/web/20251008041429id_/https://www.city.chiyoda.lg.jp/documents/27485/r2seika-9.pdf"
+          }
+        ],
+        "archived_at": "2026-10-15T23:46:54.476Z"
+      },
+      "reason": "令和2年度決算の主要施策の成果（分冊9ファイル・計159頁、令和3年9月提出）。1頁目が「主要施策の成果 令和2年度 令和3年9月 千代田区」、分冊2が「Ⅰ 令和2年度決算の状況」（一般会計歳入79,350,132,042円・歳出76,528,868,511円）、分冊3以降が部別の「施策の成果と事務事業評価」で、事業ごとに事業概要・事業費（決算額）・実績・評価・課題を載せる。文字として読める。令和2年度の全体版（r2seika-zentai.pdf、8,012,732バイト）と分冊は同じ内容だが、現行の公式URL（r2-seika.html・documents/27485/r2seika-*.pdf）は現在404で、Wayback Machine の保存版（2025-10-08取得）でも全体版は冒頭5MBで切れる（wayback の \"content truncated by length\"）ため、完全に取得できる分冊9ファイルを選んだ。download_url は実際に取得した Wayback のURL、元の公式URLは https://www.city.chiyoda.lg.jp/documents/27485/r2seika-1.pdf 〜 r2seika-9.pdf（および全体版 r2seika-zentai.pdf）。"
     }
   ]
 }

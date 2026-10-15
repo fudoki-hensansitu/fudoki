@@ -5524,6 +5524,468 @@
         "archived_at": "2026-10-15T12:49:48.289Z"
       },
       "reason": "令和5年度に実施した事業を令和6年度に評価した事務事業評価シート8冊。シート表題は「令和6年度 事務事業評価（内部評価）シート（令和5年度実施事業）」で、事業費（コスト）の推移の列は「R4決算・R5決算・R6当初予算・R7?」のうち最新の決算が令和5年度（2023年度）。事業ごとに目的・概要、事業費、指標の現状値と実績、評価・課題・今後の方向性を載せる。文字として読める。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132071",
+        "fiscal_year": 2022,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和5年度事務事業評価シート（8分野、令和4年度実施事業）",
+          "landing_url": "https://www.city.akishima.lg.jp/shisei/seisaku/1005384/1005399/1005407/1005409.html",
+          "inspected_at": "2026-10-16T00:10:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/409/1r5annzenn.pdf",
+              "sha256": "5af1edc9793441743341093786a92170f817e6c0c28dd54e76fda75d97a5908b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/409/2r5tagaini.pdf",
+              "sha256": "dcb3a675b0feadede01a6285e0400d610adbd0510782a132dcd04ef2922b2df1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/409/3r5miraiwoninau.pdf",
+              "sha256": "e09c5fb8f3642824b9e13837a64efabba5de0f143d91f590a0e9b0f6a3e8de57",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/409/4r5bunnkageijutusupotu.pdf",
+              "sha256": "c3b589f489ea16d2e9f534248e18ca28aa5b3e27325d4531deaabd7062e5331a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/409/5r5kannkyouhuka.pdf",
+              "sha256": "83e5b63781ef560c974aab9ee15ae7ded0ae032e43ca0186db2444d83e41d549",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/409/6r5kaitekiriben.pdf",
+              "sha256": "f8d80fbea9092aff105d9c612b61edcdc927b0105703801be43a9484c4d6ccf6",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/409/7r5seikatukaturyoku.pdf",
+              "sha256": "f53561bd326e17498bc527092f7a8211935464b190988b5ad7e2627979d2e0aa",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/409/8r5keikakujitugen.pdf",
+              "sha256": "845d18d19191b9bf895637a0acc0ae1e4dec908db5fa8450c72e00281fbfcc91",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132071/2022/evaluation-settlement-1.pdf",
+            "sha256": "5af1edc9793441743341093786a92170f817e6c0c28dd54e76fda75d97a5908b",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/409/1r5annzenn.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2022/evaluation-settlement-5.pdf",
+            "sha256": "dcb3a675b0feadede01a6285e0400d610adbd0510782a132dcd04ef2922b2df1",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/409/2r5tagaini.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2022/evaluation-settlement-6.pdf",
+            "sha256": "e09c5fb8f3642824b9e13837a64efabba5de0f143d91f590a0e9b0f6a3e8de57",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/409/3r5miraiwoninau.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2022/evaluation-settlement-4.pdf",
+            "sha256": "c3b589f489ea16d2e9f534248e18ca28aa5b3e27325d4531deaabd7062e5331a",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/409/4r5bunnkageijutusupotu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2022/evaluation-settlement-2.pdf",
+            "sha256": "83e5b63781ef560c974aab9ee15ae7ded0ae032e43ca0186db2444d83e41d549",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/409/5r5kannkyouhuka.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2022/evaluation-settlement-8.pdf",
+            "sha256": "f8d80fbea9092aff105d9c612b61edcdc927b0105703801be43a9484c4d6ccf6",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/409/6r5kaitekiriben.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2022/evaluation-settlement-7.pdf",
+            "sha256": "f53561bd326e17498bc527092f7a8211935464b190988b5ad7e2627979d2e0aa",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/409/7r5seikatukaturyoku.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2022/evaluation-settlement-3.pdf",
+            "sha256": "845d18d19191b9bf895637a0acc0ae1e4dec908db5fa8450c72e00281fbfcc91",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/409/8r5keikakujitugen.pdf"
+          }
+        ],
+        "archived_at": "2026-10-15T23:47:36.658Z"
+      },
+      "reason": "2022年度に実施した事務業を令和5年度に評価した事務事業評価シート8冊。シート表題は「令和5年度 事務事業評価（内部評価）シート（令和4年度実施事業）」。事業ごとに目的・対象、事業費（コスト）の推移（決算・当初予算の年度列）、指標の現状値と実績、実施内容・実績、評価・課題・今後の方向性を載せる。文字として読める。表紙・目次は評価の本体ではないため含めない。2020・2021年度分は部（12部）別、2022年度分は8政策分野別に分冊されている。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132071",
+        "fiscal_year": 2021,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和4年度事務事業評価シート（12部、令和3年度実施事業）",
+          "landing_url": "https://www.city.akishima.lg.jp/shisei/seisaku/1005384/1005399/1005407/1005410.html",
+          "inspected_at": "2026-10-16T00:10:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/410/01r4kikaku.pdf",
+              "sha256": "7997c551ae3e27a2bccd118860624d902bcf2f88bdce61bdd017478fd73fe87e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/410/02r4soumu.pdf",
+              "sha256": "e43e12169395b93cba96719562fe6c0bface062421f1aaf572f46b2171e8f31c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/410/03r4shimin.pdf",
+              "sha256": "d5dbd87da92ca13b1a4294c5e9a1bc3f98bae5c55587624c24dee9b611bddfda",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/410/04r4hokenhukusi.pdf",
+              "sha256": "806a3773bdd67138f77a6eb3fae5f35cc35e27d1b03875c0c3ddfa6a75a346ce",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/410/05r4kodomokatei.pdf",
+              "sha256": "7b39d3e954cabb38193c296c7987fb138b5092f448cecba308df6ac72202a034",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/410/06r4kankyo.pdf",
+              "sha256": "8759905a228c55fbe122a6687e193713b72ed5809f9fc91c36eadaa2c412d144",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/410/07r4toshiseibi.pdf",
+              "sha256": "1626bcff128387cee1ccf42c8e86c3101c8e68e7441bb21d3dfd7cce65988d98",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/410/08r4toshikeikaku.pdf",
+              "sha256": "c203c151feb000435c628235afd3e27c3ee872534927652c754903e0085bfa1b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/410/09r4kaikei.pdf",
+              "sha256": "af9f8acde52a6d882f2bd2607c767757eb39de4396e8144d201fe20413d11174",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/410/10r4gakkokyoiku.pdf",
+              "sha256": "56bd9abadc0ebc213b1e7a1ffd6ef891a003153b36430c2362346844bed846de",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/410/11r4syogaigakusyu.pdf",
+              "sha256": "1c381d9d242da73a233e566bb89c11c9219d53518ca638d6b039171bf7b40556",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/410/12r4senkyokanriiinkai.pdf",
+              "sha256": "944cf090ee64917b257ae5173778f623cb68e3e8d00da53d7b2bafa6e2f2e39f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132071/2021/evaluation-settlement-4.pdf",
+            "sha256": "7997c551ae3e27a2bccd118860624d902bcf2f88bdce61bdd017478fd73fe87e",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/410/01r4kikaku.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2021/evaluation-settlement-12.pdf",
+            "sha256": "e43e12169395b93cba96719562fe6c0bface062421f1aaf572f46b2171e8f31c",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/410/02r4soumu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2021/evaluation-settlement-11.pdf",
+            "sha256": "d5dbd87da92ca13b1a4294c5e9a1bc3f98bae5c55587624c24dee9b611bddfda",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/410/03r4shimin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2021/evaluation-settlement-6.pdf",
+            "sha256": "806a3773bdd67138f77a6eb3fae5f35cc35e27d1b03875c0c3ddfa6a75a346ce",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/410/04r4hokenhukusi.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2021/evaluation-settlement-5.pdf",
+            "sha256": "7b39d3e954cabb38193c296c7987fb138b5092f448cecba308df6ac72202a034",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/410/05r4kodomokatei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2021/evaluation-settlement-7.pdf",
+            "sha256": "8759905a228c55fbe122a6687e193713b72ed5809f9fc91c36eadaa2c412d144",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/410/06r4kankyo.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2021/evaluation-settlement-1.pdf",
+            "sha256": "1626bcff128387cee1ccf42c8e86c3101c8e68e7441bb21d3dfd7cce65988d98",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/410/07r4toshiseibi.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2021/evaluation-settlement-10.pdf",
+            "sha256": "c203c151feb000435c628235afd3e27c3ee872534927652c754903e0085bfa1b",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/410/08r4toshikeikaku.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2021/evaluation-settlement-9.pdf",
+            "sha256": "af9f8acde52a6d882f2bd2607c767757eb39de4396e8144d201fe20413d11174",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/410/09r4kaikei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2021/evaluation-settlement-3.pdf",
+            "sha256": "56bd9abadc0ebc213b1e7a1ffd6ef891a003153b36430c2362346844bed846de",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/410/10r4gakkokyoiku.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2021/evaluation-settlement-2.pdf",
+            "sha256": "1c381d9d242da73a233e566bb89c11c9219d53518ca638d6b039171bf7b40556",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/410/11r4syogaigakusyu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2021/evaluation-settlement-8.pdf",
+            "sha256": "944cf090ee64917b257ae5173778f623cb68e3e8d00da53d7b2bafa6e2f2e39f",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/410/12r4senkyokanriiinkai.pdf"
+          }
+        ],
+        "archived_at": "2026-10-15T23:47:53.004Z"
+      },
+      "reason": "2021年度に実施した事務業を令和4年度に評価した事務事業評価シート12冊。シート表題は「令和4年度 事務事業評価（内部評価）シート（令和3年度実施事業）」。事業ごとに目的・対象、事業費（コスト）の推移（決算・当初予算の年度列）、指標の現状値と実績、実施内容・実績、評価・課題・今後の方向性を載せる。文字として読める。表紙・目次は評価の本体ではないため含めない。部（12部）別に分冊されている。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132071",
+        "fiscal_year": 2020,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和3年度事務事業評価シート（12部、令和2年度実施事業）",
+          "landing_url": "https://www.city.akishima.lg.jp/shisei/seisaku/1005384/1005399/1005407/1005411.html",
+          "inspected_at": "2026-10-16T00:10:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/411/01r3kikaku.pdf",
+              "sha256": "f82f8cb949371b9b7aaa2520fc3b9e0928dccfa5e47d5e95318cbe77783fad4d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/411/02r3soumu.pdf",
+              "sha256": "c38c7fe6ac51a2f8aef2290b746582b00ef1dd6fff56c227eb0cc9377eac1c55",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/411/03r3simin.pdf",
+              "sha256": "e28c6e10b37ce5503da1a23cc6c72a1133a82031ec3783daac822ba723eaba11",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/411/04r3hokenhukusi.pdf",
+              "sha256": "e7328d7d7df53a1a7a07d7c79c9bd2d0b89f20d6b092555f3ccf15e2c1db794b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/411/05r3kodomokatei.pdf",
+              "sha256": "106cea9a43a84d7d1184ea0eb5d1031b7ca0b1b7ed4fb0b01119b0cc20f2f7c4",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/411/06r3kannkyo.pdf",
+              "sha256": "6e0875d6a790ab3000b4c71e03abc3d610053c3d87ef1f86d18dc8f746b06b90",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/411/07r3tosiseibi.pdf",
+              "sha256": "db27e7973e1bd77e58e995793d21334d859a946c8678dcb314e505aa4b7f2d68",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/411/08r3tosikeikaku.pdf",
+              "sha256": "ce39ffa812b592576de7e1571361e63017f22a3fa0c59a07ce4dd2802510ffc8",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/411/09r3kaikei.pdf",
+              "sha256": "6e1dae5403c3abb348df9708bd03a6f45d3cf9be8f3f339007b872e0a1be504e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/411/10r3gakkoukyouiku.pdf",
+              "sha256": "f4b7d768ab1b1fc993d3f8c3e55581869301e89d01b5eedef69d072673726e1f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/411/11r3syougaigakusyuu.pdf",
+              "sha256": "227c36250a2c551d5ad68e8073203814f3fac633c7925808644a1c58130e4297",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/411/12r3sennkyokannri.pdf",
+              "sha256": "204e51086164a45a1d1ffd8df4edec9aad93cb5c5302f23a4c5a163f61fed84a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132071/2020/evaluation-settlement-12.pdf",
+            "sha256": "f82f8cb949371b9b7aaa2520fc3b9e0928dccfa5e47d5e95318cbe77783fad4d",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/411/01r3kikaku.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2020/evaluation-settlement-6.pdf",
+            "sha256": "c38c7fe6ac51a2f8aef2290b746582b00ef1dd6fff56c227eb0cc9377eac1c55",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/411/02r3soumu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2020/evaluation-settlement-9.pdf",
+            "sha256": "e28c6e10b37ce5503da1a23cc6c72a1133a82031ec3783daac822ba723eaba11",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/411/03r3simin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2020/evaluation-settlement-10.pdf",
+            "sha256": "e7328d7d7df53a1a7a07d7c79c9bd2d0b89f20d6b092555f3ccf15e2c1db794b",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/411/04r3hokenhukusi.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2020/evaluation-settlement-1.pdf",
+            "sha256": "106cea9a43a84d7d1184ea0eb5d1031b7ca0b1b7ed4fb0b01119b0cc20f2f7c4",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/411/05r3kodomokatei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2020/evaluation-settlement-4.pdf",
+            "sha256": "6e0875d6a790ab3000b4c71e03abc3d610053c3d87ef1f86d18dc8f746b06b90",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/411/06r3kannkyo.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2020/evaluation-settlement-8.pdf",
+            "sha256": "db27e7973e1bd77e58e995793d21334d859a946c8678dcb314e505aa4b7f2d68",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/411/07r3tosiseibi.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2020/evaluation-settlement-7.pdf",
+            "sha256": "ce39ffa812b592576de7e1571361e63017f22a3fa0c59a07ce4dd2802510ffc8",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/411/08r3tosikeikaku.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2020/evaluation-settlement-5.pdf",
+            "sha256": "6e1dae5403c3abb348df9708bd03a6f45d3cf9be8f3f339007b872e0a1be504e",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/411/09r3kaikei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2020/evaluation-settlement-11.pdf",
+            "sha256": "f4b7d768ab1b1fc993d3f8c3e55581869301e89d01b5eedef69d072673726e1f",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/411/10r3gakkoukyouiku.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2020/evaluation-settlement-3.pdf",
+            "sha256": "227c36250a2c551d5ad68e8073203814f3fac633c7925808644a1c58130e4297",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/411/11r3syougaigakusyuu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2020/evaluation-settlement-2.pdf",
+            "sha256": "204e51086164a45a1d1ffd8df4edec9aad93cb5c5302f23a4c5a163f61fed84a",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/411/12r3sennkyokannri.pdf"
+          }
+        ],
+        "archived_at": "2026-10-15T23:48:10.046Z"
+      },
+      "reason": "2020年度に実施した事務業を令和3年度に評価した事務事業評価シート12冊。シート表題は「令和3年度 事務事業評価（内部評価）シート（令和2年度実施事業）」。事業ごとに目的・対象、事業費（コスト）の推移（決算・当初予算の年度列）、指標の現状値と実績、実施内容・実績、評価・課題・今後の方向性を載せる。文字として読める。表紙・目次は評価の本体ではないため含めない。部（12部）別に分冊されている。"
     }
   ]
 }
