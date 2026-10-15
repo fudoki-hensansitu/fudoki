@@ -24,6 +24,42 @@
           "table_id": "general-expenditure"
         }
       ]
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "b85f78b54c97935a5a131d3039c5542c312b1e0cc974e3af03eeb5b27f4699c5"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-expenditure"
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "b85f78b54c97935a5a131d3039c5542c312b1e0cc974e3af03eeb5b27f4699c5"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-expenditure"
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-expenditure"
+        }
+      ]
     }
   ],
   "tables": [
@@ -56,6 +92,68 @@
           "bytes": 50076
         },
         "row_count": 4524
+      }
+    },
+    {
+      "table_id": "national-health-insurance-expenditure",
+      "conversion_id": "national-health-insurance-settlement",
+      "input_fingerprint": "faae1107615d64a02224a82c89f3205f98b4a9bb16b0a0c18b8fc29114bcb042",
+      "account": "国民健康保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は printed 6頁 から決めた。款の和 14,566,018,019 と印字の「歳出合計」14,566,018,019 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 5 種（135 件）を、印字された語から辞書の見出しに寄せた: 不用額(A)-(B)-(C)→不用額・予算現額(A)→予算現額・予算現額と支出済額との比較(E)(A)-(B)→比較・支出済額(B)→支出済額・翌年度繰越額(C)→翌年度繰越額。",
+        "選定の scope が共有していた別の方向（歳入）の頁 2 頁は読んでいない。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132241/2024/settlement/expenditure/national-health-insurance-expenditure-nodes.parquet",
+          "sha256": "c3ded7f9ecb880a4391cfa3ce8451fc105e8112c1449d2a19d6c128ffae8df4b",
+          "bytes": 8850
+        },
+        "row_count": 148
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132241/2024/settlement/expenditure/national-health-insurance-expenditure-amounts.parquet",
+          "sha256": "1ba62b88ced9e26028efc4a36dd468c3affa7042eae9a8ed0d452ea6655285e6",
+          "bytes": 13115
+        },
+        "row_count": 848
+      }
+    },
+    {
+      "table_id": "elderly-medical-expenditure",
+      "conversion_id": "elderly-medical-settlement",
+      "input_fingerprint": "b45d868d627dfe679e0a3a201ba182650a1aa697ac7e9142a1e8fa81f0185bfb",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は printed 3頁 から決めた。款の和 5,102,670,641 と印字の「歳出合計」5,102,670,641 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 5 種（70 件）を、印字された語から辞書の見出しに寄せた: 不用額(A)-(B)-(C)→不用額・予算現額(A)→予算現額・予算現額と支出済額との比較(E)(A)-(B)→比較・支出済額(B)→支出済額・翌年度繰越額(C)→翌年度繰越額。",
+        "選定の scope が共有していた別の方向（歳入）の頁 2 頁は読んでいない。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132241/2024/settlement/expenditure/elderly-medical-expenditure-nodes.parquet",
+          "sha256": "239c00428b70602780450dd42410fb3f063402a7614f36c45affeb82d11619d9",
+          "bytes": 5703
+        },
+        "row_count": 64
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132241/2024/settlement/expenditure/elderly-medical-expenditure-amounts.parquet",
+          "sha256": "3c0b2681dd9b92a8e4cf8cd72a31c9d0a126c3278b17a7d6dbeb7a3706fe192d",
+          "bytes": 7591
+        },
+        "row_count": 359
       }
     }
   ]

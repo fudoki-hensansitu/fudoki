@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132012",
+    "fiscal_year": 2024,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "kaigo-settlement-detail",
+      "converter": "fiscal/jurisdictions/132012/layouts/text_settlement_report/convert.py",
+      "inputs": [
+        {
+          "sha256": "51206fb84d7365cec1607e8b8260bacf3f598e597ad2696ea264bfd4d2da3e8e"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "scope_label": "物理504-505・510-527頁",
+        "fund_columns": [
+          "保険料",
+          "国庫支出金",
+          "都支出金",
+          "一般会計繰入金",
+          "その他"
+        ],
+        "stat_titles": [
+          "保険給付費の状況"
+        ],
+        "detail_table_id": "kaigo-detail",
+        "emit": [
+          "detail"
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-detail"
+        }
+      ]
+    },
+    {
+      "id": "kouki-settlement-detail",
+      "converter": "fiscal/jurisdictions/132012/layouts/text_settlement_report/convert.py",
+      "inputs": [
+        {
+          "sha256": "51206fb84d7365cec1607e8b8260bacf3f598e597ad2696ea264bfd4d2da3e8e"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "scope_label": "物理488-489・493-503頁",
+        "fund_columns": [
+          "保険料",
+          "国庫支出金",
+          "都支出金",
+          "一般会計繰入金",
+          "その他"
+        ],
+        "detail_table_id": "kouki-detail",
+        "emit": [
+          "detail"
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-detail"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "kaigo-detail",
+      "conversion_id": "kaigo-settlement-detail",
+      "input_fingerprint": "669368b95d59d0e5f48a34a6c223b4541549b04e4acc1db29a27823e6244ad80",
+      "account": "介護保険特別会計",
+      "notes": [
+        "「主要な施策の成果・事務報告書」の歳出部（物理504-505・510-527頁）。款・項・目の印字された名称・金額・位置を保持する。項の金額は印字されない場合がある。目の下の事業は主要施策の抜粋であるため、この表には含めない。範囲番号の目は一つの目として保持する。款の財源内訳は別の金額欄である。（予算現額）・<前年度決算額>は印字通りの文字列。網羅検査の対象は処理した頁の文字層であり、採用表以外の事業説明・財源内訳・内表・注記の数字は件数と例を報告する。款の資金分解5列は原典款見出しの印字どおり（保険料・国庫支出金・都支出金・一般会計繰入金・その他）で、一般会計の分解（国庫支出金・都支出金・市債・その他・一般財源）とは列名が異なる。決算額・執行率と合わせた7列が款集計行に対応する。宣言された統計表（保険給付費の状況）の (n) 行は表断片として annex へ送り、属する事業行を葉とする。",
+        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132012/2024/settlement/expenditure/kaigo-detail-nodes.parquet",
+          "sha256": "ba24941c65d3cd735a567d79ef67561c4bd9c187bcb7e4fb5485fac72048902a",
+          "bytes": 3163
+        },
+        "row_count": 15
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132012/2024/settlement/expenditure/kaigo-detail-amounts.parquet",
+          "sha256": "4843b0285d8bc1ff6edb9cb3e3066a7ce199eec1b2b1bf011da4bcfe78df58bc",
+          "bytes": 3816
+        },
+        "row_count": 60
+      }
+    },
+    {
+      "table_id": "kouki-detail",
+      "conversion_id": "kouki-settlement-detail",
+      "input_fingerprint": "7467f676d8e14799a6c954fa653bf2f39abb03b275b0126a714cbce531659c0b",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "「主要な施策の成果・事務報告書」の歳出部（物理488-489・493-503頁）。款・項・目の印字された名称・金額・位置を保持する。項の金額は印字されない場合がある。目の下の事業は主要施策の抜粋であるため、この表には含めない。範囲番号の目は一つの目として保持する。款の財源内訳は別の金額欄である。（予算現額）・<前年度決算額>は印字通りの文字列。網羅検査の対象は処理した頁の文字層であり、採用表以外の事業説明・財源内訳・内表・注記の数字は件数と例を報告する。款の資金分解5列は原典款見出しの印字どおり（保険料・国庫支出金・都支出金・一般会計繰入金・その他）で、一般会計の分解（国庫支出金・都支出金・市債・その他・一般財源）とは列名が異なる。決算額・執行率と合わせた7列が款集計行に対応する。",
+        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132012/2024/settlement/expenditure/kouki-detail-nodes.parquet",
+          "sha256": "cdc69ece4d77c2a0a9054dddad0c511f577906d14ea5e2ece49d5e0d87c49580",
+          "bytes": 2888
+        },
+        "row_count": 11
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132012/2024/settlement/expenditure/kouki-detail-amounts.parquet",
+          "sha256": "233ccbcb3705d77d537a58d0b670541d3a94264cba1056775398b0f60a54e036",
+          "bytes": 3349
+        },
+        "row_count": 45
+      }
+    }
+  ]
+}

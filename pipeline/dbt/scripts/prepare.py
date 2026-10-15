@@ -44,10 +44,10 @@ def input_path(document: dict, table: dict, kind: str, candidate: Path | None,
     return path
 
 
-def inspect(con, path: Path, reference: dict, kind: str) -> None:
+def inspect(con, path: Path, reference: dict, kind: str, amount_column: str | None = None) -> None:
     if kind == 'csv':
         columns = [row[0] for row in con.execute('describe select * from read_parquet(?)', [str(path)]).fetchall()]
-        for required in ('08予算額', 'source_line_start', 'source_line_end'):
+        for required in (amount_column, 'source_line_start', 'source_line_end'):
             if required not in columns:
                 raise ValueError(f'Missing CSV column {required}: {path}')
     else:
@@ -84,8 +84,10 @@ def write_relations(declarations: list[dict]) -> None:
     csv = [s for s in declarations if s['name'] == 'fiscal_csv']
     if len(csv) > 1:
         raise ValueError('Expected at most one fiscal_csv source declaration')
+    # Each CSV relation carries the amount column its conversion declares.
     write_macro('fiscal_csv_relations',
-                sorted(t['name'] for t in csv[0]['tables']) if csv else [])
+                sorted(({'relation': t['name'], 'amount_column': t['meta']['amount_column']}
+                        for t in csv[0]['tables']), key=lambda r: r['relation']) if csv else [])
 
 
 def write_macro(macro_name: str, relations: list[str]) -> None:
@@ -182,7 +184,7 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
                 original = original_for(document, table)
                 origin_id = track_origin(origins, target, spec['direction'], original, document)
                 path = input_path(document, table, 'csv', candidate, remote=remote)
-                inspect(con, path, table, 'csv')
+                inspect(con, path, table, 'csv', spec['amount_column'])
                 con.execute(f'create or replace table ingestion.{identifier(declared["name"])} as select * from read_parquet(?)', [str(path)])
                 accounts = [row[0] for row in con.execute(
                     f'select distinct {identifier("01会計")} from ingestion.{identifier(declared["name"])}').fetchall()]
@@ -193,12 +195,13 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
                 source_key = manifest.object_key(document, table['table_id']).removesuffix('.parquet')
                 csv_tables.append((source_key, declared['name'], target['jurisdiction'],
                                    target['fiscal_year'], target['document_kind'], spec['direction'],
-                                   table['table_id'], origin_id, table['row_count']))
+                                   table['table_id'], origin_id, table['row_count'],
+                                   spec['amount_column'], spec['amount_unit']))
         con.execute('create or replace table ingestion.tables (source_table_key varchar, relation_prefix varchar, jurisdiction_code varchar, fiscal_year integer, document_kind varchar, direction varchar, table_id varchar, account_name varchar, origin_id varchar, notes varchar, nodes_row_count bigint, amounts_row_count bigint)')
         con.executemany('insert into ingestion.tables values (?,?,?,?,?,?,?,?,?,?,?,?)', tables)
-        con.execute('create or replace table ingestion.csv_tables (source_table_key varchar, relation_prefix varchar, jurisdiction_code varchar, fiscal_year integer, document_kind varchar, direction varchar, table_id varchar, origin_id varchar, row_count bigint)')
+        con.execute('create or replace table ingestion.csv_tables (source_table_key varchar, relation_prefix varchar, jurisdiction_code varchar, fiscal_year integer, document_kind varchar, direction varchar, table_id varchar, origin_id varchar, row_count bigint, amount_column varchar, amount_unit varchar)')
         if csv_tables:
-            con.executemany('insert into ingestion.csv_tables values (?,?,?,?,?,?,?,?,?)', csv_tables)
+            con.executemany('insert into ingestion.csv_tables values (?,?,?,?,?,?,?,?,?,?,?)', csv_tables)
         con.execute('create or replace table ingestion.origin (origin_id varchar, jurisdiction_code varchar, fiscal_year integer, document_kind varchar, amendment_number integer, title varchar, url varchar, format varchar, sha256 varchar)')
         con.executemany('insert into ingestion.origin values (?,?,?,?,?,?,?,?,?)', list(origins.values()))
         jurisdictions = load_jurisdictions(JURISDICTIONS)

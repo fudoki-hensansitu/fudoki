@@ -24,6 +24,42 @@
         "account": "一般会計",
         "table_id": "general-expenditure"
       }
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e6132d40f1ea2e63274cb760ea2907f8dfb009d69a87ddff90c22c8c5c2b8bca"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-insurance-expenditure"
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "6a7153fec8d09f9faf50326191f7420181eb3b1cc3d20b4a7eb6749a2d007cef"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業会計",
+        "table_id": "long-term-care-expenditure"
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-expenditure"
+        }
+      ]
     }
   ],
   "tables": [
@@ -55,6 +91,66 @@
           "bytes": 177712
         },
         "row_count": 8849
+      }
+    },
+    {
+      "table_id": "national-health-insurance-expenditure",
+      "conversion_id": "national-health-insurance-settlement",
+      "input_fingerprint": "58bcfeab6de76b7aa2adc2d2beb856ab365bb8ed437e061a9225355d1cbbdc93",
+      "account": "国民健康保険事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
+        "金額の単位は column mark 7頁 から決めた。款の和 13,567,438,276 と印字の「歳出合計」13,567,438,276 が一致。",
+        "金額の注記 2 件（流用 2）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（47 件）を、印字された語から辞書の見出しに寄せた: 金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132039/2024/settlement/expenditure/national-health-insurance-expenditure-nodes.parquet",
+          "sha256": "9c752609762a112b01b71a0b8b3baa58a29bc43d714b4b3768be0858fa7f9d82",
+          "bytes": 13290
+        },
+        "row_count": 208
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132039/2024/settlement/expenditure/national-health-insurance-expenditure-amounts.parquet",
+          "sha256": "0f540ab76fe932052fbdcaef28ff83bbd2a91fdcc15d827bd4276608cdac69e7",
+          "bytes": 18624
+        },
+        "row_count": 720
+      }
+    },
+    {
+      "table_id": "long-term-care-expenditure",
+      "conversion_id": "long-term-care-settlement",
+      "input_fingerprint": "5c28228f450d2271d3679ef06ad91dbf4d108a1741a898c641806cae2a315018",
+      "account": "介護保険事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
+        "金額の単位は column mark 5頁 から決めた。款の和 12,644,756,513 と印字の「歳出合計」12,644,756,513 が一致。",
+        "金額の注記 2 件（流用 2）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（48 件）を、印字された語から辞書の見出しに寄せた: 金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132039/2024/settlement/expenditure/long-term-care-expenditure-nodes.parquet",
+          "sha256": "a056b52722468b55ee3ea0fd95385e1b7fe7630abeaf4b519e410d61e6ad4a09",
+          "bytes": 12102
+        },
+        "row_count": 190
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132039/2024/settlement/expenditure/long-term-care-expenditure-amounts.parquet",
+          "sha256": "6f520cb00736ae32b889ec77b7a26b0e98e6886f18cef320dbd092d234c59ee5",
+          "bytes": 15518
+        },
+        "row_count": 516
       }
     }
   ]

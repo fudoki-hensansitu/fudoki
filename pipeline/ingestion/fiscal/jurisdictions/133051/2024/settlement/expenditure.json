@@ -24,6 +24,60 @@
           "table_id": "general-expenditure"
         }
       ]
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "b0f1a1daabcd3c44c1bcb68528b57c073192869f0a3dbfa26f47803c87741be7"
+        }
+      ],
+      "options": {
+        "account": "日の出町国民健康保険特別会計",
+        "table_id": "national-health-insurance-expenditure"
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "b0f1a1daabcd3c44c1bcb68528b57c073192869f0a3dbfa26f47803c87741be7"
+        }
+      ],
+      "options": {
+        "account": "日の出町介護保険特別会計",
+        "table_id": "long-term-care-expenditure"
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "b0f1a1daabcd3c44c1bcb68528b57c073192869f0a3dbfa26f47803c87741be7"
+        }
+      ],
+      "options": {
+        "account": "日の出町後期高齢者医療特別会計",
+        "table_id": "elderly-medical-expenditure"
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-expenditure"
+        }
+      ]
     }
   ],
   "tables": [
@@ -55,6 +109,96 @@
           "bytes": 96409
         },
         "row_count": 6917
+      }
+    },
+    {
+      "table_id": "national-health-insurance-expenditure",
+      "conversion_id": "national-health-insurance-settlement",
+      "input_fingerprint": "09a0108501af499f9e7ce27f3733ad9ae40db9f053ef967057b09417f190cee9",
+      "account": "日の出町国民健康保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent'}。",
+        "金額の単位は column mark 5頁・carried 1頁 から決めた。款の和 1,729,069,939 と印字の「歳出合計」1,729,069,939 が一致。",
+        "金額の注記 2 件（充用 2）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 3 種（163 件）を、印字された語から辞書の見出しに寄せた: 予算現額と支出済額との比較→比較・予算現額／節／金額→節／金額・翌年度繰越額／継続費逓次繰越繰越明許費事故繰越し→翌年度繰越額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/133051/2024/settlement/expenditure/national-health-insurance-expenditure-nodes.parquet",
+          "sha256": "c1f64d7930ad71f70692d878b02421d61b0aebdb1126902e7a69cdb7c5aa3c33",
+          "bytes": 10210
+        },
+        "row_count": 196
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/133051/2024/settlement/expenditure/national-health-insurance-expenditure-amounts.parquet",
+          "sha256": "ddf27c1bc7521cb8702dd9aafee105426d9b139827d422eb0a60049cb7dffd2f",
+          "bytes": 10296
+        },
+        "row_count": 794
+      }
+    },
+    {
+      "table_id": "long-term-care-expenditure",
+      "conversion_id": "long-term-care-settlement",
+      "input_fingerprint": "30d5767cafa673a508df094ea86d6f83686c9dff39ebf1375b1a6bb88040874b",
+      "account": "日の出町介護保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent'}。",
+        "金額の単位は column mark 7頁・carried 1頁 から決めた。款の和 1,617,253,707 と印字の「歳出合計」1,617,253,707 が一致。",
+        "金額の注記 4 件（流用 4）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 3 種（210 件）を、印字された語から辞書の見出しに寄せた: 予算現額と支出済額との比較→比較・予算現額／節／金額→節／金額・翌年度繰越額／継続費逓次繰越繰越明許費事故繰越し→翌年度繰越額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/133051/2024/settlement/expenditure/long-term-care-expenditure-nodes.parquet",
+          "sha256": "baf75ea1415a9e3bf05c7bad3175a7dc560a2d159c36a97bce9c4e2fc8445e5b",
+          "bytes": 12517
+        },
+        "row_count": 261
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/133051/2024/settlement/expenditure/long-term-care-expenditure-amounts.parquet",
+          "sha256": "bed5301e0b999e6d140a48aaf9a41b5e397328f959b5adccbcabb2dfc70fb8b3",
+          "bytes": 12027
+        },
+        "row_count": 960
+      }
+    },
+    {
+      "table_id": "elderly-medical-expenditure",
+      "conversion_id": "elderly-medical-settlement",
+      "input_fingerprint": "d8b826ebcd7ea5599dd1ccbdcc7dcdda419755a1972635176b0baa8889f59c70",
+      "account": "日の出町後期高齢者医療特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent'}。",
+        "金額の単位は column mark 3頁 から決めた。款の和 687,930,893 と印字の「歳出合計」687,930,893 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 3 種（77 件）を、印字された語から辞書の見出しに寄せた: 予算現額と支出済額との比較→比較・予算現額／節／金額→節／金額・翌年度繰越額／継続費逓次繰越繰越明許費事故繰越し→翌年度繰越額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/133051/2024/settlement/expenditure/elderly-medical-expenditure-nodes.parquet",
+          "sha256": "ee1e03643bdf84dde04f03257f396dc705a4221937f102d87cf3ef7810ec2574",
+          "bytes": 6242
+        },
+        "row_count": 93
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/133051/2024/settlement/expenditure/elderly-medical-expenditure-amounts.parquet",
+          "sha256": "62dd4452b6da5ad941e1954c45b8ea2562cc2139e8e37a896627200ae1d748d1",
+          "bytes": 6526
+        },
+        "row_count": 373
       }
     }
   ]

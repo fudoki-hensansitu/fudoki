@@ -10,6 +10,7 @@ with pdf as (
 ), csv as (
     select n.*
     from {{ ref('int_fiscal__csv_expenditure_nodes') }} n
+    where n.document_kind = 'initial'
 ), unioned as (
     select * from pdf union all select * from csv
 )

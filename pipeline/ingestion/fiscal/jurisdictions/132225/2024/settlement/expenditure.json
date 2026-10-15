@@ -24,6 +24,60 @@
           "table_id": "general-expenditure"
         }
       ]
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "8c08d6045dfe4bede1b64d707952122a2b7040bbb5a8f6824a70f828fbeac42b"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-expenditure"
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "9d74f3b6b8f63f7bf7ba84862486a6dced7dfc8ac56de34e2f7a1a51b5d843e2"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-expenditure"
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "8629a275ccafc1b9eb6a33f0fe7a017613496d8b8f30c591a745735c14c84b74"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-expenditure"
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-expenditure"
+        }
+      ]
     }
   ],
   "tables": [
@@ -55,6 +109,96 @@
           "bytes": 152621
         },
         "row_count": 11774
+      }
+    },
+    {
+      "table_id": "national-health-insurance-expenditure",
+      "conversion_id": "national-health-insurance-settlement",
+      "input_fingerprint": "ee3da45df610d1ccd8e4aa229dd39f6e6ad814e2a17a7af7cee517c4d5a57968",
+      "account": "国民健康保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
+        "金額の単位は printed 14頁 から決めた。款の和 11,356,525,771 と印字の「歳出合計」11,356,525,771 が一致。",
+        "金額の注記 14 件（流用 14）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（61 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132225/2024/settlement/expenditure/national-health-insurance-expenditure-nodes.parquet",
+          "sha256": "b3d8f47fe461e8600cef65dc489708fa8e471b250d6424953b6d6eed856b6fb2",
+          "bytes": 14945
+        },
+        "row_count": 335
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132225/2024/settlement/expenditure/national-health-insurance-expenditure-amounts.parquet",
+          "sha256": "0ce23897aabd169a4359e1002af6869de1639ed351e06036493e019284c4f104",
+          "bytes": 14414
+        },
+        "row_count": 1153
+      }
+    },
+    {
+      "table_id": "elderly-medical-expenditure",
+      "conversion_id": "elderly-medical-settlement",
+      "input_fingerprint": "00dd9a2395d1bac5fe25e33d2b9e4f911acc1d5289fd420b73657c75c6458097",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
+        "金額の単位は printed 7頁 から決めた。款の和 3,881,765,045 と印字の「歳出合計」3,881,765,045 が一致。",
+        "金額の注記 2 件（充用 2）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（22 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132225/2024/settlement/expenditure/elderly-medical-expenditure-nodes.parquet",
+          "sha256": "6fd6a7d8b90533015469f1aa5e1f2e857b8a9e89fd3ee805042cae91d167f46c",
+          "bytes": 8368
+        },
+        "row_count": 138
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132225/2024/settlement/expenditure/elderly-medical-expenditure-amounts.parquet",
+          "sha256": "df00cadf71fdb5c91aeb383887cc2ae4a3a5c58b8466b78173c3404620c0d284",
+          "bytes": 8207
+        },
+        "row_count": 490
+      }
+    },
+    {
+      "table_id": "long-term-care-expenditure",
+      "conversion_id": "long-term-care-settlement",
+      "input_fingerprint": "7fcce8f861296ea51e2cb281d5e979d548800940c1d8013d784a64e45472693d",
+      "account": "介護保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
+        "金額の単位は printed 13頁 から決めた。款の和 11,323,837,717 と印字の「歳出合計」11,323,837,717 が一致。",
+        "金額の注記 10 件（流用 10）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（77 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132225/2024/settlement/expenditure/long-term-care-expenditure-nodes.parquet",
+          "sha256": "19c1986f88de51d796151458e0a7b052662b4cc45cb8de999c22ed7e37dc4b68",
+          "bytes": 16421
+        },
+        "row_count": 381
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132225/2024/settlement/expenditure/long-term-care-expenditure-amounts.parquet",
+          "sha256": "00bb28e9b78e39a791c2706fe76eee51ca7cb9c017c42d3b2ffb8189e8cbc96e",
+          "bytes": 15815
+        },
+        "row_count": 1234
       }
     }
   ]

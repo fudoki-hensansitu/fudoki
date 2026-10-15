@@ -13,7 +13,7 @@ models:
   - name: y1
     description: 金額自身の矩形の下端。不明ならNULL。
 - name: stg_fiscal__csv_expenditure
-  description: 原文のCSV行と1対1。当初予算の歳出（132047）は会計/款/項/目/事項/節/細々節の7階層で、各セルは番号+名称、08予算額が当初額（千円）。木への変換はintermediateで行う。
+  description: 原文のCSV行と1対1。歳出（132047の当初予算・決算）は会計/款/項/目/事項/節/細々節の7階層で、各セルは番号+名称。金額の列名と単位は CSV の変換の宣言（amount_column・amount_unit）で決める。木への変換はintermediateで行う。
   columns:
   - name: account_raw
     description: 01会計の原文（例01一般会計）。会計名は番号を除いた値。
