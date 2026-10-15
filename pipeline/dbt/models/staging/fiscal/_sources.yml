@@ -1172,6 +1172,22 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: nodes
+  - name: j132152_2024_settlement_general_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132152'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-detail
+      kind: amounts
+  - name: j132152_2024_settlement_general_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132152'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-detail
+      kind: nodes
   - name: j132152_2025_settlement_general_expenditure_detail_amounts
     meta:
       jurisdiction: '132152'

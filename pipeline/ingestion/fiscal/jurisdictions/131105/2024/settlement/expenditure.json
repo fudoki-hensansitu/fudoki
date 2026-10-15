@@ -30,7 +30,7 @@
     {
       "table_id": "general-setsu",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "86367641d0ed5ba8b52f1ac965d3251babb66fc86f963eee64c18f734c10c031",
+      "input_fingerprint": "7087977dec102cf1706b254af62e595d7da6e04c4913835ae250c7c1d1bd9cac",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape'}。",
