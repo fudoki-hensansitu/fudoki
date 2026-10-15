@@ -129,6 +129,12 @@ def check_tree(nodes: list[dict], amounts: list[dict], document_kind: str = 'set
                               if u == unit and '繰越事業費' in header)
                 if carried and expected - total == carried:
                     status = '繰越事業費の未配当'
+            if status == '不一致' and label == '不用額':
+                # The 節 rows print no carry-over column, so their 不用額 is 予算現額 less 支出済額, the part that goes on
+                # to the next year included: the child sum is over by exactly the parent's printed 翌年度繰越額 (清瀬).
+                carried = sum(v for (header, u), v in values[parent].items() if u == unit and '翌年度繰越額' in header)
+                if carried and total - expected == carried:
+                    status = '繰越額を含む不用額'
             results.append({'parent_node_key': parent, 'axis_header': axis, 'header_path': label,
                             'unit_text': unit, 'children': len(children), 'parent_amount': expected,
                             'child_sum': total, 'difference': total - expected, 'status': status})

@@ -33,7 +33,7 @@
     {
       "table_id": "akishima-text-budget-expenditure",
       "conversion_id": "akishima-text-budget-expenditure",
-      "input_fingerprint": "fd64fbb2020e2b9293cc421472bff514ea241ab439741dd8cb521382679fefe4",
+      "input_fingerprint": "8d942c8f5ea53efd08fe1695729a0935ae95064dbb4ebb6eae4b02412ca66606",
       "account": "一般会計",
       "notes": [
         "科目、説明、節の区分、財源内訳は独立した印字欄。空欄を0に置換しない。",

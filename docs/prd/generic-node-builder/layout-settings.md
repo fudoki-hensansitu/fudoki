@@ -114,13 +114,14 @@
 
 | 団体 | 設定 |
 | --- | --- |
+| 131067 台東（2024決算） | `spread.gutter`（見開きが物理2頁で、右頁の左の枠が開いている） |
 | 131041 新宿 | `spread.gutter`（見開き中央の開いた外枠） |
 | 132039 武蔵野 | `marks` |
 | 132128 日野 | `fitted_names`・`notes`・`amount_brackets`・`bracketed_remainder`・`name_columns`・`plain_names`・`note_kinds` |
 | 132217 清瀬 | `indent_chars`・`names_end_with_kind_words` |
 | 132098 町田 | `notes`・`wrap`・`hang_chars` |
 | 131105 目黒 | `spread.gutter`・`header.ignore_frame_title` |
-| 131148 中野 | `columns`（翌年度繰越額を金額の欄に） |
+| 131148 中野 | `columns`（翌年度繰越額を金額の欄に）。2024決算は `spread.gutter`（支出済額の列が左の枠の外で、右の頁の左端が開いている） |
 | 132055 青梅（scan） | `marks`・`wrap` |
 | 132101 小金井（scan） | `wrap`・`notes` |
 | 132152 国立（scan、一般会計採用） | `columns`（欄の役割と節の見出し） |

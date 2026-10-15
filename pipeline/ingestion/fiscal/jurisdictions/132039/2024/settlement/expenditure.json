@@ -90,7 +90,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "cbbc1d1ed4eb3e1483fe9302468563587f7f28a2477a374a839faff739bc4df0",
+      "input_fingerprint": "a2a588765be32fae57cb835033582ced5fd5d29bbfd177b7f687d19cfcdd8b7c",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -120,7 +120,7 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "8bc4702abcdb799785e9adafc41199e420ff21166d4e5029086f8b846b11a7e1",
+      "input_fingerprint": "3c87c049847ea8e8e8567495df06083811af058fab2aa6020d2a52ee60e9d4d0",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -150,7 +150,7 @@
     {
       "table_id": "long-term-care-expenditure",
       "conversion_id": "long-term-care-settlement",
-      "input_fingerprint": "a59484c64e040553d67465431ce513cfacf900b95ef69f9cc7d8ddeab7eeaee6",
+      "input_fingerprint": "dace80954bdc8912150d3aec75a69b9fb8cc2b1b69f90e0ffad80a87dce21770",
       "account": "介護保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -180,7 +180,7 @@
     {
       "table_id": "kouki-expenditure-detail",
       "conversion_id": "kouki-settlement",
-      "input_fingerprint": "6295490f1f07f7b9cbd160c57f3482cac507946e07b3d6a646a246514477be65",
+      "input_fingerprint": "0efc42f1e4b5a6605c3f3e0fcc71181860e3f811372f944d17120b15afbba964",
       "account": "後期高齢者医療会計",
       "notes": [
         "武蔵野市後期高齢者医療会計の決算事項別明細書（歳出）。款・項・目の印字欄を所属する葉へ反復。最細は法定節（節がない予備費目は目）。節一覧と備考は同じ目の独立した分解であり相互の対応を推定していない。目_備考は目の備考欄の原文（□事業・○経費・積算）。金額は円の原表記（△は減額符号）。歳出合計はlocal観測に残しraw行にしない。",
