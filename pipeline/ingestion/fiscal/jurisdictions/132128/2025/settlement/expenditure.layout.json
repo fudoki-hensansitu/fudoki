@@ -3,8 +3,14 @@
   "breakdown": {
     "備考": {
       "amount_brackets": true,
-      "fitted_names": {"chars": 5, "overflow_left_chars": 1},
-      "notes": ["(繰越明許費)"]
+      "fitted_names": {
+        "chars": 5,
+        "overflow_left_chars": 1
+      },
+      "notes": [
+        "(繰越明許費)"
+      ],
+      "bracketed_remainder": true
     }
   }
 }
