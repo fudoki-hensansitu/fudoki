@@ -2,9 +2,6 @@ import { createContext, Fragment, StrictMode, useContext, useEffect, useRef, use
 import { createRoot } from 'react-dom/client'
 import { createBridge, type Bridge } from './bridge'
 import { BarList, FOLD } from './bars'
-
-/** インラインでは要約として上位の数行だけを出す。全画面では FOLD 件ずつ */
-const INLINE_FOLD = 5
 import { Kind } from './kind'
 import { PdfViewer, type PdfSelection } from './pdf-view'
 import {
@@ -27,6 +24,9 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from '@fudoki/ui/components/breadcrumb'
+
+/** インラインでは要約として上位の数行だけを出す。全画面では FOLD 件ずつ */
+const INLINE_FOLD = 5
 
 type Names = Record<string, string>
 
@@ -353,7 +353,7 @@ function NodesResult({ rows, next, history, names, bridge, busy, failed, fold, e
                 <h3>{label}</h3>
                 {gShare && <span className="group-total" title={yen(gTotal)}>{shortYen(gTotal)}</span>}
               </div>
-              <BarList label={label} share={gShare} busy={busy} fold={Math.min(5, fold)}
+              <BarList label={label} share={gShare} busy={busy} fold={INLINE_FOLD}
                 bars={group.map((n) => ({ key: `${n.document_kind}-${n.node_id}`, label: n.name, kind: kindOf(n), amount: n.amount_yen, onSelect: drill(n) }))} />
             </section>
           )
@@ -479,6 +479,7 @@ function View({ bridge }: { bridge: Bridge }) {
     manualFullscreen.current = true
     bridge.setFullscreen(true)
   }
+  // fold が変わったら（全画面の出入り）件数を数え直すため、結果の key に fold を含めて作り直す
   const previous = state.history.at(-1)
   const backToList = previous && 'nodes' in previous.data && !oneScope(previous.data.nodes)
     ? () => bridge.backTo(state.history.length - 1) : undefined
@@ -490,7 +491,7 @@ function View({ bridge }: { bridge: Bridge }) {
     )
   return (
     <BackContext.Provider value={backToList}>
-    <main aria-busy={state.busy} className="view" data-fullscreen={state.fullscreen.active || undefined}>
+    <main aria-busy={state.busy} className="view">
       {state.fullscreen.available && entry && !state.pending && (
         <Button variant="outline" size="sm" className="expand" onClick={toggleFullscreen}>
           {inline ? '全画面で開く' : '元の大きさに戻す'}
@@ -508,7 +509,7 @@ function View({ bridge }: { bridge: Bridge }) {
           </div>
         </div>
       ) : entry && (
-        <div key={entry.revision} className="result">
+        <div key={`${entry.revision}-${fold}`} className="result">
           {'jurisdictions' in entry.data ? <JurisdictionsResult list={entry.data.jurisdictions} bridge={bridge} busy={state.busy} fold={fold} />
             : 'nodes' in entry.data ? <NodesResult rows={entry.data.nodes} next={entry.data.next_page_token} history={state.history} names={state.names} bridge={bridge} busy={state.busy} failed={!!state.error} fold={fold} expand={expand} />
             : <NodeResult data={entry.data} crumbs={crumbsOf(entry.data.node, state.history, bridge)} names={state.names} bridge={bridge} showPdf={showPdf} busy={state.busy} />}
