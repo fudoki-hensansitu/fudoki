@@ -5402,6 +5402,128 @@
         "archived_at": "2026-10-14T16:16:41.467Z"
       },
       "reason": "令和6年度に実施した事務事業を令和7年度に評価した事務事業評価シート8冊（計141頁）。政策指標の達成に向けて直接関連する事業を対象に、事業ごとに目的・概要、事業費（R5決算・R6予算決算・R7予算）、指標の現状値とR4〜6年度実績、評価・課題・今後の方向性を載せる。文字として読める。表紙・目次・対象一覧は評価の本体ではないため含めない。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132071",
+        "fiscal_year": 2023,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和6年度事務事業評価シート（8分野、令和5年度実施事業）",
+          "landing_url": "https://www.city.akishima.lg.jp/shisei/seisaku/1005384/1005399/1005407/1005408.html",
+          "inspected_at": "2026-10-15T15:10:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/408/1annzennannsinn.pdf",
+              "sha256": "d9512385dba5cdfff86c61238f0dae746ed3751648b889e1dfd9b0db82aa3ac4",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/408/2sasaeaisonntyou.pdf",
+              "sha256": "d3810b702af79d5f0c843cba8d47ec1f52a3d86ba1027f68d1f763edaf39be3e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/408/3miraiwoninau.pdf",
+              "sha256": "aad82bc9237d838ab7b193657d7bdb2d44efa71003852d4082e1efd67dfd4e49",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/408/4bunnkageijutu.pdf",
+              "sha256": "960bf6f8dfdbf938cb34c519522a4424aaa77f99b33b395f0f507fb08c8b4345",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/408/5kannkyouhuka.pdf",
+              "sha256": "557665a395022fda70af358f36fd596271434a954156c3a9be23fe51437fff3f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/408/6kaitekiribenn.pdf",
+              "sha256": "8f888c4fee640d69bab3fa78b5220da5357f3d46d1cb2479a3f423ec274e80ff",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/408/7seikatuwosasae.pdf",
+              "sha256": "5471331d5a9178b617497ea7fb40ca89767bac740d5200e7ee5cb47c332a51c4",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/408/8keikakujitugenn.pdf",
+              "sha256": "999d28e8b472d535731035758883014d03e65d9d150dbaa0b129921ee35cd7ac",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132071/2023/evaluation-settlement-8.pdf",
+            "sha256": "d9512385dba5cdfff86c61238f0dae746ed3751648b889e1dfd9b0db82aa3ac4",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/408/1annzennannsinn.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2023/evaluation-settlement-7.pdf",
+            "sha256": "d3810b702af79d5f0c843cba8d47ec1f52a3d86ba1027f68d1f763edaf39be3e",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/408/2sasaeaisonntyou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2023/evaluation-settlement-6.pdf",
+            "sha256": "aad82bc9237d838ab7b193657d7bdb2d44efa71003852d4082e1efd67dfd4e49",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/408/3miraiwoninau.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2023/evaluation-settlement-4.pdf",
+            "sha256": "960bf6f8dfdbf938cb34c519522a4424aaa77f99b33b395f0f507fb08c8b4345",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/408/4bunnkageijutu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2023/evaluation-settlement-2.pdf",
+            "sha256": "557665a395022fda70af358f36fd596271434a954156c3a9be23fe51437fff3f",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/408/5kannkyouhuka.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2023/evaluation-settlement-3.pdf",
+            "sha256": "8f888c4fee640d69bab3fa78b5220da5357f3d46d1cb2479a3f423ec274e80ff",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/408/6kaitekiribenn.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2023/evaluation-settlement-1.pdf",
+            "sha256": "5471331d5a9178b617497ea7fb40ca89767bac740d5200e7ee5cb47c332a51c4",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/408/7seikatuwosasae.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2023/evaluation-settlement-5.pdf",
+            "sha256": "999d28e8b472d535731035758883014d03e65d9d150dbaa0b129921ee35cd7ac",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/408/8keikakujitugenn.pdf"
+          }
+        ],
+        "archived_at": "2026-10-15T12:49:48.289Z"
+      },
+      "reason": "令和5年度に実施した事業を令和6年度に評価した事務事業評価シート8冊。シート表題は「令和6年度 事務事業評価（内部評価）シート（令和5年度実施事業）」で、事業費（コスト）の推移の列は「R4決算・R5決算・R6当初予算・R7?」のうち最新の決算が令和5年度（2023年度）。事業ごとに目的・概要、事業費、指標の現状値と実績、評価・課題・今後の方向性を載せる。文字として読める。"
     }
   ]
 }

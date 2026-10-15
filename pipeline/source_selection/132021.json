@@ -5711,6 +5711,104 @@
         "archived_at": "2026-10-14T16:14:55.541Z"
       },
       "reason": "令和7年度行政評価（令和6年度事後評価）の基本事業マネジメントシート6冊（計837頁）。基本事業ごとに目的、成果指標（令和6年度実績と目標値）、全体総括（成果目標の達成状況・成果のあった主な事務事業・課題のあった主な事務事業）、次年度の取組方針、事業費・人件費・総事業費（令和5・6年度実績、執行率）、構成する事務事業ごとの予算科目・事業費・活動指標・課題の有無を載せる。文字として読める。同じ評価の施策マネジメントシートは施策単位のため選ばなかった。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132021",
+        "fiscal_year": 2023,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和6年度立川市行政評価 基本事業マネジメントシート（令和5年度実績）",
+          "landing_url": "https://www.city.tachikawa.lg.jp/shisei/sesaku/1006562/1006673/1022706.html",
+          "inspected_at": "2026-10-15T13:00:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/022/706/2024_4kodomo.pdf",
+              "sha256": "0a0e7c448240f86d20f926bba0d18d6514bcd9bc8ca54105beb6ebb6fdec5f2b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/022/706/2024_5kankyou.pdf",
+              "sha256": "26347f70f2ff1eab527a535650dd7f54b4038f20f295c3673739243aee77ff12",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/022/706/2024_6tosikibann.pdf",
+              "sha256": "0a09d961cace4f44c4a65fb1a69361d17059aeeb101f56554e2ac27efb88fe21",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/022/706/2024_7hukusihokenn.pdf",
+              "sha256": "f74e1dcc3463d8833802e9ca3f73b4ea5e08335093d856863a8e77293f85601e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/022/706/2024_8gyouseikeiei.pdf",
+              "sha256": "64d4ddd144670d1ded4bbcf4680ed250ab8c201bf902bfdafb9fccfac834f73a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/022/706/2024_9sonota.pdf",
+              "sha256": "b8bffa12ee89f7ce6b92b23c359f0e6ee8bc7eb23ad19112c7c58d8b8286b9af",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132021/2023/evaluation-settlement-2.pdf",
+            "sha256": "0a0e7c448240f86d20f926bba0d18d6514bcd9bc8ca54105beb6ebb6fdec5f2b",
+            "final_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/022/706/2024_4kodomo.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132021/2023/evaluation-settlement-3.pdf",
+            "sha256": "26347f70f2ff1eab527a535650dd7f54b4038f20f295c3673739243aee77ff12",
+            "final_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/022/706/2024_5kankyou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132021/2023/evaluation-settlement-1.pdf",
+            "sha256": "0a09d961cace4f44c4a65fb1a69361d17059aeeb101f56554e2ac27efb88fe21",
+            "final_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/022/706/2024_6tosikibann.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132021/2023/evaluation-settlement-6.pdf",
+            "sha256": "f74e1dcc3463d8833802e9ca3f73b4ea5e08335093d856863a8e77293f85601e",
+            "final_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/022/706/2024_7hukusihokenn.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132021/2023/evaluation-settlement-4.pdf",
+            "sha256": "64d4ddd144670d1ded4bbcf4680ed250ab8c201bf902bfdafb9fccfac834f73a",
+            "final_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/022/706/2024_8gyouseikeiei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132021/2023/evaluation-settlement-5.pdf",
+            "sha256": "b8bffa12ee89f7ce6b92b23c359f0e6ee8bc7eb23ad19112c7c58d8b8286b9af",
+            "final_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/022/706/2024_9sonota.pdf"
+          }
+        ],
+        "archived_at": "2026-10-15T12:47:55.175Z"
+      },
+      "reason": "令和5年度に実施した事業を令和6年度に評価した事務事業マネジメントシート6冊。各シートは「令和5年度事後評価／令和6年度 事務事業マネジメントシート」で、本文に「④令和５年度実績(事業活動)」とあり最新の実績は令和5年度。基本事業ごとに目的、成果指標の実績と目標値、全体総括、次年度の取組方針、事業費・人件費・総事業費、構成する事務事業ごとの予算科目・事業費・活動指標・課題の有無を載せる。文字として読める。"
     }
   ]
 }
