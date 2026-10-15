@@ -30,7 +30,7 @@ EXECUTED = ['支出済額', '翌年度繰越額', '不用額']
 # Left printed page: subject columns then five budget amount bands.
 SUBJ_BANDS = [(195, 295), (295, 368), (368, 433), (433, 497), (497, 568)]
 # Right printed page: 節区分 number/name, then four amount bands.
-SETSU_NUM = (612, 641.5)
+SETSU_NUM = (612, 643.5)
 SETSU_NAME = (640, 705)
 SETSU_BANDS = [(705, 775), (775, 843), (843, 910), (910, 980)]
 EXEC_BANDS = SETSU_BANDS[1:]
@@ -255,6 +255,27 @@ def split_boundary_token(word):
     return parts
 
 
+GLUED_SETSU = re.compile(r'([0-9]{1,2})([^0-9,.\s].*)')
+
+
+def split_glued_setsu(word):
+    """A text layer that keeps '1報酬' as one word: split the section number from
+    its name at the number column. Widths are estimated per character (a digit is
+    half the width of a kanji), so the split lies between the two glyph runs."""
+    if not (SETSU_NUM[0] <= word['xMin'] < SETSU_NUM[1]):
+        return [word]
+    match = GLUED_SETSU.fullmatch(word['text'])
+    if not match:
+        return [word]
+    number, name = match.groups()
+    weights = [0.5 if ch.isascii() else 1.0 for ch in word['text']]
+    unit = (word['xMax'] - word['xMin']) / sum(weights)
+    cut = word['xMin'] + unit * 0.5 * len(number)
+    if cut > SETSU_NUM[1]:
+        return [word]
+    return [{**word, 'text': number, 'xMax': cut}, {**word, 'text': name, 'xMin': cut}]
+
+
 def observe(pdf, first, last, path):
     subprocess.run(['pdftotext', '-f', str(first), '-l', str(last), '-bbox-layout',
                     str(pdf), str(path)], check=True)
@@ -265,7 +286,8 @@ def observe(pdf, first, last, path):
         words = []
         for w in page.findall('.//{*}word'):
             word = dict(text=repair_text(w.text or ''), **{k: float(v) for k, v in w.attrib.items()})
-            words.extend(split_boundary_token(word))
+            for part in split_glued_setsu(word):
+                words.extend(split_boundary_token(part))
         pages.append((number, words))
     if len(pages) != last - first + 1:
         raise ValueError('Incomplete Poppler page range')
@@ -785,7 +807,7 @@ def parse_breakdown(cell, anomalies):
     return items, remarks
 
 
-def build(pages):
+def build(pages, note_left=NOTE_LEFT):
     """Assemble leaf rows; remarks-column lines attach to the subject whose
     printed row region contains them (breakdowns go to that subject's stream)."""
     current = {}
@@ -868,7 +890,7 @@ def build(pages):
         # straddling x=982 is split so a merged ○ marker is recovered, but the
         # amount-side fragments (x<982) must not leak into the remark stream —
         # e.g. the last digit of 1,101,960 in 不用額 fakes a '0' marker/item.
-        note_rows = lines([w for w in body if w['xMin'] >= NOTE_LEFT
+        note_rows = lines([w for w in body if w['xMin'] >= note_left
                            and not (w.get('frag') and w['xMin'] < 982)])
         for row in note_rows:
             y = row[0]['yMin']
@@ -1043,7 +1065,7 @@ def convert(inputs, destination, options):
     observations = destination / 'suginami-observations'
     observations.mkdir(parents=True, exist_ok=True)
     pages = observe(source['path'], selected[0], selected[-1], observations / 'detail-bbox.html')
-    setsu_rows, breakdown_rows, parents, cells_seen, total_rows, anomalies, retained = build(pages)
+    setsu_rows, breakdown_rows, parents, cells_seen, total_rows, anomalies, retained = build(pages, options.get('note_left', NOTE_LEFT))
     (observations / 'parents.json').write_text(json.dumps({'detail': parents}, ensure_ascii=False, indent=2) + '\n')
     (observations / 'note-cells.json').write_text(json.dumps(
         {'cells': cells_seen}, ensure_ascii=False, indent=2) + '\n')

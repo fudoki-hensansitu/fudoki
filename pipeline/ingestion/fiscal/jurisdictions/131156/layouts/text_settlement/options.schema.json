@@ -20,6 +20,9 @@
       },
       "minItems": 1,
       "uniqueItems": true
+    },
+    "note_left": {
+      "type": "number"
     }
   },
   "required": [
