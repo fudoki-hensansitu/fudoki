@@ -283,9 +283,11 @@ function describeRows(rows: TreeNode[], names: Names) {
   }
 }
 
-function NodesResult({ rows, next, history, names, bridge, busy, failed, fold }: {
+function NodesResult({ rows, next, history, names, bridge, busy, failed, fold, expand }: {
   rows: TreeNode[]
   fold: number
+  /** インラインで行を押したとき、先に全画面へ移す（利用者の操作がきっかけの切り替え） */
+  expand: () => void
   failed: boolean
   history: { data: ViewData }[]
   next?: string | null
@@ -294,7 +296,10 @@ function NodesResult({ rows, next, history, names, bridge, busy, failed, fold }:
   busy: boolean
 }) {
   if (!rows.length) return <p className="quiet">該当する歳出明細はありません。</p>
-  const drill = (n: TreeNode) => () => void bridge.call('get_expenditure_node', { document_kind: n.document_kind, node_id: n.node_id }, 'drill', n)
+  const drill = (n: TreeNode) => () => {
+    expand()
+    void bridge.call('get_expenditure_node', { document_kind: n.document_kind, node_id: n.node_id }, 'drill', n)
+  }
   // 明細の画面に置き換わるまでの間、同じ見出しを出しておく
   if (autoOpens(rows, next)) {
     const n = rows[0]!
@@ -469,6 +474,11 @@ function View({ bridge }: { bridge: Bridge }) {
     manualFullscreen.current = inline
     bridge.setFullscreen(inline)
   }
+  const expand = () => {
+    if (!inline) return
+    manualFullscreen.current = true
+    bridge.setFullscreen(true)
+  }
   const previous = state.history.at(-1)
   const backToList = previous && 'nodes' in previous.data && !oneScope(previous.data.nodes)
     ? () => bridge.backTo(state.history.length - 1) : undefined
@@ -500,7 +510,7 @@ function View({ bridge }: { bridge: Bridge }) {
       ) : entry && (
         <div key={entry.revision} className="result">
           {'jurisdictions' in entry.data ? <JurisdictionsResult list={entry.data.jurisdictions} bridge={bridge} busy={state.busy} fold={fold} />
-            : 'nodes' in entry.data ? <NodesResult rows={entry.data.nodes} next={entry.data.next_page_token} history={state.history} names={state.names} bridge={bridge} busy={state.busy} failed={!!state.error} fold={fold} />
+            : 'nodes' in entry.data ? <NodesResult rows={entry.data.nodes} next={entry.data.next_page_token} history={state.history} names={state.names} bridge={bridge} busy={state.busy} failed={!!state.error} fold={fold} expand={expand} />
             : <NodeResult data={entry.data} crumbs={crumbsOf(entry.data.node, state.history, bridge)} names={state.names} bridge={bridge} showPdf={showPdf} busy={state.busy} />}
         </div>
       )}
