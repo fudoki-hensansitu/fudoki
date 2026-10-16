@@ -75,7 +75,7 @@ PaddleとVisionのどちらでも、名称の補正には共通の `ingestion.li
 
 ## 汎用scanの科目番号の訂正
 
-`generic_scan` の管理JSONの `conversions[].options.code_corrections` は、原画で確認した科目番号の誤読だけを固定する。組版の設定ではなく、OCRの原文を保持した別の宣言である。数字だけのOCR単語が科目欄の中にあること、物理頁・単語ID・原文の完全一致を確かめる。対象がない、原文が違う、金額欄にある、文字を含む場合は停止する。金額の訂正には従来の `amount_corrections` を使う。
+`generic_scan` の管理JSONの `conversions[].options.code_corrections` は、原画で確認した科目番号の誤読だけを固定する。組版の設定ではなく、OCRの原文を保持した別の宣言である。数字だけのOCR単語が科目欄（款・項・目）か内訳の名前欄（`kind: label`。節の番号）の中にあること、物理頁・単語ID・原文の完全一致を確かめる。対象がない、原文が違う、金額欄にある、文字を含む場合は停止する。訂正で桁が減る場合（縦罫線が数字に付いた `181` を `18` と直す）は、語の枠も印字の桁数に縮める。金額の訂正には従来の `amount_corrections` を使う。
 
 ```json
 {

@@ -78,7 +78,7 @@ class CorrectionTest(unittest.TestCase):
                     scan.pages(observation, Path('x.pdf'), code_corrections=[{**rule, **changes}])
             band.header = ('支出済額',)
             band.kind = 'amount'
-            with self.assertRaisesRegex(ValueError, 'subject column'):
+            with self.assertRaisesRegex(ValueError, 'label column'):
                 scan.pages(observation, Path('x.pdf'), code_corrections=[rule])
 
     def test_a_contained_comma_in_another_tile_is_kept_in_its_complete_amount(self):
