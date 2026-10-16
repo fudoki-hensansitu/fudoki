@@ -18,6 +18,7 @@ export default defineConfig({
   },
   footer: {
     links: [
+      { label: '風土記（ホーム）', href: 'https://fudoki.dev/' },
       { label: 'プライバシーポリシー', href: '/privacy' },
       { label: '利用規約', href: '/terms' },
     ],
