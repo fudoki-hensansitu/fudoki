@@ -58,15 +58,14 @@ for (const root of ['apps', 'packages'])
         )
     }
   }
+// web は入口の1枚と、その頁が使う静的ファイル（static/）だけを配る。データの binding は持たせない
 for (const name of ['web/deploy']) {
   const config = await readFile(
     join(REPO, 'apps', name, 'cloudflare.config.ts'),
     'utf8'
   )
-  if (/\b(?:bindings|assets)\s*[:.]/.test(config))
-    throw new Error(
-      `Unavailable public app must not bind data or assets: ${name}`
-    )
+  if (/\bbindings\s*[:.]/.test(config))
+    throw new Error(`Public web must not bind data: ${name}`)
 }
 // docs は静的ファイルだけを配る。Worker のコードも binding（D1 などのデータ）も持たせない
 const docsConfig = await readFile(

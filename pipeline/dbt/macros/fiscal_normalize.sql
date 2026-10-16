@@ -12,8 +12,8 @@
 
 {% macro fiscal_setsu_strip(col) -%}
     {#- Names arrive NFKC-normalized from staging. Separators go, and the conjunction printed in hiragana
-        (`負担金、補助および交付金`, 132055) reads as the legal 及び. Other words wait for a real case. -#}
-    replace(regexp_replace({{ col }}, '[、，,､・･·.．\s　]+', '', 'g'), 'および', '及び')
+        (`負担金、補助および交付金`, 132055) reads as the legal 及び. A leading enumerator `(1)` (葛飾の節の内訳番号) is not part of the name. Other words wait for a real case. -#}
+    replace(regexp_replace(regexp_replace({{ col }}, '^[(（][0-9]+[)）]', ''), '[、，,､・･·.．\s　]+', '', 'g'), 'および', '及び')
 {%- endmacro %}
 
 {% macro fiscal_setsu_prefix_ids(norm_name, fiscal_year) -%}

@@ -1,500 +1,196 @@
----
-version: "alpha"
-name: 風土記（fudoki）
-description: 自治体の予算を事業単位まで構造化して配布する風土記の画面。彩度ゼロを既定とし、色が付くものには必ず意味を持たせる。
-colors:
-  # 基調。無彩色（彩度ゼロ）で通す。色は意味を持つところにだけ置く
-  background: "oklch(1 0 0)"
-  foreground: "oklch(0.145 0 0)"
-  card: "oklch(1 0 0)"
-  card-foreground: "oklch(0.145 0 0)"
-  # ブランド。青丹（あをに）。shadcn の primary は仕様上 "brand surfaces" の置き場
-  primary: "#2f5d43"
-  primary-foreground: "#f4f1e6"
-  # 強調色。元の風土記のオレンジを保持し、単色ロゴとは役割を分ける
-  brand-highlight: "#c1553a"
-  secondary: "oklch(0.97 0 0)"
-  secondary-foreground: "oklch(0.205 0 0)"
-  muted: "oklch(0.97 0 0)"
-  muted-foreground: "oklch(0.556 0 0)"
-  accent: "oklch(96.5% 0.012 157)"
-  accent-foreground: "oklch(32% 0.04 157)"
-  border: "oklch(0.922 0 0)"
-  ring: "oklch(58% 0.075 157)"
-  destructive: "oklch(0.577 0.245 27.325)"
-  og-paper: "#f4f1e6"
-typography:
-  heading:
-    fontFamily: "\"Geist Variable\", \"Noto Sans JP Variable\", \"Hiragino Sans\", sans-serif"
-    fontSize: 20px
-    fontWeight: 600
-    lineHeight: "28px"
-  stat:
-    fontFamily: "\"Geist Variable\", \"Noto Sans JP Variable\", \"Hiragino Sans\", sans-serif"
-    fontSize: 20px
-    fontWeight: 500
-    lineHeight: "28px"
-  body:
-    fontFamily: "\"Geist Variable\", \"Noto Sans JP Variable\", \"Hiragino Sans\", sans-serif"
-    fontSize: 14px
-    fontWeight: 400
-    lineHeight: "20px"
-  label:
-    fontFamily: "\"Geist Variable\", \"Noto Sans JP Variable\", \"Hiragino Sans\", sans-serif"
-    fontSize: 12px
-    fontWeight: 500
-    lineHeight: "16px"
-  caption:
-    fontFamily: "\"Geist Variable\", \"Noto Sans JP Variable\", \"Hiragino Sans\", sans-serif"
-    fontSize: 12px
-    fontWeight: 400
-    lineHeight: "19.5px"
-  mono:
-    fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
-    fontSize: 12px
-    fontWeight: 400
-    lineHeight: "19.5px"
-rounded:
-  sm: 6px
-  md: 8px
-  lg: 10px
-  xl: 14px
-  pill: 26px
-spacing:
-  xs: 4px
-  sm: 8px
-  md: 12px
-  lg: 16px
-  xl: 24px
-  section: 32px
-components:
-  card:
-    backgroundColor: "{colors.card}"
-    textColor: "{colors.card-foreground}"
-    typography: "{typography.body}"
-    rounded: "{rounded.xl}"
-    padding: "{spacing.lg}"
-  card-label:
-    textColor: "{colors.muted-foreground}"
-    typography: "{typography.label}"
-  card-value:
-    textColor: "{colors.foreground}"
-    typography: "{typography.stat}"
-  button-primary:
-    backgroundColor: "{colors.primary}"
-    textColor: "{colors.primary-foreground}"
-    typography: "{typography.body}"
-    rounded: "{rounded.lg}"
-    height: 32px
-    padding: "10px"
-  button-outline:
-    backgroundColor: "{colors.background}"
-    textColor: "{colors.foreground}"
-    typography: "{typography.body}"
-    rounded: "{rounded.lg}"
-    height: 32px
-    padding: "10px"
-  badge:
-    backgroundColor: "{colors.secondary}"
-    textColor: "{colors.secondary-foreground}"
-    typography: "{typography.label}"
-    rounded: "{rounded.pill}"
-    height: 20px
-    padding: "2px 8px"
-  input:
-    backgroundColor: "{colors.background}"
-    textColor: "{colors.foreground}"
-    typography: "{typography.body}"
-    rounded: "{rounded.md}"
-    height: 32px
-    padding: "{spacing.md}"
-  tab-trigger:
-    textColor: "{colors.muted-foreground}"
-    typography: "{typography.body}"
-    rounded: "{rounded.md}"
-    padding: "2px 6px"
-  tab-trigger-active:
-    backgroundColor: "{colors.background}"
-    textColor: "{colors.foreground}"
-    typography: "{typography.body}"
-    rounded: "{rounded.md}"
-    padding: "2px 6px"
-  table-header-cell:
-    textColor: "{colors.foreground}"
-    typography: "{typography.label}"
-    height: 32px
-  table-cell:
-    textColor: "{colors.foreground}"
-    typography: "{typography.body}"
-    height: 32px
-  flow-node:
-    backgroundColor: "{colors.card}"
-    textColor: "{colors.card-foreground}"
-    typography: "{typography.label}"
-    rounded: "{rounded.sm}"
-    height: 46px
-    width: 210px
-  path-code:
-    textColor: "{colors.muted-foreground}"
-    typography: "{typography.mono}"
-  focus-ring:
-    backgroundColor: "{colors.ring}"
-    rounded: "{rounded.md}"
-    size: 3px
-  button-hover-surface:
-    backgroundColor: "{colors.accent}"
-    textColor: "{colors.accent-foreground}"
-    typography: "{typography.body}"
-    rounded: "{rounded.lg}"
-    height: 32px
-  button-outline-hover:
-    backgroundColor: "{colors.muted}"
-    textColor: "{colors.foreground}"
-    typography: "{typography.body}"
-    rounded: "{rounded.lg}"
-    height: 32px
-  rule:
-    backgroundColor: "{colors.border}"
-    height: 1px
-  card-value-failed:
-    textColor: "{colors.destructive}"
-    typography: "{typography.stat}"
-  # 流れ図のノードに付く検査の印。落ちているときだけ色が付く
-  check-marker-failed:
-    backgroundColor: "{colors.destructive}"
-    size: 16px
-  check-marker:
-    backgroundColor: "{colors.muted-foreground}"
-    size: 16px
-  # 単色のロゴ。元の五本の短冊と基準線を保持する
-  logo-bar:
-    backgroundColor: "{colors.primary}"
-    width: 4px
-    height: 26px
-    rounded: 2px
-  og-canvas:
-    backgroundColor: "{colors.og-paper}"
-    textColor: "{colors.foreground}"
-    width: 1200px
-    height: 630px
----
+# Design — 風土記
 
-## Overview
+Locked design system。この repo の視覚値の正本。product-design skill はこれを参照し、
+Hallmark は検出すると pick をこれに従わせる。値を変えるときはこのファイルだけを編集し、
+派生物は再生成する。
 
-⚠️ **画面は3種類あり、答える問いが違う。** 当初この文書は検査の画面だけを記述していたので、
-どの話をしているかを先に分ける。
+## System
+- Genre · editorial（地誌・帳面）
+- Theme · 白い机に生成りの紙。見出しは低コントラストの明朝 400、ブランドの青丹は操作にだけ、朱と藍は絵の面にだけ置く
+- Vibe · 静か、紙、帳面、確かめられる、少しの諧謔
 
-- **報告** — パイプラインの検査結果。**検査成績書**として組む
-- **分析** — 団体の支出を COFOG で見る。**金額を読ませる画面**
-- **読み物** — ホーム・利用条件・パイプラインの共通案内。説明が主体で、絵と見出しがその役を担う
+**実データの表そのものが製品の説明を担う。** 最初の画面に置くのは、原典の階層（款・項・目）と金額・頁を持つ帳面の紙。
+飾りの絵は紙の後ろに敷く添え物で、本文やデータを覆わない。
 
-### 報告の性格
+画面は **読み物**（ホーム・利用条件・案内）と **データの面**（報告・分析）に分かれる。token と書体は共通で、
+絵の面（網点・大きな字・朱の楕円）を持つのは読み物だけ。データの面は紙・罫線・数字だけで組む。
 
-**検査成績書であって、可視化ではない。** この画面が答える問いは「この配布データは信用できるか」の1つで、
-「三鷹市はいくら使ったか」ではない。だから装飾も、印象を作るための色も、演出のための動きも持たない。
-紙の検査成績書がそうであるように、余白と罫線と数字だけで構成し、
-読み手が値を1つずつ確かめられることを最優先にする。
+## Tokens
 
-その結果、全体の質感は **Dense（密）で Utilitarian（実用一辺倒）** になる。
-画面は白地（`{colors.background}`）に無彩色の細線で区切られ、影はほぼ無い。
-情報の階層は色や影ではなく、**文字サイズと余白**が作る。
-
-**彩度はゼロが既定で、色が付いているものには必ず意味がある。**
-このルールを守るために shadcn の `chart-1..5` は使っていない（base-nova のそれはゼロ彩度のグレーで、
-判断の有無も分類の状態も区別できないため）。
-
-### 分析の性格
-
-**報告が答えない問いに答える。** 報告は「この配布データは信用できるか」に答えるが、
-分析は「**この団体は何にいくら使っているか**」に答える。可視化そのものなので、
-報告の「装飾も色も持たない」はここには効かない。
-
-⚠️ **色を持てるのは COFOG の10色だけ。** これは既に
-「識別の補助であって情報の担い手ではない」と決めてあり（後述）、明度と彩度を
-狭い帯に抑えてある。**ここに新しい色を足さない** — 足した瞬間に
-「色が付いていたら意味がある」という既定が崩れる。
-
-⚠️ **割合の分母は合計にする。割り当てられなかった分を落とさない。**
-割当済みだけを分母にすると 100% になり、**使途が見えていない分まで
-「見えている」ことになる**。未分類は分母に含めたうえで、帯にも一区画として出す。
-
-⚠️ **画面で集計しない。** 数字は API が返したものをそのまま出す。
-
-### 読み物の性格
-
-**読み手はまだ何も知らない。** 報告に来る人は配布データが正しいかを確かめに来るが、
-ホームに来る人は fudoki が何なのかを知らない。だから読み物は説明が主体で、
-絵と見出しがその役を担う。
-
-⚠️ **上の彩度の既定・意味色・ブランド色の線引き・Flat・`tabular-nums` は読み物にも効く。**
-報告と違うのは、装飾を持たないことと文字サイズが4段しかないことで、
-どちらも**検査成績書の密度のための決めごと**である。
-
-## Colors
-
-**この画面が色で言うことは1つだけ — 検査が落ちているか。**
-
-`{colors.destructive}` だけが意味を持つ色で、下流の成果物を書き出さない状態を指す。
-それ以外はすべて無彩色に落ちる。
-
-⚠️ **警告に色を与えない。** 一時は失敗（赤）と警告（黄）の対で持っていたが、
-**警告は数と一覧が言う** — ノードに付く印は件数を数字で持ち、検査タブに一行ずつ出る。
-色を足しても情報は増えず、「色が付いていたら意味がある」の意味が1段薄まるだけだった。
-
-⚠️ **判断の有無（原典・正本 ⇄ 派生）も色で言わない。**
-以前は寒色／暖色の対で示していたが、**段の並びと辺の向きが既にそれを言っている** — 流れ図は
-左から右へ ingestion → staging → intermediate → marts と並び、風土記の分類などの判断は intermediate で加える。配布パッケージの生成は dbt の外の処理として案内する。
-位置で分かることを色でも言うと、色の語彙が2つの意味を持つ。
-
-**この2つを削ったので、意味色は destructive の 1 つだけになった。**
-増やすときは、それが何を言うか・位置や数字では言えないのかを先に確かめる。
-
-COFOG の大分類（01〜10）にも 10 色を割り当てているが、
-これは**識別の補助であって情報の担い手ではない**。明度を 58〜69% の狭い帯に、彩度を 0.05〜0.10 に
-抑えてあり、どれかが目立つことがないようにしている。色はコードの文字と必ず併記する。
-⚠️ この 10 色は CSS トークンではなく、画面のコードの定数として持つ（画面は作り直し中で、現在は定義がない）。
-**分類体系に対応する色はデータの一部**で、テーマで変わるものではないため。
-
-**ブランド色は `{colors.primary}`（青丹）。** shadcn の `primary` は仕様上
-"High-emphasis actions and **brand surfaces**" の置き場なので、独自の `brand-*` を作らずここに入れる。
-青丹（あをに）の緑を受け継ぐ。713年の官命という出自に由来するが、
-ロゴに顔料の対を再現する必要はない。小サイズでも形と名前を読めることを優先し、同じ緑を基調にし、細い基準線だけ濃さを補正する。
-
-**出る場所はクロムに限る** — ヘッダのロゴ、リンク、主ボタン、フォーカスリング（`{colors.ring}`）、
-ホバー面（`{colors.accent}`）。**データを表す面には出さない** — 流れ図のノード、状態のバッジ、明細のセル。
-色が情報を担うのは意味色の役目で、そこにブランド色が混ざると、
-読み手はブランド色にも意味があると読む。**「使うか使わないか」ではなく、どちらの役をやらせるか**の線引きである。
-
-⚠️ 青丹の緑は COFOG の大分類 05（`oklch(64% 0.08 145)`）と近い。
-**この2つが同じ面に出ないのは上の線引きの結果**で、偶然ではない。
-ブランド色をデータの面へ持ち出した瞬間に、この近さが実害になる。
-
-**ロゴマークと文字は同じ色相を使う。** ライトでは `{colors.primary}`、
-ダークでは同トークンの明るい緑（`#8fbfa2`）。マークと文字で色相を分けず、基準線の赤も使わない。短冊は全て同じ色とし、細い基準線だけ背景との明度差を増やす。
-
-**強調色は元のオレンジ `#c1553a`（`{colors.brand-highlight}`）を保持する。**
-ロゴの単色とは役割を分ける。shadcn の `accent` はホバー面のトークンであり、この強調色とは区別する。
-ロゴ色4案とオレンジとの組み合わせの比較は `docs/brand/logo-colors.html` に記録する。
-黒一色・白抜きで使用する場合も、全体を同じ色で描く。
-
-ヘッダの導線にはマーク単体を使う。製品名を伝える説明面には横組みロゴを使う。
-文字は SVG の輪郭なので、画面側に別のロゴ書体を読み込む必要はない。
-
-ダークモードは同じ色相を保ったまま明度だけを上げる（`{colors.primary}` は 43.7% → 76.2%）。
-**色相を変えると、その色が意味していたものがテーマによって別物に見える。**
-
-## Typography
-
-`Geist Variable` の可変フォントを 1 本だけ持つ。等幅はパス・識別子・コード片のためだけに使い、
-`{typography.mono}` としてシステムの等幅スタックに委ねる。
-
-サイズは 4 段しかない。`{typography.heading}` 20px / `{typography.body}` 14px /
-`{typography.label}` 12px・500 / `{typography.caption}` 12px・400。
-**14px が本文で、12px が説明とラベル。** これ以上刻まない。
-
-読み物では見出しがこの 4 段の上に出る。本文以下は 4 段のままにする。
-
-**数字は必ず `tabular-nums` で組む。** 金額と行数が縦に並ぶ画面なので、
-プロポーショナルな数字だと桁が揃わず、比較のために目が横に泳ぐ。実装でも最も多く現れる指定のひとつ。
-
-### 和文の扱い
-
-欧文は `Geist Variable`、和文は **`Noto Sans JP Variable`**。どちらも webfont として同梱し、
-システムフォントに委ねない。**Geist に和文グリフが無い**ので、宣言しなければ日本語は
-generic の `sans-serif` に落ち、OS ごとに別の字形で出る
-（macOS では Hiragino Kaku Gothic ProN が拾うため、mac だけで見ていると破綻に気づけない）。
-`Hiragino Sans` は webfont が落ちてこなかったときの保険として残してある。
-
-条件は2つあった。
-
-**1. ウェイトが連続していること。** この画面は `ELT パイプライン` `COFOG 割当（金額比）` のように
-**1行の中で和欧が混ざる**箇所が多く、和文側が必要なウェイトを持たないと、
-同じ行の欧文と和文で太さがずれる。使うのは 400 / 500 / 600 の3段。
-Zen Kaku Gothic New（300/400/500/700）や BIZ UDPGothic（400/700）は 600 を持たないため落ちる。
-
-**2. 癖が無いこと。** 表と数字が主体の画面で、書体が主張すると読む対象と競合する。
-M PLUS 2 は条件1を満たすが仮名が幾何的で、字面に個性が出すぎた。
-Noto Sans JP は 100〜900 が連続し、かつ4候補（M PLUS 2 / Noto Sans JP /
-IBM Plex Sans JP / Murecho）の中で最も無個性で、字幅も最も詰まっている。
-**表が主体の画面では、字幅が詰まっていること自体が情報量になる。**
-
-**ワードマークは Zen角ゴシック New の 700（ゴシック体、OFL-1.1）で組む。**
-比較のD案を採用し、本文より角の丸みを抑える。字面は比較時より約5.1%小さくする。
-`apps/web/brand/build.py` が固定バージョンのフォントから輪郭を取り出して SVG の path に変換する。
-ロゴにはフォントの配信やシステムフォントへのフォールバックが発生しない。
-
-⚠️ **行間も欧文基準のまま。** `{typography.body}` は 20/14 ＝ 1.43、`{typography.label}` は 16/12 ＝ 1.33 で、
-日本語本文の標準（1.5〜2.0）より狭い。**表のセルとバッジは短い文字列なので実害が無い**が、
-段落として日本語を流す箇所（Caveats、検査の説明文）には `{typography.caption}` の 19.5/12 ＝ 1.625 を使う。
-新しく段落を足すときも同じ扱いにする。
-
-改行は本文で `line-break: strict` / `word-break: normal` / `overflow-wrap: break-word`。
-`word-break: keep-all` は使わない — 日本語の塊に当てると CJK 文字間の自然な折り返しごと止まる。
-ノードのラベルのように**幅が固定で折り返させたくない**箇所は、折り返しを禁じるのではなく
-表示幅で切り詰めて `…` を付ける（全角を 2、半角を 1 と数える。文字数で切ると全角で箱を突き抜ける）。
-
-## Layout
-
-**1 カラム、中央寄せ。サイドバーを持たない。**
-報告は上から「流れ図 → 検証の指標 → タブで4つの証拠」の一直線で、
-読み手が上から下へ読み切れば判断が終わる形にしている。
-
-**最大幅は中身が決める。** 表と流れ図が主体の報告は広く、文章が主体の読み物は
-1行が長くなりすぎない幅で止める。**数値は決め打ちにせず、その画面で最も広い要素に合わせる。**
-
-節と節の間は `{spacing.section}`（32px）、節の中の要素は `{spacing.lg}`（16px）、
-関連する要素どうしは `{spacing.sm}`（8px）。この 3 段しか使わない。
-
-ヘッダーは 56px 固定で `sticky`、背景は 95% 不透明＋ backdrop-blur。
-**画面をまたぐ導線と、いまどの画面にいるかが、スクロールしても消えない**ようにするため。
-
-⚠️ **溢れるものはその要素の中でスクロールさせる。** 流れ図は幅が足りなければ横に、
-ノードが増えれば縦に、それ自身がスクロールする。ページ本体をスクロールさせない。
-
-## Elevation & Depth
-
-**Flat。影で階層を作らない。**
-
-カードは影を持たず、`{colors.foreground}` の 10% 不透明のヘアラインリング 1px で縁を取る。
-影を落とすと「浮いている＝重要」という序列が生まれるが、この画面では
-4 つの指標も 15 個のノードも**互いに対等**で、序列を付けたくない。
-
-影が現れるのはタブの選択状態だけ（`0 1px 3px rgba(0,0,0,.1)`）で、
-これは「いまどれを開いているか」を言うための最小限。それ以外に `box-shadow` を足さない。
-
-フォーカスリングだけは例外的に太い（`{components.focus-ring}` の 3px、`{colors.ring}` の 50% 不透明）。
-キーボードで辿る画面なので、ここは目立つ方が正しい。
-
-## Shapes
-
-角丸は **控えめに丸い**。カードが 14px（`{rounded.xl}`）、ボタンとノードが 10px（`{rounded.lg}`）、
-タブと入力が 8px（`{rounded.md}`）で、`--radius` 10px から派生する。
-
-**完全な円は 2 箇所だけ** — バッジ（`{rounded.pill}`）と、COFOG の大分類の色見本
-（2.5px 角の小さな四角。丸ではない）。
-
-表には角丸を付けない。**罫線は角を持ったまま直交させる**。検査成績書の見た目に寄せる意図で、
-表だけは意図的に硬い。
-
-## Components
-
-* **Cards:** 背景 `{colors.card}`、14px の角丸、影なし・ヘアラインリングのみ。
-  内側は 16px。指標カードはラベル（`{components.card-label}`、12px のミュート）と
-  値（`{components.card-value}`、20px）の 2 段組で、値が良否を持つときだけ着色する。
-* **Buttons:** 高さ 32px、10px の角丸。既定は `{colors.primary}` の塗り。
-  境界線つき（outline）は背景色を持たず、ホバーで `{colors.muted}` に沈む。
-  押下時に 1px 下がる以外のアニメーションを持たない。
-* **Badges:** 高さ 20px の丸型。既定は `{colors.secondary}` の薄いグレー。
-  **検査が落ちているときだけ** `{colors.destructive}` の系統に変わる。
-* **Tabs:** 選択されていないタブは `{colors.muted-foreground}`、選択中は前景色に戻り、
-  背景と 1px の影が付く。タブの並びは**検証の順**（何を保証しているか → どこから来たか →
-  fudoki は何を足したか → 1 行ずつ確かめる）で、機能のグルーピングではない。
-* **Tables:** 罫線は水平のみ、`{colors.border}`。ヘッダは 12px・500。
-  数値列は右寄せ＋ `tabular-nums`。行の高さは 32px。
-* **Flow graph:** ノードを段ごとの列に並べ、依存を実線で引く。
-  ノードは**名前と行数だけ**を持ち、詳細は選択したときに別の面へ出す。
-  判断が入るのは intermediate 以降だが、それは**列の位置が言う**ので色では言わない。
-  ノードに付く印は件数を数字で持ち、**落ちているときだけ** `{colors.destructive}` になる。
-  それ以外は `{colors.muted-foreground}`。
-* **Inputs:** 高さ 32px、8px の角丸、1px の `{colors.border}`。背景は持たない。
-* **Tooltips:** 定義や但し書きの置き場。最大 36 文字幅で折り返す。
-  **本文に書けることをツールチップに逃がさない** — 隠した時点で読まれない。
-* **Map:** 自治体の境界を素の SVG で描き、押すとその団体の報告へ入る。
-  既定は `{colors.accent}`、ホバーで `{colors.primary}` に沈む。
-  **全団体が同じ色で、収録の有無を色で言わない** — 色が団体ごとの違いを表さないので、
-  これは押せる面を示すクロムであって、データを表す面ではない。
-  ⚠️ ホバーは**濃くする方向**へ。薄くすると背景へ近づき、どれを指しているか分かりにくい。
-  縮尺が本土と揃わない離島は別枠のタイルに切り出す。実面積に比例させると押せなくなる。
-
-## Logo
-
-**元の比率のマーク＋D案のZen角ゴシック Newを正式採用（2026-10-04）**。
-文字サイズは32.5（D案の比較時より約5.1%縮小）、文字位置は1px下、マークとの間隔は8px。
-気に入っていた元の五本の短冊・基準線の形を保持し、同じ色を基調に細い基準線だけ濃さを補正する。
-三本案は電波表示のように見えるため不採用。
-比較した5案は `docs/brand/logo-options.html` に記録する。
-
-ロゴの視覚値。画面のブランド色は上記 frontmatter と同じ値を参照する。
+shadcn/ui の語彙。ブランド色は `--primary`、`--accent` は hover の控えめな面。拡張は絵の面と帯の色。
 
 ```css
 :root {
+  --background: #fdfcfa;
+  --foreground: #2b2723;
+  --card: #f8f5ee;
+  --card-foreground: #2b2723;
+  --popover: #fdfcfa;
+  --popover-foreground: #2b2723;
   --primary: #2f5d43;
-  --primary-foreground: #f4f1e6;
-  --logo-ink: var(--primary);
-  --logo-font-family: "Zen Kaku Gothic New", "Hiragino Sans", sans-serif;
-  --logo-font-weight: 700;
-  --logo-height: 40px;
+  --primary-foreground: #f8f5ee;
+  --secondary: #ece6da;
+  --secondary-foreground: #2b2723;
+  --muted: #ece6da;
+  --muted-foreground: #6b655c;
+  --accent: #e9efe9;
+  --accent-foreground: #2f5d43;
+  --destructive: oklch(57.7% 0.245 27.325);
+  --destructive-foreground: #fdfcfa;
+  --border: #ddd6c8;
+  --input: #ddd6c8;
+  --ring: #2f5d43;
+  --radius: 8px;
+  --radius-sm: 4px;
+  --radius-card: 16px;
+  --radius-sheet: 24px;
+
+  /* 拡張: 絵の面と帯。データを表す面には使わない */
+  --paper: #e4d8bf;
+  --paper-foreground: #2b2723;
+  --night: #2b2723;
+  --night-foreground: #f8f5ee;
+  /* 原典の頁を写す面。PDF の白なので明暗で変えない */
+  --page: #ffffff;
+  --page-foreground: #2b2723;
+  --shu: #c1553a;
+  --ai: #33507a;
+  --kincha: #e3a43c;
+  --sakura: #ebcab9;
+  --logo-rule-ink: #29523b;
+
+  --font-display: "Fudoki Mincho", "BIZ UDPMincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --font-sans: "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", "Yu Gothic", Meiryo, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --text-caption: 12px;
+  --text-ui: 14px;
+  --text-body: 16px;
+  --text-lead: 17px;
+  --text-h3: 26px;
+  --text-h2: clamp(1.75rem, 1.3rem + 1.6vw, 2.75rem);
+  --text-display: clamp(2.5rem, 1.4rem + 4.4vw, 5.5rem);
+  --line-height-body: 1.8;
+  --line-height-heading: 1.4;
+  --line-height-display: 1.18;
+  --letter-spacing-body: 0.03em;
+  --letter-spacing-heading: 0.02em;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 40px;
+  --space-7: 64px;
+  --space-section: 120px;
+  --max-width: 1200px;
+
+  --shadow-sheet: 0 20px 25px -5px color-mix(in srgb, var(--night) 12%, transparent), 0 8px 10px -6px color-mix(in srgb, var(--night) 10%, transparent);
+  --shadow-pill: 0 1px 2px color-mix(in srgb, var(--night) 4%, transparent), 0 6px 20px color-mix(in srgb, var(--night) 6%, transparent);
+  --hair: color-mix(in srgb, var(--foreground) 10%, transparent);
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-sweep: cubic-bezier(0.87, 0, 0.13, 1);
+  --duration: 150ms;
 }
-.dark {
-  --primary: #8fbfa2;
-  --primary-foreground: #0a0a0a;
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #1b1916;
+    --foreground: #ece6da;
+    --card: #24211d;
+    --card-foreground: #ece6da;
+    --popover: #24211d;
+    --popover-foreground: #ece6da;
+    --primary: #8fbfa2;
+    --primary-foreground: #1b1916;
+    --secondary: #302c26;
+    --secondary-foreground: #ece6da;
+    --muted: #302c26;
+    --muted-foreground: #a8a094;
+    --accent: #26332b;
+    --accent-foreground: #8fbfa2;
+    --border: #3b362f;
+    --input: #3b362f;
+    --ring: #8fbfa2;
+    --paper: #3a342b;
+    --paper-foreground: #ece6da;
+    --night: #0f0e0c;
+    --night-foreground: #ece6da;
+    --shu: #d46a4f;
+    --ai: #6f8fc0;
+    --sakura: #b98f80;
+    --logo-rule-ink: #9cc7ad;
+  }
 }
 ```
 
-- **Logomark**: 32 × 32 の grid。`markProportion=original` の元の比率を採用する。
-  見える高さ29・幅28、中心はx=16・y=16.5（上端y=2・下端y=31）。
-  五本の短冊は幅4・空き2、左端x=2／8／14／20／26、下端y=28。
-  高さは14／22／10／26／17、角丸は2。下線はx=2・y=29・幅28・高さ2、
-  独立した角丸 `ruleRadius=1` を使う。外形の高さ／幅は29/28で、黄金比ではない。
-  短冊と文字は同じ色・不透明度1。基準線は `ruleContrast=0.12` で、ライト背景では
-  基調RGBを0.88倍、ダーク背景では白へ12%近づけて背景との明度差を増やす。
-  ライトの基準線は `#29523b`、ダークでは `#9cc7ad`。透明度で薄くする補正は使わない。
-- **Wordmark**: 「風土記」全体。Zen角ゴシック New・Bold（700）、32.5 単位の文字サイズ、
-  高さ 40 の viewBox。全角送りではなく実際の輪郭で字間を取り、風–土・土–記とも3.5。字間は文字サイズから独立した実寸。
-  三文字は共通のベースラインを持ち、字面全体の中心を y=21.5 に置く。
-  2026-10-04に文字のみ1単位下へ補正した（高さ40pxで1px）。改行しない。
-- **Lockup**: 高さ 40、マークを 1.25 倍、文字の先頭輪郭を x=45.5 に配置する。
-  マークの見える右端から文字までの空きは8。マークの見える高さは36.25、文字の字面の高さは約29.0。
-- **Usage**: マークはヘッダ 24px・最小 16px。ワードマーク単体と横組みは最小高さ 24px、
-  説明面 40px、スライド 64px。マークの周囲は最低 4/32、横組みは最低高さの 1/4 を空ける。
-  ライト・ダークはそれぞれ同じ色相の濃淡。印刷用の黒一色・白抜きも許可する。背景は透過、縁取り・影・グラデーションを付けない。
-- **Assets**: 設定値の正本は `apps/web/brand/config.json`、生成手順は `apps/web/brand/build.py`、生成先は `apps/web/public/`。
-  `mark.svg` / `wordmark.svg` / `logo.svg` と各 `-dark.svg`、OS テーマを追う `favicon.svg`。
-  `bun run --cwd apps/web build:brand` は docs の public にも同期し、OG 画像を再生成する。
-- **比例の比較（2026-10-04）**: 元のマークは幅28・高さ29。
-  縦長の黄金比案は幅29/φ・高さ29。短め案は幅26・高さ25で、短冊幅／空き=φを保つ。
-  `apps/web/brand/geometry.py` で生成し、`docs/brand/logo-proportions.html` に三案の実サイズ・実画面比較を置く。
-  短め案は縦長すぎるというフィードバックから外形を光学調整したもので、外形全体の黄金比は主張しない。
-  比較後、ユーザーが指定した「元の比率」のマークを採用した。下線の角丸は1に揃える。
-- **書体と下線の比較（2026-10-04）**: `docs/brand/logo-type-options.html` に候補を置く。
-  A=Noto Sans JP、B=BIZ UDPゴシック、C=M PLUS 1、D=Zen角ゴシック New（各700）。
-  字面の高さ約30.572、字間3.5／3.5、文字位置1下・マークとの間隔8を揃える。
-  下線の角丸は0.25／0.6／1.0を別のタブで比較し、書体の候補と組み合わせて実画面へ適用できる。
-  候補の生成は `apps/web/brand/build-type-options.py`。書体の出典・固定commit・SHA-256は
-  `apps/web/brand/type-fonts.json`、OFLと候補ごとの数値は `docs/brand/logo-type-options/` に記録する。
-  DのZen角ゴシック Newを採用した。比較時の文字サイズ約34.263から32.5へ、字面を約5.1%縮小（高さ約30.572→29.0）する。
-  固定フォントのSHA-256を `apps/web/brand/fonts.py` で検証し、OFLを `apps/web/brand/fonts/zen-OFL.txt` に置く。
-  調整画面も同じ輪郭を使う。採用版は静的Boldなので太さは700に固定し、文字サイズは直接操作・数値入力で調整する。
-  比較ページは候補作成時の見本として残し、採用済みの書体と数値は `config.json` を正本とする。
-- **微調整**: `docs/brand/logo-editor.html` の「位置・字間」と「色」を分けて操作する。
-  「元の比率」「黄金比」「短め」でマークを切り替え、各文字の直接ドラッグと「風–土」「土–記」の個別値でカーニングを調整する。
-  文字全体・マークの移動、サイズのハンドル、数値入力も使える。
-  下線の角丸は「サイズ・太さ」の「下線の角丸」で調整する。
-  設定はブラウザに保存され、実画面は必要時に開いて確認できる。書き出しUIは置かない。
-  採用時は調整値を `apps/web/brand/config.json` に同期し、`bun run --cwd apps/web build:brand` とこの節を更新する。
-- **確認用**: `docs/brand/logo-review.html` に単体・横組みの実サイズ／拡大、旧版との比較、明暗の使用例を置く。
-  実際の画面でもマーク 24px・横組み 40px を確認する。
+## Components
 
-## Do's and Don'ts
+```css
+/* 見出しは明朝 400 だけ。太さではなく大きさと余白で階層を作る */
+.text-heading { font-family: var(--font-display); font-weight: 400; font-style: normal; letter-spacing: var(--letter-spacing-heading); word-break: auto-phrase; text-wrap: balance; }
+.text-body { font-family: var(--font-sans); font-size: var(--text-body); line-height: var(--line-height-body); letter-spacing: var(--letter-spacing-body); line-break: strict; word-break: normal; overflow-wrap: break-word; }
+.num { font-variant-numeric: tabular-nums; letter-spacing: 0; white-space: nowrap; }
+.eyebrow { font: 400 var(--text-ui)/1.4 var(--font-display); color: var(--foreground); }
 
-**Do**
+/* ボタンはピル。hover は塗りの色だけを変える */
+.btn { height: 44px; padding: 0 var(--space-5); border-radius: 999px; background: var(--primary); color: var(--primary-foreground); font: 500 15px/1 var(--font-sans); white-space: nowrap; transition: background-color var(--duration) var(--ease); }
+.btn-outline { border: 1px solid var(--foreground); background: transparent; color: var(--foreground); }
 
-* 色を足すときは、それが**何の意味を担うか**を先に決める。担うものが無いなら無彩色にする
-* 数字を並べる場所では必ず `tabular-nums` を指定する
-* 状態は色と**文字**の両方で示す（色覚特性と読み上げに届かせる）
-* 日本語の段落には `{typography.caption}` の広い行間を使う
-* 新しい指標を足すときは「配布データが正しいか」を判別できるものに限る
+/* 帳面の紙。実データの表を載せる。信号機や偽の操作ボタンは描かない */
+.sheet { padding: 22px 26px; border: 1px solid var(--hair); border-radius: var(--radius-card); background: var(--card); color: var(--card-foreground); box-shadow: var(--shadow-sheet); }
+.ledger-table th { font-size: var(--text-caption); font-weight: 500; color: var(--muted-foreground); border-bottom: 1px solid var(--hair); }
+.ledger-table td { padding: var(--space-2); border-bottom: 1px solid var(--hair); }
 
-**Don't**
+/* 絵の面。紙の後ろに敷き、本文やデータを覆わない */
+.art-paper { background: var(--paper); }
+.art-halftone { background:
+  radial-gradient(circle at 50% 50%, transparent 40%, var(--night) 54%) 0 0 / 7px 7px,
+  radial-gradient(46% 46% at 38% 62%, var(--kincha), transparent 72%),
+  repeating-conic-gradient(from 8deg at 38% 62%, var(--shu) 0 6.4deg, var(--ai) 0 9.6deg, var(--sakura) 0 12.9deg); }
 
-* ❌ 影で重要度の序列を作らない。カードは対等
-* ❌ `chart-1..5` を使わない。ゼロ彩度で意味を区別できない
-* ❌ ダークモードで色相を変えない。明度だけを動かす
-* ❌ 意味色を増やさない。増やすなら、位置や数字では言えないことを先に確かめる
-* ❌ 判断の有無を色で言わない。段の並びが既に言っている
-* ❌ ページ本体を横スクロールさせない。溢れるものはその要素の中でスクロールさせる
-* ❌ `word-break: keep-all` を本文に当てない
-* ❌ 和文フォントを 1 つだけ指定しない。必ず欧文 → generic まで繋ぐ
-* ❌ ブランド色をデータを表す面に使わない（流れ図のノード、状態のバッジ、明細のセル）
-* ❌ 画面側で集計しない。数字は API が返したものをそのまま出す
-  （同じ数字が 2 通りに計算されて、いずれ食い違う）
+/* nav は透明な帯で始まり、24px スクロールすると白いピルに落ち着く */
+.nav-pill { border: 0.5px solid var(--border); border-radius: 999px; background: var(--background); box-shadow: var(--shadow-pill); }
+```
+
+- **帯**: 白い節の間に、生成りの紙（`--paper`、MCP の案内）を全幅で1本だけ挟む。帯の文字は `--paper-foreground`。右には実際の操作の録画を置き、音なし・繰り返しで、表示域に入ったら再生する（クリックで止める・動きを減らす設定では自動で再生しない）。説明文や再生ボタンは添えない
+- **冒頭の帳面**: 款・項・目と、目ごとの上位3つの内訳（API の軸「節」、無ければ「備考」の事業）を載せる。団体の表を 2 秒ごとに順に切り替え、最後から最初へ戻る。見出しの団体名だけが縦に回り、表は新しいものを上に重ねて 350ms で出す。動きを減らす設定では最初の団体のまま止める
+- **原典の面**: 「確かめる」は、原典の PDF の切り抜きを `--page` の紙に載せ、API が返す印字の位置を朱の囲みで重ねる。例には金額が実際に入っている明細を選ぶ（0 円の科目は使わない）
+- **3つのステップ**: 「見る・比べる・確かめる」は、左に sticky の rail、右に1画面ぶんの高さのステップを縦に並べ、961px 以上ではステップの頭に `scroll-snap`（`y mandatory`）で必ず止める。snap はステップが画面を覆っている間だけ効かせ（`html[data-snap]` を script で付け外す）、ページの他の場所には止まる位置を置かない。出入りの先として、帳面の下端と MCP の帯の頭だけを止まる位置にする。rail は朱の大きな漢数字（今のステップ ／ 三）、3分割の目盛り、番号・見出し・一行の要約の一覧。960px 以下では rail を隠し、snap も外す
+- **コピーに作業の記録を書かない**: 取得日・更新日・件数など、時点で変わる値や作業の経緯は画面に載せない
+- **FAQ**: 罫線の上に明朝の問い、`+` が開くと 45° 回る。答えは `--muted-foreground`
+- **データの面に出してよい色**: 前景・`--muted-foreground`・罫線・`--destructive`（検査が落ちているときだけ）。`--primary` と絵の色は出さない
+
+## Icons
+- lucide（`lucide-static@1.54.0` の path を inline の `<symbol>` に写す）・24px grid・stroke 1.5・round cap/join。外部サービスの公式 logo だけを例外とする
+
+## Logo
+- Logomark: 32 × 32 の grid に五本の短冊（幅4・空き2、左端 x=2／8／14／20／26、下端 y=28、高さ 14／22／10／26／17、角丸2）と基準線（x=2・y=29・幅28・高さ2、角丸1）。見える外形は幅28・高さ29で、黄金比は使っていない。短冊と文字は `--primary`、基準線だけ `--logo-rule-ink` で背景との明度差を 12% 増やす
+- Wordmark: 「風土記」。Zen角ゴシック New Bold（700、OFL-1.1）を SVG の path にしたもの。文字サイズ 32.5 単位・高さ 40 の viewBox、字間は 風–土・土–記とも 3.5（`palt` は使わず実際の輪郭で詰める）、字面の中心 y=21.5、改行しない
+- Lockup: 高さ 40、マークを 1.25 倍、マークの見える右端から文字まで 8、文字の先頭輪郭 x=45.5
+- Usage: ヘッダは横組み 28px、マーク単体は 24px・最小 16px、横組みの最小高さ 24px、フッタは先頭の列に横組み 30px（全幅の wordmark は置かない）。周囲は横組みの高さの 1/4 以上を空ける。黒一色・白抜き可、縁取り・影・グラデーションは付けない
+- Assets: 正本は `apps/web/brand/config.json`、生成は `bun run --cwd apps/web build:brand`、出力は `apps/web/public/`（`mark.svg`・`wordmark.svg`・`logo.svg` と各 `-dark.svg`、`favicon.svg`）。docs の public にも同期する
+
+## Motion
+- 1 primitive: 見出しの sweep。表示域に入ったとき一度だけ、金茶・朱・桜・藍の帯が 1.4s（`--ease-sweep`）で文字を通り抜け、墨に戻る。最初の描画から墨で読める
+- 他に動くのは hover の色（150ms）、nav の浮き（300ms ease-out）、rail の漢数字と目盛り（600ms `--ease-sweep`）、帳面の団体名の回転（700ms `--ease-sweep`）と表の入れ替え、FAQ の `+` だけ。紙・絵は動かさない
+- すべて `prefers-reduced-motion: no-preference` の中に置く
+
+## 守る規則
+- **画面で集計しない。** 数字は API が返したものをそのまま載せる。同じ数字が2通りに計算されると、いずれ食い違う
+- **割合の分母は合計にする。** 割り当てられなかった分を分母から落とすと、使途が見えていない分まで見えていることになる
+- **ブランド色と絵の色をデータの面に出さない。** 色が付いていたら意味があると読まれる。データの面で意味を持つ色は `--destructive` だけ
+- **比べる数字には、比べ方の注意を同じ面に書く。** 人口あたりでない、年度が違う、などは脚注に逃がさず数字の隣に置く
+- **溢れるものはその要素の中でスクロールさせる。** ページ本体を横にスクロールさせない（`overflow-x: clip`）
+- **和文の段落は `--line-height-body`（1.8）で組む。** `word-break: keep-all` は本文に当てない
+
+## Exports
+- `apps/web/landing.ts` の `:root` は本ファイルの Tokens から写す。直接の値の変更はここを先に直す
+- 見出しの明朝は BIZ UDP明朝 Regular（google/fonts の commit `9710da1e` で固定、SHA-256 は `apps/web/brand/home_font.py`、OFL は `apps/web/brand/fonts/bizudpmincho-OFL.txt`）を、頁で使う字だけに絞って自前で配る。文言を変えたら `bun run --cwd apps/web build:font` で `public/fonts/mincho.woff2` と `font.generated.ts` を作り直す
+- 重いファイル（ホームの録画・原典の切り抜き）は `apps/web/static/` に置き、Workers static assets で配る。録画は `apps/web/brand/home_demo.sh`（冒頭に映る利用者名を覆う）、切り抜きは `bun run --cwd apps/web build:origin` で作り直す
+- 閲覧者の IP を第三者へ渡さないため、Google Fonts などの外部 CDN から書体を読まない
+
+## Notes
+- 参考の質感は flavors.design の Groanola（白い机・oat の窓・低コントラストの serif・ピル・紙と網点のコラージュ）。黄緑の紙と桃・藤の網点は、青丹と緑が2つ並ぶため生成り・朱・藍に置き換えた
+- ホームの構図は3案（コラージュ / 帳面 / 比較の図版）から帳面を選んだ。選んだ理由は「最初の画面の帳面がサムネとして分かりやすい」こと。コラージュは絵が実データを添え物にし、図版は見出しが総額の比になって人口差の注意が脚注へ逃げた
+- 見出しの書体は Noto Serif JP・しっぽり明朝・Zen Old Mincho・BIZ UDP明朝を実画面で比べて BIZ UDP明朝にした。線の強弱が小さく、役所の資料の語彙に合う。しっぽり明朝と Zen Old Mincho は `palt` が効かず、句読点のまわりが開いた
+- Groanola の窓の信号機と、チャット欄の偽の操作ボタンは、OS やアプリの画面をなぞる飾りなので採らない

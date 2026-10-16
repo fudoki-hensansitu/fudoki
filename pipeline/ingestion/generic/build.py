@@ -76,11 +76,11 @@ def page_titles(pages) -> dict[int, str | None]:
     return result
 
 
-def image_rules(pdf: Path, page: Page) -> Page:
+def image_rules(pdf: Path, page: Page, staircase: bool = False) -> Page:
     """A text page whose ruled grid is a background image (281000): its rules read from the render, as a scan's are."""
     from ingestion.generic.scan import short_rows
     from ingestion.lib import pdf_rules
-    detected = short_rows(pdf, pdf_rules.detect(pdf, page.number))
+    detected = short_rows(pdf, pdf_rules.detect(pdf, page.number), staircase)
     rules = [Rule(r.position, r.start, r.position, r.end) for r in detected.vertical]
     rules += [Rule(r.start, r.position, r.end, r.position) for r in detected.horizontal]
     return Page(page.number, page.width, page.height, page.words, rules)
@@ -100,7 +100,8 @@ def run_pages(pdf: Path, pages: list[int], cache: Path | None = None, judge=None
     `stop=False` returns the check in `report.unit` instead, for a measurement that goes on."""
     printed = observe(pdf, pages, cache)
     if (text_layer or {}).get('image_rules'):
-        printed = [image_rules(pdf, page) if not page.rules else page for page in printed]
+        staircase = bool((header or {}).get('staircase'))
+        printed = [image_rules(pdf, page, staircase) if not page.rules else page for page in printed]
     titles = page_titles(printed) if direction else {}  # before the repair: it drops what is outside the frame
     observed, report = repair(pdf, printed, bool((text_layer or {}).get('form_clips')))
     if direction:

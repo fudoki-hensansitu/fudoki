@@ -8,6 +8,10 @@
   },
   "homepage": "https://docs.fudoki.dev",
   "repository": "https://github.com/wwwyo/fudoki",
+  "privacyPolicyUrl": "https://docs.fudoki.dev/privacy",
+  "termsOfServiceUrl": "https://docs.fudoki.dev/terms",
+  "supportUrl": "https://docs.fudoki.dev/support",
+  "documentationUrl": "https://docs.fudoki.dev",
   "mcpServers": "./.mcp.json",
   "license": "MIT",
   "displayName": "風土記(fudoki)"

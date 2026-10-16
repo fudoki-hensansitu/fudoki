@@ -19,7 +19,7 @@ AMOUNT = re.compile(r'[△▲\-]?(?:[0-9]{1,3}(?:,[0-9]{3})+|[0-9]+)')
 DASHES = {'－', '―', '—', '-', 'ー'}
 SIGNS = {'△', '▲'}
 SUBJECT_LEVELS = ('款', '項', '目')
-TITLE = re.compile(r'^第?([0-9]+)款([^(（0-9]+)')
+TITLE = re.compile(r'^(?:第?([0-9]+)款|[(（]款[)）]([0-9]+))([^(（0-9]+)')  # `第２款 総務費` or `（款） 2 総 務 費`
 # Share of a body row's words that must repeat the table's header words for the row to be a
 # header printed again mid-page (a new table for the next 款 on the same page).
 REPEATED_HEADER = .6
@@ -95,7 +95,7 @@ class Logical:
         for line in lines(self.outside):
             match = TITLE.match(normalize(text(line)))
             if match:
-                found.append((match.group(1), match.group(2), line))
+                found.append((match.group(1) or match.group(2), match.group(3), line))
         return found
 
 
