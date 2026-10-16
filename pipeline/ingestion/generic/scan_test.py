@@ -255,6 +255,24 @@ class AgreedHeadersTest(unittest.TestCase):
         self.assertEqual([sorted(w.text for w in p.words if w.y0 < 120) for p in pages], [['目', '計']] * 3)
 
 
+    def test_declared_readings_stop_rather_than_overwrite_a_read_amount(self):
+        from ingestion.generic.scan import add_code_readings, read_headers
+        page = Page(1, 200, 400, [Word('額', 60, 20, 66, 26), Word('1,000', 60, 130, 95, 140)], [])
+        headed = read_headers([page], [{'id': 'h', 'pages': [1], 'box': [50, 15, 100, 30], 'text': '予算現額'}])
+        self.assertEqual(sorted(w.text for w in headed[0].words), ['1,000', '予算現額'])
+        with self.assertRaises(ValueError):
+            read_headers([page], [{'id': 'h', 'pages': [1], 'box': [50, 125, 100, 145], 'text': '計'}])
+        with self.assertRaises(ValueError):
+            read_headers([page], [{'id': 'h', 'pages': [2], 'box': [50, 15, 100, 30], 'text': '計'}])
+        amount = r'△?(0|[1-9][0-9]{0,2}(,[0-9]{3})*)'
+        filled = add_code_readings([page], [{'id': 'z', 'page': 1, 'box': [100, 130, 105, 140], 'amount': '0'}], 'amount', amount)
+        self.assertIn('0', [w.text for w in filled[0].words])
+        with self.assertRaises(ValueError):
+            add_code_readings([page], [{'id': 'z', 'page': 1, 'box': [90, 130, 105, 140], 'amount': '0'}], 'amount', amount)
+        with self.assertRaises(ValueError):
+            add_code_readings([page], [{'id': 'z', 'page': 1, 'box': [100, 130, 105, 140], 'amount': '1000'}], 'amount', amount)
+
+
 if __name__ == '__main__':
     unittest.main()
 
