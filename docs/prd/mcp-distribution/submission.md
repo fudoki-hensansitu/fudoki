@@ -1,6 +1,6 @@
 # 公開提出の準備
 
-状態: 未提出。ローカルpackageは検査済みだが、提出に必要なURL・録画・host検証が不足しているため、提出可能とは扱わない。仕様確認日: 2026-10-14。
+状態: 未提出。manifestの掲載URL（support/privacy/terms）は2026-10-16に公開を確認して入れた。録画URLは#197より前のUIの暫定記録で、提出前に現行UIで撮り直して置き換える。package検査は通過した。残りは録画の撮り直し、発行者の本人確認、各portalでの検査・提出。仕様確認日: 2026-10-14。
 
 ## 掲載する内容
 
@@ -13,15 +13,15 @@
 | MCP URL | https://api.fudoki.dev/mcp |
 | 認証 | 不要。公開データの読取りのみ |
 | Website / Documentation | https://docs.fudoki.dev （2026-10-14 HTTP 200、内容を確認） |
-| Support URL・連絡先 | support@fudoki.dev（転送設定は有効）。GitHub Issues。/support のデプロイ後にURLを登録 |
-| Privacy URL | 公開用ページを作成済み。/privacy のデプロイ後にURLを登録 |
-| Terms URL | 公開用ページを作成済み。/terms のデプロイ後にURLを登録 |
+| Support URL・連絡先 | https://docs.fudoki.dev/support （2026-10-15 HTTP 200）。support@fudoki.dev（転送設定は有効）。GitHub Issues |
+| Privacy URL | https://docs.fudoki.dev/privacy （2026-10-15 HTTP 200） |
+| Terms URL | https://docs.fudoki.dev/terms （2026-10-15 HTTP 200） |
 | アイコン | plugins/fudoki/assets/icon.png（256×256 PNG、既存markから作成） |
 | package | .build/plugins/fudoki-0.2.0.zip（再生成可能、未提出の準備用） |
-| 録画デモURL | 空欄。台本は下記、録画・公開未実施 |
-| 掲載用スクリーンショット | 下記3場面を撮影する。実hostの提出用画像は未作成 |
+| 録画デモURL（暫定・提出用の正本ではない） | https://youtu.be/VX8z8EbJDyU （ChatGPTの北区の操作、89秒。2026-10-14に#197より前のUIで撮影）。現行の6 tool・描画toolのみUIの挙動で撮り直し、置き換える |
+| 掲載用スクリーンショット | Claudeで撮影済み（検索3件・節の内訳・COFOG 10の集計）。gitの外の `.agent/claude-submission-shots/` に置く |
 
-OpenAIの英語subtitleは `Compare municipal spending`、日本語は「自治体の歳出を比較し原典を確認」。本文・starter prompts・6 positive / 4 negative case（2026-10-14に事業の評価の検索を各1件足した）・課金なし・JP・release notesはportable manifestの `extensions.com.openai` に入れた。support/privacy/terms と録画URLは値を捏造せず、省略している。[OpenAIの提出metadata](https://developers.openai.com/plugins/deploy/submission)
+OpenAIの英語subtitleは `Compare municipal spending`、日本語は「自治体の歳出を比較し原典を確認」。本文・starter prompts・6 positive / 4 negative case（2026-10-14に事業の評価の検索を各1件足した）・課金なし・JP・release notesはportable manifestの `extensions.com.openai` に入れた。support/privacy/terms と録画URLは公開を確認してから入れた。[OpenAIの提出metadata](https://developers.openai.com/plugins/deploy/submission)
 
 support/privacy/terms の項目調査・本番設定との照合・運用方針は [ポリシーの調査](policies.md)を参照する。ページは通常の公開 build に含める。ページの作成を、デプロイ後の公開 URL の確認や提出の完了とは扱わない。
 
@@ -33,15 +33,16 @@ Claudeの掲載文案:
 
 ## レビュー用の接続とcase
 
-既存URLへ匿名で接続する。風土記用のアカウント、API key、test passwordは不要。レビューhost側の接続設定を済ませ、5つのtool、うち3つのUI（事業の評価の検索は表を持たない）、原典のリンクが使えることを確認する。公開PDFの中継には既存のサイズ・時間・頻度上限があり、取得時の内容が取り込み時と同じとは保証しない。
+既存URLへ匿名で接続する。風土記用のアカウント、API key、test passwordは不要。レビューhost側の接続設定を済ませ、6つのtool、うちUIを持つのは描画tool（render_expenditure_view）1つ、原典のリンクが使えることを確認する。データtoolは画面を出さず、モデルが描画toolを呼んだときだけUIが出る。公開PDFの中継には既存のサイズ・時間・頻度上限があり、取得時の内容が取り込み時と同じとは保証しない。
 
 実行caseの正本は `plugins/fudoki/plugin.json` の `review.test_cases`。6件のpositiveは収録範囲・条件検索・内訳・原典・COFOG集計・事業の評価の頁の検索、4件のnegativeは個別取引/銀行口座・歳入・書込み・評価資料の金額の断定。prompt、必要な前提、期待toolと引数、期待結果を記した。前の結果のnode_idは捏造せず、実際に返された値を使う。
 
 | case | ChatGPT | Claude | Codex / Claude Code / Cursor package |
 | --- | --- | --- | --- |
-| 収録範囲・3件の検索・内訳・原典 | 旧UIの個人用接続で確認済み。新packageを導入したreview実行は未実施 | 接続・対話型tool認識まで。応答・描画未確認 | インストールとskill実行は未実施 |
-| COFOG集計 | 未実施 | 未実施 | 未実施 |
-| negative 4件 | 未実施 | 未実施 | 未実施 |
+| 収録範囲・3件の検索・内訳・原典 | #197後の6 toolで描画を確認（「ツールを更新」が必要だった） | 合格。収録範囲だけ描画toolが呼ばれずUIが出なかった | インストールとskill実行は未実施 |
+| COFOG集計 | 未実施 | 合格 | 未実施 |
+| 事業の評価の頁 | 録画で確認 | 合格 | 未実施 |
+| negative 4件 | 未実施 | 合格（歳入は検索toolを1回呼んでから対象外と回答） | 未実施 |
 
 MCPのHTTP要求だけの確認、manifest検査、skill本文のレビューは、会話内のtool選択や描画を確かめた結果とは区別する。実行結果は [検証記録](verification.md) に追記する。新UIのデプロイと公開hostでの検証は別担当・別操作として残る。
 
@@ -57,7 +58,7 @@ Claudeの掲載画像はPNG、幅1000px以上、3〜5枚で、promptを画像に
 
 個人用の接続「風土記」はChatGPTとClaudeに残っている。重複作成せず、利用可能な接続を選ぶ。公開するUI版がhostで利用できる状態になったら、画面録画の開始・停止を利用者が行い、上記3場面と「この決算を書き換えて保存して」の対応範囲の説明を撮る。実際に呼ばれたtoolと結果が読める速度で操作し、会話履歴・アカウント情報・他のタブを映さない。
 
-Computer pluginでの操作補助も可能だが、録画機能とは別である。録画は未実施で、この文書は録画そのものではない。保存後は再生して字幕・数字・成功した操作を確認し、利用者が選んだレビュー閲覧可能な場所へ公開する。外部への公開は禁止されている本作業では行わない。公開リンクの再生とアクセス権を確認できてから `review.demo_recording_url` をmanifestに追加し、ZIPを再生成する。
+Computer pluginでの操作補助も可能だが、録画機能とは別である。現行UIでの提出用の録画は未実施。manifestの `review.demo_recording_url` には2026-10-14の#197より前のUIの記録を暫定で入れてあり、提出用の正本とは扱わない。保存後は再生して字幕・数字・成功した操作を確認し、利用者が選んだレビュー閲覧可能な場所へ公開する。外部への公開は禁止されている本作業では行わない。撮り直した公開リンクの再生とアクセス権を確認できたら `review.demo_recording_url` を置き換え、ZIPを再生成する。
 
 ## 後日、外部で行うこと
 
@@ -65,4 +66,4 @@ OpenAIは公開用ZIPをDeveloper PortalのPluginsへ読み込み、既存MCP UR
 
 Claudeは `claude.ai/directory/manage` でMCP connectorとPlugin bundleをそれぞれ準備する。pluginのrepoは `wwwyo/fudoki`、pathは `plugins/fudoki`。GitHub連携・push権限の確認、連絡先、公開ポリシー、実機確認、portalのdata handling・complianceが残る。既存connectorとpluginを組み合わせる提出として扱う。[Claude connector](https://claude.com/docs/connectors/building/submission)・[Claude plugin](https://claude.com/docs/plugins/submit)
 
-公開ポリシーには実際のデータ収集・保存・利用・削除・第三者への共有・連絡先を確認して記す。匿名接続であっても、Cloudflareやhostを含めたデータ取扱いを未確認のまま「一切保存しない」などと宣言しない。現時点では法的文書・complianceへの同意・公開URLを用意したとは扱わない。
+公開ポリシーには実際のデータ収集・保存・利用・削除・第三者への共有・連絡先を確認して記す。匿名接続であっても、Cloudflareやhostを含めたデータ取扱いを未確認のまま「一切保存しない」などと宣言しない。掲載URL（support/privacy/terms）は公開済みだが、法的文書としてのレビューとportalのcomplianceへの同意は未完了で、公開によって法的適合性やcomplianceを確認したとは扱わない。

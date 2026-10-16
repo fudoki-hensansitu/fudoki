@@ -22,6 +22,9 @@
           "Interactive"
         ],
         "websiteURL": "https://docs.fudoki.dev",
+        "supportURL": "https://docs.fudoki.dev/support",
+        "privacyPolicyURL": "https://docs.fudoki.dev/privacy",
+        "termsOfServiceURL": "https://docs.fudoki.dev/terms",
         "defaultPrompt": [
           "中野区で収録されている年度・資料区分・会計を教えて",
           "中野区の2025年度決算一般会計の目を金額の大きい順に3件見せて",
@@ -31,6 +34,7 @@
         "composerIcon": "./assets/icon.png"
       },
       "review": {
+        "demo_recording_url": "https://youtu.be/VX8z8EbJDyU",
         "test_cases": {
           "positive": [
             {
