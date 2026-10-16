@@ -65,7 +65,7 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 -754,keyword-register-statistics,,一般会計,,,,,戸籍|住民基本台帳|区民事務所|統計|国勢調査,contains,,assigned,01.3,retained,目,,戸籍・住民登録・統計を一般サービスに分類する。,false
 -753,keyword-labour-boundary,,一般会計,,,,,勤労福祉|労働費,contains,,assigned,04.1.2,retained,目,,労働・勤労者への支援は COFOG 04.1.2 一般労働業務。勤労福祉の内容が境界のため暫定とする。,true
 -752,keyword-labour,,一般会計,,,,,就労支援|労働,contains,,assigned,04.1.2,retained,目,,就労・労働支援を一般労働業務に分類する。,false
--751,keyword-industry-consumer,,一般会計,,,,,産業振興|產業振興|産業経済|消費者支援|消費生活|商工,contains,,assigned,04.1,retained,目,,産業振興・商工・消費者支援を一般経済商業業務に分類する。,false
+-751,keyword-industry-consumer,,一般会計,,,,,産業振興|産業経済|消費者支援|消費生活|商工,contains,,assigned,04.1,retained,目,,産業振興・商工・消費者支援を一般経済商業業務に分類する。,false
 -750,keyword-agriculture,,一般会計,,,,,農業|農地,contains,,assigned,04.2,retained,目,,農業の振興・管理を農林漁業に分類する。,false
 -749,keyword-tourism,,一般会計,,,,,観光,contains,,assigned,04.7,retained,目,,観光振興をその他産業に分類する。,false
 -748,keyword-fire-brigade,,一般会計,,,,,消防,contains,,assigned,03.2,retained,目,,消防活動・施設を防火サービスに分類する。,false

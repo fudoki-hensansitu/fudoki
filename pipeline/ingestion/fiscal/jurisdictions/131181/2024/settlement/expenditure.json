@@ -10893,6 +10893,16 @@
             "corrected_code": "3",
             "reason": "原画の項の科目欄で「3 生活保護費」と読んだ。OCR は 3 を 2 と誤読した（同じ款の項2 子育て支援費と重なる）。"
           }
+        ],
+        "name_corrections": [
+          {
+            "id": "confirmed-industry-promotion-name",
+            "page": 122,
+            "observation_id": "p122:tile-1-2:r0",
+            "observed_name": "產",
+            "corrected_name": "産",
+            "reason": "原画の目の名称は「産業振興費」。OCR が産を旧字形の產と読んだ。"
+          }
         ]
       },
       "ocr_inputs": [
@@ -11066,7 +11076,7 @@
     {
       "table_id": "general-expenditure-detail",
       "conversion_id": "general",
-      "input_fingerprint": "dec49f661db4fbb5f470474a98be9b0a882097355abb061cc08271ee2493c31a",
+      "input_fingerprint": "c299a8de04ddb59b7ed361d9d5b1b0f3857c8d5b26bfc3f0d5c7908c708f0fda",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape'}。",
@@ -11079,8 +11089,8 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131181/2024/settlement/expenditure/general-expenditure-detail-nodes.parquet",
-          "sha256": "3518992a7d40d94134ffda08f448f0ba8bfc8d58422494f3a0a735ed7c5e4486",
-          "bytes": 64736
+          "sha256": "93b873564f3de5241ffd41955a579b51f8725cbb135278422e45c232d5f495bd",
+          "bytes": 64730
         },
         "row_count": 1571
       },

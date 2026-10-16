@@ -272,6 +272,36 @@ def agreed_headers(pages: list[Page]) -> list[Page]:
     return [Page(p.number, p.width, p.height, replaced[i], p.rules) for i, p in enumerate(pages)]
 
 
+def apply_name_corrections(observation: dict, rules: list[dict] | None) -> dict:
+    """A copy of the observation with the OCR misread characters of a name replaced, as declared.
+
+    A rule binds to one observation (a line or word) by page and ID and names the exact characters
+    the OCR read and the ones the page prints. The raw observation is not changed, the rule must
+    match it, and a name has no digits to correct (those are codes and amounts)."""
+    if not rules:
+        return observation
+    found = {(p['page_number'], o['id']) for p in observation['pages'] for r in p['regions'] for o in r['observations']}
+    result = json.loads(json.dumps(observation))
+    for rule in rules:
+        if (rule['page'], rule['observation_id']) not in found:
+            raise ValueError(f'A name correction matches no observation: {rule["id"]}')
+        if any(c.isdigit() for c in rule['observed_name'] + rule['corrected_name']) \
+                or len(rule['observed_name']) != len(rule['corrected_name']):
+            raise ValueError(f'A name correction replaces characters of a name: {rule["id"]}')
+        hit = 0
+        for p in result['pages']:
+            for r in p['regions']:
+                for o in r['observations']:
+                    if p['page_number'] != rule['page'] or rule['observed_name'] not in o['raw_text'] \
+                            or rule['observation_id'] not in (o['id'], o.get('parent_id')):
+                        continue
+                    o['raw_text'] = o['raw_text'].replace(rule['observed_name'], rule['corrected_name'])
+                    hit += 1
+        if not hit:
+            raise ValueError(f'The declared misread is not in the observation: {rule["id"]}')
+    return result
+
+
 def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = None,
           columns: dict | None = None, rules: dict | None = None, *, spread: dict | None = None,
           header: dict | None = None, code_corrections: list[dict] | None = None) -> list[Page]:
@@ -555,6 +585,7 @@ def build_table(source: dict, options: dict, *, stop: bool = True, rules: dict |
     columns = (settings or {}).get('columns')
     spread = (settings or {}).get('spread')
     header = (settings or {}).get('header')
+    observation = apply_name_corrections(observation, options.get('name_corrections'))
     printed = pages(observation, Path(source['path']), amount_dictionary(options.get('amount_corrections', [])), columns, rules,
                     spread=spread, header=header, code_corrections=options.get('code_corrections'))
     printed, recovered = recover_codes(printed, Path(source['path']), columns, spread=spread, header=header)
