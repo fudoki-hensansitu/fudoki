@@ -1,6 +1,6 @@
 ---
 name: web-frontend-ops
-description: fudoki の apps/web（Cloudflare Workers、現在は全パスで 500）と repo root の DESIGN.md を触るときに参照する。DESIGN.md に何を書くか迷った、といった非自明なハマりどころを持つ。
+description: fudoki の apps/web（Cloudflare Workers、現在は入口の1枚だけ）と repo root の DESIGN.md を触るときに参照する。DESIGN.md に何を書くか迷った、といった非自明なハマりどころを持つ。
 user-invocable: false
 ---
 
