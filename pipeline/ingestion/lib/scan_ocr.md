@@ -91,3 +91,20 @@ PaddleとVisionのどちらでも、名称の補正には共通の `ingestion.li
 ```
 
 単語が複数の科目欄を横断した場合も、訂正した数字を同じ観測の枠のまま既存の列分割へ渡す。観測JSONを書き換えず、構築後は木・数字の網羅・単位・科目の検査を当てる。
+
+## 汎用scanの科目名の訂正
+
+`generic_scan` の管理JSONの `conversions[].options.name_corrections` は、原画で確認した科目名のOCRの誤読（旧字形の取り違えなど）を、同じ長さの字の置き換えとして固定する。頁・観測ID（行または単語）・誤読した字・印字された字に結び付け、観測にその字が無ければ停止する。数字（科目番号・金額）は `code_corrections`・`amount_corrections` が受けるので、数字を含む訂正は拒否する。原観測は書き換えず、分類の規則へ誤読の字形を足さずに済ませる。
+
+```json
+{
+  "name_corrections": [{
+    "id": "confirmed-industry-promotion-name",
+    "page": 122,
+    "observation_id": "p122:tile-1-2:r0",
+    "observed_name": "產",
+    "corrected_name": "産",
+    "reason": "原画の目の名称は「産業振興費」。OCR が産を旧字形の產と読んだ。"
+  }]
+}
+```
