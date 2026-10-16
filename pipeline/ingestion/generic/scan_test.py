@@ -105,10 +105,12 @@ class CorrectionTest(unittest.TestCase):
         bands = [Band(0, 40, 1, ('科目', '款'), [30, 100], 30, 100, kind='label'),
                  Band(0, 40, 1, (), [30, 100], 40, 100, kind='label'),
                  Band(0, 40, 1, ('項目',), [30, 100], 50, 100, kind='label'),
-                 Band(0, 40, 1, (), [30, 100], 60, 100, kind='amount')]
+                 Band(0, 40, 1, (), [30, 100], 60, 100, kind='label'),
+                 Band(0, 40, 1, ('当初予算額',), [30, 100], 70, 100, kind='amount')]
         with patch('ingestion.generic.layout.logical_pages', return_value=[Logical([1], bands, '円', [])]):
             scan._layout([], None)
-        self.assertEqual([b.header for b in bands], [('科目', '款'), ('項目',), ('項目',), ()])
+        # Two empty columns in a row take it from the right; one beside an amount column stays empty.
+        self.assertEqual([b.header for b in bands], [('科目', '款'), ('項目',), ('項目',), (), ('当初予算額',)])
 
     def test_a_contained_comma_in_another_tile_is_kept_in_its_complete_amount(self):
         from ingestion.generic import scan
