@@ -115,6 +115,72 @@
             "corrected_code": "18",
             "reason": "原画の節の欄で「18」と読んだ。節の区切りの縦罫線を OCR が数字（1）に取り違えた。"
           }
+        ],
+        "amount_corrections": [
+          {
+            "id": "vlm-6e44eb1d8d",
+            "page": 75,
+            "observation_id": "p75:tile-7-0:r0:w0",
+            "observed_amount": "A214,765,000",
+            "corrected_amount": "△214,765,000",
+            "reason": "codex/gpt-6-luna で読み直し、木の検査で確かめた（OCR は A214,765,000）"
+          },
+          {
+            "id": "vlm-5a613d4e4d",
+            "page": 75,
+            "observation_id": "p75:tile-7-0:r1:w1",
+            "observed_amount": "214,765,000",
+            "corrected_amount": "△214,765,000",
+            "reason": "codex/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 214,765,000）"
+          },
+          {
+            "id": "vlm-a0b0863928",
+            "page": 75,
+            "observation_id": "p75:tile-7-0:r2:w0",
+            "observed_amount": "A214,765,000",
+            "corrected_amount": "△214,765,000",
+            "reason": "codex/gpt-6-luna で読み直し、木の検査で確かめた（OCR は A214,765,000）"
+          },
+          {
+            "id": "vlm-564a1c02b8",
+            "page": 18,
+            "observation_id": "p18:tile-2-4:r1:w0",
+            "observed_amount": "25,143,710",
+            "corrected_amount": "25, 443, 710",
+            "reason": "codex/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 25,143,710）"
+          },
+          {
+            "id": "vlm-5d45551c06",
+            "page": 19,
+            "observation_id": "p19:tile-10-4:r0:w0",
+            "observed_amount": "144,000",
+            "corrected_amount": "444, 000",
+            "reason": "codex/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 144,000）"
+          },
+          {
+            "id": "vlm-c8fdb66c4a",
+            "page": 6,
+            "observation_id": "p6:tile-2-3:r2:w0",
+            "observed_amount": "5,468,124",
+            "corrected_amount": "5,468,424",
+            "reason": "codex/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 5,468,124）"
+          },
+          {
+            "id": "vlm-6437994017",
+            "page": 31,
+            "observation_id": "p31:tile-10-2:r1:w0",
+            "observed_amount": "14,589,000",
+            "corrected_amount": "44, 589, 000",
+            "reason": "codex/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 14,589,000）"
+          },
+          {
+            "id": "vlm-1805a7f5da",
+            "page": 53,
+            "observation_id": "p53:tile-10-2:r1:w0",
+            "observed_amount": "10,000",
+            "corrected_amount": "40, 000",
+            "reason": "codex/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 10,000）"
+          }
         ]
       },
       "ocr_inputs": [
