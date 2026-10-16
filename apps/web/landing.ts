@@ -7,7 +7,20 @@ export const LANDING_HTML = `<!doctype html>
 <title>風土記（fudoki）— 町の家計簿</title>
 <meta name="description" content="日本の自治体の歳出の予算・決算を事業の単位まで集め、AI から問い合わせられるデータとして配る。">
 <link rel="canonical" href="https://fudoki.dev/">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="風土記（fudoki）">
+<meta property="og:title" content="風土記（fudoki）— 町の家計簿">
+<meta property="og:description" content="日本の自治体の歳出の予算・決算を事業の単位まで集め、AI から問い合わせられるデータとして配る。">
+<meta property="og:url" content="https://fudoki.dev/">
+<meta property="og:image" content="https://fudoki.dev/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"風土記（fudoki）","url":"https://fudoki.dev/","logo":"https://fudoki.dev/icon.png","sameAs":["https://github.com/wwwyo/fudoki","https://docs.fudoki.dev/"]}</script>
 <style>
 :root { --bg: #fbfaf7; --fg: #1f2a24; --muted: #5b665f; --brand: #2f5d43; --line: #dde3dc; }
 @media (prefers-color-scheme: dark) { :root { --bg: #141916; --fg: #e8ece8; --muted: #a3ada6; --brand: #8fbf9f; --line: #2c3530; } }
