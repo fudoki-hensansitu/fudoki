@@ -73,6 +73,7 @@ class Band:
     unit_mark: str | None = None  # a header cell that only names the unit (`円`), kept apart from the heading
     axis_header: str | None = None  # a declared printed axis spanning a spread's split header
     ignored: bool = False  # a column the layout settings declare no part of the table
+    inline_free: bool = False  # the kind words are declared, not the dictionary's (`国` `都` `その他` before their amounts)
     inline: bool = False  # amounts printed after a kind word of the heading in one cell (`計 140,323,000` / `当初 121,705,000`)
 
     @property
@@ -165,6 +166,42 @@ def split_digits_at_rules(word: Word, verticals: list[Rule]) -> list[Word]:
     cuts = [r for r in verticals if word.x0 + 1 < r.x0 < word.x1 - 1 and _crosses(r, y)
             and abs((r.x0 - word.x0) / width - round((r.x0 - word.x0) / width)) * width <= 1]
     return split_at_rules(word, cuts) if cuts else [word]
+
+
+def split_text_at_rules(word: Word, verticals: list[Rule]) -> list[Word]:
+    """Split a body word of text where a vertical rule runs between two of its characters.
+
+    Poppler joins the last character of one cell and the first of the next into one word when they sit
+    close (a vertical 主管課 column `政` against the name `行政…`, `１６号` against `(8年度へ繰越`). A rule inside a
+    word on a character boundary (within 2pt) is a cell edge, never text; amounts are left whole. A character's
+    width is its class's: full width one line high, half width half of it."""
+    if len(word.text) < 2 or is_amount(word.text):
+        return [word]
+    y = (word.y0 + word.y1) / 2
+    glued = re.match(r'^([△▲\-]?[0-9][0-9,]*)([^0-9,△▲\-].*)$', word.text)
+    if glued:
+        # An amount with text glued to its end (`4,123,524国`): cut where the amount ends when a rule runs there.
+        at = word.x0 + sum(_width(c) for c in glued.group(1)) * (word.x1 - word.x0) / sum(_width(c) for c in word.text)
+        if any(abs(r.x0 - at) <= 3 and _crosses(r, y) for r in verticals):
+            return [Word(glued.group(1), word.x0, word.y0, at, word.y1), Word(glued.group(2), at, word.y0, word.x1, word.y1)]
+    weights = [_width(c) for c in word.text]
+    unit = (word.x1 - word.x0) / sum(weights)
+    edges = [word.x0]
+    for weight in weights:
+        edges.append(edges[-1] + weight * unit)
+    cuts = sorted({index for index, edge in enumerate(edges) if 0 < index < len(word.text)
+                   for r in verticals if abs(r.x0 - edge) <= 2 and word.x0 + 1 < r.x0 < word.x1 - 1 and _crosses(r, y)})
+    if not cuts:
+        return [word]
+    pieces, start = [], 0
+    for cut in cuts + [len(word.text)]:
+        pieces.append(Word(word.text[start:cut], edges[start], word.y0, edges[cut], word.y1))
+        start = cut
+    return pieces
+
+
+def _width(char: str) -> float:
+    return .5 if ord(char) < 128 else 1.0
 
 
 def reading(words: list[Word]) -> str:
@@ -270,7 +307,7 @@ def _header_bottom(page: Page, frame) -> float:
 
 
 def page_bands(page: Page, spread: dict | None = None,
-               header: dict | None = None) -> tuple[list[Band], list[Word]]:
+               header: dict | None = None, split_text: bool = False) -> tuple[list[Band], list[Word]]:
     """Bands of every frame on one physical page, and the words outside frames."""
     verticals = [r for r in page.rules if r.vertical]
     horizontals = [r for r in page.rules if not r.vertical]
@@ -307,7 +344,8 @@ def page_bands(page: Page, spread: dict | None = None,
                    for c in (covering_of((left + right) / 2) for left, right in zip(edges, edges[1:]))]
         between = [r for x, a, b in zip(edges[1:-1], subject, subject[1:]) if a and b
                    for r in verticals if abs(r.x0 - x) <= 3]  # the rules as drawn: a rule ending early splits nothing below it
-        body = [(index, piece) for index, word in whole for piece in split_digits_at_rules(word, between)]
+        body = [(index, piece) for index, word in whole for part in (split_text_at_rules(word, verticals) if split_text else [word])
+                for piece in split_digits_at_rules(part, between)]
         skip = repeated_header(page, frame, header_bottom, body, {normalize(w.text) for ws in cells.values() for w in ws})
         for left, right in zip(edges, edges[1:]):
             middle = (left + right) / 2
@@ -415,9 +453,9 @@ def inline_kind(band: Band, line: list[Glyph]) -> bool:
 
 
 def logical_pages(pages: list[Page], *, columns: dict | None = None, spread: dict | None = None,
-                  header: dict | None = None) -> list[Logical]:
+                  header: dict | None = None, split_text: bool = False) -> list[Logical]:
     """Read each page's bands, classify them once per document, then join spreads."""
-    per_page = [(page, *page_bands(page, spread, header)) for page in pages]
+    per_page = [(page, *page_bands(page, spread, header, split_text)) for page in pages]
     # Band kind by content, learned per header path over the whole document so
     # that empty continuation pages keep it. A band is a label band when at least
     # half of its printed lines carry text; otherwise it holds amounts if any
@@ -464,6 +502,10 @@ def logical_pages(pages: list[Page], *, columns: dict | None = None, spread: dic
                 band.kind = 'label'
             setting = (columns or {}).get('／'.join(band.header), {})
             band.kind = setting.get('kind', band.kind)
+            if setting.get('heading'):  # the column's meaning, declared where the print only says `金額`
+                band.header = band.header[:-1] + (setting['heading'],)
+            if setting.get('inline'):
+                band.inline, band.inline_free = True, True
             if band.kind == 'ignore':  # a column that is no part of the table (a policy number printed beside it)
                 band.kind, band.ignored = None, True
             band.axis_header = setting.get('axis_header')

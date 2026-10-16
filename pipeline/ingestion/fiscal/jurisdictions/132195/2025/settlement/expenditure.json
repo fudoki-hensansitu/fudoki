@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132195",
+    "fiscal_year": 2025,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "447003e344021e674db1bb302975d6f92cc638965e059c7b768c6a219e5e98f4"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure"
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-expenditure",
+      "conversion_id": "general-settlement",
+      "input_fingerprint": "efeac22793a162ba3623cecbc0d774cf5fa28b2652912b6d8035e3b110f9a12a",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'事業名': 'indent', '節': 'indent', '節説明': 'indent'}。",
+        "金額の単位は printed 226頁 から決めた。款の和 38,656,654（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132195/2025/settlement/expenditure/general-expenditure-nodes.parquet",
+          "sha256": "87dc3eda40947d69cd11c412ce6b998204c789a3f3b29a39e29ad7d0a2bee94f",
+          "bytes": 151964
+        },
+        "row_count": 5737
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132195/2025/settlement/expenditure/general-expenditure-amounts.parquet",
+          "sha256": "e50e437f3d0ee89b8fe50c32d086cfbce2c8639ad8a30470c7a638976745bf7e",
+          "bytes": 139428
+        },
+        "row_count": 9171
+      }
+    }
+  ]
+}

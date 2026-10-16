@@ -94,7 +94,8 @@ def run_pages(pdf: Path, pages: list[int], cache: Path | None = None, judge=None
     if direction:
         report.skipped_pages = [number for number, title in titles.items() if title not in (None, direction)]
         observed = [page for page in observed if page.number not in report.skipped_pages]
-    logicals = logical_pages(observed, columns=columns, spread=spread, header=header)
+    logicals = logical_pages(observed, columns=columns, spread=spread, header=header,
+                             split_text='split_at_rules' in repairs)
     built, choice = choose_pattern(logicals, document_kind, judge, layout, codes_right)
     report.pattern = choice
     unit = check_units(built, document_kind, account, partial)

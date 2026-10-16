@@ -140,6 +140,10 @@ def check(built, document_kind: str, account: str | None = None, partial: bool =
     # One unit: compare the printed numbers. Mixed units: compare in yen (an unknown unit fails).
     raw_sum = sum(value for _, value, _ in entries) if len(units) <= 1 else \
         sum(value * MULTIPLIER[unit] if unit in MULTIPLIER else 0 for _, value, unit in entries)
+    # A settlement printed in 千円 prints the digits of a budget; its yen amount is what the settlement range is for.
+    scale = MULTIPLIER.get(next(iter(units)), 1) if len(units) == 1 and document_kind == 'settlement' else 1
+    low, high = DIGITS.get(document_kind, (0, float('inf')))
+    fits = lambda value: low <= abs(value) < high or (scale > 1 and low <= abs(value) * scale < high)
     result = {'phase': phase, 'kan_sum': raw_sum, 'printed_total': None, 'sum_matches': None, 'digits': DIGITS.get(document_kind),
               'digits_ok': None, 'stopped': False,
               'conflicts': [{'code': c['node'].get('code_text'), 'name': c['node'].get('name_text'), 'printed': c['printed']}
@@ -157,14 +161,12 @@ def check(built, document_kind: str, account: str | None = None, partial: bool =
         else:
             result['sum_matches'] = chosen.get('unit') in MULTIPLIER and None not in units and \
                 total is not None and total * MULTIPLIER[chosen['unit']] == raw_sum
-        low, high = DIGITS.get(document_kind, (0, float('inf')))
         if account == '一般会計' and not partial:
-            result['digits_ok'] = total is not None and low <= abs(total) < high
+            result['digits_ok'] = total is not None and fits(total)
         result['stopped'] = not partial and (not result['sum_matches'] or result['digits_ok'] is False)
     elif raw_sum and account == '一般会計' and not partial:
         # No printed total in the pages read: only the digits of the 款 sum can be checked.
-        low, high = DIGITS.get(document_kind, (0, float('inf')))
-        result['digits_ok'] = low <= abs(raw_sum) < high
+        result['digits_ok'] = fits(raw_sum)
         result['stopped'] = not result['digits_ok']
     if conflicts:
         result['stopped'] = True  # a 款 printed with two different amounts of the phase: never pick one
