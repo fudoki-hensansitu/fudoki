@@ -99,6 +99,17 @@ class CorrectionTest(unittest.TestCase):
             words = scan.pages(observation, Path('x.pdf'), code_corrections=[rule])[0].words
         self.assertEqual([(w.text, w.x1) for w in sorted(words, key=lambda w: w.y0)], [('18', 30), ('181', 40)])
 
+    def test_a_column_without_a_header_takes_the_header_of_the_column_beside_it(self):
+        from ingestion.generic import scan
+        from ingestion.generic.layout import Band, Logical
+        bands = [Band(0, 40, 1, ('科目', '款'), [30, 100], 30, 100, kind='label'),
+                 Band(0, 40, 1, (), [30, 100], 40, 100, kind='label'),
+                 Band(0, 40, 1, ('項目',), [30, 100], 50, 100, kind='label'),
+                 Band(0, 40, 1, (), [30, 100], 60, 100, kind='amount')]
+        with patch('ingestion.generic.layout.logical_pages', return_value=[Logical([1], bands, '円', [])]):
+            scan._layout([], None)
+        self.assertEqual([b.header for b in bands], [('科目', '款'), ('項目',), ('項目',), ()])
+
     def test_a_contained_comma_in_another_tile_is_kept_in_its_complete_amount(self):
         from ingestion.generic import scan
         from ingestion.lib.pdf_rules import PageRules
