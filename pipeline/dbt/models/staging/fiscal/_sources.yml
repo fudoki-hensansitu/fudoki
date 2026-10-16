@@ -3300,6 +3300,22 @@ sources:
       direction: expenditure
       table_id: parking-expenditure
       kind: nodes
+  - name: j133035_2024_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '133035'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j133035_2024_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '133035'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
   - name: j133035_2025_settlement_elderly_medical_expenditure_amounts
     meta:
       jurisdiction: '133035'

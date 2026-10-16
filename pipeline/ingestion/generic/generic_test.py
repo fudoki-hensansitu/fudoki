@@ -1048,6 +1048,25 @@ class RepeatedParentRowTest(unittest.TestCase):
         self.assertEqual(repeated, [])
         self.assertEqual(len(unowned), 2)
 
+    def run_budget_row(self, value):
+        from ingestion.generic.tree import repeated_parent_rows
+        nodes = [{'node_key': 'm', 'axis_header': '科目'}]
+        amounts = [{'node_key': 'm', 'header_path': '予算現額／計', 'amount_text': '10,495,000', 'physical_page': 1,
+                    'y0': 100., 'y1': 109.}]
+        record = {'kind': 'amount without row', 'page': 1, 'text': value, 'header': '予算現額／節／金額'}
+        unowned = [record]
+        return repeated_parent_rows(nodes, amounts, unowned, [(record, [glyph(value, 500, 130, 40)])]), unowned
+
+    def test_a_nameless_setsu_amount_that_equals_the_parents_amount_of_the_same_phase_is_a_repeat(self):
+        repeated, unowned = self.run_budget_row('10,495,000')
+        self.assertEqual(len(repeated), 1)
+        self.assertEqual(unowned, [])
+
+    def test_a_nameless_setsu_amount_one_yen_off_the_parent_stays_unowned(self):
+        repeated, unowned = self.run_budget_row('10,495,001')
+        self.assertEqual(repeated, [])
+        self.assertEqual(len(unowned), 1)
+
 
 class PatternNamesTest(unittest.TestCase):
     def test_equal_subject_balances_prefer_complete_names_over_more_breakdown_comparisons(self):
