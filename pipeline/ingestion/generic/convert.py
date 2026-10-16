@@ -25,6 +25,7 @@ import json
 from pathlib import Path
 import re
 
+from ingestion.generic import observe as observe_module
 from ingestion.generic.build import run_pages
 from ingestion.generic.headers import canonical
 from ingestion.generic.layout import is_amount, lines, normalize
@@ -260,9 +261,11 @@ def _glued_amount_split(page: int, word) -> list[tuple]:
 
 
 def observation_cache(source: dict, pages: list[int]) -> Path:
-    """Local-only cache of the observation (words and rules). The key is the original's identity and the pages."""
+    """Local-only cache of the observation (words and rules). The key is the original's identity, the pages and the observation code."""
     page_key = hashlib.sha256(','.join(map(str, pages)).encode()).hexdigest()[:16]
-    return CACHE / 'generic-observation' / f'{source["sha256"]}-{page_key}.json'
+    # The observation code is part of the key: a cache read after `observe.py` changed would hide the change.
+    code_key = hashlib.sha256(Path(observe_module.__file__).read_bytes()).hexdigest()[:8]
+    return CACHE / 'generic-observation' / f'{source["sha256"]}-{page_key}-{code_key}.json'
 
 
 @dataclass

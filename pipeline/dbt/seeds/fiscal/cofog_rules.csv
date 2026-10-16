@@ -293,3 +293,9 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 1317,keyword-elderly-medical-pension,,一般会計,,,,,高齢者医療年金,contains,,unclassifiable,,retained,目,,医療と年金の事務を一つの目に含み、名称だけでは機能を分離できない。,false
 1318,keyword-transfer-elderly-facility,,一般会計,,,,,老人保健施設会計繰出金,contains,,assigned,07.3,retained,目,,老人保健施設（入院サービス）への繰出を UN COFOG 07.3 入院サービスに分類する。連結消去は行わず retained とする。名称からの判断で定義の確認が要るため暫定とする。,true
 1319,keyword-welfare-kan-general-admin,,一般会計,,福祉費,,,福祉総務,contains,,assigned,10.9,retained,目,,福祉の総務を UN COFOG 10.9 社会保護に分類されないものに分類する。名称からの判断で定義の確認が要るため暫定とする。,true
+1320,keyword-parking-fund-transfer,,一般会計,,,,,駐車場事業,contains,,assigned,04.5.1,retained,目,,駐車場事業の会計への繰出・貸付を受け皿の機能（道路交通の駐車場運営）に分類する。貸付金は金融資産の取得を含みうるので名称からの判断で暫定とする。,true
+1321,keyword-child-placement,,一般会計,,,,,児童措置,contains,,assigned,10.4,retained,目,,児童措置（児童福祉施設への措置）を UN COFOG 10.4 家族・児童に分類する。名称からの判断で定義の確認が要るため暫定とする。,true
+1322,keyword-bond-miscellaneous,,一般会計,,公債費,,,債諸費,contains,,assigned,01.7,retained,目,,公債費の項に属する債の諸費（発行・償還の手数料など）を公債取引に分類する。公債諸費の規則と同じ扱いで名称からの判断のため暫定とする。,true
+1323,keyword-welfare-staff,,一般会計,,,,,福祉職員,contains,,assigned,10.9,retained,目,,福祉部門の職員の人件費を UN COFOG 10.9 他に分類されない社会保護に分類する。名称からの判断で対象者を特定できないため暫定とする。,true
+1324,vocab-machizukuri-kanji,,一般会計,,,,,街づくり,contains,,assigned,06.2,retained,目,,街づくりの計画・事業は地域の開発であり UN COFOG 06.2 地域開発。まちづくりの規則と同じ扱い。,false
+1325,keyword-medical-measures,,一般会計,,衛生費,,,医療対策,contains,,assigned,07,retained,目,,衛生費に属する医療対策を保健に分類する。名称からの判断で定義の確認が要るため暫定とする。,true
