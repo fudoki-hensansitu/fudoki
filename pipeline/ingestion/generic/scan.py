@@ -39,7 +39,10 @@ def header_names():
 
 def header_path(header: tuple[str, ...]) -> tuple[str, ...]:
     """Correct a complete printed header, after its wrapped OCR words have been joined."""
-    return tuple(correct_name(part, header_names())['corrected_name'] for part in header)
+    corrected = [correct_name(part, header_names())['corrected_name'] for part in header]
+    # A heading wrapped so that its last character is a cell of its own (`翌年度繰越` / `額`) is one segment.
+    return tuple(part for index, part in enumerate(corrected)
+                 if not (part == '額' and index and corrected[index - 1].endswith('額')))
 
 
 def _layout(observed: list[Page], columns: dict | None, *, spread: dict | None = None,
@@ -156,12 +159,23 @@ def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None
     complete = [(region, o) for region, o in readings if _amount(o['raw_text'])
                 and not any(o['bbox_pdf_pt'][0] + 1 < x < o['bbox_pdf_pt'][2] - 1 for x in cuts)]
     declared = {r.observation_id for r in corrections.rules if r.page == number} if corrections else set()
-    fragments = {o['id'] for region, o in readings if _text(o['raw_text']) == ',' and o['id'] not in declared
+    fragments = {o['id'] for region, o in readings if _text(o['raw_text']) in (',', '、') and o['id'] not in declared
                  and any(region != other and ',' in _text(full['raw_text'])
                          and full['bbox_pdf_pt'][0] - 1 <= o['bbox_pdf_pt'][0]
                          and full['bbox_pdf_pt'][1] - 1 <= o['bbox_pdf_pt'][1]
                          and o['bbox_pdf_pt'][2] <= full['bbox_pdf_pt'][2] + 1
                          and o['bbox_pdf_pt'][3] <= full['bbox_pdf_pt'][3] + 1 for other, full in complete)}
+    # A digitless single character inside another tile's single-character reading of the same ink (a zero
+    # cut by a tile seam, read as `く` above and `っ` below) is one printed mark, not a second amount cell.
+    marks = [(region, o) for region, o in readings if len(o['raw_text'].strip()) == 1
+             and not any(c.isdigit() for c in o['raw_text']) and o['raw_text'] != '円']
+    fragments |= {o['id'] for region, o in marks if o['id'] not in declared
+                  and any(region != other and full['id'] != o['id']
+                          and full['bbox_pdf_pt'][0] - 1 <= o['bbox_pdf_pt'][0] and full['bbox_pdf_pt'][1] - 1 <= o['bbox_pdf_pt'][1]
+                          and o['bbox_pdf_pt'][2] <= full['bbox_pdf_pt'][2] + 1 and o['bbox_pdf_pt'][3] <= full['bbox_pdf_pt'][3] + 1
+                          and (full['bbox_pdf_pt'][2] - full['bbox_pdf_pt'][0]) * (full['bbox_pdf_pt'][3] - full['bbox_pdf_pt'][1])
+                          > (o['bbox_pdf_pt'][2] - o['bbox_pdf_pt'][0]) * (o['bbox_pdf_pt'][3] - o['bbox_pdf_pt'][1])
+                          for other, full in marks)}
     gone |= fragments
     words: list[Word] = []
     for region in observation_page['regions']:

@@ -1589,7 +1589,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
         common = [x for x, n in Counter(round(x) for x in xs).items() if n >= 3]  # a stray start is not a column
         if common and 3 < max(common) - min(common) <= 6.5:
             right_set.add(level)
-    for _, ordered, found in all_items:
+    for logical, ordered, found in all_items:
         for group in ordered:
             if not group.subject:
                 continue
@@ -1610,7 +1610,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             if group.mode == 'indent':
                 # Join at the name's position before learning subject levels from the code's start.
                 for item in kept:
-                    item.indent = item.glyphs[0].x0
+                    # The code leads the item: a name set a few points above its code's line (OCR) is not the start.
+                    item.indent = min(g.x0 for g in item.glyphs) if logical.ocr else item.glyphs[0].x0
                     band = group.bands[item.level] if 0 <= item.level < len(group.bands) else None
                     narrow = len(group.bands) >= 3 and all(b.x1 - b.x0 < 20 for b in group.bands[:-1])
                     if band is not None and item.code is not None and narrow and item.level in right_set:
