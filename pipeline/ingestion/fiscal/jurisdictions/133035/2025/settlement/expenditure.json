@@ -174,7 +174,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "26008250a98bd7c1bb81cdb5c655a8393f810292931ce6c87fc8cb84b2d0c0cf",
+      "input_fingerprint": "4847a7377522e94ec6d92090690f984ccc249af0a74e03fb8f6cbea2dcf28cc5",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent'}。",
@@ -204,7 +204,7 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "b53bb62689564424af30b2b6cd78e7d3907d48044656f028d600c318300b27b8",
+      "input_fingerprint": "2ec5fd42b44e4a176fba2965993335380c02329d25fca924bf1d879a7689a8d7",
       "account": "国民健康保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent'}。",
@@ -234,7 +234,7 @@
     {
       "table_id": "land-readjustment-expenditure",
       "conversion_id": "land-readjustment-settlement",
-      "input_fingerprint": "08ddf1fe7a310ff5d638a3ef582be4bae198eec2bb36afc05ff1c8bbe5912fe4",
+      "input_fingerprint": "0a50716a9658dc546f95b9946d8828ab24344aa34b7aebbf371dafdb895734ec",
       "account": "福生都市計画瑞穂町箱根ケ崎駅西土地区画整理事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent'}。",
@@ -264,7 +264,7 @@
     {
       "table_id": "long-term-care-expenditure",
       "conversion_id": "long-term-care-settlement",
-      "input_fingerprint": "9fb40f6729d8e2ce259eaeb6e50cec2480c6ab99ce2c6b18fca2f89b81ec21d4",
+      "input_fingerprint": "b337052708315382937d258a5dc4bfda4d7b1316c556161e73475a3f3cdb524a",
       "account": "瑞穂町介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent'}。",
@@ -294,7 +294,7 @@
     {
       "table_id": "elderly-medical-expenditure",
       "conversion_id": "elderly-medical-settlement",
-      "input_fingerprint": "65dc43c679085f289ce825f713740c9aebc6fe014df5e793c03cc36d83aff5e1",
+      "input_fingerprint": "12c0d3cee877cf2e913160fd14d04309235bb8f052bbe7777e0e2f745df97c5e",
       "account": "瑞穂町後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent'}。",
@@ -324,7 +324,7 @@
     {
       "table_id": "property-ward-tonogaya-expenditure",
       "conversion_id": "property-ward-tonogaya-settlement",
-      "input_fingerprint": "04faf00e71c27bfc030eee53d57dd38c93ef692f3c309395618a9ab066becfed",
+      "input_fingerprint": "c4f4f2042c08cab98ebb8a1cb0d647da49163489ab484ceef4c183dc4d72ee05",
       "account": "瑞穂町殿ケ谷財産区特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent'}。",
@@ -354,7 +354,7 @@
     {
       "table_id": "property-ward-ishihata-expenditure",
       "conversion_id": "property-ward-ishihata-settlement",
-      "input_fingerprint": "bdf1d02cb8bc9d512b8946bd19f95aa0c98152fb87eac0a89145e5df3eb03f71",
+      "input_fingerprint": "9bc2f5cde1f3cdd7db5cd6d46fc6bcbeab21a8ab753a3113c2bc92bd0995cc72",
       "account": "瑞穂町石畑財産区特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent'}。",
@@ -384,7 +384,7 @@
     {
       "table_id": "property-ward-hakonegasaki-expenditure",
       "conversion_id": "property-ward-hakonegasaki-settlement",
-      "input_fingerprint": "88115ac8364972205a85aff718f0f25ff6a6b83fa3ce7931d73e30990c8e6cae",
+      "input_fingerprint": "80bb48da331872b711f6b06408538e5f12ca84cf6bb96f1ac4250545e80f826c",
       "account": "瑞穂町箱根ケ崎財産区特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent'}。",
@@ -414,7 +414,7 @@
     {
       "table_id": "property-ward-nagaoka-expenditure",
       "conversion_id": "property-ward-nagaoka-settlement",
-      "input_fingerprint": "b606e67c5568b32ceea622c8a3270162ada0456da73e9e6332064bd03c7b7abe",
+      "input_fingerprint": "d41a2290578e8c13e9beb426c91d2474c9f8f95a913d076fcb062f8d3581f6a9",
       "account": "瑞穂町長岡財産区特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent'}。",

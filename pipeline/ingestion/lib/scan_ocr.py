@@ -539,9 +539,10 @@ def acquire(path: Path, request: Mapping, previous: Mapping | None = None) -> tu
         if regions:
             raise ValueError('Column tiles and explicit regions are alternative OCR requests')
         result = None
+        dark = request.get('rule_dark', pdf_rules.DARK)  # a scan whose rules are printed pale declares a higher level
         for number in request['pages']:
-            rules = pdf_rules.detect(path, number)
-            tiles = column_tiles(rules, pdf_rules.render(path, number) < pdf_rules.DARK)
+            rules = pdf_rules.detect(path, number, dark=dark)
+            tiles = column_tiles(rules, pdf_rules.render(path, number) < dark)
             reading = recognize_pdf(path, pages=[number], backend='vision',
                                     config=replace(config, region_padding_px=60), regions=tiles)
             if result is None:
@@ -554,8 +555,9 @@ def acquire(path: Path, request: Mapping, previous: Mapping | None = None) -> tu
     # read again in column tiles bounded by its rules; still empty, it stops here.
     for index, page in enumerate(result["pages"]):
         if not any(region["observations"] for region in page["regions"]):
-            tiles = column_tiles(pdf_rules.detect(path, page["page_number"]),
-                                 pdf_rules.render(path, page["page_number"]) < pdf_rules.DARK)
+            dark = request.get('rule_dark', pdf_rules.DARK)
+            tiles = column_tiles(pdf_rules.detect(path, page["page_number"], dark=dark),
+                                 pdf_rules.render(path, page["page_number"]) < dark)
             result["pages"][index] = recognize_pdf(path, pages=[page["page_number"]], backend="vision",
                                                    config=replace(config, region_padding_px=60),
                                                    regions=tiles)["pages"][0]
