@@ -7,6 +7,13 @@
     "schema_version": {"const": 1},
     "repairs": {"type": "array", "uniqueItems": true, "items": {"enum": ["opening_cell", "overprint", "split_at_rules", "stacked_rows"]}},
     "codes": {"const": "right"},
+    "rules": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "dark": {"type": "integer", "minimum": 129, "maximum": 255}
+      }
+    },
     "accounts": {
       "type": "object",
       "propertyNames": {"minLength": 1},

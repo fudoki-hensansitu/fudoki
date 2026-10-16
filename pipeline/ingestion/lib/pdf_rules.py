@@ -86,9 +86,10 @@ def _merge(runs: list[tuple[int, int, int]], scale: float) -> tuple[Rule, ...]:
 
 
 def detect(pdf: Path, page: int, *, dpi: int = DPI, vertical_fraction: float = 0.05,
-           horizontal_fraction: float = 0.2) -> PageRules:
+           horizontal_fraction: float = 0.2, dark: int = DARK) -> PageRules:
+    """`dark` is the gray level below which a pixel is ink; a scan that prints its rules pale declares a higher one."""
     image = render(pdf, page, dpi)
-    dark = image < DARK
+    dark = image < dark
     scale = 72 / dpi
     height, width = dark.shape
     return PageRules(page, round(width * scale, 1), round(height * scale, 1),

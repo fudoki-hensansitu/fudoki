@@ -169,7 +169,7 @@ class CorrectionTest(unittest.TestCase):
         correction = scan.amount_dictionary([{'id': 'bad-unit', 'page': 1, 'observation_id': '10',
             'observed_amount': '门', 'corrected_amount': '0', 'reason': 'wrong target'}])
         with patch.object(scan.pdf_rules, 'detect', return_value=rules), \
-                patch.object(scan, 'short_rows', side_effect=lambda pdf, rules: rules):
+                patch.object(scan, 'short_rows', side_effect=lambda pdf, rules, dark=None: rules):
             found = scan.pages(observation, Path('x.pdf'))
             self.assertIn('千', [w.text for w in found[0].words])
             self.assertIn('C', [w.text for w in found[0].words])
