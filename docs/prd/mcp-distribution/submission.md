@@ -1,6 +1,6 @@
 # 公開提出の準備
 
-状態: 未提出。manifestの掲載URL（support/privacy/terms）は2026-10-16に公開を確認して入れた。録画URLは#197より前のUIの暫定記録で、提出前に現行UIで撮り直して置き換える。package検査は通過した。残りは録画の撮り直し、発行者の本人確認、各portalでの検査・提出。仕様確認日: 2026-10-14。
+状態: Claudeは2026-10-16にMCP connector（slug `fudoki`、認証なし、6 tool）とPlugin bundle（`wwwyo/fudoki` の `plugins/fudoki`、main を追跡、push webhook は未設定）を審査に提出した。OpenAIは発行者の本人確認（Individual）が審査中で、承認後にZIPを提出する。録画URLは#197より前のUIの記録。仕様確認日: 2026-10-14。
 
 ## 掲載する内容
 
@@ -65,5 +65,10 @@ Computer pluginでの操作補助も可能だが、録画機能とは別であ�
 OpenAIは公開用ZIPをDeveloper PortalのPluginsへ読み込み、既存MCP URLを接続する。登録済みapp IDや `.app.json` はauthor提供ZIPには含めない。掲載URL、発行者、レビュー情報、録画、国設定を確認し、portal検査を完了してから提出する。個人用custom MCP接続は公開提出を兼ねない。[OpenAIの提出](https://developers.openai.com/plugins/deploy/submission)
 
 Claudeは `claude.ai/directory/manage` でMCP connectorとPlugin bundleをそれぞれ準備する。pluginのrepoは `wwwyo/fudoki`、pathは `plugins/fudoki`。GitHub連携・push権限の確認、連絡先、公開ポリシー、実機確認、portalのdata handling・complianceが残る。既存connectorとpluginを組み合わせる提出として扱う。[Claude connector](https://claude.com/docs/connectors/building/submission)・[Claude plugin](https://claude.com/docs/plugins/submit)
+
+### Claudeへの提出（2026-10-16）
+
+- connector: 掲載名「風土記(fudoki)」、作者・会社のサイトは https://fudoki.dev、連絡先は support@fudoki.dev（転送の着信を確認済み）。提出画面は tool の `annotations.title` を見るため、最上位の `title` と同じ値を入れた（#213）。custom connector をつなぎ直すと、提出画面の掲載名と認証の選択が初期値に戻るので、提出前に見直す。アイコンは fudoki.dev のファビコンを Google 経由で表示するため、古いマークが出ることがある。
+- plugin: `.claude-plugin/plugin.json` に privacyPolicyUrl・termsOfServiceUrl・supportUrl・documentationUrl を入れた（#217・#218）。新しい版は main の定期チェックか、portal の「Check for new commits」で取り込まれる。更新時は `version` を上げる。
 
 公開ポリシーには実際のデータ収集・保存・利用・削除・第三者への共有・連絡先を確認して記す。匿名接続であっても、Cloudflareやhostを含めたデータ取扱いを未確認のまま「一切保存しない」などと宣言しない。掲載URL（support/privacy/terms）は公開済みだが、法的文書としてのレビューとportalのcomplianceへの同意は未完了で、公開によって法的適合性やcomplianceを確認したとは扱わない。
