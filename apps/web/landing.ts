@@ -1,4 +1,4 @@
-// fudoki.dev の入口の1枚。ロゴは public/logo.svg・mark.svg と同じもの
+// fudoki.dev の入口の1枚。ロゴは public/logo.svg、favicon は public/favicon.svg の写し（Worker は assets を持たないので inline にする）
 export const LANDING_HTML = `<!doctype html>
 <html lang="ja">
 <head>
@@ -55,7 +55,7 @@ a { color: var(--brand); }
 `
 
 export const FAVICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32.0000 32" role="img" aria-label="風土記">
-  <title>風土記</title>
-  <g fill="#2f5d43"><g transform="translate(0 0) scale(1)"><rect x="2.00000000" y="14.00000000" width="4.00000000" height="14.00000000" rx="2.00000000"/><rect x="8.00000000" y="6.00000000" width="4.00000000" height="22.00000000" rx="2.00000000"/><rect x="14.00000000" y="18.00000000" width="4.00000000" height="10.00000000" rx="2.00000000"/><rect x="20.00000000" y="2.00000000" width="4.00000000" height="26.00000000" rx="2.00000000"/><rect x="26.00000000" y="11.00000000" width="4.00000000" height="17.00000000" rx="2.00000000"/><rect x="2.00000000" y="29.00000000" width="28.00000000" height="2.00000000" rx="1.00000000" fill="#29523b"/></g></g>
+  <title>風土記</title><style>svg { color: #2f5d43; --logo-rule-ink: #29523b; } @media (prefers-color-scheme: dark) { svg { color: #8fbfa2; --logo-rule-ink: #9cc7ad; } }</style>
+  <g fill="currentColor"><g transform="translate(0 0) scale(1)"><rect x="2.00000000" y="14.00000000" width="4.00000000" height="14.00000000" rx="2.00000000"/><rect x="8.00000000" y="6.00000000" width="4.00000000" height="22.00000000" rx="2.00000000"/><rect x="14.00000000" y="18.00000000" width="4.00000000" height="10.00000000" rx="2.00000000"/><rect x="20.00000000" y="2.00000000" width="4.00000000" height="26.00000000" rx="2.00000000"/><rect x="26.00000000" y="11.00000000" width="4.00000000" height="17.00000000" rx="2.00000000"/><rect x="2.00000000" y="29.00000000" width="28.00000000" height="2.00000000" rx="1.00000000" style="fill:var(--logo-rule-ink)"/></g></g>
 </svg>
 `
