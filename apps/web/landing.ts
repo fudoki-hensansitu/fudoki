@@ -114,8 +114,8 @@ code{font:13px/1.6 var(--font-mono);letter-spacing:0;overflow-wrap:anywhere}
 .tbl{width:100%;border-collapse:collapse;font-size:13px;line-height:1.5}
 .tbl caption{text-align:left;font:400 22px/1.4 var(--font-display);padding-bottom:12px}
 .ttl{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 .4em;font:400 22px/1.4 var(--font-display)}
-.roll{display:inline-block;height:1.4em;overflow:hidden}
-.roll-in{display:grid;transform:translateY(calc(var(--r,0) * -1.4em));transition:transform .7s var(--ease-sweep)}
+.roll{display:inline-block;height:1.4em;overflow:hidden;transition:width .7s var(--ease-sweep)}
+.roll-in{display:grid;justify-items:start;width:max-content;transform:translateY(calc(var(--r,0) * -1.4em));transition:transform .7s var(--ease-sweep)}
 .roll-in span{height:1.4em}
 .tbls{display:grid}
 .tbls caption{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
@@ -356,9 +356,9 @@ const BODY = `${ICONS}
 const SCRIPT = `const n=document.querySelector('.nav'),sp=document.querySelector('.steps'),h=document.documentElement;const s=()=>{n.toggleAttribute('data-scrolled',scrollY>24);const b=sp.getBoundingClientRect();h.toggleAttribute('data-snap',b.top<=1&&b.bottom>=innerHeight-1)};addEventListener('scroll',s,{passive:true});s();
 if('IntersectionObserver'in window){const o=new IntersectionObserver(l=>l.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');o.unobserve(e.target)}}),{threshold:.6});document.querySelectorAll('.sweep').forEach(e=>o.observe(e));
 const r=document.querySelector('.rail'),t=[...document.querySelectorAll('.rail a')],st=[...document.querySelectorAll('.step')];const p=new IntersectionObserver(l=>l.forEach(e=>{if(e.isIntersecting){const i=st.indexOf(e.target);r.style.setProperty('--at',i);t.forEach((a,j)=>j===i?a.setAttribute('aria-current','step'):a.removeAttribute('aria-current'))}}),{rootMargin:'-45% 0px -45% 0px'});st.forEach(e=>p.observe(e))}
-const rm=matchMedia('(prefers-reduced-motion: reduce)').matches,lg=document.querySelector('.ledger');if(lg&&!rm&&'IntersectionObserver'in window){const ts=[...lg.querySelectorAll('.tbl')],ro=lg.querySelector('.roll-in'),n=ts.length;let i=0,id=0,vis=false;
+const rm=matchMedia('(prefers-reduced-motion: reduce)').matches,lg=document.querySelector('.ledger');if(lg&&!rm&&'IntersectionObserver'in window){const ts=[...lg.querySelectorAll('.tbl')],ro=lg.querySelector('.roll-in'),ns=[...ro.children],n=ts.length;let i=0,id=0,vis=false;const fit=()=>{ro.parentElement.style.width=ns[i].offsetWidth+'px'};fit();document.fonts&&document.fonts.ready.then(fit);
 ro.addEventListener('transitionend',()=>{if(i===n){ro.style.transition='none';i=0;ro.style.setProperty('--r',0);ro.offsetWidth;ro.style.transition=''}});
-const step=()=>{i++;ro.style.setProperty('--r',i);ts.forEach((t,k)=>k===i%n?t.dataset.pos='cur':delete t.dataset.pos)};
+const step=()=>{i++;ro.style.setProperty('--r',i);fit();ts.forEach((t,k)=>k===i%n?t.dataset.pos='cur':delete t.dataset.pos)};
 const run=()=>{clearInterval(id);if(vis)id=setInterval(step,2000)};
 new IntersectionObserver(l=>{vis=l[0].isIntersecting;run()}).observe(lg)}
 const v=document.querySelector('.demo video');if(v){let user=rm;const tg=()=>{if(v.paused){user=false;v.play()}else{user=true;v.pause()}};v.addEventListener('click',tg);v.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();tg()}});
