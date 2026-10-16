@@ -25,7 +25,7 @@ import re
 import unicodedata
 
 from ingestion.generic.notes import kind_of, reads_as_note
-from ingestion.lib.node_tables import phase_dictionary
+from ingestion.lib.node_tables import amount_phase, phase_dictionary
 from shared.amount import number
 from ingestion.generic.layout import (SIGNS, SUBJECT_LEVELS, UNIT_CELL, Band, Glyph, Logical, is_amount, kind_heading, lines,
                                       normalize, runs, text)
@@ -2115,12 +2115,23 @@ def _bbox(glyphs: list[Glyph]) -> tuple[float, float, float, float]:
     return (min(b[0] for b in boxes), min(b[1] for b in boxes), max(b[2] for b in boxes), max(b[3] for b in boxes))
 
 
+def header_phase(header: str) -> str | None:
+    """The amount phase of the longest suffix of a printed header path that the shared dictionary knows."""
+    parts = header.split('／')
+    for start in range(len(parts)):
+        phase = amount_phase('／'.join(parts[start:]), 'settlement', '科目', None)
+        if phase:
+            return phase
+    return None
+
+
 def repeated_parent_rows(nodes: list[dict], amounts: list[dict], unowned: list[dict],
                          runs: list[tuple[dict, list[Glyph]]]) -> list[Glyph]:
     """The unowned amount rows that print the amounts of the account row above them again.
 
     A row has no name and no row of its own, and each of its printed amounts is equal, to the yen and in the
-    same column, to the amount of the nearest 款・項・目 row above it on the page. One amount that differs keeps
+    same column (or a column of the same amount phase: a 節 column's `金額` and the account's `計` both
+    stand for the 予算現額), to the amount of the nearest 款・項・目 row above it on the page. One amount that differs keeps
     the whole row unowned (the check stops). The row is recorded, not dropped: its glyphs become an excluded
     region of kind `親の繰り返し`.
     """
@@ -2135,8 +2146,11 @@ def repeated_parent_rows(nodes: list[dict], amounts: list[dict], unowned: list[d
     for (page, _), row in rows.items():
         matched = []
         for record, run, y0 in row:
+            phase = header_phase(record['header'])
             above = [a for a in amounts if a['node_key'] in subject and a['physical_page'] == page
-                     and a['header_path'] == record['header'] and a['y1'] is not None and a['y1'] <= y0 + 1]
+                     and (a['header_path'] == record['header']
+                          or (phase is not None and header_phase(a['header_path']) == phase))
+                     and a['y1'] is not None and a['y1'] <= y0 + 1]
             nearest = max(above, key=lambda a: a['y1'], default=None)
             same = nearest is not None and normalize(nearest['amount_text']) == normalize(record['text'])
             matched.append(same)

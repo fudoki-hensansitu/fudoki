@@ -196,6 +196,9 @@ def _segments(page, pdf: Path | None = None) -> list[Rule]:
                 rules.append(Rule((x0 + x1) / 2, y0, (x0 + x1) / 2, y1))
             elif abs(y1 - y0) < 1:
                 rules.append(Rule(x0, (y0 + y1) / 2, x1, (y0 + y1) / 2))
+        elif line.get('stroke', True) and max(line['x1'] - line['x0'], line['bottom'] - line['top']) > 20 \
+                and min(line['x1'] - line['x0'], line['bottom'] - line['top']) < 1:
+            unread.append(line)  # a stroke in a spot colour the reader gives as 1.0: checked on the rendered page below
     for rect in page.rects:
         x0, x1, y0, y1 = rect['x0'], rect['x1'], rect['top'], rect['bottom']
         w, h = x1 - x0, y1 - y0
