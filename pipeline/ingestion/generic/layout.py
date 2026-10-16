@@ -9,6 +9,7 @@ the two are read as one logical page with the right page shifted to the right.
 from __future__ import annotations
 
 from collections import defaultdict
+from functools import lru_cache
 from dataclasses import dataclass, field
 import re
 import unicodedata
@@ -71,6 +72,8 @@ class Band:
     left_rules: list[tuple[float, float]] = field(default_factory=list)  # (top, bottom) of each rule drawn on its left edge
     unit_mark: str | None = None  # a header cell that only names the unit (`円`), kept apart from the heading
     axis_header: str | None = None  # a declared printed axis spanning a spread's split header
+    ignored: bool = False  # a column the layout settings declare no part of the table
+    inline: bool = False  # amounts printed after a kind word of the heading in one cell (`計 140,323,000` / `当初 121,705,000`)
 
     @property
     def center(self) -> float:
@@ -383,6 +386,34 @@ def same_rows(left: Page, right: Page) -> bool:
     return found / len(shorter) >= SPREAD_ROW_MATCH
 
 
+@lru_cache(maxsize=1)
+def kind_headings() -> tuple[str, ...]:
+    """The kinds of an amount the shared dictionary knows by their last heading word (`当初予算額`,
+    `継続費及び繰越事業費繰越額`…), longest first."""
+    from ingestion.lib.node_tables import phase_dictionary
+    return tuple(sorted({heading.split('／')[-1] for _, heading in phase_dictionary()} - {''}, key=lambda h: (-len(h), h)))
+
+
+def kind_heading(label: str, heading: str = '') -> str | None:
+    """The dictionary heading a kind word printed before an amount stands for: the word itself, or the heading it
+    begins among those the band's own heading text names (`当初` → `当初予算額`, `継続` → `継続費及び繰越事業費繰越額`).
+    `None` when it is not one kind."""
+    key, own = label.replace('及び', ''), normalize(heading).replace('及び', '')
+    for found in ([h for h in kind_headings() if h.replace('及び', '') == key],
+                  [h for h in kind_headings() if len(key) >= 2 and h.replace('及び', '').startswith(key) and h.replace('及び', '') in own]):
+        if found:
+            longest = max(found, key=len)  # `予備費支出` and `予備費支出及び流用増減`: the longer heading holds the other
+            return longest if all(h in longest for h in found) else None
+    return None
+
+
+def inline_kind(band: Band, line: list[Glyph]) -> bool:
+    """Whether a printed line is a kind word of an amount followed by its amount (`当初 121,705,000`)."""
+    words = [normalize(text(run)) for run in runs(line)]
+    names = [w for w in words if not is_amount(w) and w not in SIGNS and not UNIT_CELL.match(w)]
+    return bool(names) and all(kind_heading(w, band.header[-1]) is not None for w in names)
+
+
 def logical_pages(pages: list[Page], *, columns: dict | None = None, spread: dict | None = None,
                   header: dict | None = None) -> list[Logical]:
     """Read each page's bands, classify them once per document, then join spreads."""
@@ -412,6 +443,8 @@ def logical_pages(pages: list[Page], *, columns: dict | None = None, spread: dic
                         kinds.add('code')
                 counts = stats[band.header]
                 counts['lines'] += 1
+                if len(band.header) > 1 and 'text' in kinds and 'grouped' in kinds and inline_kind(band, line):
+                    counts['inline'] += 1
                 for kind in kinds:
                     counts[kind] += 1
     for _, bands, _ in per_page:
@@ -421,6 +454,8 @@ def logical_pages(pages: list[Page], *, columns: dict | None = None, spread: dic
                 band.kind = 'label'
             elif not counts['lines']:
                 band.kind = None
+            elif counts['inline'] * 2 >= counts['lines']:
+                band.kind, band.inline = 'amount', True
             elif counts['text'] * 2 >= counts['lines']:
                 band.kind = 'label'
             elif counts['grouped'] or (counts['zero'] and not counts['code']):
@@ -429,6 +464,8 @@ def logical_pages(pages: list[Page], *, columns: dict | None = None, spread: dic
                 band.kind = 'label'
             setting = (columns or {}).get('／'.join(band.header), {})
             band.kind = setting.get('kind', band.kind)
+            if band.kind == 'ignore':  # a column that is no part of the table (a policy number printed beside it)
+                band.kind, band.ignored = None, True
             band.axis_header = setting.get('axis_header')
     result: list[Logical] = []
     observed = {page.number: page for page, _, _ in per_page}

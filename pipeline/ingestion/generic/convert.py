@@ -36,14 +36,16 @@ from ingestion.lib.parquet import write_parquet
 from ingestion.paths import CACHE
 
 NOTE_SEPARATOR = '／注記／'
-# An account code joined by hyphens (`02-01-02-15-11-01`): printed text in a transfer note's label, and
-# amount-shaped to the coverage check, which never lets a hyphen-and-digits word be a label.
-ACCOUNT_CODE = re.compile(r'[0-9０-９][-－―—][0-9０-９]')
+# An account code joined by hyphens or dots (`02-01-02-15-11-01`, `40.15.25`): printed text in a transfer note's
+# label, and amount-shaped to the coverage check, which never lets a hyphen-and-digits word be a label.
+ACCOUNT_CODE = re.compile(r'[0-9０-９][-－―—.．][0-9０-９]')
 TOTAL_ROW = re.compile(r'(?:合計|総計)$|^計$')
 FOOTNOTE_MARK = re.compile(r'[※＊*][0-9]+')
 # An item number printed with its separator (`1.`, `1.職員人件費`, `（1）消耗品費`): the builder keeps the number alone.
 ITEM_NUMBER = re.compile(r'^[(（]?([0-9０-９]{1,4})(?:[)）]|[.．](?=$|[^0-9０-９]))')
 # The 事業 number printed in brackets under a name (`【010111】`): an identifier, no amount.
+# `…円）`: the end of a parenthetical remark that carries an amount of its own (a balance), no item's amount.
+CLOSING_AMOUNT = re.compile(r'[0-9][0-9,]*円[)）]')
 BRACKET_CODE = re.compile(r'[【\[][0-9０-９]+[】\]]')
 # The part number a work's name ends with (`舗装補修工事(7-1)`): digits of a name, a hyphen between them.
 NAME_PART_NUMBER = re.compile(r'[^0-9０-９(（][(（][0-9０-９]{1,2}[-－][0-9０-９]{1,2}[)）]')
@@ -101,7 +103,9 @@ def lay_notes(built) -> tuple[list[dict], list[dict], list[dict], set, list]:
             continue
         if record['kind'] == 'kind line':
             dropped.add((record['node_key'], record['heading']))
-        codes += [g for g in record['label'] if ACCOUNT_CODE.search(g.text)]
+        joined = any(ACCOUNT_CODE.search(g.text) for g in record['label'])
+        # the item number printed before a joined code (`15.` `5.15へ流用`) is part of that account code's line
+        codes += [g for g in record['label'] if ACCOUNT_CODE.search(g.text) or (joined and re.fullmatch(r'[0-9０-９]{1,3}[.．]?', g.text))]
         for run in record['runs']:
             x0, y0, x1, y1 = union(run)
             page = run[0].page
@@ -170,6 +174,9 @@ def excluded_regions(built, logicals, codes, observed) -> list[dict]:
             if band.kind == 'label' and RATIO_HEADER.search(''.join(band.header)) and band.x0 - band.offset < band.x1 - band.offset:
                 regions.append({'kind': '数量表', 'reason': '比率の欄（見出しが割合・率）。金額の欄ではない。',
                                 'pages': [[band.page, band.page]], 'x_range': [band.x0 - band.offset, band.x1 - band.offset]})
+    regions += [{'kind': '本文', 'reason': '表の一部でない欄（設定で読まないと宣言した列。施策番号など）。金額ではない。',
+                 'pages': [[band.page, band.page]], 'x_range': [band.x0 - band.offset, band.x1 - band.offset]}
+                for logical in logicals for band in logical.bands if band.ignored]
     marks = [(page.number, (w.x0, w.y0, w.x1, w.y1), w.text) for page in observed for w in page.words
              if FOOTNOTE_MARK.fullmatch(normalize(w.text))]
     regions += coverage_regions(marks, kind='本文', reason='脚注の番号（※1）。金額ではない。')
@@ -179,6 +186,9 @@ def excluded_regions(built, logicals, codes, observed) -> list[dict]:
     codes_printed = [(page.number, (w.x0, w.y0, w.x1, w.y1), w.text) for page in observed for w in page.words
                      if BRACKET_CODE.fullmatch(normalize(w.text))]
     regions += coverage_regions(codes_printed, kind='本文', reason='事業の識別番号（【010111】）。金額ではない。')
+    closing = [(page.number, (w.x0, w.y0, w.x1, w.y1), w.text) for page in observed for w in page.words
+               if CLOSING_AMOUNT.fullmatch(normalize(w.text))]
+    regions += coverage_regions(closing, kind='本文', reason='括弧書きの説明の中の金額（（令和7年5月末基金現在額 …円））。括弧を閉じるだけで開かない語で、項目の金額ではない。')
     regions += coverage_regions([(g.page, g.original, g.text) for g in built.repeated_codes], kind='本文',
                                 reason='継続頁に繰り返し印字された科目の番号。直前の同じ科目（番号・名称が一致）の金額と番号であり、新しい金額ではない。')
     regions += coverage_regions([(g.page, g.original, g.text) for g in built.repeated_amounts], kind='親の繰り返し',
@@ -298,7 +308,8 @@ def build_table(source: dict, options: dict, *, stop: bool = True) -> Table:
         document_kind=source['target']['document_kind'], account=account, stop=stop,
         partial=bool(options.get('partial')), direction=source.get('direction'),
         layout=(layout or {}).get('breakdown'), columns=(layout or {}).get('columns'),
-        spread=(layout or {}).get('spread'), header=(layout or {}).get('header'))
+        spread=(layout or {}).get('spread'), header=(layout or {}).get('header'),
+        repairs=frozenset((layout or {}).get('repairs', ())), codes_right=(layout or {}).get('codes') == 'right')
     kept, nodes, amounts, unresolved, codes = split_notes(built)
     all_nodes = [*built.nodes, *nodes]
     all_amounts, headings = canonical_headings([*kept, *amounts], all_nodes, source['target']['document_kind'])

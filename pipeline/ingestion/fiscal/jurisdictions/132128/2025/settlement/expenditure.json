@@ -97,7 +97,7 @@
     {
       "table_id": "late-elderly-medical-setsu",
       "conversion_id": "late-elderly-medical-settlement",
-      "input_fingerprint": "2a31ea32e37fc267318dbc389146c9f881bf10c5b1a9b3eb8fa388d4bf1be389",
+      "input_fingerprint": "2dad5ec9eef958602ab82b8e84ebf898acad04cc41b4ea1f51dc8de531bc2c48",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "日野市決算歳出事項別明細書（A3横単票）の備考細目を行とする。名称は単語間隔が2pt超の箇所を空白、欄内折返しを改行で保持する（印字のまま）。款・項・目の予算5列・執行3列・印字位置を反復し、事業・事業群・備考節を展開する。金額は印字原文（△・桁区切り・括弧のまま）。事業_名称は担当課の括弧書きを含む原文。予備費目は目の粒度とし、備考の bare 事業文を目_備考へ保持する（0069承認・0047先例）。同一印字行帯の科目・節・備考はx帯で独立に解釈し、高さの一致を対応の根拠にしない。法定節一覧は説明と独立した節の軸として保持し、歳出合計はlocal観測に留める。p2は款1項2目1の備考溢れ頁で、前頁の文脈を継承する。頁頭の「後期 (単位：円)」は単位の根拠、会計の同定は上流scopeによる。対象会計は後期高齢者医療特別会計。",
@@ -125,7 +125,7 @@
     {
       "table_id": "land-readjustment-expenditure",
       "conversion_id": "land-readjustment-settlement",
-      "input_fingerprint": "917c8b39dc053354d8779e5b7ffc71bfebeb38ae8db9bc21d66bc74ecc17ed8c",
+      "input_fingerprint": "409293f7c2579d31f87c7d0c3da40f862f3155b45dac43cc1b0392dfe2102c46",
       "account": "土地区画整理事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent'}。",
@@ -155,7 +155,7 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "28a8e450094189cfdfcad1a1a32d46682bcf81a98467493022f864b6c5064428",
+      "input_fingerprint": "b65602fbf4596878f3e58703caefaf39032cb25f7a780c634496f5f192917e60",
       "account": "国民健康保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'shape'}。",
@@ -185,7 +185,7 @@
     {
       "table_id": "long-term-care-expenditure",
       "conversion_id": "long-term-care-settlement",
-      "input_fingerprint": "66722c3bfb2eb07afb42cec3de26c5fb17c4d2d33bf3fc5d95542a6f02337882",
+      "input_fingerprint": "6539f8b557face52f362b953ba1798061a783b889a967187e75b8e799650730e",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
@@ -215,7 +215,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "b584cf4693b49b241195ee776d8ce8ce04d89d460fef46e3ad2460bde506484c",
+      "input_fingerprint": "c5ed8605bacf8586ae1c3043ca8bb456e98953e834431980cb704acf4c760418",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
