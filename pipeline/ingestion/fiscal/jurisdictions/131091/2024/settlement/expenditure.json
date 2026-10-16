@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "131091",
+    "fiscal_year": 2024,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "70761df182cc4e55039a334ce79a01c683e2927ab48f3c2e99447a7daea2f1ac"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure"
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-expenditure",
+      "conversion_id": "general-settlement",
+      "input_fingerprint": "1b143a9bff47c556cab7db96e4115e6ba4bd3f1e14b63c7a075ef5f1f7a6430a",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
+        "金額の単位は printed 118頁 から決めた。款の和 209,700,311,574 と印字の「歳出合計」209,700,311,574 が一致。",
+        "金額の注記 116 件（不用額 18・充用 18・流用 80）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（1631 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・翌年度繰越額／継続費逓次繰越繰越明許費事故繰越し→翌年度繰越額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2024/settlement/expenditure/general-expenditure-nodes.parquet",
+          "sha256": "cbe300e02af0919124e2ddf6b259a685d108488cc22e4c3f57d98adc09286107",
+          "bytes": 147261
+        },
+        "row_count": 4019
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2024/settlement/expenditure/general-expenditure-amounts.parquet",
+          "sha256": "3c90de1dd89ba8479a00f3e78c6b3210cbf453cf1bce3c84c41d4d817532f253",
+          "bytes": 137763
+        },
+        "row_count": 6988
+      }
+    }
+  ]
+}

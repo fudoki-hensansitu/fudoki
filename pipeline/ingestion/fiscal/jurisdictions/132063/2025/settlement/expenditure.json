@@ -24,13 +24,31 @@
           "table_id": "kouki-setsu"
         }
       ]
+    },
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "67a4b3b89621b108c7e2c2555a0e2b6d18ccc75b1242e722022d0fa0b1556366"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure"
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure"
+        }
+      ]
     }
   ],
   "tables": [
     {
       "table_id": "kouki-setsu",
       "conversion_id": "kouki-settlement",
-      "input_fingerprint": "1be46384ebba5e3f538f697b913d90c955309a2c7d37d612add227abc8045a2c",
+      "input_fingerprint": "8b845ca8bd0383be8bd7e864d68c2b0fe97c06754a11f7e13e49536773883acb",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "法定節が行。節を持たない25款5項5目予備費は目行。款・項・目の金額・執行額は所属contextとして各行へ反復。右頁備考の経費内訳ブロック（見出し・項目・合計）は事業別の分解で節対応未確認のため行化せず、属する目の目_備考へ印字行の改行のまま保持。末尾の施策番号は目_施策番号へカンマ結合で保持し、目_備考の行内にも残る。歳出合計統制行は行化せずlocal観測。執行率は原典の百分率表記を保持。継続費繰越・予備費流用欄は対象範囲で印字なしのため全行NULL。物理頁は左頁、bboxは左頁の行bounds。",
@@ -53,6 +71,36 @@
           "bytes": 5370
         },
         "row_count": 233
+      }
+    },
+    {
+      "table_id": "general-expenditure",
+      "conversion_id": "general-settlement",
+      "input_fingerprint": "ebd28fa0ab3b4e5b81401921841b7824dac5b1277a6706dd67297c9f182be481",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
+        "金額の単位は column mark 66頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 3 種（3246 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・支出済額(執行率%)→支出済額・翌年度繰越額継続費逓次繰越繰越明許費事故繰越し→翌年度繰越額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132063/2025/settlement/expenditure/general-expenditure-nodes.parquet",
+          "sha256": "7b4e4186ce88caec4088c411b0db44b4a52fec783db9b1c78d42804cf4903ff0",
+          "bytes": 82087
+        },
+        "row_count": 2828
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132063/2025/settlement/expenditure/general-expenditure-amounts.parquet",
+          "sha256": "714a1dad2fcc5c4f162059542cfa6c56ae013210d260b6a1dbf481ba89a8a902",
+          "bytes": 88652
+        },
+        "row_count": 6599
       }
     }
   ]
