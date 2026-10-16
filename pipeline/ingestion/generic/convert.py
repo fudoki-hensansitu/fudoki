@@ -46,6 +46,12 @@ ITEM_NUMBER = re.compile(r'^[(（]?([0-9０-９]{1,4})(?:[)）]|[.．](?=$|[^0-9
 # The 事業 number printed in brackets under a name (`【010111】`): an identifier, no amount.
 # `…円）`: the end of a parenthetical remark that carries an amount of its own (a balance), no item's amount.
 CLOSING_AMOUNT = re.compile(r'[0-9][0-9,]*円[)）]')
+# A unit price times a count (`560,000円×1人×11月`), the way a wrapped line breaks it (`円×13人×`): the digits are a
+# calculation, no amount. A price alone on its line (`12,600円`) is one only when the next line goes on with `×`.
+PRICE = r'(?:[0-9][0-9,]*)?円'
+COUNT = r'延?[0-9][0-9,]*(?:人|名|回|月|か月|日|件|台|個|世帯)?'
+FORMULA = re.compile(rf'(?:{PRICE})?(?:×(?:{COUNT})?)+|{COUNT}(?:×(?:{COUNT})?)+')
+LONE_PRICE = re.compile(r'[0-9][0-9,]*円')
 BRACKET_CODE = re.compile(r'[【\[][0-9０-９]+[】\]]')
 # The part number a work's name ends with (`舗装補修工事(7-1)`): digits of a name, a hyphen between them.
 NAME_PART_NUMBER = re.compile(r'[^0-9０-９(（][(（][0-9０-９]{1,2}[-－][0-9０-９]{1,2}[)）]')
@@ -188,6 +194,8 @@ def excluded_regions(built, logicals, codes, observed) -> list[dict]:
     regions += coverage_regions(codes_printed, kind='本文', reason='事業の識別番号（【010111】）。金額ではない。')
     closing = [(page.number, (w.x0, w.y0, w.x1, w.y1), w.text) for page in observed for w in page.words
                if CLOSING_AMOUNT.fullmatch(normalize(w.text))]
+    regions += coverage_regions(formula_words(observed), kind='本文',
+                                reason='単価×数量の算式（560,000円×1人×11月）の数字。計算の式で、金額ではない。')
     regions += coverage_regions(closing, kind='本文', reason='括弧書きの説明の中の金額（（令和7年5月末基金現在額 …円））。括弧を閉じるだけで開かない語で、項目の金額ではない。')
     regions += coverage_regions([(g.page, g.original, g.text) for g in built.repeated_codes], kind='本文',
                                 reason='継続頁に繰り返し印字された科目の番号。直前の同じ科目（番号・名称が一致）の金額と番号であり、新しい金額ではない。')
@@ -209,6 +217,26 @@ def excluded_regions(built, logicals, codes, observed) -> list[dict]:
     regions += [{'kind': '総括', 'reason': '合計の行。款の和には入れない統制値。見開きでは見出しの語が反対の頁にある。',
                  'page': note['page'], 'bbox': list(note['box'])} for note in totals]
     return regions
+
+
+def formula_words(observed) -> list[tuple]:
+    """The words of every run on a line (words touching each other) that is a unit price times counts."""
+    found = []
+    for page in observed:
+        runs: list[list] = []
+        for word in sorted(page.words, key=lambda w: (round(w.y0), w.x0)):
+            if runs and abs(runs[-1][-1].y0 - word.y0) <= 1.5 and 0 <= word.x0 - runs[-1][-1].x1 <= 2.5:
+                runs[-1].append(word)
+            else:
+                runs.append([word])
+        texts = [normalize(''.join(w.text for w in run)) for run in runs]
+        for index, (run, joined) in enumerate(zip(runs, texts)):
+            lone = LONE_PRICE.fullmatch(joined) and any(
+                abs(other[0].x0 - run[0].x0) <= 12 and 0 < other[0].y0 - run[0].y0 <= 2 * (run[0].y1 - run[0].y0)
+                and following.startswith('×') for other, following in zip(runs, texts))
+            if lone or ('×' in joined and FORMULA.fullmatch(joined)):
+                found += [(page.number, (w.x0, w.y0, w.x1, w.y1), w.text) for w in run]
+    return found
 
 
 def zero_marks(logicals) -> list[tuple]:

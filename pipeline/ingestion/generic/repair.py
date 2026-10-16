@@ -433,7 +433,7 @@ def apply_dictionary(page: Page, report: Report) -> None:
     page.words = repaired
 
 
-def join_vertical(page: Page, report: Report) -> None:
+def join_vertical(page: Page, report: Report, stacked_rows: bool = False) -> None:
     """Single characters stacked tightly in one column with no neighbour on their line are one
     vertically printed word (款・項 names in a narrow column); read it top to bottom."""
     singles = [w for w in page.words if len(w.text) == 1 and not NUMERIC.match(w.text) and w.text.strip()]
@@ -450,8 +450,11 @@ def join_vertical(page: Page, report: Report) -> None:
     def alone(word: Word) -> bool:
         """No neighbour on its line, unless a vertical rule separates them (another column)."""
         reach = 1.5 * (word.x1 - word.x0)
+        # An amount further along the same line in the same cell (`国` `639,349`, `都` `507,401`) makes the
+        # lines of a stack rows of a table, not one vertically printed word.
         return not any(_same_line(word, other) and other is not word and not walled(word, other) and
-                       (abs(other.x0 - word.x1) < reach or abs(word.x0 - other.x1) < reach)
+                       (abs(other.x0 - word.x1) < reach or abs(word.x0 - other.x1) < reach
+                        or (stacked_rows and other.x0 > word.x1 and any(c.isdigit() for c in other.text)))
                        for other in page.words)
 
     stacks: list[list[Word]] = []
@@ -563,7 +566,7 @@ def repair(pdf_path: Path | None, pages: list[Page], repairs: frozenset = frozen
             report.hidden_glyphs = report.hidden_rules = 0
     for page in pages:
         repair_positions(page, report)
-        join_vertical(page, report)
+        join_vertical(page, report, 'stacked_rows' in repairs)
     report.health = health(pages)
     report.broken = is_broken(report.health)
     if report.broken:

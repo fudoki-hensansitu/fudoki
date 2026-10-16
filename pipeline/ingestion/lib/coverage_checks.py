@@ -50,7 +50,7 @@ QUANTITY_PHRASE = re.compile(
     r'|[0-9][0-9,]*円(?:延|×)?[0-9][0-9,]*(?:人|名|件|回|日|個|台|戸|世帯|本|冊|校|園)')
 
 
-ORDINAL_PHRASE = re.compile(r'(?:[^0-9,円]|第[0-9]+(?:款|項|目|節|土曜日|ブロック|期))+')
+ORDINAL_PHRASE = re.compile(r'(?:[^0-9,円]|第[0-9]+(?:款|項|目|節|土曜日|ブロック|期|農園?)|[0-9]+ブロック)+')
 
 
 # Bare folios live in the footer strip. All processed PDFs are ~842pt tall

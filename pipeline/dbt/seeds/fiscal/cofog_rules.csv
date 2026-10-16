@@ -302,3 +302,4 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 1326,vocab-funeral-hall,,一般会計,,,,,聖苑,contains,,assigned,06.2,retained,目,,聖苑（火葬場・葬祭場）の運営を霊園・斎場の規則と同じく地域アメニティに寄せる。境界の判断のため暫定とする。,true
 1327,keyword-health-medical,,一般会計,,衛生費,,,保健医療,contains,,assigned,07,retained,目,,衛生費に属する保健医療を保健に分類する。名称からの判断で定義の確認が要るため暫定とする。,true
 1328,keyword-school-management-general,,一般会計,,教育費,学校教育費,,学校管理,contains,,assigned,09,retained,目,,学校教育費に属する学校管理は学校段階を名称から分けられないため COFOG 09 教育の division 止まりで暫定とする。,true
+1329,keyword-nature-conservation,,一般会計,,,,,自然保護,contains,,assigned,05.4,retained,目,,自然保護（生物多様性・景観の保護）を COFOG 05.4 に分類する。,false

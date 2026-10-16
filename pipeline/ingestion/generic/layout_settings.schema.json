@@ -5,7 +5,7 @@
   "required": ["schema_version"],
   "properties": {
     "schema_version": {"const": 1},
-    "repairs": {"type": "array", "uniqueItems": true, "items": {"enum": ["opening_cell", "overprint"]}},
+    "repairs": {"type": "array", "uniqueItems": true, "items": {"enum": ["opening_cell", "overprint", "split_at_rules", "stacked_rows"]}},
     "codes": {"const": "right"},
     "accounts": {
       "type": "object",
@@ -29,7 +29,9 @@
         "additionalProperties": false,
         "properties": {
           "kind": {"enum": ["amount", "label", "ignore"]},
-          "axis_header": {"type": "string", "minLength": 1}
+          "axis_header": {"type": "string", "minLength": 1},
+          "inline": {"type": "boolean"},
+          "heading": {"type": "string", "minLength": 1}
         }
       }
     },
@@ -111,6 +113,15 @@
           "amount_brackets": {"type": "boolean"},
           "indent_chars": {"type": "integer", "minimum": 1},
           "single_part_notes": {"type": "boolean"},
+          "rows": {"type": "boolean"},
+          "rows_from": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "amount"],
+            "properties": {"name": {"type": "string", "minLength": 1}, "amount": {"type": "string", "minLength": 1}}
+          },
+          "sum_levels": {"type": "boolean"},
+          "bare_amounts": {"type": "boolean"},
           "notes": {"type": "array", "items": {"type": "string", "minLength": 1}}
         }
       }

@@ -2148,6 +2148,22 @@ sources:
       direction: expenditure
       table_id: general-expenditure-detail
       kind: nodes
+  - name: j132195_2025_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '132195'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j132195_2025_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '132195'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
   - name: j132209_2024_settlement_general_expenditure_amounts
     meta:
       jurisdiction: '132209'
