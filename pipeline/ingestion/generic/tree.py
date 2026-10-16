@@ -996,9 +996,19 @@ def title_amount(line: list[Glyph]) -> tuple[str | None, list[Glyph]]:
 
 
 def untitled(group: Group) -> bool:
-    """A subject group in bands whose first column is not 款 (its 款 is printed as a title)."""
-    return group.mode in ('bands', 'names') and bool(group.bands) and bool(group.bands[0].header) \
-        and group.bands[0].header[-1] in SUBJECT_LEVELS[1:]
+    """A subject group whose 款 is printed as a title: its first column is not 款, or one header spans the
+    columns (`款項目`) and the 款 column prints nothing."""
+    if not group.bands or not group.bands[0].header:
+        return False
+    first = group.bands[0]
+    if group.mode in ('bands', 'names') and first.header[-1] in SUBJECT_LEVELS[1:]:
+        return True
+    return first.header[-1] == '款項目' and not first.words
+
+
+def title_shift(group: Group) -> bool:
+    """Whether the group's columns sit one level below a title's 款 (an `indent` group's columns include the 款's)."""
+    return untitled(group) and group.mode != 'indent'
 
 
 def heading_names(logical: Logical) -> dict[tuple[str, str], str]:
@@ -1546,7 +1556,10 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
         if subject is not None and untitled(subject):
             # A table without a 款 column under a title naming its 款: the title is the 款 item.
             for code, name, line in logical.titles:
-                title = Item(subject, line[0].page, [line], code, name, line[0].x0, level=-1, level_name='款')
+                # An indent group reads levels from where a code starts: the title stands where a 款 code would
+                # (one character inside the 款 column), not where its own text starts.
+                indent = subject.bands[0].x0 + (line[0].y1 - line[0].y0) if subject.mode == 'indent' else line[0].x0
+                title = Item(subject, line[0].page, [line], code, name, indent, level=-1, level_name='款')
                 kind, run = title_amount(line)
                 if kind and run and is_amount(normalize(text(run))):  # `（決算額 4,764,369,474 円）`
                     title.amounts.append((kind, run))
@@ -1578,16 +1591,22 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
     # Codes set right in their column: a one-digit and a two-digit code of one level start a digit apart (4–6pt).
     # A wider spread is names or other levels sharing the column, not alignment.
     code_starts: dict[int, list[float]] = defaultdict(list)
+    digit_widths: dict[int, list[float]] = defaultdict(list)
     for _, ordered, found in all_items:
         for group in ordered:
             if group.subject and group.mode == 'indent':
                 for item in found[id(group)]:
                     if item.code is not None and item.role == 'node' and item.glyphs:
                         code_starts[item.level].append(item.glyphs[0].x0)
+                        if len(item.glyphs[0].text) == 1:
+                            digit_widths[item.level].append(item.glyphs[0].x1 - item.glyphs[0].x0)
     right_set = set()
     for level, xs in code_starts.items():
         common = [x for x, n in Counter(round(x) for x in xs).items() if n >= 3]  # a stray start is not a column
-        if common and 3 < max(common) - min(common) <= 6.5:
+        # Set right, a one-digit code starts one digit (as wide as the font sets it) after a two-digit one.
+        digit = max(digit_widths[level], default=0)
+        gap = max(common) - min(common) if common else 0
+        if common and 3 < gap and (gap <= 6.5 or abs(gap - digit) <= .6):
             right_set.add(level)
     for logical, ordered, found in all_items:
         for group in ordered:
@@ -1800,7 +1819,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
         closing_headings = closing_department_headings([item for _, _, item in events])
         headings = heading_names(logical)
         subject_depth = max((g.levels or len(g.bands) for g in ordered if g.subject), default=3) \
-            + any(titled and untitled(g) for g in ordered if g.subject)
+            + any(titled and title_shift(g) for g in ordered if g.subject)
         row = None  # (subject item, top, bottom) of the latest subject row
         for _, _, item in events:
             if not item.group.subject and item.role in ('node', 'note') and row is not None \
@@ -1840,7 +1859,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                               'amounts': [text(r) for _, r in item.amounts]})
                 continue
             if item.group.subject:
-                depth = item.level + 1 + (titled and untitled(item.group))
+                depth = 1 if item.level == -1 else item.level + 1 + (titled and title_shift(item.group))
                 previous = stack[depth - 1] if len(stack) >= depth else None
                 if previous is None:  # bands that skip a level (a name band between the codes): find the open one by band
                     previous = next((s for s in stack if s.level == item.level), None)
