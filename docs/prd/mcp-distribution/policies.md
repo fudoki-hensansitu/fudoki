@@ -65,7 +65,7 @@
 
 Workers Paid の Workers Logs は標準7日保持なので、privacy には最大7日と記載した。query のマスクは false であり、URL に含まれる情報が記録され得るため、秘密情報を送らせない案内を維持する。[Cloudflare DPA](https://www.cloudflare.com/cloudflare-customer-dpa/)も確認した。契約の個別の締結状態や法的適合性を、設定取得だけで証明したとは扱わない。
 
-Email Routing は `cf email-routing settings get --zone fudoki.dev` で enabled=true/status=ready。`cf email-routing addresses list` で検証済みの転送先が1件、`cf email-routing rules list-account --zone fudoki.dev` で support@fudoki.dev からそのアドレスへの有効な forward ルールを確認した。確認時には既に設定されていたため、重複して作成していない。転送先は Gmail であり、個人のアドレスは文書・Git に記載しない。実メールの送受信テストやメール本文の取得は行っていない。
+Email Routing は `cf email-routing settings get --zone fudoki.dev` で enabled=true/status=ready。`cf email-routing addresses list` で検証済みの転送先が1件、`cf email-routing rules list-account --zone fudoki.dev` で support@fudoki.dev からそのアドレスへの有効な forward ルールを確認した。確認時には既に設定されていたため、重複して作成していない。転送先は Gmail であり、個人のアドレスは文書・Git に記載しない。2026-10-16に別のアドレスから support@fudoki.dev へ送り、転送先で受信できることを確かめた。同じ Gmail から送ると、転送されたコピーは重複として表示されないので、試験は別のアドレスから送る。
 
 [Email Routing の設定](https://developers.cloudflare.com/email-service/configuration/email-routing-addresses/)、[メールの活動記録](https://developers.cloudflare.com/email-service/observability/logs/)、[Google のプライバシーポリシー](https://policies.google.com/privacy)を確認し、privacy にはメールで受け取る情報・転送と受信の提供元・目的・削除方針を追加した。メールの活動記録と Workers Logs の保持期間を混同しない。
 

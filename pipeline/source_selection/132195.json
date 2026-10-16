@@ -5834,6 +5834,120 @@
         "archived_at": "2026-10-15T12:53:26.964Z"
       },
       "reason": "令和5年度に実施した予算事業を所管課が内部評価した令和6年度内部評価結果報告書。2頁目に「（令和５年度実施事業）」とあり、評価対象は令和5年度。まちの姿に沿って1事業あたり約1/3〜1頁で、予算科目・所管課・令和5年度決算額、取組結果・評価、具体的な成果、4段階の評定と理由を載せる。文字として読める。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132195",
+        "fiscal_year": 2022,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和5年度内部評価結果報告書（令和4年度実施事業）",
+          "landing_url": "https://www.city.komae.tokyo.jp/index.cfm/46,0,362,3163,html",
+          "inspected_at": "2026-10-16T00:40:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.komae.tokyo.jp/index.cfm/46,117244,c,html/117244/20231026-162316.pdf",
+              "sha256": "e07d371411fce4b903d0e3ee0bac8cb49131cf482f5e2792f0a982df22a73c04",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132195/2022/evaluation-settlement.pdf",
+            "sha256": "e07d371411fce4b903d0e3ee0bac8cb49131cf482f5e2792f0a982df22a73c04",
+            "final_url": "https://www.city.komae.tokyo.jp/index.cfm/46,117244,c,html/117244/20231026-162316.pdf"
+          }
+        ],
+        "archived_at": "2026-10-15T23:48:14.193Z"
+      },
+      "reason": "令和4年度に実施した予算事業を所管課が内部評価した「令和5年度内部評価結果報告書」（令和5年10月、118頁、狛江市の行政評価ページで公表）。1頁目が「令和5年度内部評価結果報告書（令和4年度実施事業）」。基本計画の「まちの姿」に沿って、事業ごとに目的・対象・内容、事業費（決算額）、活動指標・成果指標の目標値と実績値、実施内容・成果、評価・課題・今後の方向性を載せる。文字として読める。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132195",
+        "fiscal_year": 2021,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和4年度内部評価結果報告書（令和3年度実施事業）",
+          "landing_url": "https://www.city.komae.tokyo.jp/index.cfm/46,0,362,3163,html",
+          "inspected_at": "2026-10-16T00:40:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.komae.tokyo.jp/index.cfm/46,117244,c,html/117244/20221005-160829.pdf",
+              "sha256": "76272dbc47987af2b3a2fd24bd3d2e69f746e748291088fed07704cdf9f5a57e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132195/2021/evaluation-settlement.pdf",
+            "sha256": "76272dbc47987af2b3a2fd24bd3d2e69f746e748291088fed07704cdf9f5a57e",
+            "final_url": "https://www.city.komae.tokyo.jp/index.cfm/46,117244,c,html/117244/20221005-160829.pdf"
+          }
+        ],
+        "archived_at": "2026-10-15T23:48:18.816Z"
+      },
+      "reason": "令和3年度に実施した予算事業を所管課が内部評価した「令和4年度内部評価結果報告書」（令和4年10月、115頁、狛江市の行政評価ページで公表）。1頁目が「令和4年度内部評価結果報告書（令和3年度実施事業）」。基本計画の「まちの姿」に沿って、事業ごとに目的・対象・内容、事業費（決算額）、活動指標・成果指標の目標値と実績値、実施内容・成果、評価・課題・今後の方向性を載せる。文字として読める。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132195",
+        "fiscal_year": 2020,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和3年度内部評価結果報告書（令和2年度実施事務事業評価）",
+          "landing_url": "https://www.city.komae.tokyo.jp/index.cfm/46,0,362,3163,html",
+          "inspected_at": "2026-10-16T00:50:00+09:00",
+          "files": [
+            {
+              "download_url": "https://web.archive.org/web/20220302040911id_/https://www.city.komae.tokyo.jp/index.cfm/46,117244,c,html/117244/20211112-143703.pdf",
+              "sha256": "925709c0000eab033abe05c7775b6705c378b579b458db5f54dea82efa20d285",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132195/2020/evaluation-settlement.pdf",
+            "sha256": "925709c0000eab033abe05c7775b6705c378b579b458db5f54dea82efa20d285",
+            "final_url": "https://web.archive.org/web/20220302040911id_/https://www.city.komae.tokyo.jp/index.cfm/46,117244,c,html/117244/20211112-143703.pdf"
+          }
+        ],
+        "archived_at": "2026-10-15T23:48:26.423Z"
+      },
+      "reason": "令和2年度に実施した事務事業を所管課が内部評価した「令和3年度内部評価結果報告書（令和2年度実施事務事業評価）」（令和3年9月、122頁、狛江市の行政評価ページで公表）。1頁目が「令和3年度内部評価結果報告書（令和2年度実施事務事業評価）」。事業ごとに目的・対象・内容、事業費（決算額）、活動指標・成果指標の目標値と実績値、実施内容・成果、評価・課題・今後の方向性を載せる。文字として読める。現行の公式URL（index.cfm/46,117244,c,html/117244/20211112-143703.pdf）は404で、行政評価の頁からも外れているため、Wayback Machine の保存版（2022-03-02取得、11,180,829バイト、x-archive-orig-content-length と一致）から取得した。download_url は実際に取得した Wayback のURL、元の公式URLは https://www.city.komae.tokyo.jp/index.cfm/46,117244,c,html/117244/20211112-143703.pdf。"
     }
   ]
 }

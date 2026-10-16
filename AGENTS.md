@@ -159,7 +159,7 @@ _Avoid_: ログ
 .
 ├── pipeline/         # source_selection、ingestion/fiscal、dbt（マスタと正規化macro）
 ├── packages/         # fiscal の純粋な型・名称、jurisdictions
-├── apps/             # web（一時的な 500 応答）、api、docs
+├── apps/             # web（入口の1枚）、api、docs
 ├── docs/
 │   ├── prd/<topic>/{prd,dd}.md   # 要件と設計書。同じ topic に併置する
 │   ├── adr/                      # 決定の記録
@@ -182,7 +182,7 @@ uv sync
 
 bun run --cwd pipeline ingestion:check   # 取り込みの宣言・選定・fingerprint を検査
 bun run typecheck:all                    # 型検査（root と全 package）
-bun run test                             # テスト（web の 500 応答と各 package）
+bun run test                             # テスト（web の入口と各 package）
 bun run --cwd pipeline test:python       # パイプラインの Python テスト
 bun run build:web                        # build（api・docs も build:api・build:docs）
 bun run dev:api                          # API をローカルで起動（web は dev:web）
@@ -202,7 +202,7 @@ unit テストは、金額の正しさ・公開 API の安全性（認証・入�
 ## 技術スタック
 
 - **パイプライン**（取得・OCR・dbt 変換・検証・保存・一時検証の規則）→ `pipeline/AGENTS.md`
-- **公開面**（web・api・docs、web は現在一時的に HTTP 500）→ `apps/AGENTS.md`
+- **公開面**（web・api・docs、web は現在入口の1枚だけ）→ `apps/AGENTS.md`
 - **言語・依存**: TypeScript は Bun workspaces（共有版は `catalog:` で集約）、Python は uv workspace。exact ピン留め・cooldown 7日
 - **保存の大原則**: Git はコード・宣言・判断・入力一覧、非公開 R2 は原典・取り込み表。`.cache/`・`.build/` は再生成可能なローカル作業領域
 - **script の置き場**: package の作業はその package.json が所有し、root は `pipeline:*`・`dev:*` などの入口と orchestration だけを持つ

@@ -1,0 +1,74 @@
+// fudoki.dev の入口の1枚。ロゴは public/logo.svg、favicon は public/favicon.svg の写し（Worker は assets を持たないので inline にする）
+export const LANDING_HTML = `<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>風土記（fudoki）— 町の家計簿</title>
+<meta name="description" content="日本の自治体の歳出の予算・決算を事業の単位まで集め、AI から問い合わせられるデータとして配る。">
+<link rel="canonical" href="https://fudoki.dev/">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="風土記（fudoki）">
+<meta property="og:title" content="風土記（fudoki）— 町の家計簿">
+<meta property="og:description" content="日本の自治体の歳出の予算・決算を事業の単位まで集め、AI から問い合わせられるデータとして配る。">
+<meta property="og:url" content="https://fudoki.dev/">
+<meta property="og:image" content="https://fudoki.dev/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"風土記（fudoki）","url":"https://fudoki.dev/","logo":"https://fudoki.dev/icon.png","sameAs":["https://github.com/wwwyo/fudoki","https://docs.fudoki.dev/"]}</script>
+<style>
+:root { --bg: #fbfaf7; --fg: #1f2a24; --muted: #5b665f; --brand: #2f5d43; --line: #dde3dc; }
+@media (prefers-color-scheme: dark) { :root { --bg: #141916; --fg: #e8ece8; --muted: #a3ada6; --brand: #8fbf9f; --line: #2c3530; } }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.8 system-ui, -apple-system, "Hiragino Sans", "Noto Sans JP", sans-serif; }
+main { max-width: 40rem; margin: 0 auto; padding: 4rem 1rem; }
+.logo { height: 2.5rem; width: auto; color: var(--brand); }
+h1 { font-size: 1.5rem; line-height: 1.5; margin: 2rem 0 1rem; }
+p { margin: 0 0 1rem; }
+.muted { color: var(--muted); }
+code { font: 0.95em ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--line); padding: 0.1em 0.4em; border-radius: 4px; overflow-wrap: anywhere; }
+section { border-top: 1px solid var(--line); margin-top: 2rem; padding-top: 1.5rem; }
+h2 { font-size: 1rem; margin: 0 0 0.5rem; }
+ul { padding-left: 1.2rem; margin: 0; }
+a { color: var(--brand); }
+</style>
+</head>
+<body>
+<main>
+<svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 146.2150 40" role="img" aria-label="風土記">
+  <title>風土記</title>
+  <g fill="currentColor"><g transform="translate(0 0) scale(1.25)"><rect x="2.00000000" y="14.00000000" width="4.00000000" height="14.00000000" rx="2.00000000"/><rect x="8.00000000" y="6.00000000" width="4.00000000" height="22.00000000" rx="2.00000000"/><rect x="14.00000000" y="18.00000000" width="4.00000000" height="10.00000000" rx="2.00000000"/><rect x="20.00000000" y="2.00000000" width="4.00000000" height="26.00000000" rx="2.00000000"/><rect x="26.00000000" y="11.00000000" width="4.00000000" height="17.00000000" rx="2.00000000"/><rect x="2.00000000" y="29.00000000" width="28.00000000" height="2.00000000" rx="1.00000000" fill="currentColor"/></g><path transform="translate(45.0775 33.5854) scale(0.03250 -0.03250)" d="M111 -71Q92 -55 63.0 -39.5Q34 -24 13 -15Q46 30 69.0 76.5Q92 123 106.5 178.5Q121 234 127.5 306.0Q134 378 134 472Q134 585 130.5 673.5Q127 762 123 811H843Q839 765 835.0 671.5Q831 578 831 449Q831 308 846.0 224.5Q861 141 886 100Q894 119 901.0 141.5Q908 164 913 184Q929 173 956.5 159.0Q984 145 999 139Q989 90 973.0 39.5Q957 -11 936 -46Q921 -71 893.5 -74.0Q866 -77 840 -48Q720 91 720 449Q720 509 720.5 565.0Q721 621 721.0 660.5Q721 700 721 711H237Q237 696 237.5 666.0Q238 636 238.5 599.5Q239 563 239.0 527.0Q239 491 239 464Q239 359 231.0 279.0Q223 199 207.5 137.0Q192 75 168.0 25.0Q144 -25 111 -71ZM684 -55Q668 -15 644 30Q606 22 552.5 12.5Q499 3 441.5 -5.5Q384 -14 334.0 -21.5Q284 -29 254 -32L227 72Q259 74 315.5 80.0Q372 86 434 93V218H279V500H434V554Q394 550 357.0 547.5Q320 545 290 543Q289 556 284.0 574.5Q279 593 273.5 610.5Q268 628 263 637Q307 638 359.5 642.5Q412 647 464.0 653.5Q516 660 560.5 669.0Q605 678 635 688L696 601Q662 591 619.0 582.5Q576 574 530 566V500H684V218H530V105Q548 107 564.5 110.0Q581 113 596 115Q588 128 579.5 139.5Q571 151 563 161L653 206Q674 179 698.5 140.0Q723 101 744.0 61.5Q765 22 777 -9Q758 -15 730.0 -29.0Q702 -43 684 -55ZM373 309H434V409H373ZM530 309H590V409H530Z"/><path transform="translate(79.5825 33.5854) scale(0.03250 -0.03250)" d="M45 -32V81H436V427H110V539H436V818H564V539H895V427H564V81H960V-32Z"/><path transform="translate(112.6250 33.5854) scale(0.03250 -0.03250)" d="M617 -55Q555 -55 529.5 -36.0Q504 -17 504 28V500H792V700H495V805H914V391H626V88Q626 73 633.5 66.5Q641 60 664 60H781Q808 60 823.0 70.0Q838 80 845.0 105.5Q852 131 856 177Q869 170 890.0 161.5Q911 153 933.5 146.0Q956 139 972 135Q961 56 943.5 15.0Q926 -26 896.0 -40.5Q866 -55 815 -55ZM92 -55V237H416V-55ZM51 570V661H451V570ZM99 710V804H407V710ZM99 288V380H407V288ZM99 429V521H407V429ZM199 36H309V145H199Z"/></g>
+</svg>
+<h1>町の家計簿</h1>
+<p>風土記は、日本の自治体の歳出の予算・決算を、事業の単位まで集めて構造化し、AI から問い合わせられるデータとして配ります。ある街のお金の使い道を事業の単位で見て、他の街や他の年と同じ物差しで比べ、数字を原典で確かめられます。</p>
+<p class="muted">収録する自治体と年度は、順次広げています。</p>
+<section>
+<h2>AI から使う</h2>
+<p>MCP に対応した AI クライアントに、次の URL を登録してください。認証は要りません。</p>
+<p><code>https://api.fudoki.dev/mcp</code></p>
+</section>
+<section>
+<h2>リンク</h2>
+<ul>
+<li><a href="https://docs.fudoki.dev">ドキュメント</a></li>
+<li><a href="https://github.com/wwwyo/fudoki">GitHub</a></li>
+<li><a href="https://docs.fudoki.dev/support">サポート</a></li>
+<li><a href="https://docs.fudoki.dev/privacy">プライバシーポリシー</a></li>
+<li><a href="https://docs.fudoki.dev/terms">利用規約</a></li>
+</ul>
+</section>
+</main>
+</body>
+</html>
+`
+
+export const FAVICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32.0000 32" role="img" aria-label="風土記">
+  <title>風土記</title><style>svg { color: #2f5d43; --logo-rule-ink: #29523b; } @media (prefers-color-scheme: dark) { svg { color: #8fbfa2; --logo-rule-ink: #9cc7ad; } }</style>
+  <g fill="currentColor"><g transform="translate(0 0) scale(1)"><rect x="2.00000000" y="14.00000000" width="4.00000000" height="14.00000000" rx="2.00000000"/><rect x="8.00000000" y="6.00000000" width="4.00000000" height="22.00000000" rx="2.00000000"/><rect x="14.00000000" y="18.00000000" width="4.00000000" height="10.00000000" rx="2.00000000"/><rect x="20.00000000" y="2.00000000" width="4.00000000" height="26.00000000" rx="2.00000000"/><rect x="26.00000000" y="11.00000000" width="4.00000000" height="17.00000000" rx="2.00000000"/><rect x="2.00000000" y="29.00000000" width="28.00000000" height="2.00000000" rx="1.00000000" style="fill:var(--logo-rule-ink)"/></g></g>
+</svg>
+`
