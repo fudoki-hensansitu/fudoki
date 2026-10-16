@@ -38,6 +38,16 @@ describe('MCP Apps の View', () => {
     for (const name of ['get_expenditure_node', 'list_jurisdictions', 'search_expenditure_nodes']) expect(tools.some((t) => t.name === name)).toBe(true)
   })
 
+  test('どの tool も title を最上位と annotations の両方に持ち、読み取り専用と宣言する（Claude の提出画面の検査）', async () => {
+    const tools = (await rpc('tools/list')).result.tools as { name: string; title?: string; annotations?: { title?: string; readOnlyHint?: boolean } }[]
+    expect(tools.length).toBeGreaterThan(0)
+    for (const t of tools) {
+      expect(t.title, t.name).toBeTruthy()
+      expect(t.annotations?.title, t.name).toBe(t.title)
+      expect(t.annotations?.readOnlyHint, t.name).toBe(true)
+    }
+  })
+
   test('描画 tool はデータ tool と同じ結果を返し、入力が不正なら isError', async () => {
     insertJurisdiction(sqlite, { jurisdiction_code: '132039', name: '武蔵野市' })
     const direct = (await rpc('tools/call', { name: 'list_jurisdictions', arguments: {} })).result
