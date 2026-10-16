@@ -85,7 +85,7 @@
     {
       "table_id": "kouki-expenditure-detail",
       "conversion_id": "kouki-settlement",
-      "input_fingerprint": "d8727954ce7b042b4136e561d3fa2d15b9a8b46b1be4d7edcac3f86eb0b3afbd",
+      "input_fingerprint": "61cecfd97e509694852dfe6fa5f679c67767b6d4b82b90ff70d9297e3f6f3ae8",
       "account": "後期高齢者医療会計",
       "notes": [
         "武蔵野市後期高齢者医療会計の決算事項別明細書（歳出）。款・項・目の印字欄を所属する葉へ反復。最細は法定節（節がない予備費目は目）。節一覧と備考は同じ目の独立した分解であり相互の対応を推定していない。目_備考は目の備考欄の原文（□事業・○経費・積算）。金額は円の原表記（△は減額符号）。歳出合計はlocal観測に残しraw行にしない。",
@@ -113,7 +113,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "47dce3f97b8d5dada361e2bf3c7557c7f06f4affeed6097ed9a1d003e45d8d80",
+      "input_fingerprint": "f8fc7bf918455cabd06f351acd653f2d4c8b58057b8f7b80d97d1e31964d34f7",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -143,7 +143,7 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "2152519c6db4a6d09cdabeb3c775874a420b3e839a056936077ae2991d26ddad",
+      "input_fingerprint": "472a82fe2ce2682134a0395cb0c516547d09f18174d322bb76a4d5b3bdd640fb",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -173,7 +173,7 @@
     {
       "table_id": "long-term-care-expenditure",
       "conversion_id": "long-term-care-settlement",
-      "input_fingerprint": "257caf7a8d9769210b22ce5c6a0664112feb9b434d72fa69c9b585dae8aa5b5a",
+      "input_fingerprint": "f47e6590fa84cc1c6b4b89302e1fa5182255cc95c71b9a98dfc9c59d48779f3f",
       "account": "介護保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",

@@ -1060,6 +1060,22 @@ sources:
       direction: expenditure
       table_id: kouki-setsu
       kind: nodes
+  - name: j131181_2024_settlement_general_expenditure_detail_amounts
+    meta:
+      jurisdiction: '131181'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-detail
+      kind: amounts
+  - name: j131181_2024_settlement_general_expenditure_detail_nodes
+    meta:
+      jurisdiction: '131181'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-detail
+      kind: nodes
   - name: j131202_2024_settlement_elderly_medical_expenditure_amounts
     meta:
       jurisdiction: '131202'

@@ -98,6 +98,48 @@
           "reason"
         ]
       }
+    },
+    "name_corrections": {
+      "description": "原画で確認した科目名のOCR誤読の訂正。頁・観測ID（行または単語）・誤読した字・印字された字に結び付け、同じ長さの字の置き換えだけを許す。原観測は変えない。",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "observation_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "observed_name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "corrected_name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "id",
+          "page",
+          "observation_id",
+          "observed_name",
+          "corrected_name",
+          "reason"
+        ]
+      }
     }
   },
   "required": [

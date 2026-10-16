@@ -31,6 +31,48 @@
       "observed_name": "算現",
       "corrected_name": "予算現",
       "reason": "見開きで額が右の枠に続く予算現の見出しの予をOCRが落とした。原典の印字を確認した。"
+    },
+    {
+      "id": "settled-heading-simplified",
+      "observed_name": "支出济額",
+      "corrected_name": "支出済額",
+      "reason": "OCRが済を济と読む見出しの誤り。金額欄の見出しだけに適用する。原典の支出済額の印字を確認した。"
+    },
+    {
+      "id": "budget-amount-heading-whole",
+      "observed_name": "算現額",
+      "corrected_name": "予算現額",
+      "reason": "予算現額の見出しの予をOCRが落とした。原典の印字を確認した。"
+    },
+    {
+      "id": "continuing-expense-heading",
+      "observed_name": "継続偵逓次繰越",
+      "corrected_name": "継続費逓次繰越",
+      "reason": "OCRが費を偵と読む見出しの誤り。原典の継続費逓次繰越の印字を確認した。"
+    },
+    {
+      "id": "accident-carryover-heading",
+      "observed_name": "事故繰越し",
+      "corrected_name": "事故繰越",
+      "reason": "OCRが事故繰越の後ろに「し」を足した見出しの誤り。原典の印字を確認した。"
+    },
+    {
+      "id": "carryover-permit-heading",
+      "observed_name": "越明許費",
+      "corrected_name": "繰越明許費",
+      "reason": "OCRが繰越明許費の先頭の繰を落とした見出しの誤り。原典の印字を確認した。"
+    },
+    {
+      "id": "carryover-heading-split",
+      "observed_name": "翌年度繰越",
+      "corrected_name": "翌年度繰越額",
+      "reason": "見開きで額が次の行に折り返された翌年度繰越額の見出しの前半。額だけの段は続けて落とす。原典の印字を確認した。"
+    },
+    {
+      "id": "reserve-transfer-heading-stacked",
+      "observed_name": "予一備費支出及び流用増減",
+      "corrected_name": "予備費支出及び流用増減",
+      "reason": "二段に積んだ見出し（予／備費）の間の罫線をOCRが一と読んだ。原典の予備費支出及び流用増減の印字を確認した。"
     }
   ]
 }

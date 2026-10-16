@@ -39,7 +39,10 @@ def header_names():
 
 def header_path(header: tuple[str, ...]) -> tuple[str, ...]:
     """Correct a complete printed header, after its wrapped OCR words have been joined."""
-    return tuple(correct_name(part, header_names())['corrected_name'] for part in header)
+    corrected = [correct_name(part, header_names())['corrected_name'] for part in header]
+    # A heading wrapped so that its last character is a cell of its own (`翌年度繰越` / `額`) is one segment.
+    return tuple(part for index, part in enumerate(corrected)
+                 if not (part == '額' and index and corrected[index - 1].endswith('額')))
 
 
 def _layout(observed: list[Page], columns: dict | None, *, spread: dict | None = None,
@@ -156,12 +159,23 @@ def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None
     complete = [(region, o) for region, o in readings if _amount(o['raw_text'])
                 and not any(o['bbox_pdf_pt'][0] + 1 < x < o['bbox_pdf_pt'][2] - 1 for x in cuts)]
     declared = {r.observation_id for r in corrections.rules if r.page == number} if corrections else set()
-    fragments = {o['id'] for region, o in readings if _text(o['raw_text']) == ',' and o['id'] not in declared
+    fragments = {o['id'] for region, o in readings if _text(o['raw_text']) in (',', '、') and o['id'] not in declared
                  and any(region != other and ',' in _text(full['raw_text'])
                          and full['bbox_pdf_pt'][0] - 1 <= o['bbox_pdf_pt'][0]
                          and full['bbox_pdf_pt'][1] - 1 <= o['bbox_pdf_pt'][1]
                          and o['bbox_pdf_pt'][2] <= full['bbox_pdf_pt'][2] + 1
                          and o['bbox_pdf_pt'][3] <= full['bbox_pdf_pt'][3] + 1 for other, full in complete)}
+    # A digitless single character inside another tile's single-character reading of the same ink (a zero
+    # cut by a tile seam, read as `く` above and `っ` below) is one printed mark, not a second amount cell.
+    marks = [(region, o) for region, o in readings if len(o['raw_text'].strip()) == 1
+             and not any(c.isdigit() for c in o['raw_text']) and o['raw_text'] != '円']
+    fragments |= {o['id'] for region, o in marks if o['id'] not in declared
+                  and any(region != other and full['id'] != o['id']
+                          and full['bbox_pdf_pt'][0] - 1 <= o['bbox_pdf_pt'][0] and full['bbox_pdf_pt'][1] - 1 <= o['bbox_pdf_pt'][1]
+                          and o['bbox_pdf_pt'][2] <= full['bbox_pdf_pt'][2] + 1 and o['bbox_pdf_pt'][3] <= full['bbox_pdf_pt'][3] + 1
+                          and (full['bbox_pdf_pt'][2] - full['bbox_pdf_pt'][0]) * (full['bbox_pdf_pt'][3] - full['bbox_pdf_pt'][1])
+                          > (o['bbox_pdf_pt'][2] - o['bbox_pdf_pt'][0]) * (o['bbox_pdf_pt'][3] - o['bbox_pdf_pt'][1])
+                          for other, full in marks)}
     gone |= fragments
     words: list[Word] = []
     for region in observation_page['regions']:
@@ -258,6 +272,36 @@ def agreed_headers(pages: list[Page]) -> list[Page]:
     return [Page(p.number, p.width, p.height, replaced[i], p.rules) for i, p in enumerate(pages)]
 
 
+def apply_name_corrections(observation: dict, rules: list[dict] | None) -> dict:
+    """A copy of the observation with the OCR misread characters of a name replaced, as declared.
+
+    A rule binds to one observation (a line or word) by page and ID and names the exact characters
+    the OCR read and the ones the page prints. The raw observation is not changed, the rule must
+    match it, and a name has no digits to correct (those are codes and amounts)."""
+    if not rules:
+        return observation
+    found = {(p['page_number'], o['id']) for p in observation['pages'] for r in p['regions'] for o in r['observations']}
+    result = json.loads(json.dumps(observation))
+    for rule in rules:
+        if (rule['page'], rule['observation_id']) not in found:
+            raise ValueError(f'A name correction matches no observation: {rule["id"]}')
+        if any(c.isdigit() for c in rule['observed_name'] + rule['corrected_name']) \
+                or len(rule['observed_name']) != len(rule['corrected_name']):
+            raise ValueError(f'A name correction replaces characters of a name: {rule["id"]}')
+        hit = 0
+        for p in result['pages']:
+            for r in p['regions']:
+                for o in r['observations']:
+                    if p['page_number'] != rule['page'] or rule['observed_name'] not in o['raw_text'] \
+                            or rule['observation_id'] not in (o['id'], o.get('parent_id')):
+                        continue
+                    o['raw_text'] = o['raw_text'].replace(rule['observed_name'], rule['corrected_name'])
+                    hit += 1
+        if not hit:
+            raise ValueError(f'The declared misread is not in the observation: {rule["id"]}')
+    return result
+
+
 def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = None,
           columns: dict | None = None, rules: dict | None = None, *, spread: dict | None = None,
           header: dict | None = None, code_corrections: list[dict] | None = None) -> list[Page]:
@@ -265,12 +309,13 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
     def detected(number):
         return short_rows(pdf, (rules or {}).get(number) or pdf_rules.detect(pdf, number))
 
-    code_rules = []
+    code_rules, shrunk = [], []
     if code_corrections:
         from ingestion.generic.tree import groups
         plain = agreed_headers([page(p, pdf, detected=detected(p['page_number'])) for p in observation['pages']])
+        # The code of a 款・項・目 or of a 節 sits in a label column; a number in an amount column is not a code.
         subjects = [b for l in _layout(plain, columns, spread=spread, header=header)
-                    for g in groups(l) if g.subject for b in g.bands]
+                    for g in groups(l) for b in g.bands if g.subject or b.kind == 'label']
         readings = {(p['page_number'], o['id']): o for p in observation['pages']
                     for region in p['regions'] for o in region['observations']}
         for rule in code_corrections:
@@ -286,9 +331,11 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
             pieces = _split(Word(item['raw_text'], *box), cuts) if box else []
             if not pieces or not all(any(b.x0 - b.offset <= (w.x0 + w.x1) / 2 <= b.x1 - b.offset
                     and b.body_top <= (w.y0 + w.y1) / 2 <= b.body_bottom for b in bands) for w in pieces):
-                raise ValueError(f'A code correction needs a subject column: {rule["id"]}')
+                raise ValueError(f'A code correction needs a subject or breakdown label column: {rule["id"]}')
             code_rules.append(AmountRule(rule['id'], rule['page'], rule['observation_id'],
                                          rule['observed_code'], rule['corrected_code'], rule['reason']))
+            if len(rule['corrected_code']) < len(rule['observed_code']):
+                shrunk.append(rule)  # the extra characters were a ruling or a stroke, not part of the number
     if corrections:
         from ingestion.generic.layout import page_bands
         plain = agreed_headers([page(p, pdf, detected=detected(p['page_number'])) for p in observation['pages']])
@@ -308,6 +355,18 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
                                   and b.body_top <= (box[1] + box[3]) / 2 <= b.body_bottom
                                   for b in bands.get(rule.page, []))):
                 raise ValueError(f'Digitless correction needs a declared amount column: {rule.id}')
+    if shrunk:
+        # A code the OCR read with a stroke attached is as wide as the printed digits: shrink its box (the
+        # raw text is unchanged) so the number is placed by the digits it prints.
+        observation = json.loads(json.dumps(observation))
+        for rule in shrunk:
+            for p in observation['pages']:
+                for region in p['regions']:
+                    for o in region['observations']:
+                        if p['page_number'] == rule['page'] and o.get('bbox_pdf_pt') and o['raw_text'] == rule['observed_code'] \
+                                and rule['observation_id'] in (o['id'], o.get('parent_id')):
+                            x0, y0, x1, y1 = o['bbox_pdf_pt']
+                            o['bbox_pdf_pt'] = [x0, y0, x0 + (x1 - x0) * len(rule['corrected_code']) / len(rule['observed_code']), y1]
     if code_rules:
         corrections = amount_dictionary([r.__dict__ for r in [*(corrections.rules if corrections else ()), *code_rules]])
     used = set()
@@ -541,6 +600,7 @@ def build_table(source: dict, options: dict, *, stop: bool = True, rules: dict |
     columns = (settings or {}).get('columns')
     spread = (settings or {}).get('spread')
     header = (settings or {}).get('header')
+    observation = apply_name_corrections(observation, options.get('name_corrections'))
     printed = pages(observation, Path(source['path']), amount_dictionary(options.get('amount_corrections', [])), columns, rules,
                     spread=spread, header=header, code_corrections=options.get('code_corrections'))
     printed, recovered = recover_codes(printed, Path(source['path']), columns, spread=spread, header=header)
