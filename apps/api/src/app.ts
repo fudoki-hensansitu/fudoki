@@ -182,7 +182,8 @@ function mcpServer(ctx: Ctx, apiOrigin: string, operations: Operation[]): McpSer
     }
   }
   // どの tool も利用者の状態を変えない（評価の検索は回数の記録と AI Search の呼び出しを伴うが、風土記の内側で閉じる）
-  const annotations = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }
+  // title は最上位と annotations の両方に書く（annotations.title は旧仕様の置き場所で、Claude の提出画面はこちらを見る）
+  const annotations = (title: string) => ({ title, readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false })
   for (const op of operations) {
     server.registerTool(
       op.name,
@@ -191,12 +192,13 @@ function mcpServer(ctx: Ctx, apiOrigin: string, operations: Operation[]): McpSer
         description: op.view ? `${op.description} 結果を画面に表示するときは、この tool ではなく ${RENDER_TOOL} を使う。` : op.description,
         inputSchema: op.input,
         outputSchema: op.output,
-        annotations,
+        annotations: annotations(op.summary),
       },
       // View が追加ページの取得や drill で直接呼ぶので、団体名の _meta はデータ tool にも付ける（描画 tool と同じ結果にする）
       (args: Record<string, unknown>) => toolResult(op, args, !!op.view)
     )
   }
+  const RENDER_TITLE = '結果の表示'
   // View を描く tool は1つだけ。データ tool と同じ問い合わせを受けて結果を返し、View のテンプレートを指す
   const viewOps = operations.filter((op) => op.view)
   if (viewOps.length > 0) {
@@ -204,14 +206,14 @@ function mcpServer(ctx: Ctx, apiOrigin: string, operations: Operation[]): McpSer
     server.registerTool(
       RENDER_TOOL,
       {
-        title: '結果の表示',
+        title: RENDER_TITLE,
         description: RENDER_DESCRIPTION,
         inputSchema: z.strictObject({
           tool: z.enum(names).describe('表示する結果を返す tool の名前。'),
           arguments: z.record(z.string(), z.unknown()).describe('その tool に渡す入力（データ tool の呼び出しと同じもの）。'),
         }),
         // outputSchema は付けない: 結果の形が tool 引数で変わる（対象 tool の output のどれか）ため、単一の schema にできない
-        annotations,
+        annotations: annotations(RENDER_TITLE),
         // 旧キー ui/resourceUri は ext-apps の registerAppTool と同じく併記する（仕様では GA 前に外す deprecated）
         _meta: { ui: { resourceUri: VIEW_URI }, 'ui/resourceUri': VIEW_URI },
       },
