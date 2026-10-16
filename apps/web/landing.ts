@@ -7,7 +7,7 @@ const DOCS = 'https://docs.fudoki.dev'
 const GITHUB = 'https://github.com/wwwyo/fudoki'
 
 const yen = (n: number) => `${n.toLocaleString('ja-JP')}円`
-// 億・万の表記。万未満は切り捨てるので、正確な額は yen で並べる面に任せる
+// 億・万の表記。万未満は切り捨てるので、正確な額は title に yen で添える
 const oku = (n: number) => {
   if (n === 0) return '0円'
   const o = Math.floor(n / 1e8)
@@ -59,7 +59,7 @@ h1,h2,h3,h4{margin:0;font-family:var(--font-display);font-weight:400;letter-spac
 p,figure{margin:0}
 ul,ol{margin:0;padding:0;list-style:none}
 a{color:inherit;text-decoration:none}
-a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid color-mix(in srgb,var(--ring) 50%,transparent);outline-offset:2px;border-radius:var(--radius-sm)}
+a:focus-visible,button:focus-visible,summary:focus-visible,video:focus-visible{outline:3px solid color-mix(in srgb,var(--ring) 50%,transparent);outline-offset:2px;border-radius:var(--radius-sm)}
 code{font:13px/1.6 var(--font-mono);letter-spacing:0;overflow-wrap:anywhere}
 .i{display:block;flex:none;width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .num{font-variant-numeric:tabular-nums;letter-spacing:0;white-space:nowrap}
@@ -305,13 +305,13 @@ const BODY = `${ICONS}
 <p>款・項・目と、その下の事業まで、原典の階層を保ったまま引けます。予算案・当初・補正後・決算は、金額の段階として分けて持ちます。</p>
 <div class="stage"><div class="art paper" aria-hidden="true"><i style="right:-20px;top:-30px">見</i><s></s></div>
 <div class="win"><h4 class="win-h">${nakano.jurisdiction}の款 · ${nakano.period}</h4>
-<div class="lines">${nakano.kanList.map((k) => `<div class="r"><span>${k.name}</span><span class="num">${oku(k.amount)}</span></div>`).join('')}</div></div></div>
+<div class="lines">${nakano.kanList.map((k) => `<div class="r"><span>${k.name}</span><span class="num" title="${yen(k.amount)}">${oku(k.amount)}</span></div>`).join('')}</div></div></div>
 </article>
 <article class="step" id="compare"><span class="k">ステップ二　比べる</span><h3>別の街と、同じ物差しで</h3>
 <p>款の名前は街ごとに違います。中野区には「民生費」という款がありません。だから目ごとに政府支出の国際分類（COFOG）を割り当て、街をまたいで並べられるようにしています。</p>
 <div class="stage"><div class="art burst" aria-hidden="true"></div>
 <div class="win"><h4 class="win-h">目「${library.name}」 · COFOG ${library.cofog}</h4>
-<div class="bars">${library.rows.map((r) => `<div class="b"><span>${r.jurisdiction}</span><i style="width:${((r.amount / libraryMax) * 100).toFixed(1)}%" aria-hidden="true"></i><span class="num">${oku(r.amount)}</span></div>`).join('')}</div>
+<div class="bars">${library.rows.map((r) => `<div class="b"><span>${r.jurisdiction}</span><i style="width:${((r.amount / libraryMax) * 100).toFixed(1)}%" aria-hidden="true"></i><span class="num" title="${yen(r.amount)}">${oku(r.amount)}</span></div>`).join('')}</div>
 <p class="muted" style="font-size:12px">${library.period}。人口あたりの額ではありません。</p></div></div>
 </article>
 <article class="step" id="check"><span class="k">ステップ三　確かめる</span><h3>怪しい数字は、原典の頁で</h3>
@@ -328,7 +328,7 @@ const BODY = `${ICONS}
 <div><p class="eyebrow">AI から使う</p><h2 id="mcp-h">URL を一つ登録するだけ</h2>
 <ol class="howto"><li><b>一</b><span>MCP に対応した AI クライアントの設定を開く</span></li><li><b>二</b><span><code>${MCP}</code> を登録する（認証は要りません）</span></li><li><b>三</b><span>「北区に住んでいます。何の予算が見れますか？」と聞く</span></li></ol></div>
 <figure class="demo">
-<video src="/home/demo.mp4" poster="/home/demo-poster.webp" width="1280" height="840" muted loop playsinline preload="none" aria-label="ChatGPT から風土記の MCP に、北区の決算を聞いた操作の録画"></video>
+<video src="/home/demo.mp4" poster="/home/demo-poster.webp" width="1280" height="840" muted loop playsinline preload="none" tabindex="0" aria-label="ChatGPT から風土記の MCP に、北区の決算を聞いた操作の録画。Enter で再生・停止"></video>
 <figcaption><a href="${DOCS}/mcp">MCP の使い方を見る${icon('arrow-right')}</a></figcaption>
 </figure>
 </section>
@@ -361,7 +361,7 @@ ro.addEventListener('transitionend',()=>{if(i===n){ro.style.transition='none';i=
 const step=()=>{i++;ro.style.setProperty('--r',i);ts.forEach((t,k)=>k===i%n?t.dataset.pos='cur':delete t.dataset.pos)};
 const run=()=>{clearInterval(id);if(vis)id=setInterval(step,2000)};
 new IntersectionObserver(l=>{vis=l[0].isIntersecting;run()}).observe(lg)}
-const v=document.querySelector('.demo video');if(v){let user=rm;v.addEventListener('click',()=>{if(v.paused){user=false;v.play()}else{user=true;v.pause()}});
+const v=document.querySelector('.demo video');if(v){let user=rm;const tg=()=>{if(v.paused){user=false;v.play()}else{user=true;v.pause()}};v.addEventListener('click',tg);v.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();tg()}});
 if('IntersectionObserver'in window)new IntersectionObserver(l=>{if(l[0].isIntersecting){if(!user)v.play().catch(()=>{})}else v.pause()},{threshold:.4}).observe(v)}`
 
 const DESCRIPTION = '日本の自治体の歳出の予算・決算を事業の単位まで集め、AI から問い合わせられるデータとして配る。'
