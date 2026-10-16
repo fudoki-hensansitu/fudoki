@@ -25,7 +25,7 @@ from pathlib import Path
 import re
 import unicodedata
 
-from ingestion.generic.observe import Page, Rule, Word
+from ingestion.generic.observe import OPENING, Page, Rule, Word
 
 REPAIRS = Path(__file__).resolve().parents[1] / 'lib/text_repairs.csv'
 NUMERIC = re.compile(r'^[0-9,△▲\-]+$')
@@ -79,7 +79,7 @@ def rules() -> tuple[tuple[str, str, re.Pattern | None], ...]:
 
 # --- 1. invisible glyphs -----------------------------------------------------
 
-def _glyphs(pdf, number: int):
+def _glyphs(pdf, number: int, opening: bool = False):
     """(box, character, visible) of every drawn character, in Poppler's top-left coordinates.
 
     Visibility belongs to the text object that draws the character: visible
@@ -129,6 +129,10 @@ def _glyphs(pdf, number: int):
         l, r, b, t = (ctypes.c_double() for _ in range(4))
         if not raw.FPDFText_GetCharBox(textpage.raw, index, l, r, b, t):
             continue
+        if opening and chr(code) in OPENING:  # the ink of a full-width opening bracket sits right in its cell: the cell starts at the origin
+            x, y = ctypes.c_double(), ctypes.c_double()
+            if raw.FPDFText_GetCharOrigin(textpage.raw, index, x, y) and x.value < l.value:
+                l = x
         handle = raw.FPDFText_GetTextObject(textpage.raw, index)
         # The character box is in page space; compare it, not the object's bounds,
         # with the clip (object bounds come back in another space on some PDFs).
@@ -157,12 +161,19 @@ def _drawn(rule, paths) -> bool:
 
 
 def words_from_glyphs(glyphs: list[tuple[tuple[float, float, float, float], str]], report: Report,
-                      rules: list | None = None) -> list[Word]:
+                      rules: list | None = None, overprint: bool = False) -> list[Word]:
     """Glyphs into words: neighbours that overlap vertically and sit close, never across a vertical rule."""
     verticals = [r for r in rules or [] if r.vertical]
     unique: list[tuple[tuple[float, float, float, float], str]] = []
+    placed: dict[tuple, list] = defaultdict(list)  # the struck twin sits a hair off in y, so sorting by line does not bring it next
     for box, char in sorted(glyphs, key=lambda g: ((g[0][1] + g[0][3]) / 2, g[0][0])):
-        if any(char == other and abs(box[0] - b[0]) < 1 and abs(box[1] - b[1]) < 1 for b, other in unique[-8:]):
+        if overprint:
+            struck = any(abs(box[0] - b[0]) < 1 and abs(box[1] - b[1]) < 1
+                         for dx in (-1, 0, 1) for dy in (-1, 0, 1) for b in placed[char, int(box[0]) + dx, int(box[1]) + dy])
+            placed[char, int(box[0]), int(box[1])].append(box)
+        else:
+            struck = any(char == other and abs(box[0] - b[0]) < 1 and abs(box[1] - b[1]) < 1 for b, other in unique[-8:])
+        if struck:
             report.duplicate_words += 1  # a glyph struck twice (bold by overprint)
             continue
         unique.append((box, char))
@@ -223,12 +234,12 @@ def _without_hidden(words: list[Word], glyphs) -> list[Word]:
     return kept
 
 
-def drop_invisible(pdf_path: Path, pages: list[Page], report: Report) -> None:
+def drop_invisible(pdf_path: Path, pages: list[Page], report: Report, repairs: frozenset = frozenset()) -> None:
     import pypdfium2 as pdfium
     pdf = pdfium.PdfDocument(str(pdf_path))
     try:
         for page in pages:
-            glyphs, paths = _glyphs(pdf, page.number)
+            glyphs, paths = _glyphs(pdf, page.number, 'opening_cell' in repairs)
             # Glyphs placed off the page are not on it at all (Poppler skips them);
             # only invisible glyphs on the page call for a rebuild.
             glyphs = [g for g in glyphs if g[0][2] > 0 and g[0][0] < page.width and g[0][3] > 0 and g[0][1] < page.height]
@@ -242,7 +253,7 @@ def drop_invisible(pdf_path: Path, pages: list[Page], report: Report) -> None:
             if hidden >= REBUILD_SHARE * len(glyphs):
                 # Most of the page is drawn twice: rebuild its words from the visible
                 # glyphs, whose boxes are exact, instead of Poppler's words.
-                page.words = words_from_glyphs([(box, char) for box, char, visible in glyphs if visible], report, page.rules)
+                page.words = words_from_glyphs([(box, char) for box, char, visible in glyphs if visible], report, page.rules, 'overprint' in repairs)
             else:
                 page.words = _without_hidden(page.words, glyphs)
     finally:
@@ -250,6 +261,27 @@ def drop_invisible(pdf_path: Path, pages: list[Page], report: Report) -> None:
 
 
 # --- 2. position repairs -----------------------------------------------------
+
+def opening_brackets(pdf_path: Path, pages: list[Page]) -> None:
+    """Poppler boxes a full-width opening bracket by its ink, which sits in the right of its cell (`（仮称）` starts
+    7pt right of the name it is lined up with): a word that begins with one starts where its character's cell does."""
+    import pypdfium2 as pdfium
+    pdf = pdfium.PdfDocument(str(pdf_path))
+    try:
+        for page in pages:
+            if not any(word.text[:1] in OPENING for word in page.words):
+                continue
+            glyphs, _ = _glyphs(pdf, page.number, True)
+            for index, word in enumerate(page.words):
+                if word.text[:1] not in OPENING:
+                    continue
+                cell = [box for box, char, _ in glyphs if char == word.text[0] and word.x0 - 12 < box[0] < word.x0 - 1
+                        and box[2] > word.x0 - .5 and abs((box[1] + box[3]) / 2 - (word.y0 + word.y1) / 2) < 2]
+                if cell:
+                    page.words[index] = Word(word.text, min(cell, key=lambda box: word.x0 - box[0])[0], word.y0, word.x1, word.y1)
+    finally:
+        pdf.close()
+
 
 def _same_line(a: Word, b: Word) -> bool:
     overlap = min(a.y1, b.y1) - max(a.y0, b.y0)
@@ -515,7 +547,7 @@ def clip_to_page(page: Page, report: Report, width: float, height: float) -> Non
     page.rules = kept
 
 
-def repair(pdf_path: Path | None, pages: list[Page]) -> tuple[list[Page], Report]:
+def repair(pdf_path: Path | None, pages: list[Page], repairs: frozenset = frozenset()) -> tuple[list[Page], Report]:
     report = Report()
     if pdf_path is not None and pdf_path.exists():
         sizes = display_size(pdf_path, [page.number for page in pages])
@@ -523,7 +555,9 @@ def repair(pdf_path: Path | None, pages: list[Page]) -> tuple[list[Page], Report
             clip_to_page(page, report, *sizes[page.number])
         crop_to_box(pdf_path, pages, report)
         try:
-            drop_invisible(pdf_path, pages, report)
+            drop_invisible(pdf_path, pages, report, repairs)
+            if 'opening_cell' in repairs:
+                opening_brackets(pdf_path, pages)
         except Exception as error:  # pdfium's raw API failed: keep Poppler's words as they are
             report.invisible_error = f'{type(error).__name__}: {error}'
             report.hidden_glyphs = report.hidden_rules = 0

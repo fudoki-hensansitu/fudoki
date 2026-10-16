@@ -8,7 +8,7 @@ Coordinates are PDF points from the top-left of the displayed page.
 from __future__ import annotations
 
 from collections import Counter
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 import json
 import re
@@ -76,6 +76,9 @@ def _strokes(char: str) -> set[str]:
     if 'HORIZONTAL' in tokens:
         found |= {'left', 'right'}
     return found
+
+
+OPENING = '（〔【「『［｛'
 
 
 def rule_glyphs(items: list[Word], chars: list | None = None) -> tuple[list[Word], list[Rule]]:
@@ -183,8 +186,9 @@ def _dark(color) -> bool:
     return max(values) < .5
 
 
-def _segments(page) -> list[Rule]:
+def _segments(page, pdf: Path | None = None) -> list[Rule]:
     rules = []
+    unread = []  # thin filled rectangles whose colour the reader gives as light
     for line in page.lines:
         if line.get('stroke', True) and _dark(line.get('stroking_color', 0)):
             x0, x1, y0, y1 = line['x0'], line['x1'], line['top'], line['bottom']
@@ -195,6 +199,8 @@ def _segments(page) -> list[Rule]:
     for rect in page.rects:
         x0, x1, y0, y1 = rect['x0'], rect['x1'], rect['top'], rect['bottom']
         w, h = x1 - x0, y1 - y0
+        if rect.get('fill') and not _dark(rect.get('non_stroking_color')) and min(w, h) < 2 and max(w, h) > 20:
+            unread.append(rect)
         if rect.get('fill') and _dark(rect.get('non_stroking_color')) and min(w, h) < 2:
             if w < h:
                 rules.append(Rule((x0 + x1) / 2, y0, (x0 + x1) / 2, y1))
@@ -202,7 +208,31 @@ def _segments(page) -> list[Rule]:
                 rules.append(Rule(x0, (y0 + y1) / 2, x1, (y0 + y1) / 2))
         elif rect.get('stroke') and _dark(rect.get('stroking_color')) and not (w > .98 * page.width and h > .98 * page.height):  # a page-sized border is not a table's
             rules += [Rule(x0, y0, x1, y0), Rule(x0, y1, x1, y1), Rule(x0, y0, x0, y1), Rule(x1, y0, x1, y1)]
+    if pdf is not None and len(unread) >= 6 and not rules and _drawn_dark(pdf, page, unread):
+        for rect in unread:  # a spot colour read as 1.0 draws black: the rule is there when the page shows ink on it
+            x0, x1, y0, y1 = rect['x0'], rect['x1'], rect['top'], rect['bottom']
+            rules.append(Rule((x0 + x1) / 2, y0, (x0 + x1) / 2, y1) if x1 - x0 < y1 - y0
+                         else Rule(x0, (y0 + y1) / 2, x1, (y0 + y1) / 2))
     return rules
+
+
+def _drawn_dark(pdf: Path, page, rects: list[dict]) -> bool:
+    """Whether the page, rendered, shows ink along the longest of these light-coloured thin rectangles."""
+    import numpy as np
+    from PIL import Image
+    with tempfile.TemporaryDirectory() as directory:
+        subprocess.run(['pdftoppm', '-f', str(page.page_number), '-l', str(page.page_number), '-r', '144', '-gray', '-png',
+                        str(pdf), str(Path(directory) / 'page')], check=True)
+        image = np.array(Image.open(next(Path(directory).glob('page*.png'))).convert('L'))
+    scale = image.shape[1] / float(page.width)
+    longest = sorted(rects, key=lambda r: -max(r['x1'] - r['x0'], r['bottom'] - r['top']))[:5]
+    dark = []
+    for rect in longest:
+        y0, y1 = int(rect['top'] * scale), int(rect['bottom'] * scale) + 1
+        x0, x1 = int(rect['x0'] * scale), int(rect['x1'] * scale) + 1
+        region = image[max(y0 - 1, 0):y1 + 1, max(x0 - 1, 0):x1 + 1]
+        dark.append(bool(region.size) and float(region.min(axis=0 if x1 - x0 > y1 - y0 else 1).mean()) < 128)
+    return all(dark)
 
 
 def merge_rules(rules: list[Rule], tolerance: float = 2.5, gap: float = 2.0) -> list[Rule]:
@@ -251,7 +281,7 @@ def observe(pdf: Path, pages: list[int], cache: Path | None = None) -> list[Page
             page = document.pages[number - 1]
             items = drop_hidden_copies(pdf, number, width, items)
             items, glyph_rules = rule_glyphs(items, page.chars)
-            result.append(Page(number, width, height, items, merge_rules(_segments(page) + glyph_rules)))
+            result.append(Page(number, width, height, items, merge_rules(_segments(page, pdf) + glyph_rules)))
             page.close()
     if cache is not None:
         cache.parent.mkdir(parents=True, exist_ok=True)

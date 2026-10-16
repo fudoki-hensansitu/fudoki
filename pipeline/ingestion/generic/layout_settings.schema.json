@@ -5,6 +5,8 @@
   "required": ["schema_version"],
   "properties": {
     "schema_version": {"const": 1},
+    "repairs": {"type": "array", "uniqueItems": true, "items": {"enum": ["opening_cell", "overprint"]}},
+    "codes": {"const": "right"},
     "accounts": {
       "type": "object",
       "propertyNames": {"minLength": 1},
@@ -26,7 +28,7 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "kind": {"enum": ["amount", "label"]},
+          "kind": {"enum": ["amount", "label", "ignore"]},
           "axis_header": {"type": "string", "minLength": 1}
         }
       }
