@@ -81,6 +81,24 @@ class CorrectionTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'label column'):
                 scan.pages(observation, Path('x.pdf'), code_corrections=[rule])
 
+    def test_a_code_correction_that_drops_a_stroke_shrinks_the_word_box_to_the_digits(self):
+        from pathlib import Path
+        from ingestion.generic import scan
+        from ingestion.generic.layout import Band, Logical
+        from ingestion.lib.pdf_rules import PageRules
+        line = {'id': 'r', 'kind': 'region', 'raw_text': '181', 'bbox_pdf_pt': [10, 40, 40, 50]}
+        word = {**line, 'id': 'w', 'kind': 'word', 'parent_id': 'r'}
+        other_line = {**line, 'id': 'q', 'bbox_pdf_pt': [10, 60, 40, 70]}
+        other = {**other_line, 'id': 'x', 'kind': 'word', 'parent_id': 'q'}
+        observation = {'pages': [{'page_number': 1, 'regions': [{'observations': [line, word, other_line, other]}]}]}
+        band = Band(0, 40, 1, ('節', '区分'), [30, 100], 30, 100, kind='label')
+        rule = {'id': 'code', 'page': 1, 'observation_id': 'w', 'observed_code': '181',
+                'corrected_code': '18', 'reason': '原画で18と確認（縦罫線の一部が1に読まれた）'}
+        with patch.object(scan.pdf_rules, 'detect', return_value=PageRules(1, 100, 100, (), ())), \
+                patch.object(scan, '_layout', return_value=[Logical([1], [band], '円', [])]):
+            words = scan.pages(observation, Path('x.pdf'), code_corrections=[rule])[0].words
+        self.assertEqual([(w.text, w.x1) for w in sorted(words, key=lambda w: w.y0)], [('18', 30), ('181', 40)])
+
     def test_a_contained_comma_in_another_tile_is_kept_in_its_complete_amount(self):
         from ingestion.generic import scan
         from ingestion.lib.pdf_rules import PageRules
