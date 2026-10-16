@@ -7874,5 +7874,1515 @@
       "archive": null
     }
   ],
-  "unresolved_candidates": []
+  "unresolved_candidates": [],
+  "evaluation_selections": [
+    {
+      "target": {
+        "jurisdiction": "132241",
+        "fiscal_year": 2024,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和6年度決算事業報告書 事業カルテ（15ファイル）",
+          "landing_url": "https://www.city.tama.lg.jp/shisei/zaisei/kessan/1004932.html",
+          "inspected_at": "2026-10-16T03:00:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2024doboku.pdf",
+              "sha256": "42cb879925be63c86d6b4a1e8f78987bced00107b2e43e4af01db720aca87f8d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2024eisei.pdf",
+              "sha256": "4d240df1ae0005a3254ef25787714a28c48d07468755f23fe7d1cb0b86e3ac04",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2024gesui.pdf",
+              "sha256": "996fcbf5a41c5e591d50c3cf73fcc9cd7172204f216152ceb2deee9e1e0a72aa",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2024gikai.pdf",
+              "sha256": "6025bc5fa119abc0e5a98b512e65d7e99d2035ef1cc40917eeced44fa9e9bade",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2024kaigo.pdf",
+              "sha256": "967da42adf5f7b3d4070e6140fb9e46e30e4c9ee08391c8a326afc7311adb0e8",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2024kokuho.pdf",
+              "sha256": "41454790c0dc448c808f53260851d13c5eea1a19e8245a76bf07fdca6c82ac80",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2024kouki.pdf",
+              "sha256": "fc7c9d88393577d42f80c6470e5f24dfa25791c9bf1fad7f5c2a2255531f40ad",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2024kyouiku.pdf",
+              "sha256": "f851c44bf59ffadbf94d12c3e7d6ee1bf60a73ac6ce944077b8e5c64ead64ba7",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2024minsei1.pdf",
+              "sha256": "2a3016c93d4b1265a247142afad50b61da58d153441f22e23930385a388f1dca",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2024minsei2.pdf",
+              "sha256": "bc7b85406de7e4c54d50580ce85774fa39ef48ec4129b6933f0711ff7eadf7b1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2024nourin.pdf",
+              "sha256": "0cefa51737db5930aa039de068368cf7511b5d8e2e168302f95734ef6eddd29d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2024roudou.pdf",
+              "sha256": "613de7cd55ad0e9b3d1927605a7992e62c7aaefd5c0edf5205c22bd9e71cd93b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2024shoubou.pdf",
+              "sha256": "92ceab058ebff5480e4612f128d74a7d0e49f063ac2100c721053bf103dc8ce1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2024shoukou.pdf",
+              "sha256": "525ad43dca74a4808ec2ac989023bd99b032e69240cd7edce30d0ec5bd7970bc",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2024soumu.pdf",
+              "sha256": "7f9d759e058fec64081a2a423ee635f4dbac2d4609e2c20ff862943084ddc8e7",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132241/2024/evaluation-settlement-4.pdf",
+            "sha256": "42cb879925be63c86d6b4a1e8f78987bced00107b2e43e4af01db720aca87f8d",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2024doboku.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2024/evaluation-settlement-5.pdf",
+            "sha256": "4d240df1ae0005a3254ef25787714a28c48d07468755f23fe7d1cb0b86e3ac04",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2024eisei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2024/evaluation-settlement-12.pdf",
+            "sha256": "996fcbf5a41c5e591d50c3cf73fcc9cd7172204f216152ceb2deee9e1e0a72aa",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2024gesui.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2024/evaluation-settlement-7.pdf",
+            "sha256": "6025bc5fa119abc0e5a98b512e65d7e99d2035ef1cc40917eeced44fa9e9bade",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2024gikai.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2024/evaluation-settlement-11.pdf",
+            "sha256": "967da42adf5f7b3d4070e6140fb9e46e30e4c9ee08391c8a326afc7311adb0e8",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2024kaigo.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2024/evaluation-settlement-3.pdf",
+            "sha256": "41454790c0dc448c808f53260851d13c5eea1a19e8245a76bf07fdca6c82ac80",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2024kokuho.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2024/evaluation-settlement-15.pdf",
+            "sha256": "fc7c9d88393577d42f80c6470e5f24dfa25791c9bf1fad7f5c2a2255531f40ad",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2024kouki.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2024/evaluation-settlement-14.pdf",
+            "sha256": "f851c44bf59ffadbf94d12c3e7d6ee1bf60a73ac6ce944077b8e5c64ead64ba7",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2024kyouiku.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2024/evaluation-settlement-2.pdf",
+            "sha256": "2a3016c93d4b1265a247142afad50b61da58d153441f22e23930385a388f1dca",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2024minsei1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2024/evaluation-settlement-13.pdf",
+            "sha256": "bc7b85406de7e4c54d50580ce85774fa39ef48ec4129b6933f0711ff7eadf7b1",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2024minsei2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2024/evaluation-settlement-1.pdf",
+            "sha256": "0cefa51737db5930aa039de068368cf7511b5d8e2e168302f95734ef6eddd29d",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2024nourin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2024/evaluation-settlement-8.pdf",
+            "sha256": "613de7cd55ad0e9b3d1927605a7992e62c7aaefd5c0edf5205c22bd9e71cd93b",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2024roudou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2024/evaluation-settlement-10.pdf",
+            "sha256": "92ceab058ebff5480e4612f128d74a7d0e49f063ac2100c721053bf103dc8ce1",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2024shoubou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2024/evaluation-settlement-6.pdf",
+            "sha256": "525ad43dca74a4808ec2ac989023bd99b032e69240cd7edce30d0ec5bd7970bc",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2024shoukou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2024/evaluation-settlement-9.pdf",
+            "sha256": "7f9d759e058fec64081a2a423ee635f4dbac2d4609e2c20ff862943084ddc8e7",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2024soumu.pdf"
+          }
+        ],
+        "archived_at": "2026-10-15T23:49:26.759Z"
+      },
+      "reason": "令和6年度決算の「決算事業報告書」の《事業カルテ》15ファイル（計750頁）。決算事業報告書は決算書・主要施策の成果説明書を補完し、事業カルテは事業の活動実績・活動量・成果・実施水準・見直しの方向性を共通の切り口から評価するもの。事業ごとに「令和6年度の目標」「◇成果指標」（活動指標・成果指標の目標値と実績値）、「◇自己点検」（今後の見通し・今後の課題や方向性に関するコメント）、執行状況及び成果等を載せる。文字として読める。議会費の一部など、PDCAサイクルに馴染まない事業は事業カルテ作成対象外で執行状況のみ。歳入歳出決算額一覧表・マスタデータ・付属資料は評価の記述ではないため含めず、事業カルテのみを選んだ。令和6年度決算事業報告書データは https://www.city.tama.lg.jp/shisei/zaisei/kessan/1004932.html で公表。2023・2024年度の当初の調査は決算書の頁（.../kessan/1004929.html）しか見ておらず多摩市を「評価資料が見つからない」としていたが、決算事業報告書の事業カルテに目標・評価・課題・方向があるため選び直した。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132241",
+        "fiscal_year": 2023,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和5年度決算事業報告書 事業カルテ（16ファイル）",
+          "landing_url": "https://www.city.tama.lg.jp/shisei/zaisei/kessan/1016384.html",
+          "inspected_at": "2026-10-16T03:00:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/016/384/2023doboku.pdf",
+              "sha256": "c7566f15fa3182c97bc1c1f82147729ab24005af0d0f49c6c79d7ad97ae87116",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/016/384/2023gesuikarute.pdf",
+              "sha256": "d2031030da36cd9c3a047f8e82487b6f66e06a93446392a7694f826232597ee0",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/016/384/2023gikai.pdf",
+              "sha256": "252001c10f0d4dfcd856746b3f436ed2db3d1b8b97e8f135ba2a8f9c963d5b96",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/016/384/2023kaigokarute.pdf",
+              "sha256": "0e7129392de9543f6af57e6a00d43bc235737d5c3bc00ca8bac95cd21a1d128e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/016/384/2023kokuhokarute.pdf",
+              "sha256": "5301298787db59e06b1e23734b09b94565713d695805e16a0b81ffec2729a3e1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/016/384/2023koukikarute.pdf",
+              "sha256": "1affe661367153529c6e3cc3c7f7ec5fcabcd16d9cad103b06e77ff23ef4c35a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/016/384/2023minnsei1.pdf",
+              "sha256": "9ae2366f33b4fb5d6d568354eb512580f10c6daa7b54ac026fce01b665db4af2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/016/384/2023minnsei2.pdf",
+              "sha256": "a5fad4ec1ef09e5c8c922b3030c415a6a4e9e2842e934bfc3aa5abfaf53303a5",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/016/384/2023sineisei.pdf",
+              "sha256": "6bd96bbf444b3c837bf404ce91cda9eb8e7d361679f1492aed8b818c2b7819a5",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/016/384/2023sinkyouiku1.pdf",
+              "sha256": "133d19e6437676be370392c1a46f559b570571530266f2bd14c6d35823c6de9b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/016/384/2023sinkyouiku2.pdf",
+              "sha256": "cfe378a2c876f62076074b04623e5bbd14eae005985e22d8c25949283bd4cc3f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/016/384/2023sinnourin.pdf",
+              "sha256": "d1f1c8d7722e4f5d653f37da4a4d9a8ec1d1a33418ff0258677fc6817015e74e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/016/384/2023sinroudou.pdf",
+              "sha256": "58461fba40d787e4f5b339891c78f946602079d1746d8940c241e090e5b4b515",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/016/384/2023sinsyoukou.pdf",
+              "sha256": "aa8a05a7845486c9a845a66b3e049393809ed331474321327a1184576db2cb6f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/016/384/2023soumu.pdf",
+              "sha256": "2bebdc538e90c87a7fc5069b5f47dbfd2cc02e8fa5fe66426fe0dd504766b60e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/016/384/2023syoubou.pdf",
+              "sha256": "c82c288342659514c331e046ae6f9f595d6af2b00056361d62c986baacee5fb1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132241/2023/evaluation-settlement-12.pdf",
+            "sha256": "c7566f15fa3182c97bc1c1f82147729ab24005af0d0f49c6c79d7ad97ae87116",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/016/384/2023doboku.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2023/evaluation-settlement-16.pdf",
+            "sha256": "d2031030da36cd9c3a047f8e82487b6f66e06a93446392a7694f826232597ee0",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/016/384/2023gesuikarute.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2023/evaluation-settlement-4.pdf",
+            "sha256": "252001c10f0d4dfcd856746b3f436ed2db3d1b8b97e8f135ba2a8f9c963d5b96",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/016/384/2023gikai.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2023/evaluation-settlement-1.pdf",
+            "sha256": "0e7129392de9543f6af57e6a00d43bc235737d5c3bc00ca8bac95cd21a1d128e",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/016/384/2023kaigokarute.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2023/evaluation-settlement-6.pdf",
+            "sha256": "5301298787db59e06b1e23734b09b94565713d695805e16a0b81ffec2729a3e1",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/016/384/2023kokuhokarute.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2023/evaluation-settlement-3.pdf",
+            "sha256": "1affe661367153529c6e3cc3c7f7ec5fcabcd16d9cad103b06e77ff23ef4c35a",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/016/384/2023koukikarute.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2023/evaluation-settlement-9.pdf",
+            "sha256": "9ae2366f33b4fb5d6d568354eb512580f10c6daa7b54ac026fce01b665db4af2",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/016/384/2023minnsei1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2023/evaluation-settlement-10.pdf",
+            "sha256": "a5fad4ec1ef09e5c8c922b3030c415a6a4e9e2842e934bfc3aa5abfaf53303a5",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/016/384/2023minnsei2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2023/evaluation-settlement-8.pdf",
+            "sha256": "6bd96bbf444b3c837bf404ce91cda9eb8e7d361679f1492aed8b818c2b7819a5",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/016/384/2023sineisei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2023/evaluation-settlement-2.pdf",
+            "sha256": "133d19e6437676be370392c1a46f559b570571530266f2bd14c6d35823c6de9b",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/016/384/2023sinkyouiku1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2023/evaluation-settlement-14.pdf",
+            "sha256": "cfe378a2c876f62076074b04623e5bbd14eae005985e22d8c25949283bd4cc3f",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/016/384/2023sinkyouiku2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2023/evaluation-settlement-15.pdf",
+            "sha256": "d1f1c8d7722e4f5d653f37da4a4d9a8ec1d1a33418ff0258677fc6817015e74e",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/016/384/2023sinnourin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2023/evaluation-settlement-7.pdf",
+            "sha256": "58461fba40d787e4f5b339891c78f946602079d1746d8940c241e090e5b4b515",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/016/384/2023sinroudou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2023/evaluation-settlement-11.pdf",
+            "sha256": "aa8a05a7845486c9a845a66b3e049393809ed331474321327a1184576db2cb6f",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/016/384/2023sinsyoukou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2023/evaluation-settlement-5.pdf",
+            "sha256": "2bebdc538e90c87a7fc5069b5f47dbfd2cc02e8fa5fe66426fe0dd504766b60e",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/016/384/2023soumu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2023/evaluation-settlement-13.pdf",
+            "sha256": "c82c288342659514c331e046ae6f9f595d6af2b00056361d62c986baacee5fb1",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/016/384/2023syoubou.pdf"
+          }
+        ],
+        "archived_at": "2026-10-15T23:50:39.278Z"
+      },
+      "reason": "令和5年度決算の「決算事業報告書」の《事業カルテ》16ファイル（計753頁）。決算事業報告書は決算書・主要施策の成果説明書を補完し、事業カルテは事業の活動実績・活動量・成果・実施水準・見直しの方向性を共通の切り口から評価するもの。事業ごとに「令和5年度の目標」「◇成果指標」（活動指標・成果指標の目標値と実績値）、「◇自己点検」（今後の見通し・今後の課題や方向性に関するコメント）、執行状況及び成果等を載せる。文字として読める。議会費の一部など、PDCAサイクルに馴染まない事業は事業カルテ作成対象外で執行状況のみ。歳入歳出決算額一覧表・マスタデータ・付属資料は評価の記述ではないため含めず、事業カルテのみを選んだ。令和5年度決算事業報告書データは https://www.city.tama.lg.jp/shisei/zaisei/kessan/1016384.html で公表。2023・2024年度の当初の調査は決算書の頁（.../kessan/1004929.html）しか見ておらず多摩市を「評価資料が見つからない」としていたが、決算事業報告書の事業カルテに目標・評価・課題・方向があるため選び直した。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132241",
+        "fiscal_year": 2022,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和4年度決算事業報告書 事業カルテ（50ファイル）",
+          "landing_url": "https://www.city.tama.lg.jp/shisei/zaisei/kessan/1014433.html",
+          "inspected_at": "2026-10-16T01:20:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202201gikai.pdf",
+              "sha256": "b680351ebbe94f58564478307eb3f7de3734588a0fd79d03e51128b8e190ad59",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202202soumu1.pdf",
+              "sha256": "dbcdb9b43b024845834addd25cc94a29738425c77b8448bef8310977886ec746",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202202soumu2.pdf",
+              "sha256": "a2402c4b4a7a46196e22d014ad9e86dc2f8ffbe5f74d9595015a24a1cf5f1056",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202202soumu3.pdf",
+              "sha256": "74ca28f2a5dbc4cb5de2a27fb95aae36855d1c7191ab81f80483cc9b40d94b7f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202202soumu4.pdf",
+              "sha256": "0942c75c9cbb414a218ae1314a6256c5463efa110c1bffe8409163a12d9af55c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202202soumu5.pdf",
+              "sha256": "c75d4513972b11552e7dc9604f0753a3aca58a85a461908b74261c43d0aace4f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202202soumu6.pdf",
+              "sha256": "46fb9a9e07a89d34dfe397249f7cf4fc896360c5bf1550bb904fcce95918ef62",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202202soumu7.pdf",
+              "sha256": "7cd5722bcbeb133d3d05d3dfd5b44981ef6faf9e695d56c9b870a33a6ba65ecd",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202202soumu8.pdf",
+              "sha256": "92ea1e1e04f9bb9d9488179ad9ba86eaf445e97105d11204d7040162663fc7e7",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202202soumu9.pdf",
+              "sha256": "9271eb0c2449dd239855b04f0066a7301cf16c181634aa2b9b8916ecb66c8844",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202203minsei1.pdf",
+              "sha256": "0e4e00f9d763489a7e80c80bdbf737d405254fbc84d47380f0c2dbd503e36574",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202203minsei10.pdf",
+              "sha256": "f4deb1ec802211d04cb59fb3e698f0a20f861f09fdb7674e4c82c6dee40817ec",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202203minsei11.pdf",
+              "sha256": "108c604131293c5b243a8cdd073c34857f95dfc2d4fb98bb2f01c5acca8e6640",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202203minsei12.pdf",
+              "sha256": "760066dba44b385dc42d04a2d6e6b6d342ac7ef7487845e272d86fd0a173b9f4",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202203minsei13.pdf",
+              "sha256": "d0d76d184339e85202d92182536676ac6dc114c4a23d8240c882aa66de834b44",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202203minsei14.pdf",
+              "sha256": "1a0dfd0b4c288a1dda93da11ed36dd18202b18529eb64c34ca53836c21855796",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202203minsei2.pdf",
+              "sha256": "bd65511eb54419de8e817b7da77d2f1da997dcbaa2412318ba04a7a0be0092b3",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202203minsei3.pdf",
+              "sha256": "962b0f3cde86a05d6fe8f09d52dc43097c9c9714a55b559d9b82c73090f3a8df",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202203minsei4.pdf",
+              "sha256": "5abf194954aa059ea777c27e6c480d9943198200c2423deffa33ebca34f2f990",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202203minsei5.pdf",
+              "sha256": "9cda8fd478956a52add9a182700b8af9f66882d95114fb211af6c5e8db684ad4",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202203minsei6.pdf",
+              "sha256": "b3c75d4ca8730c507e179b3a1a2099b0cfb46bc8acccc15e175533a90628af09",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202203minsei7.pdf",
+              "sha256": "09d337347c2d17973089de42aebde81b1257ae69596b8b13f20caf5e4f17bc18",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202203minsei8.pdf",
+              "sha256": "eba973174a22db611f9ba5eca0c23dbb9f791ac947939a2b37965fefbde5ab79",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202203minsei9.pdf",
+              "sha256": "895ccf930c3a87a2dcf6bf430f843df7e82ee36057bc85939c84a9a98efc158f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202204eisei1.pdf",
+              "sha256": "7da8a99412117fa05486a37c4bb53fd745dcb36a16f304c914bec3f47c517ef0",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202204eisei2.pdf",
+              "sha256": "c015ac0d6cf8531e851119b54f06662d7a309dc69e4abe8210e8a65187ca3002",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202204eisei3.pdf",
+              "sha256": "9cfe1bbb1ad38a03332609cde95773008a3905e09711f6124853a2073eaced9a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202204eisei4.pdf",
+              "sha256": "ab40b1e9941bd166dcdca1824b11b7eb73c3bb0be7dd53de81771d707a83335e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202205rodo.pdf",
+              "sha256": "048b4178ae82436b96a1be3af6a6e58c2c32f6848cb1befe28e9c1aadc1df4c3",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202206nourin.pdf",
+              "sha256": "08c54d5fbb544068ea8b99ece8b0717aca22d0fd1bb543b48ad2d8fbd8b78c27",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202207syoko.pdf",
+              "sha256": "44df5f3d3032078d765d3f66a0655a56ff32dc56fc66168176b100d7233d0648",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202208doboku1.pdf",
+              "sha256": "0f315f9ce769e3ffe81ab5ade95522c7c6016ca5c8ee8d6947da7831592d2481",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202208doboku2.pdf",
+              "sha256": "31adde18fc3d62b104cfc6c30d8cc4064aaf2682a341e64df70be28c8ecb63e5",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202208doboku3.pdf",
+              "sha256": "39667ce6d72ff1ed17e325da50fd8919a6e76f2a59a47fb38793f6a0a67f150c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202208doboku4.pdf",
+              "sha256": "0ae111d30853c53f0b862ae98ca7fd4475361ec632a03a8db1b71743229c8ca4",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202209syobo1.pdf",
+              "sha256": "a56aa0a7c2fd93d59a850824a0cbe92ff25f389f4fca66ad1434690e7885ba2b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202209syobo2.pdf",
+              "sha256": "afc7a0e291d8422f5377177f0254e702b180b56d5cbdbad0f3bb1cd2c043c6ee",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202210kyoiku1.pdf",
+              "sha256": "2b7371f95734390ba0065f0414263819cdc8b748800f344daa087a8590a51657",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202210kyoiku2.pdf",
+              "sha256": "91b2d07fc71c3d8bb9065a25bb527cff0c86115883dd1df33b67e32354ef9b45",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202210kyoiku3.pdf",
+              "sha256": "a85a34336a351c3af9a27f33e67e67d609b4019e48d38cb0477cfbdc8de81f96",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202210kyoiku4.pdf",
+              "sha256": "c98177ffb75926ee5879298d2d7d989dad83e8607f3efa32c69ba9e1eb3e7003",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202210kyoiku5.pdf",
+              "sha256": "19212987c3e3447636d9d8473cf541defafbaa2e03ddb31f3f448a9eab8f7329",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202210kyoiku6.pdf",
+              "sha256": "8540156febbeabcf8492d9ebfb3e903eb1a2802cad2861a0f57196513aa0fb37",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202210kyoiku7.pdf",
+              "sha256": "8c33f0b3147ee8632b5732560840f045dc356ebdff05a9d40d95be67d37785e3",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202210kyoiku8.pdf",
+              "sha256": "30917d7021321394721963f0cc3a6883d0ba4476dc6598ef3b1c5ccbf6a74091",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202210kyoiku9.pdf",
+              "sha256": "057dfc228274124e6d2fe0804d119f8057f3dab9a08abeb383fba5fdd5d7b699",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/2022gesui.pdf",
+              "sha256": "7d4c25ed729ecd14927a15a5fe620fa1dd8a1a5e4b21dbdd59f297082212294e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/2022kaigo.pdf",
+              "sha256": "af8b9339ba70ec7e8d88caf030efa57a79391bec1f625245b80583e9b0b09ce2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/2022kokuho.pdf",
+              "sha256": "d67feb60b7457b824c36fd599298db39fd4ea8c9207939632118c4db60ac7eda",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/2022kouki.pdf",
+              "sha256": "d44b82dba8531993a23433106617de4975729fd19870196fdd408d19534d555b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-40.pdf",
+            "sha256": "b680351ebbe94f58564478307eb3f7de3734588a0fd79d03e51128b8e190ad59",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202201gikai.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-48.pdf",
+            "sha256": "dbcdb9b43b024845834addd25cc94a29738425c77b8448bef8310977886ec746",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202202soumu1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-33.pdf",
+            "sha256": "a2402c4b4a7a46196e22d014ad9e86dc2f8ffbe5f74d9595015a24a1cf5f1056",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202202soumu2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-19.pdf",
+            "sha256": "74ca28f2a5dbc4cb5de2a27fb95aae36855d1c7191ab81f80483cc9b40d94b7f",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202202soumu3.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-4.pdf",
+            "sha256": "0942c75c9cbb414a218ae1314a6256c5463efa110c1bffe8409163a12d9af55c",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202202soumu4.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-43.pdf",
+            "sha256": "c75d4513972b11552e7dc9604f0753a3aca58a85a461908b74261c43d0aace4f",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202202soumu5.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-17.pdf",
+            "sha256": "46fb9a9e07a89d34dfe397249f7cf4fc896360c5bf1550bb904fcce95918ef62",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202202soumu6.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-21.pdf",
+            "sha256": "7cd5722bcbeb133d3d05d3dfd5b44981ef6faf9e695d56c9b870a33a6ba65ecd",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202202soumu7.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-29.pdf",
+            "sha256": "92ea1e1e04f9bb9d9488179ad9ba86eaf445e97105d11204d7040162663fc7e7",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202202soumu8.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-28.pdf",
+            "sha256": "9271eb0c2449dd239855b04f0066a7301cf16c181634aa2b9b8916ecb66c8844",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202202soumu9.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-7.pdf",
+            "sha256": "0e4e00f9d763489a7e80c80bdbf737d405254fbc84d47380f0c2dbd503e36574",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202203minsei1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-50.pdf",
+            "sha256": "f4deb1ec802211d04cb59fb3e698f0a20f861f09fdb7674e4c82c6dee40817ec",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202203minsei10.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-9.pdf",
+            "sha256": "108c604131293c5b243a8cdd073c34857f95dfc2d4fb98bb2f01c5acca8e6640",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202203minsei11.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-20.pdf",
+            "sha256": "760066dba44b385dc42d04a2d6e6b6d342ac7ef7487845e272d86fd0a173b9f4",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202203minsei12.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-45.pdf",
+            "sha256": "d0d76d184339e85202d92182536676ac6dc114c4a23d8240c882aa66de834b44",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202203minsei13.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-11.pdf",
+            "sha256": "1a0dfd0b4c288a1dda93da11ed36dd18202b18529eb64c34ca53836c21855796",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202203minsei14.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-41.pdf",
+            "sha256": "bd65511eb54419de8e817b7da77d2f1da997dcbaa2412318ba04a7a0be0092b3",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202203minsei2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-30.pdf",
+            "sha256": "962b0f3cde86a05d6fe8f09d52dc43097c9c9714a55b559d9b82c73090f3a8df",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202203minsei3.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-18.pdf",
+            "sha256": "5abf194954aa059ea777c27e6c480d9943198200c2423deffa33ebca34f2f990",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202203minsei4.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-31.pdf",
+            "sha256": "9cda8fd478956a52add9a182700b8af9f66882d95114fb211af6c5e8db684ad4",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202203minsei5.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-39.pdf",
+            "sha256": "b3c75d4ca8730c507e179b3a1a2099b0cfb46bc8acccc15e175533a90628af09",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202203minsei6.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-5.pdf",
+            "sha256": "09d337347c2d17973089de42aebde81b1257ae69596b8b13f20caf5e4f17bc18",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202203minsei7.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-49.pdf",
+            "sha256": "eba973174a22db611f9ba5eca0c23dbb9f791ac947939a2b37965fefbde5ab79",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202203minsei8.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-25.pdf",
+            "sha256": "895ccf930c3a87a2dcf6bf430f843df7e82ee36057bc85939c84a9a98efc158f",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202203minsei9.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-23.pdf",
+            "sha256": "7da8a99412117fa05486a37c4bb53fd745dcb36a16f304c914bec3f47c517ef0",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202204eisei1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-42.pdf",
+            "sha256": "c015ac0d6cf8531e851119b54f06662d7a309dc69e4abe8210e8a65187ca3002",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202204eisei2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-32.pdf",
+            "sha256": "9cfe1bbb1ad38a03332609cde95773008a3905e09711f6124853a2073eaced9a",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202204eisei3.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-36.pdf",
+            "sha256": "ab40b1e9941bd166dcdca1824b11b7eb73c3bb0be7dd53de81771d707a83335e",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202204eisei4.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-1.pdf",
+            "sha256": "048b4178ae82436b96a1be3af6a6e58c2c32f6848cb1befe28e9c1aadc1df4c3",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202205rodo.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-3.pdf",
+            "sha256": "08c54d5fbb544068ea8b99ece8b0717aca22d0fd1bb543b48ad2d8fbd8b78c27",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202206nourin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-16.pdf",
+            "sha256": "44df5f3d3032078d765d3f66a0655a56ff32dc56fc66168176b100d7233d0648",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202207syoko.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-8.pdf",
+            "sha256": "0f315f9ce769e3ffe81ab5ade95522c7c6016ca5c8ee8d6947da7831592d2481",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202208doboku1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-14.pdf",
+            "sha256": "31adde18fc3d62b104cfc6c30d8cc4064aaf2682a341e64df70be28c8ecb63e5",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202208doboku2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-15.pdf",
+            "sha256": "39667ce6d72ff1ed17e325da50fd8919a6e76f2a59a47fb38793f6a0a67f150c",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202208doboku3.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-6.pdf",
+            "sha256": "0ae111d30853c53f0b862ae98ca7fd4475361ec632a03a8db1b71743229c8ca4",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202208doboku4.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-34.pdf",
+            "sha256": "a56aa0a7c2fd93d59a850824a0cbe92ff25f389f4fca66ad1434690e7885ba2b",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202209syobo1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-38.pdf",
+            "sha256": "afc7a0e291d8422f5377177f0254e702b180b56d5cbdbad0f3bb1cd2c043c6ee",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202209syobo2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-12.pdf",
+            "sha256": "2b7371f95734390ba0065f0414263819cdc8b748800f344daa087a8590a51657",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202210kyoiku1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-27.pdf",
+            "sha256": "91b2d07fc71c3d8bb9065a25bb527cff0c86115883dd1df33b67e32354ef9b45",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202210kyoiku2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-35.pdf",
+            "sha256": "a85a34336a351c3af9a27f33e67e67d609b4019e48d38cb0477cfbdc8de81f96",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202210kyoiku3.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-44.pdf",
+            "sha256": "c98177ffb75926ee5879298d2d7d989dad83e8607f3efa32c69ba9e1eb3e7003",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202210kyoiku4.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-10.pdf",
+            "sha256": "19212987c3e3447636d9d8473cf541defafbaa2e03ddb31f3f448a9eab8f7329",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202210kyoiku5.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-24.pdf",
+            "sha256": "8540156febbeabcf8492d9ebfb3e903eb1a2802cad2861a0f57196513aa0fb37",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202210kyoiku6.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-26.pdf",
+            "sha256": "8c33f0b3147ee8632b5732560840f045dc356ebdff05a9d40d95be67d37785e3",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202210kyoiku7.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-13.pdf",
+            "sha256": "30917d7021321394721963f0cc3a6883d0ba4476dc6598ef3b1c5ccbf6a74091",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202210kyoiku8.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-2.pdf",
+            "sha256": "057dfc228274124e6d2fe0804d119f8057f3dab9a08abeb383fba5fdd5d7b699",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/202210kyoiku9.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-22.pdf",
+            "sha256": "7d4c25ed729ecd14927a15a5fe620fa1dd8a1a5e4b21dbdd59f297082212294e",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/2022gesui.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-37.pdf",
+            "sha256": "af8b9339ba70ec7e8d88caf030efa57a79391bec1f625245b80583e9b0b09ce2",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/2022kaigo.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-47.pdf",
+            "sha256": "d67feb60b7457b824c36fd599298db39fd4ea8c9207939632118c4db60ac7eda",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/2022kokuho.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2022/evaluation-settlement-46.pdf",
+            "sha256": "d44b82dba8531993a23433106617de4975729fd19870196fdd408d19534d555b",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/433/2022kouki.pdf"
+          }
+        ],
+        "archived_at": "2026-10-15T23:52:28.473Z"
+      },
+      "reason": "令和4年度決算の「決算事業報告書」のうち《事業カルテ》50ファイル（計753頁）。決算事業報告書は決算書・主要施策の成果説明書を補完する資料で、事業カルテは事業の活動実績・活動量・成果・実施水準・見直しの方向性を共通の切り口から評価するもの（「決算事業報告書とは」1-1.pdf）。事業ごとに「令和4年度の目標」「◇成果指標」（活動指標・成果指標の目標値と実績値）、「◇自己点検」（今後の見通し・今後の課題や方向性に関するコメント）、執行状況及び成果等を載せる。文字として読める。議会費の一部など、PDCAサイクルに馴染まない事業は事業カルテ作成対象外で執行状況のみ。歳入歳出決算額一覧表・マスタデータ・付属資料は金額やデータで評価の記述ではないため含めず、事業カルテのみを選んだ。令和4年度決算事業報告書データは https://www.city.tama.lg.jp/shisei/zaisei/kessan/1014433.html で公表。なお令和2・3年度分の決算事業報告書データ（旧頁 /shisei/zaisei/kessan/1004932.html・1008762.html）は現行サイトから外れており、Wayback の保存版もPDFが途中で切れるため、それらは別に扱う。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132241",
+        "fiscal_year": 2020,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和2年度決算事業報告書 事業カルテ（36ファイル、商工費を除く）",
+          "landing_url": "https://www.city.tama.lg.jp/shisei/zaisei/kessan/1004930.html",
+          "inspected_at": "2026-10-16T02:00:00+09:00",
+          "files": [
+            {
+              "download_url": "https://web.archive.org/web/20250328085341id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202001gikai.pdf",
+              "sha256": "5efc6e0eb3d303ffb24582bc90ffb08bbc1a4f0723bdd908bc8f94bdaa6d170d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250328083957id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202002soumu1.pdf",
+              "sha256": "fc125006372691e7e8e8dc364d9fca8c6b54e007fbc3c3b63327dcf4833d893c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250328082504id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202002soumu2.pdf",
+              "sha256": "70ed7fcd43b32dc72d87bb8f6bf5de5b50f1117874d3de23842da3ab3859f1e2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250327175956id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202002soumu3.pdf",
+              "sha256": "1be123fcffd762eeddf5e24960cb62040ebb040d55cda36fbe9720d738238310",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250327174715id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202002soumu4.pdf",
+              "sha256": "c317877684dade9e38b092fed318f9173289f0ceea0980bfd65d639e806dc7a5",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250327173524id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202002soumu5.pdf",
+              "sha256": "5f17eabdc8706e5e96a128dfc16286dc5c975a5e51515de72e22688e22ced74a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250328094714id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202002soumu6.pdf",
+              "sha256": "eb8bbe05212d92d2912f76e899c486e216b1128477f297ff0891bb09ad02d32f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250327162241id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202003minsei1.pdf",
+              "sha256": "76d298f961cffbbcbc6d64de0c59bb1ffc48bf1fb5b9005dc7c1d82d6bd0f091",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250327165308id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202003minsei2.pdf",
+              "sha256": "5ddc8691415c7d1b7a9750080ccc9523f88b3a2665215a8a9fd6e686c082c070",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250327171511id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202003minsei3.pdf",
+              "sha256": "53ba2c816071d6a0b1adf4d86f455ff466e56e75d09bfaf2092c659adf489020",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250327174212id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202003minsei4.pdf",
+              "sha256": "61667595fbfb55f1241afbe6ae2f882fc3bf347b3b058cb02ea14a2be93cc801",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250327155721id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202003minsei5.pdf",
+              "sha256": "a5635bdfda15208ce77302f5a99dbdeedd7a525cc9744ad5180747104f247e59",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250327163319id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202003minsei6.pdf",
+              "sha256": "f05477c653120bc95492c80ed01d600930080c98af6dc6879ef22766803099ac",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250327170639id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202003minsei7.pdf",
+              "sha256": "aad0fd62913588a9533fb808e31fc33e0a922aef57d5101507d6ba7ed4e0602e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250327172507id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202003minsei8.pdf",
+              "sha256": "3bf94d6b7115df486e50a077c519a9c508ef595e55f5c82004d10df9a5d05ccd",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250327175210id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202003minsei9.pdf",
+              "sha256": "e94eaa4345168ec0b9926ab839005ab582766ee3bfc54daf03c7c69b91c4318c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250327171401id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202004eisei1.pdf",
+              "sha256": "6cb6aafee1abdd441f2fd8c1defa97eb89c2a759250b4b5139b8cbcbcc70c941",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250328092246id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202004eisei2.pdf",
+              "sha256": "bcac6687c244372fa76dc88f7a8c5656422a1aa8c223fc4a425eb9c8597afda3",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250327165555id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202004eisei3.pdf",
+              "sha256": "08595bd8e3c00bd542ac8d57a75be3a9e121ab8d3cbeead7af86e2ef0815bf14",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250327162711id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202005rodo.pdf",
+              "sha256": "7a38ad76fe4710bef534eb53fc1a078680315e2f3a361694f48f29c0a0dddc69",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250327165954id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202006nourin.pdf",
+              "sha256": "c0e8f0186f32acd8e8d750e74a4036f0f6ac7f6550bfab04225a94ca99cafcbe",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250327170231id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202008doboku1.pdf",
+              "sha256": "0e9da2c2041b98128c1731c0ce61b48dc020ece2484eb40f61d1834df9a64d0d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250327172049id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202008doboku2.pdf",
+              "sha256": "7246d96f7931f111cc1ebbc4dabcac4041e333b73ba03d77f1f30c38978fa9a6",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250327174930id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202008doboku3.pdf",
+              "sha256": "04f51aa91f4a2f3bb1e3da1899021cd6e85ab6ac40e5c0644ec094b222b7264c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250328084551id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202009syobo.pdf",
+              "sha256": "90d0ba5533bd5ed67721626c9b6383a57088d16edfbe8d289ee8035a56891eeb",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250327170908id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202010kyoiku1.pdf",
+              "sha256": "d3951a0395b0935a4a4b7e932693afabe831808023b1890cbe8d363e80fba601",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250327172816id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202010kyoiku2.pdf",
+              "sha256": "c187f919290c80fbd172cf6603facf943c0713f685fb53521dd891d92e772803",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250327175651id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202010kyoiku3.pdf",
+              "sha256": "84f0f493defe43df1f6f312a7ab69bbf45fc14b2e56a2e946759718752128a60",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250327162042id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202010kyoiku4.pdf",
+              "sha256": "bf9ece603afef5d5b473e6942c8da36b4d2a38dd0524846877ae703d5952cbe1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250328091109id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202010kyoiku5.pdf",
+              "sha256": "91a815d84ba858cfd6f9ec671e8078f97c4a4bdd7c67818880836f763b745cd0",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250328093726id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202010kyoiku6.pdf",
+              "sha256": "ec0684aab4392a6f496dca4f49e3ca2c4f4a7323fd0e651cf6dd1823787b263e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250327173947id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202010kyoiku7.pdf",
+              "sha256": "b574f5da900302928d683ac6408d6a684409bd4ec672ecaf34539fa70fd2b157",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250327164831id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2020kokuho.pdf",
+              "sha256": "5d4ab93f14aa4d123c0c8f7a8a2cfcbadc81e484988b91a96155b13519ea7eaf",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250328082933id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2020kaigo.pdf",
+              "sha256": "42a0ab508d383bd7fd919ad0a070f303c45ccfff559591dd3eb274763d151111",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250327174529id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2020kouki.pdf",
+              "sha256": "7e2e1f5045213f385cfc4dbd4018778e63140ce45a5ec2e64709ab3c776d5315",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://web.archive.org/web/20250328084627id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2020gesui.pdf",
+              "sha256": "a9d9fd23845e6ac8f6d335ddd75e22d36660c9cf969fe03303d9ee829ec9a723",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-10.pdf",
+            "sha256": "5efc6e0eb3d303ffb24582bc90ffb08bbc1a4f0723bdd908bc8f94bdaa6d170d",
+            "final_url": "https://web.archive.org/web/20250328085341id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202001gikai.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-36.pdf",
+            "sha256": "fc125006372691e7e8e8dc364d9fca8c6b54e007fbc3c3b63327dcf4833d893c",
+            "final_url": "https://web.archive.org/web/20250328083957id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202002soumu1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-14.pdf",
+            "sha256": "70ed7fcd43b32dc72d87bb8f6bf5de5b50f1117874d3de23842da3ab3859f1e2",
+            "final_url": "https://web.archive.org/web/20250328082504id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202002soumu2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-4.pdf",
+            "sha256": "1be123fcffd762eeddf5e24960cb62040ebb040d55cda36fbe9720d738238310",
+            "final_url": "https://web.archive.org/web/20250327175956id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202002soumu3.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-30.pdf",
+            "sha256": "c317877684dade9e38b092fed318f9173289f0ceea0980bfd65d639e806dc7a5",
+            "final_url": "https://web.archive.org/web/20250327174715id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202002soumu4.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-11.pdf",
+            "sha256": "5f17eabdc8706e5e96a128dfc16286dc5c975a5e51515de72e22688e22ced74a",
+            "final_url": "https://web.archive.org/web/20250327173524id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202002soumu5.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-33.pdf",
+            "sha256": "eb8bbe05212d92d2912f76e899c486e216b1128477f297ff0891bb09ad02d32f",
+            "final_url": "https://web.archive.org/web/20250328094714id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202002soumu6.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-16.pdf",
+            "sha256": "76d298f961cffbbcbc6d64de0c59bb1ffc48bf1fb5b9005dc7c1d82d6bd0f091",
+            "final_url": "https://web.archive.org/web/20250327162241id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202003minsei1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-9.pdf",
+            "sha256": "5ddc8691415c7d1b7a9750080ccc9523f88b3a2665215a8a9fd6e686c082c070",
+            "final_url": "https://web.archive.org/web/20250327165308id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202003minsei2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-7.pdf",
+            "sha256": "53ba2c816071d6a0b1adf4d86f455ff466e56e75d09bfaf2092c659adf489020",
+            "final_url": "https://web.archive.org/web/20250327171511id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202003minsei3.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-12.pdf",
+            "sha256": "61667595fbfb55f1241afbe6ae2f882fc3bf347b3b058cb02ea14a2be93cc801",
+            "final_url": "https://web.archive.org/web/20250327174212id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202003minsei4.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-22.pdf",
+            "sha256": "a5635bdfda15208ce77302f5a99dbdeedd7a525cc9744ad5180747104f247e59",
+            "final_url": "https://web.archive.org/web/20250327155721id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202003minsei5.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-35.pdf",
+            "sha256": "f05477c653120bc95492c80ed01d600930080c98af6dc6879ef22766803099ac",
+            "final_url": "https://web.archive.org/web/20250327163319id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202003minsei6.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-24.pdf",
+            "sha256": "aad0fd62913588a9533fb808e31fc33e0a922aef57d5101507d6ba7ed4e0602e",
+            "final_url": "https://web.archive.org/web/20250327170639id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202003minsei7.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-5.pdf",
+            "sha256": "3bf94d6b7115df486e50a077c519a9c508ef595e55f5c82004d10df9a5d05ccd",
+            "final_url": "https://web.archive.org/web/20250327172507id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202003minsei8.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-32.pdf",
+            "sha256": "e94eaa4345168ec0b9926ab839005ab582766ee3bfc54daf03c7c69b91c4318c",
+            "final_url": "https://web.archive.org/web/20250327175210id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202003minsei9.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-13.pdf",
+            "sha256": "6cb6aafee1abdd441f2fd8c1defa97eb89c2a759250b4b5139b8cbcbcc70c941",
+            "final_url": "https://web.archive.org/web/20250327171401id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202004eisei1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-26.pdf",
+            "sha256": "bcac6687c244372fa76dc88f7a8c5656422a1aa8c223fc4a425eb9c8597afda3",
+            "final_url": "https://web.archive.org/web/20250328092246id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202004eisei2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-2.pdf",
+            "sha256": "08595bd8e3c00bd542ac8d57a75be3a9e121ab8d3cbeead7af86e2ef0815bf14",
+            "final_url": "https://web.archive.org/web/20250327165555id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202004eisei3.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-17.pdf",
+            "sha256": "7a38ad76fe4710bef534eb53fc1a078680315e2f3a361694f48f29c0a0dddc69",
+            "final_url": "https://web.archive.org/web/20250327162711id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202005rodo.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-28.pdf",
+            "sha256": "c0e8f0186f32acd8e8d750e74a4036f0f6ac7f6550bfab04225a94ca99cafcbe",
+            "final_url": "https://web.archive.org/web/20250327165954id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202006nourin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-3.pdf",
+            "sha256": "0e9da2c2041b98128c1731c0ce61b48dc020ece2484eb40f61d1834df9a64d0d",
+            "final_url": "https://web.archive.org/web/20250327170231id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202008doboku1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-15.pdf",
+            "sha256": "7246d96f7931f111cc1ebbc4dabcac4041e333b73ba03d77f1f30c38978fa9a6",
+            "final_url": "https://web.archive.org/web/20250327172049id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202008doboku2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-1.pdf",
+            "sha256": "04f51aa91f4a2f3bb1e3da1899021cd6e85ab6ac40e5c0644ec094b222b7264c",
+            "final_url": "https://web.archive.org/web/20250327174930id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202008doboku3.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-20.pdf",
+            "sha256": "90d0ba5533bd5ed67721626c9b6383a57088d16edfbe8d289ee8035a56891eeb",
+            "final_url": "https://web.archive.org/web/20250328084551id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202009syobo.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-31.pdf",
+            "sha256": "d3951a0395b0935a4a4b7e932693afabe831808023b1890cbe8d363e80fba601",
+            "final_url": "https://web.archive.org/web/20250327170908id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202010kyoiku1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-29.pdf",
+            "sha256": "c187f919290c80fbd172cf6603facf943c0713f685fb53521dd891d92e772803",
+            "final_url": "https://web.archive.org/web/20250327172816id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202010kyoiku2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-19.pdf",
+            "sha256": "84f0f493defe43df1f6f312a7ab69bbf45fc14b2e56a2e946759718752128a60",
+            "final_url": "https://web.archive.org/web/20250327175651id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202010kyoiku3.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-27.pdf",
+            "sha256": "bf9ece603afef5d5b473e6942c8da36b4d2a38dd0524846877ae703d5952cbe1",
+            "final_url": "https://web.archive.org/web/20250327162042id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202010kyoiku4.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-21.pdf",
+            "sha256": "91a815d84ba858cfd6f9ec671e8078f97c4a4bdd7c67818880836f763b745cd0",
+            "final_url": "https://web.archive.org/web/20250328091109id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202010kyoiku5.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-34.pdf",
+            "sha256": "ec0684aab4392a6f496dca4f49e3ca2c4f4a7323fd0e651cf6dd1823787b263e",
+            "final_url": "https://web.archive.org/web/20250328093726id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202010kyoiku6.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-25.pdf",
+            "sha256": "b574f5da900302928d683ac6408d6a684409bd4ec672ecaf34539fa70fd2b157",
+            "final_url": "https://web.archive.org/web/20250327173947id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/202010kyoiku7.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-8.pdf",
+            "sha256": "5d4ab93f14aa4d123c0c8f7a8a2cfcbadc81e484988b91a96155b13519ea7eaf",
+            "final_url": "https://web.archive.org/web/20250327164831id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2020kokuho.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-6.pdf",
+            "sha256": "42a0ab508d383bd7fd919ad0a070f303c45ccfff559591dd3eb274763d151111",
+            "final_url": "https://web.archive.org/web/20250328082933id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2020kaigo.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-18.pdf",
+            "sha256": "7e2e1f5045213f385cfc4dbd4018778e63140ce45a5ec2e64709ab3c776d5315",
+            "final_url": "https://web.archive.org/web/20250327174529id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2020kouki.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2020/evaluation-settlement-23.pdf",
+            "sha256": "a9d9fd23845e6ac8f6d335ddd75e22d36660c9cf969fe03303d9ee829ec9a723",
+            "final_url": "https://web.archive.org/web/20250328084627id_/https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/2020gesui.pdf"
+          }
+        ],
+        "archived_at": "2026-10-15T23:54:53.116Z"
+      },
+      "reason": "令和2年度決算の「決算事業報告書」の《事業カルテ》36ファイル（計808頁）。決算事業報告書は決算書・主要施策の成果説明書を補完し、事業カルテは事業の活動実績・活動量・成果・実施水準・見直しの方向性を共通の切り口から評価するもの。事業ごとに当年度の目標・成果指標（目標値と実績値）・自己点検（今後の見通し、今後の課題や方向性）・執行状況及び成果等を載せる。文字として読める。令和2年度分は現行サイトから外れており（旧頁 /shisei/zaisei/kessan/1004932.html、現在は同じ番号を令和6年度分が使う）、さらに Wayback Machine の 2023-11 の保存版は約1MiBで切れるため、後年の完全な保存版（2024〜2025取得）から取得した。download_url は実際に取得した Wayback のURL（元の公式URLは https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/<ファイル名>）。不足: 商工費の事業カルテ（201907shoko.pdf）は公式URLが404で Wayback に保存版が無く取得できないため含めない（商工費の事業評価が欠ける）。また 2023・2024年度の調査は決算書の頁しか見ておらず、この決算事業報告書を見落として多摩市を「評価資料なし」としていた。"
+    }
+  ]
 }
