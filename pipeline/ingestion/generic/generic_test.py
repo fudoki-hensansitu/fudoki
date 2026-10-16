@@ -1216,3 +1216,17 @@ class HeaderCharactersTest(unittest.TestCase):
         self.assertEqual(canonical('翌年度越額／繰／越／繰明／許／費', None, known), '翌年度繰越額／繰越明許費')
         self.assertEqual(canonical('翌年度越額／繰／継逓／続／費／次越／繰', None, known), '翌年度繰越額／継続費逓次繰越')
         self.assertEqual(canonical('見知らぬ／見出し', None, known), '見知らぬ／見出し')
+
+
+class OcrCodeWordTest(unittest.TestCase):
+    def test_an_ocr_word_joining_the_code_and_the_name_starts_its_name_after_the_digits(self):
+        from ingestion.generic.tree import Group, Item, _measure
+        # `10需用費`: 2 half-width digits and 3 kanji over 35pt; a digit is half a kanji wide.
+        glyph = Glyph('10需用費', 422.2, 0, 457.2, 9, 1, 0)
+        shared = Group.__new__(Group)
+        shared.subject = False
+        item = Item(shared, 1, [[glyph]], '10', '需用費', 0)
+        _measure(item, [glyph], '10', ocr=True)
+        self.assertAlmostEqual(item.indent, 422.2 + 2 * 35 / 8, places=3)
+        _measure(item, [glyph], '10')
+        self.assertAlmostEqual(item.indent, 422.2 + 2 * 35 / 5, places=3)

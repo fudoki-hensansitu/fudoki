@@ -584,7 +584,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
             for i in members:
                 for run in entries[i][1]:
                     item.amounts.append((header, run))
-            _measure(item, entries[code_index][0], entries[code_index][2])
+            _measure(item, entries[code_index][0], entries[code_index][2], ocr)
             result.append(item)
             continue
         previous = result[-1] if result else None
@@ -700,7 +700,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
         item = Item(group, label[0].page, [label], code, name, 0)
         for run in money:
             item.amounts.append((header, run))
-        _measure(item, label, code)
+        _measure(item, label, code, ocr)
         result.append(item)
     return result
 
@@ -758,7 +758,7 @@ def _name_start(item: Item) -> float:
     return item.indent
 
 
-def _measure(item: Item, label: list[Glyph], code: str | None) -> None:
+def _measure(item: Item, label: list[Glyph], code: str | None, ocr: bool = False) -> None:
     """Indentation is where the name starts; subject level is the band of the first glyph."""
     first = label[0]
     if code is not None:
@@ -773,6 +773,11 @@ def _measure(item: Item, label: list[Glyph], code: str | None) -> None:
         for glyph in label:
             if consumed + len(glyph.text) > length:
                 width = (glyph.x1 - glyph.x0) / max(len(glyph.text), 1)
+                if ocr and any(not c.isascii() for c in glyph.text) and all(c.isascii() and c.isdigit() for c in glyph.text[:length - consumed]):
+                    # An OCR word that joins the code and the name (`10需用費`): half-width digits are half a
+                    # kanji wide, so the name starts after the digits' own width, not after an even share.
+                    wide = sum(1 for c in glyph.text if not c.isascii())
+                    width = (glyph.x1 - glyph.x0) / (len(glyph.text) - wide + 2 * wide) if wide else width
                 offset = glyph.x0 + (length - consumed) * width
                 break
             consumed += len(glyph.text)

@@ -67,6 +67,12 @@
       "observed_name": "翌年度繰越",
       "corrected_name": "翌年度繰越額",
       "reason": "見開きで額が次の行に折り返された翌年度繰越額の見出しの前半。額だけの段は続けて落とす。原典の印字を確認した。"
+    },
+    {
+      "id": "reserve-transfer-heading-stacked",
+      "observed_name": "予一備費支出及び流用増減",
+      "corrected_name": "予備費支出及び流用増減",
+      "reason": "二段に積んだ見出し（予／備費）の間の罫線をOCRが一と読んだ。原典の予備費支出及び流用増減の印字を確認した。"
     }
   ]
 }
