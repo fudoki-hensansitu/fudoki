@@ -1,0 +1,1016 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132055",
+    "fiscal_year": 2024,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "scan-1",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "0779b187032137fd66908f1faffb65ed3e1a2ec72bc0b7c10e9e5692a472e86a"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "scan-1",
+        "partial": true
+      },
+      "ocr_inputs": [
+        {
+          "id": "scan-1-ocr-columns-1",
+          "origin_sha256": "0779b187032137fd66908f1faffb65ed3e1a2ec72bc0b7c10e9e5692a472e86a",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "7e65fb683afc9f5fb614ab49a2f0a3be0f02a569667366c4635f870d52fad9f6",
+          "bytes": 445373
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "scan-1"
+        }
+      ]
+    },
+    {
+      "id": "scan-2",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "e82a75dd93bbe24f6c711f0fcc2389ec5f3f5aceff3b017414b151f01f65e834"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "scan-2",
+        "partial": true
+      },
+      "ocr_inputs": [
+        {
+          "id": "scan-2-ocr-columns-1",
+          "origin_sha256": "e82a75dd93bbe24f6c711f0fcc2389ec5f3f5aceff3b017414b151f01f65e834",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "f9b58347bad4bddc853cb93e5058b2ae04e010573ae9c55c2f98d25c9936da11",
+          "bytes": 1694253
+        },
+        {
+          "id": "scan-2-ocr-columns-2",
+          "origin_sha256": "e82a75dd93bbe24f6c711f0fcc2389ec5f3f5aceff3b017414b151f01f65e834",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "03c735cbc3e15ad4ca6f29f6fd5f0c02b32b5a4da7ca2dbbc7049a10e772d238",
+          "bytes": 1613388
+        },
+        {
+          "id": "scan-2-ocr-columns-3",
+          "origin_sha256": "e82a75dd93bbe24f6c711f0fcc2389ec5f3f5aceff3b017414b151f01f65e834",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "c36db6f8c9081617dfcfe1c3c3a1ffa9c12ed00b92aeb82a3357c811a747cdcd",
+          "bytes": 1459485
+        },
+        {
+          "id": "scan-2-ocr-columns-4",
+          "origin_sha256": "e82a75dd93bbe24f6c711f0fcc2389ec5f3f5aceff3b017414b151f01f65e834",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "d176ac295e3e8a62e5f0bf14108af98e4cfd0322d3b216429184e1d5d3945f75",
+          "bytes": 1055047
+        },
+        {
+          "id": "scan-2-ocr-columns-5",
+          "origin_sha256": "e82a75dd93bbe24f6c711f0fcc2389ec5f3f5aceff3b017414b151f01f65e834",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "0215672f3c244e6d559162bcc4e7fb8d6e8e5a1f6f11fd88c8335d501f926478",
+          "bytes": 1769103
+        },
+        {
+          "id": "scan-2-ocr-columns-6",
+          "origin_sha256": "e82a75dd93bbe24f6c711f0fcc2389ec5f3f5aceff3b017414b151f01f65e834",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "8e229b35455ce1a7745c7d652d1324c6802d7f9d4bdb8d7f150b6e4ddf5bdda9",
+          "bytes": 1005554
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "scan-2"
+        }
+      ]
+    },
+    {
+      "id": "scan-3",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "507853752f7cf6e1ae4e0688bd4ca971a5e66be6dfe41784aad084a5641ffdff"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "scan-3",
+        "partial": true
+      },
+      "ocr_inputs": [
+        {
+          "id": "scan-3-ocr-columns-1",
+          "origin_sha256": "507853752f7cf6e1ae4e0688bd4ca971a5e66be6dfe41784aad084a5641ffdff",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "c65ff2c085d5761e6c9860b5cc965104087e2264bb35e2ed5ace7cfdd45bd9ca",
+          "bytes": 1464338
+        },
+        {
+          "id": "scan-3-ocr-columns-2",
+          "origin_sha256": "507853752f7cf6e1ae4e0688bd4ca971a5e66be6dfe41784aad084a5641ffdff",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "10bc91db9e068a184c628092efe1a2fe132ec018a73f1ddf58e299a46bf15939",
+          "bytes": 1215475
+        },
+        {
+          "id": "scan-3-ocr-columns-3",
+          "origin_sha256": "507853752f7cf6e1ae4e0688bd4ca971a5e66be6dfe41784aad084a5641ffdff",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "11c1fcad68cebecd143fa5e0b9010d9d52abb8ce74847be902350182813138a8",
+          "bytes": 1230118
+        },
+        {
+          "id": "scan-3-ocr-columns-4",
+          "origin_sha256": "507853752f7cf6e1ae4e0688bd4ca971a5e66be6dfe41784aad084a5641ffdff",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "7fb792260ef0cd12f28aa06cc72f8de6c1fd8bd67d07b9dfd819ec7d86a207a9",
+          "bytes": 1142728
+        },
+        {
+          "id": "scan-3-ocr-columns-5",
+          "origin_sha256": "507853752f7cf6e1ae4e0688bd4ca971a5e66be6dfe41784aad084a5641ffdff",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "445340460ef4bd5f407a3f0a5769dc196bf39e76b3cdc07fc7ae4b2454111846",
+          "bytes": 1416885
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "scan-3"
+        }
+      ]
+    },
+    {
+      "id": "scan-4",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "a163daa5865d79b556ad6557d85a7fc78bd24be4b77ba6aa34eb3073f43a2c73"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "scan-4",
+        "partial": true
+      },
+      "ocr_inputs": [
+        {
+          "id": "scan-4-ocr-columns-1",
+          "origin_sha256": "a163daa5865d79b556ad6557d85a7fc78bd24be4b77ba6aa34eb3073f43a2c73",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "b559b9842059bf327defa545dcdf84dd43a9ae0d85f2d112f49d17ab1986ef3a",
+          "bytes": 1262844
+        },
+        {
+          "id": "scan-4-ocr-columns-2",
+          "origin_sha256": "a163daa5865d79b556ad6557d85a7fc78bd24be4b77ba6aa34eb3073f43a2c73",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "1e5fb92dada7f5c165502634f36a71e34dd002b04b8f89b200a35071110bf0dd",
+          "bytes": 1407821
+        },
+        {
+          "id": "scan-4-ocr-columns-3",
+          "origin_sha256": "a163daa5865d79b556ad6557d85a7fc78bd24be4b77ba6aa34eb3073f43a2c73",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "c7526ad2d3a2e46adbe43c9c98070de012ca06c2a9c18b15f466eca13ffcaaa3",
+          "bytes": 677230
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "scan-4"
+        }
+      ]
+    },
+    {
+      "id": "scan-5",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "050c90259d1a0cc4b99da45bc318fb2f4155a61f908d14b034c5ac686fc24cd7"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "scan-5",
+        "partial": true
+      },
+      "ocr_inputs": [
+        {
+          "id": "scan-5-ocr-columns-1",
+          "origin_sha256": "050c90259d1a0cc4b99da45bc318fb2f4155a61f908d14b034c5ac686fc24cd7",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "721a90115a85f7f2cd4ad397077815a9080fd4c35d1db417cfd7bb4419bc5146",
+          "bytes": 162782
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "scan-5"
+        }
+      ]
+    },
+    {
+      "id": "scan-6",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "124d968e81c504684d2d656c4e5cbff0026b8c1755a3d7dc453cc0aa6aa5e7de"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "scan-6",
+        "partial": true
+      },
+      "ocr_inputs": [
+        {
+          "id": "scan-6-ocr-columns-1",
+          "origin_sha256": "124d968e81c504684d2d656c4e5cbff0026b8c1755a3d7dc453cc0aa6aa5e7de",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "16e1e41f66f342233cd9654fff3bffee71753ccd7e7fdf5819ff322460db5caf",
+          "bytes": 1466718
+        },
+        {
+          "id": "scan-6-ocr-columns-2",
+          "origin_sha256": "124d968e81c504684d2d656c4e5cbff0026b8c1755a3d7dc453cc0aa6aa5e7de",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              11,
+              12
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "2bbf59dd821e68bdff294fa891c80b97526bebd296d455804d540d2cbced4433",
+          "bytes": 232912
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "scan-6"
+        }
+      ]
+    },
+    {
+      "id": "scan-7",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "4d1af44a3790955caa8e3796c92834b55ad6a478a853cbc730ec04a12b45774a"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "scan-7",
+        "partial": true
+      },
+      "ocr_inputs": [
+        {
+          "id": "scan-7-ocr-columns-1",
+          "origin_sha256": "4d1af44a3790955caa8e3796c92834b55ad6a478a853cbc730ec04a12b45774a",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "abdea6f2fd851f3aa9e503a3bf56815fb6a1a74c0277d05f61ee018187a72665",
+          "bytes": 1383792
+        },
+        {
+          "id": "scan-7-ocr-columns-2",
+          "origin_sha256": "4d1af44a3790955caa8e3796c92834b55ad6a478a853cbc730ec04a12b45774a",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              11,
+              12
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "18af487cb47c35238c975b603750f39c98f74f5688892f26608706f5bc674cf1",
+          "bytes": 68080
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "scan-7"
+        }
+      ]
+    },
+    {
+      "id": "scan-8",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "ae62aef500a460178263f768a4d2b86581a280e4d36dc51ab0b7f96a1ed76432"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "scan-8",
+        "partial": true
+      },
+      "ocr_inputs": [
+        {
+          "id": "scan-8-ocr-columns-1",
+          "origin_sha256": "ae62aef500a460178263f768a4d2b86581a280e4d36dc51ab0b7f96a1ed76432",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "65aaed200af768c7e357a749c64e8820443fe3689b2ed1d8698f99a577d387be",
+          "bytes": 1749266
+        },
+        {
+          "id": "scan-8-ocr-columns-2",
+          "origin_sha256": "ae62aef500a460178263f768a4d2b86581a280e4d36dc51ab0b7f96a1ed76432",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "63a0a2bd28a5905ec3c084db9d5d764341fa6a2038a2a593f7306e993685a106",
+          "bytes": 1625670
+        },
+        {
+          "id": "scan-8-ocr-columns-3",
+          "origin_sha256": "ae62aef500a460178263f768a4d2b86581a280e4d36dc51ab0b7f96a1ed76432",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              21,
+              22
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "5f297f26240c42ba5ea0feb93b7389b9f9f6801859e72321857b052ec1a6a77d",
+          "bytes": 172746
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "scan-8"
+        }
+      ]
+    },
+    {
+      "id": "scan-9",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "fcce92ed1a1116d6651bbf465ee7bfc82ce5c841e1eabc47589b39370726d9cc"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "scan-9",
+        "partial": true
+      },
+      "ocr_inputs": [
+        {
+          "id": "scan-9-ocr-columns-1",
+          "origin_sha256": "fcce92ed1a1116d6651bbf465ee7bfc82ce5c841e1eabc47589b39370726d9cc",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "6c75db637343a3d3fd989030c9b2a3ef1e56d4abfaae9fab34daa995efd8de6f",
+          "bytes": 996278
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "scan-9"
+        }
+      ]
+    },
+    {
+      "id": "scan-10",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "87793a9746ed9540a1762d7eb100f7882a98f5f4b914b183dc717750b6bdd55e"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "scan-10",
+        "partial": true
+      },
+      "ocr_inputs": [
+        {
+          "id": "scan-10-ocr-columns-1",
+          "origin_sha256": "87793a9746ed9540a1762d7eb100f7882a98f5f4b914b183dc717750b6bdd55e",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "de6f8c1343a3ecd6b9d3ec287ebde30940d5d9a17c79ae299f6f1bb18a9464e1",
+          "bytes": 1556808
+        },
+        {
+          "id": "scan-10-ocr-columns-2",
+          "origin_sha256": "87793a9746ed9540a1762d7eb100f7882a98f5f4b914b183dc717750b6bdd55e",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "cf6674e0f03937715d34f3c9210d8586e755b0642f52a0c0cdbc853fb76eeba2",
+          "bytes": 1458884
+        },
+        {
+          "id": "scan-10-ocr-columns-3",
+          "origin_sha256": "87793a9746ed9540a1762d7eb100f7882a98f5f4b914b183dc717750b6bdd55e",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "44cd4c4dd3194113dbfb1f35c03c8faa4d93d3568c502419a619e4cdb4b5f880",
+          "bytes": 1528754
+        },
+        {
+          "id": "scan-10-ocr-columns-4",
+          "origin_sha256": "87793a9746ed9540a1762d7eb100f7882a98f5f4b914b183dc717750b6bdd55e",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "487338c035f6146e6ffcb963c7691fc7843cd504c2053cf722ad9acf96e37c14",
+          "bytes": 1333306
+        },
+        {
+          "id": "scan-10-ocr-columns-5",
+          "origin_sha256": "87793a9746ed9540a1762d7eb100f7882a98f5f4b914b183dc717750b6bdd55e",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "32a3ff5ba40454089afd3bf08c39089c1511f1c8c8be78d7a547ed50bc6953dc",
+          "bytes": 1715355
+        },
+        {
+          "id": "scan-10-ocr-columns-6",
+          "origin_sha256": "87793a9746ed9540a1762d7eb100f7882a98f5f4b914b183dc717750b6bdd55e",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "eaa24bbe5a4b967cdb1e005d5874d84c66cdd87d8a4474d5949d973d7a2a0f5e",
+          "bytes": 1094371
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "scan-10"
+        }
+      ]
+    },
+    {
+      "id": "scan-11",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "9d5df571e6d18ad0ed5fb5e23a33623959f173766cb5f35cdc65118fe95744ab"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "scan-11",
+        "partial": true
+      },
+      "ocr_inputs": [
+        {
+          "id": "scan-11-ocr-columns-1",
+          "origin_sha256": "9d5df571e6d18ad0ed5fb5e23a33623959f173766cb5f35cdc65118fe95744ab",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "c61acee3d46ee566d8a878098d12e1b63a798d2d8ae0a0f635afebb4b68826e3",
+          "bytes": 438504
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "scan-11"
+        }
+      ]
+    },
+    {
+      "id": "scan-12",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "37dbda5395f7d75d0e73afefae0a5261f1e8fb09f685e937cbbee3d3f9199c73"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "scan-12",
+        "partial": true
+      },
+      "ocr_inputs": [
+        {
+          "id": "scan-12-ocr-columns-1",
+          "origin_sha256": "37dbda5395f7d75d0e73afefae0a5261f1e8fb09f685e937cbbee3d3f9199c73",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "0468773d8c1001c69ac385f6b3def4a0a5c5f133bf0d142c3c77365b70d96737",
+          "bytes": 193523
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "scan-12"
+        }
+      ]
+    },
+    {
+      "id": "scan-13",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "3f3ee513f3a0c3b53088c0d5ecc5b411772857631482390d3e80cd86bcf43fe0"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "scan-13",
+        "partial": true
+      },
+      "ocr_inputs": [
+        {
+          "id": "scan-13-ocr-columns-1",
+          "origin_sha256": "3f3ee513f3a0c3b53088c0d5ecc5b411772857631482390d3e80cd86bcf43fe0",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "799ceb49222ef3580f32afa513143b6f1acf99d47fbe9ac5339ccaff8035dc95",
+          "bytes": 685382
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "scan-13"
+        }
+      ]
+    },
+    {
+      "id": "scan-14",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "6a053f6453627f8eeb1f15fc4403091e49169de7a9415cff7d213e0bbf87bc6d"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "scan-14",
+        "partial": true
+      },
+      "ocr_inputs": [
+        {
+          "id": "scan-14-ocr-columns-1",
+          "origin_sha256": "6a053f6453627f8eeb1f15fc4403091e49169de7a9415cff7d213e0bbf87bc6d",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              1,
+              2
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "540606dc40607d4fecbaf600e02fa383712ece4280258e52ae85f7b40fa19fb2",
+          "bytes": 144419
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "scan-14"
+        }
+      ]
+    }
+  ],
+  "tables": []
+}

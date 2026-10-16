@@ -53,6 +53,12 @@ def _layout(observed: list[Page], columns: dict | None, *, spread: dict | None =
         logical.ocr = True
         for band in logical.bands:
             band.header = header_path(band.header)
+        # A column header that spans two columns (`項目` over 項 and 目) is read once, over the second:
+        # the first column has no header of its own and takes the one beside it.
+        for band, following in reversed(list(zip(logical.bands, logical.bands[1:]))):
+            if not band.header and band.kind == 'label' and following.kind == 'label' and following.header:
+                band.header = following.header
+        for band in logical.bands:
             setting = (columns or {}).get('／'.join(band.header), {})
             band.kind = setting.get('kind', band.kind)
             band.axis_header = setting.get('axis_header', band.axis_header)
