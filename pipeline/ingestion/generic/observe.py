@@ -7,10 +7,12 @@ Coordinates are PDF points from the top-left of the displayed page.
 """
 from __future__ import annotations
 
+from collections import Counter
 from dataclasses import dataclass, field
 from pathlib import Path
 import json
 import re
+import unicodedata
 import subprocess
 import tempfile
 import xml.etree.ElementTree as ET
@@ -64,6 +66,111 @@ def words(pdf: Path, first: int, last: int) -> dict[int, tuple[float, float, lis
     return pages
 
 
+def _strokes(char: str) -> set[str]:
+    """Which half-strokes (up, down, left, right) a box-drawing character draws."""
+    name = unicodedata.name(char, '')
+    tokens = set(name.split())
+    found = {t.lower() for t in tokens & {'UP', 'DOWN', 'LEFT', 'RIGHT'}}
+    if 'VERTICAL' in tokens:
+        found |= {'up', 'down'}
+    if 'HORIZONTAL' in tokens:
+        found |= {'left', 'right'}
+    return found
+
+
+def rule_glyphs(items: list[Word], chars: list | None = None) -> tuple[list[Word], list[Rule]]:
+    """Some documents draw table rules as text (box-drawing characters ┃┯━…).
+    Turn those characters into the rules a ruled table would carry and keep the other characters as words.
+    `chars` are the page's characters (pdfplumber), which place each character of a word exactly; without
+    them a word's characters are spread evenly over its box."""
+    kept, rules = [], []
+    for word in items:
+        if not any('\u2500' <= c <= '\u257f' for c in word.text):
+            kept.append(word)
+            continue
+        inside = sorted((c for c in chars or () if word.x0 - .5 <= (c['x0'] + c['x1']) / 2 <= word.x1 + .5
+                         and word.y0 - 1 <= (c['top'] + c['bottom']) / 2 <= word.y1 + 1), key=lambda c: c['x0'])
+        if [c['text'] for c in inside] == list(word.text):
+            boxes = [(c['x0'], c['x1']) for c in inside]
+        else:
+            width = (word.x1 - word.x0) / len(word.text)
+            boxes = [(word.x0 + i * width, word.x0 + (i + 1) * width) for i in range(len(word.text))]
+        middle_y = (word.y0 + word.y1) / 2
+        text, start = '', 0
+        for index, char in enumerate(word.text):
+            x0, x1 = boxes[index]
+            middle_x = (x0 + x1) / 2
+            strokes = _strokes(char) if '\u2500' <= char <= '\u257f' else None
+            if strokes is None:
+                if not text:
+                    start = index
+                text += char
+                continue
+            if text:
+                kept.append(Word(text, boxes[start][0], word.y0, boxes[index - 1][1], word.y1))
+                text = ''
+            if strokes & {'up', 'down'}:
+                rules.append(Rule(middle_x, word.y0 if 'up' in strokes else middle_y,
+                                  middle_x, word.y1 if 'down' in strokes else middle_y))
+            if strokes & {'left', 'right'}:
+                rules.append(Rule(x0 if 'left' in strokes else middle_x, middle_y,
+                                  x1 if 'right' in strokes else middle_x, middle_y))
+        if text:
+            kept.append(Word(text, boxes[start][0], word.y0, boxes[-1][1], word.y1))
+    return kept, rules
+
+
+def drop_hidden_copies(pdf: Path, number: int, width: float, items: list[Word]) -> list[Word]:
+    """Some documents print every word twice, the second copy a fixed distance to the side and not visible
+    (a layer the page's clip hides): Poppler reads both. A page where a good share of the words have a twin at one
+    common distance is rendered, and in each half of the page the words of the side that shows no ink are dropped."""
+    by_place: dict[tuple, list[int]] = {}
+    for index, word in enumerate(items):
+        by_place.setdefault((word.text, round(word.y0)), []).append(index)
+    shifts = Counter()
+    for members in by_place.values():
+        for a in members:
+            for b in members:
+                gap = items[b].x0 - items[a].x0
+                if 5 < gap < 80 and abs(items[b].y0 - items[a].y0) < .3:
+                    shifts[round(gap, 1)] += 1
+    if not shifts:
+        return items
+    shift, count = shifts.most_common(1)[0]
+    if count < max(50, .35 * len(items)):  # a copy of nearly every word, not repeated figures of one column spacing
+        return items
+    pairs = []
+    for members in by_place.values():
+        for a in members:
+            for b in members:
+                if abs(items[b].x0 - items[a].x0 - shift) < .6 and abs(items[b].y0 - items[a].y0) < .3:
+                    pairs.append((a, b))
+    import numpy as np
+    from PIL import Image
+    with tempfile.TemporaryDirectory() as directory:
+        subprocess.run(['pdftoppm', '-f', str(number), '-l', str(number), '-r', '144', '-gray', '-png', str(pdf),
+                        str(Path(directory) / 'page')], check=True)
+        image = np.array(Image.open(next(Path(directory).glob('page*.png'))).convert('L'))
+    scale = image.shape[1] / width
+
+    def ink(word: Word) -> float:
+        region = image[int(word.y0 * scale):int(word.y1 * scale) + 1, int(word.x0 * scale):int(word.x1 * scale) + 1]
+        return float((region < 160).mean()) if region.size else 0.
+    votes = {False: Counter(), True: Counter()}  # right half: which copy shows ink
+    for a, b in pairs:
+        difference = ink(items[a]) - ink(items[b])
+        if abs(difference) > .06:
+            votes[items[a].x0 > width / 2]['first' if difference > 0 else 'second'] += 1
+    dropped = set()
+    for a, b in pairs:
+        vote = votes[items[a].x0 > width / 2]
+        if vote['first'] > 2 * vote['second']:
+            dropped.add(b)
+        elif vote['second'] > 2 * vote['first']:
+            dropped.add(a)
+    return [word for index, word in enumerate(items) if index not in dropped]
+
+
 def _dark(color) -> bool:
     if color is None:
         return False
@@ -93,7 +200,7 @@ def _segments(page) -> list[Rule]:
                 rules.append(Rule((x0 + x1) / 2, y0, (x0 + x1) / 2, y1))
             else:
                 rules.append(Rule(x0, (y0 + y1) / 2, x1, (y0 + y1) / 2))
-        elif rect.get('stroke') and _dark(rect.get('stroking_color')):
+        elif rect.get('stroke') and _dark(rect.get('stroking_color')) and not (w > .98 * page.width and h > .98 * page.height):  # a page-sized border is not a table's
             rules += [Rule(x0, y0, x1, y0), Rule(x0, y1, x1, y1), Rule(x0, y0, x0, y1), Rule(x1, y0, x1, y1)]
     return rules
 
@@ -142,7 +249,9 @@ def observe(pdf: Path, pages: list[int], cache: Path | None = None) -> list[Page
         for number in pages:
             width, height, items = poppler[number]
             page = document.pages[number - 1]
-            result.append(Page(number, width, height, items, merge_rules(_segments(page))))
+            items = drop_hidden_copies(pdf, number, width, items)
+            items, glyph_rules = rule_glyphs(items, page.chars)
+            result.append(Page(number, width, height, items, merge_rules(_segments(page) + glyph_rules)))
             page.close()
     if cache is not None:
         cache.parent.mkdir(parents=True, exist_ok=True)
