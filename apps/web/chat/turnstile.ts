@@ -24,15 +24,28 @@ async function loaded(timeoutMs = 15_000): Promise<Turnstile> {
 export async function mountTurnstile(el: HTMLElement, sitekey: string) {
   const turnstile = await loaded()
   let waiting: { resolve: (t: string) => void; reject: (e: Error) => void } | undefined
+  // 決着した後に遅れて届いた callback は無視する
+  const settle = (outcome: { token: string } | { error: string }) => {
+    const w = waiting
+    waiting = undefined
+    if (!w) return
+    if ('token' in outcome) w.resolve(outcome.token)
+    else w.reject(new Error(outcome.error))
+  }
   const id = turnstile.render(el, {
     sitekey,
     action: 'chat-start',
     execution: 'execute',
     appearance: 'interaction-only',
     language: 'ja',
-    callback: (token: string) => waiting?.resolve(token),
-    'error-callback': () => waiting?.reject(new Error('確認に失敗しました。もう一度送ってください')),
-    'expired-callback': () => turnstile.reset(id),
+    callback: (token: string) => settle({ token }),
+    'error-callback': () => settle({ error: '確認に失敗しました。もう一度送ってください' }),
+    // 操作を求める確認に時間内に答えなかった・token が期限切れになったときも、待っている送信を終わらせる
+    'timeout-callback': () => settle({ error: '確認の時間が切れました。もう一度送ってください' }),
+    'expired-callback': () => {
+      settle({ error: '確認の期限が切れました。もう一度送ってください' })
+      turnstile.reset(id)
+    },
   })
   return {
     token: () =>

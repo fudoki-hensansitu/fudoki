@@ -136,3 +136,10 @@ describe('/api/* の入口', () => {
     expect(res.status).toBe(413)
   })
 })
+
+test('上流の MCP が JSON でない応答を返したら 502', async () => {
+  const s = await issueSession(SECRET)
+  const API = { fetch: async () => new Response('<html>Bad Gateway</html>', { status: 502, headers: { 'Content-Type': 'text/html' } }) }
+  const res = await call(post('/api/mcp', { method: 'tools/call', params: { name: 'list_jurisdictions', arguments: {} } }, { Authorization: `Bearer ${s.token}` }), env({ API }))
+  expect(res.status).toBe(502)
+})

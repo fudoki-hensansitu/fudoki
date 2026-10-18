@@ -17,7 +17,8 @@ export function Composer({
   autoFocus,
   children,
 }: {
-  onSubmit: (text: string) => void | Promise<void>
+  /** false を返すか reject したら、送れなかったとして入力を戻す */
+  onSubmit: (text: string) => void | boolean | Promise<void | boolean>
   onStop?: () => void
   /** 応答の生成中（止められる） */
   busy?: boolean
@@ -35,7 +36,12 @@ export function Composer({
     if (!canSend) return
     const value = text.trim()
     setText('')
-    void onSubmit(value)
+    void Promise.resolve()
+      .then(() => onSubmit(value))
+      .then(
+        (ok) => ok === false && setText(value),
+        () => setText(value),
+      )
   }
   return (
     <form

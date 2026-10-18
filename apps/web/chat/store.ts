@@ -20,10 +20,12 @@ export function loadSession(id: string): StoredSession | undefined {
   }
 }
 
-export function saveSession(id: string, session: StoredSession) {
+/** 書けたら true。容量超過などでは履歴を残さない（会話の画面はそのまま続けられるが、入口からは移れない） */
+export function saveSession(id: string, session: StoredSession): boolean {
   try {
     sessionStorage.setItem(key(id), JSON.stringify(session))
+    return true
   } catch {
-    // 容量超過などでは履歴を残さない（画面の会話はそのまま続けられる）
+    return false
   }
 }

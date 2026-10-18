@@ -43,9 +43,15 @@ export async function callMcp(env: Env, ip: string, method: string, params: unkn
   })
   const text = await res.text()
   const data = /^data: (.*)$/m.exec(text)
-  const message = JSON.parse(data ? data[1]! : text) as { result?: unknown; error?: { message?: string } }
-  if (!res.ok || message.error || message.result === undefined)
-    throw new HttpError(502, 'UNAVAILABLE', message.error?.message ?? `風土記の API が応答しませんでした（${res.status}）`)
+  const unavailable = (message?: string) => new HttpError(502, 'UNAVAILABLE', message ?? `風土記の API が応答しませんでした（${res.status}）`)
+  let message: { result?: unknown; error?: { message?: string } }
+  try {
+    message = JSON.parse(data ? data[1]! : text)
+  } catch {
+    // 空の body や基盤の HTML のエラー頁など、JSON でない応答も上流の失敗として扱う
+    throw unavailable()
+  }
+  if (!res.ok || message.error || message.result === undefined) throw unavailable(message.error?.message)
   return message.result
 }
 

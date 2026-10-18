@@ -34,11 +34,15 @@ function Start({ sitekey }: { sitekey: string }) {
       const res = await fetch('/api/sessions', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ turnstileToken }) })
       const body = (await res.json()) as { id?: string; token?: string; expiresAt?: number; error?: { message: string } }
       if (!res.ok || !body.id || !body.token) throw new Error(body.error?.message ?? '会話を始められませんでした')
-      saveSession(body.id, { token: body.token, expiresAt: body.expiresAt ?? 0, pending: text })
+      // 移った先は sessionStorage から token と質問を読むので、書けなければ移らない
+      if (!saveSession(body.id, { token: body.token, expiresAt: body.expiresAt ?? 0, pending: text }))
+        throw new Error('このブラウザでは会話を保存できないため始められません（プライベートブラウズや保存の制限を確かめてください）')
       location.assign(`/s/${body.id}`)
+      return true
     } catch (e) {
       setPending(false)
       setError(e instanceof Error ? e.message : String(e))
+      return false
     }
   }
 
