@@ -404,6 +404,22 @@ sources:
       direction: expenditure
       table_id: general-expenditure
       kind: nodes
+  - name: j131091_2024_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '131091'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j131091_2024_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '131091'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
   - name: j131105_2024_settlement_elderly_medical_setsu_amounts
     meta:
       jurisdiction: '131105'
@@ -1540,6 +1556,22 @@ sources:
       direction: expenditure
       table_id: expenditure-settlement-1
       kind: nodes
+  - name: j132063_2025_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '132063'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j132063_2025_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '132063'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
   - name: j132063_2025_settlement_kouki_setsu_amounts
     meta:
       jurisdiction: '132063'
@@ -2115,6 +2147,22 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: general-expenditure-detail
+      kind: nodes
+  - name: j132195_2025_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '132195'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j132195_2025_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '132195'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
       kind: nodes
   - name: j132209_2024_settlement_general_expenditure_amounts
     meta:
@@ -3251,6 +3299,22 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: parking-expenditure
+      kind: nodes
+  - name: j133035_2024_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '133035'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j133035_2024_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '133035'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
       kind: nodes
   - name: j133035_2025_settlement_elderly_medical_expenditure_amounts
     meta:

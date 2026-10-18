@@ -183,6 +183,12 @@
               "const": true,
               "description": "Read every page in rule-bounded column tiles, with white padding. Explicit acquisition choice; omission keeps the full-page default."
             },
+            "rule_dark": {
+              "type": "integer",
+              "minimum": 129,
+              "maximum": 255,
+              "description": "Gray level below which a pixel counts as a rule when tiling by columns. A scan that prints its rules pale declares a higher level than the default 128."
+            },
             "regions": {
               "type": "array",
               "minItems": 1,

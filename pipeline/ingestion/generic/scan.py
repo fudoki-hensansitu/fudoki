@@ -54,6 +54,12 @@ def _layout(observed: list[Page], columns: dict | None, *, spread: dict | None =
         logical.ocr = True
         for band in logical.bands:
             band.header = header_path(band.header)
+        # A column header that spans two columns (`項目` over 項 and 目) is read once, over the second:
+        # the first column has no header of its own and takes the one beside it.
+        for band, following in reversed(list(zip(logical.bands, logical.bands[1:]))):
+            if not band.header and band.kind == 'label' and following.kind == 'label' and following.header:
+                band.header = following.header
+        for band in logical.bands:
             setting = (columns or {}).get('／'.join(band.header), {})
             band.kind = setting.get('kind', band.kind)
             band.axis_header = setting.get('axis_header', band.axis_header)
@@ -134,7 +140,8 @@ def _cell_words(pieces: list[Word], cuts: list[float]) -> list[Word]:
     return [Word(_text(w.text), w.x0, w.y0, w.x1, w.y1) for w in words if w.text.strip()]
 
 
-def short_rows(pdf: Path, detected: pdf_rules.PageRules, staircase: bool = False) -> pdf_rules.PageRules:
+def short_rows(pdf: Path, detected: pdf_rules.PageRules, dark: int = pdf_rules.DARK,
+               staircase: bool = False) -> pdf_rules.PageRules:
     """A continuous horizontal stroke joining two observed vertical rules closes their cell.
 
     The page-wide detector deliberately omits short strokes. Here both ends must meet
@@ -154,7 +161,7 @@ def short_rows(pdf: Path, detected: pdf_rules.PageRules, staircase: bool = False
         if top >= bottom or x1 <= x0:
             continue
         y0, y1 = max(0, round(top * scale)), min(image.shape[0], round(bottom * scale))
-        joined = np.all(image[y0:y1, x0:x1 + 1] < pdf_rules.DARK, axis=1)
+        joined = np.all(image[y0:y1, x0:x1 + 1] < dark, axis=1)
         runs.extend((y0 + int(y), x0, x1 + 1) for y in np.flatnonzero(joined))
     found = pdf_rules._merge(runs, 1 / scale)
     extra = [r for r in found if not any(abs(old.position - r.position) <= 1
@@ -173,7 +180,7 @@ def short_rows(pdf: Path, detected: pdf_rules.PageRules, staircase: bool = False
             if any(abs(r.position - x) <= 1 and r.start <= top + 1 and bottom - 1 <= r.end for r in vertical):
                 continue
             px, y0, y1 = round(x * scale), round(top * scale) + 1, round(bottom * scale)
-            if y1 > y0 and np.any(np.all(image[y0:y1, max(0, px - 1):px + 2] < pdf_rules.DARK, axis=0)):
+            if y1 > y0 and np.any(np.all(image[y0:y1, max(0, px - 1):px + 2] < dark, axis=0)):
                 columns.append(pdf_rules.Rule(x, top, bottom, vertical[0].thickness))
     return replace(detected, horizontal=tuple(horizontal),
                    vertical=tuple(sorted([*detected.vertical, *columns], key=lambda r: (r.position, r.start))))
@@ -366,7 +373,7 @@ def apply_name_corrections(observation: dict, rules: list[dict] | None) -> dict:
 def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = None,
           columns: dict | None = None, rules: dict | None = None, *, spread: dict | None = None,
           header: dict | None = None, code_corrections: list[dict] | None = None,
-          header_readings: list[dict] | None = None) -> list[Page]:
+          header_readings: list[dict] | None = None, rule_dark: int = pdf_rules.DARK) -> list[Page]:
     every = bool((header or {}).get('agree_all_frames'))
 
     def agreed(found):
@@ -374,7 +381,7 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
 
     @cache
     def detected(number):
-        return short_rows(pdf, (rules or {}).get(number) or pdf_rules.detect(pdf, number),
+        return short_rows(pdf, (rules or {}).get(number) or pdf_rules.detect(pdf, number, dark=rule_dark), rule_dark,
                           bool((header or {}).get('staircase')))
 
     code_rules, shrunk = [], []
@@ -482,10 +489,11 @@ def logical_units(logicals_: list) -> set[tuple]:
 
 def logicals(observation: dict, pdf: Path, corrections: AmountDictionary | None = None,
              columns: dict | None = None, *, recover: bool = False, recovered: list | None = None,
-             spread: dict | None = None, header: dict | None = None, code_corrections: list[dict] | None = None) -> list:
+             spread: dict | None = None, header: dict | None = None, code_corrections: list[dict] | None = None,
+             rule_dark: int = pdf_rules.DARK) -> list:
     """The logical pages of an OCR observation, marked as OCR so the builder's rules for misreads apply."""
     observed = pages(observation, pdf, corrections, columns, spread=spread, header=header,
-                     code_corrections=code_corrections)
+                     code_corrections=code_corrections, rule_dark=rule_dark)
     if recover:
         observed, fills = recover_codes(observed, pdf, columns, spread=spread, header=header)
         if recovered is not None:
@@ -745,7 +753,8 @@ def build_table(source: dict, options: dict, *, stop: bool = True, rules: dict |
     observation = apply_name_corrections(observation, by_observation)
     printed = pages(observation, Path(source['path']), amount_dictionary(options.get('amount_corrections', [])), columns, rules,
                     spread=spread, header=header, code_corrections=options.get('code_corrections'),
-                    header_readings=options.get('header_readings'))
+                    header_readings=options.get('header_readings'),
+                    rule_dark=((settings or {}).get('rules') or {}).get('dark', pdf_rules.DARK))
     printed = add_code_readings(printed, options.get('code_readings'))
     printed = add_code_readings(printed, [{**r, 'box': box} for r in options.get('amount_readings', ()) for box in r['boxes']],
                                 'amount', r'△?(0|[1-9][0-9]{0,2}(,[0-9]{3})*)')

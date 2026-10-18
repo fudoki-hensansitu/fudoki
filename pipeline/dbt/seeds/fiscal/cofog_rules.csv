@@ -346,3 +346,7 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 980,kind-fallback-single-parent-loan,,,母子父子寡婦福祉資金貸付,,,,,,,assigned,10.4,retained,目,,母子父子寡婦福祉資金の貸付の事務を家族及び児童 10.4 に分類する。貸付金そのものは先の規則が対象外にする（例: 281000）。,false
 981,kind-fallback-redevelopment,,,市街地再開発,,,,,,,assigned,06.2,retained,目,,市街地再開発の事業会計を地域開発 06.2 に分類する（例: 281000 市街地再開発事業費）。,false
 982,kind-fallback-debt,,,公債費,,,,,,,assigned,01.7,retained,目,,公債費の特別会計で元金・利子以外の目（公債諸費など発行・償還の事務）を公債取引 01.7 に分類する（keyword-debt-cost と同じ。例: 281000 公債費）。元金は先の規則が対象外にする。,false
+1326,vocab-funeral-hall,,一般会計,,,,,聖苑,contains,,assigned,06.2,retained,目,,聖苑（火葬場・葬祭場）の運営を霊園・斎場の規則と同じく地域アメニティに寄せる。境界の判断のため暫定とする。,true
+1327,keyword-health-medical,,一般会計,,衛生費,,,保健医療,contains,,assigned,07,retained,目,,衛生費に属する保健医療を保健に分類する。名称からの判断で定義の確認が要るため暫定とする。,true
+1328,keyword-school-management-general,,一般会計,,教育費,学校教育費,,学校管理,contains,,assigned,09,retained,目,,学校教育費に属する学校管理は学校段階を名称から分けられないため COFOG 09 教育の division 止まりで暫定とする。,true
+1329,keyword-nature-conservation,,一般会計,,,,,自然保護,contains,,assigned,05.4,retained,目,,自然保護（生物多様性・景観の保護）を COFOG 05.4 に分類する。,false

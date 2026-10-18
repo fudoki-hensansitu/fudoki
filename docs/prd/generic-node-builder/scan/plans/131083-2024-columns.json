@@ -1,0 +1,337 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "131083",
+    "fiscal_year": 2024,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "scan-1",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "eb1e83d3a3d62b08c35f2541011d19a1236a6bc7d2d685fdfe10625c79f0ece2"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "scan-1",
+        "partial": true
+      },
+      "ocr_inputs": [
+        {
+          "id": "scan-1-ocr-columns-1",
+          "origin_sha256": "eb1e83d3a3d62b08c35f2541011d19a1236a6bc7d2d685fdfe10625c79f0ece2",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              16,
+              17,
+              18
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "2c195313997460c603104f3792f4f276477b6fa92243a17f988d018e22eeb671",
+          "bytes": 644150
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "scan-1"
+        }
+      ]
+    },
+    {
+      "id": "scan-2",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "734c41222d2704fd0b570a91c8bb7de8552795e51b3444e8c5e7b3a2f130dba3"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "scan-2",
+        "partial": true
+      },
+      "ocr_inputs": [
+        {
+          "id": "scan-2-ocr-columns-1",
+          "origin_sha256": "734c41222d2704fd0b570a91c8bb7de8552795e51b3444e8c5e7b3a2f130dba3",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              85,
+              86,
+              87,
+              88,
+              89,
+              90,
+              91,
+              92,
+              93,
+              94
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "385d5d2cc25a207d89409a7cb6e1493163194f5e1ccacd14fe1f03a34c46ec09",
+          "bytes": 1402326
+        },
+        {
+          "id": "scan-2-ocr-columns-2",
+          "origin_sha256": "734c41222d2704fd0b570a91c8bb7de8552795e51b3444e8c5e7b3a2f130dba3",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              95,
+              96,
+              97,
+              98,
+              99,
+              100,
+              101,
+              102,
+              103,
+              104
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "c245a67518b035a553a19db863866585373a48e652ca2f3441ac5d31373cb5eb",
+          "bytes": 1523866
+        },
+        {
+          "id": "scan-2-ocr-columns-3",
+          "origin_sha256": "734c41222d2704fd0b570a91c8bb7de8552795e51b3444e8c5e7b3a2f130dba3",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              105,
+              106,
+              107,
+              108,
+              109,
+              110,
+              111,
+              112,
+              113,
+              114
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "b4a0f7142de483f87b35ef38edf51047561c9fdc634a609cb04858982207c9aa",
+          "bytes": 1509701
+        },
+        {
+          "id": "scan-2-ocr-columns-4",
+          "origin_sha256": "734c41222d2704fd0b570a91c8bb7de8552795e51b3444e8c5e7b3a2f130dba3",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              115,
+              116,
+              117,
+              118,
+              119,
+              120,
+              121,
+              122,
+              123,
+              124
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "a3098a1af7c4a471cce32644bfedc94de7cfec7a057c2853b3939c60bc807aab",
+          "bytes": 1624689
+        },
+        {
+          "id": "scan-2-ocr-columns-5",
+          "origin_sha256": "734c41222d2704fd0b570a91c8bb7de8552795e51b3444e8c5e7b3a2f130dba3",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              125,
+              126,
+              127,
+              128,
+              129,
+              130,
+              131,
+              132,
+              133,
+              134
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "f00bf3e24d3a6f6c48752bd3f02ab3ba81332348fc650508ae4235b7959b308c",
+          "bytes": 1457007
+        },
+        {
+          "id": "scan-2-ocr-columns-6",
+          "origin_sha256": "734c41222d2704fd0b570a91c8bb7de8552795e51b3444e8c5e7b3a2f130dba3",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              135,
+              136,
+              137,
+              138,
+              139,
+              140,
+              141,
+              142,
+              143,
+              144
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "8c824fc9ca29711a6a614db08150cf97a50c46dce159037f90869120c7b977f3",
+          "bytes": 1516340
+        },
+        {
+          "id": "scan-2-ocr-columns-7",
+          "origin_sha256": "734c41222d2704fd0b570a91c8bb7de8552795e51b3444e8c5e7b3a2f130dba3",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              145,
+              146,
+              147,
+              148,
+              149,
+              150,
+              151,
+              152,
+              153,
+              154
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "f7d5d5297c41676383fb43700874697632e6b739a9630b093c3111815609207d",
+          "bytes": 1438165
+        },
+        {
+          "id": "scan-2-ocr-columns-8",
+          "origin_sha256": "734c41222d2704fd0b570a91c8bb7de8552795e51b3444e8c5e7b3a2f130dba3",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              155,
+              156,
+              157,
+              158,
+              159,
+              160,
+              161,
+              162,
+              163,
+              164
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "9701ca0fe947c0bcf0b15aa21b3abcb2cb0fdeb33e3ad0d0572d55032be659e3",
+          "bytes": 1548906
+        },
+        {
+          "id": "scan-2-ocr-columns-9",
+          "origin_sha256": "734c41222d2704fd0b570a91c8bb7de8552795e51b3444e8c5e7b3a2f130dba3",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              165,
+              166,
+              167,
+              168,
+              169,
+              170,
+              171,
+              172,
+              173,
+              174
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "60a78716d546ece934bfbaca26f164004918629101b3d8bcf03262d89ba76c95",
+          "bytes": 1354104
+        },
+        {
+          "id": "scan-2-ocr-columns-10",
+          "origin_sha256": "734c41222d2704fd0b570a91c8bb7de8552795e51b3444e8c5e7b3a2f130dba3",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              175,
+              176,
+              177,
+              178,
+              179,
+              180,
+              181,
+              182,
+              183,
+              184
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "983082f2d1f94b0cbaf494366c15180182fe22290f2aadfab839d0a7a879cfc0",
+          "bytes": 1525776
+        },
+        {
+          "id": "scan-2-ocr-columns-11",
+          "origin_sha256": "734c41222d2704fd0b570a91c8bb7de8552795e51b3444e8c5e7b3a2f130dba3",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              185,
+              186,
+              187,
+              188,
+              189,
+              190,
+              191,
+              192,
+              193,
+              194
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "3aa940e76c9fe4cab0971267f8f0af186d54a424c4dc7c956466792ed9a7774a",
+          "bytes": 1093665
+        },
+        {
+          "id": "scan-2-ocr-columns-12",
+          "origin_sha256": "734c41222d2704fd0b570a91c8bb7de8552795e51b3444e8c5e7b3a2f130dba3",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              195
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "cb71af334a2d8ac266c7a6df7606ad41d9a7a360ec527e93583b44231612ab1c",
+          "bytes": 43583
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "scan-2"
+        }
+      ]
+    }
+  ],
+  "tables": []
+}

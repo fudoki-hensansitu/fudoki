@@ -25,21 +25,22 @@ import re
 import unicodedata
 
 from ingestion.generic.notes import kind_of, reads_as_note
-from ingestion.lib.node_tables import phase_dictionary
+from ingestion.lib.node_tables import amount_phase, phase_dictionary
 from shared.amount import number
-from ingestion.generic.layout import (SUBJECT_LEVELS, UNIT_CELL, Band, Glyph, Logical, is_amount, lines, normalize,
-                                      runs, text)
+from ingestion.generic.layout import (SIGNS, SUBJECT_LEVELS, UNIT_CELL, Band, Glyph, Logical, is_amount, kind_heading, lines,
+                                      normalize, runs, text)
 
 # A leading item number; the separator after it (`1.議会費`, `1．`) is not part of the name.
-CODE = re.compile(r'^[(（]?([0-9０-９]{1,4})[)）]?(?:[.．](?=[^0-9０-９]))?(?=\D|$)')
+CODE = re.compile(r'^[(（]?([0-9０-９]{1,4})[)）]?(?:[.．](?=[^0-9０-９]|$))?(?=\D|$)')
 BARE_CODE = re.compile(r'^[0-9０-９]{1,4}$')
 TRANSFER = re.compile(r'(流用|充用|充当|予備費支出|予備費充当|予備費[よか]り|第[0-9０-９]+節[へか]|^第[0-9０-９]+[款項目節]|^[○〇●]?同[款項目])')
 # A kind word printed above an amount inside an amount column's cell (a stacked carry-over column).
 STACKED_KIND = re.compile(r'(翌年度)?(繰越明許費?|事故繰越し?|継続費逓次繰越|不用額)')
 # A total row ends in 合計・総計 (`歳出合計`); a name that contains the letters (`長期総合計画に要する経費`) is not one.
+WIDE_DIGITS = re.compile(r'[０-９]+')
 TOTAL = re.compile(r'(合計|総計)$|^計$')
 # A reserve's remark that names where it went: `…へ`, `…へ充当`.
-RESERVE_DESTINATION = re.compile(r'へ(?:予備費)?(?:充当|充用)?$')
+RESERVE_DESTINATION = re.compile(r'へ(?:予備費)?(?:充当|充用|補充)?$')
 
 
 @dataclass
@@ -294,7 +295,7 @@ def _cell(band: Band, y: float) -> tuple[float, float]:
     return (above[-1] if above else band.body_top, below[0] if below else band.body_bottom)
 
 
-def _split_line(line: list[Glyph], amount_brackets: bool = False) -> tuple[list[Glyph], list[list[Glyph]]]:
+def _split_line(line: list[Glyph], amount_brackets: bool = False, bare_amounts: bool = False) -> tuple[list[Glyph], list[list[Glyph]]]:
     parts = runs(line)
     if amount_brackets and normalize(text(line)).endswith(')'):
         for start in range(len(parts) - 1, -1, -1):
@@ -320,8 +321,14 @@ def _split_line(line: list[Glyph], amount_brackets: bool = False) -> tuple[list[
     money = []
     while parts and is_amount(text(parts[-1])) and len(parts) > 1:
         money.insert(0, parts.pop())
+    # Full-width digits without a comma before a half-width grouped amount are part of the name (`…東京２０２４ 1,619,271`).
+    while len(money) > 1 and WIDE_DIGITS.fullmatch(text(money[0])) and GROUPED.fullmatch(normalize(text(money[-1]))) \
+            and not WIDE_DIGITS.search(text(money[-1])):
+        parts.append(money.pop(0))
     if len(parts) == 1 and normalize(text(parts[0])) == '0':
         return [], [parts[0]]  # a line that is only `0` is a printed zero amount: no item is numbered 0
+    if bare_amounts and len(parts) == 1 and re.fullmatch(r'[0-9]{1,3}', normalize(text(parts[0]))):
+        return [], [parts[0]]  # an axis whose items carry no number: a line that is only digits is the amount of the name above
     if len(parts) == 1 and GROUPED.fullmatch(normalize(text(parts[0]))):
         # A line that is only a grouped amount (`10,000` under a long name) is the
         # amount of the item above, not an item numbered 10. A bare `10` stays a label.
@@ -425,11 +432,12 @@ def strip_ancestor_codes(group: Group) -> list[Glyph]:
     return removed
 
 
-def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: bool = False) -> list[tuple]:
+def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: bool = False,
+               bare_amounts: bool = False) -> list[tuple]:
     """Printed lines of a label group as (label glyphs, amount runs, code, name)."""
     entries = []
     for line in lines([w for band in group.bands for w in band.words]):
-        label, money = _split_line(line, amount_brackets)
+        label, money = _split_line(line, amount_brackets, bare_amounts)
         line_text = normalize(text(label))
         code, name = _split_code(line_text)
         raw_text = text(label).strip()
@@ -497,7 +505,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
 
     `roles` (variant B) replaces the geometric decisions for codeless lines.
     """
-    entries = entries_of(group, margins, amount_brackets)
+    entries = entries_of(group, margins, amount_brackets, bool((settings or {}).get('bare_amounts')))
     settings = settings or {}
     kind_names = bool(settings.get('names_end_with_kind_words'))
     remainder = bool(settings.get('bracketed_remainder'))
@@ -1111,6 +1119,13 @@ def owner(amount: list[Glyph], band: Band, ordered: list[Group], found: dict[int
                  and not any(centre(i.lines[-1]) < rule < y for rule in band.rows)]
         if above:
             return min(above, key=lambda i: y - centre(i.lines[-1]))
+    if band.inline:
+        # Kind lines stacked in the cell of the item that opens them (`計` / `当初` / `補正` …, one line each): the
+        # nearest item above in the nearest label group, within the height of the stack.
+        for group in left:
+            stacked = [i for i in found[id(group)] if i.role in roles and 0 <= y - i.anchor <= 6 * height]
+            if stacked:
+                return max(stacked, key=lambda i: i.anchor)
     return None
 
 
@@ -1446,6 +1461,57 @@ def layout_name_start(item: Item, hang_chars: int | None = None) -> float:
     return item.indent
 
 
+def sum_levels(items: list[Item]) -> None:
+    """A subtotal printed in brackets (`通信運搬費 (1,568)`) heads the items that follow it when they add up to it
+    exactly; those items are one level down and everything else is level one. Indentation cannot say it: the
+    subtotal's items and the items of a 節 with no subtotal start at the same place. The items may go on
+    on the next page, so `items` is the whole axis in reading order."""
+    value = lambda item: number(normalize(text(item.amounts[0][1])).strip('()（）')) if item.amounts else None
+    bracketed = lambda item: bool(item.amounts) and text(item.amounts[0][1]).strip().startswith(('(', '（'))
+    nodes = [item for item in items if item.role == 'node' and item.level is None]
+    for item in nodes:
+        item.level = 0
+    for index, item in enumerate(nodes):
+        total = value(item) if bracketed(item) else None
+        if not total:
+            continue
+        taken, running = [], 0
+        for follower in nodes[index + 1:]:
+            if bracketed(follower) or value(follower) is None or running + value(follower) > total:
+                break
+            if follower.amounts:
+                taken.append(follower)
+                running += value(follower)
+            if running == total:
+                break
+        if running == total:
+            for follower in taken:
+                follower.level = 1
+
+
+def with_empty_rows(items: list[Item], group: Group, logical: Logical, declared: dict) -> list[Item]:
+    """A row the rules draw that prints amounts but no name in this axis is an item named by another column of the
+    row (`rows_from`: a 事業 printed for a second 主管課 has no 事業名, its 主管課 names it)."""
+    bands = {'／'.join(b.header): b for b in logical.bands}
+    named, paid = bands.get(declared['name']), bands.get(declared['amount'])
+    if named is None or paid is None:
+        return items
+    band, added = group.bands[0], []
+    for top, bottom in zip(band.rows, band.rows[1:]):
+        if any(top - .5 <= i.anchor <= bottom + .5 for i in items):
+            continue
+        centre = lambda g: (g.y0 + g.y1) / 2
+        if not any(top < centre(g) < bottom and any(c.isdigit() for c in g.text) for g in paid.words):
+            continue
+        words = [g for g in named.words if top < centre(g) < bottom]
+        if words:
+            printed = lines(words)
+            top = min(printed[0], key=lambda g: g.y0)  # a name printed downwards is one tall word: its row is where it starts
+            added.append(Item(group, words[0].page, printed, None, ''.join(g.text for line in printed for g in line), band.x0,
+                              fixed_anchor=top.y0 + (top.y1 - top.y0) / (2 * len(top.text))))
+    return sorted([*items, *added], key=lambda i: i.anchor)
+
+
 def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int],
                  subject_starts: tuple[float, ...] = ()) -> list[Item]:
     """Apply declared hints after money ownership is known, before learning breakdown levels."""
@@ -1456,6 +1522,9 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
     note_kinds = {normalize(prefix): kind for prefix, kind in settings.get('note_kinds', {}).items()}
     prefixes = note_prefixes(settings)
     for item in items:
+        if settings.get('rows') and item.code is not None:
+            # No item of this axis is numbered: a name that begins with a digit (`３・４・１６号線…`) is a name.
+            item.name, item.code = ''.join(g.text for line in item.lines for g in line), None
         if settings.get('wrap'):
             item.indent = layout_name_start(item, settings.get('hang_chars'))
         raw = normalize(text(item.lines[0]))
@@ -1475,6 +1544,13 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
             else:
                 item.level = marks[mark] - 1
         previous = result[-1] if result else None
+        if (settings.get('rows') and previous and item.code is None and mark is None and not note
+                and item.role == previous.role == 'node' and item.page == previous.page and not item.amounts
+                and _cell(item.group.bands[0], previous.anchor) == _cell(item.group.bands[0], item.anchor)):
+            # The items of this axis begin at the rows the rules draw: every line of a row is its name.
+            previous.name += item.name
+            previous.lines += item.lines
+            continue
         if (previous and not previous.amounts and id(previous) not in column_amount_items and item.code is None and mark is None and not note
                 and item.role in ('node', 'note') and previous.role in ('node', 'note', 'annotation')
                 and (settings.get('wrap') == 'amount_on_last_line' or normalize(text(previous.lines[0])).startswith(prefixes))
@@ -1491,6 +1567,9 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
             previous.kinds += item.kinds
             continue
         result.append(item)
+    if settings.get('rows'):
+        for item in result:  # one item per row, all siblings: no level is read from where the name starts
+            item.indent = item.group.bands[0].x0
     fitted = settings.get('fitted_names')
     columned: list[tuple[Item, Item]] = []
     if settings.get('name_columns'):
@@ -1518,7 +1597,7 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
 
 
 def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: str | dict = 'indent',
-          layout: dict | None = None) -> Built:
+          layout: dict | None = None, codes_right: bool = False) -> Built:
     """`detail` is one breakdown pattern for every axis, or a mapping axis → pattern."""
     """`judge(lines) -> {line id: (role, confidence)}` replaces the codeless-line rules (variant B)."""
     shapes: dict[str, list[str]] = {}  # numbering shapes per breakdown axis, in order of first use
@@ -1636,6 +1715,19 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                         code_starts[item.level].append(item.glyphs[0].x0)
                         if len(item.glyphs[0].text) == 1:
                             digit_widths[item.level].append(item.glyphs[0].x1 - item.glyphs[0].x0)
+    # Codes set right across the whole subject column (a 款 `5` and `10` of nested boxes): a two-digit code starts
+    # one digit before a one-digit code of its level, so it is read at the position the one-digit codes start.
+    ones = [item.glyphs[0] for _, ordered, found in all_items for group in ordered
+            if group.subject and group.mode == 'indent' for item in found[id(group)]
+            if item.code is not None and item.role == 'node' and item.glyphs and re.fullmatch(r'[0-9]', item.glyphs[0].text)]
+    twos = [item.glyphs[0] for _, ordered, found in all_items for group in ordered
+            if group.subject and group.mode == 'indent' for item in found[id(group)]
+            if item.code is not None and item.role == 'node' and item.glyphs and re.fullmatch(r'[0-9]{2}', item.glyphs[0].text)]
+    one_width = sorted(g.x1 - g.x0 for g in ones)[len(ones) // 2] if ones else 0
+    starts_of_ones = [g.x0 for g in ones]
+    set_right = sum(any(abs(g.x0 + one_width - x) <= 1 for x in starts_of_ones) for g in twos)
+    set_left = sum(any(abs(g.x0 - x) <= 1 for x in starts_of_ones) for g in twos)
+    codes_set_right = codes_right and one_width > 0 and set_right >= 3 and set_right > 2 * set_left
     right_set = set()
     for level, xs in code_starts.items():
         common = [x for x, n in Counter(round(x) for x in xs).items() if n >= 3]  # a stray start is not a column
@@ -1669,14 +1761,16 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     item.indent = min(g.x0 for g in item.glyphs) if logical.ocr else item.glyphs[0].x0
                     band = group.bands[item.level] if 0 <= item.level < len(group.bands) else None
                     narrow = len(group.bands) >= 3 and all(b.x1 - b.x0 < 20 for b in group.bands[:-1])
-                    if band is not None and item.code is not None and narrow and item.level in right_set:
+                    if codes_set_right and item.code is not None and re.fullmatch(r'[0-9]{1,2}', item.glyphs[0].text):
+                        item.indent += one_width if len(item.glyphs[0].text) == 2 else 0
+                    elif band is not None and item.code is not None and narrow and item.level in right_set:
                         # A staircase of narrow level columns with the codes set right: the column is the level,
                         # not where the digits start (`5` and `10` of one 目 start 5pt apart).
                         item.indent = band.x0
             found[id(group)] = kept
     # A subject name cut at the foot of a page continues without a number or amount at the next page's
     # start (`8 市立社会福祉` / `センター費`). Keep its first-page position; a box cannot span two pages.
-    for (_, ordered, found), (_, next_ordered, next_found) in zip(all_items, all_items[1:]):
+    for position, ((_, ordered, found), (_, next_ordered, next_found)) in enumerate(zip(all_items, all_items[1:])):
         for group in ordered:
             tail = found[id(group)][-1] if group.subject and found[id(group)] else None
             if tail is None or tail.role != 'node' or tail.code is None or not tail.name:
@@ -1684,11 +1778,23 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             tail_band = group.bands[tail.level or 0]
             if abs(_cell(tail_band, tail.anchor)[1] - tail_band.body_bottom) > .5:
                 continue
+            # The headings open at the foot of the page: a name-only line of the next page that repeats one of them
+            # (`総務管理費` / `一般管理費` printed again, without their codes) is a repeated heading, not the tail's name.
+            opened, shallowest = [tail.name], tail.indent
+            earlier = [i for _, o, f in all_items[:position + 1] for g in o if g.subject and g.axis == group.axis
+                       for i in f[id(g)][:-1 if f is found else None]]
+            for item in reversed(earlier):
+                if item.role == 'node' and item.code is not None and item.indent < shallowest - 3:
+                    opened.append(item.name)
+                    shallowest = item.indent
             for other in next_ordered:
                 if not other.subject or not next_found[id(other)]:
                     continue
                 previous_head = None
                 for head in list(next_found[id(other)]):
+                    # The open headings printed again, outermost first, as one name or several lines.
+                    if any(same_heading(''.join(reversed(opened[:count])), head.name) for count in range(1, len(opened) + 1)):
+                        break
                     if (head.code is not None or head.amounts or id(head) in column_amount_items
                             or head.role != 'node' or not head.name or TOTAL.search(head.name)
                             or not 0 < head.page - tail.page <= 2
@@ -1728,6 +1834,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                                        for i in found[id(g)] if i.role == 'node'}))
         for group in ordered:
             if not group.subject:
+                if layout and group.axis in layout and layout[group.axis].get('rows_from'):
+                    found[id(group)] = with_empty_rows(found[id(group)], group, logical, layout[group.axis]['rows_from'])
                 if layout and group.axis in layout:
                     found[id(group)] = apply_layout(found[id(group)], layout[group.axis], column_amount_items,
                                                    subject_starts)
@@ -1774,8 +1882,12 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 steps = (start(item) - item.group.x0 - origin) / (chars * height)
                 item.level = floor(steps + .4)
     # Subject levels by indentation, learned over the document (pattern indent).
-    starts = sorted(i.indent for _, ordered, found in all_items for g in ordered if g.subject and g.mode == 'indent'
-                    for i in found[id(g)] if i.role == 'node')
+    nodes_ = [i for _, ordered, found in all_items for g in ordered if g.subject and g.mode == 'indent'
+              for i in found[id(g)] if i.role == 'node']
+    # Where the codes start decide the levels; the names a continuation page prints again without their codes
+    # sit elsewhere (their box is open, its code is not printed) and are no level of their own.
+    coded_ = [i for i in nodes_ if i.code is not None]
+    starts = sorted(i.indent for i in (coded_ if len(coded_) >= max(3, len(nodes_) // 2) else nodes_))
     subject_levels: list[list[float]] = []
     for value in starts:
         if subject_levels and value - subject_levels[-1][-1] <= 3:
@@ -1848,6 +1960,10 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     continue
                 kept.append(item)
             found[id(group)] = kept
+    for axis, hints in (layout or {}).items():
+        if hints.get('sum_levels'):
+            sum_levels([item for _, ordered, found in all_items for group in ordered
+                        if not group.subject and group.axis == axis for item in found[id(group)]])
     # Pattern position: a level is a numbering shape at one aligned position, or the
     # indentation of codeless lines; levels rank by where their lines start.
     position_rank, position_key = position_levels(all_items, levels, depth_of)
@@ -1865,6 +1981,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
         subject_depth = max((g.levels or len(g.bands) for g in ordered if g.subject), default=3) \
             + any(titled and title_shift(g) for g in ordered if g.subject)
         row = None  # (subject item, top, bottom) of the latest subject row
+        opening = True  # no subject with a code has begun on this page yet
         for _, _, item in events:
             if not item.group.subject and item.role in ('node', 'note') and row is not None \
                     and (row[0].depth < subject_depth or item.code is None) \
@@ -1903,6 +2020,17 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                               'amounts': [text(r) for _, r in item.amounts]})
                 continue
             if item.group.subject:
+                if item.code is not None and item.role == 'node':
+                    opening = False
+                elif opening and item.code is None and item.name and not item.amounts and item.role == 'node':
+                    # A continuation page opens by printing the open headings again, names only (`総務管理費` /
+                    # `一般管理費`, without their codes): the open heading of that name, not a new subject.
+                    # (one line each, or all in one item when the page sets them close).
+                    again = next((stack[-1] for count in range(1, len(stack) + 1)
+                                  if same_heading(''.join(s.name for s in stack[-count:]), item.name)), None)
+                    if again is not None:
+                        item.key, item.role = again.key, 'repeat'
+                        continue
                 depth = 1 if item.level == -1 else item.level + 1 + (titled and title_shift(item.group))
                 previous = stack[depth - 1] if len(stack) >= depth else None
                 if previous is None:  # bands that skip a level (a name band between the codes): find the open one by band
@@ -1979,6 +2107,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     continue
                 sign = None
                 stacked = None  # (kind word, rule-bounded cell) of the last kind word printed in this column
+                waiting = None  # (heading, y) of a kind word alone on its line in an inline-kind band
                 previous = None  # (item, rule-bounded cell) of the last amount this column gave to an item
                 for line in lines(band.words):
                     printed = {}  # the amount of a word that runs on into text, by the word it was cut from
@@ -1990,6 +2119,10 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                         sign = money[0]  # a minus sign printed above its number
                         continue
                     if not money:
+                        if band.inline and line and kind_heading(normalize(text(line)), band.header[-1]) is not None:
+                            # A kind word that fills its line (`継続費及び繰越事業費繰越額`): its amount is the next line's.
+                            waiting = (kind_heading(normalize(text(line)), band.header[-1]), sum((g.y0 + g.y1) / 2 for g in line) / len(line))
+                            continue
                         # A kind word inside an amount cell (`継続費逓次繰越` / `73,871,000` / `繰越明許費` /
                         # `102,288,855`): the amount printed below it, in the same cell, carries it (132241).
                         word = normalize(text(line))
@@ -2024,6 +2157,20 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                             unowned_runs.append((record, money))
                         continue
                     header = '／'.join(band.header)
+                    if band.inline:
+                        word = normalize(''.join(g.text for g in line if g not in money and g.text not in SIGNS))
+                        kind = kind_heading(word, band.header[-1]) if word else None
+                        if kind is None and band.inline_free and word:
+                            kind = word  # declared inline: the printed word is the last word of the heading
+                        if kind is None and not word and waiting is not None \
+                                and 0 < sum((g.y0 + g.y1) / 2 for g in money) / len(money) - waiting[1] <= 2.2 * (money[0].y1 - money[0].y0):
+                            kind = waiting[0]
+                        waiting = None
+                        if kind is None:
+                            unowned.append({'kind': 'amount without kind', 'page': money[0].page, 'text': candidate,
+                                            'header': header})
+                            continue
+                        header = '／'.join((band.header if band.inline_free else band.header[:-1]) + (kind,))
                     y = sum((g.y0 + g.y1) / 2 for g in money) / len(money)
                     if stacked is not None and stacked[1] == _cell(band, y):
                         header = f'{header}／{stacked[0]}'
@@ -2082,12 +2229,23 @@ def _bbox(glyphs: list[Glyph]) -> tuple[float, float, float, float]:
     return (min(b[0] for b in boxes), min(b[1] for b in boxes), max(b[2] for b in boxes), max(b[3] for b in boxes))
 
 
+def header_phase(header: str) -> str | None:
+    """The amount phase of the longest suffix of a printed header path that the shared dictionary knows."""
+    parts = header.split('／')
+    for start in range(len(parts)):
+        phase = amount_phase('／'.join(parts[start:]), 'settlement', '科目', None)
+        if phase:
+            return phase
+    return None
+
+
 def repeated_parent_rows(nodes: list[dict], amounts: list[dict], unowned: list[dict],
                          runs: list[tuple[dict, list[Glyph]]]) -> list[Glyph]:
     """The unowned amount rows that print the amounts of the account row above them again.
 
     A row has no name and no row of its own, and each of its printed amounts is equal, to the yen and in the
-    same column, to the amount of the nearest 款・項・目 row above it on the page. One amount that differs keeps
+    same column (or a column of the same amount phase: a 節 column's `金額` and the account's `計` both
+    stand for the 予算現額), to the amount of the nearest 款・項・目 row above it on the page. One amount that differs keeps
     the whole row unowned (the check stops). The row is recorded, not dropped: its glyphs become an excluded
     region of kind `親の繰り返し`.
     """
@@ -2102,8 +2260,11 @@ def repeated_parent_rows(nodes: list[dict], amounts: list[dict], unowned: list[d
     for (page, _), row in rows.items():
         matched = []
         for record, run, y0 in row:
+            phase = header_phase(record['header'])
             above = [a for a in amounts if a['node_key'] in subject and a['physical_page'] == page
-                     and a['header_path'] == record['header'] and a['y1'] is not None and a['y1'] <= y0 + 1]
+                     and (a['header_path'] == record['header']
+                          or (phase is not None and header_phase(a['header_path']) == phase))
+                     and a['y1'] is not None and a['y1'] <= y0 + 1]
             nearest = max(above, key=lambda a: a['y1'], default=None)
             same = nearest is not None and normalize(nearest['amount_text']) == normalize(record['text'])
             matched.append(same)
