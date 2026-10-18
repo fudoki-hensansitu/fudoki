@@ -24016,7 +24016,7 @@
     {
       "table_id": "general-expenditure-detail",
       "conversion_id": "general",
-      "input_fingerprint": "7e1f14a997d8cb69502cdee2196a22f0f511fc9e7bd4cf325f4ace926ad73d1b",
+      "input_fingerprint": "80fadd26f98c382795865cbc79182bf2e0b3aa29383cd3fdcf0e9ed12a72e71e",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
