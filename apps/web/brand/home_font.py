@@ -14,6 +14,7 @@ import urllib.request
 from pathlib import Path
 
 from fontTools import subset
+from fontTools.ttLib import TTFont
 
 HERE = Path(__file__).resolve().parent
 WEB = HERE.parent
@@ -47,9 +48,31 @@ def page_text(page: str) -> str:
     return html.unescape(re.sub(r"<[^>]+>", "", page))
 
 
+def verify_subset(chars: list[str]) -> None:
+    """配信している明朝が、今のホームの字をすべて含むか確かめる。
+
+    subset はホームの字から作るので、`build:font` を回し忘れると新しい字だけ閲覧者の
+    OS の明朝に落ちる（`build:web` も CI も作り直さない）。ここで diff で気づけるようにする。
+    """
+    path = WEB / "public/fonts/mincho.woff2"
+    if not path.exists():
+        raise SystemExit(f"配信フォントが無い: {path.relative_to(ROOT)}。`bun run --cwd apps/web build:font` を実行する")
+    cmap = set(TTFont(path).getBestCmap())
+    missing = [c for c in chars if ord(c) not in cmap]
+    if missing:
+        raise SystemExit(
+            f"ホームの字 {len(missing)} 字が配信フォントに無い: {''.join(missing)}\n"
+            "`bun run --cwd apps/web build:font` を実行して public/fonts/mincho.woff2 と font.generated.ts を作り直す"
+        )
+    print(f"ok  {len(chars)} 字  {path.relative_to(ROOT)}")
+
+
 def main() -> None:
     text = page_text(sys.stdin.read())
     chars = sorted({c for c in text if not c.isspace()} | set("0123456789"))
+    if "--check" in sys.argv[1:]:
+        verify_subset(chars)
+        return
     options = subset.Options()
     options.flavor = "woff2"
     options.layout_features = ["palt", "kern", "liga"]

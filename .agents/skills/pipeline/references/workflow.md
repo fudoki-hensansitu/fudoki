@@ -19,6 +19,10 @@
 - 原典はsource_selection、表は対象・方向別のingestion領域に保存し、保存先と原典参照は対象別JSONに置く。独立したprovenanceファイルは作らない。
 - C（dbt）は対象別JSONと保存済みParquetを読む。入口は `dbt:build`（[dbt](dbt.md)）。
 
+## 重い実行の直列化と待ち合わせ
+
+OCR・全表の変換・`ingestion:refresh --remote` は機械（8コア16GB）を占有する。同時に走らせず、`.build/ingestion-refresh/report.json` のような出力の出現まで待つ。エージェントのサンドボックスでは `ps` が `operation not permitted` で終わり、待ち合わせが静かに空振りする（1.5時間以上を消費した実測がある）。プロセスの確認はサンドボックス外の `pgrep -fl "[p]attern"`（`[p]attern` で自分のシェルへの一致を避ける）で行い、終了はバックグラウンド task の完了通知か出力ファイルで判定する。`sleep N` は遮断されるので、待つときは Monitor の until-loop を1本だけ張って id を state に持つ。Monitor は30分で expire するので、expire を「実行が止まった」と取り違えない。
+
 ## 後段で確認すること
 
 年度・会計・単位・金額段階の解釈、staging、単位換算・分類・集約は [dbt](dbt.md) で確認する。取り込みの保存成功と後段の構築成功を分ける。収録漏れは、source_selection の選定済みscopeと取り込みの宣言（`<方向>.json`）の有無を突き合わせて確認する。

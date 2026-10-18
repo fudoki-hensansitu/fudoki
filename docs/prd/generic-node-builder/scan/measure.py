@@ -61,8 +61,10 @@ for path in manifests:
                                for g in band.words if g.text in ('C', 'J') and (g.page, g.original) not in units)
         built, _ = choose_pattern(logicals,
                                   layout=(layout or {}).get('breakdown'))
-        # Passed: the builder's own tree check closes and no amount is left without an owner.
-        passed = bool(check(built)['passed']) and not built.unowned
+        # Passed: the builder found nodes, its tree check closes and no amount is left without an owner.
+        # A build that reads no node makes the tree check close vacuously (`mismatches 0`), so a
+        # non-empty tree is part of passing (131113 足立: 0 nodes read as '不一致 0').
+        passed = bool(built.nodes) and bool(check(built)['passed']) and not built.unowned
         kept, note_nodes, note_amounts, _, _ = split_notes(built)  # the converter entry's stages after the builder
         nodes = [*built.nodes, *note_nodes]
         amounts, _ = canonical_headings([*kept, *note_amounts], nodes, 'settlement')
@@ -71,9 +73,9 @@ for path in manifests:
         mismatches = sum(1 for r in result['results'] if r['status'] != '一致')
         unowned = Counter(u['kind'] for u in built.unowned)
         rows.append({'jurisdiction': j, 'conversion': conversion['id'], 'account': account, 'mismatches': mismatches,
-                     'unowned': dict(unowned), 'passed': passed, 'recovered_codes': len(recovered),
+                     'unowned': dict(unowned), 'nodes': len(nodes), 'passed': passed, 'recovered_codes': len(recovered),
                      'amount_letter_cells': dict(letter_cells),
-                     'finalized_tree_passed': bool(result['passed']) and not built.unowned})
+                     'finalized_tree_passed': bool(nodes) and bool(result['passed']) and not built.unowned})
         if args.details_dir:
             args.details_dir.mkdir(parents=True, exist_ok=True)
             (args.details_dir / f'{j}-{conversion["id"]}.json').write_text(json.dumps(
