@@ -1,0 +1,5 @@
+# cf dev 用。.dev.vars に写して使う（.dev.vars は commit しない）。本番は `wrangler secret put` 相当で Worker の secret に置く
+# Turnstile の secret key。下は Cloudflare が公開している「常に通る」試験用の値で、本番では dashboard で作った widget の secret にする
+TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA
+# 手元では site key も試験用の値で上書きできる（本番は deploy/cloudflare.config.ts の var）
+TURNSTILE_SITE_KEY=1x00000000000000000000AA

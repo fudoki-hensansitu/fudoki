@@ -1,23 +1,34 @@
 import { BINARY_ASSETS } from './assets'
+import { CHAT_SHELL_HTML } from './chat-shell'
 import { MINCHO_WOFF2 } from './font.generated'
 import { FAVICON_SVG, LANDING_HTML } from './landing'
+import { handleApi, isApiPath } from './server/api'
+import type { Ctx, Env } from './server/env'
 
-// 入口の1枚と、検索エンジン・ブラウザが取りに来る小さなファイルだけを配る。データの提供は api.fudoki.dev、文書は docs.fudoki.dev
+// 入口の1枚と、検索エンジン・ブラウザが取りに来る小さなファイル、会話の画面（/s/:id）と その API（/api/*）を配る。
+// データの提供は api.fudoki.dev（Service Binding で繋ぐ）、文書は docs.fudoki.dev。会話の画面の JS・CSS は static/_app/ を assets で配る
 const CACHE = 'public, max-age=300'
-const ROBOTS = 'User-agent: *\nAllow: /\nSitemap: https://fudoki.dev/sitemap.xml\n'
+const ROBOTS = 'User-agent: *\nAllow: /\nDisallow: /s/\nDisallow: /api/\nSitemap: https://fudoki.dev/sitemap.xml\n'
 const SITEMAP = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://fudoki.dev/</loc></url></urlset>\n'
 
 const TEXT: Record<string, [string, string]> = {
-  '/': ['text/html; charset=utf-8', LANDING_HTML],
   '/favicon.svg': ['image/svg+xml', FAVICON_SVG],
   '/robots.txt': ['text/plain; charset=utf-8', ROBOTS],
   '/sitemap.xml': ['application/xml; charset=utf-8', SITEMAP],
 }
+const SESSION_PATH = /^\/s\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
+
+const escapeAttr = (s: string) => s.replace(/[&"<>]/g, (c) => `&#${c.charCodeAt(0)};`)
+const html = (body: string, cache: string) => new Response(body, { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': cache } })
 
 export default {
-  fetch(request: Request) {
+  fetch(request: Request, env: Env = {}, ctx: Ctx = { waitUntil: () => {} }): Response | Promise<Response> {
     const { pathname } = new URL(request.url)
+    if (isApiPath(pathname)) return handleApi(request, env, ctx)
     if (request.method !== 'GET' && request.method !== 'HEAD') return new Response('Method Not Allowed\n', { status: 405, headers: { Allow: 'GET, HEAD' } })
+    // Turnstile の site key は config の var。未設定なら入口の島は入力を出さない
+    if (pathname === '/') return html(LANDING_HTML.replace('__TURNSTILE_SITE_KEY__', escapeAttr(env.TURNSTILE_SITE_KEY ?? '')), CACHE)
+    if (SESSION_PATH.test(pathname)) return html(CHAT_SHELL_HTML, 'no-store')
     const text = TEXT[pathname]
     if (text) return new Response(text[1], { headers: { 'Content-Type': text[0], 'Cache-Control': CACHE } })
     const binary = pathname === '/fonts/mincho.woff2' ? { type: 'font/woff2', base64: MINCHO_WOFF2 } : BINARY_ASSETS[pathname]

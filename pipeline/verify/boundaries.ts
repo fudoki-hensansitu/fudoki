@@ -58,13 +58,18 @@ for (const root of ['apps', 'packages'])
         )
     }
   }
-// web は入口の1枚と、その頁が使う静的ファイル（static/）だけを配る。データの binding は持たせない
+// web は入口の1枚と AI との会話を配る。データ（D1・R2・KV など）の binding は持たせず、データは apps/api に Service Binding で聞く。
+// 許すのは Workers AI・Service Binding・流量・利用状況の記録・文字列の var だけ
+const WEB_BINDINGS = new Set(['ai', 'worker', 'rateLimit', 'analyticsEngineDataset', 'text'])
 for (const name of ['web/deploy']) {
   const config = await readFile(
     join(REPO, 'apps', name, 'cloudflare.config.ts'),
     'utf8'
   )
-  if (/\bbindings\s*[:.]/.test(config))
+  for (const [, kind] of config.matchAll(/\bbindings\s*\.\s*(\w+)/g))
+    if (!WEB_BINDINGS.has(kind!))
+      throw new Error(`Public web must not bind data: ${name} (${kind})`)
+  if (/\bbindings\s*:/.test(config))
     throw new Error(`Public web must not bind data: ${name}`)
 }
 // docs は静的ファイルだけを配る。Worker のコードも binding（D1 などのデータ）も持たせない

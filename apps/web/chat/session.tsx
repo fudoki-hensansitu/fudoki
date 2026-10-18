@@ -1,0 +1,174 @@
+// 会話の画面（/s/:id）。履歴はブラウザだけが持ち、送るたびに web の Worker（/api/chat）へ渡す。
+// AI が描画 tool を呼んだ結果は、apps/api の MCP Apps の View を iframe に置いて見せる（独自の表は作らない）
+import * as React from 'react'
+import { createRoot } from 'react-dom/client'
+import { useChat } from '@ai-sdk/react'
+import { DefaultChatTransport, type DynamicToolUIPart, type UIMessage } from 'ai'
+import { CheckIcon, CircleAlertIcon } from 'lucide-react'
+import { Bubble, BubbleContent } from '@/components/ui/bubble'
+import { Marker, MarkerContent, MarkerIcon } from '@/components/ui/marker'
+import { Message, MessageContent } from '@/components/ui/message'
+import { MessageScroller, MessageScrollerButton, MessageScrollerContent, MessageScrollerItem, MessageScrollerProvider, MessageScrollerViewport } from '@/components/ui/message-scroller'
+import { Spinner } from '@/components/ui/spinner'
+import { Composer } from './composer'
+import { loadSession, saveSession, type StoredSession } from './store'
+import { ViewFrame } from './view-frame'
+
+type Metadata = { apps?: Record<string, string> }
+type ChatMessage = UIMessage<Metadata>
+
+const TOOL_LABELS: Record<string, string> = {
+  search_expenditure_nodes: '歳出を検索',
+  get_expenditure_node: '明細を開く',
+  list_jurisdictions: '収録している団体を確認',
+  search_evaluations: '事業の評価を検索',
+  render_expenditure_view: '表とグラフを用意',
+}
+
+/** 送る履歴から View 用の structuredContent と _meta を外す。AI は text しか読まないので、body を小さくする */
+function forServer(messages: ChatMessage[]) {
+  return messages.map((m) => ({
+    id: m.id,
+    role: m.role,
+    parts: m.parts
+      .filter((p) => p.type === 'text' || p.type === 'step-start' || p.type === 'dynamic-tool')
+      .map((p) => {
+        if (p.type !== 'dynamic-tool' || p.state !== 'output-available') return p
+        const out = p.output as { content?: unknown; isError?: boolean } | undefined
+        return { ...p, output: { content: out?.content ?? [], ...(out?.isError ? { isError: true } : {}) } }
+      }),
+  }))
+}
+
+function ToolMarker({ part }: { part: DynamicToolUIPart }) {
+  const label = TOOL_LABELS[part.toolName] ?? part.toolName
+  const failed = part.state === 'output-error' || (part.state === 'output-available' && (part.output as { isError?: boolean })?.isError)
+  const done = part.state === 'output-available' && !failed
+  return (
+    <Marker>
+      <MarkerIcon>{failed ? <CircleAlertIcon /> : done ? <CheckIcon /> : <Spinner />}</MarkerIcon>
+      <MarkerContent className={done || failed ? undefined : 'shimmer'}>{failed ? `${label}に失敗しました` : label}</MarkerContent>
+    </Marker>
+  )
+}
+
+function Session({ id, stored }: { id: string; stored: StoredSession }) {
+  const viewContext = React.useRef('')
+  const transport = React.useMemo(
+    () =>
+      new DefaultChatTransport<ChatMessage>({
+        api: '/api/chat',
+        headers: { Authorization: `Bearer ${stored.token}` },
+        prepareSendMessagesRequest: ({ messages }) => ({
+          body: { id, messages: forServer(messages), ...(viewContext.current ? { viewContext: viewContext.current } : {}) },
+        }),
+      }),
+    [id, stored.token],
+  )
+  const { messages, sendMessage, status, stop, error } = useChat<ChatMessage>({
+    id,
+    messages: (stored.messages ?? []) as ChatMessage[],
+    transport,
+    onFinish: ({ messages }) => saveSession(id, { token: stored.token, expiresAt: stored.expiresAt, messages }),
+  })
+  const busy = status === 'submitted' || status === 'streaming'
+  const send = React.useCallback((text: string) => void sendMessage({ text }), [sendMessage])
+
+  // 入口で入力した最初の質問を1回だけ送る（StrictMode の二重実行でも1回）
+  const sent = React.useRef(false)
+  React.useEffect(() => {
+    if (sent.current || !stored.pending) return
+    sent.current = true
+    saveSession(id, { token: stored.token, expiresAt: stored.expiresAt, messages: stored.messages })
+    send(stored.pending)
+  }, [id, stored, send])
+
+  const apps = (m: ChatMessage) => m.metadata?.apps ?? {}
+  return (
+    <div className="mx-auto flex h-dvh w-full max-w-3xl flex-col gap-3 px-4 pb-4">
+      <header className="flex items-center justify-between py-3">
+        <a href="/" className="font-medium text-primary">風土記</a>
+        <a href="/" className="text-sm text-muted-foreground hover:text-foreground">新しく聞く</a>
+      </header>
+      <MessageScrollerProvider autoScroll>
+        <MessageScroller className="flex-1">
+          <MessageScrollerViewport>
+            <MessageScrollerContent className="pb-6">
+              {messages.map((m) => (
+                <MessageScrollerItem key={m.id} messageId={m.id} scrollAnchor={m.role === 'user'}>
+                  <Message align={m.role === 'user' ? 'end' : 'start'}>
+                    <MessageContent>
+                      {m.parts.map((p, i) => {
+                        if (p.type === 'text' && p.text.trim())
+                          return (
+                            <Bubble key={i} variant={m.role === 'user' ? 'secondary' : 'ghost'} align={m.role === 'user' ? 'end' : 'start'}>
+                              <BubbleContent className="whitespace-pre-wrap">{p.text}</BubbleContent>
+                            </Bubble>
+                          )
+                        if (p.type !== 'dynamic-tool') return null
+                        const uri = apps(m)[p.toolName]
+                        const output = p.state === 'output-available' ? (p.output as { isError?: boolean; structuredContent?: unknown }) : undefined
+                        // View は結果の structuredContent を描く。履歴から復元した結果で structuredContent が無いときは印だけにする
+                        if (uri && output && !output.isError && output.structuredContent)
+                          return (
+                            <ViewFrame key={i} token={stored.token} uri={uri} input={p.input} output={output} onMessage={send} onContext={(text) => (viewContext.current = text.slice(0, 2000))} />
+                          )
+                        return <ToolMarker key={i} part={p} />
+                      })}
+                    </MessageContent>
+                  </Message>
+                </MessageScrollerItem>
+              ))}
+              {status === 'submitted' ? (
+                <MessageScrollerItem messageId="thinking">
+                  <Marker>
+                    <MarkerContent className="shimmer">考えています</MarkerContent>
+                  </Marker>
+                </MessageScrollerItem>
+              ) : null}
+              {error ? (
+                <MessageScrollerItem messageId="error">
+                  <Marker>
+                    <MarkerIcon>
+                      <CircleAlertIcon />
+                    </MarkerIcon>
+                    <MarkerContent className="text-destructive">{errorMessage(error)}</MarkerContent>
+                  </Marker>
+                </MessageScrollerItem>
+              ) : null}
+            </MessageScrollerContent>
+          </MessageScrollerViewport>
+          <MessageScrollerButton />
+        </MessageScroller>
+      </MessageScrollerProvider>
+      <Composer onSubmit={send} onStop={stop} busy={busy} placeholder="続けて聞く" autoFocus />
+      <p className="text-center text-xs text-muted-foreground">AI の答えは誤ることがあります。金額は表の原典の頁で確かめてください。会話は保存しません。</p>
+    </div>
+  )
+}
+
+/** server の JSON のエラー（{ error: { message } }）なら、その文言を出す */
+function errorMessage(error: Error) {
+  try {
+    const body = JSON.parse(error.message) as { error?: { message?: string } }
+    if (body.error?.message) return body.error.message
+  } catch {}
+  return error.message || '応答を受け取れませんでした'
+}
+
+function Expired() {
+  return (
+    <div className="mx-auto flex h-dvh max-w-xl flex-col items-center justify-center gap-4 px-4 text-center">
+      <p>この会話はこのブラウザに残っていないか、期限が切れました。会話は保存していないため、最初から聞き直してください。</p>
+      <a href="/" className="text-primary underline underline-offset-4">風土記のトップへ</a>
+    </div>
+  )
+}
+
+const root = document.getElementById('chat-session')
+const id = location.pathname.split('/').at(-1) ?? ''
+const stored = loadSession(id)
+if (root)
+  createRoot(root).render(
+    <React.StrictMode>{stored && stored.expiresAt * 1000 > Date.now() ? <Session id={id} stored={stored} /> : <Expired />}</React.StrictMode>,
+  )

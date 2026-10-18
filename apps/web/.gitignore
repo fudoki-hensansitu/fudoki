@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# 会話の画面の bundle（chat/build.ts が作る）
+static/_app/
+.dev.vars
