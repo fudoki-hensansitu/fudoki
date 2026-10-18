@@ -61,7 +61,7 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 -758,keyword-housing,,一般会計,,,,,住宅,contains,,assigned,06.1,retained,目,,住宅の管理・助成・整備を住宅開発に分類する。,false
 -757,keyword-building,,一般会計,,,,,建築,contains,,assigned,04.4,retained,目,,建築行政・建築指導を UN COFOG 04.4 鉱業・製造業・建設業に分類する。名称からの判断で定義の確認が要るため暫定のまま。,true
 -756,keyword-civil-admin,,一般会計,,,,,土木総務|土木管理|土木事務所,contains,,assigned,04.5,retained,目,,土木管理を輸送に関する行政に分類する。,true
--755,keyword-community-facility,,一般会計,,,,,コミュニティ活動|地域センター|地域振興施設|区民生活施設|区民施設,contains,,assigned,06.2,retained,目,,地域の共同利用施設・活動を地域開発に分類する。,true
+-755,keyword-community-facility,,一般会計,,,,,コミュニティ活動|コミュニティ施設|地域センター|地域振興施設|区民生活施設|区民施設,contains,,assigned,06.2,retained,目,,地域の共同利用施設・活動を地域開発に分類する。,true
 -754,keyword-register-statistics,,一般会計,,,,,戸籍|住民基本台帳|区民事務所|統計|国勢調査,contains,,assigned,01.3,retained,目,,戸籍・住民登録・統計を一般サービスに分類する。,false
 -753,keyword-labour-boundary,,一般会計,,,,,勤労福祉|労働費,contains,,assigned,04.1.2,retained,目,,労働・勤労者への支援は COFOG 04.1.2 一般労働業務。勤労福祉の内容が境界のため暫定とする。,true
 -752,keyword-labour,,一般会計,,,,,就労支援|労働,contains,,assigned,04.1.2,retained,目,,就労・労働支援を一般労働業務に分類する。,false
@@ -303,3 +303,13 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 1327,keyword-health-medical,,一般会計,,衛生費,,,保健医療,contains,,assigned,07,retained,目,,衛生費に属する保健医療を保健に分類する。名称からの判断で定義の確認が要るため暫定とする。,true
 1328,keyword-school-management-general,,一般会計,,教育費,学校教育費,,学校管理,contains,,assigned,09,retained,目,,学校教育費に属する学校管理は学校段階を名称から分けられないため COFOG 09 教育の division 止まりで暫定とする。,true
 1329,keyword-nature-conservation,,一般会計,,,,,自然保護,contains,,assigned,05.4,retained,目,,自然保護（生物多様性・景観の保護）を COFOG 05.4 に分類する。,false
+1330,keyword-waste-management-operation,,一般会計,,,,,清掃管理|清掃事業,contains,,assigned,05.1,retained,目,,清掃の管理・事業を廃棄物管理に分類する。,false
+1331,keyword-park-toilet-green-space,,一般会計,,,公園緑地費,,公衆便所,contains,,assigned,08.1,retained,目,,公園緑地費に属する公衆便所は公園の付帯施設として COFOG 08.1 に分類する。,false
+1332,keyword-health-prevention-center,,一般会計,,衛生費,,,保健予防|保健サービス,contains,,assigned,07,retained,目,,衛生費に属する保健予防・保健サービスを保健に分類する。名称からの判断で定義の確認が要るため暫定とする。,true
+1333,keyword-disability-support,,一般会計,,,,,障害者総合支援,contains,,assigned,10.1,retained,目,,障害者の総合支援を COFOG 10.1 傷病・障害に分類する。,false
+1334,keyword-commerce-loan,,一般会計,,,商工費,,融資,contains,,assigned,04.1,retained,目,,商工費に属する融資を一般経済・商業業務に分類する。名称からの判断で定義の確認が要るため暫定とする。,true
+1335,keyword-education-promotion-general,,一般会計,,教育費,学校教育費,,教育振興,contains,,assigned,09,retained,目,,学校教育費に属する教育振興は学校段階を名称から分けられないため COFOG 09 教育の division 止まりで暫定とする。,true
+1336,keyword-resident-administration,,一般会計,,,区民行政費,,区民行政総務,contains,,assigned,01,retained,目,,区民行政費の総務を一般公共サービスに分類する。名称からの判断で定義の確認が要るため division 止まりで暫定とする。,true
+1337,keyword-history-museum,,一般会計,,,,,歴史館,contains,,assigned,08.2,retained,目,,歴史館（郷土資料の展示施設）を文化施設に分類する。,false
+1338,bunkyo-academy-unclassifiable,131059,一般会計,,,アカデミー費,,,eq,,unclassifiable,,retained,目,,文京区 区民費のアカデミー費は生涯学習・スポーツ・文化の事業を一つの項に束ねる。目の名称（総務費・施設運営費・事業費）から機能を分けられないため unclassifiable とする（団体限定。他団体の分類は変えない）。,false
+1339,keyword-consumer-administration,,一般会計,,産業経済費,商工費,,消費者行政,contains,,assigned,04.1,retained,目,,産業経済費の商工費に属する消費者行政を一般経済・商業業務に分類する。,false

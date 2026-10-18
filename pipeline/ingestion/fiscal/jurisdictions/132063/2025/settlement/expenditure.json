@@ -76,7 +76,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "dfb05e7fb32aec1b076a1b6458d10516900891cc0606ac234cf16bcc8c480008",
+      "input_fingerprint": "abae4069b360a5c2c2375767bfd8c65add7b6a7725a68b8aa76d34622c880732",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
