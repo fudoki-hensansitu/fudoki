@@ -212,8 +212,8 @@ def _segments(page, pdf: Path | None = None) -> list[Rule]:
         elif rect.get('stroke') and _dark(rect.get('stroking_color')) and not (w > .98 * page.width and h > .98 * page.height):  # a page-sized border is not a table's
             rules += [Rule(x0, y0, x1, y0), Rule(x0, y1, x1, y1), Rule(x0, y0, x0, y1), Rule(x1, y0, x1, y1)]
     # Printer's marks lie outside the page: they are neither rules of the table nor a reason to read none.
-    left, bottom_, right, top_ = page.cropbox
-    left, right, top, bottom = left - 1, right + 1, page.height - top_ - 1, page.height - bottom_ + 1
+    left, top, right, bottom = page.cropbox  # pdfplumber measures it from the top, like the rules
+    left, right, top, bottom = left - 1, right + 1, top - 1, bottom + 1
     onpage = lambda x0, x1, y0, y1: x0 >= left and y0 >= top and x1 <= right and y1 <= bottom
     shown = [r for r in rules if onpage(r.x0, r.x1, r.y0, r.y1)]
     unread = [r for r in unread if onpage(r['x0'], r['x1'], r['top'], r['bottom'])]
