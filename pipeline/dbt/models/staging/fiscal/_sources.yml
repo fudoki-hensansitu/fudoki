@@ -388,6 +388,22 @@ sources:
       direction: expenditure
       table_id: kouki-expenditure-detail
       kind: nodes
+  - name: j131059_2024_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '131059'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j131059_2024_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '131059'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
   - name: j131067_2024_settlement_general_expenditure_amounts
     meta:
       jurisdiction: '131067'

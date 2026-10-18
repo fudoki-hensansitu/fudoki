@@ -90,7 +90,7 @@ def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False):
     """
     import pypdfium2.raw as raw
     page = pdf[number - 1]
-    left, _, _, top = page.get_cropbox()
+    left, _, _, top = page.get_mediabox()  # Poppler's words are measured from the MediaBox, even when a CropBox is smaller
     textpage = page.get_textpage()
     clips: dict[int, tuple | None] = {}
 

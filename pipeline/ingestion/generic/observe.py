@@ -211,7 +211,14 @@ def _segments(page, pdf: Path | None = None) -> list[Rule]:
                 rules.append(Rule(x0, (y0 + y1) / 2, x1, (y0 + y1) / 2))
         elif rect.get('stroke') and _dark(rect.get('stroking_color')) and not (w > .98 * page.width and h > .98 * page.height):  # a page-sized border is not a table's
             rules += [Rule(x0, y0, x1, y0), Rule(x0, y1, x1, y1), Rule(x0, y0, x0, y1), Rule(x1, y0, x1, y1)]
-    if pdf is not None and len(unread) >= 6 and not rules and _drawn_dark(pdf, page, unread):
+    # Printer's marks lie outside the page: they are neither rules of the table nor a reason to read none.
+    left, top, right, bottom = page.cropbox  # pdfplumber measures it from the top, like the rules
+    left, right, top, bottom = left - 1, right + 1, top - 1, bottom + 1
+    onpage = lambda x0, x1, y0, y1: x0 >= left and y0 >= top and x1 <= right and y1 <= bottom
+    shown = [r for r in rules if onpage(r.x0, r.x1, r.y0, r.y1)]
+    unread = [r for r in unread if onpage(r['x0'], r['x1'], r['top'], r['bottom'])]
+    if pdf is not None and len(unread) >= 6 and not shown and _drawn_dark(pdf, page, unread):
+        rules = []  # what is drawn outside the page was all there was: the marks, not the table's rules
         for rect in unread:  # a spot colour read as 1.0 draws black: the rule is there when the page shows ink on it
             x0, x1, y0, y1 = rect['x0'], rect['x1'], rect['top'], rect['bottom']
             rules.append(Rule((x0 + x1) / 2, y0, (x0 + x1) / 2, y1) if x1 - x0 < y1 - y0
