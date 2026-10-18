@@ -212,6 +212,23 @@ class RefreshWorkflowTest(unittest.TestCase):
         self.assertEqual(json.loads(output.read_text())['manifests'][0]['status'], refresh.DIFFERENT)
         self.assertEqual(report['summary']['attention'][0]['status'], refresh.DIFFERENT)
 
+    def test_refresh_all_removes_a_stale_report_before_starting(self):
+        output = self.root / 'report' / 'report.json'
+        output.parent.mkdir(parents=True)
+        output.write_text('{"stale": true}')
+        seen = []
+        real = refresh.refresh_manifest
+
+        def spy(*args, **kwargs):
+            # A caller waits for this file to appear; an old report must not be visible while the run is going.
+            seen.append(output.exists())
+            return real(*args, **kwargs)
+
+        with patch.object(refresh, 'refresh_manifest', side_effect=spy):
+            refresh.refresh_all([self.path], remote=False, dry_run=False, output=output)
+        self.assertEqual(seen, [False])
+        self.assertNotIn('stale', output.read_text())
+
 
 class SaveGateTest(unittest.TestCase):
     def test_node_table_gate_is_shared_by_save_and_refresh(self):
