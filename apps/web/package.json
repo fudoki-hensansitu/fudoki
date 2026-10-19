@@ -12,6 +12,7 @@
     "test": "bun test server",
     "typecheck": "tsc --noEmit",
     "build:font": "bun -e \"import { LANDING_HTML } from './landing'; process.stdout.write(LANDING_HTML)\" | uv run --no-project --exclude-newer 2026-09-26 --with fonttools==4.66.0 --with brotli==1.2.0 python brand/home_font.py",
+    "build:font:check": "bun -e \"import { LANDING_HTML } from './landing'; process.stdout.write(LANDING_HTML)\" | uv run --no-project --exclude-newer 2026-09-26 --with fonttools==4.66.0 --with brotli==1.2.0 python brand/home_font.py --check",
     "build:origin": "uv run --no-project --exclude-newer 2026-10-09 --with pypdfium2==5.14.0 --with pillow==12.3.0 python brand/home_origin.py"
   },
   "devDependencies": {

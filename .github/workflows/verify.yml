@@ -23,6 +23,7 @@ jobs:
       - run: bun run --cwd pipeline ingestion:check
       - run: bun run --cwd pipeline test:python
       - run: bun run --cwd pipeline serving:evaluation-catalog --check
+      - run: bun run --cwd apps/web build:font:check
       - run: bun run build:web
       - run: bun run build:api
       - run: bun run build:docs

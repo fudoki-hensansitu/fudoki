@@ -9,7 +9,7 @@ bun run build:web
 
 ## 見出しの明朝は `landing.ts` の字から作る
 
-`public/fonts/mincho.woff2`（＝Worker が返すため `font.generated.ts` に base64 で写したもの）は、`bun run --cwd apps/web build:font` が `landing.ts` の本文に出てくる字だけを BIZ UDP明朝から集めて作る。**ホームの文言を変えたら `build:font` を回す。** 回さないと新しい字だけ配信フォントに無く、閲覧者の OS の明朝に落ちる（`build:web` も CI もこの再生成をしないので気づけない）。Google Fonts を使わないのは、読み手の IP を第三者へ渡さないため（`brand/home_font.py`）。
+`public/fonts/mincho.woff2`（＝Worker が返すため `font.generated.ts` に base64 で写したもの）は、`bun run --cwd apps/web build:font` が `landing.ts` の本文に出てくる字だけを BIZ UDP明朝から集めて作る。**ホームの文言を変えたら `build:font` を回す。** 回さないと新しい字だけ配信フォントに無く、閲覧者の OS の明朝に落ちる。CI（`verify.yml`）の `build:font:check` が、今の `landing.ts` の字を配信フォントがすべて含むかを確かめて、ずれていれば落とす。Google Fonts を使わないのは、読み手の IP を第三者へ渡さないため（`brand/home_font.py`）。
 
 ## 風土記の AI に聞く（`/` の入力と `/s/:id`）
 

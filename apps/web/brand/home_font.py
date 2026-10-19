@@ -7,6 +7,7 @@ public/fonts/mincho.woff2 と、Worker が配るための写し font.generated.t
 import base64
 import hashlib
 import html
+import io
 import re
 import sys
 import tempfile
@@ -14,6 +15,7 @@ import urllib.request
 from pathlib import Path
 
 from fontTools import subset
+from fontTools.ttLib import TTFont
 
 HERE = Path(__file__).resolve().parent
 WEB = HERE.parent
@@ -47,9 +49,40 @@ def page_text(page: str) -> str:
     return html.unescape(re.sub(r"<[^>]+>", "", page))
 
 
+def verify_subset(chars: list[str]) -> None:
+    """配信している明朝が、今のホームの字をすべて含むか確かめる。
+
+    subset はホームの字から作るので、`build:font` を回し忘れると新しい字だけ閲覧者の
+    OS の明朝に落ちる。Worker が実際に返すのは `font.generated.ts` の写しなので、
+    そちらを読む（`public/` の実体だけ新しくても検出できる）。
+    """
+    generated = WEB / "font.generated.ts"
+    found = re.search(r"MINCHO_WOFF2 = '([^']+)'", generated.read_text())
+    if found is None:
+        raise SystemExit("font.generated.ts に MINCHO_WOFF2 が無い。`bun run --cwd apps/web build:font` を実行する")
+    data = base64.b64decode(found.group(1))
+    served = WEB / "public/fonts/mincho.woff2"
+    if served.exists() and served.read_bytes() != data:
+        raise SystemExit(
+            f"font.generated.ts と {served.relative_to(ROOT)} が食い違う。"
+            "`bun run --cwd apps/web build:font` を実行して揃える"
+        )
+    cmap = set(TTFont(io.BytesIO(data)).getBestCmap())
+    missing = [c for c in chars if ord(c) not in cmap]
+    if missing:
+        raise SystemExit(
+            f"ホームの字 {len(missing)} 字が配信フォントに無い: {''.join(missing)}\n"
+            "`bun run --cwd apps/web build:font` を実行して public/fonts/mincho.woff2 と font.generated.ts を作り直す"
+        )
+    print(f"ok  {len(chars)} 字  {served.relative_to(ROOT)}")
+
+
 def main() -> None:
     text = page_text(sys.stdin.read())
     chars = sorted({c for c in text if not c.isspace()} | set("0123456789"))
+    if "--check" in sys.argv[1:]:
+        verify_subset(chars)
+        return
     options = subset.Options()
     options.flavor = "woff2"
     options.layout_features = ["palt", "kern", "liga"]
