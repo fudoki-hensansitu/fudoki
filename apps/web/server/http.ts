@@ -1,3 +1,4 @@
+import type { Context } from 'hono'
 import type { RateLimiter } from './env'
 
 export class HttpError extends Error {
@@ -54,4 +55,13 @@ export async function rateLimit(limiter: RateLimiter | undefined, key: string, p
   if (!limiter) throw new HttpError(503, 'UNAVAILABLE', '流量の制限を利用できないため止めています')
   if (!(await limiter.limit({ key: key || 'unknown' })).success)
     throw new HttpError(429, 'RESOURCE_EXHAUSTED', 'しばらく待ってから送ってください', period)
+}
+
+/** 応答を返したあとも続ける仕事。実行 context が無い環境（試験）では待たずに流す */
+export function waitUntil(c: Context, promise: Promise<unknown>) {
+  try {
+    c.executionCtx.waitUntil(promise)
+  } catch {
+    promise.catch(() => {})
+  }
 }

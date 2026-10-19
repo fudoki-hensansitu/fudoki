@@ -3,11 +3,12 @@
 import { createMCPClient, mcpAppClientCapabilities } from '@ai-sdk/mcp'
 import { convertToModelMessages, stepCountIs, streamText, type ToolSet, type UIMessage } from 'ai'
 import { createWorkersAI } from 'workers-ai-provider'
-import { apiFetch, MCP_URL, type Ctx, type Env } from './env'
-import { clientIp, HttpError, rateLimit, readJson } from './http'
-import { CHAT_RATE_LIMIT, MAX_CHAT_BODY_BYTES, MAX_MESSAGES, MAX_OUTPUT_TOKENS, MAX_STEPS, MAX_USER_TEXT, MAX_VIEW_CONTEXT } from './limits'
+import type { AppContext } from './api'
+import { apiFetch, MCP_URL } from './env'
+import { HttpError } from './http'
+import { MAX_MESSAGES, MAX_OUTPUT_TOKENS, MAX_STEPS, MAX_USER_TEXT, MAX_VIEW_CONTEXT } from './limits'
 import { logError } from './log'
-import { verifySession } from './session'
+import { waitUntil } from './http'
 import { writeUsage, type Usage } from './usage'
 
 const SYSTEM = [
@@ -60,12 +61,11 @@ function textOnly({ output }: { output: unknown }) {
   return { type: 'text' as const, value: text || '結果がありません' }
 }
 
-export async function handleChat(request: Request, env: Env, ctx: Ctx): Promise<Response> {
+export async function handleChat(c: AppContext): Promise<Response> {
   const started = Date.now()
-  const sessionId = await verifySession(env.TURNSTILE_SECRET_KEY, request.headers.get('Authorization'))
-  const ip = clientIp(request)
-  await rateLimit(env.CHAT_RATE_LIMIT, ip, CHAT_RATE_LIMIT.period)
-  const chat = parseChat(await readJson(request, MAX_CHAT_BODY_BYTES))
+  const { env } = c
+  const { sessionId, ip } = c.var
+  const chat = parseChat(c.var.body)
   if (chat.id !== sessionId) throw new HttpError(403, 'PERMISSION_DENIED', '別の会話の token です')
   const modelId = env.CHAT_MODEL
   if (!modelId || !env.AI) throw new HttpError(503, 'UNAVAILABLE', 'チャットはまだ準備中です')
@@ -99,7 +99,7 @@ export async function handleChat(request: Request, env: Env, ctx: Ctx): Promise<
     if (typeof uri === 'string') apps[name] = uri
     Object.assign(t, { toModelOutput: textOnly })
   }
-  const close = () => ctx.waitUntil(mcp.close().catch(() => {}))
+  const close = () => waitUntil(c, mcp.close().catch(() => {}))
 
   let messages
   try {
@@ -125,7 +125,7 @@ export async function handleChat(request: Request, env: Env, ctx: Ctx): Promise<
     tools,
     stopWhen: stepCountIs(MAX_STEPS),
     maxOutputTokens: MAX_OUTPUT_TOKENS,
-    abortSignal: request.signal,
+    abortSignal: c.req.raw.signal,
     onEnd: (event) => {
       const counts: Record<string, number> = {}
       for (const step of event.steps) for (const call of step.toolCalls) counts[call.toolName] = (counts[call.toolName] ?? 0) + 1
