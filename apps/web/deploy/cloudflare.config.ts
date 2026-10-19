@@ -9,7 +9,6 @@ export default defineConfig({
     // static/ の重いファイル（ホームの動画・原典の切り抜き）と会話の画面の JS・CSS（_app/、build で作る）を assets で配る。合わない path は Worker が答える
     assets: { notFoundHandling: 'none' },
     observability: { enabled: true, headSamplingRate: 1 },
-    // secret（コードに書かない）: TURNSTILE_SECRET_KEY。名前は .dev.vars.example
     env: {
       AI: bindings.ai(),
       // 風土記の MCP（apps/api）。workers.dev を閉じているので Worker 間で直接呼ぶ
@@ -25,7 +24,9 @@ export default defineConfig({
       // 推論の深さ（low・medium・high、none で切る）。考える分も出力 token に数えるので、案内役の応答には low で足りる
       CHAT_REASONING_EFFORT: bindings.text('low'),
       // Turnstile の site key（公開値）。Cloudflare の dashboard で widget を作って書く。空の間は入口の入力を出さない
-      TURNSTILE_SITE_KEY: bindings.text(''),
+      TURNSTILE_SITE_KEY: bindings.text('0x4AAAAAAFbNaowr2DVLbWDn'),
+      // Turnstile の secret key（コードに書かない。値は Worker の secret に手で置く）。cf dev はここに宣言した名前だけを deploy/.dev.vars から読む
+      TURNSTILE_SECRET_KEY: bindings.secret(),
     },
   },
 })
