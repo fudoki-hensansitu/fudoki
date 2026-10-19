@@ -9,7 +9,7 @@
 
 @layer base {
   #chat-start :where(*, ::before, ::after) { box-sizing: border-box; border: 0 solid; margin: 0; padding: 0; }
-  #chat-start :where(button, textarea) { font: inherit; letter-spacing: inherit; color: inherit; background: transparent; }
+  #chat-start :where(button, input, textarea) { font: inherit; letter-spacing: inherit; color: inherit; background: transparent; }
   #chat-start :where(button:not(:disabled)) { cursor: pointer; }
   #chat-start * { border-color: var(--border); }
 }
