@@ -591,6 +591,24 @@ class UnitTest(unittest.TestCase):
         self.assertEqual(resolve(pages, 'initial')['default'], 1)
         self.assertEqual([p.unit for p in pages], ['千円', '千円'])
 
+    def test_a_column_that_prints_its_own_unit_keeps_it_on_a_page_of_another_unit(self):
+        from ingestion.generic.layout import Logical
+        from ingestion.generic.units import resolve
+        band = lambda *header: Band(0, 10, 1, header, [], 0, 0, kind='amount')
+        page = Logical([1], [band('予算現額', '当初予算額(千円)'), band('予算現額', '計')], '円', [])
+        resolve([page], 'settlement')
+        self.assertEqual(page.unit_of('予算現額／当初予算額(千円)'), '千円')
+        self.assertEqual(page.unit_of('予算現額／当初予算額(千円)／注記／x'), '千円')  # a note under that column
+        self.assertEqual(page.unit_of('予算現額／計'), '円')
+        self.assertEqual(page.unit_of('支出済額'), '円')
+
+    def test_a_heading_that_names_its_unit_is_no_part_of_the_heading_and_is_an_amount_column(self):
+        from ingestion.generic.headers import clean
+        from ingestion.generic.layout import HEADER_UNIT
+        self.assertEqual(clean('当初予算額(千円)'), '当初予算額')
+        self.assertIsNotNone(HEADER_UNIT.search('補正予算額(千円)'))
+        self.assertIsNone(HEADER_UNIT.search('補正予算額'))
+
     def test_kan_sum_must_equal_the_printed_total(self):
         from ingestion.generic.tree import Built
         from ingestion.generic.units import check

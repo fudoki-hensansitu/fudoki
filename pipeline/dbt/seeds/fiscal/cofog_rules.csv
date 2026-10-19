@@ -346,6 +346,7 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 980,kind-fallback-single-parent-loan,,,母子父子寡婦福祉資金貸付,,,,,,,assigned,10.4,retained,目,,母子父子寡婦福祉資金の貸付の事務を家族及び児童 10.4 に分類する。貸付金そのものは先の規則が対象外にする（例: 281000）。,false
 981,kind-fallback-redevelopment,,,市街地再開発,,,,,,,assigned,06.2,retained,目,,市街地再開発の事業会計を地域開発 06.2 に分類する（例: 281000 市街地再開発事業費）。,false
 982,kind-fallback-debt,,,公債費,,,,,,,assigned,01.7,retained,目,,公債費の特別会計で元金・利子以外の目（公債諸費など発行・償還の事務）を公債取引 01.7 に分類する（keyword-debt-cost と同じ。例: 281000 公債費）。元金は先の規則が対象外にする。,false
+983,kind-fallback-tv-reception,,,テレビ共同受信,,,,,,,unclassifiable,,retained,目,,テレビ共同受信施設の整備・管理は放送の受信環境の維持であり COFOG 08.3 放送・出版に当たるが、マスタ（packages/fiscal/cofog-master.ts）は 08.3 を持たない。捨てずに分類不能として残す。,false
 1326,vocab-funeral-hall,,一般会計,,,,,聖苑,contains,,assigned,06.2,retained,目,,聖苑（火葬場・葬祭場）の運営を霊園・斎場の規則と同じく地域アメニティに寄せる。境界の判断のため暫定とする。,true
 1327,keyword-health-medical,,一般会計,,衛生費,,,保健医療,contains,,assigned,07,retained,目,,衛生費に属する保健医療を保健に分類する。名称からの判断で定義の確認が要るため暫定とする。,true
 1328,keyword-school-management-general,,一般会計,,教育費,学校教育費,,学校管理,contains,,assigned,09,retained,目,,学校教育費に属する学校管理は学校段階を名称から分けられないため COFOG 09 教育の division 止まりで暫定とする。,true
@@ -361,3 +362,6 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 1338,bunkyo-academy-unclassifiable,131059,一般会計,,,アカデミー費,,,eq,,unclassifiable,,retained,目,,文京区 区民費のアカデミー費は生涯学習・スポーツ・文化の事業を一つの項に束ねる。目の名称（総務費・施設運営費・事業費）から機能を分けられないため unclassifiable とする（団体限定。他団体の分類は変えない）。,false
 1339,keyword-consumer-administration,,一般会計,,産業経済費,商工費,,消費者行政,contains,,assigned,04.1,retained,目,,産業経済費の商工費に属する消費者行政を一般経済・商業業務に分類する。,false
 1340,keyword-road-parking,,一般会計,,土木費,,,駐車場,contains,,assigned,04.5.1,retained,目,,土木費に属する駐車場の管理・運営を道路交通に分類する（駐車場事業の会計と同じ扱い）。,false
+1341,vocab-crematorium,,一般会計,,,,,火葬場,contains,,assigned,06.2,retained,目,,火葬場の運営を霊園・斎場（vocab-cemetery）・聖苑（vocab-funeral-hall）と同じく地域アメニティに寄せる。境界の判断のため暫定とする。,true
+1342,vocab-health-building,,一般会計,,,,,健康づくり,contains,,assigned,07,retained,目,,健康づくり（健康増進と同じ事業）を保健に分類する（vocab-health-promotion と同じ）。,false
+1343,kind-forestry-property-ward,,,財産区,,林業費,,,eq,,assigned,04.2,retained,目,,財産区の特別会計で項が林業費の目（林業総務費・林業振興費）を農業・林業・漁業に分類する（vocab-forestry と同じ。財産区の会計は款が業務費で款の規則に当たらない）。,false
