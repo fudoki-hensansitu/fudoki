@@ -1,6 +1,7 @@
 // 利用状況を Workers Analytics Engine に1要求1行で書く。会話の本文・IP・会話 ID は書かない。
 // 列の並びは README の「利用状況」の SQL と合わせる。
 import type { AnalyticsDataset } from './env'
+import { logError } from './log'
 
 export interface Usage {
   kind: 'chat' | 'relay'
@@ -29,6 +30,6 @@ export function writeUsage(dataset: AnalyticsDataset | undefined, u: Usage) {
     })
   } catch (e) {
     // 記録の失敗で応答を落とさない
-    console.error(e)
+    logError(e)
   }
 }

@@ -143,3 +143,30 @@ test('上流の MCP が JSON でない応答を返したら 502', async () => {
   const res = await call(post('/api/mcp', { method: 'tools/call', params: { name: 'list_jurisdictions', arguments: {} } }, { Authorization: `Bearer ${s.token}` }), env({ API }))
   expect(res.status).toBe(502)
 })
+
+describe('ログに会話を残さない', () => {
+  test('AI のエラーは requestBodyValues と responseBody を落とし、名前・短い文言・状態だけを出す', async () => {
+    const { APICallError, RetryError } = await import('ai')
+    const { safeError } = await import('./log')
+    const secret = '利用者の質問の全文'
+    const apiError = new APICallError({
+      message: 'x'.repeat(500),
+      url: 'https://api.cloudflare.com/ai/run',
+      requestBodyValues: { messages: [{ role: 'user', content: secret }] },
+      statusCode: 500,
+      responseBody: `{"echo":"${secret}"}`,
+      cause: new TypeError('fetch failed'),
+    })
+    const retry = new RetryError({ message: 'failed after retries', reason: 'maxRetriesExceeded', errors: [apiError] })
+    for (const e of [apiError, retry]) {
+      const out = safeError(e)
+      const text = JSON.stringify(out)
+      expect(text).not.toContain(secret)
+      expect(text).not.toContain('requestBodyValues')
+      expect(text).not.toContain('responseBody')
+      expect(out.message!.length).toBeLessThanOrEqual(201)
+    }
+    expect(safeError(apiError)).toMatchObject({ name: 'AI_APICallError', statusCode: 500, cause: 'TypeError' })
+    expect(safeError(retry)).toMatchObject({ name: 'AI_RetryError', lastError: 'AI_APICallError' })
+  })
+})

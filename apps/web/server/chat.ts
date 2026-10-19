@@ -6,6 +6,7 @@ import { createWorkersAI } from 'workers-ai-provider'
 import { apiFetch, MCP_URL, type Ctx, type Env } from './env'
 import { clientIp, HttpError, rateLimit, readJson } from './http'
 import { CHAT_RATE_LIMIT, MAX_CHAT_BODY_BYTES, MAX_MESSAGES, MAX_OUTPUT_TOKENS, MAX_STEPS, MAX_USER_TEXT, MAX_VIEW_CONTEXT } from './limits'
+import { logError } from './log'
 import { verifySession } from './session'
 import { writeUsage, type Usage } from './usage'
 
@@ -87,7 +88,7 @@ export async function handleChat(request: Request, env: Env, ctx: Ctx): Promise<
     })
     tools = await mcp.tools()
   } catch (e) {
-    console.error(e)
+    logError(e)
     record({ error: 'mcp' })
     throw new HttpError(502, 'UNAVAILABLE', '風土記の API に繋がりませんでした')
   }
@@ -137,7 +138,7 @@ export async function handleChat(request: Request, env: Env, ctx: Ctx): Promise<
       close()
     },
     onError: ({ error }) => {
-      console.error(error)
+      logError(error)
       record({ error: 'model' })
       close()
     },

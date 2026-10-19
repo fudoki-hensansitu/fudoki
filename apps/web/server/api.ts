@@ -3,6 +3,7 @@ import type { Ctx, Env } from './env'
 import { handleChat } from './chat'
 import { clientIp, errorResponse, HttpError, json, rateLimit, readJson } from './http'
 import { CHAT_RATE_LIMIT } from './limits'
+import { logError } from './log'
 import { handleRelay } from './relay'
 import { issueSession, verifyTurnstile } from './session'
 
@@ -38,7 +39,7 @@ export async function handleApi(request: Request, env: Env, ctx: Ctx): Promise<R
       if (e.status === 405) res.headers.set('Allow', 'POST')
       return res
     }
-    console.error(e)
+    logError(e)
     return errorResponse(new HttpError(500, 'INTERNAL', '内部エラー'))
   }
 }
