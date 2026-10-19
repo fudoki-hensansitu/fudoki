@@ -115,6 +115,45 @@ class PlanTest(unittest.TestCase):
         changed = [{**items[0], 'metadata': {**items[0]['metadata'], 'fiscal_year': '2024'}}, *items[1:]]
         self.assertNotEqual(base, plan.fingerprint(CONFIG, changed))
 
+    def test_declared_text_origin_uses_md_keys_and_its_own_fingerprint(self):
+        (origin,) = self.origins()
+        declared = {**CONFIG, 'text_origins': [A]}
+        self.assertEqual(plan.item_format(declared, origin), 'md')
+        self.assertEqual(plan.item_format({**CONFIG, 'text_origins': [B]}, origin), 'pdf')
+        self.assertEqual(plan.item_key(origin, 75, 'md'), f'{A}_p0075.md')
+        self.assertTrue(all(i['key'].endswith('.md') for i in plan.plan_items(origin, 3, 'md')))
+        pdf = plan.fingerprint(CONFIG, plan.plan_items(origin, 3))
+        self.assertNotEqual(pdf, plan.fingerprint(declared, plan.plan_items(origin, 3, 'md'), 'md'))
+        # 形だけが違っても指紋が変わる
+        self.assertNotEqual(plan.fingerprint(declared, plan.plan_items(origin, 3), 'pdf'),
+                            plan.fingerprint(declared, plan.plan_items(origin, 3), 'md'))
+
+    def test_fingerprint_of_undeclared_origin_ignores_the_declaration_list(self):
+        (origin,) = self.origins()
+        items = plan.plan_items(origin, 3)
+        base = plan.fingerprint(CONFIG, items)
+        self.assertEqual(base, plan.fingerprint({**CONFIG, 'text_origins': [B]}, items))
+        # 宣言を足す前から使われている指紋の作り方（config と items だけ）と同じ
+        legacy = json.dumps({'config': CONFIG, 'items': items}, ensure_ascii=False, sort_keys=True, separators=(',', ':'))
+        import hashlib
+        self.assertEqual(base, hashlib.sha256(legacy.encode('utf-8')).hexdigest())
+
+    def test_committed_records_keep_their_fingerprints(self):
+        instance = plan.load_instance()
+        text = set(instance['config']['text_origins'])
+        origins = [o for o in plan.load_origins() if o.sha256 not in text]
+        self.assertTrue(origins)
+        self.assertTrue(all(plan.registration_is_current(instance, o) for o in origins if plan.registration(instance, o)))
+
+    def test_registration_is_current_for_md_needs_an_md_record(self):
+        (origin,) = self.origins()
+        declared = {**CONFIG, 'text_origins': [A]}
+        base = {'origin_sha256': A, 'page_count': 3, 'confirmed_at': '2026-10-19T00:00:00Z'}
+        pdf_record = {**base, 'plan_fingerprint': plan.fingerprint(CONFIG, plan.plan_items(origin, 3))}
+        md_record = {**base, 'plan_fingerprint': plan.fingerprint(declared, plan.plan_items(origin, 3, 'md'), 'md')}
+        self.assertFalse(plan.registration_is_current({'config': declared, 'registrations': [pdf_record]}, origin))
+        self.assertTrue(plan.registration_is_current({'config': declared, 'registrations': [md_record]}, origin))
+
     def test_registration_is_current_only_while_selection_and_config_match(self):
         (origin,) = self.origins()
         record = {'origin_sha256': A, 'page_count': 3, 'confirmed_at': '2026-10-14T00:00:00Z',
@@ -136,6 +175,10 @@ class ConvertedCharsTest(unittest.TestCase):
     """取り込み後の本文の文字数。変換の見出しだけの頁を読めたと数えると、検索に出ない原典が catalog に載る。"""
 
     HEADER = f'# {A}_p0001.pdf\n## Metadata\n- Creator=PDFium\n- Producer=PDFium\n\n\n\n## Contents\n### Page 1'
+
+    def test_text_item_chunk_without_header_is_counted(self):
+        from evaluation_search.index import converted_chars
+        self.assertEqual(converted_chars([{'text': '事業 名称\n\u3000評価'}, {'text': '予算'}]), 8)
 
     def test_header_only_is_empty(self):
         from evaluation_search.index import converted_chars
