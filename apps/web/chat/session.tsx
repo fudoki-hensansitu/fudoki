@@ -93,7 +93,7 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
 
   const apps = (m: ChatMessage) => m.metadata?.apps ?? {}
   return (
-    <div className="mx-auto flex h-dvh w-full max-w-3xl flex-col gap-3 px-4 pb-4">
+    <div className="mx-auto flex h-dvh w-full max-w-3xl flex-col gap-3 px-4 pb-4 max-sm:gap-2 max-sm:pb-2">
       <header className="flex items-center justify-between py-3">
         <a href="/" className="font-medium text-primary">風土記</a>
         <a href="/" className="text-sm text-muted-foreground hover:text-foreground">新しく聞く</a>
@@ -149,8 +149,8 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
           <MessageScrollerButton />
         </MessageScroller>
       </MessageScrollerProvider>
-      <Composer onSubmit={send} onStop={stop} busy={busy} placeholder="続けて聞く" autoFocus />
-      <p className="text-center text-xs text-muted-foreground">AI の答えは誤ることがあります。金額は表の原典の頁で確かめてください。会話は保存しません。</p>
+      <Composer onSubmit={send} onStop={stop} busy={busy} placeholder="続けて聞く" autoFocus compact />
+      <p className="text-center text-xs text-muted-foreground max-sm:text-[0.6875rem] max-sm:leading-snug">AI の答えは誤ることがあります。金額は表の原典の頁で確かめてください。会話は保存しません。</p>
     </div>
   )
 }

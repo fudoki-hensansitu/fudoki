@@ -3,7 +3,9 @@
 // 試作の土台は apps/api/tests/host.ts
 import * as React from 'react'
 import { AppBridge, PostMessageTransport } from '@modelcontextprotocol/ext-apps/app-bridge'
-import type { McpUiStyles } from '@modelcontextprotocol/ext-apps'
+import type { McpUiDisplayMode, McpUiStyles } from '@modelcontextprotocol/ext-apps'
+import { XIcon } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
 import { relay } from './relay'
 
@@ -32,14 +34,18 @@ function loadResource(token: string, uri: string) {
 
 const dark = () => matchMedia('(prefers-color-scheme: dark)').matches
 
-/** 頁の token を View に渡し、View の背景・文字・枠・字を会話の画面に合わせる */
-function hostContext() {
+/** View に選ばせる表示の大きさ。全画面は頁の上に重ねて出す */
+type DisplayMode = Extract<McpUiDisplayMode, 'inline' | 'fullscreen'>
+const DISPLAY_MODES: DisplayMode[] = ['inline', 'fullscreen']
+
+/** 頁の token を View に渡し、View の背景・文字・枠・字を会話の画面に合わせる。setHostContext は全体を置き換えるので、毎回すべてを作る */
+function hostContext(displayMode: DisplayMode) {
   const css = getComputedStyle(document.documentElement)
   const v = (name: string) => css.getPropertyValue(name).trim()
   return {
     theme: dark() ? ('dark' as const) : ('light' as const),
-    displayMode: 'inline' as const,
-    availableDisplayModes: ['inline' as const],
+    displayMode,
+    availableDisplayModes: DISPLAY_MODES,
     locale: 'ja-JP',
     styles: {
       variables: {
@@ -78,6 +84,12 @@ export function ViewFrame({
   const [height, setHeight] = React.useState(360)
   const [error, setError] = React.useState<string>()
   const [ready, setReady] = React.useState(false)
+  const [mode, setMode] = React.useState<DisplayMode>('inline')
+  const fullscreen = mode === 'fullscreen'
+  const bridgeRef = React.useRef<AppBridge>(undefined)
+  const modeRef = React.useRef(mode)
+  modeRef.current = mode
+  const close = React.useRef<HTMLButtonElement>(null)
   // 親の再描画で bridge を作り直さないよう、最新の callback を ref で持つ
   const handlers = React.useRef({ onMessage, onContext })
   handlers.current = { onMessage, onContext }
@@ -88,7 +100,7 @@ export function ViewFrame({
     let bridge: AppBridge | undefined
     let disposed = false
     const media = matchMedia('(prefers-color-scheme: dark)')
-    const onTheme = () => bridge?.setHostContext(hostContext())
+    const onTheme = () => bridge?.setHostContext(hostContext(modeRef.current))
     loadResource(token, uri)
       .then((resource) => {
         if (disposed) return
@@ -96,8 +108,9 @@ export function ViewFrame({
           null,
           { name: '風土記', version: '1.0.0' },
           { openLinks: {}, serverTools: {}, logging: {}, updateModelContext: { text: {} }, message: { text: {} } },
-          { hostContext: hostContext() },
+          { hostContext: hostContext(modeRef.current) },
         )
+        bridgeRef.current = bridge
         bridge.oncalltool = async (params) => (await relay(token, 'tools/call', { name: params.name, arguments: params.arguments ?? {} })) as never
         bridge.onopenlink = async ({ url }) => {
           // 原典の PDF などの外部の頁は新しいタブで開き、こちらの頁を触らせない
@@ -112,6 +125,12 @@ export function ViewFrame({
         bridge.onupdatemodelcontext = async ({ content }) => {
           handlers.current.onContext(content?.map((c) => ('text' in c ? c.text : '')).join('') ?? '')
           return {}
+        }
+        // View が「全画面で開く」「元の大きさに戻す」を頼んだとき。知らない大きさ（pip など）はいまのままにする
+        bridge.onrequestdisplaymode = async ({ mode }) => {
+          const next = DISPLAY_MODES.includes(mode as DisplayMode) ? (mode as DisplayMode) : modeRef.current
+          setMode(next)
+          return { mode: next }
         }
         bridge.onsizechange = ({ height }) => {
           if (typeof height === 'number' && height > 0) setHeight(Math.min(Math.ceil(height), 4000))
@@ -132,6 +151,7 @@ export function ViewFrame({
       })
     return () => {
       disposed = true
+      bridgeRef.current = undefined
       media.removeEventListener('change', onTheme)
       void bridge?.teardownResource({}).catch(() => {})
       void bridge?.close().catch(() => {})
@@ -139,15 +159,61 @@ export function ViewFrame({
     // 1つの tool 結果に1つの iframe。入力と結果は変わらない
   }, [token, uri])
 
+  // 全画面は popover で top layer に上げる。会話の一覧は contain と content-visibility で fixed の基準を閉じ込めるので、
+  // position: fixed だけでは画面全体を覆えない。iframe は DOM の中で動かさない（動かすと View が読み直しになる）
+  const box = React.useRef<HTMLDivElement>(null)
+  React.useLayoutEffect(() => {
+    const el = box.current
+    if (fullscreen && el && !el.matches(':popover-open')) el.showPopover()
+  }, [fullscreen])
+
+  // 大きさが変わったら host context で View に伝える（View はこれで「全画面で開く」「元の大きさに戻す」を切り替える）
+  React.useEffect(() => {
+    bridgeRef.current?.setHostContext(hostContext(mode))
+    if (!fullscreen) return
+    // 重ねている間は下の会話を動かさない。iframe の中で押した Esc は頁に届かないので、閉じるボタンに focus を置く
+    const overflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    close.current?.focus()
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMode('inline')
+    }
+    window.addEventListener('keydown', onKey)
+    return () => {
+      document.body.style.overflow = overflow
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [mode])
+
   if (error) return <p className="text-sm text-destructive">{error}</p>
   return (
-    <div className="relative w-full overflow-hidden rounded-xl border bg-background">
+    <div
+      ref={box}
+      // popover の属性は全画面の間だけ付ける（付けたまま閉じると display: none になる）
+      popover={fullscreen ? 'manual' : undefined}
+      role={fullscreen ? 'dialog' : undefined}
+      aria-modal={fullscreen || undefined}
+      aria-label={fullscreen ? '風土記の表とグラフ（全画面）' : undefined}
+      className={
+        fullscreen
+          ? 'fixed inset-0 m-0 flex size-full max-h-none max-w-none flex-col border-0 bg-background p-0 text-foreground'
+          : 'relative w-full overflow-hidden rounded-xl border bg-background'
+      }
+    >
+      {fullscreen ? (
+        <div className="flex shrink-0 items-center justify-between border-b px-4 py-2">
+          <span className="text-sm text-muted-foreground">風土記の表とグラフ</span>
+          <Button ref={close} variant="ghost" size="icon-sm" aria-label="元の大きさに戻す（Esc）" title="元の大きさに戻す（Esc）" onClick={() => setMode('inline')}>
+            <XIcon />
+          </Button>
+        </div>
+      ) : null}
       {!ready ? (
         <div className="absolute inset-0 flex items-center justify-center gap-2 text-sm text-muted-foreground">
           <Spinner /> 表を準備しています
         </div>
       ) : null}
-      <iframe ref={frame} title="風土記の表とグラフ" sandbox="allow-scripts" className="block w-full border-0" style={{ height }} />
+      <iframe ref={frame} title="風土記の表とグラフ" sandbox="allow-scripts" className={fullscreen ? 'block min-h-0 w-full flex-1 border-0' : 'block w-full border-0'} style={fullscreen ? undefined : { height }} />
     </div>
   )
 }

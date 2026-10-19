@@ -2,6 +2,7 @@ import * as React from 'react'
 import { ArrowUpIcon, SquareIcon } from 'lucide-react'
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupText, InputGroupTextarea } from '@/components/ui/input-group'
 import { Spinner } from '@/components/ui/spinner'
+import { cn } from '@/lib/utils'
 
 /** server/limits.ts の MAX_USER_TEXT と同じ。超えたら送れないことを先に見せる */
 export const MAX_TEXT = 2000
@@ -15,6 +16,7 @@ export function Composer({
   disabled = false,
   placeholder,
   autoFocus,
+  compact = false,
   children,
 }: {
   /** false を返すか reject したら、送れなかったとして入力を戻す */
@@ -27,6 +29,8 @@ export function Composer({
   disabled?: boolean
   placeholder: string
   autoFocus?: boolean
+  /** 狭い画面（sm 未満）では1行で始め、送るボタンを横に置く。会話の画面の続きの入力に使う */
+  compact?: boolean
   children?: React.ReactNode
 }) {
   const [text, setText] = React.useState('')
@@ -52,7 +56,7 @@ export function Composer({
         submit()
       }}
     >
-      <InputGroup data-disabled={disabled || undefined}>
+      <InputGroup data-disabled={disabled || undefined} className={compact ? 'max-sm:flex-row! max-sm:items-end' : undefined}>
         <InputGroupTextarea
           aria-label="風土記の AI への質問"
           value={text}
@@ -60,8 +64,8 @@ export function Composer({
           autoFocus={autoFocus}
           disabled={disabled}
           aria-invalid={over || undefined}
-          rows={2}
-          className="max-h-48 min-h-14"
+          rows={compact ? 1 : 2}
+          className={cn('max-h-48 min-h-14', compact && 'max-sm:max-h-32 max-sm:min-h-10')}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
@@ -70,7 +74,7 @@ export function Composer({
             }
           }}
         />
-        <InputGroupAddon align="block-end">
+        <InputGroupAddon align="block-end" className={compact ? 'max-sm:w-auto max-sm:pr-1.5 max-sm:pb-1 max-sm:pl-0' : undefined}>
           {children}
           <InputGroupText className="ml-auto tabular-nums">{over ? `${text.length} / ${MAX_TEXT} 文字` : ''}</InputGroupText>
           {busy && onStop ? (
