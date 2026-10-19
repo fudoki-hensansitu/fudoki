@@ -10,7 +10,9 @@ import {
   searchEvaluationsOperation,
   searchRequest,
   stripHeader,
+  verify,
   type AiSearchChunk,
+  type CatalogDocument,
   type AiSearchRequest,
 } from './evaluations'
 import { operations } from './operations'
@@ -355,6 +357,26 @@ describe('照合', () => {
       searchImpl = async () => bad as never
       expect((await post(valid)).status).toBe(503)
     }
+  })
+})
+
+describe('登録の形と key', () => {
+  const doc = (item_format: 'pdf' | 'md'): CatalogDocument => ({
+    origin_sha256: KITA, jurisdiction: KITA_CODE, fiscal_year: 2025, title: 't', url: 'https://example.test/a.pdf',
+    landing_url: 'https://example.test/', item_format, pages: [{ start: 1, end: 108 }],
+  })
+  const md = (page: number, body = '抜き出した文字') => chunk(page, body, { key: key(KITA, page).replace(/\.pdf$/, '.md'), text: body })
+
+  test('md の原典は .md の key の chunk（見出しなし）が通り、本文はそのまま返る', () => {
+    const verified = verify(md(70), KITA_CODE, 2025, [doc('md')])
+    expect(verified).toMatchObject({ page: 70, key: key(KITA, 70).replace(/\.pdf$/, '.md') })
+    expect(stripHeader('抜き出した文字', verified!.key)).toBe('抜き出した文字')
+  })
+
+  test('登録の形と違う拡張子の key は捨てる（どちらの形でも通す照合にしない）', () => {
+    expect(verify(chunk(70, '本文'), KITA_CODE, 2025, [doc('md')])).toBeNull()
+    expect(verify(md(70), KITA_CODE, 2025, [doc('pdf')])).toBeNull()
+    expect(verify(chunk(70, '本文'), KITA_CODE, 2025, [doc('pdf')])).not.toBeNull()
   })
 })
 

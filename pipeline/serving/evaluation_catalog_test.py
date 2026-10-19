@@ -11,9 +11,10 @@ A = 'a' * 64
 B = 'b' * 64
 
 
-def record(origin: plan.Origin, page_count: int, **overrides) -> dict:
+def record(origin: plan.Origin, page_count: int, config: dict = CONFIG, **overrides) -> dict:
+    fmt = plan.item_format(config, origin)
     return {'origin_sha256': origin.sha256, 'page_count': page_count, 'confirmed_at': '2026-10-14T00:00:00Z',
-            'plan_fingerprint': plan.fingerprint(CONFIG, plan.plan_items(origin, page_count)), **overrides}
+            'plan_fingerprint': plan.fingerprint(config, plan.plan_items(origin, page_count, fmt), fmt), **overrides}
 
 
 class EvaluationCatalogTest(unittest.TestCase):
@@ -34,7 +35,17 @@ class EvaluationCatalogTest(unittest.TestCase):
         self.assertEqual(catalog['documents'][1], {
             'origin_sha256': A, 'jurisdiction': '131172', 'fiscal_year': 2025, 'title': '131172の評価',
             'url': f'https://example.test/{A}.pdf', 'landing_url': 'https://example.test/landing',
-            'pages': [{'start': 1, 'end': 108}]})
+            'item_format': 'pdf', 'pages': [{'start': 1, 'end': 108}]})
+
+    def test_declared_text_origin_is_listed_as_md_and_needs_a_record_of_that_shape(self):
+        by_sha = {o.sha256: o for o in self.origins}
+        config = {**CONFIG, 'text_origins': [A]}
+        instance = {'config': config, 'registrations': [record(by_sha[A], 108, config), record(by_sha[B], 63, config)]}
+        formats = {d['origin_sha256']: d['item_format'] for d in evaluation_catalog.build(self.origins, instance)['documents']}
+        self.assertEqual(formats, {A: 'md', B: 'pdf'})
+        # 宣言だけ足して登録し直していない（PDF の形の記録のまま）原典は載せない
+        stale = {'config': config, 'registrations': [record(by_sha[A], 108)]}
+        self.assertEqual(evaluation_catalog.build(self.origins, stale)['documents'], [])
 
     def test_origin_without_record_or_with_stale_fingerprint_is_omitted(self):
         by_sha = {o.sha256: o for o in self.origins}

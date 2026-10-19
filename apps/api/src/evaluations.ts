@@ -49,13 +49,15 @@ export interface EvaluationDeps {
 
 // --- catalog（pipeline が生成する、検索してよい原典の一覧） ---
 
-interface CatalogDocument {
+export interface CatalogDocument {
   origin_sha256: string
   jurisdiction: string
   fiscal_year: number
   title: string
   url: string
   landing_url: string
+  /** 登録の形。pdf は頁の PDF、md は抜き出した文字（key の拡張子になる） */
+  item_format: 'pdf' | 'md'
   pages: { start: number; end: number }[]
 }
 const CATALOG = (catalogJson as unknown as { documents: CatalogDocument[] }).documents
@@ -231,16 +233,17 @@ const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'obj
 interface Verified { key: string; document: CatalogDocument; page: number }
 
 /** chunk の出どころを、登録と同じ規則で組み立てた key と catalog に照らす。通らなければ null。 */
-function verify(chunk: unknown, jurisdiction: string, fiscalYear: number, documents: CatalogDocument[]): Verified | null {
+export function verify(chunk: unknown, jurisdiction: string, fiscalYear: number, documents: CatalogDocument[]): Verified | null {
   if (!isRecord(chunk) || !isRecord(chunk.item) || typeof chunk.text !== 'string') return null
   const { key, metadata } = chunk.item
   if (typeof key !== 'string' || !isRecord(metadata)) return null
   const { page, origin_sha256: sha } = metadata
   if (typeof page !== 'number' || !Number.isSafeInteger(page) || page <= 0 || typeof sha !== 'string') return null
-  if (key !== `${sha}_p${String(page).padStart(4, '0')}.pdf`) return null
   if (String(metadata.jurisdiction) !== jurisdiction || String(metadata.fiscal_year) !== String(fiscalYear)) return null
   const document = documents.find((d) => d.origin_sha256 === sha)
   if (!document || !document.pages.some((r) => r.start <= page && page <= r.end)) return null
+  // 期待する key は catalog の登録の形から組み立てる。形と違う拡張子の chunk は受けない
+  if (key !== `${sha}_p${String(page).padStart(4, '0')}.${document.item_format}`) return null
   return { key, document, page }
 }
 

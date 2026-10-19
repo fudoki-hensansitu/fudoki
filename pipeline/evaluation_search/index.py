@@ -43,14 +43,19 @@ def log(message: str) -> None:
 
 
 def cf(*args: str, parse: bool = True):
-    """cf を呼ぶ。一時的な失敗に備えて 3 回まで試し、尽きたら止める。"""
+    """cf を呼ぶ。一時的な失敗に備えて 3 回まで試し、尽きたら止める。混雑の 429 は待ちを延ばして 6 回まで試す（続けての delete で出る）。"""
     last = ''
-    for attempt in range(3):
+    attempt = 0
+    while True:
         result = subprocess.run(['cf', *args], capture_output=True, text=True)
         if result.returncode == 0:
             return json.loads(result.stdout) if parse and result.stdout.strip() else None
         last = (result.stderr or result.stdout).strip()[-300:]
-        time.sleep(2 * (attempt + 1))
+        busy = '429' in last
+        attempt += 1
+        if attempt >= (6 if busy else 3):
+            break
+        time.sleep(15 * attempt if busy else 2 * attempt)
     raise RuntimeError(f'cf {" ".join(args[:3])} が失敗: {last}')
 
 
@@ -113,9 +118,35 @@ def split_page(document, page: int) -> bytes:
     return data
 
 
+def page_text(document, page: int) -> str:
+    """pdfium で抜き出した頁（1 始まり）の文字。文字の item の本文で、改行は LF にそろえる。頁と textpage は都度閉じる（数万頁を回すため）。"""
+    pdf_page = document[page - 1]
+    try:
+        textpage = pdf_page.get_textpage()
+        try:
+            text = textpage.get_text_range()
+        finally:
+            textpage.close()
+    finally:
+        pdf_page.close()
+    return text.replace('\r\n', '\n').replace('\r', '\n')
+
+
 def text_chars(document, page: int) -> int:
     """手元の pdfium で読める、空白を除いた文字数。"""
-    return len(''.join(document[page - 1].get_textpage().get_text_range().split()))
+    return len(''.join(page_text(document, page).split()))
+
+
+def text_item(document, page: int) -> bytes:
+    """文字の item（`.md`）の本文。文字が無い頁も item を保つため、空なら改行 1 つにする（頁の数と catalog の範囲を崩さない）。4MiB を超えれば止める。"""
+    data = (page_text(document, page).rstrip('\n') + '\n').encode('utf-8')
+    if len(data) > plan.MAX_ITEM_BYTES:
+        raise ValueError(f'{page} 頁の文字が {len(data)} byte で、上限 {plan.MAX_ITEM_BYTES} byte を超える')
+    return data
+
+
+def item_bytes(document, page: int, fmt: str) -> bytes:
+    return text_item(document, page) if fmt == 'md' else split_page(document, page)
 
 
 def converted_chars(chunks: list[dict]) -> int:
@@ -178,6 +209,7 @@ class OriginPlan:
     fingerprint: str
     pages: list[int]
     recorded: bool  # 登録の記録が今の計画の指紋と一致する
+    fmt: str = 'pdf'                                     # 登録の形。pdf は頁の PDF、md は抜き出した文字
     add: list[dict] = field(default_factory=list)       # 索引に無い
     delete: list[dict] = field(default_factory=list)    # metadata が違う索引の item。消して add で登録し直す
     waiting: int = 0                                     # 正しいが完了していない
@@ -218,14 +250,15 @@ def build_plans(instance: dict, origins: list[plan.Origin]) -> tuple[list[Origin
             page_count = len(document)
             pages = plan.selected_pages(origin, page_count)
             chars = {}
+            fmt = plan.item_format(config, origin)
             for page in pages:
-                split_page(document, page)
+                item_bytes(document, page, fmt)
                 chars[page] = text_chars(document, page)
         finally:
             document.close()
-        items = plan.plan_items(origin, page_count)
-        origin_plan = OriginPlan(origin, page_count, items, plan.fingerprint(config, items), pages,
-                                 recorded=False)
+        items = plan.plan_items(origin, page_count, fmt)
+        origin_plan = OriginPlan(origin, page_count, items, plan.fingerprint(config, items, fmt), pages,
+                                 recorded=False, fmt=fmt)
         origin_plan.probe_page = max(pages, key=lambda page: chars[page])
         origin_plan.probe_chars = chars[origin_plan.probe_page]
         record = plan.registration(instance, origin)
@@ -242,7 +275,7 @@ def describe(plans: list[OriginPlan], strays: list[dict]) -> None:
     for p in plans:
         o = p.origin
         state = '記録あり' if p.recorded else '記録なし'
-        log(f'{o.jurisdiction} {o.fiscal_year} {o.sha256[:12]} 原典{p.page_count}頁 → 登録{len(p.pages)}頁 '
+        log(f'{o.jurisdiction} {o.fiscal_year} {o.sha256[:12]} 原典{p.page_count}頁 → 登録{len(p.pages)}頁 {p.fmt} '
             f'[{state}] 登録済み{p.ok} 待ち{p.waiting} 追加{len(p.add)} 削除{len(p.delete)}')
     log(f'計画に無い item: {len(strays)}')
 
@@ -280,10 +313,17 @@ def apply(instance: dict, plans: list[OriginPlan], strays: list[dict], workers: 
     for p in plans:
         if p.dirty:
             drop_record(instance, p.origin)  # 書く前に記録を消す。確認できるまで catalog に載せない
+    # 削除は続けると 429・timeout になる。失敗しても止めずに登録へ進む。消し残した item は確認で「余分」になり、
+    # その原典の記録を書かないので catalog に載らない。次の実行で消し直す
+    failed = 0
     for item in [*strays, *(i for p in plans for i in p.delete)]:
-        search_cf(name, 'items', 'delete', item['id'], '--force', parse=False)
+        try:
+            search_cf(name, 'items', 'delete', item['id'], '--force', parse=False)
+        except RuntimeError as error:
+            failed += 1
+            log(f'{item["key"]}: 削除できず、次の実行で消し直す: {str(error)[-80:]}')
     if strays or any(p.delete for p in plans):
-        log(f'削除 {len(strays) + sum(len(p.delete) for p in plans)}')
+        log(f'削除 {len(strays) + sum(len(p.delete) for p in plans) - failed}（失敗 {failed}）')
     with tempfile.TemporaryDirectory(prefix='evaluation-index-') as directory:
         jobs: list[tuple[dict, Path]] = []
         for p in plans:
@@ -294,7 +334,7 @@ def apply(instance: dict, plans: list[OriginPlan], strays: list[dict], workers: 
                 for item in p.add:
                     page = item['metadata']['page']
                     path = Path(directory) / item['key']
-                    path.write_bytes(split_page(document, page))
+                    path.write_bytes(item_bytes(document, page, p.fmt))
                     jobs.append((item, path))
             finally:
                 document.close()

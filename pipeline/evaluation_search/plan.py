@@ -90,9 +90,19 @@ def selected_pages(origin: Origin, page_count: int) -> list[int]:
     return [page for start, end in origin.pages for page in range(start, end + 1)]
 
 
-def item_key(origin: Origin, page: int) -> str:
+ITEM_FORMATS = ('pdf', 'md')
+
+
+def item_format(config: dict, origin: Origin) -> str:
+    """登録の形。config の `text_origins` に宣言した原典は、頁の PDF の代わりに pdfium で抜き出した文字（`md`）を item にする（ADR 0031）。"""
+    return 'md' if origin.sha256 in (config.get('text_origins') or []) else 'pdf'
+
+
+def item_key(origin: Origin, page: int, fmt: str = 'pdf') -> str:
     """item の key。cf の upload は key をファイル名の末尾（basename）にするので、`/` で区切れない。`_` で原典の sha256 と頁をつなぐ。"""
-    return f'{origin.sha256}_p{page:04d}.pdf'
+    if fmt not in ITEM_FORMATS:
+        raise ValueError(f'登録の形が pdf でも md でもない: {fmt}')
+    return f'{origin.sha256}_p{page:04d}.{fmt}'
 
 
 def item_metadata(origin: Origin, page: int) -> dict:
@@ -101,14 +111,22 @@ def item_metadata(origin: Origin, page: int) -> dict:
             'origin_sha256': origin.sha256, 'page': page}
 
 
-def plan_items(origin: Origin, page_count: int) -> list[dict]:
-    return [{'key': item_key(origin, page), 'metadata': item_metadata(origin, page)}
+def plan_items(origin: Origin, page_count: int, fmt: str = 'pdf') -> list[dict]:
+    return [{'key': item_key(origin, page, fmt), 'metadata': item_metadata(origin, page)}
             for page in selected_pages(origin, page_count)]
 
 
-def fingerprint(config: dict, items: list[dict]) -> str:
-    """インスタンスの設定と、その原典の key・metadata の計画から求めるハッシュ。"""
-    body = json.dumps({'config': config, 'items': items}, ensure_ascii=False, sort_keys=True, separators=(',', ':'))
+def fingerprint(config: dict, items: list[dict], fmt: str = 'pdf') -> str:
+    """インスタンスの設定と、その原典の登録の形・key・metadata の計画から求めるハッシュ。
+
+    `text_origins`（原典ごとの宣言）は config から除く。含めると、他の原典の宣言を足すだけで宣言の無い原典の指紋が変わり、
+    登録済みの原典が全件登録し直しになる。原典ごとの形は `fmt` で入れる。pdf のときは入れず、宣言の無い原典の指紋を従来のまま保つ。
+    """
+    shared = {k: v for k, v in config.items() if k != 'text_origins'}
+    document = {'config': shared, 'items': items}
+    if fmt != 'pdf':
+        document['item_format'] = fmt
+    body = json.dumps(document, ensure_ascii=False, sort_keys=True, separators=(',', ':'))
     return hashlib.sha256(body.encode('utf-8')).hexdigest()
 
 
@@ -122,7 +140,8 @@ def registration_is_current(instance: dict, origin: Origin) -> bool:
     if record is None:
         return False
     try:
-        items = plan_items(origin, record['page_count'])
+        fmt = item_format(instance['config'], origin)
+        items = plan_items(origin, record['page_count'], fmt)
     except ValueError:
         return False
-    return fingerprint(instance['config'], items) == record['plan_fingerprint']
+    return fingerprint(instance['config'], items, fmt) == record['plan_fingerprint']

@@ -31,6 +31,7 @@ def build(origins: list[plan.Origin], instance: dict) -> dict:
             'title': origin.title,
             'url': origin.download_url,
             'landing_url': origin.landing_url,
+            'item_format': plan.item_format(instance['config'], origin),
             'pages': [{'start': start, 'end': end} for start, end in ranges],
         })
     return {'instance': instance['config']['name'], 'documents': documents}
