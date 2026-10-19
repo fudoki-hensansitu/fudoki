@@ -75,7 +75,9 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
   const send = React.useCallback((text: string) => void sendMessage({ text }), [sendMessage])
   // View の「チャットで聞く」は、応答の生成中には送らない（2つの応答が同じ会話に書き込まないように）
   const busyRef = React.useRef(busy)
-  busyRef.current = busy
+  React.useLayoutEffect(() => {
+    busyRef.current = busy
+  }, [busy])
   const sendFromView = React.useCallback((text: string) => {
     if (!busyRef.current) send(text)
   }, [send])

@@ -36,11 +36,13 @@ export function Composer({
     if (!canSend) return
     const value = text.trim()
     setText('')
+    // 送れなかったら質問を戻す。待つ間に新しく書き始めていたら、その下書きを残す
+    const restore = () => setText((current) => (current === '' ? value : current))
     void Promise.resolve()
       .then(() => onSubmit(value))
       .then(
-        (ok) => ok === false && setText(value),
-        () => setText(value),
+        (ok) => ok === false && restore(),
+        restore,
       )
   }
   return (
