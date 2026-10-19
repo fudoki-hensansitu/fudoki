@@ -50,7 +50,7 @@ function Start({ sitekey }: { sitekey: string }) {
     return <p className="text-sm text-muted-foreground">風土記の AI に聞く機能は準備中です。下の「自分の AI に接続する」から、お使いの AI で使えます。</p>
   return (
     <div className="flex flex-col gap-3">
-      <Composer onSubmit={start} pending={pending} placeholder="街のお金について聞く" />
+      <Composer onSubmit={start} pending={pending} placeholder="街のお金について聞く" pill />
       <div ref={widget} />
       {error ? <p role="alert" className="text-sm text-destructive">{error}</p> : null}
       <p className="text-xs text-muted-foreground">
