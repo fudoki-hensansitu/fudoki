@@ -59,8 +59,8 @@ for (const root of ['apps', 'packages'])
     }
   }
 // web は入口の1枚と AI との会話を配る。データ（D1・R2・KV など）の binding は持たせず、データは apps/api に Service Binding で聞く。
-// 許すのは Workers AI・Service Binding・流量・利用状況の記録・文字列の var だけ
-const WEB_BINDINGS = new Set(['ai', 'worker', 'rateLimit', 'analyticsEngineDataset', 'text'])
+// 許すのは Workers AI・Service Binding・流量・利用状況の記録・文字列の var・secret（値を持たない宣言）だけ
+const WEB_BINDINGS = new Set(['ai', 'worker', 'rateLimit', 'analyticsEngineDataset', 'text', 'secret'])
 for (const name of ['web/deploy']) {
   const config = await readFile(
     join(REPO, 'apps', name, 'cloudflare.config.ts'),
