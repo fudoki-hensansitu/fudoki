@@ -20,6 +20,8 @@ export interface Env {
   CHAT_USAGE?: AnalyticsDataset
   /** Workers AI のモデル ID。config の var で切り替える */
   CHAT_MODEL?: string
+  /** 推論の深さ（low・medium・high・none）。未設定・不明な値ならモデルの既定 */
+  CHAT_REASONING_EFFORT?: string
   /** Turnstile の site key（公開値、config の var） */
   TURNSTILE_SITE_KEY?: string
   /** Turnstile の secret key（Worker の secret）。session の署名の鍵もここから作る */

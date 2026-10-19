@@ -19,8 +19,11 @@ export default defineConfig({
       VIEW_RATE_LIMIT: bindings.rateLimit({ namespace: '1003', simple: { limit: 60, period: 60 } }),
       // 利用状況（時刻・モデル・token 数・tool の回数・段数・所要時間・失敗の有無）。会話の本文と IP は書かない
       CHAT_USAGE: bindings.analyticsEngineDataset({ name: 'fudoki_web_chat' }),
-      // Workers AI のモデル ID。tool 呼び出し（function calling）に対応し、日本語を扱えるものを選ぶ
-      CHAT_MODEL: bindings.text('@cf/zai-org/glm-4.7-flash'),
+      // Workers AI のモデル ID。tool 呼び出し（function calling）に対応し、日本語を扱えるものを選ぶ。
+      // DeepSeek-V4-Flash は Workers Paid が要る。コンテキストが長く（約105万 token）、毎回送り直す履歴がキャッシュ入力の安い単価になる
+      CHAT_MODEL: bindings.text('@cf/deepseek-ai/deepseek-v4-flash-0731'),
+      // 推論の深さ（low・medium・high、none で切る）。考える分も出力 token に数えるので、案内役の応答には low で足りる
+      CHAT_REASONING_EFFORT: bindings.text('low'),
       // Turnstile の site key（公開値）。Cloudflare の dashboard で widget を作って書く。空の間は入口の入力を出さない
       TURNSTILE_SITE_KEY: bindings.text(''),
     },

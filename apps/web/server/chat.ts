@@ -43,6 +43,13 @@ export function parseChat(body: unknown): { id: string; messages: UIMessage[]; v
   return { id, messages: out, ...(viewContext ? { viewContext } : {}) }
 }
 
+/** config の var を workers-ai-provider の reasoning_effort にする。none は推論を切る（null） */
+export function reasoningEffort(value: string | undefined): { reasoning_effort?: 'low' | 'medium' | 'high' | null } {
+  if (value === 'low' || value === 'medium' || value === 'high') return { reasoning_effort: value }
+  if (value === 'none') return { reasoning_effort: null }
+  return {}
+}
+
 /** tool の結果のうち text だけを AI に渡す */
 function textOnly({ output }: { output: unknown }) {
   const content = (output as { content?: unknown })?.content
@@ -110,7 +117,8 @@ export async function handleChat(request: Request, env: Env, ctx: Ctx): Promise<
 
   const workersai = createWorkersAI({ binding: env.AI as never })
   const result = streamText({
-    model: workersai(modelId),
+    // 同じ会話を同じ replica に送り、送り直す履歴の prefix cache を効かせる（鍵は会話の無作為な ID だけ）
+    model: workersai(modelId, { sessionAffinity: sessionId, ...reasoningEffort(env.CHAT_REASONING_EFFORT) }),
     system,
     messages,
     tools,

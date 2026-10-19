@@ -15,7 +15,7 @@ bun run build:web
 
 入口の中央の入力（`chat/start.tsx`、React の島）から、風土記の MCP（apps/api）に繋いだ AI と会話する。会話の画面 `/s/:id` は React の SPA（`chat/session.tsx`）。チャットの部品は shadcn の chat 系（`chat/components/ui/`、`components.json`）で、apps/web の中に閉じる。
 
-- **流れ**: 入力を送ると Turnstile で確かめ（`POST /api/sessions` がサーバー側で siteverify）、その会話だけに使える署名付き token（2時間）を受けて `/s/:id` に移る。`POST /api/chat` が Workers AI（`workers-ai-provider`、モデルは config の `CHAT_MODEL`）と AI SDK の MCP client で応答を stream する。apps/api とは Service Binding（`API`）で繋ぐ
+- **流れ**: 入力を送ると Turnstile で確かめ（`POST /api/sessions` がサーバー側で siteverify）、その会話だけに使える署名付き token（2時間）を受けて `/s/:id` に移る。`POST /api/chat` が Workers AI（`workers-ai-provider`、モデルは config の `CHAT_MODEL`、推論の深さは `CHAT_REASONING_EFFORT`）と AI SDK の MCP client で応答を stream する。apps/api とは Service Binding（`API`）で繋ぐ
 - **表示**: AI が `render_expenditure_view` を呼んだ結果は、apps/api の MCP Apps の View を `srcdoc` + `sandbox="allow-scripts"` の iframe に置き、`AppBridge` + `PostMessageTransport` で渡す（`chat/view-frame.tsx`、土台は `apps/api/tests/host.ts`）。View が呼ぶ tool と resource の読み込みは `POST /api/mcp` が許可リスト（`server/limits.ts` の `VIEW_TOOLS`・`VIEW_RESOURCE`）で中継する
 - **AI に渡すもの**: tool の結果は text の側だけ（`server/chat.ts` の `textOnly`）。structuredContent と `_meta` は View にだけ流れる
 - **保存しない**: 会話の履歴と token はブラウザの sessionStorage だけに置く。サーバーは利用状況だけを Analytics Engine に書く（本文・IP・会話 ID は書かない）
