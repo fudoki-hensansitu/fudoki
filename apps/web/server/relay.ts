@@ -1,9 +1,9 @@
 // MCP Apps の View が host に頼む tools/call・resources/read を apps/api の MCP へ中継する。
 // View は sandbox の iframe の中で動き、許可した tool と風土記の View の resource だけを呼べる。
-import { apiFetch, MCP_URL, type Ctx, type Env } from './env'
-import { clientIp, HttpError, json, rateLimit, readJson } from './http'
-import { MAX_RELAY_BODY_BYTES, VIEW_RATE_LIMIT, VIEW_RESOURCE, VIEW_TOOLS } from './limits'
-import { verifySession } from './session'
+import type { AppContext } from './api'
+import { apiFetch, MCP_URL, type Env } from './env'
+import { HttpError, json } from './http'
+import { VIEW_RESOURCE, VIEW_TOOLS } from './limits'
 import { writeUsage } from './usage'
 
 type RelayRequest =
@@ -55,12 +55,11 @@ export async function callMcp(env: Env, ip: string, method: string, params: unkn
   return message.result
 }
 
-export async function handleRelay(request: Request, env: Env, _ctx: Ctx): Promise<Response> {
+export async function handleRelay(c: AppContext): Promise<Response> {
   const started = Date.now()
-  await verifySession(env.TURNSTILE_SECRET_KEY, request.headers.get('Authorization'))
-  const ip = clientIp(request)
-  await rateLimit(env.VIEW_RATE_LIMIT, ip, VIEW_RATE_LIMIT.period)
-  const relay = parseRelay(await readJson(request, MAX_RELAY_BODY_BYTES))
+  const { env } = c
+  const { ip } = c.var
+  const relay = parseRelay(c.var.body)
   const tool = relay.method === 'tools/call' ? relay.params.name : ''
   let failed = false
   try {

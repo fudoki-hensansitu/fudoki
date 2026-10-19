@@ -28,10 +28,6 @@ export interface Env {
   TURNSTILE_SECRET_KEY?: string
 }
 
-export interface Ctx {
-  waitUntil(promise: Promise<unknown>): void
-}
-
 /** apps/api の MCP の URL。Service Binding でもこの URL で呼び、結果の _meta.apiOrigin を本番と同じにする */
 export const MCP_URL = 'https://api.fudoki.dev/mcp'
 
