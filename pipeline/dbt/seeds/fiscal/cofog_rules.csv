@@ -360,3 +360,4 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 1337,keyword-history-museum,,一般会計,,,,,歴史館,contains,,assigned,08.2,retained,目,,歴史館（郷土資料の展示施設）を文化施設に分類する。,false
 1338,bunkyo-academy-unclassifiable,131059,一般会計,,,アカデミー費,,,eq,,unclassifiable,,retained,目,,文京区 区民費のアカデミー費は生涯学習・スポーツ・文化の事業を一つの項に束ねる。目の名称（総務費・施設運営費・事業費）から機能を分けられないため unclassifiable とする（団体限定。他団体の分類は変えない）。,false
 1339,keyword-consumer-administration,,一般会計,,産業経済費,商工費,,消費者行政,contains,,assigned,04.1,retained,目,,産業経済費の商工費に属する消費者行政を一般経済・商業業務に分類する。,false
+1340,keyword-road-parking,,一般会計,,土木費,,,駐車場,contains,,assigned,04.5.1,retained,目,,土木費に属する駐車場の管理・運営を道路交通に分類する（駐車場事業の会計と同じ扱い）。,false

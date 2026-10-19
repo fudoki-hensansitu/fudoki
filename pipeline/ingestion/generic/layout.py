@@ -559,7 +559,10 @@ def logical_pages(pages: list[Page], *, columns: dict | None = None, spread: dic
         glyphs = [Glyph(w.text, w.x0, w.y0, w.x1, w.y1, page.number, 0) for w in outside]
         if not bands:
             continue
-        first = min(bands, key=lambda b: b.x0)
+        leftmost = min(bands, key=lambda b: b.x0)
+        # A frame with no header and no words (crop marks printed outside the CropBox) is no column:
+        # taken as the first band, it hid the amount column opening a spread's right page.
+        first = min([b for b in bands if b.header or b.words] or bands, key=lambda b: b.x0)
         previous_page = observed.get(result[-1].pages[-1]) if result else None
         # The right half of a spread starts with an amount column, or (when the 節 column
         # opens the right page) at least carries no 款・項・目 column while the left half does.
@@ -568,7 +571,7 @@ def logical_pages(pages: list[Page], *, columns: dict | None = None, spread: dic
         if (continues and result and len(result[-1].pages) == 1
                 and previous_page is not None and same_rows(previous_page, page)):
             previous = result[-1]
-            offset = max(b.x1 for b in previous.bands) + 10 - first.x0
+            offset = max(b.x1 for b in previous.bands) + 10 - leftmost.x0
             for band in bands:
                 band.x0 += offset; band.x1 += offset; band.offset = offset
                 band.spans = [(a + offset, b + offset, t) for a, b, t in band.spans]

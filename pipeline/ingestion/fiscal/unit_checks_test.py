@@ -195,6 +195,10 @@ class UnitCheckTest(unittest.TestCase):
         # A page that prints a name of its own is a row of its own, not the rest of the total.
         named = scope(('100,000,000', 300.0, 360.0), label=('議', '会', '費'), page=2)
         self.assertEqual(unit_checks.printed_totals({'words': left['words'] + named['words']}, nodes, amounts), [])
+        # The kind word of a stacked carry-over cell on the total's line (`継続` `費逓次繰越`) is no name.
+        stacked = scope(('100,000,000', 300.0, 360.0), label=('継続', '費逓次繰越'), page=2)
+        found = unit_checks.printed_totals({'words': left['words'] + stacked['words']}, nodes, amounts)
+        self.assertEqual([item['text'] for item in found], ['100,000,000'])
 
     def test_two_different_totals_of_the_reported_phase_are_not_compared(self):
         nodes, amounts = table('100,000,000')
