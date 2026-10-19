@@ -591,6 +591,24 @@ class UnitTest(unittest.TestCase):
         self.assertEqual(resolve(pages, 'initial')['default'], 1)
         self.assertEqual([p.unit for p in pages], ['千円', '千円'])
 
+    def test_a_column_that_prints_its_own_unit_keeps_it_on_a_page_of_another_unit(self):
+        from ingestion.generic.layout import Logical
+        from ingestion.generic.units import resolve
+        band = lambda *header: Band(0, 10, 1, header, [], 0, 0, kind='amount')
+        page = Logical([1], [band('予算現額', '当初予算額(千円)'), band('予算現額', '計')], '円', [])
+        resolve([page], 'settlement')
+        self.assertEqual(page.unit_of('予算現額／当初予算額(千円)'), '千円')
+        self.assertEqual(page.unit_of('予算現額／当初予算額(千円)／注記／x'), '千円')  # a note under that column
+        self.assertEqual(page.unit_of('予算現額／計'), '円')
+        self.assertEqual(page.unit_of('支出済額'), '円')
+
+    def test_a_heading_that_names_its_unit_is_no_part_of_the_heading_and_is_an_amount_column(self):
+        from ingestion.generic.headers import clean
+        from ingestion.generic.layout import HEADER_UNIT
+        self.assertEqual(clean('当初予算額(千円)'), '当初予算額')
+        self.assertIsNotNone(HEADER_UNIT.search('補正予算額(千円)'))
+        self.assertIsNone(HEADER_UNIT.search('補正予算額'))
+
     def test_kan_sum_must_equal_the_printed_total(self):
         from ingestion.generic.tree import Built
         from ingestion.generic.units import check
@@ -823,6 +841,21 @@ class ConvertRulesTest(unittest.TestCase):
                          900, 1100)
         found = entries_of(Group([band], '備考', False), {944, 945, 10949})
         self.assertEqual([(code, name) for _, _, code, name in found], [('8', '2歳児歯科健診事業(健康課)')])
+
+    def test_a_four_digit_number_that_is_a_word_of_its_own_before_a_name_that_starts_with_a_count_is_a_number(self):
+        from ingestion.generic.tree import entries_of
+        # `0200` `16ミリ映写機検定委託料` (132284): the item is 0200, not a name `020016ミリ…`.
+        band = self.band([glyph('0200', 944.3, 350, 18), glyph('16ミリ映写機検定委託料', 966.3, 350, 100)], 900, 1100)
+        found = entries_of(Group([band], '備考', False), {944, 945, 10949})
+        self.assertEqual([(code, name) for _, _, code, name in found], [('0200', '16ミリ映写機検定委託料')])
+
+    def test_a_款_column_whose_ancestor_code_was_taken_out_is_no_title_table(self):
+        from ingestion.generic.tree import untitled
+        first = Band(24, 37, 1, ('款項目',), [], 100, 700)
+        group = Group([first, Band(37, 50, 1, ('款項目',), [], 100, 700)], '科目', True)
+        self.assertTrue(untitled(group))  # nothing printed in the 款 column: its 款 is a title
+        first.stripped_codes = True  # `2 1 6` at the top of a continuation page, `2` and `1` taken out
+        self.assertFalse(untitled(group))
 
     def test_the_numbers_column_a_rule_splits_off_its_names_is_one_column(self):
         from ingestion.generic.layout import Logical

@@ -460,6 +460,7 @@ def strip_ancestor_codes(group: Group) -> list[Glyph]:
             removed.extend(label[:codes - 1])
     gone = {id(g) for g in removed}
     for band in group.bands:
+        band.stripped_codes = band.stripped_codes or any(id(w) in gone for w in band.words)
         band.words = [w for w in band.words if id(w) not in gone]
     return removed
 
@@ -483,9 +484,9 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
             # `11３歳児健康診査事業`: half-width digits are the number and the full-width ones start the name.
             code, name = script.group(1), normalize(raw_text[len(script.group(1)):])
         if (not script and len(label) > 1 and margins is not None and margins & set(_margins(label))
-                and re.fullmatch(r'[0-9]{1,3}', normalize(label[0].text)) and re.match(r'[0-9０-９]', label[1].text)
+                and re.fullmatch(r'[0-9]{1,4}', normalize(label[0].text)) and re.match(r'[0-9０-９]', label[1].text)
                 and label[1].x0 - label[0].x1 >= 2):
-            # `8` `2歳児歯科健診事業`: the number is a word of its own, and the name begins with a count.
+            # `8` `2歳児歯科健診事業`, `0200` `16ミリ映写機検定委託料`: the number is a word of its own, and the name begins with a count.
             code, name, script = normalize(label[0].text), normalize(text(label[1:])), True
         if code is not None and margins is not None and not margins & set(_margins(label)):
             code, name = None, line_text  # a name that begins with a digit
@@ -1073,13 +1074,13 @@ def title_amount(line: list[Glyph]) -> tuple[str | None, list[Glyph]]:
 
 def untitled(group: Group) -> bool:
     """A subject group whose 款 is printed as a title: its first column is not 款, or one header spans the
-    columns (`款項目`) and the 款 column prints nothing."""
+    columns (`款項目`) and the 款 column prints nothing (a 款 code taken out as an ancestor's is not nothing)."""
     if not group.bands or not group.bands[0].header:
         return False
     first = group.bands[0]
     if group.mode in ('bands', 'names') and first.header[-1] in SUBJECT_LEVELS[1:]:
         return True
-    return first.header[-1] == '款項目' and not first.words
+    return first.header[-1] == '款項目' and not first.words and not first.stripped_codes
 
 
 def title_shift(group: Group) -> bool:
@@ -2037,7 +2038,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 if target is not None:
                     label = normalize(text([g for g in item.glyphs if not any(g in r for _, r in item.amounts)]))
                     for header, run in item.amounts:
-                        annotations.append((target, f'{header}／注記／{label}', run, logical.unit))
+                        annotations.append((target, f'{header}／注記／{label}', run, logical.unit_of(header)))
                     remarks.append({'kind': 'annotation', 'target': target, 'heading': None,
                                     # A name that is only an account code (`・040102【151502】 400`) is the
                                     # counterpart of a transfer: its words (`1200へ予算流用増`) may sit on the
@@ -2132,7 +2133,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 if item.role not in ('node', 'repeat') or item.key is None:
                     continue
                 for header, run in item.amounts:
-                    amounts.append(_amount(item.key, header, run, logical.unit))
+                    amounts.append(_amount(item.key, header, run, logical.unit_of(header)))
                 for label, run, heading in item.kinds:
                     remarks.append({'kind': 'kind line', 'target': item, 'heading': heading, 'label': label,
                                     'runs': [run], 'unit': logical.unit})
@@ -2187,7 +2188,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     carry = None
                     if target is not None and target.role == 'total':
                         notes.append({'kind': 'total amount', 'page': money[0].page, 'text': candidate,
-                                      'header': '／'.join(band.header), 'unit': logical.unit, 'label': target.name,
+                                      'header': '／'.join(band.header), 'unit': logical.unit_of('／'.join(band.header)), 'label': target.name,
                                       'box': _bbox([printed.get(id(g), g) for g in money])})
                         continue
                     if target is None or target.key is None:
@@ -2217,7 +2218,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     if stacked is not None and stacked[1] == _cell(band, y):
                         header = f'{header}／{stacked[0]}'
                         unpaid = False
-                    amounts.append(_amount(target.key, header, money, logical.unit))
+                    amounts.append(_amount(target.key, header, money, logical.unit_of(header)))
                     previous = (target, _cell(band, y))
                 if unpaid and previous is not None and stacked[1] == previous[1]:
                     carried['／'.join(band.header)] = (previous[0], stacked[0])

@@ -6,7 +6,7 @@ stacked kinds the text layer joined: `翌年度繰越額継続費逓次繰越繰
 `shared/fiscal_amount_map.csv`. A path that fails it is brought to the heading it prints, by rules that
 read the printed words only:
 
-1. the symbols a heading carries (`(A)`, `(B)-(C)`, `(逓)`, the minus mark of `流用増△減`, the rate it carries `(執行率%)`) are not part of the heading;
+1. the symbols a heading carries (`(A)`, the unit of its column `(千円)`, `(B)-(C)`, `(逓)`, the minus mark of `流用増△減`, the rate it carries `(執行率%)`) are not part of the heading;
 2. the longest suffix of two or more segments the dictionary knows (`予算現額／節／金額` → `節／金額`), or,
    for a bare `金額` column, the axis of the item it belongs to (`節／金額`);
 3. the headings a cell prints joined together (`継続費逓次繰越繰越明許費事故繰越し`) are one column of those
@@ -31,7 +31,7 @@ from collections import Counter
 from functools import cache, lru_cache
 import re
 
-SYMBOL = re.compile(r'(?:[（(][A-ZＡ-Ｚ][)）][-－−]?)+|[（(][^0-9０-９()（）][)）]|[（(][^()（）]*[％%][)）]')
+SYMBOL = re.compile(r'(?:[（(][A-ZＡ-Ｚ][)）][-－−]?)+|[（(](?:百万円|千円|円)[)）]|[（(][^0-9０-９()（）][)）]|[（(][^()（）]*[％%][)）]')
 SEPARATOR = '／'
 
 

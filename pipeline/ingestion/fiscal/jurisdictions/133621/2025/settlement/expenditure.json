@@ -102,7 +102,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "845b432e815c558557c4bf1349127cd4660e3c2aa806d8eccef738b26c3b292c",
+      "input_fingerprint": "65df1bb70126edb5c9645c2d7333e3895b213bad021cd462ec69078c273c3c23",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'shape'}。",
@@ -132,7 +132,7 @@
     {
       "table_id": "national-health-insurance-business-expenditure",
       "conversion_id": "national-health-insurance-business-settlement",
-      "input_fingerprint": "a75c99cd3562838dc38d8c99ea94ddd44fc39198e74b4a5efa9b20e8d67518ee",
+      "input_fingerprint": "748f28205de89439811200380ed8a66de9ac01d744e406135ce541a3927c4e5f",
       "account": "国民健康保険事業特別会計（事業勘定）",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'shape'}。",
@@ -162,7 +162,7 @@
     {
       "table_id": "national-health-insurance-clinic-expenditure",
       "conversion_id": "national-health-insurance-clinic-settlement",
-      "input_fingerprint": "0057773d0068ee2487dedb41c2c6e3a23d9ea31f5afbfd3974d6eea4d7a99f43",
+      "input_fingerprint": "0ecc31c038c28d3b75cb589c7ae058d3bfa1791037898e5fd2494a1f2df9e06c",
       "account": "国民健康保険事業特別会計（直診勘定）",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -192,7 +192,7 @@
     {
       "table_id": "long-term-care-business-expenditure",
       "conversion_id": "long-term-care-business-settlement",
-      "input_fingerprint": "4910569af0115c992257bec885c0c0c828c6a64b921beabba2d0a7376cdf9a9b",
+      "input_fingerprint": "28fa448101429dd0d371f8cdcb1f682f73c2ae2804cfb473787e49928fa0fe92",
       "account": "介護保険事業特別会計（事業勘定）",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -222,7 +222,7 @@
     {
       "table_id": "elderly-medical-expenditure",
       "conversion_id": "elderly-medical-settlement",
-      "input_fingerprint": "710082806039f246951502ce973c5a3d1fa2085fb1e99a79f3a6faa940496853",
+      "input_fingerprint": "19694488f9d74e7f53b910cf02b494bbc2bf9790ce7c2d6f87a44089c1ac7e6e",
       "account": "後期高齢者事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",

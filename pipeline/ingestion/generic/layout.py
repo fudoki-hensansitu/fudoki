@@ -28,6 +28,7 @@ UNIT = re.compile(r'単位\s*[:：]?\s*(百万円|千円|円)')  # printed 単�
 # A header cell that is only the unit of the column below it (`円`, `（千円）`): the unit of the amounts,
 # not a level of their heading.
 UNIT_CELL = re.compile(r'^[(（]?(百万円|千円|円)[)）]?$')
+HEADER_UNIT = re.compile(r'[(（](?:百万円|千円|円)[)）]$')
 FOLIO = re.compile(r'[-－―][0-9]+[-－―]')  # a page number printed as `-6-`
 
 
@@ -77,6 +78,7 @@ class Band:
     inline_free: bool = False  # the kind words are declared, not the dictionary's (`国` `都` `その他` before their amounts)
     inline: bool = False  # amounts printed after a kind word of the heading in one cell (`計 140,323,000` / `当初 121,705,000`)
     excluded: dict | None = None  # a declared column whose printed digits are not taken in (kind and reason)
+    stripped_codes: bool = False  # ancestors' codes a continuation page prints (`2 1 6`) were taken out of its words (`tree.strip_ancestor_codes`)
     staircase: bool = False  # the layout setting `header.staircase`: a level's cell runs right until its own rule starts
 
     @property
@@ -91,6 +93,12 @@ class Logical:
     unit: str | None
     outside: list[Glyph]
     ocr: bool = False  # the words came from OCR (`ingestion/generic/scan.py`): rules for its misreads apply
+    column_units: dict[str, str] = field(default_factory=dict)  # heading of a column whose own unit mark differs from the page's
+
+    def unit_of(self, header: str) -> str | None:
+        """The unit of an amount under `header`: its column's own mark (`(千円)` over 当初予算額 on a 円 page), else the page's."""
+        mark = max((k for k in self.column_units if header == k or header.startswith(k + '／')), key=len, default=None)
+        return self.column_units[mark] if mark else self.unit
 
     @property
     def titles(self) -> list[tuple[str, str, list[Glyph]]]:
@@ -528,6 +536,8 @@ def logical_pages(pages: list[Page], *, columns: dict | None = None, spread: dic
                 band.kind = 'label'
             elif not counts['lines']:
                 band.kind = None
+            elif HEADER_UNIT.search(band.header[-1] if band.header else ''):
+                band.kind = 'amount'  # a heading that names its unit (`補正予算額(千円)`) is an amount column even when it prints only 0 and a short number
             elif counts['inline'] * 2 >= counts['lines']:
                 band.kind, band.inline = 'amount', True
             elif counts['text'] * 2 >= counts['lines']:
