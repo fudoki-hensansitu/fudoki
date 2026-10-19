@@ -125,6 +125,22 @@ class RefreshWorkflowTest(unittest.TestCase):
         self.assertEqual(result['status'], refresh.WOULD_REFRESH)
         self.assertEqual(self.path.read_bytes(), before)
 
+    def test_refresh_never_asks_or_writes_jev_answers(self):
+        # A refresh (dry-run included) compares tables; it must not extend or rewrite the tracked answer store.
+        with (self.code / 'lib/parquet.py').open('a') as stream:
+            stream.write('\n# a comment\n')
+        seen = []
+        real = run.convert
+
+        def spy(*args, **kwargs):
+            seen.append((kwargs.get('persist_answers'), kwargs.get('ask_answers')))
+            return real(*args, **kwargs)
+
+        with patch.object(run, 'convert', side_effect=spy):
+            result = self.refresh(dry_run=True)
+        self.assertEqual(result['status'], refresh.WOULD_REFRESH)
+        self.assertEqual(seen, [(False, False)])
+
     def test_changed_content_is_reported_and_manifest_is_not_rewritten(self):
         self.edit_converter('    return {table_id: output}', (
             "    import duckdb, os\n"

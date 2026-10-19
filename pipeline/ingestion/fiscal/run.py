@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import atexit
 import gzip
 from copy import deepcopy
 import importlib.util
@@ -13,7 +14,7 @@ import duckdb
 from ingestion.fiscal import manifest, unit_checks
 from ingestion.fiscal.storage import fetch, fetch_ocr, save, save_ocr, cleanup, verify, write_ocr
 from ingestion.paths import BUILD
-from ingestion.lib import coverage_checks, digit_recheck, node_tables, source_inconsistencies, tree_checks
+from ingestion.lib import coverage_checks, digit_recheck, heavy_lock, node_tables, source_inconsistencies, tree_checks
 
 MATCH, MISMATCH, NOT_APPLICABLE = '一致', '不一致', '対象外'
 
@@ -225,7 +226,13 @@ def coverage_peers(document: dict, converted: dict) -> dict:
 
 
 def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bool = False,
-            conversion_ids: list[str] | None = None, extend_plan: Path | None = None) -> dict:
+            conversion_ids: list[str] | None = None, extend_plan: Path | None = None,
+            persist_answers: bool = True, ask_answers: bool = True) -> dict:
+    """Convert and check tables.
+
+    A caller may read the Jev answers without extending or writing them (refresh): a read-only run
+    must not change tracked files or spend API calls.
+    """
     document = manifest.read(path)
     original_bytes = None
     if extend_plan is not None:
@@ -420,13 +427,16 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
         adopted[ident] = node_tables.with_annotations(file, migrated, raw_rows=raw_by_id[ident], adopted=peers[ident])
     peers = coverage_peers(document, adopted)
     store = recheck_store_path(document)
-    recheck = digit_recheck.Recheck.from_store(store)
+    recheck = digit_recheck.Recheck.from_store(store, ask_missing=ask_answers)
     jev_answers = {}
 
     def write_answers():
         # Answers are a judgment kept in Git, so they follow every run,
         # candidate or saved, failed or passing. Re-run tables keep only the
-        # answers they used.
+        # answers they used. A read-only caller (refresh) reads the store and
+        # writes nothing, so its dry-run cannot change a tracked file.
+        if not persist_answers:
+            return
         if jev_answers:
             rows = digit_recheck.read_store(store) if store.is_file() else []
             merged = digit_recheck.merged_rows(rows, jev_answers)
@@ -664,6 +674,11 @@ def main() -> None:
     clean = sub.add_parser('cleanup')
     clean.add_argument('--manifest', type=Path, required=True)
     args = parser.parse_args()
+    # The heavy commands take one machine-wide lock (ingestion/lib/heavy_lock.py): a second run exits
+    # with the holder instead of sharing the machine and the R2 objects. Released on exit.
+    holder = heavy_lock.acquire(args.command)
+    if holder is not None:
+        atexit.register(holder.close)
     if args.command == 'schema':
         print(manifest.SCHEMA.read_text())
     elif args.command == 'check':
