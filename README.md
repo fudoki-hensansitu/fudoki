@@ -1,7 +1,4 @@
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="apps/web/public/logo-dark.svg">
-  <img src="apps/web/public/logo.svg" alt="風土記" height="64">
-</picture>
+<img src="docs/brand/cover.jpg" alt="風土記 — 町の家計簿を作る。諸国の使いが巻物の報告を役人に差し出す墨絵" width="640">
 
 [![CI](https://github.com/wwwyo/fudoki/actions/workflows/verify.yml/badge.svg)](https://github.com/wwwyo/fudoki/actions/workflows/verify.yml)
 [![License: MIT (code)](https://img.shields.io/badge/license-MIT%20(code)-blue)](#license)
