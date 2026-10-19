@@ -3,7 +3,7 @@ import { CHAT_SHELL_HTML } from './chat-shell'
 import { MINCHO_WOFF2 } from './font.generated'
 import { FAVICON_SVG, LANDING_HTML } from './landing'
 import { Hono } from 'hono'
-import { api, onApiError, type AppEnv } from './server/api'
+import { api, type AppEnv } from './server/api'
 import type { Env } from './server/env'
 
 // 入口の1枚と、検索エンジン・ブラウザが取りに来る小さなファイル、会話の画面（/s/:id）と その API（/api/*）を配る。
@@ -27,7 +27,6 @@ const html = (body: string, cache: string) => new Response(body, { headers: { 'C
 const app = new Hono<AppEnv>()
 
 app.route('/', api)
-app.onError((e) => onApiError(e))
 
 app.get('/', (c) => {
   const { hostname } = new URL(c.req.url)

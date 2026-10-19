@@ -69,7 +69,7 @@ route(api, '/api/sessions', async (c) => json(await issueSession(c.env.TURNSTILE
 route(api, '/api/chat', handleChat)
 route(api, '/api/mcp', handleRelay)
 
-export function onApiError(e: unknown): Response {
+api.onError((e) => {
   if (e instanceof HttpError) {
     const res = errorResponse(e)
     if (e.status === 405) res.headers.set('Allow', 'POST')
@@ -77,4 +77,4 @@ export function onApiError(e: unknown): Response {
   }
   logError(e)
   return errorResponse(new HttpError(500, 'INTERNAL', '内部エラー'))
-}
+})
