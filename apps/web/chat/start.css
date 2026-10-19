@@ -1,0 +1,22 @@
+/* 入口の1枚に置く島の CSS。入口の頁は自前の CSS を持つので preflight は入れず、島の中だけ最小の reset をかける */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme) source(none);
+@import "tailwindcss/utilities.css" layer(utilities);
+@import "./theme.css";
+@source "./start.tsx";
+@source "./composer.tsx";
+@source "./components";
+
+@layer base {
+  #chat-start :where(*, ::before, ::after) { box-sizing: border-box; border: 0 solid; margin: 0; padding: 0; }
+  #chat-start :where(button, input, textarea) { font: inherit; letter-spacing: inherit; color: inherit; background: transparent; }
+  #chat-start :where(button:not(:disabled)) { cursor: pointer; }
+  #chat-start * { border-color: var(--border); }
+}
+
+/* hero の入力は大きな1行の pill（composer.tsx の pill）。JS が島を描くまでの仮の枠も同じ大きさにして、描いた瞬間に頁がずれないようにする */
+#chat-start.ask { width: min(100%, 760px); }
+#chat-start .ask-box { display: flex; align-items: center; min-height: 0; height: 72px; padding: 0 28px; border-radius: 999px; background: var(--background); box-shadow: var(--shadow-pill); }
+@media (max-width: 639px) {
+  #chat-start .ask-box { height: 56px; padding: 0 20px; }
+}

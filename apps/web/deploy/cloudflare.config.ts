@@ -1,4 +1,4 @@
-import { defineConfig } from '@cloudflare/config/public'
+import { bindings, defineConfig } from '@cloudflare/config/public'
 
 export default defineConfig({
   worker: {
@@ -6,7 +6,27 @@ export default defineConfig({
     compatibilityDate: '2026-08-23',
     entrypoint: '../worker.ts',
     domains: ['fudoki.dev'],
-    // static/ の重いファイル（ホームの動画・原典の切り抜き）だけを assets で配る。合わない path は Worker が答える
+    // static/ の重いファイル（ホームの動画・原典の切り抜き）と会話の画面の JS・CSS（_app/、build で作る）を assets で配る。合わない path は Worker が答える
     assets: { notFoundHandling: 'none' },
+    observability: { enabled: true, headSamplingRate: 1 },
+    env: {
+      AI: bindings.ai(),
+      // 風土記の MCP（apps/api）。workers.dev を閉じているので Worker 間で直接呼ぶ
+      API: bindings.worker({ worker: 'fudoki-api' }),
+      // 値は server/limits.ts の CHAT_RATE_LIMIT・VIEW_RATE_LIMIT と同じ（試験が照合する）。namespace は apps/api の 1001 と別にする
+      CHAT_RATE_LIMIT: bindings.rateLimit({ namespace: '1002', simple: { limit: 10, period: 60 } }),
+      VIEW_RATE_LIMIT: bindings.rateLimit({ namespace: '1003', simple: { limit: 60, period: 60 } }),
+      // 利用状況（時刻・モデル・token 数・tool の回数・段数・所要時間・失敗の有無）。会話の本文と IP は書かない
+      CHAT_USAGE: bindings.analyticsEngineDataset({ name: 'fudoki_web_chat' }),
+      // Workers AI のモデル ID。tool 呼び出し（function calling）に対応し、日本語を扱えるものを選ぶ。
+      // DeepSeek-V4-Flash は Workers Paid が要る。コンテキストが長く（約105万 token）、毎回送り直す履歴がキャッシュ入力の安い単価になる
+      CHAT_MODEL: bindings.text('@cf/deepseek-ai/deepseek-v4-flash-0731'),
+      // 推論の深さ（low・medium・high、none で切る）。考える分も出力 token に数えるので、案内役の応答には low で足りる
+      CHAT_REASONING_EFFORT: bindings.text('low'),
+      // Turnstile の site key（公開値）。Cloudflare の dashboard で widget を作って書く。空の間は入口の入力を出さない
+      TURNSTILE_SITE_KEY: bindings.text('0x4AAAAAAFbNaowr2DVLbWDn'),
+      // Turnstile の secret key（コードに書かない。値は Worker の secret に手で置く）。cf dev はここに宣言した名前だけを deploy/.dev.vars から読む
+      TURNSTILE_SECRET_KEY: bindings.secret(),
+    },
   },
 })
