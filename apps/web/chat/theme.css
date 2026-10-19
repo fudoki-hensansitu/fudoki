@@ -1,0 +1,32 @@
+/* 会話の画面と入口の島が共有する shadcn の token の対応。色の値は landing.ts の TOKENS_CSS（DESIGN.md）が正本で、ここでは名前を繋ぐだけ */
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@custom-variant dark (@media (prefers-color-scheme: dark));
+
+:root {
+  --popover: var(--card);
+  --popover-foreground: var(--card-foreground);
+  --input: var(--border);
+  --destructive: var(--shu);
+  --destructive-foreground: var(--primary-foreground);
+}
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}

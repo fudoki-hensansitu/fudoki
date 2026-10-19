@@ -3,19 +3,42 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "bun run --cwd deploy build",
+    "build": "bun run client && bun run --cwd deploy build",
+    "client": "bun chat/build.ts",
     "build:brand": "uv run --no-project --exclude-newer 2026-09-26 --with fonttools==4.66.0 --with brotli==1.2.0 python brand/build.py",
-    "deploy": "bun run --cwd deploy deploy",
-    "dev": "cd deploy && mise exec -- cf dev",
+    "deploy": "bun run client && bun run --cwd deploy deploy",
+    "dev": "bun run client && cd deploy && mise exec -- cf dev",
     "fetch:boundaries": "uv run python map/build.py",
+    "test": "bun test server",
     "typecheck": "tsc --noEmit",
     "build:font": "bun -e \"import { LANDING_HTML } from './landing'; process.stdout.write(LANDING_HTML)\" | uv run --no-project --exclude-newer 2026-09-26 --with fonttools==4.66.0 --with brotli==1.2.0 python brand/home_font.py",
     "build:font:check": "bun -e \"import { LANDING_HTML } from './landing'; process.stdout.write(LANDING_HTML)\" | uv run --no-project --exclude-newer 2026-09-26 --with fonttools==4.66.0 --with brotli==1.2.0 python brand/home_font.py --check",
     "build:origin": "uv run --no-project --exclude-newer 2026-10-09 --with pypdfium2==5.14.0 --with pillow==12.3.0 python brand/home_origin.py"
   },
   "devDependencies": {
+    "@cloudflare/config": "catalog:",
+    "@tailwindcss/postcss": "4.3.3",
     "@types/bun": "catalog:",
-    "typescript": "catalog:",
-    "@cloudflare/config": "catalog:"
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "postcss": "8.5.29",
+    "shadcn": "catalog:",
+    "tailwindcss": "catalog:",
+    "tw-animate-css": "1.4.0",
+    "typescript": "catalog:"
+  },
+  "dependencies": {
+    "@ai-sdk/mcp": "2.0.73",
+    "@ai-sdk/react": "4.0.139",
+    "@base-ui/react": "1.8.0",
+    "@modelcontextprotocol/ext-apps": "2.0.3",
+    "@shadcn/react": "0.3.1",
+    "ai": "7.0.136",
+    "class-variance-authority": "0.7.1",
+    "cn": "0.4.0",
+    "lucide-react": "1.52.0",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "workers-ai-provider": "4.0.0"
   }
 }
