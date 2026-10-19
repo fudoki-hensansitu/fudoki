@@ -21,7 +21,7 @@
 
 ## 重い実行の直列化と待ち合わせ
 
-OCR・全表の変換・`ingestion:refresh --remote` は機械（8コア16GB）を占有する。同時に走らせず、`.build/ingestion-refresh/report.json` のような出力の出現まで待つ。`ingestion:convert`・`ingestion:refresh`・`ingestion:ocr` は機械全体で1本のロック `~/.local/state/fudoki/heavy.lock`（`FUDOKI_HEAVY_LOCK` で変更可）を `flock` で取る。2本目は保持者の PID・command・cwd を出してすぐ終了するので、出力の完了を待ってからやり直す。ロックファイルを消したり作り直したりしない — 以前の `/tmp` のマーカーファイルは、ロックを取っていない実行が他の実行のマーカーを消し、`rm -rf` で解除できる規約だったため同日に2回破られた（2026-10-19）。エージェントのサンドボックスでは `ps` が `operation not permitted` で終わり、待ち合わせが静かに空振りする（1.5時間以上を消費した実測がある）。プロセスの確認はサンドボックス外の `pgrep -fl "[p]attern"`（`[p]attern` で自分のシェルへの一致を避ける）で行い、終了はバックグラウンド task の完了通知か出力ファイルで判定する。`sleep N` は遮断されるので、待つときは Monitor の until-loop を1本だけ張って id を state に持つ。Monitor は30分で expire するので、expire を「実行が止まった」と取り違えない。
+OCR・全表の変換・`ingestion:refresh --remote` は機械（8コア16GB）を占有する。同時に走らせず、`.build/ingestion-refresh/report.json` のような出力の出現まで待つ。`ingestion:convert`・`ingestion:refresh`・`ingestion:ocr` は機械全体で1本のロックを `flock` で取る。経路は `FUDOKI_HEAVY_LOCK`、無ければ `$XDG_STATE_HOME/fudoki/heavy.lock`、どちらも無ければ `~/.local/state/fudoki/heavy.lock` の順に決まり、環境変数は実行時に読む。2本目は保持者の PID・command・cwd を出してすぐ終了するので、出力の完了を待ってからやり直す。ロックファイルを消したり作り直したりしない — 以前の `/tmp` のマーカーファイルは、ロックを取っていない実行が他の実行のマーカーを消し、`rm -rf` で解除できる規約だったため同日に2回破られた（2026-10-19）。エージェントのサンドボックスでは `ps` が `operation not permitted` で終わり、待ち合わせが静かに空振りする（1.5時間以上を消費した実測がある）。プロセスの確認はサンドボックス外の `pgrep -fl "[p]attern"`（`[p]attern` で自分のシェルへの一致を避ける）で行い、終了はバックグラウンド task の完了通知か出力ファイルで判定する。`sleep N` は遮断されるので、待つときは Monitor の until-loop を1本だけ張って id を state に持つ。Monitor は30分で expire するので、expire を「実行が止まった」と取り違えない。
 
 ## 後段で確認すること
 

@@ -19,8 +19,12 @@ from pathlib import Path
 
 HEAVY = frozenset({'convert', 'refresh', 'ocr'})
 ENV = 'FUDOKI_HEAVY_LOCK'
-DEFAULT = (Path(os.environ.get('XDG_STATE_HOME') or Path.home() / '.local' / 'state')
-           / 'fudoki' / 'heavy.lock')
+
+
+def default_path() -> Path:
+    """The state directory as the environment reads it now, not as it read at import."""
+    base = Path(os.environ.get('XDG_STATE_HOME') or Path.home() / '.local' / 'state')
+    return base / 'fudoki' / 'heavy.lock'
 
 
 class Holder:
@@ -51,7 +55,7 @@ def acquire(command: str, path: Path | None = None) -> Holder | None:
     """Take the lock for a heavy command; return None for commands that do not occupy the machine."""
     if command not in HEAVY:
         return None
-    target = Path(path or os.environ.get(ENV) or DEFAULT)
+    target = Path(path or os.environ.get(ENV) or default_path())
     target.parent.mkdir(parents=True, exist_ok=True)
     stream = target.open('a+', encoding='utf-8')
     try:
