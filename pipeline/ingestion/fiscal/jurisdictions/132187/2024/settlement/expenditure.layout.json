@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "breakdown": {
+    "備考": {
+      "amount_brackets": true,
+      "note_kinds": {
+        "（": "内訳"
+      }
+    }
+  }
+}

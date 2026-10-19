@@ -59,6 +59,20 @@ class LineTest(unittest.TestCase):
         self.assertEqual(''.join(g.text for g in label), '事務【人事課】')
         self.assertEqual(''.join(g.text for run in money for g in run), '112,408,043')
 
+    def test_bracketed_amounts_of_a_declared_axis(self):
+        read = lambda *words: (lambda label, money: (''.join(g.text for g in label), [''.join(g.text for g in run) for run in money]))(
+            *_split_line([glyph(text, x, 100) for text, x in words], amount_brackets=True))
+        # The 事業 total in square brackets over the 事務事業 in round ones.
+        self.assertEqual(read(('議員人件費', 300), ('[187,037,067]', 500)), ('議員人件費', ['[187,037,067]']))
+        # A whole line in brackets: the name and its amount, without the closing bracket.
+        self.assertEqual(read(('（委員長', 300), ('780,000）', 500)), ('（委員長', ['780,000']))
+        # The bracket flush against a long name inside one word (`…課）(1,04` `7,226)`), cut where it opens.
+        self.assertEqual(read(('事務（公共施設マネジ', 300), ('メント課）(1,04', 390), ('7,226)', 507)),
+                         ('事務（公共施設マネジメント課）', ['(1,047,226)']))
+        # Without the setting, a bracket stays text.
+        label, money = _split_line([glyph('議員人件費', 300, 100), glyph('[187,037,067]', 500, 100)])
+        self.assertNotEqual([''.join(g.text for g in run) for run in money], ['[187,037,067]'])
+
     def test_separated_amount(self):
         label, money = _split_line([glyph('議長', 291, 100), glyph('7,956,000', 493, 100)])
         self.assertEqual([g.text for g in label], ['議長'])
@@ -443,6 +457,21 @@ class SubjectTest(unittest.TestCase):
         found = subject_items(Group(bands, '科目', True))
         self.assertEqual([(i.level, i.code, i.name) for i in found], [(0, '1', '議会費')])
 
+    def test_codes_of_the_ancestors_in_their_own_ruled_columns_are_dropped(self):
+        from ingestion.generic.tree import strip_ancestor_codes
+        bands = self.bands()  # 款・項・目 codes 1.8pt apart across the rules (`2` `1` `10` on a continued page)
+        bands[0].words = [glyph('2', 20.0, 166, 9)]
+        bands[1].words = [glyph('1', 30.8, 166, 9)]
+        bands[2].words = [glyph('10', 41.6, 166, 9), glyph('協働推進費', 52.0, 166)]
+        self.assertEqual([g.text for g in strip_ancestor_codes(Group(bands, '科目', True))], ['2', '1'])
+        bands = self.bands()  # `61` run across the 款・項 rule, the 目 code joined to its name
+        bands[0].words = [glyph('61', 20.0, 166, 19.8)]
+        bands[2].words = [glyph('1商', 41.6, 166, 19.5), glyph('工', 66.0, 166), glyph('費', 80.0, 166)]
+        self.assertEqual([g.text for g in strip_ancestor_codes(Group(bands, '科目', True))], ['61'])
+        bands = self.bands()  # in one column, a code close to a name starting with a digit is no ancestor
+        bands[2].words = [glyph('8', 39.9, 166, 4.5), glyph('2歳児健診', 45.4, 166)]
+        self.assertEqual(strip_ancestor_codes(Group(bands, '科目', True)), [])
+
     def test_two_digit_code_split_by_poppler_stays_one_code(self):
         bands = self.bands()
         bands[0].words = [glyph('1', 19.8, 166, 4.5), glyph('0', 24.3, 166, 4.5)]
@@ -593,6 +622,18 @@ class SpreadAndOwnerTest(unittest.TestCase):
         other = Page(3, 600, 800, [], rows([300, 420, 600]))
         self.assertTrue(same_rows(left, right))
         self.assertFalse(same_rows(left, other))
+
+    def test_a_crop_mark_frame_left_of_the_right_page_does_not_stop_the_spread(self):
+        rows = [50, 70, 100, 130, 160, 400]
+        frame = lambda xs: [Rule(x, 50, x, 400) for x in xs] + [Rule(xs[0], y, xs[-1], y) for y in rows]
+        header = lambda texts: [Word(t, x, 55, x + 9 * len(t), 64) for t, x in texts]
+        left = Page(1, 300, 500, header([('款項目', 20), ('予算現額', 110)]) + [
+            Word('1', 20, 110, 24.5, 119), Word('議会費', 30, 110, 57, 119), Word('1,000', 150, 110, 172.5, 119)],
+            frame([10, 100, 200]))
+        right = Page(2, 300, 500, header([('支出済額', 60)]) + [Word('9,000', 100, 110, 122.5, 119)],
+                     frame([50, 150]) + frame([14, 28, 37]))  # the crop marks: a frame with no header and no words
+        logical = logical_pages([left, right])
+        self.assertEqual([l.pages for l in logical], [[1, 2]])
 
     def test_leading_zero_is_a_bullet_and_marks_leave_the_name(self):
         from ingestion.generic.tree import _split_code

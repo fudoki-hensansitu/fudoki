@@ -29,6 +29,7 @@ import re
 from types import SimpleNamespace
 
 from ingestion.generic.build import dictionary_header
+from ingestion.generic.tree import STACKED_KIND
 from ingestion.generic.units import _phase, check as check_units
 from ingestion.fiscal.subject_checks import check_subject
 from ingestion.lib.coverage_checks import TOTAL_LABELS
@@ -75,11 +76,14 @@ def printed_totals(scope: dict, nodes: list[dict], amounts: list[dict]) -> list[
         if not any(label in ''.join(text for _, text in line) for label in TOTAL_LABELS):
             continue
         # On a spread the label is printed on the left page and the amounts go on across the right page,
-        # on the same baseline, with nothing but numbers there.
+        # on the same baseline, with nothing but numbers there (and the kind word a stacked carry-over cell
+        # prints above its amount: `37,218,383,186 継続費逓次繰越 1,352,313,814`).
         rows = [(page, line)]
         for (other, other_top), other_line in lines.items():
+            words = ''.join(text for _, text in other_line if not NUMERIC.fullmatch(text))  # `継続` `費逓次繰越`
             if other == page + 1 and abs(other_top - top) <= SPREAD_BASELINE \
-                    and all(NUMERIC.fullmatch(text) for _, text in other_line):
+                    and any(NUMERIC.fullmatch(text) for _, text in other_line) \
+                    and (not words or STACKED_KIND.fullmatch(words)):
                 rows.append((other, other_line))
         for row_page, row in rows:
             runs: list[list] = []

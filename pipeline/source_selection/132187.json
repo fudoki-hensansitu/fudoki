@@ -212,10 +212,6 @@
                   "direction": "expenditure",
                   "pages": [
                     {
-                      "start": 28,
-                      "end": 29
-                    },
-                    {
                       "start": 82,
                       "end": 277
                     }
@@ -225,10 +221,6 @@
                   "account": "国民健康保険特別会計",
                   "direction": "expenditure",
                   "pages": [
-                    {
-                      "start": 292,
-                      "end": 293
-                    },
                     {
                       "start": 302,
                       "end": 313
@@ -240,10 +232,6 @@
                   "direction": "expenditure",
                   "pages": [
                     {
-                      "start": 328,
-                      "end": 329
-                    },
-                    {
                       "start": 342,
                       "end": 359
                     }
@@ -253,10 +241,6 @@
                   "account": "後期高齢者医療特別会計",
                   "direction": "expenditure",
                   "pages": [
-                    {
-                      "start": 374,
-                      "end": 375
-                    },
                     {
                       "start": 382,
                       "end": 387
