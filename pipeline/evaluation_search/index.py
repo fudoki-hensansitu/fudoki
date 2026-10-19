@@ -119,13 +119,22 @@ def split_page(document, page: int) -> bytes:
 
 
 def page_text(document, page: int) -> str:
-    """pdfium で抜き出した頁（1 始まり）の文字。文字の item の本文で、改行は LF にそろえる。"""
-    return document[page - 1].get_textpage().get_text_range().replace('\r\n', '\n').replace('\r', '\n')
+    """pdfium で抜き出した頁（1 始まり）の文字。文字の item の本文で、改行は LF にそろえる。頁と textpage は都度閉じる（数万頁を回すため）。"""
+    pdf_page = document[page - 1]
+    try:
+        textpage = pdf_page.get_textpage()
+        try:
+            text = textpage.get_text_range()
+        finally:
+            textpage.close()
+    finally:
+        pdf_page.close()
+    return text.replace('\r\n', '\n').replace('\r', '\n')
 
 
 def text_chars(document, page: int) -> int:
     """手元の pdfium で読める、空白を除いた文字数。"""
-    return len(''.join(document[page - 1].get_textpage().get_text_range().split()))
+    return len(''.join(page_text(document, page).split()))
 
 
 def text_item(document, page: int) -> bytes:
