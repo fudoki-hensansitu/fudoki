@@ -1,4 +1,5 @@
 {
   "schema_version": 1,
-  "rules": {"dark": 215}
+  "rules": {"dark": 215},
+  "breakdown": {"備考": {"bare_amounts": true}}
 }
