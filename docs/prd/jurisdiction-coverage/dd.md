@@ -6,6 +6,8 @@
 
 収録範囲は API の要求のたびに木の表を集計せず、dbt の marts で作って木の表と同じ同期で D1 に写す。提供用データの正本は marts にあり、「何を収録範囲とするか」の判断を API と二重に持たないためである。同じ warehouse から同じ同期で入れ替えるので、返る収録範囲は同じ時点の明細の検索で返る範囲と一致する。
 
+収録の件数（団体数・表数・「一般会計あり」の数え方）を語るときは、repo の選定・取り込みの宣言と本番 API の両方を見る。main への merge と deploy は別なので、本番は repo より遅れうる。片方だけで「未収録」と断定しない（2026-10-18、本番 API だけを見て2024年度未展開と判断したが、repo には入っていた）。
+
 ```mermaid
 flowchart LR
   json[packages/jurisdictions/jurisdictions.json] -->|prepare.py| src[ingestion.jurisdiction]

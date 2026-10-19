@@ -253,6 +253,9 @@ def refresh_manifest(path: Path, *, remote: bool, dry_run: bool, work: Path) -> 
 def refresh_all(paths: list[Path], *, remote: bool, dry_run: bool, output: Path) -> dict:
     started = time.monotonic()
     output.parent.mkdir(parents=True, exist_ok=True)
+    # A caller waits for this file to appear to know the run finished. Drop a previous run's report
+    # first, so an old file is never mistaken for this run's output.
+    output.unlink(missing_ok=True)
     work = output.parent / 'candidates'
     manifests = []
     for path in paths:
