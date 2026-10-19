@@ -842,6 +842,21 @@ class ConvertRulesTest(unittest.TestCase):
         found = entries_of(Group([band], '備考', False), {944, 945, 10949})
         self.assertEqual([(code, name) for _, _, code, name in found], [('8', '2歳児歯科健診事業(健康課)')])
 
+    def test_a_four_digit_number_that_is_a_word_of_its_own_before_a_name_that_starts_with_a_count_is_a_number(self):
+        from ingestion.generic.tree import entries_of
+        # `0200` `16ミリ映写機検定委託料` (132284): the item is 0200, not a name `020016ミリ…`.
+        band = self.band([glyph('0200', 944.3, 350, 18), glyph('16ミリ映写機検定委託料', 966.3, 350, 100)], 900, 1100)
+        found = entries_of(Group([band], '備考', False), {944, 945, 10949})
+        self.assertEqual([(code, name) for _, _, code, name in found], [('0200', '16ミリ映写機検定委託料')])
+
+    def test_a_款_column_whose_ancestor_code_was_taken_out_is_no_title_table(self):
+        from ingestion.generic.tree import untitled
+        first = Band(24, 37, 1, ('款項目',), [], 100, 700)
+        group = Group([first, Band(37, 50, 1, ('款項目',), [], 100, 700)], '科目', True)
+        self.assertTrue(untitled(group))  # nothing printed in the 款 column: its 款 is a title
+        first.stripped_codes = True  # `2 1 6` at the top of a continuation page, `2` and `1` taken out
+        self.assertFalse(untitled(group))
+
     def test_the_numbers_column_a_rule_splits_off_its_names_is_one_column(self):
         from ingestion.generic.layout import Logical
         number = Band(415.9, 422.6, 1, ('節', '区分'), [], 100, 700)
