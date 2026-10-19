@@ -5,7 +5,8 @@ import { Composer } from './composer'
 import { saveSession } from './store'
 import { mountTurnstile } from './turnstile'
 
-const SUGGESTIONS = ['中野区の2024年度の決算で、一番大きい款は？', '杉並区と練馬区の教育費を比べて']
+/** 入力の placeholder に置く問いの例。幅390px の pill でも切れない長さにする */
+const EXAMPLE = '例：中野区の決算で一番大きい款は？'
 
 function Start({ sitekey }: { sitekey: string }) {
   const widget = React.useRef<HTMLDivElement>(null)
@@ -50,19 +51,9 @@ function Start({ sitekey }: { sitekey: string }) {
     return <p className="text-sm text-muted-foreground">風土記の AI に聞く機能は準備中です。下の「自分の AI に接続する」から、お使いの AI で使えます。</p>
   return (
     <div className="flex flex-col gap-3">
-      <Composer onSubmit={start} pending={pending} placeholder="街のお金について聞く" pill />
+      <Composer onSubmit={start} pending={pending} placeholder={EXAMPLE} pill />
       <div ref={widget} />
       {error ? <p role="alert" className="text-sm text-destructive">{error}</p> : null}
-      <p className="text-xs text-muted-foreground">
-        例:{' '}
-        {SUGGESTIONS.map((s, i) => (
-          <React.Fragment key={s}>
-            {i ? '／' : ''}
-            {s}
-          </React.Fragment>
-        ))}
-        。会話は保存しません。
-      </p>
     </div>
   )
 }
