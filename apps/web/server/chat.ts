@@ -7,6 +7,7 @@ import type { AppContext } from './api'
 import { apiFetch, MCP_URL } from './env'
 import { HttpError } from './http'
 import { MAX_MESSAGES, MAX_OUTPUT_TOKENS, MAX_STEPS, MAX_USER_TEXT, MAX_VIEW_CONTEXT } from './limits'
+import { toolText } from '../tool-text'
 import { logError, logStep, logTiming } from './log'
 import { waitUntil } from './http'
 import { writeUsage, type Usage } from './usage'
@@ -52,15 +53,6 @@ export function reasoningEffort(value: string | undefined): { reasoning_effort?:
   return {}
 }
 
-/** tool の結果のうち text だけを AI に渡す */
-function textOnly({ output }: { output: unknown }) {
-  const content = (output as { content?: unknown })?.content
-  const text = Array.isArray(content)
-    ? content.filter((c) => c && c.type === 'text' && typeof c.text === 'string').map((c) => c.text as string).join('\n')
-    : ''
-  return { type: 'text' as const, value: text || '結果がありません' }
-}
-
 export async function handleChat(c: AppContext): Promise<Response> {
   const started = Date.now()
   const { env } = c
@@ -100,7 +92,7 @@ export async function handleChat(c: AppContext): Promise<Response> {
   for (const [name, t] of Object.entries(tools)) {
     const uri = (t as { _meta?: { ui?: { resourceUri?: unknown } } })._meta?.ui?.resourceUri
     if (typeof uri === 'string') apps[name] = uri
-    Object.assign(t, { toModelOutput: textOnly })
+    Object.assign(t, { toModelOutput: ({ output }: { output: unknown }) => ({ type: 'text' as const, value: toolText(name, output) }) })
   }
   const close = () => waitUntil(c, mcp.close().catch(() => {}))
 
