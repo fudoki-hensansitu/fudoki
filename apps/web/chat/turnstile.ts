@@ -47,13 +47,29 @@ export async function mountTurnstile(el: HTMLElement, sitekey: string) {
       turnstile.reset(id)
     },
   })
+  const run = () =>
+    new Promise<string>((resolve, reject) => {
+      waiting = { resolve, reject }
+      turnstile.reset(id)
+      turnstile.execute(id)
+    })
+  // 入力を始めた時点で確認を先に走らせ、送るときに待たないようにする（token は約5分で切れるので、4分を超えたら取り直す）
+  let warm: { promise: Promise<string>; at: number } | undefined
   return {
-    token: () =>
-      new Promise<string>((resolve, reject) => {
-        waiting = { resolve, reject }
-        turnstile.reset(id)
-        turnstile.execute(id)
-      }),
+    warm: () => {
+      if (warm && Date.now() - warm.at < 240_000) return
+      const promise = run()
+      warm = { promise, at: Date.now() }
+      promise.catch(() => {
+        if (warm?.promise === promise) warm = undefined
+      })
+    },
+    token: () => {
+      const ready = warm && Date.now() - warm.at < 240_000 ? warm.promise : undefined
+      // token は1回しか使えない。使ったら捨てる
+      warm = undefined
+      return ready ?? run()
+    },
     remove: () => turnstile.remove(id),
   }
 }

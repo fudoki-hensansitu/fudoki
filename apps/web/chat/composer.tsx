@@ -16,6 +16,7 @@ export function Composer({
   disabled = false,
   placeholder,
   autoFocus,
+  onFocus,
   compact = false,
   pill = false,
   children,
@@ -30,6 +31,8 @@ export function Composer({
   disabled?: boolean
   placeholder: string
   autoFocus?: boolean
+  /** 入力欄に触れたとき */
+  onFocus?: () => void
   /** 1行で始め、送るボタンを横に置く。会話の画面の続きの入力に使う */
   compact?: boolean
   /** 入口の hero に置く、大きな1行の入力。長い文は枠の中で横に流れる */
@@ -73,6 +76,7 @@ export function Composer({
             aria-invalid={over || undefined}
             enterKeyHint="send"
             className="h-full pl-5 text-base placeholder:text-muted-foreground/80 sm:pl-7 sm:text-xl md:text-xl"
+            onFocus={onFocus}
             onChange={(e) => setText(e.target.value)}
             onKeyDown={(e) => {
               // 変換中の Enter は確定に使う。Safari は確定の直後の Enter を keyCode 229 で送る
