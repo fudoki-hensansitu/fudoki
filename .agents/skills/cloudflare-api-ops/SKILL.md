@@ -14,6 +14,7 @@ user-invocable: false
 | --- | --- |
 | 公開直後に特定クライアントだけ 403 になる | [references/cloudflare-zone.md](references/cloudflare-zone.md) |
 | 事業の評価の検索を止める・上限を変える・migration を適用する・ローカルの `cf dev` で AI Search を呼ぶ | [references/evaluation-search.md](references/evaluation-search.md) |
+| CI の `deploy-web`（`cf deploy`）が「差分がある」と中止する・デプロイ後に route が消えないか確かめる | [references/cf-deploy.md](references/cf-deploy.md) |
 
 ## 関連 skill
 
