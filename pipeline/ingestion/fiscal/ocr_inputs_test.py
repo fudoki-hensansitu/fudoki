@@ -206,9 +206,27 @@ class AcquireTest(unittest.TestCase):
         self.assertTrue((clean[:, 100:104] == 255).all())
         self.assertTrue((clean[50:60, 50:56] == 0).all())
 
-    def test_only_vision_is_acquired(self):
-        with self.assertRaisesRegex(ValueError, 'Vision only'):
-            scan_ocr.acquire(Path('x.pdf'), {'engine': 'paddle', 'pages': [1]})
+    def test_only_paddle_and_vision_are_acquired(self):
+        with self.assertRaisesRegex(ValueError, 'Paddle or Apple Vision'):
+            scan_ocr.acquire(Path('x.pdf'), {'engine': 'tesseract', 'pages': [1]})
+
+    def test_paddle_reads_exact_crops_and_keeps_no_native_output(self):
+        request = {'engine': 'paddle', 'pages': [1], 'config': {'page_strips': 4}}
+        result = fake_result(.1, '/a/x.pdf')
+        result['pages'][0]['attempts'] = [{'id': 'p1:full-page:a0', 'region_id': 'full-page', 'inference_seconds': .3,
+                                           'native': [{'res': {}}], 'observations': [{'id': 'x'}]}]
+        with patch.object(scan_ocr, 'recognize_pdf', return_value=result) as read, \
+                patch.object(scan_ocr, 'supplement', side_effect=lambda path, page, *_, **kwargs: page) as supplement:
+            data, run = scan_ocr.acquire(Path('x.pdf'), request)
+        self.assertEqual(read.call_args.kwargs['backend'], 'paddle')
+        self.assertEqual(read.call_args.kwargs['config'].page_strips, 4)
+        self.assertEqual(supplement.call_args.args[2].page_strips, 4)
+        attempt = json.loads(data)['pages'][0]['attempts'][0]
+        self.assertNotIn('native', attempt)
+        self.assertNotIn('inference_seconds', attempt)
+        self.assertIn(.3, [t.get('inference_seconds') for t in run['timings']])
+        with self.assertRaisesRegex(ValueError, 'Column tiles are for Vision'):
+            scan_ocr.acquire(Path('x.pdf'), {**request, 'column_tiles': True})
 
 
 class OcrManifestTest(unittest.TestCase):

@@ -57,9 +57,9 @@
 
 ### 文字・位置を取得する
 
-1. OCRは **共通入口** `pipeline/ingestion/lib/scan_ocr.py` を通して行う。既定は **Apple Vision**（`backend` 省略または `backend="vision"`）。PaddleOCR smallは `backend="paddle"` で選ぶ。Visionは単独の0などを読み落とすことがある。現行の取得（`acquire`）は、OCRの箱にも罫線にも覆われない墨をVisionで読み直し、残りを行の文脈ごとVLMで読んで観測に固定する（下記「文字観測がないセルを再読する」の現行実装）。OCRは変換器の外で取得し、固定した観測を変換器へ渡す（[ADR 0019](../../../../docs/adr/0019-freeze-scan-ocr-observations.md)）。依頼は管理JSONの `ocr_inputs` に書き、`ingestion:ocr` が観測を取得してSHAを書き込む。観測は `convert --remote` で表と一緒にR2へ保存される。出典別の抽出器にエンジン呼び出し・画像描画・座標復元を複製しない。入口と設定の詳細は [モジュールの説明](../../../../pipeline/ingestion/lib/scan_ocr.md) を参照する。
+1. OCRは **共通入口** `pipeline/ingestion/lib/scan_ocr.py` を通して行う。既定は **PaddleOCR PP-OCRv6 small（ONNX Runtime、CPU）**。新しい依頼は `engine: "paddle"` と書く。Apple Visionは `backend="vision"` で選び、既存の冊は観測IDと訂正の宣言が結び付くので `engine: "vision"` のまま残す（[ADR 0032](../../../../docs/adr/0032-paddle-onnx-for-new-scan-acquisitions.md)）。Visionは単独の0などを読み落とすことがある。現行の取得（`acquire`）は、OCRの箱にも罫線にも覆われない墨を同じエンジンで読み直し、残りを行の文脈ごとVLMで読んで観測に固定する（下記「文字観測がないセルを再読する」の現行実装）。OCRは変換器の外で取得し、固定した観測を変換器へ渡す（[ADR 0019](../../../../docs/adr/0019-freeze-scan-ocr-observations.md)）。依頼は管理JSONの `ocr_inputs` に書き、`ingestion:ocr` が観測を取得してSHAを書き込む。観測は `convert --remote` で表と一緒にR2へ保存される。出典別の抽出器にエンジン呼び出し・画像描画・座標復元を複製しない。入口と設定の詳細は [モジュールの説明](../../../../pipeline/ingestion/lib/scan_ocr.md) を参照する。
 2. 対象の物理頁・領域を指定し、300dpiを初期条件にする。表示上のCropBox・回転を反映して描画し、切り出し後の座標を元の頁へ戻す。
-3. Paddleを選ぶ場合は **PP-OCRv6 small、検出長辺1280px、原解像度で文字認識** を初期条件にする。この条件だけで全セルの文字保持を保証しない。観測のないセルは下記の欠落セル再読へ、検出済み名称の誤読は意味照合による補正へ進む。必要な見出し帯・セルの再読領域は出典別に宣言し、原画の切り出しで読む。前後のnative出力・採用した観測・座標、版・固定モデルSHA・描画条件・読み取り領域を保持する。Apple Visionは **accurate、revision 3、日本語・英語** を初期条件にし、OSの版・build、revision、言語補正も記録する。Appleの内部重みは固定できるとは扱わない。
+3. Paddleは **PP-OCRv6 small（ONNX Runtime）、検出長辺1280px、原解像度で文字認識** を初期条件にし、頁の縦分割（`config.page_strips`）は検出の設定として依頼に書く。この条件だけで全セルの文字保持を保証しない。観測のないセルは下記の欠落セル再読へ、検出済み名称の誤読は意味照合による補正へ進む。必要な見出し帯・セルの再読領域は出典別に宣言し、原画の切り出しで読む。前後のnative出力・採用した観測・座標、版・固定モデルSHA・描画条件・読み取り領域を保持する。Apple Visionは **accurate、revision 3、日本語・英語** を初期条件にし、OSの版・build、revision、言語補正も記録する。Appleの内部重みは固定できるとは扱わない。
 4. Apple Visionの `usesLanguageCorrection` をonにする場合は、コードと別管理の `ocr_vocabulary.json` を `customWords` に渡す。辞書は正しい名称の候補であり、認識成功や単独の0の検出を保証しない。Paddleの原文をこの辞書で自動置換しない。
 5. 出典の列・表領域を確認して切り出し、文字列・観測枠・単語／数値の部分枠を取得する。頁全体のOCRだけで、すべてのセルを検出できたとは判断しない。
 6. OCRの `raw_text`、候補のconfidence、観測ID、読み取り領域、元の頁での座標を保持する。枠が取れない文字も捨てず、座標なしとして残す。親候補から引き継いだconfidenceを文字単位の精度と解釈しない。
@@ -209,7 +209,7 @@ scan の測定用管理 JSON は `docs/prd/generic-node-builder/scan/plans/` に
 
 ## 関連文書
 
-- 現行のscan PDFのエンジン選定（Vision既定・Paddleは `backend="paddle"`）: [ADR 0019](../../../../docs/adr/0019-freeze-scan-ocr-observations.md)
+- 現行のscan PDFのエンジン選定（新しい取得はPaddle ONNX Runtime、既存の冊はVision）: [ADR 0032](../../../../docs/adr/0032-paddle-onnx-for-new-scan-acquisitions.md)。観測を固定する方針: [ADR 0019](../../../../docs/adr/0019-freeze-scan-ocr-observations.md)
 - Paddle small導入時の判断: [ADR 0018](../../../../docs/adr/0018-paddle-small-for-scan-pdf.md)
 - Apple Vision導入時の判断: [ADR 0017](../../../../docs/adr/0017-vision-for-coordinate-preserving-ocr.md)
 - 欠落セルの再読・前処理の比較結果と公開調査: [Vision OCRの検証記録](../../../../docs/vision-ocr-evaluation.md)

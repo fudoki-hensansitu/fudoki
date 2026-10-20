@@ -1,18 +1,18 @@
 # PaddleOCR の取り込み用入口
 
-`paddle_ocr` はPP-OCRv6 smallの検出・認識をCPUで実行する。通常は検出だけ長辺1280pxへ縮小し、認識には元画像から切り出した画素を渡す。出典の文字・符号を後処理で変更しない。Apple Visionの既存入口も残す。scan PDFの共通入口では既定ではなく、`backend="paddle"` または `PaddleConfig` を渡して選ぶ（[scan_ocr.md](scan_ocr.md)）。
+`paddle_ocr` はPP-OCRv6 smallの検出・認識をCPUで実行する。実行環境は`PaddleConfig.runtime`で選び、既定は`onnxruntime`（ONNX Runtime、`cpu_threads`は既定4。2〜6で同等、8以上は遅い）、`paddle`はPaddle本体（`--extra paddle-native`が要る）。同じ重みなら両者の出力は一致した（933観測、枠差0px、[ADR 0032](../../../docs/adr/0032-paddle-onnx-for-new-scan-acquisitions.md)）。`page_strips`・`strip_overlap_px`で領域を縦に分けて検出できる（既定は分割なし）。通常は検出だけ長辺1280pxへ縮小し、認識には元画像から切り出した画素を渡す。出典の文字・符号を後処理で変更しない。Apple Visionの既存入口も残す。scan PDFの共通入口の既定でもある（[scan_ocr.md](scan_ocr.md)）。
 
 optional依存を含めて実行する。
 
 ```bash
 mise exec -- uv run --frozen --extra paddle-ocr python -m ingestion.lib.paddle_ocr schema
 mise exec -- uv run --frozen --extra paddle-ocr python -m ingestion.lib.paddle_ocr recognize \
-  --params '{"kind":"pdf","path":"budget.pdf","pages":[1,2]}' > ocr.json
+  --params '{"kind":"pdf","path":"budget.pdf","pages":[1,2],"config":{"page_strips":4}}' > ocr.json
 ```
 
 `--params @request.json`も使える。CLIのJSON保存先はcallerが指定する。失敗はstderrのJSONと終了コード1で返す。
 
-モデルは[paddle_ocr_models.json](paddle_ocr_models.json)に宣言した公式URLから明示的に取得し、`~/.paddlex/official_models/PP-OCRv6_small_det`と`PP-OCRv6_small_rec`へ用意する。`detection_model_dir` / `recognition_model_dir`で別のローカル配置を指定できるが、宣言した3ファイルのSHA・サイズは必ず照合する。モデル不足・不一致で停止し、暗黙にダウンロードしたり他の重みに切り替えたりしない。
+モデルは[paddle_ocr_models.json](paddle_ocr_models.json)に宣言した公式URLから明示的に取得して用意する。ONNX Runtime用は`PP-OCRv6_small_{det,rec}_onnx_infer.tar`を`~/.paddlex/official_models/`に展開し（`PP-OCRv6_small_det_onnx_infer/`と`PP-OCRv6_small_rec_onnx_infer/`ができる。宣言は`inference.onnx`と`inference.yml`）、Paddle本体用は`PP-OCRv6_small_det`と`PP-OCRv6_small_rec`へ置く。`detection_model_dir` / `recognition_model_dir`で別のローカル配置を指定できるが、宣言したファイルのSHA・サイズは必ず照合する。モデル不足・不一致で停止し、暗黙にダウンロードしたり他の重みに切り替えたりしない。
 
 Pythonではengineを再利用できる。PDFは物理頁番号を明示し、再読する領域は頁ごとに宣言する。
 

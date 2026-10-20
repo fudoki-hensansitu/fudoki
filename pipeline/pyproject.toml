@@ -18,10 +18,14 @@ dependencies = [
 
 [project.optional-dependencies]
 paddle-ocr = [
+    "onnxruntime==1.31.0",
     "paddleocr==3.7.0",
-    "paddlepaddle==3.3.1",
     "paddlex==3.7.2",
     "pillow==12.3.0",
+]
+# runtime="paddle" だけが要る。既定の onnxruntime には不要（ADR 0032）
+paddle-native = [
+    "paddlepaddle==3.3.1",
 ]
 
 [build-system]

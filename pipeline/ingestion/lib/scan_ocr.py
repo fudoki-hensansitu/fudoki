@@ -1,9 +1,8 @@
-"""Scan OCR entry point: Apple Vision by default, PaddleOCR on request.
+"""Scan OCR entry point: PaddleOCR (PP-OCRv6 small on ONNX Runtime) by default, Apple Vision on request.
 
-Vision is the default because it reads the real scans more accurately. Paddle
-stays available through ``backend="paddle"``. When ``backend`` is omitted and a
-config is passed, the config type names the engine, so the legacy Paddle
-capture scripts that pass a ``PaddleConfig`` are not silently switched.
+New acquisitions use Paddle (ADR 0032). Books acquired with Apple Vision keep ``engine: "vision"``,
+because their pinned amount corrections are bound to Vision's observation ids. When ``backend``
+is omitted, a passed config's type names the engine.
 """
 from __future__ import annotations
 
@@ -32,7 +31,7 @@ from .vision_ocr import OcrRegion, VisionConfig
 def _backend(backend: str | None, config: PaddleConfig | VisionConfig | None) -> str:
     if backend is not None:
         return backend
-    return "paddle" if isinstance(config, PaddleConfig) else "vision"
+    return "vision" if isinstance(config, VisionConfig) else "paddle"
 
 
 def _config(backend: str, config: PaddleConfig | VisionConfig | None):
@@ -57,7 +56,7 @@ def recognize_pdf(path: Path, *, pages: Sequence[int], backend: str | None = Non
                   retry_regions: Mapping[int, Sequence[OcrRegion]] | None = None) -> dict:
     """Read explicit physical pages with the selected engine.
 
-    Apple Vision is the default. Paddle retries are ordered, caller-declared
+    Paddle is the default. Paddle retries are ordered, caller-declared
     crops of the original page; Vision retries are separate calls.
     """
     backend = _backend(backend, config)
@@ -83,9 +82,19 @@ def _content(value):
 
 
 def _timings(pages: list[dict]) -> list[dict]:
-    return [{"page_number": page["page_number"], "region": region["id"],
+    rows = [{"page_number": page["page_number"], "region": region["id"],
              **{k: region[k] for k in RUN_FIELDS if k in region}}
             for page in pages for region in page["regions"]]
+    return rows + [{"page_number": page["page_number"], "region": attempt["region_id"], "attempt": attempt["id"],
+                    **{k: attempt[k] for k in RUN_FIELDS if k in attempt}}
+                   for page in pages for attempt in page.get("attempts", ())]
+
+
+def _slim(page: dict) -> dict:
+    """A Paddle page without its native output: each attempt's observations are already in ``regions``."""
+    page["attempts"] = [{k: v for k, v in attempt.items() if k not in ("native", "observations")}
+                        for attempt in page.get("attempts", ())]
+    return page
 
 
 def column_tiles(rules: PageRules, ink, height: float = 150.0) -> list[OcrRegion]:
@@ -235,15 +244,37 @@ def _png(image: np.ndarray, path: Path) -> None:
                      + chunk(b"IDAT", zlib.compress(raw, 6)) + chunk(b"IEND", b""))
 
 
-def _read_without_rules(path: Path, number: int, config: VisionConfig, regions: Sequence[OcrRegion],
+@lru_cache(maxsize=1)
+def _paddle(config: PaddleConfig) -> PaddleOcr:
+    """One engine for the page-by-page re-reads of an acquisition."""
+    return PaddleOcr(config)
+
+
+def _renumber(page: dict, number: int) -> None:
+    """Paddle read an image of one page: its ids say ``p1``. Name the page they belong to."""
+    swap = lambda value: f"p{number}:{value[3:]}" if isinstance(value, str) and value.startswith("p1:") else value
+    for region in page["regions"]:
+        region.pop("attempt_ids", None)
+        for o in region["observations"]:
+            o.update(id=swap(o["id"]), parent_id=swap(o.get("parent_id")), attempt_id=swap(o.get("attempt_id")),
+                     page_number=number)
+    page.pop("attempts", None)
+
+
+def _read_without_rules(path: Path, number: int, config: VisionConfig | PaddleConfig, regions: Sequence[OcrRegion],
                         width_pt: float) -> dict:
-    """Vision on the page with its rules whitened: next to a scanned rule it reads the rule's
-    edge as 1, l or 一 however far the area keeps off the rule's nominal position."""
+    """The engine on the page with its rules whitened: next to a scanned rule Vision reads the rule's
+    edge as 1, l or 一 however far the area keeps off the rule's nominal position. Paddle reads each
+    area as a tight crop of the whitened page (no white padding, upscaled to 64 px)."""
     clean = _whitened(path, number, config.dpi)
     with tempfile.TemporaryDirectory() as tmp:
         png = Path(tmp) / "page.png"
         _png(clean, png)
-        page = vision_ocr.recognize_image(png, config=replace(config, region_padding_px=60), regions=regions)["pages"][0]
+        if isinstance(config, PaddleConfig):
+            page = _paddle(config).recognize_image(png, regions=regions, small_regions=True)["pages"][0]
+            _renumber(page, number)
+        else:
+            page = vision_ocr.recognize_image(png, config=replace(config, region_padding_px=60), regions=regions)["pages"][0]
     scale = width_pt / clean.shape[1]
     for region in page["regions"]:
         for o in region["observations"]:
@@ -314,11 +345,11 @@ def _key(page: int, box: Sequence[float]) -> str:
     return f"{page}:" + ",".join(f"{v:.1f}" for v in box)
 
 
-def supplement(path: Path, page: dict, config: VisionConfig, previous: Mapping[str, str], *,
+def supplement(path: Path, page: dict, config: VisionConfig | PaddleConfig, previous: Mapping[str, str], *,
                vlm_fallback: bool = True) -> dict:
-    """Read the ink OCR missed on one page: Vision on those areas, then the VLM on what remains.
+    """Read the ink OCR missed on one page: the engine on those areas, then the VLM on what remains.
 
-    Vision reads each tight area (``ink_areas``) as a new region ``ink-<n>``. A reading that
+    The engine (Vision or Paddle, by ``config``) reads each tight area (``ink_areas``) as a new region ``ink-<n>``. A reading that
     lies over missed ink is kept and replaces the readings it contains (``supersedes``, e.g.
     the last digit OCR read alone); one that cuts through a reading it does not contain is dropped. For marks still uncovered, the VLM reads their whole line in
     the cell and the characters OCR lacked become regions ``vlm-<n>`` (``_fill``); what it
@@ -421,7 +452,7 @@ def _zero_shaped(mark: Sequence[float]) -> bool:
     return 1.0 <= mark[2] - mark[0] <= 6.5 and 3.5 <= mark[3] - mark[1] <= 9.0
 
 
-def _read_zeros(path: Path, number: int, config: VisionConfig, page: dict, marks: Sequence[Sequence[float]]) -> None:
+def _read_zeros(path: Path, number: int, config: VisionConfig | PaddleConfig, page: dict, marks: Sequence[Sequence[float]]) -> None:
     """Digit-sized marks still uncovered go to Paddle's recogniser alone: it read all 345 such
     marks of a trial as codex did, in about 130 ms each. A single digit becomes region ``digit-<n>``."""
     shaped = [m for m in marks if _zero_shaped(m)]
@@ -436,7 +467,7 @@ def _read_zeros(path: Path, number: int, config: VisionConfig, page: dict, marks
                          max(0, int((x0 - 2) * scale)):int((x1 + 2) * scale)]
             files.append(Path(tmp) / f"{index}.png")
             _png(np.ascontiguousarray(crop), files[-1])
-        texts = paddle_ocr.recognize_crops(files)
+        texts = paddle_ocr.recognize_crops(files, config if isinstance(config, PaddleConfig) else PaddleConfig())
     for index, (mark, text) in enumerate(zip(shaped, texts)):
         text = "".join(text.split())
         if re.fullmatch(r"[0-9]", text):
@@ -526,16 +557,22 @@ def acquire(path: Path, request: Mapping, previous: Mapping | None = None) -> tu
 
     The observation holds only what the request read and what OCR returned, so
     re-reading with the same engine and renderer yields identical bytes (ADR 0019).
-    Elapsed time, local paths and the environment go to the run record. Ink that Vision
+    Elapsed time, local paths and the environment go to the run record. Ink that the engine
     missed is read again (``supplement``); VLM answers of ``previous`` are reused.
     """
-    if request.get("engine") != "vision":
-        raise ValueError("OCR inputs are acquired with Apple Vision only")
-    config = VisionConfig(**request.get("config", {}))
+    engine = request.get("engine")
+    if engine not in ("vision", "paddle"):
+        raise ValueError("OCR inputs are acquired with Paddle or Apple Vision")
+    paddle = engine == "paddle"
+    config = PaddleConfig(**request.get("config", {})) if paddle else VisionConfig(**request.get("config", {}))
+    # Vision drops text at an image edge; its tiles and re-reads get white padding. Paddle reads exact crops.
+    padded = config if paddle else replace(config, region_padding_px=60)
     path = Path(path)
     regions = [OcrRegion(r["id"], tuple(r["bbox_normalized"])) for r in request["regions"]] \
         if "regions" in request else None
     if request.get('column_tiles'):
+        if paddle:
+            raise ValueError('Column tiles are for Vision; Paddle splits a page with config.page_strips')
         if regions:
             raise ValueError('Column tiles and explicit regions are alternative OCR requests')
         result = None
@@ -543,28 +580,28 @@ def acquire(path: Path, request: Mapping, previous: Mapping | None = None) -> tu
         for number in request['pages']:
             rules = pdf_rules.detect(path, number, dark=dark)
             tiles = column_tiles(rules, pdf_rules.render(path, number) < dark)
-            reading = recognize_pdf(path, pages=[number], backend='vision',
-                                    config=replace(config, region_padding_px=60), regions=tiles)
+            reading = recognize_pdf(path, pages=[number], backend=engine, config=padded, regions=tiles)
             if result is None:
                 result = reading
             else:
                 result['pages'].extend(reading['pages'])
     else:
-        result = recognize_pdf(path, pages=request["pages"], backend="vision", config=config, regions=regions)
+        result = recognize_pdf(path, pages=request["pages"], backend=engine, config=config, regions=regions)
     # Vision can return nothing for a whole dense page without an error. Such a page is
-    # read again in column tiles bounded by its rules; still empty, it stops here.
+    # read again in column tiles bounded by its rules; still empty, it stops here. Paddle has no such fallback.
     for index, page in enumerate(result["pages"]):
-        if not any(region["observations"] for region in page["regions"]):
+        if not paddle and not any(region["observations"] for region in page["regions"]):
             dark = request.get('rule_dark', pdf_rules.DARK)
             tiles = column_tiles(pdf_rules.detect(path, page["page_number"], dark=dark),
                                  pdf_rules.render(path, page["page_number"]) < dark)
-            result["pages"][index] = recognize_pdf(path, pages=[page["page_number"]], backend="vision",
-                                                   config=replace(config, region_padding_px=60),
-                                                   regions=tiles)["pages"][0]
+            result["pages"][index] = recognize_pdf(path, pages=[page["page_number"]], backend=engine,
+                                                   config=padded, regions=tiles)["pages"][0]
     empty = [page["page_number"] for page in result["pages"]
              if not any(region["observations"] for region in page["regions"])]
     if empty:
         raise ValueError(f"OCR returned no text for pages {empty}")
+    if paddle:
+        result["pages"] = [_slim(page) for page in result["pages"]]
     pinned = _pinned_answers(previous)
     result["pages"] = [supplement(path, page, config, pinned, vlm_fallback=request.get('vlm_fallback', True))
                        for page in result["pages"]]

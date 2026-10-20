@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from ingestion.lib.paddle_ocr import OcrRegion, PaddleConfig, PaddleOcr, PaddleOcrError
+from ingestion.lib.paddle_ocr import OcrRegion, PaddleConfig, PaddleOcr, PaddleOcrError, _checked_models, _strips
 
 
 class PublicBoundaries(unittest.TestCase):
@@ -11,9 +11,28 @@ class PublicBoundaries(unittest.TestCase):
         for config in ({"dpi": True}, {"dpi": 601}, {"max_pixels": 0},
                        {"cpu_threads": 0}, {"recognition_batch_size": True},
                        {"detection_limit_side_len": 0}, {"pdf_renderer": "auto"},
+                       {"runtime": "tensorrt"}, {"page_strips": 0}, {"strip_overlap_px": -1},
                        {"render_timeout_seconds": float("nan")}):
             with self.subTest(config=config), self.assertRaises(ValueError):
                 PaddleConfig(**config)
+
+    def test_onnx_runtime_with_four_threads_is_the_default(self):
+        config = PaddleConfig()
+        self.assertEqual((config.runtime, config.cpu_threads, config.page_strips), ("onnxruntime", 4, 1))
+
+    def test_strips_cover_the_width_and_one_strip_is_the_whole_region(self):
+        self.assertEqual(_strips(1000, 1, 60), [(0, 1000)])
+        strips = _strips(1000, 4, 60)
+        self.assertEqual((strips[0][0], strips[-1][1]), (0, 1000))
+        self.assertTrue(all(a[1] > b[0] for a, b in zip(strips, strips[1:])))
+
+    def test_each_runtime_checks_its_own_declared_files(self):
+        with tempfile.TemporaryDirectory() as directory:
+            for runtime in ("onnxruntime", "paddle"):
+                with self.subTest(runtime=runtime), self.assertRaisesRegex(PaddleOcrError, "no models are downloaded"):
+                    _checked_models(["PP-OCRv6_small_det"], [Path(directory)], runtime)
+        with self.assertRaisesRegex(PaddleOcrError, "not declared"):
+            _checked_models(["PP-OCRv6_medium_det"], [Path(".")], "onnxruntime")
 
     def test_invalid_physical_pages_before_input_is_read(self):
         with PaddleOcr() as ocr:
