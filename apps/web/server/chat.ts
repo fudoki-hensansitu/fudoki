@@ -153,6 +153,7 @@ export async function handleChat(c: AppContext): Promise<Response> {
       close()
     },
     onAbort: () => {
+      logTiming({ connectMs, totalMs: Date.now() - started, steps: stepsDone, error: 'aborted' })
       record({ error: 'aborted' })
       close()
     },
