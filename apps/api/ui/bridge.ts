@@ -40,12 +40,6 @@ function appendData(previous: ViewData, next: ViewData): ViewData {
       ]),
     ).values(),
   ]
-  if ('jurisdictions' in previous && 'jurisdictions' in next)
-    return {
-      ...next,
-      jurisdictions: [...previous.jurisdictions, ...next.jurisdictions],
-      origins,
-    }
   if ('nodes' in previous && 'nodes' in next)
     return { ...next, nodes: [...previous.nodes, ...next.nodes], origins }
   if ('node' in previous && 'node' in next) {
@@ -307,20 +301,6 @@ export function createBridge() {
         .requestDisplayMode({ mode: active ? 'fullscreen' : 'inline' })
         .then(({ mode }) => update({ fullscreen: { ...state.fullscreen, active: mode === 'fullscreen' } }))
         .catch(() => {})
-    },
-    /**
-     * チャットに利用者のメッセージを送り、AI に tool を呼び直させる。View の中で画面を移すのではなく、
-     * 新しい問いとして会話に残し、AI が結果を受け取って続きを答えられるようにする。
-     */
-    ask(text: string) {
-      // 送っている間は busy にして、連打で同じ問いを重ねて送らない
-      if (disposed || state.busy) return
-      update({ busy: true, error: undefined })
-      void app
-        .sendMessage({ role: 'user', content: [{ type: 'text', text }] })
-        .then((result) => { if (result.isError) update({ error: 'チャットに送れませんでした' }) })
-        .catch((error) => update({ error: `チャットに送れませんでした: ${String(error)}` }))
-        .finally(() => { if (!disposed) update({ busy: false }) })
     },
     /** 利用者が View で見ている対象を AI に伝え、続けてチャットで聞かれたときに指せるようにする */
     tellModel(text: string) {

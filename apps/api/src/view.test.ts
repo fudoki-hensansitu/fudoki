@@ -50,12 +50,17 @@ describe('MCP Apps の View', () => {
 
   test('描画 tool はデータ tool と同じ結果を返し、入力が不正なら isError', async () => {
     insertJurisdiction(sqlite, { jurisdiction_code: '132039', name: '武蔵野市' })
-    const direct = (await rpc('tools/call', { name: 'list_jurisdictions', arguments: {} })).result
-    const rendered = (await rpc('tools/call', { name: 'render_expenditure_view', arguments: { tool: 'list_jurisdictions', arguments: {} } })).result
+    insertNode(sqlite, { document_kind: 'settlement', node_id: 'n1', name: '総務費', node_kind: '款', amount_yen: 100 })
+    const args = { document_kind: 'settlement', fiscal_year: { min: 2024, max: 2024 } }
+    const direct = (await rpc('tools/call', { name: 'search_expenditure_nodes', arguments: args })).result
+    const rendered = (await rpc('tools/call', { name: 'render_expenditure_view', arguments: { tool: 'search_expenditure_nodes', arguments: args } })).result
     expect(rendered.structuredContent).toEqual(direct.structuredContent)
     expect(rendered._meta).toEqual(direct._meta)
     const bad = (await rpc('tools/call', { name: 'render_expenditure_view', arguments: { tool: 'get_expenditure_node', arguments: {} } })).result
     expect(bad.isError).toBe(true)
+    // 団体の一覧は View を持たず、描画 tool では呼べない
+    const noView = (await rpc('tools/call', { name: 'render_expenditure_view', arguments: { tool: 'list_jurisdictions', arguments: {} } })).result
+    expect(noView.isError).toBe(true)
   })
 
   test('描画 tool は、結果の団体コードに対応する団体名を _meta にだけ載せる', async () => {

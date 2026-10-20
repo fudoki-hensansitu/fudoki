@@ -144,7 +144,7 @@ async function jurisdictionNames(ctx: Ctx, out: unknown): Promise<Record<string,
 export const RENDER_TOOL = 'render_expenditure_view'
 
 const RENDER_DESCRIPTION =
-  '結果を画面（View）に表とグラフで表示する。データを調べる tool（search_expenditure_nodes・get_expenditure_node・list_jurisdictions）は結果を返すだけで画面を出さない。' +
+  '結果を画面（View）に表とグラフで表示する。データを調べる tool（search_expenditure_nodes・get_expenditure_node・list_jurisdictions など）は結果を返すだけで画面を出さない。' +
   'ユーザーに結果を見せる最終段階で、その tool と同じ入力（tool と arguments）を渡してこの tool を一度だけ呼ぶ。' +
   'MCP Apps に対応した client では結果が画面に出るので、応答の文章で一覧や金額を繰り返さず、補足は問いへの答えと注意点だけの最小限にとどめる。'
 
@@ -164,7 +164,7 @@ function mcpServer(ctx: Ctx, apiOrigin: string, operations: Operation[]): McpSer
   server.registerResource(
     'view',
     VIEW_URI,
-    { title: '風土記の表示', description: '団体と収録範囲・歳出のノードを表にする View（MCP Apps）。', mimeType: VIEW_MIME_TYPE },
+    { title: '風土記の表示', description: '歳出のノードを表とグラフにする View（MCP Apps）。', mimeType: VIEW_MIME_TYPE },
     // URI に中身のハッシュを入れてあり、同じ URI の中身は変わらない
     async (uri) => ({ contents: [{ uri: uri.href, mimeType: VIEW_MIME_TYPE, text: VIEW_HTML, _meta: { ui: { prefersBorder: true, csp: { connectDomains: [apiOrigin] } } } }] })
   )

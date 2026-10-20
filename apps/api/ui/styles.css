@@ -88,12 +88,6 @@ button.bar:disabled { cursor: progress; }
 .bar-more:disabled { cursor: progress; color: var(--sub); }
 
 /* 団体 × 年度 */
-.coverage { display: grid; min-width: 0; overflow-x: auto; }
-.coverage-row { display: contents; }
-.coverage-row > * { padding: 8px 8px 8px 0; border-bottom: 1px solid var(--border); }
-.coverage-year { font-size: var(--text-caption); color: var(--sub); }
-.coverage-name { display: flex; flex-direction: column; }
-.coverage-cell { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; }
 .chip { padding: 2px 0; border: 0; background: none; font: inherit; font-size: var(--text-caption); color: var(--primary); white-space: nowrap; cursor: pointer; text-decoration: underline; text-decoration-color: var(--link-line); text-underline-offset: 3px; }
 .chip:hover:not(:disabled) { text-decoration-color: currentColor; }
 .chip:disabled { cursor: progress; color: var(--sub); }
