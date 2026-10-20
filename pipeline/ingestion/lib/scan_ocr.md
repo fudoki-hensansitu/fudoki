@@ -18,6 +18,10 @@ vision = recognize_pdf(Path("settlement.pdf"), pages=[1, 2], backend="vision")
 
 Paddleを既定にした理由は、頁を縦に分けて検出すると金額の誤りが訂正前のVisionの数百件から6〜12件に減るためである（[ADR 0032](../../../docs/adr/0032-paddle-onnx-for-new-scan-acquisitions.md)）。Visionの弱点であるmacOS限定は、OCRを変換器の外で一度だけ実行し観測を固定して補助入力にする方針（[ADR 0019](../../../docs/adr/0019-freeze-scan-ocr-observations.md)）で小さくなっていた。取得の入口は `acquire`（`ingestion:ocr` から呼ぶ）で、観測は内容だけの正規化JSON、所要時間や環境は実行記録に分ける。Visionが頁全体を空で返したら、罫線で決めた列の帯で読み直し、それでも空なら止める。Visionは **accurate、revision 3、日本語・英語** を初期条件にし、OSの版・build、revision、言語補正を記録する。内部重みは固定できるとは扱わない。設定は [vision_ocr.md](vision_ocr.md) を参照する。
 
+## Paddle が中国語の字形で読む字
+
+Paddle は日本語の名称・見出しを、徵・產・查・增のような中国語の字形で読むことがある。日本の科目名で正字として使われない字形だけを、[ocr_variant_chars.json](ocr_variant_chars.json) の対応表で1字ずつ置き換える。迷う字は入れず、`name_corrections` に個別に宣言する。当たるのは engine paddle の観測だけで、当たった観測 ID は変換の受領書の注記に残る。
+
 ## 見落とした墨を読み直す
 
 以下の再読の手順はVisionの説明で、Paddleの依頼でも同じ段を踏む。違いは、段1の再読がPaddleの切り出し読み（罫線を白く消した頁から、見落とした墨の範囲を白い余白なしで切り出し、64pxまで拡大して読む。領域 `ink-<n>`、観測IDは `p<頁>:ink-<n>:a0:result0:r<i>`）になることと、取得時の `attempts[].native` を観測に残さないことである。

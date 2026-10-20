@@ -452,6 +452,9 @@ def receipt_notes(table: Table) -> list[str]:
     corrected = [n['text'] for n in table.built.notes if n.get('kind') == 'name correction']
     if corrected:
         notes.append(f'原画で確かめた名称の誤読 {len(corrected)} 件を、管理 JSON の name_corrections で印字に直した: {"・".join(corrected)}。')
+    variants = [n['text'] for n in table.built.notes if n.get('kind') == 'variant characters']
+    if variants:
+        notes.append(f'Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: {"・".join(variants)}。')
     if table.report.skipped_pages:
         notes.append(f'選定の scope が共有していた別の方向（歳入）の頁 {len(table.report.skipped_pages)} 頁は読んでいない。')
     return notes
