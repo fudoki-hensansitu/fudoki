@@ -4,7 +4,7 @@ import * as React from 'react'
 import { createRoot } from 'react-dom/client'
 import { useChat } from '@ai-sdk/react'
 import { DefaultChatTransport, type DynamicToolUIPart, type UIMessage } from 'ai'
-import { CheckIcon, CircleAlertIcon } from 'lucide-react'
+import { CheckIcon, CircleAlertIcon, SquarePenIcon } from 'lucide-react'
 import { Bubble, BubbleContent } from '@/components/ui/bubble'
 import { Marker, MarkerContent, MarkerIcon } from '@/components/ui/marker'
 import { Message, MessageContent } from '@/components/ui/message'
@@ -98,11 +98,14 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
 
   const apps = (m: ChatMessage) => m.metadata?.apps ?? {}
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-3xl flex-col px-4">
-      <header className="flex items-center justify-between py-3">
+    <div className="flex min-h-dvh w-full flex-col">
+      <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-3">
         <a href="/" className="font-medium text-primary">風土記</a>
-        <a href="/" className="text-sm text-muted-foreground hover:text-foreground">新しく聞く</a>
+        <a href="/" aria-label="新しい会話" title="新しい会話" className="rounded-md p-2 text-muted-foreground hover:bg-secondary hover:text-foreground">
+          <SquarePenIcon className="size-5" />
+        </a>
       </header>
+      <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4">
       <div className="flex flex-1 flex-col gap-4 pb-6">
               {messages.map((m) => (
                 <div key={m.id}>
@@ -149,6 +152,7 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
       </div>
       <div className="sticky bottom-0 bg-background pt-2 pb-4 max-sm:pb-2">
         <Composer onSubmit={send} onStop={stop} busy={busy} placeholder="続けて聞く" autoFocus compact />
+      </div>
       </div>
     </div>
   )
