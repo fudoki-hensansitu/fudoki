@@ -143,6 +143,9 @@ async function jurisdictionNames(ctx: Ctx, out: unknown): Promise<Record<string,
 /** View を描く tool の名前。データを返す tool には View を付けず、この tool だけが View を指す（iframe を tool 呼び出しごとに作り直させないため） */
 export const RENDER_TOOL = 'render_expenditure_view'
 
+/** 描画 tool の結果の text。データは structuredContent（View 用）にあり、text には写さない */
+export const RENDER_RESULT_TEXT = '表とグラフを画面に出しました。データは直前のデータ tool の結果を使ってください。'
+
 const RENDER_DESCRIPTION =
   '結果を画面（View）に表とグラフで表示する。データを調べる tool（search_expenditure_nodes・get_expenditure_node・list_jurisdictions）は結果を返すだけで画面を出さない。' +
   'ユーザーに結果を見せる最終段階で、その tool と同じ入力（tool と arguments）を渡してこの tool を一度だけ呼ぶ。' +
@@ -168,12 +171,13 @@ function mcpServer(ctx: Ctx, apiOrigin: string, operations: Operation[]): McpSer
     // URI に中身のハッシュを入れてあり、同じ URI の中身は変わらない
     async (uri) => ({ contents: [{ uri: uri.href, mimeType: VIEW_MIME_TYPE, text: VIEW_HTML, _meta: { ui: { prefersBorder: true, csp: { connectDomains: [apiOrigin] } } } }] })
   )
-  const toolResult = async (op: Operation, args: Record<string, unknown>, withNames: boolean) => {
+  /** stubText を渡すと text をその一文にする（描画 tool 用。データは structuredContent で View に渡り、AI は直前のデータ tool の結果で読んでいるので、同じ内容を text で二重に返さない） */
+  const toolResult = async (op: Operation, args: Record<string, unknown>, withNames: boolean, stubText?: string) => {
     try {
       const out = await op.run(ctx, args)
       // structuredContent が正本。text は structuredContent を読めない client のための同じ内容の写し（MCP の SHOULD）
       const meta = withNames ? { apiOrigin, jurisdictionNames: await jurisdictionNames(ctx, out) } : { apiOrigin }
-      return { content: [{ type: 'text' as const, text: JSON.stringify(out) }], structuredContent: out as Record<string, unknown>, _meta: meta }
+      return { content: [{ type: 'text' as const, text: stubText ?? JSON.stringify(out) }], structuredContent: out as Record<string, unknown>, _meta: meta }
     } catch (e) {
       // 想定外の例外の詳細（SQL のエラーなど）は返さず、ログにだけ出す
       if (!(e instanceof ApiError)) console.error(e)
@@ -224,7 +228,7 @@ function mcpServer(ctx: Ctx, apiOrigin: string, operations: Operation[]): McpSer
           const message = parsed.error.issues.map((i) => (i.path.length > 0 ? `${i.path.join('.')}: ${i.message}` : i.message)).join('; ')
           return { isError: true, content: [{ type: 'text' as const, text: JSON.stringify(errorBody('INVALID_ARGUMENT', message)) }] }
         }
-        return toolResult(op, parsed.data as Record<string, unknown>, true)
+        return toolResult(op, parsed.data as Record<string, unknown>, true, RENDER_RESULT_TEXT)
       }
     )
   }
