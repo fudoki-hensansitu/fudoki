@@ -144,11 +144,11 @@ async function jurisdictionNames(ctx: Ctx, out: unknown): Promise<Record<string,
 export const RENDER_TOOL = 'render_expenditure_view'
 
 /** 描画 tool の結果の text。データは structuredContent（View 用）にあり、text には写さない */
-export const RENDER_RESULT_TEXT = '表とグラフを画面に出しました。データは直前のデータ tool の結果を使ってください。'
+export const RENDER_RESULT_TEXT = '描画を実行しました。表示する内容は structuredContent と同じです。'
 
 const RENDER_DESCRIPTION =
   '結果を画面（View）に表とグラフで表示する。データを調べる tool（search_expenditure_nodes・get_expenditure_node・list_jurisdictions）は結果を返すだけで画面を出さない。' +
-  'ユーザーに結果を見せる最終段階で、その tool と同じ入力（tool と arguments）を渡してこの tool を一度だけ呼ぶ。' +
+  'ユーザーに結果を見せる最終段階で、その tool と同じ入力（tool と arguments）を渡してこの tool を一度だけ呼ぶ。この tool の text にはデータを入れない（画面用の structuredContent と同じ内容なので）。回答に使うデータは、先に呼んだデータ tool の結果を読む。' +
   'MCP Apps に対応した client では結果が画面に出るので、応答の文章で一覧や金額を繰り返さず、補足は問いへの答えと注意点だけの最小限にとどめる。'
 
 function mcpServer(ctx: Ctx, apiOrigin: string, operations: Operation[]): McpServer {
@@ -175,7 +175,7 @@ function mcpServer(ctx: Ctx, apiOrigin: string, operations: Operation[]): McpSer
   const toolResult = async (op: Operation, args: Record<string, unknown>, withNames: boolean, stubText?: string) => {
     try {
       const out = await op.run(ctx, args)
-      // structuredContent が正本。text は structuredContent を読めない client のための同じ内容の写し（MCP の SHOULD）
+      // structuredContent が正本。text は structuredContent を読めない client のための同じ内容の写し（MCP の SHOULD）。描画 tool だけは例外で、stubText の一文にする（ADR 0022）
       const meta = withNames ? { apiOrigin, jurisdictionNames: await jurisdictionNames(ctx, out) } : { apiOrigin }
       return { content: [{ type: 'text' as const, text: stubText ?? JSON.stringify(out) }], structuredContent: out as Record<string, unknown>, _meta: meta }
     } catch (e) {
