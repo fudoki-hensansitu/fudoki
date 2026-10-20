@@ -8,9 +8,9 @@ import { CheckIcon, CircleAlertIcon } from 'lucide-react'
 import { Bubble, BubbleContent } from '@/components/ui/bubble'
 import { Marker, MarkerContent, MarkerIcon } from '@/components/ui/marker'
 import { Message, MessageContent } from '@/components/ui/message'
-import { MessageScroller, MessageScrollerButton, MessageScrollerContent, MessageScrollerItem, MessageScrollerProvider, MessageScrollerViewport } from '@/components/ui/message-scroller'
 import { Spinner } from '@/components/ui/spinner'
 import { Composer } from './composer'
+import { Markdown } from './markdown'
 import { loadSession, saveSession, type StoredSession } from './store'
 import { ViewFrame } from './view-frame'
 
@@ -91,26 +91,28 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
     send(stored.pending)
   }, [id, stored, send])
 
+  // 送ったら、画面全体を一番下まで送る
+  React.useEffect(() => {
+    if (status === 'submitted') window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' })
+  }, [status])
+
   const apps = (m: ChatMessage) => m.metadata?.apps ?? {}
   return (
-    <div className="mx-auto flex h-dvh w-full max-w-3xl flex-col gap-3 px-4 pb-4 max-sm:gap-2 max-sm:pb-2">
+    <div className="mx-auto flex min-h-dvh w-full max-w-3xl flex-col px-4">
       <header className="flex items-center justify-between py-3">
         <a href="/" className="font-medium text-primary">風土記</a>
         <a href="/" className="text-sm text-muted-foreground hover:text-foreground">新しく聞く</a>
       </header>
-      <MessageScrollerProvider autoScroll>
-        <MessageScroller className="flex-1">
-          <MessageScrollerViewport>
-            <MessageScrollerContent className="pb-6">
+      <div className="flex flex-1 flex-col gap-4 pb-6">
               {messages.map((m) => (
-                <MessageScrollerItem key={m.id} messageId={m.id} scrollAnchor={m.role === 'user'}>
+                <div key={m.id}>
                   <Message align={m.role === 'user' ? 'end' : 'start'}>
                     <MessageContent>
                       {m.parts.map((p, i) => {
                         if (p.type === 'text' && p.text.trim())
                           return (
                             <Bubble key={i} variant={m.role === 'user' ? 'secondary' : 'ghost'} align={m.role === 'user' ? 'end' : 'start'}>
-                              <BubbleContent className="whitespace-pre-wrap">{p.text}</BubbleContent>
+                              <BubbleContent className={m.role === 'user' ? 'whitespace-pre-wrap' : undefined}>{m.role === 'user' ? p.text : <Markdown text={p.text} />}</BubbleContent>
                             </Bubble>
                           )
                         if (p.type !== 'dynamic-tool') return null
@@ -125,32 +127,29 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
                       })}
                     </MessageContent>
                   </Message>
-                </MessageScrollerItem>
+                </div>
               ))}
               {status === 'submitted' ? (
-                <MessageScrollerItem messageId="thinking">
+                <div>
                   <Marker>
                     <MarkerContent className="shimmer">考えています</MarkerContent>
                   </Marker>
-                </MessageScrollerItem>
+                </div>
               ) : null}
               {error ? (
-                <MessageScrollerItem messageId="error">
+                <div>
                   <Marker>
                     <MarkerIcon>
                       <CircleAlertIcon />
                     </MarkerIcon>
                     <MarkerContent className="text-destructive">{errorMessage(error)}</MarkerContent>
                   </Marker>
-                </MessageScrollerItem>
+                </div>
               ) : null}
-            </MessageScrollerContent>
-          </MessageScrollerViewport>
-          <MessageScrollerButton />
-        </MessageScroller>
-      </MessageScrollerProvider>
-      <Composer onSubmit={send} onStop={stop} busy={busy} placeholder="続けて聞く" autoFocus compact />
-      <p className="text-center text-xs text-muted-foreground max-sm:text-[0.6875rem] max-sm:leading-snug">AI の答えは誤ることがあります。金額は表の原典の頁で確かめてください。会話は保存しません。</p>
+      </div>
+      <div className="sticky bottom-0 bg-background pt-2 pb-4 max-sm:pb-2">
+        <Composer onSubmit={send} onStop={stop} busy={busy} placeholder="続けて聞く" autoFocus compact />
+      </div>
     </div>
   )
 }

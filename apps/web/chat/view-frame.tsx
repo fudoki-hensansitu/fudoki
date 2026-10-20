@@ -32,9 +32,10 @@ function loadResource(token: string, uri: string) {
   return found
 }
 
+const WIDE = '(min-width: 768px)'
 const dark = () => matchMedia('(prefers-color-scheme: dark)').matches
 
-/** View に選ばせる表示の大きさ。全画面は頁の上に重ねて出す */
+/** View に選ばせる表示の大きさ。広い画面では会話の右に並べ（side-by-side）、狭い画面では頁の上に全画面で重ねる */
 type DisplayMode = Extract<McpUiDisplayMode, 'inline' | 'fullscreen'>
 const DISPLAY_MODES: DisplayMode[] = ['inline', 'fullscreen']
 
@@ -85,7 +86,17 @@ export function ViewFrame({
   const [error, setError] = React.useState<string>()
   const [ready, setReady] = React.useState(false)
   const [mode, setMode] = React.useState<DisplayMode>('inline')
-  const fullscreen = mode === 'fullscreen'
+  const expanded = mode === 'fullscreen'
+  // 広い画面では会話を残したまま右半分に開く。狭い画面だけ全画面にする
+  const [wide, setWide] = React.useState(() => matchMedia(WIDE).matches)
+  React.useEffect(() => {
+    const media = matchMedia(WIDE)
+    const onChange = () => setWide(media.matches)
+    media.addEventListener('change', onChange)
+    return () => media.removeEventListener('change', onChange)
+  }, [])
+  const side = expanded && wide
+  const fullscreen = expanded && !wide
   const bridgeRef = React.useRef<AppBridge>(undefined)
   const modeRef = React.useRef(mode)
   modeRef.current = mode
@@ -167,13 +178,23 @@ export function ViewFrame({
     if (fullscreen && el && !el.matches(':popover-open')) el.showPopover()
   }, [fullscreen])
 
+  // 横に開く間は、会話を左半分に寄せる
+  React.useEffect(() => {
+    if (!side) return
+    const margin = document.body.style.marginRight
+    document.body.style.marginRight = '50vw'
+    return () => {
+      document.body.style.marginRight = margin
+    }
+  }, [side])
+
   // 大きさが変わったら host context で View に伝える（View はこれで「全画面で開く」「元の大きさに戻す」を切り替える）
   React.useEffect(() => {
     bridgeRef.current?.setHostContext(hostContext(mode))
-    if (!fullscreen) return
+    if (!expanded) return
     // 重ねている間は下の会話を動かさない。iframe の中で押した Esc は頁に届かないので、閉じるボタンに focus を置く
     const overflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
+    if (fullscreen) document.body.style.overflow = 'hidden'
     close.current?.focus()
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setMode('inline')
@@ -183,24 +204,27 @@ export function ViewFrame({
       document.body.style.overflow = overflow
       window.removeEventListener('keydown', onKey)
     }
-  }, [mode])
+  }, [mode, fullscreen])
 
   if (error) return <p className="text-sm text-destructive">{error}</p>
   return (
+    <>
     <div
       ref={box}
       // popover の属性は全画面の間だけ付ける（付けたまま閉じると display: none になる）
       popover={fullscreen ? 'manual' : undefined}
       role={fullscreen ? 'dialog' : undefined}
       aria-modal={fullscreen || undefined}
-      aria-label={fullscreen ? '風土記の表とグラフ（全画面）' : undefined}
+      aria-label={fullscreen ? '風土記の表とグラフ（全画面）' : side ? '風土記の表とグラフ' : undefined}
       className={
         fullscreen
           ? 'fixed inset-0 m-0 flex size-full max-h-none max-w-none flex-col border-0 bg-background p-0 text-foreground'
-          : 'relative w-full overflow-hidden rounded-xl border bg-background'
+          : side
+            ? 'fixed inset-y-0 right-0 z-40 flex w-1/2 flex-col border-l bg-background text-foreground'
+            : 'relative w-full overflow-hidden rounded-xl border bg-background'
       }
     >
-      {fullscreen ? (
+      {expanded ? (
         <div className="flex shrink-0 items-center justify-between border-b px-4 py-2">
           <span className="text-sm text-muted-foreground">風土記の表とグラフ</span>
           <Button ref={close} variant="ghost" size="icon-sm" aria-label="元の大きさに戻す（Esc）" title="元の大きさに戻す（Esc）" onClick={() => setMode('inline')}>
@@ -213,7 +237,13 @@ export function ViewFrame({
           <Spinner /> 表を準備しています
         </div>
       ) : null}
-      <iframe ref={frame} title="風土記の表とグラフ" sandbox="allow-scripts" className={fullscreen ? 'block min-h-0 w-full flex-1 border-0' : 'block w-full border-0'} style={fullscreen ? undefined : { height }} />
+      <iframe ref={frame} title="風土記の表とグラフ" sandbox="allow-scripts" className={expanded ? 'block min-h-0 w-full flex-1 border-0' : 'block w-full border-0'} style={expanded ? undefined : { height }} />
     </div>
+    {!expanded && ready ? (
+      <button type="button" onClick={() => setMode('fullscreen')} className="mt-1 text-xs text-muted-foreground underline underline-offset-4 hover:text-foreground">
+        大きく開く
+      </button>
+    ) : null}
+    </>
   )
 }
