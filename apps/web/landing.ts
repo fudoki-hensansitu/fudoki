@@ -354,7 +354,7 @@ const BODY = `${ICONS}
 <div class="cols">
 <div><a href="/" aria-label="風土記 ホーム">${logo('logo')}</a><p>町の家計簿。自治体の歳出を、事業の単位まで。</p></div>
 <div><h2>使う</h2><ul><li><a href="#mcp">AI から使う</a></li><li><a href="${DOCS}">ドキュメント</a></li></ul></div>
-<div><h2>作り</h2><ul><li><a href="${GITHUB}">GitHub</a></li><li><a href="${DOCS}/support">サポート</a></li></ul></div>
+<div><h2>作り</h2><ul><li><a href="${GITHUB}">GitHub</a></li><li><a href="${DOCS}/support">サポート</a></li><li><a href="mailto:support@fudoki.dev">お問い合わせ</a></li></ul></div>
 <div><h2>決まりごと</h2><ul><li><a href="${DOCS}/privacy">プライバシーポリシー</a></li><li><a href="${DOCS}/terms">利用規約</a></li></ul></div>
 </div>
 <div class="legal"><span>713年、諸国に同じ様式で報告させた地誌にならって</span><span>© 2026 風土記</span></div>
