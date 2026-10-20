@@ -150,6 +150,7 @@
           },
           "sum_levels": {"type": "boolean"},
           "bare_amounts": {"type": "boolean"},
+          "headings": {"type": "boolean", "description": "A line without an amount, followed by a deeper line that prints one, is a heading of its own: the lines under it are its items."},
           "notes": {"type": "array", "items": {"type": "string", "minLength": 1}},
           "name_column": {"const": true, "description": "Names are set in a column of their own a space right of the numbers: a name wrapped around a line printing only its number starts up to a character past it."}
         }

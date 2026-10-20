@@ -542,6 +542,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
     settings = settings or {}
     kind_names = bool(settings.get('names_end_with_kind_words'))
     remainder = bool(settings.get('bracketed_remainder'))
+    headings = bool(settings.get('headings'))  # a line indented past the name above is under it, not its second line
     # A name that begins with a count, glued to its number (`82歳児歯科健診事業` = `8` + `2歳児…`,
     # `42025年農林業センサス費` = `4` + `2025年…`): the number is the one that follows the number before it
     # in this list. Only a line at a number's margin with a counter after its digits is read so.
@@ -712,6 +713,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
         left_slack = max(3, (label[0].y1 - label[0].y0) / 2 + .5) if label and remainder else 3
         wrapped = (previous is not None and code is None and label and not previous.amounts and not marked
                    and label[0].x0 >= previous.lines[0][0].x0 - left_slack
+                   and not (headings and label[0].x0 > previous.lines[0][0].x0 + 3)
                    and (not money or bracketed
                         or (reaches and (abs(label[0].x0 - previous.indent) <= 3
                                          or abs(label[0].x0 - _name_start(previous)) <= 3)))
@@ -885,6 +887,18 @@ def is_plain_name(layout: dict | None, item: Item) -> bool:
     (`補充用備品` holds `充用`)."""
     names = (layout or {}).get(item.group.axis, {}).get('plain_names')
     return bool(names) and any(normalize(name) in normalize(item.name) for name in names)
+
+
+def heads_items(layout: dict | None, items_: list[Item], position: int) -> bool:
+    """A line without an amount is a heading of its own when the settings say the axis prints them (`headings`)
+    and the next line, indented deeper, prints an amount: the heading's items are the lines under it."""
+    item = items_[position]
+    if not (layout or {}).get(item.group.axis, {}).get('headings') or position + 1 >= len(items_):
+        return False
+    following = items_[position + 1]
+    return (following.code is None and bool(following.amounts) and following.page == item.page
+            and following.lines[0][0].x0 > item.lines[0][0].x0 + 3
+            and (kind_of(PAREN_TAIL.sub('', following.name)) is None or is_plain_name(layout, following)))
 
 
 def number_edges(logicals: list[Logical], pattern: str = 'bands') -> set[int]:
@@ -1685,7 +1699,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 group_items = subject_items(group)
             if not group.subject:
                 group_items = join_transfer_tails(group_items, layout)
-            for item in group_items:
+            for position, item in enumerate(group_items):
                 # 01.01.01.01から流用 starts with digits. A parenthesised remark joined to an item's
                 # name (`需用費（同事業、委託料へ流用 △1,815,000）`) does not make the item a note.
                 if (TRANSFER.search(PAREN_TAIL.sub('', item.name)) and not group.subject
@@ -1694,7 +1708,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 elif item.code is None and TOTAL.search(item.name):
                     item.role = 'total'
                 elif item.code is None and not item.amounts and not group.subject:
-                    item.role = 'note'
+                    item.role = 'node' if heads_items(layout, group_items, position) else 'note'
                 elif (item.code is None and item.amounts and not group.subject and not item.kinds
                       and not is_plain_name(layout, item)
                       and (kind_of(PAREN_TAIL.sub('', item.name)) is not None or is_account_code(item.name))):
@@ -1984,6 +1998,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             for item in found[id(group)]:
                 previous = kept[-1] if kept else None
                 if (previous is not None and previous.role in ('node', 'note') and not previous.amounts
+                        and not (layout or {}).get(group.axis, {}).get('headings')
                         and item.role == 'node' and item.code is None and item.amounts and not item.decided
                         and amount_depth(item) == depth_of(previous) and depth_of(item) > depth_of(previous)):
                     previous.role = 'node'

@@ -1,6 +1,9 @@
 {"criteria": {"false": "取り込むべきでない数字。例: 款・項・目・節・事業の番号、頁番号、年月日・年度・議決の号数（令和8年第6号）、住所の番地、人数・件数・回数・面積などの数量、率（％）、本文や注記の中の数字、「第10節へ同項同目第8節から流用 12,846」のような流用・充用の注記の金額。", "true": "表の項目（科目・事業）の金額として取り込むべき値。例: 予算額、補正額、決算額、支出済額、不用額、事業費、国・県支出金など、表の金額の欄に印字された円の金額（0 や 1,234,000 のような値も含む）。"}, "instructions": "日本の自治体の決算書（歳出）のある頁から、数字を1つ取り出した。文脈は `items.{id}` にある（同じ行の語を左から並べた文、列の見出し、上下の行）。取り出した数字 `items.{id}.対象の数字`（同じ行では【】で示す）は、表の項目の金額として取り込むべき値か。", "kind": "digit-recheck", "model": "jev-1.13.0", "threshold": 0.7, "version": 1}
+{"fp":"09e451993865e88edc485b9b84e93150","p":0.11,"t":"general-expenditure"}
+{"fp":"10669ddb704e9fb2752c8e962fe428e8","p":0.08,"t":"general-expenditure"}
 {"fp":"235f69ad42d63cdb06806ef2feaf22c7","p":0.11,"t":"general-expenditure"}
 {"fp":"2b0740d2639b679424b926fe9c1bee5f","p":0.1,"t":"general-expenditure"}
+{"fp":"3054fb162597931247b4bd7727588d44","p":0.1,"t":"general-expenditure"}
 {"fp":"35697c5820d7b4bc43d3caf77118633d","p":0.08,"t":"general-expenditure"}
 {"fp":"379541cab003e4eafd58a3796da58acb","p":0.11,"t":"general-expenditure"}
 {"fp":"48a6e9d0801795f6dcb81e503acdd07a","p":0.09,"t":"general-expenditure"}
@@ -8,11 +11,18 @@
 {"fp":"4d0ef5f3409dc236dabdd9eeae3bac70","p":0.13,"t":"general-expenditure"}
 {"fp":"5f06a88fe4a6c7e6a2a29fbfeab35e69","p":0.1,"t":"general-expenditure"}
 {"fp":"61d38ebb99b25c25290f37d3087d8092","p":0.14,"t":"general-expenditure"}
+{"fp":"624bc424fd854ecd2f04987c40d501e8","p":0.11,"t":"general-expenditure"}
+{"fp":"76723778bf02e117bcaea36fea659716","p":0.1,"t":"general-expenditure"}
 {"fp":"7a5bd59523bb51686e0650f6ac16d4cb","p":0.14,"t":"general-expenditure"}
 {"fp":"8c8b9bdb2db4f8adac1e5f15e898e8c4","p":0.14,"t":"general-expenditure"}
+{"fp":"aa253f9bef5cd10d51f25b7195452cd0","p":0.09,"t":"general-expenditure"}
 {"fp":"ab2bdd2b8a00536c38377e628f1adf51","p":0.1,"t":"general-expenditure"}
+{"fp":"b7591ef56c6f622f31bf31637d2b2a52","p":0.09,"t":"general-expenditure"}
 {"fp":"cf25ed47a2010037f9b83bd9d9db2930","p":0.08,"t":"general-expenditure"}
 {"fp":"d4876a57b13f53da47397042bb5071f8","p":0.07,"t":"general-expenditure"}
+{"fp":"e92c5295e93a8c1ca7507b0c59413fb5","p":0.11,"t":"general-expenditure"}
+{"fp":"f03c0b60100d86ed66e68db0cca8e9d6","p":0.1,"t":"general-expenditure"}
+{"fp":"f8c5a0d4b08f6d876a2dd2e81b5e06f6","p":0.09,"t":"general-expenditure"}
 {"fp":"050e35228940d0aec13d149c069666e0","p":0.06,"t":"late-elderly-medical-setsu"}
 {"fp":"0d0279434248eb7fe4a4932e2e9a3de0","p":0.06,"t":"late-elderly-medical-setsu"}
 {"fp":"33158ae3950ddbe3633b0652e6ce00ec","p":0.06,"t":"late-elderly-medical-setsu"}
