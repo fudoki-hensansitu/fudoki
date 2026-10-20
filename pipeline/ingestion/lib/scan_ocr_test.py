@@ -87,5 +87,39 @@ class PaddleRereadTest(unittest.TestCase):
         self.assertNotIn("attempts", read)
 
 
+class UnitStackTest(unittest.TestCase):
+    def page(self, text="円0"):
+        return {"page_number": 1, "regions": [{"id": "full-page", "observations": [
+            {"id": "p1:full-page:a0:result0:r0", "kind": "region", "parent_id": None, "raw_text": text, "bbox_pdf_pt": [237.5, 100.8, 248.3, 117.8]},
+            {"id": "p1:full-page:a0:result0:r0:w0", "kind": "word", "parent_id": "p1:full-page:a0:result0:r0", "raw_text": "円", "bbox_pdf_pt": [237.5, 102.7, 245.7, 109.9]},
+            {"id": "p1:full-page:a0:result0:r0:w1", "kind": "word", "parent_id": "p1:full-page:a0:result0:r0", "raw_text": "0", "bbox_pdf_pt": [237.5, 110.8, 245.7, 112.0]}]}]}
+
+    def split(self, page, text):
+        import numpy as np
+        from ingestion.lib import scan_ocr
+        with patch.object(scan_ocr, "_whitened", return_value=np.full((400, 400), 255, np.uint8)), \
+                patch.object(scan_ocr.paddle_ocr, "recognize_crops", return_value=[text]):
+            scan_ocr.split_unit_stacks(Path("x.pdf"), page, PaddleConfig(dpi=72))
+        return page
+
+    def test_a_unit_mark_boxed_with_the_amount_under_it_is_split_at_the_mark(self):
+        from ingestion.lib import scan_ocr
+        page = self.split(self.page(), " 0 ")
+        added = page["regions"][-1]
+        self.assertEqual(added["supersedes"], ["p1:full-page:a0:result0:r0"])
+        self.assertEqual([(o["raw_text"], o["bbox_pdf_pt"][1], o["bbox_pdf_pt"][3]) for o in added["observations"]],
+                         [("0", 109.9, 117.8), ("円", 100.8, 109.9)])
+        self.assertEqual(scan_ocr.superseded(page), {"p1:full-page:a0:result0:r0", "p1:full-page:a0:result0:r0:w0",
+                                                      "p1:full-page:a0:result0:r0:w1"})
+
+    def test_a_reading_that_is_not_an_amount_leaves_the_merged_box_alone(self):
+        page = self.split(self.page(), "O")
+        self.assertEqual(len(page["regions"]), 1)
+
+    def test_an_ordinary_line_is_not_split(self):
+        page = self.split(self.page("円安"), "0")
+        self.assertEqual(len(page["regions"]), 1)
+
+
 if __name__ == "__main__":
     unittest.main()

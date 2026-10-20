@@ -246,7 +246,9 @@ def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None
                 parts.setdefault(item['parent_id'], []).append(Word(item['raw_text'], *item['bbox_pdf_pt']))
         for item in items:
             if item['kind'] == 'region':
-                pieces = None if item['id'] in corrected_regions else parts.get(item['id'])
+                # Paddle's word children are single characters and number fragments ('4' ',' '505'); only
+                # Vision's words are whole tokens. A Paddle line is split at the rules from its own text.
+                pieces = None if item['id'] in corrected_regions or item.get('attempt_id') else parts.get(item['id'])
                 whole = _text(item['raw_text'])
                 if (pieces and item['id'] not in corrected_word_parents and NUMBER.fullmatch(whole)
                         and whole != _text(''.join(p.text for p in pieces))

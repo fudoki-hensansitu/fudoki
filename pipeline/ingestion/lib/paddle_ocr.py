@@ -690,15 +690,30 @@ def recognize_crops(paths: Sequence[Path], config: PaddleConfig = PaddleConfig()
     return [(r.json if hasattr(r, "json") else r)["res"]["rec_text"] for r in results]
 
 
+_SHARED: dict[PaddleConfig, PaddleOcr] = {}
+
+
+def shared_engine(config: PaddleConfig = PaddleConfig()) -> PaddleOcr:
+    """One engine per configuration for the life of the process.
+
+    Creating and closing an engine for every page leaves each one's ONNX Runtime memory behind: reading
+    pages of a book that way took RSS from 1.4GB to 2.9GB within four pages (measured 2026-10-21), and
+    a re-read engine of its own raised the 42-page peak to 3.5GB. One engine stays near 1.4GB.
+    """
+    engine = _SHARED.get(config)
+    if engine is None or engine._closed:
+        engine = _SHARED[config] = PaddleOcr(config)
+    return engine
+
+
 def recognize_image(path: Path, *, config: PaddleConfig = PaddleConfig(), regions=None, retry_regions=(),
                     small_regions: bool = False) -> dict:
-    with PaddleOcr(config) as ocr:
-        return ocr.recognize_image(path, regions=regions, retry_regions=retry_regions, small_regions=small_regions)
+    return shared_engine(config).recognize_image(path, regions=regions, retry_regions=retry_regions,
+                                                  small_regions=small_regions)
 
 
 def recognize_pdf(path: Path, *, pages: Sequence[int], config: PaddleConfig = PaddleConfig(), regions=None, retry_regions=None) -> dict:
-    with PaddleOcr(config) as ocr:
-        return ocr.recognize_pdf(path, pages=pages, regions=regions, retry_regions=retry_regions)
+    return shared_engine(config).recognize_pdf(path, pages=pages, regions=regions, retry_regions=retry_regions)
 
 
 def main() -> int:

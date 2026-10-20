@@ -244,10 +244,9 @@ def _png(image: np.ndarray, path: Path) -> None:
                      + chunk(b"IDAT", zlib.compress(raw, 6)) + chunk(b"IEND", b""))
 
 
-@lru_cache(maxsize=1)
 def _paddle(config: PaddleConfig) -> PaddleOcr:
-    """One engine for the page-by-page re-reads of an acquisition."""
-    return PaddleOcr(config)
+    """The engine shared with the page reads: one per configuration, never one per page."""
+    return paddle_ocr.shared_engine(config)
 
 
 def _renumber(page: dict, number: int) -> None:
@@ -345,6 +344,54 @@ def _key(page: int, box: Sequence[float]) -> str:
     return f"{page}:" + ",".join(f"{v:.1f}" for v in box)
 
 
+UNIT_STACK = re.compile(r"円\s*([△▲]?[0-9][0-9,，.]*)")
+
+
+def split_unit_stacks(path: Path, page: dict, config: PaddleConfig) -> None:
+    """A cell prints 円 small above its amount; Paddle's detector can box both lines as one tall
+    box and read it as one line (`円0`, a lone 0 under 円). Split such a box at the bottom of the 円
+    (its word box) and read the lower part alone with the recognition model. The upper part stays
+    as the unit mark `円`. The merged reading is superseded, its words with it (region ``unit-<n>``).
+    The amount counts only when it is a well-formed amount; otherwise the merged reading stays.
+    """
+    number = page["page_number"]
+    found = []
+    for region in page["regions"]:
+        children = {}
+        for o in region["observations"]:
+            if o["kind"] == "word" and o.get("parent_id"):
+                children.setdefault(o["parent_id"], []).append(o)
+        for o in region["observations"]:
+            box = o.get("bbox_pdf_pt")
+            if o["kind"] != "region" or not box or not UNIT_STACK.fullmatch(o["raw_text"].strip()):
+                continue
+            unit = next((w for w in children.get(o["id"], ()) if w["raw_text"] == "円" and w.get("bbox_pdf_pt")), None)
+            if unit and box[3] - unit["bbox_pdf_pt"][3] >= 3.0:
+                found.append((o, unit["bbox_pdf_pt"][3]))
+    if not found:
+        return
+    clean = _whitened(path, number, config.dpi)
+    scale = config.dpi / 72
+    with tempfile.TemporaryDirectory() as tmp:
+        files = []
+        for index, (o, cut) in enumerate(found):
+            x0, _, x1, y1 = o["bbox_pdf_pt"]
+            crop = clean[max(0, int((cut - 0.5) * scale)):int((y1 + 1) * scale), max(0, int((x0 - 1) * scale)):int((x1 + 1) * scale)]
+            files.append(Path(tmp) / f"{index}.png")
+            _png(np.ascontiguousarray(crop), files[-1])
+        texts = paddle_ocr.recognize_crops(files, config)
+    for index, ((o, cut), text) in enumerate(zip(found, texts)):
+        text = "".join(text.split())
+        if not AMOUNT.fullmatch(text):
+            continue
+        x0, y0, x1, y1 = o["bbox_pdf_pt"]
+        page["regions"].append({"id": f"unit-{index}", "engine": "PP-OCRv6_small_rec", "supersedes": [o["id"]], "observations": [
+            {"id": f"p{number}:unit-{index}:r0", "kind": "region", "parent_id": None, "raw_text": text,
+             "bbox_pdf_pt": [round(v, 1) for v in (x0, cut, x1, y1)], "bbox_status": "available"},
+            {"id": f"p{number}:unit-{index}:r1", "kind": "region", "parent_id": None, "raw_text": "円",
+             "bbox_pdf_pt": [round(v, 1) for v in (x0, y0, x1, cut)], "bbox_status": "available"}]})
+
+
 def supplement(path: Path, page: dict, config: VisionConfig | PaddleConfig, previous: Mapping[str, str], *,
                vlm_fallback: bool = True) -> dict:
     """Read the ink OCR missed on one page: the engine on those areas, then the VLM on what remains.
@@ -357,6 +404,8 @@ def supplement(path: Path, page: dict, config: VisionConfig | PaddleConfig, prev
     reuses ``previous`` instead of asking again.
     """
     number = page["page_number"]
+    if isinstance(config, PaddleConfig):
+        split_unit_stacks(path, page, config)
     rules = pdf_rules.detect(path, number)
     image = pdf_rules.render(path, number)
     dark, scale = image < pdf_rules.DARK, rules.width / image.shape[1]
