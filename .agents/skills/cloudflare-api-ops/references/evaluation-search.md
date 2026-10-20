@@ -8,6 +8,7 @@
 - **索引の built-in storage でも 6 時間ごとの同期が走る（2026-10-14 実測）**: `source: null`（built-in storage）でも `Scheduled sync` が走り、変更の無い item まで `queued` に戻して `File reindexed successfully` を記録する。公式文書の「built-in storage には同期ジョブが無い」と食い違うので、`items list` の `queued` を異常と読まない。再処理を避けたいときは `sync_interval` を 86400 に延ばす。**`paused: true` は新規アップロードの取り込みまで止める**（5分待っても queued のまま）ので、同期だけを止める目的で pause を使わない。
 - **回数は検索の前に数える**: Durable Object `EvaluationSearchQuota` が UTC の分と日の固定の窓で数え、storage に書いてから AI Search を呼ぶ。失敗・時間切れの検索も数え、拒んだ要求は数えない。上限の値は DO ではなく `control` に置くので、数え直しはせず値で調整する。
 - **AI Search の binding は中断できない**: `search(params)` に timeout も `AbortSignal` も無い。Worker は 8 秒で応答だけを打ち切り（503）、検索は裏で続き得る。
+- **本文が空になる原典は頁の文字を `.md` の item にする（ADR 0031）**: 埋め込みの無い CID フォント（`UniJIS-UCS2-HW-H`・`UniJIS-UTF16-H`、ToUnicode なし）の PDF は、AI Search の変換後が1〜5字になる（手元では2,000字前後）。頁の PDF に ToUnicode を足しても2字のままで効かなかった（2026-10-19 実測）。原典ごとに config で宣言し、pdfium で抜き出した頁の文字を `<origin_sha256>_p<頁4桁>.md` の item として登録する。実装は未着手なので、catalog から外れている原典がある間は `not_covered` を「載っていない」と読まない。
 - **登録済み**: `operations.ts` の末尾に入れてあり、REST・OpenAPI・MCP の tool に出る。外すのは切り戻し（再デプロイが要る。まず `evaluation_search` を `off` にする）。
 - **ローカルの `cf dev` で AI Search を呼ぶ**（2026-10-14 に確かめた）:
   - AI Search の binding は simulation が無く、そのままだと検索が `Binding EVALUATION_SEARCH needs to be run remotely` で失敗し 503 になる。`cloudflare.config.ts` の `bindings.aiSearch({...})` に `dev: { remote: true }` を一時的に足す（コミットしない。D1・DO・rate limit はローカルのまま）。remote proxy の接続に Cloudflare の認証とネットワークが要る（sandbox の外）。検索は本番の索引を読むので、回数は数十回までにする。1回5〜7秒かかり、8秒の打ち切りに近い（remote proxy 越し）。
