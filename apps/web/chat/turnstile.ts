@@ -11,6 +11,9 @@ declare global {
   }
 }
 
+/** 先に取った token を使い回せる時間。token は約5分で切れるので、余裕を見て4分 */
+const WARM_TTL_MS = 240_000
+
 async function loaded(timeoutMs = 15_000): Promise<Turnstile> {
   const start = Date.now()
   while (!window.turnstile) {
@@ -55,9 +58,10 @@ export async function mountTurnstile(el: HTMLElement, sitekey: string) {
     })
   // 入力を始めた時点で確認を先に走らせ、送るときに待たないようにする（token は約5分で切れるので、4分を超えたら取り直す）
   let warm: { promise: Promise<string>; at: number } | undefined
+  const fresh = () => (warm && Date.now() - warm.at < WARM_TTL_MS ? warm : undefined)
   return {
     warm: () => {
-      if (warm && Date.now() - warm.at < 240_000) return
+      if (fresh()) return
       const promise = run()
       warm = { promise, at: Date.now() }
       promise.catch(() => {
@@ -65,7 +69,7 @@ export async function mountTurnstile(el: HTMLElement, sitekey: string) {
       })
     },
     token: () => {
-      const ready = warm && Date.now() - warm.at < 240_000 ? warm.promise : undefined
+      const ready = fresh()?.promise
       // token は1回しか使えない。使ったら捨てる
       warm = undefined
       return ready ?? run()

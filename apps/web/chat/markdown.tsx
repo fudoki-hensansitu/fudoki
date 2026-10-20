@@ -2,6 +2,8 @@
 import * as React from 'react'
 import { marked, type Token, type Tokens } from 'marked'
 
+const ALIGN = { left: 'text-left', right: 'text-right', center: 'text-center' } as const
+
 function inline(tokens: Token[] | undefined): React.ReactNode[] {
   return (tokens ?? []).map((t, i) => {
     switch (t.type) {
@@ -57,7 +59,7 @@ function blocks(tokens: Token[]): React.ReactNode[] {
         return <pre key={i} className="overflow-x-auto rounded bg-muted p-3 text-[0.9em]"><code>{(t as Tokens.Code).text}</code></pre>
       case 'table': {
         const table = t as Tokens.Table
-        const align = (a: 'left' | 'right' | 'center' | null) => (a === 'right' ? 'text-right' : a === 'center' ? 'text-center' : 'text-left')
+        const align = (a: 'left' | 'right' | 'center' | null) => ALIGN[a ?? 'left']
         return (
           <div key={i} className="overflow-x-auto">
             <table className="w-full border-collapse text-sm">
@@ -83,17 +85,15 @@ function blocks(tokens: Token[]): React.ReactNode[] {
       }
       case 'hr':
         return <hr key={i} />
-      case 'text': {
-        const text = t as Tokens.Text
-        return <React.Fragment key={i}>{text.tokens ? inline(text.tokens) : text.text}</React.Fragment>
-      }
+      case 'text':
+        return <React.Fragment key={i}>{inline([t])}</React.Fragment>
       default:
         return <p key={i} className="whitespace-pre-wrap">{'raw' in t ? t.raw : ''}</p>
     }
   })
 }
 
-export function Markdown({ text }: { text: string }) {
+export const Markdown = React.memo(function Markdown({ text }: { text: string }) {
   const content = React.useMemo(() => blocks(marked.lexer(text, { gfm: true, breaks: true })), [text])
   return <div className="flex flex-col gap-2">{content}</div>
-}
+})

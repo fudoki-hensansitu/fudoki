@@ -32,6 +32,7 @@ function loadResource(token: string, uri: string) {
   return found
 }
 
+/** Tailwind の md と同じ幅。横に開く側の panel の幅（w-1/2）と本文の寄せ（50vw）も合わせる */
 const WIDE = '(min-width: 768px)'
 const dark = () => matchMedia('(prefers-color-scheme: dark)').matches
 
@@ -194,8 +195,10 @@ export function ViewFrame({
     if (!expanded) return
     // 重ねている間は下の会話を動かさない。iframe の中で押した Esc は頁に届かないので、閉じるボタンに focus を置く
     const overflow = document.body.style.overflow
-    if (fullscreen) document.body.style.overflow = 'hidden'
-    if (fullscreen) close.current?.focus()
+    if (fullscreen) {
+      document.body.style.overflow = 'hidden'
+      close.current?.focus()
+    }
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setMode('inline')
     }

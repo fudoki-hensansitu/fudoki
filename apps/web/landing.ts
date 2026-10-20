@@ -240,8 +240,7 @@ footer{padding-top:96px}
 @media (max-width:400px){
 .cols{grid-template-columns:minmax(0,1fr)}
 }
-@media (min-width:961px){:root{--gut:max(56px,calc((100% - 1200px) / 2))}}
-@media (min-width:961px){html[data-snap]{scroll-snap-type:y mandatory}#mcp{scroll-snap-align:start}.ledger-stage{scroll-snap-align:end}}
+@media (min-width:961px){:root{--gut:max(56px,calc((100% - 1200px) / 2))}html[data-snap]{scroll-snap-type:y mandatory}#mcp{scroll-snap-align:start}.ledger-stage{scroll-snap-align:end}}
 @media (prefers-reduced-motion:no-preference){
 .sweep.in{animation:sweep 1.4s var(--ease-sweep) both}
 @keyframes sweep{from{background-position:100% 0}to{background-position:0 0}}
