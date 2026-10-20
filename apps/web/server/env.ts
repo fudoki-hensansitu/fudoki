@@ -34,5 +34,7 @@ export const MCP_URL = 'https://api.fudoki.dev/mcp'
 export function apiFetch(env: Env): typeof fetch {
   const api = env.API
   if (!api) return fetch
-  return ((input: RequestInfo | URL, init?: RequestInit) => api.fetch(new Request(input, init))) as typeof fetch
+  // @ai-sdk/mcp は redirect: 'error' で呼ぶが、Workers は 'error' を受け付けず Request の生成で例外になる。'manual' なら 3xx は結果として返るので同じ安全さで足りる
+  return ((input: RequestInfo | URL, init?: RequestInit) =>
+    api.fetch(new Request(input, init?.redirect === 'error' ? { ...init, redirect: 'manual' } : init))) as typeof fetch
 }
