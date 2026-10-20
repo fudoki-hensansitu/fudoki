@@ -1,6 +1,6 @@
 # scan PDFのOCRを選ぶ
 
-新しい取得の依頼は `engine: "paddle"` と書く（[ADR 0032](../../../docs/adr/0032-paddle-onnx-for-new-scan-acquisitions.md)）。例: `{"engine":"paddle","pages":[31,32],"config":{"page_strips":4}}`。既に `engine: "vision"` で固定した冊は、観測IDと訂正の宣言が結び付くのでそのまま残す。`column_tiles` はVisionの取りこぼしへの対処で、Paddleの依頼には使えない（頁の縦分割は `config.page_strips`）。
+新しい取得の依頼は `engine: "paddle"` と書く（[ADR 0032](../../../docs/adr/0032-paddle-onnx-for-new-scan-acquisitions.md)）。例: `{"engine":"paddle","pages":[31,32]}`（既定は縦2分割・上限1920・pypdfium2の300dpi。変えるときだけ `config` に書く）。既に `engine: "vision"` で固定した冊は、観測IDと訂正の宣言が結び付くのでそのまま残す。`column_tiles` はVisionの取りこぼしへの対処で、Paddleの依頼には使えない（頁の縦分割は `config.page_strips`）。
 
 取得の依頼に `column_tiles:true` を書くと、罫線で区切った列を文字のない行間で分割し、白い余白を付けてVisionで読む。文書ごとに選ぶ取得条件であり、省略時の頁全体の読みは変えない。`regions` との併用は不可。`vlm_fallback:false` はVisionの再読までで止め、未読の墨を観測に残す。木の検査後に必要なセルだけ別途再読し、答えを固定する場合に使う。例: `{"engine":"vision","pages":[31,32],"column_tiles":true,"vlm_fallback":false}`。
 
@@ -33,7 +33,7 @@ VLMの答えは観測に固定される。再取得では、同じモデル・�
 
 ## Paddleの縮小検出・頁の縦分割・原画像の再読
 
-Paddleは文字を探す検出工程だけ長辺1280pxへ縮小する（`detection_limit_side_len`）。`page_strips`（既定1）を2以上にすると、各領域を縦に等分し、隣へ`strip_overlap_px`（既定60）だけ重ねて別々に検出する。重なりで二重に検出された観測は除去しない。分割数と解像度の最良値は比較中で、決まるまで既定は分割なしである。見つけた文字の認識には、元の画像から切り出した画像を使う。MacのPDF描画は実験と同じCoreGraphics・300dpiを既定とする。
+Paddleは文字を探す検出工程だけ長辺1280pxへ縮小する（`detection_limit_side_len`）。`page_strips`（既定2）で各領域を縦に等分し、隣へ`strip_overlap_px`（既定60）だけ重ねて別々に検出する。上限は分割片ごとに効き、既定は1920である（132152・131181で全件一致、頁あたり5.6〜7.6秒、RSS 1.3〜1.7GB。比較は[ADR 0032](../../../docs/adr/0032-paddle-onnx-for-new-scan-acquisitions.md)）。重なりの帯で二重に観測された行は取得時に除く。描画は既定でpypdfium2の300dpiで、`pdf_renderer`で`coregraphics`・`poppler`を明示できる。描画方法は観測の`render`に残る。見つけた文字の認識には、元の画像から切り出した画像を使う。MacのPDF描画は実験と同じCoreGraphics・300dpiを既定とする。
 
 見出しなどの再読領域は、出典の配置を確認した書式設定から明示的に渡す。モジュールが見出しや欠落セルを自動で発見するわけではない。`retry_regions` を省略すると、縮小検出と原解像度認識だけを行い、追加のcrop再読は行わない。
 

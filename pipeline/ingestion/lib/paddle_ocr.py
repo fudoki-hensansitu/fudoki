@@ -37,7 +37,7 @@ class PaddleOcrError(RuntimeError):
 class PaddleConfig:
     dpi: int = 300
     max_pixels: int = 40_000_000
-    pdf_renderer: str = "coregraphics"
+    pdf_renderer: str = "pypdfium2"
     render_timeout_seconds: float = 300
     detection_model_name: str = "PP-OCRv6_small_det"
     recognition_model_name: str = "PP-OCRv6_small_rec"
@@ -46,8 +46,8 @@ class PaddleConfig:
     runtime: str = "onnxruntime"
     cpu_threads: int = 4
     recognition_batch_size: int = 6
-    detection_limit_side_len: int = 1280
-    page_strips: int = 1
+    detection_limit_side_len: int = 1920
+    page_strips: int = 2
     strip_overlap_px: int = 60
 
     def __post_init__(self) -> None:
@@ -60,8 +60,8 @@ class PaddleConfig:
             raise ValueError("strip_overlap_px must be a non-negative integer")
         if self.runtime not in RUNTIMES:
             raise ValueError("runtime must be onnxruntime or paddle")
-        if self.pdf_renderer not in ("coregraphics", "poppler"):
-            raise ValueError("pdf_renderer must be coregraphics or explicit poppler")
+        if self.pdf_renderer not in ("pypdfium2", "coregraphics", "poppler"):
+            raise ValueError("pdf_renderer must be pypdfium2, coregraphics or poppler")
         if (type(self.render_timeout_seconds) not in (int, float)
                 or not math.isfinite(self.render_timeout_seconds) or self.render_timeout_seconds <= 0):
             raise ValueError("render_timeout_seconds must be finite and positive")
@@ -227,6 +227,45 @@ def _strips(width: int, count: int, overlap: int) -> list[tuple[int, int]]:
             for k in range(count)]
 
 
+def _overlap(a, b) -> float:
+    """Intersection area of two boxes over the smaller box."""
+    width = min(a[2], b[2]) - max(a[0], b[0])
+    height = min(a[3], b[3]) - max(a[1], b[1])
+    smaller = min((a[2] - a[0]) * (a[3] - a[1]), (b[2] - b[0]) * (b[3] - b[1]))
+    return width * height / smaller if width > 0 and height > 0 and smaller > 0 else 0.0
+
+
+def _drop_strip_duplicates(groups: list[list[dict]], spans: list[tuple[int, int]]) -> tuple[list[dict], list[str]]:
+    """Merge the observations of vertical strips, dropping a line read twice in a band two strips share.
+
+    A line whose box lies over another strip's line (at least half of the smaller box) is a duplicate.
+    With the same text, the reading farther from its own strip's edge stays (the nearer one may be cut).
+    A shorter text inside a longer one that covers it is the cut reading, and goes. Differing readings
+    that fit neither rule both stay: no text is chosen between them. A dropped line takes its words.
+    """
+    items = [(k, o) for k, group in enumerate(groups) for o in group if o["kind"] == "region" and o["bbox_px"]]
+    margin = lambda k, o: min((o["bbox_px"][0] + o["bbox_px"][2]) / 2 - spans[k][0],
+                              spans[k][1] - (o["bbox_px"][0] + o["bbox_px"][2]) / 2)
+    dropped: set[str] = set()
+    text = lambda o: "".join(o["raw_text"].split())
+    for k in range(len(groups) - 1):
+        band = (spans[k + 1][0], spans[k][1])
+        near = [(j, o) for j, o in items if j in (k, k + 1) and o["bbox_px"][2] > band[0] and o["bbox_px"][0] < band[1]]
+        for i, a in [x for x in near if x[0] == k]:
+            for j, b in [x for x in near if x[0] == k + 1]:
+                if a["id"] in dropped or b["id"] in dropped or _overlap(a["bbox_px"], b["bbox_px"]) < 0.5:
+                    continue
+                ta, tb = text(a), text(b)
+                if ta == tb:
+                    dropped.add(b["id"] if margin(i, a) >= margin(j, b) else a["id"])
+                elif tb and tb in ta and _overlap(a["bbox_px"], b["bbox_px"]) >= 0.8:
+                    dropped.add(b["id"])
+                elif ta and ta in tb and _overlap(a["bbox_px"], b["bbox_px"]) >= 0.8:
+                    dropped.add(a["id"])
+    kept = [o for group in groups for o in group if o["id"] not in dropped and o.get("parent_id") not in dropped]
+    return kept, sorted(dropped)
+
+
 def _run(command: list[str], timeout: float, *, operation: str = "PDF renderer", **kwargs) -> subprocess.CompletedProcess:
     try:
         result = subprocess.run(command, capture_output=True, text=True, timeout=timeout, **kwargs)
@@ -321,7 +360,46 @@ def _compiled_renderer(helper: Path, helper_sha: str, timeout: float) -> tuple[P
     return binary, {**metadata, "cache_key": key, "cache_hit": cache_hit, "binary_path": str(binary)}
 
 
+def _render_pdfium(path: Path, pages: Sequence[int], config: PaddleConfig, directory: Path) -> dict:
+    """Render with pypdfium2 (the version in the lock): CropBox and rotation applied, sRGB, white background."""
+    try:
+        import pypdfium2 as pdfium
+    except ImportError as exc:
+        raise PaddleOcrError("pypdfium2 is not installed") from exc
+    scale = config.dpi / 72
+    records = []
+    try:
+        document = pdfium.PdfDocument(str(path))
+    except Exception as exc:
+        raise PaddleOcrError(f"Cannot open PDF: {exc}") from exc
+    try:
+        for number in pages:
+            if number > len(document):
+                raise PaddleOcrError(f"PDF has no physical page {number}")
+            page = document[number - 1]
+            width, height = page.get_size()
+            if (not all(math.isfinite(v) and v > 0 for v in (width, height))
+                    or math.ceil(width * scale) * math.ceil(height * scale) > config.max_pixels):
+                raise PaddleOcrError("PDF page exceeds max_pixels or has invalid geometry")
+            image = page.render(scale=scale).to_pil().convert("RGB")
+            target = directory / f"page-{number}.png"
+            image.save(target)
+            records.append({"page_number": number, "image_path": str(target), "displayed_pdf_size_pt": [width, height],
+                            "crop_box_pdf_pt": list(page.get_cropbox()), "rotation_degrees": page.get_rotation()})
+    except PaddleOcrError:
+        raise
+    except Exception as exc:
+        raise PaddleOcrError(f"pypdfium2 failed: {exc}") from exc
+    finally:
+        document.close()
+    return {"pages": records, "renderer": "pypdfium2", "version": importlib.metadata.version("pypdfium2"),
+            "pdfium": pdfium.PDFIUM_INFO.version if hasattr(pdfium.PDFIUM_INFO, "version") else str(pdfium.PDFIUM_INFO),
+            "dpi": config.dpi}
+
+
 def _render_pdf(path: Path, pages: Sequence[int], config: PaddleConfig, directory: Path) -> dict:
+    if config.pdf_renderer == "pypdfium2":
+        return _render_pdfium(path, pages, config, directory)
     if config.pdf_renderer == "coregraphics":
         if platform.system() != "Darwin":
             raise PaddleOcrError("CoreGraphics requires macOS; select poppler explicitly on other platforms")
@@ -478,7 +556,7 @@ class PaddleOcr:
                   "text_det_limit_type": "min" if scaled else "max"}
         strips = [(0, rgb.shape[1])] if scaled else _strips(rgb.shape[1], self.config.page_strips, self.config.strip_overlap_px)
         attempt_id = f"p{page['page_number']}:{region.id}:a{index}"
-        native, observations, seconds = [], [], 0.0
+        native, groups, seconds = [], [], 0.0
         for x0, x1 in strips:
             start = time.perf_counter()
             try:
@@ -486,11 +564,13 @@ class PaddleOcr:
             except Exception as exc:
                 raise PaddleOcrError(f"PaddleOCR failed in {attempt_id}: {exc}") from exc
             seconds += time.perf_counter() - start
-            observations += _observations(part, [crop[0] + x0, *crop[1:]], page, attempt_id, len(native))
+            groups.append(_observations(part, [crop[0] + x0, *crop[1:]], page, attempt_id, len(native)))
             native += part
+        observations, duplicates = _drop_strip_duplicates(groups, [(crop[0] + a, crop[0] + b) for a, b in strips])
         return {"id": attempt_id, "region_id": region.id, "retry_region_id": area.id if retry else None,
                 "crop_bbox_px": crop, "bbox_normalized": area.bbox_normalized,
-                "predict_settings": params, "strips_px": [list(s) for s in strips], "inference_seconds": seconds,
+                "predict_settings": params, "strips_px": [list(s) for s in strips], "duplicate_observation_ids": duplicates,
+                "inference_seconds": seconds,
                 "input_rgb_pixel_sha256": hashlib.sha256(rgb.tobytes()).hexdigest(),
                 "input_bgr_pixel_sha256": hashlib.sha256(bgr.tobytes()).hexdigest(),
                 "input_image_size_px": [rgb.shape[1], rgb.shape[0]],

@@ -608,10 +608,13 @@ def acquire(path: Path, request: Mapping, previous: Mapping | None = None) -> tu
     observation = {"schema_version": 1, "request": dict(request), "vlm": _vlm_identity(),
                    "origin": {k: result["origin"][k] for k in ("sha256", "bytes")},
                    "pages": _content(result["pages"])}
+    if paddle:
+        # The renderer and the dpi decide the pixels the engine reads; defaults are recorded, not left implicit.
+        observation["render"] = {"pdf_renderer": config.pdf_renderer, "dpi": config.dpi}
     data = json.dumps(observation, ensure_ascii=False, sort_keys=True,
                       separators=(",", ":"), allow_nan=False).encode()
     run = {"schema_version": 1, "observation_sha256": hashlib.sha256(data).hexdigest(),
-           "origin_path": result["origin"]["path"], "engine": result["engine"],
+           "origin_path": result["origin"]["path"], "engine": result["engine"], "renderer": result.get("renderer"),
            "timings": _timings(result["pages"])}
     return data, run
 

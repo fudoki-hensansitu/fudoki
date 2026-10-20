@@ -221,6 +221,7 @@ class AcquireTest(unittest.TestCase):
         self.assertEqual(read.call_args.kwargs['backend'], 'paddle')
         self.assertEqual(read.call_args.kwargs['config'].page_strips, 4)
         self.assertEqual(supplement.call_args.args[2].page_strips, 4)
+        self.assertEqual(json.loads(data)['render'], {'pdf_renderer': 'pypdfium2', 'dpi': 300})
         attempt = json.loads(data)['pages'][0]['attempts'][0]
         self.assertNotIn('native', attempt)
         self.assertNotIn('inference_seconds', attempt)

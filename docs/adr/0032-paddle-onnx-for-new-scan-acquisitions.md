@@ -2,7 +2,7 @@
 
 状態: 採用（2026-10-20）。[ADR 0018](0018-paddle-small-for-scan-pdf.md) と [ADR 0019](0019-freeze-scan-ocr-observations.md) の 2026-10-11 改訂（既定エンジンを Apple Vision にする）を置き換える。ADR 0019 の「変換器の外で一度だけ OCR し、観測を固定して補助入力にする」方針と、`_vlm_identity()` に結び付いた VLM の答えの固定は変えない。[ADR 0017](0017-vision-for-coordinate-preserving-ocr.md) は比較の記録として残る。
 
-新しい取得依頼（`ocr_inputs[].request.engine`）は `paddle` と書く。PaddleOCR PP-OCRv6 small を ONNX Runtime の CPU で動かし、検出は頁を縦に分けて読む。管理 JSON に `engine: "vision"` で書かれた既存の依頼は、そのまま Apple Vision で取得し、観測も動かさない。
+新しい取得依頼（`ocr_inputs[].request.engine`）は `paddle` と書く。PaddleOCR PP-OCRv6 small を ONNX Runtime の CPU（intra_op 4）で動かし、頁を縦2分割（重なり60px）して分割片ごとに検出の長辺上限1920で読む。描画は pypdfium2 の300dpiである。管理 JSON に `engine: "vision"` で書かれた既存の依頼は、そのまま Apple Vision で取得し、観測も動かさない。
 
 ## Vision を既定にした前提が崩れた
 
@@ -20,11 +20,29 @@ ONNX の重みは `paddle_ocr_models.json` に、ファイル名・バイト数�
 
 ONNX Runtime での実行は paddlepaddle を import しない。そこで `paddle-ocr` extra から paddlepaddle を外して `onnxruntime==1.31.0` を足し、paddlepaddle は `runtime="paddle"` のためだけの extra `paddle-native` に移した。
 
-## 検出の設定は PaddleConfig の項目にする
+## 検出の既定は縦2分割・上限1920にする
 
-検出の解像度の上限（`detection_limit_side_len`）と頁の縦分割数（`page_strips`、隣との重なり `strip_overlap_px`）は `PaddleConfig` の項目で、依頼の `config` に書く。最良の値は別の調査で比較中なので、既定は分割なし（`page_strips: 1`、従来の頁全体読みと同じ）に置き、決まった値で既定を直す。重なりの帯で二重に検出された観測は、そのまま両方残す。除去は評価と同じ扱いに合わせた。
+検出の解像度の上限（`detection_limit_side_len`）と頁の縦分割数（`page_strips`、隣との重なり `strip_overlap_px`）は `PaddleConfig` の項目で、依頼の `config` で変えられる。上限は分割片ごとに効く。2026-10-20 の比較（132152 国立市の2245セル、131181 荒川区の1646セル。数字は読めた/誤り/読めなかった）で、既定を次にした。
+
+| 設定（132152） | 結果 |
+| --- | --- |
+| 頁全体・1280（桁落ち17） | 2161/20/64 |
+| 縦4分割・1280 | 2234/8/3 |
+| 縦2分割・1920（採用） | 全件一致。桁落ち・連結は0 |
+| 頁全体・2560（131181） | 連結6、RSS 2.3GB |
+| 頁全体・3520 | RSS 2.8GB |
+
+採用した設定は、132152・131181とも全件一致で、桁落ち・連結が0、木の検査で新たに合わなくなった親が0だった。頁あたり5.6〜7.6秒、RSSは1.3〜1.7GBである。検出箱の拡張（unclip の引き上げ）、箱の右への拡張、罫線際のROI再読は、いずれも結果を悪くした。
+
+重なりの帯で同じ文字が二重に観測されることは、評価で確認した（縦4分割で同じ金額の重複が25件）。変換器に二重の観測が渡らないよう、取得時に除く。分割片をまたいで箱が重なる（小さい方の箱の半分以上）行のうち、同じ文字なら分割片の端から遠い側の読みを残し、片方がもう片方に含まれる短い読み（切れた読み）なら短い方を落とす。どちらにも当てはまらない食い違いは両方残し、文字を選ばない。落とした行はその単語と一緒に外し、観測IDは試行の `duplicate_observation_ids` に残す。
+
+## 描画は pypdfium2 の300dpiにする
+
+描画は pypdfium2（lock の版）の300dpiを既定にする。描画は読みの結果を左右する。同じ設定で132152は、poppler が2232/13/0で、「円」と0が `円〇` に連結した。CoreGraphics は最良設定で測っていない。CoreGraphics と poppler は `pdf_renderer` で明示すれば使える。描画方法とdpiは観測の `render` に、版は実行記録の `renderer` に残す。
 
 ## 墨チェックと VLM は Paddle の取得でも最後の段にする
+
+墨チェックは残す。単独の0などの未検出は全件検知した（132152 A 64/64、B 3/3、131181 A 3/3）。桁落ち・連結は墨では検知できない（0/17）が、木の検査と金額の形の検査で止まる。最良設定では墨の領域は空振りのみで（132152で69件、131181で7件。見出しの字間の空いた漢字や「円」のラベルなど）、害は読み直しの時間だけである。
 
 取得は、Paddle の頁読み、Paddle の ROI 再読、数字だけの認識（`_read_zeros`）、VLM の順に補う。ROI 再読は、罫線を白く消した頁から見落とした墨の範囲を切り出し、64px まで拡大して読む。Vision で使っていた白い余白は付けない。VLM は木の検査が合わないセルだけを対象に、期待値を渡さず 1 回だけ読ませて観測に固定する。採るかどうかは木の検査が決め、VLM の答えが合計に合うことを読みの正しさの根拠にはしない。
 
@@ -39,4 +57,4 @@ ONNX Runtime での実行は paddlepaddle を import しない。そこで `padd
 - 新しい取得は `engine: "paddle"` と書く。`scan_ocr` の `backend` 既定は Paddle になった。`config` に `VisionConfig` を渡す呼び出しは、従来どおり Vision を選ぶ。
 - Paddle の観測は native の出力（`attempts[].native`）を持たない。観測は `regions` にあり、native は大きく、同じ内容の重複になるためである。試行の設定・拡大条件・画素の sha256 は残す。
 - `scan_ocr.py`・`paddle_ocr.py`・`paddle_ocr_models.json` の変更で、全保存済み表の `input_fingerprint` が古くなる（[ADR 0027](0027-refresh-fingerprints-by-table-content.md)）。`ingestion:refresh` で中身が同じことを確かめて指紋だけを書き換える。この ADR の変更では表の中身は変わらない見込みである。
-- 縦分割の最良設定、二重検出の除去の要否、ROI 再読が Paddle で十分に動くかは、実際の頁で測る。右罫線に接した最後の桁の落ちは、木の検査で止まるが、Paddle 側では直せていない。
+- ROI 再読が Paddle で十分に動くかは、実際の頁で測る。最良設定で桁落ちは見つかっていないが、起きれば木の検査で止まる。
