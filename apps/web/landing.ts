@@ -37,7 +37,7 @@ export const TOKENS_CSS = `
 --font-sans:"Hiragino Sans","Noto Sans JP","Yu Gothic UI","Yu Gothic",Meiryo,system-ui,sans-serif;
 --font-mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 --radius:8px;--radius-sm:4px;--radius-card:16px;--radius-sheet:24px;
---gut:max(16px,calc((100% - 1200px) / 2));
+--gut:max(24px,calc((100% - 1200px) / 2));
 --hair:color-mix(in srgb,var(--foreground) 10%,transparent);
 --shadow-sheet:0 20px 25px -5px color-mix(in srgb,var(--night) 12%,transparent),0 8px 10px -6px color-mix(in srgb,var(--night) 10%,transparent);
 --shadow-pill:0 1px 2px color-mix(in srgb,var(--night) 4%,transparent),0 6px 20px color-mix(in srgb,var(--night) 6%,transparent);
@@ -240,6 +240,7 @@ footer{padding-top:96px}
 @media (max-width:400px){
 .cols{grid-template-columns:minmax(0,1fr)}
 }
+@media (min-width:961px){:root{--gut:max(56px,calc((100% - 1200px) / 2))}}
 @media (min-width:961px){html[data-snap]{scroll-snap-type:y mandatory}#mcp{scroll-snap-align:start}.ledger-stage{scroll-snap-align:end}}
 @media (prefers-reduced-motion:no-preference){
 .sweep.in{animation:sweep 1.4s var(--ease-sweep) both}
