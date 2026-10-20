@@ -5,6 +5,11 @@ content: when every re-converted table equals its saved table (columns, types, r
 the metadata the converter writes to the manifest), only ``input_fingerprint`` in the Git manifest is
 rewritten. The saved Parquet, its sha256 and size stay as they are. R2 is read, never written. When any
 table differs, or the current save gate would refuse it, the manifest is left untouched.
+
+The Jev answer store is read, never written and never extended: a refresh that asked a new question
+would spend money and change a tracked file from what looks like a comparison (a dry-run rewrote the
+``*.digit-recheck.jsonl`` of six manifests before this was enforced). A table whose digits have no
+stored answer is reported as blocked; recording answers is the job of ``convert``.
 """
 from __future__ import annotations
 
@@ -210,7 +215,8 @@ def refresh_manifest(path: Path, *, remote: bool, dry_run: bool, work: Path) -> 
     output = work / name
     shutil.rmtree(output, ignore_errors=True)
     try:
-        converted = run.convert(path, originals, output, remote=False, conversion_ids=stale)
+        converted = run.convert(path, originals, output, remote=False, conversion_ids=stale,
+                                persist_answers=False, ask_answers=False)
         result['units'] = converted.get('units', {}).get('counts', {})
         candidate = json.loads((output / 'manifest.json').read_text())
     except Exception as error:

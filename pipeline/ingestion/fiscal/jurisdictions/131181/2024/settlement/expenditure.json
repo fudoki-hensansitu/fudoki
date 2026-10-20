@@ -11076,14 +11076,13 @@
     {
       "table_id": "general-expenditure-detail",
       "conversion_id": "general",
-      "input_fingerprint": "c6c13051d40c477b465cbda56dc6689bdbce7573b64b684371c7ef88cc9bc85d",
+      "input_fingerprint": "594ae8f7aa7eeca5fe67ff3cd46bbb698e1e99666b2eae498915b4b6dab49793",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent'}。",
         "金額の単位は column mark 67頁 から決めた。款の和 122,152,652,777 と印字の「歳出合計」122,152,652,777 が一致。",
         "金額の注記 287 件（充用 31・流用 256）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 1 種（1056 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。",
-        "原画で確かめた名称の誤読 1 件を、管理 JSON の name_corrections で印字に直した: 122頁 產→産。"
+        "共有辞書に無い金額の見出し 1 種（1056 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,

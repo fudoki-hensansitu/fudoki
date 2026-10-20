@@ -22,7 +22,8 @@ const logo = (cls: string) => `<svg class="${cls}" xmlns="http://www.w3.org/2000
 const { nakano, ledgers, origin, library } = HOME
 const libraryMax = Math.max(...library.rows.map((r) => r.amount))
 
-const CSS = `
+/** 色・字・角の token。会話の画面（chat-shell.ts）も同じものを使う */
+export const TOKENS_CSS = `
 @font-face{font-family:"Fudoki Mincho";src:url("/fonts/mincho.woff2") format("woff2");font-weight:400;font-display:swap}
 :root{
 --background:#fdfcfa;--foreground:#2b2723;--card:#f8f5ee;--card-foreground:#2b2723;
@@ -52,6 +53,9 @@ const CSS = `
 --paper:#3a342b;--paper-foreground:#ece6da;--night:#0f0e0c;--night-foreground:#ece6da;
 --shu:#d46a4f;--ai:#6f8fc0;--sakura:#b98f80;--grain:.5;
 }}
+`
+
+const CSS = `${TOKENS_CSS}
 *,::before,::after{box-sizing:border-box}
 html{background:var(--background)}
 body{margin:0;background:var(--background);color:var(--foreground);font:400 16px/1.8 var(--font-sans);letter-spacing:.03em;-webkit-font-smoothing:antialiased;line-break:strict;word-break:normal;overflow-wrap:break-word;overflow-x:clip}
@@ -108,6 +112,8 @@ code{font:13px/1.6 var(--font-mono);letter-spacing:0;overflow-wrap:anywhere}
 .hero h1{font-size:clamp(2.5rem,1.4rem + 4.4vw,5.5rem);line-height:1.18;max-width:11em}
 .hero .sub{max-width:34em;font-size:17px;line-height:1.9}
 .acts{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
+.ask{width:min(100%,640px);text-align:left}
+.ask-box{min-height:120px;padding:14px 16px;border:1px solid var(--border);border-radius:var(--radius-card);background:var(--card)}
 .ledger-stage{position:relative;margin-top:64px;height:620px;overflow:hidden;border-radius:var(--radius)}
 .ledger-stage .art{inset:0}
 .ledger{left:6%;right:6%;top:56px;bottom:-40px;padding:26px 30px}
@@ -283,7 +289,8 @@ const BODY = `${ICONS}
 <p class="eyebrow">風土記 — 町の家計簿</p>
 <h1 class="sweep">あなたの街は、何にいくら使ったか</h1>
 <p class="sub">自治体の予算書と決算書を、事業の単位まで表にしました。AI に聞けば、他の街や他の年と同じ物差しで比べ、原典の頁まで返します。</p>
-<div class="acts"><a class="btn" href="#mcp">AI に接続する${icon('arrow-right')}</a><a class="btn ol" href="${DOCS}">ドキュメント</a></div>
+<div id="chat-start" class="ask" data-turnstile-sitekey="__TURNSTILE_SITE_KEY__"><div class="ask-box"><p class="muted">風土記の AI に聞く</p><noscript>AI に聞くには JavaScript を有効にしてください。</noscript></div></div>
+<div class="acts"><a class="btn ol" href="#mcp">自分の AI に接続する${icon('arrow-right')}</a><a class="btn ol" href="${DOCS}">ドキュメント</a></div>
 </header>
 <div class="wrap"><div class="ledger-stage">
 <div class="art oats" aria-hidden="true"><i style="left:-40px;top:-40px">帳</i></div>
@@ -392,6 +399,9 @@ export const LANDING_HTML = `<!doctype html>
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"風土記（fudoki）","url":"https://fudoki.dev/","logo":"https://fudoki.dev/icon.png","sameAs":["https://github.com/wwwyo/fudoki","https://docs.fudoki.dev/"]}</script>
 <style>${CSS}</style>
+<link rel="stylesheet" href="/_app/start.css">
+<script type="module" src="/_app/start.js"></script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
 </head>
 <body>
 ${BODY}

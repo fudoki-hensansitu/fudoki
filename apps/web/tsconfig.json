@@ -1,7 +1,13 @@
 {
   "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "paths": { "@/*": ["./chat/*"] }
+  },
   "include": [
     "worker.ts",
+    "server",
+    "chat",
     "deploy/*.ts"
   ],
   "exclude": []

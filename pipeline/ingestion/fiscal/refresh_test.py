@@ -1,6 +1,8 @@
 """Stale fingerprints are settled by table content, never by bytes, and only unchanged manifests are rewritten."""
+from collections import Counter
 from copy import deepcopy
 import json
+import os
 from pathlib import Path
 import shutil
 import tempfile
@@ -10,7 +12,9 @@ from unittest.mock import patch
 import duckdb
 
 from ingestion.fiscal import manifest, manifest_test, refresh, run, storage
+from ingestion.lib import digit_recheck
 from ingestion.lib.node_tables import NodeTables
+from ingestion.paths import PIPELINE
 
 
 def write_parquet(path: Path, rows: list[tuple], *, compression: str = 'snappy') -> None:
@@ -18,6 +22,51 @@ def write_parquet(path: Path, rows: list[tuple], *, compression: str = 'snappy')
         con.execute('create table t (名称 varchar, 金額 varchar)')
         con.executemany('insert into t values (?, ?)', rows)
         con.execute(f"copy t to '{path}' (format parquet, compression {compression})")
+
+
+PROBABILITY = 0.2
+
+
+class FakeJev:
+    """A Jev client that answers every question the same way; nothing leaves the machine."""
+
+    def __init__(self, key=None, *, model=None):
+        self.usage, self.requests = Counter(), 0
+
+    def __call__(self, contexts):
+        self.requests += 1
+        self.usage['input_tokens'] += 100 * len(contexts)
+        return [PROBABILITY] * len(contexts)
+
+
+# A text PDF table with one printed digit outside its amount band: the only digit Jev is asked about.
+PDF_CONVERTER = '''
+from ingestion.lib.node_tables import NodeTables, write_coverage_words, write_tables
+
+
+def node(key, parent, name, depth):
+    return {'node_key': key, 'parent_node_key': parent, 'axis_header': '科目', 'depth': depth,
+            'level_header': ('款', '項')[depth - 1], 'code_text': '1', 'name_text': name,
+            'physical_page': 1, 'x0': 1.0, 'y0': 2.0, 'x1': 40.0, 'y1': 4.0}
+
+
+def amount(key, text):
+    return {'node_key': key, 'header_path': '支出済額', 'amount_text': text, 'unit_text': '円',
+            'physical_page': 1, 'x0': 100.0, 'y0': 2.0, 'x1': 140.0, 'y1': 4.0}
+
+
+def convert(inputs, destination, options):
+    ident = options['table_id']
+    tables = NodeTables([node('k', None, '議会費', 1), node('k-1', 'k', '議会費', 2)],
+                        [amount('k', '1,000'), amount('k-1', '1,000')])
+    pair = write_tables(destination, ident, tables)
+    write_coverage_words(destination / (ident + '.parquet'),
+                         [(1, (1.0, 2.0, 40.0, 4.0), '議会費'),
+                          (1, (100.0, 2.0, 140.0, 4.0), '1,000'),
+                          (1, (1.0, 50.0, 20.0, 52.0), '7,777')],
+                         amount_columns=[{'header': '支出済額', 'x_range': [95.0, 145.0]}])
+    return {ident: {**pair, 'notes': []}}
+'''
 
 
 class CompareParquetTest(unittest.TestCase):
@@ -64,18 +113,24 @@ class CompareParquetTest(unittest.TestCase):
         self.assertEqual(found['schema']['added'], ['事業名'])
 
 
-class RefreshWorkflowTest(unittest.TestCase):
+class RefreshFixture:
+    """A saved manifest plus a stand-in R2; subclasses decide which conversion produced it."""
+
     def setUp(self):
         manifest_test.ManifestWorkflowTest.setUp(self)
         self.objects = self.root / 'objects'
         self.enterContext(patch.object(storage, 'OBJECTS', self.objects))
-        with patch('ingestion.fiscal.run.save'), patch('ingestion.fiscal.run.cleanup'):
+        self.prepare()
+        self.save_and_stage()
+
+    def prepare(self):
+        """Declare the conversion and the gate stubs before the first conversion."""
+
+    def save_and_stage(self):
+        """Convert once with uploads stubbed at the `cf` call, so the stand-in R2 holds what refresh restores."""
+        with patch('ingestion.fiscal.storage.subprocess.run'), patch('ingestion.fiscal.run.cleanup'):
             run.convert(self.path, self.files, self.root / 'saved', remote=True)
         self.saved = manifest.read(self.path)
-        for table in self.saved['tables']:
-            target = self.objects / table['object']['key']
-            target.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(self.root / 'saved' / f'{table["table_id"]}.parquet', target)
         for receipt in self.selection['archive']['files']:
             target = self.objects / receipt['key']
             target.parent.mkdir(parents=True, exist_ok=True)
@@ -92,6 +147,8 @@ class RefreshWorkflowTest(unittest.TestCase):
         code = self.code / 'fiscal/layouts/csv/convert.py'
         code.write_text(code.read_text().replace(old, new))
 
+
+class RefreshWorkflowTest(RefreshFixture, unittest.TestCase):
     def test_current_manifest_is_skipped_without_converting(self):
         with patch.object(run, 'convert') as convert:
             result = self.refresh()
@@ -124,6 +181,22 @@ class RefreshWorkflowTest(unittest.TestCase):
         result = self.refresh(dry_run=True)
         self.assertEqual(result['status'], refresh.WOULD_REFRESH)
         self.assertEqual(self.path.read_bytes(), before)
+
+    def test_refresh_never_asks_or_writes_jev_answers(self):
+        # A refresh (dry-run included) compares tables; it must not extend or rewrite the tracked answer store.
+        with (self.code / 'lib/parquet.py').open('a') as stream:
+            stream.write('\n# a comment\n')
+        seen = []
+        real = run.convert
+
+        def spy(*args, **kwargs):
+            seen.append((kwargs.get('persist_answers'), kwargs.get('ask_answers')))
+            return real(*args, **kwargs)
+
+        with patch.object(run, 'convert', side_effect=spy):
+            result = self.refresh(dry_run=True)
+        self.assertEqual(result['status'], refresh.WOULD_REFRESH)
+        self.assertEqual(seen, [(False, False)])
 
     def test_changed_content_is_reported_and_manifest_is_not_rewritten(self):
         self.edit_converter('    return {table_id: output}', (
@@ -228,6 +301,74 @@ class RefreshWorkflowTest(unittest.TestCase):
             refresh.refresh_all([self.path], remote=False, dry_run=False, output=output)
         self.assertEqual(seen, [False])
         self.assertNotIn('stale', output.read_text())
+
+
+class RefreshJevAnswersTest(RefreshFixture, unittest.TestCase):
+    """A refresh reads stored Jev answers; the contract is that the tracked store keeps its bytes."""
+
+    def prepare(self):
+        self.use_text_pdf_table()
+        self.enterContext(patch.object(digit_recheck, 'HttpAsk', FakeJev))
+        self.enterContext(patch.dict(os.environ, {'TYPESAFE_API_KEY': 'test-key'}))
+
+    def use_text_pdf_table(self):
+        shared = self.root / 'shared'
+        shared.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(PIPELINE / 'shared/fiscal_annotation_map.csv', shared / 'fiscal_annotation_map.csv')
+        code = self.code / 'fiscal/layouts/nodes/convert.py'
+        code.parent.mkdir(parents=True, exist_ok=True)
+        code.write_text(PDF_CONVERTER)
+        code.with_name('options.schema.json').write_text(json.dumps({'type': 'object'}))
+        for file in self.selection['candidates'][0]['files']:
+            file.update(format='pdf', pdf_type='text')
+            file['scope'][0]['pages'] = [{'start': 1, 'end': 1}]
+        for receipt in self.selection['archive']['files']:
+            receipt['key'] = receipt['key'].replace('.csv', '.pdf')
+        self.ledger.write_text(json.dumps({'selections': [self.selection]}))
+        self.document['conversions'] = [dict(self.document['conversions'][0],
+                                             converter='fiscal/layouts/nodes/convert.py',
+                                             options={'table_id': 'one'},
+                                             expected_tables=[{'table_id': 'one'}])]
+        manifest.write(self.path, self.document)
+
+    def store(self) -> Path:
+        return run.recheck_store_path(manifest.read(self.path))
+
+    def make_stale(self):
+        """Mark every saved table stale the way a changed converter would: only the stored fingerprint moves."""
+        document = manifest.read(self.path)
+        for table in document['tables']:
+            table['input_fingerprint'] = '0' * 64
+        manifest.write(self.path, document)
+
+    def test_answers_used_by_the_refresh_leave_the_store_untouched(self):
+        store = self.store()
+        used = digit_recheck.read_store(store)
+        self.assertEqual(len(used), 1)
+        # A row this refresh does not replay: rewriting the store would drop it, as it did once for 273 rows.
+        extra = {'t': 'one', 'fp': '1' * 32, 'p': 0.1}
+        digit_recheck.write_store(store, [*used, extra])
+        tracked = store.read_bytes()
+        self.make_stale()
+        manifest_before = self.path.read_bytes()
+        with patch.object(digit_recheck, 'HttpAsk') as ask:
+            result = self.refresh(dry_run=True)
+        self.assertEqual(result['status'], refresh.WOULD_REFRESH)
+        ask.assert_not_called()
+        self.assertEqual(store.read_bytes(), tracked)
+        self.assertEqual(self.path.read_bytes(), manifest_before)
+
+    def test_a_digit_without_a_stored_answer_blocks_instead_of_asking(self):
+        self.store().unlink()
+        self.make_stale()
+        manifest_before = self.path.read_bytes()
+        with patch.object(digit_recheck, 'HttpAsk') as ask:
+            result = self.refresh(dry_run=True)
+        self.assertEqual(result['status'], refresh.BLOCKED)
+        self.assertIn('Jev answers missing', result['reason'])
+        ask.assert_not_called()
+        self.assertFalse(self.store().exists())
+        self.assertEqual(self.path.read_bytes(), manifest_before)
 
 
 class SaveGateTest(unittest.TestCase):

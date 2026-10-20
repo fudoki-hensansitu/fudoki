@@ -2852,6 +2852,118 @@ sources:
       direction: expenditure
       table_id: general-expenditure
       kind: nodes
+  - name: j132284_2024_settlement_elderly_medical_expenditure_amounts
+    meta:
+      jurisdiction: '132284'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: elderly-medical-expenditure
+      kind: amounts
+  - name: j132284_2024_settlement_elderly_medical_expenditure_nodes
+    meta:
+      jurisdiction: '132284'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: elderly-medical-expenditure
+      kind: nodes
+  - name: j132284_2024_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '132284'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j132284_2024_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '132284'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
+  - name: j132284_2024_settlement_land_readjustment_expenditure_amounts
+    meta:
+      jurisdiction: '132284'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: land-readjustment-expenditure
+      kind: amounts
+  - name: j132284_2024_settlement_land_readjustment_expenditure_nodes
+    meta:
+      jurisdiction: '132284'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: land-readjustment-expenditure
+      kind: nodes
+  - name: j132284_2024_settlement_long_term_care_expenditure_amounts
+    meta:
+      jurisdiction: '132284'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: long-term-care-expenditure
+      kind: amounts
+  - name: j132284_2024_settlement_long_term_care_expenditure_nodes
+    meta:
+      jurisdiction: '132284'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: long-term-care-expenditure
+      kind: nodes
+  - name: j132284_2024_settlement_national_health_insurance_expenditure_amounts
+    meta:
+      jurisdiction: '132284'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-insurance-expenditure
+      kind: amounts
+  - name: j132284_2024_settlement_national_health_insurance_expenditure_nodes
+    meta:
+      jurisdiction: '132284'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-insurance-expenditure
+      kind: nodes
+  - name: j132284_2024_settlement_tv_reception_expenditure_amounts
+    meta:
+      jurisdiction: '132284'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: tv-reception-expenditure
+      kind: amounts
+  - name: j132284_2024_settlement_tv_reception_expenditure_nodes
+    meta:
+      jurisdiction: '132284'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: tv-reception-expenditure
+      kind: nodes
+  - name: j132284_2024_settlement_ward_property_expenditure_amounts
+    meta:
+      jurisdiction: '132284'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: ward-property-expenditure
+      kind: amounts
+  - name: j132284_2024_settlement_ward_property_expenditure_nodes
+    meta:
+      jurisdiction: '132284'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: ward-property-expenditure
+      kind: nodes
   - name: j132292_2024_settlement_elderly_medical_expenditure_amounts
     meta:
       jurisdiction: '132292'

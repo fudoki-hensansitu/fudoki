@@ -56,6 +56,11 @@ def resolve(logicals: list[Logical], document_kind: str) -> dict:
                 logical.unit = DEFAULTS.get(document_kind)
                 sources['default'] += 1
         carried = logical.unit
+        # A column that prints its own unit (`(千円)` over 当初予算額 on a page of 円) keeps it for its amounts.
+        for band in logical.bands:
+            mark = column_mark(band) if band.kind == 'amount' and band.header else None
+            if mark and mark != logical.unit:
+                logical.column_units['／'.join(band.header)] = mark
     return sources
 
 
