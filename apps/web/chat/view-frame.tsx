@@ -188,14 +188,14 @@ export function ViewFrame({
     }
   }, [side])
 
-  // 大きさが変わったら host context で View に伝える（View はこれで「全画面で開く」「元の大きさに戻す」を切り替える）
+  // 大きさが変わったら host context で View に伝える（View は displayMode に合わせて表示の密度を変える）
   React.useEffect(() => {
     bridgeRef.current?.setHostContext(hostContext(mode))
     if (!expanded) return
     // 重ねている間は下の会話を動かさない。iframe の中で押した Esc は頁に届かないので、閉じるボタンに focus を置く
     const overflow = document.body.style.overflow
     if (fullscreen) document.body.style.overflow = 'hidden'
-    close.current?.focus()
+    if (fullscreen) close.current?.focus()
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setMode('inline')
     }

@@ -91,10 +91,19 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
     send(stored.pending)
   }, [id, stored, send])
 
-  // 送ったら、画面全体を一番下まで送る
+  // 一番下を読んでいる間は、送ったときも配信中も画面全体を最下部へ追う。利用者が上へ遡ったら追わない
+  const pinned = React.useRef(true)
   React.useEffect(() => {
-    if (status === 'submitted') window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' })
-  }, [status])
+    const onScroll = () => {
+      pinned.current = document.documentElement.scrollHeight - window.scrollY - window.innerHeight < 120
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+  React.useEffect(() => {
+    if (status === 'submitted') pinned.current = true
+    if (pinned.current) window.scrollTo({ top: document.documentElement.scrollHeight })
+  }, [messages, status])
 
   const apps = (m: ChatMessage) => m.metadata?.apps ?? {}
   return (

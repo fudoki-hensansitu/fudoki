@@ -39,7 +39,7 @@ function blocks(tokens: Token[]): React.ReactNode[] {
       case 'paragraph':
         return <p key={i}>{inline((t as Tokens.Paragraph).tokens)}</p>
       case 'heading':
-        return <p key={i} className="font-semibold">{inline((t as Tokens.Heading).tokens)}</p>
+        return <h3 key={i} className="font-semibold">{inline((t as Tokens.Heading).tokens)}</h3>
       case 'list': {
         const list = t as Tokens.List
         const Tag = list.ordered ? 'ol' : 'ul'
@@ -55,6 +55,32 @@ function blocks(tokens: Token[]): React.ReactNode[] {
         return <blockquote key={i} className="border-l-2 pl-3 text-muted-foreground">{blocks((t as Tokens.Blockquote).tokens)}</blockquote>
       case 'code':
         return <pre key={i} className="overflow-x-auto rounded bg-muted p-3 text-[0.9em]"><code>{(t as Tokens.Code).text}</code></pre>
+      case 'table': {
+        const table = t as Tokens.Table
+        const align = (a: 'left' | 'right' | 'center' | null) => (a === 'right' ? 'text-right' : a === 'center' ? 'text-center' : 'text-left')
+        return (
+          <div key={i} className="overflow-x-auto">
+            <table className="w-full border-collapse text-sm">
+              <thead>
+                <tr>
+                  {table.header.map((c, j) => (
+                    <th key={j} className={`border-b px-2 py-1 font-medium ${align(c.align)}`}>{inline(c.tokens)}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {table.rows.map((row, r) => (
+                  <tr key={r}>
+                    {row.map((c, j) => (
+                      <td key={j} className={`border-b px-2 py-1 tabular-nums ${align(c.align)}`}>{inline(c.tokens)}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )
+      }
       case 'hr':
         return <hr key={i} />
       case 'text': {
