@@ -4,8 +4,7 @@
   "type": "module",
   "exports": {
     "./cofog-master": "./cofog-master.ts",
-    "./setsu-master": "./setsu-master.ts",
-    "./suggestions": "./suggestions.ts"
+    "./setsu-master": "./setsu-master.ts"
   },
   "scripts": {
     "test": "bun test"

@@ -53,4 +53,5 @@ MCP Apps（`io.modelcontextprotocol/ui`、仕様 2026-01-26）に対応した ho
 - View は `ui://fudoki/view-<HTML の SHA-256 の先頭 12 桁>.html` の1つのリソースで、`text/html;profile=mcp-app` で返す。host は URI でキャッシュするので、中身を変えたら URI が変わるようにした。
 - host の既定の CSP は inline の script だけを許し、外部の script と通信を許さない。そこで `@modelcontextprotocol/ext-apps` の `App` を `ui/view.ts` から Bun.build で bundle し、HTML に inline した `src/view.generated.ts` を commit する（`bun run --cwd apps/api view` で作り直し、`view.test.ts` が最新かを検査する）。約 560KB で、大半は ext-apps が同梱する MCP の SDK と zod。追加のデータ（次のページ・内訳）は fetch せず、host 経由で同じ tool を呼ぶ。
 - 明細の原典へのリンクは、PDF なら URL に `#page=<source_page>`（金額は `amount_source_page`）を付け、リンクの横に「◯ページ」と書く。`#page` は Chrome・Edge・Firefox・Acrobat の PDF ビューアでは効くが、Safari やダウンロード扱いの PDF では効かないため。頁が NULL の明細と CSV の原典（頁ではなく行）には `#page` を付けない。CSV は「◯行目」と書く。収録範囲の原典は頁なしのリンクにする。PDF を View に埋め込むことはしない（原典の配り方を決めてから別に扱う）。
+- `search_expenditure_nodes`・`get_expenditure_node` の結果の `_meta["fudoki.dev/suggestions"]` に、次の質問の候補 `[{ label, prompt }]`（最大3つ）を入れる。結果から決定的に作り、`structuredContent` と text には載せない。View は使わず、風土記の web チャットが回答の下にチップで出す。
 - リンクは iframe の中から直接開けないことがあるので、host に `ui/open-link` で開かせる。
