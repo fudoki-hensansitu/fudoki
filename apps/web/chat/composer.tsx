@@ -1,13 +1,13 @@
 import * as React from 'react'
-import { ArrowRightIcon, ArrowUpIcon, SquareIcon } from 'lucide-react'
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput, InputGroupText, InputGroupTextarea } from '@/components/ui/input-group'
+import { ArrowRightIcon, SquareIcon } from 'lucide-react'
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput, InputGroupText } from '@/components/ui/input-group'
 import { Spinner } from '@/components/ui/spinner'
 import { cn } from '@/lib/utils'
 
 /** server/limits.ts の MAX_USER_TEXT と同じ。超えたら送れないことを先に見せる */
 export const MAX_TEXT = 2000
 
-/** 入口と会話の画面で共有する入力欄。Enter で送り、Shift+Enter と変換中の Enter は改行・確定にする（pill は1行なので改行しない） */
+/** 入口と会話の画面で共有する、丸い1行の入力欄。Enter で送り（変換中の Enter は確定に使う）、長い文は枠の中で横に流れる */
 export function Composer({
   onSubmit,
   onStop,
@@ -18,8 +18,6 @@ export function Composer({
   autoFocus,
   onFocus,
   compact = false,
-  pill = false,
-  children,
 }: {
   /** false を返すか reject したら、送れなかったとして入力を戻す */
   onSubmit: (text: string) => void | boolean | Promise<void | boolean>
@@ -33,11 +31,8 @@ export function Composer({
   autoFocus?: boolean
   /** 入力欄に触れたとき */
   onFocus?: () => void
-  /** 1行で始め、送るボタンを横に置く。会話の画面の続きの入力に使う */
+  /** 会話の画面の続きの入力向けの小さい大きさ（入口の hero は大きい） */
   compact?: boolean
-  /** 丸い1行の入力（入口の hero と会話の画面で同じ見た目）。長い文は枠の中で横に流れる。compact と合わせると会話向けの小さい大きさ */
-  pill?: boolean
-  children?: React.ReactNode
 }) {
   const [text, setText] = React.useState('')
   const over = text.length > MAX_TEXT
@@ -59,8 +54,7 @@ export function Composer({
     e.preventDefault()
     submit()
   }
-  if (pill)
-    return (
+  return (
       <form onSubmit={onSubmitForm}>
         {/* group の has-disabled は送るボタンの disabled にも効くので、空の間も枠と送るボタンを薄くしない */}
         <InputGroup
@@ -110,40 +104,4 @@ export function Composer({
         </InputGroup>
       </form>
     )
-  return (
-    <form onSubmit={onSubmitForm}>
-      <InputGroup data-disabled={disabled || undefined} className={compact ? 'flex-row! items-end' : undefined}>
-        <InputGroupTextarea
-          aria-label="風土記の AI への質問"
-          value={text}
-          placeholder={placeholder}
-          autoFocus={autoFocus}
-          disabled={disabled}
-          aria-invalid={over || undefined}
-          rows={compact ? 1 : 2}
-          className={cn('max-h-48 min-h-14', compact && 'max-h-32 min-h-10')}
-          onChange={(e) => setText(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
-              e.preventDefault()
-              submit()
-            }
-          }}
-        />
-        <InputGroupAddon align="block-end" className={compact ? 'w-auto pr-1.5 pb-1 pl-0' : undefined}>
-          {children}
-          <InputGroupText className="ml-auto tabular-nums">{over ? `${text.length} / ${MAX_TEXT} 文字` : ''}</InputGroupText>
-          {busy && onStop ? (
-            <InputGroupButton type="button" variant="secondary" size="icon-sm" onClick={onStop} aria-label="止める">
-              <SquareIcon />
-            </InputGroupButton>
-          ) : (
-            <InputGroupButton type="submit" variant="default" size="icon-sm" disabled={!canSend} aria-label="送る">
-              {pending ? <Spinner /> : <ArrowUpIcon />}
-            </InputGroupButton>
-          )}
-        </InputGroupAddon>
-      </InputGroup>
-    </form>
-  )
 }

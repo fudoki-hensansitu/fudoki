@@ -106,13 +106,13 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
   }, [messages, status])
 
   const suggestions = busy ? [] : suggestionsOf(messages.at(-1))
-  // 応答の生成中で、いま画面に動くものが無い間（送った直後・tool の完了後・文の前）は「考えています」を出す。止まって見えないように
+  // 応答の生成中で、画面に動くものが無い間は「考えています」を出す。止まって見えないように。
+  // 出すのは送った直後と、tool の結果が返ったあと次を組み立てている間だけ。文が出始めたあとは出さない（書き終えた答えの下に出ないように）
   const last = messages.at(-1)?.parts.at(-1)
   const thinking =
     status === 'submitted' ||
     (status === 'streaming' &&
-      !(last?.type === 'text' && last.state === 'streaming') &&
-      !(last?.type === 'dynamic-tool' && last.state !== 'output-available' && last.state !== 'output-error'))
+      (last === undefined || last.type === 'step-start' || (last.type === 'dynamic-tool' && (last.state === 'output-available' || last.state === 'output-error'))))
   const apps = (m: ChatMessage) => m.metadata?.apps ?? {}
   return (
     <div className="flex h-dvh w-full flex-col">
@@ -180,7 +180,7 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
         </div>
       </div>
       <div className="mx-auto w-full max-w-3xl shrink-0 px-4 pt-2 pb-6 sm:pb-8">
-        <Composer onSubmit={send} onStop={stop} busy={busy} placeholder="続けて聞く" autoFocus pill compact />
+        <Composer onSubmit={send} onStop={stop} busy={busy} placeholder="続けて聞く" autoFocus compact />
       </div>
     </div>
   )
