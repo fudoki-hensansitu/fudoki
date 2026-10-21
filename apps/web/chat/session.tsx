@@ -5,7 +5,9 @@ import { createRoot } from 'react-dom/client'
 import { useChat } from '@ai-sdk/react'
 import { DefaultChatTransport, type DynamicToolUIPart, type UIMessage } from 'ai'
 import { CheckIcon, CircleAlertIcon, SquarePenIcon } from 'lucide-react'
+import { readSuggestions } from '../../../packages/fiscal/suggestions'
 import { Bubble, BubbleContent } from '@/components/ui/bubble'
+import { Button } from '@/components/ui/button'
 import { Marker, MarkerContent, MarkerIcon } from '@/components/ui/marker'
 import { Message, MessageContent } from '@/components/ui/message'
 import { Spinner } from '@/components/ui/spinner'
@@ -39,6 +41,17 @@ function ToolMarker({ part }: { part: DynamicToolUIPart }) {
       <MarkerContent className={done || failed ? undefined : 'shimmer'}>{failed ? `${label}に失敗しました` : label}</MarkerContent>
     </Marker>
   )
+}
+
+/** 最後の応答の tool の結果に付いた、次の質問の候補（結果の _meta）。複数の tool があれば後のものを使う */
+function suggestionsOf(m: ChatMessage | undefined) {
+  if (m?.role !== 'assistant') return []
+  for (const p of m.parts.toReversed()) {
+    if (p.type !== 'dynamic-tool' || p.state !== 'output-available') continue
+    const found = readSuggestions((p.output as { _meta?: unknown } | undefined)?._meta)
+    if (found.length > 0) return found
+  }
+  return []
 }
 
 function Session({ id, stored }: { id: string; stored: StoredSession }) {
@@ -85,6 +98,7 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
     if (pinned.current) window.scrollTo({ top: document.documentElement.scrollHeight })
   }, [messages, status])
 
+  const suggestions = busy ? [] : suggestionsOf(messages.at(-1))
   const apps = (m: ChatMessage) => m.metadata?.apps ?? {}
   return (
     <div className="flex min-h-dvh w-full flex-col">
@@ -121,6 +135,15 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
               </Message>
             </div>
           ))}
+          {suggestions.length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {suggestions.map((s) => (
+                <Button key={s.label} variant="outline" size="sm" className="h-auto whitespace-normal py-1.5 text-left" onClick={() => send(s.prompt)}>
+                  {s.label}
+                </Button>
+              ))}
+            </div>
+          ) : null}
           {status === 'submitted' ? (
             <div>
               <Marker>

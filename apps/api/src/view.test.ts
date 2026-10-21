@@ -5,6 +5,7 @@ import type { Database } from 'bun:sqlite'
 import { insertJurisdiction, insertNode, testDb } from './testing'
 import { VIEW_HTML, VIEW_URI } from './view.generated'
 import { OUTPUT, render } from '../ui/build'
+import { SUGGESTIONS_META_KEY } from '../../../packages/fiscal/suggestions'
 
 let db: Db
 let sqlite: Database
@@ -71,6 +72,23 @@ describe('MCP Apps の View', () => {
     const res = (await rpc('tools/call', { name: 'render_expenditure_view', arguments: { tool: 'search_expenditure_nodes', arguments: { document_kind: 'settlement', fiscal_year: { min: 2024, max: 2024 } } } })).result
     expect(res._meta.jurisdictionNames).toEqual({ '132039': '武蔵野市' })
     expect(JSON.stringify(res.structuredContent)).not.toContain('武蔵野市')
+  })
+
+  test('結果の _meta に次の質問の候補を載せ、text と structuredContent には載せない', async () => {
+    insertJurisdiction(sqlite, { jurisdiction_code: '132039', name: '武蔵野市' })
+    insertNode(sqlite, { document_kind: 'settlement', node_id: 'n1', name: '総務費', node_kind: '款', amount_yen: 100, is_leaf: 0 })
+    insertNode(sqlite, { document_kind: 'settlement', node_id: 'n2', name: '民生費', node_kind: '款', amount_yen: 900, is_leaf: 0 })
+    const args = { document_kind: 'settlement', fiscal_year: { min: 2024, max: 2024 } }
+    const res = (await rpc('tools/call', { name: 'search_expenditure_nodes', arguments: args })).result
+    expect(res._meta[SUGGESTIONS_META_KEY]).toEqual([
+      { label: '「民生費」の内訳を見る', prompt: '武蔵野市の2024年度決算「民生費」の内訳を見せて' },
+      { label: '「民生費」を他の年度と比べる', prompt: '武蔵野市の2024年度決算「民生費」を他の年度と比べて' },
+      { label: '「民生費」を他の団体と比べる', prompt: '2024年度決算の「民生費」を他の団体と比べて' },
+    ])
+    expect(JSON.stringify(res.structuredContent)).not.toContain('の内訳を見る')
+    expect(res.content[0].text).not.toContain('の内訳を見る')
+    const list = (await rpc('tools/call', { name: 'list_jurisdictions', arguments: {} })).result
+    expect(list._meta[SUGGESTIONS_META_KEY]).toBeUndefined()
   })
 
   test('resources/read で View の HTML を MCP Apps の MIME type で返す', async () => {
