@@ -39,7 +39,7 @@ export function suggestionsFor(tool: string, out: unknown, jurisdictionNames: Re
   const out3: Suggestion[] = []
   if (drill) out3.push({ label: `「${short(drill.name)}」の内訳を見る`, prompt: `${scope(drill)}の「${drill.name}」の内訳を見せて` })
   out3.push({ label: `「${short(focus.name)}」を他の年度と比べる`, prompt: `${scope(focus)}の「${focus.name}」を他の年度と比べて` })
-  out3.push({ label: `「${short(focus.name)}」を他の自治体と比べる`, prompt: `${yearOf(focus)}の「${focus.name}」を他の自治体と比べて` })
+  out3.push({ label: `「${short(focus.name)}」を他の自治体と比べる`, prompt: `${scope(focus)}の「${focus.name}」を他の自治体と比べて` })
   // 名前が長くて上限を超えた候補は、読み手に黙って捨てられる前にここで外す
   return validSuggestions(out3)
 }
