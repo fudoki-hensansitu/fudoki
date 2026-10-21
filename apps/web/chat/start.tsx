@@ -12,12 +12,13 @@ function Start({ sitekey }: { sitekey: string }) {
   const widget = React.useRef<HTMLDivElement>(null)
   const turnstile = React.useRef<Awaited<ReturnType<typeof mountTurnstile>>>(undefined)
   const [pending, setPending] = React.useState(false)
+  const [challenge, setChallenge] = React.useState(false)
   const [error, setError] = React.useState<string>()
 
   React.useEffect(() => {
     if (!sitekey || !widget.current) return
     let removed = false
-    mountTurnstile(widget.current, sitekey)
+    mountTurnstile(widget.current, sitekey, setChallenge)
       .then((t) => (removed ? t.remove() : (turnstile.current = t)))
       .catch((e: Error) => setError(e.message))
     return () => {
@@ -51,8 +52,8 @@ function Start({ sitekey }: { sitekey: string }) {
     return <p className="text-sm text-muted-foreground">風土記の AI に聞く機能は準備中です。下の「自分の AI に接続する」から、お使いの AI で使えます。</p>
   return (
     <div className="ask-dock flex flex-col">
-      <Composer onSubmit={start} pending={pending} placeholder={EXAMPLE} pill onFocus={() => turnstile.current?.warm()} />
-      <div ref={widget} />
+      <Composer onSubmit={start} pending={pending} placeholder={EXAMPLE} onFocus={() => turnstile.current?.warm()} />
+      <div ref={widget} className={challenge ? 'mt-3 flex justify-center' : 'hidden'} />
       {error ? <p role="alert" className="mt-3 text-sm text-destructive">{error}</p> : null}
     </div>
   )
@@ -65,10 +66,22 @@ if (root) {
   // 入力が出ない（鍵が無い）ときは固定する物が無いので、下余白も足さない
   if (sitekey)
     // 元の位置が画面の上へ出たら下に固定する。下に外れている（まだ読んでいない）間は動かさない
-    new IntersectionObserver(([entry]) => {
-      if (!entry) return
-      const docked = !entry.isIntersecting && entry.boundingClientRect.top < 0
-      root.toggleAttribute('data-docked', docked)
-      document.body.classList.toggle('ask-docked', docked)
-    }).observe(root)
+    {
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)')
+      let leave: ReturnType<typeof setTimeout> | undefined
+      new IntersectionObserver(([entry]) => {
+        if (!entry) return
+        const docked = !entry.isIntersecting && entry.boundingClientRect.top < 0
+        const was = root.hasAttribute('data-docked')
+        clearTimeout(leave)
+        root.removeAttribute('data-leaving')
+        root.toggleAttribute('data-docked', docked)
+        document.body.classList.toggle('ask-docked', docked)
+        // 元の位置へ戻るときは、固定のまま小さく消えてから流れに戻す（動きを減らす設定では即座に戻す）
+        if (was && !docked && !reduced.matches) {
+          root.setAttribute('data-leaving', '')
+          leave = setTimeout(() => root.removeAttribute('data-leaving'), 200)
+        }
+      }).observe(root)
+    }
 }

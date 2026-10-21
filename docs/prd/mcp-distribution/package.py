@@ -62,8 +62,8 @@ def validate(files: dict[str, bytes]) -> dict:
     if "references/evaluation.md" not in skill:
         raise ValueError("Skill must link the evaluation reference")
     cases = extension["review"]["test_cases"]
-    if len(cases["positive"]) != 6 or len(cases["negative"]) != 4:
-        raise ValueError("Review needs six positive and four negative cases")
+    if len(cases["positive"]) != 5 or len(cases["negative"]) != 3:
+        raise ValueError("Review needs five positive and three negative cases")
     for category in ["positive", "negative"]:
         keys = ["description", "prompt"] + (["tools_triggered", "expected_behavior"] if category == "positive" else [])
         for case in cases[category]:

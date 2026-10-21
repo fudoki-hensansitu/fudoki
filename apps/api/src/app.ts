@@ -21,6 +21,8 @@ const MAX_BODY_BYTES = 16 * 1024
 
 const JSON_CONTENT_TYPE = /^application\/json\s*(;.*)?$/i
 
+const OPENAI_APPS_CHALLENGE = 'gq6l8WC6A0uBMUBkqmsmJJ-DoER65Cu5g5m4XY724hI'
+
 /** body を実際に読んだバイト数で数える（Content-Length は信用しない）。上限を超えたら読むのをやめる。 */
 async function readLimitedText(req: Request): Promise<string> {
   const tooLarge = () => new ApiError(413, 'PAYLOAD_TOO_LARGE', `リクエストの body は ${MAX_BODY_BYTES} バイトまでです`)
@@ -162,7 +164,10 @@ function mcpServer(ctx: Ctx, apiOrigin: string, operations: Operation[]): McpSer
       icons: [{ src: MCP_ICON_SRC, mimeType: 'image/svg+xml', sizes: ['any'] }],
     },
     // stateless で tool・resource の一覧は変わらず、通知を送る経路も無いので、listChanged は名乗らない
-    { capabilities: { tools: { listChanged: false }, resources: { listChanged: false } } }
+    {
+      instructions: '風土記は、日本の地方自治体の歳出予算・決算と事業評価資料を検索するサービスです。自治体の支出や事業評価に関する質問で利用してください。',
+      capabilities: { tools: { listChanged: false }, resources: { listChanged: false } },
+    }
   )
   // MCP Apps に対応した host は、tool の _meta.ui.resourceUri の View に結果を描く。非対応の client は _meta を無視し、structuredContent と text だけを使う。
   // stateless なので client の対応を見て出し分けられない（2025 年代の client は要求ごとに initialize を送らない）。そのため常に付ける
@@ -316,6 +321,9 @@ export function createApp(operations: Operation[] = defaultOperations) {
       mcp: `${origin}/mcp`,
     })
   })
+
+  // OpenAI の plugin 提出で、MCP のドメインを所有していることを示す token。公開して構わない値。
+  app.get('/.well-known/openai-apps-challenge', (c) => c.text(OPENAI_APPS_CHALLENGE))
 
   app.openapi(
     createRoute({

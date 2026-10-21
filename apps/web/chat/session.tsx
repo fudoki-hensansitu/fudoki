@@ -18,6 +18,8 @@ import { loadSession, saveSession, type StoredSession } from './store'
 import { ViewFrame } from './view-frame'
 import { LOGO_G } from '../logo'
 
+/** 頁の端からこの距離以内なら、その側のフェードは出さない */
+const FADE_EDGE_PX = 4
 /** 一番下からこの距離以内なら、読み終えて追っていると見なす */
 const NEAR_BOTTOM_PX = 120
 
@@ -28,6 +30,7 @@ const TOOL_LABELS: Record<string, string> = {
   search_expenditure_nodes: '支出を検索',
   get_expenditure_node: '明細を開く',
   list_jurisdictions: '収録している自治体を確認',
+  describe_expenditure_columns: '列の意味を確認',
   search_evaluations: '事業の評価を検索',
   render_expenditure_view: '表とグラフを用意',
 }
@@ -86,23 +89,58 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
   }, [id, stored, send])
 
   // 一番下を読んでいる間は、送ったときも配信中も画面全体を最下部へ追う。利用者が上へ遡ったら追わない
+  // 上下のフェード（scroll-fade と同じ見え方）は、頁の端にいる側では出さない
   const pinned = React.useRef(true)
+  const [fade, setFade] = React.useState({ top: false, bottom: false })
+  const measure = React.useCallback(() => {
+    const el = document.documentElement
+    const rest = el.scrollHeight - window.scrollY - window.innerHeight
+    pinned.current = rest < NEAR_BOTTOM_PX
+    const top = window.scrollY > FADE_EDGE_PX
+    const bottom = rest > FADE_EDGE_PX
+    setFade((f) => (f.top === top && f.bottom === bottom ? f : { top, bottom }))
+  }, [])
   React.useEffect(() => {
-    const onScroll = () => {
-      pinned.current = document.documentElement.scrollHeight - window.scrollY - window.innerHeight < NEAR_BOTTOM_PX
+    window.addEventListener('scroll', measure, { passive: true })
+    window.addEventListener('resize', measure)
+    return () => {
+      window.removeEventListener('scroll', measure)
+      window.removeEventListener('resize', measure)
     }
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+  }, [measure])
+  // ソフトキーボードは iOS・Android（既定）でレイアウトの高さを縮めず、下に固定した入力欄が裏に隠れる。見えている範囲の下端へ持ち上げる
+  React.useEffect(() => {
+    const vv = window.visualViewport
+    if (!vv) return
+    const root = document.documentElement
+    const lift = () => root.style.setProperty('--kb', `${Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop))}px`)
+    lift()
+    vv.addEventListener('resize', lift)
+    vv.addEventListener('scroll', lift)
+    return () => {
+      vv.removeEventListener('resize', lift)
+      vv.removeEventListener('scroll', lift)
+      root.style.removeProperty('--kb')
+    }
   }, [])
   React.useEffect(() => {
     if (status === 'submitted') pinned.current = true
     if (pinned.current) window.scrollTo({ top: document.documentElement.scrollHeight })
-  }, [messages, status])
+    measure()
+  }, [messages, status, measure])
 
   const suggestions = busy ? [] : suggestionsOf(messages.at(-1))
+  // 応答の生成中で、画面に動くものが無い間は「考えています」を出す。止まって見えないように。
+  // 出すのは送った直後と、tool の結果が返ったあと次を組み立てている間だけ。文が出始めたあとは出さない（書き終えた答えの下に出ないように）
+  const last = messages.at(-1)?.parts.at(-1)
+  const thinking =
+    status === 'submitted' ||
+    (status === 'streaming' &&
+      (last === undefined || last.type === 'step-start' || (last.type === 'dynamic-tool' && (last.state === 'output-available' || last.state === 'output-error'))))
   const apps = (m: ChatMessage) => m.metadata?.apps ?? {}
   return (
     <div className="flex min-h-dvh w-full flex-col">
+      <div className="sticky top-0 z-20 bg-background">
       <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-3">
         <a href="/" aria-label="風土記 ホーム" className="text-primary">
           <svg className="block h-7 w-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 146.2150 40" role="img" aria-hidden="true" dangerouslySetInnerHTML={{ __html: LOGO_G }} />
@@ -111,6 +149,8 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
           <SquarePenIcon className="size-5" />
         </a>
       </header>
+      <div aria-hidden className={`pointer-events-none absolute inset-x-0 top-full h-10 bg-gradient-to-b from-background to-transparent transition-opacity duration-200 ${fade.top ? 'opacity-100' : 'opacity-0'}`} />
+      </div>
       <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4">
         <div className="flex flex-1 flex-col gap-4 pb-6">
           {messages.map((m) => (
@@ -147,7 +187,7 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
               ))}
             </div>
           ) : null}
-          {status === 'submitted' ? (
+          {thinking ? (
             <div>
               <Marker>
                 <MarkerContent className="shimmer">考えています</MarkerContent>
@@ -165,7 +205,10 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
             </div>
           ) : null}
         </div>
-        <div className="sticky bottom-0 bg-background pt-2 pb-4 max-sm:pb-2">
+      </div>
+      <div className="sticky bottom-0 z-20 bg-background" style={{ transform: 'translateY(calc(-1 * var(--kb, 0px)))' }}>
+        <div aria-hidden className={`pointer-events-none absolute inset-x-0 bottom-full h-10 bg-gradient-to-t from-background to-transparent transition-opacity duration-200 ${fade.bottom ? 'opacity-100' : 'opacity-0'}`} />
+        <div className="mx-auto w-full max-w-3xl px-4 pt-2 pb-[calc(2rem+env(safe-area-inset-bottom))] sm:pb-12">
           <Composer onSubmit={send} onStop={stop} busy={busy} placeholder="続けて聞く" autoFocus compact />
         </div>
       </div>
