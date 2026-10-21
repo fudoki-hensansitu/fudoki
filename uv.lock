@@ -646,7 +646,7 @@ requires-dist = [
     { name = "pillow", marker = "extra == 'paddle-ocr'", specifier = "==12.3.0" },
     { name = "pypdfium2", specifier = "==5.14.0" },
 ]
-provides-extras = ["paddle-ocr"]
+provides-extras = ["paddle-ocr", "paddle-native"]
 
 [[package]]
 name = "fudoki-workspace"
@@ -666,7 +666,7 @@ requires-dist = [
     { name = "fudoki-pipeline", editable = "pipeline" },
     { name = "fudoki-pipeline", extras = ["paddle-ocr"], marker = "extra == 'paddle-ocr'", editable = "pipeline" },
 ]
-provides-extras = ["paddle-ocr", "paddle-native"]
+provides-extras = ["paddle-ocr"]
 
 [[package]]
 name = "future"
