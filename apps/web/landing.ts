@@ -89,8 +89,7 @@ code{font:13px/1.6 var(--font-mono);letter-spacing:0;overflow-wrap:anywhere}
 .right .btn{height:36px;padding:0 14px;font-size:14px;font-weight:400}
 .right .gh{border-color:var(--border);background:var(--background);color:var(--foreground)}
 .right .gh:hover{background:var(--card)}
-.right .go{background:var(--card);color:var(--foreground);cursor:pointer}
-.nav[data-scrolled] .go{background:var(--primary);color:var(--primary-foreground)}
+.right .go{cursor:pointer}
 dialog.setup{width:min(560px,calc(100% - 32px));padding:24px;border:.5px solid var(--border);border-radius:var(--radius-lg,16px);background:var(--background);color:var(--foreground)}
 dialog.setup::backdrop{background:color-mix(in srgb,var(--foreground) 40%,transparent)}
 dialog.setup h2{font-size:20px}
