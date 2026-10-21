@@ -33,10 +33,10 @@ export function suggestionsFor(tool: string, out: unknown, jurisdictionNames: Re
   }
   if (!focus) return []
 
-  const scope = (n: Node) => `${jurisdictionNames[n.jurisdiction_code] ?? '同じ団体'}の${n.fiscal_year}年度${KIND_LABEL[n.document_kind] ?? ''}`
+  const scope = (n: Node) => `${jurisdictionNames[n.jurisdiction_code] ?? '同じ自治体'}の${n.fiscal_year}年度${KIND_LABEL[n.document_kind] ?? ''}`
   const out3: Suggestion[] = []
   if (drill) out3.push({ label: `「${short(drill.name)}」の内訳を見る`, prompt: `${scope(drill)}「${drill.name}」の内訳を見せて` })
   out3.push({ label: `「${short(focus.name)}」を他の年度と比べる`, prompt: `${scope(focus)}「${focus.name}」を他の年度と比べて` })
-  out3.push({ label: `「${short(focus.name)}」を他の団体と比べる`, prompt: `${focus.fiscal_year}年度${KIND_LABEL[focus.document_kind] ?? ''}の「${focus.name}」を他の団体と比べて` })
+  out3.push({ label: `「${short(focus.name)}」を他の自治体と比べる`, prompt: `${focus.fiscal_year}年度${KIND_LABEL[focus.document_kind] ?? ''}の「${focus.name}」を他の自治体と比べて` })
   return out3.slice(0, MAX_SUGGESTIONS)
 }

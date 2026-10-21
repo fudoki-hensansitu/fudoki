@@ -83,7 +83,7 @@ describe('MCP Apps の View', () => {
     expect(res._meta[SUGGESTIONS_META_KEY]).toEqual([
       { label: '「民生費」の内訳を見る', prompt: '武蔵野市の2024年度決算「民生費」の内訳を見せて' },
       { label: '「民生費」を他の年度と比べる', prompt: '武蔵野市の2024年度決算「民生費」を他の年度と比べて' },
-      { label: '「民生費」を他の団体と比べる', prompt: '2024年度決算の「民生費」を他の団体と比べて' },
+      { label: '「民生費」を他の自治体と比べる', prompt: '2024年度決算の「民生費」を他の自治体と比べて' },
     ])
     expect(JSON.stringify(res.structuredContent)).not.toContain('の内訳を見る')
     expect(res.content[0].text).not.toContain('の内訳を見る')
