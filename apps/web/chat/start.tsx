@@ -12,12 +12,13 @@ function Start({ sitekey }: { sitekey: string }) {
   const widget = React.useRef<HTMLDivElement>(null)
   const turnstile = React.useRef<Awaited<ReturnType<typeof mountTurnstile>>>(undefined)
   const [pending, setPending] = React.useState(false)
+  const [challenge, setChallenge] = React.useState(false)
   const [error, setError] = React.useState<string>()
 
   React.useEffect(() => {
     if (!sitekey || !widget.current) return
     let removed = false
-    mountTurnstile(widget.current, sitekey)
+    mountTurnstile(widget.current, sitekey, setChallenge)
       .then((t) => (removed ? t.remove() : (turnstile.current = t)))
       .catch((e: Error) => setError(e.message))
     return () => {
@@ -52,7 +53,7 @@ function Start({ sitekey }: { sitekey: string }) {
   return (
     <div className="ask-dock flex flex-col">
       <Composer onSubmit={start} pending={pending} placeholder={EXAMPLE} onFocus={() => turnstile.current?.warm()} />
-      <div ref={widget} />
+      <div ref={widget} className={challenge ? 'mt-3 flex justify-center' : 'hidden'} />
       {error ? <p role="alert" className="mt-3 text-sm text-destructive">{error}</p> : null}
     </div>
   )
