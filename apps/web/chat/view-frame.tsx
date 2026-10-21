@@ -4,9 +4,10 @@
 import * as React from 'react'
 import { AppBridge, PostMessageTransport } from '@modelcontextprotocol/ext-apps/app-bridge'
 import type { McpUiDisplayMode, McpUiStyles } from '@modelcontextprotocol/ext-apps'
-import { GripVerticalIcon, PanelRightOpenIcon, XIcon } from 'lucide-react'
+import { GripHorizontalIcon, PanelRightOpenIcon, XIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
+import { cn } from '@/lib/utils'
 import { relay } from './relay'
 
 interface Resource {
@@ -34,11 +35,41 @@ function loadResource(token: string, uri: string) {
 
 /** Tailwind の md と同じ幅。横に開く側の panel の幅（w-1/2）と本文の寄せ（50vw）も合わせる */
 const WIDE = '(min-width: 768px)'
-// 横に開いている View の数と、開く前の body の margin（複数あっても最後に閉じたときに戻す）
-let sideOpen = 0
-let sideMargin = ''
-// 右のパネルは1枠。別の View が入ると、前の View は会話の中へ戻る
-let panel: { owner: object; release: () => void } | undefined
+// 右のパネルに置いた View のタブ。iframe は動かさず（動かすと View が読み直しになる）、選ばれていないものは隠すだけにする
+interface Tab {
+  owner: object
+  title: string
+  /** 会話の元の場所へ戻す */
+  close: () => void
+}
+interface Panel {
+  tabs: Tab[]
+  active?: object
+}
+let panel: Panel = { tabs: [] }
+let panelMargin = ''
+const panelListeners = new Set<() => void>()
+const setPanel = (next: Panel) => {
+  // 開いている間は、会話を左半分に寄せる。最初のタブで元の margin を覚え、最後のタブが閉じたときに戻す
+  if (!panel.tabs.length && next.tabs.length) panelMargin = document.body.style.marginRight
+  if (next.tabs.length) document.body.style.marginRight = '50vw'
+  else if (panel.tabs.length) document.body.style.marginRight = panelMargin
+  panel = next
+  panelListeners.forEach((l) => l())
+}
+const subscribePanel = (l: () => void) => {
+  panelListeners.add(l)
+  return () => void panelListeners.delete(l)
+}
+const getPanel = () => panel
+function openTab(tab: Tab) {
+  setPanel({ tabs: [...panel.tabs.filter((t) => t.owner !== tab.owner), tab], active: tab.owner })
+}
+function closeTab(owner: object) {
+  const tabs = panel.tabs.filter((t) => t.owner !== owner)
+  if (tabs.length === panel.tabs.length) return
+  setPanel({ tabs, active: panel.active === owner ? tabs.at(-1)?.owner : panel.active })
+}
 const dark = () => matchMedia('(prefers-color-scheme: dark)').matches
 
 /** View に選ばせる表示の大きさ。広い画面では会話の右に並べ（side-by-side）、狭い画面では頁の上に全画面で重ねる */
@@ -66,6 +97,20 @@ function hostContext(displayMode: DisplayMode) {
       } as McpUiStyles,
     },
   }
+}
+
+const panelKeys = new WeakMap<object, number>()
+let panelKeyCount = 0
+const panelKey = (owner: object) => {
+  if (!panelKeys.has(owner)) panelKeys.set(owner, ++panelKeyCount)
+  return panelKeys.get(owner)
+}
+
+/** タブの名前。結果の中の見出しになるものを使う */
+function titleOf(output: unknown) {
+  const data = (output as { structuredContent?: { node?: { name?: string }; nodes?: { name?: string; kou_name?: string | null; kan_name?: string }[] } })?.structuredContent
+  const first = data?.nodes?.[0]
+  return data?.node?.name ?? first?.kou_name ?? first?.kan_name ?? first?.name ?? '表とグラフ'
 }
 
 export function ViewFrame({
@@ -223,20 +268,16 @@ export function ViewFrame({
     if (fullscreen && el && !el.matches(':popover-open')) el.showPopover()
   }, [fullscreen])
 
-  // 横に開く間は、会話を左半分に寄せる
+  // 右のパネルにタブとして置く。タブを閉じる・元に戻すと、会話の元の場所へ戻る
+  const tabState = React.useSyncExternalStore(subscribePanel, getPanel)
+  const title = React.useMemo(() => titleOf(output), [output])
   React.useEffect(() => {
     if (!side) return
     const owner = me.current
-    if (panel && panel.owner !== owner) panel.release()
-    panel = { owner, release: () => setMode('inline') }
-    if (sideOpen++ === 0) sideMargin = document.body.style.marginRight
-    document.body.style.marginRight = '50vw'
-    return () => {
-      if (panel?.owner === owner) panel = undefined
-      // 複数の View が横に開いていても、最後の1つが閉じたときに元へ戻す
-      if (--sideOpen === 0) document.body.style.marginRight = sideMargin
-    }
-  }, [side])
+    openTab({ owner, title, close: () => setMode('inline') })
+    return () => closeTab(owner)
+  }, [side, title])
+  const activeTab = side && tabState.active === me.current
 
   // 大きさが変わったら host context で View に伝える（View は displayMode に合わせて表示の密度を変える）
   React.useEffect(() => {
@@ -249,7 +290,7 @@ export function ViewFrame({
       close.current?.focus()
     }
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setMode('inline')
+      if (e.key === 'Escape' && (fullscreen || panel.active === me.current)) setMode('inline')
     }
     window.addEventListener('keydown', onKey)
     return () => {
@@ -272,11 +313,11 @@ export function ViewFrame({
         fullscreen
           ? 'fixed inset-0 m-0 flex size-full max-h-none max-w-none flex-col border-0 bg-background p-0 text-foreground'
           : side
-            ? 'fixed inset-y-0 right-0 z-40 flex w-1/2 flex-col border-l bg-background text-foreground'
-            : 'relative w-full overflow-hidden rounded-xl border bg-background'
+            ? cn('fixed inset-y-0 right-0 z-40 w-1/2 flex-col border-l bg-background text-foreground', activeTab ? 'flex' : 'hidden')
+            : 'group/view relative w-full overflow-hidden rounded-xl border bg-background'
       }
     >
-      {expanded ? (
+      {fullscreen ? (
         <div className="flex shrink-0 items-center justify-between border-b px-4 py-2">
           <span className="text-sm text-muted-foreground">風土記の表とグラフ</span>
           <Button ref={close} variant="ghost" size="icon-sm" aria-label="元の大きさに戻す（Esc）" title="元の大きさに戻す（Esc）" onClick={() => setMode('inline')}>
@@ -284,21 +325,41 @@ export function ViewFrame({
           </Button>
         </div>
       ) : null}
+      {side ? (
+        <div role="tablist" aria-label="右のパネルの表とグラフ" className="flex shrink-0 items-center gap-1 overflow-x-auto border-b px-2 pt-2">
+          {tabState.tabs.map((t) => (
+            <div key={panelKey(t.owner)} className={cn('flex max-w-48 shrink-0 items-center rounded-t-md border border-b-0 text-sm', t.owner === tabState.active ? 'bg-background text-foreground' : 'bg-secondary/60 text-muted-foreground hover:text-foreground')}>
+              <button type="button" role="tab" aria-selected={t.owner === tabState.active} onClick={() => setPanel({ ...panel, active: t.owner })} className="min-w-0 truncate py-1.5 pr-1 pl-3">
+                {t.title}
+              </button>
+              <button type="button" onClick={t.close} aria-label={`${t.title}を元に戻す`} title="会話の中へ元に戻す" className="rounded p-1 hover:bg-secondary">
+                <XIcon className="size-3.5" />
+              </button>
+            </div>
+          ))}
+        </div>
+      ) : null}
       {grippable ? (
-        <div className="flex items-center border-b px-2 py-1">
+        // 常には出さず、View にホバー（またはキーボードの focus）したときだけ、上辺の真ん中に出す。掴んで右へ離すと右パネルに開く。
+        // iframe の上のホバーが親に届かない場合に備え、上辺の真ん中は親側の領域（group/zone）でも出す
+        <div className="group/zone absolute top-0 left-1/2 z-10 h-6 w-44 -translate-x-1/2">
           <button
             type="button"
             onPointerDown={startDrag}
-            onClick={(e) => {
+            onClick={() => {
               // 押しただけ（キーボードの Enter も含む）で右に開く。ドラッグしたあとの click は無視する
               if (!dragged.current) setMode('fullscreen')
               dragged.current = false
             }}
-            className="flex cursor-grab touch-none items-center gap-1 rounded px-1.5 py-0.5 text-xs text-muted-foreground select-none hover:bg-secondary hover:text-foreground active:cursor-grabbing"
-            title="右にドラッグして、会話の横に並べる（クリックでも開きます）"
+            className={cn(
+              'absolute top-0.5 left-1/2 flex h-5 w-12 -translate-x-1/2 cursor-grab touch-none items-center justify-center rounded-full border bg-background/90 text-muted-foreground shadow-sm backdrop-blur select-none',
+              'opacity-0 group-focus-within/view:opacity-100 group-hover/view:opacity-100 group-hover/zone:opacity-100 focus-visible:opacity-100 motion-safe:transition-opacity motion-safe:duration-150',
+              'hover:text-foreground active:cursor-grabbing',
+            )}
+            aria-label="右のパネルに開く（右へドラッグ、または Enter）"
+            title="右へドラッグすると、会話の横に開きます"
           >
-            <GripVerticalIcon className="size-3.5" />
-            右に並べる
+            <GripHorizontalIcon className="size-4" />
           </button>
         </div>
       ) : null}
