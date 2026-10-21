@@ -42,6 +42,11 @@ class AmountSourceTest(unittest.TestCase):
         declared_unread(table.built, logicals, columns, observation)
         ink = [r for r in table.built.unowned if r['kind'] == 'unread ink in amount column']
         self.assertEqual([r['box'] for r in ink], [[170, 41, 175, 47]])
+        # a seam the re-read did not give back whole stops the conversion in any column (a name column has no tree check)
+        seam = {'pages': [{'page_number': 1, 'unread_ink': [[20, 41, 25, 47]], 'unread_seams': [[20, 41, 25, 47]]}]}
+        declared_unread(table.built, logicals, columns, seam)
+        self.assertEqual([r['box'] for r in table.built.unowned if r['kind'] == 'unread strip seam'], [[20, 41, 25, 47]])
+        self.assertEqual([r['box'] for r in table.built.unowned if r['kind'] == 'unread ink in amount column'], [[170, 41, 175, 47]])
         glyph = next(g for logical in logicals for band in logical.bands for g in band.words if g.text == 'C')
         glyph.text = '。'
         declared_unread(table.built, logicals, columns)

@@ -424,6 +424,7 @@ def settle_seams(page: dict) -> dict:
         return page
     factor = page["displayed_pdf_size_pt"][0] / page["image_width"]
     unread = [list(area) for area in page.get("unread_ink", ())]
+    seams = [list(area) for area in page.get("unread_seams", ())]
     for box in ([v * factor for v in b] for b in boxes_px):
         middle = (box[1] + box[3]) / 2
         found = [(region, o) for region in page["regions"] for o in region["observations"]
@@ -439,8 +440,12 @@ def settle_seams(page: dict) -> dict:
         area = [round(v, 1) for v in box]
         if area not in unread:
             unread.append(area)
+        if area not in seams:
+            seams.append(area)
     if unread:
         page["unread_ink"] = unread
+    if seams:
+        page["unread_seams"] = seams  # read by the converter, which stops on them in any column
     return page
 
 

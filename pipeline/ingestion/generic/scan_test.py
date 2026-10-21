@@ -289,6 +289,14 @@ class CellWordsTest(unittest.TestCase):
         self.assertEqual(self.paddle_words('12,828,111同項、', children, [100, 10, 196, 20], [60, 171, 300]),
                          [('12,828,111', 100, 168), ('同項、', 173, 196)])
 
+    def test_number_fragments_of_two_cells_are_not_joined_over_a_rule(self):
+        # `12,828,111` of one cell and `111,000` of the next, a rule between: one word would be cut by a share of its box
+        children = [('12', [100, 10, 112, 20]), (',', [114, 10, 116, 20]), ('828', [118, 10, 140, 20]),
+                    (',', [142, 10, 144, 20]), ('111', [146, 10, 168, 20]), ('111', [173, 10, 195, 20]),
+                    (',', [197, 10, 199, 20]), ('000', [201, 10, 223, 20])]
+        self.assertEqual(self.paddle_words('12,828,111111,000', children, [100, 10, 223, 20], [60, 172, 300]),
+                         [('12,828,111', 100, 168), ('111,000', 173, 223)])
+
     def test_a_character_box_starting_just_before_its_rule_belongs_to_the_next_cell(self):
         children = [('159', [100, 10, 120, 20]), ('同', [124.6, 10, 134, 20]), ('項', [134, 10, 144, 20])]
         self.assertEqual(self.paddle_words('159同項', children, [100, 10, 144, 20], [60, 125.5, 300]),

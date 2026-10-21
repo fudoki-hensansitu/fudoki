@@ -166,6 +166,7 @@ class SeamPairs(unittest.TestCase):
         page = settle_seams(self.page([("負担金、補助及び", [240, 24, 290, 34])]))
         self.assertEqual(self.ids(page), ["keep"])
         self.assertEqual(page["unread_ink"], [[240.0, 24.0, 336.0, 33.6]])
+        self.assertEqual(page["unread_seams"], [[240.0, 24.0, 336.0, 33.6]])  # the converter stops on it in any column
 
     def test_two_pieces_that_together_cover_the_pair_are_still_not_taken(self):
         page = settle_seams(self.page([("負担金、補助及び", [240, 24, 290, 34]), ("及び交付金", [291, 24, 336, 34])]))

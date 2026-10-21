@@ -160,6 +160,7 @@ def _paddle_pieces(line: dict, children: list[Word], corrected: bool, cuts: list
             continue
         last = merged[-1] if merged else None
         if (last is not None and NUMERIC_RUN.fullmatch(_text(child.text)) and NUMERIC_RUN.fullmatch(_text(last.text))
+                and not any(last.x0 + PADDLE_REACH < x <= child.x0 + PADDLE_REACH for x in cuts)  # a rule keeps two cells apart
                 and child.x0 - last.x1 <= (2 * JOIN_GAP if last.text.endswith(',') or child.text.startswith(',') else JOIN_GAP)
                 * max(last.y1 - last.y0, child.y1 - child.y0)):
             merged[-1] = Word(last.text + child.text, last.x0, min(last.y0, child.y0), max(last.x1, child.x1),
@@ -454,8 +455,10 @@ def apply_name_corrections(observation: dict, rules: list[dict] | None) -> dict:
     """A copy of the observation with the OCR misread characters of a name replaced, as declared.
 
     A rule binds to one observation (a line or word) by page and ID and names the exact characters
-    the OCR read and the ones the page prints. The raw observation is not changed, the rule must
-    match it, and a name has no digits to correct (those are codes and amounts)."""
+    the OCR read and the ones the page prints. The raw observation is not changed and the rule must
+    match it. Characters are replaced one for one, or characters the OCR lost are put back (the observed
+    text is the corrected one without them, in order). The digits of the two texts are the same, in the
+    same order: a digit is a code or an amount and is never corrected here."""
     if not rules:
         return observation
     found = {(p['page_number'], o['id']) for p in observation['pages'] for r in p['regions'] for o in r['observations']}
@@ -825,6 +828,11 @@ def declared_unread(built, logicals_: list, columns: dict | None, observation: d
                                 and b.x0 - b.offset < cx < b.x1 - b.offset and b.body_top < cy < b.body_bottom
                                 for logical in logicals_ for b in logical.bands):
                 built.unowned.append({'kind': 'unread ink in amount column', 'page': page_['page_number'], 'box': box})
+        # A line the strip seam cut and no single re-read gave back (`settle_seams`) stops the conversion in any
+        # column: a name has no tree check, so a name cut short would pass.
+        for box in page_.get('unread_seams', []):
+            if not any(u.get('page') == page_['page_number'] and u.get('box') == box for u in built.unowned):
+                built.unowned.append({'kind': 'unread strip seam', 'page': page_['page_number'], 'box': box})
 
 
 def pinned(source: dict, selected_pages: list[int]) -> dict:
