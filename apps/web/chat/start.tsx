@@ -60,12 +60,15 @@ function Start({ sitekey }: { sitekey: string }) {
 
 const root = document.getElementById('chat-start')
 if (root) {
-  createRoot(root).render(<Start sitekey={root.dataset.turnstileSitekey ?? ''} />)
-  // 元の位置が画面の上へ出たら下に固定する。下に外れている（まだ読んでいない）間は動かさない
-  new IntersectionObserver(([entry]) => {
-    if (!entry) return
-    const docked = !entry.isIntersecting && entry.boundingClientRect.top < 0
-    root.toggleAttribute('data-docked', docked)
-    document.body.classList.toggle('ask-docked', docked)
-  }).observe(root)
+  const sitekey = root.dataset.turnstileSitekey ?? ''
+  createRoot(root).render(<Start sitekey={sitekey} />)
+  // 入力が出ない（鍵が無い）ときは固定する物が無いので、下余白も足さない
+  if (sitekey)
+    // 元の位置が画面の上へ出たら下に固定する。下に外れている（まだ読んでいない）間は動かさない
+    new IntersectionObserver(([entry]) => {
+      if (!entry) return
+      const docked = !entry.isIntersecting && entry.boundingClientRect.top < 0
+      root.toggleAttribute('data-docked', docked)
+      document.body.classList.toggle('ask-docked', docked)
+    }).observe(root)
 }
