@@ -11,6 +11,9 @@ declare global {
   }
 }
 
+/** 先に取った token を使い回せる時間。token は約5分で切れるので、余裕を見て4分 */
+const WARM_TTL_MS = 240_000
+
 async function loaded(timeoutMs = 15_000): Promise<Turnstile> {
   const start = Date.now()
   while (!window.turnstile) {
@@ -47,13 +50,35 @@ export async function mountTurnstile(el: HTMLElement, sitekey: string) {
       turnstile.reset(id)
     },
   })
+  // 走っている確認の間は、新しく走らせて待っている側（waiting）を差し替えない
+  let running = false
+  const run = () =>
+    new Promise<string>((resolve, reject) => {
+      running = true
+      waiting = { resolve, reject }
+      turnstile.reset(id)
+      turnstile.execute(id)
+    }).finally(() => {
+      running = false
+    })
+  // 入力を始めた時点で確認を先に走らせ、送るときに待たないようにする（token は約5分で切れるので、4分を超えたら取り直す）
+  let warm: { promise: Promise<string>; at: number } | undefined
+  const fresh = () => (warm && Date.now() - warm.at < WARM_TTL_MS ? warm : undefined)
   return {
-    token: () =>
-      new Promise<string>((resolve, reject) => {
-        waiting = { resolve, reject }
-        turnstile.reset(id)
-        turnstile.execute(id)
-      }),
+    warm: () => {
+      if (fresh() || running) return
+      const promise = run()
+      warm = { promise, at: Date.now() }
+      promise.catch(() => {
+        if (warm?.promise === promise) warm = undefined
+      })
+    },
+    token: () => {
+      const ready = fresh()?.promise
+      // token は1回しか使えない。使ったら捨てる
+      warm = undefined
+      return ready ?? run()
+    },
     remove: () => turnstile.remove(id),
   }
 }

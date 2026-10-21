@@ -4,16 +4,19 @@ import * as React from 'react'
 import { createRoot } from 'react-dom/client'
 import { useChat } from '@ai-sdk/react'
 import { DefaultChatTransport, type DynamicToolUIPart, type UIMessage } from 'ai'
-import { CheckIcon, CircleAlertIcon } from 'lucide-react'
+import { CheckIcon, CircleAlertIcon, SquarePenIcon } from 'lucide-react'
 import { Bubble, BubbleContent } from '@/components/ui/bubble'
 import { Marker, MarkerContent, MarkerIcon } from '@/components/ui/marker'
 import { Message, MessageContent } from '@/components/ui/message'
-import { MessageScroller, MessageScrollerButton, MessageScrollerContent, MessageScrollerItem, MessageScrollerProvider, MessageScrollerViewport } from '@/components/ui/message-scroller'
 import { Spinner } from '@/components/ui/spinner'
 import { Composer } from './composer'
 import { forServer } from './history'
+import { Markdown } from './markdown'
 import { loadSession, saveSession, type StoredSession } from './store'
 import { ViewFrame } from './view-frame'
+
+/** 一番下からこの距離以内なら、読み終えて追っていると見なす */
+const NEAR_BOTTOM_PX = 120
 
 type Metadata = { apps?: Record<string, string> }
 type ChatMessage = UIMessage<Metadata>
@@ -77,66 +80,78 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
     send(stored.pending)
   }, [id, stored, send])
 
+  // 一番下を読んでいる間は、送ったときも配信中も画面全体を最下部へ追う。利用者が上へ遡ったら追わない
+  const pinned = React.useRef(true)
+  React.useEffect(() => {
+    const onScroll = () => {
+      pinned.current = document.documentElement.scrollHeight - window.scrollY - window.innerHeight < NEAR_BOTTOM_PX
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+  React.useEffect(() => {
+    if (status === 'submitted') pinned.current = true
+    if (pinned.current) window.scrollTo({ top: document.documentElement.scrollHeight })
+  }, [messages, status])
+
   const apps = (m: ChatMessage) => m.metadata?.apps ?? {}
   return (
-    <div className="mx-auto flex h-dvh w-full max-w-3xl flex-col gap-3 px-4 pb-4 max-sm:gap-2 max-sm:pb-2">
-      <header className="flex items-center justify-between py-3">
+    <div className="flex min-h-dvh w-full flex-col">
+      <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-3">
         <a href="/" className="font-medium text-primary">風土記</a>
-        <a href="/" className="text-sm text-muted-foreground hover:text-foreground">新しく聞く</a>
+        <a href="/" aria-label="新しい会話" title="新しい会話" className="rounded-md p-2 text-muted-foreground hover:bg-secondary hover:text-foreground">
+          <SquarePenIcon className="size-5" />
+        </a>
       </header>
-      <MessageScrollerProvider autoScroll>
-        <MessageScroller className="flex-1">
-          <MessageScrollerViewport>
-            <MessageScrollerContent className="pb-6">
-              {messages.map((m) => (
-                <MessageScrollerItem key={m.id} messageId={m.id} scrollAnchor={m.role === 'user'}>
-                  <Message align={m.role === 'user' ? 'end' : 'start'}>
-                    <MessageContent>
-                      {m.parts.map((p, i) => {
-                        if (p.type === 'text' && p.text.trim())
-                          return (
-                            <Bubble key={i} variant={m.role === 'user' ? 'secondary' : 'ghost'} align={m.role === 'user' ? 'end' : 'start'}>
-                              <BubbleContent className="whitespace-pre-wrap">{p.text}</BubbleContent>
-                            </Bubble>
-                          )
-                        if (p.type !== 'dynamic-tool') return null
-                        const uri = apps(m)[p.toolName]
-                        const output = p.state === 'output-available' ? (p.output as { isError?: boolean; structuredContent?: unknown }) : undefined
-                        // View は結果の structuredContent を描く。履歴から復元した結果で structuredContent が無いときは印だけにする
-                        if (uri && output && !output.isError && output.structuredContent)
-                          return (
-                            <ViewFrame key={i} token={stored.token} uri={uri} input={p.input} output={output} onMessage={sendFromView} onContext={(text) => (viewContext.current = text.slice(0, 2000))} />
-                          )
-                        return <ToolMarker key={i} part={p} />
-                      })}
-                    </MessageContent>
-                  </Message>
-                </MessageScrollerItem>
-              ))}
-              {status === 'submitted' ? (
-                <MessageScrollerItem messageId="thinking">
-                  <Marker>
-                    <MarkerContent className="shimmer">考えています</MarkerContent>
-                  </Marker>
-                </MessageScrollerItem>
-              ) : null}
-              {error ? (
-                <MessageScrollerItem messageId="error">
-                  <Marker>
-                    <MarkerIcon>
-                      <CircleAlertIcon />
-                    </MarkerIcon>
-                    <MarkerContent className="text-destructive">{errorMessage(error)}</MarkerContent>
-                  </Marker>
-                </MessageScrollerItem>
-              ) : null}
-            </MessageScrollerContent>
-          </MessageScrollerViewport>
-          <MessageScrollerButton />
-        </MessageScroller>
-      </MessageScrollerProvider>
-      <Composer onSubmit={send} onStop={stop} busy={busy} placeholder="続けて聞く" autoFocus compact />
-      <p className="text-center text-xs text-muted-foreground max-sm:text-[0.6875rem] max-sm:leading-snug">AI の答えは誤ることがあります。金額は表の原典の頁で確かめてください。会話は保存しません。</p>
+      <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4">
+        <div className="flex flex-1 flex-col gap-4 pb-6">
+          {messages.map((m) => (
+            <div key={m.id}>
+              <Message align={m.role === 'user' ? 'end' : 'start'}>
+                <MessageContent>
+                  {m.parts.map((p, i) => {
+                    if (p.type === 'text' && p.text.trim())
+                      return (
+                        <Bubble key={i} variant={m.role === 'user' ? 'secondary' : 'ghost'} align={m.role === 'user' ? 'end' : 'start'}>
+                          <BubbleContent className={m.role === 'user' ? 'whitespace-pre-wrap' : undefined}>{m.role === 'user' ? p.text : <Markdown text={p.text} />}</BubbleContent>
+                        </Bubble>
+                      )
+                    if (p.type !== 'dynamic-tool') return null
+                    const uri = apps(m)[p.toolName]
+                    const output = p.state === 'output-available' ? (p.output as { isError?: boolean; structuredContent?: unknown }) : undefined
+                    // View は結果の structuredContent を描く。履歴から復元した結果で structuredContent が無いときは印だけにする
+                    if (uri && output && !output.isError && output.structuredContent)
+                      return (
+                        <ViewFrame key={i} token={stored.token} uri={uri} input={p.input} output={output} onMessage={sendFromView} onContext={(text) => (viewContext.current = text.slice(0, 2000))} />
+                      )
+                    return <ToolMarker key={i} part={p} />
+                  })}
+                </MessageContent>
+              </Message>
+            </div>
+          ))}
+          {status === 'submitted' ? (
+            <div>
+              <Marker>
+                <MarkerContent className="shimmer">考えています</MarkerContent>
+              </Marker>
+            </div>
+          ) : null}
+          {error ? (
+            <div>
+              <Marker>
+                <MarkerIcon>
+                  <CircleAlertIcon />
+                </MarkerIcon>
+                <MarkerContent className="text-destructive">{errorMessage(error)}</MarkerContent>
+              </Marker>
+            </div>
+          ) : null}
+        </div>
+        <div className="sticky bottom-0 bg-background pt-2 pb-4 max-sm:pb-2">
+          <Composer onSubmit={send} onStop={stop} busy={busy} placeholder="続けて聞く" autoFocus compact />
+        </div>
+      </div>
     </div>
   )
 }

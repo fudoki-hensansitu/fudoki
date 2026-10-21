@@ -470,10 +470,6 @@ function View({ bridge }: { bridge: Bridge }) {
     if (entry) bridge.tellModel(describe(entry.data, state.names))
     queueMicrotask(() => { if (trigger?.isConnected) trigger.focus() })
   }
-  const toggleFullscreen = () => {
-    manualFullscreen.current = inline
-    bridge.setFullscreen(inline)
-  }
   const expand = () => {
     if (!inline) return
     manualFullscreen.current = true
@@ -492,11 +488,6 @@ function View({ bridge }: { bridge: Bridge }) {
   return (
     <BackContext.Provider value={backToList}>
     <main aria-busy={state.busy} className="view">
-      {state.fullscreen.available && entry && !state.pending && (
-        <Button variant="outline" size="sm" className="expand" onClick={toggleFullscreen}>
-          {inline ? '全画面で開く' : '元の大きさに戻す'}
-        </Button>
-      )}
       {state.pending ? (
         <div className="result">
           <PathHeader crumbs={crumbsOf(state.pending, entry ? [...state.history, entry] : state.history, bridge)}
