@@ -130,7 +130,7 @@ custom metadata は次の4項目とし、5項目目は空けておく。metadata
 
 1. 保存済みの `evaluation_selections` を読み、R2 から出典を取り、sha256 を選定と照合する。書き込む前に、変更する出典の登録の記録を消す。
 2. 選定の `pages`（null は全頁）の各頁を1頁の PDF にする。分割には pdfplumber が既に依存している `pypdfium2` を使い、直接の依存として exact で固定する。分割した PDF が4MiB を超えれば止める。`text_origins` の出典は、頁の PDF の代わりに pdfium で抜き出した頁の文字を `<sha256>_p<頁4桁>.md` の item にする（metadata は同じ）。本文の先頭には、頁の PDF の変換と同じ見出し（`# <key>`・`## Contents`・`### Page 1`）を付ける。見出しの無い md は、一部の頁が `file_content_empty` の error になったため（文字が無い頁は見出しだけになる）。登録の形は計画の指紋に含め、catalog の各出典に `item_format`（`pdf` か `md`）として出す。Worker の照合は catalog の形から期待する key を組み立てる。
-3. 計画した key と metadata を、インスタンスの item の一覧と比べる。足りない item を登録し、計画に無い item を消す。削除の失敗では止めず、消し残しは手順4で余分な item として記録を書かない（次の実行で消し直す）。同じ key で metadata が違う item は、消してから登録し直す。
+3. 計画した key と metadata を、インスタンスの item の一覧と比べる。足りない item を登録し、計画に無い item を消す。削除の失敗では止めず、消し残しは手順4で余分な item として記録を書かない（次の実行で消し直す）。同じ key で metadata が違う item は、消してから登録し直す。`nfkc_origins` の宣言を変えた md の出典は、key と metadata が同じでも全 item を登録し直す（本文だけが変わるため）。
 4. 各 item の状態を、決めた期限まで待つ。全件が `completed` になり、item の数と metadata が計画と一致し、手元（pdfium）で文字が最も多く読める頁の取り込み後の本文が手元の1/10以上あれば、`instance.json` に登録の記録を書く。`error`・`skipped`・`outdated` が残るか期限を過ぎたら、記録を消したまま止める。同じ計画で再実行すると、未完了の item だけをやり直す。
 
 分割した PDF は保存しない。R2 の出典から同じ手順で作り直せる。AI Search の文字の抜き出しは決定的とは限らないので、同じ出典から同じ chunk ができる保証はない。候補は数字の答えに使わないので、出典から作り直せることを要件とする。
