@@ -66,6 +66,15 @@ const getPanel = () => panel
 function openTab(tab: Tab) {
   setPanel({ tabs: [...panel.tabs.filter((t) => t.owner !== tab.owner), tab], active: tab.owner })
 }
+/** タブを閉じたあと、残ったタブ（選ばれている側）へ focus を移す。閉じた × や tab は DOM から外れるので、そのままだと focus が頁の先頭へ落ちる */
+function closeAndFocus(tab: Tab) {
+  tab.close()
+  requestAnimationFrame(() =>
+    requestAnimationFrame(() => {
+      if (panel.active) document.getElementById(`view-tab-${panelKey(panel.active)}`)?.focus()
+    }),
+  )
+}
 function closeTab(owner: object) {
   const tabs = panel.tabs.filter((t) => t.owner !== owner)
   if (tabs.length === panel.tabs.length) return
@@ -328,7 +337,7 @@ export function ViewFrame({
         </div>
       ) : null}
       {activeTab ? (
-        // タブの帯は選ばれている View の箱にだけ描く（隠れている箱には描かない）。tablist の中は tab だけ（閉じる × は各タブの中、キーボードでは Esc）
+        // タブの帯は選ばれている View の箱にだけ描く（隠れている箱には描かない）。tablist の中は tab だけ（閉じる × は各タブの中。キーボードでは、選ばれているタブで Esc か Delete）
         <div className="flex shrink-0 items-end border-b px-2 pt-2">
           <div
             role="tablist"
@@ -336,6 +345,12 @@ export function ViewFrame({
             className="flex min-w-0 items-end gap-1 overflow-x-auto"
             onKeyDown={(e) => {
               const i = tabState.tabs.findIndex((t) => t.owner === tabState.active)
+              // タブの Delete で、選ばれているタブを閉じる（tabs パターンの任意のキー）
+              if (e.key === 'Delete' && tabState.tabs[i]) {
+                e.preventDefault()
+                closeAndFocus(tabState.tabs[i])
+                return
+              }
               const next = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabState.tabs.length - 1 }[e.key]
               if (next === undefined) return
               e.preventDefault()
@@ -378,9 +393,9 @@ export function ViewFrame({
                     type="button"
                     tabIndex={-1}
                     aria-label={`「${label}」を閉じて会話の中へ元に戻す`}
-                    title="閉じて会話の中へ元に戻す"
-                    onClick={() => t.close()}
-                    className="mr-1.5 flex size-5 shrink-0 items-center justify-center rounded text-muted-foreground/60 hover:bg-secondary hover:text-muted-foreground"
+                    title={selected ? '閉じて会話の中へ元に戻す（Esc、タブで Delete）' : '閉じて会話の中へ元に戻す'}
+                    onClick={() => closeAndFocus(t)}
+                    className="mr-1 flex size-6 shrink-0 items-center justify-center rounded text-muted-foreground/60 hover:bg-secondary hover:text-muted-foreground"
                   >
                     <XIcon className="size-3.5" />
                   </button>
