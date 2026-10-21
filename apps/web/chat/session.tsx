@@ -87,17 +87,22 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
   }, [id, stored, send])
 
   // 一番下を読んでいる間は、送ったときも配信中も画面全体を最下部へ追う。利用者が上へ遡ったら追わない
+  // メッセージは自分の scroll 領域に置く（上下端を scroll-fade でぼかすため、頁ではなくこの領域が動く）
+  const scroller = React.useRef<HTMLDivElement>(null)
   const pinned = React.useRef(true)
   React.useEffect(() => {
+    const el = scroller.current
+    if (!el) return
     const onScroll = () => {
-      pinned.current = document.documentElement.scrollHeight - window.scrollY - window.innerHeight < NEAR_BOTTOM_PX
+      pinned.current = el.scrollHeight - el.scrollTop - el.clientHeight < NEAR_BOTTOM_PX
     }
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    el.addEventListener('scroll', onScroll, { passive: true })
+    return () => el.removeEventListener('scroll', onScroll)
   }, [])
   React.useEffect(() => {
+    const el = scroller.current
     if (status === 'submitted') pinned.current = true
-    if (pinned.current) window.scrollTo({ top: document.documentElement.scrollHeight })
+    if (pinned.current && el) el.scrollTo({ top: el.scrollHeight })
   }, [messages, status])
 
   const suggestions = busy ? [] : suggestionsOf(messages.at(-1))
@@ -110,7 +115,7 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
       !(last?.type === 'dynamic-tool' && last.state !== 'output-available' && last.state !== 'output-error'))
   const apps = (m: ChatMessage) => m.metadata?.apps ?? {}
   return (
-    <div className="flex min-h-dvh w-full flex-col">
+    <div className="flex h-dvh w-full flex-col">
       <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-3">
         <a href="/" aria-label="風土記 ホーム" className="text-primary">
           <svg className="block h-7 w-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 146.2150 40" role="img" aria-hidden="true" dangerouslySetInnerHTML={{ __html: LOGO_G }} />
@@ -119,8 +124,8 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
           <SquarePenIcon className="size-5" />
         </a>
       </header>
-      <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4">
-        <div className="flex flex-1 flex-col gap-4 pb-6">
+      <div ref={scroller} className="scroll-fade min-h-0 flex-1 overflow-y-auto">
+        <div className="mx-auto flex min-h-full w-full max-w-3xl flex-col gap-4 px-4 pb-6">
           {messages.map((m) => (
             <div key={m.id}>
               <Message align={m.role === 'user' ? 'end' : 'start'}>
@@ -173,9 +178,9 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
             </div>
           ) : null}
         </div>
-        <div className="sticky bottom-0 bg-background pt-2 pb-6 sm:pb-8">
-          <Composer onSubmit={send} onStop={stop} busy={busy} placeholder="続けて聞く" autoFocus pill compact />
-        </div>
+      </div>
+      <div className="mx-auto w-full max-w-3xl shrink-0 px-4 pt-2 pb-6 sm:pb-8">
+        <Composer onSubmit={send} onStop={stop} busy={busy} placeholder="続けて聞く" autoFocus pill compact />
       </div>
     </div>
   )

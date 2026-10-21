@@ -2,6 +2,7 @@
 // iframe は srcdoc + sandbox="allow-scripts"（同じオリジンを与えない）で、View の CSP は resource の _meta.ui.csp から作る。
 // 試作の土台は apps/api/tests/host.ts
 import * as React from 'react'
+import { createPortal } from 'react-dom'
 import { AppBridge, PostMessageTransport } from '@modelcontextprotocol/ext-apps/app-bridge'
 import type { McpUiDisplayMode, McpUiStyles } from '@modelcontextprotocol/ext-apps'
 import { GripHorizontalIcon, PanelRightOpenIcon, XIcon } from 'lucide-react'
@@ -260,13 +261,13 @@ export function ViewFrame({
     // 1つの tool 結果に1つの iframe。入力と結果は変わらない
   }, [token, uri])
 
-  // 全画面は popover で top layer に上げる。会話の一覧は contain と content-visibility で fixed の基準を閉じ込めるので、
+  // 全画面と右のパネルは popover で top layer に上げる。会話の一覧は contain・content-visibility・scroll-fade の mask で fixed の基準や見た目を閉じ込めるので、
   // position: fixed だけでは画面全体を覆えない。iframe は DOM の中で動かさない（動かすと View が読み直しになる）
   const box = React.useRef<HTMLDivElement>(null)
   React.useLayoutEffect(() => {
     const el = box.current
-    if (fullscreen && el && !el.matches(':popover-open')) el.showPopover()
-  }, [fullscreen])
+    if ((fullscreen || side) && el && !el.matches(':popover-open')) el.showPopover()
+  }, [fullscreen, side])
 
   // 右のパネルにタブとして置く。タブを閉じる・元に戻すと、会話の元の場所へ戻る
   const tabState = React.useSyncExternalStore(subscribePanel, getPanel)
@@ -304,8 +305,8 @@ export function ViewFrame({
     <>
     <div
       ref={box}
-      // popover の属性は全画面の間だけ付ける（付けたまま閉じると display: none になる）
-      popover={fullscreen ? 'manual' : undefined}
+      // popover の属性は全画面・右のパネルの間だけ付ける（付けたまま閉じると display: none になる）
+      popover={fullscreen || side ? 'manual' : undefined}
       role={fullscreen ? 'dialog' : undefined}
       aria-modal={fullscreen || undefined}
       aria-label={fullscreen ? '風土記の表とグラフ（全画面）' : side ? '風土記の表とグラフ' : undefined}
@@ -313,7 +314,7 @@ export function ViewFrame({
         fullscreen
           ? 'fixed inset-0 m-0 flex size-full max-h-none max-w-none flex-col border-0 bg-background p-0 text-foreground'
           : side
-            ? cn('fixed inset-y-0 right-0 z-40 w-1/2 flex-col border-l bg-background text-foreground', activeTab ? 'flex' : 'hidden')
+            ? cn('fixed inset-y-0 right-0 left-auto m-0 h-auto max-h-none w-1/2 flex-col border-0 border-l bg-background p-0 text-foreground', activeTab ? 'flex' : 'hidden')
             : 'group/view relative w-full overflow-hidden rounded-xl border bg-background'
       }
     >
@@ -382,10 +383,11 @@ export function ViewFrame({
         大きく開く
       </button>
     ) : null}
-    {drag ? (
+    {drag ? createPortal(
       <div aria-hidden className={`pointer-events-none fixed inset-y-0 right-0 z-50 flex w-1/2 items-center justify-center border-l-2 border-dashed text-sm transition-colors ${drag.over ? 'border-primary bg-primary/10 text-primary' : 'border-border bg-secondary/60 text-muted-foreground'}`}>
         ここに置くと右に開きます
-      </div>
+      </div>,
+      document.body,
     ) : null}
     </>
   )
