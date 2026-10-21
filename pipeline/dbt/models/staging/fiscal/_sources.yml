@@ -1636,6 +1636,22 @@ sources:
       direction: expenditure
       table_id: akishima-text-budget-expenditure
       kind: nodes
+  - name: j132080_2024_settlement_general_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132080'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-detail
+      kind: amounts
+  - name: j132080_2024_settlement_general_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132080'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-detail
+      kind: nodes
   - name: j132098_2024_settlement_general_expenditure_amounts
     meta:
       jurisdiction: '132098'
