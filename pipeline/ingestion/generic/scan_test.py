@@ -1,7 +1,7 @@
 import unittest
 
 from ingestion.generic.observe import Page, Rule, Word
-from ingestion.generic.scan import _cell_words, _text, agreed_headers
+from ingestion.generic.scan import _cell_words, _text, agreed_headers, apply_variant_chars
 from unittest.mock import patch
 from copy import deepcopy
 
@@ -339,3 +339,22 @@ class RepeatedHeadingTest(unittest.TestCase):
             previous = Item(group, 1, [], first, names[0], 0)
             item = Item(group, 2, [], second, names[1], 0)
             self.assertFalse(repeats(previous, item, ocr=True))
+
+
+class VariantCharsTest(unittest.TestCase):
+    def observation(self, engine):
+        return {'pages': [{'page_number': 1, 'engine': engine, 'regions': [{'id': 'full-page', 'observations': [
+            {'id': 'p1:full-page:a0:result0:r0', 'raw_text': '賦課徵収費'}, {'id': 'p1:full-page:a0:result0:r1', 'raw_text': '1,234'},
+            {'id': 'p1:unit-0:r0', 'raw_text': '增減'}]}]}]}
+
+    def test_a_paddle_name_gets_the_japanese_forms_and_the_receipt_names_the_observations(self):
+        original = self.observation('paddle')
+        result, receipt = apply_variant_chars(original)
+        self.assertEqual([o['raw_text'] for o in result['pages'][0]['regions'][0]['observations']], ['賦課徴収費', '1,234', '増減'])
+        self.assertEqual(original['pages'][0]['regions'][0]['observations'][0]['raw_text'], '賦課徵収費')
+        self.assertEqual(sorted(receipt), sorted(['徵→徴 1 件（p1:full-page:a0:result0:r0）', '增→増 1 件（p1:unit-0:r0）']))
+
+    def test_a_vision_observation_is_left_as_it_is(self):
+        original = self.observation('vision')
+        self.assertEqual(apply_variant_chars(original)[1], [])
+        self.assertEqual(apply_variant_chars(original)[0]['pages'][0]['regions'][0]['observations'][0]['raw_text'], '賦課徵収費')

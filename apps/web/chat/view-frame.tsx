@@ -4,7 +4,7 @@
 import * as React from 'react'
 import { AppBridge, PostMessageTransport } from '@modelcontextprotocol/ext-apps/app-bridge'
 import type { McpUiDisplayMode, McpUiStyles } from '@modelcontextprotocol/ext-apps'
-import { XIcon } from 'lucide-react'
+import { GripVerticalIcon, PanelRightOpenIcon, XIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
 import { relay } from './relay'
@@ -37,6 +37,8 @@ const WIDE = '(min-width: 768px)'
 // 横に開いている View の数と、開く前の body の margin（複数あっても最後に閉じたときに戻す）
 let sideOpen = 0
 let sideMargin = ''
+// 右のパネルは1枠。別の View が入ると、前の View は会話の中へ戻る
+let panel: { owner: object; release: () => void } | undefined
 const dark = () => matchMedia('(prefers-color-scheme: dark)').matches
 
 /** View に選ばせる表示の大きさ。広い画面では会話の右に並べ（side-by-side）、狭い画面では頁の上に全画面で重ねる */
@@ -97,7 +99,54 @@ export function ViewFrame({
     return () => media.removeEventListener('change', onChange)
   }, [])
   const side = expanded && wide
+  const me = React.useRef({})
   const fullscreen = expanded && !wide
+  // 取っ手を掴んでいる間だけ、右半分に置き場を出す。iframe の上では pointer が奪われるので、掴む場所は View の外に置く
+  const [drag, setDrag] = React.useState<{ over: boolean }>()
+  const dragged = React.useRef(false)
+  // 掴んでいる間の後始末。取っ手が消えたとき・中断されたとき・unmount でも必ず呼んで、置き場と iframe を元へ戻す
+  const stopDrag = React.useRef<() => void>(undefined)
+  const startDrag = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (e.button !== 0) return
+    stopDrag.current?.()
+    const handle = e.currentTarget
+    handle.setPointerCapture(e.pointerId)
+    const startX = e.clientX
+    let moved = false
+    dragged.current = false
+    const over = (x: number) => x > window.innerWidth / 2
+    const move = (ev: PointerEvent) => {
+      if (Math.abs(ev.clientX - startX) > 4) moved = dragged.current = true
+      if (moved) setDrag({ over: over(ev.clientX) })
+    }
+    const cleanup = () => {
+      window.removeEventListener('pointermove', move)
+      window.removeEventListener('pointerup', up)
+      window.removeEventListener('pointercancel', cancel)
+      window.removeEventListener('blur', cancel)
+      stopDrag.current = undefined
+      setDrag(undefined)
+    }
+    // 中断したときは click が来ないので、掴んだ印もここで戻す
+    const cancel = () => {
+      cleanup()
+      dragged.current = false
+    }
+    const up = (ev: PointerEvent) => {
+      cleanup()
+      if (moved && over(ev.clientX)) setMode('fullscreen')
+    }
+    window.addEventListener('pointermove', move)
+    window.addEventListener('pointerup', up)
+    window.addEventListener('pointercancel', cancel)
+    window.addEventListener('blur', cancel)
+    stopDrag.current = cancel
+  }
+  const grippable = !expanded && wide && ready
+  React.useEffect(() => {
+    if (!grippable) stopDrag.current?.()
+  }, [grippable])
+  React.useEffect(() => () => stopDrag.current?.(), [])
   const bridgeRef = React.useRef<AppBridge>(undefined)
   const modeRef = React.useRef(mode)
   modeRef.current = mode
@@ -125,7 +174,7 @@ export function ViewFrame({
         bridgeRef.current = bridge
         bridge.oncalltool = async (params) => (await relay(token, 'tools/call', { name: params.name, arguments: params.arguments ?? {} })) as never
         bridge.onopenlink = async ({ url }) => {
-          // 原典の PDF などの外部の頁は新しいタブで開き、こちらの頁を触らせない
+          // 出典の PDF などの外部の頁は新しいタブで開き、こちらの頁を触らせない
           if (/^https?:\/\//.test(url)) window.open(url, '_blank', 'noopener,noreferrer')
           return {}
         }
@@ -177,9 +226,13 @@ export function ViewFrame({
   // 横に開く間は、会話を左半分に寄せる
   React.useEffect(() => {
     if (!side) return
+    const owner = me.current
+    if (panel && panel.owner !== owner) panel.release()
+    panel = { owner, release: () => setMode('inline') }
     if (sideOpen++ === 0) sideMargin = document.body.style.marginRight
     document.body.style.marginRight = '50vw'
     return () => {
+      if (panel?.owner === owner) panel = undefined
       // 複数の View が横に開いていても、最後の1つが閉じたときに元へ戻す
       if (--sideOpen === 0) document.body.style.marginRight = sideMargin
     }
@@ -231,17 +284,47 @@ export function ViewFrame({
           </Button>
         </div>
       ) : null}
+      {grippable ? (
+        <div className="flex items-center border-b px-2 py-1">
+          <button
+            type="button"
+            onPointerDown={startDrag}
+            onClick={(e) => {
+              // 押しただけ（キーボードの Enter も含む）で右に開く。ドラッグしたあとの click は無視する
+              if (!dragged.current) setMode('fullscreen')
+              dragged.current = false
+            }}
+            className="flex cursor-grab touch-none items-center gap-1 rounded px-1.5 py-0.5 text-xs text-muted-foreground select-none hover:bg-secondary hover:text-foreground active:cursor-grabbing"
+            title="右にドラッグして、会話の横に並べる（クリックでも開きます）"
+          >
+            <GripVerticalIcon className="size-3.5" />
+            右に並べる
+          </button>
+        </div>
+      ) : null}
       {!ready ? (
         <div className="absolute inset-0 flex items-center justify-center gap-2 text-sm text-muted-foreground">
           <Spinner /> 表を準備しています
         </div>
       ) : null}
-      <iframe ref={frame} title="風土記の表とグラフ" sandbox="allow-scripts" className={expanded ? 'block min-h-0 w-full flex-1 border-0' : 'block w-full border-0'} style={expanded ? undefined : { height }} />
+      <iframe ref={frame} title="風土記の表とグラフ" sandbox="allow-scripts" className={`${expanded ? 'block min-h-0 w-full flex-1 border-0' : 'block w-full border-0'}${drag ? ' pointer-events-none' : ''}`} style={expanded ? undefined : { height }} />
     </div>
-    {!expanded && ready ? (
+    {side ? (
+      // 右のパネルへ移した View の元の場所。急に消えたように見えないよう、ここで開いている場所を示す
+      <div className="flex items-center justify-between gap-3 rounded-xl border border-dashed px-4 py-3 text-sm text-muted-foreground">
+        <span className="flex items-center gap-2"><PanelRightOpenIcon className="size-4" />右のパネルで開いています</span>
+        <Button variant="outline" size="sm" onClick={() => setMode('inline')}>元に戻す</Button>
+      </div>
+    ) : null}
+    {!expanded && !wide && ready ? (
       <button type="button" onClick={() => setMode('fullscreen')} className="mt-1 text-xs text-muted-foreground underline underline-offset-4 hover:text-foreground">
         大きく開く
       </button>
+    ) : null}
+    {drag ? (
+      <div aria-hidden className={`pointer-events-none fixed inset-y-0 right-0 z-50 flex w-1/2 items-center justify-center border-l-2 border-dashed text-sm transition-colors ${drag.over ? 'border-primary bg-primary/10 text-primary' : 'border-border bg-secondary/60 text-muted-foreground'}`}>
+        ここに置くと右に開きます
+      </div>
     ) : null}
     </>
   )

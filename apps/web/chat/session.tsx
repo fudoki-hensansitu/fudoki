@@ -5,7 +5,9 @@ import { createRoot } from 'react-dom/client'
 import { useChat } from '@ai-sdk/react'
 import { DefaultChatTransport, type DynamicToolUIPart, type UIMessage } from 'ai'
 import { CheckIcon, CircleAlertIcon, SquarePenIcon } from 'lucide-react'
+import { readSuggestions } from '../../../packages/fiscal/suggestions'
 import { Bubble, BubbleContent } from '@/components/ui/bubble'
+import { Button } from '@/components/ui/button'
 import { Marker, MarkerContent, MarkerIcon } from '@/components/ui/marker'
 import { Message, MessageContent } from '@/components/ui/message'
 import { Spinner } from '@/components/ui/spinner'
@@ -14,6 +16,7 @@ import { forServer } from './history'
 import { Markdown } from './markdown'
 import { loadSession, saveSession, type StoredSession } from './store'
 import { ViewFrame } from './view-frame'
+import { LOGO_G } from '../logo'
 
 /** 一番下からこの距離以内なら、読み終えて追っていると見なす */
 const NEAR_BOTTOM_PX = 120
@@ -22,9 +25,9 @@ type Metadata = { apps?: Record<string, string> }
 type ChatMessage = UIMessage<Metadata>
 
 const TOOL_LABELS: Record<string, string> = {
-  search_expenditure_nodes: '歳出を検索',
+  search_expenditure_nodes: '支出を検索',
   get_expenditure_node: '明細を開く',
-  list_jurisdictions: '収録している団体を確認',
+  list_jurisdictions: '収録している自治体を確認',
   search_evaluations: '事業の評価を検索',
   render_expenditure_view: '表とグラフを用意',
 }
@@ -39,6 +42,17 @@ function ToolMarker({ part }: { part: DynamicToolUIPart }) {
       <MarkerContent className={done || failed ? undefined : 'shimmer'}>{failed ? `${label}に失敗しました` : label}</MarkerContent>
     </Marker>
   )
+}
+
+/** 最後の応答の tool の結果に付いた、次の質問の候補（結果の _meta）。複数の tool があれば後のものを使う */
+function suggestionsOf(m: ChatMessage | undefined) {
+  if (m?.role !== 'assistant') return []
+  for (const p of m.parts.toReversed()) {
+    if (p.type !== 'dynamic-tool' || p.state !== 'output-available') continue
+    const found = readSuggestions((p.output as { _meta?: unknown } | undefined)?._meta)
+    if (found.length > 0) return found
+  }
+  return []
 }
 
 function Session({ id, stored }: { id: string; stored: StoredSession }) {
@@ -85,11 +99,14 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
     if (pinned.current) window.scrollTo({ top: document.documentElement.scrollHeight })
   }, [messages, status])
 
+  const suggestions = busy ? [] : suggestionsOf(messages.at(-1))
   const apps = (m: ChatMessage) => m.metadata?.apps ?? {}
   return (
     <div className="flex min-h-dvh w-full flex-col">
       <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-3">
-        <a href="/" className="font-medium text-primary">風土記</a>
+        <a href="/" aria-label="風土記 ホーム" className="text-primary">
+          <svg className="block h-7 w-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 146.2150 40" role="img" aria-hidden="true" dangerouslySetInnerHTML={{ __html: LOGO_G }} />
+        </a>
         <a href="/" aria-label="新しい会話" title="新しい会話" className="rounded-md p-2 text-muted-foreground hover:bg-secondary hover:text-foreground">
           <SquarePenIcon className="size-5" />
         </a>
@@ -121,6 +138,15 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
               </Message>
             </div>
           ))}
+          {suggestions.length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {suggestions.map((s) => (
+                <Button key={s.label} variant="outline" size="sm" className="h-auto whitespace-normal py-1.5 text-left" onClick={() => send(s.prompt)}>
+                  {s.label}
+                </Button>
+              ))}
+            </div>
+          ) : null}
           {status === 'submitted' ? (
             <div>
               <Marker>

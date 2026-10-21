@@ -169,5 +169,23 @@ class AmountCorrections(unittest.TestCase):
             with self.assertRaises(TypeError):
                 correct_amount('1,000', dictionary=dictionary, **kwargs)
 
+    def test_the_shipped_variant_table_is_valid_and_replaces_one_character_at_a_time(self):
+        from ingestion.lib.ocr_names import correct_variant_chars, load_variant_chars
+        table = load_variant_chars()
+        self.assertEqual(correct_variant_chars('徵産查', table), ('徴産査', [('徵', '徴'), ('查', '査')]))
+        self.assertEqual(correct_variant_chars('負担金、補助及び交付金', table)[1], [])
+
+    def test_a_variant_table_that_chains_or_repeats_is_refused(self):
+        import json, tempfile
+        from pathlib import Path
+        from ingestion.lib.ocr_names import load_variant_chars
+        for rules in ([('a', 'b'), ('b', 'c')], [('a', 'b'), ('a', 'c')], [('a', 'ab')]):
+            with tempfile.TemporaryDirectory() as directory, self.subTest(rules=rules):
+                path = Path(directory) / 'table.json'
+                path.write_text(json.dumps({'schema_version': 1, 'rules': [
+                    {'id': str(i), 'observed_char': a, 'corrected_char': b, 'reason': 'x'} for i, (a, b) in enumerate(rules)]}))
+                with self.assertRaises(ValueError):
+                    load_variant_chars(path)
+
 if __name__ == '__main__':
     unittest.main()

@@ -21,7 +21,8 @@ from ingestion.generic.layout import _frames, _header_bottom, normalize
 from ingestion.generic.observe import Page, Rule, Word
 from ingestion.lib import pdf_rules
 from ingestion.lib.scan_ocr import superseded
-from ingestion.lib.ocr_names import AmountDictionary, AmountRule, correct_amount, correct_name, load_name_dictionary
+from ingestion.lib.ocr_names import (AmountDictionary, AmountRule, correct_amount, correct_name, correct_variant_chars,
+                                     load_name_dictionary, load_variant_chars)
 
 # Vision reads the minus sign △ as a letter.
 MINUS = re.compile(r'^[AΔ▲−-]\s*(?=[0-9])')
@@ -263,7 +264,9 @@ def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None
                 parts.setdefault(item['parent_id'], []).append(Word(item['raw_text'], *item['bbox_pdf_pt']))
         for item in items:
             if item['kind'] == 'region':
-                pieces = None if item['id'] in corrected_regions else parts.get(item['id'])
+                # Paddle's word children are single characters and number fragments ('4' ',' '505'); only
+                # Vision's words are whole tokens. A Paddle line is split at the rules from its own text.
+                pieces = None if item['id'] in corrected_regions or item.get('attempt_id') else parts.get(item['id'])
                 whole = _text(item['raw_text'])
                 if (pieces and item['id'] not in corrected_word_parents and NUMBER.fullmatch(whole)
                         and whole != _text(''.join(p.text for p in pieces))
@@ -357,6 +360,29 @@ def read_headers(observed: list[Page], readings: list[dict] | None) -> list[Page
                 raise ValueError(f'A header reading covers a read amount: {reading["id"]}')
             words[number] = [w for w in words[number] if not any(w is i for i in inside)] + [Word(reading['text'], x0, y0, x1, y1)]
     return [Page(p.number, p.width, p.height, words[p.number], p.rules) for p in observed]
+
+
+@cache
+def variant_chars() -> dict[str, str]:
+    return load_variant_chars()
+
+
+def apply_variant_chars(observation: dict) -> tuple[dict, list[str]]:
+    """A copy of a Paddle observation with the characters of the shared table replaced one by one, and one
+    line of the receipt for each pair: `徵→徴 3 件（observation ids）`. Pages read by Vision are left as they are."""
+    result = json.loads(json.dumps(observation))
+    hits: dict[tuple[str, str], list[str]] = {}
+    for page in result['pages']:
+        if page.get('engine') != 'paddle':
+            continue
+        for region in page['regions']:
+            for o in region['observations']:
+                text, found = correct_variant_chars(o['raw_text'], variant_chars())
+                if found:
+                    o['raw_text'] = text
+                    for pair in found:
+                        hits.setdefault(pair, []).append(o['id'])
+    return result, [f'{a}→{b} {len(ids)} 件（{"・".join(ids)}）' for (a, b), ids in sorted(hits.items())]
 
 
 def apply_name_corrections(observation: dict, rules: list[dict] | None) -> dict:
@@ -747,7 +773,7 @@ def pinned(source: dict, selected_pages: list[int]) -> dict:
             number = p['page_number']
             if number in observed:
                 raise ValueError(f'Page {number} is read by more than one OCR input')
-            observed[number] = p
+            observed[number] = {**p, 'engine': observation['request'].get('engine')}  # the engine that read the page
     missing = set(selected_pages) - observed.keys()
     if missing:
         raise ValueError(f'No pinned OCR for pages {sorted(missing)}')
@@ -755,10 +781,11 @@ def pinned(source: dict, selected_pages: list[int]) -> dict:
 
 
 def read_pages(source: dict, options: dict, settings: dict | None, selected: list[int],
-               rules: dict | None = None, rule_hook=None, keep_marks: bool = False) -> tuple[list[Page], dict]:
+               rules: dict | None = None, rule_hook=None, keep_marks: bool = False) -> tuple[list[Page], dict, list[str]]:
     """The pinned OCR of `selected` pages as generic pages, with the conversion's declared rereads laid in
-    (dropped readings, name corrections bound to an observation, amount and code corrections, readings of what
-    OCR left unread, unit readings). A text document's OCR pages (`mixed.py`) are read by this too."""
+    (dropped readings, name corrections bound to an observation, the variant characters Paddle reads, amount and code
+    corrections, readings of what OCR left unread, unit readings), and the variant characters it replaced. A text
+    document's OCR pages (`mixed.py`) are read by this too."""
     observation = drop_readings(pinned(source, selected), options.get('dropped_readings'))
     columns = (settings or {}).get('columns')
     spread = (settings or {}).get('spread')
@@ -767,6 +794,7 @@ def read_pages(source: dict, options: dict, settings: dict | None, selected: lis
     # builder's, to a node by page, code and the name read (convert.correct_names).
     by_observation = [r for r in options.get('name_corrections', ()) if 'observation_id' in r]
     observation = apply_name_corrections(observation, by_observation)
+    observation, variants = apply_variant_chars(observation)
     printed = pages(observation, Path(source['path']), amount_dictionary(options.get('amount_corrections', [])), columns, rules,
                     spread=spread, header=header, code_corrections=options.get('code_corrections'),
                     header_readings=options.get('header_readings'),
@@ -775,7 +803,7 @@ def read_pages(source: dict, options: dict, settings: dict | None, selected: lis
     printed = add_code_readings(printed, options.get('code_readings'))
     printed = add_code_readings(printed, [{**r, 'box': box} for r in options.get('amount_readings', ()) for box in r['boxes']],
                                 'amount', r'△?(0|[1-9][0-9]{0,2}(,[0-9]{3})*)')
-    return read_units(printed, options.get('unit_readings')), observation
+    return read_units(printed, options.get('unit_readings')), observation, variants
 
 
 def build_table(source: dict, options: dict, *, stop: bool = True, rules: dict | None = None):
@@ -793,7 +821,7 @@ def build_table(source: dict, options: dict, *, stop: bool = True, rules: dict |
     spread = (settings or {}).get('spread')
     header = (settings or {}).get('header')
     by_node = [r for r in options.get('name_corrections', ()) if 'observation_id' not in r]
-    printed, observation = read_pages(source, options, settings, selected, rules)
+    printed, observation, variants = read_pages(source, options, settings, selected, rules)
     printed, recovered = recover_codes(printed, Path(source['path']), columns, spread=spread, header=header)
     report = Report()
     direction = source.get('direction')
@@ -810,6 +838,7 @@ def build_table(source: dict, options: dict, *, stop: bool = True, rules: dict |
         raise ValueError(f'Unit check failed: {report.unit}')
     kept, notes, amounts, unresolved, codes = split_notes(built)
     built.notes.extend({'kind': 'name correction', 'text': text} for text in correct_names(built.nodes, by_node))
+    built.notes.extend({'kind': 'variant characters', 'text': text} for text in variants)
     nodes = [*built.nodes, *notes]
     amounts, headings = canonical_headings([*kept, *amounts], nodes, kind, header)
     fine_sections(nodes)

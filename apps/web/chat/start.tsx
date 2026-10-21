@@ -6,7 +6,7 @@ import { saveSession } from './store'
 import { mountTurnstile } from './turnstile'
 
 /** 入力の placeholder に置く問いの例。幅390px の pill でも切れない長さにする */
-const EXAMPLE = '例：中野区の決算で一番大きい款は？'
+const EXAMPLE = '例：中野区で一番お金を使った分野は？'
 
 function Start({ sitekey }: { sitekey: string }) {
   const widget = React.useRef<HTMLDivElement>(null)

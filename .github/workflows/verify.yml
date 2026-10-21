@@ -31,4 +31,4 @@ jobs:
       - run: bun run pipeline/verify/python.ts
       - run: bun run pipeline/verify/docs.ts
       - name: 検証範囲を表示
-        run: echo '架空団体の fixture とコードの検証。' >> "$GITHUB_STEP_SUMMARY"
+        run: echo '架空自治体の fixture とコードの検証。' >> "$GITHUB_STEP_SUMMARY"
