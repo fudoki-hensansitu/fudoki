@@ -251,7 +251,7 @@ models:
     - unique
     - not_null
   - name: sha256
-    description: 原典ファイルの SHA-256。
+    description: 原典ファイルの SHA-256。風土記が取得・保存した時点のもの。自治体がファイルを再保存すると、url から取得したファイルの SHA-256 とは一致しないことがある。
     data_tests:
     - not_null
   - name: jurisdiction_code

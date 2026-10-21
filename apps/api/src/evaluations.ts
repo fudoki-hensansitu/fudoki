@@ -77,7 +77,7 @@ const input = z.strictObject({
 
 const Document = z
   .strictObject({
-    origin_sha256: z.string().describe('原典 PDF の SHA-256。'),
+    origin_sha256: z.string().describe('原典 PDF の SHA-256。風土記が取得・保存した時点のもの。自治体がファイルを再保存すると、url から取得したファイルの SHA-256 とは一致しないことがある。'),
     title: z.string().describe('資料の題。'),
     evaluated_fiscal_year: z.int().describe('評価対象の決算年度。資料の題の年度とは違うことがある。'),
     url: z.string().describe('原典 PDF の URL。'),
@@ -88,7 +88,7 @@ const Document = z
 const Candidate = z
   .strictObject({
     rank: z.int().describe('検索の順位（1が先頭）。'),
-    origin_sha256: z.string().describe('原典 PDF の SHA-256。'),
+    origin_sha256: z.string().describe('原典 PDF の SHA-256。風土記が取得・保存した時点のもの。自治体がファイルを再保存すると、url から取得したファイルの SHA-256 とは一致しないことがある。'),
     page: z.int().describe('原典 PDF の物理頁（1始まり。印字された頁番号とは別）。'),
     url: z.string().describe('原典 PDF の URL。'),
     page_url: z.string().describe('原典 PDF の該当頁を指す URL（url#page=頁）。内容を読むにはこの頁を自分で取得する。'),
