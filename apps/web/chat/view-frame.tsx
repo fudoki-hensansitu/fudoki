@@ -421,7 +421,11 @@ export function ViewFrame({
       </button>
     ) : null}
     {drag ? createPortal(
-      <div aria-hidden className={`pointer-events-none fixed inset-y-0 right-0 z-50 flex w-1/2 items-center justify-center border-l-2 border-dashed text-sm transition-colors ${drag.over ? 'border-primary bg-primary/10 text-primary' : 'border-border bg-secondary/60 text-muted-foreground'}`}>
+      <div
+        ref={(el) => { if (el && !el.matches(':popover-open')) el.showPopover() }}
+        popover="manual"
+        aria-hidden
+        className={`pointer-events-none fixed inset-y-0 right-0 left-auto m-0 flex h-auto w-1/2 items-center justify-center overflow-visible border-0 border-l-2 border-dashed p-0 text-sm transition-colors ${drag.over ? 'border-primary bg-primary/10 text-primary' : 'border-border bg-secondary/60 text-muted-foreground'}`}>
         ここに置くと右に開きます
       </div>,
       document.body,
