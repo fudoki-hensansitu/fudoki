@@ -40,8 +40,8 @@ beforeEach(() => {
   insertCoverage(sqlite, { jurisdiction_code: '132063', fiscal_year: 2024, document_kind: 'settlement', account_name: '一般会計', origin_id: 'o1' })
 })
 
-describe('団体と収録範囲（GET /v1/jurisdictions・list_jurisdictions）', () => {
-  test('団体名で、6桁のコードと収録している年度・資料区分・会計・原典を1回で得る', async () => {
+describe('自治体と収録範囲（GET /v1/jurisdictions・list_jurisdictions）', () => {
+  test('自治体名で、6桁のコードと収録している年度・資料区分・会計・出典を1回で得る', async () => {
     const body = await list(`?name=${encodeURIComponent('武蔵野市')}`)
     expect(body).toEqual({
       jurisdictions: [
@@ -82,7 +82,7 @@ describe('団体と収録範囲（GET /v1/jurisdictions・list_jurisdictions）'
     expect(await list('?code=13203')).toEqual(six)
   })
 
-  test('絞らなければ全団体をコード順に、ページをまたいで欠落・重複なく返す', async () => {
+  test('絞らなければ全自治体をコード順に、ページをまたいで欠落・重複なく返す', async () => {
     const all = await list()
     expect(all.jurisdictions.map((j: { jurisdiction_code: string }) => j.jurisdiction_code)).toEqual(['131016', '132039', '132063', '342076'])
     const seen: string[] = []
@@ -90,7 +90,7 @@ describe('団体と収録範囲（GET /v1/jurisdictions・list_jurisdictions）'
     for (let i = 0; i < 10; i++) {
       const page: { jurisdictions: { jurisdiction_code: string }[]; next_page_token: string | null } = await list(`?page_size=1${token ? `&page_token=${token}` : ''}`)
       seen.push(...page.jurisdictions.map((j) => j.jurisdiction_code))
-      // 団体の収録範囲はページで切らない
+      // 自治体の収録範囲はページで切らない
       expect(page.jurisdictions).toEqual(all.jurisdictions.filter((j: { jurisdiction_code: string }) => page.jurisdictions.some((p) => p.jurisdiction_code === j.jurisdiction_code)))
       token = page.next_page_token
       if (token === null) break

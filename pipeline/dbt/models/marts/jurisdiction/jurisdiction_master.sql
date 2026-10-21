@@ -1,5 +1,5 @@
--- 団体マスタ（ADR 0015）。名称・OCD ID は packages/jurisdictions/jurisdictions.json が正本で、
--- 都道府県はマスタに無いので団体コードの先頭2桁から引く。
+-- 自治体マスタ（ADR 0015）。名称・OCD ID は packages/jurisdictions/jurisdictions.json が正本で、
+-- 都道府県はマスタに無いので自治体コードの先頭2桁から引く。
 select j.jurisdiction_code,
     j.name,
     p.prefecture_code,

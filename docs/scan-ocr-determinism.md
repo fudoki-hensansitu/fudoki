@@ -16,9 +16,9 @@
 - 各実行は別プロセスで、engineを毎回初期化した。1プロセス内でengineを再利用した2回目の認識も比較した。
 - 実行中は同じMacで他のagentの処理が動いており、1分間のload averageは4.8〜10.0だった。所要時間はこの負荷を含む。
 
-対象の原典はR2の保存記録から取得し、SHA-256を照合した。
+対象の出典はR2の保存記録から取得し、SHA-256を照合した。
 
-| 対象 | 原典SHA-256 | 物理頁 |
+| 対象 | 出典SHA-256 | 物理頁 |
 | --- | --- | --- |
 | 132039 武蔵野市 2025年度決算 `settlement-4.pdf`（水道事業会計） | `84743fdd8cf408d7c7f9cbe4e92cdea0708cabfe2407421286eb91db93e783b0` | 6–9・38–43（10頁） |
 | 132101 小金井市 2025年度決算 `settlement-3.pdf`（一般会計） | `0b1af0ae74a6964525621308a1390afa66d735edfd2ca534de8cd64230522b3c` | 1–4（4頁） |
@@ -83,4 +83,4 @@ native JSON（現行の `indent=2` 出力）の大きさは、132039の10頁で1
 - 実行コード: `scripts/run_ocr.py`（SHA-256 `5880ae20944e1a60cb51e5c1cb3b083920e0f3ea915bd380b00cb876781e81a2`）、`scripts/batch.sh`（`28660d8ee709b4d8ea2e65dcec311be249565c57ec5b1ec7d5f9df390485c09c`）。
 - 比較コード: `scripts/compare.py`（`c4d78e232a3fe8f2972aea53caae891b025a58752c5538e47aaba122082a4c41`）、凍結済み設定の再生: `scripts/replay_132039.py`（`a53d321dc4b9c88bcecd96af2b9a8adeafec8824ff97ab5e8701d50da6a31a11`）。
 - 比較結果: `reports/132039.json`、`reports/132101.json`、`reports/132039-replay-proc1.json`。
-- 各実行の所要時間・ログ: `runs/<団体>/<実行>/summary.json` と `runs/<団体>/<実行>.log`。比較後、再生成できる各実行のnative（計約67MB）と原典PDFの複製は削除した。作り直すときは原典をR2から取得し、`scripts/batch.sh` を実行する。
+- 各実行の所要時間・ログ: `runs/<自治体>/<実行>/summary.json` と `runs/<自治体>/<実行>.log`。比較後、再生成できる各実行のnative（計約67MB）と出典PDFの複製は削除した。作り直すときは出典をR2から取得し、`scripts/batch.sh` を実行する。

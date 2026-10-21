@@ -35,7 +35,7 @@ describe('EXPLAIN QUERY PLAN', () => {
     expect(rows.map((r) => r.detail).join('\n')).toMatch(/_parent_node_id \(parent_node_id=\?\)/)
   })
 
-  test('団体のページの収録範囲は jurisdiction_code の index で引く', () => {
+  test('自治体のページの収録範囲は jurisdiction_code の index で引く', () => {
     const rows = sqlite
       .query(`EXPLAIN QUERY PLAN SELECT * FROM expenditure_coverage WHERE jurisdiction_code IN (SELECT jurisdiction_code FROM jurisdiction_master ORDER BY jurisdiction_code LIMIT ? OFFSET ?)`)
       .all(10, 0) as { detail: string }[]

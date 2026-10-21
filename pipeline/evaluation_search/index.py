@@ -1,7 +1,7 @@
 """評価資料を頁ごとの PDF にして AI Search の索引へ登録する（dd.md「索引の登録 script と宣言」）。
 
     bun run --cwd pipeline evaluation:index            # 計画の表示だけ（R2 と索引は読むだけ）
-    bun run --cwd pipeline evaluation:index --write    # 登録して、確認できた原典の記録を instance.json に書く
+    bun run --cwd pipeline evaluation:index --write    # 登録して、確認できた出典の記録を instance.json に書く
 
 ネットワークと `cf` を使うので sandbox の外で手動実行し、CI では回さない。分割した PDF は保存しない。
 """
@@ -63,7 +63,7 @@ def search_cf(instance_name: str, *args: str, parse: bool = True):
     return cf('ai-search', *args, '--name', NAMESPACE, '--id', instance_name, parse=parse)
 
 
-# --- 原典 -------------------------------------------------------------------
+# --- 出典 -------------------------------------------------------------------
 
 def sha256_of(path: Path) -> str:
     digest = hashlib.sha256()
@@ -74,7 +74,7 @@ def sha256_of(path: Path) -> str:
 
 
 def fetch_origin(origin: plan.Origin) -> Path:
-    """R2 の原典をローカルの cache に置く。選定の sha256 と違えば止める（cache が壊れていれば取り直す）。"""
+    """R2 の出典をローカルの cache に置く。選定の sha256 と違えば止める（cache が壊れていれば取り直す）。"""
     path = CACHE / f'{origin.sha256}.pdf'
     if path.exists() and sha256_of(path) == origin.sha256:
         return path
@@ -98,13 +98,13 @@ def fetch_origin(origin: plan.Origin) -> Path:
             raise
     if sha256_of(temporary) != origin.sha256:
         temporary.unlink(missing_ok=True)
-        raise ValueError(f'R2 の原典の sha256 が選定と違う: {origin.r2_key}')
+        raise ValueError(f'R2 の出典の sha256 が選定と違う: {origin.r2_key}')
     temporary.replace(path)
     return path
 
 
 def split_page(document, page: int) -> bytes:
-    """原典の 1 頁（1 始まり）だけの PDF。4MiB を超えれば止める。pdfium は thread safe ではないので主 thread で呼ぶ。"""
+    """出典の 1 頁（1 始まり）だけの PDF。4MiB を超えれば止める。pdfium は thread safe ではないので主 thread で呼ぶ。"""
     single = pdfium.PdfDocument.new()
     buffer = io.BytesIO()
     try:
@@ -239,7 +239,7 @@ def compare(origin_plan: OriginPlan, indexed: dict[str, dict]) -> None:
 
 
 def build_plans(instance: dict, origins: list[plan.Origin]) -> tuple[list[OriginPlan], list[dict], dict]:
-    """原典を取って頁に分け、索引の item と比べる。分割した PDF の大きさもここで確かめる（保存はしない）。"""
+    """出典を取って頁に分け、索引の item と比べる。分割した PDF の大きさもここで確かめる（保存はしない）。"""
     config = instance['config']
     indexed = {item['key']: item for item in list_items(config['name'])}
     plans: list[OriginPlan] = []
@@ -275,7 +275,7 @@ def describe(plans: list[OriginPlan], strays: list[dict]) -> None:
     for p in plans:
         o = p.origin
         state = '記録あり' if p.recorded else '記録なし'
-        log(f'{o.jurisdiction} {o.fiscal_year} {o.sha256[:12]} 原典{p.page_count}頁 → 登録{len(p.pages)}頁 {p.fmt} '
+        log(f'{o.jurisdiction} {o.fiscal_year} {o.sha256[:12]} 出典{p.page_count}頁 → 登録{len(p.pages)}頁 {p.fmt} '
             f'[{state}] 登録済み{p.ok} 待ち{p.waiting} 追加{len(p.add)} 削除{len(p.delete)}')
     log(f'計画に無い item: {len(strays)}')
 
@@ -314,7 +314,7 @@ def apply(instance: dict, plans: list[OriginPlan], strays: list[dict], workers: 
         if p.dirty:
             drop_record(instance, p.origin)  # 書く前に記録を消す。確認できるまで catalog に載せない
     # 削除は続けると 429・timeout になる。失敗しても止めずに登録へ進む。消し残した item は確認で「余分」になり、
-    # その原典の記録を書かないので catalog に載らない。次の実行で消し直す
+    # その出典の記録を書かないので catalog に載らない。次の実行で消し直す
     failed = 0
     for item in [*strays, *(i for p in plans for i in p.delete)]:
         try:
@@ -353,7 +353,7 @@ def readable(name: str, p: OriginPlan, indexed: dict[str, dict]) -> bool:
     key = next(item['key'] for item in p.items if item['metadata']['page'] == p.probe_page)
     try:
         chunks = search_cf(name, 'items', 'chunks', indexed[key]['id']) or []
-    except RuntimeError as error:  # 一時的な失敗では止めず、記録しないまま次の原典へ。再実行で確かめ直す
+    except RuntimeError as error:  # 一時的な失敗では止めず、記録しないまま次の出典へ。再実行で確かめ直す
         log(f'{p.origin.sha256[:12]}: chunk を取れず、本文を確かめられない: {error}')
         return False
     converted = converted_chars(chunks)
@@ -364,7 +364,7 @@ def readable(name: str, p: OriginPlan, indexed: dict[str, dict]) -> bool:
 
 
 def wait_and_confirm(instance: dict, plans: list[OriginPlan], timeout_minutes: int) -> bool:
-    """全 item が completed になり、数と metadata が計画と一致した原典だけ記録を書く。"""
+    """全 item が completed になり、数と metadata が計画と一致した出典だけ記録を書く。"""
     name = instance['config']['name']
     targets = [p for p in plans if p.dirty]
     deadline = time.time() + timeout_minutes * 60
@@ -402,7 +402,7 @@ def wait_and_confirm(instance: dict, plans: list[OriginPlan], timeout_minutes: i
         if pending == 0 or time.time() > deadline:
             break
         time.sleep(POLL_SECONDS)
-    # 数の一致: 索引にあるこの原典の item が計画と同数
+    # 数の一致: 索引にあるこの出典の item が計画と同数
     ok = True
     for p in targets:
         extra = [k for k in indexed if k.startswith(p.origin.sha256 + '_') and k not in {i['key'] for i in p.items}]
@@ -424,7 +424,7 @@ def wait_and_confirm(instance: dict, plans: list[OriginPlan], timeout_minutes: i
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument('--write', action='store_true', help='索引へ書き込み、確認できた原典の記録を instance.json に書く')
+    parser.add_argument('--write', action='store_true', help='索引へ書き込み、確認できた出典の記録を instance.json に書く')
     parser.add_argument('--workers', type=int, default=3, help='cf の同時実行数（既定 3）')
     parser.add_argument('--timeout-minutes', type=int, default=DEFAULT_TIMEOUT_MINUTES, help='取り込みを待つ期限')
     args = parser.parse_args(argv)

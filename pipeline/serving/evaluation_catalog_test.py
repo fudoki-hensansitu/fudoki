@@ -43,7 +43,7 @@ class EvaluationCatalogTest(unittest.TestCase):
         instance = {'config': config, 'registrations': [record(by_sha[A], 108, config), record(by_sha[B], 63, config)]}
         formats = {d['origin_sha256']: d['item_format'] for d in evaluation_catalog.build(self.origins, instance)['documents']}
         self.assertEqual(formats, {A: 'md', B: 'pdf'})
-        # 宣言だけ足して登録し直していない（PDF の形の記録のまま）原典は載せない
+        # 宣言だけ足して登録し直していない（PDF の形の記録のまま）出典は載せない
         stale = {'config': config, 'registrations': [record(by_sha[A], 108)]}
         self.assertEqual(evaluation_catalog.build(self.origins, stale)['documents'], [])
 

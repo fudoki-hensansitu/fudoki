@@ -2,7 +2,7 @@ import type { Origin, TreeNode, ViewData } from '../ui/types'
 
 const origin: Origin = {
   origin_id: 'ok',
-  title: '試験原典 ok',
+  title: '試験出典 ok',
   url: 'https://city.fudoki.dev/ok.pdf',
   format: 'pdf',
 }
@@ -135,7 +135,7 @@ export function chartData(scenario: string, id?: string, more = false): ViewData
     { ...kanWelfare, node_id: 'cmp-2', jurisdiction_code: '000003', amount_yen: 9_870_000_000, parent_node_id: null },
     { ...kanWelfare, node_id: 'cmp-3', fiscal_year: 2023, amount_yen: 3_650_000_000 },
   ], origins: [origin], next_page_token: null }
-  // 2団体の款（2025年度の中央区・新宿区の決算の金額）。款の名前は団体ごとに違う
+  // 2自治体の款（2025年度の中央区・新宿区の決算の金額）。款の名前は自治体ごとに違う
   if (scenario === 'chart-cities') return { nodes: [
     ...CITY_KAN.A.map(([name, oku], i) => ({ ...fiscal(`city-a-${i}`, name, '款', oku * 100, null), fiscal_year: 2025 })),
     ...CITY_KAN.B.map(([name, oku], i) => ({ ...fiscal(`city-b-${i}`, name, '款', oku * 100, null), fiscal_year: 2025, jurisdiction_code: '000003' })),

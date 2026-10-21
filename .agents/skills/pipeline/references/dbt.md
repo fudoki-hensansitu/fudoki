@@ -4,25 +4,25 @@
 
 ## 入力を確認する
 
-1. `ingestion/fiscal/jurisdictions/<団体>/<年度>/<資料区分>/<方向>.json` を読み、そこで参照される保存済みParquetを `ingestion:restore` で復元して読む。`ingestion:check` で対象・原典選定・scope・fingerprintを検査する。dbt の入力宣言（`pipeline/dbt/models/staging/fiscal/_sources.yml`）は `dbt/scripts/generate_sources.py` が管理 JSON から生成する（決算と当初予算の歳出。PDF はノードの表・金額の表、CSV は原文の表）。手で表を足さない。通らない表の除外は同スクリプトの EXCLUDE に理由付きで宣言する。
-2. 原典の抽出やBの検査は再実行しない。階層はノードの表の親子、単位と金額欄の見出しは金額の表、会計と注記は管理JSONの `tables[]` から取り、不足を推定値・空表で補わない。段の名前は共通規則で付ける（科目軸の深さ1/2/3は款・項・目、それ以外の軸は印字見出しか `内訳{深さ}`。[ADR 0025](../../../../docs/adr/0025-level-names-by-shared-rule.md)）。見出しから金額の段階への対応は取り込みと共通の辞書 `pipeline/shared/fiscal_amount_map.csv` に宣言する（[ADR 0021](../../../../docs/adr/0021-level-and-phase-map-in-dbt-seed.md)）。PDFの表はすべてノードの表に移行済み（横持ちの表は削除済み）。CSVは原文の表を読む。
+1. `ingestion/fiscal/jurisdictions/<自治体>/<年度>/<資料区分>/<方向>.json` を読み、そこで参照される保存済みParquetを `ingestion:restore` で復元して読む。`ingestion:check` で対象・出典選定・scope・fingerprintを検査する。dbt の入力宣言（`pipeline/dbt/models/staging/fiscal/_sources.yml`）は `dbt/scripts/generate_sources.py` が管理 JSON から生成する（決算と当初予算の歳出。PDF はノードの表・金額の表、CSV は原文の表）。手で表を足さない。通らない表の除外は同スクリプトの EXCLUDE に理由付きで宣言する。
+2. 出典の抽出やBの検査は再実行しない。階層はノードの表の親子、単位と金額欄の見出しは金額の表、会計と注記は管理JSONの `tables[]` から取り、不足を推定値・空表で補わない。段の名前は共通規則で付ける（科目軸の深さ1/2/3は款・項・目、それ以外の軸は印字見出しか `内訳{深さ}`。[ADR 0025](../../../../docs/adr/0025-level-names-by-shared-rule.md)）。見出しから金額の段階への対応は取り込みと共通の辞書 `pipeline/shared/fiscal_amount_map.csv` に宣言する（[ADR 0021](../../../../docs/adr/0021-level-and-phase-map-in-dbt-seed.md)）。PDFの表はすべてノードの表に移行済み（横持ちの表は削除済み）。CSVは原文の表を読む。
 
 ## 構築結果を確認する
 
-- marts の木の表は原典の位置として頁（`source_page`・`amount_source_page`）と印字の枠（`source_x0`〜`source_y1`・`amount_source_x0`〜`amount_source_y1`、左上原点の pt）を持つ。座標は PDF だけで、CSV は NULL。金額の枠は印字が一つで全額のときだけ入り、複数の印字を足した額は頁が最初の頁でも NULL（検査は `tests/fiscal_source_coordinates.sql`）。R2 の取り込み表で金額の位置が未保存なら金額の座標は NULL になる。
-- 原典行の対応、値と単位、欠落・二重収録、集約を確認する。stagingの行数一致だけで全値一致としない。単位・金額段階の根拠は原典から取り、宣言どうしの一致だけで済ませない。
+- marts の木の表は出典の位置として頁（`source_page`・`amount_source_page`）と印字の枠（`source_x0`〜`source_y1`・`amount_source_x0`〜`amount_source_y1`、左上原点の pt）を持つ。座標は PDF だけで、CSV は NULL。金額の枠は印字が一つで全額のときだけ入り、複数の印字を足した額は頁が最初の頁でも NULL（検査は `tests/fiscal_source_coordinates.sql`）。R2 の取り込み表で金額の位置が未保存なら金額の座標は NULL になる。
+- 出典行の対応、値と単位、欠落・二重収録、集約を確認する。stagingの行数一致だけで全値一致としない。単位・金額段階の根拠は出典から取り、宣言どうしの一致だけで済ませない。
 - コード・宣言・判断はGitで管理する。DB・CSV・検査結果は再生成するローカル領域（`pipeline/.build/`）に置く。
 - 構築成功を全公開資料の収録完了と扱わない。
-- 会計の種類は語の辞書 `seeds/fiscal/account_kind_map.csv` で付け、辞書に無い会計名は構築を止める。会計間の繰出は目・節・備考の名称規則で印を付け（受け手の決まる内訳へ。内訳の繰出額が節の全額を説明する場合だけ移し、部分内訳・不明は節を維持）、金額は消さない。節も備考も無い団体は拾えず、印は網羅ではない（[ADR 0023](../../../../docs/adr/0023-account-kind-and-no-consolidation.md)）。
+- 会計の種類は語の辞書 `seeds/fiscal/account_kind_map.csv` で付け、辞書に無い会計名は構築を止める。会計間の繰出は目・節・備考の名称規則で印を付け（受け手の決まる内訳へ。内訳の繰出額が節の全額を説明する場合だけ移し、部分内訳・不明は節を維持）、金額は消さない。節も備考も無い自治体は拾えず、印は網羅ではない（[ADR 0023](../../../../docs/adr/0023-account-kind-and-no-consolidation.md)）。
 
 ## stagingを定義する
 
-1. 対象の管理JSONと、SHA・サイズを照合したノードの表と金額の表を読む。値と親子は Parquet、会計・注記・対象は管理JSON、原典の情報は selection から確認する。通常はこの入力だけで定義し、意味が不足する場合だけ原典に戻る。設計は [dbt モデルの設計](../../../../docs/prd/fiscal-dbt-models/dd.md) を参照する。
+1. 対象の管理JSONと、SHA・サイズを照合したノードの表と金額の表を読む。値と親子は Parquet、会計・注記・対象は管理JSON、出典の情報は selection から確認する。通常はこの入力だけで定義し、意味が不足する場合だけ出典に戻る。設計は [dbt モデルの設計](../../../../docs/prd/fiscal-dbt-models/dd.md) を参照する。
 2. 管理している PDF の表は支出の木の表だけで、支出額の集計に使わない補助表（総括・財源内訳・予備費充用・貸付金状況など）は取り込みの管理から外してある。文字観測など調査だけに使う表を歳出明細へ混ぜない。目の下の独立した分解（節の一覧と事業の説明など）は軸ごとの枝として保ち、軸の違うノードや親と子を足さない。
-3. `pipeline/dbt/models/staging/fiscal/` にsourceと薄いSQLを置く。PDFのノードの表と金額の表は全団体で同じ形なので、書式ごとにSQLを分けず、対象を区別して `union all` で扱う。CSVの原文の表は書式ごとにstagingを作り、どの列が款・項・目・節の番号・名称・金額かをymlで宣言する。ノードの形への変換は intermediate で行う。取り込みの行と1対1を保ち、段の名前・金額の段階の対応、単位換算、表をまたぐ款・項・目のまとめ、共通分類は後段に置く。
+3. `pipeline/dbt/models/staging/fiscal/` にsourceと薄いSQLを置く。PDFのノードの表と金額の表は全自治体で同じ形なので、書式ごとにSQLを分けず、対象を区別して `union all` で扱う。CSVの原文の表は書式ごとにstagingを作り、どの列が款・項・目・節の番号・名称・金額かをymlで宣言する。ノードの形への変換は intermediate で行う。取り込みの行と1対1を保ち、段の名前・金額の段階の対応、単位換算、表をまたぐ款・項・目のまとめ、共通分類は後段に置く。
 4. 原文へ戻れる対応を保持し、利用する文字列は必ず共通の `trim_cell`、金額は `staging_amount` を通す。NFKC・前後trimを既定とし、個別SQLへ変換を複製しない。金額は原文列を残して数値列を追加する。変換できない値を黙ってNULLや0にしない。
 5. 管理JSONから入力を固定し、対象モデルだけを構築・検査する。dbtには `--select <モデル>` を指定する。別の検証用DB・targetを使い、通常の構築結果を上書きしない。
-   候補の置き場は `<candidate-dir>/<団体>/<年度>/<資料区分>/<方向>/manifest.json` と同じディレクトリの `<table_id>-nodes.parquet` / `<table_id>-amounts.parquet`（CSV は `<table_id>-csv.parquet`）。その対象の全表を置き、候補のない対象はキャッシュした保存済み表から読む。従来の `<candidate-dir>/<団体>/manifest.json` も使えるが、同じ団体の別年度・資料区分を扱うときは新しい配置を使う。空の候補ディレクトリ・宣言に使われない候補・提供した対象の欠けた表は停止する。
+   候補の置き場は `<candidate-dir>/<自治体>/<年度>/<資料区分>/<方向>/manifest.json` と同じディレクトリの `<table_id>-nodes.parquet` / `<table_id>-amounts.parquet`（CSV は `<table_id>-csv.parquet`）。その対象の全表を置き、候補のない対象はキャッシュした保存済み表から読む。従来の `<candidate-dir>/<自治体>/manifest.json` も使えるが、同じ自治体の別年度・資料区分を扱うときは新しい配置を使う。空の候補ディレクトリ・宣言に使われない候補・提供した対象の欠けた表は停止する。
    検証用DBへは `prepare.prepare(warehouse_path, candidate_dir)` で準備し、同じDBを指す dbt profile の `--profiles-dir` で構築する。対象外の保存済み表が未キャッシュなら先に `ingestion:restore --remote` で復元する（候補と `--remote` は併用しない）。
 6. 入力と出力の行の対応、重複を含む原文値の一致、識別情報、数値の型・単位を確認する。親の金額と子の金額を合計せず、同じ軸で子の和と親の金額を照合する。
 7. チャットでモデルの場所、実行範囲、変換前後の例と実施した変換を短く伝える。コードから読める処理を別の説明表や文書へ重ねない。

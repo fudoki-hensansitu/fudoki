@@ -8,7 +8,7 @@ export interface Bar {
   key: string
   label: string
   kind?: string
-  /** 団体・年度など、行ごとに違うときだけ出す補足 */
+  /** 自治体・年度など、行ごとに違うときだけ出す補足 */
   note?: string
   amount: number | null
   onSelect?: () => void
@@ -18,7 +18,7 @@ export const FOLD = 10
 
 /**
  * 金額を横棒の長さで見せる。割合を出す兄弟の一覧では、棒も合計に対する比にして、% と長さを一致させる。
- * 割合を出さない一覧（団体・年度の混在、続きがある）では合計が意味を持たないので、最大の行に対する長さにする。
+ * 割合を出さない一覧（自治体・年度の混在、続きがある）では合計が意味を持たないので、最大の行に対する長さにする。
  */
 export function BarList({ bars, share, busy, label, keepOrder = false, fold = FOLD }: {
   bars: Bar[]

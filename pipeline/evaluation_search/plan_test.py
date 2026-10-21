@@ -172,7 +172,7 @@ class PlanTest(unittest.TestCase):
 
 
 class ConvertedCharsTest(unittest.TestCase):
-    """取り込み後の本文の文字数。変換の見出しだけの頁を読めたと数えると、検索に出ない原典が catalog に載る。"""
+    """取り込み後の本文の文字数。変換の見出しだけの頁を読めたと数えると、検索に出ない出典が catalog に載る。"""
 
     HEADER = f'# {A}_p0001.pdf\n## Metadata\n- Creator=PDFium\n- Producer=PDFium\n\n\n\n## Contents\n### Page 1'
 

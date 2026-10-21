@@ -1,7 +1,7 @@
 version: 2
 models:
 - name: jurisdiction_master
-  description: 団体マスタ（ADR 0015）。packages/jurisdictions/jurisdictions.json の全団体を、収録の有無に関わらず持つ。改称・合併の履歴は持たない。
+  description: 自治体マスタ（ADR 0015）。packages/jurisdictions/jurisdictions.json の全自治体を、収録の有無に関わらず持つ。改称・合併の履歴は持たない。
   columns:
   - name: jurisdiction_code
     description: 全国地方公共団体コード（6桁、末尾は検査数字）。木の表・origin の jurisdiction_code と同じ値。検査数字を除いた先頭5桁でも一意に決まる。
@@ -9,15 +9,15 @@ models:
     - not_null
     - unique
   - name: name
-    description: 団体の名称（例：武蔵野市）。全国では一意でない（府中市は東京都と広島県にある）ので、都道府県と合わせて区別する。
+    description: 自治体の名称（例：武蔵野市）。全国では一意でない（府中市は東京都と広島県にある）ので、都道府県と合わせて区別する。
     data_tests:
     - not_null
   - name: prefecture_code
-    description: 都道府県コード（JIS X 0401）。団体コードの先頭2桁。
+    description: 都道府県コード（JIS X 0401）。自治体コードの先頭2桁。
     data_tests:
     - not_null
   - name: prefecture_name
-    description: 都道府県の名称。団体マスタには無いので、団体コードの先頭2桁から引いた値。
+    description: 都道府県の名称。自治体マスタには無いので、自治体コードの先頭2桁から引いた値。
     data_tests:
     - not_null
   - name: ocd_id

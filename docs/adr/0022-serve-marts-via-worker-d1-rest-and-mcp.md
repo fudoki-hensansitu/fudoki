@@ -2,7 +2,7 @@
 
 状態: 採用（2026-10-11）。2026-10-12 改訂・実装
 
-提供用データ（marts）の歳出の木を Cloudflare D1 に載せ、Cloudflare Workers（Workers Paid）が `https://api.fudoki.dev` で REST と MCP の両方を返す。操作は一度だけ定義し、Hono の REST の route と MCP の tool の両方に登録する。検索は AIP-136 の custom method（`:search`）として POST し、条件は構造化した JSON で受ける。Get は AIP-131 に従う。生 SQL と集計の操作は持たない。主な利用者は MCP 経由の AI で、問い合わせは絞り込みが中心になる。この規模（決算10団体・当初予算2団体で約3.8万行、全国でも1年度・1資料区分で約850万行）なら、D1 と Worker だけの最小構成で足りる。
+提供用データ（marts）の歳出の木を Cloudflare D1 に載せ、Cloudflare Workers（Workers Paid）が `https://api.fudoki.dev` で REST と MCP の両方を返す。操作は一度だけ定義し、Hono の REST の route と MCP の tool の両方に登録する。検索は AIP-136 の custom method（`:search`）として POST し、条件は構造化した JSON で受ける。Get は AIP-131 に従う。生 SQL と集計の操作は持たない。主な利用者は MCP 経由の AI で、問い合わせは絞り込みが中心になる。この規模（決算10自治体・当初予算2自治体で約3.8万行、全国でも1年度・1資料区分で約850万行）なら、D1 と Worker だけの最小構成で足りる。
 
 ```mermaid
 flowchart LR
@@ -16,7 +16,7 @@ flowchart LR
 
 操作は次の3つで、REST と MCP で入力・出力・説明が同じである。
 
-- 木のノードの検索（`search_expenditure_nodes`。REST は `POST /v1/expenditure/nodes:search`、body は MCP の tool の引数と同じ JSON）: `document_kind`・`fiscal_year`・`where`・`order_by`・`page_size`・`page_token` を受ける。未知のキーは 400 にする。団体の比較は、科目の軸の款・項・目のノードを `where` の `node_kind` で絞って行う。
+- 木のノードの検索（`search_expenditure_nodes`。REST は `POST /v1/expenditure/nodes:search`、body は MCP の tool の引数と同じ JSON）: `document_kind`・`fiscal_year`・`where`・`order_by`・`page_size`・`page_token` を受ける。未知のキーは 400 にする。自治体の比較は、科目の軸の款・項・目のノードを `where` の `node_kind` で絞って行う。
 - ノード一つの取得（Get。`GET /v1/expenditure/nodes/{document_kind}/{node_id}`）: ノードと、軸ごとの子を返す。子にも `page_size` の上限と `page_token` を適用する。`node_id` は小文字 16 進 64 文字で検査する。詳細は、比較で見つけた目から木を辿って読む。
 - 列の説明の取得: `_models.yml` の列の説明と、`where`・`order_by` に使える列、検索の入力の例を返す。
 
@@ -39,7 +39,7 @@ SQL の列名は許可した列の enum からだけ作り、値はすべて bin
 
 `page_token` は offset と問い合わせの指紋である。指紋は入力を正規化した JSON（キーの順に依らず、`page_size` と `page_token` を除く）から計算する。後ろのページほど走査が増えるが、今の規模では許容する。
 
-応答には、結果の行が指す原典だけを `origins` として一度だけ付ける。原典の資料名・URL・SHA-256 を行ごとに繰り返すと、AI に返すトークンが行数に比例して増えるためである。
+応答には、結果の行が指す出典だけを `origins` として一度だけ付ける。出典の資料名・URL・SHA-256 を行ごとに繰り返すと、AI に返すトークンが行数に比例して増えるためである。
 
 ## データの形
 
@@ -47,16 +47,16 @@ D1 の表は marts と同名・同列の1対1にする（`settlement_expenditure
 
 列・型は warehouse、説明は `_models.yml` から生成した `apps/api/src/columns.json` が API の許可列になる。marts の列はすべて公開する。marts は利用者が使う列を確定した最終モデルで、出さない列は intermediate に置く。marts に列を足せば、次の同期で D1 と API に出る。marts は仮置きで列も行も大きく増えるため、手書きの列一覧や migration を持たない。
 
-比較用のビュー `settlement_expenditure_moku` は D1 に載せず、目の比較はノードの一覧を `node_kind` で絞って行う。ビューは marts に残し、dbt の検査と団体ごとの配布に使う。
+比較用のビュー `settlement_expenditure_moku` は D1 に載せず、目の比較はノードの一覧を `node_kind` で絞って行う。ビューは marts に残し、dbt の検査と自治体ごとの配布に使う。
 
-API の検索は結合を持たないので、ノードの行に所属する款・項の名前（`kan_name`・`kou_name`）を marts に持つ。款の番号は団体ごとに違うので、款・項の名前で目を絞れるようにするためである。API 側で親を辿ると、名前の辿り方が dbt と API の2か所に分かれる。
+API の検索は結合を持たないので、ノードの行に所属する款・項の名前（`kan_name`・`kou_name`）を marts に持つ。款の番号は自治体ごとに違うので、款・項の名前で目を絞れるようにするためである。API 側で親を辿ると、名前の辿り方が dbt と API の2か所に分かれる。
 
 金額の和は API では求めず、利用者が絞った行を足す。和が正しくなる条件は、列の説明で渡す。
 
-- 款・項・目の金額は原典に印字された値で、比較に和は要らない。
+- 款・項・目の金額は出典に印字された値で、比較に和は要らない。
 - COFOG で比べるときは、`cofog_code` の前方一致で目を集めて足す。`assigned` の目には COFOG のコードが一つだけ付くので、二重計上は起きない。
 - division のコードだけを持つ目は、配下のどの group に属するかが決まっていない。たとえば `10.2*` の和には、`10` 止まりの目を含めない。
-- 同じ団体・年度・資料区分・会計の目について、COFOG の全 division の和と、`unclassifiable` と `out-of-scope` の目の和を足すと、歳出の総額になる。すべての目がこの3つの状態のどれかを持つことは、dbt の検査 `fiscal_cofog_covers_moku` が保証する。
+- 同じ自治体・年度・資料区分・会計の目について、COFOG の全 division の和と、`unclassifiable` と `out-of-scope` の目の和を足すと、歳出の総額になる。すべての目がこの3つの状態のどれかを持つことは、dbt の検査 `fiscal_cofog_covers_moku` が保証する。
 
 ## 公開と費用の上限
 
@@ -64,7 +64,7 @@ API の検索は結合を持たないので、ノードの行に所属する款�
 
 - WAF の rate limiting rule で、IP あたり20回/10秒に制限する。AI が普通に使う頻度（1秒に2回程度）は通る。Worker の前で弾くので、弾いた分は課金されない。Free プランの period は10秒だけなので、毎秒2回は10秒あたりの量で表す。データセンターごとに数えるので、厳密な上限ではない。Free プランのルールはホスト名を条件にできない（パスと Verified Bot だけ）ので、D1 を読む API の入口のパス（`/v1/` で始まるものと `/mcp`）で絞る。web と docs はこれらのパスを持たないので、実質的に `api.fudoki.dev` だけにかかる。ゾーン全体にかけると、web を公開したとき1ページで何十回もリクエストするブラウザを弾く。Free のルールは1つだけなので、既定の漏えい済み認証情報のルール（ログインの無いこのゾーンでは守るものが無い）と置き換えた。
 - MCP は JSON-RPC の batch（最上位が配列の要求）を受けない。1回の HTTP で検索を何十件も実行でき、WAF の回数の制限が増幅されるためである。単一の要求だけを受け、body は実際に読んだバイト数で 16KB までにする。
-- 必須の入力（`document_kind`・`fiscal_year`）と index で、1回あたりに走査する行を抑える。表は資料区分ごとに分かれているので、index は `document_kind` を含めない。団体の比較に使う `(fiscal_year, jurisdiction_code, node_kind)`、COFOG の比較に使う `(fiscal_year, cofog_code)`、子を辿る `(parent_node_id)` の3つにする。index を増やすと、同期で行を書くたびに index の分の書き込みも増えるので、問い合わせの形が増えるまで足さない。
+- 必須の入力（`document_kind`・`fiscal_year`）と index で、1回あたりに走査する行を抑える。表は資料区分ごとに分かれているので、index は `document_kind` を含めない。自治体の比較に使う `(fiscal_year, jurisdiction_code, node_kind)`、COFOG の比較に使う `(fiscal_year, cofog_code)`、子を辿る `(parent_node_id)` の3つにする。index を増やすと、同期で行を書くたびに index の分の書き込みも増えるので、問い合わせの形が増えるまで足さない。
 - `limits.cpu_ms` で、1回あたりの CPU を絞る。
 - kill switch を持つ。Worker の先頭で D1 の `control` 表の `serving` を読み、`on` 以外なら 503 を返す。migration は `control` だけである。予算超過の通知だけでは、リクエストの処理と課金は止まらないためである。kill switch の読み取りは1リクエストあたり `control` の1行で、1回の問い合わせの走査（最悪で約2.1万行）に比べて無視できるため、費用の見積もりには含めない。
 - アカウント全体の Budget alert（従量課金の合計が $1 を超えたら通知）を使う。通知はしきい値ごとに月1回なので、ふだんの従量課金が $1 を超える月が出てきたら、異常に気づく用にもう1段上のしきい値を足す。
@@ -91,7 +91,7 @@ script は warehouse を読むので `pipeline/` に置き、D1 の migration �
 
 ## D1 の容量
 
-slice の3団体の木を SQLite に入れ、3つの index を張って測ると、1行あたり約485バイトだった。全国の1年度・1資料区分（約850万行）では約4.1GB になり、D1 の1データベースの上限（10GB）には、年度と資料区分の組で2つ分ほどしか入らない。収録が団体の数十の規模のうちは1つのデータベースで足りる。データベースが 8GB を超えそうになったら、年度ごとにデータベースを分け、5年をまたぐ問い合わせは Worker が複数のデータベースに分けて引く。
+slice の3自治体の木を SQLite に入れ、3つの index を張って測ると、1行あたり約485バイトだった。全国の1年度・1資料区分（約850万行）では約4.1GB になり、D1 の1データベースの上限（10GB）には、年度と資料区分の組で2つ分ほどしか入らない。収録が自治体の数十の規模のうちは1つのデータベースで足りる。データベースが 8GB を超えそうになったら、年度ごとにデータベースを分け、5年をまたぐ問い合わせは Worker が複数のデータベースに分けて引く。
 
 ## 依存
 
@@ -112,7 +112,7 @@ REST の route と OpenAPI 3.1 の文書は `@hono/zod-openapi` で作り、MCP 
 
 - **AIP-160 の filter 文字列で受ける（当初の決定）**: Google AIP の List の形に揃う。しかし自前の構文解析が攻撃面になり、範囲を年ごとに展開するループが、巨大な年の値で止まらない穴が実際に出た。AI は独自の文法を書くより、JSON Schema の引数を正確に埋める。必須の条件も型で表せる。失うのは列をまたぐ OR と NOT で、2回の問い合わせで代えられる。REST を POST にしたので、GET のまま CDN に載せる余地は失う（今はキャッシュを持たない）。
 - **AIP-160 の既存の実装（`onesixty` など）を使う**: 文法の全体を解析できる。使うのは一部だけで、定番と言える実装もなく、配布物と公開ソースの一致も確かめられていないため採用しない。構造化した入力にしたので、構文解析そのものが要らない。
-- **公開 R2 に団体ごとの Parquet を置き、利用者の手元の MCP の DuckDB で読む**: サーバー側の計算が要らない。claude.ai の web やモバイルからは使えず、利用者のインストールが要るため採用しない。団体ごとの配布物は [ADR 0004](0004-package-per-jurisdiction.md) に従って別に扱い、形式は未決とする。
+- **公開 R2 に自治体ごとの Parquet を置き、利用者の手元の MCP の DuckDB で読む**: サーバー側の計算が要らない。claude.ai の web やモバイルからは使えず、利用者のインストールが要るため採用しない。自治体ごとの配布物は [ADR 0004](0004-package-per-jurisdiction.md) に従って別に扱い、形式は未決とする。
 - **Basin SQL（旧 R2 SQL）の前に Worker を置く**: スキャン量の課金で大規模に伸ばせる。この規模では Iceberg の登録とトークンの代理が増えるだけで、得るものがない。D1 の容量が足りなくなったら見直す。
 - **Workers 上の DuckDB-WASM**: dbt と同じ方言で書ける。wasm の大きさが Worker の上限にほぼ収まらないため採用しない。
 - **生 SQL を受ける**: AI は SQL が得意である。しかし D1 には読み取り専用の接続がなく、SQL の構文で SELECT だけを許す検査が要る。親と子、別の軸の末端を混ぜた和も止められない。さらに、表の構造がそのまま公開の契約になる。比較を款・項・目に限ると絞り込みだけで足りるため、採用しない。
@@ -127,5 +127,5 @@ REST の route と OpenAPI 3.1 の文書は `@hono/zod-openapi` で作り、MCP 
 
 - marts の木の表に `kan_name`・`kou_name` を加えた。marts の列を足せば、次の同期で D1 と API に出る。
 - 公開の契約は、操作の入力・出力と `where`・`order_by` に使える列である。列は marts と同じなので、marts の列の変更は契約の変更になる。
-- [ADR 0010](0010-monorepo-data-storage.md) が後段に送っていた配布・検索の方式のうち、問い合わせの配信をこの ADR で決める。団体ごとの配布物の形式と、原典ごとの利用条件の扱いは引き続き未決である。
+- [ADR 0010](0010-monorepo-data-storage.md) が後段に送っていた配布・検索の方式のうち、問い合わせの配信をこの ADR で決める。自治体ごとの配布物の形式と、出典ごとの利用条件の扱いは引き続き未決である。
 - `apps/api` は一時的に HTTP 500 を返す状態から、この構成に置き換わった。公開する前に、到達できる入口（custom domain・workers.dev・preview URL・version URL）を数え上げ、`api.fudoki.dev` 以外を無効にする。

@@ -1,5 +1,5 @@
--- 収録範囲: 歳出の木に明細がある団体・年度・資料区分・会計と、その明細が指す原典。
--- 原典の選定結果は使わない（選定しても木に明細が無ければ検索で返らない）。
+-- 収録範囲: 歳出の木に明細がある自治体・年度・資料区分・会計と、その明細が指す出典。
+-- 出典の選定結果は使わない（選定しても木に明細が無ければ検索で返らない）。
 with nodes as (
     select jurisdiction_code, fiscal_year, 'settlement' as document_kind, account_name, account_kind, origin_id
     from {{ ref('settlement_expenditure_node') }}

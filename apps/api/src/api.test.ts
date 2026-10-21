@@ -434,8 +434,8 @@ describe('入力の文字と位置', () => {
   })
 })
 
-describe('ノードと原典は1つの batch で読む', () => {
-  test('search と get は D1 の batch を1回だけ使い、ノードと原典の文を同時に渡す', async () => {
+describe('ノードと出典は1つの batch で読む', () => {
+  test('search と get は D1 の batch を1回だけ使い、ノードと出典の文を同時に渡す', async () => {
     const batches: number[] = []
     const spy: Db = { prepare: (sql) => db.prepare(sql), batch: (s) => (batches.push(s.length), db.batch(s)) }
     await app.request(SEARCH, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(valid) }, { DB: spy })

@@ -1,5 +1,5 @@
 // ホームに載せる数字。api.fudoki.dev の応答をそのまま写したもので、画面では足し算をしない（DESIGN.md「画面で集計しない」）
-// 取り直すときは POST /v1/expenditure/nodes:search（document_kind=settlement, fiscal_year=2025, account_name=一般会計）。原典の頁は source_page
+// 取り直すときは POST /v1/expenditure/nodes:search（document_kind=settlement, fiscal_year=2025, account_name=一般会計）。出典の頁は source_page
 export const HOME = {
   nakano: {
     jurisdiction: '中野区',
@@ -16,7 +16,7 @@ export const HOME = {
       { name: '地域支えあい推進費', amount: 10244505881 },
     ],
   },
-  // ホームの表で順に切り替える団体。款は支出済額の最も大きいもの、その下の最も大きい項、その下の上位2つの目、目ごとに上位3つの内訳。
+  // ホームの表で順に切り替える自治体。款は支出済額の最も大きいもの、その下の最も大きい項、その下の上位2つの目、目ごとに上位3つの内訳。
   // 内訳は API の軸「節」、無ければ軸「備考」（新宿区は事業の一覧）。COFOG の「仮」は tentative、「分類できない」は unclassifiable
   ledgers: [
     {
@@ -165,7 +165,7 @@ export const HOME = {
       ],
     },
   ],
-  // 「確かめる」に載せる原典の切り抜き。brand/home_origin.py と同じ頁・範囲（pt、左上原点）。mark は目「図書館費」の支出済額の印字位置（API の amount_source_*）
+  // 「確かめる」に載せる出典の切り抜き。brand/home_origin.py と同じ頁・範囲（pt、左上原点）。mark は目「図書館費」の支出済額の印字位置（API の amount_source_*）
   origin: {
     jurisdiction: '新宿区',
     document: '令和7年度歳入歳出決算事項別明細書',
@@ -178,7 +178,7 @@ export const HOME = {
   library: {
     name: '図書館費',
     cofog: '08.2',
-    period: '令和7年度決算 · 一般会計 · 各団体の決算書',
+    period: '令和7年度決算 · 一般会計 · 各自治体の決算書',
     rows: [
       { jurisdiction: '新宿区', amount: 1750575436 },
       { jurisdiction: '北区', amount: 1093837046 },
