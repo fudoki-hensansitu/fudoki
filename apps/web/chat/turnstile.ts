@@ -48,10 +48,14 @@ export async function mountTurnstile(el: HTMLElement, sitekey: string, onInterac
       onInteractive?.(false)
       settle({ token })
     },
-    'error-callback': () => settle({ error: '確認に失敗しました。もう一度送ってください' }),
+    'error-callback': () => {
+      onInteractive?.(false)
+      settle({ error: '確認に失敗しました。もう一度送ってください' })
+    },
     // 操作を求める確認に時間内に答えなかった・token が期限切れになったときも、待っている送信を終わらせる
     'timeout-callback': () => settle({ error: '確認の時間が切れました。もう一度送ってください' }),
     'expired-callback': () => {
+      onInteractive?.(false)
       settle({ error: '確認の期限が切れました。もう一度送ってください' })
       turnstile.reset(id)
     },
@@ -62,6 +66,8 @@ export async function mountTurnstile(el: HTMLElement, sitekey: string, onInterac
     new Promise<string>((resolve, reject) => {
       running = true
       waiting = { resolve, reject }
+      // reset では after-interactive が来ないので、前回の表示を先に畳む
+      onInteractive?.(false)
       turnstile.reset(id)
       turnstile.execute(id)
     }).finally(() => {
