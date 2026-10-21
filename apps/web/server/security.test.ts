@@ -76,10 +76,11 @@ describe('View の中継の許可リスト', () => {
     expect(parseRelay({ method: 'tools/call', params: { name: 'search_expenditure_nodes', arguments: { page_size: 1 } } })).toMatchObject({ params: { name: 'search_expenditure_nodes' } })
     expect(parseRelay({ method: 'resources/read', params: { uri: 'ui://fudoki/view-06a8e196f6a7.html' } })).toMatchObject({ method: 'resources/read' })
   })
-  test('描画 tool・評価の検索・他の method・他の resource は 403', () => {
+  test('描画 tool・評価の検索・団体の一覧・他の method・他の resource は 403', () => {
     for (const body of [
       { method: 'tools/call', params: { name: 'render_expenditure_view', arguments: {} } },
       { method: 'tools/call', params: { name: 'search_evaluations', arguments: {} } },
+      { method: 'tools/call', params: { name: 'list_jurisdictions', arguments: {} } },
       { method: 'tools/call', params: { name: '__proto__' } },
       { method: 'tools/list', params: {} },
       { method: 'resources/read', params: { uri: 'ui://other/view.html' } },
