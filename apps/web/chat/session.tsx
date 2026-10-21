@@ -87,6 +87,23 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
   }, [id, stored, send])
 
   // 一番下を読んでいる間は、送ったときも配信中も画面全体を最下部へ追う。利用者が上へ遡ったら追わない
+  // 画面全体を固定の高さにしたので、ソフトキーボードで見える範囲が縮んだら、その高さに合わせて入力欄が隠れないようにする（iOS は dvh が縮まない）
+  React.useEffect(() => {
+    const vv = window.visualViewport
+    if (!vv) return
+    const root = document.documentElement
+    const fit = () => {
+      root.style.setProperty('--vvh', `${Math.round(vv.height)}px`)
+      // キーボードで頁ごと押し上げられた分を戻す
+      if (window.scrollY) window.scrollTo(0, 0)
+    }
+    fit()
+    vv.addEventListener('resize', fit)
+    return () => {
+      vv.removeEventListener('resize', fit)
+      root.style.removeProperty('--vvh')
+    }
+  }, [])
   // メッセージは自分の scroll 領域に置く（上下端を scroll-fade でぼかすため、頁ではなくこの領域が動く）
   const scroller = React.useRef<HTMLDivElement>(null)
   const pinned = React.useRef(true)
@@ -115,7 +132,7 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
       (last === undefined || last.type === 'step-start' || (last.type === 'dynamic-tool' && (last.state === 'output-available' || last.state === 'output-error'))))
   const apps = (m: ChatMessage) => m.metadata?.apps ?? {}
   return (
-    <div className="flex h-dvh w-full flex-col">
+    <div className="flex w-full flex-col" style={{ height: 'var(--vvh, 100dvh)' }}>
       <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-3">
         <a href="/" aria-label="風土記 ホーム" className="text-primary">
           <svg className="block h-7 w-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 146.2150 40" role="img" aria-hidden="true" dangerouslySetInnerHTML={{ __html: LOGO_G }} />

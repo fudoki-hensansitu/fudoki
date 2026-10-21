@@ -307,9 +307,11 @@ export function ViewFrame({
       ref={box}
       // popover の属性は全画面・右のパネルの間だけ付ける（付けたまま閉じると display: none になる）
       popover={fullscreen || side ? 'manual' : undefined}
-      role={fullscreen ? 'dialog' : undefined}
+      role={fullscreen ? 'dialog' : side ? 'tabpanel' : undefined}
+      id={side ? `view-panel-${panelKey(me.current)}` : undefined}
+      aria-labelledby={side ? `view-tab-${panelKey(me.current)}` : undefined}
       aria-modal={fullscreen || undefined}
-      aria-label={fullscreen ? '風土記の表とグラフ（全画面）' : side ? '風土記の表とグラフ' : undefined}
+      aria-label={fullscreen ? '風土記の表とグラフ（全画面）' : undefined}
       className={
         fullscreen
           ? 'fixed inset-0 m-0 flex size-full max-h-none max-w-none flex-col border-0 bg-background p-0 text-foreground'
@@ -326,29 +328,59 @@ export function ViewFrame({
           </Button>
         </div>
       ) : null}
-      {side ? (
-        <div role="tablist" aria-label="右のパネルの表とグラフ" className="flex shrink-0 items-center gap-1 overflow-x-auto border-b px-2 pt-2">
-          {tabState.tabs.map((t, i) => {
-            // 同じ名前のタブは、2つ目からは番号を添えて見分ける
-            const same = tabState.tabs.slice(0, i).filter((o) => o.title === t.title).length
-            const label = same ? `${t.title}（${same + 1}）` : t.title
-            return (
-            <div key={panelKey(t.owner)} className={cn('flex max-w-48 shrink-0 items-center rounded-t-md border border-b-0 text-sm', t.owner === tabState.active ? 'bg-background text-foreground' : 'bg-secondary/60 text-muted-foreground hover:text-foreground')}>
-              <button type="button" role="tab" aria-selected={t.owner === tabState.active} onClick={() => setPanel({ ...panel, active: t.owner })} className="min-w-0 truncate py-1.5 pr-1 pl-3">
-                {label}
-              </button>
-              <button type="button" onClick={t.close} aria-label={`${label}を元に戻す`} title="会話の中へ元に戻す" className="rounded p-1 hover:bg-secondary">
-                <XIcon className="size-3.5" />
-              </button>
-            </div>
-            )
-          })}
+      {activeTab ? (
+        // タブの帯は選ばれている View の箱にだけ描く（隠れている箱には描かない）。tablist の中は tab だけにし、元に戻すボタンは横に置く
+        <div className="flex shrink-0 items-end justify-between gap-2 border-b px-2 pt-2">
+          <div
+            role="tablist"
+            aria-label="右のパネルの表とグラフ"
+            className="flex min-w-0 items-end gap-1 overflow-x-auto"
+            onKeyDown={(e) => {
+              const i = tabState.tabs.findIndex((t) => t.owner === tabState.active)
+              const next = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabState.tabs.length - 1 }[e.key]
+              if (next === undefined) return
+              e.preventDefault()
+              const target = tabState.tabs[(next + tabState.tabs.length) % tabState.tabs.length]
+              if (!target) return
+              setPanel({ ...panel, active: target.owner })
+              // 選ばれた View の箱に帯が描き直されてから、その tab に focus を移す
+              requestAnimationFrame(() => document.getElementById(`view-tab-${panelKey(target.owner)}`)?.focus())
+            }}
+          >
+            {tabState.tabs.map((t, i) => {
+              // 同じ名前のタブは、2つ目からは番号を添えて見分ける
+              const same = tabState.tabs.slice(0, i).filter((o) => o.title === t.title).length
+              const key = panelKey(t.owner)
+              const selected = t.owner === tabState.active
+              return (
+                <button
+                  key={key}
+                  id={`view-tab-${key}`}
+                  type="button"
+                  role="tab"
+                  aria-selected={selected}
+                  aria-controls={`view-panel-${key}`}
+                  tabIndex={selected ? 0 : -1}
+                  onClick={() => {
+                    setPanel({ ...panel, active: t.owner })
+                    requestAnimationFrame(() => document.getElementById(`view-tab-${key}`)?.focus())
+                  }}
+                  className={cn('max-w-48 shrink-0 truncate rounded-t-md border border-b-0 px-3 py-1.5 text-sm', selected ? 'bg-background text-foreground' : 'bg-secondary/60 text-muted-foreground hover:text-foreground')}
+                >
+                  {same ? `${t.title}（${same + 1}）` : t.title}
+                </button>
+              )
+            })}
+          </div>
+          <Button variant="ghost" size="icon-sm" className="mb-1 shrink-0" aria-label="このタブを会話の中へ元に戻す（Esc）" title="会話の中へ元に戻す（Esc）" onClick={() => setMode('inline')}>
+            <XIcon />
+          </Button>
         </div>
       ) : null}
       {grippable ? (
         // 常には出さず、View にホバー（またはキーボードの focus）したときだけ、上辺の真ん中に出す。掴んで右へ離すと右パネルに開く。
         // iframe の上のホバーが親に届かない場合に備え、上辺の真ん中は親側の領域（group/zone）でも出す
-        <div className="group/zone absolute top-0 left-1/2 z-10 h-6 w-44 -translate-x-1/2">
+        <div className="group/zone absolute top-0 left-1/2 z-10 h-6 w-16 -translate-x-1/2">
           <button
             type="button"
             onPointerDown={startDrag}
@@ -359,7 +391,7 @@ export function ViewFrame({
             }}
             className={cn(
               'absolute top-0.5 left-1/2 flex h-5 w-12 -translate-x-1/2 cursor-grab touch-none items-center justify-center rounded-full border bg-background/90 text-muted-foreground shadow-sm backdrop-blur select-none',
-              'opacity-0 group-focus-within/view:opacity-100 group-hover/view:opacity-100 group-hover/zone:opacity-100 focus-visible:opacity-100 motion-safe:transition-opacity motion-safe:duration-150',
+              'pointer-events-none opacity-0 group-focus-within/view:pointer-events-auto group-focus-within/view:opacity-100 group-hover/view:pointer-events-auto group-hover/zone:pointer-events-auto group-hover/view:opacity-100 group-hover/zone:opacity-100 focus-visible:opacity-100 motion-safe:transition-opacity motion-safe:duration-150',
               'hover:text-foreground active:cursor-grabbing',
             )}
             aria-label="右のパネルに開く（右へドラッグ、または Enter）"
