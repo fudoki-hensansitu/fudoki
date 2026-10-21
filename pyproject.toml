@@ -22,5 +22,6 @@ members = ["pipeline"]
 # 公開から7日経っていない版は解決しない（supply chain の cooldown）
 exclude-newer = "7 days"
 # root 自身は環境へインストールしない（入るのは workspace の依存だけ）。配布もしない。
-# ただし name と version を持つため `uv build` は通り、pipeline のソース入りの wheel を作る。
+# name と version は PEP 621 で必須。root には build-system が無く setuptools の flat-layout
+# 発見が複数の top-level package を見つけるため、`uv build` も失敗する（uv 0.12.5 で実測）。
 package = false
