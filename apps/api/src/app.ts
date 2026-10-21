@@ -21,6 +21,8 @@ const MAX_BODY_BYTES = 16 * 1024
 
 const JSON_CONTENT_TYPE = /^application\/json\s*(;.*)?$/i
 
+const OPENAI_APPS_CHALLENGE = 'gq6l8WC6A0uBMUBkqmsmJJ-DoER65Cu5g5m4XY724hI'
+
 /** body を実際に読んだバイト数で数える（Content-Length は信用しない）。上限を超えたら読むのをやめる。 */
 async function readLimitedText(req: Request): Promise<string> {
   const tooLarge = () => new ApiError(413, 'PAYLOAD_TOO_LARGE', `リクエストの body は ${MAX_BODY_BYTES} バイトまでです`)
@@ -316,6 +318,9 @@ export function createApp(operations: Operation[] = defaultOperations) {
       mcp: `${origin}/mcp`,
     })
   })
+
+  // OpenAI の plugin 提出で、MCP のドメインを所有していることを示す token。公開して構わない値。
+  app.get('/.well-known/openai-apps-challenge', (c) => c.text(OPENAI_APPS_CHALLENGE))
 
   app.openapi(
     createRoute({
