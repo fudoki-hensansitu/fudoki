@@ -771,5 +771,38 @@
       ]
     }
   ],
-  "tables": []
+  "tables": [
+    {
+      "table_id": "general-expenditure-detail",
+      "conversion_id": "general",
+      "input_fingerprint": "0cb80cd30fb3956db932efbf4f9afe6408792dd48f095c15154ea8a8b27a3238",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は column mark 42頁 から決めた。款の和 38,925,340,647 と印字の「歳出合計」38,925,340,647 が一致。",
+        "金額の注記 98 件（充用 7・流用 91）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（813 件）を、印字された語から辞書の見出しに寄せた: 額／節／金額→節／金額。",
+        "原画で確かめた名称の誤読 16 件を、管理 JSON の name_corrections で印字に直した: 13None→13使用料及び賃借料・13None→13使用料及び賃借料・13None→13使用料及び賃借料・13使用料及び賃借→13使用料及び賃借料・13使用料及び賃借→13使用料及び賃借料・13None→13使用料及び賃借料・13None→13使用料及び賃借料・13None→13使用料及び賃借料・13None→13使用料及び賃借料・13None→13使用料及び賃借料・13None→13使用料及び賃借料・13None→13使用料及び賃借料・15コミュニテイ費→15コミュニティ費・2道路橋りよう費→2道路橋りょう費・1道路橋りよう総務費→1道路橋りょう総務費・7None→7子ども家庭支援センター費。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 4 件（p46:full-page:a0:result0:r30・p46:full-page:a0:result0:r30:w8・p72:full-page:a0:result0:r43・p72:full-page:a0:result0:r43:w3）・增→増 84 件（p31:ink-3:a3:result0:r0・p31:ink-3:a3:result0:r0:w1・p32:full-page:a0:result0:r11・p32:full-page:a0:result0:r11:w1・p33:full-page:a0:result0:r11・p33:full-page:a0:result0:r11:w1・p34:full-page:a0:result0:r11・p34:full-page:a0:result0:r11:w1・p35:full-page:a0:result0:r11・p35:full-page:a0:result0:r11:w1・p36:full-page:a0:result0:r11・p36:full-page:a0:result0:r11:w1・p37:full-page:a0:result0:r11・p37:full-page:a0:result0:r11:w1・p38:full-page:a0:result0:r11・p38:full-page:a0:result0:r11:w1・p39:full-page:a0:result0:r11・p39:full-page:a0:result0:r11:w1・p40:full-page:a0:result0:r11・p40:full-page:a0:result0:r11:w1・p41:full-page:a0:result0:r11・p41:full-page:a0:result0:r11:w1・p42:full-page:a0:result0:r11・p42:full-page:a0:result0:r11:w1・p43:full-page:a0:result0:r11・p43:full-page:a0:result0:r11:w1・p44:full-page:a0:result0:r11・p44:full-page:a0:result0:r11:w1・p45:ink-3:a3:result0:r1・p45:ink-3:a3:result0:r1:w0・p46:full-page:a0:result0:r11・p46:full-page:a0:result0:r11:w1・p47:full-page:a0:result0:r11・p47:full-page:a0:result0:r11:w1・p48:full-page:a0:result0:r11・p48:full-page:a0:result0:r11:w1・p49:full-page:a0:result0:r11・p49:full-page:a0:result0:r11:w1・p50:full-page:a0:result0:r11・p50:full-page:a0:result0:r11:w1・p51:full-page:a0:result0:r11・p51:full-page:a0:result0:r11:w1・p52:full-page:a0:result0:r11・p52:full-page:a0:result0:r11:w1・p53:full-page:a0:result0:r11・p53:full-page:a0:result0:r11:w1・p54:full-page:a0:result0:r11・p54:full-page:a0:result0:r11:w1・p55:full-page:a0:result0:r11・p55:full-page:a0:result0:r11:w1・p56:full-page:a0:result0:r11・p56:full-page:a0:result0:r11:w1・p57:full-page:a0:result0:r11・p57:full-page:a0:result0:r11:w1・p58:full-page:a0:result0:r11・p58:full-page:a0:result0:r11:w1・p59:full-page:a0:result0:r11・p59:full-page:a0:result0:r11:w1・p60:full-page:a0:result0:r11・p60:full-page:a0:result0:r11:w1・p61:ink-2:a2:result0:r0・p61:ink-2:a2:result0:r0:w1・p62:full-page:a0:result0:r11・p62:full-page:a0:result0:r11:w1・p63:full-page:a0:result0:r11・p63:full-page:a0:result0:r11:w1・p64:full-page:a0:result0:r11・p64:full-page:a0:result0:r11:w1・p65:ink-3:a3:result0:r1・p65:ink-3:a3:result0:r1:w0・p66:full-page:a0:result0:r11・p66:full-page:a0:result0:r11:w1・p67:full-page:a0:result0:r11・p67:full-page:a0:result0:r11:w1・p68:full-page:a0:result0:r11・p68:full-page:a0:result0:r11:w1・p69:full-page:a0:result0:r11・p69:full-page:a0:result0:r11:w1・p70:full-page:a0:result0:r11・p70:full-page:a0:result0:r11:w1・p71:full-page:a0:result0:r11・p71:full-page:a0:result0:r11:w1・p72:ink-0:a0:result0:r0・p72:ink-0:a0:result0:r0:w1）・徵→徴 6 件（p37:full-page:a0:result0:r43・p37:full-page:a0:result0:r43:w2・p38:full-page:a0:result0:r1・p38:full-page:a0:result0:r1:w3・p38:full-page:a0:result0:r22・p38:full-page:a0:result0:r22:w4）・查→査 12 件（p40:full-page:a0:result0:r59・p40:full-page:a0:result0:r59:w5・p41:full-page:a0:result0:r1・p41:full-page:a0:result0:r1:w6・p41:full-page:a0:result0:r21・p41:full-page:a0:result0:r21:w5・p41:full-page:a0:result0:r50・p41:full-page:a0:result0:r50:w3・p41:full-page:a0:result0:r56・p41:full-page:a0:result0:r56:w3・p42:full-page:a0:result0:r1・p42:full-page:a0:result0:r1:w4）・涉→渉 2 件（p32:full-page:a0:result0:r37・p32:full-page:a0:result0:r37:w2）・產→産 10 件（p34:full-page:a0:result0:r21・p34:full-page:a0:result0:r21:w3・p58:full-page:a0:result0:r42・p58:full-page:a0:result0:r42:w5・p59:full-page:a0:result0:r34・p59:full-page:a0:result0:r34:w5・p66:full-page:a0:result0:r55・p66:full-page:a0:result0:r55:w5・p68:full-page:a0:result0:r21・p68:full-page:a0:result0:r21:w5）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132152/2025/settlement/expenditure/general-expenditure-detail-nodes.parquet",
+          "sha256": "07f0408250fbe114bfb1efafd7fca115e0045319a70482e42890a379a41f5b6e",
+          "bytes": 32021
+        },
+        "row_count": 1068
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132152/2025/settlement/expenditure/general-expenditure-detail-amounts.parquet",
+          "sha256": "36fd0594be10495d3cca99b4f9411f0b0c02781c069bfae26fe9e69e8719c658",
+          "bytes": 67625
+        },
+        "row_count": 6546
+      }
+    }
+  ]
 }
