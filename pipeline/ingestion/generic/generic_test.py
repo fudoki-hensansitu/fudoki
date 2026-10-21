@@ -991,6 +991,15 @@ class BreakdownRulesTest(unittest.TestCase):
         self.assertEqual([(i.name, [''.join(g.text for g in r) for _, r in i.amounts]) for i in found],
                          [('・020601【010261】020000へ予算流用減', ['△28,800'])])
 
+    def test_a_line_after_a_finished_transfer_remark_is_its_own_item_even_at_the_columns_limit(self):
+        # The tail `…へ流用` is the longest line of the document (its end is the limit), and the next remark prints its amount.
+        words = [glyph('保育所運営費・負担金，補助及び交付', 300, 100, 150), glyph('55,579,000', 540, 100, 50),
+                 glyph('金から負担金，補助及び交付金へ流用', 300, 112, 170),
+                 glyph('報酬から償還金へ流用', 300, 136, 100), glyph('467,000', 540, 136, 35)]
+        found = self.found(words, limit=470)
+        self.assertEqual([(i.name, len(i.amounts)) for i in found],
+                         [('保育所運営費・負担金,補助及び交付', 1), ('金から負担金,補助及び交付金へ流用', 0), ('報酬から償還金へ流用', 1)])
+
     def test_amount_marks_do_not_make_an_account_code(self):
         from ingestion.generic.tree import is_account_code
         for value in ('△28,800', '12,846', '1,000', '▲１２８４６', '１２，８４６', '-12846', '－１２８４６'):

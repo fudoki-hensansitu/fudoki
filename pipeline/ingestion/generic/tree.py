@@ -36,6 +36,8 @@ BARE_CODE = re.compile(r'^[0-9０-９]{1,4}$')
 BRACKET_PAIRS = {')': '(', ']': '['}  # the closing and opening brackets of a bracketed amount
 CODE_LED = re.compile(r'^[0-9０-９]{1,4}[^0-9０-９,，.．]')  # a code joined to its name (`1商`)
 TRANSFER = re.compile(r'(流用|充用|充当|予備費支出|予備費充当|予備費[よか]り|第[0-9０-９]+節[へか]|^第[0-9０-９]+[款項目節]|^[○〇●]?同[款項目])')
+# A transfer remark ends with the word (`…へ流用`): a line after it is another remark, even when it reaches the column's limit.
+ENDED_TRANSFER = re.compile(r'(?:流用|充用)$')
 # A kind word printed above an amount inside an amount column's cell (a stacked carry-over column).
 STACKED_KIND = re.compile(r'(翌年度)?(繰越明許費?|事故繰越し?|継続費逓次繰越|不用額)')
 # A total row ends in 合計・総計 (`歳出合計`); a name that contains the letters (`長期総合計画に要する経費`) is not one.
@@ -713,7 +715,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
         wrapped = (previous is not None and code is None and label and not previous.amounts and not marked
                    and label[0].x0 >= previous.lines[0][0].x0 - left_slack
                    and (not money or bracketed
-                        or (reaches and (abs(label[0].x0 - previous.indent) <= 3
+                        or (reaches and not ENDED_TRANSFER.search(previous.name) and (abs(label[0].x0 - previous.indent) <= 3
                                          or abs(label[0].x0 - _name_start(previous)) <= 3)))
                    and _cell(band_of(label[0]), label[0].y0) == _cell(band_of(previous.lines[-1][0]), previous.lines[-1][0].y0))
         # (Not only the rule-bounded cell: the name and the amount of a 備考 can have grids of their own.)
