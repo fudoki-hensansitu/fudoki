@@ -79,7 +79,7 @@ code{font:13px/1.6 var(--font-mono);letter-spacing:0;overflow-wrap:anywhere}
 .logo{display:block;width:auto;color:var(--primary)}
 
 .nav{position:sticky;top:8px;z-index:20;padding-inline:calc(var(--gut) - 8px);transition:opacity .25s ease-out}
-.nav[data-hide]:not(:focus-within){opacity:0;pointer-events:none}
+.nav[data-hide]:not(:has(:focus-visible)){opacity:0;pointer-events:none}
 .bar{display:flex;align-items:center;height:56px;padding:0 8px 0 14px;border:.5px solid transparent;border-radius:999px;transition:background-color .3s ease-out,border-color .3s ease-out,box-shadow .3s ease-out}
 .nav[data-scrolled] .bar{border-color:var(--border);background:var(--background);box-shadow:var(--shadow-pill)}
 .nav .logo{height:28px}
