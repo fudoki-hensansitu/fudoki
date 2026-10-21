@@ -14,6 +14,7 @@ import { forServer } from './history'
 import { Markdown } from './markdown'
 import { loadSession, saveSession, type StoredSession } from './store'
 import { ViewFrame } from './view-frame'
+import { LOGO_G } from '../logo'
 
 /** 一番下からこの距離以内なら、読み終えて追っていると見なす */
 const NEAR_BOTTOM_PX = 120
@@ -98,7 +99,9 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
   return (
     <div className="flex min-h-dvh w-full flex-col">
       <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-3">
-        <a href="/" className="font-medium text-primary">風土記</a>
+        <a href="/" aria-label="風土記 ホーム" className="text-primary">
+          <svg className="block h-7 w-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 146.2150 40" role="img" aria-hidden="true" dangerouslySetInnerHTML={{ __html: LOGO_G }} />
+        </a>
         <a href="/" aria-label="新しい会話" title="新しい会話" className="rounded-md p-2 text-muted-foreground hover:bg-secondary hover:text-foreground">
           <SquarePenIcon className="size-5" />
         </a>
