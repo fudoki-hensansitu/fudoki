@@ -19,6 +19,7 @@ import { ViewFrame } from './view-frame'
 import { LOGO_G } from '../logo'
 
 /** 一番下からこの距離以内なら、読み終えて追っていると見なす */
+const FADE_EDGE_PX = 4
 const NEAR_BOTTOM_PX = 120
 
 type Metadata = { apps?: Record<string, string> }
@@ -87,40 +88,30 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
   }, [id, stored, send])
 
   // 一番下を読んでいる間は、送ったときも配信中も画面全体を最下部へ追う。利用者が上へ遡ったら追わない
-  // 画面全体を固定の高さにしたので、ソフトキーボードで見える範囲が縮んだら、その高さに合わせて入力欄が隠れないようにする（iOS は dvh が縮まない）
-  React.useEffect(() => {
-    const vv = window.visualViewport
-    if (!vv) return
-    const root = document.documentElement
-    const fit = () => {
-      root.style.setProperty('--vvh', `${Math.round(vv.height)}px`)
-      // キーボードで頁ごと押し上げられた分を戻す
-      if (window.scrollY) window.scrollTo(0, 0)
-    }
-    fit()
-    vv.addEventListener('resize', fit)
-    return () => {
-      vv.removeEventListener('resize', fit)
-      root.style.removeProperty('--vvh')
-    }
-  }, [])
-  // メッセージは自分の scroll 領域に置く（上下端を scroll-fade でぼかすため、頁ではなくこの領域が動く）
-  const scroller = React.useRef<HTMLDivElement>(null)
+  // 上下のフェード（scroll-fade と同じ見え方）は、頁の端にいる側では出さない
   const pinned = React.useRef(true)
-  React.useEffect(() => {
-    const el = scroller.current
-    if (!el) return
-    const onScroll = () => {
-      pinned.current = el.scrollHeight - el.scrollTop - el.clientHeight < NEAR_BOTTOM_PX
-    }
-    el.addEventListener('scroll', onScroll, { passive: true })
-    return () => el.removeEventListener('scroll', onScroll)
+  const [fade, setFade] = React.useState({ top: false, bottom: false })
+  const measure = React.useCallback(() => {
+    const el = document.documentElement
+    const rest = el.scrollHeight - window.scrollY - window.innerHeight
+    pinned.current = rest < NEAR_BOTTOM_PX
+    const top = window.scrollY > FADE_EDGE_PX
+    const bottom = rest > FADE_EDGE_PX
+    setFade((f) => (f.top === top && f.bottom === bottom ? f : { top, bottom }))
   }, [])
   React.useEffect(() => {
-    const el = scroller.current
+    window.addEventListener('scroll', measure, { passive: true })
+    window.addEventListener('resize', measure)
+    return () => {
+      window.removeEventListener('scroll', measure)
+      window.removeEventListener('resize', measure)
+    }
+  }, [measure])
+  React.useEffect(() => {
     if (status === 'submitted') pinned.current = true
-    if (pinned.current && el) el.scrollTo({ top: el.scrollHeight })
-  }, [messages, status])
+    if (pinned.current) window.scrollTo({ top: document.documentElement.scrollHeight })
+    measure()
+  }, [messages, status, measure])
 
   const suggestions = busy ? [] : suggestionsOf(messages.at(-1))
   // 応答の生成中で、画面に動くものが無い間は「考えています」を出す。止まって見えないように。
@@ -132,7 +123,8 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
       (last === undefined || last.type === 'step-start' || (last.type === 'dynamic-tool' && (last.state === 'output-available' || last.state === 'output-error'))))
   const apps = (m: ChatMessage) => m.metadata?.apps ?? {}
   return (
-    <div className="flex w-full flex-col" style={{ height: 'var(--vvh, 100dvh)' }}>
+    <div className="flex min-h-dvh w-full flex-col">
+      <div className="sticky top-0 z-20 bg-background">
       <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-3">
         <a href="/" aria-label="風土記 ホーム" className="text-primary">
           <svg className="block h-7 w-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 146.2150 40" role="img" aria-hidden="true" dangerouslySetInnerHTML={{ __html: LOGO_G }} />
@@ -141,8 +133,10 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
           <SquarePenIcon className="size-5" />
         </a>
       </header>
-      <div ref={scroller} className="scroll-fade min-h-0 flex-1 overflow-y-auto">
-        <div className="mx-auto flex min-h-full w-full max-w-3xl flex-col gap-4 px-4 pb-6">
+      <div aria-hidden className={`pointer-events-none absolute inset-x-0 top-full h-10 bg-gradient-to-b from-background to-transparent transition-opacity duration-200 ${fade.top ? 'opacity-100' : 'opacity-0'}`} />
+      </div>
+      <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4">
+        <div className="flex flex-1 flex-col gap-4 pb-6">
           {messages.map((m) => (
             <div key={m.id}>
               <Message align={m.role === 'user' ? 'end' : 'start'}>
@@ -196,8 +190,11 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
           ) : null}
         </div>
       </div>
-      <div className="mx-auto w-full max-w-3xl shrink-0 px-4 pt-2 pb-[calc(2rem+env(safe-area-inset-bottom))] sm:pb-12">
-        <Composer onSubmit={send} onStop={stop} busy={busy} placeholder="続けて聞く" autoFocus compact />
+      <div className="sticky bottom-0 z-20 bg-background">
+        <div aria-hidden className={`pointer-events-none absolute inset-x-0 bottom-full h-10 bg-gradient-to-t from-background to-transparent transition-opacity duration-200 ${fade.bottom ? 'opacity-100' : 'opacity-0'}`} />
+        <div className="mx-auto w-full max-w-3xl px-4 pt-2 pb-[calc(2rem+env(safe-area-inset-bottom))] sm:pb-12">
+          <Composer onSubmit={send} onStop={stop} busy={busy} placeholder="続けて聞く" autoFocus compact />
+        </div>
       </div>
     </div>
   )
