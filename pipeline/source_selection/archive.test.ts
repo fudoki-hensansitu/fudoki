@@ -35,6 +35,13 @@ test('a downloaded notice page that is not the declared format stops before any 
   expect(fake.uploads).toHaveLength(0)
 })
 
+test('a PDF whose header follows leading bytes is still accepted', async () => {
+  const prefixed = new TextEncoder().encode('JUNK\n%PDF-1.7\nbody')
+  const fake = store([], { 'https://example.com/prefixed.pdf': prefixed })
+  const result = await archiveSelected(withFiles([{ ...pdf, download_url: 'https://example.com/prefixed.pdf', sha256: hash(prefixed) }]), fake.api)
+  expect(result.archive!.files.map(item => item.key)).toEqual(['fiscal/source-selection/132047/2024/initial.pdf'])
+})
+
 test('missing-object cleanup ignores only genuine key-not-found errors', () => {
   for (const error of ['[10007] The specified key does not exist.', 'HTTP status 404', 'NoSuchKey']) expect(isMissingR2ObjectError(error)).toBe(true)
   for (const error of ['HTTP 403', '[10007] Permission denied.', '[10000] The specified key does not exist.', 'Network timeout']) expect(isMissingR2ObjectError(error)).toBe(false)

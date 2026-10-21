@@ -411,7 +411,7 @@ const WHERE_HELP = {
 
 const searchDescription =
   '歳出の木のノード（款・項・目と、節・備考など別の軸の内訳）を条件で絞って一覧する。検索の前に describe_expenditure_columns を一度読む。' +
-  '文字の条件は、原典が科目・事業・備考の欄に印字した名称（name・kan_name・kou_name）に当たる。本文の説明文は表に無いので、事業名が原典に印字されていない支出は科目の名前に含まれる語で引く。' +
+  '文字の条件は、出典が科目・事業・備考の欄に印字した名称（name・kan_name・kou_name）に当たる。本文の説明文は表に無いので、事業名が出典に印字されていない支出は科目の名前に含まれる語で引く。' +
   '自治体の比較は node_kind を "目" などに絞って行い、詳細は get_expenditure_node で木を辿る。' +
   '資料区分や軸の違う金額を足さない。足すときは describe_expenditure_columns の sum_rules に従う。where は列をまたぐ OR・NOT が無いので、2回に分けて問い合わせる。'
 

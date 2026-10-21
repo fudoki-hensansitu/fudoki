@@ -8,11 +8,12 @@ import { ARCHIVE_BUCKET, evaluationObjectKey, evaluationObjectSlot, originObject
 const MAX_BYTES = 300_000_000
 const digest = (body: Uint8Array) => createHash('sha256').update(body).digest('hex')
 
-/** 取得したバイト列が宣言した形式か。原典の URL が失効した跡地は、404 ではなく「見つかりませんでした」とリニューアルの案内を HTML で 200 に返すことがある（2026-10-20 の品川区）。 */
+/** 取得したバイト列が宣言した形式か。出典の URL が失効した跡地は、404 ではなく「見つかりませんでした」とリニューアルの案内を HTML で 200 に返すことがある（2026-10-20 の品川区）。 */
 export function matchesDeclaredFormat(body: Uint8Array, format: 'csv' | 'pdf'): boolean {
   const head = new TextDecoder('latin1').decode(body.subarray(0, 1024)).replace(/^\uFEFF/, '').trimStart().toLowerCase()
   if (head.startsWith('<') && (head.includes('<html') || head.includes('<!doctype') || head.includes('</'))) return false
-  return format === 'csv' || head.startsWith('%pdf-')
+  // PDF のヘッダは先頭 1024 バイト以内にあればよい（先頭に余分なバイトを持つ PDF がある）
+  return format === 'csv' || head.includes('%pdf-')
 }
 
 async function saveSelections(path: string, data: unknown) {
