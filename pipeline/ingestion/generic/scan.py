@@ -118,8 +118,86 @@ def _split(word: Word, cuts: list[float]) -> list[Word]:
     return pieces
 
 
-def _cell_words(pieces: list[Word], cuts: list[float]) -> list[Word]:
-    """Rejoin the pieces of one OCR line that sit in the same cell and nearly touch."""
+PADDLE_REACH = 1.5  # pt
+# digits and commas of an amount, with its sign; a code's periods (`10.04.01.03`) are not an amount's
+NUMERIC_RUN = re.compile(r'[△▲−-]?[0-9][0-9,]*|,+|[△▲−-]')
+
+
+def _paddle_pieces(line: dict, children: list[Word], corrected: bool, cuts: list[float] = ()) -> list[Word] | None:
+    """Where the printed characters of a Paddle line sit, for cutting it at the rules.
+
+    A Paddle line's children are fragments (`12` `,` `828` `,` `111`), but they carry the x of each
+    character. Cutting the line by a share of its box per character count puts the cut in the wrong place
+    when digits and kanji run together (`12,828,111同項…` cut after `12,828`, 131181). The children are
+    used only when they spell the whole line (no character lost or changed, no declared correction), and a
+    run of number fragments is joined back into one amount word, which `_split` then protects like a
+    whole amount. A line that is only one number keeps its own box: None, so the caller uses the line.
+    """
+    if corrected:
+        return None
+    spelled, printed = ''.join(c.text for c in children), re.sub(r'\s+', '', line['raw_text'])
+    if re.sub(r'\s+', '', spelled) != printed and len(re.sub(r'\s+', '', spelled)) == len(printed) \
+            and all(c.text == re.sub(r'\s+', '', c.text) for c in children):
+        # A declared name correction replaced characters of the line one for one (`センタ一費` → `センター費`): the
+        # children keep where each character sits, and take the corrected characters in order.
+        position, fixed = 0, []
+        for child in children:
+            fixed.append(Word(printed[position:position + len(child.text)], child.x0, child.y0, child.x1, child.y1))
+            position += len(child.text)
+        children = fixed
+    if re.sub(r'\s+', '', ''.join(c.text for c in children)) != re.sub(r'\s+', '', line['raw_text']):
+        # The children lost characters (`2,490,840円` has no `2` `,`): the line is not cut from them. A printed
+        # unit 円 at its end still has its own box, so the amount is cut off before it and stays whole.
+        tail = max(children, key=lambda c: c.x0, default=None)
+        text = line['raw_text'].rstrip()
+        if tail is not None and tail.text == '円' and text.endswith('円') and len(_text(text)) > 1:
+            x0, y0, x1, y1 = line['bbox_pdf_pt']
+            return [Word(text[:-1], x0, y0, tail.x0, y1), tail]
+        return None
+    merged: list[Word] = []
+    for child in sorted(children, key=lambda c: c.x0):
+        if not child.text.strip():
+            continue
+        last = merged[-1] if merged else None
+        if (last is not None and NUMERIC_RUN.fullmatch(_text(child.text)) and NUMERIC_RUN.fullmatch(_text(last.text))
+                # a rule between the end of the fragment before and the start of this one keeps two cells apart; one that
+                # only crosses the first character's box (`1,981,045,000` over a rule 2pt from its left) does not
+                and not any(last.x1 - min(2, (last.x1 - last.x0) / 2) < x <= child.x0 + PADDLE_REACH for x in cuts)
+                and child.x0 - last.x1 <= (2 * JOIN_GAP if last.text.endswith(',') or child.text.startswith(',') else JOIN_GAP)
+                * max(last.y1 - last.y0, child.y1 - child.y0)):
+            merged[-1] = Word(last.text + child.text, last.x0, min(last.y0, child.y0), max(last.x1, child.x1),
+                              max(last.y1, child.y1))
+        else:
+            merged.append(child)
+    # A code (`10.04.01.03へ流用`) reads as an amount of its own when it stands alone: it stays in front of its text.
+    joined: list[Word] = []
+    for word in merged:
+        if joined and re.search(r'[0-9]\.[0-9]', joined[-1].text) and not NUMERIC_RUN.fullmatch(_text(word.text)):
+            last = joined[-1]
+            joined[-1] = Word(last.text + word.text, last.x0, min(last.y0, word.y0), max(last.x1, word.x1), max(last.y1, word.y1))
+        else:
+            joined.append(word)
+    merged = joined
+    if len(merged) < 2:
+        return None
+    # The line's own box includes the padding its characters' boxes lack: the ends keep it, so a line no rule cuts
+    # is the same word with the same box as when it is not cut from its children.
+    x0, _, x1, _ = line['bbox_pdf_pt']
+    # (padding that reaches over a rule is not kept: the character is on the other side of it. A rule within a point
+    # of the line's edge is padding, as `_split` takes it.)
+    first, last = merged[0], merged[-1]
+    if not any(x0 + 1 < x <= first.x0 + PADDLE_REACH for x in cuts):
+        merged[0] = Word(first.text, min(x0, first.x0), first.y0, first.x1, first.y1)
+    if not any(last.x1 - PADDLE_REACH <= x < x1 - 1 for x in cuts):
+        merged[-1] = Word(last.text, last.x0, last.y0, max(x1, last.x1), last.y1)
+    return merged
+
+
+def _cell_words(pieces: list[Word], cuts: list[float], reach: float = 0) -> list[Word]:
+    """Rejoin the pieces of one OCR line that sit in the same cell and nearly touch.
+
+    ``reach``: how far past a piece's left edge a rule still lies in front of it. A Paddle character box
+    can start a little left of the rule its character sits right of (`同` 0.6pt, 131181)."""
     words: list[Word] = []
     for piece in sorted((p for w in pieces for p in _split(w, cuts)), key=lambda w: w.x0):
         if words:
@@ -129,7 +207,7 @@ def _cell_words(pieces: list[Word], cuts: list[float]) -> list[Word]:
             # in the cell the layout places it in (`551` `111,000`, 281000).
             digits = bool(NUMBER.fullmatch(_text(last.text)) and NUMBER.fullmatch(_text(piece.text)))
             pad = min(2, (last.x1 - last.x0) / 2) if digits else 0
-            same_cell = not any(last.x0 + pad < x <= piece.x0 for x in cuts)
+            same_cell = not any(last.x0 + pad + reach < x <= piece.x0 + reach for x in cuts)
             # "2" "款" "1" "項" join; a name and its amount stay apart even when they nearly touch.
             amount_with_text = _amount(last.text) != _amount(piece.text) and not (
                 NUMBER.fullmatch(_text(last.text)) and NUMBER.fullmatch(_text(piece.text)))
@@ -249,15 +327,19 @@ def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None
             if item['kind'] == 'region':
                 # Paddle's word children are single characters and number fragments ('4' ',' '505'); only
                 # Vision's words are whole tokens. A Paddle line is split at the rules from its own text.
-                pieces = None if item['id'] in corrected_regions or item.get('attempt_id') else parts.get(item['id'])
+                pieces = None if item['id'] in corrected_regions else parts.get(item['id'])
                 whole = _text(item['raw_text'])
+                reach = 0
+                if item.get('attempt_id') and pieces is not None:
+                    pieces = _paddle_pieces(item, pieces, item['id'] in corrected_word_parents, cuts)
+                    reach = PADDLE_REACH if pieces else 0
                 if (pieces and item['id'] not in corrected_word_parents and NUMBER.fullmatch(whole)
                         and whole != _text(''.join(p.text for p in pieces))
                         and not any(item['bbox_pdf_pt'][0] + 1 < x < item['bbox_pdf_pt'][2] - 1 for x in cuts)):
                     # Vision's word ranges may omit a minus whose line reading is intact.
                     # One complete number wholly inside a ruled cell outranks incomplete pieces.
                     pieces = None
-                words += _cell_words(pieces or [Word(item['raw_text'], *item['bbox_pdf_pt'])], cuts)
+                words += _cell_words(pieces or [Word(item['raw_text'], *item['bbox_pdf_pt'])], cuts, reach)
     return Page(number, detected.width, detected.height, words, rules)
 
 
@@ -366,12 +448,19 @@ def apply_variant_chars(observation: dict) -> tuple[dict, list[str]]:
     return result, [f'{a}→{b} {len(ids)} 件（{"・".join(ids)}）' for (a, b), ids in sorted(hits.items())]
 
 
+def _subsequence(short: str, long: str) -> bool:
+    characters = iter(long)
+    return all(c in characters for c in short)
+
+
 def apply_name_corrections(observation: dict, rules: list[dict] | None) -> dict:
     """A copy of the observation with the OCR misread characters of a name replaced, as declared.
 
     A rule binds to one observation (a line or word) by page and ID and names the exact characters
-    the OCR read and the ones the page prints. The raw observation is not changed, the rule must
-    match it, and a name has no digits to correct (those are codes and amounts)."""
+    the OCR read and the ones the page prints. The raw observation is not changed and the rule must
+    match it. Characters are replaced one for one, or characters the OCR lost are put back (the observed
+    text is the corrected one without them, in order). The digits of the two texts are the same, in the
+    same order: a digit is a code or an amount and is never corrected here."""
     if not rules:
         return observation
     found = {(p['page_number'], o['id']) for p in observation['pages'] for r in p['regions'] for o in r['observations']}
@@ -379,8 +468,12 @@ def apply_name_corrections(observation: dict, rules: list[dict] | None) -> dict:
     for rule in rules:
         if (rule['page'], rule['observation_id']) not in found:
             raise ValueError(f'A name correction matches no observation: {rule["id"]}')
-        if any(c.isdigit() for c in rule['observed_name'] + rule['corrected_name']) \
-                or len(rule['observed_name']) != len(rule['corrected_name']):
+        observed, corrected = rule['observed_name'], rule['corrected_name']
+        digits = lambda t: [c for c in t if c.isdigit()]
+        # Characters are replaced one for one, or a character the OCR lost is put back (`3款民生費` → `第3款民生費`:
+        # the observed text is the corrected one without the lost characters). A digit is never changed.
+        inserted = len(observed) < len(corrected) and _subsequence(observed, corrected)
+        if digits(observed) != digits(corrected) or (len(observed) != len(corrected) and not inserted):
             raise ValueError(f'A name correction replaces characters of a name: {rule["id"]}')
         hit = 0
         for p in result['pages']:
@@ -737,6 +830,11 @@ def declared_unread(built, logicals_: list, columns: dict | None, observation: d
                                 and b.x0 - b.offset < cx < b.x1 - b.offset and b.body_top < cy < b.body_bottom
                                 for logical in logicals_ for b in logical.bands):
                 built.unowned.append({'kind': 'unread ink in amount column', 'page': page_['page_number'], 'box': box})
+        # A line the strip seam cut and no single re-read gave back (`settle_seams`) stops the conversion in any
+        # column: a name has no tree check, so a name cut short would pass.
+        for box in page_.get('unread_seams', []):
+            if not any(u.get('page') == page_['page_number'] and u.get('box') == box for u in built.unowned):
+                built.unowned.append({'kind': 'unread strip seam', 'page': page_['page_number'], 'box': box})
 
 
 def pinned(source: dict, selected_pages: list[int]) -> dict:
