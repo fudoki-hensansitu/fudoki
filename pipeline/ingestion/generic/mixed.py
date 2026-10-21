@@ -50,34 +50,42 @@ def learn_origins(pages: list[Page], spread: dict | None = None, staircase: bool
     return [(x1 - x0, x0) for page in pages for x0, x1, *_ in _frames(page, spread, staircase)]
 
 
-def learn_gap(pages: list[Page], spread: dict | None = None, staircase: bool = False) -> float | None:
-    """How far apart the text pages print the two frames of a spread (the right frame's left edge from the left one's right)."""
-    gaps = []
-    for page in pages:
-        frames = _frames(page, spread, staircase)
-        gaps += [round(second[0] - first[1], 1) for first, second in zip(frames, frames[1:])]
-    gaps.sort()
-    return gaps[len(gaps) // 2] if gaps else None
-
-
-def aligned(page: Page, origins: list[tuple[float, float]], spread: dict | None = None, staircase: bool = False) -> Page:
-    """The page moved sideways to where the text pages print a frame of its width.
+def shift(page: Page, origins: list[tuple[float, float]], spread: dict | None = None, staircase: bool = False) -> float:
+    """How far to move the page sideways to where the text pages print a frame of its width (`aligned`).
 
     A page that is scanned apart from the volume lies a few points off (a left page of a printed frame at 38 where the
     text pages have it at 22), and the builder reads indentations and number positions by where they are on the page.
-    The nearest frame of about the same width (`WIDTH_TOLERANCE`) is the place; a page without one stays."""
+    The nearest frame of about the same width (`WIDTH_TOLERANCE`) is the place; a page without one stays (0)."""
     shifts = []
     for x0, x1, *_ in _frames(page, spread, staircase):
         fitting = [left for width, left in origins if abs(width / (x1 - x0) - 1) <= WIDTH_TOLERANCE]
         if not fitting:
-            return page
+            return 0.0
         shifts.append(min(fitting, key=lambda left: abs(left - x0)) - x0)
     if not shifts or max(shifts) - min(shifts) > EDGE_TOLERANCE or abs(shifts[0]) < EDGE_TOLERANCE:
+        return 0.0
+    return shifts[0]
+
+
+def aligned(page: Page, origins: list[tuple[float, float]], spread: dict | None = None, staircase: bool = False) -> Page:
+    """The page moved sideways by `shift`."""
+    return moved(page, shift(page, origins, spread, staircase))
+
+
+def moved(page: Page, dx: float) -> Page:
+    if not dx:
         return page
-    dx = shifts[0]
     return Page(page.number, page.width, page.height,
                 [Word(w.text, w.x0 + dx, w.y0, w.x1 + dx, w.y1) for w in page.words],
                 [Rule(r.x0 + dx, r.y0, r.x1 + dx, r.y1) for r in page.rules])
+
+
+def moved_unread(observation: dict, shifts: dict[int, float]) -> dict:
+    """The observation's unread ink (ink no OCR box and no rule covers) moved with its page (`shift`), so that the scan's
+    gate (`scan.declared_unread`) finds it in the amount columns the page is read in."""
+    return {**observation, 'pages': [{**page, 'unread_ink': [[x0 + shifts.get(page['page_number'], 0.0), y0, x1 + shifts.get(page['page_number'], 0.0), y1]
+                                                            for x0, y0, x1, y1 in page.get('unread_ink', [])]}
+                                     for page in observation.get('pages', [])]}
 
 
 def frame_rules(page: Page, layouts: Counter, spread: dict | None = None, staircase: bool = False) -> list[Rule]:

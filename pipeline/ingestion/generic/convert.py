@@ -334,6 +334,19 @@ class Table:
     ocr_pages: list = field(default_factory=list)  # pages of a text original read from pinned OCR (`mixed.py`)
 
 
+# The options of a conversion that reread an OCR observation (`scan.read_pages`).
+OCR_REREADS = ('amount_corrections', 'code_corrections', 'amount_readings', 'code_readings', 'dropped_readings', 'unit_readings',
+               'header_readings')
+
+
+def check_ocr_rereads(options: dict, ocr_pages: list[int]) -> None:
+    """The rereads of an OCR reading apply to the OCR pages only: declared without one, they would be noted and never applied."""
+    declared = [key for key in OCR_REREADS if options.get(key)]
+    declared += ['name_corrections'] if any('observation_id' in rule for rule in options.get('name_corrections', ())) else []
+    if declared and not ocr_pages:
+        raise ValueError(f'OCR rereads without OCR pages: {declared}')
+
+
 def build_table(source: dict, options: dict, *, stop: bool = True) -> Table:
     """Everything the converter derives from one original, before anything is written."""
     if source.get('format') != 'pdf' or source.get('pdf_type') != 'text':
@@ -348,7 +361,8 @@ def build_table(source: dict, options: dict, *, stop: bool = True) -> Table:
     # Pages whose text layer is empty are declared as an OCR input of the conversion and read from its pinned
     # observation (`mixed.py`); the observation cache of the text layer is keyed by the pages it observes.
     ocr_numbers = mixed.numbers(source, pages)
-    ocr = (ocr_numbers, lambda hook: scan_module.read_pages(source, options, layout, ocr_numbers, rule_hook=hook, keep_marks=True)[0]) if ocr_numbers else None
+    check_ocr_rereads(options, ocr_numbers)
+    ocr = (ocr_numbers, lambda hook: scan_module.read_pages(source, options, layout, ocr_numbers, rule_hook=hook, keep_marks=True)[:2]) if ocr_numbers else None
     built, report, observed, logicals = run_pages(
         Path(source['path']), pages, observation_cache(source, [p for p in pages if p not in ocr_numbers]),
         document_kind=source['target']['document_kind'], account=account, stop=stop,
@@ -474,4 +488,9 @@ def receipt_notes(table: Table) -> list[str]:
 def convert(inputs: list[dict], destination: Path, options: dict) -> dict:
     if len(inputs) != 1:
         raise ValueError('The generic builder converts one original per table')
-    return write_files(destination, options['table_id'], build_table(inputs[0], options))
+    table = build_table(inputs[0], options)
+    # As the scan converter: ink OCR left unread in an amount column of an OCR page stops the table (`mixed.py`).
+    unread = [u for u in table.built.unowned if u['kind'] in ('unread ink in amount column', 'unreadable declared amount cell')]
+    if unread:
+        raise ValueError(f'OCR pages have unread ink in amount columns: {[(u["page"], u["box"]) for u in unread]}')
+    return write_files(destination, options['table_id'], table)

@@ -156,6 +156,16 @@ class TrialRulesTest(unittest.TestCase):
         self.assertEqual(titles(foot), [])
         self.assertEqual(titles(above + foot), [('2', '民生費')])
 
+    def test_the_foot_is_under_the_frame_the_title_stands_in_when_the_frames_of_a_spread_end_apart(self):
+        # The left frame ends at 450, the right one at 400: a title under the right frame is its foot.
+        verticals = [Rule(x, 50, x, 450) for x in (10, 60, 100)] + [Rule(x, 50, x, 400) for x in (150, 200, 280)]
+        horizontals = [Rule(10, y, 100, y) for y in (50, 70, 450)] + [Rule(150, y, 280, y) for y in (50, 70, 400)]
+        words = [Word('科目', 20, 55, 38, 64), Word('支出済額', 65, 55, 95, 64), Word('総務費', 20, 110, 47, 119), Word('1,000', 70, 110, 92.5, 119),
+                 Word('科目', 160, 55, 178, 64), Word('支出済額', 205, 55, 241, 64), Word('民生費', 160, 110, 187, 119), Word('2,000', 230, 110, 252.5, 119)]
+        foot = [Word('第10款', 160, 410, 187, 419), Word('総務費', 190, 410, 217, 419)]
+        logical = logical_pages([Page(1, 300, 500, words + foot, verticals + horizontals)])[0]
+        self.assertEqual(logical.titles, [])
+
     def test_rules_off_the_page_are_dropped_inside_the_box_the_pdf_displays(self):
         import tempfile
         from pathlib import Path

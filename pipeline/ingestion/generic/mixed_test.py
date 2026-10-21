@@ -3,7 +3,7 @@ import unittest
 from types import SimpleNamespace
 
 from ingestion.generic.layout import Logical, logical_pages
-from ingestion.generic.mixed import aligned, completing, frame_rules, learn_frames, learn_origins, numbers
+from ingestion.generic.mixed import aligned, completing, frame_rules, learn_frames, learn_origins, moved_unread, numbers, shift
 from ingestion.generic.observe import Page, Rule, Word
 from ingestion.generic.tree import mixed_document, snap_ocr_levels
 from ingestion.lib import pdf_rules
@@ -77,6 +77,29 @@ class MixedPagesTest(unittest.TestCase):
         self.assertIs(aligned(TEXT, learn_origins([TEXT])), TEXT)
         wide = Page(2, 300, 500, [], frame(26, 280, {'wide': (116,), 'narrow': ()}))  # no frame of its width: stays
         self.assertIs(aligned(wide, learn_origins([TEXT])), wide)
+
+    def test_ink_ocr_left_unread_in_an_amount_column_is_unowned_where_the_page_is_moved(self):
+        from ingestion.generic.scan import declared_unread
+        words = [Word('科目', 20, 55, 38, 64), Word('支出済額', 110, 55, 146, 64), Word('総務費', 20, 120, 56, 129), Word('1,000', 150, 120, 172.5, 129)]
+        text = Page(1, 300, 500, words, frame(10, 200, {'wide': (100,), 'narrow': ()}))
+        ocr = Page(2, 300, 500, [Word(w.text, w.x0 + 16, w.y0, w.x1 + 16, w.y1) for w in words], frame(26, 216, {'wide': (116,), 'narrow': ()}))
+        shifts = {2: shift(ocr, learn_origins([text]))}
+        self.assertEqual(shifts, {2: -16})
+        logicals = logical_pages([text, aligned(ocr, learn_origins([text]))], ocr_pages=frozenset({2}))
+        observation = {'pages': [{'page_number': 2, 'unread_ink': [[176, 140, 182, 148], [36, 140, 60, 148]]}]}  # under 支出済額, under 科目
+        built = SimpleNamespace(unowned=[])
+        declared_unread(built, logicals, None, moved_unread(observation, shifts))
+        self.assertEqual([(u['page'], u['box']) for u in built.unowned], [(2, [160, 140, 166, 148])])
+
+    def test_rereads_of_an_ocr_reading_need_ocr_pages(self):
+        from ingestion.generic.convert import check_ocr_rereads
+        rereads = {'amount_readings': [{'id': 'a'}]}
+        with self.assertRaises(ValueError):
+            check_ocr_rereads(rereads, [])
+        with self.assertRaises(ValueError):
+            check_ocr_rereads({'name_corrections': [{'observation_id': 'p1:r0'}]}, [])
+        check_ocr_rereads(rereads, [146])
+        check_ocr_rereads({'name_corrections': [{'page': 1, 'observed_name': 'a'}]}, [])  # bound to a node, not to OCR
 
     def test_only_a_document_of_printed_and_ocr_pages_has_its_ocr_levels_set_to_the_printed_ones(self):
         page = lambda ocr: Logical([1], [], None, [], ocr=ocr)
