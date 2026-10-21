@@ -62,15 +62,6 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
   })
   const busy = status === 'submitted' || status === 'streaming'
   const send = React.useCallback((text: string) => void sendMessage({ text }), [sendMessage])
-  // View の「チャットで聞く」は、応答の生成中には送らない（2つの応答が同じ会話に書き込まないように）
-  const busyRef = React.useRef(busy)
-  React.useLayoutEffect(() => {
-    busyRef.current = busy
-  }, [busy])
-  const sendFromView = React.useCallback((text: string) => {
-    if (!busyRef.current) send(text)
-  }, [send])
-
   // 入口で入力した最初の質問を1回だけ送る（StrictMode の二重実行でも1回）
   const sent = React.useRef(false)
   React.useEffect(() => {
@@ -122,7 +113,7 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
                     // View は結果の structuredContent を描く。履歴から復元した結果で structuredContent が無いときは印だけにする
                     if (uri && output && !output.isError && output.structuredContent)
                       return (
-                        <ViewFrame key={i} token={stored.token} uri={uri} input={p.input} output={output} onMessage={sendFromView} onContext={(text) => (viewContext.current = text.slice(0, 2000))} />
+                        <ViewFrame key={i} token={stored.token} uri={uri} input={p.input} output={output} onContext={(text) => (viewContext.current = text.slice(0, 2000))} />
                       )
                     return <ToolMarker key={i} part={p} />
                   })}
