@@ -338,7 +338,7 @@ text PDF の数頁だけ文字層が空（頁ごと画像）の原典は、そ�
 | --- | --- | --- |
 | `ocr_inputs`（変換の宣言） | OCR で読む頁（`request.pages`）と固定した観測（`sha256`）。text の変換にあれば、その頁の語は観測から、罫線は描画から読む | 組版の設定は文書の読み方、`ocr_inputs` は頁ごとの事実。既にある項目なので増やさない |
 | `rules.dark`（既存） | 描画から読む罫線の暗さ。text の頁は罫線をベクタから読むので **OCR の頁だけ** に効く（調布: 罫線が灰 215 で、既定の 128 では拾えない） | 新しい項目を足す必要はない（text の頁に効かない既存の意味が、そのまま混在で正しい） |
-| `amount_corrections`・`code_corrections`・`amount_readings`・`code_readings`・`dropped_readings`・`name_corrections`（`observation_id` 形）（変換の options） | scan の変換と同じ宣言。OCR の頁だけに効く。実装は scan の `read_pages` を共有する | text の変換の options に無かった（text は読み違いを訂正する宣言が無く、名称は節点の形だけだった） |
+| `amount_corrections`・`code_corrections`・`amount_readings`・`code_readings`・`dropped_readings`・`unit_readings`・`header_readings`・`name_corrections`（`observation_id` 形）（変換の options） | scan の変換と同じ宣言。OCR の頁だけに効く。実装は scan の `read_pages` を共有する | text の変換の options に無かった（text は読み違いを訂正する宣言が無く、名称は節点の形だけだった） |
 
 OCR の頁が text の頁と混ざるとき、次を汎用の処理で行う（設定で有効にするものではない）。
 
