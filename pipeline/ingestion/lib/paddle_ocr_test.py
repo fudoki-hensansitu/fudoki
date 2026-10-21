@@ -97,11 +97,14 @@ class PublicBoundaries(unittest.TestCase):
         # A merged heading: the column rules stop below it, so nothing divides it and it is one area too.
         merged = areas(dark, [Rule(1238.0, 30.0, 60.0)])
         self.assertEqual(len(merged), 1)
-        # A gap of 14 points or more inside the cell (letter-spaced characters) also makes two areas.
-        spaced = np.zeros((60, 1500), bool)
-        for x in list(range(1000, 1200, 6)) + list(range(1220, 1400, 6)):
-            spaced[10:18, x:x + 2] = True
-        self.assertEqual(len(areas(spaced, [Rule(900.0, 0.0, 60.0), Rule(1450.0, 0.0, 60.0)])), 2)
+        # Inside the cell, a gap under 14 points between the parts keeps one area; 14 points splits it.
+        def gap_areas(gap):  # the last stroke of the first part ends at x=1200, the next part starts `gap` later
+            parts = np.zeros((60, 1500), bool)
+            for x in list(range(1000, 1200, 6)) + list(range(1200 + gap, 1400 + gap, 6)):
+                parts[10:18, x:x + 2] = True
+            return areas(parts, [Rule(900.0, 0.0, 60.0), Rule(1450.0, 0.0, 60.0)])
+        self.assertEqual(len(gap_areas(13)), 1)
+        self.assertEqual(len(gap_areas(14)), 2)
         # Two cells (a rule through the line between its parts): two areas, never one line.
         two = areas(dark, [Rule(1238.0, 0.0, 60.0)])
         self.assertEqual(len(two), 2)
