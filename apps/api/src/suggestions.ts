@@ -13,7 +13,7 @@ interface Node {
 const KIND_LABEL: Record<string, string> = { settlement: '決算', initial: '当初予算' }
 const LABEL_NAME_CHARS = 14
 
-const yearOf = (n: Node) => `${n.fiscal_year}年度${KIND_LABEL[n.document_kind] ?? ''}（${n.account_name}）`
+const yearOf = (n: Node) => `${n.fiscal_year}年度${KIND_LABEL[n.document_kind] ?? n.document_kind}（${n.account_name}）`
 const short = (name: string) => (name.length > LABEL_NAME_CHARS ? `${name.slice(0, LABEL_NAME_CHARS)}…` : name)
 const biggest = (nodes: Node[]) => nodes.reduce<Node | undefined>((top, n) => (n.amount_yen !== null && n.amount_yen > (top?.amount_yen ?? -1) ? n : top), undefined)
 
