@@ -28,6 +28,7 @@ const TOOL_LABELS: Record<string, string> = {
   search_expenditure_nodes: '支出を検索',
   get_expenditure_node: '明細を開く',
   list_jurisdictions: '収録している自治体を確認',
+  describe_expenditure_columns: '列の意味を確認',
   search_evaluations: '事業の評価を検索',
   render_expenditure_view: '表とグラフを用意',
 }
@@ -100,6 +101,13 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
   }, [messages, status])
 
   const suggestions = busy ? [] : suggestionsOf(messages.at(-1))
+  // 応答の生成中で、いま画面に動くものが無い間（送った直後・tool の完了後・文の前）は「考えています」を出す。止まって見えないように
+  const last = messages.at(-1)?.parts.at(-1)
+  const thinking =
+    status === 'submitted' ||
+    (status === 'streaming' &&
+      !(last?.type === 'text' && last.state === 'streaming') &&
+      !(last?.type === 'dynamic-tool' && last.state !== 'output-available' && last.state !== 'output-error'))
   const apps = (m: ChatMessage) => m.metadata?.apps ?? {}
   return (
     <div className="flex min-h-dvh w-full flex-col">
@@ -147,7 +155,7 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
               ))}
             </div>
           ) : null}
-          {status === 'submitted' ? (
+          {thinking ? (
             <div>
               <Marker>
                 <MarkerContent className="shimmer">考えています</MarkerContent>
@@ -165,8 +173,8 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
             </div>
           ) : null}
         </div>
-        <div className="sticky bottom-0 bg-background pt-2 pb-4 max-sm:pb-2">
-          <Composer onSubmit={send} onStop={stop} busy={busy} placeholder="続けて聞く" autoFocus compact />
+        <div className="sticky bottom-0 bg-background pt-2 pb-6 sm:pb-8">
+          <Composer onSubmit={send} onStop={stop} busy={busy} placeholder="続けて聞く" autoFocus pill compact />
         </div>
       </div>
     </div>

@@ -35,7 +35,7 @@ export function Composer({
   onFocus?: () => void
   /** 1行で始め、送るボタンを横に置く。会話の画面の続きの入力に使う */
   compact?: boolean
-  /** 入口の hero に置く、大きな1行の入力。長い文は枠の中で横に流れる */
+  /** 丸い1行の入力（入口の hero と会話の画面で同じ見た目）。長い文は枠の中で横に流れる。compact と合わせると会話向けの小さい大きさ */
   pill?: boolean
   children?: React.ReactNode
 }) {
@@ -65,7 +65,10 @@ export function Composer({
         {/* group の has-disabled は送るボタンの disabled にも効くので、空の間も枠と送るボタンを薄くしない */}
         <InputGroup
           data-disabled={disabled || undefined}
-          className="h-14 rounded-full bg-background shadow-[var(--shadow-pill)] has-disabled:bg-background has-disabled:opacity-100 data-disabled:opacity-50 sm:h-18 dark:bg-card dark:has-disabled:bg-card"
+          className={cn(
+            'h-14 rounded-full bg-background shadow-[var(--shadow-pill)] has-disabled:bg-background has-disabled:opacity-100 data-disabled:opacity-50 dark:bg-card dark:has-disabled:bg-card',
+            compact ? 'sm:h-14' : 'sm:h-18',
+          )}
         >
           <InputGroupInput
             aria-label="風土記の AI への質問"
@@ -75,7 +78,7 @@ export function Composer({
             disabled={disabled}
             aria-invalid={over || undefined}
             enterKeyHint="send"
-            className="h-full pl-5 text-base placeholder:text-muted-foreground/80 sm:pl-7 sm:text-xl md:text-xl"
+            className={cn('h-full pl-5 text-base placeholder:text-muted-foreground/80', compact ? 'sm:pl-6' : 'sm:pl-7 sm:text-xl md:text-xl')}
             onFocus={onFocus}
             onChange={(e) => setText(e.target.value)}
             onKeyDown={(e) => {
@@ -87,9 +90,22 @@ export function Composer({
           />
           <InputGroupAddon align="inline-end" className="pr-2 sm:pr-3">
             {over ? <InputGroupText className="tabular-nums">{`${text.length} / ${MAX_TEXT}`}</InputGroupText> : null}
-            <InputGroupButton type="submit" variant="default" size="icon-sm" disabled={!canSend} aria-label="送る" className="size-10 rounded-full disabled:opacity-100 sm:size-13 [&_svg:not([class*='size-'])]:size-5 sm:[&_svg:not([class*='size-'])]:size-6">
-              {pending ? <Spinner /> : <ArrowRightIcon />}
-            </InputGroupButton>
+            {busy && onStop ? (
+              <InputGroupButton type="button" variant="secondary" size="icon-sm" onClick={onStop} aria-label="止める" className="size-10 rounded-full">
+                <SquareIcon />
+              </InputGroupButton>
+            ) : (
+              <InputGroupButton
+                type="submit"
+                variant="default"
+                size="icon-sm"
+                disabled={!canSend}
+                aria-label="送る"
+                className={cn("size-10 rounded-full disabled:opacity-100 [&_svg:not([class*='size-'])]:size-5", !compact && "sm:size-13 sm:[&_svg:not([class*='size-'])]:size-6")}
+              >
+                {pending ? <Spinner /> : <ArrowRightIcon />}
+              </InputGroupButton>
+            )}
           </InputGroupAddon>
         </InputGroup>
       </form>
