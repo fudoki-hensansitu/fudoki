@@ -122,7 +122,7 @@ export function PdfViewer({
   const canvases = useRef(new Map<number, HTMLCanvasElement>())
   const reportError = (error: unknown) => {
     setError(true)
-    // 原因は開発者向けに残し、画面では参照元の該当ページへ案内する
+    // 原因は開発者向けに残し、画面では出典の該当ページへ案内する
     console.error('origin pdf', error)
   }
 
@@ -284,14 +284,14 @@ export function PdfViewer({
           <Button variant="outline" size="icon-sm" aria-label="次のページ" disabled={!ready || !document || pages[0]! >= document.numPages}
             onClick={() => setMovedPage(pages[0]! + 1)}><ChevronRight aria-hidden="true" /></Button>
         </span>}
-        {!error && <a className="pdf-url" href={url} title={url} onClick={(event) => { event.preventDefault(); openLink(url) }}>参照元<ExternalLink aria-hidden="true" /></a>}
+        {!error && <a className="pdf-url" href={url} title={url} onClick={(event) => { event.preventDefault(); openLink(url) }}>出典<ExternalLink aria-hidden="true" /></a>}
       </div>
       {error && (
         <Alert role="status">
           <AlertDescription className="flex flex-col items-start gap-2">
-            <span>この PDF はここでは表示できません。参照元{initialPages.length ? `の${initialPages.join('・')}ページ` : ''}を開いて確かめてください。</span>
+            <span>この PDF はここでは表示できません。出典{initialPages.length ? `の${initialPages.join('・')}ページ` : ''}を開いて確かめてください。</span>
             <Button size="sm" onClick={() => openLink(initialPages.length ? `${origin.url}#page=${initialPages[0]}` : origin.url)}>
-              参照元の{initialPages[0] ? `${initialPages[0]}ページ` : 'PDF'}<ExternalLink aria-hidden="true" />
+              出典の{initialPages[0] ? `${initialPages[0]}ページ` : 'PDF'}<ExternalLink aria-hidden="true" />
             </Button>
           </AlertDescription>
         </Alert>

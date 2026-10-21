@@ -131,15 +131,15 @@ function OriginButton({ node, origin, bridge, showPdf }: {
   const format = <span className="ref-format" aria-hidden="true">{origin.format.toUpperCase()}</span>
   if (origin.format === 'pdf' && page)
     return (
-      <Button variant="outline" size="sm" className="ref" aria-label={`参照（PDF）: ${node.name}`}
+      <Button variant="outline" size="sm" className="ref" aria-label={`出典（PDF）: ${node.name}`}
         onClick={(event) => showPdf({ origin, location: node, selectedPage: page, trigger: event.currentTarget })}>
-        {format}参照
+        {format}出典
       </Button>
     )
   return (
-    <Button variant="outline" size="sm" className="ref" aria-label={`参照（${origin.format.toUpperCase()}、外部で開く）: ${node.name}`}
+    <Button variant="outline" size="sm" className="ref" aria-label={`出典（${origin.format.toUpperCase()}、外部で開く）: ${node.name}`}
       onClick={() => bridge.openLink(origin.url)}>
-      {format}参照<ExternalLink aria-hidden="true" className="ref-external" />
+      {format}出典<ExternalLink aria-hidden="true" className="ref-external" />
     </Button>
   )
 }
