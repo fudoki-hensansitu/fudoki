@@ -34,6 +34,9 @@ function loadResource(token: string, uri: string) {
 
 /** Tailwind の md と同じ幅。横に開く側の panel の幅（w-1/2）と本文の寄せ（50vw）も合わせる */
 const WIDE = '(min-width: 768px)'
+// 横に開いている View の数と、開く前の body の margin（複数あっても最後に閉じたときに戻す）
+let sideOpen = 0
+let sideMargin = ''
 const dark = () => matchMedia('(prefers-color-scheme: dark)').matches
 
 /** View に選ばせる表示の大きさ。広い画面では会話の右に並べ（side-by-side）、狭い画面では頁の上に全画面で重ねる */
@@ -182,10 +185,11 @@ export function ViewFrame({
   // 横に開く間は、会話を左半分に寄せる
   React.useEffect(() => {
     if (!side) return
-    const margin = document.body.style.marginRight
+    if (sideOpen++ === 0) sideMargin = document.body.style.marginRight
     document.body.style.marginRight = '50vw'
     return () => {
-      document.body.style.marginRight = margin
+      // 複数の View が横に開いていても、最後の1つが閉じたときに元へ戻す
+      if (--sideOpen === 0) document.body.style.marginRight = sideMargin
     }
   }, [side])
 

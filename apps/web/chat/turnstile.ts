@@ -50,18 +50,23 @@ export async function mountTurnstile(el: HTMLElement, sitekey: string) {
       turnstile.reset(id)
     },
   })
+  // 走っている確認の間は、新しく走らせて待っている側（waiting）を差し替えない
+  let running = false
   const run = () =>
     new Promise<string>((resolve, reject) => {
+      running = true
       waiting = { resolve, reject }
       turnstile.reset(id)
       turnstile.execute(id)
+    }).finally(() => {
+      running = false
     })
   // 入力を始めた時点で確認を先に走らせ、送るときに待たないようにする（token は約5分で切れるので、4分を超えたら取り直す）
   let warm: { promise: Promise<string>; at: number } | undefined
   const fresh = () => (warm && Date.now() - warm.at < WARM_TTL_MS ? warm : undefined)
   return {
     warm: () => {
-      if (fresh()) return
+      if (fresh() || running) return
       const promise = run()
       warm = { promise, at: Date.now() }
       promise.catch(() => {

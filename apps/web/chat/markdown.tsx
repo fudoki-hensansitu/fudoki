@@ -27,6 +27,8 @@ function inline(tokens: Token[] | undefined): React.ReactNode[] {
         const text = t as Tokens.Text
         return <React.Fragment key={i}>{text.tokens ? inline(text.tokens) : text.text}</React.Fragment>
       }
+      case 'escape':
+        return <React.Fragment key={i}>{(t as Tokens.Escape).text}</React.Fragment>
       default:
         return <React.Fragment key={i}>{'raw' in t ? t.raw : ''}</React.Fragment>
     }
