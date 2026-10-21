@@ -50,16 +50,10 @@
               "expected_behavior": "document_kind=settlement、fiscal_year=min/max 2025、jurisdiction_code=131148、account_name=一般会計、node_kind=目に絞り、amount_yen降順で3件。円単位と出典を示す。"
             },
             {
-              "description": "返却された明細の内訳。前の検索のnode_idを使う。",
-              "prompt": "いま表示した最初の目の内訳を、科目・節・備考の切り口ごとに見せて。",
-              "tools_triggered": "get_expenditure_node",
-              "expected_behavior": "前の応答のnode_idとdocument_kindで取得し、子をaxis別に示す。異なる軸と親子を合算しない。子が無い場合は無いと説明する。"
-            },
-            {
-              "description": "出典確認。中野区2025年度決算一般会計からPDF・頁付き明細を検索済みの会話。",
-              "prompt": "この明細の項目と金額を出典で確認したい。資料名、URL、PDFファイルの頁番号を教えて。",
-              "tools_triggered": "get_expenditure_node",
-              "expected_behavior": "origin_idに対応する資料名・URL、source_pageとamount_source_pageを返す。PDF表示の入口と枠の有無を案内し、ファイル頁と紙面頁を区別する。描画はhostで実確認する。"
+              "description": "明細の内訳と出典確認。公開データのみ、認証不要。中野区2025年度決算一般会計は2026-10-14に収録を確認。",
+              "prompt": "中野区の2025年度決算、一般会計で金額が最も大きい目について、内訳を科目・節・備考の切り口ごとに見せて。あわせて、その目の資料名、URL、PDFファイルの頁番号を教えて。",
+              "tools_triggered": "search_expenditure_nodes, get_expenditure_node",
+              "expected_behavior": "document_kind=settlement、fiscal_year=2025、jurisdiction_code=131148、account_name=一般会計、node_kind=目、amount_yen降順で1件を検索し、返されたnode_idで取得する。子をaxis別に示し、異なる軸と親子を合算しない。origin_idに対応する資料名・URL、source_pageとamount_source_pageを示し、ファイル頁と紙面頁を区別する。"
             },
             {
               "description": "COFOG分類の集計。検索上限に達したら総額を断言しない。",
