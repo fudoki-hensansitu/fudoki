@@ -196,7 +196,7 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
           ) : null}
         </div>
       </div>
-      <div className="mx-auto w-full max-w-3xl shrink-0 px-4 pt-2 pb-6 sm:pb-8">
+      <div className="mx-auto w-full max-w-3xl shrink-0 px-4 pt-2 pb-[calc(2rem+env(safe-area-inset-bottom))] sm:pb-12">
         <Composer onSubmit={send} onStop={stop} busy={busy} placeholder="続けて聞く" autoFocus compact />
       </div>
     </div>
