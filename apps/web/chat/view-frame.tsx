@@ -261,8 +261,7 @@ export function ViewFrame({
     // 1つの tool 結果に1つの iframe。入力と結果は変わらない
   }, [token, uri])
 
-  // 全画面と右のパネルは popover で top layer に上げる。会話の一覧は contain・content-visibility・scroll-fade の mask で fixed の基準や見た目を閉じ込めるので、
-  // position: fixed だけでは画面全体を覆えない。iframe は DOM の中で動かさない（動かすと View が読み直しになる）
+  // 全画面と右のパネルは popover で top layer に上げる。固定のヘッダーや入力欄（z-20）の上に出し、祖先の stacking context に左右されないようにする。iframe は DOM の中で動かさない（動かすと View が読み直しになる）
   const box = React.useRef<HTMLDivElement>(null)
   React.useLayoutEffect(() => {
     const el = box.current

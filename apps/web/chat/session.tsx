@@ -18,8 +18,9 @@ import { loadSession, saveSession, type StoredSession } from './store'
 import { ViewFrame } from './view-frame'
 import { LOGO_G } from '../logo'
 
-/** 一番下からこの距離以内なら、読み終えて追っていると見なす */
+/** 頁の端からこの距離以内なら、その側のフェードは出さない */
 const FADE_EDGE_PX = 4
+/** 一番下からこの距離以内なら、読み終えて追っていると見なす */
 const NEAR_BOTTOM_PX = 120
 
 type Metadata = { apps?: Record<string, string> }
@@ -107,6 +108,21 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
       window.removeEventListener('resize', measure)
     }
   }, [measure])
+  // ソフトキーボードは iOS・Android（既定）でレイアウトの高さを縮めず、下に固定した入力欄が裏に隠れる。見えている範囲の下端へ持ち上げる
+  React.useEffect(() => {
+    const vv = window.visualViewport
+    if (!vv) return
+    const root = document.documentElement
+    const lift = () => root.style.setProperty('--kb', `${Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop))}px`)
+    lift()
+    vv.addEventListener('resize', lift)
+    vv.addEventListener('scroll', lift)
+    return () => {
+      vv.removeEventListener('resize', lift)
+      vv.removeEventListener('scroll', lift)
+      root.style.removeProperty('--kb')
+    }
+  }, [])
   React.useEffect(() => {
     if (status === 'submitted') pinned.current = true
     if (pinned.current) window.scrollTo({ top: document.documentElement.scrollHeight })
@@ -190,7 +206,7 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
           ) : null}
         </div>
       </div>
-      <div className="sticky bottom-0 z-20 bg-background">
+      <div className="sticky bottom-0 z-20 bg-background" style={{ transform: 'translateY(calc(-1 * var(--kb, 0px)))' }}>
         <div aria-hidden className={`pointer-events-none absolute inset-x-0 bottom-full h-10 bg-gradient-to-t from-background to-transparent transition-opacity duration-200 ${fade.bottom ? 'opacity-100' : 'opacity-0'}`} />
         <div className="mx-auto w-full max-w-3xl px-4 pt-2 pb-[calc(2rem+env(safe-area-inset-bottom))] sm:pb-12">
           <Composer onSubmit={send} onStop={stop} busy={busy} placeholder="続けて聞く" autoFocus compact />
