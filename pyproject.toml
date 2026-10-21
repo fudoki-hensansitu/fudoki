@@ -1,6 +1,16 @@
+[project]
+name = "fudoki-workspace"
+version = "0.0.0"
+# Dependabot の uv updater が workspace root から読む Python 対応範囲。
+# pipeline の package metadata と一致させる（workspace 全体も 3.13 のみ）。
+requires-python = ">=3.13,<3.14"
+dependencies = []
+
 [tool.uv.workspace]
 members = ["pipeline"]
 
 [tool.uv]
 # 公開から7日経っていない版は解決しない（supply chain の cooldown）
 exclude-newer = "7 days"
+# root は updater 用の workspace metadata のみで、配布・環境へのインストール対象にはしない。
+package = false

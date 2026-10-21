@@ -16,6 +16,7 @@ exclude-newer-span = "P7D"
 [manifest]
 members = [
     "fudoki-pipeline",
+    "fudoki-workspace",
 ]
 
 [[package]]
@@ -634,6 +635,11 @@ requires-dist = [
     { name = "pypdfium2", specifier = "==5.13.0" },
 ]
 provides-extras = ["paddle-ocr"]
+
+[[package]]
+name = "fudoki-workspace"
+version = "0.0.0"
+source = { virtual = "." }
 
 [[package]]
 name = "future"
