@@ -50,10 +50,10 @@ function Start({ sitekey }: { sitekey: string }) {
   if (!sitekey)
     return <p className="text-sm text-muted-foreground">風土記の AI に聞く機能は準備中です。下の「自分の AI に接続する」から、お使いの AI で使えます。</p>
   return (
-    <div className="ask-dock flex flex-col gap-3">
+    <div className="ask-dock flex flex-col">
       <Composer onSubmit={start} pending={pending} placeholder={EXAMPLE} pill onFocus={() => turnstile.current?.warm()} />
       <div ref={widget} />
-      {error ? <p role="alert" className="text-sm text-destructive">{error}</p> : null}
+      {error ? <p role="alert" className="mt-3 text-sm text-destructive">{error}</p> : null}
     </div>
   )
 }
