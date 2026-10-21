@@ -3,7 +3,7 @@ import unittest
 from types import SimpleNamespace
 
 from ingestion.generic.layout import Logical, logical_pages
-from ingestion.generic.mixed import aligned, completing, frame_rules, learn_frames, learn_origins, moved_unread, numbers, shift
+from ingestion.generic.mixed import aligned, completing, frame_rules, learn_frames, learn_origins, moved_unread, numbers, shift, unlearned_amounts
 from ingestion.generic.observe import Page, Rule, Word
 from ingestion.generic.tree import mixed_document, snap_ocr_levels
 from ingestion.lib import pdf_rules
@@ -90,6 +90,16 @@ class MixedPagesTest(unittest.TestCase):
         built = SimpleNamespace(unowned=[])
         declared_unread(built, logicals, None, moved_unread(observation, shifts))
         self.assertEqual([(u['page'], u['box']) for u in built.unowned], [(2, [160, 140, 166, 148])])
+
+    def test_amounts_in_an_ocr_column_whose_heading_the_text_pages_do_not_print_are_listed(self):
+        def page(number, heading):
+            words = [Word('科目', 20, 55, 38, 64), Word(heading, 110, 55, 146, 64), Word('総務費', 20, 120, 56, 129), Word('1,000', 150, 120, 172.5, 129)]
+            return Page(number, 300, 500, words, frame(10, 200, {'wide': (100,), 'narrow': ()}))
+        logicals = logical_pages([page(1, '支出済額'), page(2, '支王済額')], ocr_pages=frozenset({2}))  # OCR misread 出
+        self.assertEqual([band.kind for band in logicals[1].bands], ['label', None])
+        self.assertEqual([(u['page'], u['text'] if 'text' in u else u['header']) for u in unlearned_amounts(logicals, frozenset({2}))],
+                         [(2, '支王済額')])
+        self.assertEqual(unlearned_amounts(logical_pages([page(1, '支出済額'), page(2, '支出済額')], ocr_pages=frozenset({2})), frozenset({2})), [])
 
     def test_rereads_of_an_ocr_reading_need_ocr_pages(self):
         from ingestion.generic.convert import check_ocr_rereads

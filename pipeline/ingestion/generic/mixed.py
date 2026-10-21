@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from collections import Counter
 
-from ingestion.generic.layout import _frames
+from ingestion.generic.layout import _frames, is_amount
 from ingestion.generic.observe import Page, Rule, Word
 from ingestion.lib import pdf_rules
 
@@ -86,6 +86,14 @@ def moved_unread(observation: dict, shifts: dict[int, float]) -> dict:
     return {**observation, 'pages': [{**page, 'unread_ink': [[x0 + shifts.get(page['page_number'], 0.0), y0, x1 + shifts.get(page['page_number'], 0.0), y1]
                                                             for x0, y0, x1, y1 in page.get('unread_ink', [])]}
                                      for page in observation.get('pages', [])]}
+
+
+def unlearned_amounts(logicals: list, ocr_pages: frozenset) -> list[dict]:
+    """Amounts OCR read in a column of no kind: its heading is one the text pages do not print (OCR misread it), so
+    nothing teaches whether it holds amounts, and the builder reads no amount there."""
+    return [{'kind': 'amount in a column of no kind', 'page': glyph.page, 'box': glyph.original, 'header': '／'.join(band.header)}
+            for logical in logicals for band in logical.bands if band.kind is None
+            for glyph in band.words if glyph.page in ocr_pages and is_amount(glyph.text)]
 
 
 def frame_rules(page: Page, layouts: Counter, spread: dict | None = None, staircase: bool = False) -> list[Rule]:

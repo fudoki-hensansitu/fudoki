@@ -334,6 +334,8 @@ class Table:
     ocr_pages: list = field(default_factory=list)  # pages of a text original read from pinned OCR (`mixed.py`)
 
 
+# What the gates of the OCR pages list in `built.unowned` (`build.run_pages`).
+OCR_GATES = ('unread ink in amount column', 'unreadable declared amount cell', 'amount in a column of no kind')
 # The options of a conversion that reread an OCR observation (`scan.read_pages`).
 OCR_REREADS = ('amount_corrections', 'code_corrections', 'amount_readings', 'code_readings', 'dropped_readings', 'unit_readings',
                'header_readings')
@@ -362,7 +364,7 @@ def build_table(source: dict, options: dict, *, stop: bool = True) -> Table:
     # observation (`mixed.py`); the observation cache of the text layer is keyed by the pages it observes.
     ocr_numbers = mixed.numbers(source, pages)
     check_ocr_rereads(options, ocr_numbers)
-    ocr = (ocr_numbers, lambda hook: scan_module.read_pages(source, options, layout, ocr_numbers, rule_hook=hook, keep_marks=True)[:2]) if ocr_numbers else None
+    ocr = (ocr_numbers, lambda hook: scan_module.read_pages(source, options, layout, ocr_numbers, rule_hook=hook, keep_marks=True)) if ocr_numbers else None
     built, report, observed, logicals = run_pages(
         Path(source['path']), pages, observation_cache(source, [p for p in pages if p not in ocr_numbers]),
         document_kind=source['target']['document_kind'], account=account, stop=stop,
@@ -489,8 +491,8 @@ def convert(inputs: list[dict], destination: Path, options: dict) -> dict:
     if len(inputs) != 1:
         raise ValueError('The generic builder converts one original per table')
     table = build_table(inputs[0], options)
-    # As the scan converter: ink OCR left unread in an amount column of an OCR page stops the table (`mixed.py`).
-    unread = [u for u in table.built.unowned if u['kind'] in ('unread ink in amount column', 'unreadable declared amount cell')]
+    # As the scan converter: what OCR left unread in the amount columns of an OCR page stops the table (`run_pages`).
+    unread = [u for u in table.built.unowned if u['kind'] in OCR_GATES]
     if unread:
-        raise ValueError(f'OCR pages have unread ink in amount columns: {[(u["page"], u["box"]) for u in unread]}')
+        raise ValueError(f'OCR pages have amounts left unread: {[(u["kind"], u["page"], u["box"]) for u in unread]}')
     return write_files(destination, options['table_id'], table)

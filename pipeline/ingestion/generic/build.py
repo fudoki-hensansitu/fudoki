@@ -101,7 +101,7 @@ def run_pages(pdf: Path, pages: list[int], cache: Path | None = None, judge=None
     `stop=False` returns the check in `report.unit` instead, for a measurement that goes on."""
     staircase = bool((header or {}).get('staircase'))
     # `ocr = (pages, read)`: pages of a text document that OCR read (`mixed.py`), and `read(rule_hook)` for them (their
-    # pages and the pinned observation). They are
+    # pages, the pinned observation and the variant characters replaced in it). They are
     # not observed from the text layer and not repaired as text, and they teach nothing: the columns the text pages draw
     # complete the rules of their render (the hook) before their words are cut at them.
     numbers, read_ocr = ocr or ((), None)
@@ -110,7 +110,7 @@ def run_pages(pdf: Path, pages: list[int], cache: Path | None = None, judge=None
         printed = [image_rules(pdf, page, staircase) if not page.rules else page for page in printed]
     unrepaired = [Page(page.number, page.width, page.height, list(page.words), page.rules) for page in printed]
     observed, report = repair(pdf, printed, repairs, bool((text_layer or {}).get('form_clips')))
-    read, observation = read_ocr(mixed.completing(mixed.learn_frames(observed, spread, staircase), spread, staircase)) if read_ocr else ([], None)
+    read, observation, variants = read_ocr(mixed.completing(mixed.learn_frames(observed, spread, staircase), spread, staircase)) if read_ocr else ([], None, [])
     origins = mixed.learn_origins(observed, spread, staircase)
     shifts = {page.number: mixed.shift(page, origins, spread, staircase) for page in read}
     read = [mixed.moved(page, shifts[page.number]) for page in read]
@@ -127,9 +127,14 @@ def run_pages(pdf: Path, pages: list[int], cache: Path | None = None, judge=None
                                    ('bands',) if (header or {}).get('staircase') else SUBJECT_PATTERNS)
     report.pattern = choice
     if observation is not None:
-        # The scan's gate: ink OCR left unread in an amount column is listed in `built.unowned`, not an empty cell.
+        # The scan's gates over the logical pages OCR read: ink OCR left unread in an amount column, a glyph it could not
+        # read in a column the settings declare amounts, and amounts in a column whose kind the text pages do not teach
+        # (a heading OCR misread) are listed in `built.unowned`, not left as empty cells.
         from ingestion.generic.scan import declared_unread
-        declared_unread(built, logicals, None, mixed.moved_unread(observation, shifts))
+        read_logicals = [logical for logical in logicals if logical.ocr]
+        declared_unread(built, read_logicals, columns, mixed.moved_unread(observation, shifts))
+        built.unowned.extend(mixed.unlearned_amounts(read_logicals, frozenset(numbers)))
+        built.notes.extend({'kind': 'variant characters', 'text': text} for text in variants)
     unit = check_units(built, document_kind, account, partial)
     if unit['stopped'] and stop:
         raise ValueError(f'Unit check failed: {unit}')
