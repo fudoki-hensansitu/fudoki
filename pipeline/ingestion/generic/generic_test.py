@@ -1323,3 +1323,51 @@ class OcrCodeWordTest(unittest.TestCase):
         self.assertAlmostEqual(item.indent, 422.2 + 2 * 35 / 8, places=3)
         _measure(item, [glyph], '10')
         self.assertAlmostEqual(item.indent, 422.2 + 2 * 35 / 5, places=3)
+
+class HeadingsTest(unittest.TestCase):
+    """`headings`: a name-only line heads the deeper lines under it, only in an axis that declares it."""
+    SETTINGS = {'備考': {'headings': True, 'plain_names': ['繰越明許費分']}}
+
+    def read(self, lines, settings=True):
+        from ingestion.generic.tree import heads_items, items
+        words = [glyph(text, x, y, width) for text, x, y, width in lines]
+        group = Group([Band(0, 1200, 1, ('備考',), [], 100, 700, words)], '備考', False)
+        found = items(group, '備考', None, None, None, settings=self.SETTINGS['備考'] if settings else None)
+        return found, [heads_items(self.SETTINGS if settings else None, found, i) for i in range(len(found))]
+
+    def test_a_name_only_line_with_a_deeper_line_that_prints_an_amount_is_a_heading(self):
+        found, heads = self.read([('水道料金減免事業補助金', 300, 100, 110), ('繰越明許費分', 320, 112, 60), ('41,963,647', 560, 112, 50),
+                                  ('本年度分', 320, 124, 40), ('247,860,745', 560, 124, 50)])
+        self.assertEqual([i.name for i in found], ['水道料金減免事業補助金', '繰越明許費分', '本年度分'])
+        self.assertEqual(heads, [True, False, False])
+
+    def test_a_name_only_line_without_deeper_lines_is_not_a_heading(self):
+        found, heads = self.read([('市勢要覧作成委託', 300, 100, 80), ('通信運搬費', 300, 112, 50), ('1,000', 560, 112, 40)])
+        self.assertEqual(heads, [False] * len(found))
+
+    def test_a_marked_name_wraps_under_its_text_not_under_its_mark(self):
+        found, heads = self.read([('○あそべえ事業', 300, 100, 70), ('負担金', 309, 112, 30), ('1,000', 560, 112, 40)])
+        self.assertEqual([i.name for i in found], ['あそべえ事業負担金'])
+        self.assertEqual(heads, [False])
+
+    def test_without_the_setting_nothing_is_a_heading(self):
+        found, heads = self.read([('甲事業補助金', 300, 100, 66), ('乙分', 320, 112, 20), ('41,963,647', 560, 112, 50)],
+                                 settings=False)
+        self.assertEqual(heads, [False] * len(found))
+
+    def test_a_line_that_is_not_a_heading_still_joins_the_amountless_item_above(self):
+        from ingestion.generic.tree import join_last_lines
+        group = Group([Band(0, 1200, 1, ('備考',), [], 100, 700)], '備考', False)
+
+        def pair(heading):
+            above = Item(group, 1, [[glyph('共通経費', 300, 100, 36)]], None, '共通経費', 300)
+            above.heading = heading
+            below = Item(group, 1, [[glyph('【所管課】', 312, 112, 45)]], None, '【所管課】', 312)
+            below.amounts.append(('備考', [glyph('299,161,329', 520, 112, 90)]))
+            return [above, below]
+
+        depth = lambda item: 1 if item.indent < 310 else 2
+        joined = join_last_lines(pair(False), depth, lambda item: 1)
+        self.assertEqual([(i.name, len(i.amounts)) for i in joined], [('共通経費【所管課】', 1)])
+        apart = join_last_lines(pair(True), depth, lambda item: 1)
+        self.assertEqual([(i.name, len(i.amounts)) for i in apart], [('共通経費', 0), ('【所管課】', 1)])
