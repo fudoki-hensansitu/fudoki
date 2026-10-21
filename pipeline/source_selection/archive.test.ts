@@ -161,7 +161,7 @@ test('replacement next-part skips an unregistered fourth object and still refuse
   expect(() => planFiles([replacement], undefined, 5)).toThrow('next-part')
 })
 
-// 評価資料: 決算書と同じ団体・年度で、別の slot（evaluation-settlement）に保存する。
+// 評価資料: 決算書と同じ自治体・年度で、別の slot（evaluation-settlement）に保存する。
 const settlementTarget = { jurisdiction: '132047', fiscal_year: 2024, document_kind: 'settlement' as const }
 const evaluationFile = (data: Uint8Array, name: string) => ({ download_url: `https://example.com/${name}.pdf`, sha256: hash(data), format: 'pdf' as const, pdf_type: 'text' as const, pages: null })
 const evaluation = (files: ReturnType<typeof evaluationFile>[]): EvaluationSelection => ({ target: settlementTarget,

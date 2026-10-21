@@ -34,6 +34,6 @@ models:
   - name: amount
     description: 08予算額の数値。読めない値はNULLにせず検査で止める。
   - name: source_line_start
-    description: 原文CSVの物理行の開始。原典の位置の特定に使う。
+    description: 原文CSVの物理行の開始。出典の位置の特定に使う。
   - name: source_line_end
     description: 原文CSVの物理行の終了。

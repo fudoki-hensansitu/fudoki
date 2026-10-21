@@ -6,7 +6,7 @@ export default defineConfig({
     compatibilityDate: '2026-08-23',
     entrypoint: '../worker.ts',
     domains: ['fudoki.dev'],
-    // static/ の重いファイル（ホームの動画・原典の切り抜き）と会話の画面の JS・CSS（_app/、build で作る）を assets で配る。合わない path は Worker が答える
+    // static/ の重いファイル（ホームの動画・出典の切り抜き）と会話の画面の JS・CSS（_app/、build で作る）を assets で配る。合わない path は Worker が答える
     assets: { notFoundHandling: 'none' },
     observability: { enabled: true, headSamplingRate: 1 },
     env: {

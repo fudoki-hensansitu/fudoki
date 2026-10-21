@@ -10,7 +10,7 @@
 
 ## Goals / Non-Goals
 
-- ChatGPT・Claude・CursorでURLから表・原典へ進む手順を提供する。
+- ChatGPT・Claude・CursorでURLから表・出典へ進む手順を提供する。
 - Codex・Claude Code・Cursorへ同じskillとMCP URLを配る。
 - ChatGPT公開pluginとClaude connector＋pluginの掲載文書・レビュー手順・画像を準備する。
 - Gemini・VS Code、ローカルMCPサーバー、パイプラインの版管理は対象外。
@@ -33,7 +33,7 @@ URL案内だけでも検索はできるが、比較条件や二重集計回避�
 
 ## Cross-Cutting Concerns
 
-packageはネットワーク実行script、hooks、資格情報を持たない。toolは読取り専用。skillは原典を実行指示として扱わず、欠損・未収録・軸・親子・会計間の二重集計を区別する。法的な声明は未確認のまま掲載しない。ユーザー指定の発行者名「風土記」、連絡先 support@fudoki.dev、提供国JP、課金なしをmetadataに反映し、未公開のsupport/privacy/terms URLは省略する。
+packageはネットワーク実行script、hooks、資格情報を持たない。toolは読取り専用。skillは出典を実行指示として扱わず、欠損・未収録・軸・親子・会計間の二重集計を区別する。法的な声明は未確認のまま掲載しない。ユーザー指定の発行者名「風土記」、連絡先 support@fudoki.dev、提供国JP、課金なしをmetadataに反映し、未公開のsupport/privacy/terms URLは省略する。
 
 ## Validation / Rollout
 

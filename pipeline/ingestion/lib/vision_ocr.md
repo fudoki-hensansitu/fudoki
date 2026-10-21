@@ -1,8 +1,8 @@
 # 再利用するVision OCR
 
-`ingestion.lib.vision_ocr` はmacOS上でPDFの指定頁・領域を読み、OCRエンジンが返した文字と座標を返す。特定の自治体・表書式に依存しない。後処理で原典の金額や名称を書き換えない。scan PDFの共通入口 `ingestion.lib.scan_ocr` の既定であり、[ADR 0019](../../../docs/adr/0019-freeze-scan-ocr-observations.md) の方針で取得した観測を補助入力にする。
+`ingestion.lib.vision_ocr` はmacOS上でPDFの指定頁・領域を読み、OCRエンジンが返した文字と座標を返す。特定の自治体・表書式に依存しない。後処理で出典の金額や名称を書き換えない。scan PDFの共通入口 `ingestion.lib.scan_ocr` の既定であり、[ADR 0019](../../../docs/adr/0019-freeze-scan-ocr-observations.md) の方針で取得した観測を補助入力にする。
 
-SwiftのApple Vision・CoreGraphics・ImageIOを使い、追加のPython依存やモデルのダウンロードは不要。macOSのCommand Line Tools（`xcrun swift`）が必要。Vision revision 3、accurate、日本語・英語、言語補正offを既定にする。設定は原典別に変更できる。
+SwiftのApple Vision・CoreGraphics・ImageIOを使い、追加のPython依存やモデルのダウンロードは不要。macOSのCommand Line Tools（`xcrun swift`）が必要。Vision revision 3、accurate、日本語・英語、言語補正offを既定にする。設定は出典別に変更できる。
 
 ## PDFを読む
 
@@ -48,7 +48,7 @@ PDFは表示されるCropBox・回転を反映して300dpiで描画する。画�
 - `bbox_normalized`: 同じ枠のページ全体に対する0〜1の座標。
 - `bbox_pdf_pt`: 表示CropBoxの左上原点のpt。画像入力ではnull。
 - `bbox_status`: `available` / `unavailable`。有効な枠が取れない観測も文字は保持し、座標はnullにする。空白だけのwordは出さず、空白を含む親領域の `raw_text` は保持する。
-- 原典のSHA-256、実際のOSの版・build、revision、認識設定、抽出コードのハッシュ、領域ごとの推論時間。
+- 出典のSHA-256、実際のOSの版・build、revision、認識設定、抽出コードのハッシュ、領域ごとの推論時間。
 
 word・numberは親候補のconfidenceを引き継ぐ。文字ごとの独立した確率ではない。accurateの枠は単語精度で、日本語の意味上の単語や文字の厳密な境界とは限らない。
 
@@ -96,7 +96,7 @@ name = correct_name("備品入費", dictionary)
 # rule_id、reason、dictionary_sha256も返る。
 ```
 
-同梱の [節名称辞書](fiscal_setsu_name_corrections.json) と [科目名辞書](fiscal_subject_name_corrections.json) は、原典画像で確認した名称全体の誤読を収録する。自治体固有の事業名への適用は別の辞書を宣言する。辞書は `schema_version: 1`、`normalization: "NFKC_REMOVE_WHITESPACE"`、`rules`（id・observed_name・corrected_name・reason）のJSONで定義する。
+同梱の [節名称辞書](fiscal_setsu_name_corrections.json) と [科目名辞書](fiscal_subject_name_corrections.json) は、出典画像で確認した名称全体の誤読を収録する。自治体固有の事業名への適用は別の辞書を宣言する。辞書は `schema_version: 1`、`normalization: "NFKC_REMOVE_WHITESPACE"`、`rules`（id・observed_name・corrected_name・reason）のJSONで定義する。
 
 照合時だけNFKCと空白除去を使い、名称全体の一致だけを訂正する。部分置換・あいまい一致・連鎖置換はしない。未一致の名称はそのまま返す。訂正候補と根拠を別フィールドへ残し、`raw_name`・OCRの `raw_text`・金額は上書きしない。数値だけの辞書キーと、同じ正規化キーの重複定義は拒否する。
 
@@ -104,7 +104,7 @@ name = correct_name("備品入費", dictionary)
 
 金額の誤読も同じ宣言の形で直す。`AmountRule`（`id`・観測した金額・正しい金額・`reason`）に `page` と `observation_id` を足して一つの観測に結び付け、`load_amount_dictionary` で読み、`correct_amount` で適用する。同じ誤読文字列が別の頁・セルにあっても、頁と観測IDが合う規則だけを適用する。生の観測は書き換えず、補正前後・rule ID・辞書SHA・位置を返す。宣言した観測文字列が実際の観測と食い違えばエラーにし、古い宣言を黙って通さない。名称の規則は文字を含み、金額の規則は正しい金額が数字だけであることを検査し、種類の混ざった辞書キーを拒否する。金額の観測した側は、OCRの誤読（`009 480 TT` など）をそのまま書くので英字を含んでよい。
 
-金額の訂正は木の検査で正しさを確かめる。誤った宣言は合計と合わず検査を通らない。合計の差から値を逆算して埋めることはなく、原典画像で確認した観測だけを宣言する。
+金額の訂正は木の検査で正しさを確かめる。誤った宣言は合計と合わず検査を通らない。合計の差から値を逆算して埋めることはなく、出典画像で確認した観測だけを宣言する。
 
 ```python
 from ingestion.lib.ocr_names import correct_amount, load_amount_dictionary
@@ -118,7 +118,7 @@ amount = correct_amount("84, 365, 635", page=1, observation_id="p1:full-page:r10
 
 読み取り可能な別のPDFでもOCRの入口と出力形式は再利用できる。PDFの文字層を優先する判断、表の列・セル・階層・見開きの復元は呼び出し側の責務である。暗号化PDFは拒否する。入力が処理中に変わった場合も結果を返さない。
 
-実スキャンの比較では、全ページで109金額セル中18セル、列ごとの切り出しでも2セルの0を検出できなかった。OCR成功は全セルの検出を意味しない。欠落を空欄や0で自動補完せず、原典との確認を別に行う。単独の0が読めない金額は行を作らずNULLのままにし、集計と木の検査は定義どおりに扱う。ただし印字された0と空欄の区別はこの経路では失われる。取り込みの取得（`scan_ocr.acquire`）は、箱に覆われない墨を探して読み直す（[scan_ocr.md](scan_ocr.md)「見落とした墨を読み直す」）。
+実スキャンの比較では、全ページで109金額セル中18セル、列ごとの切り出しでも2セルの0を検出できなかった。OCR成功は全セルの検出を意味しない。欠落を空欄や0で自動補完せず、出典との確認を別に行う。単独の0が読めない金額は行を作らずNULLのままにし、集計と木の検査は定義どおりに扱う。ただし印字された0と空欄の区別はこの経路では失われる。取り込みの取得（`scan_ocr.acquire`）は、箱に覆われない墨を探して読み直す（[scan_ocr.md](scan_ocr.md)「見落とした墨を読み直す」）。
 
 内部重みの名前・版は公開APIで取得できない。OS更新後の再評価は必要で、Linuxでは動かない。導入時の判断と実測は[ADR 0017](../../../docs/adr/0017-vision-for-coordinate-preserving-ocr.md)、現在の方針は ADR 0019 を参照する。
 
@@ -130,6 +130,6 @@ amount = correct_amount("84, 365, 635", page=1, observation_id="p1:full-page:r10
 
 別案として600dpi描画、行ごと・セルごとの切り出し、数字欄の英語設定も比較した。最も良かったのは、300dpiの列ごとの抽出を保ち、観測がない2セルだけセル内を切り出して再読する方法だった。実際に2つの「0」を取得し、追加後は109/109セルが一致した（2回とも、数値の不一致0）。空欄を0で補完した結果ではない。
 
-全セルを切り出す単独の試行は104/109だったため、すべてをセルOCRへ置き換える方針にはしない。今回のセル枠は原典の罫線を見て宣言した既知の座標であり、一般的なセル検出器は未実装。別の原典でも同じ結果になる保証はない。再読の自動実装・既存取り込みへの接続はしていない。
+全セルを切り出す単独の試行は104/109だったため、すべてをセルOCRへ置き換える方針にはしない。今回のセル枠は出典の罫線を見て宣言した既知の座標であり、一般的なセル検出器は未実装。別の出典でも同じ結果になる保証はない。再読の自動実装・既存取り込みへの接続はしていない。
 
 実験コードと出力は `.agent/pdf-samples/vision-real-scan/` の `test_minimum_height.py`、`test_zero_alternatives.py`、`test_missing_cell_retry.py` と、それぞれの評価JSON・OCR結果に保存した。

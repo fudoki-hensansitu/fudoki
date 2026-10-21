@@ -276,12 +276,12 @@ const ledgerTables = ledgers
   .map(
     (l, i) =>
       `<table class="tbl"${i ? '' : ' data-pos="cur"'}><caption>${l.jurisdiction} · ${nakano.period} · 一般会計</caption>
-<thead><tr><th scope="col">科目</th><th scope="col">COFOG</th><th scope="col" class="n">支出済額</th><th scope="col" class="n">原典</th></tr></thead>
+<thead><tr><th scope="col">科目</th><th scope="col">COFOG</th><th scope="col" class="n">支出済額</th><th scope="col" class="n">出典</th></tr></thead>
 <tbody>${ledgerRows(l)}</tbody></table>`,
   )
   .join('')
 
-// 原典の切り抜きの上に、印字の位置を % で重ねる（3pt の余白を付ける）
+// 出典の切り抜きの上に、印字の位置を % で重ねる（3pt の余白を付ける）
 const [cx0, cy0, cx1, cy1] = origin.crop
 const [mx0, my0, mx1, my1] = origin.mark
 const pct = (v: number, w: number) => `${((v / w) * 100).toFixed(2)}%`
@@ -312,7 +312,7 @@ const BODY = `${ICONS}
 <header class="hero wrap">
 <p class="eyebrow">風土記 — 町の家計簿</p>
 <h1 class="sweep">あなたの街は、何にいくら使ったか</h1>
-<p class="sub">自治体の予算書と決算書を、事業の単位まで表にしました。AI に聞けば、他の街や他の年と同じ物差しで比べ、原典の頁まで返します。</p>
+<p class="sub">自治体の予算書と決算書を、事業の単位まで表にしました。AI に聞けば、他の街や他の年と同じ物差しで比べ、出典の頁まで返します。</p>
 <div id="chat-start" class="ask" data-turnstile-sitekey="__TURNSTILE_SITE_KEY__"><div class="ask-box"><p class="muted">風土記の AI に聞く</p><noscript>AI に聞くには JavaScript を有効にしてください。</noscript></div></div>
 <div class="acts"><a class="btn ol" href="#mcp">自分の AI に接続する${icon('arrow-right')}</a><a class="btn ol" href="${DOCS}">ドキュメント</a></div>
 </header>
@@ -329,11 +329,11 @@ const BODY = `${ICONS}
 <nav class="rail" aria-label="3つのステップ">
 <div class="rail-n" aria-hidden="true"><span class="win-n"><span>一</span><span>二</span><span>三</span></span><small>／ 三</small></div>
 <span class="gauge" aria-hidden="true"><i></i></span>
-<ol><li><a href="#see" aria-current="step"><b>一</b><span><strong>見る</strong><small>款・項・目から、その下の事業まで</small></span></a></li><li><a href="#compare"><b>二</b><span><strong>比べる</strong><small>COFOG で、街をまたいで並べる</small></span></a></li><li><a href="#check"><b>三</b><span><strong>確かめる</strong><small>原典の頁と、印字の位置で</small></span></a></li></ol>
+<ol><li><a href="#see" aria-current="step"><b>一</b><span><strong>見る</strong><small>款・項・目から、その下の事業まで</small></span></a></li><li><a href="#compare"><b>二</b><span><strong>比べる</strong><small>COFOG で、街をまたいで並べる</small></span></a></li><li><a href="#check"><b>三</b><span><strong>確かめる</strong><small>出典の頁と、印字の位置で</small></span></a></li></ol>
 </nav>
 <div>
 <article class="step" id="see"><span class="k">ステップ一　見る</span><h3>一つの街の支出を、事業の単位で</h3>
-<p>款・項・目と、その下の事業まで、原典の階層を保ったまま引けます。予算案・当初・補正後・決算は、金額の段階として分けて持ちます。</p>
+<p>款・項・目と、その下の事業まで、出典の階層を保ったまま引けます。予算案・当初・補正後・決算は、金額の段階として分けて持ちます。</p>
 <div class="stage"><div class="art paper" aria-hidden="true"><i style="right:-20px;top:-30px">見</i><s></s></div>
 <div class="win"><h4 class="win-h">${nakano.jurisdiction}の款 · ${nakano.period}</h4>
 <div class="lines">${nakano.kanList.map((k) => `<div class="r"><span>${k.name}</span><span class="num" title="${yen(k.amount)}">${oku(k.amount)}</span></div>`).join('')}</div></div></div>
@@ -345,8 +345,8 @@ const BODY = `${ICONS}
 <div class="bars">${library.rows.map((r) => `<div class="b"><span>${r.jurisdiction}</span><i style="width:${((r.amount / libraryMax) * 100).toFixed(1)}%" aria-hidden="true"></i><span class="num" title="${yen(r.amount)}">${oku(r.amount)}</span></div>`).join('')}</div>
 <p class="muted" style="font-size:12px">${library.period}。人口あたりの額ではありません。</p></div></div>
 </article>
-<article class="step" id="check"><span class="k">ステップ三　確かめる</span><h3>怪しい数字は、原典の頁で</h3>
-<p>明細ごとに原典の頁と印字の位置を持ち、分類が確かか・仮か・できないかも返します。数字に引っかかったら、その頁を開けば確かめられます。</p>
+<article class="step" id="check"><span class="k">ステップ三　確かめる</span><h3>怪しい数字は、出典の頁で</h3>
+<p>明細ごとに出典の頁と印字の位置を持ち、分類が確かか・仮か・できないかも返します。数字に引っかかったら、その頁を開けば確かめられます。</p>
 <div class="stage pdf"><div class="art oats" aria-hidden="true"><i style="left:-30px;top:-40px">確</i></div>
 <figure class="sheet"><figcaption><span>${origin.jurisdiction} · ${origin.document}</span><span class="num">PDF ${origin.page}頁</span></figcaption>
 <div class="crop"><img src="/home/origin.webp" width="2136" height="879" loading="lazy" alt="${origin.jurisdiction}の決算書 ${origin.page}頁の切り抜き。目「${origin.name}」の支出済額 ${yen(origin.amount)}"><i class="mark" style="${markStyle}" aria-hidden="true"></i></div>
@@ -365,9 +365,9 @@ const BODY = `${ICONS}
 </section>
 
 <section class="sec wrap faq" id="faq" aria-labelledby="faq-h"><h2 id="faq-h">よくある質問</h2><div>
-<details open><summary>数字はどこから来ていますか</summary><p>自治体が公開した予算書・決算書（PDF または CSV）です。表に読み込んだあと、原典の中で重ねて印字された合計どうしが一致するかを確かめています。明細ごとに、原典の頁と印字された位置を持っています。</p></details>
-<details><summary>予備費が 0 円なのは、使わなかったからですか</summary><p>いいえ。決算の予備費は、他の科目へ充用したあとの支出済額なので 0 円になります。どこへ充用したかは原典の備考にあり、風土記では金額の注記として科目の金額とは別に持ちます。</p></details>
-<details><summary>COFOG の分類は正しいのですか</summary><p>分類は原典にない、風土記の判断です。確かなもの・仮のもの・分類できないものを区別して返し、分類できない明細も合計から落としません。</p></details>
+<details open><summary>数字はどこから来ていますか</summary><p>自治体が公開した予算書・決算書（PDF または CSV）です。表に読み込んだあと、出典の中で重ねて印字された合計どうしが一致するかを確かめています。明細ごとに、出典の頁と印字された位置を持っています。</p></details>
+<details><summary>予備費が 0 円なのは、使わなかったからですか</summary><p>いいえ。決算の予備費は、他の科目へ充用したあとの支出済額なので 0 円になります。どこへ充用したかは出典の備考にあり、風土記では金額の注記として科目の金額とは別に持ちます。</p></details>
+<details><summary>COFOG の分類は正しいのですか</summary><p>分類は出典にない、風土記の判断です。確かなもの・仮のもの・分類できないものを区別して返し、分類できない明細も合計から落としません。</p></details>
 <details><summary>どの自治体・年度が入っていますか</summary><p>収録する自治体と年度は、順次広げています。いま入っている範囲は、AI に聞くか<a href="${DOCS}">ドキュメント</a>で確かめられます。収録していないことは、支出がゼロであることを意味しません。</p></details>
 <details><summary>使うのにお金や登録は要りますか</summary><p>要りません。MCP の URL を AI クライアントに登録すれば使えます。詳しくは<a href="${DOCS}/terms">利用規約</a>をご覧ください。</p></details>
 </div></section>

@@ -56,7 +56,7 @@
 
 .kind { display: inline-block; margin-right: 6px; padding: 0 4px; border: 1px solid var(--border); border-radius: 4px; font-size: 11px; line-height: 16px; font-weight: var(--font-weight-medium, 500); color: var(--sub); vertical-align: 1px; white-space: nowrap; }
 
-/* 団体・年度ごとのまとまり。見出しの金額は一画面の合計より一段小さくする */
+/* 自治体・年度ごとのまとまり。見出しの金額は一画面の合計より一段小さくする */
 .group { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .group + .group { margin-top: 8px; }
 .group-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-bottom: 4px; border-bottom: 1px solid var(--border); }
@@ -88,7 +88,7 @@ button.bar:disabled { cursor: progress; }
 .bar-more:disabled { cursor: progress; color: var(--sub); }
 
 
-/* 原典 PDF */
+/* 出典 PDF */
 .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .pager { display: inline-flex; align-items: center; gap: 4px; }
 .pager-status { min-width: 6.5em; text-align: center; font-size: var(--text-caption); color: var(--sub); font-variant-numeric: lining-nums tabular-nums; }

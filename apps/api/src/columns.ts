@@ -52,12 +52,12 @@ export const ORIGIN_TABLE = 'origin'
 export const ORIGIN_COLUMNS = TABLES[ORIGIN_TABLE]!.columns
 export const ORIGIN_SELECT_LIST = selectList(ORIGIN_COLUMNS)
 
-/** 団体マスタ。収録の無い団体も含む全団体 */
+/** 自治体マスタ。収録の無い自治体も含む全自治体 */
 export const JURISDICTION_TABLE = 'jurisdiction_master'
 export const JURISDICTION_COLUMNS = TABLES[JURISDICTION_TABLE]!.columns
 export const JURISDICTION_SELECT_LIST = selectList(JURISDICTION_COLUMNS)
 
-/** 収録範囲。木の表に明細がある団体・年度・資料区分・会計と原典の組 */
+/** 収録範囲。木の表に明細がある自治体・年度・資料区分・会計と出典の組 */
 export const COVERAGE_TABLE = 'expenditure_coverage'
 export const COVERAGE_COLUMNS = TABLES[COVERAGE_TABLE]!.columns
 

@@ -61,12 +61,12 @@ describe('MCP Apps の View', () => {
     expect(rendered._meta).toEqual(direct._meta)
     const bad = (await rpc('tools/call', { name: 'render_expenditure_view', arguments: { tool: 'get_expenditure_node', arguments: {} } })).result
     expect(bad.isError).toBe(true)
-    // 団体の一覧は View を持たず、描画 tool では呼べない
+    // 自治体の一覧は View を持たず、描画 tool では呼べない
     const noView = (await rpc('tools/call', { name: 'render_expenditure_view', arguments: { tool: 'list_jurisdictions', arguments: {} } })).result
     expect(noView.isError).toBe(true)
   })
 
-  test('描画 tool は、結果の団体コードに対応する団体名を _meta にだけ載せる', async () => {
+  test('描画 tool は、結果の自治体コードに対応する自治体名を _meta にだけ載せる', async () => {
     insertJurisdiction(sqlite, { jurisdiction_code: '132039', name: '武蔵野市' })
     insertNode(sqlite, { document_kind: 'settlement', node_id: 'n1', name: '総務費', node_kind: '款', amount_yen: 100 })
     const res = (await rpc('tools/call', { name: 'render_expenditure_view', arguments: { tool: 'search_expenditure_nodes', arguments: { document_kind: 'settlement', fiscal_year: { min: 2024, max: 2024 } } } })).result

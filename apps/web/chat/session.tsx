@@ -27,7 +27,7 @@ type ChatMessage = UIMessage<Metadata>
 const TOOL_LABELS: Record<string, string> = {
   search_expenditure_nodes: '歳出を検索',
   get_expenditure_node: '明細を開く',
-  list_jurisdictions: '収録している団体を確認',
+  list_jurisdictions: '収録している自治体を確認',
   search_evaluations: '事業の評価を検索',
   render_expenditure_view: '表とグラフを用意',
 }
