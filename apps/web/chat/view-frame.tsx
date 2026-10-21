@@ -328,16 +328,21 @@ export function ViewFrame({
       ) : null}
       {side ? (
         <div role="tablist" aria-label="右のパネルの表とグラフ" className="flex shrink-0 items-center gap-1 overflow-x-auto border-b px-2 pt-2">
-          {tabState.tabs.map((t) => (
+          {tabState.tabs.map((t, i) => {
+            // 同じ名前のタブは、2つ目からは番号を添えて見分ける
+            const same = tabState.tabs.slice(0, i).filter((o) => o.title === t.title).length
+            const label = same ? `${t.title}（${same + 1}）` : t.title
+            return (
             <div key={panelKey(t.owner)} className={cn('flex max-w-48 shrink-0 items-center rounded-t-md border border-b-0 text-sm', t.owner === tabState.active ? 'bg-background text-foreground' : 'bg-secondary/60 text-muted-foreground hover:text-foreground')}>
               <button type="button" role="tab" aria-selected={t.owner === tabState.active} onClick={() => setPanel({ ...panel, active: t.owner })} className="min-w-0 truncate py-1.5 pr-1 pl-3">
-                {t.title}
+                {label}
               </button>
-              <button type="button" onClick={t.close} aria-label={`${t.title}を元に戻す`} title="会話の中へ元に戻す" className="rounded p-1 hover:bg-secondary">
+              <button type="button" onClick={t.close} aria-label={`${label}を元に戻す`} title="会話の中へ元に戻す" className="rounded p-1 hover:bg-secondary">
                 <XIcon className="size-3.5" />
               </button>
             </div>
-          ))}
+            )
+          })}
         </div>
       ) : null}
       {grippable ? (
