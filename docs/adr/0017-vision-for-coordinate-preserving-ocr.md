@@ -1,6 +1,6 @@
 # ADR 0017: 座標を保持するOCRの第一選択にApple Visionを使う
 
-状態: scan PDFの既定については[ADR 0018](0018-paddle-small-for-scan-pdf.md)で更新済み（2026-10-09）。Apple Visionは比較用に残し、取り込みの経路では使わない（[ADR 0019](0019-freeze-scan-ocr-observations.md)、2026-10-11）。以下は2026-10-07の比較と決定、および2026-10-09のGoogle Cloud Visionの追加比較の記録。
+状態: scan PDFの既定は[ADR 0032](0032-paddle-onnx-for-new-scan-acquisitions.md)で新しい取得をPaddle（ONNX Runtime）にした（2026-10-20）。それ以前の経緯: scan PDFの既定については[ADR 0018](0018-paddle-small-for-scan-pdf.md)で更新済み（2026-10-09）。Apple Visionは比較用に残し、取り込みの経路では使わない（[ADR 0019](0019-freeze-scan-ocr-observations.md)、2026-10-11）。以下は2026-10-07の比較と決定、および2026-10-09のGoogle Cloud Visionの追加比較の記録。
 
 ## 決定
 

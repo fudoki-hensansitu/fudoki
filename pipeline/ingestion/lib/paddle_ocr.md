@@ -1,6 +1,6 @@
 # PaddleOCR の取り込み用入口
 
-`paddle_ocr` はPP-OCRv6 smallの検出・認識をCPUで実行する。通常は検出だけ長辺1280pxへ縮小し、認識には元画像から切り出した画素を渡す。出典の文字・符号を後処理で変更しない。Apple Visionの既存入口も残す。scan PDFの共通入口では既定ではなく、`backend="paddle"` または `PaddleConfig` を渡して選ぶ（[scan_ocr.md](scan_ocr.md)）。
+`paddle_ocr` はPP-OCRv6 smallの検出・認識をCPUで実行する。実行環境は`PaddleConfig.runtime`で選び、既定は`onnxruntime`（ONNX Runtime、`cpu_threads`は既定4。2〜6で同等、8以上は遅い）、`paddle`はPaddle本体（`--extra paddle-native`が要る）。同じ重みなら両者の出力は一致した（933観測、枠差0px、[ADR 0032](../../../docs/adr/0032-paddle-onnx-for-new-scan-acquisitions.md)）。既定は`page_strips=2`（重なり`strip_overlap_px=60`）・`detection_limit_side_len=1920`（分割片ごと）で、重なりの帯の二重の観測は除く（`attempts[].duplicate_observation_ids`）。通常は検出だけ長辺1280pxへ縮小し、認識には元画像から切り出した画素を渡す。出典の文字・符号を後処理で変更しない。Apple Visionの既存入口も残す。scan PDFの共通入口の既定でもある（[scan_ocr.md](scan_ocr.md)）。
 
 optional依存を含めて実行する。
 
@@ -12,7 +12,7 @@ mise exec -- uv run --frozen --extra paddle-ocr python -m ingestion.lib.paddle_o
 
 `--params @request.json`も使える。CLIのJSON保存先はcallerが指定する。失敗はstderrのJSONと終了コード1で返す。
 
-モデルは[paddle_ocr_models.json](paddle_ocr_models.json)に宣言した公式URLから明示的に取得し、`~/.paddlex/official_models/PP-OCRv6_small_det`と`PP-OCRv6_small_rec`へ用意する。`detection_model_dir` / `recognition_model_dir`で別のローカル配置を指定できるが、宣言した3ファイルのSHA・サイズは必ず照合する。モデル不足・不一致で停止し、暗黙にダウンロードしたり他の重みに切り替えたりしない。
+モデルは[paddle_ocr_models.json](paddle_ocr_models.json)に宣言した公式URLから明示的に取得して用意する。ONNX Runtime用は`PP-OCRv6_small_{det,rec}_onnx_infer.tar`を`~/.paddlex/official_models/`に展開し（`PP-OCRv6_small_det_onnx_infer/`と`PP-OCRv6_small_rec_onnx_infer/`ができる。宣言は`inference.onnx`と`inference.yml`）、Paddle本体用は`PP-OCRv6_small_det`と`PP-OCRv6_small_rec`へ置く。`detection_model_dir` / `recognition_model_dir`で別のローカル配置を指定できるが、宣言したファイルのSHA・サイズは必ず照合する。モデル不足・不一致で停止し、暗黙にダウンロードしたり他の重みに切り替えたりしない。
 
 Pythonではengineを再利用できる。PDFは物理頁番号を明示し、再読する領域は頁ごとに宣言する。
 
@@ -36,7 +36,7 @@ with PaddleOcr(PaddleConfig()) as ocr:
 
 `region` / `word`はPaddleのnative文字を保持し、子のconfidenceは親regionのscoreを継承する。`number`はnative word全体が数字・カンマだけの場合に限る。符号付きwordから部分文字列やその座標を推測しない。採用する観測の階層は一つ選び、親とchildを同時に集計しない。
 
-PDFの既定描画はmacOSのCoreGraphicsで、既存Vision・実験と同じCropBox・回転・sRGB・白背景・ceil寸法を使う。OCRを行わない[pdf_render.swift](pdf_render.swift)がPNGと表示geometryだけを返す。`pdf_renderer="poppler"`は明示選択できる（`pdfinfo`と`pdftoppm`が必要）。描画器を自動で切り替えない。PopplerはCropBox・回転を反映するがCoreGraphicsとは画素が異なり得るため、同じ精度・速度を保証しない。
+PDFの既定描画はpypdfium2（lockの版）の300dpiで、CoreGraphics・Popplerは`pdf_renderer`で明示する。pypdfium2はプロセスの中で動いて止められないので、`render_timeout_seconds`を超えたらエラーで止める（描画のスレッドは残る）。以下はCoreGraphicsの説明で、既存Vision・実験と同じCropBox・回転・sRGB・白背景・ceil寸法を使う。OCRを行わない[pdf_render.swift](pdf_render.swift)がPNGと表示geometryだけを返す。`pdf_renderer="poppler"`は明示選択できる（`pdfinfo`と`pdftoppm`が必要）。描画器を自動で切り替えない。PopplerはCropBox・回転を反映するがCoreGraphicsとは画素が異なり得るため、同じ精度・速度を保証しない。
 
 CoreGraphicsのhelperは初回にSwift compiler（`xcrun`で解決、`-Onone`）でコンパイルし、以後はバイナリを再利用する。SwiftソースSHA、compiler版・path、macOS SDK版・path、OS・CPU、compile flagsとtoolchain環境をキャッシュキーに含める。キャッシュ取得時の不足・破損は再コンパイルする。実行前後にもバイナリSHAを照合し、不一致はエラーにする。並行構築は排他ロックで待ち、一時ファイルの構築後にatomic publishする。コンパイル・ロック待ちには`render_timeout_seconds`の共通上限を使い、描画には同じ値の別の上限を使う。失敗時にSwiftインタプリタへ切り替えない。Xcode Command Line ToolsとmacOS SDKが必要。
 
