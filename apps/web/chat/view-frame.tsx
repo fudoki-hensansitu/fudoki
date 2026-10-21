@@ -107,8 +107,11 @@ export function ViewFrame({
   // 取っ手を掴んでいる間だけ、右半分に置き場を出す。iframe の上では pointer が奪われるので、掴む場所は View の外に置く
   const [drag, setDrag] = React.useState<{ over: boolean }>()
   const dragged = React.useRef(false)
+  // 掴んでいる間の後始末。取っ手が消えたとき・中断されたとき・unmount でも必ず呼んで、置き場と iframe を元へ戻す
+  const stopDrag = React.useRef<() => void>(undefined)
   const startDrag = (e: React.PointerEvent<HTMLButtonElement>) => {
     if (e.button !== 0) return
+    stopDrag.current?.()
     const handle = e.currentTarget
     handle.setPointerCapture(e.pointerId)
     const startX = e.clientX
@@ -119,17 +122,34 @@ export function ViewFrame({
       if (Math.abs(ev.clientX - startX) > 4) moved = dragged.current = true
       if (moved) setDrag({ over: over(ev.clientX) })
     }
-    const end = (ev: PointerEvent) => {
-      handle.removeEventListener('pointermove', move)
-      handle.removeEventListener('pointerup', end)
-      handle.removeEventListener('pointercancel', end)
+    const cleanup = () => {
+      window.removeEventListener('pointermove', move)
+      window.removeEventListener('pointerup', up)
+      window.removeEventListener('pointercancel', cancel)
+      window.removeEventListener('blur', cancel)
+      stopDrag.current = undefined
       setDrag(undefined)
-      if (moved && ev.type === 'pointerup' && over(ev.clientX)) setMode('fullscreen')
     }
-    handle.addEventListener('pointermove', move)
-    handle.addEventListener('pointerup', end)
-    handle.addEventListener('pointercancel', end)
+    // 中断したときは click が来ないので、掴んだ印もここで戻す
+    const cancel = () => {
+      cleanup()
+      dragged.current = false
+    }
+    const up = (ev: PointerEvent) => {
+      cleanup()
+      if (moved && over(ev.clientX)) setMode('fullscreen')
+    }
+    window.addEventListener('pointermove', move)
+    window.addEventListener('pointerup', up)
+    window.addEventListener('pointercancel', cancel)
+    window.addEventListener('blur', cancel)
+    stopDrag.current = cancel
   }
+  const grippable = !expanded && wide && ready
+  React.useEffect(() => {
+    if (!grippable) stopDrag.current?.()
+  }, [grippable])
+  React.useEffect(() => () => stopDrag.current?.(), [])
   const bridgeRef = React.useRef<AppBridge>(undefined)
   const modeRef = React.useRef(mode)
   modeRef.current = mode
@@ -272,7 +292,7 @@ export function ViewFrame({
           </Button>
         </div>
       ) : null}
-      {!expanded && wide && ready ? (
+      {grippable ? (
         <div className="flex items-center border-b px-2 py-1">
           <button
             type="button"
