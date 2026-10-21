@@ -23,10 +23,3 @@ test('団体をまたぐ一覧を団体ごとに出す', async ({ app, browser }
   await expect(ui.getByRole('region', '試験市')).toBeVisible()
   await expect(ui.getByRole('region', '比較市')).toBeVisible()
 })
-
-test('団体一覧の資料を押すとチャットに問いを送る', async ({ app, browser }) => {
-  await app.open('/?ui=jurisdictions')
-  const ui = browser.frameLocator('iframe')
-  await ui.getByRole('button', '試験市 2024年度 決算の一般会計をチャットで聞く').tap()
-  expect(await browser.evaluate('() => window.uiQA.messages().length')).toBe(1)
-})

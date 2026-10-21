@@ -40,6 +40,7 @@ TRANSFER = re.compile(r'(流用|充用|充当|予備費支出|予備費充当|�
 ENDED_TRANSFER = re.compile(r'(?:流用|充用)$')
 # A kind word printed above an amount inside an amount column's cell (a stacked carry-over column).
 STACKED_KIND = re.compile(r'(翌年度)?(繰越明許費?|事故繰越し?|継続費逓次繰越|不用額)')
+HEADING_INDENT = 6  # pt: the least a heading's lines are indented for the level learning to keep their level (3pt clusters, 6pt apart)
 # A total row ends in 合計・総計 (`歳出合計`); a name that contains the letters (`長期総合計画に要する経費`) is not one.
 WIDE_DIGITS = re.compile(r'[０-９]+')
 TOTAL = re.compile(r'(合計|総計)$|^計$')
@@ -80,6 +81,7 @@ class Item:
     parent: 'Item | None' = None
     depth: int | None = None
     fixed_anchor: float | None = None
+    heading: bool = False  # a name-only line that heads the lines under it (`headings`)
     decided: bool = False  # role chosen by a judgment, not by the geometric rules
     hint: str | None = None  # the kind of the note whose parts this item prints (`note_breakdown`)
     kinds: list[tuple[list[Glyph], list[Glyph], str]] = field(default_factory=list)  # (label, amount run, heading) of kind lines
@@ -544,6 +546,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
     settings = settings or {}
     kind_names = bool(settings.get('names_end_with_kind_words'))
     remainder = bool(settings.get('bracketed_remainder'))
+    headings = bool(settings.get('headings'))  # a line indented past the name above is under it, not its second line
     # A name that begins with a count, glued to its number (`82歳児歯科健診事業` = `8` + `2歳児…`,
     # `42025年農林業センサス費` = `4` + `2025年…`): the number is the one that follows the number before it
     # in this list. Only a line at a number's margin with a counter after its digits is read so.
@@ -714,6 +717,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
         left_slack = max(3, (label[0].y1 - label[0].y0) / 2 + .5) if label and remainder else 3
         wrapped = (previous is not None and code is None and label and not previous.amounts and not marked
                    and label[0].x0 >= previous.lines[0][0].x0 - left_slack
+                   and not (headings and label[0].x0 > _name_start(previous) + HEADING_INDENT)
                    and (not money or bracketed
                         or (reaches and not ENDED_TRANSFER.search(previous.name) and (abs(label[0].x0 - previous.indent) <= 3
                                          or abs(label[0].x0 - _name_start(previous)) <= 3)))
@@ -887,6 +891,18 @@ def is_plain_name(layout: dict | None, item: Item) -> bool:
     (`補充用備品` holds `充用`)."""
     names = (layout or {}).get(item.group.axis, {}).get('plain_names')
     return bool(names) and any(normalize(name) in normalize(item.name) for name in names)
+
+
+def heads_items(layout: dict | None, items_: list[Item], position: int) -> bool:
+    """A line without an amount is a heading of its own when the settings say the axis prints them (`headings`)
+    and the next line, indented deeper, prints an amount: the heading's items are the lines under it."""
+    item = items_[position]
+    if not (layout or {}).get(item.group.axis, {}).get('headings') or position + 1 >= len(items_):
+        return False
+    following = items_[position + 1]
+    return (following.code is None and bool(following.amounts) and following.page == item.page
+            and following.lines[0][0].x0 > _name_start(item) + HEADING_INDENT
+            and (kind_of(PAREN_TAIL.sub('', following.name)) is None or is_plain_name(layout, following)))
 
 
 def number_edges(logicals: list[Logical], pattern: str = 'bands') -> set[int]:
@@ -1099,6 +1115,25 @@ def heading_names(logical: Logical) -> dict[tuple[str, str], str]:
         if match:
             found[match.group(1), match.group(2)] = match.group(3)
     return found
+
+
+def join_last_lines(items_: list[Item], depth_of, amount_depth) -> list[Item]:
+    """A codeless line whose amount sits in the column of the amountless item above, one level deeper, is that
+    item's wrapped last line (`共通経費` / `【所管課】 299,161,329`). A heading (`headings`) is no such item."""
+    kept: list[Item] = []
+    for item in items_:
+        previous = kept[-1] if kept else None
+        if (previous is not None and previous.role in ('node', 'note') and not previous.amounts
+                and not previous.heading
+                and item.role == 'node' and item.code is None and item.amounts and not item.decided
+                and amount_depth(item) == depth_of(previous) and depth_of(item) > depth_of(previous)):
+            previous.role = 'node'
+            previous.lines += item.lines
+            previous.name += item.name
+            previous.amounts += item.amounts
+            continue
+        kept.append(item)
+    return kept
 
 
 def owner(amount: list[Glyph], band: Band, ordered: list[Group], found: dict[int, list[Item]],
@@ -1713,7 +1748,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 group_items = subject_items(group)
             if not group.subject:
                 group_items = join_transfer_tails(group_items, layout)
-            for item in group_items:
+            for position, item in enumerate(group_items):
                 # 01.01.01.01から流用 starts with digits. A parenthesised remark joined to an item's
                 # name (`需用費（同事業、委託料へ流用 △1,815,000）`) does not make the item a note.
                 if (TRANSFER.search(PAREN_TAIL.sub('', item.name)) and not group.subject
@@ -1722,7 +1757,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 elif item.code is None and TOTAL.search(item.name):
                     item.role = 'total'
                 elif item.code is None and not item.amounts and not group.subject:
-                    item.role = 'note'
+                    item.heading = heads_items(layout, group_items, position)
+                    item.role = 'node' if item.heading else 'note'
                 elif (item.code is None and item.amounts and not group.subject and not item.kinds
                       and not is_plain_name(layout, item)
                       and (kind_of(PAREN_TAIL.sub('', item.name)) is not None or is_account_code(item.name))):
@@ -2014,19 +2050,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
         for group in ordered:
             if group.subject or not levels.get(group.axis):
                 continue
-            kept: list[Item] = []
-            for item in found[id(group)]:
-                previous = kept[-1] if kept else None
-                if (previous is not None and previous.role in ('node', 'note') and not previous.amounts
-                        and item.role == 'node' and item.code is None and item.amounts and not item.decided
-                        and amount_depth(item) == depth_of(previous) and depth_of(item) > depth_of(previous)):
-                    previous.role = 'node'
-                    previous.lines += item.lines
-                    previous.name += item.name
-                    previous.amounts += item.amounts
-                    continue
-                kept.append(item)
-            found[id(group)] = kept
+            found[id(group)] = join_last_lines(found[id(group)], depth_of, amount_depth)
     for axis, hints in (layout or {}).items():
         if hints.get('sum_levels'):
             sum_levels([item for _, ordered, found in all_items for group in ordered

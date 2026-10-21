@@ -23,6 +23,6 @@ export const MAX_RELAY_BODY_BYTES = 16 * 1024
 export const SESSION_TTL_SECONDS = 2 * 60 * 60
 
 /** View が直接呼んでよい tool。表の移動・追加ページ・経路の段の検索だけで、描画 tool と評価の検索は呼ばせない */
-export const VIEW_TOOLS: ReadonlySet<string> = new Set(['search_expenditure_nodes', 'get_expenditure_node', 'list_jurisdictions'])
+export const VIEW_TOOLS: ReadonlySet<string> = new Set(['search_expenditure_nodes', 'get_expenditure_node'])
 /** View が読んでよい resource。風土記の View の HTML だけ */
 export const VIEW_RESOURCE = /^ui:\/\/fudoki\/[A-Za-z0-9._-]+$/

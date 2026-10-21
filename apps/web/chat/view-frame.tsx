@@ -71,7 +71,6 @@ export function ViewFrame({
   uri,
   input,
   output,
-  onMessage,
   onContext,
 }: {
   token: string
@@ -80,8 +79,6 @@ export function ViewFrame({
   input: unknown
   /** 描画 tool の結果（structuredContent と _meta を含む CallToolResult） */
   output: unknown
-  /** View が「チャットで聞く」を押したとき */
-  onMessage: (text: string) => void
   /** View が「いま見ているもの」を AI に伝えるとき */
   onContext: (text: string) => void
 }) {
@@ -106,8 +103,8 @@ export function ViewFrame({
   modeRef.current = mode
   const close = React.useRef<HTMLButtonElement>(null)
   // 親の再描画で bridge を作り直さないよう、最新の callback を ref で持つ
-  const handlers = React.useRef({ onMessage, onContext })
-  handlers.current = { onMessage, onContext }
+  const handlers = React.useRef({ onContext })
+  handlers.current = { onContext }
 
   React.useEffect(() => {
     const iframe = frame.current
@@ -122,7 +119,7 @@ export function ViewFrame({
         bridge = new AppBridge(
           null,
           { name: '風土記', version: '1.0.0' },
-          { openLinks: {}, serverTools: {}, logging: {}, updateModelContext: { text: {} }, message: { text: {} } },
+          { openLinks: {}, serverTools: {}, logging: {}, updateModelContext: { text: {} } },
           { hostContext: hostContext(modeRef.current) },
         )
         bridgeRef.current = bridge
@@ -130,11 +127,6 @@ export function ViewFrame({
         bridge.onopenlink = async ({ url }) => {
           // 原典の PDF などの外部の頁は新しいタブで開き、こちらの頁を触らせない
           if (/^https?:\/\//.test(url)) window.open(url, '_blank', 'noopener,noreferrer')
-          return {}
-        }
-        bridge.onmessage = async ({ content }) => {
-          const text = content.map((c) => ('text' in c ? c.text : '')).join('').trim()
-          if (text) handlers.current.onMessage(text)
           return {}
         }
         bridge.onupdatemodelcontext = async ({ content }) => {

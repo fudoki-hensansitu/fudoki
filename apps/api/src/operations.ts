@@ -440,7 +440,6 @@ export const operations: Operation[] = [
       jurisdictions: z.array(Jurisdiction).describe('団体コードの昇順。'),
       next_page_token: z.string().nullable().describe(NEXT_PAGE_TOKEN_HELP),
     }),
-    view: true,
     run: listJurisdictions,
   },
   {
