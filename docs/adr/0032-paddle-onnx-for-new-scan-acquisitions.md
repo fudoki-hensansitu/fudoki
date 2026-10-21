@@ -95,10 +95,10 @@ VLM を既定のまま（`vlm_fallback` なし）で取ると、12領域が埋�
 - 表 nodes: `fiscal/ingestion/132152/2025/settlement/expenditure/general-expenditure-detail-nodes.parquet`、sha256 `07f0408250fbe114fbfb1efafd7fca115e0045319a70482e42890a379a41f5b6e`、32021 bytes、1068行（旧は sha256 `267dfc6bc171c31f782e71346717548e4374d3e9a014cbfca5ed2f5f647b4449`、52686 bytes、1068行）。
 - 表 amounts: `.../general-expenditure-detail-amounts.parquet`、sha256 `36fd0594be10495d3cca99b4f9411f0b0c02781c069bfae26fe9e69e8719c658`、67625 bytes、6546行（旧は sha256 `4b83a0d74387280938340f8cd4b899d85be354bbd747bfa55c43c19ac06f73d2`、141042 bytes、6499行）。
 
-増えた47行は、旧の表に無かった、原典に印字された0の金額である。
+増えた47行は、旧の表に無かった、出典に印字された0の金額である。
 
 ## 描画の箱・時間の上限・Vision の数字の再読
 
-- **CropBox と MediaBox。** Paddle の観測の座標は pypdfium2（CropBox）で、規則線と墨の再読の切り出しは poppler（MediaBox）の画像である。両者が違う頁（切り取った A3 の見開き、回転した頁）では別の墨を読むので、墨の再読の前に `require_one_page_box` で確かめ、違えば取得を止める。132152 の原典は157頁すべてで CropBox と MediaBox が同じで回転も無く、保存済みの観測は変わらない。
+- **CropBox と MediaBox。** Paddle の観測の座標は pypdfium2（CropBox）で、規則線と墨の再読の切り出しは poppler（MediaBox）の画像である。両者が違う頁（切り取った A3 の見開き、回転した頁）では別の墨を読むので、墨の再読の前に `require_one_page_box` で確かめ、違えば取得を止める。132152 の出典は157頁すべてで CropBox と MediaBox が同じで回転も無く、保存済みの観測は変わらない。
 - **pypdfium2 の描画の時間の上限。** pdfium は同じプロセスの中で動き、止められない。`render_timeout_seconds` を超えたら取得をエラーで止める（描画のスレッドは残る）。
 - **Vision の依頼の数字の再読。** 既存の Vision の冊でも、単独の数字の再読（`_read_zeros`）は ONNX Runtime の既定になった。以前は Paddle 本体だった。出力が Paddle 本体と一致することは確かめてある（933観測、枠差0px、単独の数字の切り出しは `0` を同じに読む）。観測は固定されているので、既存の観測のバイトは変わらない。取り直したときだけ、この経路で読まれる。
