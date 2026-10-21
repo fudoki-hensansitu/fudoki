@@ -10,6 +10,8 @@ import { VIEW_HTML, VIEW_URI } from './view.generated'
 import { originPdf } from './origin-pdf'
 import { JURISDICTION_TABLE } from './columns'
 import { quotaOf } from './evaluation-quota'
+import { SUGGESTIONS_META_KEY } from '../../../packages/fiscal/suggestions'
+import { suggestionsFor } from './suggestions'
 
 type AppEnv = { Bindings: Env; Variables: { ctx: Ctx; json: unknown } }
 
@@ -176,7 +178,12 @@ function mcpServer(ctx: Ctx, apiOrigin: string, operations: Operation[]): McpSer
     try {
       const out = await op.run(ctx, args)
       // structuredContent が正本。text は structuredContent を読めない client のための同じ内容の写し（MCP の SHOULD）。描画 tool だけは例外で、stubText の一文にする（ADR 0022）
-      const meta = withNames ? { apiOrigin, jurisdictionNames: await jurisdictionNames(ctx, out) } : { apiOrigin }
+      let meta: Record<string, unknown> = { apiOrigin }
+      if (withNames) {
+        const names = await jurisdictionNames(ctx, out)
+        const suggestions = suggestionsFor(op.name, out, names)
+        meta = { apiOrigin, jurisdictionNames: names, ...(suggestions.length > 0 ? { [SUGGESTIONS_META_KEY]: suggestions } : {}) }
+      }
       return { content: [{ type: 'text' as const, text: stubText ?? JSON.stringify(out) }], structuredContent: out as Record<string, unknown>, _meta: meta }
     } catch (e) {
       // 想定外の例外の詳細（SQL のエラーなど）は返さず、ログにだけ出す
