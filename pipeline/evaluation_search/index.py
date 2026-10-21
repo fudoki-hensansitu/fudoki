@@ -277,6 +277,11 @@ def build_plans(instance: dict, origins: list[plan.Origin]) -> tuple[list[Origin
         origin_plan.recorded = (record is not None and record['page_count'] == page_count
                                 and record['plan_fingerprint'] == origin_plan.fingerprint)
         compare(origin_plan, indexed)
+        # NFKC の宣言だけが変わった md は key と metadata が同じなので、取り込み済みの item も本文を送り直す
+        if record is not None and fmt == 'md' and record['plan_fingerprint'] == plan.fingerprint(config, items, fmt, not nfkc):
+            queued = {item['key'] for item in origin_plan.add}
+            origin_plan.add += [item for item in items if item['key'] not in queued]
+            origin_plan.ok = 0
         plans.append(origin_plan)
     planned = {item['key'] for p in plans for item in p.items}
     strays = [item for key, item in indexed.items() if key not in planned]
