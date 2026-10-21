@@ -3,7 +3,7 @@ import unittest
 from types import SimpleNamespace
 
 from ingestion.generic.layout import Logical, logical_pages
-from ingestion.generic.mixed import aligned, completing, frame_rules, learn_frames, learn_origins, moved_unread, numbers, shift, unlearned_amounts
+from ingestion.generic.mixed import aligned, completing, frame_rules, learn_frames, gated, learn_origins, moved_unread, numbers, shift, unlearned_amounts
 from ingestion.generic.observe import Page, Rule, Word
 from ingestion.generic.tree import mixed_document, snap_ocr_levels
 from ingestion.lib import pdf_rules
@@ -105,6 +105,20 @@ class MixedPagesTest(unittest.TestCase):
         # A column the settings declare not read is no column of no kind.
         ignored = logical_pages([page(1, '支王済額'), page(2, '支王済額')], columns={'支王済額': {'kind': 'ignore'}}, ocr_pages=frozenset({2}))
         self.assertEqual(unlearned_amounts(ignored, frozenset({2}), ink), [])
+
+    def test_an_ocr_page_the_builder_leaves_out_for_a_misread_amount_heading_is_still_gated(self):
+        from ingestion.generic import tree
+        page = lambda number, words: Page(number, 300, 500, words, frame(10, 200, {'wide': (100,), 'narrow': ()}))
+        left = page(1, [Word('科目', 20, 55, 38, 64), Word('支出済額', 110, 55, 146, 64), Word('1', 20, 120, 24.5, 129),
+                        Word('総務費', 30, 120, 57, 129), Word('1,000', 150, 120, 172.5, 129)])
+        right = page(2, [Word('不用額', 20, 55, 47, 64), Word('備考', 110, 55, 128, 64), Word('0', 80, 120, 84.5, 129)])
+        ocr = page(3, [Word('名称', 20, 55, 38, 64), Word('支王済額', 110, 55, 146, 64), Word('給料', 20, 120, 38, 129),
+                       Word('2,000', 150, 120, 172.5, 129)])  # OCR misread both headings
+        logicals = logical_pages([left, right, ocr], ocr_pages=frozenset({3}))
+        built = tree.build(logicals, pattern='bands', detail='indent')
+        self.assertEqual([logical.pages for logical in built.skipped], [[3]])  # no 款 column and no amount column
+        self.assertEqual([logical.pages for logical in gated(logicals)], [[3]])
+        self.assertEqual([(u['page'], u['header']) for u in unlearned_amounts(gated(logicals), frozenset({3}))], [(3, '支王済額')])
 
     def test_a_lone_sign_over_a_figure_is_no_unreadable_cell_of_a_declared_amount_column(self):
         from ingestion.generic.scan import declared_unread

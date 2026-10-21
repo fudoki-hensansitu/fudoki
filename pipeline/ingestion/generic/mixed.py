@@ -88,6 +88,13 @@ def moved_unread(observation: dict, shifts: dict[int, float]) -> dict:
                                      for page in observation.get('pages', [])]}
 
 
+def gated(logicals: list) -> list:
+    """The logical pages the gates of the OCR pages look at: every one OCR read, the ones the builder leaves out
+    (`built.skipped`) too. An OCR page whose amount heading is misread has no amount column either, so it is left out as
+    a list of its own, and only these gates see its amounts. A list that is no table declares its column `excluded`."""
+    return [logical for logical in logicals if logical.ocr]
+
+
 def unlearned_amounts(logicals: list, ocr_pages: frozenset, observation: dict | None = None) -> list[dict]:
     """Amounts OCR read, and ink it left unread (`unread_ink`, page coordinates), in a column of no kind: its heading is
     one the text pages do not print (OCR misread it), so nothing teaches whether it holds amounts, and the builder reads
