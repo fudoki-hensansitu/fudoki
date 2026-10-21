@@ -14,8 +14,8 @@
   #chat-start * { border-color: var(--border); }
 }
 
-/* hero の入力は大きな1行の pill（composer.tsx の pill）。JS が島を描くまでの仮の枠も同じ大きさにして、描いた瞬間に頁がずれないようにする */
-#chat-start.ask { width: min(100%, 760px); }
+/* 入力は画面の下に固定する（スクロールしても付いてくる）。大きな1行の pill（composer.tsx の pill）。JS が島を描くまでの仮の枠も同じ大きさにして、描いた瞬間に頁がずれないようにする */
+#chat-start.ask { width: min(calc(100% - 32px), 760px); }
 #chat-start .ask-box { display: flex; align-items: center; min-height: 0; height: 72px; padding: 0 28px; border-radius: 999px; background: var(--background); box-shadow: var(--shadow-pill); }
 @media (max-width: 639px) {
   #chat-start .ask-box { height: 56px; padding: 0 20px; }

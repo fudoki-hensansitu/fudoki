@@ -7,6 +7,7 @@ import type { AppContext } from './api'
 import { apiFetch, MCP_URL } from './env'
 import { HttpError } from './http'
 import { MAX_MESSAGES, MAX_OUTPUT_TOKENS, MAX_STEPS, MAX_USER_TEXT, MAX_VIEW_CONTEXT } from './limits'
+import { toolText } from '../tool-text'
 import { logError, logStep, logTiming } from './log'
 import { waitUntil } from './http'
 import { writeUsage, type Usage } from './usage'
@@ -15,7 +16,7 @@ const SYSTEM = [
   'あなたは「風土記」の案内役です。風土記は、日本の自治体の歳出の予算・決算を事業の単位まで集めたデータです。',
   '利用者の問いには、風土記の tool で調べた結果だけを根拠に、日本語で短く答えてください。tool で確かめていない金額や事業名を書かないでください。',
   '収録されていない団体・年度・資料は、無いと正直に伝えてください。',
-  '結果を見せるときは、データを調べた tool と同じ入力で render_expenditure_view を最後に一度だけ呼んでください。画面に表とグラフが出るので、応答の文章で一覧や金額を繰り返さず、問いへの答えと注意点だけを書いてください。',
+  '歳出の検索結果と一つのノードの内訳を見せるときは、データを調べた tool（search_expenditure_nodes・get_expenditure_node）と同じ入力で render_expenditure_view を最後に一度だけ呼んでください。団体の一覧（list_jurisdictions）は画面に描けないので、文章で答えてください。画面に出した結果は、応答の文章で一覧や金額を繰り返さず、問いへの答えと注意点だけを書いてください。',
 ].join('\n')
 
 /** 送られてきた履歴から、AI に渡してよい形のものだけを残す。利用者の発言は text だけ */
@@ -50,15 +51,6 @@ export function reasoningEffort(value: string | undefined): { reasoning_effort?:
   if (value === 'low' || value === 'medium' || value === 'high') return { reasoning_effort: value }
   if (value === 'none') return { reasoning_effort: null }
   return {}
-}
-
-/** tool の結果のうち text だけを AI に渡す */
-function textOnly({ output }: { output: unknown }) {
-  const content = (output as { content?: unknown })?.content
-  const text = Array.isArray(content)
-    ? content.filter((c) => c && c.type === 'text' && typeof c.text === 'string').map((c) => c.text as string).join('\n')
-    : ''
-  return { type: 'text' as const, value: text || '結果がありません' }
 }
 
 export async function handleChat(c: AppContext): Promise<Response> {
@@ -100,7 +92,7 @@ export async function handleChat(c: AppContext): Promise<Response> {
   for (const [name, t] of Object.entries(tools)) {
     const uri = (t as { _meta?: { ui?: { resourceUri?: unknown } } })._meta?.ui?.resourceUri
     if (typeof uri === 'string') apps[name] = uri
-    Object.assign(t, { toModelOutput: textOnly })
+    Object.assign(t, { toModelOutput: ({ output }: { output: unknown }) => ({ type: 'text' as const, value: toolText(name, output) }) })
   }
   const close = () => waitUntil(c, mcp.close().catch(() => {}))
 

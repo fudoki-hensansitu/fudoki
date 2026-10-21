@@ -16,6 +16,7 @@ export function Composer({
   disabled = false,
   placeholder,
   autoFocus,
+  onFocus,
   compact = false,
   pill = false,
   children,
@@ -30,7 +31,9 @@ export function Composer({
   disabled?: boolean
   placeholder: string
   autoFocus?: boolean
-  /** 狭い画面（sm 未満）では1行で始め、送るボタンを横に置く。会話の画面の続きの入力に使う */
+  /** 入力欄に触れたとき */
+  onFocus?: () => void
+  /** 1行で始め、送るボタンを横に置く。会話の画面の続きの入力に使う */
   compact?: boolean
   /** 入口の hero に置く、大きな1行の入力。長い文は枠の中で横に流れる */
   pill?: boolean
@@ -73,6 +76,7 @@ export function Composer({
             aria-invalid={over || undefined}
             enterKeyHint="send"
             className="h-full pl-5 text-base placeholder:text-muted-foreground/80 sm:pl-7 sm:text-xl md:text-xl"
+            onFocus={onFocus}
             onChange={(e) => setText(e.target.value)}
             onKeyDown={(e) => {
               // 変換中の Enter は確定に使う。Safari は確定の直後の Enter を keyCode 229 で送る
@@ -92,7 +96,7 @@ export function Composer({
     )
   return (
     <form onSubmit={onSubmitForm}>
-      <InputGroup data-disabled={disabled || undefined} className={compact ? 'max-sm:flex-row! max-sm:items-end' : undefined}>
+      <InputGroup data-disabled={disabled || undefined} className={compact ? 'flex-row! items-end' : undefined}>
         <InputGroupTextarea
           aria-label="風土記の AI への質問"
           value={text}
@@ -101,7 +105,7 @@ export function Composer({
           disabled={disabled}
           aria-invalid={over || undefined}
           rows={compact ? 1 : 2}
-          className={cn('max-h-48 min-h-14', compact && 'max-sm:max-h-32 max-sm:min-h-10')}
+          className={cn('max-h-48 min-h-14', compact && 'max-h-32 min-h-10')}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
@@ -110,7 +114,7 @@ export function Composer({
             }
           }}
         />
-        <InputGroupAddon align="block-end" className={compact ? 'max-sm:w-auto max-sm:pr-1.5 max-sm:pb-1 max-sm:pl-0' : undefined}>
+        <InputGroupAddon align="block-end" className={compact ? 'w-auto pr-1.5 pb-1 pl-0' : undefined}>
           {children}
           <InputGroupText className="ml-auto tabular-nums">{over ? `${text.length} / ${MAX_TEXT} 文字` : ''}</InputGroupText>
           {busy && onStop ? (

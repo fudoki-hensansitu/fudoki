@@ -37,7 +37,7 @@ export const TOKENS_CSS = `
 --font-sans:"Hiragino Sans","Noto Sans JP","Yu Gothic UI","Yu Gothic",Meiryo,system-ui,sans-serif;
 --font-mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 --radius:8px;--radius-sm:4px;--radius-card:16px;--radius-sheet:24px;
---gut:max(16px,calc((100% - 1200px) / 2));
+--gut:max(24px,calc((100% - 1200px) / 2));
 --hair:color-mix(in srgb,var(--foreground) 10%,transparent);
 --shadow-sheet:0 20px 25px -5px color-mix(in srgb,var(--night) 12%,transparent),0 8px 10px -6px color-mix(in srgb,var(--night) 10%,transparent);
 --shadow-pill:0 1px 2px color-mix(in srgb,var(--night) 4%,transparent),0 6px 20px color-mix(in srgb,var(--night) 6%,transparent);
@@ -112,7 +112,8 @@ code{font:13px/1.6 var(--font-mono);letter-spacing:0;overflow-wrap:anywhere}
 .hero h1{font-size:clamp(2.5rem,1.4rem + 4.4vw,5.5rem);line-height:1.18;max-width:11em}
 .hero .sub{max-width:34em;font-size:17px;line-height:1.9}
 .acts{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
-.ask{width:min(100%,640px);text-align:left}
+.ask{position:fixed;left:50%;bottom:16px;z-index:50;width:min(calc(100% - 32px),760px);transform:translateX(-50%);text-align:left}
+body{padding-bottom:112px}
 .ask-box{min-height:120px;padding:14px 16px;border:1px solid var(--border);border-radius:var(--radius-card);background:var(--card)}
 .ledger-stage{position:relative;margin-top:64px;height:620px;overflow:hidden;border-radius:var(--radius)}
 .ledger-stage .art{inset:0}
@@ -239,7 +240,7 @@ footer{padding-top:96px}
 @media (max-width:400px){
 .cols{grid-template-columns:minmax(0,1fr)}
 }
-@media (min-width:961px){html[data-snap]{scroll-snap-type:y mandatory}#mcp{scroll-snap-align:start}.ledger-stage{scroll-snap-align:end}}
+@media (min-width:961px){:root{--gut:max(56px,calc((100% - 1200px) / 2))}html[data-snap]{scroll-snap-type:y mandatory}#mcp{scroll-snap-align:start}.ledger-stage{scroll-snap-align:end}}
 @media (prefers-reduced-motion:no-preference){
 .sweep.in{animation:sweep 1.4s var(--ease-sweep) both}
 @keyframes sweep{from{background-position:100% 0}to{background-position:0 0}}
@@ -353,7 +354,7 @@ const BODY = `${ICONS}
 <div class="cols">
 <div><a href="/" aria-label="風土記 ホーム">${logo('logo')}</a><p>町の家計簿。自治体の歳出を、事業の単位まで。</p></div>
 <div><h2>使う</h2><ul><li><a href="#mcp">AI から使う</a></li><li><a href="${DOCS}">ドキュメント</a></li></ul></div>
-<div><h2>作り</h2><ul><li><a href="${GITHUB}">GitHub</a></li><li><a href="${DOCS}/support">サポート</a></li></ul></div>
+<div><h2>作り</h2><ul><li><a href="${GITHUB}">GitHub</a></li><li><a href="${DOCS}/support">サポート</a></li><li><a href="mailto:support@fudoki.dev">お問い合わせ</a></li></ul></div>
 <div><h2>決まりごと</h2><ul><li><a href="${DOCS}/privacy">プライバシーポリシー</a></li><li><a href="${DOCS}/terms">利用規約</a></li></ul></div>
 </div>
 <div class="legal"><span>713年、諸国に同じ様式で報告させた地誌にならって</span><span>© 2026 風土記</span></div>

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from 'bun:test'
-import { createApp } from './app'
+import { createApp, RENDER_RESULT_TEXT } from './app'
 import type { Db } from './db'
 import type { Database } from 'bun:sqlite'
 import { insertJurisdiction, insertNode, testDb } from './testing'
@@ -55,6 +55,8 @@ describe('MCP Apps の View', () => {
     const direct = (await rpc('tools/call', { name: 'search_expenditure_nodes', arguments: args })).result
     const rendered = (await rpc('tools/call', { name: 'render_expenditure_view', arguments: { tool: 'search_expenditure_nodes', arguments: args } })).result
     expect(rendered.structuredContent).toEqual(direct.structuredContent)
+    // データは structuredContent だけで返し、text に同じ内容を写さない（会話の文脈を膨らませないため）
+    expect(rendered.content).toEqual([{ type: 'text', text: RENDER_RESULT_TEXT }])
     expect(rendered._meta).toEqual(direct._meta)
     const bad = (await rpc('tools/call', { name: 'render_expenditure_view', arguments: { tool: 'get_expenditure_node', arguments: {} } })).result
     expect(bad.isError).toBe(true)
