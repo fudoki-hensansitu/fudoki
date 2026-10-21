@@ -1,22 +1,22 @@
 version: 2
 models:
 - name: settlement_expenditure_node
-  description: 原典の決算歳出の木。表をまたぐ同じ款・項・目だけをまとめ、備考・節を独立した軸で保持する。
+  description: 出典の決算歳出の木。表をまたぐ同じ款・項・目だけをまとめ、備考・節を独立した軸で保持する。
   columns:
   - name: node_id
-    description: 団体・年度・会計・款項目番号、または親ID・軸・段・番号・名称から生成。重複兄弟は印字順の連番を含む。年度をまたいだ同一性は保証しない。
+    description: 自治体・年度・会計・款項目番号、または親ID・軸・段・番号・名称から生成。重複兄弟は印字順の連番を含む。年度をまたいだ同一性は保証しない。
     data_tests:
     - not_null
     - unique
   - name: parent_node_id
-    description: 原典の親子。款はNULL。別の軸の子を同じ金額に混ぜて足さない。
+    description: 出典の親子。款はNULL。別の軸の子を同じ金額に混ぜて足さない。
     data_tests:
     - relationships:
         arguments:
           to: ref('settlement_expenditure_node')
           field: node_id
   - name: jurisdiction_code
-    description: 宣言の団体コード。
+    description: 宣言の自治体コード。
     data_tests:
     - not_null
   - name: fiscal_year
@@ -24,49 +24,49 @@ models:
     data_tests:
     - not_null
   - name: account_name
-    description: 選定scope・管理JSONにある原典の会計名。
+    description: 選定scope・管理JSONにある出典の会計名。
     data_tests:
     - not_null
   - name: axis
-    description: 原典の分解の軸。科目・節・備考は同じ支出の独立した切り口で、軸をまたいで合算しない。
+    description: 出典の分解の軸。科目・節・備考は同じ支出の独立した切り口で、軸をまたいで合算しない。
     data_tests:
     - not_null
   - name: is_subject
-    description: 表の根ノードと同じ軸か。原典の軸名を保持したまま科目の枝を識別する。
+    description: 表の根ノードと同じ軸か。出典の軸名を保持したまま科目の枝を識別する。
     data_tests:
     - not_null
   - name: node_kind
-    description: 原典の段の見出し、または根拠付きseedで風土記が名付けた段。
+    description: 出典の段の見出し、または根拠付きseedで風土記が名付けた段。
     data_tests:
     - not_null
   - name: code
-    description: 原典の番号をNFKC・前後trimした値。番号がない段はNULL。
+    description: 出典の番号をNFKC・前後trimした値。番号がない段はNULL。
   - name: name
-    description: 原典の名称をNFKC・前後trimし、日本語の字間空白と折り返し改行を除いた値。英単語間の空白は保持。
+    description: 出典の名称をNFKC・前後trimし、日本語の字間空白と折り返し改行を除いた値。英単語間の空白は保持。
     data_tests:
     - not_null
   - name: amount_yen
-    description: 決算支出済額（円）。原典の金額を円換算し、見出しの対応を適用。立川の繰越内訳は支出済額＋本年度支出額。印字がない段はNULL。親と子を混ぜて合算しない。
+    description: 決算支出済額（円）。出典の金額を円換算し、見出しの対応を適用。立川の繰越内訳は支出済額＋本年度支出額。印字がない段はNULL。親と子を混ぜて合算しない。
   - name: is_leaf
     description: 同じ軸の子を持たないか。総額は一つの軸の末端を選んで求め、軸の異なる末端を混ぜない。
     data_tests:
     - not_null
   - name: kan_code
-    description: 所属する原典の款番号。
+    description: 所属する出典の款番号。
     data_tests:
     - not_null
   - name: kan_name
-    description: 所属する款の原典の名称（name と同じ正規化）。比較の絞り込みで親を辿らずに使う（ADR 0022）。
+    description: 所属する款の出典の名称（name と同じ正規化）。比較の絞り込みで親を辿らずに使う（ADR 0022）。
     data_tests:
     - not_null
   - name: kou_code
-    description: 所属する原典の項番号。款ではNULL。
+    description: 所属する出典の項番号。款ではNULL。
   - name: kou_name
-    description: 所属する項の原典の名称。款ではNULL。
+    description: 所属する項の出典の名称。款ではNULL。
   - name: moku_code
-    description: 所属する原典の目番号。款・項ではNULL。
+    description: 所属する出典の目番号。款・項ではNULL。
   - name: origin_id
-    description: 原典選定のファイルを指すSHA由来のID。
+    description: 出典選定のファイルを指すSHA由来のID。
     data_tests:
     - not_null
     - relationships:
@@ -74,19 +74,19 @@ models:
           to: ref('origin')
           field: origin_id
   - name: source_page
-    description: 項目が印字された頁。原典ファイル（origin_id が指す1つの PDF）の1始まりのページ番号で、紙面に印刷されたページ番号ではない。分冊・抜粋のファイルでは、そのファイルの中での番号。
+    description: 項目が印字された頁。出典ファイル（origin_id が指す1つの PDF）の1始まりのページ番号で、紙面に印刷されたページ番号ではない。分冊・抜粋のファイルでは、そのファイルの中での番号。
     data_tests:
     - not_null
   - name: amount_source_page
-    description: 採用した実績金額が印字された頁（source_page と同じ数え方の、原典ファイルの1始まりのページ番号）。不明ならNULL。繰越内訳を足す場合は、全額の頁が既知のときだけ最初の頁。
+    description: 採用した実績金額が印字された頁（source_page と同じ数え方の、出典ファイルの1始まりのページ番号）。不明ならNULL。繰越内訳を足す場合は、全額の頁が既知のときだけ最初の頁。
   - name: source_x0
-    description: 項目の印字の枠の左端。PDFだけ（頁`source_page`の左上原点のpt）。保存済みの取り込み表で値が無ければNULL（団体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
+    description: 項目の印字の枠の左端。PDFだけ（頁`source_page`の左上原点のpt）。保存済みの取り込み表で値が無ければNULL（自治体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
   - name: source_y0
-    description: 項目の印字の枠の上端。PDFだけ（頁`source_page`の左上原点のpt）。保存済みの取り込み表で値が無ければNULL（団体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
+    description: 項目の印字の枠の上端。PDFだけ（頁`source_page`の左上原点のpt）。保存済みの取り込み表で値が無ければNULL（自治体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
   - name: source_x1
-    description: 項目の印字の枠の右端。PDFだけ（頁`source_page`の左上原点のpt）。保存済みの取り込み表で値が無ければNULL（団体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
+    description: 項目の印字の枠の右端。PDFだけ（頁`source_page`の左上原点のpt）。保存済みの取り込み表で値が無ければNULL（自治体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
   - name: source_y1
-    description: 項目の印字の枠の下端。PDFだけ（頁`source_page`の左上原点のpt）。保存済みの取り込み表で値が無ければNULL（団体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
+    description: 項目の印字の枠の下端。PDFだけ（頁`source_page`の左上原点のpt）。保存済みの取り込み表で値が無ければNULL（自治体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
   - name: amount_source_x0
     description: 採用した実績金額の印字の枠の左端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。
   - name: amount_source_y0
@@ -96,11 +96,11 @@ models:
   - name: amount_source_y1
     description: 採用した実績金額の印字の枠の下端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。
   - name: account_kind
-    description: 団体共通の会計の種類（一般会計・国民健康保険・介護保険・後期高齢者医療・用地・駐車場・下水道・介護サービス事業・土地区画整理）。原典の会計名を account_kind_map の語で対応づけた風土記の判断。団体をまたぐ比較はこの列で行う。辞書に無い会計名は構築を止める。
+    description: 自治体共通の会計の種類（一般会計・国民健康保険・介護保険・後期高齢者医療・用地・駐車場・下水道・介護サービス事業・土地区画整理）。出典の会計名を account_kind_map の語で対応づけた風土記の判断。自治体をまたぐ比較はこの列で行う。辞書に無い会計名は構築を止める。
     data_tests:
     - not_null
   - name: is_interfund_transfer
-    description: 会計間の繰出の印。科目の目で名称が「<会計名>繰出金」の形のものと、科目以外の軸で名称が「繰出金」または「<会計名>繰出金」のもの（法定の節・備考や説明の内訳）に付ける。節・備考の同名でも会計で終わらない内訳（例：保険基盤安定繰出金）は一会計の中の法定の負担で移転ではないため含まない。印は枝の最も上だけに付け、同じ目の下で節と備考の両方には付けない（節が優先）。節の軸が無い団体は備考・説明の軸で拾う（131041）。節も備考も無い団体（132012）は拾えない。印は網羅ではない。印の付いた金額はそのまま足せる（二重なし）。金額の消去はしない（ADR 0023）。
+    description: 会計間の繰出の印。科目の目で名称が「<会計名>繰出金」の形のものと、科目以外の軸で名称が「繰出金」または「<会計名>繰出金」のもの（法定の節・備考や説明の内訳）に付ける。節・備考の同名でも会計で終わらない内訳（例：保険基盤安定繰出金）は一会計の中の法定の負担で移転ではないため含まない。印は枝の最も上だけに付け、同じ目の下で節と備考の両方には付けない（節が優先）。節の軸が無い自治体は備考・説明の軸で拾う（131041）。節も備考も無い自治体（132012）は拾えない。印は網羅ではない。印の付いた金額はそのまま足せる（二重なし）。金額の消去はしない（ADR 0023）。
     data_tests:
     - not_null
   - name: interfund_transfer_to
@@ -122,22 +122,22 @@ models:
           to: ref('cofog_master')
           field: cofog_code
 - name: initial_expenditure_node
-  description: 原典の当初予算の歳出の木。PDF（132071）とCSV（132047）の両方を同じ列で持ち、金額は当初予算額。款・項・目のnode_idの導出は決算と共通。
+  description: 出典の当初予算の歳出の木。PDF（132071）とCSV（132047）の両方を同じ列で持ち、金額は当初予算額。款・項・目のnode_idの導出は決算と共通。
   columns:
   - name: node_id
-    description: 団体・年度・会計・款項目番号、または親ID・軸・段・番号・名称から生成。決算の木と同じ導出。
+    description: 自治体・年度・会計・款項目番号、または親ID・軸・段・番号・名称から生成。決算の木と同じ導出。
     data_tests:
     - not_null
     - unique
   - name: parent_node_id
-    description: 原典の親子。款はNULL。CSVの親は経路から機械的に決まる。別の軸の子を同じ金額に混ぜて足さない。
+    description: 出典の親子。款はNULL。CSVの親は経路から機械的に決まる。別の軸の子を同じ金額に混ぜて足さない。
     data_tests:
     - relationships:
         arguments:
           to: ref('initial_expenditure_node')
           field: node_id
   - name: jurisdiction_code
-    description: 宣言の団体コード。
+    description: 宣言の自治体コード。
     data_tests:
     - not_null
   - name: fiscal_year
@@ -145,11 +145,11 @@ models:
     data_tests:
     - not_null
   - name: account_name
-    description: 原典の会計名。CSVは01会計の番号を除いた値。
+    description: 出典の会計名。CSVは01会計の番号を除いた値。
     data_tests:
     - not_null
   - name: axis
-    description: 原典の分解の軸。PDFは科目・節・備考など、CSVは科目だけ。軸をまたいで合算しない。
+    description: 出典の分解の軸。PDFは科目・節・備考など、CSVは科目だけ。軸をまたいで合算しない。
     data_tests:
     - not_null
   - name: is_subject
@@ -161,9 +161,9 @@ models:
     data_tests:
     - not_null
   - name: code
-    description: 原典の番号。CSVは番号+名称のセルから番号を分けた値。番号がない段はNULL。
+    description: 出典の番号。CSVは番号+名称のセルから番号を分けた値。番号がない段はNULL。
   - name: name
-    description: 原典の名称を正規化した値。CSVは番号+名称のセルから名称を分けた値。
+    description: 出典の名称を正規化した値。CSVは番号+名称のセルから名称を分けた値。
     data_tests:
     - not_null
   - name: amount_yen
@@ -173,21 +173,21 @@ models:
     data_tests:
     - not_null
   - name: kan_code
-    description: 所属する原典の款番号。
+    description: 所属する出典の款番号。
     data_tests:
     - not_null
   - name: kan_name
-    description: 所属する款の原典の名称（name と同じ正規化）。比較の絞り込みで親を辿らずに使う（ADR 0022）。
+    description: 所属する款の出典の名称（name と同じ正規化）。比較の絞り込みで親を辿らずに使う（ADR 0022）。
     data_tests:
     - not_null
   - name: kou_code
-    description: 所属する原典の項番号。款ではNULL。
+    description: 所属する出典の項番号。款ではNULL。
   - name: kou_name
-    description: 所属する項の原典の名称。款ではNULL。
+    description: 所属する項の出典の名称。款ではNULL。
   - name: moku_code
-    description: 所属する原典の目番号。款・項ではNULL。
+    description: 所属する出典の目番号。款・項ではNULL。
   - name: origin_id
-    description: 印字された原典ファイルを指すSHA由来のID。originのformatでPDFとCSVを区別できる。
+    description: 印字された出典ファイルを指すSHA由来のID。originのformatでPDFとCSVを区別できる。
     data_tests:
     - not_null
     - relationships:
@@ -195,19 +195,19 @@ models:
           to: ref('origin')
           field: origin_id
   - name: source_page
-    description: PDFは項目が印字された頁で、原典ファイル（origin_id が指す1つの PDF）の1始まりのページ番号。紙面に印刷されたページ番号ではなく、分冊・抜粋のファイルではそのファイルの中での番号。CSVは原典ファイルの1始まりの物理行（見出しの行が1行目）で、末端は印字された行の開始行、CSVに行の無い親（款〜節）は子孫の行のうち最も小さい開始行。
+    description: PDFは項目が印字された頁で、出典ファイル（origin_id が指す1つの PDF）の1始まりのページ番号。紙面に印刷されたページ番号ではなく、分冊・抜粋のファイルではそのファイルの中での番号。CSVは出典ファイルの1始まりの物理行（見出しの行が1行目）で、末端は印字された行の開始行、CSVに行の無い親（款〜節）は子孫の行のうち最も小さい開始行。
     data_tests:
     - not_null
   - name: amount_source_page
-    description: 採用した当初予算額の位置。PDFは source_page と同じ数え方の、原典ファイルの1始まりのページ番号。CSVは1始まりの物理行。CSVの親の集計額はNULL。不明ならNULL。
+    description: 採用した当初予算額の位置。PDFは source_page と同じ数え方の、出典ファイルの1始まりのページ番号。CSVは1始まりの物理行。CSVの親の集計額はNULL。不明ならNULL。
   - name: source_x0
-    description: 項目の印字の枠の左端。PDFだけ（頁`source_page`の左上原点のpt）。CSVは座標を持たずNULL。保存済みの取り込み表で値が無ければNULL（団体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
+    description: 項目の印字の枠の左端。PDFだけ（頁`source_page`の左上原点のpt）。CSVは座標を持たずNULL。保存済みの取り込み表で値が無ければNULL（自治体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
   - name: source_y0
-    description: 項目の印字の枠の上端。PDFだけ（頁`source_page`の左上原点のpt）。CSVは座標を持たずNULL。保存済みの取り込み表で値が無ければNULL（団体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
+    description: 項目の印字の枠の上端。PDFだけ（頁`source_page`の左上原点のpt）。CSVは座標を持たずNULL。保存済みの取り込み表で値が無ければNULL（自治体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
   - name: source_x1
-    description: 項目の印字の枠の右端。PDFだけ（頁`source_page`の左上原点のpt）。CSVは座標を持たずNULL。保存済みの取り込み表で値が無ければNULL（団体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
+    description: 項目の印字の枠の右端。PDFだけ（頁`source_page`の左上原点のpt）。CSVは座標を持たずNULL。保存済みの取り込み表で値が無ければNULL（自治体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
   - name: source_y1
-    description: 項目の印字の枠の下端。PDFだけ（頁`source_page`の左上原点のpt）。CSVは座標を持たずNULL。保存済みの取り込み表で値が無ければNULL（団体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
+    description: 項目の印字の枠の下端。PDFだけ（頁`source_page`の左上原点のpt）。CSVは座標を持たずNULL。保存済みの取り込み表で値が無ければNULL（自治体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
   - name: amount_source_x0
     description: 採用した当初予算額の印字の枠の左端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。
   - name: amount_source_y0
@@ -217,7 +217,7 @@ models:
   - name: amount_source_y1
     description: 採用した当初予算額の印字の枠の下端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。
   - name: account_kind
-    description: 団体共通の会計の種類（一般会計・国民健康保険・介護保険・後期高齢者医療・用地・駐車場・下水道・介護サービス事業・土地区画整理）。原典の会計名を account_kind_map の語で対応づけた風土記の判断。団体をまたぐ比較はこの列で行う。辞書に無い会計名は構築を止める。決算の表と同じ共有 intermediate から付ける。
+    description: 自治体共通の会計の種類（一般会計・国民健康保険・介護保険・後期高齢者医療・用地・駐車場・下水道・介護サービス事業・土地区画整理）。出典の会計名を account_kind_map の語で対応づけた風土記の判断。自治体をまたぐ比較はこの列で行う。辞書に無い会計名は構築を止める。決算の表と同じ共有 intermediate から付ける。
     data_tests:
     - not_null
   - name: is_interfund_transfer
@@ -243,23 +243,23 @@ models:
           to: ref('cofog_master')
           field: cofog_code
 - name: origin
-  description: 原典選定から毎回生成する原典ファイルの表。独立した証跡ファイルを保存するものではない。
+  description: 出典選定から毎回生成する出典ファイルの表。独立した証跡ファイルを保存するものではない。
   columns:
   - name: origin_id
-    description: 原典ファイルを指すSHA由来のID。木の表の origin_id が指す。
+    description: 出典ファイルを指すSHA由来のID。木の表の origin_id が指す。
     data_tests:
     - unique
     - not_null
   - name: sha256
-    description: 原典ファイルの SHA-256。風土記が取得・保存した時点のもの。自治体がファイルを再保存すると、url から取得したファイルの SHA-256 とは一致しないことがある。
+    description: 出典ファイルの SHA-256。風土記が取得・保存した時点のもの。自治体がファイルを再保存すると、url から取得したファイルの SHA-256 とは一致しないことがある。
     data_tests:
     - not_null
   - name: jurisdiction_code
-    description: 団体コード。
+    description: 自治体コード。
     data_tests:
     - not_null
   - name: fiscal_year
-    description: 原典の年度。
+    description: 出典の年度。
     data_tests:
     - not_null
   - name: document_kind
@@ -269,27 +269,27 @@ models:
   - name: amendment_number
     description: 補正予算の号数。補正予算以外はNULL。
   - name: title
-    description: 原典の資料名（前後の空白を除いたもの）。
+    description: 出典の資料名（前後の空白を除いたもの）。
     data_tests:
     - not_null
   - name: url
-    description: 原典の公開URL。
+    description: 出典の公開URL。
     data_tests:
     - not_null
   - name: format
-    description: 原典の形式（pdf か csv）。
+    description: 出典の形式（pdf か csv）。
     data_tests:
     - not_null
 - name: expenditure_coverage
-  description: 収録範囲。歳出の木（決算・当初予算）に明細がある団体・年度・資料区分・会計と、その明細が指す原典の組。木の表から作るので、同じ構築の木の検索で返る範囲と一致する。明細があることを示し、会計全体・全事業を収録し終えたことは保証しない。原典の選定結果は使わないので、収録が無い理由（未収録か原典が無いか）は区別しない。
+  description: 収録範囲。歳出の木（決算・当初予算）に明細がある自治体・年度・資料区分・会計と、その明細が指す出典の組。木の表から作るので、同じ構築の木の検索で返る範囲と一致する。明細があることを示し、会計全体・全事業を収録し終えたことは保証しない。出典の選定結果は使わないので、収録が無い理由（未収録か出典が無いか）は区別しない。
   columns:
   - name: coverage_id
-    description: 団体・年度・資料区分・会計名・origin_id から生成した ID。
+    description: 自治体・年度・資料区分・会計名・origin_id から生成した ID。
     data_tests:
     - not_null
     - unique
   - name: jurisdiction_code
-    description: 団体コード。木の表の jurisdiction_code。
+    description: 自治体コード。木の表の jurisdiction_code。
     data_tests:
     - not_null
     - relationships:
@@ -308,15 +308,15 @@ models:
         arguments:
           values: [settlement, initial]
   - name: account_name
-    description: 原典の会計名。木の表の account_name と同じ値で、明細の検索の条件にそのまま使える。
+    description: 出典の会計名。木の表の account_name と同じ値で、明細の検索の条件にそのまま使える。
     data_tests:
     - not_null
   - name: account_kind
-    description: 団体共通の会計の種類。木の表の account_kind（風土記の判断）。
+    description: 自治体共通の会計の種類。木の表の account_kind（風土記の判断）。
     data_tests:
     - not_null
   - name: origin_id
-    description: この団体・年度・資料区分・会計の明細が指す原典。分冊などで一つの会計に複数の原典があれば、原典ごとに行がある。
+    description: この自治体・年度・資料区分・会計の明細が指す出典。分冊などで一つの会計に複数の出典があれば、出典ごとに行がある。
     data_tests:
     - not_null
     - relationships:

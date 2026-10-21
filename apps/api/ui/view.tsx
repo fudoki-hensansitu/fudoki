@@ -89,7 +89,7 @@ const shareable = (rows: TreeNode[], next?: string | null) =>
 /** 検索結果が1件で続きも無いときだけ、明細の画面に置き換える */
 const autoOpens = (rows: TreeNode[], next?: string | null) => rows.length === 1 && !next
 
-/** 団体・年度・資料・会計ごとに分け、2つ以上のまとまりがどれも兄弟の一覧なら返す。年度、団体コードの順に並べる */
+/** 自治体・年度・資料・会計ごとに分け、2つ以上のまとまりがどれも兄弟の一覧なら返す。年度、自治体コードの順に並べる */
 function groupByScope(rows: TreeNode[]): TreeNode[][] | undefined {
   const map = new Map<string, TreeNode[]>()
   for (const n of rows) {
@@ -131,15 +131,15 @@ function OriginButton({ node, origin, bridge, showPdf }: {
   const format = <span className="ref-format" aria-hidden="true">{origin.format.toUpperCase()}</span>
   if (origin.format === 'pdf' && page)
     return (
-      <Button variant="outline" size="sm" className="ref" aria-label={`参照（PDF）: ${node.name}`}
+      <Button variant="outline" size="sm" className="ref" aria-label={`出典（PDF）: ${node.name}`}
         onClick={(event) => showPdf({ origin, location: node, selectedPage: page, trigger: event.currentTarget })}>
-        {format}参照
+        {format}出典
       </Button>
     )
   return (
-    <Button variant="outline" size="sm" className="ref" aria-label={`参照（${origin.format.toUpperCase()}、外部で開く）: ${node.name}`}
+    <Button variant="outline" size="sm" className="ref" aria-label={`出典（${origin.format.toUpperCase()}、外部で開く）: ${node.name}`}
       onClick={() => bridge.openLink(origin.url)}>
-      {format}参照<ExternalLink aria-hidden="true" className="ref-external" />
+      {format}出典<ExternalLink aria-hidden="true" className="ref-external" />
     </Button>
   )
 }
@@ -148,10 +148,10 @@ function OriginButton({ node, origin, bridge, showPdf }: {
  * 一覧と明細で共通の見出し。1行目は経路（今の画面は太字の見出し）と、右寄せの範囲。2行目は金額などの主役。
  * 今の画面も経路の続きに同じ大きさで並べ、大きくするのは金額だけにする。
  */
-/** 前の画面がパンくずで辿れない（団体・年度をまたぐ一覧）ときだけ、見出しの頭に置く「戻る」 */
+/** 前の画面がパンくずで辿れない（自治体・年度をまたぐ一覧）ときだけ、見出しの頭に置く「戻る」 */
 const BackContext = createContext<(() => void) | undefined>(undefined)
 
-/** 全行が同じ団体・年度・資料なら、パンくずで辿れる一つの範囲とみなす */
+/** 全行が同じ自治体・年度・資料なら、パンくずで辿れる一つの範囲とみなす */
 const oneScope = (rows: TreeNode[]) => rows.every((n) => n.jurisdiction_code === rows[0]!.jurisdiction_code &&
   n.fiscal_year === rows[0]!.fiscal_year && n.document_kind === rows[0]!.document_kind)
 
@@ -240,8 +240,8 @@ function nodesTitle(rows: TreeNode[]) {
 }
 
 /**
- * 検索結果の行を、行ごとに違う値だけで名付ける。全行で同じ値（団体・年度・資料・会計・科目・名前）は見出しにまとめる。
- * 例: 民生費を団体・年度で比べる結果は、見出しが「【款】民生費」、行が「比較市 · 2024年度」になる。
+ * 検索結果の行を、行ごとに違う値だけで名付ける。全行で同じ値（自治体・年度・資料・会計・科目・名前）は見出しにまとめる。
+ * 例: 民生費を自治体・年度で比べる結果は、見出しが「【款】民生費」、行が「比較市 · 2024年度」になる。
  */
 function describeRows(rows: TreeNode[], names: Names) {
   const all = <T,>(f: (n: TreeNode) => T) => rows.every((n) => f(n) === f(rows[0]!))
@@ -329,8 +329,8 @@ function NodesResult({ rows, next, history, names, bridge, busy, failed, fold, e
   }
   const groups = groupByScope(rows)
   if (groups) {
-    // 団体・年度ごとの兄弟の一覧を、それぞれ一つの画面と同じ形（合計・割合）で縦に並べる。
-    // 款の名前は団体ごとに違うので、行を混ぜて金額順に並べると比べられない
+    // 自治体・年度ごとの兄弟の一覧を、それぞれ一つの画面と同じ形（合計・割合）で縦に並べる。
+    // 款の名前は自治体ごとに違うので、行を混ぜて金額順に並べると比べられない
     const d = describeRows(rows, names)
     const first = rows[0]!
     const parent = ancestorsOf(first).at(-1)
@@ -364,7 +364,7 @@ function NodesResult({ rows, next, history, names, bridge, busy, failed, fold, e
   const ordered = d.byYear ? [...rows].sort((a, b) => a.fiscal_year - b.fiscal_year) : rows
   return (
     <>
-      {/* 団体・年度・資料が混ざると、段を押して移る先を一つに決められないのでパンくずを置かない */}
+      {/* 自治体・年度・資料が混ざると、段を押して移る先を一つに決められないのでパンくずを置かない */}
       <PathHeader crumbs={d.commonLevels && d.oneScope ? crumbsOf(rows[0]!, history, bridge, d.commonLevels) : []} kind={d.kind} title={title}
         scope={[d.scope, !d.oneScope && d.commonLevels ? rows[0]!.account_name : undefined].filter(Boolean).join(' · ') || undefined} busy={busy} />
       <BarList label={title} share={false} busy={busy} keepOrder={d.byYear} fold={fold}
@@ -412,7 +412,7 @@ function View({ bridge }: { bridge: Bridge }) {
     setPdf(selection)
     if (inline) autoFullscreen.current = true
     bridge.setFullscreen(true)
-    bridge.tellModel(`風土記の View で原典「${selection.origin.title}」の${selection.selectedPage}ページを表示中。`)
+    bridge.tellModel(`風土記の View で出典「${selection.origin.title}」の${selection.selectedPage}ページを表示中。`)
   }
   function closePdf() {
     const trigger = pdf?.trigger

@@ -1,7 +1,7 @@
-"""Worker が引く評価資料の一覧 `apps/api/src/evaluation-catalog.json` の生成器（dd.md「Worker が使う原典の一覧」）。
+"""Worker が引く評価資料の一覧 `apps/api/src/evaluation-catalog.json` の生成器（dd.md「Worker が使う出典の一覧」）。
 
 選定の評価資料のうち、`evaluation_search/instance.json` に登録の記録があり、記録の指紋が今の選定と設定から求めた指紋と
-一致する原典だけを載せる。選定や索引の設定だけが先に変わった原典を「収録済み」として検索させないため。
+一致する出典だけを載せる。選定や索引の設定だけが先に変わった出典を「収録済み」として検索させないため。
 
     bun run --cwd pipeline serving:evaluation-catalog           # evaluation-catalog.json を書き直す
     bun run --cwd pipeline serving:evaluation-catalog --check   # 最新かだけ検査する

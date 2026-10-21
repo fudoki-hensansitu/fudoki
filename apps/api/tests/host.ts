@@ -80,7 +80,7 @@ bridge.oncalltool = async (params) => {
   if (level) return toolResult(level)
   if (params.name === 'get_expenditure_node' && hierarchyIds.has(String(input.node_id)))
     return toolResult(chartData('chart', String(input.node_id)))
-  // 比較や2団体の一覧の行は試験の階層に無いので、押した行そのものを内訳なしの明細として返す
+  // 比較や2自治体の一覧の行は試験の階層に無いので、押した行そのものを内訳なしの明細として返す
   if (scenario.startsWith('chart') && params.name === 'get_expenditure_node') {
     const data = uiData(scenario)
     const hit = 'nodes' in data ? data.nodes.find((n) => n.node_id === input.node_id) : undefined

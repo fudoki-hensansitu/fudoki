@@ -4,9 +4,9 @@
 
 COFOG は歳出明細・変更の CSV の `cofog_code` 列に含め、`functional-classification:cofog:code` として宣言する。分類コード・状態・根拠のための独立した配布 CSV は作らない。
 
-GFSM は提供しない。採用した次の設計では、歳出予算を事業×歳出の節で提供し、`expenditure_setsu_id` / `expenditure_setsu_label` を `economic-classification:generic:code` / `label` として宣言する。ID は適用期間を含むマスタの定義を特定し、法改正前後で同じ節番号を同じ定義とみなさない。COFOG は機能分類、歳出の節は経済的な性質の分類であり、別の軸として同じ明細に持てる。細節・細々節等は、この節を書いた時点では `details_json` に保持する予定だったが、2026-10-11 に原典の段を親子のノードで持つ設計に改めた（[ADR 0020](../adr/0020-ingestion-outputs-node-tables.md)）。[FDP 1.0.0 の分類定義](https://fiscal.datapackage.org/specifications/fiscal-data-package-budgets/)
+GFSM は提供しない。採用した次の設計では、歳出予算を事業×歳出の節で提供し、`expenditure_setsu_id` / `expenditure_setsu_label` を `economic-classification:generic:code` / `label` として宣言する。ID は適用期間を含むマスタの定義を特定し、法改正前後で同じ節番号を同じ定義とみなさない。COFOG は機能分類、歳出の節は経済的な性質の分類であり、別の軸として同じ明細に持てる。細節・細々節等は、この節を書いた時点では `details_json` に保持する予定だったが、2026-10-11 に出典の段を親子のノードで持つ設計に改めた（[ADR 0020](../adr/0020-ingestion-outputs-node-tables.md)）。[FDP 1.0.0 の分類定義](https://fiscal.datapackage.org/specifications/fiscal-data-package-budgets/)
 
-事業×歳出の節への集約とマスタ参照は未実装で、旧処理の歳出明細 CSV は削除した。提供用データの設計は [dbt モデルの設計](../prd/fiscal-dbt-models/dd.md) を正とする。原典の節は取り込み・内部検証と予算対象の原典経路に保持する。歳入の節は財源の内訳であり、歳出の節マスタとは別に扱う。
+事業×歳出の節への集約とマスタ参照は未実装で、旧処理の歳出明細 CSV は削除した。提供用データの設計は [dbt モデルの設計](../prd/fiscal-dbt-models/dd.md) を正とする。出典の節は取り込み・内部検証と予算対象の出典経路に保持する。歳入の節は財源の内訳であり、歳出の節マスタとは別に扱う。
 
 ## 参照する仕様の版を選ぶ
 

@@ -79,7 +79,7 @@ export function insertOrigin(sqlite: Database, row: Record<string, string | numb
     .run(...(full.map(([, v]) => v) as never[]))
 }
 
-/** 団体マスタの1行。 */
+/** 自治体マスタの1行。 */
 export function insertJurisdiction(sqlite: Database, row: { jurisdiction_code: string; name: string; prefecture_name?: string }) {
   const prefecture_code = row.jurisdiction_code.slice(0, 2)
   sqlite

@@ -174,7 +174,7 @@ export function ViewFrame({
         bridgeRef.current = bridge
         bridge.oncalltool = async (params) => (await relay(token, 'tools/call', { name: params.name, arguments: params.arguments ?? {} })) as never
         bridge.onopenlink = async ({ url }) => {
-          // 原典の PDF などの外部の頁は新しいタブで開き、こちらの頁を触らせない
+          // 出典の PDF などの外部の頁は新しいタブで開き、こちらの頁を触らせない
           if (/^https?:\/\//.test(url)) window.open(url, '_blank', 'noopener,noreferrer')
           return {}
         }

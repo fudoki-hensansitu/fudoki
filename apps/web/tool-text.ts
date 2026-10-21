@@ -1,7 +1,7 @@
 // MCP の tool の結果のうち、AI に渡す text の整え方。server/chat.ts（AI へ）と chat/history.ts（ブラウザが履歴を送るとき）が同じ形にする。
 // 検索の結果は1回で10万字を超え、render の結果もそれを写している。履歴に残ると毎回送り直され、body の上限と AI の待ち時間を食う。
 
-/** 1つの tool の結果の text を AI に渡す上限（文字）。収録している団体の一覧（約2.2万字）が全部入る大きさ */
+/** 1つの tool の結果の text を AI に渡す上限（文字）。収録している自治体の一覧（約2.2万字）が全部入る大きさ */
 export const MAX_TOOL_TEXT = 24_000
 
 const TRUNCATED = `\n…（結果が長いため先頭の ${MAX_TOOL_TEXT} 文字だけを渡しています。条件を絞る・page_size を小さくする・order_by で並べ替えるなどして取り直してください）`
