@@ -74,18 +74,38 @@ class PublicBoundaries(unittest.TestCase):
                                                 [line("b", "4,567", [1180, 10, 1400, 20])]], spans)
         self.assertEqual(dropped, [])
 
-    def test_the_ink_a_dropped_seam_line_leaves_is_one_area_for_the_reread(self):
+    def test_the_ink_of_a_dropped_seam_line_is_one_area_when_the_line_is_in_one_cell(self):
         import numpy as np
         from ingestion.lib import pdf_rules, scan_ocr
-        dark = np.zeros((40, 1500), bool)
-        for x in range(1000, 1400, 6):  # one printed line across the seam (strokes, not a rule), its two cut readings dropped
-            dark[10:18, x:x + 2] = True
-        rule = pdf_rules.Rule(1450.0, 0.0, 40.0)
-        rules = pdf_rules.PageRules(1, 1500.0, 40.0, (rule,), ())
-        marks = scan_ocr.missed_ink(dark, 1.0, [])
-        self.assertEqual(len(scan_ocr.ink_areas(marks, rules)), 1)
-        area = scan_ocr.ink_areas(marks, rules)[0]
-        self.assertTrue(area[0] <= 1000 and area[2] >= 1400)
+        Rule, PageRules = pdf_rules.Rule, pdf_rules.PageRules
+
+        def ink(x0, x1):
+            dark = np.zeros((60, 1500), bool)
+            for x in range(x0, x1, 6):  # strokes of one printed line, not a rule
+                dark[10:18, x:x + 2] = True
+            return dark
+
+        def areas(dark, vertical):
+            rules = PageRules(1, 1500.0, 60.0, tuple(vertical), ())
+            return scan_ocr.ink_areas(scan_ocr.missed_ink(dark, 1.0, []), rules)
+
+        dark = ink(1000, 1400)  # the line crosses the seam (x 1180..1300)
+        # One cell (rules at 900 and 1450 over the line's height): the whole line is one area, inside the cell.
+        one = areas(dark, [Rule(900.0, 0.0, 60.0), Rule(1450.0, 0.0, 60.0)])
+        self.assertEqual(len(one), 1)
+        self.assertTrue(one[0][0] <= 1000 and one[0][2] >= 1400 and one[0][0] > 900 and one[0][2] < 1450)
+        # A merged heading: the column rules stop below it, so nothing divides it and it is one area too.
+        merged = areas(dark, [Rule(1238.0, 30.0, 60.0)])
+        self.assertEqual(len(merged), 1)
+        # A gap of 14 points or more inside the cell (letter-spaced characters) also makes two areas.
+        spaced = np.zeros((60, 1500), bool)
+        for x in list(range(1000, 1200, 6)) + list(range(1220, 1400, 6)):
+            spaced[10:18, x:x + 2] = True
+        self.assertEqual(len(areas(spaced, [Rule(900.0, 0.0, 60.0), Rule(1450.0, 0.0, 60.0)])), 2)
+        # Two cells (a rule through the line between its parts): two areas, never one line.
+        two = areas(dark, [Rule(1238.0, 0.0, 60.0)])
+        self.assertEqual(len(two), 2)
+        self.assertTrue(two[0][2] < 1238 < two[1][0])
 
     def test_a_cut_reading_inside_a_longer_one_goes_but_conflicting_readings_stay(self):
         def line(id, text, box):
