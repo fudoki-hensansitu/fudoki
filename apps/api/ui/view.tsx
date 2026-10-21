@@ -8,7 +8,6 @@ import {
   KIND_LABEL,
   shortYen,
   yen,
-  type Jurisdiction,
   type Origin,
   type TreeNode,
   type ViewData,
@@ -111,7 +110,6 @@ function siblings(rows: TreeNode[]) {
 }
 
 function describe(data: ViewData, names: Names) {
-  if ('jurisdictions' in data) return `風土記の View で団体と収録範囲（${data.jurisdictions.length}団体）を表示中。`
   if ('nodes' in data)
     return `風土記の View で歳出明細の検索結果${data.nodes.length}件を表示中。上位: ${[...data.nodes]
       .sort((a, b) => (b.amount_yen ?? 0) - (a.amount_yen ?? 0)).slice(0, 5)
@@ -382,58 +380,6 @@ function NodesResult({ rows, next, history, names, bridge, busy, failed, fold, e
   )
 }
 
-function JurisdictionsResult({ list, bridge, busy, fold }: { list: Jurisdiction[]; bridge: Bridge; busy: boolean; fold: number }) {
-  const [limit, setLimit] = useState(fold)
-  if (!list.length) return <p className="quiet">団体はありません。</p>
-  // 絞らずに引くと収録の無い団体が大半になるので、収録のある団体を先に置き、最初は FOLD 件だけ出す
-  const ordered = [...list.filter((j) => j.coverage.length), ...list.filter((j) => !j.coverage.length)]
-  const hidden = ordered.length - Math.min(limit, ordered.length)
-  const years = [...new Set(list.flatMap((j) => j.coverage.map((c) => c.fiscal_year)))].sort()
-  return (
-    <>
-      <PathHeader crumbs={[]} title={`${list.length}団体の収録範囲`} busy={busy} />
-      <div className="coverage" role="table" aria-label="団体ごとの収録範囲"
-        style={{ gridTemplateColumns: `minmax(7em, 1fr) repeat(${Math.max(1, years.length)}, minmax(4.5em, max-content))` }}>
-        <div role="row" className="coverage-row">
-          <span role="columnheader" className="coverage-year">団体</span>
-          {years.map((y) => <span role="columnheader" key={y} className="coverage-year">{y}年度</span>)}
-          {!years.length && <span role="columnheader" />}
-        </div>
-        {ordered.slice(0, limit).map((j) => (
-          <div role="row" className="coverage-row" key={j.jurisdiction_code}>
-            <span role="rowheader" className="coverage-name">
-              {j.name}<span className="bar-note">{j.prefecture_name}</span>
-            </span>
-            {years.map((y) => {
-              const covered = j.coverage.filter((c) => c.fiscal_year === y)
-              return (
-                <span role="cell" key={y} className="coverage-cell">
-                  {covered.map((c) => {
-                    const label = KIND_LABEL[c.document_kind] ?? c.document_kind
-                    // View の中では移らず、チャットで AI に呼び直させる。一般会計を優先し、別の会計はチャットで聞き直せばよい
-                    const account = c.accounts.find((a) => a.account_name === '一般会計') ?? c.accounts[0]
-                    return (
-                      <Button variant="link" key={c.document_kind} className="chip" disabled={busy || !account}
-                        aria-label={`${j.name} ${y}年度 ${label}の${account?.account_name ?? ''}をチャットで聞く`}
-                        onClick={() => account && bridge.ask(`${j.name}（団体コード ${j.jurisdiction_code}）の${y}年度 ${label}・${account.account_name}の歳出を款ごとに見せて`)}>
-                        {label}
-                      </Button>
-                    )
-                  })}
-                </span>
-              )
-            })}
-            {!years.length && <span role="cell" className="quiet">収録なし</span>}
-          </div>
-        ))}
-      </div>
-      {hidden > 0 && (
-        <Button variant="link" className="bar-more" onClick={() => setLimit(limit + fold)}>もっと見る（残り{hidden}団体）</Button>
-      )}
-    </>
-  )
-}
-
 function View({ bridge }: { bridge: Bridge }) {
   const state = useSyncExternalStore(bridge.subscribe, bridge.getSnapshot)
   const [pdf, setPdf] = useState<PdfSelection>()
@@ -501,8 +447,7 @@ function View({ bridge }: { bridge: Bridge }) {
         </div>
       ) : entry && (
         <div key={`${entry.revision}-${fold}`} className="result">
-          {'jurisdictions' in entry.data ? <JurisdictionsResult list={entry.data.jurisdictions} bridge={bridge} busy={state.busy} fold={fold} />
-            : 'nodes' in entry.data ? <NodesResult rows={entry.data.nodes} next={entry.data.next_page_token} history={state.history} names={state.names} bridge={bridge} busy={state.busy} failed={!!state.error} fold={fold} expand={expand} />
+          {'nodes' in entry.data ? <NodesResult rows={entry.data.nodes} next={entry.data.next_page_token} history={state.history} names={state.names} bridge={bridge} busy={state.busy} failed={!!state.error} fold={fold} expand={expand} />
             : <NodeResult data={entry.data} crumbs={crumbsOf(entry.data.node, state.history, bridge)} names={state.names} bridge={bridge} showPdf={showPdf} busy={state.busy} />}
         </div>
       )}

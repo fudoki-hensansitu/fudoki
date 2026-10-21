@@ -35,31 +35,15 @@ export interface TreeNode extends PdfLocation {
   kou_name: string | null
   origin_id: string
 }
-export interface Jurisdiction {
-  jurisdiction_code: string
-  name: string
-  prefecture_name: string
-  coverage: {
-    fiscal_year: number
-    document_kind: string
-    accounts: {
-      account_name: string
-      account_kind: string
-      origins: Origin[]
-    }[]
-  }[]
-}
 export type ViewData = {
   origins?: Origin[]
   next_page_token?: string | null
 } & (
-  | { jurisdictions: Jurisdiction[] }
   | { nodes: TreeNode[] }
   | { node: TreeNode; children: Record<string, TreeNode[]> }
 )
 
 export function toolFor(data: Json): string | undefined {
-  if (Array.isArray(data.jurisdictions)) return 'list_jurisdictions'
   if (Array.isArray(data.nodes)) return 'search_expenditure_nodes'
   if (data.node && data.children) return 'get_expenditure_node'
 }

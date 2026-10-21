@@ -22,16 +22,12 @@ const rpc = async (method: string, params: unknown) => {
 const scenario = new URLSearchParams(location.search).get('ui')
 const preview = location.pathname === '/preview'
 const year = location.search.includes('real') ? 2025 : 2024
-const initialArgs = ['jurisdictions', 'single', 'empty-jurisdictions'].includes(
-  scenario ?? '',
-)
-  ? { page_size: 1 }
-  : {
-      document_kind: 'settlement',
-      fiscal_year: { min: year, max: year },
-      page_size: scenario ? 1 : 100,
-      ...(scenario === 'chart-kan' ? { where: { kan_name: { eq: ['総務費'] }, node_kind: { eq: ['項'] } } } : {}),
-    }
+const initialArgs = {
+  document_kind: 'settlement',
+  fiscal_year: { min: year, max: year },
+  page_size: scenario ? 1 : 100,
+  ...(scenario === 'chart-kan' ? { where: { kan_name: { eq: ['総務費'] }, node_kind: { eq: ['項'] } } } : {}),
+}
 const result = scenario
   ? undefined
   : await rpc('tools/call', {
@@ -90,9 +86,6 @@ bridge.oncalltool = async (params) => {
   if (level) return toolResult(level)
   if (params.name === 'get_expenditure_node' && hierarchyIds.has(String(input.node_id)))
     return toolResult(chartData('chart', String(input.node_id)))
-  // 団体一覧のチップから款の一覧を開き、そのまま掘り下げられるようにする
-  if ((scenario === 'jurisdictions' || scenario === 'single') && params.name !== 'list_jurisdictions')
-    return toolResult(chartData('chart', params.name === 'get_expenditure_node' ? String(input.node_id) : undefined))
   // 比較や2団体の一覧の行は試験の階層に無いので、押した行そのものを内訳なしの明細として返す
   if (scenario.startsWith('chart') && params.name === 'get_expenditure_node') {
     const data = uiData(scenario)
@@ -230,7 +223,7 @@ if (preview) {
       const target = new URL(url)
       target.searchParams.set('ui', link.dataset.pattern!)
       link.href = target.href
-      if (link.dataset.pattern === (scenario ?? 'jurisdictions'))
+      if (link.dataset.pattern === (scenario ?? ''))
         link.setAttribute('aria-current', 'page')
       else link.removeAttribute('aria-current')
     }

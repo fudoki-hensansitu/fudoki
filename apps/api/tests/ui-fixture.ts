@@ -1,4 +1,4 @@
-import type { Jurisdiction, Origin, TreeNode, ViewData } from '../ui/types'
+import type { Origin, TreeNode, ViewData } from '../ui/types'
 
 const origin: Origin = {
   origin_id: 'ok',
@@ -31,35 +31,6 @@ export const node: TreeNode = {
   amount_source_x1: 240,
   amount_source_y1: 180,
 }
-const jurisdiction = (
-  code: string,
-  name: string,
-  covered = true,
-): Jurisdiction => ({
-  jurisdiction_code: code,
-  name,
-  prefecture_name: '試験県',
-  coverage: covered
-    ? [
-        {
-          fiscal_year: 2024,
-          document_kind: 'settlement',
-          accounts: [
-            {
-              account_name: '一般会計',
-              account_kind: '一般会計',
-              origins: [origin],
-            },
-          ],
-        },
-        {
-          fiscal_year: 2025,
-          document_kind: 'initial',
-          accounts: [{ account_name: '一般会計', account_kind: '一般会計', origins: [origin] }],
-        },
-      ]
-    : [],
-})
 export const child = {
   ...node,
   node_id: 'ui-child',
@@ -95,19 +66,6 @@ export function uiData(scenario: string, more = false, nodeId?: string): ViewDat
       ],
       origins: [origin],
     }
-  if (scenario === 'jurisdictions')
-    return {
-      jurisdictions: more
-        ? [jurisdiction('000003', '追加市')]
-        : [
-            jurisdiction('000001', '試験市'),
-            jurisdiction('000002', '未収録町', false),
-          ],
-      next_page_token: more ? null : 'jurisdictions-next',
-    }
-  if (scenario === 'single')
-    return { jurisdictions: [jurisdiction('000001', '試験市')] }
-  if (scenario === 'empty-jurisdictions') return { jurisdictions: [] }
   if (scenario === 'empty') return { nodes: [] }
   if (scenario === 'detail')
     return {

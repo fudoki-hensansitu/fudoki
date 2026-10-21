@@ -73,7 +73,7 @@ const server = Bun.serve({
   async fetch(req) {
     const path = new URL(req.url).pathname
     if (preview && path === '/')
-      return Response.redirect(new URL('/preview?ui=jurisdictions', req.url))
+      return Response.redirect(new URL('/preview?ui=search', req.url))
     if (preview && path === '/preview')
       return new Response(previewHtml(), {
         headers: { 'Content-Type': 'text/html', 'Cache-Control': 'no-store' },
@@ -140,7 +140,7 @@ const server = Bun.serve({
   },
 })
 console.log(
-  `${preview ? 'MCP UI preview' : 'PDF QA host'}: ${server.url}${preview ? 'preview?ui=jurisdictions' : ''}`,
+  `${preview ? 'MCP UI preview' : 'PDF QA host'}: ${server.url}${preview ? 'preview?ui=search' : ''}`,
 )
 async function stop() {
   clearTimeout(reloadTimer)

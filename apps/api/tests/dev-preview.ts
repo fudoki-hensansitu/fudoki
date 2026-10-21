@@ -1,6 +1,4 @@
 export const PATTERNS = [
-  ['jurisdictions', '団体一覧・収録範囲'],
-  ['single', '一団体の収録範囲'],
   ['search', '歳出の検索結果'],
   ['chart', '款→項→目のチャート'],
   ['chart-kan', '款で絞ったチャート'],
@@ -14,7 +12,6 @@ export const PATTERNS = [
   ['', 'PDF・原典の各ケース'],
   ['pdf-locations', 'PDFの頁が片方だけ'],
   ['empty', '検索0件'],
-  ['empty-jurisdictions', '団体0件'],
   ['loading', '読み込み中'],
   ['error', '初回取得の失敗'],
   ['retry', '追加取得の失敗・再試行'],
