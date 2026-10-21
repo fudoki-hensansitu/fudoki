@@ -90,8 +90,6 @@ code{font:13px/1.6 var(--font-mono);letter-spacing:0;overflow-wrap:anywhere}
 .right .btn{height:36px;padding:0 14px;font-size:14px;font-weight:400}
 .right .gh{border-color:var(--border);background:var(--background);color:var(--foreground)}
 .right .gh:hover{background:var(--card)}
-.right .go{background:var(--card);color:var(--foreground)}
-.nav[data-scrolled] .go{background:var(--primary);color:var(--primary-foreground)}
 
 .art{position:absolute;overflow:hidden}
 .art::after{content:"";position:absolute;inset:0;background:var(--noise);opacity:var(--grain);mix-blend-mode:multiply;pointer-events:none}
@@ -214,7 +212,7 @@ footer{padding-top:96px}
 .sweep{background:linear-gradient(90deg,var(--foreground) 0 33.33%,var(--kincha) 40%,var(--shu) 46%,var(--sakura) 52%,var(--ai) 58%,var(--foreground) 66.67%) 0 0/300% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 
 @media (max-width:960px){
-.links,.right .gh{display:none}
+.links{display:none}
 .right{margin-left:auto}
 .steps,.mcp,.faq{grid-template-columns:minmax(0,1fr)}
 .rail{display:none}
@@ -285,7 +283,7 @@ const BODY = `${ICONS}
 <nav class="nav" aria-label="サイト"><div class="bar">
 <a href="/" aria-label="風土記 ホーム">${logo('logo')}</a>
 <div class="links"><a href="#how">しくみ</a><a href="#mcp">AI から使う</a><a href="${DOCS}">ドキュメント</a><a href="#faq">よくある質問</a></div>
-<div class="right"><a class="btn gh" href="${GITHUB}">GitHub</a><a class="btn go" href="#mcp">AI に接続</a></div>
+<div class="right"><a class="btn gh" href="${GITHUB}">GitHub</a></div>
 </div></nav>
 <main>
 <header class="hero wrap">
