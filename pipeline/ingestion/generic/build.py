@@ -131,9 +131,12 @@ def run_pages(pdf: Path, pages: list[int], cache: Path | None = None, judge=None
         # read in a column the settings declare amounts, and amounts in a column whose kind the text pages do not teach
         # (a heading OCR misread) are listed in `built.unowned`, not left as empty cells.
         from ingestion.generic.scan import declared_unread
-        read_logicals = [logical for logical in logicals if logical.ocr]
-        declared_unread(built, read_logicals, columns, mixed.moved_unread(observation, shifts))
-        built.unowned.extend(mixed.unlearned_amounts(read_logicals, frozenset(numbers)))
+        # A logical page the builder leaves out (`built.skipped`, a table with no subject or amount columns) is declared
+        # an excluded region instead.
+        read_logicals = [logical for logical in logicals if logical.ocr and all(logical is not s for s in built.skipped)]
+        moved = mixed.moved_unread(observation, shifts)
+        declared_unread(built, read_logicals, columns, moved)
+        built.unowned.extend(mixed.unlearned_amounts(read_logicals, frozenset(numbers), moved))
         built.notes.extend({'kind': 'variant characters', 'text': text} for text in variants)
     unit = check_units(built, document_kind, account, partial)
     if unit['stopped'] and stop:

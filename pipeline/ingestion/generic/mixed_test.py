@@ -100,6 +100,20 @@ class MixedPagesTest(unittest.TestCase):
         self.assertEqual([(u['page'], u['text'] if 'text' in u else u['header']) for u in unlearned_amounts(logicals, frozenset({2}))],
                          [(2, '支王済額')])
         self.assertEqual(unlearned_amounts(logical_pages([page(1, '支出済額'), page(2, '支出済額')], ocr_pages=frozenset({2})), frozenset({2})), [])
+        ink = {'pages': [{'page_number': 2, 'unread_ink': [[176, 140, 182, 148]]}]}  # a figure OCR left unread under the misread heading
+        self.assertEqual([u['box'] for u in unlearned_amounts(logicals, frozenset({2}), ink)], [(150, 120, 172.5, 129), [176, 140, 182, 148]])
+        # A column the settings declare not read is no column of no kind.
+        ignored = logical_pages([page(1, '支王済額'), page(2, '支王済額')], columns={'支王済額': {'kind': 'ignore'}}, ocr_pages=frozenset({2}))
+        self.assertEqual(unlearned_amounts(ignored, frozenset({2}), ink), [])
+
+    def test_a_lone_sign_over_a_figure_is_no_unreadable_cell_of_a_declared_amount_column(self):
+        from ingestion.generic.scan import declared_unread
+        words = [Word('科目', 20, 55, 38, 64), Word('支出済額', 110, 55, 146, 64), Word('総務費', 20, 120, 56, 129),
+                 Word('△', 150, 110, 158, 119), Word('1,000', 150, 120, 172.5, 129), Word('民生費', 20, 150, 56, 159), Word('O', 165, 150, 172.5, 159)]
+        logicals = logical_pages([Page(1, 300, 500, words, frame(10, 200, {'wide': (100,), 'narrow': ()}))])
+        built = SimpleNamespace(unowned=[])
+        declared_unread(built, logicals, {'支出済額': {'kind': 'amount'}}, None)
+        self.assertEqual([u['text'] for u in built.unowned], ['O'])  # the zero OCR read as a letter, not the sign
 
     def test_rereads_of_an_ocr_reading_need_ocr_pages(self):
         from ingestion.generic.convert import check_ocr_rereads

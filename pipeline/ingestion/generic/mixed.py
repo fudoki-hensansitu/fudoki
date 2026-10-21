@@ -88,12 +88,21 @@ def moved_unread(observation: dict, shifts: dict[int, float]) -> dict:
                                      for page in observation.get('pages', [])]}
 
 
-def unlearned_amounts(logicals: list, ocr_pages: frozenset) -> list[dict]:
-    """Amounts OCR read in a column of no kind: its heading is one the text pages do not print (OCR misread it), so
-    nothing teaches whether it holds amounts, and the builder reads no amount there."""
-    return [{'kind': 'amount in a column of no kind', 'page': glyph.page, 'box': glyph.original, 'header': '／'.join(band.header)}
-            for logical in logicals for band in logical.bands if band.kind is None
-            for glyph in band.words if glyph.page in ocr_pages and is_amount(glyph.text)]
+def unlearned_amounts(logicals: list, ocr_pages: frozenset, observation: dict | None = None) -> list[dict]:
+    """Amounts OCR read, and ink it left unread (`unread_ink`, page coordinates), in a column of no kind: its heading is
+    one the text pages do not print (OCR misread it), so nothing teaches whether it holds amounts, and the builder reads
+    no amount there. A column the settings declare not read (`ignore`, `excluded`) is no such column."""
+    unknown = [band for logical in logicals for band in logical.bands
+               if band.kind is None and not band.ignored and not band.excluded and band.page in ocr_pages]
+    found = [{'kind': 'amount in a column of no kind', 'page': glyph.page, 'box': glyph.original, 'header': '／'.join(band.header)}
+             for band in unknown for glyph in band.words if is_amount(glyph.text)]
+    for page in (observation or {}).get('pages', []):
+        for box in page.get('unread_ink', []):
+            cx, cy = (box[0] + box[2]) / 2, (box[1] + box[3]) / 2
+            found += [{'kind': 'amount in a column of no kind', 'page': page['page_number'], 'box': box, 'header': '／'.join(band.header)}
+                      for band in unknown if band.page == page['page_number']
+                      and band.x0 - band.offset < cx < band.x1 - band.offset and band.body_top < cy < band.body_bottom]
+    return found
 
 
 def frame_rules(page: Page, layouts: Counter, spread: dict | None = None, staircase: bool = False) -> list[Rule]:

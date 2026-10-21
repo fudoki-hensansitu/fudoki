@@ -17,7 +17,7 @@ from pathlib import Path
 from functools import cache
 import re
 
-from ingestion.generic.layout import _frames, _header_bottom, normalize
+from ingestion.generic.layout import SIGNS, _frames, _header_bottom, normalize
 from ingestion.generic.observe import Page, Rule, Word
 from ingestion.lib import pdf_rules
 from ingestion.lib.scan_ocr import superseded
@@ -746,7 +746,9 @@ def declared_unread(built, logicals_: list, columns: dict | None, observation: d
             if (columns or {}).get('／'.join(band.header), {}).get('kind') != 'amount':
                 continue
             for glyph in band.words:
+                # A lone sign (`△`) is printed over its figure, and the builder reads it so (`tree`): not unread.
                 if (len(glyph.text.strip()) == 1 and not any(c.isdigit() for c in glyph.text) and glyph.text != '円'
+                        and glyph.text.strip() not in SIGNS
                         and not is_amount(glyph.text)
                         and (glyph.page, glyph.original) not in units):
                     built.unowned.append({'kind': 'unreadable declared amount cell', 'page': glyph.page,
