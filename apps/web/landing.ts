@@ -79,7 +79,7 @@ code{font:13px/1.6 var(--font-mono);letter-spacing:0;overflow-wrap:anywhere}
 .logo{display:block;width:auto;color:var(--primary)}
 
 .nav{position:sticky;top:8px;z-index:20;padding-inline:calc(var(--gut) - 8px);transition:transform .25s ease-out}
-.nav[data-hide]:not(:focus-within){transform:translateY(calc(-100% - 16px))}
+.nav[data-hide]{transform:translateY(calc(-100% - 16px));visibility:hidden;transition:transform .25s ease-out,visibility 0s .25s}
 .bar{display:flex;align-items:center;height:56px;padding:0 8px 0 14px;border:.5px solid transparent;border-radius:999px;transition:background-color .3s ease-out,border-color .3s ease-out,box-shadow .3s ease-out}
 .nav[data-scrolled] .bar{border-color:var(--border);background:var(--background);box-shadow:var(--shadow-pill)}
 .nav .logo{height:28px}
@@ -384,7 +384,7 @@ const BODY = `${ICONS}
 </footer>`
 
 // nav の浮き、見出しの sweep、3つのステップの現在地。どれも無くても読める
-const SCRIPT = `const n=document.querySelector('.nav'),sp=document.querySelector('.steps'),h=document.documentElement;let ly=scrollY;const s=()=>{const y=scrollY,d=y-ly;n.toggleAttribute('data-scrolled',y>24);if(y<=80)n.removeAttribute('data-hide');else if(Math.abs(d)>=4)n.toggleAttribute('data-hide',d>0);if(Math.abs(d)>=4)ly=y;const b=sp.getBoundingClientRect();h.toggleAttribute('data-snap',b.top<=1&&b.bottom>=innerHeight-1)};addEventListener('scroll',s,{passive:true});s();
+const SCRIPT = `const n=document.querySelector('.nav'),sp=document.querySelector('.steps'),h=document.documentElement;let ly=0;const s=()=>{const y=scrollY,d=y-ly;n.toggleAttribute('data-scrolled',y>24);if(y<=80)n.removeAttribute('data-hide');else if(Math.abs(d)>=4)n.toggleAttribute('data-hide',d>0);if(Math.abs(d)>=4)ly=y;const b=sp.getBoundingClientRect();h.toggleAttribute('data-snap',b.top<=1&&b.bottom>=innerHeight-1)};addEventListener('scroll',s,{passive:true});s();
 if('IntersectionObserver'in window){const o=new IntersectionObserver(l=>l.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');o.unobserve(e.target)}}),{threshold:.6});document.querySelectorAll('.sweep').forEach(e=>o.observe(e));
 const r=document.querySelector('.rail'),t=[...document.querySelectorAll('.rail a')],st=[...document.querySelectorAll('.step')];const p=new IntersectionObserver(l=>l.forEach(e=>{if(e.isIntersecting){const i=st.indexOf(e.target);r.style.setProperty('--at',i);t.forEach((a,j)=>j===i?a.setAttribute('aria-current','step'):a.removeAttribute('aria-current'))}}),{rootMargin:'-45% 0px -45% 0px'});st.forEach(e=>p.observe(e))}
 const dg=document.getElementById('setup');if(dg&&dg.showModal){document.querySelector('[data-open]').addEventListener('click',()=>dg.showModal());dg.querySelector('[data-close]').addEventListener('click',()=>dg.close());dg.addEventListener('click',e=>{if(e.target===dg)dg.close()});const cb=dg.querySelector('[data-copy]');cb.addEventListener('click',()=>{const done=t=>{cb.textContent=t;setTimeout(()=>{cb.textContent='コピーする'},2000)};Promise.resolve().then(()=>navigator.clipboard.writeText(document.getElementById('setup-text').textContent)).then(()=>done('コピーしました'),()=>done('コピーできませんでした'))})}
