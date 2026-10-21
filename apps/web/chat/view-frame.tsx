@@ -328,8 +328,8 @@ export function ViewFrame({
         </div>
       ) : null}
       {activeTab ? (
-        // タブの帯は選ばれている View の箱にだけ描く（隠れている箱には描かない）。tablist の中は tab だけにし、元に戻すボタンは横に置く
-        <div className="flex shrink-0 items-end justify-between gap-2 border-b px-2 pt-2">
+        // タブの帯は選ばれている View の箱にだけ描く（隠れている箱には描かない）。tablist の中は tab だけ（閉じる × は各タブの中、キーボードでは Esc）
+        <div className="flex shrink-0 items-end border-b px-2 pt-2">
           <div
             role="tablist"
             aria-label="右のパネルの表とグラフ"
@@ -351,29 +351,43 @@ export function ViewFrame({
               const same = tabState.tabs.slice(0, i).filter((o) => o.title === t.title).length
               const key = panelKey(t.owner)
               const selected = t.owner === tabState.active
+              const label = same ? `${t.title}（${same + 1}）` : t.title
               return (
-                <button
+                // 閉じる × は各タブの中（名前の右）に置く。tab の中に button を入れない（入れ子にしない）ので、枠は外側の div が持つ
+                <div
                   key={key}
-                  id={`view-tab-${key}`}
-                  type="button"
-                  role="tab"
-                  aria-selected={selected}
-                  aria-controls={`view-panel-${key}`}
-                  tabIndex={selected ? 0 : -1}
-                  onClick={() => {
-                    setPanel({ ...panel, active: t.owner })
-                    requestAnimationFrame(() => document.getElementById(`view-tab-${key}`)?.focus())
-                  }}
-                  className={cn('max-w-48 shrink-0 truncate rounded-t-md border border-b-0 px-3 py-1.5 text-sm', selected ? 'bg-background text-foreground' : 'bg-secondary/60 text-muted-foreground hover:text-foreground')}
+                  role="presentation"
+                  className={cn('flex max-w-56 shrink-0 items-center rounded-t-md border border-b-0 text-sm', selected ? 'bg-background text-foreground' : 'bg-secondary/60 text-muted-foreground hover:text-foreground')}
                 >
-                  {same ? `${t.title}（${same + 1}）` : t.title}
-                </button>
+                  <button
+                    id={`view-tab-${key}`}
+                    type="button"
+                    role="tab"
+                    aria-selected={selected}
+                    aria-controls={`view-panel-${key}`}
+                    tabIndex={selected ? 0 : -1}
+                    onClick={() => {
+                      setPanel({ ...panel, active: t.owner })
+                      requestAnimationFrame(() => document.getElementById(`view-tab-${key}`)?.focus())
+                    }}
+                    className="min-w-0 truncate py-1.5 pr-1 pl-3"
+                  >
+                    {label}
+                  </button>
+                  <button
+                    type="button"
+                    tabIndex={-1}
+                    aria-label={`「${label}」を閉じて会話の中へ元に戻す`}
+                    title="閉じて会話の中へ元に戻す"
+                    onClick={() => t.close()}
+                    className="mr-1.5 flex size-5 shrink-0 items-center justify-center rounded text-muted-foreground/60 hover:bg-secondary hover:text-muted-foreground"
+                  >
+                    <XIcon className="size-3.5" />
+                  </button>
+                </div>
               )
             })}
           </div>
-          <Button variant="ghost" size="icon-sm" className="mb-1 shrink-0" aria-label="このタブを会話の中へ元に戻す（Esc）" title="会話の中へ元に戻す（Esc）" onClick={() => setMode('inline')}>
-            <XIcon />
-          </Button>
         </div>
       ) : null}
       {grippable ? (
