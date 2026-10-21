@@ -344,6 +344,22 @@ def _key(page: int, box: Sequence[float]) -> str:
     return f"{page}:" + ",".join(f"{v:.1f}" for v in box)
 
 
+def require_one_page_box(path: Path, number: int) -> None:
+    """Paddle's boxes are in the CropBox (pypdfium2) while the rules and the re-read crops come from
+    poppler's MediaBox page. Where the two differ (a cropped A3 spread, a rotated page) the crops would
+    read other ink than the boxes name, so the acquisition stops instead of reading it."""
+    import pypdfium2 as pdfium
+    document = pdfium.PdfDocument(str(path))
+    try:
+        page = document[number - 1]
+        crop, media, rotation = page.get_cropbox(), page.get_mediabox(), page.get_rotation()
+    finally:
+        document.close()
+    if rotation or any(abs(a - b) > 0.01 for a, b in zip(crop, media)):
+        raise ValueError(f"Page {number} has a CropBox {crop} different from its MediaBox {media} or is rotated ({rotation}); "
+                         "the re-read of missed ink needs one box")
+
+
 UNIT_STACK = re.compile(r"円\s*([△▲]?[0-9][0-9,，.]*)")
 
 
@@ -405,6 +421,7 @@ def supplement(path: Path, page: dict, config: VisionConfig | PaddleConfig, prev
     """
     number = page["page_number"]
     if isinstance(config, PaddleConfig):
+        require_one_page_box(path, number)
         split_unit_stacks(path, page, config)
     rules = pdf_rules.detect(path, number)
     image = pdf_rules.render(path, number)

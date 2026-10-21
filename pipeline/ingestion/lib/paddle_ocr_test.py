@@ -38,6 +38,14 @@ class PublicBoundaries(unittest.TestCase):
             with self.assertRaisesRegex(PaddleOcrError, "no physical page 2"):
                 _render_pdf(pdf, [2], PaddleConfig(), Path(directory))
 
+    def test_a_pdfium_render_that_does_not_finish_in_time_stops_the_acquisition(self):
+        import time
+        from unittest.mock import patch
+        from ingestion.lib import paddle_ocr
+        with patch.object(paddle_ocr, "_render_pdfium", side_effect=lambda *args: time.sleep(5)):
+            with self.assertRaisesRegex(PaddleOcrError, "did not finish within"):
+                _render_pdf(Path("x.pdf"), [1], PaddleConfig(render_timeout_seconds=0.05), Path("."))
+
     def test_a_line_read_in_two_strips_is_kept_once_with_its_words(self):
         def line(id, text, box, parent=None, kind="region"):
             return {"id": id, "parent_id": parent, "kind": kind, "raw_text": text, "bbox_px": box}
@@ -49,6 +57,35 @@ class PublicBoundaries(unittest.TestCase):
         kept, dropped = _drop_strip_duplicates([left, right], [(0, 140), (80, 220)])
         self.assertEqual(dropped, ["a"])
         self.assertEqual(sorted(o["id"] for o in kept), ["b", "b:w0", "c", "d", "e"])
+
+    def test_a_line_crossing_the_seam_is_read_in_two_cut_pieces_and_neither_is_kept(self):
+        def line(id, text, box):
+            return {"id": id, "parent_id": None, "kind": "region", "raw_text": text, "bbox_px": box}
+        # A4 at 300dpi in two strips: the seam is the middle, each strip reaches 60px past it.
+        spans = [(0, 1300), (1180, 2480)]
+        groups = [[line("a", "1,234", [1000, 10, 1300, 20]), line("n", "負担金、補助及び", [200, 40, 1300, 50])],
+                  [line("b", "4,567", [1180, 10, 1400, 20]), line("m", "及び交付金", [1180, 40, 1500, 50]),
+                   line("other", "予算", [1200, 80, 1400, 90])]]
+        kept, dropped = _drop_strip_duplicates(groups, spans)
+        self.assertEqual(dropped, ["a", "b", "m", "n"])
+        self.assertEqual([o["id"] for o in kept], ["other"])
+        # A reading that is not cut by its strip is not dropped for a neighbour that is.
+        kept, dropped = _drop_strip_duplicates([[line("a", "1,234", [1000, 10, 1250, 20])],
+                                                [line("b", "4,567", [1180, 10, 1400, 20])]], spans)
+        self.assertEqual(dropped, [])
+
+    def test_the_ink_a_dropped_seam_line_leaves_is_one_area_for_the_reread(self):
+        import numpy as np
+        from ingestion.lib import pdf_rules, scan_ocr
+        dark = np.zeros((40, 1500), bool)
+        for x in range(1000, 1400, 6):  # one printed line across the seam (strokes, not a rule), its two cut readings dropped
+            dark[10:18, x:x + 2] = True
+        rule = pdf_rules.Rule(1450.0, 0.0, 40.0)
+        rules = pdf_rules.PageRules(1, 1500.0, 40.0, (rule,), ())
+        marks = scan_ocr.missed_ink(dark, 1.0, [])
+        self.assertEqual(len(scan_ocr.ink_areas(marks, rules)), 1)
+        area = scan_ocr.ink_areas(marks, rules)[0]
+        self.assertTrue(area[0] <= 1000 and area[2] >= 1400)
 
     def test_a_cut_reading_inside_a_longer_one_goes_but_conflicting_readings_stay(self):
         def line(id, text, box):

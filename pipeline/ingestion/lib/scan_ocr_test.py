@@ -121,5 +121,24 @@ class UnitStackTest(unittest.TestCase):
         self.assertEqual(len(page["regions"]), 1)
 
 
+class PageBoxTest(unittest.TestCase):
+    def test_a_page_whose_cropbox_differs_from_its_mediabox_is_refused(self):
+        import tempfile
+        import pypdfium2 as pdfium
+        from ingestion.lib.scan_ocr import require_one_page_box
+        with tempfile.TemporaryDirectory() as directory:
+            same, cropped = Path(directory) / "same.pdf", Path(directory) / "cropped.pdf"
+            for path, crop in ((same, None), (cropped, (10, 10, 100, 60))):
+                document = pdfium.PdfDocument.new()
+                page = document.new_page(200, 100)
+                if crop:
+                    page.set_cropbox(*crop)
+                document.save(str(path))
+                document.close()
+            require_one_page_box(same, 1)
+            with self.assertRaisesRegex(ValueError, "CropBox"):
+                require_one_page_box(cropped, 1)
+
+
 if __name__ == "__main__":
     unittest.main()

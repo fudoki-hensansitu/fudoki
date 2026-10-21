@@ -36,7 +36,7 @@ with PaddleOcr(PaddleConfig()) as ocr:
 
 `region` / `word`はPaddleのnative文字を保持し、子のconfidenceは親regionのscoreを継承する。`number`はnative word全体が数字・カンマだけの場合に限る。符号付きwordから部分文字列やその座標を推測しない。採用する観測の階層は一つ選び、親とchildを同時に集計しない。
 
-PDFの既定描画はpypdfium2（lockの版）の300dpiで、CoreGraphics・Popplerは`pdf_renderer`で明示する。以下はCoreGraphicsの説明で、既存Vision・実験と同じCropBox・回転・sRGB・白背景・ceil寸法を使う。OCRを行わない[pdf_render.swift](pdf_render.swift)がPNGと表示geometryだけを返す。`pdf_renderer="poppler"`は明示選択できる（`pdfinfo`と`pdftoppm`が必要）。描画器を自動で切り替えない。PopplerはCropBox・回転を反映するがCoreGraphicsとは画素が異なり得るため、同じ精度・速度を保証しない。
+PDFの既定描画はpypdfium2（lockの版）の300dpiで、CoreGraphics・Popplerは`pdf_renderer`で明示する。pypdfium2はプロセスの中で動いて止められないので、`render_timeout_seconds`を超えたらエラーで止める（描画のスレッドは残る）。以下はCoreGraphicsの説明で、既存Vision・実験と同じCropBox・回転・sRGB・白背景・ceil寸法を使う。OCRを行わない[pdf_render.swift](pdf_render.swift)がPNGと表示geometryだけを返す。`pdf_renderer="poppler"`は明示選択できる（`pdfinfo`と`pdftoppm`が必要）。描画器を自動で切り替えない。PopplerはCropBox・回転を反映するがCoreGraphicsとは画素が異なり得るため、同じ精度・速度を保証しない。
 
 CoreGraphicsのhelperは初回にSwift compiler（`xcrun`で解決、`-Onone`）でコンパイルし、以後はバイナリを再利用する。SwiftソースSHA、compiler版・path、macOS SDK版・path、OS・CPU、compile flagsとtoolchain環境をキャッシュキーに含める。キャッシュ取得時の不足・破損は再コンパイルする。実行前後にもバイナリSHAを照合し、不一致はエラーにする。並行構築は排他ロックで待ち、一時ファイルの構築後にatomic publishする。コンパイル・ロック待ちには`render_timeout_seconds`の共通上限を使い、描画には同じ値の別の上限を使う。失敗時にSwiftインタプリタへ切り替えない。Xcode Command Line ToolsとmacOS SDKが必要。
 

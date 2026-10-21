@@ -235,33 +235,49 @@ def _overlap(a, b) -> float:
     return width * height / smaller if width > 0 and height > 0 and smaller > 0 else 0.0
 
 
+SEAM_TOLERANCE_PX = 3  # a box this close to its strip's edge was cut by it
+
+
 def _drop_strip_duplicates(groups: list[list[dict]], spans: list[tuple[int, int]]) -> tuple[list[dict], list[str]]:
     """Merge the observations of vertical strips, dropping a line read twice in a band two strips share.
 
     A line whose box lies over another strip's line (at least half of the smaller box) is a duplicate.
     With the same text, the reading farther from its own strip's edge stays (the nearer one may be cut).
-    A shorter text inside a longer one that covers it is the cut reading, and goes. Differing readings
-    that fit neither rule both stay: no text is chosen between them. A dropped line takes its words.
+    A shorter text inside a longer one that covers it is the cut reading, and goes. A line crossing the
+    seam is read in two pieces, each cut by its own strip's edge (a box ending at the right edge of one
+    strip and one starting at the left edge of the next, on one text line): neither is trusted, both go,
+    and the ink they leave is read again whole by the missed-ink re-read. Any other differing readings
+    both stay: no text is chosen between them. A dropped line takes its words.
     """
     items = [(k, o) for k, group in enumerate(groups) for o in group if o["kind"] == "region" and o["bbox_px"]]
     margin = lambda k, o: min((o["bbox_px"][0] + o["bbox_px"][2]) / 2 - spans[k][0],
                               spans[k][1] - (o["bbox_px"][0] + o["bbox_px"][2]) / 2)
     dropped: set[str] = set()
     text = lambda o: "".join(o["raw_text"].split())
+
+    def same_line(a, b) -> bool:
+        height = min(a["bbox_px"][3] - a["bbox_px"][1], b["bbox_px"][3] - b["bbox_px"][1])
+        shared = min(a["bbox_px"][3], b["bbox_px"][3]) - max(a["bbox_px"][1], b["bbox_px"][1])
+        return height > 0 and shared >= 0.5 * height and min(a["bbox_px"][2], b["bbox_px"][2]) > max(a["bbox_px"][0], b["bbox_px"][0])
+
     for k in range(len(groups) - 1):
         band = (spans[k + 1][0], spans[k][1])
         near = [(j, o) for j, o in items if j in (k, k + 1) and o["bbox_px"][2] > band[0] and o["bbox_px"][0] < band[1]]
         for i, a in [x for x in near if x[0] == k]:
             for j, b in [x for x in near if x[0] == k + 1]:
-                if a["id"] in dropped or b["id"] in dropped or _overlap(a["bbox_px"], b["bbox_px"]) < 0.5:
+                if a["id"] in dropped or b["id"] in dropped:
                     continue
+                shared = _overlap(a["bbox_px"], b["bbox_px"])
                 ta, tb = text(a), text(b)
-                if ta == tb:
+                if shared >= 0.5 and ta == tb:
                     dropped.add(b["id"] if margin(i, a) >= margin(j, b) else a["id"])
-                elif tb and tb in ta and _overlap(a["bbox_px"], b["bbox_px"]) >= 0.8:
+                elif shared >= 0.8 and tb and tb in ta:
                     dropped.add(b["id"])
-                elif ta and ta in tb and _overlap(a["bbox_px"], b["bbox_px"]) >= 0.8:
+                elif shared >= 0.8 and ta and ta in tb:
                     dropped.add(a["id"])
+                elif (a["bbox_px"][2] >= spans[k][1] - SEAM_TOLERANCE_PX and b["bbox_px"][0] <= spans[k + 1][0] + SEAM_TOLERANCE_PX
+                      and same_line(a, b)):
+                    dropped |= {a["id"], b["id"]}
     kept = [o for group in groups for o in group if o["id"] not in dropped and o.get("parent_id") not in dropped]
     return kept, sorted(dropped)
 
@@ -397,9 +413,31 @@ def _render_pdfium(path: Path, pages: Sequence[int], config: PaddleConfig, direc
             "dpi": config.dpi}
 
 
+def _render_pdfium_in_time(path: Path, pages: Sequence[int], config: PaddleConfig, directory: Path) -> dict:
+    """pypdfium2 renders inside this process and cannot be killed, so it runs in a daemon thread and the
+    acquisition stops with an error after ``render_timeout_seconds``; the stuck thread is left behind."""
+    import threading
+    box: dict = {}
+
+    def work():
+        try:
+            box["result"] = _render_pdfium(path, pages, config, directory)
+        except BaseException as exc:  # handed to the caller's thread
+            box["error"] = exc
+
+    thread = threading.Thread(target=work, daemon=True)
+    thread.start()
+    thread.join(config.render_timeout_seconds)
+    if thread.is_alive():
+        raise PaddleOcrError(f"Cannot render PDF: pypdfium2 did not finish within {config.render_timeout_seconds} seconds")
+    if "error" in box:
+        raise box["error"]
+    return box["result"]
+
+
 def _render_pdf(path: Path, pages: Sequence[int], config: PaddleConfig, directory: Path) -> dict:
     if config.pdf_renderer == "pypdfium2":
-        return _render_pdfium(path, pages, config, directory)
+        return _render_pdfium_in_time(path, pages, config, directory)
     if config.pdf_renderer == "coregraphics":
         if platform.system() != "Darwin":
             raise PaddleOcrError("CoreGraphics requires macOS; select poppler explicitly on other platforms")
