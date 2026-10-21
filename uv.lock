@@ -640,6 +640,21 @@ provides-extras = ["paddle-ocr"]
 name = "fudoki-workspace"
 version = "0.0.0"
 source = { virtual = "." }
+dependencies = [
+    { name = "fudoki-pipeline" },
+]
+
+[package.optional-dependencies]
+paddle-ocr = [
+    { name = "fudoki-pipeline", extra = ["paddle-ocr"] },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "fudoki-pipeline", editable = "pipeline" },
+    { name = "fudoki-pipeline", extras = ["paddle-ocr"], marker = "extra == 'paddle-ocr'", editable = "pipeline" },
+]
+provides-extras = ["paddle-ocr"]
 
 [[package]]
 name = "future"
