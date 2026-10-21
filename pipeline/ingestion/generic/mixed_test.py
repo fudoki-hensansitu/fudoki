@@ -61,6 +61,14 @@ class MixedPagesTest(unittest.TestCase):
         self.assertEqual(kinds(taught), [['label', 'amount'], ['label', 'amount']])
         self.assertEqual([logical.ocr for logical in taught], [False, True])
 
+    def test_an_ocr_heading_the_text_pages_print_keeps_their_spelling(self):
+        # The scan correction turns `事故繰越し` into `事故繰越` (a misread elsewhere); this document prints the し.
+        def page(number):
+            words = [Word('科目', 20, 55, 38, 64), Word('事故繰越し', 110, 55, 155, 64), Word('総務費', 20, 120, 56, 129), Word('1,000', 150, 120, 172.5, 129)]
+            return Page(number, 300, 500, words, frame(10, 200, {'wide': (100,), 'narrow': ()}))
+        taught = logical_pages([page(1), page(2)], ocr_pages=frozenset({2}))
+        self.assertEqual([(band.header, band.kind) for band in taught[1].bands], [(('科目',), 'label'), (('事故繰越し',), 'amount')])
+
     def test_a_page_scanned_off_the_text_frame_is_moved_to_it(self):
         ocr = Page(2, 300, 500, [Word('総務費', 36, 120, 70, 129)], frame(26, 216, {'wide': (116,), 'narrow': ()}))  # 16pt right
         moved = aligned(ocr, learn_origins([TEXT]))

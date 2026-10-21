@@ -512,10 +512,14 @@ def logical_pages(pages: list[Page], *, columns: dict | None = None, spread: dic
     per_page = [(page, *page_bands(page, spread, header, split_text)) for page in pages]
     if ocr_pages:
         from ingestion.generic.scan import header_path
+        # A heading the text pages print is the document's own spelling: the scan correction (`事故繰越し` → `事故繰越`,
+        # a misread elsewhere) is for the others only.
+        printed = {part for page, bands, _ in per_page if page.number not in ocr_pages for band in bands for part in band.header}
         for page, bands, _ in per_page:
             if page.number in ocr_pages:
                 for band in bands:
-                    band.header = header_path(band.header)
+                    corrected = header_path(band.header)
+                    band.header = band.header if set(band.header) <= printed else corrected
     # Band kind by content, learned per header path over the whole document so
     # that empty continuation pages keep it. A band is a label band when at least
     # half of its printed lines carry text; otherwise it holds amounts if any
