@@ -1,7 +1,7 @@
 """D1 に写す表の契約と、API が読む `apps/api/src/columns.json` の生成器（ADR 0022）。
 
 D1 の表は marts の表を同名・同列・同順で写したもの。列・順序・型は warehouse の information_schema から、
-説明は marts の `_models.yml`（財政と団体マスタ）から引く。warehouse は read_only で開く（構築は dbt:build）。
+説明は marts の `_models.yml`（財政と自治体マスタ）から引く。warehouse は read_only で開く（構築は dbt:build）。
 
     bun run --cwd pipeline serving:columns           # columns.json を書き直す
     bun run --cwd pipeline serving:columns -- --check  # 最新かだけ検査する
@@ -35,7 +35,7 @@ NODE_INDEXES = [
     ['parent_node_id'],
 ]
 PRIMARY_KEYS = {'origin': 'origin_id', 'jurisdiction_master': 'jurisdiction_code', 'expenditure_coverage': 'coverage_id'}
-# 木の表以外の index。収録範囲は団体のページごとに団体コードで引く
+# 木の表以外の index。収録範囲は自治体のページごとに自治体コードで引く
 INDEXES = {'expenditure_coverage': [['jurisdiction_code']]}
 DEFAULT_PRIMARY_KEY = 'node_id'
 

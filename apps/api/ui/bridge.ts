@@ -21,7 +21,7 @@ interface State {
   pending?: TreeNode
   error?: string
   apiOrigin: string
-  /** 団体コード → 団体名。server が結果の _meta に載せる */
+  /** 自治体コード → 自治体名。server が結果の _meta に載せる */
   names: Record<string, string>
   fullscreen: { available: boolean; active: boolean }
 }
@@ -232,7 +232,7 @@ export function createBridge() {
       }
     },
     /**
-     * 経路の款・項へ移る。同じ団体・年度・資料・会計の中から名前でその段を検索し、見つかった明細を開く。
+     * 経路の款・項へ移る。同じ自治体・年度・資料・会計の中から名前でその段を検索し、見つかった明細を開く。
      * 親の ID を持たない明細（検索結果から開いたものなど）でも、どの段にも移れるようにする。
      * 移った先より深い明細の履歴は経路と食い違うので捨てる。
      */
@@ -311,7 +311,7 @@ export function createBridge() {
       void app
         .openLink({ url })
         .catch((error) =>
-          update({ error: `原典を開けませんでした: ${String(error)}` }),
+          update({ error: `出典を開けませんでした: ${String(error)}` }),
         )
     },
     dispose() {

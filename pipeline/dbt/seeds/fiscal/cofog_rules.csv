@@ -43,7 +43,7 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 -776,keyword-pollution,,一般会計,,,,,公害対策,contains,,assigned,05.3,retained,目,,公害対策を汚染防止に分類する。,true
 -775,keyword-night-soil,,一般会計,,,,,し尿処理,contains,,assigned,05.2,retained,目,,し尿の処理を排水管理に分類する。,false
 -773,keyword-environment,,一般会計,,,,,環境対策|環境保全,contains,,assigned,05,retained,目,,環境の総合的な対策・保全を環境保護に分類する。,false
--774,keyword-environment-policy-132098,132098,一般会計,,,,,環境政策,contains,,assigned,05,retained,目,,町田市の環境政策費（衛生費・保健衛生費）を環境保護に分類する。三鷹の環境政策費は規則 eisei-hoken で保健に分類済みなので団体限定にする。,false
+-774,keyword-environment-policy-132098,132098,一般会計,,,,,環境政策,contains,,assigned,05,retained,目,,町田市の環境政策費（衛生費・保健衛生費）を環境保護に分類する。三鷹の環境政策費は規則 eisei-hoken で保健に分類済みなので自治体限定にする。,false
 -772,keyword-waste-facility,,一般会計,,,,,環境清掃施設|リサイクル・清掃|資源清掃|ごみ処理|清掃総務,contains,,assigned,05.1,retained,目,,ごみ・資源回収と清掃施設を廃棄物管理に分類する。,false
 -771,keyword-health-hokenjo,,一般会計,,,,,保健所,contains,,assigned,07,retained,目,,保健所に属する衛生等を COFOG 07 保健に分類する。確かな割り当てであり暫定にしない。予防・母子保健は先の規則が取る。,false
 -770,keyword-health-boundary,,一般会計,,,,,保健衛生総務|保健総務|保健費|環境衛生|衛生管理,contains,,assigned,07,retained,目,,立川の保健衛生5目は環境衛生に環境保護が混じる可能性など境界があるため暫定として COFOG 07 保健に置く。,true
@@ -98,7 +98,7 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 14,toshikeikaku-kouen,132047,,,,都市計画費,,緑化公園費,eq,,assigned,08.1,retained,目,,公園・緑化。COFOG 08.1 レクリエーション及びスポーツのサービス,false
 15,toshikeikaku-gesui,132047,,,,都市計画費,,下水道事業支出金,eq,,assigned,05.2,retained,目,,下水道事業への支出。COFOG 05.2 排水管理。下水道事業会計は本パッケージの収録範囲外なので消去しない,false
 16,shogaigakushu-toshokan,132047,,,,生涯学習費,,図書館費,eq,,assigned,08.2,retained,目,,図書館。COFOG 08.2 文化サービスが図書館を明示的に含むため、教育費の下にあっても 08 に置く,false
-17,shogaigakushu-other,132047,,,,生涯学習費,,,eq,,assigned,09.5,retained,目,,社会教育（生涯学習総務・青少年育成・生涯学習センター）。COFOG 09.5 水準が定義できない教育。08 文化サービスとの境界は判断であり、2団体目で再検討する,false
+17,shogaigakushu-other,132047,,,,生涯学習費,,,eq,,assigned,09.5,retained,目,,社会教育（生涯学習総務・青少年育成・生涯学習センター）。COFOG 09.5 水準が定義できない教育。08 文化サービスとの境界は判断であり、2自治体目で再検討する,false
 18,eisei-hoken,132047,,,,保健衛生費,,,eq,,assigned,07,retained,項,,保健衛生。COFOG 07 保健,false
 19,eisei-seiso,132047,,,,清掃費,,,eq,,assigned,05.1,retained,項,,ごみ処理。COFOG 05.1 廃棄物管理,false
 20,doboku-kanri,132047,,,,土木管理費,,,eq,,assigned,04.5,retained,項,,土木の管理部門。COFOG 04.5 運輸の管理にあたる,false
@@ -120,7 +120,7 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 36,fund-kouki,132047,後期高齢者医療特別会計,,,,,,eq,,assigned,07,retained,会計,,後期高齢者医療。医療給付とその運営であり COFOG 07 保健,false
 37,fund-kaigo-service,132047,介護サービス事業特別会計,,,,,,eq,,assigned,10.2,retained,会計,,介護サービス事業。COFOG 10.2 高齢,false
 38,fund-kaigo-hoken,132047,介護保険事業特別会計,,,,,,eq,,assigned,10.2,retained,会計,,介護保険。長期介護の社会保険であり COFOG 10.2 高齢,false
-93,akishima-eisei-hoken,132071,一般会計,,,保健衛生費,,,eq,,assigned,07,retained,項,,昭島市 款4 項1。COFOG 07 保健。⚠️ 目には環境衛生費・環境費・害虫等駆除対策費（COFOG 05 環境保護に寄る内容）が混じるが、既収録3団体と同じく項の粒度で 07 に寄せてある。目まで降ろすのは規則の分割という別の判断なので、caveat として残す,false
+93,akishima-eisei-hoken,132071,一般会計,,,保健衛生費,,,eq,,assigned,07,retained,項,,昭島市 款4 項1。COFOG 07 保健。⚠️ 目には環境衛生費・環境費・害虫等駆除対策費（COFOG 05 環境保護に寄る内容）が混じるが、既収録3自治体と同じく項の粒度で 07 に寄せてある。目まで降ろすのは規則の分割という別の判断なので、caveat として残す,false
 94,akishima-eisei-seiso,132071,一般会計,,,清掃費,,,eq,,assigned,05.1,retained,項,,昭島市 款4 項2。COFOG 05.1 廃棄物管理,false
 95,akishima-doboku-kanri,132071,一般会計,,,土木管理費,,,eq,,assigned,04.5,retained,項,,昭島市 款8 項1。COFOG 04.5 運輸。土木の総務にあたるので運輸の division 止まり,false
 96,akishima-doboku-doro,132071,一般会計,,,道路橋りょう費,,,eq,,assigned,04.5.1,retained,項,,昭島市 款8 項2。COFOG 04.5.1 道路交通,false
@@ -129,7 +129,7 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 99,akishima-toshikeikaku-gesui,132071,一般会計,,,都市計画費,,公共下水道費,eq,,assigned,05.2,retained,目,,昭島市 款8 項3 のうち公共下水道。COFOG 05.2 排水,false
 100,akishima-toshikeikaku-other,132071,一般会計,,,都市計画費,,,eq,,assigned,06.2,retained,項,,昭島市 款8 項3 の残り（都市計画総務費・土地区画整理費・中神駅北側地域整備費）。COFOG 06.2 コミュニティの開発,false
 101,akishima-doboku-jutaku,132071,一般会計,,,住宅費,,,eq,,assigned,06.1,retained,項,,昭島市 款8 項4。COFOG 06.1 住宅開発,false
-102,akishima-kyoiku-yochien,132071,一般会計,,,教育総務費,,幼稚園費,eq,,assigned,09.1,retained,目,,昭島市 款10 項1 のうち幼稚園。COFOG 09.1 就学前教育及び初等教育。⚠️ 他の3団体は幼稚園費が項として立っているが、昭島市は教育総務費の目にある,false
+102,akishima-kyoiku-yochien,132071,一般会計,,,教育総務費,,幼稚園費,eq,,assigned,09.1,retained,目,,昭島市 款10 項1 のうち幼稚園。COFOG 09.1 就学前教育及び初等教育。⚠️ 他の3自治体は幼稚園費が項として立っているが、昭島市は教育総務費の目にある,false
 103,akishima-kyoiku-gakko,132071,一般会計,,,教育総務費,,,eq,,assigned,09.8,retained,項,,昭島市 款10 項1 の残り。COFOG 09.8 他に分類されない教育,false
 104,akishima-kyoiku-shoto,132071,一般会計,,,小学校費,,,eq,,assigned,09.1,retained,項,,昭島市 款10 項2。COFOG 09.1 就学前教育及び初等教育,false
 105,akishima-kyoiku-chuto,132071,一般会計,,,中学校費,,,eq,,assigned,09.2,retained,項,,昭島市 款10 項3。COFOG 09.2 中等教育,false
@@ -138,13 +138,13 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 108,akishima-hokentaiiku-kyushoku,132071,一般会計,,,保健体育費,,学校給食費,eq,,assigned,09.6,retained,目,,昭島市 款10 項5 のうち学校給食。COFOG 09.6 教育に付帯するサービス,false
 109,akishima-hokentaiiku-other,132071,一般会計,,,保健体育費,,,eq,,assigned,08.1,retained,項,,昭島市 款10 項5 の残り。COFOG 08.1 レクリエーション及びスポーツのサービス,false
 110,akishima-saigai,132071,一般会計,,,公共施設災害復旧費,,,eq,,unclassifiable,,retained,項,,昭島市 款11 項1。対象施設が特定できないので機能を決められない。捨てずに分類不能として残す,false
-147,transfer-mitaka-sewer,132047,一般会計,,,,,下水道事業特別会計繰出金,eq,繰出金,assigned,05.2,eliminated,目,下水道事業特別会計,2014〜2019年度の原典に会計間繰出と受け側の一般会計繰入を確認。各年度の当初予算・決算を分けて同額を検算する。,false
+147,transfer-mitaka-sewer,132047,一般会計,,,,,下水道事業特別会計繰出金,eq,繰出金,assigned,05.2,eliminated,目,下水道事業特別会計,2014〜2019年度の出典に会計間繰出と受け側の一般会計繰入を確認。各年度の当初予算・決算を分けて同額を検算する。,false
 900,kind-x-fund-accumulation,,,,,,,積立金,contains,,out-of-scope,,retained,目,,基金への積立は金融資産への振替であり COFOG の集計対象ではない。目の名称に積立金を含むものを全部ここで受ける（節を見る規則は目の粒度では当たらない）。,false
 901,kind-x-interest,,,,,,,利子,contains,,assigned,01.7,retained,目,,借入金の利子は UN COFOG 01.7 公的債務取引。償還金の規則より先に置き、利子償還金をこちらで取る。,false
-902,kind-x-refund,,,,,,,償還金|還付|延滞金|小切手|基金拠出金|共同事業拠出金|返還金,contains,,out-of-scope,,retained,目,,過誤納金の還付・償還・返還金、延滞金・小切手未済・基金への拠出金は歳入の戻しや現金精算であり経費ではない。将来の団体で事業への拠出に当たらないよう語は拠出の種類まで書く。,false
+902,kind-x-refund,,,,,,,償還金|還付|延滞金|小切手|基金拠出金|共同事業拠出金|返還金,contains,,out-of-scope,,retained,目,,過誤納金の還付・償還・返還金、延滞金・小切手未済・基金への拠出金は歳入の戻しや現金精算であり経費ではない。将来の自治体で事業への拠出に当たらないよう語は拠出の種類まで書く。,false
 903,kind-x-transfer-to-general,,,,,,,一般会計繰出金|他会計繰出金,eq,,out-of-scope,,retained,目,,特別会計から一般会計への精算返還は同一主体内の移転であり COFOG の対象（経費・非金融資産への純投資）ではない。,false
 904,kind-x-debt-combined,,,,,公債費,,公債費,eq,,unclassifiable,,retained,目,,元金（対象外）と利子（01.7）が一つの目に混ざり、目の名称だけでは分離できない。,false
-905,kind-x-insurance-medical-fund,,一般会計,,,,,保険医療費,eq,,unclassifiable,,retained,目,,国保・介護・後期高齢への繰出をまとめた目の可能性があるが原典の内訳が無く、07 と 10.2 を分離できない。,false
+905,kind-x-insurance-medical-fund,,一般会計,,,,,保険医療費,eq,,unclassifiable,,retained,目,,国保・介護・後期高齢への繰出をまとめた目の可能性があるが出典の内訳が無く、07 と 10.2 を分離できない。,false
 906,kind-x-land-transfer,,,,,,,用地特別会計繰出金,eq,,unclassifiable,,retained,目,,用地特別会計への繰出。用地取得の対象事業が特定できず機能を決められない。,false
 907,kind-x-private-sewer,,,,,,,私道私下水,contains,,unclassifiable,,retained,目,,私道の道路改修と下水改修の補助が一つの目に混ざり分離できない。私道防犯灯は後の規則が取る。,false
 908,kind-x-parking-fund,,駐車場事業特別会計,,,,,,,,assigned,04.5.1,retained,目,,駐車場事業特別会計の運営は UN COFOG 04.5.1 道路交通（狛江市の駐車場規則と同じ扱い）。一般管理費・予備費は先の規則が取る。,false
@@ -212,7 +212,7 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 974,kind-fallback-parking,,,駐車場,,,,,,,assigned,04.5,retained,目,,駐車場の整備・運営の事業会計は UN COFOG 04.5 運輸。償還・積立・繰出など行き先が違う目は先の規則が取る。,false
 975,kind-fallback-sewer,,,下水道,,,,,,,assigned,05.2,retained,目,,下水道事業の会計は UN COFOG 05.2 排水管理。償還・積立・繰出など行き先が違う目は先の規則が取る。,false
 976,kind-fallback-kaigo-service,,,介護サービス事業,,,,,,,assigned,10.2,retained,目,,介護サービス事業の会計は長期介護の社会保障であり COFOG 10.2 高齢。償還・積立・繰出など行き先が違う目は先の規則が取る。,false
-977,kind-fallback-land-readjustment,,,土地区画整理,,,,,,,assigned,06.2,retained,目,,土地区画整理事業の会計（組合施行・公共団体施行などの事業費）は UN COFOG 06.2 地域開発。一般会計の土地区画整理（vocab-land-readjustment）と同じ。償還・積立・繰出など行き先が違う目は先の規則が取る。,false
+977,kind-fallback-land-readjustment,,,土地区画整理,,,,,,,assigned,06.2,retained,目,,土地区画整理事業の会計（組合施行・公共自治体施行などの事業費）は UN COFOG 06.2 地域開発。一般会計の土地区画整理（vocab-land-readjustment）と同じ。償還・積立・繰出など行き先が違う目は先の規則が取る。,false
 1000,vocab-disaster-public-facility,,一般会計,,災害復旧費,,,公共施設|公用施設,contains,,unclassifiable,,retained,目,,「その他公共施設・公用施設」の災害復旧は施設の機能を名称から分けられない。既存の公共施設災害復旧費（unclassifiable）に合わせる。,false
 1001,vocab-disaster-welfare-facility,,一般会計,,災害復旧費,,,民生施設,contains,,assigned,10,retained,目,,民生施設（社会福祉施設）の災害復旧を社会保護に分類する。,false
 1002,vocab-disaster-sanitation-facility,,一般会計,,災害復旧費,,,衛生施設,contains,,assigned,07,retained,目,,衛生施設（保健・環境衛生施設）の災害復旧を保健に置く。清掃施設なら 05.1 廃棄物管理との境界のため暫定とする。,true
@@ -359,7 +359,7 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 1335,keyword-education-promotion-general,,一般会計,,教育費,学校教育費,,教育振興,contains,,assigned,09,retained,目,,学校教育費に属する教育振興は学校段階を名称から分けられないため COFOG 09 教育の division 止まりで暫定とする。,true
 1336,keyword-resident-administration,,一般会計,,,区民行政費,,区民行政総務,contains,,assigned,01,retained,目,,区民行政費の総務を一般公共サービスに分類する。名称からの判断で定義の確認が要るため division 止まりで暫定とする。,true
 1337,keyword-history-museum,,一般会計,,,,,歴史館,contains,,assigned,08.2,retained,目,,歴史館（郷土資料の展示施設）を文化施設に分類する。,false
-1338,bunkyo-academy-unclassifiable,131059,一般会計,,,アカデミー費,,,eq,,unclassifiable,,retained,目,,文京区 区民費のアカデミー費は生涯学習・スポーツ・文化の事業を一つの項に束ねる。目の名称（総務費・施設運営費・事業費）から機能を分けられないため unclassifiable とする（団体限定。他団体の分類は変えない）。,false
+1338,bunkyo-academy-unclassifiable,131059,一般会計,,,アカデミー費,,,eq,,unclassifiable,,retained,目,,文京区 区民費のアカデミー費は生涯学習・スポーツ・文化の事業を一つの項に束ねる。目の名称（総務費・施設運営費・事業費）から機能を分けられないため unclassifiable とする（自治体限定。他自治体の分類は変えない）。,false
 1339,keyword-consumer-administration,,一般会計,,産業経済費,商工費,,消費者行政,contains,,assigned,04.1,retained,目,,産業経済費の商工費に属する消費者行政を一般経済・商業業務に分類する。,false
 1340,keyword-road-parking,,一般会計,,土木費,,,駐車場,contains,,assigned,04.5.1,retained,目,,土木費に属する駐車場の管理・運営を道路交通に分類する（駐車場事業の会計と同じ扱い）。,false
 1341,vocab-crematorium,,一般会計,,,,,火葬場,contains,,assigned,06.2,retained,目,,火葬場の運営を霊園・斎場（vocab-cemetery）・聖苑（vocab-funeral-hall）と同じく地域アメニティに寄せる。境界の判断のため暫定とする。,true

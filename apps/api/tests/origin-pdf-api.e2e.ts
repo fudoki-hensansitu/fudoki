@@ -6,7 +6,7 @@ const get = (baseUrl: string, id: string) => fetch(new URL(`/v1/origins/${id.spl
 const advance = (baseUrl: string, ms: number) => fetch(new URL('/__advance', baseUrl), { method: 'POST', body: String(ms) })
 const hits = async (baseUrl: string) => (await fetch(new URL('/__stats', baseUrl))).json()
 
-test('原典IDから中継・同時要求と同URL別IDを24h再利用・期限後は再取得', async ({ app }) => {
+test('出典IDから中継・同時要求と同URL別IDを24h再利用・期限後は再取得', async ({ app }) => {
   const responses = await Promise.all(Array.from({ length: 4 }, (_, i) => get(app.baseUrl!, i === 3 ? 'same' : 'ok')))
   for (const r of responses) {
     expect(r.status).toBe(200)

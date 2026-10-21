@@ -1,6 +1,6 @@
 ---
 name: pipeline
-description: 風土記の原典選定（source_selection）、CSV・text PDF・scan PDFの取り込みと形式別検査、保存・採用、staging定義・dbt構築を行うときに参照する。CSVの全セル保持検査と、PDFの階層別合計検査・修正の手順を扱う。
+description: 風土記の出典選定（source_selection）、CSV・text PDF・scan PDFの取り込みと形式別検査、保存・採用、staging定義・dbt構築を行うときに参照する。CSVの全セル保持検査と、PDFの階層別合計検査・修正の手順を扱う。
 user-invocable: false
 ---
 
@@ -10,12 +10,12 @@ user-invocable: false
 
 ## Routing table
 
-取り込みの責務は、原典から表を構築・検査し、Parquetと管理情報を保存するところまで。保存済みParquetの読み込み・入力準備・後段の構築はdbt側の責務として [references/dbt.md](references/dbt.md) に分ける。
+取り込みの責務は、出典から表を構築・検査し、Parquetと管理情報を保存するところまで。保存済みParquetの読み込み・入力準備・後段の構築はdbt側の責務として [references/dbt.md](references/dbt.md) に分ける。
 
 | やること | 読む reference |
 | --- | --- |
 | 全体の流れ・工程間の受け渡しを確認する | [references/workflow.md](references/workflow.md) |
-| A. source_selection — 原典の情報を埋め、1資料を選定・保存する。選べなければ理由を残す | [references/source-selection.md](references/source-selection.md) |
+| A. source_selection — 出典の情報を埋め、1資料を選定・保存する。選べなければ理由を残す | [references/source-selection.md](references/source-selection.md) |
 | B. ingestion：保存済みCSV・text PDF・scan PDFから取り込みParquetを作り、形式別に検査する | [references/ingestion.md](references/ingestion.md) |
 | C. dbt：保存済みの取り込み表からstagingを定義し、構築する | [references/dbt.md](references/dbt.md) |
 

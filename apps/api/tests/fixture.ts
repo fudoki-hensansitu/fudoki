@@ -83,7 +83,7 @@ export async function fixture(real = false) {
     await db.prepare(`INSERT INTO ${table} (${Object.keys(data).join(',')}) VALUES (${Object.keys(data).map(() => '?').join(',')})`).bind(...Object.values(data) as never[]).run()
   }
   const paths = ['navigation', 'ok', 'rotated', 'pending', 'skinny', 'missing', 'recover', 'redirect', 'html', 'fake', 'big-header', 'big-stream', 'limit', 'slow', 'slow-body', ...Array.from({ length: 18 }, (_, i) => `extra-${i}`)]
-  for (const path of paths) await insert('origin', { origin_id: path, title: `試験原典 ${path}`, url: `https://city.fudoki.dev/${path}.pdf`, format: 'pdf' })
+  for (const path of paths) await insert('origin', { origin_id: path, title: `試験出典 ${path}`, url: `https://city.fudoki.dev/${path}.pdf`, format: 'pdf' })
   await insert('origin', { origin_id: 'same', title: '同じ URL', url: 'https://city.fudoki.dev/ok.pdf', format: 'pdf' })
   await insert('origin', { origin_id: 'csv', title: 'CSV', url: 'https://city.fudoki.dev/csv', format: 'csv' })
   await insert('origin', { origin_id: 'private', title: 'private', url: 'http://127.0.0.1/pdf', format: 'pdf' })
@@ -95,7 +95,7 @@ export async function fixture(real = false) {
     { name: '枠欠損', origin_id: 'ok', source_page: 1, source_y0: 40, source_y1: 80 },
     { name: '次頁継続', origin_id: 'ok', source_page: 1, source_x0: 35, source_y0: 740, source_x1: 240, source_y1: 80 },
     { name: '取得失敗', origin_id: 'missing', source_page: 1, amount_source_page: 2 },
-    { name: 'CSV原典', origin_id: 'csv', source_page: 8 },
+    { name: 'CSV出典', origin_id: 'csv', source_page: 8 },
     { name: 'サイズ上限', origin_id: 'big-header', source_page: 1 },
     { name: '頻度上限', origin_id: 'extra-6', source_page: 1 },
     { name: '頁が変わった', origin_id: 'ok', source_page: 3 },

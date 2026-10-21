@@ -1,6 +1,6 @@
-"""ホームの「確かめる」に載せる原典の切り抜きを、新宿区の決算書 PDF から書き出す。
+"""ホームの「確かめる」に載せる出典の切り抜きを、新宿区の決算書 PDF から書き出す。
 
-原典は自治体が公開した PDF そのもの。頁と切り抜く範囲（pt）は home-data.ts の HOME.origin と揃える。
+出典は自治体が公開した PDF そのもの。頁と切り抜く範囲（pt）は home-data.ts の HOME.origin と揃える。
 static/home/origin.webp を書く（Worker の static assets として配る）。
 """
 

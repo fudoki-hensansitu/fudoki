@@ -2,7 +2,7 @@
 
     bun run --cwd pipeline serving:sync -- --database-id <uuid> [--dry-run]
     bun run --cwd pipeline serving:sync -- --local [--persist-to <dir>] [--dry-run]
-    ... --jurisdiction 132039 [--jurisdiction ...]   # 一部の団体だけを入れる（動作確認用。団体マスタも絞られる）
+    ... --jurisdiction 132039 [--jurisdiction ...]   # 一部の自治体だけを入れる（動作確認用。自治体マスタも絞られる）
 
 手順:
 1. 開始時に、前回の失敗の残骸 `<表>__new`・`<表>__old` を無条件に drop する（本名の表には触らない）。
@@ -19,7 +19,7 @@
 前提:
 - 書き込むのはこの script だけで、同時に2つ以上実行しない（`__new` が衝突する）。
 - 表の列・型・index は `apps/api/src/columns.json`（serving:columns）が正。warehouse と食い違えば止まる。
-- D1 の上限（1文の SQL 100KB）を守るため、行は表・団体ごとに流し、全行を一度にメモリへ載せない。
+- D1 の上限（1文の SQL 100KB）を守るため、行は表・自治体ごとに流し、全行を一度にメモリへ載せない。
   値は SQL の literal に埋め込む（D1 の REST は params に NULL を渡せない）。boolean は 0/1。
 - `cf d1 raw --local` は「Network connection lost」で散発的に失敗する（cf 1.0.0-beta の実測）ので3回まで再試行する。
   応答が失われただけで書き込みは済んでいた場合に備え、投入は `insert or replace`（流し直しても同じ結果）にし、最後の行数照合で重複や欠落を止める。
@@ -56,7 +56,7 @@ FETCH_ROWS = 500
 MEMORY_LIMIT = '1GB'
 READ_ROWS_PER_CALL = 4000
 
-# 参照される表（団体マスタ・origin）を先に、参照する表を後に。収録範囲は木の表と同じ warehouse から同じ同期で入れ替える
+# 参照される表（自治体マスタ・origin）を先に、参照する表を後に。収録範囲は木の表と同じ warehouse から同じ同期で入れ替える
 TABLE_ORDER = ['jurisdiction_master', 'origin', 'settlement_expenditure_node', 'initial_expenditure_node', 'expenditure_coverage']
 
 Table = dict  # columns.json の1表
@@ -143,7 +143,7 @@ def open_warehouse(path: Path) -> duckdb.DuckDBPyConnection:
 
 
 def scope_where(jurisdictions: Sequence[str] | None) -> str:
-    """一部の団体だけを入れるときの絞り込み。どの表も jurisdiction_code で絞る。DuckDB と SQLite のどちらでも同じ。"""
+    """一部の自治体だけを入れるときの絞り込み。どの表も jurisdiction_code で絞る。DuckDB と SQLite のどちらでも同じ。"""
     if not jurisdictions:
         return ''
     return ' where "jurisdiction_code" in (' + ', '.join(literal(j) for j in jurisdictions) + ')'
@@ -309,7 +309,7 @@ def sync(d1: D1 | None, warehouse: Path, dry_run: bool, jurisdictions: Sequence[
             raise SystemExit('columns.json が warehouse と食い違う。serving:columns で書き直す')
         where = scope_where(jurisdictions)
         if jurisdictions:
-            log(f'一部の団体だけを入れる: {", ".join(jurisdictions)}（D1 は全団体の写しにならない）')
+            log(f'一部の自治体だけを入れる: {", ".join(jurisdictions)}（D1 は全自治体の写しにならない）')
         started = time.time()
         if d1 and not dry_run:
             d1.batch(cleanup_statements())
@@ -353,8 +353,8 @@ def main() -> int:
     parser.add_argument('--local', action='store_true', help='ローカルの D1（miniflare）に書く。リモートには触れない')
     parser.add_argument('--persist-to', type=Path, default=LOCAL_PERSIST_TO, help='--local の状態の置き場')
     parser.add_argument('--warehouse', type=Path, default=contract.WAREHOUSE)
-    parser.add_argument('--jurisdiction', action='append', metavar='団体コード',
-                        help='一部の団体だけを入れる（複数指定可）。どの表も jurisdiction_code で絞る。省略は全件')
+    parser.add_argument('--jurisdiction', action='append', metavar='自治体コード',
+                        help='一部の自治体だけを入れる（複数指定可）。どの表も jurisdiction_code で絞る。省略は全件')
     parser.add_argument('--dry-run', action='store_true', help='文を作って数えるだけで、書かない')
     args = parser.parse_args()
     database_id = args.database_id or (LOCAL_DATABASE_ID if args.local else None)

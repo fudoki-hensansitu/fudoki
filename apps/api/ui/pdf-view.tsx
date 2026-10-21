@@ -162,7 +162,7 @@ export function PdfViewer({
           const pdf = await task.promise
           if (abort.signal.aborted) return
           if (!initialPages.length || initialPages.some((p) => p > pdf.numPages))
-            throw new Error('原典の頁数が明細の頁番号より少なくなっています')
+            throw new Error('出典の頁数が明細の頁番号より少なくなっています')
           setDocument(pdf)
         } catch (e) {
           if (abort.signal.aborted) return
@@ -301,7 +301,7 @@ export function PdfViewer({
         ref={scroll}
         className="pdf-scroll"
         role="region"
-        aria-label="原典 PDF のページ（スクロール可能）"
+        aria-label="出典 PDF のページ（スクロール可能）"
         tabIndex={0}
       >
         <div
@@ -331,7 +331,7 @@ export function PdfViewer({
                     else canvases.current.delete(sheet.page)
                   }}
                   role="img"
-                  aria-label={`原典 PDF ${sheet.page}ページ`}
+                  aria-label={`出典 PDF ${sheet.page}ページ`}
                 />
                 <Frame location={location} sheet={sheet} kind="source" />
                 <Frame location={location} sheet={sheet} kind="amount_source" />

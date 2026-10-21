@@ -125,7 +125,7 @@ preloadSchemas()
 /** MCP Apps（io.modelcontextprotocol/ui）の View の HTML の MIME type */
 export const VIEW_MIME_TYPE = 'text/html;profile=mcp-app'
 
-/** View が団体コードの代わりに団体名を出すための対応。structuredContent の契約は変えず、MCP の _meta にだけ載せる */
+/** View が自治体コードの代わりに自治体名を出すための対応。structuredContent の契約は変えず、MCP の _meta にだけ載せる */
 async function jurisdictionNames(ctx: Ctx, out: unknown): Promise<Record<string, string>> {
   const o = out as { nodes?: { jurisdiction_code: string }[]; node?: { jurisdiction_code: string } }
   const codes = [...new Set([...(o.nodes ?? []), ...(o.node ? [o.node] : [])].map((n) => n.jurisdiction_code))]
@@ -147,7 +147,7 @@ export const RENDER_TOOL = 'render_expenditure_view'
 export const RENDER_RESULT_TEXT = '描画を実行しました。表示する内容は structuredContent と同じです。'
 
 const RENDER_DESCRIPTION =
-  '歳出の検索結果（search_expenditure_nodes）と一つのノードの内訳（get_expenditure_node）を画面（View）に表とグラフで表示する。団体の一覧（list_jurisdictions）など、これ以外の tool の結果は画面に描けないので、文章で答える。データを調べる tool は結果を返すだけで画面を出さない。' +
+  '歳出の検索結果（search_expenditure_nodes）と一つのノードの内訳（get_expenditure_node）を画面（View）に表とグラフで表示する。自治体の一覧（list_jurisdictions）など、これ以外の tool の結果は画面に描けないので、文章で答える。データを調べる tool は結果を返すだけで画面を出さない。' +
   'ユーザーに結果を見せる最終段階で、その tool と同じ入力（tool と arguments）を渡してこの tool を一度だけ呼ぶ。この tool の text にはデータを入れない（画面用の structuredContent と同じ内容なので）。回答に使うデータは、先に呼んだデータ tool の結果を読む。' +
   'MCP Apps に対応した client では結果が画面に出るので、応答の文章で一覧や金額を繰り返さず、補足は問いへの答えと注意点だけの最小限にとどめる。'
 
@@ -198,7 +198,7 @@ function mcpServer(ctx: Ctx, apiOrigin: string, operations: Operation[]): McpSer
         outputSchema: op.output,
         annotations: annotations(op.summary),
       },
-      // View が追加ページの取得や drill で直接呼ぶので、団体名の _meta はデータ tool にも付ける（描画 tool と同じ結果にする）
+      // View が追加ページの取得や drill で直接呼ぶので、自治体名の _meta はデータ tool にも付ける（描画 tool と同じ結果にする）
       (args: Record<string, unknown>) => toolResult(op, args, !!op.view)
     )
   }
@@ -327,8 +327,8 @@ export function createApp(operations: Operation[] = defaultOperations) {
 
   app.openapi(createRoute({
     method: 'get', path: '/v1/origins/{origin_id}/pdf', operationId: 'get_origin_pdf',
-    summary: '原典 PDF の表示用中継',
-    description: '原典 ID が指す自治体の公開 PDF を中継する。32 MiB・20秒、取得6回/分（同一URL1回/分）、閲覧120回/分、成功PDFを24時間・最大16 URL保持。上限は全利用者合計。取得 URL（percent-encoding）と取得日時を X-Origin-Url・X-Origin-Fetched-At で返す。取り込み時の内容との一致は保証しない。query・任意 URL・リダイレクト・CSV は受け付けない。',
+    summary: '出典 PDF の表示用中継',
+    description: '出典 ID が指す自治体の公開 PDF を中継する。32 MiB・20秒、取得6回/分（同一URL1回/分）、閲覧120回/分、成功PDFを24時間・最大16 URL保持。上限は全利用者合計。取得 URL（percent-encoding）と取得日時を X-Origin-Url・X-Origin-Fetched-At で返す。取り込み時の内容との一致は保証しない。query・任意 URL・リダイレクト・CSV は受け付けない。',
     request: { params: z.object({ origin_id: z.string().min(1).max(256) }) },
     responses: {
       200: { description: 'PDF', content: { 'application/pdf': { schema: z.string().openapi({ format: 'binary' }) } } },
