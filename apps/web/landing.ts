@@ -264,10 +264,10 @@ const ICONS = `<svg width="0" height="0" style="position:absolute" aria-hidden="
 
 const ledgerRows = (l: (typeof ledgers)[number]) =>
   [
-    `<tr class="k"><td><span class="lv">款</span>${l.kan.name}</td><td></td><td class="n">${yen(l.kan.amount)}</td><td class="n">${l.kan.page}頁</td></tr>`,
-    `<tr class="ko"><td><span class="lv">項</span>${l.kou.name}</td><td></td><td class="n">${yen(l.kou.amount)}</td><td class="n">${l.kou.page}頁</td></tr>`,
+    `<tr class="k"><td><span class="lv">大</span>${l.kan.name}</td><td></td><td class="n">${yen(l.kan.amount)}</td><td class="n">${l.kan.page}頁</td></tr>`,
+    `<tr class="ko"><td><span class="lv">中</span>${l.kou.name}</td><td></td><td class="n">${yen(l.kou.amount)}</td><td class="n">${l.kou.page}頁</td></tr>`,
     ...l.moku.flatMap((m) => [
-      `<tr class="mo"><td><span class="lv">目</span>${m.name}</td><td><span class="tag">${m.cofog}</span></td><td class="n">${yen(m.amount)}</td><td class="n">${m.page}頁</td></tr>`,
+      `<tr class="mo"><td><span class="lv">小</span>${m.name}</td><td><span class="tag">${m.cofog}</span></td><td class="n">${yen(m.amount)}</td><td class="n">${m.page}頁</td></tr>`,
       ...m.detail.map((d) => `<tr class="su"><td><span class="lv">${d.kind}</span>${d.name}</td><td></td><td class="n">${yen(d.amount)}</td><td class="n">${d.page}頁</td></tr>`),
     ]),
   ].join('')
@@ -276,7 +276,7 @@ const ledgerTables = ledgers
   .map(
     (l, i) =>
       `<table class="tbl"${i ? '' : ' data-pos="cur"'}><caption>${l.jurisdiction} · ${nakano.period} · 一般会計</caption>
-<thead><tr><th scope="col">科目</th><th scope="col">COFOG</th><th scope="col" class="n">支出済額</th><th scope="col" class="n">原典</th></tr></thead>
+<thead><tr><th scope="col">項目</th><th scope="col">共通分類</th><th scope="col" class="n">使った額</th><th scope="col" class="n">原典</th></tr></thead>
 <tbody>${ledgerRows(l)}</tbody></table>`,
   )
   .join('')
@@ -312,7 +312,7 @@ const BODY = `${ICONS}
 <header class="hero wrap">
 <p class="eyebrow">風土記 — 町の家計簿</p>
 <h1 class="sweep">あなたの街は、何にいくら使ったか</h1>
-<p class="sub">自治体の予算書と決算書を、事業の単位まで表にしました。AI に聞けば、他の街や他の年と同じ物差しで比べ、原典の頁まで返します。</p>
+<p class="sub">自治体の予算書と決算書を、事業ごとの表にしました。AI に聞けば、他の街や他の年と同じ物差しで比べ、原典の頁まで返します。</p>
 <div id="chat-start" class="ask" data-turnstile-sitekey="__TURNSTILE_SITE_KEY__"><div class="ask-box"><p class="muted">風土記の AI に聞く</p><noscript>AI に聞くには JavaScript を有効にしてください。</noscript></div></div>
 <div class="acts"><a class="btn ol" href="#mcp">自分の AI に接続する${icon('arrow-right')}</a><a class="btn ol" href="${DOCS}">ドキュメント</a></div>
 </header>
@@ -329,19 +329,19 @@ const BODY = `${ICONS}
 <nav class="rail" aria-label="3つのステップ">
 <div class="rail-n" aria-hidden="true"><span class="win-n"><span>一</span><span>二</span><span>三</span></span><small>／ 三</small></div>
 <span class="gauge" aria-hidden="true"><i></i></span>
-<ol><li><a href="#see" aria-current="step"><b>一</b><span><strong>見る</strong><small>款・項・目から、その下の事業まで</small></span></a></li><li><a href="#compare"><b>二</b><span><strong>比べる</strong><small>COFOG で、街をまたいで並べる</small></span></a></li><li><a href="#check"><b>三</b><span><strong>確かめる</strong><small>原典の頁と、印字の位置で</small></span></a></li></ol>
+<ol><li><a href="#see" aria-current="step"><b>一</b><span><strong>見る</strong><small>大きな分類から、細かい事業まで</small></span></a></li><li><a href="#compare"><b>二</b><span><strong>比べる</strong><small>共通の分類で、街をまたいで並べる</small></span></a></li><li><a href="#check"><b>三</b><span><strong>確かめる</strong><small>原典の頁と、印字の位置で</small></span></a></li></ol>
 </nav>
 <div>
 <article class="step" id="see"><span class="k">ステップ一　見る</span><h3>一つの街の支出を、事業の単位で</h3>
-<p>款・項・目と、その下の事業まで、原典の階層を保ったまま引けます。予算案・当初・補正後・決算は、金額の段階として分けて持ちます。</p>
+<p>大きな分類から、その内訳、さらに細かい事業まで、原典の並びのまま引けます。予算案・当初予算・途中で組み替えた予算・決算（実際に使った額）は、別々の金額として持ちます。</p>
 <div class="stage"><div class="art paper" aria-hidden="true"><i style="right:-20px;top:-30px">見</i><s></s></div>
-<div class="win"><h4 class="win-h">${nakano.jurisdiction}の款 · ${nakano.period}</h4>
+<div class="win"><h4 class="win-h">${nakano.jurisdiction}の大きな分類 · ${nakano.period}</h4>
 <div class="lines">${nakano.kanList.map((k) => `<div class="r"><span>${k.name}</span><span class="num" title="${yen(k.amount)}">${oku(k.amount)}</span></div>`).join('')}</div></div></div>
 </article>
 <article class="step" id="compare"><span class="k">ステップ二　比べる</span><h3>別の街と、同じ物差しで</h3>
-<p>款の名前は街ごとに違います。中野区には「民生費」という款がありません。だから目ごとに政府支出の国際分類（COFOG）を割り当て、街をまたいで並べられるようにしています。</p>
+<p>大きな分類の名前は街ごとに違います。中野区には「民生費」という分類がありません。だから細かい分類ごとに、目的別の共通分類（国際基準 COFOG）を割り当て、街をまたいで並べられるようにしています。</p>
 <div class="stage"><div class="art burst" aria-hidden="true"></div>
-<div class="win"><h4 class="win-h">目「${library.name}」 · COFOG ${library.cofog}</h4>
+<div class="win"><h4 class="win-h">「${library.name}」 · 共通分類 ${library.cofog}</h4>
 <div class="bars">${library.rows.map((r) => `<div class="b"><span>${r.jurisdiction}</span><i style="width:${((r.amount / libraryMax) * 100).toFixed(1)}%" aria-hidden="true"></i><span class="num" title="${yen(r.amount)}">${oku(r.amount)}</span></div>`).join('')}</div>
 <p class="muted" style="font-size:12px">${library.period}。人口あたりの額ではありません。</p></div></div>
 </article>
@@ -349,8 +349,8 @@ const BODY = `${ICONS}
 <p>明細ごとに原典の頁と印字の位置を持ち、分類が確かか・仮か・できないかも返します。数字に引っかかったら、その頁を開けば確かめられます。</p>
 <div class="stage pdf"><div class="art oats" aria-hidden="true"><i style="left:-30px;top:-40px">確</i></div>
 <figure class="sheet"><figcaption><span>${origin.jurisdiction} · ${origin.document}</span><span class="num">PDF ${origin.page}頁</span></figcaption>
-<div class="crop"><img src="/home/origin.webp" width="2136" height="879" loading="lazy" alt="${origin.jurisdiction}の決算書 ${origin.page}頁の切り抜き。目「${origin.name}」の支出済額 ${yen(origin.amount)}"><i class="mark" style="${markStyle}" aria-hidden="true"></i></div>
-<p>目「${origin.name}」の支出済額 <b class="num">${yen(origin.amount)}</b><small>囲みは、API が返す印字の位置</small></p></figure></div></div>
+<div class="crop"><img src="/home/origin.webp" width="2136" height="879" loading="lazy" alt="${origin.jurisdiction}の決算書 ${origin.page}頁の切り抜き。「${origin.name}」の使った額 ${yen(origin.amount)}"><i class="mark" style="${markStyle}" aria-hidden="true"></i></div>
+<p>「${origin.name}」の使った額 <b class="num">${yen(origin.amount)}</b><small>囲みは、API が返す印字の位置</small></p></figure></div></div>
 </article>
 </div></div>
 </section>
@@ -366,8 +366,8 @@ const BODY = `${ICONS}
 
 <section class="sec wrap faq" id="faq" aria-labelledby="faq-h"><h2 id="faq-h">よくある質問</h2><div>
 <details open><summary>数字はどこから来ていますか</summary><p>自治体が公開した予算書・決算書（PDF または CSV）です。表に読み込んだあと、原典の中で重ねて印字された合計どうしが一致するかを確かめています。明細ごとに、原典の頁と印字された位置を持っています。</p></details>
-<details><summary>予備費が 0 円なのは、使わなかったからですか</summary><p>いいえ。決算の予備費は、他の科目へ充用したあとの支出済額なので 0 円になります。どこへ充用したかは原典の備考にあり、風土記では金額の注記として科目の金額とは別に持ちます。</p></details>
-<details><summary>COFOG の分類は正しいのですか</summary><p>分類は原典にない、風土記の判断です。確かなもの・仮のもの・分類できないものを区別して返し、分類できない明細も合計から落としません。</p></details>
+<details><summary>予備費が 0 円なのは、使わなかったからですか</summary><p>いいえ。決算の予備費は、他の費目へ補ったあとの使った額なので 0 円になります。どこへ補ったかは原典の備考にあり、風土記では注記の金額として、費目の金額とは別に持ちます。</p></details>
+<details><summary>共通分類（COFOG）は正しいのですか</summary><p>分類は原典にない、風土記の判断です。確かなもの・仮のもの・分類できないものを区別して返し、分類できない明細も合計から落としません。</p></details>
 <details><summary>どの自治体・年度が入っていますか</summary><p>収録する自治体と年度は、順次広げています。いま入っている範囲は、AI に聞くか<a href="${DOCS}">ドキュメント</a>で確かめられます。収録していないことは、支出がゼロであることを意味しません。</p></details>
 <details><summary>使うのにお金や登録は要りますか</summary><p>要りません。MCP の URL を AI クライアントに登録すれば使えます。詳しくは<a href="${DOCS}/terms">利用規約</a>をご覧ください。</p></details>
 </div></section>
@@ -375,7 +375,7 @@ const BODY = `${ICONS}
 
 <footer class="wrap">
 <div class="cols">
-<div><a href="/" aria-label="風土記 ホーム">${logo('logo')}</a><p>町の家計簿。自治体の歳出を、事業の単位まで。</p></div>
+<div><a href="/" aria-label="風土記 ホーム">${logo('logo')}</a><p>町の家計簿。自治体の支出を、事業ごとに。</p></div>
 <div><h2>使う</h2><ul><li><a href="#mcp">AI から使う</a></li><li><a href="${DOCS}">ドキュメント</a></li></ul></div>
 <div><h2>作り</h2><ul><li><a href="${GITHUB}">GitHub</a></li><li><a href="${DOCS}/support">サポート</a></li><li><a href="mailto:support@fudoki.dev">お問い合わせ</a></li></ul></div>
 <div><h2>決まりごと</h2><ul><li><a href="${DOCS}/privacy">プライバシーポリシー</a></li><li><a href="${DOCS}/terms">利用規約</a></li></ul></div>
@@ -396,7 +396,7 @@ new IntersectionObserver(l=>{vis=l[0].isIntersecting;run()}).observe(lg)}
 const v=document.querySelector('.demo video');if(v){let user=rm;const tg=()=>{if(v.paused){user=false;v.play()}else{user=true;v.pause()}};v.addEventListener('click',tg);v.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();tg()}});
 if('IntersectionObserver'in window)new IntersectionObserver(l=>{if(l[0].isIntersecting){if(!user)v.play().catch(()=>{})}else v.pause()},{threshold:.4}).observe(v)}`
 
-const DESCRIPTION = '日本の自治体の歳出の予算・決算を事業の単位まで集め、AI から問い合わせられるデータとして配る。'
+const DESCRIPTION = '日本の自治体の支出の予算と決算を事業ごとに集め、AI から問い合わせられるデータとして配る。'
 
 export const LANDING_HTML = `<!doctype html>
 <html lang="ja">

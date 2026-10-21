@@ -30,9 +30,9 @@ export const HOME = {
           cofog: '分類できない',
           page: 120,
           detail: [
-            { kind: '節', name: '扶助費', amount: 17588572813, page: 120 },
-            { kind: '節', name: '負担金補助及び交付金', amount: 2226175147, page: 120 },
-            { kind: '節', name: '委託料', amount: 355826620, page: 120 },
+            { kind: '内訳', name: '扶助費', amount: 17588572813, page: 120 },
+            { kind: '内訳', name: '負担金補助及び交付金', amount: 2226175147, page: 120 },
+            { kind: '内訳', name: '委託料', amount: 355826620, page: 120 },
           ],
         },
         {
@@ -41,9 +41,9 @@ export const HOME = {
           cofog: '10.4',
           page: 120,
           detail: [
-            { kind: '節', name: '扶助費', amount: 8111557205, page: 120 },
-            { kind: '節', name: '委託料', amount: 753643656, page: 120 },
-            { kind: '節', name: '負担金補助及び交付金', amount: 208633145, page: 120 },
+            { kind: '内訳', name: '扶助費', amount: 8111557205, page: 120 },
+            { kind: '内訳', name: '委託料', amount: 753643656, page: 120 },
+            { kind: '内訳', name: '負担金補助及び交付金', amount: 208633145, page: 120 },
           ],
         },
       ],
@@ -59,9 +59,9 @@ export const HOME = {
           cofog: '10',
           page: 162,
           detail: [
-            { kind: '節', name: '扶助費', amount: 7651759488, page: 164 },
-            { kind: '節', name: '負担金補助及び交付金', amount: 1477396304, page: 164 },
-            { kind: '節', name: '給料', amount: 553952574, page: 162 },
+            { kind: '内訳', name: '扶助費', amount: 7651759488, page: 164 },
+            { kind: '内訳', name: '負担金補助及び交付金', amount: 1477396304, page: 164 },
+            { kind: '内訳', name: '給料', amount: 553952574, page: 162 },
           ],
         },
         {
@@ -70,9 +70,9 @@ export const HOME = {
           cofog: '10.4',
           page: 160,
           detail: [
-            { kind: '節', name: '扶助費', amount: 5571600335, page: 162 },
-            { kind: '節', name: '負担金補助及び交付金', amount: 642446506, page: 162 },
-            { kind: '節', name: '委託料', amount: 45388101, page: 160 },
+            { kind: '内訳', name: '扶助費', amount: 5571600335, page: 162 },
+            { kind: '内訳', name: '負担金補助及び交付金', amount: 642446506, page: 162 },
+            { kind: '内訳', name: '委託料', amount: 45388101, page: 160 },
           ],
         },
       ],
@@ -88,9 +88,9 @@ export const HOME = {
           cofog: '10.4',
           page: 66,
           detail: [
-            { kind: '節', name: '扶助費', amount: 8888013625, page: 67 },
-            { kind: '節', name: '給料', amount: 2979267283, page: 66 },
-            { kind: '節', name: '職員手当等', amount: 2527517072, page: 66 },
+            { kind: '内訳', name: '扶助費', amount: 8888013625, page: 67 },
+            { kind: '内訳', name: '給料', amount: 2979267283, page: 66 },
+            { kind: '内訳', name: '職員手当等', amount: 2527517072, page: 66 },
           ],
         },
         {
@@ -99,9 +99,9 @@ export const HOME = {
           cofog: '10.4',
           page: 67,
           detail: [
-            { kind: '節', name: '扶助費', amount: 10032782670, page: 67 },
-            { kind: '節', name: '負担金補助及び交付金', amount: 3266473620, page: 67 },
-            { kind: '節', name: '償還金利子及び割引料', amount: 256567708, page: 67 },
+            { kind: '内訳', name: '扶助費', amount: 10032782670, page: 67 },
+            { kind: '内訳', name: '負担金補助及び交付金', amount: 3266473620, page: 67 },
+            { kind: '内訳', name: '償還金利子及び割引料', amount: 256567708, page: 67 },
           ],
         },
       ],
@@ -117,9 +117,9 @@ export const HOME = {
           cofog: '10.4',
           page: 65,
           detail: [
-            { kind: '節', name: '扶助費', amount: 22211650733, page: 65 },
-            { kind: '節', name: '負担金、補助及び交付金', amount: 5808702287, page: 65 },
-            { kind: '節', name: '償還金、利子及び割引料', amount: 440090261, page: 65 },
+            { kind: '内訳', name: '扶助費', amount: 22211650733, page: 65 },
+            { kind: '内訳', name: '負担金、補助及び交付金', amount: 5808702287, page: 65 },
+            { kind: '内訳', name: '償還金、利子及び割引料', amount: 440090261, page: 65 },
           ],
         },
         {
@@ -128,9 +128,9 @@ export const HOME = {
           cofog: '10.4',
           page: 64,
           detail: [
-            { kind: '節', name: '給料', amount: 2372336087, page: 64 },
-            { kind: '節', name: '職員手当等', amount: 2316824000, page: 64 },
-            { kind: '節', name: '共済費', amount: 953671472, page: 65 },
+            { kind: '内訳', name: '給料', amount: 2372336087, page: 64 },
+            { kind: '内訳', name: '職員手当等', amount: 2316824000, page: 64 },
+            { kind: '内訳', name: '共済費', amount: 953671472, page: 65 },
           ],
         },
       ],
