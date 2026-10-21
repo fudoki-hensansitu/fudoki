@@ -1629,6 +1629,29 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
     return result
 
 
+def mixed_document(logicals: list[Logical]) -> bool:
+    """Whether a text document has pages OCR read (`mixed.py`): only then are the OCR pages read by what the printed ones teach."""
+    return any(l.ocr for l in logicals) and any(not l.ocr for l in logicals)
+
+
+def snap_ocr_levels(own: list[Item], centres: list[float]) -> None:
+    """An OCR page's lines start a point or three off the printed levels (a misread mark moves a line's start by half a
+    character), and a start between two levels is no level of its own: the OCR's starts are grouped around as many
+    centres as the printed pages have levels, and each group is the printed level of its rank."""
+    if len(centres) < 2 or len(own) < 3 * len(centres):
+        return
+    shift = sorted(i.indent - min(centres, key=lambda c: abs(c - i.indent)) for i in own)[len(own) // 2]
+    middles = [c + shift for c in centres]
+    for _ in range(20):
+        groups_: list[list[float]] = [[] for _ in middles]
+        for item in own:
+            groups_[min(range(len(middles)), key=lambda k: abs(middles[k] - item.indent))].append(item.indent)
+        middles = [sum(g) / len(g) if g else m for g, m in zip(groups_, middles)]
+    if all(b - a >= 2 * INDENT_SPAN / 3 for a, b in zip(middles, middles[1:])):
+        for item in own:
+            item.indent = centres[min(range(len(middles)), key=lambda k: abs(middles[k] - item.indent))]
+
+
 def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: str | dict = 'indent',
           layout: dict | None = None, codes_right: bool = False) -> Built:
     """`detail` is one breakdown pattern for every axis, or a mapping axis → pattern."""
@@ -1649,10 +1672,13 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
     remarks: list[dict] = []  # `Built.annotations` before the items have keys
     all_items: list[tuple[Logical, list[Group], dict[int, list[Item]]]] = []
     column_amount_items: set[int] = set()
-    margins = code_margins(logicals)
-    edges = number_edges(logicals, pattern)
-    limits = line_limits(logicals)
-    stacking = stacked_columns(logicals)
+    # What the document teaches is read from its printed pages: the few pages of a text document that OCR read
+    # (`mixed.py`) are read by what the others teach and teach nothing (a scan, all OCR, learns from itself).
+    taught = [logical for logical in logicals if not logical.ocr] or logicals
+    margins = code_margins(taught)
+    edges = number_edges(taught, pattern)
+    limits = line_limits(taught)
+    stacking = stacked_columns(taught)
     skipped: list[Logical] = []
     open_headings: dict[str, int] = {}  # per axis: the depth of the department heading line that is open
     for logical in logicals:
@@ -1938,7 +1964,9 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     item.level_name = SUBJECT_LEVELS[item.level] if item.level < len(SUBJECT_LEVELS) else None
     # Indentation levels per non-subject axis, learned over the document.
     indents: dict[str, list[float]] = defaultdict(list)
-    for _, ordered, found in all_items:
+    for logical, ordered, found in all_items:
+        if logical.ocr and mixed_document(logicals):  # the levels are the printed pages'; an OCR page's words lie a point or two off
+            continue
         for group in ordered:
             if not group.subject:
                 indents[group.axis] += [i.indent for i in found[id(group)] if i.role == 'node']
@@ -1960,6 +1988,10 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 kept.append(c)
                 centres.append(sum(c) / len(c))
         levels[axis] = sorted(sum(c) / len(c) for c in kept)
+    if mixed_document(logicals):
+        for axis, centres in levels.items():
+            snap_ocr_levels([i for l, ordered, found in all_items if l.ocr for g in ordered if not g.subject and g.axis == axis
+                             for i in found[id(g)] if i.role == 'node'], centres)
     depth_of = lambda item: 1 + min(range(len(levels[item.group.axis])),
                                     key=lambda i: abs(levels[item.group.axis][i] - item.indent))
     # Right-aligned amount columns also mark the level: learn which column each

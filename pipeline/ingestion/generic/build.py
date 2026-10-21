@@ -14,6 +14,7 @@ from collections import Counter
 import json
 from pathlib import Path
 
+from ingestion.generic import mixed
 from ingestion.generic.layout import logical_pages, normalize
 from ingestion.generic.observe import Page, Rule, observe
 from ingestion.generic.repair import repair
@@ -90,7 +91,7 @@ def run_pages(pdf: Path, pages: list[int], cache: Path | None = None, judge=None
               document_kind: str = 'settlement', account: str | None = None, stop: bool = True,
               partial: bool = False, direction: str | None = None, layout: dict | None = None,
               columns: dict | None = None, spread: dict | None = None, header: dict | None = None, repairs: frozenset = frozenset(),
-              codes_right: bool = False, text_layer: dict | None = None):
+              codes_right: bool = False, text_layer: dict | None = None, ocr: tuple | None = None):
     """Build one table and keep what the converter needs next to it: the repaired pages (their
     words are the digit-coverage scope), the logical pages (their amount bands) and the unit check.
 
@@ -98,17 +99,28 @@ def run_pages(pdf: Path, pages: list[int], cache: Path | None = None, judge=None
     summary, `歳 入` over a 款・項 table) is not read: `report.skipped_pages` lists them.
     Stops when the unit check fails (款 sum ≠ printed total, or a general account's digits);
     `stop=False` returns the check in `report.unit` instead, for a measurement that goes on."""
-    printed = observe(pdf, pages, cache)
+    staircase = bool((header or {}).get('staircase'))
+    # `ocr = (pages, read)`: pages of a text document that OCR read (`mixed.py`), and `read(rule_hook)` for them. They are
+    # not observed from the text layer and not repaired as text, and they teach nothing: the columns the text pages draw
+    # complete the rules of their render (the hook) before their words are cut at them.
+    numbers, read_ocr = ocr or ((), None)
+    printed = observe(pdf, [number for number in pages if number not in numbers], cache)
     if (text_layer or {}).get('image_rules'):
-        staircase = bool((header or {}).get('staircase'))
         printed = [image_rules(pdf, page, staircase) if not page.rules else page for page in printed]
-    titles = page_titles(printed) if direction else {}  # before the repair: it drops what is outside the frame
+    unrepaired = [Page(page.number, page.width, page.height, list(page.words), page.rules) for page in printed]
     observed, report = repair(pdf, printed, repairs, bool((text_layer or {}).get('form_clips')))
+    read = read_ocr(mixed.completing(mixed.learn_frames(observed, spread, staircase), spread, staircase)) if read_ocr else []
+    origins = mixed.learn_origins(observed, spread, staircase)
+    read = [mixed.aligned(page, origins, spread, staircase) for page in read]
+    gap = mixed.learn_gap(observed, spread, staircase) if read else None
+    # The direction a page prints is read before the repair, which drops what is outside the frame.
+    titles = page_titles(sorted([*unrepaired, *read], key=lambda page: page.number)) if direction else {}
+    observed = sorted([*observed, *read], key=lambda page: page.number)
     if direction:
         report.skipped_pages = [number for number, title in titles.items() if title not in (None, direction)]
         observed = [page for page in observed if page.number not in report.skipped_pages]
     logicals = logical_pages(observed, columns=columns, spread=spread, header=header,
-                             split_text='split_at_rules' in repairs)
+                             split_text='split_at_rules' in repairs, ocr_pages=frozenset(numbers), ocr_gap=gap)
     # A staircase declares how the levels are marked: each level's band (see `layout.level_cells`).
     built, choice = choose_pattern(logicals, document_kind, judge, layout, codes_right,
                                    ('bands',) if (header or {}).get('staircase') else SUBJECT_PATTERNS)

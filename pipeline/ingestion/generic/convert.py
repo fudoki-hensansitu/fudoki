@@ -25,7 +25,7 @@ import json
 from pathlib import Path
 import re
 
-from ingestion.generic import observe as observe_module
+from ingestion.generic import mixed, observe as observe_module, scan as scan_module
 from ingestion.generic.build import run_pages
 from ingestion.generic.headers import canonical
 from ingestion.generic.layout import is_amount, lines, normalize
@@ -331,6 +331,7 @@ class Table:
     logicals: list
     headings: dict = field(default_factory=dict)  # `{(printed heading path, heading kept): count}`
     plain_names: list = field(default_factory=list)  # names the settings declare to be items, not notes
+    ocr_pages: list = field(default_factory=list)  # pages of a text original read from pinned OCR (`mixed.py`)
 
 
 def build_table(source: dict, options: dict, *, stop: bool = True) -> Table:
@@ -344,23 +345,30 @@ def build_table(source: dict, options: dict, *, stop: bool = True) -> Table:
         # An account's own settings replace the document's, key by key: accounts of one
         # original can print the same marks for different levels.
         layout = {**layout, **layout['accounts'][account]}
+    # Pages whose text layer is empty are declared as an OCR input of the conversion and read from its pinned
+    # observation (`mixed.py`); the observation cache of the text layer is keyed by the pages it observes.
+    ocr_numbers = mixed.numbers(source, pages)
+    ocr = (ocr_numbers, lambda hook: scan_module.read_pages(source, options, layout, ocr_numbers, rule_hook=hook, keep_marks=True)[0]) if ocr_numbers else None
     built, report, observed, logicals = run_pages(
-        Path(source['path']), pages, observation_cache(source, pages),
+        Path(source['path']), pages, observation_cache(source, [p for p in pages if p not in ocr_numbers]),
         document_kind=source['target']['document_kind'], account=account, stop=stop,
         partial=bool(options.get('partial')), direction=source.get('direction'),
         layout=(layout or {}).get('breakdown'), columns=(layout or {}).get('columns'),
         spread=(layout or {}).get('spread'), header=(layout or {}).get('header'),
         repairs=frozenset((layout or {}).get('repairs', ())), codes_right=(layout or {}).get('codes') == 'right',
-        text_layer=(layout or {}).get('text_layer'))
+        text_layer=(layout or {}).get('text_layer'), ocr=ocr)
     kept, nodes, amounts, unresolved, codes = split_notes(built)
-    built.notes.extend({'kind': 'name correction', 'text': text} for text in correct_names(built.nodes, options.get('name_corrections')))
+    by_node = [rule for rule in options.get('name_corrections', ()) if 'observation_id' not in rule]
+    built.notes.extend({'kind': 'name correction', 'text': text} for text in correct_names(built.nodes, by_node))
+    built.notes.extend({'kind': 'name correction', 'text': f'{rule["page"]}頁 {rule["observed_name"]}→{rule["corrected_name"]}'}
+                       for rule in options.get('name_corrections', ()) if 'observation_id' in rule)
     all_nodes = [*built.nodes, *nodes]
     all_amounts, headings = canonical_headings([*kept, *amounts], all_nodes, source['target']['document_kind'],
                                                (layout or {}).get('header'))
     fine_sections(all_nodes)
     plain = [name for hints in ((layout or {}).get('breakdown') or {}).values() for name in hints.get('plain_names', ())]
     return Table(all_nodes, all_amounts, unresolved, excluded_regions(built, logicals, codes, observed),
-                 built, report, observed, logicals, headings, plain)
+                 built, report, observed, logicals, headings, plain, ocr_numbers)
 
 
 def correct_names(nodes: list[dict], rules: list[dict] | None) -> list[str]:
@@ -452,6 +460,9 @@ def receipt_notes(table: Table) -> list[str]:
     corrected = [n['text'] for n in table.built.notes if n.get('kind') == 'name correction']
     if corrected:
         notes.append(f'原画で確かめた名称の誤読 {len(corrected)} 件を、管理 JSON の name_corrections で印字に直した: {"・".join(corrected)}。')
+    if table.ocr_pages:
+        notes.append(f'文字層の無い頁 {len(table.ocr_pages)} 頁（{"・".join(map(str, table.ocr_pages))}）は、固定した OCR の観測（頁の単語）と描画の罫線で読み、'
+                     '段の読み方は文字層の頁から当てはめた。')
     if table.report.skipped_pages:
         notes.append(f'選定の scope が共有していた別の方向（歳入）の頁 {len(table.report.skipped_pages)} 頁は読んでいない。')
     return notes

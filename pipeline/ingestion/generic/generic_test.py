@@ -144,6 +144,18 @@ class TrialRulesTest(unittest.TestCase):
         self.assertEqual(body, ['1', '総務費', '1', '社会福祉費', '1,000', '2,000'])
         self.assertEqual([(code, name) for code, name, _ in logical.titles], [('2', '民生費')])
 
+    def test_a_title_printed_under_the_last_rule_is_the_foot_of_the_page_not_a_kan_title(self):
+        verticals = [Rule(x, 50, x, 400) for x in (10, 100, 200)]
+        horizontals = [Rule(10, y, 200, y) for y in (50, 70, 100, 400)]
+        words = [Word('科', 20, 55, 29, 64), Word('目', 40, 55, 49, 64), Word('支出', 110, 55, 128, 64), Word('済額', 130, 55, 148, 64),
+                 Word('1', 20, 110, 24.5, 119), Word('総務費', 30, 110, 57, 119), Word('1,000', 150, 110, 172.5, 119)]
+        above = [Word('第2款', 20, 20, 47, 29), Word('民生費', 50, 20, 77, 29)]
+        foot = [Word('第10款', 20, 420, 47, 429), Word('総務費', 50, 420, 77, 429)]
+        titles = lambda extra: [(code, name) for code, name, _ in logical_pages([Page(1, 300, 500, words + extra, verticals + horizontals)])[0].titles]
+        self.assertEqual(titles(above), [('2', '民生費')])
+        self.assertEqual(titles(foot), [])
+        self.assertEqual(titles(above + foot), [('2', '民生費')])
+
     def test_rules_off_the_page_are_dropped_inside_the_box_the_pdf_displays(self):
         import tempfile
         from pathlib import Path

@@ -94,6 +94,7 @@ class Logical:
     outside: list[Glyph]
     ocr: bool = False  # the words came from OCR (`ingestion/generic/scan.py`): rules for its misreads apply
     column_units: dict[str, str] = field(default_factory=dict)  # heading of a column whose own unit mark differs from the page's
+    foot: dict[int, float] = field(default_factory=dict)  # per page, the lowest rule of its frames: what is printed below it is the page's foot
 
     def unit_of(self, header: str) -> str | None:
         """The unit of an amount under `header`: its column's own mark (`(千円)` over 当初予算額 on a 円 page), else the page's."""
@@ -105,6 +106,10 @@ class Logical:
         """Table titles naming a 款 outside the table (`第２款 総務費（決算額 … 円）`): code, name, glyphs."""
         found = []
         for line in lines(self.outside):
+            # A title under the table's last rule is the page's foot (`第10款 総務費` repeated at the bottom of a
+            # right-hand page), not the title of a table: the rows of the next page do not belong to it.
+            if any(g.y0 > self.foot.get(g.page, float('inf')) for g in line):
+                continue
             match = TITLE.match(normalize(text(line)))
             if match:
                 found.append((match.group(1) or match.group(2), match.group(3), line))
@@ -497,15 +502,28 @@ def inline_kind(band: Band, line: list[Glyph]) -> bool:
 
 
 def logical_pages(pages: list[Page], *, columns: dict | None = None, spread: dict | None = None,
-                  header: dict | None = None, split_text: bool = False) -> list[Logical]:
-    """Read each page's bands, classify them once per document, then join spreads."""
+                  header: dict | None = None, split_text: bool = False, ocr_pages: frozenset = frozenset(),
+                  ocr_gap: float | None = None) -> list[Logical]:
+    """Read each page's bands, classify them once per document, then join spreads.
+
+    `ocr_pages`: pages of a text document whose words OCR read (`mixed.py`). Their bands are classified by what
+    the text pages teach (their headings corrected as a scan's are) and never teach anything themselves. The right
+    page of an OCR spread is set apart from the left by the gap the text pages print (`ocr_gap`), not by a scan's."""
     per_page = [(page, *page_bands(page, spread, header, split_text)) for page in pages]
+    if ocr_pages:
+        from ingestion.generic.scan import header_path
+        for page, bands, _ in per_page:
+            if page.number in ocr_pages:
+                for band in bands:
+                    band.header = header_path(band.header)
     # Band kind by content, learned per header path over the whole document so
     # that empty continuation pages keep it. A band is a label band when at least
     # half of its printed lines carry text; otherwise it holds amounts if any
     # grouped number or only zeros appear (item codes alone are labels).
     stats: dict[tuple, dict[str, int]] = defaultdict(lambda: defaultdict(int))
-    for _, bands, _ in per_page:
+    for page, bands, _ in per_page:
+        if page.number in ocr_pages:
+            continue
         for band in bands:
             for line in lines(band.words):
                 kinds = set()
@@ -569,6 +587,7 @@ def logical_pages(pages: list[Page], *, columns: dict | None = None, spread: dic
         glyphs = [Glyph(w.text, w.x0, w.y0, w.x1, w.y1, page.number, 0) for w in outside]
         if not bands:
             continue
+        foot = {page.number: max(b.body_bottom for b in bands)}
         leftmost = min(bands, key=lambda b: b.x0)
         # A frame with no header and no words (crop marks printed outside the CropBox) is no column:
         # taken as the first band, it hid the amount column opening a spread's right page.
@@ -581,7 +600,7 @@ def logical_pages(pages: list[Page], *, columns: dict | None = None, spread: dic
         if (continues and result and len(result[-1].pages) == 1
                 and previous_page is not None and same_rows(previous_page, page)):
             previous = result[-1]
-            offset = max(b.x1 for b in previous.bands) + 10 - leftmost.x0
+            offset = max(b.x1 for b in previous.bands) + (ocr_gap if ocr_gap is not None and page.number in ocr_pages else 10) - leftmost.x0
             for band in bands:
                 band.x0 += offset; band.x1 += offset; band.offset = offset
                 band.spans = [(a + offset, b + offset, t) for a, b, t in band.spans]
@@ -591,6 +610,8 @@ def logical_pages(pages: list[Page], *, columns: dict | None = None, spread: dic
             previous.bands.extend(bands)
             previous.unit = previous.unit or unit
             previous.outside.extend(glyphs)
+            previous.foot.update(foot)
+            previous.ocr = previous.ocr or page.number in ocr_pages
             continue
-        result.append(Logical([page.number], bands, unit, glyphs))
+        result.append(Logical([page.number], bands, unit, glyphs, ocr=page.number in ocr_pages, foot=foot))
     return result
