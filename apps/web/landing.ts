@@ -90,6 +90,15 @@ code{font:13px/1.6 var(--font-mono);letter-spacing:0;overflow-wrap:anywhere}
 .right .btn{height:36px;padding:0 14px;font-size:14px;font-weight:400}
 .right .gh{border-color:var(--border);background:var(--background);color:var(--foreground)}
 .right .gh:hover{background:var(--card)}
+.right .go{background:var(--card);color:var(--foreground);cursor:pointer}
+.nav[data-scrolled] .go{background:var(--primary);color:var(--primary-foreground)}
+dialog.setup{width:min(560px,calc(100% - 32px));padding:24px;border:.5px solid var(--border);border-radius:var(--radius-lg,16px);background:var(--background);color:var(--foreground)}
+dialog.setup::backdrop{background:color-mix(in srgb,var(--foreground) 40%,transparent)}
+dialog.setup h2{font-size:20px}
+dialog.setup p{margin-top:8px;font-size:14px;color:var(--muted-foreground)}
+dialog.setup pre{margin:16px 0;padding:14px;max-height:40svh;overflow:auto;border-radius:var(--radius-sm);background:var(--card);font:13px/1.7 var(--font-mono);letter-spacing:0;white-space:pre-wrap;overflow-wrap:anywhere}
+dialog.setup .acts{display:flex;gap:8px;justify-content:flex-end}
+dialog.setup .btn{cursor:pointer}
 
 .art{position:absolute;overflow:hidden}
 .art::after{content:"";position:absolute;inset:0;background:var(--noise);opacity:var(--grain);mix-blend-mode:multiply;pointer-events:none}
@@ -279,12 +288,27 @@ const [mx0, my0, mx1, my1] = origin.mark
 const pct = (v: number, w: number) => `${((v / w) * 100).toFixed(2)}%`
 const markStyle = `left:${pct(mx0 - 3 - cx0, cx1 - cx0)};top:${pct(my0 - 3 - cy0, cy1 - cy0)};width:${pct(mx1 - mx0 + 6, cx1 - cx0)};height:${pct(my1 - my0 + 6, cy1 - cy0)}`
 
+const SETUP_PROMPT = [
+  `風土記（町の家計簿）の MCP サーバーを、私が使っているこの AI クライアントに追加したいです。`,
+  `- 種類: リモート MCP サーバー（Streamable HTTP）`,
+  `- URL: ${MCP}`,
+  `- 認証: 不要`,
+  ``,
+  `私が使っているクライアントを確認したうえで、その設定画面（または設定ファイル）での追加手順を、一つずつ案内してください。`,
+  `自分で設定を書き換えられる環境なら、書き換えてかまいません。`,
+  `追加できたら、「北区に住んでいます。何の予算が見れますか？」と聞いて、接続を確かめてください。`,
+].join('\n')
+
 const BODY = `${ICONS}
 <nav class="nav" aria-label="サイト"><div class="bar">
 <a href="/" aria-label="風土記 ホーム">${logo('logo')}</a>
 <div class="links"><a href="#how">しくみ</a><a href="#mcp">AI から使う</a><a href="${DOCS}">ドキュメント</a><a href="#faq">よくある質問</a></div>
-<div class="right"><a class="btn gh" href="${GITHUB}">GitHub</a></div>
+<div class="right"><a class="btn gh" href="${GITHUB}">GitHub</a><button class="btn go" type="button" data-open="setup">AI に接続</button></div>
 </div></nav>
+<dialog class="setup" id="setup" aria-labelledby="setup-h"><h2 id="setup-h">AI に貼り付けて接続する</h2>
+<p>下の文章をコピーして、お使いの AI（Claude・ChatGPT など）に貼り付けると、風土記の MCP を追加する手順を案内してくれます。</p>
+<pre id="setup-text">${SETUP_PROMPT}</pre>
+<div class="acts"><button class="btn ol" type="button" data-close>閉じる</button><button class="btn" type="button" data-copy>コピーする</button></div></dialog>
 <main>
 <header class="hero wrap">
 <p class="eyebrow">風土記 — 町の家計簿</p>
@@ -364,6 +388,7 @@ const BODY = `${ICONS}
 const SCRIPT = `const n=document.querySelector('.nav'),sp=document.querySelector('.steps'),h=document.documentElement;const s=()=>{n.toggleAttribute('data-scrolled',scrollY>24);const b=sp.getBoundingClientRect();h.toggleAttribute('data-snap',b.top<=1&&b.bottom>=innerHeight-1)};addEventListener('scroll',s,{passive:true});s();
 if('IntersectionObserver'in window){const o=new IntersectionObserver(l=>l.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');o.unobserve(e.target)}}),{threshold:.6});document.querySelectorAll('.sweep').forEach(e=>o.observe(e));
 const r=document.querySelector('.rail'),t=[...document.querySelectorAll('.rail a')],st=[...document.querySelectorAll('.step')];const p=new IntersectionObserver(l=>l.forEach(e=>{if(e.isIntersecting){const i=st.indexOf(e.target);r.style.setProperty('--at',i);t.forEach((a,j)=>j===i?a.setAttribute('aria-current','step'):a.removeAttribute('aria-current'))}}),{rootMargin:'-45% 0px -45% 0px'});st.forEach(e=>p.observe(e))}
+const dg=document.getElementById('setup');if(dg&&dg.showModal){document.querySelector('[data-open]').addEventListener('click',()=>dg.showModal());dg.querySelector('[data-close]').addEventListener('click',()=>dg.close());dg.addEventListener('click',e=>{if(e.target===dg)dg.close()});const cb=dg.querySelector('[data-copy]');cb.addEventListener('click',()=>{navigator.clipboard.writeText(document.getElementById('setup-text').textContent).then(()=>{cb.textContent='コピーしました';setTimeout(()=>{cb.textContent='コピーする'},2000)},()=>{})})}
 const rm=matchMedia('(prefers-reduced-motion: reduce)').matches,lg=document.querySelector('.ledger');if(lg&&!rm&&'IntersectionObserver'in window){const ts=[...lg.querySelectorAll('.tbl')],ro=lg.querySelector('.roll-in'),ns=[...ro.children],n=ts.length;let i=0,id=0,vis=false;const fit=()=>{ro.parentElement.style.width=ns[i].offsetWidth+'px'};fit();document.fonts&&document.fonts.ready.then(fit);
 ro.addEventListener('transitionend',()=>{if(i===n){ro.style.transition='none';i=0;ro.style.setProperty('--r',0);ro.offsetWidth;ro.style.transition=''}});
 const step=()=>{i++;ro.style.setProperty('--r',i);fit();ts.forEach((t,k)=>k===i%n?t.dataset.pos='cur':delete t.dataset.pos)};
