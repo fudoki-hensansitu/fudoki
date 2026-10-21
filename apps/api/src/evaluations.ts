@@ -5,7 +5,7 @@ import { ApiError } from './errors'
 import { IP_RATE_LIMIT } from './evaluation-limits'
 import type { Ctx, Operation } from './operations'
 
-// 事業の評価の検索（docs/prd/evaluation-search/dd.md）。AI Search が返す頁単位の chunk を、出典の所在と短い抜粋に変える。
+// 事業の評価の検索（docs/prd/evaluation-search/dd.md）。AI Search が返す頁の chunk（1頁が複数の chunk になり得る）を、頁ごとの出典の所在と短い抜粋に変える。
 // 頁の全文は返さない（両区の利用条件が無断の転載を禁じているため）。内容は利用者が出典 PDF の該当頁を取って読む。
 // operations の一覧に登録してあり、REST・OpenAPI・MCP の tool に出る。止めるときは control の evaluation_search を off にする。
 
@@ -150,10 +150,14 @@ export function searchRequest(query: string, jurisdiction: string, fiscalYear: n
 
 const collapse = (s: string) => s.replace(/\s+/g, ' ').trim()
 
-/** AI Search が1頁の PDF の先頭の chunk に足す見出し（`# <key>` から最初の `### Page 1` の行まで）を除く。値には依存しない。 */
+/**
+ * AI Search が1頁の PDF の先頭の chunk に足す見出し（`# <key>` から最初の `### Page 1` の行まで）を除く。値には依存しない。
+ * 文字の item は同じ見出しを付けて送るが、本文のある chunk は `### Page 1` の行から始まって返るので、その行も除く。
+ */
 export function stripHeader(text: string, key: string): string {
   const lines = text.split(/\r?\n/)
   const first = lines.findIndex((l) => l.trim() !== '')
+  if (first >= 0 && lines[first]!.trim() === '### Page 1') return lines.slice(first + 1).join('\n')
   if (first < 0 || lines[first]!.trim() !== `# ${key}`) return text
   const end = lines.findIndex((l, i) => i > first && l.trim() === '### Page 1')
   return end < 0 ? '' : lines.slice(end + 1).join('\n')
@@ -330,12 +334,20 @@ async function searchEvaluations(ctx: Ctx, raw: Record<string, unknown>): Promis
   const scores = chunks.map((c) => (isRecord(c) && typeof c.score === 'number' ? Math.round(c.score * 1000) / 1000 : null))
   let invalid = 0
   let empty = 0
+  let duplicate = 0
+  const seen = new Set<string>()
   for (const chunk of chunks) {
     const verified = verify(chunk, jurisdiction, fiscalYear, documents)
     if (!verified) {
       invalid++
       continue
     }
+    // 1頁が複数の chunk に分かれるので、同じ頁は順位の高い chunk だけを候補にする
+    if (seen.has(verified.key)) {
+      duplicate++
+      continue
+    }
+    seen.add(verified.key)
     const { text } = chunk as { text: string }
     const body = collapse(stripHeader(text, verified.key))
     if (!body) {
@@ -351,7 +363,7 @@ async function searchEvaluations(ctx: Ctx, raw: Record<string, unknown>): Promis
       excerpt: makeExcerpt(body, query),
     })
   }
-  const base = { chunks: chunks.length, candidates: candidates.length, dropped_invalid: invalid, dropped_empty: empty, scores, ms: Date.now() - started }
+  const base = { chunks: chunks.length, candidates: candidates.length, dropped_invalid: invalid, dropped_empty: empty, dropped_duplicate: duplicate, scores, ms: Date.now() - started }
   if (chunks.length > 0 && invalid === chunks.length) {
     log({ status: 'index_mismatch', ...base })
     throw unavailable('評価の検索の結果を出典と照合できませんでした。0件ではありません')

@@ -339,6 +339,21 @@ describe('照合', () => {
     expect(line).toMatchObject({ chunks: 14, candidates: 2, dropped_invalid: 12, dropped_empty: 0 })
   })
 
+  test('同じ頁の chunk は順位の高い1つだけを候補にし、順位を詰める', async () => {
+    searchImpl = async () => ({
+      chunks: [
+        chunk(70, `${QUERY} の頁の前半`),
+        chunk(3, '別の頁'),
+        chunk(70, '同じ頁の後半', { text: '同じ頁の後半' }),
+        chunk(8, '三つ目の頁'),
+      ],
+    })
+    const out = await (await post(valid)).json()
+    expect(out.candidates.map((c: { rank: number; page: number }) => [c.rank, c.page])).toEqual([[1, 70], [2, 3], [3, 8]])
+    expect(out.candidates[0].excerpt).toContain('頁の前半')
+    expect(JSON.parse(dropped('"status":"candidates"')[0]!)).toMatchObject({ chunks: 4, candidates: 3, dropped_duplicate: 1 })
+  })
+
   test('chunk を返したのに全件が通らなければ 503（no_candidates にしない）', async () => {
     searchImpl = async () => ({ chunks: [chunk(70, 'x', { key: key(KITA, 71) }), chunk(109, '範囲外')] })
     const res = await post(valid)
@@ -371,6 +386,9 @@ describe('登録の形と key', () => {
     const verified = verify(md(70), KITA_CODE, 2025, [doc('md')])
     expect(verified).toMatchObject({ page: 70, key: key(KITA, 70).replace(/\.pdf$/, '.md') })
     expect(stripHeader('抜き出した文字', verified!.key)).toBe('抜き出した文字')
+    // 見出しを付けて送った md は、本文のある chunk が ### Page 1 から、文字の無い頁は見出しだけで返る
+    expect(stripHeader('### Page 1\n抜き出した文字', verified!.key)).toBe('抜き出した文字')
+    expect(stripHeader(`# ${verified!.key}\n## Contents\n### Page 1`, verified!.key)).toBe('')
   })
 
   test('登録の形と違う拡張子の key は捨てる（どちらの形でも通す照合にしない）', () => {

@@ -124,6 +124,12 @@ class PlanTest(unittest.TestCase):
         self.assertTrue(all(i['key'].endswith('.md') for i in plan.plan_items(origin, 3, 'md')))
         pdf = plan.fingerprint(CONFIG, plan.plan_items(origin, 3))
         self.assertNotEqual(pdf, plan.fingerprint(declared, plan.plan_items(origin, 3, 'md'), 'md'))
+        # 本文を NFKC にそろえる宣言でも指紋が変わり、md でない出典には宣言できない
+        md = plan.plan_items(origin, 3, 'md')
+        self.assertNotEqual(plan.fingerprint(declared, md, 'md'), plan.fingerprint(declared, md, 'md', nfkc=True))
+        self.assertTrue(plan.normalizes_text({**declared, 'nfkc_origins': [A]}, origin))
+        with self.assertRaises(ValueError):
+            plan.normalizes_text({**CONFIG, 'nfkc_origins': [A]}, origin)
         # 形だけが違っても指紋が変わる
         self.assertNotEqual(plan.fingerprint(declared, plan.plan_items(origin, 3), 'pdf'),
                             plan.fingerprint(declared, plan.plan_items(origin, 3), 'md'))
@@ -133,6 +139,7 @@ class PlanTest(unittest.TestCase):
         items = plan.plan_items(origin, 3)
         base = plan.fingerprint(CONFIG, items)
         self.assertEqual(base, plan.fingerprint({**CONFIG, 'text_origins': [B]}, items))
+        self.assertEqual(base, plan.fingerprint({**CONFIG, 'text_origins': [B], 'nfkc_origins': [B]}, items))
         # 宣言を足す前から使われている指紋の作り方（config と items だけ）と同じ
         legacy = json.dumps({'config': CONFIG, 'items': items}, ensure_ascii=False, sort_keys=True, separators=(',', ':'))
         import hashlib
