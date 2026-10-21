@@ -43,7 +43,7 @@ test('a PDF whose header follows leading bytes is still accepted', async () => {
 })
 
 test('a declared CSV whose body is an error response is not saved', async () => {
-  for (const body of ['{"error":"not found"}', '[{"error":"not found"}]', '<?xml version="1.0"?><error/>']) {
+  for (const body of ['{"error":"not found"}', '[{"error":"not found"}]', '<?xml version="1.0"?><error/>', '\uFEFF{"error":"not found"}']) {
     const fake = store([], { [csv.download_url]: new TextEncoder().encode(body) })
     await expect(archiveSelected(withFiles([{ ...csv, sha256: hash(new TextEncoder().encode(body)) }]), fake.api)).rejects.toThrow('is not a CSV')
     expect(fake.keys.size).toBe(0)

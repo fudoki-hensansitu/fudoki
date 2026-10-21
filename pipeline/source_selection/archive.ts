@@ -10,7 +10,9 @@ const digest = (body: Uint8Array) => createHash('sha256').update(body).digest('h
 
 /** 取得したバイト列が宣言した形式か。出典の URL が失効した跡地は、404 ではなく「見つかりませんでした」とリニューアルの案内を HTML で 200 に返すことがある（2026-10-20 の品川区）。 */
 export function matchesDeclaredFormat(body: Uint8Array, format: 'csv' | 'pdf'): boolean {
-  const head = new TextDecoder('latin1').decode(body.subarray(0, 1024)).replace(/^\uFEFF/, '').trimStart().toLowerCase()
+  // UTF-8 の BOM は latin1 では "ï»¿" になるので、文字ではなくバイトで飛ばす
+  const start = body[0] === 0xef && body[1] === 0xbb && body[2] === 0xbf ? 3 : 0
+  const head = new TextDecoder('latin1').decode(body.subarray(start, start + 1024)).trimStart().toLowerCase()
   // PDF のヘッダは先頭 1024 バイト以内にあればよい（先頭に余分なバイトを持つ PDF がある）
   if (format === 'pdf') return head.includes('%pdf-')
   // CSV の宣言で HTML・XML・JSON の本文を保存しない（跡地やエラーの応答）
