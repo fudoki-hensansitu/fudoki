@@ -4,10 +4,12 @@ import { archiveGroup, archiveSelected, evaluationKind, isMissingR2ObjectError, 
 import { evaluationSelectionsSchema, sourceSelectionsSchema, type EvaluationSelection, type SourceFile, type SourceSelection } from './schema'
 import { evaluationObjectKey, originObjectKey } from './storage'
 
-const body = new TextEncoder().encode('名称,金額\n事業,100\n')
-const secondBody = new TextEncoder().encode('second part')
+const pdfBody = (text: string) => new TextEncoder().encode(`%PDF-1.7\n${text}\n`)
+const body = pdfBody('first original')
+const csvBody = new TextEncoder().encode('名称,金額\n事業,100\n')
+const secondBody = pdfBody('second part')
 const hash = (value: Uint8Array) => createHash('sha256').update(value).digest('hex')
-const csv: SourceFile = { scope: [{ account: '一般会計', direction: 'expenditure' }], download_url: 'https://example.com/budget.csv', format: 'csv', sha256: hash(body) }
+const csv: SourceFile = { scope: [{ account: '一般会計', direction: 'expenditure' }], download_url: 'https://example.com/budget.csv', format: 'csv', sha256: hash(csvBody) }
 const pdf: SourceFile = { download_url: 'https://example.com/first.pdf', format: 'pdf', pdf_type: 'text', sha256: hash(body), scope: [{ account: '一般会計', direction: 'expenditure', pages: [{ start: 1, end: 3 }] }] }
 const second: SourceFile = { ...pdf, download_url: 'https://example.com/second.pdf', sha256: hash(secondBody) }
 const selection: SourceSelection = { target: { jurisdiction: '132047', fiscal_year: 2024, document_kind: 'initial' }, candidates: [{ id: 'one', title: '令和6年度予算', landing_url: 'https://example.com/budget', inspected_at: '2026-10-07T00:00:00Z', files: [csv] }], selected_candidate_id: 'one', archive: null, reason: '必要な名称・金額を持つ資料' }
@@ -17,13 +19,21 @@ function transport(previous: string[] = []) {
   const removed: string[] = []
   const downloads: string[] = []
   const api: ArchiveTransport = {
-    async download(url) { downloads.push(url); return { body: url.includes('second') ? secondBody : body, final_url: url } },
+    async download(url) { downloads.push(url); return { body: url.endsWith('.csv') ? csvBody : url.includes('second') ? secondBody : body, final_url: url } },
     async put(key, body, contentType) { uploads.push({ key, body, contentType }) },
     async list() { return previous },
     async remove(key) { removed.push(key) },
   }
   return { api, uploads, removed, downloads }
 }
+
+test('a downloaded notice page that is not the declared format stops before any upload', async () => {
+  const notice = new TextEncoder().encode('<!DOCTYPE html><html lang="ja"><body>指定されたページは見つかりませんでした</body></html>')
+  const fake = transport()
+  await expect(archiveSelected(withFiles([{ ...pdf, sha256: hash(notice) }]),
+    { ...fake.api, async download(url) { return { body: notice, final_url: url } } })).rejects.toThrow('is not a PDF')
+  expect(fake.uploads).toHaveLength(0)
+})
 
 test('missing-object cleanup ignores only genuine key-not-found errors', () => {
   for (const error of ['[10007] The specified key does not exist.', 'HTTP status 404', 'NoSuchKey']) expect(isMissingR2ObjectError(error)).toBe(true)
@@ -92,8 +102,8 @@ test('conflicting identities and metadata outside the slot stop before any trans
 })
 
 function additiveReplacement() {
-  const thirdBody = new TextEncoder().encode('third retained part')
-  const newBody = new TextEncoder().encode('new text PDF')
+  const thirdBody = pdfBody('third retained part')
+  const newBody = pdfBody('new text PDF')
   const third: SourceFile = { ...pdf, download_url: 'https://example.com/third.pdf', sha256: hash(thirdBody) }
   const added: SourceFile = { ...pdf, download_url: 'https://example.com/new.pdf', sha256: hash(newBody) }
   const original = withFiles([pdf, second, third])
@@ -106,7 +116,7 @@ function additiveReplacement() {
 
 test('additive replacement retains three exact keys and bytes and puts only the fourth original', async () => {
   const { previous, replacement, newBody, added } = additiveReplacement()
-  const oldObjects = new Map<string, Uint8Array>(previous.archive!.files.map((item, i) => [item.key, [body, secondBody, new TextEncoder().encode('third retained part')][i]!]))
+  const oldObjects = new Map<string, Uint8Array>(previous.archive!.files.map((item, i) => [item.key, [body, secondBody, pdfBody('third retained part')][i]!]))
   const oldBytes = structuredClone(oldObjects)
   const fake = transport([...oldObjects.keys()])
   const result = (await archiveGroup([replacement], { ...fake.api,
@@ -223,7 +233,7 @@ test('archiving evaluation originals does not list or delete settlement keys', a
 })
 
 test('evaluation replacement keeps the saved keys and puts only the new original at the next part number', async () => {
-  const added = new TextEncoder().encode('added evaluation')
+  const added = pdfBody('added evaluation')
   const prefix = 'fiscal/source-selection/132047/2024/evaluation-settlement'
   const saved = [evaluationFile(body, 'results'), evaluationFile(secondBody, 'second')]
   const previous = { ...evaluation(saved), archive: { bucket: 'fudoki-inputs' as const, candidate_id: 'results', archived_at: '2026-10-14T00:00:00Z',
