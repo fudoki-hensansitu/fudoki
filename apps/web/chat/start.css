@@ -14,9 +14,12 @@
   #chat-start * { border-color: var(--border); }
 }
 
-/* 入力は画面の下に固定する（スクロールしても付いてくる）。大きな1行の pill（composer.tsx の pill）。JS が島を描くまでの仮の枠も同じ大きさにして、描いた瞬間に頁がずれないようにする */
-#chat-start.ask { width: min(calc(100% - 32px), 760px); }
+/* 入力は最初は hero の元の位置に置き、スクロールして画面の上に出たら画面の下に固定する（start.tsx が data-docked を付ける）。
+   固定の間も元の位置の高さは空けておき、戻したときに頁がずれないようにする。JS が島を描くまでの仮の枠も同じ大きさにして、描いた瞬間に頁がずれないようにする */
+#chat-start.ask { width: min(100%, 760px); min-height: 72px; }
+#chat-start[data-docked] > .ask-dock { position: fixed; left: 50%; bottom: 16px; z-index: 50; width: min(calc(100% - 32px), 760px); transform: translateX(-50%); }
 #chat-start .ask-box { display: flex; align-items: center; min-height: 0; height: 72px; padding: 0 28px; border-radius: 999px; background: var(--background); box-shadow: var(--shadow-pill); }
 @media (max-width: 639px) {
+  #chat-start.ask { min-height: 56px; }
   #chat-start .ask-box { height: 56px; padding: 0 20px; }
 }

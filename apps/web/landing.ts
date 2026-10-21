@@ -112,8 +112,8 @@ code{font:13px/1.6 var(--font-mono);letter-spacing:0;overflow-wrap:anywhere}
 .hero h1{font-size:clamp(2.5rem,1.4rem + 4.4vw,5.5rem);line-height:1.18;max-width:11em}
 .hero .sub{max-width:34em;font-size:17px;line-height:1.9}
 .acts{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
-.ask{position:fixed;left:50%;bottom:16px;z-index:50;width:min(calc(100% - 32px),760px);transform:translateX(-50%);text-align:left}
-body{padding-bottom:112px}
+.ask{width:min(100%,640px);text-align:left}
+body.ask-docked{padding-bottom:112px}
 .ask-box{min-height:120px;padding:14px 16px;border:1px solid var(--border);border-radius:var(--radius-card);background:var(--card)}
 .ledger-stage{position:relative;margin-top:64px;height:620px;overflow:hidden;border-radius:var(--radius)}
 .ledger-stage .art{inset:0}
