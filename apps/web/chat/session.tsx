@@ -10,6 +10,7 @@ import { Marker, MarkerContent, MarkerIcon } from '@/components/ui/marker'
 import { Message, MessageContent } from '@/components/ui/message'
 import { Spinner } from '@/components/ui/spinner'
 import { Composer } from './composer'
+import { forServer } from './history'
 import { Markdown } from './markdown'
 import { loadSession, saveSession, type StoredSession } from './store'
 import { ViewFrame } from './view-frame'
@@ -26,21 +27,6 @@ const TOOL_LABELS: Record<string, string> = {
   list_jurisdictions: '収録している団体を確認',
   search_evaluations: '事業の評価を検索',
   render_expenditure_view: '表とグラフを用意',
-}
-
-/** 送る履歴から View 用の structuredContent と _meta を外す。AI は text しか読まないので、body を小さくする */
-function forServer(messages: ChatMessage[]) {
-  return messages.map((m) => ({
-    id: m.id,
-    role: m.role,
-    parts: m.parts
-      .filter((p) => p.type === 'text' || p.type === 'step-start' || p.type === 'dynamic-tool')
-      .map((p) => {
-        if (p.type !== 'dynamic-tool' || p.state !== 'output-available') return p
-        const out = p.output as { content?: unknown; isError?: boolean } | undefined
-        return { ...p, output: { content: out?.content ?? [], ...(out?.isError ? { isError: true } : {}) } }
-      }),
-  }))
 }
 
 function ToolMarker({ part }: { part: DynamicToolUIPart }) {
