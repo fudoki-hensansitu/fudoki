@@ -3,7 +3,7 @@ import { createReadStream } from 'node:fs'
 import { resolve } from 'node:path'
 import { sourceSelectionsSchema, targetKey, type SourceSelection } from '../source_selection/schema'
 
-/** 選定・保存済みの資料と、呼び出し側が用意したローカル原典を対応付ける。 */
+/** 選定・保存済みの資料と、呼び出し側が用意したローカル出典を対応付ける。 */
 export async function prepareIngestion(selection: SourceSelection, localFiles: ReadonlyMap<string, string>) {
   const checked = sourceSelectionsSchema.parse([selection])[0]!
   if (checked.selected_candidate_id === null || checked.archive === null) {
