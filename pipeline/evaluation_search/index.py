@@ -328,8 +328,10 @@ def apply(instance: dict, plans: list[OriginPlan], strays: list[dict], workers: 
     planned = {p.origin.sha256 for p in plans}
     instance['registrations'] = [r for r in instance['registrations'] if r['origin_sha256'] in planned]
     for p in plans:
-        if p.dirty:
-            drop_record(instance, p.origin)  # 書く前に記録を消す。確認できるまで catalog に載せない
+        # 書く前に記録を消し、確認できるまで catalog に載せない。指紋が今の計画と違う記録は catalog に載らないので消さない。
+        # 送信が途中で失敗しても、次の実行が前の計画（NFKC の宣言など）を記録から判断できる。確認できたら置き換える
+        if p.dirty and p.recorded:
+            drop_record(instance, p.origin)
     # 削除は続けると 429・timeout になる。失敗しても止めずに登録へ進む。消し残した item は確認で「余分」になり、
     # その出典の記録を書かないので catalog に載らない。次の実行で消し直す
     failed = 0
@@ -428,9 +430,10 @@ def wait_and_confirm(instance: dict, plans: list[OriginPlan], timeout_minutes: i
         if not results[p.origin.sha256] and not extra and not readable(name, p, indexed):
             results[p.origin.sha256] = 'unreadable'
         if results[p.origin.sha256] or extra:
-            log(f'{p.origin.sha256[:12]}: 確認できない（{results[p.origin.sha256] or "extra"}, 余分{len(extra)}）。記録は消したまま')
+            log(f'{p.origin.sha256[:12]}: 確認できない（{results[p.origin.sha256] or "extra"}, 余分{len(extra)}）。記録は書かない')
             ok = False
             continue
+        instance['registrations'] = [r for r in instance['registrations'] if r['origin_sha256'] != p.origin.sha256]
         instance['registrations'].append({
             'origin_sha256': p.origin.sha256, 'page_count': p.page_count, 'plan_fingerprint': p.fingerprint,
             'confirmed_at': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
