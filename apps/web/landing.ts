@@ -119,7 +119,7 @@ dialog.setup .btn{cursor:pointer}
 .hero .sub{max-width:34em;font-size:17px;line-height:1.9}
 .acts{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
 .ask{width:min(100%,640px);text-align:left}
-body.ask-docked{padding-bottom:112px}
+body.ask-docked{padding-bottom:144px}
 .ask-box{min-height:120px;padding:14px 16px;border:1px solid var(--border);border-radius:var(--radius-card);background:var(--card)}
 .ledger-stage{position:relative;margin-top:64px;height:620px;overflow:hidden;border-radius:var(--radius)}
 .ledger-stage .art{inset:0}
