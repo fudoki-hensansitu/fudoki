@@ -147,8 +147,7 @@ class PlanTest(unittest.TestCase):
 
     def test_committed_records_keep_their_fingerprints(self):
         instance = plan.load_instance()
-        text = set(instance['config']['text_origins'])
-        origins = [o for o in plan.load_origins() if o.sha256 not in text]
+        origins = plan.load_origins()
         self.assertTrue(origins)
         self.assertTrue(all(plan.registration_is_current(instance, o) for o in origins if plan.registration(instance, o)))
 

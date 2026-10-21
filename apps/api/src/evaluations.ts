@@ -342,18 +342,18 @@ async function searchEvaluations(ctx: Ctx, raw: Record<string, unknown>): Promis
       invalid++
       continue
     }
-    // 1頁が複数の chunk に分かれるので、同じ頁は順位の高い chunk だけを候補にする
-    if (seen.has(verified.key)) {
-      duplicate++
-      continue
-    }
-    seen.add(verified.key)
     const { text } = chunk as { text: string }
     const body = collapse(stripHeader(text, verified.key))
     if (!body) {
       empty++
       continue
     }
+    // 1頁が複数の chunk に分かれるので、同じ頁は本文のある chunk のうち順位の高い1つだけを候補にする
+    if (seen.has(verified.key)) {
+      duplicate++
+      continue
+    }
+    seen.add(verified.key)
     candidates.push({
       rank: candidates.length + 1,
       origin_sha256: verified.document.origin_sha256,

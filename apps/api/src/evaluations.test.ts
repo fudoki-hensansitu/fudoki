@@ -354,6 +354,12 @@ describe('照合', () => {
     expect(JSON.parse(dropped('"status":"candidates"')[0]!)).toMatchObject({ chunks: 4, candidates: 3, dropped_duplicate: 1 })
   })
 
+  test('見出しだけの chunk が先に来ても、同じ頁の本文の chunk が候補に残る', async () => {
+    searchImpl = async () => ({ chunks: [chunk(70, ''), chunk(70, '同じ頁の本文', { text: '同じ頁の本文' })] })
+    const out = await (await post(valid)).json()
+    expect(out.candidates.map((c: { page: number; excerpt: string }) => [c.page, c.excerpt])).toEqual([[70, '同じ頁の本文']])
+  })
+
   test('chunk を返したのに全件が通らなければ 503（no_candidates にしない）', async () => {
     searchImpl = async () => ({ chunks: [chunk(70, 'x', { key: key(KITA, 71) }), chunk(109, '範囲外')] })
     const res = await post(valid)
