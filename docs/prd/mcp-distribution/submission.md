@@ -1,6 +1,6 @@
 # 公開提出の準備
 
-状態: Claudeは2026-10-16にMCP connector（slug `fudoki`、認証なし、6 tool）とPlugin bundle（`wwwyo/fudoki` の `plugins/fudoki`、main を追跡、push webhook は未設定）を審査に提出した。OpenAIは発行者の本人確認（Individual）が審査中で、承認後にZIPを提出する。録画URLは#197より前のUIの記録。仕様確認日: 2026-10-14。
+状態: Claudeは2026-10-16にMCP connector（slug `fudoki`、認証なし、6 tool）とPlugin bundle（`wwwyo/fudoki` の `plugins/fudoki`、main を追跡、push webhook は未設定）を審査に提出した。OpenAIは2026-10-21に発行者の本人確認（Individual）が通り、ドメイン確認（`api.fudoki.dev/.well-known/openai-apps-challenge`）を済ませてZIPを提出し、In reviewになった。提出画面はpositive 5件・negative 3件ちょうどを求める。提出時にカテゴリの確認とMCP checksのnon-blockingの警告が出ており、未対応。録画URLは#197より前のUIの記録。仕様確認日: 2026-10-14。
 
 ## 掲載する内容
 
