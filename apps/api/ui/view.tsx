@@ -386,12 +386,13 @@ function View({ bridge }: { bridge: Bridge }) {
   const entry = state.entry
   // 最初の結果は AI 自身が受け取っているので、利用者が画面で動かしたあとだけ伝える
   const moved = useRef(false)
-  // 利用者が「全画面で開く」を押したか。PDF や明細の切り替えで勝手にインラインへ戻さない
-  const manualFullscreen = useRef(false)
+  // PDF を出すために View が自分で全画面にしたか。そのときだけ、閉じる・明細が替わるとインラインへ戻す。
+  // 利用者が開いたパネルは、中で画面が移っても開いたままにする
+  const autoFullscreen = useRef(false)
   const inline = state.fullscreen.available && !state.fullscreen.active
   const fold = inline ? INLINE_FOLD : FOLD
   useEffect(() => {
-    if (!state.fullscreen.active) manualFullscreen.current = false
+    if (!state.fullscreen.active) autoFullscreen.current = false
   }, [state.fullscreen.active])
   useEffect(() => {
     if (entry && 'nodes' in entry.data && autoOpens(entry.data.nodes, entry.data.next_page_token)) {
@@ -399,27 +400,30 @@ function View({ bridge }: { bridge: Bridge }) {
       void bridge.call('get_expenditure_node', { document_kind: n.document_kind, node_id: n.node_id }, 'reset', n)
     }
     setPdf(undefined)
-    if (!manualFullscreen.current) bridge.setFullscreen(false)
+    if (autoFullscreen.current) foldBack()
     if (entry && moved.current) bridge.tellModel(describe(entry.data, state.names))
     if (entry) moved.current = true
   }, [entry?.revision])
+  function foldBack() {
+    autoFullscreen.current = false
+    bridge.setFullscreen(false)
+  }
   function showPdf(selection: PdfSelection) {
     setPdf(selection)
+    if (inline) autoFullscreen.current = true
     bridge.setFullscreen(true)
     bridge.tellModel(`風土記の View で出典「${selection.origin.title}」の${selection.selectedPage}ページを表示中。`)
   }
   function closePdf() {
     const trigger = pdf?.trigger
     setPdf(undefined)
-    if (!manualFullscreen.current) bridge.setFullscreen(false)
+    if (autoFullscreen.current) foldBack()
     // 文脈は最後の1件で上書きされるので、PDF を閉じたら明細を見ている状態に戻す
     if (entry) bridge.tellModel(describe(entry.data, state.names))
     queueMicrotask(() => { if (trigger?.isConnected) trigger.focus() })
   }
   const expand = () => {
-    if (!inline) return
-    manualFullscreen.current = true
-    bridge.setFullscreen(true)
+    if (inline) bridge.setFullscreen(true)
   }
   // fold が変わったら（全画面の出入り）件数を数え直すため、結果の key に fold を含めて作り直す
   const previous = state.history.at(-1)

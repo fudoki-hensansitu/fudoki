@@ -1,6 +1,7 @@
 // fudoki.dev の入口の1枚。視覚の規範は repo root の DESIGN.md、ロゴは public/logo.svg・favicon は public/favicon.svg の写し（Worker は assets を持たないので inline にする）
 // 見出しの明朝は /fonts/mincho.woff2（この頁で使う字だけの subset）。文言を変えたら `bun run --cwd apps/web build:font` で作り直す
 import { HOME } from './home-data'
+import { LOGO_G } from './logo'
 
 const MCP = 'https://api.fudoki.dev/mcp'
 const DOCS = 'https://docs.fudoki.dev'
@@ -16,7 +17,6 @@ const oku = (n: number) => {
 }
 const icon = (id: string) => `<svg class="i" aria-hidden="true"><use href="#${id}"/></svg>`
 
-const LOGO_G = `<g fill="currentColor"><g transform="translate(0 0) scale(1.25)"><rect x="2.00000000" y="14.00000000" width="4.00000000" height="14.00000000" rx="2.00000000"/><rect x="8.00000000" y="6.00000000" width="4.00000000" height="22.00000000" rx="2.00000000"/><rect x="14.00000000" y="18.00000000" width="4.00000000" height="10.00000000" rx="2.00000000"/><rect x="20.00000000" y="2.00000000" width="4.00000000" height="26.00000000" rx="2.00000000"/><rect x="26.00000000" y="11.00000000" width="4.00000000" height="17.00000000" rx="2.00000000"/><rect x="2.00000000" y="29.00000000" width="28.00000000" height="2.00000000" rx="1.00000000" fill="currentColor"/></g><path transform="translate(45.0775 33.5854) scale(0.03250 -0.03250)" d="M111 -71Q92 -55 63.0 -39.5Q34 -24 13 -15Q46 30 69.0 76.5Q92 123 106.5 178.5Q121 234 127.5 306.0Q134 378 134 472Q134 585 130.5 673.5Q127 762 123 811H843Q839 765 835.0 671.5Q831 578 831 449Q831 308 846.0 224.5Q861 141 886 100Q894 119 901.0 141.5Q908 164 913 184Q929 173 956.5 159.0Q984 145 999 139Q989 90 973.0 39.5Q957 -11 936 -46Q921 -71 893.5 -74.0Q866 -77 840 -48Q720 91 720 449Q720 509 720.5 565.0Q721 621 721.0 660.5Q721 700 721 711H237Q237 696 237.5 666.0Q238 636 238.5 599.5Q239 563 239.0 527.0Q239 491 239 464Q239 359 231.0 279.0Q223 199 207.5 137.0Q192 75 168.0 25.0Q144 -25 111 -71ZM684 -55Q668 -15 644 30Q606 22 552.5 12.5Q499 3 441.5 -5.5Q384 -14 334.0 -21.5Q284 -29 254 -32L227 72Q259 74 315.5 80.0Q372 86 434 93V218H279V500H434V554Q394 550 357.0 547.5Q320 545 290 543Q289 556 284.0 574.5Q279 593 273.5 610.5Q268 628 263 637Q307 638 359.5 642.5Q412 647 464.0 653.5Q516 660 560.5 669.0Q605 678 635 688L696 601Q662 591 619.0 582.5Q576 574 530 566V500H684V218H530V105Q548 107 564.5 110.0Q581 113 596 115Q588 128 579.5 139.5Q571 151 563 161L653 206Q674 179 698.5 140.0Q723 101 744.0 61.5Q765 22 777 -9Q758 -15 730.0 -29.0Q702 -43 684 -55ZM373 309H434V409H373ZM530 309H590V409H530Z"/><path transform="translate(79.5825 33.5854) scale(0.03250 -0.03250)" d="M45 -32V81H436V427H110V539H436V818H564V539H895V427H564V81H960V-32Z"/><path transform="translate(112.6250 33.5854) scale(0.03250 -0.03250)" d="M617 -55Q555 -55 529.5 -36.0Q504 -17 504 28V500H792V700H495V805H914V391H626V88Q626 73 633.5 66.5Q641 60 664 60H781Q808 60 823.0 70.0Q838 80 845.0 105.5Q852 131 856 177Q869 170 890.0 161.5Q911 153 933.5 146.0Q956 139 972 135Q961 56 943.5 15.0Q926 -26 896.0 -40.5Q866 -55 815 -55ZM92 -55V237H416V-55ZM51 570V661H451V570ZM99 710V804H407V710ZM99 288V380H407V288ZM99 429V521H407V429ZM199 36H309V145H199Z"/></g>`
 const logo = (cls: string) => `<svg class="${cls}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 146.2150 40" role="img" aria-label="風土記"><title>風土記</title>${LOGO_G}</svg>`
 
 const { nakano, ledgers, origin, library } = HOME
@@ -89,8 +89,15 @@ code{font:13px/1.6 var(--font-mono);letter-spacing:0;overflow-wrap:anywhere}
 .right .btn{height:36px;padding:0 14px;font-size:14px;font-weight:400}
 .right .gh{border-color:var(--border);background:var(--background);color:var(--foreground)}
 .right .gh:hover{background:var(--card)}
-.right .go{background:var(--card);color:var(--foreground)}
+.right .go{background:var(--card);color:var(--foreground);cursor:pointer}
 .nav[data-scrolled] .go{background:var(--primary);color:var(--primary-foreground)}
+dialog.setup{width:min(560px,calc(100% - 32px));padding:24px;border:.5px solid var(--border);border-radius:var(--radius-lg,16px);background:var(--background);color:var(--foreground)}
+dialog.setup::backdrop{background:color-mix(in srgb,var(--foreground) 40%,transparent)}
+dialog.setup h2{font-size:20px}
+dialog.setup p{margin-top:8px;font-size:14px;color:var(--muted-foreground)}
+dialog.setup pre{margin:16px 0;padding:14px;max-height:40svh;overflow:auto;border-radius:var(--radius-sm);background:var(--card);font:13px/1.7 var(--font-mono);letter-spacing:0;white-space:pre-wrap;overflow-wrap:anywhere}
+dialog.setup .acts{display:flex;gap:8px;justify-content:flex-end}
+dialog.setup .btn{cursor:pointer}
 
 .art{position:absolute;overflow:hidden}
 .art::after{content:"";position:absolute;inset:0;background:var(--noise);opacity:var(--grain);mix-blend-mode:multiply;pointer-events:none}
@@ -213,7 +220,7 @@ footer{padding-top:96px}
 .sweep{background:linear-gradient(90deg,var(--foreground) 0 33.33%,var(--kincha) 40%,var(--shu) 46%,var(--sakura) 52%,var(--ai) 58%,var(--foreground) 66.67%) 0 0/300% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 
 @media (max-width:960px){
-.links,.right .gh{display:none}
+.links{display:none}
 .right{margin-left:auto}
 .steps,.mcp,.faq{grid-template-columns:minmax(0,1fr)}
 .rail{display:none}
@@ -242,6 +249,7 @@ footer{padding-top:96px}
 }
 @media (min-width:961px){:root{--gut:max(56px,calc((100% - 1200px) / 2))}html[data-snap]{scroll-snap-type:y mandatory}#mcp{scroll-snap-align:start}.ledger-stage{scroll-snap-align:end}}
 @media (prefers-reduced-motion:no-preference){
+html{scroll-behavior:smooth}
 .sweep.in{animation:sweep 1.4s var(--ease-sweep) both}
 @keyframes sweep{from{background-position:100% 0}to{background-position:0 0}}
 }
@@ -279,12 +287,27 @@ const [mx0, my0, mx1, my1] = origin.mark
 const pct = (v: number, w: number) => `${((v / w) * 100).toFixed(2)}%`
 const markStyle = `left:${pct(mx0 - 3 - cx0, cx1 - cx0)};top:${pct(my0 - 3 - cy0, cy1 - cy0)};width:${pct(mx1 - mx0 + 6, cx1 - cx0)};height:${pct(my1 - my0 + 6, cy1 - cy0)}`
 
+const SETUP_PROMPT = [
+  `風土記（町の家計簿）の MCP サーバーを、私が使っているこの AI クライアントに追加したいです。`,
+  `- 種類: リモート MCP サーバー（Streamable HTTP）`,
+  `- URL: ${MCP}`,
+  `- 認証: 不要`,
+  ``,
+  `私が使っているクライアントを確認したうえで、その設定画面（または設定ファイル）での追加手順を、一つずつ案内してください。`,
+  `自分で設定を書き換えられる環境なら、書き換えてかまいません。`,
+  `追加できたら、「北区に住んでいます。何の予算が見れますか？」と聞いて、接続を確かめてください。`,
+].join('\n')
+
 const BODY = `${ICONS}
 <nav class="nav" aria-label="サイト"><div class="bar">
 <a href="/" aria-label="風土記 ホーム">${logo('logo')}</a>
 <div class="links"><a href="#how">しくみ</a><a href="#mcp">AI から使う</a><a href="${DOCS}">ドキュメント</a><a href="#faq">よくある質問</a></div>
-<div class="right"><a class="btn gh" href="${GITHUB}">GitHub</a><a class="btn go" href="#mcp">AI に接続</a></div>
+<div class="right"><a class="btn gh" href="${GITHUB}">GitHub</a><button class="btn go" type="button" data-open="setup">AI に接続</button></div>
 </div></nav>
+<dialog class="setup" id="setup" aria-labelledby="setup-h"><h2 id="setup-h">AI に貼り付けて接続する</h2>
+<p>下の文章をコピーして、お使いの AI（Claude・ChatGPT など）に貼り付けると、風土記の MCP を追加する手順を案内してくれます。</p>
+<pre id="setup-text">${SETUP_PROMPT}</pre>
+<div class="acts"><button class="btn ol" type="button" data-close>閉じる</button><button class="btn" type="button" data-copy>コピーする</button></div></dialog>
 <main>
 <header class="hero wrap">
 <p class="eyebrow">風土記 — 町の家計簿</p>
@@ -364,6 +387,7 @@ const BODY = `${ICONS}
 const SCRIPT = `const n=document.querySelector('.nav'),sp=document.querySelector('.steps'),h=document.documentElement;const s=()=>{n.toggleAttribute('data-scrolled',scrollY>24);const b=sp.getBoundingClientRect();h.toggleAttribute('data-snap',b.top<=1&&b.bottom>=innerHeight-1)};addEventListener('scroll',s,{passive:true});s();
 if('IntersectionObserver'in window){const o=new IntersectionObserver(l=>l.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');o.unobserve(e.target)}}),{threshold:.6});document.querySelectorAll('.sweep').forEach(e=>o.observe(e));
 const r=document.querySelector('.rail'),t=[...document.querySelectorAll('.rail a')],st=[...document.querySelectorAll('.step')];const p=new IntersectionObserver(l=>l.forEach(e=>{if(e.isIntersecting){const i=st.indexOf(e.target);r.style.setProperty('--at',i);t.forEach((a,j)=>j===i?a.setAttribute('aria-current','step'):a.removeAttribute('aria-current'))}}),{rootMargin:'-45% 0px -45% 0px'});st.forEach(e=>p.observe(e))}
+const dg=document.getElementById('setup');if(dg&&dg.showModal){document.querySelector('[data-open]').addEventListener('click',()=>dg.showModal());dg.querySelector('[data-close]').addEventListener('click',()=>dg.close());dg.addEventListener('click',e=>{if(e.target===dg)dg.close()});const cb=dg.querySelector('[data-copy]');cb.addEventListener('click',()=>{const done=t=>{cb.textContent=t;setTimeout(()=>{cb.textContent='コピーする'},2000)};Promise.resolve().then(()=>navigator.clipboard.writeText(document.getElementById('setup-text').textContent)).then(()=>done('コピーしました'),()=>done('コピーできませんでした'))})}
 const rm=matchMedia('(prefers-reduced-motion: reduce)').matches,lg=document.querySelector('.ledger');if(lg&&!rm&&'IntersectionObserver'in window){const ts=[...lg.querySelectorAll('.tbl')],ro=lg.querySelector('.roll-in'),ns=[...ro.children],n=ts.length;let i=0,id=0,vis=false;const fit=()=>{ro.parentElement.style.width=ns[i].offsetWidth+'px'};fit();document.fonts&&document.fonts.ready.then(fit);
 ro.addEventListener('transitionend',()=>{if(i===n){ro.style.transition='none';i=0;ro.style.setProperty('--r',0);ro.offsetWidth;ro.style.transition=''}});
 const step=()=>{i++;ro.style.setProperty('--r',i);fit();ts.forEach((t,k)=>k===i%n?t.dataset.pos='cur':delete t.dataset.pos)};
