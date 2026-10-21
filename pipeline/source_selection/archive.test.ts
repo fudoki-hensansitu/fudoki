@@ -42,6 +42,14 @@ test('a PDF whose header follows leading bytes is still accepted', async () => {
   expect(result.archive!.files.map(item => item.key)).toEqual(['fiscal/source-selection/132047/2024/initial.pdf'])
 })
 
+test('a declared CSV whose body is an error response is not saved', async () => {
+  for (const body of ['{"error":"not found"}', '[{"error":"not found"}]', '<?xml version="1.0"?><error/>']) {
+    const fake = store([], { [csv.download_url]: new TextEncoder().encode(body) })
+    await expect(archiveSelected(withFiles([{ ...csv, sha256: hash(new TextEncoder().encode(body)) }]), fake.api)).rejects.toThrow('is not a CSV')
+    expect(fake.keys.size).toBe(0)
+  }
+})
+
 test('missing-object cleanup ignores only genuine key-not-found errors', () => {
   for (const error of ['[10007] The specified key does not exist.', 'HTTP status 404', 'NoSuchKey']) expect(isMissingR2ObjectError(error)).toBe(true)
   for (const error of ['HTTP 403', '[10007] Permission denied.', '[10000] The specified key does not exist.', 'Network timeout']) expect(isMissingR2ObjectError(error)).toBe(false)
