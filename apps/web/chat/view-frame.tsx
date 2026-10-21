@@ -299,7 +299,11 @@ export function ViewFrame({
       close.current?.focus()
     }
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && (fullscreen || panel.active === me.current)) setMode('inline')
+      if (e.key !== 'Escape') return
+      // 右のパネルのタブは、× や Delete と同じく、閉じたあとに残ったタブへ focus を移す
+      const tab = panel.active === me.current ? panel.tabs.find((t) => t.owner === me.current) : undefined
+      if (tab) closeAndFocus(tab)
+      else if (fullscreen) setMode('inline')
     }
     window.addEventListener('keydown', onKey)
     return () => {
