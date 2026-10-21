@@ -6,7 +6,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from ingestion.lib.paddle_ocr import PaddleConfig
-from ingestion.lib.scan_ocr import recognize_image, recognize_pdf
+from ingestion.lib.scan_ocr import recognize_image, recognize_pdf, settle_seams
 from ingestion.lib.vision_ocr import OcrRegion, VisionConfig
 
 
@@ -138,6 +138,48 @@ class PageBoxTest(unittest.TestCase):
             require_one_page_box(same, 1)
             with self.assertRaisesRegex(ValueError, "CropBox"):
                 require_one_page_box(cropped, 1)
+
+
+class SeamPairs(unittest.TestCase):
+    """A line Paddle dropped at the strip seam comes back whole or is recorded unread, never in part."""
+
+    def page(self, ink):
+        # 300 dpi: 1 px = 0.24 pt; the pair's box is [1000, 100, 1400, 140] px = [240, 24, 336, 33.6] pt
+        regions = [{"id": "full-page", "observations": [
+            {"id": "keep", "kind": "region", "raw_text": "予算", "bbox_pdf_pt": [10, 24, 50, 33]}]}]
+        regions += [{"id": f"ink-{i}", "observations": [
+            {"id": f"ink-{i}:r0", "kind": "region", "raw_text": text, "bbox_pdf_pt": box},
+            {"id": f"ink-{i}:r0:w0", "kind": "word", "parent_id": f"ink-{i}:r0", "raw_text": text, "bbox_pdf_pt": box}]}
+            for i, (text, box) in enumerate(ink)]
+        return {"page_number": 1, "image_width": 2480, "displayed_pdf_size_pt": [595.2, 841.9], "regions": regions,
+                "attempts": [{"id": "p1:full-page:a0", "seam_dropped_boxes_px": [[1000, 100, 1400, 140]]}]}
+
+    def ids(self, page):
+        return [o["id"] for region in page["regions"] for o in region["observations"]]
+
+    def test_one_reading_over_the_whole_pair_is_kept(self):
+        page = settle_seams(self.page([("負担金、補助及び交付金", [239, 24, 337, 34])]))
+        self.assertIn("ink-0:r0", self.ids(page))
+        self.assertNotIn("unread_ink", page)
+
+    def test_a_reading_of_only_part_of_the_pair_is_not_taken_and_the_whole_is_unread(self):
+        page = settle_seams(self.page([("負担金、補助及び", [240, 24, 290, 34])]))
+        self.assertEqual(self.ids(page), ["keep"])
+        self.assertEqual(page["unread_ink"], [[240.0, 24.0, 336.0, 33.6]])
+
+    def test_two_pieces_that_together_cover_the_pair_are_still_not_taken(self):
+        page = settle_seams(self.page([("負担金、補助及び", [240, 24, 290, 34]), ("及び交付金", [291, 24, 336, 34])]))
+        self.assertEqual(self.ids(page), ["keep"])
+        self.assertEqual(len(page["unread_ink"]), 1)
+
+    def test_a_pair_nothing_re_read_is_unread(self):
+        page = settle_seams(self.page([]))
+        self.assertEqual(page["unread_ink"], [[240.0, 24.0, 336.0, 33.6]])
+
+    def test_a_page_with_no_dropped_pair_is_left_alone(self):
+        page = self.page([("負担金", [240, 24, 290, 34])])
+        page["attempts"] = [{"id": "p1:full-page:a0"}]
+        self.assertEqual(settle_seams(page), self.page([("負担金", [240, 24, 290, 34])]) | {"attempts": [{"id": "p1:full-page:a0"}]})
 
 
 if __name__ == "__main__":

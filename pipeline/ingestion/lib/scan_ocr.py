@@ -408,8 +408,50 @@ def split_unit_stacks(path: Path, page: dict, config: PaddleConfig) -> None:
              "bbox_pdf_pt": [round(v, 1) for v in (x0, y0, x1, cut)], "bbox_status": "available"}]})
 
 
+SEAM_COVER_PT = 2.0  # a re-read covers a dropped seam pair when it reaches its box within this
+
+
+def settle_seams(page: dict) -> dict:
+    """A seam pair Paddle dropped (one line read in two cut pieces, ``seam_dropped_boxes_px``) is given back
+    whole by the re-read or not at all.
+
+    The re-read must be one reading that covers the pair's whole box (its left and right ends within
+    ``SEAM_COVER_PT``). If none does, a piece of it must not stand for the line (a name cut short passes
+    every check): the pieces the re-read took inside that box are removed and the box is recorded in
+    ``unread_ink``. Readings of the full-page pass are not touched."""
+    boxes_px = [box for attempt in page.get("attempts", ()) for box in attempt.get("seam_dropped_boxes_px", ())]
+    if not boxes_px:
+        return page
+    factor = page["displayed_pdf_size_pt"][0] / page["image_width"]
+    unread = [list(area) for area in page.get("unread_ink", ())]
+    for box in ([v * factor for v in b] for b in boxes_px):
+        middle = (box[1] + box[3]) / 2
+        found = [(region, o) for region in page["regions"] for o in region["observations"]
+                 if o["kind"] == "region" and o.get("bbox_pdf_pt") and o["bbox_pdf_pt"][1] <= middle <= o["bbox_pdf_pt"][3]
+                 and o["bbox_pdf_pt"][0] < box[2] and o["bbox_pdf_pt"][2] > box[0]]
+        if any(o["bbox_pdf_pt"][0] <= box[0] + SEAM_COVER_PT and o["bbox_pdf_pt"][2] >= box[2] - SEAM_COVER_PT for _, o in found):
+            continue
+        taken = {o["id"] for region, o in found if region["id"].startswith(("ink-", "vlm-"))}
+        for region in page["regions"]:
+            region["observations"] = [o for o in region["observations"]
+                                      if o["id"] not in taken and o.get("parent_id") not in taken]
+        page["regions"] = [r for r in page["regions"] if r["observations"] or not r["id"].startswith(("ink-", "vlm-"))]
+        area = [round(v, 1) for v in box]
+        if area not in unread:
+            unread.append(area)
+    if unread:
+        page["unread_ink"] = unread
+    return page
+
+
 def supplement(path: Path, page: dict, config: VisionConfig | PaddleConfig, previous: Mapping[str, str], *,
                vlm_fallback: bool = True) -> dict:
+    """``_supplement``, then the seam pairs it left (``settle_seams``)."""
+    return settle_seams(_supplement(path, page, config, previous, vlm_fallback=vlm_fallback))
+
+
+def _supplement(path: Path, page: dict, config: VisionConfig | PaddleConfig, previous: Mapping[str, str], *,
+                vlm_fallback: bool = True) -> dict:
     """Read the ink OCR missed on one page: the engine on those areas, then the VLM on what remains.
 
     The engine (Vision or Paddle, by ``config``) reads each tight area (``ink_areas``) as a new region ``ink-<n>``. A reading that

@@ -239,6 +239,12 @@ SEAM_TOLERANCE_PX = 3  # a box this close to its strip's edge was cut by it
 
 
 def _drop_strip_duplicates(groups: list[list[dict]], spans: list[tuple[int, int]]) -> tuple[list[dict], list[str]]:
+    """The kept observations and the dropped ids of ``_merge_strips``."""
+    kept, dropped, _ = _merge_strips(groups, spans)
+    return kept, dropped
+
+
+def _merge_strips(groups: list[list[dict]], spans: list[tuple[int, int]]) -> tuple[list[dict], list[str], list[list[float]]]:
     """Merge the observations of vertical strips, dropping a line read twice in a band two strips share.
 
     A line whose box lies over another strip's line (at least half of the smaller box) is a duplicate.
@@ -247,12 +253,14 @@ def _drop_strip_duplicates(groups: list[list[dict]], spans: list[tuple[int, int]
     seam is read in two pieces, each cut by its own strip's edge (a box ending at the right edge of one
     strip and one starting at the left edge of the next, on one text line): neither is trusted, both go,
     and the ink they leave is read again whole by the missed-ink re-read. Any other differing readings
-    both stay: no text is chosen between them. A dropped line takes its words.
+    both stay: no text is chosen between them. A dropped line takes its words. The third value is the box
+    (pixels) covering each seam pair that was dropped: where a re-read has to give the whole line back.
     """
     items = [(k, o) for k, group in enumerate(groups) for o in group if o["kind"] == "region" and o["bbox_px"]]
     margin = lambda k, o: min((o["bbox_px"][0] + o["bbox_px"][2]) / 2 - spans[k][0],
                               spans[k][1] - (o["bbox_px"][0] + o["bbox_px"][2]) / 2)
     dropped: set[str] = set()
+    seams: list[list[float]] = []
     text = lambda o: "".join(o["raw_text"].split())
 
     def same_line(a, b) -> bool:
@@ -278,8 +286,10 @@ def _drop_strip_duplicates(groups: list[list[dict]], spans: list[tuple[int, int]
                 elif (a["bbox_px"][2] >= spans[k][1] - SEAM_TOLERANCE_PX and b["bbox_px"][0] <= spans[k + 1][0] + SEAM_TOLERANCE_PX
                       and same_line(a, b)):
                     dropped |= {a["id"], b["id"]}
+                    seams.append([min(a["bbox_px"][0], b["bbox_px"][0]), min(a["bbox_px"][1], b["bbox_px"][1]),
+                                  max(a["bbox_px"][2], b["bbox_px"][2]), max(a["bbox_px"][3], b["bbox_px"][3])])
     kept = [o for group in groups for o in group if o["id"] not in dropped and o.get("parent_id") not in dropped]
-    return kept, sorted(dropped)
+    return kept, sorted(dropped), seams
 
 
 def _run(command: list[str], timeout: float, *, operation: str = "PDF renderer", **kwargs) -> subprocess.CompletedProcess:
@@ -604,10 +614,11 @@ class PaddleOcr:
             seconds += time.perf_counter() - start
             groups.append(_observations(part, [crop[0] + x0, *crop[1:]], page, attempt_id, len(native)))
             native += part
-        observations, duplicates = _drop_strip_duplicates(groups, [(crop[0] + a, crop[0] + b) for a, b in strips])
+        observations, duplicates, seams = _merge_strips(groups, [(crop[0] + a, crop[0] + b) for a, b in strips])
         return {"id": attempt_id, "region_id": region.id, "retry_region_id": area.id if retry else None,
                 "crop_bbox_px": crop, "bbox_normalized": area.bbox_normalized,
                 "predict_settings": params, "strips_px": [list(s) for s in strips], "duplicate_observation_ids": duplicates,
+                **({"seam_dropped_boxes_px": seams} if seams else {}),
                 "inference_seconds": seconds,
                 "input_rgb_pixel_sha256": hashlib.sha256(rgb.tobytes()).hexdigest(),
                 "input_bgr_pixel_sha256": hashlib.sha256(bgr.tobytes()).hexdigest(),
