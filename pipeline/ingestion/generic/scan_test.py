@@ -297,6 +297,14 @@ class CellWordsTest(unittest.TestCase):
         self.assertEqual(self.paddle_words('12,828,111111,000', children, [100, 10, 223, 20], [60, 172, 300]),
                          [('12,828,111', 100, 168), ('111,000', 173, 223)])
 
+    def test_a_rule_across_the_first_character_of_an_amount_does_not_split_it(self):
+        # `1,981,045,000` over a rule 2pt from its left: the rule is not between two fragments, the amount stays one word
+        children = [('1', [100, 10, 108, 20]), (',', [110, 10, 112, 20]), ('981', [114, 10, 136, 20]),
+                    (',', [138, 10, 140, 20]), ('045', [142, 10, 164, 20]), (',', [166, 10, 168, 20]), ('000', [170, 10, 192, 20]),
+                    ('同', [200, 10, 210, 20])]
+        self.assertEqual(self.paddle_words('1,981,045,000同', children, [100, 10, 210, 20], [102, 300]),
+                         [('1,981,045,000', 100, 192), ('同', 200, 210)])
+
     def test_a_character_box_starting_just_before_its_rule_belongs_to_the_next_cell(self):
         children = [('159', [100, 10, 120, 20]), ('同', [124.6, 10, 134, 20]), ('項', [134, 10, 144, 20])]
         self.assertEqual(self.paddle_words('159同項', children, [100, 10, 144, 20], [60, 125.5, 300]),

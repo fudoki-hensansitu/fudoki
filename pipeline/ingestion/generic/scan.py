@@ -160,7 +160,9 @@ def _paddle_pieces(line: dict, children: list[Word], corrected: bool, cuts: list
             continue
         last = merged[-1] if merged else None
         if (last is not None and NUMERIC_RUN.fullmatch(_text(child.text)) and NUMERIC_RUN.fullmatch(_text(last.text))
-                and not any(last.x0 + PADDLE_REACH < x <= child.x0 + PADDLE_REACH for x in cuts)  # a rule keeps two cells apart
+                # a rule between the end of the fragment before and the start of this one keeps two cells apart; one that
+                # only crosses the first character's box (`1,981,045,000` over a rule 2pt from its left) does not
+                and not any(last.x1 - min(2, (last.x1 - last.x0) / 2) < x <= child.x0 + PADDLE_REACH for x in cuts)
                 and child.x0 - last.x1 <= (2 * JOIN_GAP if last.text.endswith(',') or child.text.startswith(',') else JOIN_GAP)
                 * max(last.y1 - last.y0, child.y1 - child.y0)):
             merged[-1] = Word(last.text + child.text, last.x0, min(last.y0, child.y0), max(last.x1, child.x1),
