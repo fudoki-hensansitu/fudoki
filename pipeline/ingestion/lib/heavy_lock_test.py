@@ -20,14 +20,14 @@ class HeavyLockTest(unittest.TestCase):
         self.path = Path(directory.name) / 'heavy.lock'
         self.held = []
 
-    def take(self, command, pressure=CALM):
-        holder = heavy_lock.acquire(command, self.path, pressure)
+    def take(self, command, pressure=CALM, targets=()):
+        holder = heavy_lock.acquire(command, self.path, pressure, targets)
         self.held.append(holder)
         return holder
 
-    def refused(self, command, pressure=CALM):
+    def refused(self, command, pressure=CALM, targets=()):
         with self.assertRaises(SystemExit) as caught:
-            heavy_lock.acquire(command, self.path, pressure)
+            heavy_lock.acquire(command, self.path, pressure, targets)
         return str(caught.exception)
 
     def tearDown(self):
@@ -50,13 +50,29 @@ class HeavyLockTest(unittest.TestCase):
         self.assertIn('"command": "ocr"', message)
         self.assertIn('memory pressure: unreadable', self.refused('refresh', lambda: None))
 
-    def test_the_same_kind_is_capped(self):
+    def test_convert_and_refresh_share_the_concurrency_cap(self):
         self.take('refresh')
-        self.take('refresh')
-        message = self.refused('refresh')
-        self.assertIn('same-kind limit', message)
-        self.assertIn('"command": "refresh"', message)
-        self.assertIsNotNone(self.take('convert'))
+        self.take('convert')
+        for command in ('refresh', 'convert'):
+            message = self.refused(command)
+            self.assertIn('concurrency limit', message)
+            self.assertIn('"command": "refresh"', message)
+
+    def test_a_manifest_is_used_by_one_run_at_a_time(self):
+        manifest, other = self.path.parent / 'a.json', self.path.parent / 'b.json'
+        first = self.take('refresh', targets=[manifest, other])
+        for command in ('convert', 'refresh'):
+            message = self.refused(command, targets=[manifest])
+            self.assertIn('same target', message)
+            self.assertIn('"command": "refresh"', message)
+        first.close()
+        self.take('convert', targets=[manifest]).close()
+
+    def test_different_manifests_run_together_and_a_refusal_keeps_nothing_held(self):
+        a, b = self.path.parent / 'a.json', self.path.parent / 'b.json'
+        self.take('convert', targets=[a])
+        self.refused('refresh', targets=[b, a])
+        self.take('refresh', targets=[b])
 
     def test_ocr_is_exclusive_in_both_directions(self):
         ocr = self.take('ocr')
@@ -79,6 +95,7 @@ class HeavyLockTest(unittest.TestCase):
         finally:
             child.kill()
             child.wait()
+            child.stdout.close()
         self.take('ocr')
 
     def test_closing_releases_and_clears_the_holder(self):

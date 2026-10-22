@@ -7,13 +7,16 @@ the marker directory released nothing because the check was the file's existence
 released by the kernel when the process exits, and these files live under the user's state
 directory, so cleaning temporary directories cannot unlock them.
 
-Measured: OCR uses all 8 cores for 80+ minutes; a refresh uses one core and about 160 MB. So the
-kinds are treated differently instead of serialising everything:
+Measured: OCR uses all 8 cores for 80+ minutes. `convert` is heavy too, and `refresh` re-converts
+every stale table through the same code, so the two are one class here. So the kinds are treated
+differently instead of serialising everything:
 
 - `ocr` is exclusive: it needs `<path>` itself (one OCR at a time) and no convert/refresh running.
-- `convert` / `refresh` take one of `MAX_SAME_KIND` slot files of their kind. They may start while
-  OCR (or the other kind) runs, but only while the kernel's memory pressure is at most
-  `MAX_PRESSURE_LEVEL`. Alone on the machine they always start.
+- `convert` / `refresh` take one of `MAX_CONCURRENT` slot files. They may start while OCR runs, but
+  only while the kernel's memory pressure is at most `MAX_PRESSURE_LEVEL`. Alone on the machine
+  they always start.
+- Every run also locks each manifest it writes (`targets`). Two runs on the same manifest would
+  overwrite each other's saved tables and fingerprints, so the second is refused whatever its kind.
 
 Memory pressure is the kernel's own level (`kern.memorystatus_vm_pressure_level`: 1 normal,
 2 warning, 4 critical), read at the start. It is chosen over a swap threshold because swap stays
@@ -22,23 +25,23 @@ on. If the level cannot be read (the agent sandbox blocks sysctl) while another 
 start is refused rather than guessed.
 
 Nothing waits. A refused run exits immediately with the holders' PID and command and the reason
-(memory pressure / same-kind limit / OCR exclusion), so a caller can decide between waiting for the
+(memory pressure / concurrency limit / same target / OCR exclusion), so a caller can decide between waiting for the
 report and stopping.
 """
 from __future__ import annotations
 
 import ctypes
 import fcntl
+import hashlib
 import json
 import os
 import time
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Iterable
 
 HEAVY = frozenset({'convert', 'refresh', 'ocr'})
-CONCURRENT = ('convert', 'refresh')
 ENV = 'FUDOKI_HEAVY_LOCK'
-MAX_SAME_KIND = 2
+MAX_CONCURRENT = 2  # convert and refresh share these slots
 MAX_PRESSURE_LEVEL = 1  # kern.memorystatus_vm_pressure_level: 1 normal, 2 warning, 4 critical
 
 
@@ -64,19 +67,20 @@ def memory_pressure_level() -> int | None:
 class Holder:
     """The acquired lock. Closing releases it; the kernel also releases it when the process dies."""
 
-    def __init__(self, stream, path: Path):
-        self.stream, self.path = stream, path
+    def __init__(self, stream, path: Path, extra=()):
+        self.stream, self.path, self.extra = stream, path, list(extra)
         self.closed = False
 
     def close(self) -> None:
         if self.closed:
             return
         self.closed = True
-        try:
-            self.stream.seek(0)
-            self.stream.truncate()
-        finally:
-            self.stream.close()
+        for stream in [self.stream, *self.extra]:
+            try:
+                stream.seek(0)
+                stream.truncate()
+            finally:
+                stream.close()
 
     def __enter__(self):
         return self
@@ -85,8 +89,13 @@ class Holder:
         self.close()
 
 
-def _slot(path: Path, kind: str, index: int) -> Path:
-    return path.with_name(f'{path.name}.{kind}.{index}')
+def _slot(path: Path, index: int) -> Path:
+    return path.with_name(f'{path.name}.slot.{index}')
+
+
+def _target(path: Path, manifest: Path) -> Path:
+    digest = hashlib.sha256(str(Path(manifest).resolve()).encode()).hexdigest()[:16]
+    return path.with_name(f'{path.name}.target.{digest}')
 
 
 def _try_lock(target: Path):
@@ -123,7 +132,7 @@ def _holder_of(target: Path) -> str | None:
 
 
 def _others(path: Path, mine: Path | None) -> list[str]:
-    targets = [path] + [_slot(path, kind, i) for kind in CONCURRENT for i in range(MAX_SAME_KIND)]
+    targets = [path] + [_slot(path, i) for i in range(MAX_CONCURRENT)]
     return [info for target in targets if target != mine and (info := _holder_of(target))]
 
 
@@ -141,9 +150,28 @@ def _write(stream, command: str) -> None:
     stream.flush()
 
 
+def _lock_targets(base: Path, command: str, targets: Iterable[Path]) -> list:
+    streams = []
+    for manifest in targets:
+        target = _target(base, manifest)
+        stream = _try_lock(target)
+        if stream is None:
+            for held in streams:
+                held.close()
+            raise _refuse(f'same target: {manifest} is already in use',
+                          [_holder_of(target) or 'another run'], base)
+        _write(stream, command)
+        streams.append(stream)
+    return streams
+
+
 def acquire(command: str, path: Path | None = None,
-            pressure: Callable[[], int | None] = memory_pressure_level) -> Holder | None:
-    """Admit a heavy command or exit at once; None for commands that do not occupy the machine."""
+            pressure: Callable[[], int | None] = memory_pressure_level,
+            targets: Iterable[Path] = ()) -> Holder | None:
+    """Admit a heavy command or exit at once; None for commands that do not occupy the machine.
+
+    `targets` are the manifests the run writes; two runs never share one.
+    """
     if command not in HEAVY:
         return None
     base = Path(path or os.environ.get(ENV) or default_path())
@@ -156,23 +184,34 @@ def acquire(command: str, path: Path | None = None,
         if running:
             stream.close()
             raise _refuse('OCR exclusion: convert/refresh is running', running, base)
+        try:
+            extra = _lock_targets(base, command, targets)
+        except SystemExit:
+            stream.close()
+            raise
         _write(stream, command)
-        return Holder(stream, base)
+        return Holder(stream, base, extra)
     held = None
-    for index in range(MAX_SAME_KIND):
-        held = _slot(base, command, index)
+    for index in range(MAX_CONCURRENT):
+        held = _slot(base, index)
         stream = _try_lock(held)
         if stream is not None:
             break
     else:
-        raise _refuse(f'same-kind limit: {MAX_SAME_KIND} {command} runs are already running',
+        raise _refuse(f'concurrency limit: {MAX_CONCURRENT} convert/refresh runs are already running',
                       _others(base, None), base)
-    others = _others(base, held)
-    if others:
-        level = pressure()
-        if level is None or level > MAX_PRESSURE_LEVEL:
-            stream.close()
-            shown = 'unreadable' if level is None else f'level {level} > {MAX_PRESSURE_LEVEL}'
-            raise _refuse(f'memory pressure: {shown}', others, base)
+    try:
+        extra = _lock_targets(base, command, targets)
+        others = _others(base, held)
+        if others:
+            level = pressure()
+            if level is None or level > MAX_PRESSURE_LEVEL:
+                shown = 'unreadable' if level is None else f'level {level} > {MAX_PRESSURE_LEVEL}'
+                for stream_ in extra:
+                    stream_.close()
+                raise _refuse(f'memory pressure: {shown}', others, base)
+    except SystemExit:
+        stream.close()
+        raise
     _write(stream, command)
-    return Holder(stream, held)
+    return Holder(stream, held, extra)
