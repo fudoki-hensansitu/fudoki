@@ -1732,7 +1732,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "未選定。令和7年度決算に係る主要な施策の成果に関する報告書は未公表。令和6年度決算のあらまし頁（https://www.city.shibuya.tokyo.jp/kusei/zaisei/kessan-aramashi/kessan06.html）には令和6年度分までしかなく、kessan07・kessan7・kessanR7・r7kessan・r07kessanのいずれも404。決算のあらまし一覧（.../kessan-aramashi/）は静的HTMLに記事リンクを含まない。確認日：2026-10-22T03:57:19+00:00（UTC）。"
+      "reason": "未選定。令和7年度決算に係る主要な施策の成果に関する報告書は未公表。決算のあらましの一覧（https://www.city.shibuya.tokyo.jp/kusei/zaisei/kessan-aramashi/、JavaScript で描かれるので Orca のブラウザで描画して読んだ）の最新は「令和6年度決算のあらまし」（kessan06.html）で、令和7年度の頁は掲載されていない。2023・2024年度の評価資料（主要な施策の成果に関する報告書）は各年度の決算のあらましの頁に載っている。確認日：2026-10-22T04:35:59+00:00（UTC）。"
     },
     {
       "target": {
