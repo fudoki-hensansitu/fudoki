@@ -2009,9 +2009,9 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
     # Where the codes start decide the levels; the names a continuation page prints again without their codes
     # sit elsewhere (their box is open, its code is not printed) and are no level of their own.
     coded_ = [i for i in nodes_ if i.code is not None]
-    # A scan's levels are measured from the left edge of the subject column: its frame sits a few points elsewhere
+    # A scan's levels (every page OCR; a text document with a few OCR pages keeps its own) are measured from the left edge of the subject column: its frame sits a few points elsewhere
     # on each page, and the same level must not start at two values.
-    ocr_groups = {id(g) for logical, ordered, _ in all_items if logical.ocr for g in ordered}
+    ocr_groups = {id(g) for logical, ordered, _ in all_items for g in ordered} if all(l.ocr for l, _, _ in all_items) else set()
     edge = lambda i: i.indent - (i.group.bands[0].x0 if id(i.group) in ocr_groups else 0)
     starts = sorted(edge(i) for i in (coded_ if len(coded_) >= max(3, len(nodes_) // 2) else nodes_))
     subject_levels: list[list[float]] = []
