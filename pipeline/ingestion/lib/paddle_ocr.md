@@ -45,3 +45,5 @@ CoreGraphicsのhelperは初回にSwift compiler（`xcrun`で解決、`-Onone`）
 入力SHA、描画PNG/RGB画素SHA、モデル・宣言・コードSHA、package版、各試行の設定・時間を結果に保持する。numpy入力はRGBからBGRへ変換し、PaddleのPNGファイル読込と同じ色順で渡す。再読・頁ごとのOCRでもengineは一度だけロードする。PDF描画subprocessにはtimeoutを設けるが、process内のPaddle推論には強制timeoutを設けない。
 
 採用判断の約17.3秒は、同じ見開きの1280px検出と見出しband＋1セル再読を**別の実験callの時間から合算した値**だった。統合後の入口を親agentが同じ実PDFで独立検査した初回実測は、coldの全所要時間42.06秒・推論18.69秒、金額124/124一致・全確認項目171/174一致だった。3項目の不一致は既存のsmall通常読みと同じで、出典確認を要する。Swiftのコンパイル導入前の再実行は全所要時間20.90秒・推論15.56秒で、初回とnative文字・座標・confidenceが完全一致した。一般の資料の精度・速度を保証する値ではない。取り込み時は出典照合・欠落確認・階層別合計検査を継続する。
+
+分割片の長辺が`detection_limit_side_len`を超えると検出は縮小される（A4横の見開きを300dpiで2分割した帯は幅1814・高さ2481で、高さが縮む）。小さい印字の冊は依頼の`config`で上限を帯の長辺以上にする。詳細は[scan_ocr.md](scan_ocr.md)と[ADR 0032](../../../docs/adr/0032-paddle-onnx-for-new-scan-acquisitions.md)。

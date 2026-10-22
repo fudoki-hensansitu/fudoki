@@ -305,6 +305,31 @@ class CellWordsTest(unittest.TestCase):
         self.assertEqual(self.paddle_words('1,981,045,000同', children, [100, 10, 210, 20], [102, 300]),
                          [('1,981,045,000', 100, 192), ('同', 200, 210)])
 
+    def test_a_dash_is_no_missed_amount_and_a_name_stroke_is_still_missed(self):
+        from ingestion.lib.scan_ocr import _without_dashes
+        page = {'regions': [{'observations': [
+            {'kind': 'region', 'raw_text': '円', 'bbox_pdf_pt': [150, 90, 155, 95]},
+            {'kind': 'region', 'raw_text': '費', 'bbox_pdf_pt': [60, 90, 66, 96]}]}]}
+        dash, bar, stroke = (150.0, 120.0, 154.5, 120.8), (30.0, 120.0, 40.0, 120.8), (61.0, 120.0, 65.0, 126.0)
+        self.assertEqual(_without_dashes([dash, bar, stroke], page), [bar, stroke])
+
+    def test_a_digit_run_after_a_comma_that_a_rule_crosses_ends_its_amount_after_three_digits(self):
+        # `11,726,051,000` | `5,918,437,000` (281000): the fragment `0005` crosses the rule; cut by a share of its
+        # box the first amount lost a digit (`1,172,605,100`)
+        children = [('11', [100, 10, 108, 20]), (',', [109, 10, 110, 20]), ('726', [111, 10, 126, 20]), (',', [127, 10, 128, 20]),
+                    ('051', [129, 10, 144, 20]), (',', [145, 10, 146, 20]), ('0005', [147, 10, 171, 20]), (',', [172, 10, 173, 20]),
+                    ('918', [174, 10, 189, 20]), (',', [190, 10, 191, 20]), ('437', [192, 10, 207, 20]), (',', [208, 10, 209, 20]),
+                    ('000', [210, 10, 225, 20])]
+        self.assertEqual(self.paddle_words('11,726,051,0005,918,437,000', children, [100, 10, 225, 20], [60, 165.5, 300]),
+                         [('11,726,051,000', 100, 165), ('5,918,437,000', 165, 225)])
+
+    def test_a_zero_and_the_digits_after_a_rule_are_two_cells_not_an_amount_with_a_leading_zero(self):
+        # `0` | `17,585,227,000` (281000): a fragment `017` crossed by a rule
+        children = [('017', [100, 10, 118, 20]), (',', [119, 10, 120, 20]), ('585', [121, 10, 139, 20]), (',', [140, 10, 141, 20]),
+                    ('227', [142, 10, 160, 20]), (',', [161, 10, 162, 20]), ('000', [163, 10, 181, 20])]
+        self.assertEqual(self.paddle_words('017,585,227,000', children, [100, 10, 181, 20], [60, 107, 300]),
+                         [('0', 100, 106), ('17,585,227,000', 106, 181)])
+
     def test_a_character_box_starting_just_before_its_rule_belongs_to_the_next_cell(self):
         children = [('159', [100, 10, 120, 20]), ('同', [124.6, 10, 134, 20]), ('項', [134, 10, 144, 20])]
         self.assertEqual(self.paddle_words('159同項', children, [100, 10, 144, 20], [60, 125.5, 300]),

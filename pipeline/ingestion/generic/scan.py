@@ -119,6 +119,8 @@ def _split(word: Word, cuts: list[float]) -> list[Word]:
 
 
 PADDLE_REACH = 1.5  # pt
+STACKED_SHARE = .5  # pieces overlapping less than this share of their height are on different lines
+DASHES = '一-－ー—―‐−'  # a dash in an amount cell is no amount: the cell prints nothing there
 # digits and commas of an amount, with its sign; a code's periods (`10.04.01.03`) are not an amount's
 NUMERIC_RUN = re.compile(r'[△▲−-]?[0-9][0-9,]*|,+|[△▲−-]')
 
@@ -161,6 +163,21 @@ def _paddle_pieces(line: dict, children: list[Word], corrected: bool, cuts: list
     for child in children:
         if not child.text.strip():
             continue
+        if (ordered and ordered[-1].text == ',' and re.fullmatch(r'[0-9]{4,}', child.text)
+                and any(child.x0 < x < child.x1 for x in cuts)):
+            # The group after a comma has three digits: a longer run that a rule crosses is the end of one amount
+            # and the first digits of the next cell's (`0005` = `000` + `5` of `…,051,000` | `5,918,437,000`, 281000).
+            width = (child.x1 - child.x0) / len(child.text)
+            edge = child.x0 + 3 * width
+            ordered.append(Word(child.text[:3], child.x0, child.y0, edge, child.y1))
+            child = Word(child.text[3:], edge, child.y0, child.x1, child.y1)
+        elif (re.fullmatch(r'0[0-9]+', child.text) and any(child.x0 < x < child.x1 for x in cuts)
+              and not (ordered and ordered[-1].text == ',')):
+            # No amount starts with a 0 and more digits: the 0 is a cell of its own, the rule's other side starts
+            # the amount (`017,585,227,000` = `0` | `17,585,227,000`, 281000).
+            edge = child.x0 + (child.x1 - child.x0) / len(child.text)
+            ordered.append(Word('0', child.x0, child.y0, edge, child.y1))
+            child = Word(child.text[1:], edge, child.y0, child.x1, child.y1)
         if ordered and child.x0 < ordered[-1].x0:
             child = Word(child.text, min(ordered[-1].x1, child.x1), child.y0, child.x1, child.y1)
         ordered.append(child)
@@ -221,7 +238,10 @@ def _cell_words(pieces: list[Word], cuts: list[float], reach: float = 0) -> list
             # "2" "款" "1" "項" join; a name and its amount stay apart even when they nearly touch.
             amount_with_text = _amount(last.text) != _amount(piece.text) and not (
                 NUMBER.fullmatch(_text(last.text)) and NUMBER.fullmatch(_text(piece.text)))
-            if same_cell and piece.x0 - last.x1 <= JOIN_GAP * height and not amount_with_text:
+            # Characters of two printed lines stacked in one box (Paddle reads `使` over `賃` of a name set on
+            # two lines, 281000) are two words: the one line's words overlap in height.
+            stacked = min(last.y1, piece.y1) - max(last.y0, piece.y0) < STACKED_SHARE * min(last.y1 - last.y0, piece.y1 - piece.y0)
+            if same_cell and piece.x0 - last.x1 <= JOIN_GAP * height and not amount_with_text and not stacked:
                 words[-1] = Word(last.text + piece.text, last.x0, min(last.y0, piece.y0), piece.x1,
                                  max(last.y1, piece.y1))
                 continue
@@ -929,6 +949,7 @@ def declared_unread(built, logicals_: list, columns: dict | None, observation: d
                 # A lone sign (`△`) is printed over its figure, and the builder reads it so (`tree`): not unread.
                 if (len(glyph.text.strip()) == 1 and not any(c.isdigit() for c in glyph.text) and glyph.text != '円'
                         and glyph.text.strip() not in SIGNS
+                        and glyph.text not in DASHES
                         and not is_amount(glyph.text)
                         and (glyph.page, glyph.original) not in units):
                     built.unowned.append({'kind': 'unreadable declared amount cell', 'page': glyph.page,

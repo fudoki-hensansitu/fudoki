@@ -194,6 +194,20 @@
               "maximum": 255,
               "description": "Gray level below which a pixel counts as a rule when tiling by columns. A scan that prints its rules pale declares a higher level than the default 128."
             },
+            "unit_marks": {
+              "const": true,
+              "description": "Read again on their own crop the small 円 printed over amounts that the page read misreads (川 间 1), and a 円 stacked over a dash. For a scan that prints a unit mark in every first-row cell; omission leaves the observation as the engine read it."
+            },
+            "merged_lines": {
+              "const": true,
+              "description": "Cut a name box taller than the page's usual line (two printed lines the detector boxed as one) at the blank rows between its lines and read each line alone. For a scan whose wrapped names sit almost touching; omission leaves the observation as the engine read it."
+            },
+            "ink_dark": {
+              "type": "integer",
+              "minimum": 129,
+              "maximum": 255,
+              "description": "Gray level below which a pixel counts as ink when the acquisition looks for text the engine missed. A scan whose small print is pale declares a higher level than the default 128, or its missed lines never show."
+            },
             "regions": {
               "type": "array",
               "minItems": 1,

@@ -1349,6 +1349,22 @@ class HeaderCharactersTest(unittest.TestCase):
         self.assertEqual(canonical('見知らぬ／見出し', None, known), '見知らぬ／見出し')
 
 
+class HeaderSubsetTest(unittest.TestCase):
+    known = {'予算現額', '予算現額／継続費及び繰越事業費繰越額', '予算現額／継続費及び繰越事業費繰越財源充当額',
+             '予算現額／予備費支出及び流用増減', '予算現額／補正予算額'}
+
+    def test_a_kind_read_across_lines_with_characters_lost_is_the_one_kind_that_holds_them(self):
+        from ingestion.generic.headers import canonical
+        self.assertEqual(canonical('予算現額／継繰繰続越費事越及業び費額', '科目', self.known, True),
+                         '予算現額／継続費及び繰越事業費繰越額')
+        self.assertEqual(canonical('予算現額／費予及増び流出用減', '科目', self.known, True), '予算現額／予備費支出及び流用増減')
+
+    def test_without_the_layout_setting_or_with_too_little_read_the_group_is_kept(self):
+        from ingestion.generic.headers import canonical
+        self.assertEqual(canonical('予算現額／費予及増び流出用減', '科目', self.known, False), '予算現額')
+        self.assertEqual(canonical('予算現額／費減', '科目', self.known, True), '予算現額')
+
+
 class OcrCodeWordTest(unittest.TestCase):
     def test_an_ocr_word_joining_the_code_and_the_name_starts_its_name_after_the_digits(self):
         from ingestion.generic.tree import Group, Item, _measure
