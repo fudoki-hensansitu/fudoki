@@ -52,7 +52,7 @@ async function call<T>(env: Env, path: string, body?: unknown): Promise<T> {
   return (await res.json()) as T
 }
 
-const line = (n: ApiNode): Line => ({ id: n.node_id, name: n.name, yen: n.amount_yen ?? 0, page: n.amount_source_page ?? n.source_page })
+const line = (n: ApiNode): Line => ({ id: n.node_id, name: n.name, yen: n.amount_yen ?? 0, ...(n.amount_yen === null ? { amountMissing: true as const } : {}), page: n.amount_source_page ?? n.source_page })
 
 /** 自治体と、一般会計の決算がある年度。収録が無い自治体は settlementYears が空 */
 export async function loadCatalog(env: Env): Promise<CatalogEntry[]> {
@@ -123,7 +123,7 @@ export async function loadFlow(env: Env, code: string, year: number, depth: Flow
       }
       for (const [parent, children] of groups) {
         const setsu = children.filter((n) => n.axis === '節')
-        setsuByMoku.set(parent, (setsu.length ? setsu : children.filter((n) => n.axis === '備考')).sort(byAmount).map((n) => ({ name: n.name, yen: n.amount_yen ?? 0 })))
+        setsuByMoku.set(parent, (setsu.length ? setsu : children.filter((n) => n.axis === '備考')).sort(byAmount).map((n) => ({ name: n.name, yen: n.amount_yen ?? 0, ...(n.amount_yen === null ? { amountMissing: true as const } : {}) })))
       }
     }
   }

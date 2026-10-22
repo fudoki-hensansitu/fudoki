@@ -11,8 +11,8 @@ bun run build:web
 
 `/自治体` が決算を収録している自治体の一覧、`/東京都/中野区` のように**都道府県名と自治体名を path に入れた**個別ページが検索（SEO）の入口。都道府県名と名称の一致で引く（`/s/:id` や `/api/*` とは都道府県名の形で見分け、形が違えば次の経路へ渡す）。名称は自治体マスタ（`/v1/jurisdictions`）のとおり。収録が無い自治体は noindex の案内、存在しない名称は 404。`/sitemap.xml` は収録のある自治体の頁を含む（API に繋がらないときは入口と一覧だけ）。
 
-- **データ**: `server/jurisdiction.ts` が api（Service Binding）の歳出の検索から、一般会計の決算の款（年度ごと）・金額の大きい目（積立・公債・予備費の款を除く。前年度の同じ目との比較つき）・最大の款の流れ（款→項→目→節）を組む。金額は API の円のまま。足すのは同じ年度の款（兄弟）の和（歳出の総額）だけで、api の sum_rules に従う。結果は Worker の cache に1時間置く（`server/jurisdiction-routes.ts`）
-- **描画**: サーバーが金額・款・事業を HTML に書き（`jurisdiction/html.ts`、JSON-LD の Dataset つき）、島（`jurisdiction/jurisdiction.tsx`、build で `static/_app/jurisdiction.js`）が同じデータを shadcn/ui の chart（recharts）と流れ図（`jurisdiction/sankey.tsx`）で描き直す。款を選ぶと `/api/jurisdictions/drill/:id`、事業を開くと `/api/jurisdictions/setsu/:id` で内訳を引く（誰でも読める GET。IP ごとの流量 `VIEW_RATE_LIMIT` と id の形の検査で守る）
+- **データ**: `server/jurisdiction.ts` が api（Service Binding）の歳出の検索から、一般会計の決算の款（年度ごと）・金額の大きい目（積立・公債・予備費の款を除く。前年度の同じ目との比較つき）・全款の流れ（款→項→目→節）を組む。金額は API の円のまま。流れ図では印字のない金額を「金額未記載」と表示し、表示済みの子の合計は親の帯の高さにだけ使う。足すのは同じ年度の款（兄弟）の和（歳出の総額）だけで、api の sum_rules に従う。結果は Worker の cache に1時間置く（`server/jurisdiction-routes.ts`）
+- **描画**: サーバーが金額・款・事業を HTML に書き（`jurisdiction/html.ts`、JSON-LD の Dataset つき）、島（`jurisdiction/jurisdiction.tsx`、build で `static/_app/jurisdiction.js`）が同じデータを shadcn/ui の chart（recharts）と流れ図（`jurisdiction/sankey.tsx`）で描き直す。流れ図は全款・全項を初期表示し、表示階層を選ぶと `/api/jurisdictions/flow/:code/:year/:depth` で全款の目・節まで取得する（誰でも読める GET。IP ごとの流量 `VIEW_RATE_LIMIT` と 入力と収録年度の検査で守る）
 - **仮の値**: 人口・将来推計・特色は API にまだ無いので `jurisdiction/dummy.ts` の仮の値で、画面に「仮」と出す。HTML（検索結果に出る説明・JSON-LD）には入れない。本物のデータを入れるときはここを置き換える
 - **会話への導線**: 下の入力（`chat/start-form.tsx`、入口と共通）から会話を始めると、最初の質問に「自治体名について：」が付く
 

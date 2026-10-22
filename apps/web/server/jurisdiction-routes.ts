@@ -15,7 +15,7 @@ const HTML_HEADERS = { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Contro
 /** Worker の cache（無い環境では毎回取り直す）。同じ isolate の中でも一度だけ取る */
 const inflight = new Map<string, Promise<unknown>>()
 async function memo<T>(key: string, fn: () => Promise<T>): Promise<T> {
-  const url = `https://fudoki.dev/__cache/jurisdiction-v2/${key}`
+  const url = `https://fudoki.dev/__cache/jurisdiction-v3/${key}`
   const cache = typeof caches === 'undefined' ? undefined : (caches as unknown as { default?: Cache }).default
   const hit = await cache?.match(url)
   if (hit) return (await hit.json()) as T
