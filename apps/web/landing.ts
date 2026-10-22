@@ -208,7 +208,7 @@ details[open] summary::after{transform:rotate(45deg)}
 details p{max-width:56ch;padding-bottom:22px;font-size:15px;line-height:1.9;color:var(--muted-foreground)}
 details p a{text-decoration:underline;text-underline-offset:3px}
 
-footer{padding-top:96px}
+footer{margin-top:96px;padding-top:80px;background:var(--secondary)}
 .cols{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px}
 .cols h2{margin:0 0 18px;font-size:18px;line-height:1}
 .cols ul{display:grid;gap:10px;font-size:13px}
