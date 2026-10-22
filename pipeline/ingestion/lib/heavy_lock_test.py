@@ -1,6 +1,9 @@
 """Admission of the heavy runs (OCR, conversion, refresh): when one may start, and why it may not."""
 import os
+import subprocess
+import sys
 import tempfile
+import time
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -64,6 +67,18 @@ class HeavyLockTest(unittest.TestCase):
         self.assertIn('OCR exclusion', message)
         self.assertIn('"command": "refresh"', message)
         refresh.close()
+        self.take('ocr')
+
+    def test_the_kernel_releases_the_lock_when_the_holder_dies(self):
+        code = ('import sys,time;from pathlib import Path;from ingestion.lib import heavy_lock;'
+                'h=heavy_lock.acquire("ocr",Path(sys.argv[1]));print("held",flush=True);time.sleep(60)')
+        child = subprocess.Popen([sys.executable, '-c', code, str(self.path)], stdout=subprocess.PIPE, text=True)
+        try:
+            self.assertEqual(child.stdout.readline().strip(), 'held')
+            self.assertIn('OCR exclusion', self.refused('ocr'))
+        finally:
+            child.kill()
+            child.wait()
         self.take('ocr')
 
     def test_closing_releases_and_clears_the_holder(self):

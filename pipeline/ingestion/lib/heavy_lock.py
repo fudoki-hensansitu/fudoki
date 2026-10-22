@@ -28,10 +28,10 @@ report and stopping.
 from __future__ import annotations
 
 import ctypes
-import ctypes.util
 import fcntl
 import json
 import os
+import time
 from pathlib import Path
 from typing import Callable
 
@@ -52,7 +52,7 @@ def memory_pressure_level() -> int | None:
     """The kernel's memory pressure level, or None when it cannot be read."""
     try:
         value, size = ctypes.c_int(), ctypes.c_size_t(ctypes.sizeof(ctypes.c_int))
-        libc = ctypes.CDLL(ctypes.util.find_library('c'), use_errno=True)
+        libc = ctypes.CDLL(None, use_errno=True)
         if libc.sysctlbyname(b'kern.memorystatus_vm_pressure_level', ctypes.byref(value),
                              ctypes.byref(size), None, 0) != 0:
             return None
@@ -90,14 +90,22 @@ def _slot(path: Path, kind: str, index: int) -> Path:
 
 
 def _try_lock(target: Path):
-    """An exclusive lock on the file, or None when another process holds it."""
-    stream = target.open('a+', encoding='utf-8')
-    try:
-        fcntl.flock(stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
-    except BlockingIOError:
-        stream.close()
-        return None
-    return stream
+    """An exclusive lock on the file, or None when another process holds it.
+
+    A holder writes its record right after locking, so a held file that is still empty may only be
+    another run's momentary probe (`_holder_of`); look again briefly before refusing.
+    """
+    for attempt in range(3):
+        stream = target.open('a+', encoding='utf-8')
+        try:
+            fcntl.flock(stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            return stream
+        except BlockingIOError:
+            stream.close()
+        if target.read_text(encoding='utf-8').strip():
+            return None
+        time.sleep(0.02)
+    return None
 
 
 def _holder_of(target: Path) -> str | None:
