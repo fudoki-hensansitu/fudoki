@@ -7879,6 +7879,17 @@
     {
       "target": {
         "jurisdiction": "132241",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "令和7年度決算事業報告書データは未公表。決算事業報告書の頁（https://www.city.tama.lg.jp/shisei/zaisei/kessan/1004930.html）に掲載があるのは令和4・5・6年度分まで（2026-10-16確認、令和7の記載なし）。令和7年度決算事業報告書（事業カルテ）が公表されたら 2025年度の評価資料として選ぶ。探した頁: https://www.city.tama.lg.jp/shisei/zaisei/kessan/1004930.html、https://www.city.tama.lg.jp/shisei/zaisei/kessan/1004929.html。探索した範囲では選べる評価資料が無かった（2026-10-16確認）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132241",
         "fiscal_year": 2024,
         "document_kind": "settlement"
       },
@@ -8925,6 +8936,17 @@
         "archived_at": "2026-10-15T23:52:28.473Z"
       },
       "reason": "令和4年度決算の「決算事業報告書」のうち《事業カルテ》50ファイル（計753頁）。決算事業報告書は決算書・主要施策の成果説明書を補完する資料で、事業カルテは事業の活動実績・活動量・成果・実施水準・見直しの方向性を共通の切り口から評価するもの（「決算事業報告書とは」1-1.pdf）。事業ごとに「令和4年度の目標」「◇成果指標」（活動指標・成果指標の目標値と実績値）、「◇自己点検」（今後の見通し・今後の課題や方向性に関するコメント）、執行状況及び成果等を載せる。文字として読める。議会費の一部など、PDCAサイクルに馴染まない事業は事業カルテ作成対象外で執行状況のみ。歳入歳出決算額一覧表・マスタデータ・付属資料は金額やデータで評価の記述ではないため含めず、事業カルテのみを選んだ。令和4年度決算事業報告書データは https://www.city.tama.lg.jp/shisei/zaisei/kessan/1014433.html で公表。なお令和2・3年度分の決算事業報告書データ（旧頁 /shisei/zaisei/kessan/1004932.html・1008762.html）は現行サイトから外れており、Wayback の保存版もPDFが途中で切れるため、それらは別に扱う。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132241",
+        "fiscal_year": 2021,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "令和3年度決算事業報告書の《事業カルテ》は実在するが、現行サイトから外れており（旧頁 https://www.city.tama.lg.jp/shisei/zaisei/kessan/1008762.html は404）、Wayback Machine の保存版も多くのファイルが約1MiBで切れる（例: 202102soumu1.pdf, 202103minsei3〜6・10〜14.pdf, 202104eisei3〜5.pdf, 202106nourin.pdf, 202110kyoiku2〜13.pdf, 2021kokuho1・2.pdf, 2021kaigo1.pdf, 2021kouki.pdf, 2021gesui.pdf）。完全な原典を復元できないため見送る。確認した頁: https://web.archive.org/web/20240303231230/https://www.city.tama.lg.jp/shisei/zaisei/kessan/1008762.html、https://www.city.tama.lg.jp/shisei/zaisei/kessan/1004930.html。探索した範囲では選べる評価資料が無かった（2026-10-18確認）。"
     },
     {
       "target": {

@@ -3144,5 +3144,40 @@
       }
     }
   ],
-  "unresolved_candidates": []
+  "unresolved_candidates": [],
+  "evaluation_selections": [
+    {
+      "target": {
+        "jurisdiction": "133621",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "評価資料が見つからない。探した頁の記録は無い。探索した範囲では選べる評価資料が無かった（2026-10-14確認）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "133621",
+        "fiscal_year": 2024,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "R6評価資料が見つからない。決算ページは議会ページのみで成果・評価のPDFなし。DuckDuckGoのsite検索でも該当なし。探した頁: https://www.toshimamura.org/about/assembly.html。探索した範囲では選べる評価資料が無かった（2026-10-15確認）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "133621",
+        "fiscal_year": 2023,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "2023年度実績の評価資料が見つからない（2024年度の調査と同様）。探した頁: https://www.toshimamura.org/about/assembly.html。探索した範囲では選べる評価資料が無かった（2026-10-16確認）。"
+    }
+  ]
 }

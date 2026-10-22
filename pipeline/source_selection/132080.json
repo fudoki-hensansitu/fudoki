@@ -1102,6 +1102,17 @@
     {
       "target": {
         "jurisdiction": "132080",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "施策・事務事業マネジメントシート【令和8年度】（令和7年度取組実績、30施策、r7_30_01〜30）は評価対象が2025年度（令和7年度）で pdf_type=scan。2025年度の settlement の選定が `selected_candidate_id: null` のまま（令和7年度決算が未公表）なので、evaluation_selections へは足さない（対になる settlement の選定が無く check.ts の検査で止まる）。令和7年度決算の選定が入った後に、この30ファイルを2025年度の評価資料として足す。探した頁: https://www.city.chofu.lg.jp/010050/p000466.html。探索した範囲では選べる評価資料が無かった（2026-10-16確認）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132080",
         "fiscal_year": 2024,
         "document_kind": "settlement"
       },
