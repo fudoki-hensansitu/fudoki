@@ -1,0 +1,219 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132080",
+    "fiscal_year": 2024,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "3c5806a307ea61c2b758cda732dc5a205b007f4f8aecfe5d8fdb4194a084f6da"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure-detail",
+        "amount_corrections": [
+          {
+            "id": "p382-minus-2002000",
+            "page": 382,
+            "observation_id": "p382:tile-2-1:r0:w1",
+            "observed_amount": "2,002,000l",
+            "corrected_amount": "-2,002,000",
+            "reason": "原画の頁382 目5 社会教育総務費の予備費支出及び流用増減は −2,002,000。OCR の語は符号を落とし末尾に l を読んだ。"
+          },
+          {
+            "id": "p147-3215300",
+            "page": 147,
+            "observation_id": "p147:tile-5-1:r20",
+            "observed_amount": "，215",
+            "corrected_amount": "3,215,300",
+            "reason": "原画の頁147 保守点検委託料の備考は 3,215,300。OCR は桁区切りの前の 3 を読み落とし、215 と 300 を別の語に分けた。"
+          },
+          {
+            "id": "p147-2684734",
+            "page": 147,
+            "observation_id": "p147:tile-5-2:r19",
+            "observed_amount": "L,684，",
+            "corrected_amount": "2,684,734",
+            "reason": "原画の頁147 地域福祉センター管理運営費・諸経費の備考は 2,684,734。OCR は先頭の 2 を L と読み、684 と 734 を別の語に分けた。"
+          }
+        ],
+        "dropped_readings": [
+          {
+            "id": "p147-300-piece",
+            "page": 147,
+            "observation_id": "p147:tile-5-1:r21",
+            "observed": "），300",
+            "reason": "原画の頁147 保守点検委託料 3,215,300 の下3桁を別の語に分けた OCR の読み。上の訂正が全体を持つ。"
+          },
+          {
+            "id": "p147-734-piece",
+            "page": 147,
+            "observation_id": "p147:tile-5-2:r20",
+            "observed": "734",
+            "reason": "原画の頁147 ・諸経費 2,684,734 の下3桁を別の語に分けた OCR の読み。上の訂正が全体を持つ。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "p383-20sai",
+            "page": 383,
+            "observation_id": "p383:tile-5-3:r8",
+            "observed_name": "•ニ十歳",
+            "corrected_name": "○二十歳",
+            "reason": "原画の頁383 備考は「○二十歳のつどい運営費」。OCR は○を•、二をニと読んだ。"
+          },
+          {
+            "id": "p383-shakai",
+            "page": 383,
+            "observation_id": "p383:tile-5-4:r1",
+            "observed_name": "•社会教",
+            "corrected_name": "○社会教",
+            "reason": "原画の頁383 備考は「○社会教育団体振興補助金」。OCR は○を•と読んだ。"
+          },
+          {
+            "id": "p383-pta",
+            "page": 383,
+            "observation_id": "p383:tile-5-4:r4",
+            "observed_name": "•公立学",
+            "corrected_name": "○公立学",
+            "reason": "原画の頁383 備考は「○公立学校PTA連合会補助金」。OCR は○を•と読んだ。"
+          },
+          {
+            "id": "p383-20sai-ni",
+            "page": 383,
+            "observation_id": "p383:tile-5-3:r8:w0",
+            "observed_name": "ニ",
+            "corrected_name": "二",
+            "reason": "原画の頁383 備考は「二十歳のつどい運営費」。OCR は漢数字の二をカタカナのニと読んだ。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "p147-zero",
+            "page": 147,
+            "boxes": [
+              [
+                137.8,
+                141.4,
+                142.1,
+                146.7
+              ]
+            ],
+            "amount": "0",
+            "reason": "原画の頁147 最初の行の翌年度繰越額（継続費逓次繰越）は 0。OCR は細い字体の単独の0を読み落とした。"
+          },
+          {
+            "id": "p383-zero",
+            "page": 383,
+            "boxes": [
+              [
+                137.8,
+                212.4,
+                142.1,
+                217.7
+              ],
+              [
+                203.1,
+                212.4,
+                207.4,
+                217.7
+              ],
+              [
+                203.1,
+                236.4,
+                207.4,
+                241.7
+              ],
+              [
+                203.1,
+                343.0,
+                207.4,
+                348.3
+              ],
+              [
+                203.1,
+                543.7,
+                207.4,
+                551.4
+              ],
+              [
+                203.1,
+                590.7,
+                207.4,
+                598.9
+              ]
+            ],
+            "amount": "0",
+            "reason": "原画の頁383 翌年度繰越額の継続費逓次繰越（1行）と繰越明許費（5行）は 0。OCR は細い字体の単独の0を読み落とした。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-detail"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-ocr-columns-1",
+          "origin_sha256": "3c5806a307ea61c2b758cda732dc5a205b007f4f8aecfe5d8fdb4194a084f6da",
+          "request": {
+            "engine": "vision",
+            "pages": [
+              146,
+              147,
+              382,
+              383,
+              413
+            ],
+            "vlm_fallback": false,
+            "column_tiles": true
+          },
+          "sha256": "a2e7b5333af3dc55def9c22c616faae328443e3413830f222a71c5115eb9c138",
+          "bytes": 1022780
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-expenditure-detail",
+      "conversion_id": "general-settlement",
+      "input_fingerprint": "e9d2ea5f705da463be649f2497e9aa0f3a3a76910d524d7b84ca68fb308f023b",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '備考': 'indent'}。",
+        "金額の単位は column mark 174頁 から決めた。款の和 109,405,332,961 と印字の「歳出合計」109,405,332,961 が一致。",
+        "金額の注記 290 件（充用 13・流用 277）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（1178 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・翌年度繰越額／継続費逓繰次越→翌年度繰越額。",
+        "原画で確かめた名称の誤読 4 件を、管理 JSON の name_corrections で印字に直した: 383頁 •ニ十歳→○二十歳・383頁 •社会教→○社会教・383頁 •公立学→○公立学・383頁 ニ→二。",
+        "文字層の無い頁 5 頁（146・147・382・383・413）は、固定した OCR の観測（頁の単語）と描画の罫線で読み、段の読み方は文字層の頁から当てはめた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132080/2024/settlement/expenditure/general-expenditure-detail-nodes.parquet",
+          "sha256": "2f2c61b1f139142e0bb0e117db703d9be001ea435856b8138a5fc5a6655740fc",
+          "bytes": 255698
+        },
+        "row_count": 8155
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132080/2024/settlement/expenditure/general-expenditure-detail-amounts.parquet",
+          "sha256": "229cc6e7d66062e621c798356d3c73e2315dbb68fec899235b343d56cc0f0fb0",
+          "bytes": 212570
+        },
+        "row_count": 15428
+      }
+    }
+  ]
+}

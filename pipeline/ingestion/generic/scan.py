@@ -17,7 +17,7 @@ from pathlib import Path
 from functools import cache
 import re
 
-from ingestion.generic.layout import _frames, _header_bottom, normalize
+from ingestion.generic.layout import SIGNS, _frames, _header_bottom, normalize
 from ingestion.generic.observe import Page, Rule, Word
 from ingestion.lib import pdf_rules
 from ingestion.lib.scan_ocr import superseded
@@ -265,8 +265,25 @@ def short_rows(pdf: Path, detected: pdf_rules.PageRules, dark: int = pdf_rules.D
                    vertical=tuple(sorted([*detected.vertical, *columns], key=lambda r: (r.position, r.start))))
 
 
+LEADING_MARK = re.compile(r'[◎○〇●•・]')
+
+
+def with_mark(item: dict, pieces: list[Word] | None) -> list[Word] | None:
+    """The bullet that starts an OCR line (`◎地域福祉センター管理運営費`, `•電気料金`) that its word ranges leave out:
+    a printed text layer keeps the mark in the first word, and the levels of a 備考 are read from where it starts."""
+    mark = LEADING_MARK.match(item['raw_text'].strip())
+    if not pieces or not mark:
+        return pieces
+    first = min(pieces, key=lambda w: w.x0)
+    left = item['bbox_pdf_pt'][0]
+    if LEADING_MARK.match(first.text) or first.x0 - left < 1:
+        return pieces
+    text = '・' if mark.group() == '•' else mark.group()
+    return [Word(text + first.text, left, first.y0, first.x1, first.y1), *[p for p in pieces if p is not first]]
+
+
 def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None = None,
-         used: set[str] | None = None, detected: pdf_rules.PageRules | None = None) -> Page:
+         used: set[str] | None = None, detected: pdf_rules.PageRules | None = None, keep_marks: bool = False) -> Page:
     number = observation_page['page_number']
     detected = detected or pdf_rules.detect(pdf, number)
     rules = [Rule(r.position, r.start, r.position, r.end) for r in detected.vertical]
@@ -339,6 +356,8 @@ def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None
                     # Vision's word ranges may omit a minus whose line reading is intact.
                     # One complete number wholly inside a ruled cell outranks incomplete pieces.
                     pieces = None
+                if keep_marks:
+                    pieces = with_mark(item, pieces)
                 words += _cell_words(pieces or [Word(item['raw_text'], *item['bbox_pdf_pt'])], cuts, reach)
     return Page(number, detected.width, detected.height, words, rules)
 
@@ -492,7 +511,10 @@ def apply_name_corrections(observation: dict, rules: list[dict] | None) -> dict:
 def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = None,
           columns: dict | None = None, rules: dict | None = None, *, spread: dict | None = None,
           header: dict | None = None, code_corrections: list[dict] | None = None,
-          header_readings: list[dict] | None = None, rule_dark: int = pdf_rules.DARK) -> list[Page]:
+          header_readings: list[dict] | None = None, rule_dark: int = pdf_rules.DARK, rule_hook=None,
+          keep_marks: bool = False) -> list[Page]:
+    """`rule_hook(PageRules) -> PageRules` completes the rules read from a rendered page before the words are cut at
+    them; `keep_marks` keeps the bullet that starts a line in its first word (both for a text document's OCR pages, `mixed.py`)."""
     every = bool((header or {}).get('agree_all_frames'))
 
     def agreed(found):
@@ -500,8 +522,9 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
 
     @cache
     def detected(number):
-        return short_rows(pdf, (rules or {}).get(number) or pdf_rules.detect(pdf, number, dark=rule_dark), rule_dark,
-                          bool((header or {}).get('staircase')))
+        found = short_rows(pdf, (rules or {}).get(number) or pdf_rules.detect(pdf, number, dark=rule_dark), rule_dark,
+                           bool((header or {}).get('staircase')))
+        return rule_hook(found) if rule_hook else found
 
     code_rules, shrunk = [], []
     if code_corrections:
@@ -564,7 +587,7 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
     if code_rules:
         corrections = amount_dictionary([r.__dict__ for r in [*(corrections.rules if corrections else ()), *code_rules]])
     used = set()
-    found = [page(p, pdf, corrections, used, detected(p['page_number'])) for p in observation['pages']]
+    found = [page(p, pdf, corrections, used, detected(p['page_number']), keep_marks) for p in observation['pages']]
     unused = {r.id for r in corrections.rules} - used if corrections else set()
     if unused:
         raise ValueError(f'Amount corrections matched no observation: {sorted(unused)}')
@@ -816,7 +839,9 @@ def declared_unread(built, logicals_: list, columns: dict | None, observation: d
             if (columns or {}).get('／'.join(band.header), {}).get('kind') != 'amount':
                 continue
             for glyph in band.words:
+                # A lone sign (`△`) is printed over its figure, and the builder reads it so (`tree`): not unread.
                 if (len(glyph.text.strip()) == 1 and not any(c.isdigit() for c in glyph.text) and glyph.text != '円'
+                        and glyph.text.strip() not in SIGNS
                         and not is_amount(glyph.text)
                         and (glyph.page, glyph.original) not in units):
                     built.unowned.append({'kind': 'unreadable declared amount cell', 'page': glyph.page,
@@ -855,6 +880,32 @@ def pinned(source: dict, selected_pages: list[int]) -> dict:
     return {'pages': [observed[p] for p in selected_pages]}
 
 
+def read_pages(source: dict, options: dict, settings: dict | None, selected: list[int],
+               rules: dict | None = None, rule_hook=None, keep_marks: bool = False) -> tuple[list[Page], dict, list[str]]:
+    """The pinned OCR of `selected` pages as generic pages, with the conversion's declared rereads laid in
+    (dropped readings, name corrections bound to an observation, the variant characters Paddle reads, amount and code
+    corrections, readings of what OCR left unread, unit readings), and the variant characters it replaced. A text
+    document's OCR pages (`mixed.py`) are read by this too."""
+    observation = drop_readings(pinned(source, selected), options.get('dropped_readings'))
+    columns = (settings or {}).get('columns')
+    spread = (settings or {}).get('spread')
+    header = (settings or {}).get('header')
+    # A name correction binds to an observation (`observation_id`: characters OCR misread) or, as the text
+    # builder's, to a node by page, code and the name read (convert.correct_names).
+    by_observation = [r for r in options.get('name_corrections', ()) if 'observation_id' in r]
+    observation = apply_name_corrections(observation, by_observation)
+    observation, variants = apply_variant_chars(observation)
+    printed = pages(observation, Path(source['path']), amount_dictionary(options.get('amount_corrections', [])), columns, rules,
+                    spread=spread, header=header, code_corrections=options.get('code_corrections'),
+                    header_readings=options.get('header_readings'),
+                    rule_dark=((settings or {}).get('rules') or {}).get('dark', pdf_rules.DARK), rule_hook=rule_hook,
+                    keep_marks=keep_marks)
+    printed = add_code_readings(printed, options.get('code_readings'))
+    printed = add_code_readings(printed, [{**r, 'box': box} for r in options.get('amount_readings', ()) for box in r['boxes']],
+                                'amount', r'△?(0|[1-9][0-9]{0,2}(,[0-9]{3})*)')
+    return read_units(printed, options.get('unit_readings')), observation, variants
+
+
 def build_table(source: dict, options: dict, *, stop: bool = True, rules: dict | None = None):
     """The scan entry of the same builder and finalization as text; the converter never runs OCR or VLM."""
     from ingestion.generic.build import choose_pattern, page_titles
@@ -865,25 +916,12 @@ def build_table(source: dict, options: dict, *, stop: bool = True, rules: dict |
     if source.get('format') != 'pdf' or source.get('pdf_type') != 'scan':
         raise ValueError('The scan builder requires a scan PDF')
     selected = scope_pages(source, options['account'], options.get('pages'))
-    observation = drop_readings(pinned(source, selected), options.get('dropped_readings'))
     settings = load(source['target'], source.get('direction') or 'expenditure')
     columns = (settings or {}).get('columns')
     spread = (settings or {}).get('spread')
     header = (settings or {}).get('header')
-    # A name correction binds to an observation (`observation_id`: characters OCR misread) or, as the text
-    # builder's, to a node by page, code and the name read (convert.correct_names).
-    by_observation = [r for r in options.get('name_corrections', ()) if 'observation_id' in r]
     by_node = [r for r in options.get('name_corrections', ()) if 'observation_id' not in r]
-    observation = apply_name_corrections(observation, by_observation)
-    observation, variants = apply_variant_chars(observation)
-    printed = pages(observation, Path(source['path']), amount_dictionary(options.get('amount_corrections', [])), columns, rules,
-                    spread=spread, header=header, code_corrections=options.get('code_corrections'),
-                    header_readings=options.get('header_readings'),
-                    rule_dark=((settings or {}).get('rules') or {}).get('dark', pdf_rules.DARK))
-    printed = add_code_readings(printed, options.get('code_readings'))
-    printed = add_code_readings(printed, [{**r, 'box': box} for r in options.get('amount_readings', ()) for box in r['boxes']],
-                                'amount', r'△?(0|[1-9][0-9]{0,2}(,[0-9]{3})*)')
-    printed = read_units(printed, options.get('unit_readings'))
+    printed, observation, variants = read_pages(source, options, settings, selected, rules)
     printed, recovered = recover_codes(printed, Path(source['path']), columns, spread=spread, header=header)
     report = Report()
     direction = source.get('direction')

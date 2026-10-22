@@ -25,7 +25,7 @@ import json
 from pathlib import Path
 import re
 
-from ingestion.generic import observe as observe_module
+from ingestion.generic import mixed, observe as observe_module, scan as scan_module
 from ingestion.generic.build import run_pages
 from ingestion.generic.headers import canonical
 from ingestion.generic.layout import is_amount, lines, normalize
@@ -331,6 +331,23 @@ class Table:
     logicals: list
     headings: dict = field(default_factory=dict)  # `{(printed heading path, heading kept): count}`
     plain_names: list = field(default_factory=list)  # names the settings declare to be items, not notes
+    ocr_pages: list = field(default_factory=list)  # pages of a text original read from pinned OCR (`mixed.py`)
+
+
+# What the gates of the OCR pages list in `built.unowned` (`build.run_pages`).
+OCR_GATES = ('unread ink in amount column', 'unreadable declared amount cell', 'amount in a column of no kind',
+             'unread strip seam')
+# The options of a conversion that reread an OCR observation (`scan.read_pages`).
+OCR_REREADS = ('amount_corrections', 'code_corrections', 'amount_readings', 'code_readings', 'dropped_readings', 'unit_readings',
+               'header_readings')
+
+
+def check_ocr_rereads(options: dict, ocr_pages: list[int]) -> None:
+    """The rereads of an OCR reading apply to the OCR pages only: declared without one, they would be noted and never applied."""
+    declared = [key for key in OCR_REREADS if options.get(key)]
+    declared += ['name_corrections'] if any('observation_id' in rule for rule in options.get('name_corrections', ())) else []
+    if declared and not ocr_pages:
+        raise ValueError(f'OCR rereads without OCR pages: {declared}')
 
 
 def build_table(source: dict, options: dict, *, stop: bool = True) -> Table:
@@ -344,23 +361,31 @@ def build_table(source: dict, options: dict, *, stop: bool = True) -> Table:
         # An account's own settings replace the document's, key by key: accounts of one
         # original can print the same marks for different levels.
         layout = {**layout, **layout['accounts'][account]}
+    # Pages whose text layer is empty are declared as an OCR input of the conversion and read from its pinned
+    # observation (`mixed.py`); the observation cache of the text layer is keyed by the pages it observes.
+    ocr_numbers = mixed.numbers(source, pages)
+    check_ocr_rereads(options, ocr_numbers)
+    ocr = (ocr_numbers, lambda hook: scan_module.read_pages(source, options, layout, ocr_numbers, rule_hook=hook, keep_marks=True)) if ocr_numbers else None
     built, report, observed, logicals = run_pages(
-        Path(source['path']), pages, observation_cache(source, pages),
+        Path(source['path']), pages, observation_cache(source, [p for p in pages if p not in ocr_numbers]),
         document_kind=source['target']['document_kind'], account=account, stop=stop,
         partial=bool(options.get('partial')), direction=source.get('direction'),
         layout=(layout or {}).get('breakdown'), columns=(layout or {}).get('columns'),
         spread=(layout or {}).get('spread'), header=(layout or {}).get('header'),
         repairs=frozenset((layout or {}).get('repairs', ())), codes_right=(layout or {}).get('codes') == 'right',
-        text_layer=(layout or {}).get('text_layer'))
+        text_layer=(layout or {}).get('text_layer'), ocr=ocr)
     kept, nodes, amounts, unresolved, codes = split_notes(built)
-    built.notes.extend({'kind': 'name correction', 'text': text} for text in correct_names(built.nodes, options.get('name_corrections')))
+    by_node = [rule for rule in options.get('name_corrections', ()) if 'observation_id' not in rule]
+    built.notes.extend({'kind': 'name correction', 'text': text} for text in correct_names(built.nodes, by_node))
+    built.notes.extend({'kind': 'name correction', 'text': f'{rule["page"]}頁 {rule["observed_name"]}→{rule["corrected_name"]}'}
+                       for rule in options.get('name_corrections', ()) if 'observation_id' in rule)
     all_nodes = [*built.nodes, *nodes]
     all_amounts, headings = canonical_headings([*kept, *amounts], all_nodes, source['target']['document_kind'],
                                                (layout or {}).get('header'))
     fine_sections(all_nodes)
     plain = [name for hints in ((layout or {}).get('breakdown') or {}).values() for name in hints.get('plain_names', ())]
     return Table(all_nodes, all_amounts, unresolved, excluded_regions(built, logicals, codes, observed),
-                 built, report, observed, logicals, headings, plain)
+                 built, report, observed, logicals, headings, plain, ocr_numbers)
 
 
 def correct_names(nodes: list[dict], rules: list[dict] | None) -> list[str]:
@@ -455,6 +480,9 @@ def receipt_notes(table: Table) -> list[str]:
     variants = [n['text'] for n in table.built.notes if n.get('kind') == 'variant characters']
     if variants:
         notes.append(f'Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: {"・".join(variants)}。')
+    if table.ocr_pages:
+        notes.append(f'文字層の無い頁 {len(table.ocr_pages)} 頁（{"・".join(map(str, table.ocr_pages))}）は、固定した OCR の観測（頁の単語）と描画の罫線で読み、'
+                     '段の読み方は文字層の頁から当てはめた。')
     if table.report.skipped_pages:
         notes.append(f'選定の scope が共有していた別の方向（歳入）の頁 {len(table.report.skipped_pages)} 頁は読んでいない。')
     return notes
@@ -463,4 +491,9 @@ def receipt_notes(table: Table) -> list[str]:
 def convert(inputs: list[dict], destination: Path, options: dict) -> dict:
     if len(inputs) != 1:
         raise ValueError('The generic builder converts one original per table')
-    return write_files(destination, options['table_id'], build_table(inputs[0], options))
+    table = build_table(inputs[0], options)
+    # As the scan converter: what OCR left unread in the amount columns of an OCR page stops the table (`run_pages`).
+    unread = [u for u in table.built.unowned if u['kind'] in OCR_GATES]
+    if unread:
+        raise ValueError(f'OCR pages have amounts left unread: {[(u["kind"], u["page"], u["box"]) for u in unread]}')
+    return write_files(destination, options['table_id'], table)

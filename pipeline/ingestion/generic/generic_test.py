@@ -151,6 +151,28 @@ class TrialRulesTest(unittest.TestCase):
         self.assertEqual(body, ['1', '総務費', '1', '社会福祉費', '1,000', '2,000'])
         self.assertEqual([(code, name) for code, name, _ in logical.titles], [('2', '民生費')])
 
+    def test_a_title_printed_under_the_last_rule_is_the_foot_of_the_page_not_a_kan_title(self):
+        verticals = [Rule(x, 50, x, 400) for x in (10, 100, 200)]
+        horizontals = [Rule(10, y, 200, y) for y in (50, 70, 100, 400)]
+        words = [Word('科', 20, 55, 29, 64), Word('目', 40, 55, 49, 64), Word('支出', 110, 55, 128, 64), Word('済額', 130, 55, 148, 64),
+                 Word('1', 20, 110, 24.5, 119), Word('総務費', 30, 110, 57, 119), Word('1,000', 150, 110, 172.5, 119)]
+        above = [Word('第2款', 20, 20, 47, 29), Word('民生費', 50, 20, 77, 29)]
+        foot = [Word('第10款', 20, 420, 47, 429), Word('総務費', 50, 420, 77, 429)]
+        titles = lambda extra: [(code, name) for code, name, _ in logical_pages([Page(1, 300, 500, words + extra, verticals + horizontals)])[0].titles]
+        self.assertEqual(titles(above), [('2', '民生費')])
+        self.assertEqual(titles(foot), [])
+        self.assertEqual(titles(above + foot), [('2', '民生費')])
+
+    def test_the_foot_is_under_the_frame_the_title_stands_in_when_the_frames_of_a_spread_end_apart(self):
+        # The left frame ends at 450, the right one at 400: a title under the right frame is its foot.
+        verticals = [Rule(x, 50, x, 450) for x in (10, 60, 100)] + [Rule(x, 50, x, 400) for x in (150, 200, 280)]
+        horizontals = [Rule(10, y, 100, y) for y in (50, 70, 450)] + [Rule(150, y, 280, y) for y in (50, 70, 400)]
+        words = [Word('科目', 20, 55, 38, 64), Word('支出済額', 65, 55, 95, 64), Word('総務費', 20, 110, 47, 119), Word('1,000', 70, 110, 92.5, 119),
+                 Word('科目', 160, 55, 178, 64), Word('支出済額', 205, 55, 241, 64), Word('民生費', 160, 110, 187, 119), Word('2,000', 230, 110, 252.5, 119)]
+        foot = [Word('第10款', 160, 410, 187, 419), Word('総務費', 190, 410, 217, 419)]
+        logical = logical_pages([Page(1, 300, 500, words + foot, verticals + horizontals)])[0]
+        self.assertEqual(logical.titles, [])
+
     def test_rules_off_the_page_are_dropped_inside_the_box_the_pdf_displays(self):
         import tempfile
         from pathlib import Path
@@ -985,6 +1007,15 @@ class BreakdownRulesTest(unittest.TestCase):
                             glyph('020000へ予算流用減', 300, 112, 100)])
         self.assertEqual([(i.name, [''.join(g.text for g in r) for _, r in i.amounts]) for i in found],
                          [('・020601【010261】020000へ予算流用減', ['△28,800'])])
+
+    def test_a_line_after_a_finished_transfer_remark_is_its_own_item_even_at_the_columns_limit(self):
+        # The tail `…へ流用` is the longest line of the document (its end is the limit), and the next remark prints its amount.
+        words = [glyph('保育所運営費・負担金，補助及び交付', 300, 100, 150), glyph('55,579,000', 540, 100, 50),
+                 glyph('金から負担金，補助及び交付金へ流用', 300, 112, 170),
+                 glyph('報酬から償還金へ流用', 300, 136, 100), glyph('467,000', 540, 136, 35)]
+        found = self.found(words, limit=470)
+        self.assertEqual([(i.name, len(i.amounts)) for i in found],
+                         [('保育所運営費・負担金,補助及び交付', 1), ('金から負担金,補助及び交付金へ流用', 0), ('報酬から償還金へ流用', 1)])
 
     def test_amount_marks_do_not_make_an_account_code(self):
         from ingestion.generic.tree import is_account_code
