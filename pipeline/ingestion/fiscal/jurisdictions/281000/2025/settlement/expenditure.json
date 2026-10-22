@@ -8810,7 +8810,7 @@
     {
       "table_id": "general-kaikei",
       "conversion_id": "general-kaikei",
-      "input_fingerprint": "3a001b6af08b022c16a6deff25c5b52d78a0206e86dfc4140c9fff953d06fadc",
+      "input_fingerprint": "d9e30bfd982b1db826ea4d52fbbd6914c8b5a91cf21d608cb51a4486e8991249",
       "account": "一般会計",
       "division": "会計室",
       "notes": [
@@ -8841,7 +8841,7 @@
     {
       "table_id": "general-gyozai",
       "conversion_id": "general-gyozai",
-      "input_fingerprint": "e2402f97b7bbce2e831d0b5217b501e63d7598194d78017c658d8fc58a588914",
+      "input_fingerprint": "8e1ba5282e094b0c2d7353d71e183d607cd0c18793ee2d23f3b39b985b8a2802",
       "account": "一般会計",
       "division": "行財政局",
       "notes": [
@@ -8872,7 +8872,7 @@
     {
       "table_id": "debt-gyozai",
       "conversion_id": "debt-gyozai",
-      "input_fingerprint": "e1ecc60228c21cb7c69aa48fdd8c13ac4a2b8c8e3f1c0ec61cf0b949b48ebfc4",
+      "input_fingerprint": "bfe89c56a96e3a5cde112a02e350df5f007f6359da8c00b0423d858571ae9e09",
       "account": "公債費",
       "division": "行財政局",
       "notes": [
@@ -8903,7 +8903,7 @@
     {
       "table_id": "general-senkyo",
       "conversion_id": "general-senkyo",
-      "input_fingerprint": "7f9ff47d606356e67be150988239dca8dcc5c307f37f8f52d6f2026676ad810d",
+      "input_fingerprint": "0814470262505ce2acbabc8099ff4d28862e2105b921be17e68c0b342cea108d",
       "account": "一般会計",
       "division": "選挙管理委員会事務局",
       "notes": [
@@ -8934,7 +8934,7 @@
     {
       "table_id": "general-jinji",
       "conversion_id": "general-jinji",
-      "input_fingerprint": "80aff335f0475c588762249872eda5cac1eb611f512799f92aebd2521a5149bb",
+      "input_fingerprint": "edc675e00fb202243697ad3fec03a269de1b5e3076f0c1d5fcac37878f81bd38",
       "account": "一般会計",
       "division": "人事委員会事務局",
       "notes": [
@@ -8965,7 +8965,7 @@
     {
       "table_id": "general-kansa",
       "conversion_id": "general-kansa",
-      "input_fingerprint": "70a04665efed117d53ca019ac18b44f09582be2c51a9943fc61902fe01b30e3b",
+      "input_fingerprint": "4f38180b9252547927ff8c0345b8c9319c5102c93f1e0fc8df8758ed40f37d67",
       "account": "一般会計",
       "division": "監査事務局",
       "notes": [
@@ -8996,7 +8996,7 @@
     {
       "table_id": "general-kikaku",
       "conversion_id": "general-kikaku",
-      "input_fingerprint": "e80703363067baf92def234849beddc5ae5bebcf6d5524810efa885a37f29c7c",
+      "input_fingerprint": "e2bbce26d0a0d07d1e1da509bafbc86e2462b1d060dae82ce242bf2614b77508",
       "account": "一般会計",
       "division": "企画調整局",
       "notes": [
@@ -9027,7 +9027,7 @@
     {
       "table_id": "general-fukushi",
       "conversion_id": "general-fukushi",
-      "input_fingerprint": "99c188fe60db19d451ddeccee4fd0d2589f621169f990ee42867a4d72d18887f",
+      "input_fingerprint": "4f3588270884991666c49e9e06648956c29b1220a9f187c0ee07115ec1596eb9",
       "account": "一般会計",
       "division": "福祉局",
       "notes": [
@@ -9058,7 +9058,7 @@
     {
       "table_id": "nhi-fukushi",
       "conversion_id": "nhi-fukushi",
-      "input_fingerprint": "01a92609316152a9252c876023e4ba3aa1cfcdc5eb1f4786cf09a734391b4893",
+      "input_fingerprint": "305de0bb4c2b643217be0e85037b2b5386ef00af9c1ed4581ed22228e6e35d00",
       "account": "国民健康保険事業費",
       "division": "福祉局",
       "notes": [
@@ -9089,7 +9089,7 @@
     {
       "table_id": "care-fukushi",
       "conversion_id": "care-fukushi",
-      "input_fingerprint": "055727f4322bdd05a5629d8c8bc202ff1a38fc51cf67a78ceb5f1d36cc124ef1",
+      "input_fingerprint": "6a3a3960079b1bd69a1f4bf1575e1c726a9ef6d690e994ec4aab9628838764f6",
       "account": "介護保険事業費",
       "division": "福祉局",
       "notes": [
@@ -9120,7 +9120,7 @@
     {
       "table_id": "elderly-fukushi",
       "conversion_id": "elderly-fukushi",
-      "input_fingerprint": "005b4c30c9e68c468efc3f0e1068fab517ca0c298fe25ae7e61ac915b00ad10a",
+      "input_fingerprint": "7dd1b8fc3a6ce3fe3f6bb6ab3eb5444243e6f43517519671cbfaa6898a24f1e5",
       "account": "後期高齢者医療事業費",
       "division": "福祉局",
       "notes": [
@@ -9151,7 +9151,7 @@
     {
       "table_id": "general-kensetsu",
       "conversion_id": "general-kensetsu",
-      "input_fingerprint": "9f6b1206604bcee2a878728fc2e23457ce8a097b584b5b3db7c6d7bfb2214f20",
+      "input_fingerprint": "26a7b038aac2f91cd2042237ddbb77799ad98eb6d9cc062094d928a3ecb6643d",
       "account": "一般会計",
       "division": "建設局",
       "notes": [
@@ -9183,7 +9183,7 @@
     {
       "table_id": "parking-kensetsu",
       "conversion_id": "parking-kensetsu",
-      "input_fingerprint": "92bea9291e2aafdb3978fcb2602952646f72171ec7167d8425fc4b95f66b1adc",
+      "input_fingerprint": "b52fdc6ea2bf6b8e6a68b838e831e56aace8a4a0ba6479df7d2a0ca726953979",
       "account": "駐車場事業費",
       "division": "建設局",
       "notes": [
@@ -9214,7 +9214,7 @@
     {
       "table_id": "general-kankyou",
       "conversion_id": "general-kankyou",
-      "input_fingerprint": "14f69d50d28374c58c7756b7c12c5c28ed38f142b3dff88b06cf6d50dbf2ae90",
+      "input_fingerprint": "403e320fb1cc890890fa30bc4d974779a39b2a323b2cdd318fd35a76ebd20ace",
       "account": "一般会計",
       "division": "環境局",
       "notes": [
@@ -9246,7 +9246,7 @@
     {
       "table_id": "general-chiiki",
       "conversion_id": "general-chiiki",
-      "input_fingerprint": "10f37f4103f103ffe6ccbc9435ba6995a81cff8ffdedf36da97cd0fd8876424c",
+      "input_fingerprint": "de812909346856e273a13a84aa8ba35f7a3e441d76a3e55356f2f93ff8cd5fef",
       "account": "一般会計",
       "division": "地域協働局",
       "notes": [
@@ -9277,7 +9277,7 @@
     {
       "table_id": "general-kenchikujyutaku",
       "conversion_id": "general-kenchikujyutaku",
-      "input_fingerprint": "a26493ca48275f9f7a2664bbc6846b562b4954531b7e26918811e534d85c3d4d",
+      "input_fingerprint": "0e90e59f4f757c74edd9b09ddd9d5e5bedf420e43ff67bf1d3691ab76e4b14fe",
       "account": "一般会計",
       "division": "建築住宅局",
       "notes": [
@@ -9309,7 +9309,7 @@
     {
       "table_id": "general-keizai",
       "conversion_id": "general-keizai",
-      "input_fingerprint": "2532750d74887bbce5cbf2b166e093c1d23733ebe6656435fa9757a769cf738c",
+      "input_fingerprint": "a2b949694127850b6943bf99d9c6a6ba9652c306640bf18c59adf67b4476404e",
       "account": "一般会計",
       "division": "経済観光局",
       "notes": [
@@ -9340,7 +9340,7 @@
     {
       "table_id": "market-keizai",
       "conversion_id": "market-keizai",
-      "input_fingerprint": "61cbb859519d60e9049bdf29bc18da7828757538681315fa957f8fdb229e9a23",
+      "input_fingerprint": "b3a8c2cb380ec1f28b7b782b794190bfe083830501877a3464c729db338b4998",
       "account": "市場事業費",
       "division": "経済観光局",
       "notes": [
@@ -9371,7 +9371,7 @@
     {
       "table_id": "meat-keizai",
       "conversion_id": "meat-keizai",
-      "input_fingerprint": "490b48ad278d3c20e0b6ce7fd6356a5f47db9fa31eefbd8e9fb0d064003d9fc2",
+      "input_fingerprint": "cb4207b42814d62758e09873ded37b7de70eeec54fd3a1b8816c6b240bf3b7b3",
       "account": "食肉センター事業費",
       "division": "経済観光局",
       "notes": [
@@ -9402,7 +9402,7 @@
     {
       "table_id": "general-kyoiku",
       "conversion_id": "general-kyoiku",
-      "input_fingerprint": "abbf8f0e3ea70b3fd9f46188bc2d7d3fb31dd4f13e14454342bcf4467f4eb177",
+      "input_fingerprint": "93f0a3f136e7cfe310d015e3d030a99f65108b3cdd1781c463e25f3dcf4e6daf",
       "account": "一般会計",
       "division": "教育委員会",
       "notes": [
@@ -9434,7 +9434,7 @@
     {
       "table_id": "general-kodomo",
       "conversion_id": "general-kodomo",
-      "input_fingerprint": "157c8c744b7eee3a6fed4a6860e43d072737c7bddf99cf09145cf4644c3e1bf9",
+      "input_fingerprint": "c357b12ddf8e822f3cea467cec8802bc13b9b9c0bdd1f7c61dec43ee24fb0233",
       "account": "一般会計",
       "division": "こども家庭局",
       "notes": [
@@ -9466,7 +9466,7 @@
     {
       "table_id": "single-parent-kodomo",
       "conversion_id": "single-parent-kodomo",
-      "input_fingerprint": "9429b0221de74472c557e5099f44754a4f97b3ae90da14ca3ac7e8ae1732767c",
+      "input_fingerprint": "640487fc78e195ec6b4c7e4f20866e534bbbd533ff49e9896655bf5dde85b363",
       "account": "母子父子寡婦福祉資金貸付事業費",
       "division": "こども家庭局",
       "notes": [
@@ -9497,7 +9497,7 @@
     {
       "table_id": "general-kouwan",
       "conversion_id": "general-kouwan",
-      "input_fingerprint": "8acade6065254365d43430ed403897805d00564f748561fe0f74891ea6e75a5c",
+      "input_fingerprint": "0d6f2bc7f069916b5a0d3f85d7c8db63f9f7a867055224f4c9f97408d7091f75",
       "account": "一般会計",
       "division": "港湾局",
       "notes": [
@@ -9529,7 +9529,7 @@
     {
       "table_id": "general-toshi",
       "conversion_id": "general-toshi",
-      "input_fingerprint": "8aceb2749795dda0dc68812aa1ae09a090a6beeb73e56e513ff7b624012c7882",
+      "input_fingerprint": "9833576772bc3eba170b3eeb349c0ded513a034537330fe0e1776069445ec1f5",
       "account": "一般会計",
       "division": "都市局",
       "notes": [
@@ -9561,7 +9561,7 @@
     {
       "table_id": "redevelopment-toshi",
       "conversion_id": "redevelopment-toshi",
-      "input_fingerprint": "d3c1083597e8c1c724d825f55f2154a2cf173a0adbc0f3e61d24f3b15d715f33",
+      "input_fingerprint": "85df30ff84a820b60aaef80c6203c4cf49672a81c2996368b1d0fddd279544dc",
       "account": "市街地再開発事業費",
       "division": "都市局",
       "notes": [
@@ -9593,7 +9593,7 @@
     {
       "table_id": "general-bunka",
       "conversion_id": "general-bunka",
-      "input_fingerprint": "bf388cc91792cc8f73efd9247bd53a168b803ad5111d76218fc51185ff9c0016",
+      "input_fingerprint": "f59708fe43a93b716053b5e0e3a05af7ce8ab2176816c26e6cd01d93d4bb9205",
       "account": "一般会計",
       "division": "文化スポーツ局",
       "notes": [
@@ -9624,7 +9624,7 @@
     {
       "table_id": "general-kikikanri",
       "conversion_id": "general-kikikanri",
-      "input_fingerprint": "cac88132eb8dbc3aacfaeb28be023cd99327d6b53c4774fad47968ea4ac44917",
+      "input_fingerprint": "2fae20a210c68b6ff37fc1bccf00175d8ef144e194895d5e1dcafa5a5dd7272a",
       "account": "一般会計",
       "division": "危機管理局",
       "notes": [
@@ -9656,7 +9656,7 @@
     {
       "table_id": "general-shobou",
       "conversion_id": "general-shobou",
-      "input_fingerprint": "41e2e0ae8c50e0281d33bd2306d044f84fcec3e044afe90cdfd3bc1be5f97681",
+      "input_fingerprint": "946966b21154a83c20f1356ac31a21226f00b5f658ebda720a8ff82fa0727d3e",
       "account": "一般会計",
       "division": "消防局",
       "notes": [
@@ -9687,7 +9687,7 @@
     {
       "table_id": "general-kenkou",
       "conversion_id": "general-kenkou",
-      "input_fingerprint": "b2fbdfe8c1aa4dfa14e06abf03a2e5175e5063266b0b4c58ef9abaccead49387",
+      "input_fingerprint": "c43c19653dc84ca02161a9a8a0e1d8731ec8d40206244551de62350f64aed40f",
       "account": "一般会計",
       "division": "健康局",
       "notes": [
@@ -9718,7 +9718,7 @@
     {
       "table_id": "care-kenkou",
       "conversion_id": "care-kenkou",
-      "input_fingerprint": "2850d647b819d2c1291cb16a3e43860aaade4d201c135ec4eb52e8430aea5a90",
+      "input_fingerprint": "6eae441eabe2d07f82fedf7b54668a73e26c62446333d7a820b6240dd11bc9c0",
       "account": "介護保険事業費",
       "division": "健康局",
       "notes": [
@@ -9749,7 +9749,7 @@
     {
       "table_id": "general",
       "conversion_id": "general",
-      "input_fingerprint": "e326cf00146c80e902d805162f9d9314d7598b133e47c3a1827509a26be12261",
+      "input_fingerprint": "cf3952615331fef56eabbc9d0cfc75bc77261955a09685007e52faf7030e36ef",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {}。",
