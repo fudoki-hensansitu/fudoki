@@ -53,7 +53,7 @@
     {
       "table_id": "expenditure-settlement-1",
       "conversion_id": "settlement-1",
-      "input_fingerprint": "a802191e2b2ad90581afc6f8ab5a5aad38f0dba8c64352e515404c4c83192dbb",
+      "input_fingerprint": "6fd6dad2e3f47c41fc0710511ad817c4a2c6a3b27701c73336e8800f2ac3c38d",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "4頁の表は節・備考の列が無い総括表で、明細ではないため読まない",
@@ -72,8 +72,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132055/2025/settlement/expenditure/expenditure-settlement-1-amounts.parquet",
-          "sha256": "907568ff53a921f07c9848546ab58a220357f9438be91e007b56c1d21dea642e",
-          "bytes": 10627
+          "sha256": "607698e3aff9d81970534a0341c5c2a83b40e62d77d4c814755ccf0d683e7851",
+          "bytes": 10546
         },
         "row_count": 487
       }
