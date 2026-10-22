@@ -111,6 +111,12 @@
       "reason": "貸付金の貸。日本の科目名では 贷 を正字として使わない。"
     },
     {
+      "id": "variant-18",
+      "observed_char": "举",
+      "corrected_char": "挙",
+      "reason": "選挙・推挙の挙。日本の科目名では 举 を正字として使わない。"
+    },
+    {
       "id": "variant-middle-dot",
       "observed_char": "·",
       "corrected_char": "・",

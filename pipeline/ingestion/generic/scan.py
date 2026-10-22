@@ -154,16 +154,26 @@ def _paddle_pieces(line: dict, children: list[Word], corrected: bool, cuts: list
             x0, y0, x1, y1 = line['bbox_pdf_pt']
             return [Word(text[:-1], x0, y0, tail.x0, y1), tail]
         return None
-    merged: list[Word] = []
-    for child in sorted(children, key=lambda c: c.x0):
+    # The children are in the order the line is spelled. A spaced-out name (`3 広 報 費`) gets a box for `広` that
+    # starts left of the `3` before it, and sorted by x it would read `広3報費`: a box that starts before the one
+    # before it starts where that one ends.
+    ordered: list[Word] = []
+    for child in children:
         if not child.text.strip():
             continue
+        if ordered and child.x0 < ordered[-1].x0:
+            child = Word(child.text, min(ordered[-1].x1, child.x1), child.y0, child.x1, child.y1)
+        ordered.append(child)
+    merged: list[Word] = []
+    for child in ordered:
         last = merged[-1] if merged else None
         if (last is not None and NUMERIC_RUN.fullmatch(_text(child.text)) and NUMERIC_RUN.fullmatch(_text(last.text))
                 # a rule between the end of the fragment before and the start of this one keeps two cells apart; one that
                 # only crosses the first character's box (`1,981,045,000` over a rule 2pt from its left) does not
                 and not any(last.x1 - min(2, (last.x1 - last.x0) / 2) < x <= child.x0 + PADDLE_REACH for x in cuts)
-                and child.x0 - last.x1 <= (2 * JOIN_GAP if last.text.endswith(',') or child.text.startswith(',') else JOIN_GAP)
+                # (a comma, or a minus sign set apart from its digits `△ 15,673,555`, sits farther from its neighbour)
+                and child.x0 - last.x1 <= (2 * JOIN_GAP if last.text.endswith(',') or child.text.startswith(',')
+                                           or re.fullmatch(r'[△▲−-]', _text(last.text)) else JOIN_GAP)
                 * max(last.y1 - last.y0, child.y1 - child.y0)):
             merged[-1] = Word(last.text + child.text, last.x0, min(last.y0, child.y0), max(last.x1, child.x1),
                               max(last.y1, child.y1))
