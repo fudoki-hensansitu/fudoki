@@ -1,6 +1,7 @@
 // fudoki.dev の入口の1枚。視覚の規範は repo root の DESIGN.md、ロゴは public/logo.svg・favicon は public/favicon.svg の写し（Worker は assets を持たないので inline にする）
 // 見出しの明朝は /fonts/mincho.woff2（この頁で使う字だけの subset）。文言を変えたら `bun run --cwd apps/web build:font` で作り直す
 import { HOME } from './home-data'
+import { PWA_HEAD, PWA_REGISTER } from './pwa'
 import { LOGO_G } from './logo'
 
 const MCP = 'https://api.fudoki.dev/mcp'
@@ -402,7 +403,7 @@ export const LANDING_HTML = `<!doctype html>
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>風土記（fudoki）— 町の家計簿</title>
 <meta name="description" content="${DESCRIPTION}">
 <meta name="theme-color" content="#fdfcfa" media="(prefers-color-scheme: light)">
@@ -411,6 +412,7 @@ export const LANDING_HTML = `<!doctype html>
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+${PWA_HEAD}
 <link rel="preload" href="/fonts/mincho.woff2" as="font" type="font/woff2" crossorigin>
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="風土記（fudoki）">
@@ -431,6 +433,7 @@ export const LANDING_HTML = `<!doctype html>
 <body>
 ${BODY}
 <script>${SCRIPT}</script>
+${PWA_REGISTER}
 </body>
 </html>
 `
