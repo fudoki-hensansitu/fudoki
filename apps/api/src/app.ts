@@ -261,7 +261,12 @@ export function createApp(operations: Operation[] = defaultOperations) {
   app.use('*', async (c, next) => {
     await next()
     c.res.headers.set('Cache-Control', 'no-store')
+    // 検索 engine に載せない（robots.txt で止めても外部リンク経由で載りうるので、応答側でも示す）
+    c.res.headers.set('X-Robots-Tag', 'noindex, nofollow')
   })
+
+  // kill switch より前に置き、停止中も crawler に拒否を返す。
+  app.get('/robots.txt', (c) => c.text('User-agent: *\nDisallow: /\n'))
 
   // sandbox iframe は opaque origin（Origin: null）。PDF の公開中継だけ資格情報なしで読ませる。
   app.use('/v1/origins/:origin_id/pdf', async (c, next) => {

@@ -63,6 +63,17 @@ describe('kill switch', () => {
   })
 })
 
+describe('crawler の除外', () => {
+  test('robots.txt は全拒否で、すべての応答に noindex, nofollow', async () => {
+    const robots = await get('/robots.txt')
+    expect(robots.status).toBe(200)
+    expect(await robots.text()).toBe('User-agent: *\nDisallow: /\n')
+    for (const path of ['/robots.txt', '/health', '/openapi.json', '/no-such-path']) {
+      expect((await get(path)).headers.get('X-Robots-Tag')).toBe('noindex, nofollow')
+    }
+  })
+})
+
 describe('GET /health', () => {
   test('200 と {status: ok}、no-store', async () => {
     const res = await get('/health')
