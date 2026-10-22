@@ -2635,6 +2635,17 @@
     {
       "target": {
         "jurisdiction": "131091",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定。令和7年度実施事業を評価する令和8年度事務事業評価シートは未公表。令和8年度行政評価の掲載頁（https://www.city.shinagawa.tokyo.jp/kusei/shisakukeikaku/1005171/1008977/index.html）には行政評価基本方針と第1回行政評価委員会資料のみで評価シートの掲載なし。令和7年度事務事業評価の掲載頁（.../1005171/1005172/1005173.html）の全部局版は「令和7年度事務事業評価シート（令和6年度実施事業）」で2024年度分。確認日：2026-10-22T03:49:30+00:00（UTC）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131091",
         "fiscal_year": 2024,
         "document_kind": "settlement"
       },

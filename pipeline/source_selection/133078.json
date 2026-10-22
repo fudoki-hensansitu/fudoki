@@ -1911,6 +1911,17 @@
     {
       "target": {
         "jurisdiction": "133078",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定。檜原村に事務事業評価・行政評価・主要施策の成果の公表なし。決算の令和7年度カテゴリ（https://www.vill.hinohara.tokyo.jp/category/2-8-3-20-0-0-0-0-0-0.html）には歳入歳出決算書の記事（0000002172）のみ、施策・計画カテゴリ（.../category/2-7-0-0-0-0-0-0-0-0.html）には総合計画・個別計画のみで評価資料の記事なし。確認日：2026-10-22T04:11:10+00:00（UTC）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "133078",
         "fiscal_year": 2024,
         "document_kind": "settlement"
       },

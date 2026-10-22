@@ -1047,6 +1047,17 @@
     {
       "target": {
         "jurisdiction": "133647",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定。神津島村に2025年度の評価資料の公表なし。サイト内検索（行政評価）に合致なし。企画財政課頁（https://www.vill.kouzushima.tokyo.jp/busyo/kikakuzaisei/）には財政指標のみで評価資料の掲載なし。確認日：2026-10-22T04:16:57+00:00（UTC）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "133647",
         "fiscal_year": 2024,
         "document_kind": "settlement"
       },

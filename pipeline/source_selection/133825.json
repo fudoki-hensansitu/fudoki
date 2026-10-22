@@ -414,6 +414,17 @@
     {
       "target": {
         "jurisdiction": "133825",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定。教育委員会の点検・評価の報告書（「令和8年度御蔵島村教育委員会の権限に属する事務の管理及び執行の状況の点検及び評価（令和7年度分）報告書」、https://www.vill.mikurasima.tokyo.jp/data/kyouiku/kyoiku_hokoku_0928.pdf）しか無く、全庁の事業の評価資料が無いため選ばない。探した頁：https://www.vill.mikurasima.tokyo.jp/、全庁の事務事業評価・行政評価・主要施策の成果の掲載なし。確認日：2026-10-22T04:24:22+00:00（UTC）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "133825",
         "fiscal_year": 2024,
         "document_kind": "settlement"
       },

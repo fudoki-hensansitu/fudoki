@@ -1781,6 +1781,17 @@
     {
       "target": {
         "jurisdiction": "131202",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定。令和7年度決算・評価資料は未公表。決算の掲載一覧（https://www.city.nerima.tokyo.jp/kusei/zaisei/kessan/index.html）の最新は令和6年度決算で、r7頁は404。令和6年度は主要事業成果報告書（R6syuyoujigyou.pdf）を公表しているが令和7年度版の掲載なし。確認日：2026-10-22T04:02:04+00:00（UTC）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131202",
         "fiscal_year": 2024,
         "document_kind": "settlement"
       },

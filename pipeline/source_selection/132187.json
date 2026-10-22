@@ -2822,6 +2822,17 @@
     {
       "target": {
         "jurisdiction": "132187",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定。令和7年度実施事業を評価する令和8年度事務事業評価調書は未公表。行政評価の掲載頁（https://www.city.fussa.tokyo.jp/municipal/management/reform/1003477.html）の最新は令和7年度事務事業評価調書・実施結果一覧で、令和8年度分の掲載なし。確認日：2026-10-22T04:07:30+00:00（UTC）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132187",
         "fiscal_year": 2024,
         "document_kind": "settlement"
       },

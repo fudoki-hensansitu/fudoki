@@ -699,6 +699,17 @@
     {
       "target": {
         "jurisdiction": "133612",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定。大島町に2025年度の評価資料の公表なし。教育委員会の点検評価の掲載頁（https://www.town.oshima.tokyo.jp/soshiki/kyouiku/kyouiku-jimu-tenken.html、2015年更新）は平成25年度実績報告書のみで最新なし。サイト内検索（行政評価・主要施策の成果）にも該当する評価資料なし。確認日：2026-10-22T04:14:58+00:00（UTC）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "133612",
         "fiscal_year": 2024,
         "document_kind": "settlement"
       },

@@ -3169,6 +3169,44 @@
     {
       "target": {
         "jurisdiction": "131016",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和7年度主要施策の成果（全体版）",
+          "landing_url": "https://www.city.chiyoda.lg.jp/koho/kuse/zaise/shisaku/r7-seika.html",
+          "inspected_at": "2026-10-22T03:44:50+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.chiyoda.lg.jp/documents/34778/r7seika-zentai.pdf",
+              "sha256": "37b6fe0da7bff496053510be8ce855bf5e170d426120a1f7b6ffab9bbfc6cf8c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131016/2025/evaluation-settlement.pdf",
+            "sha256": "37b6fe0da7bff496053510be8ce855bf5e170d426120a1f7b6ffab9bbfc6cf8c",
+            "final_url": "https://www.city.chiyoda.lg.jp/documents/34778/r7seika-zentai.pdf"
+          }
+        ],
+        "archived_at": "2026-10-22T04:25:22.956Z"
+      },
+      "reason": "令和7年度決算に係る千代田区の主要施策の成果報告書（全体版1冊、物理135頁、文字PDF）。表題・前文（地方自治法233条5項、令和8年9月17日報告）が令和7年度の主要な施策の成果であることを示す。各事業に事業に要した経費と事業実績、実績を踏まえた評価・課題、令和8年度の取組状況・令和9年度予算への対応を載せる。分冊（r7seika1〜10）は全体版と同内容のため全体版を代表にした。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131016",
         "fiscal_year": 2024,
         "document_kind": "settlement"
       },
