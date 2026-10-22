@@ -5,6 +5,7 @@
 SVG はパス化する。フォントの読み込みや端末の代替書体に依存させない。
 """
 
+import base64
 import shutil
 import subprocess
 import json
@@ -120,20 +121,57 @@ for target in (ROOT / "apps/docs/public",):
 # OS の設定を追うファビコンと、画面の .dark で選ぶ SVG は分ける。
 # 画像内部の prefers-color-scheme は画面側のクラスを参照できない。
 OW, OH = 1200, 630
-og_height = 112
-og_width = TEXT_X + text_width(TEXT_SIZE) + 2
+TAGLINE = "町の家計簿"
+og_height = 100
 scale = og_height / H
-og = (
-    f'<svg xmlns="http://www.w3.org/2000/svg" width="{OW}" height="{OH}" viewBox="0 0 {OW} {OH}">\n'
-    f'<rect width="{OW}" height="{OH}" fill="{PAPER}"/>\n'
-    f'<g fill="{INK}" transform="translate({(OW - og_width * scale) / 2:.4f} {(OH - og_height) / 2:g}) scale({scale:g})">'
-    f'{mark(MARK_SCALE, MARK_X, MARK_Y)}{wordmark(TEXT_SIZE, TEXT_X, TEXT_CENTER_Y)}</g>\n</svg>\n'
-)
-(HERE / "og.svg").write_text(og)
+LEFT = 80
+# 右に置く実画面は brand/og-card.png（ホームの決算表と入力欄を 2 倍で撮ったもの）。幅は右端まで。
+CARD_X, CARD_W, CARD_H = 560, OW - 560, round((OW - 560) * 1031 / 1280)
+tag_size = 40
+
+
+def tagline(size: float, x: float, baseline: float) -> str:
+    """見出しの下に置く一行をパス化する。字送りは advance に字間を足す。"""
+    found = load_glyphs(CONFIG["font"], WEIGHT, TAGLINE)
+    parts = []
+    for ch in TAGLINE:
+        g = found[ch]
+        k = size / g["upm"]
+        parts.append(f'<path transform="translate({x:.4f} {baseline:.4f}) scale({k:.5f} -{k:.5f})" d="{g["d"]}"/>')
+        x += g["adv"] * k + size * 0.12
+    return "".join(parts)
+
+
+def og_svg(card_href: str) -> str:
+    top = (OH - og_height - 36 - tag_size) / 2
+    return (
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{OW}" height="{OH}" viewBox="0 0 {OW} {OH}">\n'
+        f'<rect width="{OW}" height="{OH}" fill="{PAPER}"/>\n'
+        f'<g fill="{INK}" transform="translate({LEFT} {top:g}) scale({scale:g})">'
+        f'{mark(MARK_SCALE, MARK_X, MARK_Y)}{wordmark(TEXT_SIZE, TEXT_X, TEXT_CENTER_Y)}</g>\n'
+        f'<g fill="{INK}">{tagline(tag_size, LEFT, top + og_height + 36 + tag_size * 0.88)}</g>\n'
+        f'<clipPath id="c"><path d="M{CARD_X + 16} {(OH - CARD_H) / 2:g}H{OW}V{(OH + CARD_H) / 2:g}H{CARD_X + 16}'
+        f'a16 16 0 0 1 -16 -16V{(OH - CARD_H) / 2 + 16:g}a16 16 0 0 1 16 -16Z"/></clipPath>\n'
+        f'<image href="{card_href}" x="{CARD_X}" y="{(OH - CARD_H) / 2:g}" width="{CARD_W}" height="{CARD_H}" clip-path="url(#c)"/>\n</svg>\n'
+    )
+
+
+(HERE / "og.svg").write_text(og_svg("og-card.png"))
 # 生成済み PNG を使う利用者や CI に、画像変換ツールを背負わせない。
-subprocess.run([
-    "mise", "x", "imagemagick@7.1.2_27", "--", "magick", "-density", "192",
-    str(HERE / "og.svg"), "-resize", f"{OW}x{OH}", "-strip", f"PNG24:{PUBLIC / 'og.png'}",
-], check=True)
+# 変換側へは画像を埋め込んだ SVG を渡し、相対参照の解決に依存させない。
+card = base64.b64encode((HERE / "og-card.png").read_bytes()).decode()
+(HERE / ".og-render.svg").write_text(og_svg(f"data:image/png;base64,{card}"))
+try:
+    subprocess.run([
+        "mise", "x", "imagemagick@7.1.2_27", "--", "magick", "-density", "192",
+        str(HERE / ".og-render.svg"), "-resize", f"{OW}x{OH}", "-strip", f"PNG24:{PUBLIC / 'og.png'}",
+    ], check=True)
+    # ホームのデモ動画のサムネは、入口の通信量を抑えるため WebP にして static/ から配る。
+    subprocess.run([
+        "mise", "x", "imagemagick@7.1.2_27", "--", "magick", str(PUBLIC / "og.png"),
+        "-quality", "80", "-define", "webp:method=6", str(HERE.parent / "static/home/demo-poster.webp"),
+    ], check=True)
+finally:
+    (HERE / ".og-render.svg").unlink(missing_ok=True)
 subprocess.run([sys.executable, str(HERE / "build-editor.py")], check=True)
 print("mark / wordmark / logo / favicon を各 public に同期、og.png を生成")
