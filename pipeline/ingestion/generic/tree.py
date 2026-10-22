@@ -1694,6 +1694,22 @@ def snap_ocr_levels(own: list[Item], centres: list[float]) -> None:
             item.indent = centres[min(range(len(middles)), key=lambda k: abs(middles[k] - item.indent))]
 
 
+def level_indents(all_items: list, mixed: bool) -> tuple[dict[str, list[float]], set[str]]:
+    """The line starts each non-subject axis learns its indentation levels from, and the axes the printed pages teach.
+    In a mixed document the levels are the printed pages' (an OCR page's words lie a point or two off); an axis no
+    printed page has a node of (only the OCR pages print it, or the printed pages print notes only) is learned from
+    the OCR pages."""
+    nodes = lambda group, found: [i.indent for i in found[id(group)] if i.role == 'node']
+    printed = {g.axis for l, ordered, found in all_items if not l.ocr for g in ordered
+               if not g.subject and nodes(g, found)} if mixed else set()
+    indents: dict[str, list[float]] = defaultdict(list)
+    for logical, ordered, found in all_items:
+        for group in ordered:
+            if not group.subject and not (logical.ocr and group.axis in printed):
+                indents[group.axis] += nodes(group, found)
+    return indents, printed
+
+
 def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: str | dict = 'indent',
           layout: dict | None = None, codes_right: bool = False) -> Built:
     """`detail` is one breakdown pattern for every axis, or a mapping axis → pattern."""
@@ -2006,14 +2022,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     item.level = min(range(len(centres)), key=lambda i: abs(centres[i] - item.indent)) if centres else 0
                     item.level_name = SUBJECT_LEVELS[item.level] if item.level < len(SUBJECT_LEVELS) else None
     # Indentation levels per non-subject axis, learned over the document.
-    indents: dict[str, list[float]] = defaultdict(list)
-    # In a mixed document the levels are the printed pages' (an OCR page's words lie a point or two off); an axis only
-    # the OCR pages print is learned from them.
-    printed = {g.axis for l, ordered, _ in all_items if not l.ocr for g in ordered if not g.subject} if mixed_document(logicals) else set()
-    for logical, ordered, found in all_items:
-        for group in ordered:
-            if not group.subject and not (logical.ocr and group.axis in printed):
-                indents[group.axis] += [i.indent for i in found[id(group)] if i.role == 'node']
+    indents, printed = level_indents(all_items, mixed_document(logicals))
     for axis, values in indents.items():
         clusters: list[list[float]] = []
         for value in sorted(values):

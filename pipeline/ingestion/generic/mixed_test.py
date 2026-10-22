@@ -5,7 +5,7 @@ from types import SimpleNamespace
 from ingestion.generic.layout import Logical, logical_pages
 from ingestion.generic.mixed import aligned, completing, frame_rules, learn_frames, gated, learn_origins, moved_unread, numbers, shift, unlearned_amounts
 from ingestion.generic.observe import Page, Rule, Word
-from ingestion.generic.tree import mixed_document, snap_ocr_levels
+from ingestion.generic.tree import level_indents, mixed_document, snap_ocr_levels
 from ingestion.lib import pdf_rules
 
 
@@ -170,6 +170,19 @@ class MixedPagesTest(unittest.TestCase):
         one = [SimpleNamespace(indent=x) for x in (880, 881, 882, 883)]
         snap_ocr_levels(one, [882.0])  # one printed level: nothing to group
         self.assertEqual([i.indent for i in one], [880, 881, 882, 883])
+
+    def test_an_axis_learns_its_levels_from_the_printed_pages_unless_only_the_ocr_pages_have_its_nodes(self):
+        def page(ocr, *groups):
+            ordered = [SimpleNamespace(subject=False, axis=axis) for axis, _ in groups]
+            found = {id(g): [SimpleNamespace(role=role, indent=x) for role, x in lines] for g, (_, lines) in zip(ordered, groups)}
+            return SimpleNamespace(ocr=ocr), ordered, found
+        text = page(False, ('節', [('node', 20), ('node', 30)]), ('備考', [('note', 40)]))
+        ocr = page(True, ('節', [('node', 22), ('node', 31)]), ('備考', [('node', 41), ('node', 51)]), ('事業', [('node', 60)]))
+        indents, printed = level_indents([text, ocr], mixed=True)
+        self.assertEqual(printed, {'節'})  # 備考: the printed pages have notes only; 事業: only the OCR pages print it
+        self.assertEqual(dict(indents), {'節': [20, 30], '備考': [41, 51], '事業': [60]})
+        indents, printed = level_indents([text, ocr], mixed=False)  # a scan: every page teaches
+        self.assertEqual((printed, indents['節']), (set(), [20, 30, 22, 31]))
 
 
 if __name__ == '__main__':
