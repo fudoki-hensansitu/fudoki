@@ -11,7 +11,8 @@ import json
 from pathlib import Path
 
 from ingestion.fiscal.layouts.settlement_statement.statement import Box, build
-from ingestion.generic.scan import apply_name_corrections, apply_variant_chars
+from ingestion.generic.observe import Word
+from ingestion.generic.scan import _paddle_pieces, apply_name_corrections, apply_variant_chars
 from ingestion.lib.ocr_names import AmountDictionary, AmountRule
 from ingestion.lib.pdf_rules import detect
 from ingestion.lib.scan_ocr import superseded
@@ -34,8 +35,16 @@ def ocr_boxes(observation: dict, page: dict) -> list[Box]:
 
         def box(item: dict, parts: tuple[Box, ...] = ()) -> Box:
             return Box(item['id'], page['page_number'], item['raw_text'], *item['bbox_pdf_pt'], parts)
-        boxes.extend(box(item, tuple(box(word) for word in words.get(item['id'], [])))
-                     for item in observations if item['kind'] == 'region' and item['bbox_pdf_pt'])
+        def pieces(item: dict) -> tuple[Box, ...]:
+            children = words.get(item['id'], [])
+            if item.get('attempt_id') and children:
+                # a Paddle line's children are single characters and number fragments (`3` `,` `254`): the fragments of
+                # one amount are joined back into one word, as the scan builder does
+                joined = _paddle_pieces(item, [Word(w['raw_text'], *w['bbox_pdf_pt']) for w in children], False)
+                if joined:
+                    return tuple(Box(f'{item["id"]}:p{i}', page['page_number'], w.text, w.x0, w.y0, w.x1, w.y1) for i, w in enumerate(joined))
+            return tuple(box(word) for word in children)
+        boxes.extend(box(item, pieces(item)) for item in observations if item['kind'] == 'region' and item['bbox_pdf_pt'])
     return boxes
 
 

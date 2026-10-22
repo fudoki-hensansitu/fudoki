@@ -259,3 +259,16 @@ class InputsTest(unittest.TestCase):
         texts = lambda o: [x['raw_text'] for x in o['pages'][0]['regions'][0]['observations']]
         self.assertEqual(texts(corrected(observation('paddle'), [rule])), ['健康診査費', 'センター費'])
         self.assertEqual(texts(corrected(observation('vision'), [])), ['健康診查費', 'センタ一費'])
+
+    def test_the_number_fragments_of_a_paddle_line_are_one_amount_word(self):
+        from ingestion.fiscal.layouts.settlement_statement.convert import ocr_boxes
+        line = {'id': 'p1:full-page:a0:result0:r0', 'kind': 'region', 'parent_id': None, 'raw_text': '経費3,254,461,963',
+                'bbox_pdf_pt': [10, 10, 130, 20], 'attempt_id': 'p1:full-page:a0'}
+        children = [('経', [10, 10, 20, 20]), ('費', [20, 10, 30, 20]), ('3', [40, 10, 46, 20]), (',', [47, 10, 49, 20]),
+                    ('254', [50, 10, 66, 20]), (',', [67, 10, 69, 20]), ('461', [70, 10, 86, 20]), (',', [87, 10, 89, 20]),
+                    ('963', [90, 10, 106, 20])]
+        words = [{'id': f'{line["id"]}:w{i}', 'kind': 'word', 'parent_id': line['id'], 'raw_text': t, 'bbox_pdf_pt': b}
+                 for i, (t, b) in enumerate(children)]
+        page = {'page_number': 1, 'regions': [{'observations': [line, *words]}]}
+        boxes = ocr_boxes({}, page)
+        self.assertEqual([p.text for p in boxes[0].parts], ['経', '費', '3,254,461,963'])
