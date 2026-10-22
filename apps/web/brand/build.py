@@ -123,7 +123,6 @@ for target in (ROOT / "apps/docs/public",):
 OW, OH = 1200, 630
 TAGLINE = "町の家計簿"
 og_height = 100
-og_width = TEXT_X + text_width(TEXT_SIZE) + 2
 scale = og_height / H
 LEFT = 80
 # 右に置く実画面は brand/og-card.png（ホームの決算表と入力欄を 2 倍で撮ったもの）。幅は右端まで。
@@ -166,6 +165,11 @@ try:
     subprocess.run([
         "mise", "x", "imagemagick@7.1.2_27", "--", "magick", "-density", "192",
         str(HERE / ".og-render.svg"), "-resize", f"{OW}x{OH}", "-strip", f"PNG24:{PUBLIC / 'og.png'}",
+    ], check=True)
+    # ホームのデモ動画のサムネは、入口の通信量を抑えるため WebP にして static/ から配る。
+    subprocess.run([
+        "mise", "x", "imagemagick@7.1.2_27", "--", "magick", str(PUBLIC / "og.png"),
+        "-quality", "80", "-define", "webp:method=6", str(HERE.parent / "static/home/demo-poster.webp"),
     ], check=True)
 finally:
     (HERE / ".og-render.svg").unlink(missing_ok=True)

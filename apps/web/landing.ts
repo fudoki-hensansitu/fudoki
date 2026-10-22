@@ -190,7 +190,7 @@ body.ask-docked{padding-bottom:144px}
 .howto li{display:grid;grid-template-columns:2em 1fr;gap:12px;padding:14px 0;border-bottom:1px solid color-mix(in srgb,var(--paper-foreground) 25%,transparent);font-size:15px;line-height:1.7}
 .howto b{font:400 15px/1.7 var(--font-display)}
 .demo{display:grid;gap:14px}
-.demo video{display:block;width:100%;height:auto;aspect-ratio:1280/840;border-radius:var(--radius-card);background:#f4f1e6;box-shadow:var(--shadow-sheet)}
+.demo video{display:block;width:100%;height:auto;aspect-ratio:1280/840;border-radius:var(--radius-card);background:#f4f1e6;/* brand/config.json の paper。サムネ（OGP 画像）の地と揃える */box-shadow:var(--shadow-sheet)}
 .demo video{cursor:pointer}
 .demo figcaption{display:flex;justify-content:flex-end;font-size:13px;line-height:1.6}
 .demo a{display:inline-flex;align-items:center;gap:6px;color:var(--paper-foreground);white-space:nowrap;text-decoration:underline;text-underline-offset:3px}
@@ -359,7 +359,7 @@ const BODY = `${ICONS}
 <div><p class="eyebrow">AI から使う</p><h2 id="mcp-h">URL を一つ登録するだけ</h2>
 <ol class="howto"><li><b>一</b><span>MCP に対応した AI クライアントの設定を開く</span></li><li><b>二</b><span><code>${MCP}</code> を登録する（認証は要りません）</span></li><li><b>三</b><span>「北区に住んでいます。何の予算が見れますか？」と聞く</span></li></ol></div>
 <figure class="demo">
-<video src="/home/demo.mp4" poster="/og.png" width="1280" height="840" muted loop playsinline preload="none" tabindex="0" aria-label="ChatGPT から風土記の MCP に、北区の決算を聞いた操作の録画。Enter で再生・停止"></video>
+<video src="/home/demo.mp4" poster="/home/demo-poster.webp" width="1280" height="840" muted loop playsinline preload="none" tabindex="0" aria-label="ChatGPT から風土記の MCP に、北区の決算を聞いた操作の録画。Enter で再生・停止"></video>
 <figcaption><a href="${DOCS}/mcp">MCP の使い方を見る${icon('arrow-right')}</a></figcaption>
 </figure>
 </section>
