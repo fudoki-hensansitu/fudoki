@@ -370,7 +370,7 @@ const BODY = `${ICONS}
 <details><summary>予備費が 0 円なのは、使わなかったからですか</summary><p>いいえ。決算の予備費は、他の費目へ補ったあとの使った額なので 0 円になります。どこへ補ったかは出典の備考にあり、風土記では注記の金額として、費目の金額とは別に持ちます。</p></details>
 <details><summary>共通分類（COFOG）は正しいのですか</summary><p>分類は出典にない、風土記の判断です。確かなもの・仮のもの・分類できないものを区別して返し、分類できない明細も合計から落としません。</p></details>
 <details><summary>どの自治体・年度が入っていますか</summary><p>収録する自治体と年度は、順次広げています。いま入っている範囲は、AI に聞くか<a href="${DOCS}">ドキュメント</a>で確かめられます。収録していないことは、支出がゼロであることを意味しません。</p></details>
-<details><summary>使うのにお金や登録は要りますか</summary><p>要りません。MCP の URL を AI クライアントに登録すれば使えます。詳しくは<a href="${DOCS}/terms">利用規約</a>をご覧ください。</p></details>
+<details><summary>使うのにお金や登録は要りますか</summary><p>要りません。このサイトのチャットに質問を入力すれば、登録なしでそのまま調べられます。Claude や ChatGPT など MCP 対応の AI クライアントに URL を登録して使うこともできます。詳しくは<a href="${DOCS}/terms">利用規約</a>をご覧ください。</p></details>
 </div></section>
 </main>
 
