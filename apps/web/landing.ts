@@ -190,7 +190,7 @@ body.ask-docked{padding-bottom:144px}
 .howto li{display:grid;grid-template-columns:2em 1fr;gap:12px;padding:14px 0;border-bottom:1px solid color-mix(in srgb,var(--paper-foreground) 25%,transparent);font-size:15px;line-height:1.7}
 .howto b{font:400 15px/1.7 var(--font-display)}
 .demo{display:grid;gap:14px}
-.demo video{display:block;width:100%;height:auto;object-fit:cover;aspect-ratio:1280/840;border-radius:var(--radius-card);background:color-mix(in srgb,var(--paper-foreground) 12%,transparent);box-shadow:var(--shadow-sheet)}
+.demo video{display:block;width:100%;height:auto;aspect-ratio:1280/840;border-radius:var(--radius-card);background:#f4f1e6;box-shadow:var(--shadow-sheet)}
 .demo video{cursor:pointer}
 .demo figcaption{display:flex;justify-content:flex-end;font-size:13px;line-height:1.6}
 .demo a{display:inline-flex;align-items:center;gap:6px;color:var(--paper-foreground);white-space:nowrap;text-decoration:underline;text-underline-offset:3px}
