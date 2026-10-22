@@ -8686,25 +8686,7 @@
         "account": "一般会計",
         "table_id": "general-kikikanri",
         "partial": true,
-        "division": "危機管理局",
-        "name_corrections": [
-          {
-            "id": "kikikanri-14-setsu13",
-            "page": 14,
-            "code": "13",
-            "observed_name": "使用料及賃借",
-            "corrected_name": "使用料及賃借料",
-            "reason": "危機管理局の冊 物理14頁の節13。2行に折り返した名前の2行目の「料」をOCRが落とした。原典の描画と同じ冊の物理15頁の印字で確認した。"
-          },
-          {
-            "id": "kikikanri-14-setsu22",
-            "page": 14,
-            "code": "22",
-            "observed_name": "價還金利子及割引料",
-            "corrected_name": "償還金利子及割引料",
-            "reason": "危機管理局の冊 物理14頁の節22。OCRが償を價と読んだ。原典の描画で確認した。"
-          }
-        ]
+        "division": "危機管理局"
       },
       "expected_tables": [
         {
@@ -8716,14 +8698,15 @@
           "id": "general-kikikanri-ocr-1",
           "origin_sha256": "ef39b740e54747342fad81f5b42c09832a52f319b89cc0585221485276749cee",
           "request": {
-            "engine": "vision",
+            "engine": "paddle",
             "pages": [
               14,
               15
-            ]
+            ],
+            "vlm_fallback": false
           },
-          "sha256": "dd901123b8fe684f4868be7f469b3bdaa2822407f9c3419bef8a817574c40f33",
-          "bytes": 480169
+          "sha256": "c1741960fa93b1ea4cad07b42291326b1c1298514850adf21476d9850457d194",
+          "bytes": 909553
         }
       ]
     },
@@ -8824,7 +8807,7 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kaikei-nodes.parquet",
-          "sha256": "9e53df92b8b99206255e0f2f4a94cc62420fa93c294aa6ea711b7a7f6ef4167d",
+          "sha256": "f698259c21c6b41767571cb00340be093d5ff93b1cca5bc8fa582dff537ca8a7",
           "bytes": 2557
         },
         "row_count": 9
@@ -8832,7 +8815,7 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kaikei-amounts.parquet",
-          "sha256": "a1949dfacf33e5a156577db02fb9765ad0e26fdb5e076265a420c4e286acf414",
+          "sha256": "c160298412bc6087a267174170caae5ca28052a2c06a6d853970f6bd81f427af",
           "bytes": 3034
         },
         "row_count": 66
@@ -8855,7 +8838,7 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-gyozai-nodes.parquet",
-          "sha256": "7eb881c3ba883e3c3f90b21be6d174b75a58c16307f1fdb9de84ca60dd1447e2",
+          "sha256": "90783fca5b7974a3394b5bbde7f8a2c98b972f480cb108feceac5ee46664f2b5",
           "bytes": 8679
         },
         "row_count": 130
@@ -8863,7 +8846,7 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-gyozai-amounts.parquet",
-          "sha256": "1d66d6f49733fdeb37e588e8a58cf996c8304b2a8a2d0097fa215ce9d3180675",
+          "sha256": "08ceb7cb46c8d6b9fc59f3c5e36bdf0d5515b424efec82080feb57257a066c2b",
           "bytes": 17754
         },
         "row_count": 929
@@ -8886,7 +8869,7 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/debt-gyozai-nodes.parquet",
-          "sha256": "b38a4c97f9279836d74d006139aedd443e131223342902faf7b84892b5b930ac",
+          "sha256": "2668345b111e1811b52e21f75f571e799e589572fa5577aac5bf37732b843345",
           "bytes": 3361
         },
         "row_count": 16
@@ -8894,7 +8877,7 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/debt-gyozai-amounts.parquet",
-          "sha256": "355b4c9c517b2e4043853a6609b0b02e9c7cbceb4d8ae1388e969ac841443859",
+          "sha256": "0b043f37719c6d84976973547de19429cd0ce3cad4eb8a67053f0f87d452fa20",
           "bytes": 4891
         },
         "row_count": 120
@@ -8917,7 +8900,7 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-senkyo-nodes.parquet",
-          "sha256": "616213fe732fb987be590f38838825202d29b1068d3d9186e203760664ea898a",
+          "sha256": "9e8e67469248910735e3818d55ffbce294d20ea4818b74f80636f73b6a01e15b",
           "bytes": 5441
         },
         "row_count": 70
@@ -8925,7 +8908,7 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-senkyo-amounts.parquet",
-          "sha256": "27ebf02ec2c87a7e28e74edd3a5aba04570d2e27d365f218f2c0bea6bcd86bc5",
+          "sha256": "877db3230e410fc6a9911fbb35b1689df99a7b461cc2e61a6e2b4249584eced6",
           "bytes": 8198
         },
         "row_count": 464
@@ -8948,7 +8931,7 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-jinji-nodes.parquet",
-          "sha256": "42fe06cc4fc3a349d4724a231c1855cf2d563896dd4df59cbe0b1d3a46fe65a5",
+          "sha256": "fe3a05417a94309a5e2397c85cdffc1e34be91552da248aae54713e3e5995d77",
           "bytes": 3426
         },
         "row_count": 20
@@ -8956,7 +8939,7 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-jinji-amounts.parquet",
-          "sha256": "370410ca78326ed3744a20ba3ecac8b98082d6f63fbde6698a8c069f79a1d974",
+          "sha256": "1e0bb168d2ec8900f0e6de6c195dd0d1f58702a5c096689241eaa34aae6137e0",
           "bytes": 4121
         },
         "row_count": 140
@@ -8979,7 +8962,7 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kansa-nodes.parquet",
-          "sha256": "c5f624d47449aacea77c7e8f9b6d6dfde0d1925b23e72a7d5eb20260202532a3",
+          "sha256": "6f9669e224b0976741e7e08bb26fd816193be9724009dc6705b9c803a2e836e2",
           "bytes": 3405
         },
         "row_count": 20
@@ -8987,7 +8970,7 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kansa-amounts.parquet",
-          "sha256": "f641fbbc065af8f6163fc37fc4418b268373db85c27027b872c7b9dde2cc3ecb",
+          "sha256": "ce02ffc5204f84c4df7fd390a142ea562d5d35c36824ed2a9137244b41f935a3",
           "bytes": 3962
         },
         "row_count": 133
@@ -9010,7 +8993,7 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kikaku-nodes.parquet",
-          "sha256": "abd549278b36f0f7d1e07fd3c06ed952b9e22f1b283fa98474247b339a4a7f9a",
+          "sha256": "535acf859bb773f4d15c6d615dc54430f685427d07ff86cc200e22109e1d7556",
           "bytes": 5956
         },
         "row_count": 82
@@ -9018,7 +9001,7 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kikaku-amounts.parquet",
-          "sha256": "993c0128a03681f5dd8102af9b12327d9676d4f60244a20cca367833043e6e03",
+          "sha256": "075cf8e2e1dcf12374e6a997d8b40e4cf9c35ac25a2eface2a1e4df905b83340",
           "bytes": 9204
         },
         "row_count": 478
@@ -9041,7 +9024,7 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-fukushi-nodes.parquet",
-          "sha256": "c50289efb9ab8ddf2b5a5e02f1efaf50bd5dbd6da784f24172c03e6ba4e79ca6",
+          "sha256": "d704b59370d0beb4d209ae3286649afec5bb755af83d0d16e5b29428a1ae98fa",
           "bytes": 7855
         },
         "row_count": 175
@@ -9049,7 +9032,7 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-fukushi-amounts.parquet",
-          "sha256": "e808668401b6550e3891392d642e0ea865074716d5b35ee68325cff814dd3226",
+          "sha256": "6312373886692f97fe2e47bc18443eaf4989c5d348161e6fcd7896f0c2a99040",
           "bytes": 12838
         },
         "row_count": 1164
@@ -9072,7 +9055,7 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/nhi-fukushi-nodes.parquet",
-          "sha256": "8be8bfe5b7a3ea9b744837bf6ab3fc69137a3481e05939ec601a7fc442e73616",
+          "sha256": "235a7226dff975ff3cdc70c4e0052239df8a555fab9cb8ee377136711895d00e",
           "bytes": 5069
         },
         "row_count": 61
@@ -9080,7 +9063,7 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/nhi-fukushi-amounts.parquet",
-          "sha256": "715c462bab572d7bad1c0ee4c95b3e88f6cf2dbe3939417b67231d33d1b05fb5",
+          "sha256": "5146a7c896829f0cfd3cb958d21e8b52091642f6ca48018c2caa02241be915e1",
           "bytes": 7162
         },
         "row_count": 442
@@ -9103,7 +9086,7 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/care-fukushi-nodes.parquet",
-          "sha256": "23a50af8f8c1593e031046439ad9443cfe0fbf06e7e089b86c8f8be4f2396122",
+          "sha256": "fcc667b66dcca3c1797d4cd7439ac368196fcbadb8cfefe8fd6b356cf6dd8199",
           "bytes": 6085
         },
         "row_count": 92
@@ -9111,7 +9094,7 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/care-fukushi-amounts.parquet",
-          "sha256": "888745d2fcd93c8f85c86fe76abc1e1c7e277252c9613a3e7b2eff03f9c33af2",
+          "sha256": "235e2717b80a4e6c5e129156bea02ccfa25d1574f159ddd9e65adab522593179",
           "bytes": 8670
         },
         "row_count": 668
@@ -9134,7 +9117,7 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/elderly-fukushi-nodes.parquet",
-          "sha256": "75ae62096a1d673e28f88462559ec407d96ef18e2029e989134f95c85bec15e9",
+          "sha256": "c9e1cd342f46f868e6a6737c69a5e500ef5ed71e9de8851b6e0338e7c27c5705",
           "bytes": 3556
         },
         "row_count": 23
@@ -9142,7 +9125,7 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/elderly-fukushi-amounts.parquet",
-          "sha256": "7f5e6d44f6cbcfa77cb8f5b68234c38020ffbab195d8aeeab2953601ea9c0414",
+          "sha256": "d41884c3d6fe0fc27b6f8f55bfd6f3d76bd694fb2ca878d6f1918ee3b423647e",
           "bytes": 4275
         },
         "row_count": 174
@@ -9166,7 +9149,7 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kensetsu-nodes.parquet",
-          "sha256": "6f7503cdcfae3873bafbe25e9230de523e31973f16bb1f263067531c1b1eac59",
+          "sha256": "85a28db83fca69eb79a261fe5e0a16f196755e2f4ee69982745c1e4b29190ab4",
           "bytes": 12155
         },
         "row_count": 274
@@ -9174,7 +9157,7 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kensetsu-amounts.parquet",
-          "sha256": "b2b20b772e20cb7fbd524f49c13121e194bdaa5bbd87eb9ad8557eb11b5b44d0",
+          "sha256": "d60b62cff9994e14f96bba1152a45fdcd9d4af75e6c66d98b986a678a9146780",
           "bytes": 21093
         },
         "row_count": 1835
@@ -9197,7 +9180,7 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/parking-kensetsu-nodes.parquet",
-          "sha256": "1670c360f6cff5f1003175d8525d9b566bdc8a389b2d12c39cefc65a032a0bf0",
+          "sha256": "1cf5cf67ff7cff88310a09d90da1120a31e622b0169b5ad986a0508ab9951b68",
           "bytes": 2845
         },
         "row_count": 12
@@ -9205,7 +9188,7 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/parking-kensetsu-amounts.parquet",
-          "sha256": "195b5f88e701aa5ad586b5aec7cb5127e9bb9bc6277b7488d09ebc9f7332778d",
+          "sha256": "d851900162107a87d0a91bb9e6b346e3ec2c1ba835071696963cc86a88073a26",
           "bytes": 3176
         },
         "row_count": 84
@@ -9229,7 +9212,7 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kankyou-nodes.parquet",
-          "sha256": "3f0944ad57e489f59ac0ba9f92a4e9d8c766c05368cf5a5ce3047fea66dcec4e",
+          "sha256": "0eaf4bc590d53a96536a1092ea4fb0e94f7cda3fa5f57250476c562bd8c05850",
           "bytes": 6389
         },
         "row_count": 82
@@ -9237,7 +9220,7 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kankyou-amounts.parquet",
-          "sha256": "8a9b8a222ae30b5fa3ffec43ff6397db85036ee1f23e86f7cbdd6aed952d788a",
+          "sha256": "193c681cf9446de31bdab7e8b45600a20a879ed665011fb7ad4ffd57da73cd6f",
           "bytes": 14662
         },
         "row_count": 453
@@ -9260,7 +9243,7 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-chiiki-nodes.parquet",
-          "sha256": "cdf92ef3cfeb87ef3ac02a511f455f13ed8ac4ac1486a7d47fee8fe02c25fbae",
+          "sha256": "dfcf686954e337b9721090abff641bb6a667b07a932854b4fedeac5938855ac2",
           "bytes": 6128
         },
         "row_count": 85
@@ -9268,7 +9251,7 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-chiiki-amounts.parquet",
-          "sha256": "d9d0ccc027882e4dbfea04d138a859c4b0147c773010a78572936031f624b52a",
+          "sha256": "0da6fb042cfa21211a7a522fe2f5a7482a25f1a8c42c573b47deaac2d138d886",
           "bytes": 11041
         },
         "row_count": 477
@@ -9292,7 +9275,7 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kenchikujyutaku-nodes.parquet",
-          "sha256": "ca9b059c1c5c30db797922d430434b1f43532fd75c94952dca24d0303201310c",
+          "sha256": "2fc5ffd0cb22e1b8938c53907fa9a2337812f24a73afb5aa706c79d9a28e07f1",
           "bytes": 4612
         },
         "row_count": 41
@@ -9300,7 +9283,7 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kenchikujyutaku-amounts.parquet",
-          "sha256": "4d0779f60df6be095fb714319e7f47287cbdf0ea136658fda765f39ac0c12859",
+          "sha256": "096a8788db0b128523718986ef4649e17f4c79c2196274d4cf5c92d9b93469d9",
           "bytes": 7287
         },
         "row_count": 148
@@ -9323,7 +9306,7 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-keizai-nodes.parquet",
-          "sha256": "f447936d015aba4dc0c8bdb03e5789c697e861f1261b08032d20f0986acab5e7",
+          "sha256": "363b21b8995f2db24bb14432f399cc46d1e397f76df1a66c3e1b827610992532",
           "bytes": 8776
         },
         "row_count": 190
@@ -9331,7 +9314,7 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-keizai-amounts.parquet",
-          "sha256": "b231d0ea2b8fa12c528a6407bddb4cbace70d7fb1e9946ac9239d11f69220ae3",
+          "sha256": "7bf9ee04ad28612c64cdf701fa92cd5f740a018d2db534bd7065156c2b976dce",
           "bytes": 19115
         },
         "row_count": 1296
@@ -9354,7 +9337,7 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/market-keizai-nodes.parquet",
-          "sha256": "59863fca538a2dd057b4a97a8f0a2ab52907d5077a6a31e8c40c12809a7d0089",
+          "sha256": "a2fda6e57aeccc11c881395e04c3c4f180366c8b5ccc370a3aa6214390afae00",
           "bytes": 4531
         },
         "row_count": 44
@@ -9362,7 +9345,7 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/market-keizai-amounts.parquet",
-          "sha256": "bd3b383147caa547b295133ec5d3bc67bf8ec9507280a6a4059062eaaa3069ab",
+          "sha256": "c85d4d18c346c5a6371e87ba96681c40e138aa1cda47d80674a19c726f1dde0e",
           "bytes": 7070
         },
         "row_count": 320
@@ -9385,7 +9368,7 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/meat-keizai-nodes.parquet",
-          "sha256": "881f984ec624eb18706acd9310937f52aabeb104f4db1198e55ea640197aadaf",
+          "sha256": "f6d93ff6411cf761557ca07a07928df313aaa7dfe4979a2a8f3a14462156b0b0",
           "bytes": 4059
         },
         "row_count": 32
@@ -9393,7 +9376,7 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/meat-keizai-amounts.parquet",
-          "sha256": "5502ac585c5aed0ad91a0d944d2713496d5eb02c628e93d9c58c0e1ec4c6eaa4",
+          "sha256": "2ee2e66e14a5ab1fdf5c1c8f6a6f63880599b9a0b4a5322d2d641fbc90401099",
           "bytes": 5489
         },
         "row_count": 244
@@ -9417,7 +9400,7 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kyoiku-nodes.parquet",
-          "sha256": "ab5b44b72955de78c78e87c563d28eb3cd49335ee2499e09455bf2ed02f9a216",
+          "sha256": "d47c10a22303f25fad9755cecb7c938add685109394cd75b82120578fd98102d",
           "bytes": 12569
         },
         "row_count": 242
@@ -9425,7 +9408,7 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kyoiku-amounts.parquet",
-          "sha256": "0ee8065bb0327cfaaba78f27449b12edc91320ed92ea0b05290e88428241234d",
+          "sha256": "847f0a2789c54718867319bffcb055e463a56672d4ff1af8330bd16aa71d3840",
           "bytes": 32488
         },
         "row_count": 1350
@@ -9449,7 +9432,7 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kodomo-nodes.parquet",
-          "sha256": "897d15ba8256bd87c095fee399ae592602ba5c20e03c122317659f0c96140b5a",
+          "sha256": "26e6161e43a7c58ea8cb329922087753855477224955508b33dd05d047806990",
           "bytes": 9142
         },
         "row_count": 144
@@ -9457,7 +9440,7 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kodomo-amounts.parquet",
-          "sha256": "29212daa5f56ee12d97eb8beef874781aeced178cca65ed8c5ed01ed515582cc",
+          "sha256": "b3a393f7c1e121c04703498578699ddfdc0849aafcca44f1ae60948b4af1f240",
           "bytes": 20264
         },
         "row_count": 968
@@ -9480,7 +9463,7 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/single-parent-kodomo-nodes.parquet",
-          "sha256": "91c6f4306ce2ca001a959ac9363ee39460b607599c039e3a426c8d0f1ac04ba2",
+          "sha256": "33b417d3ee81044496336ec4c1888c22e7da0715de22b9f83278c898a80e0549",
           "bytes": 3836
         },
         "row_count": 24
@@ -9488,7 +9471,7 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/single-parent-kodomo-amounts.parquet",
-          "sha256": "3674ac27eb85183ccc02f2582d4268b22be6a9db023e834af50ec55dc986bf8c",
+          "sha256": "fffc1b5bfab524fdd1f5219a8965cd691cff93f6e3ff525e93d85d094838c84d",
           "bytes": 6090
         },
         "row_count": 188
@@ -9512,7 +9495,7 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kouwan-nodes.parquet",
-          "sha256": "796cf502ec451c17d471645d14a83bcd229474d748623de01ccbfb76ffb88d76",
+          "sha256": "2a4704298ab0649481e356c5c30ff6c00d5be1079614264cf3a3d08b1a7d3756",
           "bytes": 3590
         },
         "row_count": 22
@@ -9520,7 +9503,7 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kouwan-amounts.parquet",
-          "sha256": "e038b0b7b710f2ef13e9a80bc7652cd9732829a551fa22289e93f8ed3ed61c64",
+          "sha256": "3a6a4dce6a0f3615d1593ddd652bd8835681dbf6860ca184aa1882dbdd99b30b",
           "bytes": 5135
         },
         "row_count": 95
@@ -9544,7 +9527,7 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-toshi-nodes.parquet",
-          "sha256": "457615dc3b49a3af902eaa855a1dc7b08d4d400e9dd1f8047c429baa1e517c4d",
+          "sha256": "f1772fe5801c68f2429f574ed0d12f0a8c92e100df4ae7b97363ec5a1f33e954",
           "bytes": 7292
         },
         "row_count": 112
@@ -9552,7 +9535,7 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-toshi-amounts.parquet",
-          "sha256": "83694fd2e8fb9e3ac69252a2642b8e8cb355b25d41464df21c16ec9c75b10ccb",
+          "sha256": "8e593c958ae3e9a2754c829730d0ec82b2096200a4519f12c17db25c35a3053a",
           "bytes": 13304
         },
         "row_count": 739
@@ -9576,7 +9559,7 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/redevelopment-toshi-nodes.parquet",
-          "sha256": "d6bc6a652493ffacafb808c4bb23864e2bbcd47ef60754755edf4b5ad6d8939a",
+          "sha256": "03fc6ba6d327e32d420f832c044c1d25bfbb7bd468c2a82d6525171e12f43ba0",
           "bytes": 4079
         },
         "row_count": 32
@@ -9584,7 +9567,7 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/redevelopment-toshi-amounts.parquet",
-          "sha256": "e689ec107a2621883b43a873c7a02d5b369f5c5a69a226652f4ab2ff1f46c3cd",
+          "sha256": "59ac00c899c1f29d10a652f9985c05f0bea810f6ce9bb8c4fa9bc0e921aa0de0",
           "bytes": 5515
         },
         "row_count": 240
@@ -9607,7 +9590,7 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-bunka-nodes.parquet",
-          "sha256": "354afa9a735abdcf01a99a332e77cfaebbabf50fbacc3300813b4dbb3d44cbf9",
+          "sha256": "0a660c55b99cd05e94edf9cf3dea0435b2ecc69e2db9ac6da355898503e96cdb",
           "bytes": 5622
         },
         "row_count": 77
@@ -9615,7 +9598,7 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-bunka-amounts.parquet",
-          "sha256": "4ccbc5b22232b4d2c5014ceb4deb88899d54b08ac229b3987ec7170ce3e7243f",
+          "sha256": "858ba6806d2de6798ced5d5fb74f49a0d532a32cfb9ed7c287f32c8bfd95255e",
           "bytes": 8747
         },
         "row_count": 502
@@ -9631,24 +9614,24 @@
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
         "金額の単位は column mark 2頁 から決めた。分冊のため款の和 1,452,723,563 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 1 種（21 件）を、印字された語から辞書の見出しに寄せた: 金額→節／金額。",
-        "原画で確かめた名称の誤読 2 件を、管理 JSON の name_corrections で印字に直した: 13使用料及賃借→13使用料及賃借料・22價還金利子及割引料→22償還金利子及割引料。"
+        "共有辞書に無い金額の見出し 2 種（28 件）を、印字された語から辞書の見出しに寄せた: 予算現額／予備費支出及び流用増△減→予算現額／予備費支出及び流用増減・金額→節／金額。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 22 件（p14:full-page:a0:result1:r39・p14:full-page:a0:result1:r39:w0・p14:full-page:a0:result1:r46・p14:full-page:a0:result1:r46:w0・p14:full-page:a0:result1:r55・p14:full-page:a0:result1:r55:w0・p14:full-page:a0:result1:r66・p14:full-page:a0:result1:r66:w0・p14:full-page:a0:result1:r73・p14:full-page:a0:result1:r73:w0・p14:full-page:a0:result1:r74・p14:full-page:a0:result1:r74:w0・p14:full-page:a0:result1:r76・p14:full-page:a0:result1:r76:w0・p14:full-page:a0:result1:r83・p14:full-page:a0:result1:r83:w0・p14:full-page:a0:result1:r84・p14:full-page:a0:result1:r84:w0・p14:full-page:a0:result1:r102・p14:full-page:a0:result1:r102:w0・p14:full-page:a0:result1:r109・p14:full-page:a0:result1:r109:w0）・减→減 4 件（p14:full-page:a0:result0:r12・p14:full-page:a0:result0:r12:w4・p15:full-page:a0:result0:r11・p15:full-page:a0:result0:r11:w4）・增→増 4 件（p14:full-page:a0:result0:r12・p14:full-page:a0:result0:r12:w2・p15:full-page:a0:result0:r11・p15:full-page:a0:result0:r11:w2）。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kikikanri-nodes.parquet",
-          "sha256": "a08aae3e6ab8d288a5ce84bd6ce0ed5e61a564df39782f9b46a272ccaa18d454",
-          "bytes": 3986
+          "sha256": "a93359b2a67f2f3baabf0a25258e7dfb56ea618eb9fc893c9fa316a4a8c13122",
+          "bytes": 3934
         },
         "row_count": 28
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kikikanri-amounts.parquet",
-          "sha256": "ab1679c54f83ea7ff206aebf929d74d4e04f0e5f2d434a665c9bf158836d88b6",
-          "bytes": 7509
+          "sha256": "227be989039709f33f2ad40c1d79bebc4a531ec122ca1705866c2faa3af0fd48",
+          "bytes": 5940
         },
         "row_count": 196
       }
@@ -9670,7 +9653,7 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-shobou-nodes.parquet",
-          "sha256": "ced44bf1a7be9a19df3b0ac3b1fc45a3dc8ea72ab71a76a9431c6e8bf9cf8994",
+          "sha256": "17c5c14e5f5ea214be5087d021608040c656e7bee019b645f1f61fe7bf010099",
           "bytes": 4445
         },
         "row_count": 43
@@ -9678,7 +9661,7 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-shobou-amounts.parquet",
-          "sha256": "d7679a48066a6ef7e3536b47e41ed18e50efc56feacd63f676a7803f7ca21d7b",
+          "sha256": "8bcabe7b381f88fa7213eb145c298d167e557af8701ef5b1dcafb1b0d21aa9f9",
           "bytes": 8166
         },
         "row_count": 282
@@ -9701,7 +9684,7 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kenkou-nodes.parquet",
-          "sha256": "5816ee14f490fd115261fea32b68788526dca356019c90d75e1a8cb4135f5446",
+          "sha256": "6e27f693f3cc9e17c71fbee4530b50116cd96d0a0e3b2dadea4823a58a5ba6e2",
           "bytes": 6528
         },
         "row_count": 105
@@ -9709,7 +9692,7 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kenkou-amounts.parquet",
-          "sha256": "b6e345a2a54c6892d9370768c831373cca6fe756958a97303fd9cdb77384f9f6",
+          "sha256": "cb1887bb33a447ff8dd8e40ec2b1ddbf48278295c178abaeb4ac3612d79216ff",
           "bytes": 11177
         },
         "row_count": 690
@@ -9732,7 +9715,7 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/care-kenkou-nodes.parquet",
-          "sha256": "423d826d7b8d9469ff29996e1780da9423706f81a5ca363bbb44625d14a77fd6",
+          "sha256": "f8daf8dd7c1371c577def5076a5035036c8524ba1dd6b03cad06d271ab73c54e",
           "bytes": 3192
         },
         "row_count": 15
@@ -9740,7 +9723,7 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/care-kenkou-amounts.parquet",
-          "sha256": "b852085f7783fb93f4559c3d5bcd1a3db30a02c1bf76fdb232acc936271c2916",
+          "sha256": "bb8008d02cf52a5bee17972ec48fa722904885f14a34deaed879f051ba04e94b",
           "bytes": 3506
         },
         "row_count": 106
@@ -9762,7 +9745,7 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-nodes.parquet",
-          "sha256": "d5a106f1d18dcdccc3bede2c778122c8038c4bc88a528ba01e745fc77afefe7d",
+          "sha256": "407e25b46dc6da7fc05bd2731399bc6155cee377158dc2162deaa0d3439f266d",
           "bytes": 6254
         },
         "row_count": 78
@@ -9770,7 +9753,7 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-amounts.parquet",
-          "sha256": "ebd60bb070e60290cbe4a2014565653e27785c26306621e0bb02765552be980a",
+          "sha256": "837c9fdd3df5dc9232f82fbb5f73924c858bd06c17c7c01e4888ea8e18803fe4",
           "bytes": 9061
         },
         "row_count": 390
