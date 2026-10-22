@@ -1,4 +1,4 @@
-// 自治体の個別ページ（/jurisdictions/:名称）のデータの型と、金額・年度の表記。server（SSR・API）と画面（島）で同じものを使う
+// 自治体の個別ページ（/:都道府県/:名称）のデータの型と、金額・年度の表記。server（SSR・API）と画面（島）で同じものを使う
 
 /** 款・項・目・節など、出典の1行。金額は API が返した円（画面で足し引きしない） */
 export interface Line {
@@ -69,4 +69,4 @@ export function formatYen(yen: number): string {
 /** 前の年度との増減（%）。前が 0 や無いときは null */
 export const changePct = (now: number, prev: number | null | undefined) => (prev ? ((now - prev) / prev) * 100 : null)
 
-export const jurisdictionPath = (name: string) => `/jurisdictions/${encodeURIComponent(name)}`
+export const jurisdictionPath = (prefecture: string, name: string) => `/${encodeURIComponent(prefecture)}/${encodeURIComponent(name)}`

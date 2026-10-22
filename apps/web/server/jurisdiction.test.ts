@@ -67,11 +67,11 @@ const get = (path: string, e: Env = env) => web.fetch(new Request(`https://fudok
 
 describe('自治体の個別ページ', () => {
   test('款の和・事業・前年度の同じ目から組み、HTML に金額と自治体名を入れる', async () => {
-    const res = await get(`/jurisdictions/${encodeURIComponent('中野区')}`)
+    const res = await get(`/${encodeURIComponent('東京都')}/${encodeURIComponent('中野区')}`)
     expect(res.status).toBe(200)
     const html = await res.text()
     expect(html).toContain('<title>中野区の歳出｜令和7年度決算｜風土記</title>')
-    expect(html).toContain('<link rel="canonical" href="https://fudoki.dev/jurisdictions/%E4%B8%AD%E9%87%8E%E5%8C%BA">')
+    expect(html).toContain('<link rel="canonical" href="https://fudoki.dev/%E6%9D%B1%E4%BA%AC%E9%83%BD/%E4%B8%AD%E9%87%8E%E5%8C%BA">')
     // 年度ごとの総額は、その年度の款（兄弟）の和
     const data = JSON.parse(html.match(/<script type="application\/json" id="j-data">(.*?)<\/script>/s)![1]!)
     expect(data.years.map((y: { year: number; yen: number }) => [y.year, y.yen])).toEqual([[2024, 500], [2025, 1000]])
@@ -81,12 +81,15 @@ describe('自治体の個別ページ', () => {
   })
 
   test('収録の無い自治体は検索に出さず、名前が違えば 404、sitemap には収録のある自治体だけ', async () => {
-    const empty = await get(`/jurisdictions/${encodeURIComponent('千代田区')}`)
+    const empty = await get(`/${encodeURIComponent('東京都')}/${encodeURIComponent('千代田区')}`)
     expect(empty.status).toBe(200)
     expect(await empty.text()).toContain('<meta name="robots" content="noindex">')
-    expect((await get(`/jurisdictions/${encodeURIComponent('存在しない市')}`)).status).toBe(404)
+    expect((await get(`/${encodeURIComponent('東京都')}/${encodeURIComponent('存在しない市')}`)).status).toBe(404)
+    // 都道府県の形でなければ他の経路へ渡す（/s/:id などを奪わない）
+    expect((await get('/s/not-a-session')).status).not.toBe(200)
+    expect((await get('/api/none')).status).toBe(404)
     const sitemap = await (await get('/sitemap.xml')).text()
-    expect(sitemap).toContain(encodeURIComponent('中野区'))
+    expect(sitemap).toContain(`${encodeURIComponent('東京都')}/${encodeURIComponent('中野区')}`)
     expect(sitemap).not.toContain(encodeURIComponent('千代田区'))
   })
 

@@ -1,4 +1,4 @@
-// 自治体の個別ページ（/jurisdictions/:名称）の島。サーバーが書いた HTML（検索エンジン向け）を、同じデータでグラフ付きに描き直す。
+// 自治体の個別ページ（/:都道府県/:名称）の島。サーバーが書いた HTML（検索エンジン向け）を、同じデータでグラフ付きに描き直す。
 // 歳出は API の値。人口・将来推計・特色はまだ無いので仮の値（dummy.ts）で、画面にも「仮」と出す
 import * as React from 'react'
 import { createRoot } from 'react-dom/client'

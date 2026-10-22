@@ -1,4 +1,4 @@
-// 自治体の個別ページ（/jurisdictions/:名称）と一覧（/jurisdictions）の HTML。検索エンジンが読めるよう、金額と款・事業はサーバーで書き出す。
+// 自治体の個別ページ（/:都道府県/:名称）と一覧（/jurisdictions）の HTML。検索エンジンが読めるよう、金額と款・事業はサーバーで書き出す。
 // グラフと会話への導線は島（jurisdiction/jurisdiction.tsx）が同じデータで描き直す
 import { TOKENS_CSS } from '../landing'
 import { PWA_HEAD, PWA_REGISTER } from '../pwa'
@@ -44,7 +44,7 @@ export function renderPage(d: PageData, siteKey: string): string {
   const latest = d.years.at(-1)!
   const title = `${d.name}の歳出｜${reiwa(latest.year)}決算｜風土記`
   const description = pageDescription(d)
-  const canonical = `${ORIGIN}${jurisdictionPath(d.name)}`
+  const canonical = `${ORIGIN}${jurisdictionPath(d.prefecture, d.name)}`
   const ld = {
     '@context': 'https://schema.org',
     '@type': 'Dataset',
@@ -90,7 +90,7 @@ export function renderEmpty(e: CatalogEntry): string {
   return `<!doctype html>
 <html lang="ja">
 <head>
-${head(title, `${e.name}の歳出は風土記にまだ収録されていません。`, `${ORIGIN}${jurisdictionPath(e.name)}`, '<meta name="robots" content="noindex">')}
+${head(title, `${e.name}の歳出は風土記にまだ収録されていません。`, `${ORIGIN}${jurisdictionPath(e.prefecture, e.name)}`, '<meta name="robots" content="noindex">')}
 </head>
 <body>
 ${header}
@@ -107,7 +107,7 @@ export function renderIndex(entries: CatalogEntry[]): string {
   const description = `決算を収録している自治体（${have.length}）の一覧。自治体ごとに歳出の款・項・目と、金額の推移を確かめられます。`
   const byPref = new Map<string, CatalogEntry[]>()
   for (const e of have) byPref.set(e.prefecture, [...(byPref.get(e.prefecture) ?? []), e])
-  const sections = [...byPref].map(([pref, list]) => `<h2>${esc(pref)}</h2><ul class="j-list">${list.map((e) => `<li><a href="${jurisdictionPath(e.name)}">${esc(e.name)}</a></li>`).join('')}</ul>`).join('')
+  const sections = [...byPref].map(([pref, list]) => `<h2>${esc(pref)}</h2><ul class="j-list">${list.map((e) => `<li><a href="${jurisdictionPath(e.prefecture, e.name)}">${esc(e.name)}</a></li>`).join('')}</ul>`).join('')
   return `<!doctype html>
 <html lang="ja">
 <head>
@@ -125,5 +125,5 @@ ${PWA_REGISTER}
 export const sitemapXml = (entries: CatalogEntry[]) =>
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${ORIGIN}/</loc></url><url><loc>${ORIGIN}/jurisdictions</loc></url>${entries
     .filter((e) => e.settlementYears.length > 0)
-    .map((e) => `<url><loc>${ORIGIN}${jurisdictionPath(e.name)}</loc></url>`)
+    .map((e) => `<url><loc>${ORIGIN}${jurisdictionPath(e.prefecture, e.name)}</loc></url>`)
     .join('')}</urlset>\n`

@@ -1,4 +1,4 @@
-// 自治体の個別ページ（/jurisdictions/:名称）と、画面が款・目の内訳を引く /api/jurisdictions/*。データは apps/api の歳出の検索から組み、
+// 自治体の個別ページ（/:都道府県/:名称）と、画面が款・目の内訳を引く /api/jurisdictions/*。データは apps/api の歳出の検索から組み、
 // 変わるのは取り込みのときだけなので、Worker の cache に1時間置く。内訳の API は誰でも読める GET で、IP ごとの流量と id の形の検査で守る
 import { Hono } from 'hono'
 import { renderEmpty, renderIndex, renderPage, sitemapXml } from '../jurisdiction/html'
@@ -42,10 +42,14 @@ jurisdictions.get('/jurisdictions', async (c) => {
   }
 })
 
-jurisdictions.get('/jurisdictions/:name', async (c) => {
-  const name = c.req.param('name')
+// /<都道府県>/<自治体名>。/s/:id・/api/* など他の経路とは、都道府県名の形で見分ける（形が違えば API を引かずに次へ渡す）
+const PREFECTURE = /^(北海道|.{2,3}[都府県])$/
+
+jurisdictions.get('/:prefecture/:name', async (c, next) => {
+  const { prefecture, name } = c.req.param()
+  if (!PREFECTURE.test(prefecture)) return next()
   try {
-    const entry = (await catalog(c.env)).find((e) => e.name === name)
+    const entry = (await catalog(c.env)).find((e) => e.prefecture === prefecture && e.name === name)
     if (!entry) return notFound()
     const data = entry.settlementYears.length > 0 ? await page(c.env, entry) : null
     if (!data) return new Response(renderEmpty(entry), { headers: HTML_HEADERS })
