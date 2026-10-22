@@ -248,3 +248,14 @@ class InputsTest(unittest.TestCase):
         from ingestion.fiscal.layouts.settlement_statement.recheck import recheck
         with self.assertRaisesRegex(ValueError, 'one OCR input'):
             recheck({}, {'ocr_inputs': [{'id': 'a'}, {'id': 'b'}]}, Path('x.pdf'))
+
+    def test_paddle_letter_forms_and_declared_names_are_corrected_but_vision_pages_are_left(self):
+        from ingestion.fiscal.layouts.settlement_statement.convert import corrected
+        def observation(engine):
+            return {'request': {'engine': engine}, 'pages': [{'page_number': 3, 'regions': [{'observations': [
+                {'id': 'a', 'kind': 'region', 'parent_id': None, 'raw_text': '健康診查費'},
+                {'id': 'b', 'kind': 'region', 'parent_id': None, 'raw_text': 'センタ一費'}]}]}]}
+        rule = {'id': 'r', 'page': 3, 'observation_id': 'b', 'observed_name': 'センタ一費', 'corrected_name': 'センター費', 'reason': 'x'}
+        texts = lambda o: [x['raw_text'] for x in o['pages'][0]['regions'][0]['observations']]
+        self.assertEqual(texts(corrected(observation('paddle'), [rule])), ['健康診査費', 'センター費'])
+        self.assertEqual(texts(corrected(observation('vision'), [])), ['健康診查費', 'センタ一費'])

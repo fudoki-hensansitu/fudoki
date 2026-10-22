@@ -11,6 +11,7 @@ import json
 from pathlib import Path
 
 from ingestion.fiscal.layouts.settlement_statement.statement import Box, build
+from ingestion.generic.scan import apply_name_corrections, apply_variant_chars
 from ingestion.lib.ocr_names import AmountDictionary, AmountRule
 from ingestion.lib.pdf_rules import detect
 from ingestion.lib.scan_ocr import superseded
@@ -38,6 +39,15 @@ def ocr_boxes(observation: dict, page: dict) -> list[Box]:
     return boxes
 
 
+def corrected(observation: dict, name_corrections) -> dict:
+    """The observation with Paddle's Chinese letter forms and the declared misread names replaced, as the scan
+    builder does (the raw observation stays); pages read by Vision are left as they are."""
+    engine = observation.get('request', {}).get('engine')
+    observation, _ = apply_variant_chars({**observation, 'pages': [{**q, 'engine': engine} for q in observation['pages']]})
+    return apply_name_corrections(observation, [r for r in name_corrections
+                                                if any(r['page'] == q['page_number'] for q in observation['pages'])])
+
+
 def convert(inputs: list[dict], destination: Path, options: dict) -> dict:
     if len(inputs) != 1:
         raise ValueError('One original makes one table')
@@ -52,6 +62,7 @@ def convert(inputs: list[dict], destination: Path, options: dict) -> dict:
         observation = json.loads(gzip.decompress(Path(ocr['path']).read_bytes()))
         if observation['origin']['sha256'] != item['sha256']:
             raise ValueError(f'OCR input {ocr["id"]} reads another original')
+        observation = corrected(observation, options.get('name_corrections', ()))
         for page in observation['pages']:
             if page['page_number'] in observed:
                 raise ValueError(f'Page {page["page_number"]} is read by more than one OCR input')

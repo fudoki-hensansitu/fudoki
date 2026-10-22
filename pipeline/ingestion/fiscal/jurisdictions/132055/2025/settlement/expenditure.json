@@ -20,7 +20,7 @@
           "id": "settlement-1-ocr",
           "origin_sha256": "08974bda7129106fb2cd902eba31a9327eea6df4d2dc005784eff97bc20efef3",
           "request": {
-            "engine": "vision",
+            "engine": "paddle",
             "pages": [
               4,
               5,
@@ -32,32 +32,15 @@
               19,
               20,
               21
-            ]
+            ],
+            "vlm_fallback": false
           },
-          "sha256": "8cc2ee6da0a95ff38982957327b9745621effacf2847cccd37020e9ac28bf73a",
-          "bytes": 1327834
+          "sha256": "c051caaf29c8f364059dc473d404d83d28bdb0531636d1174a8b4ed8257f3df9",
+          "bytes": 2381153
         }
       ],
       "options": {
-        "table_id": "expenditure-settlement-1",
-        "amount_corrections": [
-          {
-            "id": "vlm-a40ac127ee",
-            "page": 16,
-            "observation_id": "p16:full-page:r71",
-            "observed_amount": "21,000",
-            "corrected_amount": "27,000",
-            "reason": "codex/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 21,000）"
-          },
-          {
-            "id": "vlm-1018add2e7",
-            "page": 14,
-            "observation_id": "p14:full-page:r56",
-            "observed_amount": "3,543,000",
-            "corrected_amount": "5,543,000",
-            "reason": "codex/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 3,543,000）"
-          }
-        ]
+        "table_id": "expenditure-settlement-1"
       },
       "expected_tables": [
         {
@@ -70,7 +53,7 @@
     {
       "table_id": "expenditure-settlement-1",
       "conversion_id": "settlement-1",
-      "input_fingerprint": "584719ec7098283d1f9b50a9136a79e5eaf6fcfe44713b695473e04623506177",
+      "input_fingerprint": "a802191e2b2ad90581afc6f8ab5a5aad38f0dba8c64352e515404c4c83192dbb",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "4頁の表は節・備考の列が無い総括表で、明細ではないため読まない",
@@ -81,18 +64,18 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/132055/2025/settlement/expenditure/expenditure-settlement-1-nodes.parquet",
-          "sha256": "3f96314d4b5747385bb54456d084eb79abd363cf8a6fc1c9969a3717ceb3be65",
-          "bytes": 10070
+          "sha256": "e4cd1dcf3cd943ebbc0412f965f789355036ce638d1ccabc25ee132734d8828a",
+          "bytes": 8938
         },
         "row_count": 129
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132055/2025/settlement/expenditure/expenditure-settlement-1-amounts.parquet",
-          "sha256": "0a9431c22a4847ddf7a3a48b39f3584ccd9793933685610d74a77f251daa3eeb",
-          "bytes": 15603
+          "sha256": "907568ff53a921f07c9848546ab58a220357f9438be91e007b56c1d21dea642e",
+          "bytes": 10627
         },
-        "row_count": 486
+        "row_count": 487
       }
     }
   ]
