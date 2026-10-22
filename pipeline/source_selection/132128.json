@@ -4878,5 +4878,40 @@
       }
     }
   ],
-  "unresolved_candidates": []
+  "unresolved_candidates": [],
+  "evaluation_selections": [
+    {
+      "target": {
+        "jurisdiction": "132128",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "取り組みと成果と事業費だけで、目標との対比・評価・課題・方向が無い。探した頁の記録は無い。探索した範囲では選べる評価資料が無かった（2026-10-14確認）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132128",
+        "fiscal_year": 2024,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "R7行政評価は窓口時間・土曜開庁の単一テーマのみ（01_joho.pdf等3本）。全事業の評価ではなく、決算参考資料も2025年度と同様に取り組みと成果が中心のため選ばない。探した頁: https://www.city.hino.lg.jp/shisei/gyozaisei/hyoka/1025984/1030291.html。探索した範囲では選べる評価資料が無かった（2026-10-15確認）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132128",
+        "fiscal_year": 2023,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "行政評価は窓口時間・土曜開庁の単一テーマのみで、事業単位の評価資料が見つからない。探した頁: https://www.city.hino.lg.jp/shisei/gyozaisei/hyoka/index.html。探索した範囲では選べる評価資料が無かった（2026-10-16確認）。"
+    }
+  ]
 }

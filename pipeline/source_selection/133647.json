@@ -1042,5 +1042,29 @@
       ],
       "reason": "前wave引継ぎは令和5年度中盤の第1〜7号が令和5年第2〜4回会議録に審議記録のみとしていたが、検証済み実物（令和5年第4回93頁・令和6年第1回190頁の文字抽出）で議案題名に対応する令和5年度一般会計補正は第5号・第6号（第4回）・第8号・第9号（令和6年第1回）のみで、第7号の議案題名対応はない。掲載済み議案書・明細表も確認できないため号数確定不可。架空号を作らず未確定として残す。"
     }
+  ],
+  "evaluation_selections": [
+    {
+      "target": {
+        "jurisdiction": "133647",
+        "fiscal_year": 2024,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "R6評価資料が見つからない。決算ページに成果・評価のPDFなし。DuckDuckGoのsite検索でも該当なし。探した頁: https://www.vill.kouzushima.tokyo.jp/2025-0110/。探索した範囲では選べる評価資料が無かった（2026-10-15確認）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "133647",
+        "fiscal_year": 2023,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "2023年度実績の評価資料が見つからない（2024年度の調査と同様）。探した頁: https://www.vill.kouzushima.tokyo.jp/2025-0110/。探索した範囲では選べる評価資料が無かった（2026-10-16確認）。"
+    }
   ]
 }

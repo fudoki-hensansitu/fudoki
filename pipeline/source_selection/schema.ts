@@ -274,11 +274,5 @@ export const jurisdictionSelectionsSchema = z.object({
       }
     }
   }
-  const settlements = new Set(file.selections.map(selection => targetKey(selection.target)))
-  for (const [index, selection] of (file.evaluation_selections ?? []).entries()) {
-    if (!settlements.has(targetKey(selection.target))) {
-      ctx.addIssue({ code: 'custom', path: ['evaluation_selections', index, 'target'], message: 'Evaluated settlement is not a selection target' })
-    }
-  }
 })
 export type JurisdictionSelections = z.infer<typeof jurisdictionSelectionsSchema>

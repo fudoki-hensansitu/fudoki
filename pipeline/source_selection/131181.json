@@ -2282,6 +2282,17 @@
         "archived_at": "2026-10-14T16:14:18.228Z"
       },
       "reason": "令和6年度に実施した事務事業を令和7年度に評価した事務事業分析シート53冊（計1738頁）。事務事業ごとに目的・対象・内容、指標の推移（目標値・実績値）、予算・決算額の推移（R元〜7年度）、実績の推移、評価・課題・今後の方向性を載せる。文字として読める。同じ評価の政策・施策・施設分析シートは施策・施設単位のため、事業単位の事務事業分析シートを代表にした。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131181",
+        "fiscal_year": 2023,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "令和6年度事務事業分析シート（所管部課別54ファイル）のうち `https://www.city.arakawa.tokyo.jp/documents/37913/gyoseihyoka.pdf`（sha256 6cdd3634ce8a8240ea28533ad0ea992da94104ae4aa2dd5cb540fb871cb2bc3a）が現在404（botよけのHTML、本文のsha256は 66dbbd9a063907d599fc8eb9a9e97178b5184a6be1b9f58581cd6283d53bc6c5）。他の53ファイルは候補のsha256と一致したが、1ファイルでも一致しないため団体ごと外した。探した頁: https://www.city.arakawa.tokyo.jp/a001/gyouseihyouka/r6gyouseihyouka/r6jimujigyo.html（2026-10-15確認、現在の頁に gyoseihyoka.pdf のリンクは無い）。探索した範囲では選べる評価資料が無かった（2026-10-16確認）。"
     }
   ]
 }

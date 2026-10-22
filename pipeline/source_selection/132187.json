@@ -2817,5 +2817,29 @@
       }
     }
   ],
-  "unresolved_candidates": []
+  "unresolved_candidates": [],
+  "evaluation_selections": [
+    {
+      "target": {
+        "jurisdiction": "132187",
+        "fiscal_year": 2024,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "R6評価資料が見つからない。決算ページの決算説明書（前後）は歳入歳出の説明のみで目標・評価なし。DuckDuckGoのsite検索でも事業評価なし。探した頁: https://www.city.fussa.tokyo.jp/municipal/aboutfussa/finances/kessan/1020596.html。探索した範囲では選べる評価資料が無かった（2026-10-15確認）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132187",
+        "fiscal_year": 2023,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "決算説明書は歳入歳出の説明のみで目標・評価が無い。探した頁: https://www.city.fussa.tokyo.jp/municipal/aboutfussa/finances/kessan/1020596.html。探索した範囲では選べる評価資料が無かった（2026-10-16確認）。"
+    }
+  ]
 }

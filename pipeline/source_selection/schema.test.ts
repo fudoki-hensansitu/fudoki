@@ -59,16 +59,16 @@ test('references, targets, metadata and file receipts are strict and consistent'
   expect(jurisdictionSelectionsSchema.safeParse({ ...ledger, unresolved_candidates: [{ candidate, missing: ['account'], reason: '旧単位' }] }).success).toBe(false)
 })
 
-test('evaluation selections evaluate a selected settlement and need hashes but no accounts', () => {
+test('evaluation selections need hashes but no accounts, and do not need a settlement selection of the same year', () => {
   const settlement = { jurisdiction: '132047', fiscal_year: 2024, document_kind: 'settlement' as const }
   const file = { download_url: 'https://example.com/results.pdf', sha256: 'c'.repeat(64), format: 'pdf' as const, pdf_type: 'text' as const, pages: null }
   const explanation = { target: settlement, candidates: [{ ...candidate, id: 'results', files: [file] }], selected_candidate_id: 'results', archive: null, reason: '決算と同じ頁に掲載。' }
   const ledger = { jurisdiction: '132047', name: '三鷹市', official_url: 'https://www.city.mitaka.lg.jp/', selections: [{ ...selection, target: settlement }], unresolved_candidates: [] }
   expect(jurisdictionSelectionsSchema.safeParse({ ...ledger, evaluation_selections: [explanation] }).success).toBe(true)
   expect(jurisdictionSelectionsSchema.safeParse({ ...ledger, evaluation_selections: [] }).success).toBe(true)
+  expect(jurisdictionSelectionsSchema.safeParse({ ...ledger, evaluation_selections: [{ ...explanation, target: { ...settlement, fiscal_year: 2023 } }] }).success).toBe(true)
   for (const changed of [
     { ...explanation, target: target },
-    { ...explanation, target: { ...settlement, fiscal_year: 2023 } },
     { ...explanation, candidates: [{ ...explanation.candidates[0]!, files: [{ ...file, sha256: null }] }] },
     { ...explanation, candidates: [{ ...explanation.candidates[0]!, files: [{ ...file, scope: candidate.files[0]!.scope }] }] },
     { ...explanation, selected_candidate_id: 'missing' },
