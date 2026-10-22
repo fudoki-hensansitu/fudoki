@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { changePct, formatYen, kanChanges, reiwa, type YearTotal } from '../jurisdiction/types'
 import web from '../worker'
+import { searchInput } from '../../api/src/search'
 import type { Env } from './env'
 
 describe('金額と年度の表記', () => {
@@ -39,60 +40,70 @@ describe('金額と年度の表記', () => {
 
 const id = (n: number) => n.toString(16).padStart(64, '0')
 type Row = Record<string, unknown> & { node_id: string; fiscal_year: number }
-const node = (over: Record<string, unknown>): Row => ({ document_kind: 'settlement', jurisdiction_code: '131148', account_name: '一般会計', axis: '科目', origin_id: 'o1', source_page: 1, amount_source_page: 2, kan_name: null, kou_name: null, node_id: '', fiscal_year: 0, ...over })
+const node = (over: Record<string, unknown>): Row => ({ document_kind: 'settlement', jurisdiction_code: '131148', account_name: '一般会計', axis: '科目', is_subject: true, parent_node_id: null, origin_id: 'o1', source_page: 1, amount_source_page: 2, kan_name: null, kou_name: null, node_id: '', fiscal_year: 0, ...over })
 const KAN = [node({ node_id: id(1), node_kind: '款', name: '子ども教育費', amount_yen: 600, fiscal_year: 2025 }), node({ node_id: id(2), node_kind: '款', name: '総務費', amount_yen: 400, fiscal_year: 2025 }), node({ node_id: id(3), node_kind: '款', name: '子ども教育費', amount_yen: 500, fiscal_year: 2024 })]
 const MOKU_2025 = [
   node({ node_id: id(10), node_kind: '目', name: '積立金', amount_yen: 900, fiscal_year: 2025, kan_name: '諸支出金', kou_name: '積立金' }),
-  node({ node_id: id(11), node_kind: '目', name: '保育園費', amount_yen: 300, fiscal_year: 2025, kan_name: '子ども教育費', kou_name: '子ども費' }),
+  node({ node_id: id(11), parent_node_id: id(20), node_kind: '目', name: '保育園費', amount_yen: 300, fiscal_year: 2025, kan_name: '子ども教育費', kou_name: '子ども費' }),
 ]
 const MOKU_2024 = [node({ node_id: id(12), node_kind: '目', name: '保育園費', amount_yen: 200, fiscal_year: 2024, kan_name: '子ども教育費', kou_name: '子ども費' })]
 const CHILDREN: Record<string, Record<string, Row[]>> = {
-  [id(1)]: { 科目: [node({ node_id: id(20), node_kind: '項', name: '子ども費', amount_yen: 600, fiscal_year: 2025 })] },
-  [id(20)]: { 科目: [node({ node_id: id(11), node_kind: '目', name: '保育園費', amount_yen: 300, fiscal_year: 2025 })] },
-  [id(11)]: { 節: [node({ node_id: id(30), node_kind: '節', name: '扶助費', amount_yen: 250, fiscal_year: 2025 }), node({ node_id: id(31), node_kind: '節', name: '委託料', amount_yen: 50, fiscal_year: 2025 })] },
+  [id(1)]: { 科目: [node({ node_id: id(20), parent_node_id: id(1), node_kind: '項', name: '子ども費', amount_yen: 600, fiscal_year: 2025 })] },
+  [id(2)]: { 科目: [node({ node_id: id(21), parent_node_id: id(2), node_kind: '項', name: '総務管理費', amount_yen: 400, fiscal_year: 2025 })] },
+  [id(20)]: { 科目: [node({ node_id: id(11), parent_node_id: id(20), node_kind: '目', name: '保育園費', amount_yen: 300, fiscal_year: 2025 })] },
+  [id(11)]: { 節: [node({ node_id: id(30), parent_node_id: id(11), axis: '節', is_subject: false, node_kind: '節', name: '扶助費', amount_yen: 250, fiscal_year: 2025 }), node({ node_id: id(31), parent_node_id: id(11), axis: '節', is_subject: false, node_kind: '節', name: '委託料', amount_yen: 50, fiscal_year: 2025 })] },
 }
 
-const API = {
-  fetch: async (req: Request) => {
+function fixtureApi({ axis = '科目', code = '131148', name = '中野区', extraNodes = [] as Row[] } = {}) {
+  const map = (n: Row): Row => ({ ...n, jurisdiction_code: code, axis: n.is_subject ? axis : n.axis })
+  const rows = [...new Map([...Object.values(CHILDREN).flatMap((axes) => Object.values(axes).flat()), ...KAN, ...MOKU_2025, ...MOKU_2024, ...extraNodes].map((n) => [n.node_id, map(n)])).values()]
+  return { fetch: async (req: Request) => {
     const url = new URL(req.url)
     if (url.pathname === '/v1/jurisdictions')
-      return Response.json({
-        jurisdictions: [
-          { jurisdiction_code: '131148', name: '中野区', prefecture_name: '東京都', coverage: [{ fiscal_year: 2024, document_kind: 'settlement', accounts: [{ account_name: '一般会計' }] }, { fiscal_year: 2025, document_kind: 'settlement', accounts: [{ account_name: '一般会計' }] }] },
-          { jurisdiction_code: '131016', name: '千代田区', prefecture_name: '東京都', coverage: [] },
-        ],
-      })
+      return Response.json({ jurisdictions: [
+        { jurisdiction_code: code, name, prefecture_name: '東京都', coverage: [2024, 2025].map((fiscal_year) => ({ fiscal_year, document_kind: 'settlement', accounts: [{ account_name: '一般会計' }] })) },
+        { jurisdiction_code: '131016', name: '千代田区', prefecture_name: '東京都', coverage: [] },
+      ] })
     if (url.pathname === '/v1/expenditure/nodes:search') {
-      const body = (await req.json()) as { fiscal_year: { min: number; max: number }; where: { node_kind: { eq: string[] } } }
-      const kind = body.where.node_kind.eq[0]
-      const rows = kind === '款' ? KAN : [...MOKU_2025, ...MOKU_2024].filter((n) => n.fiscal_year >= body.fiscal_year.min && n.fiscal_year <= body.fiscal_year.max)
-      return Response.json({ nodes: rows.filter((n) => n.fiscal_year >= body.fiscal_year.min && n.fiscal_year <= body.fiscal_year.max), origins: [{ origin_id: 'o1', title: '令和7年度決算書' }] })
+      const parsed = searchInput.safeParse(await req.json())
+      if (!parsed.success) return Response.json({ error: parsed.error.message }, { status: 400 })
+      const body = parsed.data
+      const matches = rows.filter((n) => n.fiscal_year >= body.fiscal_year.min && n.fiscal_year <= body.fiscal_year.max && Object.entries(body.where ?? {}).every(([key, cond]) => {
+        const eq = (cond as { eq?: unknown } | undefined)?.eq
+        return eq === undefined || (Array.isArray(eq) ? eq.includes(n[key]) : eq === n[key])
+      })).sort((a, b) => Number(b.amount_yen ?? 0) - Number(a.amount_yen ?? 0))
+      const offset = Number(body.page_token?.slice(8) ?? 0)
+      return Response.json({ nodes: matches.slice(offset, offset + body.page_size), next_page_token: offset + body.page_size < matches.length ? `fixture_${offset + body.page_size}` : null, origins: [{ origin_id: 'o1', title: '令和7年度決算書' }] })
     }
     const m = url.pathname.match(/^\/v1\/expenditure\/nodes\/settlement\/([0-9a-f]{64})$/)
     if (m) {
-      const nodeId = m[1]!
-      const self = [...KAN, ...MOKU_2025].find((n) => n.node_id === nodeId) ?? CHILDREN[nodeId]?.['科目']?.[0]
-      return Response.json({ node: self, children: CHILDREN[nodeId] ?? {} })
+      const self = rows.find((n) => n.node_id === m[1])
+      const children: Record<string, Row[]> = {}
+      for (const child of rows.filter((n) => n.parent_node_id === m[1])) (children[String(child.axis)] ??= []).push(child)
+      return Response.json({ node: self, children, next_page_token: null })
     }
     return new Response('nf', { status: 404 })
-  },
+  } }
 }
+const API = fixtureApi()
 const env: Env = { API, VIEW_RATE_LIMIT: { limit: async () => ({ success: true }) } }
 const get = (path: string, e: Env = env) => web.fetch(new Request(`https://fudoki.dev${path}`), e)
 
 describe('自治体の個別ページ', () => {
   test('款の和・事業・前年度の同じ目から組み、HTML に金額と自治体名を入れる', async () => {
-    const res = await get(`/${encodeURIComponent('東京都')}/${encodeURIComponent('中野区')}`)
+    const res = await get(`/${encodeURIComponent('東京都')}/${encodeURIComponent('中野区')}`, { ...env, TURNSTILE_SITE_KEY: 'public-test-key' })
     expect(res.status).toBe(200)
     const html = await res.text()
     expect(html).toContain('<title>中野区の歳出｜令和7年度決算｜風土記</title>')
+    expect(html).toContain('https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit')
     expect(html).toContain('<link rel="canonical" href="https://fudoki.dev/%E6%9D%B1%E4%BA%AC%E9%83%BD/%E4%B8%AD%E9%87%8E%E5%8C%BA">')
     // 年度ごとの総額は、その年度の款（兄弟）の和
     const data = JSON.parse(html.match(/<script type="application\/json" id="j-data">(.*?)<\/script>/s)![1]!)
     expect(data.years.map((y: { year: number; yen: number }) => [y.year, y.yen])).toEqual([[2024, 500], [2025, 1000]])
     // 積立の款は事業の候補から外し、前年度の同じ目（款・項・名前が一致）だけを前年に使う
     expect(data.projects.map((p: { name: string; prevYen: number | null }) => [p.name, p.prevYen])).toEqual([['保育園費', 200]])
-    expect(data.flow.kou[0].moku[0].setsu.map((s: { name: string }) => s.name)).toEqual(['扶助費', '委託料'])
+    expect(data.flow.map((d: { kan: { name: string }; kou: { name: string; moku: unknown[] }[] }) => [d.kan.name, d.kou.map((k) => k.name)])).toEqual([['子ども教育費', ['子ども費']], ['総務費', ['総務管理費']]])
+    expect(data.flow[0].kou[0].moku).toEqual([])
   })
 
   test('収録の無い自治体は検索に出さず、名前が違えば 404、sitemap には収録のある自治体だけ', async () => {

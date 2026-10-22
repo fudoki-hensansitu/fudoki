@@ -2,11 +2,11 @@
 // 変わるのは取り込みのときだけなので、Worker の cache に1時間置く。内訳の API は誰でも読める GET で、IP ごとの流量と id の形の検査で守る
 import { Hono } from 'hono'
 import { renderEmpty, renderIndex, renderPage, sitemapXml } from '../jurisdiction/html'
-import type { Drill, PageData, Setsu } from '../jurisdiction/types'
+import type { Drill, FlowDepth, PageData, Setsu } from '../jurisdiction/types'
 import { clientIp, errorResponse, HttpError, rateLimit } from './http'
 import { VIEW_RATE_LIMIT } from './limits'
 import type { Env, RateLimiter } from './env'
-import { loadCatalog, loadDrillById, loadPage, loadSetsu, type CatalogEntry } from './jurisdiction'
+import { loadCatalog, loadDrillById, loadFlow, loadPage, loadSetsu, type CatalogEntry } from './jurisdiction'
 
 const TTL = 3600
 const NODE_ID = /^[0-9a-f]{64}$/
@@ -15,7 +15,7 @@ const HTML_HEADERS = { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Contro
 /** Worker の cache（無い環境では毎回取り直す）。同じ isolate の中でも一度だけ取る */
 const inflight = new Map<string, Promise<unknown>>()
 async function memo<T>(key: string, fn: () => Promise<T>): Promise<T> {
-  const url = `https://fudoki.dev/__cache/${key}`
+  const url = `https://fudoki.dev/__cache/jurisdiction-v2/${key}`
   const cache = typeof caches === 'undefined' ? undefined : (caches as unknown as { default?: Cache }).default
   const hit = await cache?.match(url)
   if (hit) return (await hit.json()) as T
@@ -83,3 +83,18 @@ async function guarded(c: { env: Env; req: { raw: Request } }, id: string, run: 
 
 jurisdictions.get('/api/jurisdictions/drill/:id', (c) => guarded(c, c.req.param('id'), () => memo<Drill>(`drill-${c.req.param('id')}`, () => loadDrillById(c.env, c.req.param('id')))))
 jurisdictions.get('/api/jurisdictions/setsu/:id', (c) => guarded(c, c.req.param('id'), () => memo<Setsu[]>(`setsu-${c.req.param('id')}`, () => loadSetsu(c.env, c.req.param('id')))))
+
+jurisdictions.get('/api/jurisdictions/flow/:code/:year/:depth', async (c) => {
+  try {
+    const { code, year, depth } = c.req.param()
+    if (!/^\d{6}$/.test(code) || !/^\d{4}$/.test(year) || !['kou', 'moku', 'setsu'].includes(depth))
+      throw new HttpError(400, 'INVALID_ARGUMENT', '自治体・年度・表示階層の指定が違います')
+    await rateLimit(c.env.VIEW_RATE_LIMIT as RateLimiter | undefined, clientIp(c.req.raw), VIEW_RATE_LIMIT.period)
+    const entry = (await catalog(c.env)).find((e) => e.code === code)
+    if (!entry?.settlementYears.includes(Number(year))) throw new HttpError(404, 'NOT_FOUND', 'この自治体・年度の一般会計の決算は収録されていません')
+    return json(await memo<Drill[]>(`flow-${code}-${year}-${depth}`, () => loadFlow(c.env, code, Number(year), depth as FlowDepth)))
+  } catch (e) {
+    if (e instanceof HttpError) return errorResponse(e)
+    return errorResponse(new HttpError(502, 'UNAVAILABLE', '決算データを表示できませんでした。少し待ってからもう一度開いてください。'))
+  }
+})

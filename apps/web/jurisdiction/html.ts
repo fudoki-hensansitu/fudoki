@@ -1,6 +1,6 @@
 // 自治体の個別ページ（/:都道府県/:名称）と一覧（/jurisdictions）の HTML。検索エンジンが読めるよう、金額と款・事業はサーバーで書き出す。
 // グラフと会話への導線は島（jurisdiction/jurisdiction.tsx）が同じデータで描き直す
-import { TOKENS_CSS } from '../landing'
+import { logo, TOKENS_CSS, TURNSTILE_SCRIPT } from '../landing'
 import { PWA_HEAD, PWA_REGISTER } from '../pwa'
 import type { CatalogEntry } from '../server/jurisdiction'
 import { formatYen, jurisdictionPath, reiwa, type PageData } from './types'
@@ -32,7 +32,7 @@ ${PWA_HEAD}
 ${extra}`
 
 export const INDEX_PATH = '/' + encodeURIComponent('自治体')
-const header = `<header class="j-top"><a class="j-brand" href="/"><svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true"><g fill="var(--primary)"><rect x="2" y="14" width="4" height="14" rx="2"/><rect x="8" y="6" width="4" height="22" rx="2"/><rect x="14" y="18" width="4" height="10" rx="2"/><rect x="20" y="2" width="4" height="26" rx="2"/><rect x="26" y="11" width="4" height="17" rx="2"/></g><rect x="2" y="29" width="28" height="2" rx="1" fill="var(--logo-rule-ink)"/></svg>風土記</a><nav><a href="/自治体">自治体を探す</a><a href="https://docs.fudoki.dev/">使い方</a></nav></header>`
+const header = `<header class="j-top"><a class="j-brand" href="/" aria-label="風土記 ホーム">${logo('j-logo')}</a><nav><a href="/自治体">自治体を探す</a><a href="https://docs.fudoki.dev/">使い方</a></nav></header>`
 
 /** 個別ページの説明文。検索結果に出るので、金額は API の値だけで書く（人口や仮の値は入れない） */
 export function pageDescription(d: PageData): string {
@@ -62,7 +62,7 @@ export function renderPage(d: PageData, siteKey: string): string {
   return `<!doctype html>
 <html lang="ja">
 <head>
-${head(title, description, canonical, `<script type="application/ld+json">${inlineJson(ld)}</script>\n<script type="module" src="/_app/jurisdiction.js"></script>`)}
+${head(title, description, canonical, `${siteKey ? `${TURNSTILE_SCRIPT}\n` : ''}<script type="application/ld+json">${inlineJson(ld)}</script>\n<script type="module" src="/_app/jurisdiction.js"></script>`)}
 </head>
 <body>
 ${header}

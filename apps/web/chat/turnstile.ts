@@ -17,7 +17,7 @@ const WARM_TTL_MS = 240_000
 async function loaded(timeoutMs = 15_000): Promise<Turnstile> {
   const start = Date.now()
   while (!window.turnstile) {
-    if (Date.now() - start > timeoutMs) throw new Error('確認の部品を読み込めませんでした')
+    if (Date.now() - start > timeoutMs) throw new Error('チャットを始めるための確認を読み込めませんでした。ページを再読み込みしてください。')
     await new Promise((r) => setTimeout(r, 100))
   }
   return window.turnstile
