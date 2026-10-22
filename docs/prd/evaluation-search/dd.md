@@ -43,7 +43,7 @@
 
 ### 現在のコードとの接点
 
-- 出典の選定: `pipeline/source_selection/<自治体>.json` の `evaluation_selections` に、評価資料を URL と sha256 で固定済み（当初は北区・中野区。拡大の分は[手順7](#実装の順序と依存)）。型は `schema.ts` の `evaluationSelectionSchema` で、`archive` は null だけを受ける。target は評価する実績の決算（例: 令和8年度事務事業評価なら2025年度の決算）で、同じ自治体の `selections` に同じ target が無ければ検査で止まる。
+- 出典の選定: `pipeline/source_selection/<自治体>.json` の `evaluation_selections` に、評価資料を URL と sha256 で固定済み（当初は北区・中野区。拡大の分は[手順7](#実装の順序と依存)）。型は `schema.ts` の `evaluationSelectionSchema` で、`archive` は null だけを受ける。target は評価する実績の決算（例: 令和8年度事務事業評価なら2025年度の決算）で、決算の選定（`selections`）とは独立している（同じ年度の決算が未選定でも評価資料を選べる。2026-10-22 のユーザーの判断）。
 - 出典の保存: `archive.ts` は `selections`（金額の出典）だけを扱い、`fiscal/source-selection/<自治体>/<年度>/<資料区分>[-n].<形式>` に保存する。置き換えでない保存では、`<資料区分>-` で始まる key を一覧し、残さない key を削除する。
 - API: `apps/api` は ADR 0022 の構成で、`operations.ts` に定義した操作を REST と MCP の両方に登録する。D1 の `control` 表の `serving` が kill switch で、WAF が IP あたり20回/10秒に制限する。`columns.json` は pipeline の script が書く生成物で、公開 app は `pipeline/` を import しない。出典 PDF の中継（`/v1/origins/{origin_id}/pdf`）は D1 の `origin`（marts の出典）だけを対象にし、自治体の URL から取得する。
 - Cloudflare AI Search: 登録する1つのファイルを item、item から区切った本文を chunk と呼ぶ。Worker からは binding で検索と item の操作（登録・一覧・状態・chunk の一覧）ができ、`@cloudflare/config` 0.17.0 は `bindings.aiSearch` と `bindings.rateLimit` を持つ。binding の検索の既定値は `keyword_match_mode: and`・`max_num_results: 10`・`return_on_failure: true`（一部の処理が失敗しても部分的な結果を返す）で、試行の条件と違う（[検索](https://developers.cloudflare.com/ai-search/api/search/workers-binding/)、[item](https://developers.cloudflare.com/ai-search/api/items/workers-binding/)）。custom metadata は1インスタンス5項目まで、OCR なしの PDF は1ファイル4MiB まで、hybrid のインスタンスは50万ファイルまで（[上限](https://developers.cloudflare.com/ai-search/platform/limits-pricing/)）。いずれも2026-10-14に確認した。

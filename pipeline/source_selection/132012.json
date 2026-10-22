@@ -2994,5 +2994,40 @@
       }
     }
   ],
-  "unresolved_candidates": []
+  "unresolved_candidates": [],
+  "evaluation_selections": [
+    {
+      "target": {
+        "jurisdiction": "132012",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "事務事業評価は Power BI でのみ公開。探した頁の記録は無い。探索した範囲では選べる評価資料が無かった（2026-10-14確認）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132012",
+        "fiscal_year": 2024,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "事務事業評価はPower BIでのみ公開（https://app.powerbi.com/view?r=eyJrIjoiNGRkZWMxNTctNDBjYS00ZTNlLWFmMzAtMDIxNjkyOWQ0MWI0IiwidCI6IjNhM2M3YWY2LWZhMDgtNDcyNy1hOGJjLTIxMGNmYjc3M2RjMCJ9）。点検結果一覧PDF（zigyoutenkenkekka.pdf、8頁）は目標・評価・方向を持つが実績値・決算額の記載が無く、評価の記述として不十分のため選ばない。探した頁: https://www.city.hachioji.tokyo.jp/shisei/001/004/004/002/p035956.html。探索した範囲では選べる評価資料が無かった（2026-10-15確認）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132012",
+        "fiscal_year": 2023,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "事務事業評価は Power BI でのみ公開。点検結果一覧は実績値・決算額の記載が無い。探した頁: https://www.city.hachioji.tokyo.jp/shisei/001/004/004/002/p035956.html。探索した範囲では選べる評価資料が無かった（2026-10-16確認）。"
+    }
+  ]
 }

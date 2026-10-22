@@ -694,5 +694,29 @@
       ],
       "reason": "令和7年度東京都大島町予算資料（資料№3、全10頁、文字PDF、単位千円）の事業等一覧表（物理7-10、出典列名「事業費」）は款区分ごとの事業名と事業費・財源内訳（国・都・地方債・その他・一般財源と一般財源内訳）が同一明細で対応するが、金額列は事業費の単一列のみで増減額・補正額・既定額の列は全文検索でも確認できない（補正後の snapshot とみられるが増減額の対応がないため補正明細として選定しない）。本文全文に「補正」「第X号」「議案」「専決」の記載はなく法定補正号数は出典から確定できない。公式一覧の表記は月名のみ（資料№と法定号数の直接対応なし）で、月名・公開順からの推測はしない。一般会計の会計別予算額は9,130,000千円（物理1頁、補正後総額）。歳入は未確認。"
     }
+  ],
+  "evaluation_selections": [
+    {
+      "target": {
+        "jurisdiction": "133612",
+        "fiscal_year": 2024,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "R6評価資料が見つからない。決算ページに成果・評価のPDFなし。DuckDuckGoのsite検索でも該当なし。探した頁: https://www.town.oshima.tokyo.jp/soshiki/seisaku/yosan12.html。探索した範囲では選べる評価資料が無かった（2026-10-15確認）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "133612",
+        "fiscal_year": 2023,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "2023年度実績の評価資料が見つからない（2024年度の調査と同様）。探した頁: https://www.town.oshima.tokyo.jp/soshiki/seisaku/yosan12.html。探索した範囲では選べる評価資料が無かった（2026-10-16確認）。"
+    }
   ]
 }

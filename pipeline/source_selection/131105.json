@@ -2365,5 +2365,40 @@
       "archive": null
     }
   ],
-  "unresolved_candidates": []
+  "unresolved_candidates": [],
+  "evaluation_selections": [
+    {
+      "target": {
+        "jurisdiction": "131105",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "主要な施策の成果等報告書は予算決算比較表と不用額の理由だけ、文字層も壊れている。探した頁の記録は無い。探索した範囲では選べる評価資料が無かった（2026-10-14確認）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131105",
+        "fiscal_year": 2024,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "R6主要な施策の成果等報告書が見つからない。決算ページに成果・評価のPDFなし（決算書のみ）。DuckDuckGoのsite検索（令和7年度 行政評価／事務事業評価／令和6年度 主要施策の成果）でも事業評価の頁なし。2025年度と同様に予算決算比較と不用額理由中心の可能性。探した頁: https://www.city.meguro.tokyo.jp/kaikei/kusei/yosan/kessan.html。探索した範囲では選べる評価資料が無かった（2026-10-15確認）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131105",
+        "fiscal_year": 2023,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "2023年度実績の成果・評価資料が見つからない。決算ページに成果・評価のPDFなし。探した頁: https://www.city.meguro.tokyo.jp/kaikei/kusei/yosan/kessan.html。探索した範囲では選べる評価資料が無かった（2026-10-16確認）。"
+    }
+  ]
 }

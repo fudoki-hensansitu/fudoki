@@ -2816,5 +2816,40 @@
       }
     }
   ],
-  "unresolved_candidates": []
+  "unresolved_candidates": [],
+  "evaluation_selections": [
+    {
+      "target": {
+        "jurisdiction": "132136",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "成果の概要は事務報告に近く、成果シートの PDF が見つからない。探した頁の記録は無い。探索した範囲では選べる評価資料が無かった（2026-10-14確認）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132136",
+        "fiscal_year": 2024,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "R6主要な施策の成果の概要（r6_seikanogaiyou.pdf、550頁）は事務報告に近く、事業の実績・金額の記載が中心で目標・評価・課題・方向の記述が無いため選ばない。R7行政評価ページにも事業別評価シートなし。探した頁: https://www.city.higashimurayama.tokyo.jp/shisei/gyozaisei/gyozaisei/kessan.html。探索した範囲では選べる評価資料が無かった（2026-10-15確認）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132136",
+        "fiscal_year": 2023,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "主要な施策の成果の概要は事務報告に近く、目標・評価・課題・方向の記述が無い。探した頁: https://www.city.higashimurayama.tokyo.jp/shisei/gyozaisei/gyozaisei/kessan.html。探索した範囲では選べる評価資料が無かった（2026-10-16確認）。"
+    }
+  ]
 }
