@@ -89,8 +89,6 @@ code{font:13px/1.6 var(--font-mono);letter-spacing:0;overflow-wrap:anywhere}
 .links a:hover{color:var(--muted-foreground)}
 .right{display:flex;gap:6px}
 .right .btn{height:36px;padding:0 14px;font-size:14px;font-weight:400}
-.right .gh{border-color:var(--border);background:var(--background);color:var(--foreground)}
-.right .gh:hover{background:var(--card)}
 .right .go{cursor:pointer}
 dialog.setup{width:min(560px,calc(100% - 32px));padding:24px;border:.5px solid var(--border);border-radius:var(--radius-lg,16px);background:var(--background);color:var(--foreground)}
 dialog.setup::backdrop{background:color-mix(in srgb,var(--foreground) 40%,transparent)}
@@ -208,7 +206,7 @@ details[open] summary::after{transform:rotate(45deg)}
 details p{max-width:56ch;padding-bottom:22px;font-size:15px;line-height:1.9;color:var(--muted-foreground)}
 details p a{text-decoration:underline;text-underline-offset:3px}
 
-footer{padding-top:96px}
+footer{margin-top:96px;padding-top:80px;background:var(--secondary)}
 .cols{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px}
 .cols h2{margin:0 0 18px;font-size:18px;line-height:1}
 .cols ul{display:grid;gap:10px;font-size:13px}
@@ -303,7 +301,7 @@ const BODY = `${ICONS}
 <nav class="nav" aria-label="サイト"><div class="bar">
 <a href="/" aria-label="風土記 ホーム">${logo('logo')}</a>
 <div class="links"><a href="#how">しくみ</a><a href="#mcp">AI から使う</a><a href="${DOCS}">ドキュメント</a><a href="#faq">よくある質問</a></div>
-<div class="right"><a class="btn gh" href="${GITHUB}">GitHub</a><button class="btn go" type="button" data-open="setup">AI に接続</button></div>
+<div class="right"><button class="btn go" type="button" data-open="setup">AI に接続</button></div>
 </div></nav>
 <dialog class="setup" id="setup" aria-labelledby="setup-h"><h2 id="setup-h">AI に貼り付けて接続する</h2>
 <p>下の文章をコピーして、お使いの AI（Claude・ChatGPT など）に貼り付けると、風土記の MCP を追加する手順を案内してくれます。</p>
@@ -370,7 +368,7 @@ const BODY = `${ICONS}
 <details><summary>予備費が 0 円なのは、使わなかったからですか</summary><p>いいえ。決算の予備費は、他の費目へ補ったあとの使った額なので 0 円になります。どこへ補ったかは出典の備考にあり、風土記では注記の金額として、費目の金額とは別に持ちます。</p></details>
 <details><summary>共通分類（COFOG）は正しいのですか</summary><p>分類は出典にない、風土記の判断です。確かなもの・仮のもの・分類できないものを区別して返し、分類できない明細も合計から落としません。</p></details>
 <details><summary>どの自治体・年度が入っていますか</summary><p>収録する自治体と年度は、順次広げています。いま入っている範囲は、AI に聞くか<a href="${DOCS}">ドキュメント</a>で確かめられます。収録していないことは、支出がゼロであることを意味しません。</p></details>
-<details><summary>使うのにお金や登録は要りますか</summary><p>要りません。MCP の URL を AI クライアントに登録すれば使えます。詳しくは<a href="${DOCS}/terms">利用規約</a>をご覧ください。</p></details>
+<details><summary>使うのにお金や登録は要りますか</summary><p>要りません。このサイトのチャットに質問を入力すれば、登録なしでそのまま調べられます。Claude や ChatGPT など MCP 対応の AI クライアントに URL を登録して使うこともできます。詳しくは<a href="${DOCS}/terms">利用規約</a>をご覧ください。</p></details>
 </div></section>
 </main>
 
