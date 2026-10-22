@@ -1,122 +1,82 @@
-// 款 → 項 → 目 → 節 の流れ。帯の太さは金額に比例する。選んだ款だけ色を付け、他の款は灰色の帯で右へ消える。
-// recharts の Sankey は他の款を節の位置まで伸ばしてしまうので、位置は自前で組む（金額は API の値、縮尺にだけ款の和を使う）
+// 全款を同じ深さで描く。科目間の余白を別に取り、帯の太さは全列で同じ金額の縮尺にする。
 import * as React from 'react'
-import { formatYen, type Drill, type Line } from './types'
+import { formatYen, type Drill, type FlowDepth } from './types'
 
-const W = 900
-const H = 430
-const GAP = 9
-const NW = 14
-const KX = 170
-const X1 = 372
-const X2 = 548
-const X3 = 716
+const GAP = 24
+const NODE_WIDTH = 12
+const COLUMN_WIDTH = 300
+const LABELS = ['款', '項', '目', '節・事業内訳']
 
-const ribbon = (xa: number, ya: number, yb: number, xb: number, yc: number, yd: number) => {
-  const m = (xa + xb) / 2
-  return `M${xa} ${ya}C${m} ${ya},${m} ${yc},${xb} ${yc}L${xb} ${yd}C${m} ${yd},${m} ${yb},${xa} ${yb}Z`
+interface FlowNode {
+  key: string
+  name: string
+  yen: number
+  column: number
+  children: FlowNode[]
+  height: number
+  span: number
+  y: number
 }
 
-export function Sankey({ kan, selectedId, drill, onSelect }: { kan: Line[]; selectedId: string; drill: Drill | null; onSelect: (id: string) => void }) {
-  const total = kan.reduce((a, k) => a + k.yen, 0)
-  const sc = (H - GAP * (kan.length - 1)) / total
-  let y = 0
-  const kans = kan.map((k) => {
-    const o = { ...k, y, h: k.yen * sc }
-    y += o.h + GAP
-    return o
-  })
-  const sel = kans.find((k) => k.id === selectedId)
-  const flows: React.ReactNode[] = []
-  const nodes: React.ReactNode[] = []
-  if (sel && drill && drill.kan.id === sel.id) {
-    let ky = sel.y
-    let koff = 0
-    drill.kou.forEach((kou, i) => {
-      const kh = kou.yen * sc
-      flows.push(<path key={`k${i}`} d={ribbon(KX + NW, sel.y + koff, sel.y + koff + kh, X1, ky, ky + kh)} className="fill-primary/25" />)
-      nodes.push(
-        <g key={`kn${i}`}>
-          <rect x={X1} y={ky} width={NW} height={Math.max(kh, 2)} rx={3} className="fill-primary" />
-          <text x={X1} y={ky - 7} className="fill-foreground text-[12.5px]">
-            {kou.name} <tspan className="fill-muted-foreground text-[11.5px]">{formatYen(kou.yen)}</tspan>
-          </text>
-        </g>,
-      )
-      let moff = 0
-      let my = ky
-      let sy = ky
-      kou.moku.forEach((m, j) => {
-        const mh = m.yen * sc
-        flows.push(<path key={`m${i}-${j}`} d={ribbon(X1 + NW, ky + moff, ky + moff + mh, X2, my, my + mh)} className="fill-primary/25" />)
-        nodes.push(
-          <g key={`mn${i}-${j}`}>
-            <rect x={X2} y={my} width={NW} height={Math.max(mh, 2)} rx={3} className="fill-primary" />
-            <text x={X2} y={my - 7} className="fill-foreground text-[12.5px]">
-              {m.name} <tspan className="fill-muted-foreground text-[11.5px]">{formatYen(m.yen)}</tspan>
-            </text>
-          </g>,
-        )
-        let soff = 0
-        m.setsu.forEach((s, k) => {
-          const sh = Math.max(s.yen * sc, 3)
-          flows.push(<path key={`s${i}-${j}-${k}`} d={ribbon(X2 + NW, my + soff, my + soff + Math.max(s.yen * sc, 1.5), X3, sy, sy + sh)} className="fill-primary/25" />)
-          nodes.push(
-            <g key={`sn${i}-${j}-${k}`}>
-              <rect x={X3} y={sy} width={NW} height={sh} rx={3} className="fill-primary" />
-              <text x={X3 + NW + 8} y={sy + sh / 2 + 4} className="fill-muted-foreground text-[11.5px]">
-                {s.name} {formatYen(s.yen)}
-              </text>
-            </g>,
-          )
-          soff += s.yen * sc
-          sy += sh + 15
-        })
-        moff += mh
-        my += mh + 38
-        sy += 14
-      })
-      koff += kh
-      ky += kh + 38
-    })
+const ribbon = (xa: number, ya: number, height: number, xb: number, yb: number) => {
+  const mid = (xa + xb) / 2
+  return `M${xa} ${ya}C${mid} ${ya},${mid} ${yb},${xb} ${yb}L${xb} ${yb + height}C${mid} ${yb + height},${mid} ${ya + height},${xa} ${ya + height}Z`
+}
+
+export function Sankey({ flows, depth }: { flows: Drill[]; depth: FlowDepth }) {
+  const columns = depth === 'kou' ? 2 : depth === 'moku' ? 3 : 4
+  const total = flows.reduce((sum, flow) => sum + Math.max(0, flow.kan.yen), 0)
+  const scale = total ? 360 / total : 0
+  const make = (key: string, name: string, yen: number, column: number, children: FlowNode[]): FlowNode => {
+    const height = Math.max(0, yen) * scale
+    const childSpan = children.reduce((sum, child) => sum + child.span, 0) + Math.max(0, children.length - 1) * GAP
+    return { key, name, yen, column, children, height, span: Math.max(height, childSpan, 30), y: 0 }
   }
+  const roots = flows.map(({ kan, kou }) => make(kan.id, kan.name, kan.yen, 0,
+    kou.map((k) => make(k.id, k.name, k.yen, 1, columns > 2
+      ? k.moku.map((m) => make(m.id, m.name, m.yen, 2, columns > 3
+        ? m.setsu.map((s, i) => make(`${m.id}-${i}`, s.name, s.yen, 3, []))
+        : []))
+      : []))))
+  const nodes: FlowNode[] = []
+  const bands: React.ReactNode[] = []
+  const x = (column: number) => 220 + column * COLUMN_WIDTH
+  const position = (node: FlowNode, top: number) => {
+    node.y = top + (node.span - node.height) / 2
+    nodes.push(node)
+    let childTop = top
+    let sourceOffset = 0
+    for (const child of node.children) {
+      position(child, childTop)
+      if (child.height > 0) bands.push(<path key={child.key} d={ribbon(x(node.column) + NODE_WIDTH, node.y + sourceOffset, child.height, x(child.column), child.y)} className="fill-primary/20" />)
+      sourceOffset += child.height
+      childTop += child.span + GAP
+    }
+  }
+  let top = 24
+  for (const root of roots) {
+    position(root, top)
+    top += root.span + GAP
+  }
+  const width = columns * COLUMN_WIDTH
+  const height = Math.max(180, top)
   return (
-    <div className="-mx-2 overflow-x-auto px-2">
-      <svg viewBox={`0 -40 ${W} ${H + 50}`} role="img" aria-label="歳出の款から節への流れ" className="block h-auto w-full min-w-[700px] overflow-visible font-sans">
-        <defs>
-          {kans.map((k, i) => (
-            <linearGradient key={k.id} id={`sk-fade-${i}`} x1="0" x2="1">
-              <stop offset="0" stopColor="var(--muted-foreground)" stopOpacity=".35" />
-              <stop offset="1" stopColor="var(--muted-foreground)" stopOpacity="0" />
-            </linearGradient>
-          ))}
-        </defs>
-        {['款', '項', '目', '節（内訳）'].map((t, i) => (
-          <text key={t} x={[KX + NW, X1, X2, X3][i]} y={-30} textAnchor={i === 0 ? 'end' : 'start'} className="fill-muted-foreground text-[11px]">
-            {t}
-          </text>
-        ))}
-        {kans.map((k, i) => (k.id === selectedId ? null : <rect key={`f${k.id}`} x={KX + NW} y={k.y} width={150} height={k.h} fill={`url(#sk-fade-${i})`} />))}
-        <g>{flows}</g>
-        {nodes}
-        {kans.map((k) => {
-          const on = k.id === selectedId
-          const ty = k.y + Math.min(k.h / 2, 18)
+    <div className="max-h-[720px] overflow-auto rounded-lg border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring" tabIndex={0} role="region" aria-label="お金の流れの図">
+      <div className="sticky top-0 z-10 grid border-b bg-background py-2 text-xs text-muted-foreground" style={{ width, gridTemplateColumns: `repeat(${columns}, ${COLUMN_WIDTH}px)` }}>
+        {LABELS.slice(0, columns).map((label) => <span key={label} className="px-4">{label}</span>)}
+      </div>
+      <svg width={width} height={height} role="img" aria-label={`${LABELS.slice(0, columns).join('から')}への歳出の流れ`} className="block max-w-none font-sans">
+        {bands}
+        {nodes.map((node) => {
+          const center = node.y + node.height / 2
+          const chars = Array.from(node.name)
+          const label = chars.length > 15 ? `${chars.slice(0, 14).join('')}…` : node.name
           return (
-            <g key={k.id} role="button" tabIndex={0} aria-label={`${k.name} ${formatYen(k.yen)}`} aria-pressed={on} className="cursor-pointer outline-none [&:focus-visible>.hit]:stroke-ring [&:focus-visible>.hit]:stroke-2" onClick={() => onSelect(k.id)} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), onSelect(k.id))}>
-              <rect className="hit fill-transparent" x={0} y={k.y - 4} width={KX + NW + 4} height={k.h + GAP} rx={6} />
-              <rect x={KX} y={k.y} width={NW} height={k.h} rx={3} className={on ? 'fill-primary' : 'fill-muted-foreground/60 hover:fill-foreground'} />
-              <title>{`${k.name} ${formatYen(k.yen)}`}</title>
-              {k.h >= 11 ? (
-                <text x={KX - 10} y={ty + (k.h > 34 ? -3 : 4)} textAnchor="end" className="fill-foreground text-[12.5px]">
-                  {k.name}
-                </text>
-              ) : null}
-              {k.h > 34 ? (
-                <text x={KX - 10} y={ty + 13} textAnchor="end" className="fill-muted-foreground text-[11.5px]">
-                  {formatYen(k.yen)}
-                </text>
-              ) : null}
+            <g key={node.key}>
+              <title>{`${node.name} ${formatYen(node.yen)}`}</title>
+              <rect x={x(node.column)} y={node.y} width={NODE_WIDTH} height={Math.max(node.height, 2)} rx={2} className={node.yen > 0 ? 'fill-primary' : 'fill-muted-foreground'} />
+              <text x={x(node.column) - 10} y={center - 3} textAnchor="end" className="fill-foreground text-[12.5px]" stroke="var(--background)" strokeWidth={4} paintOrder="stroke">{label}</text>
+              <text x={x(node.column) - 10} y={center + 13} textAnchor="end" className="fill-muted-foreground text-[11.5px]" stroke="var(--background)" strokeWidth={4} paintOrder="stroke">{formatYen(node.yen)}</text>
             </g>
           )
         })}

@@ -5,13 +5,15 @@ import { createRoot } from 'react-dom/client'
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, LabelList, ReferenceLine, XAxis, YAxis } from 'recharts'
 import { ChevronDownIcon } from 'lucide-react'
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart'
+import { Button } from '@/components/ui/button'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { StartForm } from '../chat/start-form'
 import { DUMMY_TRAITS, dummyPopulation } from './dummy'
 import { Sankey } from './sankey'
-import { changePct, formatYen, kanChanges, reiwa, type Drill, type PageData, type Project, type Setsu } from './types'
+import { changePct, formatYen, kanChanges, reiwa, type Drill, type FlowDepth, type PageData, type Project, type Setsu } from './types'
 
-const fetchJson = async <T,>(url: string): Promise<T> => {
-  const res = await fetch(url)
+const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
+  const res = await fetch(url, { signal })
   if (!res.ok) throw new Error(String(res.status))
   return (await res.json()) as T
 }
@@ -21,7 +23,7 @@ const Dummy = () => <span className="ml-1.5 inline-block rounded border border-d
 const Card = ({ title, aside, children }: { title: string; aside?: React.ReactNode; children: React.ReactNode }) => (
   <section className="mt-4 min-w-0 rounded-[20px] border bg-background p-5 sm:p-6">
     <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
-      <h2 className="font-display text-xl font-normal">{title}</h2>
+      <h2 className="font-sans text-xl font-normal">{title}</h2>
       {aside}
     </div>
     {children}
@@ -48,7 +50,7 @@ const BigNumber = ({ label, dummy, yen, perPerson }: { label: string; dummy?: bo
         {label}
         {dummy ? <Dummy /> : null}
       </div>
-      <div className="font-display text-[clamp(2rem,1.5rem+2vw,3.2rem)] leading-tight tabular-nums">
+      <div className="font-sans text-[clamp(2rem,1.5rem+2vw,3.2rem)] leading-tight tabular-nums">
         {n}
         <small className="ml-1 text-[.4em] text-muted-foreground">{unit}</small>
       </div>
@@ -127,21 +129,42 @@ function Trend({ data, pop }: { data: PageData; pop: number }) {
 
 function Flow({ data }: { data: PageData }) {
   const latest = data.years.at(-1)!
-  const [selected, setSelected] = React.useState(data.flow.kan.id)
-  const [drills, setDrills] = React.useState<Record<string, Drill>>({ [data.flow.kan.id]: data.flow })
+  const [depth, setDepth] = React.useState<FlowDepth>('kou')
+  const [flows, setFlows] = React.useState<Partial<Record<FlowDepth, Drill[]>>>({ kou: data.flow })
   const [error, setError] = React.useState(false)
-  const select = (id: string) => {
-    setSelected(id)
+  const [attempt, setAttempt] = React.useState(0)
+  React.useEffect(() => {
     setError(false)
-    if (drills[id]) return
-    fetchJson<Drill>(`/api/jurisdictions/drill/${id}`).then((d) => setDrills((s) => ({ ...s, [id]: d })), () => setError(true))
-  }
-  const drill = drills[selected] ?? null
+    if (flows[depth]) return
+    const controller = new AbortController()
+    fetchJson<Drill[]>(`/api/jurisdictions/flow/${data.code}/${latest.year}/${depth}`, controller.signal).then(
+      (value) => { if (!controller.signal.aborted) setFlows((current) => ({ ...current, [depth]: value })) },
+      () => { if (!controller.signal.aborted) setError(true) },
+    )
+    return () => controller.abort()
+  }, [data.code, latest.year, depth, flows, attempt])
+  const current = flows[depth]
   return (
-    <Card title="お金の流れ" aside={<span className="text-xs text-muted-foreground">款を選ぶと、右へ項・目・節に分かれます{data.originTitle ? ` · 出典 ${data.originTitle}` : ''}</span>}>
-      <Sankey kan={latest.kan.filter((k) => k.yen > 0)} selectedId={selected} drill={drill} onSelect={select} />
-      {!drill && !error ? <p className="text-sm text-muted-foreground">内訳を読み込んでいます…</p> : null}
-      {error ? <p role="alert" className="text-sm text-destructive">内訳を読み込めませんでした。少し待ってから、もう一度選んでください。</p> : null}
+    <Card title="お金の流れ" aside={
+      <ToggleGroup aria-label="お金の流れの表示階層" variant="outline" value={[depth]} onValueChange={(values) => {
+        const value = values[0]
+        if (value === 'kou' || value === 'moku' || value === 'setsu') setDepth(value)
+      }}>
+        <ToggleGroupItem value="kou">項まで</ToggleGroupItem>
+        <ToggleGroupItem value="moku">目まで</ToggleGroupItem>
+        <ToggleGroupItem value="setsu">節まで</ToggleGroupItem>
+      </ToggleGroup>
+    }>
+      <p className="mb-3 text-xs text-muted-foreground">すべての款を同じ階層まで表示します。図の中をスクロールすると、全体を確かめられます。</p>
+      <div aria-busy={!current && !error}>
+        <Sankey flows={current ?? data.flow} depth={current ? depth : 'kou'} />
+      </div>
+      {!current && !error ? <p role="status" className="mt-2 text-sm text-muted-foreground">内訳を読み込んでいます…</p> : null}
+      {error ? <div role="alert" className="mt-2 flex flex-wrap items-center gap-2 text-sm text-destructive">
+        <p>内訳を読み込めませんでした。</p>
+        <Button variant="outline" onClick={() => setAttempt((n) => n + 1)}>もう一度読み込む</Button>
+      </div> : null}
+      {data.originTitle ? <p className="mt-2 text-xs text-muted-foreground">出典 {data.originTitle}</p> : null}
     </Card>
   )
 }
@@ -158,7 +181,7 @@ function ProjectRow({ p, rank, max }: { p: Project; rank: number; max: number })
   return (
     <li className="border-t">
       <div className="grid grid-cols-[22px_minmax(0,1fr)_auto_32px] items-center gap-x-3.5 gap-y-1 py-3 sm:grid-cols-[22px_minmax(120px,190px)_1fr_110px_90px_32px]">
-        <span className="font-display text-xl text-muted-foreground">{rank}</span>
+        <span className="font-sans text-xl text-muted-foreground">{rank}</span>
         <div className="min-w-0">
           <b className="block text-[15px] font-medium leading-snug">{p.name}</b>
           <span className="text-xs text-muted-foreground">{p.kanName}</span>
@@ -220,7 +243,7 @@ function Population({ code }: { code: string }) {
       <div className="grid items-end gap-6 md:grid-cols-2">
         <div>
           <div className="text-[13px] text-muted-foreground">現在の人口</div>
-          <div className="font-display text-5xl tabular-nums">
+          <div className="font-sans text-5xl tabular-nums">
             {pop.now}
             <small className="ml-1 text-[.4em] text-muted-foreground">万人</small>
           </div>
@@ -261,7 +284,7 @@ function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
         </span>
         <span className="rounded-full border px-3 py-1">{reiwa(latest.year)} 決算</span>
       </div>
-      <h1 className="mt-3 font-display text-[clamp(2.4rem,1.5rem+3.4vw,4rem)] font-normal leading-tight">{data.name}</h1>
+      <h1 className="mt-3 font-sans text-[clamp(2.4rem,1.5rem+3.4vw,4rem)] font-normal leading-tight">{data.name}</h1>
       <p className="mt-1.5 text-[15px] text-muted-foreground">予算の使いみちから、気になる事業まで。そのまま下から聞けます。</p>
       <div className="mt-7 flex gap-6 sm:gap-14">
         <BigNumber label="歳出の総額" yen={latest.yen} />

@@ -20,15 +20,17 @@ export interface Moku extends Line {
 }
 
 export interface Kou extends Line {
-  /** 一番大きい項だけ、目と節まで引く */
+  /** 選択した表示階層までの目 */
   moku: Moku[]
 }
 
-/** 款を選んだときのお金の流れ（款 → 項 → 目 → 節） */
+/** 一つの款からの流れ（款 → 項 → 目 → 節） */
 export interface Drill {
   kan: Line
   kou: Kou[]
 }
+
+export type FlowDepth = 'kou' | 'moku' | 'setsu'
 
 export interface Project extends Line {
   kanName: string
@@ -52,8 +54,8 @@ export interface PageData {
   originTitle: string | null
   /** 西暦、古い順 */
   years: YearTotal[]
-  /** 最新年度の款のうち一番大きいものの流れ */
-  flow: Drill
+  /** 最新年度の全款から全項への流れ */
+  flow: Drill[]
   projects: Project[]
 }
 

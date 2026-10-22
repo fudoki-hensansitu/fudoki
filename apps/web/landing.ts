@@ -7,6 +7,7 @@ import { LOGO_G } from './logo'
 const MCP = 'https://api.fudoki.dev/mcp'
 const DOCS = 'https://docs.fudoki.dev'
 const GITHUB = 'https://github.com/wwwyo/fudoki'
+export const TURNSTILE_SCRIPT = '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>'
 
 const yen = (n: number) => `${n.toLocaleString('ja-JP')}円`
 // 億・万の表記。万未満は切り捨てるので、正確な額は title に yen で添える
@@ -18,7 +19,7 @@ const oku = (n: number) => {
 }
 const icon = (id: string) => `<svg class="i" aria-hidden="true"><use href="#${id}"/></svg>`
 
-const logo = (cls: string) => `<svg class="${cls}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 146.2150 40" role="img" aria-label="風土記"><title>風土記</title>${LOGO_G}</svg>`
+export const logo = (cls: string) => `<svg class="${cls}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 146.2150 40" role="img" aria-label="風土記"><title>風土記</title>${LOGO_G}</svg>`
 
 const { nakano, ledgers, origin, library } = HOME
 const libraryMax = Math.max(...library.rows.map((r) => r.amount))
@@ -426,7 +427,7 @@ ${PWA_HEAD}
 <style>${CSS}</style>
 <link rel="stylesheet" href="/_app/start.css">
 <script type="module" src="/_app/start.js"></script>
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+${TURNSTILE_SCRIPT}
 </head>
 <body>
 ${BODY}
