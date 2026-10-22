@@ -268,6 +268,66 @@ class CellWordsTest(unittest.TestCase):
     def test_a_piece_across_a_rule_is_cut(self):
         self.assertEqual([w.text for w in _cell_words([Word('款項', 42, 122, 61, 133)], [42, 52, 60])], ['款', '項'])
 
+    def paddle_words(self, text, children, box, cuts):
+        from ingestion.generic import scan
+        from ingestion.lib.pdf_rules import PageRules, Rule as PdfRule
+        from pathlib import Path
+        line = {'id': 'p1:full-page:a0:result0:r0', 'kind': 'region', 'raw_text': text, 'bbox_pdf_pt': box,
+                'attempt_id': 'p1:full-page:a0'}
+        words = [{'id': f'{line["id"]}:w{i}', 'kind': 'word', 'parent_id': line['id'], 'raw_text': t, 'bbox_pdf_pt': b}
+                 for i, (t, b) in enumerate(children)]
+        observed = {'page_number': 1, 'regions': [{'observations': [line, *words]}]}
+        rules = PageRules(1, 400, 100, tuple(PdfRule(x, 0, 100) for x in cuts), ())
+        with patch.object(scan.pdf_rules, 'detect', return_value=rules):
+            return [(w.text, round(w.x0), round(w.x1)) for w in scan.page(observed, Path('x.pdf')).words]
+
+    def test_a_paddle_line_is_cut_at_the_rule_by_where_its_characters_sit(self):
+        # `12,828,111同項…`: cut by a share of the box per character, the rule lands after `12,828`
+        children = [('12', [100, 10, 112, 20]), (',', [114, 10, 116, 20]), ('828', [118, 10, 140, 20]),
+                    (',', [142, 10, 144, 20]), ('111', [146, 10, 168, 20]), ('同', [173, 10, 183, 20]),
+                    ('項', [183, 10, 193, 20]), ('、', [194, 10, 196, 20])]
+        self.assertEqual(self.paddle_words('12,828,111同項、', children, [100, 10, 196, 20], [60, 171, 300]),
+                         [('12,828,111', 100, 168), ('同項、', 173, 196)])
+
+    def test_number_fragments_of_two_cells_are_not_joined_over_a_rule(self):
+        # `12,828,111` of one cell and `111,000` of the next, a rule between: one word would be cut by a share of its box
+        children = [('12', [100, 10, 112, 20]), (',', [114, 10, 116, 20]), ('828', [118, 10, 140, 20]),
+                    (',', [142, 10, 144, 20]), ('111', [146, 10, 168, 20]), ('111', [173, 10, 195, 20]),
+                    (',', [197, 10, 199, 20]), ('000', [201, 10, 223, 20])]
+        self.assertEqual(self.paddle_words('12,828,111111,000', children, [100, 10, 223, 20], [60, 172, 300]),
+                         [('12,828,111', 100, 168), ('111,000', 173, 223)])
+
+    def test_a_rule_across_the_first_character_of_an_amount_does_not_split_it(self):
+        # `1,981,045,000` over a rule 2pt from its left: the rule is not between two fragments, the amount stays one word
+        children = [('1', [100, 10, 108, 20]), (',', [110, 10, 112, 20]), ('981', [114, 10, 136, 20]),
+                    (',', [138, 10, 140, 20]), ('045', [142, 10, 164, 20]), (',', [166, 10, 168, 20]), ('000', [170, 10, 192, 20]),
+                    ('同', [200, 10, 210, 20])]
+        self.assertEqual(self.paddle_words('1,981,045,000同', children, [100, 10, 210, 20], [102, 300]),
+                         [('1,981,045,000', 100, 192), ('同', 200, 210)])
+
+    def test_a_character_box_starting_just_before_its_rule_belongs_to_the_next_cell(self):
+        children = [('159', [100, 10, 120, 20]), ('同', [124.6, 10, 134, 20]), ('項', [134, 10, 144, 20])]
+        self.assertEqual(self.paddle_words('159同項', children, [100, 10, 144, 20], [60, 125.5, 300]),
+                         [('159', 100, 120), ('同項', 125, 144)])
+
+    def test_children_that_do_not_spell_the_line_are_not_used_but_the_unit_is_split_off(self):
+        # the children lost `2,`; the line still ends in its own 円, and the amount is not cut by the rule
+        children = [('490', [30, 10, 50, 20]), (',', [51, 10, 52, 20]), ('840', [54, 10, 74, 20]), ('円', [80, 10, 90, 20])]
+        self.assertEqual(self.paddle_words('2,490,840円', children, [10, 10, 90, 20], [25, 300]),
+                         [('2,490,840', 10, 80), ('円', 80, 90)])
+
+    def test_a_name_correction_may_put_back_a_lost_character_but_never_changes_a_digit(self):
+        from ingestion.generic.scan import apply_name_corrections
+        line = {'id': 'r', 'kind': 'region', 'raw_text': '3款民生費', 'bbox_pdf_pt': [0, 0, 10, 10]}
+        observation = {'pages': [{'page_number': 1, 'regions': [{'observations': [line]}]}]}
+        rule = {'id': 'x', 'page': 1, 'observation_id': 'r', 'observed_name': '3款民生費', 'corrected_name': '第3款民生費', 'reason': '原典'}
+        fixed = apply_name_corrections(observation, [rule])
+        self.assertEqual(fixed['pages'][0]['regions'][0]['observations'][0]['raw_text'], '第3款民生費')
+        self.assertEqual(line['raw_text'], '3款民生費')
+        for bad in ({'corrected_name': '第5款民生費'}, {'corrected_name': '民生費'}, {'corrected_name': '第3款環境費'}):
+            with self.assertRaisesRegex(ValueError, 'replaces characters'):
+                apply_name_corrections(observation, [{**rule, **bad}])
+
     def test_a_rule_that_removes_no_amount_character_does_not_change_its_source_box(self):
         word = Word('18,802', 528.4, 352.8, 550.04, 363.1)
         kept = _cell_words([word], [498, 549, 600])[0]

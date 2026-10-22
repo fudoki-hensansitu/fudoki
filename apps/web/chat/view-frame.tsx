@@ -66,6 +66,15 @@ const getPanel = () => panel
 function openTab(tab: Tab) {
   setPanel({ tabs: [...panel.tabs.filter((t) => t.owner !== tab.owner), tab], active: tab.owner })
 }
+/** タブを閉じたあと、残ったタブ（選ばれている側）へ focus を移す。閉じた × や tab は DOM から外れるので、そのままだと focus が頁の先頭へ落ちる */
+function closeAndFocus(tab: Tab) {
+  tab.close()
+  requestAnimationFrame(() =>
+    requestAnimationFrame(() => {
+      if (panel.active) document.getElementById(`view-tab-${panelKey(panel.active)}`)?.focus()
+    }),
+  )
+}
 function closeTab(owner: object) {
   const tabs = panel.tabs.filter((t) => t.owner !== owner)
   if (tabs.length === panel.tabs.length) return
@@ -290,7 +299,11 @@ export function ViewFrame({
       close.current?.focus()
     }
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && (fullscreen || panel.active === me.current)) setMode('inline')
+      if (e.key !== 'Escape') return
+      // 右のパネルのタブは、× や Delete と同じく、閉じたあとに残ったタブへ focus を移す
+      const tab = panel.active === me.current ? panel.tabs.find((t) => t.owner === me.current) : undefined
+      if (tab) closeAndFocus(tab)
+      else if (fullscreen) setMode('inline')
     }
     window.addEventListener('keydown', onKey)
     return () => {
@@ -328,14 +341,20 @@ export function ViewFrame({
         </div>
       ) : null}
       {activeTab ? (
-        // タブの帯は選ばれている View の箱にだけ描く（隠れている箱には描かない）。tablist の中は tab だけにし、元に戻すボタンは横に置く
-        <div className="flex shrink-0 items-end justify-between gap-2 border-b px-2 pt-2">
+        // タブの帯は選ばれている View の箱にだけ描く（隠れている箱には描かない）。tablist の中は tab だけ（閉じる × は各タブの中。キーボードでは、選ばれているタブで Esc か Delete）
+        <div className="flex shrink-0 items-end border-b px-2 pt-2">
           <div
             role="tablist"
             aria-label="右のパネルの表とグラフ"
             className="flex min-w-0 items-end gap-1 overflow-x-auto"
             onKeyDown={(e) => {
               const i = tabState.tabs.findIndex((t) => t.owner === tabState.active)
+              // タブの Delete で、選ばれているタブを閉じる（tabs パターンの任意のキー）
+              if (e.key === 'Delete' && tabState.tabs[i]) {
+                e.preventDefault()
+                closeAndFocus(tabState.tabs[i])
+                return
+              }
               const next = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabState.tabs.length - 1 }[e.key]
               if (next === undefined) return
               e.preventDefault()
@@ -351,29 +370,43 @@ export function ViewFrame({
               const same = tabState.tabs.slice(0, i).filter((o) => o.title === t.title).length
               const key = panelKey(t.owner)
               const selected = t.owner === tabState.active
+              const label = same ? `${t.title}（${same + 1}）` : t.title
               return (
-                <button
+                // 閉じる × は各タブの中（名前の右）に置く。tab の中に button を入れない（入れ子にしない）ので、枠は外側の div が持つ
+                <div
                   key={key}
-                  id={`view-tab-${key}`}
-                  type="button"
-                  role="tab"
-                  aria-selected={selected}
-                  aria-controls={`view-panel-${key}`}
-                  tabIndex={selected ? 0 : -1}
-                  onClick={() => {
-                    setPanel({ ...panel, active: t.owner })
-                    requestAnimationFrame(() => document.getElementById(`view-tab-${key}`)?.focus())
-                  }}
-                  className={cn('max-w-48 shrink-0 truncate rounded-t-md border border-b-0 px-3 py-1.5 text-sm', selected ? 'bg-background text-foreground' : 'bg-secondary/60 text-muted-foreground hover:text-foreground')}
+                  role="presentation"
+                  className={cn('flex max-w-56 shrink-0 items-center rounded-t-md border border-b-0 text-sm', selected ? 'bg-background text-foreground' : 'bg-secondary/60 text-muted-foreground hover:text-foreground')}
                 >
-                  {same ? `${t.title}（${same + 1}）` : t.title}
-                </button>
+                  <button
+                    id={`view-tab-${key}`}
+                    type="button"
+                    role="tab"
+                    aria-selected={selected}
+                    aria-controls={`view-panel-${key}`}
+                    tabIndex={selected ? 0 : -1}
+                    onClick={() => {
+                      setPanel({ ...panel, active: t.owner })
+                      requestAnimationFrame(() => document.getElementById(`view-tab-${key}`)?.focus())
+                    }}
+                    className="min-w-0 truncate py-1.5 pr-1 pl-3"
+                  >
+                    {label}
+                  </button>
+                  <button
+                    type="button"
+                    tabIndex={-1}
+                    aria-label={`「${label}」を閉じて会話の中へ元に戻す`}
+                    title={selected ? '閉じて会話の中へ元に戻す（Esc、タブで Delete）' : '閉じて会話の中へ元に戻す'}
+                    onClick={() => closeAndFocus(t)}
+                    className="mr-1 flex size-6 shrink-0 items-center justify-center rounded text-muted-foreground/60 hover:bg-secondary hover:text-muted-foreground"
+                  >
+                    <XIcon className="size-3.5" />
+                  </button>
+                </div>
               )
             })}
           </div>
-          <Button variant="ghost" size="icon-sm" className="mb-1 shrink-0" aria-label="このタブを会話の中へ元に戻す（Esc）" title="会話の中へ元に戻す（Esc）" onClick={() => setMode('inline')}>
-            <XIcon />
-          </Button>
         </div>
       ) : null}
       {grippable ? (

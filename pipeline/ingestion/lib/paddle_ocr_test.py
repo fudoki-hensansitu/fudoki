@@ -69,6 +69,10 @@ class PublicBoundaries(unittest.TestCase):
         kept, dropped = _drop_strip_duplicates(groups, spans)
         self.assertEqual(dropped, ["a", "b", "m", "n"])
         self.assertEqual([o["id"] for o in kept], ["other"])
+        from ingestion.lib.paddle_ocr import _merge_strips
+        _, _, seams = _merge_strips(groups, spans)
+        # the box covering each dropped pair: where the re-read has to give the whole line back
+        self.assertEqual(seams, [[1000, 10, 1400, 20], [200, 40, 1500, 50]])
         # A reading that is not cut by its strip is not dropped for a neighbour that is.
         kept, dropped = _drop_strip_duplicates([[line("a", "1,234", [1000, 10, 1250, 20])],
                                                 [line("b", "4,567", [1180, 10, 1400, 20])]], spans)

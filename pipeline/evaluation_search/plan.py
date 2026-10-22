@@ -98,6 +98,18 @@ def item_format(config: dict, origin: Origin) -> str:
     return 'md' if origin.sha256 in (config.get('text_origins') or []) else 'pdf'
 
 
+def normalizes_text(config: dict, origin: Origin) -> bool:
+    """文字の item の本文を NFKC にそろえるか。config の `nfkc_origins` に宣言した md の出典だけ（ADR 0033）。
+
+    見出しを付けても `file_content_empty` になる頁が、全角を半角にそろえると取り込まれた（調布市 2024 の1頁）。
+    検索文は正規化しないので、全角の検索文が当たりにくくなる。全体には当てない。
+    """
+    declared = origin.sha256 in (config.get('nfkc_origins') or [])
+    if declared and item_format(config, origin) != 'md':
+        raise ValueError(f'{origin.sha256[:12]}: nfkc_origins は text_origins の出典にだけ宣言できる')
+    return declared
+
+
 def item_key(origin: Origin, page: int, fmt: str = 'pdf') -> str:
     """item の key。cf の upload は key をファイル名の末尾（basename）にするので、`/` で区切れない。`_` で出典の sha256 と頁をつなぐ。"""
     if fmt not in ITEM_FORMATS:
@@ -116,16 +128,19 @@ def plan_items(origin: Origin, page_count: int, fmt: str = 'pdf') -> list[dict]:
             for page in selected_pages(origin, page_count)]
 
 
-def fingerprint(config: dict, items: list[dict], fmt: str = 'pdf') -> str:
+def fingerprint(config: dict, items: list[dict], fmt: str = 'pdf', nfkc: bool = False) -> str:
     """インスタンスの設定と、その出典の登録の形・key・metadata の計画から求めるハッシュ。
 
     `text_origins`（出典ごとの宣言）は config から除く。含めると、他の出典の宣言を足すだけで宣言の無い出典の指紋が変わり、
     登録済みの出典が全件登録し直しになる。出典ごとの形は `fmt` で入れる。pdf のときは入れず、宣言の無い出典の指紋を従来のまま保つ。
+    `nfkc_origins` も同じく config から除き、宣言した出典だけ `nfkc` で入れる。
     """
-    shared = {k: v for k, v in config.items() if k != 'text_origins'}
+    shared = {k: v for k, v in config.items() if k not in ('text_origins', 'nfkc_origins')}
     document = {'config': shared, 'items': items}
     if fmt != 'pdf':
         document['item_format'] = fmt
+    if nfkc:
+        document['text_normalization'] = 'NFKC'
     body = json.dumps(document, ensure_ascii=False, sort_keys=True, separators=(',', ':'))
     return hashlib.sha256(body.encode('utf-8')).hexdigest()
 
@@ -142,6 +157,7 @@ def registration_is_current(instance: dict, origin: Origin) -> bool:
     try:
         fmt = item_format(instance['config'], origin)
         items = plan_items(origin, record['page_count'], fmt)
+        nfkc = normalizes_text(instance['config'], origin)
     except ValueError:
         return False
-    return fingerprint(instance['config'], items, fmt) == record['plan_fingerprint']
+    return fingerprint(instance['config'], items, fmt, nfkc) == record['plan_fingerprint']

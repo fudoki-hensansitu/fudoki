@@ -8,6 +8,18 @@ import { ARCHIVE_BUCKET, evaluationObjectKey, evaluationObjectSlot, originObject
 const MAX_BYTES = 300_000_000
 const digest = (body: Uint8Array) => createHash('sha256').update(body).digest('hex')
 
+/** 取得したバイト列が宣言した形式か。出典の URL が失効した跡地は、404 ではなく「見つかりませんでした」とリニューアルの案内を HTML で 200 に返すことがある（2026-10-20 の品川区）。 */
+export function matchesDeclaredFormat(body: Uint8Array, format: 'csv' | 'pdf'): boolean {
+  // UTF-8 の BOM は latin1 では "ï»¿" になるので、文字ではなくバイトで飛ばす
+  const start = body[0] === 0xef && body[1] === 0xbb && body[2] === 0xbf ? 3 : 0
+  const decoded = new TextDecoder('latin1').decode(body.subarray(start, start + 1024))
+  // PDF のヘッダは先頭 1024 バイト以内にあればよい（先頭に余分なバイトを持つ PDF がある）
+  if (format === 'pdf') return decoded.includes('%PDF-')
+  // CSV の宣言で HTML・XML・JSON の本文を保存しない（跡地やエラーの応答）
+  const head = decoded.trimStart().toLowerCase()
+  return !(head.startsWith('<') || head.startsWith('{') || head.startsWith('['))
+}
+
 async function saveSelections(path: string, data: unknown) {
   const temporary = `${path}.${randomUUID()}.tmp`
   try {
@@ -181,6 +193,7 @@ export async function archiveGroup<S extends ArchiveSelection>(group: S[], trans
       if (retained.has(item.file.sha256!)) continue
       const response = await transport.download(item.file.download_url)
       if (digest(response.body) !== item.file.sha256) throw new Error(`Original changed; inspect and reselect before archiving: ${item.file.download_url}`)
+      if (!matchesDeclaredFormat(response.body, item.file.format)) throw new Error(`Original is not a ${item.file.format.toUpperCase()}; inspect and reselect before archiving: ${item.file.download_url}`)
       if (response.body.byteLength > MAX_BYTES) throw new Error('Original exceeds the cf upload size limit')
       const path = join(directory, String(downloaded.length))
       await writeFile(path, response.body)

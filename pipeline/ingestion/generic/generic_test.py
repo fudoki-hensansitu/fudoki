@@ -59,6 +59,13 @@ class LineTest(unittest.TestCase):
         self.assertEqual(''.join(g.text for g in label), '事務【人事課】')
         self.assertEqual(''.join(g.text for run in money for g in run), '112,408,043')
 
+    def test_an_amount_touching_the_name_is_split_off_before_its_unit(self):
+        # `同項、東京都知事選挙費、報償費から流用1,128,000 円`: the amount touches the name, the unit is apart
+        label, money = _split_line([glyph('同項、報償費から流用', 100, 100, 90), glyph('1,128,000', 192, 100, 45),
+                                    glyph('円', 243, 100, 9)])
+        self.assertEqual(''.join(g.text for g in label), '同項、報償費から流用')
+        self.assertEqual(''.join(g.text for run in money for g in run), '1,128,000')
+
     def test_bracketed_amounts_of_a_declared_axis(self):
         read = lambda *words: (lambda label, money: (''.join(g.text for g in label), [''.join(g.text for g in run) for run in money]))(
             *_split_line([glyph(text, x, 100) for text, x in words], amount_brackets=True))

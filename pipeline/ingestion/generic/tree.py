@@ -355,11 +355,16 @@ def _split_line(line: list[Glyph], amount_brackets: bool = False, bare_amounts: 
     if not money and parts:
         # A grouped amount printed flush against the name (`…】112,408,043`),
         # possibly starting inside a Poppler word: split that word proportionally.
-        last = parts[-1]
+        # A unit 円 set apart after it (`…から流用1,128,000 円`, the amount touching the name) is no part of the
+        # amount, and no part of the name: it goes.
+        unit = len(parts) > 1 and normalize(text(parts[-1])) == '円'
+        last = parts[-2] if unit else parts[-1]
         joined = text(last)
         found = re.match(r'^(.*[^0-9,△▲])([△▲]?[0-9]{1,3}(?:,[0-9]{3})+)$', joined)
         if found:
             head, tail = _cut(last, len(found.group(1)))
+            if unit:
+                parts.pop()
             parts[-1], money = head, [tail]
     return [g for part in parts for g in part], money
 

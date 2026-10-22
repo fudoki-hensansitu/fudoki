@@ -775,7 +775,7 @@
     {
       "table_id": "general-expenditure-detail",
       "conversion_id": "general",
-      "input_fingerprint": "623d8ea11bfb19202ca2a4240114c1feaf35e0ebeb448f391d7e09ae2a00abf7",
+      "input_fingerprint": "6ab5931c90474ae7b5e35df20f0eebcf027e77aa202f4b0999bd878b76156b2f",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -790,16 +790,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/132152/2025/settlement/expenditure/general-expenditure-detail-nodes.parquet",
-          "sha256": "07f0408250fbe114bfb1efafd7fca115e0045319a70482e42890a379a41f5b6e",
-          "bytes": 32021
+          "sha256": "ae40b217a634084cdc6182d90e8cf82fab0f0abbc454ff915e6a72ee555b81eb",
+          "bytes": 31995
         },
         "row_count": 1068
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132152/2025/settlement/expenditure/general-expenditure-detail-amounts.parquet",
-          "sha256": "36fd0594be10495d3cca99b4f9411f0b0c02781c069bfae26fe9e69e8719c658",
-          "bytes": 67625
+          "sha256": "9f51fad7db7312a37913d71905fb74603559a0d29620d8cac5acc0242503ebc3",
+          "bytes": 68268
         },
         "row_count": 6546
       }
