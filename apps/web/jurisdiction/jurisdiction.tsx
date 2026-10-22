@@ -8,7 +8,7 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } f
 import { StartForm } from '../chat/start-form'
 import { DUMMY_TRAITS, dummyPopulation } from './dummy'
 import { Sankey } from './sankey'
-import { changePct, formatYen, reiwa, type Drill, type PageData, type Project, type Setsu } from './types'
+import { changePct, formatYen, kanChanges, reiwa, type Drill, type PageData, type Project, type Setsu } from './types'
 
 const fetchJson = async <T,>(url: string): Promise<T> => {
   const res = await fetch(url)
@@ -81,20 +81,13 @@ function Trend({ data, pop }: { data: PageData; pop: number }) {
     const value = y ? (tab === 'per' ? y.yen / (pop * 1e4) / 1e4 : y.yen / 1e8) : 0
     return { label: reiwa(year).replace('年度', ''), value, ghost: !y }
   })
-  const prev = data.years.at(-2)
-  const changes = prev
-    ? latest.kan.flatMap((k) => {
-        const p = prev.kan.find((x) => x.name === k.name)
-        const pct = changePct(k.yen, p?.yen)
-        return pct === null ? [] : [{ name: k.name, pct: Math.round(pct * 10) / 10 }]
-      })
-    : []
-  const config = { value: { label: tab === 'per' ? '住民一人あたり（万円）' : '歳出（億円）', color: 'var(--primary)' }, pct: { label: '前の年度との増減（%）', color: 'var(--primary)' } } satisfies ChartConfig
+  const changes = kanChanges(data.years)
+  const config = { value: { label: tab === 'per' ? '住民一人あたり（万円）' : '歳出（億円）', color: 'var(--primary)' }, pct: { label: '前年度との増減（%）', color: 'var(--primary)' } } satisfies ChartConfig
   return (
     <Card title="歳出の推移" aside={<Segmented value={tab} onChange={setTab} options={[['total', '総額'], ['per', '住民一人あたり'], ['kan', '款ごとの増減']]} />}>
       {tab === 'kan' ? (
         changes.length === 0 ? (
-          <p className="py-8 text-sm text-muted-foreground">比べられる年度が、まだ1つしか収録されていません。</p>
+          <p className="py-8 text-sm text-muted-foreground">前年度と比べられる款がありません。</p>
         ) : (
           <ChartContainer config={config} className="aspect-auto w-full" style={{ height: 40 + changes.length * 30 }}>
             <BarChart data={changes} layout="vertical" margin={{ left: 8, right: 44 }}>

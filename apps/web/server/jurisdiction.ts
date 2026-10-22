@@ -32,6 +32,7 @@ interface SearchResponse {
 interface NodeResponse {
   node: ApiNode
   children: Record<string, ApiNode[]>
+  next_page_token?: string | null
 }
 export interface CatalogEntry {
   code: string
@@ -79,7 +80,16 @@ const search = (env: Env, code: string, years: { min: number; max: number }, nod
     page_size: pageSize,
   })
 
-const children = async (env: Env, id: string) => (await call<NodeResponse>(env, `/v1/expenditure/nodes/settlement/${id}`)).children
+async function children(env: Env, id: string): Promise<Record<string, ApiNode[]>> {
+  const out: Record<string, ApiNode[]> = {}
+  let token: string | undefined
+  do {
+    const r = await call<NodeResponse>(env, `/v1/expenditure/nodes/settlement/${id}${token ? `?page_token=${encodeURIComponent(token)}` : ''}`)
+    for (const [axis, nodes] of Object.entries(r.children)) (out[axis] ??= []).push(...nodes)
+    token = r.next_page_token ?? undefined
+  } while (token)
+  return out
+}
 
 /** 目の内訳。節があれば節、無ければ備考（事業の一覧）を上位だけ返す */
 export async function loadSetsu(env: Env, mokuId: string) {
@@ -106,15 +116,15 @@ export async function loadDrill(env: Env, kan: Line): Promise<Drill> {
 }
 
 export async function loadPage(env: Env, entry: CatalogEntry): Promise<PageData | null> {
-  const years = entry.settlementYears.slice(-MAX_YEARS)
-  const latest = years.at(-1)
+  const latest = entry.settlementYears.at(-1)
   if (latest === undefined) return null
+  const years = entry.settlementYears.filter((year) => year >= latest - MAX_YEARS + 1)
   const range = { min: years[0]!, max: latest }
   const [kanRes, mokuRes] = await Promise.all([search(env, entry.code, range, '款'), search(env, entry.code, { min: latest, max: latest }, '目', {}, CANDIDATES)])
   // 積立・公債・予備費の款は「事業」ではないので、力を入れている事業の候補から外す
   const picked = mokuRes.nodes.filter((n) => !NOT_PROJECT_KAN.has(n.kan_name ?? '')).slice(0, PROJECT_COUNT)
   const prevRes =
-    years.length > 1 && picked.length > 0
+    years.includes(latest - 1) && picked.length > 0
       ? await search(env, entry.code, { min: latest - 1, max: latest - 1 }, '目', { name: { eq: [...new Set(picked.map((n) => n.name))] } }, 200)
       : { nodes: [] as ApiNode[] }
   const totals: YearTotal[] = years.map((year) => {

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { changePct, formatYen, reiwa } from '../jurisdiction/types'
+import { changePct, formatYen, kanChanges, reiwa, type YearTotal } from '../jurisdiction/types'
 import web from '../worker'
 import type { Env } from './env'
 
@@ -19,6 +19,21 @@ describe('金額と年度の表記', () => {
     expect(changePct(110, 100)).toBeCloseTo(10)
     expect(changePct(50, null)).toBeNull()
     expect(changePct(50, 0)).toBeNull()
+  })
+  test('款の増減は前年の同じ款だけを比べ、未収録年度を飛び越えない', () => {
+    const year = (year: number, amounts: Record<string, number>): YearTotal => ({
+      year,
+      yen: Object.values(amounts).reduce((sum, yen) => sum + yen, 0),
+      kan: Object.entries(amounts).map(([name, yen]) => ({ id: name, name, yen, page: null })),
+    })
+    const latest = year(2025, { 民生費: 120, 総務費: 50, 教育費: 100, 衛生費: 20 })
+    expect(kanChanges([year(2023, { 民生費: 100 }), latest])).toEqual([])
+    expect(kanChanges([year(2023, { 民生費: 60 }), year(2024, { 民生費: 100, 総務費: 100, 教育費: 0 }), latest])).toEqual([
+      { name: '民生費', pct: 20 },
+      { name: '総務費', pct: -50 },
+    ])
+    expect(kanChanges([latest])).toEqual([])
+    expect(kanChanges([])).toEqual([])
   })
 })
 
@@ -94,6 +109,29 @@ describe('自治体の個別ページ', () => {
     expect(sitemap).not.toContain(encodeURIComponent('千代田区'))
   })
 
+  test('収録年度が離れていても最新年度から5年間の決算を表示する', async () => {
+    const sparse: Env = { API: { fetch: async (req) => {
+      const url = new URL(req.url)
+      if (url.pathname === '/v1/jurisdictions')
+        return Response.json({ jurisdictions: [{ jurisdiction_code: '131148', name: '中野区', prefecture_name: '東京都', coverage: [2019, 2020, 2021, 2023, 2025].map((fiscal_year) => ({ fiscal_year, document_kind: 'settlement', accounts: [{ account_name: '一般会計' }] })) }] })
+      if (url.pathname === '/v1/expenditure/nodes:search') {
+        const body = await req.json() as { fiscal_year: { min: number; max: number }; where: { node_kind: { eq: string[] } } }
+        if (body.fiscal_year.max - body.fiscal_year.min > 4) return Response.json({ error: 'fiscal_year は 5 年以内にしてください' }, { status: 400 })
+        const rows = body.where.node_kind.eq[0] === '款'
+          ? [...KAN.filter((n) => n.fiscal_year === 2025), node({ node_id: id(4), node_kind: '款', name: '総務費', fiscal_year: 2021, amount_yen: 250 }), node({ node_id: id(5), node_kind: '款', name: '総務費', fiscal_year: 2023, amount_yen: 300 })]
+          : MOKU_2025
+        return Response.json({ nodes: rows.filter((n) => n.fiscal_year >= body.fiscal_year.min && n.fiscal_year <= body.fiscal_year.max) })
+      }
+      return API.fetch(req)
+    } } }
+    const res = await get('/東京都/中野区', sparse)
+    expect(res.status).toBe(200)
+    const html = await res.text()
+    const data = JSON.parse(html.match(/<script type="application\/json" id="j-data">(.*?)<\/script>/s)![1]!)
+    expect(data.years.map((y: YearTotal) => [y.year, y.yen])).toEqual([[2021, 250], [2023, 300], [2025, 1000]])
+    expect(data.projects[0].prevYen).toBeNull()
+  })
+
   test('API に繋がらないときは 502 で、sitemap は入口と一覧だけで答える', async () => {
     const down: Env = { API: { fetch: async () => new Response('x', { status: 500 }) } }
     expect((await get('/自治体', down)).status).toBe(502)
@@ -104,6 +142,28 @@ describe('自治体の個別ページ', () => {
 })
 
 describe('内訳の API', () => {
+  test('後続ページの節を優先し、全ページの金額から上位の内訳を選ぶ', async () => {
+    const paginated: Env = { ...env, API: { fetch: async (req) => {
+      const url = new URL(req.url)
+      if (url.pathname !== `/v1/expenditure/nodes/settlement/${id(11)}`) return API.fetch(req)
+      const token = url.searchParams.get('page_token')
+      if (!token)
+        return Response.json({ children: { 備考: Array.from({ length: 100 }, (_, i) => node({ node_id: id(100 + i), axis: '備考', name: `事業${i}`, amount_yen: 5000 })) }, next_page_token: 'next1' })
+      if (token === 'next1')
+        return Response.json({ children: { 節: [node({ name: '委託料', amount_yen: 1000 }), node({ name: '扶助費', amount_yen: 2000 })] }, next_page_token: 'next2' })
+      if (token === 'next2')
+        return Response.json({ children: { 節: [node({ name: '負担金補助及び交付金', amount_yen: 3000 }), node({ name: '旅費', amount_yen: 500 })] }, next_page_token: null })
+      return new Response('invalid page token', { status: 400 })
+    } } }
+    const res = await get(`/api/jurisdictions/setsu/${id(11)}`, paginated)
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual([
+      { name: '負担金補助及び交付金', yen: 3000 },
+      { name: '扶助費', yen: 2000 },
+      { name: '委託料', yen: 1000 },
+    ])
+  })
+
   test('id の形が違えば 400、流量の binding が無ければ 503、正しければ内訳を返す', async () => {
     expect((await get('/api/jurisdictions/drill/not-an-id')).status).toBe(400)
     expect((await get(`/api/jurisdictions/setsu/${id(11)}`, { API })).status).toBe(503)

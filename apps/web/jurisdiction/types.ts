@@ -41,7 +41,7 @@ export interface YearTotal {
   year: number
   /** 一般会計の款の支出済額の和（api の sum_rules: 同じ軸・同じ段の兄弟の和） */
   yen: number
-  /** 前年度の款ごとの金額（款の名前で引く） */
+  /** この年度の款ごとの金額（款の名前で引く） */
   kan: Line[]
 }
 
@@ -68,5 +68,17 @@ export function formatYen(yen: number): string {
 
 /** 前の年度との増減（%）。前が 0 や無いときは null */
 export const changePct = (now: number, prev: number | null | undefined) => (prev ? ((now - prev) / prev) * 100 : null)
+
+/** 前年度の金額がある款だけを比べる。未収録の年度を飛び越えて比較しない。 */
+export function kanChanges(years: YearTotal[]): { name: string; pct: number }[] {
+  const latest = years.at(-1)
+  if (!latest) return []
+  const previous = years.find((year) => year.year === latest.year - 1)
+  if (!previous) return []
+  return latest.kan.flatMap((kan) => {
+    const pct = changePct(kan.yen, previous.kan.find((p) => p.name === kan.name)?.yen)
+    return pct === null ? [] : [{ name: kan.name, pct: Math.round(pct * 10) / 10 }]
+  })
+}
 
 export const jurisdictionPath = (prefecture: string, name: string) => `/${encodeURIComponent(prefecture)}/${encodeURIComponent(name)}`
