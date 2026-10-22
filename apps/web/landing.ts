@@ -89,8 +89,6 @@ code{font:13px/1.6 var(--font-mono);letter-spacing:0;overflow-wrap:anywhere}
 .links a:hover{color:var(--muted-foreground)}
 .right{display:flex;gap:6px}
 .right .btn{height:36px;padding:0 14px;font-size:14px;font-weight:400}
-.right .gh{border-color:var(--border);background:var(--background);color:var(--foreground)}
-.right .gh:hover{background:var(--card)}
 .right .go{cursor:pointer}
 dialog.setup{width:min(560px,calc(100% - 32px));padding:24px;border:.5px solid var(--border);border-radius:var(--radius-lg,16px);background:var(--background);color:var(--foreground)}
 dialog.setup::backdrop{background:color-mix(in srgb,var(--foreground) 40%,transparent)}
@@ -303,7 +301,7 @@ const BODY = `${ICONS}
 <nav class="nav" aria-label="サイト"><div class="bar">
 <a href="/" aria-label="風土記 ホーム">${logo('logo')}</a>
 <div class="links"><a href="#how">しくみ</a><a href="#mcp">AI から使う</a><a href="${DOCS}">ドキュメント</a><a href="#faq">よくある質問</a></div>
-<div class="right"><a class="btn gh" href="${GITHUB}">GitHub</a><button class="btn go" type="button" data-open="setup">AI に接続</button></div>
+<div class="right"><button class="btn go" type="button" data-open="setup">AI に接続</button></div>
 </div></nav>
 <dialog class="setup" id="setup" aria-labelledby="setup-h"><h2 id="setup-h">AI に貼り付けて接続する</h2>
 <p>下の文章をコピーして、お使いの AI（Claude・ChatGPT など）に貼り付けると、風土記の MCP を追加する手順を案内してくれます。</p>
