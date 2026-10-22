@@ -126,8 +126,8 @@ og_height = 100
 og_width = TEXT_X + text_width(TEXT_SIZE) + 2
 scale = og_height / H
 LEFT = 80
-# 右に置く実画面は brand/og-card.png（ホームの決算表を 2 倍で撮ったもの）。幅は右端まで。
-CARD_X, CARD_W, CARD_H = 560, OW - 560, round((OW - 560) * 926 / 1280)
+# 右に置く実画面は brand/og-card.png（ホームの決算表と入力欄を 2 倍で撮ったもの）。幅は右端まで。
+CARD_X, CARD_W, CARD_H = 560, OW - 560, round((OW - 560) * 1031 / 1280)
 tag_size = 40
 
 
