@@ -411,13 +411,14 @@ const WHERE_HELP = {
 
 const searchDescription =
   '歳出の木のノード（款・項・目と、節・備考など別の軸の内訳）を条件で絞って一覧する。検索の前に describe_expenditure_columns を一度読む。' +
+  '文字の条件は、出典が科目・事業説明・節・備考の欄に印字した名称（name・kan_name・kou_name）に当たる。本文の説明文は表に無いので、事業名が出典に印字されていない支出は科目の名前に含まれる語で引く。' +
   '自治体の比較は node_kind を "目" などに絞って行い、詳細は get_expenditure_node で木を辿る。' +
   '資料区分や軸の違う金額を足さない。足すときは describe_expenditure_columns の sum_rules に従う。where は列をまたぐ OR・NOT が無いので、2回に分けて問い合わせる。'
 
 const listJurisdictionsDescription =
   '自治体の名称・6桁の自治体コード・都道府県と、その自治体の収録範囲（明細を検索できる年度・資料区分・会計と、明細が指す出典の標題・URL）を返す。' +
   '歳出を検索する前に、自治体コードと、比べたい年度・資料区分が収録されているかをここで確かめる。' +
-  '名称（部分一致）か自治体コード（5桁・6桁）で絞り、絞らなければ全自治体を自治体コード順に返す。収録の無い自治体は coverage が空。' +
+  '名称（部分一致）か自治体コード（5桁・6桁）で絞り、絞らなければ自治体コード順に返す。1頁は既定 20 件（最大 100）なので、全件は next_page_token を辿る。収録の無い自治体は coverage が空。' +
   '返った jurisdiction_code（6桁）・fiscal_year・document_kind・account_name は search_expenditure_nodes の条件にそのまま使える。検索は5桁のコードを受け付けず0件になるので、ここで6桁を引いてから渡す。名前とコードの両方を渡すと AND。'
 
 export const operations: Operation[] = [
