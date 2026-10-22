@@ -1,6 +1,7 @@
 // fudoki.dev の入口の1枚。視覚の規範は repo root の DESIGN.md、ロゴは public/logo.svg・favicon は public/favicon.svg の写し（Worker は assets を持たないので inline にする）
 // 見出しの明朝は /fonts/mincho.woff2（この頁で使う字だけの subset）。文言を変えたら `bun run --cwd apps/web build:font` で作り直す
 import { HOME } from './home-data'
+import { PWA_HEAD, PWA_REGISTER } from './pwa'
 import { LOGO_G } from './logo'
 
 const MCP = 'https://api.fudoki.dev/mcp'
@@ -37,7 +38,7 @@ export const TOKENS_CSS = `
 --font-sans:"Hiragino Sans","Noto Sans JP","Yu Gothic UI","Yu Gothic",Meiryo,system-ui,sans-serif;
 --font-mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 --radius:8px;--radius-sm:4px;--radius-card:16px;--radius-sheet:24px;
---gut:max(24px,calc((100% - 1200px) / 2));
+--gut:max(24px,env(safe-area-inset-left),env(safe-area-inset-right),calc((100% - 1200px) / 2));
 --hair:color-mix(in srgb,var(--foreground) 10%,transparent);
 --shadow-sheet:0 20px 25px -5px color-mix(in srgb,var(--night) 12%,transparent),0 8px 10px -6px color-mix(in srgb,var(--night) 10%,transparent);
 --shadow-pill:0 1px 2px color-mix(in srgb,var(--night) 4%,transparent),0 6px 20px color-mix(in srgb,var(--night) 6%,transparent);
@@ -78,7 +79,7 @@ code{font:13px/1.6 var(--font-mono);letter-spacing:0;overflow-wrap:anywhere}
 .btn .i{width:14px;height:14px}
 .logo{display:block;width:auto;color:var(--primary)}
 
-.nav{position:sticky;top:8px;z-index:20;padding-inline:calc(var(--gut) - 8px);transition:opacity .25s ease-out}
+.nav{position:sticky;top:max(8px,env(safe-area-inset-top));z-index:20;padding-inline:calc(var(--gut) - 8px);transition:opacity .25s ease-out}
 .nav[data-hide]:not(:has(:focus-visible)){opacity:0;pointer-events:none}
 .bar{display:flex;align-items:center;height:56px;padding:0 8px 0 14px;border:.5px solid transparent;border-radius:999px;transition:background-color .3s ease-out,border-color .3s ease-out,box-shadow .3s ease-out}
 .nav[data-scrolled] .bar{border-color:var(--border);background:var(--background);box-shadow:var(--shadow-pill)}
@@ -247,7 +248,7 @@ footer{padding-top:96px}
 @media (max-width:400px){
 .cols{grid-template-columns:minmax(0,1fr)}
 }
-@media (min-width:961px){:root{--gut:max(56px,calc((100% - 1200px) / 2))}html[data-snap]{scroll-snap-type:y mandatory}#mcp{scroll-snap-align:start}.ledger-stage{scroll-snap-align:end}}
+@media (min-width:961px){:root{--gut:max(56px,env(safe-area-inset-left),env(safe-area-inset-right),calc((100% - 1200px) / 2))}html[data-snap]{scroll-snap-type:y mandatory}#mcp{scroll-snap-align:start}.ledger-stage{scroll-snap-align:end}}
 @media (prefers-reduced-motion:no-preference){
 html{scroll-behavior:smooth}
 .sweep.in{animation:sweep 1.4s var(--ease-sweep) both}
@@ -402,7 +403,7 @@ export const LANDING_HTML = `<!doctype html>
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>風土記（fudoki）— 町の家計簿</title>
 <meta name="description" content="${DESCRIPTION}">
 <meta name="theme-color" content="#fdfcfa" media="(prefers-color-scheme: light)">
@@ -411,6 +412,7 @@ export const LANDING_HTML = `<!doctype html>
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+${PWA_HEAD}
 <link rel="preload" href="/fonts/mincho.woff2" as="font" type="font/woff2" crossorigin>
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="風土記（fudoki）">
@@ -431,6 +433,7 @@ export const LANDING_HTML = `<!doctype html>
 <body>
 ${BODY}
 <script>${SCRIPT}</script>
+${PWA_REGISTER}
 </body>
 </html>
 `
