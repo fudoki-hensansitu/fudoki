@@ -2007,11 +2007,12 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     item.level_name = SUBJECT_LEVELS[item.level] if item.level < len(SUBJECT_LEVELS) else None
     # Indentation levels per non-subject axis, learned over the document.
     indents: dict[str, list[float]] = defaultdict(list)
+    # In a mixed document the levels are the printed pages' (an OCR page's words lie a point or two off); an axis only
+    # the OCR pages print is learned from them.
+    printed = {g.axis for l, ordered, _ in all_items if not l.ocr for g in ordered if not g.subject} if mixed_document(logicals) else set()
     for logical, ordered, found in all_items:
-        if logical.ocr and mixed_document(logicals):  # the levels are the printed pages'; an OCR page's words lie a point or two off
-            continue
         for group in ordered:
-            if not group.subject:
+            if not group.subject and not (logical.ocr and group.axis in printed):
                 indents[group.axis] += [i.indent for i in found[id(group)] if i.role == 'node']
     for axis, values in indents.items():
         clusters: list[list[float]] = []
@@ -2032,7 +2033,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 centres.append(sum(c) / len(c))
         levels[axis] = sorted(sum(c) / len(c) for c in kept)
     if mixed_document(logicals):
-        for axis, centres in levels.items():
+        for axis, centres in ((a, c) for a, c in levels.items() if a in printed):
             snap_ocr_levels([i for l, ordered, found in all_items if l.ocr for g in ordered if not g.subject and g.axis == axis
                              for i in found[id(g)] if i.role == 'node'], centres)
     depth_of = lambda item: 1 + min(range(len(levels[item.group.axis])),

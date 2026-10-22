@@ -335,7 +335,8 @@ class Table:
 
 
 # What the gates of the OCR pages list in `built.unowned` (`build.run_pages`).
-OCR_GATES = ('unread ink in amount column', 'unreadable declared amount cell', 'amount in a column of no kind')
+OCR_GATES = ('unread ink in amount column', 'unreadable declared amount cell', 'amount in a column of no kind',
+             'unread strip seam')
 # The options of a conversion that reread an OCR observation (`scan.read_pages`).
 OCR_REREADS = ('amount_corrections', 'code_corrections', 'amount_readings', 'code_readings', 'dropped_readings', 'unit_readings',
                'header_readings')

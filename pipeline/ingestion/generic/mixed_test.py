@@ -91,6 +91,22 @@ class MixedPagesTest(unittest.TestCase):
         declared_unread(built, logicals, None, moved_unread(observation, shifts))
         self.assertEqual([(u['page'], u['box']) for u in built.unowned], [(2, [160, 140, 166, 148])])
 
+    def test_a_line_the_strip_seam_cut_stops_a_mixed_conversion_in_any_column_where_the_page_is_moved(self):
+        from ingestion.generic.convert import OCR_GATES
+        from ingestion.generic.scan import declared_unread
+        words = [Word('科目', 20, 55, 38, 64), Word('支出済額', 110, 55, 146, 64), Word('総務費', 20, 120, 56, 129), Word('1,000', 150, 120, 172.5, 129)]
+        text = Page(1, 300, 500, words, frame(10, 200, {'wide': (100,), 'narrow': ()}))
+        ocr = Page(2, 300, 500, [Word(w.text, w.x0 + 16, w.y0, w.x1 + 16, w.y1) for w in words], frame(26, 216, {'wide': (116,), 'narrow': ()}))
+        shifts = {2: shift(ocr, learn_origins([text]))}
+        logicals = logical_pages([text, aligned(ocr, learn_origins([text]))], ocr_pages=frozenset({2}))
+        seams = [[176, 140, 182, 148], [36, 160, 60, 168]]  # under 支出済額, under 科目 (a seam's box is unread ink too)
+        observation = {'pages': [{'page_number': 2, 'unread_ink': seams, 'unread_seams': seams}]}
+        built = SimpleNamespace(unowned=[])
+        declared_unread(built, logicals, None, moved_unread(observation, shifts))
+        self.assertEqual([(u['kind'], u['box']) for u in built.unowned],
+                         [('unread ink in amount column', [160, 140, 166, 148]), ('unread strip seam', [20, 160, 44, 168])])
+        self.assertTrue(all(u['kind'] in OCR_GATES for u in built.unowned))
+
     def test_amounts_in_an_ocr_column_whose_heading_the_text_pages_do_not_print_are_listed(self):
         def page(number, heading):
             words = [Word('科目', 20, 55, 38, 64), Word(heading, 110, 55, 146, 64), Word('総務費', 20, 120, 56, 129), Word('1,000', 150, 120, 172.5, 129)]

@@ -81,10 +81,12 @@ def moved(page: Page, dx: float) -> Page:
 
 
 def moved_unread(observation: dict, shifts: dict[int, float]) -> dict:
-    """The observation's unread ink (ink no OCR box and no rule covers) moved with its page (`shift`), so that the scan's
-    gate (`scan.declared_unread`) finds it in the amount columns the page is read in."""
-    return {**observation, 'pages': [{**page, 'unread_ink': [[x0 + shifts.get(page['page_number'], 0.0), y0, x1 + shifts.get(page['page_number'], 0.0), y1]
-                                                            for x0, y0, x1, y1 in page.get('unread_ink', [])]}
+    """The observation's unread ink (ink no OCR box and no rule covers) and unread strip seams moved with their page
+    (`shift`), so that the scan's gate (`scan.declared_unread`) finds them in the columns the page is read in."""
+    def move(page: dict, key: str) -> list:
+        dx = shifts.get(page['page_number'], 0.0)
+        return [[x0 + dx, y0, x1 + dx, y1] for x0, y0, x1, y1 in page.get(key, [])]
+    return {**observation, 'pages': [{**page, 'unread_ink': move(page, 'unread_ink'), 'unread_seams': move(page, 'unread_seams')}
                                      for page in observation.get('pages', [])]}
 
 
