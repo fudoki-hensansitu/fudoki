@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto'
 import { expect, test } from 'bun:test'
-import { archiveGroup, archiveSelected, evaluationKind, isMissingR2ObjectError, planArchives, planFiles, isArchived, type ArchiveTransport } from './archive'
+import { archiveGroup, archiveSelected, evaluationKind, isMissingR2ObjectError, matchesDeclaredFormat, planArchives, planFiles, isArchived, type ArchiveTransport } from './archive'
 import { evaluationSelectionsSchema, sourceSelectionsSchema, type EvaluationSelection, type SourceFile, type SourceSelection } from './schema'
 import { evaluationObjectKey, originObjectKey } from './storage'
 
@@ -48,6 +48,14 @@ test('a declared CSV whose body is an error response is not saved', async () => 
     await expect(archiveSelected(withFiles([{ ...csv, sha256: hash(new TextEncoder().encode(body)) }]), fake.api)).rejects.toThrow('is not a CSV')
     expect(fake.keys.size).toBe(0)
   }
+})
+
+test('the PDF signature is matched as printed, not case-folded', () => {
+  const pdf = (text: string) => new TextEncoder().encode(text)
+  expect(matchesDeclaredFormat(pdf('%PDF-1.7'), 'pdf')).toBe(true)
+  expect(matchesDeclaredFormat(pdf('JUNK\n%PDF-1.7'), 'pdf')).toBe(true)
+  expect(matchesDeclaredFormat(pdf('%pdf-1.7'), 'pdf')).toBe(false)
+  expect(matchesDeclaredFormat(pdf('<!DOCTYPE html><html>'), 'pdf')).toBe(false)
 })
 
 test('missing-object cleanup ignores only genuine key-not-found errors', () => {

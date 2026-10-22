@@ -12,10 +12,11 @@ const digest = (body: Uint8Array) => createHash('sha256').update(body).digest('h
 export function matchesDeclaredFormat(body: Uint8Array, format: 'csv' | 'pdf'): boolean {
   // UTF-8 の BOM は latin1 では "ï»¿" になるので、文字ではなくバイトで飛ばす
   const start = body[0] === 0xef && body[1] === 0xbb && body[2] === 0xbf ? 3 : 0
-  const head = new TextDecoder('latin1').decode(body.subarray(start, start + 1024)).trimStart().toLowerCase()
+  const decoded = new TextDecoder('latin1').decode(body.subarray(start, start + 1024))
   // PDF のヘッダは先頭 1024 バイト以内にあればよい（先頭に余分なバイトを持つ PDF がある）
-  if (format === 'pdf') return head.includes('%pdf-')
+  if (format === 'pdf') return decoded.includes('%PDF-')
   // CSV の宣言で HTML・XML・JSON の本文を保存しない（跡地やエラーの応答）
+  const head = decoded.trimStart().toLowerCase()
   return !(head.startsWith('<') || head.startsWith('{') || head.startsWith('['))
 }
 
