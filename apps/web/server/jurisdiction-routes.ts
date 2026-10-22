@@ -34,7 +34,7 @@ export const jurisdictions = new Hono<{ Bindings: Env }>()
 const notFound = () => new Response('Not Found\n', { status: 404, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
 const unavailable = () => new Response('風土記の API に繋がりませんでした。少し待ってからもう一度開いてください。\n', { status: 502, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' } })
 
-jurisdictions.get('/jurisdictions', async (c) => {
+jurisdictions.get('/自治体', async (c) => {
   try {
     return new Response(renderIndex(await catalog(c.env)), { headers: HTML_HEADERS })
   } catch {

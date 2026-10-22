@@ -86,6 +86,7 @@ describe('自治体の個別ページ', () => {
     expect(await empty.text()).toContain('<meta name="robots" content="noindex">')
     expect((await get(`/${encodeURIComponent('東京都')}/${encodeURIComponent('存在しない市')}`)).status).toBe(404)
     // 都道府県の形でなければ他の経路へ渡す（/s/:id などを奪わない）
+    expect((await get(`/${encodeURIComponent('自治体')}`)).status).toBe(200)
     expect((await get('/s/not-a-session')).status).not.toBe(200)
     expect((await get('/api/none')).status).toBe(404)
     const sitemap = await (await get('/sitemap.xml')).text()
@@ -95,10 +96,10 @@ describe('自治体の個別ページ', () => {
 
   test('API に繋がらないときは 502 で、sitemap は入口と一覧だけで答える', async () => {
     const down: Env = { API: { fetch: async () => new Response('x', { status: 500 }) } }
-    expect((await get('/jurisdictions', down)).status).toBe(502)
+    expect((await get('/自治体', down)).status).toBe(502)
     const sitemap = await get('/sitemap.xml', down)
     expect(sitemap.status).toBe(200)
-    expect(await sitemap.text()).toContain('https://fudoki.dev/jurisdictions')
+    expect(await sitemap.text()).toContain('https://fudoki.dev/%E8%87%AA%E6%B2%BB%E4%BD%93')
   })
 })
 

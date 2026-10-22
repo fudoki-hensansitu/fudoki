@@ -31,7 +31,8 @@ ${PWA_HEAD}
 <link rel="stylesheet" href="/_app/jurisdiction.css">
 ${extra}`
 
-const header = `<header class="j-top"><a class="j-brand" href="/"><svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true"><g fill="var(--primary)"><rect x="2" y="14" width="4" height="14" rx="2"/><rect x="8" y="6" width="4" height="22" rx="2"/><rect x="14" y="18" width="4" height="10" rx="2"/><rect x="20" y="2" width="4" height="26" rx="2"/><rect x="26" y="11" width="4" height="17" rx="2"/></g><rect x="2" y="29" width="28" height="2" rx="1" fill="var(--logo-rule-ink)"/></svg>風土記</a><nav><a href="/jurisdictions">自治体を探す</a><a href="https://docs.fudoki.dev/">使い方</a></nav></header>`
+export const INDEX_PATH = '/' + encodeURIComponent('自治体')
+const header = `<header class="j-top"><a class="j-brand" href="/"><svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true"><g fill="var(--primary)"><rect x="2" y="14" width="4" height="14" rx="2"/><rect x="8" y="6" width="4" height="22" rx="2"/><rect x="14" y="18" width="4" height="10" rx="2"/><rect x="20" y="2" width="4" height="26" rx="2"/><rect x="26" y="11" width="4" height="17" rx="2"/></g><rect x="2" y="29" width="28" height="2" rx="1" fill="var(--logo-rule-ink)"/></svg>風土記</a><nav><a href="/自治体">自治体を探す</a><a href="https://docs.fudoki.dev/">使い方</a></nav></header>`
 
 /** 個別ページの説明文。検索結果に出るので、金額は API の値だけで書く（人口や仮の値は入れない） */
 export function pageDescription(d: PageData): string {
@@ -67,7 +68,7 @@ ${head(title, description, canonical, `<script type="application/ld+json">${inli
 ${header}
 <div id="j-app" data-turnstile-sitekey="${esc(siteKey)}">
 <main class="j-static">
-<p class="j-crumb"><a href="/jurisdictions">自治体</a> › ${esc(d.prefecture)} › ${esc(d.name)}</p>
+<p class="j-crumb"><a href="/自治体">自治体</a> › ${esc(d.prefecture)} › ${esc(d.name)}</p>
 <h1>${esc(d.name)}</h1>
 <p>${esc(description)}</p>
 <h2>${reiwa(latest.year)}決算の歳出（款別）</h2>
@@ -94,7 +95,7 @@ ${head(title, `${e.name}の歳出は風土記にまだ収録されていませ�
 </head>
 <body>
 ${header}
-<main class="j-static"><h1>${esc(e.name)}</h1><p>この自治体の決算は、風土記にまだ収録されていません。</p><p><a href="/jurisdictions">収録している自治体を見る</a></p></main>
+<main class="j-static"><h1>${esc(e.name)}</h1><p>この自治体の決算は、風土記にまだ収録されていません。</p><p><a href="/自治体">収録している自治体を見る</a></p></main>
 ${PWA_REGISTER}
 </body>
 </html>
@@ -103,7 +104,7 @@ ${PWA_REGISTER}
 
 export function renderIndex(entries: CatalogEntry[]): string {
   const have = entries.filter((e) => e.settlementYears.length > 0)
-  const canonical = `${ORIGIN}/jurisdictions`
+  const canonical = `${ORIGIN}${INDEX_PATH}`
   const description = `決算を収録している自治体（${have.length}）の一覧。自治体ごとに歳出の款・項・目と、金額の推移を確かめられます。`
   const byPref = new Map<string, CatalogEntry[]>()
   for (const e of have) byPref.set(e.prefecture, [...(byPref.get(e.prefecture) ?? []), e])
@@ -123,7 +124,7 @@ ${PWA_REGISTER}
 }
 
 export const sitemapXml = (entries: CatalogEntry[]) =>
-  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${ORIGIN}/</loc></url><url><loc>${ORIGIN}/jurisdictions</loc></url>${entries
+  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${ORIGIN}/</loc></url><url><loc>${ORIGIN}${INDEX_PATH}</loc></url>${entries
     .filter((e) => e.settlementYears.length > 0)
     .map((e) => `<url><loc>${ORIGIN}${jurisdictionPath(e.prefecture, e.name)}</loc></url>`)
     .join('')}</urlset>\n`

@@ -1,6 +1,6 @@
 # 公開 web
 
-入口の1枚（`landing.ts`）と会話の画面（`/s/:id`、下の「風土記の AI に聞く」）、favicon・OG 画像・robots.txt・sitemap.xml・見出しの明朝だけを返す（画像は `public/` を `assets.ts` に、明朝は `font.generated.ts` に写して Worker が返す）。ホームの録画と出典の切り抜きのような重いファイルは `static/` に置き、Workers static assets で配る。自治体ごとの頁（`/jurisdictions`・`/:都道府県/:名称`）も返す（下の「自治体の個別ページ」）。PWA 用の `/manifest.webmanifest`・`/sw.js`・`/offline`（`pwa.ts`）も返す。service worker は繋がらないときの案内を出すだけで、頁・API はキャッシュしない。PWA のアイコンは `brand/pwa_icons.py` で `public/` に描き、`assets.ts` へ写す。他は 404。main に入ると `.github/workflows/deploy-web.yml` が自動で deploy する（手元からは `bun run --cwd apps/web deploy`）。
+入口の1枚（`landing.ts`）と会話の画面（`/s/:id`、下の「風土記の AI に聞く」）、favicon・OG 画像・robots.txt・sitemap.xml・見出しの明朝だけを返す（画像は `public/` を `assets.ts` に、明朝は `font.generated.ts` に写して Worker が返す）。ホームの録画と出典の切り抜きのような重いファイルは `static/` に置き、Workers static assets で配る。自治体ごとの頁（`/自治体`・`/:都道府県/:名称`）も返す（下の「自治体の個別ページ」）。PWA 用の `/manifest.webmanifest`・`/sw.js`・`/offline`（`pwa.ts`）も返す。service worker は繋がらないときの案内を出すだけで、頁・API はキャッシュしない。PWA のアイコンは `brand/pwa_icons.py` で `public/` に描き、`assets.ts` へ写す。他は 404。main に入ると `.github/workflows/deploy-web.yml` が自動で deploy する（手元からは `bun run --cwd apps/web deploy`）。
 
 ```bash
 bun run dev:web
@@ -9,7 +9,7 @@ bun run build:web
 
 ## 自治体の個別ページ（`/:都道府県/:名称`）
 
-`/jurisdictions` が決算を収録している自治体の一覧、`/東京都/中野区` のように**都道府県名と自治体名を path に入れた**個別ページが検索（SEO）の入口。都道府県名と名称の一致で引く（`/s/:id` や `/api/*` とは都道府県名の形で見分け、形が違えば次の経路へ渡す）。名称は自治体マスタ（`/v1/jurisdictions`）のとおり。収録が無い自治体は noindex の案内、存在しない名称は 404。`/sitemap.xml` は収録のある自治体の頁を含む（API に繋がらないときは入口と一覧だけ）。
+`/自治体` が決算を収録している自治体の一覧、`/東京都/中野区` のように**都道府県名と自治体名を path に入れた**個別ページが検索（SEO）の入口。都道府県名と名称の一致で引く（`/s/:id` や `/api/*` とは都道府県名の形で見分け、形が違えば次の経路へ渡す）。名称は自治体マスタ（`/v1/jurisdictions`）のとおり。収録が無い自治体は noindex の案内、存在しない名称は 404。`/sitemap.xml` は収録のある自治体の頁を含む（API に繋がらないときは入口と一覧だけ）。
 
 - **データ**: `server/jurisdiction.ts` が api（Service Binding）の歳出の検索から、一般会計の決算の款（年度ごと）・金額の大きい目（積立・公債・予備費の款を除く。前年度の同じ目との比較つき）・最大の款の流れ（款→項→目→節）を組む。金額は API の円のまま。足すのは同じ年度の款（兄弟）の和（歳出の総額）だけで、api の sum_rules に従う。結果は Worker の cache に1時間置く（`server/jurisdiction-routes.ts`）
 - **描画**: サーバーが金額・款・事業を HTML に書き（`jurisdiction/html.ts`、JSON-LD の Dataset つき）、島（`jurisdiction/jurisdiction.tsx`、build で `static/_app/jurisdiction.js`）が同じデータを shadcn/ui の chart（recharts）と流れ図（`jurisdiction/sankey.tsx`）で描き直す。款を選ぶと `/api/jurisdictions/drill/:id`、事業を開くと `/api/jurisdictions/setsu/:id` で内訳を引く（誰でも読める GET。IP ごとの流量 `VIEW_RATE_LIMIT` と id の形の検査で守る）

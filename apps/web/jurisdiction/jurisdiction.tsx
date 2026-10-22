@@ -264,7 +264,7 @@ function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
     <div className="mx-auto max-w-[1000px] px-4 pb-48 pt-2 sm:px-6">
       <div className="flex items-center justify-between gap-2 pt-6 text-xs text-muted-foreground">
         <span>
-          <a href="/jurisdictions" className="hover:underline">自治体</a> › {data.prefecture} › {data.name}
+          <a href="/自治体" className="hover:underline">自治体</a> › {data.prefecture} › {data.name}
         </span>
         <span className="rounded-full border px-3 py-1">{reiwa(latest.year)} 決算</span>
       </div>
