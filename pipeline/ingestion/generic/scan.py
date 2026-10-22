@@ -369,7 +369,24 @@ def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None
                 if keep_marks:
                     pieces = with_mark(item, pieces)
                 words += _cell_words(pieces or [Word(item['raw_text'], *item['bbox_pdf_pt'])], cuts, reach)
-    return Page(number, detected.width, detected.height, words, rules)
+    return Page(number, detected.width, detected.height, drop_covered_digits(words), rules)
+
+
+def drop_covered_digits(words: list[Word]) -> list[Word]:
+    """A last digit read a second time: the left end of the line the next tile read (`9予算額…` after `11,547,449`)
+    cut at the column rule leaves a digit lying inside the box of the complete amount it ends. One or two digits
+    that are the end (or the start) of an amount whose box holds them are that amount's own print, not a word."""
+    amounts = [w for w in words if AMOUNT.fullmatch(_text(w.text))]
+    def covered(word: Word) -> bool:
+        text = _text(word.text)
+        if not re.fullmatch(r'[0-9]{1,2}', text):
+            return False
+        return any(other is not word and len(_text(other.text)) > len(text)
+                   and (_text(other.text).endswith(text) or _text(other.text).startswith(text))
+                   and other.x0 - 1 <= word.x0 and word.x1 <= other.x1 + 1
+                   and min(word.y1, other.y1) - max(word.y0, other.y0) >= .6 * (word.y1 - word.y0)
+                   for other in amounts)
+    return [w for w in words if not covered(w)]
 
 
 def _header(page: Page, every: bool = False) -> list[tuple[list[float], float, float, list[Word]]]:
@@ -771,6 +788,60 @@ def add_code_readings(observed: list[Page], readings: list[dict] | None, key: st
     return [Page(p.number, p.width, p.height, words[p.number], p.rules) for p in observed]
 
 
+SECTION_TITLES = {'収入': 'revenue', '支出': 'expenditure'}
+
+
+def direction_sections(printed: list[Page], direction: str | None) -> tuple[list[Page], list[int]]:
+    """The part of each page printed under the section title of the manifest's direction.
+
+    An enterprise statement (公営企業会計) prints its 収入 and 支出 tables one above the other on one page, each
+    under a title at the left margin (`収入` / `支出`). A page without a title goes on with the section of the
+    page before it. The words and rules outside the direction's sections are left out, so a table of the other
+    direction is not read as an amount of this one; a page wholly of the other direction is skipped (returned
+    as its number). A scope with no section title on any page is returned as it is."""
+    if direction is None:
+        return printed, []
+    def titles_of(page: Page) -> list[tuple[float, str]]:
+        # A title set apart (`収 入`) is read as one word per character: the words of a line at the left margin.
+        lines: list[list[Word]] = []
+        for word in sorted((w for w in page.words if w.x0 < page.width * .2), key=lambda w: (w.y0, w.x0)):
+            if lines and abs(lines[-1][0].y0 - word.y0) <= 2:
+                lines[-1].append(word)
+            else:
+                lines.append([word])
+        return sorted(((line[0].y0 + line[0].y1) / 2, SECTION_TITLES[key]) for line in lines
+                      if (key := normalize(''.join(w.text for w in sorted(line, key=lambda w: w.x0)))) in SECTION_TITLES)
+
+    titled = {page.number: titles_of(page) for page in printed}
+    if not any(titled.values()):
+        return printed, []
+    kept, skipped, current = [], [], None
+    for page in sorted(printed, key=lambda p: p.number):
+        found = titled[page.number]
+        starts = [centre - 8 for centre, _ in found]
+        # what is above the first title goes on with the section before; each title opens the next section
+        spans = [(float('-inf'), starts[0] if found else float('inf'), current)]
+        spans += [(start, starts[i + 1] if i + 1 < len(starts) else float('inf'), kind)
+                  for i, (start, (_, kind)) in enumerate(zip(starts, found))]
+        if found:
+            current = found[-1][1]
+        wanted = [(top, bottom) for top, bottom, kind in spans if kind in (None, direction)]
+        if not wanted:
+            skipped.append(page.number)
+            continue
+        inside = lambda y: any(top <= y < bottom for top, bottom in wanted)
+        rules = []
+        for rule in page.rules:
+            if rule.vertical:
+                low, high = sorted((rule.y0, rule.y1))
+                rules += [Rule(rule.x0, max(low, top), rule.x1, min(high, bottom)) for top, bottom in wanted
+                          if min(high, bottom) - max(low, top) > 1]
+            elif inside(rule.y0):
+                rules.append(rule)
+        kept.append(Page(page.number, page.width, page.height, [w for w in page.words if inside((w.y0 + w.y1) / 2)], rules))
+    return kept, skipped
+
+
 def read_units(observed: list[Page], readings: list[dict] | None) -> list[Page]:
     """Unit marks OCR misread, as the conversion's options declare them from the rendered page
     (`unit_readings`: page, box in PDF points, the one glyph read). The glyph becomes the unit 円, which is
@@ -867,7 +938,12 @@ def declared_unread(built, logicals_: list, columns: dict | None, observation: d
                 built.unowned.append({'kind': 'unread ink in amount column', 'page': page_['page_number'], 'box': box})
         # A line the strip seam cut and no single re-read gave back (`settle_seams`) stops the conversion in any
         # column: a name has no tree check, so a name cut short would pass.
+        # A line outside every ruled frame of the page (the note printed under a table) holds no amount or name of it.
         for box in page_.get('unread_seams', []):
+            centre = (box[1] + box[3]) / 2
+            if not any(b.page == page_['page_number'] and (b.top if b.top is not None else b.body_top) <= centre <= b.body_bottom
+                       for logical in logicals_ for b in logical.bands):
+                continue
             if not any(u.get('page') == page_['page_number'] and u.get('box') == box for u in built.unowned):
                 built.unowned.append({'kind': 'unread strip seam', 'page': page_['page_number'], 'box': box})
 
@@ -932,11 +1008,12 @@ def build_table(source: dict, options: dict, *, stop: bool = True, rules: dict |
     header = (settings or {}).get('header')
     by_node = [r for r in options.get('name_corrections', ()) if 'observation_id' not in r]
     printed, observation, variants = read_pages(source, options, settings, selected, rules)
+    printed, other_sections = direction_sections(printed, source.get('direction'))
     printed, recovered = recover_codes(printed, Path(source['path']), columns, spread=spread, header=header)
     report = Report()
     direction = source.get('direction')
     titles = page_titles(printed) if direction else {}
-    report.skipped_pages = [p for p, title in titles.items() if title not in (None, direction)]
+    report.skipped_pages = [p for p, title in titles.items() if title not in (None, direction)] + other_sections
     observed = [p for p in printed if p.number not in report.skipped_pages]
     logical = _layout(observed, columns, spread=spread, header=header)
     kind = source['target']['document_kind']

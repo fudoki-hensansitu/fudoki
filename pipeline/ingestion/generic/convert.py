@@ -107,6 +107,9 @@ def lay_notes(built) -> tuple[list[dict], list[dict], list[dict], set, list]:
     seen = set()
     for record in built.annotations:
         label = printed(record['label'])
+        count = len(record['runs'])
+        if count > 1 and len(label) % count == 0 and label == label[:len(label) // count] * count:
+            label = label[:len(label) // count]  # one line of the same words for each amount (`予算額` ×3): that word is each note's label
         # The dictionary first; then what the account says (a reserve's remarks are 充用); then the
         # transfer words of a remark.
         kind = kind_of(label) or record.get('hint') or kind_of(label, words=record['kind'] == 'annotation')

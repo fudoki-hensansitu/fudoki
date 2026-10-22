@@ -23,6 +23,11 @@ class AmountTextTest(unittest.TestCase):
         self.assertEqual(st.amount_text([box('528.435', 0, 0, 1, 1)]), '528,435')
         self.assertEqual(st.amount_text([box('6.71', 0, 0, 1, 1)]), '6.71')
 
+    def test_a_lone_zero_before_a_grouped_amount_is_a_misread_bracket(self):
+        self.assertEqual(st.amount_text([box('0', 0, 0, 1, 1), box('495, 372, 524', 1, 0, 2, 1)]), '495,372,524')
+        self.assertEqual(st.amount_text([box('0', 0, 0, 1, 1)]), '0')
+        self.assertEqual(st.amount_text([box('0,495', 0, 0, 1, 1)]), '0,495')
+
     def test_a_leading_a_is_a_misread_triangle(self):
         self.assertEqual(st.amount_text([box('A8,517,000', 0, 0, 1, 1)]), '△8,517,000')
         self.assertEqual(number(st.amount_text([box('A8,517,000', 0, 0, 1, 1)])), -8517000)

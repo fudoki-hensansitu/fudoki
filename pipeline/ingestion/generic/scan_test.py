@@ -432,3 +432,32 @@ class VariantCharsTest(unittest.TestCase):
         original = self.observation('vision')
         self.assertEqual(apply_variant_chars(original)[1], [])
         self.assertEqual(apply_variant_chars(original)[0]['pages'][0]['regions'][0]['observations'][0]['raw_text'], '賦課徵収費')
+
+
+class EnterpriseSectionTest(unittest.TestCase):
+    def test_a_page_keeps_only_the_sections_of_its_direction(self):
+        from ingestion.generic.scan import direction_sections
+        page = lambda number, words, rules=(): Page(number, 600, 800, list(words), list(rules))
+        title = lambda text, y: [Word(c, 40 + 18 * i, y, 54 + 18 * i, y + 12) for i, c in enumerate(text)]
+        body = lambda text, y: Word(text, 100, y, 160, y + 10)
+        first = page(1, [*title('収入', 80), body('収入の行', 120), *title('支出', 300), body('支出の行', 340)],
+                     [Rule(50, 90, 50, 700), Rule(50, 130, 500, 130), Rule(50, 350, 500, 350)])
+        second = page(2, [body('続きの行', 100)])   # no title: it goes on with the section before it
+        kept, skipped = direction_sections([first, second], 'expenditure')
+        self.assertEqual([[w.text for w in p.words if len(w.text) > 1] for p in kept], [['支出の行'], ['続きの行']])
+        self.assertEqual(skipped, [])
+        self.assertEqual([(r.y0, r.y1) for r in kept[0].rules if r.vertical], [(298.0, 700)])
+        self.assertEqual([r.y0 for r in kept[0].rules if not r.vertical], [350])
+        revenue, skipped = direction_sections([first, second], 'revenue')
+        self.assertEqual([w.text for w in revenue[0].words if len(w.text) > 1], ['収入の行'])
+        self.assertEqual([p.number for p in revenue], [1])
+        self.assertEqual(skipped, [2])   # the continuation belongs to the 支出 section
+        plain = [page(1, [body('歳出の行', 100)])]
+        self.assertEqual(direction_sections(plain, 'expenditure'), (plain, []))
+
+    def test_a_digit_read_twice_at_a_tile_seam_is_no_second_word(self):
+        from ingestion.generic.scan import drop_covered_digits
+        amount = Word('11,547,449', 381, 327.5, 432.8, 340.7)
+        again = Word('9', 428.3, 327.1, 430.2, 340.0)       # the left end of the next tile's line, inside the amount
+        neighbour = Word('9', 440, 327.1, 442, 340.0)       # a lone 9 of its own cell stays
+        self.assertEqual(drop_covered_digits([amount, again, neighbour]), [amount, neighbour])
