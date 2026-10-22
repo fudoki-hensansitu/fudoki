@@ -53,11 +53,12 @@
     {
       "table_id": "expenditure-settlement-1",
       "conversion_id": "settlement-1",
-      "input_fingerprint": "6fd6dad2e3f47c41fc0710511ad817c4a2c6a3b27701c73336e8800f2ac3c38d",
+      "input_fingerprint": "8c62525da21d6b939c5d7545f520134cc3ca15124513848ea90598c64c1f09c6",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "4頁の表は節・備考の列が無い総括表で、明細ではないため読まない",
-        "5頁の表は節・備考の列が無い総括表で、明細ではないため読まない"
+        "5頁の表は節・備考の列が無い総括表で、明細ではないため読まない",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 增→増 8 件（p14:full-page:a0:result1:r9・p14:full-page:a0:result1:r9:w3・p16:full-page:a0:result1:r11・p16:full-page:a0:result1:r11:w3・p18:full-page:a0:result1:r16・p18:full-page:a0:result1:r16:w3・p20:full-page:a0:result1:r8・p20:full-page:a0:result1:r8:w2）・徵→徴 6 件（p14:full-page:a0:result0:r23・p14:full-page:a0:result0:r23:w1・p14:full-page:a0:result0:r27・p14:full-page:a0:result0:r27:w3・p17:full-page:a0:result1:r13・p17:full-page:a0:result1:r13:w2）・查→査 12 件（p16:full-page:a0:result0:r32・p16:full-page:a0:result0:r32:w5・p17:full-page:a0:result1:r45・p17:full-page:a0:result1:r45:w5・p17:full-page:a0:result1:r55・p17:full-page:a0:result1:r55:w3・p17:full-page:a0:result1:r61・p17:full-page:a0:result1:r61:w7・p17:full-page:a0:result1:r81・p17:full-page:a0:result1:r81:w3・p18:full-page:a0:result0:r9・p18:full-page:a0:result0:r9:w5）・齡→齢 2 件（p17:full-page:a0:result1:r23・p17:full-page:a0:result1:r23:w8）。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,

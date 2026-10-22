@@ -105,7 +105,7 @@ VLM を既定のまま（`vlm_fallback` なし）で取ると、12領域が埋�
 
 ## 描画の箱・時間の上限・Vision の数字の再読
 
-- **CropBox と MediaBox。** Paddle の観測の座標は pypdfium2（CropBox）で、規則線と墨の再読の切り出しは poppler（MediaBox）の画像である。両者が違う頁（切り取った A3 の見開き）では別の墨を読むので、墨の再読の前に `require_one_page_box` で確かめ、違えば取得を止める。回転した頁は止めない。pypdfium2 も poppler も表示された向きで描き、281000 の `/Rotate 90` の頁（物理23頁・75頁）で2つの画像は同じ大きさ・同じ位置（ずれ0px、直立の頁と同じ重なり）だった。132152 の出典は157頁すべてで CropBox と MediaBox が同じで回転も無く、保存済みの観測は変わらない。
+- **CropBox と MediaBox。** Paddle の観測の座標は pypdfium2（CropBox）で、規則線と墨の再読の切り出しは poppler（MediaBox）の画像である。両者が違う頁（切り取った A3 の見開き）では別の墨を読むので、墨の再読の前に `require_one_page_box` で確かめ、違えば取得を止める。回転した頁は止めない。PDFium の `get_size` は `/Rotate` 90/270 で幅と高さを入れ替え、`pdftoppm` も `/Rotate` を適用するので、CropBox が MediaBox と同じなら表示寸法が同じになる。実際に 281000 の `/Rotate 90` の頁（物理23頁・75頁）で2つの画像は同じ大きさ・同じ位置（ずれ0px、直立の頁と同じ重なり）だった。132152 の出典は157頁すべてで CropBox と MediaBox が同じで回転も無く、保存済みの観測は変わらない。
 - **pypdfium2 の版。** 132152/2025 の観測は pypdfium2 5.13.0 で取得した。5.14.0 での再現は未確認（観測は固定されているので、変換には影響しない）。取り直すときに `ingestion:ocr --verify` で確かめる。
 - **pypdfium2 の描画の時間の上限。** pdfium は同じプロセスの中で動き、止められない。`render_timeout_seconds` を超えたら取得をエラーで止める（描画のスレッドは残る）。
 - **Vision の依頼の数字の再読。** 既存の Vision の冊でも、単独の数字の再読（`_read_zeros`）は ONNX Runtime の既定になった。以前は Paddle 本体だった。出力が Paddle 本体と一致することは確かめてある（933観測、枠差0px、単独の数字の切り出しは `0` を同じに読む）。観測は固定されているので、既存の観測のバイトは変わらない。取り直したときだけ、この経路で読まれる。

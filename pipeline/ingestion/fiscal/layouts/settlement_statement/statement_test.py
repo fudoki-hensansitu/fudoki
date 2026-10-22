@@ -240,8 +240,12 @@ class InputsTest(unittest.TestCase):
                     {'origin': {'sha256': 'x'}, 'pages': [{'page_number': 1, 'regions': []}]}).encode()))
                 paths.append({'id': name, 'path': str(path)})
             item = {'sha256': 'x', 'pdf_type': 'scan', 'scope': [{'pages': [[1, 1]]}], 'ocr': paths}
-            with self.assertRaisesRegex(ValueError, 'more than one OCR input'):
-                convert([item], Path(tmp), {'table_id': 't'})
+            from types import SimpleNamespace
+            from unittest.mock import patch
+            item['path'] = 'x.pdf'
+            with patch('ingestion.fiscal.layouts.settlement_statement.convert.detect', return_value=SimpleNamespace(vertical=())):
+                with self.assertRaisesRegex(ValueError, 'more than one OCR input'):
+                    convert([item], Path(tmp), {'table_id': 't'})
 
     def test_the_recheck_reads_a_conversion_with_one_ocr_input(self):
         from pathlib import Path
@@ -257,8 +261,14 @@ class InputsTest(unittest.TestCase):
                 {'id': 'b', 'kind': 'region', 'parent_id': None, 'raw_text': 'センタ一費'}]}]}]}
         rule = {'id': 'r', 'page': 3, 'observation_id': 'b', 'observed_name': 'センタ一費', 'corrected_name': 'センター費', 'reason': 'x'}
         texts = lambda o: [x['raw_text'] for x in o['pages'][0]['regions'][0]['observations']]
-        self.assertEqual(texts(corrected(observation('paddle'), [rule])), ['健康診査費', 'センター費'])
-        self.assertEqual(texts(corrected(observation('vision'), [])), ['健康診查費', 'センタ一費'])
+        fixed, notes, lines = corrected(observation('paddle'), [rule])
+        self.assertEqual(texts(fixed), ['健康診査費', 'センター費'])
+        self.assertEqual(lines, frozenset({'b'}))
+        self.assertEqual(len(notes), 2)
+        self.assertIn('3頁 センタ一費→センター費', notes[0])
+        self.assertIn('查→査 1 件（a）', notes[1])
+        vision, notes, _ = corrected(observation('vision'), [])
+        self.assertEqual((texts(vision), notes), (['健康診查費', 'センタ一費'], []))
 
     def test_the_number_fragments_of_a_paddle_line_are_one_amount_word(self):
         from ingestion.fiscal.layouts.settlement_statement.convert import ocr_boxes
@@ -272,3 +282,29 @@ class InputsTest(unittest.TestCase):
         page = {'page_number': 1, 'regions': [{'observations': [line, *words]}]}
         boxes = ocr_boxes({}, page)
         self.assertEqual([p.text for p in boxes[0].parts], ['経', '費', '3,254,461,963'])
+
+    def test_number_fragments_of_two_columns_are_not_joined_over_a_column_rule(self):
+        from ingestion.fiscal.layouts.settlement_statement.convert import ocr_boxes
+        line = {'id': 'p1:full-page:a0:result0:r0', 'kind': 'region', 'parent_id': None, 'raw_text': '1,234,5678,765,432',
+                'bbox_pdf_pt': [20, 10, 56, 20], 'attempt_id': 'p1:full-page:a0'}
+        children = [('1', [20, 10, 22, 20]), (',', [22.5, 10, 23.5, 20]), ('234', [24, 10, 29, 20]), (',', [29.5, 10, 30.5, 20]),
+                    ('567', [31, 10, 36, 20]), ('8', [38.5, 10, 40.5, 20]), (',', [41, 10, 42, 20]), ('765', [42.5, 10, 48, 20]),
+                    (',', [48.5, 10, 49.5, 20]), ('432', [50, 10, 56, 20])]
+        words = [{'id': f'{line["id"]}:w{i}', 'kind': 'word', 'parent_id': line['id'], 'raw_text': t, 'bbox_pdf_pt': b}
+                 for i, (t, b) in enumerate(children)]
+        page = {'page_number': 1, 'regions': [{'observations': [line, *words]}]}
+        self.assertEqual([p.text for p in ocr_boxes({}, page, (38,))[0].parts], ['1,234,567', '8,765,432'])
+
+    def test_a_rotated_page_is_displayed_with_its_width_and_height_swapped(self):
+        import tempfile
+        from pathlib import Path
+        import pypdfium2 as pdfium
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'r.pdf'
+            document = pdfium.PdfDocument.new()
+            document.new_page(100, 200).set_rotation(90)
+            document.save(str(path))
+            document.close()
+            from ingestion.lib import pdf_rules
+            self.assertEqual(pdfium.PdfDocument(str(path))[0].get_size(), (200, 100))
+            self.assertEqual(pdf_rules.render(path, 1, 72).shape, (100, 200))
