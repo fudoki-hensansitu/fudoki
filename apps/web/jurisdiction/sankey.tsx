@@ -11,6 +11,7 @@ interface FlowNode {
   key: string
   name: string
   yen: number
+  amountMissing: boolean
   column: number
   children: FlowNode[]
   height: number
@@ -27,17 +28,18 @@ export function Sankey({ flows, depth }: { flows: Drill[]; depth: FlowDepth }) {
   const columns = depth === 'kou' ? 2 : depth === 'moku' ? 3 : 4
   const total = flows.reduce((sum, flow) => sum + Math.max(0, flow.kan.yen), 0)
   const scale = total ? 360 / total : 0
-  const make = (key: string, name: string, yen: number, column: number, children: FlowNode[]): FlowNode => {
-    const height = Math.max(0, yen) * scale
+  const make = (key: string, name: string, yen: number, column: number, children: FlowNode[], amountMissing = false): FlowNode => {
+    // 印字のない親は子の帯を収める高さだけ確保し、合計を出典の金額として表示しない。
+    const height = amountMissing ? children.reduce((sum, child) => sum + child.height, 0) : Math.max(0, yen) * scale
     const childSpan = children.reduce((sum, child) => sum + child.span, 0) + Math.max(0, children.length - 1) * GAP
-    return { key, name, yen, column, children, height, span: Math.max(height, childSpan, 30), y: 0 }
+    return { key, name, yen, amountMissing, column, children, height, span: Math.max(height, childSpan, 30), y: 0 }
   }
   const roots = flows.map(({ kan, kou }) => make(kan.id, kan.name, kan.yen, 0,
     kou.map((k) => make(k.id, k.name, k.yen, 1, columns > 2
       ? k.moku.map((m) => make(m.id, m.name, m.yen, 2, columns > 3
-        ? m.setsu.map((s, i) => make(`${m.id}-${i}`, s.name, s.yen, 3, []))
-        : []))
-      : []))))
+        ? m.setsu.map((s, i) => make(`${m.id}-${i}`, s.name, s.yen, 3, [], s.amountMissing))
+        : [], m.amountMissing))
+      : [], k.amountMissing)), kan.amountMissing))
   const nodes: FlowNode[] = []
   const bands: React.ReactNode[] = []
   const x = (column: number) => 220 + column * COLUMN_WIDTH
@@ -71,12 +73,13 @@ export function Sankey({ flows, depth }: { flows: Drill[]; depth: FlowDepth }) {
           const center = node.y + node.height / 2
           const chars = Array.from(node.name)
           const label = chars.length > 15 ? `${chars.slice(0, 14).join('')}…` : node.name
+          const amount = node.amountMissing ? '金額未記載' : formatYen(node.yen)
           return (
             <g key={node.key}>
-              <title>{`${node.name} ${formatYen(node.yen)}`}</title>
+              <title>{`${node.name} ${amount}`}</title>
               <rect x={x(node.column)} y={node.y} width={NODE_WIDTH} height={Math.max(node.height, 2)} rx={2} className={node.yen > 0 ? 'fill-primary' : 'fill-muted-foreground'} />
               <text x={x(node.column) - 10} y={center - 3} textAnchor="end" className="fill-foreground text-[12.5px]" stroke="var(--background)" strokeWidth={4} paintOrder="stroke">{label}</text>
-              <text x={x(node.column) - 10} y={center + 13} textAnchor="end" className="fill-muted-foreground text-[11.5px]" stroke="var(--background)" strokeWidth={4} paintOrder="stroke">{formatYen(node.yen)}</text>
+              <text x={x(node.column) - 10} y={center + 13} textAnchor="end" className="fill-muted-foreground text-[11.5px]" stroke="var(--background)" strokeWidth={4} paintOrder="stroke">{amount}</text>
             </g>
           )
         })}

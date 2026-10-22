@@ -153,6 +153,30 @@ describe('自治体の個別ページ', () => {
 })
 
 describe('内訳の API', () => {
+  test('科目軸が款項でも全款を返し、1000件を超える項と目・節を省略しない', async () => {
+    const north: Env = { ...env, API: fixtureApi({ code: '131172', name: '北区', axis: '款項', extraNodes: Array.from({ length: 1001 }, (_, i) => node({ node_id: id(1000 + i), parent_node_id: id(2), node_kind: '項', name: `追加項${i}`, amount_yen: 0, fiscal_year: 2025 })) }) }
+    const res = await get('/api/jurisdictions/flow/131172/2025/setsu', north)
+    expect(res.status).toBe(200)
+    const flows = await res.json() as { kan: { id: string }; kou: { moku: { setsu: unknown[] }[] }[] }[]
+    expect(flows).toHaveLength(2)
+    expect(flows.find((flow) => flow.kan.id === id(2))!.kou).toHaveLength(1002)
+    expect(flows.find((flow) => flow.kan.id === id(1))!.kou[0]!.moku[0]!.setsu).toHaveLength(2)
+  })
+
+  test('印字のない項金額と印字された0円を区別して返す', async () => {
+    const missing: Env = { ...env, API: fixtureApi({ code: '132012', name: '八王子市', extraNodes: [
+      node({ node_id: id(20), parent_node_id: id(1), node_kind: '項', name: '子ども費', amount_yen: null, fiscal_year: 2025 }),
+      node({ node_id: id(21), parent_node_id: id(2), node_kind: '項', name: '総務管理費', amount_yen: 0, fiscal_year: 2025 }),
+    ] }) }
+    for (const depth of ['kou', 'moku']) {
+      const res = await get(`/api/jurisdictions/flow/132012/2025/${depth}`, missing)
+      expect(res.status).toBe(200)
+      const flows = await res.json() as { kan: { id: string }; kou: { yen: number; amountMissing?: true }[] }[]
+      expect(flows.find((flow) => flow.kan.id === id(1))!.kou[0]!.amountMissing).toBe(true)
+      expect(flows.find((flow) => flow.kan.id === id(2))!.kou[0]!.amountMissing).toBeUndefined()
+      expect(flows.find((flow) => flow.kan.id === id(2))!.kou[0]!.yen).toBe(0)
+    }
+  })
   test('後続ページの節を優先し、全ページの金額から上位の内訳を選ぶ', async () => {
     const paginated: Env = { ...env, API: { fetch: async (req) => {
       const url = new URL(req.url)

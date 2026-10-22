@@ -6,6 +6,8 @@ export interface Line {
   id: string
   name: string
   yen: number
+  /** 出典に金額の印字がない。yen の 0 は表示に使わない */
+  amountMissing?: true
   /** 出典の頁（金額の印字の頁） */
   page: number | null
 }
@@ -13,6 +15,8 @@ export interface Line {
 export interface Setsu {
   name: string
   yen: number
+  /** 出典に金額の印字がない。yen の 0 は表示に使わない */
+  amountMissing?: true
 }
 
 export interface Moku extends Line {
