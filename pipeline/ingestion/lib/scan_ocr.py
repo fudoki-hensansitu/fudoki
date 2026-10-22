@@ -346,8 +346,9 @@ def _key(page: int, box: Sequence[float]) -> str:
 
 def require_one_page_box(path: Path, number: int) -> None:
     """Paddle's boxes are in the CropBox (pypdfium2) while the rules and the re-read crops come from
-    poppler's MediaBox page. Where the two differ (a cropped A3 spread, a rotated page) the crops would
-    read other ink than the boxes name, so the acquisition stops instead of reading it."""
+    poppler's MediaBox page. Where the two differ (a cropped A3 spread) the crops would read other ink than
+    the boxes name, so the acquisition stops instead of reading it. Both render a rotated page as it is
+    displayed (same size, same place for the ink: 281000's /Rotate 90 pages), so rotation alone is no reason."""
     import pypdfium2 as pdfium
     document = pdfium.PdfDocument(str(path))
     try:
@@ -355,8 +356,8 @@ def require_one_page_box(path: Path, number: int) -> None:
         crop, media, rotation = page.get_cropbox(), page.get_mediabox(), page.get_rotation()
     finally:
         document.close()
-    if rotation or any(abs(a - b) > 0.01 for a, b in zip(crop, media)):
-        raise ValueError(f"Page {number} has a CropBox {crop} different from its MediaBox {media} or is rotated ({rotation}); "
+    if any(abs(a - b) > 0.01 for a, b in zip(crop, media)):
+        raise ValueError(f"Page {number} has a CropBox {crop} different from its MediaBox {media} (rotation {rotation}); "
                          "the re-read of missed ink needs one box")
 
 

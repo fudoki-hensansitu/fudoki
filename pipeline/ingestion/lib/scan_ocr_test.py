@@ -139,6 +139,18 @@ class PageBoxTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "CropBox"):
                 require_one_page_box(cropped, 1)
 
+    def test_a_rotated_page_is_allowed_because_both_renderers_show_it_as_displayed(self):
+        import tempfile
+        import pypdfium2 as pdfium
+        from ingestion.lib.scan_ocr import require_one_page_box
+        with tempfile.TemporaryDirectory() as directory:
+            rotated = Path(directory) / "rotated.pdf"
+            document = pdfium.PdfDocument.new()
+            document.new_page(100, 200).set_rotation(90)
+            document.save(str(rotated))
+            document.close()
+            require_one_page_box(rotated, 1)
+
 
 class SeamPairs(unittest.TestCase):
     """A line Paddle dropped at the strip seam comes back whole or is recorded unread, never in part."""

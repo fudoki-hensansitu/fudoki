@@ -249,7 +249,8 @@ def _merge_strips(groups: list[list[dict]], spans: list[tuple[int, int]]) -> tup
 
     A line whose box lies over another strip's line (at least half of the smaller box) is a duplicate.
     With the same text, the reading farther from its own strip's edge stays (the nearer one may be cut).
-    A shorter text inside a longer one that covers it is the cut reading, and goes. A line crossing the
+    A shorter text inside a longer one that covers it is the cut reading, and goes (when the shorter box
+    ends at its own strip's edge, half of it over the longer one is enough). A line crossing the
     seam is read in two pieces, each cut by its own strip's edge (a box ending at the right edge of one
     strip and one starting at the left edge of the next, on one text line): neither is trusted, both go,
     and the ink they leave is read again whole by the missed-ink re-read. Any other differing readings
@@ -271,6 +272,10 @@ def _merge_strips(groups: list[list[dict]], spans: list[tuple[int, int]]) -> tup
     for k in range(len(groups) - 1):
         band = (spans[k + 1][0], spans[k][1])
         near = [(j, o) for j, o in items if j in (k, k + 1) and o["bbox_px"][2] > band[0] and o["bbox_px"][0] < band[1]]
+        # the box of a reading cut by its own strip's edge is as tall as its cut text, so it overlaps the
+        # whole reading less than a box of the same height would
+        cut_a = lambda o, edge=spans[k][1]: o["bbox_px"][2] >= edge - SEAM_TOLERANCE_PX
+        cut_b = lambda o, edge=spans[k + 1][0]: o["bbox_px"][0] <= edge + SEAM_TOLERANCE_PX
         for i, a in [x for x in near if x[0] == k]:
             for j, b in [x for x in near if x[0] == k + 1]:
                 if a["id"] in dropped or b["id"] in dropped:
@@ -279,9 +284,9 @@ def _merge_strips(groups: list[list[dict]], spans: list[tuple[int, int]]) -> tup
                 ta, tb = text(a), text(b)
                 if shared >= 0.5 and ta == tb:
                     dropped.add(b["id"] if margin(i, a) >= margin(j, b) else a["id"])
-                elif shared >= 0.8 and tb and tb in ta:
+                elif tb and tb in ta and (shared >= 0.8 or (shared >= 0.5 and cut_b(b))):
                     dropped.add(b["id"])
-                elif shared >= 0.8 and ta and ta in tb:
+                elif ta and ta in tb and (shared >= 0.8 or (shared >= 0.5 and cut_a(a))):
                     dropped.add(a["id"])
                 elif (a["bbox_px"][2] >= spans[k][1] - SEAM_TOLERANCE_PX and b["bbox_px"][0] <= spans[k + 1][0] + SEAM_TOLERANCE_PX
                       and same_line(a, b)):

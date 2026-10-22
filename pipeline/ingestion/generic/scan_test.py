@@ -310,6 +310,20 @@ class CellWordsTest(unittest.TestCase):
         self.assertEqual(self.paddle_words('159同項', children, [100, 10, 144, 20], [60, 125.5, 300]),
                          [('159', 100, 120), ('同項', 125, 144)])
 
+    def test_a_minus_sign_set_apart_from_its_digits_is_one_amount(self):
+        # `△ 15,673,555` (132195): the sign's box ends 5.8pt before the digits, over 0.6 of the line height
+        children = [('△', [771.8, 273.5, 773.3, 282.2]), ('15', [779.0, 273.5, 784.8, 282.2]), (',', [786.2, 273.5, 787.7, 282.2]),
+                    ('673', [792.0, 273.5, 802.1, 282.2]), (',', [803.5, 273.5, 804.9, 282.2]), ('555', [809.3, 273.5, 817.9, 282.2])]
+        self.assertEqual(self.paddle_words('△15,673,555', children, [768.9, 273.5, 820.5, 282.2], [300, 900]),
+                         [('△15,673,555', 769, 820)])
+
+    def test_the_boxes_of_a_spaced_out_name_keep_the_order_the_line_is_spelled(self):
+        # `3広報費` (132195): the box of `広` starts left of the `3` before it; sorted by x it read `広3報費`
+        children = [('3', [44.4, 131.7, 46.3, 143.5]), ('広', [41.0, 131.7, 65.5, 143.5]),
+                    ('報', [64.6, 131.7, 89.3, 143.5]), ('費', [88.3, 131.7, 105.8, 143.5])]
+        words = self.paddle_words('3広報費', children, [40.6, 131.7, 105.8, 143.5], [22, 300])
+        self.assertEqual(''.join(t for t, _, _ in words), '3広報費')
+
     def test_children_that_do_not_spell_the_line_are_not_used_but_the_unit_is_split_off(self):
         # the children lost `2,`; the line still ends in its own 円, and the amount is not cut by the rule
         children = [('490', [30, 10, 50, 20]), (',', [51, 10, 52, 20]), ('840', [54, 10, 74, 20]), ('円', [80, 10, 90, 20])]

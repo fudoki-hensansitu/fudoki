@@ -18,406 +18,38 @@
       "options": {
         "account": "一般会計",
         "table_id": "general-expenditure-detail",
-        "code_readings": [
-          {
-            "id": "komae-p60-ko2",
-            "page": 60,
-            "box": [
-              33.5,
-              448.5,
-              38.0,
-              455.5
-            ],
-            "code": "2",
-            "reason": "原画の項の科目欄で「2 徴税費」と読んだ。OCR は項の番号 2 を読まず、未読の墨（unread_ink）になっていた。"
-          }
-        ],
-        "amount_corrections": [
-          {
-            "id": "vlm-80d62c2fef",
-            "page": 54,
-            "observation_id": "p54:tile-11-2:r2:w0",
-            "observed_amount": "649,914",
-            "corrected_amount": "649,944",
-            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 649,914）"
-          },
-          {
-            "id": "vlm-752cc7e996",
-            "page": 56,
-            "observation_id": "p56:tile-10-1:r1:w0",
-            "observed_amount": "4,415,000",
-            "corrected_amount": "4,445,000",
-            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 4,415,000）"
-          },
-          {
-            "id": "vlm-4700a6f005",
-            "page": 60,
-            "observation_id": "p60:tile-11-1:r1:w0",
-            "observed_amount": "759,315",
-            "corrected_amount": "759,345",
-            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 759,315）"
-          },
-          {
-            "id": "vlm-c9f48a5d27",
-            "page": 61,
-            "observation_id": "p61:tile-10-2:r4:w0",
-            "observed_amount": "18,840",
-            "corrected_amount": "48,840",
-            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 18,840）"
-          },
-          {
-            "id": "vlm-6312ad64d3",
-            "page": 63,
-            "observation_id": "p63:tile-13-0:r2",
-            "observed_amount": "1,635, 162",
-            "corrected_amount": "1,635,462",
-            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 1,635,162）"
-          },
-          {
-            "id": "vlm-9ecd63ce5f",
-            "page": 64,
-            "observation_id": "p64:tile-11-2:r2:w0",
-            "observed_amount": "8,104",
-            "corrected_amount": "8,404",
-            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 8,104）"
-          },
-          {
-            "id": "vlm-56437870ae",
-            "page": 70,
-            "observation_id": "p70:tile-13-0:r3:w0",
-            "observed_amount": "1,070,880",
-            "corrected_amount": "4,070,880",
-            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 1,070,880）"
-          },
-          {
-            "id": "vlm-124b57d125",
-            "page": 71,
-            "observation_id": "p71:tile-13-0:r3:w0",
-            "observed_amount": "18,827",
-            "corrected_amount": "48,827",
-            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 18,827）"
-          },
-          {
-            "id": "vlm-eacd415338",
-            "page": 71,
-            "observation_id": "p71:tile-13-1:r1:w0",
-            "observed_amount": "741,108",
-            "corrected_amount": "744,408",
-            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 741,108）"
-          },
-          {
-            "id": "vlm-dcba74dfb3",
-            "page": 72,
-            "observation_id": "p72:tile-13-1:r3",
-            "observed_amount": "14, 141,838",
-            "corrected_amount": "44,141,838",
-            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 14,141,838）"
-          },
-          {
-            "id": "vlm-cb90bee907",
-            "page": 73,
-            "observation_id": "p73:tile-11-2:r2:w0",
-            "observed_amount": "77,916",
-            "corrected_amount": "77,946",
-            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 77,916）"
-          },
-          {
-            "id": "vlm-104417149b",
-            "page": 73,
-            "observation_id": "p73:tile-10-2:r4:w0",
-            "observed_amount": "3,913,623",
-            "corrected_amount": "3,943,623",
-            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 3,913,623）"
-          },
-          {
-            "id": "vlm-decf421c14",
-            "page": 75,
-            "observation_id": "p75:tile-11-0:r2:w0",
-            "observed_amount": "12,900",
-            "corrected_amount": "42,900",
-            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 12,900）"
-          },
-          {
-            "id": "vlm-fe5212fe28",
-            "page": 75,
-            "observation_id": "p75:tile-11-1:r1:w0",
-            "observed_amount": "3,879,514",
-            "corrected_amount": "3,879,544",
-            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 3,879,514）"
-          },
-          {
-            "id": "vlm-cdacbb1ef0",
-            "page": 77,
-            "observation_id": "p77:tile-10-2:r0",
-            "observed_amount": "27,321, 163",
-            "corrected_amount": "27,321,463",
-            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 27,321,163）"
-          },
-          {
-            "id": "vlm-6e25ae1f8e",
-            "page": 79,
-            "observation_id": "p79:tile-11-2:r1:w0",
-            "observed_amount": "55,141,951",
-            "corrected_amount": "55,441,951",
-            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 55,141,951）"
-          },
-          {
-            "id": "vlm-3876925f41",
-            "page": 87,
-            "observation_id": "p87:tile-10-1:r0:w0",
-            "observed_amount": "10,000",
-            "corrected_amount": "40,000",
-            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 10,000）"
-          },
-          {
-            "id": "vlm-a61a77371c",
-            "page": 89,
-            "observation_id": "p89:tile-7-1:r0:w0",
-            "observed_amount": "73,061",
-            "corrected_amount": "△73,061",
-            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 73,061）"
-          },
-          {
-            "id": "vlm-4a7679b21a",
-            "page": 89,
-            "observation_id": "p89:tile-13-0:r3:w0",
-            "observed_amount": "26,100",
-            "corrected_amount": "26,400",
-            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 26,100）"
-          },
-          {
-            "id": "vlm-cf1c26025e",
-            "page": 95,
-            "observation_id": "p95:tile-13-1:r4:w0",
-            "observed_amount": "18,011,015",
-            "corrected_amount": "48,011,015",
-            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 18,011,015）"
-          },
-          {
-            "id": "vlm-5fb54f26ea",
-            "page": 96,
-            "observation_id": "p96:tile-10-2:r0:w0",
-            "observed_amount": "100,000",
-            "corrected_amount": "400,000",
-            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 100,000）"
-          },
-          {
-            "id": "vlm-bded468e23",
-            "page": 97,
-            "observation_id": "p97:tile-5-0:r0:w0",
-            "observed_amount": "3,425,000",
-            "corrected_amount": "△3,425,000",
-            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 3,425,000）"
-          },
-          {
-            "id": "vlm-c71a08cd2a",
-            "page": 99,
-            "observation_id": "p99:tile-11-1:r3:w0",
-            "observed_amount": "1,234,500",
-            "corrected_amount": "4,234,500",
-            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 1,234,500）"
-          },
-          {
-            "id": "vlm-663ad6b7d0",
-            "page": 100,
-            "observation_id": "p100:tile-13-2:r2:w0",
-            "observed_amount": "614,914",
-            "corrected_amount": "644,944",
-            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 614,914）"
-          },
-          {
-            "id": "vlm-f0deb1105c",
-            "page": 107,
-            "observation_id": "p107:tile-11-0:r3:w0",
-            "observed_amount": "10,123",
-            "corrected_amount": "40,123",
-            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 10,123）"
-          },
-          {
-            "id": "vlm-bd811444a4",
-            "page": 109,
-            "observation_id": "p109:tile-13-3:r0:w0",
-            "observed_amount": "5,418,886",
-            "corrected_amount": "5,448,886",
-            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 5,418,886）"
-          },
-          {
-            "id": "vlm-3fb230a356",
-            "page": 110,
-            "observation_id": "p110:tile-8-0:r1:w0",
-            "observed_amount": "181,064,000",
-            "corrected_amount": "481,064,000",
-            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 181,064,000）"
-          },
-          {
-            "id": "vlm-cb43a83aee",
-            "page": 110,
-            "observation_id": "p110:tile-10-2:r1:w0",
-            "observed_amount": "33,700,180",
-            "corrected_amount": "33,700,480",
-            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 33,700,180）"
-          },
-          {
-            "id": "vlm-158f3c9a86",
-            "page": 111,
-            "observation_id": "p111:tile-7-1:r0:w1",
-            "observed_amount": "211,699",
-            "corrected_amount": "△211,699",
-            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 211,699）"
-          },
-          {
-            "id": "vlm-b08bfecc15",
-            "page": 114,
-            "observation_id": "p114:tile-11-2:r3:w0",
-            "observed_amount": "180,354",
-            "corrected_amount": "480,354",
-            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 180,354）"
-          },
-          {
-            "id": "vlm-0f240d37b8",
-            "page": 114,
-            "observation_id": "p114:tile-13-2:r3:w0",
-            "observed_amount": "77,616",
-            "corrected_amount": "77,646",
-            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は 77,616）"
-          },
-          {
-            "id": "vlm-d7beac2a3a",
-            "page": 54,
-            "observation_id": "p54:tile-14-2:r3",
-            "observed_amount": "ヘ64,920",
-            "corrected_amount": "△64,920",
-            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は ヘ64,920）"
-          },
-          {
-            "id": "vlm-58c1f909b6",
-            "page": 86,
-            "observation_id": "p86:tile-14-1:r2",
-            "observed_amount": "ヘ21,497",
-            "corrected_amount": "△21,497",
-            "reason": "opencode-go/gpt-6-luna で読み直し、木の検査で確かめた（OCR は ヘ21,497）"
-          },
-          {
-            "id": "vlm-komae-p85-moku",
-            "page": 85,
-            "observation_id": "p85:tile-4-1:r0",
-            "observed_amount": "000 '688 g",
-            "corrected_amount": "3,339,000",
-            "reason": "opencode-go/gpt-6-luna で読み直し、行の内訳の和で確かめた（OCR は 000 '688 g）"
-          }
-        ],
         "name_corrections": [
           {
-            "id": "komae-name-p57-0",
-            "page": 57,
-            "observation_id": "p57:tile-3-1:r0",
-            "observed_name": "產",
-            "corrected_name": "産",
-            "reason": "原画の科目名は「財産管理費」。OCR が 產 を字形の近い字と読んだ（gpt-6-luna で読み直し）。"
+            "id": "komae-p59-ti",
+            "page": 59,
+            "observation_id": "p59:full-page:a0:result0:r21",
+            "observed_name": "コミュニテイ",
+            "corrected_name": "コミュニティ",
+            "reason": "原典の画像で「コミュニティ推進費」と印字されている。Paddle は小さい「ィ」を「イ」と読んだ。字形の対応表は1字ずつで、イ→ィ は置けないので、この行だけを宣言する。"
           },
           {
-            "id": "komae-name-p62-1",
-            "page": 62,
-            "observation_id": "p62:tile-3-0:r1",
-            "observed_name": "查",
-            "corrected_name": "査",
-            "reason": "原画の科目名は「固定資産評価審査委員会費」。OCR が 查 を字形の近い字と読んだ（gpt-6-luna で読み直し）。"
+            "id": "komae-p72-i",
+            "page": 72,
+            "observation_id": "p72:full-page:a0:result0:r29",
+            "observed_name": "サービス費",
+            "corrected_name": "いサービス費",
+            "reason": "原典の画像で「障がいサービス費」と印字されている（1行目の末尾が「障がい」、2行目が「サービス費」）。Paddle は1行目の「い」を落とした。1行目は金額と連なって読まれ、訂正すると金額の位置が失われるので、名称が続く2行目に「い」を戻す（連結した名称は同じ）。"
           },
           {
-            "id": "komae-name-p63-2",
-            "page": 63,
-            "observation_id": "p63:tile-3-2:r0",
-            "observed_name": "举",
-            "corrected_name": "挙",
-            "reason": "原画の科目名は「選挙費」。OCR が 举 を字形の近い字と読んだ（gpt-6-luna で読み直し）。"
+            "id": "komae-p91-ryo-19",
+            "page": 91,
+            "observation_id": "p91:full-page:a0:result0:r19",
+            "observed_name": "りよう",
+            "corrected_name": "りょう",
+            "reason": "原典の画像で「道路橋りょう費」と印字されている。Paddle は小さい「ょ」を「よ」と読んだ。字形の対応表は1字ずつで、よ→ょ は置けないので、この行だけを宣言する。"
           },
           {
-            "id": "komae-name-p64-3",
-            "page": 64,
-            "observation_id": "p64:tile-3-1:r0",
-            "observed_name": "拳",
-            "corrected_name": "挙",
-            "reason": "原画の科目名は「選挙啓発費」。OCR が 拳 を字形の近い字と読んだ（gpt-6-luna で読み直し）。"
-          },
-          {
-            "id": "komae-name-p65-4",
-            "page": 65,
-            "observation_id": "p65:tile-3-1:r0",
-            "observed_name": "举",
-            "corrected_name": "挙",
-            "reason": "原画の科目名は「東京都知事選挙費」。OCR が 举 を字形の近い字と読んだ（gpt-6-luna で読み直し）。"
-          },
-          {
-            "id": "komae-name-p65-5",
-            "page": 65,
-            "observation_id": "p1:ink-6:r0",
-            "observed_name": "举",
-            "corrected_name": "挙",
-            "reason": "原画の科目名は「衆議院議員選挙費」。OCR が 举 を字形の近い字と読んだ（gpt-6-luna で読み直し）。"
-          },
-          {
-            "id": "komae-name-p66-6",
-            "page": 66,
-            "observation_id": "p66:tile-3-1:r0",
-            "observed_name": "查",
-            "corrected_name": "査",
-            "reason": "原画の科目名は「統計調査費」。OCR が 查 を字形の近い字と読んだ（gpt-6-luna で読み直し）。"
-          },
-          {
-            "id": "komae-name-p67-7",
-            "page": 67,
-            "observation_id": "p67:tile-3-1:r0",
-            "observed_name": "查",
-            "corrected_name": "査",
-            "reason": "原画の科目名は「監査委員費」。OCR が 查 を字形の近い字と読んだ（gpt-6-luna で読み直し）。"
-          },
-          {
-            "id": "komae-name-p67-8",
-            "page": 67,
-            "observation_id": "p67:tile-3-2:r0",
-            "observed_name": "查",
-            "corrected_name": "査",
-            "reason": "原画の科目名は「監査委員費」。OCR が 查 を字形の近い字と読んだ（gpt-6-luna で読み直し）。"
-          },
-          {
-            "id": "komae-name-p85-9",
-            "page": 85,
-            "observation_id": "p85:tile-2-1:r0",
-            "observed_name": "万",
-            "corrected_name": "労",
-            "reason": "原画の科目名は「労働費」。OCR が 万 を字形の近い字と読んだ（gpt-6-luna で読み直し）。"
-          },
-          {
-            "id": "komae-name-p115-11",
-            "page": 115,
-            "observation_id": "p115:tile-2-3:r0",
-            "observed_name": "諾",
-            "corrected_name": "諸",
-            "reason": "原画の科目名は「諸支出金」。OCR が 諾 を字形の近い字と読んだ（gpt-6-luna で読み直し）。"
-          },
-          {
-            "id": "komae-name-p115-12",
-            "page": 115,
-            "observation_id": "p115:tile-3-3:r0",
-            "observed_name": "文",
-            "corrected_name": "支",
-            "reason": "原画の科目名は「諸支出金」。OCR が 文 を字形の近い字と読んだ（gpt-6-luna で読み直し）。"
-          },
-          {
-            "id": "komae-total-p118",
-            "page": 118,
-            "observation_id": "p118:tile-2-2:r0",
-            "observed_name": "厊",
-            "corrected_name": "歳",
-            "reason": "原画の歳出合計の行は「歳出合計」。OCR が歳を字形の近い字と読んだ（原画の描画で確認）。"
-          },
-          {
-            "id": "komae-name-p88-kan7",
-            "page": 88,
-            "code": "7",
-            "observed_name": "工費",
-            "corrected_name": "商工費",
-            "reason": "原画の款の名称は「7 商 工 費」（gpt-6-luna で読み直し）。OCR は款の名前の先頭の「商」を読まなかった。"
+            "id": "komae-p91-ryo-25",
+            "page": 91,
+            "observation_id": "p91:full-page:a0:result0:r25",
+            "observed_name": "りよう",
+            "corrected_name": "りょう",
+            "reason": "原典の画像で「道路橋りょう総務費」と印字されている（行は「道路橋りょう」で終わり、2行目に「総務費」）。Paddle は小さい「ょ」を「よ」と読んだ。字形の対応表は1字ずつで、よ→ょ は置けないので、この行だけを宣言する。"
           }
         ]
       },
@@ -426,7 +58,7 @@
           "id": "scan-1-ocr-columns-1",
           "origin_sha256": "303d7d797e346b5344d63081f4376a6fb81805b7fa07bb4e673fe67a6eb51887",
           "request": {
-            "engine": "vision",
+            "engine": "paddle",
             "pages": [
               53,
               54,
@@ -440,17 +72,16 @@
               62
             ],
             "vlm_fallback": false,
-            "column_tiles": true,
             "rule_dark": 215
           },
-          "sha256": "2b02f4ca51f8ce0dff347894dd2d52673aeace1d81efd666e4d54044d3dfbaff",
-          "bytes": 1717424
+          "sha256": "493c4f64083475501ee984dafdd7d61962f132fc73ad085c8c5e56dbf80f6bb1",
+          "bytes": 3105282
         },
         {
           "id": "scan-1-ocr-columns-2",
           "origin_sha256": "303d7d797e346b5344d63081f4376a6fb81805b7fa07bb4e673fe67a6eb51887",
           "request": {
-            "engine": "vision",
+            "engine": "paddle",
             "pages": [
               63,
               64,
@@ -464,17 +95,16 @@
               72
             ],
             "vlm_fallback": false,
-            "column_tiles": true,
             "rule_dark": 215
           },
-          "sha256": "d9fafdf0ae8ce8d538c2dc517580a6ac5683686f31949db6cbc8697111a6cc46",
-          "bytes": 1681543
+          "sha256": "50725a0010555f43604246795407adfe7984151c6d6b54769000a54a3d33e718",
+          "bytes": 2976802
         },
         {
           "id": "scan-1-ocr-columns-3",
           "origin_sha256": "303d7d797e346b5344d63081f4376a6fb81805b7fa07bb4e673fe67a6eb51887",
           "request": {
-            "engine": "vision",
+            "engine": "paddle",
             "pages": [
               73,
               74,
@@ -488,17 +118,16 @@
               82
             ],
             "vlm_fallback": false,
-            "column_tiles": true,
             "rule_dark": 215
           },
-          "sha256": "7715633371c8180912876ed06a1b1440ef3ce2f5a657fa46e9e7cd83108cf5cb",
-          "bytes": 1733858
+          "sha256": "36aa4f4bc454f74b1b20475dae5b4205420467c71df77a3f76ea3d10f7865bde",
+          "bytes": 3154954
         },
         {
           "id": "scan-1-ocr-columns-4",
           "origin_sha256": "303d7d797e346b5344d63081f4376a6fb81805b7fa07bb4e673fe67a6eb51887",
           "request": {
-            "engine": "vision",
+            "engine": "paddle",
             "pages": [
               83,
               84,
@@ -512,17 +141,16 @@
               92
             ],
             "vlm_fallback": false,
-            "column_tiles": true,
             "rule_dark": 215
           },
-          "sha256": "332e6cb595ca97e0f44a8e3cb796d307ea5f1313af9f8ff215a77eafb88ad4c6",
-          "bytes": 1728819
+          "sha256": "9bd468cf41d608f7133c5a52dab5f04f648db156944ed515f6038535477076ce",
+          "bytes": 3015568
         },
         {
           "id": "scan-1-ocr-columns-5",
           "origin_sha256": "303d7d797e346b5344d63081f4376a6fb81805b7fa07bb4e673fe67a6eb51887",
           "request": {
-            "engine": "vision",
+            "engine": "paddle",
             "pages": [
               93,
               94,
@@ -536,17 +164,16 @@
               102
             ],
             "vlm_fallback": false,
-            "column_tiles": true,
             "rule_dark": 215
           },
-          "sha256": "204f2dc4af7f3ead77c75740d456763997d81d9d09cd8e23bed23193a9bf8ad2",
-          "bytes": 1722267
+          "sha256": "81a9b26ca36a79004671a0f4152701afc11f4a50a18b0cffff24b44f26cff464",
+          "bytes": 3104158
         },
         {
           "id": "scan-1-ocr-columns-6",
           "origin_sha256": "303d7d797e346b5344d63081f4376a6fb81805b7fa07bb4e673fe67a6eb51887",
           "request": {
-            "engine": "vision",
+            "engine": "paddle",
             "pages": [
               103,
               104,
@@ -560,17 +187,16 @@
               112
             ],
             "vlm_fallback": false,
-            "column_tiles": true,
             "rule_dark": 215
           },
-          "sha256": "40953f8c7b3cdc134986e33661b3dc823a5a7dbea2f77762d564710afdf113f0",
-          "bytes": 1655627
+          "sha256": "a5ddb7fe2dad9f693edc938d0ad7e97eb7b8d30915f1692e2344af860972dc43",
+          "bytes": 3007637
         },
         {
           "id": "scan-1-ocr-columns-7",
           "origin_sha256": "303d7d797e346b5344d63081f4376a6fb81805b7fa07bb4e673fe67a6eb51887",
           "request": {
-            "engine": "vision",
+            "engine": "paddle",
             "pages": [
               113,
               114,
@@ -580,11 +206,10 @@
               118
             ],
             "vlm_fallback": false,
-            "column_tiles": true,
             "rule_dark": 215
           },
-          "sha256": "c25c8b762ccea1702de5acf7803a48e1041c09f31d50afd929489295084370b2",
-          "bytes": 849064
+          "sha256": "23af7cf27b150935620e8702a747881c28e4bf56b28edf53a9fbfd80ef94f78a",
+          "bytes": 1394689
         }
       ],
       "expected_tables": [
@@ -598,32 +223,33 @@
     {
       "table_id": "general-expenditure-detail",
       "conversion_id": "general",
-      "input_fingerprint": "fc0748507c4923037ec10a1e362a11ae45ae7454bed843f0c33ddbfeb51fd0d6",
+      "input_fingerprint": "95187413895a33ac69ac0db463ed6a9550634ffd1eff9214ade0efdd1dd98da6",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape'}。",
-        "金額の単位は printed 66頁 から決めた。款の和 36,419,853,818 と印字の「歳出合計」36,419,853,818 が一致。",
+        "金額の単位は printed 64頁・carried 2頁 から決めた。款の和 36,419,853,818 と印字の「歳出合計」36,419,853,818 が一致。",
         "金額の注記 394 件（充用 32・流用 319・繰越額 43）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 1 種（733 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。",
-        "原画で確かめた名称の誤読 14 件を、管理 JSON の name_corrections で印字に直した: 7工費→7商工費・57頁 產→産・62頁 查→査・63頁 举→挙・64頁 拳→挙・65頁 举→挙・65頁 举→挙・66頁 查→査・67頁 查→査・67頁 查→査・85頁 万→労・115頁 諾→諸・115頁 文→支・118頁 厊→歳。"
+        "原画で確かめた名称の誤読 4 件を、管理 JSON の name_corrections で印字に直した: 59頁 コミュニテイ→コミュニティ・72頁 サービス費→いサービス費・91頁 りよう→りょう・91頁 りよう→りょう。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 举→挙 2 件（p63:full-page:a0:result0:r32・p63:full-page:a0:result0:r32:w2）・增→増 120 件（p53:full-page:a0:result0:r16・p53:full-page:a0:result0:r16:w2・p54:full-page:a0:result0:r16・p54:full-page:a0:result0:r16:w2・p55:full-page:a0:result0:r15・p55:full-page:a0:result0:r15:w2・p56:full-page:a0:result0:r16・p56:full-page:a0:result0:r16:w2・p57:full-page:a0:result0:r16・p57:full-page:a0:result0:r16:w2・p58:full-page:a0:result0:r16・p58:full-page:a0:result0:r16:w2・p59:full-page:a0:result0:r15・p59:full-page:a0:result0:r15:w2・p60:full-page:a0:result0:r15・p60:full-page:a0:result0:r15:w2・p61:full-page:a0:result0:r15・p61:full-page:a0:result0:r15:w2・p62:full-page:a0:result0:r16・p62:full-page:a0:result0:r16:w2・p63:full-page:a0:result0:r16・p63:full-page:a0:result0:r16:w2・p64:full-page:a0:result0:r15・p64:full-page:a0:result0:r15:w2・p65:full-page:a0:result0:r15・p65:full-page:a0:result0:r15:w2・p66:full-page:a0:result0:r16・p66:full-page:a0:result0:r16:w2・p67:full-page:a0:result0:r16・p67:full-page:a0:result0:r16:w2・p68:full-page:a0:result0:r16・p68:full-page:a0:result0:r16:w2・p69:full-page:a0:result0:r15・p69:full-page:a0:result0:r15:w2・p70:full-page:a0:result0:r15・p70:full-page:a0:result0:r15:w2・p71:full-page:a0:result0:r16・p71:full-page:a0:result0:r16:w2・p72:full-page:a0:result0:r15・p72:full-page:a0:result0:r15:w2・p74:full-page:a0:result0:r16・p74:full-page:a0:result0:r16:w2・p75:full-page:a0:result0:r15・p75:full-page:a0:result0:r15:w2・p76:full-page:a0:result0:r15・p76:full-page:a0:result0:r15:w2・p77:full-page:a0:result0:r15・p77:full-page:a0:result0:r15:w2・p78:full-page:a0:result0:r16・p78:full-page:a0:result0:r16:w2・p79:full-page:a0:result0:r16・p79:full-page:a0:result0:r16:w2・p80:full-page:a0:result0:r16・p80:full-page:a0:result0:r16:w2・p81:full-page:a0:result0:r16・p81:full-page:a0:result0:r16:w2・p82:full-page:a0:result0:r15・p82:full-page:a0:result0:r15:w2・p83:full-page:a0:result0:r16・p83:full-page:a0:result0:r16:w2・p84:full-page:a0:result0:r15・p84:full-page:a0:result0:r15:w2・p85:full-page:a0:result0:r16・p85:full-page:a0:result0:r16:w2・p86:full-page:a0:result0:r16・p86:full-page:a0:result0:r16:w2・p87:full-page:a0:result0:r16・p87:full-page:a0:result0:r16:w2・p89:full-page:a0:result0:r16・p89:full-page:a0:result0:r16:w2・p91:full-page:a0:result0:r15・p91:full-page:a0:result0:r15:w2・p93:full-page:a0:result0:r16・p93:full-page:a0:result0:r16:w2・p94:full-page:a0:result0:r15・p94:full-page:a0:result0:r15:w2・p95:full-page:a0:result0:r15・p95:full-page:a0:result0:r15:w2・p96:full-page:a0:result0:r16・p96:full-page:a0:result0:r16:w2・p97:full-page:a0:result0:r15・p97:full-page:a0:result0:r15:w2・p98:full-page:a0:result0:r16・p98:full-page:a0:result0:r16:w2・p100:full-page:a0:result0:r15・p100:full-page:a0:result0:r15:w2・p101:full-page:a0:result0:r15・p101:full-page:a0:result0:r15:w2・p102:full-page:a0:result0:r15・p102:full-page:a0:result0:r15:w2・p103:full-page:a0:result0:r14・p103:full-page:a0:result0:r14:w2・p104:full-page:a0:result0:r15・p104:full-page:a0:result0:r15:w2・p105:full-page:a0:result0:r16・p105:full-page:a0:result0:r16:w2・p106:full-page:a0:result0:r16・p106:full-page:a0:result0:r16:w2・p107:full-page:a0:result0:r15・p107:full-page:a0:result0:r15:w2・p108:full-page:a0:result0:r15・p108:full-page:a0:result0:r15:w2・p109:full-page:a0:result0:r16・p109:full-page:a0:result0:r16:w2・p110:full-page:a0:result0:r16・p110:full-page:a0:result0:r16:w2・p111:full-page:a0:result0:r15・p111:full-page:a0:result0:r15:w2・p112:full-page:a0:result0:r15・p112:full-page:a0:result0:r15:w2・p113:full-page:a0:result0:r16・p113:full-page:a0:result0:r16:w2・p115:full-page:a0:result0:r15・p115:full-page:a0:result0:r15:w2・p116:full-page:a0:result0:r16・p116:full-page:a0:result0:r16:w2・p117:full-page:a0:result0:r17・p117:full-page:a0:result0:r17:w2・p118:full-page:a0:result0:r15・p118:full-page:a0:result0:r15:w2）・徵→徴 4 件（p60:full-page:a0:result0:r27・p60:full-page:a0:result0:r27:w1・p61:full-page:a0:result0:r22・p61:full-page:a0:result0:r22:w3）・查→査 12 件（p62:full-page:a0:result0:r26・p62:full-page:a0:result0:r26:w1・p66:full-page:a0:result0:r27・p66:full-page:a0:result0:r27:w4・p66:full-page:a0:result0:r33・p66:full-page:a0:result0:r33:w5・p66:full-page:a0:result0:r41・p66:full-page:a0:result0:r41:w4・p67:full-page:a0:result0:r23・p67:full-page:a0:result0:r23:w2・p67:full-page:a0:result0:r29・p67:full-page:a0:result0:r29:w2）・產→産 12 件（p57:full-page:a0:result0:r25・p57:full-page:a0:result0:r25:w2・p58:full-page:a0:result1:r67・p58:full-page:a0:result1:r67:w4・p62:full-page:a0:result0:r20・p62:full-page:a0:result0:r20:w5・p77:full-page:a0:result1:r64・p77:full-page:a0:result1:r64:w4・p95:full-page:a0:result1:r86・p95:full-page:a0:result1:r86:w4・p96:full-page:a0:result1:r65・p96:full-page:a0:result1:r65:w4）。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/132195/2024/settlement/expenditure/general-expenditure-detail-nodes.parquet",
-          "sha256": "09c4b7b7254af6242e91d29995fd205069b4944ba8c780a1ae302647263379e5",
-          "bytes": 49717
+          "sha256": "0b63ba7c9dd571b7abf73f5906500e5caa4c9233adf64b3ff102bc3fc6e0b717",
+          "bytes": 36519
         },
-        "row_count": 1276
+        "row_count": 1277
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132195/2024/settlement/expenditure/general-expenditure-detail-amounts.parquet",
-          "sha256": "78e254413e5094f3ea95982081c6a4679f81c72368b16045ec5032186983d32e",
-          "bytes": 139077
+          "sha256": "65451bf5685699e89bc29282f040a0d85488fcd8430b480ad463887609939ccb",
+          "bytes": 66662
         },
-        "row_count": 4497
+        "row_count": 4498
       }
     }
   ]

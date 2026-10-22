@@ -124,6 +124,19 @@ class PublicBoundaries(unittest.TestCase):
         self.assertEqual(dropped, ["b"])
         self.assertEqual(sorted(o["id"] for o in kept), ["a", "x", "y"])
 
+    def test_a_reading_cut_by_its_strip_edge_goes_when_half_of_its_box_is_over_the_whole_reading(self):
+        def line(id, text, box):
+            return {"id": id, "parent_id": None, "kind": "region", "raw_text": text, "bbox_px": box}
+        spans = [(0, 1300), (1180, 2480)]
+        # the cut box is taller than the whole one: 71% of it is over the whole reading
+        kept, dropped = _drop_strip_duplicates(
+            [[line("a", "1,000", [1196, 672, 1300, 724])], [line("b", "1,000,000", [1198, 680, 1376, 718])]], spans)
+        self.assertEqual((dropped, [o["id"] for o in kept]), (["a"], ["b"]))
+        # the same overlap with a shorter box that its strip did not cut stays
+        kept, dropped = _drop_strip_duplicates(
+            [[line("a", "1,000", [1196, 672, 1250, 724])], [line("b", "1,000,000", [1198, 680, 1376, 718])]], spans)
+        self.assertEqual(dropped, [])
+
     def test_strips_cover_the_width_and_one_strip_is_the_whole_region(self):
         self.assertEqual(_strips(1000, 1, 60), [(0, 1000)])
         strips = _strips(1000, 4, 60)
