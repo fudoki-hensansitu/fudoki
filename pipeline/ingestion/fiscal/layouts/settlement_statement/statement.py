@@ -172,7 +172,7 @@ def amount_text(boxes: list[Box]) -> str:
     text = re.sub(r'^[)）](?=[△▲-]?[0-9])', '', text)
     # A lone 0 before a grouped amount (`0495,372,524`) is the closing bracket of an empty `( )` cell read as a 0:
     # no printed amount starts with 0 and goes on in groups.
-    text = re.sub(r'^0(?=[1-9][0-9]{0,2}(?:,[0-9]{3})+$)', '', text)
+    text = re.sub(r'^0(?=[1-9][0-9]{0,2}(?:[.,、][0-9]{3})+$)', '', text)
     # Yen amounts have no decimals: periods or 、 grouping digits in threes are misread commas.
     if re.fullmatch(r'[(（]?[△▲-]?[0-9]{1,3}(?:[.,、][0-9]{3})+[)）]?', text):
         text = text.replace('.', ',').replace('、', ',')

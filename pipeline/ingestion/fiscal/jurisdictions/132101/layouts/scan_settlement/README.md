@@ -1,6 +1,6 @@
 # 小金井市 132101 settlement-3 議会費 scan converter
 
-**状態（2026-10-11）**: 管理JSONに未登録の書式。入力の凍結native OCRはgitignore配下のローカルファイルで、どのcheckoutにも残っていないため、この書式からは表を再構築できない。[ADR 0019](../../../../../../../docs/adr/0019-freeze-scan-ocr-observations.md) の補助入力の保存・取得を実装した後、OCRを取り直して登録する。
+**状態（2026-10-22）**: この converter は管理JSONに登録されていない（凍結 native OCR はどの checkout にも残っておらず、ここから表は再構築できない）。132101/2025 の決算歳出は、この converter ではなく `settlement_statement`・`generic_scan` の変換器で、Paddle の観測（R2 に保存済み、[ADR 0032](../../../../../../../docs/adr/0032-paddle-onnx-for-new-scan-acquisitions.md) の「小金井2025決算の19冊」）から19表を登録した。この文書は議会費1冊の旧試作の記録である。
 
 `convert(inputs, destination, options)` は固定出典・凍結 native・書式設定の SHA を照合し、未使用 dir へ Parquet と検算用観測を生成する。OCR の起動・入力の取得・正式 manifest の更新は行わない。
 

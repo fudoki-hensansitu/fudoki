@@ -789,18 +789,22 @@ def add_code_readings(observed: list[Page], readings: list[dict] | None, key: st
 
 
 SECTION_TITLES = {'収入': 'revenue', '支出': 'expenditure'}
+SECTION_TITLE_REACH = 60.0  # pt: how far under its title the table's top rule may lie
 
 
-def direction_sections(printed: list[Page], direction: str | None) -> tuple[list[Page], list[int]]:
+def direction_sections(printed: list[Page], direction: str | None) -> tuple[list[Page], list[int], set[int]]:
     """The part of each page printed under the section title of the manifest's direction.
 
     An enterprise statement (公営企業会計) prints its 収入 and 支出 tables one above the other on one page, each
     under a title at the left margin (`収入` / `支出`). A page without a title goes on with the section of the
     page before it. The words and rules outside the direction's sections are left out, so a table of the other
     direction is not read as an amount of this one; a page wholly of the other direction is skipped (returned
-    as its number). A scope with no section title on any page is returned as it is."""
+    as its number). A scope with no section title on any page is returned as it is. The third value is the pages
+    that were divided by section titles: their direction is decided by the sections, not by a whole-page title
+    (a `歳入` heading above the `収入` and `支出` sections must not make the page a revenue page).
+    A title counts only when a table's top rule lies just under it: a note in the margin that says `支出` is none."""
     if direction is None:
-        return printed, []
+        return printed, [], set()
     def titles_of(page: Page) -> list[tuple[float, str]]:
         # A title set apart (`収 入`) is read as one word per character: the words of a line at the left margin.
         lines: list[list[Word]] = []
@@ -809,12 +813,14 @@ def direction_sections(printed: list[Page], direction: str | None) -> tuple[list
                 lines[-1].append(word)
             else:
                 lines.append([word])
+        tops = [r.y0 for r in page.rules if not r.vertical]
         return sorted(((line[0].y0 + line[0].y1) / 2, SECTION_TITLES[key]) for line in lines
-                      if (key := normalize(''.join(w.text for w in sorted(line, key=lambda w: w.x0)))) in SECTION_TITLES)
+                      if (key := normalize(''.join(w.text for w in sorted(line, key=lambda w: w.x0)))) in SECTION_TITLES
+                      and any(line[0].y1 - 2 <= y <= line[0].y1 + SECTION_TITLE_REACH for y in tops))
 
     titled = {page.number: titles_of(page) for page in printed}
     if not any(titled.values()):
-        return printed, []
+        return printed, [], set()
     kept, skipped, current = [], [], None
     for page in sorted(printed, key=lambda p: p.number):
         found = titled[page.number]
@@ -839,7 +845,7 @@ def direction_sections(printed: list[Page], direction: str | None) -> tuple[list
             elif inside(rule.y0):
                 rules.append(rule)
         kept.append(Page(page.number, page.width, page.height, [w for w in page.words if inside((w.y0 + w.y1) / 2)], rules))
-    return kept, skipped
+    return kept, skipped, {number for number, found in titled.items() if found}
 
 
 def read_units(observed: list[Page], readings: list[dict] | None) -> list[Page]:
@@ -1008,11 +1014,11 @@ def build_table(source: dict, options: dict, *, stop: bool = True, rules: dict |
     header = (settings or {}).get('header')
     by_node = [r for r in options.get('name_corrections', ()) if 'observation_id' not in r]
     printed, observation, variants = read_pages(source, options, settings, selected, rules)
-    printed, other_sections = direction_sections(printed, source.get('direction'))
+    printed, other_sections, sectioned = direction_sections(printed, source.get('direction'))
     printed, recovered = recover_codes(printed, Path(source['path']), columns, spread=spread, header=header)
     report = Report()
     direction = source.get('direction')
-    titles = page_titles(printed) if direction else {}
+    titles = page_titles([p for p in printed if p.number not in sectioned]) if direction else {}
     report.skipped_pages = [p for p, title in titles.items() if title not in (None, direction)] + other_sections
     observed = [p for p in printed if p.number not in report.skipped_pages]
     logical = _layout(observed, columns, spread=spread, header=header)

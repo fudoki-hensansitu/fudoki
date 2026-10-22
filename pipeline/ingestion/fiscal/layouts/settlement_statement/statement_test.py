@@ -25,6 +25,8 @@ class AmountTextTest(unittest.TestCase):
 
     def test_a_lone_zero_before_a_grouped_amount_is_a_misread_bracket(self):
         self.assertEqual(st.amount_text([box('0', 0, 0, 1, 1), box('495, 372, 524', 1, 0, 2, 1)]), '495,372,524')
+        self.assertEqual(st.amount_text([box('0495.372.524', 0, 0, 1, 1)]), '495,372,524')
+        self.assertEqual(st.amount_text([box('0495、372、524', 0, 0, 1, 1)]), '495,372,524')
         self.assertEqual(st.amount_text([box('0', 0, 0, 1, 1)]), '0')
         self.assertEqual(st.amount_text([box('0,495', 0, 0, 1, 1)]), '0,495')
 
