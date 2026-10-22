@@ -377,7 +377,7 @@ const BODY = `${ICONS}
 <footer class="wrap">
 <div class="cols">
 <div><a href="/" aria-label="風土記 ホーム">${logo('logo')}</a><p>町の家計簿。自治体の支出を、事業ごとに。</p></div>
-<div><h2>使う</h2><ul><li><a href="#mcp">AI から使う</a></li><li><a href="${DOCS}">ドキュメント</a></li></ul></div>
+<div><h2>使う</h2><ul><li><a href="/jurisdictions">自治体を探す</a></li><li><a href="#mcp">AI から使う</a></li><li><a href="${DOCS}">ドキュメント</a></li></ul></div>
 <div><h2>作り</h2><ul><li><a href="${GITHUB}">GitHub</a></li><li><a href="${DOCS}/support">サポート</a></li><li><a href="mailto:support@fudoki.dev">お問い合わせ</a></li></ul></div>
 <div><h2>決まりごと</h2><ul><li><a href="${DOCS}/privacy">プライバシーポリシー</a></li><li><a href="${DOCS}/terms">利用規約</a></li></ul></div>
 </div>

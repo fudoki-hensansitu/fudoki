@@ -10,7 +10,7 @@ rmSync(out, { recursive: true, force: true })
 mkdirSync(out, { recursive: true })
 
 const result = await Bun.build({
-  entrypoints: [`${dir}start.tsx`, `${dir}session.tsx`],
+  entrypoints: [`${dir}start.tsx`, `${dir}session.tsx`, `${dir}../jurisdiction/jurisdiction.tsx`],
   outdir: out,
   target: 'browser',
   format: 'esm',
@@ -21,8 +21,7 @@ const result = await Bun.build({
 })
 if (!result.success) throw new AggregateError(result.logs, 'chat の bundle に失敗した')
 
-for (const name of ['start', 'session']) {
-  const from = `${dir}${name}.css`
+for (const [name, from] of [['start', `${dir}start.css`], ['session', `${dir}session.css`], ['jurisdiction', `${dir}../jurisdiction/jurisdiction.css`]] as const) {
   const css = await postcss([tailwind({ base: dir, optimize: true }) as Plugin]).process(readFileSync(from, 'utf8'), { from })
   await Bun.write(`${out}${name}.css`, css.css)
 }
