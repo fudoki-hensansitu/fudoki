@@ -16,7 +16,8 @@ const post = (path: string, body: unknown, headers: Record<string, string> = {})
 const call = async (req: Request, e: Env) => web.fetch(req, e)
 
 test('流量の上限は config の rate limit binding と同じ値', async () => {
-  const config = (await import('../deploy/cloudflare.config')).default as unknown as { worker: { env: Record<string, { simple: unknown; namespace: string }> } }
+  type Config = { worker: { env: Record<string, { simple: unknown; namespace: string }> } }
+  const config = ((await import('../deploy/cloudflare.config')).default as unknown as (ctx: { isPreview: boolean }) => Config)({ isPreview: false })
   expect(config.worker.env.CHAT_RATE_LIMIT!.simple).toEqual(CHAT_RATE_LIMIT)
   expect(config.worker.env.VIEW_RATE_LIMIT!.simple).toEqual(VIEW_RATE_LIMIT)
   // apps/api の評価の検索（1001）と同じ namespace を使わない
