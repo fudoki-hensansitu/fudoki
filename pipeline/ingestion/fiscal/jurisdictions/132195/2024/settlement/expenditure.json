@@ -223,7 +223,7 @@
     {
       "table_id": "general-expenditure-detail",
       "conversion_id": "general",
-      "input_fingerprint": "4d68447ea4fb635de44ceae6ad6556761779b4356f92ad465787a65039e646bd",
+      "input_fingerprint": "6f2c7394e3073d016adcd97f67892875f835869675c71f25d66ada19f97d43a1",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape'}。",

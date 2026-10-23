@@ -1741,9 +1741,17 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
     edges = number_edges(taught, pattern)
     limits = line_limits(taught)
     stacking = stacked_columns(taught)
+    # The OCR pages of a mixed document are another size and another origin of x than its text pages: what
+    # the text pages teach does not place their columns, so they teach each other (a scan teaches itself).
+    scanned = [logical for logical in logicals if logical.ocr] if taught is not logicals else []
+    if scanned:
+        scan_margins, scan_edges, scan_limits = code_margins(scanned), number_edges(scanned, pattern), line_limits(scanned)
+        text_taught = (margins, edges, limits)
     skipped: list[Logical] = []
     open_headings: dict[str, int] = {}  # per axis: the depth of the department heading line that is open
     for logical in logicals:
+        if scanned:
+            margins, edges, limits = (scan_margins, scan_edges, scan_limits) if logical.ocr else text_taught
         ordered = groups(logical, pattern)
         if not any(g.subject for g in ordered) and not prints_phase(logical):
             # A frame with no 款・項・目 column and no column of a budget or settlement amount is no
