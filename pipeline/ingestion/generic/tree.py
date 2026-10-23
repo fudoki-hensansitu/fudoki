@@ -32,6 +32,7 @@ from ingestion.generic.layout import (SIGNS, SUBJECT_LEVELS, UNIT_CELL, Band, Gl
 
 # A leading item number; the separator after it (`1.議会費`, `1．`) is not part of the name.
 CODE = re.compile(r'^[(（]?([0-9０-９]{1,4})[)）]?(?:[.．](?=[^0-9０-９]|$))?(?=\D|$)')
+UNIT_NOTATION = re.compile(r'[(（]単位[:：][^()（）]*[)）]')
 BARE_CODE = re.compile(r'^[0-9０-９]{1,4}$')
 BRACKET_PAIRS = {')': '(', ']': '['}  # the closing and opening brackets of a bracketed amount
 CODE_LED = re.compile(r'^[0-9０-９]{1,4}[^0-9０-９,，.．]')  # a code joined to its name (`1商`)
@@ -187,13 +188,14 @@ def groups(logical: Logical, pattern: str = 'bands') -> list[Group]:
     elif pattern == 'indent':
         # Every neighbouring label band headed by 款・項・目 (or 科目) is one subject
         # column; a staircase of narrow level columns is read by indentation too.
+        # (A declared axis `科目` (layout `columns`) names a subject column the header words do not: 区分.)
+        subject_band = lambda b: bool(b.header) and (subject_header(b.header) or b.axis_header == '科目')
         for band in labels:
-            if band.header and subject_header(band.header):
+            if subject_band(band):
                 subject_bands = [band]
                 index = bands.index(band)
                 while index + 1 < len(bands) and bands[index + 1].kind == 'label' and (
-                        bands[index + 1].header == band.header
-                        or (bands[index + 1].header and subject_header(bands[index + 1].header))):
+                        bands[index + 1].header == band.header or subject_band(bands[index + 1])):
                     index += 1
                     subject_bands.append(bands[index])
                 break
@@ -481,6 +483,8 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
     for line in lines([w for band in group.bands for w in band.words]):
         label, money = _split_line(line, amount_brackets, bare_amounts)
         line_text = normalize(text(label))
+        if label and not money and UNIT_NOTATION.fullmatch(line_text):
+            continue  # `(単位:円・税抜)` printed over a column names the unit; it is no item of the column
         code, name = _split_code(line_text)
         raw_text = text(label).strip()
         if code is not None and len(name) > 1 and re.match(r'[０-９]{3,}', raw_text):
@@ -682,7 +686,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
             continue
         whole = normalize(text(line_of(label, money)))
         if (previous is not None and code is None and whole[:1] in '(（' and whole[-1:] in ')）'
-                and not (amount_brackets and money)):
+                and not (amount_brackets and money) and not whole.startswith(note_prefixes(settings))):
             previous.lines.append(label + [g for run in money for g in run])
             previous.name += whole  # a parenthesised remark on the previous item, not an amount of it
             continue
@@ -2005,7 +2009,11 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
     # Where the codes start decide the levels; the names a continuation page prints again without their codes
     # sit elsewhere (their box is open, its code is not printed) and are no level of their own.
     coded_ = [i for i in nodes_ if i.code is not None]
-    starts = sorted(i.indent for i in (coded_ if len(coded_) >= max(3, len(nodes_) // 2) else nodes_))
+    # A scan's levels (every page OCR; a text document with a few OCR pages keeps its own) are measured from the left edge of the subject column: its frame sits a few points elsewhere
+    # on each page, and the same level must not start at two values.
+    ocr_groups = {id(g) for logical, ordered, _ in all_items for g in ordered} if all(l.ocr for l, _, _ in all_items) else set()
+    edge = lambda i: i.indent - (i.group.bands[0].x0 if id(i.group) in ocr_groups else 0)
+    starts = sorted(edge(i) for i in (coded_ if len(coded_) >= max(3, len(nodes_) // 2) else nodes_))
     subject_levels: list[list[float]] = []
     for value in starts:
         if subject_levels and value - subject_levels[-1][-1] <= 3:
@@ -2019,7 +2027,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             if group.subject and group.mode == 'indent':
                 group.levels = len(centres) or 1
                 for item in found[id(group)]:
-                    item.level = min(range(len(centres)), key=lambda i: abs(centres[i] - item.indent)) if centres else 0
+                    item.level = min(range(len(centres)), key=lambda i: abs(centres[i] - edge(item))) if centres else 0
                     item.level_name = SUBJECT_LEVELS[item.level] if item.level < len(SUBJECT_LEVELS) else None
     # Indentation levels per non-subject axis, learned over the document.
     indents, printed = level_indents(all_items, mixed_document(logicals))

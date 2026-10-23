@@ -432,3 +432,51 @@ class VariantCharsTest(unittest.TestCase):
         original = self.observation('vision')
         self.assertEqual(apply_variant_chars(original)[1], [])
         self.assertEqual(apply_variant_chars(original)[0]['pages'][0]['regions'][0]['observations'][0]['raw_text'], '賦課徵収費')
+
+
+class EnterpriseSectionTest(unittest.TestCase):
+    def test_a_page_keeps_only_the_sections_of_its_direction(self):
+        from ingestion.generic.scan import direction_sections
+        page = lambda number, words, rules=(): Page(number, 600, 800, list(words), list(rules))
+        title = lambda text, y: [Word(c, 40 + 18 * i, y, 54 + 18 * i, y + 12) for i, c in enumerate(text)]
+        body = lambda text, y: Word(text, 100, y, 160, y + 10)
+        first = page(1, [*title('収入', 80), body('収入の行', 120), *title('支出', 300), body('支出の行', 340)],
+                     [Rule(50, 90, 50, 700), Rule(50, 130, 500, 130), Rule(50, 350, 500, 350)])
+        second = page(2, [body('続きの行', 100)])   # no title: it goes on with the section before it
+        kept, skipped, sectioned = direction_sections([first, second], 'expenditure')
+        self.assertEqual([[w.text for w in p.words if len(w.text) > 1] for p in kept], [['支出の行'], ['続きの行']])
+        self.assertEqual((skipped, sectioned), ([], {1}))
+        self.assertEqual([(r.y0, r.y1) for r in kept[0].rules if r.vertical], [(298.0, 700)])
+        self.assertEqual([r.y0 for r in kept[0].rules if not r.vertical], [350])
+        revenue, skipped, _ = direction_sections([first, second], 'revenue')
+        self.assertEqual([w.text for w in revenue[0].words if len(w.text) > 1], ['収入の行'])
+        self.assertEqual([p.number for p in revenue], [1])
+        self.assertEqual(skipped, [2])   # the continuation belongs to the 支出 section
+        plain = [page(1, [body('歳出の行', 100)])]
+        self.assertEqual(direction_sections(plain, 'expenditure'), (plain, [], set()))
+
+    def test_a_digit_read_twice_at_a_tile_seam_is_no_second_word(self):
+        from ingestion.generic.scan import drop_covered_digits
+        amount = Word('11,547,449', 381, 327.5, 432.8, 340.7)
+        again = Word('9', 428.3, 327.1, 430.2, 340.0)       # the left end of the next tile's line, inside the amount
+        neighbour = Word('9', 440, 327.1, 442, 340.0)       # a lone 9 of its own cell stays
+        self.assertEqual(drop_covered_digits([amount, again, neighbour]), [amount, neighbour])
+
+    def test_a_revenue_heading_over_the_sections_does_not_make_the_page_a_revenue_page(self):
+        from ingestion.generic.build import page_titles
+        from ingestion.generic.scan import direction_sections
+        title = lambda text, y: [Word(c, 40 + 18 * i, y, 54 + 18 * i, y + 12) for i, c in enumerate(text)]
+        words = [Word('歳入', 300, 20, 330, 32), *title('収入', 80), Word('収入の行', 100, 120, 160, 130),
+                 *title('支出', 300), Word('支出の行', 100, 340, 160, 350)]
+        page = Page(1, 600, 800, words, [Rule(50, 130, 500, 130), Rule(50, 350, 500, 350)])
+        kept, skipped, sectioned = direction_sections([page], 'expenditure')
+        self.assertEqual((skipped, sectioned), ([], {1}))
+        self.assertIn('支出の行', [w.text for w in kept[0].words])
+        # the whole-page title is read only from the pages no section title divided
+        self.assertEqual(page_titles([p for p in kept if p.number not in sectioned]), {})
+
+    def test_a_word_alone_in_the_margin_is_no_section_title(self):
+        from ingestion.generic.scan import direction_sections
+        words = [Word('支出', 40, 600, 76, 612), Word('本文', 100, 300, 140, 310)]
+        page = Page(1, 600, 800, words, [Rule(50, 100, 500, 100)])   # no table's top rule under it
+        self.assertEqual(direction_sections([page], 'revenue'), ([page], [], set()))

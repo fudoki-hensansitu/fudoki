@@ -7,6 +7,10 @@
       "type": "string",
       "pattern": "^[a-z0-9][a-z0-9_-]{0,95}$"
     },
+    "partial": {
+      "const": true,
+      "description": "The original is one volume of an account printed in several originals (款別の分冊): its 款 are some of the account's, so the sum and digit checks of the unit are reported, not enforced."
+    },
     "amount_corrections": {
       "description": "OCR の金額の誤読の訂正（ocr_names.AmountRule）。頁と観測IDで1つの観測に結び付け、木の検査で正しさを確かめる。",
       "type": "array",
