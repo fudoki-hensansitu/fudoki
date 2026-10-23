@@ -48,7 +48,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "295fbed05c5e5dbae9b3ad80b283cd10c9848fa9eb3ede23675271b8a74bf298",
+      "input_fingerprint": "980501b5394fd937bbdf933c77cbe58d43d956eb7aab3835ed72f805eeaca633",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'shape', '節': 'indent'}。",
@@ -78,7 +78,7 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "21af2430fcbcad0bc4f192f027bf9efae95b141515efc24d6da5ac0ebaefb156",
+      "input_fingerprint": "f3aa8e916397903ed8b7ac63e8bb0482faa63051860430808c00b11e9960713a",
       "account": "国民健康保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'shape', '節': 'indent'}。",
