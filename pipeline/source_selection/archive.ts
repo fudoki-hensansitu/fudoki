@@ -3,9 +3,9 @@ import { mkdtemp, readFile, readdir, rename, rm, writeFile } from 'node:fs/promi
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { evaluationSelectionsSchema, jurisdictionSelectionsSchema, sourceSelectionsSchema, targetKey, type ArchivedOrigin, type SourceTarget } from './schema'
+import { downloadOriginal, MAX_BYTES } from './download'
 import { ARCHIVE_BUCKET, evaluationObjectKey, evaluationObjectSlot, originObjectKey, originObjectSlot } from './storage'
 
-const MAX_BYTES = 300_000_000
 const digest = (body: Uint8Array) => createHash('sha256').update(body).digest('hex')
 
 /** 取得したバイト列が宣言した形式か。出典の URL が失効した跡地は、404 ではなく「見つかりませんでした」とリニューアルの案内を HTML で 200 に返すことがある（2026-10-20 の品川区）。 */
@@ -231,24 +231,8 @@ async function runCf(args: string[], allowMissing = false, capture = false): Pro
 
 const cfTransport: ArchiveTransport = {
   async download(url) {
-    const response = await fetch(url, { signal: AbortSignal.timeout(120_000) })
-    if (!response.ok || !response.body) throw new Error(`Original download failed (HTTP ${response.status})`)
-    const reader = response.body.getReader()
-    const chunks: Uint8Array[] = []
-    let size = 0
-    try {
-      for (;;) {
-        const chunk = await reader.read()
-        if (chunk.done) break
-        size += chunk.value.byteLength
-        if (size > MAX_BYTES) throw new Error('Original exceeds the cf upload size limit')
-        chunks.push(chunk.value)
-      }
-    } finally { await reader.cancel() }
-    const body = new Uint8Array(size)
-    let offset = 0
-    for (const chunk of chunks) { body.set(chunk, offset); offset += chunk.byteLength }
-    return { body, final_url: response.url }
+    const { body, final_url } = await downloadOriginal(url)
+    return { body, final_url }
   },
   async put(key, body, contentType) {
     const directory = await mkdtemp(join(tmpdir(), 'fudoki-origin-'))
