@@ -41,8 +41,25 @@ beforeEach(() => {
 })
 
 describe('自治体と収録範囲（GET /v1/jurisdictions・list_jurisdictions）', () => {
-  test('自治体名で、6桁のコードと収録している年度・資料区分・会計・出典を1回で得る', async () => {
+  test('既定（BASIC）は出典を含めず、年度・資料区分・会計だけを返す', async () => {
     const body = await list(`?name=${encodeURIComponent('武蔵野市')}`)
+    expect(body.jurisdictions[0].coverage.map((c: { document_kind: string; accounts: unknown[] }) => [c.document_kind, c.accounts])).toEqual([
+      ['initial', [{ account_name: '一般会計', account_kind: '一般会計' }]],
+      [
+        'settlement',
+        [
+          { account_name: '一般会計', account_kind: '一般会計' },
+          { account_name: '国民健康保険事業会計', account_kind: '国民健康保険' },
+        ],
+      ],
+    ])
+    // 出典が複数あっても、会計は1つにまとまる
+    const fuchu = await list(`?code=132063`)
+    expect(fuchu.jurisdictions[0].coverage[0].accounts).toEqual([{ account_name: '一般会計', account_kind: '一般会計' }])
+  })
+
+  test('view=FULL は、6桁のコードと収録している年度・資料区分・会計・出典を1回で得る', async () => {
+    const body = await list(`?name=${encodeURIComponent('武蔵野市')}&view=FULL`)
     expect(body).toEqual({
       jurisdictions: [
         {
@@ -121,15 +138,15 @@ describe('自治体と収録範囲（GET /v1/jurisdictions・list_jurisdictions�
       expect(result.valid, result.valid ? '' : result.errorMessage).toBe(true)
       expect(body.result.structuredContent).toEqual(JSON.parse(body.result.content[0].text))
     }
-    const rest = await list(`?name=${encodeURIComponent('武蔵野市')}`)
-    expect((await rpc('tools/call', { name: 'list_jurisdictions', arguments: { name: '武蔵野市' } })).result.structuredContent).toEqual(rest)
+    const rest = await list(`?name=${encodeURIComponent('武蔵野市')}&view=FULL`)
+    expect((await rpc('tools/call', { name: 'list_jurisdictions', arguments: { name: '武蔵野市', view: 'FULL' } })).result.structuredContent).toEqual(rest)
     const err = await rpc('tools/call', { name: 'list_jurisdictions', arguments: { code: '1' } })
     expect(err.error !== undefined || err.result.isError === true).toBe(true)
   })
 
   test('返った条件でそのまま明細を検索できる', async () => {
     insertNode(sqlite, { document_kind: 'settlement', node_id: 'a'.repeat(64), jurisdiction_code: '132039', fiscal_year: 2024, account_name: '国民健康保険事業会計', node_kind: '款', origin_id: 'o2' })
-    const j = (await list('?code=132039')).jurisdictions[0]
+    const j = (await list('?code=132039&view=FULL')).jurisdictions[0]
     const c = j.coverage.find((x: { document_kind: string }) => x.document_kind === 'settlement')
     const a = c.accounts.find((x: { account_name: string }) => x.account_name === '国民健康保険事業会計')
     const res = await app.request(

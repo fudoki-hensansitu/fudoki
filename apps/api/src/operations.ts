@@ -255,7 +255,7 @@ const Coverage = z
         z.strictObject({
           account_name: z.string().describe(describeColumn(COVERAGE_COLUMNS, 'account_name')),
           account_kind: z.string().describe(describeColumn(COVERAGE_COLUMNS, 'account_kind')),
-          origins: z.array(CoverageOrigin).describe('この会計の明細が指す出典すべて。'),
+          origins: z.array(CoverageOrigin).optional().describe('この会計の明細が指す出典すべて。view が FULL のときだけ返る。'),
         })
       )
       .describe('明細がある会計。一般会計が先。'),
@@ -277,14 +277,15 @@ interface CoverageRow {
   document_kind: string
   account_name: string
   account_kind: string
-  origin_id: string
-  title: string
-  url: string
-  format: string
+  // BASIC では出典の列を読まない
+  origin_id?: string
+  title?: string
+  url?: string
+  format?: string
 }
 
 /** 自治体コード順に並んだ行を、自治体 → 年度・資料区分 → 会計 → 出典の入れ子にする（行の順を保つ）。 */
-function nestCoverage(rows: CoverageRow[]) {
+function nestCoverage(rows: CoverageRow[], full: boolean) {
   const out = new Map<string, z.infer<typeof Coverage>[]>()
   for (const r of rows) {
     const list = out.get(r.jurisdiction_code) ?? []
@@ -296,10 +297,10 @@ function nestCoverage(rows: CoverageRow[]) {
     }
     let account = cov.accounts.at(-1)
     if (!account || account.account_name !== r.account_name) {
-      account = { account_name: r.account_name, account_kind: r.account_kind, origins: [] }
+      account = { account_name: r.account_name, account_kind: r.account_kind, ...(full ? { origins: [] } : {}) }
       cov.accounts.push(account)
     }
-    account.origins.push({ origin_id: r.origin_id, title: r.title, url: r.url, format: r.format })
+    if (full) account.origins!.push({ origin_id: r.origin_id!, title: r.title!, url: r.url!, format: r.format! })
   }
   return out
 }
@@ -309,6 +310,7 @@ async function listJurisdictions(ctx: Ctx, input: Record<string, unknown>) {
   const name = (input.name as string | undefined)?.normalize('NFKC').trim() || undefined
   const code = input.code as string | undefined
   const limit = (input.page_size as number | undefined) ?? DEFAULT_JURISDICTION_PAGE_SIZE
+  const full = input.view === 'FULL'
   const conds: string[] = []
   const params: string[] = []
   if (name !== undefined) {
@@ -332,15 +334,20 @@ async function listJurisdictions(ctx: Ctx, input: Record<string, unknown>) {
       .bind(...params, limit + 1, offset),
     db
       .prepare(
-        `SELECT c."jurisdiction_code", c."fiscal_year", c."document_kind", c."account_name", c."account_kind", o."origin_id", o."title", o."url", o."format" ` +
-          `FROM ${COVERAGE_TABLE} c JOIN ${ORIGIN_TABLE} o ON o."origin_id" = c."origin_id" ` +
-          `WHERE c."jurisdiction_code" IN (${pageSql}) ` +
-          `ORDER BY c."jurisdiction_code", c."fiscal_year", c."document_kind", c."account_kind" <> '一般会計', c."account_name", o."title", o."origin_id"`
+        full
+          ? `SELECT c."jurisdiction_code", c."fiscal_year", c."document_kind", c."account_name", c."account_kind", o."origin_id", o."title", o."url", o."format" ` +
+              `FROM ${COVERAGE_TABLE} c JOIN ${ORIGIN_TABLE} o ON o."origin_id" = c."origin_id" ` +
+              `WHERE c."jurisdiction_code" IN (${pageSql}) ` +
+              `ORDER BY c."jurisdiction_code", c."fiscal_year", c."document_kind", c."account_kind" <> '一般会計', c."account_name", o."title", o."origin_id"`
+          : `SELECT DISTINCT c."jurisdiction_code", c."fiscal_year", c."document_kind", c."account_name", c."account_kind" ` +
+              `FROM ${COVERAGE_TABLE} c ` +
+              `WHERE c."jurisdiction_code" IN (${pageSql}) ` +
+              `ORDER BY c."jurisdiction_code", c."fiscal_year", c."document_kind", c."account_kind" <> '一般会計', c."account_name"`
       )
       .bind(...params, limit, offset),
   ])
   const more = page!.results.length > limit
-  const nested = nestCoverage(coverage!.results as unknown as CoverageRow[])
+  const nested = nestCoverage(coverage!.results as unknown as CoverageRow[], full)
   return {
     jurisdictions: page!.results.slice(0, limit).map((r) => ({
       ...toRow(JURISDICTION_COLUMNS, r),
@@ -369,6 +376,11 @@ const listJurisdictionsInput = {
     .optional()
     .describe('前回の応答の next_page_token。name と code は前回と同じにする。'),
 }
+
+/** AIP-157 の view。BASIC は軽い既定、FULL は全部 */
+const JURISDICTION_VIEWS = ['BASIC', 'FULL'] as const
+const jurisdictionViewDescription =
+  'BASIC（既定）は自治体と、収録している年度・資料区分・会計だけを返す。FULL は会計ごとの出典（origin_id・標題・URL・形式）も返す。出典の標題や URL が要るときだけ FULL にする。'
 
 async function describeColumns() {
   // 資料区分ごとの説明を列名でまとめる（列の集合は表をまたいで同じ）
@@ -416,7 +428,7 @@ const searchDescription =
   '資料区分や軸の違う金額を足さない。足すときは describe_expenditure_columns の sum_rules に従う。where は列をまたぐ OR・NOT が無いので、2回に分けて問い合わせる。'
 
 const listJurisdictionsDescription =
-  '自治体の名称・6桁の自治体コード・都道府県と、その自治体の収録範囲（明細を検索できる年度・資料区分・会計と、明細が指す出典の標題・URL）を返す。' +
+  '自治体の名称・6桁の自治体コード・都道府県と、その自治体の収録範囲（明細を検索できる年度・資料区分・会計。view が FULL なら明細が指す出典の標題・URL も）を返す。' +
   '歳出を検索する前に、自治体コードと、比べたい年度・資料区分が収録されているかをここで確かめる。' +
   '名称（部分一致）か自治体コード（5桁・6桁）で絞り、絞らなければ自治体コード順に返す。1頁は既定 20 件（最大 100）なので、全件は next_page_token を辿る。収録の無い自治体は coverage が空。' +
   '返った jurisdiction_code（6桁）・fiscal_year・document_kind・account_name は search_expenditure_nodes の条件にそのまま使える。検索は5桁のコードを受け付けず0件になるので、ここで6桁を引いてから渡す。名前とコードの両方を渡すと AND。'
@@ -432,10 +444,12 @@ export const operations: Operation[] = [
     input: z.strictObject({
       ...listJurisdictionsInput,
       page_size: z.int().min(1).max(MAX_JURISDICTION_PAGE_SIZE).default(DEFAULT_JURISDICTION_PAGE_SIZE).describe(jurisdictionPageSizeDescription),
+      view: z.enum(JURISDICTION_VIEWS).default('BASIC').describe(jurisdictionViewDescription),
     }),
     restQuery: z.strictObject({
       ...listJurisdictionsInput,
       page_size: z.coerce.number().int().min(1).max(MAX_JURISDICTION_PAGE_SIZE).default(DEFAULT_JURISDICTION_PAGE_SIZE).describe(jurisdictionPageSizeDescription),
+      view: z.enum(JURISDICTION_VIEWS).default('BASIC').describe(jurisdictionViewDescription),
     }),
     output: z.strictObject({
       jurisdictions: z.array(Jurisdiction).describe('自治体コードの昇順。'),
