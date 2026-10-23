@@ -63,7 +63,7 @@ def cf(*args: str, parse: bool = True):
 
 
 def search_cf(instance_name: str, *args: str, parse: bool = True):
-    return cf('ai-search', *args, '--name', NAMESPACE, '--id', instance_name, parse=parse)
+    return cf('ai-search', *args, '--namespace', NAMESPACE, '--instance-id', instance_name, parse=parse)
 
 
 # --- 出典 -------------------------------------------------------------------
@@ -170,7 +170,7 @@ def converted_chars(chunks: list[dict]) -> int:
 
 def check_instance(config: dict) -> None:
     """索引の設定が instance.json と合っていることを確かめる。合わなければ登録しない。"""
-    actual = cf('ai-search', 'get', config['name'], '--name', NAMESPACE)
+    actual = cf('ai-search', 'get', config['name'], '--namespace', NAMESPACE)
     expected = {
         'embedding_model': config['embedding_model'],
         'chunk_size': config['chunk_size'],
@@ -335,7 +335,7 @@ def upload_all(instance_name: str, jobs: list[tuple[dict, Path]], workers: int) 
     def upload(job: tuple[dict, Path]) -> None:
         item, path = job
         metadata = {k: str(v) for k, v in item['metadata'].items()}
-        cf('ai-search', 'items', 'upload', instance_name, '--name', NAMESPACE, '--file', str(path),
+        cf('ai-search', 'items', 'upload', instance_name, '--namespace', NAMESPACE, '--file', str(path),
            '--metadata', json.dumps(metadata), parse=False)
 
     with ThreadPoolExecutor(workers) as pool:
