@@ -8,8 +8,8 @@ export const MANIFEST = JSON.stringify({
   start_url: '/',
   scope: '/',
   display: 'standalone',
-  background_color: '#fdfcfa',
-  theme_color: '#fdfcfa',
+  background_color: '#ffffff',
+  theme_color: '#ffffff',
   icons: [
     { src: '/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
     { src: '/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
@@ -47,10 +47,10 @@ export const OFFLINE_HTML = `<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>オフライン — 風土記</title>
 <meta name="robots" content="noindex">
-<meta name="theme-color" content="#fdfcfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1b1916" media="(prefers-color-scheme: dark)">
 <style>
-:root{color-scheme:light dark;--bg:#fdfcfa;--fg:#1b1916}
+:root{color-scheme:light dark;--bg:#ffffff;--fg:#1b1916}
 @media(prefers-color-scheme:dark){:root{--bg:#1b1916;--fg:#f3f0ea}}
 body{margin:0;min-height:100dvh;display:grid;place-items:center;padding:24px;background:var(--bg);color:var(--fg);font:400 16px/1.8 system-ui,sans-serif;text-align:center}
 button{margin-top:16px;font:inherit;padding:10px 24px;border-radius:999px;border:1px solid currentColor;background:transparent;color:inherit}

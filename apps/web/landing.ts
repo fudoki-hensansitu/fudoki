@@ -28,7 +28,7 @@ const libraryMax = Math.max(...library.rows.map((r) => r.amount))
 export const TOKENS_CSS = `
 @font-face{font-family:"Fudoki Mincho";src:url("/fonts/mincho.woff2") format("woff2");font-weight:400;font-display:swap}
 :root{
---background:#fdfcfa;--foreground:#2b2723;--card:#f8f5ee;--card-foreground:#2b2723;
+--background:#ffffff;--foreground:#2b2723;--card:#f8f5ee;--card-foreground:#2b2723;
 --secondary:#ece6da;--secondary-foreground:#2b2723;--muted:#ece6da;--muted-foreground:#6b655c;
 --primary:#2f5d43;--primary-foreground:#f8f5ee;--accent:#e9efe9;--accent-foreground:#2f5d43;
 --border:#ddd6c8;--ring:#2f5d43;--logo-rule-ink:#29523b;
@@ -405,7 +405,7 @@ export const LANDING_HTML = `<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>風土記（fudoki）— 町の家計簿</title>
 <meta name="description" content="${DESCRIPTION}">
-<meta name="theme-color" content="#fdfcfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1b1916" media="(prefers-color-scheme: dark)">
 <link rel="canonical" href="https://fudoki.dev/">
 <link rel="icon" href="/favicon.ico" sizes="48x48">

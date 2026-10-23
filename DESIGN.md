@@ -21,11 +21,11 @@ shadcn/ui の語彙。ブランド色は `--primary`、`--accent` は hover の�
 
 ```css
 :root {
-  --background: #fdfcfa;
+  --background: #ffffff;
   --foreground: #2b2723;
   --card: #f8f5ee;
   --card-foreground: #2b2723;
-  --popover: #fdfcfa;
+  --popover: #ffffff;
   --popover-foreground: #2b2723;
   --primary: #2f5d43;
   --primary-foreground: #f8f5ee;
@@ -36,7 +36,7 @@ shadcn/ui の語彙。ブランド色は `--primary`、`--accent` は hover の�
   --accent: #e9efe9;
   --accent-foreground: #2f5d43;
   --destructive: oklch(57.7% 0.245 27.325);
-  --destructive-foreground: #fdfcfa;
+  --destructive-foreground: #ffffff;
   --border: #ddd6c8;
   --input: #ddd6c8;
   --ring: #2f5d43;
