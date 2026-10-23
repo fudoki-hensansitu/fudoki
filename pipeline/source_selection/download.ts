@@ -78,7 +78,10 @@ async function browserOriginal(url: string, opener: string): Promise<Downloaded>
   }
 }
 
-/** 弾かれたとき（403・429・5xx・接続の失敗）だけブラウザで取り直す。404・410 は無いものとしてそのまま返す。 */
+/**
+ * 404・410 は無いものとしてそのまま返し、それ以外の失敗（403・429・5xx・接続の失敗など）はブラウザで取り直す。
+ * 弾くときに 403 でなく 400・406 などを返すサイトもあるので、状態を絞らない。大きさの上限を超えたときは取り直さない。
+ */
 function shouldRetryInBrowser(error: unknown): boolean {
   if (!(error instanceof DownloadError)) return true
   return error.status === undefined ? false : error.status !== 404 && error.status !== 410

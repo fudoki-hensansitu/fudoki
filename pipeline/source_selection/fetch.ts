@@ -6,7 +6,7 @@ import { downloadOriginal } from './download'
 
 const USAGE = `Usage: bun pipeline/source_selection/fetch.ts <url> --out <path> [--format pdf|csv] [--landing <url>] [--browser fallback|never|only]
 選定の調査で出典を1つ取り、--out に書いて、選定に写す値を1行の JSON で返す（sha256 は書いたバイト列から求める）。
-風土記と名乗る User-Agent で取り、403・429・5xx・接続の失敗なら Orca のブラウザで --landing（無ければ出典の origin）を開いて頁の中で取り直す。
+風土記と名乗る User-Agent で取り、404・410 以外の失敗（403・429・5xx・接続の失敗など）なら Orca のブラウザで --landing（無ければ出典の origin）を開いて頁の中で取り直す。
 --format の形式でないバイト列（失効した URL が 200 で返す HTML など）は書かずに exit 1。sandbox の外で回す（Orca の socket とネットワークを使う）。`
 
 async function main(args: string[]) {
@@ -17,13 +17,14 @@ async function main(args: string[]) {
   let landing: string | undefined
   let browser: 'fallback' | 'never' | 'only' = 'fallback'
   for (let index = 0; index < args.length; index++) {
+    const arg = args[index] ?? ''
     const value = args[index + 1]
-    if (args[index] === '--out' && value) { out = value; index++ }
-    else if (args[index] === '--format' && (value === 'pdf' || value === 'csv')) { format = value; index++ }
-    else if (args[index] === '--landing' && value) { landing = value; index++ }
-    else if (args[index] === '--browser' && (value === 'fallback' || value === 'never' || value === 'only')) { browser = value; index++ }
-    else if (!url && !args[index].startsWith('--')) url = args[index]
-    else throw new Error(`Unknown or incomplete argument: ${args[index]}`)
+    if (arg === '--out' && value) { out = value; index++ }
+    else if (arg === '--format' && (value === 'pdf' || value === 'csv')) { format = value; index++ }
+    else if (arg === '--landing' && value) { landing = value; index++ }
+    else if (arg === '--browser' && (value === 'fallback' || value === 'never' || value === 'only')) { browser = value; index++ }
+    else if (!url && !arg.startsWith('--')) url = arg
+    else throw new Error(`Unknown or incomplete argument: ${arg}`)
   }
   if (!url || !out) throw new Error('url and --out are required')
   const downloaded = await downloadOriginal(url, { opener: landing, browser })
