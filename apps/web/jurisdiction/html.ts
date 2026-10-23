@@ -1,6 +1,7 @@
 // 自治体の個別ページ（/:都道府県/:名称）と一覧（/jurisdictions）の HTML。検索エンジンが読めるよう、金額と款・事業はサーバーで書き出す。
 // グラフと会話への導線は島（jurisdiction/jurisdiction.tsx）が同じデータで描き直す
 import { logo, TOKENS_CSS, TURNSTILE_SCRIPT } from '../landing'
+import { THEME_COLOR_META } from '../tokens'
 import { PWA_HEAD, PWA_REGISTER } from '../pwa'
 import type { CatalogEntry } from '../server/jurisdiction'
 import { formatYen, jurisdictionPath, reiwa, type PageData } from './types'
@@ -21,8 +22,7 @@ const head = (title: string, description: string, canonical: string, extra = '')
 <meta property="og:url" content="${esc(canonical)}">
 <meta property="og:image" content="${ORIGIN}/og.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#1b1916" media="(prefers-color-scheme: dark)">
+${THEME_COLOR_META}
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 ${PWA_HEAD}
