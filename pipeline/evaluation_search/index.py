@@ -2,6 +2,7 @@
 
     bun run --cwd pipeline evaluation:index            # 計画の表示だけ（R2 と索引は読むだけ）
     bun run --cwd pipeline evaluation:index --write    # 登録して、確認できた出典の記録を instance.json に書く
+    bun run --cwd pipeline evaluation:index --full     # 記録済みの出典も索引の全件と比べる（既定は記録の無い・計画が変わった出典だけ）
 
 ネットワークと `cf` を使うので sandbox の外で手動実行し、CI では回さない。分割した PDF は保存しない。
 """
@@ -194,10 +195,12 @@ def check_instance(config: dict) -> None:
         raise SystemExit(f'索引の設定が instance.json と違う:\n  期待 {expected}\n  実際 {found}')
 
 
-def list_items(instance_name: str, status: str | None = None) -> list[dict]:
+def list_items(instance_name: str, status: str | None = None, origin_sha256: str | None = None) -> list[dict]:
     items: dict[str, dict] = {}
     page = 1
     narrow = ('--status', status) if status else ()
+    if origin_sha256:
+        narrow += ('--metadata-filter', json.dumps({'origin_sha256': origin_sha256}))
     while True:
         rows = search_cf(instance_name, 'items', 'list', *narrow, '--per-page', str(PER_PAGE), '--page', str(page))
         for row in rows:
@@ -250,10 +253,25 @@ def compare(origin_plan: OriginPlan, indexed: dict[str, dict]) -> None:
             origin_plan.ok += 1
 
 
-def build_plans(instance: dict, origins: list[plan.Origin]) -> tuple[list[OriginPlan], list[dict], dict]:
-    """出典を取って頁に分け、索引の item と比べる。分割した PDF の大きさもここで確かめる（保存はしない）。"""
+def list_origins(instance_name: str, origin_sha256s: list[str]) -> dict[str, dict]:
+    return {item['key']: item for sha in origin_sha256s for item in list_items(instance_name, origin_sha256=sha)}
+
+
+def build_plans(instance: dict, origins: list[plan.Origin], full: bool = False) -> tuple[list[OriginPlan], list[dict], dict]:
+    """出典を取って頁に分け、索引の item と比べる。分割した PDF の大きさもここで確かめる（保存はしない）。
+
+    既定では、記録があり指紋も今の計画と同じ出典は比べずに飛ばし、残りの出典と、選定から外れた記録の出典の item だけを
+    索引から一覧する（全件は約4万件で、一覧に十数分〜1時間半かかる）。`full` は全件を一覧して全出典を比べる。
+    索引の側で item が error・取り込み直しになったか、記録の無い出典の item が残っていないかを確かめるときに使う。
+    """
     config = instance['config']
-    indexed = {item['key']: item for item in list_items(config['name'])}
+    if full:
+        indexed = {item['key']: item for item in list_items(config['name'])}
+    else:
+        selected = {o.sha256 for o in origins}
+        origins = [o for o in origins if not plan.registration_is_current(instance, o)]
+        dropped = [r['origin_sha256'] for r in instance['registrations'] if r['origin_sha256'] not in selected]
+        indexed = list_origins(config['name'], [o.sha256 for o in origins] + dropped)
     plans: list[OriginPlan] = []
     for origin in origins:
         path = fetch_origin(origin)
@@ -289,7 +307,9 @@ def build_plans(instance: dict, origins: list[plan.Origin]) -> tuple[list[Origin
     return plans, strays, indexed
 
 
-def describe(plans: list[OriginPlan], strays: list[dict]) -> None:
+def describe(plans: list[OriginPlan], strays: list[dict], skipped: int = 0) -> None:
+    if skipped:
+        log(f'記録済みで計画が変わらない出典: {skipped}（比べない。比べるには --full）')
     for p in plans:
         o = p.origin
         state = '記録あり' if p.recorded else '記録なし'
@@ -324,10 +344,9 @@ def upload_all(instance_name: str, jobs: list[tuple[dict, Path]], workers: int) 
                 log(f'  登録 {count}/{len(jobs)}')
 
 
-def apply(instance: dict, plans: list[OriginPlan], strays: list[dict], workers: int) -> None:
+def apply(instance: dict, plans: list[OriginPlan], strays: list[dict], workers: int, selected: list[str]) -> None:
     name = instance['config']['name']
-    planned = {p.origin.sha256 for p in plans}
-    instance['registrations'] = [r for r in instance['registrations'] if r['origin_sha256'] in planned]
+    instance['registrations'] = [r for r in instance['registrations'] if r['origin_sha256'] in set(selected)]
     for p in plans:
         # 書く前に記録を消し、確認できるまで catalog に載せない。指紋が今の計画と違う記録は catalog に載らないので消さない。
         # 送信が途中で失敗しても、次の実行が前の計画（NFKC の宣言など）を記録から判断できる。確認できたら置き換える
@@ -385,7 +404,7 @@ def readable(name: str, p: OriginPlan, indexed: dict[str, dict]) -> bool:
     return False
 
 
-def wait_and_confirm(instance: dict, plans: list[OriginPlan], timeout_minutes: int) -> bool:
+def wait_and_confirm(instance: dict, plans: list[OriginPlan], timeout_minutes: int, selected: list[str]) -> bool:
     """全 item が completed になり、数と metadata が計画と一致した出典だけ記録を書く。"""
     name = instance['config']['name']
     targets = [p for p in plans if p.dirty]
@@ -393,15 +412,15 @@ def wait_and_confirm(instance: dict, plans: list[OriginPlan], timeout_minutes: i
     results: dict[str, str] = {}
     while True:
         try:
-            # 全件の一覧は約4万件で1周に十数分〜1時間半かかる。待ちの間は取り込み中の item だけを見て、
-            # 計画の item が無くなってから全件で確かめる（全件で待ちが残れば、また取り込み中だけの待ちに戻る）
+            # 待ちの間は取り込み中の item だけを見て、計画の item が無くなってから対象の出典の item を一覧して確かめる
+            # （そこで待ちが残れば、また取り込み中だけの待ちに戻る）
             active = {item['key'] for status in sorted(PENDING) for item in list_items(name, status)}
             waiting = sum(1 for p in targets for item in p.items if item['key'] in active)
             if waiting and time.time() <= deadline:
                 log(f'  待ち {waiting} / 取り込み中 {len(active)}')
                 time.sleep(POLL_SECONDS)
                 continue
-            indexed = {item['key']: item for item in list_items(name)}
+            indexed = list_origins(name, [p.origin.sha256 for p in targets])
         except RuntimeError as error:  # 待ちは数時間に及ぶので、一覧の一時的な失敗では止めずに次の回で取り直す
             if time.time() > deadline:
                 raise
@@ -447,7 +466,7 @@ def wait_and_confirm(instance: dict, plans: list[OriginPlan], timeout_minutes: i
             'origin_sha256': p.origin.sha256, 'page_count': p.page_count, 'plan_fingerprint': p.fingerprint,
             'confirmed_at': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
         log(f'{p.origin.sha256[:12]}: 登録 {len(p.items)} 頁を確認')
-    order = {p.origin.sha256: i for i, p in enumerate(plans)}
+    order = {sha: i for i, sha in enumerate(selected)}
     instance['registrations'].sort(key=lambda r: order.get(r['origin_sha256'], len(order)))
     save_instance(instance)
     return ok
@@ -458,18 +477,20 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument('--write', action='store_true', help='索引へ書き込み、確認できた出典の記録を instance.json に書く')
     parser.add_argument('--workers', type=int, default=3, help='cf の同時実行数（既定 3）')
     parser.add_argument('--timeout-minutes', type=int, default=DEFAULT_TIMEOUT_MINUTES, help='取り込みを待つ期限')
+    parser.add_argument('--full', action='store_true', help='記録済みの出典も含め、索引の全件と比べる（十数分〜1時間半かかる）')
     args = parser.parse_args(argv)
 
     instance = plan.load_instance()
     origins = plan.load_origins(use_ocr=instance['config']['use_ocr'])
+    selected = [o.sha256 for o in origins]
     check_instance(instance['config'])
-    plans, strays, _ = build_plans(instance, origins)
-    describe(plans, strays)
+    plans, strays, _ = build_plans(instance, origins, args.full)
+    describe(plans, strays, len(origins) - len(plans))
     if not args.write:
         log('計画の表示だけ。書き込むには --write')
         return 0
-    apply(instance, plans, strays, args.workers)
-    return 0 if wait_and_confirm(instance, plans, args.timeout_minutes) else 1
+    apply(instance, plans, strays, args.workers, selected)
+    return 0 if wait_and_confirm(instance, plans, args.timeout_minutes, selected) else 1
 
 
 if __name__ == '__main__':
