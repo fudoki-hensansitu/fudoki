@@ -96,13 +96,19 @@ function Trend({ data }: { data: PageData }) {
 
 function ProjectRow({ p, rank, max }: { p: Project; rank: number; max: number }) {
   const [setsu, setSetsu] = React.useState<Setsu[]>()
+  const [error, setError] = React.useState(false)
+  const [attempt, setAttempt] = React.useState(0)
   const pct = changePct(p.yen, p.prevYen)
   // 内訳（節の上位）は開閉せず最初から出す
   React.useEffect(() => {
     const controller = new AbortController()
-    fetchJson<Setsu[]>(`/api/jurisdictions/setsu/${p.id}`, controller.signal).then(setSetsu, () => {})
+    setError(false)
+    fetchJson<Setsu[]>(`/api/jurisdictions/setsu/${p.id}`, controller.signal).then(
+      (value) => { if (!controller.signal.aborted) setSetsu(value) },
+      () => { if (!controller.signal.aborted) setError(true) },
+    )
     return () => controller.abort()
-  }, [p.id])
+  }, [p.id, attempt])
   return (
     <li className="border-t">
       <div className="grid grid-cols-[22px_minmax(0,1fr)_auto] items-center gap-x-3.5 gap-y-1 py-3 sm:grid-cols-[22px_minmax(120px,190px)_1fr_110px_90px]">
@@ -122,12 +128,17 @@ function ProjectRow({ p, rank, max }: { p: Project; rank: number; max: number })
           <i className="block text-[11px] not-italic text-muted-foreground">前年度比</i>
         </div>
       </div>
-      {setsu && setsu.length > 0 ? (
+      {error ? (
+        <div role="alert" className="flex flex-wrap items-center gap-2 pb-3 pl-9 text-[13px] text-destructive">
+          <span>内訳を読み込めませんでした。</span>
+          <button type="button" onClick={() => setAttempt((n) => n + 1)} className="underline underline-offset-2">もう一度読み込む</button>
+        </div>
+      ) : setsu && setsu.length > 0 ? (
         <ul className="flex flex-wrap gap-x-4 gap-y-0.5 pb-3 pl-9 text-[12.5px] text-muted-foreground">
           {setsu.map((s) => (
             <li key={s.name}>
               {s.name}
-              <b className="ml-1.5 font-normal tabular-nums text-foreground">{formatYen(s.yen)}</b>
+              <b className="ml-1.5 font-normal tabular-nums text-foreground">{s.amountMissing ? '金額未記載' : formatYen(s.yen)}</b>
             </li>
           ))}
         </ul>
