@@ -198,6 +198,8 @@ export async function fetchPowerBiCsv(reportUrl: string, acquisition: PowerBiAcq
   const shape = response.results[0]?.result.data.dsr.DS[0]
   if (!shape) throw new Error('Power BI returned no data')
   const rows = decodeDataShape(shape)
+  if (rows.length === 0) throw new Error('Power BI returned no rows')
+  if (rows.some(row => row.length !== acquisition.columns.length)) throw new Error('Result columns differ from the declared columns')
   const orderIndexes = acquisition.order_by.map(column => acquisition.columns.indexOf(column))
   if (orderIndexes.includes(-1)) throw new Error('order_by must be among columns')
   rows.sort((a, b) => {
