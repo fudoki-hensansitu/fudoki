@@ -50,6 +50,16 @@ app.all('*', (c) =>
     : new Response('Method Not Allowed\n', { status: 405, headers: { Allow: 'GET, HEAD' } }),
 )
 
+// PR ごとの preview（pr-<番号>.fudoki.dev）は custom domain だと noindex が自動で付かないので自分で付ける。assets が直接返すファイルには付かないが、頁は Worker が返す
+const noindex = (res: Response) => {
+  const out = new Response(res.body, res)
+  out.headers.set('X-Robots-Tag', 'noindex')
+  return out
+}
+
 export default {
-  fetch: (request: Request, env: Env = {}, ctx?: Parameters<typeof app.fetch>[2]) => app.fetch(request, env, ctx),
+  fetch: async (request: Request, env: Env = {}, ctx?: Parameters<typeof app.fetch>[2]) => {
+    const res = await app.fetch(request, env, ctx)
+    return new URL(request.url).hostname.endsWith('.fudoki.dev') ? noindex(res) : res
+  },
 }
