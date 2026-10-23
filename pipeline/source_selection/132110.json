@@ -450,6 +450,17 @@
     {
       "target": {
         "jurisdiction": "132110",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定。公式HP（https://www.city.kodaira.tokyo.jp/）がシステム障害で閲覧不可（2026-10-20更新の臨時案内ページのみで記事本文なし）のため、評価資料の有無を確認できない。過去年度の評価資料の選定もなく手がかりなし。HP復旧後に再選定が必要。確認日：2026-10-22T04:06:23+00:00（UTC）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132110",
         "fiscal_year": 2024,
         "document_kind": "settlement"
       },

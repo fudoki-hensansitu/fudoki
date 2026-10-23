@@ -2840,6 +2840,68 @@
     {
       "target": {
         "jurisdiction": "131211",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和8年度足立区区民評価委員会活動報告書（令和7年度実施事業分）",
+          "landing_url": "https://www.city.adachi.tokyo.jp/sesaku/ku/kuse/gyose-h28-kuminhyoka.html",
+          "inspected_at": "2026-10-22T04:02:39+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.adachi.tokyo.jp/documents/33840/1_katsudouhoukoku.pdf",
+              "sha256": "2bbab4e37dffc31211e8cf60a8b10493a6f1e9931afdbdfecfd5401e9764bf6b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.adachi.tokyo.jp/documents/33840/2_katsudouhoukoku.pdf",
+              "sha256": "16618ddc0e562ce9ed16b735cd0a1c706a09dd2c1d2e90df6011b1c7ef04551c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.adachi.tokyo.jp/documents/33840/3_katsudouhoukoku.pdf",
+              "sha256": "a7f1d54b21190c7b8f8c7919e634da13ddf84aae4ff8aa4bab5a7e0396671929",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131211/2025/evaluation-settlement-2.pdf",
+            "sha256": "2bbab4e37dffc31211e8cf60a8b10493a6f1e9931afdbdfecfd5401e9764bf6b",
+            "final_url": "https://www.city.adachi.tokyo.jp/documents/33840/1_katsudouhoukoku.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131211/2025/evaluation-settlement-1.pdf",
+            "sha256": "16618ddc0e562ce9ed16b735cd0a1c706a09dd2c1d2e90df6011b1c7ef04551c",
+            "final_url": "https://www.city.adachi.tokyo.jp/documents/33840/2_katsudouhoukoku.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131211/2025/evaluation-settlement-3.pdf",
+            "sha256": "a7f1d54b21190c7b8f8c7919e634da13ddf84aae4ff8aa4bab5a7e0396671929",
+            "final_url": "https://www.city.adachi.tokyo.jp/documents/33840/3_katsudouhoukoku.pdf"
+          }
+        ],
+        "archived_at": "2026-10-22T04:28:35.143Z"
+      },
+      "reason": "令和7年度実施事業を区民の視点で評価した報告書3分冊（計138頁、文字PDF）。報告にあたってが「令和7年度実施事業分」の初めての区民評価であることを示す。第4章の個別評価調書は事業ごとに目的・事業内容、ロジックモデル・指標の達成度、令和6〜8年度の総事業費・事業費・人件費（単位千円）と支出内訳、評価を載せる。各分科会の5段階評価の平均点の推移も記載。ヒアリング用スライド（r8slide_*）は説明資料で評価調書の本体ではないため不採用。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131211",
         "fiscal_year": 2024,
         "document_kind": "settlement"
       },

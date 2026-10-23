@@ -1781,13 +1781,24 @@
     {
       "target": {
         "jurisdiction": "131202",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定。令和7年度決算・評価資料は未公表。決算の掲載一覧（https://www.city.nerima.tokyo.jp/kusei/zaisei/kessan/index.html）の最新は令和6年度決算で、r7頁は404。令和6年度は主要事業成果報告書（R6syuyoujigyou.pdf）を公表しているが令和7年度版の掲載なし。確認日：2026-10-22T04:02:04+00:00（UTC）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131202",
         "fiscal_year": 2024,
         "document_kind": "settlement"
       },
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "R6評価資料が見つからない。決算ページに成果・評価のPDFなし。DuckDuckGoのsite検索（令和7年度 行政評価／事務事業評価）でも事業評価なし（教育点検のみ）。探した頁: https://www.city.nerima.tokyo.jp/kusei/zaisei/kessan/r6/06kessansyo.html。探索した範囲では選べる評価資料が無かった（2026-10-15確認）。"
+      "reason": "未選定。令和6年度主要事業成果報告書（R6syuyoujigyou.pdf、165頁、文字PDF）は事業ごとに事業概要と経費の執行状況（予算額・執行額・不用額・執行率）を載せるのみで、評価と今後の方向の欄がなく、取組の内容と決算額だけの報告書のため評価資料に該当せず不採用。サイト内検索（Google CSEを描画して実行。「事務事業評価」は平成21〜25年度の旧資料と会議録のみ、「行政評価」は平成23〜25年度の委員会記録のみ、「令和6年度 事務事業評価」に該当なし。2024年度＝令和6年度実施分を評価する「令和7年度」の語では引いていない）でも令和の事務事業評価・行政評価の公表なし。探した頁：https://www.city.nerima.tokyo.jp/kusei/zaisei/kessan/r6/index.html、練馬区HP内検索。確認日：2026-10-22T05:34:06+00:00（UTC）。"
     },
     {
       "target": {
@@ -1798,7 +1809,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "2023年度実績の評価資料が見つからない。教育点検のみ。探した頁: https://www.city.nerima.tokyo.jp/kusei/zaisei/kessan/r6/06kessansyo.html。探索した範囲では選べる評価資料が無かった（2026-10-16確認）。"
+      "reason": "未選定。令和5年度主要事業成果報告書（R5syuyoujigyou.pdf、148頁、文字PDF）は事業ごとに事業概要と経費の執行状況（予算額・執行額・不用額・執行率）を載せるのみで、評価と今後の方向の欄がなく、取組の内容と決算額だけの報告書のため評価資料に該当せず不採用。サイト内検索（Google CSEを描画して実行。「事務事業評価」は平成21〜25年度の旧資料と会議録のみ、「行政評価」は平成23〜25年度の委員会記録のみ、「令和6年度 事務事業評価」に該当なし）でも令和の事務事業評価・行政評価の公表なし。探した頁：https://www.city.nerima.tokyo.jp/kusei/zaisei/kessan/r5/index.html、練馬区HP内検索。確認日：2026-10-22T05:34:06+00:00（UTC）。"
     }
   ]
 }

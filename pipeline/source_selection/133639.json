@@ -432,6 +432,17 @@
     {
       "target": {
         "jurisdiction": "133639",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定。新島村に2025年度の評価資料の公表なし。サイト内検索（行政評価）では社会資本総合整備計画の事後評価（インフラ個別計画）のみ、主要施策の成果の検索にも該当なし。財政・職員の状況頁（https://www.niijima.com/gyousei/zaiseishokuin/index.html）に評価資料の掲載なし。確認日：2026-10-22T04:15:59+00:00（UTC）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "133639",
         "fiscal_year": 2024,
         "document_kind": "settlement"
       },

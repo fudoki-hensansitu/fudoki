@@ -1715,6 +1715,17 @@
     {
       "target": {
         "jurisdiction": "131199",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定。令和7年度実施事業を評価する令和8年度行政評価結果は未公表。行政評価結果の掲載一覧（https://www.city.itabashi.tokyo.jp/kusei/seisakukeiei/hyouka/kekka/index.html）の最新は「令和7年度行政評価結果」（https://www.city.itabashi.tokyo.jp/kusei/seisakukeiei/hyouka/kekka/1060042.html）で、令和8年度分の掲載なし。確認日：2026-10-22T04:00:26+00:00（UTC）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131199",
         "fiscal_year": 2024,
         "document_kind": "settlement"
       },

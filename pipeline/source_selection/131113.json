@@ -1790,6 +1790,17 @@
     {
       "target": {
         "jurisdiction": "131113",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定。令和7年度主要施策の成果（https://www.city.ota.tokyo.jp/kuseijoho/ota_plan/kihonkeikaku/past/plan_seika/reiwa6_syuyosesakunoseika.files/R7_seika.pdf、物理96頁、文字PDF、令和8年8月）はあるが、各事業に事業概要・令和7年度の取組内容・所管部と巻末の決算額・執行率一覧を載せるのみで、目標・成果指標・評価・課題・今後の方向性の欄がなく、活動報告＋決算額の事務報告書のため評価資料に該当せず不採用。事務事業評価・行政評価の掲載頁は、企画課（.../soshiki/gyoumu/seisaku.html）・区のプラン（.../ota_plan/）・サイトマップ・決算頁（.../kessan/r07_kessan.html）に存在しない。確認日：2026-10-22T03:53:55+00:00（UTC）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131113",
         "fiscal_year": 2024,
         "document_kind": "settlement"
       },

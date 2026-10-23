@@ -1675,6 +1675,17 @@
     {
       "target": {
         "jurisdiction": "131083",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定。令和7年度実施事業を評価する令和8年度行政評価は未公表。江東区の行政評価は長期計画の「展開」の第6章に載る（2024年度に選んだ令和7年度行政評価は展開2026の一部）。展開の一覧（https://www.city.koto.lg.jp/010162/kuse/shisaku/kekaku/kekakur0211/koki/tenkai/index.html、Orca のブラウザで描画して読んだ）の最新は「江東区長期計画の展開2026」で、展開2027は掲載されていない。行政評価制度の一覧（https://www.city.koto.lg.jp/kuse/shisaku/hyokasedo/system22/index.html）は令和6年度行政評価で更新が止まっているので根拠にしない。同じ一覧の「江東区長期計画 令和7年度主要事業実績報告書」（https://www.city.koto.lg.jp/010162/07jissekihoukokusyo.html）は事業ごとの事業内容・活動量・事業費の計画と実績だけで、評価・課題・方向性の欄が無いので評価資料ではない。確認日：2026-10-22T04:35:59+00:00（UTC）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131083",
         "fiscal_year": 2024,
         "document_kind": "settlement"
       },

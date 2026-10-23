@@ -2680,6 +2680,17 @@
     {
       "target": {
         "jurisdiction": "131237",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定。令和7年度実績を評価する2026年（令和8年）度行政評価は未公表。行政評価の掲載一覧（https://www.city.edogawa.tokyo.jp/kuseijoho/zaisei/gyoseikaikaku/hyoka/index.html）の最新は「2025年（令和7年）度江戸川区行政評価」（令和7年度実施報告書=令和6年度実績・2024年度分）で、2026hyouka.htmlは404。なお2025hyouka_v2.pdfは2024年度選定と同一バイト列のため再選定しない。確認日：2026-10-22T04:03:58+00:00（UTC）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131237",
         "fiscal_year": 2024,
         "document_kind": "settlement"
       },

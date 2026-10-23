@@ -2279,6 +2279,44 @@
     {
       "target": {
         "jurisdiction": "131121",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和7年度主要事業の説明",
+          "landing_url": "https://www.city.setagaya.lg.jp/02022/35693.html",
+          "inspected_at": "2026-10-22T03:54:21+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.setagaya.lg.jp/documents/35693/2shyojigyonosetsumei.pdf",
+              "sha256": "5e63e3eb58a9a02bb11d4bd63f22fc0314d28f002a0c34b48c37a3991b795cee",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131121/2025/evaluation-settlement.pdf",
+            "sha256": "5e63e3eb58a9a02bb11d4bd63f22fc0314d28f002a0c34b48c37a3991b795cee",
+            "final_url": "https://www.city.setagaya.lg.jp/documents/35693/2shyojigyonosetsumei.pdf"
+          }
+        ],
+        "archived_at": "2026-10-22T04:28:25.569Z"
+      },
+      "reason": "令和7年度決算の主要事業の説明（97頁、文字PDF）。世田谷区実施計画の施策を対象に、行政の活動と区民等への効果を量的に把握し、成果指標の目標達成度（令和7年度末時点の達成状況・要因分析）、事業ごとの取組内容・実績、予算現額・決算額、今後の政策展開を載せる。目次・施策索引（p4・p10〜p12）と実施計画事業の執行実績の表（p5〜p9、分野別の予算現額・決算額・不用額・執行率）は評価の本体ではないが、全頁を選ぶ（pages は null）。評価の本体は p14 以降の施策評価票。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131121",
         "fiscal_year": 2024,
         "document_kind": "settlement"
       },

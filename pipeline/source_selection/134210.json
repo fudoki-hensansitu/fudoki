@@ -5543,6 +5543,17 @@
     {
       "target": {
         "jurisdiction": "134210",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定。小笠原村に2025年度の評価資料の公表なし。決算の掲載頁（https://www.vill.ogasawara.tokyo.jp/zaisei/zaisei_kessan/）の最新は令和5年度決算概要・主要な施策の成果報告書と令和6年度決算カードで、令和7年度分の掲載なし。サイト内検索（行政評価）に合致する記事なし。確認日：2026-10-22T04:19:32+00:00（UTC）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "134210",
         "fiscal_year": 2024,
         "document_kind": "settlement"
       },

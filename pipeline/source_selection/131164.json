@@ -2274,6 +2274,17 @@
     {
       "target": {
         "jurisdiction": "131164",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定。令和7年度（令和8年度実施）行政評価は未公表。行政評価の掲載一覧（https://www.city.toshima.lg.jp/kuse/shisaku/gyosehyoka/index.html）の最新は「令和6年度（令和7年度実施）行政評価結果」（https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r07/2508291433.html）で、令和7年度実施分の掲載なし。確認日：2026-10-22T03:57:36+00:00（UTC）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131164",
         "fiscal_year": 2024,
         "document_kind": "settlement"
       },

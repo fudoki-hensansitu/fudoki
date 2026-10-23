@@ -2575,6 +2575,44 @@
     {
       "target": {
         "jurisdiction": "131059",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和8年度戦略点検シート",
+          "landing_url": "https://www.city.bunkyo.lg.jp/b001/p007667.html",
+          "inspected_at": "2026-10-22T03:45:09+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.bunkyo.lg.jp/documents/8570/r8senryakutenken.pdf",
+              "sha256": "fac1d68e1692167272801634dae1abe0794193eacab4155fe1d99197c3b07f17",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131059/2025/evaluation-settlement.pdf",
+            "sha256": "fac1d68e1692167272801634dae1abe0794193eacab4155fe1d99197c3b07f17",
+            "final_url": "https://www.city.bunkyo.lg.jp/documents/8570/r8senryakutenken.pdf"
+          }
+        ],
+        "archived_at": "2026-10-22T04:26:09.937Z"
+      },
+      "reason": "令和7年度実績を評価する「文の京」総合戦略の進行管理資料（令和8年度戦略点検シート、物理166頁、文字PDF）。各主要課題に「事業費（令和7年度）上段：実績 下段：当初予算」の列と、R4(2022)〜R9(2027)の「主な取組実績」の列（R7(2025)が最新の実績）を持ち、評価・今後の方向を載せる。同じ頁の行財政運営点検シートは行財政運営の点検で事業単位の評価ではないため不採用。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131059",
         "fiscal_year": 2024,
         "document_kind": "settlement"
       },

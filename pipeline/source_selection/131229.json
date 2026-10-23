@@ -2347,6 +2347,44 @@
     {
       "target": {
         "jurisdiction": "131229",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和8年度自己評価の結果（別冊1）",
+          "landing_url": "https://www.city.katsushika.lg.jp/information/1000085/1006294/1006358/1043420.html",
+          "inspected_at": "2026-10-22T04:03:15+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.katsushika.lg.jp/_res/projects/default_project/_page_/001/043/420/bessi1.pdf",
+              "sha256": "59ad5323d71786b358806c125a2f94eaed31cbc4b7020cc2a2374ce03d548c3d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131229/2025/evaluation-settlement.pdf",
+            "sha256": "59ad5323d71786b358806c125a2f94eaed31cbc4b7020cc2a2374ce03d548c3d",
+            "final_url": "https://www.city.katsushika.lg.jp/_res/projects/default_project/_page_/001/043/420/bessi1.pdf"
+          }
+        ],
+        "archived_at": "2026-10-22T04:28:38.576Z"
+      },
+      "reason": "令和7年度実施事業の自己評価（別冊1、物理994頁、文字PDF）。評価表の見方がR5〜R8の予算・決算列（⑤執行額=決算額、単位千円）と要因分析・必要性・効率性・有効性の評価を載せることを示す。概要（2026overview.pdf）と別冊2「令和８年度 葛飾区行政評価委員会の評価結果」（2026administrativeevaluationcommittee.pdf、26頁。委員会が評価した事務事業ごとの実績状況・今後の方向性）は選ばない。全事務事業の自己評価は別冊1にあり、委員会の評価結果は検索に載らない。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131229",
         "fiscal_year": 2024,
         "document_kind": "settlement"
       },

@@ -2822,13 +2822,51 @@
     {
       "target": {
         "jurisdiction": "132187",
-        "fiscal_year": 2024,
+        "fiscal_year": 2025,
         "document_kind": "settlement"
       },
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "R6評価資料が見つからない。決算ページの決算説明書（前後）は歳入歳出の説明のみで目標・評価なし。DuckDuckGoのsite検索でも事業評価なし。探した頁: https://www.city.fussa.tokyo.jp/municipal/aboutfussa/finances/kessan/1020596.html。探索した範囲では選べる評価資料が無かった（2026-10-15確認）。"
+      "reason": "未選定。令和7年度実施事業を評価する令和8年度事務事業評価調書は未公表。行政評価の掲載頁（https://www.city.fussa.tokyo.jp/municipal/management/reform/1003477.html）の最新は令和7年度事務事業評価調書・実施結果一覧で、令和8年度分の掲載なし。確認日：2026-10-22T04:07:30+00:00（UTC）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132187",
+        "fiscal_year": 2024,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和7年度　事務事業評価調書",
+          "landing_url": "https://www.city.fussa.tokyo.jp/municipal/management/reform/1003477.html",
+          "inspected_at": "2026-10-22T05:31:28+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.fussa.tokyo.jp/_res/projects/default_project/_page_/001/003/477/r7tyousyo.pdf",
+              "sha256": "300c5f3a436f17ee503d07a1c7c12fce2e09ea416e7aee021f24af43043405c5",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132187/2024/evaluation-settlement.pdf",
+            "sha256": "300c5f3a436f17ee503d07a1c7c12fce2e09ea416e7aee021f24af43043405c5",
+            "final_url": "https://www.city.fussa.tokyo.jp/_res/projects/default_project/_page_/001/003/477/r7tyousyo.pdf"
+          }
+        ],
+        "archived_at": "2026-10-22T05:34:57.975Z"
+      },
+      "reason": "令和6年度に実施した事務事業の評価調書（物理154頁、文字PDF）。事業ごとに（1）実施計画決算（令和5・6年度の列）、（6）事業指標（令和6年度目標値・実績値・達成率）、（7）担当課長の総括、（8）行政評価（評点・一次評価の継続判断・二次評価結果）を載せる。実施結果一覧（r7itiran_v2.pdf）は事業ごとの二次評価の区分（Ａ・Ｂと評価文言）と改善検討の結果を並べたもので、同じ二次評価の区分と評点は各調書の（8）行政評価にあるため、重複として選ばない。"
     },
     {
       "target": {
@@ -2836,10 +2874,37 @@
         "fiscal_year": 2023,
         "document_kind": "settlement"
       },
-      "candidates": [],
-      "selected_candidate_id": null,
-      "archive": null,
-      "reason": "決算説明書は歳入歳出の説明のみで目標・評価が無い。探した頁: https://www.city.fussa.tokyo.jp/municipal/aboutfussa/finances/kessan/1020596.html。探索した範囲では選べる評価資料が無かった（2026-10-16確認）。"
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和6年度　事務事業評価調書",
+          "landing_url": "https://www.city.fussa.tokyo.jp/municipal/management/reform/1003477.html",
+          "inspected_at": "2026-10-22T05:31:28+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.fussa.tokyo.jp/_res/projects/default_project/_page_/001/003/477/r6chousyo.pdf",
+              "sha256": "085fe89c1c7fb7a832f1a87bc3539c187a67e24fee6126ac95cedbbedcbb2330",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132187/2023/evaluation-settlement.pdf",
+            "sha256": "085fe89c1c7fb7a832f1a87bc3539c187a67e24fee6126ac95cedbbedcbb2330",
+            "final_url": "https://www.city.fussa.tokyo.jp/_res/projects/default_project/_page_/001/003/477/r6chousyo.pdf"
+          }
+        ],
+        "archived_at": "2026-10-22T05:35:00.693Z"
+      },
+      "reason": "令和5年度に実施した事務事業の評価調書（物理148頁、文字PDF）。事業ごとに（1）実施計画決算（令和4・5年度の列）、（6）事業指標（令和5年度目標値・実績値・達成率）、（7）担当課長の総括、（8）行政評価（評点・一次評価の継続判断・二次評価結果）を載せる。実施結果一覧（r6itirann.pdf）は事業ごとの改善検討の結果（改善予定・改善済み・現状維持）を並べたもので、各事業の二次評価の区分と評点は各調書の（8）行政評価にあるため、重複として選ばない。"
     }
   ]
 }
