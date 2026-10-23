@@ -5,6 +5,8 @@ import { HttpError } from './http'
 export const SITEVERIFY_URL = 'https://challenges.cloudflare.com/turnstile/v0/siteverify'
 /** 入口の島が widget に付ける action。別の頁で取った token を使い回させない */
 export const TURNSTILE_ACTION = 'chat-start'
+/** Cloudflare が公開している「常に通る」試験用の secret（preview と手元で使う）。この secret は action・hostname が本番と合わないダミー値を返す */
+export const TURNSTILE_TEST_SECRET = '1x0000000000000000000000000000000AA'
 
 const encoder = new TextEncoder()
 const b64url = (bytes: ArrayBuffer) =>
@@ -68,8 +70,8 @@ export async function verifyTurnstile(
   } catch {
     throw new HttpError(502, 'UNAVAILABLE', '確認に失敗しました。もう一度試してください')
   }
-  // 別の頁・別のサイトで取った token は通さない。手元（localhost）は Turnstile の試験用の鍵が action・hostname を返さないので success だけを見る
-  const local = hostname === 'localhost' || hostname === '127.0.0.1'
-  if (result.success !== true || (!local && (result.action !== TURNSTILE_ACTION || result.hostname !== hostname)))
+  // 別の頁・別のサイトで取った token は通さない。試験用の secret（手元・preview）は action・hostname がダミー値で合わないので success だけを見る
+  const test = secret === TURNSTILE_TEST_SECRET
+  if (result.success !== true || (!test && (result.action !== TURNSTILE_ACTION || result.hostname !== hostname)))
     throw new HttpError(403, 'PERMISSION_DENIED', '確認に失敗しました。もう一度試してください')
 }

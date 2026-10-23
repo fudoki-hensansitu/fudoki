@@ -5,7 +5,7 @@ import type { Env, RateLimiter } from './env'
 import { CHAT_RATE_LIMIT, MAX_MESSAGES, MAX_USER_TEXT, VIEW_RATE_LIMIT } from './limits'
 import { parseChat } from './chat'
 import { parseRelay } from './relay'
-import { issueSession, SITEVERIFY_URL, TURNSTILE_ACTION, verifySession, verifyTurnstile } from './session'
+import { issueSession, SITEVERIFY_URL, TURNSTILE_ACTION, TURNSTILE_TEST_SECRET, verifySession, verifyTurnstile } from './session'
 
 const SECRET = 'test-secret'
 const allow: RateLimiter = { limit: async () => ({ success: true }) }
@@ -58,6 +58,10 @@ describe('Turnstile', () => {
   test('失敗・別の action・別の hostname は 403', async () => {
     for (const result of [{ success: false }, { success: true, action: 'other', hostname: 'fudoki.dev' }, { success: true, action: TURNSTILE_ACTION, hostname: 'evil.example' }])
       await expect(verifyTurnstile(SECRET, 'tok', '', 'fudoki.dev', fake(result))).rejects.toMatchObject({ status: 403 })
+  })
+  test('試験用の secret（preview・手元）は action・hostname を返さなくても success で通り、本番の secret では通さない', async () => {
+    await verifyTurnstile(TURNSTILE_TEST_SECRET, 'tok', '', 'pr-1.fudoki.dev', fake({ success: true }))
+    await expect(verifyTurnstile(SECRET, 'tok', '', 'pr-1.fudoki.dev', fake({ success: true }))).rejects.toMatchObject({ status: 403 })
   })
   test('token が無い・長すぎるなら siteverify を呼ばずに 400、secret が無ければ 503', async () => {
     const never = (async () => {

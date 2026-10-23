@@ -26,9 +26,10 @@ export default defineConfig(({ isPreview }) => ({
       // 推論の深さ（low・medium・high、none で切る）。考える分も出力 token に数えるので、案内役の応答には low で足りる
       CHAT_REASONING_EFFORT: bindings.text('low'),
       // Turnstile の site key（公開値）。Cloudflare の dashboard で widget を作って書く。空の間は入口の入力を出さない
-      TURNSTILE_SITE_KEY: bindings.text('0x4AAAAAAFbNaowr2DVLbWDn'),
-      // Turnstile の secret key（コードに書かない。値は Worker の secret に手で置く）。cf dev はここに宣言した名前だけを deploy/.dev.vars から読む
-      TURNSTILE_SECRET_KEY: bindings.secret(),
+      // preview（Access で保護済み）は AI エージェントも操作できるよう、Cloudflare が公開している「常に通る」試験用の鍵にする（本番の widget の hostname は fudoki.dev で、pr-<番号>.fudoki.dev では動かない）
+      TURNSTILE_SITE_KEY: bindings.text(isPreview ? '1x00000000000000000000AA' : '0x4AAAAAAFbNaowr2DVLbWDn'),
+      // Turnstile の secret key（本番はコードに書かず Worker の secret に手で置く。cf dev はここに宣言した名前だけを deploy/.dev.vars から読む）。preview は試験用の secret（公開値）
+      TURNSTILE_SECRET_KEY: isPreview ? bindings.text('1x0000000000000000000000000000000AA') : bindings.secret(),
     },
   },
 }))

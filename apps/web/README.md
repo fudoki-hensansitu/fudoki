@@ -35,6 +35,7 @@ bun run build:web
 
 - Turnstile の widget を dashboard で作り（hostname は `fudoki.dev`）、site key を `deploy/cloudflare.config.ts` の `TURNSTILE_SITE_KEY` に書く（設定済み）。secret key は Worker の secret `TURNSTILE_SECRET_KEY` に置く（会話の token の署名の鍵もここから作る）
 - 手元の `cf dev` は `deploy/.dev.vars.example` を `deploy/.dev.vars` に写す（secret は Cloudflare の試験用の鍵で通る）。site key は localhost / 127.0.0.1 のときだけ `worker.ts` が試験用の値に差し替える（本番の widget の hostname は `fudoki.dev` で、config の `TURNSTILE_SITE_KEY` は text の binding なので `.dev.vars` では上書きできない）
+- preview（`pr-<番号>.fudoki.dev`、Cloudflare Access で保護）は config の `isPreview` で site key・secret を Cloudflare 公開の「常に通る」試験用の値に差し替える（AI エージェントが操作できる）。試験用の secret は action・hostname が合わないダミー値を返すので、`server/session.ts` はその secret のときだけ success のみを見る。本番は変えない
 
 ### 利用状況
 
