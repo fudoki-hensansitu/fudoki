@@ -21,7 +21,7 @@ const head = (title: string, description: string, canonical: string, extra = '')
 <meta property="og:url" content="${esc(canonical)}">
 <meta property="og:image" content="${ORIGIN}/og.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#fdfcfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1b1916" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
