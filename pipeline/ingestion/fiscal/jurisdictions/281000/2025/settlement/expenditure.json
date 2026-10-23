@@ -1747,14 +1747,14 @@
     {
       "table_id": "general-kaikei",
       "conversion_id": "general-kaikei",
-      "input_fingerprint": "66f5a7e30de7fb59e4396c81440ead7183082b72e05c21a40aa45828644fb18b",
+      "input_fingerprint": "cf83d8a864bd06f091aa6d718b362c8c640a615f6f6d72e501fae643a5b78e98",
       "account": "一般会計",
       "division": "会計室",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
         "金額の単位は column mark 1頁 から決めた。分冊のため款の和 3,893,073,476 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 2 種（9 件）を、印字された語から辞書の見出しに寄せた: 予算現額／備費予支流出用及増び減→予算現額・予算現額／節／金額→節／金額。"
+        "共有辞書に無い金額の見出し 2 種（9 件）を、印字された語から辞書の見出しに寄せた: 予算現額／備費予支流出用及増び減→予算現額／予備費支出及び流用増減・予算現額／節／金額→節／金額。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
@@ -1769,8 +1769,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kaikei-amounts.parquet",
-          "sha256": "c160298412bc6087a267174170caae5ca28052a2c06a6d853970f6bd81f427af",
-          "bytes": 3034
+          "sha256": "3dcfff432b65dde83a43f3bff15f2f77cf755011d2b046a8d16bcb0a92e51cc8",
+          "bytes": 3060
         },
         "row_count": 66
       }
@@ -1778,30 +1778,31 @@
     {
       "table_id": "general-gyozai",
       "conversion_id": "general-gyozai",
-      "input_fingerprint": "dc5c5f24338553c6114de23b0a21dab0739e0c38ab66c08f989a4fb39d147921",
+      "input_fingerprint": "3993954803dd8c30ba94ff561242f373c9fa315044de8ef0e22c448ebdcbd8aa",
       "account": "一般会計",
       "division": "行財政局",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
         "金額の単位は printed 1頁・carried 5頁 から決めた。分冊のため款の和 263,715,663,970 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
-        "原画で確かめた名称の誤読 64 件を、管理 JSON の name_corrections で印字に直した: 2給→2給料・8費→8旅費・17備品晴入費→17備品購入費・18食担金補助及交付金→18負担金補助及交付金・1報湿→1報酬・5災害補償費图給及→5災害補償費・8費→8旅費・12委託→12委託料・13及賃借料→13使用料及賃借料・17備品嘴入費→17備品購入費・18g食担金補助→18負担金補助及交付金・21蒸養精盒及賠償金→21補償補填及賠償金・8費→8旅費・10費→10需用費・12委新→12委託料・13及賃借料→13使用料及賃借料・17備品𣌟入考→17備品購入費・18g食担金補助及交付金→18負担金補助及交付金・1报酬→1報酬・7償費→7報償費・10費→10需用費・1111役務費→11役務費・12天→12委託料・13乃低胜粉→13使用料及賃借料・17備品𣌟入零伯相金補助→17備品購入費・18None→18負担金補助及交付金・21None→21補償補填及賠償金・22及割引料→22償還金利子及割引料・11役務費使用→11役務費・13None→13使用料及賃借料・18及交付金→18負担金補助及交付金・7價費→7報償費・8費→8旅費・10田→10需用費・11役費→11役務費・12香評料→12委託料・16公有財産瞵入費→16公有財産購入費・17備品膳入費→17備品購入費・18負担金補助無A州→18負担金補助及交付金・22及割引料→22償還金利子及割引料・27繰出→27繰出金・27繰出→27繰出金・27繰出→27繰出金・27綠出金→27繰出金・6職亻→6恩給及退職年金・3連営費→3運営費・3葉税→3徴税費・1賦課徵収費→1賦課徴収費・2固定資産審查委員会費→2固定資産審査委員会費・1None→1繰出金・1市場事業費出→1市場事業費へ繰出金・2食肉ャンタ中米我三→2食肉センター事業費へ繰出金・3国民健康保険事業費繰出金→3国民健康保険事業費へ繰出金・4母子父子寡婦福祉資金貸付事菜省へ總市→4母子父子寡婦福祉資金貸付事業費へ繰出金・5市街地再開発事業費繰出金→5市街地再開発事業費へ繰出金・8別前即イ餐事業費繰出→8後期高齢者医療事業費へ繰出金・9事業費へ繰出金→9空港整備事業費へ繰出金・11下水道事業会計繰出金→11下水道事業会計へ繰出金・12港湾非奖会師繰出金→12港湾事業会計へ繰出金・13自動車事業会社繰出金→13自動車事業会計へ繰出金・14高速鉄道事業会計人綠出金→14高速鉄道事業会計へ繰出金・15水道事業会計繰出金→15水道事業会計へ繰出金・16会計へ繰出金→16工業用水道事業会計へ繰出金・2雑→2雑出。"
+        "原画で確かめた名称の誤読 3 件を、管理 JSON の name_corrections で印字に直した: 8後期高齢者医療事業費→8後期高齢者医療事業費へ繰出金・11下水道事業会計繰出金→11下水道事業会計へ繰出金・12港湾事業会計繰出金→12港湾事業会計へ繰出金。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 46 件（p23:full-page:a0:result1:r64・p23:full-page:a0:result1:r64:w0・p23:full-page:a0:result1:r66・p23:full-page:a0:result1:r66:w0・p23:full-page:a0:result1:r74・p23:full-page:a0:result1:r74:w0・p23:full-page:a0:result1:r76・p23:full-page:a0:result1:r76:w0・p23:full-page:a0:result1:r78・p23:full-page:a0:result1:r78:w0・p23:full-page:a0:result1:r86・p23:full-page:a0:result1:r86:w0・p23:full-page:a0:result1:r88・p23:full-page:a0:result1:r88:w0・p23:full-page:a0:result1:r90・p23:full-page:a0:result1:r90:w0・p24:full-page:a0:result1:r34・p24:full-page:a0:result1:r34:w0・p24:full-page:a0:result1:r36・p24:full-page:a0:result1:r36:w0・p24:full-page:a0:result1:r44・p24:full-page:a0:result1:r44:w0・p24:full-page:a0:result1:r46・p24:full-page:a0:result1:r46:w0・p24:full-page:a0:result1:r48・p24:full-page:a0:result1:r48:w0・p24:full-page:a0:result1:r56・p24:full-page:a0:result1:r56:w0・p24:full-page:a0:result1:r58・p24:full-page:a0:result1:r58:w0・p24:full-page:a0:result1:r60・p24:full-page:a0:result1:r60:w0・p24:full-page:a0:result1:r68・p24:full-page:a0:result1:r68:w0・p24:full-page:a0:result1:r70・p24:full-page:a0:result1:r70:w0・p26:full-page:a0:result1:r49・p26:full-page:a0:result1:r49:w13・p27:full-page:a0:result1:r102・p27:full-page:a0:result1:r102:w0・p27:full-page:a0:result1:r109・p27:full-page:a0:result1:r109:w0・p27:full-page:a0:result1:r111・p27:full-page:a0:result1:r111:w0・p27:full-page:a0:result1:r113・p27:full-page:a0:result1:r113:w0）・债→債 2 件（p28:full-page:a0:result1:r54・p28:full-page:a0:result1:r54:w1）・减→減 10 件（p24:ink-0:a0:result0:r3・p24:ink-0:a0:result0:r3:w0・p25:full-page:a0:result0:r18・p25:full-page:a0:result0:r18:w0・p27:full-page:a0:result1:r64・p27:full-page:a0:result1:r64:w8・p27:full-page:a0:result1:r147・p27:full-page:a0:result1:r147:w2・p28:full-page:a0:result0:r19・p28:full-page:a0:result0:r19:w0）・单→単 2 件（p23:full-page:a0:result1:r0・p23:full-page:a0:result1:r0:w1）・增→増 14 件（p23:ink-3:a3:result0:r3・p23:ink-3:a3:result0:r3:w0・p23:ink-5:a5:result0:r1・p23:ink-5:a5:result0:r1:w0・p24:full-page:a0:result0:r19・p24:full-page:a0:result0:r19:w2・p25:full-page:a0:result0:r17・p25:full-page:a0:result0:r17:w2・p26:full-page:a0:result0:r15・p26:full-page:a0:result0:r15:w1・p27:full-page:a0:result0:r19・p27:full-page:a0:result0:r19:w1・p28:full-page:a0:result0:r17・p28:full-page:a0:result0:r17:w1）・徵→徴 4 件（p25:full-page:a0:result0:r43・p25:full-page:a0:result0:r43:w1・p25:full-page:a0:result0:r51・p25:full-page:a0:result0:r51:w3）・查→査 4 件（p25:full-page:a0:result0:r78・p25:full-page:a0:result0:r78:w5・p25:full-page:a0:result1:r151・p25:full-page:a0:result1:r151:w7）・济→済 6 件（p25:full-page:a0:result1:r2・p25:full-page:a0:result1:r2:w2・p26:full-page:a0:result1:r2・p26:full-page:a0:result1:r2:w2・p27:full-page:a0:result1:r2・p27:full-page:a0:result1:r2:w2）・產→産 6 件（p25:full-page:a0:result0:r78・p25:full-page:a0:result0:r78:w3・p26:full-page:a0:result0:r34・p26:full-page:a0:result0:r34:w2・p26:full-page:a0:result0:r50・p26:full-page:a0:result0:r50:w3）・赁→賃 6 件（p23:full-page:a0:result0:r79・p23:full-page:a0:result0:r79:w1・p25:full-page:a0:result0:r38・p25:full-page:a0:result0:r38:w1・p26:full-page:a0:result0:r48・p26:full-page:a0:result0:r48:w1）・项→項 4 件（p23:full-page:a0:result0:r6・p23:full-page:a0:result0:r6:w1・p28:full-page:a0:result0:r4・p28:full-page:a0:result0:r4:w1）・额→額 8 件（p24:full-page:a0:result0:r19・p24:full-page:a0:result0:r19:w1・p25:full-page:a0:result0:r9・p25:full-page:a0:result0:r9:w9・p28:full-page:a0:result0:r6・p28:full-page:a0:result0:r6:w4・p28:ink-0:a0:result0:r0・p28:ink-0:a0:result0:r0:w3）・齡→齢 2 件（p27:full-page:a0:result0:r81・p27:full-page:a0:result0:r81:w3）。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-gyozai-nodes.parquet",
-          "sha256": "90783fca5b7974a3394b5bbde7f8a2c98b972f480cb108feceac5ee46664f2b5",
-          "bytes": 8679
+          "sha256": "ffe349860788ab6e15e6861c34a8ca22dfaa21b7a52b6399a27c1a29a45b0e76",
+          "bytes": 8218
         },
         "row_count": 130
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-gyozai-amounts.parquet",
-          "sha256": "08ceb7cb46c8d6b9fc59f3c5e36bdf0d5515b424efec82080feb57257a066c2b",
-          "bytes": 17754
+          "sha256": "2cbb8b48880d1b6a46312de6cc5c50bd90eb0c7ef9f13ad6da84107a49158c82",
+          "bytes": 15161
         },
         "row_count": 929
       }
@@ -1809,38 +1810,38 @@
     {
       "table_id": "debt-gyozai",
       "conversion_id": "debt-gyozai",
-      "input_fingerprint": "b4bec83b285c964838e381f66a7eb684312637a5fd174c8ef26d9c878d4d99b0",
+      "input_fingerprint": "11e29244b80de9a6df1cfbdbcef1cd9bd31762cd076ce53e328d773ca45068b5",
       "account": "公債費",
       "division": "行財政局",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
         "金額の単位は printed 1頁 から決めた。分冊のため款の和 317,456,586,295 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 2 種（20 件）を、印字された語から辞書の見出しに寄せた: 予算現額／予備費支出及び流用増反び流用増△減→予算現額・翌年度繰越額／継続費次繰→翌年度繰越額。"
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 增→増 2 件（p37:full-page:a0:result0:r12・p37:full-page:a0:result0:r12:w1）・额→額 2 件（p37:full-page:a0:result1:r3・p37:full-page:a0:result1:r3:w3）。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/debt-gyozai-nodes.parquet",
-          "sha256": "2668345b111e1811b52e21f75f571e799e589572fa5577aac5bf37732b843345",
-          "bytes": 3361
+          "sha256": "4caf4f11596bdd0339bfe163631a985ee2008f8378bad679e5ac849a34eef955",
+          "bytes": 3292
         },
         "row_count": 16
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/debt-gyozai-amounts.parquet",
-          "sha256": "0b043f37719c6d84976973547de19429cd0ce3cad4eb8a67053f0f87d452fa20",
-          "bytes": 4891
+          "sha256": "ef229e22985b06b18ae58e9cf067b95c6252edbf11faa05352f1e4acb4947e57",
+          "bytes": 4340
         },
-        "row_count": 120
+        "row_count": 124
       }
     },
     {
       "table_id": "general-senkyo",
       "conversion_id": "general-senkyo",
-      "input_fingerprint": "377cd50cf7d3b9e212ccdf7bd95b75d3d85d4cb6e32a81fee26c1f5937581a09",
+      "input_fingerprint": "78a24720eeb3730deaf380f1224abeea00b55e598a138645336eadf91508f4b3",
       "account": "一般会計",
       "division": "選挙管理委員会事務局",
       "notes": [
@@ -1871,7 +1872,7 @@
     {
       "table_id": "general-jinji",
       "conversion_id": "general-jinji",
-      "input_fingerprint": "269641ba0179c8c06e1088de76a2ed82d87504c4e57cbac25412835fe2932e2a",
+      "input_fingerprint": "f60cba674d2e406bc436d79dcf9efe1ad319f80d2fdb3d691c059d6952c32240",
       "account": "一般会計",
       "division": "人事委員会事務局",
       "notes": [
@@ -1902,7 +1903,7 @@
     {
       "table_id": "general-kansa",
       "conversion_id": "general-kansa",
-      "input_fingerprint": "fdae3cb3ac808b8092745fbd414767da4c0e84f2bd367e94589b595913c25ec6",
+      "input_fingerprint": "018efdeb902469d7ef58ca2c9a9d42f47ed80d7bf74d0eb652f9326ad85d841c",
       "account": "一般会計",
       "division": "監査事務局",
       "notes": [
@@ -1933,7 +1934,7 @@
     {
       "table_id": "general-kikaku",
       "conversion_id": "general-kikaku",
-      "input_fingerprint": "87e2691cc84c8791289966415d6d4764bcde3b3636ab028ba2e495d986889470",
+      "input_fingerprint": "59f78b3f98f4d75d1edd84ac017d56b5f9c62ea4cf59b8af88e9503edb992222",
       "account": "一般会計",
       "division": "企画調整局",
       "notes": [
@@ -1964,7 +1965,7 @@
     {
       "table_id": "general-fukushi",
       "conversion_id": "general-fukushi",
-      "input_fingerprint": "fba4440045fb36bbafc95a206a8f06b57a4cc4f85ae476ddf2dfeb13edf96b95",
+      "input_fingerprint": "6174a68e17703ae3edc20dd5752c6ee8c941fcf9f5649b9f68cd45db9104feba",
       "account": "一般会計",
       "division": "福祉局",
       "notes": [
@@ -1995,7 +1996,7 @@
     {
       "table_id": "nhi-fukushi",
       "conversion_id": "nhi-fukushi",
-      "input_fingerprint": "74241d88b384a4b32ce1a8c9686810d2595ff11027993c6c095fee3e3628f64d",
+      "input_fingerprint": "06a0c48d6b1641029f4b3d65e1fe1e61b520edf0f2352f3ac40d0588d2116eef",
       "account": "国民健康保険事業費",
       "division": "福祉局",
       "notes": [
@@ -2026,7 +2027,7 @@
     {
       "table_id": "care-fukushi",
       "conversion_id": "care-fukushi",
-      "input_fingerprint": "420a8a1eb83883e5f10144fe837a71ff1aab74221c3fe75b01c6013ee21b7237",
+      "input_fingerprint": "f165ddcc812de1975e2b2d48efb8923ce5126fa6cd3990ecbed48e5ca2ccd45f",
       "account": "介護保険事業費",
       "division": "福祉局",
       "notes": [
@@ -2057,7 +2058,7 @@
     {
       "table_id": "elderly-fukushi",
       "conversion_id": "elderly-fukushi",
-      "input_fingerprint": "3f78026fa03c91290fc39dfb45a63c95aee12f4627c3a287a451d75504c37b53",
+      "input_fingerprint": "5b298cc9da0dbf8dcf75f9637071adab9957292439841526dbf8414e7057b7a4",
       "account": "後期高齢者医療事業費",
       "division": "福祉局",
       "notes": [
@@ -2088,7 +2089,7 @@
     {
       "table_id": "general-kensetsu",
       "conversion_id": "general-kensetsu",
-      "input_fingerprint": "80cc02250e4239e93b181c5e4b3de0ef8862b88e33a2abe42f6691355051b777",
+      "input_fingerprint": "ed618e2308b93def3caed146a9e0b3aa818bf43f84b7d90bbee3e3fdc9c75b2a",
       "account": "一般会計",
       "division": "建設局",
       "notes": [
@@ -2120,7 +2121,7 @@
     {
       "table_id": "parking-kensetsu",
       "conversion_id": "parking-kensetsu",
-      "input_fingerprint": "1fb2fda12cdbdb64337206b6dc772805ec4f4fd97779d06db720fa0b33b3f549",
+      "input_fingerprint": "0745f9af31ea819f73de72f603748aee5bc8bdf7dce83f630056fde228474d04",
       "account": "駐車場事業費",
       "division": "建設局",
       "notes": [
@@ -2151,39 +2152,40 @@
     {
       "table_id": "general-kankyou",
       "conversion_id": "general-kankyou",
-      "input_fingerprint": "e300827a35ade5960b7177c5db12817382499340670b54d78e1db18854b25393",
+      "input_fingerprint": "0210dfdc767a08f25691150e51641026e59ef84ce06e051ec7a4f04802456e5e",
       "account": "一般会計",
       "division": "環境局",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
         "金額の単位は column mark 1頁・carried 2頁 から決めた。分冊のため款の和 26,960,017,587 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 1 種（67 件）を、印字された語から辞書の見出しに寄せた: 金額→節／金額。",
-        "原画で確かめた名称の誤読 24 件を、管理 JSON の name_corrections で印字に直した: 1報壺→1報酬・13料袋用腦料→13使用料及賃借料・16有財盒産費入→16公有財産購入費・17備品瞒入費→17備品購入費・18袋担金補助器→18負担金補助及交付金・21補階→21補償補填及賠償金・22運金利子紧→22償還金利子及割引料・13袋用桂料系→13使用料及賃借料・17備品瞒人費→17備品購入費・18隻担金補助盈交→18負担金補助及交付金・18袋用借→13使用料及賃借料・17備品瞵入費→17備品購入費・18袋担金補助及→18負担金補助及交付金・13用料袋借→13使用料及賃借料・18袋担金補助及→18負担金補助及交付金・17備品瞒入費→17備品購入費・17備品瞒入費→17備品購入費・17備品瞵入費→17備品購入費・17備品賗入費→17備品購入費・1環境絵務費→1環境総務費・2彋境総務費→2環境総務費・2リサイク推進費→2リサイクル推進費・4黑境施發→4環境施設整備費・4重両整備費→4車両整備費。"
+        "共有辞書に無い金額の見出し 2 種（82 件）を、印字された語から辞書の見出しに寄せた: 予算現額／予費出及び流用増減→予算現額／予備費支出及び流用増減・金額→節／金額。",
+        "原画で確かめた名称の誤読 6 件を、管理 JSON の name_corrections で印字に直した: 13使用料及料賃借→13使用料及賃借料・13使用料及賃料→13使用料及賃借料・17備品購人費→17備品購入費・2リイクル推進費→2リサイクル推進費・2処設整費→2処理施設整備費・3業所等事整備費→3事業所等整備費。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 4 件（p17:full-page:a0:result1:r55・p17:full-page:a0:result1:r55:w2・p18:full-page:a0:result1:r97・p18:full-page:a0:result1:r97:w2）・减→減 2 件（p18:full-page:a0:result1:r97・p18:full-page:a0:result1:r97:w0）・增→増 6 件（p17:full-page:a0:result0:r14・p17:full-page:a0:result0:r14:w1・p18:ink-2:a2:result0:r0・p18:ink-2:a2:result0:r0:w2・p19:ink-2:a2:result0:r0・p19:ink-2:a2:result0:r0:w2）・继→継 2 件（p17:full-page:a0:result1:r2・p17:full-page:a0:result1:r2:w0）・费→費 6 件（p17:full-page:a0:result0:r29・p17:full-page:a0:result0:r29:w5・p18:full-page:a0:result0:r82・p18:full-page:a0:result0:r82:w4・p19:full-page:a0:result0:r94・p19:full-page:a0:result0:r94:w6）。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kankyou-nodes.parquet",
-          "sha256": "0eaf4bc590d53a96536a1092ea4fb0e94f7cda3fa5f57250476c562bd8c05850",
-          "bytes": 6389
+          "sha256": "fafae48392e19653fa3f6d9e1ed7d225af9d72f5a37106cab21f0aac5fab5797",
+          "bytes": 6146
         },
         "row_count": 82
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kankyou-amounts.parquet",
-          "sha256": "193c681cf9446de31bdab7e8b45600a20a879ed665011fb7ad4ffd57da73cd6f",
-          "bytes": 14662
+          "sha256": "635f0116136834972a277e5897526ab8afc4d16aaeea02f36a44b150d9995c2a",
+          "bytes": 11178
         },
-        "row_count": 453
+        "row_count": 552
       }
     },
     {
       "table_id": "general-chiiki",
       "conversion_id": "general-chiiki",
-      "input_fingerprint": "aab4cface06de00b42388c25ca3c35b9fbf345e4006085648400024609e8cd64",
+      "input_fingerprint": "7884a132e4ad932d2d8615a4a3d38dbc4f7264c59f57fac874eb3791dd43210f",
       "account": "一般会計",
       "division": "地域協働局",
       "notes": [
@@ -2214,7 +2216,7 @@
     {
       "table_id": "general-kenchikujyutaku",
       "conversion_id": "general-kenchikujyutaku",
-      "input_fingerprint": "2afeb21462d98fde1e0b193525aa0bdbb8d248d023e2869dfc643264f4dda50d",
+      "input_fingerprint": "556810c38f910f0d28e3ca764b3aa40e2ce9da98efaa62befe0367693f919862",
       "account": "一般会計",
       "division": "建築住宅局",
       "notes": [
@@ -2222,23 +2224,23 @@
         "金額の単位は column mark 2頁 から決めた。分冊のため款の和 4,342,146,782 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 1 種（33 件）を、印字された語から辞書の見出しに寄せた: 金額→節／金額。",
-        "原画で確かめた名称の誤読 16 件を、管理 JSON の name_corrections で印字に直した: 11住宅→11住宅費・1膱員貴→1職員費・7報債費→7報償費・10論用費→10需用費・13隻用料爲→13使用料及賃借料・17備品䐭入費→17備品購入費・1赧→1報酬・7赧償費→7報償費・13袋用种释→13使用料及賃借料・17備品瞒入費→17備品購入費・18農搜金神盟→18負担金補助及交付金・7報償貴→7報償費・13袋用料肾→13使用料及賃借料・17備品嘴入費→17備品購入費・18嫠搜金种盟→18負担金補助及交付金・158食搜金抽盟→18負担金補助及交付金。"
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 减→減 4 件（p9:full-page:a0:result0:r15・p9:full-page:a0:result0:r15:w3・p10:full-page:a0:result0:r14・p10:full-page:a0:result0:r14:w3）・增→増 4 件（p9:full-page:a0:result0:r15・p9:full-page:a0:result0:r15:w2・p10:full-page:a0:result0:r14・p10:full-page:a0:result0:r14:w2）・报→報 2 件（p9:full-page:a0:result0:r49・p9:full-page:a0:result0:r49:w1）・济→済 2 件（p10:full-page:a0:result0:r45・p10:full-page:a0:result0:r45:w2）・继→継 2 件（p10:full-page:a0:result1:r2・p10:full-page:a0:result1:r2:w0）・赁→賃 1 件（p9:lines-0:r1）・项→項 4 件（p9:full-page:a0:result0:r5・p9:full-page:a0:result0:r5:w1・p10:full-page:a0:result0:r4・p10:full-page:a0:result0:r4:w1）。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kenchikujyutaku-nodes.parquet",
-          "sha256": "2fc5ffd0cb22e1b8938c53907fa9a2337812f24a73afb5aa706c79d9a28e07f1",
-          "bytes": 4612
+          "sha256": "34ce64bc2d46e165b25486da161fb8affcf860814b3d7c302cab86aa1f88c91b",
+          "bytes": 4418
         },
         "row_count": 41
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kenchikujyutaku-amounts.parquet",
-          "sha256": "096a8788db0b128523718986ef4649e17f4c79c2196274d4cf5c92d9b93469d9",
-          "bytes": 7287
+          "sha256": "c539871719c69a8360e16ca1c5245d7554cb5acd62935e13b3533e3d75bc9561",
+          "bytes": 5898
         },
         "row_count": 148
       }
@@ -2246,7 +2248,7 @@
     {
       "table_id": "general-keizai",
       "conversion_id": "general-keizai",
-      "input_fingerprint": "2c5cc16406ad2a49ffdb334bf08a4b9e41cf3ef66c9f3c6aa9731b84c06f6f40",
+      "input_fingerprint": "5f8a18ef4cff36a0c5c481d96dfc31c4ecd916c6b065e1cd2ce59d3cb75ed389",
       "account": "一般会計",
       "division": "経済観光局",
       "notes": [
@@ -2277,7 +2279,7 @@
     {
       "table_id": "market-keizai",
       "conversion_id": "market-keizai",
-      "input_fingerprint": "13aa6cd5a33c7f59dbfe9398b3415a87ca59abfb8d55a7e8208740f340163c86",
+      "input_fingerprint": "5a0b8371f797d082c0d2939d05d182145464341216c444e8c3b75c12e4699300",
       "account": "市場事業費",
       "division": "経済観光局",
       "notes": [
@@ -2308,7 +2310,7 @@
     {
       "table_id": "meat-keizai",
       "conversion_id": "meat-keizai",
-      "input_fingerprint": "46cf87749d4d9eb401c3382ef92cb6775acf0924310c7dcd21d297cb31fdfe6b",
+      "input_fingerprint": "6676eb5914045dbf1fc76f65226bfa4c319033162abd0106e2c76bfa5ebb6e3c",
       "account": "食肉センター事業費",
       "division": "経済観光局",
       "notes": [
@@ -2339,39 +2341,40 @@
     {
       "table_id": "general-kyoiku",
       "conversion_id": "general-kyoiku",
-      "input_fingerprint": "210b1e60ee426f10a65776461c63d526afcab4e3858f7075e49d0daf8d84f2d5",
+      "input_fingerprint": "39224874401bec06d3e5d4c372da294400d73e855e9ade193c1ccff20cb134b0",
       "account": "一般会計",
       "division": "教育委員会",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
-        "金額の単位は carried 11頁・default 1頁 から決めた。分冊のため款の和 143,775,295,406 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の単位は column mark 12頁 から決めた。分冊のため款の和 143,775,295,406 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 1 種（205 件）を、印字された語から辞書の見出しに寄せた: 金額→節／金額。",
-        "原画で確かめた名称の誤読 85 件を、管理 JSON の name_corrections で印字に直した: 1共济費→4共済費・1共济費→4共済費・4土济費→4共済費・1共济費→4共済費・7特州文盤→7特別支援学校費・8負担金補助及交什金→18負担金補助及交付金・18袋用料及→13使用料及賃借料・19扶取燃业州價還金利子及必→19扶助費・22刺引米→22償還金利子及割引料・2補借補填及賠償金→21補償補填及賠償金・18飲用料及→13使用料及賃借料・1靸→1報酬・4共済→4共済費・9交費→9交際費・13使用料及借→13使用料及賃借料・18食担金補助及金→18負担金補助及交付金・21補償補填及賠償→21補償補填及賠償金・13使用料及賃借→13使用料及賃借料・17備品驊入費→17備品購入費・18負担金補助及交金→18負担金補助及交付金・7殺→7報償費・13使用料及→13使用料及賃借料・17備品瞵人費→17備品購入費・18負担金補助及交→18負担金補助及交付金・21補償補填及贈償金→21補償補填及賠償金・22償還金利子及料→22償還金利子及割引料・7根償費→7報償費・17備品瞒入費→17備品購入費・18負担金補助及→18負担金補助及交付金・4共济→4共済費・10需用賓→10需用費・13袋用料料→13使用料及賃借料・18致担金補助及→18負担金補助及交付金・3職昌玉当等→3職員手当等・5災害補僧者→5災害補償費・22價違金利子及割引料→22償還金利子及割引料・7殽償費→7報償費・13体用料及→13使用料及賃借料・15盾炒料惠→15原材料費・18我担金補助及→18負担金補助及交付金・22管選金利下及刮5料→22償還金利子及割引料・7殽償費→7報償費・17備品嘴入費→17備品購入費・18真担企補助及交付→18負担金補助及交付金・3職昌玉当等→3職員手当等・5災害補僧者→5災害補償費・21補借補熊及→21補償補填及賠償金・7殽償費→7報償費・13体用料及→13使用料及賃借料・15盾炒料典→15原材料費・18食担金補助及交付→18負担金補助及交付金・22價違金利子及割引料→22償還金利子及割引料・7殽償費→7報償費・11怨孜費→11役務費・13休用料及→13使用料及賃借料・18袋担命辅助及→18負担金補助及交付金・4济費→4共済費・7償貴→7報償費・13使用料及香供→13使用料及賃借料・17備品購人費→17備品購入費・17備品驊入費→17備品購入費・18負担金補助及→18負担金補助及交付金・13使用料及香借→13使用料及賃借料・21補償補填及路償金→21補償補填及賠償金・16公有时品比天→16公有財産購入費・12使用料及借料→12委託料・1瓶酬→1報酬・7报償費→7報償費・13使用料及賃借→13使用料及賃借料・17備品膦入費→17備品購入費・1g鱼担金補助及交付金→1報酬・7觀借曹→7報償費・10用→10需用費・13袋用料系→13使用料及賃借料・15原材料曹→15原材料費・1g負担金補助及交仙金→1報酬・2補坡補價及眩借→2給料・12安匙→12委託料・4獎学援助費→4奨学援助費・5篇校服晏→5学校職員厚生費・1教朧員費→1教職員費・4盤別文超学獎→4特別支援学校建設費・14數有推盤育施設備→14教育施設整備費・1数首施發育施設備→1教育施設整備費・123使用料及雪借料→13使用料及賃借料。"
+        "原画で確かめた名称の誤読 8 件を、管理 JSON の name_corrections で印字に直した: 5校職員学厚生費→5学校職員厚生費・17備品購人費→17備品購入費・17備品購人費→17備品購入費・7特特別支援援学学校費費→7特別支援学校費・4特別支援学校→4特別支援学校建設費・13使用料及科→13使用料及賃借料・21補填補償及賠償金→21補償補填及賠償金・14教育設整費→14教育施設整備費。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 4 件（p24:full-page:a0:result1:r29・p24:full-page:a0:result1:r29:w4・p33:full-page:a0:result1:r28・p33:full-page:a0:result1:r28:w0）・减→減 24 件（p22:full-page:a0:result0:r18・p22:full-page:a0:result0:r18:w3・p23:full-page:a0:result0:r17・p23:full-page:a0:result0:r17:w3・p24:full-page:a0:result0:r17・p24:full-page:a0:result0:r17:w3・p25:full-page:a0:result0:r16・p25:full-page:a0:result0:r16:w3・p26:full-page:a0:result0:r16・p26:full-page:a0:result0:r16:w3・p27:full-page:a0:result0:r16・p27:full-page:a0:result0:r16:w3・p28:full-page:a0:result0:r16・p28:full-page:a0:result0:r16:w3・p29:full-page:a0:result0:r16・p29:full-page:a0:result0:r16:w3・p30:full-page:a0:result0:r17・p30:full-page:a0:result0:r17:w3・p31:full-page:a0:result0:r16・p31:full-page:a0:result0:r16:w3・p32:full-page:a0:result0:r16・p32:full-page:a0:result0:r16:w3・p33:full-page:a0:result0:r18・p33:full-page:a0:result0:r18:w3）・别→別 2 件（p32:ink-1:a1:result0:r0・p32:ink-1:a1:result0:r0:w1）・增→増 24 件（p22:full-page:a0:result0:r18・p22:full-page:a0:result0:r18:w2・p23:full-page:a0:result0:r17・p23:full-page:a0:result0:r17:w2・p24:full-page:a0:result0:r17・p24:full-page:a0:result0:r17:w2・p25:full-page:a0:result0:r16・p25:full-page:a0:result0:r16:w2・p26:full-page:a0:result0:r16・p26:full-page:a0:result0:r16:w2・p27:full-page:a0:result0:r16・p27:full-page:a0:result0:r16:w2・p28:full-page:a0:result0:r16・p28:full-page:a0:result0:r16:w2・p29:full-page:a0:result0:r16・p29:full-page:a0:result0:r16:w2・p30:full-page:a0:result0:r17・p30:full-page:a0:result0:r17:w2・p31:full-page:a0:result0:r16・p31:full-page:a0:result0:r16:w2・p32:full-page:a0:result0:r16・p32:full-page:a0:result0:r16:w2・p33:full-page:a0:result0:r18・p33:full-page:a0:result0:r18:w2）・济→済 12 件（p24:full-page:a0:result0:r35・p24:full-page:a0:result0:r35:w3・p25:full-page:a0:result0:r39・p25:full-page:a0:result0:r39:w2・p26:full-page:a0:result0:r38・p26:full-page:a0:result0:r38:w2・p27:full-page:a0:result0:r38・p27:full-page:a0:result0:r38:w2・p28:full-page:a0:result0:r39・p28:full-page:a0:result0:r39:w2・p29:full-page:a0:result0:r40・p29:full-page:a0:result0:r40:w3）・產→産 2 件（p31:full-page:a0:result0:r55・p31:full-page:a0:result0:r55:w3）・继→継 2 件（p22:full-page:a0:result1:r2・p22:full-page:a0:result1:r2:w0）・费→費 4 件（p23:full-page:a0:result0:r56・p23:full-page:a0:result0:r56:w3・p25:full-page:a0:result0:r39・p25:full-page:a0:result0:r39:w3）・项→項 20 件（p23:full-page:a0:result0:r6・p23:full-page:a0:result0:r6:w1・p24:full-page:a0:result0:r6・p24:full-page:a0:result0:r6:w1・p25:full-page:a0:result0:r6・p25:full-page:a0:result0:r6:w1・p26:full-page:a0:result0:r6・p26:full-page:a0:result0:r6:w1・p27:full-page:a0:result0:r6・p27:full-page:a0:result0:r6:w1・p28:full-page:a0:result0:r6・p28:full-page:a0:result0:r6:w1・p29:full-page:a0:result0:r6・p29:full-page:a0:result0:r6:w1・p30:full-page:a0:result0:r6・p30:full-page:a0:result0:r6:w1・p32:full-page:a0:result0:r4・p32:full-page:a0:result0:r4:w1・p33:full-page:a0:result0:r5・p33:full-page:a0:result0:r5:w1）・额→額 14 件（p25:full-page:a0:result0:r15・p25:full-page:a0:result0:r15:w2・p26:full-page:a0:result0:r15・p26:full-page:a0:result0:r15:w2・p27:full-page:a0:result0:r15・p27:full-page:a0:result0:r15:w2・p28:full-page:a0:result0:r15・p28:full-page:a0:result0:r15:w2・p29:full-page:a0:result0:r15・p29:full-page:a0:result0:r15:w2・p30:full-page:a0:result0:r16・p30:full-page:a0:result0:r16:w2・p31:full-page:a0:result0:r15・p31:full-page:a0:result0:r15:w2）。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kyoiku-nodes.parquet",
-          "sha256": "d47c10a22303f25fad9755cecb7c938add685109394cd75b82120578fd98102d",
-          "bytes": 12569
+          "sha256": "055f7db8a8eff373669f3dff8df8c03289a7808758c8540894ba89a4d0b9ef29",
+          "bytes": 11463
         },
         "row_count": 242
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kyoiku-amounts.parquet",
-          "sha256": "847f0a2789c54718867319bffcb055e463a56672d4ff1af8330bd16aa71d3840",
-          "bytes": 32488
+          "sha256": "747d50a97f067e418281d91067227ea91640748bafcf2c5d1287bdc0a8e9a7ff",
+          "bytes": 26231
         },
-        "row_count": 1350
+        "row_count": 1600
       }
     },
     {
       "table_id": "general-kodomo",
       "conversion_id": "general-kodomo",
-      "input_fingerprint": "e04d15801af5b31723014700a35f9892f8adaad1469c0e19cfa0bd68f74281a7",
+      "input_fingerprint": "3b6b4de7521a4762fcf62ed54fb1b165208416adf10ebaa915abef246271208a",
       "account": "一般会計",
       "division": "こども家庭局",
       "notes": [
@@ -2403,7 +2406,7 @@
     {
       "table_id": "single-parent-kodomo",
       "conversion_id": "single-parent-kodomo",
-      "input_fingerprint": "2350e55e34fac17630cd8afaeaca507d3617cb64e485bab3321bd79271fc10c5",
+      "input_fingerprint": "35338538b3262415f7c5964de4370655761fbc3be9eaafc3df74b72e31ce2434",
       "account": "母子父子寡婦福祉資金貸付事業費",
       "division": "こども家庭局",
       "notes": [
@@ -2434,7 +2437,7 @@
     {
       "table_id": "general-kouwan",
       "conversion_id": "general-kouwan",
-      "input_fingerprint": "8fc1ac9b4eece684689d08c874de93c72ff45671b241ad10d33ee5538dab0eef",
+      "input_fingerprint": "50a1302485c0733d777608c52f6641c6d62249eca68a117d88e7c7a2136d19f2",
       "account": "一般会計",
       "division": "港湾局",
       "notes": [
@@ -2442,31 +2445,31 @@
         "金額の単位は column mark 1頁 から決めた。分冊のため款の和 2,648,569,492 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 1 種（16 件）を、印字された語から辞書の見出しに寄せた: 金額／節→節／金額。",
-        "原画で確かめた名称の誤読 6 件を、管理 JSON の name_corrections で印字に直した: 9土費→9土木費・1職費→1職員費・13袋用料発→13使用料及賃借料・18袋摄金補盟交付→18負担金補助及交付金・211補雙1F償1→21補償補填及賠償金・2瘦欝被盤→21補償補填及賠償金。"
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 减→減 2 件（p75:full-page:a0:result0:r16・p75:full-page:a0:result0:r16:w5）・增→増 2 件（p75:full-page:a0:result0:r16・p75:full-page:a0:result0:r16:w4）。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kouwan-nodes.parquet",
-          "sha256": "2a4704298ab0649481e356c5c30ff6c00d5be1079614264cf3a3d08b1a7d3756",
-          "bytes": 3590
+          "sha256": "a58167779f004278c73798dd7efd69eb69e25563297968e0265b7e4c309c0192",
+          "bytes": 3571
         },
         "row_count": 22
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kouwan-amounts.parquet",
-          "sha256": "3a6a4dce6a0f3615d1593ddd652bd8835681dbf6860ca184aa1882dbdd99b30b",
-          "bytes": 5135
+          "sha256": "8924a0c29e9cbf59efaccd936b805e1379f65f2f629675d394c0c282f4651fc2",
+          "bytes": 5352
         },
-        "row_count": 95
+        "row_count": 156
       }
     },
     {
       "table_id": "general-toshi",
       "conversion_id": "general-toshi",
-      "input_fingerprint": "7d26de5b5b406b4ea7fdfc2d0871bfd235da56c399c32568de512228452b09f6",
+      "input_fingerprint": "1344307570a1a689040491534f6d17c746f6fcc3441082b12175ba436847464f",
       "account": "一般会計",
       "division": "都市局",
       "notes": [
@@ -2498,14 +2501,14 @@
     {
       "table_id": "redevelopment-toshi",
       "conversion_id": "redevelopment-toshi",
-      "input_fingerprint": "7a3dbdacbe3dcf9a2734b1aeeae84829888e63823795dfbd56c922dc13839446",
+      "input_fingerprint": "248d9b4509f9f929b756ad3be1c6de0fc054805450c77073ceb371354c2e661f",
       "account": "市街地再開発事業費",
       "division": "都市局",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
         "金額の単位は column mark 2頁 から決めた。分冊のため款の和 3,332,672,561 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 2 種（32 件）を、印字された語から辞書の見出しに寄せた: 予算現額／予支流出用備及増費び減→予算現額・金額→節／金額。",
+        "共有辞書に無い金額の見出し 2 種（32 件）を、印字された語から辞書の見出しに寄せた: 予算現額／予支流出用備及増費び減→予算現額／予備費支出及び流用増減・金額→節／金額。",
         "原画で確かめた名称の誤読 1 件を、管理 JSON の name_corrections で印字に直した: 2他会計へ金繰出→2他会計へ繰出金。"
       ],
       "unread_amount_count": 0,
@@ -2521,8 +2524,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/redevelopment-toshi-amounts.parquet",
-          "sha256": "59ac00c899c1f29d10a652f9985c05f0bea810f6ce9bb8c4fa9bc0e921aa0de0",
-          "bytes": 5515
+          "sha256": "f260d76a757bccb4986a4adea50b98c22fa3b769f06c4b5655bfbb3db86285ab",
+          "bytes": 5541
         },
         "row_count": 240
       }
@@ -2530,7 +2533,7 @@
     {
       "table_id": "general-bunka",
       "conversion_id": "general-bunka",
-      "input_fingerprint": "07198e7e10fc34eeb0ed19f36a3bb74f7b8aadc38e48284e0941ada45c995643",
+      "input_fingerprint": "0dee5feec195fb0ff92f093d3b3a9b3206601192dc3721f8f048e336f0187729",
       "account": "一般会計",
       "division": "文化スポーツ局",
       "notes": [
@@ -2561,7 +2564,7 @@
     {
       "table_id": "general-kikikanri",
       "conversion_id": "general-kikikanri",
-      "input_fingerprint": "21deba671555d48b0fdc3dd774e6c7383d92c36493fd098fda38453cf04ad5ee",
+      "input_fingerprint": "01a73f5d1cf6cd6269b416046a09a4add273dafc89eebd12c812ccdb72f0bd1d",
       "account": "一般会計",
       "division": "危機管理局",
       "notes": [
@@ -2584,8 +2587,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kikikanri-amounts.parquet",
-          "sha256": "227be989039709f33f2ad40c1d79bebc4a531ec122ca1705866c2faa3af0fd48",
-          "bytes": 5940
+          "sha256": "fbbc7de0c7a05d2157bf6ccd862e6558834846dabd43a510c82c229c50072548",
+          "bytes": 5937
         },
         "row_count": 196
       }
@@ -2593,7 +2596,7 @@
     {
       "table_id": "general-shobou",
       "conversion_id": "general-shobou",
-      "input_fingerprint": "0bda4387049a7c8c29a3609d3dd383037a47738cea79f2c9c1e5260a39e587be",
+      "input_fingerprint": "668d519aced3e7cb54f95a5268c54ea6fc707441243e9302abd0815cff5b9497",
       "account": "一般会計",
       "division": "消防局",
       "notes": [
@@ -2624,7 +2627,7 @@
     {
       "table_id": "general-kenkou",
       "conversion_id": "general-kenkou",
-      "input_fingerprint": "a0959c4dc06c33d12dd4624a38aac0ee06465b703df68f864d17110489ef3c86",
+      "input_fingerprint": "554df77db9cdf21c1fcef6671f996d0d6c7989b04e48b670351c64aca8fe774a",
       "account": "一般会計",
       "division": "健康局",
       "notes": [
@@ -2655,7 +2658,7 @@
     {
       "table_id": "care-kenkou",
       "conversion_id": "care-kenkou",
-      "input_fingerprint": "168cd4927e477af5475255f51e0127b7ddf922032f30df47b58731d132bc7504",
+      "input_fingerprint": "188227f1ca9ddbcc741a2b56c59e92f0475ba349ea191888a912e6cbeff56dc5",
       "account": "介護保険事業費",
       "division": "健康局",
       "notes": [
@@ -2686,7 +2689,7 @@
     {
       "table_id": "general",
       "conversion_id": "general",
-      "input_fingerprint": "d989b1f5831347ceb0d1bbb81d16bd7650cdba43b0f5ff6051b103a6c188659e",
+      "input_fingerprint": "542d751c4f9bdf91acbc30d0741d35bccb33f5559b91ed200f84af48c54c419f",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {}。",
