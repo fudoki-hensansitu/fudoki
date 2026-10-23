@@ -194,11 +194,12 @@ def check_instance(config: dict) -> None:
         raise SystemExit(f'索引の設定が instance.json と違う:\n  期待 {expected}\n  実際 {found}')
 
 
-def list_items(instance_name: str) -> list[dict]:
+def list_items(instance_name: str, status: str | None = None) -> list[dict]:
     items: dict[str, dict] = {}
     page = 1
+    narrow = ('--status', status) if status else ()
     while True:
-        rows = search_cf(instance_name, 'items', 'list', '--per-page', str(PER_PAGE), '--page', str(page))
+        rows = search_cf(instance_name, 'items', 'list', *narrow, '--per-page', str(PER_PAGE), '--page', str(page))
         for row in rows:
             items[row['id']] = row
         if len(rows) < PER_PAGE:
@@ -392,6 +393,14 @@ def wait_and_confirm(instance: dict, plans: list[OriginPlan], timeout_minutes: i
     results: dict[str, str] = {}
     while True:
         try:
+            # 全件の一覧は約4万件で1周に十数分〜1時間半かかる。待ちの間は取り込み中の item だけを見て、
+            # 計画の item が無くなってから全件で確かめる（全件で待ちが残れば、また取り込み中だけの待ちに戻る）
+            active = {item['key'] for status in sorted(PENDING) for item in list_items(name, status)}
+            waiting = sum(1 for p in targets for item in p.items if item['key'] in active)
+            if waiting and time.time() <= deadline:
+                log(f'  待ち {waiting} / 取り込み中 {len(active)}')
+                time.sleep(POLL_SECONDS)
+                continue
             indexed = {item['key']: item for item in list_items(name)}
         except RuntimeError as error:  # 待ちは数時間に及ぶので、一覧の一時的な失敗では止めずに次の回で取り直す
             if time.time() > deadline:
