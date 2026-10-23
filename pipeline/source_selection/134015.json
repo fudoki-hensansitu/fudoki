@@ -5188,10 +5188,26 @@
         "fiscal_year": 2024,
         "document_kind": "settlement"
       },
-      "candidates": [],
-      "selected_candidate_id": null,
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "八丈町まち・ひと・しごと創生総合戦略進捗状況報告書・事業評価書【令和6年度】",
+          "landing_url": "https://www.town.hachijo.tokyo.jp/chousei/hachijojima-g/joukyou-houkokusho/",
+          "inspected_at": "2026-10-23T05:29:27.711596+00:00",
+          "files": [
+            {
+              "download_url": "https://prd-hachijo.s3.ap-northeast-1.amazonaws.com/wp-content/uploads/2026/03/13132928/R6report.pdf",
+              "sha256": "5bc873442b4abef8be0c23d4cb005b9925d527625919210a0b5bf2405a4a42d0",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
       "archive": null,
-      "reason": "R6評価資料が見つからない。決算ページに成果・評価のPDFなし。DuckDuckGoのsite検索でも該当なし。探した頁: https://www.town.hachijo.tokyo.jp/chousei/yosan-zaisei/yo-kessansho/yk-reiwa6/。探索した範囲では選べる評価資料が無かった（2026-10-15確認）。"
+      "reason": "八丈町まち・ひと・しごと創生総合戦略の具体的施策31件（基本目標1〜4）ごとに、(1)進捗状況の表（重要業績評価指標の目標値・令和2年度状況・令和3〜7年度実績・進捗率・達成度1〜5）と、(2)八丈町事業評価書（目的、関係事業、具体的取組、事業コスト（事業費・財源別の決算額、千円）、従事職員数、実績・効果、評価（必要性・有効性・効率性・総合、A〜D）、課題、改善案）を載せる。対象は総合戦略の具体的施策に限られ、町の全事業の評価ではない。評価書は施策ごとに31枚（「八丈町事業評価書」の見出しが31件）。45頁。年度は、表紙の「【令和6年度】」（令和7年8月）と各評価書の見出し「八丈町事業評価書【令和6年度事業】」、進捗状況の表の年度列（令和3〜7年度実績のうち令和6年度実績まで記入、令和7年度は空欄。例：1-1-1 新規就農者数 令和5年度11名・令和6年度8名）、評価書の年度列（令和6年度まで記入）で決めた。課題・改善案の欄は評価書に有る（例：4-2-1 災害に強いまちづくり事業の課題「センサー監視体制と電波状況、管理体制に問題があることが判明した」、改善案「機器の再選定を実施しデジタル化を継続していく」）。決算額の欄は施策により「—」で空の場合があり、金額の有無は選ぶ条件にしていない。文字として読める（pdftotext で全頁に文字あり）。確認日：2026-10-23（UTC）。"
     },
     {
       "target": {
@@ -5199,10 +5215,26 @@
         "fiscal_year": 2023,
         "document_kind": "settlement"
       },
-      "candidates": [],
-      "selected_candidate_id": null,
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "八丈町まち・ひと・しごと創生総合戦略進捗状況報告書・事業評価書【令和5年度】",
+          "landing_url": "https://www.town.hachijo.tokyo.jp/chousei/hachijojima-g/joukyou-houkokusho/",
+          "inspected_at": "2026-10-23T05:29:27.743736+00:00",
+          "files": [
+            {
+              "download_url": "https://prd-hachijo.s3.ap-northeast-1.amazonaws.com/wp-content/uploads/2026/03/30220522/R5report.pdf",
+              "sha256": "12604c60fcfe5d5ca88a4a1e747ca20bdd55c840717d8bdc3f83cc2bf6760b40",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
       "archive": null,
-      "reason": "2023年度実績の評価資料が見つからない（2024年度の調査と同様）。探した頁: https://www.town.hachijo.tokyo.jp/chousei/yosan-zaisei/yo-kessansho/yk-reiwa6/。探索した範囲では選べる評価資料が無かった（2026-10-16確認）。"
+      "reason": "八丈町まち・ひと・しごと創生総合戦略の具体的施策31件（基本目標1〜4）ごとに、(1)進捗状況の表（重要業績評価指標の目標値・令和2年度状況・令和3〜7年度実績・進捗率・達成度1〜5）と、(2)八丈町事業評価書（目的、関係事業、具体的取組、事業コスト（事業費・財源別の決算額、千円）、従事職員数、実績・効果、評価（必要性・有効性・効率性・総合、A〜D）、課題、改善案）を載せる。対象は総合戦略の具体的施策に限られ、町の全事業の評価ではない。評価書は施策ごとに31枚（「八丈町事業評価書」の見出しが31件）。45頁。年度は、表紙の「【令和5年度】」（令和7年2月）と各評価書の見出し「八丈町事業評価書【令和5年度事業】」、進捗状況の表の年度列（令和3〜7年度実績のうち令和5年度実績まで記入、令和6年度以降は空欄。例：1-1-1 新規就農者数 令和3年度10名・令和4年度13名・令和5年度11名）、評価書の年度列（令和5年度まで記入。例：4-1-2 ごみ減量化と資源化推進 事業費 令和5年度98,850千円、評価 必要性B・有効性B・効率性B・総合B）で決めた。課題・改善案の欄は評価書に有る（例：4-1-2の課題「コンポストを置けない賃貸物件や集合住宅などでの排出抑制」、改善案「コンポスト貸与数は…年間貸与数150基…普及率向上に向けて周知等を促進する」）。決算額の欄は施策により「—」で空の場合があり、金額の有無は選ぶ条件にしていない。文字として読める（pdftotext で全頁に文字あり）。確認日：2026-10-23（UTC）。"
     }
   ]
 }

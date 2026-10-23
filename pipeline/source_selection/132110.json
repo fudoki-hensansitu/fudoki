@@ -467,7 +467,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "R6評価資料が見つからない。決算ページは都の市町村決算indexのみで市独自の成果・評価なし。DuckDuckGoのsite検索でも該当なし。探した頁: https://www.soumu.metro.tokyo.lg.jp/05gyousei/04kusichousonindex/04kusichousonzaisei/years/06nend。探索した範囲では選べる評価資料が無かった（2026-10-15確認）。"
+      "reason": "判断保留（null のまま記録、見落としの可能性が高い）。小平市の公式サイト（https://www.city.kodaira.tokyo.jp/ および実際の運用ドメイン https://www.city.kodaira.lg.jp/）は2026-10-20以降「システム障害により市ホームページをご覧いただけない」臨時ページで、ブラウザでも curl でも TLS で接続できず（確認日に再試行）、Wayback Machine にも行政評価の頁・PDFの保存が無いため、頁の描画も PDF の取得もできなかった。DuckDuckGo の site 検索（city.kodaira.lg.jp、事務事業評価・小平市の行政評価・行政評価 令和6年度）で、行政評価の頁（https://www.city.kodaira.lg.jp/kurashi/index07011007.html、財政・行財政改革 > 行政評価）と「小平市の行政評価」（頁 071864、令和5年度 小平市の行政評価 att_0000050.pdf ほか）が掲載されていることだけ確認した。小平市デジタルアーカイブの目録（https://adeac.jp/kodaira-lib/catalog/mp000040-100050）に「令和5年度 小平市の行政評価」（128頁、企画政策部政策課、令和6年9月作成、CC BY）があるが、画像ビューアのみで原本の PDF のバイト列を取れない。令和6年度の行政評価（2025年の公表）の有無は、サイト障害のため掲載一覧を描画して確かめられなかった。復旧後に行政評価の頁を見直すこと。確認日：2026-10-23（UTC）。"
     },
     {
       "target": {
@@ -478,7 +478,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "2023年度実績の評価資料が見つからない。探した頁: https://www.soumu.metro.tokyo.lg.jp/05gyousei/04kusichousonindex/04kusichousonzaisei/years/06nend。探索した範囲では選べる評価資料が無かった（2026-10-16確認）。"
+      "reason": "判断保留（null のまま記録、見落としの可能性が高い）。小平市の公式サイト（https://www.city.kodaira.tokyo.jp/ および実際の運用ドメイン https://www.city.kodaira.lg.jp/）は2026-10-20以降「システム障害により市ホームページをご覧いただけない」臨時ページで、ブラウザでも curl でも TLS で接続できず（確認日に再試行）、Wayback Machine にも行政評価の頁・PDFの保存が無いため、頁の描画も PDF の取得もできなかった。DuckDuckGo の site 検索（city.kodaira.lg.jp、事務事業評価・小平市の行政評価・行政評価 令和6年度）で、行政評価の頁（https://www.city.kodaira.lg.jp/kurashi/index07011007.html、財政・行財政改革 > 行政評価）と「小平市の行政評価」（頁 071864、令和5年度 小平市の行政評価 att_0000050.pdf ほか）が掲載されていることだけ確認した。小平市デジタルアーカイブの目録（https://adeac.jp/kodaira-lib/catalog/mp000040-100050）に「令和5年度 小平市の行政評価」（128頁、企画政策部政策課、令和6年9月作成、CC BY）があるが、画像ビューアのみで原本の PDF のバイト列を取れない。この令和5年度の行政評価（令和6年9月作成）が令和5年度（2023年度）の事業を評価した資料である可能性がある。サイト復旧後に PDF を取得し、年度列と評価の記述（事業ごとの目標・実績・評価）を確かめて選ぶこと。確認日：2026-10-23（UTC）。"
     }
   ]
 }

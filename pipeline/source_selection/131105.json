@@ -2387,7 +2387,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "R6主要な施策の成果等報告書が見つからない。決算ページに成果・評価のPDFなし（決算書のみ）。DuckDuckGoのsite検索（令和7年度 行政評価／事務事業評価／令和6年度 主要施策の成果）でも事業評価の頁なし。2025年度と同様に予算決算比較と不用額理由中心の可能性。探した頁: https://www.city.meguro.tokyo.jp/kaikei/kusei/yosan/kessan.html。探索した範囲では選べる評価資料が無かった（2026-10-15確認）。"
+      "reason": "ブラウザで描画した主要な施策の成果等報告書の掲載一覧（https://www.city.meguro.tokyo.jp/zaisei/kusei/yosan/shuyou.html）に令和6年度（2024年度）主要な施策の成果等報告書（r6syuyousesaku.pdf、461頁）がある。目次は「実施計画事業等の執行実績」「款別予算決算比較表・部別款別予算決算一覧表・歳出各款の執行状況」で、実施計画事業は予算額・執行額と計画期間の達成状況の短い記述のみ、本体は予算決算比較表と不用額の理由で、事業ごとの目標・成果指標・評価・課題の欄が無いため選ばない。決算の頁（https://www.city.meguro.tokyo.jp/kaikei/kusei/yosan/kessan.html）は決算書のみ。DuckDuckGo の site 検索（事務事業評価・行政評価・施策評価・事業評価・成果 評価 令和6年度）では全庁の事業評価は無く、事務事業見直し（財源確保）、指定管理者運営評価、教育委員会の点検・評価、子ども総合計画や保健医療福祉計画など分野別の計画の評価（https://www.city.meguro.tokyo.jp/kusei/keikaku/kosodate/jigyouhyouka/index.html）のみで、全体を覆う評価資料ではない。確認日：2026-10-23（UTC）。"
     },
     {
       "target": {
@@ -2398,7 +2398,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "2023年度実績の成果・評価資料が見つからない。決算ページに成果・評価のPDFなし。探した頁: https://www.city.meguro.tokyo.jp/kaikei/kusei/yosan/kessan.html。探索した範囲では選べる評価資料が無かった（2026-10-16確認）。"
+      "reason": "ブラウザで描画した主要な施策の成果等報告書の掲載一覧（https://www.city.meguro.tokyo.jp/zaisei/kusei/yosan/shuyou.html）に令和5年度（2023年度）主要な施策の成果等報告書（r5syuyousesaku.pdf、540頁）がある。目次は「実施計画事業等の執行実績」「款別予算決算比較表・部別款別予算決算一覧表・歳出各款の執行状況」で、実施計画事業は予算額・執行額と計画期間の達成状況の短い記述のみ、本体は予算決算比較表と不用額の理由で、事業ごとの目標・成果指標・評価・課題の欄が無いため選ばない。決算の頁（https://www.city.meguro.tokyo.jp/kaikei/kusei/yosan/kessan.html）は決算書のみ。DuckDuckGo の site 検索（事務事業評価・行政評価・施策評価・事業評価・成果 評価 令和6年度）では全庁の事業評価は無く、事務事業見直し（財源確保）、指定管理者運営評価、教育委員会の点検・評価、子ども総合計画や保健医療福祉計画など分野別の計画の評価（https://www.city.meguro.tokyo.jp/kusei/keikaku/kosodate/jigyouhyouka/index.html）のみで、全体を覆う評価資料ではない。確認日：2026-10-23（UTC）。"
     }
   ]
 }

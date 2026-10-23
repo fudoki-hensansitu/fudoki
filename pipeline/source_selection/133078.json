@@ -1928,7 +1928,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "R6評価資料が見つからない。決算ページに成果・評価のPDFなし。DuckDuckGoのsite検索（令和7年度 行政評価）でも該当なし。探した頁: https://www.vill.hinohara.tokyo.jp/0000001972.html。探索した範囲では選べる評価資料が無かった（2026-10-15確認）。"
+      "reason": "ブラウザで描画した施策・計画（https://www.vill.hinohara.tokyo.jp/category/2-7-0-0-0-0-0-0-0-0.html）と総合計画（.../category/2-7-1-0-0-0-0-0-0-0.html）の頁、教育委員会の教育目標・基本方針の頁（https://www.vill.hinohara.tokyo.jp/0000000582.html）を確認した。総合計画・個別計画は計画の本体で評価の掲載が無く、事務報告書（DuckDuckGo の検索結果で確認）は活動報告、教育委員会の点検・評価は選ばない対象。DuckDuckGo の site 検索（事務事業評価・行政評価・総合計画 進捗・決算 成果）でも事業の評価資料は出ない。確認日：2026-10-23（UTC）。"
     },
     {
       "target": {
@@ -1939,7 +1939,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "2023年度実績の評価資料が見つからない（2024年度の調査と同様）。探した頁: https://www.vill.hinohara.tokyo.jp/0000001972.html。探索した範囲では選べる評価資料が無かった（2026-10-16確認）。"
+      "reason": "ブラウザで描画した施策・計画（https://www.vill.hinohara.tokyo.jp/category/2-7-0-0-0-0-0-0-0-0.html）と総合計画（.../category/2-7-1-0-0-0-0-0-0-0.html）の頁、教育委員会の教育目標・基本方針の頁（https://www.vill.hinohara.tokyo.jp/0000000582.html）を確認した。総合計画・個別計画は計画の本体で評価の掲載が無く、事務報告書（DuckDuckGo の検索結果で確認）は活動報告、教育委員会の点検・評価は選ばない対象。DuckDuckGo の site 検索（事務事業評価・行政評価・総合計画 進捗・決算 成果）でも事業の評価資料は出ない。確認日：2026-10-23（UTC）。"
     }
   ]
 }

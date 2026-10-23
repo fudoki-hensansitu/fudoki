@@ -5662,7 +5662,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "R6評価資料が見つからない。決算ページに成果・評価のPDFなし。DuckDuckGoのsite検索でも該当なし。探した頁: https://www.town.okutama.tokyo.jp/gyosei/8/zaiseijokyo/kessan/3573.html。探索した範囲では選べる評価資料が無かった（2026-10-15確認）。"
+      "reason": "ブラウザで描画した町政情報の施策・計画（https://www.town.okutama.tokyo.jp/gyosei/8/shisaku_keikaku/choseijohonikansurushisaku_keikaku/index.html）、長期総合計画（https://www.town.okutama.tokyo.jp/gyosei/8/tyoukisougoukeikaku/index.html）の頁を確認した。掲載は第6期長期総合計画の本体、事務報告書（活動報告）、教育委員会事務の点検・評価、電源立地関係の事業評価総括表（r5_dengen_hyouka.pdf、交付金事業のみ）で、全事業を覆う事業の評価資料は無い。DuckDuckGo の site 検索（事務事業評価・行政評価・総合計画 進捗・決算 成果）でも出ない。確認日：2026-10-23（UTC）。"
     },
     {
       "target": {
@@ -5673,7 +5673,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "2023年度実績の評価資料が見つからない（2024年度の調査と同様）。探した頁: https://www.town.okutama.tokyo.jp/gyosei/8/zaiseijokyo/kessan/3573.html。探索した範囲では選べる評価資料が無かった（2026-10-16確認）。"
+      "reason": "ブラウザで描画した町政情報の施策・計画（https://www.town.okutama.tokyo.jp/gyosei/8/shisaku_keikaku/choseijohonikansurushisaku_keikaku/index.html）、長期総合計画（https://www.town.okutama.tokyo.jp/gyosei/8/tyoukisougoukeikaku/index.html）の頁を確認した。掲載は第6期長期総合計画の本体、事務報告書（活動報告）、教育委員会事務の点検・評価、電源立地関係の事業評価総括表（r5_dengen_hyouka.pdf、交付金事業のみ）で、全事業を覆う事業の評価資料は無い。DuckDuckGo の site 検索（事務事業評価・行政評価・総合計画 進捗・決算 成果）でも出ない。確認日：2026-10-23（UTC）。"
     }
   ]
 }

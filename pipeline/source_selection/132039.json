@@ -2907,10 +2907,26 @@
         "fiscal_year": 2024,
         "document_kind": "settlement"
       },
-      "candidates": [],
-      "selected_candidate_id": null,
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "事務事業(補助金)評価実施結果集 令和7年度評価実施版（令和6年度事務事業（補助金）の振返り評価）",
+          "landing_url": "https://www.city.musashino.lg.jp/shiseijoho/shisaku_keikaku/sogoseisakubu_shisaku_keikaku/gyoseihyokaseido/jimujigyo_hojokinminaoshi/jimujigyo_hojokin_hyoka/1053726.html",
+          "inspected_at": "2026-10-23T04:51:11.151783+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/053/726/R7_jisshikekkasyu.pdf",
+              "sha256": "37ab5979f28e093192aaa033e334a3dd40a799376834bee3112b750e559910df",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
       "archive": null,
-      "reason": "R7事務事業評価（R6実施事業）が見つからない。行政評価indexにはR8（R7実施事業）のみ掲載。DuckDuckGoのsite検索でもR7版なし。R6決算ページにも成果・評価のPDFなし。探した頁: https://www.city.musashino.lg.jp/shiseijoho/shisaku_keikaku/sogoseisakubu_shisaku_keikaku/gyoseihyokaseido/1054972/index.html。探索した範囲では選べる評価資料が無かった（2026-10-15確認）。"
+      "reason": "令和6年度に実施した事務事業（補助金）を令和7年度に評価した実施結果集（135頁、令和8年2月作成、2026-03-19更新）。表紙に「令和６年度事務事業（補助金）の振返り評価」とあり、各シート（事務事業見直し評価シート）の見出しに「評価対象年度 令和６年度」と印字されている。事業（補助金）ごとに、事業の目的・内容、市関与の妥当性、サービス供給量とその効果の指標（目標・実績・乖離の理由）、事業費・人件費・収入、評価と課題・今後の方向性を載せる。文字として読める（抜き取った頁20・30・80に文字あり）。評価対象は全71件（行財政改革推進本部で選んだ32件、新規開始から3年の12件、前回評価から10年の27件）で、全事務事業の評価ではない。同じ様式の令和5年度分（令和6年度評価実施版）を2023年度に選定済みで、それと揃える。令和8年度事務事業評価（令和7年度実施事業、2025年度に選定済み）とは別の、評価実施結果集の頁にあり、従前の「R7版なし」は見落とし。確認日：2026-10-23（UTC）。"
     },
     {
       "target": {
