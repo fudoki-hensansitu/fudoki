@@ -124,36 +124,24 @@
     },
     {
       "id": "variant-20",
-      "observed_char": "赁",
-      "corrected_char": "賃",
-      "reason": "賃借料の賃。日本の科目名・見出しでは 赁 を正字として使わない。"
-    },
-    {
-      "id": "variant-21",
       "observed_char": "债",
       "corrected_char": "債",
       "reason": "公債費・債務の債。日本の科目名・見出しでは 债 を正字として使わない。"
     },
     {
-      "id": "variant-22",
-      "observed_char": "单",
-      "corrected_char": "単",
-      "reason": "単位の単。日本の科目名・見出しでは 单 を正字として使わない。"
-    },
-    {
-      "id": "variant-23",
+      "id": "variant-21",
       "observed_char": "继",
       "corrected_char": "継",
       "reason": "継続費・継続の継。日本の科目名・見出しでは 继 を正字として使わない。"
     },
     {
-      "id": "variant-24",
+      "id": "variant-22",
       "observed_char": "别",
       "corrected_char": "別",
       "reason": "特別・区別の別。日本の科目名・見出しでは 别 を正字として使わない。"
     },
     {
-      "id": "variant-25",
+      "id": "variant-23",
       "observed_char": "报",
       "corrected_char": "報",
       "reason": "報酬・報償費の報。日本の科目名・見出しでは 报 を正字として使わない。"

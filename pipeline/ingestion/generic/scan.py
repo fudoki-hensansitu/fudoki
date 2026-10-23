@@ -163,15 +163,18 @@ def _paddle_pieces(line: dict, children: list[Word], corrected: bool, cuts: list
     for child in children:
         if not child.text.strip():
             continue
+        crossing = [x for x in cuts if child.x0 < x < child.x1]
+        # (only where cutting by a share of the box would put the rule at another digit than the grouping says)
+        share = lambda x: round((x - child.x0) / ((child.x1 - child.x0) / max(1, len(child.text))))
         if (ordered and ordered[-1].text == ',' and re.fullmatch(r'[0-9]{4,}', child.text)
-                and any(child.x0 < x < child.x1 for x in cuts)):
+                and crossing and any(share(x) != 3 for x in crossing)):
             # The group after a comma has three digits: a longer run that a rule crosses is the end of one amount
             # and the first digits of the next cell's (`0005` = `000` + `5` of `…,051,000` | `5,918,437,000`, 281000).
             width = (child.x1 - child.x0) / len(child.text)
             edge = child.x0 + 3 * width
             ordered.append(Word(child.text[:3], child.x0, child.y0, edge, child.y1))
             child = Word(child.text[3:], edge, child.y0, child.x1, child.y1)
-        elif (re.fullmatch(r'0[0-9]+', child.text) and any(child.x0 < x < child.x1 for x in cuts)
+        elif (re.fullmatch(r'0[0-9]+', child.text) and crossing
               and not (ordered and ordered[-1].text == ',')):
             # No amount starts with a 0 and more digits: the 0 is a cell of its own, the rule's other side starts
             # the amount (`017,585,227,000` = `0` | `17,585,227,000`, 281000).
