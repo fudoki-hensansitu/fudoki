@@ -1114,10 +1114,37 @@
         "fiscal_year": 2025,
         "document_kind": "settlement"
       },
-      "candidates": [],
-      "selected_candidate_id": null,
-      "archive": null,
-      "reason": "令和7年度欄が空、事務報告書は活動報告。探した頁の記録は無い。探索した範囲では選べる評価資料が無かった（2026-10-14確認）。"
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和7年度施策分野評価シート・事務事業評価シート（第30回瑞穂町行政評価委員会 事前配付資料、7施策分野）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/tyosei/004/p001465.html",
+          "inspected_at": "2026-10-23T09:57:31.533007+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/004/p001465_d/fil/080806siryou.pdf",
+              "sha256": "f5fc84555989130914e7d50ddc1c393b1fa10067535d6306f3e3c30b1b85c664",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2025/evaluation-settlement.pdf",
+            "sha256": "f5fc84555989130914e7d50ddc1c393b1fa10067535d6306f3e3c30b1b85c664",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/004/p001465_d/fil/080806siryou.pdf"
+          }
+        ],
+        "archived_at": "2026-10-23T10:03:45.332Z"
+      },
+      "reason": "令和7年度の施策分野評価シート7分野（35分野のうち、第30回行政評価委員会［令和8年8月6日］が外部評価の対象にした基本目標1の1健康づくり・スポーツ、1の3社会保険制度、2の1子育てしやすい環境、2の2保育・幼児教育の充実、2の3支援が必要な子どもと家庭への支援、7の1協働の推進、7の3効果的・効率的な行財政運営）と、その中の令和7年度事務事業評価シート40事業（約140事業のうち約3割）をまとめた1ファイル（080806siryou.pdf、102頁、文字PDF）。施策分野評価シートは施策数値指標（現状値と令和3〜6年度の実績、令和7年度の目標値）、予算額・決算額（令和3〜7年度）、重点施策ごとの年度別の進捗状況（主な取組）と評価・査定、個別事務事業の概要を載せる。事務事業評価シートは【目標・成果等】の欄に年度目標、年度成果（A目標を上回って達成〜D一部しか達成できなかった、の区分と説明）、課題及び今後の方向性（拡大・現状のまま継続・手段等の見直し・縮小・廃止・完了の区分と説明）と、予算・決算（令和5〜8年度、事業費と財源内訳）を載せる。施策分野ごとの外部評価の議題は同じ頁の次第（080806sidai.pdf）に「令和７年度施策分野評価シートの外部評価について」とある。年度は、各事務事業評価シートの見出し「令和 7 年度事務事業評価シート」と、予算・決算の表の令和7年度の列（決算額）、施策分野評価シートの令和7年度の決算額・進捗状況の行で決めた。施策分野評価シートの数値指標と予算・決算の表は令和3年度から令和7年度までの列を並べるが、令和7年度の列と見出しで年度を分けられる。全35分野の令和7年度版（施策分野評価シートの頁 https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025.html は更新日2026-02-26で令和6年度版まで）が載れば差し替えを検討する。掲載頁は行政評価委員会（https://www.town.mizuho.tokyo.jp/tyosei/004/p001465.html、更新日2026-10-08）。実物の確認: pdfinfo の頁数102、全頁に文字あり。確認日：2026-10-23（UTC）。"
     },
     {
       "target": {
@@ -1125,10 +1152,445 @@
         "fiscal_year": 2024,
         "document_kind": "settlement"
       },
-      "candidates": [],
-      "selected_candidate_id": null,
-      "archive": null,
-      "reason": "R6評価資料が見つからない。決算ページに成果・評価のPDFなし。DuckDuckGoのsite検索でも該当なし。2025年度のR7欄空・事務報告書は活動報告と同様。探した頁: https://www.town.mizuho.tokyo.jp/tyosei/002/012/p001152.html。探索した範囲では選べる評価資料が無かった（2026-10-15確認）。"
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "第5次瑞穂町長期総合計画 施策分野評価シート（35分野）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025.html",
+          "inspected_at": "2026-10-23T05:10:23.659928+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/1-1.pdf",
+              "sha256": "0cce37597bb8f5ca9b8c07d4478a626eb138838f3bd08565852981bcb29723c0",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/1-2.pdf",
+              "sha256": "129685bd1b6b1f3d914e697add1c7e2d30258ac52d55a9f62eb4f8755269f250",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/1-3.pdf",
+              "sha256": "7a1b94d344e9973890757f657ae650ba95c7cae020d313c7a9a7528d6787d8f3",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/1-4.pdf",
+              "sha256": "63a04b0617473307f72b60d892832a66385198fbf3cf61561d9c1c13607117e6",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/1-5.pdf",
+              "sha256": "602576483b81d74b1183a6ab55755ef9985db269c2007deba72c2eecf3d48f9c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/1-6.pdf",
+              "sha256": "8e1c28d37e9f47503a1b157ce767199c579ee5ac55446a33d6f0d131e36a8f93",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/2-1.pdf",
+              "sha256": "48a544e63f7c22f95763bc113d241ccd67ad041579d9804874529330661ae4c5",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/2-2.pdf",
+              "sha256": "fab7c46d5dc204509509010470e25accaa6393620f0808b811f48e7b71f4e18e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/2-3.pdf",
+              "sha256": "bd0dd0578b7f0ab1ccb27d54497dd4ea882e8d64cd710f458cf1528a62578a50",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/2-4.pdf",
+              "sha256": "6ead7309bafb94d47b2d9c30301e9feb8947170d5d01857d74604e067aca8f48",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/2-5.pdf",
+              "sha256": "5c51ee7b28c6fcf7b11cc2c2aaf45209a46dce931ed760535f2b439f468e8e1b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/2-6.pdf",
+              "sha256": "9383e2e2492ab8643482bed2f6549cba235e12cc392c15fc17eca238d9e11fe5",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/2-7.pdf",
+              "sha256": "dfd2d277501ce3ecbb506e137b9c32a99f1e9ebb30de0629d8329ed1b8b35cb0",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/3-1.pdf",
+              "sha256": "f90264853c728eeef650e10ba8f6f217026e27173517ba203979eee3d8b877dd",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/3-2.pdf",
+              "sha256": "21a83baf548b6655b1654cd3d1bbe1723a742f27125f64bb9bc03dd16f519ac5",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/3-3.pdf",
+              "sha256": "af5e0c150611a0487c674f63fabaec133719dd013dbce4aef9309519d7ae7abd",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/3-4.pdf",
+              "sha256": "f7e40e15a6f21d9544412c0f4f92e75024359b20e04318d36867d62c362a3a17",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/3-5.pdf",
+              "sha256": "001c43bac399b662ac62d1ea0275c989d59cfff6e79a9f32ef198dca9c02ef6b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/4-1.pdf",
+              "sha256": "bdc2e6d4e5a23e62163ed525af3f0e0b3fd268e0e3058f12a7eedaee62b4f69d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/4-2.pdf",
+              "sha256": "20ebe125baa98c18825e578be6ed0186abc760292226abc3aadbb20a9d052370",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/4-3.pdf",
+              "sha256": "dc61a40085e6f8c64b671f9de2585b6b515c982169bd5b6874f0a32ed5db7c13",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/5-1.pdf",
+              "sha256": "bab5f397bf84b4e1a753bf7b9e64b7084e24c8119ba441d072dfc80eca5192b7",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/5-2.pdf",
+              "sha256": "9db928724ccab9fc3d316e60b2702fd8c154926e22e8b0490b5066e5216f8ea8",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/5-3.pdf",
+              "sha256": "be2f85f7fb3f5abf06e5a28dfc322714f02581e099a3d3cd23dfdb489c8f31de",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/5-4.pdf",
+              "sha256": "6ea3956513298a22945d7c17561bd1d054d146026f12fcc13729e992fe9f15fc",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/5-5.pdf",
+              "sha256": "1961957e4c0bceebe356e9cd844ee65c8a2e24afa5540dc27840c5da728effa6",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/6-1.pdf",
+              "sha256": "832eed9d23a0fc683c805f7ef6921b53ed7c51e6c08ffa697a72a43c08d0a583",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/6-2.pdf",
+              "sha256": "8a890b62f03e5921507faa648ccfb49f5617cfab4ddbb67695f84fe380696887",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/6-3.pdf",
+              "sha256": "b514d2591a22d25e41330174e74c1ff2dee44b75bef88d7017e50dc2e8ff4d11",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/6-4.pdf",
+              "sha256": "60a77dfcdb35f725179473c5e6b5b8134630afe72de8ad8194ff4c8869bf2f2c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/6-5.pdf",
+              "sha256": "655fd16543b245b79a611b52c86418c9b99d8d8a8a631b4d9b9de39d5ec9a148",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/7-1.pdf",
+              "sha256": "a07d04084af1e3cb91bfd3711b540e2b3127424935b2e71ac15da1112a8bc209",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/7-2.pdf",
+              "sha256": "d0ac0d582ba007d38eb7172aac4cee6afc4209dd09f870904155c401fc201792",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/7-3.pdf",
+              "sha256": "b543aee25184e280420c26faaf8b18beb877076f3b9775f4a1961447298bb6e4",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/7-4.pdf",
+              "sha256": "c291f76b734af082f9caa695e2ee61cb3cf6a5a5d19fe7d31e428e86a1728537",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-2.pdf",
+            "sha256": "0cce37597bb8f5ca9b8c07d4478a626eb138838f3bd08565852981bcb29723c0",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/1-1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-3.pdf",
+            "sha256": "129685bd1b6b1f3d914e697add1c7e2d30258ac52d55a9f62eb4f8755269f250",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/1-2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-15.pdf",
+            "sha256": "7a1b94d344e9973890757f657ae650ba95c7cae020d313c7a9a7528d6787d8f3",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/1-3.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-11.pdf",
+            "sha256": "63a04b0617473307f72b60d892832a66385198fbf3cf61561d9c1c13607117e6",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/1-4.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-9.pdf",
+            "sha256": "602576483b81d74b1183a6ab55755ef9985db269c2007deba72c2eecf3d48f9c",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/1-5.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-18.pdf",
+            "sha256": "8e1c28d37e9f47503a1b157ce767199c579ee5ac55446a33d6f0d131e36a8f93",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/1-6.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-7.pdf",
+            "sha256": "48a544e63f7c22f95763bc113d241ccd67ad041579d9804874529330661ae4c5",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/2-1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-35.pdf",
+            "sha256": "fab7c46d5dc204509509010470e25accaa6393620f0808b811f48e7b71f4e18e",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/2-2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-26.pdf",
+            "sha256": "bd0dd0578b7f0ab1ccb27d54497dd4ea882e8d64cd710f458cf1528a62578a50",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/2-3.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-14.pdf",
+            "sha256": "6ead7309bafb94d47b2d9c30301e9feb8947170d5d01857d74604e067aca8f48",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/2-4.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-8.pdf",
+            "sha256": "5c51ee7b28c6fcf7b11cc2c2aaf45209a46dce931ed760535f2b439f468e8e1b",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/2-5.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-19.pdf",
+            "sha256": "9383e2e2492ab8643482bed2f6549cba235e12cc392c15fc17eca238d9e11fe5",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/2-6.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-32.pdf",
+            "sha256": "dfd2d277501ce3ecbb506e137b9c32a99f1e9ebb30de0629d8329ed1b8b35cb0",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/2-7.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-34.pdf",
+            "sha256": "f90264853c728eeef650e10ba8f6f217026e27173517ba203979eee3d8b877dd",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/3-1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-6.pdf",
+            "sha256": "21a83baf548b6655b1654cd3d1bbe1723a742f27125f64bb9bc03dd16f519ac5",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/3-2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-22.pdf",
+            "sha256": "af5e0c150611a0487c674f63fabaec133719dd013dbce4aef9309519d7ae7abd",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/3-3.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-33.pdf",
+            "sha256": "f7e40e15a6f21d9544412c0f4f92e75024359b20e04318d36867d62c362a3a17",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/3-4.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-1.pdf",
+            "sha256": "001c43bac399b662ac62d1ea0275c989d59cfff6e79a9f32ef198dca9c02ef6b",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/3-5.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-27.pdf",
+            "sha256": "bdc2e6d4e5a23e62163ed525af3f0e0b3fd268e0e3058f12a7eedaee62b4f69d",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/4-1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-5.pdf",
+            "sha256": "20ebe125baa98c18825e578be6ed0186abc760292226abc3aadbb20a9d052370",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/4-2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-31.pdf",
+            "sha256": "dc61a40085e6f8c64b671f9de2585b6b515c982169bd5b6874f0a32ed5db7c13",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/4-3.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-25.pdf",
+            "sha256": "bab5f397bf84b4e1a753bf7b9e64b7084e24c8119ba441d072dfc80eca5192b7",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/5-1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-20.pdf",
+            "sha256": "9db928724ccab9fc3d316e60b2702fd8c154926e22e8b0490b5066e5216f8ea8",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/5-2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-28.pdf",
+            "sha256": "be2f85f7fb3f5abf06e5a28dfc322714f02581e099a3d3cd23dfdb489c8f31de",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/5-3.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-13.pdf",
+            "sha256": "6ea3956513298a22945d7c17561bd1d054d146026f12fcc13729e992fe9f15fc",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/5-4.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-4.pdf",
+            "sha256": "1961957e4c0bceebe356e9cd844ee65c8a2e24afa5540dc27840c5da728effa6",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/5-5.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-16.pdf",
+            "sha256": "832eed9d23a0fc683c805f7ef6921b53ed7c51e6c08ffa697a72a43c08d0a583",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/6-1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-17.pdf",
+            "sha256": "8a890b62f03e5921507faa648ccfb49f5617cfab4ddbb67695f84fe380696887",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/6-2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-23.pdf",
+            "sha256": "b514d2591a22d25e41330174e74c1ff2dee44b75bef88d7017e50dc2e8ff4d11",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/6-3.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-10.pdf",
+            "sha256": "60a77dfcdb35f725179473c5e6b5b8134630afe72de8ad8194ff4c8869bf2f2c",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/6-4.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-12.pdf",
+            "sha256": "655fd16543b245b79a611b52c86418c9b99d8d8a8a631b4d9b9de39d5ec9a148",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/6-5.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-21.pdf",
+            "sha256": "a07d04084af1e3cb91bfd3711b540e2b3127424935b2e71ac15da1112a8bc209",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/7-1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-30.pdf",
+            "sha256": "d0ac0d582ba007d38eb7172aac4cee6afc4209dd09f870904155c401fc201792",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/7-2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-24.pdf",
+            "sha256": "b543aee25184e280420c26faaf8b18beb877076f3b9775f4a1961447298bb6e4",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/7-3.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/evaluation-settlement-29.pdf",
+            "sha256": "c291f76b734af082f9caa695e2ee61cb3cf6a5a5d19fe7d31e428e86a1728537",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025_d/fil/7-4.pdf"
+          }
+        ],
+        "archived_at": "2026-10-23T08:25:35.656Z"
+      },
+      "reason": "第5次瑞穂町長期総合計画の施策分野評価シート35冊（基本目標1〜7の35分野、各2〜4頁、計107頁、掲載頁の更新日2026-02-26）。約140の事務事業評価シートを集計した分野ごとのシートで、施策数値指標（現状値と令和3〜6年度の実績、令和7年度の目標値）、予算額・決算額（令和3〜7年度、一般財源・国庫支出金・都支出金・地方債その他）、施策の評価（分析）、重点施策ごとの年度別の進捗状況（主な取組）と評価・査定、個別事務事業の一覧を載せる。施策単位で、事業の細目は個別事務事業の欄にとどまる。文字として読める（35ファイルとも先頭頁に文字あり）。年度は、シートの数値指標・予算決算の表の令和3〜6年度の列のうち最新の「令和6年度」の列と、重点施策の年度別欄の「令和６年度」の進捗状況・評価で決めた。従前の「R6評価資料が見つからない」は見落とし（決算頁だけを見て、町政情報の計画・施策にある長期総合計画の下の施策分野評価シートを見ていなかった）。確認日：2026-10-23（UTC）。"
     },
     {
       "target": {
@@ -1139,7 +1601,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "2023年度実績の評価資料が見つからない。事務報告書は活動報告。探した頁: https://www.town.mizuho.tokyo.jp/tyosei/002/012/p001152.html。探索した範囲では選べる評価資料が無かった（2026-10-16確認）。"
+      "reason": "選ばない。2023年度（令和5年度）の評価は、2024年度に選んだ施策分野評価シート35冊（https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025.html、更新日2026-02-26）の令和5年度の列（施策数値指標の実績、予算額・決算額）と重点施策の令和5年度の進捗状況・評価にも載っている。ただし同じ35ファイルは令和3〜6年度を1冊に持つ最新版1組だけの公開で、令和5年度版は別に公開されていない。各頁に令和3〜6年度の列が並ぶ作りで、頁の範囲で令和5年度分だけを分けられない。同じファイルは2024年度に選んだので2023年度には選ばない。令和5年度の実績・決算額・評価は2024年度の選定の資料で引ける。行政評価の頁（https://www.town.mizuho.tokyo.jp/tyosei/004/index.html）は行政評価委員会の資料のみ。事務報告書は活動報告。確認日：2026-10-23（UTC）。"
     }
   ]
 }

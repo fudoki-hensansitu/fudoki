@@ -2824,10 +2824,37 @@
         "fiscal_year": 2025,
         "document_kind": "settlement"
       },
-      "candidates": [],
-      "selected_candidate_id": null,
-      "archive": null,
-      "reason": "成果の概要は事務報告に近く、成果シートの PDF が見つからない。探した頁の記録は無い。探索した範囲では選べる評価資料が無かった（2026-10-14確認）。"
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和7年度版実施計画成果シート（振り返り）",
+          "landing_url": "https://www.city.higashimurayama.tokyo.jp/shisei/keikaku/sogo/sougoukeikaku5/dai5ji_jisshi.html",
+          "inspected_at": "2026-10-23T05:29:28.804657+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.higashimurayama.tokyo.jp/shisei/keikaku/sogo/sougoukeikaku5/files/reiwa7furikaeri.pdf",
+              "sha256": "34910e58368d372e731c563ed0a2f6b1af1e9a7f762e3ffd74d36282d08b857d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132136/2025/evaluation-settlement.pdf",
+            "sha256": "34910e58368d372e731c563ed0a2f6b1af1e9a7f762e3ffd74d36282d08b857d",
+            "final_url": "https://www.city.higashimurayama.tokyo.jp/shisei/keikaku/sogo/sougoukeikaku5/files/reiwa7furikaeri.pdf"
+          }
+        ],
+        "archived_at": "2026-10-23T08:21:38.007Z"
+      },
+      "reason": "令和7年度に実施した第5次総合計画の実施計画事業を令和8年8月に振り返った成果シート（251頁、実施計画事業ごとのシート。旧名称は事業別主要な施策評価シート）。冒頭に「「令和７年度 事業別主要な施策評価シート（計画）（令和７年度予算参考資料）」において記載した事業の取組状況について、振り返りを行った内容を報告するために作成」とある。実施計画事業ごとに、事業概要・予算額、Ⅰ．課題、Ⅱ．令和7年度の主な取組予定、Ⅲ．成果を測定するための指標（基準値・達成目標）、Ⅳ．財務情報（事業コスト・人件費・決算額の主な内訳、6年度・7年度）、Ⅴ．総括（令和7年度の主な取組実績、成果指標の5〜7年度値の推移、令和7年度の主な成果、今後の方向性）を載せる（「今後の方向性」の欄が123頁）。年度は、表題「令和７年度版実施計画成果シート」と「令和７年度の主な取組実績」、指標の推移の「５年度値・６年度値・７年度値」の列のうち７年度値（例：小中学校トイレ洋式化事業の小学校整備学校数 ７年度値14）で決めた（令和7年度＝2025年度の実績）。文字として読める（251頁中、白紙の2頁目を除き文字あり）。対象は総合計画に紐づく実施計画事業で、全事務事業ではない。掲載頁は第5次総合計画実施計画（各年度）（ブラウザで描画、更新日2026-09-02）で、令和7年度版実施計画成果シート（振り返り）として載る。注意：ファイルは User-Agent を付けない curl だと 403 になる（風土記と名乗る User-Agent の fetch.ts で取得できる）。確認日：2026-10-23（UTC）。"
     },
     {
       "target": {
@@ -2835,10 +2862,37 @@
         "fiscal_year": 2024,
         "document_kind": "settlement"
       },
-      "candidates": [],
-      "selected_candidate_id": null,
-      "archive": null,
-      "reason": "R6主要な施策の成果の概要（r6_seikanogaiyou.pdf、550頁）は事務報告に近く、事業の実績・金額の記載が中心で目標・評価・課題・方向の記述が無いため選ばない。R7行政評価ページにも事業別評価シートなし。探した頁: https://www.city.higashimurayama.tokyo.jp/shisei/gyozaisei/gyozaisei/kessan.html。探索した範囲では選べる評価資料が無かった（2026-10-15確認）。"
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和6年度版実施計画成果シート（振り返り）",
+          "landing_url": "https://www.city.higashimurayama.tokyo.jp/shisei/keikaku/sogo/sougoukeikaku5/dai5ji_jisshi.html",
+          "inspected_at": "2026-10-23T04:59:17.648046+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.higashimurayama.tokyo.jp/shisei/keikaku/sogo/sougoukeikaku5/files/r6_seika.pdf",
+              "sha256": "c57c3ac310a045fdf5aad6d3f2e4b92255b00c9278e04a4ddcc6ee7eb2c10ff0",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132136/2024/evaluation-settlement.pdf",
+            "sha256": "c57c3ac310a045fdf5aad6d3f2e4b92255b00c9278e04a4ddcc6ee7eb2c10ff0",
+            "final_url": "https://www.city.higashimurayama.tokyo.jp/shisei/keikaku/sogo/sougoukeikaku5/files/r6_seika.pdf"
+          }
+        ],
+        "archived_at": "2026-10-23T08:21:47.082Z"
+      },
+      "reason": "令和6年度に実施した第5次総合計画の実施計画事業を令和7年度に振り返った成果シート（271頁、旧名称は事業別主要な施策評価シート）。冒頭に「本資料は「令和６年度 事業別主要な施策評価シート（計画）」に記載した事業の取組状況を報告するために作成」「令和6年度に実施する事業は令和7年度に令和6年度決算に基づく振り返りを行う」とある。実施計画事業ごとに、事業概要・予算額、これまでの課題、令和6年度の取組予定、成果指標（基準値・達成目標）、財務情報（事業コスト・人件費・決算額の主な内訳）、令和6年度の主な取組実績、成果指標の4〜6年度の推移、主な成果、今後の方向性を載せる。年度は「令和6年度版実施計画成果シート」の見出しと「６年度値」の列、「令和６年度の主な取組実績」で決めた。文字として読める（抜き取った頁1・3・10・11・100・271に文字あり）。対象は総合計画に紐づく実施計画事業で、全事務事業ではない。従前の「R7行政評価ページにも事業別評価シートなし」は、掲載頁を第5次総合計画実施計画（各年度）にして見直すと誤りで、同頁（https://www.city.higashimurayama.tokyo.jp/shisei/keikaku/sogo/sougoukeikaku5/dai5ji_jisshi.html）にある。注意：ファイルは User-Agent を付けない curl だと 403 になる（風土記と名乗る User-Agent の fetch.ts で取得できる）。確認日：2026-10-23（UTC）。"
     },
     {
       "target": {
@@ -2849,7 +2903,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "主要な施策の成果の概要は事務報告に近く、目標・評価・課題・方向の記述が無い。探した頁: https://www.city.higashimurayama.tokyo.jp/shisei/gyozaisei/gyozaisei/kessan.html。探索した範囲では選べる評価資料が無かった（2026-10-16確認）。"
+      "reason": "令和5年度に当たる実施計画の成果シート（振り返り）は無い。第5次総合計画実施計画（各年度）の頁（https://www.city.higashimurayama.tokyo.jp/shisei/keikaku/sogo/sougoukeikaku5/dai5ji_jisshi.html）を描画して見ると、成果シート（振り返り）の掲載は令和6年度分（2024年度）と令和7年度分（2025年度）のみで、令和5年度は実施計画（計画）のみ、令和4年度は「実施計画事業決算額及び取り組み成果」（index_R4_kessann.pdf、2022年度）。主要な施策の成果の概要（r5seikanogaiyou_2.pdf）は事務報告に近く目標・評価・課題・方向の記述が無い。令和5年度行財政改革の取組成果（r5gyoukakuseika.pdf）は行財政改革の取組の検証で事業全体の評価ではない。DuckDuckGo の site 検索（令和5年度 実施計画成果シート・事業別主要な施策評価シート・振り返り）でも該当なし。確認日：2026-10-23（UTC）。"
     }
   ]
 }

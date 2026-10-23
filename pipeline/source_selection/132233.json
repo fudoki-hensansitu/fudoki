@@ -2467,10 +2467,373 @@
         "fiscal_year": 2025,
         "document_kind": "settlement"
       },
-      "candidates": [],
-      "selected_candidate_id": null,
-      "archive": null,
-      "reason": "未公表。探した頁の記録は無い。探索した範囲では選べる評価資料が無かった（2026-10-14確認）。"
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和7年度重点事務事業 期末評価（重点事務事業進行管理表29事業）",
+          "landing_url": "https://www.city.musashimurayama.lg.jp/shisei/shisaku/1022427/1014822/1021376.html",
+          "inspected_at": "2026-10-23T09:48:59.768894+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/1-1_r7kimatu.pdf",
+              "sha256": "85dd93d3dd623c1c7f5887a5f5185a7985008581b0ee239e6745c758a01f06d5",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/1-2_r7kimatu.pdf",
+              "sha256": "68eaed0bf3879549fde4b482659dac4ed5473191bb7eb9c9180109a859d87725",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/1-3_r7kimatu.pdf",
+              "sha256": "768dde6654f7ba5671d18b037d3738ef1594780a467dcf880a53279f2bad71f9",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/1-4_r7kimatu.pdf",
+              "sha256": "46d571b3015c3cf513a38ae874f01050c346f8fb4268a5df6ae301020149a091",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/2-1_r7kimatu.pdf",
+              "sha256": "6d6e343c69e1a351e38d71db9f49f9b50de946625049804f14f91c16f01c0531",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/2-2_r7kimatu.pdf",
+              "sha256": "21a9825df62b90c723dab8847643f694b9285f42e27325de5696a426677c8667",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/2-3_r7kimatu.pdf",
+              "sha256": "56dae1f8435852f754d7dcac7bf1437c3c858f3a0c9e45dc9c448dedfb4376ea",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/3-1_r7kimatu.pdf",
+              "sha256": "4bdb63307b25e096c2d68b5a16b2a9de32c17d9f9ad61b75ed8175017a5803ef",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/3-2_r7kimatu.pdf",
+              "sha256": "e4bacf6a88bcb86473cfa7ec5a9136f4025b15aae009d6d8a749b2e472e842c6",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/3-3_r7kimatu.pdf",
+              "sha256": "5f3555cc776a327a34412a39f6520418337b3bc955e733a78368856e1f7d0c72",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/3-4_r7kimatu.pdf",
+              "sha256": "9b32389db63eca62cfec691182a6063dc7b83f99caa104800c2062db5ccc9f37",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/4-1_r7kimatu.pdf",
+              "sha256": "8e38522a27cdb5a64d54aa62c0ce29d4eb9285b83e2ed86737cb19e7f24b9181",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/4-2_r7kimatu.pdf",
+              "sha256": "3ac73f2b359de4457569603566fa33e7eee0fefbef28052652ab83d3d9fd30d6",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/4-3_r7kimatu.pdf",
+              "sha256": "011a50e5786cd1261bc35d1e814ff1db5d78bdb8f1b1661578818e9c6b59ee20",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/4-4_r7kimatu.pdf",
+              "sha256": "66abc32e4976af54954f4876e6653a8f09a59fe6a0bb2368607f4c63a6b842cf",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/5_r7kimatu.pdf",
+              "sha256": "26632be1c08d49cc58460b3679e833764f7242276431bdbe3dca4f4b95aaabc9",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/6_r7kimatu.pdf",
+              "sha256": "2b8f189199ca83deb3d0afadaf34fa253cf0e994a570e35e34f4834bb451c6b2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/7_r7kimatu.pdf",
+              "sha256": "723e7a1e47e82b218aaf3cf9618f04626e8040b7b7c45a54336ac04cdbdc238a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/8_r7kimatu.pdf",
+              "sha256": "2b38aa1c5fcc880da63da43bfd56fe689ad85b46408ba8cf3fed3f63b4d1ce91",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/9_r7kimatu.pdf",
+              "sha256": "5c9b2e142279838a5a8ff14527c85bff6c8381a672ed17a941e8273f8448911c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/10_r7kimatu.pdf",
+              "sha256": "c8fbbe55dd07709acc4ba30b0aaa3e09e542660da71bb08ecb40a5d502a27641",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/11_r7kimatu.pdf",
+              "sha256": "0cd40106a4c4d017480d462d73ba39f17ff235f81d875e5847ca046fed91e367",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/12_r7kimatu.pdf",
+              "sha256": "8ca790997053efcff7f0720b91883ede57ae995b3dcec3e07960aa9826730fd2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/13_r7kimatu.pdf",
+              "sha256": "bd9c5d645425485bebb9f70d910c967bf25ddda8ad92fd9be5928292737b95aa",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/14_r7kimatu.pdf",
+              "sha256": "d95046a465cbe1746b2e923443bcac059f00d8b7b5a45622a0c824bd89cd5680",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/15_r7kimatu.pdf",
+              "sha256": "3403d3346f8e7ffcff6e7caed50aa690b081d917ad96f65e4379f0b2bb37c3ee",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/16_r7kimatu.pdf",
+              "sha256": "a9c5881102a008c6c6c6a68dd9ff1c360aacbca99553f6819391e06f97e40411",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/17_r7kimatu.pdf",
+              "sha256": "de94e3b6ed1bee86a3b36d058ccf48d49563b0e9ee12b3cd9152a21efa549a9d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/18_r7kimatu.pdf",
+              "sha256": "f7529177c81c9e4310fc50c3b6c5106db9305f5adba1bee1db5c1d7f9bcf58e3",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132233/2025/evaluation-settlement-19.pdf",
+            "sha256": "85dd93d3dd623c1c7f5887a5f5185a7985008581b0ee239e6745c758a01f06d5",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/1-1_r7kimatu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132233/2025/evaluation-settlement-15.pdf",
+            "sha256": "68eaed0bf3879549fde4b482659dac4ed5473191bb7eb9c9180109a859d87725",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/1-2_r7kimatu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132233/2025/evaluation-settlement-18.pdf",
+            "sha256": "768dde6654f7ba5671d18b037d3738ef1594780a467dcf880a53279f2bad71f9",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/1-3_r7kimatu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132233/2025/evaluation-settlement-9.pdf",
+            "sha256": "46d571b3015c3cf513a38ae874f01050c346f8fb4268a5df6ae301020149a091",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/1-4_r7kimatu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132233/2025/evaluation-settlement-16.pdf",
+            "sha256": "6d6e343c69e1a351e38d71db9f49f9b50de946625049804f14f91c16f01c0531",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/2-1_r7kimatu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132233/2025/evaluation-settlement-3.pdf",
+            "sha256": "21a9825df62b90c723dab8847643f694b9285f42e27325de5696a426677c8667",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/2-2_r7kimatu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132233/2025/evaluation-settlement-11.pdf",
+            "sha256": "56dae1f8435852f754d7dcac7bf1437c3c858f3a0c9e45dc9c448dedfb4376ea",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/2-3_r7kimatu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132233/2025/evaluation-settlement-10.pdf",
+            "sha256": "4bdb63307b25e096c2d68b5a16b2a9de32c17d9f9ad61b75ed8175017a5803ef",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/3-1_r7kimatu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132233/2025/evaluation-settlement-28.pdf",
+            "sha256": "e4bacf6a88bcb86473cfa7ec5a9136f4025b15aae009d6d8a749b2e472e842c6",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/3-2_r7kimatu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132233/2025/evaluation-settlement-13.pdf",
+            "sha256": "5f3555cc776a327a34412a39f6520418337b3bc955e733a78368856e1f7d0c72",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/3-3_r7kimatu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132233/2025/evaluation-settlement-22.pdf",
+            "sha256": "9b32389db63eca62cfec691182a6063dc7b83f99caa104800c2062db5ccc9f37",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/3-4_r7kimatu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132233/2025/evaluation-settlement-21.pdf",
+            "sha256": "8e38522a27cdb5a64d54aa62c0ce29d4eb9285b83e2ed86737cb19e7f24b9181",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/4-1_r7kimatu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132233/2025/evaluation-settlement-8.pdf",
+            "sha256": "3ac73f2b359de4457569603566fa33e7eee0fefbef28052652ab83d3d9fd30d6",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/4-2_r7kimatu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132233/2025/evaluation-settlement-1.pdf",
+            "sha256": "011a50e5786cd1261bc35d1e814ff1db5d78bdb8f1b1661578818e9c6b59ee20",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/4-3_r7kimatu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132233/2025/evaluation-settlement-14.pdf",
+            "sha256": "66abc32e4976af54954f4876e6653a8f09a59fe6a0bb2368607f4c63a6b842cf",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/4-4_r7kimatu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132233/2025/evaluation-settlement-4.pdf",
+            "sha256": "26632be1c08d49cc58460b3679e833764f7242276431bdbe3dca4f4b95aaabc9",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/5_r7kimatu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132233/2025/evaluation-settlement-6.pdf",
+            "sha256": "2b8f189199ca83deb3d0afadaf34fa253cf0e994a570e35e34f4834bb451c6b2",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/6_r7kimatu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132233/2025/evaluation-settlement-17.pdf",
+            "sha256": "723e7a1e47e82b218aaf3cf9618f04626e8040b7b7c45a54336ac04cdbdc238a",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/7_r7kimatu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132233/2025/evaluation-settlement-5.pdf",
+            "sha256": "2b38aa1c5fcc880da63da43bfd56fe689ad85b46408ba8cf3fed3f63b4d1ce91",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/8_r7kimatu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132233/2025/evaluation-settlement-12.pdf",
+            "sha256": "5c9b2e142279838a5a8ff14527c85bff6c8381a672ed17a941e8273f8448911c",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/9_r7kimatu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132233/2025/evaluation-settlement-25.pdf",
+            "sha256": "c8fbbe55dd07709acc4ba30b0aaa3e09e542660da71bb08ecb40a5d502a27641",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/10_r7kimatu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132233/2025/evaluation-settlement-2.pdf",
+            "sha256": "0cd40106a4c4d017480d462d73ba39f17ff235f81d875e5847ca046fed91e367",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/11_r7kimatu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132233/2025/evaluation-settlement-20.pdf",
+            "sha256": "8ca790997053efcff7f0720b91883ede57ae995b3dcec3e07960aa9826730fd2",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/12_r7kimatu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132233/2025/evaluation-settlement-24.pdf",
+            "sha256": "bd9c5d645425485bebb9f70d910c967bf25ddda8ad92fd9be5928292737b95aa",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/13_r7kimatu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132233/2025/evaluation-settlement-26.pdf",
+            "sha256": "d95046a465cbe1746b2e923443bcac059f00d8b7b5a45622a0c824bd89cd5680",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/14_r7kimatu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132233/2025/evaluation-settlement-7.pdf",
+            "sha256": "3403d3346f8e7ffcff6e7caed50aa690b081d917ad96f65e4379f0b2bb37c3ee",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/15_r7kimatu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132233/2025/evaluation-settlement-23.pdf",
+            "sha256": "a9c5881102a008c6c6c6a68dd9ff1c360aacbca99553f6819391e06f97e40411",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/16_r7kimatu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132233/2025/evaluation-settlement-27.pdf",
+            "sha256": "de94e3b6ed1bee86a3b36d058ccf48d49563b0e9ee12b3cd9152a21efa549a9d",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/17_r7kimatu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132233/2025/evaluation-settlement-29.pdf",
+            "sha256": "f7529177c81c9e4310fc50c3b6c5106db9305f5adba1bee1db5c1d7f9bcf58e3",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/376/r7kimatsu/18_r7kimatu.pdf"
+          }
+        ],
+        "archived_at": "2026-10-23T10:03:36.740Z"
+      },
+      "reason": "令和7年度に管理した重点事務事業29事業の期末評価（令和8年3月末、掲載頁の更新日2026-05-28）。全事業ではなく市が選んだ重点事業だけ。事業ごとの重点事務事業進行管理表（1事業1ファイル、29ファイル、計39頁、文字PDF）に、本年度の目標、上半期・下半期の計画と実績、中間評価・期末評価それぞれの達成度（目標以下／目標どおり／目標以上）と取組の成果、事業費の実績（総事業費・一般財源）、今後の方針を載せる。同じ頁の総括表（soukatu_r7kimatu.pdf、3頁）は個別表の目標と達成度を一覧にしたもので、同じ内容が個別表にあるため重複として選ばない。年度は、各表の「年度 令和７年度」の見出しと、「令和７年度に管理を行う重点事務事業について、令和8年3月末における期末評価を公表します」の頁の記載、期末評価欄の事業費の実績で決めた。令和7年度実績を評価する行政評価（https://www.city.musashimurayama.lg.jp/shisei/shisaku/gyouseihyouka/index.html）は令和7年度行政評価（令和6年度実施分）までで未公表のため、事業ごとの目標・実績・評価・今後の方針をそろえて載せるこの資料を選んだ。実物の確認: 29ファイルの pdftotext に「令和７年度」「期末評価」「達成度」「今後」の語があり、pdfinfo の頁数の合計は39。確認日：2026-10-23（UTC）。"
     },
     {
       "target": {
