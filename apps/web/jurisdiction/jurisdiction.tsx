@@ -75,8 +75,8 @@ function Trend({ data }: { data: PageData }) {
             <ChartContainer config={config} className="aspect-auto w-full" style={{ height: 40 + changes.length * 30 }}>
               <BarChart data={changes} layout="vertical" margin={{ left: 8, right: 44 }}>
                 <CartesianGrid horizontal={false} />
-                <YAxis dataKey="name" type="category" tickLine={false} axisLine={false} width={118} tick={{ fontSize: 12.5 }} />
-                <XAxis type="number" hide domain={['dataMin - 14', 'dataMax + 14']} />
+                <YAxis dataKey="name" type="category" tickLine={false} axisLine={false} width={126} tick={{ fontSize: 12 }} />
+                <XAxis type="number" hide domain={['dataMin - 34', 'dataMax + 22']} />
                 <ReferenceLine x={0} stroke="var(--border)" />
                 <ChartTooltip content={<ChartTooltipContent hideLabel />} />
                 <Bar dataKey="pct" radius={4} barSize={14}>

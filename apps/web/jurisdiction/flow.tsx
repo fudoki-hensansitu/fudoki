@@ -92,6 +92,7 @@ function KouSection({ kou, active, loading, onBox }: { kou: Kou; active: boolean
   return (
     <section ref={(el) => { box.current = el; onBox(el) }} data-active={active} className="group/kou grid min-h-full snap-start snap-always grid-cols-1 content-start gap-3 px-5 pb-5 pt-3 sm:grid-cols-[150px_10px_64px_minmax(0,1fr)] sm:gap-0 sm:pr-8">
       <div className="min-w-0 border-b pb-2 sm:border-0 sm:pb-0 sm:pr-2">
+        <div className="text-[11px] text-muted-foreground">項</div>
         <div className="font-sans text-lg leading-snug">{kou.name}</div>
         <div className="text-[13px] tabular-nums text-muted-foreground">{amountText(kou.yen, kou.amountMissing)}</div>
         {kou.page ? <div className="mt-1.5 text-[11px] text-muted-foreground">決算書 {kou.page}頁</div> : null}

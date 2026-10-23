@@ -50,8 +50,8 @@ export function Overview({ flows, height = 520 }: { flows: Drill[]; height?: num
     return () => observer.disconnect()
   }, [])
   const narrow = width < 560
-  const left = narrow ? 96 : 180
-  const right = narrow ? 160 : 260
+  const left = narrow ? 104 : 180
+  const right = narrow ? 170 : 260
   const kous = flows.flatMap((flow, kanIndex) => flow.kou.map((kou) => ({ kanIndex, kou })))
   const kanValues = flows.map((flow) => Math.max(0, flow.kan.yen))
   const kouValues = kous.map(({ kou }) => Math.max(0, kou.yen))
@@ -78,7 +78,7 @@ export function Overview({ flows, height = 520 }: { flows: Drill[]; height?: num
           })}
           {flows.map((flow, i) => {
             const node = kans[i]!
-            const label = cut(flow.kan.name, 8)
+            const label = cut(flow.kan.name, 9)
             return (
               <g key={flow.kan.id}>
                 <title>{`${flow.kan.name} ${amountText(flow.kan.yen, flow.kan.amountMissing)}`}</title>
@@ -95,7 +95,7 @@ export function Overview({ flows, height = 520 }: { flows: Drill[]; height?: num
                 <title>{`${kou.name} ${amountText(kou.yen, kou.amountMissing)}`}</title>
                 <rect x={x1} y={node.y} width={BAR} height={Math.max(node.height, 2)} rx={2} className="fill-primary" />
                 <text x={x1 + BAR + 8} y={node.top + node.size / 2 + 4} className="fill-foreground" fontSize={narrow ? 10.5 : 12}>
-                  {cut(kou.name, 8)}
+                  {cut(kou.name, 10)}
                   <tspan dx={6} className="fill-muted-foreground tabular-nums" fontSize={narrow ? 10 : 11}>{amountText(kou.yen, kou.amountMissing)}</tspan>
                 </text>
               </g>
