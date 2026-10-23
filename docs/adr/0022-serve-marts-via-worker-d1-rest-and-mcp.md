@@ -75,7 +75,7 @@ API の検索は結合を持たないので、ノードの行に所属する款�
 
 キャッシュは持たない。必要になれば、GET のまま CDN に載せられる。
 
-Worker の observability を有効にし（`headSamplingRate: 1`）、要求ごとの CPU 時間（`limits.cpuMs` に対する余裕）とエラーをログで見る。Workers Paid の Workers Logs は月 2,000 万件が含まれ、超過は 100 万件あたり $0.60 である（保持は7日。2026年12月1日から Cloudflare Observability の料金に移る）。今の利用の量なら含まれる量に収まる見込みで、デプロイ後の実測で確かめる。WAF の rate limit は IP ごと（データセンターごと）なので、ログの総量の上限にはならない。総量の異常は従来の Budget alert（$1）で気づき、kill switch で止める（超過の単価は小さい）。2026年12月1日に料金の体系が変わるので、そのときにアカウント全体のログの量と保存量を見て見積もりを見直し、必要なら `headSamplingRate` を下げる。トレースは有効にしない。
+Worker の observability を有効にし（`headSamplingRate: 1`）、要求ごとの CPU 時間（`limits.cpuMs` に対する余裕）とエラーをログで見る。Workers Paid の Workers Logs は月 2,000 万件が含まれ、超過は 100 万件あたり $0.60 である（保持は7日。2026年12月1日から Cloudflare Observability の料金に移る）。今の利用の量なら含まれる量に収まる見込みで、デプロイ後の実測で確かめる。WAF の rate limit は IP ごと（データセンターごと）なので、ログの総量の上限にはならない。総量の異常は従来の Budget alert（$1）で気づき、kill switch で止める（超過の単価は小さい）。2026年12月1日に料金の体系が変わるので、そのときにアカウント全体のログの量と保存量を見て見積もりを見直し、必要なら `headSamplingRate` を下げる。トレースも有効にする（`traces.headSamplingRate: 1`）。トレースは早期ベータで、2026年11月末までは課金されない。2026年12月1日からはログと同じ Cloudflare Observability の枠（Workers Paid は取り込み 50GB・保存 10GB-月が含まれ、超過は $0.25/GB と $0.10/GB-月、保持は7日）を共有して消費する。span の分だけ取り込みが増えるので、12月にアカウント全体の量を見て、必要なら `traces.headSamplingRate` を下げる。当初はトレースを有効にしない判断だったが、理由は記録されていない。
 
 ## 更新は表ごとの全件の入れ替えで行う
 

@@ -10,7 +10,7 @@ export default defineConfig(({ isPreview }) => ({
     domains: [{ hostname: 'fudoki.dev', production: true, previews: true }],
     // static/ の重いファイル（ホームの動画・出典の切り抜き）と会話の画面の JS・CSS（_app/、build で作る）を assets で配る。合わない path は Worker が答える
     assets: { notFoundHandling: 'none' },
-    observability: { enabled: true, headSamplingRate: 1 },
+    observability: { enabled: true, headSamplingRate: 1, traces: { enabled: true, headSamplingRate: 1 } },
     env: {
       AI: bindings.ai(),
       // 風土記の MCP（apps/api）。workers.dev を閉じているので Worker 間で直接呼ぶ

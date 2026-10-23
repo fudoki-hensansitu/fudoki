@@ -59,9 +59,9 @@
 
 | 本番 Worker | 実行ログ | 自動転送 |
 | --- | --- | --- |
-| fudoki-api | logs.enabled/persist/invocation_logs=true、sampling=1。traces=false | logpush=false、tail consumer 0件 |
+| fudoki-api | logs.enabled/persist/invocation_logs=true、sampling=1。traces=false（確認時点。その後 traces を有効にする設定に変更） | logpush=false、tail consumer 0件 |
 | fudoki-docs | observability=null（有効化なし） | logpush=false、tail consumer 0件 |
-| fudoki | observability=null（有効化なし）。web は500応答 | logpush=false、tail consumer 0件 |
+| fudoki | observability=null（確認時点。その後 logs・traces を有効にする設定に変更）。web は500応答 | logpush=false、tail consumer 0件 |
 
 Workers Paid の Workers Logs は標準7日保持なので、privacy には最大7日と記載した。query のマスクは false であり、URL に含まれる情報が記録され得るため、秘密情報を送らせない案内を維持する。[Cloudflare DPA](https://www.cloudflare.com/cloudflare-customer-dpa/)も確認した。契約の個別の締結状態や法的適合性を、設定取得だけで証明したとは扱わない。
 
