@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 
 from evaluation_search import plan
-from evaluation_search.plan_test import CONFIG, selection, write_selections
+from evaluation_search.plan_test import CONFIG, csv_selection, selection, write_selections
 from serving import evaluation_catalog
 
 A = 'a' * 64
@@ -36,6 +36,15 @@ class EvaluationCatalogTest(unittest.TestCase):
             'origin_sha256': A, 'jurisdiction': '131172', 'fiscal_year': 2025, 'title': '131172の評価',
             'url': f'https://example.test/{A}.pdf', 'landing_url': 'https://example.test/landing',
             'item_format': 'pdf', 'pages': [{'start': 1, 'end': 108}]})
+
+    def test_csv_origin_is_listed_as_md_with_its_format_and_rows_as_pages(self):
+        with tempfile.TemporaryDirectory() as directory:
+            write_selections(Path(directory), '132012', csv_selection('132012', A))
+            origins = plan.load_origins(Path(directory))
+        instance = {'config': CONFIG, 'registrations': [record(origins[0], 568)]}
+        (document,) = evaluation_catalog.build(origins, instance)['documents']
+        self.assertEqual((document['origin_format'], document['item_format'], document['pages']), ('csv', 'md', [{'start': 1, 'end': 568}]))
+        self.assertEqual(document['url'], 'https://app.powerbi.com/view?r=test')
 
     def test_declared_text_origin_is_listed_as_md_and_needs_a_record_of_that_shape(self):
         by_sha = {o.sha256: o for o in self.origins}

@@ -56,11 +56,14 @@ export interface CatalogDocument {
   title: string
   url: string
   landing_url: string
+  /** 出典の形。省略は PDF。csv は公開レポートの表を風土記が取ったもので、pages の「頁」はデータ行の番号（1始まり） */
+  origin_format?: 'csv'
   /** 登録の形。pdf は頁の PDF、md は抜き出した文字（key の拡張子になる） */
   item_format: 'pdf' | 'md'
   pages: { start: number; end: number }[]
 }
-const CATALOG = (catalogJson as unknown as { documents: CatalogDocument[] }).documents
+/** 試験が CSV の出典を足すために export する。本番は読むだけ。 */
+export const CATALOG = (catalogJson as unknown as { documents: CatalogDocument[] }).documents
 
 // --- 入出力 ---
 
@@ -75,12 +78,15 @@ const input = z.strictObject({
     .describe(`検索文（1〜${MAX_QUERY_CHARS}文字）。事業の正式名称、または対象と行為が分かる3文字以上の語。`),
 })
 
+const originFormat = z.literal('csv').optional().describe('出典の形。省略は PDF。csv は自治体が公開レポートでだけ出している表を、風土記がレポートの API から取ったもの（自治体のファイルではない）。')
+
 const Document = z
   .strictObject({
-    origin_sha256: z.string().describe('出典 PDF の SHA-256。風土記が取得・保存した時点のもの。自治体がファイルを再保存すると、url から取得したファイルの SHA-256 とは一致しないことがある。'),
+    origin_sha256: z.string().describe('出典の SHA-256。風土記が取得・保存した時点のもの。自治体がファイルを再保存すると、url から取得したファイルの SHA-256 とは一致しないことがある。CSV の出典は、風土記が公開レポートの API から取った表のバイト列のもの。'),
     title: z.string().describe('資料の題。'),
     evaluated_fiscal_year: z.int().describe('評価対象の決算年度。資料の題の年度とは違うことがある。'),
-    url: z.string().describe('出典 PDF の URL。'),
+    origin_format: originFormat,
+    url: z.string().describe('出典 PDF の URL。CSV の出典は、表を取った公開レポート（Power BI）の URL。'),
     landing_url: z.string().describe('自治体が資料を掲載しているページの URL。'),
   })
   .meta({ id: 'EvaluationDocument', description: '自治体・年度の評価資料（候補の有無によらず返す）。' })
@@ -88,10 +94,11 @@ const Document = z
 const Candidate = z
   .strictObject({
     rank: z.int().describe('検索の順位（1が先頭）。'),
-    origin_sha256: z.string().describe('出典 PDF の SHA-256。風土記が取得・保存した時点のもの。自治体がファイルを再保存すると、url から取得したファイルの SHA-256 とは一致しないことがある。'),
-    page: z.int().describe('出典 PDF の物理頁（1始まり。印字された頁番号とは別）。'),
-    url: z.string().describe('出典 PDF の URL。'),
-    page_url: z.string().describe('出典 PDF の該当頁を指す URL（url#page=頁）。内容を読むにはこの頁を自分で取得する。'),
+    origin_sha256: z.string().describe('出典の SHA-256。風土記が取得・保存した時点のもの。自治体がファイルを再保存すると、url から取得したファイルの SHA-256 とは一致しないことがある。'),
+    origin_format: originFormat,
+    page: z.int().describe('出典 PDF の物理頁（1始まり。印字された頁番号とは別）。origin_format が csv のときは、風土記が取った表のデータ行の番号（1始まり。レポートの画面にある番号ではない）。'),
+    url: z.string().describe('出典 PDF の URL。CSV の出典は公開レポートの URL。'),
+    page_url: z.string().describe('出典 PDF の該当頁を指す URL（url#page=頁）。内容を読むにはこの頁を自分で取得する。CSV の出典は頁を指せないので、公開レポートの URL（url と同じ）。'),
     excerpt: z.string().describe(`所在を示すための短い抜粋（最大${EXCERPT_CHARS}文字）。頁の内容ではなく、これだけを根拠に評価・目標値・実績を答えない。`),
   })
   .meta({ id: 'EvaluationCandidate', description: '事業の評価が載っているかもしれない頁の所在。目的の事業の評価とは保証しない。' })
@@ -108,13 +115,16 @@ export type EvaluationSearchOutput = z.infer<typeof output>
 const NOTE_NO_PROOF = '0件は出典に無いことを意味しない。別の言い方で引き直してよい。'
 const NOTE_LOCATION =
   '候補は検索の結果で、抜粋は所在を示すためのもの。内容は出典 PDF の該当頁（page_url）を自分で取得して確かめる。'
+const NOTE_CSV =
+  'origin_format が csv の候補は、自治体が公開レポート（Power BI）でだけ出している表を風土記が取ったもの。自治体のファイルではない。page は風土記が取った表のデータ行の番号で、内容はレポートの画面で事業名を検索して確かめる。'
 const NOTE_EMPTY_DROPPED = '本文の無い候補を除いた。'
 const NOTE_NOT_COVERED = '風土記はこの自治体・年度の評価資料を収録していない。出典に無いとは言えない。'
 
 export const description =
   '自治体と評価対象年度（評価された実績の決算の年度）を指定して、事業の評価が書かれた頁の所在を探す。' +
-  '候補は所在（出典 PDF の URL・sha256・物理頁）と短い抜粋だけで、頁の内容は返さない。' +
-  '内容を参照したいときは、page_url（出典 PDF の該当頁）を自分で取得して読む。取得できない環境では、利用者に page_url を示して確かめてもらう。抜粋だけを根拠に評価・目標値・実績を答えない。\n' +
+  '候補は所在（出典の URL・sha256・PDF なら物理頁、CSV の出典ならデータ行の番号）と短い抜粋だけで、頁の内容は返さない。' +
+  '内容を参照したいときは、page_url（出典 PDF の該当頁）を自分で取得して読む。取得できない環境では、利用者に page_url を示して確かめてもらう。抜粋だけを根拠に評価・目標値・実績を答えない。' +
+  'origin_format が csv の出典は、自治体が公開レポートでだけ出している表を風土記が取ったもので、page_url は頁を指さず公開レポートの URL。事業名で画面を検索して確かめる。\n' +
   '1. 正式名称が分かれば名称だけで検索する。分からなければ、対象と行為が分かる3文字以上の語を含めて検索する。依頼文（「評価を教えて」など）は足さない。\n' +
   '2. 返された候補はすべて確かめる。0件は出典に無い保証ではない。行政資料の言い方や候補で確認した名称で引き直してよい。検索は1つの問いで初回を含めて3回までにする。\n' +
   '3. 同名の事業、関連する事業、上位の施策を区別する。同名の複数の事業が対象なら全頁を挙げる。どれか決められなければ決められないと答え、3回で見つからなければ見つからなかったと答えて、検索した語を添える。\n' +
@@ -354,12 +364,14 @@ async function searchEvaluations(ctx: Ctx, raw: Record<string, unknown>): Promis
       continue
     }
     seen.add(verified.key)
+    const csv = verified.document.origin_format === 'csv'
     candidates.push({
       rank: candidates.length + 1,
       origin_sha256: verified.document.origin_sha256,
+      ...(csv ? { origin_format: 'csv' as const } : {}),
       page: verified.page,
       url: verified.document.url,
-      page_url: `${verified.document.url}#page=${verified.page}`,
+      page_url: csv ? verified.document.url : `${verified.document.url}#page=${verified.page}`,
       excerpt: makeExcerpt(body, query),
     })
   }
@@ -372,6 +384,7 @@ async function searchEvaluations(ctx: Ctx, raw: Record<string, unknown>): Promis
     origin_sha256: d.origin_sha256,
     title: d.title,
     evaluated_fiscal_year: d.fiscal_year,
+    ...(d.origin_format === 'csv' ? { origin_format: 'csv' as const } : {}),
     url: d.url,
     landing_url: d.landing_url,
   }))
@@ -381,7 +394,7 @@ async function searchEvaluations(ctx: Ctx, raw: Record<string, unknown>): Promis
     status,
     documents: outDocuments,
     candidates,
-    notes: [NOTE_NO_PROOF, NOTE_LOCATION, ...(empty > 0 ? [NOTE_EMPTY_DROPPED] : [])],
+    notes: [NOTE_NO_PROOF, NOTE_LOCATION, ...(candidates.some((c) => c.origin_format === 'csv') ? [NOTE_CSV] : []), ...(empty > 0 ? [NOTE_EMPTY_DROPPED] : [])],
   }
 }
 

@@ -20,6 +20,6 @@ export function evaluationObjectSlot(target: Extract<SourceTarget, { document_ki
   return `fiscal/source-selection/${target.jurisdiction}/${target.fiscal_year}/evaluation-${target.document_kind}`
 }
 
-export function evaluationObjectKey(target: Extract<SourceTarget, { document_kind: 'settlement' }>, format: 'pdf', index?: number): string {
+export function evaluationObjectKey(target: Extract<SourceTarget, { document_kind: 'settlement' }>, format: 'csv' | 'pdf', index?: number): string {
   return index === undefined ? `${evaluationObjectSlot(target)}.${format}` : `${evaluationObjectSlot(target)}-${index}.${format}`
 }

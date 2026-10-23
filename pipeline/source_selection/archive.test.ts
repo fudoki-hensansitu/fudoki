@@ -268,3 +268,25 @@ test('evaluation replacement keeps the saved keys and puts only the new original
   expect(evaluationSelectionsSchema.safeParse([result]).success).toBe(true)
   expect(fake.keys.size).toBe(3)
 })
+
+test('an evaluation CSV with a Power BI acquisition is fetched from the report and saved as a csv key', async () => {
+  const table = new TextEncoder().encode('番号,事務事業名\n1,議会の運営\n')
+  const acquisition = { type: 'powerbi' as const, table: '01 メイン（済）', columns: ['番号', '事務事業名'], order_by: ['番号'] }
+  const file = { download_url: 'https://app.powerbi.com/view?r=abc', sha256: hash(table), format: 'csv' as const, acquisition }
+  const selected: EvaluationSelection = { ...evaluation([]), candidates: [{ id: 'representative', title: '事務事業評価', landing_url: 'https://example.com/', inspected_at: '2026-10-23T00:00:00Z', files: [file] }], selected_candidate_id: 'representative' }
+  const acquisitions: unknown[] = []
+  const uploads: { key: string; contentType: string }[] = []
+  const api: ArchiveTransport = {
+    async download(url, declared) { acquisitions.push(declared); return { body: table, final_url: url } },
+    async put(key, _body, contentType) { uploads.push({ key, contentType }) },
+    async list() { return [] },
+    async remove() {},
+  }
+  const saved = await archiveSelected(selected, api, evaluationKind)
+  expect(acquisitions).toEqual([acquisition])
+  expect(uploads).toEqual([{ key: 'fiscal/source-selection/132047/2024/evaluation-settlement.csv', contentType: 'text/csv' }])
+  expect(evaluationSelectionsSchema.safeParse([saved]).success).toBe(true)
+  expect(isArchived([saved], undefined, undefined, evaluationKind)).toBe(true)
+  const changed = { ...api, async download(url: string) { return { body: new TextEncoder().encode('番号\n2\n'), final_url: url } } }
+  await expect(archiveSelected(selected, changed, evaluationKind)).rejects.toThrow('Original changed')
+})
