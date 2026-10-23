@@ -25,6 +25,10 @@ from typing import Mapping, Sequence
 from .vision_ocr import OcrRegion
 
 
+RUNTIMES = ("onnxruntime", "paddle")
+MODEL_CACHE = Path.home() / ".paddlex/official_models"
+
+
 class PaddleOcrError(RuntimeError):
     """OCR failed; the caller receives no partial result."""
 
@@ -33,24 +37,31 @@ class PaddleOcrError(RuntimeError):
 class PaddleConfig:
     dpi: int = 300
     max_pixels: int = 40_000_000
-    pdf_renderer: str = "coregraphics"
+    pdf_renderer: str = "pypdfium2"
     render_timeout_seconds: float = 300
     detection_model_name: str = "PP-OCRv6_small_det"
     recognition_model_name: str = "PP-OCRv6_small_rec"
     detection_model_dir: str | None = None
     recognition_model_dir: str | None = None
-    cpu_threads: int = 10
+    runtime: str = "onnxruntime"
+    cpu_threads: int = 4
     recognition_batch_size: int = 6
-    detection_limit_side_len: int = 1280
+    detection_limit_side_len: int = 1920
+    page_strips: int = 2
+    strip_overlap_px: int = 60
 
     def __post_init__(self) -> None:
         if type(self.dpi) is not int or not 72 <= self.dpi <= 600:
             raise ValueError("dpi must be an integer between 72 and 600")
-        for name in ("max_pixels", "cpu_threads", "recognition_batch_size", "detection_limit_side_len"):
+        for name in ("max_pixels", "cpu_threads", "recognition_batch_size", "detection_limit_side_len", "page_strips"):
             if type(getattr(self, name)) is not int or getattr(self, name) < 1:
                 raise ValueError(f"{name} must be a positive integer")
-        if self.pdf_renderer not in ("coregraphics", "poppler"):
-            raise ValueError("pdf_renderer must be coregraphics or explicit poppler")
+        if type(self.strip_overlap_px) is not int or self.strip_overlap_px < 0:
+            raise ValueError("strip_overlap_px must be a non-negative integer")
+        if self.runtime not in RUNTIMES:
+            raise ValueError("runtime must be onnxruntime or paddle")
+        if self.pdf_renderer not in ("pypdfium2", "coregraphics", "poppler"):
+            raise ValueError("pdf_renderer must be pypdfium2, coregraphics or poppler")
         if (type(self.render_timeout_seconds) not in (int, float)
                 or not math.isfinite(self.render_timeout_seconds) or self.render_timeout_seconds <= 0):
             raise ValueError("render_timeout_seconds must be finite and positive")
@@ -108,22 +119,34 @@ def _retry_owners(areas, retries):
     return owners
 
 
-def _checked_models(names, directories):
-    manifest_path = Path(__file__).with_name("paddle_ocr_models.json")
-    manifest_sha = _sha(manifest_path)
-    declaration = json.loads(manifest_path.read_text())
+def _default_directory(name: str, runtime: str) -> Path:
+    """Where a declared model is expected; the ONNX archives unpack to ``<name>_onnx_infer``."""
+    for model in _declaration()["models"]:
+        if model["name"] == name and model["runtime"] == runtime:
+            return MODEL_CACHE / model["directory"]
+    raise PaddleOcrError(f"Model is not declared: {name} ({runtime})")
+
+
+def _declaration() -> dict:
+    declaration = json.loads(Path(__file__).with_name("paddle_ocr_models.json").read_text())
     if declaration.get("schema_version") != 1:
         raise PaddleOcrError("Unsupported local model declaration")
-    declared = {m["name"]: m for m in declaration["models"]}
+    return declaration
+
+
+def _checked_models(names, directories, runtime="paddle"):
+    manifest_path = Path(__file__).with_name("paddle_ocr_models.json")
+    manifest_sha = _sha(manifest_path)
+    declared = {(m["name"], m["runtime"]): m for m in _declaration()["models"]}
     models = []
     for name, directory in zip(names, directories):
-        if name not in declared:
-            raise PaddleOcrError(f"Model is not declared: {name}")
-        for file in declared[name]["files"]:
+        if (name, runtime) not in declared:
+            raise PaddleOcrError(f"Model is not declared: {name} ({runtime})")
+        for file in declared[(name, runtime)]["files"]:
             path = directory / file["name"]
             if (not path.is_file() or path.stat().st_size != file["bytes"] or _sha(path) != file["sha256"]):
                 raise PaddleOcrError(f"Local model missing or hash mismatch: {path}; no models are downloaded")
-            models.append({"model_name": name, "path": str(path.resolve()), **file})
+            models.append({"model_name": name, "runtime": runtime, "path": str(path.resolve()), **file})
     return models, {"path": str(manifest_path), "sha256": manifest_sha}
 
 
@@ -167,9 +190,9 @@ def _observation(text, box, *, id, parent, kind, confidence, page, attempt_id):
             "page_number": page["page_number"]}
 
 
-def _observations(native: list[dict], crop: list[int], page: dict, attempt_id: str) -> list[dict]:
+def _observations(native: list[dict], crop: list[int], page: dict, attempt_id: str, first_result: int = 0) -> list[dict]:
     result = []
-    for result_index, raw in enumerate(native):
+    for result_index, raw in enumerate(native, first_result):
         data = raw["res"]
         texts, scores, polys = data["rec_texts"], data["rec_scores"], data["rec_polys"]
         if not len(texts) == len(scores) == len(polys):
@@ -196,6 +219,82 @@ def _observations(native: list[dict], crop: list[int], page: dict, attempt_id: s
                     result.append(_observation(word, box, id=f"{parent}:n{word_index}", parent=parent,
                                                kind="number", confidence=score, page=page, attempt_id=attempt_id))
     return result
+
+
+def _strips(width: int, count: int, overlap: int) -> list[tuple[int, int]]:
+    """Vertical strips of a region, each reaching ``overlap`` px into its neighbours."""
+    return [(max(0, k * width // count - overlap), min(width, (k + 1) * width // count + overlap))
+            for k in range(count)]
+
+
+def _overlap(a, b) -> float:
+    """Intersection area of two boxes over the smaller box."""
+    width = min(a[2], b[2]) - max(a[0], b[0])
+    height = min(a[3], b[3]) - max(a[1], b[1])
+    smaller = min((a[2] - a[0]) * (a[3] - a[1]), (b[2] - b[0]) * (b[3] - b[1]))
+    return width * height / smaller if width > 0 and height > 0 and smaller > 0 else 0.0
+
+
+SEAM_TOLERANCE_PX = 3  # a box this close to its strip's edge was cut by it
+
+
+def _drop_strip_duplicates(groups: list[list[dict]], spans: list[tuple[int, int]]) -> tuple[list[dict], list[str]]:
+    """The kept observations and the dropped ids of ``_merge_strips``."""
+    kept, dropped, _ = _merge_strips(groups, spans)
+    return kept, dropped
+
+
+def _merge_strips(groups: list[list[dict]], spans: list[tuple[int, int]]) -> tuple[list[dict], list[str], list[list[float]]]:
+    """Merge the observations of vertical strips, dropping a line read twice in a band two strips share.
+
+    A line whose box lies over another strip's line (at least half of the smaller box) is a duplicate.
+    With the same text, the reading farther from its own strip's edge stays (the nearer one may be cut).
+    A shorter text inside a longer one that covers it is the cut reading, and goes (when the shorter box
+    ends at its own strip's edge, half of it over the longer one is enough). A line crossing the
+    seam is read in two pieces, each cut by its own strip's edge (a box ending at the right edge of one
+    strip and one starting at the left edge of the next, on one text line): neither is trusted, both go,
+    and the ink they leave is read again whole by the missed-ink re-read. Any other differing readings
+    both stay: no text is chosen between them. A dropped line takes its words. The third value is the box
+    (pixels) covering each seam pair that was dropped: where a re-read has to give the whole line back.
+    """
+    items = [(k, o) for k, group in enumerate(groups) for o in group if o["kind"] == "region" and o["bbox_px"]]
+    margin = lambda k, o: min((o["bbox_px"][0] + o["bbox_px"][2]) / 2 - spans[k][0],
+                              spans[k][1] - (o["bbox_px"][0] + o["bbox_px"][2]) / 2)
+    dropped: set[str] = set()
+    seams: list[list[float]] = []
+    text = lambda o: "".join(o["raw_text"].split())
+
+    def same_line(a, b) -> bool:
+        height = min(a["bbox_px"][3] - a["bbox_px"][1], b["bbox_px"][3] - b["bbox_px"][1])
+        shared = min(a["bbox_px"][3], b["bbox_px"][3]) - max(a["bbox_px"][1], b["bbox_px"][1])
+        return height > 0 and shared >= 0.5 * height and min(a["bbox_px"][2], b["bbox_px"][2]) > max(a["bbox_px"][0], b["bbox_px"][0])
+
+    for k in range(len(groups) - 1):
+        band = (spans[k + 1][0], spans[k][1])
+        near = [(j, o) for j, o in items if j in (k, k + 1) and o["bbox_px"][2] > band[0] and o["bbox_px"][0] < band[1]]
+        # the box of a reading cut by its own strip's edge is as tall as its cut text, so it overlaps the
+        # whole reading less than a box of the same height would
+        cut_a = lambda o, edge=spans[k][1]: o["bbox_px"][2] >= edge - SEAM_TOLERANCE_PX
+        cut_b = lambda o, edge=spans[k + 1][0]: o["bbox_px"][0] <= edge + SEAM_TOLERANCE_PX
+        for i, a in [x for x in near if x[0] == k]:
+            for j, b in [x for x in near if x[0] == k + 1]:
+                if a["id"] in dropped or b["id"] in dropped:
+                    continue
+                shared = _overlap(a["bbox_px"], b["bbox_px"])
+                ta, tb = text(a), text(b)
+                if shared >= 0.5 and ta == tb:
+                    dropped.add(b["id"] if margin(i, a) >= margin(j, b) else a["id"])
+                elif tb and tb in ta and (shared >= 0.8 or (shared >= 0.5 and cut_b(b))):
+                    dropped.add(b["id"])
+                elif ta and ta in tb and (shared >= 0.8 or (shared >= 0.5 and cut_a(a))):
+                    dropped.add(a["id"])
+                elif (a["bbox_px"][2] >= spans[k][1] - SEAM_TOLERANCE_PX and b["bbox_px"][0] <= spans[k + 1][0] + SEAM_TOLERANCE_PX
+                      and same_line(a, b)):
+                    dropped |= {a["id"], b["id"]}
+                    seams.append([min(a["bbox_px"][0], b["bbox_px"][0]), min(a["bbox_px"][1], b["bbox_px"][1]),
+                                  max(a["bbox_px"][2], b["bbox_px"][2]), max(a["bbox_px"][3], b["bbox_px"][3])])
+    kept = [o for group in groups for o in group if o["id"] not in dropped and o.get("parent_id") not in dropped]
+    return kept, sorted(dropped), seams
 
 
 def _run(command: list[str], timeout: float, *, operation: str = "PDF renderer", **kwargs) -> subprocess.CompletedProcess:
@@ -292,7 +391,68 @@ def _compiled_renderer(helper: Path, helper_sha: str, timeout: float) -> tuple[P
     return binary, {**metadata, "cache_key": key, "cache_hit": cache_hit, "binary_path": str(binary)}
 
 
+def _render_pdfium(path: Path, pages: Sequence[int], config: PaddleConfig, directory: Path) -> dict:
+    """Render with pypdfium2 (the version in the lock): CropBox and rotation applied, sRGB, white background."""
+    try:
+        import pypdfium2 as pdfium
+    except ImportError as exc:
+        raise PaddleOcrError("pypdfium2 is not installed") from exc
+    scale = config.dpi / 72
+    records = []
+    try:
+        document = pdfium.PdfDocument(str(path))
+    except Exception as exc:
+        raise PaddleOcrError(f"Cannot open PDF: {exc}") from exc
+    try:
+        for number in pages:
+            if number > len(document):
+                raise PaddleOcrError(f"PDF has no physical page {number}")
+            page = document[number - 1]
+            width, height = page.get_size()
+            if (not all(math.isfinite(v) and v > 0 for v in (width, height))
+                    or math.ceil(width * scale) * math.ceil(height * scale) > config.max_pixels):
+                raise PaddleOcrError("PDF page exceeds max_pixels or has invalid geometry")
+            image = page.render(scale=scale).to_pil().convert("RGB")
+            target = directory / f"page-{number}.png"
+            image.save(target)
+            records.append({"page_number": number, "image_path": str(target), "displayed_pdf_size_pt": [width, height],
+                            "crop_box_pdf_pt": list(page.get_cropbox()), "rotation_degrees": page.get_rotation()})
+    except PaddleOcrError:
+        raise
+    except Exception as exc:
+        raise PaddleOcrError(f"pypdfium2 failed: {exc}") from exc
+    finally:
+        document.close()
+    return {"pages": records, "renderer": "pypdfium2", "version": importlib.metadata.version("pypdfium2"),
+            "pdfium": pdfium.PDFIUM_INFO.version if hasattr(pdfium.PDFIUM_INFO, "version") else str(pdfium.PDFIUM_INFO),
+            "dpi": config.dpi}
+
+
+def _render_pdfium_in_time(path: Path, pages: Sequence[int], config: PaddleConfig, directory: Path) -> dict:
+    """pypdfium2 renders inside this process and cannot be killed, so it runs in a daemon thread and the
+    acquisition stops with an error after ``render_timeout_seconds``; the stuck thread is left behind."""
+    import threading
+    box: dict = {}
+
+    def work():
+        try:
+            box["result"] = _render_pdfium(path, pages, config, directory)
+        except BaseException as exc:  # handed to the caller's thread
+            box["error"] = exc
+
+    thread = threading.Thread(target=work, daemon=True)
+    thread.start()
+    thread.join(config.render_timeout_seconds)
+    if thread.is_alive():
+        raise PaddleOcrError(f"Cannot render PDF: pypdfium2 did not finish within {config.render_timeout_seconds} seconds")
+    if "error" in box:
+        raise box["error"]
+    return box["result"]
+
+
 def _render_pdf(path: Path, pages: Sequence[int], config: PaddleConfig, directory: Path) -> dict:
+    if config.pdf_renderer == "pypdfium2":
+        return _render_pdfium_in_time(path, pages, config, directory)
     if config.pdf_renderer == "coregraphics":
         if platform.system() != "Darwin":
             raise PaddleOcrError("CoreGraphics requires macOS; select poppler explicitly on other platforms")
@@ -343,6 +503,23 @@ def _render_pdf(path: Path, pages: Sequence[int], config: PaddleConfig, director
     return {"pages": records, "renderer": "Poppler", "version": (version.stderr or version.stdout).strip(), "dpi": config.dpi}
 
 
+def _runtime_kwargs(config: PaddleConfig) -> dict:
+    """PaddleOCR arguments that select the runtime and its CPU threads."""
+    if config.runtime == "paddle":
+        return {"cpu_threads": config.cpu_threads}
+    return {"engine": "onnxruntime",
+            "engine_config": {"onnxruntime": {"intra_op_num_threads": config.cpu_threads,
+                                               "inter_op_num_threads": 1}}}
+
+
+def _threads(runner, runtime: str):
+    """CPU threads the loaded model actually runs with."""
+    if runtime == "paddle":
+        return runner._config.get("cpu_threads")
+    options = runner.session.get_session_options()
+    return options.intra_op_num_threads if options.inter_op_num_threads == 1 else None
+
+
 class PaddleOcr:
     """One lazily loaded local engine shared across images/PDF pages and retries."""
 
@@ -374,38 +551,41 @@ class PaddleOcr:
         if self._engine is not None:
             return
         config = self.config
-        cache = Path.home() / ".paddlex/official_models"
-        dirs = [Path(config.detection_model_dir) if config.detection_model_dir else cache / config.detection_model_name,
-                Path(config.recognition_model_dir) if config.recognition_model_dir else cache / config.recognition_model_name]
+        runtime = config.runtime
         names = [config.detection_model_name, config.recognition_model_name]
-        models, manifest = _checked_models(names, dirs)
+        dirs = [Path(config.detection_model_dir) if config.detection_model_dir else _default_directory(names[0], runtime),
+                Path(config.recognition_model_dir) if config.recognition_model_dir else _default_directory(names[1], runtime)]
+        models, manifest = _checked_models(names, dirs, runtime)
         try:
             from paddleocr import PaddleOCR
         except ImportError as exc:
             raise PaddleOcrError("PaddleOCR optional dependencies are not installed") from exc
-        kwargs = {"ocr_version": "PP-OCRv6", "device": "cpu", "cpu_threads": config.cpu_threads,
+        kwargs = {"ocr_version": "PP-OCRv6", "device": "cpu",
                   "text_recognition_batch_size": config.recognition_batch_size,
                   "use_doc_orientation_classify": False, "use_doc_unwarping": False,
                   "use_textline_orientation": False, "text_rec_score_thresh": 0.0,
                   "text_detection_model_name": config.detection_model_name, "text_detection_model_dir": str(dirs[0].resolve()),
                   "text_recognition_model_name": config.recognition_model_name, "text_recognition_model_dir": str(dirs[1].resolve())}
+        kwargs.update(_runtime_kwargs(config))
         start = time.perf_counter()
         engine = None
         try:
             engine = PaddleOCR(**kwargs)
             pipe = engine.paddlex_pipeline._pipeline
-            actual = {"det_cpu_threads": pipe.text_det_model.runner._config.get("cpu_threads"),
-                      "rec_cpu_threads": pipe.text_rec_model.runner._config.get("cpu_threads"),
+            actual = {"det_cpu_threads": _threads(pipe.text_det_model.runner, runtime),
+                      "rec_cpu_threads": _threads(pipe.text_rec_model.runner, runtime),
                       "recognition_batch_size": pipe.text_rec_model.batch_sampler.batch_size}
             if actual != {"det_cpu_threads": config.cpu_threads, "rec_cpu_threads": config.cpu_threads,
                           "recognition_batch_size": config.recognition_batch_size}:
                 raise PaddleOcrError("Native PaddleOCR settings differ from requested configuration")
-            if _checked_models(names, dirs) != (models, manifest):
+            if _checked_models(names, dirs, runtime) != (models, manifest):
                 raise PaddleOcrError("Model declaration or model files changed during initialization")
+            packages = ("paddleocr", "paddlex", "numpy", "pillow",
+                        "onnxruntime" if runtime == "onnxruntime" else "paddlepaddle")
             metadata = {"name": "PaddleOCR", "settings": kwargs, "config": asdict(config),
                         "init_seconds": time.perf_counter() - start, "models": models,
                         "model_manifest": manifest, "actual_engine_settings": actual,
-                        "versions": {p: importlib.metadata.version(p) for p in ("paddleocr", "paddlepaddle", "paddlex", "numpy", "pillow")},
+                        "versions": {p: importlib.metadata.version(p) for p in packages},
                         "platform": platform.platform(), "architecture": platform.machine(),
                         "driver_sha256": _sha(Path(__file__)), "word_confidence": "Inherited native parent-region score"}
         except Exception as exc:
@@ -416,31 +596,41 @@ class PaddleOcr:
             raise PaddleOcrError(f"Cannot initialize local PaddleOCR: {exc}") from exc
         self._engine, self._engine_metadata = engine, metadata
 
-    def _attempt(self, image, page, region, area, index, retry):
+    def _attempt(self, image, page, region, area, index, retry, small=False):
+        """Read one crop. A retry or a ``small`` area is upscaled to 64 px; a normal region is
+        split into ``page_strips`` vertical strips (overlapping by ``strip_overlap_px``), each read alone."""
         import numpy as np
         crop = _crop_box(area, image.width, image.height)
         rgb = np.array(image.crop(tuple(crop)).convert("RGB"))
         # Paddle's file loader decodes PNG with OpenCV as BGR; match it exactly.
         bgr = np.ascontiguousarray(rgb[:, :, ::-1])
-        params = {"return_word_box": True, "text_det_limit_side_len": 64 if retry else self.config.detection_limit_side_len,
-                  "text_det_limit_type": "min" if retry else "max"}
+        scaled = retry or small
+        params = {"return_word_box": True, "text_det_limit_side_len": 64 if scaled else self.config.detection_limit_side_len,
+                  "text_det_limit_type": "min" if scaled else "max"}
+        strips = [(0, rgb.shape[1])] if scaled else _strips(rgb.shape[1], self.config.page_strips, self.config.strip_overlap_px)
         attempt_id = f"p{page['page_number']}:{region.id}:a{index}"
-        start = time.perf_counter()
-        try:
-            native = _plain([r.json for r in self._engine.predict(bgr, **params)])
-        except Exception as exc:
-            raise PaddleOcrError(f"PaddleOCR failed in {attempt_id}: {exc}") from exc
-        seconds = time.perf_counter() - start
-        observations = _observations(native, crop, page, attempt_id)
+        native, groups, seconds = [], [], 0.0
+        for x0, x1 in strips:
+            start = time.perf_counter()
+            try:
+                part = _plain([r.json for r in self._engine.predict(np.ascontiguousarray(bgr[:, x0:x1]), **params)])
+            except Exception as exc:
+                raise PaddleOcrError(f"PaddleOCR failed in {attempt_id}: {exc}") from exc
+            seconds += time.perf_counter() - start
+            groups.append(_observations(part, [crop[0] + x0, *crop[1:]], page, attempt_id, len(native)))
+            native += part
+        observations, duplicates, seams = _merge_strips(groups, [(crop[0] + a, crop[0] + b) for a, b in strips])
         return {"id": attempt_id, "region_id": region.id, "retry_region_id": area.id if retry else None,
                 "crop_bbox_px": crop, "bbox_normalized": area.bbox_normalized,
-                "predict_settings": params, "inference_seconds": seconds,
+                "predict_settings": params, "strips_px": [list(s) for s in strips], "duplicate_observation_ids": duplicates,
+                **({"seam_dropped_boxes_px": seams} if seams else {}),
+                "inference_seconds": seconds,
                 "input_rgb_pixel_sha256": hashlib.sha256(rgb.tobytes()).hexdigest(),
                 "input_bgr_pixel_sha256": hashlib.sha256(bgr.tobytes()).hexdigest(),
                 "input_image_size_px": [rgb.shape[1], rgb.shape[0]],
                 "native": native, "observations": observations}
 
-    def _read_page(self, image, page, areas, retries):
+    def _read_page(self, image, page, areas, retries, small=False):
         if image.width * image.height > self.config.max_pixels:
             raise ValueError("Image exceeds max_pixels")
         page.update(image_width=image.width, image_height=image.height)
@@ -448,7 +638,7 @@ class PaddleOcr:
         self._load_engine()
         regions, attempts = [], []
         for area in areas:
-            attempt = self._attempt(image, page, area, area, len(attempts), False)
+            attempt = self._attempt(image, page, area, area, len(attempts), False, small)
             attempts.append(attempt)
             regions.append({"id": area.id, "crop_bbox_px": attempt["crop_bbox_px"],
                             "observations": list(attempt["observations"]), "attempt_ids": [attempt["id"]]})
@@ -464,7 +654,7 @@ class PaddleOcr:
         page.update(regions=regions, attempts=attempts)
         return page
 
-    def _recognize(self, path, kind, pages, regions, retry_regions):
+    def _recognize(self, path, kind, pages, regions, retry_regions, small=False):
         started = time.perf_counter()
         path = Path(path).resolve(strict=True)
         if not path.is_file():
@@ -507,7 +697,7 @@ class PaddleOcr:
                     page.update(image_file_sha256=image_file_sha,
                                 rendered_png_sha256=image_file_sha if kind == "pdf" or image.format == "PNG" else None,
                                 rendered_rgb_pixel_sha256=hashlib.sha256(rgb.tobytes()).hexdigest())
-                    output.append(self._read_page(rgb, page, areas, retries.get(record["page_number"], ())))
+                    output.append(self._read_page(rgb, page, areas, retries.get(record["page_number"], ()), small))
         if _sha(path) != origin_sha:
             raise PaddleOcrError("OCR input changed during recognition")
         if _sha(Path(__file__)) != self._engine_metadata["driver_sha256"]:
@@ -517,8 +707,10 @@ class PaddleOcr:
                 "render_seconds": render_seconds, "elapsed_seconds": time.perf_counter() - started, "pages": output}
 
     def recognize_image(self, path: Path, *, regions: Sequence[OcrRegion] | None = None,
-                        retry_regions: Sequence[OcrRegion] = ()) -> dict:
-        return self._recognize(path, "image", (1,), regions, {1: retry_regions})
+                        retry_regions: Sequence[OcrRegion] = (), small_regions: bool = False) -> dict:
+        """``small_regions`` reads each region as a small area (upscaled to 64 px, never split into
+        strips): the tight crop of a lone digit or amount, not a page or a tile."""
+        return self._recognize(path, "image", (1,), regions, {1: retry_regions}, small_regions)
 
     def recognize_pdf(self, path: Path, *, pages: Sequence[int], regions: Sequence[OcrRegion] | None = None,
                       retry_regions: Mapping[int, Sequence[OcrRegion]] | None = None) -> dict:
@@ -526,39 +718,56 @@ class PaddleOcr:
                                {} if retry_regions is None else retry_regions)
 
 
-_RECOGNIZER = None
+_RECOGNIZERS: dict = {}
 
 
 def recognize_crops(paths: Sequence[Path], config: PaddleConfig = PaddleConfig()) -> list[str]:
     """Text of each cropped line image with the recognition model alone (no detection).
 
-    About 130 ms a crop after a one-time load of about 27 s; one recognizer is kept per process.
+    About 130 ms a crop with the Paddle runtime after a one-time load of about 27 s; one
+    recognizer is kept per process and configuration.
     """
-    global _RECOGNIZER
-    if _RECOGNIZER is None:
+    key = (config.runtime, config.recognition_model_name, config.recognition_model_dir, config.cpu_threads)
+    if key not in _RECOGNIZERS:
         directory = (Path(config.recognition_model_dir) if config.recognition_model_dir
-                     else Path.home() / ".paddlex/official_models" / config.recognition_model_name)
-        _checked_models([config.recognition_model_name], [directory])
+                     else _default_directory(config.recognition_model_name, config.runtime))
+        _checked_models([config.recognition_model_name], [directory], config.runtime)
         try:
             from paddleocr import TextRecognition
         except ImportError as exc:
             raise PaddleOcrError("PaddleOCR optional dependencies are not installed") from exc
-        _RECOGNIZER = TextRecognition(model_name=config.recognition_model_name, model_dir=str(directory.resolve()),
-                                      device="cpu", cpu_threads=config.cpu_threads)
+        _RECOGNIZERS[key] = TextRecognition(model_name=config.recognition_model_name, model_dir=str(directory.resolve()),
+                                            device="cpu", **_runtime_kwargs(config))
     if not paths:
         return []
-    results = _RECOGNIZER.predict([str(p) for p in paths], batch_size=config.recognition_batch_size)
+    results = _RECOGNIZERS[key].predict([str(p) for p in paths], batch_size=config.recognition_batch_size)
     return [(r.json if hasattr(r, "json") else r)["res"]["rec_text"] for r in results]
 
 
-def recognize_image(path: Path, *, config: PaddleConfig = PaddleConfig(), regions=None, retry_regions=()) -> dict:
-    with PaddleOcr(config) as ocr:
-        return ocr.recognize_image(path, regions=regions, retry_regions=retry_regions)
+_SHARED: dict[PaddleConfig, PaddleOcr] = {}
+
+
+def shared_engine(config: PaddleConfig = PaddleConfig()) -> PaddleOcr:
+    """One engine per configuration for the life of the process.
+
+    Creating and closing an engine for every page leaves each one's ONNX Runtime memory behind: reading
+    pages of a book that way took RSS from 1.4GB to 2.9GB within four pages (measured 2026-10-21), and
+    a re-read engine of its own raised the 42-page peak to 3.5GB. One engine stays near 1.4GB.
+    """
+    engine = _SHARED.get(config)
+    if engine is None or engine._closed:
+        engine = _SHARED[config] = PaddleOcr(config)
+    return engine
+
+
+def recognize_image(path: Path, *, config: PaddleConfig = PaddleConfig(), regions=None, retry_regions=(),
+                    small_regions: bool = False) -> dict:
+    return shared_engine(config).recognize_image(path, regions=regions, retry_regions=retry_regions,
+                                                  small_regions=small_regions)
 
 
 def recognize_pdf(path: Path, *, pages: Sequence[int], config: PaddleConfig = PaddleConfig(), regions=None, retry_regions=None) -> dict:
-    with PaddleOcr(config) as ocr:
-        return ocr.recognize_pdf(path, pages=pages, regions=regions, retry_regions=retry_regions)
+    return shared_engine(config).recognize_pdf(path, pages=pages, regions=regions, retry_regions=retry_regions)
 
 
 def main() -> int:

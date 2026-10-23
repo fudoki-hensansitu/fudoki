@@ -9,7 +9,7 @@ Hallmark は検出すると pick をこれに従わせる。値を変えると�
 - Theme · 白い机に生成りの紙。見出しは低コントラストの明朝 400、ブランドの青丹は操作にだけ、朱と藍は絵の面にだけ置く
 - Vibe · 静か、紙、帳面、確かめられる、少しの諧謔
 
-**実データの表そのものが製品の説明を担う。** 最初の画面に置くのは、原典の階層（款・項・目）と金額・頁を持つ帳面の紙。
+**実データの表そのものが製品の説明を担う。** 最初の画面に置くのは、出典の階層（款・項・目）と金額・頁を持つ帳面の紙。
 飾りの絵は紙の後ろに敷く添え物で、本文やデータを覆わない。
 
 画面は **読み物**（ホーム・利用条件・案内）と **データの面**（報告・分析）に分かれる。token と書体は共通で、
@@ -21,11 +21,11 @@ shadcn/ui の語彙。ブランド色は `--primary`、`--accent` は hover の�
 
 ```css
 :root {
-  --background: #fdfcfa;
+  --background: #ffffff;
   --foreground: #2b2723;
   --card: #f8f5ee;
   --card-foreground: #2b2723;
-  --popover: #fdfcfa;
+  --popover: #ffffff;
   --popover-foreground: #2b2723;
   --primary: #2f5d43;
   --primary-foreground: #f8f5ee;
@@ -36,7 +36,7 @@ shadcn/ui の語彙。ブランド色は `--primary`、`--accent` は hover の�
   --accent: #e9efe9;
   --accent-foreground: #2f5d43;
   --destructive: oklch(57.7% 0.245 27.325);
-  --destructive-foreground: #fdfcfa;
+  --destructive-foreground: #ffffff;
   --border: #ddd6c8;
   --input: #ddd6c8;
   --ring: #2f5d43;
@@ -50,7 +50,7 @@ shadcn/ui の語彙。ブランド色は `--primary`、`--accent` は hover の�
   --paper-foreground: #2b2723;
   --night: #2b2723;
   --night-foreground: #f8f5ee;
-  /* 原典の頁を写す面。PDF の白なので明暗で変えない */
+  /* 出典の頁を写す面。PDF の白なので明暗で変えない */
   --page: #ffffff;
   --page-foreground: #2b2723;
   --shu: #c1553a;
@@ -153,12 +153,13 @@ shadcn/ui の語彙。ブランド色は `--primary`、`--accent` は hover の�
 ```
 
 - **帯**: 白い節の間に、生成りの紙（`--paper`、MCP の案内）を全幅で1本だけ挟む。帯の文字は `--paper-foreground`。右には実際の操作の録画を置き、音なし・繰り返しで、表示域に入ったら再生する（クリックで止める・動きを減らす設定では自動で再生しない）。説明文や再生ボタンは添えない
-- **冒頭の帳面**: 款・項・目と、目ごとの上位3つの内訳（API の軸「節」、無ければ「備考」の事業）を載せる。団体の表を 2 秒ごとに順に切り替え、最後から最初へ戻る。見出しの団体名だけが縦に回り、表は新しいものを上に重ねて 350ms で出す。動きを減らす設定では最初の団体のまま止める
-- **原典の面**: 「確かめる」は、原典の PDF の切り抜きを `--page` の紙に載せ、API が返す印字の位置を朱の囲みで重ねる。例には金額が実際に入っている明細を選ぶ（0 円の科目は使わない）
+- **冒頭の帳面**: 款・項・目と、目ごとの上位3つの内訳（API の軸「節」、無ければ「備考」の事業）を載せる。自治体の表を 2 秒ごとに順に切り替え、最後から最初へ戻る。見出しの自治体名だけが縦に回り、表は新しいものを上に重ねて 350ms で出す。動きを減らす設定では最初の自治体のまま止める
+- **出典の面**: 「確かめる」は、出典の PDF の切り抜きを `--page` の紙に載せ、API が返す印字の位置を朱の囲みで重ねる。例には金額が実際に入っている明細を選ぶ（0 円の科目は使わない）
 - **3つのステップ**: 「見る・比べる・確かめる」は、左に sticky の rail、右に1画面ぶんの高さのステップを縦に並べ、961px 以上ではステップの頭に `scroll-snap`（`y mandatory`）で必ず止める。snap はステップが画面を覆っている間だけ効かせ（`html[data-snap]` を script で付け外す）、ページの他の場所には止まる位置を置かない。出入りの先として、帳面の下端と MCP の帯の頭だけを止まる位置にする。rail は朱の大きな漢数字（今のステップ ／ 三）、3分割の目盛り、番号・見出し・一行の要約の一覧。960px 以下では rail を隠し、snap も外す
 - **コピーに作業の記録を書かない**: 取得日・更新日・件数など、時点で変わる値や作業の経緯は画面に載せない
+- **自治体の個別ページ（`/:都道府県/:名称`）**: 見出し・金額・本文はすべて `--font-sans` のゴシック体にし、ロゴはホームと同じ SVG を使う。流れ図は全款・全項を初期表示し、目・節も全款を同じ深さへ展開する。グラフを主役にするため、データの面でも色を使う。使うのは `--primary`（系列・選んだ項目）と `--kincha`（将来推計・減少）の2色だけで、灰色（`--muted-foreground`）と並べる。款ごとの色分けはしない。数字は `shadcn/ui` の chart（recharts）と自前の流れ図で描き、収録していない年度は「未収録」と書く。API にまだ無い値（人口・特色・将来推計）は仮の値で、数字の隣に「仮」を付け、検索エンジンへ渡す HTML には入れない
 - **FAQ**: 罫線の上に明朝の問い、`+` が開くと 45° 回る。答えは `--muted-foreground`
-- **データの面に出してよい色**: 前景・`--muted-foreground`・罫線・`--destructive`（検査が落ちているときだけ）。`--primary` と絵の色は出さない
+- **データの面に出してよい色**: 前景・`--muted-foreground`・罫線・`--destructive`（検査が落ちているときだけ）。`--primary` と絵の色は出さない。例外は自治体の個別ページ（下の「自治体の個別ページ」）だけ
 
 ## Icons
 - lucide（`lucide-static@1.54.0` の path を inline の `<symbol>` に写す）・24px grid・stroke 1.5・round cap/join。外部サービスの公式 logo だけを例外とする
@@ -172,13 +173,13 @@ shadcn/ui の語彙。ブランド色は `--primary`、`--accent` は hover の�
 
 ## Motion
 - 1 primitive: 見出しの sweep。表示域に入ったとき一度だけ、金茶・朱・桜・藍の帯が 1.4s（`--ease-sweep`）で文字を通り抜け、墨に戻る。最初の描画から墨で読める
-- 他に動くのは hover の色（150ms）、nav の浮き（300ms ease-out）、rail の漢数字と目盛り（600ms `--ease-sweep`）、帳面の団体名の回転（700ms `--ease-sweep`）と表の入れ替え、FAQ の `+` だけ。紙・絵は動かさない
+- 他に動くのは hover の色（150ms）、nav の浮き（300ms ease-out）、rail の漢数字と目盛り（600ms `--ease-sweep`）、帳面の自治体名の回転（700ms `--ease-sweep`）と表の入れ替え、FAQ の `+` だけ。紙・絵は動かさない
 - すべて `prefers-reduced-motion: no-preference` の中に置く
 
 ## 守る規則
 - **画面で集計しない。** 数字は API が返したものをそのまま載せる。同じ数字が2通りに計算されると、いずれ食い違う
 - **割合の分母は合計にする。** 割り当てられなかった分を分母から落とすと、使途が見えていない分まで見えていることになる
-- **ブランド色と絵の色をデータの面に出さない。** 色が付いていたら意味があると読まれる。データの面で意味を持つ色は `--destructive` だけ
+- **ブランド色と絵の色をデータの面に出さない。** 色が付いていたら意味があると読まれる。データの面で意味を持つ色は `--destructive` だけ（自治体の個別ページの例外を除く）
 - **比べる数字には、比べ方の注意を同じ面に書く。** 人口あたりでない、年度が違う、などは脚注に逃がさず数字の隣に置く
 - **溢れるものはその要素の中でスクロールさせる。** ページ本体を横にスクロールさせない（`overflow-x: clip`）
 - **和文の段落は `--line-height-body`（1.8）で組む。** `word-break: keep-all` は本文に当てない
@@ -186,7 +187,7 @@ shadcn/ui の語彙。ブランド色は `--primary`、`--accent` は hover の�
 ## Exports
 - `apps/web/landing.ts` の `:root` は本ファイルの Tokens から写す。直接の値の変更はここを先に直す
 - 見出しの明朝は BIZ UDP明朝 Regular（google/fonts の commit `9710da1e` で固定、SHA-256 は `apps/web/brand/home_font.py`、OFL は `apps/web/brand/fonts/bizudpmincho-OFL.txt`）を、頁で使う字だけに絞って自前で配る。文言を変えたら `bun run --cwd apps/web build:font` で `public/fonts/mincho.woff2` と `font.generated.ts` を作り直す
-- 重いファイル（ホームの録画・原典の切り抜き）は `apps/web/static/` に置き、Workers static assets で配る。録画は `apps/web/brand/home_demo.sh`（冒頭に映る利用者名を覆う）、切り抜きは `bun run --cwd apps/web build:origin` で作り直す
+- 重いファイル（ホームの録画・出典の切り抜き）は `apps/web/static/` に置き、Workers static assets で配る。録画は `apps/web/brand/home_demo.sh`（冒頭に映る利用者名を覆う）、切り抜きは `bun run --cwd apps/web build:origin` で作り直す
 - 閲覧者の IP を第三者へ渡さないため、Google Fonts などの外部 CDN から書体を読まない
 
 ## Notes

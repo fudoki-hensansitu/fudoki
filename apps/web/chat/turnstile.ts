@@ -11,17 +11,20 @@ declare global {
   }
 }
 
+/** 先に取った token を使い回せる時間。token は約5分で切れるので、余裕を見て4分 */
+const WARM_TTL_MS = 240_000
+
 async function loaded(timeoutMs = 15_000): Promise<Turnstile> {
   const start = Date.now()
   while (!window.turnstile) {
-    if (Date.now() - start > timeoutMs) throw new Error('確認の部品を読み込めませんでした')
+    if (Date.now() - start > timeoutMs) throw new Error('チャットを始めるための確認を読み込めませんでした。ページを再読み込みしてください。')
     await new Promise((r) => setTimeout(r, 100))
   }
   return window.turnstile
 }
 
 /** widget を置き、呼ぶたびに新しい token を返す関数を作る */
-export async function mountTurnstile(el: HTMLElement, sitekey: string) {
+export async function mountTurnstile(el: HTMLElement, sitekey: string, onInteractive?: (visible: boolean) => void) {
   const turnstile = await loaded()
   let waiting: { resolve: (t: string) => void; reject: (e: Error) => void } | undefined
   // 決着した後に遅れて届いた callback は無視する
@@ -38,22 +41,56 @@ export async function mountTurnstile(el: HTMLElement, sitekey: string) {
     execution: 'execute',
     appearance: 'interaction-only',
     language: 'ja',
-    callback: (token: string) => settle({ token }),
-    'error-callback': () => settle({ error: '確認に失敗しました。もう一度送ってください' }),
+    // 操作を求められたときだけ widget を見せる。終わったら（成功の表示も含め）畳む
+    'before-interactive-callback': () => onInteractive?.(true),
+    'after-interactive-callback': () => onInteractive?.(false),
+    callback: (token: string) => {
+      onInteractive?.(false)
+      settle({ token })
+    },
+    'error-callback': () => {
+      onInteractive?.(false)
+      settle({ error: '確認に失敗しました。もう一度送ってください' })
+    },
     // 操作を求める確認に時間内に答えなかった・token が期限切れになったときも、待っている送信を終わらせる
     'timeout-callback': () => settle({ error: '確認の時間が切れました。もう一度送ってください' }),
     'expired-callback': () => {
+      onInteractive?.(false)
       settle({ error: '確認の期限が切れました。もう一度送ってください' })
       turnstile.reset(id)
     },
   })
+  // 走っている確認の間は、新しく走らせて待っている側（waiting）を差し替えない
+  let running = false
+  const run = () =>
+    new Promise<string>((resolve, reject) => {
+      running = true
+      waiting = { resolve, reject }
+      // reset では after-interactive が来ないので、前回の表示を先に畳む
+      onInteractive?.(false)
+      turnstile.reset(id)
+      turnstile.execute(id)
+    }).finally(() => {
+      running = false
+    })
+  // 入力を始めた時点で確認を先に走らせ、送るときに待たないようにする（token は約5分で切れるので、4分を超えたら取り直す）
+  let warm: { promise: Promise<string>; at: number } | undefined
+  const fresh = () => (warm && Date.now() - warm.at < WARM_TTL_MS ? warm : undefined)
   return {
-    token: () =>
-      new Promise<string>((resolve, reject) => {
-        waiting = { resolve, reject }
-        turnstile.reset(id)
-        turnstile.execute(id)
-      }),
+    warm: () => {
+      if (fresh() || running) return
+      const promise = run()
+      warm = { promise, at: Date.now() }
+      promise.catch(() => {
+        if (warm?.promise === promise) warm = undefined
+      })
+    },
+    token: () => {
+      const ready = fresh()?.promise
+      // token は1回しか使えない。使ったら捨てる
+      warm = undefined
+      return ready ?? run()
+    },
     remove: () => turnstile.remove(id),
   }
 }

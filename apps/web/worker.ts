@@ -3,19 +3,20 @@ import { CHAT_SHELL_HTML } from './chat-shell'
 import { MINCHO_WOFF2 } from './font.generated'
 import { FAVICON_SVG, LANDING_HTML } from './landing'
 import { Hono } from 'hono'
+import { MANIFEST, OFFLINE_HTML, OFFLINE_PATH_NAME, SERVICE_WORKER } from './pwa'
 import { api, type AppEnv } from './server/api'
 import type { Env } from './server/env'
+import { jurisdictions } from './server/jurisdiction-routes'
 
 // 入口の1枚と、検索エンジン・ブラウザが取りに来る小さなファイル、会話の画面（/s/:id）と その API（/api/*）を配る。
 // データの提供は api.fudoki.dev（Service Binding で繋ぐ）、文書は docs.fudoki.dev。会話の画面の JS・CSS は static/_app/ を assets で配る
 const CACHE = 'public, max-age=300'
 const ROBOTS = 'User-agent: *\nAllow: /\nDisallow: /s/\nDisallow: /api/\nSitemap: https://fudoki.dev/sitemap.xml\n'
-const SITEMAP = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://fudoki.dev/</loc></url></urlset>\n'
 
 const TEXT: Record<string, [string, string]> = {
   '/favicon.svg': ['image/svg+xml', FAVICON_SVG],
   '/robots.txt': ['text/plain; charset=utf-8', ROBOTS],
-  '/sitemap.xml': ['application/xml; charset=utf-8', SITEMAP],
+  '/manifest.webmanifest': ['application/manifest+json; charset=utf-8', MANIFEST],
 }
 const SESSION_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 
@@ -27,6 +28,8 @@ const html = (body: string, cache: string) => new Response(body, { headers: { 'C
 const app = new Hono<AppEnv>()
 
 app.route('/', api)
+// 自治体の個別ページ・一覧・内訳の API と、自治体の頁を含む sitemap
+app.route('/', jurisdictions)
 
 app.get('/', (c) => {
   const { hostname } = new URL(c.req.url)
@@ -35,6 +38,9 @@ app.get('/', (c) => {
   return html(LANDING_HTML.replace('__TURNSTILE_SITE_KEY__', escapeAttr(siteKey)), CACHE)
 })
 app.get('/s/:id', (c, next) => (SESSION_ID.test(c.req.param('id')) ? html(CHAT_SHELL_HTML, 'no-store') : next()))
+// service worker は更新を遅らせない（ブラウザは 24 時間まで古い sw.js を使うので no-cache にする）
+app.get('/sw.js', () => new Response(SERVICE_WORKER, { headers: { 'Content-Type': 'text/javascript; charset=utf-8', 'Cache-Control': 'no-cache' } }))
+app.get(OFFLINE_PATH_NAME, () => html(OFFLINE_HTML, CACHE))
 for (const [path, [type, body]] of Object.entries(TEXT)) app.get(path, () => new Response(body, { headers: { 'Content-Type': type, 'Cache-Control': CACHE } }))
 for (const [path, { type, base64 }] of Object.entries({ '/fonts/mincho.woff2': { type: 'font/woff2', base64: MINCHO_WOFF2 }, ...BINARY_ASSETS }))
   app.get(path, () => new Response(Uint8Array.from(atob(base64), (c) => c.charCodeAt(0)), { headers: { 'Content-Type': type, 'Cache-Control': CACHE } }))

@@ -150,7 +150,9 @@
           },
           "sum_levels": {"type": "boolean"},
           "bare_amounts": {"type": "boolean"},
+          "headings": {"type": "boolean", "description": "A line without an amount, followed by a deeper line that prints one, is a heading of its own: the lines under it are its items."},
           "notes": {"type": "array", "items": {"type": "string", "minLength": 1}},
+          "name_line_reach": {"type": "number", "minimum": 1, "maximum": 2, "description": "How far a name line wrapped around a number's line may sit from it, in heights of its box (default 1). A Paddle box is lower than the line pitch, so a scan read by Paddle declares a little over 1."},
           "name_column": {"const": true, "description": "Names are set in a column of their own a space right of the numbers: a name wrapped around a line printing only its number starts up to a character past it."}
         }
       }

@@ -1,10 +1,11 @@
 import { beforeEach, describe, expect, test } from 'bun:test'
-import { createApp } from './app'
+import { createApp, RENDER_RESULT_TEXT } from './app'
 import type { Db } from './db'
 import type { Database } from 'bun:sqlite'
 import { insertJurisdiction, insertNode, testDb } from './testing'
 import { VIEW_HTML, VIEW_URI } from './view.generated'
 import { OUTPUT, render } from '../ui/build'
+import { SUGGESTIONS_META_KEY } from '../../../packages/fiscal/suggestions'
 
 let db: Db
 let sqlite: Database
@@ -50,20 +51,44 @@ describe('MCP Apps の View', () => {
 
   test('描画 tool はデータ tool と同じ結果を返し、入力が不正なら isError', async () => {
     insertJurisdiction(sqlite, { jurisdiction_code: '132039', name: '武蔵野市' })
-    const direct = (await rpc('tools/call', { name: 'list_jurisdictions', arguments: {} })).result
-    const rendered = (await rpc('tools/call', { name: 'render_expenditure_view', arguments: { tool: 'list_jurisdictions', arguments: {} } })).result
+    insertNode(sqlite, { document_kind: 'settlement', node_id: 'n1', name: '総務費', node_kind: '款', amount_yen: 100 })
+    const args = { document_kind: 'settlement', fiscal_year: { min: 2024, max: 2024 } }
+    const direct = (await rpc('tools/call', { name: 'search_expenditure_nodes', arguments: args })).result
+    const rendered = (await rpc('tools/call', { name: 'render_expenditure_view', arguments: { tool: 'search_expenditure_nodes', arguments: args } })).result
     expect(rendered.structuredContent).toEqual(direct.structuredContent)
+    // データは structuredContent だけで返し、text に同じ内容を写さない（会話の文脈を膨らませないため）
+    expect(rendered.content).toEqual([{ type: 'text', text: RENDER_RESULT_TEXT }])
     expect(rendered._meta).toEqual(direct._meta)
     const bad = (await rpc('tools/call', { name: 'render_expenditure_view', arguments: { tool: 'get_expenditure_node', arguments: {} } })).result
     expect(bad.isError).toBe(true)
+    // 自治体の一覧は View を持たず、描画 tool では呼べない
+    const noView = (await rpc('tools/call', { name: 'render_expenditure_view', arguments: { tool: 'list_jurisdictions', arguments: {} } })).result
+    expect(noView.isError).toBe(true)
   })
 
-  test('描画 tool は、結果の団体コードに対応する団体名を _meta にだけ載せる', async () => {
+  test('描画 tool は、結果の自治体コードに対応する自治体名を _meta にだけ載せる', async () => {
     insertJurisdiction(sqlite, { jurisdiction_code: '132039', name: '武蔵野市' })
     insertNode(sqlite, { document_kind: 'settlement', node_id: 'n1', name: '総務費', node_kind: '款', amount_yen: 100 })
     const res = (await rpc('tools/call', { name: 'render_expenditure_view', arguments: { tool: 'search_expenditure_nodes', arguments: { document_kind: 'settlement', fiscal_year: { min: 2024, max: 2024 } } } })).result
     expect(res._meta.jurisdictionNames).toEqual({ '132039': '武蔵野市' })
     expect(JSON.stringify(res.structuredContent)).not.toContain('武蔵野市')
+  })
+
+  test('結果の _meta に次の質問の候補を載せ、text と structuredContent には載せない', async () => {
+    insertJurisdiction(sqlite, { jurisdiction_code: '132039', name: '武蔵野市' })
+    insertNode(sqlite, { document_kind: 'settlement', node_id: 'n1', name: '総務費', node_kind: '款', amount_yen: 100, is_leaf: 0 })
+    insertNode(sqlite, { document_kind: 'settlement', node_id: 'n2', name: '民生費', node_kind: '款', amount_yen: 900, is_leaf: 0 })
+    const args = { document_kind: 'settlement', fiscal_year: { min: 2024, max: 2024 } }
+    const res = (await rpc('tools/call', { name: 'search_expenditure_nodes', arguments: args })).result
+    expect(res._meta[SUGGESTIONS_META_KEY]).toEqual([
+      { label: '「民生費」の内訳を見る', prompt: '武蔵野市の2024年度決算（一般会計）の「民生費」の内訳を見せて' },
+      { label: '「民生費」を他の年度と比べる', prompt: '武蔵野市の2024年度決算（一般会計）の「民生費」を他の年度と比べて' },
+      { label: '「民生費」を他の自治体と比べる', prompt: '武蔵野市の2024年度決算（一般会計）の「民生費」を他の自治体と比べて' },
+    ])
+    expect(JSON.stringify(res.structuredContent)).not.toContain('の内訳を見る')
+    expect(res.content[0].text).not.toContain('の内訳を見る')
+    const list = (await rpc('tools/call', { name: 'list_jurisdictions', arguments: {} })).result
+    expect(list._meta[SUGGESTIONS_META_KEY]).toBeUndefined()
   })
 
   test('resources/read で View の HTML を MCP Apps の MIME type で返す', async () => {
@@ -80,6 +105,9 @@ describe('MCP Apps の View', () => {
   })
 
   test('view.generated.ts は ui/ から作り直したものと同じ（bun ui/build.ts で書き直す）', async () => {
+    // minify の出力は bun の版で変わる。mise.toml の版以外で作り直した結果とは比べられない
+    const pinned = /^bun = "([^"]+)"/m.exec(await Bun.file(new URL('../../../mise.toml', import.meta.url).pathname).text())![1]!
+    expect(Bun.version, `bun ${pinned}（mise install）で実行する。版が違うと生成物が一致しない`).toBe(pinned)
     expect(await Bun.file(OUTPUT).text()).toBe(await render())
   })
 })

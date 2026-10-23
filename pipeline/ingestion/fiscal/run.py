@@ -676,7 +676,10 @@ def main() -> None:
     args = parser.parse_args()
     # The heavy commands take one machine-wide lock (ingestion/lib/heavy_lock.py): a second run exits
     # with the holder instead of sharing the machine and the R2 objects. Released on exit.
-    holder = heavy_lock.acquire(args.command)
+    manifests = [args.manifest] if isinstance(getattr(args, 'manifest', None), Path) else args.manifest
+    if args.command == 'refresh' and not manifests:
+        manifests = manifest.paths()
+    holder = heavy_lock.acquire(args.command, targets=manifests or ())
     if holder is not None:
         atexit.register(holder.close)
     if args.command == 'schema':

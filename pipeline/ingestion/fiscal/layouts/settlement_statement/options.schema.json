@@ -7,6 +7,10 @@
       "type": "string",
       "pattern": "^[a-z0-9][a-z0-9_-]{0,95}$"
     },
+    "partial": {
+      "const": true,
+      "description": "The original is one volume of an account printed in several originals (款別の分冊): its 款 are some of the account's, so the sum and digit checks of the unit are reported, not enforced."
+    },
     "amount_corrections": {
       "description": "OCR の金額の誤読の訂正（ocr_names.AmountRule）。頁と観測IDで1つの観測に結び付け、木の検査で正しさを確かめる。",
       "type": "array",
@@ -45,6 +49,48 @@
           "observation_id",
           "observed_amount",
           "corrected_amount",
+          "reason"
+        ]
+      }
+    },
+    "name_corrections": {
+      "description": "原画で確認した名称の誤読の訂正。観測ID（行または単語）に結び付けて、誤読した字を印字された字に置き換える（原観測は変えない。同じ字数の置き換えか、OCR が落とした字を戻す字の増だけを許し、観測した文字が訂正後の文字の部分列であること。数字は並びを変えない）。",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "observation_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "observed_name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "corrected_name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "id",
+          "page",
+          "observation_id",
+          "observed_name",
+          "corrected_name",
           "reason"
         ]
       }

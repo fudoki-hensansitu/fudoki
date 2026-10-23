@@ -14,9 +14,21 @@
   #chat-start * { border-color: var(--border); }
 }
 
-/* hero の入力は大きな1行の pill（composer.tsx の pill）。JS が島を描くまでの仮の枠も同じ大きさにして、描いた瞬間に頁がずれないようにする */
-#chat-start.ask { width: min(100%, 760px); }
+/* 入力は最初は hero の元の位置に置き、スクロールして画面の上に出たら画面の下に固定する（start.tsx が data-docked を付ける）。
+   固定の間も元の位置の高さは空けておき、戻したときに頁がずれないようにする。JS が島を描くまでの仮の枠も同じ大きさにして、描いた瞬間に頁がずれないようにする */
+#chat-start.ask { width: min(100%, 760px); min-height: 72px; }
+#chat-start:is([data-docked], [data-leaving]) > .ask-dock { position: fixed; left: 50%; bottom: 48px; z-index: 50; width: min(calc(100% - 2 * var(--gut)), 760px); transform: translateX(-50%); transform-origin: 50% 100%; }
+/* 固定に切り替わるときは、下から少し大きくなりながら現れ、元の位置へ戻るときは小さくなりながら消える（動きが無いと、入力が急に現れたように見える）。最初の表示では動かさない */
+@keyframes ask-dock-in { from { opacity: 0; transform: translate(-50%, 24px) scale(0.92); } to { opacity: 1; transform: translate(-50%, 0) scale(1); } }
+@keyframes ask-dock-out { from { opacity: 1; transform: translate(-50%, 0) scale(1); } to { opacity: 0; transform: translate(-50%, 24px) scale(0.92); } }
+#chat-start[data-docked] > .ask-dock { animation: ask-dock-in 320ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+#chat-start[data-leaving] > .ask-dock { animation: ask-dock-out 200ms cubic-bezier(0.4, 0, 1, 1) forwards; }
+@media (prefers-reduced-motion: reduce) {
+  #chat-start[data-docked] > .ask-dock, #chat-start[data-leaving] > .ask-dock { animation: none; }
+}
 #chat-start .ask-box { display: flex; align-items: center; min-height: 0; height: 72px; padding: 0 28px; border-radius: 999px; background: var(--background); box-shadow: var(--shadow-pill); }
 @media (max-width: 639px) {
+  #chat-start:is([data-docked], [data-leaving]) > .ask-dock { bottom: calc(32px + env(safe-area-inset-bottom)); }
+  #chat-start.ask { min-height: 56px; }
   #chat-start .ask-box { height: 56px; padding: 0 20px; }
 }

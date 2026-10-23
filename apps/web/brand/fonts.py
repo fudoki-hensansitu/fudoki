@@ -43,8 +43,8 @@ def font_paths(key: str) -> list[Path]:
     return [path]
 
 
-def load_glyphs(key: str, weight: int) -> dict[str, dict]:
-    """各文字の輪郭・字面・emサイズを指定ウェイトで取り出す。"""
+def load_glyphs(key: str, weight: int, chars: str = NAME) -> dict[str, dict]:
+    """各文字の輪郭・字面・advance・emサイズを指定ウェイトで取り出す。"""
     found = {}
     for path in font_paths(key):
         with TTFont(path) as font:
@@ -52,15 +52,15 @@ def load_glyphs(key: str, weight: int) -> dict[str, dict]:
             if "fvar" not in font and font["OS/2"].usWeightClass != weight:
                 raise ValueError(f"静的フォントに指定ウェイトがありません: {key} / {weight}")
             gs = font.getGlyphSet(location={"wght": weight} if "fvar" in font else None)
-            for ch in NAME:
+            for ch in chars:
                 if ch in found or ord(ch) not in cmap:
                     continue
                 pen, bounds = SVGPathPen(gs), BoundsPen(gs)
                 gs[cmap[ord(ch)]].draw(pen)
                 gs[cmap[ord(ch)]].draw(bounds)
-                found[ch] = {"d": pen.getCommands(), "bounds": bounds.bounds, "upm": font["head"].unitsPerEm}
-        if len(found) == len(NAME):
+                found[ch] = {"d": pen.getCommands(), "bounds": bounds.bounds, "adv": font["hmtx"][cmap[ord(ch)]][0], "upm": font["head"].unitsPerEm}
+        if len(found) == len(set(chars)):
             break
-    if len(found) != len(NAME):
-        raise ValueError(f"字形が見つかりません: {set(NAME) - found.keys()}")
+    if len(found) != len(set(chars)):
+        raise ValueError(f"字形が見つかりません: {set(chars) - found.keys()}")
     return found

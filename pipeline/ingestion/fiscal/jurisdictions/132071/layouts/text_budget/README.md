@@ -1,6 +1,6 @@
 # 昭島市の text PDF 予算見開き
 
-2025年度一般会計当初予算の原典SHAは `4662197051b0ec0d9c50e1690c5804d0b31e17dd7d35b972fd272e03068507f8`。469物理頁のうち歳出明細は108–449頁（紙面104–445頁）、450頁から給与費明細書である。選定で渡される10–11頁の款・項の印字合計も取り込む。
+2025年度一般会計当初予算の出典SHAは `4662197051b0ec0d9c50e1690c5804d0b31e17dd7d35b972fd272e03068507f8`。469物理頁のうち歳出明細は108–449頁（紙面104–445頁）、450頁から給与費明細書である。選定で渡される10–11頁の款・項の印字合計も取り込む。
 
 管理入口は `convert.py`。文字層の抽出、継続見開きの目への所属、説明の字下げと金額右端、折り返し名称の確認には、測定書式 `../budget_spread.json` と共通の `fiscal/layouts/statement/text_document.build_document` を使う。組み立て部分は本dirの `assemble` に置く。年度や頁ごとの例外は持たない。
 
@@ -29,4 +29,4 @@ bun run --cwd pipeline ingestion:verify --candidate ../.agent/akishima-new-candi
 
 現在の共通検査は同じ軸では段階の一致する金額を、独立した枝ではその枝に印字された段階と共通の見出しだけを比較する。前年額や一般財源を当年の説明枝へ0埋めして比較しない。2026-10-11の保存済み表の検査は2,747件すべて一致し、ノードの組をR2へ保存・採用した。`ingestion:verify --manifest ingestion/fiscal/jurisdictions/132071/2025/initial/expenditure.json` で再検査できる。
 
-`inspect_origin.py` と `inspect_detail_origin.py` は構築コードをimportせず、原典から款・項・目・節の独立した検査用観測を作る。`validate_candidate.py` と `cli_checks.py` は旧3590行の保存値を照合する検査であり、新しいノードの候補には使わない。旧横持ち表の検査宣言（`sum_checks/`）は削除済みで残らない。ノードの候補では `ingestion:verify` が共通の木の検査を使う。
+`inspect_origin.py` と `inspect_detail_origin.py` は構築コードをimportせず、出典から款・項・目・節の独立した検査用観測を作る。`validate_candidate.py` と `cli_checks.py` は旧3590行の保存値を照合する検査であり、新しいノードの候補には使わない。旧横持ち表の検査宣言（`sum_checks/`）は削除済みで残らない。ノードの候補では `ingestion:verify` が共通の木の検査を使う。

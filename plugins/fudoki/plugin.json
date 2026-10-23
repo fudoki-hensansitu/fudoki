@@ -2,7 +2,7 @@
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "fudoki",
   "version": "0.2.0",
-  "description": "日本の自治体の歳出を事業の単位で検索し、収録範囲と原典を確かめて比較・集計する。収録した団体は事業の評価が載った原典の頁も探せる。",
+  "description": "日本の自治体の歳出を事業の単位で検索し、収録範囲と出典を確かめて比較・集計する。収録した自治体は事業の評価が載った出典の頁も探せる。",
   "author": {
     "name": "風土記",
     "email": "support@fudoki.dev"
@@ -39,36 +39,30 @@
           "positive": [
             {
               "description": "収録範囲を確認する。公開データのみ、認証不要。",
-              "prompt": "中野区で収録されている年度、当初予算・決算、会計、原典を教えて。",
+              "prompt": "中野区で収録されている年度、当初予算・決算、会計、出典を教えて。",
               "tools_triggered": "list_jurisdictions",
-              "expected_behavior": "中野区（131148）の収録範囲を返す。返却された年度・資料区分・会計・原典URLだけを案内し、未収録をゼロ円としない。"
+              "expected_behavior": "中野区（131148）の収録範囲を返す。返却された年度・資料区分・会計・出典URLだけを案内し、未収録をゼロ円としない。"
             },
             {
               "description": "条件付きの検索。中野区2025年度決算一般会計は2026-10-14に収録を確認。",
               "prompt": "中野区の2025年度決算、一般会計の目を、金額の大きい順に3件見せて。",
               "tools_triggered": "list_jurisdictions, describe_expenditure_columns, search_expenditure_nodes",
-              "expected_behavior": "document_kind=settlement、fiscal_year=min/max 2025、jurisdiction_code=131148、account_name=一般会計、node_kind=目に絞り、amount_yen降順で3件。円単位と原典を示す。"
+              "expected_behavior": "document_kind=settlement、fiscal_year=min/max 2025、jurisdiction_code=131148、account_name=一般会計、node_kind=目に絞り、amount_yen降順で3件。円単位と出典を示す。"
             },
             {
-              "description": "返却された明細の内訳。前の検索のnode_idを使う。",
-              "prompt": "いま表示した最初の目の内訳を、科目・節・備考の切り口ごとに見せて。",
-              "tools_triggered": "get_expenditure_node",
-              "expected_behavior": "前の応答のnode_idとdocument_kindで取得し、子をaxis別に示す。異なる軸と親子を合算しない。子が無い場合は無いと説明する。"
-            },
-            {
-              "description": "原典確認。中野区2025年度決算一般会計からPDF・頁付き明細を検索済みの会話。",
-              "prompt": "この明細の項目と金額を原典で確認したい。資料名、URL、PDFファイルの頁番号を教えて。",
-              "tools_triggered": "get_expenditure_node",
-              "expected_behavior": "origin_idに対応する資料名・URL、source_pageとamount_source_pageを返す。PDF表示の入口と枠の有無を案内し、ファイル頁と紙面頁を区別する。描画はhostで実確認する。"
+              "description": "明細の内訳と出典確認。公開データのみ、認証不要。中野区2025年度決算一般会計は2026-10-14に収録を確認。",
+              "prompt": "中野区の2025年度決算、一般会計で金額が最も大きい目について、内訳を科目・節・備考の切り口ごとに見せて。あわせて、その目の資料名、URL、PDFファイルの頁番号を教えて。",
+              "tools_triggered": "search_expenditure_nodes, get_expenditure_node",
+              "expected_behavior": "document_kind=settlement、fiscal_year=2025、jurisdiction_code=131148、account_name=一般会計、node_kind=目、amount_yen降順で1件を検索し、返されたnode_idで取得する。子をaxis別に示し、異なる軸と親子を合算しない。origin_idに対応する資料名・URL、source_pageとamount_source_pageを示し、ファイル頁と紙面頁を区別する。"
             },
             {
               "description": "COFOG分類の集計。検索上限に達したら総額を断言しない。",
               "prompt": "中野区の2025年度決算一般会計について、COFOGの社会保護（10）の目を集計し、暫定分類と分類できない項目の扱いも説明して。",
               "tools_triggered": "list_jurisdictions, describe_expenditure_columns, search_expenditure_nodes",
-              "expected_behavior": "同じ団体・年度・資料区分・会計の目に限定し、cofog_code prefix=10で検索する。next_page_tokenを辿り、分類状態と欠損を示す。全件取得できなければ取得分の小計と明記する。"
+              "expected_behavior": "同じ自治体・年度・資料区分・会計の目に限定し、cofog_code prefix=10で検索する。next_page_tokenを辿り、分類状態と欠損を示す。全件取得できなければ取得分の小計と明記する。"
             },
             {
-              "description": "事業の評価の頁の所在を探す。収録は選定した団体の2020〜2025年度決算を評価した資料のみ（未収録はnot_covered）。公開データのみ、認証不要。",
+              "description": "事業の評価の頁の所在を探す。収録は選定した自治体の2020〜2025年度決算を評価した資料のみ（未収録はnot_covered）。公開データのみ、認証不要。",
               "prompt": "北区の2025年度の事業評価で、防災分野におけるデジタル化の推進が載っている頁を教えて。",
               "tools_triggered": "search_evaluations",
               "expected_behavior": "jurisdiction=131172、fiscal_year=2025、query=防災分野におけるデジタル化の推進で検索する。候補の資料URL・origin_sha256・物理頁・page_urlを示し、抜粋だけを根拠に評価・目標値・実績を答えない。page_urlの頁を取得できれば読んで事業・年度の列・指標を確かめてから出典つきで答え、取得できなければpage_urlを示して確認を促す。"
@@ -86,10 +80,6 @@
             {
               "description": "書込みは対象外。toolで変更を試みず、公開資料の訂正には自治体側の手続が必要と説明する。",
               "prompt": "中野区のこの決算額を100万円に書き換えて保存して。"
-            },
-            {
-              "description": "評価資料の金額は財政データの答えに使わない。評価の検索の抜粋から決算額を断言せず、歳出の金額は歳出toolで取り、評価資料の数字は評価資料の記載として区別する。",
-              "prompt": "北区の防災分野におけるデジタル化の推進の決算額を、評価資料の抜粋から読み取って、歳出の決算額として断定して。"
             }
           ]
         },
@@ -100,11 +90,11 @@
         "countries": [
           "JP"
         ],
-        "release_notes": "0.2.0: 選定した団体の2025年度決算を評価した資料から、事業の評価が載った原典PDFの頁の所在を探すsearch_evaluations toolと、compare-expenditure skillの評価の検索の手順（references/evaluation.md）を追加。返すのは所在と短い抜粋だけで、内容は原典PDFで読む。0.1.0: 初版。既存リモートMCPへの接続と歳出の比較・集計skillを同梱。",
+        "release_notes": "0.2.0: 選定した自治体の2025年度決算を評価した資料から、事業の評価が載った出典PDFの頁の所在を探すsearch_evaluations toolと、compare-expenditure skillの評価の検索の手順（references/evaluation.md）を追加。返すのは所在と短い抜粋だけで、内容は出典PDFで読む。0.1.0: 初版。既存リモートMCPへの接続と歳出の比較・集計skillを同梱。",
         "translations": {
           "ja-JP": {
-            "subtitle": "自治体の歳出を比較し原典を確認",
-            "description": "自治体の当初予算・決算の歳出を検索し、収録範囲・会計・粒度を確かめて比較できます。内訳と原典の位置を確認できます。収録した団体は、2020〜2025年度決算を評価した資料から事業の評価が載った頁の所在を探せます（返すのは所在と短い抜粋のみ。内容は原典PDFで確認）。収録済み資料に限られ、COFOG分類は風土記の判断です。歳入・取引・書込みには対応しません。"
+            "subtitle": "自治体の歳出を比較し出典を確認",
+            "description": "自治体の当初予算・決算の歳出を検索し、収録範囲・会計・粒度を確かめて比較できます。内訳と出典の位置を確認できます。収録した自治体は、2020〜2025年度決算を評価した資料から事業の評価が載った頁の所在を探せます（返すのは所在と短い抜粋のみ。内容は出典PDFで確認）。収録済み資料に限られ、COFOG分類は風土記の判断です。歳入・取引・書込みには対応しません。"
           }
         }
       }

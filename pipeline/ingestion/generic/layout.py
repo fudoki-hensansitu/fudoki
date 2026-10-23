@@ -94,17 +94,32 @@ class Logical:
     outside: list[Glyph]
     ocr: bool = False  # the words came from OCR (`ingestion/generic/scan.py`): rules for its misreads apply
     column_units: dict[str, str] = field(default_factory=dict)  # heading of a column whose own unit mark differs from the page's
+    foot: dict[int, list] = field(default_factory=dict)  # per page, each band's (left, right, bottom rule): what is printed below its column is the page's foot
 
     def unit_of(self, header: str) -> str | None:
         """The unit of an amount under `header`: its column's own mark (`(千円)` over 当初予算額 on a 円 page), else the page's."""
         mark = max((k for k in self.column_units if header == k or header.startswith(k + '／')), key=len, default=None)
         return self.column_units[mark] if mark else self.unit
 
+    def below_foot(self, glyph: Glyph) -> bool:
+        """Printed under the last rule of the column it stands in (of the lowest column when it stands in none): the
+        frames of a spread need not end at the same height."""
+        spans = self.foot.get(glyph.page)
+        if not spans:
+            return False
+        centre = (glyph.x0 + glyph.x1) / 2
+        bottoms = [bottom for left, right, bottom in spans if left <= centre <= right]
+        return glyph.y0 > (min(bottoms) if bottoms else max(bottom for *_, bottom in spans))
+
     @property
     def titles(self) -> list[tuple[str, str, list[Glyph]]]:
         """Table titles naming a 款 outside the table (`第２款 総務費（決算額 … 円）`): code, name, glyphs."""
         found = []
         for line in lines(self.outside):
+            # A title under the table's last rule is the page's foot (`第10款 総務費` repeated at the bottom of a
+            # right-hand page), not the title of a table: the rows of the next page do not belong to it.
+            if any(self.below_foot(g) for g in line):
+                continue
             match = TITLE.match(normalize(text(line)))
             if match:
                 found.append((match.group(1) or match.group(2), match.group(3), line))
@@ -497,15 +512,30 @@ def inline_kind(band: Band, line: list[Glyph]) -> bool:
 
 
 def logical_pages(pages: list[Page], *, columns: dict | None = None, spread: dict | None = None,
-                  header: dict | None = None, split_text: bool = False) -> list[Logical]:
-    """Read each page's bands, classify them once per document, then join spreads."""
+                  header: dict | None = None, split_text: bool = False, ocr_pages: frozenset = frozenset()) -> list[Logical]:
+    """Read each page's bands, classify them once per document, then join spreads.
+
+    `ocr_pages`: pages of a text document whose words OCR read (`mixed.py`). Their bands are classified by what
+    the text pages teach (their headings corrected as a scan's are) and never teach anything themselves."""
     per_page = [(page, *page_bands(page, spread, header, split_text)) for page in pages]
+    if ocr_pages:
+        from ingestion.generic.scan import header_path
+        # A heading the text pages print is the document's own spelling: the scan correction (`事故繰越し` → `事故繰越`,
+        # a misread elsewhere) is for the others only.
+        printed = {part for page, bands, _ in per_page if page.number not in ocr_pages for band in bands for part in band.header}
+        for page, bands, _ in per_page:
+            if page.number in ocr_pages:
+                for band in bands:
+                    corrected = header_path(band.header)
+                    band.header = band.header if set(band.header) <= printed else corrected
     # Band kind by content, learned per header path over the whole document so
     # that empty continuation pages keep it. A band is a label band when at least
     # half of its printed lines carry text; otherwise it holds amounts if any
     # grouped number or only zeros appear (item codes alone are labels).
     stats: dict[tuple, dict[str, int]] = defaultdict(lambda: defaultdict(int))
-    for _, bands, _ in per_page:
+    for page, bands, _ in per_page:
+        if page.number in ocr_pages:
+            continue
         for band in bands:
             for line in lines(band.words):
                 kinds = set()
@@ -569,6 +599,7 @@ def logical_pages(pages: list[Page], *, columns: dict | None = None, spread: dic
         glyphs = [Glyph(w.text, w.x0, w.y0, w.x1, w.y1, page.number, 0) for w in outside]
         if not bands:
             continue
+        foot = {page.number: [(b.x0, b.x1, b.body_bottom) for b in bands]}  # before a spread's offset, as `outside`
         leftmost = min(bands, key=lambda b: b.x0)
         # A frame with no header and no words (crop marks printed outside the CropBox) is no column:
         # taken as the first band, it hid the amount column opening a spread's right page.
@@ -591,6 +622,8 @@ def logical_pages(pages: list[Page], *, columns: dict | None = None, spread: dic
             previous.bands.extend(bands)
             previous.unit = previous.unit or unit
             previous.outside.extend(glyphs)
+            previous.foot.update(foot)
+            previous.ocr = previous.ocr or page.number in ocr_pages
             continue
-        result.append(Logical([page.number], bands, unit, glyphs))
+        result.append(Logical([page.number], bands, unit, glyphs, ocr=page.number in ocr_pages, foot=foot))
     return result

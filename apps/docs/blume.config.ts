@@ -15,6 +15,7 @@ export default defineConfig({
       { label: 'API リファレンス', path: '/reference' },
     ],
     repo: 'https://github.com/wwwyo/fudoki',
+    featured: [{ label: '風土記を開く', href: 'https://fudoki.dev/', icon: 'arrow-up-right' }],
   },
   footer: {
     links: [

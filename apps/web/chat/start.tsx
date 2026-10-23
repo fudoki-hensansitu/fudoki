@@ -1,62 +1,35 @@
 // 入口の1枚の中央に置く入力（React の島）。送ると Turnstile で確かめて会話を始め、/s/:id へ移る
 import * as React from 'react'
 import { createRoot } from 'react-dom/client'
-import { Composer } from './composer'
-import { saveSession } from './store'
-import { mountTurnstile } from './turnstile'
+import { StartForm } from './start-form'
 
 /** 入力の placeholder に置く問いの例。幅390px の pill でも切れない長さにする */
-const EXAMPLE = '例：中野区の決算で一番大きい款は？'
-
-function Start({ sitekey }: { sitekey: string }) {
-  const widget = React.useRef<HTMLDivElement>(null)
-  const turnstile = React.useRef<Awaited<ReturnType<typeof mountTurnstile>>>(undefined)
-  const [pending, setPending] = React.useState(false)
-  const [error, setError] = React.useState<string>()
-
-  React.useEffect(() => {
-    if (!sitekey || !widget.current) return
-    let removed = false
-    mountTurnstile(widget.current, sitekey)
-      .then((t) => (removed ? t.remove() : (turnstile.current = t)))
-      .catch((e: Error) => setError(e.message))
-    return () => {
-      removed = true
-      turnstile.current?.remove()
-    }
-  }, [sitekey])
-
-  const start = async (text: string) => {
-    setPending(true)
-    setError(undefined)
-    try {
-      if (!turnstile.current) throw new Error('確認の準備ができていません。少し待ってから送ってください')
-      const turnstileToken = await turnstile.current.token()
-      const res = await fetch('/api/sessions', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ turnstileToken }) })
-      const body = (await res.json()) as { id?: string; token?: string; expiresAt?: number; error?: { message: string } }
-      if (!res.ok || !body.id || !body.token) throw new Error(body.error?.message ?? '会話を始められませんでした')
-      // 移った先は sessionStorage から token と質問を読むので、書けなければ移らない
-      if (!saveSession(body.id, { token: body.token, expiresAt: body.expiresAt ?? 0, pending: text }))
-        throw new Error('このブラウザでは会話を保存できないため始められません（プライベートブラウズや保存の制限を確かめてください）')
-      location.assign(`/s/${body.id}`)
-      return true
-    } catch (e) {
-      setPending(false)
-      setError(e instanceof Error ? e.message : String(e))
-      return false
-    }
-  }
-
-  if (!sitekey)
-    return <p className="text-sm text-muted-foreground">風土記の AI に聞く機能は準備中です。下の「自分の AI に接続する」から、お使いの AI で使えます。</p>
-  return (
-    <div className="flex flex-col gap-3">
-      <Composer onSubmit={start} pending={pending} placeholder={EXAMPLE} pill />
-      <div ref={widget} />
-      {error ? <p role="alert" className="text-sm text-destructive">{error}</p> : null}
-    </div>
-  )
-}
+const EXAMPLE = '例：中野区で一番お金を使った分野は？'
+const UNAVAILABLE = '風土記の AI に聞く機能は準備中です。下の「自分の AI に接続する」から、お使いの AI で使えます。'
 
 const root = document.getElementById('chat-start')
-if (root) createRoot(root).render(<Start sitekey={root.dataset.turnstileSitekey ?? ''} />)
+if (root) {
+  const sitekey = root.dataset.turnstileSitekey ?? ''
+  createRoot(root).render(<StartForm sitekey={sitekey} placeholder={EXAMPLE} unavailable={UNAVAILABLE} />)
+  // 入力が出ない（鍵が無い）ときは固定する物が無いので、下余白も足さない
+  if (sitekey)
+    // 元の位置が画面の上へ出たら下に固定する。下に外れている（まだ読んでいない）間は動かさない
+    {
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)')
+      let leave: ReturnType<typeof setTimeout> | undefined
+      new IntersectionObserver(([entry]) => {
+        if (!entry) return
+        const docked = !entry.isIntersecting && entry.boundingClientRect.top < 0
+        const was = root.hasAttribute('data-docked')
+        clearTimeout(leave)
+        root.removeAttribute('data-leaving')
+        root.toggleAttribute('data-docked', docked)
+        document.body.classList.toggle('ask-docked', docked)
+        // 元の位置へ戻るときは、固定のまま小さく消えてから流れに戻す（動きを減らす設定では即座に戻す）
+        if (was && !docked && !reduced.matches) {
+          root.setAttribute('data-leaving', '')
+          leave = setTimeout(() => root.removeAttribute('data-leaving'), 200)
+        }
+      }).observe(root)
+    }
+}

@@ -1,6 +1,27 @@
+[project]
+name = "fudoki-workspace"
+version = "0.0.0"
+# Dependabot の uv updater は workspace root の PEP 621 項目から Python 対応範囲を読む。
+# pipeline の package metadata と同じ値を保つ（workspace 全体の範囲は全 member の積）。
+requires-python = ">=3.13,<3.14"
+# root は workspace 全体を同期するための入口。`uv sync` / `uv run` は root プロジェクトを
+# 対象にするので、pipeline を依存に持たせて virtual root だった頃と同じ環境を作る。
+dependencies = ["fudoki-pipeline"]
+
+[project.optional-dependencies]
+# root から `uv sync --extra paddle-ocr` を通すための pipeline 側 extra への参照。
+paddle-ocr = ["fudoki-pipeline[paddle-ocr]"]
+
+[tool.uv.sources]
+fudoki-pipeline = { workspace = true }
+
 [tool.uv.workspace]
 members = ["pipeline"]
 
 [tool.uv]
 # 公開から7日経っていない版は解決しない（supply chain の cooldown）
 exclude-newer = "7 days"
+# root 自身は環境へインストールしない（入るのは workspace の依存だけ）。配布もしない。
+# name と version は PEP 621 で必須。root には build-system が無く setuptools の flat-layout
+# 発見が複数の top-level package を見つけるため、`uv build` も失敗する（uv 0.12.5 で実測）。
+package = false

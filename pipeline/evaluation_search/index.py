@@ -1,7 +1,7 @@
 """評価資料を頁ごとの PDF にして AI Search の索引へ登録する（dd.md「索引の登録 script と宣言」）。
 
     bun run --cwd pipeline evaluation:index            # 計画の表示だけ（R2 と索引は読むだけ）
-    bun run --cwd pipeline evaluation:index --write    # 登録して、確認できた原典の記録を instance.json に書く
+    bun run --cwd pipeline evaluation:index --write    # 登録して、確認できた出典の記録を instance.json に書く
 
 ネットワークと `cf` を使うので sandbox の外で手動実行し、CI では回さない。分割した PDF は保存しない。
 """
@@ -15,6 +15,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import unicodedata
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -43,7 +44,8 @@ def log(message: str) -> None:
 
 
 def cf(*args: str, parse: bool = True):
-    """cf を呼ぶ。一時的な失敗に備えて 3 回まで試し、尽きたら止める。混雑の 429 は待ちを延ばして 6 回まで試す（続けての delete で出る）。"""
+    """cf を呼ぶ。一時的な失敗に備えて 3 回まで試し、尽きたら止める。混雑の 429（続けての delete で出る）と
+    回線の失敗（全件の登録の途中で `fetch failed` が続いた）は、待ちを延ばして 6 回まで試す。"""
     last = ''
     attempt = 0
     while True:
@@ -51,7 +53,7 @@ def cf(*args: str, parse: bool = True):
         if result.returncode == 0:
             return json.loads(result.stdout) if parse and result.stdout.strip() else None
         last = (result.stderr or result.stdout).strip()[-300:]
-        busy = '429' in last
+        busy = '429' in last or 'fetch failed' in last
         attempt += 1
         if attempt >= (6 if busy else 3):
             break
@@ -63,7 +65,7 @@ def search_cf(instance_name: str, *args: str, parse: bool = True):
     return cf('ai-search', *args, '--name', NAMESPACE, '--id', instance_name, parse=parse)
 
 
-# --- 原典 -------------------------------------------------------------------
+# --- 出典 -------------------------------------------------------------------
 
 def sha256_of(path: Path) -> str:
     digest = hashlib.sha256()
@@ -74,7 +76,7 @@ def sha256_of(path: Path) -> str:
 
 
 def fetch_origin(origin: plan.Origin) -> Path:
-    """R2 の原典をローカルの cache に置く。選定の sha256 と違えば止める（cache が壊れていれば取り直す）。"""
+    """R2 の出典をローカルの cache に置く。選定の sha256 と違えば止める（cache が壊れていれば取り直す）。"""
     path = CACHE / f'{origin.sha256}.pdf'
     if path.exists() and sha256_of(path) == origin.sha256:
         return path
@@ -98,13 +100,13 @@ def fetch_origin(origin: plan.Origin) -> Path:
             raise
     if sha256_of(temporary) != origin.sha256:
         temporary.unlink(missing_ok=True)
-        raise ValueError(f'R2 の原典の sha256 が選定と違う: {origin.r2_key}')
+        raise ValueError(f'R2 の出典の sha256 が選定と違う: {origin.r2_key}')
     temporary.replace(path)
     return path
 
 
 def split_page(document, page: int) -> bytes:
-    """原典の 1 頁（1 始まり）だけの PDF。4MiB を超えれば止める。pdfium は thread safe ではないので主 thread で呼ぶ。"""
+    """出典の 1 頁（1 始まり）だけの PDF。4MiB を超えれば止める。pdfium は thread safe ではないので主 thread で呼ぶ。"""
     single = pdfium.PdfDocument.new()
     buffer = io.BytesIO()
     try:
@@ -137,16 +139,24 @@ def text_chars(document, page: int) -> int:
     return len(''.join(page_text(document, page).split()))
 
 
-def text_item(document, page: int) -> bytes:
-    """文字の item（`.md`）の本文。文字が無い頁も item を保つため、空なら改行 1 つにする（頁の数と catalog の範囲を崩さない）。4MiB を超えれば止める。"""
-    data = (page_text(document, page).rstrip('\n') + '\n').encode('utf-8')
+def text_item(document, page: int, key: str, nfkc: bool = False) -> bytes:
+    """文字の item（`.md`）の本文。頁の PDF の変換と同じ見出し（`# <key>` から `### Page 1` まで）を先頭に付ける。4MiB を超えれば止める。
+
+    見出しの無い md は、和文の一部の頁（800〜2,100 字）と文字の無い頁が、送り直しても `file_content_empty` の error になった
+    （2026-10-21、v2）。見出しを付けると取り込まれ、文字の無い頁も見出しだけの item として頁の数と catalog の範囲を保つ。
+    それでも落ちる頁の出典は `nfkc` で本文を NFKC にそろえる（`plan.normalizes_text`）。
+    """
+    text = page_text(document, page).rstrip('\n')
+    if nfkc:
+        text = unicodedata.normalize('NFKC', text)
+    data = f'# {key}\n## Contents\n### Page 1\n{text}\n'.encode('utf-8')
     if len(data) > plan.MAX_ITEM_BYTES:
         raise ValueError(f'{page} 頁の文字が {len(data)} byte で、上限 {plan.MAX_ITEM_BYTES} byte を超える')
     return data
 
 
-def item_bytes(document, page: int, fmt: str) -> bytes:
-    return text_item(document, page) if fmt == 'md' else split_page(document, page)
+def item_bytes(document, page: int, fmt: str, key: str, nfkc: bool = False) -> bytes:
+    return text_item(document, page, key, nfkc) if fmt == 'md' else split_page(document, page)
 
 
 def converted_chars(chunks: list[dict]) -> int:
@@ -210,6 +220,7 @@ class OriginPlan:
     pages: list[int]
     recorded: bool  # 登録の記録が今の計画の指紋と一致する
     fmt: str = 'pdf'                                     # 登録の形。pdf は頁の PDF、md は抜き出した文字
+    nfkc: bool = False                                   # md の本文を NFKC にそろえる
     add: list[dict] = field(default_factory=list)       # 索引に無い
     delete: list[dict] = field(default_factory=list)    # metadata が違う索引の item。消して add で登録し直す
     waiting: int = 0                                     # 正しいが完了していない
@@ -239,7 +250,7 @@ def compare(origin_plan: OriginPlan, indexed: dict[str, dict]) -> None:
 
 
 def build_plans(instance: dict, origins: list[plan.Origin]) -> tuple[list[OriginPlan], list[dict], dict]:
-    """原典を取って頁に分け、索引の item と比べる。分割した PDF の大きさもここで確かめる（保存はしない）。"""
+    """出典を取って頁に分け、索引の item と比べる。分割した PDF の大きさもここで確かめる（保存はしない）。"""
     config = instance['config']
     indexed = {item['key']: item for item in list_items(config['name'])}
     plans: list[OriginPlan] = []
@@ -251,20 +262,26 @@ def build_plans(instance: dict, origins: list[plan.Origin]) -> tuple[list[Origin
             pages = plan.selected_pages(origin, page_count)
             chars = {}
             fmt = plan.item_format(config, origin)
+            nfkc = plan.normalizes_text(config, origin)
             for page in pages:
-                item_bytes(document, page, fmt)
+                item_bytes(document, page, fmt, plan.item_key(origin, page, fmt), nfkc)
                 chars[page] = text_chars(document, page)
         finally:
             document.close()
         items = plan.plan_items(origin, page_count, fmt)
-        origin_plan = OriginPlan(origin, page_count, items, plan.fingerprint(config, items, fmt), pages,
-                                 recorded=False, fmt=fmt)
+        origin_plan = OriginPlan(origin, page_count, items, plan.fingerprint(config, items, fmt, nfkc), pages,
+                                 recorded=False, fmt=fmt, nfkc=nfkc)
         origin_plan.probe_page = max(pages, key=lambda page: chars[page])
         origin_plan.probe_chars = chars[origin_plan.probe_page]
         record = plan.registration(instance, origin)
         origin_plan.recorded = (record is not None and record['page_count'] == page_count
                                 and record['plan_fingerprint'] == origin_plan.fingerprint)
         compare(origin_plan, indexed)
+        # NFKC の宣言だけが変わった md は key と metadata が同じなので、取り込み済みの item も本文を送り直す
+        if record is not None and fmt == 'md' and record['plan_fingerprint'] == plan.fingerprint(config, items, fmt, not nfkc):
+            queued = {item['key'] for item in origin_plan.add}
+            origin_plan.add += [item for item in items if item['key'] not in queued]
+            origin_plan.ok = 0
         plans.append(origin_plan)
     planned = {item['key'] for p in plans for item in p.items}
     strays = [item for key, item in indexed.items() if key not in planned]
@@ -275,7 +292,7 @@ def describe(plans: list[OriginPlan], strays: list[dict]) -> None:
     for p in plans:
         o = p.origin
         state = '記録あり' if p.recorded else '記録なし'
-        log(f'{o.jurisdiction} {o.fiscal_year} {o.sha256[:12]} 原典{p.page_count}頁 → 登録{len(p.pages)}頁 {p.fmt} '
+        log(f'{o.jurisdiction} {o.fiscal_year} {o.sha256[:12]} 出典{p.page_count}頁 → 登録{len(p.pages)}頁 {p.fmt} '
             f'[{state}] 登録済み{p.ok} 待ち{p.waiting} 追加{len(p.add)} 削除{len(p.delete)}')
     log(f'計画に無い item: {len(strays)}')
 
@@ -311,10 +328,12 @@ def apply(instance: dict, plans: list[OriginPlan], strays: list[dict], workers: 
     planned = {p.origin.sha256 for p in plans}
     instance['registrations'] = [r for r in instance['registrations'] if r['origin_sha256'] in planned]
     for p in plans:
-        if p.dirty:
-            drop_record(instance, p.origin)  # 書く前に記録を消す。確認できるまで catalog に載せない
+        # 書く前に記録を消し、確認できるまで catalog に載せない。指紋が今の計画と違う記録は catalog に載らないので消さない。
+        # 送信が途中で失敗しても、次の実行が前の計画（NFKC の宣言など）を記録から判断できる。確認できたら置き換える
+        if p.dirty and p.recorded:
+            drop_record(instance, p.origin)
     # 削除は続けると 429・timeout になる。失敗しても止めずに登録へ進む。消し残した item は確認で「余分」になり、
-    # その原典の記録を書かないので catalog に載らない。次の実行で消し直す
+    # その出典の記録を書かないので catalog に載らない。次の実行で消し直す
     failed = 0
     for item in [*strays, *(i for p in plans for i in p.delete)]:
         try:
@@ -324,22 +343,24 @@ def apply(instance: dict, plans: list[OriginPlan], strays: list[dict], workers: 
             log(f'{item["key"]}: 削除できず、次の実行で消し直す: {str(error)[-80:]}')
     if strays or any(p.delete for p in plans):
         log(f'削除 {len(strays) + sum(len(p.delete) for p in plans) - failed}（失敗 {failed}）')
-    with tempfile.TemporaryDirectory(prefix='evaluation-index-') as directory:
-        jobs: list[tuple[dict, Path]] = []
-        for p in plans:
-            if not p.add:
-                continue
+    # 頁の PDF は1頁で平均 600KB を超え、全件（3万頁超）を先に書き出すと 20GB 前後になる。出典ごとに書いて送り、消してから次へ進む
+    log(f'登録する item: {sum(len(p.add) for p in plans)}')
+    for p in plans:
+        if not p.add:
+            continue
+        with tempfile.TemporaryDirectory(prefix='evaluation-index-') as directory:
+            jobs: list[tuple[dict, Path]] = []
             document = pdfium.PdfDocument(str(CACHE / f'{p.origin.sha256}.pdf'))
             try:
                 for item in p.add:
                     page = item['metadata']['page']
                     path = Path(directory) / item['key']
-                    path.write_bytes(item_bytes(document, page, p.fmt))
+                    path.write_bytes(item_bytes(document, page, p.fmt, item['key'], p.nfkc))
                     jobs.append((item, path))
             finally:
                 document.close()
-        log(f'登録する item: {len(jobs)}')
-        upload_all(name, jobs, workers)
+            log(f'{p.origin.sha256[:12]}: {len(jobs)} 頁')
+            upload_all(name, jobs, workers)
 
 
 def readable(name: str, p: OriginPlan, indexed: dict[str, dict]) -> bool:
@@ -353,7 +374,7 @@ def readable(name: str, p: OriginPlan, indexed: dict[str, dict]) -> bool:
     key = next(item['key'] for item in p.items if item['metadata']['page'] == p.probe_page)
     try:
         chunks = search_cf(name, 'items', 'chunks', indexed[key]['id']) or []
-    except RuntimeError as error:  # 一時的な失敗では止めず、記録しないまま次の原典へ。再実行で確かめ直す
+    except RuntimeError as error:  # 一時的な失敗では止めず、記録しないまま次の出典へ。再実行で確かめ直す
         log(f'{p.origin.sha256[:12]}: chunk を取れず、本文を確かめられない: {error}')
         return False
     converted = converted_chars(chunks)
@@ -364,7 +385,7 @@ def readable(name: str, p: OriginPlan, indexed: dict[str, dict]) -> bool:
 
 
 def wait_and_confirm(instance: dict, plans: list[OriginPlan], timeout_minutes: int) -> bool:
-    """全 item が completed になり、数と metadata が計画と一致した原典だけ記録を書く。"""
+    """全 item が completed になり、数と metadata が計画と一致した出典だけ記録を書く。"""
     name = instance['config']['name']
     targets = [p for p in plans if p.dirty]
     deadline = time.time() + timeout_minutes * 60
@@ -402,16 +423,17 @@ def wait_and_confirm(instance: dict, plans: list[OriginPlan], timeout_minutes: i
         if pending == 0 or time.time() > deadline:
             break
         time.sleep(POLL_SECONDS)
-    # 数の一致: 索引にあるこの原典の item が計画と同数
+    # 数の一致: 索引にあるこの出典の item が計画と同数
     ok = True
     for p in targets:
         extra = [k for k in indexed if k.startswith(p.origin.sha256 + '_') and k not in {i['key'] for i in p.items}]
         if not results[p.origin.sha256] and not extra and not readable(name, p, indexed):
             results[p.origin.sha256] = 'unreadable'
         if results[p.origin.sha256] or extra:
-            log(f'{p.origin.sha256[:12]}: 確認できない（{results[p.origin.sha256] or "extra"}, 余分{len(extra)}）。記録は消したまま')
+            log(f'{p.origin.sha256[:12]}: 確認できない（{results[p.origin.sha256] or "extra"}, 余分{len(extra)}）。記録は書かない')
             ok = False
             continue
+        instance['registrations'] = [r for r in instance['registrations'] if r['origin_sha256'] != p.origin.sha256]
         instance['registrations'].append({
             'origin_sha256': p.origin.sha256, 'page_count': p.page_count, 'plan_fingerprint': p.fingerprint,
             'confirmed_at': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})
@@ -424,7 +446,7 @@ def wait_and_confirm(instance: dict, plans: list[OriginPlan], timeout_minutes: i
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument('--write', action='store_true', help='索引へ書き込み、確認できた原典の記録を instance.json に書く')
+    parser.add_argument('--write', action='store_true', help='索引へ書き込み、確認できた出典の記録を instance.json に書く')
     parser.add_argument('--workers', type=int, default=3, help='cf の同時実行数（既定 3）')
     parser.add_argument('--timeout-minutes', type=int, default=DEFAULT_TIMEOUT_MINUTES, help='取り込みを待つ期限')
     args = parser.parse_args(argv)

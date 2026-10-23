@@ -17,11 +17,12 @@ from pathlib import Path
 from functools import cache
 import re
 
-from ingestion.generic.layout import _frames, _header_bottom, normalize
+from ingestion.generic.layout import SIGNS, _frames, _header_bottom, normalize
 from ingestion.generic.observe import Page, Rule, Word
 from ingestion.lib import pdf_rules
 from ingestion.lib.scan_ocr import superseded
-from ingestion.lib.ocr_names import AmountDictionary, AmountRule, correct_amount, correct_name, load_name_dictionary
+from ingestion.lib.ocr_names import (AmountDictionary, AmountRule, correct_amount, correct_name, correct_variant_chars,
+                                     load_name_dictionary, load_variant_chars)
 
 # Vision reads the minus sign △ as a letter.
 MINUS = re.compile(r'^[AΔ▲−-]\s*(?=[0-9])')
@@ -117,8 +118,116 @@ def _split(word: Word, cuts: list[float]) -> list[Word]:
     return pieces
 
 
-def _cell_words(pieces: list[Word], cuts: list[float]) -> list[Word]:
-    """Rejoin the pieces of one OCR line that sit in the same cell and nearly touch."""
+PADDLE_REACH = 1.5  # pt
+STACKED_SHARE = .5  # pieces overlapping less than this share of their height are on different lines
+DASHES = '一-－ー—―‐−'  # a dash in an amount cell is no amount: the cell prints nothing there
+# digits and commas of an amount, with its sign; a code's periods (`10.04.01.03`) are not an amount's
+NUMERIC_RUN = re.compile(r'[△▲−-]?[0-9][0-9,]*|,+|[△▲−-]')
+
+
+def _paddle_pieces(line: dict, children: list[Word], corrected: bool, cuts: list[float] = ()) -> list[Word] | None:
+    """Where the printed characters of a Paddle line sit, for cutting it at the rules.
+
+    A Paddle line's children are fragments (`12` `,` `828` `,` `111`), but they carry the x of each
+    character. Cutting the line by a share of its box per character count puts the cut in the wrong place
+    when digits and kanji run together (`12,828,111同項…` cut after `12,828`, 131181). The children are
+    used only when they spell the whole line (no character lost or changed, no declared correction), and a
+    run of number fragments is joined back into one amount word, which `_split` then protects like a
+    whole amount. A line that is only one number keeps its own box: None, so the caller uses the line.
+    """
+    if corrected:
+        return None
+    spelled, printed = ''.join(c.text for c in children), re.sub(r'\s+', '', line['raw_text'])
+    if re.sub(r'\s+', '', spelled) != printed and len(re.sub(r'\s+', '', spelled)) == len(printed) \
+            and all(c.text == re.sub(r'\s+', '', c.text) for c in children):
+        # A declared name correction replaced characters of the line one for one (`センタ一費` → `センター費`): the
+        # children keep where each character sits, and take the corrected characters in order.
+        position, fixed = 0, []
+        for child in children:
+            fixed.append(Word(printed[position:position + len(child.text)], child.x0, child.y0, child.x1, child.y1))
+            position += len(child.text)
+        children = fixed
+    if re.sub(r'\s+', '', ''.join(c.text for c in children)) != re.sub(r'\s+', '', line['raw_text']):
+        # The children lost characters (`2,490,840円` has no `2` `,`): the line is not cut from them. A printed
+        # unit 円 at its end still has its own box, so the amount is cut off before it and stays whole.
+        tail = max(children, key=lambda c: c.x0, default=None)
+        text = line['raw_text'].rstrip()
+        if tail is not None and tail.text == '円' and text.endswith('円') and len(_text(text)) > 1:
+            x0, y0, x1, y1 = line['bbox_pdf_pt']
+            return [Word(text[:-1], x0, y0, tail.x0, y1), tail]
+        return None
+    # The children are in the order the line is spelled. A spaced-out name (`3 広 報 費`) gets a box for `広` that
+    # starts left of the `3` before it, and sorted by x it would read `広3報費`: a box that starts before the one
+    # before it starts where that one ends.
+    ordered: list[Word] = []
+    for child in children:
+        if not child.text.strip():
+            continue
+        crossing = [x for x in cuts if child.x0 < x < child.x1]
+        # (only where cutting by a share of the box would put the rule at another digit than the grouping says)
+        share = lambda x: round((x - child.x0) / ((child.x1 - child.x0) / max(1, len(child.text))))
+        if (ordered and ordered[-1].text == ',' and re.fullmatch(r'[0-9]{4,}', child.text)
+                and crossing and any(share(x) != 3 for x in crossing)):
+            # The group after a comma has three digits: a longer run that a rule crosses is the end of one amount
+            # and the first digits of the next cell's (`0005` = `000` + `5` of `…,051,000` | `5,918,437,000`, 281000).
+            width = (child.x1 - child.x0) / len(child.text)
+            edge = child.x0 + 3 * width
+            ordered.append(Word(child.text[:3], child.x0, child.y0, edge, child.y1))
+            child = Word(child.text[3:], edge, child.y0, child.x1, child.y1)
+        elif (re.fullmatch(r'0[0-9]+', child.text) and crossing
+              and not (ordered and ordered[-1].text == ',')):
+            # No amount starts with a 0 and more digits: the 0 is a cell of its own, the rule's other side starts
+            # the amount (`017,585,227,000` = `0` | `17,585,227,000`, 281000).
+            edge = child.x0 + (child.x1 - child.x0) / len(child.text)
+            ordered.append(Word('0', child.x0, child.y0, edge, child.y1))
+            child = Word(child.text[1:], edge, child.y0, child.x1, child.y1)
+        if ordered and child.x0 < ordered[-1].x0:
+            child = Word(child.text, min(ordered[-1].x1, child.x1), child.y0, child.x1, child.y1)
+        ordered.append(child)
+    merged: list[Word] = []
+    for child in ordered:
+        last = merged[-1] if merged else None
+        if (last is not None and NUMERIC_RUN.fullmatch(_text(child.text)) and NUMERIC_RUN.fullmatch(_text(last.text))
+                # a rule between the end of the fragment before and the start of this one keeps two cells apart; one that
+                # only crosses the first character's box (`1,981,045,000` over a rule 2pt from its left) does not
+                and not any(last.x1 - min(2, (last.x1 - last.x0) / 2) < x <= child.x0 + PADDLE_REACH for x in cuts)
+                # (a comma, or a minus sign set apart from its digits `△ 15,673,555`, sits farther from its neighbour)
+                and child.x0 - last.x1 <= (2 * JOIN_GAP if last.text.endswith(',') or child.text.startswith(',')
+                                           or re.fullmatch(r'[△▲−-]', _text(last.text)) else JOIN_GAP)
+                * max(last.y1 - last.y0, child.y1 - child.y0)):
+            merged[-1] = Word(last.text + child.text, last.x0, min(last.y0, child.y0), max(last.x1, child.x1),
+                              max(last.y1, child.y1))
+        else:
+            merged.append(child)
+    # A code (`10.04.01.03へ流用`) reads as an amount of its own when it stands alone: it stays in front of its text.
+    joined: list[Word] = []
+    for word in merged:
+        if joined and re.search(r'[0-9]\.[0-9]', joined[-1].text) and not NUMERIC_RUN.fullmatch(_text(word.text)):
+            last = joined[-1]
+            joined[-1] = Word(last.text + word.text, last.x0, min(last.y0, word.y0), max(last.x1, word.x1), max(last.y1, word.y1))
+        else:
+            joined.append(word)
+    merged = joined
+    if len(merged) < 2:
+        return None
+    # The line's own box includes the padding its characters' boxes lack: the ends keep it, so a line no rule cuts
+    # is the same word with the same box as when it is not cut from its children.
+    x0, _, x1, _ = line['bbox_pdf_pt']
+    # (padding that reaches over a rule is not kept: the character is on the other side of it. A rule within a point
+    # of the line's edge is padding, as `_split` takes it.)
+    first, last = merged[0], merged[-1]
+    if not any(x0 + 1 < x <= first.x0 + PADDLE_REACH for x in cuts):
+        merged[0] = Word(first.text, min(x0, first.x0), first.y0, first.x1, first.y1)
+    if not any(last.x1 - PADDLE_REACH <= x < x1 - 1 for x in cuts):
+        merged[-1] = Word(last.text, last.x0, last.y0, max(x1, last.x1), last.y1)
+    return merged
+
+
+def _cell_words(pieces: list[Word], cuts: list[float], reach: float = 0) -> list[Word]:
+    """Rejoin the pieces of one OCR line that sit in the same cell and nearly touch.
+
+    ``reach``: how far past a piece's left edge a rule still lies in front of it. A Paddle character box
+    can start a little left of the rule its character sits right of (`同` 0.6pt, 131181)."""
     words: list[Word] = []
     for piece in sorted((p for w in pieces for p in _split(w, cuts)), key=lambda w: w.x0):
         if words:
@@ -128,11 +237,14 @@ def _cell_words(pieces: list[Word], cuts: list[float]) -> list[Word]:
             # in the cell the layout places it in (`551` `111,000`, 281000).
             digits = bool(NUMBER.fullmatch(_text(last.text)) and NUMBER.fullmatch(_text(piece.text)))
             pad = min(2, (last.x1 - last.x0) / 2) if digits else 0
-            same_cell = not any(last.x0 + pad < x <= piece.x0 for x in cuts)
+            same_cell = not any(last.x0 + pad + reach < x <= piece.x0 + reach for x in cuts)
             # "2" "款" "1" "項" join; a name and its amount stay apart even when they nearly touch.
             amount_with_text = _amount(last.text) != _amount(piece.text) and not (
                 NUMBER.fullmatch(_text(last.text)) and NUMBER.fullmatch(_text(piece.text)))
-            if same_cell and piece.x0 - last.x1 <= JOIN_GAP * height and not amount_with_text:
+            # Characters of two printed lines stacked in one box (Paddle reads `使` over `賃` of a name set on
+            # two lines, 281000) are two words: the one line's words overlap in height.
+            stacked = min(last.y1, piece.y1) - max(last.y0, piece.y0) < STACKED_SHARE * min(last.y1 - last.y0, piece.y1 - piece.y0)
+            if same_cell and piece.x0 - last.x1 <= JOIN_GAP * height and not amount_with_text and not stacked:
                 words[-1] = Word(last.text + piece.text, last.x0, min(last.y0, piece.y0), piece.x1,
                                  max(last.y1, piece.y1))
                 continue
@@ -186,8 +298,25 @@ def short_rows(pdf: Path, detected: pdf_rules.PageRules, dark: int = pdf_rules.D
                    vertical=tuple(sorted([*detected.vertical, *columns], key=lambda r: (r.position, r.start))))
 
 
+LEADING_MARK = re.compile(r'[◎○〇●•・]')
+
+
+def with_mark(item: dict, pieces: list[Word] | None) -> list[Word] | None:
+    """The bullet that starts an OCR line (`◎地域福祉センター管理運営費`, `•電気料金`) that its word ranges leave out:
+    a printed text layer keeps the mark in the first word, and the levels of a 備考 are read from where it starts."""
+    mark = LEADING_MARK.match(item['raw_text'].strip())
+    if not pieces or not mark:
+        return pieces
+    first = min(pieces, key=lambda w: w.x0)
+    left = item['bbox_pdf_pt'][0]
+    if LEADING_MARK.match(first.text) or first.x0 - left < 1:
+        return pieces
+    text = '・' if mark.group() == '•' else mark.group()
+    return [Word(text + first.text, left, first.y0, first.x1, first.y1), *[p for p in pieces if p is not first]]
+
+
 def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None = None,
-         used: set[str] | None = None, detected: pdf_rules.PageRules | None = None) -> Page:
+         used: set[str] | None = None, detected: pdf_rules.PageRules | None = None, keep_marks: bool = False) -> Page:
     number = observation_page['page_number']
     detected = detected or pdf_rules.detect(pdf, number)
     rules = [Rule(r.position, r.start, r.position, r.end) for r in detected.vertical]
@@ -246,16 +375,41 @@ def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None
                 parts.setdefault(item['parent_id'], []).append(Word(item['raw_text'], *item['bbox_pdf_pt']))
         for item in items:
             if item['kind'] == 'region':
+                # Paddle's word children are single characters and number fragments ('4' ',' '505'); only
+                # Vision's words are whole tokens. A Paddle line is split at the rules from its own text.
                 pieces = None if item['id'] in corrected_regions else parts.get(item['id'])
                 whole = _text(item['raw_text'])
+                reach = 0
+                if item.get('attempt_id') and pieces is not None:
+                    pieces = _paddle_pieces(item, pieces, item['id'] in corrected_word_parents, cuts)
+                    reach = PADDLE_REACH if pieces else 0
                 if (pieces and item['id'] not in corrected_word_parents and NUMBER.fullmatch(whole)
                         and whole != _text(''.join(p.text for p in pieces))
                         and not any(item['bbox_pdf_pt'][0] + 1 < x < item['bbox_pdf_pt'][2] - 1 for x in cuts)):
                     # Vision's word ranges may omit a minus whose line reading is intact.
                     # One complete number wholly inside a ruled cell outranks incomplete pieces.
                     pieces = None
-                words += _cell_words(pieces or [Word(item['raw_text'], *item['bbox_pdf_pt'])], cuts)
-    return Page(number, detected.width, detected.height, words, rules)
+                if keep_marks:
+                    pieces = with_mark(item, pieces)
+                words += _cell_words(pieces or [Word(item['raw_text'], *item['bbox_pdf_pt'])], cuts, reach)
+    return Page(number, detected.width, detected.height, drop_covered_digits(words), rules)
+
+
+def drop_covered_digits(words: list[Word]) -> list[Word]:
+    """A last digit read a second time: the left end of the line the next tile read (`9予算額…` after `11,547,449`)
+    cut at the column rule leaves a digit lying inside the box of the complete amount it ends. One or two digits
+    that are the end (or the start) of an amount whose box holds them are that amount's own print, not a word."""
+    amounts = [w for w in words if AMOUNT.fullmatch(_text(w.text))]
+    def covered(word: Word) -> bool:
+        text = _text(word.text)
+        if not re.fullmatch(r'[0-9]{1,2}', text):
+            return False
+        return any(other is not word and len(_text(other.text)) > len(text)
+                   and (_text(other.text).endswith(text) or _text(other.text).startswith(text))
+                   and other.x0 - 1 <= word.x0 and word.x1 <= other.x1 + 1
+                   and min(word.y1, other.y1) - max(word.y0, other.y0) >= .6 * (word.y1 - word.y0)
+                   for other in amounts)
+    return [w for w in words if not covered(w)]
 
 
 def _header(page: Page, every: bool = False) -> list[tuple[list[float], float, float, list[Word]]]:
@@ -340,12 +494,42 @@ def read_headers(observed: list[Page], readings: list[dict] | None) -> list[Page
     return [Page(p.number, p.width, p.height, words[p.number], p.rules) for p in observed]
 
 
+@cache
+def variant_chars() -> dict[str, str]:
+    return load_variant_chars()
+
+
+def apply_variant_chars(observation: dict) -> tuple[dict, list[str]]:
+    """A copy of a Paddle observation with the characters of the shared table replaced one by one, and one
+    line of the receipt for each pair: `徵→徴 3 件（observation ids）`. Pages read by Vision are left as they are."""
+    result = json.loads(json.dumps(observation))
+    hits: dict[tuple[str, str], list[str]] = {}
+    for page in result['pages']:
+        if page.get('engine') != 'paddle':
+            continue
+        for region in page['regions']:
+            for o in region['observations']:
+                text, found = correct_variant_chars(o['raw_text'], variant_chars())
+                if found:
+                    o['raw_text'] = text
+                    for pair in found:
+                        hits.setdefault(pair, []).append(o['id'])
+    return result, [f'{a}→{b} {len(ids)} 件（{"・".join(ids)}）' for (a, b), ids in sorted(hits.items())]
+
+
+def _subsequence(short: str, long: str) -> bool:
+    characters = iter(long)
+    return all(c in characters for c in short)
+
+
 def apply_name_corrections(observation: dict, rules: list[dict] | None) -> dict:
     """A copy of the observation with the OCR misread characters of a name replaced, as declared.
 
     A rule binds to one observation (a line or word) by page and ID and names the exact characters
-    the OCR read and the ones the page prints. The raw observation is not changed, the rule must
-    match it, and a name has no digits to correct (those are codes and amounts)."""
+    the OCR read and the ones the page prints. The raw observation is not changed and the rule must
+    match it. Characters are replaced one for one, or characters the OCR lost are put back (the observed
+    text is the corrected one without them, in order). The digits of the two texts are the same, in the
+    same order: a digit is a code or an amount and is never corrected here."""
     if not rules:
         return observation
     found = {(p['page_number'], o['id']) for p in observation['pages'] for r in p['regions'] for o in r['observations']}
@@ -353,8 +537,12 @@ def apply_name_corrections(observation: dict, rules: list[dict] | None) -> dict:
     for rule in rules:
         if (rule['page'], rule['observation_id']) not in found:
             raise ValueError(f'A name correction matches no observation: {rule["id"]}')
-        if any(c.isdigit() for c in rule['observed_name'] + rule['corrected_name']) \
-                or len(rule['observed_name']) != len(rule['corrected_name']):
+        observed, corrected = rule['observed_name'], rule['corrected_name']
+        digits = lambda t: [c for c in t if c.isdigit()]
+        # Characters are replaced one for one, or a character the OCR lost is put back (`3款民生費` → `第3款民生費`:
+        # the observed text is the corrected one without the lost characters). A digit is never changed.
+        inserted = len(observed) < len(corrected) and _subsequence(observed, corrected)
+        if digits(observed) != digits(corrected) or (len(observed) != len(corrected) and not inserted):
             raise ValueError(f'A name correction replaces characters of a name: {rule["id"]}')
         hit = 0
         for p in result['pages']:
@@ -373,7 +561,10 @@ def apply_name_corrections(observation: dict, rules: list[dict] | None) -> dict:
 def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = None,
           columns: dict | None = None, rules: dict | None = None, *, spread: dict | None = None,
           header: dict | None = None, code_corrections: list[dict] | None = None,
-          header_readings: list[dict] | None = None, rule_dark: int = pdf_rules.DARK) -> list[Page]:
+          header_readings: list[dict] | None = None, rule_dark: int = pdf_rules.DARK, rule_hook=None,
+          keep_marks: bool = False) -> list[Page]:
+    """`rule_hook(PageRules) -> PageRules` completes the rules read from a rendered page before the words are cut at
+    them; `keep_marks` keeps the bullet that starts a line in its first word (both for a text document's OCR pages, `mixed.py`)."""
     every = bool((header or {}).get('agree_all_frames'))
 
     def agreed(found):
@@ -381,8 +572,9 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
 
     @cache
     def detected(number):
-        return short_rows(pdf, (rules or {}).get(number) or pdf_rules.detect(pdf, number, dark=rule_dark), rule_dark,
-                          bool((header or {}).get('staircase')))
+        found = short_rows(pdf, (rules or {}).get(number) or pdf_rules.detect(pdf, number, dark=rule_dark), rule_dark,
+                           bool((header or {}).get('staircase')))
+        return rule_hook(found) if rule_hook else found
 
     code_rules, shrunk = [], []
     if code_corrections:
@@ -445,7 +637,7 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
     if code_rules:
         corrections = amount_dictionary([r.__dict__ for r in [*(corrections.rules if corrections else ()), *code_rules]])
     used = set()
-    found = [page(p, pdf, corrections, used, detected(p['page_number'])) for p in observation['pages']]
+    found = [page(p, pdf, corrections, used, detected(p['page_number']), keep_marks) for p in observation['pages']]
     unused = {r.id for r in corrections.rules} - used if corrections else set()
     if unused:
         raise ValueError(f'Amount corrections matched no observation: {sorted(unused)}')
@@ -619,6 +811,66 @@ def add_code_readings(observed: list[Page], readings: list[dict] | None, key: st
     return [Page(p.number, p.width, p.height, words[p.number], p.rules) for p in observed]
 
 
+SECTION_TITLES = {'収入': 'revenue', '支出': 'expenditure'}
+SECTION_TITLE_REACH = 60.0  # pt: how far under its title the table's top rule may lie
+
+
+def direction_sections(printed: list[Page], direction: str | None) -> tuple[list[Page], list[int], set[int]]:
+    """The part of each page printed under the section title of the manifest's direction.
+
+    An enterprise statement (公営企業会計) prints its 収入 and 支出 tables one above the other on one page, each
+    under a title at the left margin (`収入` / `支出`). A page without a title goes on with the section of the
+    page before it. The words and rules outside the direction's sections are left out, so a table of the other
+    direction is not read as an amount of this one; a page wholly of the other direction is skipped (returned
+    as its number). A scope with no section title on any page is returned as it is. The third value is the pages
+    that were divided by section titles: their direction is decided by the sections, not by a whole-page title
+    (a `歳入` heading above the `収入` and `支出` sections must not make the page a revenue page).
+    A title counts only when a table's top rule lies just under it: a note in the margin that says `支出` is none."""
+    if direction is None:
+        return printed, [], set()
+    def titles_of(page: Page) -> list[tuple[float, str]]:
+        # A title set apart (`収 入`) is read as one word per character: the words of a line at the left margin.
+        lines: list[list[Word]] = []
+        for word in sorted((w for w in page.words if w.x0 < page.width * .2), key=lambda w: (w.y0, w.x0)):
+            if lines and abs(lines[-1][0].y0 - word.y0) <= 2:
+                lines[-1].append(word)
+            else:
+                lines.append([word])
+        tops = [r.y0 for r in page.rules if not r.vertical]
+        return sorted(((line[0].y0 + line[0].y1) / 2, SECTION_TITLES[key]) for line in lines
+                      if (key := normalize(''.join(w.text for w in sorted(line, key=lambda w: w.x0)))) in SECTION_TITLES
+                      and any(line[0].y1 - 2 <= y <= line[0].y1 + SECTION_TITLE_REACH for y in tops))
+
+    titled = {page.number: titles_of(page) for page in printed}
+    if not any(titled.values()):
+        return printed, [], set()
+    kept, skipped, current = [], [], None
+    for page in sorted(printed, key=lambda p: p.number):
+        found = titled[page.number]
+        starts = [centre - 8 for centre, _ in found]
+        # what is above the first title goes on with the section before; each title opens the next section
+        spans = [(float('-inf'), starts[0] if found else float('inf'), current)]
+        spans += [(start, starts[i + 1] if i + 1 < len(starts) else float('inf'), kind)
+                  for i, (start, (_, kind)) in enumerate(zip(starts, found))]
+        if found:
+            current = found[-1][1]
+        wanted = [(top, bottom) for top, bottom, kind in spans if kind in (None, direction)]
+        if not wanted:
+            skipped.append(page.number)
+            continue
+        inside = lambda y: any(top <= y < bottom for top, bottom in wanted)
+        rules = []
+        for rule in page.rules:
+            if rule.vertical:
+                low, high = sorted((rule.y0, rule.y1))
+                rules += [Rule(rule.x0, max(low, top), rule.x1, min(high, bottom)) for top, bottom in wanted
+                          if min(high, bottom) - max(low, top) > 1]
+            elif inside(rule.y0):
+                rules.append(rule)
+        kept.append(Page(page.number, page.width, page.height, [w for w in page.words if inside((w.y0 + w.y1) / 2)], rules))
+    return kept, skipped, {number for number, found in titled.items() if found}
+
+
 def read_units(observed: list[Page], readings: list[dict] | None) -> list[Page]:
     """Unit marks OCR misread, as the conversion's options declare them from the rendered page
     (`unit_readings`: page, box in PDF points, the one glyph read). The glyph becomes the unit 円, which is
@@ -697,7 +949,10 @@ def declared_unread(built, logicals_: list, columns: dict | None, observation: d
             if (columns or {}).get('／'.join(band.header), {}).get('kind') != 'amount':
                 continue
             for glyph in band.words:
+                # A lone sign (`△`) is printed over its figure, and the builder reads it so (`tree`): not unread.
                 if (len(glyph.text.strip()) == 1 and not any(c.isdigit() for c in glyph.text) and glyph.text != '円'
+                        and glyph.text.strip() not in SIGNS
+                        and glyph.text not in DASHES
                         and not is_amount(glyph.text)
                         and (glyph.page, glyph.original) not in units):
                     built.unowned.append({'kind': 'unreadable declared amount cell', 'page': glyph.page,
@@ -711,6 +966,16 @@ def declared_unread(built, logicals_: list, columns: dict | None, observation: d
                                 and b.x0 - b.offset < cx < b.x1 - b.offset and b.body_top < cy < b.body_bottom
                                 for logical in logicals_ for b in logical.bands):
                 built.unowned.append({'kind': 'unread ink in amount column', 'page': page_['page_number'], 'box': box})
+        # A line the strip seam cut and no single re-read gave back (`settle_seams`) stops the conversion in any
+        # column: a name has no tree check, so a name cut short would pass.
+        # A line outside every ruled frame of the page (the note printed under a table) holds no amount or name of it.
+        for box in page_.get('unread_seams', []):
+            centre = (box[1] + box[3]) / 2
+            if not any(b.page == page_['page_number'] and (b.top if b.top is not None else b.body_top) <= centre <= b.body_bottom
+                       for logical in logicals_ for b in logical.bands):
+                continue
+            if not any(u.get('page') == page_['page_number'] and u.get('box') == box for u in built.unowned):
+                built.unowned.append({'kind': 'unread strip seam', 'page': page_['page_number'], 'box': box})
 
 
 def pinned(source: dict, selected_pages: list[int]) -> dict:
@@ -724,11 +989,37 @@ def pinned(source: dict, selected_pages: list[int]) -> dict:
             number = p['page_number']
             if number in observed:
                 raise ValueError(f'Page {number} is read by more than one OCR input')
-            observed[number] = p
+            observed[number] = {**p, 'engine': observation['request'].get('engine')}  # the engine that read the page
     missing = set(selected_pages) - observed.keys()
     if missing:
         raise ValueError(f'No pinned OCR for pages {sorted(missing)}')
     return {'pages': [observed[p] for p in selected_pages]}
+
+
+def read_pages(source: dict, options: dict, settings: dict | None, selected: list[int],
+               rules: dict | None = None, rule_hook=None, keep_marks: bool = False) -> tuple[list[Page], dict, list[str]]:
+    """The pinned OCR of `selected` pages as generic pages, with the conversion's declared rereads laid in
+    (dropped readings, name corrections bound to an observation, the variant characters Paddle reads, amount and code
+    corrections, readings of what OCR left unread, unit readings), and the variant characters it replaced. A text
+    document's OCR pages (`mixed.py`) are read by this too."""
+    observation = drop_readings(pinned(source, selected), options.get('dropped_readings'))
+    columns = (settings or {}).get('columns')
+    spread = (settings or {}).get('spread')
+    header = (settings or {}).get('header')
+    # A name correction binds to an observation (`observation_id`: characters OCR misread) or, as the text
+    # builder's, to a node by page, code and the name read (convert.correct_names).
+    by_observation = [r for r in options.get('name_corrections', ()) if 'observation_id' in r]
+    observation = apply_name_corrections(observation, by_observation)
+    observation, variants = apply_variant_chars(observation)
+    printed = pages(observation, Path(source['path']), amount_dictionary(options.get('amount_corrections', [])), columns, rules,
+                    spread=spread, header=header, code_corrections=options.get('code_corrections'),
+                    header_readings=options.get('header_readings'),
+                    rule_dark=((settings or {}).get('rules') or {}).get('dark', pdf_rules.DARK), rule_hook=rule_hook,
+                    keep_marks=keep_marks)
+    printed = add_code_readings(printed, options.get('code_readings'))
+    printed = add_code_readings(printed, [{**r, 'box': box} for r in options.get('amount_readings', ()) for box in r['boxes']],
+                                'amount', r'△?(0|[1-9][0-9]{0,2}(,[0-9]{3})*)')
+    return read_units(printed, options.get('unit_readings')), observation, variants
 
 
 def build_table(source: dict, options: dict, *, stop: bool = True, rules: dict | None = None):
@@ -741,29 +1032,18 @@ def build_table(source: dict, options: dict, *, stop: bool = True, rules: dict |
     if source.get('format') != 'pdf' or source.get('pdf_type') != 'scan':
         raise ValueError('The scan builder requires a scan PDF')
     selected = scope_pages(source, options['account'], options.get('pages'))
-    observation = drop_readings(pinned(source, selected), options.get('dropped_readings'))
     settings = load(source['target'], source.get('direction') or 'expenditure')
     columns = (settings or {}).get('columns')
     spread = (settings or {}).get('spread')
     header = (settings or {}).get('header')
-    # A name correction binds to an observation (`observation_id`: characters OCR misread) or, as the text
-    # builder's, to a node by page, code and the name read (convert.correct_names).
-    by_observation = [r for r in options.get('name_corrections', ()) if 'observation_id' in r]
     by_node = [r for r in options.get('name_corrections', ()) if 'observation_id' not in r]
-    observation = apply_name_corrections(observation, by_observation)
-    printed = pages(observation, Path(source['path']), amount_dictionary(options.get('amount_corrections', [])), columns, rules,
-                    spread=spread, header=header, code_corrections=options.get('code_corrections'),
-                    header_readings=options.get('header_readings'),
-                    rule_dark=((settings or {}).get('rules') or {}).get('dark', pdf_rules.DARK))
-    printed = add_code_readings(printed, options.get('code_readings'))
-    printed = add_code_readings(printed, [{**r, 'box': box} for r in options.get('amount_readings', ()) for box in r['boxes']],
-                                'amount', r'△?(0|[1-9][0-9]{0,2}(,[0-9]{3})*)')
-    printed = read_units(printed, options.get('unit_readings'))
+    printed, observation, variants = read_pages(source, options, settings, selected, rules)
+    printed, other_sections, sectioned = direction_sections(printed, source.get('direction'))
     printed, recovered = recover_codes(printed, Path(source['path']), columns, spread=spread, header=header)
     report = Report()
     direction = source.get('direction')
-    titles = page_titles(printed) if direction else {}
-    report.skipped_pages = [p for p, title in titles.items() if title not in (None, direction)]
+    titles = page_titles([p for p in printed if p.number not in sectioned]) if direction else {}
+    report.skipped_pages = [p for p, title in titles.items() if title not in (None, direction)] + other_sections
     observed = [p for p in printed if p.number not in report.skipped_pages]
     logical = _layout(observed, columns, spread=spread, header=header)
     kind = source['target']['document_kind']
@@ -775,6 +1055,7 @@ def build_table(source: dict, options: dict, *, stop: bool = True, rules: dict |
         raise ValueError(f'Unit check failed: {report.unit}')
     kept, notes, amounts, unresolved, codes = split_notes(built)
     built.notes.extend({'kind': 'name correction', 'text': text} for text in correct_names(built.nodes, by_node))
+    built.notes.extend({'kind': 'variant characters', 'text': text} for text in variants)
     nodes = [*built.nodes, *notes]
     amounts, headings = canonical_headings([*kept, *amounts], nodes, kind, header)
     fine_sections(nodes)

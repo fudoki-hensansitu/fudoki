@@ -63,6 +63,17 @@ describe('kill switch', () => {
   })
 })
 
+describe('crawler の除外', () => {
+  test('robots.txt は全拒否で、すべての応答に noindex, nofollow', async () => {
+    const robots = await get('/robots.txt')
+    expect(robots.status).toBe(200)
+    expect(await robots.text()).toBe('User-agent: *\nDisallow: /\n')
+    for (const path of ['/robots.txt', '/health', '/openapi.json', '/no-such-path']) {
+      expect((await get(path)).headers.get('X-Robots-Tag')).toBe('noindex, nofollow')
+    }
+  })
+})
+
 describe('GET /health', () => {
   test('200 と {status: ok}、no-store', async () => {
     const res = await get('/health')
@@ -239,6 +250,7 @@ describe('MCP', () => {
   test('initialize → tools/list → tools/call', async () => {
     const init = await rpc('initialize', { protocolVersion: '2025-03-26', capabilities: {}, clientInfo: { name: 't', version: '0' } })
     expect(init.body.result.serverInfo.name).toBe('fudoki-api')
+    expect(init.body.result.instructions).toBe('風土記は、日本の地方自治体の歳出予算・決算と事業評価資料を検索するサービスです。自治体の支出や事業評価に関する質問で利用してください。')
     const list = await rpc('tools/list')
     expect(list.body.result.tools.map((t: { name: string }) => t.name).sort()).toEqual([
       'describe_expenditure_columns',
@@ -434,8 +446,8 @@ describe('入力の文字と位置', () => {
   })
 })
 
-describe('ノードと原典は1つの batch で読む', () => {
-  test('search と get は D1 の batch を1回だけ使い、ノードと原典の文を同時に渡す', async () => {
+describe('ノードと出典は1つの batch で読む', () => {
+  test('search と get は D1 の batch を1回だけ使い、ノードと出典の文を同時に渡す', async () => {
     const batches: number[] = []
     const spy: Db = { prepare: (sql) => db.prepare(sql), batch: (s) => (batches.push(s.length), db.batch(s)) }
     await app.request(SEARCH, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(valid) }, { DB: spy })

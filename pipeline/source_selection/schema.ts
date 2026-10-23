@@ -4,7 +4,7 @@ import { ARCHIVE_BUCKET, evaluationObjectKey, evaluationObjectSlot, originObject
 const nonEmptyString = z.string().min(1).refine(value => value.trim().length > 0, { message: 'Blank text is not allowed' })
 const sha256Schema = z.string().regex(/^[a-f0-9]{64}$/)
 
-/** 原典の会計名。団体固有の表記も保持する。 */
+/** 出典の会計名。自治体固有の表記も保持する。 */
 export const accountSchema = z.enum([
   '一般会計',
   '国民健康保険特別会計',
@@ -24,7 +24,7 @@ const targetFields = {
 
 const settlementTargetSchema = z.object({ ...targetFields, document_kind: z.literal('settlement') }).strict()
 
-/** 資料区分は金額の段階（phase）とは別。補正だけに原典の号数を持つ。 */
+/** 資料区分は金額の段階（phase）とは別。補正だけに出典の号数を持つ。 */
 export const sourceTargetSchema = z.discriminatedUnion('document_kind', [
   z.object({ ...targetFields, document_kind: z.literal('initial') }).strict(),
   z.object({ ...targetFields, document_kind: z.literal('supplementary'), amendment_number: z.number().int().positive() }).strict(),
@@ -60,7 +60,7 @@ const contentFields = {
 const uniqueContents = (items: { account: string; direction: string }[]) =>
   new Set(items.map(item => JSON.stringify([item.account, item.direction]))).size === items.length
 
-/** CSVに含まれる会計・お金の向き。会計名は原典の表記。 */
+/** CSVに含まれる会計・お金の向き。会計名は出典の表記。 */
 export const csvScopeSchema = z.array(z.object(contentFields).strict()).min(1)
   .refine(uniqueContents, { message: 'Duplicate file content' })
 
@@ -100,7 +100,7 @@ export const sourceCandidateSchema = z.object({
 }).strict().superRefine(rejectDuplicateFiles)
 export type SourceCandidate = z.infer<typeof sourceCandidateSchema>
 
-/** 原典対象の情報が不足している候補。対象を確定してから選定一覧へ移す。 */
+/** 出典対象の情報が不足している候補。対象を確定してから選定一覧へ移す。 */
 export const unresolvedCandidatesSchema = z.array(z.object({
   candidate: sourceCandidateSchema,
   missing: z.array(z.enum(['fiscal_year', 'document_kind', 'amendment_number'])).min(1)
@@ -116,7 +116,7 @@ export const unresolvedCandidatesSchema = z.array(z.object({
 })
 export type UnresolvedCandidate = z.infer<typeof unresolvedCandidatesSchema>[number]
 
-/** R2へのアップロードが成功した原典。取得は本文の検査日時を変更しない。 */
+/** R2へのアップロードが成功した出典。取得は本文の検査日時を変更しない。 */
 export const archivedOriginSchema = z.object({
   bucket: z.literal(ARCHIVE_BUCKET),
   candidate_id: nonEmptyString,
@@ -249,7 +249,7 @@ export const evaluationSelectionsSchema = z.array(evaluationSelectionSchema).sup
   }
 })
 
-/** ファイルや列挙順によらない原典対象の識別。 */
+/** ファイルや列挙順によらない出典対象の識別。 */
 export function targetKey(target: SourceTarget): string {
   return JSON.stringify([
     target.jurisdiction, target.fiscal_year, target.document_kind,
@@ -264,7 +264,7 @@ export const jurisdictionSelectionsSchema = z.object({
   official_url: z.httpUrl(),
   selections: sourceSelectionsSchema,
   unresolved_candidates: unresolvedCandidatesSchema,
-  /** 金額の原典とは別の、事業の評価の原典。取り込み・dbtは読まない。 */
+  /** 金額の出典とは別の、事業の評価の出典。取り込み・dbtは読まない。 */
   evaluation_selections: evaluationSelectionsSchema.optional(),
 }).strict().superRefine((file, ctx) => {
   for (const [field, selections] of [['selections', file.selections], ['evaluation_selections', file.evaluation_selections ?? []]] as const) {
@@ -272,12 +272,6 @@ export const jurisdictionSelectionsSchema = z.object({
       if (selection.target.jurisdiction !== file.jurisdiction) {
         ctx.addIssue({ code: 'custom', path: [field, index, 'target', 'jurisdiction'], message: 'Target belongs to another jurisdiction' })
       }
-    }
-  }
-  const settlements = new Set(file.selections.map(selection => targetKey(selection.target)))
-  for (const [index, selection] of (file.evaluation_selections ?? []).entries()) {
-    if (!settlements.has(targetKey(selection.target))) {
-      ctx.addIssue({ code: 'custom', path: ['evaluation_selections', index, 'target'], message: 'Evaluated settlement is not a selection target' })
     }
   }
 })

@@ -202,3 +202,27 @@ def correct_amount(observed_amount: str, *, page: int, observation_id: str,
         "dictionary_sha256": dictionary.sha256,
         "normalization": "NFKC_REMOVE_WHITESPACE",
     }
+
+
+def load_variant_chars(path: Path | None = None) -> dict[str, str]:
+    """The table of characters Paddle reads in a Chinese form, each with the Japanese one it stands for.
+
+    Single characters only, none is also a replacement (no chain), each declared once."""
+    data = json.loads((path or Path(__file__).with_name("ocr_variant_chars.json")).read_text())
+    if data.get("schema_version") != 1:
+        raise ValueError("Unsupported variant character table")
+    table: dict[str, str] = {}
+    for rule in data["rules"]:
+        observed, corrected = rule["observed_char"], rule["corrected_char"]
+        if len(observed) != 1 or len(corrected) != 1 or observed == corrected or observed in table or not rule.get("reason"):
+            raise ValueError(f"Invalid variant character rule: {rule.get('id')}")
+        table[observed] = corrected
+    if set(table) & set(table.values()):
+        raise ValueError("A variant character table must not chain replacements")
+    return table
+
+
+def correct_variant_chars(text: str, table: dict[str, str]) -> tuple[str, list[tuple[str, str]]]:
+    """``text`` with each character of ``table`` replaced, and the replacements made (observed, corrected)."""
+    hits = [(char, table[char]) for char in text if char in table]
+    return ("".join(table.get(char, char) for char in text), hits) if hits else (text, hits)

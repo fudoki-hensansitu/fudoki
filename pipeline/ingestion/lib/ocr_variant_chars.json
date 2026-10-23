@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "description": "Paddle（中国語の字形を出すことがある）が読む字のうち、日本の自治体の科目名・見出しで正字として使われない字形を、日本で使う字形へ1字ずつ置き換える対応表。迷う字は入れず、個別の宣言（name_corrections・AmountRule）に回す。engine paddle の観測だけに当てる。",
+  "rules": [
+    {
+      "id": "variant-0",
+      "observed_char": "徵",
+      "corrected_char": "徴",
+      "reason": "徴収費・徴税費などの徴。日本の科目名では 徵 を正字として使わない。"
+    },
+    {
+      "id": "variant-1",
+      "observed_char": "產",
+      "corrected_char": "産",
+      "reason": "財産・産業などの産。日本の科目名では 產 を正字として使わない。"
+    },
+    {
+      "id": "variant-2",
+      "observed_char": "涉",
+      "corrected_char": "渉",
+      "reason": "渉外費の渉。日本の科目名では 涉 を正字として使わない。"
+    },
+    {
+      "id": "variant-3",
+      "observed_char": "查",
+      "corrected_char": "査",
+      "reason": "審査・監査・調査の査。日本の科目名では 查 を正字として使わない。"
+    },
+    {
+      "id": "variant-4",
+      "observed_char": "齡",
+      "corrected_char": "齢",
+      "reason": "高齢の齢。日本の科目名では 齡 を正字として使わない。"
+    },
+    {
+      "id": "variant-5",
+      "observed_char": "增",
+      "corrected_char": "増",
+      "reason": "増減の増。日本の科目名では 增 を正字として使わない。"
+    },
+    {
+      "id": "variant-6",
+      "observed_char": "减",
+      "corrected_char": "減",
+      "reason": "増減の減。日本の科目名では 减 を正字として使わない。"
+    },
+    {
+      "id": "variant-7",
+      "observed_char": "济",
+      "corrected_char": "済",
+      "reason": "支出済額の済。日本の科目名では 济 を正字として使わない。"
+    },
+    {
+      "id": "variant-8",
+      "observed_char": "实",
+      "corrected_char": "実",
+      "reason": "実施・実績の実。日本の科目名では 实 を正字として使わない。"
+    },
+    {
+      "id": "variant-9",
+      "observed_char": "关",
+      "corrected_char": "関",
+      "reason": "関係・関連の関。日本の科目名では 关 を正字として使わない。"
+    },
+    {
+      "id": "variant-10",
+      "observed_char": "补",
+      "corrected_char": "補",
+      "reason": "補助・補償・補填の補。日本の科目名では 补 を正字として使わない。"
+    },
+    {
+      "id": "variant-11",
+      "observed_char": "总",
+      "corrected_char": "総",
+      "reason": "総務費・総額の総。日本の科目名では 总 を正字として使わない。"
+    },
+    {
+      "id": "variant-12",
+      "observed_char": "费",
+      "corrected_char": "費",
+      "reason": "〇〇費の費。日本の科目名では 费 を正字として使わない。"
+    },
+    {
+      "id": "variant-13",
+      "observed_char": "额",
+      "corrected_char": "額",
+      "reason": "金額・支出済額の額。日本の科目名では 额 を正字として使わない。"
+    },
+    {
+      "id": "variant-14",
+      "observed_char": "计",
+      "corrected_char": "計",
+      "reason": "合計・計の計。日本の科目名では 计 を正字として使わない。"
+    },
+    {
+      "id": "variant-15",
+      "observed_char": "决",
+      "corrected_char": "決",
+      "reason": "決算の決。日本の科目名では 决 を正字として使わない。"
+    },
+    {
+      "id": "variant-16",
+      "observed_char": "员",
+      "corrected_char": "員",
+      "reason": "委員・職員の員。日本の科目名では 员 を正字として使わない。"
+    },
+    {
+      "id": "variant-17",
+      "observed_char": "贷",
+      "corrected_char": "貸",
+      "reason": "貸付金の貸。日本の科目名では 贷 を正字として使わない。"
+    },
+    {
+      "id": "variant-18",
+      "observed_char": "举",
+      "corrected_char": "挙",
+      "reason": "選挙・推挙の挙。日本の科目名では 举 を正字として使わない。"
+    },
+    {
+      "id": "variant-19",
+      "observed_char": "项",
+      "corrected_char": "項",
+      "reason": "款項目・事項の項。日本の科目名・見出しでは 项 を正字として使わない。"
+    },
+    {
+      "id": "variant-20",
+      "observed_char": "债",
+      "corrected_char": "債",
+      "reason": "公債費・債務の債。日本の科目名・見出しでは 债 を正字として使わない。"
+    },
+    {
+      "id": "variant-21",
+      "observed_char": "继",
+      "corrected_char": "継",
+      "reason": "継続費・継続の継。日本の科目名・見出しでは 继 を正字として使わない。"
+    },
+    {
+      "id": "variant-22",
+      "observed_char": "别",
+      "corrected_char": "別",
+      "reason": "特別・区別の別。日本の科目名・見出しでは 别 を正字として使わない。"
+    },
+    {
+      "id": "variant-23",
+      "observed_char": "报",
+      "corrected_char": "報",
+      "reason": "報酬・報償費の報。日本の科目名・見出しでは 报 を正字として使わない。"
+    },
+    {
+      "id": "variant-middle-dot",
+      "observed_char": "·",
+      "corrected_char": "・",
+      "reason": "国・都支出金返納金などの中点。U+00B7 は日本の科目名で使わず、中点は U+30FB。"
+    }
+  ]
+}

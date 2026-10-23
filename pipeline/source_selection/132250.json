@@ -1975,6 +1975,17 @@
     {
       "target": {
         "jurisdiction": "132250",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "事務報告書は活動報告、評価は未公表。探した頁の記録は無い。探索した範囲では選べる評価資料が無かった（2026-10-14確認）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132250",
         "fiscal_year": 2024,
         "document_kind": "settlement"
       },

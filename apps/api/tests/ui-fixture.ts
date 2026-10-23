@@ -1,8 +1,8 @@
-import type { Jurisdiction, Origin, TreeNode, ViewData } from '../ui/types'
+import type { Origin, TreeNode, ViewData } from '../ui/types'
 
 const origin: Origin = {
   origin_id: 'ok',
-  title: '試験原典 ok',
+  title: '試験出典 ok',
   url: 'https://city.fudoki.dev/ok.pdf',
   format: 'pdf',
 }
@@ -31,35 +31,6 @@ export const node: TreeNode = {
   amount_source_x1: 240,
   amount_source_y1: 180,
 }
-const jurisdiction = (
-  code: string,
-  name: string,
-  covered = true,
-): Jurisdiction => ({
-  jurisdiction_code: code,
-  name,
-  prefecture_name: '試験県',
-  coverage: covered
-    ? [
-        {
-          fiscal_year: 2024,
-          document_kind: 'settlement',
-          accounts: [
-            {
-              account_name: '一般会計',
-              account_kind: '一般会計',
-              origins: [origin],
-            },
-          ],
-        },
-        {
-          fiscal_year: 2025,
-          document_kind: 'initial',
-          accounts: [{ account_name: '一般会計', account_kind: '一般会計', origins: [origin] }],
-        },
-      ]
-    : [],
-})
 export const child = {
   ...node,
   node_id: 'ui-child',
@@ -95,19 +66,6 @@ export function uiData(scenario: string, more = false, nodeId?: string): ViewDat
       ],
       origins: [origin],
     }
-  if (scenario === 'jurisdictions')
-    return {
-      jurisdictions: more
-        ? [jurisdiction('000003', '追加市')]
-        : [
-            jurisdiction('000001', '試験市'),
-            jurisdiction('000002', '未収録町', false),
-          ],
-      next_page_token: more ? null : 'jurisdictions-next',
-    }
-  if (scenario === 'single')
-    return { jurisdictions: [jurisdiction('000001', '試験市')] }
-  if (scenario === 'empty-jurisdictions') return { jurisdictions: [] }
   if (scenario === 'empty') return { nodes: [] }
   if (scenario === 'detail')
     return {
@@ -177,7 +135,7 @@ export function chartData(scenario: string, id?: string, more = false): ViewData
     { ...kanWelfare, node_id: 'cmp-2', jurisdiction_code: '000003', amount_yen: 9_870_000_000, parent_node_id: null },
     { ...kanWelfare, node_id: 'cmp-3', fiscal_year: 2023, amount_yen: 3_650_000_000 },
   ], origins: [origin], next_page_token: null }
-  // 2団体の款（2025年度の中央区・新宿区の決算の金額）。款の名前は団体ごとに違う
+  // 2自治体の款（2025年度の中央区・新宿区の決算の金額）。款の名前は自治体ごとに違う
   if (scenario === 'chart-cities') return { nodes: [
     ...CITY_KAN.A.map(([name, oku], i) => ({ ...fiscal(`city-a-${i}`, name, '款', oku * 100, null), fiscal_year: 2025 })),
     ...CITY_KAN.B.map(([name, oku], i) => ({ ...fiscal(`city-b-${i}`, name, '款', oku * 100, null), fiscal_year: 2025, jurisdiction_code: '000003' })),

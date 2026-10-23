@@ -1,31 +1,35 @@
 [project]
 name = "fudoki-pipeline"
 version = "0.1.0"
-description = "風土記の取得層。原典を非公開 R2 に保存し、取り込み表を Parquet として固定する"
+description = "風土記の取得層。出典を非公開 R2 に保存し、取り込み表を Parquet として固定する"
 # dbt-duckdb 1.11.0 は classifiers が 3.13 止まりで 3.14 を宣言していないため上限を切る
 requires-python = ">=3.13,<3.14"
 # exact ピン留め（supply chain リスクを避けるため範囲指定は使わない）
 # cooldown（公開から7日未満の版を外す）は root の pyproject.toml の exclude-newer で効かせる
 dependencies = [
-    "dbt-core==1.12.3",
+    "dbt-core==1.12.5",
     "dbt-duckdb==1.11.0",
-    "duckdb==1.5.5",
+    "duckdb==1.5.6",
     "jsonschema==4.26.0",
     "numpy==2.3.5",
     "pdfplumber==0.11.10",
-    "pypdfium2==5.13.0",
+    "pypdfium2==5.14.0",
 ]
 
 [project.optional-dependencies]
 paddle-ocr = [
+    "onnxruntime==1.31.0",
     "paddleocr==3.7.0",
-    "paddlepaddle==3.3.1",
     "paddlex==3.7.2",
     "pillow==12.3.0",
 ]
+# runtime="paddle" だけが要る。既定の onnxruntime には不要（ADR 0032）
+paddle-native = [
+    "paddlepaddle==3.3.1",
+]
 
 [build-system]
-requires = ["uv_build==0.13.0"]
+requires = ["uv_build==0.13.1"]
 build-backend = "uv_build"
 
 [tool.uv.build-backend]

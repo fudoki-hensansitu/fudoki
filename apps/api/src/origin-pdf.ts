@@ -36,13 +36,13 @@ function publicUrl(raw: string): boolean {
   } catch { return false }
 }
 
-/** URLは利用者から受け取らず、原典の宣言からだけ解決する。 */
+/** URLは利用者から受け取らず、出典の宣言からだけ解決する。 */
 export async function originPdf(db: Db, relay: RelayNamespace | undefined, request: Request, originId: string): Promise<Response> {
-  if (new URL(request.url).search) throw invalid('原典 PDF に query は指定できません')
+  if (new URL(request.url).search) throw invalid('出典 PDF に query は指定できません')
   const origin = await db.prepare('SELECT url, format FROM origin WHERE origin_id = ?').bind(originId).first<{ url: string; format: string }>()
-  if (!origin) throw new ApiError(404, 'NOT_FOUND', '原典が見つかりません')
+  if (!origin) throw new ApiError(404, 'NOT_FOUND', '出典が見つかりません')
   if (origin.format !== 'pdf' || !publicUrl(origin.url)) throw invalid('中継対象の公開 PDF ではありません')
-  if (!relay) throw new ApiError(503, 'UNAVAILABLE', '原典 PDF の中継を利用できません')
+  if (!relay) throw new ApiError(503, 'UNAVAILABLE', '出典 PDF の中継を利用できません')
   const response = await relay.get(relay.idFromName('origin-pdf-v1')).fetch(new Request('https://relay.internal/pdf', {
     method: 'POST', body: JSON.stringify({ url: origin.url }),
   }))

@@ -59,6 +59,13 @@ class LineTest(unittest.TestCase):
         self.assertEqual(''.join(g.text for g in label), '事務【人事課】')
         self.assertEqual(''.join(g.text for run in money for g in run), '112,408,043')
 
+    def test_an_amount_touching_the_name_is_split_off_before_its_unit(self):
+        # `同項、東京都知事選挙費、報償費から流用1,128,000 円`: the amount touches the name, the unit is apart
+        label, money = _split_line([glyph('同項、報償費から流用', 100, 100, 90), glyph('1,128,000', 192, 100, 45),
+                                    glyph('円', 243, 100, 9)])
+        self.assertEqual(''.join(g.text for g in label), '同項、報償費から流用')
+        self.assertEqual(''.join(g.text for run in money for g in run), '1,128,000')
+
     def test_bracketed_amounts_of_a_declared_axis(self):
         read = lambda *words: (lambda label, money: (''.join(g.text for g in label), [''.join(g.text for g in run) for run in money]))(
             *_split_line([glyph(text, x, 100) for text, x in words], amount_brackets=True))
@@ -143,6 +150,28 @@ class TrialRulesTest(unittest.TestCase):
         body = [w.text for band in logical.bands for w in band.words]
         self.assertEqual(body, ['1', '総務費', '1', '社会福祉費', '1,000', '2,000'])
         self.assertEqual([(code, name) for code, name, _ in logical.titles], [('2', '民生費')])
+
+    def test_a_title_printed_under_the_last_rule_is_the_foot_of_the_page_not_a_kan_title(self):
+        verticals = [Rule(x, 50, x, 400) for x in (10, 100, 200)]
+        horizontals = [Rule(10, y, 200, y) for y in (50, 70, 100, 400)]
+        words = [Word('科', 20, 55, 29, 64), Word('目', 40, 55, 49, 64), Word('支出', 110, 55, 128, 64), Word('済額', 130, 55, 148, 64),
+                 Word('1', 20, 110, 24.5, 119), Word('総務費', 30, 110, 57, 119), Word('1,000', 150, 110, 172.5, 119)]
+        above = [Word('第2款', 20, 20, 47, 29), Word('民生費', 50, 20, 77, 29)]
+        foot = [Word('第10款', 20, 420, 47, 429), Word('総務費', 50, 420, 77, 429)]
+        titles = lambda extra: [(code, name) for code, name, _ in logical_pages([Page(1, 300, 500, words + extra, verticals + horizontals)])[0].titles]
+        self.assertEqual(titles(above), [('2', '民生費')])
+        self.assertEqual(titles(foot), [])
+        self.assertEqual(titles(above + foot), [('2', '民生費')])
+
+    def test_the_foot_is_under_the_frame_the_title_stands_in_when_the_frames_of_a_spread_end_apart(self):
+        # The left frame ends at 450, the right one at 400: a title under the right frame is its foot.
+        verticals = [Rule(x, 50, x, 450) for x in (10, 60, 100)] + [Rule(x, 50, x, 400) for x in (150, 200, 280)]
+        horizontals = [Rule(10, y, 100, y) for y in (50, 70, 450)] + [Rule(150, y, 280, y) for y in (50, 70, 400)]
+        words = [Word('科目', 20, 55, 38, 64), Word('支出済額', 65, 55, 95, 64), Word('総務費', 20, 110, 47, 119), Word('1,000', 70, 110, 92.5, 119),
+                 Word('科目', 160, 55, 178, 64), Word('支出済額', 205, 55, 241, 64), Word('民生費', 160, 110, 187, 119), Word('2,000', 230, 110, 252.5, 119)]
+        foot = [Word('第10款', 160, 410, 187, 419), Word('総務費', 190, 410, 217, 419)]
+        logical = logical_pages([Page(1, 300, 500, words + foot, verticals + horizontals)])[0]
+        self.assertEqual(logical.titles, [])
 
     def test_rules_off_the_page_are_dropped_inside_the_box_the_pdf_displays(self):
         import tempfile
@@ -979,6 +1008,15 @@ class BreakdownRulesTest(unittest.TestCase):
         self.assertEqual([(i.name, [''.join(g.text for g in r) for _, r in i.amounts]) for i in found],
                          [('・020601【010261】020000へ予算流用減', ['△28,800'])])
 
+    def test_a_line_after_a_finished_transfer_remark_is_its_own_item_even_at_the_columns_limit(self):
+        # The tail `…へ流用` is the longest line of the document (its end is the limit), and the next remark prints its amount.
+        words = [glyph('保育所運営費・負担金，補助及び交付', 300, 100, 150), glyph('55,579,000', 540, 100, 50),
+                 glyph('金から負担金，補助及び交付金へ流用', 300, 112, 170),
+                 glyph('報酬から償還金へ流用', 300, 136, 100), glyph('467,000', 540, 136, 35)]
+        found = self.found(words, limit=470)
+        self.assertEqual([(i.name, len(i.amounts)) for i in found],
+                         [('保育所運営費・負担金,補助及び交付', 1), ('金から負担金,補助及び交付金へ流用', 0), ('報酬から償還金へ流用', 1)])
+
     def test_amount_marks_do_not_make_an_account_code(self):
         from ingestion.generic.tree import is_account_code
         for value in ('△28,800', '12,846', '1,000', '▲１２８４６', '１２，８４６', '-12846', '－１２８４６'):
@@ -1311,6 +1349,22 @@ class HeaderCharactersTest(unittest.TestCase):
         self.assertEqual(canonical('見知らぬ／見出し', None, known), '見知らぬ／見出し')
 
 
+class HeaderSubsetTest(unittest.TestCase):
+    known = {'予算現額', '予算現額／継続費及び繰越事業費繰越額', '予算現額／継続費及び繰越事業費繰越財源充当額',
+             '予算現額／予備費支出及び流用増減', '予算現額／補正予算額'}
+
+    def test_a_kind_read_across_lines_with_characters_lost_is_the_one_kind_that_holds_them(self):
+        from ingestion.generic.headers import canonical
+        self.assertEqual(canonical('予算現額／継繰繰続越費事越及業び費額', '科目', self.known, True),
+                         '予算現額／継続費及び繰越事業費繰越額')
+        self.assertEqual(canonical('予算現額／費予及増び流出用減', '科目', self.known, True), '予算現額／予備費支出及び流用増減')
+
+    def test_without_the_layout_setting_or_with_too_little_read_the_group_is_kept(self):
+        from ingestion.generic.headers import canonical
+        self.assertEqual(canonical('予算現額／費予及増び流出用減', '科目', self.known, False), '予算現額')
+        self.assertEqual(canonical('予算現額／費減', '科目', self.known, True), '予算現額')
+
+
 class OcrCodeWordTest(unittest.TestCase):
     def test_an_ocr_word_joining_the_code_and_the_name_starts_its_name_after_the_digits(self):
         from ingestion.generic.tree import Group, Item, _measure
@@ -1323,3 +1377,51 @@ class OcrCodeWordTest(unittest.TestCase):
         self.assertAlmostEqual(item.indent, 422.2 + 2 * 35 / 8, places=3)
         _measure(item, [glyph], '10')
         self.assertAlmostEqual(item.indent, 422.2 + 2 * 35 / 5, places=3)
+
+class HeadingsTest(unittest.TestCase):
+    """`headings`: a name-only line heads the deeper lines under it, only in an axis that declares it."""
+    SETTINGS = {'備考': {'headings': True, 'plain_names': ['繰越明許費分']}}
+
+    def read(self, lines, settings=True):
+        from ingestion.generic.tree import heads_items, items
+        words = [glyph(text, x, y, width) for text, x, y, width in lines]
+        group = Group([Band(0, 1200, 1, ('備考',), [], 100, 700, words)], '備考', False)
+        found = items(group, '備考', None, None, None, settings=self.SETTINGS['備考'] if settings else None)
+        return found, [heads_items(self.SETTINGS if settings else None, found, i) for i in range(len(found))]
+
+    def test_a_name_only_line_with_a_deeper_line_that_prints_an_amount_is_a_heading(self):
+        found, heads = self.read([('水道料金減免事業補助金', 300, 100, 110), ('繰越明許費分', 320, 112, 60), ('41,963,647', 560, 112, 50),
+                                  ('本年度分', 320, 124, 40), ('247,860,745', 560, 124, 50)])
+        self.assertEqual([i.name for i in found], ['水道料金減免事業補助金', '繰越明許費分', '本年度分'])
+        self.assertEqual(heads, [True, False, False])
+
+    def test_a_name_only_line_without_deeper_lines_is_not_a_heading(self):
+        found, heads = self.read([('市勢要覧作成委託', 300, 100, 80), ('通信運搬費', 300, 112, 50), ('1,000', 560, 112, 40)])
+        self.assertEqual(heads, [False] * len(found))
+
+    def test_a_marked_name_wraps_under_its_text_not_under_its_mark(self):
+        found, heads = self.read([('○あそべえ事業', 300, 100, 70), ('負担金', 309, 112, 30), ('1,000', 560, 112, 40)])
+        self.assertEqual([i.name for i in found], ['あそべえ事業負担金'])
+        self.assertEqual(heads, [False])
+
+    def test_without_the_setting_nothing_is_a_heading(self):
+        found, heads = self.read([('甲事業補助金', 300, 100, 66), ('乙分', 320, 112, 20), ('41,963,647', 560, 112, 50)],
+                                 settings=False)
+        self.assertEqual(heads, [False] * len(found))
+
+    def test_a_line_that_is_not_a_heading_still_joins_the_amountless_item_above(self):
+        from ingestion.generic.tree import join_last_lines
+        group = Group([Band(0, 1200, 1, ('備考',), [], 100, 700)], '備考', False)
+
+        def pair(heading):
+            above = Item(group, 1, [[glyph('共通経費', 300, 100, 36)]], None, '共通経費', 300)
+            above.heading = heading
+            below = Item(group, 1, [[glyph('【所管課】', 312, 112, 45)]], None, '【所管課】', 312)
+            below.amounts.append(('備考', [glyph('299,161,329', 520, 112, 90)]))
+            return [above, below]
+
+        depth = lambda item: 1 if item.indent < 310 else 2
+        joined = join_last_lines(pair(False), depth, lambda item: 1)
+        self.assertEqual([(i.name, len(i.amounts)) for i in joined], [('共通経費【所管課】', 1)])
+        apart = join_last_lines(pair(True), depth, lambda item: 1)
+        self.assertEqual([(i.name, len(i.amounts)) for i in apart], [('共通経費', 0), ('【所管課】', 1)])

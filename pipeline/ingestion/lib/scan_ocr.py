@@ -1,9 +1,8 @@
-"""Scan OCR entry point: Apple Vision by default, PaddleOCR on request.
+"""Scan OCR entry point: PaddleOCR (PP-OCRv6 small on ONNX Runtime) by default, Apple Vision on request.
 
-Vision is the default because it reads the real scans more accurately. Paddle
-stays available through ``backend="paddle"``. When ``backend`` is omitted and a
-config is passed, the config type names the engine, so the legacy Paddle
-capture scripts that pass a ``PaddleConfig`` are not silently switched.
+New acquisitions use Paddle (ADR 0032). Books acquired with Apple Vision keep ``engine: "vision"``,
+because their pinned amount corrections are bound to Vision's observation ids. When ``backend``
+is omitted, a passed config's type names the engine.
 """
 from __future__ import annotations
 
@@ -32,7 +31,7 @@ from .vision_ocr import OcrRegion, VisionConfig
 def _backend(backend: str | None, config: PaddleConfig | VisionConfig | None) -> str:
     if backend is not None:
         return backend
-    return "paddle" if isinstance(config, PaddleConfig) else "vision"
+    return "vision" if isinstance(config, VisionConfig) else "paddle"
 
 
 def _config(backend: str, config: PaddleConfig | VisionConfig | None):
@@ -57,7 +56,7 @@ def recognize_pdf(path: Path, *, pages: Sequence[int], backend: str | None = Non
                   retry_regions: Mapping[int, Sequence[OcrRegion]] | None = None) -> dict:
     """Read explicit physical pages with the selected engine.
 
-    Apple Vision is the default. Paddle retries are ordered, caller-declared
+    Paddle is the default. Paddle retries are ordered, caller-declared
     crops of the original page; Vision retries are separate calls.
     """
     backend = _backend(backend, config)
@@ -83,9 +82,19 @@ def _content(value):
 
 
 def _timings(pages: list[dict]) -> list[dict]:
-    return [{"page_number": page["page_number"], "region": region["id"],
+    rows = [{"page_number": page["page_number"], "region": region["id"],
              **{k: region[k] for k in RUN_FIELDS if k in region}}
             for page in pages for region in page["regions"]]
+    return rows + [{"page_number": page["page_number"], "region": attempt["region_id"], "attempt": attempt["id"],
+                    **{k: attempt[k] for k in RUN_FIELDS if k in attempt}}
+                   for page in pages for attempt in page.get("attempts", ())]
+
+
+def _slim(page: dict) -> dict:
+    """A Paddle page without its native output: each attempt's observations are already in ``regions``."""
+    page["attempts"] = [{k: v for k, v in attempt.items() if k not in ("native", "observations")}
+                        for attempt in page.get("attempts", ())]
+    return page
 
 
 def column_tiles(rules: PageRules, ink, height: float = 150.0) -> list[OcrRegion]:
@@ -198,6 +207,20 @@ def missed_ink(dark: np.ndarray, scale: float, boxes: Sequence[Sequence[float]])
     return sorted(marks, key=lambda m: (m[1], m[0]))
 
 
+DASH_PT = (2.0, 7.0, 2.0)  # a dash: at least / at most this wide, at most this tall (pt)
+
+
+def _without_dashes(marks: Sequence[Sequence[float]], page: dict) -> list[tuple[float, ...]]:
+    """The marks that are not a dash set in an amount column: a short thin stroke that ends where an amount, a
+    unit mark or another dash of the page ends (they are set flush right). A dash there says the cell has no amount."""
+    amounts = [o["bbox_pdf_pt"] for region in page["regions"] for o in region["observations"]
+               if o["kind"] == "region" and o.get("bbox_pdf_pt")
+               and ("".join(o["raw_text"].split()) == "円" or UNIT_BELOW.fullmatch("".join(o["raw_text"].split())))]
+    low, high, tall = DASH_PT
+    return [m for m in marks if not (low <= m[2] - m[0] <= high and m[3] - m[1] <= tall
+                                     and any(abs(a[2] - m[2]) <= 4.0 for a in amounts))]
+
+
 def ink_areas(marks: Sequence[Sequence[float]], rules: PageRules,
               boxes: Sequence[Sequence[float]] = ()) -> list[tuple[float, float, float, float]]:
     """Marks on one text line and in one cell become one tight area: Vision drops a lone 0 in a
@@ -235,15 +258,36 @@ def _png(image: np.ndarray, path: Path) -> None:
                      + chunk(b"IDAT", zlib.compress(raw, 6)) + chunk(b"IEND", b""))
 
 
-def _read_without_rules(path: Path, number: int, config: VisionConfig, regions: Sequence[OcrRegion],
+def _paddle(config: PaddleConfig) -> PaddleOcr:
+    """The engine shared with the page reads: one per configuration, never one per page."""
+    return paddle_ocr.shared_engine(config)
+
+
+def _renumber(page: dict, number: int) -> None:
+    """Paddle read an image of one page: its ids say ``p1``. Name the page they belong to."""
+    swap = lambda value: f"p{number}:{value[3:]}" if isinstance(value, str) and value.startswith("p1:") else value
+    for region in page["regions"]:
+        region.pop("attempt_ids", None)
+        for o in region["observations"]:
+            o.update(id=swap(o["id"]), parent_id=swap(o.get("parent_id")), attempt_id=swap(o.get("attempt_id")),
+                     page_number=number)
+    page.pop("attempts", None)
+
+
+def _read_without_rules(path: Path, number: int, config: VisionConfig | PaddleConfig, regions: Sequence[OcrRegion],
                         width_pt: float) -> dict:
-    """Vision on the page with its rules whitened: next to a scanned rule it reads the rule's
-    edge as 1, l or 一 however far the area keeps off the rule's nominal position."""
+    """The engine on the page with its rules whitened: next to a scanned rule Vision reads the rule's
+    edge as 1, l or 一 however far the area keeps off the rule's nominal position. Paddle reads each
+    area as a tight crop of the whitened page (no white padding, upscaled to 64 px)."""
     clean = _whitened(path, number, config.dpi)
     with tempfile.TemporaryDirectory() as tmp:
         png = Path(tmp) / "page.png"
         _png(clean, png)
-        page = vision_ocr.recognize_image(png, config=replace(config, region_padding_px=60), regions=regions)["pages"][0]
+        if isinstance(config, PaddleConfig):
+            page = _paddle(config).recognize_image(png, regions=regions, small_regions=True)["pages"][0]
+            _renumber(page, number)
+        else:
+            page = vision_ocr.recognize_image(png, config=replace(config, region_padding_px=60), regions=regions)["pages"][0]
     scale = width_pt / clean.shape[1]
     for region in page["regions"]:
         for o in region["observations"]:
@@ -314,22 +358,329 @@ def _key(page: int, box: Sequence[float]) -> str:
     return f"{page}:" + ",".join(f"{v:.1f}" for v in box)
 
 
-def supplement(path: Path, page: dict, config: VisionConfig, previous: Mapping[str, str], *,
-               vlm_fallback: bool = True) -> dict:
-    """Read the ink OCR missed on one page: Vision on those areas, then the VLM on what remains.
+def require_one_page_box(path: Path, number: int) -> None:
+    """Paddle's boxes are in the CropBox (pypdfium2) while the rules and the re-read crops come from
+    poppler's MediaBox page. Where the two differ (a cropped A3 spread) the crops would read other ink than
+    the boxes name, so the acquisition stops instead of reading it. Both render a rotated page as it is
+    displayed (same size, same place for the ink: 281000's /Rotate 90 pages), so rotation alone is no reason."""
+    import pypdfium2 as pdfium
+    document = pdfium.PdfDocument(str(path))
+    try:
+        page = document[number - 1]
+        crop, media, rotation = page.get_cropbox(), page.get_mediabox(), page.get_rotation()
+    finally:
+        document.close()
+    if any(abs(a - b) > 0.01 for a, b in zip(crop, media)):
+        raise ValueError(f"Page {number} has a CropBox {crop} different from its MediaBox {media} (rotation {rotation}); "
+                         "the re-read of missed ink needs one box")
 
-    Vision reads each tight area (``ink_areas``) as a new region ``ink-<n>``. A reading that
+
+UNIT_STACK = re.compile(r"円\s*([△▲]?[0-9][0-9,，.]*)")
+
+
+def split_unit_stacks(path: Path, page: dict, config: PaddleConfig) -> None:
+    """A cell prints 円 small above its amount; Paddle's detector can box both lines as one tall
+    box and read it as one line (`円0`, a lone 0 under 円). Split such a box at the bottom of the 円
+    (its word box) and read the lower part alone with the recognition model. The upper part stays
+    as the unit mark `円`. The merged reading is superseded, its words with it (region ``unit-<n>``).
+    The amount counts only when it is a well-formed amount; otherwise the merged reading stays.
+    """
+    number = page["page_number"]
+    found = []
+    for region in page["regions"]:
+        children = {}
+        for o in region["observations"]:
+            if o["kind"] == "word" and o.get("parent_id"):
+                children.setdefault(o["parent_id"], []).append(o)
+        for o in region["observations"]:
+            box = o.get("bbox_pdf_pt")
+            if o["kind"] != "region" or not box or not UNIT_STACK.fullmatch(o["raw_text"].strip()):
+                continue
+            unit = next((w for w in children.get(o["id"], ()) if w["raw_text"] == "円" and w.get("bbox_pdf_pt")), None)
+            if unit and box[3] - unit["bbox_pdf_pt"][3] >= 3.0:
+                found.append((o, unit["bbox_pdf_pt"][3]))
+    if not found:
+        return
+    clean = _whitened(path, number, config.dpi)
+    scale = config.dpi / 72
+    with tempfile.TemporaryDirectory() as tmp:
+        files = []
+        for index, (o, cut) in enumerate(found):
+            x0, _, x1, y1 = o["bbox_pdf_pt"]
+            crop = clean[max(0, int((cut - 0.5) * scale)):int((y1 + 1) * scale), max(0, int((x0 - 1) * scale)):int((x1 + 1) * scale)]
+            files.append(Path(tmp) / f"{index}.png")
+            _png(np.ascontiguousarray(crop), files[-1])
+        texts = paddle_ocr.recognize_crops(files, config)
+    for index, ((o, cut), text) in enumerate(zip(found, texts)):
+        text = "".join(text.split())
+        if not AMOUNT.fullmatch(text):
+            continue
+        x0, y0, x1, y1 = o["bbox_pdf_pt"]
+        page["regions"].append({"id": f"unit-{index}", "engine": "PP-OCRv6_small_rec", "supersedes": [o["id"]], "observations": [
+            {"id": f"p{number}:unit-{index}:r0", "kind": "region", "parent_id": None, "raw_text": text,
+             "bbox_pdf_pt": [round(v, 1) for v in (x0, cut, x1, y1)], "bbox_status": "available"},
+            {"id": f"p{number}:unit-{index}:r1", "kind": "region", "parent_id": None, "raw_text": "円",
+             "bbox_pdf_pt": [round(v, 1) for v in (x0, y0, x1, cut)], "bbox_status": "available"}]})
+
+
+UNIT_MARK_PT = 7.5  # the 円 printed over an amount is at most this wide and tall
+DASH_MARKS = ("一", "-", "－", "ー", "—", "―")
+UNIT_BELOW = re.compile(r"[△▲]?[0-9][0-9,，.]*|[-－ー一]")
+
+
+def reread_unit_marks(path: Path, page: dict, config: PaddleConfig) -> None:
+    """The small 円 printed at the top right of a cell, over its amount, read in the page as something
+    else (`川` `间` `1` `I`, Paddle at 5pt). A one-glyph reading no larger than a unit mark, with an amount
+    right below it that ends at the same edge, is read again on its own crop by the recogniser alone, as
+    ``_read_zeros`` does. Only a 円 replaces the reading (region ``unit-mark-<n>``, superseding it): a
+    digit or a kanji that reading gives is left as it is. A lone 1 that reads as a dash on its own crop is that
+    dash."""
+    number = page["page_number"]
+    observations = [o for region in page["regions"] for o in region["observations"]
+                    if o["kind"] == "region" and o.get("bbox_pdf_pt") and o["id"] not in superseded(page)]
+    amounts = [o["bbox_pdf_pt"] for o in observations if UNIT_BELOW.fullmatch("".join(o["raw_text"].split()))]
+    found, stacks = [], []
+    for o in observations:
+        x0, y0, x1, y1 = o["bbox_pdf_pt"]
+        text = "".join(o["raw_text"].split())
+        if (len(text) == 1 and text != "円" and x1 - x0 <= UNIT_MARK_PT and y1 - y0 <= UNIT_MARK_PT
+                and (any(-1.0 <= a[1] - y1 <= 6.0 and abs(a[2] - x1) <= 3.0 for a in amounts) or text == "1")):
+            # (a lone 1 is also read again: a dash set small in an amount cell comes out as 1)
+            found.append(o)
+        elif (len(text) == 2 and UNIT_BELOW.fullmatch(text[1:]) and not text[0].isdigit() and x1 - x0 <= UNIT_MARK_PT + 1
+                and 1.6 * (x1 - x0) <= y1 - y0 <= 2 * UNIT_MARK_PT + 1):
+            # the unit over a one-glyph amount or a dash, boxed as one tall box and read as two glyphs
+            stacks.append(o)
+    if not found and not stacks:
+        return
+    clean = _whitened(path, number, config.dpi)
+    scale = config.dpi / 72
+    crops = [o["bbox_pdf_pt"] for o in found]
+    for o in stacks:
+        x0, y0, x1, y1 = o["bbox_pdf_pt"]
+        crops += [[x0, y0, x1, (y0 + y1) / 2], [x0, (y0 + y1) / 2, x1, y1]]
+    with tempfile.TemporaryDirectory() as tmp:
+        files = []
+        for index, (x0, y0, x1, y1) in enumerate(crops):
+            crop = clean[max(0, int((y0 - 0.6) * scale)):int((y1 + 0.6) * scale), max(0, int((x0 - 0.6) * scale)):int((x1 + 0.6) * scale)]
+            files.append(Path(tmp) / f"{index}.png")
+            _png(np.ascontiguousarray(crop), files[-1])
+        texts = ["".join(t.split()) for t in paddle_ocr.recognize_crops(files, config)]
+    def region(index: int, o: dict, box: Sequence[float], text: str) -> dict:
+        return {"id": f"unit-mark-{index}", "engine": "PP-OCRv6_small_rec", "supersedes": [o["id"]], "observations": [
+            {"id": f"p{number}:unit-mark-{index}:r0", "kind": "region", "parent_id": None, "raw_text": text,
+             "bbox_pdf_pt": [round(v, 1) for v in box], "bbox_status": "available"}]}
+    for index, o in enumerate(found):
+        if texts[index] == "円" or (texts[index] in DASH_MARKS and "".join(o["raw_text"].split()) == "1"):
+            page["regions"].append(region(index, o, o["bbox_pdf_pt"], "円" if texts[index] == "円" else "一"))  # (a dash is read as 一)
+    for k, o in enumerate(stacks):
+        upper, lower = texts[len(found) + 2 * k], texts[len(found) + 2 * k + 1]
+        if upper == "円" and UNIT_BELOW.fullmatch(lower):
+            x0, y0, x1, y1 = o["bbox_pdf_pt"]
+            middle = (y0 + y1) / 2
+            first = region(len(found) + 2 * k, o, [x0, y0, x1, middle], "円")
+            second = region(len(found) + 2 * k + 1, o, [x0, middle, x1, y1], lower)
+            second["supersedes"] = []
+            page["regions"] += [first, second]
+
+
+MERGED_LINES = 1.7  # a name box this many times the page's usual line height holds more than one printed line
+LINE_GAP_PX = 1  # blank pixel rows that part two lines of one box
+LINE_VALLEY = .2  # a row with at most this share of the box's inked rows' count is blank
+
+
+SPECK_PX = 6  # a component of at most this many pixels at 300dpi is dust, not a stroke
+
+
+def _without_specks(crop: np.ndarray, level: int = 190) -> np.ndarray:
+    """``crop`` (gray) with its tiny dark components (the tails of the glyphs of the next line, a rule's fringe) whitened."""
+    dark = crop < level
+    seen = np.zeros_like(dark)
+    clean = crop.copy()
+    height, width = dark.shape
+    for y0, x0 in zip(*np.nonzero(dark)):
+        if seen[y0, x0]:
+            continue
+        seen[y0, x0] = True
+        queue, group = deque([(y0, x0)]), [(y0, x0)]
+        while queue:
+            y, x = queue.popleft()
+            for dy in (-1, 0, 1):
+                for dx in (-1, 0, 1):
+                    ny, nx = y + dy, x + dx
+                    if 0 <= ny < height and 0 <= nx < width and dark[ny, nx] and not seen[ny, nx]:
+                        seen[ny, nx] = True
+                        queue.append((ny, nx))
+                        group.append((ny, nx))
+        if len(group) <= SPECK_PX:
+            for y, x in group:
+                clean[y, x] = 255
+    return clean
+
+
+def split_merged_lines(path: Path, page: dict, config: PaddleConfig) -> None:
+    """A name set on two lines in a narrow cell, the lines almost touching, comes out of Paddle's detector as
+    one tall box and is read as one jumbled line (`使用 料及科` for `使用料及` over `賃借料`). A name box much
+    taller than the page's usual line, and at least three lines wide (a narrow box is characters stacked in a column,
+    not lines), is cut at the blank pixel rows between its lines, each line is read
+    alone by the recogniser, and the box is superseded (regions ``lines-<n>``). A box whose lines do not all
+    read, or that has no blank row between its lines, is left as it is."""
+    number = page["page_number"]
+    gone = superseded(page)
+    boxes = [(o, o["bbox_pdf_pt"]) for region in page["regions"] for o in region["observations"]
+             if o["kind"] == "region" and o.get("bbox_pdf_pt") and o["id"] not in gone]
+    plain = lambda o: "".join(o["raw_text"].split())
+    heights = sorted(b[3] - b[1] for o, b in boxes if 3 <= len(plain(o)) <= 30 and not re.search(r"[0-9０-９,，.円]", plain(o)))
+    if len(heights) < 5:
+        return
+    usual = heights[len(heights) // 2]
+    tall = [(o, b) for o, b in boxes if b[3] - b[1] >= MERGED_LINES * usual and b[2] - b[0] >= 3 * usual
+            and 2 <= len(plain(o)) <= 30 and not re.search(r"[0-9０-９,，.円]", plain(o))]
+    if not tall:
+        return
+    clean = _whitened(path, number, config.dpi)
+    scale = config.dpi / 72
+    plans, tops = [], []
+    for o, (x0, y0, x1, y1) in tall:
+        top, bottom, left, right = (max(0, int(y0 * scale)), int(y1 * scale) + 1, max(0, int((x0 - 0.3) * scale)),
+                                    int((x1 + 0.3) * scale) + 1)
+        window = clean[top:bottom, left:right].copy()
+        for other, (ox0, oy0, ox1, oy1) in boxes:
+            if other is not o and ox0 < x1 and ox1 > x0 and oy0 < y1 and oy1 > y0:
+                # what another reading covers (the cell's number set beside the name) is not this name's ink
+                window[max(0, int(oy0 * scale) - top):max(0, int(oy1 * scale) + 1 - top),
+                       max(0, int(ox0 * scale) - left):max(0, int(ox1 * scale) + 1 - left)] = 255
+        ink = window < 190
+        counts = ink.sum(axis=1)
+        # a row is blank between lines when only the tails of the glyphs reach it
+        rows = counts > LINE_VALLEY * np.percentile(counts, 90)
+        cuts, start = [], None
+        for index, row in enumerate(rows):
+            if row and start is None:
+                start = index
+            if not row and start is not None:
+                cuts.append((start, index))
+                start = None
+        if start is not None:
+            cuts.append((start, len(rows)))
+        # blank rows narrower than LINE_GAP_PX do not part lines; a line must be about a usual line high
+        lines = []
+        for first, last in cuts:
+            if lines and first - lines[-1][1] < LINE_GAP_PX:
+                lines[-1] = (lines[-1][0], last)
+            else:
+                lines.append((first, last))
+        lines = [line for line in lines if line[1] - line[0] >= 0.4 * usual * scale]
+        if len(lines) < 2 or any(line[1] - line[0] > 1.6 * usual * scale for line in lines):
+            continue
+        parts = []
+        for first, last in lines:
+            columns = np.flatnonzero(ink[first:last].any(axis=0))
+            parts.append((top + first, top + last, left + int(columns[0]), left + int(columns[-1]) + 1))
+        plans.append((o, parts, window))
+        tops.append((top, left))
+    if not plans:
+        return
+    with tempfile.TemporaryDirectory() as tmp:
+        files = []
+        for index, (o, parts, window) in enumerate(plans):
+            for k, (a, b, c, d) in enumerate(parts):
+                files.append(Path(tmp) / f"{index}-{k}.png")
+                origin = tops[index]
+                crop = window[max(0, a - origin[0] - 2):b - origin[0] + 2, max(0, c - origin[1] - 2):d - origin[1] + 2]
+                _png(np.ascontiguousarray(_without_specks(crop)), files[-1])
+        # (the edge of the number set beside the name can leave a dot before the first character: no name starts so)
+        texts = ["".join(t.split()).lstrip("。、°.,・") for t in paddle_ocr.recognize_crops(files, config)]
+    cursor = 0
+    for index, (o, parts, _) in enumerate(plans):
+        read = texts[cursor:cursor + len(parts)]
+        cursor += len(parts)
+        if not all(read):
+            continue
+        page["regions"].append({"id": f"lines-{index}", "engine": "PP-OCRv6_small_rec", "supersedes": [o["id"]], "observations": [
+            {"id": f"p{number}:lines-{index}:r{k}", "kind": "region", "parent_id": None, "raw_text": text,
+             "bbox_pdf_pt": [round(v, 1) for v in (c / scale, a / scale, d / scale, b / scale)], "bbox_status": "available"}
+            for k, (text, (a, b, c, d)) in enumerate(zip(read, parts))]})
+
+
+SEAM_COVER_PT = 2.0  # a re-read covers a dropped seam pair when it reaches its box within this
+
+
+def settle_seams(page: dict) -> dict:
+    """A seam pair Paddle dropped (one line read in two cut pieces, ``seam_dropped_boxes_px``) is given back
+    whole by the re-read or not at all.
+
+    The re-read must be one reading that covers the pair's whole box (its left and right ends within
+    ``SEAM_COVER_PT``). If none does, a piece of it must not stand for the line (a name cut short passes
+    every check): the pieces the re-read took inside that box are removed and the box is recorded in
+    ``unread_ink``. Readings of the full-page pass are not touched."""
+    boxes_px = [box for attempt in page.get("attempts", ()) for box in attempt.get("seam_dropped_boxes_px", ())]
+    if not boxes_px:
+        return page
+    factor = page["displayed_pdf_size_pt"][0] / page["image_width"]
+    unread = [list(area) for area in page.get("unread_ink", ())]
+    seams = [list(area) for area in page.get("unread_seams", ())]
+    for box in ([v * factor for v in b] for b in boxes_px):
+        middle = (box[1] + box[3]) / 2
+        found = [(region, o) for region in page["regions"] for o in region["observations"]
+                 if o["kind"] == "region" and o.get("bbox_pdf_pt") and o["bbox_pdf_pt"][1] <= middle <= o["bbox_pdf_pt"][3]
+                 and o["bbox_pdf_pt"][0] < box[2] and o["bbox_pdf_pt"][2] > box[0]]
+        if any(o["bbox_pdf_pt"][0] <= box[0] + SEAM_COVER_PT and o["bbox_pdf_pt"][2] >= box[2] - SEAM_COVER_PT for _, o in found):
+            continue
+        taken = {o["id"] for region, o in found if region["id"].startswith(("ink-", "vlm-"))}
+        for region in page["regions"]:
+            region["observations"] = [o for o in region["observations"]
+                                      if o["id"] not in taken and o.get("parent_id") not in taken]
+        page["regions"] = [r for r in page["regions"] if r["observations"] or not r["id"].startswith(("ink-", "vlm-"))]
+        area = [round(v, 1) for v in box]
+        if area not in unread:
+            unread.append(area)
+        if area not in seams:
+            seams.append(area)
+    if unread:
+        page["unread_ink"] = unread
+    if seams:
+        page["unread_seams"] = seams  # read by the converter, which stops on them in any column
+    return page
+
+
+def supplement(path: Path, page: dict, config: VisionConfig | PaddleConfig, previous: Mapping[str, str], *,
+               vlm_fallback: bool = True, ink_dark: int = pdf_rules.DARK, unit_marks: bool = False,
+               merged_lines: bool = False) -> dict:
+    """``_supplement``, then the seam pairs it left (``settle_seams``)."""
+    return settle_seams(_supplement(path, page, config, previous, vlm_fallback=vlm_fallback, ink_dark=ink_dark,
+                                    unit_marks=unit_marks, merged_lines=merged_lines))
+
+
+def _supplement(path: Path, page: dict, config: VisionConfig | PaddleConfig, previous: Mapping[str, str], *,
+                vlm_fallback: bool = True, ink_dark: int = pdf_rules.DARK, unit_marks: bool = False,
+                merged_lines: bool = False) -> dict:
+    """Read the ink OCR missed on one page: the engine on those areas, then the VLM on what remains.
+
+    The engine (Vision or Paddle, by ``config``) reads each tight area (``ink_areas``) as a new region ``ink-<n>``. A reading that
     lies over missed ink is kept and replaces the readings it contains (``supersedes``, e.g.
     the last digit OCR read alone); one that cuts through a reading it does not contain is dropped. For marks still uncovered, the VLM reads their whole line in
     the cell and the characters OCR lacked become regions ``vlm-<n>`` (``_fill``); what it
     cannot place is kept in ``unread_ink``. Answers are pinned by area, so re-acquiring
-    reuses ``previous`` instead of asking again.
+    reuses ``previous`` instead of asking again. ``ink_dark`` is the gray level below which a pixel counts
+    as ink (a scan whose small print is pale declares a level above the default, or its lines never show as missed).
     """
     number = page["page_number"]
+    if isinstance(config, PaddleConfig):
+        require_one_page_box(path, number)
+        split_unit_stacks(path, page, config)
+        if unit_marks:
+            reread_unit_marks(path, page, config)
+        if merged_lines:
+            split_merged_lines(path, page, config)
     rules = pdf_rules.detect(path, number)
     image = pdf_rules.render(path, number)
-    dark, scale = image < pdf_rules.DARK, rules.width / image.shape[1]
-    marks = missed_ink(dark, scale, _boxes(page))
+    dark, scale = image < ink_dark, rules.width / image.shape[1]
+    # (a dash set in an amount column is no missed ink: only where the request lowers the ink level, which is what
+    # makes a dash's pixels count; the default level never saw them)
+    missed = (lambda: _without_dashes(missed_ink(dark, scale, _boxes(page)), page)) if ink_dark != pdf_rules.DARK \
+        else (lambda: missed_ink(dark, scale, _boxes(page)))
+    marks = missed()
     if not marks:
         return page
     areas = ink_areas(marks, rules, _boxes(page))
@@ -358,8 +709,8 @@ def supplement(path: Path, page: dict, config: VisionConfig, previous: Mapping[s
             if replaced:
                 region["supersedes"] = sorted(replaced)
             page["regions"].append(region)
-    _read_zeros(path, number, config, page, missed_ink(dark, scale, _boxes(page)))
-    rest = ink_areas(missed_ink(dark, scale, _boxes(page)), rules)
+    _read_zeros(path, number, config, page, missed())
+    rest = ink_areas(missed(), rules)
     if not vlm_fallback:
         if rest:
             page['unread_ink'] = [[round(v, 1) for v in area] for area in rest]
@@ -421,7 +772,7 @@ def _zero_shaped(mark: Sequence[float]) -> bool:
     return 1.0 <= mark[2] - mark[0] <= 6.5 and 3.5 <= mark[3] - mark[1] <= 9.0
 
 
-def _read_zeros(path: Path, number: int, config: VisionConfig, page: dict, marks: Sequence[Sequence[float]]) -> None:
+def _read_zeros(path: Path, number: int, config: VisionConfig | PaddleConfig, page: dict, marks: Sequence[Sequence[float]]) -> None:
     """Digit-sized marks still uncovered go to Paddle's recogniser alone: it read all 345 such
     marks of a trial as codex did, in about 130 ms each. A single digit becomes region ``digit-<n>``."""
     shaped = [m for m in marks if _zero_shaped(m)]
@@ -436,7 +787,7 @@ def _read_zeros(path: Path, number: int, config: VisionConfig, page: dict, marks
                          max(0, int((x0 - 2) * scale)):int((x1 + 2) * scale)]
             files.append(Path(tmp) / f"{index}.png")
             _png(np.ascontiguousarray(crop), files[-1])
-        texts = paddle_ocr.recognize_crops(files)
+        texts = paddle_ocr.recognize_crops(files, config if isinstance(config, PaddleConfig) else PaddleConfig())
     for index, (mark, text) in enumerate(zip(shaped, texts)):
         text = "".join(text.split())
         if re.fullmatch(r"[0-9]", text):
@@ -526,16 +877,22 @@ def acquire(path: Path, request: Mapping, previous: Mapping | None = None) -> tu
 
     The observation holds only what the request read and what OCR returned, so
     re-reading with the same engine and renderer yields identical bytes (ADR 0019).
-    Elapsed time, local paths and the environment go to the run record. Ink that Vision
+    Elapsed time, local paths and the environment go to the run record. Ink that the engine
     missed is read again (``supplement``); VLM answers of ``previous`` are reused.
     """
-    if request.get("engine") != "vision":
-        raise ValueError("OCR inputs are acquired with Apple Vision only")
-    config = VisionConfig(**request.get("config", {}))
+    engine = request.get("engine")
+    if engine not in ("vision", "paddle"):
+        raise ValueError("OCR inputs are acquired with Paddle or Apple Vision")
+    paddle = engine == "paddle"
+    config = PaddleConfig(**request.get("config", {})) if paddle else VisionConfig(**request.get("config", {}))
+    # Vision drops text at an image edge; its tiles and re-reads get white padding. Paddle reads exact crops.
+    padded = config if paddle else replace(config, region_padding_px=60)
     path = Path(path)
     regions = [OcrRegion(r["id"], tuple(r["bbox_normalized"])) for r in request["regions"]] \
         if "regions" in request else None
     if request.get('column_tiles'):
+        if paddle:
+            raise ValueError('Column tiles are for Vision; Paddle splits a page with config.page_strips')
         if regions:
             raise ValueError('Column tiles and explicit regions are alternative OCR requests')
         result = None
@@ -543,38 +900,43 @@ def acquire(path: Path, request: Mapping, previous: Mapping | None = None) -> tu
         for number in request['pages']:
             rules = pdf_rules.detect(path, number, dark=dark)
             tiles = column_tiles(rules, pdf_rules.render(path, number) < dark)
-            reading = recognize_pdf(path, pages=[number], backend='vision',
-                                    config=replace(config, region_padding_px=60), regions=tiles)
+            reading = recognize_pdf(path, pages=[number], backend=engine, config=padded, regions=tiles)
             if result is None:
                 result = reading
             else:
                 result['pages'].extend(reading['pages'])
     else:
-        result = recognize_pdf(path, pages=request["pages"], backend="vision", config=config, regions=regions)
+        result = recognize_pdf(path, pages=request["pages"], backend=engine, config=config, regions=regions)
     # Vision can return nothing for a whole dense page without an error. Such a page is
-    # read again in column tiles bounded by its rules; still empty, it stops here.
+    # read again in column tiles bounded by its rules; still empty, it stops here. Paddle has no such fallback.
     for index, page in enumerate(result["pages"]):
-        if not any(region["observations"] for region in page["regions"]):
+        if not paddle and not any(region["observations"] for region in page["regions"]):
             dark = request.get('rule_dark', pdf_rules.DARK)
             tiles = column_tiles(pdf_rules.detect(path, page["page_number"], dark=dark),
                                  pdf_rules.render(path, page["page_number"]) < dark)
-            result["pages"][index] = recognize_pdf(path, pages=[page["page_number"]], backend="vision",
-                                                   config=replace(config, region_padding_px=60),
-                                                   regions=tiles)["pages"][0]
+            result["pages"][index] = recognize_pdf(path, pages=[page["page_number"]], backend=engine,
+                                                   config=padded, regions=tiles)["pages"][0]
     empty = [page["page_number"] for page in result["pages"]
              if not any(region["observations"] for region in page["regions"])]
     if empty:
         raise ValueError(f"OCR returned no text for pages {empty}")
+    if paddle:
+        result["pages"] = [_slim(page) for page in result["pages"]]
     pinned = _pinned_answers(previous)
-    result["pages"] = [supplement(path, page, config, pinned, vlm_fallback=request.get('vlm_fallback', True))
+    result["pages"] = [supplement(path, page, config, pinned, vlm_fallback=request.get('vlm_fallback', True),
+                          ink_dark=request.get('ink_dark', pdf_rules.DARK), unit_marks=bool(request.get('unit_marks')),
+                          merged_lines=bool(request.get('merged_lines')))
                        for page in result["pages"]]
     observation = {"schema_version": 1, "request": dict(request), "vlm": _vlm_identity(),
                    "origin": {k: result["origin"][k] for k in ("sha256", "bytes")},
                    "pages": _content(result["pages"])}
+    if paddle:
+        # The renderer and the dpi decide the pixels the engine reads; defaults are recorded, not left implicit.
+        observation["render"] = {"pdf_renderer": config.pdf_renderer, "dpi": config.dpi}
     data = json.dumps(observation, ensure_ascii=False, sort_keys=True,
                       separators=(",", ":"), allow_nan=False).encode()
     run = {"schema_version": 1, "observation_sha256": hashlib.sha256(data).hexdigest(),
-           "origin_path": result["origin"]["path"], "engine": result["engine"],
+           "origin_path": result["origin"]["path"], "engine": result["engine"], "renderer": result.get("renderer"),
            "timings": _timings(result["pages"])}
     return data, run
 

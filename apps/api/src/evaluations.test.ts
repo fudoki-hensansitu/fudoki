@@ -126,7 +126,7 @@ describe('公開の範囲', () => {
     expect(operations.at(-1)).toBe(searchEvaluationsOperation)
   })
 
-  test('既定の app の REST・OpenAPI・MCP に出る。429 を持つのはこの操作と原典 PDF の中継だけ', async () => {
+  test('既定の app の REST・OpenAPI・MCP に出る。429 を持つのはこの操作と出典 PDF の中継だけ', async () => {
     const doc = await (await app.request('/openapi.json', {}, { DB: db })).json()
     expect(Object.keys(doc.paths)).toContain('/v1/evaluations:search')
     for (const [path, item] of Object.entries<any>(doc.paths)) {
@@ -151,7 +151,7 @@ describe('公開の範囲', () => {
     expect(body.result.isError).toBe(true)
     expect(JSON.parse(body.result.content[0].text).error.code).toBe('UNAVAILABLE')
 
-    // 収録していない団体・年度でも、止まっているあいだは not_covered ではなく 503
+    // 収録していない自治体・年度でも、止まっているあいだは not_covered ではなく 503
     expect((await post({ ...valid, fiscal_year: 2010 }, e)).status).toBe(503)
 
     expect(order).toEqual([])
@@ -240,7 +240,7 @@ describe('状態の分類', () => {
     // 本文は抜粋より先に応答へ出ない。スコアも返さない
     expect(JSON.stringify(out)).not.toContain('あ'.repeat(200))
     expect(JSON.stringify(out)).not.toContain('0.8')
-    expect(out.notes.join('\n')).toContain('0件は原典に無いことを意味しない')
+    expect(out.notes.join('\n')).toContain('0件は出典に無いことを意味しない')
     expect(out.notes.join('\n')).toContain('自分で取得して確かめる')
   })
 
@@ -250,23 +250,23 @@ describe('状態の分類', () => {
     expect(out.status).toBe('no_candidates')
     expect(out.candidates).toEqual([])
     expect(out.documents).toHaveLength(1)
-    expect(out.notes.join('\n')).toContain('0件は原典に無いことを意味しない')
+    expect(out.notes.join('\n')).toContain('0件は出典に無いことを意味しない')
   })
 
-  test('not_covered: 収録の無い団体・年度は AI Search・流量・総数に届かない', async () => {
+  test('not_covered: 収録の無い自治体・年度は AI Search・流量・総数に届かない', async () => {
     for (const body of [{ ...valid, jurisdiction: '131130' }, { ...valid, fiscal_year: 2010 }, { ...valid, fiscal_year: 2026 }]) {
       const res = await post(body)
       expect(res.status).toBe(200)
       const out = await res.json()
       expect(out).toMatchObject({ status: 'not_covered', documents: [], candidates: [] })
       expect(searchEvaluationsOperation.output.parse(out)).toEqual(out)
-      expect(out.notes.join('\n')).toContain('0件は原典に無いことを意味しない')
+      expect(out.notes.join('\n')).toContain('0件は出典に無いことを意味しない')
     }
     expect(order).toEqual([])
     expect(doState.map.size).toBe(0)
   })
 
-  test('中野区は2つの原典を documents に返す', async () => {
+  test('中野区は2つの出典を documents に返す', async () => {
     searchImpl = async () => ({ chunks: [chunk(5, '本冊の頁', { sha: NAKANO_HON, metadata: { jurisdiction: '131148' } })] })
     const out = await (await post({ jurisdiction: '131148', fiscal_year: 2025, query: '本冊' })).json()
     expect(out.status).toBe('candidates')
@@ -319,10 +319,10 @@ describe('照合', () => {
         good,
         chunk(0, '頁が0', { metadata: { page: 0 }, key: key(KITA, 0) }),
         chunk(109, '範囲外', {}),
-        chunk(5, '別の団体', { metadata: { jurisdiction: '131148' } }),
+        chunk(5, '別の自治体', { metadata: { jurisdiction: '131148' } }),
         chunk(5, '別の年度', { metadata: { fiscal_year: '2024' } }),
-        chunk(5, '知らない原典', { sha: 'f'.repeat(64) }),
-        chunk(5, '中野区の原典', { sha: NAKANO_HON }),
+        chunk(5, '知らない出典', { sha: 'f'.repeat(64) }),
+        chunk(5, '中野区の出典', { sha: NAKANO_HON }),
         chunk(5, '頁が文字列', { metadata: { page: '5' } }),
         chunk(5, '頁が小数', { metadata: { page: 5.5 }, key: key(KITA, 5.5) }),
         { score: 0.5, text: 'x', item: { key: key(KITA, 5) } },
@@ -337,6 +337,27 @@ describe('照合', () => {
     expect(out.candidates.map((c: { rank: number; page: number }) => [c.rank, c.page])).toEqual([[1, 70], [2, 8]])
     const line = JSON.parse(dropped('"status":"candidates"')[0]!)
     expect(line).toMatchObject({ chunks: 14, candidates: 2, dropped_invalid: 12, dropped_empty: 0 })
+  })
+
+  test('同じ頁の chunk は順位の高い1つだけを候補にし、順位を詰める', async () => {
+    searchImpl = async () => ({
+      chunks: [
+        chunk(70, `${QUERY} の頁の前半`),
+        chunk(3, '別の頁'),
+        chunk(70, '同じ頁の後半', { text: '同じ頁の後半' }),
+        chunk(8, '三つ目の頁'),
+      ],
+    })
+    const out = await (await post(valid)).json()
+    expect(out.candidates.map((c: { rank: number; page: number }) => [c.rank, c.page])).toEqual([[1, 70], [2, 3], [3, 8]])
+    expect(out.candidates[0].excerpt).toContain('頁の前半')
+    expect(JSON.parse(dropped('"status":"candidates"')[0]!)).toMatchObject({ chunks: 4, candidates: 3, dropped_duplicate: 1 })
+  })
+
+  test('見出しだけの chunk が先に来ても、同じ頁の本文の chunk が候補に残る', async () => {
+    searchImpl = async () => ({ chunks: [chunk(70, ''), chunk(70, '同じ頁の本文', { text: '同じ頁の本文' })] })
+    const out = await (await post(valid)).json()
+    expect(out.candidates.map((c: { page: number; excerpt: string }) => [c.page, c.excerpt])).toEqual([[70, '同じ頁の本文']])
   })
 
   test('chunk を返したのに全件が通らなければ 503（no_candidates にしない）', async () => {
@@ -367,10 +388,13 @@ describe('登録の形と key', () => {
   })
   const md = (page: number, body = '抜き出した文字') => chunk(page, body, { key: key(KITA, page).replace(/\.pdf$/, '.md'), text: body })
 
-  test('md の原典は .md の key の chunk（見出しなし）が通り、本文はそのまま返る', () => {
+  test('md の出典は .md の key の chunk（見出しなし）が通り、本文はそのまま返る', () => {
     const verified = verify(md(70), KITA_CODE, 2025, [doc('md')])
     expect(verified).toMatchObject({ page: 70, key: key(KITA, 70).replace(/\.pdf$/, '.md') })
     expect(stripHeader('抜き出した文字', verified!.key)).toBe('抜き出した文字')
+    // 見出しを付けて送った md は、本文のある chunk が ### Page 1 から、文字の無い頁は見出しだけで返る
+    expect(stripHeader('### Page 1\n抜き出した文字', verified!.key)).toBe('抜き出した文字')
+    expect(stripHeader(`# ${verified!.key}\n## Contents\n### Page 1`, verified!.key)).toBe('')
   })
 
   test('登録の形と違う拡張子の key は捨てる（どちらの形でも通す照合にしない）', () => {

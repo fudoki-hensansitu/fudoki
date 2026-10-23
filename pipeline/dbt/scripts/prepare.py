@@ -125,9 +125,9 @@ def original_for(document: dict, table: dict) -> dict:
 
 
 def load_jurisdictions(path: Path) -> list[tuple[str, str, str]]:
-    """団体マスタ（ADR 0015）の団体コード・名称・OCD ID。団体コードの検査は dbt の marts が持つ。
+    """自治体マスタ（ADR 0015）の自治体コード・名称・OCD ID。自治体コードの検査は dbt の marts が持つ。
 
-    API は入力の団体名だけを NFKC で揃えて部分一致で引くので、マスタの名称が NFKC で変わる字を含むと当たらない。そのときは止める。
+    API は入力の自治体名だけを NFKC で揃えて部分一致で引くので、マスタの名称が NFKC で変わる字を含むと当たらない。そのときは止める。
     """
     registry = json.loads(path.read_text(encoding='utf-8'))['jurisdictions']
     changed = [code for code, entry in registry.items() if unicodedata.normalize('NFKC', entry['name']) != entry['name']]

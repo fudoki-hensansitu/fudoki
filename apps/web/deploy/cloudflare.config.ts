@@ -1,12 +1,14 @@
 import { bindings, defineConfig } from '@cloudflare/config/public'
 
-export default defineConfig({
+// isPreview は PR ごとの preview（cf previews deploy）で評価するとき true
+export default defineConfig(({ isPreview }) => ({
   worker: {
     name: 'fudoki',
     compatibilityDate: '2026-08-23',
     entrypoint: '../worker.ts',
-    domains: ['fudoki.dev'],
-    // static/ の重いファイル（ホームの動画・原典の切り抜き）と会話の画面の JS・CSS（_app/、build で作る）を assets で配る。合わない path は Worker が答える
+    // PR ごとの preview を pr-<番号>.fudoki.dev で出す（*.fudoki.dev の DNS・証明書は Cloudflare が作る。api・docs は明示のレコードが勝つ）
+    domains: [{ hostname: 'fudoki.dev', production: true, previews: true }],
+    // static/ の重いファイル（ホームの動画・出典の切り抜き）と会話の画面の JS・CSS（_app/、build で作る）を assets で配る。合わない path は Worker が答える
     assets: { notFoundHandling: 'none' },
     observability: { enabled: true, headSamplingRate: 1 },
     env: {
@@ -17,10 +19,10 @@ export default defineConfig({
       CHAT_RATE_LIMIT: bindings.rateLimit({ namespace: '1002', simple: { limit: 10, period: 60 } }),
       VIEW_RATE_LIMIT: bindings.rateLimit({ namespace: '1003', simple: { limit: 60, period: 60 } }),
       // 利用状況（時刻・モデル・token 数・tool の回数・段数・所要時間・失敗の有無）。会話の本文と IP は書かない
-      CHAT_USAGE: bindings.analyticsEngineDataset({ name: 'fudoki_web_chat' }),
+      // preview では書かない（本番の集計に混ぜない。dataset が無ければ server/usage.ts は何もしない）
+      ...(isPreview ? {} : { CHAT_USAGE: bindings.analyticsEngineDataset({ name: 'fudoki_web_chat' }) }),
       // Workers AI のモデル ID。tool 呼び出し（function calling）に対応し、日本語を扱えるものを選ぶ。
-      // DeepSeek-V4-Flash は Workers Paid が要る。コンテキストが長く（約105万 token）、毎回送り直す履歴がキャッシュ入力の安い単価になる
-      CHAT_MODEL: bindings.text('@cf/deepseek-ai/deepseek-v4-flash-0731'),
+      CHAT_MODEL: bindings.text('@cf/deepseek-ai/deepseek-v4.1-flash-1017'),
       // 推論の深さ（low・medium・high、none で切る）。考える分も出力 token に数えるので、案内役の応答には low で足りる
       CHAT_REASONING_EFFORT: bindings.text('low'),
       // Turnstile の site key（公開値）。Cloudflare の dashboard で widget を作って書く。空の間は入口の入力を出さない
@@ -29,4 +31,4 @@ export default defineConfig({
       TURNSTILE_SECRET_KEY: bindings.secret(),
     },
   },
-})
+}))

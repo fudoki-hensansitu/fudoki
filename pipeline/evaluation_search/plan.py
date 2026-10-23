@@ -1,5 +1,5 @@
-"""評価資料の索引の計画。選定（`source_selection/<団体>.json` の `evaluation_selections`）と `instance.json` の設定から、
-原典ごとの item（頁ごとの PDF）の key と metadata を決める。ネットワークも PDF も読まない。
+"""評価資料の索引の計画。選定（`source_selection/<自治体>.json` の `evaluation_selections`）と `instance.json` の設定から、
+出典ごとの item（頁ごとの PDF）の key と metadata を決める。ネットワークも PDF も読まない。
 
 設計は docs/prd/evaluation-search/dd.md。登録の script は `index.py`、Worker が引く catalog の生成は `serving/evaluation_catalog.py`。
 """
@@ -19,7 +19,7 @@ MAX_ITEM_BYTES = 4 * 1024 * 1024
 
 @dataclass(frozen=True)
 class Origin:
-    """登録する評価資料の原典 1 ファイル。R2 に保存済みで、選定の sha256 と保存の記録が一致するものだけ。"""
+    """登録する評価資料の出典 1 ファイル。R2 に保存済みで、選定の sha256 と保存の記録が一致するものだけ。"""
 
     jurisdiction: str
     fiscal_year: int
@@ -34,7 +34,7 @@ class Origin:
 
 
 def load_origins(selection_dir: Path = SELECTION_DIR, *, use_ocr: bool = False) -> list[Origin]:
-    """保存済みの評価資料を団体・評価対象年度・選定の files の順に返す。保存の記録が無い選定は含めない。
+    """保存済みの評価資料を自治体・評価対象年度・選定の files の順に返す。保存の記録が無い選定は含めない。
 
     OCR なしのインスタンス（`use_ocr: false`）には選定の `pdf_type: text` のファイルだけ、OCR ありには `scan` だけを返す。
     scan を文字の層の無いまま登録しないための関門で、選定の判断だけに頼らない（dd.md「拡大の条件」）。
@@ -68,7 +68,7 @@ def load_origins(selection_dir: Path = SELECTION_DIR, *, use_ocr: bool = False) 
                     pages=None if pages is None else tuple((r['start'], r['end']) for r in pages)))
     hashes = [o.sha256 for o in origins]
     if len(set(hashes)) != len(hashes):
-        raise ValueError('同じ sha256 の原典が複数の選定にある')
+        raise ValueError('同じ sha256 の出典が複数の選定にある')
     return sorted(origins, key=lambda o: (o.jurisdiction, o.fiscal_year))  # 同じ対象の中は選定の files の順のまま
 
 
@@ -81,12 +81,12 @@ def render_instance(instance: dict) -> str:
 
 
 def selected_pages(origin: Origin, page_count: int) -> list[int]:
-    """索引に入れる物理頁（1 始まり）。選定が null なら全頁。原典の頁数を超える範囲は止める。"""
+    """索引に入れる物理頁（1 始まり）。選定が null なら全頁。出典の頁数を超える範囲は止める。"""
     if origin.pages is None:
         return list(range(1, page_count + 1))
     for start, end in origin.pages:
         if not 1 <= start <= end <= page_count:
-            raise ValueError(f'{origin.sha256[:12]}: 選定の頁範囲 {start}-{end} が 1 <= 始点 <= 終点 <= 原典の頁数 {page_count} を満たさない')
+            raise ValueError(f'{origin.sha256[:12]}: 選定の頁範囲 {start}-{end} が 1 <= 始点 <= 終点 <= 出典の頁数 {page_count} を満たさない')
     return [page for start, end in origin.pages for page in range(start, end + 1)]
 
 
@@ -94,12 +94,24 @@ ITEM_FORMATS = ('pdf', 'md')
 
 
 def item_format(config: dict, origin: Origin) -> str:
-    """登録の形。config の `text_origins` に宣言した原典は、頁の PDF の代わりに pdfium で抜き出した文字（`md`）を item にする（ADR 0031）。"""
+    """登録の形。config の `text_origins` に宣言した出典は、頁の PDF の代わりに pdfium で抜き出した文字（`md`）を item にする（ADR 0031）。"""
     return 'md' if origin.sha256 in (config.get('text_origins') or []) else 'pdf'
 
 
+def normalizes_text(config: dict, origin: Origin) -> bool:
+    """文字の item の本文を NFKC にそろえるか。config の `nfkc_origins` に宣言した md の出典だけ（ADR 0033）。
+
+    見出しを付けても `file_content_empty` になる頁が、全角を半角にそろえると取り込まれた（調布市 2024 の1頁）。
+    検索文は正規化しないので、全角の検索文が当たりにくくなる。全体には当てない。
+    """
+    declared = origin.sha256 in (config.get('nfkc_origins') or [])
+    if declared and item_format(config, origin) != 'md':
+        raise ValueError(f'{origin.sha256[:12]}: nfkc_origins は text_origins の出典にだけ宣言できる')
+    return declared
+
+
 def item_key(origin: Origin, page: int, fmt: str = 'pdf') -> str:
-    """item の key。cf の upload は key をファイル名の末尾（basename）にするので、`/` で区切れない。`_` で原典の sha256 と頁をつなぐ。"""
+    """item の key。cf の upload は key をファイル名の末尾（basename）にするので、`/` で区切れない。`_` で出典の sha256 と頁をつなぐ。"""
     if fmt not in ITEM_FORMATS:
         raise ValueError(f'登録の形が pdf でも md でもない: {fmt}')
     return f'{origin.sha256}_p{page:04d}.{fmt}'
@@ -116,16 +128,19 @@ def plan_items(origin: Origin, page_count: int, fmt: str = 'pdf') -> list[dict]:
             for page in selected_pages(origin, page_count)]
 
 
-def fingerprint(config: dict, items: list[dict], fmt: str = 'pdf') -> str:
-    """インスタンスの設定と、その原典の登録の形・key・metadata の計画から求めるハッシュ。
+def fingerprint(config: dict, items: list[dict], fmt: str = 'pdf', nfkc: bool = False) -> str:
+    """インスタンスの設定と、その出典の登録の形・key・metadata の計画から求めるハッシュ。
 
-    `text_origins`（原典ごとの宣言）は config から除く。含めると、他の原典の宣言を足すだけで宣言の無い原典の指紋が変わり、
-    登録済みの原典が全件登録し直しになる。原典ごとの形は `fmt` で入れる。pdf のときは入れず、宣言の無い原典の指紋を従来のまま保つ。
+    `text_origins`（出典ごとの宣言）は config から除く。含めると、他の出典の宣言を足すだけで宣言の無い出典の指紋が変わり、
+    登録済みの出典が全件登録し直しになる。出典ごとの形は `fmt` で入れる。pdf のときは入れず、宣言の無い出典の指紋を従来のまま保つ。
+    `nfkc_origins` も同じく config から除き、宣言した出典だけ `nfkc` で入れる。
     """
-    shared = {k: v for k, v in config.items() if k != 'text_origins'}
+    shared = {k: v for k, v in config.items() if k not in ('text_origins', 'nfkc_origins')}
     document = {'config': shared, 'items': items}
     if fmt != 'pdf':
         document['item_format'] = fmt
+    if nfkc:
+        document['text_normalization'] = 'NFKC'
     body = json.dumps(document, ensure_ascii=False, sort_keys=True, separators=(',', ':'))
     return hashlib.sha256(body.encode('utf-8')).hexdigest()
 
@@ -142,6 +157,7 @@ def registration_is_current(instance: dict, origin: Origin) -> bool:
     try:
         fmt = item_format(instance['config'], origin)
         items = plan_items(origin, record['page_count'], fmt)
+        nfkc = normalizes_text(instance['config'], origin)
     except ValueError:
         return False
-    return fingerprint(instance['config'], items, fmt) == record['plan_fingerprint']
+    return fingerprint(instance['config'], items, fmt, nfkc) == record['plan_fingerprint']

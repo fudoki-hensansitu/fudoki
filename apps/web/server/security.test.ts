@@ -16,7 +16,8 @@ const post = (path: string, body: unknown, headers: Record<string, string> = {})
 const call = async (req: Request, e: Env) => web.fetch(req, e)
 
 test('流量の上限は config の rate limit binding と同じ値', async () => {
-  const config = (await import('../deploy/cloudflare.config')).default as unknown as { worker: { env: Record<string, { simple: unknown; namespace: string }> } }
+  type Config = { worker: { env: Record<string, { simple: unknown; namespace: string }> } }
+  const config = ((await import('../deploy/cloudflare.config')).default as unknown as (ctx: { isPreview: boolean }) => Config)({ isPreview: false })
   expect(config.worker.env.CHAT_RATE_LIMIT!.simple).toEqual(CHAT_RATE_LIMIT)
   expect(config.worker.env.VIEW_RATE_LIMIT!.simple).toEqual(VIEW_RATE_LIMIT)
   // apps/api の評価の検索（1001）と同じ namespace を使わない
@@ -76,10 +77,11 @@ describe('View の中継の許可リスト', () => {
     expect(parseRelay({ method: 'tools/call', params: { name: 'search_expenditure_nodes', arguments: { page_size: 1 } } })).toMatchObject({ params: { name: 'search_expenditure_nodes' } })
     expect(parseRelay({ method: 'resources/read', params: { uri: 'ui://fudoki/view-06a8e196f6a7.html' } })).toMatchObject({ method: 'resources/read' })
   })
-  test('描画 tool・評価の検索・他の method・他の resource は 403', () => {
+  test('描画 tool・評価の検索・自治体の一覧・他の method・他の resource は 403', () => {
     for (const body of [
       { method: 'tools/call', params: { name: 'render_expenditure_view', arguments: {} } },
       { method: 'tools/call', params: { name: 'search_evaluations', arguments: {} } },
+      { method: 'tools/call', params: { name: 'list_jurisdictions', arguments: {} } },
       { method: 'tools/call', params: { name: '__proto__' } },
       { method: 'tools/list', params: {} },
       { method: 'resources/read', params: { uri: 'ui://other/view.html' } },
@@ -132,7 +134,7 @@ describe('/api/* の入口', () => {
   })
   test('body の上限を超えたら 413', async () => {
     const s = await issueSession(SECRET)
-    const res = await call(post('/api/mcp', { method: 'tools/call', params: { name: 'list_jurisdictions', arguments: { x: 'a'.repeat(20_000) } } }, { Authorization: `Bearer ${s.token}` }), env())
+    const res = await call(post('/api/mcp', { method: 'tools/call', params: { name: 'search_expenditure_nodes', arguments: { x: 'a'.repeat(20_000) } } }, { Authorization: `Bearer ${s.token}` }), env())
     expect(res.status).toBe(413)
   })
 })
@@ -140,7 +142,7 @@ describe('/api/* の入口', () => {
 test('上流の MCP が JSON でない応答を返したら 502', async () => {
   const s = await issueSession(SECRET)
   const API = { fetch: async () => new Response('<html>Bad Gateway</html>', { status: 502, headers: { 'Content-Type': 'text/html' } }) }
-  const res = await call(post('/api/mcp', { method: 'tools/call', params: { name: 'list_jurisdictions', arguments: {} } }, { Authorization: `Bearer ${s.token}` }), env({ API }))
+  const res = await call(post('/api/mcp', { method: 'tools/call', params: { name: 'search_expenditure_nodes', arguments: {} } }, { Authorization: `Bearer ${s.token}` }), env({ API }))
   expect(res.status).toBe(502)
 })
 

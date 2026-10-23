@@ -1106,5 +1106,40 @@
       }
     }
   ],
-  "unresolved_candidates": []
+  "unresolved_candidates": [],
+  "evaluation_selections": [
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "令和7年度欄が空、事務報告書は活動報告。探した頁の記録は無い。探索した範囲では選べる評価資料が無かった（2026-10-14確認）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2024,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "R6評価資料が見つからない。決算ページに成果・評価のPDFなし。DuckDuckGoのsite検索でも該当なし。2025年度のR7欄空・事務報告書は活動報告と同様。探した頁: https://www.town.mizuho.tokyo.jp/tyosei/002/012/p001152.html。探索した範囲では選べる評価資料が無かった（2026-10-15確認）。"
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2023,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "2023年度実績の評価資料が見つからない。事務報告書は活動報告。探した頁: https://www.town.mizuho.tokyo.jp/tyosei/002/012/p001152.html。探索した範囲では選べる評価資料が無かった（2026-10-16確認）。"
+    }
+  ]
 }

@@ -125,7 +125,7 @@
       "description": "The division (所属) whose share of the account the original prints: its 款・項・目 carry that division's amounts, and the tables of one account's divisions add up to the account (ADR 0030)."
     },
     "name_corrections": {
-      "description": "原画で確認した名称の誤読の訂正。観測ID（行または単語）に結び付けて誤読した字を同じ長さの印字された字に置き換える形（observation_id。原観測は変えない）と、文字層の変換と同じく頁・番号・読んだ名称で1つのノードに結び付けて名称を直す形がある。",
+      "description": "原画で確認した名称の誤読の訂正。観測ID（行または単語）に結び付けて、誤読した字を印字された字に置き換える形（observation_id。原観測は変えない。同じ字数の置き換えか、OCR が落とした字を戻す字の増だけを許し、観測した文字が訂正後の文字の部分列であること。数字は並びを変えない）と、文字層の変換と同じく頁・番号・読んだ名称で1つのノードに結び付けて名称を直す形がある。",
       "type": "array",
       "items": {
         "oneOf": [

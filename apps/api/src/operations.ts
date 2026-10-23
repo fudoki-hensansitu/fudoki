@@ -49,10 +49,10 @@ export const SEARCH_EXAMPLE = {
 }
 
 export const SUM_RULES = [
-  '比較には提供された款・項・目の金額を使い、親と子を混ぜて合算しない。当初予算CSVの親金額は子の和から生成した値で、原典の印字値ではない。',
+  '比較には提供された款・項・目の金額を使い、親と子を混ぜて合算しない。当初予算CSVの親金額は子の和から生成した値で、出典の印字値ではない。',
   'COFOG で比べるときは cofog_code の前方一致で目（node_kind = "目"）を集めて足す。assigned の目には COFOG のコードが一つだけ付くので二重計上は起きない。',
   'division のコードだけを持つ目（例: "10"）は配下のどの group に属するか決まっていない。"10.2*" の和にはそうした目を含めない。',
-  '同じ団体・年度・資料区分・会計の目について、COFOG の全 division の和と、cofog_status が unclassifiable と out-of-scope の目の和を足すと歳出の総額になる。',
+  '同じ自治体・年度・資料区分・会計の目について、COFOG の全 division の和と、cofog_status が unclassifiable と out-of-scope の目の和を足すと歳出の総額になる。',
   '軸（axis）の異なる末端（is_leaf = true）を混ぜて足さない。科目・節・備考は同じ支出の独立した切り口で、一つの軸の末端だけを足す。',
 ]
 
@@ -72,7 +72,7 @@ const pageToken = z
 // meta の id を付けると、JSON Schema では $defs に一度だけ出て $ref で参照される（tools/list と OpenAPI が小さくなる）。
 const Origin = z
   .strictObject(Object.fromEntries(ORIGIN_COLUMNS.map((c) => [c.name, nullableIf(zodOf(c.type), c)])))
-  .meta({ id: 'Origin', description: '原典（資料名・URL・SHA-256）。' })
+  .meta({ id: 'Origin', description: '出典（資料名・URL・SHA-256）。' })
 
 // 木の表の列は資料区分が違っても同じ集合（pipeline の生成器が検査する）。応答の行には document_kind を先頭に付ける。
 const anyTable = NODE_TABLES.values().next().value as NodeTable
@@ -83,7 +83,7 @@ const Node = z
   })
   .meta({ id: 'Node', description: '歳出の木のノード。列の意味は describe_expenditure_columns。' })
 
-const ORIGINS_HELP = '結果の行が指す原典。行の origin_id から引く。'
+const ORIGINS_HELP = '結果の行が指す出典。行の origin_id から引く。'
 
 const withKind = (t: NodeTable, raw: Record<string, unknown>): Row => ({
   document_kind: t.documentKind,
@@ -170,7 +170,7 @@ async function searchNodes(ctx: Ctx, raw: Record<string, unknown>) {
   const fp = ['search', canonicalJson(query)]
   const offset = await decodeToken(token, fp)
 
-  // ノードと原典は1つの batch（トランザクション）で読み、同期の入れ替えをまたいで食い違わないようにする。
+  // ノードと出典は1つの batch（トランザクション）で読み、同期の入れ替えをまたいで食い違わないようにする。
   const [page, origins] = await db.batch([
     db
       .prepare(`SELECT ${t.selectList} FROM ${t.table} WHERE ${where.sql} ORDER BY ${orderSql} LIMIT ? OFFSET ?`)
@@ -201,7 +201,7 @@ async function getNode(ctx: Ctx, input: Record<string, unknown>) {
   const offset = await decodeToken(input.page_token as string | undefined, fp)
   const childrenSql = `SELECT ${t.selectList} FROM ${t.table} WHERE parent_node_id = ? ORDER BY "axis", "node_id" LIMIT ? OFFSET ?`
 
-  // ノード・子・原典を1つの batch で読む（search と同じく、入れ替えをまたいで食い違わない）。
+  // ノード・子・出典を1つの batch で読む（search と同じく、入れ替えをまたいで食い違わない）。
   const [self, kids, origins] = await db.batch([
     db.prepare(`SELECT ${t.selectList} FROM ${t.table} WHERE node_id = ?`).bind(nodeId),
     db.prepare(childrenSql).bind(nodeId, limit + 1, offset),
@@ -227,12 +227,12 @@ async function getNode(ctx: Ctx, input: Record<string, unknown>) {
   }
 }
 
-// --- 団体と収録範囲 ---
+// --- 自治体と収録範囲 ---
 
 const MAX_JURISDICTION_PAGE_SIZE = 100
 const DEFAULT_JURISDICTION_PAGE_SIZE = 20
 const MAX_NAME = 50
-const jurisdictionPageSizeDescription = `1ページの団体の数（1〜${MAX_JURISDICTION_PAGE_SIZE}、既定 ${DEFAULT_JURISDICTION_PAGE_SIZE}）。`
+const jurisdictionPageSizeDescription = `1ページの自治体の数（1〜${MAX_JURISDICTION_PAGE_SIZE}、既定 ${DEFAULT_JURISDICTION_PAGE_SIZE}）。`
 
 const describeColumn = (columns: ColumnSpec[], name: string) => columns.find((c) => c.name === name)?.description ?? ''
 /** columns.json の列から、型・null の可否・説明の付いた schema を作る */
@@ -244,7 +244,7 @@ const pick = (columns: ColumnSpec[], names: string[]) => Object.fromEntries(name
 
 const CoverageOrigin = z
   .strictObject(pick(ORIGIN_COLUMNS, ['origin_id', 'title', 'url', 'format']))
-  .meta({ id: 'CoverageOrigin', description: '明細の出典の原典。' })
+  .meta({ id: 'CoverageOrigin', description: '明細が指す出典。' })
 
 const Coverage = z
   .strictObject({
@@ -255,7 +255,7 @@ const Coverage = z
         z.strictObject({
           account_name: z.string().describe(describeColumn(COVERAGE_COLUMNS, 'account_name')),
           account_kind: z.string().describe(describeColumn(COVERAGE_COLUMNS, 'account_kind')),
-          origins: z.array(CoverageOrigin).optional().describe('この会計の明細が指す原典すべて。view が FULL のときだけ返る。'),
+          origins: z.array(CoverageOrigin).optional().describe('この会計の明細が指す出典すべて。view が FULL のときだけ返る。'),
         })
       )
       .describe('明細がある会計。一般会計が先。'),
@@ -267,9 +267,9 @@ const Jurisdiction = z
     ...pick(JURISDICTION_COLUMNS, ['jurisdiction_code', 'name', 'prefecture_code', 'prefecture_name', 'ocd_id']),
     coverage: z
       .array(Coverage)
-      .describe('収録範囲（年度の昇順、同じ年度は当初予算・決算の順）。空なら、この団体の明細は収録していない。明細があることを示し、会計全体・全事業を収録し終えたことは保証しない。'),
+      .describe('収録範囲（年度の昇順、同じ年度は当初予算・決算の順）。空なら、この自治体の明細は収録していない。明細があることを示し、会計全体・全事業を収録し終えたことは保証しない。'),
   })
-  .meta({ id: 'Jurisdiction', description: '団体と、その収録範囲。' })
+  .meta({ id: 'Jurisdiction', description: '自治体と、その収録範囲。' })
 
 interface CoverageRow {
   jurisdiction_code: string
@@ -277,14 +277,14 @@ interface CoverageRow {
   document_kind: string
   account_name: string
   account_kind: string
-  // BASIC では原典の列を読まない
+  // BASIC では出典の列を読まない
   origin_id?: string
   title?: string
   url?: string
   format?: string
 }
 
-/** 団体コード順に並んだ行を、団体 → 年度・資料区分 → 会計 → 原典の入れ子にする（行の順を保つ）。 */
+/** 自治体コード順に並んだ行を、自治体 → 年度・資料区分 → 会計 → 出典の入れ子にする（行の順を保つ）。 */
 function nestCoverage(rows: CoverageRow[], full: boolean) {
   const out = new Map<string, z.infer<typeof Coverage>[]>()
   for (const r of rows) {
@@ -327,7 +327,7 @@ async function listJurisdictions(ctx: Ctx, input: Record<string, unknown>) {
   const offset = await decodeToken(input.page_token as string | undefined, fp)
   const pageSql = `SELECT "jurisdiction_code" FROM ${JURISDICTION_TABLE} WHERE ${where} ORDER BY "jurisdiction_code" LIMIT ? OFFSET ?`
 
-  // 団体と収録範囲を1つの batch で読み、同期の入れ替えをまたいで食い違わないようにする。集計は marts で済ませてあり、ここでは並べ替えて入れ子にするだけ。
+  // 自治体と収録範囲を1つの batch で読み、同期の入れ替えをまたいで食い違わないようにする。集計は marts で済ませてあり、ここでは並べ替えて入れ子にするだけ。
   const [page, coverage] = await db.batch([
     db
       .prepare(`SELECT ${JURISDICTION_SELECT_LIST} FROM ${JURISDICTION_TABLE} WHERE ${where} ORDER BY "jurisdiction_code" LIMIT ? OFFSET ?`)
@@ -363,7 +363,7 @@ const listJurisdictionsInput = {
     .max(MAX_NAME)
     .regex(/^[^\u0000-\u001f\u007f]*$/, '制御文字は使えません')
     .optional()
-    .describe('団体名の部分一致（例: "武蔵野市"、"府中"）。全角・半角の違いは NFKC で揃えて比べる。同名の団体はすべて返るので、prefecture_name と jurisdiction_code で区別する。'),
+    .describe('自治体名の部分一致（例: "武蔵野市"、"府中"）。全角・半角の違いは NFKC で揃えて比べる。同名の自治体はすべて返るので、prefecture_name と jurisdiction_code で区別する。'),
   code: z
     .string()
     .regex(/^[0-9]{5,6}$/, 'code は5桁か6桁の数字です')
@@ -380,7 +380,7 @@ const listJurisdictionsInput = {
 /** AIP-157 の view。BASIC は軽い既定、FULL は全部 */
 const JURISDICTION_VIEWS = ['BASIC', 'FULL'] as const
 const jurisdictionViewDescription =
-  'BASIC（既定）は団体と、収録している年度・資料区分・会計だけを返す。FULL は会計ごとの原典（origin_id・標題・URL・形式）も返す。原典の標題や URL が要るときだけ FULL にする。'
+  'BASIC（既定）は自治体と、収録している年度・資料区分・会計だけを返す。FULL は会計ごとの出典（origin_id・標題・URL・形式）も返す。出典の標題や URL が要るときだけ FULL にする。'
 
 async function describeColumns() {
   // 資料区分ごとの説明を列名でまとめる（列の集合は表をまたいで同じ）
@@ -423,19 +423,20 @@ const WHERE_HELP = {
 
 const searchDescription =
   '歳出の木のノード（款・項・目と、節・備考など別の軸の内訳）を条件で絞って一覧する。検索の前に describe_expenditure_columns を一度読む。' +
-  '団体の比較は node_kind を "目" などに絞って行い、詳細は get_expenditure_node で木を辿る。' +
+  '文字の条件は、出典が科目・事業説明・節・備考の欄に印字した名称（name・kan_name・kou_name）に当たる。本文の説明文は表に無いので、事業名が出典に印字されていない支出は科目の名前に含まれる語で引く。' +
+  '自治体の比較は node_kind を "目" などに絞って行い、詳細は get_expenditure_node で木を辿る。' +
   '資料区分や軸の違う金額を足さない。足すときは describe_expenditure_columns の sum_rules に従う。where は列をまたぐ OR・NOT が無いので、2回に分けて問い合わせる。'
 
 const listJurisdictionsDescription =
-  '団体（自治体）の名称・6桁の団体コード・都道府県と、その団体の収録範囲（明細を検索できる年度・資料区分・会計。view が FULL なら明細の出典の原典の標題・URL も）を返す。' +
-  '歳出を検索する前に、団体コードと、比べたい年度・資料区分が収録されているかをここで確かめる。' +
-  '名称（部分一致）か団体コード（5桁・6桁）で絞り、絞らなければ全団体を団体コード順に返す。収録の無い団体は coverage が空。' +
+  '自治体の名称・6桁の自治体コード・都道府県と、その自治体の収録範囲（明細を検索できる年度・資料区分・会計。view が FULL なら明細が指す出典の標題・URL も）を返す。' +
+  '歳出を検索する前に、自治体コードと、比べたい年度・資料区分が収録されているかをここで確かめる。' +
+  '名称（部分一致）か自治体コード（5桁・6桁）で絞り、絞らなければ自治体コード順に返す。1頁は既定 20 件（最大 100）なので、全件は next_page_token を辿る。収録の無い自治体は coverage が空。' +
   '返った jurisdiction_code（6桁）・fiscal_year・document_kind・account_name は search_expenditure_nodes の条件にそのまま使える。検索は5桁のコードを受け付けず0件になるので、ここで6桁を引いてから渡す。名前とコードの両方を渡すと AND。'
 
 export const operations: Operation[] = [
   {
     name: 'list_jurisdictions',
-    summary: '団体と収録範囲',
+    summary: '自治体と収録範囲',
     method: 'get',
     path: '/v1/jurisdictions',
     pathParams: [],
@@ -451,10 +452,9 @@ export const operations: Operation[] = [
       view: z.enum(JURISDICTION_VIEWS).default('BASIC').describe(jurisdictionViewDescription),
     }),
     output: z.strictObject({
-      jurisdictions: z.array(Jurisdiction).describe('団体コードの昇順。'),
+      jurisdictions: z.array(Jurisdiction).describe('自治体コードの昇順。'),
       next_page_token: z.string().nullable().describe(NEXT_PAGE_TOKEN_HELP),
     }),
-    view: true,
     run: listJurisdictions,
   },
   {

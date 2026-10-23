@@ -11,8 +11,3 @@ ffmpeg -v error -y -i "$src" -an \
   -vf "drawbox=x=580:y=448:w=530:h=60:color=0xffffff@1:t=fill:enable='lt(t,4.9)',scale=1280:-2,fps=30" \
   -c:v h264_videotoolbox -b:v 900k -maxrate 1500k -bufsize 3000k -pix_fmt yuv420p -profile:v high -movflags +faststart \
   "$out/demo.mp4"
-ffmpeg -v error -y -ss 20 -i "$out/demo.mp4" -frames:v 1 "$out/demo-poster.png"
-uv run --no-project --exclude-newer 2026-10-09 --with pillow==12.3.0 python -c "
-from PIL import Image; import sys
-Image.open(sys.argv[1]).save(sys.argv[2], 'WEBP', quality=72, method=6)" "$out/demo-poster.png" "$out/demo-poster.webp"
-rm "$out/demo-poster.png"
