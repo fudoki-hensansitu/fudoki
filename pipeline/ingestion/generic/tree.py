@@ -635,7 +635,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
             if code is not None or not label or money or i in single or not numbered:
                 continue
             nearest = min(numbered, key=lambda n: abs(middle(n) - middle(i)))
-            if abs(middle(nearest) - middle(i)) <= label[0].y1 - label[0].y0:
+            if abs(middle(nearest) - middle(i)) <= float(settings.get('name_line_reach', 1)) * (label[0].y1 - label[0].y0):
                 attached[nearest].append(i)
         for number, lines_ in attached.items():
             members = tuple(sorted({*single.get(number, (number,)), *lines_}))

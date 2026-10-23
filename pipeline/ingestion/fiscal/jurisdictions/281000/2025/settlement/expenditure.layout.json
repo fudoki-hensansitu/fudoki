@@ -50,6 +50,7 @@
   "breakdown": {
     "節": {
       "name_column": true,
+      "name_line_reach": 1.5,
       "indent_chars": 2
     }
   },

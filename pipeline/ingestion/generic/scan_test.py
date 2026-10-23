@@ -305,6 +305,25 @@ class CellWordsTest(unittest.TestCase):
         self.assertEqual(self.paddle_words('1,981,045,000同', children, [100, 10, 210, 20], [102, 300]),
                          [('1,981,045,000', 100, 192), ('同', 200, 210)])
 
+    def test_a_dash_is_no_missed_amount_and_a_name_stroke_is_still_missed(self):
+        from ingestion.lib.scan_ocr import _without_dashes
+        page = {'regions': [{'observations': [
+            {'kind': 'region', 'raw_text': '円', 'bbox_pdf_pt': [150, 90, 155, 95]},
+            {'kind': 'region', 'raw_text': '費', 'bbox_pdf_pt': [60, 90, 66, 96]}]}]}
+        dash, bar, stroke = (150.0, 120.0, 154.5, 120.8), (30.0, 120.0, 40.0, 120.8), (61.0, 120.0, 65.0, 126.0)
+        self.assertEqual(_without_dashes([dash, bar, stroke], page), [bar, stroke])
+
+    def test_a_digit_run_after_a_comma_that_a_rule_crosses_ends_its_amount_after_three_digits(self):
+        # `11,726,051,000` | `5,918,437,000` (281000): the fragment `0005` crosses the rule; cut by a share of its
+        # box (two digits of four) the first amount lost a digit (`1,172,605,100`)
+        children = [('11', [136.0, 10, 139.9, 20]), (',', [140.8, 10, 141.8, 20]), ('726', [143.7, 10, 149.7, 20]),
+                    (',', [150.7, 10, 151.6, 20]), ('051', [154.5, 10, 160.3, 20]), (',', [161.2, 10, 162.2, 20]),
+                    ('0005', [164.1, 10, 175.6, 20]), (',', [176.6, 10, 177.5, 20]), ('918', [179.5, 10, 185.2, 20]),
+                    (',', [186.2, 10, 187.1, 20]), ('437', [190.0, 10, 194.8, 20]), (',', [196.7, 10, 197.7, 20]),
+                    ('000', [199.6, 10, 205.4, 20])]
+        words = self.paddle_words('11,726,051,0005,918,437,000', children, [136, 10, 206, 20], [60, 171.2, 300])
+        self.assertEqual([w[0] for w in words], ['11,726,051,000', '5,918,437,000'])
+
     def test_a_character_box_starting_just_before_its_rule_belongs_to_the_next_cell(self):
         children = [('159', [100, 10, 120, 20]), ('同', [124.6, 10, 134, 20]), ('項', [134, 10, 144, 20])]
         self.assertEqual(self.paddle_words('159同項', children, [100, 10, 144, 20], [60, 125.5, 300]),
