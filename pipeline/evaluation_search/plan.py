@@ -1,5 +1,5 @@
 """評価資料の索引の計画。選定（`source_selection/<自治体>.json` の `evaluation_selections`）と `instance.json` の設定から、
-出典ごとの item（頁ごとの PDF）の key と metadata を決める。ネットワークも PDF も読まない。
+出典ごとの item（PDF は頁ごと、CSV はデータ行ごと）の key と metadata を決める。ネットワークも出典の中身も読まない。
 
 設計は docs/prd/evaluation-search/dd.md。登録の script は `index.py`、Worker が引く catalog の生成は `serving/evaluation_catalog.py`。
 """
@@ -29,15 +29,18 @@ class Origin:
     title: str
     landing_url: str
     download_url: str
-    # 選定の pages。None は全頁
+    # 選定の pages。None は全頁（CSV は全データ行）
     pages: tuple[tuple[int, int], ...] | None
+    # 出典の形。csv は Power BI の公開レポートから取った表で、`pages` の「頁」はデータ行の番号（1 始まり）
+    origin_format: str = 'pdf'
 
 
 def load_origins(selection_dir: Path = SELECTION_DIR, *, use_ocr: bool = False) -> list[Origin]:
     """保存済みの評価資料を自治体・評価対象年度・選定の files の順に返す。保存の記録が無い選定は含めない。
 
-    OCR なしのインスタンス（`use_ocr: false`）には選定の `pdf_type: text` のファイルだけ、OCR ありには `scan` だけを返す。
+    OCR なしのインスタンス（`use_ocr: false`）には選定の `pdf_type: text` のファイルと CSV を、OCR ありには `scan` だけを返す。
     scan を文字の層の無いまま登録しないための関門で、選定の判断だけに頼らない（dd.md「拡大の条件」）。
+    CSV は文字だけなので OCR を使わない。
     """
     pdf_type = 'scan' if use_ocr else 'text'
     origins: list[Origin] = []
@@ -56,16 +59,23 @@ def load_origins(selection_dir: Path = SELECTION_DIR, *, use_ocr: bool = False) 
             for file, saved in zip(candidate['files'], archive['files']):
                 if file['sha256'] != saved['sha256']:
                     raise ValueError(f'{path.name}: 選定と保存の sha256 が違う: {saved["key"]}')
-                if file['pdf_type'] not in ('text', 'scan'):
-                    raise ValueError(f'{path.name}: pdf_type が text でも scan でもない: {file["pdf_type"]}')
-                if file['pdf_type'] != pdf_type:
-                    continue
-                pages = file['pages']
+                origin_format = file['format']
+                if origin_format == 'csv':
+                    if use_ocr:
+                        continue
+                    pages = None
+                else:
+                    if file['pdf_type'] not in ('text', 'scan'):
+                        raise ValueError(f'{path.name}: pdf_type が text でも scan でもない: {file["pdf_type"]}')
+                    if file['pdf_type'] != pdf_type:
+                        continue
+                    pages = file['pages']
                 origins.append(Origin(
                     jurisdiction=target['jurisdiction'], fiscal_year=target['fiscal_year'], sha256=file['sha256'],
                     bucket=archive['bucket'], r2_key=saved['key'], title=candidate['title'],
                     landing_url=candidate['landing_url'], download_url=file['download_url'],
-                    pages=None if pages is None else tuple((r['start'], r['end']) for r in pages)))
+                    pages=None if pages is None else tuple((r['start'], r['end']) for r in pages),
+                    origin_format=origin_format))
     hashes = [o.sha256 for o in origins]
     if len(set(hashes)) != len(hashes):
         raise ValueError('同じ sha256 の出典が複数の選定にある')
@@ -94,7 +104,10 @@ ITEM_FORMATS = ('pdf', 'md')
 
 
 def item_format(config: dict, origin: Origin) -> str:
-    """登録の形。config の `text_origins` に宣言した出典は、頁の PDF の代わりに pdfium で抜き出した文字（`md`）を item にする（ADR 0031）。"""
+    """登録の形。CSV の出典は宣言なしでデータ行ごとの文字（`md`）にする（ADR 0034）。
+    config の `text_origins` に宣言した PDF の出典は、頁の PDF の代わりに pdfium で抜き出した文字（`md`）を item にする（ADR 0031）。"""
+    if origin.origin_format == 'csv':
+        return 'md'
     return 'md' if origin.sha256 in (config.get('text_origins') or []) else 'pdf'
 
 

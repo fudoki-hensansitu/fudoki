@@ -197,12 +197,44 @@ export const sourceSelectionsSchema = z.array(sourceSelectionSchema).superRefine
 })
 
 /** 事業の評価の資料（主要施策の成果説明書・事務事業評価）のPDF。会計・お金の向きを持たず、頁範囲が無ければ全頁。 */
-export const evaluationFileSchema = z.object({
+const evaluationPdfSchema = z.object({
   ...fileFields,
   format: z.literal('pdf'),
   pdf_type: pdfTypeSchema,
   pages: pdfScopeSchema.nullable(),
 }).strict()
+
+/**
+ * Power BI の公開レポートの表を取る宣言。表・列は、レポートのデータモデル（conceptualschema）の名前のまま。
+ * 列は measure を除いた列を取る順で列挙し、order_by の列は行を一意に決める。
+ */
+export const powerBiAcquisitionSchema = z.object({
+  type: z.literal('powerbi'),
+  table: nonEmptyString,
+  columns: z.array(nonEmptyString).min(1),
+  order_by: z.array(nonEmptyString).min(1),
+}).strict().superRefine((acquisition, ctx) => {
+  if (new Set(acquisition.columns).size !== acquisition.columns.length) {
+    ctx.addIssue({ code: 'custom', path: ['columns'], message: 'Duplicate column' })
+  }
+  if (new Set(acquisition.order_by).size !== acquisition.order_by.length || acquisition.order_by.some(column => !acquisition.columns.includes(column))) {
+    ctx.addIssue({ code: 'custom', path: ['order_by'], message: 'order_by must be unique columns among columns' })
+  }
+})
+export type PowerBiAcquisition = z.infer<typeof powerBiAcquisitionSchema>
+
+/**
+ * 公開レポートの API から取った表の CSV。市が公開したファイルではなく、風土記が問い合わせた結果。
+ * download_url はレポートの URL で、sha256 は acquisition で取った CSV のバイト列のもの。
+ */
+const evaluationPowerBiCsvSchema = z.object({
+  ...fileFields,
+  format: z.literal('csv'),
+  acquisition: powerBiAcquisitionSchema,
+}).strict()
+
+export const evaluationFileSchema = z.discriminatedUnion('format', [evaluationPdfSchema, evaluationPowerBiCsvSchema])
+export type EvaluationFile = z.infer<typeof evaluationFileSchema>
 
 export const evaluationCandidateSchema = z.object({
   ...candidateFields,
@@ -244,7 +276,7 @@ export const evaluationSelectionsSchema = z.array(evaluationSelectionSchema).sup
       }
     }
     if (selection.archive) {
-      checkArchive(ctx, [index, 'archive'], selection.candidates[selectedIndex], selection.archive, evaluationObjectSlot(selection.target), () => evaluationObjectKey(selection.target, 'pdf'))
+      checkArchive(ctx, [index, 'archive'], selection.candidates[selectedIndex], selection.archive, evaluationObjectSlot(selection.target), format => evaluationObjectKey(selection.target, format))
     }
   }
 })

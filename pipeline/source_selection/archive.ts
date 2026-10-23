@@ -2,8 +2,9 @@ import { createHash, randomUUID } from 'node:crypto'
 import { mkdtemp, readFile, readdir, rename, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { evaluationSelectionsSchema, jurisdictionSelectionsSchema, sourceSelectionsSchema, targetKey, type ArchivedOrigin, type SourceTarget } from './schema'
+import { evaluationSelectionsSchema, jurisdictionSelectionsSchema, sourceSelectionsSchema, targetKey, type ArchivedOrigin, type PowerBiAcquisition, type SourceTarget } from './schema'
 import { downloadOriginal, MAX_BYTES } from './download'
+import { fetchPowerBiCsv } from './powerbi'
 import { ARCHIVE_BUCKET, evaluationObjectKey, evaluationObjectSlot, originObjectKey, originObjectSlot } from './storage'
 
 const digest = (body: Uint8Array) => createHash('sha256').update(body).digest('hex')
@@ -29,14 +30,15 @@ async function saveSelections(path: string, data: unknown) {
 }
 
 export type ArchiveTransport = {
-  download(url: string): Promise<{ body: Uint8Array; final_url: string }>
+  /** acquisition があるファイルは、url のレポートへ問い合わせた結果を返す（ダウンロードではない）。 */
+  download(url: string, acquisition?: PowerBiAcquisition): Promise<{ body: Uint8Array; final_url: string }>
   put(key: string, body: Uint8Array, contentType: string): Promise<void>
   list(prefix: string): Promise<string[]>
   remove(key: string): Promise<void>
 }
 
 /** 保存の計画が見る選定の形。決算書の選定（scope 付き）と評価資料の選定（pages 付き）が共通で満たす。 */
-export type ArchiveFile = { download_url: string; sha256: string | null; format: 'csv' | 'pdf' }
+export type ArchiveFile = { download_url: string; sha256: string | null; format: 'csv' | 'pdf'; acquisition?: PowerBiAcquisition }
 export type ArchiveSelection = {
   target: SourceTarget
   candidates: { id: string; files: ArchiveFile[] }[]
@@ -69,13 +71,10 @@ function settlementTarget(target: SourceTarget) {
 
 export const evaluationKind: ArchiveKind = {
   field: 'evaluation_selections',
-  formats: ['pdf'],
+  formats: ['csv', 'pdf'],
   parse: selections => { evaluationSelectionsSchema.parse(selections) },
   slot: target => evaluationObjectSlot(settlementTarget(target)),
-  key: (target, format, index) => {
-    if (format !== 'pdf') throw new Error('Evaluation originals are PDF')
-    return evaluationObjectKey(settlementTarget(target), format, index)
-  },
+  key: (target, format, index) => evaluationObjectKey(settlementTarget(target), format, index),
 }
 
 /** 同じ保存範囲のファイルを、確認済みバイト列ごとに共有する。 */
@@ -191,7 +190,7 @@ export async function archiveGroup<S extends ArchiveSelection>(group: S[], trans
     const downloaded = []
     for (const item of planned) {
       if (retained.has(item.file.sha256!)) continue
-      const response = await transport.download(item.file.download_url)
+      const response = await transport.download(item.file.download_url, item.file.acquisition)
       if (digest(response.body) !== item.file.sha256) throw new Error(`Original changed; inspect and reselect before archiving: ${item.file.download_url}`)
       if (!matchesDeclaredFormat(response.body, item.file.format)) throw new Error(`Original is not a ${item.file.format.toUpperCase()}; inspect and reselect before archiving: ${item.file.download_url}`)
       if (response.body.byteLength > MAX_BYTES) throw new Error('Original exceeds the cf upload size limit')
@@ -230,7 +229,8 @@ async function runCf(args: string[], allowMissing = false, capture = false): Pro
 }
 
 const cfTransport: ArchiveTransport = {
-  async download(url) {
+  async download(url, acquisition) {
+    if (acquisition) return { body: (await fetchPowerBiCsv(url, acquisition)).body, final_url: url }
     const { body, final_url } = await downloadOriginal(url)
     return { body, final_url }
   },
@@ -262,7 +262,7 @@ const cfTransport: ArchiveTransport = {
 
 async function main(args: string[]) {
   if (args.includes('--help')) {
-    console.log('Usage: bun pipeline/source_selection/archive.ts [--write] [--evaluation] [--jurisdiction CODE] [--replacement-selection JSON] [--next-part N]\nDefault: read-only selected-original plan. --evaluation targets only the evaluation_selections (keys evaluation-settlement[-N].pdf) and leaves settlement originals untouched; without it evaluation_selections are never touched. JSON is a file containing one existing source-selection schema object with archive:null. Replacement retains the same target\'s saved files and keys, uploads only new bytes at the next part number, and saves the selection after all receipts succeed; it never deletes old objects. Optional --next-part requires replacement and sets the first new part number above all saved receipt numbers; plan and write use the same argument, and existing objects still cause an error. Without replacement, --write preserves the existing archive flow. No readback.')
+    console.log('Usage: bun pipeline/source_selection/archive.ts [--write] [--evaluation] [--jurisdiction CODE] [--replacement-selection JSON] [--next-part N]\nDefault: read-only selected-original plan. --evaluation targets only the evaluation_selections (keys evaluation-settlement[-N].pdf|csv; a csv with an acquisition is fetched from the Power BI report, not downloaded) and leaves settlement originals untouched; without it evaluation_selections are never touched. JSON is a file containing one existing source-selection schema object with archive:null. Replacement retains the same target\'s saved files and keys, uploads only new bytes at the next part number, and saves the selection after all receipts succeed; it never deletes old objects. Optional --next-part requires replacement and sets the first new part number above all saved receipt numbers; plan and write use the same argument, and existing objects still cause an error. Without replacement, --write preserves the existing archive flow. No readback.')
     return
   }
   let write = false

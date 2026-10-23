@@ -97,3 +97,23 @@ test('an evaluation archive must use evaluation-settlement keys that match the s
   ]) expect(evaluationSelectionsSchema.safeParse([{ ...base, archive }]).success).toBe(false)
   expect(evaluationSelectionsSchema.safeParse([{ ...base, selected_candidate_id: null, archive: receipt(`${prefix}evaluation-settlement.pdf`) }]).success).toBe(false)
 })
+
+test('an evaluation file is a PDF, or a CSV taken from a Power BI report with its acquisition', () => {
+  const settlement = { jurisdiction: '132012', fiscal_year: 2025, document_kind: 'settlement' as const }
+  const acquisition = { type: 'powerbi' as const, table: '01 メイン（済）', columns: ['番号', '事務事業名'], order_by: ['番号'] }
+  const file = { download_url: 'https://app.powerbi.com/view?r=abc', sha256: 'c'.repeat(64), format: 'csv' as const, acquisition }
+  const base = { target: settlement, candidates: [{ ...candidate, id: 'representative', files: [file] }], selected_candidate_id: 'representative', reason: '公開レポートの表。' }
+  const receipt = (key: string) => ({ bucket: 'fudoki-inputs' as const, candidate_id: 'representative', archived_at: '2026-10-23T00:00:00Z', files: [{ key, sha256: file.sha256, final_url: file.download_url }] })
+  const prefix = 'fiscal/source-selection/132012/2025/'
+  expect(evaluationSelectionsSchema.safeParse([{ ...base, archive: null }]).success).toBe(true)
+  expect(evaluationSelectionsSchema.safeParse([{ ...base, archive: receipt(`${prefix}evaluation-settlement.csv`) }]).success).toBe(true)
+  expect(evaluationSelectionsSchema.safeParse([{ ...base, archive: receipt(`${prefix}evaluation-settlement.pdf`) }]).success).toBe(false)
+  for (const broken of [
+    { ...file, acquisition: undefined },
+    { ...file, acquisition: { ...acquisition, order_by: ['存在しない列'] } },
+    { ...file, acquisition: { ...acquisition, columns: ['番号', '番号'] } },
+    { ...file, acquisition: { ...acquisition, columns: [] } },
+    { ...file, acquisition: { ...acquisition, type: 'tableau' } },
+    { ...file, pdf_type: 'text' },
+  ]) expect(evaluationSelectionsSchema.safeParse([{ ...base, archive: null, candidates: [{ ...base.candidates[0]!, files: [broken] }] }]).success).toBe(false)
+})

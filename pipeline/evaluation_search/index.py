@@ -1,4 +1,4 @@
-"""評価資料を頁ごとの PDF にして AI Search の索引へ登録する（dd.md「索引の登録 script と宣言」）。
+"""評価資料を頁ごとの PDF（CSV はデータ行ごとの文字）にして AI Search の索引へ登録する（dd.md「索引の登録 script と宣言」）。
 
     bun run --cwd pipeline evaluation:index            # 計画の表示だけ（R2 と索引は読むだけ）
     bun run --cwd pipeline evaluation:index --write    # 登録して、確認できた出典の記録を instance.json に書く
@@ -9,6 +9,7 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import hashlib
 import io
 import json
@@ -76,9 +77,13 @@ def sha256_of(path: Path) -> str:
     return digest.hexdigest()
 
 
+def origin_path(origin: plan.Origin) -> Path:
+    return CACHE / f'{origin.sha256}.{origin.origin_format}'
+
+
 def fetch_origin(origin: plan.Origin) -> Path:
     """R2 の出典をローカルの cache に置く。選定の sha256 と違えば止める（cache が壊れていれば取り直す）。"""
-    path = CACHE / f'{origin.sha256}.pdf'
+    path = origin_path(origin)
     if path.exists() and sha256_of(path) == origin.sha256:
         return path
     CACHE.mkdir(parents=True, exist_ok=True)
@@ -106,6 +111,36 @@ def fetch_origin(origin: plan.Origin) -> Path:
     return path
 
 
+class CsvDocument:
+    """CSV の出典。データ行（ヘッダの次から、1 始まり）を、頁のように `page_text` で引く。"""
+
+    def __init__(self, path: Path):
+        csv.field_size_limit(1 << 30)  # 長い本文の列がある（既定の 128KiB では足りない出典に備える）
+        with path.open(encoding='utf-8', newline='') as stream:
+            rows = list(csv.reader(stream))
+        if not rows:
+            raise ValueError(f'{path.name}: CSV にヘッダが無い')
+        self.header, self.rows = rows[0], rows[1:]
+        for number, row in enumerate(self.rows, 1):
+            if len(row) != len(self.header):
+                raise ValueError(f'{path.name}: データ行 {number} の列数 {len(row)} がヘッダの {len(self.header)} と違う')
+
+    def __len__(self) -> int:
+        return len(self.rows)
+
+    def text(self, row: int) -> str:
+        """「列名: 値」を列の順に1行ずつ並べた文字。空の値は省く。"""
+        return '\n'.join(f'{name}: {value}' for name, value in zip(self.header, self.rows[row - 1]) if value != '')
+
+    def close(self) -> None:
+        pass
+
+
+def open_origin(origin: plan.Origin):
+    path = origin_path(origin)
+    return CsvDocument(path) if origin.origin_format == 'csv' else pdfium.PdfDocument(str(path))
+
+
 def split_page(document, page: int) -> bytes:
     """出典の 1 頁（1 始まり）だけの PDF。4MiB を超えれば止める。pdfium は thread safe ではないので主 thread で呼ぶ。"""
     single = pdfium.PdfDocument.new()
@@ -122,7 +157,10 @@ def split_page(document, page: int) -> bytes:
 
 
 def page_text(document, page: int) -> str:
-    """pdfium で抜き出した頁（1 始まり）の文字。文字の item の本文で、改行は LF にそろえる。頁と textpage は都度閉じる（数万頁を回すため）。"""
+    """pdfium で抜き出した頁（1 始まり）の文字。CSV はデータ行（1 始まり）の文字。文字の item の本文で、改行は LF にそろえる。
+    頁と textpage は都度閉じる（数万頁を回すため）。"""
+    if isinstance(document, CsvDocument):
+        return document.text(page).replace('\r\n', '\n').replace('\r', '\n')
     pdf_page = document[page - 1]
     try:
         textpage = pdf_page.get_textpage()
@@ -274,8 +312,8 @@ def build_plans(instance: dict, origins: list[plan.Origin], full: bool = False) 
         indexed = list_origins(config['name'], [o.sha256 for o in origins] + dropped)
     plans: list[OriginPlan] = []
     for origin in origins:
-        path = fetch_origin(origin)
-        document = pdfium.PdfDocument(str(path))
+        fetch_origin(origin)
+        document = open_origin(origin)
         try:
             page_count = len(document)
             pages = plan.selected_pages(origin, page_count)
@@ -313,7 +351,8 @@ def describe(plans: list[OriginPlan], strays: list[dict], skipped: int = 0) -> N
     for p in plans:
         o = p.origin
         state = '記録あり' if p.recorded else '記録なし'
-        log(f'{o.jurisdiction} {o.fiscal_year} {o.sha256[:12]} 出典{p.page_count}頁 → 登録{len(p.pages)}頁 {p.fmt} '
+        unit = '行' if o.origin_format == 'csv' else '頁'
+        log(f'{o.jurisdiction} {o.fiscal_year} {o.sha256[:12]} 出典{p.page_count}{unit} → 登録{len(p.pages)}{unit} {p.fmt} '
             f'[{state}] 登録済み{p.ok} 待ち{p.waiting} 追加{len(p.add)} 削除{len(p.delete)}')
     log(f'計画に無い item: {len(strays)}')
 
@@ -370,7 +409,7 @@ def apply(instance: dict, plans: list[OriginPlan], strays: list[dict], workers: 
             continue
         with tempfile.TemporaryDirectory(prefix='evaluation-index-') as directory:
             jobs: list[tuple[dict, Path]] = []
-            document = pdfium.PdfDocument(str(CACHE / f'{p.origin.sha256}.pdf'))
+            document = open_origin(p.origin)
             try:
                 for item in p.add:
                     page = item['metadata']['page']
@@ -379,7 +418,7 @@ def apply(instance: dict, plans: list[OriginPlan], strays: list[dict], workers: 
                     jobs.append((item, path))
             finally:
                 document.close()
-            log(f'{p.origin.sha256[:12]}: {len(jobs)} 頁')
+            log(f'{p.origin.sha256[:12]}: {len(jobs)} {"行" if p.origin.origin_format == "csv" else "頁"}')
             upload_all(name, jobs, workers)
 
 
