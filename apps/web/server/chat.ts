@@ -52,13 +52,33 @@ export function reasoningEffort(value: string | undefined): { reasoning_effort?:
   return {}
 }
 
+/** 原典の PDF 上の位置。View が原典を開くための列で、AI が答えに使うことはない */
+const SOURCE_POSITION = /^(amount_)?source_(page|x0|y0|x1|y1)$/
+
+/** 結果の JSON から原典上の位置を落とす。読めない text はそのまま返す。送り直す履歴の token を減らす */
+export function trimForModel(text: string): string {
+  let data: unknown
+  try {
+    data = JSON.parse(text)
+  } catch {
+    return text
+  }
+  const strip = (v: unknown): unknown => {
+    if (Array.isArray(v)) return v.map(strip)
+    if (v && typeof v === 'object')
+      return Object.fromEntries(Object.entries(v).filter(([k]) => !SOURCE_POSITION.test(k)).map(([k, x]) => [k, strip(x)]))
+    return v
+  }
+  return JSON.stringify(strip(data))
+}
+
 /** tool の結果のうち text だけを AI に渡す */
 function textOnly({ output }: { output: unknown }) {
   const content = (output as { content?: unknown })?.content
   const text = Array.isArray(content)
     ? content.filter((c) => c && c.type === 'text' && typeof c.text === 'string').map((c) => c.text as string).join('\n')
     : ''
-  return { type: 'text' as const, value: text || '結果がありません' }
+  return { type: 'text' as const, value: text ? trimForModel(text) : '結果がありません' }
 }
 
 export async function handleChat(c: AppContext): Promise<Response> {

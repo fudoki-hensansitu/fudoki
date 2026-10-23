@@ -45,7 +45,7 @@ export interface Jurisdiction {
     accounts: {
       account_name: string
       account_kind: string
-      origins: Origin[]
+      origins?: Origin[]
     }[]
   }[]
 }

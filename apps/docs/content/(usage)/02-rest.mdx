@@ -67,7 +67,7 @@ description: https://api.fudoki.dev に JSON で問い合わせ、歳出の木�
 
 ## 原典
 
-応答の `origins` には、結果の行が指す原典（資料名・公開 URL・形式・SHA-256）が入ります。行の `origin_id` から引いてください。団体の一覧では、原典（`origin_id`・資料名・公開 URL・形式）は会計ごとに `coverage[].accounts[].origins` に入っています。
+応答の `origins` には、結果の行が指す原典（資料名・公開 URL・形式・SHA-256）が入ります。行の `origin_id` から引いてください。団体の一覧（`GET /v1/jurisdictions`）は既定（`view=BASIC`）では年度・資料区分・会計までを返します。原典（`origin_id`・資料名・公開 URL・形式）が要るときは `view=FULL` を付けると、会計ごとに `coverage[].accounts[].origins` に入ります。
 
 `GET /v1/origins/{origin_id}/pdf` で自治体の公開 PDF を表示用に中継します。任意 URL や query は指定できません。取得 URL は percent-encoding した `X-Origin-Url`、取得日時は ISO 8601 UTC の `X-Origin-Fetched-At` ヘッダーで返します。取り込み時の内容との一致は検査しません。保持期限と上限は [MCP の PDF 表示](/mcp#表で見るmcp-apps)を参照してください。
 
