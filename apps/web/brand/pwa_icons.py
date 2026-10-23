@@ -5,6 +5,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 
 PUBLIC = Path(__file__).resolve().parent.parent / "public"
+# BG は tokens.ts の BACKGROUND_LIGHT と揃える
 BG, INK, RULE = "#ffffff", "#2f5d43", "#29523b"
 # favicon.svg（32 x 32）の棒: (x, y, 幅, 高さ)。最後が下線
 BARS = [(2, 14, 4, 14), (8, 6, 4, 22), (14, 18, 4, 10), (20, 2, 4, 26), (26, 11, 4, 17)]

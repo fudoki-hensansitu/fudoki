@@ -2,6 +2,7 @@
 // 見出しの明朝は /fonts/mincho.woff2（この頁で使う字だけの subset）。文言を変えたら `bun run --cwd apps/web build:font` で作り直す
 import { HOME } from './home-data'
 import { PWA_HEAD, PWA_REGISTER } from './pwa'
+import { BACKGROUND_DARK, BACKGROUND_LIGHT, THEME_COLOR_META } from './tokens'
 import { LOGO_G } from './logo'
 
 const MCP = 'https://api.fudoki.dev/mcp'
@@ -28,7 +29,7 @@ const libraryMax = Math.max(...library.rows.map((r) => r.amount))
 export const TOKENS_CSS = `
 @font-face{font-family:"Fudoki Mincho";src:url("/fonts/mincho.woff2") format("woff2");font-weight:400;font-display:swap}
 :root{
---background:#ffffff;--foreground:#2b2723;--card:#f8f5ee;--card-foreground:#2b2723;
+--background:${BACKGROUND_LIGHT};--foreground:#2b2723;--card:#f8f5ee;--card-foreground:#2b2723;
 --secondary:#ece6da;--secondary-foreground:#2b2723;--muted:#ece6da;--muted-foreground:#6b655c;
 --primary:#2f5d43;--primary-foreground:#f8f5ee;--accent:#e9efe9;--accent-foreground:#2f5d43;
 --border:#ddd6c8;--ring:#2f5d43;--logo-rule-ink:#29523b;
@@ -48,7 +49,7 @@ export const TOKENS_CSS = `
 --noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 @media (prefers-color-scheme:dark){:root{
---background:#1b1916;--foreground:#ece6da;--card:#24211d;--card-foreground:#ece6da;
+--background:${BACKGROUND_DARK};--foreground:#ece6da;--card:#24211d;--card-foreground:#ece6da;
 --secondary:#302c26;--secondary-foreground:#ece6da;--muted:#302c26;--muted-foreground:#a8a094;
 --primary:#8fbfa2;--primary-foreground:#1b1916;--accent:#26332b;--accent-foreground:#8fbfa2;
 --border:#3b362f;--ring:#8fbfa2;--logo-rule-ink:#9cc7ad;
@@ -405,8 +406,7 @@ export const LANDING_HTML = `<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>風土記（fudoki）— 町の家計簿</title>
 <meta name="description" content="${DESCRIPTION}">
-<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#1b1916" media="(prefers-color-scheme: dark)">
+${THEME_COLOR_META}
 <link rel="canonical" href="https://fudoki.dev/">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">

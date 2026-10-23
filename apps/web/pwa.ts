@@ -1,5 +1,6 @@
 // ホーム画面に追加できるようにするための manifest・service worker・オフライン時の頁。
 // service worker は「繋がらないときの案内」だけを持つ。会話・データは常に通信で取るので、頁も API もキャッシュしない
+import { BACKGROUND_DARK, BACKGROUND_LIGHT, THEME_COLOR_META } from './tokens'
 export const MANIFEST = JSON.stringify({
   name: '風土記（fudoki）— 町の家計簿',
   short_name: '風土記',
@@ -8,8 +9,8 @@ export const MANIFEST = JSON.stringify({
   start_url: '/',
   scope: '/',
   display: 'standalone',
-  background_color: '#ffffff',
-  theme_color: '#ffffff',
+  background_color: BACKGROUND_LIGHT,
+  theme_color: BACKGROUND_LIGHT,
   icons: [
     { src: '/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
     { src: '/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
@@ -47,11 +48,10 @@ export const OFFLINE_HTML = `<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>オフライン — 風土記</title>
 <meta name="robots" content="noindex">
-<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#1b1916" media="(prefers-color-scheme: dark)">
+${THEME_COLOR_META}
 <style>
-:root{color-scheme:light dark;--bg:#ffffff;--fg:#1b1916}
-@media(prefers-color-scheme:dark){:root{--bg:#1b1916;--fg:#f3f0ea}}
+:root{color-scheme:light dark;--bg:${BACKGROUND_LIGHT};--fg:#1b1916}
+@media(prefers-color-scheme:dark){:root{--bg:${BACKGROUND_DARK};--fg:#f3f0ea}}
 body{margin:0;min-height:100dvh;display:grid;place-items:center;padding:24px;background:var(--bg);color:var(--fg);font:400 16px/1.8 system-ui,sans-serif;text-align:center}
 button{margin-top:16px;font:inherit;padding:10px 24px;border-radius:999px;border:1px solid currentColor;background:transparent;color:inherit}
 </style>
