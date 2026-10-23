@@ -3002,10 +3002,78 @@
         "fiscal_year": 2025,
         "document_kind": "settlement"
       },
-      "candidates": [],
-      "selected_candidate_id": null,
-      "archive": null,
-      "reason": "未選定（Power BI のみの公開）。令和8年度（2026年度）事務事業評価結果（令和7年度（2025年度）事業）は公表済みだが、Power BI でのみ公開されている。Orca のブラウザで描画した頁（https://www.city.hachioji.tokyo.jp/shisei/001/004/004/002/p035956.html、更新日令和8年8月31日）に、令和8年度（2026年度）事務事業評価結果（令和7年度事業）と令和7年度（2025年度）事務事業評価結果（令和6年度事業）が Power BI（app.powerbi.com）の外部リンクで載る。同頁の PDF は令和7年度（2025年度）事務事業点検結果一覧（令和6年度事業、zigyoutenkenkekka.pdf）だけで、令和7年度事業の PDF は無い。行政評価結果の一覧（https://www.city.hachioji.tokyo.jp/shisei/001/004/004/002/index.html）も令和6年度評価分（令和5年度事業）までが PDF、令和7年度評価分以降が Power BI。確認日：2026-10-23T09:47:41+00:00（UTC）。"
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和8年度 事務事業評価結果（令和7年度実施分）",
+          "landing_url": "https://www.city.hachioji.tokyo.jp/shisei/001/004/004/002/p035956.html",
+          "inspected_at": "2026-10-23T11:15:33Z",
+          "files": [
+            {
+              "download_url": "https://app.powerbi.com/view?r=eyJrIjoiN2U0NDBkZWEtNDAwMS00NjM0LThjMTItYzdhNjQ1NjQxNjgwIiwidCI6IjNhM2M3YWY2LWZhMDgtNDcyNy1hOGJjLTIxMGNmYjc3M2RjMCJ9",
+              "sha256": "1db4549701053f53e7503f2b3100519519ba96655287c54bb75afe21ae3fad63",
+              "format": "csv",
+              "acquisition": {
+                "type": "powerbi",
+                "table": "01 メイン（済）",
+                "columns": [
+                  "番号",
+                  "事務事業名（検索キー）",
+                  "中事業コード",
+                  "事務事業名",
+                  "担当部課",
+                  "種別",
+                  "事業分類",
+                  "編",
+                  "編名",
+                  "章",
+                  "章名",
+                  "節",
+                  "節名",
+                  "細施策",
+                  "細施策名",
+                  "会計",
+                  "款",
+                  "項",
+                  "目",
+                  "事業目的",
+                  "令和７年度目標",
+                  "課題",
+                  "目標に対する事業実績",
+                  "令和７年度評価",
+                  "令和５年度",
+                  "令和６年度",
+                  "令和７年度",
+                  "人員体制対前年度比",
+                  "経常コスト削減に向けた今後の方策",
+                  "今後の方向性",
+                  "令和８年度",
+                  "令和９年度",
+                  "令和10年度",
+                  "取組区分"
+                ],
+                "order_by": [
+                  "番号"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132012/2025/evaluation-settlement.csv",
+            "sha256": "1db4549701053f53e7503f2b3100519519ba96655287c54bb75afe21ae3fad63",
+            "final_url": "https://app.powerbi.com/view?r=eyJrIjoiN2U0NDBkZWEtNDAwMS00NjM0LThjMTItYzdhNjQ1NjQxNjgwIiwidCI6IjNhM2M3YWY2LWZhMDgtNDcyNy1hOGJjLTIxMGNmYjc3M2RjMCJ9"
+          }
+        ],
+        "archived_at": "2026-10-23T12:30:08.981Z"
+      },
+      "reason": "事務事業評価は Power BI の公開レポート（Web に公開）でだけ出ていて、PDF・CSV のファイルが無い。この出典は市が公開したファイルではなく、風土記が公開レポートの API（modelsAndExploration・conceptualschema・querydata）に問い合わせて取った表の CSV のスナップショット（pipeline/source_selection/powerbi.ts）。表は「01 メイン（済）」、列は measure を除く34列（部・部並び順・課・課並び順は、所管が担当部課に入っていて、共同所管の事業を複数行にするので除いた）、行は番号で並べる。事業数568（番号の種類。うち事務事業453・マンパワー115）、行も568。年度は資料の題でなく本文の実績の列で決めた: 列「令和７年度目標」「令和７年度評価」「令和７年度」（令和7年度＝2025年度の実績）。復元の確認: 画面の総事業数568、今後の方向性の内訳（継続518・拡大・充実35・縮小・休止8・廃止・終了7）が表と一致。掲載頁: https://www.city.hachioji.tokyo.jp/shisei/001/004/004/002/p035956.html。確認日時 2026-10-23T11:15:33Z。"
     },
     {
       "target": {
@@ -3013,10 +3081,78 @@
         "fiscal_year": 2024,
         "document_kind": "settlement"
       },
-      "candidates": [],
-      "selected_candidate_id": null,
-      "archive": null,
-      "reason": "令和7年度（2025年度）評価分（令和6年度（2024年度）事業）の事務事業評価結果は Power BI でのみ公開（https://www.city.hachioji.tokyo.jp/shisei/001/004/004/002/p035956.html の外部リンク）。同頁の PDF は事務事業点検結果一覧（zigyoutenkenkekka.pdf、8頁）のみで、目標・評価・方向を持つが実績値・決算額の記載が無く、評価の記述として不十分のため選ばない。行政評価結果の一覧（https://www.city.hachioji.tokyo.jp/shisei/001/004/004/002/index.html）を描画して見ると、令和6年度（2024年度）評価分までは PDF 掲載、令和7年度評価分以降が Power BI で、令和6年度事業のPDF版は無い。確認日：2026-10-23（UTC）。"
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和7年度 事務事業評価結果（令和6年度事業実施分）",
+          "landing_url": "https://www.city.hachioji.tokyo.jp/shisei/001/004/004/002/p035956.html",
+          "inspected_at": "2026-10-23T11:15:33Z",
+          "files": [
+            {
+              "download_url": "https://app.powerbi.com/view?r=eyJrIjoiNGRkZWMxNTctNDBjYS00ZTNlLWFmMzAtMDIxNjkyOWQ0MWI0IiwidCI6IjNhM2M3YWY2LWZhMDgtNDcyNy1hOGJjLTIxMGNmYjc3M2RjMCJ9",
+              "sha256": "d0f2b130785dcae29e528db1933e7b5e322b9756f815bef69a24a62915deaf14",
+              "format": "csv",
+              "acquisition": {
+                "type": "powerbi",
+                "table": "01 メイン（済）",
+                "columns": [
+                  "番号",
+                  "事務事業名（検索キー）",
+                  "中事業コード",
+                  "事務事業名",
+                  "担当部課",
+                  "種別",
+                  "事業分類",
+                  "編",
+                  "編名",
+                  "章",
+                  "章名",
+                  "節",
+                  "節名",
+                  "細施策",
+                  "細施策名",
+                  "会計",
+                  "款",
+                  "項",
+                  "目",
+                  "事業目的",
+                  "令和６年度目標",
+                  "課題",
+                  "目標に対する事業実績",
+                  "令和６年度評価",
+                  "令和４年度",
+                  "令和５年度",
+                  "令和６年度",
+                  "人員体制対前年度比",
+                  "経常コスト削減に向けた今後の方策",
+                  "今後の方向性",
+                  "令和７年度",
+                  "令和８年度",
+                  "令和９年度"
+                ],
+                "order_by": [
+                  "番号",
+                  "担当部課"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132012/2024/evaluation-settlement.csv",
+            "sha256": "d0f2b130785dcae29e528db1933e7b5e322b9756f815bef69a24a62915deaf14",
+            "final_url": "https://app.powerbi.com/view?r=eyJrIjoiNGRkZWMxNTctNDBjYS00ZTNlLWFmMzAtMDIxNjkyOWQ0MWI0IiwidCI6IjNhM2M3YWY2LWZhMDgtNDcyNy1hOGJjLTIxMGNmYjc3M2RjMCJ9"
+          }
+        ],
+        "archived_at": "2026-10-23T12:30:14.850Z"
+      },
+      "reason": "事務事業評価は Power BI の公開レポート（Web に公開）でだけ出ていて、PDF・CSV のファイルが無い。この出典は市が公開したファイルではなく、風土記が公開レポートの API（modelsAndExploration・conceptualschema・querydata）に問い合わせて取った表の CSV のスナップショット（pipeline/source_selection/powerbi.ts）。表は「01 メイン（済）」、列は measure を除く33列（部・部並び順・課・課並び順は、所管が担当部課に入っていて、共同所管の事業を複数行にするので除いた）、行は番号・担当部課で並べる。事業数560（番号の種類。うち事務事業447・マンパワー113）、行は562（番号44と266が担当部課ごとの2行）。年度は資料の題でなく本文の実績の列で決めた: 列「令和６年度目標」「令和６年度評価」「令和６年度」（令和6年度＝2024年度の実績）。復元の確認: 画面の総事務事業数560、今後の方向性の内訳（継続415・拡大35・改善61・再構築29・縮小・廃止14・終了6）と令和6年度評価の内訳（目標以上の達成3・達成531・やや不十分25・不十分1）が表と一致。掲載頁: https://www.city.hachioji.tokyo.jp/shisei/001/004/004/002/p035956.html。確認日時 2026-10-23T11:15:33Z。"
     },
     {
       "target": {

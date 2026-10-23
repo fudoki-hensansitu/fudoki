@@ -9017,6 +9017,38 @@
       ]
     },
     {
+      "origin_sha256": "d0f2b130785dcae29e528db1933e7b5e322b9756f815bef69a24a62915deaf14",
+      "jurisdiction": "132012",
+      "fiscal_year": 2024,
+      "title": "令和7年度 事務事業評価結果（令和6年度事業実施分）",
+      "url": "https://app.powerbi.com/view?r=eyJrIjoiNGRkZWMxNTctNDBjYS00ZTNlLWFmMzAtMDIxNjkyOWQ0MWI0IiwidCI6IjNhM2M3YWY2LWZhMDgtNDcyNy1hOGJjLTIxMGNmYjc3M2RjMCJ9",
+      "landing_url": "https://www.city.hachioji.tokyo.jp/shisei/001/004/004/002/p035956.html",
+      "origin_format": "csv",
+      "item_format": "md",
+      "pages": [
+        {
+          "start": 1,
+          "end": 562
+        }
+      ]
+    },
+    {
+      "origin_sha256": "1db4549701053f53e7503f2b3100519519ba96655287c54bb75afe21ae3fad63",
+      "jurisdiction": "132012",
+      "fiscal_year": 2025,
+      "title": "令和8年度 事務事業評価結果（令和7年度実施分）",
+      "url": "https://app.powerbi.com/view?r=eyJrIjoiN2U0NDBkZWEtNDAwMS00NjM0LThjMTItYzdhNjQ1NjQxNjgwIiwidCI6IjNhM2M3YWY2LWZhMDgtNDcyNy1hOGJjLTIxMGNmYjc3M2RjMCJ9",
+      "landing_url": "https://www.city.hachioji.tokyo.jp/shisei/001/004/004/002/p035956.html",
+      "origin_format": "csv",
+      "item_format": "md",
+      "pages": [
+        {
+          "start": 1,
+          "end": 568
+        }
+      ]
+    },
+    {
       "origin_sha256": "0a0e7c448240f86d20f926bba0d18d6514bcd9bc8ca54105beb6ebb6fdec5f2b",
       "jurisdiction": "132021",
       "fiscal_year": 2023,
