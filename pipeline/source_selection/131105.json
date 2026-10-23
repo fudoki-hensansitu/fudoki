@@ -2376,7 +2376,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "主要な施策の成果等報告書は予算決算比較表と不用額の理由だけ、文字層も壊れている。探した頁の記録は無い。探索した範囲では選べる評価資料が無かった（2026-10-14確認）。"
+      "reason": "未選定（評価資料なし）。令和7年度（2025年度）主要な施策の成果等報告書は公表済みで、Orca のブラウザで描画した掲載一覧（https://www.city.meguro.tokyo.jp/zaisei/kusei/yosan/shuyou.html）に P1〜P42（r7syuyousesaku1_1.pdf、50頁）・P43〜P171（r7syuyousesaku2.pdf、129頁）・P172〜P466（r7syuyousesaku3.pdf）の3分冊（印字頁466頁）がある。目次は「款別予算決算比較表・歳入・歳出の各款」「国民健康保険特別会計」「後期高齢者医療特別会計」などの決算の比較表と執行状況で、冒頭の「Ⅲ 事業の執行実績について」は歳入決算額・歳出決算額・執行率・繰越額の記述。事業ごとの目標・成果指標・評価・課題の欄が無く、文字層も壊れている（pdftotext が文字化け）。2023・2024年度の同報告書を選ばなかった判断と同じ。ほかに全庁の事務事業評価・行政評価は見つからない（DuckDuckGo の site 検索で出るのは指定管理者運営評価・教育委員会の点検・評価・分野別計画の評価・事務事業見直し取組結果一覧（24〜26年度の削減額の集計、https://www.city.meguro.tokyo.jp/documents/630/torikumikekka_1.pdf）・実施計画（https://www.city.meguro.tokyo.jp/kikakukeiei/kusei/keikaku/jissi-zaiseikeikaku2025.html）で、事業ごとの評価ではない）。確認日：2026-10-23T09:47:41+00:00（UTC）。"
     },
     {
       "target": {

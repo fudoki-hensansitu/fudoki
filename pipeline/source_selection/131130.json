@@ -1732,7 +1732,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "未選定。令和7年度決算に係る主要な施策の成果に関する報告書は未公表。決算のあらましの一覧（https://www.city.shibuya.tokyo.jp/kusei/zaisei/kessan-aramashi/、JavaScript で描かれるので Orca のブラウザで描画して読んだ）の最新は「令和6年度決算のあらまし」（kessan06.html）で、令和7年度の頁は掲載されていない。2023・2024年度の評価資料（主要な施策の成果に関する報告書）は各年度の決算のあらましの頁に載っている。確認日：2026-10-22T04:35:59+00:00（UTC）。"
+      "reason": "未選定（未公表）。令和7年度決算に係る主要な施策の成果に関する報告書は未公表。JavaScript で描かれる決算のあらましの一覧（https://www.city.shibuya.tokyo.jp/kusei/zaisei/kessan-aramashi/）を Orca のブラウザで描画して読んだところ、最新は「令和6年度決算のあらまし」（https://www.city.shibuya.tokyo.jp/kusei/zaisei/kessan-aramashi/kessan06.html）で、令和7年度の頁は無い。2023・2024年度の評価資料（主要な施策の成果に関する報告書）は各年度の決算のあらましの頁に載っている。渋谷区の全庁の行政評価・事務事業評価は DuckDuckGo の site 検索（行政評価・事務事業評価）で見つからず、出るのは教育委員会の点検・評価だけ。確認日：2026-10-23T09:47:41+00:00（UTC）。"
     },
     {
       "target": {
