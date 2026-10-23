@@ -3042,7 +3042,18 @@
         }
       ],
       "selected_candidate_id": "representative",
-      "archive": null,
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132012/2023/evaluation-settlement.pdf",
+            "sha256": "3b301d963a7ce2288e84b3a63fb7b40cf71c1e984b30c9d6f245f36251b9a485",
+            "final_url": "https://www.city.hachioji.tokyo.jp/shisei/001/004/004/002/p034392_d/fil/hyoukasito.pdf"
+          }
+        ],
+        "archived_at": "2026-10-23T08:21:24.469Z"
+      },
       "reason": "令和5年度（2023年度）実施分の事務事業評価シート（562頁、令和6年9月2日更新）。1事業1頁で、事業名・担当部課・基本計画の施策・予算科目（款項目）、令和5年度目標と目標に対する事業実績と評価（達成など）、活動・成果指標の令和3〜5年度の推移、経常費用・純経常コストの令和3〜5年度、今後の方向性（維持など）を載せる。年度は各頁の見出し「事務事業評価シート（令和５年度（2023年度）実施分）」と、指標・経済性の表の最新年度列「令和５年度」で決めた。文字として読める（抜き取った頁1・2・5・100・300・500・562に文字あり）。「令和5年度評価はPower BIのみ」とした従前の判断は誤りで、令和6年度評価結果の頁（p034392.html）に総括と評価シートのPDFが掲載されている。確認日：2026-10-23（UTC）。"
     }
   ]

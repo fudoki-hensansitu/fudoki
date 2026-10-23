@@ -3572,7 +3572,223 @@
         }
       ],
       "selected_candidate_id": "representative",
-      "archive": null,
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-4.pdf",
+            "sha256": "13ce3b75b429963e6e562ae922c784d7d5ac8328a3d799ed3ddc931d0d39bc15",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_sesaku01.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-13.pdf",
+            "sha256": "44325da16d04bd79839f1eed95429e98934379b1b96685fea0f0da16420ae329",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_sesaku02.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-30.pdf",
+            "sha256": "aeabc4c10d79649b6324e0a028b8787acc060c6e77e5c209a8db0fd240b778df",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_sesaku03.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-38.pdf",
+            "sha256": "d361d787618d87047cf72428ca5d1c8140ecb4d63888f7400f62d4aa66b6f696",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_sesaku04.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-5.pdf",
+            "sha256": "15b4578b5422feaa8439f7d5e2a738f4582e1230f8bbc5356a6cd7e24fe9f5ab",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_sesaku05.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-19.pdf",
+            "sha256": "5ef28c52413d3223f8c2369bc44aa1fab00399ceee454ea175ab9891778953e1",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_sesaku06.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-39.pdf",
+            "sha256": "d6710a0717adea3106af99e3e36713d4cd7904eae7f7551afe31ca1c01a222e0",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_sesaku07.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-18.pdf",
+            "sha256": "5d131074a2694083c8f84b02e3454755d974954aed2b1935bd5272e9028f08dc",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_sesaku08.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-27.pdf",
+            "sha256": "97966690feecfd7ca04ed4756d4adead9e9d5e333eaeb023d6a2026333755dbf",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_sesaku09.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-42.pdf",
+            "sha256": "f56eda80e6bac811038d2a49146332328393b71c078aafb52f4e692083b1af39",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_sesaku10.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-7.pdf",
+            "sha256": "1c9be18d5c24769da09a61c933bd2ab97fd5d807a8c74722c293d27eca8d53a2",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_sesaku11.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-14.pdf",
+            "sha256": "5481be514f837e4341aadf633a4757feba791d37ad00f44db748e63ef2e9732e",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_sesaku12.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-1.pdf",
+            "sha256": "0475f3b4f36b65d1426bd59ae138552e9ca59b7ce8d741cd34194b1e856ff078",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_sesaku13.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-8.pdf",
+            "sha256": "2513e6d9d62a51ece2e8d1626c137a460db5d6a866e6156c894d333506f9b40a",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_sesaku14.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-2.pdf",
+            "sha256": "0a6ac1569222aa049e37a1cb5635dd8e8be5800299476272775db162df0c88f3",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_sesaku15.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-25.pdf",
+            "sha256": "9016c6b54bc2f62495029d77063a376ad4db9741bf322e945891a081aaf598fc",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_sesaku16.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-9.pdf",
+            "sha256": "2ef436ebb2a47ad80f40eb87ae8e9b5709b93285238b532dbe566f5ddc621133",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_sesaku17.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-15.pdf",
+            "sha256": "57069fdd7089e9decc25b6a9781a67d0f9ca2ade89dba411f12716fcbbc442b7",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_sesaku18.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-11.pdf",
+            "sha256": "344e6165c5fcbf5925d268673dfe185cda23b442cc4a4b31f9688ebd11c004ea",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_sesaku19.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-37.pdf",
+            "sha256": "d11c5ec345a1f976acae78c7573f8c7634421e1c73a8a6a06188c19a3b118fbf",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_sesaku20.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-41.pdf",
+            "sha256": "dfa4123baf114593417d57ba3073e2bd93b15a7b22652ed86ef463fa07f9032f",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_sesaku21.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-26.pdf",
+            "sha256": "95cc3cf3a9bac1dd7b80468672ec4b6d5048d63ad11f86a9f6053064b9c08a26",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_sesaku22.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-10.pdf",
+            "sha256": "32518369eb73fb1a874391a8917ed08198bd46081b416a16d5b611fbf99b2b92",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_sesaku23.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-40.pdf",
+            "sha256": "d8d8156d74870fa1282aca5f7e66998dbe3a4d835fcc7cffa565ead7f5152573",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_sesaku24.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-35.pdf",
+            "sha256": "c24d84f507bfb033cfd7d03e1ac31fd22afb0dbbbb3b5a198e01620c8b691fae",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_sesaku25.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-31.pdf",
+            "sha256": "b2f45635123c04b191f6c9ba846d694e313af734b3823347e0aead3aa105bbc8",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_sesaku26.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-17.pdf",
+            "sha256": "5a59946c3a363cd618ef839a12d5d8ce988e61d8e3b31853a128b9146c3e9dc8",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_sesaku27.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-12.pdf",
+            "sha256": "3aa3ba94eabd3f21554667a03c667af4092f943463f90fac761e83f7997f9d14",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_sesaku28.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-29.pdf",
+            "sha256": "a89a6eedd87e1ba00432da189f10ed624fd6117325a997d09ff5e44dd3391011",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_sesaku29.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-6.pdf",
+            "sha256": "16cb0ffebccd62ea24c25b5ab4a053546ece87ecad9de7ba1b8e0cdeb2b679a5",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_jimu01.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-32.pdf",
+            "sha256": "bbd4d91b901e541fce37929e69e25229a84311940262c10be1fffdbdadb09557",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_jimu02.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-36.pdf",
+            "sha256": "cb8114000d140d0534da9fcb9136e28a3952e831a338e5a41a672d661f3515ff",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_jimu03.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-34.pdf",
+            "sha256": "bd9af661111eedac0614063ce9150f6f9eb0e94aacc81cf4964dd15092874b5c",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_jimu04.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-24.pdf",
+            "sha256": "8122d6b79af17d3b84215d02f8285461859a59d3c6e0002de42ef73f57ffd55b",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_jimu05.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-16.pdf",
+            "sha256": "59d660c56535b0a41814585b328b8d26c7c7f690fabed6097995ae8d545232d5",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_jimu06.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-21.pdf",
+            "sha256": "69fa3e32c8042754193f62f674dcf4eaf0f13c43422882776cb67fb41c68ea35",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_jimu07.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-23.pdf",
+            "sha256": "7a1824a9725f056ce5c861989c589006c9fc98e783bf63d4ea96c637625f5585",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_jimu08.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-20.pdf",
+            "sha256": "6098cc40e2a968a8216b82cce362f2a93ed1e205aba310a55483d4bbb3b34a3f",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_jimu09.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-3.pdf",
+            "sha256": "0af213152a17ff3638037edd9d9fcfdb6762c3eb272280db6abc6db7118c4b26",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_jimu10.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-33.pdf",
+            "sha256": "bcbe0d9605ce18af03ac4ce8b77fa579552ca45277bd30e357c46b01978800c1",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_jimu11.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-22.pdf",
+            "sha256": "742cc2f3291ac7a53efabda22b9228b8af50086e4b33cfc95288cd8c08e61d79",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_jimu12.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2024/evaluation-settlement-28.pdf",
+            "sha256": "9f76933582fb68557adfb0b5494d75e3e9cf3ef94fdb2f9e265c2af3d78d4087",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R6_jimu13.pdf"
+          }
+        ],
+        "archived_at": "2026-10-23T08:23:03.947Z"
+      },
       "reason": "令和6年度の行政評価結果（掲載頁の更新日2026-02-25）。第2次基本計画の29基本施策ごとの施策マネジメントシート（R6_sesaku01〜29、各4頁）と、事務事業マネジメントシート13事業（R6_jimu01〜13、各2頁）の計42ファイル。施策シートは対象指標・成果指標の令和2〜9年度の目標値・実績値、施策全体の成果実績目標達成度（A〜E）と時系列比較、理由・背景、「6年度の取組状況」と「7年度の取組予定」、課題を載せる。事務事業シートは指標と事務事業コストの令和4〜7年度の推移（令和6年度は「決算見込み」の列）、必要性・有効性・効率性の評価、改革・改善方向を載せる。年度は施策シートの「6年度の取組状況」「7年度の取組予定」と、事務事業シートの「評価実施 令和6年度」「令和6年度（決算見込み）(Ａ)」の列で決めた（R5版は5年度の取組状況・令和5年度の列）。文字として読める（全ファイルの先頭3頁に文字あり）。施策シートの総事業費の欄は多くが空欄または0で、金額が載るのは事務事業シートの一部。従前の「R6評価資料が見つからない」は見落としで、行政評価の一覧（.../0407/0410/index.html）に令和5年度・令和6年度の行政評価がある。確認日：2026-10-23（UTC）。"
     },
     {
@@ -3907,7 +4123,238 @@
         }
       ],
       "selected_candidate_id": "representative",
-      "archive": null,
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-10.pdf",
+            "sha256": "49ea4a7d1b2a610d9dbc69834debe2874f2a601ee73c6dca43ad232612f9c37f",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_sesaku01.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-32.pdf",
+            "sha256": "b244862e356950889b32b42f8e3e606ca92467f65350783142dd39db93e57fb2",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_sesaku02.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-7.pdf",
+            "sha256": "331cbd43ccd346736fe2a6234b573825818fe7197810094d57a564fea8f6d13e",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_sesaku03.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-3.pdf",
+            "sha256": "2492cf029c745a3e7d55091cba3cfa19c6ed05d7c1b0629c704a23942d710fb9",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_sesaku04.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-28.pdf",
+            "sha256": "aa3a307c5db1c7511063d93cc6c281d5a8ef224405feee73b59e8e51d1420152",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_sesaku05.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-20.pdf",
+            "sha256": "915a5055203ac48b93b1b5d314c52239cf12fc32bbebae712b117bf6efd79922",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_sesaku06.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-27.pdf",
+            "sha256": "a45e9d16f59de8a0ef360bd4c18fc995bb54542f9747291034ce6fe299f0b467",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_sesaku07.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-44.pdf",
+            "sha256": "eefa0f677d436de08da87e7c09c2adf55f5a3355b941e91fd21274ae1d8a4e9c",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_sesaku08.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-6.pdf",
+            "sha256": "31b07a38fe28fbb18aa659f7aac50fc32acd228bdd81582dda87a94c0cd6855e",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_sesaku09.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-38.pdf",
+            "sha256": "dcb4a794143b986cfd86af8b3c7fca20af436fa8d1484960770b81f3d30203e7",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_sesaku10.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-17.pdf",
+            "sha256": "86465e6f6c2d8c1ca527048d9b69940a5ffb6a38ce5daf47e0995ce110cf8200",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_sesaku11.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-26.pdf",
+            "sha256": "a3cbecef202cd337c404097164d03961fae6e39319d3a472412bbb009117da09",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_sesaku12.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-36.pdf",
+            "sha256": "d1128449f635c3755455dd3849ac171261bea48e5de57c1427fd5f43b93ab843",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_sesaku13.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-23.pdf",
+            "sha256": "9c7421343f3624164f71e57a8021c3de249512703352dd9a56ca1f12b08039f0",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_sesaku14.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-40.pdf",
+            "sha256": "e633eeae4f5640d2a61462b187f6227575ed121c3fd3da685e1ac5d04115c431",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_sesaku15.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-11.pdf",
+            "sha256": "549e33bcce8a5ea764fcfb6c3b42e42f5c94d8ff707b47faecf01b5891136259",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_sesaku16.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-2.pdf",
+            "sha256": "13974fc99eb7353699f50e329f0956d9f4cd68fa331cb38d31866764cc372847",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_sesaku17.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-37.pdf",
+            "sha256": "da21192d11aa11c5645f45b94925474e90f379c1cfc885276f5941b577cc85ea",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_sesaku18.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-29.pdf",
+            "sha256": "aa817b260281de10d8ebbf4fc5b077c94fafd40f408e5a27b102e0523fdb5aad",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_sesaku19.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-42.pdf",
+            "sha256": "e92493289bb45a99e23f61f887336c1be40f66882dd8a4e05dba155511055cbf",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_sesaku20.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-15.pdf",
+            "sha256": "7c09e19821916be95cca320c2822c57c1d1a52b74d26d397c6ddc20aa81e66bc",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_sesaku21.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-4.pdf",
+            "sha256": "2b500768116bb4ee7ea90563a7ed7030a6e59759952f050f2b8fd9002d12ea33",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_sesaku22.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-24.pdf",
+            "sha256": "a013281fd2f108251fe7039d54fbb1fac32310b2285a6a713d9c2ab4df2988fd",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_sesaku23.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-39.pdf",
+            "sha256": "e2b2769b4f97152c600922c35f509ecb671bf7cec46a85a1c97cefc9d06235a7",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_sesaku24.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-1.pdf",
+            "sha256": "0bb353d37d0a0d1e223d3e2b784aa2fee1f999df2ab7076c586135e6bd9cde71",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_sesaku25.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-43.pdf",
+            "sha256": "ed21a2bcc64c5e50f84032910adf31bbbe1e5c0db85567c1dee5e13d8f48190f",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_sesaku26.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-25.pdf",
+            "sha256": "a25a870e89360840d7578b57328e533984f9a7950ff40eea4d08a5b75076312a",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_sesaku27.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-5.pdf",
+            "sha256": "2f2e8f1b9a07184862e848875dbb2dc6d42ce9b390ca511fd346600ea0a7586b",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_sesaku28.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-31.pdf",
+            "sha256": "aed52dd5d6b807247d2fc6dc89f45aea366fec24b27287e33f08e067f5e86177",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_sesaku29.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-16.pdf",
+            "sha256": "82908a459f24c6c84a75b98fff8eb33a9c6f04c4fd110fd100eea7f388f7d0ed",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_jimu01.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-13.pdf",
+            "sha256": "64cb152d61bd588ae3bf167eea174c5eeca64bb4fba9180cdf9e2216c24db3d8",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_jimu02.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-8.pdf",
+            "sha256": "3ba29a3ba341ef073f1be592c1145d9df07e27d77e5600991ab154fc50f5c8f8",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_jimu03.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-30.pdf",
+            "sha256": "acf9117c3d5fdf5a4686455f19634dd1ef07dbcff7f0d3a9254b220bd82bdf00",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_jimu04.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-45.pdf",
+            "sha256": "ff755557554d5093d4770f6f36e8b94d03bbbaae8a04d9df14f5044b29878913",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_jimu05.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-12.pdf",
+            "sha256": "59a6c90eb6ad646f513c5dc99bf4fd7015d638a1ba4083894e3ee57158e217fa",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_jimu06.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-35.pdf",
+            "sha256": "cf9ec0008a97424c8cb71d5d516abe41bb9de05775dfa3264c8ffa0c4855f1b3",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_jimu07.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-33.pdf",
+            "sha256": "c140b869db0e70e86318eb7b3ded2230c2e6088a6b4bed3d62f779dab8ebf0e6",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_jimu08.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-34.pdf",
+            "sha256": "c95067664686ee9e1a5fe20d650cf4ba2df420e6cdd91ccbe8a6ea92312fe9ee",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_jimu09.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-21.pdf",
+            "sha256": "94e7c12e87b962228fe744039df2e9f145ed7827dcf6c5619790adea5a70583f",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_jimu10.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-41.pdf",
+            "sha256": "e65f48ab771066b93dc04acfd87c3f9f9405a59c225abef6e25b598967fc3fa4",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_jimu11.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-9.pdf",
+            "sha256": "3cd8875e08eaf88af35a932ef188b846ff6b9380dfd720fe45666829126debe2",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_jimu12.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-18.pdf",
+            "sha256": "8ac7cc9e01fbc284690a59e1e64d30a40f8b40dffd9bbe358fc7a44e6865e45b",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_jimu13.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-19.pdf",
+            "sha256": "8d3de5dc90f699a049c821770f82bbee40f04ca6954dffbba53b48804d9d17c7",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_jimu14.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-22.pdf",
+            "sha256": "990ae6184b68c7100bccfa15aa398169ba44868f71d20dcdddc9dfe3c7690d9a",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_jimu15.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132152/2023/evaluation-settlement-14.pdf",
+            "sha256": "7591b0f059da6bc5c6e0c9d9ceb240513733931ed2ba7ad951f97ed618f27d95",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/6/R5_jimu16.pdf"
+          }
+        ],
+        "archived_at": "2026-10-23T08:24:21.770Z"
+      },
       "reason": "令和5年度の行政評価結果（掲載頁の更新日2025-01-15）。第2次基本計画の29基本施策ごとの施策マネジメントシート（R5_sesaku01〜29）と、事務事業マネジメントシート16事業（R5_jimu01〜16、各2頁）の計45ファイル。施策シートは対象指標・成果指標の目標値・実績値、施策全体の成果実績目標達成度と時系列比較、理由・背景、「5年度の取組状況」と「6年度の取組予定」、「5年度の評価結果」を載せる。事務事業シートは指標と事務事業コストの令和3〜6年度の推移（令和5年度は決算の(Ａ)列）、必要性・有効性・効率性の評価、改革・改善方向を載せる。年度は施策シートの「5年度の取組状況」「5年度の評価結果」と、事務事業シートの令和5年度（決算）の列で決めた。文字として読める（全ファイルの先頭3頁に文字あり）。施策シートの総事業費の欄は空欄が多く、金額が載るのは事務事業シートの一部。従前の「2023年度実績の評価資料が見つからない」は見落とし。確認日：2026-10-23（UTC）。"
     }
   ]

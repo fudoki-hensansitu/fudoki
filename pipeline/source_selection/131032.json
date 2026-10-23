@@ -4038,7 +4038,33 @@
         }
       ],
       "selected_candidate_id": "representative",
-      "archive": null,
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131032/2024/evaluation-settlement-2.pdf",
+            "sha256": "d372b455345f8cbd074edaafe0ab6d5f9cfc8f2d3fb9b565a793055caee412ef",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/176055/20260220153518.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131032/2024/evaluation-settlement-4.pdf",
+            "sha256": "fd425a1d6eaf0d77820bbd16cbf46bd39b2bbf0b2836d7c8259dbb338cfc0bee",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/176055/20260220153608.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131032/2024/evaluation-settlement-1.pdf",
+            "sha256": "09e018d8063112a931459ed12b9fea1966ce80ceee0357c12287383fb3995d45",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/176055/20260323185218.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131032/2024/evaluation-settlement-3.pdf",
+            "sha256": "d456ca4c73f5ca189ae0f2eb42dc70eda7e0fc6cbfbf2d20b2077460ccb8410f",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/176055/20260220153843.pdf"
+          }
+        ],
+        "archived_at": "2026-10-23T08:20:53.817Z"
+      },
       "reason": "事務事業評価Ａシート（事業ごとに1頁。統合などで複数事業を1枚にまとめる場合がある）。事業名・所管課・施策、事業目的と内容、事業実績（活動指標の予定・実績・達成率）、事業費の状況（当初予算額・流用・補正予算・予算現額・決算額・執行率、財源内訳）、一次評価（確認票の必要性・効果性・効率性の項目評価）、二次・三次評価結果と理由（見直しの方向）を載せる。掲載頁（ブラウザで描画）のＡシートは統合2頁・縮小・一部廃止12頁・廃止6頁・継続15頁の4ファイル計35頁で、約35事業（統合シート等は複数事業を含む）を載せる。全事業は令和7年度港区事務事業評価結果の一覧の1,557事業のため、約2.2%の事業に限られる（スクラップ事業と内容確認が必要と判断した継続事業）。件数は少ないが、目標（活動指標の予定）・実績・評価・見直しの方向の欄がそろうため選ぶ。Ｂシート（レベルアップ、予算増額の要求で実績が無い）、一覧（全1,557事業の予算額と評価区分のみ、kekka.pdf）、二次・三次評価の対象事業一覧、様式のみのＡ・Ｂシートは含めない。年度は、シートの「令和７年度事務事業評価Ａシート」の見出しと、事業実績・事業費の状況の年度列（令和５・６年度に予定・実績／決算額あり、令和７年度は予定・当初予算額のみで実績・決算額が「ー」「－」）のうち最新の実績の令和６年度で決めた（継続シートNO133で確認）。文字として読める（4ファイルとも文字あり）。確認日：2026-10-23（UTC）。"
     },
     {
@@ -4086,7 +4112,33 @@
         }
       ],
       "selected_candidate_id": "representative",
-      "archive": null,
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131032/2023/evaluation-settlement-2.pdf",
+            "sha256": "733bbade1d7cc18be218987e02082a451a8a307ce004b966fd1fe7c61c3f55f5",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/156903/asheet01tougou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131032/2023/evaluation-settlement-1.pdf",
+            "sha256": "6f828b1f5a47ea1084f6b693e6c3144773f86cb4bd11be604820bb0df1ede6f7",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/156903/asheet02shukushou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131032/2023/evaluation-settlement-4.pdf",
+            "sha256": "ed7a051b1c2a433cf040374c27734a7141547544a3d181eed9c6e8a38b38954b",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/156903/asheet03haisi.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131032/2023/evaluation-settlement-3.pdf",
+            "sha256": "a5213ee9d35ddc802a1a1070dc9216cb41fde61260d1b2049d240d1b5e245894",
+            "final_url": "https://www.city.minato.tokyo.jp/documents/156903/asheet04keizoku.pdf"
+          }
+        ],
+        "archived_at": "2026-10-23T08:21:01.410Z"
+      },
       "reason": "事務事業評価Ａシート（事業ごとに1頁）。事業名・所管課・施策、事業目的と内容、活動指標（当初予定・実績・達成率）、事業費の状況（当初予算額・流用・補正予算・予算現額・決算額・執行率、財源内訳）、一次評価（所管課の意見）、事務事業評価結果（二次・三次を含む評価区分と理由、見直しの方向）を載せる。掲載頁（ブラウザで描画）のＡシートは統合3頁・縮小・一部廃止6頁・廃止12頁・継続2頁の4ファイル計23頁で、23事業（1頁1事業）を載せる。全事業は令和6年度事務事業評価結果の一覧（01reiwa6hyouka.pdf、20頁）の1,537事業のため、約1.5%の事業に限られる（スクラップ事業と内容確認が必要と判断した継続事業）。件数は少ないが、目標（活動指標の予定）・実績・評価・見直しの方向の欄がそろうため選ぶ。Ｂシート（bsheet.pdf、予算増額の要求で実績・決算額が無い）、一覧（01reiwa6hyouka.pdf、予算額と評価区分のみ）、二次・三次評価の対象事業一覧、様式のみのＡ・Ｂシート（04_reiwa6asheet.pdf・05_reiwa6bsheet.pdf）は含めない。年度は、シートの「令和６年度事務事業評価Ａシート」の見出しと、活動指標・事業費の状況の年度列（令和４・５年度が予定・実績／決算額あり、令和６年度は当初予算額のみで実績・決算額が「－」）のうち最新の実績の令和５年度で決めた（継続シートNO126で確認）。文字として読める（4ファイルとも文字あり）。確認日：2026-10-23（UTC）。"
     }
   ]
