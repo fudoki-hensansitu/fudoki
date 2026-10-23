@@ -5,6 +5,7 @@ import { createRoot } from 'react-dom/client'
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, LabelList, ReferenceLine, XAxis, YAxis } from 'recharts'
 import { ChevronDownIcon } from 'lucide-react'
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart'
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
 import { Button } from '@/components/ui/button'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { StartForm } from '../chat/start-form'
@@ -279,13 +280,22 @@ function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
   return (
     <div className="mx-auto max-w-[1000px] px-4 pb-48 pt-2 sm:px-6">
       <div className="flex items-center justify-between gap-2 pt-6 text-xs text-muted-foreground">
-        <span>
-          <a href="/自治体" className="hover:underline">自治体</a> › {data.prefecture} › {data.name}
-        </span>
+        <Breadcrumb>
+          <BreadcrumbList className="text-xs">
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/自治体">自治体</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>{data.prefecture}</BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{data.name}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
         <span className="rounded-full border px-3 py-1">{reiwa(latest.year)} 決算</span>
       </div>
       <h1 className="mt-3 font-sans text-[clamp(2.4rem,1.5rem+3.4vw,4rem)] font-normal leading-tight">{data.name}</h1>
-      <p className="mt-1.5 text-[15px] text-muted-foreground">予算の使いみちから、気になる事業まで。そのまま下から聞けます。</p>
       <div className="mt-7 flex gap-6 sm:gap-14">
         <BigNumber label="歳出の総額" yen={latest.yen} />
         <div className="border-l pl-6 sm:pl-14 flex-1 min-w-0">
