@@ -286,8 +286,11 @@ def _continued_subject_boxes(words, control_tables, tolerance):
                     numeric[joined].append((union, list(parts)))
             fragments = {tuple(part) for values in numeric.values() for _, parts in values
                          if len(parts) > 1 for part in parts}
+            # A word of two or more digits is a whole code, not a glyph of one: codes a scan reads as one run
+            # (`103510`) and a ruled column splits touch at the rule, yet each stays a code of its own.
+            whole = {tuple(box) for box, text in digits if len(text) > 1}
             page_codes[page] = {text:[(box, parts) for box, parts in values
-                                     if len(parts) > 1 or tuple(box) not in fragments]
+                                     if len(parts) > 1 or tuple(box) not in fragments or tuple(box) in whole]
                                 for text, values in numeric.items()}
     matched = set()
     for table in control_tables:

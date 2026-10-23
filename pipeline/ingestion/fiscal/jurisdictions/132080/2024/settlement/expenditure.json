@@ -18,140 +18,140 @@
       "options": {
         "account": "一般会計",
         "table_id": "general-expenditure-detail",
-        "amount_corrections": [
-          {
-            "id": "p382-minus-2002000",
-            "page": 382,
-            "observation_id": "p382:tile-2-1:r0:w1",
-            "observed_amount": "2,002,000l",
-            "corrected_amount": "-2,002,000",
-            "reason": "原画の頁382 目5 社会教育総務費の予備費支出及び流用増減は −2,002,000。OCR の語は符号を落とし末尾に l を読んだ。"
-          },
-          {
-            "id": "p147-3215300",
-            "page": 147,
-            "observation_id": "p147:tile-5-1:r20",
-            "observed_amount": "，215",
-            "corrected_amount": "3,215,300",
-            "reason": "原画の頁147 保守点検委託料の備考は 3,215,300。OCR は桁区切りの前の 3 を読み落とし、215 と 300 を別の語に分けた。"
-          },
-          {
-            "id": "p147-2684734",
-            "page": 147,
-            "observation_id": "p147:tile-5-2:r19",
-            "observed_amount": "L,684，",
-            "corrected_amount": "2,684,734",
-            "reason": "原画の頁147 地域福祉センター管理運営費・諸経費の備考は 2,684,734。OCR は先頭の 2 を L と読み、684 と 734 を別の語に分けた。"
-          }
-        ],
-        "dropped_readings": [
-          {
-            "id": "p147-300-piece",
-            "page": 147,
-            "observation_id": "p147:tile-5-1:r21",
-            "observed": "），300",
-            "reason": "原画の頁147 保守点検委託料 3,215,300 の下3桁を別の語に分けた OCR の読み。上の訂正が全体を持つ。"
-          },
-          {
-            "id": "p147-734-piece",
-            "page": 147,
-            "observation_id": "p147:tile-5-2:r20",
-            "observed": "734",
-            "reason": "原画の頁147 ・諸経費 2,684,734 の下3桁を別の語に分けた OCR の読み。上の訂正が全体を持つ。"
-          }
-        ],
         "name_corrections": [
           {
-            "id": "p383-20sai",
-            "page": 383,
-            "observation_id": "p383:tile-5-3:r8",
-            "observed_name": "•ニ十歳",
-            "corrected_name": "○二十歳",
-            "reason": "原画の頁383 備考は「○二十歳のつどい運営費」。OCR は○を•、二をニと読んだ。"
+            "id": "p146-code-18-1",
+            "page": 146,
+            "code": null,
+            "observed_name": "18負担金,補助及び交付金",
+            "corrected_name": "負担金,補助及び交付金",
+            "corrected_code": "18",
+            "reason": "原画の頁146 節の番号 18 は名称「負担金,補助及び交付金」と別の升に印字されている。OCR は番号を名称の語に結んで1つの名称として読んだ。",
+            "y": 137.7
           },
           {
-            "id": "p383-shakai",
-            "page": 383,
-            "observation_id": "p383:tile-5-4:r1",
-            "observed_name": "•社会教",
-            "corrected_name": "○社会教",
-            "reason": "原画の頁383 備考は「○社会教育団体振興補助金」。OCR は○を•と読んだ。"
+            "id": "p146-code-14-2",
+            "page": 146,
+            "code": null,
+            "observed_name": "14工事請負費",
+            "corrected_name": "工事請負費",
+            "corrected_code": "14",
+            "reason": "原画の頁146 節の番号 14 は名称「工事請負費」と別の升に印字されている。OCR は番号を名称の語に結んで1つの名称として読んだ。"
           },
           {
-            "id": "p383-pta",
-            "page": 383,
-            "observation_id": "p383:tile-5-4:r4",
-            "observed_name": "•公立学",
-            "corrected_name": "○公立学",
-            "reason": "原画の頁383 備考は「○公立学校PTA連合会補助金」。OCR は○を•と読んだ。"
+            "id": "p146-code-18-3",
+            "page": 146,
+            "code": null,
+            "observed_name": "18負担金,補助及び交付金",
+            "corrected_name": "負担金,補助及び交付金",
+            "corrected_code": "18",
+            "reason": "原画の頁146 節の番号 18 は名称「負担金,補助及び交付金」と別の升に印字されている。OCR は番号を名称の語に結んで1つの名称として読んだ。",
+            "y": 410.8
           },
           {
-            "id": "p383-20sai-ni",
-            "page": 383,
-            "observation_id": "p383:tile-5-3:r8:w0",
-            "observed_name": "ニ",
-            "corrected_name": "二",
-            "reason": "原画の頁383 備考は「二十歳のつどい運営費」。OCR は漢数字の二をカタカナのニと読んだ。"
-          }
-        ],
-        "amount_readings": [
+            "id": "p382-code-4-4",
+            "page": 382,
+            "code": null,
+            "observed_name": "4共済費",
+            "corrected_name": "共済費",
+            "corrected_code": "4",
+            "reason": "原画の頁382 節の番号 4 は名称「共済費」と別の升に印字されている。OCR は番号を名称の語に結んで1つの名称として読んだ。"
+          },
           {
-            "id": "p147-zero",
+            "id": "p382-code-10-5",
+            "page": 382,
+            "code": null,
+            "observed_name": "10需用費",
+            "corrected_name": "需用費",
+            "corrected_code": "10",
+            "reason": "原画の頁382 節の番号 10 は名称「需用費」と別の升に印字されている。OCR は番号を名称の語に結んで1つの名称として読んだ。"
+          },
+          {
+            "id": "p382-code-11-6",
+            "page": 382,
+            "code": null,
+            "observed_name": "11役務費",
+            "corrected_name": "役務費",
+            "corrected_code": "11",
+            "reason": "原画の頁382 節の番号 11 は名称「役務費」と別の升に印字されている。OCR は番号を名称の語に結んで1つの名称として読んだ。"
+          },
+          {
+            "id": "p382-code-13-7",
+            "page": 382,
+            "code": null,
+            "observed_name": "13使用料及び賃借料",
+            "corrected_name": "使用料及び賃借料",
+            "corrected_code": "13",
+            "reason": "原画の頁382 節の番号 13 は名称「使用料及び賃借料」と別の升に印字されている。OCR は番号を名称の語に結んで1つの名称として読んだ。"
+          },
+          {
+            "id": "p382-code-14-8",
+            "page": 382,
+            "code": null,
+            "observed_name": "14工事請負費",
+            "corrected_name": "工事請負費",
+            "corrected_code": "14",
+            "reason": "原画の頁382 節の番号 14 は名称「工事請負費」と別の升に印字されている。OCR は番号を名称の語に結んで1つの名称として読んだ。"
+          },
+          {
+            "id": "p382-code-17-9",
+            "page": 382,
+            "code": null,
+            "observed_name": "17備品購入費",
+            "corrected_name": "備品購入費",
+            "corrected_code": "17",
+            "reason": "原画の頁382 節の番号 17 は名称「備品購入費」と別の升に印字されている。OCR は番号を名称の語に結んで1つの名称として読んだ。"
+          },
+          {
+            "id": "p382-code-18-10",
+            "page": 382,
+            "code": null,
+            "observed_name": "18負担金,補助及び交付金",
+            "corrected_name": "負担金,補助及び交付金",
+            "corrected_code": "18",
+            "reason": "原画の頁382 節の番号 18 は名称「負担金,補助及び交付金」と別の升に印字されている。OCR は番号を名称の語に結んで1つの名称として読んだ。"
+          },
+          {
+            "id": "p382-code-21-11",
+            "page": 382,
+            "code": null,
+            "observed_name": "21補償,補塡及び賠償金",
+            "corrected_name": "補償,補塡及び賠償金",
+            "corrected_code": "21",
+            "reason": "原画の頁382 節の番号 21 は名称「補償,補塡及び賠償金」と別の升に印字されている。OCR は番号を名称の語に結んで1つの名称として読んだ。"
+          },
+          {
+            "id": "p382-code-26-12",
+            "page": 382,
+            "code": null,
+            "observed_name": "26公課費",
+            "corrected_name": "公課費",
+            "corrected_code": "26",
+            "reason": "原画の頁382 節の番号 26 は名称「公課費」と別の升に印字されている。OCR は番号を名称の語に結んで1つの名称として読んだ。"
+          },
+          {
+            "id": "p146-community",
+            "page": 146,
+            "code": "15",
+            "observed_name": "コミュニテイ施設費",
+            "corrected_name": "コミュニティ施設費",
+            "reason": "原画の頁146 目15 は「コミュニティ施設費」。拗音の小さい ィ を OCR は大きい イ と読んだ。"
+          },
+          {
+            "id": "p147-center",
             "page": 147,
-            "boxes": [
-              [
-                137.8,
-                141.4,
-                142.1,
-                146.7
-              ]
-            ],
-            "amount": "0",
-            "reason": "原画の頁147 最初の行の翌年度繰越額（継続費逓次繰越）は 0。OCR は細い字体の単独の0を読み落とした。"
+            "code": null,
+            "observed_name": "地域福祉センタ一管理運営費",
+            "corrected_name": "地域福祉センター管理運営費",
+            "reason": "原画の頁147 備考は「◎地域福祉センター管理運営費」。OCR は長音符ーを漢数字の一と読んだ。"
           },
           {
-            "id": "p383-zero",
-            "page": 383,
-            "boxes": [
-              [
-                137.8,
-                212.4,
-                142.1,
-                217.7
-              ],
-              [
-                203.1,
-                212.4,
-                207.4,
-                217.7
-              ],
-              [
-                203.1,
-                236.4,
-                207.4,
-                241.7
-              ],
-              [
-                203.1,
-                343.0,
-                207.4,
-                348.3
-              ],
-              [
-                203.1,
-                543.7,
-                207.4,
-                551.4
-              ],
-              [
-                203.1,
-                590.7,
-                207.4,
-                598.9
-              ]
-            ],
-            "amount": "0",
-            "reason": "原画の頁383 翌年度繰越額の継続費逓次繰越（1行）と繰越明許費（5行）は 0。OCR は細い字体の単独の0を読み落とした。"
+            "id": "p147-shokeihi-mark",
+            "page": 147,
+            "code": null,
+            "observed_name": "O諸経費",
+            "corrected_name": "諸経費",
+            "reason": "原画の頁147 備考は「○諸経費」。OCR は段を示す印の○を英字の O と読み、名称に残った。"
           }
         ]
       },
@@ -165,7 +165,7 @@
           "id": "general-ocr-columns-1",
           "origin_sha256": "3c5806a307ea61c2b758cda732dc5a205b007f4f8aecfe5d8fdb4194a084f6da",
           "request": {
-            "engine": "vision",
+            "engine": "paddle",
             "pages": [
               146,
               147,
@@ -173,11 +173,10 @@
               383,
               413
             ],
-            "vlm_fallback": false,
-            "column_tiles": true
+            "vlm_fallback": false
           },
-          "sha256": "a2e7b5333af3dc55def9c22c616faae328443e3413830f222a71c5115eb9c138",
-          "bytes": 1022780
+          "sha256": "4cc4dfc390df8d189d231f67f0539b707969e13ddf86b71eae26832d8ad98618",
+          "bytes": 1880386
         }
       ]
     }
@@ -186,14 +185,15 @@
     {
       "table_id": "general-expenditure-detail",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "da090ef3bf7378097042b7fdd296ccf88b358d580e05652799233726a8e801b1",
+      "input_fingerprint": "1d5757efdf78526d5ff2884e069cb6547b9954e79f322df782eb55fdf11ceaf7",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '備考': 'indent'}。",
         "金額の単位は column mark 174頁 から決めた。款の和 109,405,332,961 と印字の「歳出合計」109,405,332,961 が一致。",
         "金額の注記 290 件（充用 13・流用 277）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 2 種（1178 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・翌年度繰越額／継続費逓繰次越→翌年度繰越額。",
-        "原画で確かめた名称の誤読 4 件を、管理 JSON の name_corrections で印字に直した: 383頁 •ニ十歳→○二十歳・383頁 •社会教→○社会教・383頁 •公立学→○公立学・383頁 ニ→二。",
+        "原画で確かめた名称の誤読 15 件を、管理 JSON の name_corrections で印字に直した: 18負担金,補助及び交付金→18負担金,補助及び交付金・14工事請負費→14工事請負費・18負担金,補助及び交付金→18負担金,補助及び交付金・4共済費→4共済費・10需用費→10需用費・11役務費→11役務費・13使用料及び賃借料→13使用料及び賃借料・14工事請負費→14工事請負費・17備品購入費→17備品購入費・18負担金,補助及び交付金→18負担金,補助及び交付金・21補償,補塡及び賠償金→21補償,補塡及び賠償金・26公課費→26公課費・15コミュニテイ施設費→15コミュニティ施設費・地域福祉センタ一管理運営費→地域福祉センター管理運営費・O諸経費→諸経費。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 160 件（p147:full-page:a0:result1:r16・p147:full-page:a0:result1:r16:w0・p147:full-page:a0:result1:r19・p147:full-page:a0:result1:r19:w0・p147:full-page:a0:result1:r21・p147:full-page:a0:result1:r21:w0・p147:full-page:a0:result1:r24・p147:full-page:a0:result1:r24:w0・p147:full-page:a0:result1:r26・p147:full-page:a0:result1:r26:w0・p147:full-page:a0:result1:r31・p147:full-page:a0:result1:r31:w0・p147:full-page:a0:result1:r36・p147:full-page:a0:result1:r36:w0・p147:full-page:a0:result1:r38・p147:full-page:a0:result1:r38:w0・p147:full-page:a0:result1:r41・p147:full-page:a0:result1:r41:w0・p147:full-page:a0:result1:r43・p147:full-page:a0:result1:r43:w0・p147:full-page:a0:result1:r46・p147:full-page:a0:result1:r46:w0・p147:full-page:a0:result1:r54・p147:full-page:a0:result1:r54:w0・p147:full-page:a0:result1:r58・p147:full-page:a0:result1:r58:w0・p147:full-page:a0:result1:r60・p147:full-page:a0:result1:r60:w0・p147:full-page:a0:result1:r62・p147:full-page:a0:result1:r62:w0・p147:full-page:a0:result1:r66・p147:full-page:a0:result1:r66:w0・p147:full-page:a0:result1:r72・p147:full-page:a0:result1:r72:w0・p147:full-page:a0:result1:r76・p147:full-page:a0:result1:r76:w0・p147:full-page:a0:result1:r80・p147:full-page:a0:result1:r80:w0・p147:full-page:a0:result1:r84・p147:full-page:a0:result1:r84:w0・p147:full-page:a0:result1:r86・p147:full-page:a0:result1:r86:w0・p147:full-page:a0:result1:r89・p147:full-page:a0:result1:r89:w0・p147:full-page:a0:result1:r93・p147:full-page:a0:result1:r93:w0・p147:full-page:a0:result1:r97・p147:full-page:a0:result1:r97:w0・p147:full-page:a0:result1:r99・p147:full-page:a0:result1:r99:w0・p147:full-page:a0:result1:r101・p147:full-page:a0:result1:r101:w0・p147:full-page:a0:result1:r105・p147:full-page:a0:result1:r105:w0・p383:full-page:a0:result1:r14・p383:full-page:a0:result1:r14:w0・p383:full-page:a0:result1:r19・p383:full-page:a0:result1:r19:w0・p383:full-page:a0:result1:r22・p383:full-page:a0:result1:r22:w0・p383:full-page:a0:result1:r24・p383:full-page:a0:result1:r24:w0・p383:full-page:a0:result1:r27・p383:full-page:a0:result1:r27:w0・p383:full-page:a0:result1:r29・p383:full-page:a0:result1:r29:w0・p383:full-page:a0:result1:r31・p383:full-page:a0:result1:r31:w0・p383:full-page:a0:result1:r34・p383:full-page:a0:result1:r34:w0・p383:full-page:a0:result1:r36・p383:full-page:a0:result1:r36:w0・p383:full-page:a0:result1:r41・p383:full-page:a0:result1:r41:w0・p383:full-page:a0:result1:r46・p383:full-page:a0:result1:r46:w0・p383:full-page:a0:result1:r56・p383:full-page:a0:result1:r56:w0・p383:full-page:a0:result1:r61・p383:full-page:a0:result1:r61:w0・p383:full-page:a0:result1:r66・p383:full-page:a0:result1:r66:w0・p383:full-page:a0:result1:r68・p383:full-page:a0:result1:r68:w0・p383:full-page:a0:result1:r71・p383:full-page:a0:result1:r71:w0・p383:full-page:a0:result1:r73・p383:full-page:a0:result1:r73:w0・p383:full-page:a0:result1:r78・p383:full-page:a0:result1:r78:w0・p383:full-page:a0:result1:r80・p383:full-page:a0:result1:r80:w0・p383:full-page:a0:result1:r83・p383:full-page:a0:result1:r83:w0・p383:full-page:a0:result1:r90・p383:full-page:a0:result1:r90・p383:full-page:a0:result1:r90:w0・p383:full-page:a0:result1:r90:w4・p383:full-page:a0:result1:r92・p383:full-page:a0:result1:r92:w0・p383:full-page:a0:result1:r95・p383:full-page:a0:result1:r95:w0・p383:full-page:a0:result1:r97・p383:full-page:a0:result1:r97:w0・p383:full-page:a0:result1:r104・p383:full-page:a0:result1:r104:w0・p383:full-page:a0:result1:r106・p383:full-page:a0:result1:r106:w0・p383:full-page:a0:result1:r110・p383:full-page:a0:result1:r110:w0・p383:full-page:a0:result1:r115・p383:full-page:a0:result1:r115:w0・p413:full-page:a0:result1:r9・p413:full-page:a0:result1:r9:w0・p413:full-page:a0:result1:r14・p413:full-page:a0:result1:r14:w0・p413:full-page:a0:result1:r19・p413:full-page:a0:result1:r19:w0・p413:full-page:a0:result1:r24・p413:full-page:a0:result1:r24:w0・p413:full-page:a0:result1:r26・p413:full-page:a0:result1:r26:w0・p413:full-page:a0:result1:r28・p413:full-page:a0:result1:r28:w0・p413:full-page:a0:result1:r30・p413:full-page:a0:result1:r30:w0・p413:full-page:a0:result1:r34・p413:full-page:a0:result1:r34:w0・p413:full-page:a0:result1:r36・p413:full-page:a0:result1:r36:w7・p413:full-page:a0:result1:r39・p413:full-page:a0:result1:r39・p413:full-page:a0:result1:r39:w0・p413:full-page:a0:result1:r39:w8・p413:full-page:a0:result1:r42・p413:full-page:a0:result1:r42:w0・p413:full-page:a0:result1:r65・p413:full-page:a0:result1:r65:w0・p413:full-page:a0:result1:r68・p413:full-page:a0:result1:r68:w0・p413:full-page:a0:result1:r72・p413:full-page:a0:result1:r72:w0・p413:full-page:a0:result1:r74・p413:full-page:a0:result1:r74:w0・p413:full-page:a0:result1:r77・p413:full-page:a0:result1:r77:w0・p413:full-page:a0:result1:r79・p413:full-page:a0:result1:r79:w0・p413:full-page:a0:result1:r82・p413:full-page:a0:result1:r82:w0・p413:full-page:a0:result1:r84・p413:full-page:a0:result1:r84:w0・p413:full-page:a0:result1:r86・p413:full-page:a0:result1:r86:w0・p413:full-page:a0:result1:r89・p413:full-page:a0:result1:r89:w0・p413:full-page:a0:result1:r91・p413:full-page:a0:result1:r91:w0・p413:full-page:a0:result1:r94・p413:full-page:a0:result1:r94:w0）・增→増 4 件（p146:full-page:a0:result1:r10・p146:full-page:a0:result1:r10:w1・p382:full-page:a0:result1:r10・p382:full-page:a0:result1:r10:w1）・查→査 10 件（p147:full-page:a0:result1:r46・p147:full-page:a0:result1:r46:w9・p147:full-page:a0:result1:r62・p147:full-page:a0:result1:r62:w4・p147:full-page:a0:result1:r86・p147:full-page:a0:result1:r86:w9・p147:full-page:a0:result1:r101・p147:full-page:a0:result1:r101:w4・p413:full-page:a0:result1:r74・p413:full-page:a0:result1:r74:w2）。",
         "文字層の無い頁 5 頁（146・147・382・383・413）は、固定した OCR の観測（頁の単語）と描画の罫線で読み、段の読み方は文字層の頁から当てはめた。"
       ],
       "unread_amount_count": 0,
@@ -201,16 +201,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/132080/2024/settlement/expenditure/general-expenditure-detail-nodes.parquet",
-          "sha256": "2f2c61b1f139142e0bb0e117db703d9be001ea435856b8138a5fc5a6655740fc",
-          "bytes": 255698
+          "sha256": "39a9b0dbc92b2556d2c916450c6fb9584e066708a0c48babaf8e2f0f27a45926",
+          "bytes": 255890
         },
         "row_count": 8155
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132080/2024/settlement/expenditure/general-expenditure-detail-amounts.parquet",
-          "sha256": "229cc6e7d66062e621c798356d3c73e2315dbb68fec899235b343d56cc0f0fb0",
-          "bytes": 212570
+          "sha256": "a441d9a268e33c70bda8f26ca44cd4311b20e887947d14b069b5a4a97e5b1197",
+          "bytes": 199863
         },
         "row_count": 15428
       }
