@@ -24,13 +24,67 @@
           "table_id": "general-expenditure"
         }
       ]
+    },
+    {
+      "id": "care-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "3711afe760a2317126877d5fee6868cf6df4c2bb4abe0a67516ed085662ecddf"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "care-expenditure"
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "national-health-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "3711afe760a2317126877d5fee6868cf6df4c2bb4abe0a67516ed085662ecddf"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-expenditure"
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "3711afe760a2317126877d5fee6868cf6df4c2bb4abe0a67516ed085662ecddf"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-expenditure"
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-expenditure"
+        }
+      ]
     }
   ],
   "tables": [
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "82e3862928dd18ff50274fe5e45e886b42f3722d050979308f7b4ea01c9ebc55",
+      "input_fingerprint": "3fff6fbf48d37d996f0a60a6b633f63ae391eec7aa099948ef517af244d3e7e2",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -55,6 +109,96 @@
           "bytes": 137763
         },
         "row_count": 6988
+      }
+    },
+    {
+      "table_id": "care-expenditure",
+      "conversion_id": "care-settlement",
+      "input_fingerprint": "397f9b9e3be28c1afe8f990fb7e842dbaeef9e17a2e15d0b2c9e384c672b7625",
+      "account": "介護保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
+        "金額の単位は printed 12頁 から決めた。款の和 27,039,745,099 と印字の「歳出合計」27,039,745,099 が一致。",
+        "金額の注記 28 件（充用 6・流用 22）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（257 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・翌年度繰越額／継続費逓次繰越繰越明許費事故繰越し→翌年度繰越額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2024/settlement/expenditure/care-expenditure-nodes.parquet",
+          "sha256": "3fcf492a4be18ac8fe087c9ce44f3f4ca21c7a8bdbdb5fd166c7d3bcc702bf5a",
+          "bytes": 13571
+        },
+        "row_count": 278
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2024/settlement/expenditure/care-expenditure-amounts.parquet",
+          "sha256": "f952b7b8f7e1879e14347982e8cf0e143461135c93894412cadcfdbc9c71369c",
+          "bytes": 15751
+        },
+        "row_count": 1010
+      }
+    },
+    {
+      "table_id": "national-health-expenditure",
+      "conversion_id": "national-health-settlement",
+      "input_fingerprint": "863d90ec577e92d72c2ab57ccdf4fa67346912474500478cc7451a578aca4c70",
+      "account": "国民健康保険事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
+        "金額の単位は printed 9頁 から決めた。款の和 35,886,678,482 と印字の「歳出合計」35,886,678,482 が一致。",
+        "金額の注記 18 件（流用 18）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（139 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・翌年度繰越額／継続費逓次繰越繰越明許費事故繰越し→翌年度繰越額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2024/settlement/expenditure/national-health-expenditure-nodes.parquet",
+          "sha256": "aefc234bc88fdc4256d6cbfc45d7b1510f7177be1591674dd5a46845bcf699ac",
+          "bytes": 10287
+        },
+        "row_count": 183
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2024/settlement/expenditure/national-health-expenditure-amounts.parquet",
+          "sha256": "5f305b6b4925e1391f2378ef9c2ba69b4fc97868de023adfc12323edb587687e",
+          "bytes": 12095
+        },
+        "row_count": 650
+      }
+    },
+    {
+      "table_id": "elderly-medical-expenditure",
+      "conversion_id": "elderly-medical-settlement",
+      "input_fingerprint": "ff810ff134e1f3a5f780d3867e503577d87abf4d497716cd93af9de7c966735b",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
+        "金額の単位は printed 4頁 から決めた。款の和 10,632,378,033 と印字の「歳出合計」10,632,378,033 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（71 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・翌年度繰越額／継続費逓次繰越繰越明許費事故繰越し→翌年度繰越額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2024/settlement/expenditure/elderly-medical-expenditure-nodes.parquet",
+          "sha256": "3a0839faf6bbd5d3803ad34c74296dd09ed23862c7ea7d3eb87132977f8b6bf4",
+          "bytes": 6742
+        },
+        "row_count": 90
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2024/settlement/expenditure/elderly-medical-expenditure-amounts.parquet",
+          "sha256": "9e92517a574eabd924c247669d30e3c70895d38d00d4e893ee749c286cebaccb",
+          "bytes": 7459
+        },
+        "row_count": 312
       }
     }
   ]

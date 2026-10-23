@@ -365,3 +365,4 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 1341,vocab-crematorium,,一般会計,,,,,火葬場,contains,,assigned,06.2,retained,目,,火葬場の運営を霊園・斎場（vocab-cemetery）・聖苑（vocab-funeral-hall）と同じく地域アメニティに寄せる。境界の判断のため暫定とする。,true
 1342,vocab-health-building,,一般会計,,,,,健康づくり,contains,,assigned,07,retained,目,,健康づくり（健康増進と同じ事業）を保健に分類する（vocab-health-promotion と同じ）。,false
 1343,kind-forestry-property-ward,,,財産区,,林業費,,,eq,,assigned,04.2,retained,目,,財産区の特別会計で項が林業費の目（林業総務費・林業振興費）を農業・林業・漁業に分類する（vocab-forestry と同じ。財産区の会計は款が業務費で款の規則に当たらない）。,false
+1344,shinagawa-elderly-community,131091,一般会計,,,,,高齢者地域支援費,eq,,assigned,10.2,retained,目,,品川区の高齢者地域支援費は認知症高齢者支援・高齢者活動支援・高齢者クラブ支援・高齢者福祉施設運営など高齢者の福祉サービス。2024年度決算書冊2物理77-80頁。,false

@@ -24,6 +24,7 @@
 5. 管理JSONから入力を固定し、対象モデルだけを構築・検査する。dbtには `--select <モデル>` を指定する。別の検証用DB・targetを使い、通常の構築結果を上書きしない。
    候補の置き場は `<candidate-dir>/<自治体>/<年度>/<資料区分>/<方向>/manifest.json` と同じディレクトリの `<table_id>-nodes.parquet` / `<table_id>-amounts.parquet`（CSV は `<table_id>-csv.parquet`）。その対象の全表を置き、候補のない対象はキャッシュした保存済み表から読む。従来の `<candidate-dir>/<自治体>/manifest.json` も使えるが、同じ自治体の別年度・資料区分を扱うときは新しい配置を使う。空の候補ディレクトリ・宣言に使われない候補・提供した対象の欠けた表は停止する。
    検証用DBへは `prepare.prepare(warehouse_path, candidate_dir)` で準備し、同じDBを指す dbt profile の `--profiles-dir` で構築する。対象外の保存済み表が未キャッシュなら先に `ingestion:restore --remote` で復元する（候補と `--remote` は併用しない）。
+   別projectにコードのスナップショットを置く場合、`seed-paths` に元のprojectの絶対パスを書かない。コンパイル先もそのパスになり、入力CSVがSQLで上書きされた（2026-10-23実測）。Git管理の `seeds`・`shared` もスナップショットへコピーし、`seed-paths` は相対パスにする。取り込みParquetはコピーせず、SHAを固定した保存済み入力を参照する。
 6. 入力と出力の行の対応、重複を含む原文値の一致、識別情報、数値の型・単位を確認する。親の金額と子の金額を合計せず、同じ軸で子の和と親の金額を照合する。
 7. チャットでモデルの場所、実行範囲、変換前後の例と実施した変換を短く伝える。コードから読める処理を別の説明表や文書へ重ねない。
 
