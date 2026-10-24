@@ -31,6 +31,8 @@ def build(origins: list[plan.Origin], instance: dict) -> dict:
             'title': origin.title,
             'url': origin.download_url,
             'landing_url': origin.landing_url,
+            # 出典の形は csv のときだけ書く。無ければ pdf で、既存の出典の行を書き換えない（pages は csv ではデータ行の範囲）
+            **({'origin_format': origin.origin_format} if origin.origin_format != 'pdf' else {}),
             'item_format': plan.item_format(instance['config'], origin),
             'pages': [{'start': start, 'end': end} for start, end in ranges],
         })

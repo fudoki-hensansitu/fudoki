@@ -4,10 +4,13 @@
 -- keep the mark with a NULL recipient instead of a guessed kind.
 -- Marks sit only on transfer-named nodes, without marking two axes of one 目.
 -- Eligibility mirrors the marts rule; nesting and axis checks are invariants.
-with recursive eligible as (
-    select node_id from {{ ref('settlement_expenditure_node') }}
-    where (is_subject and node_kind = '目' and regexp_matches(name, '^(.*会計)繰出金$'))
-       or (not is_subject and (name = '繰出金' or regexp_matches(name, '^(.*会計)繰出金$')))
+with recursive transfer_names as (
+    select *, regexp_replace(name, '【[^【】]+】$', '') as transfer_name
+    from {{ ref('settlement_expenditure_node') }}
+), eligible as (
+    select node_id from transfer_names
+    where (is_subject and node_kind = '目' and regexp_matches(transfer_name, '^(.*会計)繰出金$'))
+       or (not is_subject and (transfer_name = '繰出金' or regexp_matches(transfer_name, '^(.*会計)繰出金$')))
 ), ancestors as (
     select node_id, parent_node_id as ancestor_id
     from {{ ref('settlement_expenditure_node') }} where parent_node_id is not null

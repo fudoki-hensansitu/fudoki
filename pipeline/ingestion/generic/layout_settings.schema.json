@@ -100,6 +100,7 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "character_map": {"type": "object", "minProperties": 1, "propertyNames": {"pattern": "^[\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f]$"}, "additionalProperties": {"type": "string", "minLength": 1, "maxLength": 1}, "description": "Explicit Unicode mapping for broken font maps, before XML parsing and glyph reconstruction."},
         "form_clips": {"const": true, "description": "Text drawn inside a form has its clip in the form's space: an object whose own bounds meet it is visible."},
         "image_rules": {"const": true, "description": "A page that draws no vector rule has its ruled grid in a background image: the rules are read from the render, as a scan's are."}
       }

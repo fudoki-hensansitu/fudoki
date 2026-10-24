@@ -456,7 +456,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "未選定。公式HP（https://www.city.kodaira.tokyo.jp/）がシステム障害で閲覧不可（2026-10-20更新の臨時案内ページのみで記事本文なし）のため、評価資料の有無を確認できない。過去年度の評価資料の選定もなく手がかりなし。HP復旧後に再選定が必要。確認日：2026-10-22T04:06:23+00:00（UTC）。"
+      "reason": "判断保留。小平市の公式サイトは回復していない。Orca のブラウザで https://www.city.kodaira.lg.jp/kurashi/index07011007.html（財政・行財政改革 > 行政評価の頁）を開くと chrome-error://chromewebdata/ のエラー画面で本文が無く、頁内の fetch も Failed to fetch、curl も TLS の alert protocol version で接続できない（https://www.city.kodaira.lg.jp/ も同じ）。旧ドメインの https://www.city.kodaira.tokyo.jp/ は臨時案内ページ（「現在、システム障害により市ホームページをご覧いただけない状態です」、最終更新：2026年10月20日 16時00分）で、記事本文へのリンクは無く、https://www.city.kodaira.tokyo.jp/kurashi/index07011007.html などの個別の頁は404。このため行政評価の掲載一覧を描画できず、評価資料の有無も年度も確かめられていない。令和7年度実績の評価（令和8年度の行政評価）の有無も未確認。サイトの復旧後に行政評価の頁を見直す。確認日：2026-10-23T09:47:41+00:00（UTC）。"
     },
     {
       "target": {
@@ -467,7 +467,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "R6評価資料が見つからない。決算ページは都の市町村決算indexのみで市独自の成果・評価なし。DuckDuckGoのsite検索でも該当なし。探した頁: https://www.soumu.metro.tokyo.lg.jp/05gyousei/04kusichousonindex/04kusichousonzaisei/years/06nend。探索した範囲では選べる評価資料が無かった（2026-10-15確認）。"
+      "reason": "判断保留。小平市の公式サイトは回復していない。Orca のブラウザで https://www.city.kodaira.lg.jp/kurashi/index07011007.html（財政・行財政改革 > 行政評価の頁）を開くと chrome-error://chromewebdata/ のエラー画面で本文が無く、頁内の fetch も Failed to fetch、curl も TLS の alert protocol version で接続できない（https://www.city.kodaira.lg.jp/ も同じ）。旧ドメインの https://www.city.kodaira.tokyo.jp/ は臨時案内ページ（「現在、システム障害により市ホームページをご覧いただけない状態です」、最終更新：2026年10月20日 16時00分）で、記事本文へのリンクは無く、https://www.city.kodaira.tokyo.jp/kurashi/index07011007.html などの個別の頁は404。このため行政評価の掲載一覧を描画できず、評価資料の有無も年度も確かめられていない。令和6年度の行政評価（2025年の公表）の有無は掲載一覧を描画できず未確認。サイトの復旧後に行政評価の頁を見直す。確認日：2026-10-23T09:47:41+00:00（UTC）。"
     },
     {
       "target": {
@@ -478,7 +478,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "2023年度実績の評価資料が見つからない。探した頁: https://www.soumu.metro.tokyo.lg.jp/05gyousei/04kusichousonindex/04kusichousonzaisei/years/06nend。探索した範囲では選べる評価資料が無かった（2026-10-16確認）。"
+      "reason": "判断保留。小平市の公式サイトは回復していない。Orca のブラウザで https://www.city.kodaira.lg.jp/kurashi/index07011007.html（財政・行財政改革 > 行政評価の頁）を開くと chrome-error://chromewebdata/ のエラー画面で本文が無く、頁内の fetch も Failed to fetch、curl も TLS の alert protocol version で接続できない（https://www.city.kodaira.lg.jp/ も同じ）。旧ドメインの https://www.city.kodaira.tokyo.jp/ は臨時案内ページ（「現在、システム障害により市ホームページをご覧いただけない状態です」、最終更新：2026年10月20日 16時00分）で、記事本文へのリンクは無く、https://www.city.kodaira.tokyo.jp/kurashi/index07011007.html などの個別の頁は404。このため行政評価の掲載一覧を描画できず、評価資料の有無も年度も確かめられていない。令和5年度の行政評価として「令和5年度 小平市の行政評価」（128頁、令和6年9月作成）の存在だけは小平市デジタルアーカイブの目録（https://adeac.jp/kodaira-lib/catalog/mp000040-100050）で確認しているが、画像ビューアのみで原本の PDF が取れない。サイトの復旧後に行政評価の頁から PDF を取って年度の列を確かめる。確認日：2026-10-23T09:47:41+00:00（UTC）。"
     }
   ]
 }

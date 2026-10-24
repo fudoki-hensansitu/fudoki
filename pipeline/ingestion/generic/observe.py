@@ -16,6 +16,7 @@ import unicodedata
 import subprocess
 import tempfile
 import xml.etree.ElementTree as ET
+from xml.sax.saxutils import escape
 
 
 @dataclass(frozen=True)
@@ -49,13 +50,16 @@ class Page:
     rules: list[Rule] = field(default_factory=list)
 
 
-def words(pdf: Path, first: int, last: int) -> dict[int, tuple[float, float, list[Word]]]:
+def words(pdf: Path, first: int, last: int, character_map: dict[str, str] | None = None) -> dict[int, tuple[float, float, list[Word]]]:
     with tempfile.TemporaryDirectory() as directory:
         output = Path(directory) / 'bbox.html'
         subprocess.run(['pdftotext', '-f', str(first), '-l', str(last), '-bbox', str(pdf), str(output)],
                        check=True)
         # Poppler copies control characters of broken font maps into the XML.
-        source = re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f]', '', output.read_text(errors='replace'))
+        source = output.read_text(errors='replace')
+        # Map only characters XML cannot represent; never rewrite XML tags or entities.
+        invalid = r'[\x00-\x08\x0b\x0c\x0e-\x1f]'
+        source = re.sub(invalid, lambda hit: escape((character_map or {}).get(hit[0], '')), source)
         pages = {}
         for number, page in enumerate(ET.fromstring(source).findall('.//{*}page'), first):
             items = [Word(w.text or '', *(float(w.get(k)) for k in ('xMin', 'yMin', 'xMax', 'yMax')))
@@ -274,17 +278,18 @@ def merge_rules(rules: list[Rule], tolerance: float = 2.5, gap: float = 2.0) -> 
     return merged
 
 
-def observe(pdf: Path, pages: list[int], cache: Path | None = None) -> list[Page]:
+def observe(pdf: Path, pages: list[int], cache: Path | None = None,
+            character_map: dict[str, str] | None = None) -> list[Page]:
     """Observe the listed physical pages. A JSON cache keeps reruns cheap."""
     if cache is not None and cache.exists():
         data = json.loads(cache.read_text())
-        if data['pages'] == pages:
+        if data['pages'] == pages and data.get('character_map', {}) == (character_map or {}):
             return [Page(p['number'], p['width'], p['height'], [Word(*w) for w in p['words']],
                          [Rule(*r) for r in p['rules']]) for p in data['observed']]
     import pdfplumber
     result = []
     first, last = min(pages), max(pages)
-    poppler = words(pdf, first, last)
+    poppler = words(pdf, first, last, character_map)
     with pdfplumber.open(pdf) as document:
         for number in pages:
             width, height, items = poppler[number]
@@ -295,7 +300,7 @@ def observe(pdf: Path, pages: list[int], cache: Path | None = None) -> list[Page
             page.close()
     if cache is not None:
         cache.parent.mkdir(parents=True, exist_ok=True)
-        cache.write_text(json.dumps({'pages': pages, 'observed': [
+        cache.write_text(json.dumps({'pages': pages, 'character_map': character_map or {}, 'observed': [
             {'number': p.number, 'width': p.width, 'height': p.height,
              'words': [[w.text, w.x0, w.y0, w.x1, w.y1] for w in p.words],
              'rules': [[r.x0, r.y0, r.x1, r.y1] for r in p.rules]} for p in result]}, ensure_ascii=False))

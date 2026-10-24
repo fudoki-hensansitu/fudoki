@@ -79,7 +79,7 @@ def rules() -> tuple[tuple[str, str, re.Pattern | None], ...]:
 
 # --- 1. invisible glyphs -----------------------------------------------------
 
-def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False):
+def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, character_map: dict[str, str] | None = None):
     """(box, character, visible) of every drawn character, in Poppler's top-left coordinates.
 
     Visibility belongs to the text object that draws the character: visible
@@ -144,7 +144,7 @@ def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False):
             ol, ob, orr, ot = (ctypes.c_float() for _ in range(4))
             raw.FPDFPageObj_GetBounds(handle, ol, ob, orr, ot)
             visible = inside((ol.value, ob.value, orr.value, ot.value), clip_of(handle))
-        found.append(((l.value - left, top - t.value, r.value - left, top - b.value), chr(code), visible))
+        found.append(((l.value - left, top - t.value, r.value - left, top - b.value), (character_map or {}).get(chr(code), chr(code)), visible))
     textpage.close(); page.close()
     return found, paths
 
@@ -242,12 +242,12 @@ def _without_hidden(words: list[Word], glyphs) -> list[Word]:
 
 
 def drop_invisible(pdf_path: Path, pages: list[Page], report: Report, repairs: frozenset = frozenset(),
-                   form_clips: bool = False) -> None:
+                   form_clips: bool = False, character_map: dict[str, str] | None = None) -> None:
     import pypdfium2 as pdfium
     pdf = pdfium.PdfDocument(str(pdf_path))
     try:
         for page in pages:
-            glyphs, paths = _glyphs(pdf, page.number, 'opening_cell' in repairs, form_clips)
+            glyphs, paths = _glyphs(pdf, page.number, 'opening_cell' in repairs, form_clips, character_map)
             # Glyphs placed off the page are not on it at all (Poppler skips them);
             # only invisible glyphs on the page call for a rebuild.
             glyphs = [g for g in glyphs if g[0][2] > 0 and g[0][0] < page.width and g[0][3] > 0 and g[0][1] < page.height]
@@ -559,7 +559,7 @@ def clip_to_page(page: Page, report: Report, width: float, height: float) -> Non
 
 
 def repair(pdf_path: Path | None, pages: list[Page], repairs: frozenset = frozenset(),
-           form_clips: bool = False) -> tuple[list[Page], Report]:
+           form_clips: bool = False, character_map: dict[str, str] | None = None) -> tuple[list[Page], Report]:
     report = Report()
     if pdf_path is not None and pdf_path.exists():
         sizes = display_size(pdf_path, [page.number for page in pages])
@@ -567,7 +567,7 @@ def repair(pdf_path: Path | None, pages: list[Page], repairs: frozenset = frozen
             clip_to_page(page, report, *sizes[page.number])
         crop_to_box(pdf_path, pages, report)
         try:
-            drop_invisible(pdf_path, pages, report, repairs, form_clips)
+            drop_invisible(pdf_path, pages, report, repairs, form_clips, character_map)
             if 'opening_cell' in repairs:
                 opening_brackets(pdf_path, pages)
         except Exception as error:  # pdfium's raw API failed: keep Poppler's words as they are

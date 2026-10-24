@@ -156,7 +156,7 @@
           "inspected_at": "2026-10-07T14:35:35.341143+00:00",
           "files": [
             {
-              "download_url": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/751/20210301101047_24.pdf",
+              "download_url": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/751/r6/r6_1.pdf",
               "sha256": "1eb3b028d1b794bbb498b77270f0d5fac27dbc05b90ab2c375673979508f353c",
               "format": "pdf",
               "pdf_type": "text",
@@ -174,7 +174,7 @@
               ]
             },
             {
-              "download_url": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/751/20210301101047_25.pdf",
+              "download_url": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/751/r6/r6_2.pdf",
               "sha256": "70761df182cc4e55039a334ce79a01c683e2927ab48f3c2e99447a7daea2f1ac",
               "format": "pdf",
               "pdf_type": "text",
@@ -192,10 +192,10 @@
               ]
             },
             {
-              "download_url": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/751/20210301101047_26.pdf",
+              "download_url": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/751/r6/r6_3.pdf",
               "sha256": "3711afe760a2317126877d5fee6868cf6df4c2bb4abe0a67516ed085662ecddf",
               "format": "pdf",
-              "pdf_type": "scan",
+              "pdf_type": "text",
               "scope": [
                 {
                   "account": "国民健康保険事業会計",
@@ -282,7 +282,7 @@
           ]
         }
       ],
-      "reason": "令和6年度決算書ページ（令和8年9月1日更新時点で最新公表年度）掲載の「令和6年度品川区各会計歳入歳出決算書」3冊（印字頁1-171/172-418/419-558、各冊物理=印字ずれ0・+171・+418）を選定。令和7年度決算は令和8年9-10月の決算特別委員会で審査中のため未公表。歳出明細は款・項・目名と予算現額（当初/補正/継続/予備内訳）・支出済額・翌年度繰越額・不用額を同一明細に持ち単位は円。1冊目は表紙・目次・5会計の決算議案（款項表）と一般会計歳入明細、2冊目は一般会計歳出明細（印字172-407）と参考資料、3冊目は4会計明細と参考資料。議案・参考資料・実質収支調書・財産調書・基金報告はscope外。3冊目の明細頁は文字層の数字が文字化け（数字のみ別字体で復元不可、漢字は可）のためscan扱い。会計は5会計で掲載と一致、企業会計なし。CSV提供なし。 2026-10-21確認: 品川区公式サイトの2026-10-20リニューアルでURLが移転した。landing_url・download_urlは新URL。新URLの配布物はsha256が再保存で変わったが、頁数と本文テキストは保存済みの出典と同一（スキャンPDFは抽出した4頁の描画も同一）。sha256・保存は移転前に取得した出典のまま。",
+      "reason": "令和6年度決算書ページ（令和8年9月1日更新時点で最新公表年度）掲載の「令和6年度品川区各会計歳入歳出決算書」3冊（印字頁1-171/172-418/419-558、各冊物理=印字ずれ0・+171・+418）を選定。令和7年度決算は令和8年9-10月の決算特別委員会で審査中のため未公表。歳出明細は款・項・目名と予算現額（当初/補正/継続/予備内訳）・支出済額・翌年度繰越額・不用額を同一明細に持ち単位は円。1冊目は表紙・目次・5会計の決算議案（款項表）と一般会計歳入明細、2冊目は一般会計歳出明細（印字172-407）と参考資料、3冊目は4会計明細と参考資料。議案・参考資料・実質収支調書・財産調書・基金報告はscope外。3冊目の明細頁は文字層の数字が文字化け（数字のみ別字体で復元不可、漢字は可）のためscan扱い。会計は5会計で掲載と一致、企業会計なし。CSV提供なし。 2026-10-21確認: 品川区公式サイトの2026-10-20リニューアルでURLが移転した。landing_url・download_urlは新URL。新URLの配布物はsha256が再保存で変わったが、頁数と本文テキストは保存済みの出典と同一（スキャンPDFは抽出した4頁の描画も同一）。sha256・保存は移転前に取得した出典のまま。 2026-10-23再確認: 現行一覧のr6/r6_1.pdf〜r6_3.pdfへURLを更新。3冊目の数字はU+0013〜U+001Cを0〜9、U+000Fをカンマへ対応付けると復元できるため文字PDFとして扱う（従前の復元不可・scan扱いを訂正）。保存済みの出典のSHAとkeyは保持する。",
       "selected_candidate_id": "representative",
       "archive": {
         "bucket": "fudoki-inputs",
@@ -944,10 +944,164 @@
         "fiscal_year": 2025,
         "document_kind": "settlement"
       },
-      "candidates": [],
-      "reason": "未公表（決算書一覧 PC/kuseizyoho/kessan/20210301101047.html（更新日令和8年9月1日）、2026-10-13確認。令和7年度の決算書・事項別明細書の掲載なし）。【従前の確認】令和7年度（2025年度）決算は公式の決算書一覧ページ（https://www.city.shinagawa.tokyo.jp/PC/kuseizyoho/kessan/20210301101047.html、更新日 令和8年9月1日、確認日 2026-10-08）で最新公表が令和6年度まで。前回調査（2026-10-07）では令和8年9-10月の決算特別委員会で審査中と確認済みで、今回の一覧にも令和7年度の掲載なし。公開を確認できないため未選定（公開義務違反・非公開の断定ではない）。公表後に再選定が必要。探索済み: 決算書一覧・決算indexページ。",
-      "selected_candidate_id": null,
-      "archive": null
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和7年度品川区各会計歳入歳出決算書（全3冊）",
+          "landing_url": "https://www.city.shinagawa.tokyo.jp/kusei/zaisei/1005750/1005751.html",
+          "inspected_at": "2026-10-23T10:08:37.959266+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/751/r7/r7_1.pdf",
+              "sha256": "0f7d8057eb11f36c334d2fc7c445de9b63b62948274e823b751924345c4c8dba",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 52,
+                      "end": 177
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/751/r7/r7_2.pdf",
+              "sha256": "c837ae00dc7485c9a106f31ce76e3a83a40ef326ffd049d149136547ea4c1add",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 236
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/751/r7/r7_3.pdf",
+              "sha256": "40b87c7964bbc688953b3d12cf234bb38fd4d4c1b9d038bf5726f15a007e6b16",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "国民健康保険事業会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 12
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険事業会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 13,
+                      "end": 30
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 33,
+                      "end": 40
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 41,
+                      "end": 48
+                    }
+                  ]
+                },
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 51,
+                      "end": 66
+                    }
+                  ]
+                },
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 67,
+                      "end": 90
+                    }
+                  ]
+                },
+                {
+                  "account": "災害復旧特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 93,
+                      "end": 94
+                    }
+                  ]
+                },
+                {
+                  "account": "災害復旧特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 95,
+                      "end": 96
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "2026-10-23確認: 決算書一覧に令和7年度各会計歳入歳出決算書全3冊（177・246・143頁）が公表済み。表紙と提出日（令和8年9月17日）、目次、明細の先頭・末尾で5会計と歳入歳出の範囲を確認。冊1は一般会計歳入（52-177頁）、冊2は一般会計歳出（1-236頁）、冊3は国保（歳入3-12・歳出13-30）、後期（歳入33-40・歳出41-48）、介護（歳入51-66・歳出67-90）、災害復旧（歳入93-94・歳出95-96）。円単位の款項目・節・備考、予算現額・支出済額・翌年度繰越額・不用額を同一明細に持つ文字PDF。国保の数字はU+0013〜U+001CとU+000Fの対応表で復号する。議案の款項表・参考資料・財産調書・基金報告はscope外。企業会計なし。従前の未公表記録を訂正。",
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131091/2025/settlement-1.pdf",
+            "sha256": "0f7d8057eb11f36c334d2fc7c445de9b63b62948274e823b751924345c4c8dba",
+            "final_url": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/751/r7/r7_1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131091/2025/settlement-3.pdf",
+            "sha256": "c837ae00dc7485c9a106f31ce76e3a83a40ef326ffd049d149136547ea4c1add",
+            "final_url": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/751/r7/r7_2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131091/2025/settlement-2.pdf",
+            "sha256": "40b87c7964bbc688953b3d12cf234bb38fd4d4c1b9d038bf5726f15a007e6b16",
+            "final_url": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/751/r7/r7_3.pdf"
+          }
+        ],
+        "archived_at": "2026-10-23T10:09:11.049Z"
+      }
     },
     {
       "target": {
@@ -2074,7 +2228,7 @@
           ]
         }
       ],
-      "reason": "補正予算一覧・各号掲載頁(https://www.city.shinagawa.tokyo.jp/PC/kuseizyoho/yosan/hosei/2025002hosei.html、頁題名に第2号)掲載の「令和7年度品川区一般会計補正予算書(2号)」(物理11頁・文字PDF)。第71号議案。予算書本文の表題・第1条で一般会計第2号を確認。歳入歳出補正予算事項別明細書に目・節・補正前の額/補正額/計(千円)・財源内訳を同一明細で収録し、全款合計が第1条の補正額と一致。歳入物理6-8頁・歳出物理9-11頁を選定。表紙・議案・第1表・給与費明細書・債務負担/繰越明許調書・同頁の概要PDFはscope外(概要の実物未確認)。一般会計のみの掲載で特別会計分はなし。CSV提供なし。 2026-10-21確認: 品川区公式サイトの2026-10-20リニューアル後、令和7年度補正予算の一覧に第2号が無く、旧掲載頁は令和8年度第2号の頁へ転送される。出典は保存済みのものを正とし、URLは移転前のまま残す。",
+      "reason": "補正予算一覧・各号掲載頁(https://www.city.shinagawa.tokyo.jp/PC/kuseizyoho/yosan/hosei/2025002hosei.html、頁題名に第2号)掲載の「令和7年度品川区一般会計補正予算書(2号)」(物理11頁・文字PDF)。第71号議案。予算書本文の表題・第1条で一般会計第2号を確認。歳入歳出補正予算事項別明細書に目・節・補正前の額/補正額/計(千円)・財源内訳を同一明細で収録し、全款合計が第1条の補正額と一致。歳入物理6-8頁・歳出物理9-11頁を選定。表紙・議案・第1表・給与費明細書・債務負担/繰越明許調書・同頁の概要PDFはscope外(概要の実物未確認)。一般会計のみの掲載で特別会計分はなし。CSV提供なし。 2026-10-21確認: 品川区公式サイトの2026-10-20リニューアル後、令和7年度補正予算の一覧に第2号が無く、旧掲載頁は令和8年度第2号の頁へ転送される。出典は保存済みのものを正とし、URLは移転前のまま残す。 2026-10-23再確認: 登録済み40出典URLのうち、本資料と令和6年度決算3冊がPDFを返さなかった。本資料の旧掲載頁は引き続き令和8年度第2号へ転送され、対象年度が異なるため代替しない。保存済み出典を維持する。",
       "selected_candidate_id": "representative",
       "archive": {
         "bucket": "fudoki-inputs",
@@ -2641,7 +2795,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "未選定。令和7年度実施事業を評価する令和8年度事務事業評価シートは未公表。令和8年度行政評価の掲載頁（https://www.city.shinagawa.tokyo.jp/kusei/shisakukeikaku/1005171/1008977/index.html）には行政評価基本方針と第1回行政評価委員会資料のみで評価シートの掲載なし。令和7年度事務事業評価の掲載頁（.../1005171/1005172/1005173.html）の全部局版は「令和7年度事務事業評価シート（令和6年度実施事業）」で2024年度分。確認日：2026-10-22T03:49:30+00:00（UTC）。"
+      "reason": "未選定（未公表）。令和7年度実施事業（2025年度）を評価する令和8年度の事務事業評価シートは未公表。Orca のブラウザで描画した行政評価の一覧（https://www.city.shinagawa.tokyo.jp/kusei/shisakukeikaku/1005171/index.html）は令和8年度・令和7年度・令和6年度・令和5年度行政評価の4頁で、令和8年度行政評価の頁（https://www.city.shinagawa.tokyo.jp/kusei/shisakukeikaku/1005171/1008977/index.html）には行政評価基本方針（令和8年4月9日改定）と第1回行政評価委員会（令和8年7月15日、https://www.city.shinagawa.tokyo.jp/kusei/shisakukeikaku/1005171/1008977/1011187.html）の資料・議事要旨だけで評価シートが無い。令和7年度行政評価の頁（https://www.city.shinagawa.tokyo.jp/kusei/shisakukeikaku/1005171/1005172/index.html）の事務事業評価結果（1005173.html）は「令和6年度予算事務事業」＝2024年度実施分で、すでに2024年度として選んでいる。確認日：2026-10-23T09:47:41+00:00（UTC）。"
     },
     {
       "target": {

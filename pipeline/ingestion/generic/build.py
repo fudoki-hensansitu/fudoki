@@ -105,11 +105,12 @@ def run_pages(pdf: Path, pages: list[int], cache: Path | None = None, judge=None
     # not observed from the text layer and not repaired as text, and they teach nothing: the columns the text pages draw
     # complete the rules of their render (the hook) before their words are cut at them.
     numbers, read_ocr = ocr or ((), None)
-    printed = observe(pdf, [number for number in pages if number not in numbers], cache)
+    character_map = (text_layer or {}).get('character_map')
+    printed = observe(pdf, [number for number in pages if number not in numbers], cache, character_map)
     if (text_layer or {}).get('image_rules'):
         printed = [image_rules(pdf, page, staircase) if not page.rules else page for page in printed]
     unrepaired = [Page(page.number, page.width, page.height, list(page.words), page.rules) for page in printed]
-    observed, report = repair(pdf, printed, repairs, bool((text_layer or {}).get('form_clips')))
+    observed, report = repair(pdf, printed, repairs, bool((text_layer or {}).get('form_clips')), character_map)
     read, observation, variants = read_ocr(mixed.completing(mixed.learn_frames(observed, spread, staircase), spread, staircase)) if read_ocr else ([], None, [])
     origins = mixed.learn_origins(observed, spread, staircase)
     shifts = {page.number: mixed.shift(page, origins, spread, staircase) for page in read}

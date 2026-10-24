@@ -6,6 +6,7 @@ import type { Db } from './db'
 import { IP_RATE_LIMIT } from './evaluation-limits'
 import { EvaluationSearchQuota, quotaOf, type QuotaNamespace } from './evaluation-quota'
 import {
+  CATALOG,
   makeExcerpt,
   searchEvaluationsOperation,
   searchRequest,
@@ -401,6 +402,64 @@ describe('登録の形と key', () => {
     expect(verify(chunk(70, '本文'), KITA_CODE, 2025, [doc('md')])).toBeNull()
     expect(verify(md(70), KITA_CODE, 2025, [doc('pdf')])).toBeNull()
     expect(verify(chunk(70, '本文'), KITA_CODE, 2025, [doc('pdf')])).not.toBeNull()
+  })
+})
+
+describe('CSV の出典（公開レポートの表）', () => {
+  const HACHIOJI = '132012'
+  const CSV_SHA = 'c'.repeat(64)
+  const REPORT = 'https://app.powerbi.com/view?r=test'
+  const csvDoc: CatalogDocument = {
+    origin_sha256: CSV_SHA, jurisdiction: HACHIOJI, fiscal_year: 2025, title: '令和8年度事務事業評価結果', url: REPORT,
+    landing_url: 'https://www.city.hachioji.tokyo.jp/shisei/', origin_format: 'csv', item_format: 'md', pages: [{ start: 1, end: 568 }],
+  }
+  const csvChunk = (row: number, body: string) => ({
+    score: 0.9, text: `### Page 1\n${body}`,
+    item: { key: `${CSV_SHA}_p${String(row).padStart(4, '0')}.md`, metadata: { fiscal_year: '2025', jurisdiction: HACHIOJI, origin_sha256: CSV_SHA, page: row } },
+  })
+  const ask = { jurisdiction: HACHIOJI, fiscal_year: 2025, query: '議会の運営' }
+
+  beforeEach(() => void CATALOG.push(csvDoc))
+  afterEach(() => void CATALOG.splice(CATALOG.indexOf(csvDoc), 1))
+
+  test('CSV の候補は出典の形・データ行の番号・レポートの URL（頁の指定なし）を返し、PDF の候補は今のまま', async () => {
+    searchImpl = async () => ({ chunks: [csvChunk(7, '番号: 7\n事務事業名: 議会の運営')] })
+    const out = await (await post(ask)).json()
+    expect(searchEvaluationsOperation.output.parse(out)).toEqual(out)
+    expect(out.status).toBe('candidates')
+    // 本番の catalog にも八王子市 2025 の CSV の出典があるので、足した出典が含まれることだけを見る
+    expect(out.documents).toContainEqual({
+      origin_sha256: CSV_SHA, title: '令和8年度事務事業評価結果', evaluated_fiscal_year: 2025, origin_format: 'csv',
+      url: REPORT, landing_url: csvDoc.landing_url,
+    })
+    expect(out.candidates).toEqual([{
+      rank: 1, origin_sha256: CSV_SHA, origin_format: 'csv', page: 7, url: REPORT, page_url: REPORT, excerpt: '番号: 7 事務事業名: 議会の運営',
+    }])
+    expect(out.notes.join('\n')).toContain('自治体のファイルではない')
+    // PDF の候補は origin_format を持たず、csv の注記も付かない
+    searchImpl = async () => ({ chunks: [chunk(70, '事務事業評価 防災分野におけるデジタル化の推進')] })
+    const pdf = await (await post(valid)).json()
+    expect(Object.keys(pdf.candidates[0]).sort()).toEqual(['excerpt', 'origin_sha256', 'page', 'page_url', 'rank', 'url'])
+    expect(Object.keys(pdf.documents[0]).sort()).toEqual(['evaluated_fiscal_year', 'landing_url', 'origin_sha256', 'title', 'url'])
+    expect(pdf.notes.join('\n')).not.toContain('自治体のファイルではない')
+  })
+
+  test('範囲外の行・登録の形（.md）と違う key の chunk は捨てる', () => {
+    expect(verify(csvChunk(568, '本文'), HACHIOJI, 2025, [csvDoc])).toMatchObject({ page: 568 })
+    expect(verify(csvChunk(569, '本文'), HACHIOJI, 2025, [csvDoc])).toBeNull()
+    expect(verify({ ...csvChunk(7, '本文'), item: { ...csvChunk(7, '本文').item, key: `${CSV_SHA}_p0007.pdf` } }, HACHIOJI, 2025, [csvDoc])).toBeNull()
+  })
+
+  test('MCP の structuredContent が CSV の候補でも outputSchema に通る', async () => {
+    searchImpl = async () => ({ chunks: [csvChunk(7, '事務事業名: 議会の運営')] })
+    const list = await mcpRpc(app, 'tools/list')
+    const schema = list.result.tools.find((t: { name: string }) => t.name === 'search_evaluations').outputSchema
+    const validator = new CfWorkerJsonSchemaValidator().getValidator(schema)
+    const body = await mcpRpc(app, 'tools/call', { name: 'search_evaluations', arguments: ask }, env())
+    expect(body.result.structuredContent.candidates[0].origin_format).toBe('csv')
+    const result = validator(body.result.structuredContent)
+    expect(result.valid, result.valid ? '' : result.errorMessage).toBe(true)
+    expect(validator({ status: 'candidates', documents: [], candidates: [{ rank: 1, origin_sha256: 'a', origin_format: 'xlsx', page: 1, url: 'u', page_url: 'u', excerpt: 'e' }], notes: [] }).valid).toBe(false)
   })
 })
 

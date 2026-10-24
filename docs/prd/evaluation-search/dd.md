@@ -139,9 +139,18 @@ custom metadata は次の4項目とし、5項目目は空けておく。metadata
 
 script はネットワークと `cf` を使うので sandbox の外で手動で実行し、CI では回さない。計画（選定から key と metadata を作る部分）の単体試験だけを `test:python` に入れる。
 
+### 公開レポートの表を出典にする（CSV）
+
+八王子市のように事務事業評価を Power BI の公開レポートでだけ出す自治体は、PDF が無い。レポートが使う公開 API から表を取って CSV にし、出典にする（[ADR 0034](../../adr/0034-evaluation-origin-from-power-bi-report-api.md)）。市のファイルではなく、風土記が問い合わせた結果のスナップショットである。
+
+- 選定: `evaluation_selections` のファイルに `format: csv`（`download_url` はレポートの URL、`acquisition` に `type: powerbi`・表の名前・列の一覧・並びの列）を持たせる。PDF の形は変えない。取得は `source_selection/powerbi.ts`。
+- 保存: `archive.ts` が取得で作ったバイト列を保存する。key は `evaluation-settlement[-<n>].csv`。
+- 索引: `plan.py` の `Origin` が出典の形（`pdf`・`csv`）を持つ。CSV は OCR なしのインスタンスにだけ載せ、登録の形は宣言なしで `md` にする。`index.py` は R2 から取った CSV（cache は `<sha256>.csv`）のデータ行1行を1つの item にする。key は `<sha256>_p<行番号4桁>.md`、metadata の `page` は1始まりのデータ行の番号。本文は PDF の文字の item と同じ見出しの下に「列名: 値」を列の順に行ごとに並べ、空の値は省く。fingerprint・本文の確かめ・待ちの手順は PDF と同じに当てる。
+- 正しく取れたことの確かめ: 件数と列の存在、並びの列が行を一意に決めること、結果が途中で終わっていないことは取得が検査する。選定の `reason` に、画面の総事業数や内訳（評価・方向性の件数）と表の一致を書く。
+
 ### Worker が使う出典の一覧（catalog）
 
-`evaluation-catalog.json` は、`columns.json` と同じく pipeline の script（`serving:evaluation-catalog`）が書く生成物である。`evaluation_selections` のうち、`instance.json` の登録の記録があり、その計画の指紋が現在の選定と設定から求めた指紋と一致する出典だけを載せる。出典ごとに sha256・自治体・評価対象年度・資料の題・ファイルの URL・掲載頁の URL・対象の頁範囲を持つ。CI では `--check` で選定・登録の記録と一致するかを検査する。catalog の `fiscal_year` は評価対象の決算年度の整数で、索引の metadata の `fiscal_year`（text）とは型が違う。Worker は filter を組むときに文字列へ変換する。
+`evaluation-catalog.json` は、`columns.json` と同じく pipeline の script（`serving:evaluation-catalog`）が書く生成物である。`evaluation_selections` のうち、`instance.json` の登録の記録があり、その計画の指紋が現在の選定と設定から求めた指紋と一致する出典だけを載せる。出典ごとに sha256・自治体・評価対象年度・資料の題・ファイルの URL・掲載頁の URL・対象の頁範囲を持つ。CSV の出典だけ出典の形（`origin_format: csv`）を持ち、無ければ PDF である。URL は公開レポートの URL、頁範囲はデータ行の範囲（`1`〜行数）になる。CI では `--check` で選定・登録の記録と一致するかを検査する。catalog の `fiscal_year` は評価対象の決算年度の整数で、索引の metadata の `fiscal_year`（text）とは型が違う。Worker は filter を組むときに文字列へ変換する。
 
 指紋の一致を条件にするのは、選定や索引の設定だけが先に変わったときに、索引に無い資料や確認していない索引を「収録済み」として検索させないためである。公開後に出典の差し替え、索引の設定の変更、作り直しを行うときは、`evaluation_search` を止め、登録・確認・catalog の生成・デプロイを終えてから再開する。評価資料は年に1回公表される資料なので、初期はこの停止を挟む運用とする。許容する停止時間は公開の前に決める。
 
@@ -193,6 +202,8 @@ script はネットワークと `cf` を使うので sandbox の外で手動で�
 ```
 
 `page` は物理頁の整数である。頁単位の登録では 1 つの item が 1 頁なので、候補ごとに 1 つになる（文書単位に戻した場合は、頁の見出しで分けて頁ごとの候補にする）。`url` は出典 PDF、`page_url` は `<url>#page=<page>` で、利用者が該当頁を開くための所在である。`notes` には、「0件は出典に無いことを意味しない」と「候補は検索の結果で、抜粋は所在を示すためのもの。内容は出典 PDF の該当頁を自分で取得して確かめる」を常に入れる。本文の無い候補を除いたときは、それも書く。
+
+CSV の出典（公開レポートの表）の候補と documents の出典だけ、`origin_format: csv` を返す（PDF には付けず、省略は PDF）。`page` は風土記が取った表のデータ行の番号（1始まり）、`url` と `page_url` は公開レポートの URL で、頁の指定は付けない。CSV の候補が入るときは、市のファイルではなく風土記が取った表であること、画面で事業名を検索して確かめることを `notes` に足す。PDF の候補の値と形は変えない。
 
 #### 返す量は所在と軽微な抜粋にする
 

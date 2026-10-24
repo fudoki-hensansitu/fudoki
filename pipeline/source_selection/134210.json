@@ -5560,7 +5560,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "R6評価資料が見つからない。決算ページは都のindexのみ。DuckDuckGoのsite検索でも該当なし。探した頁: https://www.soumu.metro.tokyo.lg.jp/05gyousei/04kusichousonindex/04kusichousonzaisei/years/06nend。探索した範囲では選べる評価資料が無かった（2026-10-15確認）。"
+      "reason": "小笠原村の評価資料を探した。ブラウザで描画して確認した頁: https://www.vill.ogasawara.tokyo.jp/kikaku_seisaku/comprehensiveplan/（小笠原村総合計画）。DuckDuckGo の site 検索（事務事業評価・行政評価 施策評価・総合計画 進捗 評価）で出た「事業評価書」（補助事業ごと1頁の様式、高齢者在宅サービスセンター運営事業など補助金の事後評価）は個別の補助事業のみで、全体の評価資料ではない。ほかは教育委員会の点検・評価（選ばない対象）と計画本体のみ。確認日：2026-10-23（UTC）。"
     },
     {
       "target": {
@@ -5571,7 +5571,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "2023年度実績の評価資料が見つからない（2024年度の調査と同様）。探した頁: https://www.soumu.metro.tokyo.lg.jp/05gyousei/04kusichousonindex/04kusichousonzaisei/years/06nend。探索した範囲では選べる評価資料が無かった（2026-10-16確認）。"
+      "reason": "小笠原村の評価資料を探した。ブラウザで描画して確認した頁: https://www.vill.ogasawara.tokyo.jp/kikaku_seisaku/comprehensiveplan/（小笠原村総合計画）。DuckDuckGo の site 検索でも、補助事業ごとの事業評価書（個別の補助金の事後評価）、教育委員会の点検・評価（選ばない対象）、計画本体のみで、全体の評価資料は無い。確認日：2026-10-23（UTC）。"
     }
   ]
 }

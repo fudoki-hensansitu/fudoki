@@ -25,6 +25,16 @@ def selection(jurisdiction: str, sha256: str, *, pages=None, files=None, archive
     }
 
 
+def csv_selection(jurisdiction: str, sha256: str) -> dict:
+    """Power BI の公開レポートの表を取った CSV の選定。"""
+    chosen = selection(jurisdiction, sha256)
+    chosen['candidates'][0]['files'] = [{
+        'download_url': 'https://app.powerbi.com/view?r=test', 'sha256': sha256, 'format': 'csv',
+        'acquisition': {'type': 'powerbi', 'table': '01 メイン', 'columns': ['番号', '事務事業名'], 'order_by': ['番号']}}]
+    chosen['archive']['files'] = [{'key': f'fiscal/{jurisdiction}/evaluation-settlement.csv', 'sha256': sha256}]
+    return chosen
+
+
 def write_selections(directory: Path, jurisdiction: str, *selections: dict) -> None:
     (directory / f'{jurisdiction}.json').write_text(json.dumps({'evaluation_selections': list(selections)}), encoding='utf-8')
 
@@ -81,6 +91,20 @@ class PlanTest(unittest.TestCase):
             write_selections(Path(directory), '131172', broken)
             with self.assertRaises(ValueError):
                 plan.load_origins(Path(directory))
+
+    def test_csv_origin_goes_to_the_instance_without_ocr_and_is_planned_by_data_row(self):
+        with tempfile.TemporaryDirectory() as directory:
+            write_selections(Path(directory), '132012', csv_selection('132012', A))
+            (origin,) = plan.load_origins(Path(directory))
+            self.assertEqual(plan.load_origins(Path(directory), use_ocr=True), [])
+        self.assertEqual((origin.origin_format, origin.pages, origin.download_url), ('csv', None, 'https://app.powerbi.com/view?r=test'))
+        self.assertEqual(plan.item_format(CONFIG, origin), 'md')
+        items = plan.plan_items(origin, 2, plan.item_format(CONFIG, origin))
+        self.assertEqual([i['key'] for i in items], [f'{A}_p0001.md', f'{A}_p0002.md'])
+        self.assertEqual(items[1]['metadata'], {'jurisdiction': '132012', 'fiscal_year': '2025', 'origin_sha256': A, 'page': 2})
+        record = {'origin_sha256': A, 'page_count': 2, 'confirmed_at': '2026-10-23T00:00:00Z',
+                  'plan_fingerprint': plan.fingerprint(CONFIG, items, 'md')}
+        self.assertTrue(plan.registration_is_current({'config': CONFIG, 'registrations': [record]}, origin))
 
     def test_scan_files_go_only_to_an_ocr_instance(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -175,6 +199,29 @@ class PlanTest(unittest.TestCase):
         instance = plan.load_instance()
         self.assertEqual(plan.INSTANCE_PATH.read_text(encoding='utf-8'), plan.render_instance(instance))
         self.assertEqual({r['origin_sha256'] for r in instance['registrations']} - {o.sha256 for o in plan.load_origins()}, set())
+
+
+class CsvItemTest(unittest.TestCase):
+    """CSV の出典のデータ行が、列名: 値の文字の item になる。"""
+
+    def document(self, text: str):
+        from evaluation_search.index import CsvDocument
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'origin.csv'
+            path.write_text(text, encoding='utf-8', newline='')
+            return CsvDocument(path)
+
+    def test_each_data_row_is_one_item_with_non_empty_columns_only(self):
+        from evaluation_search.index import text_item
+        document = self.document('番号,事務事業名,課題\n1,議会の運営,\n2,"広報,広聴","一行目\n二行目 ""引用"""\n')
+        self.assertEqual(len(document), 2)
+        self.assertEqual(text_item(document, 1, 'k.md').decode(), '# k.md\n## Contents\n### Page 1\n番号: 1\n事務事業名: 議会の運営\n')
+        self.assertEqual(text_item(document, 2, 'k.md').decode(),
+                         '# k.md\n## Contents\n### Page 1\n番号: 2\n事務事業名: 広報,広聴\n課題: 一行目\n二行目 "引用"\n')
+
+    def test_row_with_a_different_column_count_stops(self):
+        with self.assertRaises(ValueError):
+            self.document('番号,事務事業名\n1\n')
 
 
 class ConvertedCharsTest(unittest.TestCase):

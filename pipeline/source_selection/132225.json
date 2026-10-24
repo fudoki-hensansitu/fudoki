@@ -5304,7 +5304,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "施策報告書に目標・評価が無い。探した頁の記録は無い。探索した範囲では選べる評価資料が無かった（2026-10-14確認）。"
+      "reason": "選ばない（評価資料なし）。ブラウザで描画して見た頁: 行政評価・事務報告書（https://www.city.higashikurume.lg.jp/shisei/gyousaisei/hyoka/index.html）、行政評価一覧（https://www.city.higashikurume.lg.jp/shisei/gyousaisei/hyoka/1005527/index.html、施策評価表の最新は令和3年度、事務事業評価表の最新は令和3年度＝令和2年度振り返り）、事務報告書（https://www.city.higashikurume.lg.jp/shisei/gyousaisei/hyoka/1022766/index.html、令和5〜8年度の事務報告書・施策報告書・市民アンケート調査・利用者モニタリング）。令和7年度実績の資料として令和8年度施策報告書（令和7年度振り返り、令和8年7月、95頁、https://www.city.higashikurume.lg.jp/shisei/gyousaisei/hyoka/1022766/1029492.html の reiwahatinendoshisakuhoukokusho.pdf）が令和8年8月に掲載されている。ただし冒頭の「施策報告書の目的・見方」が「前年度に実施した事業について、その事業名、事務概要、事業費及び取組み内容を公表する」とあり、各表の列は事務事業名・事業概要・事業費（前年度比）・取組み・所管課で、目標・評価・課題・今後の方向の欄が無い（令和4年度に行政評価制度を見直し、令和5年度から施策報告書に置き換えた旨の記載）。令和8年度事務報告書（https://www.city.higashikurume.lg.jp/shisei/gyousaisei/hyoka/1022766/1029438.html）は予定計画事業一覧のみ、令和8年度利用者モニタリング（https://www.city.higashikurume.lg.jp/shisei/gyousaisei/hyoka/1022766/1029496.html）はデジタルサービスの利用者調査で、事業ごとの評価ではない。確認日：2026-10-23（UTC）。"
     },
     {
       "target": {
@@ -5315,7 +5315,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "R7施策報告書（R6振り返り、shisaku_all.pdf、106頁）は目的に「事業名、事務概要、事業費及び取組み内容を公表」と明記し、目標・評価・課題・方向の記述が無いため選ばない。事務報告書も活動報告。探した頁: https://www.city.higashikurume.lg.jp/shisei/gyousaisei/hyoka/1022766/1027450.html。探索した範囲では選べる評価資料が無かった（2026-10-15確認）。"
+      "reason": "ブラウザで描画した行政評価・事務報告書の頁（https://www.city.higashikurume.lg.jp/shisei/gyousaisei/hyoka/index.html）と行政評価一覧（https://www.city.higashikurume.lg.jp/shisei/gyousaisei/hyoka/1005527/index.html）を確認した。行政評価一覧に載る施策評価表・事務事業評価表・外部評価の最新は令和3年度（令和2年度振り返り）までで、頁に「行政評価制度を活用してきたが、事務報告書を作成している」とあり、以降は行政評価を実施していない。施策報告書（https://www.city.higashikurume.lg.jp/shisei/gyousaisei/hyoka/1022766/1027450.html）は「事業名、事務概要、事業費及び取組み内容を公表する」もので、目標・評価・課題・方向の欄が無い。令和7年度施策報告書（令和6年度振り返り、shisaku_all.pdf）が該当するが、上記のとおり活動報告のため選ばない。DuckDuckGo の site 検索でも他の評価資料は出ない。確認日：2026-10-23（UTC）。"
     },
     {
       "target": {
@@ -5326,7 +5326,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "施策報告書は目的に「事業名・事務概要・事業費及び取組み内容を公表」と明記し、目標・評価・課題・方向の記述が無い。探した頁: https://www.city.higashikurume.lg.jp/shisei/gyousaisei/hyoka/1022766/1027450.html。探索した範囲では選べる評価資料が無かった（2026-10-16確認）。"
+      "reason": "ブラウザで描画した行政評価・事務報告書の頁（https://www.city.higashikurume.lg.jp/shisei/gyousaisei/hyoka/index.html）と行政評価一覧（https://www.city.higashikurume.lg.jp/shisei/gyousaisei/hyoka/1005527/index.html）を確認した。行政評価一覧に載る施策評価表・事務事業評価表・外部評価の最新は令和3年度（令和2年度振り返り）までで、頁に「行政評価制度を活用してきたが、事務報告書を作成している」とあり、以降は行政評価を実施していない。施策報告書（https://www.city.higashikurume.lg.jp/shisei/gyousaisei/hyoka/1022766/1027450.html）は「事業名、事務概要、事業費及び取組み内容を公表する」もので、目標・評価・課題・方向の欄が無い。令和6年度施策報告書（令和5年度振り返り、https://www.city.higashikurume.lg.jp/_res/projects/default_project/_page_/001/024/679/r6/shisaku_all.pdf）が該当するが、活動報告のため選ばない。令和5年度事務報告書の頁（.../hyoka/1022766/1022778.html）も同様。確認日：2026-10-23（UTC）。"
     }
   ]
 }
