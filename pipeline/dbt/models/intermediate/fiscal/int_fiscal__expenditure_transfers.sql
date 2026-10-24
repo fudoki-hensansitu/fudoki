@@ -16,16 +16,19 @@ with recursive unioned as (
     select node_id, parent_node_id, jurisdiction_code, fiscal_year, document_kind,
         account_name, axis, is_subject, node_kind, code, name, amount_yen
     from {{ ref('int_fiscal__csv_expenditure_nodes') }}
+), transfer_names as (
+    -- A printed department suffix does not change the recipient account.
+    select *, regexp_replace(name, '【[^【】]+】$', '') as transfer_name from unioned
 ), transfer_named as (
     -- A transfer 目, or an off-subject breakdown (節・備考・説明) named exactly
     -- 繰出金 or matching the account pattern. Subject 項・款 never qualify, so a
     -- marked 目 keeps its mark under a transfer-named 項 (e.g. 他会計繰出金).
     select document_kind, node_id, axis, is_subject,
-        case when regexp_matches(name, '^(.*会計)繰出金$')
-             then regexp_extract(name, '^(.*会計)繰出金$', 1) end as own_recipient
-    from unioned
-    where (is_subject and node_kind = '目' and regexp_matches(name, '^(.*会計)繰出金$'))
-       or (not is_subject and (name = '繰出金' or regexp_matches(name, '^(.*会計)繰出金$')))
+        case when regexp_matches(transfer_name, '^(.*会計)繰出金$')
+             then regexp_extract(transfer_name, '^(.*会計)繰出金$', 1) end as own_recipient
+    from transfer_names
+    where (is_subject and node_kind = '目' and regexp_matches(transfer_name, '^(.*会計)繰出金$'))
+       or (not is_subject and (transfer_name = '繰出金' or regexp_matches(transfer_name, '^(.*会計)繰出金$')))
 ), ancestors as (
     select document_kind, node_id, parent_node_id as ancestor_id, 1 as depth
     from unioned where parent_node_id is not null
@@ -87,7 +90,7 @@ with recursive unioned as (
       using (document_kind, node_id, depth)
     group by c.document_kind, c.node_id
     having count(distinct c.account_kind) = 1
-), classified as (
+), classified_names as (
     -- Resolve every printed transfer name before choosing its level/axis. A
     -- known recipient in the remarks can split a 節 that combines recipients.
     select u.*, r.recipient_name, r.keyword,
@@ -103,6 +106,29 @@ with recursive unioned as (
     left join ancestor_kinds ak using (node_id, document_kind)
     left join {{ ref('int_fiscal__expenditure_accounts') }} a
       using (jurisdiction_code, fiscal_year, account_name)
+), section_recipient_axes as (
+    -- A complete breakdown naming one recipient also explains a bare 節.
+    -- Partial or mixed-recipient details cannot identify its whole amount.
+    -- Keep existing recipient marks at their published level: only newly
+    -- recognized department-qualified details can enrich the bare section.
+    select s.document_kind, s.node_id, min(d.recipient_kind) as recipient_kind
+    from classified_names s
+    join classified_names d
+      on d.document_kind = s.document_kind and d.moku_id = s.moku_id
+         and not d.is_subject and d.axis <> '節'
+    where s.axis = '節' and (s.recipient_kind is null or s.recipient_kind = '不明')
+    group by s.document_kind, s.node_id, s.amount_yen, d.axis
+    having count(distinct d.recipient_kind) = 1
+       and bool_and(d.recipient_kind is not null and d.recipient_kind <> '不明')
+       and bool_and(regexp_matches(d.name, '【[^【】]+】$'))
+       and count(d.amount_yen) = count(*) and sum(d.amount_yen) = s.amount_yen
+), section_recipients as (
+    select document_kind, node_id, min(recipient_kind) as recipient_kind
+    from section_recipient_axes group by document_kind, node_id
+    having count(distinct recipient_kind) = 1
+), classified as (
+    select c.* replace (coalesce(r.recipient_kind, c.recipient_kind) as recipient_kind)
+    from classified_names c left join section_recipients r using (document_kind, node_id)
 ), finest as (
     -- Repeated names within an axis yield to an identified recipient below.
     -- Keep 節 until identified_details proves a complete split in another axis.

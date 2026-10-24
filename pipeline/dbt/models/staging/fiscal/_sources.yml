@@ -420,6 +420,38 @@ sources:
       direction: expenditure
       table_id: general-expenditure
       kind: nodes
+  - name: j131091_2024_settlement_care_expenditure_amounts
+    meta:
+      jurisdiction: '131091'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: care-expenditure
+      kind: amounts
+  - name: j131091_2024_settlement_care_expenditure_nodes
+    meta:
+      jurisdiction: '131091'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: care-expenditure
+      kind: nodes
+  - name: j131091_2024_settlement_elderly_medical_expenditure_amounts
+    meta:
+      jurisdiction: '131091'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: elderly-medical-expenditure
+      kind: amounts
+  - name: j131091_2024_settlement_elderly_medical_expenditure_nodes
+    meta:
+      jurisdiction: '131091'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: elderly-medical-expenditure
+      kind: nodes
   - name: j131091_2024_settlement_general_expenditure_amounts
     meta:
       jurisdiction: '131091'
@@ -435,6 +467,70 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: general-expenditure
+      kind: nodes
+  - name: j131091_2024_settlement_national_health_expenditure_amounts
+    meta:
+      jurisdiction: '131091'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-expenditure
+      kind: amounts
+  - name: j131091_2024_settlement_national_health_expenditure_nodes
+    meta:
+      jurisdiction: '131091'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-expenditure
+      kind: nodes
+  - name: j131091_2025_settlement_care_expenditure_amounts
+    meta:
+      jurisdiction: '131091'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: care-expenditure
+      kind: amounts
+  - name: j131091_2025_settlement_care_expenditure_nodes
+    meta:
+      jurisdiction: '131091'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: care-expenditure
+      kind: nodes
+  - name: j131091_2025_settlement_elderly_medical_expenditure_amounts
+    meta:
+      jurisdiction: '131091'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: elderly-medical-expenditure
+      kind: amounts
+  - name: j131091_2025_settlement_elderly_medical_expenditure_nodes
+    meta:
+      jurisdiction: '131091'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: elderly-medical-expenditure
+      kind: nodes
+  - name: j131091_2025_settlement_national_health_expenditure_amounts
+    meta:
+      jurisdiction: '131091'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-expenditure
+      kind: amounts
+  - name: j131091_2025_settlement_national_health_expenditure_nodes
+    meta:
+      jurisdiction: '131091'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-expenditure
       kind: nodes
   - name: j131105_2024_settlement_elderly_medical_setsu_amounts
     meta:
@@ -1747,6 +1843,310 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: national-health-insurance-expenditure
+      kind: nodes
+  - name: j132101_2025_settlement_expenditure_settlement_10_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-10
+      kind: amounts
+  - name: j132101_2025_settlement_expenditure_settlement_10_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-10
+      kind: nodes
+  - name: j132101_2025_settlement_expenditure_settlement_11_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-11
+      kind: amounts
+  - name: j132101_2025_settlement_expenditure_settlement_11_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-11
+      kind: nodes
+  - name: j132101_2025_settlement_expenditure_settlement_12_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-12
+      kind: amounts
+  - name: j132101_2025_settlement_expenditure_settlement_12_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-12
+      kind: nodes
+  - name: j132101_2025_settlement_expenditure_settlement_13_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-13
+      kind: amounts
+  - name: j132101_2025_settlement_expenditure_settlement_13_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-13
+      kind: nodes
+  - name: j132101_2025_settlement_expenditure_settlement_14_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-14
+      kind: amounts
+  - name: j132101_2025_settlement_expenditure_settlement_14_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-14
+      kind: nodes
+  - name: j132101_2025_settlement_expenditure_settlement_15_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-15
+      kind: amounts
+  - name: j132101_2025_settlement_expenditure_settlement_15_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-15
+      kind: nodes
+  - name: j132101_2025_settlement_expenditure_settlement_16_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-16
+      kind: amounts
+  - name: j132101_2025_settlement_expenditure_settlement_16_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-16
+      kind: nodes
+  - name: j132101_2025_settlement_expenditure_settlement_17_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-17
+      kind: amounts
+  - name: j132101_2025_settlement_expenditure_settlement_17_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-17
+      kind: nodes
+  - name: j132101_2025_settlement_expenditure_settlement_18_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-18
+      kind: amounts
+  - name: j132101_2025_settlement_expenditure_settlement_18_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-18
+      kind: nodes
+  - name: j132101_2025_settlement_expenditure_settlement_19_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-19
+      kind: amounts
+  - name: j132101_2025_settlement_expenditure_settlement_19_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-19
+      kind: nodes
+  - name: j132101_2025_settlement_expenditure_settlement_1_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-1
+      kind: amounts
+  - name: j132101_2025_settlement_expenditure_settlement_1_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-1
+      kind: nodes
+  - name: j132101_2025_settlement_expenditure_settlement_2_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-2
+      kind: amounts
+  - name: j132101_2025_settlement_expenditure_settlement_2_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-2
+      kind: nodes
+  - name: j132101_2025_settlement_expenditure_settlement_3_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-3
+      kind: amounts
+  - name: j132101_2025_settlement_expenditure_settlement_3_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-3
+      kind: nodes
+  - name: j132101_2025_settlement_expenditure_settlement_4_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-4
+      kind: amounts
+  - name: j132101_2025_settlement_expenditure_settlement_4_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-4
+      kind: nodes
+  - name: j132101_2025_settlement_expenditure_settlement_5_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-5
+      kind: amounts
+  - name: j132101_2025_settlement_expenditure_settlement_5_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-5
+      kind: nodes
+  - name: j132101_2025_settlement_expenditure_settlement_6_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-6
+      kind: amounts
+  - name: j132101_2025_settlement_expenditure_settlement_6_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-6
+      kind: nodes
+  - name: j132101_2025_settlement_expenditure_settlement_7_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-7
+      kind: amounts
+  - name: j132101_2025_settlement_expenditure_settlement_7_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-7
+      kind: nodes
+  - name: j132101_2025_settlement_expenditure_settlement_8_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-8
+      kind: amounts
+  - name: j132101_2025_settlement_expenditure_settlement_8_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-8
+      kind: nodes
+  - name: j132101_2025_settlement_expenditure_settlement_9_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-9
+      kind: amounts
+  - name: j132101_2025_settlement_expenditure_settlement_9_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: expenditure-settlement-9
       kind: nodes
   - name: j132128_2024_settlement_general_expenditure_01_amounts
     meta:

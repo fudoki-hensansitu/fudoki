@@ -22,8 +22,8 @@ class TransferTest(unittest.TestCase):
             rows = [
                 ('m', None, '科目', True, '目', '医療費', 8485855706),
                 ('s', 'm', '節', False, '内訳1', '繰出金', 8485855706),
-                ('n', 'm', '備考', False, '内訳1', '国民健康保険特別会計繰出金', 4913384649),
-                ('l', 'm', '備考', False, '内訳1', '後期高齢者医療特別会計繰出金', 3572471057),
+                ('n', 'm', '備考', False, '内訳1', '国民健康保険特別会計繰出金【保険課】', 4913384649),
+                ('l', 'm', '備考', False, '内訳1', '後期高齢者医療特別会計繰出金【保険課】', 3572471057),
                 ('a', None, '科目', True, '目', '財政管理費', 100),
                 ('as', 'a', '節', False, '内訳1', '繰出金', 100),
                 ('ar', 'a', '備考', False, '内訳1', '特別会計繰出金', 100),
@@ -37,10 +37,10 @@ class TransferTest(unittest.TestCase):
                 ('dr', 'd', '備考', False, '内訳1', 'その他介護保険会計繰出金', 25),
                 ('e', None, '科目', True, '目', '福祉総務費', 1000),
                 ('es', 'e', '節', False, '内訳1', '繰出金', 1000),
-                ('er', 'e', '備考', False, '内訳1', '介護保険会計繰出金', 25),
+                ('er', 'e', '備考', False, '内訳1', '介護保険会計繰出金【福祉課】', 25),
                 ('f', None, '科目', True, '目', '福祉総務費', 1000),
                 ('fs', 'f', '節', False, '内訳1', '繰出金', 1000),
-                ('fr', 'fs', '備考', False, '内訳1', '介護保険会計繰出金', 25),
+                ('fr', 'fs', '備考', False, '内訳1', '介護保険会計繰出金【福祉課】', 25),
                 ('g', None, '科目', True, '目', '医療費', 1000),
                 ('gs', 'g', '節', False, '内訳1', '繰出金', 1000),
                 ('gn', 'gs', '備考', False, '内訳1', '国民健康保険特別会計繰出金', 600),
@@ -49,6 +49,20 @@ class TransferTest(unittest.TestCase):
                 ('hs', 'h', '節', False, '内訳1', '繰出金', 100),
                 ('hr', 'hs', '備考', False, '内訳1', '繰出金', 100),
                 ('hd', 'hr', '備考', False, '内訳2', '一般会計繰出金', 100),
+                ('i', None, '科目', True, '目', '高齢者福祉費', 100),
+                ('is', 'i', '節', False, '内訳1', '繰出金【担当課】', 100),
+                ('ir', 'i', '備考', False, '内訳1', '介護保険特別会計繰出金【高齢者福祉課】', 100),
+                ('j', None, '科目', True, '目', '福祉費', 100),
+                ('js', 'j', '節', False, '内訳1', '繰出金', 100),
+                ('jr', 'j', '備考', False, '内訳1', '介護保険特別会計繰出金【担当課】', 100),
+                ('ju', 'j', '備考', False, '内訳1', '介護保険特別会計繰出金【別課】', None),
+                ('l2', None, '科目', True, '目', '福祉費', 100),
+                ('l2s', 'l2', '節', False, '内訳1', '繰出金', 100),
+                ('l2r', 'l2', '備考', False, '内訳1', '介護保険特別会計繰出金【福祉課】', 100),
+                ('l2x', 'l2', '説明', False, '内訳1', '介護保険特別会計繰出金【福祉課】', 100),
+                ('v', None, '科目', True, '目', '福祉費', 100),
+                ('vs', 'v', '節', False, '内訳1', '繰出金', 100),
+                ('vr', 'v', '備考', False, '内訳1', '介護保険特別会計繰出金', 100),
             ]
             con.executemany('insert into int_fiscal__settlement_expenditure_nodes values (?,?,?,?,?,?,?,?,?,?,?,?)',
                             [(key, parent, 'fixture', 2025, 'settlement', '一般会計', axis, subject, kind, None, name, amount)
@@ -62,7 +76,7 @@ class TransferTest(unittest.TestCase):
             sql = Environment(undefined=StrictUndefined).from_string(source).render(ref=lambda name: name)
             con.execute('create table transfers as ' + sql)
             marked = con.execute('select node_id,interfund_transfer_to from transfers where is_interfund_transfer order by node_id').fetchall()
-            self.assertEqual(marked, [('as', None), ('bs', '国民健康保険'), ('cs', None), ('d', '介護保険'), ('es', None), ('fs', None), ('gl', '後期高齢者医療'), ('gn', '国民健康保険'), ('hd', '一般会計'), ('l', '後期高齢者医療'), ('n', '国民健康保険')])
+            self.assertEqual(marked, [('as', None), ('bs', '国民健康保険'), ('cs', None), ('d', '介護保険'), ('es', None), ('fs', None), ('gl', '後期高齢者医療'), ('gn', '国民健康保険'), ('hd', '一般会計'), ('is', '介護保険'), ('js', None), ('l', '後期高齢者医療'), ('l2s', '介護保険'), ('n', '国民健康保険'), ('vr', '介護保険')])
             self.assertEqual(con.execute("select sum(n.amount_yen) from transfers t join int_fiscal__settlement_expenditure_nodes n using(node_id) where t.is_interfund_transfer and n.parent_node_id='m'").fetchone()[0], 8485855706)
 
 
