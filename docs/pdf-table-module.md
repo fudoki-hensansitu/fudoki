@@ -26,7 +26,7 @@ layoutの区分は年度・会計ではなく書式で決める。同じ列配�
 `Token` は出典ID・物理頁・観測ID・`raw_text`・元のbbox・単位を持つ。OCRではkind・confidence・parent IDも保持する。座標は正立した表示頁の左上原点、単位はptまたはpx。CropBox・回転の反映は抽出側で済ませる。
 
 - `tokens_from_bbox_layout(xml, origin_id=..., first_page=...)` はPoppler XMLの単語を読む。文字単位に分割せず、同じ文字・位置の観測も黙って削除しない。
-- `tokens_from_ocr(result, kind=..., region_ids=..., unit=...)` は [共通OCR入口](../pipeline/ingestion/lib/scan_ocr.md) のPaddle・Apple Visionの出力を読む。region・word・numberのいずれか一種類と領域を明示し、親観測と部分観測の重複を避ける。ptはPDFだけに使える。既存の `tokens_from_vision` も同じ処理の入口として残す。
+- `tokens_from_ocr(result, kind=..., region_ids=..., unit=...)` は [共通OCR入口](../pipeline/ingestion/lib/scan_ocr.md) のPaddleの出力を読む。region・word・numberのいずれか一種類と領域を明示し、親観測と部分観測の重複を避ける。ptはPDFだけに使える。
 
 枠のないOCR観測はbboxをNoneにして保持する。同じ出典内の観測IDが重複した入力は表の組み立て時に拒否する。異なるIDで重複印字された文字は自動削除せず、呼び出し側で出典の印字層を確認する。
 

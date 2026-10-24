@@ -71,7 +71,7 @@ Paddleの任意依存（onnxruntimeを含む）は `mise exec -- uv sync --extra
 
 Paddleのモデル指定・常駐engine・CLIは [paddle_ocr.md](paddle_ocr.md)を参照する。複数画像を処理する場合は `PaddleOcr` のcontext内でengineを使い回す。PDF入口は同じengineで全指定頁と再読を処理する。
 
-両エンジンの有効な観測は `pages[].regions[].observations[]` に返る。`pdf_table.tokens_from_ocr(result, kind="region", region_ids=["full-page"], unit="pt")` で表の組み立てへ渡せる。画像入力では `unit="px"` を指定する。原文・金額の補正は行わず、名称辞書の適用や出典照合は呼び出し側で行う。
+有効な観測は `pages[].regions[].observations[]` に返る。`pdf_table.tokens_from_ocr(result, kind="region", region_ids=["full-page"], unit="pt")` で表の組み立てへ渡せる。画像入力では `unit="px"` を指定する。原文・金額の補正は行わず、名称辞書の適用や出典照合は呼び出し側で行う。
 
 ## OCR後の名称と金額に共通訂正辞書を使う
 

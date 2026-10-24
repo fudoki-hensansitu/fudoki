@@ -64,6 +64,8 @@ ONNX Runtime での実行は paddlepaddle を import しない。そこで `padd
 
 ## 既存の冊は Vision のまま残す
 
+（この節と下の「結果」の Vision に関する記述は導入時の判断である。その後、全冊を Paddle で取り直し、Vision の処理は消した。末尾の節を参照。）
+
 観測 ID は、Paddle が `p{n}:{region}:a{k}:result{m}:r{i}`、Vision が `p{n}:{region}:r{i}` で、形が違う。`AmountRule` などの固定観測と訂正の宣言は Vision の ID に結び付くので、既存の冊を Paddle に切り替えると訂正がすべて無効になる。切り替えの利益は、訂正済みの冊では小さい。そのため既存の依頼は `engine: "vision"` のまま触らない。固定済みの VLM の答えを無効にしないよう、`_vlm_identity()` の値も変えない。
 
 ## 132152/2025 の試しの取り直し

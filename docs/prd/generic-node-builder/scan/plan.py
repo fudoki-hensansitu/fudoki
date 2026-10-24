@@ -17,8 +17,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[4] / 'pipeline'))
 from ingestion.fiscal import manifest  # noqa: E402
 
 
-def plan(document: dict, keep: list[str], *, generic: bool = False, account: str | None = None,
-         column_tiles: bool = False) -> dict:
+def plan(document: dict, keep: list[str], *, generic: bool = False, account: str | None = None) -> dict:
     result = deepcopy(document)
     result['tables'] = []
     for conversion in result['conversions']:
@@ -29,12 +28,8 @@ def plan(document: dict, keep: list[str], *, generic: bool = False, account: str
         for old in conversion['ocr_inputs']:
             pages = old['request']['pages']
             for index, first in enumerate(range(0, len(pages), 10), 1):
-                mode = 'columns' if column_tiles else 'vision'
                 request = {**old['request'], 'pages': pages[first:first + 10], 'vlm_fallback': False}
-                if column_tiles:
-                    request.pop('regions', None)
-                    request['column_tiles'] = True
-                inputs.append({'id': f'{old["id"]}-{mode}-{index}', 'origin_sha256': old['origin_sha256'], 'request': request})
+                inputs.append({'id': f'{old["id"]}-paddle-{index}', 'origin_sha256': old['origin_sha256'], 'request': request})
         conversion['ocr_inputs'] = inputs
     if generic:
         selected_files = manifest.selection_for(result)['candidates'][0]['files']
@@ -65,7 +60,7 @@ def selected(target: dict, account: str, page_limit: int | None) -> dict:
         document['conversions'].append({'id': ident, 'converter': 'fiscal/layouts/settlement_statement/convert.py',
             'inputs': [{'sha256': file['sha256']}], 'options': {'table_id': ident},
             'ocr_inputs': [{'id': f'{ident}-ocr', 'origin_sha256': file['sha256'],
-                            'request': {'engine': 'vision', 'pages': pages}}],
+                            'request': {'engine': 'paddle', 'pages': pages}}],
             'expected_tables': [{'table_id': ident}]})
     if not document['conversions']:
         raise ValueError('No selected scan original for this account')
@@ -81,7 +76,6 @@ def main() -> None:
     parser.add_argument('--page-limit', type=int)
     parser.add_argument('--keep', action='append', default=[])
     parser.add_argument('--generic', action='store_true', help='Wire the plan to generic_scan with account/partial options')
-    parser.add_argument('--column-tiles', action='store_true', help='Declare rule-bounded column OCR, without changing the default')
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     if args.target and not args.account:
@@ -89,7 +83,7 @@ def main() -> None:
     if args.page_limit is not None and args.page_limit < 1:
         parser.error('--page-limit must be positive')
     document = json.loads(args.manifest.read_text()) if args.manifest else selected(args.target, args.account, args.page_limit)
-    result = plan(document, args.keep, generic=args.generic, account=args.account, column_tiles=args.column_tiles)
+    result = plan(document, args.keep, generic=args.generic, account=args.account)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     with args.output.open('x') as stream:
         stream.write(json.dumps(result, ensure_ascii=False, indent=2) + '\n')

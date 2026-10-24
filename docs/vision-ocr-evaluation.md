@@ -2,7 +2,7 @@
 
 2026-10-07の実スキャン1頁では、列ごとのOCRで欠落したセルだけを再読する方法が最も多くの金額セルに一致した。全セルの切り出しや罫線除去は、一律に改善する処理ではなかった。
 
-本書は比較結果と調査根拠を保存する。実行フローは [pipelineスキルのingestion](../.agents/skills/pipeline/references/ingestion.md)、エンジン選定は [ADR 0017](adr/0017-vision-for-coordinate-preserving-ocr.md)、API・出力形式は [OCRモジュールの説明](../pipeline/ingestion/lib/vision_ocr.md) を参照する。
+本書は比較結果と調査根拠を保存する。実行フローは [pipelineスキルのingestion](../.agents/skills/pipeline/references/ingestion.md)、エンジン選定は [ADR 0017](adr/0017-vision-for-coordinate-preserving-ocr.md)を参照する。Vision の処理は全冊を Paddle に移した後に消した（[ADR 0032](adr/0032-paddle-onnx-for-new-scan-acquisitions.md)）。
 
 ## 評価した出典と条件
 
