@@ -19,7 +19,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[4] / 'pipeline'))
 from ingestion.fiscal import manifest  # noqa: E402
 from ingestion.fiscal.storage import fetch, fetch_ocr, save_ocr, write_ocr  # noqa: E402
 from ingestion.lib.scan_ocr import acquire  # noqa: E402
-from ingestion.lib.vision_ocr import VisionOcrError  # noqa: E402
+from ingestion.lib.paddle_ocr import PaddleOcrError  # noqa: E402
 
 
 def acquire_plan(path: Path, *, remote: bool, inputs_dir: Path, conversion_ids: list[str] | None = None) -> None:
@@ -58,7 +58,7 @@ def acquire_plan(path: Path, *, remote: bool, inputs_dir: Path, conversion_ids: 
                     try:
                         data, run = acquire(files[item['origin_sha256']], item['request'])
                         break
-                    except VisionOcrError as error:
+                    except PaddleOcrError as error:
                         if attempt == 2:
                             raise
                         print(json.dumps({'ocr': item['id'], 'retry': attempt + 1,

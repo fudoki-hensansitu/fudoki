@@ -156,16 +156,10 @@
         "request": {
           "type": "object",
           "additionalProperties": false,
-          "not": {"required": ["column_tiles", "regions"]},
-          "if": {"properties": {"engine": {"const": "paddle"}}},
-          "then": {"not": {"required": ["column_tiles"]}},
           "properties": {
             "engine": {
-              "enum": [
-                "paddle",
-                "vision"
-              ],
-              "description": "New requests name paddle (PP-OCRv6 small, ONNX Runtime; ADR 0032). Requests already pinned with vision stay vision: their amount corrections are bound to Vision's observation ids."
+              "const": "paddle",
+              "description": "PP-OCRv6 small on ONNX Runtime (ADR 0032)."
             },
             "pages": {
               "type": "array",
@@ -178,21 +172,17 @@
             },
             "config": {
               "type": "object",
-              "description": "Engine settings: PaddleConfig for paddle (dpi, cpu_threads, detection_limit_side_len, page_strips, strip_overlap_px), VisionConfig for vision."
+              "description": "Engine settings: PaddleConfig for paddle (dpi, cpu_threads, detection_limit_side_len, page_strips, strip_overlap_px)."
             },
             "vlm_fallback": {
               "const": false,
-              "description": "Acquire with Vision only, keeping unread ink for a measured, bounded recheck outside the converter. Omission preserves the existing VLM fallback."
-            },
-            "column_tiles": {
-              "const": true,
-              "description": "Read every page in rule-bounded column tiles, with white padding. Explicit acquisition choice; omission keeps the full-page default."
+              "description": "Acquire without the VLM, keeping unread ink for a measured, bounded recheck outside the converter. Omission preserves the existing VLM fallback."
             },
             "rule_dark": {
               "type": "integer",
               "minimum": 129,
               "maximum": 255,
-              "description": "Gray level below which a pixel counts as a rule when tiling by columns. A scan that prints its rules pale declares a higher level than the default 128."
+              "description": "Left over from column-tiled requests; acquisition no longer reads it. It stays only where an existing request declares it, so the pinned request is unchanged."
             },
             "unit_marks": {
               "const": true,

@@ -1741,8 +1741,9 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
     edges = number_edges(taught, pattern)
     limits = line_limits(taught)
     stacking = stacked_columns(taught)
-    # The OCR pages of a mixed document are another size and another origin of x than its text pages: what
-    # the text pages teach does not place their columns, so they teach each other (a scan teaches itself).
+    # The OCR pages of a mixed document share the text pages' coordinates, but Paddle's word left edges sit 1-2pt
+    # off the text layer's glyphs (132080: `14` at 423.4, where the text layer teaches 426±1): what the text pages
+    # teach does not land on the OCR columns, so they teach each other (a scan teaches itself).
     scanned = [logical for logical in logicals if logical.ocr] if taught is not logicals else []
     if scanned:
         scan_margins, scan_edges, scan_limits = code_margins(scanned), number_edges(scanned, pattern), line_limits(scanned)

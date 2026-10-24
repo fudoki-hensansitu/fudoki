@@ -152,12 +152,6 @@ def tokens_from_ocr(result: dict, *, kind: str, region_ids: Sequence[str],
     return tuple(tokens)
 
 
-def tokens_from_vision(result: dict, *, kind: str, region_ids: Sequence[str],
-                       unit: str = "pt") -> tuple[Token, ...]:
-    """Retain the existing Apple Vision entry point."""
-    return tokens_from_ocr(result, kind=kind, region_ids=region_ids, unit=unit)
-
-
 @dataclass(frozen=True)
 class Column:
     name: str

@@ -5,68 +5,26 @@ import unittest.mock
 from pathlib import Path
 from unittest.mock import patch
 
-from ingestion.lib.paddle_ocr import PaddleConfig
+from ingestion.lib.paddle_ocr import OcrRegion, PaddleConfig
 from ingestion.lib.scan_ocr import recognize_image, recognize_pdf, settle_seams
-from ingestion.lib.vision_ocr import OcrRegion, VisionConfig
 
 
-class BackendSelection(unittest.TestCase):
-    def call(self, **kwargs):
-        with patch("ingestion.lib.scan_ocr.vision_ocr.recognize_pdf",
-                   return_value={"engine": {"name": "vision"}}) as vision, \
-                patch("ingestion.lib.scan_ocr.paddle_ocr.recognize_pdf",
-                      return_value={"engine": {"name": "paddle"}}) as paddle:
-            result = recognize_pdf(Path("input.pdf"), pages=[1], **kwargs)
-            return result["engine"]["name"], vision, paddle
-
-    def test_paddle_is_the_default(self):
-        name, vision, paddle = self.call()
-        self.assertEqual(name, "paddle")
-        self.assertEqual(paddle.call_count, 1)
-        self.assertEqual(vision.call_count, 0)
+class EngineEntryTest(unittest.TestCase):
+    def test_paddle_is_the_only_engine_and_its_default_config_is_onnxruntime(self):
+        with patch("ingestion.lib.scan_ocr.paddle_ocr.recognize_pdf",
+                   return_value={"engine": {"name": "paddle"}}) as paddle:
+            result = recognize_pdf(Path("input.pdf"), pages=[1])
+        self.assertEqual(result["engine"]["name"], "paddle")
         config = paddle.call_args.kwargs["config"]
         self.assertIsInstance(config, PaddleConfig)
         self.assertEqual((config.runtime, config.cpu_threads), ("onnxruntime", 4))
 
-    def test_paddle_is_the_default_for_images(self):
-        with patch("ingestion.lib.scan_ocr.vision_ocr.recognize_image",
-                   return_value={"engine": {"name": "vision"}}) as vision, \
-                patch("ingestion.lib.scan_ocr.paddle_ocr.recognize_image",
-                      return_value={"engine": {"name": "paddle"}}) as paddle:
-            self.assertEqual(recognize_image(Path("input.png"))["engine"]["name"], "paddle")
-            self.assertEqual((vision.call_count, paddle.call_count), (0, 1))
-
-    def test_vision_is_selected_by_backend_name(self):
-        name, vision, paddle = self.call(backend="vision")
-        self.assertEqual(name, "vision")
-        self.assertEqual((vision.call_count, paddle.call_count), (1, 0))
-        self.assertIsInstance(vision.call_args.kwargs["config"], VisionConfig)
-
-    def test_config_type_still_names_the_engine_so_legacy_paddle_callers_work(self):
-        name, _, paddle = self.call(config=PaddleConfig())
-        self.assertEqual(name, "paddle")
-        self.assertEqual(paddle.call_count, 1)
-        name, vision, _ = self.call(config=VisionConfig())
-        self.assertEqual(name, "vision")
-        self.assertEqual(vision.call_count, 1)
-
-    def test_mismatched_backend_and_config_are_rejected(self):
-        for kwargs in [{"backend": "paddle", "config": VisionConfig()},
-                       {"backend": "vision", "config": PaddleConfig()}]:
-            with self.assertRaises(ValueError):
-                recognize_pdf(Path("input.pdf"), pages=[1], **kwargs)
-
-    def test_unknown_backend_is_not_substituted(self):
-        with self.assertRaises(ValueError):
-            recognize_pdf(Path("input.pdf"), pages=[1], backend="tesseract")
-
-    def test_vision_rejects_paddle_retry_regions(self):
-        with self.assertRaises(ValueError):
-            recognize_pdf(Path("input.pdf"), pages=[1], backend="vision",
-                          retry_regions={1: [OcrRegion("cell", (0, 0, 1, 1))]})
-        with self.assertRaises(ValueError):
-            recognize_image(Path("input.png"), backend="vision",
-                            retry_regions=[OcrRegion("cell", (0, 0, 1, 1))])
+    def test_images_go_to_paddle_with_their_retry_regions(self):
+        retry = [OcrRegion("cell", (0, 0, 1, 1))]
+        with patch("ingestion.lib.scan_ocr.paddle_ocr.recognize_image",
+                   return_value={"engine": {"name": "paddle"}}) as paddle:
+            self.assertEqual(recognize_image(Path("input.png"), retry_regions=retry)["engine"]["name"], "paddle")
+        self.assertEqual(paddle.call_args.kwargs["retry_regions"], retry)
 
 
 class PaddleRereadTest(unittest.TestCase):

@@ -22,11 +22,23 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Mapping, Sequence
 
-from .vision_ocr import OcrRegion
-
 
 RUNTIMES = ("onnxruntime", "paddle")
 MODEL_CACHE = Path.home() / ".paddlex/official_models"
+
+
+@dataclass(frozen=True)
+class OcrRegion:
+    id: str
+    bbox_normalized: tuple[float, float, float, float]
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.id, str) or not self.id.strip():
+            raise ValueError("Region id must be nonempty")
+        b = self.bbox_normalized
+        if (len(b) != 4 or any(type(x) not in (int, float) or not math.isfinite(x) for x in b)
+                or not (0 <= b[0] < b[2] <= 1 and 0 <= b[1] < b[3] <= 1)):
+            raise ValueError("Region bbox must be [xMin,yMin,xMax,yMax], top-left, normalized 0..1")
 
 
 class PaddleOcrError(RuntimeError):
@@ -782,7 +794,7 @@ def main() -> int:
               "pages": "distinct physical page numbers; PDF only", "config": asdict(PaddleConfig()),
               "regions": [{"id": "full-page", "bbox_normalized": [0, 0, 1, 1]}],
               "retry_regions": "PDF: object keyed by physical page, each value a region list; image: region list"},
-              "output": {"schema_version": 1, "pages": "Vision-compatible active observations plus unchanged native attempts",
+              "output": {"schema_version": 1, "pages": "active observations plus unchanged native attempts",
               "coordinates": "top-left full page px/normalized/displayed CropBox pt; null pt for images",
               "retry_policy": "parent-region center inside ROI removes parent and all children; cross-boundary parents may remain",
               "numbers": "native whole-word digit/comma matches only; sign-bearing raw word remains intact"}}, ensure_ascii=False))
