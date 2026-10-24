@@ -10,7 +10,7 @@ from ingestion.lib.parquet import ParquetColumn, write_parquet
 from ingestion.lib.pdf_table import (
     Box, Column, Heading, HierarchyContext, Placement, RowBand, TableLayout,
     Token, assemble_table, join_wrapped_rows, place_tokens,
-    tokens_from_bbox_layout, tokens_from_vision,
+    tokens_from_bbox_layout, tokens_from_ocr,
 )
 
 
@@ -113,12 +113,12 @@ class OcrAdapter(unittest.TestCase):
                 {"id": "parent", "kind": "region", "raw_text": "0", "bbox_pdf_pt": [1, 2, 3, 4]},
                 {"id": "child", "parent_id": "parent", "kind": "word", "raw_text": "0", "bbox_pdf_pt": None},
                 {"id": "number", "kind": "number", "raw_text": "0", "bbox_pdf_pt": [1, 2, 3, 4]}]}]}]}
-        tokens = tokens_from_vision(result, kind="word", region_ids=["column"])
+        tokens = tokens_from_ocr(result, kind="word", region_ids=["column"])
         self.assertEqual(len(tokens), 1)
         self.assertEqual((tokens[0].id, tokens[0].raw_text, tokens[0].bbox), ("child", "0", None))
         self.assertEqual(tokens[0].parent_id, "parent")
         with self.assertRaises(ValueError):
-            tokens_from_vision(result, kind="word", region_ids=["missing"])
+            tokens_from_ocr(result, kind="word", region_ids=["missing"])
 
 
 class HierarchyInheritance(unittest.TestCase):

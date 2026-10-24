@@ -204,3 +204,7 @@ VLM を既定のまま（`vlm_fallback` なし）で取ると、12領域が埋�
 - **節の番号が名称に結ばれる（12件）は、混在文書の学習の出どころの誤りだった。** `tree.build` は 款・項・目と節の番号の欄の位置（`code_margins`）、番号の右端（`number_edges`）、行の幅（`line_limits`）を、文字層の頁だけから学び、OCR の頁にも当てていた。132080 の節の番号の欄の左端は、文字層の頁が {426, 430, 442}（±1）で、OCR の頁は 2 桁の番号が 423 前後（`14` は 423.4）に出る。許容の ±1 を割った `14`・`18` などが「数字で始まる名称」と読まれた。OCR の頁を含む文書では、OCR の頁を自分たちの頁から学んで読むようにした（`scanned`。文字層だけの文書と全頁 OCR の文書は従来どおり）。`corrected_code` の訂正12件は外し、名称の訂正は3件になった。金額・款の和・名称の差は変わらない。
 - **頁の左上の款・項の番号の網羅（`coverage_checks.py`）。** 款・項・目の番号を Paddle が1つの語（`103510`）に読み、罫線で切った語が隙間なく接する。網羅の検査は接する語を1つの番号の字の破片と見て、2桁の番号を単独の候補から外していた。2桁以上の語は番号そのものなので、単独の候補にも残す（候補が増えるだけで、通っていた表は落ちない）。検査のコードで指紋の対象外。
 - **検討して外した。** `detection_limit_side_len: 2560` は木の不一致が1件から12件に増えたため使わない。
+
+## 全冊を Paddle へ移した後、Vision の処理を消した
+
+2026-10-23、管理 JSON の `ocr_inputs[].request.engine` がすべて `paddle` になったので、Vision の処理を消した（`vision_ocr.py`・`vision_ocr.swift`・語彙 `ocr_vocabulary.json`、`scan_ocr` の `backend="vision"`・`column_tiles`、manifest schema の `engine: "vision"`・`column_tiles`）。測定用の plans のうち Vision の依頼だけで書かれた19件も外した（git の履歴に残る）。Vision の経緯と比較は ADR 0017・0018・0019 と `docs/vision-ocr-evaluation.md` に歴史として残す。

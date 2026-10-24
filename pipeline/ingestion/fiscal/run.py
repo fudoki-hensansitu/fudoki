@@ -666,7 +666,7 @@ def main() -> None:
     refresh.add_argument('--output', type=Path, help='Report file (default: .build/ingestion-refresh/report.json)')
     refresh.add_argument('--remote', action='store_true', help='Restore missing originals and saved tables from R2 (read only; nothing is uploaded)')
     refresh.add_argument('--dry-run', action='store_true', help='Compare only; do not rewrite any manifest')
-    ocr = sub.add_parser('ocr', help='Read declared OCR requests and pin observation SHA (Vision; run outside the sandbox)')
+    ocr = sub.add_parser('ocr', help='Read declared OCR requests and pin observation SHA (Paddle; run outside the sandbox)')
     ocr.add_argument('--manifest', type=Path, required=True)
     ocr.add_argument('--inputs', type=Path, required=True, help='JSON: original SHA-256 to local file path')
     ocr.add_argument('--id', action='append', help='Only these OCR input IDs')

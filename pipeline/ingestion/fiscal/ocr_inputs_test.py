@@ -16,7 +16,7 @@ from ingestion.lib import scan_ocr
 
 
 def fake_result(seconds: float, path: str) -> dict:
-    return {'engine': {'name': 'Apple Vision', 'macos': 'test'},
+    return {'engine': {'name': 'PaddleOCR', 'runtime': 'test'},
             'origin': {'path': path, 'sha256': 'a' * 64, 'bytes': 3},
             'pages': [{'page_number': 1, 'image_width': 10, 'image_height': 20,
                        'regions': [{'id': 'full-page', 'inference_seconds': seconds,
@@ -24,24 +24,13 @@ def fake_result(seconds: float, path: str) -> dict:
 
 
 class AcquireTest(unittest.TestCase):
-    def test_column_tiles_are_an_explicit_request_and_do_not_enable_vlm(self):
-        request = {'engine': 'vision', 'pages': [1], 'column_tiles': True, 'vlm_fallback': False}
-        tiles = [scan_ocr.OcrRegion('column-0', (0, 0, 1, 1))]
-        with patch.object(scan_ocr, 'recognize_pdf', return_value=fake_result(.1, '/a/x.pdf')) as read, \
-                patch.object(scan_ocr.pdf_rules, 'detect'), \
-                patch.object(scan_ocr.pdf_rules, 'render', return_value=np.zeros((4, 4), np.uint8)), \
-                patch.object(scan_ocr, 'column_tiles', return_value=tiles), \
-                patch.object(scan_ocr, 'supplement', side_effect=lambda path, page, *_, **kwargs: page) as supplement:
-            data, _ = scan_ocr.acquire(Path('x.pdf'), request)
-        self.assertEqual(read.call_args.kwargs['regions'], tiles)
-        self.assertEqual(read.call_args.kwargs['config'].region_padding_px, 60)
-        self.assertFalse(supplement.call_args.kwargs['vlm_fallback'])
-        self.assertEqual(json.loads(data)['request'], request)
-        with self.assertRaisesRegex(ValueError, 'alternative OCR requests'):
-            scan_ocr.acquire(Path('x.pdf'), {**request, 'regions': [{'id': 'x', 'bbox_normalized': [0, 0, 1, 1]}]})
+    def setUp(self):
+        # supplement's page checks read the PDF; the tests here hand it pages that have none
+        for step in ('require_one_page_box', 'split_unit_stacks'):
+            self.enterContext(patch.object(scan_ocr, step))
 
     def test_run_dependent_fields_leave_the_observation_bytes_unchanged(self):
-        request = {'engine': 'vision', 'pages': [1]}
+        request = {'engine': 'paddle', 'pages': [1]}
         outputs = []
         for seconds, path in ((0.5, '/a/x.pdf'), (2.0, '/b/x.pdf')):
             with patch.object(scan_ocr, 'recognize_pdf', return_value=fake_result(seconds, path)), \
@@ -55,22 +44,12 @@ class AcquireTest(unittest.TestCase):
         self.assertEqual([t['inference_seconds'] for t in (run_a['timings'][0], run_b['timings'][0])], [0.5, 2.0])
         self.assertEqual(json.loads(first)['request'], request)
 
-    def test_an_empty_page_is_read_again_in_strips_and_stops_when_still_empty(self):
+    def test_a_page_without_text_stops_the_acquisition(self):
         empty = fake_result(0.1, '/a/x.pdf')
         empty['pages'][0]['regions'][0]['observations'] = []
-        filled = fake_result(0.1, '/a/x.pdf')
-        with patch.object(scan_ocr, 'recognize_pdf', side_effect=[deepcopy(empty), filled]) as read, \
-                patch.object(scan_ocr.pdf_rules, 'detect'), patch.object(scan_ocr.pdf_rules, 'render', return_value=np.zeros((4, 4), np.uint8)), \
-                patch.object(scan_ocr, "column_tiles", return_value=[scan_ocr.OcrRegion("column-0", (0, 0, 1, 1))]):
-            with patch.object(scan_ocr, 'supplement', side_effect=lambda path, page, *_, **kwargs: page):
-                data, _ = scan_ocr.acquire(Path('x.pdf'), {'engine': 'vision', 'pages': [1]})
-        self.assertEqual(read.call_count, 2)
-        self.assertIn(b'1,000', data)
-        with patch.object(scan_ocr, 'recognize_pdf', side_effect=[deepcopy(empty), deepcopy(empty)]), \
-                patch.object(scan_ocr.pdf_rules, 'detect'), patch.object(scan_ocr.pdf_rules, 'render', return_value=np.zeros((4, 4), np.uint8)), \
-                patch.object(scan_ocr, "column_tiles", return_value=[]):
+        with patch.object(scan_ocr, 'recognize_pdf', return_value=empty):
             with self.assertRaisesRegex(ValueError, 'no text for pages \\[1\\]'):
-                scan_ocr.acquire(Path('x.pdf'), {'engine': 'vision', 'pages': [1]})
+                scan_ocr.acquire(Path('x.pdf'), {'engine': 'paddle', 'pages': [1]})
 
     def test_missed_ink_skips_rules_and_covered_text(self):
         dark = np.zeros((100, 200), bool)
@@ -97,7 +76,7 @@ class AcquireTest(unittest.TestCase):
     def test_supplement_keeps_new_readings_and_pins_vlm_answers(self):
         page = {'page_number': 1, 'regions': [{'id': 'full-page', 'observations': [
             {'id': 'p1:full-page:r0', 'kind': 'region', 'parent_id': None, 'raw_text': '特別職', 'bbox_pdf_pt': [10, 10, 40, 16]}]}]}
-        vision = {'pages': [{'page_number': 1, 'regions': [{'id': 'ink-0', 'observations': [
+        reread = {'pages': [{'page_number': 1, 'regions': [{'id': 'ink-0', 'observations': [
             {'id': 'p1:ink-0:r0', 'kind': 'region', 'parent_id': None, 'raw_text': '特別職', 'bbox_pdf_pt': [10, 10, 40, 16]},
             {'id': 'p1:ink-0:r1', 'kind': 'region', 'parent_id': None, 'raw_text': '0', 'bbox_pdf_pt': [100, 30, 104, 36]}]}]}]}
         rules = scan_ocr.pdf_rules.PageRules(1, 200.0, 100.0, (), ())
@@ -105,9 +84,9 @@ class AcquireTest(unittest.TestCase):
         with patch.object(scan_ocr.pdf_rules, 'detect', return_value=rules), \
                 patch.object(scan_ocr.pdf_rules, 'render', return_value=np.zeros((200, 400), np.uint8)), \
                 patch.object(scan_ocr, 'missed_ink', side_effect=[[(100, 30, 104, 36)], [], rest]), \
-                patch.object(scan_ocr, '_read_without_rules', return_value=vision['pages'][0]), \
+                patch.object(scan_ocr, '_read_without_rules', return_value=reread['pages'][0]), \
                 patch.object(scan_ocr.vlm_ocr, 'read', return_value='一') as ask:
-            result = scan_ocr.supplement(Path('x.pdf'), deepcopy(page), scan_ocr.VisionConfig(), {})
+            result = scan_ocr.supplement(Path('x.pdf'), deepcopy(page), scan_ocr.PaddleConfig(), {})
         texts = [(r['id'], [o['raw_text'] for o in r['observations']]) for r in result['regions']]
         self.assertEqual(texts, [('full-page', ['特別職']), ('ink-0', ['0']), ('vlm-0', ['一'])])
         self.assertEqual(ask.call_count, 1)
@@ -116,9 +95,9 @@ class AcquireTest(unittest.TestCase):
         with patch.object(scan_ocr.pdf_rules, 'detect', return_value=rules), \
                 patch.object(scan_ocr.pdf_rules, 'render', return_value=np.zeros((200, 400), np.uint8)), \
                 patch.object(scan_ocr, 'missed_ink', side_effect=[[(100, 30, 104, 36)], [], rest]), \
-                patch.object(scan_ocr, '_read_without_rules', return_value=deepcopy(vision)['pages'][0]), \
+                patch.object(scan_ocr, '_read_without_rules', return_value=deepcopy(reread)['pages'][0]), \
                 patch.object(scan_ocr.vlm_ocr, 'read') as again:
-            scan_ocr.supplement(Path('x.pdf'), deepcopy(page), scan_ocr.VisionConfig(), pinned)
+            scan_ocr.supplement(Path('x.pdf'), deepcopy(page), scan_ocr.PaddleConfig(), pinned)
         again.assert_not_called()
 
     def test_vlm_line_reading_fills_only_the_one_gap_ocr_left(self):
@@ -128,7 +107,7 @@ class AcquireTest(unittest.TestCase):
         self.assertIsNone(scan_ocr._fill('修繕料', tokens, (440, 0, 450, 10)))     # gap elsewhere
         self.assertEqual(scan_ocr._fill('0', [], (10, 0, 14, 10)), '0')
 
-    def test_vision_only_acquisition_keeps_unread_ink_without_calling_a_model(self):
+    def test_acquisition_without_the_vlm_keeps_unread_ink_without_calling_a_model(self):
         page = {'page_number': 1, 'regions': []}
         rules = scan_ocr.pdf_rules.PageRules(1, 200.0, 100.0, (), ())
         rest = [(10.0, 50.0, 14.0, 52.0)]
@@ -137,7 +116,7 @@ class AcquireTest(unittest.TestCase):
                 patch.object(scan_ocr, 'missed_ink', side_effect=[rest, [], rest]), \
                 patch.object(scan_ocr, '_read_without_rules', return_value={'regions': []}), \
                 patch.object(scan_ocr.vlm_ocr, 'read') as ask:
-            result = scan_ocr.supplement(Path('x.pdf'), page, scan_ocr.VisionConfig(), {}, vlm_fallback=False)
+            result = scan_ocr.supplement(Path('x.pdf'), page, scan_ocr.PaddleConfig(), {}, vlm_fallback=False)
         ask.assert_not_called()
         self.assertEqual(len(result['unread_ink']), 1)
         x0, y0, x1, y1 = result['unread_ink'][0]
@@ -153,7 +132,7 @@ class AcquireTest(unittest.TestCase):
             {'id': 'p1:full-page:r0', 'kind': 'region', 'parent_id': None, 'raw_text': '7)', 'bbox_pdf_pt': [120, 0, 126, 10]},
             {'id': 'p1:full-page:r1', 'kind': 'region', 'parent_id': None, 'raw_text': '事業', 'bbox_pdf_pt': [10, 0, 30, 10]},
             {'id': 'p1:full-page:r2', 'kind': 'region', 'parent_id': None, 'raw_text': '（', 'bbox_pdf_pt': [60, 0, 64, 10]}]}]}
-        vision = {'page_number': 1, 'regions': [{'id': 'ink-0', 'observations': [
+        reread = {'page_number': 1, 'regions': [{'id': 'ink-0', 'observations': [
             {'id': 'p1:ink-0:r0', 'kind': 'region', 'parent_id': None, 'raw_text': '1,796,817)', 'bbox_pdf_pt': [88, 0, 126, 10]},
             {'id': 'p1:ink-0:r1', 'kind': 'region', 'parent_id': None, 'raw_text': '事', 'bbox_pdf_pt': [20, 0, 40, 10]}]}]}
         rules = scan_ocr.pdf_rules.PageRules(1, 200.0, 100.0, (), ())
@@ -161,8 +140,8 @@ class AcquireTest(unittest.TestCase):
         with patch.object(scan_ocr.pdf_rules, 'detect', return_value=rules), \
                 patch.object(scan_ocr.pdf_rules, 'render', return_value=np.zeros((200, 400), np.uint8)), \
                 patch.object(scan_ocr, 'missed_ink', side_effect=[marks, [], []]), \
-                patch.object(scan_ocr, '_read_without_rules', return_value=vision):
-            result = scan_ocr.supplement(Path('x.pdf'), deepcopy(page), scan_ocr.VisionConfig(), {})
+                patch.object(scan_ocr, '_read_without_rules', return_value=reread):
+            result = scan_ocr.supplement(Path('x.pdf'), deepcopy(page), scan_ocr.PaddleConfig(), {})
         added = result['regions'][-1]
         self.assertEqual([o['raw_text'] for o in added['observations']], ['1,796,817)'])  # 事 cuts through 事業
         self.assertEqual(added['supersedes'], ['p1:full-page:r0'])
@@ -190,7 +169,7 @@ class AcquireTest(unittest.TestCase):
         marks = [(10, 10, 14, 16), (30, 10, 34, 16), (40, 10, 41.5, 16), (45, 10, 46.5, 16), (50, 10, 90, 16)]
         with patch.object(scan_ocr, '_whitened', return_value=np.full((400, 400), 255, np.uint8)), \
                 patch.object(scan_ocr.paddle_ocr, 'recognize_crops', return_value=['0', 'o)', '1', '(']) as read:
-            scan_ocr._read_zeros(Path('x.pdf'), 1, scan_ocr.VisionConfig(), page, marks)
+            scan_ocr._read_zeros(Path('x.pdf'), 1, scan_ocr.PaddleConfig(), page, marks)
         self.assertEqual(len(read.call_args.args[0]), 4)
         self.assertEqual([(r['id'], r['observations'][0]['raw_text']) for r in page['regions']],
                          [('digit-0', '0'), ('digit-2', '1')])
@@ -206,8 +185,8 @@ class AcquireTest(unittest.TestCase):
         self.assertTrue((clean[:, 100:104] == 255).all())
         self.assertTrue((clean[50:60, 50:56] == 0).all())
 
-    def test_only_paddle_and_vision_are_acquired(self):
-        with self.assertRaisesRegex(ValueError, 'Paddle or Apple Vision'):
+    def test_only_paddle_is_acquired(self):
+        with self.assertRaisesRegex(ValueError, 'acquired with Paddle'):
             scan_ocr.acquire(Path('x.pdf'), {'engine': 'tesseract', 'pages': [1]})
 
     def test_paddle_reads_exact_crops_and_keeps_no_native_output(self):
@@ -218,7 +197,6 @@ class AcquireTest(unittest.TestCase):
         with patch.object(scan_ocr, 'recognize_pdf', return_value=result) as read, \
                 patch.object(scan_ocr, 'supplement', side_effect=lambda path, page, *_, **kwargs: page) as supplement:
             data, run = scan_ocr.acquire(Path('x.pdf'), request)
-        self.assertEqual(read.call_args.kwargs['backend'], 'paddle')
         self.assertEqual(read.call_args.kwargs['config'].page_strips, 4)
         self.assertEqual(supplement.call_args.args[2].page_strips, 4)
         self.assertEqual(json.loads(data)['render'], {'pdf_renderer': 'pypdfium2', 'dpi': 300})
@@ -226,8 +204,6 @@ class AcquireTest(unittest.TestCase):
         self.assertNotIn('native', attempt)
         self.assertNotIn('inference_seconds', attempt)
         self.assertIn(.3, [t.get('inference_seconds') for t in run['timings']])
-        with self.assertRaisesRegex(ValueError, 'Column tiles are for Vision'):
-            scan_ocr.acquire(Path('x.pdf'), {**request, 'column_tiles': True})
 
 
 class OcrManifestTest(unittest.TestCase):
@@ -240,7 +216,7 @@ class OcrManifestTest(unittest.TestCase):
         self.enterContext(patch.object(storage, 'OBJECTS', self.objects))
         self.origin = self.document['conversions'][0]['inputs'][0]['sha256']
         self.document['conversions'][0]['ocr_inputs'] = [
-            {'id': 'one-pages', 'origin_sha256': self.origin, 'request': {'engine': 'vision', 'pages': [1]}}]
+            {'id': 'one-pages', 'origin_sha256': self.origin, 'request': {'engine': 'paddle', 'pages': [1]}}]
         manifest.write(self.path, self.document)
 
     def acquire(self, text: str):
