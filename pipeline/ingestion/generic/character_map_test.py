@@ -1,7 +1,9 @@
 """A declared font map must preserve money and its printed location."""
 from pathlib import Path
+import shutil
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from ingestion.generic.observe import observe
 from ingestion.generic.repair import repair
@@ -40,6 +42,25 @@ endcmap CMapName currentdict /CMap defineresource pop end end'''
 
 class CharacterMapTest(unittest.TestCase):
     def test_mapping_preserves_money_and_location_and_invalidates_observation_cache(self):
+        # CI has the Python PDF engines but not Poppler. Exercise its bbox
+        # boundary with the same illegal XML text that the real PDF emits.
+        def bbox(command, *, check):
+            self.assertEqual(command[0], 'pdftotext')
+            money = ''.join('\x0f' if char == ',' else chr(19 + int(char))
+                            for char in '1,234,567,890')
+            Path(command[-1]).write_text(
+                '<html><page width="200" height="100">'
+                '<word xMin="20" yMin="30" xMax="95" yMax="42">'
+                + money + '</word></page></html>')
+
+        with patch('ingestion.generic.observe.subprocess.run', side_effect=bbox):
+            self.check_mapping()
+
+    @unittest.skipUnless(shutil.which('pdftotext'), 'Poppler integration needs pdftotext')
+    def test_poppler_font_map_integration(self):
+        self.check_mapping()
+
+    def check_mapping(self):
         mapping = {**{chr(19 + digit): str(digit) for digit in range(10)}, '\x0f': ','}
         with tempfile.TemporaryDirectory() as directory:
             pdf, cache = Path(directory) / 'font.pdf', Path(directory) / 'words.json'
