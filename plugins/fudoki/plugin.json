@@ -8,7 +8,7 @@
     "email": "support@fudoki.dev"
   },
   "homepage": "https://docs.fudoki.dev",
-  "repository": "https://github.com/wwwyo/fudoki",
+  "repository": "https://github.com/fudoki-hensansitu/fudoki",
   "extensions": {
     "com.openai": {
       "interface": {

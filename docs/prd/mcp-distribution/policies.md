@@ -52,7 +52,7 @@
 - API はアカウント・OAuth・決済を持たず、D1 の公開財政データを読む。外部の生成 AI を要求処理から呼ぶコードはない。開発時の agent セッション記録（Langfuse）と、公開サービスの利用者要求の記録を混同しない。
 - PDF 表示用中継は宣言済み公開 URL を取得する。利用者の IP/Cookie を転送するコードはない。公開 PDF の24時間保持は利用者の検索履歴の保存期間ではない。
 - 文書サイトは Blume 2.1.3。設定に analytics はない。標準検索は端末内の索引検索で、表示テーマ等には localStorage を使う。独立した広告・解析タグは設定されていない。
-- `mise exec -- gh api repos/wwwyo/fudoki --jq '{has_issues,html_url}'` で Issues が有効、`gh api repos/wwwyo/fudoki/private-vulnerability-reporting` で `enabled=true` を確認した。設定変更や報告の投稿は行っていない。
+- `mise exec -- gh api repos/fudoki-hensansitu/fudoki --jq '{has_issues,html_url}'` で Issues が有効、`gh api repos/fudoki-hensansitu/fudoki/private-vulnerability-reporting` で `enabled=true` を確認した。設定変更や報告の投稿は行っていない。
 - root LICENSE・plugin LICENSE・ADR 0006・README に従い、コードは MIT、出典由来の列は出典の条件、風土記の判断は配布物で明示された条件を参照する。予定の CC BY を現時点の一律の許諾にしない。
 
 初回の確認では Cloudflare 環境変数がなく本番設定を取得できなかったが、既存 `cf` の OAuth 認証で取得できた。`cf accounts subscriptions get` で Workers Paid、`cf logpush account-jobs list` で account の Logpush job が0件であることを確認した。通常 Worker の設定取得コマンドはインストール済み CLI に見つからないため、[Script Settings API](https://developers.cloudflare.com/api/resources/workers/subresources/scripts/subresources/settings/methods/get/)を読取りで使った。zone の Logpush job も0件。認証情報は出力・追加せず、利用者のログ本文は取得していない。

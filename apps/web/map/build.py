@@ -34,7 +34,7 @@ import zipfile
 ROOT = pathlib.Path(__file__).resolve().parent.parent.parent.parent
 OUT = ROOT / "apps" / "web" / "public" / "tokyo.geojson"
 JURISDICTIONS = ROOT / "packages" / "jurisdictions" / "jurisdictions.json"
-UA = "fudoki/0.1 (+https://github.com/wwwyo/fudoki)"
+UA = "fudoki/0.1 (+https://github.com/fudoki-hensansitu/fudoki)"
 
 URL = "https://nlftp.mlit.go.jp/ksj/gml/data/N03/N03-2026/N03-20260101_13_GML.zip"
 SHA256 = "94f10b26256566db970dd74b09d614f059c1e8a432f9244ac9c4add76c32ff16"
