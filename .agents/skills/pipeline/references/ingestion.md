@@ -173,6 +173,8 @@ PDFは出典の内部で重複して印字された数字どうしの一致で�
 
 ## 管理JSONを確認して変換する
 
+PDFの読み方は `options.workflow` に固定する。層別の読み方は `generic_text / generic_scan`、表・科目・金額の所属をまとめて読む文字PDFは `workflow_text` の共有入口を使う。後者はカタログの `reading.pattern` と `components` を選び、実測・訂正のJSON宣言を `reading.profile` で参照する。書式に合わなければ共有パターンを追加し、自治体別の採用用 `convert.py` は増やさない。選び方・設定例・依存の境界は [PDF workflowの設計](../../../../docs/prd/pdf-workflow-patterns/dd.md) を参照する。
+
 1. `pipeline/ingestion/fiscal/jurisdictions/<自治体>/<年度>/<資料区分>/<方向>.json` に入力SHA、変換コード・設定、期待する表を定義する。形式・会計・ページ範囲はselectionから解決する。複数出典・複数変換・複数表は同じ対象のJSONへまとめる。
 2. `pipeline/` から `bun run ingestion:check --manifest <対象JSON>` を実行する。型・正規配置・選定との対応・表IDの所有者が不正なら修正してから進む。
 3. 出典のSHAからローカルパスへの対応JSONを渡す。出典の復元が必要なら `bun run ingestion:originals --manifest <対象JSON> --output <入力パスJSON> --remote` を使う。
