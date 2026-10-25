@@ -34,8 +34,12 @@ class AmountSourceTest(unittest.TestCase):
             path.write_bytes(gzip.compress(json.dumps({'pages': [{'page_number': 1,
                 'regions': [{'observations': observations}]}]}).encode()))
             source = {'ocr': [{'path': path}], 'target': {}, 'direction': 'expenditure'}
-            with patch('ingestion.generic.scan_recheck.load', return_value={'columns': columns}):
-                found = amount_sources(table, source, [])
+            workflow = {'layout': {'pattern': 'ruled', 'options': {'columns': columns}},
+                        'headers': {'pattern': 'standard'},
+                        'hierarchy': {'subject': {'pattern': 'bands'}, 'breakdown': {}}}
+            found = amount_sources(table, source, [], {'workflow': workflow})
+            workflow['layout']['options']['columns'] = {}
+            self.assertEqual(amount_sources(table, source, [], {'workflow': workflow}), {})
         self.assertEqual(list(found), [('unread:1:10', '')])
         observation = {'pages': [{'page_number': 1, 'unread_ink': [
             [170, 41, 175, 47], [20, 41, 25, 47], [170, 15, 175, 20], [170, 31, 175, 35]]}]}

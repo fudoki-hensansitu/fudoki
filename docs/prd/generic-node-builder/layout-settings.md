@@ -1,16 +1,28 @@
-# 文書ごとの組版の設定（`<方向>.layout.json`）
+# PDF workflowの組版設定と印字のずれの宣言
 
-更新日: `2026-10-15`
+更新日: `2026-10-25`
 状態: 内訳6項目・欄の役割・見開きの受け口実装済み。採用の状況と停止した表は末尾に記録する。
 
 汎用の組み立て（[設計書](dd.md)）が内訳（備考・節・説明）の欄の段を読み違える原因の多くは、自治体ごとの組版の習慣である。字下げの意味、行頭の印、名前の均等割付、注記と名前の折り返し方がそれにあたる。共通の規則を足すと別の自治体とぶつかるので、その習慣を文書ごとの設定として LLM が書き、組み立ては設定のある文書でだけ、それを手がかりに使う。設定が誤っていても、保存の関門（木・網羅・単位）で止まる。
 
 ## 置き場と範囲
 
-- 管理 JSON の隣の `<方向>.layout.json`（例: `ingestion/fiscal/jurisdictions/132128/2025/settlement/expenditure.layout.json`）。
-- 自治体・年度・資料区分・方向ごとに1つ。汎用text・scanの両経路に当てる。既存の書式別変換器はこの受け口を呼ばない。表ごとの上書きは、要る実例が出てから足す。
-- 項目はすべて省略でき、書いた項目だけが効く。未対応の項目や無効な値はschema検査で停止する。決まっていない項目は書かない。
-- 設定は表の中身を変えるので、指紋（`input_fingerprint`）の入力に入れる。
+汎用text・scanの取り込み設定は、管理JSONの `conversions[].options.workflow` に置く。
+パターンの選択と指紋の境界は [PDF workflowの設計](../pdf-workflow-patterns/dd.md) を参照する。
+
+- `columns`・`spread`・`rules`・`header`・`text_layer` は `workflow.layout.options` に置く。
+- 内訳の設定は `workflow.hierarchy.breakdown.<軸>.options` に置く。軸ごとに `pattern` も指定する。
+- `codes` は `workflow.hierarchy.subject`、文字層の補修は `workflow.repairs` に置く。
+- 旧 `header.kind_by_characters` は設定せず、`workflow.headers.pattern: characters` を選ぶ。
+- 表の中身を変える設定は、その変換の指紋に含める。他の変換の設定は含めない。
+- workflowの未指定、未対応の項目、無効な値は検査で停止する。汎用変換は `.layout.json` の取り込み設定へ戻らない。
+
+以下の例は、移行前の設定の形で各項目の意味を示す。新規設定は上記のworkflow内の位置へ書く。
+`schema_version` はworkflow内には書かない。専用変換だけの旧宣言は互換経路を維持する。
+
+管理JSONの隣の `<方向>.layout.json` は、汎用変換の移行後は `source_inconsistencies` だけを持つ。
+これは印字の食い違いの宣言であり、表の値を変えない。指紋から外し、`ingestion:verify` で当て直す。
+汎用変換と専用変換が混在する文書でも、取り込み設定を二か所に残さない。
 
 ## 形
 

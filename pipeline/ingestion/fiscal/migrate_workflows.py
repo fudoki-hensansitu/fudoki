@@ -11,7 +11,7 @@ from ingestion.generic.layout_settings import load
 from ingestion.generic.workflow import validate
 from ingestion.lib.node_tables import read_rows
 
-CONVERTERS = {'fiscal/layouts/generic_text/convert.py', 'fiscal/layouts/generic_scan/convert.py'}
+CONVERTERS = manifest.GENERIC_PDF_CONVERTERS
 PATTERN_NOTE = re.compile(r'科目の段は (\w+)、内訳の段は (\{.*?\})。')
 
 
@@ -85,26 +85,40 @@ def main() -> None:
     results = []
     layouts = []
     for path in args.manifest or manifest.paths():
-        document = manifest.read(path)
+        document = manifest.read(path, check_code=False)
         candidate, changes = plan(document)
-        if changes and args.write:
-            manifest.write(path, candidate)
         if changes:
             results.append({'manifest': str(path.resolve().relative_to(manifest.PIPELINE)), 'changes': changes})
         layout = path.with_suffix('.layout.json')
-        if layout.exists() and all('workflow' in item['options'] for item in candidate['conversions']):
+        generic = [item for item in candidate['conversions'] if item['converter'] in CONVERTERS]
+        cleanup = False
+        if layout.exists() and generic and all('workflow' in item['options'] for item in generic):
             old = json.loads(layout.read_text())
             retained = {'schema_version': old['schema_version']}
             if old.get('source_inconsistencies'):
                 retained['source_inconsistencies'] = old['source_inconsistencies']
             if old != retained or len(retained) == 1:
+                cleanup = True
                 layouts.append({'path': str(layout.resolve().relative_to(manifest.PIPELINE)),
                                 'action': 'retain-inconsistencies' if len(retained) > 1 else 'remove'})
-                if args.write:
+        if args.write and (changes or cleanup):
+            previous_layout = layout.read_bytes() if cleanup else None
+            previous_manifest = path.read_bytes()
+            try:
+                if cleanup:
                     if len(retained) > 1:
                         layout.write_text(json.dumps(retained, ensure_ascii=False, indent=2) + '\n')
                     else:
                         layout.unlink()
+                if changes:
+                    manifest.write(path, candidate)
+                else:
+                    manifest.validate(candidate, path=path)
+            except Exception:
+                path.write_bytes(previous_manifest)
+                if previous_layout is not None:
+                    layout.write_bytes(previous_layout)
+                raise
     print(json.dumps({'written': args.write, 'manifests': len(results),
                       'conversions': sum(len(item['changes']) for item in results), 'results': results,
                       'layouts': layouts},

@@ -96,6 +96,8 @@ def options_schema(conversion: dict) -> str:
 # manifest.py validates converter outputs and resolves paths but never shapes table bytes;
 # fingerprinting it would stale every table of a converter that imports it on each schema edit.
 FINGERPRINT_EXCLUDED = frozenset({'fiscal/manifest.py'})
+GENERIC_PDF_CONVERTERS = frozenset({'fiscal/layouts/generic_text/convert.py',
+                                    'fiscal/layouts/generic_scan/convert.py'})
 
 # A module named ``*_checks.py`` only decides pass/fail (tree check, digit coverage); it never builds
 # or writes a table. It is left out of the fingerprint so that tightening a check does not stale
@@ -229,11 +231,23 @@ def dependencies(conversion: dict, *, trees: dict | None = None, patterns: dict 
 def resources(files: list[str], *, trees: dict | None = None) -> list[str]:
     trees = {} if trees is None else trees
     found = set()
+    references = []
     for relative in files:
         path = code_path(relative)
         if path.suffix != '.py':
             continue
-        for node in code_tree(path, trees).body:
+        tree = code_tree(path, trees)
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Constant) and isinstance(node.value, str) and node.value.endswith('.csv'):
+                references.append((relative, node.value))
+            elif isinstance(node, ast.Import):
+                references.extend((relative, alias.name.replace('.', '/') + '.py')
+                                  for alias in node.names if alias.name.startswith('shared.'))
+            elif isinstance(node, ast.ImportFrom) and node.module and not node.level:
+                modules = ([node.module] if node.module.startswith('shared.') else
+                           ['shared.' + alias.name for alias in node.names] if node.module == 'shared' else [])
+                references.extend((relative, module.replace('.', '/') + '.py') for module in modules)
+        for node in tree.body:
             if not isinstance(node, ast.Assign) or not any(isinstance(target, ast.Name)
                     and target.id == 'FINGERPRINT_RESOURCES' for target in node.targets):
                 continue
@@ -246,6 +260,9 @@ def resources(files: list[str], *, trees: dict | None = None) -> list[str]:
                         or str(Path(value)) != value or '..' in Path(value).parts):
                     raise ValueError(f'Invalid fingerprint resource: {value}')
                 found.add(value)
+    for importer, reference in references:
+        if not any(value == reference or value.endswith('/' + reference) for value in found):
+            raise ValueError(f'Undeclared fingerprint resource in {importer}: {reference}')
     return sorted(found)
 
 
@@ -281,7 +298,7 @@ def validate(document: dict, *, path: Path | None = None, check_code: bool = Tru
     validator().validate(document)
     if check_code:
         from ingestion.generic.layout_settings import load
-        load(document['target'], document['direction'])
+        legacy_layout = load(document['target'], document['direction']) or {}
     if path is not None:
         expected_path = manifest_path(document['target'], document['direction'])
         if path.resolve() != expected_path.resolve():
@@ -306,11 +323,14 @@ def validate(document: dict, *, path: Path | None = None, check_code: bool = Tru
             schema_path = code_path(options_schema(conversion))
             jsonschema.Draft202012Validator(json.loads(schema_path.read_text())).validate(conversion['options'])
             if 'workflow' in conversion['options']:
-                if conversion['converter'] not in ('fiscal/layouts/generic_text/convert.py',
-                                                     'fiscal/layouts/generic_scan/convert.py'):
+                if conversion['converter'] not in GENERIC_PDF_CONVERTERS:
                     raise ValueError('PDF workflow requires a generic PDF converter')
                 from ingestion.generic.workflow import validate as validate_workflow
-                validate_workflow(conversion['options']['workflow'])
+                validate_workflow(conversion['options']['workflow'],
+                                  text_pdf=conversion['converter'] == 'fiscal/layouts/generic_text/convert.py')
+    if check_code and any(c['converter'] in GENERIC_PDF_CONVERTERS for c in conversions.values()):
+        if set(legacy_layout) - {'schema_version', 'source_inconsistencies'}:
+            raise ValueError('Generic PDF settings belong in options.workflow, not .layout.json')
     ocr_ids = set()
     for conversion, item in ocr_inputs(document):
         if item['id'] in ocr_ids:

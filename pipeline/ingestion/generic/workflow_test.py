@@ -1,5 +1,7 @@
 """Fixed PDF readings must retain amounts and limit invalidation to their dependencies."""
 from copy import deepcopy
+from contextlib import redirect_stdout
+import io
 import json
 from pathlib import Path
 import shutil
@@ -20,6 +22,47 @@ def reading():
 
 
 class FixedReadingTest(unittest.TestCase):
+    def test_generic_manifests_require_a_workflow_and_reject_text_repairs_on_scans(self):
+        for converter in ('generic_text', 'generic_scan'):
+            document = manifest.read(manifest.JURISDICTIONS / '132039/2025/settlement/expenditure.json')
+            conversion = document['conversions'][0]
+            conversion['converter'] = f'fiscal/layouts/{converter}/convert.py'
+            conversion['options'] = {'account': '一般会計', 'table_id': 'general'}
+            with self.subTest(converter=converter), self.assertRaisesRegex(jsonschema.ValidationError, 'workflow'):
+                manifest.validate(document)
+            conversion['options']['workflow'] = reading()
+            manifest.validate(document)
+            if converter == 'generic_scan':
+                for setting in ({'repairs': ['overprint']}, {'text_layer': {}}):
+                    workflow = reading()
+                    if 'text_layer' in setting:
+                        workflow['layout']['options'] = setting
+                    else:
+                        workflow.update(setting)
+                    conversion['options']['workflow'] = workflow
+                    with self.subTest(setting=setting), self.assertRaisesRegex(ValueError, 'scan workflow'):
+                        manifest.validate(document)
+
+    def test_migration_removes_ignored_settings_even_with_a_dedicated_converter(self):
+        from ingestion.fiscal.migrate_workflows import main
+        document = manifest.read(manifest.JURISDICTIONS / '132039/2025/settlement/expenditure.json')
+        self.assertTrue(any(c['converter'] not in manifest.GENERIC_PDF_CONVERTERS for c in document['conversions']))
+        with tempfile.TemporaryDirectory(dir=manifest.PIPELINE) as directory, \
+                patch.object(manifest, 'JURISDICTIONS', Path(directory)):
+            path = manifest.manifest_path(document['target'], document['direction'])
+            path.parent.mkdir(parents=True)
+            manifest.write(path, document)
+            before = path.read_bytes()
+            layout = path.with_suffix('.layout.json')
+            layout.write_text(json.dumps({'schema_version': 1, 'columns': {'unused': {'kind': 'amount'}}}))
+            with self.assertRaisesRegex(ValueError, 'options.workflow'):
+                manifest.read(path)
+            with patch('sys.argv', ['migrate_workflows', '--manifest', str(path), '--write']), redirect_stdout(io.StringIO()):
+                main()
+            self.assertFalse(layout.exists())
+            self.assertEqual(before, path.read_bytes())
+            manifest.read(path)
+
     def logicals(self):
         subject = Band(0, 40, 1, ('款',), [20, 100], 20, 100, kind='label')
         remarks = Band(40, 140, 1, ('備考',), [20, 100], 20, 100, kind='label')
@@ -122,8 +165,20 @@ class SelectedDependencyTest(unittest.TestCase):
         files = manifest.dependencies(self.conversion)
         self.assertNotIn('generic/discovery.py', files)
         self.assertNotIn('lib/tree_checks.py', files)
-        self.assertNotIn('generic/patterns/breakdown/shape.py', files)
-        self.assertNotIn('generic/patterns/subject/indent.py', files)
+        from ingestion.generic.patterns import catalog
+        from ingestion.generic.workflow import selections
+        selected = set(selections(self.conversion['options']['workflow']).values())
+        unselected = {module.removeprefix('ingestion.').replace('.', '/') + '.py'
+                      for patterns in catalog().values() for module in patterns.values() if module not in selected}
+        self.assertFalse(unselected.intersection(files))
+
+    def test_undeclared_csv_and_shared_code_stop_fingerprinting(self):
+        path = self.root / 'ingestion/generic/patterns/headers/standard.py'
+        original = path.read_text()
+        for extra in ("\nDICTIONARY = 'untracked.csv'\n", '\nfrom shared import untracked\n'):
+            path.write_text(original + extra)
+            with self.subTest(extra=extra), self.assertRaisesRegex(ValueError, 'Undeclared fingerprint resource'):
+                self.fingerprint()
 
     def test_settings_of_a_different_conversion_do_not_change_this_fingerprint(self):
         before = self.fingerprint()

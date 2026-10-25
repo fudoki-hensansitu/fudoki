@@ -1244,24 +1244,6 @@ def shape_of(item: Item) -> str | None:
     return None
 
 
-def number_span(glyph):
-    return load_pattern("breakdown", "shape").number_span(glyph)
-
-
-def same_position(number, anchor, glyph):
-    return load_pattern("breakdown", "shape").same_position(number, anchor, glyph)
-
-
-def nearest_position(number, anchors, glyph):
-    return load_pattern("breakdown", "shape").nearest_position(number, anchors, glyph)
-
-
-def shape_depth(item, indent_depth, order, open_items, anchors=None):
-    return load_pattern("breakdown", "shape").shape_depth(item, indent_depth, order, open_items, anchors)
-
-def position_levels(all_items, levels, depth_of):
-    return load_pattern("breakdown", "position").position_levels(all_items, levels, depth_of)
-
 INDENT_SPAN = 6.0  # one indentation step is a character (about 10pt); a level is narrower than this
 
 

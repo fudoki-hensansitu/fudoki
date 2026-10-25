@@ -21,7 +21,7 @@ from ingestion.fiscal.layouts.settlement_statement.recheck import LIMIT, MODEL, 
 from ingestion.fiscal.storage import fetch_ocr
 from ingestion.generic.scan import build_table, logical_units
 from ingestion.generic.layout import normalize
-from ingestion.generic.layout_settings import load
+from ingestion.generic.workflow import effective_settings
 from ingestion.lib.node_tables import NodeTables, amount_phase
 from ingestion.lib.paddle_ocr import recognize_crops
 from ingestion.lib import pdf_rules
@@ -44,7 +44,7 @@ def source_input(document: dict, conversion: dict, pdf: Path) -> dict:
     return source
 
 
-def amount_sources(table, source: dict, declared: list[dict]) -> dict:
+def amount_sources(table, source: dict, declared: list[dict], options: dict) -> dict:
     """Bind printed amounts to an exact OCR box; ambiguous/assembled cells remain unbound."""
     boxes = {}
     for item in source['ocr']:
@@ -67,7 +67,7 @@ def amount_sources(table, source: dict, declared: list[dict]) -> dict:
                 (b.page, (b.x0, b.y0, b.x1, b.y1)) in units for b in matches):
             matches.sort(key=lambda b: ((b.page, b.id) not in targets, ':w' not in b.id))
             sources[(amount['node_key'], amount['header_path'])] = [matches[0]]
-    columns = (load(source['target'], source['direction']) or {}).get('columns', {})
+    columns = effective_settings(source, options, text_pdf=False).get('columns', {})
     for unread in [u for u in table.built.unowned if u['kind'] == 'unreadable amount']:
         matches = [b for b in boxes.get(unread['page'], []) if normalize(b.text) == unread['text']]
         if matches and len({(b.x0, b.y0, b.x1, b.y1) for b in matches}) == 1:
@@ -189,7 +189,7 @@ def recheck(document: dict, conversion: dict, pdf: Path, model: str = MODEL, lim
     kind = document['target']['document_kind']
     table = build_table(source, options, stop=False, rules=rules)
     existing = options.get('amount_corrections', [])
-    sources = amount_sources(table, source, existing)
+    sources = amount_sources(table, source, existing, options)
     result = SimpleNamespace(tables=NodeTables(table.nodes, table.amounts), sources=sources)
     before = problems(table, sources, kind)
     targets = {(r['page'], r['observation_id']) for r in existing}
@@ -263,7 +263,7 @@ def recheck(document: dict, conversion: dict, pdf: Path, model: str = MODEL, lim
         # matching parent/child comparison still matches. A batch that fails stays undeclared.
         declarations = [*existing, *kept, *batch]
         rebuilt = build_table(source, {**options, 'amount_corrections': declarations}, stop=False, rules=rules)
-        after = problems(rebuilt, amount_sources(rebuilt, source, declarations), kind)
+        after = problems(rebuilt, amount_sources(rebuilt, source, declarations, options), kind)
         if after < current and len(rebuilt.built.unowned) <= len(table.built.unowned) and matched(table) <= matched(rebuilt):
             kept.extend(batch)
             table, current = rebuilt, after

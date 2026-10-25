@@ -32,10 +32,12 @@ def settings(workflow: dict) -> dict:
     return found
 
 
-def validate(workflow: dict) -> dict:
+def validate(workflow: dict, *, text_pdf: bool = True) -> dict:
     schema = json.loads(Path(__file__).with_name('workflow.schema.json').read_text())
     jsonschema.Draft202012Validator(schema).validate(workflow)
     selections(workflow)
+    if not text_pdf and (workflow.get('repairs') or 'text_layer' in workflow['layout'].get('options', {})):
+        raise ValueError('Text-layer repairs cannot be applied to a scan workflow')
     if 'kind_by_characters' in workflow['layout'].get('options', {}).get('header', {}):
         raise ValueError('Select a header pattern instead of setting kind_by_characters')
     subject = workflow['hierarchy']['subject']
@@ -69,9 +71,7 @@ def build_reading(logicals, document_kind='settlement', judge=None, layout=None,
 
 def effective_settings(source: dict, options: dict, *, text_pdf: bool) -> dict:
     if 'workflow' in options:
-        workflow = validate(options['workflow'])
-        if not text_pdf and (workflow.get('repairs') or 'text_layer' in workflow['layout'].get('options', {})):
-            raise ValueError('Text-layer repairs cannot be applied to a scan workflow')
+        workflow = validate(options['workflow'], text_pdf=text_pdf)
         found = settings(workflow)
         found['header']['_layout_pattern'] = workflow['layout']['pattern']
         found['header']['_headers_pattern'] = workflow['headers']['pattern']

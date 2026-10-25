@@ -454,6 +454,7 @@
   },
   "required": [
     "account",
-    "table_id"
+    "table_id",
+    "workflow"
   ]
 }
