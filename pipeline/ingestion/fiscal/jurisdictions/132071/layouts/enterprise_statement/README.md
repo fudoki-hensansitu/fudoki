@@ -1,6 +1,6 @@
 # 昭島の企業会計決算書
 
-`convert.py` は昭島の罫線付き企業会計決算報告書・歳出明細書の測定済み書式を読む。年度は管理JSON、頁はoptionsから受け取り、年度ごとのコードを複製しない。2025下水道事業会計の物理4–7、24–28、30–31頁で構築を確認した。他の会計・書式への適用は未検証。
+共有の読み方 `generic/patterns/readings/enterprise_expenses.py` と部品 `components/enterprise_hierarchy.py` が、`reading.json` に宣言した罫線付き企業会計決算報告書・歳出明細書の書式を読む。管理入口は共有の `fiscal/layouts/workflow_text/convert.py`。年度は管理JSON、頁はoptionsから受け取り、年度ごとのコードを複製しない。2025下水道事業会計の物理4–7、24–28、30–31頁で構築を確認した。他の会計・書式への適用は未検証。
 
 pipelineをcwdにし、通常の `ingestion:check --manifest <対象JSON>` と `ingestion:convert --manifest <対象JSON> --inputs <SHAとローカルパスのJSON> --output <未使用候補dir>` を実行する。出典はsource_selectionの保存済みPDFをSHA照合して復元する。
 
