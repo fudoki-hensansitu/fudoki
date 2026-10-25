@@ -7,7 +7,7 @@ import { LOGO_G } from './logo'
 
 const MCP = 'https://api.fudoki.dev/mcp'
 const DOCS = 'https://docs.fudoki.dev'
-const GITHUB = 'https://github.com/wwwyo/fudoki'
+const GITHUB = 'https://github.com/fudoki-hensansitu/fudoki'
 export const TURNSTILE_SCRIPT = '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>'
 
 const yen = (n: number) => `${n.toLocaleString('ja-JP')}円`
@@ -423,7 +423,7 @@ ${PWA_HEAD}
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="ja_JP">
 <meta name="twitter:card" content="summary_large_image">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"風土記（fudoki）","url":"https://fudoki.dev/","logo":"https://fudoki.dev/icon.png","sameAs":["https://github.com/wwwyo/fudoki","https://docs.fudoki.dev/"]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"風土記（fudoki）","url":"https://fudoki.dev/","logo":"https://fudoki.dev/icon.png","sameAs":["https://github.com/fudoki-hensansitu","https://docs.fudoki.dev/"]}</script>
 <style>${CSS}</style>
 <link rel="stylesheet" href="/_app/start.css">
 <script type="module" src="/_app/start.js"></script>

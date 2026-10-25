@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Server-side Pullfrog config for wwwyo/fudoki — this file is the SSOT.
+# Server-side Pullfrog config for fudoki-hensansitu/fudoki — this file is the SSOT.
 #
 # .github/workflows/pullfrog.yml is a Pullfrog-managed file kept pristine
 # (byte-identical across repos, updated by upstream PRs). Repo-level settings
@@ -7,12 +7,12 @@
 # backend and are invisible to git — this script records and reapplies them.
 #
 # Apply:  .github/pullfrog.config.sh        (uses gh auth)
-# Audit:  mise exec -- pullfrog config list --repo wwwyo/fudoki
+# Audit:  mise exec -- pullfrog config list --repo fudoki-hensansitu/fudoki
 #
 # BYOK keys are org-scoped (OPENCODE_API_KEY inherited) — see `pf secret list`.
 set -euo pipefail
 
-REPO="wwwyo/fudoki"
+REPO="fudoki-hensansitu/fudoki"
 PF=(mise exec -- pullfrog)
 
 pf_set()   { "${PF[@]}" config set   "$1" "$2" --repo "$REPO" --yes; }
