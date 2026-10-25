@@ -428,8 +428,7 @@ class Reader(Reading):
             raise ValueError("Kiyose late-elderly settlement requires one original")
         source = inputs[0]
         target = source["target"]
-        if (target.get("jurisdiction") != "132217" or target.get("fiscal_year") != 2025
-                or target.get("document_kind") != "settlement" or source.get("direction") != "expenditure"
+        if (target.get("document_kind") != "settlement" or source.get("direction") != "expenditure"
                 or source.get("format") != "pdf" or source.get("pdf_type") != "text"):
             raise ValueError("This measured layout is Kiyose 2025 late-elderly settlement expenditure only")
         if source.get("sha256") != self.ORIGIN_SHA:
@@ -438,6 +437,8 @@ class Reader(Reading):
         flat = sorted(p for s in scope for first, last in s["pages"] for p in range(first, last + 1))
         if flat != list(range(self.FIRST_PAGE, self.LAST_PAGE + 1)):
             raise ValueError(f"Measured scope for {self.ACCOUNT} must be physical pages {self.FIRST_PAGE}-{self.LAST_PAGE}")
+        if (self.LAST_PAGE - self.FIRST_PAGE + 1) % 2:
+            raise ValueError('Measured scope must pair into left/right spreads')
         table_id = options["table_id"]
         destination = Path(destination)
         observations = destination / "kiyose-observations"
@@ -447,7 +448,7 @@ class Reader(Reading):
         problems, detail, totals = [], [], []
         spread_rows, bnodes_all, ryuyo_all = {}, [], []
         left_state: dict = {}
-        for left_no in (self.FIRST_PAGE, self.FIRST_PAGE + 2, self.FIRST_PAGE + 4):
+        for left_no in range(self.FIRST_PAGE, self.LAST_PAGE + 1, 2):
             right_no = left_no + 1
             rows, total = self.parse_left(left_no, pages[left_no], left_state)
             pairs, bnodes = self.parse_right(right_no, pages[right_no])
