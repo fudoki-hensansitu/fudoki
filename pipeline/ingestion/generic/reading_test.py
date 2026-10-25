@@ -39,6 +39,30 @@ class CoupledReadingTest(unittest.TestCase):
                 reading.convert([source], root / 'candidate', {'workflow': workflow, 'table_id': 'unpaired'})
             self.assertFalse((root / 'candidate').exists())
 
+    def test_legacy_statement_discovery_does_not_depend_on_coupled_rules(self):
+        from ingestion.generic import patterns
+        document = manifest.read(manifest.JURISDICTIONS / '132101/2025/settlement/expenditure.json')
+        conversion = document['conversions'][0]
+        files = manifest.dependencies(conversion)
+        self.assertIn('generic/discovery.py', files)
+        self.assertIn('generic/patterns/subject/bands.py', files)
+        self.assertNotIn('generic/reading.py', files)
+        self.assertNotIn('generic/patterns/catalog.json', files)
+        self.assertFalse(any(name.startswith(('generic/patterns/readings/', 'generic/patterns/components/')) for name in files))
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            catalog = patterns.catalog()
+            path = root / 'catalog.json'
+            path.write_text(json.dumps(catalog))
+            with patch.object(patterns, '__file__', str(root / '__init__.py')):
+                before = manifest.fingerprint(document, conversion)
+                catalog['reading']['unselected'] = 'ingestion.generic.patterns.readings.unselected'
+                path.write_text(json.dumps(catalog))
+                self.assertEqual(before, manifest.fingerprint(document, conversion))
+                catalog['subject']['bands'] = catalog['subject']['names']
+                path.write_text(json.dumps(catalog))
+                self.assertNotEqual(before, manifest.fingerprint(document, conversion))
+
     def test_missing_duplicate_unused_and_unknown_components_stop(self):
         for components, error in (([], 'missing='),
                                   (['scoped_text', 'scoped_text', 'marker_boundary'], 'not valid'),
