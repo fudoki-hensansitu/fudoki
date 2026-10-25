@@ -17,7 +17,25 @@
       ],
       "options": {
         "account": "一般会計",
-        "table_id": "general-expenditure-detail"
+        "table_id": "general-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "予算現": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -30,7 +48,7 @@
     {
       "table_id": "general-expenditure-detail",
       "conversion_id": "general",
-      "input_fingerprint": "2b4c43ab6fd553534742896742d99bad21ec8bd41516932c037cdb39b2f8e7d3",
+      "input_fingerprint": "dc6e47915180e8c5be60d69630fc758dbe8569723fb27f6e1b7b0f17d1349a5b",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'予算現': 'indent'}。",

@@ -214,7 +214,48 @@
             "observed": "センタ",
             "reason": "頁48の「7. 子ども家庭支援センター／費」（2行に折り返した名称）の墨を、Paddle の再読が重なった範囲で別々に読み、名前が崩れた。原典の画像で確認し、この読みは使わず名称は name_corrections で宣言する。"
           }
-        ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現／区分": {
+                  "kind": "label",
+                  "axis_header": "節"
+                },
+                "予算現／継続費及び繰越事業費繰越財源充当額": {
+                  "kind": "amount"
+                },
+                "予算現／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "ocr_inputs": [
         {
@@ -775,7 +816,7 @@
     {
       "table_id": "general-expenditure-detail",
       "conversion_id": "general",
-      "input_fingerprint": "041a1aee25e6263747181a3094f44d01d05d8a5e4dc7a9e4c23f2574a12a271d",
+      "input_fingerprint": "0baafa0f325a5c02fda8b4c89387328f243f281f86573be469a0e036024eea92",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",

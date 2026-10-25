@@ -96,6 +96,8 @@ def options_schema(conversion: dict) -> str:
 # manifest.py validates converter outputs and resolves paths but never shapes table bytes;
 # fingerprinting it would stale every table of a converter that imports it on each schema edit.
 FINGERPRINT_EXCLUDED = frozenset({'fiscal/manifest.py'})
+GENERIC_PDF_CONVERTERS = frozenset({'fiscal/layouts/generic_text/convert.py',
+                                    'fiscal/layouts/generic_scan/convert.py'})
 
 # A module named ``*_checks.py`` only decides pass/fail (tree check, digit coverage); it never builds
 # or writes a table. It is left out of the fingerprint so that tightening a check does not stale
@@ -111,7 +113,8 @@ CHECK_MODULE_SUFFIX = '_checks.py'
 # The generic builder keeps the subject pattern whose tree closes best, so it reads `check_tree`'s
 # comparison; for that importer the module stays in the fingerprint, otherwise a rule change there would
 # change tables without a stale mark. (importing module, check module), paths relative to `ingestion/`.
-RESULT_SHAPES_TABLE = frozenset({('generic/build.py', 'lib/tree_checks.py')})
+RESULT_SHAPES_TABLE = frozenset({('generic/build.py', 'lib/tree_checks.py'),
+                                ('generic/discovery.py', 'lib/tree_checks.py')})
 # Calls that write or remove files; a check module may read tables, never produce them. This is a
 # heuristic over representative calls, not a proof: it catches the usual ways of writing a table by
 # accident, and the contract (verdicts only) is what the ADR relies on.
@@ -126,10 +129,10 @@ def is_check_module(relative: str) -> bool:
     return relative.endswith(CHECK_MODULE_SUFFIX)
 
 
-def check_module_violations(path: Path) -> list[str]:
+def check_module_violations(path: Path, *, tree: ast.Module | None = None) -> list[str]:
     """Reasons ``path`` is not a check-only module (empty when it is)."""
     found = []
-    for node in ast.walk(ast.parse(path.read_text())):
+    for node in ast.walk(tree if tree is not None else ast.parse(path.read_text())):
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name.startswith('write'):
             found.append(f'defines {node.name}()')
         elif isinstance(node, ast.Call):
@@ -151,8 +154,20 @@ def check_module_violations(path: Path) -> list[str]:
     return sorted(set(found))
 
 
-def dependencies(conversion: dict) -> list[str]:
+def code_tree(path: Path, trees: dict) -> ast.Module:
+    if path not in trees:
+        trees[path] = ast.parse(path.read_text())
+    return trees[path]
+
+
+def dependencies(conversion: dict, *, trees: dict | None = None, patterns: dict | None = None) -> list[str]:
+    trees = {} if trees is None else trees
     pending = [conversion['converter'], options_schema(conversion)]
+    workflow = conversion['options'].get('workflow')
+    if workflow is not None:
+        from ingestion.generic.workflow import selections
+        pending.extend(module.removeprefix('ingestion.').replace('.', '/') + '.py'
+                       for module in (selections(workflow) if patterns is None else patterns).values())
     found = set()
     while pending:
         relative = pending.pop()
@@ -160,10 +175,20 @@ def dependencies(conversion: dict) -> list[str]:
             continue
         found.add(relative)
         path = code_path(relative)
+        if relative == 'generic/runtime.py' and workflow is None:
+            pending.append('generic/discovery.py')
+        if relative == 'generic/discovery.py':
+            from ingestion.generic.patterns import catalog
+            pending.extend(module.removeprefix('ingestion.').replace('.', '/') + '.py'
+                           for patterns in catalog().values() for module in patterns.values())
         if path.suffix != '.py':
             continue
+        for parent in path.relative_to(INGESTION).parents:
+            initializer = parent / '__init__.py'
+            if (INGESTION / initializer).is_file():
+                pending.append(str(initializer))
         importer = relative
-        tree = ast.parse(path.read_text())
+        tree = code_tree(path, trees)
         for node in ast.walk(tree):
             modules = []
             if isinstance(node, ast.Import):
@@ -181,7 +206,9 @@ def dependencies(conversion: dict) -> list[str]:
                 if node.value.endswith(('.json', '.toml', '.swift')):
                     candidate = path.with_suffix(node.value) if node.value.startswith('.') else path.parent / node.value
                     if candidate.is_file() and candidate.resolve().is_relative_to(INGESTION.resolve()):
-                        pending.append(str(candidate.relative_to(INGESTION)))
+                        dependency = str(candidate.relative_to(INGESTION))
+                        if dependency != 'generic/patterns/catalog.json' or workflow is None:
+                            pending.append(dependency)
             for module in modules:
                 if not module.startswith('ingestion.'):
                     continue
@@ -193,11 +220,49 @@ def dependencies(conversion: dict) -> list[str]:
                 if dependency in FINGERPRINT_EXCLUDED:
                     continue
                 if is_check_module(dependency) and (importer, dependency) not in RESULT_SHAPES_TABLE:
-                    violations = check_module_violations(candidate)
+                    violations = check_module_violations(candidate, tree=code_tree(candidate, trees))
                     if violations:
                         raise ValueError(f'Check module {dependency} must not produce tables: {"; ".join(violations)}')
                     continue
                 pending.append(dependency)
+    return sorted(found)
+
+
+def resources(files: list[str], *, trees: dict | None = None) -> list[str]:
+    trees = {} if trees is None else trees
+    found = set()
+    references = []
+    for relative in files:
+        path = code_path(relative)
+        if path.suffix != '.py':
+            continue
+        tree = code_tree(path, trees)
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Constant) and isinstance(node.value, str) and node.value.endswith('.csv'):
+                references.append((relative, node.value))
+            elif isinstance(node, ast.Import):
+                references.extend((relative, alias.name.replace('.', '/') + '.py')
+                                  for alias in node.names if alias.name.startswith('shared.'))
+            elif isinstance(node, ast.ImportFrom) and node.module and not node.level:
+                modules = ([node.module] if node.module.startswith('shared.') else
+                           ['shared.' + alias.name for alias in node.names] if node.module == 'shared' else [])
+                references.extend((relative, module.replace('.', '/') + '.py') for module in modules)
+        for node in tree.body:
+            if not isinstance(node, ast.Assign) or not any(isinstance(target, ast.Name)
+                    and target.id == 'FINGERPRINT_RESOURCES' for target in node.targets):
+                continue
+            for value in ast.literal_eval(node.value):
+                if not isinstance(value, str):
+                    raise ValueError('Fingerprint resource must be a relative path')
+                resource = PIPELINE / value
+                if (resource.is_symlink() or not resource.is_file()
+                        or not resource.resolve().is_relative_to(PIPELINE.resolve())
+                        or str(Path(value)) != value or '..' in Path(value).parts):
+                    raise ValueError(f'Invalid fingerprint resource: {value}')
+                found.add(value)
+    for importer, reference in references:
+        if not any(value == reference or value.endswith('/' + reference) for value in found):
+            raise ValueError(f'Undeclared fingerprint resource in {importer}: {reference}')
     return sorted(found)
 
 
@@ -233,7 +298,7 @@ def validate(document: dict, *, path: Path | None = None, check_code: bool = Tru
     validator().validate(document)
     if check_code:
         from ingestion.generic.layout_settings import load
-        load(document['target'], document['direction'])
+        legacy_layout = load(document['target'], document['direction']) or {}
     if path is not None:
         expected_path = manifest_path(document['target'], document['direction'])
         if path.resolve() != expected_path.resolve():
@@ -257,6 +322,15 @@ def validate(document: dict, *, path: Path | None = None, check_code: bool = Tru
             code_path(conversion['converter'])
             schema_path = code_path(options_schema(conversion))
             jsonschema.Draft202012Validator(json.loads(schema_path.read_text())).validate(conversion['options'])
+            if 'workflow' in conversion['options']:
+                if conversion['converter'] not in GENERIC_PDF_CONVERTERS:
+                    raise ValueError('PDF workflow requires a generic PDF converter')
+                from ingestion.generic.workflow import validate as validate_workflow
+                validate_workflow(conversion['options']['workflow'],
+                                  text_pdf=conversion['converter'] == 'fiscal/layouts/generic_text/convert.py')
+    if check_code and any(c['converter'] in GENERIC_PDF_CONVERTERS for c in conversions.values()):
+        if set(legacy_layout) - {'schema_version', 'source_inconsistencies'}:
+            raise ValueError('Generic PDF settings belong in options.workflow, not .layout.json')
     ocr_ids = set()
     for conversion, item in ocr_inputs(document):
         if item['id'] in ocr_ids:
@@ -353,20 +427,35 @@ def resolved_inputs(document: dict, conversion: dict, selection: dict | None = N
 def fingerprints(document: dict, conversions: list[dict] | None = None) -> dict[str, str]:
     selected = selection_for(document)
     hashes = {}
+    trees = {}
     result = {}
     for conversion in document['conversions'] if conversions is None else conversions:
         origins = resolved_inputs(document, conversion, selected)
-        files = dependencies(conversion)
+        workflow = conversion['options'].get('workflow')
+        patterns = None
+        if workflow is not None:
+            from ingestion.generic.workflow import selections
+            patterns = selections(workflow)
+        files = dependencies(conversion, trees=trees, patterns=patterns)
         for path in files:
-            if path not in hashes:
-                hashes[path] = sha_file(code_path(path))
+            if code_path(path) not in hashes:
+                hashes[code_path(path)] = sha_file(code_path(path))
         material = {'target': document['target'], 'direction': document['direction'],
                     'conversion': conversion,
                     'origins': [{k: item[k] for k in ('sha256', 'format', 'scope', 'pdf_type')} for item in origins],
-                    'code': [{'path': path, 'sha256': hashes[path]} for path in files]}
-        if 'generic/layout_settings.py' in files:
+                    'code': [{'path': path, 'sha256': hashes[code_path(path)]} for path in files]}
+        if patterns is not None:
+            material['patterns'] = [{'kind': kind, 'name': name, 'module': module}
+                                    for (kind, name), module in patterns.items()]
+        if 'generic/layout_settings.py' in files and 'workflow' not in conversion['options']:
             from ingestion.generic.layout_settings import load
             material['layout_settings'] = load(document['target'], document['direction'])
+        data = resources(files, trees=trees)
+        if data:
+            for path in data:
+                if PIPELINE / path not in hashes:
+                    hashes[PIPELINE / path] = sha_file(PIPELINE / path)
+            material['resources'] = [{'path': path, 'sha256': hashes[PIPELINE / path]} for path in data]
         if any(origin.get('pdf_type') == 'text' for origin in origins):
             material['annotation_dictionary_sha256'] = sha_file(
                 INGESTION.parent / 'shared/fiscal_annotation_map.csv')

@@ -17,7 +17,25 @@
       ],
       "options": {
         "account": "一般会計",
-        "table_id": "general-expenditure"
+        "table_id": "general-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -35,7 +53,25 @@
       ],
       "options": {
         "account": "介護保険特別会計",
-        "table_id": "long-term-care-expenditure"
+        "table_id": "long-term-care-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -48,7 +84,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "447120b2e38a44bd5f17bcd2963d0c071e191043f23da74733d6bf0b1ccb0587",
+      "input_fingerprint": "ed9b060abc7f9cdd12c2aa4f7528af48958ace01c3014e2fc5c9208ff50292f6",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape'}。",
@@ -78,7 +114,7 @@
     {
       "table_id": "long-term-care-expenditure",
       "conversion_id": "long-term-care-settlement",
-      "input_fingerprint": "67f5d0cec2b1c0100d8c566816f3abb357d7e2187a5a9421b4f36faa161d79cb",
+      "input_fingerprint": "9a0ac64f2e27e8d7887da634ab06d641d352c27e4552c6dc8fe0dd553cbc7a9e",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape'}。",

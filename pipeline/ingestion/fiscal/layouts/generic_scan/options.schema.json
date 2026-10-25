@@ -447,10 +447,14 @@
           "reason"
         ]
       }
+    },
+    "workflow": {
+      "type": "object"
     }
   },
   "required": [
     "account",
-    "table_id"
+    "table_id",
+    "workflow"
   ]
 }

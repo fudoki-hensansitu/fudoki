@@ -17,7 +17,34 @@
       ],
       "options": {
         "account": "一般会計",
-        "table_id": "general-expenditure"
+        "table_id": "general-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "indent"
+              },
+              "節": {
+                "pattern": "indent"
+              },
+              "予算現額に対する支出割合": {
+                "pattern": "indent"
+              },
+              "支出総額に対する割合": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -35,7 +62,34 @@
       ],
       "options": {
         "account": "国民健康保険特別会計",
-        "table_id": "national-health-insurance-expenditure"
+        "table_id": "national-health-insurance-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "indent"
+              },
+              "節": {
+                "pattern": "indent"
+              },
+              "予算現額に対する支出割合": {
+                "pattern": "indent"
+              },
+              "支出総額に対する割合": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -53,7 +107,34 @@
       ],
       "options": {
         "account": "福生都市計画瑞穂町箱根ケ崎駅西土地区画整理事業特別会計",
-        "table_id": "land-readjustment-expenditure"
+        "table_id": "land-readjustment-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "indent"
+              },
+              "節": {
+                "pattern": "indent"
+              },
+              "予算現額に対する支出割合": {
+                "pattern": "indent"
+              },
+              "支出総額に対する割合": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -71,7 +152,34 @@
       ],
       "options": {
         "account": "瑞穂町介護保険特別会計",
-        "table_id": "long-term-care-expenditure"
+        "table_id": "long-term-care-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "indent"
+              },
+              "節": {
+                "pattern": "indent"
+              },
+              "予算現額に対する支出割合": {
+                "pattern": "indent"
+              },
+              "支出総額に対する割合": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -89,7 +197,34 @@
       ],
       "options": {
         "account": "瑞穂町後期高齢者医療特別会計",
-        "table_id": "elderly-medical-expenditure"
+        "table_id": "elderly-medical-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "indent"
+              },
+              "節": {
+                "pattern": "indent"
+              },
+              "予算現額に対する支出割合": {
+                "pattern": "indent"
+              },
+              "支出総額に対する割合": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -107,7 +242,34 @@
       ],
       "options": {
         "account": "瑞穂町殿ケ谷財産区特別会計",
-        "table_id": "property-ward-tonogaya-expenditure"
+        "table_id": "property-ward-tonogaya-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "indent"
+              },
+              "節": {
+                "pattern": "indent"
+              },
+              "予算現額に対する支出割合": {
+                "pattern": "indent"
+              },
+              "支出総額に対する割合": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -125,7 +287,34 @@
       ],
       "options": {
         "account": "瑞穂町石畑財産区特別会計",
-        "table_id": "property-ward-ishihata-expenditure"
+        "table_id": "property-ward-ishihata-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "indent"
+              },
+              "節": {
+                "pattern": "indent"
+              },
+              "予算現額に対する支出割合": {
+                "pattern": "indent"
+              },
+              "支出総額に対する割合": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -143,7 +332,34 @@
       ],
       "options": {
         "account": "瑞穂町箱根ケ崎財産区特別会計",
-        "table_id": "property-ward-hakonegasaki-expenditure"
+        "table_id": "property-ward-hakonegasaki-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "indent"
+              },
+              "節": {
+                "pattern": "indent"
+              },
+              "予算現額に対する支出割合": {
+                "pattern": "indent"
+              },
+              "支出総額に対する割合": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -161,7 +377,34 @@
       ],
       "options": {
         "account": "瑞穂町長岡財産区特別会計",
-        "table_id": "property-ward-nagaoka-expenditure"
+        "table_id": "property-ward-nagaoka-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "indent"
+              },
+              "節": {
+                "pattern": "indent"
+              },
+              "予算現額に対する支出割合": {
+                "pattern": "indent"
+              },
+              "支出総額に対する割合": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -174,10 +417,10 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "f0de07060d470abb09793786c7ab22b52f156348c940a84b2b6c95fbe3eac5f8",
+      "input_fingerprint": "21c7c44468690f47dee8d8aff6172a3dd31a19b804a412dd818ad6edaca25335",
       "account": "一般会計",
       "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent'}。",
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent', '予算現額に対する支出割合': 'indent', '支出総額に対する割合': 'indent'}。",
         "金額の単位は printed 86頁・column mark 4頁 から決めた。款の和 17,157,360,475 と印字の「歳出合計」17,157,360,475 が一致。",
         "金額の注記 34 件（不用額 16・充用 12・流用 6）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 3 種（1768 件）を、印字された語から辞書の見出しに寄せた: 予算現額と支出済額との比較→比較・予算現額／節／金額→節／金額・翌年度繰越額／継続費逓次繰越(逓)繰越明許費(明)事故繰越(事)→翌年度繰越額。"
@@ -204,10 +447,10 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "893f290283be2c8ae230201c0273a6d3b36e322cfe52ec4cdb10a94dce85f759",
+      "input_fingerprint": "d671559067c6cb7398a9b97606173c982f09b7f6e51364719f7b2af6c6caba5c",
       "account": "国民健康保険特別会計",
       "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent'}。",
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent', '予算現額に対する支出割合': 'indent', '支出総額に対する割合': 'indent'}。",
         "金額の単位は printed 6頁・column mark 3頁 から決めた。款の和 3,649,396,288 と印字の「歳出合計」3,649,396,288 が一致。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 3 種（178 件）を、印字された語から辞書の見出しに寄せた: 予算現額と支出済額との比較→比較・予算現額／節／金額→節／金額・翌年度繰越額／継続費逓次繰越(逓)繰越明許費(明)事故繰越(事)→翌年度繰越額。"
@@ -234,10 +477,10 @@
     {
       "table_id": "land-readjustment-expenditure",
       "conversion_id": "land-readjustment-settlement",
-      "input_fingerprint": "3ee07b25204fb394657d315f9ac24577cc275d68cdf7aae17bc60bbfa9a0fa75",
+      "input_fingerprint": "026b0da73995524133ba4febed46f290c6348d35c3e4bbce32ff7ca1e062015d",
       "account": "福生都市計画瑞穂町箱根ケ崎駅西土地区画整理事業特別会計",
       "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent'}。",
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent', '予算現額に対する支出割合': 'indent', '支出総額に対する割合': 'indent'}。",
         "金額の単位は printed 2頁・column mark 2頁 から決めた。款の和 798,018,118 と印字の「歳出合計」798,018,118 が一致。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 3 種（40 件）を、印字された語から辞書の見出しに寄せた: 予算現額と支出済額との比較→比較・予算現額／節／金額→節／金額・翌年度繰越額／継続費逓次繰越(逓)繰越明許費(明)事故繰越(事)→翌年度繰越額。"
@@ -264,10 +507,10 @@
     {
       "table_id": "long-term-care-expenditure",
       "conversion_id": "long-term-care-settlement",
-      "input_fingerprint": "d2b93252b000a5ac59fbe50a620cccbd074122892a4ab8561d43c9c55f06cdd3",
+      "input_fingerprint": "e91d6a4c1a0f633c1b0c0a4fa77a18cecdadbce7b4c60908311a05fe971b32f4",
       "account": "瑞穂町介護保険特別会計",
       "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent'}。",
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent', '予算現額に対する支出割合': 'indent', '支出総額に対する割合': 'indent'}。",
         "金額の単位は printed 9頁・column mark 2頁 から決めた。款の和 3,001,603,677 と印字の「歳出合計」3,001,603,677 が一致。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 3 種（224 件）を、印字された語から辞書の見出しに寄せた: 予算現額と支出済額との比較→比較・予算現額／節／金額→節／金額・翌年度繰越額／継続費逓次繰越(逓)繰越明許費(明)事故繰越(事)→翌年度繰越額。"
@@ -294,10 +537,10 @@
     {
       "table_id": "elderly-medical-expenditure",
       "conversion_id": "elderly-medical-settlement",
-      "input_fingerprint": "6f294c4d68bcd570dde6d97a27c7f15f7263b408060646d2ee5fc5b6dca81c1d",
+      "input_fingerprint": "1658198d401113888c5c5294a5c5738d15c51501465d14c5197d3e91f3bc2f7f",
       "account": "瑞穂町後期高齢者医療特別会計",
       "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent'}。",
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent', '予算現額に対する支出割合': 'indent', '支出総額に対する割合': 'indent'}。",
         "金額の単位は printed 3頁・column mark 2頁 から決めた。款の和 1,018,165,987 と印字の「歳出合計」1,018,165,987 が一致。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 3 種（68 件）を、印字された語から辞書の見出しに寄せた: 予算現額と支出済額との比較→比較・予算現額／節／金額→節／金額・翌年度繰越額／継続費逓次繰越(逓)繰越明許費(明)事故繰越(事)→翌年度繰越額。"
@@ -324,10 +567,10 @@
     {
       "table_id": "property-ward-tonogaya-expenditure",
       "conversion_id": "property-ward-tonogaya-settlement",
-      "input_fingerprint": "fd3eb3753b33d67a923429860fe1d90a68c56be7adbaa342592c2a83b6659a14",
+      "input_fingerprint": "edb86ec3bac4f2a37532322574e82507b41e495786665ba3e78aec206946551f",
       "account": "瑞穂町殿ケ谷財産区特別会計",
       "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent'}。",
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent', '予算現額に対する支出割合': 'indent', '支出総額に対する割合': 'indent'}。",
         "金額の単位は printed 1頁・column mark 2頁 から決めた。款の和 3,710,686 と印字の「歳出合計」3,710,686 が一致。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 3 種（32 件）を、印字された語から辞書の見出しに寄せた: 予算現額と支出済額との比較→比較・予算現額／節／金額→節／金額・翌年度繰越額／継続費逓次繰越(逓)繰越明許費(明)事故繰越(事)→翌年度繰越額。"
@@ -354,10 +597,10 @@
     {
       "table_id": "property-ward-ishihata-expenditure",
       "conversion_id": "property-ward-ishihata-settlement",
-      "input_fingerprint": "9f7dd6c78b541f7da9b6ace96d0ca2e81713488f93f27a3f5c9d123277e85ac5",
+      "input_fingerprint": "7695a682e8c378acf5d17f74fcf47e114deab79ad48ae0dd47c96d3d15bdd3c8",
       "account": "瑞穂町石畑財産区特別会計",
       "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent'}。",
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent', '予算現額に対する支出割合': 'indent', '支出総額に対する割合': 'indent'}。",
         "金額の単位は printed 2頁・column mark 2頁 から決めた。款の和 14,714,121 と印字の「歳出合計」14,714,121 が一致。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 3 種（54 件）を、印字された語から辞書の見出しに寄せた: 予算現額と支出済額との比較→比較・予算現額／節／金額→節／金額・翌年度繰越額／継続費逓次繰越(逓)繰越明許費(明)事故繰越(事)→翌年度繰越額。"
@@ -384,10 +627,10 @@
     {
       "table_id": "property-ward-hakonegasaki-expenditure",
       "conversion_id": "property-ward-hakonegasaki-settlement",
-      "input_fingerprint": "c188e8d51ea19b52dda4c42fccdccdf1b8a3d383399bc337d30fc1890de4a3dc",
+      "input_fingerprint": "269677b7de2ee791c47fc9efe565a70f397b98af9f6455d6a36bbb0a5bf17b39",
       "account": "瑞穂町箱根ケ崎財産区特別会計",
       "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent'}。",
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent', '予算現額に対する支出割合': 'indent', '支出総額に対する割合': 'indent'}。",
         "金額の単位は printed 2頁・column mark 2頁 から決めた。款の和 7,264,210 と印字の「歳出合計」7,264,210 が一致。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 3 種（34 件）を、印字された語から辞書の見出しに寄せた: 予算現額と支出済額との比較→比較・予算現額／節／金額→節／金額・翌年度繰越額／継続費逓次繰越(逓)繰越明許費(明)事故繰越(事)→翌年度繰越額。"
@@ -414,10 +657,10 @@
     {
       "table_id": "property-ward-nagaoka-expenditure",
       "conversion_id": "property-ward-nagaoka-settlement",
-      "input_fingerprint": "07711211117f3e3e081df740c4d90d06b086e5ba6cdc35ef9997c5cbd67f3755",
+      "input_fingerprint": "70f7283e6775ac27c7055f29f4f3419a022191a128ddbfd5bb25ff9528bd4498",
       "account": "瑞穂町長岡財産区特別会計",
       "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent'}。",
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent', '予算現額に対する支出割合': 'indent', '支出総額に対する割合': 'indent'}。",
         "金額の単位は printed 1頁・column mark 2頁 から決めた。款の和 711,394 と印字の「歳出合計」711,394 が一致。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 3 種（32 件）を、印字された語から辞書の見出しに寄せた: 予算現額と支出済額との比較→比較・予算現額／節／金額→節／金額・翌年度繰越額／継続費逓次繰越(逓)繰越明許費(明)事故繰越(事)→翌年度繰越額。"

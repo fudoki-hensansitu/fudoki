@@ -17,7 +17,37 @@
       ],
       "options": {
         "account": "介護保険事業会計",
-        "table_id": "long-term-care-expenditure"
+        "table_id": "long-term-care-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "notes": [
+                    "○同款",
+                    "○同項",
+                    "○同目"
+                  ],
+                  "wrap": "amount_on_last_line",
+                  "hang_chars": 1
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -35,7 +65,37 @@
       ],
       "options": {
         "account": "国民健康保険事業会計",
-        "table_id": "national-health-insurance-expenditure"
+        "table_id": "national-health-insurance-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "notes": [
+                    "○同款",
+                    "○同項",
+                    "○同目"
+                  ],
+                  "wrap": "amount_on_last_line",
+                  "hang_chars": 1
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -53,7 +113,37 @@
       ],
       "options": {
         "account": "後期高齢者医療事業会計",
-        "table_id": "elderly-medical-expenditure"
+        "table_id": "elderly-medical-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "notes": [
+                    "○同款",
+                    "○同項",
+                    "○同目"
+                  ],
+                  "wrap": "amount_on_last_line",
+                  "hang_chars": 1
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -71,7 +161,37 @@
       ],
       "options": {
         "account": "鶴川駅南土地区画整理事業会計",
-        "table_id": "land-readjustment-expenditure"
+        "table_id": "land-readjustment-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "notes": [
+                    "○同款",
+                    "○同項",
+                    "○同目"
+                  ],
+                  "wrap": "amount_on_last_line",
+                  "hang_chars": 1
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -89,7 +209,37 @@
       ],
       "options": {
         "account": "一般会計",
-        "table_id": "general-expenditure"
+        "table_id": "general-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "notes": [
+                    "○同款",
+                    "○同項",
+                    "○同目"
+                  ],
+                  "wrap": "amount_on_last_line",
+                  "hang_chars": 1
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -102,7 +252,7 @@
     {
       "table_id": "long-term-care-expenditure",
       "conversion_id": "long-term-care-settlement",
-      "input_fingerprint": "5525d799001341a492d65aa1ee3038ca820230bd2fb34b829ffa9f19831d50be",
+      "input_fingerprint": "887f0e88800526a85787a55a6f4aafe76fcb04686fb6aa4bacc07751b82b532e",
       "account": "介護保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
@@ -132,7 +282,7 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "0ae4e284c79a718fdcb4b95cbf067182bf6567ae93ffd3a803c033f4d95da08a",
+      "input_fingerprint": "410de2ba99af0e665aed6531445dfeb42d63d978499c506e53aedda2aca863c6",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
@@ -162,7 +312,7 @@
     {
       "table_id": "elderly-medical-expenditure",
       "conversion_id": "elderly-medical-settlement",
-      "input_fingerprint": "f64aeedabb076d27134d9464d18c5d0b18138f7bf081bd370722df48b18afe3d",
+      "input_fingerprint": "a59247b93534634a5093f580aade623a96db6c1b271097f1994cfb9703a87c7a",
       "account": "後期高齢者医療事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
@@ -192,7 +342,7 @@
     {
       "table_id": "land-readjustment-expenditure",
       "conversion_id": "land-readjustment-settlement",
-      "input_fingerprint": "8ef58a141d0542b1c8a17e5803f2262615f41cbe346c6965c0116ca8fa27691f",
+      "input_fingerprint": "284ea9e1dbd94d94f8943a1631234c6e15414ba88ee4da9ac186b38738f00e43",
       "account": "鶴川駅南土地区画整理事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
@@ -222,7 +372,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "d02fb0f65386cb5834e27e4204a13a488bddda2a5ee2adda4028195ea8b1b0c4",
+      "input_fingerprint": "016f67070a361a48c5ecea39afca684a07b2d39b92c7b25e828ad29302f792c3",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",

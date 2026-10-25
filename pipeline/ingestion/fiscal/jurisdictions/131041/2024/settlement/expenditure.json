@@ -17,7 +17,33 @@
       ],
       "options": {
         "account": "一般会計",
-        "table_id": "general-expenditure-detail"
+        "table_id": "general-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "spread": {
+                "gutter": 0.5
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -35,7 +61,33 @@
       ],
       "options": {
         "account": "介護保険特別会計",
-        "table_id": "kaigo-expenditure-detail"
+        "table_id": "kaigo-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "spread": {
+                "gutter": 0.5
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -53,7 +105,33 @@
       ],
       "options": {
         "account": "国民健康保険特別会計",
-        "table_id": "kokuho-expenditure-detail"
+        "table_id": "kokuho-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "spread": {
+                "gutter": 0.5
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -71,7 +149,33 @@
       ],
       "options": {
         "account": "後期高齢者医療特別会計",
-        "table_id": "kouki-expenditure-detail"
+        "table_id": "kouki-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "spread": {
+                "gutter": 0.5
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -84,7 +188,7 @@
     {
       "table_id": "general-expenditure-detail",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "4bbcac80bba4c84506e15069dcd7a0bb744b40ef8eaadf91fcc6ea9e66620bfa",
+      "input_fingerprint": "cdb820c85632ce01e98620d129d990925fd92a000a04bf2178bec5d5c9b090b5",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -114,7 +218,7 @@
     {
       "table_id": "kaigo-expenditure-detail",
       "conversion_id": "kaigo-settlement",
-      "input_fingerprint": "63d2403f3be8b0b30d3e024765aabf5aa0640de8837c2e1b5ed8dbda72c8216f",
+      "input_fingerprint": "997300130c7e247f7b8d003e4a9275ced595e7b19ebbb1987226939b9006d196",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -144,7 +248,7 @@
     {
       "table_id": "kokuho-expenditure-detail",
       "conversion_id": "kokuho-settlement",
-      "input_fingerprint": "85bbf67f2c870c38033b4be5a3d7ee0930099170b7275f3d6be8b68bc6f319ff",
+      "input_fingerprint": "5964ab200d9568939287a2cf96f88cc80546fafd56af695f3aeac4fd38042854",
       "account": "国民健康保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -174,7 +278,7 @@
     {
       "table_id": "kouki-expenditure-detail",
       "conversion_id": "kouki-settlement",
-      "input_fingerprint": "d13d0b4730174d5e623ca7d2020e478b732dfe7f42f0be7d519ef6e57957adaf",
+      "input_fingerprint": "e619a7447d6c78e5e8f2aff9439072d7024c7f6d86b0760e5a1366349d5b8b40",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",

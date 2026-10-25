@@ -43,7 +43,42 @@
             "corrected_name": "諸経費",
             "reason": "原画の頁147 備考は「○諸経費」。OCR は段を示す印の○を英字の O と読み、名称に残った。"
           }
-        ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 230
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "plain_names": [
+                    "補充用消耗品費"
+                  ],
+                  "note_kinds": {
+                    "体育施設費・工事請負費から報償費へ": "流用"
+                  }
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -75,7 +110,7 @@
     {
       "table_id": "general-expenditure-detail",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "0c04b093a8012add433fe9274ba7477e6991b9622f58cc716b42c3b4216e8d86",
+      "input_fingerprint": "3795db2ed85ec308b52d7bf6da889252faf8b059052f151f53f0598dd3ff8abe",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '備考': 'indent'}。",

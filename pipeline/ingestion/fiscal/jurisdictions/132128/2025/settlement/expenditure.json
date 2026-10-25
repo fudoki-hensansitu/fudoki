@@ -28,7 +28,47 @@
       ],
       "options": {
         "account": "土地区画整理事業特別会計",
-        "table_id": "land-readjustment-expenditure"
+        "table_id": "land-readjustment-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 1
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -46,7 +86,47 @@
       ],
       "options": {
         "account": "国民健康保険特別会計",
-        "table_id": "national-health-insurance-expenditure"
+        "table_id": "national-health-insurance-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 1
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              },
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -64,7 +144,47 @@
       ],
       "options": {
         "account": "介護保険特別会計",
-        "table_id": "long-term-care-expenditure"
+        "table_id": "long-term-care-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 1
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -82,7 +202,47 @@
       ],
       "options": {
         "account": "一般会計",
-        "table_id": "general-expenditure"
+        "table_id": "general-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 1
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -97,7 +257,7 @@
     {
       "table_id": "late-elderly-medical-setsu",
       "conversion_id": "late-elderly-medical-settlement",
-      "input_fingerprint": "2dad5ec9eef958602ab82b8e84ebf898acad04cc41b4ea1f51dc8de531bc2c48",
+      "input_fingerprint": "97331bfce1cf3eecbe1ebc5048663c88ade1816994d7e845024ba8b5d41921a9",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "日野市決算歳出事項別明細書（A3横単票）の備考細目を行とする。名称は単語間隔が2pt超の箇所を空白、欄内折返しを改行で保持する（印字のまま）。款・項・目の予算5列・執行3列・印字位置を反復し、事業・事業群・備考節を展開する。金額は印字原文（△・桁区切り・括弧のまま）。事業_名称は担当課の括弧書きを含む原文。予備費目は目の粒度とし、備考の bare 事業文を目_備考へ保持する（0069承認・0047先例）。同一印字行帯の科目・節・備考はx帯で独立に解釈し、高さの一致を対応の根拠にしない。法定節一覧は説明と独立した節の軸として保持し、歳出合計はlocal観測に留める。p2は款1項2目1の備考溢れ頁で、前頁の文脈を継承する。頁頭の「後期 (単位：円)」は単位の根拠、会計の同定は上流scopeによる。対象会計は後期高齢者医療特別会計。",
@@ -125,7 +285,7 @@
     {
       "table_id": "land-readjustment-expenditure",
       "conversion_id": "land-readjustment-settlement",
-      "input_fingerprint": "d7e020540a58c4572dd0c2360ebeda2c490e38af1b078ca1fc7e2a5b6520627c",
+      "input_fingerprint": "0fac399f940c8c3abb2c745bb3a23de402223a55be38ad5683704306bce27d5b",
       "account": "土地区画整理事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent'}。",
@@ -155,7 +315,7 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "eca4fe06befc04874460bc639e75a369e1c733bd6f5da9af3f8ac4af27654ded",
+      "input_fingerprint": "e2721f2db7f9cce20575cc971e827da72b2d9f99399bcc7ccdcfc94046e77da6",
       "account": "国民健康保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'shape'}。",
@@ -185,7 +345,7 @@
     {
       "table_id": "long-term-care-expenditure",
       "conversion_id": "long-term-care-settlement",
-      "input_fingerprint": "00b286c1576c96e2fb0df2f15528a2cd2b9fcee12029f72375bd31e8e3909c20",
+      "input_fingerprint": "aa5edf1d3f819425109a23d169199249e54711701ef87e8ce448dbfea469c56d",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
@@ -215,7 +375,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "ba94e71973bc7a41e20effd2b62017f290c09d4263cb49f4be917caa74e78ffb",
+      "input_fingerprint": "3fade30be5ca04b7bdbd5f357ec523ef380abbec0f450bddf5d7d55f0182aa8b",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",

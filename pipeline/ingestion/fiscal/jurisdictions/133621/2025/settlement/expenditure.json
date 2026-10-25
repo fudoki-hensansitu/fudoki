@@ -17,7 +17,28 @@
       ],
       "options": {
         "account": "一般会計",
-        "table_id": "general-expenditure"
+        "table_id": "general-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -35,7 +56,28 @@
       ],
       "options": {
         "account": "国民健康保険事業特別会計（事業勘定）",
-        "table_id": "national-health-insurance-business-expenditure"
+        "table_id": "national-health-insurance-business-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -53,7 +95,28 @@
       ],
       "options": {
         "account": "国民健康保険事業特別会計（直診勘定）",
-        "table_id": "national-health-insurance-clinic-expenditure"
+        "table_id": "national-health-insurance-clinic-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "position"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -71,7 +134,28 @@
       ],
       "options": {
         "account": "介護保険事業特別会計（事業勘定）",
-        "table_id": "long-term-care-business-expenditure"
+        "table_id": "long-term-care-business-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "position"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -89,7 +173,28 @@
       ],
       "options": {
         "account": "後期高齢者事業特別会計",
-        "table_id": "elderly-medical-expenditure"
+        "table_id": "elderly-medical-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -102,7 +207,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "4a82a3efb243b431faf7bb2c10cd57dba296ea75779be3f9ae1563587f1ca340",
+      "input_fingerprint": "3c24b0d9554255175d01238e9ad4a1dd94239ca35dde8ff20744847ecfaa154c",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'shape'}。",
@@ -132,7 +237,7 @@
     {
       "table_id": "national-health-insurance-business-expenditure",
       "conversion_id": "national-health-insurance-business-settlement",
-      "input_fingerprint": "1eb58055b866e67d121db922ee7de36df931edebf736cda538faf69d53e5e308",
+      "input_fingerprint": "9bcce6b5e0033be57799b3826c6ccb4831749a4ed1e1ad87709645d01d821962",
       "account": "国民健康保険事業特別会計（事業勘定）",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'shape'}。",
@@ -162,7 +267,7 @@
     {
       "table_id": "national-health-insurance-clinic-expenditure",
       "conversion_id": "national-health-insurance-clinic-settlement",
-      "input_fingerprint": "6b120bc6e088a3a83610cf29b2e21bb5fc956e164ce1b86379958619bb13a116",
+      "input_fingerprint": "c68ad7fe66ecbfc91993c17056e8856a9ef203db7938ad1b3eac0e60b07c3d4a",
       "account": "国民健康保険事業特別会計（直診勘定）",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -192,7 +297,7 @@
     {
       "table_id": "long-term-care-business-expenditure",
       "conversion_id": "long-term-care-business-settlement",
-      "input_fingerprint": "eb30a6b93fcedbe2cece320c47d6e997bd39b67e1bdc476e92eea72797053564",
+      "input_fingerprint": "9d5f6b32cedd3b7ec4c71ff7ff08ba9f11b079e94bdf7a1b15522021925f3961",
       "account": "介護保険事業特別会計（事業勘定）",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -222,7 +327,7 @@
     {
       "table_id": "elderly-medical-expenditure",
       "conversion_id": "elderly-medical-settlement",
-      "input_fingerprint": "a753d2c1d6577cf66971fb6f264eb9066a19c0ada3ca5822bbfe3d96ff2c92a2",
+      "input_fingerprint": "8ab79d68891ba1cd5531c1e0e74d88ebe2cceb379ad844c88a26349a7a83fc6f",
       "account": "後期高齢者事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",

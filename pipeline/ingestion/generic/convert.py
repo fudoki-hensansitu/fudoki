@@ -26,10 +26,10 @@ from pathlib import Path
 import re
 
 from ingestion.generic import mixed, observe as observe_module, scan as scan_module
-from ingestion.generic.build import run_pages
+from ingestion.generic.runtime import run_pages
+from ingestion.generic.workflow import effective_settings
 from ingestion.generic.headers import canonical
 from ingestion.generic.layout import is_amount, lines, normalize
-from ingestion.generic.layout_settings import load as load_layout
 from ingestion.generic.notes import kind_of
 from ingestion.lib.node_tables import AMOUNT_COLUMNS, NODE_COLUMNS, coverage_regions, phase_dictionary, write_coverage_words
 from ingestion.lib.parquet import write_parquet
@@ -359,11 +359,7 @@ def build_table(source: dict, options: dict, *, stop: bool = True) -> Table:
         raise ValueError('The generic builder reads text PDFs only')
     account = options['account']
     pages = scope_pages(source, account, options.get('pages'))
-    layout = load_layout(source['target'], source.get('direction', 'expenditure'))
-    if layout and account in layout.get('accounts', {}):
-        # An account's own settings replace the document's, key by key: accounts of one
-        # original can print the same marks for different levels.
-        layout = {**layout, **layout['accounts'][account]}
+    layout = effective_settings(source, options, text_pdf=True)
     # Pages whose text layer is empty are declared as an OCR input of the conversion and read from its pinned
     # observation (`mixed.py`); the observation cache of the text layer is keyed by the pages it observes.
     ocr_numbers = mixed.numbers(source, pages)
@@ -376,7 +372,7 @@ def build_table(source: dict, options: dict, *, stop: bool = True) -> Table:
         layout=(layout or {}).get('breakdown'), columns=(layout or {}).get('columns'),
         spread=(layout or {}).get('spread'), header=(layout or {}).get('header'),
         repairs=frozenset((layout or {}).get('repairs', ())), codes_right=(layout or {}).get('codes') == 'right',
-        text_layer=(layout or {}).get('text_layer'), ocr=ocr)
+        text_layer=(layout or {}).get('text_layer'), ocr=ocr, workflow=options.get('workflow'))
     kept, nodes, amounts, unresolved, codes = split_notes(built)
     by_node = [rule for rule in options.get('name_corrections', ()) if 'observation_id' not in rule]
     built.notes.extend({'kind': 'name correction', 'text': text} for text in correct_names(built.nodes, by_node))
@@ -430,7 +426,7 @@ def canonical_headings(amounts: list[dict], nodes: list[dict], document_kind: st
     changed: Counter = Counter()
     for amount in amounts:
         path = canonical(amount['header_path'], axis.get(amount['node_key']), known,
-                         bool((header or {}).get('kind_by_characters')))
+                         bool((header or {}).get('kind_by_characters')), (header or {}).get('_headers_pattern'))
         if path == '金額' and axis.get(amount['node_key']) == '科目' and level.get(amount['node_key']):
             # A 款・項・目 row that prints its total in the 節 金額 column: the column of that level (`科目／款`).
             path = f"科目／{level[amount['node_key']]}"

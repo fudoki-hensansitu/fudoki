@@ -24,7 +24,7 @@ from collections import defaultdict
 from functools import lru_cache
 import sys
 
-from ingestion.generic.build import dictionary_header
+from ingestion.generic.headers import dictionary_header
 from ingestion.lib.node_tables import amount_phase
 from shared.amount import number
 

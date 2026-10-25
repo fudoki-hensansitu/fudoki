@@ -103,7 +103,7 @@ OCRモジュールは文字と位置を返す。**表の列・セル・階層の
 
 単語・OCR観測から行・列・階層を組み立てる処理は、Pythonコードと書式別の宣言にする。共通処理には `pipeline/ingestion/lib/pdf_table.py` を使い、列境界・見出し・見開きなど書式の違いを宣言で指定する。[共通モジュールの使い方](../../../../docs/pdf-table-module.md)を参照し、新しい書式では出典を確認してコード・宣言を作り、対象頁で検査してから同じ書式へ適用する。
 
-layoutは年度・会計ではなく書式ごとに管理する。年度・会計が違っても列配置・見出し判定・階層表現が同じなら再利用し、設定値の違いで対応できる場合は同じ処理へ設定を渡す。書式の規則が変わる場合は別のlayoutにする。一つのPDF内でも頁・表ごとに書式が違えばlayoutを切り替える。年度・会計は上流から受け取り、layoutから推定しない。別会計・独立した表へ移るときは階層の文脈をリセットする。文書ごとの組版の設定（`<方向>.layout.json`）の形・6項目・指紋への含有は [組版設定](../../../../docs/prd/generic-node-builder/layout-settings.md) を参照する。
+layoutは年度・会計ではなく書式ごとに管理する。年度・会計が違っても列配置・見出し判定・階層表現が同じなら再利用し、設定値の違いで対応できる場合は同じ処理へ設定を渡す。書式の規則が変わる場合は別のlayoutにする。一つのPDF内でも頁・表ごとに書式が違えばlayoutを切り替える。年度・会計は上流から受け取り、layoutから推定しない。別会計・独立した表へ移るときは階層の文脈をリセットする。
 
 LLMを使う場合は、このコード・宣言の作成と修正を支援させる。取り込み実行時に、各PDFの行・金額・階層を毎回LLMへ生成させない。
 
@@ -198,7 +198,6 @@ scan の測定用管理 JSON は `docs/prd/generic-node-builder/scan/plans/` に
 
 `ingestion:check` が `Stale saved table` で止まるのは、表を作ったコード・設定・出典・scopeのどれかが変わったという合図であり、表の中身が変わった証拠ではない。次の順で、中身で決める（[ADR 0027](../../../../docs/adr/0027-refresh-fingerprints-by-table-content.md)）。
 
-指紋は変換の宣言（`conversions[].options`）と書式の設定（`.layout.json`）も含む。印字の食い違いの注記のように表の中身を変えない記録は `.layout.json` に足さず、`jurisdictions/<自治体>/README.md` や [書式の設定](../../../../docs/prd/generic-node-builder/layout-settings.md) に書く — 宣言に1行足すだけでその対象の全表が stale になる。
 
 1. `bun run ingestion:refresh --remote` を `pipeline/` から実行する（対象を絞るなら `--manifest <対象JSON>`、書き換えずに見るだけなら `--dry-run`）。レビュー指摘への修正はまとめてから回す — 変換コードを1行直すたびに回すと、全表の再変換に40〜50分かかる（2026-10-22 実測で6回超）。`--remote` を省くと、指紋の変わった表を R2 から取り直さないので、古い `.cache/objects` との不一致で `restore` が止まる。指紋が古い管理JSONだけが対象で、出典と保存済みの表をR2から読み（書かない）、変換をローカルでやり直して、表ごとに列・型・行の順序・値と、管理JSONへ書く表のメタデータを比べる。保存前の関門（木の検査・網羅の検査）も当て直す。
 2. 全表が「same」の管理JSONは、`input_fingerprint` だけを書き換える。保存済みのParquetとその `sha256`・サイズは変えない。結果は `.build/ingestion-refresh/report.json`（管理JSON・表ごとの `same`／`different`／`blocked`と、増えた・消えた・変わった行の数と例）に残り、標準出力には件数と対象だけを返す。

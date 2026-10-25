@@ -17,7 +17,25 @@
       ],
       "options": {
         "account": "国民健康保険事業会計",
-        "table_id": "national-health-insurance-expenditure"
+        "table_id": "national-health-insurance-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -35,7 +53,25 @@
       ],
       "options": {
         "account": "後期高齢者医療会計",
-        "table_id": "elderly-medical-expenditure"
+        "table_id": "elderly-medical-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -53,7 +89,25 @@
       ],
       "options": {
         "account": "介護保険会計",
-        "table_id": "long-term-care-expenditure"
+        "table_id": "long-term-care-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -71,7 +125,32 @@
       ],
       "options": {
         "account": "一般会計",
-        "table_id": "general-expenditure"
+        "table_id": "general-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "single_part_notes": true,
+                  "wrap": "amount_on_last_line"
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -84,7 +163,7 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "2ab4a2db7203c29fb4eccddd0d91f5792fd95e6edc95f299637b193a96547361",
+      "input_fingerprint": "98694b438abe7a6e523ff95442cc70adf13b3bf99a6fb22cf637044ae77c7664",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -114,7 +193,7 @@
     {
       "table_id": "elderly-medical-expenditure",
       "conversion_id": "elderly-medical-settlement",
-      "input_fingerprint": "0c30965f91dc10ab86d74e32c2f72a328f2be85915b151f691e1821293d9fffa",
+      "input_fingerprint": "22d6388b0855d656a58238e66149859f1c70fb889848079bc83e2c91ca6a16b5",
       "account": "後期高齢者医療会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -144,7 +223,7 @@
     {
       "table_id": "long-term-care-expenditure",
       "conversion_id": "long-term-care-settlement",
-      "input_fingerprint": "349c642822c248eebd161336d6e736cee24bbef3fee862cb19f6e901194a0f94",
+      "input_fingerprint": "91843875cc0ca980c051d5346a6bc9a466bea1dc71ea0322bc4c8cefbb6d5ae2",
       "account": "介護保険会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -174,10 +253,10 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "046a58c77114c8ebd0f1c5344ef37794c4c210b28746b9c1a3a9cc8db445b4d4",
+      "input_fingerprint": "6f104b43b5fe8978a26069820090dad46b902ce147f0653855e4de560eeb6ed4",
       "account": "一般会計",
       "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
         "金額の単位は column mark 59頁 から決めた。款の和 189,054,795,859 と印字の「歳出合計」189,054,795,859 が一致。",
         "金額の注記 178 件（不用額 24・充用 25・流用 129）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 1 種（849 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"

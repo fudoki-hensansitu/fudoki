@@ -18,7 +18,28 @@
       "options": {
         "account": "一般会計",
         "table_id": "general-expenditure-01",
-        "partial": true
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position"
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -37,7 +58,28 @@
       "options": {
         "account": "一般会計",
         "table_id": "general-expenditure-02",
-        "partial": true
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position"
+              },
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -56,7 +98,28 @@
       "options": {
         "account": "一般会計",
         "table_id": "general-expenditure-03",
-        "partial": true
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position"
+              },
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -75,7 +138,28 @@
       "options": {
         "account": "一般会計",
         "table_id": "general-expenditure-04",
-        "partial": true
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position"
+              },
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -94,7 +178,28 @@
       "options": {
         "account": "一般会計",
         "table_id": "general-expenditure-05",
-        "partial": true
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position"
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -113,7 +218,28 @@
       "options": {
         "account": "一般会計",
         "table_id": "general-expenditure-06",
-        "partial": true
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position"
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -132,7 +258,28 @@
       "options": {
         "account": "一般会計",
         "table_id": "general-expenditure-07",
-        "partial": true
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position"
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -151,7 +298,28 @@
       "options": {
         "account": "一般会計",
         "table_id": "general-expenditure-08",
-        "partial": true
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position"
+              },
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -170,7 +338,28 @@
       "options": {
         "account": "一般会計",
         "table_id": "general-expenditure-09",
-        "partial": true
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position"
+              },
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -189,7 +378,28 @@
       "options": {
         "account": "一般会計",
         "table_id": "general-expenditure-10",
-        "partial": true
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position"
+              },
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -208,7 +418,28 @@
       "options": {
         "account": "一般会計",
         "table_id": "general-expenditure-11",
-        "partial": true
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "shape"
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -227,7 +458,28 @@
       "options": {
         "account": "一般会計",
         "table_id": "general-expenditure-12",
-        "partial": true
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position"
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -246,7 +498,21 @@
       "options": {
         "account": "一般会計",
         "table_id": "general-expenditure-13",
-        "partial": true
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {}
+          }
+        }
       },
       "expected_tables": [
         {
@@ -264,7 +530,28 @@
       ],
       "options": {
         "account": "国民健康保険特別会計",
-        "table_id": "national-health-insurance-expenditure"
+        "table_id": "national-health-insurance-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position"
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -282,7 +569,28 @@
       ],
       "options": {
         "account": "駐車場事業特別会計",
-        "table_id": "parking-expenditure"
+        "table_id": "parking-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position"
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -300,7 +608,28 @@
       ],
       "options": {
         "account": "介護保険特別会計",
-        "table_id": "long-term-care-expenditure"
+        "table_id": "long-term-care-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position"
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -318,7 +647,28 @@
       ],
       "options": {
         "account": "後期高齢者医療特別会計",
-        "table_id": "elderly-medical-expenditure"
+        "table_id": "elderly-medical-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position"
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -331,7 +681,7 @@
     {
       "table_id": "general-expenditure-01",
       "conversion_id": "general-settlement-01",
-      "input_fingerprint": "851d4d97359d31f3d06b41cd7b40911e39707a75691a8a9a256530f14ec7c064",
+      "input_fingerprint": "52145ab44c278655fe1fd5e5566a9b94d111991bccc6afc3977e0c727da2a306",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
@@ -361,7 +711,7 @@
     {
       "table_id": "general-expenditure-02",
       "conversion_id": "general-settlement-02",
-      "input_fingerprint": "80b7b3b01bf193a79b69e58852171fe529a404dfefb85544fc40b7dffae9c624",
+      "input_fingerprint": "daba4c3852e2e667e3a032cd6d9a87895b28bd570b458103884400fee8b65166",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'shape'}。",
@@ -391,7 +741,7 @@
     {
       "table_id": "general-expenditure-03",
       "conversion_id": "general-settlement-03",
-      "input_fingerprint": "17a4093b2b54e51fe540fd6046b54b45668f59f08fb54d443009d2a5c1b27323",
+      "input_fingerprint": "b765212f3393ad9173221f5d7f15237d065fa4263ac704c013126a95700d0c98",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'shape'}。",
@@ -421,7 +771,7 @@
     {
       "table_id": "general-expenditure-04",
       "conversion_id": "general-settlement-04",
-      "input_fingerprint": "be7c45277634c31544388c9b907fd4c9de349c49827e7f955b96570546cd46d6",
+      "input_fingerprint": "f2395bf8a4ba9076580223de24a20903908cedac4ad00b3931242bf8c34f3866",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'shape'}。",
@@ -451,7 +801,7 @@
     {
       "table_id": "general-expenditure-05",
       "conversion_id": "general-settlement-05",
-      "input_fingerprint": "78869e044fdf18c2e8691b89c03b30d529c5f62a1ce145b965b550d11b080e9d",
+      "input_fingerprint": "d4f4ccb9d0d88275ea2c2795614d997aa1985d4336b01e9c8630d42b3af9a5f6",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
@@ -481,7 +831,7 @@
     {
       "table_id": "general-expenditure-06",
       "conversion_id": "general-settlement-06",
-      "input_fingerprint": "361e0b598064edf64fce8b929e8576b03828efed71209987e764536fd3ad5c4e",
+      "input_fingerprint": "400c6b0a956613ab135d52e52d97fe88e904030c7cf6e1771d1c4c3a7d8594c2",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
@@ -511,7 +861,7 @@
     {
       "table_id": "general-expenditure-07",
       "conversion_id": "general-settlement-07",
-      "input_fingerprint": "eac12fd845abf8c69d2531c689068dc7f436695283d7fb58cae2e88b0b0dab20",
+      "input_fingerprint": "fecd8ee77236406f130bf9f1c06a821e19a496c07f91756678633f737e51e2da",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
@@ -541,7 +891,7 @@
     {
       "table_id": "general-expenditure-08",
       "conversion_id": "general-settlement-08",
-      "input_fingerprint": "c7719cf225f908e698cb2ed0e4234bf100328735a3510167c2e13fb969d4d4e6",
+      "input_fingerprint": "74774f5b68d879812bc2753d595c4d35140bc6249b9ebc3f68d97fc5162bc9b1",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'shape'}。",
@@ -571,7 +921,7 @@
     {
       "table_id": "general-expenditure-09",
       "conversion_id": "general-settlement-09",
-      "input_fingerprint": "d4b824b5963030d09b05805a6f22e6b6b1fb529d9834014a093811faefcff2d6",
+      "input_fingerprint": "4be61ed3c4e5a94e08d0d2bc26d472b0c4619a622fbe6d8b81b3f06b06d95ede",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'shape'}。",
@@ -601,7 +951,7 @@
     {
       "table_id": "general-expenditure-10",
       "conversion_id": "general-settlement-10",
-      "input_fingerprint": "70655185a5277db1402bea8b557ef8870bdc1c309a567bd3642d59f34d20bab0",
+      "input_fingerprint": "09f8d54ca9b9a08dddac151f8011107fec931d202d337a7b362fe1c47b2106a4",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'shape'}。",
@@ -631,7 +981,7 @@
     {
       "table_id": "general-expenditure-11",
       "conversion_id": "general-settlement-11",
-      "input_fingerprint": "9f4224b40dcf32057aed3a706301857c868b6def536e5ab33a02ff82c460c393",
+      "input_fingerprint": "7c32dcc950ae5b7989aee2ce6fa5101a093b73358a0cdd08de98d6142fb230b3",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'shape', '節': 'indent'}。",
@@ -661,7 +1011,7 @@
     {
       "table_id": "general-expenditure-12",
       "conversion_id": "general-settlement-12",
-      "input_fingerprint": "cb03bdb3b986a6b6cf29d40f0ed999251729bcb07aacfa912397edb93ae6f49b",
+      "input_fingerprint": "6c1634536633544f8dc7eb264ff821ff4f3e3b66552c1546a2a933aec50fc154",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
@@ -691,7 +1041,7 @@
     {
       "table_id": "general-expenditure-13",
       "conversion_id": "general-settlement-13",
-      "input_fingerprint": "782814d8f1e4cb1f3431ea33f5cace50b801766386824a996f17ca80aa0cc44a",
+      "input_fingerprint": "347a4898213d0c9b41e706f87a40abf1e5eb9e97ef833c5af09ee64f5d059380",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {}。",
@@ -720,7 +1070,7 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "58a210fcbd75bff238c2028c07d34ecbe321af194d3fdbc1303d48590364c6a3",
+      "input_fingerprint": "3aa4c384056ce37260583ea1179ea27680c5338dfef41f310b885af45f211890",
       "account": "国民健康保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
@@ -750,7 +1100,7 @@
     {
       "table_id": "parking-expenditure",
       "conversion_id": "parking-settlement",
-      "input_fingerprint": "f8bc8c4e350bc69285d0cb4f28c0b71fd97a40b97919df4d64f134daf5928b1b",
+      "input_fingerprint": "4e50301f4de7fe090ad6e3ef1f6a881b2dd2fe617db8107ea881580c74e56e55",
       "account": "駐車場事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
@@ -780,7 +1130,7 @@
     {
       "table_id": "long-term-care-expenditure",
       "conversion_id": "long-term-care-settlement",
-      "input_fingerprint": "b4a07c67216818f014981cf316528563720c61d56265a70093dde54d33747a6e",
+      "input_fingerprint": "7286a7de1644293f8e6fe7b4eedd981ce2acdb58f27dcb4b6c06ec1efffd7981",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
@@ -810,7 +1160,7 @@
     {
       "table_id": "elderly-medical-expenditure",
       "conversion_id": "elderly-medical-settlement",
-      "input_fingerprint": "170563d82bdfeebee696d4bca350729fd34faa92e44d2a6bc03cba46069735bd",
+      "input_fingerprint": "f091f73e8afbced2f71ba3743fe62e1e39d1d9ec1bffc27eab14a15991ea39ff",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",

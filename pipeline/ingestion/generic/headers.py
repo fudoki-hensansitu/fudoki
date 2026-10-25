@@ -27,6 +27,7 @@ A path that the dictionary already knows (or whose last segment it knows) is nev
 """
 from __future__ import annotations
 
+from ingestion.generic.patterns import load as load_pattern
 from collections import Counter
 from functools import cache, lru_cache
 import re
@@ -88,32 +89,9 @@ def by_characters(path: str, known: frozenset[str]) -> str | None:
     return f'{a}{SEPARATOR}{b}'
 
 
-MIN_SUBSET_CHARS = 6  # a shorter reading says too little to name a heading
-MIN_SUBSET_SHARE = .6
 
-
-@lru_cache(maxsize=256)
-def by_subset(segments: tuple[str, ...], known: frozenset[str]) -> str | None:
-    """The known `group／kind` under the printed group whose kind has all the characters the printed kind
-    has (counted) and the printed kind is most of it, the one it fills most; None when none or a tie."""
-    group, printed = segments
-    wanted = Counter(c for c in printed if not c.isspace())
-    if sum(wanted.values()) < MIN_SUBSET_CHARS:
-        return None
-    found = []
-    for heading in known:
-        head, _, kind = heading.partition(SEPARATOR)
-        if head != group or not kind or SEPARATOR in kind:
-            continue
-        have = Counter(kind)
-        share = sum(wanted.values()) / len(kind)
-        if all(have[c] >= n for c, n in wanted.items()) and share >= MIN_SUBSET_SHARE:
-            found.append((share, heading))
-    best = max(found, default=None)
-    return best[1] if best and sum(1 for share, _ in found if share == best[0]) == 1 else None
-
-
-def canonical(path: str, axis: str | None, known: set[str], kind_by_characters: bool = False) -> str:
+def canonical(path: str, axis: str | None, known: set[str], kind_by_characters: bool = False,
+              pattern: str | None = None) -> str:
     segments = path.split(SEPARATOR)
     if path in known or segments[-1] in known:
         return path
@@ -141,19 +119,27 @@ def canonical(path: str, axis: str | None, known: set[str], kind_by_characters: 
     # A stacked kind under its group, its two printed lines read across (`翌年度繰越額／継逓繰続費次越`, 281000):
     # the last segment's characters are one known heading, which a fall back to the group would lose.
     # Only where the layout setting `header.kind_by_characters` says the document prints its kinds so.
-    found = by_characters(segments[-1], frozenset(known)) if kind_by_characters and len(segments) > 1 else None
-    if found is not None and SEPARATOR not in found:
+    found = load_pattern("headers", pattern or ("characters" if kind_by_characters else "standard")).kind(segments, known)
+    if found is not None:
         return found
-    if kind_by_characters and len(segments) == 2:
-        # The kind printed in three lines or in a narrow cell, read across and with a character or two lost
-        # (`予算現額／費予及増び流出用減` for `予算現額／予備費支出及び流用増減`, Paddle): the heading under the same group
-        # whose characters hold the path's, when it is the only one.
-        found = by_subset(tuple(segments), frozenset(known))
-        if found is not None:
-            return found
     for end in range(len(segments) - 1, 0, -1):
         prefix = SEPARATOR.join(segments[:end])
         if prefix in known:
             return prefix
     found = by_characters(joined, frozenset(known))
     return found if found is not None else joined
+
+
+def dictionary_header(header: str, document_kind: str) -> str:
+    """The longest suffix of a printed header path that the shared dictionary knows.
+
+    Only for checking: the stored `header_path` keeps every printed level.
+    """
+    from ingestion.lib.node_tables import phase_dictionary
+    parts = header.split('／')
+    known = {label for kind, label in phase_dictionary() if kind in ('', document_kind)}
+    for start in range(len(parts)):
+        candidate = '／'.join(parts[start:])
+        if candidate in known:
+            return candidate
+    return header

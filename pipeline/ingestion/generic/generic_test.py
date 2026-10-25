@@ -5,8 +5,10 @@ from ingestion.generic.observe import Page, Rule, Word, merge_rules
 from ingestion.generic.sums import bracket
 from ingestion.generic.repair import Report, clip_to_page, crop_to_box
 from ingestion.generic.rows import identities
-from ingestion.generic.tree import (Built, Group, Item, _leading_amount, _split_code, _split_line, groups, number_span,
-                                   owner, same_position, shape_depth, subject_header, subject_items)
+from ingestion.generic.patterns.breakdown.numbering import number_span, same_position
+from ingestion.generic.patterns.breakdown.shape import shape_depth
+from ingestion.generic.tree import (Built, Group, Item, _leading_amount, _split_code, _split_line, groups,
+                                   owner, subject_header, subject_items)
 from ingestion.generic.units import check as check_units
 
 
@@ -756,7 +758,7 @@ class ConvertRulesTest(unittest.TestCase):
         self.assertEqual([w.text for w in page.words], ['0', '△22,990,000'])
 
     def test_a_number_takes_the_position_it_fits_best_and_a_start_weighs_more_than_an_end(self):
-        from ingestion.generic.tree import nearest_position
+        from ingestion.generic.patterns.breakdown.numbering import nearest_position
         word = lambda text, x: Glyph(text, x, 0, x + 4.2 * len(text), 8.4, 1, 0)
         anchors = [('事業', (936.7, 940.8, 1)), ('節', (944.9, 949.1, 1))]
         # A right-aligned `26`: starts 3.8 from the 事業, ends 0.2 from the 節 (132209).

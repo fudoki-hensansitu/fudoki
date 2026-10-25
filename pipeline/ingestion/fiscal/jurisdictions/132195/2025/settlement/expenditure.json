@@ -17,7 +17,67 @@
       ],
       "options": {
         "account": "一般会計",
-        "table_id": "general-expenditure"
+        "table_id": "general-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "主管課": {
+                  "kind": "ignore"
+                },
+                "事業説明": {
+                  "kind": "ignore"
+                },
+                "財源内訳／特定財源": {
+                  "kind": "amount",
+                  "inline": true
+                },
+                "金額": {
+                  "heading": "決算額"
+                },
+                "節／金額": {
+                  "heading": "決算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "事業名": {
+                "pattern": "indent",
+                "options": {
+                  "rows": true,
+                  "rows_from": {
+                    "name": "主管課",
+                    "amount": "決算額"
+                  }
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              },
+              "節説明": {
+                "pattern": "indent",
+                "options": {
+                  "amount_brackets": true,
+                  "sum_levels": true,
+                  "bare_amounts": true
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules",
+            "stacked_rows"
+          ]
+        }
       },
       "expected_tables": [
         {
@@ -30,7 +90,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "d0ad5ba733e6ae494b3adb2a73230afe1e0f984be7e4b202e8506fc012ebfac7",
+      "input_fingerprint": "58123e7f5a8e7e392d565a8f68c968c22fa8cc3b91e7b49ceeadf8f8b1717551",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'事業名': 'indent', '節': 'indent', '節説明': 'indent'}。",

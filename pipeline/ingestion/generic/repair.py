@@ -25,9 +25,11 @@ from pathlib import Path
 import re
 import unicodedata
 
+from ingestion.generic.patterns import load as load_pattern
 from ingestion.generic.observe import OPENING, Page, Rule, Word
 
 REPAIRS = Path(__file__).resolve().parents[1] / 'lib/text_repairs.csv'
+FINGERPRINT_RESOURCES = ['ingestion/lib/text_repairs.csv']
 NUMERIC = re.compile(r'^[0-9,△▲\-]+$')
 # A note's words with its amount set against them (`繰越事業費不用額55,753,516円`): the words and the amount.
 GLUED_AMOUNT = re.compile(r'^(.*[^0-9,０-９△▲\s])([△▲]?[0-9]{1,3}(?:,[0-9]{3})+円?)$')
@@ -133,9 +135,7 @@ def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, c
         if not raw.FPDFText_GetCharBox(textpage.raw, index, l, r, b, t):
             continue
         if opening and chr(code) in OPENING:  # the ink of a full-width opening bracket sits right in its cell: the cell starts at the origin
-            x, y = ctypes.c_double(), ctypes.c_double()
-            if raw.FPDFText_GetCharOrigin(textpage.raw, index, x, y) and x.value < l.value:
-                l = x
+            l = load_pattern("repairs", "opening_cell").left_edge(raw, textpage, index, l)
         handle = raw.FPDFText_GetTextObject(textpage.raw, index)
         # The character box is in page space; compare it, not the object's bounds,
         # with the clip (object bounds come back in another space on some PDFs).
@@ -175,9 +175,7 @@ def words_from_glyphs(glyphs: list[tuple[tuple[float, float, float, float], str]
     placed: dict[tuple, list] = defaultdict(list)  # the struck twin sits a hair off in y, so sorting by line does not bring it next
     for box, char in sorted(glyphs, key=lambda g: ((g[0][1] + g[0][3]) / 2, g[0][0])):
         if overprint:
-            struck = any(abs(box[0] - b[0]) < 1 and abs(box[1] - b[1]) < 1
-                         for dx in (-1, 0, 1) for dy in (-1, 0, 1) for b in placed[char, int(box[0]) + dx, int(box[1]) + dy])
-            placed[char, int(box[0]), int(box[1])].append(box)
+            struck = load_pattern("repairs", "overprint").duplicate(box, char, placed)
         else:
             struck = any(char == other and abs(box[0] - b[0]) < 1 and abs(box[1] - b[1]) < 1 for b, other in unique[-8:])
         if struck:
@@ -270,26 +268,8 @@ def drop_invisible(pdf_path: Path, pages: list[Page], report: Report, repairs: f
 
 # --- 2. position repairs -----------------------------------------------------
 
-def opening_brackets(pdf_path: Path, pages: list[Page]) -> None:
-    """Poppler boxes a full-width opening bracket by its ink, which sits in the right of its cell (`（仮称）` starts
-    7pt right of the name it is lined up with): a word that begins with one starts where its character's cell does."""
-    import pypdfium2 as pdfium
-    pdf = pdfium.PdfDocument(str(pdf_path))
-    try:
-        for page in pages:
-            if not any(word.text[:1] in OPENING for word in page.words):
-                continue
-            glyphs, _ = _glyphs(pdf, page.number, True)
-            for index, word in enumerate(page.words):
-                if word.text[:1] not in OPENING:
-                    continue
-                cell = [box for box, char, _ in glyphs if char == word.text[0] and word.x0 - 12 < box[0] < word.x0 - 1
-                        and box[2] > word.x0 - .5 and abs((box[1] + box[3]) / 2 - (word.y0 + word.y1) / 2) < 2]
-                if cell:
-                    page.words[index] = Word(word.text, min(cell, key=lambda box: word.x0 - box[0])[0], word.y0, word.x1, word.y1)
-    finally:
-        pdf.close()
-
+def opening_brackets(pdf_path, pages):
+    return load_pattern("repairs", "opening_cell").opening_brackets(pdf_path, pages)
 
 def _same_line(a: Word, b: Word) -> bool:
     overlap = min(a.y1, b.y1) - max(a.y0, b.y0)
@@ -462,7 +442,7 @@ def join_vertical(page: Page, report: Report, stacked_rows: bool = False) -> Non
         # lines of a stack rows of a table, not one vertically printed word.
         return not any(_same_line(word, other) and other is not word and not walled(word, other) and
                        (abs(other.x0 - word.x1) < reach or abs(word.x0 - other.x1) < reach
-                        or (stacked_rows and other.x0 > word.x1 and any(c.isdigit() for c in other.text)))
+                        or (stacked_rows and load_pattern("repairs", "stacked_rows").row_neighbor(word, other)))
                        for other in page.words)
 
     stacks: list[list[Word]] = []
