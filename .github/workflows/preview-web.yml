@@ -20,8 +20,8 @@ concurrency:
   cancel-in-progress: true
 jobs:
   preview:
-    # fork の PR には secrets が渡らないので出さない
-    if: github.event.action != 'closed' && github.event.pull_request.head.repo.full_name == github.repository
+    # fork の PR と Dependabot が起こした run には Actions の secrets が渡らないので出さない
+    if: github.event.action != 'closed' && github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7

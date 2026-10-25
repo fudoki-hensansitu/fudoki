@@ -6,12 +6,22 @@ updates:
       interval: weekly
     cooldown:
       default-days: 7
+    # 1回の更新で lock を1つの PR にまとめる。package ごとに PR を分けると、1つ merge するたびに
+    # 残りの PR の lock がずれて rebase 待ちになり、同じ系列の package（ai と @ai-sdk/*）が
+    # 別の PR に分かれて版が噛み合わなくなる。major は破壊的変更を個別に見るため分ける。
+    groups:
+      bun:
+        update-types: [minor, patch]
   - package-ecosystem: uv
     directory: /
     schedule:
       interval: weekly
     cooldown:
       default-days: 7
+    # bun と同じ理由で minor・patch を1つの PR にまとめる
+    groups:
+      uv:
+        update-types: [minor, patch]
     ignore:
       # root の workspace member は PyPI に無い。uv は [tool.uv.sources] で解決するが、
       # Dependabot はその source を解釈せずレジストリ参照で失敗するので対象外にする。
@@ -22,3 +32,7 @@ updates:
       interval: weekly
     cooldown:
       default-days: 7
+    # bun と同じ理由で minor・patch を1つの PR にまとめる
+    groups:
+      github-actions:
+        update-types: [minor, patch]
