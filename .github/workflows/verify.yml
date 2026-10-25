@@ -21,7 +21,10 @@ jobs:
       - run: bun run test
       - run: bun pipeline/source_selection/check.ts
       - run: bun run --cwd pipeline ingestion:check
-      - run: bun run --cwd pipeline test:python
+      - name: Python tests with PDF observation tools
+        run: |
+          mise install conda:poppler@26.09.0
+          mise exec conda:poppler@26.09.0 -- bun run --cwd pipeline test:python
       - run: bun run --cwd pipeline serving:evaluation-catalog --check
       - run: bun run --cwd apps/web build:font:check
       - run: bun run build:web
