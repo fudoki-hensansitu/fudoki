@@ -36,6 +36,10 @@ def declaration_files(workflow: dict) -> list[str]:
 
 
 def validate(workflow: dict, options: dict | None = None) -> dict:
+    schema = json.loads(Path(__file__).with_name('workflow.schema.json').read_text())
+    jsonschema.Draft202012Validator(schema).validate(workflow)
+    if 'reading' not in workflow:
+        raise ValueError('Coupled readings require workflow_text; layered workflows require generic_text or generic_scan')
     selected = workflow['reading']
     module = load('reading', selected['pattern'])
     profile = json.loads(declaration_path(selected['profile']).read_text())
@@ -77,8 +81,6 @@ class Reading:
 
 def convert(inputs: list[dict], destination: Path, options: dict) -> dict:
     workflow = options['workflow']
-    from ingestion.generic.workflow import validate as validate_workflow
-    validate_workflow(workflow, coupled=True)
     profile = validate(workflow, options)
     reader = load('reading', workflow['reading']['pattern']).Reader(profile, workflow)
     return reader.convert(inputs, destination, {k: v for k, v in options.items() if k != 'workflow'})

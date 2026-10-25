@@ -45,8 +45,6 @@ def validate(workflow: dict, *, text_pdf: bool = True, coupled: bool | None = No
     if 'reading' in workflow:
         if not text_pdf:
             raise ValueError('Coupled text readings cannot be applied to scan workflows')
-        from ingestion.generic.reading import validate as validate_reading
-        validate_reading(workflow)
         return workflow
     if not text_pdf and (workflow.get('repairs') or 'text_layer' in workflow['layout'].get('options', {})):
         raise ValueError('Text-layer repairs cannot be applied to a scan workflow')

@@ -10,7 +10,7 @@ import jsonschema
 
 from ingestion.fiscal import manifest
 from ingestion.generic import reading
-from ingestion.generic.workflow import validate
+from ingestion.generic.reading import validate
 
 
 class CoupledReadingTest(unittest.TestCase):
@@ -51,14 +51,23 @@ class CoupledReadingTest(unittest.TestCase):
     def test_selected_code_profile_and_schema_change_only_their_consumers(self):
         files = manifest.dependencies(self.conversion)
         self.assertNotIn('generic/discovery.py', files)
+        self.assertNotIn('generic/tree.py', files)
+        self.assertNotIn('lib/paddle_ocr.py', files)
         self.assertFalse(any(name.startswith('fiscal/jurisdictions/') and name.endswith('.py') for name in files))
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            for name in [*files, 'generic/patterns/components/page_context.py']:
+            layered = deepcopy(self.conversion)
+            layered['converter'] = 'fiscal/layouts/generic_text/convert.py'
+            layered['options'] = {'account': '一般会計', 'table_id': 'general', 'workflow': {
+                'layout': {'pattern': 'ruled'}, 'headers': {'pattern': 'standard'},
+                'hierarchy': {'subject': {'pattern': 'bands'}, 'breakdown': {}}}}
+            layered_files = manifest.dependencies(layered)
+            self.assertNotIn('generic/reading.py', layered_files)
+            for name in set(files) | set(layered_files) | {'generic/patterns/components/page_context.py'}:
                 target = root / 'ingestion' / name
                 target.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copyfile(manifest.code_path(name), target)
-            for name in set(manifest.resources(files)) | {'shared/fiscal_annotation_map.csv', 'source_selection/131156.json'}:
+            for name in set(manifest.resources([*files, *layered_files])) | {'shared/fiscal_annotation_map.csv', 'source_selection/131156.json'}:
                 target = root / name
                 target.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copyfile(manifest.PIPELINE / name, target)
@@ -68,6 +77,13 @@ class CoupledReadingTest(unittest.TestCase):
                 unselected = root / 'ingestion/generic/patterns/components/page_context.py'
                 unselected.write_text(unselected.read_text() + '\n# unselected edit\n')
                 self.assertEqual(before, manifest.fingerprint(self.document, self.conversion))
+                tree = root / 'ingestion/generic/tree.py'
+                tree.write_text(tree.read_text() + '\n# layered edit\n')
+                self.assertEqual(before, manifest.fingerprint(self.document, self.conversion))
+                layered_before = manifest.fingerprint(self.document, layered)
+                shared_reading = root / 'ingestion/generic/reading.py'
+                shared_reading.write_text(shared_reading.read_text() + '\n# coupled edit\n')
+                self.assertEqual(layered_before, manifest.fingerprint(self.document, layered))
                 for name in ('generic/patterns/components/scoped_text.py',
                              self.conversion['options']['workflow']['reading']['profile'],
                              'generic/patterns/readings/parallel_breakdowns.profile.schema.json'):

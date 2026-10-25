@@ -329,13 +329,13 @@ def validate(document: dict, *, path: Path | None = None, check_code: bool = Tru
             if 'workflow' in conversion['options']:
                 if conversion['converter'] not in GENERIC_PDF_CONVERTERS:
                     raise ValueError('PDF workflow requires a generic PDF converter')
-                from ingestion.generic.workflow import validate as validate_workflow
-                validate_workflow(conversion['options']['workflow'],
-                                  text_pdf=conversion['converter'] != 'fiscal/layouts/generic_scan/convert.py',
-                                  coupled=conversion['converter'] == 'fiscal/layouts/workflow_text/convert.py')
-                if 'reading' in conversion['options']['workflow']:
+                if conversion['converter'] == 'fiscal/layouts/workflow_text/convert.py':
                     from ingestion.generic.reading import validate as validate_reading
                     validate_reading(conversion['options']['workflow'], conversion['options'])
+                else:
+                    from ingestion.generic.workflow import validate as validate_workflow
+                    validate_workflow(conversion['options']['workflow'], coupled=False,
+                                      text_pdf=conversion['converter'] != 'fiscal/layouts/generic_scan/convert.py')
     if check_code and any(c['converter'] in GENERIC_PDF_CONVERTERS for c in conversions.values()):
         if set(legacy_layout) - {'schema_version', 'source_inconsistencies'}:
             raise ValueError('Generic PDF settings belong in options.workflow, not .layout.json')
