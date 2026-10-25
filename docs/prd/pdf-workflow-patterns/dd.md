@@ -242,7 +242,7 @@ workflowへの切り替えはconversionごとに比較・採用する。段階�
 
 ### 実装の入口
 
-`python -m ingestion.fiscal.migrate_workflows` は保存済みの選択結果・ノードの軸・旧設定を照合して移行案を出す。`--write` は設定と上記の説明を書き、全conversionを移行した旧 `.layout.json` の取り込み設定を除く。出典内の不整合の宣言は残す。指紋は更新しない。内容比較が終わるまでは `ingestion:check` が古い指紋として止める。
+`python -m ingestion.fiscal.migrate_workflows` は保存済みの選択結果・ノードの軸・旧設定を照合して移行案を出す。`--write` は設定と上記の説明を書き、全汎用PDF conversionを移行した旧 `.layout.json` の取り込み設定を除く。出典内の不整合の宣言は残す。指紋は更新しない。内容比較が終わるまでは `ingestion:check` が古い指紋として止める。
 
 `ingestion:refresh --plan` は指紋の比較だけで再変換対象を列挙する。出典・取り込み表の読み込み、変換、指紋更新を行わない。実際の内容比較をする `--dry-run` と区別し、`--remote / --dry-run / --output` とは併用しない。
 
