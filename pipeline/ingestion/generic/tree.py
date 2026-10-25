@@ -167,11 +167,27 @@ def groups(logical: Logical, pattern: str = 'bands') -> list[Group]:
     names  – as bands, plus the neighbouring name band that the codes share.
     indent – one subject column; levels by indentation (codes optional).
     """
-    bands = sorted((b for b in logical.bands), key=lambda b: b.x0)
-    labels = [b for b in bands if b.kind == 'label']
-    subject_bands: list[Band] = []
-    mode, count = pattern, None
-    subject_bands, mode, count = load_pattern("subject", pattern).select(bands)
+    bands = sorted(logical.bands, key=lambda b: b.x0)
+    return _groups(bands, load_pattern("subject", pattern).select(bands))
+
+
+def code_columns(bands):
+    subject_bands = []
+    for index, band in enumerate(bands):
+        if band.kind == 'label' and band.header and band.header[-1] in SUBJECT_LEVELS:
+            if subject_bands and subject_bands[-1] is not bands[index - 1]:
+                break
+            subject_bands.append(band)
+    return subject_bands, "bands", len(subject_bands)
+
+
+def column_groups(logical):
+    bands = sorted(logical.bands, key=lambda b: b.x0)
+    return _groups(bands, code_columns(bands))
+
+
+def _groups(bands, selection):
+    subject_bands, mode, count = selection
     result: list[Group] = []
     for band in bands:
         if band in subject_bands:
@@ -388,7 +404,7 @@ def code_margins(logicals: list[Logical]) -> dict[str, set[int]]:
     """
     votes: dict[tuple[str, int], list[int]] = defaultdict(lambda: [0, 0])
     for logical in logicals:
-        for group in groups(logical):
+        for group in column_groups(logical):
             if group.subject:
                 continue
             for line in lines([w for band in group.bands for w in band.words]):
@@ -501,7 +517,7 @@ def line_limits(logicals: list[Logical]) -> dict[str, float]:
     """
     ends: dict[str, list[float]] = defaultdict(list)
     for logical in logicals:
-        for group in groups(logical):
+        for group in column_groups(logical):
             if group.subject:
                 continue
             for line in lines([w for band in group.bands for w in band.words]):

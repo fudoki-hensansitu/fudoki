@@ -181,6 +181,10 @@ def dependencies(conversion: dict, *, trees: dict | None = None, patterns: dict 
                            for patterns in catalog().values() for module in patterns.values())
         if path.suffix != '.py':
             continue
+        for parent in path.relative_to(INGESTION).parents:
+            initializer = parent / '__init__.py'
+            if (INGESTION / initializer).is_file():
+                pending.append(str(initializer))
         importer = relative
         tree = code_tree(path, trees)
         for node in ast.walk(tree):

@@ -90,7 +90,7 @@ def main() -> None:
         if changes and args.write:
             manifest.write(path, candidate)
         if changes:
-            results.append({'manifest': str(path.relative_to(manifest.PIPELINE)), 'changes': changes})
+            results.append({'manifest': str(path.resolve().relative_to(manifest.PIPELINE)), 'changes': changes})
         layout = path.with_suffix('.layout.json')
         if layout.exists() and all('workflow' in item['options'] for item in candidate['conversions']):
             old = json.loads(layout.read_text())
@@ -98,7 +98,7 @@ def main() -> None:
             if old.get('source_inconsistencies'):
                 retained['source_inconsistencies'] = old['source_inconsistencies']
             if old != retained or len(retained) == 1:
-                layouts.append({'path': str(layout.relative_to(manifest.PIPELINE)),
+                layouts.append({'path': str(layout.resolve().relative_to(manifest.PIPELINE)),
                                 'action': 'retain-inconsistencies' if len(retained) > 1 else 'remove'})
                 if args.write:
                     if len(retained) > 1:

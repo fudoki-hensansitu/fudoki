@@ -1,6 +1,5 @@
-from ingestion.generic.patterns.subject.bands import select as code_columns
 from ingestion.generic.layout import SUBJECT_LEVELS
-from ingestion.generic.tree import subject_header
+from ingestion.generic.tree import code_columns, subject_header
 
 
 def select(bands):
