@@ -342,7 +342,7 @@
     {
       "table_id": "general-expenditure-detail",
       "conversion_id": "general",
-      "input_fingerprint": "a2d1be07e64a2f5f37ba3bb033fb61665ca36d1fa2cd890b593b545ecb3dcb0d",
+      "input_fingerprint": "4b706d6e706164e2276f4707efb1fc7b138c3899a49041ba3a56493d1664f154",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent'}。",
