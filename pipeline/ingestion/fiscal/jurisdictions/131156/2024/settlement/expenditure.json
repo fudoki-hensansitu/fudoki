@@ -9,7 +9,7 @@
   "conversions": [
     {
       "id": "general-settlement",
-      "converter": "fiscal/jurisdictions/131156/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "ff815c1b7c4f5a29e8ad5a0bd81caefdd863f13925b628bf3de66a421305b717"
@@ -18,7 +18,17 @@
       "options": {
         "table_prefix": "general-expenditure",
         "account": "一般会計",
-        "note_left": 982
+        "note_left": 982,
+        "workflow": {
+          "reading": {
+            "pattern": "parallel_breakdowns",
+            "profile": "fiscal/jurisdictions/131156/layouts/text_settlement/reading.json"
+          },
+          "components": [
+            "scoped_text",
+            "marker_boundary"
+          ]
+        }
       },
       "expected_tables": [
         {
@@ -31,7 +41,7 @@
     },
     {
       "id": "care-insurance-settlement-details",
-      "converter": "fiscal/jurisdictions/131156/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "ff815c1b7c4f5a29e8ad5a0bd81caefdd863f13925b628bf3de66a421305b717"
@@ -43,7 +53,17 @@
         "emit": [
           "details"
         ],
-        "note_left": 982
+        "note_left": 982,
+        "workflow": {
+          "reading": {
+            "pattern": "parallel_breakdowns",
+            "profile": "fiscal/jurisdictions/131156/layouts/text_settlement/reading.json"
+          },
+          "components": [
+            "scoped_text",
+            "marker_boundary"
+          ]
+        }
       },
       "expected_tables": [
         {
@@ -53,7 +73,7 @@
     },
     {
       "id": "care-insurance-settlement-notes",
-      "converter": "fiscal/jurisdictions/131156/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "ff815c1b7c4f5a29e8ad5a0bd81caefdd863f13925b628bf3de66a421305b717"
@@ -65,7 +85,17 @@
         "emit": [
           "notes"
         ],
-        "note_left": 982
+        "note_left": 982,
+        "workflow": {
+          "reading": {
+            "pattern": "parallel_breakdowns",
+            "profile": "fiscal/jurisdictions/131156/layouts/text_settlement/reading.json"
+          },
+          "components": [
+            "scoped_text",
+            "marker_boundary"
+          ]
+        }
       },
       "expected_tables": [
         {
@@ -75,7 +105,7 @@
     },
     {
       "id": "national-health-insurance-settlement-details",
-      "converter": "fiscal/jurisdictions/131156/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "ff815c1b7c4f5a29e8ad5a0bd81caefdd863f13925b628bf3de66a421305b717"
@@ -87,7 +117,17 @@
         "emit": [
           "details"
         ],
-        "note_left": 982
+        "note_left": 982,
+        "workflow": {
+          "reading": {
+            "pattern": "parallel_breakdowns",
+            "profile": "fiscal/jurisdictions/131156/layouts/text_settlement/reading.json"
+          },
+          "components": [
+            "scoped_text",
+            "marker_boundary"
+          ]
+        }
       },
       "expected_tables": [
         {
@@ -97,7 +137,7 @@
     },
     {
       "id": "national-health-insurance-settlement-notes",
-      "converter": "fiscal/jurisdictions/131156/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "ff815c1b7c4f5a29e8ad5a0bd81caefdd863f13925b628bf3de66a421305b717"
@@ -109,7 +149,17 @@
         "emit": [
           "notes"
         ],
-        "note_left": 982
+        "note_left": 982,
+        "workflow": {
+          "reading": {
+            "pattern": "parallel_breakdowns",
+            "profile": "fiscal/jurisdictions/131156/layouts/text_settlement/reading.json"
+          },
+          "components": [
+            "scoped_text",
+            "marker_boundary"
+          ]
+        }
       },
       "expected_tables": [
         {
@@ -119,7 +169,7 @@
     },
     {
       "id": "late-stage-elderly-settlement-details",
-      "converter": "fiscal/jurisdictions/131156/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "ff815c1b7c4f5a29e8ad5a0bd81caefdd863f13925b628bf3de66a421305b717"
@@ -131,7 +181,17 @@
         "emit": [
           "details"
         ],
-        "note_left": 982
+        "note_left": 982,
+        "workflow": {
+          "reading": {
+            "pattern": "parallel_breakdowns",
+            "profile": "fiscal/jurisdictions/131156/layouts/text_settlement/reading.json"
+          },
+          "components": [
+            "scoped_text",
+            "marker_boundary"
+          ]
+        }
       },
       "expected_tables": [
         {
@@ -141,7 +201,7 @@
     },
     {
       "id": "late-stage-elderly-settlement-notes",
-      "converter": "fiscal/jurisdictions/131156/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "ff815c1b7c4f5a29e8ad5a0bd81caefdd863f13925b628bf3de66a421305b717"
@@ -153,7 +213,17 @@
         "emit": [
           "notes"
         ],
-        "note_left": 982
+        "note_left": 982,
+        "workflow": {
+          "reading": {
+            "pattern": "parallel_breakdowns",
+            "profile": "fiscal/jurisdictions/131156/layouts/text_settlement/reading.json"
+          },
+          "components": [
+            "scoped_text",
+            "marker_boundary"
+          ]
+        }
       },
       "expected_tables": [
         {

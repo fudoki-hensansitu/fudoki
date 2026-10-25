@@ -9,7 +9,7 @@
   "conversions": [
     {
       "id": "chuo-text-settlement-general",
-      "converter": "fiscal/jurisdictions/131024/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "4417470dc5e1fa3324a63fd1540330ba26f83f636814968bc7d6723398e7e334"
@@ -786,7 +786,17 @@
             ],
             false
           ]
-        ]
+        ],
+        "workflow": {
+          "reading": {
+            "pattern": "marked_businesses",
+            "profile": "fiscal/jurisdictions/131024/layouts/text_settlement/reading.json"
+          },
+          "components": [
+            "marked_subjects",
+            "embedded_businesses"
+          ]
+        }
       },
       "expected_tables": [
         {
@@ -796,7 +806,7 @@
     },
     {
       "id": "chuo-text-settlement-care-detail",
-      "converter": "fiscal/jurisdictions/131024/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "4417470dc5e1fa3324a63fd1540330ba26f83f636814968bc7d6723398e7e334"
@@ -813,7 +823,17 @@
         "output_role": "detail",
         "table_id": "chuo-care-settlement",
         "unexplained_section_detail": true,
-        "row_tolerance": 4.6
+        "row_tolerance": 4.6,
+        "workflow": {
+          "reading": {
+            "pattern": "marked_businesses",
+            "profile": "fiscal/jurisdictions/131024/layouts/text_settlement/reading.json"
+          },
+          "components": [
+            "marked_subjects",
+            "embedded_businesses"
+          ]
+        }
       },
       "expected_tables": [
         {
@@ -823,7 +843,7 @@
     },
     {
       "id": "chuo-text-settlement-kokuho-detail",
-      "converter": "fiscal/jurisdictions/131024/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "4417470dc5e1fa3324a63fd1540330ba26f83f636814968bc7d6723398e7e334"
@@ -910,7 +930,17 @@
             ],
             false
           ]
-        ]
+        ],
+        "workflow": {
+          "reading": {
+            "pattern": "marked_businesses",
+            "profile": "fiscal/jurisdictions/131024/layouts/text_settlement/reading.json"
+          },
+          "components": [
+            "marked_subjects",
+            "embedded_businesses"
+          ]
+        }
       },
       "expected_tables": [
         {
@@ -920,7 +950,7 @@
     },
     {
       "id": "chuo-text-settlement-kouki-detail",
-      "converter": "fiscal/jurisdictions/131024/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "4417470dc5e1fa3324a63fd1540330ba26f83f636814968bc7d6723398e7e334"
@@ -948,7 +978,17 @@
             0,
             336.79
           ]
-        ]
+        ],
+        "workflow": {
+          "reading": {
+            "pattern": "marked_businesses",
+            "profile": "fiscal/jurisdictions/131024/layouts/text_settlement/reading.json"
+          },
+          "components": [
+            "marked_subjects",
+            "embedded_businesses"
+          ]
+        }
       },
       "expected_tables": [
         {
@@ -961,7 +1001,7 @@
     {
       "table_id": "chuo-general-settlement",
       "conversion_id": "chuo-text-settlement-general",
-      "input_fingerprint": "8241b9118aa832d076fe11a0d50de682fd569f312c52089c90e4ef781a67bd8e",
+      "input_fingerprint": "b494c67cb691c0759163f7484765a13d9f89722fb570f45d9ece0e825f10554e",
       "account": "一般会計",
       "notes": [
         "人数・件数・率・月額の基準および職員人数は金額の分解ではなく金額表に入れない。明細金額は最深の事業金額の反復であり二重計上しない。内表の縦結合金額は原典セルの位置で一度だけ数え、所属する印字区分の文字をまとめて保持する。",
@@ -989,7 +1029,7 @@
     {
       "table_id": "chuo-care-settlement",
       "conversion_id": "chuo-text-settlement-care-detail",
-      "input_fingerprint": "43f2dadb6d3562d5829a8b4594473897a0e45a11b7af43a0091328e4cbcc300b",
+      "input_fingerprint": "e70194fd3a203ca3bd68bc86a35914e543a119c75aed23454d211aee5b2c4fb5",
       "account": "介護保険事業会計",
       "notes": [
         "人数・件数・率・月額の基準および職員人数は金額の分解ではなく金額表に入れない。明細金額は最深の事業金額の反復であり二重計上しない。内表の縦結合金額は原典セルの位置で一度だけ数え、所属する印字区分の文字をまとめて保持する。",
@@ -1017,7 +1057,7 @@
     {
       "table_id": "chuo-kokuho-settlement",
       "conversion_id": "chuo-text-settlement-kokuho-detail",
-      "input_fingerprint": "60851090815708ba666cb7a9154a0743020c7483b7c60c44c2a9c6b6267e31f0",
+      "input_fingerprint": "8b3c335e84393c21cd65623bd13c01ea6d3c6a7bc602a6316c788ee4bc85f0ee",
       "account": "国民健康保険事業会計",
       "notes": [
         "人数・件数・率・月額の基準および職員人数は金額の分解ではなく金額表に入れない。明細金額は最深の事業金額の反復であり二重計上しない。内表の縦結合金額は原典セルの位置で一度だけ数え、所属する印字区分の文字をまとめて保持する。",
@@ -1045,7 +1085,7 @@
     {
       "table_id": "chuo-kouki-settlement",
       "conversion_id": "chuo-text-settlement-kouki-detail",
-      "input_fingerprint": "98d9c8a9adb911901afe4045a5e0981dd20fd2e0d5a261b29d95c1bf9b1f199b",
+      "input_fingerprint": "835453bfaa2a6c0fe047f91c6196e98f0658006f2a9df1bc8491909d662b623f",
       "account": "後期高齢者医療会計",
       "notes": [
         "人数・件数・率・月額の基準および職員人数は金額の分解ではなく金額表に入れない。明細金額は最深の事業金額の反復であり二重計上しない。内表の縦結合金額は原典セルの位置で一度だけ数え、所属する印字区分の文字をまとめて保持する。",

@@ -97,7 +97,8 @@ def options_schema(conversion: dict) -> str:
 # fingerprinting it would stale every table of a converter that imports it on each schema edit.
 FINGERPRINT_EXCLUDED = frozenset({'fiscal/manifest.py'})
 GENERIC_PDF_CONVERTERS = frozenset({'fiscal/layouts/generic_text/convert.py',
-                                    'fiscal/layouts/generic_scan/convert.py'})
+                                    'fiscal/layouts/generic_scan/convert.py',
+                                    'fiscal/layouts/workflow_text/convert.py'})
 
 # A module named ``*_checks.py`` only decides pass/fail (tree check, digit coverage); it never builds
 # or writes a table. It is left out of the fingerprint so that tightening a check does not stale
@@ -166,6 +167,9 @@ def dependencies(conversion: dict, *, trees: dict | None = None, patterns: dict 
     workflow = conversion['options'].get('workflow')
     if workflow is not None:
         from ingestion.generic.workflow import selections
+        if 'reading' in workflow:
+            from ingestion.generic.reading import declaration_files
+            pending.extend(declaration_files(workflow))
         pending.extend(module.removeprefix('ingestion.').replace('.', '/') + '.py'
                        for module in (selections(workflow) if patterns is None else patterns).values())
     found = set()
@@ -327,7 +331,11 @@ def validate(document: dict, *, path: Path | None = None, check_code: bool = Tru
                     raise ValueError('PDF workflow requires a generic PDF converter')
                 from ingestion.generic.workflow import validate as validate_workflow
                 validate_workflow(conversion['options']['workflow'],
-                                  text_pdf=conversion['converter'] == 'fiscal/layouts/generic_text/convert.py')
+                                  text_pdf=conversion['converter'] != 'fiscal/layouts/generic_scan/convert.py',
+                                  coupled=conversion['converter'] == 'fiscal/layouts/workflow_text/convert.py')
+                if 'reading' in conversion['options']['workflow']:
+                    from ingestion.generic.reading import validate as validate_reading
+                    validate_reading(conversion['options']['workflow'], conversion['options'])
     if check_code and any(c['converter'] in GENERIC_PDF_CONVERTERS for c in conversions.values()):
         if set(legacy_layout) - {'schema_version', 'source_inconsistencies'}:
             raise ValueError('Generic PDF settings belong in options.workflow, not .layout.json')

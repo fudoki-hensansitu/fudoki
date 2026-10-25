@@ -254,3 +254,51 @@ workflowへの切り替えはconversionごとに比較・採用する。段階�
 汎用PDFの242変換を明示設定へ移した。既存の実効設定はすべて一致し、暗黙の字下げ軸を説明へ補った18表以外のメタデータは維持した。不要になった旧設定を除き、出典内の不整合の宣言は残した。
 
 最終コードで全73管理JSONの314表を再変換し、保存済みの表と内容が一致した。不一致・保存前検査による停止は0件で、R2の表は保存し直していない。Pythonの627テストはOK（1件skip）。指紋の波及と、選択外の実装・自動探索を実行しないことも確認した。
+
+
+### 自治体別の変換を共有ルールへ移す
+
+[ADR 0036](../../adr/0036-shared-coupled-pdf-readings.md) に従い、採用中の自治体別変換48件を、共有の読み方12種類へ移す。表の境界・科目・金額の所属が結び付いた処理は一つの読み方に保ち、独立できる処理を10種類の部品へ切り出す。自治体側の `layouts/` には実測した列境界、見出し、文字の訂正などのJSON宣言を置く。
+
+```text
+pipeline/ingestion/
+  fiscal/jurisdictions/.../expenditure.json
+    └─ options.workflow
+       ├─ reading.pattern ──→ generic/patterns/readings/<pattern>.py
+       ├─ reading.profile ──→ fiscal/jurisdictions/.../layouts/.../reading.json
+       └─ components[] ─────→ generic/patterns/components/<component>.py
+  fiscal/layouts/workflow_text/convert.py ──→ generic/reading.py
+```
+
+従来の層別workflowは `generic_text / generic_scan`、追加のまとまった読み方は `workflow_text` を入口とする。読み方は自由なPythonパスでなく、既存カタログから選ぶ。宣言の項目・型、変換オプションは選択した読み方のschemaで検査し、読み方が要求する部品の関数が過不足なくそろうことも検査する。誤った入口との組み合わせは開始前に止める。
+
+例えば杉並区の文字PDFは次の選択になる。
+
+```yaml
+workflow:
+  reading:
+    pattern: parallel_breakdowns
+    profile: fiscal/jurisdictions/131156/layouts/text_settlement/reading.json
+  components: [scoped_text, marker_boundary]
+```
+
+| 共有の読み方 | 主な読み取り方 | 選択する部品 |
+|---|---|---|
+| `marked_businesses` | 記号付きの事業と本文内の表 | `marked_subjects`, `embedded_businesses` |
+| `facing_columns` | 見開きの科目・内訳欄 | なし |
+| `parallel_breakdowns` | 並行する節と備考の内訳 | `scoped_text`, `marker_boundary` |
+| `clipped_columns` | 文字層の切り出しを伴う欄 | `clipped_words` |
+| `narrative_results` | 本文中の科目・事業と実績額 | `narrative_subjects`, `narrative_projects` |
+| `merged_breakdowns` | 結合された内訳欄 | なし |
+| `rotated_columns` | 回転した表と続き行 | `carried_totals` |
+| `staggered_execution` | ずれた支出済額と内訳 | なし |
+| `profiled_budget` | 実測プロファイルによる予算表 | `page_context` |
+| `enterprise_expenses` | 企業会計の費用・節・備考 | `enterprise_hierarchy` |
+| `banded_projects` | 帯ごとの事業 | なし |
+| `offset_projects` | 位置のずれた事業欄 | なし |
+
+ルールは自治体名ではなく読み取り方で識別する。一つの自治体だけが使うルールも許す。別資料で再利用できるかは、固定した入力と保存前検査で確かめてから選択する。似た処理でも所属や文字の保持が異なる場合は、同じルールに統合しない。
+
+新経路の指紋には、選択した読み方・部品・そのimport先、選択した読み方のオプションschema・宣言schema、参照するJSON宣言を含める。`statement_profile` が別のJSONを参照する場合はそれも含める。宣言は `ingestion/` 内のJSONに限り、実行コードは置かない。共有コードや同じ宣言を使う変換には変更が波及するが、未選択のルールへは波及しない。
+
+採用中の自治体別 `convert.py` は48件の参照を移した後で削除する。自治体側の独立検査と、未採用資料の変換・調査コードは保持する。本文中の表などの強く結び付いた部分を、既存の層別workflowへ無理に置き換えない。これらの文字抽出に依存する追加の読み方は、OCR観測には適用しない。

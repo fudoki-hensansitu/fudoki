@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "budget",
+    "executed",
+    "header_top",
+    "row_tol",
+    "name_gap",
+    "path_right",
+    "budget_bands",
+    "setsu_left",
+    "setsu_right",
+    "setsu_mark_right",
+    "setsu_name_left",
+    "setsu_amount_bands",
+    "subject_exec_bands",
+    "note_left",
+    "project_mark_right",
+    "note_setsu_mark_right",
+    "note_amount_min_right"
+  ],
+  "properties": {
+    "budget": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "executed": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "header_top": {
+      "type": "number"
+    },
+    "row_tol": {
+      "type": "number"
+    },
+    "name_gap": {
+      "type": "number"
+    },
+    "path_right": {
+      "type": "number"
+    },
+    "budget_bands": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "number"
+        }
+      }
+    },
+    "setsu_left": {
+      "type": "number"
+    },
+    "setsu_right": {
+      "type": "number"
+    },
+    "setsu_mark_right": {
+      "type": "number"
+    },
+    "setsu_name_left": {
+      "type": "number"
+    },
+    "setsu_amount_bands": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "number"
+        }
+      }
+    },
+    "subject_exec_bands": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "number"
+        }
+      }
+    },
+    "note_left": {
+      "type": "number"
+    },
+    "project_mark_right": {
+      "type": "number"
+    },
+    "note_setsu_mark_right": {
+      "type": "number"
+    },
+    "note_amount_min_right": {
+      "type": "number"
+    }
+  }
+}

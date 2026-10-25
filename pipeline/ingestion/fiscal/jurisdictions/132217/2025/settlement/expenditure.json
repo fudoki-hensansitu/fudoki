@@ -1,7 +1,7 @@
 {
   "conversions": [
     {
-      "converter": "fiscal/jurisdictions/132217/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "expected_tables": [
         {
           "table_id": "late-elderly-medical-setsu"
@@ -14,7 +14,14 @@
         }
       ],
       "options": {
-        "table_id": "late-elderly-medical-setsu"
+        "table_id": "late-elderly-medical-setsu",
+        "workflow": {
+          "reading": {
+            "pattern": "offset_projects",
+            "profile": "fiscal/jurisdictions/132217/layouts/text_settlement/reading.json"
+          },
+          "components": []
+        }
       }
     },
     {

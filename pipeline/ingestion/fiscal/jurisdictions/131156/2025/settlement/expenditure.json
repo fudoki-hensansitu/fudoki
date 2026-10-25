@@ -9,7 +9,7 @@
   "conversions": [
     {
       "id": "general-settlement",
-      "converter": "fiscal/jurisdictions/131156/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "76b79cb8d33f3b93a9e3bd97eaa1f68e27b9e2a8c3500680607ea194ba6b5a23"
@@ -17,7 +17,17 @@
       ],
       "options": {
         "table_prefix": "general-expenditure",
-        "account": "一般会計"
+        "account": "一般会計",
+        "workflow": {
+          "reading": {
+            "pattern": "parallel_breakdowns",
+            "profile": "fiscal/jurisdictions/131156/layouts/text_settlement/reading.json"
+          },
+          "components": [
+            "scoped_text",
+            "marker_boundary"
+          ]
+        }
       },
       "expected_tables": [
         {
@@ -30,7 +40,7 @@
     },
     {
       "id": "care-insurance-settlement-details",
-      "converter": "fiscal/jurisdictions/131156/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "967a471db769aa4a8c521ed52999ef061606a7cada5e281e061039ac28097326"
@@ -41,7 +51,17 @@
         "account": "介護保険事業会計",
         "emit": [
           "details"
-        ]
+        ],
+        "workflow": {
+          "reading": {
+            "pattern": "parallel_breakdowns",
+            "profile": "fiscal/jurisdictions/131156/layouts/text_settlement/reading.json"
+          },
+          "components": [
+            "scoped_text",
+            "marker_boundary"
+          ]
+        }
       },
       "expected_tables": [
         {
@@ -51,7 +71,7 @@
     },
     {
       "id": "care-insurance-settlement-notes",
-      "converter": "fiscal/jurisdictions/131156/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "967a471db769aa4a8c521ed52999ef061606a7cada5e281e061039ac28097326"
@@ -62,7 +82,17 @@
         "account": "介護保険事業会計",
         "emit": [
           "notes"
-        ]
+        ],
+        "workflow": {
+          "reading": {
+            "pattern": "parallel_breakdowns",
+            "profile": "fiscal/jurisdictions/131156/layouts/text_settlement/reading.json"
+          },
+          "components": [
+            "scoped_text",
+            "marker_boundary"
+          ]
+        }
       },
       "expected_tables": [
         {
@@ -72,7 +102,7 @@
     },
     {
       "id": "national-health-insurance-settlement-details",
-      "converter": "fiscal/jurisdictions/131156/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "967a471db769aa4a8c521ed52999ef061606a7cada5e281e061039ac28097326"
@@ -83,7 +113,17 @@
         "account": "国民健康保険事業会計",
         "emit": [
           "details"
-        ]
+        ],
+        "workflow": {
+          "reading": {
+            "pattern": "parallel_breakdowns",
+            "profile": "fiscal/jurisdictions/131156/layouts/text_settlement/reading.json"
+          },
+          "components": [
+            "scoped_text",
+            "marker_boundary"
+          ]
+        }
       },
       "expected_tables": [
         {
@@ -93,7 +133,7 @@
     },
     {
       "id": "national-health-insurance-settlement-notes",
-      "converter": "fiscal/jurisdictions/131156/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "967a471db769aa4a8c521ed52999ef061606a7cada5e281e061039ac28097326"
@@ -104,7 +144,17 @@
         "account": "国民健康保険事業会計",
         "emit": [
           "notes"
-        ]
+        ],
+        "workflow": {
+          "reading": {
+            "pattern": "parallel_breakdowns",
+            "profile": "fiscal/jurisdictions/131156/layouts/text_settlement/reading.json"
+          },
+          "components": [
+            "scoped_text",
+            "marker_boundary"
+          ]
+        }
       },
       "expected_tables": [
         {
@@ -114,7 +164,7 @@
     },
     {
       "id": "late-stage-elderly-settlement-details",
-      "converter": "fiscal/jurisdictions/131156/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "967a471db769aa4a8c521ed52999ef061606a7cada5e281e061039ac28097326"
@@ -125,7 +175,17 @@
         "account": "後期高齢者医療事業会計",
         "emit": [
           "details"
-        ]
+        ],
+        "workflow": {
+          "reading": {
+            "pattern": "parallel_breakdowns",
+            "profile": "fiscal/jurisdictions/131156/layouts/text_settlement/reading.json"
+          },
+          "components": [
+            "scoped_text",
+            "marker_boundary"
+          ]
+        }
       },
       "expected_tables": [
         {
@@ -135,7 +195,7 @@
     },
     {
       "id": "late-stage-elderly-settlement-notes",
-      "converter": "fiscal/jurisdictions/131156/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "967a471db769aa4a8c521ed52999ef061606a7cada5e281e061039ac28097326"
@@ -146,7 +206,17 @@
         "account": "後期高齢者医療事業会計",
         "emit": [
           "notes"
-        ]
+        ],
+        "workflow": {
+          "reading": {
+            "pattern": "parallel_breakdowns",
+            "profile": "fiscal/jurisdictions/131156/layouts/text_settlement/reading.json"
+          },
+          "components": [
+            "scoped_text",
+            "marker_boundary"
+          ]
+        }
       },
       "expected_tables": [
         {

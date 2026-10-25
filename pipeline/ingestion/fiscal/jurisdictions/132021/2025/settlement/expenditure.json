@@ -9,7 +9,7 @@
   "conversions": [
     {
       "id": "general-settlement-detail",
-      "converter": "fiscal/jurisdictions/132021/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "71b7aa9ebd5359cc35dd8fc938d3eb9c2578b5de34c241c9e6bd92a8ee25fcc7"
@@ -18,7 +18,14 @@
       "options": {
         "account": "一般会計",
         "part": "detail",
-        "table_prefix": "general-expenditure"
+        "table_prefix": "general-expenditure",
+        "workflow": {
+          "reading": {
+            "pattern": "merged_breakdowns",
+            "profile": "fiscal/jurisdictions/132021/layouts/text_settlement/reading.json"
+          },
+          "components": []
+        }
       },
       "expected_tables": [
         {
@@ -31,7 +38,7 @@
     },
     {
       "id": "kouki-settlement-details",
-      "converter": "fiscal/jurisdictions/132021/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "71b7aa9ebd5359cc35dd8fc938d3eb9c2578b5de34c241c9e6bd92a8ee25fcc7"
@@ -43,7 +50,14 @@
         "table_prefix": "kouki-expenditure",
         "emit": [
           "details"
-        ]
+        ],
+        "workflow": {
+          "reading": {
+            "pattern": "merged_breakdowns",
+            "profile": "fiscal/jurisdictions/132021/layouts/text_settlement/reading.json"
+          },
+          "components": []
+        }
       },
       "expected_tables": [
         {
@@ -53,7 +67,7 @@
     },
     {
       "id": "kouki-settlement-notes",
-      "converter": "fiscal/jurisdictions/132021/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "71b7aa9ebd5359cc35dd8fc938d3eb9c2578b5de34c241c9e6bd92a8ee25fcc7"
@@ -65,7 +79,14 @@
         "table_prefix": "kouki-expenditure",
         "emit": [
           "notes"
-        ]
+        ],
+        "workflow": {
+          "reading": {
+            "pattern": "merged_breakdowns",
+            "profile": "fiscal/jurisdictions/132021/layouts/text_settlement/reading.json"
+          },
+          "components": []
+        }
       },
       "expected_tables": [
         {
@@ -75,7 +96,7 @@
     },
     {
       "id": "chushajo-settlement-details",
-      "converter": "fiscal/jurisdictions/132021/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "71b7aa9ebd5359cc35dd8fc938d3eb9c2578b5de34c241c9e6bd92a8ee25fcc7"
@@ -87,7 +108,14 @@
         "table_prefix": "chushajo-expenditure",
         "emit": [
           "details"
-        ]
+        ],
+        "workflow": {
+          "reading": {
+            "pattern": "merged_breakdowns",
+            "profile": "fiscal/jurisdictions/132021/layouts/text_settlement/reading.json"
+          },
+          "components": []
+        }
       },
       "expected_tables": [
         {
@@ -97,7 +125,7 @@
     },
     {
       "id": "chushajo-settlement-notes",
-      "converter": "fiscal/jurisdictions/132021/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "71b7aa9ebd5359cc35dd8fc938d3eb9c2578b5de34c241c9e6bd92a8ee25fcc7"
@@ -110,7 +138,14 @@
         "emit": [
           "notes"
         ],
-        "notes_setsu_reference": "chushajo-expenditure-details"
+        "notes_setsu_reference": "chushajo-expenditure-details",
+        "workflow": {
+          "reading": {
+            "pattern": "merged_breakdowns",
+            "profile": "fiscal/jurisdictions/132021/layouts/text_settlement/reading.json"
+          },
+          "components": []
+        }
       },
       "expected_tables": [
         {

@@ -1,6 +1,6 @@
 """Exercise conversion with the private fixed original when restored."""
 import hashlib
-from importlib import import_module
+from ingestion.generic.reading_fixture import reader
 from pathlib import Path
 import tempfile
 import unittest
@@ -14,7 +14,7 @@ from ingestion.lib.tree_checks import check_tree
 
 class EnterpriseStatementTest(unittest.TestCase):
     def test_equal_printed_names_stay_distinct_and_budget_belongs_to_section(self):
-        module = import_module('ingestion.fiscal.jurisdictions.132071.layouts.enterprise_statement.convert')
+        module = reader('enterprise_expenses')
         def pos(y, x=50):
             return {'物理頁': 1, '左端': x, '上端': y, '右端': x + 40, '下端': y + 10}
         rows = []
@@ -29,7 +29,7 @@ class EnterpriseStatementTest(unittest.TestCase):
                          '_positions': {'款': pos(20), '項': pos(40), '目': pos(60), '節': pos(section_y, 180),
                                         '備考': pos(remark_y, 350) if remark_y else None,
                                         '予算額': pos(section_y - 10, 350)}})
-        migrated = migrate_rows(module.migration_detail_rows(rows), module.detail_metadata())
+        migrated = migrate_rows(module.rule('migration_detail_rows')(rows), module.rule('detail_metadata')())
         checked = check_tree(migrated.nodes, migrated.amounts)
         self.assertFalse(migrated.issues)
         self.assertEqual((migrated.unread_amount_count, migrated.unresolved_parent_count), (0, 0))
@@ -50,7 +50,7 @@ class EnterpriseStatementTest(unittest.TestCase):
             self.skipTest('Private original is not restored')
         sha = '7d2b4b818e99e43e95c02ef7c33c0022b93e1bab83335004924bd30894bcb280'
         self.assertEqual(hashlib.sha256(pdf.read_bytes()).hexdigest(), sha)
-        convert = import_module('ingestion.fiscal.jurisdictions.132071.layouts.enterprise_statement.convert').convert
+        convert = reader('enterprise_expenses').convert
         source = {'path': pdf, 'sha256': sha, 'format': 'pdf', 'direction': 'expenditure',
                   'target': {'jurisdiction': '132071', 'fiscal_year': 2025, 'document_kind': 'settlement'},
                   'scope': [{'account': '下水道事業会計', 'pages': [[4, 7], [24, 28], [30, 31]]}]}

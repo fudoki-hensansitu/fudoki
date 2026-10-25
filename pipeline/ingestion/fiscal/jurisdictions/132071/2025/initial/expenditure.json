@@ -9,7 +9,7 @@
   "conversions": [
     {
       "id": "akishima-text-budget-expenditure",
-      "converter": "fiscal/jurisdictions/132071/layouts/text_budget/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "4662197051b0ec0d9c50e1690c5804d0b31e17dd7d35b972fd272e03068507f8"
@@ -20,7 +20,16 @@
         "detail_pages": [
           108,
           449
-        ]
+        ],
+        "workflow": {
+          "reading": {
+            "pattern": "profiled_budget",
+            "profile": "fiscal/jurisdictions/132071/layouts/text_budget/reading.json"
+          },
+          "components": [
+            "page_context"
+          ]
+        }
       },
       "expected_tables": [
         {

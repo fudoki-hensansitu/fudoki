@@ -9,7 +9,7 @@
   "conversions": [
     {
       "id": "general-setsu",
-      "converter": "fiscal/jurisdictions/131172/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "12b1e95c026d5c3f112cd7bc15adbbd759a61711dc88db83b28c22e81ecfe508"
@@ -18,7 +18,16 @@
       "options": {
         "table_id": "general-setsu",
         "account": "一般会計",
-        "part": "detail"
+        "part": "detail",
+        "workflow": {
+          "reading": {
+            "pattern": "clipped_columns",
+            "profile": "fiscal/jurisdictions/131172/layouts/text_settlement/reading.json"
+          },
+          "components": [
+            "clipped_words"
+          ]
+        }
       },
       "expected_tables": [
         {
@@ -28,7 +37,7 @@
     },
     {
       "id": "kaigo-setsu",
-      "converter": "fiscal/jurisdictions/131172/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "12b1e95c026d5c3f112cd7bc15adbbd759a61711dc88db83b28c22e81ecfe508"
@@ -37,7 +46,16 @@
       "options": {
         "table_id": "kaigo-setsu",
         "account": "介護保険会計",
-        "part": "detail"
+        "part": "detail",
+        "workflow": {
+          "reading": {
+            "pattern": "clipped_columns",
+            "profile": "fiscal/jurisdictions/131172/layouts/text_settlement/reading.json"
+          },
+          "components": [
+            "clipped_words"
+          ]
+        }
       },
       "expected_tables": [
         {
@@ -47,7 +65,7 @@
     },
     {
       "id": "kokuho-setsu",
-      "converter": "fiscal/jurisdictions/131172/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "12b1e95c026d5c3f112cd7bc15adbbd759a61711dc88db83b28c22e81ecfe508"
@@ -56,7 +74,16 @@
       "options": {
         "table_id": "kokuho-setsu",
         "account": "国民健康保険事業会計",
-        "part": "detail"
+        "part": "detail",
+        "workflow": {
+          "reading": {
+            "pattern": "clipped_columns",
+            "profile": "fiscal/jurisdictions/131172/layouts/text_settlement/reading.json"
+          },
+          "components": [
+            "clipped_words"
+          ]
+        }
       },
       "expected_tables": [
         {
@@ -66,7 +93,7 @@
     },
     {
       "id": "kouki-setsu",
-      "converter": "fiscal/jurisdictions/131172/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "12b1e95c026d5c3f112cd7bc15adbbd759a61711dc88db83b28c22e81ecfe508"
@@ -75,7 +102,16 @@
       "options": {
         "table_id": "kouki-setsu",
         "account": "後期高齢者医療会計",
-        "part": "detail"
+        "part": "detail",
+        "workflow": {
+          "reading": {
+            "pattern": "clipped_columns",
+            "profile": "fiscal/jurisdictions/131172/layouts/text_settlement/reading.json"
+          },
+          "components": [
+            "clipped_words"
+          ]
+        }
       },
       "expected_tables": [
         {
@@ -88,7 +124,7 @@
     {
       "table_id": "general-setsu",
       "conversion_id": "general-setsu",
-      "input_fingerprint": "e63a1a98be4f5042cecf35b042840f2b52fcf7b0d0719f904f44e408e8416820",
+      "input_fingerprint": "5bd8dfbb55d14312570606c60f18f3d2ae74a0ce5e18e9f1e4272b7667102bf6",
       "account": "一般会計",
       "notes": [
         "最細行のみ: 法定節（区分番号+区分名称）が原典の最細明細で、節のない目（予備費等）は目行が葉行（区分_列は空）。款・項・目・合計の印字行は行にせず、所属する行の番号・名称・予算5列・執行6列・備考・印字位置を款_/項_/目_列として各leaf行へ反復する。款・項・目・歳出合計の印字行自体はlocal観測 parents.json に保持する。左印字頁に科目・予算5列・節区分、右印字頁に節金額・執行6列・備考が印字される。備考欄は水平罫線の結合セルが所属範囲を定め、セルが縦に覆う行のうち最上位の行の備考欄へセル全文を印字行の改行のまま保持する。物理頁はPDFの物理頁。名称の折り返しは改行、字間の印字間隔は空白で保持。本文の文字は描画が二重（クリップ済みの幽霊層は含めない）。見開き末尾の「一般会計」会計標は行の備考ではないため除く。",
@@ -116,7 +152,7 @@
     {
       "table_id": "kaigo-setsu",
       "conversion_id": "kaigo-setsu",
-      "input_fingerprint": "9b6157b829f59408da9783de86cc91ca10ca9f2781e7f7d42b88fce0b838ab99",
+      "input_fingerprint": "1695e53b22136b1906877a33d3e23333fe835d8634a9d4a48135d4dac04fa223",
       "account": "介護保険会計",
       "notes": [
         "最細行のみ: 法定節（区分番号+区分名称）が原典の最細明細で、節のない目（予備費等）は目行が葉行（区分_列は空）。款・項・目・合計の印字行は行にせず、所属する行の番号・名称・予算5列・執行6列・備考・印字位置を款_/項_/目_列として各leaf行へ反復する。款・項・目・歳出合計の印字行自体はlocal観測 parents.json に保持する。左印字頁に科目・予算5列・節区分、右印字頁に節金額・執行6列・備考が印字される。備考欄は水平罫線の結合セルが所属範囲を定め、セルが縦に覆う行のうち最上位の行の備考欄へセル全文を印字行の改行のまま保持する。物理頁はPDFの物理頁。名称の折り返しは改行、字間の印字間隔は空白で保持。本文の文字は描画が二重（クリップ済みの幽霊層は含めない）。見開き末尾の「介護保険会計」会計標は行の備考ではないため除く。",
@@ -144,7 +180,7 @@
     {
       "table_id": "kokuho-setsu",
       "conversion_id": "kokuho-setsu",
-      "input_fingerprint": "448c5b1b79fa821c673e0f05b8ce23fe5851a59bf720bd85a218cb141926304f",
+      "input_fingerprint": "0fd8e701449e3749b30ae68924b5c089a3a7204c282b0ceea0490dd85faedf11",
       "account": "国民健康保険事業会計",
       "notes": [
         "最細行のみ: 法定節（区分番号+区分名称）が原典の最細明細で、節のない目（予備費等）は目行が葉行（区分_列は空）。款・項・目・合計の印字行は行にせず、所属する行の番号・名称・予算5列・執行6列・備考・印字位置を款_/項_/目_列として各leaf行へ反復する。款・項・目・歳出合計の印字行自体はlocal観測 parents.json に保持する。左印字頁に科目・予算5列・節区分、右印字頁に節金額・執行6列・備考が印字される。備考欄は水平罫線の結合セルが所属範囲を定め、セルが縦に覆う行のうち最上位の行の備考欄へセル全文を印字行の改行のまま保持する。物理頁はPDFの物理頁。名称の折り返しは改行、字間の印字間隔は空白で保持。本文の文字は描画が二重（クリップ済みの幽霊層は含めない）。見開き末尾の「国民健康保険事業会計」会計標は行の備考ではないため除く。",
@@ -172,7 +208,7 @@
     {
       "table_id": "kouki-setsu",
       "conversion_id": "kouki-setsu",
-      "input_fingerprint": "0bc3592403df36cd0b46b0f66d9e7097ad4c27a7e0e05fac8c5fad33c26ac3c4",
+      "input_fingerprint": "387f087d9bb1aa743854e204324407e01b43d172d0e4e230f543ae98cd40685a",
       "account": "後期高齢者医療会計",
       "notes": [
         "最細行のみ: 法定節（区分番号+区分名称）が原典の最細明細で、節のない目（予備費等）は目行が葉行（区分_列は空）。款・項・目・合計の印字行は行にせず、所属する行の番号・名称・予算5列・執行6列・備考・印字位置を款_/項_/目_列として各leaf行へ反復する。款・項・目・歳出合計の印字行自体はlocal観測 parents.json に保持する。左印字頁に科目・予算5列・節区分、右印字頁に節金額・執行6列・備考が印字される。備考欄は水平罫線の結合セルが所属範囲を定め、セルが縦に覆う行のうち最上位の行の備考欄へセル全文を印字行の改行のまま保持する。物理頁はPDFの物理頁。名称の折り返しは改行、字間の印字間隔は空白で保持。本文の文字は描画が二重（クリップ済みの幽霊層は含めない）。見開き末尾の「後期高齢者医療会計」会計標は行の備考ではないため除く。",

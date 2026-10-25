@@ -10,7 +10,7 @@
     {
       "id": "akishima-enterprise-expenditure",
       "statement_kind": "public-enterprise",
-      "converter": "fiscal/jurisdictions/132071/layouts/enterprise_statement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "7d2b4b818e99e43e95c02ef7c33c0022b93e1bab83335004924bd30894bcb280"
@@ -34,7 +34,16 @@
         "capital_expense_pages": [
           30,
           31
-        ]
+        ],
+        "workflow": {
+          "reading": {
+            "pattern": "enterprise_expenses",
+            "profile": "fiscal/jurisdictions/132071/layouts/enterprise_statement/reading.json"
+          },
+          "components": [
+            "enterprise_hierarchy"
+          ]
+        }
       },
       "expected_tables": [
         {

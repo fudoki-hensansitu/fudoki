@@ -9,7 +9,7 @@
   "conversions": [
     {
       "id": "kaigo-settlement-detail",
-      "converter": "fiscal/jurisdictions/132012/layouts/text_settlement_report/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "51206fb84d7365cec1607e8b8260bacf3f598e597ad2696ea264bfd4d2da3e8e"
@@ -31,7 +31,17 @@
         "detail_table_id": "kaigo-detail",
         "emit": [
           "detail"
-        ]
+        ],
+        "workflow": {
+          "reading": {
+            "pattern": "narrative_results",
+            "profile": "fiscal/jurisdictions/132012/layouts/text_settlement_report/reading.json"
+          },
+          "components": [
+            "narrative_subjects",
+            "narrative_projects"
+          ]
+        }
       },
       "expected_tables": [
         {
@@ -41,7 +51,7 @@
     },
     {
       "id": "kouki-settlement-detail",
-      "converter": "fiscal/jurisdictions/132012/layouts/text_settlement_report/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "51206fb84d7365cec1607e8b8260bacf3f598e597ad2696ea264bfd4d2da3e8e"
@@ -60,7 +70,17 @@
         "detail_table_id": "kouki-detail",
         "emit": [
           "detail"
-        ]
+        ],
+        "workflow": {
+          "reading": {
+            "pattern": "narrative_results",
+            "profile": "fiscal/jurisdictions/132012/layouts/text_settlement_report/reading.json"
+          },
+          "components": [
+            "narrative_subjects",
+            "narrative_projects"
+          ]
+        }
       },
       "expected_tables": [
         {

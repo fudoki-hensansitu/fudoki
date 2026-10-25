@@ -1,5 +1,7 @@
 {
-  "layout": {"ruled": "ingestion.generic.patterns.layout.ruled"},
+  "layout": {
+    "ruled": "ingestion.generic.patterns.layout.ruled"
+  },
   "headers": {
     "standard": "ingestion.generic.patterns.headers.standard",
     "characters": "ingestion.generic.patterns.headers.characters"
@@ -19,5 +21,31 @@
     "overprint": "ingestion.generic.patterns.repairs.overprint",
     "split_at_rules": "ingestion.generic.patterns.repairs.split_at_rules",
     "stacked_rows": "ingestion.generic.patterns.repairs.stacked_rows"
+  },
+  "reading": {
+    "marked_businesses": "ingestion.generic.patterns.readings.marked_businesses",
+    "facing_columns": "ingestion.generic.patterns.readings.facing_columns",
+    "parallel_breakdowns": "ingestion.generic.patterns.readings.parallel_breakdowns",
+    "clipped_columns": "ingestion.generic.patterns.readings.clipped_columns",
+    "narrative_results": "ingestion.generic.patterns.readings.narrative_results",
+    "merged_breakdowns": "ingestion.generic.patterns.readings.merged_breakdowns",
+    "rotated_columns": "ingestion.generic.patterns.readings.rotated_columns",
+    "staggered_execution": "ingestion.generic.patterns.readings.staggered_execution",
+    "profiled_budget": "ingestion.generic.patterns.readings.profiled_budget",
+    "enterprise_expenses": "ingestion.generic.patterns.readings.enterprise_expenses",
+    "banded_projects": "ingestion.generic.patterns.readings.banded_projects",
+    "offset_projects": "ingestion.generic.patterns.readings.offset_projects"
+  },
+  "component": {
+    "marked_subjects": "ingestion.generic.patterns.components.marked_subjects",
+    "embedded_businesses": "ingestion.generic.patterns.components.embedded_businesses",
+    "scoped_text": "ingestion.generic.patterns.components.scoped_text",
+    "marker_boundary": "ingestion.generic.patterns.components.marker_boundary",
+    "clipped_words": "ingestion.generic.patterns.components.clipped_words",
+    "narrative_subjects": "ingestion.generic.patterns.components.narrative_subjects",
+    "narrative_projects": "ingestion.generic.patterns.components.narrative_projects",
+    "page_context": "ingestion.generic.patterns.components.page_context",
+    "enterprise_hierarchy": "ingestion.generic.patterns.components.enterprise_hierarchy",
+    "carried_totals": "ingestion.generic.patterns.components.carried_totals"
   }
 }

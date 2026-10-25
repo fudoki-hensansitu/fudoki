@@ -1,7 +1,7 @@
 {
   "conversions": [
     {
-      "converter": "fiscal/jurisdictions/132039/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "expected_tables": [
         {
           "table_id": "kouki-expenditure-detail"
@@ -21,7 +21,16 @@
             3
           ]
         ],
-        "table_id": "kouki-expenditure-detail"
+        "table_id": "kouki-expenditure-detail",
+        "workflow": {
+          "reading": {
+            "pattern": "rotated_columns",
+            "profile": "fiscal/jurisdictions/132039/layouts/text_settlement/reading.json"
+          },
+          "components": [
+            "carried_totals"
+          ]
+        }
       }
     },
     {

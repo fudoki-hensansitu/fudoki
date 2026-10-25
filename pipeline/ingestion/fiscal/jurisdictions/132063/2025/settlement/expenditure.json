@@ -9,7 +9,7 @@
   "conversions": [
     {
       "id": "kouki-settlement",
-      "converter": "fiscal/jurisdictions/132063/layouts/fuchu_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "d0a90af39bf310b985c4172345ef890781c912ffa15ce70a874e9cc4c0a54d71"
@@ -17,7 +17,14 @@
       ],
       "options": {
         "table_id": "kouki-setsu",
-        "account": "後期高齢者医療特別会計"
+        "account": "後期高齢者医療特別会計",
+        "workflow": {
+          "reading": {
+            "pattern": "staggered_execution",
+            "profile": "fiscal/jurisdictions/132063/layouts/fuchu_settlement/reading.json"
+          },
+          "components": []
+        }
       },
       "expected_tables": [
         {

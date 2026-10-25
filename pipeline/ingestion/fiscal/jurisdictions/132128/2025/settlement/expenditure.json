@@ -1,7 +1,7 @@
 {
   "conversions": [
     {
-      "converter": "fiscal/jurisdictions/132128/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "expected_tables": [
         {
           "table_id": "late-elderly-medical-setsu"
@@ -15,7 +15,14 @@
       ],
       "options": {
         "account": "後期高齢者医療特別会計",
-        "table_id": "late-elderly-medical-setsu"
+        "table_id": "late-elderly-medical-setsu",
+        "workflow": {
+          "reading": {
+            "pattern": "banded_projects",
+            "profile": "fiscal/jurisdictions/132128/layouts/text_settlement/reading.json"
+          },
+          "components": []
+        }
       }
     },
     {
