@@ -30,3 +30,6 @@ pipeline/ingestion/**/observations/
 
 # Originals and ingestion tables use private input storage, not the repository.
 /data/
+
+# Generated at build time (apps/api: bun run view). Not committed.
+apps/api/src/gen/

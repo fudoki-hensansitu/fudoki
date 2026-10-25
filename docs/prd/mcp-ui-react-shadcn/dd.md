@@ -46,7 +46,7 @@ shadcn CLI `4.21.3` の公式 `@shadcn` registryから、Table、Button、Input�
 
 ### 単体 HTML を再生成する
 
-`ui/build.ts` はBunでTSX・React・App SDK・PDF.jsのworker handlerをbundleし、PostCSS/TailwindでCSSを生成してHTMLへinline化する。通常はReact production版を使う。共有部品のクラスは`packages/ui/src/`から検出する。CSSに外部参照が残る場合はbuildを失敗させる。APIのbuildはViewの再生成を先に実行する。HTML内容からhash付きresource URIと`src/view.generated.ts`を生成する。CSPのAPI origin、MIME type、旧`ui/resourceUri`キーは既存のサーバー実装を維持する。Viewは`@modelcontextprotocol/ext-apps`経由でzodなどの依存をbundleするので、依存のminor bumpでも`view.generated.ts`の内容が変わり、生成物の差分検査（`view.test.ts`・`ui/build.ts --check`）が落ちる。落ちたら`bun run --cwd apps/api view`で作り直し、bundleに入った新しいシンボル（例: 4.6系で足された`ZodIBAN`）やサイズの変化を証拠にする。
+`ui/build.ts` はBunでTSX・React・App SDK・PDF.jsのworker handlerをbundleし、PostCSS/TailwindでCSSを生成してHTMLへinline化する。通常はReact production版を使う。共有部品のクラスは`packages/ui/src/`から検出する。CSSに外部参照が残る場合はbuildを失敗させる。APIのbuildはViewの再生成を先に実行する。HTML内容からhash付きresource URIと`src/gen/view.ts`を生成する。生成物はcommitせず、`test`・`typecheck`・`dev`・`deploy`・`openapi`の前に作り直す（依存のminor bumpでもbundleの中身が変わり、commitした生成物の差分検査が依存の更新のたびに落ちていたため）。
 
 ## Alternatives Considered
 
@@ -69,7 +69,7 @@ MCP/REST schema、出典の中継、財政明細、金額の段階や和の条�
 ## ローカル検証結果（2026-10-14）
 
 - `mise exec -- bun run typecheck:all` と `mise exec -- bun run --cwd apps/api test` が成功。APIテストは138件で、公開schema・MIME type・旧キー・CSP・UI再生成の同期を含む。
-- `mise exec -- bun apps/api/ui/build.ts --check` と `mise exec -- bun run build:api` が成功。buildはViewを再生成してからcfのdry-runを実行する。生成HTMLは約2.5 MB。デプロイは行っていない。
+- `mise exec -- bun run build:api` が成功。buildはViewを再生成してからcfのdry-runを実行する。生成HTMLは約2.5 MB。デプロイは行っていない。
 - API cwdで `E2E_TELEMETRY_DISABLED=1 mise exec -- bun run test:e2e --output .e2e/final --trace on` が33件成功。自治体の絞込み/展開/追加、検索/軸ごとの内訳/末端/追加済み行を含む戻る、0件/読込み/失敗/再試行、host通知/遅いtool応答/teardownを確認した。
 - PDFは同頁/別頁/片方の頁/欠損枠/頁外枠/次頁継続/回転/頁不整合、320/375/414/768pxの拡大/内部横スクロール/金額側への移動、focus復帰/取得中の閉じる/遅い応答/中継の再利用、極端な縦横比でのcanvas上限を確認した。頁欠損は試験hostの不完全な通知を使う。公開schemaでは項目頁が必須なので、その試験のためにD1へNULLの項目頁を保存しない。
 - development版のReactでも24件成功。traceは各画面で初期化1回で、PDFを2回開くケースの取得要求は2回。想定した502/429以外のconsole errorはなかった。最終生成物はproduction版に戻した。

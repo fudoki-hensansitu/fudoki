@@ -3,8 +3,7 @@ import { createApp, RENDER_RESULT_TEXT } from './app'
 import type { Db } from './db'
 import type { Database } from 'bun:sqlite'
 import { insertJurisdiction, insertNode, testDb } from './testing'
-import { VIEW_HTML, VIEW_URI } from './view.generated'
-import { OUTPUT, render } from '../ui/build'
+import { VIEW_HTML, VIEW_URI } from './gen/view'
 import { SUGGESTIONS_META_KEY } from '../../../packages/fiscal/suggestions'
 
 let db: Db
@@ -102,12 +101,5 @@ describe('MCP Apps の View', () => {
     expect(VIEW_URI).toMatch(/^ui:\/\/fudoki\/view-[0-9a-f]{12}\.html$/)
     expect(VIEW_HTML).not.toMatch(/<script[^>]+src=/i)
     expect(VIEW_HTML).not.toMatch(/<link[^>]+href=/i)
-  })
-
-  test('view.generated.ts は ui/ から作り直したものと同じ（bun ui/build.ts で書き直す）', async () => {
-    // minify の出力は bun の版で変わる。mise.toml の版以外で作り直した結果とは比べられない
-    const pinned = /^bun = "([^"]+)"/m.exec(await Bun.file(new URL('../../../mise.toml', import.meta.url).pathname).text())![1]!
-    expect(Bun.version, `bun ${pinned}（mise install）で実行する。版が違うと生成物が一致しない`).toBe(pinned)
-    expect(await Bun.file(OUTPUT).text()).toBe(await render())
   })
 })
