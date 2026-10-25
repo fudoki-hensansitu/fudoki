@@ -30,7 +30,7 @@
   "dependencies": {
     "@ai-sdk/mcp": "2.0.73",
     "@ai-sdk/react": "4.0.147",
-    "@base-ui/react": "1.8.0",
+    "@base-ui/react": "1.9.0",
     "@modelcontextprotocol/ext-apps": "2.0.3",
     "@shadcn/react": "0.3.1",
     "ai": "7.0.136",
