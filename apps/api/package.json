@@ -20,15 +20,15 @@
     "@e2e-dev/web": "0.15.2",
     "@modelcontextprotocol/client": "2.3.1",
     "@modelcontextprotocol/ext-apps": "2.0.3",
-    "@modelcontextprotocol/inspector": "2.10.1",
+    "@modelcontextprotocol/inspector": "2.11.0",
     "@tailwindcss/postcss": "4.3.3",
     "@types/bun": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "e2e": "0.18.0",
+    "e2e": "0.21.2",
     "miniflare": "4.20260730.0",
     "pdfjs-dist": "6.4.299",
-    "playwright": "1.63.0",
+    "playwright": "1.64.1",
     "postcss": "8.5.30",
     "react": "catalog:",
     "react-dom": "catalog:",
@@ -42,7 +42,7 @@
     "@hono/zod-openapi": "1.6.3",
     "@modelcontextprotocol/server": "2.3.1",
     "hono": "4.13.13",
-    "lucide-react": "1.52.0",
+    "lucide-react": "1.59.0",
     "zod": "catalog:"
   }
 }
