@@ -18,6 +18,27 @@ class CoupledReadingTest(unittest.TestCase):
         self.document = manifest.read(manifest.JURISDICTIONS / '131156/2025/settlement/expenditure.json')
         self.conversion = self.document['conversions'][0]
 
+    def test_unpaired_spread_scope_stops_before_reading_a_pdf(self):
+        profile_path = 'fiscal/jurisdictions/132217/layouts/text_settlement/reading.json'
+        profile = json.loads(reading.declaration_path(profile_path).read_text())
+        profile['last_page'] -= 1
+        workflow = {'reading': {'pattern': 'offset_projects', 'profile': profile_path}, 'components': []}
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for name in reading.declaration_files(workflow):
+                target = root / name
+                target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(reading.declaration_path(name), target)
+            (root / profile_path).write_text(json.dumps(profile))
+            source = {'target': {'jurisdiction': '132217', 'fiscal_year': 2025, 'document_kind': 'settlement'},
+                      'direction': 'expenditure', 'format': 'pdf', 'pdf_type': 'text',
+                      'sha256': profile['origin_sha'], 'path': root / 'unread.pdf',
+                      'scope': [{'account': profile['account'],
+                                 'pages': [[profile['first_page'], profile['last_page']]]}]}
+            with patch.object(reading, 'INGESTION', root), self.assertRaisesRegex(ValueError, 'pair into left/right'):
+                reading.convert([source], root / 'candidate', {'workflow': workflow, 'table_id': 'unpaired'})
+            self.assertFalse((root / 'candidate').exists())
+
     def test_missing_duplicate_unused_and_unknown_components_stop(self):
         for components, error in (([], 'missing='),
                                   (['scoped_text', 'scoped_text', 'marker_boundary'], 'not valid'),
