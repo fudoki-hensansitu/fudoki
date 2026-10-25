@@ -18,6 +18,7 @@ CELL = re.compile(r'[△▲\-0-9,()]+円?')
 DESTINATION = re.compile(r'第[0-9]+[款項目][^0-9,円]+[△▲-]?[0-9][0-9,]*円')
 
 DICTIONARY = Path(__file__).resolve().parents[2] / 'shared/fiscal_annotation_map.csv'
+FINGERPRINT_RESOURCES = ['shared/fiscal_annotation_map.csv']
 
 
 def annotation_dictionary():

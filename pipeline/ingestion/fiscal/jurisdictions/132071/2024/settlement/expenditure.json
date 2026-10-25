@@ -17,7 +17,45 @@
       ],
       "options": {
         "account": "一般会計",
-        "table_id": "general-expenditure"
+        "table_id": "general-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "執行率(%)": {
+                  "kind": "ignore"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "amount_brackets": true,
+                  "plain_names": [
+                    "繰越明許費分",
+                    "継続費逓次繰越分"
+                  ],
+                  "headings": true,
+                  "bare_amounts": true,
+                  "bracketed_remainder": true
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {

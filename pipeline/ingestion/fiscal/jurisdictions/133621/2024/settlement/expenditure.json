@@ -17,7 +17,28 @@
       ],
       "options": {
         "account": "一般会計",
-        "table_id": "general-expenditure"
+        "table_id": "general-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -35,7 +56,28 @@
       ],
       "options": {
         "account": "国民健康保険事業特別会計（事業勘定）",
-        "table_id": "national-health-insurance-business-expenditure"
+        "table_id": "national-health-insurance-business-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -53,7 +95,28 @@
       ],
       "options": {
         "account": "国民健康保険事業特別会計（直診勘定）",
-        "table_id": "national-health-insurance-clinic-expenditure"
+        "table_id": "national-health-insurance-clinic-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -71,7 +134,28 @@
       ],
       "options": {
         "account": "介護保険事業特別会計（事業勘定）",
-        "table_id": "long-term-care-business-expenditure"
+        "table_id": "long-term-care-business-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "position"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -89,7 +173,28 @@
       ],
       "options": {
         "account": "後期高齢者事業特別会計",
-        "table_id": "elderly-medical-expenditure"
+        "table_id": "elderly-medical-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {

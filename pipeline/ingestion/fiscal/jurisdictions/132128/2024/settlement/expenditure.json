@@ -18,7 +18,55 @@
       "options": {
         "partial": true,
         "account": "一般会計",
-        "table_id": "general-expenditure-01"
+        "table_id": "general-expenditure-01",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "不用額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 0
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品",
+                    "拡充用"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -37,7 +85,55 @@
       "options": {
         "partial": true,
         "account": "一般会計",
-        "table_id": "general-expenditure-02"
+        "table_id": "general-expenditure-02",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "不用額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 0
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品",
+                    "拡充用"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -56,7 +152,55 @@
       "options": {
         "partial": true,
         "account": "一般会計",
-        "table_id": "general-expenditure-03"
+        "table_id": "general-expenditure-03",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "不用額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 0
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品",
+                    "拡充用"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -75,7 +219,55 @@
       "options": {
         "partial": true,
         "account": "一般会計",
-        "table_id": "general-expenditure-04"
+        "table_id": "general-expenditure-04",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "不用額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 0
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品",
+                    "拡充用"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -94,7 +286,55 @@
       "options": {
         "partial": true,
         "account": "一般会計",
-        "table_id": "general-expenditure-05"
+        "table_id": "general-expenditure-05",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "不用額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 0
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品",
+                    "拡充用"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -113,7 +353,55 @@
       "options": {
         "partial": true,
         "account": "一般会計",
-        "table_id": "general-expenditure-06"
+        "table_id": "general-expenditure-06",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "不用額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 0
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品",
+                    "拡充用"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -132,7 +420,55 @@
       "options": {
         "partial": true,
         "account": "一般会計",
-        "table_id": "general-expenditure-07"
+        "table_id": "general-expenditure-07",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "不用額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 0
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品",
+                    "拡充用"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -151,7 +487,55 @@
       "options": {
         "partial": true,
         "account": "一般会計",
-        "table_id": "general-expenditure-08"
+        "table_id": "general-expenditure-08",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "不用額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 0
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品",
+                    "拡充用"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -170,7 +554,55 @@
       "options": {
         "partial": true,
         "account": "一般会計",
-        "table_id": "general-expenditure-09"
+        "table_id": "general-expenditure-09",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "不用額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 0
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品",
+                    "拡充用"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -189,7 +621,55 @@
       "options": {
         "partial": true,
         "account": "一般会計",
-        "table_id": "general-expenditure-10"
+        "table_id": "general-expenditure-10",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "不用額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 0
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品",
+                    "拡充用"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -208,7 +688,55 @@
       "options": {
         "partial": true,
         "account": "一般会計",
-        "table_id": "general-expenditure-11"
+        "table_id": "general-expenditure-11",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "不用額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 0
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品",
+                    "拡充用"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -227,7 +755,55 @@
       "options": {
         "partial": true,
         "account": "一般会計",
-        "table_id": "general-expenditure-12"
+        "table_id": "general-expenditure-12",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "不用額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 0
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品",
+                    "拡充用"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -246,7 +822,55 @@
       "options": {
         "partial": true,
         "account": "一般会計",
-        "table_id": "general-expenditure-13"
+        "table_id": "general-expenditure-13",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "不用額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 0
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品",
+                    "拡充用"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -622,7 +1246,7 @@
       "input_fingerprint": "b549e1c71741cad5507380cca5ea2da7cc758f5fd356e93e677db91fe82a21f9",
       "account": "一般会計",
       "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
         "金額の単位は printed 2頁 から決めた。分冊のため款の和 0 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
         "金額の注記 41 件（充用 41）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 1 種（1 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"

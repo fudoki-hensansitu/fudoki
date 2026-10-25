@@ -27,7 +27,32 @@
       ],
       "options": {
         "account": "国民健康保険事業特別会計",
-        "table_id": "national-health-insurance-expenditure"
+        "table_id": "national-health-insurance-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1,
+                  "names_end_with_kind_words": true
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -45,7 +70,32 @@
       ],
       "options": {
         "account": "駐車場事業特別会計",
-        "table_id": "parking-expenditure"
+        "table_id": "parking-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1,
+                  "names_end_with_kind_words": true
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -63,7 +113,32 @@
       ],
       "options": {
         "account": "介護保険特別会計",
-        "table_id": "long-term-care-expenditure"
+        "table_id": "long-term-care-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1,
+                  "names_end_with_kind_words": true
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -81,7 +156,32 @@
       ],
       "options": {
         "account": "一般会計",
-        "table_id": "general-expenditure"
+        "table_id": "general-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1,
+                  "names_end_with_kind_words": true
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {

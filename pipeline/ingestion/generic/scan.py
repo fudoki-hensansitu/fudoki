@@ -19,6 +19,7 @@ import re
 
 from ingestion.generic.layout import SIGNS, _frames, _header_bottom, normalize
 from ingestion.generic.observe import Page, Rule, Word
+from ingestion.generic.workflow import read_layout
 from ingestion.lib import pdf_rules
 from ingestion.lib.scan_ocr import superseded
 from ingestion.lib.ocr_names import (AmountDictionary, AmountRule, correct_amount, correct_name, correct_variant_chars,
@@ -49,8 +50,7 @@ def header_path(header: tuple[str, ...]) -> tuple[str, ...]:
 
 def _layout(observed: list[Page], columns: dict | None, *, spread: dict | None = None,
             header: dict | None = None) -> list:
-    from ingestion.generic.layout import logical_pages
-    found = logical_pages(observed, columns=columns, spread=spread, header=header)
+    found = read_layout(observed, columns=columns, spread=spread, header=header)
     for logical in found:
         logical.ocr = True
         for band in logical.bands:
@@ -582,7 +582,8 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
         plain = agreed([page(p, pdf, detected=detected(p['page_number'])) for p in observation['pages']])
         # The code of a 款・項・目 or of a 節 sits in a label column; a number in an amount column is not a code.
         subjects = [b for l in _layout(plain, columns, spread=spread, header=header)
-                    for g in groups(l) for b in g.bands if g.subject or b.kind == 'label']
+                    for g in groups(l, (header or {}).get('_subject_pattern', 'bands'))
+                    for b in g.bands if g.subject or b.kind == 'label']
         readings = {(p['page_number'], o['id']): o for p in observation['pages']
                     for region in p['regions'] for o in region['observations']}
         for rule in code_corrections:
@@ -693,7 +694,7 @@ def logicals(observation: dict, pdf: Path, corrections: AmountDictionary | None 
     return _layout(observed, columns, spread=spread, header=header)
 
 
-def code_holes(logical_pages_: list) -> list[dict]:
+def code_holes(logical_pages_: list, pattern: str = 'bands') -> list[dict]:
     """Only a numbered subject sequence with one missing row warrants an ink search.
 
     A 6 / unnumbered name / 8, or an unnumbered name followed by 2 at the start of a
@@ -704,7 +705,7 @@ def code_holes(logical_pages_: list) -> list[dict]:
     from ingestion.generic.tree import _cell, _split_code, groups, subject_items
     holes = []
     for logical in logical_pages_:
-        for group in groups(logical):
+        for group in groups(logical, pattern):
             if not group.subject:
                 continue
             items = subject_items(group)
@@ -895,7 +896,8 @@ def recover_codes(observed: list[Page], pdf: Path, columns: dict | None = None,
     separate from the name. Other digits and ambiguous marks are left for explicit OCR.
     """
     from ingestion.lib.scan_ocr import missed_ink
-    holes = [h for h in code_holes(_layout(observed, columns, spread=spread, header=header)) if h['expected'] == 1]
+    holes = [h for h in code_holes(_layout(observed, columns, spread=spread, header=header),
+                                    (header or {}).get('_subject_pattern', 'bands')) if h['expected'] == 1]
     images, filled, words = {}, [], {p.number: list(p.words) for p in observed}
     last_hole = {h['page']: index for index, h in enumerate(holes)}
     for index, hole in enumerate(holes):
@@ -1024,15 +1026,15 @@ def read_pages(source: dict, options: dict, settings: dict | None, selected: lis
 
 def build_table(source: dict, options: dict, *, stop: bool = True, rules: dict | None = None):
     """The scan entry of the same builder and finalization as text; the converter never runs OCR or VLM."""
-    from ingestion.generic.build import choose_pattern, page_titles
+    from ingestion.generic.runtime import page_titles
+    from ingestion.generic.workflow import build_reading, effective_settings
     from ingestion.generic.convert import Table, canonical_headings, correct_names, excluded_regions, fine_sections, scope_pages, split_notes
-    from ingestion.generic.layout_settings import load
     from ingestion.generic.repair import Report
     from ingestion.generic.units import check as check_units
     if source.get('format') != 'pdf' or source.get('pdf_type') != 'scan':
         raise ValueError('The scan builder requires a scan PDF')
     selected = scope_pages(source, options['account'], options.get('pages'))
-    settings = load(source['target'], source.get('direction') or 'expenditure')
+    settings = effective_settings(source, options, text_pdf=False)
     columns = (settings or {}).get('columns')
     spread = (settings or {}).get('spread')
     header = (settings or {}).get('header')
@@ -1047,7 +1049,9 @@ def build_table(source: dict, options: dict, *, stop: bool = True, rules: dict |
     observed = [p for p in printed if p.number not in report.skipped_pages]
     logical = _layout(observed, columns, spread=spread, header=header)
     kind = source['target']['document_kind']
-    built, report.pattern = choose_pattern(logical, kind, layout=(settings or {}).get('breakdown'))
+    built, report.pattern = build_reading(logical, kind, layout=(settings or {}).get('breakdown'),
+                                         codes_right=(settings or {}).get('codes') == 'right',
+                                         workflow=options.get('workflow'))
     declared_unread(built, logical, columns, observation)
     built.notes.extend(recovered)
     report.unit = check_units(built, kind, options['account'], bool(options.get('partial')))

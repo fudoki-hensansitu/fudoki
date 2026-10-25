@@ -28,7 +28,47 @@
       ],
       "options": {
         "account": "土地区画整理事業特別会計",
-        "table_id": "land-readjustment-expenditure"
+        "table_id": "land-readjustment-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 1
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -46,7 +86,47 @@
       ],
       "options": {
         "account": "国民健康保険特別会計",
-        "table_id": "national-health-insurance-expenditure"
+        "table_id": "national-health-insurance-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 1
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              },
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -64,7 +144,47 @@
       ],
       "options": {
         "account": "介護保険特別会計",
-        "table_id": "long-term-care-expenditure"
+        "table_id": "long-term-care-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 1
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -82,7 +202,47 @@
       ],
       "options": {
         "account": "一般会計",
-        "table_id": "general-expenditure"
+        "table_id": "general-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 1
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {

@@ -28,7 +28,7 @@ from pathlib import Path
 import re
 from types import SimpleNamespace
 
-from ingestion.generic.build import dictionary_header
+from ingestion.generic.headers import dictionary_header
 from ingestion.generic.tree import STACKED_KIND
 from ingestion.generic.units import _phase, check as check_units
 from ingestion.fiscal.subject_checks import check_subject

@@ -1,6 +1,8 @@
 """Migrate declared PDF columns to printed nodes and amounts; reject ambiguous layouts."""
 from __future__ import annotations
 
+FINGERPRINT_RESOURCES = ['shared/fiscal_amount_map.csv', 'shared/amount.py']
+
 from collections import defaultdict
 import csv
 from dataclasses import dataclass

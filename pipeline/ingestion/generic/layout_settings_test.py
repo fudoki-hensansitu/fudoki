@@ -243,6 +243,8 @@ class LayoutHintsTest(unittest.TestCase):
 class LayoutRegistryTest(unittest.TestCase):
     def test_settings_add_change_and_remove_stale_only_converters_that_read_them(self):
         generic = manifest.read(manifest.JURISDICTIONS / '132039/2025/settlement/expenditure.json')
+        for conversion in generic['conversions']:
+            conversion['options'].pop('workflow', None)
         csv = manifest.read(manifest.JURISDICTIONS / '132047/2024/initial/expenditure.json')
         with tempfile.TemporaryDirectory() as tmp, patch.object(manifest, 'JURISDICTIONS', Path(tmp)):
             plain = manifest.fingerprints(generic)

@@ -16,7 +16,7 @@ import json
 import re
 from pathlib import Path
 
-from ingestion.generic.build import dictionary_header
+from ingestion.generic.headers import dictionary_header
 from ingestion.generic.layout import normalize
 from ingestion.lib.node_tables import amount_phase, read_rows
 from shared.amount import number

@@ -17,7 +17,55 @@
       ],
       "options": {
         "account": "介護保険特別会計",
-        "table_id": "care-expenditure"
+        "table_id": "care-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "text_layer": {
+                "character_map": {
+                  "\u0013": "0",
+                  "\u0014": "1",
+                  "\u0015": "2",
+                  "\u0016": "3",
+                  "\u0017": "4",
+                  "\u0018": "5",
+                  "\u0019": "6",
+                  "\u001a": "7",
+                  "\u001b": "8",
+                  "\u001c": "9",
+                  "\u000f": ","
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "plain_names": [
+                    "補充用"
+                  ],
+                  "wrap": "amount_on_last_line"
+                }
+              }
+            }
+          },
+          "repairs": [
+            "opening_cell",
+            "overprint"
+          ]
+        }
       },
       "expected_tables": [
         {
@@ -35,7 +83,55 @@
       ],
       "options": {
         "account": "国民健康保険事業会計",
-        "table_id": "national-health-expenditure"
+        "table_id": "national-health-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "text_layer": {
+                "character_map": {
+                  "\u0013": "0",
+                  "\u0014": "1",
+                  "\u0015": "2",
+                  "\u0016": "3",
+                  "\u0017": "4",
+                  "\u0018": "5",
+                  "\u0019": "6",
+                  "\u001a": "7",
+                  "\u001b": "8",
+                  "\u001c": "9",
+                  "\u000f": ","
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "shape",
+                "options": {
+                  "plain_names": [
+                    "補充用"
+                  ],
+                  "wrap": "amount_on_last_line"
+                }
+              }
+            }
+          },
+          "repairs": [
+            "opening_cell",
+            "overprint"
+          ]
+        }
       },
       "expected_tables": [
         {
@@ -53,7 +149,55 @@
       ],
       "options": {
         "account": "後期高齢者医療特別会計",
-        "table_id": "elderly-medical-expenditure"
+        "table_id": "elderly-medical-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "text_layer": {
+                "character_map": {
+                  "\u0013": "0",
+                  "\u0014": "1",
+                  "\u0015": "2",
+                  "\u0016": "3",
+                  "\u0017": "4",
+                  "\u0018": "5",
+                  "\u0019": "6",
+                  "\u001a": "7",
+                  "\u001b": "8",
+                  "\u001c": "9",
+                  "\u000f": ","
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "plain_names": [
+                    "補充用"
+                  ],
+                  "wrap": "amount_on_last_line"
+                }
+              }
+            }
+          },
+          "repairs": [
+            "opening_cell",
+            "overprint"
+          ]
+        }
       },
       "expected_tables": [
         {

@@ -84,7 +84,7 @@ def kan_entries(nodes: list[dict], amounts: list[dict], document_kind: str
     counted. Anything less (a different unit, a 款 with an amount missing or added, an unnamed
     款) counts in full, so a doubtful sum stops the build.
     """
-    from ingestion.generic.build import dictionary_header
+    from ingestion.generic.headers import dictionary_header
     from ingestion.lib.node_tables import amount_phase
     from shared.amount import number
     phase = _phase(document_kind)
@@ -134,7 +134,7 @@ def check(built, document_kind: str, account: str | None = None, partial: bool =
     `partial`: the original holds one volume of an account printed in several (西東京's 13 files). Its
     款 are some of the account's, so neither the sum against the printed total nor the digits of the sum say
     anything: both are reported and never stop the table. A 款 printed with two amounts still does."""
-    from ingestion.generic.build import dictionary_header
+    from ingestion.generic.headers import dictionary_header
     from ingestion.lib.node_tables import amount_phase
     from shared.amount import number
     phase = _phase(document_kind)

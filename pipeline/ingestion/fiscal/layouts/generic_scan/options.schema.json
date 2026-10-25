@@ -447,6 +447,9 @@
           "reason"
         ]
       }
+    },
+    "workflow": {
+      "type": "object"
     }
   },
   "required": [

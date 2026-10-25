@@ -19,7 +19,78 @@
         "account": "一般会計",
         "table_id": "general-kaikei",
         "partial": true,
-        "division": "会計室"
+        "division": "会計室",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。事業の説明と、その一部の金額（「1 経済調査企画等 61,371千円」「◎職員手当等の内訳 扶養手当 2,466,000円」）。局ごとに千円・円が混ざり、目の一部や節の内訳だけを挙げるので目・節の金額の内訳として閉じない。今回は取り込まない。"
+                  }
+                },
+                "予算現額／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越し": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "text_layer": {
+                "form_clips": true,
+                "image_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "name_column": true,
+                  "name_line_reach": 1.5,
+                  "indent_chars": 2
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -679,7 +750,74 @@
             "corrected_name": "使用料及賃借料",
             "reason": "行財政局の冊 物理26頁、番号13の名称をOCRが「使用料及赁借料」と読んだ（「賃」を簡体字の「赁」と読んだ）。原典の描画で確認した。"
           }
-        ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。事業の説明と、その一部の金額（「1 経済調査企画等 61,371千円」「◎職員手当等の内訳 扶養手当 2,466,000円」）。局ごとに千円・円が混ざり、目の一部や節の内訳だけを挙げるので目・節の金額の内訳として閉じない。今回は取り込まない。"
+                  }
+                },
+                "予算現額／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越し": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "name_column": true,
+                  "name_line_reach": 1.5,
+                  "indent_chars": 2
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -753,7 +891,74 @@
             "text": "継続費逓次繰越",
             "reason": "行財政局の冊（決算説明書）の物理37頁。見出しは字間を空けた印字で、OCR が升の字を欠いて読んだ（「予備費支出及流用増△減」「継続費逓繰越次」）。原典の描画で升の印字を確認した。"
           }
-        ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。事業の説明と、その一部の金額（「1 経済調査企画等 61,371千円」「◎職員手当等の内訳 扶養手当 2,466,000円」）。局ごとに千円・円が混ざり、目の一部や節の内訳だけを挙げるので目・節の金額の内訳として閉じない。今回は取り込まない。"
+                  }
+                },
+                "予算現額／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越し": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "name_column": true,
+                  "name_line_reach": 1.5,
+                  "indent_chars": 2
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -797,7 +1002,78 @@
             6,
             9
           ]
-        ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。事業の説明と、その一部の金額（「1 経済調査企画等 61,371千円」「◎職員手当等の内訳 扶養手当 2,466,000円」）。局ごとに千円・円が混ざり、目の一部や節の内訳だけを挙げるので目・節の金額の内訳として閉じない。今回は取り込まない。"
+                  }
+                },
+                "予算現額／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越し": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "text_layer": {
+                "form_clips": true,
+                "image_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "name_column": true,
+                  "name_line_reach": 1.5,
+                  "indent_chars": 2
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -823,7 +1099,78 @@
             13,
             14
           ]
-        ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。事業の説明と、その一部の金額（「1 経済調査企画等 61,371千円」「◎職員手当等の内訳 扶養手当 2,466,000円」）。局ごとに千円・円が混ざり、目の一部や節の内訳だけを挙げるので目・節の金額の内訳として閉じない。今回は取り込まない。"
+                  }
+                },
+                "予算現額／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越し": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "text_layer": {
+                "form_clips": true,
+                "image_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "name_column": true,
+                  "name_line_reach": 1.5,
+                  "indent_chars": 2
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -849,7 +1196,78 @@
             17,
             17
           ]
-        ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。事業の説明と、その一部の金額（「1 経済調査企画等 61,371千円」「◎職員手当等の内訳 扶養手当 2,466,000円」）。局ごとに千円・円が混ざり、目の一部や節の内訳だけを挙げるので目・節の金額の内訳として閉じない。今回は取り込まない。"
+                  }
+                },
+                "予算現額／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越し": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "text_layer": {
+                "form_clips": true,
+                "image_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "name_column": true,
+                  "name_line_reach": 1.5,
+                  "indent_chars": 2
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -869,7 +1287,78 @@
         "account": "一般会計",
         "table_id": "general-kikaku",
         "partial": true,
-        "division": "企画調整局"
+        "division": "企画調整局",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。事業の説明と、その一部の金額（「1 経済調査企画等 61,371千円」「◎職員手当等の内訳 扶養手当 2,466,000円」）。局ごとに千円・円が混ざり、目の一部や節の内訳だけを挙げるので目・節の金額の内訳として閉じない。今回は取り込まない。"
+                  }
+                },
+                "予算現額／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越し": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "text_layer": {
+                "form_clips": true,
+                "image_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "name_column": true,
+                  "name_line_reach": 1.5,
+                  "indent_chars": 2
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -889,7 +1378,78 @@
         "account": "一般会計",
         "table_id": "general-fukushi",
         "partial": true,
-        "division": "福祉局"
+        "division": "福祉局",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。事業の説明と、その一部の金額（「1 経済調査企画等 61,371千円」「◎職員手当等の内訳 扶養手当 2,466,000円」）。局ごとに千円・円が混ざり、目の一部や節の内訳だけを挙げるので目・節の金額の内訳として閉じない。今回は取り込まない。"
+                  }
+                },
+                "予算現額／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越し": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "text_layer": {
+                "form_clips": true,
+                "image_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "name_column": true,
+                  "name_line_reach": 1.5,
+                  "indent_chars": 2
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -909,7 +1469,78 @@
         "account": "国民健康保険事業費",
         "table_id": "nhi-fukushi",
         "partial": true,
-        "division": "福祉局"
+        "division": "福祉局",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。事業の説明と、その一部の金額（「1 経済調査企画等 61,371千円」「◎職員手当等の内訳 扶養手当 2,466,000円」）。局ごとに千円・円が混ざり、目の一部や節の内訳だけを挙げるので目・節の金額の内訳として閉じない。今回は取り込まない。"
+                  }
+                },
+                "予算現額／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越し": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "text_layer": {
+                "form_clips": true,
+                "image_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "name_column": true,
+                  "name_line_reach": 1.5,
+                  "indent_chars": 2
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -929,7 +1560,78 @@
         "account": "介護保険事業費",
         "table_id": "care-fukushi",
         "partial": true,
-        "division": "福祉局"
+        "division": "福祉局",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。事業の説明と、その一部の金額（「1 経済調査企画等 61,371千円」「◎職員手当等の内訳 扶養手当 2,466,000円」）。局ごとに千円・円が混ざり、目の一部や節の内訳だけを挙げるので目・節の金額の内訳として閉じない。今回は取り込まない。"
+                  }
+                },
+                "予算現額／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越し": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "text_layer": {
+                "form_clips": true,
+                "image_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "name_column": true,
+                  "name_line_reach": 1.5,
+                  "indent_chars": 2
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -949,7 +1651,78 @@
         "account": "後期高齢者医療事業費",
         "table_id": "elderly-fukushi",
         "partial": true,
-        "division": "福祉局"
+        "division": "福祉局",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。事業の説明と、その一部の金額（「1 経済調査企画等 61,371千円」「◎職員手当等の内訳 扶養手当 2,466,000円」）。局ごとに千円・円が混ざり、目の一部や節の内訳だけを挙げるので目・節の金額の内訳として閉じない。今回は取り込まない。"
+                  }
+                },
+                "予算現額／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越し": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "text_layer": {
+                "form_clips": true,
+                "image_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "name_column": true,
+                  "name_line_reach": 1.5,
+                  "indent_chars": 2
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -979,7 +1752,78 @@
             "corrected_name": "スポーツ振興費",
             "reason": "文字層が長音符を水平線（U+2015）で持つ。印字は長音符で、他局の冊の同じ目の名前（スポーツ振興費）と一致する。"
           }
-        ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。事業の説明と、その一部の金額（「1 経済調査企画等 61,371千円」「◎職員手当等の内訳 扶養手当 2,466,000円」）。局ごとに千円・円が混ざり、目の一部や節の内訳だけを挙げるので目・節の金額の内訳として閉じない。今回は取り込まない。"
+                  }
+                },
+                "予算現額／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越し": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "text_layer": {
+                "form_clips": true,
+                "image_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "name_column": true,
+                  "name_line_reach": 1.5,
+                  "indent_chars": 2
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -999,7 +1843,78 @@
         "account": "駐車場事業費",
         "table_id": "parking-kensetsu",
         "partial": true,
-        "division": "建設局"
+        "division": "建設局",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。事業の説明と、その一部の金額（「1 経済調査企画等 61,371千円」「◎職員手当等の内訳 扶養手当 2,466,000円」）。局ごとに千円・円が混ざり、目の一部や節の内訳だけを挙げるので目・節の金額の内訳として閉じない。今回は取り込まない。"
+                  }
+                },
+                "予算現額／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越し": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "text_layer": {
+                "form_clips": true,
+                "image_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "name_column": true,
+                  "name_line_reach": 1.5,
+                  "indent_chars": 2
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -1069,7 +1984,74 @@
             "corrected_name": "事業所等整備費",
             "reason": "環境局の冊 物理19頁、番号3の名称をOCRが「業所等事整備費」と読んだ（折り返した名称の字の順がOCRで入れ替わった）。原典の描画で確認した。"
           }
-        ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。事業の説明と、その一部の金額（「1 経済調査企画等 61,371千円」「◎職員手当等の内訳 扶養手当 2,466,000円」）。局ごとに千円・円が混ざり、目の一部や節の内訳だけを挙げるので目・節の金額の内訳として閉じない。今回は取り込まない。"
+                  }
+                },
+                "予算現額／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越し": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "name_column": true,
+                  "name_line_reach": 1.5,
+                  "indent_chars": 2
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -1110,7 +2092,78 @@
         "account": "一般会計",
         "table_id": "general-chiiki",
         "partial": true,
-        "division": "地域協働局"
+        "division": "地域協働局",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。事業の説明と、その一部の金額（「1 経済調査企画等 61,371千円」「◎職員手当等の内訳 扶養手当 2,466,000円」）。局ごとに千円・円が混ざり、目の一部や節の内訳だけを挙げるので目・節の金額の内訳として閉じない。今回は取り込まない。"
+                  }
+                },
+                "予算現額／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越し": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "text_layer": {
+                "form_clips": true,
+                "image_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "name_column": true,
+                  "name_line_reach": 1.5,
+                  "indent_chars": 2
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -1154,7 +2207,74 @@
             "corrected_name": "使用料及賃借料",
             "reason": "建築住宅局の冊 物理9頁、番号13の名称をOCRが「使用料及赁借料」と読んだ（「賃」を簡体字の「赁」と読んだ）。原典の描画で確認した。"
           }
-        ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。事業の説明と、その一部の金額（「1 経済調査企画等 61,371千円」「◎職員手当等の内訳 扶養手当 2,466,000円」）。局ごとに千円・円が混ざり、目の一部や節の内訳だけを挙げるので目・節の金額の内訳として閉じない。今回は取り込まない。"
+                  }
+                },
+                "予算現額／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越し": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "name_column": true,
+                  "name_line_reach": 1.5,
+                  "indent_chars": 2
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -1196,7 +2316,78 @@
         "account": "一般会計",
         "table_id": "general-keizai",
         "partial": true,
-        "division": "経済観光局"
+        "division": "経済観光局",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。事業の説明と、その一部の金額（「1 経済調査企画等 61,371千円」「◎職員手当等の内訳 扶養手当 2,466,000円」）。局ごとに千円・円が混ざり、目の一部や節の内訳だけを挙げるので目・節の金額の内訳として閉じない。今回は取り込まない。"
+                  }
+                },
+                "予算現額／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越し": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "text_layer": {
+                "form_clips": true,
+                "image_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "name_column": true,
+                  "name_line_reach": 1.5,
+                  "indent_chars": 2
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -1216,7 +2407,78 @@
         "account": "市場事業費",
         "table_id": "market-keizai",
         "partial": true,
-        "division": "経済観光局"
+        "division": "経済観光局",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。事業の説明と、その一部の金額（「1 経済調査企画等 61,371千円」「◎職員手当等の内訳 扶養手当 2,466,000円」）。局ごとに千円・円が混ざり、目の一部や節の内訳だけを挙げるので目・節の金額の内訳として閉じない。今回は取り込まない。"
+                  }
+                },
+                "予算現額／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越し": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "text_layer": {
+                "form_clips": true,
+                "image_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "name_column": true,
+                  "name_line_reach": 1.5,
+                  "indent_chars": 2
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -1236,7 +2498,78 @@
         "account": "食肉センター事業費",
         "table_id": "meat-keizai",
         "partial": true,
-        "division": "経済観光局"
+        "division": "経済観光局",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。事業の説明と、その一部の金額（「1 経済調査企画等 61,371千円」「◎職員手当等の内訳 扶養手当 2,466,000円」）。局ごとに千円・円が混ざり、目の一部や節の内訳だけを挙げるので目・節の金額の内訳として閉じない。今回は取り込まない。"
+                  }
+                },
+                "予算現額／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越し": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "text_layer": {
+                "form_clips": true,
+                "image_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "name_column": true,
+                  "name_line_reach": 1.5,
+                  "indent_chars": 2
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -1348,7 +2681,74 @@
             "corrected_name": "教育施設整備費",
             "reason": "教育委員会の冊 物理33頁、番号14の名称をOCRが「教育設整費」と読んだ（折り返した名称の「施」「備」を読み落とした）。原典の描画で確認した。"
           }
-        ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。事業の説明と、その一部の金額（「1 経済調査企画等 61,371千円」「◎職員手当等の内訳 扶養手当 2,466,000円」）。局ごとに千円・円が混ざり、目の一部や節の内訳だけを挙げるので目・節の金額の内訳として閉じない。今回は取り込まない。"
+                  }
+                },
+                "予算現額／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越し": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "name_column": true,
+                  "name_line_reach": 1.5,
+                  "indent_chars": 2
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -1424,7 +2824,78 @@
             "corrected_name": "民生施設整備費",
             "reason": "2行に組んだ項の名前を、文字層が上下の行を交互に読んだ（生施民整設費備）。原典の描画で印字を確認した。決算第1号と他局の冊の同じ項の名前とも一致する。"
           }
-        ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。事業の説明と、その一部の金額（「1 経済調査企画等 61,371千円」「◎職員手当等の内訳 扶養手当 2,466,000円」）。局ごとに千円・円が混ざり、目の一部や節の内訳だけを挙げるので目・節の金額の内訳として閉じない。今回は取り込まない。"
+                  }
+                },
+                "予算現額／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越し": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "text_layer": {
+                "form_clips": true,
+                "image_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "name_column": true,
+                  "name_line_reach": 1.5,
+                  "indent_chars": 2
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -1444,7 +2915,78 @@
         "account": "母子父子寡婦福祉資金貸付事業費",
         "table_id": "single-parent-kodomo",
         "partial": true,
-        "division": "こども家庭局"
+        "division": "こども家庭局",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。事業の説明と、その一部の金額（「1 経済調査企画等 61,371千円」「◎職員手当等の内訳 扶養手当 2,466,000円」）。局ごとに千円・円が混ざり、目の一部や節の内訳だけを挙げるので目・節の金額の内訳として閉じない。今回は取り込まない。"
+                  }
+                },
+                "予算現額／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越し": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "text_layer": {
+                "form_clips": true,
+                "image_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "name_column": true,
+                  "name_line_reach": 1.5,
+                  "indent_chars": 2
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -1547,7 +3089,74 @@
             "amount": "0",
             "reason": "港湾局の冊 物理75頁、款の行の翌年度繰越額（継続費逓次繰越）の欄の0。単位「円」の下の0を、OCRが円と重ねて「。」と読んだ。原典の描画で確認した。"
           }
-        ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。事業の説明と、その一部の金額（「1 経済調査企画等 61,371千円」「◎職員手当等の内訳 扶養手当 2,466,000円」）。局ごとに千円・円が混ざり、目の一部や節の内訳だけを挙げるので目・節の金額の内訳として閉じない。今回は取り込まない。"
+                  }
+                },
+                "予算現額／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越し": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "name_column": true,
+                  "name_line_reach": 1.5,
+                  "indent_chars": 2
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -1604,7 +3213,78 @@
             "corrected_name": "都市改造事業費",
             "reason": "2行に組んだ項の名前を、文字層が上下の行を交互に読んだ（市改都事造費業）。原典の描画で印字を確認した。決算第1号と他局の冊の同じ項の名前とも一致する。"
           }
-        ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。事業の説明と、その一部の金額（「1 経済調査企画等 61,371千円」「◎職員手当等の内訳 扶養手当 2,466,000円」）。局ごとに千円・円が混ざり、目の一部や節の内訳だけを挙げるので目・節の金額の内訳として閉じない。今回は取り込まない。"
+                  }
+                },
+                "予算現額／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越し": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "text_layer": {
+                "form_clips": true,
+                "image_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "name_column": true,
+                  "name_line_reach": 1.5,
+                  "indent_chars": 2
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -1634,7 +3314,78 @@
             "corrected_name": "他会計へ繰出金",
             "reason": "2行に組んだ項の名前を、文字層が上下の行を交互に読んだ（他会計へ金繰出）。原典の描画で印字を確認した。市場事業費・食肉センター事業費の同じ項の名前とも一致する。"
           }
-        ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。事業の説明と、その一部の金額（「1 経済調査企画等 61,371千円」「◎職員手当等の内訳 扶養手当 2,466,000円」）。局ごとに千円・円が混ざり、目の一部や節の内訳だけを挙げるので目・節の金額の内訳として閉じない。今回は取り込まない。"
+                  }
+                },
+                "予算現額／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越し": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "text_layer": {
+                "form_clips": true,
+                "image_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "name_column": true,
+                  "name_line_reach": 1.5,
+                  "indent_chars": 2
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -1654,7 +3405,78 @@
         "account": "一般会計",
         "table_id": "general-bunka",
         "partial": true,
-        "division": "文化スポーツ局"
+        "division": "文化スポーツ局",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。事業の説明と、その一部の金額（「1 経済調査企画等 61,371千円」「◎職員手当等の内訳 扶養手当 2,466,000円」）。局ごとに千円・円が混ざり、目の一部や節の内訳だけを挙げるので目・節の金額の内訳として閉じない。今回は取り込まない。"
+                  }
+                },
+                "予算現額／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越し": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "text_layer": {
+                "form_clips": true,
+                "image_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "name_column": true,
+                  "name_line_reach": 1.5,
+                  "indent_chars": 2
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -1674,7 +3496,74 @@
         "account": "一般会計",
         "table_id": "general-kikikanri",
         "partial": true,
-        "division": "危機管理局"
+        "division": "危機管理局",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。事業の説明と、その一部の金額（「1 経済調査企画等 61,371千円」「◎職員手当等の内訳 扶養手当 2,466,000円」）。局ごとに千円・円が混ざり、目の一部や節の内訳だけを挙げるので目・節の金額の内訳として閉じない。今回は取り込まない。"
+                  }
+                },
+                "予算現額／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越し": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "name_column": true,
+                  "name_line_reach": 1.5,
+                  "indent_chars": 2
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -1710,7 +3599,78 @@
         "account": "一般会計",
         "table_id": "general-shobou",
         "partial": true,
-        "division": "消防局"
+        "division": "消防局",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。事業の説明と、その一部の金額（「1 経済調査企画等 61,371千円」「◎職員手当等の内訳 扶養手当 2,466,000円」）。局ごとに千円・円が混ざり、目の一部や節の内訳だけを挙げるので目・節の金額の内訳として閉じない。今回は取り込まない。"
+                  }
+                },
+                "予算現額／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越し": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "text_layer": {
+                "form_clips": true,
+                "image_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "name_column": true,
+                  "name_line_reach": 1.5,
+                  "indent_chars": 2
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -1730,7 +3690,78 @@
         "account": "一般会計",
         "table_id": "general-kenkou",
         "partial": true,
-        "division": "健康局"
+        "division": "健康局",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。事業の説明と、その一部の金額（「1 経済調査企画等 61,371千円」「◎職員手当等の内訳 扶養手当 2,466,000円」）。局ごとに千円・円が混ざり、目の一部や節の内訳だけを挙げるので目・節の金額の内訳として閉じない。今回は取り込まない。"
+                  }
+                },
+                "予算現額／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越し": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "text_layer": {
+                "form_clips": true,
+                "image_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "name_column": true,
+                  "name_line_reach": 1.5,
+                  "indent_chars": 2
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -1750,7 +3781,78 @@
         "account": "介護保険事業費",
         "table_id": "care-kenkou",
         "partial": true,
-        "division": "健康局"
+        "division": "健康局",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。事業の説明と、その一部の金額（「1 経済調査企画等 61,371千円」「◎職員手当等の内訳 扶養手当 2,466,000円」）。局ごとに千円・円が混ざり、目の一部や節の内訳だけを挙げるので目・節の金額の内訳として閉じない。今回は取り込まない。"
+                  }
+                },
+                "予算現額／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越し": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "text_layer": {
+                "form_clips": true,
+                "image_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "name_column": true,
+                  "name_line_reach": 1.5,
+                  "indent_chars": 2
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -1768,7 +3870,78 @@
       ],
       "options": {
         "account": "一般会計",
-        "table_id": "general"
+        "table_id": "general",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。事業の説明と、その一部の金額（「1 経済調査企画等 61,371千円」「◎職員手当等の内訳 扶養手当 2,466,000円」）。局ごとに千円・円が混ざり、目の一部や節の内訳だけを挙げるので目・節の金額の内訳として閉じない。今回は取り込まない。"
+                  }
+                },
+                "予算現額／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越し": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "text_layer": {
+                "form_clips": true,
+                "image_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "name_column": true,
+                  "name_line_reach": 1.5,
+                  "indent_chars": 2
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -2727,7 +4900,7 @@
       "input_fingerprint": "e8765c66ef8deb0d62698686be1f77edecdf22b758a25fb6cd0ecd8d2ce334d8",
       "account": "一般会計",
       "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {}。",
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
         "金額の単位は printed 3頁 から決めた。款の和 1,027,468,122,201 と印字の「歳出合計」1,027,468,122,201 が一致。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 1 種（78 件）を、印字された語から辞書の見出しに寄せた: 予算現額と支出済額との比較→比較。"

@@ -24,6 +24,7 @@ import hashlib
 import re
 import unicodedata
 
+from ingestion.generic.patterns import load as load_pattern
 from ingestion.generic.notes import kind_of, reads_as_note
 from ingestion.lib.node_tables import amount_phase, phase_dictionary
 from shared.amount import number
@@ -170,35 +171,7 @@ def groups(logical: Logical, pattern: str = 'bands') -> list[Group]:
     labels = [b for b in bands if b.kind == 'label']
     subject_bands: list[Band] = []
     mode, count = pattern, None
-    if pattern in ('bands', 'names'):
-        for index, band in enumerate(bands):
-            if band.kind == 'label' and band.header and band.header[-1] in SUBJECT_LEVELS:
-                if subject_bands and subject_bands[-1] is not bands[index - 1]:
-                    break
-                subject_bands.append(band)
-        count = len(subject_bands)
-        if pattern == 'names' and subject_bands:
-            following = bands.index(subject_bands[-1]) + 1
-            if following < len(bands) and bands[following].kind == 'label' and not (
-                    bands[following].header and bands[following].header[-1] in SUBJECT_LEVELS) and (
-                    not bands[following].header or subject_header(bands[following].header)):
-                subject_bands.append(bands[following])
-            else:
-                subject_bands = []
-    elif pattern == 'indent':
-        # Every neighbouring label band headed by 款・項・目 (or 科目) is one subject
-        # column; a staircase of narrow level columns is read by indentation too.
-        # (A declared axis `科目` (layout `columns`) names a subject column the header words do not: 区分.)
-        subject_band = lambda b: bool(b.header) and (subject_header(b.header) or b.axis_header == '科目')
-        for band in labels:
-            if subject_band(band):
-                subject_bands = [band]
-                index = bands.index(band)
-                while index + 1 < len(bands) and bands[index + 1].kind == 'label' and (
-                        bands[index + 1].header == band.header or subject_band(bands[index + 1])):
-                    index += 1
-                    subject_bands.append(bands[index])
-                break
+    subject_bands, mode, count = load_pattern("subject", pattern).select(bands)
     result: list[Group] = []
     for band in bands:
         if band in subject_bands:
@@ -1255,142 +1228,23 @@ def shape_of(item: Item) -> str | None:
     return None
 
 
-def number_span(glyph: Glyph) -> tuple[float, float, int]:
-    """Where a leading number starts and ends, and its digit count. The end comes from the
-    digits' own widths (a half-width digit is half the line height, a full-width one the
-    height), not from the word's average character width, which a name joined to the number
-    (`13使用料…`) widens. An opening bracket (`(1)`) is not part of the number: it starts where the digits do."""
-    height = glyph.y1 - glyph.y0
-    text = glyph.text
-    lead = 1 if text[:1] in ('(', '（') else 0
-    start = glyph.x0 + (height / 2 if lead and text[0].isascii() else height if lead else 0)
-    body = text[lead:]
-    digits = len(body) - len(body.lstrip('0123456789０１２３４５６７８９'))
-    full = sum(1 for c in body[:digits] if not c.isascii())
-    return start, start + (digits - full) * height / 2 + full * height, digits
+def number_span(glyph):
+    return load_pattern("breakdown", "shape").number_span(glyph)
 
 
-# An end that fits is a weaker sign of one position than a start that fits (points).
-END_PENALTY = 2.0
+def same_position(number, anchor, glyph):
+    return load_pattern("breakdown", "shape").same_position(number, anchor, glyph)
 
 
-def position_gap(number: tuple[float, float, int], anchor: tuple[float, float, int], glyph: Glyph) -> float | None:
-    """How far two numbers of one shape are from standing at one position, or None when they do not.
-
-    They stand together when their starts align (left-aligned 4 and 18), or their ends align with at most
-    one digit more or less (right-aligned 1 and 10; a 7-digit 事業番号 ending where a 2-digit number ends is
-    not aligned with it). Tolerance: one digit, from the line height (事業「2」 at x 936 and 節「10」 at 941
-    are two levels, 132209). A digit is about .6 of the line height wide (a smaller number font, `11` at
-    6.0pt, is 3.5pt a digit).
-
-    The gap is the start difference, or the end difference plus a penalty: an end that fits is a weaker
-    sign than a start that fits (a left-aligned `99` starts 2.8 from a 事業's number and ends 1.4 from a
-    節's, 132217, while a right-aligned `26` starts 3.8 from one and ends 0.2 from the other, 132209)."""
-    tolerance = .6 * (glyph.y1 - glyph.y0)
-    gaps = []
-    if abs(number[0] - anchor[0]) <= tolerance:
-        gaps.append(abs(number[0] - anchor[0]))
-    if abs(number[1] - anchor[1]) <= tolerance and abs(number[2] - anchor[2]) <= 1:
-        gaps.append(abs(number[1] - anchor[1]) + END_PENALTY)
-    return min(gaps) if gaps else None
+def nearest_position(number, anchors, glyph):
+    return load_pattern("breakdown", "shape").nearest_position(number, anchors, glyph)
 
 
-def same_position(number: tuple[float, float, int], anchor: tuple[float, float, int], glyph: Glyph) -> bool:
-    return position_gap(number, anchor, glyph) is not None
+def shape_depth(item, indent_depth, order, open_items, anchors=None):
+    return load_pattern("breakdown", "shape").shape_depth(item, indent_depth, order, open_items, anchors)
 
-
-def circled_continuation(number: tuple[float, float, int], matched, circled, glyph: Glyph):
-    """Circled numbers end at ⑳, so a series goes on in plain digits (`⑨宿日直手当` then `23災害急患対応手当`).
-    A plain number that fits a plain position only by where it ends, and starts where a circled number
-    starts, is that series' next item. Returns that circled key, or None."""
-    tolerance = .6 * (glyph.y1 - glyph.y0)
-    if matched is not None and abs(number[0] - matched[0]) <= tolerance:
-        return None
-    fits = [(abs(number[0] - anchor[0]), index, key) for index, (key, anchor) in enumerate(circled)
-            if abs(number[0] - anchor[0]) <= tolerance]
-    return min(fits)[2] if fits else None
-
-
-def nearest_position(number: tuple[float, float, int], anchors, glyph: Glyph):
-    """The key among `anchors` (key, anchor) whose position the number fits best; the first among equals."""
-    fits = [(gap, index, key) for index, (key, anchor) in enumerate(anchors)
-            if (gap := position_gap(number, anchor, glyph)) is not None]
-    return min(fits)[2] if fits else None
-
-
-def shape_depth(item: Item, indent_depth: int, order: list[str], open_items: list,
-                anchors: dict[str, tuple[float, float, int]] | None = None) -> int:
-    """Depth by numbering shape: each shape keeps the level where it first appeared on the
-    axis (numbering restarts under each parent); unnumbered lines sit under the last open item
-    when indented deeper, otherwise they keep the indentation level.
-
-    A shape is one level where its numbers start or end at one position (left-aligned 4 and
-    18 start together, right-aligned 1 and 10 end together). The same shape whose start and
-    end are not at `same_position` as any position seen for it is another level
-    (事業「1 …」 and 節「8 旅費」 indented below it)."""
-    shape = shape_of(item)
-    if shape is None:
-        last = next((p for p in reversed(open_items) if p is not None), None)
-        if last is not None and item.indent > last.indent + 2:
-            return len(open_items) + 1
-        return indent_depth
-    if anchors is not None and item.lines and item.lines[0]:
-        first = item.lines[0][0]
-        number = number_span(first)
-        seen = nearest_position(number, [(key, anchor) for key, anchor in anchors.items() if key.split('@')[0] == shape], first)
-        if shape == 'number':
-            circled = [(key, anchor) for key, anchor in anchors.items() if key.split('@')[0] == 'circled']
-            seen = circled_continuation(number, anchors.get(seen), circled, first) or seen
-        if seen is not None:
-            shape = seen
-        else:
-            if any(key.split('@')[0] == shape for key in anchors):
-                shape = f'{shape}@{len(anchors)}'
-            anchors[shape] = number
-    if shape not in order:
-        order.append(shape)
-    return order.index(shape) + 1
-
-
-def position_levels(all_items, levels: dict[str, list[float]], depth_of) -> tuple[dict, dict]:
-    """Levels of breakdown items by numbering shape and position (pattern position).
-
-    A numbered item's level is its shape at one aligned position (its numbers start or end
-    at `same_position`, as in `shape_depth`); a codeless item's level is its
-    indentation level. Levels rank by the x where their lines start, so a codeless 事業 line
-    (x 254) sits above 節「13 …」 (263), 細節「03 …」 (273) and the codeless lines under them
-    (282) (132276)."""
-    starts: dict[str, dict[tuple, float]] = defaultdict(dict)
-    numbers: dict[str, dict[tuple, tuple[float, float, int]]] = defaultdict(dict)
-    keys: dict[int, tuple] = {}
-    for _, ordered, found in all_items:
-        for group in ordered:
-            if group.subject or not levels.get(group.axis):
-                continue
-            for item in found[id(group)]:
-                if item.role not in ('node', 'note') or not item.lines or not item.lines[0]:
-                    continue
-                first = item.lines[0][0]
-                shape = shape_of(item)
-                if shape is None:
-                    key = ('plain', depth_of(item))
-                    starts[group.axis].setdefault(key, levels[group.axis][key[1] - 1])
-                else:
-                    number = number_span(first)
-                    key = nearest_position(number, [(k, numbers[group.axis][k]) for k in starts[group.axis] if k[0] == shape], first)
-                    if shape == 'number':
-                        circled = [(k, numbers[group.axis][k]) for k in starts[group.axis] if k[0] == 'circled']
-                        key = circled_continuation(number, numbers[group.axis].get(key), circled, first) or key
-                    if key is None:
-                        key = (shape, len(starts[group.axis]))
-                        starts[group.axis][key], numbers[group.axis][key] = number[0], number
-                keys[id(item)] = key
-    # Levels whose lines start within a couple of points are ranked by which was met first (outer first):
-    # `3 …` and `(1) …` below it start together once the bracket is taken off.
-    ranks = {axis: {key: rank for rank, key in enumerate(
-        sorted(found, key=lambda k: (round(found[k] / 3), list(found).index(k))))} for axis, found in starts.items()}
-    return ranks, keys
-
+def position_levels(all_items, levels, depth_of):
+    return load_pattern("breakdown", "position").position_levels(all_items, levels, depth_of)
 
 INDENT_SPAN = 6.0  # one indentation step is a character (about 10pt); a level is narrower than this
 
@@ -1715,7 +1569,7 @@ def level_indents(all_items: list, mixed: bool) -> tuple[dict[str, list[float]],
 
 
 def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: str | dict = 'indent',
-          layout: dict | None = None, codes_right: bool = False) -> Built:
+          layout: dict | None = None, codes_right: bool = False, *, strict: bool = False) -> Built:
     """`detail` is one breakdown pattern for every axis, or a mapping axis → pattern."""
     """`judge(lines) -> {line id: (role, confidence)}` replaces the codeless-line rules (variant B)."""
     shapes: dict[str, list[str]] = {}  # numbering shapes per breakdown axis, in order of first use
@@ -1834,39 +1688,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
         all_items.append((logical, ordered, found))
     # A subject's name can cross a rule of its narrow name column while its amount cell stays whole.
     # The next line without a code or amount is still the name, not a deeper subject (`センタ－費`).
-    # Codes set right in their column: a one-digit and a two-digit code of one level start a digit apart (4–6pt).
-    # A wider spread is names or other levels sharing the column, not alignment.
-    code_starts: dict[int, list[float]] = defaultdict(list)
-    digit_widths: dict[int, list[float]] = defaultdict(list)
-    for _, ordered, found in all_items:
-        for group in ordered:
-            if group.subject and group.mode == 'indent':
-                for item in found[id(group)]:
-                    if item.code is not None and item.role == 'node' and item.glyphs:
-                        code_starts[item.level].append(item.glyphs[0].x0)
-                        if len(item.glyphs[0].text) == 1:
-                            digit_widths[item.level].append(item.glyphs[0].x1 - item.glyphs[0].x0)
-    # Codes set right across the whole subject column (a 款 `5` and `10` of nested boxes): a two-digit code starts
-    # one digit before a one-digit code of its level, so it is read at the position the one-digit codes start.
-    ones = [item.glyphs[0] for _, ordered, found in all_items for group in ordered
-            if group.subject and group.mode == 'indent' for item in found[id(group)]
-            if item.code is not None and item.role == 'node' and item.glyphs and re.fullmatch(r'[0-9]', item.glyphs[0].text)]
-    twos = [item.glyphs[0] for _, ordered, found in all_items for group in ordered
-            if group.subject and group.mode == 'indent' for item in found[id(group)]
-            if item.code is not None and item.role == 'node' and item.glyphs and re.fullmatch(r'[0-9]{2}', item.glyphs[0].text)]
-    one_width = sorted(g.x1 - g.x0 for g in ones)[len(ones) // 2] if ones else 0
-    starts_of_ones = [g.x0 for g in ones]
-    set_right = sum(any(abs(g.x0 + one_width - x) <= 1 for x in starts_of_ones) for g in twos)
-    set_left = sum(any(abs(g.x0 - x) <= 1 for x in starts_of_ones) for g in twos)
-    codes_set_right = codes_right and one_width > 0 and set_right >= 3 and set_right > 2 * set_left
-    right_set = set()
-    for level, xs in code_starts.items():
-        common = [x for x, n in Counter(round(x) for x in xs).items() if n >= 3]  # a stray start is not a column
-        # Set right, a one-digit code starts one digit (as wide as the font sets it) after a two-digit one.
-        digit = max(digit_widths[level], default=0)
-        gap = max(common) - min(common) if common else 0
-        if common and 3 < gap and (gap <= 6.5 or abs(gap - digit) <= .6):
-            right_set.add(level)
+    subject_pattern = load_pattern("subject", pattern)
+    alignment = subject_pattern.alignment(all_items, codes_right) if pattern == "indent" else None
     for logical, ordered, found in all_items:
         for group in ordered:
             if not group.subject:
@@ -1885,19 +1708,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     previous.lines += item.lines
                     continue
                 kept.append(item)
-            if group.mode == 'indent':
-                # Join at the name's position before learning subject levels from the code's start.
-                for item in kept:
-                    # The code leads the item: a name set a few points above its code's line (OCR) is not the start.
-                    item.indent = min(g.x0 for g in item.glyphs) if logical.ocr else item.glyphs[0].x0
-                    band = group.bands[item.level] if 0 <= item.level < len(group.bands) else None
-                    narrow = len(group.bands) >= 3 and all(b.x1 - b.x0 < 20 for b in group.bands[:-1])
-                    if codes_set_right and item.code is not None and re.fullmatch(r'[0-9]{1,2}', item.glyphs[0].text):
-                        item.indent += one_width if len(item.glyphs[0].text) == 2 else 0
-                    elif band is not None and item.code is not None and narrow and item.level in right_set:
-                        # A staircase of narrow level columns with the codes set right: the column is the level,
-                        # not where the digits start (`5` and `10` of one 目 start 5pt apart).
-                        item.indent = band.x0
+            if group.mode == "indent":
+                subject_pattern.align(logical, group, kept, alignment)
             found[id(group)] = kept
     # A subject name cut at the foot of a page continues without a number or amount at the next page's
     # start (`8 市立社会福祉` / `センター費`). Keep its first-page position; a box cannot span two pages.
@@ -2012,32 +1824,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 height = max(first(item).y1 - first(item).y0, usual)
                 steps = (start(item) - item.group.x0 - origin) / (chars * height)
                 item.level = floor(steps + .4)
-    # Subject levels by indentation, learned over the document (pattern indent).
-    nodes_ = [i for _, ordered, found in all_items for g in ordered if g.subject and g.mode == 'indent'
-              for i in found[id(g)] if i.role == 'node']
-    # Where the codes start decide the levels; the names a continuation page prints again without their codes
-    # sit elsewhere (their box is open, its code is not printed) and are no level of their own.
-    coded_ = [i for i in nodes_ if i.code is not None]
-    # A scan's levels (every page OCR; a text document with a few OCR pages keeps its own) are measured from the left edge of the subject column: its frame sits a few points elsewhere
-    # on each page, and the same level must not start at two values.
-    ocr_groups = {id(g) for logical, ordered, _ in all_items for g in ordered} if all(l.ocr for l, _, _ in all_items) else set()
-    edge = lambda i: i.indent - (i.group.bands[0].x0 if id(i.group) in ocr_groups else 0)
-    starts = sorted(edge(i) for i in (coded_ if len(coded_) >= max(3, len(nodes_) // 2) else nodes_))
-    subject_levels: list[list[float]] = []
-    for value in starts:
-        if subject_levels and value - subject_levels[-1][-1] <= 3:
-            subject_levels[-1].append(value)
-        else:
-            subject_levels.append([value])
-    subject_levels = [c for c in subject_levels if len(c) >= max(2, len(starts) // 100)]
-    centres = [sum(c) / len(c) for c in subject_levels]
-    for _, ordered, found in all_items:
-        for group in ordered:
-            if group.subject and group.mode == 'indent':
-                group.levels = len(centres) or 1
-                for item in found[id(group)]:
-                    item.level = min(range(len(centres)), key=lambda i: abs(centres[i] - edge(item))) if centres else 0
-                    item.level_name = SUBJECT_LEVELS[item.level] if item.level < len(SUBJECT_LEVELS) else None
+    if pattern == "indent":
+        subject_pattern.learn_levels(all_items)
     # Indentation levels per non-subject axis, learned over the document.
     indents, printed = level_indents(all_items, mixed_document(logicals))
     for axis, values in indents.items():
@@ -2089,7 +1877,11 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                         if not group.subject and group.axis == axis for item in found[id(group)]])
     # Pattern position: a level is a numbering shape at one aligned position, or the
     # indentation of codeless lines; levels rank by where their lines start.
-    position_rank, position_key = position_levels(all_items, levels, depth_of)
+    modes = {detail} if isinstance(detail, str) else set(detail.values())
+    if not strict:
+        modes.add("indent")
+    readings = {mode: load_pattern("breakdown", mode) for mode in modes}
+    prepared = {mode: reading.prepare(all_items, levels, depth_of) for mode, reading in readings.items()}
     # 款 come from titles in this document: the 項・目 columns of untitled tables sit one level down.
     titled = any(i.level == -1 for _, ordered, found in all_items for g in ordered if g.subject for i in found[id(g)])
     # Per amount column: (item, kind word) of a stacked kind word left at the foot of a page with its amount still to come.
@@ -2183,12 +1975,14 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             else:
                 ranks = levels[item.group.axis]
                 depth = 1 + min(range(len(ranks)), key=lambda i: abs(ranks[i] - item.indent)) if ranks else 1
-                mode = detail if isinstance(detail, str) else detail.get(item.group.axis, 'indent')
-                if mode == 'position' and id(item) in position_key:
-                    depth = position_rank[item.group.axis][position_key[id(item)]] + 1
-                if mode == 'shape':
-                    depth = shape_depth(item, depth, shapes.setdefault(item.group.axis, []),
-                                        branch.get(item.group.axis, []), anchors.setdefault(item.group.axis, {}))
+                mode = detail if isinstance(detail, str) else detail.get(item.group.axis)
+                if mode is None:
+                    if strict:
+                        raise ValueError(f"PDF workflow has no breakdown pattern for axis: {item.group.axis}")
+                    mode = "indent"
+                depth = readings[mode].depth(item, depth, shapes.setdefault(item.group.axis, []),
+                                             branch.get(item.group.axis, []), anchors.setdefault(item.group.axis, {}),
+                                             prepared[mode])
                 if item.level is not None:
                     depth = item.level + 1  # the configured mark names a breakdown level
                 axis = item.group.axis

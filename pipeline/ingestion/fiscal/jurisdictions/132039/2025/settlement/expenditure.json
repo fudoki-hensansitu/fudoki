@@ -39,7 +39,34 @@
       ],
       "options": {
         "account": "一般会計",
-        "table_id": "general-expenditure"
+        "table_id": "general-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "□": "説明",
+                    "○": 1
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     {
@@ -52,7 +79,34 @@
       ],
       "options": {
         "account": "国民健康保険事業会計",
-        "table_id": "national-health-insurance-expenditure"
+        "table_id": "national-health-insurance-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "□": "説明",
+                    "○": 1
+                  }
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -70,7 +124,34 @@
       ],
       "options": {
         "account": "介護保険事業会計",
-        "table_id": "long-term-care-expenditure"
+        "table_id": "long-term-care-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "□": "説明",
+                    "○": 1
+                  }
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {

@@ -17,7 +17,32 @@
       ],
       "options": {
         "account": "一般会計",
-        "table_id": "general-expenditure"
+        "table_id": "general-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1,
+                  "names_end_with_kind_words": true
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {
@@ -33,7 +58,7 @@
       "input_fingerprint": "566a159795003a96f171a41d2852b56761eff1e85e6942fecb8a1477c13e71ab",
       "account": "一般会計",
       "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent'}。",
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
         "金額の単位は printed 25頁 から決めた。款の和 37,092,820,382 と印字の「歳出合計」37,092,820,382 が一致。",
         "金額の注記 814 件（充用 2・流用 812）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 1 種（724 件）を、印字された語から辞書の見出しに寄せた: 額／節／金額→節／金額。"

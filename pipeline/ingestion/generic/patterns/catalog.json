@@ -1,0 +1,23 @@
+{
+  "layout": {"ruled": "ingestion.generic.patterns.layout.ruled"},
+  "headers": {
+    "standard": "ingestion.generic.patterns.headers.standard",
+    "characters": "ingestion.generic.patterns.headers.characters"
+  },
+  "subject": {
+    "bands": "ingestion.generic.patterns.subject.bands",
+    "names": "ingestion.generic.patterns.subject.names",
+    "indent": "ingestion.generic.patterns.subject.indent"
+  },
+  "breakdown": {
+    "indent": "ingestion.generic.patterns.breakdown.indent",
+    "shape": "ingestion.generic.patterns.breakdown.shape",
+    "position": "ingestion.generic.patterns.breakdown.position"
+  },
+  "repairs": {
+    "opening_cell": "ingestion.generic.patterns.repairs.opening_cell",
+    "overprint": "ingestion.generic.patterns.repairs.overprint",
+    "split_at_rules": "ingestion.generic.patterns.repairs.split_at_rules",
+    "stacked_rows": "ingestion.generic.patterns.repairs.stacked_rows"
+  }
+}

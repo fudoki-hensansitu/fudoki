@@ -43,7 +43,42 @@
             "corrected_name": "諸経費",
             "reason": "原画の頁147 備考は「○諸経費」。OCR は段を示す印の○を英字の O と読み、名称に残った。"
           }
-        ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 230
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "plain_names": [
+                    "補充用消耗品費"
+                  ],
+                  "note_kinds": {
+                    "体育施設費・工事請負費から報償費へ": "流用"
+                  }
+                }
+              }
+            }
+          }
+        }
       },
       "expected_tables": [
         {

@@ -17,7 +17,67 @@
       ],
       "options": {
         "account": "一般会計",
-        "table_id": "general-expenditure"
+        "table_id": "general-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "主管課": {
+                  "kind": "ignore"
+                },
+                "事業説明": {
+                  "kind": "ignore"
+                },
+                "財源内訳／特定財源": {
+                  "kind": "amount",
+                  "inline": true
+                },
+                "金額": {
+                  "heading": "決算額"
+                },
+                "節／金額": {
+                  "heading": "決算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "事業名": {
+                "pattern": "indent",
+                "options": {
+                  "rows": true,
+                  "rows_from": {
+                    "name": "主管課",
+                    "amount": "決算額"
+                  }
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              },
+              "節説明": {
+                "pattern": "indent",
+                "options": {
+                  "amount_brackets": true,
+                  "sum_levels": true,
+                  "bare_amounts": true
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules",
+            "stacked_rows"
+          ]
+        }
       },
       "expected_tables": [
         {

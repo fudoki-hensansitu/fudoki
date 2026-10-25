@@ -177,6 +177,21 @@ def slug(document: dict) -> str:
     return f'{target["jurisdiction"]}-{target["fiscal_year"]}-{manifest.document_slot(target)}-{document["direction"]}'
 
 
+def plan(paths: list[Path]) -> dict:
+    """List stale conversions without reading originals or executing converters."""
+    affected = []
+    for path in paths:
+        document = manifest.read(path)
+        fingerprints = manifest.fingerprints(document)
+        stale = {table['conversion_id'] for table in document['tables']
+                 if table['input_fingerprint'] != fingerprints[table['conversion_id']]}
+        if stale:
+            affected.append({'manifest': str(path), 'conversions': sorted(stale),
+                             'tables': [table['table_id'] for table in document['tables']
+                                        if table['conversion_id'] in stale]})
+    return {'manifests': affected, 'conversions': sum(len(item['conversions']) for item in affected)}
+
+
 def refresh_manifest(path: Path, *, remote: bool, dry_run: bool, work: Path) -> dict:
     started = time.monotonic()
     original_bytes = path.read_bytes()
