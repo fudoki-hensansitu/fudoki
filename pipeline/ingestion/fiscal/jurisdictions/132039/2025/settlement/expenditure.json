@@ -166,7 +166,7 @@
     {
       "table_id": "kouki-expenditure-detail",
       "conversion_id": "kouki-settlement",
-      "input_fingerprint": "d8727954ce7b042b4136e561d3fa2d15b9a8b46b1be4d7edcac3f86eb0b3afbd",
+      "input_fingerprint": "652394c1ad10544a5cfcb746cb549539586e979de5f4bc21b5ce63f8071b3c54",
       "account": "後期高齢者医療会計",
       "notes": [
         "武蔵野市後期高齢者医療会計の決算事項別明細書（歳出）。款・項・目の印字欄を所属する葉へ反復。最細は法定節（節がない予備費目は目）。節一覧と備考は同じ目の独立した分解であり相互の対応を推定していない。目_備考は目の備考欄の原文（□事業・○経費・積算）。金額は円の原表記（△は減額符号）。歳出合計はlocal観測に残しraw行にしない。",
@@ -194,7 +194,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "0e382b131f85546832680588f908da77f8e9f54ecea8692bc34abb7546fc92e1",
+      "input_fingerprint": "afc26437863fbcf530c07dd13804989597407796661c5e2e3a254d12b4f9e378",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -224,7 +224,7 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "f0b4c84498ae0466aa766730f861cb915b7fc5ff7f5ef5ed2a49473019dd64cc",
+      "input_fingerprint": "090ddfd0a6bcae2bb325ad3bdbbdc899cdb0a559f6d53e0aaac6f8f778a5a23e",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -254,7 +254,7 @@
     {
       "table_id": "long-term-care-expenditure",
       "conversion_id": "long-term-care-settlement",
-      "input_fingerprint": "9b3e749cbe790c4c9dda682615e23e05533c7c0fc2644a73d66cf915dcaed36f",
+      "input_fingerprint": "6fb533c537b3b974c72e887e979cb234b9f9b9b8dd29687b20b5ee787bc1cab2",
       "account": "介護保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
