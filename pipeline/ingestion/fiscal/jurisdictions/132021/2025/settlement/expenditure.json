@@ -9,7 +9,7 @@
   "conversions": [
     {
       "id": "general-settlement-detail",
-      "converter": "fiscal/jurisdictions/132021/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "71b7aa9ebd5359cc35dd8fc938d3eb9c2578b5de34c241c9e6bd92a8ee25fcc7"
@@ -18,7 +18,14 @@
       "options": {
         "account": "一般会計",
         "part": "detail",
-        "table_prefix": "general-expenditure"
+        "table_prefix": "general-expenditure",
+        "workflow": {
+          "reading": {
+            "pattern": "merged_breakdowns",
+            "profile": "fiscal/jurisdictions/132021/layouts/text_settlement/reading.json"
+          },
+          "components": []
+        }
       },
       "expected_tables": [
         {
@@ -31,7 +38,7 @@
     },
     {
       "id": "kouki-settlement-details",
-      "converter": "fiscal/jurisdictions/132021/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "71b7aa9ebd5359cc35dd8fc938d3eb9c2578b5de34c241c9e6bd92a8ee25fcc7"
@@ -43,7 +50,14 @@
         "table_prefix": "kouki-expenditure",
         "emit": [
           "details"
-        ]
+        ],
+        "workflow": {
+          "reading": {
+            "pattern": "merged_breakdowns",
+            "profile": "fiscal/jurisdictions/132021/layouts/text_settlement/reading.json"
+          },
+          "components": []
+        }
       },
       "expected_tables": [
         {
@@ -53,7 +67,7 @@
     },
     {
       "id": "kouki-settlement-notes",
-      "converter": "fiscal/jurisdictions/132021/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "71b7aa9ebd5359cc35dd8fc938d3eb9c2578b5de34c241c9e6bd92a8ee25fcc7"
@@ -65,7 +79,14 @@
         "table_prefix": "kouki-expenditure",
         "emit": [
           "notes"
-        ]
+        ],
+        "workflow": {
+          "reading": {
+            "pattern": "merged_breakdowns",
+            "profile": "fiscal/jurisdictions/132021/layouts/text_settlement/reading.json"
+          },
+          "components": []
+        }
       },
       "expected_tables": [
         {
@@ -75,7 +96,7 @@
     },
     {
       "id": "chushajo-settlement-details",
-      "converter": "fiscal/jurisdictions/132021/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "71b7aa9ebd5359cc35dd8fc938d3eb9c2578b5de34c241c9e6bd92a8ee25fcc7"
@@ -87,7 +108,14 @@
         "table_prefix": "chushajo-expenditure",
         "emit": [
           "details"
-        ]
+        ],
+        "workflow": {
+          "reading": {
+            "pattern": "merged_breakdowns",
+            "profile": "fiscal/jurisdictions/132021/layouts/text_settlement/reading.json"
+          },
+          "components": []
+        }
       },
       "expected_tables": [
         {
@@ -97,7 +125,7 @@
     },
     {
       "id": "chushajo-settlement-notes",
-      "converter": "fiscal/jurisdictions/132021/layouts/text_settlement/convert.py",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [
         {
           "sha256": "71b7aa9ebd5359cc35dd8fc938d3eb9c2578b5de34c241c9e6bd92a8ee25fcc7"
@@ -110,7 +138,14 @@
         "emit": [
           "notes"
         ],
-        "notes_setsu_reference": "chushajo-expenditure-details"
+        "notes_setsu_reference": "chushajo-expenditure-details",
+        "workflow": {
+          "reading": {
+            "pattern": "merged_breakdowns",
+            "profile": "fiscal/jurisdictions/132021/layouts/text_settlement/reading.json"
+          },
+          "components": []
+        }
       },
       "expected_tables": [
         {
@@ -123,7 +158,7 @@
     {
       "table_id": "general-expenditure-details",
       "conversion_id": "general-settlement-detail",
-      "input_fingerprint": "f6d93da7a023be41d75f7450b614a580eba40a5d8d33f8836d03982c1fc5ac74",
+      "input_fingerprint": "f9e5a1a00a3e1da5ef22bec8bb9366b02cfebf7218217d1c93ee24c6c57663f9",
       "account": "一般会計",
       "notes": [
         "左頁グリッドの法定最細行=節行（節_*列が印字値）。節を印字しない目はその科目行自体が葉（節_*列NULL）。款・項・目_*列は行が属する科目行の印字値（denorm、再掲行は同一値）。右頁備考結合セルのうち説明階層を構成しない行（流用注記・予備費支出先一覧等）は目_備考に原文改行で保持。説明分解は別表 general-expenditure-notes にあり、この表とは同一支出の別軸で合算しない。金額は原典の桁区切り・△符号を保持。歳出合計行・款（N）項（N）再掲見出し・会計標は観測に留め行にしない。",
@@ -151,7 +186,7 @@
     {
       "table_id": "general-expenditure-notes",
       "conversion_id": "general-settlement-detail",
-      "input_fingerprint": "f6d93da7a023be41d75f7450b614a580eba40a5d8d33f8836d03982c1fc5ac74",
+      "input_fingerprint": "f9e5a1a00a3e1da5ef22bec8bb9366b02cfebf7218217d1c93ee24c6c57663f9",
       "account": "一般会計",
       "notes": [
         "右頁備考結合セル内の事業説明の最細行（説明1=事業、説明2=セル内節見出し、説明3=細目、説明4=細目の下の行: 字下げして金額を一段左に印字する細々目、または繰越明許費・事故繰越の内訳行）。繰越明許費・事故繰越・支出済額・不用額・本年度支出額・翌年度繰越額は項目ではなく説明3の金額欄の見出しであり、ノードへの移行時は説明3の金額として保持する。説明階層の見出し行で下位印字の無いものはその見出し自体を葉とする（金額0印字の事業・葉なし節見出し等）。説明内節見出し(説明2)と表グリッド節行の対応付けはraw列に実体化せず検査用観測に留める。説明3・説明4は同じ支出の別分解軸であり節表 general-expenditure-details とは合算しない。事業名の【所管】は名称の一部。金額は原典の桁区切り・△符号を保持。物理頁は各要素が印字された実頁（左頁・右頁それぞれ）。",
@@ -179,7 +214,7 @@
     {
       "table_id": "kouki-expenditure-details",
       "conversion_id": "kouki-settlement-details",
-      "input_fingerprint": "4898313c16541e4a65602f87b7a4cdcf0d5f658a118ee75ce9c35f4bfb971e50",
+      "input_fingerprint": "e064995bfc56067a6216e65af1dc33edea1a02887dbc33d056a830d1f1777e8c",
       "account": "後期高齢者医療事業特別会計",
       "notes": [
         "左頁グリッドの法定最細行=節行（節_*列が印字値）。節を印字しない目はその科目行自体が葉（節_*列NULL）。款・項・目_*列は行が属する科目行の印字値（denorm、再掲行は同一値）。右頁備考結合セルのうち説明階層を構成しない行（流用注記・予備費支出先一覧等）は目_備考に原文改行で保持。説明分解は別表 kouki-expenditure-notes にあり、この表とは同一支出の別軸で合算しない。金額は原典の桁区切り・△符号を保持。歳出合計行・款（N）項（N）再掲見出し・会計標は観測に留め行にしない。",
@@ -207,7 +242,7 @@
     {
       "table_id": "kouki-expenditure-notes",
       "conversion_id": "kouki-settlement-notes",
-      "input_fingerprint": "239daa8af5e5c921b835dcb863de0ff2e2d1b0990d9e95b231e87338f376818b",
+      "input_fingerprint": "9350c2919e8bc5d85e4d10edbf257d403b2652db57d4ef959ba0e5f470eaa05a",
       "account": "後期高齢者医療事業特別会計",
       "notes": [
         "右頁備考結合セル内の事業説明の最細行（説明1=事業、説明2=セル内節見出し、説明3=細目、説明4=細目の下の行: 字下げして金額を一段左に印字する細々目、または繰越明許費・事故繰越の内訳行）。繰越明許費・事故繰越・支出済額・不用額・本年度支出額・翌年度繰越額は項目ではなく説明3の金額欄の見出しであり、ノードへの移行時は説明3の金額として保持する。説明階層の見出し行で下位印字の無いものはその見出し自体を葉とする（金額0印字の事業・葉なし節見出し等）。説明内節見出し(説明2)と表グリッド節行の対応付けはraw列に実体化せず検査用観測に留める。説明3・説明4は同じ支出の別分解軸であり節表 kouki-expenditure-details とは合算しない。事業名の【所管】は名称の一部。金額は原典の桁区切り・△符号を保持。物理頁は各要素が印字された実頁（左頁・右頁それぞれ）。",
@@ -235,7 +270,7 @@
     {
       "table_id": "chushajo-expenditure-details",
       "conversion_id": "chushajo-settlement-details",
-      "input_fingerprint": "5ecb2aca08b63021b8c8771d9f4c56ea0f800e08f0ce803cf33180a24608a5b4",
+      "input_fingerprint": "eae30674e68f3cec0945d67e4e9e157d9e209b7b3e4ee2a1e474b94119500952",
       "account": "駐車場事業特別会計",
       "notes": [
         "左頁グリッドの法定最細行=節行（節_*列が印字値）。節を印字しない目はその科目行自体が葉（節_*列NULL）。款・項・目_*列は行が属する科目行の印字値（denorm、再掲行は同一値）。右頁備考結合セルのうち説明階層を構成しない行（流用注記・予備費支出先一覧等）は目_備考に原文改行で保持。説明分解は別表 chushajo-expenditure-notes にあり、この表とは同一支出の別軸で合算しない。金額は原典の桁区切り・△符号を保持。歳出合計行・款（N）項（N）再掲見出し・会計標は観測に留め行にしない。",
@@ -263,7 +298,7 @@
     {
       "table_id": "chushajo-expenditure-notes",
       "conversion_id": "chushajo-settlement-notes",
-      "input_fingerprint": "ac07cfd391ea5136e35708b33dc09430b06b016081d5ea25d418963cf2e7b905",
+      "input_fingerprint": "ebcb465b22c60980105424d60c356666a14fc1849459ed3f97aad49573bfff6b",
       "account": "駐車場事業特別会計",
       "notes": [
         "右頁備考結合セル内の事業説明の最細行（説明1=事業、説明2=セル内節見出し、説明3=細目、説明4=細目の下の行: 字下げして金額を一段左に印字する細々目、または繰越明許費・事故繰越の内訳行）。繰越明許費・事故繰越・支出済額・不用額・本年度支出額・翌年度繰越額は項目ではなく説明3の金額欄の見出しであり、ノードへの移行時は説明3の金額として保持する。説明階層の見出し行で下位印字の無いものはその見出し自体を葉とする（金額0印字の事業・葉なし節見出し等）。説明内節見出し(説明2)と表グリッド節行の対応付けはraw列に実体化せず検査用観測に留める。説明3・説明4は同じ支出の別分解軸であり節表 chushajo-expenditure-details とは合算しない。事業名の【所管】は名称の一部。金額は原典の桁区切り・△符号を保持。物理頁は各要素が印字された実頁（左頁・右頁それぞれ）。",

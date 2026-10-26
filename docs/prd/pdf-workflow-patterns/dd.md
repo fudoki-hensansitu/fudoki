@@ -254,3 +254,63 @@ workflowへの切り替えはconversionごとに比較・採用する。段階�
 汎用PDFの242変換を明示設定へ移した。既存の実効設定はすべて一致し、暗黙の字下げ軸を説明へ補った18表以外のメタデータは維持した。不要になった旧設定を除き、出典内の不整合の宣言は残した。
 
 最終コードで全73管理JSONの314表を再変換し、保存済みの表と内容が一致した。不一致・保存前検査による停止は0件で、R2の表は保存し直していない。Pythonの627テストはOK（1件skip）。指紋の波及と、選択外の実装・自動探索を実行しないことも確認した。
+
+
+### 自治体別の変換を共有ルールへ移す
+
+[ADR 0036](../../adr/0036-shared-coupled-pdf-readings.md) に従い、採用中の自治体別変換48件を、共有の読み方12種類へ移す。表の境界・科目・金額の所属が結び付いた処理は一つの読み方に保ち、独立できる処理を10種類の部品へ切り出す。自治体側の `layouts/` には実測した列境界、見出し、文字の訂正などのJSON宣言を置く。
+
+```text
+pipeline/ingestion/
+  fiscal/jurisdictions/.../expenditure.json
+    └─ options.workflow
+       ├─ reading.pattern ──→ generic/patterns/readings/<pattern>.py
+       ├─ reading.profile ──→ fiscal/jurisdictions/.../layouts/.../reading.json
+       └─ components[] ─────→ generic/patterns/components/<component>.py
+  fiscal/layouts/workflow_text/convert.py ──→ generic/reading.py
+```
+
+従来の層別workflowは `generic_text / generic_scan`、追加のまとまった読み方は `workflow_text` を入口とする。読み方は自由なPythonパスでなく、既存カタログから選ぶ。宣言の項目・型、変換オプションは選択した読み方のschemaで検査し、読み方が要求する部品の関数が過不足なくそろうことも検査する。誤った入口との組み合わせは開始前に止める。
+
+例えば杉並区の文字PDFは次の選択になる。
+
+```yaml
+workflow:
+  reading:
+    pattern: parallel_breakdowns
+    profile: fiscal/jurisdictions/131156/layouts/text_settlement/reading.json
+  components: [scoped_text, marker_boundary]
+```
+
+| 共有の読み方 | 主な読み取り方 | 選択する部品 |
+|---|---|---|
+| `marked_businesses` | 記号付きの事業と本文内の表 | `marked_subjects`, `embedded_businesses` |
+| `facing_columns` | 見開きの科目・内訳欄 | なし |
+| `parallel_breakdowns` | 並行する節と備考の内訳 | `scoped_text`, `marker_boundary` |
+| `clipped_columns` | 文字層の切り出しを伴う欄 | `clipped_words` |
+| `narrative_results` | 本文中の科目・事業と実績額 | `narrative_subjects`, `narrative_projects` |
+| `merged_breakdowns` | 結合された内訳欄 | なし |
+| `rotated_columns` | 回転した表と続き行 | `carried_totals` |
+| `staggered_execution` | ずれた支出済額と内訳 | なし |
+| `profiled_budget` | 実測プロファイルによる予算表 | `page_context` |
+| `enterprise_expenses` | 企業会計の費用・節・備考 | `enterprise_hierarchy` |
+| `banded_projects` | 帯ごとの事業 | なし |
+| `offset_projects` | 位置のずれた事業欄 | なし |
+
+ルールは自治体名ではなく読み取り方で識別する。一つの自治体だけが使うルールも許す。別資料で再利用できるかは、固定した入力と保存前検査で確かめてから選択する。似た処理でも所属や文字の保持が異なる場合は、同じルールに統合しない。各パターンには書式固有の位置判定も残しており、宣言の値だけで任意の書式に対応することは保証しない。新しい実例で必要になった値を宣言へ移すか、別パターンを追加する。
+
+新経路の指紋には、選択した読み方・部品・そのimport先、選択した読み方のオプションschema・宣言schema、参照するJSON宣言を含める。`statement_profile` が別のJSONを参照する場合はそれも含める。宣言は `ingestion/` 内のJSONに限り、実行コードは置かない。共有コードや同じ宣言を使う変換には変更が波及するが、未選択のルールへは波及しない。
+
+採用中の自治体別 `convert.py` は48件の参照を移した後で削除する。自治体側の独立検査と、未採用資料の変換・調査コードは保持する。本文中の表などの強く結び付いた部分を、既存の層別workflowへ無理に置き換えない。これらの文字抽出に依存する追加の読み方は、OCR観測には適用しない。
+
+
+固定書式の共通変換 `settlement_statement` の17件は、自治体専用変換ではないため現在の入口を保つ。この経路の依存探索で辿る従来の候補群は `layout / headers / subject / breakdown / repairs` に限り、追加の `reading / component` を含めない。カタログ全体の内容ではなく、使う候補群の名前と実装の対応を指紋へ含めるため、新しい読み方・部品の追加や編集をこの17件へ波及させない。
+
+
+### 専用変換を移した後の検証（2026-10-26）
+
+採用中の自治体別48変換を共有ルールへ移し、採用中の管理JSONから自治体別 `convert.py` への参照をなくした。PDF311表の再生成結果は保存済みの表と全件一致し、列・型・順序・値・親子・座標・単位・メタデータを維持した。変更対象外のCSV3表も指紋が最新で、全314表の保存先・データSHAなどの保存記録は指紋以外を変更していない。R2の表の再保存は行っていない。
+
+独立QAでも杉並区8表と昭島市企業会計2表が一致し、無効なルール指定では実行前に停止した。Python635テスト（1件skip）、型検査とBunテストを確認した。指紋の検査は、層別workflow・まとまった読み方・従来の共通変換の間で、使わない新ルールの変更や追加が波及しないことも含む。
+
+杉並区の内容比較には、実体を確認したPoppler26.10.0を使った。別の配布物ではフォント定義の不足で数字が欠落したため、抽出条件の確認を取り込み手順へ追記した。実行コマンドの指定だけでなく、実際に使う抽出ツールを記録する。

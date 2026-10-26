@@ -9,6 +9,10 @@ from ingestion.generic.patterns import catalog, entry, load
 
 
 def selections(workflow: dict) -> dict[tuple[str, str], str]:
+    if 'reading' in workflow:
+        choices = [('reading', workflow['reading']['pattern'])]
+        choices += [('component', name) for name in workflow.get('components', [])]
+        return {choice: entry(*choice) for choice in choices}
     hierarchy = workflow['hierarchy']
     choices = [('layout', workflow['layout']['pattern']), ('headers', workflow['headers']['pattern']),
                ('subject', hierarchy['subject']['pattern'])]
@@ -32,10 +36,16 @@ def settings(workflow: dict) -> dict:
     return found
 
 
-def validate(workflow: dict, *, text_pdf: bool = True) -> dict:
+def validate(workflow: dict, *, text_pdf: bool = True, coupled: bool | None = None) -> dict:
     schema = json.loads(Path(__file__).with_name('workflow.schema.json').read_text())
     jsonschema.Draft202012Validator(schema).validate(workflow)
     selections(workflow)
+    if coupled is not None and ('reading' in workflow) != coupled:
+        raise ValueError('Coupled readings require workflow_text; layered workflows require generic_text or generic_scan')
+    if 'reading' in workflow:
+        if not text_pdf:
+            raise ValueError('Coupled text readings cannot be applied to scan workflows')
+        return workflow
     if not text_pdf and (workflow.get('repairs') or 'text_layer' in workflow['layout'].get('options', {})):
         raise ValueError('Text-layer repairs cannot be applied to a scan workflow')
     if 'kind_by_characters' in workflow['layout'].get('options', {}).get('header', {}):
@@ -71,7 +81,7 @@ def build_reading(logicals, document_kind='settlement', judge=None, layout=None,
 
 def effective_settings(source: dict, options: dict, *, text_pdf: bool) -> dict:
     if 'workflow' in options:
-        workflow = validate(options['workflow'], text_pdf=text_pdf)
+        workflow = validate(options['workflow'], text_pdf=text_pdf, coupled=False)
         found = settings(workflow)
         found['header']['_layout_pattern'] = workflow['layout']['pattern']
         found['header']['_headers_pattern'] = workflow['headers']['pattern']

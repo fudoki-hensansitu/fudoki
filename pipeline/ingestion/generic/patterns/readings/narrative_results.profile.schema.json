@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "page_width",
+    "page_height",
+    "footer_top",
+    "right_x",
+    "name_right",
+    "amount_band",
+    "depth_step",
+    "kan_keys",
+    "default_funds",
+    "detail_columns",
+    "funding_columns",
+    "annex_columns"
+  ],
+  "properties": {
+    "page_width": {
+      "type": "number"
+    },
+    "page_height": {
+      "type": "number"
+    },
+    "footer_top": {
+      "type": "number"
+    },
+    "right_x": {
+      "type": "number"
+    },
+    "name_right": {
+      "type": "number"
+    },
+    "amount_band": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "depth_step": {
+      "type": "number"
+    },
+    "kan_keys": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "default_funds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "detail_columns": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "funding_columns": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "annex_columns": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

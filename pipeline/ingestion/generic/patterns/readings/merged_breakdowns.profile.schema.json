@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "budget",
+    "page_width",
+    "body_top",
+    "body_bottom",
+    "label_right",
+    "budget_left",
+    "budget_right",
+    "budget_rules",
+    "setsu_num_left",
+    "setsu_num_right",
+    "setsu_name_left",
+    "setsu_name_right",
+    "setsu_amount_left",
+    "r_paid_right",
+    "r_carry_right",
+    "r_unused_right",
+    "note_left",
+    "inner_labels",
+    "sub_name_left",
+    "sub_amount_right",
+    "executed_keys",
+    "summary_cols",
+    "summary_bounds"
+  ],
+  "properties": {
+    "budget": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "page_width": {
+      "type": "number"
+    },
+    "body_top": {
+      "type": "number"
+    },
+    "body_bottom": {
+      "type": "number"
+    },
+    "label_right": {
+      "type": "number"
+    },
+    "budget_left": {
+      "type": "number"
+    },
+    "budget_right": {
+      "type": "number"
+    },
+    "budget_rules": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "number"
+        }
+      }
+    },
+    "setsu_num_left": {
+      "type": "number"
+    },
+    "setsu_num_right": {
+      "type": "number"
+    },
+    "setsu_name_left": {
+      "type": "number"
+    },
+    "setsu_name_right": {
+      "type": "number"
+    },
+    "setsu_amount_left": {
+      "type": "number"
+    },
+    "r_paid_right": {
+      "type": "number"
+    },
+    "r_carry_right": {
+      "type": "number"
+    },
+    "r_unused_right": {
+      "type": "number"
+    },
+    "note_left": {
+      "type": "number"
+    },
+    "inner_labels": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "sub_name_left": {
+      "type": "number"
+    },
+    "sub_amount_right": {
+      "type": "number"
+    },
+    "executed_keys": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "summary_cols": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "summary_bounds": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

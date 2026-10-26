@@ -9,7 +9,9 @@ from ingestion.lib.node_tables import migrate_rows
 from ingestion.lib.tree_checks import check_tree
 from ingestion.lib.pdf_table import tokens_from_bbox_layout
 
-converter = import_module('ingestion.fiscal.jurisdictions.132071.layouts.text_budget.convert')
+from ingestion.generic.reading_fixture import reader
+
+converter = reader('profiled_budget')
 
 
 def control_fixture():
@@ -25,7 +27,7 @@ class NodeMigrationContract(unittest.TestCase):
     def candidate(self):
         xml, profile = fixture()
         tables, bindings = build_document(xml, origin_id='test', pages=(108, 111), profile=profile)
-        rows, metadata, total = converter.assemble(tables, bindings, control_fixture())
+        rows, metadata, total = converter.rule('assemble')(tables, bindings, control_fixture())
         return migrate_rows(rows, metadata), total
 
     def test_subject_codes_and_independent_axes_have_confirmed_parents(self):

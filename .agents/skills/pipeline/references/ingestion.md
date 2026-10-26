@@ -48,7 +48,7 @@
 
 1. 対象頁を表示し、文字層から必要な本文を取得できるか確認する。頁番号だけが文字で本文が画像なら、本文はscan PDFとして扱う。
 2. **Popplerの `pdftotext -bbox-layout` で単語と座標を取得する。** 通常の入口は単語単位とし、文字単位への再分割を標準処理にしない。単語は抽出器の区切りであり、日本語の意味上の単語とは限らない。
-3. 文字層があるのに文字化けする場合は、文字対応表・フォントの復元を検討する。復元できない領域だけOCRへ回す。アウトライン化された文字もOCRの対象になる。
+3. 文字層があるのに文字化けする場合は、先に抽出ツールの実行パス・実際の版とフォント定義を確かめる。`Missing language pack` の警告で数字まで消えることがある。起動コマンドで版を指定したときも、指定だけで判断せず、変換を呼ぶPythonから `shutil.which('pdftotext')` と `pdftotext -v` を確かめる（`env`・`uv run` を挟むとPATHの解決先が異なる場合がある）。環境を揃えても復元できない文字層は、文字対応表・フォントの復元を検討する。復元できない領域だけOCRへ回す。アウトライン化された文字もOCRの対象になる。
 4. 生の単語・座標を保持し、次の「PDFの表の組み立て」でノードと金額へまとめる。
 
 座標は原点、単位、CropBox・回転の扱いを記録する。異なる抽出手段を混ぜるときは、同じ表示頁の座標系へ変換してから対応付ける。
@@ -172,6 +172,8 @@ PDFは出典の内部で重複して印字された数字どうしの一致で�
 年度・会計等を推定・定義せず、受け取った対象・scopeと変換結果を表IDで対応させて管理側へ渡す。変換器は `convert(inputs, destination, options)` と同じフォルダの `options.schema.json` を定義し、表IDとローカルParquetの対応を返す。変換器からGitの管理JSONやR2を更新しない。型と制約は [管理schema](../../../../pipeline/ingestion/fiscal/manifest.schema.json) と [実行時検査](../../../../pipeline/ingestion/fiscal/manifest.py) を正本とする。
 
 ## 管理JSONを確認して変換する
+
+PDFの読み方は `options.workflow` に固定する。層別の読み方は `generic_text / generic_scan`、表・科目・金額の所属をまとめて読む文字PDFは `workflow_text` の共有入口を使う。後者はカタログの `reading.pattern` と `components` を選び、実測・訂正のJSON宣言を `reading.profile` で参照する。書式に合わなければ共有パターンを追加し、自治体別の採用用 `convert.py` は増やさない。選び方・設定例・依存の境界は [PDF workflowの設計](../../../../docs/prd/pdf-workflow-patterns/dd.md) を参照する。
 
 1. `pipeline/ingestion/fiscal/jurisdictions/<自治体>/<年度>/<資料区分>/<方向>.json` に入力SHA、変換コード・設定、期待する表を定義する。形式・会計・ページ範囲はselectionから解決する。複数出典・複数変換・複数表は同じ対象のJSONへまとめる。
 2. `pipeline/` から `bun run ingestion:check --manifest <対象JSON>` を実行する。型・正規配置・選定との対応・表IDの所有者が不正なら修正してから進む。

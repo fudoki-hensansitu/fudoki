@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "financial",
+    "levels",
+    "inner_headers",
+    "quantity_exclusion",
+    "reserve_exclusion",
+    "personnel_exclusion",
+    "lending_exclusion",
+    "section_exclusion"
+  ],
+  "properties": {
+    "financial": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "levels": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "inner_headers": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "quantity_exclusion": {
+      "type": "object"
+    },
+    "reserve_exclusion": {
+      "type": "object"
+    },
+    "personnel_exclusion": {
+      "type": "object"
+    },
+    "lending_exclusion": {
+      "type": "object"
+    },
+    "section_exclusion": {
+      "type": "object"
+    }
+  }
+}

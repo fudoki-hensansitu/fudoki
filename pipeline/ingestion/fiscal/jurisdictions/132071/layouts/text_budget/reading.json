@@ -1,0 +1,29 @@
+{
+  "position": [
+    "物理頁",
+    "左端",
+    "上端",
+    "右端",
+    "下端"
+  ],
+  "budget": [
+    "本年度予算額",
+    "前年度予算額",
+    "比較"
+  ],
+  "control_columns": [
+    [
+      275,
+      365
+    ],
+    [
+      365,
+      455
+    ],
+    [
+      455,
+      545
+    ]
+  ],
+  "statement_profile": "fiscal/jurisdictions/132071/layouts/budget_spread.json"
+}

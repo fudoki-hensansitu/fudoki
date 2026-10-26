@@ -56,8 +56,9 @@ def fixture():
 class DocumentContract(unittest.TestCase):
     def test_formal_layout_options_validate_and_include_the_measured_profile_dependency(self):
         from ingestion.fiscal import manifest
-        conversion = {'id': 'text-budget', 'converter': 'fiscal/jurisdictions/132071/layouts/text_budget/convert.py',
-                      'inputs': [{'sha256': 'a' * 64}], 'options': {'table_id': 'expenditure', 'detail_pages': [108, 449]},
+        conversion = {'id': 'text-budget', 'converter': 'fiscal/layouts/workflow_text/convert.py',
+                      'inputs': [{'sha256': 'a' * 64}], 'options': {'table_id': 'expenditure', 'detail_pages': [108, 449],
+                      'workflow': {'reading': {'pattern': 'profiled_budget', 'profile': 'fiscal/jurisdictions/132071/layouts/text_budget/reading.json'}, 'components': ['page_context']}},
                       'expected_tables': [{'table_id': 'expenditure'}]}
         document = {'schema_version': 1, 'target': {'jurisdiction': '132071', 'fiscal_year': 2025, 'document_kind': 'initial'},
                     'direction': 'expenditure', 'conversions': [conversion], 'tables': []}

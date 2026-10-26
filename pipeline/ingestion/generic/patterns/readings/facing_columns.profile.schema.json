@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "budget",
+    "executed",
+    "page_width",
+    "body_top",
+    "body_bottom",
+    "label_right",
+    "amount_left",
+    "amount_right",
+    "section_left",
+    "section_right",
+    "right_amounts_right",
+    "note_left",
+    "note_rule_left",
+    "note_rule_right"
+  ],
+  "properties": {
+    "budget": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "executed": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "page_width": {
+      "type": "number"
+    },
+    "body_top": {
+      "type": "number"
+    },
+    "body_bottom": {
+      "type": "number"
+    },
+    "label_right": {
+      "type": "number"
+    },
+    "amount_left": {
+      "type": "number"
+    },
+    "amount_right": {
+      "type": "number"
+    },
+    "section_left": {
+      "type": "number"
+    },
+    "section_right": {
+      "type": "number"
+    },
+    "right_amounts_right": {
+      "type": "number"
+    },
+    "note_left": {
+      "type": "number"
+    },
+    "note_rule_left": {
+      "type": "number"
+    },
+    "note_rule_right": {
+      "type": "number"
+    }
+  }
+}

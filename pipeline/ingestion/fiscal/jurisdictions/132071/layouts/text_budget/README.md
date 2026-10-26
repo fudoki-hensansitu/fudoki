@@ -2,7 +2,7 @@
 
 2025年度一般会計当初予算の出典SHAは `4662197051b0ec0d9c50e1690c5804d0b31e17dd7d35b972fd272e03068507f8`。469物理頁のうち歳出明細は108–449頁（紙面104–445頁）、450頁から給与費明細書である。選定で渡される10–11頁の款・項の印字合計も取り込む。
 
-管理入口は `convert.py`。文字層の抽出、継続見開きの目への所属、説明の字下げと金額右端、折り返し名称の確認には、測定書式 `../budget_spread.json` と共通の `fiscal/layouts/statement/text_document.build_document` を使う。組み立て部分は本dirの `assemble` に置く。年度や頁ごとの例外は持たない。
+管理入口は共有の `fiscal/layouts/workflow_text/convert.py`。読み方 `generic/patterns/readings/profiled_budget.py` と部品 `components/page_context.py` を選び、実測の宣言は本dirの `reading.json` に置く。文字層の抽出、継続見開きの目への所属、説明の字下げと金額右端、折り返し名称の確認には、測定書式 `../budget_spread.json` と共通の `fiscal/layouts/statement/text_document.build_document` を使う。組み立て部分は選択した `page_context` に置く。年度や頁ごとの例外は持たない。
 
 - 款・項のコード・名称・本年度予算額・前年度予算額・比較は総括表の印字から読む。目は明細の番号トークンを名称から分離し、番号のない前年のみの目も残す。
 - 目の下に説明、節の区分、財源内訳の名称をそれぞれ独立した枝として置く。説明の節へ、別欄の節コードを転記しない。

@@ -1,0 +1,32 @@
+{
+  "origin_sha": "55219fb3c04d2cca0ecb4fea979111040beccafdedd596ec09a553317bbaeb3d",
+  "first_page": 159,
+  "last_page": 164,
+  "page_width": 595.276,
+  "page_height": 841.89,
+  "account": "後期高齢者医療特別会計",
+  "left_body_top": 135.0,
+  "left_body_bottom": 745.0,
+  "right_body_top": 135.0,
+  "right_body_bottom": 745.0,
+  "ab_split_x": 289.0,
+  "level_bands": [
+    [
+      290.0,
+      296.0
+    ],
+    [
+      297.0,
+      304.0
+    ],
+    [
+      305.0,
+      313.0
+    ],
+    [
+      313.0,
+      321.0
+    ]
+  ],
+  "y_tol": 4.0
+}

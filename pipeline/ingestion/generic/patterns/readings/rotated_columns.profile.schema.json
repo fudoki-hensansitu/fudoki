@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "account",
+    "total_label",
+    "parent_amounts",
+    "amount_edges",
+    "setsu_amount_edge",
+    "setsu_name_zone",
+    "setsu_event_x",
+    "kan_name_x",
+    "kou_name_x",
+    "moku_name_x",
+    "note_left",
+    "uchiwake_reason",
+    "body_top",
+    "body_bottom",
+    "total_carry_labels",
+    "metadata_note"
+  ],
+  "properties": {
+    "account": {
+      "type": "string"
+    },
+    "total_label": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "parent_amounts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "amount_edges": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "number"
+        }
+      }
+    },
+    "setsu_amount_edge": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "setsu_name_zone": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "setsu_event_x": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "kan_name_x": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "kou_name_x": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "moku_name_x": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "note_left": {
+      "type": "number"
+    },
+    "uchiwake_reason": {
+      "type": "string"
+    },
+    "body_top": {
+      "type": "number"
+    },
+    "body_bottom": {
+      "type": "number"
+    },
+    "total_carry_labels": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "metadata_note": {
+      "type": "string"
+    }
+  }
+}

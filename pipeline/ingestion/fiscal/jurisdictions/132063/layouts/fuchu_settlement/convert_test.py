@@ -8,7 +8,9 @@ from ingestion.fiscal import manifest
 from ingestion.lib.node_tables import migrate_rows, number, read_rows
 from ingestion.lib.tree_checks import check_tree
 
-reader = import_module('ingestion.fiscal.jurisdictions.132063.layouts.fuchu_settlement.convert')
+from ingestion.generic.reading_fixture import reader as declared_reader
+
+reader = declared_reader('staggered_execution')
 
 
 class FuchuSettlementTests(unittest.TestCase):
@@ -55,7 +57,7 @@ class FuchuSettlementTests(unittest.TestCase):
         self.assertEqual(migrated.issues, [])
         check = check_tree(migrated.nodes, migrated.amounts)
         self.assertTrue(check['passed'], check)
-        self.assertEqual(check['counts'], {'一致': 110})
+        self.assertEqual(check['counts'], {'一致': 111})
         mokus = [n for n in migrated.nodes if n['level_header'] == '目']
         kans = [n for n in migrated.nodes if n['level_header'] == '款']
         self.assertEqual((len(mokus), len(kans)), (9, 6))

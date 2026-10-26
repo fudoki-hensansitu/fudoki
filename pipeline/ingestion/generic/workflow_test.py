@@ -46,6 +46,10 @@ class FixedReadingTest(unittest.TestCase):
     def test_migration_removes_ignored_settings_even_with_a_dedicated_converter(self):
         from ingestion.fiscal.migrate_workflows import main
         document = manifest.read(manifest.JURISDICTIONS / '132039/2025/settlement/expenditure.json')
+        conversion = document['conversions'][-1]
+        conversion['converter'] = 'fiscal/jurisdictions/132039/layouts/enterprise_statement/convert.py'
+        conversion['options'] = {'layout': 'unused.json', 'layout_sha256': '0' * 64,
+                                 'native': {'path': 'unused.pdf', 'sha256': '0' * 64}}
         self.assertTrue(any(c['converter'] not in manifest.GENERIC_PDF_CONVERTERS for c in document['conversions']))
         with tempfile.TemporaryDirectory(dir=manifest.PIPELINE) as directory, \
                 patch.object(manifest, 'JURISDICTIONS', Path(directory)):
@@ -105,7 +109,8 @@ class SelectedDependencyTest(unittest.TestCase):
         self.root = Path(self.tmp.name)
         self.document = manifest.read(manifest.JURISDICTIONS / '132039/2025/settlement/expenditure.json')
         self.conversion = next(c for c in self.document['conversions'] if 'workflow' in c['options'])
-        self.conversion['options']['workflow'] = reading()
+        self.conversion['converter'] = 'fiscal/layouts/generic_text/convert.py'
+        self.conversion['options'] = {'account': '一般会計', 'table_id': 'general', 'workflow': reading()}
         alternate = deepcopy(self.conversion)
         alternate['options']['workflow']['headers']['pattern'] = 'characters'
         self.files = set(manifest.dependencies(self.conversion)) | set(manifest.dependencies(alternate))

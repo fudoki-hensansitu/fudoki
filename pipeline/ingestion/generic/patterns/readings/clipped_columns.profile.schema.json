@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "body_top",
+    "body_bottom",
+    "name_left",
+    "name_right",
+    "level_kan",
+    "level_kou",
+    "budget_edges",
+    "budget",
+    "setsu_left",
+    "setsu_right",
+    "exec_edges",
+    "executed",
+    "note_left",
+    "note_right",
+    "sum_kan",
+    "sum_kou",
+    "sum_edges",
+    "sum_columns",
+    "sum_body_top"
+  ],
+  "properties": {
+    "body_top": {
+      "type": "number"
+    },
+    "body_bottom": {
+      "type": "number"
+    },
+    "name_left": {
+      "type": "number"
+    },
+    "name_right": {
+      "type": "number"
+    },
+    "level_kan": {
+      "type": "number"
+    },
+    "level_kou": {
+      "type": "number"
+    },
+    "budget_edges": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "number"
+        }
+      }
+    },
+    "budget": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "setsu_left": {
+      "type": "number"
+    },
+    "setsu_right": {
+      "type": "number"
+    },
+    "exec_edges": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "number"
+        }
+      }
+    },
+    "executed": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "note_left": {
+      "type": "number"
+    },
+    "note_right": {
+      "type": "number"
+    },
+    "sum_kan": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "sum_kou": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "sum_edges": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "number"
+        }
+      }
+    },
+    "sum_columns": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "sum_body_top": {
+      "type": "number"
+    }
+  }
+}

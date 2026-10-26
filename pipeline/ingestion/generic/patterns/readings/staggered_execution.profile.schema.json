@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "page_width",
+    "page_height",
+    "body_top",
+    "left_bottom",
+    "right_bottom",
+    "row_tol",
+    "match_tol",
+    "budget_labels",
+    "level_amounts",
+    "setsu_amounts",
+    "uchiwake_exclusion",
+    "position_suffixes"
+  ],
+  "properties": {
+    "page_width": {
+      "type": "number"
+    },
+    "page_height": {
+      "type": "number"
+    },
+    "body_top": {
+      "type": "number"
+    },
+    "left_bottom": {
+      "type": "number"
+    },
+    "right_bottom": {
+      "type": "number"
+    },
+    "row_tol": {
+      "type": "number"
+    },
+    "match_tol": {
+      "type": "number"
+    },
+    "budget_labels": {
+      "type": "object"
+    },
+    "level_amounts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "setsu_amounts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "uchiwake_exclusion": {
+      "type": "object"
+    },
+    "position_suffixes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

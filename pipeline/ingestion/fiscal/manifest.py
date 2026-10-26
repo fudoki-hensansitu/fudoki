@@ -97,7 +97,16 @@ def options_schema(conversion: dict) -> str:
 # fingerprinting it would stale every table of a converter that imports it on each schema edit.
 FINGERPRINT_EXCLUDED = frozenset({'fiscal/manifest.py'})
 GENERIC_PDF_CONVERTERS = frozenset({'fiscal/layouts/generic_text/convert.py',
-                                    'fiscal/layouts/generic_scan/convert.py'})
+                                    'fiscal/layouts/generic_scan/convert.py',
+                                    'fiscal/layouts/workflow_text/convert.py'})
+DISCOVERY_PATTERN_KINDS = ('layout', 'headers', 'subject', 'breakdown', 'repairs')
+
+
+def discovery_patterns() -> dict[tuple[str, str], str]:
+    from ingestion.generic.patterns import catalog
+    entries = catalog()
+    return {(kind, name): module for kind in DISCOVERY_PATTERN_KINDS
+            for name, module in entries[kind].items()}
 
 # A module named ``*_checks.py`` only decides pass/fail (tree check, digit coverage); it never builds
 # or writes a table. It is left out of the fingerprint so that tightening a check does not stale
@@ -166,6 +175,9 @@ def dependencies(conversion: dict, *, trees: dict | None = None, patterns: dict 
     workflow = conversion['options'].get('workflow')
     if workflow is not None:
         from ingestion.generic.workflow import selections
+        if 'reading' in workflow:
+            from ingestion.generic.reading import declaration_files
+            pending.extend(declaration_files(workflow))
         pending.extend(module.removeprefix('ingestion.').replace('.', '/') + '.py'
                        for module in (selections(workflow) if patterns is None else patterns).values())
     found = set()
@@ -178,9 +190,8 @@ def dependencies(conversion: dict, *, trees: dict | None = None, patterns: dict 
         if relative == 'generic/runtime.py' and workflow is None:
             pending.append('generic/discovery.py')
         if relative == 'generic/discovery.py':
-            from ingestion.generic.patterns import catalog
             pending.extend(module.removeprefix('ingestion.').replace('.', '/') + '.py'
-                           for patterns in catalog().values() for module in patterns.values())
+                           for module in discovery_patterns().values())
         if path.suffix != '.py':
             continue
         for parent in path.relative_to(INGESTION).parents:
@@ -207,7 +218,7 @@ def dependencies(conversion: dict, *, trees: dict | None = None, patterns: dict 
                     candidate = path.with_suffix(node.value) if node.value.startswith('.') else path.parent / node.value
                     if candidate.is_file() and candidate.resolve().is_relative_to(INGESTION.resolve()):
                         dependency = str(candidate.relative_to(INGESTION))
-                        if dependency != 'generic/patterns/catalog.json' or workflow is None:
+                        if dependency != 'generic/patterns/catalog.json':
                             pending.append(dependency)
             for module in modules:
                 if not module.startswith('ingestion.'):
@@ -325,9 +336,13 @@ def validate(document: dict, *, path: Path | None = None, check_code: bool = Tru
             if 'workflow' in conversion['options']:
                 if conversion['converter'] not in GENERIC_PDF_CONVERTERS:
                     raise ValueError('PDF workflow requires a generic PDF converter')
-                from ingestion.generic.workflow import validate as validate_workflow
-                validate_workflow(conversion['options']['workflow'],
-                                  text_pdf=conversion['converter'] == 'fiscal/layouts/generic_text/convert.py')
+                if conversion['converter'] == 'fiscal/layouts/workflow_text/convert.py':
+                    from ingestion.generic.reading import validate as validate_reading
+                    validate_reading(conversion['options']['workflow'], conversion['options'])
+                else:
+                    from ingestion.generic.workflow import validate as validate_workflow
+                    validate_workflow(conversion['options']['workflow'], coupled=False,
+                                      text_pdf=conversion['converter'] != 'fiscal/layouts/generic_scan/convert.py')
     if check_code and any(c['converter'] in GENERIC_PDF_CONVERTERS for c in conversions.values()):
         if set(legacy_layout) - {'schema_version', 'source_inconsistencies'}:
             raise ValueError('Generic PDF settings belong in options.workflow, not .layout.json')
@@ -437,6 +452,8 @@ def fingerprints(document: dict, conversions: list[dict] | None = None) -> dict[
             from ingestion.generic.workflow import selections
             patterns = selections(workflow)
         files = dependencies(conversion, trees=trees, patterns=patterns)
+        if workflow is None and 'generic/discovery.py' in files:
+            patterns = discovery_patterns()
         for path in files:
             if code_path(path) not in hashes:
                 hashes[code_path(path)] = sha_file(code_path(path))

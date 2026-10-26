@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "page_width",
+    "page_height",
+    "body_top",
+    "body_bottom",
+    "note_left",
+    "note_right",
+    "budget",
+    "executed",
+    "subj_bands",
+    "setsu_num",
+    "setsu_name",
+    "setsu_bands",
+    "note_amount_left",
+    "glyph_fix",
+    "digit_fix",
+    "repair_chars",
+    "repair_words",
+    "uchiwake_reason",
+    "repair_patterns",
+    "bracket_words",
+    "boundary_x"
+  ],
+  "properties": {
+    "page_width": {
+      "type": "number"
+    },
+    "page_height": {
+      "type": "number"
+    },
+    "body_top": {
+      "type": "number"
+    },
+    "body_bottom": {
+      "type": "number"
+    },
+    "note_left": {
+      "type": "number"
+    },
+    "note_right": {
+      "type": "number"
+    },
+    "budget": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "executed": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "subj_bands": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "number"
+        }
+      }
+    },
+    "setsu_num": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "setsu_name": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "setsu_bands": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "number"
+        }
+      }
+    },
+    "note_amount_left": {
+      "type": "number"
+    },
+    "glyph_fix": {
+      "type": "object"
+    },
+    "digit_fix": {
+      "type": "object"
+    },
+    "repair_chars": {
+      "type": "object"
+    },
+    "repair_words": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "uchiwake_reason": {
+      "type": "string"
+    },
+    "repair_patterns": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "bracket_words": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "boundary_x": {
+      "type": "number"
+    }
+  }
+}

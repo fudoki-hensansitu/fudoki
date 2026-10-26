@@ -3,17 +3,16 @@ import importlib.util
 from pathlib import Path
 import unittest
 
-CODE=Path(__file__).parent/'jurisdictions/131156/layouts/text_settlement/convert.py'
-spec=importlib.util.spec_from_file_location('suginami_text_settlement',CODE)
-converter=importlib.util.module_from_spec(spec)
-spec.loader.exec_module(converter)
+from ingestion.generic.reading_fixture import reader
+
+converter = reader('parallel_breakdowns')
 
 
 class SuginamiMigrationTests(unittest.TestCase):
     def test_subject_name_repair_is_scoped_to_the_render_verified_full_word(self):
-        self.assertEqual(converter.repair_name('馬齢者福祉普'),'高齢者福祉費')
+        self.assertEqual(converter.rule('repair_name')('馬齢者福祉普'),'高齢者福祉費')
         for value in ('馬齢','高齢者福祉費','馬の普及','高齢者福祉'):
-            with self.subTest(value=value):self.assertEqual(converter.repair_name(value),value)
+            with self.subTest(value=value):self.assertEqual(converter.rule('repair_name')(value),value)
 
     def test_explanation_levels_have_their_own_grains_and_positions(self):
         metadata=converter.metadata(converter.BREAKDOWN_COLUMNS,'一般会計','notes')

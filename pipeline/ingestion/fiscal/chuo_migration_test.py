@@ -5,7 +5,7 @@ import unittest
 from ingestion.lib.node_tables import migrate_rows
 from ingestion.lib.tree_checks import check_tree
 
-monetary = import_module('ingestion.fiscal.jurisdictions.131024.layouts.text_settlement.monetary')
+monetary = import_module('ingestion.generic.patterns.readings.business_amounts')
 
 
 def entity(prefix, name, amount, x=30, y=100):
