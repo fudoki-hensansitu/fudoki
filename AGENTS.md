@@ -196,7 +196,7 @@ lint の script は持たない。
 
 unit テストは、金額の正しさ・公開 API の安全性（認証・入力の上限・SQL の bind・停止スイッチなど）・壊すと利用者に届く契約（MCP の出力 schema など）のように、間違えると困るものに限って書く。画面や細かい振る舞いはローカルの e2e（smoke）で確かめ、CI では回さない。CI は速さを優先する。
 
-依存は exact ピン留めにする。公開から7日未満の版は `bunfig.toml`（`minimumReleaseAge`）と root の `pyproject.toml`（`exclude-newer`）で解決から外す。
+依存は exact ピン留めにする。公開から7日未満の版は `bunfig.toml`（`minimumReleaseAge`）と root の `pyproject.toml`（`exclude-newer`）で解決から外す。セキュリティ修正は severity に関わらず cooldown の例外として直ちに適用し、例外を解除できる日時を PR 本文に書き、公開から7日経ったら例外と補助の固定を外す。
 
 ## 現在の優先範囲
 
