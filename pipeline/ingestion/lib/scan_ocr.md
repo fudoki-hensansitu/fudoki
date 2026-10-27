@@ -36,7 +36,7 @@ VLMの答えは観測に固定される。再取得では、同じモデル・�
 
 ## Paddleの縮小検出・頁の縦分割・原画像の再読
 
-Paddleは文字を探す検出工程だけ長辺1280pxへ縮小する（`detection_limit_side_len`）。`page_strips`（既定2）で各領域を縦に等分し、隣へ`strip_overlap_px`（既定60）だけ重ねて別々に検出する。上限は分割片ごとに効き、既定は1920である（132152・131181で全件一致、頁あたり5.6〜7.6秒、RSS 1.3〜1.7GB。比較は[ADR 0032](../../../docs/adr/0032-paddle-onnx-for-new-scan-acquisitions.md)）。重なりの帯で二重に観測された行は取得時に除く。描画は既定でpypdfium2の300dpiで、`pdf_renderer`で`coregraphics`・`poppler`を明示できる。描画方法は観測の`render`に残る。見つけた文字の認識には、元の画像から切り出した画像を使う。MacのPDF描画は実験と同じCoreGraphics・300dpiを既定とする。
+Paddleは文字を探す検出工程だけ、長辺が上限（`detection_limit_side_len`）を超える分割片を縮小する。`page_strips`（既定2）で各領域を縦に等分し、隣へ`strip_overlap_px`（既定60）だけ重ねて別々に検出する。上限は分割片ごとに効き、既定は1920である（132152・131181で全件一致、頁あたり5.6〜7.6秒、RSS 1.3〜1.7GB。比較は[ADR 0032](../../../docs/adr/0032-paddle-onnx-for-new-scan-acquisitions.md)）。重なりの帯で二重に観測された行は取得時に除く。描画は既定でpypdfium2の300dpiで、`pdf_renderer`で`coregraphics`・`poppler`を明示できる。描画方法は観測の`render`に残る。見つけた文字の認識には、元の画像から切り出した画像を使う。
 
 見出しなどの再読領域は、出典の配置を確認した書式設定から明示的に渡す。モジュールが見出しや欠落セルを自動で発見するわけではない。`retry_regions` を省略すると、縮小検出と原解像度認識だけを行い、追加のcrop再読は行わない。
 
