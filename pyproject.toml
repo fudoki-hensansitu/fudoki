@@ -21,12 +21,6 @@ members = ["pipeline"]
 [tool.uv]
 # 公開から7日経っていない版は解決しない（supply chain の cooldown）
 exclude-newer = "7 days"
-# セキュリティ修正だけは cooldown の例外にする。修正を含む最も古い版を constraint で固定し、
-# その版の公開日時までを許す。cooldown が追いついたら両方を消す。
-# certifi 2026.10.19: Dependabot #24（critical、transitive）
-# setuptools 84.1.0: Dependabot #95（low、transitive）
-exclude-newer-package = { certifi = "2026-10-20T03:00:00Z", setuptools = "2026-10-19T21:00:00Z" }
-constraint-dependencies = ["certifi==2026.10.19", "setuptools==84.1.0"]
 # root 自身は環境へインストールしない（入るのは workspace の依存だけ）。配布もしない。
 # name と version は PEP 621 で必須。root には build-system が無く setuptools の flat-layout
 # 発見が複数の top-level package を見つけるため、`uv build` も失敗する（uv 0.12.5 で実測）。
