@@ -37,4 +37,4 @@
 
 ## 設計
 
-要件は [prd.md](../prd/statistics-fallback/prd.md)、設計は [dd.md](../prd/statistics-fallback/dd.md) に置く。
+要件は [prd.md](../prd/statistical-settlement/prd.md)、設計は [dd.md](../prd/statistical-settlement/dd.md) に置く。
