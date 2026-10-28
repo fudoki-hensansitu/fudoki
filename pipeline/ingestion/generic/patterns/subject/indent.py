@@ -91,7 +91,10 @@ def learn_levels(all_items):
             subject_levels[-1].append(value)
         else:
             subject_levels.append([value])
-    subject_levels = [c for c in subject_levels if len(c) >= max(2, len(starts) // 100)]
+    # A start printed once is a stray one. A table that prints one 款・項・目 chain has no level twice: keep its starts
+    # (132063 公共用地, 款 項 目 of one name), or every line is level 0 and the chain reads as one repeated heading.
+    kept_levels = [c for c in subject_levels if len(c) >= max(2, len(starts) // 100)]
+    subject_levels = kept_levels or subject_levels
     centres = [sum(c) / len(c) for c in subject_levels]
     for _, ordered, found in all_items:
         for group in ordered:
