@@ -50,6 +50,11 @@ QUANTITY_PHRASE = re.compile(
     r'|[0-9][0-9,]*円(?:延|×)?[0-9][0-9,]*(?:人|名|件|回|日|個|台|戸|世帯|本|冊|校|園)')
 
 
+# A date in an era's short form (`10. 5. 5から流用`: 令和 left out) opening a transfer remark. The words come without
+# their dots (`10` `5` `5から流用`), so the date is the digits that lead into `から流用`.
+ABBREVIATED_DATE = re.compile(r'[0-9]{2,6}(?:から|より)(?:流用|充用)[^0-9円]*')
+
+
 ORDINAL_PHRASE = re.compile(r'(?:[^0-9,円]|第[0-9]+(?:款|項|目|節|条|土曜日|ブロック|期|農園?)|[0-9]+ブロック|同[款項目節][0-9]+)+')
 
 
@@ -542,7 +547,7 @@ def check_digit_coverage(words, tables, *, tolerance=0.5, exclusions=(), amount_
     # amount, so it is explained outright instead of being left for recheck.
     document_boxes = set()
     non_amount_boxes, lines, merged_lines = _notation_context(
-        words, lambda text: _document_notation(text) or QUANTITY_PHRASE.fullmatch(text) or ORDINAL_PHRASE.fullmatch(text),
+        words, lambda text: _document_notation(text) or QUANTITY_PHRASE.fullmatch(text) or ORDINAL_PHRASE.fullmatch(text) or ABBREVIATED_DATE.fullmatch(text),
         strong=lambda text: bool(DOCUMENT_NUMBER.fullmatch(text)), strong_boxes=document_boxes)
     for word in normalized:
         # A fragment (7号) may already read as a glued code; the number still explains it.

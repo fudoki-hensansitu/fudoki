@@ -1,0 +1,398 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132063",
+    "fiscal_year": 2024,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "6016f9762ffdd0472cb92ce08256e52ea30ffafaf199aea0b1f80d16d4831bd7"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "施策番号": {
+                  "kind": "ignore"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "6be311f16918ee56342d639571cee1be3e0c654536ac9643ab00a430c4d38e54"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "施策番号": {
+                  "kind": "ignore"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "late-elderly-medical-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "6be311f16918ee56342d639571cee1be3e0c654536ac9643ab00a430c4d38e54"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "late-elderly-medical-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "施策番号": {
+                  "kind": "ignore"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "late-elderly-medical-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "care-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "6be311f16918ee56342d639571cee1be3e0c654536ac9643ab00a430c4d38e54"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "care-insurance-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "施策番号": {
+                  "kind": "ignore"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-insurance-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "public-land-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "6be311f16918ee56342d639571cee1be3e0c654536ac9643ab00a430c4d38e54"
+        }
+      ],
+      "options": {
+        "account": "公共用地特別会計",
+        "table_id": "public-land-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "施策番号": {
+                  "kind": "ignore"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "public-land-expenditure"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-expenditure",
+      "conversion_id": "general-settlement",
+      "input_fingerprint": "52b597745bbc1fad68a16ec9da48e115fc301ef8e968aa51c3588ee3905a2b9e",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
+        "金額の単位は column mark 67頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 3 種（3262 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・支出済額(執行率%)→支出済額・翌年度繰越額継続費逓次繰越繰越明許費事故繰越し→翌年度繰越額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132063/2024/settlement/expenditure/general-expenditure-nodes.parquet",
+          "sha256": "39d9a3ddbff5ea27041aea2ad01554cfb600dab74889aa50a4698f21130b0409",
+          "bytes": 83193
+        },
+        "row_count": 2868
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132063/2024/settlement/expenditure/general-expenditure-amounts.parquet",
+          "sha256": "f05d98551ea2dfff942c98f8a93d8bdf9b59cb82174bae6c440189720b6de98d",
+          "bytes": 89751
+        },
+        "row_count": 6651
+      }
+    },
+    {
+      "table_id": "national-health-insurance-expenditure",
+      "conversion_id": "national-health-insurance-settlement",
+      "input_fingerprint": "7aa4b100807b6d1666eb20a24fbb9c311ae1433a77361c3f150ac50fafd44e25",
+      "account": "国民健康保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
+        "金額の単位は column mark 6頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 3 種（269 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・支出済額(執行率%)→支出済額・翌年度繰越額継続費逓次繰越繰越明許費事故繰越し→翌年度繰越額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132063/2024/settlement/expenditure/national-health-insurance-expenditure-nodes.parquet",
+          "sha256": "4494acfffe35bbd8e28ea96e15a826a0cf31d42f7be9da862b99326bf752c29b",
+          "bytes": 9063
+        },
+        "row_count": 152
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132063/2024/settlement/expenditure/national-health-insurance-expenditure-amounts.parquet",
+          "sha256": "14fc6b51b86ce653facd840688a9f30c6daf335404bf55afb27de3dce921c2e8",
+          "bytes": 9641
+        },
+        "row_count": 553
+      }
+    },
+    {
+      "table_id": "late-elderly-medical-expenditure",
+      "conversion_id": "late-elderly-medical-settlement",
+      "input_fingerprint": "cf29f523431ffc9b92f689f770663f3327cb66e054fc85659030b4558d57597b",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
+        "金額の単位は column mark 3頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 3 種（127 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・支出済額(執行率%)→支出済額・翌年度繰越額継続費逓次繰越繰越明許費事故繰越し→翌年度繰越額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132063/2024/settlement/expenditure/late-elderly-medical-expenditure-nodes.parquet",
+          "sha256": "bc04fa3dbba341783ae8e53fdef27708e1e48393f545eed5ce44018674b0657d",
+          "bytes": 6128
+        },
+        "row_count": 70
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132063/2024/settlement/expenditure/late-elderly-medical-expenditure-amounts.parquet",
+          "sha256": "22102ff93edb99b69e0a483cbe930f846911cbb264235e561c75d244dcefab40",
+          "bytes": 5983
+        },
+        "row_count": 254
+      }
+    },
+    {
+      "table_id": "care-insurance-expenditure",
+      "conversion_id": "care-insurance-settlement",
+      "input_fingerprint": "fcede9890b64a7bf8f60824591a2128c8948136806190f89d243b120d5cf65ce",
+      "account": "介護保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
+        "金額の単位は column mark 6頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 3 種（277 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・支出済額(執行率%)→支出済額・翌年度繰越額継続費逓次繰越繰越明許費事故繰越し→翌年度繰越額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132063/2024/settlement/expenditure/care-insurance-expenditure-nodes.parquet",
+          "sha256": "4d564460291945326a1db95c52bd79f8171435dbf92dee8a29e116d8e9f1961a",
+          "bytes": 9317
+        },
+        "row_count": 167
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132063/2024/settlement/expenditure/care-insurance-expenditure-amounts.parquet",
+          "sha256": "f1bef02e12c89ce4ccd6cf39a92d72ef7d90f1686f54b164a093b08f79bdabcc",
+          "bytes": 9957
+        },
+        "row_count": 560
+      }
+    },
+    {
+      "table_id": "public-land-expenditure",
+      "conversion_id": "public-land-settlement",
+      "input_fingerprint": "7a78f6b75507eec308bab8bd3c4d771444201d620d137c3e612c4e4af0c98ef7",
+      "account": "公共用地特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
+        "金額の単位は column mark 1頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 3 種（33 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・支出済額(執行率%)→支出済額・翌年度繰越額継続費逓次繰越繰越明許費事故繰越し→翌年度繰越額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132063/2024/settlement/expenditure/public-land-expenditure-nodes.parquet",
+          "sha256": "d5320d785745a77ceff66ca631dc35250c915f8e23458cf373821f5da6620901",
+          "bytes": 4165
+        },
+        "row_count": 30
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132063/2024/settlement/expenditure/public-land-expenditure-amounts.parquet",
+          "sha256": "3df738fff782615bf74c1b5b0f2a55150e9bd12b929d720d4ae08ff85dbf922b",
+          "bytes": 3713
+        },
+        "row_count": 72
+      }
+    }
+  ]
+}

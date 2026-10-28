@@ -1945,6 +1945,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                                   if same_heading(''.join(s.name for s in stack[-count:]), item.name)), None)
                     if again is not None:
                         item.key, item.role = again.key, 'repeat'
+                        # Digits in the repeated name (`市制７０周年記念事業費`) are the open heading's own, not an amount.
+                        repeated_codes.extend(g for g in item.glyphs if re.search(r'[0-9０-９]', g.text))
                         continue
                 depth = 1 if item.level == -1 else item.level + 1 + (titled and title_shift(item.group))
                 previous = stack[depth - 1] if len(stack) >= depth else None
