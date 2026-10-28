@@ -49,7 +49,7 @@ describe('MCP Apps の View', () => {
     }
   })
 
-  test('Directory exposes six stable tool names with English descriptions and optional rendering guidance', async () => {
+  test('Directory exposes six stable tool names with English capability descriptions', async () => {
     const tools = (await rpc('tools/list')).result.tools as { name: string; title: string; description: string; inputSchema: { properties: Record<string, { enum?: string[] }> } }[]
     expect(tools.map((t) => t.name).sort()).toEqual([
       'describe_expenditure_columns', 'get_expenditure_node', 'list_jurisdictions',
@@ -63,14 +63,17 @@ describe('MCP Apps の View', () => {
     for (const op of operations) expect(tools.find((t) => t.name === op.name)!.description).toBe(op.description)
     const renderer = tools.find((t) => t.name === 'render_expenditure_view')!
     expect(renderer.inputSchema.properties.tool!.enum).toEqual(['search_expenditure_nodes', 'get_expenditure_node'])
-    expect(renderer.description).toContain('If the client cannot display MCP Apps, provide the results in text')
-    expect(renderer.description).toContain('figures, units, fiscal years, sources and caveats')
+    expect(renderer.description).toContain('tables and charts in clients that support MCP Apps')
+    expect(renderer.description).toContain('structuredContent')
+    expect(renderer.description).toContain('text acknowledgement')
+    expect(renderer.description).not.toMatch(/\b(answer|commentary|repeat|minimal)\b/i)
   })
 
-  test('clients without MCP Apps receive complete figures and sources in data-tool text; supported Views retain the same data', async () => {
+  test('data-tool text preserves figures and sources; renderer retains matching structured data', async () => {
     // No UI capability is advertised. Ignoring _meta and structuredContent must still leave usable data.
     const init = (await rpc('initialize', { protocolVersion: '2025-03-26', capabilities: {}, clientInfo: { name: 'text-only', version: '1' } })).result
-    expect(init.instructions).toContain('including when an MCP Apps View is unavailable')
+    expect(init.instructions).not.toContain('Answer with')
+    expect(init.instructions).not.toContain('when an MCP Apps View is unavailable')
     insertJurisdiction(sqlite, { jurisdiction_code: '132039', name: '武蔵野市' })
     insertOrigin(sqlite, { origin_id: 'o1', title: '決算書', url: 'https://example.test/settlement.pdf', sha256: 'abc123' })
     const nodeId = 'a'.repeat(64)
