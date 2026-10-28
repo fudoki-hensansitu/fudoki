@@ -37,4 +37,4 @@
 
 ## 設計
 
-要件と設計は [統計の決算による穴埋め](../prd/statistics-fallback/prd.md) に置く。
+要件は [prd.md](../prd/statistics-fallback/prd.md)、設計は [dd.md](../prd/statistics-fallback/dd.md) に置く。
