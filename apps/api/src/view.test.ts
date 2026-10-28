@@ -2,8 +2,9 @@ import { beforeEach, describe, expect, test } from 'bun:test'
 import { createApp, RENDER_RESULT_TEXT } from './app'
 import type { Db } from './db'
 import type { Database } from 'bun:sqlite'
-import { insertJurisdiction, insertNode, testDb } from './testing'
+import { insertJurisdiction, insertNode, insertOrigin, testDb } from './testing'
 import { VIEW_HTML, VIEW_URI } from './gen/view'
+import { operations } from './operations'
 import { SUGGESTIONS_META_KEY } from '../../../packages/fiscal/suggestions'
 
 let db: Db
@@ -45,6 +46,51 @@ describe('MCP Apps の View', () => {
       expect(t.title, t.name).toBeTruthy()
       expect(t.annotations?.title, t.name).toBe(t.title)
       expect(t.annotations?.readOnlyHint, t.name).toBe(true)
+    }
+  })
+
+  test('Directory exposes six stable tool names with English descriptions and optional rendering guidance', async () => {
+    const tools = (await rpc('tools/list')).result.tools as { name: string; title: string; description: string; inputSchema: { properties: Record<string, { enum?: string[] }> } }[]
+    expect(tools.map((t) => t.name).sort()).toEqual([
+      'describe_expenditure_columns', 'get_expenditure_node', 'list_jurisdictions',
+      'render_expenditure_view', 'search_evaluations', 'search_expenditure_nodes',
+    ])
+    for (const t of tools) {
+      expect(t.title).toMatch(/[A-Za-z]+ [A-Za-z]+/)
+      expect(t.description).toMatch(/^[A-Z][a-z]+ /)
+    }
+    // Data tool descriptions stay independent of the optional View.
+    for (const op of operations) expect(tools.find((t) => t.name === op.name)!.description).toBe(op.description)
+    const renderer = tools.find((t) => t.name === 'render_expenditure_view')!
+    expect(renderer.inputSchema.properties.tool!.enum).toEqual(['search_expenditure_nodes', 'get_expenditure_node'])
+    expect(renderer.description).toContain('If the client cannot display MCP Apps, provide the results in text')
+    expect(renderer.description).toContain('figures, units, fiscal years, sources and caveats')
+  })
+
+  test('clients without MCP Apps receive complete figures and sources in data-tool text; supported Views retain the same data', async () => {
+    // No UI capability is advertised. Ignoring _meta and structuredContent must still leave usable data.
+    const init = (await rpc('initialize', { protocolVersion: '2025-03-26', capabilities: {}, clientInfo: { name: 'text-only', version: '1' } })).result
+    expect(init.instructions).toContain('including when an MCP Apps View is unavailable')
+    insertJurisdiction(sqlite, { jurisdiction_code: '132039', name: '武蔵野市' })
+    insertOrigin(sqlite, { origin_id: 'o1', title: '決算書', url: 'https://example.test/settlement.pdf', sha256: 'abc123' })
+    const nodeId = 'a'.repeat(64)
+    insertNode(sqlite, { document_kind: 'settlement', node_id: nodeId, name: '総務費', amount_yen: 123456, origin_id: 'o1' })
+    const calls = [
+      { name: 'search_expenditure_nodes', arguments: { document_kind: 'settlement', fiscal_year: { min: 2024, max: 2024 } } },
+      { name: 'get_expenditure_node', arguments: { document_kind: 'settlement', node_id: nodeId } },
+    ]
+    for (const call of calls) {
+      const direct = (await rpc('tools/call', call)).result
+      expect(direct.isError).toBeUndefined()
+      const text = JSON.parse(direct.content[0].text)
+      expect(text).toEqual(direct.structuredContent)
+      const node = text.node ?? text.nodes[0]
+      expect(node).toMatchObject({ name: '総務費', amount_yen: 123456, fiscal_year: 2024, document_kind: 'settlement', origin_id: 'o1' })
+      expect(text.origins).toContainEqual(expect.objectContaining({ title: '決算書', url: 'https://example.test/settlement.pdf', sha256: 'abc123' }))
+      const rendered = (await rpc('tools/call', { name: 'render_expenditure_view', arguments: { tool: call.name, arguments: call.arguments } })).result
+      expect(rendered.structuredContent).toEqual(text)
+      expect(rendered._meta).toEqual(direct._meta)
+      expect(rendered.content).toEqual([{ type: 'text', text: RENDER_RESULT_TEXT }])
     }
   })
 

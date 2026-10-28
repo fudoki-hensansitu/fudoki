@@ -250,7 +250,7 @@ describe('MCP', () => {
   test('initialize → tools/list → tools/call', async () => {
     const init = await rpc('initialize', { protocolVersion: '2025-03-26', capabilities: {}, clientInfo: { name: 't', version: '0' } })
     expect(init.body.result.serverInfo.name).toBe('fudoki-api')
-    expect(init.body.result.instructions).toBe('風土記は、日本の地方自治体の歳出予算・決算と事業評価資料を検索するサービスです。自治体の支出や事業評価に関する質問で利用してください。')
+    expect(init.body.result.instructions).toContain('read-only search of Japanese municipal expenditure budgets, settlements and project evaluation documents')
     const list = await rpc('tools/list')
     expect(list.body.result.tools.map((t: { name: string }) => t.name).sort()).toEqual([
       'describe_expenditure_columns',

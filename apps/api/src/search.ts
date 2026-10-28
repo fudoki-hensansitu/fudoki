@@ -28,12 +28,12 @@ const ints = z.array(z.int()).min(1).max(MAX_LIST)
 // meta の id で、33 列に同じ条件の schema が繰り返し出ないよう $defs に一度だけ出す（tools/list を小さくする）。
 const stringCondition = z
   .strictObject({
-    eq: strings.optional().describe('いずれかに等しい（OR）'),
-    not_eq: strings.optional().describe('どれにも等しくない'),
-    prefix: part.optional().describe('前方一致'),
-    suffix: part.optional().describe('後方一致'),
-    contains: part.optional().describe('部分一致'),
-    is_null: z.boolean().optional().describe('true で NULL、false で NULL でない'),
+    eq: strings.optional().describe('Equal to any value (OR)'),
+    not_eq: strings.optional().describe('Not equal to any listed value'),
+    prefix: part.optional().describe('Starts with'),
+    suffix: part.optional().describe('Ends with'),
+    contains: part.optional().describe('Contains'),
+    is_null: z.boolean().optional().describe('true matches NULL; false matches non-NULL'),
   })
   .refine(oneOrMore, KEYS_MESSAGE)
   .meta({ id: 'StringCondition' })
@@ -42,8 +42,8 @@ const integerCondition = z
   .strictObject({
     eq: ints.optional(),
     not_eq: ints.optional(),
-    min: z.int().optional().describe('以上'),
-    max: z.int().optional().describe('以下'),
+    min: z.int().optional().describe('Inclusive minimum'),
+    max: z.int().optional().describe('Inclusive maximum'),
     is_null: z.boolean().optional(),
   })
   .refine(oneOrMore, KEYS_MESSAGE)
@@ -51,8 +51,8 @@ const integerCondition = z
 
 const numberCondition = z
   .strictObject({
-    min: z.number().optional().describe('以上'),
-    max: z.number().optional().describe('以下'),
+    min: z.number().optional().describe('Inclusive minimum'),
+    max: z.number().optional().describe('Inclusive maximum'),
     is_null: z.boolean().optional(),
   })
   .refine(oneOrMore, KEYS_MESSAGE)
@@ -169,14 +169,14 @@ const DOCUMENT_KIND_LIST = [...NODE_TABLES.keys()] as [string, ...string[]]
 
 export const searchInput = z
   .strictObject({
-    document_kind: z.enum(DOCUMENT_KIND_LIST).describe('資料区分。表の選択に使う。必須。'),
+    document_kind: z.enum(DOCUMENT_KIND_LIST).describe('Required document kind selecting the table: settlement (executed expenditure) or initial (initial budget).'),
     fiscal_year: z
       .strictObject({
         min: z.int().min(1).max(9999),
         max: z.int().min(1).max(9999),
       })
-      .describe(`会計年度（西暦）の範囲。幅は ${MAX_YEARS} 年以内（max - min <= ${MAX_YEARS - 1}）。必須。`),
-    where: whereSchema.optional().describe('列ごとの条件。列どうしは AND。'),
+      .describe(`Required fiscal year range in Gregorian years, spanning at most ${MAX_YEARS} years (max - min <= ${MAX_YEARS - 1}).`),
+    where: whereSchema.optional().describe('Conditions per column, combined with AND.'),
     order_by: z
       .array(
         z.strictObject({
@@ -186,9 +186,9 @@ export const searchInput = z
       )
       .max(MAX_ORDER_KEYS)
       .optional()
-      .describe('並び順。末尾に node_id が足される。'),
-    page_size: z.int().min(1).max(MAX_PAGE_SIZE).default(DEFAULT_PAGE_SIZE).describe('1ページの件数。'),
-    page_token: z.string().max(512).regex(/^[A-Za-z0-9_-]*$/, 'page_token の形式が不正です').optional().describe('前回の応答の next_page_token。page_size 以外は前回と同じ入力にする。'),
+      .describe('Sort order; node_id is appended as a tie breaker.'),
+    page_size: z.int().min(1).max(MAX_PAGE_SIZE).default(DEFAULT_PAGE_SIZE).describe('Number of results per page.'),
+    page_token: z.string().max(512).regex(/^[A-Za-z0-9_-]*$/, 'page_token の形式が不正です').optional().describe('next_page_token from the previous response. Keep all input except page_size unchanged.'),
   })
   .superRefine((v, ctx) => {
     if (v.fiscal_year.max < v.fiscal_year.min)

@@ -2,7 +2,7 @@
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "fudoki",
   "version": "0.2.0",
-  "description": "日本の自治体の歳出を事業の単位で検索し、収録範囲と出典を確かめて比較・集計する。収録した自治体は事業の評価が載った出典の頁も探せる。",
+  "description": "Search Japanese municipal expenditure budgets and settlements at project level. Check coverage and sources before comparing or aggregating amounts. For covered municipalities, also find source pages containing project evaluations.",
   "author": {
     "name": "風土記",
     "email": "support@fudoki.dev"

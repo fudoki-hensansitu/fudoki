@@ -59,7 +59,7 @@ export const SUM_RULES = [
 // Get の子のページング。MCP は型を強制しない整数、REST の query は文字列から整数にする（どちらも 1〜1000）。
 const NEXT_PAGE_TOKEN_HELP = `次のページの token。無ければ null。位置は ${MAX_OFFSET} 件目までで、それ以上は null になるので、条件を絞って問い合わせる。`
 
-const pageSizeDescription = `1ページの件数（1〜${MAX_PAGE_SIZE}、既定 ${DEFAULT_PAGE_SIZE}）。`
+const pageSizeDescription = `Number of results per page (1–${MAX_PAGE_SIZE}; default ${DEFAULT_PAGE_SIZE}).`
 const getPageSize = z.int().min(1).max(MAX_PAGE_SIZE).default(DEFAULT_PAGE_SIZE).describe(pageSizeDescription)
 const queryPageSize = z.coerce.number().int().min(1).max(MAX_PAGE_SIZE).default(DEFAULT_PAGE_SIZE).describe(pageSizeDescription)
 const pageToken = z
@@ -67,7 +67,7 @@ const pageToken = z
   .max(512)
   .regex(/^[A-Za-z0-9_-]*$/, 'page_token の形式が不正です')
   .optional()
-  .describe('前回の応答の next_page_token。document_kind と node_id は前回と同じにする。')
+  .describe('next_page_token from the previous response. Keep document_kind and node_id unchanged.')
 
 // meta の id を付けると、JSON Schema では $defs に一度だけ出て $ref で参照される（tools/list と OpenAPI が小さくなる）。
 const Origin = z
@@ -232,7 +232,7 @@ async function getNode(ctx: Ctx, input: Record<string, unknown>) {
 const MAX_JURISDICTION_PAGE_SIZE = 100
 const DEFAULT_JURISDICTION_PAGE_SIZE = 20
 const MAX_NAME = 50
-const jurisdictionPageSizeDescription = `1ページの自治体の数（1〜${MAX_JURISDICTION_PAGE_SIZE}、既定 ${DEFAULT_JURISDICTION_PAGE_SIZE}）。`
+const jurisdictionPageSizeDescription = `Municipalities per page (1–${MAX_JURISDICTION_PAGE_SIZE}; default ${DEFAULT_JURISDICTION_PAGE_SIZE}).`
 
 const describeColumn = (columns: ColumnSpec[], name: string) => columns.find((c) => c.name === name)?.description ?? ''
 /** columns.json の列から、型・null の可否・説明の付いた schema を作る */
@@ -363,24 +363,24 @@ const listJurisdictionsInput = {
     .max(MAX_NAME)
     .regex(/^[^\u0000-\u001f\u007f]*$/, '制御文字は使えません')
     .optional()
-    .describe('自治体名の部分一致（例: "武蔵野市"、"府中"）。全角・半角の違いは NFKC で揃えて比べる。同名の自治体はすべて返るので、prefecture_name と jurisdiction_code で区別する。'),
+    .describe('Partial municipality name (e.g. "武蔵野市", "府中"), compared after NFKC normalization. All municipalities with matching names are returned; distinguish them using prefecture_name and jurisdiction_code.'),
   code: z
     .string()
     .regex(/^[0-9]{5,6}$/, 'code は5桁か6桁の数字です')
     .optional()
-    .describe('全国地方公共団体コード。6桁（末尾は検査数字）でも、検査数字を除いた5桁でもよい。'),
+    .describe('Japanese local government code: six digits including the check digit, or five digits without it.'),
   page_token: z
     .string()
     .max(512)
     .regex(/^[A-Za-z0-9_-]*$/, 'page_token の形式が不正です')
     .optional()
-    .describe('前回の応答の next_page_token。name と code は前回と同じにする。'),
+    .describe('next_page_token from the previous response. Keep name and code unchanged.'),
 }
 
 /** AIP-157 の view。BASIC は軽い既定、FULL は全部 */
 const JURISDICTION_VIEWS = ['BASIC', 'FULL'] as const
 const jurisdictionViewDescription =
-  'BASIC（既定）は自治体と、収録している年度・資料区分・会計だけを返す。FULL は会計ごとの出典（origin_id・標題・URL・形式）も返す。出典の標題や URL が要るときだけ FULL にする。'
+  'BASIC (default) returns municipalities and covered fiscal years, document kinds and accounts. FULL also returns sources per account (origin_id, title, URL and format). Use FULL only when source details are needed.'
 
 async function describeColumns() {
   // 資料区分ごとの説明を列名でまとめる（列の集合は表をまたいで同じ）
@@ -422,21 +422,21 @@ const WHERE_HELP = {
 }
 
 const searchDescription =
-  '歳出の木のノード（款・項・目と、節・備考など別の軸の内訳）を条件で絞って一覧する。検索の前に describe_expenditure_columns を一度読む。' +
-  '文字の条件は、出典が科目・事業説明・節・備考の欄に印字した名称（name・kan_name・kou_name）に当たる。本文の説明文は表に無いので、事業名が出典に印字されていない支出は科目の名前に含まれる語で引く。' +
-  '自治体の比較は node_kind を "目" などに絞って行い、詳細は get_expenditure_node で木を辿る。' +
-  '資料区分や軸の違う金額を足さない。足すときは describe_expenditure_columns の sum_rules に従う。where は列をまたぐ OR・NOT が無いので、2回に分けて問い合わせる。'
+  'Search expenditure tree nodes (款/kan, 項/kou, 目/moku and breakdowns on separate axes such as 節/setsu and notes). Read describe_expenditure_columns once before searching. ' +
+  'Text filters match names printed in the source subject, project, setsu or notes fields (name, kan_name, kou_name). Narrative body text is not in these tables; if a project name is not printed, search words in the subject name. ' +
+  'For comparisons across municipalities, filter node_kind to a consistent level such as "目", then use get_expenditure_node to explore details. ' +
+  'Do not add amounts across document kinds or axes. Follow sum_rules from describe_expenditure_columns when summing. where has no cross-column OR or NOT; use separate queries for those alternatives.'
 
 const listJurisdictionsDescription =
-  '自治体の名称・6桁の自治体コード・都道府県と、その自治体の収録範囲（明細を検索できる年度・資料区分・会計。view が FULL なら明細が指す出典の標題・URL も）を返す。' +
-  '歳出を検索する前に、自治体コードと、比べたい年度・資料区分が収録されているかをここで確かめる。' +
-  '名称（部分一致）か自治体コード（5桁・6桁）で絞り、絞らなければ自治体コード順に返す。1頁は既定 20 件（最大 100）なので、全件は next_page_token を辿る。収録の無い自治体は coverage が空。' +
-  '返った jurisdiction_code（6桁）・fiscal_year・document_kind・account_name は search_expenditure_nodes の条件にそのまま使える。検索は5桁のコードを受け付けず0件になるので、ここで6桁を引いてから渡す。名前とコードの両方を渡すと AND。'
+  'List municipality names, six-digit jurisdiction codes, prefectures and available expenditure coverage (fiscal years, document kinds and accounts). With view FULL, also return source titles and URLs for each account. ' +
+  'Before searching expenditure, use this tool to check the municipality code and whether the years and document kinds you want to compare are covered. ' +
+  'Filter by partial municipality name or a five- or six-digit code. Without filters, results are ordered by jurisdiction code. Pages default to 20 municipalities (maximum 100); follow next_page_token for more. Municipalities without data have empty coverage. ' +
+  'Use returned jurisdiction_code (six digits), fiscal_year, document_kind and account_name directly in search_expenditure_nodes. Search does not accept five-digit codes as matches: resolve the six-digit code here first. Name and code filters are combined with AND.'
 
 export const operations: Operation[] = [
   {
     name: 'list_jurisdictions',
-    summary: '自治体と収録範囲',
+    summary: 'Municipalities and expenditure coverage',
     method: 'get',
     path: '/v1/jurisdictions',
     pathParams: [],
@@ -459,7 +459,7 @@ export const operations: Operation[] = [
   },
   {
     name: 'search_expenditure_nodes',
-    summary: '歳出の木のノードの検索',
+    summary: 'Search expenditure tree nodes',
     method: 'post',
     path: '/v1/expenditure/nodes:search',
     pathParams: [],
@@ -476,14 +476,14 @@ export const operations: Operation[] = [
   },
   {
     name: 'get_expenditure_node',
-    summary: '歳出のノード一つと軸ごとの子',
+    summary: 'Expenditure node and children by axis',
     method: 'get',
     path: '/v1/expenditure/nodes/{document_kind}/{node_id}',
     pathParams: ['document_kind', 'node_id'],
-    description: 'ノード一つ（document_kind と node_id で識別）と、その子を軸（axis）ごとに返す。search_expenditure_nodes で見つけたノードの内訳を辿るときに使う。',
+    description: 'Return one expenditure node, identified by document_kind and node_id, and its children grouped by axis. Use this to explore the breakdown of a node found by search_expenditure_nodes. Do not sum children from different axes together.',
     input: z.strictObject({
-      document_kind: z.enum(DOCUMENT_KINDS).describe('資料区分（settlement か initial）。'),
-      node_id: z.string().regex(/^[0-9a-f]{64}$/).describe('search の応答の node_id（小文字 16 進 64 文字）。'),
+      document_kind: z.enum(DOCUMENT_KINDS).describe('Document kind: settlement (executed expenditure) or initial (initial budget).'),
+      node_id: z.string().regex(/^[0-9a-f]{64}$/).describe('node_id from a search response (64 lowercase hexadecimal characters).'),
       page_size: getPageSize,
       page_token: pageToken,
     }),
@@ -499,11 +499,11 @@ export const operations: Operation[] = [
   },
   {
     name: 'describe_expenditure_columns',
-    summary: '列の説明と金額の和の条件',
+    summary: 'Column descriptions and aggregation rules',
     method: 'get',
     path: '/v1/expenditure/columns',
     pathParams: [],
-    description: '歳出の木の列の説明と、金額を足すときの条件（sum_rules）、検索の入力の例（search_example）を返す。検索の前に一度読む。',
+    description: 'Describe expenditure tree columns, rules for adding amounts (sum_rules), and an example search input (search_example). Read this once before searching; follow sum_rules to avoid double counting parents and children or mixing independent breakdown axes.',
     input: z.strictObject({}),
     output: z.strictObject({
       document_kinds: z.array(z.strictObject({ name: z.string(), description: z.string() })),

@@ -80,7 +80,7 @@ const RateLimitedBody = z.object({ error: z.object({ code: z.string(), message: 
 /** `/openapi.json` と apps/docs の API リファレンスが同じ文書を使う */
 export const OPENAPI_CONFIG = {
   openapi: '3.1.0',
-  info: { title: '風土記 API', version: '1.0.0', description: '町の家計簿を作る。自治体の歳出の予算・決算を事業の単位まで集約したデータ。' },
+  info: { title: '風土記 API', version: '1.0.0', description: 'Search Japanese municipal expenditure budgets and settlements down to individual projects, with coverage and sources.' },
   servers: [{ url: 'https://api.fudoki.dev' }],
 }
 
@@ -148,12 +148,12 @@ async function jurisdictionNames(ctx: Ctx, out: unknown): Promise<Record<string,
 export const RENDER_TOOL = 'render_expenditure_view'
 
 /** 描画 tool の結果の text。データは structuredContent（View 用）にあり、text には写さない */
-export const RENDER_RESULT_TEXT = '描画を実行しました。表示する内容は structuredContent と同じです。'
+export const RENDER_RESULT_TEXT = 'Display requested. The display data is in structuredContent.'
 
 const RENDER_DESCRIPTION =
-  '歳出の検索結果（search_expenditure_nodes）と一つのノードの内訳（get_expenditure_node）を画面（View）に表とグラフで表示する。自治体の一覧（list_jurisdictions）など、これ以外の tool の結果は画面に描けないので、文章で答える。データを調べる tool は結果を返すだけで画面を出さない。' +
-  'ユーザーに結果を見せる最終段階で、その tool と同じ入力（tool と arguments）を渡してこの tool を一度だけ呼ぶ。この tool の text にはデータを入れない（画面用の structuredContent と同じ内容なので）。回答に使うデータは、先に呼んだデータ tool の結果を読む。' +
-  'MCP Apps に対応した client では結果が画面に出るので、応答の文章で一覧や金額を繰り返さず、補足は問いへの答えと注意点だけの最小限にとどめる。'
+  'Display search_expenditure_nodes results and get_expenditure_node breakdowns as tables and charts in an MCP Apps View on supported clients. Other tools, including list_jurisdictions, cannot be rendered; present their results in text. ' +
+  'After reading a data tool result, call this tool once with the same tool name and arguments when a visual display is useful. Data tools themselves do not open a View. ' +
+  'This tool returns only a text acknowledgement; the display data is in structuredContent. Use the original data tool result to answer the question with relevant figures, units, fiscal years, sources and caveats. If the client cannot display MCP Apps, provide the results in text from that original data result.'
 
 function mcpServer(ctx: Ctx, apiOrigin: string, operations: Operation[]): McpServer {
   const server = new McpServer(
@@ -165,7 +165,7 @@ function mcpServer(ctx: Ctx, apiOrigin: string, operations: Operation[]): McpSer
     },
     // stateless で tool・resource の一覧は変わらず、通知を送る経路も無いので、listChanged は名乗らない
     {
-      instructions: '風土記は、日本の地方自治体の歳出予算・決算と事業評価資料を検索するサービスです。自治体の支出や事業評価に関する質問で利用してください。',
+      instructions: '風土記 provides read-only search of Japanese municipal expenditure budgets, settlements and project evaluation documents. Use it for questions about municipal spending or project evaluations. Answer with relevant figures, units, fiscal years, sources and caveats from the data tool results, including when an MCP Apps View is unavailable.',
       capabilities: { tools: { listChanged: false }, resources: { listChanged: false } },
     }
   )
@@ -174,7 +174,7 @@ function mcpServer(ctx: Ctx, apiOrigin: string, operations: Operation[]): McpSer
   server.registerResource(
     'view',
     VIEW_URI,
-    { title: '風土記の表示', description: '歳出のノードを表とグラフにする View（MCP Apps）。', mimeType: VIEW_MIME_TYPE },
+    { title: '風土記 expenditure view', description: 'MCP Apps View for expenditure search results and node breakdowns as tables and charts.', mimeType: VIEW_MIME_TYPE },
     // URI に中身のハッシュを入れてあり、同じ URI の中身は変わらない
     async (uri) => ({ contents: [{ uri: uri.href, mimeType: VIEW_MIME_TYPE, text: VIEW_HTML, _meta: { ui: { prefersBorder: true, csp: { connectDomains: [apiOrigin] } } } }] })
   )
@@ -205,7 +205,7 @@ function mcpServer(ctx: Ctx, apiOrigin: string, operations: Operation[]): McpSer
       op.name,
       {
         title: op.summary,
-        description: op.view ? `${op.description} 結果を画面に表示するときは、この tool ではなく ${RENDER_TOOL} を使う。` : op.description,
+        description: op.description,
         inputSchema: op.input,
         outputSchema: op.output,
         annotations: annotations(op.summary),
@@ -214,7 +214,7 @@ function mcpServer(ctx: Ctx, apiOrigin: string, operations: Operation[]): McpSer
       (args: Record<string, unknown>) => toolResult(op, args, !!op.view)
     )
   }
-  const RENDER_TITLE = '結果の表示'
+  const RENDER_TITLE = 'Display expenditure results'
   // View を描く tool は1つだけ。データ tool と同じ問い合わせを受けて結果を返し、View のテンプレートを指す
   const viewOps = operations.filter((op) => op.view)
   if (viewOps.length > 0) {
@@ -225,8 +225,8 @@ function mcpServer(ctx: Ctx, apiOrigin: string, operations: Operation[]): McpSer
         title: RENDER_TITLE,
         description: RENDER_DESCRIPTION,
         inputSchema: z.strictObject({
-          tool: z.enum(names).describe('表示する結果を返す tool の名前。'),
-          arguments: z.record(z.string(), z.unknown()).describe('その tool に渡す入力（データ tool の呼び出しと同じもの）。'),
+          tool: z.enum(names).describe('Name of the data tool whose result will be displayed.'),
+          arguments: z.record(z.string(), z.unknown()).describe('Input for that tool, identical to the original data tool call.'),
         }),
         // outputSchema は付けない: 結果の形が tool 引数で変わる（対象 tool の output のどれか）ため、単一の schema にできない
         annotations: annotations(RENDER_TITLE),

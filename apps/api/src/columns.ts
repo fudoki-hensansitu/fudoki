@@ -62,7 +62,7 @@ export const COVERAGE_TABLE = 'expenditure_coverage'
 export const COVERAGE_COLUMNS = TABLES[COVERAGE_TABLE]!.columns
 
 export const DOCUMENT_KIND_DESCRIPTION =
-  '資料区分。settlement は決算（金額は支出済額）、initial は当初予算（金額は当初予算額）。意味の違う金額を足さない。'
+  'Document kind: settlement means executed expenditure; initial means initial budget amounts. Do not add amounts with different meanings.'
 
 export type Row = Record<string, string | number | boolean | null>
 
