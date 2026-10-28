@@ -25,7 +25,7 @@ e-Stat の「地方財政状況調査 市町村分 調査表 年次」の xlsx �
 統計の年次ファイルを、既存の PDF と同じノードの表・金額の表に落とす変換器を1つ足す。
 
 - 入口は既存の `prepareIngestion`（`pipeline/ingestion/selection.ts`）とは別に置く。`prepareIngestion` は選定結果が null の対象を拒むので、選定の宣言を渡す経路には乗せない。統計の入口は「統計の宣言（年度）」と「決算の選定結果が null の団体・年度の一覧」を入力に取り、統計にその団体・年度の行がある組だけを変換する。
-- 条件は `selected_candidate_id === null` だけで決める。`archive === null`（選定済みだが未保存）は対象にしない。
+- 対象は「`selected_candidate_id === null` かつ統計にその団体・年度の行がある」組に限る。統計に行が無い組と、`archive === null`（選定済みだが未保存）の組は対象にしない。
 - 出力は既存の管理 JSON と同じ形で、`dbt/scripts/prepare.py` が生成する staging の入力一覧（`fiscal_pdf_relations()`）に載る。これで `stg_fiscal__nodes`・`stg_fiscal__amounts` → `int_fiscal__settlement_expenditure_nodes` → `int_fiscal__expenditure_transfers` の既存経路を通り、木の検査（`fiscal_tree_balances`）も当たる。
 
 - 木は「普通会計 → 款 → 項」。内訳の列が無い款は款を葉にする。
@@ -35,7 +35,7 @@ e-Stat の「地方財政状況調査 市町村分 調査表 年次」の xlsx �
 
 - 専用の union 枝は作らず、上の staging・intermediate の経路で `settlement_expenditure_node` に入る。`account_name` は「普通会計」とし、`account_kind` は `int_fiscal__expenditure_transfers` が `account_kind_map` から引くので、辞書に普通会計を一般会計とは別の種類として足す。自治体をまたぐ比較は `account_kind` で行うので、一般会計と混ざらない。
 - 統計由来であることは、明細から引ける列で示す。候補は `origin.format`（xlsx）だけに頼らず、粒度を表す列（例: 款まで・項まで）を木の表に足す案。列の名前と語彙は実装時に決める。
-- `origin` は団体ごとに1行を持つ（同じ URL・sha256 を団体ごとに繰り返す）。今の `origin` は自治体コードを持つので、全国共通の出典も同じ形に合わせる。
+- `origin` は団体ごとに1行を持つ（同じ URL・sha256 を団体ごとに繰り返す）。今の `dbt/scripts/prepare.py` は sha256 を `origin_id` にし、同じ sha256 で対象が違うと `conflicting source targets` で止まる。統計の出典だけ `origin_id` を sha256 と自治体コードから作り、団体ごとの行を別の ID にする。`origin.sha256` は全団体で同じ値のまま、ファイルの同一性を示す。自治体の資料の `origin_id`（sha256 そのもの）と競合検査は変えない。
 - `expenditure_coverage` は木の表から作るので、変更なしで「普通会計」の行が載る。
 - 頁・印字の枠の列は NULL（xlsx の行・列の位置は持たない）。
 
