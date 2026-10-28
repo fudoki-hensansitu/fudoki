@@ -151,9 +151,9 @@ export const RENDER_TOOL = 'render_expenditure_view'
 export const RENDER_RESULT_TEXT = 'Display requested. The display data is in structuredContent.'
 
 const RENDER_DESCRIPTION =
-  'Display search_expenditure_nodes results and get_expenditure_node breakdowns as tables and charts in an MCP Apps View on supported clients. Other tools, including list_jurisdictions, cannot be rendered; present their results in text. ' +
-  'After reading a data tool result, call this tool once with the same tool name and arguments when a visual display is useful. Data tools themselves do not open a View. ' +
-  'This tool returns only a text acknowledgement; the display data is in structuredContent. Use the original data tool result to answer the question with relevant figures, units, fiscal years, sources and caveats. If the client cannot display MCP Apps, provide the results in text from that original data result.'
+  'Render search_expenditure_nodes results and get_expenditure_node breakdowns as tables and charts in clients that support MCP Apps. ' +
+  "Accepts tool (one of those two names) and arguments (the selected tool's input). " +
+  "Returns the selected tool's result in structuredContent and a text acknowledgement."
 
 function mcpServer(ctx: Ctx, apiOrigin: string, operations: Operation[]): McpServer {
   const server = new McpServer(
@@ -165,7 +165,7 @@ function mcpServer(ctx: Ctx, apiOrigin: string, operations: Operation[]): McpSer
     },
     // stateless で tool・resource の一覧は変わらず、通知を送る経路も無いので、listChanged は名乗らない
     {
-      instructions: '風土記 provides read-only search of Japanese municipal expenditure budgets, settlements and project evaluation documents. Use it for questions about municipal spending or project evaluations. Answer with relevant figures, units, fiscal years, sources and caveats from the data tool results, including when an MCP Apps View is unavailable.',
+      instructions: '風土記 provides read-only search of Japanese municipal expenditure budgets, settlements and project evaluation documents. Use it for questions about municipal spending or project evaluations.',
       capabilities: { tools: { listChanged: false }, resources: { listChanged: false } },
     }
   )
@@ -226,7 +226,7 @@ function mcpServer(ctx: Ctx, apiOrigin: string, operations: Operation[]): McpSer
         description: RENDER_DESCRIPTION,
         inputSchema: z.strictObject({
           tool: z.enum(names).describe('Name of the data tool whose result will be displayed.'),
-          arguments: z.record(z.string(), z.unknown()).describe('Input for that tool, identical to the original data tool call.'),
+          arguments: z.record(z.string(), z.unknown()).describe('Input for the selected data tool.'),
         }),
         // outputSchema は付けない: 結果の形が tool 引数で変わる（対象 tool の output のどれか）ため、単一の schema にできない
         annotations: annotations(RENDER_TITLE),
