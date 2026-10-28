@@ -25,7 +25,11 @@ OpenAIの英語subtitleは `Compare municipal spending`、日本語は「自治�
 
 support/privacy/terms の項目調査・本番設定との照合・運用方針は [ポリシーの調査](policies.md)を参照する。ページは通常の公開 build に含める。ページの作成を、デプロイ後の公開 URL の確認や提出の完了とは扱わない。
 
-Claudeの掲載文案:
+Anthropic MCP Directory の英語掲載文案（MCP connector 用。Plugin bundle・OpenAI の別申請とは区別する。2026-10-28 のレビュー対応としてローカルで準備。公開反映・申請画面の更新・審査担当への返信は未実施）:
+
+> Search Japanese municipal initial-budget and settlement expenditure data down to individual projects. Check which fiscal years, document kinds and accounts are covered, compare spending on consistent terms, and inspect breakdowns and sources. For covered municipalities and years, also find pages that may contain project evaluations; results provide source locations and short excerpts, and evaluation content must be verified in the original source. COFOG classifications are judgments made by 風土記 and include provisional classifications. Access is read-only and requires no authentication. Individual transactions, revenue data and write operations are not supported. On clients supporting MCP Apps, expenditure search results and node breakdowns can be shown as tables and charts. Other results, including municipality coverage, are provided in text; clients without MCP Apps can receive figures and sources in text from the data tools.
+
+日本語の併記案:
 
 > 自治体の当初予算・決算の歳出を、事業の単位で検索し、内訳と出典を確認できます。比べたい年度・会計が収録されているかを確かめ、同じ条件で比較します。COFOG分類は風土記の判断で、暫定分類を含みます。個別取引、歳入、書込みには対応しません。
 
