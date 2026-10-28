@@ -345,7 +345,18 @@
       ],
       "reason": "一部会計・一部歳出の部分選定。町の予算の頁（https://www.town.oshima.tokyo.jp/soshiki/seisaku/yosan12.html）掲載の令和5年度一般会計補正予算（第1号）の補正予算資料（5511.pdf、文字PDF、単位千円）。事業等一覧表（物理7-10）は款の区分ごとの事業名と事業費・財源内訳が同一明細で対応する。事業費はこの補正を反映した後の累計額（当初予算資料の同じ事業と比べて増減を確認）で、補正の増減額ではない。一覧表の合計2,016,349千円は同じ資料の性質別歳出の普通建設事業費と一致し、普通建設事業だけを載せる表である。人件費・扶助費など他の性質の歳出、特別会計（国保・介護・後期高齢者医療・財産区・水道・浄化槽）は総額だけで明細が無く、不足として残す。号数は議会結果報告（https://www.town.oshima.tokyo.jp/soshiki/gikaijim/gikai-kekka.html）の議案件名と資料の提出時期で対応付けた。専決処分の補正は資料の掲載が無い。確認 2026-10-28。",
       "selected_candidate_id": "133612-2023-supplementary-1",
-      "archive": null
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133612-2023-supplementary-1",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133612/2023/supplementary-1.pdf",
+            "sha256": "fbb4f5ccda15f81101a8b0ace8aa3d841d4d40aa24c44d5028b09eb53e3bfe5d",
+            "final_url": "https://www.town.oshima.tokyo.jp/uploaded/attachment/5511.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:53:30.612Z"
+      }
     },
     {
       "target": {
@@ -384,7 +395,18 @@
       ],
       "reason": "一部会計・一部歳出の部分選定。町の予算の頁（https://www.town.oshima.tokyo.jp/soshiki/seisaku/yosan12.html）掲載の令和5年度一般会計補正予算（第2号）の補正予算資料（5512.pdf、文字PDF、単位千円）。事業等一覧表（物理7-10）は款の区分ごとの事業名と事業費・財源内訳が同一明細で対応する。事業費はこの補正を反映した後の累計額（当初予算資料の同じ事業と比べて増減を確認）で、補正の増減額ではない。一覧表の合計2,002,724千円は同じ資料の性質別歳出の普通建設事業費と一致し、普通建設事業だけを載せる表である。人件費・扶助費など他の性質の歳出、特別会計（国保・介護・後期高齢者医療・財産区・水道・浄化槽）は総額だけで明細が無く、不足として残す。号数は議会結果報告（https://www.town.oshima.tokyo.jp/soshiki/gikaijim/gikai-kekka.html）の議案件名と資料の提出時期で対応付けた。専決処分の補正は資料の掲載が無い。確認 2026-10-28。",
       "selected_candidate_id": "133612-2023-supplementary-2",
-      "archive": null
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133612-2023-supplementary-2",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133612/2023/supplementary-2.pdf",
+            "sha256": "ca08193904ef212d851b8f6c93b67e3990dbc0ee44dcd731ea5677bab24e2707",
+            "final_url": "https://www.town.oshima.tokyo.jp/uploaded/attachment/5512.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:53:34.504Z"
+      }
     },
     {
       "target": {
@@ -423,7 +445,18 @@
       ],
       "reason": "一部会計・一部歳出の部分選定。町の予算の頁（https://www.town.oshima.tokyo.jp/soshiki/seisaku/yosan12.html）掲載の令和5年度一般会計補正予算（第3号）の補正予算資料（5625.pdf、文字PDF、単位千円）。事業等一覧表（物理7-10）は款の区分ごとの事業名と事業費・財源内訳が同一明細で対応する。事業費はこの補正を反映した後の累計額（当初予算資料の同じ事業と比べて増減を確認）で、補正の増減額ではない。一覧表の合計1,876,129千円は同じ資料の性質別歳出の普通建設事業費と一致し、普通建設事業だけを載せる表である。人件費・扶助費など他の性質の歳出、特別会計（国保・介護・後期高齢者医療・財産区・水道・浄化槽）は総額だけで明細が無く、不足として残す。号数は議会結果報告（https://www.town.oshima.tokyo.jp/soshiki/gikaijim/gikai-kekka.html）の議案件名と資料の提出時期で対応付けた。専決処分の補正は資料の掲載が無い。確認 2026-10-28。",
       "selected_candidate_id": "133612-2023-supplementary-3",
-      "archive": null
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133612-2023-supplementary-3",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133612/2023/supplementary-3.pdf",
+            "sha256": "a953d17f91ac1ff3086eafc939db9916f4c9dcf0521a26bd3f1d2b64fdbcc298",
+            "final_url": "https://www.town.oshima.tokyo.jp/uploaded/attachment/5625.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:53:37.358Z"
+      }
     },
     {
       "target": {
@@ -462,7 +495,18 @@
       ],
       "reason": "一部会計・一部歳出の部分選定。町の予算の頁（https://www.town.oshima.tokyo.jp/soshiki/seisaku/yosan12.html）掲載の令和5年度一般会計補正予算（第4号）の補正予算資料（5626.pdf、文字PDF、単位千円）。事業等一覧表（物理7-10）は款の区分ごとの事業名と事業費・財源内訳が同一明細で対応する。事業費はこの補正を反映した後の累計額（当初予算資料の同じ事業と比べて増減を確認）で、補正の増減額ではない。一覧表の合計1,876,129千円は同じ資料の性質別歳出の普通建設事業費と一致し、普通建設事業だけを載せる表である。人件費・扶助費など他の性質の歳出、特別会計（国保・介護・後期高齢者医療・財産区・水道・浄化槽）は総額だけで明細が無く、不足として残す。号数は議会結果報告（https://www.town.oshima.tokyo.jp/soshiki/gikaijim/gikai-kekka.html）の議案件名と資料の提出時期で対応付けた。専決処分の補正は資料の掲載が無い。確認 2026-10-28。",
       "selected_candidate_id": "133612-2023-supplementary-4",
-      "archive": null
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133612-2023-supplementary-4",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133612/2023/supplementary-4.pdf",
+            "sha256": "6f9776dc9050c8b25d783b940ef6a1c53fbfce75f3d0971ca32fa7e632268af0",
+            "final_url": "https://www.town.oshima.tokyo.jp/uploaded/attachment/5626.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:53:40.711Z"
+      }
     },
     {
       "target": {
@@ -501,7 +545,18 @@
       ],
       "reason": "一部会計・一部歳出の部分選定。町の予算の頁（https://www.town.oshima.tokyo.jp/soshiki/seisaku/yosan12.html）掲載の令和5年度一般会計補正予算（第5号）の補正予算資料（5898.pdf、文字PDF、単位千円）。事業等一覧表（物理7-10）は款の区分ごとの事業名と事業費・財源内訳が同一明細で対応する。事業費はこの補正を反映した後の累計額（当初予算資料の同じ事業と比べて増減を確認）で、補正の増減額ではない。一覧表の合計1,847,297千円は同じ資料の性質別歳出の普通建設事業費と一致し、普通建設事業だけを載せる表である。人件費・扶助費など他の性質の歳出、特別会計（国保・介護・後期高齢者医療・財産区・水道・浄化槽）は総額だけで明細が無く、不足として残す。号数は議会結果報告（https://www.town.oshima.tokyo.jp/soshiki/gikaijim/gikai-kekka.html）の議案件名と資料の提出時期で対応付けた。専決処分の補正は資料の掲載が無い。確認 2026-10-28。",
       "selected_candidate_id": "133612-2023-supplementary-5",
-      "archive": null
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133612-2023-supplementary-5",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133612/2023/supplementary-5.pdf",
+            "sha256": "79fed3ee0067ca9981c49b8f1547d1dd32ffd6c3735d1b0cd64f910520d3ccbf",
+            "final_url": "https://www.town.oshima.tokyo.jp/uploaded/attachment/5898.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:53:43.944Z"
+      }
     },
     {
       "target": {
@@ -540,7 +595,18 @@
       ],
       "reason": "一部会計・一部歳出の部分選定。町の予算の頁（https://www.town.oshima.tokyo.jp/soshiki/seisaku/yosan12.html）掲載の令和6年度一般会計補正予算（第1号）の補正予算資料（6455.pdf、文字PDF、単位千円）。事業等一覧表（物理7-9）は款の区分ごとの事業名と事業費・財源内訳が同一明細で対応する。事業費はこの補正を反映した後の累計額（当初予算資料の同じ事業と比べて増減を確認）で、補正の増減額ではない。一覧表の合計2,198,252千円は同じ資料の性質別歳出の普通建設事業費と一致し、普通建設事業だけを載せる表である。人件費・扶助費など他の性質の歳出、特別会計（国保・介護・後期高齢者医療・財産区・水道・浄化槽）は総額だけで明細が無く、不足として残す。号数は議会結果報告（https://www.town.oshima.tokyo.jp/soshiki/gikaijim/gikai-kekka.html）の議案件名と資料の提出時期で対応付けた。専決処分の補正は資料の掲載が無い。確認 2026-10-28。",
       "selected_candidate_id": "133612-2024-supplementary-1",
-      "archive": null
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133612-2024-supplementary-1",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133612/2024/supplementary-1.pdf",
+            "sha256": "47956349033f8ba58f3c422cb5c56884c7c236426eaaf251a582973bf50ee964",
+            "final_url": "https://www.town.oshima.tokyo.jp/uploaded/attachment/6455.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:53:46.795Z"
+      }
     },
     {
       "target": {
@@ -579,7 +645,18 @@
       ],
       "reason": "一部会計・一部歳出の部分選定。町の予算の頁（https://www.town.oshima.tokyo.jp/soshiki/seisaku/yosan12.html）掲載の令和6年度一般会計補正予算（第2号）の補正予算資料（6735.pdf、文字PDF、単位千円）。事業等一覧表（物理7-9）は款の区分ごとの事業名と事業費・財源内訳が同一明細で対応する。事業費はこの補正を反映した後の累計額（当初予算資料の同じ事業と比べて増減を確認）で、補正の増減額ではない。一覧表の合計2,302,107千円は同じ資料の性質別歳出の普通建設事業費と一致し、普通建設事業だけを載せる表である。人件費・扶助費など他の性質の歳出、特別会計（国保・介護・後期高齢者医療・財産区・水道・浄化槽）は総額だけで明細が無く、不足として残す。号数は議会結果報告（https://www.town.oshima.tokyo.jp/soshiki/gikaijim/gikai-kekka.html）の議案件名と資料の提出時期で対応付けた。専決処分の補正は資料の掲載が無い。確認 2026-10-28。",
       "selected_candidate_id": "133612-2024-supplementary-2",
-      "archive": null
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133612-2024-supplementary-2",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133612/2024/supplementary-2.pdf",
+            "sha256": "037adb9c6d87d6e381f02789eb3ffb7aa6785d84a18eddf6287e49dead907fac",
+            "final_url": "https://www.town.oshima.tokyo.jp/uploaded/attachment/6735.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:53:49.756Z"
+      }
     },
     {
       "target": {
@@ -618,7 +695,18 @@
       ],
       "reason": "一部会計・一部歳出の部分選定。町の予算の頁（https://www.town.oshima.tokyo.jp/soshiki/seisaku/yosan12.html）掲載の令和6年度一般会計補正予算（第3号）の補正予算資料（7401.pdf、文字PDF、単位千円）。事業等一覧表（物理7-9）は款の区分ごとの事業名と事業費・財源内訳が同一明細で対応する。事業費はこの補正を反映した後の累計額（当初予算資料の同じ事業と比べて増減を確認）で、補正の増減額ではない。一覧表の合計2,404,561千円は同じ資料の性質別歳出の普通建設事業費と一致し、普通建設事業だけを載せる表である。人件費・扶助費など他の性質の歳出、特別会計（国保・介護・後期高齢者医療・財産区・水道・浄化槽）は総額だけで明細が無く、不足として残す。号数は議会結果報告（https://www.town.oshima.tokyo.jp/soshiki/gikaijim/gikai-kekka.html）の議案件名と資料の提出時期で対応付けた。専決処分の補正は資料の掲載が無い。確認 2026-10-28。",
       "selected_candidate_id": "133612-2024-supplementary-3",
-      "archive": null
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133612-2024-supplementary-3",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133612/2024/supplementary-3.pdf",
+            "sha256": "ad9f869d7d009eac6b7710529d02c71c41578ebdb982c52357b60d58dbd35976",
+            "final_url": "https://www.town.oshima.tokyo.jp/uploaded/attachment/7401.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:53:52.837Z"
+      }
     },
     {
       "target": {
@@ -657,7 +745,18 @@
       ],
       "reason": "一部会計・一部歳出の部分選定。町の予算の頁（https://www.town.oshima.tokyo.jp/soshiki/seisaku/yosan12.html）掲載の令和6年度一般会計補正予算（第4号）の補正予算資料（7402.pdf、文字PDF、単位千円）。事業等一覧表（物理7-10）は款の区分ごとの事業名と事業費・財源内訳が同一明細で対応する。事業費はこの補正を反映した後の累計額（当初予算資料の同じ事業と比べて増減を確認）で、補正の増減額ではない。一覧表の合計2,358,775千円は同じ資料の性質別歳出の普通建設事業費と一致し、普通建設事業だけを載せる表である。人件費・扶助費など他の性質の歳出、特別会計（国保・介護・後期高齢者医療・財産区・水道・浄化槽）は総額だけで明細が無く、不足として残す。号数は議会結果報告（https://www.town.oshima.tokyo.jp/soshiki/gikaijim/gikai-kekka.html）の議案件名と資料の提出時期で対応付けた。専決処分の補正は資料の掲載が無い。確認 2026-10-28。",
       "selected_candidate_id": "133612-2024-supplementary-4",
-      "archive": null
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133612-2024-supplementary-4",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133612/2024/supplementary-4.pdf",
+            "sha256": "49eca503c8a67f4e2385fd090d6757e801c12430161aa473e5354a1d0cee54ba",
+            "final_url": "https://www.town.oshima.tokyo.jp/uploaded/attachment/7402.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:53:56.226Z"
+      }
     },
     {
       "target": {
@@ -696,7 +795,18 @@
       ],
       "reason": "一部会計・一部歳出の部分選定。町の予算の頁（https://www.town.oshima.tokyo.jp/soshiki/seisaku/yosan12.html）掲載の令和7年度一般会計補正予算（第1号）の補正予算資料（8073.pdf、文字PDF、単位千円）。事業等一覧表（物理7-10）は款の区分ごとの事業名と事業費・財源内訳が同一明細で対応する。事業費はこの補正を反映した後の累計額（当初予算資料の同じ事業と比べて増減を確認）で、補正の増減額ではない。一覧表の合計1,231,445千円は同じ資料の性質別歳出の普通建設事業費と一致し、普通建設事業だけを載せる表である。人件費・扶助費など他の性質の歳出、特別会計（国保・介護・後期高齢者医療・財産区・水道・浄化槽）は総額だけで明細が無く、不足として残す。号数は議会結果報告（https://www.town.oshima.tokyo.jp/soshiki/gikaijim/gikai-kekka.html）の議案件名と資料の提出時期で対応付けた。専決処分の補正は資料の掲載が無い。確認 2026-10-28。",
       "selected_candidate_id": "133612-2025-supplementary-1",
-      "archive": null
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133612-2025-supplementary-1",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133612/2025/supplementary-1.pdf",
+            "sha256": "fd5d17d5e003bbc1ba3cd00e3284ecd6dc8df9cfc48f7ea41fba26686282b84f",
+            "final_url": "https://www.town.oshima.tokyo.jp/uploaded/attachment/8073.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:54:00.110Z"
+      }
     },
     {
       "target": {
@@ -735,7 +845,18 @@
       ],
       "reason": "一部会計・一部歳出の部分選定。町の予算の頁（https://www.town.oshima.tokyo.jp/soshiki/seisaku/yosan12.html）掲載の令和7年度一般会計補正予算（第2号）の補正予算資料（8167.pdf、文字PDF、単位千円）。事業等一覧表（物理7-10）は款の区分ごとの事業名と事業費・財源内訳が同一明細で対応する。事業費はこの補正を反映した後の累計額（当初予算資料の同じ事業と比べて増減を確認）で、補正の増減額ではない。一覧表の合計1,259,858千円は同じ資料の性質別歳出の普通建設事業費と一致し、普通建設事業だけを載せる表である。人件費・扶助費など他の性質の歳出、特別会計（国保・介護・後期高齢者医療・財産区・水道・浄化槽）は総額だけで明細が無く、不足として残す。号数は議会結果報告（https://www.town.oshima.tokyo.jp/soshiki/gikaijim/gikai-kekka.html）の議案件名と資料の提出時期で対応付けた。専決処分の補正は資料の掲載が無い。確認 2026-10-28。",
       "selected_candidate_id": "133612-2025-supplementary-2",
-      "archive": null
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133612-2025-supplementary-2",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133612/2025/supplementary-2.pdf",
+            "sha256": "764921498d48bbe89c2a15bdc058e80ebb30e638dc92e289d41ebfff90805a11",
+            "final_url": "https://www.town.oshima.tokyo.jp/uploaded/attachment/8167.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:54:04.077Z"
+      }
     },
     {
       "target": {
@@ -774,7 +895,18 @@
       ],
       "reason": "一部会計・一部歳出の部分選定。町の予算の頁（https://www.town.oshima.tokyo.jp/soshiki/seisaku/yosan12.html）掲載の令和7年度一般会計補正予算（第3号）の補正予算資料（8387.pdf、文字PDF、単位千円）。事業等一覧表（物理7-10）は款の区分ごとの事業名と事業費・財源内訳が同一明細で対応する。事業費はこの補正を反映した後の累計額（当初予算資料の同じ事業と比べて増減を確認）で、補正の増減額ではない。一覧表の合計1,199,190千円は同じ資料の性質別歳出の普通建設事業費と一致し、普通建設事業だけを載せる表である。人件費・扶助費など他の性質の歳出、特別会計（国保・介護・後期高齢者医療・財産区・水道・浄化槽）は総額だけで明細が無く、不足として残す。号数は議会結果報告（https://www.town.oshima.tokyo.jp/soshiki/gikaijim/gikai-kekka.html）の議案件名と資料の提出時期で対応付けた。専決処分の補正は資料の掲載が無い。確認 2026-10-28。",
       "selected_candidate_id": "133612-2025-supplementary-3",
-      "archive": null
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133612-2025-supplementary-3",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133612/2025/supplementary-3.pdf",
+            "sha256": "c3a97f12fc4e3b379a3b8d574e4c5d837ddfc6a27a38649813e25c6bba535ee4",
+            "final_url": "https://www.town.oshima.tokyo.jp/uploaded/attachment/8387.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:54:07.692Z"
+      }
     },
     {
       "target": {
