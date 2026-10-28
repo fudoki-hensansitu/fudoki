@@ -1104,6 +1104,3789 @@
         ],
         "archived_at": "2026-10-08T08:02:12.159Z"
       }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2023,
+        "document_kind": "supplementary",
+        "amendment_number": 1
+      },
+      "candidates": [
+        {
+          "id": "133035-2023-supplementary-1",
+          "title": "令和5年度瑞穂町補正予算（第1号）議案（一般会計・介護保険特別会計・国民健康保険特別会計・箱根ケ崎駅西土地区画整理事業特別会計・後期高齢者医療特別会計・殿ケ谷財産区特別会計・石畑財産区特別会計・箱根ケ崎財産区特別会計・長岡財産区特別会計・下水道事業会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009305.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009305_d/fil/5-1-33.pdf",
+              "sha256": "2ca6f3b3884ec8f6eb9c36bd1eab97a9d65f65367ba7572e8d1e7205deb736f3",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 8,
+                      "end": 11
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009463_d/fil/5-2-44.pdf",
+              "sha256": "0359be67536895da01141840fe002cf601d7666b2bb5df6f3735d65d2c13d174",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 8,
+                      "end": 11
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009618_d/fil/5-3-54.pdf",
+              "sha256": "0e52cb0080a525919f9c3bfb6d6073a44a146a87471f2f546b08145351adec12",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 6,
+                      "end": 9
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009618_d/fil/5-3-55.pdf",
+              "sha256": "316bca33be3742b311305e6ad5c2354347a98861b9e904509248c5bd8d0363aa",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "箱根ケ崎駅西土地区画整理事業特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 6,
+                      "end": 7
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009618_d/fil/5-3-57.pdf",
+              "sha256": "fe00e7657b8ee0c22ceedfd98398c755d4aec306b90846a1f6c8bf70fa42a7a3",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 6,
+                      "end": 7
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009618_d/fil/5-3-58.pdf",
+              "sha256": "4d55556078c1d99fc715c96b4c742c7a000ca01cee71bf25e4fe155aa2d736cb",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "殿ケ谷財産区特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 4,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009618_d/fil/5-3-59.pdf",
+              "sha256": "43316e07e59d04bbe849a6a1442a0855d375ffae2e658efd147b2260b87b081b",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "石畑財産区特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 4,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009618_d/fil/5-3-60.pdf",
+              "sha256": "1cf018f06ff456ef0bf0de5bd38893e9f6f023ea13f87d70d1ddafd7fd4ce6ec",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "箱根ケ崎財産区特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 4,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009618_d/fil/5-3-61.pdf",
+              "sha256": "e649e1aaa2249b10574a01b020574b2a82bbe3fa47235a665517b02174174f5d",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "長岡財産区特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 4,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009744_d/fil/5-4-86.pdf",
+              "sha256": "ce09393274bb01095eeaceaff917a572b2454abee77808b6fb404270d09baa12",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "下水道事業会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 16,
+                      "end": 17
+                    },
+                    {
+                      "start": 20,
+                      "end": 21
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009305.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和5年度補正予算（第1号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（5-1-33.pdf、scan）は歳出の事項別明細 物理8-11。介護保険特別会計（5-2-44.pdf、scan）は歳出の事項別明細 物理8-11。国民健康保険特別会計（5-3-54.pdf、scan）は歳出の事項別明細 物理6-9。箱根ケ崎駅西土地区画整理事業特別会計（5-3-55.pdf、scan）は歳出の事項別明細 物理6-7。後期高齢者医療特別会計（5-3-57.pdf、scan）は歳出の事項別明細 物理6-7。殿ケ谷財産区特別会計（5-3-58.pdf、scan）は歳入と同じ頁の下段に歳出の目・説明が載るため物理4-5（歳入の段は取り込み時に除く）。石畑財産区特別会計（5-3-59.pdf、scan）は歳入と同じ頁の下段に歳出の目・説明が載るため物理4-5（歳入の段は取り込み時に除く）。箱根ケ崎財産区特別会計（5-3-60.pdf、scan）は歳入と同じ頁の下段に歳出の目・説明が載るため物理4-5（歳入の段は取り込み時に除く）。長岡財産区特別会計（5-3-61.pdf、scan）は歳入と同じ頁の下段に歳出の目・説明が載るため物理4-5（歳入の段は取り込み時に除く）。下水道事業会計（5-4-86.pdf、scan）は補正予算実施計画説明書の支出頁 物理16-17・20-21（款・項・目と既決予定額・補正予定額・計、節・説明。収入頁と予定キャッシュ・フロー・貸借対照表は除く）。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2023-supplementary-1",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2023-supplementary-1",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2023/supplementary-1-4.pdf",
+            "sha256": "2ca6f3b3884ec8f6eb9c36bd1eab97a9d65f65367ba7572e8d1e7205deb736f3",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009305_d/fil/5-1-33.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2023/supplementary-1-1.pdf",
+            "sha256": "0359be67536895da01141840fe002cf601d7666b2bb5df6f3735d65d2c13d174",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009463_d/fil/5-2-44.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2023/supplementary-1-2.pdf",
+            "sha256": "0e52cb0080a525919f9c3bfb6d6073a44a146a87471f2f546b08145351adec12",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009618_d/fil/5-3-54.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2023/supplementary-1-5.pdf",
+            "sha256": "316bca33be3742b311305e6ad5c2354347a98861b9e904509248c5bd8d0363aa",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009618_d/fil/5-3-55.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2023/supplementary-1-10.pdf",
+            "sha256": "fe00e7657b8ee0c22ceedfd98398c755d4aec306b90846a1f6c8bf70fa42a7a3",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009618_d/fil/5-3-57.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2023/supplementary-1-7.pdf",
+            "sha256": "4d55556078c1d99fc715c96b4c742c7a000ca01cee71bf25e4fe155aa2d736cb",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009618_d/fil/5-3-58.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2023/supplementary-1-6.pdf",
+            "sha256": "43316e07e59d04bbe849a6a1442a0855d375ffae2e658efd147b2260b87b081b",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009618_d/fil/5-3-59.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2023/supplementary-1-3.pdf",
+            "sha256": "1cf018f06ff456ef0bf0de5bd38893e9f6f023ea13f87d70d1ddafd7fd4ce6ec",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009618_d/fil/5-3-60.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2023/supplementary-1-9.pdf",
+            "sha256": "e649e1aaa2249b10574a01b020574b2a82bbe3fa47235a665517b02174174f5d",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009618_d/fil/5-3-61.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2023/supplementary-1-8.pdf",
+            "sha256": "ce09393274bb01095eeaceaff917a572b2454abee77808b6fb404270d09baa12",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009744_d/fil/5-4-86.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:41:08.200Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2023,
+        "document_kind": "supplementary",
+        "amendment_number": 2
+      },
+      "candidates": [
+        {
+          "id": "133035-2023-supplementary-2",
+          "title": "令和5年度瑞穂町補正予算（第2号）議案（一般会計・介護保険特別会計・国民健康保険特別会計・後期高齢者医療特別会計・箱根ケ崎駅西土地区画整理事業特別会計・殿ケ谷財産区特別会計・石畑財産区特別会計・箱根ケ崎財産区特別会計・長岡財産区特別会計・下水道事業会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009393.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009393_d/fil/38.pdf",
+              "sha256": "da49f8d5c326a57701ede8018a64b7d9b69f60e8150a04cb65ff9a66504ed9de",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 8,
+                      "end": 9
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009618_d/fil/5-3-56.pdf",
+              "sha256": "91077325da32e53edd1fea6ca6ce499381ef113f6b0a451bf5fa560db2e833eb",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 8,
+                      "end": 11
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009744_d/fil/5-4-83.pdf",
+              "sha256": "4ba2ee1e4e5eee283712fc57139e1264fe31362437754d06e10fddd508b6856c",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 6,
+                      "end": 7
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009744_d/fil/5-4-85.pdf",
+              "sha256": "becfce5b82790fb7fe3bcfbe34c51f16e7a267ee281f60be9c150536bd72f813",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 6,
+                      "end": 7
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p009872_d/fil/6-1-20.pdf",
+              "sha256": "71930e377823bc30abc8967b19285a482ffc318dc2f78715fb6a15a3e39d48ac",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "箱根ケ崎駅西土地区画整理事業特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 8,
+                      "end": 9
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p009872_d/fil/6-1-23.pdf",
+              "sha256": "2ee6b77b9ad86468bb9b0a7ea55450afb8ab2dc98821d3d1fd5125d9d2f1906e",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "殿ケ谷財産区特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 4,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p009872_d/fil/6-1-24.pdf",
+              "sha256": "c6f830b3afa3d92e541dd403478316e71a2024adb109053352c87f3a5d56aecc",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "石畑財産区特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 4,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p009872_d/fil/6-1-25.pdf",
+              "sha256": "5ffdeb5af05641e111d038896cf6459883d7ea93b408c49f67cddc42f938b354",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "箱根ケ崎財産区特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 4,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p009872_d/fil/6-1-26.pdf",
+              "sha256": "ca6ece793975cc2365d1fb6b7da7bb8d23108a99adae6e972ab0384846bdb62f",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "長岡財産区特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 4,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p009872_d/fil/6-1-27.pdf",
+              "sha256": "1d0348ab10718573f14dce9537119f2152f8eb1d4822d2c0adba45fab3afc801",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "下水道事業会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 16,
+                      "end": 17
+                    },
+                    {
+                      "start": 20,
+                      "end": 21
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009393.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和5年度補正予算（第2号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（38.pdf、scan、専決処分の承認議案）は歳出の事項別明細 物理8-9。介護保険特別会計（5-3-56.pdf、scan）は歳出の事項別明細 物理8-11。国民健康保険特別会計（5-4-83.pdf、scan）は歳出の事項別明細 物理6-7。後期高齢者医療特別会計（5-4-85.pdf、scan）は歳出の事項別明細 物理6-7。箱根ケ崎駅西土地区画整理事業特別会計（6-1-20.pdf、scan）は歳出の事項別明細 物理8-9。殿ケ谷財産区特別会計（6-1-23.pdf、scan）は歳入と同じ頁の下段に歳出の目・説明が載るため物理4-5（歳入の段は取り込み時に除く）。石畑財産区特別会計（6-1-24.pdf、scan）は歳入と同じ頁の下段に歳出の目・説明が載るため物理4-5（歳入の段は取り込み時に除く）。箱根ケ崎財産区特別会計（6-1-25.pdf、scan）は歳入と同じ頁の下段に歳出の目・説明が載るため物理4-5（歳入の段は取り込み時に除く）。長岡財産区特別会計（6-1-26.pdf、scan）は歳入と同じ頁の下段に歳出の目・説明が載るため物理4-5（歳入の段は取り込み時に除く）。下水道事業会計（6-1-27.pdf、text）は補正予算実施計画説明書の支出頁 物理16-17・20-21（款・項・目と既決予定額・補正予定額・計、節・説明。収入頁と予定キャッシュ・フロー・貸借対照表は除く）。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2023-supplementary-2",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2023-supplementary-2",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2023/supplementary-2-10.pdf",
+            "sha256": "da49f8d5c326a57701ede8018a64b7d9b69f60e8150a04cb65ff9a66504ed9de",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009393_d/fil/38.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2023/supplementary-2-6.pdf",
+            "sha256": "91077325da32e53edd1fea6ca6ce499381ef113f6b0a451bf5fa560db2e833eb",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009618_d/fil/5-3-56.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2023/supplementary-2-3.pdf",
+            "sha256": "4ba2ee1e4e5eee283712fc57139e1264fe31362437754d06e10fddd508b6856c",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009744_d/fil/5-4-83.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2023/supplementary-2-7.pdf",
+            "sha256": "becfce5b82790fb7fe3bcfbe34c51f16e7a267ee281f60be9c150536bd72f813",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009744_d/fil/5-4-85.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2023/supplementary-2-5.pdf",
+            "sha256": "71930e377823bc30abc8967b19285a482ffc318dc2f78715fb6a15a3e39d48ac",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p009872_d/fil/6-1-20.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2023/supplementary-2-2.pdf",
+            "sha256": "2ee6b77b9ad86468bb9b0a7ea55450afb8ab2dc98821d3d1fd5125d9d2f1906e",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p009872_d/fil/6-1-23.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2023/supplementary-2-8.pdf",
+            "sha256": "c6f830b3afa3d92e541dd403478316e71a2024adb109053352c87f3a5d56aecc",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p009872_d/fil/6-1-24.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2023/supplementary-2-4.pdf",
+            "sha256": "5ffdeb5af05641e111d038896cf6459883d7ea93b408c49f67cddc42f938b354",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p009872_d/fil/6-1-25.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2023/supplementary-2-9.pdf",
+            "sha256": "ca6ece793975cc2365d1fb6b7da7bb8d23108a99adae6e972ab0384846bdb62f",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p009872_d/fil/6-1-26.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2023/supplementary-2-1.pdf",
+            "sha256": "1d0348ab10718573f14dce9537119f2152f8eb1d4822d2c0adba45fab3afc801",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p009872_d/fil/6-1-27.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:41:29.138Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2023,
+        "document_kind": "supplementary",
+        "amendment_number": 3
+      },
+      "candidates": [
+        {
+          "id": "133035-2023-supplementary-3",
+          "title": "令和5年度瑞穂町補正予算（第3号）議案（一般会計・介護保険特別会計・国民健康保険特別会計・後期高齢者医療特別会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009463.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009463_d/fil/5-2-43.pdf",
+              "sha256": "2436085d36d5f307bf250b4ff692a63d08d5d99b4627796bd9c42fca1fb240bb",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 8,
+                      "end": 19
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009744_d/fil/5-4-84.pdf",
+              "sha256": "eaf969cec79b0075634caefdfe643274119d6761e387256f6f917a7853424461",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 8,
+                      "end": 13
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p009872_d/fil/6-1-19.pdf",
+              "sha256": "374155bb77e1f8ff2b3813543e5f46613419dd7b3ad4af836b8bfb998a577e1b",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 8,
+                      "end": 13
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p009872_d/fil/6-1-22.pdf",
+              "sha256": "51bd12d2c58380d8ef3d276630a48f1b5424a0bee4001a0cc004775d0835e870",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 8,
+                      "end": 9
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009463.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和5年度補正予算（第3号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（5-2-43.pdf、scan）は歳出の事項別明細 物理8-19。介護保険特別会計（5-4-84.pdf、scan）は歳出の事項別明細 物理8-13。国民健康保険特別会計（6-1-19.pdf、scan）は歳出の事項別明細 物理8-13。後期高齢者医療特別会計（6-1-22.pdf、scan）は歳出の事項別明細 物理8-9。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2023-supplementary-3",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2023-supplementary-3",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2023/supplementary-3-1.pdf",
+            "sha256": "2436085d36d5f307bf250b4ff692a63d08d5d99b4627796bd9c42fca1fb240bb",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009463_d/fil/5-2-43.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2023/supplementary-3-4.pdf",
+            "sha256": "eaf969cec79b0075634caefdfe643274119d6761e387256f6f917a7853424461",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009744_d/fil/5-4-84.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2023/supplementary-3-2.pdf",
+            "sha256": "374155bb77e1f8ff2b3813543e5f46613419dd7b3ad4af836b8bfb998a577e1b",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p009872_d/fil/6-1-19.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2023/supplementary-3-3.pdf",
+            "sha256": "51bd12d2c58380d8ef3d276630a48f1b5424a0bee4001a0cc004775d0835e870",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p009872_d/fil/6-1-22.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:41:39.437Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2023,
+        "document_kind": "supplementary",
+        "amendment_number": 4
+      },
+      "candidates": [
+        {
+          "id": "133035-2023-supplementary-4",
+          "title": "令和5年度瑞穂町補正予算（第4号）議案（一般会計・介護保険特別会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009618.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009618_d/fil/5-3-53.pdf",
+              "sha256": "38b1f30471c4f4c53bcbcf417d6de384adf8f02625feaa11b2c237080d35103b",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 16,
+                      "end": 31
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p009872_d/fil/6-1-21.pdf",
+              "sha256": "845b72716bd37dec80eb15abe54778bdfc542f283f5561013a05995b607ca4b2",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 10,
+                      "end": 17
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009618.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和5年度補正予算（第4号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（5-3-53.pdf、scan）は歳出の事項別明細 物理16-31。介護保険特別会計（6-1-21.pdf、scan）は歳出の事項別明細 物理10-17。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2023-supplementary-4",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2023-supplementary-4",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2023/supplementary-4-1.pdf",
+            "sha256": "38b1f30471c4f4c53bcbcf417d6de384adf8f02625feaa11b2c237080d35103b",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009618_d/fil/5-3-53.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2023/supplementary-4-2.pdf",
+            "sha256": "845b72716bd37dec80eb15abe54778bdfc542f283f5561013a05995b607ca4b2",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p009872_d/fil/6-1-21.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:41:46.231Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2023,
+        "document_kind": "supplementary",
+        "amendment_number": 5
+      },
+      "candidates": [
+        {
+          "id": "133035-2023-supplementary-5",
+          "title": "令和5年度瑞穂町補正予算（第5号）議案（一般会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009744.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009744_d/fil/5-4-82.pdf",
+              "sha256": "84f08827df1f4007b3a9679920b10e53c7df917d8e7e637ee02d98d7b7d8abf7",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 12,
+                      "end": 27
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009744.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和5年度補正予算（第5号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（5-4-82.pdf、scan）は歳出の事項別明細 物理12-27。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2023-supplementary-5",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2023-supplementary-5",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2023/supplementary-5.pdf",
+            "sha256": "84f08827df1f4007b3a9679920b10e53c7df917d8e7e637ee02d98d7b7d8abf7",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009744_d/fil/5-4-82.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:41:50.234Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2023,
+        "document_kind": "supplementary",
+        "amendment_number": 6
+      },
+      "candidates": [
+        {
+          "id": "133035-2023-supplementary-6",
+          "title": "令和5年度瑞穂町補正予算（第6号）議案（一般会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009744.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009744_d/fil/5-4-92.pdf",
+              "sha256": "d4cefe7e654d3a2f7b80540ac45a0ffc3f655fad77f194f603238bd12b25eb3f",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 6,
+                      "end": 9
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009744.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和5年度補正予算（第6号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（5-4-92.pdf、scan）は歳出の事項別明細 物理6-9。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2023-supplementary-6",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2023-supplementary-6",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2023/supplementary-6.pdf",
+            "sha256": "d4cefe7e654d3a2f7b80540ac45a0ffc3f655fad77f194f603238bd12b25eb3f",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r5/p009744_d/fil/5-4-92.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:41:53.457Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2023,
+        "document_kind": "supplementary",
+        "amendment_number": 7
+      },
+      "candidates": [
+        {
+          "id": "133035-2023-supplementary-7",
+          "title": "令和5年度瑞穂町補正予算（第7号）議案（一般会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p009872.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p009872_d/fil/6-1-1.pdf",
+              "sha256": "cda6439a10f0152a0cb135814e84f933407a388cd5c9061f43f3effb41ca8481",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 8,
+                      "end": 9
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p009872.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和5年度補正予算（第7号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（6-1-1.pdf、scan、専決処分の承認議案）は歳出の事項別明細 物理8-9。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2023-supplementary-7",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2023-supplementary-7",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2023/supplementary-7.pdf",
+            "sha256": "cda6439a10f0152a0cb135814e84f933407a388cd5c9061f43f3effb41ca8481",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p009872_d/fil/6-1-1.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:41:56.481Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2023,
+        "document_kind": "supplementary",
+        "amendment_number": 8
+      },
+      "candidates": [
+        {
+          "id": "133035-2023-supplementary-8",
+          "title": "令和5年度瑞穂町補正予算（第8号）議案（一般会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p009872.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p009872_d/fil/6-1-18.pdf",
+              "sha256": "943c52ccec38d40eb57e9ecb35b62fec7b16d990f3c632e48e0a82400af795ff",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 26,
+                      "end": 73
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p009872.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和5年度補正予算（第8号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（6-1-18.pdf、scan）は歳出の事項別明細 物理26-73。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2023-supplementary-8",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2023-supplementary-8",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2023/supplementary-8.pdf",
+            "sha256": "943c52ccec38d40eb57e9ecb35b62fec7b16d990f3c632e48e0a82400af795ff",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p009872_d/fil/6-1-18.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:42:00.848Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2023,
+        "document_kind": "supplementary",
+        "amendment_number": 9
+      },
+      "candidates": [
+        {
+          "id": "133035-2023-supplementary-9",
+          "title": "令和5年度瑞穂町補正予算（第9号）議案（一般会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010065.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010065_d/fil/6-2-47.pdf",
+              "sha256": "3d58dea7304ce63b52f3dac4c1e2fcd349d642cce41731a7b769cea84d023490",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 16,
+                      "end": 25
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010065.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和5年度補正予算（第9号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（6-2-47.pdf、scan、専決処分の承認議案）は歳出の事項別明細 物理16-25。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2023-supplementary-9",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2023-supplementary-9",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2023/supplementary-9.pdf",
+            "sha256": "3d58dea7304ce63b52f3dac4c1e2fcd349d642cce41731a7b769cea84d023490",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010065_d/fil/6-2-47.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:42:05.013Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2024,
+        "document_kind": "supplementary",
+        "amendment_number": 1
+      },
+      "candidates": [
+        {
+          "id": "133035-2024-supplementary-1",
+          "title": "令和6年度瑞穂町補正予算（第1号）議案（一般会計・国民健康保険特別会計・箱根ケ崎駅西土地区画整理事業特別会計・介護保険特別会計・後期高齢者医療特別会計・殿ケ谷財産区特別会計・石畑財産区特別会計・箱根ケ崎財産区特別会計・長岡財産区特別会計・下水道事業会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p009872.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p009872_d/fil/6-1-43.pdf",
+              "sha256": "6bc85976c4a60b91d0932cc9fc3189fcd4d714f975876c1681851c419f359818",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 6,
+                      "end": 7
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010065_d/fil/6-2-60.pdf",
+              "sha256": "2b4e468ac22cd83d7cd2293627c8da0b77d1824e9ca40bd60d10f62aa4d2a869",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 6,
+                      "end": 7
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010238_d/fil/6-3-73.pdf",
+              "sha256": "aa04a3864ba22455555e19da4efa77fcced78560ed6dcf26540b2ab6b188c633",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "箱根ケ崎駅西土地区画整理事業特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 6,
+                      "end": 7
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010238_d/fil/6-3-74.pdf",
+              "sha256": "c8e7b6ec6f139c3130cb1e4bc7e96a96bf343b88cece9b5f44f95e7d1bddebb1",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 10,
+                      "end": 17
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010238_d/fil/6-3-75.pdf",
+              "sha256": "d94aab2118e04ab62af7c60187df6813da46c7d877433afa1d6ff43a9ee9272d",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 6,
+                      "end": 7
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010238_d/fil/6-3-76.pdf",
+              "sha256": "75f918e014aff3d3ee4f88f7f39755c57eb1def28a9f7c6dede4e2404626cb6f",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "殿ケ谷財産区特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 4,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010238_d/fil/6-3-77.pdf",
+              "sha256": "2d5c45420d11c10c8bce07e9edc931a33cbb20a9bddd3abfd7ca81ebe023e42c",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "石畑財産区特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 4,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010238_d/fil/6-3-78.pdf",
+              "sha256": "93256c511ec1f31303701501c3ef82741410364d837055bba02b69cc855bc3a8",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "箱根ケ崎財産区特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 4,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010238_d/fil/6-3-79.pdf",
+              "sha256": "d34746ac1dd31c1b8f9c5977823418a21e2c9a7eaef4b5cd7bc5f2ab4ddf881c",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "長岡財産区特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 4,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010238_d/fil/6-3-80.pdf",
+              "sha256": "195503be5cef26d1ab84fa6118b152f75f2609cfc28dceb1a8cada937643c19d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "下水道事業会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 14,
+                      "end": 17
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p009872.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和6年度補正予算（第1号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（6-1-43.pdf、scan）は歳出の事項別明細 物理6-7。国民健康保険特別会計（6-2-60.pdf、scan）は歳出の事項別明細 物理6-7。箱根ケ崎駅西土地区画整理事業特別会計（6-3-73.pdf、scan）は歳出の事項別明細 物理6-7。介護保険特別会計（6-3-74.pdf、scan）は歳出の事項別明細 物理10-17。後期高齢者医療特別会計（6-3-75.pdf、scan）は歳出の事項別明細 物理6-7。殿ケ谷財産区特別会計（6-3-76.pdf、scan）は歳入と同じ頁の下段に歳出の目・説明が載るため物理4-5（歳入の段は取り込み時に除く）。石畑財産区特別会計（6-3-77.pdf、scan）は歳入と同じ頁の下段に歳出の目・説明が載るため物理4-5（歳入の段は取り込み時に除く）。箱根ケ崎財産区特別会計（6-3-78.pdf、scan）は歳入と同じ頁の下段に歳出の目・説明が載るため物理4-5（歳入の段は取り込み時に除く）。長岡財産区特別会計（6-3-79.pdf、scan）は歳入と同じ頁の下段に歳出の目・説明が載るため物理4-5（歳入の段は取り込み時に除く）。下水道事業会計（6-3-80.pdf、text）は補正予算実施計画説明書の支出頁 物理14-17（款・項・目と既決予定額・補正予定額・計、節・説明。収入頁と予定キャッシュ・フロー・貸借対照表は除く）。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2024-supplementary-1",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2024-supplementary-1",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-1-4.pdf",
+            "sha256": "6bc85976c4a60b91d0932cc9fc3189fcd4d714f975876c1681851c419f359818",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p009872_d/fil/6-1-43.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-1-2.pdf",
+            "sha256": "2b4e468ac22cd83d7cd2293627c8da0b77d1824e9ca40bd60d10f62aa4d2a869",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010065_d/fil/6-2-60.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-1-7.pdf",
+            "sha256": "aa04a3864ba22455555e19da4efa77fcced78560ed6dcf26540b2ab6b188c633",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010238_d/fil/6-3-73.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-1-8.pdf",
+            "sha256": "c8e7b6ec6f139c3130cb1e4bc7e96a96bf343b88cece9b5f44f95e7d1bddebb1",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010238_d/fil/6-3-74.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-1-10.pdf",
+            "sha256": "d94aab2118e04ab62af7c60187df6813da46c7d877433afa1d6ff43a9ee9272d",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010238_d/fil/6-3-75.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-1-5.pdf",
+            "sha256": "75f918e014aff3d3ee4f88f7f39755c57eb1def28a9f7c6dede4e2404626cb6f",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010238_d/fil/6-3-76.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-1-3.pdf",
+            "sha256": "2d5c45420d11c10c8bce07e9edc931a33cbb20a9bddd3abfd7ca81ebe023e42c",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010238_d/fil/6-3-77.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-1-6.pdf",
+            "sha256": "93256c511ec1f31303701501c3ef82741410364d837055bba02b69cc855bc3a8",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010238_d/fil/6-3-78.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-1-9.pdf",
+            "sha256": "d34746ac1dd31c1b8f9c5977823418a21e2c9a7eaef4b5cd7bc5f2ab4ddf881c",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010238_d/fil/6-3-79.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-1-1.pdf",
+            "sha256": "195503be5cef26d1ab84fa6118b152f75f2609cfc28dceb1a8cada937643c19d",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010238_d/fil/6-3-80.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:42:22.177Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2024,
+        "document_kind": "supplementary",
+        "amendment_number": 2
+      },
+      "candidates": [
+        {
+          "id": "133035-2024-supplementary-2",
+          "title": "令和6年度瑞穂町補正予算（第2号）議案（一般会計・国民健康保険特別会計・介護保険特別会計・下水道事業会計・箱根ケ崎駅西土地区画整理事業特別会計・後期高齢者医療特別会計・殿ケ谷財産区特別会計・石畑財産区特別会計・箱根ケ崎財産区特別会計・長岡財産区特別会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010065.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010065_d/fil/6-2-59.pdf",
+              "sha256": "dd2269ebc9fafe82db257a973b32d7f265abc7953790353b34e85ee2e31f13d9",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 6,
+                      "end": 11
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010238_d/fil/6-3-72.pdf",
+              "sha256": "1f3e88deb1b72ba8b302481c029e42d4d48e10e74a228179cc53123de7975c5c",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 6,
+                      "end": 9
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010488_d/fil/6-4-103.pdf",
+              "sha256": "8a42a9ceb93193c2c8b9f8214ec7dfb5e9c7499d874df529de8bd08b291e8cf8",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 10,
+                      "end": 17
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010488_d/fil/6-4-104.pdf",
+              "sha256": "d23e31ed7e3e1eb702b82f3a72c5927644fbf5cbb2a554a538088487552b033b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "下水道事業会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 12,
+                      "end": 13
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010631_d/fil/7-1-21.pdf",
+              "sha256": "3b8f7f0d7ca625a2e23fd33f192650df1393a9836264d56e6c36758599852d37",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "箱根ケ崎駅西土地区画整理事業特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 8,
+                      "end": 9
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010631_d/fil/7-1-23.pdf",
+              "sha256": "de5311ef472491fa14e1f5fc4b3297202d485c3e83f7a078510ce5e25e1f09d3",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 8,
+                      "end": 9
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010631_d/fil/7-1-24.pdf",
+              "sha256": "c459bcf1351eded908e417858b76de441a52b82e06fdfc2663b59760a66861da",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "殿ケ谷財産区特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 6,
+                      "end": 7
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010631_d/fil/7-1-25.pdf",
+              "sha256": "5d1db3e295da50ca7027ef2f31248f1d843e830aa79637dead738bf0c9dfed14",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "石畑財産区特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 6,
+                      "end": 7
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010631_d/fil/7-1-26.pdf",
+              "sha256": "98c19a6945ed8795b79bda1f03dadd1e57cb8ba1e4786871b74f874bd155b78d",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "箱根ケ崎財産区特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 6,
+                      "end": 7
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010631_d/fil/7-1-27.pdf",
+              "sha256": "cad5f91284d5e7f4195219ca9bdd10e66e1affc00fe66c0ded5bccc53579c568",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "長岡財産区特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 6,
+                      "end": 7
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010065.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和6年度補正予算（第2号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（6-2-59.pdf、scan）は歳出の事項別明細 物理6-11。国民健康保険特別会計（6-3-72.pdf、scan）は歳出の事項別明細 物理6-9。介護保険特別会計（6-4-103.pdf、scan）は歳出の事項別明細 物理10-17。下水道事業会計（6-4-104.pdf、text）は補正予算実施計画説明書の支出頁 物理12-13（款・項・目と既決予定額・補正予定額・計、節・説明。収入頁と予定キャッシュ・フロー・貸借対照表は除く）。箱根ケ崎駅西土地区画整理事業特別会計（7-1-21.pdf、scan）は歳出の事項別明細 物理8-9。後期高齢者医療特別会計（7-1-23.pdf、scan）は歳出の事項別明細 物理8-9。殿ケ谷財産区特別会計（7-1-24.pdf、scan）は歳出の事項別明細 物理6-7。石畑財産区特別会計（7-1-25.pdf、scan）は歳出の事項別明細 物理6-7。箱根ケ崎財産区特別会計（7-1-26.pdf、scan）は歳出の事項別明細 物理6-7。長岡財産区特別会計（7-1-27.pdf、scan）は歳出の事項別明細 物理6-7。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2024-supplementary-2",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2024-supplementary-2",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-2-9.pdf",
+            "sha256": "dd2269ebc9fafe82db257a973b32d7f265abc7953790353b34e85ee2e31f13d9",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010065_d/fil/6-2-59.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-2-1.pdf",
+            "sha256": "1f3e88deb1b72ba8b302481c029e42d4d48e10e74a228179cc53123de7975c5c",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010238_d/fil/6-3-72.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-2-4.pdf",
+            "sha256": "8a42a9ceb93193c2c8b9f8214ec7dfb5e9c7499d874df529de8bd08b291e8cf8",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010488_d/fil/6-4-103.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-2-8.pdf",
+            "sha256": "d23e31ed7e3e1eb702b82f3a72c5927644fbf5cbb2a554a538088487552b033b",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010488_d/fil/6-4-104.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-2-2.pdf",
+            "sha256": "3b8f7f0d7ca625a2e23fd33f192650df1393a9836264d56e6c36758599852d37",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010631_d/fil/7-1-21.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-2-10.pdf",
+            "sha256": "de5311ef472491fa14e1f5fc4b3297202d485c3e83f7a078510ce5e25e1f09d3",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010631_d/fil/7-1-23.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-2-6.pdf",
+            "sha256": "c459bcf1351eded908e417858b76de441a52b82e06fdfc2663b59760a66861da",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010631_d/fil/7-1-24.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-2-3.pdf",
+            "sha256": "5d1db3e295da50ca7027ef2f31248f1d843e830aa79637dead738bf0c9dfed14",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010631_d/fil/7-1-25.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-2-5.pdf",
+            "sha256": "98c19a6945ed8795b79bda1f03dadd1e57cb8ba1e4786871b74f874bd155b78d",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010631_d/fil/7-1-26.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-2-7.pdf",
+            "sha256": "cad5f91284d5e7f4195219ca9bdd10e66e1affc00fe66c0ded5bccc53579c568",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010631_d/fil/7-1-27.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:42:39.837Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2024,
+        "document_kind": "supplementary",
+        "amendment_number": 3
+      },
+      "candidates": [
+        {
+          "id": "133035-2024-supplementary-3",
+          "title": "令和6年度瑞穂町補正予算（第3号）議案（一般会計・国民健康保険特別会計・介護保険特別会計・下水道事業会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010065.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010065_d/fil/6-2-61.pdf",
+              "sha256": "c395218195dba69c1e4837cd54613c95c2c2f59c9fcb9ac5f4137529c77715fa",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 8,
+                      "end": 9
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010488_d/fil/6-4-102.pdf",
+              "sha256": "472bd731513f71db0fa0f084a1d7960ad40541a8dd4637d9d5daa75b39a091d6",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 6,
+                      "end": 7
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010631_d/fil/7-1-22.pdf",
+              "sha256": "524a4477b5e1a46699425abddf9d07c044ed0fb394245f8fd8e7bfb901818252",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 12,
+                      "end": 21
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010631_d/fil/7-1-28.pdf",
+              "sha256": "3495d2b07a9ac935669ce0c3664cef7b913e07577debfbd83e15a2ae655ee737",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "下水道事業会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 18,
+                      "end": 19
+                    },
+                    {
+                      "start": 22,
+                      "end": 23
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010065.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和6年度補正予算（第3号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（6-2-61.pdf、scan）は歳出の事項別明細 物理8-9。国民健康保険特別会計（6-4-102.pdf、scan）は歳出の事項別明細 物理6-7。介護保険特別会計（7-1-22.pdf、scan）は歳出の事項別明細 物理12-21。下水道事業会計（7-1-28.pdf、text）は補正予算実施計画説明書の支出頁 物理18-19・22-23（款・項・目と既決予定額・補正予定額・計、節・説明。収入頁と予定キャッシュ・フロー・貸借対照表は除く）。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2024-supplementary-3",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2024-supplementary-3",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-3-4.pdf",
+            "sha256": "c395218195dba69c1e4837cd54613c95c2c2f59c9fcb9ac5f4137529c77715fa",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010065_d/fil/6-2-61.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-3-2.pdf",
+            "sha256": "472bd731513f71db0fa0f084a1d7960ad40541a8dd4637d9d5daa75b39a091d6",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010488_d/fil/6-4-102.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-3-3.pdf",
+            "sha256": "524a4477b5e1a46699425abddf9d07c044ed0fb394245f8fd8e7bfb901818252",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010631_d/fil/7-1-22.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-3-1.pdf",
+            "sha256": "3495d2b07a9ac935669ce0c3664cef7b913e07577debfbd83e15a2ae655ee737",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010631_d/fil/7-1-28.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:42:48.536Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2024,
+        "document_kind": "supplementary",
+        "amendment_number": 4
+      },
+      "candidates": [
+        {
+          "id": "133035-2024-supplementary-4",
+          "title": "令和6年度瑞穂町補正予算（第4号）議案（一般会計・国民健康保険特別会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010218.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010218_d/fil/62.pdf",
+              "sha256": "fd9934c0fc401dae00e3656de0c9b8b6ffd095ffba8e158ef8e67ca4bac2ae26",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 8,
+                      "end": 9
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010631_d/fil/7-1-20.pdf",
+              "sha256": "a88947f2480cb32f9d3196213fddc6ffe6ad7cdec5bcf182418ffd2c318dbb87",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 8,
+                      "end": 13
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010218.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和6年度補正予算（第4号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（62.pdf、scan、専決処分の承認議案）は歳出の事項別明細 物理8-9。国民健康保険特別会計（7-1-20.pdf、scan）は歳出の事項別明細 物理8-13。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2024-supplementary-4",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2024-supplementary-4",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-4-2.pdf",
+            "sha256": "fd9934c0fc401dae00e3656de0c9b8b6ffd095ffba8e158ef8e67ca4bac2ae26",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010218_d/fil/62.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-4-1.pdf",
+            "sha256": "a88947f2480cb32f9d3196213fddc6ffe6ad7cdec5bcf182418ffd2c318dbb87",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010631_d/fil/7-1-20.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:42:53.965Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2024,
+        "document_kind": "supplementary",
+        "amendment_number": 5
+      },
+      "candidates": [
+        {
+          "id": "133035-2024-supplementary-5",
+          "title": "令和6年度瑞穂町補正予算（第5号）議案（一般会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010218.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010218_d/fil/64.pdf",
+              "sha256": "6f8737ab65acc5e1185ee81953a2882ed267835532b815dc6e98fe65740672b0",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 6,
+                      "end": 7
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010218.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和6年度補正予算（第5号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（64.pdf、scan）は歳出の事項別明細 物理6-7。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2024-supplementary-5",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2024-supplementary-5",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-5.pdf",
+            "sha256": "6f8737ab65acc5e1185ee81953a2882ed267835532b815dc6e98fe65740672b0",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010218_d/fil/64.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:42:56.821Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2024,
+        "document_kind": "supplementary",
+        "amendment_number": 6
+      },
+      "candidates": [
+        {
+          "id": "133035-2024-supplementary-6",
+          "title": "令和6年度瑞穂町補正予算（第6号）議案（一般会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010238.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010238_d/fil/6-3-71.pdf",
+              "sha256": "e4bdeea23bc2519ca80a1577692a7247000724a84f2eeb373cd36c4fdce149b3",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 16,
+                      "end": 35
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010238.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和6年度補正予算（第6号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（6-3-71.pdf、scan）は歳出の事項別明細 物理16-35。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2024-supplementary-6",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2024-supplementary-6",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-6.pdf",
+            "sha256": "e4bdeea23bc2519ca80a1577692a7247000724a84f2eeb373cd36c4fdce149b3",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010238_d/fil/6-3-71.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:43:06.174Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2024,
+        "document_kind": "supplementary",
+        "amendment_number": 7
+      },
+      "candidates": [
+        {
+          "id": "133035-2024-supplementary-7",
+          "title": "令和6年度瑞穂町補正予算（第7号）議案（一般会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010238.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010238_d/fil/6-3-92.pdf",
+              "sha256": "493519b9db7225852f290a438d617b7548b5f9ff73839dc62e8c12fd0b92c2a3",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 6,
+                      "end": 7
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010238.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和6年度補正予算（第7号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（6-3-92.pdf、scan）は歳出の事項別明細 物理6-7。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2024-supplementary-7",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2024-supplementary-7",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-7.pdf",
+            "sha256": "493519b9db7225852f290a438d617b7548b5f9ff73839dc62e8c12fd0b92c2a3",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010238_d/fil/6-3-92.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:43:09.638Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2024,
+        "document_kind": "supplementary",
+        "amendment_number": 8
+      },
+      "candidates": [
+        {
+          "id": "133035-2024-supplementary-8",
+          "title": "令和6年度瑞穂町補正予算（第8号）議案（一般会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010488.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010488_d/fil/6-4-93.pdf",
+              "sha256": "144d599b37d9201e15986fb6c03b4c8b3dc80ec16e8e893b440ce5d44c946ac1",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 8,
+                      "end": 11
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010488.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和6年度補正予算（第8号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（6-4-93.pdf、scan、専決処分の承認議案）は歳出の事項別明細 物理8-11。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2024-supplementary-8",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2024-supplementary-8",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-8.pdf",
+            "sha256": "144d599b37d9201e15986fb6c03b4c8b3dc80ec16e8e893b440ce5d44c946ac1",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010488_d/fil/6-4-93.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:43:13.942Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2024,
+        "document_kind": "supplementary",
+        "amendment_number": 9
+      },
+      "candidates": [
+        {
+          "id": "133035-2024-supplementary-9",
+          "title": "令和6年度瑞穂町補正予算（第9号）議案（一般会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010488.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010488_d/fil/6-4-101.pdf",
+              "sha256": "b2cf1cae563acb1f5b3afa3989823dd6be698cae10ac733cda1e7b1619d0b0ef",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 14,
+                      "end": 35
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010488.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和6年度補正予算（第9号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（6-4-101.pdf、scan）は歳出の事項別明細 物理14-35。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2024-supplementary-9",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2024-supplementary-9",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-9.pdf",
+            "sha256": "b2cf1cae563acb1f5b3afa3989823dd6be698cae10ac733cda1e7b1619d0b0ef",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010488_d/fil/6-4-101.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:43:18.475Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2024,
+        "document_kind": "supplementary",
+        "amendment_number": 10
+      },
+      "candidates": [
+        {
+          "id": "133035-2024-supplementary-10",
+          "title": "令和6年度瑞穂町補正予算（第10号）議案（一般会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010488.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010488_d/fil/6-4-110.pdf",
+              "sha256": "26cf48e0408b263370cad891d34a1ef4323dfa4041c0245848dfb12fcb0cbcf8",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 6,
+                      "end": 11
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010488.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和6年度補正予算（第10号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（6-4-110.pdf、scan）は歳出の事項別明細 物理6-11。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2024-supplementary-10",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2024-supplementary-10",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-10.pdf",
+            "sha256": "26cf48e0408b263370cad891d34a1ef4323dfa4041c0245848dfb12fcb0cbcf8",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r6/p010488_d/fil/6-4-110.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:43:21.862Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2024,
+        "document_kind": "supplementary",
+        "amendment_number": 11
+      },
+      "candidates": [
+        {
+          "id": "133035-2024-supplementary-11",
+          "title": "令和6年度瑞穂町補正予算（第11号）議案（一般会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010631.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010631_d/fil/7-1-1.pdf",
+              "sha256": "55e5126d1e53628116a36c367e8d731bb4345dd09aee7c46effd5c0b4224e4e3",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 10,
+                      "end": 15
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010631.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和6年度補正予算（第11号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（7-1-1.pdf、scan、専決処分の承認議案）は歳出の事項別明細 物理10-15。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2024-supplementary-11",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2024-supplementary-11",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-11.pdf",
+            "sha256": "55e5126d1e53628116a36c367e8d731bb4345dd09aee7c46effd5c0b4224e4e3",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010631_d/fil/7-1-1.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:43:25.440Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2024,
+        "document_kind": "supplementary",
+        "amendment_number": 12
+      },
+      "candidates": [
+        {
+          "id": "133035-2024-supplementary-12",
+          "title": "令和6年度瑞穂町補正予算（第12号）議案（一般会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010631.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010631_d/fil/7-1-19.pdf",
+              "sha256": "c4581247d96a8bb3ef8e6388a4f9cf826e9949baee329625fe5d603c79d66e6e",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 28,
+                      "end": 69
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010631.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和6年度補正予算（第12号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（7-1-19.pdf、scan）は歳出の事項別明細 物理28-69。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2024-supplementary-12",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2024-supplementary-12",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-12.pdf",
+            "sha256": "c4581247d96a8bb3ef8e6388a4f9cf826e9949baee329625fe5d603c79d66e6e",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010631_d/fil/7-1-19.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:43:30.714Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2024,
+        "document_kind": "supplementary",
+        "amendment_number": 13
+      },
+      "candidates": [
+        {
+          "id": "133035-2024-supplementary-13",
+          "title": "令和6年度瑞穂町補正予算（第13号）議案（一般会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010824.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010824_d/fil/43.pdf",
+              "sha256": "71f536b6ac94a006c49eb9bccf7f02e54b8cf28078df3a27fd57fceaabe275e8",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 20,
+                      "end": 31
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010824.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和6年度補正予算（第13号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（43.pdf、scan、専決処分の承認議案）は歳出の事項別明細 物理20-31。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2024-supplementary-13",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2024-supplementary-13",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2024/supplementary-13.pdf",
+            "sha256": "71f536b6ac94a006c49eb9bccf7f02e54b8cf28078df3a27fd57fceaabe275e8",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010824_d/fil/43.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:43:34.600Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2025,
+        "document_kind": "supplementary",
+        "amendment_number": 1
+      },
+      "candidates": [
+        {
+          "id": "133035-2025-supplementary-1",
+          "title": "令和7年度瑞穂町補正予算（第1号）議案（一般会計・後期高齢者医療特別会計・国民健康保険特別会計・介護保険特別会計・殿ケ谷財産区特別会計・石畑財産区特別会計・箱根ケ崎財産区特別会計・長岡財産区特別会計・下水道事業会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010631.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010631_d/fil/7-1-39.pdf",
+              "sha256": "47c584a2135d20473db2499ff0869ebba5b659984f2b85e71cfd29aeda73fc9c",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 6,
+                      "end": 8
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010873_d/fil/7-2-50.pdf",
+              "sha256": "a8b86a7d3756f3f4d3ca008ee69fd2b1491ed06643fc05ccde43fc6f4f0c8289",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 5,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011046_d/fil/7-3-63.pdf",
+              "sha256": "0ce20109a8b0b7d7da4cce92c69b9d9dd20be51eab0c458bfb04071893205c12",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 7,
+                      "end": 9
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011046_d/fil/7-3-65.pdf",
+              "sha256": "897ca803cd58d741c31d29f763cf49e3b3894239a863f628de22c2758c8a9e18",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 7,
+                      "end": 13
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011046_d/fil/7-3-67.pdf",
+              "sha256": "4f38435c709528d1357590081206c56a192658a8c74af85c61e7679049e28ce1",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "殿ケ谷財産区特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 5,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011046_d/fil/7-3-68.pdf",
+              "sha256": "bf97336ce7fdb6a431e9f81d5cec51fbfc2e2f2faa0ce94c4f5de7132190c9ee",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "石畑財産区特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 5,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011046_d/fil/7-3-69.pdf",
+              "sha256": "a31c32e91d6d1e3020f826d9779d571fa0fccf001e7fff5ddc1cf8559544ed9e",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "箱根ケ崎財産区特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 5,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011046_d/fil/7-3-70.pdf",
+              "sha256": "22ef2c72cf5a71b208edd52a0e6fccaf1cb8d80debc06b3446f5a22e012983ec",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "長岡財産区特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 5,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011198_d/fil/7-4-103.pdf",
+              "sha256": "563250079b192131a927afee0eb54fd3d6e856cd258c9171324ff537440ad4cd",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "下水道事業会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 14,
+                      "end": 15
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010631.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和7年度補正予算（第1号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（7-1-39.pdf、scan）は歳出の事項別明細 物理6-8。後期高齢者医療特別会計（7-2-50.pdf、scan）は歳出の事項別明細 物理5。国民健康保険特別会計（7-3-63.pdf、scan）は歳出の事項別明細 物理7-9。介護保険特別会計（7-3-65.pdf、scan）は歳出の事項別明細 物理7-13。殿ケ谷財産区特別会計（7-3-67.pdf、scan）は歳出の事項別明細 物理5。石畑財産区特別会計（7-3-68.pdf、scan）は歳出の事項別明細 物理5。箱根ケ崎財産区特別会計（7-3-69.pdf、scan）は歳出の事項別明細 物理5。長岡財産区特別会計（7-3-70.pdf、scan）は歳出の事項別明細 物理5。下水道事業会計（7-4-103.pdf、text）は補正予算実施計画説明書の支出頁 物理14-15（款・項・目と既決予定額・補正予定額・計、節・説明。収入頁と予定キャッシュ・フロー・貸借対照表は除く）。箱根ケ崎駅西土地区画整理事業特別会計の第1号（7-3-64.pdf）は歳入の財源更正だけで歳出の明細が無く（第1表・事項別明細とも歳入のみ）、ファイルに含めない。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2025-supplementary-1",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2025-supplementary-1",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-1-3.pdf",
+            "sha256": "47c584a2135d20473db2499ff0869ebba5b659984f2b85e71cfd29aeda73fc9c",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010631_d/fil/7-1-39.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-1-8.pdf",
+            "sha256": "a8b86a7d3756f3f4d3ca008ee69fd2b1491ed06643fc05ccde43fc6f4f0c8289",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010873_d/fil/7-2-50.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-1-1.pdf",
+            "sha256": "0ce20109a8b0b7d7da4cce92c69b9d9dd20be51eab0c458bfb04071893205c12",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011046_d/fil/7-3-63.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-1-6.pdf",
+            "sha256": "897ca803cd58d741c31d29f763cf49e3b3894239a863f628de22c2758c8a9e18",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011046_d/fil/7-3-65.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-1-4.pdf",
+            "sha256": "4f38435c709528d1357590081206c56a192658a8c74af85c61e7679049e28ce1",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011046_d/fil/7-3-67.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-1-9.pdf",
+            "sha256": "bf97336ce7fdb6a431e9f81d5cec51fbfc2e2f2faa0ce94c4f5de7132190c9ee",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011046_d/fil/7-3-68.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-1-7.pdf",
+            "sha256": "a31c32e91d6d1e3020f826d9779d571fa0fccf001e7fff5ddc1cf8559544ed9e",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011046_d/fil/7-3-69.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-1-2.pdf",
+            "sha256": "22ef2c72cf5a71b208edd52a0e6fccaf1cb8d80debc06b3446f5a22e012983ec",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011046_d/fil/7-3-70.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-1-5.pdf",
+            "sha256": "563250079b192131a927afee0eb54fd3d6e856cd258c9171324ff537440ad4cd",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011198_d/fil/7-4-103.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:43:50.236Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2025,
+        "document_kind": "supplementary",
+        "amendment_number": 2
+      },
+      "candidates": [
+        {
+          "id": "133035-2025-supplementary-2",
+          "title": "令和7年度瑞穂町補正予算（第2号）議案（一般会計・後期高齢者医療特別会計・国民健康保険特別会計・箱根ケ崎駅西土地区画整理事業特別会計・介護保険特別会計・石畑財産区特別会計・殿ケ谷財産区特別会計・箱根ケ崎財産区特別会計・長岡財産区特別会計・下水道事業会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010824.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010824_d/fil/44.pdf",
+              "sha256": "b7f118dc2bf880a786c9ca6f94db40924e05330d6647711502200a0d0ae902a4",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 7,
+                      "end": 7
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011046_d/fil/7-3-66.pdf",
+              "sha256": "290b782e84b8092a1475bc2317267b6e3023891080a8ebdbb4074fab8591dbf1",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 7,
+                      "end": 8
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011198_d/fil/7-4-99.pdf",
+              "sha256": "98aee5648cca7b4a47f406dae693faff21ee352213a12228ee657265a8e489ef",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 5,
+                      "end": 6
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011198_d/fil/7-4-100.pdf",
+              "sha256": "8b17a9a22631413b44ddc63831a2dd2edae9789885f2473bc3ddb65fde1c0e6c",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "箱根ケ崎駅西土地区画整理事業特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 5,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011198_d/fil/7-4-101.pdf",
+              "sha256": "212da95af6655bdf5aa935f76c4fa7d8e4d964dd784c08186372850b2cdc2dfc",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 6,
+                      "end": 7
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011198_d/fil/7-4-102.pdf",
+              "sha256": "21edd52ead50664ec3dfeb79257e36af290267a244eb4c2d006887872e08352a",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "石畑財産区特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 5,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011439_d/fil/8-1-22.pdf",
+              "sha256": "a05aa05c29da43eed88c11151943343ae754be873a9bbbf98da06dd48ae6fa6c",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "殿ケ谷財産区特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 5,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011439_d/fil/8-1-24.pdf",
+              "sha256": "0ae7d83d37b8d34427edfd2b0c0ac0143abdb4afbab0cb9b5089761414af545e",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "箱根ケ崎財産区特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 5,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011439_d/fil/8-1-25.pdf",
+              "sha256": "612a86b38f227cfddba411d55dafec02147e3180279314a52a390bf08c82a345",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "長岡財産区特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 5,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011439_d/fil/8-1-26.pdf",
+              "sha256": "154bcb6ba04ad28df0d82b8eb72e81b20ca501079b993bbadda8494fc2cbc2ca",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "下水道事業会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 21,
+                      "end": 21
+                    },
+                    {
+                      "start": 23,
+                      "end": 23
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010824.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和7年度補正予算（第2号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（44.pdf、scan、専決処分の承認議案）は歳出の事項別明細 物理7。後期高齢者医療特別会計（7-3-66.pdf、scan）は歳出の事項別明細 物理7-8。国民健康保険特別会計（7-4-99.pdf、scan）は歳出の事項別明細 物理5-6。箱根ケ崎駅西土地区画整理事業特別会計（7-4-100.pdf、scan）は歳出の事項別明細 物理5。介護保険特別会計（7-4-101.pdf、scan）は歳出の事項別明細 物理6-7。石畑財産区特別会計（7-4-102.pdf、scan）は歳出の事項別明細 物理5。殿ケ谷財産区特別会計（8-1-22.pdf、scan）は歳出の事項別明細 物理5。箱根ケ崎財産区特別会計（8-1-24.pdf、scan）は歳出の事項別明細 物理5。長岡財産区特別会計（8-1-25.pdf、scan）は歳出の事項別明細 物理5。下水道事業会計（8-1-26.pdf、text）は補正予算実施計画説明書の支出頁 物理21・23（款・項・目と既決予定額・補正予定額・計、節・説明。収入頁と予定キャッシュ・フロー・貸借対照表は除く）。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2025-supplementary-2",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2025-supplementary-2",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-2-10.pdf",
+            "sha256": "b7f118dc2bf880a786c9ca6f94db40924e05330d6647711502200a0d0ae902a4",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010824_d/fil/44.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-2-5.pdf",
+            "sha256": "290b782e84b8092a1475bc2317267b6e3023891080a8ebdbb4074fab8591dbf1",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011046_d/fil/7-3-66.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-2-8.pdf",
+            "sha256": "98aee5648cca7b4a47f406dae693faff21ee352213a12228ee657265a8e489ef",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011198_d/fil/7-4-99.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-2-7.pdf",
+            "sha256": "8b17a9a22631413b44ddc63831a2dd2edae9789885f2473bc3ddb65fde1c0e6c",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011198_d/fil/7-4-100.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-2-3.pdf",
+            "sha256": "212da95af6655bdf5aa935f76c4fa7d8e4d964dd784c08186372850b2cdc2dfc",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011198_d/fil/7-4-101.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-2-4.pdf",
+            "sha256": "21edd52ead50664ec3dfeb79257e36af290267a244eb4c2d006887872e08352a",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011198_d/fil/7-4-102.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-2-9.pdf",
+            "sha256": "a05aa05c29da43eed88c11151943343ae754be873a9bbbf98da06dd48ae6fa6c",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011439_d/fil/8-1-22.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-2-1.pdf",
+            "sha256": "0ae7d83d37b8d34427edfd2b0c0ac0143abdb4afbab0cb9b5089761414af545e",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011439_d/fil/8-1-24.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-2-6.pdf",
+            "sha256": "612a86b38f227cfddba411d55dafec02147e3180279314a52a390bf08c82a345",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011439_d/fil/8-1-25.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-2-2.pdf",
+            "sha256": "154bcb6ba04ad28df0d82b8eb72e81b20ca501079b993bbadda8494fc2cbc2ca",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011439_d/fil/8-1-26.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:44:08.431Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2025,
+        "document_kind": "supplementary",
+        "amendment_number": 3
+      },
+      "candidates": [
+        {
+          "id": "133035-2025-supplementary-3",
+          "title": "令和7年度瑞穂町補正予算（第3号）議案（一般会計・国民健康保険特別会計・箱根ケ崎駅西土地区画整理事業特別会計・介護保険特別会計・後期高齢者医療特別会計・石畑財産区特別会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010873.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010873_d/fil/7-2-49.pdf",
+              "sha256": "0df8f588abd2f4caa03c4139f57c96fbea34abd74583148b5545a1eed6681690",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 7,
+                      "end": 13
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011439_d/fil/8-1-18.pdf",
+              "sha256": "da470a118d992eeee690121f8ede13614ca2acf636db0321844485c0c797f265",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 7,
+                      "end": 13
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011439_d/fil/8-1-19.pdf",
+              "sha256": "ce0a5148b956899782a88c2550d69f17649fd4780b9d9f3b5fe2d8a871bfd757",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "箱根ケ崎駅西土地区画整理事業特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 7,
+                      "end": 7
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011439_d/fil/8-1-20.pdf",
+              "sha256": "c244823fcf0f5d8f914ba9ff862a213ded36e3af4284b4fb7758b4c7ab194bd5",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 9,
+                      "end": 22
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011439_d/fil/8-1-21.pdf",
+              "sha256": "94ac82c619ee5e41211da2ee84b1324d7ceb1e2c6a1019dacce474e22bf912aa",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 6,
+                      "end": 7
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011439_d/fil/8-1-23.pdf",
+              "sha256": "473667962e2e29e1920e93d8278332e7f256b4c154ec3816cf27310def7e9cc7",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "石畑財産区特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 5,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010873.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和7年度補正予算（第3号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（7-2-49.pdf、scan）は歳出の事項別明細 物理7-13。国民健康保険特別会計（8-1-18.pdf、scan）は歳出の事項別明細 物理7-13。箱根ケ崎駅西土地区画整理事業特別会計（8-1-19.pdf、scan）は歳出の事項別明細 物理7。介護保険特別会計（8-1-20.pdf、scan）は歳出の事項別明細 物理9-22。後期高齢者医療特別会計（8-1-21.pdf、scan）は歳出の事項別明細 物理6-7。石畑財産区特別会計（8-1-23.pdf、scan）は歳出の事項別明細 物理5。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2025-supplementary-3",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2025-supplementary-3",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-3-1.pdf",
+            "sha256": "0df8f588abd2f4caa03c4139f57c96fbea34abd74583148b5545a1eed6681690",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010873_d/fil/7-2-49.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-3-6.pdf",
+            "sha256": "da470a118d992eeee690121f8ede13614ca2acf636db0321844485c0c797f265",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011439_d/fil/8-1-18.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-3-5.pdf",
+            "sha256": "ce0a5148b956899782a88c2550d69f17649fd4780b9d9f3b5fe2d8a871bfd757",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011439_d/fil/8-1-19.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-3-4.pdf",
+            "sha256": "c244823fcf0f5d8f914ba9ff862a213ded36e3af4284b4fb7758b4c7ab194bd5",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011439_d/fil/8-1-20.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-3-3.pdf",
+            "sha256": "94ac82c619ee5e41211da2ee84b1324d7ceb1e2c6a1019dacce474e22bf912aa",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011439_d/fil/8-1-21.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-3-2.pdf",
+            "sha256": "473667962e2e29e1920e93d8278332e7f256b4c154ec3816cf27310def7e9cc7",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011439_d/fil/8-1-23.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:48:37.946Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2025,
+        "document_kind": "supplementary",
+        "amendment_number": 4
+      },
+      "candidates": [
+        {
+          "id": "133035-2025-supplementary-4",
+          "title": "令和7年度瑞穂町補正予算（第4号）議案（一般会計・箱根ケ崎駅西土地区画整理事業特別会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010873.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010873_d/fil/7-2-53.pdf",
+              "sha256": "334446e07ce9499d9e8c8f7ebf02463cb0ea21abc803bf45b16cf5120aaa5f80",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 5,
+                      "end": 10
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011661_d/fil/8-2-43.pdf",
+              "sha256": "8bbec88b886b5f916ca77ecda20d31a9de5da896f3f8fb4aed5ef12edfb72f5e",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "箱根ケ崎駅西土地区画整理事業特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 7,
+                      "end": 7
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010873.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和7年度補正予算（第4号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（7-2-53.pdf、scan）は歳出の事項別明細 物理5-10。箱根ケ崎駅西土地区画整理事業特別会計（8-2-43.pdf、scan、専決処分の承認議案）は歳出の事項別明細 物理7。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2025-supplementary-4",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2025-supplementary-4",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-4-1.pdf",
+            "sha256": "334446e07ce9499d9e8c8f7ebf02463cb0ea21abc803bf45b16cf5120aaa5f80",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p010873_d/fil/7-2-53.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-4-2.pdf",
+            "sha256": "8bbec88b886b5f916ca77ecda20d31a9de5da896f3f8fb4aed5ef12edfb72f5e",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011661_d/fil/8-2-43.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:48:43.129Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2025,
+        "document_kind": "supplementary",
+        "amendment_number": 5
+      },
+      "candidates": [
+        {
+          "id": "133035-2025-supplementary-5",
+          "title": "令和7年度瑞穂町補正予算（第5号）議案（一般会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011046.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011046_d/fil/7-3-62.pdf",
+              "sha256": "d72be9a092514da9f142d528512894080ebf580e17f683cdf7838372201f0c8e",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 13,
+                      "end": 37
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011046.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和7年度補正予算（第5号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（7-3-62.pdf、scan）は歳出の事項別明細 物理13-37。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2025-supplementary-5",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2025-supplementary-5",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-5.pdf",
+            "sha256": "d72be9a092514da9f142d528512894080ebf580e17f683cdf7838372201f0c8e",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011046_d/fil/7-3-62.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:48:47.394Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2025,
+        "document_kind": "supplementary",
+        "amendment_number": 6
+      },
+      "candidates": [
+        {
+          "id": "133035-2025-supplementary-6",
+          "title": "令和7年度瑞穂町補正予算（第6号）議案（一般会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011046.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011046_d/fil/7-3-82.pdf",
+              "sha256": "53a02dfecfa2a2d093863b002733a1507c12385001cd56fd96db88df1c58b76b",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 5,
+                      "end": 6
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011046.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和7年度補正予算（第6号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（7-3-82.pdf、scan）は歳出の事項別明細 物理5-6。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2025-supplementary-6",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2025-supplementary-6",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-6.pdf",
+            "sha256": "53a02dfecfa2a2d093863b002733a1507c12385001cd56fd96db88df1c58b76b",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011046_d/fil/7-3-82.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:48:50.389Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2025,
+        "document_kind": "supplementary",
+        "amendment_number": 7
+      },
+      "candidates": [
+        {
+          "id": "133035-2025-supplementary-7",
+          "title": "令和7年度瑞穂町補正予算（第7号）議案（一般会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011198.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011198_d/fil/7-4-98.pdf",
+              "sha256": "ce22d778f92c68cfb84ebbf04d8c97e2ed00f92f3896fc26aae549300a654ebf",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 15,
+                      "end": 42
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011198.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和7年度補正予算（第7号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（7-4-98.pdf、scan）は歳出の事項別明細 物理15-42。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2025-supplementary-7",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2025-supplementary-7",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-7.pdf",
+            "sha256": "ce22d778f92c68cfb84ebbf04d8c97e2ed00f92f3896fc26aae549300a654ebf",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011198_d/fil/7-4-98.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:48:56.408Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2025,
+        "document_kind": "supplementary",
+        "amendment_number": 8
+      },
+      "candidates": [
+        {
+          "id": "133035-2025-supplementary-8",
+          "title": "令和7年度瑞穂町補正予算（第8号）議案（一般会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011198.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011198_d/fil/7-4-109.pdf",
+              "sha256": "b04d8ad7cac67f3299d81df2e1a31e257ae9b035f07b522178bbad8b912220b1",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 6,
+                      "end": 6
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011198.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和7年度補正予算（第8号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（7-4-109.pdf、scan）は歳出の事項別明細 物理6。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2025-supplementary-8",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2025-supplementary-8",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-8.pdf",
+            "sha256": "b04d8ad7cac67f3299d81df2e1a31e257ae9b035f07b522178bbad8b912220b1",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r7/p011198_d/fil/7-4-109.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:48:59.266Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2025,
+        "document_kind": "supplementary",
+        "amendment_number": 9
+      },
+      "candidates": [
+        {
+          "id": "133035-2025-supplementary-9",
+          "title": "令和7年度瑞穂町補正予算（第9号）議案（一般会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011380.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011380_d/fil/8-1rinzi-1.pdf",
+              "sha256": "635c6441d51afaece2fe31b6285402fa32cbfc5aec865a41a78664ec51116a89",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 7,
+                      "end": 9
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011380.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和7年度補正予算（第9号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（8-1rinzi-1.pdf、scan、専決処分の承認議案）は歳出の事項別明細 物理7-9。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2025-supplementary-9",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2025-supplementary-9",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-9.pdf",
+            "sha256": "635c6441d51afaece2fe31b6285402fa32cbfc5aec865a41a78664ec51116a89",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011380_d/fil/8-1rinzi-1.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:49:02.243Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2025,
+        "document_kind": "supplementary",
+        "amendment_number": 10
+      },
+      "candidates": [
+        {
+          "id": "133035-2025-supplementary-10",
+          "title": "令和7年度瑞穂町補正予算（第10号）議案（一般会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011380.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011380_d/fil/8-1rinzi-2.pdf",
+              "sha256": "c19e2cde16f57ee7c5f312bd613bb4dc52879d2c8ec574082da9c7ad90901589",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 7,
+                      "end": 12
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011380.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和7年度補正予算（第10号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（8-1rinzi-2.pdf、scan）は歳出の事項別明細 物理7-12。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2025-supplementary-10",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2025-supplementary-10",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-10.pdf",
+            "sha256": "c19e2cde16f57ee7c5f312bd613bb4dc52879d2c8ec574082da9c7ad90901589",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011380_d/fil/8-1rinzi-2.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:49:05.699Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2025,
+        "document_kind": "supplementary",
+        "amendment_number": 11
+      },
+      "candidates": [
+        {
+          "id": "133035-2025-supplementary-11",
+          "title": "令和7年度瑞穂町補正予算（第11号）議案（一般会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011439.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011439_d/fil/8-1-17.pdf",
+              "sha256": "a1e045845ff3919420b094d8e14093eaa3db49ce845196f52650f8009f9d6e94",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 21,
+                      "end": 78
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011439.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和7年度補正予算（第11号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（8-1-17.pdf、scan）は歳出の事項別明細 物理21-78。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2025-supplementary-11",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2025-supplementary-11",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-11.pdf",
+            "sha256": "a1e045845ff3919420b094d8e14093eaa3db49ce845196f52650f8009f9d6e94",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011439_d/fil/8-1-17.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:49:11.774Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2025,
+        "document_kind": "supplementary",
+        "amendment_number": 12
+      },
+      "candidates": [
+        {
+          "id": "133035-2025-supplementary-12",
+          "title": "令和7年度瑞穂町補正予算（第12号）議案（一般会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011661.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011661_d/fil/8-2-42.pdf",
+              "sha256": "230ab13862da20217c471a5cd14db530e6aedd0a8be3d03ed276ea116e154091",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 14,
+                      "end": 26
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011661.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和7年度補正予算（第12号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（8-2-42.pdf、scan、専決処分の承認議案）は歳出の事項別明細 物理14-26。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2025-supplementary-12",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2025-supplementary-12",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2025/supplementary-12.pdf",
+            "sha256": "230ab13862da20217c471a5cd14db530e6aedd0a8be3d03ed276ea116e154091",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011661_d/fil/8-2-42.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:49:15.604Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2026,
+        "document_kind": "supplementary",
+        "amendment_number": 1
+      },
+      "candidates": [
+        {
+          "id": "133035-2026-supplementary-1",
+          "title": "令和8年度瑞穂町補正予算（第1号）議案（一般会計・箱根ケ崎駅西土地区画整理事業特別会計・介護保険特別会計・下水道事業会計・国民健康保険特別会計・後期高齢者医療特別会計・殿ケ谷財産区特別会計・石畑財産区特別会計・箱根ケ崎財産区特別会計・長岡財産区特別会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011439.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011439_d/fil/8-1-37.pdf",
+              "sha256": "9ab78d34c2c43e041328956daefa390d3a20e709aa5e0cdafb72910af8b81465",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 5,
+                      "end": 6
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011661_d/fil/8-2-52.pdf",
+              "sha256": "a71c96dbee247a6a416f32a71198e3663c1e6cb645d6cc012bad4eb3eb09cb58",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "箱根ケ崎駅西土地区画整理事業特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 5,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011661_d/fil/8-2-53.pdf",
+              "sha256": "a4a6e2a2bd6f081f52e119d6312bf990c01d175c5036841b6495f41e959394be",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 5,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011661_d/fil/8-2-54.pdf",
+              "sha256": "eb0ae8c7193ed51f3f39f2a98b9eda981c57d89df1ae5e8746d44a93dbbfb994",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "下水道事業会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 12,
+                      "end": 12
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011864_d/fil/8-3-66.pdf",
+              "sha256": "d0754ce72ad975ff25d742f3b33cc4997bb7509b989bb098392e6cf2ed5ab752",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 5,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011864_d/fil/8-3-69.pdf",
+              "sha256": "238cddfb842817c8e7bf4661eabe41d5c90db6959dfcbeda206ed2d9c127f5c2",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 5,
+                      "end": 6
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011864_d/fil/8-3-70.pdf",
+              "sha256": "c53bf996f7aa1b381d8cc98a9aef13f05fdb70b5ac8744601f8a7a8d79d51a96",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "殿ケ谷財産区特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 5,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011864_d/fil/8-3-71.pdf",
+              "sha256": "4c03a1eb105bc310771d61532bd10d05047108e4632259f6933a596881625479",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "石畑財産区特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 5,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011864_d/fil/8-3-72.pdf",
+              "sha256": "0b92fd82b3ae56c8862aee7f720b9b80982d0f8fdebf92d661d24102305b3222",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "箱根ケ崎財産区特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 5,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011864_d/fil/8-3-73.pdf",
+              "sha256": "99ab164d30bbec71037f1a562c4398538f8a18bf1f0b18a6fda5293e9ae716d3",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "長岡財産区特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 5,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011439.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和8年度補正予算（第1号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（8-1-37.pdf、scan）は歳出の事項別明細 物理5-6。箱根ケ崎駅西土地区画整理事業特別会計（8-2-52.pdf、scan）は歳出の事項別明細 物理5。介護保険特別会計（8-2-53.pdf、scan）は歳出の事項別明細 物理5。下水道事業会計（8-2-54.pdf、scan）は補正予算実施計画説明書の支出頁 物理12（款・項・目と既決予定額・補正予定額・計、節・説明。収入頁と予定キャッシュ・フロー・貸借対照表は除く）。国民健康保険特別会計（8-3-66.pdf、scan）は歳出の事項別明細 物理5。後期高齢者医療特別会計（8-3-69.pdf、scan）は歳出の事項別明細 物理5-6。殿ケ谷財産区特別会計（8-3-70.pdf、scan）は歳出の事項別明細 物理5。石畑財産区特別会計（8-3-71.pdf、scan）は歳出の事項別明細 物理5。箱根ケ崎財産区特別会計（8-3-72.pdf、scan）は歳出の事項別明細 物理5。長岡財産区特別会計（8-3-73.pdf、scan）は歳出の事項別明細 物理5。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2026-supplementary-1",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2026-supplementary-1",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2026/supplementary-1-5.pdf",
+            "sha256": "9ab78d34c2c43e041328956daefa390d3a20e709aa5e0cdafb72910af8b81465",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011439_d/fil/8-1-37.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2026/supplementary-1-7.pdf",
+            "sha256": "a71c96dbee247a6a416f32a71198e3663c1e6cb645d6cc012bad4eb3eb09cb58",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011661_d/fil/8-2-52.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2026/supplementary-1-6.pdf",
+            "sha256": "a4a6e2a2bd6f081f52e119d6312bf990c01d175c5036841b6495f41e959394be",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011661_d/fil/8-2-53.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2026/supplementary-1-10.pdf",
+            "sha256": "eb0ae8c7193ed51f3f39f2a98b9eda981c57d89df1ae5e8746d44a93dbbfb994",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011661_d/fil/8-2-54.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2026/supplementary-1-9.pdf",
+            "sha256": "d0754ce72ad975ff25d742f3b33cc4997bb7509b989bb098392e6cf2ed5ab752",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011864_d/fil/8-3-66.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2026/supplementary-1-2.pdf",
+            "sha256": "238cddfb842817c8e7bf4661eabe41d5c90db6959dfcbeda206ed2d9c127f5c2",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011864_d/fil/8-3-69.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2026/supplementary-1-8.pdf",
+            "sha256": "c53bf996f7aa1b381d8cc98a9aef13f05fdb70b5ac8744601f8a7a8d79d51a96",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011864_d/fil/8-3-70.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2026/supplementary-1-3.pdf",
+            "sha256": "4c03a1eb105bc310771d61532bd10d05047108e4632259f6933a596881625479",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011864_d/fil/8-3-71.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2026/supplementary-1-1.pdf",
+            "sha256": "0b92fd82b3ae56c8862aee7f720b9b80982d0f8fdebf92d661d24102305b3222",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011864_d/fil/8-3-72.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2026/supplementary-1-4.pdf",
+            "sha256": "99ab164d30bbec71037f1a562c4398538f8a18bf1f0b18a6fda5293e9ae716d3",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011864_d/fil/8-3-73.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:49:30.847Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2026,
+        "document_kind": "supplementary",
+        "amendment_number": 2
+      },
+      "candidates": [
+        {
+          "id": "133035-2026-supplementary-2",
+          "title": "令和8年度瑞穂町補正予算（第2号）議案（一般会計・箱根ケ崎駅西土地区画整理事業特別会計・介護保険特別会計・下水道事業会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011661.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011661_d/fil/8-2-51.pdf",
+              "sha256": "2398dab0c81e0814f1aee08dda3e43717f7018a1b3453ab3e2314dfd2e0259ee",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 6,
+                      "end": 10
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011864_d/fil/8-3-67.pdf",
+              "sha256": "a31ee65d3d25f9e108a195c634e7d12ab25e89f182e7af96ca5a2ce21cdfc149",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "箱根ケ崎駅西土地区画整理事業特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 5,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011864_d/fil/8-3-68.pdf",
+              "sha256": "12d36faed4a4aae1df4e551fb4c5ef163ea75d18e8b2d29a1bd1de3123e5e65c",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 8,
+                      "end": 16
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011864_d/fil/8-3-74.pdf",
+              "sha256": "ce499c800b09ddba13995b77c390ef96c10f040378177d9bb1dba447039b3557",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "下水道事業会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 12,
+                      "end": 12
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011661.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和8年度補正予算（第2号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（8-2-51.pdf、scan）は歳出の事項別明細 物理6-10。箱根ケ崎駅西土地区画整理事業特別会計（8-3-67.pdf、scan）は歳出の事項別明細 物理5。介護保険特別会計（8-3-68.pdf、scan）は歳出の事項別明細 物理8-16。下水道事業会計（8-3-74.pdf、scan）は補正予算実施計画説明書の支出頁 物理12（款・項・目と既決予定額・補正予定額・計、節・説明。収入頁と予定キャッシュ・フロー・貸借対照表は除く）。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2026-supplementary-2",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2026-supplementary-2",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2026/supplementary-2-2.pdf",
+            "sha256": "2398dab0c81e0814f1aee08dda3e43717f7018a1b3453ab3e2314dfd2e0259ee",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011661_d/fil/8-2-51.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2026/supplementary-2-3.pdf",
+            "sha256": "a31ee65d3d25f9e108a195c634e7d12ab25e89f182e7af96ca5a2ce21cdfc149",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011864_d/fil/8-3-67.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2026/supplementary-2-1.pdf",
+            "sha256": "12d36faed4a4aae1df4e551fb4c5ef163ea75d18e8b2d29a1bd1de3123e5e65c",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011864_d/fil/8-3-68.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/133035/2026/supplementary-2-4.pdf",
+            "sha256": "ce499c800b09ddba13995b77c390ef96c10f040378177d9bb1dba447039b3557",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011864_d/fil/8-3-74.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:49:39.689Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2026,
+        "document_kind": "supplementary",
+        "amendment_number": 3
+      },
+      "candidates": [
+        {
+          "id": "133035-2026-supplementary-3",
+          "title": "令和8年度瑞穂町補正予算（第3号）議案（一般会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011661.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011661_d/fil/8-2-57.pdf",
+              "sha256": "7109695a4a53c7b8c8e71d094abb1dd2f9107366a6ccd8da391bbbd53a3c4220",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 5,
+                      "end": 6
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011661.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和8年度補正予算（第3号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（8-2-57.pdf、text）は歳出の事項別明細 物理5-6。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2026-supplementary-3",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2026-supplementary-3",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2026/supplementary-3.pdf",
+            "sha256": "7109695a4a53c7b8c8e71d094abb1dd2f9107366a6ccd8da391bbbd53a3c4220",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011661_d/fil/8-2-57.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:49:42.388Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2026,
+        "document_kind": "supplementary",
+        "amendment_number": 4
+      },
+      "candidates": [
+        {
+          "id": "133035-2026-supplementary-4",
+          "title": "令和8年度瑞穂町補正予算（第4号）議案（一般会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011864.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011864_d/fil/8-3-65.pdf",
+              "sha256": "56c95d2bc4f31f612fc79f9f453afb66ed479c8ed2b1dc98a4f8723f3f964cad",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 13,
+                      "end": 33
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011864.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和8年度補正予算（第4号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（8-3-65.pdf、text）は歳出の事項別明細 物理13-33。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2026-supplementary-4",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2026-supplementary-4",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2026/supplementary-4.pdf",
+            "sha256": "56c95d2bc4f31f612fc79f9f453afb66ed479c8ed2b1dc98a4f8723f3f964cad",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011864_d/fil/8-3-65.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:49:46.355Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2026,
+        "document_kind": "supplementary",
+        "amendment_number": 5
+      },
+      "candidates": [
+        {
+          "id": "133035-2026-supplementary-5",
+          "title": "令和8年度瑞穂町補正予算（第5号）議案（一般会計）",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011864.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011864_d/fil/8-3-86.pdf",
+              "sha256": "f9334f6f34fcf15ef887457564fb73e3eb6d60a18377c43ef4ef3a427f9a8089",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 5,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "瑞穂町議会「議案件名」頁（https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011864.html ほか各定例会・臨時会の頁）に会計別の議案PDFとして掲載された令和8年度補正予算（第5号）。各議案は第1表歳入歳出予算補正と歳入歳出補正予算事項別明細書を収め、歳出は款・項ごとに目（事業）・補正前の額・補正額・計・補正額の財源内訳・節（区分・金額）・説明が同一明細で対応する（単位千円）。補正額は増減額で、計が補正後の額。給与費明細書・地方債調書・債務負担行為調書は範囲外。一般会計（8-3-86.pdf、text）は歳出の事項別明細 物理5。頁範囲は各頁の表題（「3 歳出」・「給与費明細書」）と表の列構成で先頭・末尾を確認した。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "133035-2026-supplementary-5",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "133035-2026-supplementary-5",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2026/supplementary-5.pdf",
+            "sha256": "f9334f6f34fcf15ef887457564fb73e3eb6d60a18377c43ef4ef3a427f9a8089",
+            "final_url": "https://www.town.mizuho.tokyo.jp/gikai/result/001/r8/p011864_d/fil/8-3-86.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:49:49.104Z"
+      }
     }
   ],
   "unresolved_candidates": [],

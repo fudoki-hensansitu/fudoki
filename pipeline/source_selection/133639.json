@@ -425,6 +425,282 @@
       "reason": "未公表（財政状況等について gyousei/zaiseishokuin/zaiseijoukyou.html（決算リンクは令和6年度 R6kessan.pdf まで）、2026-10-13確認。令和7年度の決算書・事項別明細書の掲載なし）。【従前の確認】未選定。村公式掲載一覧（財政状況等について、2026-10-08再取得で確認）の決算リンクは令和6年度（R6kessan.pdf）までで令和7年度決算の掲載なし。令和7年度決算は令和8年第3回定例会で審査済み（FY2024調査時に議会開催概要で確認）だがHP未掲載。議会ページは議案の件名と議決結果のみで決算書本文の添付なし、東京都オープンデータカタログに財政データセットなし（前回調査で確認）。公開を確認できないのであり非公開の断定ではない。",
       "selected_candidate_id": null,
       "archive": null
+    },
+    {
+      "target": {
+        "jurisdiction": "133639",
+        "fiscal_year": 2023,
+        "document_kind": "supplementary",
+        "amendment_number": 1
+      },
+      "candidates": [],
+      "reason": "令和5年度新島村補正予算（第1号：一般会計・国保診療所特別会計・簡易水道事業会計・国民健康保険事業特別会計・後期高齢者医療特別会計・下水道事業会計・介護保険特別会計）。新島村は補正予算書・補正予算の明細を公式サイトに掲載していない。財政状況の頁（https://www.niijima.com/gyousei/zaiseishokuin/zaiseijoukyou.html）は当初予算の資料だけ。号数は村議会の開催概要の審議結果一覧（https://www.niijima.com/gikai/kaisaigaiyou/2023/ 配下の各定例会・臨時会の頁、画像）による。確認 2026-10-28。",
+      "selected_candidate_id": null,
+      "archive": null
+    },
+    {
+      "target": {
+        "jurisdiction": "133639",
+        "fiscal_year": 2023,
+        "document_kind": "supplementary",
+        "amendment_number": 2
+      },
+      "candidates": [],
+      "reason": "令和5年度新島村補正予算（第2号：一般会計・国保診療所特別会計・連絡船事業特別会計・簡易水道事業会計）。新島村は補正予算書・補正予算の明細を公式サイトに掲載していない。財政状況の頁（https://www.niijima.com/gyousei/zaiseishokuin/zaiseijoukyou.html）は当初予算の資料だけ。号数は村議会の開催概要の審議結果一覧（https://www.niijima.com/gikai/kaisaigaiyou/2023/ 配下の各定例会・臨時会の頁、画像）による。確認 2026-10-28。",
+      "selected_candidate_id": null,
+      "archive": null
+    },
+    {
+      "target": {
+        "jurisdiction": "133639",
+        "fiscal_year": 2023,
+        "document_kind": "supplementary",
+        "amendment_number": 3
+      },
+      "candidates": [],
+      "reason": "令和5年度新島村補正予算（第3号：一般会計・国保診療所特別会計・連絡船事業特別会計）。新島村は補正予算書・補正予算の明細を公式サイトに掲載していない。財政状況の頁（https://www.niijima.com/gyousei/zaiseishokuin/zaiseijoukyou.html）は当初予算の資料だけ。号数は村議会の開催概要の審議結果一覧（https://www.niijima.com/gikai/kaisaigaiyou/2023/ 配下の各定例会・臨時会の頁、画像）による。確認 2026-10-28。",
+      "selected_candidate_id": null,
+      "archive": null
+    },
+    {
+      "target": {
+        "jurisdiction": "133639",
+        "fiscal_year": 2023,
+        "document_kind": "supplementary",
+        "amendment_number": 4
+      },
+      "candidates": [],
+      "reason": "令和5年度新島村補正予算（第4号：一般会計）。新島村は補正予算書・補正予算の明細を公式サイトに掲載していない。財政状況の頁（https://www.niijima.com/gyousei/zaiseishokuin/zaiseijoukyou.html）は当初予算の資料だけ。号数は村議会の開催概要の審議結果一覧（https://www.niijima.com/gikai/kaisaigaiyou/2023/ 配下の各定例会・臨時会の頁、画像）による。確認 2026-10-28。",
+      "selected_candidate_id": null,
+      "archive": null
+    },
+    {
+      "target": {
+        "jurisdiction": "133639",
+        "fiscal_year": 2023,
+        "document_kind": "supplementary",
+        "amendment_number": 5
+      },
+      "candidates": [],
+      "reason": "令和5年度新島村補正予算（第5号：一般会計）。新島村は補正予算書・補正予算の明細を公式サイトに掲載していない。財政状況の頁（https://www.niijima.com/gyousei/zaiseishokuin/zaiseijoukyou.html）は当初予算の資料だけ。号数は村議会の開催概要の審議結果一覧（https://www.niijima.com/gikai/kaisaigaiyou/2023/ 配下の各定例会・臨時会の頁、画像）による。確認 2026-10-28。",
+      "selected_candidate_id": null,
+      "archive": null
+    },
+    {
+      "target": {
+        "jurisdiction": "133639",
+        "fiscal_year": 2023,
+        "document_kind": "supplementary",
+        "amendment_number": 6
+      },
+      "candidates": [],
+      "reason": "令和5年度新島村補正予算（第6号：一般会計）。新島村は補正予算書・補正予算の明細を公式サイトに掲載していない。財政状況の頁（https://www.niijima.com/gyousei/zaiseishokuin/zaiseijoukyou.html）は当初予算の資料だけ。号数は村議会の開催概要の審議結果一覧（https://www.niijima.com/gikai/kaisaigaiyou/2023/ 配下の各定例会・臨時会の頁、画像）による。確認 2026-10-28。",
+      "selected_candidate_id": null,
+      "archive": null
+    },
+    {
+      "target": {
+        "jurisdiction": "133639",
+        "fiscal_year": 2023,
+        "document_kind": "supplementary",
+        "amendment_number": 7
+      },
+      "candidates": [],
+      "reason": "令和5年度新島村補正予算（第7号：一般会計）。新島村は補正予算書・補正予算の明細を公式サイトに掲載していない。財政状況の頁（https://www.niijima.com/gyousei/zaiseishokuin/zaiseijoukyou.html）は当初予算の資料だけ。号数は村議会の開催概要の審議結果一覧（https://www.niijima.com/gikai/kaisaigaiyou/2023/ 配下の各定例会・臨時会の頁、画像）による。確認 2026-10-28。",
+      "selected_candidate_id": null,
+      "archive": null
+    },
+    {
+      "target": {
+        "jurisdiction": "133639",
+        "fiscal_year": 2024,
+        "document_kind": "supplementary",
+        "amendment_number": 1
+      },
+      "candidates": [],
+      "reason": "令和6年度新島村補正予算（第1号：一般会計・国民健康保険事業特別会計・連絡船・国保診療所・後期高齢者医療・介護保険・簡易水道・下水道の各会計）。新島村は補正予算書・補正予算の明細を公式サイトに掲載していない。財政状況の頁（https://www.niijima.com/gyousei/zaiseishokuin/zaiseijoukyou.html）は当初予算の資料だけ。号数は村議会の開催概要の審議結果一覧（https://www.niijima.com/gikai/kaisaigaiyou/2024/ 配下の各定例会・臨時会の頁、画像）による。確認 2026-10-28。",
+      "selected_candidate_id": null,
+      "archive": null
+    },
+    {
+      "target": {
+        "jurisdiction": "133639",
+        "fiscal_year": 2024,
+        "document_kind": "supplementary",
+        "amendment_number": 2
+      },
+      "candidates": [],
+      "reason": "令和6年度新島村補正予算（第2号：一般会計・国民健康保険事業特別会計・連絡船・国保診療所・後期高齢者医療・介護保険・簡易水道・下水道の各会計）。新島村は補正予算書・補正予算の明細を公式サイトに掲載していない。財政状況の頁（https://www.niijima.com/gyousei/zaiseishokuin/zaiseijoukyou.html）は当初予算の資料だけ。号数は村議会の開催概要の審議結果一覧（https://www.niijima.com/gikai/kaisaigaiyou/2024/ 配下の各定例会・臨時会の頁、画像）による。確認 2026-10-28。",
+      "selected_candidate_id": null,
+      "archive": null
+    },
+    {
+      "target": {
+        "jurisdiction": "133639",
+        "fiscal_year": 2024,
+        "document_kind": "supplementary",
+        "amendment_number": 3
+      },
+      "candidates": [],
+      "reason": "令和6年度新島村補正予算（第3号：一般会計・国民健康保険事業特別会計）。新島村は補正予算書・補正予算の明細を公式サイトに掲載していない。財政状況の頁（https://www.niijima.com/gyousei/zaiseishokuin/zaiseijoukyou.html）は当初予算の資料だけ。号数は村議会の開催概要の審議結果一覧（https://www.niijima.com/gikai/kaisaigaiyou/2024/ 配下の各定例会・臨時会の頁、画像）による。確認 2026-10-28。",
+      "selected_candidate_id": null,
+      "archive": null
+    },
+    {
+      "target": {
+        "jurisdiction": "133639",
+        "fiscal_year": 2024,
+        "document_kind": "supplementary",
+        "amendment_number": 4
+      },
+      "candidates": [],
+      "reason": "令和6年度新島村補正予算（第4号：一般会計）。新島村は補正予算書・補正予算の明細を公式サイトに掲載していない。財政状況の頁（https://www.niijima.com/gyousei/zaiseishokuin/zaiseijoukyou.html）は当初予算の資料だけ。号数は村議会の開催概要の審議結果一覧（https://www.niijima.com/gikai/kaisaigaiyou/2024/ 配下の各定例会・臨時会の頁、画像）による。確認 2026-10-28。",
+      "selected_candidate_id": null,
+      "archive": null
+    },
+    {
+      "target": {
+        "jurisdiction": "133639",
+        "fiscal_year": 2024,
+        "document_kind": "supplementary",
+        "amendment_number": 5
+      },
+      "candidates": [],
+      "reason": "令和6年度新島村補正予算（第5号：一般会計）。新島村は補正予算書・補正予算の明細を公式サイトに掲載していない。財政状況の頁（https://www.niijima.com/gyousei/zaiseishokuin/zaiseijoukyou.html）は当初予算の資料だけ。号数は村議会の開催概要の審議結果一覧（https://www.niijima.com/gikai/kaisaigaiyou/2024/ 配下の各定例会・臨時会の頁、画像）による。確認 2026-10-28。",
+      "selected_candidate_id": null,
+      "archive": null
+    },
+    {
+      "target": {
+        "jurisdiction": "133639",
+        "fiscal_year": 2025,
+        "document_kind": "supplementary",
+        "amendment_number": 1
+      },
+      "candidates": [],
+      "reason": "令和7年度新島村補正予算（第1号：一般会計・各特別会計・公営企業会計）。新島村は補正予算書・補正予算の明細を公式サイトに掲載していない。財政状況の頁（https://www.niijima.com/gyousei/zaiseishokuin/zaiseijoukyou.html）は当初予算の資料だけ。号数は村議会の開催概要の審議結果一覧（https://www.niijima.com/gikai/kaisaigaiyou/2025/ 配下の各定例会・臨時会の頁、画像）による。確認 2026-10-28。",
+      "selected_candidate_id": null,
+      "archive": null
+    },
+    {
+      "target": {
+        "jurisdiction": "133639",
+        "fiscal_year": 2025,
+        "document_kind": "supplementary",
+        "amendment_number": 2
+      },
+      "candidates": [],
+      "reason": "令和7年度新島村補正予算（第2号：一般会計・各特別会計・公営企業会計）。新島村は補正予算書・補正予算の明細を公式サイトに掲載していない。財政状況の頁（https://www.niijima.com/gyousei/zaiseishokuin/zaiseijoukyou.html）は当初予算の資料だけ。号数は村議会の開催概要の審議結果一覧（https://www.niijima.com/gikai/kaisaigaiyou/2025/ 配下の各定例会・臨時会の頁、画像）による。確認 2026-10-28。",
+      "selected_candidate_id": null,
+      "archive": null
+    },
+    {
+      "target": {
+        "jurisdiction": "133639",
+        "fiscal_year": 2025,
+        "document_kind": "supplementary",
+        "amendment_number": 3
+      },
+      "candidates": [],
+      "reason": "令和7年度新島村補正予算（第3号：一般会計・各特別会計・公営企業会計）。新島村は補正予算書・補正予算の明細を公式サイトに掲載していない。財政状況の頁（https://www.niijima.com/gyousei/zaiseishokuin/zaiseijoukyou.html）は当初予算の資料だけ。号数は村議会の開催概要の審議結果一覧（https://www.niijima.com/gikai/kaisaigaiyou/2025/ 配下の各定例会・臨時会の頁、画像）による。確認 2026-10-28。",
+      "selected_candidate_id": null,
+      "archive": null
+    },
+    {
+      "target": {
+        "jurisdiction": "133639",
+        "fiscal_year": 2025,
+        "document_kind": "supplementary",
+        "amendment_number": 4
+      },
+      "candidates": [],
+      "reason": "令和7年度新島村補正予算（第4号：一般会計）。新島村は補正予算書・補正予算の明細を公式サイトに掲載していない。財政状況の頁（https://www.niijima.com/gyousei/zaiseishokuin/zaiseijoukyou.html）は当初予算の資料だけ。号数は村議会の開催概要の審議結果一覧（https://www.niijima.com/gikai/kaisaigaiyou/2025/ 配下の各定例会・臨時会の頁、画像）による。確認 2026-10-28。",
+      "selected_candidate_id": null,
+      "archive": null
+    },
+    {
+      "target": {
+        "jurisdiction": "133639",
+        "fiscal_year": 2025,
+        "document_kind": "supplementary",
+        "amendment_number": 5
+      },
+      "candidates": [],
+      "reason": "令和7年度新島村補正予算（第5号：一般会計）。新島村は補正予算書・補正予算の明細を公式サイトに掲載していない。財政状況の頁（https://www.niijima.com/gyousei/zaiseishokuin/zaiseijoukyou.html）は当初予算の資料だけ。号数は村議会の開催概要の審議結果一覧（https://www.niijima.com/gikai/kaisaigaiyou/2025/ 配下の各定例会・臨時会の頁、画像）による。確認 2026-10-28。",
+      "selected_candidate_id": null,
+      "archive": null
+    },
+    {
+      "target": {
+        "jurisdiction": "133639",
+        "fiscal_year": 2025,
+        "document_kind": "supplementary",
+        "amendment_number": 6
+      },
+      "candidates": [],
+      "reason": "令和7年度新島村補正予算（第6号：一般会計）。新島村は補正予算書・補正予算の明細を公式サイトに掲載していない。財政状況の頁（https://www.niijima.com/gyousei/zaiseishokuin/zaiseijoukyou.html）は当初予算の資料だけ。号数は村議会の開催概要の審議結果一覧（https://www.niijima.com/gikai/kaisaigaiyou/2025/ 配下の各定例会・臨時会の頁、画像）による。確認 2026-10-28。",
+      "selected_candidate_id": null,
+      "archive": null
+    },
+    {
+      "target": {
+        "jurisdiction": "133639",
+        "fiscal_year": 2025,
+        "document_kind": "supplementary",
+        "amendment_number": 7
+      },
+      "candidates": [],
+      "reason": "令和7年度新島村補正予算（第7号：一般会計）。新島村は補正予算書・補正予算の明細を公式サイトに掲載していない。財政状況の頁（https://www.niijima.com/gyousei/zaiseishokuin/zaiseijoukyou.html）は当初予算の資料だけ。号数は村議会の開催概要の審議結果一覧（https://www.niijima.com/gikai/kaisaigaiyou/2025/ 配下の各定例会・臨時会の頁、画像）による。確認 2026-10-28。",
+      "selected_candidate_id": null,
+      "archive": null
+    },
+    {
+      "target": {
+        "jurisdiction": "133639",
+        "fiscal_year": 2026,
+        "document_kind": "supplementary",
+        "amendment_number": 1
+      },
+      "candidates": [],
+      "reason": "令和8年度新島村補正予算（第1号：一般会計・各特別会計・公営企業会計）。新島村は補正予算書・補正予算の明細を公式サイトに掲載していない。財政状況の頁（https://www.niijima.com/gyousei/zaiseishokuin/zaiseijoukyou.html）は当初予算の資料だけ。号数は村議会の開催概要の審議結果一覧（https://www.niijima.com/gikai/kaisaigaiyou/2026/ 配下の各定例会・臨時会の頁、画像）による。確認 2026-10-28。",
+      "selected_candidate_id": null,
+      "archive": null
+    },
+    {
+      "target": {
+        "jurisdiction": "133639",
+        "fiscal_year": 2026,
+        "document_kind": "supplementary",
+        "amendment_number": 2
+      },
+      "candidates": [],
+      "reason": "令和8年度新島村補正予算（第2号：一般会計・各特別会計・公営企業会計）。新島村は補正予算書・補正予算の明細を公式サイトに掲載していない。財政状況の頁（https://www.niijima.com/gyousei/zaiseishokuin/zaiseijoukyou.html）は当初予算の資料だけ。号数は村議会の開催概要の審議結果一覧（https://www.niijima.com/gikai/kaisaigaiyou/2026/ 配下の各定例会・臨時会の頁、画像）による。確認 2026-10-28。",
+      "selected_candidate_id": null,
+      "archive": null
+    },
+    {
+      "target": {
+        "jurisdiction": "133639",
+        "fiscal_year": 2026,
+        "document_kind": "supplementary",
+        "amendment_number": 3
+      },
+      "candidates": [],
+      "reason": "令和8年度新島村補正予算（第3号：一般会計）。新島村は補正予算書・補正予算の明細を公式サイトに掲載していない。財政状況の頁（https://www.niijima.com/gyousei/zaiseishokuin/zaiseijoukyou.html）は当初予算の資料だけ。号数は村議会の開催概要の審議結果一覧（https://www.niijima.com/gikai/kaisaigaiyou/2026/ 配下の各定例会・臨時会の頁、画像）による。確認 2026-10-28。",
+      "selected_candidate_id": null,
+      "archive": null
+    },
+    {
+      "target": {
+        "jurisdiction": "133639",
+        "fiscal_year": 2026,
+        "document_kind": "supplementary",
+        "amendment_number": 4
+      },
+      "candidates": [],
+      "reason": "令和8年度新島村補正予算（第4号：一般会計）。新島村は補正予算書・補正予算の明細を公式サイトに掲載していない。財政状況の頁（https://www.niijima.com/gyousei/zaiseishokuin/zaiseijoukyou.html）は当初予算の資料だけ。号数は村議会の開催概要の審議結果一覧（https://www.niijima.com/gikai/kaisaigaiyou/2026/ 配下の各定例会・臨時会の頁、画像）による。確認 2026-10-28。",
+      "selected_candidate_id": null,
+      "archive": null
     }
   ],
   "unresolved_candidates": [],

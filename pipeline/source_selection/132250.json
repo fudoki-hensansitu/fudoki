@@ -1968,6 +1968,1741 @@
         ],
         "archived_at": "2026-10-07T16:00:07.988Z"
       }
+    },
+    {
+      "target": {
+        "jurisdiction": "132250",
+        "fiscal_year": 2023,
+        "document_kind": "supplementary",
+        "amendment_number": 1
+      },
+      "candidates": [
+        {
+          "id": "132250-2023-supplementary-1",
+          "title": "令和5年度稲城市補正予算（第1号）議案書（一般会計・下水道事業会計・土地区画整理事業特別会計・介護保険特別会計・国民健康保険事業特別会計・後期高齢者医療特別会計）",
+          "landing_url": "https://www.city.inagi.tokyo.jp/gikai/ugoki/1009566/1009571.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/009/571/r5.1gian_tsuika.pdf",
+              "sha256": "e2c422ef3733acd04911e1d9e6ad8870de65d9a23d791743ca5c2481b7726aeb",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 7,
+                      "end": 8
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/009/567/r5.4gian.pdf",
+              "sha256": "7ed16cad3d5abe6990238049f1929d3aacb2440186bc7b7e03984865e7d66c1a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "下水道事業会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 210,
+                      "end": 213
+                    }
+                  ]
+                },
+                {
+                  "account": "土地区画整理事業特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 196,
+                      "end": 196
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/009/568/r5.3gian.pdf",
+              "sha256": "5718c9df2f143b9ff6e4dd04e7473eeeb157574a6bf9b147b2baa9ab6a719039",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 93,
+                      "end": 94
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険事業特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 85,
+                      "end": 86
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 101,
+                      "end": 102
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "稲城市議会「議会の動き（議案）」の各定例会・臨時会の頁に掲載された議案書（文字PDF。1冊に複数の議案を収める）から、令和5年度の会計別補正予算（第1号）の歳出明細を選定。一般会計・特別会計の歳入歳出補正予算事項別明細書は科目（款・項・目）・補正前の額・補正額・計・財源内訳・節・説明が同一明細で対応する（単位千円、補正額は増減額）。一般会計第1号（議案第20号、r5.1gian_tsuika.pdf 物理7-8：歳入歳出補正予算事項別明細書の歳出）、下水道事業会計第1号（議案第86号、r5.4gian.pdf 物理210-213：補正予算実施計画説明書。款・項・目と予定額・補正予定額・計、節・説明が対応する。収益的収入と支出、資本的収入と支出が同じ頁に並ぶため、取り込みでは支出の表だけを読む）、介護保険特別会計第1号（議案第61号、r5.3gian.pdf 物理93-94：歳入歳出補正予算事項別明細書の歳出）、国民健康保険事業特別会計第1号（議案第60号、r5.3gian.pdf 物理85-86：歳入歳出補正予算事項別明細書の歳出）、土地区画整理事業特別会計第1号（議案第85号、r5.4gian.pdf 物理196：歳入歳出補正予算事項別明細書の歳出）、後期高齢者医療特別会計第1号（議案第62号、r5.3gian.pdf 物理101-102：歳入歳出補正予算事項別明細書の歳出）。頁範囲は議案ごとの表紙・第1表・事項別明細の見出しを文字抽出で確認した物理頁。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "132250-2023-supplementary-1",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "132250-2023-supplementary-1",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132250/2023/supplementary-1-3.pdf",
+            "sha256": "e2c422ef3733acd04911e1d9e6ad8870de65d9a23d791743ca5c2481b7726aeb",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/009/571/r5.1gian_tsuika.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132250/2023/supplementary-1-2.pdf",
+            "sha256": "7ed16cad3d5abe6990238049f1929d3aacb2440186bc7b7e03984865e7d66c1a",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/009/567/r5.4gian.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132250/2023/supplementary-1-1.pdf",
+            "sha256": "5718c9df2f143b9ff6e4dd04e7473eeeb157574a6bf9b147b2baa9ab6a719039",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/009/568/r5.3gian.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:50:04.640Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "132250",
+        "fiscal_year": 2023,
+        "document_kind": "supplementary",
+        "amendment_number": 2
+      },
+      "candidates": [
+        {
+          "id": "132250-2023-supplementary-2",
+          "title": "令和5年度稲城市補正予算（第2号）議案書（一般会計・国民健康保険事業特別会計・土地区画整理事業特別会計・後期高齢者医療特別会計）",
+          "landing_url": "https://www.city.inagi.tokyo.jp/gikai/ugoki/1009566/1009570.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/009/570/r5.1r_gian.pdf",
+              "sha256": "ccec4524f81661e7ca4691a89af57c4432f95559c870fc29eee18cb2d4d8e68e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 66,
+                      "end": 68
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/009/567/r5.4gian.pdf",
+              "sha256": "7ed16cad3d5abe6990238049f1929d3aacb2440186bc7b7e03984865e7d66c1a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "国民健康保険事業特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 189,
+                      "end": 189
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/009/565/r6.1gian.pdf",
+              "sha256": "99bb1d8f3d50ad9d403d8b508351516c79b2609e1ed87eb1043aae5b407cc024",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "土地区画整理事業特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 116,
+                      "end": 116
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 124,
+                      "end": 124
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "稲城市議会「議会の動き（議案）」の各定例会・臨時会の頁に掲載された議案書（文字PDF。1冊に複数の議案を収める）から、令和5年度の会計別補正予算（第2号）の歳出明細を選定。一般会計・特別会計の歳入歳出補正予算事項別明細書は科目（款・項・目）・補正前の額・補正額・計・財源内訳・節・説明が同一明細で対応する（単位千円、補正額は増減額）。一般会計第2号（専決処分の承認議案第23号、r5.1r_gian.pdf 物理66-68：歳入歳出補正予算事項別明細書の歳出）、国民健康保険事業特別会計第2号（議案第84号、r5.4gian.pdf 物理189：歳入歳出補正予算事項別明細書の歳出）、土地区画整理事業特別会計第2号（議案第18号、r6.1gian.pdf 物理116：歳入歳出補正予算事項別明細書の歳出）、後期高齢者医療特別会計第2号（議案第19号、r6.1gian.pdf 物理124：歳入歳出補正予算事項別明細書の歳出）。頁範囲は議案ごとの表紙・第1表・事項別明細の見出しを文字抽出で確認した物理頁。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "132250-2023-supplementary-2",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "132250-2023-supplementary-2",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132250/2023/supplementary-2-3.pdf",
+            "sha256": "ccec4524f81661e7ca4691a89af57c4432f95559c870fc29eee18cb2d4d8e68e",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/009/570/r5.1r_gian.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132250/2023/supplementary-2-1.pdf",
+            "sha256": "7ed16cad3d5abe6990238049f1929d3aacb2440186bc7b7e03984865e7d66c1a",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/009/567/r5.4gian.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132250/2023/supplementary-2-2.pdf",
+            "sha256": "99bb1d8f3d50ad9d403d8b508351516c79b2609e1ed87eb1043aae5b407cc024",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/009/565/r6.1gian.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:50:23.069Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "132250",
+        "fiscal_year": 2023,
+        "document_kind": "supplementary",
+        "amendment_number": 3
+      },
+      "candidates": [
+        {
+          "id": "132250-2023-supplementary-3",
+          "title": "令和5年度稲城市補正予算（第3号）議案書（一般会計・国民健康保険事業特別会計）",
+          "landing_url": "https://www.city.inagi.tokyo.jp/gikai/ugoki/1009566/1009569.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/009/569/r5.2gian.pdf",
+              "sha256": "77acbd792a1ced4c147e1ce242562cc8f2fb2fc7b7e958662be607350b700c1f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 65,
+                      "end": 74
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/009/565/r6.1gian.pdf",
+              "sha256": "99bb1d8f3d50ad9d403d8b508351516c79b2609e1ed87eb1043aae5b407cc024",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "国民健康保険事業特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 106,
+                      "end": 108
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "稲城市議会「議会の動き（議案）」の各定例会・臨時会の頁に掲載された議案書（文字PDF。1冊に複数の議案を収める）から、令和5年度の会計別補正予算（第3号）の歳出明細を選定。一般会計・特別会計の歳入歳出補正予算事項別明細書は科目（款・項・目）・補正前の額・補正額・計・財源内訳・節・説明が同一明細で対応する（単位千円、補正額は増減額）。一般会計第3号（議案第32号、r5.2gian.pdf 物理65-74：歳入歳出補正予算事項別明細書の歳出）、国民健康保険事業特別会計第3号（議案第17号、r6.1gian.pdf 物理106-108：歳入歳出補正予算事項別明細書の歳出）。頁範囲は議案ごとの表紙・第1表・事項別明細の見出しを文字抽出で確認した物理頁。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "132250-2023-supplementary-3",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "132250-2023-supplementary-3",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132250/2023/supplementary-3-1.pdf",
+            "sha256": "77acbd792a1ced4c147e1ce242562cc8f2fb2fc7b7e958662be607350b700c1f",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/009/569/r5.2gian.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132250/2023/supplementary-3-2.pdf",
+            "sha256": "99bb1d8f3d50ad9d403d8b508351516c79b2609e1ed87eb1043aae5b407cc024",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/009/565/r6.1gian.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:50:35.577Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "132250",
+        "fiscal_year": 2023,
+        "document_kind": "supplementary",
+        "amendment_number": 4
+      },
+      "candidates": [
+        {
+          "id": "132250-2023-supplementary-4",
+          "title": "令和5年度稲城市補正予算（第4号）議案書（一般会計）",
+          "landing_url": "https://www.city.inagi.tokyo.jp/gikai/ugoki/1009566/1009568.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/009/568/r5.3gian.pdf",
+              "sha256": "5718c9df2f143b9ff6e4dd04e7473eeeb157574a6bf9b147b2baa9ab6a719039",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 67,
+                      "end": 77
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "稲城市議会「議会の動き（議案）」の各定例会・臨時会の頁に掲載された議案書（文字PDF。1冊に複数の議案を収める）から、令和5年度の会計別補正予算（第4号）の歳出明細を選定。一般会計・特別会計の歳入歳出補正予算事項別明細書は科目（款・項・目）・補正前の額・補正額・計・財源内訳・節・説明が同一明細で対応する（単位千円、補正額は増減額）。一般会計第4号（議案第59号、r5.3gian.pdf 物理67-77：歳入歳出補正予算事項別明細書の歳出）。頁範囲は議案ごとの表紙・第1表・事項別明細の見出しを文字抽出で確認した物理頁。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "132250-2023-supplementary-4",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "132250-2023-supplementary-4",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132250/2023/supplementary-4.pdf",
+            "sha256": "5718c9df2f143b9ff6e4dd04e7473eeeb157574a6bf9b147b2baa9ab6a719039",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/009/568/r5.3gian.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:50:38.821Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "132250",
+        "fiscal_year": 2023,
+        "document_kind": "supplementary",
+        "amendment_number": 5
+      },
+      "candidates": [
+        {
+          "id": "132250-2023-supplementary-5",
+          "title": "令和5年度稲城市補正予算（第5号）議案書（一般会計）",
+          "landing_url": "https://www.city.inagi.tokyo.jp/gikai/ugoki/1009566/1009567.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/009/567/r5.4gian.pdf",
+              "sha256": "7ed16cad3d5abe6990238049f1929d3aacb2440186bc7b7e03984865e7d66c1a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 164,
+                      "end": 175
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "稲城市議会「議会の動き（議案）」の各定例会・臨時会の頁に掲載された議案書（文字PDF。1冊に複数の議案を収める）から、令和5年度の会計別補正予算（第5号）の歳出明細を選定。一般会計・特別会計の歳入歳出補正予算事項別明細書は科目（款・項・目）・補正前の額・補正額・計・財源内訳・節・説明が同一明細で対応する（単位千円、補正額は増減額）。一般会計第5号（議案第83号、r5.4gian.pdf 物理164-175：歳入歳出補正予算事項別明細書の歳出）。頁範囲は議案ごとの表紙・第1表・事項別明細の見出しを文字抽出で確認した物理頁。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "132250-2023-supplementary-5",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "132250-2023-supplementary-5",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132250/2023/supplementary-5.pdf",
+            "sha256": "7ed16cad3d5abe6990238049f1929d3aacb2440186bc7b7e03984865e7d66c1a",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/009/567/r5.4gian.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:50:43.151Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "132250",
+        "fiscal_year": 2023,
+        "document_kind": "supplementary",
+        "amendment_number": 6
+      },
+      "candidates": [
+        {
+          "id": "132250-2023-supplementary-6",
+          "title": "令和5年度稲城市補正予算（第6号）議案書（一般会計）",
+          "landing_url": "https://www.city.inagi.tokyo.jp/gikai/ugoki/1009566/1009567.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/009/567/r5.4gian_tsuika.pdf",
+              "sha256": "a76542911db54a9b488a1a1db70f1a5cf717d63066873b8aabb4fc5987e393de",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 8,
+                      "end": 12
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "稲城市議会「議会の動き（議案）」の各定例会・臨時会の頁に掲載された議案書（文字PDF。1冊に複数の議案を収める）から、令和5年度の会計別補正予算（第6号）の歳出明細を選定。一般会計・特別会計の歳入歳出補正予算事項別明細書は科目（款・項・目）・補正前の額・補正額・計・財源内訳・節・説明が同一明細で対応する（単位千円、補正額は増減額）。一般会計第6号（議案第95号、r5.4gian_tsuika.pdf 物理8-12：歳入歳出補正予算事項別明細書の歳出）。頁範囲は議案ごとの表紙・第1表・事項別明細の見出しを文字抽出で確認した物理頁。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "132250-2023-supplementary-6",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "132250-2023-supplementary-6",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132250/2023/supplementary-6.pdf",
+            "sha256": "a76542911db54a9b488a1a1db70f1a5cf717d63066873b8aabb4fc5987e393de",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/009/567/r5.4gian_tsuika.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:50:45.791Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "132250",
+        "fiscal_year": 2023,
+        "document_kind": "supplementary",
+        "amendment_number": 7
+      },
+      "candidates": [
+        {
+          "id": "132250-2023-supplementary-7",
+          "title": "令和5年度稲城市補正予算（第7号）議案書（一般会計）",
+          "landing_url": "https://www.city.inagi.tokyo.jp/gikai/ugoki/1009564/1009565.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/009/565/r6.1gian.pdf",
+              "sha256": "99bb1d8f3d50ad9d403d8b508351516c79b2609e1ed87eb1043aae5b407cc024",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 183,
+                      "end": 184
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "稲城市議会「議会の動き（議案）」の各定例会・臨時会の頁に掲載された議案書（文字PDF。1冊に複数の議案を収める）から、令和5年度の会計別補正予算（第7号）の歳出明細を選定。一般会計・特別会計の歳入歳出補正予算事項別明細書は科目（款・項・目）・補正前の額・補正額・計・財源内訳・節・説明が同一明細で対応する（単位千円、補正額は増減額）。一般会計第7号（専決処分の承認議案第28号、r6.1gian.pdf 物理183-184：歳入歳出補正予算事項別明細書の歳出）。頁範囲は議案ごとの表紙・第1表・事項別明細の見出しを文字抽出で確認した物理頁。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "132250-2023-supplementary-7",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "132250-2023-supplementary-7",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132250/2023/supplementary-7.pdf",
+            "sha256": "99bb1d8f3d50ad9d403d8b508351516c79b2609e1ed87eb1043aae5b407cc024",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/009/565/r6.1gian.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:50:55.758Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "132250",
+        "fiscal_year": 2023,
+        "document_kind": "supplementary",
+        "amendment_number": 8
+      },
+      "candidates": [
+        {
+          "id": "132250-2023-supplementary-8",
+          "title": "令和5年度稲城市補正予算（第8号）議案書（一般会計）",
+          "landing_url": "https://www.city.inagi.tokyo.jp/gikai/ugoki/1009564/1009565.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/009/565/r6.1gian.pdf",
+              "sha256": "99bb1d8f3d50ad9d403d8b508351516c79b2609e1ed87eb1043aae5b407cc024",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 96,
+                      "end": 99
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "稲城市議会「議会の動き（議案）」の各定例会・臨時会の頁に掲載された議案書（文字PDF。1冊に複数の議案を収める）から、令和5年度の会計別補正予算（第8号）の歳出明細を選定。一般会計・特別会計の歳入歳出補正予算事項別明細書は科目（款・項・目）・補正前の額・補正額・計・財源内訳・節・説明が同一明細で対応する（単位千円、補正額は増減額）。一般会計第8号（議案第16号、r6.1gian.pdf 物理96-99：歳入歳出補正予算事項別明細書の歳出）。頁範囲は議案ごとの表紙・第1表・事項別明細の見出しを文字抽出で確認した物理頁。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "132250-2023-supplementary-8",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "132250-2023-supplementary-8",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132250/2023/supplementary-8.pdf",
+            "sha256": "99bb1d8f3d50ad9d403d8b508351516c79b2609e1ed87eb1043aae5b407cc024",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/009/565/r6.1gian.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:51:00.790Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "132250",
+        "fiscal_year": 2024,
+        "document_kind": "supplementary",
+        "amendment_number": 1
+      },
+      "candidates": [
+        {
+          "id": "132250-2024-supplementary-1",
+          "title": "令和6年度稲城市補正予算（第1号）議案書（一般会計・下水道事業会計・土地区画整理事業特別会計・後期高齢者医療特別会計・病院事業会計・介護保険特別会計・国民健康保険事業特別会計）",
+          "landing_url": "https://www.city.inagi.tokyo.jp/gikai/ugoki/1009564/1010984.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/010/984/r6.2gian.pdf",
+              "sha256": "16d95ff726ff816d930e97ba6616eb4b0b6efefd27545d6878e289d229f12803",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 23,
+                      "end": 26
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/010/982/r6.4gian.pdf.pdf",
+              "sha256": "e0323390ef6ab61bf4e803ad636da6e2fc4bff602af13ce3df308fde7492c13a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "下水道事業会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 234,
+                      "end": 237
+                    }
+                  ]
+                },
+                {
+                  "account": "土地区画整理事業特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 212,
+                      "end": 212
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 224,
+                      "end": 225
+                    }
+                  ]
+                },
+                {
+                  "account": "病院事業会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 249,
+                      "end": 252
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/010/983/r6.3gian.pdf",
+              "sha256": "7c5491396d3b3a28323b764e0047a1afc4a68650d18ae00aefa0feec9182f1b0",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 86,
+                      "end": 87
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険事業特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 78,
+                      "end": 78
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "稲城市議会「議会の動き（議案）」の各定例会・臨時会の頁に掲載された議案書（文字PDF。1冊に複数の議案を収める）から、令和6年度の会計別補正予算（第1号）の歳出明細を選定。一般会計・特別会計の歳入歳出補正予算事項別明細書は科目（款・項・目）・補正前の額・補正額・計・財源内訳・節・説明が同一明細で対応する（単位千円、補正額は増減額）。一般会計第1号（議案第32号、r6.2gian.pdf 物理23-26：歳入歳出補正予算事項別明細書の歳出）、下水道事業会計第1号（議案第73号、r6.4gian.pdf.pdf 物理234-237：補正予算実施計画説明書。款・項・目と予定額・補正予定額・計、節・説明が対応する。収益的収入と支出、資本的収入と支出が同じ頁に並ぶため、取り込みでは支出の表だけを読む）、介護保険特別会計第1号（議案第53号、r6.3gian.pdf 物理86-87：歳入歳出補正予算事項別明細書の歳出）、国民健康保険事業特別会計第1号（議案第52号、r6.3gian.pdf 物理78：歳入歳出補正予算事項別明細書の歳出）、土地区画整理事業特別会計第1号（議案第71号、r6.4gian.pdf.pdf 物理212：歳入歳出補正予算事項別明細書の歳出）、後期高齢者医療特別会計第1号（議案第72号、r6.4gian.pdf.pdf 物理224-225：歳入歳出補正予算事項別明細書の歳出）、病院事業会計第1号（議案第74号、r6.4gian.pdf.pdf 物理249-252：補正予算実施計画説明書。款・項・目と予定額・補正予定額・計、節・説明が対応する。収益的収入と支出、資本的収入と支出が同じ頁に並ぶため、取り込みでは支出の表だけを読む）。頁範囲は議案ごとの表紙・第1表・事項別明細の見出しを文字抽出で確認した物理頁。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "132250-2024-supplementary-1",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "132250-2024-supplementary-1",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132250/2024/supplementary-1-1.pdf",
+            "sha256": "16d95ff726ff816d930e97ba6616eb4b0b6efefd27545d6878e289d229f12803",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/010/984/r6.2gian.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132250/2024/supplementary-1-3.pdf",
+            "sha256": "e0323390ef6ab61bf4e803ad636da6e2fc4bff602af13ce3df308fde7492c13a",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/010/982/r6.4gian.pdf.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132250/2024/supplementary-1-2.pdf",
+            "sha256": "7c5491396d3b3a28323b764e0047a1afc4a68650d18ae00aefa0feec9182f1b0",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/010/983/r6.3gian.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:51:12.802Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "132250",
+        "fiscal_year": 2024,
+        "document_kind": "supplementary",
+        "amendment_number": 2
+      },
+      "candidates": [
+        {
+          "id": "132250-2024-supplementary-2",
+          "title": "令和6年度稲城市補正予算（第2号）議案書（一般会計・国民健康保険事業特別会計・後期高齢者医療特別会計・病院事業会計）",
+          "landing_url": "https://www.city.inagi.tokyo.jp/gikai/ugoki/1009564/1010984.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/010/984/r6.2gian_tsuika.pdf",
+              "sha256": "61ca157b258b0925ee92d4d857b7da207dceff1346425712ef8518d3d21c9f5b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 7,
+                      "end": 8
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/010/982/r6.4gian.pdf.pdf",
+              "sha256": "e0323390ef6ab61bf4e803ad636da6e2fc4bff602af13ce3df308fde7492c13a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "国民健康保険事業特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 204,
+                      "end": 205
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/011/882/r7.1gian2.pdf",
+              "sha256": "38e316c8228239d8839b271f2504cf33332e5e79661447f7bd1fc7a94d604f2f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 111,
+                      "end": 112
+                    }
+                  ]
+                },
+                {
+                  "account": "病院事業会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 119,
+                      "end": 120
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "稲城市議会「議会の動き（議案）」の各定例会・臨時会の頁に掲載された議案書（文字PDF。1冊に複数の議案を収める）から、令和6年度の会計別補正予算（第2号）の歳出明細を選定。一般会計・特別会計の歳入歳出補正予算事項別明細書は科目（款・項・目）・補正前の額・補正額・計・財源内訳・節・説明が同一明細で対応する（単位千円、補正額は増減額）。一般会計第2号（議案第39号、r6.2gian_tsuika.pdf 物理7-8：歳入歳出補正予算事項別明細書の歳出）、国民健康保険事業特別会計第2号（議案第70号、r6.4gian.pdf.pdf 物理204-205：歳入歳出補正予算事項別明細書の歳出）、後期高齢者医療特別会計第2号（議案第13号、r7.1gian2.pdf 物理111-112：歳入歳出補正予算事項別明細書の歳出）、病院事業会計第2号（議案第14号、r7.1gian2.pdf 物理119-120：補正予算実施計画説明書。款・項・目と予定額・補正予定額・計、節・説明が対応する。収益的収入と支出、資本的収入と支出が同じ頁に並ぶため、取り込みでは支出の表だけを読む）。土地区画整理事業特別会計第2号（議案第12号）は繰越明許費・債務負担行為の補正だけで歳出の補正明細が無いため含めない。頁範囲は議案ごとの表紙・第1表・事項別明細の見出しを文字抽出で確認した物理頁。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "132250-2024-supplementary-2",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "132250-2024-supplementary-2",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132250/2024/supplementary-2-2.pdf",
+            "sha256": "61ca157b258b0925ee92d4d857b7da207dceff1346425712ef8518d3d21c9f5b",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/010/984/r6.2gian_tsuika.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132250/2024/supplementary-2-3.pdf",
+            "sha256": "e0323390ef6ab61bf4e803ad636da6e2fc4bff602af13ce3df308fde7492c13a",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/010/982/r6.4gian.pdf.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132250/2024/supplementary-2-1.pdf",
+            "sha256": "38e316c8228239d8839b271f2504cf33332e5e79661447f7bd1fc7a94d604f2f",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/011/882/r7.1gian2.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:51:23.658Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "132250",
+        "fiscal_year": 2024,
+        "document_kind": "supplementary",
+        "amendment_number": 3
+      },
+      "candidates": [
+        {
+          "id": "132250-2024-supplementary-3",
+          "title": "令和6年度稲城市補正予算（第3号）議案書（一般会計・国民健康保険事業特別会計）",
+          "landing_url": "https://www.city.inagi.tokyo.jp/gikai/ugoki/1009564/1010983.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/010/983/r6.3gian.pdf",
+              "sha256": "7c5491396d3b3a28323b764e0047a1afc4a68650d18ae00aefa0feec9182f1b0",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 60,
+                      "end": 69
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/011/882/r7.1gian2.pdf",
+              "sha256": "38e316c8228239d8839b271f2504cf33332e5e79661447f7bd1fc7a94d604f2f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "国民健康保険事業特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 97,
+                      "end": 98
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "稲城市議会「議会の動き（議案）」の各定例会・臨時会の頁に掲載された議案書（文字PDF。1冊に複数の議案を収める）から、令和6年度の会計別補正予算（第3号）の歳出明細を選定。一般会計・特別会計の歳入歳出補正予算事項別明細書は科目（款・項・目）・補正前の額・補正額・計・財源内訳・節・説明が同一明細で対応する（単位千円、補正額は増減額）。一般会計第3号（議案第51号、r6.3gian.pdf 物理60-69：歳入歳出補正予算事項別明細書の歳出）、国民健康保険事業特別会計第3号（議案第11号、r7.1gian2.pdf 物理97-98：歳入歳出補正予算事項別明細書の歳出）。頁範囲は議案ごとの表紙・第1表・事項別明細の見出しを文字抽出で確認した物理頁。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "132250-2024-supplementary-3",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "132250-2024-supplementary-3",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132250/2024/supplementary-3-2.pdf",
+            "sha256": "7c5491396d3b3a28323b764e0047a1afc4a68650d18ae00aefa0feec9182f1b0",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/010/983/r6.3gian.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132250/2024/supplementary-3-1.pdf",
+            "sha256": "38e316c8228239d8839b271f2504cf33332e5e79661447f7bd1fc7a94d604f2f",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/011/882/r7.1gian2.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:51:29.847Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "132250",
+        "fiscal_year": 2024,
+        "document_kind": "supplementary",
+        "amendment_number": 4
+      },
+      "candidates": [
+        {
+          "id": "132250-2024-supplementary-4",
+          "title": "令和6年度稲城市補正予算（第4号）議案書（一般会計）",
+          "landing_url": "https://www.city.inagi.tokyo.jp/gikai/ugoki/1009564/1010983.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/010/983/r6.3gian_tsuika.pdf",
+              "sha256": "be4479e5864679789df9e9c986c3182bf21d6b6c5d9e161909ef8239a981e74a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 7,
+                      "end": 7
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "稲城市議会「議会の動き（議案）」の各定例会・臨時会の頁に掲載された議案書（文字PDF。1冊に複数の議案を収める）から、令和6年度の会計別補正予算（第4号）の歳出明細を選定。一般会計・特別会計の歳入歳出補正予算事項別明細書は科目（款・項・目）・補正前の額・補正額・計・財源内訳・節・説明が同一明細で対応する（単位千円、補正額は増減額）。一般会計第4号（議案第61号、r6.3gian_tsuika.pdf 物理7：歳入歳出補正予算事項別明細書の歳出）。頁範囲は議案ごとの表紙・第1表・事項別明細の見出しを文字抽出で確認した物理頁。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "132250-2024-supplementary-4",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "132250-2024-supplementary-4",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132250/2024/supplementary-4.pdf",
+            "sha256": "be4479e5864679789df9e9c986c3182bf21d6b6c5d9e161909ef8239a981e74a",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/010/983/r6.3gian_tsuika.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:51:32.706Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "132250",
+        "fiscal_year": 2024,
+        "document_kind": "supplementary",
+        "amendment_number": 5
+      },
+      "candidates": [
+        {
+          "id": "132250-2024-supplementary-5",
+          "title": "令和6年度稲城市補正予算（第5号）議案書（一般会計）",
+          "landing_url": "https://www.city.inagi.tokyo.jp/gikai/ugoki/1009564/1010982.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/010/982/r6.4gian.pdf.pdf",
+              "sha256": "e0323390ef6ab61bf4e803ad636da6e2fc4bff602af13ce3df308fde7492c13a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 268,
+                      "end": 269
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "稲城市議会「議会の動き（議案）」の各定例会・臨時会の頁に掲載された議案書（文字PDF。1冊に複数の議案を収める）から、令和6年度の会計別補正予算（第5号）の歳出明細を選定。一般会計・特別会計の歳入歳出補正予算事項別明細書は科目（款・項・目）・補正前の額・補正額・計・財源内訳・節・説明が同一明細で対応する（単位千円、補正額は増減額）。一般会計第5号（専決処分の承認議案第75号、r6.4gian.pdf.pdf 物理268-269：歳入歳出補正予算事項別明細書の歳出）。頁範囲は議案ごとの表紙・第1表・事項別明細の見出しを文字抽出で確認した物理頁。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "132250-2024-supplementary-5",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "132250-2024-supplementary-5",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132250/2024/supplementary-5.pdf",
+            "sha256": "e0323390ef6ab61bf4e803ad636da6e2fc4bff602af13ce3df308fde7492c13a",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/010/982/r6.4gian.pdf.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:51:37.417Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "132250",
+        "fiscal_year": 2024,
+        "document_kind": "supplementary",
+        "amendment_number": 6
+      },
+      "candidates": [
+        {
+          "id": "132250-2024-supplementary-6",
+          "title": "令和6年度稲城市補正予算（第6号）議案書（一般会計）",
+          "landing_url": "https://www.city.inagi.tokyo.jp/gikai/ugoki/1009564/1010982.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/010/982/r6.4gian.pdf.pdf",
+              "sha256": "e0323390ef6ab61bf4e803ad636da6e2fc4bff602af13ce3df308fde7492c13a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 177,
+                      "end": 189
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "稲城市議会「議会の動き（議案）」の各定例会・臨時会の頁に掲載された議案書（文字PDF。1冊に複数の議案を収める）から、令和6年度の会計別補正予算（第6号）の歳出明細を選定。一般会計・特別会計の歳入歳出補正予算事項別明細書は科目（款・項・目）・補正前の額・補正額・計・財源内訳・節・説明が同一明細で対応する（単位千円、補正額は増減額）。一般会計第6号（議案第69号、r6.4gian.pdf.pdf 物理177-189：歳入歳出補正予算事項別明細書の歳出）。頁範囲は議案ごとの表紙・第1表・事項別明細の見出しを文字抽出で確認した物理頁。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "132250-2024-supplementary-6",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "132250-2024-supplementary-6",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132250/2024/supplementary-6.pdf",
+            "sha256": "e0323390ef6ab61bf4e803ad636da6e2fc4bff602af13ce3df308fde7492c13a",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/010/982/r6.4gian.pdf.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:51:44.710Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "132250",
+        "fiscal_year": 2024,
+        "document_kind": "supplementary",
+        "amendment_number": 7
+      },
+      "candidates": [
+        {
+          "id": "132250-2024-supplementary-7",
+          "title": "令和6年度稲城市補正予算（第7号）議案書（一般会計）",
+          "landing_url": "https://www.city.inagi.tokyo.jp/gikai/ugoki/1011878/1011882.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/011/882/r7.1gian2.pdf",
+              "sha256": "38e316c8228239d8839b271f2504cf33332e5e79661447f7bd1fc7a94d604f2f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 184,
+                      "end": 185
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "稲城市議会「議会の動き（議案）」の各定例会・臨時会の頁に掲載された議案書（文字PDF。1冊に複数の議案を収める）から、令和6年度の会計別補正予算（第7号）の歳出明細を選定。一般会計・特別会計の歳入歳出補正予算事項別明細書は科目（款・項・目）・補正前の額・補正額・計・財源内訳・節・説明が同一明細で対応する（単位千円、補正額は増減額）。一般会計第7号（専決処分の承認議案第24号、r7.1gian2.pdf 物理184-185：歳入歳出補正予算事項別明細書の歳出）。頁範囲は議案ごとの表紙・第1表・事項別明細の見出しを文字抽出で確認した物理頁。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "132250-2024-supplementary-7",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "132250-2024-supplementary-7",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132250/2024/supplementary-7.pdf",
+            "sha256": "38e316c8228239d8839b271f2504cf33332e5e79661447f7bd1fc7a94d604f2f",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/011/882/r7.1gian2.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:51:49.385Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "132250",
+        "fiscal_year": 2024,
+        "document_kind": "supplementary",
+        "amendment_number": 8
+      },
+      "candidates": [
+        {
+          "id": "132250-2024-supplementary-8",
+          "title": "令和6年度稲城市補正予算（第8号）議案書（一般会計）",
+          "landing_url": "https://www.city.inagi.tokyo.jp/gikai/ugoki/1011878/1011882.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/011/882/r7.1gian2.pdf",
+              "sha256": "38e316c8228239d8839b271f2504cf33332e5e79661447f7bd1fc7a94d604f2f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 81,
+                      "end": 87
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "稲城市議会「議会の動き（議案）」の各定例会・臨時会の頁に掲載された議案書（文字PDF。1冊に複数の議案を収める）から、令和6年度の会計別補正予算（第8号）の歳出明細を選定。一般会計・特別会計の歳入歳出補正予算事項別明細書は科目（款・項・目）・補正前の額・補正額・計・財源内訳・節・説明が同一明細で対応する（単位千円、補正額は増減額）。一般会計第8号（議案第10号、r7.1gian2.pdf 物理81-87：歳入歳出補正予算事項別明細書の歳出）。頁範囲は議案ごとの表紙・第1表・事項別明細の見出しを文字抽出で確認した物理頁。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "132250-2024-supplementary-8",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "132250-2024-supplementary-8",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132250/2024/supplementary-8.pdf",
+            "sha256": "38e316c8228239d8839b271f2504cf33332e5e79661447f7bd1fc7a94d604f2f",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/011/882/r7.1gian2.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:51:53.984Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "132250",
+        "fiscal_year": 2025,
+        "document_kind": "supplementary",
+        "amendment_number": 1
+      },
+      "candidates": [
+        {
+          "id": "132250-2025-supplementary-1",
+          "title": "令和7年度稲城市補正予算（第1号）議案書（一般会計・後期高齢者医療特別会計・下水道事業会計・土地区画整理事業特別会計・介護保険特別会計・国民健康保険事業特別会計・病院事業会計）",
+          "landing_url": "https://www.city.inagi.tokyo.jp/gikai/ugoki/1011878/1012439.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/012/439/r7.2gian.pdf",
+              "sha256": "5707027b5973357057663ab7aa65f03c80626021d3b3a24f13d2597ac7104a11",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 62,
+                      "end": 65
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 75,
+                      "end": 75
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/013/296/r7.4gian.pdf",
+              "sha256": "37b10cc0289c53f90c156a9beb40b7f0a66e102bd42725cc73394f9e01bbfc9d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "下水道事業会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 212,
+                      "end": 215
+                    }
+                  ]
+                },
+                {
+                  "account": "土地区画整理事業特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 191,
+                      "end": 191
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/012/952/r7.3gian.pdf",
+              "sha256": "3add5120534a55bb79c810e10e515d8c80f384630b995233bec345b08dd5b99d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 91,
+                      "end": 92
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険事業特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 83,
+                      "end": 83
+                    }
+                  ]
+                },
+                {
+                  "account": "病院事業会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 106,
+                      "end": 107
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "稲城市議会「議会の動き（議案）」の各定例会・臨時会の頁に掲載された議案書（文字PDF。1冊に複数の議案を収める）から、令和7年度の会計別補正予算（第1号）の歳出明細を選定。一般会計・特別会計の歳入歳出補正予算事項別明細書は科目（款・項・目）・補正前の額・補正額・計・財源内訳・節・説明が同一明細で対応する（単位千円、補正額は増減額）。一般会計第1号（議案第40号、r7.2gian.pdf 物理62-65：歳入歳出補正予算事項別明細書の歳出）、下水道事業会計第1号（議案第82号、r7.4gian.pdf 物理212-215：補正予算実施計画説明書。款・項・目と予定額・補正予定額・計、節・説明が対応する。収益的収入と支出、資本的収入と支出が同じ頁に並ぶため、取り込みでは支出の表だけを読む）、介護保険特別会計第1号（議案第57号、r7.3gian.pdf 物理91-92：歳入歳出補正予算事項別明細書の歳出）、国民健康保険事業特別会計第1号（議案第56号、r7.3gian.pdf 物理83：歳入歳出補正予算事項別明細書の歳出）、土地区画整理事業特別会計第1号（議案第80号、r7.4gian.pdf 物理191：歳入歳出補正予算事項別明細書の歳出）、後期高齢者医療特別会計第1号（議案第41号、r7.2gian.pdf 物理75：歳入歳出補正予算事項別明細書の歳出）、病院事業会計第1号（議案第59号、r7.3gian.pdf 物理106-107：補正予算実施計画説明書。款・項・目と予定額・補正予定額・計、節・説明が対応する。収益的収入と支出、資本的収入と支出が同じ頁に並ぶため、取り込みでは支出の表だけを読む）。頁範囲は議案ごとの表紙・第1表・事項別明細の見出しを文字抽出で確認した物理頁。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "132250-2025-supplementary-1",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "132250-2025-supplementary-1",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132250/2025/supplementary-1-3.pdf",
+            "sha256": "5707027b5973357057663ab7aa65f03c80626021d3b3a24f13d2597ac7104a11",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/012/439/r7.2gian.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132250/2025/supplementary-1-1.pdf",
+            "sha256": "37b10cc0289c53f90c156a9beb40b7f0a66e102bd42725cc73394f9e01bbfc9d",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/013/296/r7.4gian.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132250/2025/supplementary-1-2.pdf",
+            "sha256": "3add5120534a55bb79c810e10e515d8c80f384630b995233bec345b08dd5b99d",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/012/952/r7.3gian.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:52:16.975Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "132250",
+        "fiscal_year": 2025,
+        "document_kind": "supplementary",
+        "amendment_number": 2
+      },
+      "candidates": [
+        {
+          "id": "132250-2025-supplementary-2",
+          "title": "令和7年度稲城市補正予算（第2号）議案書（一般会計・後期高齢者医療特別会計・国民健康保険事業特別会計・病院事業会計）",
+          "landing_url": "https://www.city.inagi.tokyo.jp/gikai/ugoki/1011878/1012952.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/012/952/r7.3gian.pdf",
+              "sha256": "3add5120534a55bb79c810e10e515d8c80f384630b995233bec345b08dd5b99d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 66,
+                      "end": 75
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 99,
+                      "end": 99
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/013/296/r7.4gian.pdf",
+              "sha256": "37b10cc0289c53f90c156a9beb40b7f0a66e102bd42725cc73394f9e01bbfc9d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "国民健康保険事業特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 184,
+                      "end": 184
+                    }
+                  ]
+                },
+                {
+                  "account": "病院事業会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 227,
+                      "end": 228
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "稲城市議会「議会の動き（議案）」の各定例会・臨時会の頁に掲載された議案書（文字PDF。1冊に複数の議案を収める）から、令和7年度の会計別補正予算（第2号）の歳出明細を選定。一般会計・特別会計の歳入歳出補正予算事項別明細書は科目（款・項・目）・補正前の額・補正額・計・財源内訳・節・説明が同一明細で対応する（単位千円、補正額は増減額）。一般会計第2号（議案第55号、r7.3gian.pdf 物理66-75：歳入歳出補正予算事項別明細書の歳出）、国民健康保険事業特別会計第2号（議案第79号、r7.4gian.pdf 物理184：歳入歳出補正予算事項別明細書の歳出）、後期高齢者医療特別会計第2号（議案第58号、r7.3gian.pdf 物理99：歳入歳出補正予算事項別明細書の歳出）、病院事業会計第2号（議案第83号、r7.4gian.pdf 物理227-228：補正予算実施計画説明書。款・項・目と予定額・補正予定額・計、節・説明が対応する。収益的収入と支出、資本的収入と支出が同じ頁に並ぶため、取り込みでは支出の表だけを読む）。土地区画整理事業特別会計第2号（議案第14号）は繰越明許費・債務負担行為の補正だけで歳出の補正明細が無いため含めない。頁範囲は議案ごとの表紙・第1表・事項別明細の見出しを文字抽出で確認した物理頁。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "132250-2025-supplementary-2",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "132250-2025-supplementary-2",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132250/2025/supplementary-2-2.pdf",
+            "sha256": "3add5120534a55bb79c810e10e515d8c80f384630b995233bec345b08dd5b99d",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/012/952/r7.3gian.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132250/2025/supplementary-2-1.pdf",
+            "sha256": "37b10cc0289c53f90c156a9beb40b7f0a66e102bd42725cc73394f9e01bbfc9d",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/013/296/r7.4gian.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:52:25.568Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "132250",
+        "fiscal_year": 2025,
+        "document_kind": "supplementary",
+        "amendment_number": 3
+      },
+      "candidates": [
+        {
+          "id": "132250-2025-supplementary-3",
+          "title": "令和7年度稲城市補正予算（第3号）議案書（一般会計・後期高齢者医療特別会計・国民健康保険事業特別会計）",
+          "landing_url": "https://www.city.inagi.tokyo.jp/gikai/ugoki/1011878/1013296.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/013/296/r7.4gian.pdf",
+              "sha256": "37b10cc0289c53f90c156a9beb40b7f0a66e102bd42725cc73394f9e01bbfc9d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 155,
+                      "end": 168
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 203,
+                      "end": 203
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/013/698/r8.1gian.pdf",
+              "sha256": "bdba1444efd832baecdb99515a9d5eb162d4703a9e34b36ec3700c5f9063ae8d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "国民健康保険事業特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 196,
+                      "end": 197
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "稲城市議会「議会の動き（議案）」の各定例会・臨時会の頁に掲載された議案書（文字PDF。1冊に複数の議案を収める）から、令和7年度の会計別補正予算（第3号）の歳出明細を選定。一般会計・特別会計の歳入歳出補正予算事項別明細書は科目（款・項・目）・補正前の額・補正額・計・財源内訳・節・説明が同一明細で対応する（単位千円、補正額は増減額）。一般会計第3号（議案第78号、r7.4gian.pdf 物理155-168：歳入歳出補正予算事項別明細書の歳出）、国民健康保険事業特別会計第3号（議案第13号、r8.1gian.pdf 物理196-197：歳入歳出補正予算事項別明細書の歳出）、後期高齢者医療特別会計第3号（議案第81号、r7.4gian.pdf 物理203：歳入歳出補正予算事項別明細書の歳出）。頁範囲は議案ごとの表紙・第1表・事項別明細の見出しを文字抽出で確認した物理頁。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "132250-2025-supplementary-3",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "132250-2025-supplementary-3",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132250/2025/supplementary-3-1.pdf",
+            "sha256": "37b10cc0289c53f90c156a9beb40b7f0a66e102bd42725cc73394f9e01bbfc9d",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/013/296/r7.4gian.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132250/2025/supplementary-3-2.pdf",
+            "sha256": "bdba1444efd832baecdb99515a9d5eb162d4703a9e34b36ec3700c5f9063ae8d",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/013/698/r8.1gian.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:52:39.673Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "132250",
+        "fiscal_year": 2025,
+        "document_kind": "supplementary",
+        "amendment_number": 4
+      },
+      "candidates": [
+        {
+          "id": "132250-2025-supplementary-4",
+          "title": "令和7年度稲城市補正予算（第4号）議案書（一般会計・後期高齢者医療特別会計）",
+          "landing_url": "https://www.city.inagi.tokyo.jp/gikai/ugoki/1013693/1013698.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/013/698/r8.1gian.pdf",
+              "sha256": "bdba1444efd832baecdb99515a9d5eb162d4703a9e34b36ec3700c5f9063ae8d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 269,
+                      "end": 271
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 209,
+                      "end": 209
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "稲城市議会「議会の動き（議案）」の各定例会・臨時会の頁に掲載された議案書（文字PDF。1冊に複数の議案を収める）から、令和7年度の会計別補正予算（第4号）の歳出明細を選定。一般会計・特別会計の歳入歳出補正予算事項別明細書は科目（款・項・目）・補正前の額・補正額・計・財源内訳・節・説明が同一明細で対応する（単位千円、補正額は増減額）。一般会計第4号（専決処分の承認議案第24号、r8.1gian.pdf 物理269-271：歳入歳出補正予算事項別明細書の歳出）、後期高齢者医療特別会計第4号（議案第15号、r8.1gian.pdf 物理209：歳入歳出補正予算事項別明細書の歳出）。頁範囲は議案ごとの表紙・第1表・事項別明細の見出しを文字抽出で確認した物理頁。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "132250-2025-supplementary-4",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "132250-2025-supplementary-4",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132250/2025/supplementary-4.pdf",
+            "sha256": "bdba1444efd832baecdb99515a9d5eb162d4703a9e34b36ec3700c5f9063ae8d",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/013/698/r8.1gian.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:52:43.720Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "132250",
+        "fiscal_year": 2025,
+        "document_kind": "supplementary",
+        "amendment_number": 5
+      },
+      "candidates": [
+        {
+          "id": "132250-2025-supplementary-5",
+          "title": "令和7年度稲城市補正予算（第5号）議案書（一般会計）",
+          "landing_url": "https://www.city.inagi.tokyo.jp/gikai/ugoki/1013693/1013698.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/013/698/r8.1gian.pdf",
+              "sha256": "bdba1444efd832baecdb99515a9d5eb162d4703a9e34b36ec3700c5f9063ae8d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 281,
+                      "end": 282
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "稲城市議会「議会の動き（議案）」の各定例会・臨時会の頁に掲載された議案書（文字PDF。1冊に複数の議案を収める）から、令和7年度の会計別補正予算（第5号）の歳出明細を選定。一般会計・特別会計の歳入歳出補正予算事項別明細書は科目（款・項・目）・補正前の額・補正額・計・財源内訳・節・説明が同一明細で対応する（単位千円、補正額は増減額）。一般会計第5号（専決処分の承認議案第25号、r8.1gian.pdf 物理281-282：歳入歳出補正予算事項別明細書の歳出）。頁範囲は議案ごとの表紙・第1表・事項別明細の見出しを文字抽出で確認した物理頁。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "132250-2025-supplementary-5",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "132250-2025-supplementary-5",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132250/2025/supplementary-5.pdf",
+            "sha256": "bdba1444efd832baecdb99515a9d5eb162d4703a9e34b36ec3700c5f9063ae8d",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/013/698/r8.1gian.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:52:47.869Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "132250",
+        "fiscal_year": 2025,
+        "document_kind": "supplementary",
+        "amendment_number": 6
+      },
+      "candidates": [
+        {
+          "id": "132250-2025-supplementary-6",
+          "title": "令和7年度稲城市補正予算（第6号）議案書（一般会計）",
+          "landing_url": "https://www.city.inagi.tokyo.jp/gikai/ugoki/1013693/1013698.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/013/698/r8.1gian.pdf",
+              "sha256": "bdba1444efd832baecdb99515a9d5eb162d4703a9e34b36ec3700c5f9063ae8d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 179,
+                      "end": 186
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "稲城市議会「議会の動き（議案）」の各定例会・臨時会の頁に掲載された議案書（文字PDF。1冊に複数の議案を収める）から、令和7年度の会計別補正予算（第6号）の歳出明細を選定。一般会計・特別会計の歳入歳出補正予算事項別明細書は科目（款・項・目）・補正前の額・補正額・計・財源内訳・節・説明が同一明細で対応する（単位千円、補正額は増減額）。一般会計第6号（議案第12号、r8.1gian.pdf 物理179-186：歳入歳出補正予算事項別明細書の歳出）。頁範囲は議案ごとの表紙・第1表・事項別明細の見出しを文字抽出で確認した物理頁。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "132250-2025-supplementary-6",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "132250-2025-supplementary-6",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132250/2025/supplementary-6.pdf",
+            "sha256": "bdba1444efd832baecdb99515a9d5eb162d4703a9e34b36ec3700c5f9063ae8d",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/013/698/r8.1gian.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:52:52.439Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "132250",
+        "fiscal_year": 2026,
+        "document_kind": "supplementary",
+        "amendment_number": 1
+      },
+      "candidates": [
+        {
+          "id": "132250-2026-supplementary-1",
+          "title": "令和8年度稲城市補正予算（第1号）議案書（一般会計・後期高齢者医療特別会計・介護保険特別会計・国民健康保険事業特別会計）",
+          "landing_url": "https://www.city.inagi.tokyo.jp/gikai/ugoki/1013693/1013956.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/013/956/r8.2gian2.pdf",
+              "sha256": "1df8bee430b68f4d2c96a22bc196cbc9c3f7af193f8bbc9edd029e830ecdfb3e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 46,
+                      "end": 56
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 67,
+                      "end": 67
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/014/314/r8.3gian.pdf",
+              "sha256": "bb09230d78b10ad8065bd709341cc82f37c6992e5cebd3ba5b3a27bd0318413b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 80,
+                      "end": 81
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険事業特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 72,
+                      "end": 73
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "稲城市議会「議会の動き（議案）」の各定例会・臨時会の頁に掲載された議案書（文字PDF。1冊に複数の議案を収める）から、令和8年度の会計別補正予算（第1号）の歳出明細を選定。一般会計・特別会計の歳入歳出補正予算事項別明細書は科目（款・項・目）・補正前の額・補正額・計・財源内訳・節・説明が同一明細で対応する（単位千円、補正額は増減額）。一般会計第1号（議案第32号、r8.2gian2.pdf 物理46-56：歳入歳出補正予算事項別明細書の歳出）、介護保険特別会計第1号（議案第65号、r8.3gian.pdf 物理80-81：歳入歳出補正予算事項別明細書の歳出）、国民健康保険事業特別会計第1号（議案第64号、r8.3gian.pdf 物理72-73：歳入歳出補正予算事項別明細書の歳出）、後期高齢者医療特別会計第1号（議案第33号、r8.2gian2.pdf 物理67：歳入歳出補正予算事項別明細書の歳出）。病院事業会計第1号（議案第66号）は議案が2頁だけで実施計画説明書（目の明細）を含まないため含めない。頁範囲は議案ごとの表紙・第1表・事項別明細の見出しを文字抽出で確認した物理頁。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "132250-2026-supplementary-1",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "132250-2026-supplementary-1",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132250/2026/supplementary-1-1.pdf",
+            "sha256": "1df8bee430b68f4d2c96a22bc196cbc9c3f7af193f8bbc9edd029e830ecdfb3e",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/013/956/r8.2gian2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132250/2026/supplementary-1-2.pdf",
+            "sha256": "bb09230d78b10ad8065bd709341cc82f37c6992e5cebd3ba5b3a27bd0318413b",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/014/314/r8.3gian.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:53:02.712Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "132250",
+        "fiscal_year": 2026,
+        "document_kind": "supplementary",
+        "amendment_number": 2
+      },
+      "candidates": [
+        {
+          "id": "132250-2026-supplementary-2",
+          "title": "令和8年度稲城市補正予算（第2号）議案書（一般会計）",
+          "landing_url": "https://www.city.inagi.tokyo.jp/gikai/ugoki/1013693/1014314.html",
+          "inspected_at": "2026-10-28T07:39:10.075068+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/014/314/r8.3gian.pdf",
+              "sha256": "bb09230d78b10ad8065bd709341cc82f37c6992e5cebd3ba5b3a27bd0318413b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 54,
+                      "end": 64
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "稲城市議会「議会の動き（議案）」の各定例会・臨時会の頁に掲載された議案書（文字PDF。1冊に複数の議案を収める）から、令和8年度の会計別補正予算（第2号）の歳出明細を選定。一般会計・特別会計の歳入歳出補正予算事項別明細書は科目（款・項・目）・補正前の額・補正額・計・財源内訳・節・説明が同一明細で対応する（単位千円、補正額は増減額）。一般会計第2号（議案第63号、r8.3gian.pdf 物理54-64：歳入歳出補正予算事項別明細書の歳出）。頁範囲は議案ごとの表紙・第1表・事項別明細の見出しを文字抽出で確認した物理頁。号数は議案の件名（会計別の号数）による。確認 2026-10-28。",
+      "selected_candidate_id": "132250-2026-supplementary-2",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "132250-2026-supplementary-2",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132250/2026/supplementary-2.pdf",
+            "sha256": "bb09230d78b10ad8065bd709341cc82f37c6992e5cebd3ba5b3a27bd0318413b",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/014/314/r8.3gian.pdf"
+          }
+        ],
+        "archived_at": "2026-10-28T07:53:05.790Z"
+      }
     }
   ],
   "unresolved_candidates": [],
