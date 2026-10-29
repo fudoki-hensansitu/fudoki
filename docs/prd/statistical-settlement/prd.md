@@ -1,5 +1,5 @@
 ---
-status: draft
+status: in-progress
 ---
 
 # 全自治体の決算を統計の普通会計で款まで並べる
