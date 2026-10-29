@@ -271,6 +271,32 @@ const Jurisdiction = z
   })
   .meta({ id: 'Jurisdiction', description: '自治体と、その収録範囲。' })
 
+/**
+ * 収録の無い自治体・年度・資料区分で、利用者を案内する統計の出典。数字は風土記に取り込まない（ADR 0037）。
+ * 自治体が決算書を公開していない年度も、総務省の地方財政状況調査が普通会計の決算を款・項まで公開している。
+ */
+export const UNCOVERED_SOURCES = [
+  {
+    title: '市町村決算カード（総務省）',
+    url: 'https://www.soumu.go.jp/iken/zaisei/card.html',
+    description: '市町村ごとの普通会計の決算を、目的別（款）・性質別で1枚にまとめたもの。都道府県別の Excel。',
+  },
+  {
+    title: '地方財政状況調査 市町村分 調査表（e-Stat）',
+    url: 'https://www.e-stat.go.jp/stat-search/files?toukei=00200251&tstat=000001077755',
+    description:
+      '全市町村の普通会計の決算。表07〜13「歳出内訳及び財源内訳」が目的別の款・項（一部の款は項まで）を持つ。データセットの「調査年」は決算年度の翌年。',
+  },
+] as const
+
+const UncoveredSource = z
+  .strictObject({ title: z.string(), url: z.string(), description: z.string() })
+  .meta({ id: 'UncoveredSource', description: '収録の無い年度で使える、風土記の外の統計の出典。' })
+
+const UNCOVERED_SOURCES_HELP =
+  '収録の無い自治体・年度の決算を見たいときの、風土記の外の統計の出典（どの自治体でも同じ）。風土記はこの数字を取り込まない。' +
+  'どれも普通会計の決算で、事業（目）の単位は無く、風土記の一般会計とは範囲が違い合計も一致しない。当初予算と未公表の年度の数字は無い。'
+
 interface CoverageRow {
   jurisdiction_code: string
   fiscal_year: number
@@ -354,6 +380,7 @@ async function listJurisdictions(ctx: Ctx, input: Record<string, unknown>) {
       coverage: nested.get(String(r.jurisdiction_code)) ?? [],
     })),
     next_page_token: more ? await nextToken(offset + limit, fp) : null,
+    uncovered_sources: UNCOVERED_SOURCES,
   }
 }
 
@@ -431,6 +458,7 @@ const listJurisdictionsDescription =
   'List municipality names, six-digit jurisdiction codes, prefectures and available expenditure coverage (fiscal years, document kinds and accounts). With view FULL, also return source titles and URLs for each account. ' +
   'Before searching expenditure, use this tool to check the municipality code and whether the years and document kinds you want to compare are covered. ' +
   'Filter by partial municipality name or a five- or six-digit code. Without filters, results are ordered by jurisdiction code. Pages default to 20 municipalities (maximum 100); follow next_page_token for more. Municipalities without data have empty coverage. ' +
+  'When a wanted settlement year is not covered (for example, the municipality has not published its settlement document), do not treat it as zero; point the user to uncovered_sources, which hold official statistics at kan/kou level for the ordinary account (普通会計), not comparable to Fudoki general-account totals. ' +
   'Use returned jurisdiction_code (six digits), fiscal_year, document_kind and account_name directly in search_expenditure_nodes. Search does not accept five-digit codes as matches: resolve the six-digit code here first. Name and code filters are combined with AND.'
 
 export const operations: Operation[] = [
@@ -454,6 +482,7 @@ export const operations: Operation[] = [
     output: z.strictObject({
       jurisdictions: z.array(Jurisdiction).describe('自治体コードの昇順。'),
       next_page_token: z.string().nullable().describe(NEXT_PAGE_TOKEN_HELP),
+      uncovered_sources: z.array(UncoveredSource).describe(UNCOVERED_SOURCES_HELP),
     }),
     run: listJurisdictions,
   },
