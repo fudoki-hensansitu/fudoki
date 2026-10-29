@@ -103,7 +103,9 @@ def learn_levels(all_items):
         # drifts has fewer levels; one whose frame is steady has as many, and keeps its own starts.
         from_edge = lambda i: i.indent - i.group.bands[0].x0
         relative = cluster(from_edge)
-        if len(relative) < len(subject_levels):
+        # Only when the levels still fit 款・項・目: a drift that leaves a fourth start measured from the edge is not a
+        # frame drifting, and the absolute starts stay as they were.
+        if len(relative) < len(subject_levels) and len(relative) <= len(SUBJECT_LEVELS):
             subject_levels, edge = relative, from_edge
     centres = [sum(c) / len(c) for c in subject_levels]
     for _, ordered, found in all_items:

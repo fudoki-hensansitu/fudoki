@@ -1232,6 +1232,26 @@ class SubjectContinuationTest(unittest.TestCase):
                          [built.nodes[0]['node_key'], built.nodes[1]['node_key']])
         self.assertEqual(built.unowned, [])
 
+    def learned_levels(self, frames):
+        from types import SimpleNamespace
+        from ingestion.generic.patterns.subject.indent import learn_levels
+        all_items = []
+        for left, starts in frames:
+            group = SimpleNamespace(subject=True, mode='indent', bands=[SimpleNamespace(x0=left)], levels=None)
+            items = [SimpleNamespace(role='node', code='1', indent=start, group=group, level=None, level_name=None)
+                     for start in starts for _ in range(2)]
+            all_items.append((SimpleNamespace(ocr=False), [group], {id(group): items}))
+        learn_levels(all_items)
+        return sorted({item.level for _, _, found in all_items for items in found.values() for item in items}), all_items[0][1][0].levels
+
+    def test_a_frame_that_drifts_between_pages_keeps_three_subject_levels(self):
+        levels, count = self.learned_levels([(46, (51, 63, 73)), (52, (57, 69, 79))])
+        self.assertEqual((levels, count), ([0, 1, 2], 3))
+
+    def test_relative_starts_that_would_make_a_fourth_level_are_not_taken(self):
+        levels, count = self.learned_levels([(40, (50, 60, 70)), (56, (56, 66, 76))])
+        self.assertEqual(count, 6)
+
     def test_indented_codeless_lines_at_another_name_position_or_with_money_stay_separate(self):
         for options in ({'extra_x': 70}, {'extra_amount': '7'}):
             with self.subTest(options=options):
