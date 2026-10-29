@@ -1,0 +1,1000 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "130001",
+    "fiscal_year": 2025,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "a36c26a7eccfdcb8a6551a98512f8671179e3b54c60b4193fe62a21cc94f9749"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "ward-fiscal-adjustment-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "de771037f3ccdb64918aec203f4ae58fb7721c40708d0adc909e9a42fe1bc6ea"
+        }
+      ],
+      "options": {
+        "account": "特別区財政調整会計",
+        "table_id": "ward-fiscal-adjustment-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "ward-fiscal-adjustment-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "local-consumption-tax-settlement-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "de771037f3ccdb64918aec203f4ae58fb7721c40708d0adc909e9a42fe1bc6ea"
+        }
+      ],
+      "options": {
+        "account": "地方消費税清算会計",
+        "table_id": "local-consumption-tax-settlement-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "local-consumption-tax-settlement-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "ogasawara-livelihood-reconstruction-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "de771037f3ccdb64918aec203f4ae58fb7721c40708d0adc909e9a42fe1bc6ea"
+        }
+      ],
+      "options": {
+        "account": "小笠原諸島生活再建資金会計",
+        "table_id": "ogasawara-livelihood-reconstruction-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "ogasawara-livelihood-reconstruction-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "de771037f3ccdb64918aec203f4ae58fb7721c40708d0adc909e9a42fe1bc6ea"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-insurance-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "single-parent-welfare-loan-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "de771037f3ccdb64918aec203f4ae58fb7721c40708d0adc909e9a42fe1bc6ea"
+        }
+      ],
+      "options": {
+        "account": "母子父子福祉貸付資金会計",
+        "table_id": "single-parent-welfare-loan-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "single-parent-welfare-loan-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "disability-dependants-pension-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "de771037f3ccdb64918aec203f4ae58fb7721c40708d0adc909e9a42fe1bc6ea"
+        }
+      ],
+      "options": {
+        "account": "心身障害者扶養年金会計",
+        "table_id": "disability-dependants-pension-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "disability-dependants-pension-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "metropolitan-hospital-loan-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "de771037f3ccdb64918aec203f4ae58fb7721c40708d0adc909e9a42fe1bc6ea"
+        }
+      ],
+      "options": {
+        "account": "地方独立行政法人東京都立病院機構貸付等事業会計",
+        "table_id": "metropolitan-hospital-loan-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "metropolitan-hospital-loan-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "sme-equipment-fund-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "de771037f3ccdb64918aec203f4ae58fb7721c40708d0adc909e9a42fe1bc6ea"
+        }
+      ],
+      "options": {
+        "account": "中小企業設備導入等資金会計",
+        "table_id": "sme-equipment-fund-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "sme-equipment-fund-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "forestry-improvement-fund-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "de771037f3ccdb64918aec203f4ae58fb7721c40708d0adc909e9a42fe1bc6ea"
+        }
+      ],
+      "options": {
+        "account": "林業・木材産業改善資金助成会計",
+        "table_id": "forestry-improvement-fund-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "forestry-improvement-fund-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "coastal-fishery-improvement-fund-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "de771037f3ccdb64918aec203f4ae58fb7721c40708d0adc909e9a42fe1bc6ea"
+        }
+      ],
+      "options": {
+        "account": "沿岸漁業改善資金助成会計",
+        "table_id": "coastal-fishery-improvement-fund-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "coastal-fishery-improvement-fund-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "slaughterhouse-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "de771037f3ccdb64918aec203f4ae58fb7721c40708d0adc909e9a42fe1bc6ea"
+        }
+      ],
+      "options": {
+        "account": "と場会計",
+        "table_id": "slaughterhouse-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "slaughterhouse-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "metropolitan-housing-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "de771037f3ccdb64918aec203f4ae58fb7721c40708d0adc909e9a42fe1bc6ea"
+        }
+      ],
+      "options": {
+        "account": "都営住宅等事業会計",
+        "table_id": "metropolitan-housing-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "metropolitan-housing-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "metropolitan-housing-deposit-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "de771037f3ccdb64918aec203f4ae58fb7721c40708d0adc909e9a42fe1bc6ea"
+        }
+      ],
+      "options": {
+        "account": "都営住宅等保証金会計",
+        "table_id": "metropolitan-housing-deposit-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "metropolitan-housing-deposit-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "urban-development-fund-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "de771037f3ccdb64918aec203f4ae58fb7721c40708d0adc909e9a42fe1bc6ea"
+        }
+      ],
+      "options": {
+        "account": "都市開発資金会計",
+        "table_id": "urban-development-fund-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "urban-development-fund-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "land-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "de771037f3ccdb64918aec203f4ae58fb7721c40708d0adc909e9a42fe1bc6ea"
+        }
+      ],
+      "options": {
+        "account": "用地会計",
+        "table_id": "land-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "land-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "public-debt-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "de771037f3ccdb64918aec203f4ae58fb7721c40708d0adc909e9a42fe1bc6ea"
+        }
+      ],
+      "options": {
+        "account": "公債費会計",
+        "table_id": "public-debt-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "public-debt-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "waterfront-infrastructure-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "de771037f3ccdb64918aec203f4ae58fb7721c40708d0adc909e9a42fe1bc6ea"
+        }
+      ],
+      "options": {
+        "account": "臨海都市基盤整備事業会計",
+        "table_id": "waterfront-infrastructure-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "waterfront-infrastructure-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "industrial-water-liquidation-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "de771037f3ccdb64918aec203f4ae58fb7721c40708d0adc909e9a42fe1bc6ea"
+        }
+      ],
+      "options": {
+        "account": "工業用水道事業清算会計",
+        "table_id": "industrial-water-liquidation-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "industrial-water-liquidation-expenditure"
+        }
+      ]
+    }
+  ],
+  "tables": []
+}

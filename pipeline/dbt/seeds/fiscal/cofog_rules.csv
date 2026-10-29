@@ -366,3 +366,58 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 1342,vocab-health-building,,一般会計,,,,,健康づくり,contains,,assigned,07,retained,目,,健康づくり（健康増進と同じ事業）を保健に分類する（vocab-health-promotion と同じ）。,false
 1343,kind-forestry-property-ward,,,財産区,,林業費,,,eq,,assigned,04.2,retained,目,,財産区の特別会計で項が林業費の目（林業総務費・林業振興費）を農業・林業・漁業に分類する（vocab-forestry と同じ。財産区の会計は款が業務費で款の規則に当たらない）。,false
 1344,shinagawa-elderly-community,131091,一般会計,,,,,高齢者地域支援費,eq,,assigned,10.2,retained,目,,品川区の高齢者地域支援費は認知症高齢者支援・高齢者活動支援・高齢者クラブ支援・高齢者福祉施設運営など高齢者の福祉サービス。2024年度決算書冊2物理77-80頁。,false
+1345,vocab-zoo,,,,,,,動物園,contains,,assigned,08.2,retained,目,,動物園の目を文化サービス 08.2 に分類する（COFOG は動物園・植物園を文化サービスに置く。例: 130001 公園霊園費）。,false
+1346,vocab-metrology,,,,,,,計量検定,contains,,assigned,04.1,retained,目,,計量検定所の目を一般経済・商業 04.1 に分類する（計量の検査は商取引の規制。例: 130001 生活文化費）。,false
+966,vocab-transfer-debt-account,,,,,,,公債費会計繰出金,eq,,unclassifiable,,retained,目,,公債費（特別会計）への繰出は元金（対象外）と利子（01.7）が混ざり、目の名前だけでは分けられない（kind-x-debt-combined・kobe-transfer-debt にならう。例: 130001）。,false
+1348,vocab-transfer-public-enterprise,,,,,,,公営企業会計支出金,eq,,unclassifiable,,retained,目,,受け手が「公営企業会計」とだけ印字された支出金は受け手の機能を特定できない（vocab-transfer-recipient-unknown と同じ。例: 130001）。,false
+1349,vocab-scholarship-ikuei,,,,,,,育英,contains,,assigned,09,retained,目,,育英資金の目を教育 09 に置く。段階は特定できない（vocab-scholarship と同じ。例: 130001 学務費）。,true
+1350,fallback-kou-public-university,,一般会計,,,東京都公立大学法人支援費,,,eq,,assigned,09.4,retained,目,,公立大学法人への支援の項に属する目を高等教育 09.4 に分類する（例: 130001 学務費）。,false
+1351,fallback-kou-private-school,,一般会計,,,私立学校振興費,,,eq,,assigned,09,retained,目,,私立学校振興の項に属する目を教育 09 に置く。幼稚園から高校までの助成が混ざり段階は特定できない（例: 130001 学務費）。,true
+1352,fallback-kou-education-management,,一般会計,,教育費,教育管理費|教育指導奨励費|福利厚生費|退職手当及年金費,,,eq,,assigned,09.8,retained,目,,都道府県の教育費で教職員の任免・研修・福利・退職手当の項に属し語の規則に当たらない目を他に分類されない教育 09.8 に分類する（fallback-kou-education-admin と同じ扱い。例: 130001）。,false
+1353,fallback-kou-upper-secondary,,一般会計,,教育費,高等学校費,,,eq,,assigned,09.2,retained,目,,高等学校費の項に属し語の規則に当たらない目を中等教育 09.2 に分類する（COFOG は後期中等教育を 09.2 に含める。例: 130001）。,false
+1354,fallback-kan-education,,一般会計,,教育費|学務費,,,,eq,,assigned,09,retained,目,,教育費・学務費の款に属し項・語の規則に当たらない目（小中学校費・特別支援学校費・施設整備費など）を教育 09 に置く。段階が混ざる（例: 130001）。,true
+1355,fallback-kan-police,,一般会計,,警察費,,,,eq,,assigned,03.1,retained,目,,都道府県の警察費の款に属する目を警察 03.1 に分類する（例: 130001）。,false
+1356,fallback-kan-tax-collection,,一般会計,,徴税費,,,,eq,,assigned,01.1.2,retained,目,,都道府県の徴税費の款に属する目を財政・租税 01.1.2 に分類する（例: 130001）。,false
+1357,fallback-kou-hospital-support,,一般会計,,保健医療費,都立病院支援費,,,eq,,assigned,07.3,retained,目,,都立病院への支援の項に属する目を病院サービス 07.3 に分類する（例: 130001）。,false
+1358,fallback-kou-infectious-disease,,一般会計,,保健医療費,感染症対策費,,,eq,,assigned,07.4,retained,目,,感染症対策の項に属する目を公衆衛生サービス 07.4 に分類する（例: 130001）。,false
+1359,fallback-kan-health-medical,,一般会計,,保健医療費,,,,eq,,assigned,07,retained,目,,都道府県の保健医療費の款に属し項・語の規則に当たらない目を保健 07 に置く（例: 130001）。,false
+1360,fallback-kou-children-support,,一般会計,,福祉費,子供・子育て支援費,,,eq,,assigned,10.4,retained,目,,子供・子育て支援の項に属する目を家族及び児童 10.4 に分類する。女性福祉費が混ざる（例: 130001）。,true
+1361,fallback-kou-disability-policy,,一般会計,,福祉費,障害者施策推進費,,,eq,,assigned,10.1,retained,目,,障害者施策の項に属する目を疾病及び障害 10.1 に分類する。精神保健福祉費が混ざる（例: 130001）。,true
+1362,fallback-kou-elderly-policy,,一般会計,,福祉費,高齢者施策推進費,,,eq,,assigned,10.2,retained,目,,高齢者施策の項に属する目を高齢 10.2 に分類する（例: 130001）。,false
+1363,fallback-kou-welfare-management,,一般会計,,福祉費,福祉管理費,,,eq,,assigned,10.9,retained,目,,福祉管理の項に属する目を他に分類されない社会的保護 10.9 に分類する（keyword-welfare-kan-general-admin と同じ。例: 130001）。,true
+1364,fallback-kan-welfare,,一般会計,,福祉費,,,,eq,,assigned,10,retained,目,,福祉費の款に属し項・語の規則に当たらない目を社会的保護 10 に置く。医療助成など保健が混ざる（例: 130001 生活福祉費）。,true
+1365,fallback-kou-labour,,一般会計,,,労働費|労働委員会費,,,eq,,assigned,04.1.2,retained,目,,労働費・労働委員会費の項に属する目を一般労働 04.1.2 に分類する（例: 130001 産業労働費）。,false
+1366,fallback-kou-agri-forest-fishery,,一般会計,,,農林水産費,,,eq,,assigned,04.2,retained,目,,農林水産費の項に属する目を農林水産 04.2 に分類する。小笠原振興費が混ざる（fallback-kan-agri-forest-fishery と同じ。例: 130001 産業労働費）。,true
+1367,fallback-kan-industry-labour,,一般会計,,産業労働費,,,,eq,,assigned,04.1,retained,目,,産業労働費の款に属し項・語の規則に当たらない目を一般経済・商業 04.1 に置く（例: 130001 商工業振興費）。,true
+1368,fallback-kou-waste,,一般会計,,環境費,廃棄物費,,,eq,,assigned,05.1,retained,目,,廃棄物の項に属する目を廃棄物管理 05.1 に分類する（例: 130001）。,false
+1369,fallback-kan-environment,,一般会計,,環境費,,,,eq,,assigned,05,retained,目,,環境費の款に属し項・語の規則に当たらない目を環境保護 05 に置く（例: 130001）。,false
+1370,fallback-kou-sports,,一般会計,,,スポーツ推進費,,,eq,,assigned,08.1,retained,目,,スポーツ推進の項に属する目を娯楽・スポーツ 08.1 に分類する（例: 130001 生活文化費）。,false
+1371,fallback-kou-public-safety,,一般会計,,,都民安全総合対策費,,,eq,,assigned,03,retained,目,,都民の安全対策の項に属する目を公共の秩序・安全 03 に置く。治安・交通安全が混ざる（例: 130001 生活文化費）。,true
+1372,fallback-kou-living-culture,,一般会計,,生活文化費|生活文化スポーツ費,生活文化費|生活文化スポーツ費,,,eq,,unclassifiable,,retained,目,,生活文化費（2024年度は生活文化スポーツ費）の項は消費生活・男女平等・地域活動などが混ざり、語の規則に当たらない目の機能を特定できない（例: 130001）。,false
+1373,fallback-kou-housing-policy,,一般会計,,,住宅政策費,,,eq,,assigned,06.1,retained,目,,住宅政策の項に属する目を住宅開発 06.1 に分類する（例: 130001 都市整備費）。,false
+1374,fallback-kou-building-administration,,一般会計,,,建築行政費,,,eq,,assigned,04.4,retained,目,,建築行政の項（建設業・建築の指導）に属する目を鉱業・製造業・建設業 04.4 に分類する（例: 130001 都市整備費）。,true
+1375,fallback-kan-urban-development,,一般会計,,都市整備費,,,,eq,,assigned,06.2,retained,目,,都市整備費の款に属し項・語の規則に当たらない目を地域開発 06.2 に置く。水資源対策などが混ざる（例: 130001）。,true
+1376,fallback-kou-river-coast,,一般会計,,,河川海岸費,,,eq,,unclassifiable,,retained,目,,河川海岸費の項に属し語の規則に当たらない目を分類不能とする（fallback-kou-river と同じ。治水・海岸保全・環境が混じる。例: 130001）。,false
+1377,fallback-kou-road-bridge,,一般会計,,,道路橋梁費,,,eq,,assigned,04.5.1,retained,目,,道路橋梁費の項に属し語の規則に当たらない目を道路運輸 04.5.1 に分類する（例: 130001）。,false
+1378,fallback-kou-park-cemetery,,一般会計,,,公園霊園費,,,eq,,assigned,08.1,retained,目,,公園霊園費の項に属し語の規則に当たらない目を娯楽 08.1 に置く。霊園（06.2）が混ざる（例: 130001）。,true
+1379,fallback-kou-port,,一般会計,,港湾費,東京港整備費|港湾管理費,,,eq,,assigned,04.5.2,retained,目,,港の整備・管理の項に属し語の規則に当たらない目を水運 04.5.2 に分類する。海岸保全・廃棄物処理場が混ざる（例: 130001）。,true
+1380,fallback-kan-port,,一般会計,,港湾費,,,,eq,,assigned,04.5,retained,目,,港湾費の款に属し項・語の規則に当たらない目を運輸 04.5 に置く。島しょの港・空港・漁港が混ざる（例: 130001 島しょ等港湾整備費）。,true
+1381,fallback-kou-local-grants,,一般会計,,諸支出金,諸費,,交付金,contains,,assigned,01.8,retained,目,,都道府県の諸費の項で市町村への税の交付金の目を政府間の一般的移転 01.8 に分類する（例: 130001 地方消費税交付金）。,false
+1382,fallback-kou-property,,一般会計,,諸支出金,財産費,,,eq,,assigned,01.3.3,retained,目,,財産費の項に属する目を他の一般サービス 01.3.3 に分類する（vocab-property-acquisition と同じ。例: 130001）。,true
+1383,fallback-kou-expropriation-committee,,一般会計,,諸支出金,収用委員会費,,,eq,,assigned,01.3,retained,目,,収用委員会の項に属する目を一般サービス 01.3 に置く（例: 130001）。,true
+1384,kind-fallback-ward-fiscal-adjustment,,,特別区財政調整,,,,,,,assigned,01.8,retained,目,,都区財政調整の特別会計の目を政府間の一般的移転 01.8 に分類する（例: 130001）。,false
+1385,kind-fallback-local-consumption-tax-settlement,,,地方消費税清算,,,,,,,assigned,01.8,retained,目,,地方消費税清算の特別会計の目（他の都道府県への清算金）を政府間の一般的移転 01.8 に分類する（例: 130001）。,false
+1386,kind-fallback-ogasawara-livelihood,,,小笠原諸島生活再建資金,,,,,,,assigned,10.7,retained,目,,小笠原諸島の生活再建資金の特別会計の目を他に分類されない社会的排除 10.7 に置く（例: 130001）。,true
+1387,kind-fallback-disability-dependants-pension,,,心身障害者扶養年金,,,,,,,assigned,10.1,retained,目,,心身障害者扶養年金の特別会計の目を疾病及び障害 10.1 に分類する（例: 130001）。,false
+1388,kind-fallback-hospital-corporation-loan,,,地方独立行政法人病院貸付,,,,,,,assigned,07.3,retained,目,,病院の地方独立行政法人への貸付等の特別会計の目を病院サービス 07.3 に分類する（例: 130001）。,false
+1389,kind-fallback-sme-equipment,,,中小企業設備導入等資金,,,,,,,assigned,04.1,retained,目,,中小企業の設備導入等資金の特別会計の目を一般経済・商業 04.1 に分類する（例: 130001）。,false
+1390,kind-fallback-forestry-improvement,,,林業・木材産業改善資金,,,,,,,assigned,04.2,retained,目,,林業・木材産業改善資金の特別会計の目を農林水産 04.2 に分類する（例: 130001）。,false
+1391,kind-fallback-coastal-fishery-improvement,,,沿岸漁業改善資金,,,,,,,assigned,04.2,retained,目,,沿岸漁業改善資金の特別会計の目を農林水産 04.2 に分類する（例: 130001）。,false
+1392,kind-fallback-slaughterhouse,,,と場,,,,,,,assigned,07.4,retained,目,,と場の特別会計の目を公衆衛生サービス 07.4 に分類する（kind-fallback-meat-center と同じ。例: 130001）。,true
+1393,kind-fallback-metropolitan-housing,,,都営住宅,,,,,,,assigned,06.1,retained,目,,都営住宅等事業の特別会計の目を住宅開発 06.1 に分類する（例: 130001）。,false
+1394,kind-fallback-metropolitan-housing-deposit,,,都営住宅保証金,,,,,,,unclassifiable,,retained,目,,都営住宅の保証金（敷金）の特別会計は預り金の受払いで、機能別の経費ではない（vocab-contract-deposit と同じ。例: 130001）。,false
+1395,kind-fallback-urban-development-fund,,,都市開発資金,,,,,,,assigned,06.2,retained,目,,都市開発資金の特別会計の目を地域開発 06.2 に分類する（例: 130001）。,false
+1396,kind-fallback-waterfront-infrastructure,,,臨海都市基盤整備,,,,,,,assigned,06.2,retained,目,,臨海都市基盤整備事業の特別会計の目を地域開発 06.2 に置く。道路・公園の整備が混ざる（例: 130001）。,true
+1397,kind-fallback-industrial-water-liquidation,,,工業用水道清算,,,,,,,assigned,04.4,retained,目,,工業用水道事業清算の特別会計の目を鉱業・製造業・建設業 04.4 に置く（廃止した産業向け水道の清算。例: 130001）。,true
+899,vocab-interest-tax-grant,,一般会計,,,,,利子割,contains,,assigned,01.8,retained,目,,都道府県民税利子割の市町村への交付金・都道府県間の精算金は税の移転で公債の利子ではない。kind-x-interest（利子）より先に政府間の一般的移転 01.8 に分類する（例: 130001 諸費）。,false
+1347,vocab-public-safety-promotion,,一般会計,,,,,都民安全,contains,,assigned,03,retained,目,,都民の安全推進の目を公共の秩序・安全 03 に置く。治安・交通安全が混ざる（fallback-kou-public-safety と同じ。例: 130001 2024 生活文化スポーツ費）。,true

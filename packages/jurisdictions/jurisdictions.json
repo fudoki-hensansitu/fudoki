@@ -1,7 +1,11 @@
 {
-  "note": "全国地方公共団体コードをキーにした自治体の同一性。**層に依存しない。**予算・調達はこのキーで束ねる。tokyoCatalogDatasets は東京都カタログでの公開データセット数（母集団の目安）で、都外の自治体は持たない。",
+  "note": "全国地方公共団体コードをキーにした自治体の同一性。**層に依存しない。**予算・調達はこのキーで束ねる。tokyoCatalogDatasets は東京都カタログでの公開データセット数（母集団の目安）で、都外の自治体は持たない。都道府県（コードの3〜5桁目が000）の ocdId は city を持たない。",
   "generatedAt": "2026-08-10",
   "jurisdictions": {
+    "130001": {
+      "name": "東京都",
+      "ocdId": "ocd-division/country:jp/prefecture:13"
+    },
     "131016": {
       "name": "千代田区",
       "ocdId": "ocd-division/country:jp/prefecture:13/city:131016",
