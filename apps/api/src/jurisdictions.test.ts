@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, test } from 'bun:test'
 import type { Database } from 'bun:sqlite'
 import { CfWorkerJsonSchemaValidator } from '@modelcontextprotocol/server/validators/cf-worker'
 import { createApp } from './app'
+import { UNCOVERED_SOURCES } from './operations'
 import type { Db } from './db'
 import { insertCoverage, insertJurisdiction, insertNode, insertOrigin, testDb } from './testing'
 
@@ -90,7 +91,17 @@ describe('自治体と収録範囲（GET /v1/jurisdictions・list_jurisdictions�
         },
       ],
       next_page_token: null,
+      uncovered_sources: UNCOVERED_SOURCES,
     })
+  })
+
+  test('収録の無い自治体でも、空の収録範囲と一緒に統計の出典の案内を返す', async () => {
+    const body = await list('?code=131016')
+    expect(body.jurisdictions[0].coverage).toEqual([])
+    expect(body.uncovered_sources.map((s: { url: string }) => s.url)).toEqual([
+      'https://www.soumu.go.jp/iken/zaisei/card.html',
+      'https://www.e-stat.go.jp/stat-search/files?toukei=00200251&tstat=000001077755',
+    ])
   })
 
   test('5桁と6桁のコードで同じ結果になる', async () => {
