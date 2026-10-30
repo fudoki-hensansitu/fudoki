@@ -414,13 +414,14 @@ def code_margins(logicals: list[Logical]) -> dict[str, set[int]]:
             # A name wrapped around its code, printed further left in the same rule-bounded cell (`18` /
             # `負担金補助` `及交付金`, 130001), is part of a numbered line: it does not vote that its start holds no code.
             centre = lambda label: sum((g.y0 + g.y1) / 2 for g in label) / len(label)
-            cells: dict[tuple, float] = {}
+            # A cell listing several numbered lines (`1…` `2…` `3…` in a 備考 column) is a list, not one wrapped name.
+            cells: dict[tuple, list[float]] = defaultdict(list)
             for label, numbered in zip(labels, coded):
                 if numbered and group.bands[0].rows:
-                    key = (label[0].page, _cell(group.bands[0], centre(label)))
-                    cells[key] = min(cells.get(key, label[0].x0), label[0].x0)
+                    cells[label[0].page, _cell(group.bands[0], centre(label))].append(label[0].x0)
             for label, numbered in zip(labels, coded):
-                if not numbered and cells.get((label[0].page, _cell(group.bands[0], centre(label))), label[0].x0) < label[0].x0 - 3:
+                starts = cells.get((label[0].page, _cell(group.bands[0], centre(label))), [])
+                if not numbered and len(starts) == 1 and starts[0] < label[0].x0 - 3:
                     continue
                 for margin in _margins(label):
                     votes[group.axis, margin][0 if numbered else 1] += 1
