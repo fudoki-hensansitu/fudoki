@@ -1,0 +1,1571 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "130001",
+    "fiscal_year": 2024,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "bf65f32e9b1e6a9aa46e02d06282f18748c57e1ced4f20016234a13e235f5844"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "ward-fiscal-adjustment-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "特別区財政調整会計",
+        "table_id": "ward-fiscal-adjustment-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "ward-fiscal-adjustment-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "local-consumption-tax-settlement-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "地方消費税清算会計",
+        "table_id": "local-consumption-tax-settlement-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "local-consumption-tax-settlement-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "ogasawara-livelihood-reconstruction-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "小笠原諸島生活再建資金会計",
+        "table_id": "ogasawara-livelihood-reconstruction-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "ogasawara-livelihood-reconstruction-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-insurance-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "single-parent-welfare-loan-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "母子父子福祉貸付資金会計",
+        "table_id": "single-parent-welfare-loan-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "single-parent-welfare-loan-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "disability-dependants-pension-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "心身障害者扶養年金会計",
+        "table_id": "disability-dependants-pension-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "disability-dependants-pension-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "metropolitan-hospital-loan-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "地方独立行政法人東京都立病院機構貸付等事業会計",
+        "table_id": "metropolitan-hospital-loan-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "metropolitan-hospital-loan-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "sme-equipment-fund-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "中小企業設備導入等資金会計",
+        "table_id": "sme-equipment-fund-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "sme-equipment-fund-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "forestry-improvement-fund-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "林業・木材産業改善資金助成会計",
+        "table_id": "forestry-improvement-fund-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "forestry-improvement-fund-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "coastal-fishery-improvement-fund-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "沿岸漁業改善資金助成会計",
+        "table_id": "coastal-fishery-improvement-fund-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "coastal-fishery-improvement-fund-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "slaughterhouse-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "と場会計",
+        "table_id": "slaughterhouse-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "slaughterhouse-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "metropolitan-housing-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "都営住宅等事業会計",
+        "table_id": "metropolitan-housing-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "metropolitan-housing-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "metropolitan-housing-deposit-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "都営住宅等保証金会計",
+        "table_id": "metropolitan-housing-deposit-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "metropolitan-housing-deposit-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "urban-development-fund-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "都市開発資金会計",
+        "table_id": "urban-development-fund-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "urban-development-fund-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "land-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "用地会計",
+        "table_id": "land-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "land-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "public-debt-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "公債費会計",
+        "table_id": "public-debt-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "public-debt-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "waterfront-infrastructure-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "臨海都市基盤整備事業会計",
+        "table_id": "waterfront-infrastructure-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "waterfront-infrastructure-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "industrial-water-liquidation-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "工業用水道事業清算会計",
+        "table_id": "industrial-water-liquidation-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額": {
+                  "heading": "予算現額／予備費支出及び流用増減"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "industrial-water-liquidation-expenditure"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-expenditure",
+      "conversion_id": "general-settlement",
+      "input_fingerprint": "99d99767cc76fb72442fb0f7641ded0ea887cdbc317ec6bdd72b1ee39e48ddae",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は column mark 195頁 から決めた。款の和 8,724,585,235,292 と印字の「歳出合計」8,724,585,235,292 が一致。",
+        "金額の注記 368 件（不用額 76・充用 7・流用 285）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（5030 件）を、印字された語から辞書の見出しに寄せた: 予算現額／予支流出用備及増費び減→予算現額／予備費支出及び流用増減・予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/general-expenditure-nodes.parquet",
+          "sha256": "8f7008576df4abe7e9622f7d687333334b2ff8ae7ff6d586754000f8ab02db86",
+          "bytes": 156948
+        },
+        "row_count": 5406
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/general-expenditure-amounts.parquet",
+          "sha256": "99135f353a8b604fca11609295d00b7b3f0d4091417360f8c2a44841918aa728",
+          "bytes": 288361
+        },
+        "row_count": 32188
+      }
+    },
+    {
+      "table_id": "ward-fiscal-adjustment-expenditure",
+      "conversion_id": "ward-fiscal-adjustment-settlement",
+      "input_fingerprint": "f1bc81ce341c1043f038ba0acd9c299efb48308a0e1fe3f06be4ce916ee4a757",
+      "account": "特別区財政調整会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は column mark 1頁 から決めた。款の和 1,259,932,193,000 と印字の「歳出合計」1,259,932,193,000 が一致。",
+        "金額の注記 2 件（流用 2）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（6 件）を、印字された語から辞書の見出しに寄せた: 予算現額／予支流出用備及増費び減→予算現額／予備費支出及び流用増減・予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/ward-fiscal-adjustment-expenditure-nodes.parquet",
+          "sha256": "d4040a62d3674024854e3114b2841034f3aa03e585e338df00b109eef331faa9",
+          "bytes": 2599
+        },
+        "row_count": 8
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/ward-fiscal-adjustment-expenditure-amounts.parquet",
+          "sha256": "1900e41796f13d3399c618a4913145061a9346f3178c6e45a66efa4818aeb658",
+          "bytes": 2961
+        },
+        "row_count": 54
+      }
+    },
+    {
+      "table_id": "local-consumption-tax-settlement-expenditure",
+      "conversion_id": "local-consumption-tax-settlement-settlement",
+      "input_fingerprint": "c97065c047e705a2a29cd6e26bd8fd5bee0e3d7ca09e112543c16932948360f5",
+      "account": "地方消費税清算会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は column mark 1頁 から決めた。款の和 2,550,518,428,236 と印字の「歳出合計」2,550,518,428,236 が一致。",
+        "金額の注記 2 件（流用 2）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（8 件）を、印字された語から辞書の見出しに寄せた: 予算現額／予支流出用備及増費び減→予算現額／予備費支出及び流用増減・予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/local-consumption-tax-settlement-expenditure-nodes.parquet",
+          "sha256": "37bfb977542ee5c76dfde53dd6bdfaff2b0642a1cd32a5ffa0c2e3335d0e4a47",
+          "bytes": 2891
+        },
+        "row_count": 10
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/local-consumption-tax-settlement-expenditure-amounts.parquet",
+          "sha256": "e9a467db34ac83c25de79a135c9705985d54f6dad1036f4448fc92a3a968eba5",
+          "bytes": 3409
+        },
+        "row_count": 70
+      }
+    },
+    {
+      "table_id": "ogasawara-livelihood-reconstruction-expenditure",
+      "conversion_id": "ogasawara-livelihood-reconstruction-settlement",
+      "input_fingerprint": "227e756940a537d69b49f622930beb02b85ce9b50271498779cac647becd5378",
+      "account": "小笠原諸島生活再建資金会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は column mark 1頁 から決めた。款の和 0 と印字の「歳出合計」0 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（4 件）を、印字された語から辞書の見出しに寄せた: 予算現額／予支流出用備及増費び減→予算現額／予備費支出及び流用増減・予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/ogasawara-livelihood-reconstruction-expenditure-nodes.parquet",
+          "sha256": "3ddde9e6b25980fd7baaec3554478660258014b2ca89ed89af8d05afc1705316",
+          "bytes": 2145
+        },
+        "row_count": 4
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/ogasawara-livelihood-reconstruction-expenditure-amounts.parquet",
+          "sha256": "c24651bb7fa3660b3a7df0ca2eb6e8d6e2b6ec5f2f5dcb72b2fe081c1b167105",
+          "bytes": 2460
+        },
+        "row_count": 36
+      }
+    },
+    {
+      "table_id": "national-health-insurance-expenditure",
+      "conversion_id": "national-health-insurance-settlement",
+      "input_fingerprint": "c81403b2c51c53f91b951fd89c952977353bf047e258fdc217fffdd297f51405",
+      "account": "国民健康保険事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は column mark 2頁 から決めた。款の和 1,059,438,545,244 と印字の「歳出合計」1,059,438,545,244 が一致。",
+        "金額の注記 4 件（流用 4）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（46 件）を、印字された語から辞書の見出しに寄せた: 予算現額／予支流出用備及増費び減→予算現額／予備費支出及び流用増減・予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/national-health-insurance-expenditure-nodes.parquet",
+          "sha256": "c3340e6fed4f33a0d10ec5edacff1f888bfb0b52bee39e43db59420bedb8fdd1",
+          "bytes": 5185
+        },
+        "row_count": 50
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/national-health-insurance-expenditure-amounts.parquet",
+          "sha256": "54aecf9c2db4ada1108cc7d750dc21f95263e002bb666eb9dc0271d77392607a",
+          "bytes": 6808
+        },
+        "row_count": 332
+      }
+    },
+    {
+      "table_id": "single-parent-welfare-loan-expenditure",
+      "conversion_id": "single-parent-welfare-loan-settlement",
+      "input_fingerprint": "43ff77f8dc1347f3123f5cec209fb68fa1217bac4377c137a494b48a66597128",
+      "account": "母子父子福祉貸付資金会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は column mark 1頁 から決めた。款の和 6,690,674,399 と印字の「歳出合計」6,690,674,399 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（19 件）を、印字された語から辞書の見出しに寄せた: 予算現額／予支流出用備及増費び減→予算現額／予備費支出及び流用増減・予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/single-parent-welfare-loan-expenditure-nodes.parquet",
+          "sha256": "c87a0060be2354cf76362d3fc119896598145f495eb9585382cca749d3e59464",
+          "bytes": 3408
+        },
+        "row_count": 19
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/single-parent-welfare-loan-expenditure-amounts.parquet",
+          "sha256": "4ab36d3bfc004e5afaecde36040d09abb736c58af62f7f27379a13026361a73f",
+          "bytes": 4037
+        },
+        "row_count": 130
+      }
+    },
+    {
+      "table_id": "disability-dependants-pension-expenditure",
+      "conversion_id": "disability-dependants-pension-settlement",
+      "input_fingerprint": "64da9e9f5a476117205906baf480fb2a4384de65faa9260ea619bd5a7838dd51",
+      "account": "心身障害者扶養年金会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は column mark 1頁 から決めた。款の和 2,866,560,633 と印字の「歳出合計」2,866,560,633 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（6 件）を、印字された語から辞書の見出しに寄せた: 予算現額／予支流出用備及増費び減→予算現額／予備費支出及び流用増減・予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/disability-dependants-pension-expenditure-nodes.parquet",
+          "sha256": "78f20625bc27b254cc8672966c61e4b51b95a262989023ffd6ce80cbb4b9e564",
+          "bytes": 2433
+        },
+        "row_count": 6
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/disability-dependants-pension-expenditure-amounts.parquet",
+          "sha256": "5e191b5ecd01ccb7114c9ad1e6a2698a4014b4b0989310e2f79dbaf9a840a5aa",
+          "bytes": 2637
+        },
+        "row_count": 48
+      }
+    },
+    {
+      "table_id": "metropolitan-hospital-loan-expenditure",
+      "conversion_id": "metropolitan-hospital-loan-settlement",
+      "input_fingerprint": "c72c8cb320e3abf8c94311fbcdd0f13522173fc0b323ae608803f76dd92d25d9",
+      "account": "地方独立行政法人東京都立病院機構貸付等事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は column mark 2頁 から決めた。款の和 28,176,442,826 と印字の「歳出合計」28,176,442,826 が一致。",
+        "金額の注記 6 件（不用額 4・流用 2）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（30 件）を、印字された語から辞書の見出しに寄せた: 予算現額／予支流出用備及増費び減→予算現額／予備費支出及び流用増減・予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/metropolitan-hospital-loan-expenditure-nodes.parquet",
+          "sha256": "a4f3b8e4a67834043427022aeaf1e1c0348f98dabfbec67956e9d888a64cc189",
+          "bytes": 4549
+        },
+        "row_count": 36
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/metropolitan-hospital-loan-expenditure-amounts.parquet",
+          "sha256": "d19eaa96b1da3c49705f03c9ddca79b08860c676381689ba6295d8d0c8ffda35",
+          "bytes": 5538
+        },
+        "row_count": 214
+      }
+    },
+    {
+      "table_id": "sme-equipment-fund-expenditure",
+      "conversion_id": "sme-equipment-fund-settlement",
+      "input_fingerprint": "a401e01a30d74664ff2910c5c1aaac5bb4417eca407cc6a64a771a189e5339d6",
+      "account": "中小企業設備導入等資金会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は column mark 2頁 から決めた。款の和 163,193,819 と印字の「歳出合計」163,193,819 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（29 件）を、印字された語から辞書の見出しに寄せた: 予算現額／予支流出用備及増費び減→予算現額／予備費支出及び流用増減・予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/sme-equipment-fund-expenditure-nodes.parquet",
+          "sha256": "ca69cd77402d719424f5de7774d734bd9d3a97b19c6b615f8efa918a7c5bc74c",
+          "bytes": 4039
+        },
+        "row_count": 29
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/sme-equipment-fund-expenditure-amounts.parquet",
+          "sha256": "f421d05b84d398eed9c54ac3d1da14da4ccf33dd7df24faa97771a9ae5a32125",
+          "bytes": 4492
+        },
+        "row_count": 140
+      }
+    },
+    {
+      "table_id": "forestry-improvement-fund-expenditure",
+      "conversion_id": "forestry-improvement-fund-settlement",
+      "input_fingerprint": "3b4202bdd3a9069fb39fab64ecf5c94d6f6db708556a7f8ee864082fda009895",
+      "account": "林業・木材産業改善資金助成会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は column mark 1頁 から決めた。款の和 55,500,000 と印字の「歳出合計」55,500,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（12 件）を、印字された語から辞書の見出しに寄せた: 予算現額／予支流出用備及増費び減→予算現額／予備費支出及び流用増減・予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/forestry-improvement-fund-expenditure-nodes.parquet",
+          "sha256": "8b56aede57e94fd4c74c6e022c81586d4cd9fc56c7dc72deef9770434ed0c4ae",
+          "bytes": 2801
+        },
+        "row_count": 12
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/forestry-improvement-fund-expenditure-amounts.parquet",
+          "sha256": "9812ced675515994e0dd7237cb782095ec7da3abf6dfde4d20b7fc3222c37c0e",
+          "bytes": 3188
+        },
+        "row_count": 84
+      }
+    },
+    {
+      "table_id": "coastal-fishery-improvement-fund-expenditure",
+      "conversion_id": "coastal-fishery-improvement-fund-settlement",
+      "input_fingerprint": "5b2d7a9d17d2f92297fc7bf1fd02d5a8f47bab41b59a87ea1655c9d5b75eecb3",
+      "account": "沿岸漁業改善資金助成会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は column mark 1頁 から決めた。款の和 44,385 と印字の「歳出合計」44,385 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（11 件）を、印字された語から辞書の見出しに寄せた: 予算現額／予支流出用備及増費び減→予算現額／予備費支出及び流用増減・予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/coastal-fishery-improvement-fund-expenditure-nodes.parquet",
+          "sha256": "1401850eb62e06f09b3fd6a664c49ff0bf59312e2408697e5aa417527327514a",
+          "bytes": 2752
+        },
+        "row_count": 11
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/coastal-fishery-improvement-fund-expenditure-amounts.parquet",
+          "sha256": "f1326d6f438e153de0f893c9bd25aad205a4cadfa9ee100333ea0e9b4113e5c1",
+          "bytes": 3152
+        },
+        "row_count": 78
+      }
+    },
+    {
+      "table_id": "slaughterhouse-expenditure",
+      "conversion_id": "slaughterhouse-settlement",
+      "input_fingerprint": "d960dcbdb4118898590e6820c7050ad99ed8d0007697bef33dc25c1959c8d586",
+      "account": "と場会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は column mark 3頁 から決めた。款の和 6,423,890,408 と印字の「歳出合計」6,423,890,408 が一致。",
+        "金額の注記 2 件（流用 2）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（52 件）を、印字された語から辞書の見出しに寄せた: 予算現額／予支流出用備及増費び減→予算現額／予備費支出及び流用増減・予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/slaughterhouse-expenditure-nodes.parquet",
+          "sha256": "b3d3f5135038d85c5b2c65cf5fe03c40a6627dfcc328683363da6238f79c8b8e",
+          "bytes": 5225
+        },
+        "row_count": 54
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/slaughterhouse-expenditure-amounts.parquet",
+          "sha256": "3f6a042e2dc23ca7a794d79fc01cbd3ae52ba16506c7083bd51f82e29bdef04f",
+          "bytes": 7057
+        },
+        "row_count": 279
+      }
+    },
+    {
+      "table_id": "metropolitan-housing-expenditure",
+      "conversion_id": "metropolitan-housing-settlement",
+      "input_fingerprint": "9eb608c0d4336413d7be24b25dd166bad0488c7c17101bf2ce6ba06838b0eef1",
+      "account": "都営住宅等事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は column mark 4頁 から決めた。款の和 161,510,462,350 と印字の「歳出合計」161,510,462,350 が一致。",
+        "金額の注記 8 件（不用額 4・流用 4）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（82 件）を、印字された語から辞書の見出しに寄せた: 予算現額／予支流出用備及増費び減→予算現額／予備費支出及び流用増減・予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/metropolitan-housing-expenditure-nodes.parquet",
+          "sha256": "5d24bba9ecae25788295d1b454714d8048e8f025d3d369e4e5de0de9be126d30",
+          "bytes": 6651
+        },
+        "row_count": 90
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/metropolitan-housing-expenditure-amounts.parquet",
+          "sha256": "71c0d7d6c2887522bec0b951c6c93da01719d0e4d22e76b5274bfb6b3fbca23c",
+          "bytes": 9212
+        },
+        "row_count": 528
+      }
+    },
+    {
+      "table_id": "metropolitan-housing-deposit-expenditure",
+      "conversion_id": "metropolitan-housing-deposit-settlement",
+      "input_fingerprint": "7aa07727459f5c0cb70b1c62a2abda4622e2e29e817a0cc977989019c069187f",
+      "account": "都営住宅等保証金会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は column mark 1頁 から決めた。款の和 2,553,070,343 と印字の「歳出合計」2,553,070,343 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（15 件）を、印字された語から辞書の見出しに寄せた: 予算現額／予支流出用備及増費び減→予算現額／予備費支出及び流用増減・予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/metropolitan-housing-deposit-expenditure-nodes.parquet",
+          "sha256": "d2616424e96760394743883f5290c3ca7f58971e54027a46b6b24223ef17406a",
+          "bytes": 3269
+        },
+        "row_count": 15
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/metropolitan-housing-deposit-expenditure-amounts.parquet",
+          "sha256": "276f4b9e55110b4809d825462938dc43a154cf77aad4adf26db6d74db44da3fd",
+          "bytes": 3639
+        },
+        "row_count": 130
+      }
+    },
+    {
+      "table_id": "urban-development-fund-expenditure",
+      "conversion_id": "urban-development-fund-settlement",
+      "input_fingerprint": "b52953c791a46869dc6cea8bf92920d4e42b315568dcb30e3c8ee903537f7617",
+      "account": "都市開発資金会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は column mark 1頁 から決めた。款の和 5,990,312,855 と印字の「歳出合計」5,990,312,855 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（19 件）を、印字された語から辞書の見出しに寄せた: 予算現額／予支流出用備及増費び減→予算現額／予備費支出及び流用増減・予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/urban-development-fund-expenditure-nodes.parquet",
+          "sha256": "aba716d7f9c2da7d4c7e3baee725781100d4b546ff9ddcfb8c6ee15681c9bba3",
+          "bytes": 3457
+        },
+        "row_count": 19
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/urban-development-fund-expenditure-amounts.parquet",
+          "sha256": "e54919497a96f5bbab0158d673acaf098e322570495a6eaf2c967c293ec9746a",
+          "bytes": 3619
+        },
+        "row_count": 87
+      }
+    },
+    {
+      "table_id": "land-expenditure",
+      "conversion_id": "land-settlement",
+      "input_fingerprint": "e63f5090065185f38b3524b8749204d9529d4de4a0dda0791e2b3d408eec318d",
+      "account": "用地会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は column mark 1頁 から決めた。款の和 4,772,227,806 と印字の「歳出合計」4,772,227,806 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（21 件）を、印字された語から辞書の見出しに寄せた: 予算現額／予支流出用備及増費び減→予算現額／予備費支出及び流用増減・予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/land-expenditure-nodes.parquet",
+          "sha256": "96e9c14ed97007e5e47aaadd72f527770d9b510cc04434adf351701e7c5302e2",
+          "bytes": 3508
+        },
+        "row_count": 21
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/land-expenditure-amounts.parquet",
+          "sha256": "2614f8169dbcda04ef0aacb9fff719768ef5c72c7f772e4a726b1da1130c706c",
+          "bytes": 4104
+        },
+        "row_count": 138
+      }
+    },
+    {
+      "table_id": "public-debt-expenditure",
+      "conversion_id": "public-debt-settlement",
+      "input_fingerprint": "d7dcb98974f3ca1384b75e73b614b9c2dfa7003b72c5ef0bc6270b87f1c14abe",
+      "account": "公債費会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は column mark 2頁 から決めた。款の和 1,228,850,945,405 と印字の「歳出合計」1,228,850,945,405 が一致。",
+        "金額の注記 2 件（流用 2）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（24 件）を、印字された語から辞書の見出しに寄せた: 予算現額／予支流出用備及増費び減→予算現額／予備費支出及び流用増減・予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/public-debt-expenditure-nodes.parquet",
+          "sha256": "028fc8e7f2cf78b1b2a91936c0a3e6bea8765dc31336af98809785e5e6af10b3",
+          "bytes": 3993
+        },
+        "row_count": 26
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/public-debt-expenditure-amounts.parquet",
+          "sha256": "073d3eaec699abefbb7ece2c806cf1c728903e6dd156210687f3a9b5ac464e1b",
+          "bytes": 4964
+        },
+        "row_count": 174
+      }
+    },
+    {
+      "table_id": "waterfront-infrastructure-expenditure",
+      "conversion_id": "waterfront-infrastructure-settlement",
+      "input_fingerprint": "089192de12539a988c063cd4d869d6733af7d78fa9e9a12864407cd05c404323",
+      "account": "臨海都市基盤整備事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は column mark 2頁 から決めた。款の和 405,774,394 と印字の「歳出合計」405,774,394 が一致。",
+        "金額の注記 2 件（流用 2）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（43 件）を、印字された語から辞書の見出しに寄せた: 予算現額／予支流出用備及増費び減→予算現額／予備費支出及び流用増減・予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/waterfront-infrastructure-expenditure-nodes.parquet",
+          "sha256": "94fd57f58e2f5996f55074326e2f02983acda3ee997640cf33016577c24951af",
+          "bytes": 4799
+        },
+        "row_count": 45
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/waterfront-infrastructure-expenditure-amounts.parquet",
+          "sha256": "a08f5453696564bfc099f980c25e9f2b1801900691c2ba911c56217dc240033b",
+          "bytes": 6223
+        },
+        "row_count": 276
+      }
+    },
+    {
+      "table_id": "industrial-water-liquidation-expenditure",
+      "conversion_id": "industrial-water-liquidation-settlement",
+      "input_fingerprint": "653a32618496933e3370ec064bfaf3eec6284fcb58fe3bdc6a3fcdf243e0e6a3",
+      "account": "工業用水道事業清算会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は column mark 1頁 から決めた。款の和 3,643,799,407 と印字の「歳出合計」3,643,799,407 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（8 件）を、印字された語から辞書の見出しに寄せた: 予算現額／予支流出用備及増費び減→予算現額／予備費支出及び流用増減・予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/industrial-water-liquidation-expenditure-nodes.parquet",
+          "sha256": "268d0b423e20d5b91f378420a65c380532e0732a9f0fedbaa219ecab966e4243",
+          "bytes": 2600
+        },
+        "row_count": 8
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2024/settlement/expenditure/industrial-water-liquidation-expenditure-amounts.parquet",
+          "sha256": "e253ffaf3f98b26e08b4f8da799da05801a2c4d0959d71846debb1de3f3c8b91",
+          "bytes": 2934
+        },
+        "row_count": 60
+      }
+    }
+  ]
+}

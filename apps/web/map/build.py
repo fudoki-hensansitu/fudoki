@@ -162,7 +162,9 @@ def main() -> None:
     master = json.loads(JURISDICTIONS.read_text(encoding="utf-8"))["jurisdictions"]
     # 地図は東京都の1枚だけを描く。母集団はマスタから都道府県コード 13 で絞る
     # （マスタに都外の自治体が増えても、この地図の母集団は変わらない）。
-    jurisdictions = {code: entry for code, entry in master.items() if code.startswith("13")}
+    # 都道府県としての東京都（130001、3〜5桁目が000）は区市町村の形を持たない。
+    # 5桁の 13000 は N03 では所属未定地なので、母集団に入れるとその形を都に当ててしまう。
+    jurisdictions = {code: entry for code, entry in master.items() if code.startswith("13") and code[2:5] != "000"}
     if not jurisdictions:
         raise RuntimeError("自治体マスタに東京都（13…）の自治体が無い")
     # N03_007 は全国地方公共団体コード**から検査数字（末尾1桁）を除いた5桁**

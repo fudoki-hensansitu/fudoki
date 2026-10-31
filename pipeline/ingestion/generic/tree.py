@@ -38,6 +38,8 @@ BARE_CODE = re.compile(r'^[0-9０-９]{1,4}$')
 BRACKET_PAIRS = {')': '(', ']': '['}  # the closing and opening brackets of a bracketed amount
 CODE_LED = re.compile(r'^[0-9０-９]{1,4}[^0-9０-９,，.．]')  # a code joined to its name (`1商`)
 TRANSFER = re.compile(r'(流用|充用|充当|予備費支出|予備費充当|予備費[よか]り|第[0-9０-９]+節[へか]|^第[0-9０-９]+[款項目節]|^[○〇●]?同[款項目])')
+# The words that end a transfer remark begun on the line above (`…費` / `から流用 13,281,000円`).
+TRANSFER_TAIL = re.compile(r'^[へか]ら?(?:流用|充用)')
 # A transfer remark ends with the word (`…へ流用`): a line after it is another remark, even when it reaches the column's limit.
 ENDED_TRANSFER = re.compile(r'(?:流用|充用)$')
 # A kind word printed above an amount inside an amount column's cell (a stacked carry-over column).
@@ -407,12 +409,22 @@ def code_margins(logicals: list[Logical]) -> dict[str, set[int]]:
         for group in column_groups(logical):
             if group.subject:
                 continue
-            for line in lines([w for band in group.bands for w in band.words]):
-                label, _ = _split_line(line)
-                if label:
-                    coded = _split_code(normalize(text(label)))[0] is not None
-                    for margin in _margins(label):
-                        votes[group.axis, margin][0 if coded else 1] += 1
+            labels = [label for label in (_split_line(line)[0] for line in lines([w for band in group.bands for w in band.words])) if label]
+            coded = [_split_code(normalize(text(label)))[0] is not None for label in labels]
+            # A name wrapped around its code, printed further left in the same rule-bounded cell (`18` /
+            # `負担金補助` `及交付金`, 130001), is part of a numbered line: it does not vote that its start holds no code.
+            centre = lambda label: sum((g.y0 + g.y1) / 2 for g in label) / len(label)
+            # A cell listing several numbered lines (`1…` `2…` `3…` in a 備考 column) is a list, not one wrapped name.
+            cells: dict[tuple, list[float]] = defaultdict(list)
+            for label, numbered in zip(labels, coded):
+                if numbered and group.bands[0].rows:
+                    cells[label[0].page, _cell(group.bands[0], centre(label))].append(label[0].x0)
+            for label, numbered in zip(labels, coded):
+                starts = cells.get((label[0].page, _cell(group.bands[0], centre(label))), [])
+                if not numbered and len(starts) == 1 and starts[0] < label[0].x0 - 3:
+                    continue
+                for margin in _margins(label):
+                    votes[group.axis, margin][0 if numbered else 1] += 1
     margins: dict[str, set[int]] = defaultdict(set)
     for (axis, x), (coded, plain) in votes.items():
         if coded > plain:
@@ -874,6 +886,19 @@ def join_transfer_tails(items_: list[Item], layout: dict | None) -> list[Item]:
                 and not is_plain_name(layout, previous)):
             previous.name += item.name
             previous.lines += item.lines
+            continue
+        if (previous is not None and previous.code is not None and not previous.amounts and item.code is None
+                and item.amounts and item.lines and previous.lines
+                and abs(item.lines[0][0].x0 - previous.lines[0][0].x0) <= 2
+                and 0 < item.lines[0][0].y0 - previous.lines[-1][0].y0 <= 2.5 * (previous.lines[-1][0].y1 - previous.lines[-1][0].y0)
+                and TRANSFER_TAIL.match(normalize(item.name)) and not is_plain_name(layout, previous)):
+            # The account a transfer came from, printed by its code on the line above the words and amount
+            # (`０１項０２土木技術支援・人材育成センター費` / `から流用 13,281,000円`, 130001): one note, not an item numbered 01.
+            previous.name = previous.code + previous.name + item.name
+            previous.code = None
+            previous.lines += item.lines
+            previous.amounts += item.amounts
+            previous.kinds += item.kinds
             continue
         result.append(item)
     return result

@@ -1,6 +1,7 @@
 {
   "layout": {
-    "ruled": "ingestion.generic.patterns.layout.ruled"
+    "ruled": "ingestion.generic.patterns.layout.ruled",
+    "open_edge": "ingestion.generic.patterns.layout.open_edge"
   },
   "headers": {
     "standard": "ingestion.generic.patterns.headers.standard",
