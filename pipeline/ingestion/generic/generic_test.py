@@ -1232,6 +1232,53 @@ class SubjectContinuationTest(unittest.TestCase):
                          [built.nodes[0]['node_key'], built.nodes[1]['node_key']])
         self.assertEqual(built.unowned, [])
 
+    def learned_levels(self, frames):
+        from types import SimpleNamespace
+        from ingestion.generic.patterns.subject.indent import learn_levels
+        all_items = []
+        for left, starts in frames:
+            group = SimpleNamespace(subject=True, mode='indent', bands=[SimpleNamespace(x0=left)], levels=None)
+            items = [SimpleNamespace(role='node', code='1', indent=start, group=group, level=None, level_name=None)
+                     for start in starts for _ in range(2)]
+            all_items.append((SimpleNamespace(ocr=False), [group], {id(group): items}))
+        learn_levels(all_items)
+        return sorted({item.level for _, _, found in all_items for items in found.values() for item in items}), all_items[0][1][0].levels
+
+    def test_a_frame_that_drifts_between_pages_keeps_three_subject_levels(self):
+        levels, count = self.learned_levels([(46, (51, 63, 73)), (52, (57, 69, 79))])
+        self.assertEqual((levels, count), ([0, 1, 2], 3))
+
+    def test_relative_starts_that_would_make_a_fourth_level_are_not_taken(self):
+        levels, count = self.learned_levels([(40, (50, 60, 70)), (56, (56, 66, 76))])
+        self.assertEqual(count, 6)
+
+    def stacked_under(self, rule_at, own_label='当初予算額'):
+        from types import SimpleNamespace
+        from ingestion.generic.tree import stacked_under
+        band = Band(120, 300, 1, ('予算現額',), [] if rule_at is None else [rule_at], 70, 300, kind='amount')
+        band.words = [glyph('計', 125, 78, 10), glyph('100', 200, 78, 20),
+                      glyph(own_label, 125, 90, 40), glyph('50', 200, 90, 20)]
+        previous = SimpleNamespace(y0=78, y1=88)
+        wrapped = SimpleNamespace(y0=90, y1=100, glyphs=[glyph('付金', 62, 90, 20)])
+        return stacked_under(SimpleNamespace(bands=[band]), previous, wrapped)
+
+    def test_the_next_amount_of_one_cell_is_the_cell_of_the_line_above(self):
+        self.assertTrue(self.stacked_under(rule_at=140))
+
+    def test_amounts_in_two_ruled_cells_are_two_items(self):
+        self.assertFalse(self.stacked_under(rule_at=86))
+
+    def test_amounts_of_a_band_without_rules_are_not_known_to_be_one_cell(self):
+        self.assertFalse(self.stacked_under(rule_at=None))
+
+    def test_a_unit_is_no_kind_of_an_amount(self):
+        for label in ('千円', '(単位:千円)', '円'):
+            with self.subTest(label=label):
+                self.assertFalse(self.stacked_under(rule_at=140, own_label=label))
+
+    def test_a_kind_the_line_above_already_names_is_another_item(self):
+        self.assertFalse(self.stacked_under(rule_at=140, own_label='計'))
+
     def test_indented_codeless_lines_at_another_name_position_or_with_money_stay_separate(self):
         for options in ({'extra_x': 70}, {'extra_amount': '7'}):
             with self.subTest(options=options):

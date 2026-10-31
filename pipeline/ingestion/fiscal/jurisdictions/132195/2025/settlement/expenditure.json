@@ -90,7 +90,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "ea3bc2419908b306c0d4e2e4144fe370268d3b11dc96e843d12e9e5c3af928bf",
+      "input_fingerprint": "0a9dcebcc00d20050814f53eda904fc33f0f902b56e44048848c748067d859b4",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'事業名': 'indent', '節': 'indent', '節説明': 'indent'}。",

@@ -83,18 +83,30 @@ def learn_levels(all_items):
     # A scan's levels (every page OCR; a text document with a few OCR pages keeps its own) are measured from the left edge of the subject column: its frame sits a few points elsewhere
     # on each page, and the same level must not start at two values.
     ocr_groups = {id(g) for logical, ordered, _ in all_items for g in ordered} if all(l.ocr for l, _, _ in all_items) else set()
+    def cluster(edge):
+        starts = sorted(edge(i) for i in (coded_ if len(coded_) >= max(3, len(nodes_) // 2) else nodes_))
+        found_levels: list[list[float]] = []
+        for value in starts:
+            if found_levels and value - found_levels[-1][-1] <= 3:
+                found_levels[-1].append(value)
+            else:
+                found_levels.append([value])
+        # A start printed once is a stray one. A table that prints one 款・項・目 chain has no level twice: keep its
+        # starts (132063 公共用地, 款 項 目 of one name), or every line is level 0 and the chain reads as one repeated heading.
+        kept_levels = [c for c in found_levels if len(c) >= max(2, len(starts) // 100)]
+        return kept_levels or found_levels
     edge = lambda i: i.indent - (i.group.bands[0].x0 if id(i.group) in ocr_groups else 0)
-    starts = sorted(edge(i) for i in (coded_ if len(coded_) >= max(3, len(nodes_) // 2) else nodes_))
-    subject_levels: list[list[float]] = []
-    for value in starts:
-        if subject_levels and value - subject_levels[-1][-1] <= 3:
-            subject_levels[-1].append(value)
-        else:
-            subject_levels.append([value])
-    # A start printed once is a stray one. A table that prints one 款・項・目 chain has no level twice: keep its starts
-    # (132063 公共用地, 款 項 目 of one name), or every line is level 0 and the chain reads as one repeated heading.
-    kept_levels = [c for c in subject_levels if len(c) >= max(2, len(starts) // 100)]
-    subject_levels = kept_levels or subject_levels
+    subject_levels = cluster(edge)
+    if not ocr_groups:
+        # The frame of a text page sits a few points elsewhere on some pages (132063 競走事業会計: 款 at 51 and 57), and one
+        # level then starts at two values. Measured from the subject column's left edge, a document whose frame
+        # drifts has fewer levels; one whose frame is steady has as many, and keeps its own starts.
+        from_edge = lambda i: i.indent - i.group.bands[0].x0
+        relative = cluster(from_edge)
+        # Only when the levels still fit 款・項・目: a drift that leaves a fourth start measured from the edge is not a
+        # frame drifting, and the absolute starts stay as they were.
+        if len(relative) < len(subject_levels) and len(relative) <= len(SUBJECT_LEVELS):
+            subject_levels, edge = relative, from_edge
     centres = [sum(c) / len(c) for c in subject_levels]
     for _, ordered, found in all_items:
         for group in ordered:
