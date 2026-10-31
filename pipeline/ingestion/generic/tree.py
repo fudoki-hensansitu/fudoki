@@ -525,32 +525,33 @@ def stacked_under(logical: Logical, previous: Item, item: Item) -> bool:
 
     A cell stacks its amounts (`計` / `当初予算額` / `補正予算額`), one row each, so the second line of a long name
     shares its row with the next amount of the first line's cell (132063 後期高齢者医療広域連合納付金: `付金`).
-    Every amount band that holds money at the wrapped line's row names it with a kind word of the cell (`当初予算額`),
-    and also holds money, in the same ruled cell, at another row of the line above; money alone at that row is the
-    line's own.
+    Every amount band that holds money at the wrapped line's row names it with a kind of an amount the dictionary
+    knows (`当初予算額`; a unit such as `千円` is no kind), a kind the line above does not name, and also holds money, in
+    the same ruled cell, at another row of the line above; money alone at that row is the line's own.
     """
     height = max(g.y1 - g.y0 for g in item.glyphs)
     middle = (item.y0 + item.y1) / 2
     own, above = (middle - height / 2, middle + height / 2), (previous.y0 - height, previous.y0 + height)
 
-    def kind_word(glyph: Glyph) -> bool:
-        return not is_amount(glyph.text) and re.search(r'[^0-9,.\s円△▲\-]', glyph.text) is not None
-
     def centre(line: list[Glyph]) -> float:
         return (line[0].y0 + line[0].y1) / 2
 
-    def rows(band: Band, lo: float, hi: float, kinds: bool = False) -> list[list[Glyph]]:
-        return [line for line in lines(band.words)
-                if lo <= centre(line) <= hi and any(is_amount(g.text) for g in line)
-                and (not kinds or any(kind_word(g) for g in line))]
+    def kinds(band: Band, line: list[Glyph]) -> set[str]:
+        # The kinds of an amount the shared dictionary knows (`計`, `当初予算額`); a unit (`千円`) or other text is none.
+        found = (kind_heading(normalize(g.text), band.header[-1]) for g in line if not is_amount(g.text))
+        return {kind for kind in found if kind is not None}
+
+    def rows(band: Band, lo: float, hi: float) -> list[list[Glyph]]:
+        return [line for line in lines(band.words) if lo <= centre(line) <= hi and any(is_amount(g.text) for g in line)]
 
     def stacked(band: Band) -> bool:
-        # A band without rules draws no cells: two rows of it are not known to be one stack.
-        # The rows of one cell are one stack; a row in another ruled cell is another item's amount (adjacent
-        # subjects each print a kind-labelled amount in a cell of their own).
-        return bool(band.rows) and any(abs(centre(low) - centre(high)) > height / 2
-                                       and _cell(band, centre(low)) == _cell(band, centre(high))
-                                       for low in rows(band, *own, True) for high in rows(band, *above))
+        # A band without rules draws no cells: two rows of it are not known to be one stack. The rows of one cell
+        # are one stack, each naming its own kind; a row in another ruled cell, or one that names the kind the line
+        # above already names, is another item's amount.
+        return bool(band.rows) and any(
+            kinds(band, low) and abs(centre(low) - centre(high)) > height / 2
+            and _cell(band, centre(low)) == _cell(band, centre(high)) and not kinds(band, low) & kinds(band, high)
+            for low in rows(band, *own) for high in rows(band, *above))
 
     bands = [band for band in logical.bands if band.kind == 'amount' and rows(band, *own)]
     return bool(bands) and all(stacked(band) for band in bands)

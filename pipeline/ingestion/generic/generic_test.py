@@ -1252,12 +1252,12 @@ class SubjectContinuationTest(unittest.TestCase):
         levels, count = self.learned_levels([(40, (50, 60, 70)), (56, (56, 66, 76))])
         self.assertEqual(count, 6)
 
-    def stacked_under(self, rule_at):
+    def stacked_under(self, rule_at, own_label='当初予算額'):
         from types import SimpleNamespace
         from ingestion.generic.tree import stacked_under
         band = Band(120, 300, 1, ('予算現額',), [] if rule_at is None else [rule_at], 70, 300, kind='amount')
         band.words = [glyph('計', 125, 78, 10), glyph('100', 200, 78, 20),
-                      glyph('当初予算額', 125, 90, 40), glyph('50', 200, 90, 20)]
+                      glyph(own_label, 125, 90, 40), glyph('50', 200, 90, 20)]
         previous = SimpleNamespace(y0=78, y1=88)
         wrapped = SimpleNamespace(y0=90, y1=100, glyphs=[glyph('付金', 62, 90, 20)])
         return stacked_under(SimpleNamespace(bands=[band]), previous, wrapped)
@@ -1270,6 +1270,14 @@ class SubjectContinuationTest(unittest.TestCase):
 
     def test_amounts_of_a_band_without_rules_are_not_known_to_be_one_cell(self):
         self.assertFalse(self.stacked_under(rule_at=None))
+
+    def test_a_unit_is_no_kind_of_an_amount(self):
+        for label in ('千円', '(単位:千円)', '円'):
+            with self.subTest(label=label):
+                self.assertFalse(self.stacked_under(rule_at=140, own_label=label))
+
+    def test_a_kind_the_line_above_already_names_is_another_item(self):
+        self.assertFalse(self.stacked_under(rule_at=140, own_label='計'))
 
     def test_indented_codeless_lines_at_another_name_position_or_with_money_stay_separate(self):
         for options in ({'extra_x': 70}, {'extra_amount': '7'}):
