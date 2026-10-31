@@ -1252,6 +1252,22 @@ class SubjectContinuationTest(unittest.TestCase):
         levels, count = self.learned_levels([(40, (50, 60, 70)), (56, (56, 66, 76))])
         self.assertEqual(count, 6)
 
+    def stacked_under(self, rule_at):
+        from types import SimpleNamespace
+        from ingestion.generic.tree import stacked_under
+        band = Band(120, 300, 1, ('予算現額',), [rule_at], 70, 300, kind='amount')
+        band.words = [glyph('計', 125, 78, 10), glyph('100', 200, 78, 20),
+                      glyph('当初予算額', 125, 90, 40), glyph('50', 200, 90, 20)]
+        previous = SimpleNamespace(y0=78, y1=88)
+        wrapped = SimpleNamespace(y0=90, y1=100, glyphs=[glyph('付金', 62, 90, 20)])
+        return stacked_under(SimpleNamespace(bands=[band]), previous, wrapped)
+
+    def test_the_next_amount_of_one_cell_is_the_cell_of_the_line_above(self):
+        self.assertTrue(self.stacked_under(rule_at=140))
+
+    def test_amounts_in_two_ruled_cells_are_two_items(self):
+        self.assertFalse(self.stacked_under(rule_at=86))
+
     def test_indented_codeless_lines_at_another_name_position_or_with_money_stay_separate(self):
         for options in ({'extra_x': 70}, {'extra_amount': '7'}):
             with self.subTest(options=options):

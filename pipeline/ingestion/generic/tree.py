@@ -526,7 +526,8 @@ def stacked_under(logical: Logical, previous: Item, item: Item) -> bool:
     A cell stacks its amounts (`計` / `当初予算額` / `補正予算額`), one row each, so the second line of a long name
     shares its row with the next amount of the first line's cell (132063 後期高齢者医療広域連合納付金: `付金`).
     Every amount band that holds money at the wrapped line's row names it with a kind word of the cell (`当初予算額`),
-    and also holds money at the row of the line above; money alone at that row is the line's own.
+    and also holds money, in the same ruled cell, at another row of the line above; money alone at that row is the
+    line's own.
     """
     height = max(g.y1 - g.y0 for g in item.glyphs)
     kind_word = lambda g: not is_amount(g.text) and re.search(r'[^0-9,.\s円△▲\-]', g.text) is not None
@@ -536,7 +537,12 @@ def stacked_under(logical: Logical, previous: Item, item: Item) -> bool:
     middle = (item.y0 + item.y1) / 2
     own, above = (middle - height / 2, middle + height / 2), (previous.y0 - height, previous.y0 + height)
     bands = [band for band in logical.bands if band.kind == 'amount' and rows(band, *own)]
-    return bool(bands) and all(rows(band, *own, True) and rows(band, *above) for band in bands)
+    centre = lambda line: (line[0].y0 + line[0].y1) / 2
+    # The rows of one cell are one stack; a row in another ruled cell is another item's amount (adjacent subjects
+    # each print a kind-labelled amount in a cell of their own).
+    stacked = lambda band: any(abs(centre(low) - centre(high)) > height / 2 and _cell(band, centre(low)) == _cell(band, centre(high))
+                               for low in rows(band, *own, True) for high in rows(band, *above))
+    return bool(bands) and all(stacked(band) for band in bands)
 
 
 def line_limits(logicals: list[Logical]) -> dict[str, float]:
