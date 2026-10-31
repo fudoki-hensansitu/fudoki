@@ -530,18 +530,29 @@ def stacked_under(logical: Logical, previous: Item, item: Item) -> bool:
     line's own.
     """
     height = max(g.y1 - g.y0 for g in item.glyphs)
-    kind_word = lambda g: not is_amount(g.text) and re.search(r'[^0-9,.\s円△▲\-]', g.text) is not None
-    rows = lambda band, lo, hi, kinds=False: [line for line in lines(band.words)
-                                              if lo <= (line[0].y0 + line[0].y1) / 2 <= hi and any(is_amount(g.text) for g in line)
-                                              and (not kinds or any(kind_word(g) for g in line))]
     middle = (item.y0 + item.y1) / 2
     own, above = (middle - height / 2, middle + height / 2), (previous.y0 - height, previous.y0 + height)
+
+    def kind_word(glyph: Glyph) -> bool:
+        return not is_amount(glyph.text) and re.search(r'[^0-9,.\s円△▲\-]', glyph.text) is not None
+
+    def centre(line: list[Glyph]) -> float:
+        return (line[0].y0 + line[0].y1) / 2
+
+    def rows(band: Band, lo: float, hi: float, kinds: bool = False) -> list[list[Glyph]]:
+        return [line for line in lines(band.words)
+                if lo <= centre(line) <= hi and any(is_amount(g.text) for g in line)
+                and (not kinds or any(kind_word(g) for g in line))]
+
+    def stacked(band: Band) -> bool:
+        # A band without rules draws no cells: two rows of it are not known to be one stack.
+        # The rows of one cell are one stack; a row in another ruled cell is another item's amount (adjacent
+        # subjects each print a kind-labelled amount in a cell of their own).
+        return bool(band.rows) and any(abs(centre(low) - centre(high)) > height / 2
+                                       and _cell(band, centre(low)) == _cell(band, centre(high))
+                                       for low in rows(band, *own, True) for high in rows(band, *above))
+
     bands = [band for band in logical.bands if band.kind == 'amount' and rows(band, *own)]
-    centre = lambda line: (line[0].y0 + line[0].y1) / 2
-    # The rows of one cell are one stack; a row in another ruled cell is another item's amount (adjacent subjects
-    # each print a kind-labelled amount in a cell of their own).
-    stacked = lambda band: any(abs(centre(low) - centre(high)) > height / 2 and _cell(band, centre(low)) == _cell(band, centre(high))
-                               for low in rows(band, *own, True) for high in rows(band, *above))
     return bool(bands) and all(stacked(band) for band in bands)
 
 

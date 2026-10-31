@@ -1255,7 +1255,7 @@ class SubjectContinuationTest(unittest.TestCase):
     def stacked_under(self, rule_at):
         from types import SimpleNamespace
         from ingestion.generic.tree import stacked_under
-        band = Band(120, 300, 1, ('予算現額',), [rule_at], 70, 300, kind='amount')
+        band = Band(120, 300, 1, ('予算現額',), [] if rule_at is None else [rule_at], 70, 300, kind='amount')
         band.words = [glyph('計', 125, 78, 10), glyph('100', 200, 78, 20),
                       glyph('当初予算額', 125, 90, 40), glyph('50', 200, 90, 20)]
         previous = SimpleNamespace(y0=78, y1=88)
@@ -1267,6 +1267,9 @@ class SubjectContinuationTest(unittest.TestCase):
 
     def test_amounts_in_two_ruled_cells_are_two_items(self):
         self.assertFalse(self.stacked_under(rule_at=86))
+
+    def test_amounts_of_a_band_without_rules_are_not_known_to_be_one_cell(self):
+        self.assertFalse(self.stacked_under(rule_at=None))
 
     def test_indented_codeless_lines_at_another_name_position_or_with_money_stay_separate(self):
         for options in ({'extra_x': 70}, {'extra_amount': '7'}):
