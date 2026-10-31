@@ -1,0 +1,492 @@
+{
+  "jurisdiction": "130001",
+  "name": "東京都",
+  "official_url": "https://www.metro.tokyo.lg.jp/",
+  "selections": [
+    {
+      "target": {
+        "jurisdiction": "130001",
+        "fiscal_year": 2024,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和６年度東京都各会計歳入歳出決算附属書類（歳入歳出決算事項別明細書 一般会計・特別会計）",
+          "landing_url": "https://www.kaikeikanri.metro.tokyo.lg.jp/koukaikei-kessan/kessan/kantyoukaikaikei_kanendo",
+          "inspected_at": "2026-10-29T07:33:17.908432+00:00",
+          "files": [
+            {
+              "download_url": "https://www.kaikeikanri.metro.tokyo.lg.jp/documents/d/kaikeikanri/06kessan-2",
+              "sha256": "bf65f32e9b1e6a9aa46e02d06282f18748c57e1ced4f20016234a13e235f5844",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 116,
+                      "end": 505
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.kaikeikanri.metro.tokyo.lg.jp/documents/d/kaikeikanri/06kessan-3",
+              "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "特別区財政調整会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 4,
+                      "end": 5
+                    }
+                  ]
+                },
+                {
+                  "account": "地方消費税清算会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 10,
+                      "end": 11
+                    }
+                  ]
+                },
+                {
+                  "account": "小笠原諸島生活再建資金会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 16,
+                      "end": 17
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険事業会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 26,
+                      "end": 29
+                    }
+                  ]
+                },
+                {
+                  "account": "母子父子福祉貸付資金会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 36,
+                      "end": 37
+                    }
+                  ]
+                },
+                {
+                  "account": "心身障害者扶養年金会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 42,
+                      "end": 43
+                    }
+                  ]
+                },
+                {
+                  "account": "地方独立行政法人東京都立病院機構貸付等事業会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 50,
+                      "end": 53
+                    }
+                  ]
+                },
+                {
+                  "account": "中小企業設備導入等資金会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 58,
+                      "end": 61
+                    }
+                  ]
+                },
+                {
+                  "account": "林業・木材産業改善資金助成会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 66,
+                      "end": 67
+                    }
+                  ]
+                },
+                {
+                  "account": "沿岸漁業改善資金助成会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 72,
+                      "end": 73
+                    }
+                  ]
+                },
+                {
+                  "account": "と場会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 80,
+                      "end": 85
+                    }
+                  ]
+                },
+                {
+                  "account": "都営住宅等事業会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 96,
+                      "end": 103
+                    }
+                  ]
+                },
+                {
+                  "account": "都営住宅等保証金会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 110,
+                      "end": 111
+                    }
+                  ]
+                },
+                {
+                  "account": "都市開発資金会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 118,
+                      "end": 119
+                    }
+                  ]
+                },
+                {
+                  "account": "用地会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 126,
+                      "end": 127
+                    }
+                  ]
+                },
+                {
+                  "account": "公債費会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 134,
+                      "end": 137
+                    }
+                  ]
+                },
+                {
+                  "account": "臨海都市基盤整備事業会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 144,
+                      "end": 147
+                    }
+                  ]
+                },
+                {
+                  "account": "工業用水道事業清算会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 154,
+                      "end": 155
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "会計管理局「官庁会計による決算情報（過年度分）」の令和６年度。歳入歳出決算事項別明細書の歳出（文字PDF、単位円）。見開きで、左頁に款・項・目と予算現額（当初予算額・補正予算額・継続費及び繰越事業費繰越額・予備費支出及び流用増減・計）、節・細節の区分と金額、右頁に支出済額・翌年度繰越額（継続費逓次繰越・繰越明許費・事故繰越し）・不用額・備考。目の下に事業の階層はない。一般会計（物理505頁、印字＋8＝物理）の歳出は物理116-505頁（印字108-497頁、第1款議会費から第18款予備費・歳出合計 支出済額 8,724,585,235,292円まで）。特別会計18会計の歳出は別冊（特別会計）にあり、会計ごとの物理頁は scope のとおり（各会計とも会計の扉頁の後に歳入、歳出の順）。歳入・実質収支調書・財産調書は scope 外。同じ内容を東京都オープンデータカタログが XLSX（事項別明細 歳出、印刷様式のシート）でも出しているが、風土記の取り込みは CSV・PDF だけなので文字PDFを選んだ。XLSX は op20251218_06kessan_05_jikoubetu_saisyutu.xlsx（2026-10-29確認）。",
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/130001/2024/settlement-1.pdf",
+            "sha256": "bf65f32e9b1e6a9aa46e02d06282f18748c57e1ced4f20016234a13e235f5844",
+            "final_url": "https://www.kaikeikanri.metro.tokyo.lg.jp/documents/d/kaikeikanri/06kessan-2"
+          },
+          {
+            "key": "fiscal/source-selection/130001/2024/settlement-2.pdf",
+            "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391",
+            "final_url": "https://www.kaikeikanri.metro.tokyo.lg.jp/documents/d/kaikeikanri/06kessan-3"
+          }
+        ],
+        "archived_at": "2026-10-29T08:33:08.409Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "130001",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和７年度東京都各会計歳入歳出決算附属書類（歳入歳出決算事項別明細書 一般会計・特別会計）",
+          "landing_url": "https://www.kaikeikanri.metro.tokyo.lg.jp/koukaikei-kessan/kessan",
+          "inspected_at": "2026-10-29T07:33:17.908432+00:00",
+          "files": [
+            {
+              "download_url": "https://www.kaikeikanri.metro.tokyo.lg.jp/documents/d/kaikeikanri/02_sainyuu_saisyutu_kessann_meisai_ippan-pdf",
+              "sha256": "a36c26a7eccfdcb8a6551a98512f8671179e3b54c60b4193fe62a21cc94f9749",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 115,
+                      "end": 510
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.kaikeikanri.metro.tokyo.lg.jp/documents/d/kaikeikanri/03_sainyuu_saisyutu_kessann_meisai_tokubetu-pdf",
+              "sha256": "de771037f3ccdb64918aec203f4ae58fb7721c40708d0adc909e9a42fe1bc6ea",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "特別区財政調整会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 4,
+                      "end": 5
+                    }
+                  ]
+                },
+                {
+                  "account": "地方消費税清算会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 10,
+                      "end": 11
+                    }
+                  ]
+                },
+                {
+                  "account": "小笠原諸島生活再建資金会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 16,
+                      "end": 17
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険事業会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 26,
+                      "end": 29
+                    }
+                  ]
+                },
+                {
+                  "account": "母子父子福祉貸付資金会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 36,
+                      "end": 37
+                    }
+                  ]
+                },
+                {
+                  "account": "心身障害者扶養年金会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 42,
+                      "end": 43
+                    }
+                  ]
+                },
+                {
+                  "account": "地方独立行政法人東京都立病院機構貸付等事業会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 50,
+                      "end": 53
+                    }
+                  ]
+                },
+                {
+                  "account": "中小企業設備導入等資金会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 58,
+                      "end": 61
+                    }
+                  ]
+                },
+                {
+                  "account": "林業・木材産業改善資金助成会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 66,
+                      "end": 67
+                    }
+                  ]
+                },
+                {
+                  "account": "沿岸漁業改善資金助成会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 72,
+                      "end": 73
+                    }
+                  ]
+                },
+                {
+                  "account": "と場会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 80,
+                      "end": 85
+                    }
+                  ]
+                },
+                {
+                  "account": "都営住宅等事業会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 96,
+                      "end": 103
+                    }
+                  ]
+                },
+                {
+                  "account": "都営住宅等保証金会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 110,
+                      "end": 111
+                    }
+                  ]
+                },
+                {
+                  "account": "都市開発資金会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 118,
+                      "end": 119
+                    }
+                  ]
+                },
+                {
+                  "account": "用地会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 126,
+                      "end": 127
+                    }
+                  ]
+                },
+                {
+                  "account": "公債費会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 134,
+                      "end": 135
+                    }
+                  ]
+                },
+                {
+                  "account": "臨海都市基盤整備事業会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 142,
+                      "end": 145
+                    }
+                  ]
+                },
+                {
+                  "account": "工業用水道事業清算会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 152,
+                      "end": 153
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "会計管理局「東京都の決算情報」の最新年度（令和７年度）。掲載頁の見出しは「決算（見込み）」で、議会の認定前に調製・提出された決算書類。歳入歳出決算事項別明細書の歳出（文字PDF、単位円）。見開きで、左頁に款・項・目と予算現額（当初予算額・補正予算額・継続費及び繰越事業費繰越額・予備費支出及び流用増減・計）、節・細節の区分と金額、右頁に支出済額・翌年度繰越額（継続費逓次繰越・繰越明許費・事故繰越し）・不用額・備考。目の下に事業の階層はない。一般会計（物理510頁、印字＋7＝物理）の歳出は物理115-510頁（第1款議会費から第18款予備費・歳出合計まで）。特別会計18会計の歳出は別冊（特別会計）にあり、会計ごとの物理頁は scope のとおり（各会計とも会計の扉頁の後に歳入、歳出の順）。歳入・実質収支調書・財産調書は scope 外。同じ内容を東京都オープンデータカタログが XLSX（事項別明細 歳出、印刷様式のシート）でも出しているが、風土記の取り込みは CSV・PDF だけなので文字PDFを選んだ。令和７年度分の XLSX はカタログに未掲載（2026-10-29確認）。",
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/130001/2025/settlement-1.pdf",
+            "sha256": "a36c26a7eccfdcb8a6551a98512f8671179e3b54c60b4193fe62a21cc94f9749",
+            "final_url": "https://www.kaikeikanri.metro.tokyo.lg.jp/documents/d/kaikeikanri/02_sainyuu_saisyutu_kessann_meisai_ippan-pdf"
+          },
+          {
+            "key": "fiscal/source-selection/130001/2025/settlement-2.pdf",
+            "sha256": "de771037f3ccdb64918aec203f4ae58fb7721c40708d0adc909e9a42fe1bc6ea",
+            "final_url": "https://www.kaikeikanri.metro.tokyo.lg.jp/documents/d/kaikeikanri/03_sainyuu_saisyutu_kessann_meisai_tokubetu-pdf"
+          }
+        ],
+        "archived_at": "2026-10-29T08:33:15.626Z"
+      }
+    }
+  ],
+  "unresolved_candidates": []
+}

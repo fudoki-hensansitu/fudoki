@@ -38,6 +38,8 @@ BARE_CODE = re.compile(r'^[0-9０-９]{1,4}$')
 BRACKET_PAIRS = {')': '(', ']': '['}  # the closing and opening brackets of a bracketed amount
 CODE_LED = re.compile(r'^[0-9０-９]{1,4}[^0-9０-９,，.．]')  # a code joined to its name (`1商`)
 TRANSFER = re.compile(r'(流用|充用|充当|予備費支出|予備費充当|予備費[よか]り|第[0-9０-９]+節[へか]|^第[0-9０-９]+[款項目節]|^[○〇●]?同[款項目])')
+# The words that end a transfer remark begun on the line above (`…費` / `から流用 13,281,000円`).
+TRANSFER_TAIL = re.compile(r'^[へか]ら?(?:流用|充用)')
 # A transfer remark ends with the word (`…へ流用`): a line after it is another remark, even when it reaches the column's limit.
 ENDED_TRANSFER = re.compile(r'(?:流用|充用)$')
 # A kind word printed above an amount inside an amount column's cell (a stacked carry-over column).
@@ -407,12 +409,22 @@ def code_margins(logicals: list[Logical]) -> dict[str, set[int]]:
         for group in column_groups(logical):
             if group.subject:
                 continue
-            for line in lines([w for band in group.bands for w in band.words]):
-                label, _ = _split_line(line)
-                if label:
-                    coded = _split_code(normalize(text(label)))[0] is not None
-                    for margin in _margins(label):
-                        votes[group.axis, margin][0 if coded else 1] += 1
+            labels = [label for label in (_split_line(line)[0] for line in lines([w for band in group.bands for w in band.words])) if label]
+            coded = [_split_code(normalize(text(label)))[0] is not None for label in labels]
+            # A name wrapped around its code, printed further left in the same rule-bounded cell (`18` /
+            # `負担金補助` `及交付金`, 130001), is part of a numbered line: it does not vote that its start holds no code.
+            centre = lambda label: sum((g.y0 + g.y1) / 2 for g in label) / len(label)
+            # A cell listing several numbered lines (`1…` `2…` `3…` in a 備考 column) is a list, not one wrapped name.
+            cells: dict[tuple, list[float]] = defaultdict(list)
+            for label, numbered in zip(labels, coded):
+                if numbered and group.bands[0].rows:
+                    cells[label[0].page, _cell(group.bands[0], centre(label))].append(label[0].x0)
+            for label, numbered in zip(labels, coded):
+                starts = cells.get((label[0].page, _cell(group.bands[0], centre(label))), [])
+                if not numbered and len(starts) == 1 and starts[0] < label[0].x0 - 3:
+                    continue
+                for margin in _margins(label):
+                    votes[group.axis, margin][0 if numbered else 1] += 1
     margins: dict[str, set[int]] = defaultdict(set)
     for (axis, x), (coded, plain) in votes.items():
         if coded > plain:
@@ -506,6 +518,25 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
             code, name = None, line_text  # `66,000)`: the end of a bracketed amount (`(翌年度へ繰越明許費`), not an item `66`
         entries.append((label, money, code, name))
     return entries
+
+
+def stacked_under(logical: Logical, previous: Item, item: Item) -> bool:
+    """Whether the amounts printed on a name's wrapped line are the next rows of the amount cell the line above opens.
+
+    A cell stacks its amounts (`計` / `当初予算額` / `補正予算額`), one row each, so the second line of a long name
+    shares its row with the next amount of the first line's cell (132063 後期高齢者医療広域連合納付金: `付金`).
+    Every amount band that holds money at the wrapped line's row names it with a kind word of the cell (`当初予算額`),
+    and also holds money at the row of the line above; money alone at that row is the line's own.
+    """
+    height = max(g.y1 - g.y0 for g in item.glyphs)
+    kind_word = lambda g: not is_amount(g.text) and re.search(r'[^0-9,.\s円△▲\-]', g.text) is not None
+    rows = lambda band, lo, hi, kinds=False: [line for line in lines(band.words)
+                                              if lo <= (line[0].y0 + line[0].y1) / 2 <= hi and any(is_amount(g.text) for g in line)
+                                              and (not kinds or any(kind_word(g) for g in line))]
+    middle = (item.y0 + item.y1) / 2
+    own, above = (middle - height / 2, middle + height / 2), (previous.y0 - height, previous.y0 + height)
+    bands = [band for band in logical.bands if band.kind == 'amount' and rows(band, *own)]
+    return bool(bands) and all(rows(band, *own, True) and rows(band, *above) for band in bands)
 
 
 def line_limits(logicals: list[Logical]) -> dict[str, float]:
@@ -874,6 +905,19 @@ def join_transfer_tails(items_: list[Item], layout: dict | None) -> list[Item]:
                 and not is_plain_name(layout, previous)):
             previous.name += item.name
             previous.lines += item.lines
+            continue
+        if (previous is not None and previous.code is not None and not previous.amounts and item.code is None
+                and item.amounts and item.lines and previous.lines
+                and abs(item.lines[0][0].x0 - previous.lines[0][0].x0) <= 2
+                and 0 < item.lines[0][0].y0 - previous.lines[-1][0].y0 <= 2.5 * (previous.lines[-1][0].y1 - previous.lines[-1][0].y0)
+                and TRANSFER_TAIL.match(normalize(item.name)) and not is_plain_name(layout, previous)):
+            # The account a transfer came from, printed by its code on the line above the words and amount
+            # (`０１項０２土木技術支援・人材育成センター費` / `から流用 13,281,000円`, 130001): one note, not an item numbered 01.
+            previous.name = previous.code + previous.name + item.name
+            previous.code = None
+            previous.lines += item.lines
+            previous.amounts += item.amounts
+            previous.kinds += item.kinds
             continue
         result.append(item)
     return result
@@ -1697,7 +1741,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 previous = kept[-1] if kept else None
                 if (previous is not None and previous.code is not None and previous.name
                         and previous.role == item.role == 'node' and item.code is None and item.name
-                        and not item.amounts and id(item) not in column_amount_items
+                        and not item.amounts
+                        and (id(item) not in column_amount_items or stacked_under(logical, previous, item))
                         and not TOTAL.search(item.name) and item.page == previous.page
                         and (abs(item.indent - previous.indent) <= 3 if group.mode == 'indent' else
                              group.bands[item.level].header[-1] == group.bands[previous.level].header[-1])

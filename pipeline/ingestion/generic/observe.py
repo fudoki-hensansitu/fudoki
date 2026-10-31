@@ -190,6 +190,9 @@ def _dark(color) -> bool:
     return max(values) < .5
 
 
+SHOWN_SHARE = 4  # light rules at least this many times the dark ones are the table's (see `_segments`)
+
+
 def _segments(page, pdf: Path | None = None) -> list[Rule]:
     rules = []
     unread = []  # thin filled rectangles whose colour the reader gives as light
@@ -220,9 +223,13 @@ def _segments(page, pdf: Path | None = None) -> list[Rule]:
     left, right, top, bottom = left - 1, right + 1, top - 1, bottom + 1
     onpage = lambda x0, x1, y0, y1: x0 >= left and y0 >= top and x1 <= right and y1 <= bottom
     shown = [r for r in rules if onpage(r.x0, r.x1, r.y0, r.y1)]
-    unread = [r for r in unread if onpage(r['x0'], r['x1'], r['top'], r['bottom'])]
-    if pdf is not None and len(unread) >= 6 and not shown and _drawn_dark(pdf, page, unread):
-        rules = []  # what is drawn outside the page was all there was: the marks, not the table's rules
+    # A white sliver as long as the page (the trim of 130001's spread) is not a rule either: it shows no ink.
+    across = lambda r: r['bottom'] - r['top'] > .98 * page.height or r['x1'] - r['x0'] > .98 * page.width
+    unread = [r for r in unread if onpage(r['x0'], r['x1'], r['top'], r['bottom']) and not across(r)]
+    # A few dark strokes beside the table (a box drawn in the 備考 column, 130001) are not its rules either: the table's
+    # are still the light ones, when they far outnumber the dark.
+    if pdf is not None and len(unread) >= 6 and len(shown) * SHOWN_SHARE <= len(unread) and _drawn_dark(pdf, page, unread):
+        rules = rules if shown else []  # what is drawn outside the page was all there was: the marks, not the table's rules
         for rect in unread:  # a spot colour read as 1.0 draws black: the rule is there when the page shows ink on it
             x0, x1, y0, y1 = rect['x0'], rect['x1'], rect['top'], rect['bottom']
             rules.append(Rule((x0 + x1) / 2, y0, (x0 + x1) / 2, y1) if x1 - x0 < y1 - y0

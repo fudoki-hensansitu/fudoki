@@ -4,6 +4,614 @@ sources:
 - name: fiscal_pdf
   schema: ingestion
   tables:
+  - name: j130001_2024_settlement_coastal_fishery_improvement_fund_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: coastal-fishery-improvement-fund-expenditure
+      kind: amounts
+  - name: j130001_2024_settlement_coastal_fishery_improvement_fund_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: coastal-fishery-improvement-fund-expenditure
+      kind: nodes
+  - name: j130001_2024_settlement_disability_dependants_pension_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: disability-dependants-pension-expenditure
+      kind: amounts
+  - name: j130001_2024_settlement_disability_dependants_pension_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: disability-dependants-pension-expenditure
+      kind: nodes
+  - name: j130001_2024_settlement_forestry_improvement_fund_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: forestry-improvement-fund-expenditure
+      kind: amounts
+  - name: j130001_2024_settlement_forestry_improvement_fund_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: forestry-improvement-fund-expenditure
+      kind: nodes
+  - name: j130001_2024_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j130001_2024_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
+  - name: j130001_2024_settlement_industrial_water_liquidation_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: industrial-water-liquidation-expenditure
+      kind: amounts
+  - name: j130001_2024_settlement_industrial_water_liquidation_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: industrial-water-liquidation-expenditure
+      kind: nodes
+  - name: j130001_2024_settlement_land_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: land-expenditure
+      kind: amounts
+  - name: j130001_2024_settlement_land_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: land-expenditure
+      kind: nodes
+  - name: j130001_2024_settlement_local_consumption_tax_settlement_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: local-consumption-tax-settlement-expenditure
+      kind: amounts
+  - name: j130001_2024_settlement_local_consumption_tax_settlement_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: local-consumption-tax-settlement-expenditure
+      kind: nodes
+  - name: j130001_2024_settlement_metropolitan_hospital_loan_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: metropolitan-hospital-loan-expenditure
+      kind: amounts
+  - name: j130001_2024_settlement_metropolitan_hospital_loan_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: metropolitan-hospital-loan-expenditure
+      kind: nodes
+  - name: j130001_2024_settlement_metropolitan_housing_deposit_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: metropolitan-housing-deposit-expenditure
+      kind: amounts
+  - name: j130001_2024_settlement_metropolitan_housing_deposit_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: metropolitan-housing-deposit-expenditure
+      kind: nodes
+  - name: j130001_2024_settlement_metropolitan_housing_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: metropolitan-housing-expenditure
+      kind: amounts
+  - name: j130001_2024_settlement_metropolitan_housing_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: metropolitan-housing-expenditure
+      kind: nodes
+  - name: j130001_2024_settlement_national_health_insurance_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-insurance-expenditure
+      kind: amounts
+  - name: j130001_2024_settlement_national_health_insurance_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-insurance-expenditure
+      kind: nodes
+  - name: j130001_2024_settlement_ogasawara_livelihood_reconstruction_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: ogasawara-livelihood-reconstruction-expenditure
+      kind: amounts
+  - name: j130001_2024_settlement_ogasawara_livelihood_reconstruction_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: ogasawara-livelihood-reconstruction-expenditure
+      kind: nodes
+  - name: j130001_2024_settlement_public_debt_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: public-debt-expenditure
+      kind: amounts
+  - name: j130001_2024_settlement_public_debt_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: public-debt-expenditure
+      kind: nodes
+  - name: j130001_2024_settlement_single_parent_welfare_loan_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: single-parent-welfare-loan-expenditure
+      kind: amounts
+  - name: j130001_2024_settlement_single_parent_welfare_loan_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: single-parent-welfare-loan-expenditure
+      kind: nodes
+  - name: j130001_2024_settlement_slaughterhouse_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: slaughterhouse-expenditure
+      kind: amounts
+  - name: j130001_2024_settlement_slaughterhouse_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: slaughterhouse-expenditure
+      kind: nodes
+  - name: j130001_2024_settlement_sme_equipment_fund_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: sme-equipment-fund-expenditure
+      kind: amounts
+  - name: j130001_2024_settlement_sme_equipment_fund_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: sme-equipment-fund-expenditure
+      kind: nodes
+  - name: j130001_2024_settlement_urban_development_fund_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: urban-development-fund-expenditure
+      kind: amounts
+  - name: j130001_2024_settlement_urban_development_fund_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: urban-development-fund-expenditure
+      kind: nodes
+  - name: j130001_2024_settlement_ward_fiscal_adjustment_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: ward-fiscal-adjustment-expenditure
+      kind: amounts
+  - name: j130001_2024_settlement_ward_fiscal_adjustment_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: ward-fiscal-adjustment-expenditure
+      kind: nodes
+  - name: j130001_2024_settlement_waterfront_infrastructure_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: waterfront-infrastructure-expenditure
+      kind: amounts
+  - name: j130001_2024_settlement_waterfront_infrastructure_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: waterfront-infrastructure-expenditure
+      kind: nodes
+  - name: j130001_2025_settlement_coastal_fishery_improvement_fund_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: coastal-fishery-improvement-fund-expenditure
+      kind: amounts
+  - name: j130001_2025_settlement_coastal_fishery_improvement_fund_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: coastal-fishery-improvement-fund-expenditure
+      kind: nodes
+  - name: j130001_2025_settlement_disability_dependants_pension_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: disability-dependants-pension-expenditure
+      kind: amounts
+  - name: j130001_2025_settlement_disability_dependants_pension_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: disability-dependants-pension-expenditure
+      kind: nodes
+  - name: j130001_2025_settlement_forestry_improvement_fund_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: forestry-improvement-fund-expenditure
+      kind: amounts
+  - name: j130001_2025_settlement_forestry_improvement_fund_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: forestry-improvement-fund-expenditure
+      kind: nodes
+  - name: j130001_2025_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j130001_2025_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
+  - name: j130001_2025_settlement_industrial_water_liquidation_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: industrial-water-liquidation-expenditure
+      kind: amounts
+  - name: j130001_2025_settlement_industrial_water_liquidation_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: industrial-water-liquidation-expenditure
+      kind: nodes
+  - name: j130001_2025_settlement_land_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: land-expenditure
+      kind: amounts
+  - name: j130001_2025_settlement_land_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: land-expenditure
+      kind: nodes
+  - name: j130001_2025_settlement_local_consumption_tax_settlement_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: local-consumption-tax-settlement-expenditure
+      kind: amounts
+  - name: j130001_2025_settlement_local_consumption_tax_settlement_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: local-consumption-tax-settlement-expenditure
+      kind: nodes
+  - name: j130001_2025_settlement_metropolitan_hospital_loan_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: metropolitan-hospital-loan-expenditure
+      kind: amounts
+  - name: j130001_2025_settlement_metropolitan_hospital_loan_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: metropolitan-hospital-loan-expenditure
+      kind: nodes
+  - name: j130001_2025_settlement_metropolitan_housing_deposit_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: metropolitan-housing-deposit-expenditure
+      kind: amounts
+  - name: j130001_2025_settlement_metropolitan_housing_deposit_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: metropolitan-housing-deposit-expenditure
+      kind: nodes
+  - name: j130001_2025_settlement_metropolitan_housing_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: metropolitan-housing-expenditure
+      kind: amounts
+  - name: j130001_2025_settlement_metropolitan_housing_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: metropolitan-housing-expenditure
+      kind: nodes
+  - name: j130001_2025_settlement_national_health_insurance_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-insurance-expenditure
+      kind: amounts
+  - name: j130001_2025_settlement_national_health_insurance_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-insurance-expenditure
+      kind: nodes
+  - name: j130001_2025_settlement_ogasawara_livelihood_reconstruction_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: ogasawara-livelihood-reconstruction-expenditure
+      kind: amounts
+  - name: j130001_2025_settlement_ogasawara_livelihood_reconstruction_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: ogasawara-livelihood-reconstruction-expenditure
+      kind: nodes
+  - name: j130001_2025_settlement_public_debt_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: public-debt-expenditure
+      kind: amounts
+  - name: j130001_2025_settlement_public_debt_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: public-debt-expenditure
+      kind: nodes
+  - name: j130001_2025_settlement_single_parent_welfare_loan_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: single-parent-welfare-loan-expenditure
+      kind: amounts
+  - name: j130001_2025_settlement_single_parent_welfare_loan_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: single-parent-welfare-loan-expenditure
+      kind: nodes
+  - name: j130001_2025_settlement_slaughterhouse_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: slaughterhouse-expenditure
+      kind: amounts
+  - name: j130001_2025_settlement_slaughterhouse_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: slaughterhouse-expenditure
+      kind: nodes
+  - name: j130001_2025_settlement_sme_equipment_fund_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: sme-equipment-fund-expenditure
+      kind: amounts
+  - name: j130001_2025_settlement_sme_equipment_fund_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: sme-equipment-fund-expenditure
+      kind: nodes
+  - name: j130001_2025_settlement_urban_development_fund_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: urban-development-fund-expenditure
+      kind: amounts
+  - name: j130001_2025_settlement_urban_development_fund_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: urban-development-fund-expenditure
+      kind: nodes
+  - name: j130001_2025_settlement_ward_fiscal_adjustment_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: ward-fiscal-adjustment-expenditure
+      kind: amounts
+  - name: j130001_2025_settlement_ward_fiscal_adjustment_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: ward-fiscal-adjustment-expenditure
+      kind: nodes
+  - name: j130001_2025_settlement_waterfront_infrastructure_expenditure_amounts
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: waterfront-infrastructure-expenditure
+      kind: amounts
+  - name: j130001_2025_settlement_waterfront_infrastructure_expenditure_nodes
+    meta:
+      jurisdiction: '130001'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: waterfront-infrastructure-expenditure
+      kind: nodes
   - name: j131024_2024_settlement_chuo_care_settlement_amounts
     meta:
       jurisdiction: '131024'
@@ -1667,6 +2275,86 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: expenditure-settlement-1
+      kind: nodes
+  - name: j132063_2024_settlement_care_insurance_expenditure_amounts
+    meta:
+      jurisdiction: '132063'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: care-insurance-expenditure
+      kind: amounts
+  - name: j132063_2024_settlement_care_insurance_expenditure_nodes
+    meta:
+      jurisdiction: '132063'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: care-insurance-expenditure
+      kind: nodes
+  - name: j132063_2024_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '132063'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j132063_2024_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '132063'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
+  - name: j132063_2024_settlement_late_elderly_medical_expenditure_amounts
+    meta:
+      jurisdiction: '132063'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: late-elderly-medical-expenditure
+      kind: amounts
+  - name: j132063_2024_settlement_late_elderly_medical_expenditure_nodes
+    meta:
+      jurisdiction: '132063'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: late-elderly-medical-expenditure
+      kind: nodes
+  - name: j132063_2024_settlement_national_health_insurance_expenditure_amounts
+    meta:
+      jurisdiction: '132063'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-insurance-expenditure
+      kind: amounts
+  - name: j132063_2024_settlement_national_health_insurance_expenditure_nodes
+    meta:
+      jurisdiction: '132063'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-insurance-expenditure
+      kind: nodes
+  - name: j132063_2024_settlement_public_land_expenditure_amounts
+    meta:
+      jurisdiction: '132063'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: public-land-expenditure
+      kind: amounts
+  - name: j132063_2024_settlement_public_land_expenditure_nodes
+    meta:
+      jurisdiction: '132063'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: public-land-expenditure
       kind: nodes
   - name: j132063_2025_settlement_general_expenditure_amounts
     meta:
