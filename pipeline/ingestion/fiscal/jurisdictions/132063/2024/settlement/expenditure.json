@@ -241,13 +241,52 @@
           "table_id": "public-land-expenditure"
         }
       ]
+    },
+    {
+      "id": "racing-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "6be311f16918ee56342d639571cee1be3e0c654536ac9643ab00a430c4d38e54"
+        }
+      ],
+      "options": {
+        "account": "競走事業会計",
+        "table_id": "racing-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "racing-expenditure"
+        }
+      ]
     }
   ],
   "tables": [
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "078c187fb94ce93b6782096eeca9d4ecda5709468cde29708a9e1160e7da5f92",
+      "input_fingerprint": "deb7688f9061f6d0f8e7bd45384c79a0f96b915ee87d38fcf018e554600b5b88",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -277,7 +316,7 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "41adc40c3cf3bb6d42342398cdf32c26e73c1ec2698b8a7578bdbb9c234cc027",
+      "input_fingerprint": "195f41bc891d0c0c6ee60bb0ac35f7346150fe68b9f904086b9bb62d301d5720",
       "account": "国民健康保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -307,7 +346,7 @@
     {
       "table_id": "late-elderly-medical-expenditure",
       "conversion_id": "late-elderly-medical-settlement",
-      "input_fingerprint": "a27897f76554f4b3b572bc0d31d0e650e0523bf5dc687eab3f646b625abe39b7",
+      "input_fingerprint": "810c8d004269d3e352f9d1d68a10d2da1c47ed7ed2c02702730b2670bdfc80b5",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -320,16 +359,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/132063/2024/settlement/expenditure/late-elderly-medical-expenditure-nodes.parquet",
-          "sha256": "bc04fa3dbba341783ae8e53fdef27708e1e48393f545eed5ce44018674b0657d",
-          "bytes": 6128
+          "sha256": "5011cf8194f403b1aac271398fbe411338e3f48d54afe28beacba083717d5f1d",
+          "bytes": 6068
         },
-        "row_count": 70
+        "row_count": 69
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132063/2024/settlement/expenditure/late-elderly-medical-expenditure-amounts.parquet",
-          "sha256": "22102ff93edb99b69e0a483cbe930f846911cbb264235e561c75d244dcefab40",
-          "bytes": 5983
+          "sha256": "d3d11121670710aed8efd2223c9614c3ef3c0696a08a540b03dd1e870f85a181",
+          "bytes": 5968
         },
         "row_count": 254
       }
@@ -337,7 +376,7 @@
     {
       "table_id": "care-insurance-expenditure",
       "conversion_id": "care-insurance-settlement",
-      "input_fingerprint": "bc0c0372255491eb811ed17b3d3c7add7fc2e9fb092a6316e9f8946b0e2b4d8e",
+      "input_fingerprint": "a8678f6b28a7d78676a3664be28d8d2469397d34ff6c9b08ff5e72f1fc5477ba",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -367,7 +406,7 @@
     {
       "table_id": "public-land-expenditure",
       "conversion_id": "public-land-settlement",
-      "input_fingerprint": "af082da247829a0454ec26e51a9949708993520df3ca0120bfd09c59bd047e20",
+      "input_fingerprint": "27a4c39c8298b2b2b14f686801d683b3c3817d8ef04334933cc3cfd215efdfb5",
       "account": "公共用地特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -392,6 +431,36 @@
           "bytes": 3713
         },
         "row_count": 72
+      }
+    },
+    {
+      "table_id": "racing-expenditure",
+      "conversion_id": "racing-settlement",
+      "input_fingerprint": "343c7664fbf68bf42f56dbdb32ba32f00543ce2c0ece5d43130c24fdc9ff2822",
+      "account": "競走事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
+        "金額の単位は column mark 5頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 3 種（112 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・支出済額(執行率%)→支出済額・翌年度繰越額継続費逓次繰越繰越明許費事故繰越し→翌年度繰越額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132063/2024/settlement/expenditure/racing-expenditure-nodes.parquet",
+          "sha256": "1d3f94b025ae399b61b0276d76212c52020e8ade95c95e0ff44a76204bcb0ada",
+          "bytes": 11260
+        },
+        "row_count": 168
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132063/2024/settlement/expenditure/racing-expenditure-amounts.parquet",
+          "sha256": "676c3b88b496c23d46d938cbb3a6f1589546d4df45f09e7485584a6ac2383381",
+          "bytes": 12244
+        },
+        "row_count": 327
       }
     }
   ]

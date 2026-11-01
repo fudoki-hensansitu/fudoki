@@ -520,6 +520,43 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
     return entries
 
 
+def stacked_under(logical: Logical, previous: Item, item: Item) -> bool:
+    """Whether the amounts printed on a name's wrapped line are the next rows of the amount cell the line above opens.
+
+    A cell stacks its amounts (`計` / `当初予算額` / `補正予算額`), one row each, so the second line of a long name
+    shares its row with the next amount of the first line's cell (132063 後期高齢者医療広域連合納付金: `付金`).
+    Every amount band that holds money at the wrapped line's row names it with a kind of an amount the dictionary
+    knows (`当初予算額`; a unit such as `千円` is no kind), a kind the line above does not name, and also holds money, in
+    the same ruled cell, at another row of the line above; money alone at that row is the line's own.
+    """
+    height = max(g.y1 - g.y0 for g in item.glyphs)
+    middle = (item.y0 + item.y1) / 2
+    own, above = (middle - height / 2, middle + height / 2), (previous.y0 - height, previous.y0 + height)
+
+    def centre(line: list[Glyph]) -> float:
+        return (line[0].y0 + line[0].y1) / 2
+
+    def kinds(band: Band, line: list[Glyph]) -> set[str]:
+        # The kinds of an amount the shared dictionary knows (`計`, `当初予算額`); a unit (`千円`) or other text is none.
+        found = (kind_heading(normalize(g.text), band.header[-1]) for g in line if not is_amount(g.text))
+        return {kind for kind in found if kind is not None}
+
+    def rows(band: Band, lo: float, hi: float) -> list[list[Glyph]]:
+        return [line for line in lines(band.words) if lo <= centre(line) <= hi and any(is_amount(g.text) for g in line)]
+
+    def stacked(band: Band) -> bool:
+        # A band without rules draws no cells: two rows of it are not known to be one stack. The rows of one cell
+        # are one stack, each naming its own kind; a row in another ruled cell, or one that names the kind the line
+        # above already names, is another item's amount.
+        return bool(band.rows) and any(
+            kinds(band, low) and abs(centre(low) - centre(high)) > height / 2
+            and _cell(band, centre(low)) == _cell(band, centre(high)) and not kinds(band, low) & kinds(band, high)
+            for low in rows(band, *own) for high in rows(band, *above))
+
+    bands = [band for band in logical.bands if band.kind == 'amount' and rows(band, *own)]
+    return bool(bands) and all(stacked(band) for band in bands)
+
+
 def line_limits(logicals: list[Logical]) -> dict[str, float]:
     """Per breakdown axis, the right end of the longest label line printed anywhere in the document.
 
@@ -1722,7 +1759,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 previous = kept[-1] if kept else None
                 if (previous is not None and previous.code is not None and previous.name
                         and previous.role == item.role == 'node' and item.code is None and item.name
-                        and not item.amounts and id(item) not in column_amount_items
+                        and not item.amounts
+                        and (id(item) not in column_amount_items or stacked_under(logical, previous, item))
                         and not TOTAL.search(item.name) and item.page == previous.page
                         and (abs(item.indent - previous.indent) <= 3 if group.mode == 'indent' else
                              group.bands[item.level].header[-1] == group.bands[previous.level].header[-1])
