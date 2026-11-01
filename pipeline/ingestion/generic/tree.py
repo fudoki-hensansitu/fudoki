@@ -1949,7 +1949,13 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
     # 款 come from titles in this document: the 項・目 columns of untitled tables sit one level down.
     titled = any(i.level == -1 for _, ordered, found in all_items for g in ordered if g.subject for i in found[id(g)])
     # Per amount column: (item, kind word) of a stacked kind word left at the foot of a page with its amount still to come.
-    carried: dict[str, tuple[Item, str]] = {}
+    carried: dict[str, tuple[Item, str | None, list[Glyph]]] = {}
+
+    def drop_carried_round(entry) -> None:
+        # A round printed at the foot of a page that no amount follows: its number is no amount.
+        if entry is not None and entry[1] is not None and SUPPLEMENT_ROUND.fullmatch(entry[1]):
+            unpaid_rounds.extend(entry[2])
+
     for logical, ordered, found in all_items:
         # A subject item opens at the top of its rule-bounded row: its label may be
         # centred lower than the first remark of its block.
@@ -2087,6 +2093,9 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 for label, run, heading in item.kinds:
                     remarks.append({'kind': 'kind line', 'target': item, 'heading': heading, 'label': label,
                                     'runs': [run], 'unit': logical.unit})
+            present = {'／'.join(band.header) for band in logical.bands if band.kind == 'amount'}
+            for header_ in [h for h in carried if h not in present]:
+                drop_carried_round(carried.pop(header_))  # the column does not go on on this page
             for band in logical.bands:
                 if band.kind != 'amount':
                     continue
@@ -2144,10 +2153,17 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                         # A cell that runs on with its kind word printed on the next page (`第５次補正` / `△56,880,000`
                         # in the first row) is the open item's too.
                         cell = _cell(band, money[0].y0)
-                        if carry[1] is not None:
-                            target, stacked, stacked_label = carry[0], (carry[1], cell), carry[2]
-                        elif stacked is not None and stacked[1] == cell:
+                        if stacked is not None and stacked[1] == cell:
+                            # Another kind word opens this cell: the one carried over was never paid.
+                            drop_carried_round(carry)
                             target = carry[0]
+                        elif carry[1] is not None:
+                            if unpaid and SUPPLEMENT_ROUND.fullmatch(stacked[0]):
+                                unpaid_rounds.extend(stacked_label)  # a round of an earlier cell, never paid
+                            target, stacked, stacked_label = carry[0], (carry[1], cell), carry[2]
+                            unpaid = False
+                    elif carry is not None:
+                        drop_carried_round(carry)  # not at the top of the page: the cell did not run on
                     carry = None
                     if target is not None and target.role == 'total':
                         notes.append({'kind': 'total amount', 'page': money[0].page, 'text': candidate,
@@ -2191,6 +2207,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                                             'runs': [money], 'unit': logical.unit_of(header)})
                     amounts.append(_amount(target.key, header, money, logical.unit_of(header)))
                     previous = (target, _cell(band, y))
+                drop_carried_round(carry)  # no amount line in this column at all
                 if unpaid and previous is not None and stacked[1] == previous[1]:
                     carried['／'.join(band.header)] = (previous[0], stacked[0], stacked_label)
                 else:
@@ -2200,6 +2217,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     if previous is not None and previous[1][1] >= band.body_bottom - .5:
                         # The cell at the foot may run on: its kind word, printed again on the next page, is the item's.
                         carried['／'.join(band.header)] = (previous[0], None, [])
+    for entry in carried.values():
+        drop_carried_round(entry)  # the document ends with a round no amount follows
     for target, header, run, unit in annotations:
         amounts.append(_amount(target.key, header, run, unit))
     marked = []
