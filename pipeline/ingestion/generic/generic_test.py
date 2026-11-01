@@ -562,6 +562,15 @@ class RepairTest(unittest.TestCase):
         repair_positions(page, report)
         self.assertEqual(sorted(w.text for w in page.words), ['0', '13,', '272'])
 
+    def test_a_round_of_a_supplementary_budget_set_against_its_amount_is_split_inside_the_word(self):
+        from ingestion.generic.repair import Report, repair_positions
+        for printed, split in (('第３次補正42,000', ['42,000', '第３次補正']), ('第３次補正△500', ['△500', '第３次補正']),
+                               ('第３次補正500', ['500', '第３次補正'])):
+            with self.subTest(printed=printed):
+                page = self.page([(printed, 100, 100, 160, 109)])
+                repair_positions(page, Report())
+                self.assertEqual(sorted(w.text for w in page.words), sorted(split))
+
     def test_a_character_drawn_as_two_overlapping_glyphs_becomes_one_word(self):
         from ingestion.generic.repair import Report, repair_positions
         page = self.page([('八', 676.6, 130.5, 685.9, 139.2), ('刀', 676.6, 130.5, 684.4, 139.2)])

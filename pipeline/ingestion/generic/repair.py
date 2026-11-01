@@ -32,6 +32,7 @@ REPAIRS = Path(__file__).resolve().parents[1] / 'lib/text_repairs.csv'
 FINGERPRINT_RESOURCES = ['ingestion/lib/text_repairs.csv']
 NUMERIC = re.compile(r'^[0-9,△▲\-]+$')
 # A note's words with its amount set against them (`繰越事業費不用額55,753,516円`): the words and the amount.
+ROUND_GLUED_AMOUNT = re.compile(r'^(第[0-9０-９]+次補正)([△▲]?[0-9]{1,3}(?:,[0-9]{3})*円?)$')
 GLUED_AMOUNT = re.compile(r'^(.*[^0-9,０-９△▲\s])([△▲]?[0-9]{1,3}(?:,[0-9]{3})+円?)$')
 SIGN_INSIDE = re.compile(r'(?<=[^\s△▲(（\[「［])[△▲](?=[0-9])')
 # Health criteria (one place). A document is broken when known multi-character
@@ -281,6 +282,10 @@ def _amount_start(text: str) -> int:
     found = SIGN_INSIDE.search(text)
     if found:
         return found.start()
+    # The round of a supplementary budget (`第３次補正`) with its amount set against it, whatever the amount's size.
+    round_glued = ROUND_GLUED_AMOUNT.match(text)
+    if round_glued:
+        return round_glued.start(2)
     glued = GLUED_AMOUNT.match(text)
     if glued:
         from ingestion.generic.notes import kind_of  # only the words of a note keep an amount apart from them
