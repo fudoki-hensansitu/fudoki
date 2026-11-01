@@ -142,6 +142,12 @@ class RemarkTreeTest(unittest.TestCase):
         builder, _ = remarks([('1 都市計画道路3・4・', 101, None), ('8号線整備経費', 110, '55,650,940')], [1, 10])
         self.assertEqual(tree(builder), [('備考', 1, '都市計画道路3・4・8号線整備経費', '目', {'備考': '55,650,940'})])
 
+    def test_a_bare_number_ends_the_wrapped_name_above(self):
+        builder, _ = remarks([('ビジネスフォン借上料その', 110, None), ('1', 110, '36,960'),
+                              ('ビジネスフォン借上料その', 110, None), ('2', 110, '16,368')], [1, 10])
+        self.assertEqual(tree(builder), [('備考', 2, 'ビジネスフォン借上料その1', '目', {'備考': '36,960'}),
+                                         ('備考', 2, 'ビジネスフォン借上料その2', '目', {'備考': '16,368'})])
+
     def test_a_carry_over_heading_is_a_section_beside_the_items(self):
         builder, _ = remarks([('2 幹線道路改修経費', 101, '100'), ('工事費', 110, '100'),
                               ('（前年度繰越明許費）', 108, '50'), ('委託料', 110, '50')], [1, 10])

@@ -968,6 +968,9 @@ def remark_line(builder: Builder, column: Column, line: Line, levels: list[float
                               and (bool(amounts) or unclosed(previous[1].name)))
     # A name cut after a separator (``3・4・``) goes on, even when its next line starts with a digit.
     continues = continues or (open_item and previous[1].name.endswith(('•', '・', '･', '·')))
+    # A bare number has no name to start an item with: it ends a wrapped name (``…借上料その`` ／ ``1``).
+    code, rest = parse_code(text)
+    continues = continues or (open_item and code is not None and not rest)
     if CARRY.match(name):
         depth, indented, continues = 1, False, False
     if previous is not None and (indented or continues):

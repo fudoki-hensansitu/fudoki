@@ -2564,22 +2564,6 @@ sources:
       direction: expenditure
       table_id: expenditure-settlement-11
       kind: nodes
-  - name: j132101_2025_settlement_expenditure_settlement_12_amounts
-    meta:
-      jurisdiction: '132101'
-      fiscal_year: 2025
-      document_kind: settlement
-      direction: expenditure
-      table_id: expenditure-settlement-12
-      kind: amounts
-  - name: j132101_2025_settlement_expenditure_settlement_12_nodes
-    meta:
-      jurisdiction: '132101'
-      fiscal_year: 2025
-      document_kind: settlement
-      direction: expenditure
-      table_id: expenditure-settlement-12
-      kind: nodes
   - name: j132101_2025_settlement_expenditure_settlement_13_amounts
     meta:
       jurisdiction: '132101'
@@ -2643,22 +2627,6 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: expenditure-settlement-16
-      kind: nodes
-  - name: j132101_2025_settlement_expenditure_settlement_17_amounts
-    meta:
-      jurisdiction: '132101'
-      fiscal_year: 2025
-      document_kind: settlement
-      direction: expenditure
-      table_id: expenditure-settlement-17
-      kind: amounts
-  - name: j132101_2025_settlement_expenditure_settlement_17_nodes
-    meta:
-      jurisdiction: '132101'
-      fiscal_year: 2025
-      document_kind: settlement
-      direction: expenditure
-      table_id: expenditure-settlement-17
       kind: nodes
   - name: j132101_2025_settlement_expenditure_settlement_18_amounts
     meta:
@@ -2771,22 +2739,6 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: expenditure-settlement-5
-      kind: nodes
-  - name: j132101_2025_settlement_expenditure_settlement_6_amounts
-    meta:
-      jurisdiction: '132101'
-      fiscal_year: 2025
-      document_kind: settlement
-      direction: expenditure
-      table_id: expenditure-settlement-6
-      kind: amounts
-  - name: j132101_2025_settlement_expenditure_settlement_6_nodes
-    meta:
-      jurisdiction: '132101'
-      fiscal_year: 2025
-      document_kind: settlement
-      direction: expenditure
-      table_id: expenditure-settlement-6
       kind: nodes
   - name: j132101_2025_settlement_expenditure_settlement_7_amounts
     meta:
