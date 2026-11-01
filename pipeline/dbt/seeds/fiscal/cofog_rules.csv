@@ -8,7 +8,7 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 -813,keyword-fiscal-admin,,一般会計,,,,,財政管理|会計管理|監査,contains,,assigned,01.1.2,retained,目,,財政・会計の管理と監査を UN COFOG 01.1.2 財政・財務業務に分類する。名称からの判断で定義の確認が要るため暫定とする。,true
 -812,keyword-property-admin,,一般会計,,,,,財産管理|庁舎管理|電子計算|情報管理,contains,,assigned,01.3.3,retained,目,,財産・庁舎・情報システムの管理を UN COFOG 01.3.3 その他一般サービスに分類する。,false
 -811,keyword-env-admin,,一般会計,,,,,環境清掃総務|環境清掃職員,contains,,assigned,05.1,retained,目,,環境清掃の総務・職員経費を UN COFOG 05.1 廃棄物管理に分類する。名称からの判断で定義の確認が要るため暫定とする。,true
--810,keyword-health-prevention,,一般会計,,,,,予防費|感染症|保健所予防|母子保健|保健栄養,contains,,assigned,07.4,retained,目,,予防・感染症対策・母子保健を UN COFOG 07.4 公衆衛生サービスに分類する。名称からの判断で定義の確認が要るため暫定とする。,true
+-810,keyword-health-prevention,,一般会計,,,,,予防費|予防接種|感染症|保健所予防|母子保健|保健栄養,contains,,assigned,07.4,retained,目,,予防・予防接種・感染症対策・母子保健を UN COFOG 07.4 公衆衛生サービスに分類する。名称からの判断で定義の確認が要るため暫定とする。,true
 -809,keyword-welfare-admin,,一般会計,,,社会福祉費,,社会福祉総務|福祉総務,contains,,assigned,10.9,retained,目,,社会福祉の政策全体の運営を UN COFOG 10.9 他に分類されない社会保護に分類する。対象者別の総務（障害者・高齢者・児童）は先の規則が取り、ここは項が社会福祉費のものだけ当てる。,false
 -807,keyword-personnel,,一般会計,,,,,人事管理|福利厚生,contains,,assigned,01.3.1,retained,目,,人事・福利厚生の管理を UN COFOG 01.3.1 一般人事サービスに分類する。名称からの判断で定義の確認が要るため暫定とする。教育総務費の福利厚生は項で限定した先の規則が取る。,true
 -806,keyword-grant-refund-unknown-function,,一般会計,,,,,国都支出金返納金|国庫支出金返納金|都支出金返納金,contains,,unclassifiable,,retained,目,,返す元の補助事業の機能が名前からは決まらないため分類不能。金額は保持する。,false
@@ -51,7 +51,7 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 -768,keyword-funeral,,一般会計,,,,,葬祭,contains,,assigned,01.3,retained,目,,葬祭事務を一般公共サービスに分類する。,true
 -767,keyword-street-lighting,,一般会計,,,,,街路照明,contains,,assigned,06.4,retained,目,,街路照明を UN COFOG 06.4 街路照明に分類する。名称からの判断で定義の確認が要るため暫定とする。,true
 -766,keyword-road,,一般会計,,,,,道路|橋りょう|橋梁|街路|交通安全|私道助成,contains,,assigned,04.5.1,retained,目,,道路・橋梁・交通安全を道路輸送に分類する。,false
--765,keyword-road-contracted,,一般会計,,,道路橋りょう費|道路橋梁費,,受託事業,contains,,assigned,04.5.1,retained,目,,道路橋りょう費の受託事業を道路輸送に分類する。,false
+-765,keyword-road-contracted,,一般会計,,,道路橋りょう費|道路橋りよう費|道路橋梁費,,受託事業,contains,,assigned,04.5.1,retained,目,,道路橋りょう費の受託事業を道路輸送に分類する（132101 は拗音を大書きした「りよう」と印字する）。,false
 -764,keyword-river-uncertain,,一般会計,,,,,河川,contains,,unclassifiable,,retained,目,,河川の治水・環境等の機能を名称だけでは分離できない。,false
 -763,keyword-park-toilet,,一般会計,,,公園費|緑化費,,公衆便所,contains,,assigned,08.1,retained,目,,公園・緑化施設に属する公衆便所を公園の付帯施設に分類する。,false
 -762,keyword-sport-park,,一般会計,,,,,公園|緑化|スポーツ|体育施設|体育館|保健体育総務|区民保養施設,contains,,assigned,08.1,retained,目,,公園・運動・保養施設を娯楽とスポーツに分類する。,false
