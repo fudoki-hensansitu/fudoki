@@ -1204,7 +1204,8 @@ class PatternNamesTest(unittest.TestCase):
 
 class SupplementRoundTest(unittest.TestCase):
     def build_pages(self, round_on_next_page=True, round_at_foot=False, stacked_on_first_page=True, foot_label='第５次補正',
-                    top_label='第５次補正', pages=(1, 2), amount_band_on_second_page=True):
+                    top_label='第５次補正', pages=(1, 2), amount_band_on_second_page=True, top_amount_alone=False,
+                    heading_split_with_amount=False):
         from ingestion.generic.layout import Logical
         from ingestion.generic.tree import build
         logicals = []
@@ -1224,8 +1225,11 @@ class SupplementRoundTest(unittest.TestCase):
             else:
                 code.words = [make('9', 2, 120, 5)]
                 name.words = [make('土地対策費', 12, 120, 60)]
-                value.words = ([make(top_label, 125, 76, 50), make('△42,000', 150, 88, 40)] if round_on_next_page
-                               else [make('△42,000', 150, 76, 40)] if round_at_foot else []) + [make('9,000', 150, 120, 40)]
+                top = ([make(top_label, 125, 76, 50), make('△42,000', 150, 88, 40)] if round_on_next_page
+                       else [make('△42,000', 150, 76, 40)] if round_at_foot or top_amount_alone else [])
+                if heading_split_with_amount:
+                    top = [make('第', 125, 76, 9), make('３', 136, 76, 9), make('次補正', 147, 76, 30), make('42,000', 190, 76, 30)]
+                value.words = top + [make('9,000', 150, 120, 40)]
             bands = [code, name, value] if page == 1 or amount_band_on_second_page else [code, name]
             logicals.append(Logical([page], bands, '円', []))
         return build(logicals)
@@ -1262,8 +1266,14 @@ class SupplementRoundTest(unittest.TestCase):
         self.assertEqual(''.join(g.text for g in built.unpaid_rounds), '第５次補正')
 
     def test_an_amount_with_no_round_at_the_top_of_the_page_stays_unowned(self):
-        built = self.build_pages(round_on_next_page=False)
+        built = self.build_pages(round_on_next_page=False, top_amount_alone=True)
         self.assertEqual(set(self.rounds(built)), {'第２次補正'})
+        self.assertEqual([(u['kind'], u['text']) for u in built.unowned], [('amount without row', '△42,000')])
+
+    def test_a_round_set_apart_on_the_line_of_its_amount_is_no_part_of_the_amount(self):
+        built = self.build_pages(round_on_next_page=False, heading_split_with_amount=True)
+        self.assertEqual(self.rounds(built), {'第２次補正': ['△182,000'], '第３次補正': ['42,000']})
+        self.assertEqual([u['kind'] for u in built.unowned], [])
 
 
 class SubjectContinuationTest(unittest.TestCase):

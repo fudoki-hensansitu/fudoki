@@ -558,6 +558,15 @@ def stacked_under(logical: Logical, previous: Item, item: Item) -> bool:
     return bool(bands) and all(stacked(band) for band in bands)
 
 
+def round_heading(line: list[Glyph]) -> list[Glyph]:
+    """The words a line starts with that print the round of a supplementary budget (`第２次補正`, or `第` `２` `次補正`
+    set apart), or none."""
+    for end in range(1, len(line) + 1):
+        if SUPPLEMENT_ROUND.fullmatch(normalize(text(line[:end]))):
+            return line[:end]
+    return []
+
+
 def line_limits(logicals: list[Logical]) -> dict[str, float]:
     """Per breakdown axis, the right end of the longest label line printed anywhere in the document.
 
@@ -2111,9 +2120,17 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     cut = [_leading_amount(g) for g in line]
                     printed.update({id(new): old for new, old in zip(cut, line)})
                     line = cut
-                    money = [g for g in line if is_amount(g.text) or re.fullmatch(r'[0-9,△▲\-]+', g.text)]
-                    if money and SUPPLEMENT_ROUND.fullmatch(normalize(text(line))):
-                        money = []  # `第` `２` `次補正` set apart: the round's number is no amount
+                    heading = round_heading(line)
+                    money = [g for g in line[len(heading):] if is_amount(g.text) or re.fullmatch(r'[0-9,△▲\-]+', g.text)]
+                    if heading and money:
+                        # `第` `２` `次補正` set apart: the round's number is no amount, and the heading names the amount
+                        # printed after it on the same line. (A heading alone on its line names the amount below it.)
+                        if unpaid and SUPPLEMENT_ROUND.fullmatch(stacked[0]):
+                            unpaid_rounds.extend(stacked_label)
+                        cell = _cell(band, sum((g.y0 + g.y1) / 2 for g in heading) / len(heading))
+                        stacked = (normalize(text(heading)), cell)
+                        stacked_label = heading
+                        unpaid = True
                     if [g.text for g in money] in (['△'], ['▲']):
                         sign = money[0]  # a minus sign printed above its number
                         continue

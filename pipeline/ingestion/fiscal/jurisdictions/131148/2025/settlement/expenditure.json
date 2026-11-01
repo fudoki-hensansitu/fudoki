@@ -237,7 +237,7 @@
     {
       "table_id": "general-setsu",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "f72f709289d1e1323f00e86f93e09891e3130392f9b59daa6beb664e636b82ce",
+      "input_fingerprint": "d4d9d6357af3d24e59394783c3ce2ea954da81ed513f85b6e9cb8b566f788a24",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -267,7 +267,7 @@
     {
       "table_id": "care-insurance-setsu",
       "conversion_id": "care-insurance-settlement",
-      "input_fingerprint": "5d07c6c00cd629b094437648f45ee11c9859806c39d829d960a90907dcf8051c",
+      "input_fingerprint": "74eb1d43f8f91f6c0141c2106d65beefecb2fd9cc64847eb61c48f0976ab772c",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -297,7 +297,7 @@
     {
       "table_id": "national-health-insurance-setsu",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "56a1112b82f6264102ea72b992c01ea6f29fa725e0f6f02e47eebb29da045349",
+      "input_fingerprint": "6e839a9ba656b70442ce47c41f717a169fd834ff5fd05477ae36ea2199a6736e",
       "account": "国民健康保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -327,7 +327,7 @@
     {
       "table_id": "late-elderly-medical-setsu",
       "conversion_id": "late-elderly-medical-settlement",
-      "input_fingerprint": "a06c5431681fc2bb6fe414b17f8dfa0d4469a204d1759271215280d7629b0003",
+      "input_fingerprint": "018d3bc8b7aca544133755e8e3a9e64384033bb19b8297c32cc74cf9ea0fa47e",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",

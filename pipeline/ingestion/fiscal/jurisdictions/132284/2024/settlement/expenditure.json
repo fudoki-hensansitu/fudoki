@@ -285,7 +285,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "7988c4941d6d674ec8bef10eea096cad7cc8f09d08b5104027aecaab52cd0166",
+      "input_fingerprint": "db765641db1d07585affada174367d12a4800d6210a5dee3ffa37cb26b431278",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'備考': 'shape', '節': 'indent'}。",
@@ -315,7 +315,7 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "43307fb1d7fbdc27664968dc88bc1abbda4449214714121b9c946baaab17f256",
+      "input_fingerprint": "221a23f8e0112ce7db68b2e601e0b647de88679390d87bc234f75120c64b3147",
       "account": "国民健康保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'備考': 'indent', '節': 'indent'}。",
@@ -345,7 +345,7 @@
     {
       "table_id": "elderly-medical-expenditure",
       "conversion_id": "elderly-medical-settlement",
-      "input_fingerprint": "ea47143d2a8ea348f68f08b579b4b3a9052c86aad4f89fa709a4d4e0a4aae57e",
+      "input_fingerprint": "37c04b393bd79c010eabecb20fbdb80e774d33d04ca870877bd42345679b67a2",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'備考': 'indent', '節': 'indent'}。",
@@ -375,7 +375,7 @@
     {
       "table_id": "long-term-care-expenditure",
       "conversion_id": "long-term-care-settlement",
-      "input_fingerprint": "b5fc186e054d3ce1be409dc3b92d5f831553cbed9bec9404facfc0438445451a",
+      "input_fingerprint": "8f96e2bbd122155bed6d097cf3e0d8bb69aaab62188896feca1bdd89f7419e3b",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'備考': 'indent', '節': 'indent'}。",
@@ -405,7 +405,7 @@
     {
       "table_id": "ward-property-expenditure",
       "conversion_id": "ward-property-settlement",
-      "input_fingerprint": "49e73963981bc536b660c2bf4c12114b35a886fce24fdb75aad688f4731654b8",
+      "input_fingerprint": "41eff010720f97a406318bba3f549f269d45b44eea040b40c7bed91d81eabc25",
       "account": "戸倉財産区特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'備考': 'indent', '節': 'indent'}。",
@@ -435,7 +435,7 @@
     {
       "table_id": "tv-reception-expenditure",
       "conversion_id": "tv-reception-settlement",
-      "input_fingerprint": "9c7dd23c512f63cad972a91d35644ca8d14b2a1a89f4861ee5a08b38740dd13b",
+      "input_fingerprint": "24c7b4b3fa35bb0db737f24d01f309c07ec966eb1116d9c108f685a87f917d96",
       "account": "テレビ共同受信事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'備考': 'indent', '節': 'indent'}。",
@@ -465,7 +465,7 @@
     {
       "table_id": "land-readjustment-expenditure",
       "conversion_id": "land-readjustment-settlement",
-      "input_fingerprint": "5f45b3df6cd455fd8b42783d5710e1bb947643a4b0a1323ca8fa0a3022c7afea",
+      "input_fingerprint": "14f84eb00b037a81e43ae235fb5312abc420927629557cf0e9b43573376b24c9",
       "account": "秋多都市計画事業武蔵引田駅北口土地区画整理事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'備考': 'indent', '節': 'indent'}。",
