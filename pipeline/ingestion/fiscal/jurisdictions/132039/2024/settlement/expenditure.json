@@ -180,7 +180,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "1177d2800d8c6b842627e3dc082716f1b16fe66fef9a499a292f4846d1efe188",
+      "input_fingerprint": "35561eba570fd731b4476d670aecf225bb6bb5676e6ccdf041ebec5cc19cc0a2",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -210,7 +210,7 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "61b6849862a78558e10d3fb5660ed5a4847a1ac8379f9e5bf76ac8f679ddff57",
+      "input_fingerprint": "883359f80e9ede0c05bf12d7b56963ea067ee2e803f46f7606ad0d460ae3006e",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -240,7 +240,7 @@
     {
       "table_id": "long-term-care-expenditure",
       "conversion_id": "long-term-care-settlement",
-      "input_fingerprint": "78db0063a7e53a707baa6a309e4d3481eecbf51fbab755c0e4c900346d90b8cb",
+      "input_fingerprint": "a3c895c233f5f5aa3c9f16c99c15399c42f42825c864d357ca4b7fbd41a22135",
       "account": "介護保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -270,7 +270,7 @@
     {
       "table_id": "kouki-expenditure-detail",
       "conversion_id": "kouki-settlement",
-      "input_fingerprint": "b060ca79a8e7931bd451da41445023d9b2d827467ff2773b17de67e5631c8ea7",
+      "input_fingerprint": "950c023dc640acf26620c566a79761a274a931b6fcaaa54ff8ddae5296ae6737",
       "account": "後期高齢者医療会計",
       "notes": [
         "武蔵野市後期高齢者医療会計の決算事項別明細書（歳出）。款・項・目の印字欄を所属する葉へ反復。最細は法定節（節がない予備費目は目）。節一覧と備考は同じ目の独立した分解であり相互の対応を推定していない。目_備考は目の備考欄の原文（□事業・○経費・積算）。金額は円の原表記（△は減額符号）。歳出合計はlocal観測に残しraw行にしない。",

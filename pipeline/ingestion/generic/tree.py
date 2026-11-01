@@ -43,7 +43,8 @@ TRANSFER_TAIL = re.compile(r'^[へか]ら?(?:流用|充用)')
 # A transfer remark ends with the word (`…へ流用`): a line after it is another remark, even when it reaches the column's limit.
 ENDED_TRANSFER = re.compile(r'(?:流用|充用)$')
 # A kind word printed above an amount inside an amount column's cell (a stacked carry-over column).
-STACKED_KIND = re.compile(r'(翌年度)?(繰越明許費?|事故繰越し?|継続費逓次繰越|不用額)')
+SUPPLEMENT_ROUND = re.compile(r'第[0-9０-９]+次補正')  # the round of a supplementary budget printed over its amount
+STACKED_KIND = re.compile(r'(翌年度)?(繰越明許費?|事故繰越し?|継続費逓次繰越|不用額)|' + SUPPLEMENT_ROUND.pattern)
 HEADING_INDENT = 6  # pt: the least a heading's lines are indented for the level learning to keep their level (3pt clusters, 6pt apart)
 # A total row ends in 合計・総計 (`歳出合計`); a name that contains the letters (`長期総合計画に要する経費`) is not one.
 WIDE_DIGITS = re.compile(r'[０-９]+')
@@ -1279,6 +1280,7 @@ class Built:
     # Glyphs of a row with no name whose every printed amount equals the amount of the account row above it in
     # the same column (the 節 row of a 予備費, which prints no 節 name): the parent's amounts again, not new ones.
     repeated_amounts: list = field(default_factory=list)
+    unpaid_rounds: list = field(default_factory=list)  # the printed round of a supplementary budget (`第２次補正`) no amount follows
 
 
 def node_key(item: Item) -> str:
@@ -1646,6 +1648,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
     unowned_runs: list[tuple[dict, list[Glyph]]] = []  # an amount no row owns, with its glyphs
     annotations: list[tuple[Item, str, list[Glyph], str | None]] = []
     remarks: list[dict] = []  # `Built.annotations` before the items have keys
+    unpaid_rounds: list[Glyph] = []
     all_items: list[tuple[Logical, list[Group], dict[int, list[Item]]]] = []
     column_amount_items: set[int] = set()
     # What the document teaches is read from its printed pages: the few pages of a text document that OCR read
@@ -2090,6 +2093,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 sign = None
                 carry = carried.pop('／'.join(band.header), None)
                 stacked = None  # (kind word, rule-bounded cell) of the last kind word printed in this column
+                stacked_label = []  # the printed line of that kind word
                 unpaid = False  # no amount has followed that kind word yet
                 waiting = None  # (heading, y) of a kind word alone on its line in an inline-kind band
                 previous = None  # (item, rule-bounded cell) of the last amount this column gave to an item
@@ -2112,7 +2116,10 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                         word = normalize(text(line))
                         if line and STACKED_KIND.fullmatch(word):
                             cell = _cell(band, sum((g.y0 + g.y1) / 2 for g in line) / len(line))
+                            if unpaid and SUPPLEMENT_ROUND.fullmatch(stacked[0]):
+                                unpaid_rounds.extend(stacked_label)
                             stacked = (word, cell) if '／'.join(band.header) in stacking else None
+                            stacked_label = line
                             unpaid = stacked is not None
                         continue
                     if sign is not None and money[0].y0 - sign.y0 < 14 and not money[0].text.startswith(('△', '▲')):
@@ -2131,7 +2138,13 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     if target is None and carry is not None and _cell(band, money[0].y0)[0] == band.body_top:
                         # `繰越明許費` at the foot of a page, its amount in the first row of the next page's column
                         # (a row that prints nothing else): the cell runs on over the page break.
-                        target, stacked = carry[0], (carry[1], _cell(band, money[0].y0))
+                        # A cell that runs on with its kind word printed on the next page (`第５次補正` / `△56,880,000`
+                        # in the first row) is the open item's too.
+                        cell = _cell(band, money[0].y0)
+                        if carry[1] is not None:
+                            target, stacked = carry[0], (carry[1], cell)
+                        elif stacked is not None and stacked[1] == cell:
+                            target = carry[0]
                     carry = None
                     if target is not None and target.role == 'total':
                         notes.append({'kind': 'total amount', 'page': money[0].page, 'text': candidate,
@@ -2162,13 +2175,25 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                             continue
                         header = '／'.join((band.header if band.inline_free else band.header[:-1]) + (kind,))
                     y = sum((g.y0 + g.y1) / 2 for g in money) / len(money)
+                    if unpaid and stacked[1] != _cell(band, y) and SUPPLEMENT_ROUND.fullmatch(stacked[0]):
+                        unpaid_rounds.extend(stacked_label)  # the cell ended without an amount for it
+                        unpaid = False
                     if stacked is not None and stacked[1] == _cell(band, y):
                         header = f'{header}／{stacked[0]}'
                         unpaid = False
+                        if SUPPLEMENT_ROUND.fullmatch(stacked[0]):
+                            # How a supplementary budget moved the amount, round by round: a note of the item, no
+                            # amount of its own (the column's total is the sum).
+                            remarks.append({'kind': 'kind line', 'target': target, 'heading': header, 'label': stacked_label,
+                                            'runs': [money], 'unit': logical.unit})
                     amounts.append(_amount(target.key, header, money, logical.unit_of(header)))
                     previous = (target, _cell(band, y))
                 if unpaid and previous is not None and stacked[1] == previous[1]:
                     carried['／'.join(band.header)] = (previous[0], stacked[0])
+                elif previous is not None and previous[1][1] >= band.body_bottom - .5:
+                    carried['／'.join(band.header)] = (previous[0], None)  # the cell at the foot may run on
+                if unpaid and '／'.join(band.header) not in carried and SUPPLEMENT_ROUND.fullmatch(stacked[0]):
+                    unpaid_rounds.extend(stacked_label)
     for target, header, run, unit in annotations:
         amounts.append(_amount(target.key, header, run, unit))
     marked = []
@@ -2183,7 +2208,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                        'heading': remark['heading'], 'label': remark['label'], 'runs': remark['runs'],
                        'unit': remark['unit'], 'hint': remark.get('hint')})
     repeated_amounts = repeated_parent_rows(nodes, amounts, unowned, unowned_runs)
-    return Built(nodes, _dedupe(amounts, unowned), unowned, notes, marked, skipped, repeated_codes, repeated_amounts)
+    return Built(nodes, _dedupe(amounts, unowned), unowned, notes, marked, skipped, repeated_codes, repeated_amounts, unpaid_rounds)
 
 
 def judged_roles(judge, group: Group, margins: set[int] | None) -> dict[int, str]:
