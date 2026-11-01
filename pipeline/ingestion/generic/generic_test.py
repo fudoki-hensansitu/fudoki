@@ -1202,6 +1202,55 @@ class PatternNamesTest(unittest.TestCase):
         self.assertGreater(a['score'], b['score'])
 
 
+class SupplementRoundTest(unittest.TestCase):
+    def build_pages(self, round_on_next_page=True, round_at_foot=False, stacked_on_first_page=True):
+        from ingestion.generic.layout import Logical
+        from ingestion.generic.tree import build
+        logicals = []
+        for page in (1, 2):
+            code = Band(0, 10, page, ('科目', '目'), [70, 100, 200], 70, 200, kind='label')
+            name = Band(10, 120, page, ('科目', '目', '名称'), [70, 100, 200], 70, 200, kind='label')
+            value = Band(120, 220, page, ('予算現額', '補正予算額'), [70, 100, 200], 70, 200, kind='amount')
+            make = lambda text, x, y, width: Glyph(text, x, y, x + width, y + 9, page, 0)
+            if page == 1:
+                code.words = [make('8', 2, 100, 5)]
+                name.words = [make('財産管理費', 12, 100, 60)]
+                value.words = [make('△224,000', 150, 100, 40)]
+                if stacked_on_first_page:
+                    value.words += [make('第２次補正', 125, 112, 50), make('△182,000', 150, 124, 40)]
+                if round_at_foot:
+                    value.words.append(make('第５次補正', 125, 188, 50))
+            else:
+                code.words = [make('9', 2, 120, 5)]
+                name.words = [make('土地対策費', 12, 120, 60)]
+                value.words = ([make('第５次補正', 125, 76, 50), make('△42,000', 150, 88, 40)] if round_on_next_page
+                               else [make('△42,000', 150, 76, 40)] if round_at_foot else []) + [make('9,000', 150, 120, 40)]
+            logicals.append(Logical([page], [code, name, value], '円', []))
+        return build(logicals)
+
+    def test_a_round_printed_on_the_next_page_belongs_to_the_item_at_the_foot_of_the_page_before(self):
+        built = self.build_pages()
+        rounds = {''.join(g.text for g in a['label']): [''.join(g.text for g in run) for run in a['runs']] for a in built.annotations if a['kind'] == 'kind line'}
+        self.assertEqual(rounds, {'第２次補正': ['△182,000'], '第５次補正': ['△42,000']})
+        self.assertEqual([u['kind'] for u in built.unowned], [])
+
+    def test_a_round_is_a_note_in_a_column_that_never_stacks_two_amounts_in_a_cell(self):
+        built = self.build_pages(stacked_on_first_page=False)
+        rounds = {''.join(g.text for g in a['label']): [''.join(g.text for g in run) for run in a['runs']]
+                  for a in built.annotations if a['kind'] == 'kind line'}
+        self.assertEqual(rounds, {'第５次補正': ['△42,000']})
+
+    def test_a_round_at_the_foot_of_the_page_takes_its_amount_from_the_top_of_the_next(self):
+        built = self.build_pages(round_on_next_page=False, round_at_foot=True)
+        rounds = {''.join(g.text for g in a['label']): [''.join(g.text for g in run) for run in a['runs']]
+                  for a in built.annotations if a['kind'] == 'kind line'}
+        self.assertEqual(rounds, {'第２次補正': ['△182,000'], '第５次補正': ['△42,000']})
+
+    def test_an_amount_with_no_round_at_the_top_of_the_page_stays_unowned(self):
+        built = self.build_pages(round_on_next_page=False)
+        self.assertEqual({''.join(g.text for g in a['label']) for a in built.annotations if a['kind'] == 'kind line'}, {'第２次補正'})
+
+
 class SubjectContinuationTest(unittest.TestCase):
     def build_indented_subjects(self, extra_x=65, extra_y=92, extra_amount=None):
         from ingestion.generic.layout import Logical

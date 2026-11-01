@@ -2103,6 +2103,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     printed.update({id(new): old for new, old in zip(cut, line)})
                     line = cut
                     money = [g for g in line if is_amount(g.text) or re.fullmatch(r'[0-9,△▲\-]+', g.text)]
+                    if money and SUPPLEMENT_ROUND.fullmatch(normalize(text(line))):
+                        money = []  # `第` `２` `次補正` set apart: the round's number is no amount
                     if [g.text for g in money] in (['△'], ['▲']):
                         sign = money[0]  # a minus sign printed above its number
                         continue
@@ -2118,7 +2120,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                             cell = _cell(band, sum((g.y0 + g.y1) / 2 for g in line) / len(line))
                             if unpaid and SUPPLEMENT_ROUND.fullmatch(stacked[0]):
                                 unpaid_rounds.extend(stacked_label)
-                            stacked = (word, cell) if '／'.join(band.header) in stacking else None
+                            # A round of a supplementary budget is unambiguous: it counts without a second amount in a cell.
+                            stacked = (word, cell) if '／'.join(band.header) in stacking or SUPPLEMENT_ROUND.fullmatch(word) else None
                             stacked_label = line
                             unpaid = stacked is not None
                         continue
@@ -2142,7 +2145,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                         # in the first row) is the open item's too.
                         cell = _cell(band, money[0].y0)
                         if carry[1] is not None:
-                            target, stacked = carry[0], (carry[1], cell)
+                            target, stacked, stacked_label = carry[0], (carry[1], cell), carry[2]
                         elif stacked is not None and stacked[1] == cell:
                             target = carry[0]
                     carry = None
@@ -2185,15 +2188,18 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                             # How a supplementary budget moved the amount, round by round: a note of the item, no
                             # amount of its own (the column's total is the sum).
                             remarks.append({'kind': 'kind line', 'target': target, 'heading': header, 'label': stacked_label,
-                                            'runs': [money], 'unit': logical.unit})
+                                            'runs': [money], 'unit': logical.unit_of(header)})
                     amounts.append(_amount(target.key, header, money, logical.unit_of(header)))
                     previous = (target, _cell(band, y))
                 if unpaid and previous is not None and stacked[1] == previous[1]:
-                    carried['／'.join(band.header)] = (previous[0], stacked[0])
-                elif previous is not None and previous[1][1] >= band.body_bottom - .5:
-                    carried['／'.join(band.header)] = (previous[0], None)  # the cell at the foot may run on
-                if unpaid and '／'.join(band.header) not in carried and SUPPLEMENT_ROUND.fullmatch(stacked[0]):
-                    unpaid_rounds.extend(stacked_label)
+                    carried['／'.join(band.header)] = (previous[0], stacked[0], stacked_label)
+                else:
+                    # The kind word is not carried over the page break: nothing follows it.
+                    if unpaid and SUPPLEMENT_ROUND.fullmatch(stacked[0]):
+                        unpaid_rounds.extend(stacked_label)
+                    if previous is not None and previous[1][1] >= band.body_bottom - .5:
+                        # The cell at the foot may run on: its kind word, printed again on the next page, is the item's.
+                        carried['／'.join(band.header)] = (previous[0], None, [])
     for target, header, run, unit in annotations:
         amounts.append(_amount(target.key, header, run, unit))
     marked = []
