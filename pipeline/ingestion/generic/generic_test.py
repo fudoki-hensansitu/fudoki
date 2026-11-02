@@ -1260,7 +1260,7 @@ class SumidaFormatTest(unittest.TestCase):
 
 
 class PageTopHeadingTest(unittest.TestCase):
-    def build_pages(self, amount_rows=(70, 100, 200), sign=False):
+    def build_pages(self, amount_rows=(70, 100, 200), sign=False):  # sign: a tall sign word standing too far from its number to be joined to it
         from ingestion.generic.layout import Logical
         from ingestion.generic.tree import build
         logicals = []
@@ -1276,7 +1276,7 @@ class PageTopHeadingTest(unittest.TestCase):
             else:
                 # The page opens with the heading it continues, and the 計 of the next row beside it.
                 label.words = [make('財産管理費', 25, 76, 60), make('9', 5, 88, 5), make('土地対策費', 25, 88, 60)]
-                total.words = ([Glyph('△', 124, 72, 130, 102, page, 0)] if sign else []) + [make('2,000', 130, 76, 30)]
+                total.words = ([Glyph('△', 100, 76, 106, 88, page, 0)] if sign else []) + [make('2,000', 130, 76, 30)]
                 paid.words = [make('300', 180, 88, 30)]
             logicals.append(Logical([page], [label, total, paid], '円', []))
         return build(logicals, pattern='indent')
@@ -1291,11 +1291,12 @@ class PageTopHeadingTest(unittest.TestCase):
         self.assertNotIn(('土地対策費', '2,000'), [(owner[a['node_key']], a['amount_text']) for a in built.amounts])
         self.assertEqual([(u['kind'], u['text']) for u in built.unowned], [('conflicting amount', '1,000 / 2,000')])  # beside the heading's own 計
 
-    def test_a_sign_set_apart_does_not_move_the_line_the_amount_is_read_at(self):
-        built = self.build_pages(sign=True)
+    def test_a_sign_word_left_apart_from_its_number_does_not_move_the_line_the_amount_is_read_at(self):
+        # The sign is not joined to the number here (`_signed_amounts` needs it beside it), so `owner` sees it as a
+        # word of the line: its tall box would put the mean line in the cell of the row below.
+        built = self.build_pages(amount_rows=(70, 81.5, 100, 200), sign=True)
         owner = {n['node_key']: n['name_text'] for n in built.nodes}
-        self.assertEqual(sorted((owner[a['node_key']], a['amount_text']) for a in built.amounts if '2,000' in a['amount_text']),
-                         [('土地対策費', '△2,000')])
+        self.assertNotIn(('土地対策費', '△2,000'), [(owner[a['node_key']], a['amount_text']) for a in built.amounts])  # it stays beside the heading's own 計 (a conflict)
 
     def test_the_amount_printed_beside_the_repeated_heading_belongs_to_the_row_that_follows_it(self):
         built = self.build_pages()
