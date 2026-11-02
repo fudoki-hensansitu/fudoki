@@ -1233,9 +1233,10 @@ def owner(amount: list[Glyph], band: Band, ordered: list[Group], found: dict[int
     """`_owner`, but a heading the page prints again (`営業費用`) does not take the amounts of the line it is on when
     the row it opens is the next item of its ruled cell (`5 減価償却費`, whose `計` is printed beside the heading)."""
     item = _owner(amount, band, ordered, found, roles, ocr=ocr)
-    if item is None or item.role != 'repeat':
-        return item
-    top, bottom = _cell(band, sum((g.y0 + g.y1) / 2 for g in amount) / len(amount))
+    if item is None or item.role != 'repeat' or not band.rows:
+        return item  # a column without rules draws no cell: the heading stays the owner
+    digits = [g for g in amount if g.text not in ('△', '▲')] or amount  # the line `_owner` reads the amount at
+    top, bottom = _cell(band, sum((g.y0 + g.y1) / 2 for g in digits) / len(digits))
     for group in ordered:
         if item in found[id(group)]:
             following = [i for i in found[id(group)] if i.role == 'node' and i.anchor > item.anchor and top - .5 <= i.anchor <= bottom + .5]
