@@ -5,12 +5,14 @@
   },
   "headers": {
     "standard": "ingestion.generic.patterns.headers.standard",
-    "characters": "ingestion.generic.patterns.headers.characters"
+    "characters": "ingestion.generic.patterns.headers.characters",
+    "axis_suffix": "ingestion.generic.patterns.headers.axis_suffix"
   },
   "subject": {
     "bands": "ingestion.generic.patterns.subject.bands",
     "names": "ingestion.generic.patterns.subject.names",
-    "indent": "ingestion.generic.patterns.subject.indent"
+    "indent": "ingestion.generic.patterns.subject.indent",
+    "shared_names": "ingestion.generic.patterns.subject.shared_names"
   },
   "breakdown": {
     "indent": "ingestion.generic.patterns.breakdown.indent",
@@ -21,7 +23,8 @@
     "opening_cell": "ingestion.generic.patterns.repairs.opening_cell",
     "overprint": "ingestion.generic.patterns.repairs.overprint",
     "split_at_rules": "ingestion.generic.patterns.repairs.split_at_rules",
-    "stacked_rows": "ingestion.generic.patterns.repairs.stacked_rows"
+    "stacked_rows": "ingestion.generic.patterns.repairs.stacked_rows",
+    "justified_names": "ingestion.generic.patterns.repairs.justified_names"
   },
   "reading": {
     "marked_businesses": "ingestion.generic.patterns.readings.marked_businesses",

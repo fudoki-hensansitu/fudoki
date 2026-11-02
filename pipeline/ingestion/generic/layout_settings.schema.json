@@ -5,7 +5,7 @@
   "required": ["schema_version"],
   "properties": {
     "schema_version": {"const": 1},
-    "repairs": {"type": "array", "uniqueItems": true, "items": {"enum": ["opening_cell", "overprint", "split_at_rules", "stacked_rows"]}},
+    "repairs": {"type": "array", "uniqueItems": true, "items": {"enum": ["justified_names", "opening_cell", "overprint", "split_at_rules", "stacked_rows"]}},
     "codes": {"const": "right"},
     "rules": {
       "type": "object",
