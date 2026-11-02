@@ -163,7 +163,7 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "25b3be63b6dc674f2b3200d44a93e4e5d29b86e959dc1064d024276e31e29bfb",
+      "input_fingerprint": "6e29bf113577a8a3ea08c37922fd3060f6c8f5c50b609d78eac13b2b76f7d4b1",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -193,7 +193,7 @@
     {
       "table_id": "elderly-medical-expenditure",
       "conversion_id": "elderly-medical-settlement",
-      "input_fingerprint": "37c09f1baae433d64f00e1ee15139ed15be5b9d85ae786b7a1b81df94061a400",
+      "input_fingerprint": "07fac54c4e231969e88d461a1b8819e40d90955c1420f8c328d3fe19bc870a97",
       "account": "後期高齢者医療会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -223,7 +223,7 @@
     {
       "table_id": "long-term-care-expenditure",
       "conversion_id": "long-term-care-settlement",
-      "input_fingerprint": "4afedee6547c2e24e4b11a1345c7bde6aa28538728d6d022e22e8e32553cdcfc",
+      "input_fingerprint": "98cda484f3f6293b5798dd453ce679617dfdafc06cacd469d35c48406fbd7b94",
       "account": "介護保険会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -253,7 +253,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "0000f27154778f45049af57ee279f4d6ec7f150dddf2200fa4632e7c8a4aee54",
+      "input_fingerprint": "cc453e7005059904a9c3f53ef74280b26da92575c2f3ba3b5158dde6a3a4f125",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",

@@ -1230,6 +1230,21 @@ def join_last_lines(items_: list[Item], depth_of, amount_depth) -> list[Item]:
 
 def owner(amount: list[Glyph], band: Band, ordered: list[Group], found: dict[int, list[Item]],
           roles: tuple[str, ...] = ('node', 'repeat', 'total'), *, ocr: bool = False) -> Item | None:
+    """`_owner`, but a heading the page prints again (`営業費用`) does not take the amounts of the line it is on when
+    the row it opens is the next item of its ruled cell (`5 減価償却費`, whose `計` is printed beside the heading)."""
+    item = _owner(amount, band, ordered, found, roles, ocr=ocr)
+    if item is None or item.role != 'repeat':
+        return item
+    top, bottom = _cell(band, sum((g.y0 + g.y1) / 2 for g in amount) / len(amount))
+    for group in ordered:
+        if item in found[id(group)]:
+            following = [i for i in found[id(group)] if i.role == 'node' and i.anchor > item.anchor and top - .5 <= i.anchor <= bottom + .5]
+            return min(following, key=lambda i: i.anchor) if following else item
+    return item
+
+
+def _owner(amount: list[Glyph], band: Band, ordered: list[Group], found: dict[int, list[Item]],
+           roles: tuple[str, ...] = ('node', 'repeat', 'total'), *, ocr: bool = False) -> Item | None:
     """The item printed on the amount's own line in the nearest label group to its left;
     failing that, the item in its rule-bounded row (a label centred in a tall cell).
 
@@ -1260,6 +1275,8 @@ def owner(amount: list[Glyph], band: Band, ordered: list[Group], found: dict[int
         top, bottom = y - 4, y + 4
     for group in left:
         candidates = [i for i in found[id(group)] if top - .5 <= i.anchor <= bottom + .5 and i.role in roles]
+        # A heading a page prints again over its first row (`営業費用` over `5 減価償却費`) is no owner of that row's amounts.
+        candidates = [i for i in candidates if i.role != 'repeat'] or candidates
         if candidates:
             return max(candidates, key=lambda i: (i.level or 0, -abs(i.anchor - y)))
     # A name printed on two lines with its amount at the height between them (`1衛生施設災` / `害復旧費`)
@@ -2046,6 +2063,9 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     # (one line each, or all in one item when the page sets them close).
                     again = next((stack[-1] for count in range(1, len(stack) + 1)
                                   if same_heading(''.join(s.name for s in stack[-count:]), item.name)), None)
+                    if again is None:
+                        # The open headings printed again one to a line, outermost first: this line is one of them.
+                        again = next((s for s in reversed(stack) if s.name and same_heading(s.name, item.name)), None)
                     if again is not None:
                         item.key, item.role = again.key, 'repeat'
                         # Digits in the repeated name (`市制７０周年記念事業費`) are the open heading's own, not an amount.

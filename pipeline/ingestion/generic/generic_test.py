@@ -1259,6 +1259,39 @@ class SumidaFormatTest(unittest.TestCase):
         self.assertEqual([w.text for w in shared.words], ['1', '報酬'])
 
 
+class PageTopHeadingTest(unittest.TestCase):
+    def build_pages(self):
+        from ingestion.generic.layout import Logical
+        from ingestion.generic.tree import build
+        logicals = []
+        for page in (1, 2):
+            rows = [70, 100, 200]  # the amount columns draw no rule between the heading line and the row
+            label = Band(0, 120, page, ('科目',), [70, 82, 100, 200], 70, 200, kind='label')
+            total = Band(120, 170, page, ('予算現額', '計'), rows, 70, 200, kind='amount')
+            paid = Band(170, 220, page, ('支出済額',), rows, 70, 200, kind='amount')
+            make = lambda text, x, y, width: Glyph(text, x, y, x + width, y + 9, page, 0)
+            if page == 1:
+                label.words = [make('8', 5, 120, 5), make('財産管理費', 25, 120, 60)]
+                total.words = [make('1,000', 130, 120, 30)]
+            else:
+                # The page opens with the heading it continues, and the 計 of the next row beside it.
+                label.words = [make('財産管理費', 25, 76, 60), make('9', 5, 88, 5), make('土地対策費', 25, 88, 60)]
+                total.words = [make('2,000', 130, 76, 30)]
+                paid.words = [make('300', 180, 88, 30)]
+            logicals.append(Logical([page], [label, total, paid], '円', []))
+        return build(logicals, pattern='indent')
+
+    def test_a_heading_printed_again_at_the_top_of_a_page_is_no_new_item(self):
+        built = self.build_pages()
+        self.assertEqual([n['name_text'] for n in built.nodes], ['財産管理費', '土地対策費'])
+
+    def test_the_amount_printed_beside_the_repeated_heading_belongs_to_the_row_that_follows_it(self):
+        built = self.build_pages()
+        owner = {n['node_key']: n['name_text'] for n in built.nodes}
+        self.assertEqual(sorted((owner[a['node_key']], a['amount_text']) for a in built.amounts),
+                         [('土地対策費', '2,000'), ('土地対策費', '300'), ('財産管理費', '1,000')])
+
+
 class SupplementRoundTest(unittest.TestCase):
     def build_pages(self, round_on_next_page=True, round_at_foot=False, stacked_on_first_page=True, foot_label='第５次補正',
                     top_label='第５次補正', pages=(1, 2), amount_band_on_second_page=True, top_amount_alone=False,
