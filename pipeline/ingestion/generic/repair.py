@@ -561,6 +561,8 @@ def repair(pdf_path: Path | None, pages: list[Page], repairs: frozenset = frozen
     for page in pages:
         repair_positions(page, report)
         join_vertical(page, report, 'stacked_rows' in repairs)
+        if 'justified_names' in repairs:
+            load_pattern("repairs", "justified_names").join(page)
     report.health = health(pages)
     report.broken = is_broken(report.health)
     if report.broken:

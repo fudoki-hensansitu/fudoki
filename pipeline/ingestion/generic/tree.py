@@ -567,6 +567,28 @@ def round_heading(line: list[Glyph]) -> list[Glyph]:
     return []
 
 
+def _signed_amounts(words: list[Glyph]) -> list[Glyph]:
+    """The words of an amount column with each minus sign set against its number (`△` `2,006,000`) read as one word.
+
+    The sign is a word of its own, drawn smaller and a little off the line of the digits, so its line is another
+    one and it would belong to the amount below. A sign above its number (a line of its own, a row higher) is not
+    set against it."""
+    numbers = [w for w in words if is_amount(w.text) and not w.text.startswith(('△', '▲'))]
+    joined: dict[int, Glyph] = {}
+    taken: set[int] = set()
+    for sign in (w for w in words if w.text in ('△', '▲')):
+        # A sign's box can be as tall as two lines (its top is where the sign is drawn): the number it stands
+        # against has its middle within a line of the box's top.
+        near = [n for n in numbers if 0 <= n.x0 - sign.x1 <= .8 * (n.y1 - n.y0) and id(n) not in taken
+                and sign.y0 - .5 * (n.y1 - n.y0) <= (n.y0 + n.y1) / 2 <= sign.y0 + 1.5 * (n.y1 - n.y0)]
+        if len(near) == 1:
+            n = near[0]
+            taken.add(id(n))
+            joined[id(sign)] = Glyph(sign.text + n.text, sign.x0, n.y0, n.x1, n.y1, n.page, n.offset)  # the digits' line: a sign's box is taller
+    gone = {id(n) for n in numbers if id(n) in taken}
+    return [joined.get(id(w), w) for w in words if id(w) not in gone]
+
+
 def line_limits(logicals: list[Logical]) -> dict[str, float]:
     """Per breakdown axis, the right end of the longest label line printed anywhere in the document.
 
@@ -2115,7 +2137,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 unpaid = False  # no amount has followed that kind word yet
                 waiting = None  # (heading, y) of a kind word alone on its line in an inline-kind band
                 previous = None  # (item, rule-bounded cell) of the last amount this column gave to an item
-                for line in lines(band.words):
+                for line in lines(_signed_amounts(band.words)):
                     printed = {}  # the amount of a word that runs on into text, by the word it was cut from
                     cut = [_leading_amount(g) for g in line]
                     printed.update({id(new): old for new, old in zip(cut, line)})

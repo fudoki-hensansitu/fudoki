@@ -1211,6 +1211,54 @@ class PatternNamesTest(unittest.TestCase):
         self.assertGreater(a['score'], b['score'])
 
 
+class SumidaFormatTest(unittest.TestCase):
+    def page(self, words):
+        from ingestion.generic.observe import Word
+        from ingestion.generic.layout import Page
+        return Page(1, 600, 800, [Word(*w) for w in words], [])
+
+    def test_a_name_justified_over_the_columns_is_one_word_that_starts_where_it_starts(self):
+        from ingestion.generic.patterns.repairs.justified_names import join
+        page = self.page([('1', 63, 100, 68, 109), ('報', 71, 100, 80, 109), ('酬', 270, 100, 279, 109),
+                          ('368,748,000', 350, 100, 400, 109),
+                          ('2', 63, 120, 68, 129), ('使用料', 71, 120, 100, 129), ('12,000', 350, 120, 380, 129)])
+        join(page)
+        self.assertEqual(sorted((w.text, w.x0, w.x1) for w in page.words),
+                         [('1', 63, 68), ('12,000', 350, 380), ('2', 63, 68), ('368,748,000', 350, 400), ('使用料', 71, 100), ('報酬', 71, 279)])
+
+    def test_the_total_row_without_a_number_is_one_word_and_other_numberless_lines_are_not(self):
+        from ingestion.generic.patterns.repairs.justified_names import join
+        page = self.page([('歳', 30, 100, 39, 109), ('出', 60, 100, 69, 109), ('合', 90, 100, 99, 109), ('計', 120, 100, 129, 109),
+                          ('予', 30, 140, 39, 149), ('算', 60, 140, 69, 149)])
+        join(page)
+        self.assertEqual(sorted(w.text for w in page.words), ['予', '歳出合計', '算'])
+
+    def test_a_kind_under_the_header_cell_of_the_item_axis_keeps_its_own_heading(self):
+        from ingestion.generic.headers import canonical
+        known = {'当初予算額', '予算現額', '予算現額／補正予算額'}
+        self.assertEqual(canonical('予算現額／当初予算額／節／区分', None, known), '予算現額')
+        self.assertEqual(canonical('予算現額／当初予算額／節／区分', None, known, pattern='axis_suffix'), '予算現額／当初予算額')
+
+    def test_a_minus_sign_set_against_its_number_joins_it_and_not_the_number_of_the_row_below(self):
+        from ingestion.generic.tree import _signed_amounts
+        tall_sign = Glyph('△', 200, 100, 207, 130, 1, 0)
+        words = [tall_sign, Glyph('5,790,000', 209, 101, 242, 111, 1, 0), Glyph('5,790,000', 209, 126, 242, 136, 1, 0)]
+        joined = _signed_amounts(words)
+        self.assertEqual(sorted((w.text, w.y0) for w in joined), [('5,790,000', 126), ('△5,790,000', 101)])
+
+    def test_the_lines_of_a_ruled_cell_are_the_subjects_name_even_when_the_number_stands_between_them(self):
+        from ingestion.generic.patterns.subject.shared_names import select
+        make = lambda text, x, y, width: Glyph(text, x, y, x + width, y + 9, 1, 0)
+        rows = [70, 100, 150, 200]  # the 節 row has its own cell under the 目 row
+        code = Band(49, 59, 1, ('目',), rows, 70, 200, kind='label')
+        shared = Band(59, 127, 1, ('目', '節', '区分'), rows, 70, 200, kind='label')
+        code.words = [make('12', 52, 120, 6)]
+        shared.words = [make('人権同和', 61, 112, 50), make('共同参画推進費', 61, 128, 50), make('1', 63, 160, 5), make('報酬', 71, 160, 20)]
+        subject, _, count = select([code, shared])
+        self.assertEqual([[w.text for w in band.words] for band in subject], [['12'], ['人権同和', '共同参画推進費']])
+        self.assertEqual([w.text for w in shared.words], ['1', '報酬'])
+
+
 class SupplementRoundTest(unittest.TestCase):
     def build_pages(self, round_on_next_page=True, round_at_foot=False, stacked_on_first_page=True, foot_label='第５次補正',
                     top_label='第５次補正', pages=(1, 2), amount_band_on_second_page=True, top_amount_alone=False,
