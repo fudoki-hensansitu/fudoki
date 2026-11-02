@@ -1297,6 +1297,7 @@ class PageTopHeadingTest(unittest.TestCase):
         built = self.build_pages(amount_rows=(70, 81.5, 100, 200), sign=True)
         owner = {n['node_key']: n['name_text'] for n in built.nodes}
         self.assertNotIn(('土地対策費', '△2,000'), [(owner[a['node_key']], a['amount_text']) for a in built.amounts])  # it stays beside the heading's own 計 (a conflict)
+        self.assertEqual([(u['kind'], u['text']) for u in built.unowned], [('conflicting amount', '1,000 / △2,000')])  # the signed amount is kept, not dropped
 
     def test_the_amount_printed_beside_the_repeated_heading_belongs_to_the_row_that_follows_it(self):
         built = self.build_pages()
