@@ -562,6 +562,15 @@ class RepairTest(unittest.TestCase):
         repair_positions(page, report)
         self.assertEqual(sorted(w.text for w in page.words), ['0', '13,', '272'])
 
+    def test_a_round_of_a_supplementary_budget_set_against_its_amount_is_split_inside_the_word(self):
+        from ingestion.generic.repair import Report, repair_positions
+        for printed, split in (('第３次補正42,000', ['42,000', '第３次補正']), ('第３次補正△500', ['△500', '第３次補正']),
+                               ('第３次補正500', ['500', '第３次補正'])):
+            with self.subTest(printed=printed):
+                page = self.page([(printed, 100, 100, 160, 109)])
+                repair_positions(page, Report())
+                self.assertEqual(sorted(w.text for w in page.words), sorted(split))
+
     def test_a_character_drawn_as_two_overlapping_glyphs_becomes_one_word(self):
         from ingestion.generic.repair import Report, repair_positions
         page = self.page([('八', 676.6, 130.5, 685.9, 139.2), ('刀', 676.6, 130.5, 684.4, 139.2)])
@@ -1200,6 +1209,80 @@ class PatternNamesTest(unittest.TestCase):
         self.assertEqual(a['subject_agree'], b['subject_agree'])
         self.assertGreater(b['agree'], a['agree'])
         self.assertGreater(a['score'], b['score'])
+
+
+class SupplementRoundTest(unittest.TestCase):
+    def build_pages(self, round_on_next_page=True, round_at_foot=False, stacked_on_first_page=True, foot_label='第５次補正',
+                    top_label='第５次補正', pages=(1, 2), amount_band_on_second_page=True, top_amount_alone=False,
+                    heading_split_with_amount=False):
+        from ingestion.generic.layout import Logical
+        from ingestion.generic.tree import build
+        logicals = []
+        for page in pages:
+            code = Band(0, 10, page, ('科目', '目'), [70, 100, 200], 70, 200, kind='label')
+            name = Band(10, 120, page, ('科目', '目', '名称'), [70, 100, 200], 70, 200, kind='label')
+            value = Band(120, 220, page, ('予算現額', '補正予算額'), [70, 100, 200], 70, 200, kind='amount')
+            make = lambda text, x, y, width: Glyph(text, x, y, x + width, y + 9, page, 0)
+            if page == 1:
+                code.words = [make('8', 2, 100, 5)]
+                name.words = [make('財産管理費', 12, 100, 60)]
+                value.words = [make('△224,000', 150, 100, 40)]
+                if stacked_on_first_page:
+                    value.words += [make('第２次補正', 125, 112, 50), make('△182,000', 150, 124, 40)]
+                if round_at_foot:
+                    value.words.append(make(foot_label, 125, 188, 50))
+            else:
+                code.words = [make('9', 2, 120, 5)]
+                name.words = [make('土地対策費', 12, 120, 60)]
+                top = ([make(top_label, 125, 76, 50), make('△42,000', 150, 88, 40)] if round_on_next_page
+                       else [make('△42,000', 150, 76, 40)] if round_at_foot or top_amount_alone else [])
+                if heading_split_with_amount:
+                    top = [make('第', 125, 76, 9), make('３', 136, 76, 9), make('次補正', 147, 76, 30), make('42,000', 190, 76, 30)]
+                value.words = top + [make('9,000', 150, 120, 40)]
+            bands = [code, name, value] if page == 1 or amount_band_on_second_page else [code, name]
+            logicals.append(Logical([page], bands, '円', []))
+        return build(logicals)
+
+    def rounds(self, built):
+        return {''.join(g.text for g in a['label']): [''.join(g.text for g in run) for run in a['runs']]
+                for a in built.annotations if a['kind'] == 'kind line'}
+
+    def test_a_round_printed_on_the_next_page_belongs_to_the_item_at_the_foot_of_the_page_before(self):
+        built = self.build_pages()
+        self.assertEqual(self.rounds(built), {'第２次補正': ['△182,000'], '第５次補正': ['△42,000']})
+        self.assertEqual([u['kind'] for u in built.unowned], [])
+
+    def test_a_round_is_a_note_in_a_column_that_never_stacks_two_amounts_in_a_cell(self):
+        built = self.build_pages(stacked_on_first_page=False)
+        self.assertEqual(self.rounds(built), {'第５次補正': ['△42,000']})
+
+    def test_a_round_at_the_foot_of_the_page_takes_its_amount_from_the_top_of_the_next(self):
+        built = self.build_pages(round_on_next_page=False, round_at_foot=True)
+        self.assertEqual(self.rounds(built), {'第２次補正': ['△182,000'], '第５次補正': ['△42,000']})
+        self.assertEqual(built.unpaid_rounds, [])
+
+    def test_a_round_printed_before_the_amount_replaces_the_unpaid_round_carried_over(self):
+        built = self.build_pages(round_at_foot=True, foot_label='第４次補正')
+        self.assertEqual(self.rounds(built), {'第２次補正': ['△182,000'], '第５次補正': ['△42,000']})
+        self.assertEqual(''.join(g.text for g in built.unpaid_rounds), '第４次補正')
+
+    def test_a_round_at_the_foot_with_no_column_on_the_next_page_is_unpaid(self):
+        built = self.build_pages(round_on_next_page=False, round_at_foot=True, amount_band_on_second_page=False)
+        self.assertEqual(''.join(g.text for g in built.unpaid_rounds), '第５次補正')
+
+    def test_a_round_at_the_foot_of_the_last_page_is_unpaid(self):
+        built = self.build_pages(round_on_next_page=False, round_at_foot=True, pages=(1,))
+        self.assertEqual(''.join(g.text for g in built.unpaid_rounds), '第５次補正')
+
+    def test_an_amount_with_no_round_at_the_top_of_the_page_stays_unowned(self):
+        built = self.build_pages(round_on_next_page=False, top_amount_alone=True)
+        self.assertEqual(set(self.rounds(built)), {'第２次補正'})
+        self.assertEqual([(u['kind'], u['text']) for u in built.unowned], [('amount without row', '△42,000')])
+
+    def test_a_round_set_apart_on_the_line_of_its_amount_is_no_part_of_the_amount(self):
+        built = self.build_pages(round_on_next_page=False, heading_split_with_amount=True)
+        self.assertEqual(self.rounds(built), {'第２次補正': ['△182,000'], '第３次補正': ['42,000']})
+        self.assertEqual([u['kind'] for u in built.unowned], [])
 
 
 class SubjectContinuationTest(unittest.TestCase):

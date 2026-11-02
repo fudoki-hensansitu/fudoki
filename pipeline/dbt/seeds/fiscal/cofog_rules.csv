@@ -421,3 +421,5 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 1397,kind-fallback-industrial-water-liquidation,,,工業用水道清算,,,,,,,assigned,04.4,retained,目,,工業用水道事業清算の特別会計の目を鉱業・製造業・建設業 04.4 に置く（廃止した産業向け水道の清算。例: 130001）。,true
 899,vocab-interest-tax-grant,,一般会計,,,,,利子割,contains,,assigned,01.8,retained,目,,都道府県民税利子割の市町村への交付金・都道府県間の精算金は税の移転で公債の利子ではない。kind-x-interest（利子）より先に政府間の一般的移転 01.8 に分類する（例: 130001 諸費）。,false
 1347,vocab-public-safety-promotion,,一般会計,,,,,都民安全,contains,,assigned,03,retained,目,,都民の安全推進の目を公共の秩序・安全 03 に置く。治安・交通安全が混ざる（fallback-kou-public-safety と同じ。例: 130001 2024 生活文化スポーツ費）。,true
+1501,ota-2024-01,131113,一般会計,,環境清掃費,,,,eq,,assigned,05.1,retained,目,,大田区 環境清掃費の目（廃棄物対策管理費・普及調査費・指導費・動物死体処理費・安全衛生費・事務所費）を廃棄物管理に分類する。名称からの判断。,true
+1502,ota-2024-02,131113,一般会計,,産業経済費,,,産業施設費,eq,,assigned,04.1,retained,目,,大田区 産業施設（産業会館など）を一般経済商業業務に分類する。名称からの判断。,true

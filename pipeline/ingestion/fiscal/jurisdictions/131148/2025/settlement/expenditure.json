@@ -209,7 +209,7 @@
     {
       "table_id": "land-setsu",
       "conversion_id": "land-settlement",
-      "input_fingerprint": "5f975b35f4dda99843dce4d8f196d314ad073891d7998e373d3c67c9f53cba8e",
+      "input_fingerprint": "dbbcec698b89145aeb785ca17c062db47870c2b40e4d6835d0611813d62b26ad",
       "account": "用地特別会計",
       "notes": [
         "法定節が原典の最細明細。所属する款・項・目の予算5列・執行5列・備考・印字位置を反復。節の金額は予算現額（右頁の節金額欄）、節の支出済額以下5列は執行実績。同じ欄の名称折り返しは改行、単語間の印字間隔は空白で保持。上端は印字先頭行の上端、下端は名称の全印字行を囲む下端。備考欄は水平罫線の結合セルが所属範囲を定め、セルが縦に覆う行のうち最上位の行（款・項・目のいずれか）の備考欄へセル全文を印字行の改行のまま保持する。節自身に所属する備考セルはこの原典に存在しない。原典は左右見開きで、科目・予算・節区分は左頁、節金額・執行・備考は右頁に印字される。物理頁は左頁を記録し、右側各欄は物理頁+1の頁に印字される。見開き末尾の「用地特別会計」会計標は行の備考ではないため除く。",
@@ -237,7 +237,7 @@
     {
       "table_id": "general-setsu",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "215608795a5440e89d4c1b122e2676088fd96f95d109a379b2ba669b39a5e625",
+      "input_fingerprint": "4c4282bc97b41f228c2b40abd5a569c1fdec66ac58ceb3ee01830b564376320c",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -267,7 +267,7 @@
     {
       "table_id": "care-insurance-setsu",
       "conversion_id": "care-insurance-settlement",
-      "input_fingerprint": "b88919a3b6b19ae98556861610385b3386c965c647d925aa5f204285dc5027c2",
+      "input_fingerprint": "fc173eae0b5233b9ce8f4c9baa173c408f122bac8d79401b2b6308e6025be83c",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -297,7 +297,7 @@
     {
       "table_id": "national-health-insurance-setsu",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "e0d999a672348a1e634f769ec85975329be7623a44c2acb7191b0c217961bdc5",
+      "input_fingerprint": "7e77227d7b654b1ed93ba6b5bd39c1a602b352e41b4586998e3cabfd311702c0",
       "account": "国民健康保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -327,7 +327,7 @@
     {
       "table_id": "late-elderly-medical-setsu",
       "conversion_id": "late-elderly-medical-settlement",
-      "input_fingerprint": "98307b18970819d310a18d04fbe4b7e6320ba75d2e3f84283800afe016d937ca",
+      "input_fingerprint": "b627d0ca369a7ab13f80ff4898d27910a2c21abe0a3b4247ff37706f65402ff5",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
