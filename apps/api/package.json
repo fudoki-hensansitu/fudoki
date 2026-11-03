@@ -17,19 +17,19 @@
   "devDependencies": {
     "@cloudflare/config": "catalog:",
     "@cloudflare/vite-plugin": "catalog:",
-    "@e2e-dev/web": "0.15.2",
-    "@modelcontextprotocol/client": "2.3.1",
+    "@e2e-dev/web": "0.15.3",
+    "@modelcontextprotocol/client": "2.4.0",
     "@modelcontextprotocol/ext-apps": "2.0.3",
-    "@modelcontextprotocol/inspector": "2.11.0",
+    "@modelcontextprotocol/inspector": "2.12.0",
     "@tailwindcss/postcss": "4.3.3",
     "@types/bun": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "e2e": "0.21.2",
+    "e2e": "0.21.3",
     "miniflare": "4.20260730.0",
     "pdfjs-dist": "6.4.299",
     "playwright": "1.64.1",
-    "postcss": "8.5.31",
+    "postcss": "8.5.32",
     "react": "catalog:",
     "react-dom": "catalog:",
     "shadcn": "catalog:",
@@ -40,9 +40,9 @@
   "dependencies": {
     "@fudoki/ui": "workspace:*",
     "@hono/zod-openapi": "1.6.3",
-    "@modelcontextprotocol/server": "2.3.1",
-    "hono": "4.13.13",
-    "lucide-react": "1.59.0",
+    "@modelcontextprotocol/server": "2.4.0",
+    "hono": "4.13.14",
+    "lucide-react": "1.61.0",
     "zod": "catalog:"
   }
 }
