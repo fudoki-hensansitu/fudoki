@@ -521,6 +521,12 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
     return entries
 
 
+def same_amount_cell(logical: Logical, previous: Item, item: Item) -> bool:
+    """Whether no rule of an amount column separates a name's line from the wrapped line below it."""
+    return all(_cell(band, (previous.y0 + previous.y1) / 2) == _cell(band, (item.y0 + item.y1) / 2)
+               for band in logical.bands if band.kind == 'amount')
+
+
 def stacked_under(logical: Logical, previous: Item, item: Item) -> bool:
     """Whether the amounts printed on a name's wrapped line are the next rows of the amount cell the line above opens.
 
@@ -1826,13 +1832,22 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 if (previous is not None and previous.code is not None and previous.name
                         and previous.role == item.role == 'node' and item.code is None and item.name
                         and not item.amounts
-                        and (id(item) not in column_amount_items or stacked_under(logical, previous, item))
+                        # (a name wrapped so that its amount is printed on the last line, none on the code's line: `1 居宅サービス` / `事業費 3,596,885`)
+                        # (no rule between them in the amount columns: a subject of its own has its amount in a cell of its own)
+                        and (id(item) not in column_amount_items
+                             or (id(previous) not in column_amount_items and same_amount_cell(logical, previous, item))
+                             or stacked_under(logical, previous, item))
                         and not TOTAL.search(item.name) and item.page == previous.page
-                        and (abs(item.indent - previous.indent) <= 3 if group.mode == 'indent' else
+                        # (A line starting between the code's end and the name's start wraps that name: a name split from
+                        # its code by the width of its characters starts too far right, `3その他公共施` / `設・公用施設`, 133078.)
+                        and (abs(item.indent - previous.indent) <= 3 or previous.lines[0][0].x1 <= item.indent <= previous.indent
+                             if group.mode == 'indent' else
                              group.bands[item.level].header[-1] == group.bands[previous.level].header[-1])
                         and 0 <= item.y0 - previous.y1 <= max(g.y1 - g.y0 for g in item.glyphs)):
                     previous.name += item.name
                     previous.lines += item.lines
+                    if id(item) in column_amount_items:
+                        column_amount_items.add(id(previous))
                     continue
                 kept.append(item)
             if group.mode == "indent":
