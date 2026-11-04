@@ -192,7 +192,8 @@ function Budget({ data, total }: { data: PageData; total: YearTotal }) {
         <b className="text-[clamp(2rem,1.5rem+1.8vw,2.8rem)] font-normal leading-tight tabular-nums">{formatYen(total.yen)}</b>
         {pct !== null ? <span className={`text-[13px] tabular-nums ${pct < 0 ? 'text-[#aa5910]' : 'text-primary'}`}>前年度比 {pct >= 0 ? '+' : '−'}{Math.abs(pct).toFixed(1)}%</span> : null}
       </div>
-      <KanBars total={total} prev={prev} />
+      {/* 款→項のサンキーは最新年度の分だけ API から来る。それ以外の年度は款の棒で出す */}
+      {isLatest ? null : <KanBars total={total} prev={prev} />}
       {isLatest ? (
         <>
           <Flow data={data} />
