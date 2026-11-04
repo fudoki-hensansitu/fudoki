@@ -59,8 +59,8 @@ export interface Profile {
   site: string
   population?: { people: number; asOf: string }
   tags: string[]
-  head: { title: string; name: string }
-  council?: { title: string; groups: { name: string; members: string[] }[]; source: string }
+  head: { name: string }
+  council?: { groups: { name: string; members: string[] }[]; source: string }
   /** 会計年度（西暦）ごと */
   years: Record<string, ProfileYear>
 }
@@ -79,11 +79,9 @@ const SHINAGAWA: Profile = {
     "SDGs未来都市"
   ],
   "head": {
-    "title": "区長",
     "name": "森澤 恭子"
   },
   "council": {
-    "title": "区議会議員",
     "groups": [
       {
         "name": "しながわ未来",

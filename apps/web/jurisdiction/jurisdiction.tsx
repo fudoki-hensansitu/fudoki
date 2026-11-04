@@ -256,7 +256,7 @@ function People({ profile }: { profile: Profile }) {
   const council = profile.council
   return (
     <Section id="people" title="首長と議員">
-      <h3 className="text-lg">{profile.head.title}</h3>
+      <h3 className="text-lg">首長</h3>
       <div className="flex items-center gap-3.5 pb-2 pt-1">
         <span aria-hidden="true" className="grid size-12 place-items-center rounded-full bg-secondary text-lg">{profile.head.name[0]}</span>
         <b className="text-[17px] font-normal">{profile.head.name}</b>
@@ -264,7 +264,7 @@ function People({ profile }: { profile: Profile }) {
       {council ? (
         <>
           <h3 className="text-lg">
-            {council.title} <span className="tabular-nums text-muted-foreground">{council.groups.reduce((n, g) => n + g.members.length, 0)}人</span>
+            議員 <span className="tabular-nums text-muted-foreground">{council.groups.reduce((n, g) => n + g.members.length, 0)}人</span>
           </h3>
           <div className="grid grid-cols-1 gap-x-8 border-t sm:grid-cols-2">
             {council.groups.map((g) => (
@@ -375,6 +375,13 @@ function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tocKey, year])
+  // 目次の移動で #yYYYY を節の fragment に置き換えない（再読み込みで年度が戻らないように）
+  const jump = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const target = document.querySelector(e.currentTarget.getAttribute('href')!)
+    if (!target) return
+    e.preventDefault()
+    target.scrollIntoView()
+  }
   const isCurrent = (href: string) => href === current || (href === '#domains' && !!current?.startsWith('#d-'))
   const spBar = React.useRef<HTMLElement>(null)
   React.useEffect(() => {
@@ -441,7 +448,7 @@ function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
 
         <nav ref={spBar} aria-label="目次" className={`sticky z-20 -mx-4 flex gap-1.5 overflow-x-auto border-b bg-background px-4 py-2.5 [scrollbar-width:none] md:hidden ${mini ? 'top-[61px]' : 'top-0'}`}>
           {toc.filter((t) => !t.sub).map((t) => (
-            <a key={t.href} href={t.href} data-current={isCurrent(t.href) || undefined} className="shrink-0 rounded-full border px-3 py-1 text-[13px] text-muted-foreground no-underline data-[current]:border-primary data-[current]:bg-primary data-[current]:text-primary-foreground">
+            <a key={t.href} href={t.href} onClick={jump} data-current={isCurrent(t.href) || undefined} className="shrink-0 rounded-full border px-3 py-1 text-[13px] text-muted-foreground no-underline data-[current]:border-primary data-[current]:bg-primary data-[current]:text-primary-foreground">
               {t.label}
             </a>
           ))}
@@ -453,6 +460,7 @@ function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
               <a
                 key={t.href}
                 href={t.href}
+                onClick={jump}
                 data-current={isCurrent(t.href) || undefined}
                 className={`relative block rounded-lg px-3.5 py-2 no-underline hover:bg-card data-[current]:bg-card data-[current]:text-foreground data-[current]:before:absolute data-[current]:before:inset-y-2 data-[current]:before:left-0 data-[current]:before:w-[3px] data-[current]:before:rounded-sm data-[current]:before:bg-primary ${t.sub ? 'pl-7 text-[13.5px] text-muted-foreground' : 'text-[15px]'}`}
               >
