@@ -6,6 +6,8 @@ from pathlib import Path
 from unittest.mock import patch
 
 from ingestion.lib.paddle_ocr import OcrRegion, PaddleConfig
+from ingestion.lib import scan_ocr
+from ingestion.lib.pdf_rules import PageRules, Rule
 from ingestion.lib.scan_ocr import recognize_image, recognize_pdf, settle_seams
 
 
@@ -59,6 +61,15 @@ class UnitStackTest(unittest.TestCase):
                 patch.object(scan_ocr.paddle_ocr, "recognize_crops", return_value=[text]):
             scan_ocr.split_unit_stacks(Path("x.pdf"), page, PaddleConfig(dpi=72))
         return page
+
+    def test_a_step_of_a_skewed_rule_is_no_missed_ink_but_a_figure_between_rules_is(self):
+        rules = PageRules(1, 595, 842, vertical=(Rule(400, 100, 700),), horizontal=(Rule(200, 50, 550),))
+        along_horizontal = (420.0, 198.0, 450.0, 202.0)
+        along_vertical = (399.5, 300.0, 400.5, 310.0)
+        lone_zero = (470.0, 215.0, 474.0, 224.0)
+        thin_dash_between_rules = (470.0, 250.0, 480.0, 251.0)
+        self.assertEqual(scan_ocr._without_rule_steps(
+            [along_horizontal, along_vertical, lone_zero, thin_dash_between_rules], rules), [lone_zero, thin_dash_between_rules])
 
     def test_a_unit_mark_boxed_with_the_amount_under_it_is_split_at_the_mark(self):
         from ingestion.lib import scan_ocr
