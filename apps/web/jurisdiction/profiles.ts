@@ -228,7 +228,7 @@ const SHINAGAWA: Profile = {
         }
       ],
       "scrap": {
-        "raisedYen": 1520000000,
+        "raisedYen": 1522098000,
         "targetYen": 2000000000,
         "evaluated": 652,
         "grades": {
