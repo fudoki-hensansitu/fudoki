@@ -77,9 +77,7 @@ const SHINAGAWA: Profile = {
     "people": 418666,
     "asOf": "2026-09-01"
   },
-  "tags": [
-    "SDGs未来都市"
-  ],
+  "tags": [],
   "head": {
     "name": "森澤 恭子"
   },
