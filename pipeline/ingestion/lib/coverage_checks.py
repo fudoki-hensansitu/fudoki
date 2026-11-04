@@ -514,9 +514,10 @@ def check_digit_coverage(words, tables, *, tolerance=0.5, exclusions=(), amount_
             code = _word_key(str(node.get('code_text') or ''))
             printed = code + _word_key(str(node.get('name_text') or ''))
             # A sub-item number's bracket may be dropped from the word (`10(1)消耗品費` read `1消耗品費`).
-            if word['key'] and not _amount_shaped(word['key']) and (
+            # A count printed in the name (`療養給付費負担金179,856件`) is the name's, though it reads like an amount.
+            if word['key'] and (word['key'] + '件' in printed or not _amount_shaped(word['key']) and (
                     word['key'] in printed or word['key'] in re.sub(r'[()（）]', '', printed)
-                    or word['key'] in _level_marks(code, node.get('level_header'))):
+                    or word['key'] in _level_marks(code, node.get('level_header')))):
                 word['covered'] = 'label'
                 break
     # Adopted prints take precedence over an auxiliary block. An exclusion

@@ -694,6 +694,14 @@ def items(group: Group, header: str, margins: set[int] | None = None,
     single = {i: tuple(ix) for ix in cells.values()
               if sum(entries[i][2] is not None for i in ix) == 1 and len(ix) > 1
               and sum(bool(entries[i][1]) for i in ix) <= 1 and wraps(0, ix) for i in ix}
+    if settings.get('heading_repeated_over_code'):
+        # A page opens with the last line of the heading above (`医療費` over `02市単独事業`, 132276): it is no part of the number's name.
+        for i, members in list(single.items()):
+            number = next(m for m in members if entries[m][2] is not None)
+            if i < number:
+                del single[i]
+            else:
+                single[i] = tuple(m for m in members if m >= number)
     if settings.get('name_column'):
         # A name wrapped above and below a line printing only its number, set tighter than the rows: a line
         # without a number whose middle is within a line height of a number's line is that number's name,
@@ -799,7 +807,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
                    and not (headings and label[0].x0 > _name_start(previous) + HEADING_INDENT)
                    and (not money or bracketed
                         or (reaches and not ENDED_TRANSFER.search(previous.name) and (abs(label[0].x0 - previous.indent) <= 3
-                                         or abs(label[0].x0 - _name_start(previous)) <= 3)))
+                                         or abs(label[0].x0 - _name_start(previous)) <= 3 + float(settings.get('name_start_slack', 0)))))
                    and _cell(band_of(label[0]), label[0].y0) == _cell(band_of(previous.lines[-1][0]), previous.lines[-1][0].y0))
         # (Not only the rule-bounded cell: the name and the amount of a 備考 can have grids of their own.)
         wrapped = wrapped or (previous is not None and code is None and bool(label) and bool(money) and previous.code is not None
@@ -850,6 +858,12 @@ def items(group: Group, header: str, margins: set[int] | None = None,
             item.amounts.append((header, run))
         _measure(item, label, code, ocr)
         result.append(item)
+    if settings.get('opening_bracket_ink'):
+        # OCR boxes the ink: a full-width opening bracket (`（一社）…`, `「さくら」…`) is drawn in the right half of its character.
+        for item in result:
+            first = item.lines[0][0] if item.lines and item.lines[0] else None
+            if item.code is None and first is not None and first.text[:1] in '(（「『【〔':
+                item.indent -= (first.y1 - first.y0) / 2
     return result
 
 
@@ -894,7 +908,7 @@ def _name_start(item: Item) -> float:
         if len(first[0].text) == 1 and len(first) > 1:
             return first[1].x0
         return first[0].x0 + (first[0].y1 - first[0].y0)
-    if len(head) >= 5 and head.isdigit():
+    if len(head) >= 5 and head.replace(',', '').isdigit():
         if len(first) > 1 and first[1].x0 - first[0].x1 < 12:
             return first[1].x0
     glued = re.match(r'[0-9０-９]{5,}', first[0].text)
