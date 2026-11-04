@@ -50,8 +50,6 @@ export interface YearTotal {
   yen: number
   /** この年度の款ごとの金額（款の名前で引く） */
   kan: Line[]
-  /** この年度の決算書の題名 */
-  originTitle?: string | null
 }
 
 export interface PageData {

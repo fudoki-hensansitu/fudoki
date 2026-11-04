@@ -7,6 +7,8 @@ const KAN_SLOT = 30
 const KOU_SLOT = 18
 const KAN_GAP = 4
 const KOU_GAP = 3
+/** ラベルの最小の高さとは別に、帯の太さに使う高さ */
+const BAND_ROOM = 160
 
 const amountText = (yen: number, missing?: boolean) => (missing ? '金額未記載' : formatYen(yen))
 
@@ -64,7 +66,10 @@ export function Overview({ flows, height = 520, onSelect }: { flows: Drill[]; he
   const kous = flows.flatMap((flow, kanIndex) => flow.kou.map((kou, kouIndex) => ({ kanIndex, kouIndex, kou })))
   const kanValues = flows.map((flow) => Math.max(0, flow.kan.yen))
   const kouValues = kous.map(({ kou }) => Math.max(0, kou.yen))
-  const scale = Math.min(fit(kanValues, KAN_SLOT, KAN_GAP, height), fit(kouValues, KOU_SLOT, KOU_GAP, height))
+  // ラベルの最小の高さだけで指定の高さを超えると帯の太さが0になるので、そのときは図を縦に伸ばして帯の分を残す
+  const floor = (n: number, slot: number, gap: number) => n * (slot + gap) + BAND_ROOM
+  const room = Math.max(height, floor(kanValues.length, KAN_SLOT, KAN_GAP), floor(kouValues.length, KOU_SLOT, KOU_GAP))
+  const scale = Math.min(fit(kanValues, KAN_SLOT, KAN_GAP, room), fit(kouValues, KOU_SLOT, KOU_GAP, room))
   const kans = layout(kanValues, scale, KAN_SLOT, KAN_GAP)
   const kouNodes = layout(kouValues, scale, KOU_SLOT, KOU_GAP)
   const x0 = left

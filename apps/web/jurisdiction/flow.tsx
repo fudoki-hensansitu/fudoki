@@ -154,8 +154,6 @@ export function Flow({ data, total: year }: { data: PageData; total: YearTotal }
   const [near, setNear] = React.useState(false)
   const [index, setIndex] = React.useState(0)
   const flows = detail ?? (isLatest ? data.flow : [])
-  // 年度ごとの題名が無い（古いキャッシュの）ときは、最新年度だけページの題名を使う
-  const originTitle = year.originTitle ?? (isLatest ? data.originTitle : null)
   // 項の内訳（目・節）は、図が近づいたら読み込む。クリックは要らない
   React.useEffect(() => {
     const el = root.current
@@ -204,11 +202,7 @@ export function Flow({ data, total: year }: { data: PageData; total: YearTotal }
   return (
     <div ref={root} className="min-w-0 rounded-[20px] border bg-background">
       <div className="px-5 pt-5 sm:px-6">
-        <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h3 className="font-sans text-lg font-normal">お金の流れ</h3>
-          {originTitle ? <span className="text-xs text-muted-foreground">出典 {originTitle}</span> : null}
-        </div>
-        <div className="mt-3 flex items-baseline justify-between gap-3" aria-live="polite">
+        <div className="flex items-baseline justify-between gap-3" aria-live="polite">
           <div className="font-sans text-lg leading-snug">
             {kan ? kan.kan.name : '全体'}
             <span className="ml-2.5 font-sans text-sm tabular-nums text-muted-foreground">{kan ? amountText(kan.kan.yen, kan.kan.amountMissing) : '款と項'}</span>

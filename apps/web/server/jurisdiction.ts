@@ -184,10 +184,8 @@ export async function loadPage(env: Env, entry: CatalogEntry): Promise<PageData 
       ? await search(env, entry.code, { min: latest - 1, max: latest - 1 }, '目', { name: { eq: [...new Set(picked.map((n) => n.name))] } }, 200)
       : { nodes: [] as ApiNode[] }
   const totals: YearTotal[] = years.map((year) => {
-    const nodes = kanRes.nodes.filter((n) => n.fiscal_year === year)
-    const kan = nodes.map(line)
-    const originTitle = kanRes.origins?.find((o) => o.origin_id === nodes[0]?.origin_id)?.title ?? null
-    return { year, yen: kan.reduce((s, k) => s + k.yen, 0), kan, originTitle }
+    const kan = kanRes.nodes.filter((n) => n.fiscal_year === year).map(line)
+    return { year, yen: kan.reduce((s, k) => s + k.yen, 0), kan }
   })
   const topKan = totals.at(-1)!.kan[0]
   if (!topKan) throw new Error('収録済みの一般会計に款が見つかりません')
@@ -201,7 +199,7 @@ export async function loadPage(env: Env, entry: CatalogEntry): Promise<PageData 
     code: entry.code,
     name: entry.name,
     prefecture: entry.prefecture,
-    originTitle: totals.at(-1)!.originTitle ?? null,
+    originTitle: kanRes.origins?.find((o) => o.origin_id === kanRes.nodes.find((n) => n.fiscal_year === latest)?.origin_id)?.title ?? null,
     years: totals,
     flow: await loadFlow(env, entry.code, latest),
     projects,
