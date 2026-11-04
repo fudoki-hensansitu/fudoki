@@ -145,7 +145,7 @@ function KanPanel({ drill, loading }: { drill: Drill; loading: boolean }) {
 
 export function Flow({ data }: { data: PageData }) {
   const latest = data.years.at(-1)!
-  const root = React.useRef<HTMLElement>(null)
+  const root = React.useRef<HTMLDivElement>(null)
   const track = React.useRef<HTMLDivElement>(null)
   const [detail, setDetail] = React.useState<Drill[]>()
   const [error, setError] = React.useState(false)
@@ -186,10 +186,10 @@ export function Flow({ data }: { data: PageData }) {
   const kan = index > 0 ? flows[index - 1] : undefined
   const sum = flows.reduce((s, f) => s + Math.max(0, f.kan.yen), 0) || 1
   return (
-    <section ref={root} className="mt-4 min-w-0 rounded-[20px] border bg-background">
+    <div ref={root} className="min-w-0 rounded-[20px] border bg-background">
       <div className="px-5 pt-5 sm:px-6">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h2 className="font-sans text-xl font-normal">お金の流れ</h2>
+          <h3 className="font-sans text-lg font-normal">お金の流れ</h3>
           {data.originTitle ? <span className="text-xs text-muted-foreground">出典 {data.originTitle}</span> : null}
         </div>
         <div className="mt-3 flex items-baseline justify-between gap-3" aria-live="polite">
@@ -235,6 +235,6 @@ export function Flow({ data }: { data: PageData }) {
           <Button variant="outline" onClick={() => { setDetail(undefined); setAttempt((n) => n + 1) }}>もう一度読み込む</Button>
         </div>
       ) : null}
-    </section>
+    </div>
   )
 }

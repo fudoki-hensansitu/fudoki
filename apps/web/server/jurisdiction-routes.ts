@@ -6,6 +6,7 @@ import type { Drill, FlowDepth, PageData, Setsu } from '../jurisdiction/types'
 import { clientIp, errorResponse, HttpError, rateLimit } from './http'
 import { VIEW_RATE_LIMIT } from './limits'
 import type { Env, RateLimiter } from './env'
+import { PROFILES } from '../jurisdiction/profiles'
 import { loadCatalog, loadDrillById, loadFlow, loadPage, loadSetsu, type CatalogEntry } from './jurisdiction'
 
 const TTL = 3600
@@ -53,7 +54,7 @@ jurisdictions.get('/:prefecture/:name', async (c, next) => {
     if (!entry) return notFound()
     const data = entry.settlementYears.length > 0 ? await page(c.env, entry) : null
     if (!data) return new Response(renderEmpty(entry), { headers: HTML_HEADERS })
-    return new Response(renderPage(data, c.env.TURNSTILE_SITE_KEY ?? ''), { headers: HTML_HEADERS })
+    return new Response(renderPage({ ...data, profile: PROFILES[entry.code] ?? null }, c.env.TURNSTILE_SITE_KEY ?? ''), { headers: HTML_HEADERS })
   } catch {
     return unavailable()
   }

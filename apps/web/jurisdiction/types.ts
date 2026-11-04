@@ -1,4 +1,5 @@
 // 自治体の個別ページ（/:都道府県/:名称）のデータの型と、金額・年度の表記。server（SSR・API）と画面（島）で同じものを使う
+import type { Profile } from './profiles'
 
 /** 款・項・目・節など、出典の1行。金額は API が返した円（画面で足し引きしない） */
 export interface Line {
@@ -61,6 +62,8 @@ export interface PageData {
   /** 最新年度の全款から全項への流れ */
   flow: Drill[]
   projects: Project[]
+  /** 方針・政策領域・首長と議員（jurisdiction/profiles.ts）。手で起こした自治体だけにある */
+  profile?: Profile | null
 }
 
 /** 西暦の会計年度を令和にする（2025 → 令和7年度） */

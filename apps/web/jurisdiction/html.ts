@@ -108,7 +108,7 @@ export function renderIndex(entries: CatalogEntry[]): string {
   const description = `決算を収録している自治体（${have.length}）の一覧。自治体ごとに歳出の款・項・目と、金額の推移を確かめられます。`
   const byPref = new Map<string, CatalogEntry[]>()
   for (const e of have) byPref.set(e.prefecture, [...(byPref.get(e.prefecture) ?? []), e])
-  const sections = [...byPref].map(([pref, list]) => `<h2>${esc(pref)}</h2><ul class="j-list">${list.map((e) => `<li><a href="${jurisdictionPath(e.prefecture, e.name)}">${esc(e.name)}</a></li>`).join('')}</ul>`).join('')
+  const sections = [...byPref].map(([pref, list]) => `<h2 id="${esc(pref)}">${esc(pref)}</h2><ul class="j-list">${list.map((e) => `<li><a href="${jurisdictionPath(e.prefecture, e.name)}">${esc(e.name)}</a></li>`).join('')}</ul>`).join('')
   return `<!doctype html>
 <html lang="ja">
 <head>

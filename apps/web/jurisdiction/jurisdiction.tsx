@@ -1,14 +1,13 @@
-// 自治体の個別ページ（/:都道府県/:名称）の島。サーバーが書いた HTML（検索エンジン向け）を、同じデータでグラフ付きに描き直す。
-// 歳出は API の値。人口・将来推計・特色はまだ無いので仮の値（dummy.ts）で、画面にも「仮」と出す
+// 自治体の個別ページ（/:都道府県/:名称）の島。サーバーが書いた HTML（検索エンジン向け）を、同じデータで描き直す。
+// 型は企業のプロフィールページ: ヘッダー（ロゴ・名前・一文・属性）＋年度のタブ＋左の目次＋見出し付きの節。年度を切り替えるとページ全体がその年度になる。
+// 歳出の決算は API の値。方針・政策領域・事業の入れ替え・首長と議員は jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
 import * as React from 'react'
 import { createRoot } from 'react-dom/client'
-import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, LabelList, ReferenceLine, XAxis, YAxis } from 'recharts'
-import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart'
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
+import { GlobeIcon, MapPinIcon, UsersIcon } from 'lucide-react'
 import { StartForm } from '../chat/start-form'
-import { DUMMY_TRAITS, dummyPopulation } from './dummy'
 import { Flow } from './flow'
-import { changePct, formatYen, kanChanges, reiwa, type PageData, type Project, type Setsu } from './types'
+import { assetPath, type Domain, type PolicyProject, type Profile, type ProfileYear, type ProjectStatus, type Scrap } from './profiles'
+import { changePct, formatYen, reiwa, type PageData, type Project, type Setsu, type YearTotal } from './types'
 
 const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
   const res = await fetch(url, { signal })
@@ -16,81 +15,111 @@ const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
   return (await res.json()) as T
 }
 
-const Dummy = () => <span className="ml-1.5 inline-block rounded border border-dashed px-1.5 py-px align-middle text-[11px] leading-none text-muted-foreground">仮</span>
+const BADGE: Record<ProjectStatus, { label: string; className: string }> = {
+  short: { label: '目標に届いていない', className: 'bg-[color-mix(in_srgb,var(--kincha)_22%,transparent)] text-[#aa5910]' },
+  met: { label: '目標に届いた', className: 'bg-primary/15 text-primary' },
+  mixed: { label: '達成と未達が混在', className: 'bg-secondary' },
+  none: { label: '評価前', className: 'border border-dashed' },
+}
 
-const Card = ({ title, aside, children }: { title: string; aside?: React.ReactNode; children: React.ReactNode }) => (
-  <section className="mt-4 min-w-0 rounded-[20px] border bg-background p-5 sm:p-6">
-    <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
-      <h2 className="font-sans text-xl font-normal">{title}</h2>
-      {aside}
-    </div>
+const Section = ({ id, title, children }: { id: string; title: string; children: React.ReactNode }) => (
+  <section id={id} aria-labelledby={`h-${id}`} className="flex scroll-mt-4 flex-col gap-4">
+    <h2 id={`h-${id}`} className="font-sans text-[26px] font-normal leading-snug">
+      {title}
+    </h2>
     {children}
   </section>
 )
 
-const BigNumber = ({ label, dummy, yen, perPerson }: { label: string; dummy?: boolean; yen?: number; perPerson?: number }) => {
-  const [n, unit] = yen !== undefined ? formatYen(yen).split(/(?=[億万]円$)/) : [String(perPerson), '万円']
+function Policies({ code, year }: { code: string; year: ProfileYear }) {
   return (
-    <div className="min-w-0 flex-1">
-      <div className="text-[13px] text-muted-foreground">
-        {label}
-        {dummy ? <Dummy /> : null}
+    <Section id="policy" title="方針">
+      <ol className="border-t">
+        {year.policies.map((p, i) => (
+          <li key={p.title} className="grid grid-cols-[22px_104px_minmax(0,1fr)] items-start gap-3 border-b border-foreground/10 py-3.5 sm:grid-cols-[28px_176px_minmax(0,1fr)] sm:gap-4">
+            <span className="text-lg text-primary">{i + 1}</span>
+            <img src={assetPath(code, p.image)} alt="" loading="lazy" className="aspect-video w-full rounded-lg border border-foreground/10 object-cover" />
+            <div>
+              <b className="block text-base font-normal">{p.title}</b>
+              <p className="mt-0.5 text-sm text-muted-foreground">{p.body}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </Section>
+  )
+}
+
+function ProjectItem({ p }: { p: PolicyProject }) {
+  return (
+    <div className="grid grid-cols-1 gap-x-6 gap-y-1.5 border-b border-foreground/10 py-4 md:grid-cols-[minmax(0,1fr)_210px]">
+      <div className="text-[15.5px]">
+        {p.name}
+        {p.status ? <span className={`ml-1.5 whitespace-nowrap rounded-full px-2 py-px align-middle text-xs ${BADGE[p.status].className}`}>{BADGE[p.status].label}</span> : null}
       </div>
-      <div className="font-sans text-[clamp(2rem,1.5rem+2vw,3.2rem)] leading-tight tabular-nums">
-        {n}
-        <small className="ml-1 text-[.4em] text-muted-foreground">{unit}</small>
+      <p className="text-sm md:col-start-1">{p.what}</p>
+      {p.evaluation ? (
+        <p className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1 text-[13px] text-muted-foreground md:col-start-1">
+          <span>区の評価</span>
+          <span>
+            {p.evaluation.grade ? <b className="font-normal text-foreground">{p.evaluation.grade}</b> : null}
+            {p.evaluation.grade ? '・' : ''}
+            {p.evaluation.note}
+          </span>
+        </p>
+      ) : null}
+      <div className="flex flex-row flex-wrap gap-x-3 gap-y-1 text-sm md:col-start-2 md:row-span-3 md:row-start-1 md:flex-col md:gap-0.5 md:text-right">
+        {p.amounts.map((a) => (
+          <span key={`${a.yen}-${a.label ?? ''}`} className="tabular-nums">
+            {formatYen(a.yen)}
+            {a.label ? <small className="ml-1 text-xs text-muted-foreground md:ml-0 md:block">{a.label}</small> : null}
+          </span>
+        ))}
       </div>
     </div>
   )
 }
 
-function Trend({ data }: { data: PageData }) {
-  const latest = data.years.at(-1)!
-  const first = data.years[0]!
-  const bars = data.years.map((y) => ({ label: reiwa(y.year).replace('年度', ''), value: y.yen / 1e8 }))
-  const changes = kanChanges(data.years)
-  const config = { value: { label: '歳出（億円）', color: 'var(--primary)' }, pct: { label: '前年度との増減（%）', color: 'var(--primary)' } } satisfies ChartConfig
-  const compared = data.years.length > 1 ? `${reiwa(data.years.at(-2)!.year).replace('年度', '')}→${reiwa(latest.year).replace('年度', '')}` : ''
+function Domains({ code, domains }: { code: string; domains: Domain[] }) {
   return (
-    <Card title="歳出の推移" aside={first.year > latest.year - 4 ? <span className="text-xs text-muted-foreground">{reiwa(first.year)}より前は未収録</span> : null}>
-      <div className="grid gap-x-8 gap-y-6 md:grid-cols-[5fr_7fr]">
-        <div>
-          <h3 className="mb-2 text-[13px] font-medium text-muted-foreground">総額</h3>
-          <ChartContainer config={config} className="aspect-auto h-[220px] w-full">
-            <BarChart data={bars} margin={{ top: 24 }}>
-              <CartesianGrid vertical={false} />
-              <XAxis dataKey="label" tickLine={false} axisLine={false} />
-              <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-              <Bar dataKey="value" radius={[6, 6, 0, 0]} maxBarSize={72} fill="var(--primary)">
-                <LabelList dataKey="value" position="top" className="fill-foreground text-[13px]" formatter={(v) => `${Math.round(Number(v)).toLocaleString('ja-JP')}億円`} />
-              </Bar>
-            </BarChart>
-          </ChartContainer>
+    <Section id="domains" title="政策領域">
+      {domains.map((d) => (
+        <div key={d.id} id={`d-${d.id}`} className="flex scroll-mt-4 flex-col gap-1 [&+&]:mt-12">
+          <h3 className="mb-3.5 border-l-4 border-primary py-0.5 pl-3.5 text-[19px] leading-snug sm:text-[22px]">{d.name}</h3>
+          <img src={assetPath(code, d.image)} alt="" loading="lazy" className="mb-3 aspect-[16/7] w-full rounded-lg object-cover sm:aspect-[4/1]" />
+          <div className="border-t border-foreground">
+            {d.projects.length ? (
+              d.projects.map((p) => <ProjectItem key={p.name} p={p} />)
+            ) : (
+              <p className="border-b border-foreground/10 py-4 text-sm text-muted-foreground">この年度の新規・拡充事業の中から、この領域に振り分けた事業はありません。</p>
+            )}
+          </div>
         </div>
-        <div>
-          <h3 className="mb-2 text-[13px] font-medium text-muted-foreground">款ごとの増減{compared ? `（${compared}）` : ''}</h3>
-          {changes.length === 0 ? (
-            <p className="py-8 text-sm text-muted-foreground">前年度と比べられる款がありません。</p>
-          ) : (
-            <ChartContainer config={config} className="aspect-auto w-full" style={{ height: 40 + changes.length * 30 }}>
-              <BarChart data={changes} layout="vertical" margin={{ left: 8, right: 44 }}>
-                <CartesianGrid horizontal={false} />
-                <YAxis dataKey="name" type="category" tickLine={false} axisLine={false} width={126} tick={{ fontSize: 12 }} />
-                <XAxis type="number" hide domain={['dataMin - 34', 'dataMax + 22']} />
-                <ReferenceLine x={0} stroke="var(--border)" />
-                <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-                <Bar dataKey="pct" radius={4} barSize={14}>
-                  {changes.map((c) => (
-                    <Cell key={c.name} fill={c.pct >= 0 ? 'var(--primary)' : 'var(--kincha)'} />
-                  ))}
-                  <LabelList dataKey="pct" position="right" formatter={(v) => `${Number(v) > 0 ? '+' : ''}${v}%`} className="fill-foreground text-xs" />
-                </Bar>
-              </BarChart>
-            </ChartContainer>
-          )}
-        </div>
-      </div>
-    </Card>
+      ))}
+    </Section>
+  )
+}
+
+function KanBars({ total, prev }: { total: YearTotal; prev?: YearTotal }) {
+  const max = total.kan[0]?.yen || 1
+  return (
+    <ul className="border-t">
+      {total.kan.map((k) => {
+        const pct = changePct(k.yen, prev?.kan.find((p) => p.name === k.name)?.yen)
+        return (
+          <li key={k.id} className="grid grid-cols-[84px_minmax(0,1fr)_76px] items-center gap-3 border-b border-foreground/10 py-2 text-sm sm:grid-cols-[150px_minmax(0,1fr)_90px_64px]">
+            <span className="truncate">{k.name}</span>
+            <span className="h-2.5 overflow-hidden rounded-full bg-foreground/5">
+              <i className="block h-full rounded-full bg-primary" style={{ width: `${(Math.max(k.yen, 0) / max) * 100}%` }} />
+            </span>
+            <span className="text-right tabular-nums">{k.amountMissing ? '金額未記載' : formatYen(k.yen)}</span>
+            <span className={`hidden text-right text-[13px] tabular-nums sm:block ${pct !== null && pct < 0 ? 'text-[#aa5910]' : 'text-primary'}`}>
+              {pct === null ? '' : `${pct >= 0 ? '+' : '−'}${Math.abs(pct).toFixed(1)}%`}
+            </span>
+          </li>
+        )
+      })}
+    </ul>
   )
 }
 
@@ -110,11 +139,11 @@ function ProjectRow({ p, rank, max }: { p: Project; rank: number; max: number })
     return () => controller.abort()
   }, [p.id, attempt])
   return (
-    <li className="border-t">
+    <li className="border-b border-foreground/10">
       <div className="grid grid-cols-[22px_minmax(0,1fr)_auto] items-center gap-x-3.5 gap-y-1 py-3 sm:grid-cols-[22px_minmax(120px,190px)_1fr_110px_90px]">
-        <span className="font-sans text-xl text-muted-foreground">{rank}</span>
+        <span className="text-xl text-muted-foreground">{rank}</span>
         <div className="min-w-0">
-          <b className="block text-[15px] font-medium leading-snug">{p.name}</b>
+          <b className="block text-[15px] font-normal leading-snug">{p.name}</b>
           <span className="text-xs text-muted-foreground">{p.kanName}</span>
         </div>
         <div className="order-5 col-span-full sm:order-none sm:col-span-1">
@@ -147,105 +176,310 @@ function ProjectRow({ p, rank, max }: { p: Project; rank: number; max: number })
   )
 }
 
-function Projects({ data }: { data: PageData }) {
+function Budget({ data, total }: { data: PageData; total: YearTotal }) {
+  const prev = data.years.find((y) => y.year === total.year - 1)
+  const isLatest = total.year === data.years.at(-1)?.year
+  const pct = changePct(total.yen, prev?.yen)
   const max = data.projects[0]?.yen ?? 1
   return (
-    <Card title="力を入れている事業" aside={<span className="text-xs text-muted-foreground">支出済額の大きい目（{reiwa(data.years.at(-1)!.year)}）</span>}>
-      <ul>
-        {data.projects.map((p, i) => (
-          <ProjectRow key={p.id} p={p} rank={i + 1} max={max} />
+    <Section id="budget" title="予算と決算">
+      <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1.5">
+        <span className="text-sm text-muted-foreground">歳出（決算）</span>
+        <b className="text-[clamp(2rem,1.5rem+1.8vw,2.8rem)] font-normal leading-tight tabular-nums">{formatYen(total.yen)}</b>
+        {pct !== null ? <span className={`text-[13px] tabular-nums ${pct < 0 ? 'text-[#aa5910]' : 'text-primary'}`}>前年度比 {pct >= 0 ? '+' : '−'}{Math.abs(pct).toFixed(1)}%</span> : null}
+      </div>
+      <KanBars total={total} prev={prev} />
+      {isLatest ? (
+        <>
+          <Flow data={data} />
+          <h3 className="mt-4 text-lg">金額の大きい事業</h3>
+          <ul className="border-t">
+            {data.projects.map((p, i) => (
+              <ProjectRow key={p.id} p={p} rank={i + 1} max={max} />
+            ))}
+          </ul>
+        </>
+      ) : null}
+    </Section>
+  )
+}
+
+function ScrapSection({ scrap }: { scrap: Scrap }) {
+  const ratio = Math.min(1, scrap.raisedYen / scrap.targetYen)
+  const grades = [
+    ['A', '広げる'],
+    ['B', '今のまま続ける'],
+    ['C', 'やり方を見直す'],
+    ['D', 'やめる・終える'],
+  ] as const
+  return (
+    <Section id="scrap" title="事業の入れ替え">
+      <div className="flex max-w-[560px] flex-col gap-2">
+        <div className="flex items-baseline justify-between gap-3">
+          <span>スクラップで捻出した財源</span>
+          <b className="text-[28px] font-normal tabular-nums">
+            {formatYen(scrap.raisedYen)}
+            <small className="ml-1 text-sm text-muted-foreground">／ 目標 {formatYen(scrap.targetYen)}</small>
+          </b>
+        </div>
+        <div className="relative h-2.5 rounded-full bg-foreground/5" role="img" aria-label={`目標${formatYen(scrap.targetYen)}に対して${formatYen(scrap.raisedYen)}`}>
+          <div className="absolute inset-y-0 left-0 rounded-full bg-[var(--kincha)]" style={{ width: `${ratio * 100}%` }} />
+          <div className="absolute -top-1 right-0 h-[18px] w-0.5 bg-foreground" />
+        </div>
+      </div>
+      <h3 className="text-lg">{scrap.evaluated.toLocaleString('ja-JP')}事業の自己評価</h3>
+      <div className="grid grid-cols-2 border-t sm:grid-cols-4">
+        {grades.map(([g, label]) => (
+          <div key={g} className="flex flex-col py-3">
+            <b className="text-2xl font-normal leading-snug tabular-nums">{scrap.grades[g]}</b>
+            <span className="text-[13px] text-muted-foreground">{g} {label}</span>
+          </div>
+        ))}
+      </div>
+      <h3 className="text-lg">やめた事業</h3>
+      <ul className="border-t">
+        {scrap.exits.map((e) => (
+          <li key={e.name} className="grid grid-cols-[minmax(0,1fr)_72px] items-baseline gap-x-4 gap-y-1 border-b border-foreground/10 py-3 text-sm sm:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_80px]">
+            <span>{e.name}</span>
+            <span className="col-span-full row-start-2 text-[13.5px] text-muted-foreground sm:col-span-1 sm:row-start-auto">{e.reason}</span>
+            <span className="text-right text-[13px] text-muted-foreground">{e.result}</span>
+          </li>
         ))}
       </ul>
-    </Card>
+    </Section>
   )
 }
 
-function Population({ code }: { code: string }) {
-  const pop = React.useMemo(() => dummyPopulation(code), [code])
-  const rows = [
-    ...pop.actual.map((a) => ({ year: a.year, actual: a.value, mid: null as number | null, range: null as [number, number] | null })),
-    ...pop.forecast.map((f) => ({ year: f.year, actual: f.year === 2025 ? pop.now : null, mid: f.mid, range: [f.lo, f.hi] as [number, number] })),
-  ]
-  const config = { actual: { label: '人口（万人）', color: 'var(--primary)' }, mid: { label: '将来推計（万人）', color: 'var(--kincha)' }, range: { label: '推計の幅', color: 'var(--kincha)' } } satisfies ChartConfig
+function People({ profile }: { profile: Profile }) {
+  const council = profile.council
   return (
-    <Card title="人口とまちの特色" aside={<Dummy />}>
-      <div className="grid items-end gap-6 md:grid-cols-2">
-        <div>
-          <div className="text-[13px] text-muted-foreground">現在の人口</div>
-          <div className="font-sans text-5xl tabular-nums">
-            {pop.now}
-            <small className="ml-1 text-[.4em] text-muted-foreground">万人</small>
-          </div>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {DUMMY_TRAITS.map((t) => (
-              <span key={t} className="rounded-full bg-secondary px-3 py-0.5 text-[13px]">
-                {t}
-              </span>
+    <Section id="people" title="首長と議員">
+      <h3 className="text-lg">{profile.head.title}</h3>
+      <div className="flex items-center gap-3.5 pb-2 pt-1">
+        <span aria-hidden="true" className="grid size-12 place-items-center rounded-full bg-secondary text-lg">{profile.head.name[0]}</span>
+        <b className="text-[17px] font-normal">{profile.head.name}</b>
+      </div>
+      {council ? (
+        <>
+          <h3 className="text-lg">
+            {council.title} <span className="tabular-nums text-muted-foreground">{council.groups.reduce((n, g) => n + g.members.length, 0)}人</span>
+          </h3>
+          <div className="grid grid-cols-1 gap-x-8 border-t sm:grid-cols-2">
+            {council.groups.map((g) => (
+              <div key={g.name} className="border-b border-foreground/10 py-3">
+                <div className="mb-1.5 flex justify-between gap-2 text-sm">
+                  {g.name}
+                  <span className="text-[13px] text-muted-foreground">{g.members.length}人</span>
+                </div>
+                <ul className="flex flex-wrap gap-x-3.5 gap-y-1 text-[13.5px] text-muted-foreground">
+                  {g.members.map((m) => (
+                    <li key={m}>{m}</li>
+                  ))}
+                </ul>
+              </div>
             ))}
           </div>
-        </div>
-        <ChartContainer config={config} className="aspect-auto h-[200px] w-full">
-          <AreaChart data={rows} margin={{ left: 4, right: 8, top: 8 }}>
-            <CartesianGrid vertical={false} />
-            <XAxis dataKey="year" type="number" domain={[2016, 2050]} ticks={[2016, 2025, 2035, 2050]} tickLine={false} axisLine={false} tick={{ fontSize: 11 }} />
-            <YAxis hide domain={['dataMin - 3', 'dataMax + 3']} />
-            <ChartTooltip content={<ChartTooltipContent />} />
-            <Area dataKey="range" type="monotone" stroke="none" fill="var(--color-range)" fillOpacity={0.25} connectNulls />
-            <Area dataKey="actual" type="monotone" stroke="var(--color-actual)" strokeWidth={3} fill="var(--color-actual)" fillOpacity={0.15} connectNulls={false} />
-            <Area dataKey="mid" type="monotone" stroke="var(--color-mid)" strokeWidth={3} strokeDasharray="2 7" strokeLinecap="round" fill="none" connectNulls />
-          </AreaChart>
-        </ChartContainer>
-      </div>
-      <p className="mt-3 text-xs text-muted-foreground">人口・特色・将来推計は仮の値です。</p>
-    </Card>
+        </>
+      ) : null}
+    </Section>
   )
 }
 
-function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
-  const latest = data.years.at(-1)!
-  const pop = React.useMemo(() => dummyPopulation(data.code).now, [data.code])
-  const perPerson = Math.round(latest.yen / (pop * 1e4) / 1e4)
+interface TocItem {
+  href: string
+  label: string
+  sub?: boolean
+}
+
+
+function YearTabs({ years, current, onChange, compact }: { years: number[]; current: number; onChange: (y: number) => void; compact?: boolean }) {
   return (
-    <div className="mx-auto max-w-[1000px] px-4 pb-48 pt-2 sm:px-6">
-      <div className="flex items-center justify-between gap-2 pt-6 text-xs text-muted-foreground">
-        <Breadcrumb>
-          <BreadcrumbList className="text-xs">
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/自治体">自治体</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>{data.prefecture}</BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>{data.name}</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-        <span className="rounded-full border px-3 py-1">{reiwa(latest.year)} 決算</span>
-      </div>
-      <h1 className="mt-3 font-sans text-[clamp(2.4rem,1.5rem+3.4vw,4rem)] font-normal leading-tight">{data.name}</h1>
-      <div className="mt-7 flex gap-6 sm:gap-14">
-        <BigNumber label="歳出の総額" yen={latest.yen} />
-        <div className="border-l pl-6 sm:pl-14 flex-1 min-w-0">
-          <BigNumber label="住民一人あたりの歳出" dummy perPerson={perPerson} />
+    <div role="tablist" aria-label="年度" className={compact ? 'flex gap-1' : 'flex gap-1 border-b'}>
+      {years.map((y) => (
+        <button
+          key={y}
+          type="button"
+          role="tab"
+          aria-selected={y === current}
+          onClick={() => onChange(y)}
+          className={
+            compact
+              ? `rounded-full px-2.5 py-1.5 text-[13px] ${y === current ? 'bg-secondary text-foreground' : 'text-muted-foreground'}`
+              : `-mb-px border-b-2 px-3.5 pb-2.5 pt-3 text-[15px] ${y === current ? 'border-primary text-foreground' : 'border-transparent text-muted-foreground hover:text-foreground'}`
+          }
+        >
+          {reiwa(y)}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+const yearFromHash = () => Number(/^#y(\d{4})$/.exec(location.hash)?.[1]) || undefined
+
+function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
+  const profile = data.profile ?? null
+  const years = React.useMemo(() => [...new Set([...Object.keys(profile?.years ?? {}).map(Number), ...data.years.map((y) => y.year)])].sort((a, b) => b - a), [data, profile])
+  const [year, setYear] = React.useState(() => {
+    const y = yearFromHash()
+    return y && years.includes(y) ? y : years[0]!
+  })
+  const py = profile?.years[String(year)]
+  const total = data.years.find((y) => y.year === year)
+  const choose = (y: number) => {
+    setYear(y)
+    history.replaceState(null, '', `#y${y}`)
+  }
+
+  const toc: TocItem[] = [
+    ...(py ? [{ href: '#policy', label: '方針' }, { href: '#domains', label: '政策領域' }, ...py.domains.map((d) => ({ href: `#d-${d.id}`, label: d.short ?? d.name, sub: true }))] : []),
+    ...(total ? [{ href: '#budget', label: '予算と決算' }] : []),
+    ...(py?.scrap ? [{ href: '#scrap', label: '事業の入れ替え' }] : []),
+    ...(profile ? [{ href: '#people', label: '首長と議員' }] : []),
+  ]
+
+  // スクロールしたら小さなヘッダーを出す
+  const title = React.useRef<HTMLHeadingElement>(null)
+  const [mini, setMini] = React.useState(false)
+  React.useEffect(() => {
+    const el = title.current
+    if (!el) return
+    const observer = new IntersectionObserver(([e]) => setMini(!e!.isIntersecting && e!.boundingClientRect.top < 0))
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  // 目次をスクロールに追従させる
+  const [current, setCurrent] = React.useState<string>()
+  const tocKey = toc.map((t) => t.href).join()
+  React.useEffect(() => {
+    const targets = toc.map((t) => document.querySelector<HTMLElement>(t.href)).filter((t): t is HTMLElement => !!t)
+    let frame = 0
+    const spy = () => {
+      frame = 0
+      let cur = targets[0]
+      for (const t of targets) if (t.getBoundingClientRect().top <= 160) cur = t
+      if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4) cur = targets.at(-1)
+      setCurrent(cur ? `#${cur.id}` : undefined)
+    }
+    const onScroll = () => { if (!frame) frame = requestAnimationFrame(spy) }
+    spy()
+    addEventListener('scroll', onScroll, { passive: true })
+    addEventListener('resize', onScroll)
+    return () => {
+      removeEventListener('scroll', onScroll)
+      removeEventListener('resize', onScroll)
+      cancelAnimationFrame(frame)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tocKey, year])
+  const isCurrent = (href: string) => href === current || (href === '#domains' && !!current?.startsWith('#d-'))
+  const spBar = React.useRef<HTMLElement>(null)
+  React.useEffect(() => {
+    const bar = spBar.current
+    const a = bar?.querySelector<HTMLElement>('[data-current]')
+    if (bar && a) bar.scrollTo({ left: a.offsetLeft - 16, behavior: 'smooth' })
+  }, [current])
+
+  const tagline = py?.tagline
+  const logo = profile?.logo ? assetPath(data.code, profile.logo) : null
+  const latest = data.years.at(-1)
+
+  return (
+    <>
+      <div className={`fixed inset-x-0 top-0 z-30 border-b bg-background transition-transform duration-200 ease-out motion-reduce:transition-none ${mini ? '' : '-translate-y-full'}`} aria-hidden={!mini} inert={!mini}>
+        <div className="mx-auto flex h-[60px] max-w-[1120px] items-center gap-3 px-4">
+          <span className="hidden size-10 shrink-0 place-items-center rounded-lg border bg-white p-1 sm:grid">{logo ? <img src={logo} alt="" className="w-full" /> : <span className="text-foreground">{data.name[0]}</span>}</span>
+          <b className="shrink-0 text-lg font-normal">{data.name}</b>
+          {tagline ? <span className="hidden min-w-0 truncate text-[13px] text-muted-foreground sm:block">{tagline}</span> : null}
+          {years.length > 1 ? (
+            <div className="ml-auto shrink-0">
+              <YearTabs years={years} current={year} onChange={choose} compact />
+            </div>
+          ) : null}
         </div>
       </div>
-      <p className="mt-1 text-xs text-muted-foreground">一般会計・{reiwa(latest.year)}決算（支出済額）。一人あたりは、歳出の総額を人数で割った値で、税の負担額ではありません。</p>
-      <Trend data={data} />
-      <Flow data={data} />
-      <Projects data={data} />
-      <Population code={data.code} />
+
+      <div className="mx-auto max-w-[1120px] px-4 pb-48">
+        <header className="grid grid-cols-[80px_minmax(0,1fr)] items-start gap-4 border-b py-7 sm:grid-cols-[132px_minmax(0,1fr)] sm:gap-7">
+          <div className="grid size-20 place-items-center rounded-xl border bg-white p-2.5 sm:size-[132px] sm:rounded-2xl sm:p-[18px]">
+            {logo ? <img src={logo} alt={data.name} className="h-auto w-full" /> : <span className="text-3xl text-foreground sm:text-5xl">{data.name[0]}</span>}
+          </div>
+          <div className="flex min-w-0 flex-col gap-3">
+            <h1 ref={title} className="text-[clamp(2rem,1.5rem+2vw,2.8rem)] font-normal leading-tight">{data.name}</h1>
+            {tagline ? <p className="text-[17px] [text-wrap:pretty] [word-break:auto-phrase]">{tagline}</p> : null}
+            <div className="flex flex-wrap gap-x-6 gap-y-1.5 text-sm text-muted-foreground">
+              <span className="inline-flex items-center gap-1.5">
+                <MapPinIcon className="size-4" aria-hidden="true" />
+                <a href={`/自治体#${encodeURIComponent(data.prefecture)}`} className="text-primary no-underline">{data.prefecture}</a>
+              </span>
+              {profile?.population ? (
+                <span className="inline-flex items-center gap-1.5" title="人口">
+                  <UsersIcon className="size-4" aria-hidden="true" />
+                  <span className="sr-only">人口 </span>
+                  {(profile.population.people / 1e4).toFixed(1)}万人
+                </span>
+              ) : null}
+              {profile?.site ? (
+                <span className="inline-flex items-center gap-1.5">
+                  <GlobeIcon className="size-4" aria-hidden="true" />
+                  <a href={profile.site} className="text-primary no-underline">{new URL(profile.site).host.replace(/^www\./, '')}</a>
+                </span>
+              ) : null}
+            </div>
+            {profile?.tags.length ? (
+              <div className="flex flex-wrap gap-2">
+                {profile.tags.map((t) => (
+                  <span key={t} className="rounded-full bg-secondary px-3.5 py-0.5 text-[13px]">{t}</span>
+                ))}
+              </div>
+            ) : null}
+          </div>
+        </header>
+        {years.length > 1 ? <YearTabs years={years} current={year} onChange={choose} /> : null}
+
+        <nav ref={spBar} aria-label="目次" className={`sticky z-20 -mx-4 flex gap-1.5 overflow-x-auto border-b bg-background px-4 py-2.5 [scrollbar-width:none] md:hidden ${mini ? 'top-[61px]' : 'top-0'}`}>
+          {toc.filter((t) => !t.sub).map((t) => (
+            <a key={t.href} href={t.href} data-current={isCurrent(t.href) || undefined} className="shrink-0 rounded-full border px-3 py-1 text-[13px] text-muted-foreground no-underline data-[current]:border-primary data-[current]:bg-primary data-[current]:text-primary-foreground">
+              {t.label}
+            </a>
+          ))}
+        </nav>
+
+        <div className="grid grid-cols-1 gap-12 pt-6 md:grid-cols-[220px_minmax(0,1fr)] md:pt-8">
+          <nav aria-label="目次" className="sticky top-[84px] hidden flex-col gap-0.5 self-start md:flex">
+            {toc.map((t) => (
+              <a
+                key={t.href}
+                href={t.href}
+                data-current={isCurrent(t.href) || undefined}
+                className={`relative block rounded-lg px-3.5 py-2 no-underline hover:bg-card data-[current]:bg-card data-[current]:text-foreground data-[current]:before:absolute data-[current]:before:inset-y-2 data-[current]:before:left-0 data-[current]:before:w-[3px] data-[current]:before:rounded-sm data-[current]:before:bg-primary ${t.sub ? 'pl-7 text-[13.5px] text-muted-foreground' : 'text-[15px]'}`}
+              >
+                {t.label}
+              </a>
+            ))}
+          </nav>
+          <main className="flex min-w-0 flex-col gap-14">
+            {py ? <Policies code={data.code} year={py} /> : null}
+            {py ? <Domains code={data.code} domains={py.domains} /> : null}
+            {total ? <Budget data={data} total={total} /> : null}
+            {py?.scrap ? <ScrapSection scrap={py.scrap} /> : null}
+            {profile ? <People profile={profile} /> : null}
+          </main>
+        </div>
+      </div>
+
       <div className="fixed inset-x-0 bottom-0 z-20 bg-gradient-to-t from-background from-60% to-transparent px-4 pb-[max(14px,env(safe-area-inset-bottom))] pt-3">
         <div className="mx-auto max-w-[720px]">
           <StartForm
             sitekey={sitekey}
             prefix={`${data.name}について：`}
             placeholder={`${data.name}について聞く…`}
-            suggestions={[`なぜ${latest.kan[0]?.name ?? '最大の款'}が最大なの？`, '他の自治体と比べると？', 'この数字は出典と合ってる？']}
+            suggestions={py ? ['区の方針と、実際の予算の使い方は合っている？', 'やめた事業はほかに何がある？', '他の自治体と比べると？'] : [`なぜ${latest?.kan[0]?.name ?? '最大の款'}が最大なの？`, '他の自治体と比べると？', 'この数字は出典と合ってる？']}
           />
         </div>
       </div>
-    </div>
+    </>
   )
 }
 
