@@ -22,31 +22,33 @@ const BADGE: Record<ProjectStatus, { label: string; className: string }> = {
   none: { label: '評価前', className: 'border border-dashed' },
 }
 
-const Section = ({ id, title, children }: { id: string; title: string; children: React.ReactNode }) => (
-  <section id={id} aria-labelledby={`h-${id}`} className="flex scroll-mt-4 flex-col gap-4">
-    <h2 id={`h-${id}`} className="font-sans text-[26px] font-normal leading-snug">
-      {title}
-    </h2>
+const Section = ({ id, title, link, children }: { id: string; title: string; link?: { href: string; label: string }; children: React.ReactNode }) => (
+  <section id={id} aria-labelledby={`h-${id}`} className="flex scroll-mt-20 flex-col gap-4">
+    <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+      <h2 id={`h-${id}`} className="font-sans text-[26px] font-normal leading-snug">
+        {title}
+      </h2>
+      {link ? (
+        <a href={link.href} target="_blank" rel="noopener" className="inline-flex items-center gap-1 whitespace-nowrap text-[13px] text-primary no-underline hover:underline">
+          {link.label}
+          <ArrowUpRightIcon aria-hidden="true" className="size-3.5" />
+        </a>
+      ) : null}
+    </div>
     {children}
   </section>
 )
 
 function Policies({ code, year }: { code: string; year: ProfileYear }) {
   return (
-    <Section id="policy" title="方針">
+    <Section id="policy" title="方針" link={{ href: year.policySource, label: '予算編成方針' }}>
       <ol className="border-t">
         {year.policies.map((p, i) => (
           <li key={p.title} className="grid grid-cols-[22px_104px_minmax(0,1fr)] items-start gap-3 border-b border-foreground/10 py-3.5 sm:grid-cols-[28px_176px_minmax(0,1fr)] sm:gap-4">
             <span className="text-lg text-primary">{i + 1}</span>
             <img src={assetPath(code, p.image)} alt="" loading="lazy" className="aspect-video w-full rounded-lg border border-foreground/10 object-cover" />
             <div>
-              <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
-                <b className="text-base font-normal">{p.title}</b>
-                <a href={p.source} target="_blank" rel="noopener" className="inline-flex items-center gap-1 whitespace-nowrap text-[13px] text-primary no-underline hover:underline">
-                  予算編成方針
-                  <ArrowUpRightIcon aria-hidden="true" className="size-3.5" />
-                </a>
-              </div>
+              <b className="block text-base font-normal">{p.title}</b>
               <p className="mt-0.5 text-sm text-muted-foreground">{p.body}</p>
             </div>
           </li>
@@ -90,7 +92,7 @@ function Domains({ code, domains }: { code: string; domains: Domain[] }) {
   return (
     <Section id="domains" title="政策領域">
       {domains.map((d) => (
-        <div key={d.id} id={`d-${d.id}`} className="flex scroll-mt-4 flex-col gap-1 [&+&]:mt-12">
+        <div key={d.id} id={`d-${d.id}`} className="flex scroll-mt-20 flex-col gap-1 [&+&]:mt-12">
           <h3 className="mb-3.5 border-l-4 border-primary py-0.5 pl-3.5 text-[19px] leading-snug sm:text-[22px]">{d.name}</h3>
           <img src={assetPath(code, d.image)} alt="" loading="lazy" className="mb-3 aspect-[16/7] w-full rounded-lg object-cover sm:aspect-[4/1]" />
           <div className="border-t border-foreground">

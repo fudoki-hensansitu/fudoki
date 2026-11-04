@@ -32,8 +32,6 @@ export interface Policy {
   title: string
   body: string
   image: string
-  /** この方針の出典（予算編成方針の頁） */
-  source: string
 }
 
 export interface Scrap {
@@ -49,6 +47,8 @@ export interface Scrap {
 export interface ProfileYear {
   /** 予算の考え方の一文。ヘッダーの説明に出す */
   tagline: string
+  /** 方針の出典（予算編成方針の頁） */
+  policySource: string
   policies: Policy[]
   domains: Domain[]
   scrap?: Scrap
@@ -159,24 +159,22 @@ const SHINAGAWA: Profile = {
   "years": {
     "2026": {
       "tagline": "区民の不安や不満といった「不」を取り除き、誰もが安心して暮らしていける社会へ",
+      "policySource": "https://www.city.shinagawa.tokyo.jp/kusei/zaisei/1005728/1005729.html",
       "policies": [
         {
           "title": "ウェルビーイングの深化",
           "body": "4つの政策領域の事業で、誰もが使う基礎的な行政サービスと、災害や疾病など誰もが抱えうるリスクへの備えを等しく提供する。",
-          "image": "policy-1.jpg",
-          "source": "https://www.city.shinagawa.tokyo.jp/kusei/zaisei/1005728/1005729.html"
+          "image": "policy-1.jpg"
         },
         {
           "title": "未来志向の戦略的な投資",
           "body": "SDGs 未来都市として、持続可能な経済・環境・社会をつくる。AI やデジタルツールで内部事務を効率化し、人材を育てる。",
-          "image": "policy-2.jpg",
-          "source": "https://www.city.shinagawa.tokyo.jp/kusei/zaisei/1005728/1005729.html"
+          "image": "policy-2.jpg"
         },
         {
           "title": "持続可能な自治体経営",
           "body": "事業に優先順位をつけて入れ替える。背景・課題・費用対効果を明確にしてから予算を要求する。",
-          "image": "policy-3.jpg",
-          "source": "https://www.city.shinagawa.tokyo.jp/kusei/zaisei/1005728/1005729.html"
+          "image": "policy-3.jpg"
         }
       ],
       "domains": [
@@ -354,24 +352,22 @@ const SHINAGAWA: Profile = {
     },
     "2025": {
       "tagline": "性別や障害の有無、家庭の状況などで選択を阻まれず、自分の望むように生き、幸せを感じられる社会へ",
+      "policySource": "https://www.city.shinagawa.tokyo.jp/kusei/zaisei/1005728/1005730.html",
       "policies": [
         {
           "title": "ウェルビーイングの進化（深化）",
           "body": "区民アンケートから選んだ4つの政策領域で、区民の幸福を高める取り組みを加速する。事務事業評価で20億円を生み出し、その財源にあてる。",
-          "image": "policy-1.jpg",
-          "source": "https://www.city.shinagawa.tokyo.jp/kusei/zaisei/1005728/1005730.html"
+          "image": "policy-1.jpg"
         },
         {
           "title": "SDGs の達成を加速する",
           "body": "SDGs 未来都市と自治体 SDGs モデル事業に選ばれたことを機に、「子どもとともに創るウェルビーイングシティしながわ」を目指す。区民・企業・大学などと共に施策をつくる。",
-          "image": "domain-mirai.jpg",
-          "source": "https://www.city.shinagawa.tokyo.jp/kusei/zaisei/1005728/1005730.html"
+          "image": "domain-mirai.jpg"
         },
         {
           "title": "働き方を変える",
           "body": "新庁舎への移転を見据えて DX 人材を育てる。生成 AI やデジタルツールで業務を効率化し、人と財源をより重要な事業に回す。",
-          "image": "policy-2.jpg",
-          "source": "https://www.city.shinagawa.tokyo.jp/kusei/zaisei/1005728/1005730.html"
+          "image": "policy-2.jpg"
         }
       ],
       "domains": [
@@ -558,24 +554,22 @@ const SHINAGAWA: Profile = {
     },
     "2024": {
         "tagline": "区民の幸福（ウェルビーイング）を軸に、新しい時代の品川を引っ張る",
+        "policySource": "https://www.city.shinagawa.tokyo.jp/kusei/zaisei/1005728/1005731.html",
         "policies": [
           {
             "title": "誰もが自分らしく暮らせる品川区",
             "body": "子ども、現役世代、高齢者、障害者など、誰もが生きがいを感じて暮らせる区を目指す。いまも将来も、区民の誰もが幸福を実感できる施策を進める。",
-            "image": "policy-1.jpg",
-            "source": "https://www.city.shinagawa.tokyo.jp/kusei/zaisei/1005728/1005731.html"
+            "image": "policy-1.jpg"
           },
           {
             "title": "職員の提案を施策にする",
             "body": "職員事業提案制度を始める。提案された事業は、関係する部署が今の課題や既存の事業との関係を踏まえて、新しい施策として実施を検討する。",
-            "image": "policy-2.jpg",
-            "source": "https://www.city.shinagawa.tokyo.jp/kusei/zaisei/1005728/1005731.html"
+            "image": "policy-2.jpg"
           },
           {
             "title": "事務事業評価で無駄をなくす",
             "body": "物価の高騰を踏まえ、事務事業評価で見直すべき事業を確かめて無駄をなくす。実施計画と SDGs を進めるため、歳出と歳入の両方で工夫する。",
-            "image": "policy-3.jpg",
-            "source": "https://www.city.shinagawa.tokyo.jp/kusei/zaisei/1005728/1005731.html"
+            "image": "policy-3.jpg"
           }
         ],
         "domains": [
