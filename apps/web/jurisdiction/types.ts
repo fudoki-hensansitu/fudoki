@@ -88,4 +88,5 @@ export function kanChanges(years: YearTotal[]): { name: string; pct: number }[] 
   })
 }
 
-export const jurisdictionPath = (prefecture: string, name: string) => `/${encodeURIComponent(prefecture)}/${encodeURIComponent(name)}`
+/** 自治体の一覧。個別ページの path は server 側の path.ts が作る */
+export const INDEX_PATH = '/jurisdictions'
