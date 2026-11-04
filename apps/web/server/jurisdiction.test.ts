@@ -127,6 +127,8 @@ describe('自治体の個別ページ', () => {
     expect([index.status, index.headers.get('Location')]).toEqual([301, '/jurisdictions'])
     const page = await get(`/${encodeURIComponent('東京都')}/${encodeURIComponent('中野区')}`)
     expect([page.status, page.headers.get('Location')]).toEqual([301, '/tokyo/nakano-ku'])
+    const byCode = await get('/tokyo/131148')
+    expect([byCode.status, byCode.headers.get('Location')]).toEqual([301, '/tokyo/nakano-ku'])
     expect((await get(`/${encodeURIComponent('東京都')}/${encodeURIComponent('存在しない市')}`)).status).toBe(404)
   })
 

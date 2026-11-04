@@ -63,6 +63,9 @@ jurisdictions.get('/:prefecture/:name', async (c, next) => {
       return old ? moved(jurisdictionPath(old.code)) : notFound()
     }
     const path = `/${prefecture}/${name}`
+    // slug の無い自治体はコードの path で出しているので、後から slug を足してもコードの path は slug の path へ移す
+    const byCode = /^\d{6}$/.test(name) ? list.find((e) => e.code === name && jurisdictionPath(e.code) !== path) : undefined
+    if (byCode) return moved(jurisdictionPath(byCode.code))
     const entry = list.find((e) => jurisdictionPath(e.code) === path)
     if (!entry) return notFound()
     const data = entry.settlementYears.length > 0 ? await page(c.env, entry) : null
