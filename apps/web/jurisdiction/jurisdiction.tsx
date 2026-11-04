@@ -23,7 +23,7 @@ const BADGE: Record<ProjectStatus, { label: string; className: string }> = {
 }
 
 const Section = ({ id, title, link, children }: { id: string; title: string; link?: { href: string; label: string }; children: React.ReactNode }) => (
-  <section id={id} aria-labelledby={`h-${id}`} className="flex scroll-mt-20 flex-col gap-4">
+  <section id={id} aria-labelledby={`h-${id}`} className="flex scroll-mt-32 md:scroll-mt-20 flex-col gap-4">
     <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
       <h2 id={`h-${id}`} className="font-sans text-[26px] font-normal leading-snug">
         {title}
@@ -92,7 +92,7 @@ function Domains({ code, domains }: { code: string; domains: Domain[] }) {
   return (
     <Section id="domains" title="政策領域">
       {domains.map((d) => (
-        <div key={d.id} id={`d-${d.id}`} className="flex scroll-mt-20 flex-col gap-1 [&+&]:mt-12">
+        <div key={d.id} id={`d-${d.id}`} className="flex scroll-mt-32 md:scroll-mt-20 flex-col gap-1 [&+&]:mt-12">
           <h3 className="mb-3.5 border-l-4 border-primary py-0.5 pl-3.5 text-[19px] leading-snug sm:text-[22px]">{d.name}</h3>
           <img src={assetPath(code, d.image)} alt="" loading="lazy" className="mb-3 aspect-[16/7] w-full rounded-lg object-cover sm:aspect-[4/1]" />
           <div className="border-t border-foreground">
