@@ -18,28 +18,30 @@ const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
 const amountText = (yen: number, missing?: boolean) => (missing ? '金額未記載' : formatYen(yen))
 const share = (yen: number, max: number, missing?: boolean) => (missing || max <= 0 ? 0 : (Math.max(0, yen) / max) * 100)
 
+/** 節は目の内訳。棒は目の金額に占める割合で、上位だけ名前を出して残りは件数にまとめる */
 function MokuGroup({ moku }: { moku: Moku }) {
   const shown = moku.setsu.filter((s) => s.amountMissing || s.yen > 0)
   const top = shown.slice(0, SETSU_SHOWN)
-  const topMax = Math.max(...top.filter((s) => !s.amountMissing).map((s) => s.yen), 0)
+  const base = moku.amountMissing ? 0 : moku.yen
   return (
     <div data-moku data-yen={moku.amountMissing ? 0 : moku.yen} className="grid translate-y-1.5 grid-cols-1 items-start gap-1.5 opacity-30 transition-[opacity,transform] duration-500 group-data-[active=true]/kou:translate-y-0 group-data-[active=true]/kou:opacity-100 sm:grid-cols-[5fr_7fr] sm:gap-4">
       <div className="min-w-0">
         <div className="text-sm leading-snug">{moku.name}</div>
         <div className="text-xs tabular-nums text-muted-foreground">{amountText(moku.yen, moku.amountMissing)}</div>
-        {shown.length > SETSU_SHOWN ? <div className="mt-1 text-[11.5px] text-muted-foreground">ほか{shown.length - SETSU_SHOWN}節</div> : null}
       </div>
       {top.length > 0 ? (
-        <ul className="grid min-w-0 gap-y-0.5 border-l pl-3 text-[12.5px] leading-snug">
+        <ul className="grid min-w-0 gap-y-1 border-l pl-3 text-[12.5px] leading-snug" aria-label={`${moku.name}の節`}>
+          <li className="text-[11px] text-muted-foreground sm:hidden">節（何に払ったか）</li>
           {top.map((s) => (
-            <li key={s.name} className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-2.5">
+            <li key={s.name} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2.5">
               <span className="truncate">{s.name}</span>
               <span className="text-right tabular-nums text-muted-foreground">{amountText(s.yen, s.amountMissing)}</span>
-              <span className="col-span-2 mb-0.5 h-[3px] overflow-hidden rounded-full bg-foreground/5">
-                <span className="block h-full rounded-full bg-primary/55" style={{ width: `${share(s.yen, topMax, s.amountMissing)}%` }} />
+              <span className="col-span-2 h-1 overflow-hidden rounded-full bg-foreground/5">
+                <span className="block h-full rounded-full bg-primary/55" style={{ width: `${share(s.yen, base, s.amountMissing)}%` }} />
               </span>
             </li>
           ))}
+          {shown.length > SETSU_SHOWN ? <li className="text-[11.5px] text-muted-foreground">ほか{shown.length - SETSU_SHOWN}節</li> : null}
         </ul>
       ) : (
         <p className="border-l pl-3 text-[12.5px] text-muted-foreground">内訳の区分は出典にありません</p>
@@ -101,6 +103,12 @@ function KouSection({ kou, active, loading, onBox }: { kou: Kou; active: boolean
         </svg>
       </div>
       <div className="flex min-w-0 flex-col gap-3">
+        {kou.moku.length > 0 ? (
+          <div className="hidden grid-cols-[5fr_7fr] gap-4 text-[11px] text-muted-foreground sm:grid" aria-hidden="true">
+            <span>目</span>
+            <span className="pl-3">節（何に払ったか）</span>
+          </div>
+        ) : null}
         {kou.moku.length > 0 ? kou.moku.map((m) => <MokuGroup key={m.id} moku={m} />) : (
           <p className="text-[12.5px] text-muted-foreground" role={loading ? 'status' : undefined}>{loading ? '内訳を読み込んでいます…' : 'この項に目はありません'}</p>
         )}
