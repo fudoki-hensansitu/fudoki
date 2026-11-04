@@ -4,7 +4,7 @@ import * as React from 'react'
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Overview } from './sankey'
-import { formatYen, type Drill, type Kou, type Moku, type PageData } from './types'
+import { formatYen, type Drill, type Kou, type Moku, type PageData, type YearTotal } from './types'
 
 const SETSU_SHOWN = 3
 const MOBILE_QUERY = '(max-width: 699px)'
@@ -90,7 +90,7 @@ function KouSection({ kou, active, loading, onBox }: { kou: Kou; active: boolean
     return () => observer.disconnect()
   }, [kou.moku.length])
   return (
-    <section ref={(el) => { box.current = el; onBox(el) }} data-active={active} className="group/kou grid min-h-full snap-start snap-always grid-cols-1 content-start gap-3 px-5 pb-5 pt-3 sm:grid-cols-[150px_10px_64px_minmax(0,1fr)] sm:gap-0 sm:pr-8">
+    <section ref={(el) => { box.current = el; onBox(el) }} data-kou={kou.id} data-active={active} className="group/kou grid min-h-full snap-start snap-always grid-cols-1 content-start gap-3 px-5 pb-5 pt-3 sm:grid-cols-[150px_10px_64px_minmax(0,1fr)] sm:gap-0 sm:pr-8">
       <div className="min-w-0 border-b pb-2 sm:border-0 sm:pb-0 sm:pr-2">
         <div className="text-[11px] text-muted-foreground">項</div>
         <div className="font-sans text-lg leading-snug">{kou.name}</div>
@@ -143,8 +143,9 @@ function KanPanel({ drill, loading }: { drill: Drill; loading: boolean }) {
   )
 }
 
-export function Flow({ data }: { data: PageData }) {
-  const latest = data.years.at(-1)!
+/** 款→項の全体図と款ごとの内訳。最新年度の款→項はページに埋めてあり、それ以外の年度は図が近づいたら読み込む */
+export function Flow({ data, total: year }: { data: PageData; total: YearTotal }) {
+  const isLatest = year.year === data.years.at(-1)?.year
   const root = React.useRef<HTMLDivElement>(null)
   const track = React.useRef<HTMLDivElement>(null)
   const [detail, setDetail] = React.useState<Drill[]>()
@@ -152,7 +153,7 @@ export function Flow({ data }: { data: PageData }) {
   const [attempt, setAttempt] = React.useState(0)
   const [near, setNear] = React.useState(false)
   const [index, setIndex] = React.useState(0)
-  const flows = detail ?? data.flow
+  const flows = detail ?? (isLatest ? data.flow : [])
   // 項の内訳（目・節）は、図が近づいたら読み込む。クリックは要らない
   React.useEffect(() => {
     const el = root.current
@@ -165,17 +166,30 @@ export function Flow({ data }: { data: PageData }) {
     if (!near || detail) return
     setError(false)
     const controller = new AbortController()
-    fetchJson<Drill[]>(`/api/jurisdictions/flow/${data.code}/${latest.year}/setsu`, controller.signal).then(
+    fetchJson<Drill[]>(`/api/jurisdictions/flow/${data.code}/${year.year}/setsu`, controller.signal).then(
       (value) => { if (!controller.signal.aborted) setDetail(value) },
       () => { if (!controller.signal.aborted) setError(true) },
     )
     return () => controller.abort()
-  }, [near, detail, data.code, latest.year, attempt])
+  }, [near, detail, data.code, year.year, attempt])
   const onScroll = () => {
     const el = track.current
     if (!el) return
     const next = Math.round(el.scrollLeft / el.clientWidth)
     setIndex((prev) => (prev === next ? prev : next))
+  }
+  // 全体図で押した款の面へ移り、項を押したときはその項まで縦に送る
+  const select = (kanIndex: number, kouIndex?: number) => {
+    const el = track.current
+    if (!el) return
+    el.scrollTo({ left: (kanIndex + 1) * el.clientWidth, behavior: 'smooth' })
+    const panel = el.querySelectorAll<HTMLElement>('[data-panel]')[kanIndex]
+    const body = panel?.lastElementChild as HTMLElement | null
+    const section = kouIndex === undefined ? undefined : body?.querySelectorAll<HTMLElement>('[data-kou]')[kouIndex]
+    if (!body) return
+    const top = section ? section.getBoundingClientRect().top - body.getBoundingClientRect().top + body.scrollTop : 0
+    body.scrollTo({ top, behavior: 'instant' })
+    el.focus({ preventScroll: true })
   }
   const go = (delta: number) => track.current?.scrollBy({ left: delta * (track.current?.clientWidth ?? 0), behavior: 'smooth' })
   const onKey = (e: React.KeyboardEvent) => {
@@ -190,7 +204,7 @@ export function Flow({ data }: { data: PageData }) {
       <div className="px-5 pt-5 sm:px-6">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <h3 className="font-sans text-lg font-normal">お金の流れ</h3>
-          {data.originTitle ? <span className="text-xs text-muted-foreground">出典 {data.originTitle}</span> : null}
+          {year.originTitle ? <span className="text-xs text-muted-foreground">出典 {year.originTitle}</span> : null}
         </div>
         <div className="mt-3 flex items-baseline justify-between gap-3" aria-live="polite">
           <div className="font-sans text-lg leading-snug">
@@ -210,7 +224,7 @@ export function Flow({ data }: { data: PageData }) {
           ))}
         </div>
         <p className="mt-2 text-xs text-muted-foreground">
-          {index === 0 ? '横にスクロールすると、款が一つずつ開きます。' : <>縦にスクロールすると、款の中の項が一つずつ開きます。{index < total ? '横で次の款へ。' : null}</>}
+          {index === 0 ? '款や項を押すか、横にスクロールすると、その内訳が開きます。' : <>縦にスクロールすると、款の中の項が一つずつ開きます。{index < total ? '横で次の款へ。' : null}</>}
         </p>
       </div>
       <div className="relative mt-2">
@@ -224,7 +238,11 @@ export function Flow({ data }: { data: PageData }) {
           className="flex h-[clamp(440px,80svh,700px)] snap-x snap-mandatory overflow-x-auto overflow-y-hidden overscroll-x-contain scroll-smooth rounded-b-[20px] [scrollbar-width:none] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring [&::-webkit-scrollbar]:hidden"
         >
           <div className="h-full w-full shrink-0 snap-start snap-always overflow-y-auto px-3 pb-3 pt-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:px-5">
-            <Overview flows={flows} height={Math.min(560, typeof window === 'undefined' ? 520 : Math.max(380, window.innerHeight * 0.7))} />
+            {flows.length > 0 ? (
+              <Overview flows={flows} onSelect={select} height={Math.min(560, typeof window === 'undefined' ? 520 : Math.max(380, window.innerHeight * 0.7))} />
+            ) : (
+              <p className="grid h-full place-items-center text-sm text-muted-foreground" role={error ? undefined : 'status'}>{error ? '' : 'お金の流れを読み込んでいます…'}</p>
+            )}
           </div>
           {flows.map((f) => <KanPanel key={f.kan.id} drill={f} loading={!detail && !error} />)}
         </div>

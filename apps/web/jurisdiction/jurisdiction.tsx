@@ -1,6 +1,6 @@
 // 自治体の個別ページ（/:都道府県/:名称）の島。サーバーが書いた HTML（検索エンジン向け）を、同じデータで描き直す。
 // 型は企業のプロフィールページ: ヘッダー（ロゴ・名前・一文・属性）＋年度のタブ＋左の目次＋見出し付きの節。年度を切り替えるとページ全体がその年度になる。
-// 歳出の決算は API の値。方針・政策領域・事業の入れ替え・首長と議員は jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
+// 歳出の決算は API の値。方針・政策領域・事業の入れ替えは jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
 import * as React from 'react'
 import { createRoot } from 'react-dom/client'
 import { ArrowUpRightIcon, GlobeIcon, MapPinIcon, UsersIcon } from 'lucide-react'
@@ -108,29 +108,6 @@ function Domains({ code, domains }: { code: string; domains: Domain[] }) {
   )
 }
 
-function KanBars({ total, prev }: { total: YearTotal; prev?: YearTotal }) {
-  const max = total.kan[0]?.yen || 1
-  return (
-    <ul className="border-t">
-      {total.kan.map((k) => {
-        const pct = changePct(k.yen, prev?.kan.find((p) => p.name === k.name)?.yen)
-        return (
-          <li key={k.id} className="grid grid-cols-[84px_minmax(0,1fr)_76px] items-center gap-3 border-b border-foreground/10 py-2 text-sm sm:grid-cols-[150px_minmax(0,1fr)_90px_64px]">
-            <span className="truncate">{k.name}</span>
-            <span className="h-2.5 overflow-hidden rounded-full bg-foreground/5">
-              <i className="block h-full rounded-full bg-primary" style={{ width: `${(Math.max(k.yen, 0) / max) * 100}%` }} />
-            </span>
-            <span className="text-right tabular-nums">{k.amountMissing ? '金額未記載' : formatYen(k.yen)}</span>
-            <span className={`hidden text-right text-[13px] tabular-nums sm:block ${pct !== null && pct < 0 ? 'text-[#aa5910]' : 'text-primary'}`}>
-              {pct === null ? '' : `${pct >= 0 ? '+' : '−'}${Math.abs(pct).toFixed(1)}%`}
-            </span>
-          </li>
-        )
-      })}
-    </ul>
-  )
-}
-
 function ProjectRow({ p, rank, max }: { p: Project; rank: number; max: number }) {
   const [setsu, setSetsu] = React.useState<Setsu[]>()
   const [error, setError] = React.useState(false)
@@ -184,31 +161,36 @@ function ProjectRow({ p, rank, max }: { p: Project; rank: number; max: number })
   )
 }
 
-function Budget({ data, total }: { data: PageData; total: YearTotal }) {
-  const prev = data.years.find((y) => y.year === total.year - 1)
-  const isLatest = total.year === data.years.at(-1)?.year
-  const pct = changePct(total.yen, prev?.yen)
+/** データが無いところに置く枠。データがある年度と同じ場所・同じ大きさに出す */
+const Empty = ({ className = '', children }: { className?: string; children: React.ReactNode }) => (
+  <div className={`grid place-items-center rounded-[20px] border border-dashed px-5 py-10 text-center text-sm text-muted-foreground ${className}`}>{children}</div>
+)
+
+/** どの年度も同じ並び（総額・お金の流れ・金額の大きい事業）。決算が無い年度・事業の一覧が無い年度は枠だけ出す */
+function Budget({ data, year }: { data: PageData; year: number }) {
+  const total = data.years.find((y) => y.year === year)
+  const prev = data.years.find((y) => y.year === year - 1)
+  const isLatest = !!total && total.year === data.years.at(-1)?.year
+  const pct = total ? changePct(total.yen, prev?.yen) : null
   const max = data.projects[0]?.yen ?? 1
   return (
     <Section id="budget" title="予算と決算">
       <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1.5">
         <span className="text-sm text-muted-foreground">歳出（決算）</span>
-        <b className="text-[clamp(2rem,1.5rem+1.8vw,2.8rem)] font-normal leading-tight tabular-nums">{formatYen(total.yen)}</b>
+        <b className={`text-[clamp(2rem,1.5rem+1.8vw,2.8rem)] font-normal leading-tight tabular-nums ${total ? '' : 'text-muted-foreground'}`}>{total ? formatYen(total.yen) : '—'}</b>
         {pct !== null ? <span className={`text-[13px] tabular-nums ${pct < 0 ? 'text-[#aa5910]' : 'text-primary'}`}>前年度比 {pct >= 0 ? '+' : '−'}{Math.abs(pct).toFixed(1)}%</span> : null}
       </div>
-      {/* 款→項のサンキーは最新年度の分だけ API から来る。それ以外の年度は款の棒で出す */}
-      {isLatest ? null : <KanBars total={total} prev={prev} />}
+      {total ? <Flow key={year} data={data} total={total} /> : <Empty className="h-[clamp(320px,50svh,480px)]">{reiwa(year)}の決算は、まだ収録していません</Empty>}
+      <h3 className="mt-4 text-lg">金額の大きい事業</h3>
       {isLatest ? (
-        <>
-          <Flow data={data} />
-          <h3 className="mt-4 text-lg">金額の大きい事業</h3>
-          <ul className="border-t">
-            {data.projects.map((p, i) => (
-              <ProjectRow key={p.id} p={p} rank={i + 1} max={max} />
-            ))}
-          </ul>
-        </>
-      ) : null}
+        <ul className="border-t">
+          {data.projects.map((p, i) => (
+            <ProjectRow key={p.id} p={p} rank={i + 1} max={max} />
+          ))}
+        </ul>
+      ) : (
+        <Empty>{total ? `${reiwa(year)}の事業の一覧は、まだ出していません` : `${reiwa(year)}の決算は、まだ収録していません`}</Empty>
+      )}
     </Section>
   )
 }
@@ -261,53 +243,11 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
   )
 }
 
-const reiwaDate = (iso: string) => {
-  const [y, m, d] = iso.split('-').map(Number)
-  return `令和${y! - 2018}年${m}月${d}日`
-}
-
-function People({ profile }: { profile: Profile }) {
-  const council = profile.council
-  return (
-    <Section id="people" title="首長と議員">
-      <h3 className="text-lg">首長</h3>
-      <div className="flex items-center gap-3.5 pb-2 pt-1">
-        <span aria-hidden="true" className="grid size-12 place-items-center rounded-full bg-secondary text-lg">{profile.head.name[0]}</span>
-        <b className="text-[17px] font-normal">{profile.head.name}</b>
-      </div>
-      {council ? (
-        <>
-          <h3 className="text-lg">
-            議員 <span className="tabular-nums text-muted-foreground">{council.groups.reduce((n, g) => n + g.members.length, 0)}人</span>
-            <span className="ml-2 text-[13px] text-muted-foreground">{reiwaDate(council.asOf)}現在</span>
-          </h3>
-          <div className="grid grid-cols-1 gap-x-8 border-t sm:grid-cols-2">
-            {council.groups.map((g) => (
-              <div key={g.name} className="border-b border-foreground/10 py-3">
-                <div className="mb-1.5 flex justify-between gap-2 text-sm">
-                  {g.name}
-                  <span className="text-[13px] text-muted-foreground">{g.members.length}人</span>
-                </div>
-                <ul className="flex flex-wrap gap-x-3.5 gap-y-1 text-[13.5px] text-muted-foreground">
-                  {g.members.map((m) => (
-                    <li key={m}>{m}</li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </>
-      ) : null}
-    </Section>
-  )
-}
-
 interface TocItem {
   href: string
   label: string
   sub?: boolean
 }
-
 
 function YearPicker({ years, current, onChange }: { years: number[]; current: number; onChange: (y: number) => void }) {
   return (
@@ -337,7 +277,6 @@ function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
     return y && years.includes(y) ? y : years[0]!
   })
   const py = profile?.years[String(year)]
-  const total = data.years.find((y) => y.year === year)
   const choose = (y: number) => {
     setYear(y)
     history.replaceState(null, '', `#y${y}`)
@@ -345,9 +284,8 @@ function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
 
   const toc: TocItem[] = [
     ...(py ? [{ href: '#policy', label: '方針' }, { href: '#domains', label: '政策領域' }, ...py.domains.map((d) => ({ href: `#d-${d.id}`, label: d.short ?? d.name, sub: true }))] : []),
-    ...(total ? [{ href: '#budget', label: '予算と決算' }] : []),
+    { href: '#budget', label: '予算と決算' },
     ...(py?.scrap ? [{ href: '#scrap', label: '事業の入れ替え' }] : []),
-    ...(profile ? [{ href: '#people', label: '首長と議員' }] : []),
   ]
 
   // スクロールしたら小さなヘッダーを出す
@@ -485,9 +423,8 @@ function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
           <main className="flex min-w-0 flex-col gap-14">
             {py ? <Policies code={data.code} year={py} /> : null}
             {py ? <Domains code={data.code} domains={py.domains} /> : null}
-            {total ? <Budget data={data} total={total} /> : null}
+            <Budget data={data} year={year} />
             {py?.scrap ? <ScrapSection scrap={py.scrap} /> : null}
-            {profile ? <People profile={profile} /> : null}
           </main>
         </div>
       </div>

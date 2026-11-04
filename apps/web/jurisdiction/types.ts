@@ -50,6 +50,8 @@ export interface YearTotal {
   yen: number
   /** この年度の款ごとの金額（款の名前で引く） */
   kan: Line[]
+  /** この年度の決算書の題名 */
+  originTitle?: string | null
 }
 
 export interface PageData {
@@ -62,7 +64,7 @@ export interface PageData {
   /** 最新年度の全款から全項への流れ */
   flow: Drill[]
   projects: Project[]
-  /** 方針・政策領域・首長と議員（jurisdiction/profiles.ts）。手で起こした自治体だけにある */
+  /** 方針・政策領域・事業の入れ替え（jurisdiction/profiles.ts）。手で起こした自治体だけにある */
   profile?: Profile | null
 }
 

@@ -38,7 +38,16 @@ const ribbon = (xa: number, ya: number, ha: number, xb: number, yb: number, hb: 
   return `M${xa} ${ya}C${mid} ${ya},${mid} ${yb},${xb} ${yb}L${xb} ${yb + hb}C${mid} ${yb + hb},${mid} ${ya + ha},${xa} ${ya + ha}Z`
 }
 
-export function Overview({ flows, height = 520 }: { flows: Drill[]; height?: number }) {
+/** 款・項のラベルと棒は押せる。押すとその款（と項）の内訳へ移る */
+const pick = (fn: () => void) => ({
+  role: 'button',
+  tabIndex: 0,
+  className: 'cursor-pointer outline-none [&:hover_text]:underline [&:focus-visible_rect]:fill-ring',
+  onClick: fn,
+  onKeyDown: (e: React.KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn() } },
+})
+
+export function Overview({ flows, height = 520, onSelect }: { flows: Drill[]; height?: number; onSelect?: (kan: number, kou?: number) => void }) {
   const ref = React.useRef<HTMLDivElement>(null)
   const [width, setWidth] = React.useState(0)
   React.useEffect(() => {
@@ -52,7 +61,7 @@ export function Overview({ flows, height = 520 }: { flows: Drill[]; height?: num
   const narrow = width < 560
   const left = narrow ? 104 : 180
   const right = narrow ? 170 : 260
-  const kous = flows.flatMap((flow, kanIndex) => flow.kou.map((kou) => ({ kanIndex, kou })))
+  const kous = flows.flatMap((flow, kanIndex) => flow.kou.map((kou, kouIndex) => ({ kanIndex, kouIndex, kou })))
   const kanValues = flows.map((flow) => Math.max(0, flow.kan.yen))
   const kouValues = kous.map(({ kou }) => Math.max(0, kou.yen))
   const scale = Math.min(fit(kanValues, KAN_SLOT, KAN_GAP, height), fit(kouValues, KOU_SLOT, KOU_GAP, height))
@@ -80,7 +89,8 @@ export function Overview({ flows, height = 520 }: { flows: Drill[]; height?: num
             const node = kans[i]!
             const label = cut(flow.kan.name, 9)
             return (
-              <g key={flow.kan.id}>
+              <g key={flow.kan.id} {...(onSelect ? pick(() => onSelect(i)) : {})} aria-label={onSelect ? `${flow.kan.name}の内訳を見る` : undefined}>
+                <rect x={0} y={node.top} width={x0 + BAR} height={node.size} className="fill-transparent" />
                 <title>{`${flow.kan.name} ${amountText(flow.kan.yen, flow.kan.amountMissing)}`}</title>
                 <rect x={x0} y={node.y} width={BAR} height={Math.max(node.height, 2)} rx={2} className="fill-primary" />
                 <text x={x0 - 8} y={node.top + node.size / 2 - 2} textAnchor="end" className="fill-foreground" fontSize={narrow ? 10.5 : 13}>{label}</text>
@@ -88,10 +98,11 @@ export function Overview({ flows, height = 520 }: { flows: Drill[]; height?: num
               </g>
             )
           })}
-          {kous.map(({ kou }, i) => {
+          {kous.map(({ kanIndex, kouIndex, kou }, i) => {
             const node = kouNodes[i]!
             return (
-              <g key={kou.id}>
+              <g key={kou.id} {...(onSelect ? pick(() => onSelect(kanIndex, kouIndex)) : {})} aria-label={onSelect ? `${kou.name}の内訳を見る` : undefined}>
+                <rect x={x1} y={node.top} width={width - x1} height={node.size} className="fill-transparent" />
                 <title>{`${kou.name} ${amountText(kou.yen, kou.amountMissing)}`}</title>
                 <rect x={x1} y={node.y} width={BAR} height={Math.max(node.height, 2)} rx={2} className="fill-primary" />
                 <text x={x1 + BAR + 8} y={node.top + node.size / 2 + 4} className="fill-foreground" fontSize={narrow ? 10.5 : 12}>
