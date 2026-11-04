@@ -32,7 +32,7 @@ ${PWA_HEAD}
 <link rel="stylesheet" href="/_app/jurisdiction.css">
 ${extra}`
 
-const header = `<header class="j-top"><a class="j-brand" href="/" aria-label="風土記 ホーム">${logo('j-logo')}</a><nav><a href="${INDEX_PATH}">自治体を探す</a><a href="https://docs.fudoki.dev/">使い方</a></nav></header>`
+const header = `<header class="j-top"><a class="j-brand" href="/" aria-label="風土記 ホーム">${logo('j-logo')}</a><nav><a href="${INDEX_PATH}">自治体を探す</a></nav></header>`
 
 /** 個別ページの説明文。検索結果に出るので、金額は API の値だけで書く（人口や仮の値は入れない） */
 export function pageDescription(d: PageData): string {

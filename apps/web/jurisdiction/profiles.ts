@@ -63,7 +63,8 @@ export interface Profile {
   population?: { people: number; asOf: string }
   tags: string[]
   head: { name: string }
-  council?: { groups: { name: string; members: string[] }[]; source: string }
+  /** asOf は名簿の基準日（出典の「現在」の日付） */
+  council?: { groups: { name: string; members: string[] }[]; source: string; asOf: string }
   /** 会計年度（西暦）ごと */
   years: Record<string, ProfileYear>
 }
@@ -152,7 +153,8 @@ const SHINAGAWA: Profile = {
         ]
       }
     ],
-    "source": "https://gikai.city.shinagawa.tokyo.jp/profile/group"
+    "source": "https://gikai.city.shinagawa.tokyo.jp/profile/group",
+    "asOf": "2026-09-17"
   },
   "years": {
     "2026": {

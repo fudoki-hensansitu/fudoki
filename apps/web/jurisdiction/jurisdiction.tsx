@@ -259,6 +259,11 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
   )
 }
 
+const reiwaDate = (iso: string) => {
+  const [y, m, d] = iso.split('-').map(Number)
+  return `令和${y! - 2018}年${m}月${d}日`
+}
+
 function People({ profile }: { profile: Profile }) {
   const council = profile.council
   return (
@@ -272,6 +277,7 @@ function People({ profile }: { profile: Profile }) {
         <>
           <h3 className="text-lg">
             議員 <span className="tabular-nums text-muted-foreground">{council.groups.reduce((n, g) => n + g.members.length, 0)}人</span>
+            <span className="ml-2 text-[13px] text-muted-foreground">{reiwaDate(council.asOf)}現在</span>
           </h3>
           <div className="grid grid-cols-1 gap-x-8 border-t sm:grid-cols-2">
             {council.groups.map((g) => (
