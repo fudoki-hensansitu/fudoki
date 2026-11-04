@@ -385,7 +385,6 @@ function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
 
   const tagline = py?.tagline
   const logo = profile?.logo ? assetPath(data.code, profile.logo) : null
-  const latest = data.years.at(-1)
 
   return (
     <>
@@ -477,7 +476,6 @@ function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
             sitekey={sitekey}
             prefix={`${data.name}について：`}
             placeholder={`${data.name}について聞く…`}
-            suggestions={py ? ['区の方針と、実際の予算の使い方は合っている？', 'やめた事業はほかに何がある？', '他の自治体と比べると？'] : [`なぜ${latest?.kan[0]?.name ?? '最大の款'}が最大なの？`, '他の自治体と比べると？', 'この数字は出典と合ってる？']}
           />
         </div>
       </div>
