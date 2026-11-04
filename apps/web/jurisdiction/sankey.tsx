@@ -9,6 +9,8 @@ const KAN_GAP = 4
 const KOU_GAP = 3
 /** ラベルの最小の高さとは別に、帯の太さに使う高さ */
 const BAND_ROOM = 160
+/** 図の上に出す款・項の列名の高さ */
+const HEAD = 20
 
 const amountText = (yen: number, missing?: boolean) => (missing ? '金額未記載' : formatYen(yen))
 
@@ -81,7 +83,12 @@ export function Overview({ flows, height = 520, onSelect }: { flows: Drill[]; he
   return (
     <div ref={ref} className="w-full">
       {width ? (
-        <svg width={width} height={total} role="img" aria-label="款から項への歳出の流れ" className="block font-sans">
+        <svg width={width} height={total + HEAD} role="img" aria-label="款から項への歳出の流れ" className="block font-sans">
+          <g aria-hidden="true" className="fill-muted-foreground" fontSize={11}>
+            <text x={x0 + BAR} y={11} textAnchor="end">款</text>
+            <text x={x1} y={11}>項</text>
+          </g>
+          <g transform={`translate(0 ${HEAD})`}>
           {kous.map(({ kanIndex, kou }, i) => {
             const source = kans[kanIndex]!
             const offset = offsets.get(kanIndex) ?? 0
@@ -117,6 +124,7 @@ export function Overview({ flows, height = 520, onSelect }: { flows: Drill[]; he
               </g>
             )
           })}
+          </g>
         </svg>
       ) : null}
     </div>

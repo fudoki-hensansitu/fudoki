@@ -22,12 +22,16 @@ const BADGE: Record<ProjectStatus, { label: string; className: string }> = {
   none: { label: '評価前', className: 'border border-dashed' },
 }
 
-const Section = ({ id, title, link, children }: { id: string; title: string; link?: { href: string; label: string }; children: React.ReactNode }) => (
+/** aside は見出しの横に並べる短い値（決算の総額など） */
+const Section = ({ id, title, aside, link, children }: { id: string; title: string; aside?: React.ReactNode; link?: { href: string; label: string }; children: React.ReactNode }) => (
   <section id={id} aria-labelledby={`h-${id}`} className="flex scroll-mt-32 md:scroll-mt-20 flex-col gap-4">
     <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-      <h2 id={`h-${id}`} className="font-sans text-[26px] font-normal leading-snug">
-        {title}
-      </h2>
+      <div className="flex flex-wrap items-baseline gap-x-5 gap-y-1">
+        <h2 id={`h-${id}`} className="font-sans text-[26px] font-normal leading-snug">
+          {title}
+        </h2>
+        {aside}
+      </div>
       {link ? (
         <a href={link.href} target="_blank" rel="noopener" className="inline-flex items-center gap-1 whitespace-nowrap text-[13px] text-primary no-underline hover:underline">
           {link.label}
@@ -172,13 +176,19 @@ function Budget({ data, year }: { data: PageData; year: number }) {
   const isLatest = !!total && total.year === data.years.at(-1)?.year
   const pct = total ? changePct(total.yen, prev?.yen) : null
   const max = data.projects[0]?.yen ?? 1
+  // 見出しは表示している金額の段階。予算を取り込んだら、その年度は「予算」にする
   return (
-    <Section id="budget" title="予算と決算">
-      <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1.5">
-        <span className="text-sm text-muted-foreground">歳出（決算）</span>
-        <b className={`text-[clamp(2rem,1.5rem+1.8vw,2.8rem)] font-normal leading-tight tabular-nums ${total ? '' : 'text-muted-foreground'}`}>{total ? formatYen(total.yen) : '—'}</b>
-        {pct !== null ? <span className={`text-[13px] tabular-nums ${pct < 0 ? 'text-[#aa5910]' : 'text-primary'}`}>前年度比 {pct >= 0 ? '+' : '−'}{Math.abs(pct).toFixed(1)}%</span> : null}
-      </div>
+    <Section
+      id="budget"
+      title="決算"
+      aside={
+        <div className="flex flex-wrap items-baseline gap-x-3">
+          <span className="text-sm text-muted-foreground">歳出</span>
+          <b className={`text-[26px] font-normal leading-snug tabular-nums ${total ? '' : 'text-muted-foreground'}`}>{total ? formatYen(total.yen) : '—'}</b>
+          {pct !== null ? <span className={`text-[13px] tabular-nums ${pct < 0 ? 'text-[#aa5910]' : 'text-primary'}`}>前年度比 {pct >= 0 ? '+' : '−'}{Math.abs(pct).toFixed(1)}%</span> : null}
+        </div>
+      }
+    >
       {total ? <Flow key={year} data={data} total={total} /> : <Empty>{reiwa(year)}の決算は、まだ収録していません</Empty>}
       <h3 className="mt-4 text-lg">金額の大きい事業</h3>
       {isLatest ? (
@@ -283,7 +293,7 @@ function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
 
   const toc: TocItem[] = [
     ...(py ? [{ href: '#policy', label: '方針' }, { href: '#domains', label: '政策領域' }, ...py.domains.map((d) => ({ href: `#d-${d.id}`, label: d.short ?? d.name, sub: true }))] : []),
-    { href: '#budget', label: '予算と決算' },
+    { href: '#budget', label: '決算' },
     ...(py?.scrap ? [{ href: '#scrap', label: '事業の入れ替え' }] : []),
   ]
 

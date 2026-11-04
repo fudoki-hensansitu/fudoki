@@ -204,8 +204,12 @@ export function Flow({ data, total: year }: { data: PageData; total: YearTotal }
       <div className="px-5 pt-5 sm:px-6">
         <div className="flex items-baseline justify-between gap-3" aria-live="polite">
           <div className="font-sans text-lg leading-snug">
-            {kan ? kan.kan.name : '全体'}
-            <span className="ml-2.5 font-sans text-sm tabular-nums text-muted-foreground">{kan ? amountText(kan.kan.yen, kan.kan.amountMissing) : '款と項'}</span>
+            {kan ? (
+              <>
+                {kan.kan.name}
+                <span className="ml-2.5 font-sans text-sm tabular-nums text-muted-foreground">{amountText(kan.kan.yen, kan.kan.amountMissing)}</span>
+              </>
+            ) : null}
           </div>
           <div className="flex items-center gap-1.5">
             <span className="text-xs tabular-nums text-muted-foreground">{kan ? `款 ${index} / ${total}` : ''}</span>
@@ -219,9 +223,11 @@ export function Flow({ data, total: year }: { data: PageData; total: YearTotal }
             <i key={f.kan.id} className={`block h-1.5 min-w-[3px] rounded-sm transition-colors ${index === i + 1 ? 'bg-primary' : 'bg-border'}`} style={{ flexGrow: Math.max(f.kan.yen, 0) / sum || 0.01, flexBasis: 0 }} />
           ))}
         </div>
-        <p className="mt-2 text-xs text-muted-foreground">
-          {index === 0 ? '款や項を押すか、横にスクロールすると、その内訳が開きます。' : <>縦にスクロールすると、款の中の項が一つずつ開きます。{index < total ? '横で次の款へ。' : null}</>}
-        </p>
+        {index > 0 ? (
+          <p className="mt-2 text-xs text-muted-foreground">
+            縦にスクロールすると、款の中の項が一つずつ開きます。{index < total ? '横で次の款へ。' : null}
+          </p>
+        ) : null}
       </div>
       <div className="relative mt-2">
         <div
