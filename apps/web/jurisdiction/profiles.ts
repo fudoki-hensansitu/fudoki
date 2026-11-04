@@ -24,7 +24,6 @@ export interface Domain {
   name: string
   /** 目次に出す短い名前 */
   short?: string
-  image: string
   projects: PolicyProject[]
 }
 
@@ -102,7 +101,6 @@ const SHINAGAWA: Profile = {
         {
           "id": "anzen",
           "name": "安全安心を守る",
-          "image": "domain-anzen.jpg",
           "projects": [
             {
               "name": "シェードポリシーの策定と、非課税世帯のエアコン購入費助成",
@@ -141,7 +139,6 @@ const SHINAGAWA: Profile = {
           "id": "kodomo",
           "name": "社会全体で子どもと子育てを支える",
           "short": "子どもと子育てを支える",
-          "image": "domain-kodomo.jpg",
           "projects": [
             {
               "name": "子どもの公共施設の利用料を無料に",
@@ -196,7 +193,6 @@ const SHINAGAWA: Profile = {
           "id": "yasashii",
           "name": "生きづらさをなくし住み続けられるやさしい社会をつくる",
           "short": "やさしい社会をつくる",
-          "image": "domain-yasashii.jpg",
           "projects": [
             {
               "name": "がん検診の自己負担を無料に",
@@ -223,7 +219,6 @@ const SHINAGAWA: Profile = {
           "id": "mirai",
           "name": "未来に希望の持てるサステナブルな社会をつくる",
           "short": "サステナブルな社会をつくる",
-          "image": "domain-mirai.jpg",
           "projects": []
         }
       ],
@@ -295,7 +290,6 @@ const SHINAGAWA: Profile = {
         {
           "id": "anzen",
           "name": "安全安心を守る",
-          "image": "domain-anzen.jpg",
           "projects": [
             {
               "name": "住まいの相談窓口と、エアコンの設置・買い替え助成",
@@ -323,7 +317,6 @@ const SHINAGAWA: Profile = {
           "id": "kodomo",
           "name": "社会全体で子どもと子育てを支える",
           "short": "子どもと子育てを支える",
-          "image": "domain-kodomo.jpg",
           "projects": [
             {
               "name": "認証保育所などの第一子の保育料を無償に",
@@ -361,7 +354,6 @@ const SHINAGAWA: Profile = {
           "id": "yasashii",
           "name": "生きづらさをなくし住み続けられるやさしい社会をつくる",
           "short": "やさしい社会をつくる",
-          "image": "domain-yasashii.jpg",
           "projects": [
             {
               "name": "障害児の通所支援の利用者負担を無償に",
@@ -399,7 +391,6 @@ const SHINAGAWA: Profile = {
           "id": "mirai",
           "name": "未来に希望の持てるサステナブルな社会をつくる",
           "short": "サステナブルな社会をつくる",
-          "image": "domain-mirai.jpg",
           "projects": [
             {
               "name": "建物の省エネ化の助成と、区民参加の CO2 クレジット",
@@ -497,7 +488,6 @@ const SHINAGAWA: Profile = {
           {
             "id": "anzen",
             "name": "安全安心を守る",
-            "image": "domain-anzen.jpg",
             "projects": [
               {
                 "name": "携帯トイレの全戸配布と、中学生の防災プロジェクト",
@@ -525,7 +515,6 @@ const SHINAGAWA: Profile = {
             "id": "kodomo",
             "name": "社会全体で子どもと子育てを支える",
             "short": "子どもと子育てを支える",
-            "image": "domain-kodomo.jpg",
             "projects": [
               {
                 "name": "学校給食の無償化",
@@ -563,7 +552,6 @@ const SHINAGAWA: Profile = {
             "id": "yasashii",
             "name": "生きづらさをなくし住み続けられるやさしい社会をつくる",
             "short": "やさしい社会をつくる",
-            "image": "domain-yasashii.jpg",
             "projects": [
               {
                 "name": "介護職員の居住支援手当",
@@ -601,7 +589,6 @@ const SHINAGAWA: Profile = {
             "id": "mirai",
             "name": "未来に希望の持てるサステナブルな社会をつくる",
             "short": "サステナブルな社会をつくる",
-            "image": "domain-mirai.jpg",
             "projects": [
               {
                 "name": "キャッシュレス決済のポイント還元",

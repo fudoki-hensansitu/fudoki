@@ -88,13 +88,12 @@ function ProjectItem({ p }: { p: PolicyProject }) {
   )
 }
 
-function Domains({ code, domains }: { code: string; domains: Domain[] }) {
+function Domains({ domains }: { domains: Domain[] }) {
   return (
     <Section id="domains" title="政策領域">
       {domains.map((d) => (
         <div key={d.id} id={`d-${d.id}`} className="flex scroll-mt-32 md:scroll-mt-20 flex-col gap-1 [&+&]:mt-12">
           <h3 className="mb-3.5 border-l-4 border-primary py-0.5 pl-3.5 text-[19px] leading-snug sm:text-[22px]">{d.name}</h3>
-          <img src={assetPath(code, d.image)} alt="" loading="lazy" className="mb-3 aspect-[16/7] w-full rounded-lg object-cover sm:aspect-[4/1]" />
           <div className="border-t border-foreground">
             {d.projects.length ? (
               d.projects.map((p) => <ProjectItem key={p.name} p={p} />)
@@ -422,7 +421,7 @@ function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
           </nav>
           <main className="flex min-w-0 flex-col gap-14">
             {py ? <Policies code={data.code} year={py} /> : null}
-            {py ? <Domains code={data.code} domains={py.domains} /> : null}
+            {py ? <Domains domains={py.domains} /> : null}
             <Budget data={data} year={year} />
             {py?.scrap ? <ScrapSection scrap={py.scrap} /> : null}
           </main>
