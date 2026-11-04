@@ -8,7 +8,7 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbP
 import { StartForm } from '../chat/start-form'
 import { DUMMY_TRAITS, dummyPopulation } from './dummy'
 import { Flow } from './flow'
-import { changePct, formatYen, kanChanges, reiwa, type PageData, type Project, type Setsu } from './types'
+import { changePct, formatYen, INDEX_PATH, kanChanges, reiwa, type PageData, type Project, type Setsu } from './types'
 
 const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
   const res = await fetch(url, { signal })
@@ -211,7 +211,7 @@ function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
         <Breadcrumb>
           <BreadcrumbList className="text-xs">
             <BreadcrumbItem>
-              <BreadcrumbLink href="/自治体">自治体</BreadcrumbLink>
+              <BreadcrumbLink href={INDEX_PATH}>自治体</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>{data.prefecture}</BreadcrumbItem>

@@ -7,9 +7,9 @@ bun run dev:web
 bun run build:web
 ```
 
-## 自治体の個別ページ（`/:都道府県/:名称`）
+## 自治体の個別ページ（`/:都道府県/:自治体`）
 
-`/自治体` が決算を収録している自治体の一覧、`/東京都/中野区` のように**都道府県名と自治体名を path に入れた**個別ページが検索（SEO）の入口。都道府県名と名称の一致で引く（`/s/:id` や `/api/*` とは都道府県名の形で見分け、形が違えば次の経路へ渡す）。名称は自治体マスタ（`/v1/jurisdictions`）のとおり。収録が無い自治体は noindex の案内、存在しない名称は 404。`/sitemap.xml` は収録のある自治体の頁を含む（API に繋がらないときは入口と一覧だけ）。
+`/jurisdictions` が決算を収録している自治体の一覧、`/tokyo/nakano-ku` のように**都道府県と自治体のローマ字を path に入れた**個別ページが検索（SEO）の入口。ローマ字は自治体マスタ（`packages/jurisdictions` の `jurisdictions.json` の `slug` と `prefectures.json`）が正本で、`jurisdiction/path.ts` が自治体コードから path を作る（slug の無い自治体はコードで代える）。市区町村には種別（`-ku`・`-shi`・`-machi`・`-mura` など）を付ける — 豊島区（toshima-ku）と利島村（toshima-mura）のように読みが重なるため。`/s/:id` や `/api/*` とは、先頭が都道府県の slug かどうかで見分ける（違えば次の経路へ渡す）。以前の日本語の path（`/自治体`・`/東京都/中野区`）は 301 でローマ字の path へ移す。収録が無い自治体は noindex の案内、存在しない名称は 404。`/sitemap.xml` は収録のある自治体の頁を含む（API に繋がらないときは入口と一覧だけ）。
 
 - **データ**: `server/jurisdiction.ts` が api（Service Binding）の歳出の検索から、一般会計の決算の款（年度ごと）・金額の大きい目（積立・公債・予備費の款を除く。前年度の同じ目との比較つき）・全款の流れ（款→項→目→節）を組む。金額は API の円のまま。流れ図では印字のない金額を「金額未記載」と表示し、表示済みの子の合計は親の帯の高さにだけ使う。足すのは同じ年度の款（兄弟）の和（歳出の総額）だけで、api の sum_rules に従う。結果は Worker の cache に1時間置く（`server/jurisdiction-routes.ts`）
 - **描画**: サーバーが金額・款・事業を HTML に書き（`jurisdiction/html.ts`、JSON-LD の Dataset つき）、島（`jurisdiction/jurisdiction.tsx`、build で `static/_app/jurisdiction.js`）が同じデータを shadcn/ui の chart（recharts）と流れ図（`jurisdiction/sankey.tsx`）で描き直す。流れ図（`jurisdiction/flow.tsx`）は、初期表示が全款・全項の全体図で、横にスクロールすると snap して款が一つずつ開き、縦にスクロールすると款の中の項が一つずつ開く（クリックやタブは要らない）。目・節は図が近づいたときに `/api/jurisdictions/flow/:code/:year/setsu` で全款分を一度だけ取得する（誰でも読める GET。IP ごとの流量 `VIEW_RATE_LIMIT` と 入力と収録年度の検査で守る）。事業の節の上位は開閉せず最初から出す

@@ -1,7 +1,9 @@
-// 自治体の個別ページ（/:都道府県/:名称）と、画面が款・目の内訳を引く /api/jurisdictions/*。データは apps/api の歳出の検索から組み、
+// 自治体の個別ページ（/tokyo/nakano-ku）・一覧（/jurisdictions）と、画面が款・目の内訳を引く /api/jurisdictions/*。データは apps/api の歳出の検索から組み、
 // 変わるのは取り込みのときだけなので、Worker の cache に1時間置く。内訳の API は誰でも読める GET で、IP ごとの流量と id の形の検査で守る
 import { Hono } from 'hono'
 import { renderEmpty, renderIndex, renderPage, sitemapXml } from '../jurisdiction/html'
+import { jurisdictionPath, PREFECTURE_SLUGS } from '../jurisdiction/path'
+import { INDEX_PATH } from '../jurisdiction/types'
 import type { Drill, FlowDepth, PageData, Setsu } from '../jurisdiction/types'
 import { clientIp, errorResponse, HttpError, rateLimit } from './http'
 import { VIEW_RATE_LIMIT } from './limits'
@@ -34,7 +36,12 @@ export const jurisdictions = new Hono<{ Bindings: Env }>()
 const notFound = () => new Response('Not Found\n', { status: 404, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
 const unavailable = () => new Response('風土記の API に繋がりませんでした。少し待ってからもう一度開いてください。\n', { status: 502, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' } })
 
-jurisdictions.get('/自治体', async (c) => {
+// 日本語の path（/自治体・/東京都/中野区）だった頃のリンク・検索結果を、ローマ字の path へ恒久的に移す
+const moved = (path: string) => new Response(null, { status: 301, headers: { Location: path, 'Cache-Control': 'public, max-age=86400' } })
+
+jurisdictions.get('/自治体', () => moved(INDEX_PATH))
+
+jurisdictions.get(INDEX_PATH, async (c) => {
   try {
     return new Response(renderIndex(await catalog(c.env)), { headers: HTML_HEADERS })
   } catch {
@@ -42,14 +49,21 @@ jurisdictions.get('/自治体', async (c) => {
   }
 })
 
-// /<都道府県>/<自治体名>。/s/:id・/api/* など他の経路とは、都道府県名の形で見分ける（形が違えば API を引かずに次へ渡す）
-const PREFECTURE = /^(北海道|.{2,3}[都府県])$/
+// /<都道府県のローマ字>/<自治体のローマ字>。/s/:id・/api/* など他の経路とは、都道府県の slug かどうかで見分ける（違えば API を引かずに次へ渡す）
+const JAPANESE_PREFECTURE = /^(北海道|.{2,3}[都府県])$/
 
 jurisdictions.get('/:prefecture/:name', async (c, next) => {
   const { prefecture, name } = c.req.param()
-  if (!PREFECTURE.test(prefecture)) return next()
+  const legacy = JAPANESE_PREFECTURE.test(prefecture)
+  if (!legacy && !PREFECTURE_SLUGS.has(prefecture)) return next()
   try {
-    const entry = (await catalog(c.env)).find((e) => e.prefecture === prefecture && e.name === name)
+    const list = await catalog(c.env)
+    if (legacy) {
+      const old = list.find((e) => e.prefecture === prefecture && e.name === name)
+      return old ? moved(jurisdictionPath(old.code)) : notFound()
+    }
+    const path = `/${prefecture}/${name}`
+    const entry = list.find((e) => jurisdictionPath(e.code) === path)
     if (!entry) return notFound()
     const data = entry.settlementYears.length > 0 ? await page(c.env, entry) : null
     if (!data) return new Response(renderEmpty(entry), { headers: HTML_HEADERS })
