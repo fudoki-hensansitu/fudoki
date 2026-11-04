@@ -95,7 +95,6 @@ function KouSection({ kou, active, loading, onBox }: { kou: Kou; active: boolean
         <div className="text-[11px] text-muted-foreground">項</div>
         <div className="font-sans text-lg leading-snug">{kou.name}</div>
         <div className="text-[13px] tabular-nums text-muted-foreground">{amountText(kou.yen, kou.amountMissing)}</div>
-        {kou.page ? <div className="mt-1.5 text-[11px] text-muted-foreground">決算書 {kou.page}頁</div> : null}
       </div>
       <div className="relative hidden sm:block" aria-hidden="true">
         <i className="absolute left-0 w-2 rounded-sm bg-primary transition-[height] duration-500" style={{ top: bar.top, height: bar.height }} />
