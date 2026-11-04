@@ -161,9 +161,9 @@ function ProjectRow({ p, rank, max }: { p: Project; rank: number; max: number })
   )
 }
 
-/** データが無いところに置く枠。データがある年度と同じ場所・同じ大きさに出す */
-const Empty = ({ className = '', children }: { className?: string; children: React.ReactNode }) => (
-  <div className={`grid place-items-center rounded-[20px] border border-dashed px-5 py-10 text-center text-sm text-muted-foreground ${className}`}>{children}</div>
+/** データが無いところに置く枠。データがある年度と同じ場所に、どれも同じ高さで出す */
+const Empty = ({ children }: { children: React.ReactNode }) => (
+  <div className="grid place-items-center rounded-[20px] border border-dashed px-5 py-10 text-center text-sm text-muted-foreground">{children}</div>
 )
 
 /** どの年度も同じ並び（総額・お金の流れ・金額の大きい事業）。決算が無い年度・事業の一覧が無い年度は枠だけ出す */
@@ -180,7 +180,7 @@ function Budget({ data, year }: { data: PageData; year: number }) {
         <b className={`text-[clamp(2rem,1.5rem+1.8vw,2.8rem)] font-normal leading-tight tabular-nums ${total ? '' : 'text-muted-foreground'}`}>{total ? formatYen(total.yen) : '—'}</b>
         {pct !== null ? <span className={`text-[13px] tabular-nums ${pct < 0 ? 'text-[#aa5910]' : 'text-primary'}`}>前年度比 {pct >= 0 ? '+' : '−'}{Math.abs(pct).toFixed(1)}%</span> : null}
       </div>
-      {total ? <Flow key={year} data={data} total={total} /> : <Empty className="h-[clamp(320px,50svh,480px)]">{reiwa(year)}の決算は、まだ収録していません</Empty>}
+      {total ? <Flow key={year} data={data} total={total} /> : <Empty>{reiwa(year)}の決算は、まだ収録していません</Empty>}
       <h3 className="mt-4 text-lg">金額の大きい事業</h3>
       {isLatest ? (
         <ul className="border-t">
