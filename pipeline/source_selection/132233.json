@@ -134,9 +134,9 @@
       "candidates": [
         {
           "id": "representative",
-          "title": "令和6年度武蔵村山市下水道事業会計決算書",
+          "title": "令和6年度武蔵村山市下水道事業会計決算書、令和6年度決算のあらまし 歳出（目的別）決算状況",
           "landing_url": "https://www.city.musashimurayama.lg.jp/kurashi/koutsu/water/1014620.html",
-          "inspected_at": "2026-10-08T01:16:15+00:00",
+          "inspected_at": "2026-11-04T12:58:48.552696+00:00",
           "files": [
             {
               "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/014/620/kessan.pdf",
@@ -159,11 +159,29 @@
                   ]
                 }
               ]
+            },
+            {
+              "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/593/r6saisyutumokutekibetu.pdf",
+              "sha256": "8efe1b376bd73acf02f35d1b4a57b1d9bd83a47f35386a9986dc1ab847526e95",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
       ],
-      "reason": "未取得（一般会計・特別会計4の決算書、予算・決算一覧ほか、2026-10-08確認）。一般会計は未取得。暫定で下水道事業会計を選定し取り込み済み。一般会計は「令和6年度決算のあらまし」の「歳出（目的別）決算状況」（r6saisyutumokutekibetu.pdf、sha256 8efe1b376bd73acf02f35d1b4a57b1d9bd83a47f35386a9986dc1ab847526e95）に款ごとの決算額があり、10科目の合計が一般会計の歳出決算額363億80万8千円と一致することを2026-11-04に確認した。保存（R2 の旧い控えの削除を伴う）を終えたら一般会計を加えて選び直す。令和6年度決算。下水道事業会計だけを選定する（2026-11-04 選び直し）。下水道事業会計決算書（https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/014/620/kessan.pdf、スキャンPDF、掲載 kurashi/koutsu/water/1014620）：収益的収入及び支出明細書の支出部分（物理33-35=印字29-31、資本的支出明細書 物理37=印字33）で款・項・目・節と金額が同一明細で対応、単位円・税抜。不足：一般会計・国民健康保険事業特別会計・介護保険特別会計・都市核地区土地区画整理事業特別会計・後期高齢者医療特別会計は、款の金額を持つ決算書が確認した公式掲載先（予算・決算一覧、財政事情、財政状況・決算カード、財政白書、財務4表、議会の議決結果・議会だより、各部署ページ、市・東京都のオープンデータ）に無い。選ばなかった資料：令和6年度事務報告書（https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/001/992/r6aresultreport.pdf、物理66-245）の「主要な施策の成果」は事業名に款・項・目の番号を添えて事業の歳出決算額を載せるが、款の金額と合計が無く公債費・諸支出金・予備費等も載らない。行政評価報告書（https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/943/r7houkokusho.pdf）の事務事業評価調書も事業ごとの決算額だけで会計名・款の金額が無い（evaluation_selections で扱う）。いずれも一部の事業の資料なので歳出の出典に選定しない。予算・決算一覧の「決算のあらまし」（令和6年度、款別・性質別の集計）は、会計ごとの款の金額がそろうかを未確認。",
+      "reason": "令和6年度決算（2026-11-04 選び直し）。一般会計は「令和6年度決算のあらまし」（https://www.city.musashimurayama.lg.jp/shisei/zaisei/1022367/1021593/index.html）の「歳出（目的別）決算状況」（https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/593/r6saisyutumokutekibetu.pdf、1頁・文字PDF）を選定する。掲載頁に「そのあらましを一般会計を中心に紹介します」とあり、一般会計の歳出決算額363億80万8千円が同じPDFの合計と一致する（2026-11-04 確認）。款（議会費・総務費・民生費・衛生費・農林業費・商工費・土木費・消防費・教育費・公債費の10科目）ごとの決算額を億・万・千円で印字し、10科目の合計が一般会計の歳出決算額と一致する。印字の無い款（労働費・災害復旧費・諸支出金・予備費など）は0円か不掲載とみるが、どちらかは出典で確かめていない。項・目以下と事業の明細は無く、不足として残す。単位は千円（億・万の表記を千円に読み替える）。掲載頁に「各項目の金額は、千円未満を四捨五入しています」とあり、合計との一致は千円に丸めた額どうしの照合で、円単位の一致ではない。税の記載なし。特別会計4（国民健康保険事業・介護保険・都市核地区土地区画整理事業・後期高齢者医療）は同じ掲載頁に会計ごとの歳入歳出決算額の総額1行だけで款の金額が無く、決算書も確認した公式掲載先に無いので不足とする。下水道事業会計決算書（https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/014/620/kessan.pdf、スキャンPDF、掲載 kurashi/koutsu/water/1014620）：収益的収入及び支出明細書の支出部分（物理33-35=印字29-31、資本的支出明細書 物理37=印字33）で款・項・目・節と金額が同一明細で対応、単位円・税抜。選ばなかった資料：令和6年度事務報告書（https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/001/992/r6aresultreport.pdf、物理66-245）の「主要な施策の成果」は事業名に款・項・目の番号を添えて事業の歳出決算額を載せるが、款の金額と合計が無く公債費・諸支出金・予備費等も載らない。行政評価報告書（https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/943/r7houkokusho.pdf）の事務事業評価調書も事業ごとの決算額だけで会計名・款の金額が無い（evaluation_selections で扱う）。いずれも一部の事業の資料なので歳出の出典に選定しない。",
       "selected_candidate_id": "representative",
       "archive": {
         "bucket": "fudoki-inputs",
@@ -173,9 +191,14 @@
             "key": "fiscal/source-selection/132233/2024/settlement-1.pdf",
             "sha256": "64376cce5a4a70fd0badaa114a3c1ebfcacb03a011cf11628877630580e1679e",
             "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/014/620/kessan.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132233/2024/settlement-2.pdf",
+            "sha256": "8efe1b376bd73acf02f35d1b4a57b1d9bd83a47f35386a9986dc1ab847526e95",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/593/r6saisyutumokutekibetu.pdf"
           }
         ],
-        "archived_at": "2026-10-08T01:17:49.148Z"
+        "archived_at": "2026-11-04T13:13:00.760Z"
       }
     },
     {
@@ -752,7 +775,23 @@
       ],
       "reason": "令和5年度決算（2026-11-04 選び直し）。一般会計は「令和5年度決算のあらまし」（https://www.city.musashimurayama.lg.jp/shisei/zaisei/1022367/1020535/index.html）の「歳出（目的別）決算状況」（https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/020/535/r5mokutekibetusaisyutu.pdf、1頁・文字PDF）を選定する。掲載頁に「そのあらましを一般会計を中心に紹介します」とあり、一般会計の歳出決算額320億8,169万3千円が同じPDFの合計と一致する（2026-11-04 確認）。款（議会費・総務費・民生費・衛生費・農林業費・商工費・土木費・消防費・教育費・公債費の10科目）ごとの決算額を億・万・千円で印字し、10科目の合計が一般会計の歳出決算額と一致する。印字の無い款（労働費・災害復旧費・諸支出金・予備費など）は0円か不掲載とみるが、どちらかは出典で確かめていない。項・目以下と事業の明細は無く、不足として残す。単位は千円（億・万の表記を千円に読み替える）。掲載頁に「各項目の金額は、千円未満を四捨五入しています」とあり、合計との一致は千円に丸めた額どうしの照合で、円単位の一致ではない。税の記載なし。特別会計4（国民健康保険事業・介護保険・都市核地区土地区画整理事業・後期高齢者医療）は同じ掲載頁に会計ごとの歳入歳出決算額の総額1行だけで款の金額が無く、決算書も確認した公式掲載先に無いので不足とする。下水道事業会計決算書（https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/014/620/kessanr5.pdf、スキャンPDF、掲載 kurashi/koutsu/water/1014620）：収益的収入及び支出明細書の支出部分（物理38-40=印字34-36、資本的支出明細書 物理42=印字38）で款・項・目・節と金額が同一明細で対応、単位円・税抜。選ばなかった資料：令和5年度事務報告書（https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/001/992/r5aresultreport.pdf、物理66-247）の「主要な施策の成果」は事業名に款・項・目の番号を添えて事業の歳出決算額を載せるが、款の金額と合計が無く公債費・諸支出金・予備費等も載らない。行政評価報告書（https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/020/968/r6houkokusho_3.pdf）の事務事業評価調書も事業ごとの決算額だけで会計名・款の金額が無い（evaluation_selections で扱う）。いずれも一部の事業の資料なので歳出の出典に選定しない。",
       "selected_candidate_id": "representative",
-      "archive": null
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132233/2023/settlement-1.pdf",
+            "sha256": "0c2c878f2f95b3f09a2b76de4a1401a9ceb21fdb62f34bc169895539ab348d14",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/014/620/kessanr5.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132233/2023/settlement-2.pdf",
+            "sha256": "938c1913715692a7e127aafc067c33c76384d25e81fc7635f624ae51e96cb27a",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/020/535/r5mokutekibetusaisyutu.pdf"
+          }
+        ],
+        "archived_at": "2026-11-04T13:13:08.559Z"
+      }
     },
     {
       "target": {
@@ -790,7 +829,18 @@
       ],
       "reason": "令和7年度決算（2026-11-04 選び直し）。一般会計は「令和7年度決算のあらまし」（https://www.city.musashimurayama.lg.jp/shisei/zaisei/1022367/1022667/index.html）の「歳出（目的別）決算状況」（https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/022/667/r7saisyutumokutekibetu.pdf、1頁・文字PDF）を選定する。掲載頁に「そのあらましを一般会計を中心に紹介します」とあり、一般会計の歳出決算額364億1,976万2千円が同じPDFの合計と一致する（2026-11-04 確認）。款（議会費・総務費・民生費・衛生費・農林業費・商工費・土木費・消防費・教育費・公債費の10科目）ごとの決算額を億・万・千円で印字し、10科目の合計が一般会計の歳出決算額と一致する。印字の無い款（労働費・災害復旧費・諸支出金・予備費など）は0円か不掲載とみるが、どちらかは出典で確かめていない。項・目以下と事業の明細は無く、不足として残す。単位は千円（億・万の表記を千円に読み替える）。掲載頁に「各項目の金額は、千円未満を四捨五入しています」とあり、合計との一致は千円に丸めた額どうしの照合で、円単位の一致ではない。税の記載なし。特別会計4（国民健康保険事業・介護保険・都市核地区土地区画整理事業・後期高齢者医療）は同じ掲載頁に会計ごとの歳入歳出決算額の総額1行だけで款の金額が無く、決算書も確認した公式掲載先に無いので不足とする。下水道事業会計の令和7年度決算書は上下水道ページに未掲載（最新は令和6年度、2026-10-08確認）。選ばなかった資料：令和7年度事務報告書（r7aresultreport.pdf）の「主要な施策の成果」は事業の歳出決算額だけで款の金額と合計が無い一部の事業の資料なので選定しない。",
       "selected_candidate_id": "representative",
-      "archive": null
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132233/2025/settlement.pdf",
+            "sha256": "e26f692c2a1b10d4cb8bc76229fa3c359a15acf4170d44e4ec434f3fca447b2a",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/022/667/r7saisyutumokutekibetu.pdf"
+          }
+        ],
+        "archived_at": "2026-11-04T13:13:11.606Z"
+      }
     },
     {
       "target": {
