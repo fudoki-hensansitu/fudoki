@@ -36,17 +36,19 @@ function Policies({ code, year }: { code: string; year: ProfileYear }) {
     <Section id="policy" title="方針">
       <ol className="border-t">
         {year.policies.map((p, i) => (
-          <li key={p.title} className="grid grid-cols-[22px_104px_minmax(0,1fr)] items-start gap-3 border-b border-foreground/10 py-3.5 sm:grid-cols-[28px_176px_minmax(0,1fr)_auto] sm:gap-4">
+          <li key={p.title} className="grid grid-cols-[22px_104px_minmax(0,1fr)] items-start gap-3 border-b border-foreground/10 py-3.5 sm:grid-cols-[28px_176px_minmax(0,1fr)] sm:gap-4">
             <span className="text-lg text-primary">{i + 1}</span>
             <img src={assetPath(code, p.image)} alt="" loading="lazy" className="aspect-video w-full rounded-lg border border-foreground/10 object-cover" />
             <div>
-              <b className="block text-base font-normal">{p.title}</b>
+              <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
+                <b className="text-base font-normal">{p.title}</b>
+                <a href={p.source} target="_blank" rel="noopener" className="inline-flex items-center gap-1 whitespace-nowrap text-[13px] text-primary no-underline hover:underline">
+                  予算編成方針
+                  <ArrowUpRightIcon aria-hidden="true" className="size-3.5" />
+                </a>
+              </div>
               <p className="mt-0.5 text-sm text-muted-foreground">{p.body}</p>
             </div>
-            <a href={p.source} target="_blank" rel="noopener" className="col-start-3 inline-flex items-center gap-1 justify-self-start whitespace-nowrap text-[13px] text-primary no-underline hover:underline sm:col-start-auto sm:justify-self-end sm:pt-0.5">
-              予算編成方針
-              <ArrowUpRightIcon aria-hidden="true" className="size-3.5" />
-            </a>
           </li>
         ))}
       </ol>
