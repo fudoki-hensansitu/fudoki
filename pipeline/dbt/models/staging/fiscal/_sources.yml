@@ -4996,6 +4996,118 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: nodes
+  - name: j133078_2024_settlement_care_expenditure_detail_amounts
+    meta:
+      jurisdiction: '133078'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: care-expenditure-detail
+      kind: amounts
+  - name: j133078_2024_settlement_care_expenditure_detail_nodes
+    meta:
+      jurisdiction: '133078'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: care-expenditure-detail
+      kind: nodes
+  - name: j133078_2024_settlement_care_service_expenditure_detail_amounts
+    meta:
+      jurisdiction: '133078'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: care-service-expenditure-detail
+      kind: amounts
+  - name: j133078_2024_settlement_care_service_expenditure_detail_nodes
+    meta:
+      jurisdiction: '133078'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: care-service-expenditure-detail
+      kind: nodes
+  - name: j133078_2024_settlement_elderly_expenditure_detail_amounts
+    meta:
+      jurisdiction: '133078'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: elderly-expenditure-detail
+      kind: amounts
+  - name: j133078_2024_settlement_elderly_expenditure_detail_nodes
+    meta:
+      jurisdiction: '133078'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: elderly-expenditure-detail
+      kind: nodes
+  - name: j133078_2024_settlement_forest_expenditure_detail_amounts
+    meta:
+      jurisdiction: '133078'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: forest-expenditure-detail
+      kind: amounts
+  - name: j133078_2024_settlement_forest_expenditure_detail_nodes
+    meta:
+      jurisdiction: '133078'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: forest-expenditure-detail
+      kind: nodes
+  - name: j133078_2024_settlement_general_expenditure_detail_amounts
+    meta:
+      jurisdiction: '133078'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-detail
+      kind: amounts
+  - name: j133078_2024_settlement_general_expenditure_detail_nodes
+    meta:
+      jurisdiction: '133078'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-detail
+      kind: nodes
+  - name: j133078_2024_settlement_nhi_business_expenditure_detail_amounts
+    meta:
+      jurisdiction: '133078'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: nhi-business-expenditure-detail
+      kind: amounts
+  - name: j133078_2024_settlement_nhi_business_expenditure_detail_nodes
+    meta:
+      jurisdiction: '133078'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: nhi-business-expenditure-detail
+      kind: nodes
+  - name: j133078_2024_settlement_nhi_clinic_expenditure_detail_amounts
+    meta:
+      jurisdiction: '133078'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: nhi-clinic-expenditure-detail
+      kind: amounts
+  - name: j133078_2024_settlement_nhi_clinic_expenditure_detail_nodes
+    meta:
+      jurisdiction: '133078'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: nhi-clinic-expenditure-detail
+      kind: nodes
   - name: j133621_2024_settlement_elderly_medical_expenditure_amounts
     meta:
       jurisdiction: '133621'
