@@ -521,6 +521,12 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
     return entries
 
 
+def same_amount_cell(logical: Logical, previous: Item, item: Item) -> bool:
+    """Whether no rule of an amount column separates a name's line from the wrapped line below it."""
+    return all(_cell(band, (previous.y0 + previous.y1) / 2) == _cell(band, (item.y0 + item.y1) / 2)
+               for band in logical.bands if band.kind == 'amount')
+
+
 def stacked_under(logical: Logical, previous: Item, item: Item) -> bool:
     """Whether the amounts printed on a name's wrapped line are the next rows of the amount cell the line above opens.
 
@@ -1813,7 +1819,9 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                         and previous.role == item.role == 'node' and item.code is None and item.name
                         and not item.amounts
                         # (a name wrapped so that its amount is printed on the last line, none on the code's line: `1 居宅サービス` / `事業費 3,596,885`)
-                        and (id(item) not in column_amount_items or id(previous) not in column_amount_items
+                        # (no rule between them in the amount columns: a subject of its own has its amount in a cell of its own)
+                        and (id(item) not in column_amount_items
+                             or (id(previous) not in column_amount_items and same_amount_cell(logical, previous, item))
                              or stacked_under(logical, previous, item))
                         and not TOTAL.search(item.name) and item.page == previous.page
                         # (A line starting between the code's end and the name's start wraps that name: a name split from
@@ -1824,6 +1832,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                         and 0 <= item.y0 - previous.y1 <= max(g.y1 - g.y0 for g in item.glyphs)):
                     previous.name += item.name
                     previous.lines += item.lines
+                    if id(item) in column_amount_items:
+                        column_amount_items.add(id(previous))
                     continue
                 kept.append(item)
             if group.mode == "indent":

@@ -1400,12 +1400,12 @@ class SubjectContinuationTest(unittest.TestCase):
             logicals.append(Logical([page], [label, value], '円', []))
         return build(logicals, pattern='indent')
 
-    def build_wrapped_subject(self, wrapped_x=65, amount_y=116):
+    def build_wrapped_subject(self, wrapped_x=65, amount_y=116, amount_rows=(70, 100, 124, 180)):
         """`1 広域連合負担` / `金`, its second line across a rule of the name column, under a 款 and over a 目."""
         from ingestion.generic.layout import Logical
         from ingestion.generic.tree import build
         label = Band(0, 140, 1, ('科目',), [70, 100, 110, 124, 180], 70, 180, kind='label')
-        value = Band(140, 220, 1, ('支出済額',), [70, 100, 124, 180], 70, 180, kind='amount')
+        value = Band(140, 220, 1, ('支出済額',), list(amount_rows), 70, 180, kind='amount')
         make = lambda text, x, y, width: Glyph(text, x, y, x + width, y + 9, 1, 0)
         label.words = [make('1', 5, 80, 5), make('分担金', 65, 80, 60),
                        make('1', 15, 104, 5), make('広域連合負担', 65, 104, 60), make('金', wrapped_x, 116, 10),
@@ -1417,6 +1417,10 @@ class SubjectContinuationTest(unittest.TestCase):
         built = self.build_wrapped_subject()
         self.assertEqual([n['name_text'] for n in built.nodes], ['分担金', '広域連合負担金', '広域連合分賦金'])
         self.assertEqual([a['amount_text'] for a in built.amounts], ['100'] * 3)
+
+    def test_a_line_with_its_amount_in_a_ruled_cell_of_its_own_is_a_subject_of_its_own(self):
+        built = self.build_wrapped_subject(amount_rows=(70, 100, 110, 124, 180))
+        self.assertNotIn('広域連合負担金', [n['name_text'] for n in built.nodes])
 
     def test_a_line_between_the_code_and_the_name_start_wraps_the_name(self):
         built = self.build_wrapped_subject(wrapped_x=40)

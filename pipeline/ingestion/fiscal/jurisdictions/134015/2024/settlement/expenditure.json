@@ -84,7 +84,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "29e00483a7dd112f7daebf8a53d7a4d4dfc8ff2b5ea57ba987b124d75ece4d44",
+      "input_fingerprint": "4a7e9e1c4c7012c2d3c639557a8c1bfb611f217578eb8f6665927e05330635e3",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape'}。",
@@ -114,7 +114,7 @@
     {
       "table_id": "long-term-care-expenditure",
       "conversion_id": "long-term-care-settlement",
-      "input_fingerprint": "fcd635b5790fc6e961161b3887e6bd9758a0bb39ca366b26e54d4188c161c4fe",
+      "input_fingerprint": "3d427e27a4e3abac6abb0e85a9b28472e89dd6d61078e2bcd370cd513242f53f",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape'}。",
