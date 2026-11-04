@@ -3,7 +3,7 @@
 // 歳出の決算は API の値。方針・政策領域・事業の入れ替え・首長と議員は jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
 import * as React from 'react'
 import { createRoot } from 'react-dom/client'
-import { GlobeIcon, MapPinIcon, UsersIcon } from 'lucide-react'
+import { ArrowUpRightIcon, GlobeIcon, MapPinIcon, UsersIcon } from 'lucide-react'
 import { StartForm } from '../chat/start-form'
 import { Flow } from './flow'
 import { assetPath, type Domain, type PolicyProject, type Profile, type ProfileYear, type ProjectStatus, type Scrap } from './profiles'
@@ -36,13 +36,17 @@ function Policies({ code, year }: { code: string; year: ProfileYear }) {
     <Section id="policy" title="方針">
       <ol className="border-t">
         {year.policies.map((p, i) => (
-          <li key={p.title} className="grid grid-cols-[22px_104px_minmax(0,1fr)] items-start gap-3 border-b border-foreground/10 py-3.5 sm:grid-cols-[28px_176px_minmax(0,1fr)] sm:gap-4">
+          <li key={p.title} className="grid grid-cols-[22px_104px_minmax(0,1fr)] items-start gap-3 border-b border-foreground/10 py-3.5 sm:grid-cols-[28px_176px_minmax(0,1fr)_auto] sm:gap-4">
             <span className="text-lg text-primary">{i + 1}</span>
             <img src={assetPath(code, p.image)} alt="" loading="lazy" className="aspect-video w-full rounded-lg border border-foreground/10 object-cover" />
             <div>
               <b className="block text-base font-normal">{p.title}</b>
               <p className="mt-0.5 text-sm text-muted-foreground">{p.body}</p>
             </div>
+            <a href={p.source} target="_blank" rel="noopener" className="col-start-3 inline-flex items-center gap-1 justify-self-start whitespace-nowrap text-[13px] text-primary no-underline hover:underline sm:col-start-auto sm:justify-self-end sm:pt-0.5">
+              予算編成方針
+              <ArrowUpRightIcon aria-hidden="true" className="size-3.5" />
+            </a>
           </li>
         ))}
       </ol>
@@ -294,21 +298,16 @@ interface TocItem {
 }
 
 
-function YearTabs({ years, current, onChange, compact }: { years: number[]; current: number; onChange: (y: number) => void; compact?: boolean }) {
+function YearPicker({ years, current, onChange }: { years: number[]; current: number; onChange: (y: number) => void }) {
   return (
-    <div role="tablist" aria-label="年度" className={compact ? 'flex gap-1' : 'flex gap-1 border-b'}>
+    <div role="group" aria-label="年度" className="flex gap-1">
       {years.map((y) => (
         <button
           key={y}
           type="button"
-          role="tab"
-          aria-selected={y === current}
+          aria-pressed={y === current}
           onClick={() => onChange(y)}
-          className={
-            compact
-              ? `rounded-full px-2.5 py-1.5 text-[13px] ${y === current ? 'bg-secondary text-foreground' : 'text-muted-foreground'}`
-              : `-mb-px border-b-2 px-3.5 pb-2.5 pt-3 text-[15px] ${y === current ? 'border-primary text-foreground' : 'border-transparent text-muted-foreground hover:text-foreground'}`
-          }
+          className={`rounded-full px-2.5 py-1.5 text-[13px] ${y === current ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
         >
           {reiwa(y)}
         </button>
@@ -402,14 +401,19 @@ function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
           {tagline ? <span className="hidden min-w-0 truncate text-[13px] text-muted-foreground sm:block">{tagline}</span> : null}
           {years.length > 1 ? (
             <div className="ml-auto shrink-0">
-              <YearTabs years={years} current={year} onChange={choose} compact />
+              <YearPicker years={years} current={year} onChange={choose} />
             </div>
           ) : null}
         </div>
       </div>
 
       <div className="mx-auto max-w-[1120px] px-4 pb-48">
-        <header className="grid grid-cols-[80px_minmax(0,1fr)] items-start gap-4 border-b py-7 sm:grid-cols-[132px_minmax(0,1fr)] sm:gap-7">
+        <header className="relative grid grid-cols-[80px_minmax(0,1fr)] items-start gap-4 border-b py-7 sm:grid-cols-[132px_minmax(0,1fr)] sm:gap-7">
+          {years.length > 1 ? (
+            <div className="col-span-full -mb-2 justify-self-end sm:absolute sm:right-0 sm:top-7 sm:mb-0">
+              <YearPicker years={years} current={year} onChange={choose} />
+            </div>
+          ) : null}
           <div className="grid size-20 place-items-center rounded-xl border bg-white p-2.5 sm:size-[132px] sm:rounded-2xl sm:p-[18px]">
             {logo ? <img src={logo} alt={data.name} className="h-auto w-full" /> : <span className="text-3xl text-foreground sm:text-5xl">{data.name[0]}</span>}
           </div>
@@ -444,7 +448,6 @@ function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
             ) : null}
           </div>
         </header>
-        {years.length > 1 ? <YearTabs years={years} current={year} onChange={choose} /> : null}
 
         <nav ref={spBar} aria-label="目次" className={`sticky z-20 -mx-4 flex gap-1.5 overflow-x-auto border-b bg-background px-4 py-2.5 [scrollbar-width:none] md:hidden ${mini ? 'top-[61px]' : 'top-0'}`}>
           {toc.filter((t) => !t.sub).map((t) => (
