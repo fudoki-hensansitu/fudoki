@@ -48,7 +48,7 @@
     {
       "table_id": "general-expenditure-detail",
       "conversion_id": "general",
-      "input_fingerprint": "8bf849f646564395a4e20d23cfbad0e85f826872ae2c739e28da0642d079e28f",
+      "input_fingerprint": "b65c24abcc5c9a0c517e2ab28b60be34d9f5b2f81a28b329841d4b2298a02a97",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'予算現': 'indent'}。",

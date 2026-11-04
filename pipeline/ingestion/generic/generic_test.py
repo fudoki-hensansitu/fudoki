@@ -1400,6 +1400,32 @@ class SubjectContinuationTest(unittest.TestCase):
             logicals.append(Logical([page], [label, value], '円', []))
         return build(logicals, pattern='indent')
 
+    def build_wrapped_subject(self, wrapped_x=65, amount_y=116):
+        """`1 広域連合負担` / `金`, its second line across a rule of the name column, under a 款 and over a 目."""
+        from ingestion.generic.layout import Logical
+        from ingestion.generic.tree import build
+        label = Band(0, 140, 1, ('科目',), [70, 100, 110, 124, 180], 70, 180, kind='label')
+        value = Band(140, 220, 1, ('支出済額',), [70, 100, 124, 180], 70, 180, kind='amount')
+        make = lambda text, x, y, width: Glyph(text, x, y, x + width, y + 9, 1, 0)
+        label.words = [make('1', 5, 80, 5), make('分担金', 65, 80, 60),
+                       make('1', 15, 104, 5), make('広域連合負担', 65, 104, 60), make('金', wrapped_x, 116, 10),
+                       make('1', 25, 128, 5), make('広域連合分賦金', 65, 128, 70)]
+        value.words = [make('100', 160, y, 30) for y in (80, amount_y, 128)]
+        return build([Logical([1], [label, value], '円', [])], pattern='indent')
+
+    def test_a_name_wrapped_with_its_amount_on_the_last_line_is_one_item(self):
+        built = self.build_wrapped_subject()
+        self.assertEqual([n['name_text'] for n in built.nodes], ['分担金', '広域連合負担金', '広域連合分賦金'])
+        self.assertEqual([a['amount_text'] for a in built.amounts], ['100'] * 3)
+
+    def test_a_line_between_the_code_and_the_name_start_wraps_the_name(self):
+        built = self.build_wrapped_subject(wrapped_x=40)
+        self.assertEqual([n['name_text'] for n in built.nodes], ['分担金', '広域連合負担金', '広域連合分賦金'])
+
+    def test_a_line_past_the_name_start_does_not_wrap_the_name(self):
+        built = self.build_wrapped_subject(wrapped_x=80)
+        self.assertNotIn('広域連合負担金', [n['name_text'] for n in built.nodes])
+
     def test_indented_names_join_before_learning_the_three_subject_levels(self):
         built = self.build_indented_subjects()
         self.assertEqual([(n['name_text'], n['depth']) for n in built.nodes],
