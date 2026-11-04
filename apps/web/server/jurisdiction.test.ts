@@ -3,6 +3,8 @@ import { changePct, formatYen, kanChanges, reiwa, type YearTotal } from '../juri
 import web from '../worker'
 import { searchInput } from '../../api/src/search'
 import type { Env } from './env'
+import prefectures from '../../../packages/jurisdictions/prefectures.json'
+import registry from '../../../packages/jurisdictions/jurisdictions.json'
 
 describe('金額と年度の表記', () => {
   test('1億円以上は億円、未満は万円。100億円以上は小数を出さない', () => {
@@ -91,12 +93,12 @@ const get = (path: string, e: Env = env) => web.fetch(new Request(`https://fudok
 
 describe('自治体の個別ページ', () => {
   test('款の和・事業・前年度の同じ目から組み、HTML に金額と自治体名を入れる', async () => {
-    const res = await get(`/${encodeURIComponent('東京都')}/${encodeURIComponent('中野区')}`, { ...env, TURNSTILE_SITE_KEY: 'public-test-key' })
+    const res = await get('/tokyo/nakano', { ...env, TURNSTILE_SITE_KEY: 'public-test-key' })
     expect(res.status).toBe(200)
     const html = await res.text()
     expect(html).toContain('<title>中野区の歳出｜令和7年度決算｜風土記</title>')
     expect(html).toContain('https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit')
-    expect(html).toContain('<link rel="canonical" href="https://fudoki.dev/%E6%9D%B1%E4%BA%AC%E9%83%BD/%E4%B8%AD%E9%87%8E%E5%8C%BA">')
+    expect(html).toContain('<link rel="canonical" href="https://fudoki.dev/tokyo/nakano">')
     // 年度ごとの総額は、その年度の款（兄弟）の和
     const data = JSON.parse(html.match(/<script type="application\/json" id="j-data">(.*?)<\/script>/s)![1]!)
     expect(data.years.map((y: { year: number; yen: number }) => [y.year, y.yen])).toEqual([[2024, 500], [2025, 1000]])
@@ -107,17 +109,29 @@ describe('自治体の個別ページ', () => {
   })
 
   test('収録の無い自治体は検索に出さず、名前が違えば 404、sitemap には収録のある自治体だけ', async () => {
-    const empty = await get(`/${encodeURIComponent('東京都')}/${encodeURIComponent('千代田区')}`)
+    const empty = await get('/tokyo/chiyoda')
     expect(empty.status).toBe(200)
     expect(await empty.text()).toContain('<meta name="robots" content="noindex">')
-    expect((await get(`/${encodeURIComponent('東京都')}/${encodeURIComponent('存在しない市')}`)).status).toBe(404)
-    // 都道府県の形でなければ他の経路へ渡す（/s/:id などを奪わない）
-    expect((await get(`/${encodeURIComponent('自治体')}`)).status).toBe(200)
+    expect((await get('/tokyo/sonzaishinai')).status).toBe(404)
+    // 都道府県の slug でなければ他の経路へ渡す（/s/:id などを奪わない）
+    expect((await get('/jurisdictions')).status).toBe(200)
     expect((await get('/s/not-a-session')).status).not.toBe(200)
     expect((await get('/api/none')).status).toBe(404)
     const sitemap = await (await get('/sitemap.xml')).text()
-    expect(sitemap).toContain(`${encodeURIComponent('東京都')}/${encodeURIComponent('中野区')}`)
-    expect(sitemap).not.toContain(encodeURIComponent('千代田区'))
+    expect(sitemap).toContain('<loc>https://fudoki.dev/tokyo/nakano</loc>')
+    expect(sitemap).not.toContain('chiyoda')
+  })
+
+  test('URL のローマ字は自治体マスタの全自治体にあり、同じ都道府県の中で重ならない', () => {
+    const seen = new Set<string>()
+    for (const [code, j] of Object.entries(registry.jurisdictions as Record<string, { name: string; slug?: string }>)) {
+      expect(j.slug, `${code} ${j.name}`).toMatch(/^[a-z]+(-[a-z]+)*$/)
+      const key = `${code.slice(0, 2)}/${j.slug}`
+      expect(seen.has(key), `${code} ${j.name} の slug が重なる`).toBe(false)
+      seen.add(key)
+    }
+    expect(Object.keys(prefectures.slugs)).toHaveLength(47)
+    expect(new Set(Object.values(prefectures.slugs)).size).toBe(47)
   })
 
   test('収録年度が離れていても最新年度から5年間の決算を表示する', async () => {
@@ -135,7 +149,7 @@ describe('自治体の個別ページ', () => {
       }
       return API.fetch(req)
     } } }
-    const res = await get('/東京都/中野区', sparse)
+    const res = await get('/tokyo/nakano', sparse)
     expect(res.status).toBe(200)
     const html = await res.text()
     const data = JSON.parse(html.match(/<script type="application\/json" id="j-data">(.*?)<\/script>/s)![1]!)
@@ -145,10 +159,10 @@ describe('自治体の個別ページ', () => {
 
   test('API に繋がらないときは 502 で、sitemap は入口と一覧だけで答える', async () => {
     const down: Env = { API: { fetch: async () => new Response('x', { status: 500 }) } }
-    expect((await get('/自治体', down)).status).toBe(502)
+    expect((await get('/jurisdictions', down)).status).toBe(502)
     const sitemap = await get('/sitemap.xml', down)
     expect(sitemap.status).toBe(200)
-    expect(await sitemap.text()).toContain('https://fudoki.dev/%E8%87%AA%E6%B2%BB%E4%BD%93')
+    expect(await sitemap.text()).toContain('https://fudoki.dev/jurisdictions')
   })
 })
 

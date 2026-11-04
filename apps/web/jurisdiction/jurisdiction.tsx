@@ -7,7 +7,7 @@ import { GlobeIcon, MapPinIcon, UsersIcon } from 'lucide-react'
 import { StartForm } from '../chat/start-form'
 import { Flow } from './flow'
 import { assetPath, type Domain, type PolicyProject, type Profile, type ProfileYear, type ProjectStatus, type Scrap } from './profiles'
-import { changePct, formatYen, reiwa, type PageData, type Project, type Setsu, type YearTotal } from './types'
+import { changePct, formatYen, INDEX_PATH, reiwa, type PageData, type Project, type Setsu, type YearTotal } from './types'
 
 const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
   const res = await fetch(url, { signal })
@@ -413,7 +413,7 @@ function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
             <div className="flex flex-wrap gap-x-6 gap-y-1.5 text-sm text-muted-foreground">
               <span className="inline-flex items-center gap-1.5">
                 <MapPinIcon className="size-4" aria-hidden="true" />
-                <a href={`/自治体#${encodeURIComponent(data.prefecture)}`} className="text-primary no-underline">{data.prefecture}</a>
+                <a href={`${INDEX_PATH}#${encodeURIComponent(data.prefecture)}`} className="text-primary no-underline">{data.prefecture}</a>
               </span>
               {profile?.population ? (
                 <span className="inline-flex items-center gap-1.5" title="人口">

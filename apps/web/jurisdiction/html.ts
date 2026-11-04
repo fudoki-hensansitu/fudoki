@@ -1,10 +1,11 @@
-// 自治体の個別ページ（/:都道府県/:名称）と一覧（/jurisdictions）の HTML。検索エンジンが読めるよう、金額と款・事業はサーバーで書き出す。
+// 自治体の個別ページ（/tokyo/nakano）と一覧（/jurisdictions）の HTML。検索エンジンが読めるよう、金額と款・事業はサーバーで書き出す。
 // グラフと会話への導線は島（jurisdiction/jurisdiction.tsx）が同じデータで描き直す
 import { logo, TOKENS_CSS, TURNSTILE_SCRIPT } from '../landing'
 import { THEME_COLOR_META } from '../tokens'
 import { PWA_HEAD, PWA_REGISTER } from '../pwa'
 import type { CatalogEntry } from '../server/jurisdiction'
-import { formatYen, jurisdictionPath, reiwa, type PageData } from './types'
+import { jurisdictionPath } from './path'
+import { formatYen, INDEX_PATH, reiwa, type PageData } from './types'
 
 const ORIGIN = 'https://fudoki.dev'
 export const esc = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`)
@@ -31,8 +32,7 @@ ${PWA_HEAD}
 <link rel="stylesheet" href="/_app/jurisdiction.css">
 ${extra}`
 
-export const INDEX_PATH = '/' + encodeURIComponent('自治体')
-const header = `<header class="j-top"><a class="j-brand" href="/" aria-label="風土記 ホーム">${logo('j-logo')}</a><nav><a href="/自治体">自治体を探す</a><a href="https://docs.fudoki.dev/">使い方</a></nav></header>`
+const header = `<header class="j-top"><a class="j-brand" href="/" aria-label="風土記 ホーム">${logo('j-logo')}</a><nav><a href="${INDEX_PATH}">自治体を探す</a><a href="https://docs.fudoki.dev/">使い方</a></nav></header>`
 
 /** 個別ページの説明文。検索結果に出るので、金額は API の値だけで書く（人口や仮の値は入れない） */
 export function pageDescription(d: PageData): string {
@@ -45,7 +45,7 @@ export function renderPage(d: PageData, siteKey: string): string {
   const latest = d.years.at(-1)!
   const title = `${d.name}の歳出｜${reiwa(latest.year)}決算｜風土記`
   const description = pageDescription(d)
-  const canonical = `${ORIGIN}${jurisdictionPath(d.prefecture, d.name)}`
+  const canonical = `${ORIGIN}${jurisdictionPath(d.code)}`
   const ld = {
     '@context': 'https://schema.org',
     '@type': 'Dataset',
@@ -68,7 +68,7 @@ ${head(title, description, canonical, `${siteKey ? `${TURNSTILE_SCRIPT}\n` : ''}
 ${header}
 <div id="j-app" data-turnstile-sitekey="${esc(siteKey)}">
 <main class="j-static">
-<p class="j-crumb"><a href="/自治体">自治体</a> › ${esc(d.prefecture)} › ${esc(d.name)}</p>
+<p class="j-crumb"><a href="${INDEX_PATH}">自治体</a> › ${esc(d.prefecture)} › ${esc(d.name)}</p>
 <h1>${esc(d.name)}</h1>
 <p>${esc(description)}</p>
 <h2>${reiwa(latest.year)}決算の歳出（款別）</h2>
@@ -91,11 +91,11 @@ export function renderEmpty(e: CatalogEntry): string {
   return `<!doctype html>
 <html lang="ja">
 <head>
-${head(title, `${e.name}の歳出は風土記にまだ収録されていません。`, `${ORIGIN}${jurisdictionPath(e.prefecture, e.name)}`, '<meta name="robots" content="noindex">')}
+${head(title, `${e.name}の歳出は風土記にまだ収録されていません。`, `${ORIGIN}${jurisdictionPath(e.code)}`, '<meta name="robots" content="noindex">')}
 </head>
 <body>
 ${header}
-<main class="j-static"><h1>${esc(e.name)}</h1><p>この自治体の決算は、風土記にまだ収録されていません。</p><p><a href="/自治体">収録している自治体を見る</a></p></main>
+<main class="j-static"><h1>${esc(e.name)}</h1><p>この自治体の決算は、風土記にまだ収録されていません。</p><p><a href="${INDEX_PATH}">収録している自治体を見る</a></p></main>
 ${PWA_REGISTER}
 </body>
 </html>
@@ -108,7 +108,7 @@ export function renderIndex(entries: CatalogEntry[]): string {
   const description = `決算を収録している自治体（${have.length}）の一覧。自治体ごとに歳出の款・項・目と、金額の推移を確かめられます。`
   const byPref = new Map<string, CatalogEntry[]>()
   for (const e of have) byPref.set(e.prefecture, [...(byPref.get(e.prefecture) ?? []), e])
-  const sections = [...byPref].map(([pref, list]) => `<h2 id="${esc(pref)}">${esc(pref)}</h2><ul class="j-list">${list.map((e) => `<li><a href="${jurisdictionPath(e.prefecture, e.name)}">${esc(e.name)}</a></li>`).join('')}</ul>`).join('')
+  const sections = [...byPref].map(([pref, list]) => `<h2 id="${esc(pref)}">${esc(pref)}</h2><ul class="j-list">${list.map((e) => `<li><a href="${jurisdictionPath(e.code)}">${esc(e.name)}</a></li>`).join('')}</ul>`).join('')
   return `<!doctype html>
 <html lang="ja">
 <head>
@@ -126,5 +126,5 @@ ${PWA_REGISTER}
 export const sitemapXml = (entries: CatalogEntry[]) =>
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${ORIGIN}/</loc></url><url><loc>${ORIGIN}${INDEX_PATH}</loc></url>${entries
     .filter((e) => e.settlementYears.length > 0)
-    .map((e) => `<url><loc>${ORIGIN}${jurisdictionPath(e.prefecture, e.name)}</loc></url>`)
+    .map((e) => `<url><loc>${ORIGIN}${jurisdictionPath(e.code)}</loc></url>`)
     .join('')}</urlset>\n`

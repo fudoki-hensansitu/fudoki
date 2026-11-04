@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./registry": "./jurisdictions.json"
+    "./registry": "./jurisdictions.json",
+    "./prefectures": "./prefectures.json"
   }
 }
