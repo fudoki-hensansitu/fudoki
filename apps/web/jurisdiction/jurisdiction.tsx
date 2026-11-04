@@ -205,7 +205,7 @@ function Budget({ data, total }: { data: PageData; total: YearTotal }) {
 }
 
 function ScrapSection({ scrap }: { scrap: Scrap }) {
-  const ratio = Math.min(1, scrap.raisedYen / scrap.targetYen)
+  const target = scrap.targetYen
   const grades = [
     ['A', '広げる'],
     ['B', '今のまま続ける'],
@@ -219,13 +219,15 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
           <span>スクラップで捻出した財源</span>
           <b className="text-[28px] font-normal tabular-nums">
             {formatYen(scrap.raisedYen)}
-            <small className="ml-1 text-sm text-muted-foreground">／ 目標 {formatYen(scrap.targetYen)}</small>
+            {target ? <small className="ml-1 text-sm text-muted-foreground">／ 目標 {formatYen(target)}</small> : null}
           </b>
         </div>
-        <div className="relative h-2.5 rounded-full bg-foreground/5" role="img" aria-label={`目標${formatYen(scrap.targetYen)}に対して${formatYen(scrap.raisedYen)}`}>
-          <div className="absolute inset-y-0 left-0 rounded-full bg-[var(--kincha)]" style={{ width: `${ratio * 100}%` }} />
-          <div className="absolute -top-1 right-0 h-[18px] w-0.5 bg-foreground" />
-        </div>
+        {target ? (
+          <div className="relative h-2.5 rounded-full bg-foreground/5" role="img" aria-label={`目標${formatYen(target)}に対して${formatYen(scrap.raisedYen)}`}>
+            <div className="absolute inset-y-0 left-0 rounded-full bg-[var(--kincha)]" style={{ width: `${Math.min(1, scrap.raisedYen / target) * 100}%` }} />
+            <div className="absolute -top-1 right-0 h-[18px] w-0.5 bg-foreground" />
+          </div>
+        ) : null}
       </div>
       <h3 className="text-lg">{scrap.evaluated.toLocaleString('ja-JP')}事業の自己評価</h3>
       <div className="grid grid-cols-2 border-t sm:grid-cols-4">
