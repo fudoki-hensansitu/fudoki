@@ -1,4 +1,4 @@
-// 自治体の個別ページ（/tokyo/nakano-ku）と一覧（/jurisdictions）の HTML。検索エンジンが読めるよう、金額と款・事業はサーバーで書き出す。
+// 自治体の個別ページ（/tokyo/nakano）と一覧（/jurisdictions）の HTML。検索エンジンが読めるよう、金額と款・事業はサーバーで書き出す。
 // グラフと会話への導線は島（jurisdiction/jurisdiction.tsx）が同じデータで描き直す
 import { logo, TOKENS_CSS, TURNSTILE_SCRIPT } from '../landing'
 import { THEME_COLOR_META } from '../tokens'

@@ -1,4 +1,4 @@
-// 自治体の個別ページの URL（/tokyo/nakano-ku）。ローマ字は自治体マスタ（packages/jurisdictions）の slug が正本。
+// 自治体の個別ページの URL（/tokyo/nakano）。ローマ字は自治体マスタ（packages/jurisdictions）の slug が正本。
 // 画面の bundle に registry を載せないよう、types.ts とは分けて server 側だけが import する
 import prefectures from '../../../packages/jurisdictions/prefectures.json'
 import registry from '../../../packages/jurisdictions/jurisdictions.json'

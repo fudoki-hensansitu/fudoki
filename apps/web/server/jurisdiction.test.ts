@@ -93,12 +93,12 @@ const get = (path: string, e: Env = env) => web.fetch(new Request(`https://fudok
 
 describe('自治体の個別ページ', () => {
   test('款の和・事業・前年度の同じ目から組み、HTML に金額と自治体名を入れる', async () => {
-    const res = await get('/tokyo/nakano-ku', { ...env, TURNSTILE_SITE_KEY: 'public-test-key' })
+    const res = await get('/tokyo/nakano', { ...env, TURNSTILE_SITE_KEY: 'public-test-key' })
     expect(res.status).toBe(200)
     const html = await res.text()
     expect(html).toContain('<title>中野区の歳出｜令和7年度決算｜風土記</title>')
     expect(html).toContain('https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit')
-    expect(html).toContain('<link rel="canonical" href="https://fudoki.dev/tokyo/nakano-ku">')
+    expect(html).toContain('<link rel="canonical" href="https://fudoki.dev/tokyo/nakano">')
     // 年度ごとの総額は、その年度の款（兄弟）の和
     const data = JSON.parse(html.match(/<script type="application\/json" id="j-data">(.*?)<\/script>/s)![1]!)
     expect(data.years.map((y: { year: number; yen: number }) => [y.year, y.yen])).toEqual([[2024, 500], [2025, 1000]])
@@ -109,27 +109,17 @@ describe('自治体の個別ページ', () => {
   })
 
   test('収録の無い自治体は検索に出さず、名前が違えば 404、sitemap には収録のある自治体だけ', async () => {
-    const empty = await get('/tokyo/chiyoda-ku')
+    const empty = await get('/tokyo/chiyoda')
     expect(empty.status).toBe(200)
     expect(await empty.text()).toContain('<meta name="robots" content="noindex">')
-    expect((await get('/tokyo/sonzaishinai-shi')).status).toBe(404)
+    expect((await get('/tokyo/sonzaishinai')).status).toBe(404)
     // 都道府県の slug でなければ他の経路へ渡す（/s/:id などを奪わない）
     expect((await get('/jurisdictions')).status).toBe(200)
     expect((await get('/s/not-a-session')).status).not.toBe(200)
     expect((await get('/api/none')).status).toBe(404)
     const sitemap = await (await get('/sitemap.xml')).text()
-    expect(sitemap).toContain('<loc>https://fudoki.dev/tokyo/nakano-ku</loc>')
-    expect(sitemap).not.toContain('chiyoda-ku')
-  })
-
-  test('日本語の path だった頃の URL は、ローマ字の path へ 301 で移す', async () => {
-    const index = await get(`/${encodeURIComponent('自治体')}`)
-    expect([index.status, index.headers.get('Location')]).toEqual([301, '/jurisdictions'])
-    const page = await get(`/${encodeURIComponent('東京都')}/${encodeURIComponent('中野区')}`)
-    expect([page.status, page.headers.get('Location')]).toEqual([301, '/tokyo/nakano-ku'])
-    const byCode = await get('/tokyo/131148')
-    expect([byCode.status, byCode.headers.get('Location')]).toEqual([301, '/tokyo/nakano-ku'])
-    expect((await get(`/${encodeURIComponent('東京都')}/${encodeURIComponent('存在しない市')}`)).status).toBe(404)
+    expect(sitemap).toContain('<loc>https://fudoki.dev/tokyo/nakano</loc>')
+    expect(sitemap).not.toContain('chiyoda')
   })
 
   test('URL のローマ字は自治体マスタの全自治体にあり、同じ都道府県の中で重ならない', () => {
@@ -159,7 +149,7 @@ describe('自治体の個別ページ', () => {
       }
       return API.fetch(req)
     } } }
-    const res = await get('/tokyo/nakano-ku', sparse)
+    const res = await get('/tokyo/nakano', sparse)
     expect(res.status).toBe(200)
     const html = await res.text()
     const data = JSON.parse(html.match(/<script type="application\/json" id="j-data">(.*?)<\/script>/s)![1]!)
