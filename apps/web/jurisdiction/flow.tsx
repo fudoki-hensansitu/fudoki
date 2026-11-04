@@ -18,7 +18,7 @@ const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
 const amountText = (yen: number, missing?: boolean) => (missing ? '金額未記載' : formatYen(yen))
 const share = (yen: number, max: number, missing?: boolean) => (missing || max <= 0 ? 0 : (Math.max(0, yen) / max) * 100)
 
-function MokuGroup({ moku, max }: { moku: Moku; max: number }) {
+function MokuGroup({ moku }: { moku: Moku }) {
   const shown = moku.setsu.filter((s) => s.amountMissing || s.yen > 0)
   const top = shown.slice(0, SETSU_SHOWN)
   const topMax = Math.max(...top.filter((s) => !s.amountMissing).map((s) => s.yen), 0)
@@ -27,9 +27,6 @@ function MokuGroup({ moku, max }: { moku: Moku; max: number }) {
       <div className="min-w-0">
         <div className="text-sm leading-snug">{moku.name}</div>
         <div className="text-xs tabular-nums text-muted-foreground">{amountText(moku.yen, moku.amountMissing)}</div>
-        <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-foreground/5">
-          <div className="h-full rounded-full bg-primary" style={{ width: `${share(moku.yen, max, moku.amountMissing)}%` }} />
-        </div>
         {shown.length > SETSU_SHOWN ? <div className="mt-1 text-[11.5px] text-muted-foreground">ほか{shown.length - SETSU_SHOWN}節</div> : null}
       </div>
       {top.length > 0 ? (
@@ -57,7 +54,6 @@ function KouSection({ kou, active, loading, onBox }: { kou: Kou; active: boolean
   const rib = React.useRef<HTMLDivElement>(null)
   const [paths, setPaths] = React.useState<{ d: string }[]>([])
   const [bar, setBar] = React.useState({ top: 0, height: 0 })
-  const max = Math.max(...kou.moku.filter((m) => !m.amountMissing).map((m) => m.yen), 0)
   React.useLayoutEffect(() => {
     const el = box.current
     const lane = rib.current
@@ -105,7 +101,7 @@ function KouSection({ kou, active, loading, onBox }: { kou: Kou; active: boolean
         </svg>
       </div>
       <div className="flex min-w-0 flex-col gap-3">
-        {kou.moku.length > 0 ? kou.moku.map((m) => <MokuGroup key={m.id} moku={m} max={max} />) : (
+        {kou.moku.length > 0 ? kou.moku.map((m) => <MokuGroup key={m.id} moku={m} />) : (
           <p className="text-[12.5px] text-muted-foreground" role={loading ? 'status' : undefined}>{loading ? '内訳を読み込んでいます…' : 'この項に目はありません'}</p>
         )}
       </div>
