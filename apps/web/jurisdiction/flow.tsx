@@ -3,6 +3,7 @@
 import * as React from 'react'
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { Overview } from './sankey'
 import { formatYen, type Drill, type Kou, type Moku, type PageData, type YearTotal } from './types'
 
@@ -26,6 +27,7 @@ const share = (yen: number, max: number, missing?: boolean) => (missing || max <
 function MokuGroup({ moku }: { moku: Moku }) {
   const shown = moku.setsu.filter((s) => s.amountMissing || s.yen > 0)
   const top = shown.slice(0, SETSU_SHOWN)
+  const rest = shown.slice(SETSU_SHOWN)
   // 目の金額が印字されていないときは、一番大きい節を基準にして大小だけ見せる
   const base = moku.amountMissing ? Math.max(0, ...top.filter((s) => !s.amountMissing).map((s) => s.yen)) : moku.yen
   return (
@@ -46,7 +48,23 @@ function MokuGroup({ moku }: { moku: Moku }) {
               </span>
             </li>
           ))}
-          {shown.length > SETSU_SHOWN ? <li className="text-[11.5px] text-muted-foreground">ほか{shown.length - SETSU_SHOWN}節</li> : null}
+          {rest.length > 0 ? (
+            <li data-setsu-rest className="text-[11.5px] text-muted-foreground">
+              <Tooltip>
+                <TooltipTrigger className="cursor-help underline decoration-dotted underline-offset-2 hover:text-foreground">ほか{rest.length}節</TooltipTrigger>
+                <TooltipContent side="right" className="block max-w-72 px-3 py-2">
+                  <ul className="grid gap-y-0.5">
+                    {rest.map((s) => (
+                      <li key={s.name} className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3">
+                        <span className="truncate">{s.name}</span>
+                        <span className="text-right tabular-nums opacity-75">{amountText(s.yen, s.amountMissing)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </TooltipContent>
+              </Tooltip>
+            </li>
+          ) : null}
         </ul>
       ) : (
         <p className="border-l pl-3 text-[12.5px] text-muted-foreground">内訳の区分は出典にありません</p>
@@ -55,7 +73,7 @@ function MokuGroup({ moku }: { moku: Moku }) {
   )
 }
 
-interface Ribbon { d: string; x: number; y: number; h: number }
+interface Ribbon { d: string; x: number; y: number; h: number; rest?: boolean }
 /** x0 の y0 から太さ h0 で出て、x1 の y1 に太さ h1 で着く帯 */
 const band = (x0: number, y0: number, h0: number, x1: number, y1: number, h1: number) => {
   const m = (x0 + x1) / 2
@@ -102,15 +120,20 @@ function KouSection({ kou, active, loading, onBox }: { kou: Kou; active: boolean
         const items = list ? [...list.querySelectorAll<HTMLElement>('[data-setsu]')] : []
         if (!list || items.length === 0 || yen[i]! <= 0) return
         const x = list.getBoundingClientRect().left - lanebox.left
-        const rects = items.map((li) => li.getBoundingClientRect())
-        const parts = items.map((li) => Number(li.dataset.yen) / yen[i]!)
+        // 「ほか○節」には、目の棒のうち上位の節が使わなかった残りの太さで帯を渡す（金額は足し上げない）
+        const restRow = list.querySelector<HTMLElement>('[data-setsu-rest]')
+        const topParts = items.map((li) => Math.min(1, Number(li.dataset.yen) / yen[i]!))
+        const restPart = Math.max(0, 1 - topParts.reduce((a, v) => a + v, 0))
+        const rows2 = restRow && restPart > 0 ? [...items, restRow] : items
+        const rects = rows2.map((li) => li.getBoundingClientRect())
+        const parts = restRow && restPart > 0 ? [...topParts, restPart] : topParts
         const gaps = rects.map((b, j) => (rects[j + 1] ? rects[j + 1]!.top - b.top - 3 : b.height))
         const fit = Math.min(...parts.map((v, j) => (v > 0 ? gaps[j]! / v : Infinity)), rects.at(-1)!.bottom - rects[0]!.top)
         let from = ty
         rects.forEach((b, j) => {
           const sh = Math.max(parts[j]! * h, 1)
           const th = Math.max(parts[j]! * fit, 2)
-          twigs.push({ d: band(width, from, sh, x, b.top - origin, th), x, y: b.top - origin, h: th })
+          twigs.push({ d: band(width, from, sh, x, b.top - origin, th), x, y: b.top - origin, h: th, rest: rows2[j] === restRow })
           from += sh
         })
       })
@@ -138,8 +161,8 @@ function KouSection({ kou, active, loading, onBox }: { kou: Kou; active: boolean
       <div ref={rib} className="relative hidden sm:block" aria-hidden="true">
         <svg className="absolute inset-0 size-full overflow-visible">
           {paths.map((p, i) => <path key={i} d={p.d} className={`fill-primary/20 transition-opacity duration-500 ${active ? 'opacity-100' : 'opacity-0'}`} />)}
-          {setsu.map((p, i) => <path key={`s${i}`} d={p.d} className={`fill-primary/15 transition-opacity duration-500 ${active ? 'opacity-100' : 'opacity-0'}`} />)}
-          {setsu.map((p, i) => <rect key={`t${i}`} x={p.x} y={p.y} width={SETSU_BAR} height={p.h} rx={1.5} className={`fill-primary/70 transition-opacity duration-500 ${active ? 'opacity-100' : 'opacity-0'}`} />)}
+          {setsu.map((p, i) => <path key={`s${i}`} d={p.d} className={`${p.rest ? 'fill-primary/10' : 'fill-primary/15'} transition-opacity duration-500 ${active ? 'opacity-100' : 'opacity-0'}`} />)}
+          {setsu.map((p, i) => <rect key={`t${i}`} x={p.x} y={p.y} width={SETSU_BAR} height={p.h} rx={1.5} className={`${p.rest ? 'fill-primary/35' : 'fill-primary/70'} transition-opacity duration-500 ${active ? 'opacity-100' : 'opacity-0'}`} />)}
           {paths.map((p, i) => <rect key={`b${i}`} x={p.x} y={p.y} width={MOKU_BAR} height={p.h} rx={2} className={`fill-primary transition-opacity duration-500 ${active ? 'opacity-100' : 'opacity-0'}`} />)}
         </svg>
       </div>
