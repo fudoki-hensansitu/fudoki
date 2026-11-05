@@ -47,3 +47,8 @@
   #chat-start.ask { min-height: 56px; }
   #chat-start .ask-box { height: 56px; padding: 0 20px; }
 }
+
+/* 頁の間の移動を View Transition でつなぐ（入口・会話・自治体の頁がそれぞれ opt-in する。動きを減らす設定では使わない） */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+}

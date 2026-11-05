@@ -11,3 +11,8 @@
   /* ホーム画面から開いたとき、ダブルタップの拡大待ちと横向きの切り欠きへの食い込みを避ける */
   body { touch-action: manipulation; padding-inline: env(safe-area-inset-left) env(safe-area-inset-right); }
 }
+
+/* 頁の間の移動を View Transition でつなぐ（入口・会話・自治体の頁がそれぞれ opt-in する。動きを減らす設定では使わない） */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+}

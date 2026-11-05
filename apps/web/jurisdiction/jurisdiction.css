@@ -25,3 +25,8 @@
 .j-static th, .j-static td { padding: 6px 4px; border-bottom: 1px solid var(--border); text-align: left; font-weight: 400; }
 .j-static td { text-align: right; font-variant-numeric: tabular-nums; }
 .j-crumb { font-size: 12px; color: var(--muted-foreground); }
+
+/* 頁の間の移動を View Transition でつなぐ（入口・会話・自治体の頁がそれぞれ opt-in する。動きを減らす設定では使わない） */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+}
