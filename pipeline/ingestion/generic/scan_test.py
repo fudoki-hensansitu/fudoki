@@ -11,6 +11,10 @@ class TextTest(unittest.TestCase):
         words = _cell_words([Word('△77,756,000103,232,000', 181, 636, 291, 647)], [237.0])
         self.assertEqual([w.text for w in words], ['△77,756,000', '103,232,000'])
 
+    def test_three_cells_run_together_part_at_their_two_rules(self):
+        words = _cell_words([Word('0△208,304,2645,949,872,736', 291, 691, 420, 701)], [297.0, 348.0])
+        self.assertEqual([w.text for w in words], ['0', '△208,304,264', '5,949,872,736'])
+
     def test_a_long_number_before_a_name_is_not_regrouped_as_an_amount(self):
         words = _cell_words([Word('9150776', 257, 695, 285, 705), Word('低所得世帯に対する', 290, 695, 500, 705)], [])
         self.assertEqual(words[0].text[:7], '9150776')

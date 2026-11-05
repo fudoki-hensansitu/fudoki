@@ -224,7 +224,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "4f119291f544cce929cb9cfd53af8b2eaf2df8f5b6284b7eb6f4285b2ae852fb",
+      "input_fingerprint": "2a190ac83569c8dbeedc26b0eaaa3d06bac6d561042462485011b94daadde379",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'position', '備考': 'indent'}。",
@@ -254,7 +254,7 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "9d76f6c5e72dcb97273afe0c769aca384763ea1cbeba775290f3905346f5aae4",
+      "input_fingerprint": "d3d7ce96b942c494bd4698c73547cd2fc77f5bcffd937cb9e94b1146e073361c",
       "account": "国民健康保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'position', '備考': 'indent'}。",
@@ -284,7 +284,7 @@
     {
       "table_id": "late-elderly-medical-expenditure",
       "conversion_id": "late-elderly-medical-settlement",
-      "input_fingerprint": "0543651e46c0513d921526be5f0c3b8028ce621ffb8c0e2e4404b00ef9adbe35",
+      "input_fingerprint": "6df001a10b25e45c3d8a30eebccb655e42b4d5ad1c78bf9a7888acf5afa3c39d",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'position', '備考': 'indent'}。",
@@ -314,7 +314,7 @@
     {
       "table_id": "care-insurance-expenditure",
       "conversion_id": "care-insurance-settlement",
-      "input_fingerprint": "c9f53e92fa7a2ec048c988ab7f51bd92cc9be5960b8d7e6dee664589ad6e141d",
+      "input_fingerprint": "500c1d48749b87f1e9c08e9712f29e83f2cce5b6d2dcd6f9a9df489b31ba2f55",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'position', '備考': 'indent'}。",
