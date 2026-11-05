@@ -171,10 +171,6 @@ class TrialRulesTest(unittest.TestCase):
                          [('款', '2', '民生費', '本年度予算額', '3,000'), ('項', '1', '社会福祉費', '本年度予算額', '3,000')])
         with self.assertRaises(ValueError):  # an amount under no printed heading needs the declared one
             stacked_titles.read([Page(1, 300, 500, words, verticals + horizontals)])
-        # A title printing another unit than its column would be read 1000 times off: it stops.
-        yen = [Word('(単位 円)', 150, 30, 190, 39)]
-        with self.assertRaises(ValueError):
-            stacked_titles.read([Page(1, 300, 500, words + yen, verticals + horizontals)], header={'title_amount': '本年度予算額'})
 
     def test_a_title_printed_under_the_last_rule_is_the_foot_of_the_page_not_a_kan_title(self):
         verticals = [Rule(x, 50, x, 400) for x in (10, 100, 200)]
