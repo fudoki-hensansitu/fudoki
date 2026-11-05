@@ -4,7 +4,6 @@ import * as React from 'react'
 import { flushSync } from 'react-dom'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
 import { buttonVariants } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList, ComboboxTrigger } from '@/components/ui/combobox'
 import { InputGroupAddon } from '@/components/ui/input-group'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -226,13 +225,9 @@ function TagFilter({ label, count, options, picked, onChange }: { label: string;
           {(v: string) => {
             const o = byValue.get(v)!
             return (
-              // 複数選べることが分かるよう、右の印ではなく左の checkbox で選択を示す
-              <ComboboxItem key={v} value={v} disabled={o.disabled} className="pr-1.5 [&>span.absolute]:hidden">
-                <Checkbox checked={picked.includes(v)} tabIndex={-1} aria-hidden="true" className="pointer-events-none [&_svg]:text-primary-foreground! [&_svg_*]:text-primary-foreground!" />
-                <span className="flex items-baseline gap-2">
-                  {o.label}
-                  {o.sub ? <small className="text-[11px] text-muted-foreground">{o.sub}</small> : null}
-                </span>
+              <ComboboxItem key={v} value={v} disabled={o.disabled}>
+                {o.label}
+                {o.sub ? <small className="text-[11px] text-muted-foreground">{o.sub}</small> : null}
               </ComboboxItem>
             )
           }}
