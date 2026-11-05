@@ -55,8 +55,8 @@ const GITHUB = 'https://github.com/fudoki-hensansitu/fudoki'
 /** 風土記の X アカウント。空にすると icon を出さない */
 const X = 'https://x.com/fudokijp'
 
-/** lucide の Plug は幅が細く、同じ 20px でも他の icon より小さく見えるので、一回り大きく描いて見た目を揃える */
-const McpIcon = () => <PlugIcon className="scale-[1.2]" />
+/** lucide の Plug は幅が細く、同じ 20px の枠では他の icon が大きく見えるので、他を一回り小さく描いて Plug に揃える */
+const SMALL = 'scale-[0.84]'
 
 // ブランドのロゴ（Simple Icons の形）。lucide にはブランドの icon が無い
 const XIcon = () => (
@@ -97,10 +97,10 @@ function useHideOnScroll() {
 function BottomNav({ active }: { active?: NavSection }) {
   const [hidden, setHidden] = useHideOnScroll()
   const items = [
-    { href: '/', label: 'ホーム', icon: <HomeIcon /> },
-    { href: '/jurisdictions', label: '自治体一覧', icon: <LandmarkIcon />, active: active === 'jurisdictions' },
-    { href: MCP, label: 'MCP', icon: <McpIcon /> },
-    { href: FEEDBACK, label: 'フィードバック', icon: <MessageSquareIcon /> },
+    { href: '/', label: 'ホーム', icon: <HomeIcon className={SMALL} /> },
+    { href: '/jurisdictions', label: '自治体一覧', icon: <LandmarkIcon className={SMALL} />, active: active === 'jurisdictions' },
+    { href: MCP, label: 'MCP', icon: <PlugIcon /> },
+    { href: FEEDBACK, label: 'フィードバック', icon: <MessageSquareIcon className={SMALL} /> },
   ]
   return (
     <nav
@@ -146,14 +146,14 @@ export function SiteNav({ active, open }: SiteNavProps) {
           <SidebarContent>
             <SidebarGroup>
               <SidebarMenu>
-                <Item href="/jurisdictions" label="自治体一覧" icon={<LandmarkIcon />} active={active === 'jurisdictions'} />
+                <Item href="/jurisdictions" label="自治体一覧" icon={<LandmarkIcon className={SMALL} />} active={active === 'jurisdictions'} />
               </SidebarMenu>
             </SidebarGroup>
           </SidebarContent>
           <SidebarFooter className="gap-0 px-2 pt-2 pb-12">
             <SidebarMenu>
-              <Item href={MCP} label="MCP" icon={<McpIcon />} />
-              <Item href={FEEDBACK} label="フィードバック" icon={<MessageSquareIcon />} />
+              <Item href={MCP} label="MCP" icon={<PlugIcon />} />
+              <Item href={FEEDBACK} label="フィードバック" icon={<MessageSquareIcon className={SMALL} />} />
             </SidebarMenu>
             {/* 末端に X と GitHub。閉じて icon だけのときは X だけ残す */}
             <div className="flex justify-center gap-1">
