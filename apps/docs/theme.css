@@ -62,34 +62,21 @@ h1, h2, h3, h4, h5, h6 { letter-spacing: 0.02em; }
 /* ロゴは本体サイトのヘッダと同じ 28px（DESIGN.md の Logo › Usage） */
 [data-blume-header] a > img[src^="/logo"] { height: 28px; }
 
-/* ヘッダの「ガイド／API リファレンス」は本体サイトの shadcn Tabs（base-nova の default）と同じ形にする:
-   muted の地に 3px の余白、選んでいる方だけ背景色の札と薄い影 */
-[data-blume-header] nav:has(> a[href="/reference"]) {
-  gap: 0;
-  align-items: center;
-  height: 2rem;
-  padding: 3px;
-  border-radius: var(--blume-radius);
-  background: var(--blume-muted);
-}
+/* ヘッダの「ガイド／API リファレンス」は本体サイトの tag（自治体の頁の rounded-full の札）と同じ形にする:
+   選んでいる方は secondary の地、ほかは枠線だけ */
+:root { --fudoki-secondary: #ece6da; }
+:root[data-theme="dark"] { --fudoki-secondary: #302c26; }
+[data-blume-header] nav:has(> a[href="/reference"]) { gap: 0.5rem; align-items: center; }
 [data-blume-header] nav:has(> a[href="/reference"]) > a {
-  height: 100%;
-  padding: 0 0.75rem;
-  border: 1px solid transparent;
-  border-radius: calc(var(--blume-radius) - 2px);
-  color: color-mix(in srgb, var(--blume-foreground) 60%, transparent);
-  transition: color .15s, background-color .15s, box-shadow .15s;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--blume-border);
+  border-radius: 999px;
+  font-size: 13px;
+  color: var(--blume-muted-foreground);
 }
-[data-blume-header] nav:has(> a[href="/reference"]) > a:hover { background: transparent; color: var(--blume-foreground); }
+[data-blume-header] nav:has(> a[href="/reference"]) > a:hover { background: var(--blume-muted); color: var(--blume-foreground); }
 [data-blume-header] nav:has(> a[href="/reference"]) > a[aria-current="page"] {
-  background: var(--blume-background);
+  border-color: var(--fudoki-secondary);
+  background: var(--fudoki-secondary);
   color: var(--blume-foreground);
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / .1), 0 1px 2px -1px rgb(0 0 0 / .1);
-}
-:root[data-theme="dark"] [data-blume-header] nav:has(> a[href="/reference"]) > a { color: var(--blume-muted-foreground); }
-:root[data-theme="dark"] [data-blume-header] nav:has(> a[href="/reference"]) > a[aria-current="page"] {
-  border-color: var(--blume-border);
-  background: color-mix(in srgb, var(--blume-border) 30%, transparent);
-  color: var(--blume-foreground);
-  box-shadow: none;
 }
