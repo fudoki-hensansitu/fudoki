@@ -99,7 +99,7 @@ function Domains({ domains }: { domains: Domain[] }) {
       {domains.map((d) => (
         <div key={d.id} id={`d-${d.id}`} className="flex scroll-mt-32 md:scroll-mt-20 flex-col gap-1 [&+&]:mt-12">
           <h3 className="mb-3.5 border-l-4 border-primary py-0.5 pl-3.5 text-[19px] leading-snug sm:text-[22px]">{d.name}</h3>
-          <div className="border-t border-foreground">
+          <div className="border-t">
             {d.projects.length ? (
               d.projects.map((p) => <ProjectItem key={p.name} p={p} />)
             ) : (
