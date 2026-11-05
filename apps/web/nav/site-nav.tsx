@@ -86,12 +86,12 @@ function useHideOnScroll() {
   React.useEffect(() => {
     document.documentElement.toggleAttribute('data-nav-hidden', hidden)
   }, [hidden])
-  return hidden
+  return [hidden, setHidden] as const
 }
 
 /** 幅の狭い画面では、サイドバーの代わりに画面の下へ並べる */
 function BottomNav({ active }: { active?: NavSection }) {
-  const hidden = useHideOnScroll()
+  const [hidden, setHidden] = useHideOnScroll()
   const items = [
     { href: '/', label: 'ホーム', icon: <HomeIcon /> },
     { href: '/jurisdictions', label: '自治体一覧', icon: <LandmarkIcon />, active: active === 'jurisdictions' },
@@ -102,7 +102,9 @@ function BottomNav({ active }: { active?: NavSection }) {
     <nav
       aria-label="サイト"
       data-hidden={hidden || undefined}
-      className="fixed inset-x-0 bottom-0 z-40 bg-sidebar pb-[env(safe-area-inset-bottom)] transition-transform duration-200 ease-out data-hidden:translate-y-full md:hidden"
+      // 隠れている間も link は tab 順に残るので、focus が入ったら出す
+      onFocus={() => setHidden(false)}
+      className="fixed inset-x-0 bottom-0 z-40 bg-sidebar pb-[env(safe-area-inset-bottom)] transition-transform duration-200 ease-out motion-reduce:transition-none data-hidden:translate-y-full md:hidden"
     >
       <ul className="grid h-14 grid-cols-4">
         {items.map((i) => (

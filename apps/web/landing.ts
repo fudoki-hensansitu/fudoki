@@ -66,7 +66,7 @@ body{margin:0;background:var(--background);color:var(--foreground);font:400 16px
 h1,h2,h3,h4{margin:0;font-family:var(--font-display);font-weight:400;letter-spacing:.02em;color:var(--foreground);word-break:auto-phrase;text-wrap:balance}
 p,figure{margin:0}
 ul,ol{margin:0;padding:0;list-style:none}
-.site-main a{color:inherit;text-decoration:none}
+:where(.site-main) a{color:inherit;text-decoration:none}
 a:focus-visible,button:focus-visible,summary:focus-visible,video:focus-visible{outline:3px solid color-mix(in srgb,var(--ring) 50%,transparent);outline-offset:2px;border-radius:var(--radius-sm)}
 code{font:13px/1.6 var(--font-mono);letter-spacing:0;overflow-wrap:anywhere}
 .i{display:block;flex:none;width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
