@@ -42,7 +42,7 @@ function YearPills({ years, all }: { years: number[]; all: number[] }) {
 function SelectedCard({ e }: { e: IndexEntry }) {
   const max = e.topKan[0]?.yen ?? 1
   return (
-    <div className="rounded-[20px] border bg-background p-5 sm:p-6" aria-live="polite">
+    <div className="flex flex-col rounded-[20px] border bg-background p-5 sm:p-6" aria-live="polite">
       <div className="text-xs text-muted-foreground">{e.prefecture}</div>
       <div className="mt-0.5 text-3xl leading-tight">{e.name}</div>
       <div className="mt-4 text-xs text-muted-foreground">{reiwa(e.year)} 決算・一般会計の歳出</div>
@@ -63,14 +63,14 @@ function SelectedCard({ e }: { e: IndexEntry }) {
         ))}
       </ul>
       <div className="mt-4 text-xs text-muted-foreground">収録している決算</div>
-      <div className="mt-1 flex flex-wrap gap-1.5">
+      <div className="mb-5 mt-1 flex flex-wrap gap-1.5">
         {e.years.map((y) => (
           <span key={y} className="rounded bg-accent px-2 py-0.5 text-[11px] text-accent-foreground">
             {reiwa(y)}
           </span>
         ))}
       </div>
-      <a href={e.path} className="mt-5 flex h-11 items-center justify-center rounded-full bg-primary px-4 text-[15px] font-medium text-primary-foreground transition-colors hover:bg-primary/90">
+      <a href={e.path} className="mt-auto flex h-11 items-center justify-center rounded-full bg-primary px-4 text-[15px] font-medium text-primary-foreground transition-colors hover:bg-primary/90">
         {e.name}の家計簿を開く →
       </a>
     </div>
@@ -139,7 +139,7 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
         {entries.length ? `${prefectures.join('・')}の ${entries.length} の自治体の決算を収録しています。地図か表から選ぶと、その街の歳出の内訳へ進めます。` : 'まだ決算を収録した自治体がありません。'}
       </p>
 
-      <section className="mt-8 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_320px]" aria-label="地図から選ぶ">
+      <section className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]" aria-label="地図から選ぶ">
         <div className="rounded-[20px] bg-card p-4 sm:p-6">
           <div className="mb-2 flex items-baseline justify-between gap-2">
             <h2 className="text-lg font-normal">東京都</h2>
