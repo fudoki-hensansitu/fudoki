@@ -28,6 +28,8 @@ function MokuGroup({ moku }: { moku: Moku }) {
   const shown = moku.setsu.filter((s) => s.amountMissing || s.yen > 0)
   const top = shown.slice(0, SETSU_SHOWN)
   const rest = shown.slice(SETSU_SHOWN)
+  // 残りの節の合計。同じ目の同じ軸（節、無ければ備考）の末端どうしなので足してよい（api の sum_rules）。金額未記載が混じるときは出さない
+  const restYen = rest.some((s) => s.amountMissing) ? null : rest.reduce((a, s) => a + s.yen, 0)
   // 目の金額が印字されていないときは、一番大きい節を基準にして大小だけ見せる
   const base = moku.amountMissing ? Math.max(0, ...top.filter((s) => !s.amountMissing).map((s) => s.yen)) : moku.yen
   return (
@@ -51,13 +53,16 @@ function MokuGroup({ moku }: { moku: Moku }) {
           {rest.length > 0 ? (
             <li data-setsu-rest className="text-[11.5px] text-muted-foreground">
               <Tooltip>
-                <TooltipTrigger className="underline decoration-dotted underline-offset-2 hover:text-foreground">ほか{rest.length}節</TooltipTrigger>
-                <TooltipContent side="right" className="block max-w-72 px-3 py-2">
+                <TooltipTrigger className="grid w-full grid-cols-[minmax(0,1fr)_auto] gap-x-2.5 text-left hover:text-foreground">
+                  <span className="underline decoration-dotted underline-offset-2">ほか{rest.length}節</span>
+                  {restYen !== null ? <span className="text-right tabular-nums">{formatYen(restYen)}</span> : null}
+                </TooltipTrigger>
+                <TooltipContent side="right" className="block max-w-72 border bg-background px-3 py-2 text-foreground shadow-md [&>:last-child]:border-b [&>:last-child]:border-l [&>:last-child]:bg-background [&>:last-child]:fill-background">
                   <ul className="grid gap-y-0.5">
                     {rest.map((s) => (
                       <li key={s.name} className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3">
                         <span className="truncate">{s.name}</span>
-                        <span className="text-right tabular-nums opacity-75">{amountText(s.yen, s.amountMissing)}</span>
+                        <span className="text-right tabular-nums text-muted-foreground">{amountText(s.yen, s.amountMissing)}</span>
                       </li>
                     ))}
                   </ul>
