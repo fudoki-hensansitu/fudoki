@@ -5,11 +5,11 @@ import { renderEmpty, renderIndex, renderPage, sitemapXml } from '../jurisdictio
 import { navOpen } from '../nav/render'
 import { jurisdictionPath, PREFECTURE_SLUGS } from '../jurisdiction/path'
 import { INDEX_PATH } from '../jurisdiction/types'
-import type { Drill, FlowDepth, PageData, Setsu } from '../jurisdiction/types'
+import type { Drill, FlowDepth, IndexEntry, PageData, Setsu } from '../jurisdiction/types'
 import { clientIp, errorResponse, HttpError, rateLimit } from './http'
 import { VIEW_RATE_LIMIT } from './limits'
 import type { Env, RateLimiter } from './env'
-import { loadCatalog, loadDrillById, loadFlow, loadPage, loadSetsu, type CatalogEntry } from './jurisdiction'
+import { loadCatalog, loadDrillById, loadFlow, loadIndex, loadPage, loadSetsu, type CatalogEntry } from './jurisdiction'
 
 const TTL = 3600
 const NODE_ID = /^[0-9a-f]{64}$/
@@ -31,6 +31,8 @@ async function memo<T>(key: string, fn: () => Promise<T>): Promise<T> {
 }
 
 export const catalog = (env: Env) => memo<CatalogEntry[]>('catalog', () => loadCatalog(env))
+// 収録の一覧（catalog）と同じ TTL で置くので、取り込みで自治体が増えても1時間以内に一覧へ出る
+const index = (env: Env) => memo<IndexEntry[]>('index', async () => loadIndex(env, await catalog(env), jurisdictionPath))
 const page = (env: Env, e: CatalogEntry) => memo<PageData | null>(`page-${e.code}-${e.settlementYears.at(-1)}`, () => loadPage(env, e))
 
 export const jurisdictions = new Hono<{ Bindings: Env }>()
@@ -40,7 +42,7 @@ const unavailable = () => new Response('風土記の API に繋がりません�
 
 jurisdictions.get(INDEX_PATH, async (c) => {
   try {
-    return new Response(renderIndex(await catalog(c.env), navOpen(c.req.header('Cookie'))), { headers: HTML_HEADERS })
+    return new Response(renderIndex(await index(c.env), navOpen(c.req.header('Cookie'))), { headers: HTML_HEADERS })
   } catch {
     return unavailable()
   }

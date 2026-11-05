@@ -90,3 +90,31 @@ export function kanChanges(years: YearTotal[]): { name: string; pct: number }[] 
 
 /** 自治体の一覧。個別ページの path は server 側の path.ts が作る */
 export const INDEX_PATH = '/jurisdictions'
+
+/** 一覧での自治体の種類。名称の末尾で分ける（自治体マスタに種類の列が無いため） */
+export type JurisdictionKind = '都道府県' | '区' | '市' | '町村'
+
+/** 一覧の1自治体。決算を収録している自治体だけを載せる */
+export interface IndexEntry {
+  code: string
+  name: string
+  prefecture: string
+  kind: JurisdictionKind
+  /** 個別ページの path（/tokyo/shinagawa） */
+  path: string
+  /** 一般会計の決算がある年度（西暦、古い順） */
+  years: number[]
+  /** 最新の決算の年度と、一般会計の歳出の総額（款の和） */
+  year: number
+  yen: number
+  /** 最新の決算で金額の大きい款（大きい順に3つまで） */
+  topKan: { name: string; yen: number }[]
+}
+
+/** 名称の末尾から種類を決める。都道府県は自治体コードの5桁目までが 0（130001 → 13000） */
+export function jurisdictionKind(code: string, name: string): JurisdictionKind {
+  if (code.slice(2, 5) === '000') return '都道府県'
+  if (name.endsWith('区')) return '区'
+  if (name.endsWith('市')) return '市'
+  return '町村'
+}

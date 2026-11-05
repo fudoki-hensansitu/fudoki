@@ -122,6 +122,15 @@ describe('自治体の個別ページ', () => {
     expect(sitemap).not.toContain('chiyoda')
   })
 
+  test('一覧は収録のある自治体だけを、最新の決算の款の和で HTML に載せる', async () => {
+    const html = await (await get('/jurisdictions')).text()
+    const data = JSON.parse(html.match(/<script type="application\/json" id="j-index-data">(.*?)<\/script>/s)![1]!)
+    expect(data.map((e: { name: string; year: number; yen: number; path: string }) => [e.name, e.year, e.yen, e.path])).toEqual([['中野区', 2025, 1000, '/tokyo/nakano']])
+    // JavaScript が無くても個別ページへのリンクと金額が読める
+    expect(html).toContain('href="/tokyo/nakano"')
+    expect(html).not.toContain('千代田区')
+  })
+
   test('URL のローマ字は自治体マスタの全自治体にあり、同じ都道府県の中で重ならない', () => {
     const seen = new Set<string>()
     for (const [code, j] of Object.entries(registry.jurisdictions as Record<string, { name: string; slug?: string }>)) {
