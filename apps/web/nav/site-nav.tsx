@@ -51,7 +51,7 @@ function CollapsedToggle() {
   )
 }
 
-/** サイドバーの項目。字と icon は shadcn の既定より一回り大きくし、閉じて icon だけのときだけ名前を tooltip で出す */
+/** サイドバーの項目。icon は shadcn の既定より一回り大きくし、閉じて icon だけのときだけ名前を tooltip で出す */
 const Item = ({ href, label, icon, active }: { href: string; label: string; icon: React.ReactNode; active?: boolean }) => {
   const { state, isMobile } = useSidebar()
   return (
@@ -60,7 +60,7 @@ const Item = ({ href, label, icon, active }: { href: string; label: string; icon
         render={<a href={href} aria-current={active ? 'page' : undefined} />}
         isActive={active}
         tooltip={state === 'collapsed' && !isMobile ? label : undefined}
-        className="h-10 gap-3 px-3 text-[15px] group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:p-2.5! [&_svg]:size-5"
+        className="h-10 gap-3 px-3 text-sm group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:p-2.5! [&_svg]:size-5"
       >
         {icon}
         <span>{label}</span>
