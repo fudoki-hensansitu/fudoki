@@ -35,8 +35,11 @@
   #chat-start[data-docked] > .ask-dock, #chat-start[data-leaving] > .ask-dock { animation: none; }
 }
 #chat-start .ask-box { display: flex; align-items: center; min-height: 0; height: 72px; padding: 0 28px; border-radius: 999px; background: var(--background); box-shadow: var(--shadow-pill); }
-@media (max-width: 639px) {
+/* 下のナビ（768px 未満）が出ている間は、その上に載せる */
+@media (max-width: 767px) {
   #chat-start:is([data-docked], [data-leaving]) > .ask-dock { bottom: calc(16px + max(var(--bottom-nav, 0px), env(safe-area-inset-bottom))); transition: bottom 200ms ease-out; }
+}
+@media (max-width: 639px) {
   #chat-start.ask { min-height: 56px; }
   #chat-start .ask-box { height: 56px; padding: 0 20px; }
 }

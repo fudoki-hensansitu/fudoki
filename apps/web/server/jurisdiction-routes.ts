@@ -13,7 +13,8 @@ import { loadCatalog, loadDrillById, loadFlow, loadPage, loadSetsu, type Catalog
 
 const TTL = 3600
 const NODE_ID = /^[0-9a-f]{64}$/
-const HTML_HEADERS = { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': `public, max-age=300` }
+// サイドバーの開閉を cookie で変えて書くので、Vary: Cookie で開閉の違う HTML を取り違えさせない
+const HTML_HEADERS = { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': `public, max-age=300`, Vary: 'Cookie' }
 
 /** Worker の cache（無い環境では毎回取り直す）。同じ isolate の中でも一度だけ取る */
 const inflight = new Map<string, Promise<unknown>>()
