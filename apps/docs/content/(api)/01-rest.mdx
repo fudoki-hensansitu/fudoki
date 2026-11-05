@@ -1,0 +1,94 @@
+---
+title: REST API
+description: https://api.fudoki.dev に JSON で問い合わせる。認証は要りません。
+sidebar:
+  icon: '<svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M43.18,128a29.78,29.78,0,0,1,8,10.26c4.8,9.9,4.8,22,4.8,33.74,0,24.31,1,36,24,36a8,8,0,0,1,0,16c-17.48,0-29.32-6.14-35.2-18.26-4.8-9.9-4.8-22-4.8-33.74,0-24.31-1-36-24-36a8,8,0,0,1,0-16c23,0,24-11.69,24-36,0-11.72,0-23.84,4.8-33.74C50.68,38.14,62.52,32,80,32a8,8,0,0,1,0,16C57,48,56,59.69,56,84c0,11.72,0,23.84-4.8,33.74A29.78,29.78,0,0,1,43.18,128ZM240,120c-23,0-24-11.69-24-36,0-11.72,0-23.84-4.8-33.74C205.32,38.14,193.48,32,176,32a8,8,0,0,0,0,16c23,0,24,11.69,24,36,0,11.72,0,23.84,4.8,33.74a29.78,29.78,0,0,0,8,10.26,29.78,29.78,0,0,0-8,10.26c-4.8,9.9-4.8,22-4.8,33.74,0,24.31-1,36-24,36a8,8,0,0,0,0,16c17.48,0,29.32-6.14,35.2-18.26,4.8-9.9,4.8-22,4.8-33.74,0-24.31,1-36,24-36a8,8,0,0,0,0-16Z"></path></svg>'
+---
+
+| 項目 | 値 |
+| --- | --- |
+| ベース URL | `https://api.fudoki.dev` |
+| 認証 | なし |
+| 応答 | JSON（出典 PDF の中継だけ `application/pdf`）、`Cache-Control: no-store` |
+
+## 最初の問い合わせ
+
+<Steps>
+  <Step title="自治体と収録範囲を確かめる">
+    ```bash
+    curl 'https://api.fudoki.dev/v1/jurisdictions?name=%E6%AD%A6%E8%94%B5%E9%87%8E%E5%B8%82'
+    ```
+
+    `name`（部分一致。例は「武蔵野市」）か `code`（6 桁か 5 桁）で絞ると、6 桁の自治体コードと、収録している年度・資料区分・会計が返ります。検索の `jurisdiction_code` は 6 桁だけを受け付けるので、ここで引いたコードを使います。
+  </Step>
+  <Step title="列の説明を読む">
+    ```bash
+    curl https://api.fudoki.dev/v1/expenditure/columns
+    ```
+
+    列の意味、`where` の条件、金額を足すときの条件（`sum_rules`）、入力の例が返ります。
+  </Step>
+  <Step title="ノードを検索する">
+    ```bash
+    curl -X POST 'https://api.fudoki.dev/v1/expenditure/nodes:search' \
+      -H 'Content-Type: application/json' \
+      -d '{
+        "document_kind": "settlement",
+        "fiscal_year": { "min": 2025, "max": 2025 },
+        "where": { "node_kind": { "eq": ["目"] }, "cofog_code": { "prefix": "10.4" } },
+        "order_by": [{ "column": "amount_yen", "desc": true }],
+        "page_size": 50
+      }'
+    ```
+
+    `document_kind`（`settlement` は決算、`initial` は当初予算）と `fiscal_year`（西暦、5 年以内）が必須です。
+  </Step>
+  <Step title="内訳を辿る">
+    ```bash
+    curl 'https://api.fudoki.dev/v1/expenditure/nodes/settlement/<node_id>'
+    ```
+
+    ノードと、その子を軸（`axis`）ごとに返します。
+  </Step>
+</Steps>
+
+## 検索の条件
+
+`where` は列名をキーにした条件で、列どうしは AND です。
+
+| 列の型 | 使える条件 |
+| --- | --- |
+| string | `eq`・`not_eq`（`eq` は OR）、`prefix`・`suffix`・`contains`、`is_null` |
+| integer | `eq`・`not_eq`（`eq` は OR）、`min`・`max`、`is_null` |
+| number | `min`・`max`、`is_null` |
+| boolean | `eq` |
+
+- 列をまたぐ OR と NOT は無いので、2 回に分けて問い合わせます。
+- `fiscal_year` の年数と条件の値は合わせて 90 個まで、文字列の値は 200 文字までです。
+
+## ページング
+
+応答の `next_page_token` が null でなければ、次の要求に `page_token` として渡します（ノード取得と自治体の一覧では query に付けます）。`page_size` は 1〜1000（既定 100）、自治体の一覧は 1〜100（既定 20）。100,000 件目より先は条件を絞ってください。
+
+## 出典
+
+応答の `origins` に、行の `origin_id` が指す出典（資料名・公開 URL・形式・SHA-256）が入ります。自治体の一覧では `view=FULL` を付けると会計ごとの出典が返ります。
+
+`GET /v1/origins/{origin_id}/pdf` は自治体の公開 PDF を表示用に中継します。取得 URL は `X-Origin-Url`、取得日時は `X-Origin-Fetched-At` で返し、取り込み時との一致は検査しません。上限は [MCP の表示](/mcp#表で見るmcp-apps)と同じです。
+
+## エラー
+
+`{"error": {"code": "...", "message": "..."}}` の形で返ります。
+
+| HTTP | code | 起きるとき |
+| --- | --- | --- |
+| 400 | `INVALID_ARGUMENT` | 入力が schema に合わない |
+| 404 | `NOT_FOUND` | ノードや path が無い |
+| 405 | `METHOD_NOT_ALLOWED` | 受け付けないメソッド |
+| 413 | `PAYLOAD_TOO_LARGE` | body が 16 KiB を超える |
+| 415 | `UNSUPPORTED_MEDIA_TYPE` | `Content-Type` が `application/json` でない |
+| 429 | `PDF_UNAVAILABLE` | PDF 中継の上限を超えた |
+| 502 / 504 | `PDF_UNAVAILABLE` | PDF を取れない・32 MiB 超・20 秒超 |
+| 503 | `UNAVAILABLE` | 提供を止めている |
+
+各操作の詳細は [API リファレンス](/reference)にあります。

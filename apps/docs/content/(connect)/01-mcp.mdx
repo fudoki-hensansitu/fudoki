@@ -1,0 +1,48 @@
+---
+title: MCP サーバー
+description: どの AI クライアントでも、この URL を登録すれば使えます。
+sidebar:
+  label: 概要
+  icon: '<svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M237.66,66.34a8,8,0,0,0-11.32,0L192,100.69,155.31,64l34.35-34.34a8,8,0,1,0-11.32-11.32L144,52.69,117.66,26.34a8,8,0,0,0-11.32,11.32L112.69,44l-53,53a40,40,0,0,0,0,56.57l15.71,15.71L26.34,218.34a8,8,0,0,0,11.32,11.32l49.09-49.09,15.71,15.71a40,40,0,0,0,56.57,0l53-53,6.34,6.35a8,8,0,0,0,11.32-11.32L203.31,112l34.35-34.34A8,8,0,0,0,237.66,66.34ZM147.72,185a24,24,0,0,1-33.95,0L71,142.23a24,24,0,0,1,0-33.95l53-53L200.69,132Z"></path></svg>'
+---
+
+| 項目 | 値 |
+| --- | --- |
+| URL | `https://api.fudoki.dev/mcp` |
+| 通信 | Streamable HTTP |
+| 認証 | なし |
+
+クライアントごとの手順は [ChatGPT](/chatgpt)・[Claude](/claude)・[Claude Code](/claude-code)・[Codex](/codex)・[Cursor](/cursor) にあります。ほかのクライアントでも、リモートの MCP サーバーとして上の URL を登録すれば使えます。
+
+## tool
+
+すべて読み取りだけです（`readOnlyHint: true`）。入力と応答の schema は [API リファレンス](/reference)と同じです。
+
+| tool | 使いどころ |
+| --- | --- |
+| `list_jurisdictions` | 自治体と、収録している年度・資料区分・会計を返す。会計ごとの出典が要るときは `view: FULL` |
+| `describe_expenditure_columns` | 列の説明・金額を足すときの条件（`sum_rules`）・入力の例。検索の前に一度読む |
+| `search_expenditure_nodes` | 自治体・年度・段（款・項・目）・COFOG などで絞って一覧する |
+| `get_expenditure_node` | ノード一つと、その子を軸（科目・節・備考など）ごとに返す |
+| `search_evaluations` | 事業の評価が載った出典 PDF の頁の所在を返す（[事業の評価資料](/evaluations)） |
+
+## 表で見る（MCP Apps）
+
+MCP Apps に対応したクライアントでは、`search_expenditure_nodes`・`get_expenditure_node` の結果が表で出ます。明細の「出典」を押すと、出典 PDF の該当頁を開き、印字の位置を囲みます。対応していないクライアントでも、同じ内容が構造化された結果で返ります。
+
+表示用の PDF は自治体の公開 URL から取り直すので、取り込み時と内容が違う可能性があります。取得は 32 MiB・20 秒まで、全利用者の合計で閲覧 120 回/分・取得 6 回/分（同じ URL は 1 回/分）です。取れないときは出典 URL と頁番号を案内します。
+
+## 制約
+
+- POST だけを受け付けます。JSON-RPC の batch と `subscriptions/listen` は使えません。
+- リクエストの body は 16 KiB までです。
+- `search_evaluations` は回数に上限があります。超えると `RESOURCE_EXHAUSTED` と `retry_after_seconds` を返します。
+- 提供を止めているあいだは HTTP 503 を返します。
+
+## つながらないとき
+
+1. クライアントの設定で、風土記の接続が有効になっているか確かめます。
+2. 新しい会話で、もう一度頼みます。
+3. それでも tool が呼ばれなければ、[サポート](/support)から知らせてください。
+
+サーバーを更新しても URL は変わりません。tool の一覧が古いときは、クライアントで接続を更新（Refresh）します。

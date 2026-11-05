@@ -1,0 +1,63 @@
+/* 本体サイト（fudoki.dev）と見た目を揃える。値は repo root の DESIGN.md の Tokens と apps/web/chat/theme.css（サイドバー）から写す */
+:root {
+  --blume-background: #ffffff;
+  --blume-foreground: #2b2723;
+  --blume-muted: #f8f5ee;
+  --blume-muted-foreground: #6b655c;
+  --blume-border: #ddd6c8;
+  --blume-accent: #2f5d43;
+  --blume-accent-foreground: #f8f5ee;
+  --blume-code-background: #f8f5ee;
+  --blume-radius: 8px;
+  --blume-content-width: 46rem;
+  /* 本体サイトの --font-sans。見出しもゴシックにする（自治体の頁と同じ） */
+  --blume-font-display: "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", "Yu Gothic", Meiryo, system-ui, sans-serif;
+  --blume-font-body: "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", "Yu Gothic", Meiryo, system-ui, sans-serif;
+  --blume-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  /* サイドバーは付いているか分からないくらいの薄緑。今いる項目と hover は --fudoki-nav-active で区別する */
+  --fudoki-sidebar: color-mix(in srgb, #e9efe9 25%, #ffffff);
+  --fudoki-nav-active: #e9efe9;
+  --fudoki-nav-active-foreground: #2f5d43;
+}
+:root[data-theme="dark"] {
+  --blume-background: #1b1916;
+  --blume-foreground: #ece6da;
+  --blume-muted: #24211d;
+  --blume-muted-foreground: #a8a094;
+  --blume-border: #3b362f;
+  --blume-accent: #8fbfa2;
+  --blume-accent-foreground: #1b1916;
+  --blume-code-background: #24211d;
+  --fudoki-sidebar: color-mix(in srgb, #26332b 25%, #1b1916);
+  --fudoki-nav-active: #26332b;
+  --fudoki-nav-active-foreground: #8fbfa2;
+}
+
+/* Blume の見出しは欧文向けに字間を詰める（-0.05em）。和文は詰めると読みにくいので本体サイトの字間に戻す */
+h1, h2, h3, h4, h5, h6 { letter-spacing: 0.02em; }
+.prose :where(h1) { font-size: 2.25rem; font-weight: 500; line-height: 1.3; }
+.prose :where(h2) { font-weight: 500; }
+.prose { line-height: 1.8; letter-spacing: 0.03em; line-break: strict; }
+
+/* サイドバー: 左の列を薄緑にし、ヘッダの左（ロゴの下地）も同じ幅で塗って一続きに見せる */
+@media (min-width: 64rem) {
+  [data-blume-header] {
+    background: linear-gradient(to right, var(--fudoki-sidebar) calc(17.5rem - 1px), var(--blume-border) calc(17.5rem - 1px) 17.5rem, color-mix(in srgb, var(--blume-background) 90%, transparent) 17.5rem);
+  }
+  #blume-nav-drawer {
+    background: var(--fudoki-sidebar) !important;
+    border-inline-end: 1px solid var(--blume-border) !important;
+  }
+}
+#blume-nav-drawer { background: var(--fudoki-sidebar); }
+.blume-nav-link:hover,
+.blume-nav-drill:hover,
+.blume-nav-drill-link:hover { background: var(--fudoki-nav-active); }
+.blume-nav-link[aria-current="page"] {
+  background: var(--fudoki-nav-active);
+  color: var(--fudoki-nav-active-foreground);
+}
+.blume-nav-link[aria-current="page"] span[aria-hidden] { color: var(--fudoki-nav-active-foreground); }
+
+/* ロゴは本体サイトのヘッダと同じ 28px（DESIGN.md の Logo › Usage） */
+[data-blume-header] a > img[src^="/logo"] { height: 28px; }

@@ -1,0 +1,27 @@
+---
+title: Claude Code
+description: Claude Code に風土記を追加する。
+sidebar:
+  icon: '<svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M128,128a8,8,0,0,1-3,6.25l-40,32a8,8,0,1,1-10-12.5L107.19,128,75,102.25a8,8,0,1,1,10-12.5l40,32A8,8,0,0,1,128,128Zm48,24H136a8,8,0,0,0,0,16h40a8,8,0,0,0,0-16Zm56-96V200a16,16,0,0,1-16,16H40a16,16,0,0,1-16-16V56A16,16,0,0,1,40,40H216A16,16,0,0,1,232,56ZM216,200V56H40V200H216Z"></path></svg>'
+---
+
+## plugin で入れる（おすすめ）
+
+MCP の接続に加えて、歳出を比べるときの手順（skill `compare-expenditure`）も入ります。
+
+```bash
+claude plugin marketplace add fudoki-hensansitu/fudoki
+claude plugin install fudoki@fudoki-plugins
+```
+
+## MCP だけ登録する
+
+```bash
+claude mcp add --transport http fudoki https://api.fudoki.dev/mcp
+```
+
+plugin と重ねて登録する必要はありません。
+
+:::tip[skill がすること]
+収録範囲を確かめ、比べる自治体・年度以外の条件（会計・資料区分・粒度）を揃え、親子や切り口の違う金額を二重に足さないようにしてから、出典を添えて答えます。
+:::

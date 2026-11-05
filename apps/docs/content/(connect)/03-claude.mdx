@@ -1,0 +1,28 @@
+---
+title: Claude
+description: Claude（Web・Desktop）に風土記をコネクタとして追加する。
+sidebar:
+  icon: '<svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M214.86,180.12a8,8,0,0,1-11,2.74L136,142.13V216a8,8,0,0,1-16,0V142.13L52.12,182.86a8,8,0,1,1-8.23-13.72L112.45,128,43.89,86.86a8,8,0,1,1,8.23-13.72L120,113.87V40a8,8,0,0,1,16,0v73.87l67.88-40.73a8,8,0,1,1,8.23,13.72L143.55,128l68.56,41.14A8,8,0,0,1,214.86,180.12Z"></path></svg>'
+---
+
+<Steps>
+  <Step title="Connectors を開く">
+    Customize（設定）の Connectors で、カスタムコネクタを追加します。
+  </Step>
+  <Step title="URL を入れる">
+    - 名前：風土記
+    - URL：`https://api.fudoki.dev/mcp`
+  </Step>
+  <Step title="接続する">
+    認証は「No sign in」のまま接続します。
+  </Step>
+  <Step title="会話で有効にする">
+    会話で風土記を有効にします。
+  </Step>
+</Steps>
+
+:::note
+組織のプランでは、管理者の許可が要ることがあります。画面が変わっていたら [Anthropic の手順](https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp)に従ってください。
+:::
+
+Claude Code は [Claude Code](/claude-code) を見てください。
