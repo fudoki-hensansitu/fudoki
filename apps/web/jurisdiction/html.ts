@@ -1,10 +1,11 @@
-// 自治体の個別ページ（/tokyo/nakano）と一覧（/jurisdictions）の HTML。検索エンジンが読めるよう、金額と款・事業はサーバーで書き出す。
-// グラフと会話への導線は島（jurisdiction/jurisdiction.tsx）が同じデータで描き直す
-import { TOKENS_CSS, TURNSTILE_SCRIPT } from '../landing'
-import { THEME_COLOR_META } from '../tokens'
-import { PWA_HEAD, PWA_REGISTER } from '../pwa'
+// 自治体の個別ページ（/tokyo/nakano）と一覧（/jurisdictions）の HTML。個別ページは島と同じ React の画面（page.tsx）をサーバーで書き出し、
+// 島（jurisdiction/jurisdiction.tsx）が同じデータで hydrate する。最初に出る画面と描き直した画面が同じなので、読み込みで配置がずれない
 import { createElement } from 'react'
 import { renderToString } from 'react-dom/server'
+import { TOKENS_CSS, TURNSTILE_SCRIPT } from '../landing'
+import { Page } from './page'
+import { THEME_COLOR_META } from '../tokens'
+import { PWA_HEAD, PWA_REGISTER } from '../pwa'
 import type { CatalogEntry } from '../server/jurisdiction'
 import { IndexPage } from './index-page'
 import { jurisdictionPath } from './path'
@@ -36,7 +37,6 @@ ${PWA_HEAD}
 <link rel="stylesheet" href="/_app/jurisdiction.css">
 ${extra}`
 
-
 /** 自治体の頁では、サイドバーの「自治体一覧」を今いる場所として出す */
 const nav = (open: boolean) => ({ active: 'jurisdictions' as const, open })
 
@@ -63,26 +63,13 @@ export function renderPage(d: PageData, siteKey: string, open: boolean): string 
     creator: { '@type': 'Organization', name: '風土記', url: `${ORIGIN}/` },
     ...(d.originTitle ? { isBasedOn: d.originTitle } : {}),
   }
-  const rows = latest.kan.map((k) => `<tr><th scope="row">${esc(k.name)}</th><td>${formatYen(k.yen)}</td></tr>`).join('')
-  const projects = d.projects.map((p) => `<li><b>${esc(p.name)}</b>（${esc(p.kanName)}）${formatYen(p.yen)}</li>`).join('')
   return `<!doctype html>
 <html lang="ja">
 <head>
 ${head(title, description, canonical, `${siteKey ? `${TURNSTILE_SCRIPT}\n` : ''}<script type="application/ld+json">${inlineJson(ld)}</script>\n<script type="module" src="/_app/jurisdiction.js"></script>`)}
 </head>
 <body>
-${withSiteNav(`<div id="j-app" data-turnstile-sitekey="${esc(siteKey)}">
-<main class="j-static">
-<p class="j-crumb"><a href="${INDEX_PATH}">自治体</a> › ${esc(d.prefecture)} › ${esc(d.name)}</p>
-<h1>${esc(d.name)}</h1>
-<p>${esc(description)}</p>
-<h2>${reiwa(latest.year)}決算の歳出（款別）</h2>
-<table><tbody>${rows}</tbody></table>
-<h2>金額の大きい事業</h2>
-<ul>${projects}</ul>
-${d.originTitle ? `<p>出典: ${esc(d.originTitle)}</p>` : ''}
-</main>
-</div>`, nav(open))}
+${withSiteNav(`<div id="j-app" data-turnstile-sitekey="${esc(siteKey)}">${renderToString(createElement(Page, { data: d, sitekey: siteKey }))}</div>`, nav(open))}
 <script type="application/json" id="j-data">${inlineJson(d)}</script>
 ${PWA_REGISTER}
 </body>

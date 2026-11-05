@@ -1,4 +1,5 @@
 // 自治体の個別ページ（/:都道府県/:名称）のデータの型と、金額・年度の表記。server（SSR・API）と画面（島）で同じものを使う
+import type { Profile } from './profiles'
 
 /** 款・項・目・節など、出典の1行。金額は API が返した円（画面で足し引きしない） */
 export interface Line {
@@ -61,9 +62,20 @@ export interface PageData {
   /** 最新年度の全款から全項への流れ */
   flow: Drill[]
   projects: Project[]
+  /** 方針・政策領域・事業の入れ替え（jurisdiction/profiles.ts）。手で起こした自治体だけにある */
+  profile?: Profile | null
 }
 
 /** 西暦の会計年度を令和にする（2025 → 令和7年度） */
+/** 今日を含む会計年度（4月始まり） */
+export const currentFiscalYear = (now = new Date()) => (now.getMonth() >= 3 ? now.getFullYear() : now.getFullYear() - 1)
+
+/** 今年度からの近さで呼ぶ。今年度・昨年度・一昨年度・来年度のほかは和暦の年度 */
+export function yearName(year: number, now = new Date()): string {
+  const diff = currentFiscalYear(now) - year
+  return diff === 0 ? '今年度' : diff === 1 ? '昨年度' : diff === 2 ? '一昨年度' : diff === -1 ? '来年度' : reiwa(year)
+}
+
 export const reiwa = (year: number) => (year >= 2019 ? `令和${year - 2018 === 1 ? '元' : year - 2018}年度` : `${year}年度`)
 
 /** 1億円以上は億円、それ未満は万円。3桁ごとに区切る。円の細かい数字は出典の頁で確かめてもらう */
@@ -90,6 +102,16 @@ export function kanChanges(years: YearTotal[]): { name: string; pct: number }[] 
 
 /** 自治体の一覧。個別ページの path は server 側の path.ts が作る */
 export const INDEX_PATH = '/jurisdictions'
+
+/** 全体に占める割合（%）の表記。サンキー図のラベルに使い、金額はツールチップで見せる。基準が無い・金額未記載のときは null */
+export function formatShare(yen: number, base: number, missing?: boolean): string | null {
+  if (missing || !(base > 0)) return null
+  const pct = (Math.max(0, yen) / base) * 100
+  if (pct === 0) return '0%'
+  if (pct < 0.1) return '<0.1%'
+  if (pct < 1) return `${pct.toFixed(1)}%`
+  return `${Math.round(pct)}%`
+}
 
 /** 一覧での自治体の種類。名称の末尾で分ける（自治体マスタに種類の列が無いため） */
 export type JurisdictionKind = '都道府県' | '区' | '市' | '町村'
