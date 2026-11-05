@@ -2,7 +2,7 @@
 // 型は企業のプロフィールページ: ヘッダー（ロゴ・名前・一文・属性）＋年度のタブ＋左の目次＋見出し付きの節。年度を切り替えるとページ全体がその年度になる。
 // 歳出の決算は API の値。方針・政策領域・事業の入れ替えは jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
 import * as React from 'react'
-import { ArrowUpRightIcon, ChevronDownIcon, GlobeIcon, MessageCircleIcon, MapPinIcon, SquarePenIcon, TextQuoteIcon, UsersIcon, XIcon } from 'lucide-react'
+import { ArrowUpRightIcon, CaretDownIcon, ChatCircleIcon, GlobeIcon, MapPinIcon, NotePencilIcon, QuotesIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
 import { StartForm } from '../chat/start-form'
 import type { StoredSession } from '../chat/store'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
@@ -325,7 +325,7 @@ function YearPicker({ years, current, onChange }: { years: number[]; current: nu
         <DropdownMenu>
           <DropdownMenuTrigger className={`inline-flex items-center gap-0.5 ${pill(olderPicked)}`}>
             {olderPicked ? reiwa(current) : 'それより前'}
-            <ChevronDownIcon className="size-3.5" aria-hidden="true" />
+            <CaretDownIcon className="size-3.5" aria-hidden="true" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-auto">
             <DropdownMenuRadioGroup value={olderPicked ? String(current) : ''} onValueChange={(v) => onChange(Number(v))}>
@@ -419,7 +419,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
 
   return (
     <>
-      <div className={`fixed left-0 right-(--side-panel,0px) top-0 z-30 border-b bg-background transition-[transform,right] duration-200 ease-out motion-reduce:transition-none ${mini ? '' : '-translate-y-full'}`} aria-hidden={!mini} inert={!mini}>
+      <div className={`fixed left-0 right-(--side-panel,0px) top-0 z-30 md:left-(--nav-w) border-b bg-background transition-[transform,right] duration-200 ease-out motion-reduce:transition-none ${mini ? '' : '-translate-y-full'}`} aria-hidden={!mini} inert={!mini}>
         <div className="mx-auto flex h-[60px] max-w-[1120px] items-center gap-3 px-4">
           <span className="hidden size-10 shrink-0 place-items-center rounded-lg border bg-white p-1 sm:grid">{logo ? <img src={logo} alt="" className="w-full" /> : <span className="text-foreground">{data.name[0]}</span>}</span>
           <b className="shrink-0 text-lg font-normal">{data.name}</b>
@@ -696,7 +696,7 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
         <span className="text-sm text-muted-foreground">{name}について</span>
         <div className="flex items-center gap-1 text-muted-foreground">
           <a href={`/s/${chat.id}`} aria-label="会話を別の頁で開く" title="会話を別の頁で開く" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><ArrowUpRightIcon className="size-4" /></a>
-          <button type="button" onClick={restart} aria-label="新しい会話" title="新しい会話" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><SquarePenIcon className="size-4" /></button>
+          <button type="button" onClick={restart} aria-label="新しい会話" title="新しい会話" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><NotePencilIcon className="size-4" /></button>
           <button type="button" onClick={() => setDrawer(false)} aria-label="閉じる" title="閉じる（Esc）" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><XIcon className="size-4" /></button>
         </div>
       </div>
@@ -705,7 +705,7 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
 
   const chip = quote ? (
     <div className="mb-2 flex min-w-0 items-center gap-2 self-start rounded-full border bg-background py-1 pl-3 pr-1 text-[12.5px] text-muted-foreground shadow-sm">
-      <TextQuoteIcon className="size-3.5 shrink-0 text-primary" aria-hidden="true" />
+      <QuotesIcon className="size-3.5 shrink-0 text-primary" aria-hidden="true" />
       <span className="min-w-0 truncate"><span className="sr-only">選んだ文: </span>{quote}</span>
       <button type="button" onClick={() => setQuote('')} aria-label="選んだ文を外す" className="shrink-0 rounded-full p-1 hover:bg-secondary hover:text-foreground"><XIcon className="size-3" /></button>
     </div>
@@ -714,7 +714,7 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
   const docked = open && !chat
   return (
     <>
-      <div ref={dock} onBlur={onDockBlur} className={`fixed inset-x-0 bottom-0 z-20 bg-gradient-to-t from-background from-60% to-transparent px-4 pb-[max(14px,env(safe-area-inset-bottom))] pt-3 transition-[opacity,transform] duration-200 motion-reduce:transition-none ${docked ? '' : 'pointer-events-none translate-y-4 opacity-0'}`} inert={!docked}>
+      <div ref={dock} onBlur={onDockBlur} className={`fixed inset-x-0 bottom-0 z-20 max-md:bottom-(--bottom-nav) md:left-(--nav-w) md:right-(--side-panel,0px) bg-gradient-to-t from-background from-60% to-transparent px-4 pb-[max(14px,env(safe-area-inset-bottom))] pt-3 transition-[opacity,transform] duration-200 motion-reduce:transition-none ${docked ? '' : 'pointer-events-none translate-y-4 opacity-0'}`} inert={!docked}>
         <div className="mx-auto max-w-[720px]">
           <StartForm sitekey={sitekey} placeholder={`${name}について聞く…`} context={describe} onStart={start} before={chip} />
         </div>
@@ -723,11 +723,11 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
         type="button"
         onClick={show}
         aria-keyshortcuts="/"
-        className={`fixed bottom-[max(16px,env(safe-area-inset-bottom))] right-4 z-20 inline-flex items-center gap-2 rounded-full border bg-background px-4 py-2.5 text-sm shadow-md transition-[opacity,transform] duration-200 hover:border-primary motion-reduce:transition-none ${docked || drawer ? 'pointer-events-none translate-y-4 opacity-0' : ''}`}
+        className={`fixed bottom-[max(16px,env(safe-area-inset-bottom))] max-md:bottom-[calc(16px+var(--bottom-nav))] right-4 z-20 inline-flex items-center gap-2 rounded-full border bg-background px-4 py-2.5 text-sm shadow-md transition-[opacity,transform] duration-200 hover:border-primary motion-reduce:transition-none ${docked || drawer ? 'pointer-events-none translate-y-4 opacity-0' : ''}`}
         tabIndex={docked || drawer ? -1 : 0}
         aria-hidden={docked || drawer}
       >
-        <MessageCircleIcon className="size-4 text-primary" aria-hidden="true" />
+        <ChatCircleIcon className="size-4 text-primary" aria-hidden="true" />
         {chat ? '会話に戻る' : `${name}について聞く`}
       </button>
       {chat ? (

@@ -4,7 +4,7 @@
 import * as React from 'react'
 import { useChat } from '@ai-sdk/react'
 import { DefaultChatTransport, type DynamicToolUIPart, type UIMessage } from 'ai'
-import { CheckIcon, CircleAlertIcon } from 'lucide-react'
+import { CheckIcon, WarningCircleIcon } from '@phosphor-icons/react'
 import { readSuggestions } from '../../../packages/fiscal/suggestions'
 import { Bubble, BubbleContent } from '@/components/ui/bubble'
 import { Button } from '@/components/ui/button'
@@ -40,7 +40,7 @@ function ToolMarker({ part }: { part: DynamicToolUIPart }) {
   const done = part.state === 'output-available' && !failed
   return (
     <Marker>
-      <MarkerIcon>{failed ? <CircleAlertIcon /> : done ? <CheckIcon /> : <Spinner />}</MarkerIcon>
+      <MarkerIcon>{failed ? <WarningCircleIcon /> : done ? <CheckIcon /> : <Spinner />}</MarkerIcon>
       <MarkerContent className={done || failed ? undefined : 'shimmer'}>{failed ? `${label}に失敗しました` : label}</MarkerContent>
     </Marker>
   )
@@ -231,7 +231,7 @@ export function Conversation({
             <div>
               <Marker>
                 <MarkerIcon>
-                  <CircleAlertIcon />
+                  <WarningCircleIcon />
                 </MarkerIcon>
                 <MarkerContent className="text-destructive">{errorMessage(error)}</MarkerContent>
               </Marker>
@@ -239,9 +239,9 @@ export function Conversation({
           ) : null}
         </div>
       </div>
-      <div className="sticky bottom-0 z-20 bg-background" style={{ transform: 'translateY(calc(-1 * var(--kb, 0px)))' }}>
+      <div className={`sticky bottom-0 z-20 bg-background ${scroller ? '' : 'max-md:bottom-(--bottom-nav) max-md:motion-safe:transition-[bottom] max-md:duration-200'}`} style={{ transform: 'translateY(calc(-1 * var(--kb, 0px)))' }}>
         <div aria-hidden className={`pointer-events-none absolute inset-x-0 bottom-full h-10 bg-gradient-to-t from-background to-transparent transition-opacity duration-200 ${fade.bottom ? 'opacity-100' : 'opacity-0'}`} />
-        <div className="mx-auto w-full max-w-3xl px-4 pt-2 ${scroller ? 'pb-[max(1rem,env(safe-area-inset-bottom))]' : 'pb-[calc(2rem+env(safe-area-inset-bottom))] sm:pb-12'}">
+        <div className={`mx-auto w-full max-w-3xl px-4 pt-2 ${scroller ? 'pb-[max(1rem,env(safe-area-inset-bottom))]' : 'pb-[calc(2rem+env(safe-area-inset-bottom))] sm:pb-12'}`}>
           {beforeComposer}
           <Composer onSubmit={send} onStop={stop} busy={busy} placeholder="続けて聞く" autoFocus={autoFocus} compact />
         </div>

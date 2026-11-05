@@ -2,12 +2,13 @@
 // 島（jurisdiction/jurisdiction.tsx）が同じデータで hydrate する。最初に出る画面と描き直した画面が同じなので、読み込みで配置がずれない
 import { createElement } from 'react'
 import { renderToString } from 'react-dom/server'
-import { logo, TOKENS_CSS, TURNSTILE_SCRIPT } from '../landing'
+import { TOKENS_CSS, TURNSTILE_SCRIPT } from '../landing'
 import { Page } from './page'
 import { THEME_COLOR_META } from '../tokens'
 import { PWA_HEAD, PWA_REGISTER } from '../pwa'
 import type { CatalogEntry } from '../server/jurisdiction'
 import { jurisdictionPath } from './path'
+import { withSiteNav } from '../nav/render'
 import { formatYen, INDEX_PATH, reiwa, type PageData } from './types'
 
 const ORIGIN = 'https://fudoki.dev'
@@ -35,7 +36,8 @@ ${PWA_HEAD}
 <link rel="stylesheet" href="/_app/jurisdiction.css">
 ${extra}`
 
-const header = `<header class="j-top"><a class="j-brand" href="/" aria-label="風土記 ホーム">${logo('j-logo')}</a><nav><a href="${INDEX_PATH}">自治体を探す</a></nav></header>`
+/** 自治体の頁では、サイドバーの「自治体一覧」を今いる場所として出す */
+const nav = (open: boolean) => ({ active: 'jurisdictions' as const, open })
 
 /** 個別ページの説明文。検索結果に出るので、金額は API の値だけで書く（人口や仮の値は入れない） */
 export function pageDescription(d: PageData): string {
@@ -44,7 +46,7 @@ export function pageDescription(d: PageData): string {
   return `${d.name}の${reiwa(latest.year)}決算（一般会計）の歳出は約${formatYen(latest.yen)}。最も大きい款は${top ? `${top.name}（${formatYen(top.yen)}）` : '—'}。款・項・目の金額を、出典の頁と照らして確かめられます。`
 }
 
-export function renderPage(d: PageData, siteKey: string): string {
+export function renderPage(d: PageData, siteKey: string, open: boolean): string {
   const latest = d.years.at(-1)!
   const title = `${d.name}の歳出｜${reiwa(latest.year)}決算｜風土記`
   const description = pageDescription(d)
@@ -66,8 +68,7 @@ export function renderPage(d: PageData, siteKey: string): string {
 ${head(title, description, canonical, `${siteKey ? `${TURNSTILE_SCRIPT}\n` : ''}<script type="application/ld+json">${inlineJson(ld)}</script>\n<script type="module" src="/_app/jurisdiction.js"></script>`)}
 </head>
 <body>
-${header}
-<div id="j-app" data-turnstile-sitekey="${esc(siteKey)}">${renderToString(createElement(Page, { data: d, sitekey: siteKey }))}</div>
+${withSiteNav(`<div id="j-app" data-turnstile-sitekey="${esc(siteKey)}">${renderToString(createElement(Page, { data: d, sitekey: siteKey }))}</div>`, nav(open))}
 <script type="application/json" id="j-data">${inlineJson(d)}</script>
 ${PWA_REGISTER}
 </body>
@@ -76,7 +77,7 @@ ${PWA_REGISTER}
 }
 
 /** 収録がまだ無い自治体。検索の対象にはしない */
-export function renderEmpty(e: CatalogEntry): string {
+export function renderEmpty(e: CatalogEntry, open: boolean): string {
   const title = `${e.name}｜風土記`
   return `<!doctype html>
 <html lang="ja">
@@ -84,15 +85,14 @@ export function renderEmpty(e: CatalogEntry): string {
 ${head(title, `${e.name}の歳出は風土記にまだ収録されていません。`, `${ORIGIN}${jurisdictionPath(e.code)}`, '<meta name="robots" content="noindex">')}
 </head>
 <body>
-${header}
-<main class="j-static"><h1>${esc(e.name)}</h1><p>この自治体の決算は、風土記にまだ収録されていません。</p><p><a href="${INDEX_PATH}">収録している自治体を見る</a></p></main>
+${withSiteNav(`<main class="j-static"><h1>${esc(e.name)}</h1><p>この自治体の決算は、風土記にまだ収録されていません。</p><p><a href="${INDEX_PATH}">収録している自治体を見る</a></p></main>`, nav(open))}
 ${PWA_REGISTER}
 </body>
 </html>
 `
 }
 
-export function renderIndex(entries: CatalogEntry[]): string {
+export function renderIndex(entries: CatalogEntry[], open: boolean): string {
   const have = entries.filter((e) => e.settlementYears.length > 0)
   const canonical = `${ORIGIN}${INDEX_PATH}`
   const description = `決算を収録している自治体（${have.length}）の一覧。自治体ごとに歳出の款・項・目と、金額の推移を確かめられます。`
@@ -105,8 +105,7 @@ export function renderIndex(entries: CatalogEntry[]): string {
 ${head('自治体を探す｜風土記', description, canonical)}
 </head>
 <body>
-${header}
-<main class="j-static"><h1>自治体を探す</h1><p>${esc(description)}</p>${sections}</main>
+${withSiteNav(`<main class="j-static"><h1>自治体を探す</h1><p>${esc(description)}</p>${sections}</main>`, nav(open))}
 ${PWA_REGISTER}
 </body>
 </html>

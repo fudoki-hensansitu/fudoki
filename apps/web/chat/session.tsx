@@ -1,21 +1,11 @@
 // 会話の画面（/s/:id）。会話の本体は conversation.tsx（自治体の個別ページの drawer と共有）
 import * as React from 'react'
 import { createRoot } from 'react-dom/client'
-import { SquarePenIcon } from 'lucide-react'
 import { Conversation } from './conversation'
 import { loadSession } from './store'
-import { LOGO_G } from '../logo'
 
-const header = (
-  <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-3">
-    <a href="/" aria-label="風土記 ホーム" className="text-primary">
-      <svg className="block h-7 w-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 146.2150 40" role="img" aria-hidden="true" dangerouslySetInnerHTML={{ __html: LOGO_G }} />
-    </a>
-    <a href="/" aria-label="新しい会話" title="新しい会話" className="rounded-md p-2 text-muted-foreground hover:bg-secondary hover:text-foreground">
-      <SquarePenIcon className="size-5" />
-    </a>
-  </header>
-)
+// ロゴと頁の行き来はサイドバー（nav/）に置く。ここは上端のフェードの下地だけ
+const header = <div className="h-6" />
 
 function Expired() {
   return (
