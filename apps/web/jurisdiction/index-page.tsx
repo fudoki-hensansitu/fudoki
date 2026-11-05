@@ -82,7 +82,7 @@ function SelectedCard({ e }: { e: IndexEntry }) {
         ))}
       </div>
       <a href={e.path} className={cn(buttonVariants({ size: 'lg' }), 'mt-auto h-11 rounded-full text-[15px]')}>
-        {e.name}の家計簿を開く →
+        {e.name}を開く →
       </a>
     </div>
   )
@@ -92,70 +92,77 @@ type PrefectureMap = (typeof PREFECTURE_MAPS)[number]
 const MAPS = new Map<string, PrefectureMap>(PREFECTURE_MAPS.map((m) => [m.code, m]))
 const prefOf = (e: IndexEntry) => e.code.slice(0, 2)
 
-type Panel = { width: number; height: number; shapes: readonly { code: string; d: string }[] }
-/** 地図に描いた自治体のコード（本土と島しょの挿入図） */
-const mapCodes = (map: PrefectureMap | undefined) => new Set<string>(map ? [map, ...map.insets].flatMap((p: Panel) => p.shapes.map((s) => s.code)) : [])
+/** 図に並べた自治体のコード（本土と島しょ） */
+const mapCodes = (map: PrefectureMap | undefined) => new Set<string>(map ? [...map.tiles, ...map.islands].map((t) => t.code) : [])
+/** タイルに書く短い名前。種別（区・市・町・村）は落とし、1文字になるときだけ残す（港区・北区） */
+const tileName = (name: string) => (name.length > 2 ? name.replace(/[区市町村]$/, '') : name)
 
-function Shapes({ panel, label, byCode, max, selected, onSelect, className }: { panel: Panel; label: string; byCode: Map<string, IndexEntry>; max: number; selected: string; onSelect: (code: string) => void; className: string }) {
-  // 指で触ったときは、1回目で選んでカードを見せ、2回目で開く。マウスは hover で選んでいるので1回で開く
-  const touch = React.useRef(false)
-  const sel = panel.shapes.find((s) => s.code === selected)
+type TileProps = { code: string; name: string; e: IndexEntry | undefined; max: number; selected: string; onToggle: (code: string) => void; style?: React.CSSProperties }
+function MunicipalityTile({ code, name, e, max, selected, onToggle, style }: TileProps) {
+  const label = <span className="line-clamp-2 break-all px-0.5 text-center text-[10px] leading-tight sm:text-[11px]">{tileName(name)}</span>
+  if (!e)
+    return (
+      <div key={code} style={style} title={`${name}（未収録）`} className="flex aspect-square items-center justify-center rounded-md bg-muted text-muted-foreground/70">
+        {label}
+      </div>
+    )
+  const on = selected === code
   return (
-    <svg viewBox={`0 0 ${panel.width} ${panel.height}`} className={className} role="group" aria-label={label}>
-      {panel.shapes.map((s) => {
-        const e = byCode.get(s.code)
-        if (!e) return <path key={s.code} d={s.d} fill="var(--muted)" stroke="var(--background)" strokeWidth={1} strokeLinejoin="round" />
-        return (
-          <a
-            key={s.code}
-            href={e.path}
-            aria-label={`${e.name} ${formatYen(e.yen)}`}
-            onPointerDown={(ev) => (touch.current = ev.pointerType !== 'mouse')}
-            onPointerEnter={(ev) => ev.pointerType === 'mouse' && onSelect(e.code)}
-            onFocus={() => onSelect(e.code)}
-            onClick={(ev) => {
-              if (touch.current && selected !== e.code) {
-                ev.preventDefault()
-                onSelect(e.code)
-              }
-            }}
-            className="outline-none"
-          >
-            <title>{e.name}</title>
-            {/* 小さな島でも指で選べるよう、見えない太い縁を当たり判定にする */}
-            <path d={s.d} fill="none" stroke="transparent" strokeWidth={14} strokeLinejoin="round" />
-            <path d={s.d} fill={shade(e.yen, max)} stroke="var(--background)" strokeWidth={1} strokeLinejoin="round" className="transition-[fill] hover:brightness-110" />
-          </a>
-        )
-      })}
-      {sel ? <path d={sel.d} fill="none" stroke="var(--foreground)" strokeWidth={2.5} strokeLinejoin="round" pointerEvents="none" /> : null}
-    </svg>
+    <button
+      type="button"
+      onClick={() => onToggle(code)}
+      aria-pressed={on}
+      aria-label={`${name} ${formatYen(e.yen)}`}
+      title={name}
+      style={{ ...style, background: shade(e.yen, max) }}
+      className={cn(
+        'flex aspect-square items-center justify-center rounded-md transition hover:brightness-110 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none',
+        Math.sqrt(e.yen / max) > 0.5 ? 'text-primary-foreground' : 'text-foreground',
+        on && 'ring-2 ring-foreground ring-offset-2 ring-offset-card',
+      )}
+    >
+      {label}
+    </button>
   )
 }
 
-/** 都道府県の市区町村の地図。島しょは本土と縮尺を揃えると点になるので、島を拡大した挿入図を横（狭い画面では下）に並べる */
-function MunicipalityMap({ map, entries, selected, onSelect }: { map: PrefectureMap; entries: IndexEntry[]; selected: string; onSelect: (code: string) => void }) {
+/** 都道府県の市区町村のタイル図。各自治体を同じ大きさの四角で、おおよその位置に並べ、歳出の総額で塗る。島しょは下の段に北から並べる */
+function PrefectureTiles({ map, entries, selected, onToggle }: { map: PrefectureMap; entries: IndexEntry[]; selected: string; onToggle: (code: string) => void }) {
   const byCode = new Map(entries.map((e) => [e.code, e]))
-  const codes = mapCodes(map)
-  // 塗りの濃さは本土と挿入図で同じ物差しにする
-  const max = Math.max(...entries.filter((e) => codes.has(e.code)).map((e) => e.yen), 1)
-  const props = { byCode, max, selected, onSelect }
+  const max = Math.max(...entries.map((e) => e.yen), 1)
+  const columns = { gridTemplateColumns: `repeat(${map.cols}, minmax(0, 1fr))` }
+  const props = { max, selected, onToggle }
+  // 横にスクロールする幅のときは、歳出の総額で重みを付けた収録自治体の重心が真ん中に来るところから見せる（東京都なら区部）
+  const scroller = React.useRef<HTMLDivElement>(null)
+  React.useEffect(() => {
+    const el = scroller.current
+    const recorded = map.tiles.filter((t) => byCode.has(t.code))
+    if (!el || el.scrollWidth <= el.clientWidth || !recorded.length) return
+    const yen = (code: string) => byCode.get(code)?.yen ?? 0
+    const col = recorded.reduce((a, t) => a + (t.col + 0.5) * yen(t.code), 0) / Math.max(recorded.reduce((a, t) => a + yen(t.code), 0), 1)
+    el.scrollLeft = (col / map.cols) * el.scrollWidth - el.clientWidth / 2
+  }, [map.code])
   return (
-    <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-center">
-      {/* 日本のタイルと同じ view-transition-name を付け、切り替えでタイルが地図へ拡大する（戻るときは縮む） */}
-      <div className="min-w-0 sm:flex-1" style={{ viewTransitionName: `pref-${map.code}` }}>
-        <Shapes panel={map} label={`${map.name}の市区町村の地図。収録している自治体を歳出の総額の濃さで塗っている`} className="mx-auto block h-auto max-h-[480px] w-full" {...props} />
+    // 日本のタイルと同じ view-transition-name を付け、切り替えでタイルがこの図へ拡大する（戻るときは縮む）
+    // 狭い画面では名前が読める大きさ（1マス 40px）を保ち、横にスクロールさせる
+    <div ref={scroller} className="w-full min-w-0 overflow-x-auto p-1" style={{ viewTransitionName: `pref-${map.code}` }}>
+      <div className="mx-auto" style={{ maxWidth: map.cols * 56, minWidth: map.cols * 40 }}>
+      <div className="grid gap-1" style={columns} role="group" aria-label={`${map.name}の市区町村のタイル図。収録している自治体を歳出の総額の濃さで塗っている`}>
+        {map.tiles.map((t) => (
+          <MunicipalityTile key={t.code} {...t} e={byCode.get(t.code)} style={{ gridColumn: t.col + 1, gridRow: t.row + 1 }} {...props} />
+        ))}
       </div>
-      {map.insets.length ? (
-        <div className="flex shrink-0 justify-center gap-4 border-t pt-3 sm:border-t-0 sm:border-l sm:pl-4 sm:pt-0">
-          {map.insets.map((inset) => (
-            <figure key={inset.name} className="m-0 flex flex-col items-center gap-1">
-              <figcaption className="text-[11px] text-muted-foreground">{inset.name}</figcaption>
-              <Shapes panel={inset} label={`${inset.name}の地図（島を拡大して描いている）`} className="block h-[200px] w-auto sm:h-[300px]" {...props} />
-            </figure>
-          ))}
+      {map.islands.length ? (
+        <div className="mt-3 border-t pt-3">
+          <div className="mb-1.5 text-[11px] text-muted-foreground">島しょ</div>
+          <div className="grid gap-1" style={columns} role="group" aria-label={`${map.name}の島しょの自治体`}>
+            {map.islands.map((t) => (
+              <MunicipalityTile key={t.code} {...t} e={byCode.get(t.code)} {...props} />
+            ))}
+          </div>
         </div>
       ) : null}
+      </div>
     </div>
   )
 }
@@ -204,7 +211,9 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
   const shapeCodes = mapCodes(map)
   const offMap = map ? inView.filter((e) => !shapeCodes.has(e.code)) : []
   const viewName = view ? (map?.name ?? inView[0]?.prefecture ?? '') : '日本'
-  const [selected, setSelected] = React.useState(() => (inView.length ? inView : entries).reduce<IndexEntry | null>((a, b) => (!a || b.yen > a.yen ? b : a), null)?.code ?? '')
+  // 選んだ自治体。空のときは開いている都道府県自体を見せる（最初は都道府県自体）
+  const [selected, setSelected] = React.useState('')
+  const toggle = (code: string) => setSelected((s) => (s === code ? '' : code))
   // 日本⇄都道府県の切り替えは View Transition で拡大・縮小して見せる（未対応のブラウザと、動きを減らす設定ではそのまま切り替える）
   const transition = (update: () => void) => {
     const reduce = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -214,8 +223,7 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
   const open = (pref: string) =>
     transition(() => {
       setView(pref)
-      const top = municipalities.filter((e) => prefOf(e) === pref).reduce<IndexEntry | null>((a, b) => (!a || b.yen > a.yen ? b : a), null)
-      if (top) setSelected(top.code)
+      setSelected('')
     })
   const [query, setQuery] = React.useState('')
   const [kind, setKind] = React.useState<JurisdictionKind | null>(null)
@@ -226,7 +234,8 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
   const rows = (sort === 'yen' ? byYen : [...entries].sort((a, b) => a.code.localeCompare(b.code))).filter(
     (e) => (!kind || e.kind === kind) && (!q || e.name.includes(q) || e.prefecture.includes(q) || (e.path.split('/').pop() ?? '').includes(q)),
   )
-  const current = entries.find((e) => e.code === selected)
+  // 選んだ自治体が無いときは、開いている都道府県自体（収録していれば）
+  const current = entries.find((e) => e.code === selected) ?? entries.find((e) => e.kind === '都道府県' && view !== null && prefOf(e) === view)
 
   return (
     <div className="mx-auto max-w-[1120px] px-4 pb-24 pt-8 sm:px-8 sm:pt-12">
@@ -235,12 +244,13 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
         {entries.length ? `${entries.length} の自治体の決算を収録しています。地図か表から選ぶと、その街の歳出の内訳へ進めます。` : 'まだ決算を収録した自治体がありません。'}
       </p>
 
-      <section className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]" aria-label="地図">
-        <div className="flex flex-col rounded-[20px] bg-card p-4 sm:p-6">
+      {/* Esc で選択を外し、都道府県自体に戻す */}
+      <section className="mt-8 grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1fr)_320px]" aria-label="地図" onKeyDown={(ev) => ev.key === 'Escape' && setSelected('')}>
+        <div className="flex min-w-0 flex-col rounded-[20px] bg-card p-4 sm:p-6">
           <div className="mb-3 flex items-baseline justify-between gap-2">
             <Breadcrumb>
               <BreadcrumbList className="text-lg">
-                <BreadcrumbItem>{view ? <BreadcrumbLink render={<button type="button" onClick={() => transition(() => setView(null))} />}>日本</BreadcrumbLink> : <BreadcrumbPage>日本</BreadcrumbPage>}</BreadcrumbItem>
+                <BreadcrumbItem>{view ? <BreadcrumbLink render={<button type="button" onClick={() => transition(() => (setView(null), setSelected('')))} />}>日本</BreadcrumbLink> : <BreadcrumbPage>日本</BreadcrumbPage>}</BreadcrumbItem>
                 {view ? (
                   <>
                     <BreadcrumbSeparator />
@@ -251,10 +261,10 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
                 ) : null}
               </BreadcrumbList>
             </Breadcrumb>
-            <span className="text-xs text-muted-foreground">{view ? (offMap.length ? '島しょ部は地図の下から' : map?.insets.length ? '島しょは拡大して描いています' : '') : '収録のある都道府県を選ぶ'}</span>
+            <span className="text-xs text-muted-foreground">{view ? (map ? '押して選ぶ・もう一度で戻す' : '') : '収録のある都道府県を選ぶ'}</span>
           </div>
           <div className="flex flex-1 items-center">
-            {view === null ? <JapanTiles counts={counts} onOpen={open} /> : map ? <MunicipalityMap map={map} entries={inView} selected={selected} onSelect={setSelected} /> : <p className="w-full py-16 text-center text-sm text-muted-foreground">{viewName}の地図はまだありません。下の一覧から選べます。</p>}
+            {view === null ? <JapanTiles counts={counts} onOpen={open} /> : map ? <PrefectureTiles map={map} entries={inView} selected={selected} onToggle={toggle} /> : <p className="w-full py-16 text-center text-sm text-muted-foreground">{viewName}の地図はまだありません。下の一覧から選べます。</p>}
           </div>
           <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-muted-foreground">
             <span>{view ? '歳出の総額' : '収録した市区町村の数'}</span>
@@ -268,14 +278,14 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
             <div className="mt-4 flex flex-wrap items-center gap-2 border-t pt-4">
               <span className="text-xs text-muted-foreground">地図の外</span>
               {offMap.map((e) => (
-                <Chip key={e.code} on={selected === e.code} onClick={() => setSelected(e.code)}>
+                <Chip key={e.code} on={selected === e.code} onClick={() => toggle(e.code)}>
                   {e.name}
                 </Chip>
               ))}
             </div>
           ) : null}
         </div>
-        {current ? <SelectedCard e={current} /> : <p className="rounded-[20px] border p-6 text-muted-foreground">まだ決算を収録した自治体がありません。</p>}
+        {current ? <SelectedCard e={current} /> : <p className="rounded-[20px] border p-6 text-muted-foreground">{entries.length ? '地図から自治体を選ぶと、ここに歳出の総額と大きい分野が出ます。' : 'まだ決算を収録した自治体がありません。'}</p>}
       </section>
 
       <section className="mt-14" aria-label="比較表">
@@ -329,7 +339,6 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
               <li key={e.code}>
                 <a
                   href={e.path}
-                  onMouseEnter={() => shapeCodes.has(e.code) && setSelected(e.code)}
                   className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1.5 border-b px-2 py-3 transition-colors hover:bg-card md:grid-cols-[minmax(0,13rem)_7rem_minmax(0,1fr)_9rem] md:gap-5"
                 >
                   <span className="min-w-0 truncate">
