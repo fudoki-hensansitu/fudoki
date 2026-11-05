@@ -55,6 +55,9 @@ const GITHUB = 'https://github.com/fudoki-hensansitu/fudoki'
 /** 風土記の X アカウント。空にすると icon を出さない */
 const X = 'https://x.com/fudokijp'
 
+/** lucide の Plug は幅が細く、同じ 20px でも他の icon より小さく見えるので、一回り大きく描いて見た目を揃える */
+const McpIcon = () => <PlugIcon className="scale-[1.2]" />
+
 // ブランドのロゴ（Simple Icons の形）。lucide にはブランドの icon が無い
 const XIcon = () => (
   <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" /></svg>
@@ -96,7 +99,7 @@ function BottomNav({ active }: { active?: NavSection }) {
   const items = [
     { href: '/', label: 'ホーム', icon: <HomeIcon /> },
     { href: '/jurisdictions', label: '自治体一覧', icon: <LandmarkIcon />, active: active === 'jurisdictions' },
-    { href: MCP, label: 'MCP', icon: <PlugIcon /> },
+    { href: MCP, label: 'MCP', icon: <McpIcon /> },
     { href: FEEDBACK, label: 'フィードバック', icon: <MessageSquareIcon /> },
   ]
   return (
@@ -149,7 +152,7 @@ export function SiteNav({ active, open }: SiteNavProps) {
           </SidebarContent>
           <SidebarFooter className="gap-0 px-2 pt-2 pb-12">
             <SidebarMenu>
-              <Item href={MCP} label="MCP" icon={<PlugIcon />} />
+              <Item href={MCP} label="MCP" icon={<McpIcon />} />
               <Item href={FEEDBACK} label="フィードバック" icon={<MessageSquareIcon />} />
             </SidebarMenu>
             {/* 末端に X と GitHub。閉じて icon だけのときは X だけ残す */}
