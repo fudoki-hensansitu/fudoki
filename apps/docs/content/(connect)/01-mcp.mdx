@@ -14,7 +14,7 @@ sidebar:
 
 クライアントごとの手順は [ChatGPT](/chatgpt)・[Claude](/claude)・[Claude Code](/claude-code)・[Codex](/codex)・[Cursor](/cursor) にあります。ほかのクライアントでも、リモートの MCP サーバーとして上の URL を登録すれば使えます。
 
-## tool
+## 使える tool
 
 すべて読み取りだけです（`readOnlyHint: true`）。入力と応答の schema は [API リファレンス](/reference)と同じです。
 
@@ -32,7 +32,7 @@ MCP Apps に対応したクライアントでは、`search_expenditure_nodes`・
 
 表示用の PDF は自治体の公開 URL から取り直すので、取り込み時と内容が違う可能性があります。取得は 32 MiB・20 秒まで、全利用者の合計で閲覧 120 回/分・取得 6 回/分（同じ URL は 1 回/分）です。取得結果は 24 時間再利用し、保持は 16 URL までです。取れないときは出典 URL と頁番号を案内します。
 
-## 制約
+## 使えないことと上限
 
 - POST だけを受け付けます。JSON-RPC の batch と `subscriptions/listen` は使えません。
 - リクエストの body は 16 KiB までです。
