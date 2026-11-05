@@ -27,7 +27,7 @@ const BADGE: Record<ProjectStatus, { label: string; className: string }> = {
 type SectionLink = { href: string; label: string }
 /** link は見出しの右に出す出典（PDF を直接開く）。複数あれば並べる */
 const Section = ({ id, title, aside, link, children }: { id: string; title: string; aside?: React.ReactNode; link?: SectionLink | SectionLink[]; children: React.ReactNode }) => (
-  <section id={id} aria-labelledby={`h-${id}`} className="flex scroll-mt-32 md:scroll-mt-20 flex-col gap-4">
+  <section id={id} aria-labelledby={`h-${id}`} className="flex scroll-mt-32 lg:scroll-mt-20 flex-col gap-4">
     <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
       <div className="flex flex-wrap items-baseline gap-x-5 gap-y-1">
         <h2 id={`h-${id}`} className="font-sans text-[26px] font-normal leading-snug">
@@ -71,14 +71,14 @@ function Policies({ code, year }: { code: string; year: ProfileYear }) {
 
 function ProjectItem({ p }: { p: PolicyProject }) {
   return (
-    <div className="grid grid-cols-1 gap-x-6 gap-y-1.5 border-b border-foreground/10 py-4 md:grid-cols-[minmax(0,1fr)_210px]">
+    <div className="grid grid-cols-1 gap-x-6 gap-y-1.5 border-b border-foreground/10 py-4 lg:grid-cols-[minmax(0,1fr)_210px]">
       <div className="text-[15.5px]">
         {p.name}
         {p.status ? <span className={`ml-1.5 whitespace-nowrap rounded-full px-2 py-px align-middle text-xs ${BADGE[p.status].className}`}>{BADGE[p.status].label}</span> : null}
       </div>
-      <p className="text-sm md:col-start-1">{p.what}</p>
+      <p className="text-sm lg:col-start-1">{p.what}</p>
       {p.evaluation ? (
-        <p className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1 text-[13px] text-muted-foreground md:col-start-1">
+        <p className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1 text-[13px] text-muted-foreground lg:col-start-1">
           <span>区の評価</span>
           <span>
             {p.evaluation.grade ? <b className="font-normal text-foreground">{p.evaluation.grade}</b> : null}
@@ -87,11 +87,11 @@ function ProjectItem({ p }: { p: PolicyProject }) {
           </span>
         </p>
       ) : null}
-      <div className="flex flex-row flex-wrap gap-x-3 gap-y-1 text-sm md:col-start-2 md:row-span-3 md:row-start-1 md:flex-col md:gap-0.5 md:text-right">
+      <div className="flex flex-row flex-wrap gap-x-3 gap-y-1 text-sm lg:col-start-2 lg:row-span-3 lg:row-start-1 lg:flex-col lg:gap-0.5 lg:text-right">
         {p.amounts.map((a) => (
           <span key={`${a.yen}-${a.label ?? ''}`} className="tabular-nums">
             {formatYen(a.yen)}
-            {a.label ? <small className="ml-1 text-xs text-muted-foreground md:ml-0 md:block">{a.label}</small> : null}
+            {a.label ? <small className="ml-1 text-xs text-muted-foreground lg:ml-0 lg:block">{a.label}</small> : null}
           </span>
         ))}
       </div>
@@ -103,7 +103,7 @@ function Domains({ domains }: { domains: Domain[] }) {
   return (
     <Section id="domains" title="政策領域">
       {domains.map((d) => (
-        <div key={d.id} id={`d-${d.id}`} className="flex scroll-mt-32 md:scroll-mt-20 flex-col gap-1 [&+&]:mt-12">
+        <div key={d.id} id={`d-${d.id}`} className="flex scroll-mt-32 lg:scroll-mt-20 flex-col gap-1 [&+&]:mt-12">
           <h3 className="mb-3.5 border-l-4 border-primary py-0.5 pl-3.5 text-[19px] leading-snug sm:text-[22px]">{d.name}</h3>
           <div className="border-t">
             {d.projects.length ? (
@@ -454,8 +454,8 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
           </div>
           <div className="flex min-w-0 flex-col gap-3">
             {/* 一文（方針の要約）がある年度は名前を小さく一文を大きく見せる。無い自治体・年度は名前を大きく。h1 は名前のまま */}
-            <h1 ref={title} className={tagline ? 'text-lg font-normal leading-tight text-muted-foreground sm:text-xl' : 'text-[clamp(2rem,1.5rem+2vw,2.8rem)] font-normal leading-tight'}>{data.name}</h1>
-            {tagline ? <p className="text-[clamp(1.5rem,1.1rem+1.6vw,2.4rem)] leading-snug [text-wrap:pretty] [word-break:auto-phrase]">{tagline}</p> : null}
+            <h1 ref={title} className={tagline ? 'text-lg font-normal leading-tight text-muted-foreground sm:text-xl' : 'text-[clamp(1.75rem,1.4rem+1.2vw,2.25rem)] font-normal leading-tight'}>{data.name}</h1>
+            {tagline ? <p className="text-[clamp(1.25rem,1.05rem+0.9vw,1.75rem)] leading-snug [text-wrap:pretty] [word-break:auto-phrase]">{tagline}</p> : null}
             <div className="flex flex-wrap gap-x-6 gap-y-1.5 text-sm text-muted-foreground">
               <span className="inline-flex items-center gap-1.5">
                 <MapPinIcon className="size-4" aria-hidden="true" />
@@ -485,7 +485,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
           </div>
         </header>
 
-        <nav ref={spBar} aria-label="目次" className={`sticky z-20 -mx-4 flex gap-1.5 overflow-x-auto border-b bg-background px-4 py-2.5 [scrollbar-width:none] md:hidden ${mini ? 'top-[61px]' : 'top-0'}`}>
+        <nav ref={spBar} aria-label="目次" className={`sticky z-20 -mx-4 flex gap-1.5 overflow-x-auto border-b bg-background px-4 py-2.5 [scrollbar-width:none] lg:hidden ${mini ? 'top-[61px]' : 'top-0'}`}>
           {toc.filter((t) => !t.sub).map((t) => (
             <a key={t.href} href={t.href} onClick={jump} data-current={isCurrent(t.href) || undefined} className="shrink-0 rounded-full border px-3 py-1 text-[13px] text-muted-foreground no-underline data-[current]:border-primary data-[current]:bg-primary data-[current]:text-primary-foreground">
               {t.label}
@@ -493,8 +493,8 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
           ))}
         </nav>
 
-        <div className="grid grid-cols-1 gap-12 pt-6 md:grid-cols-[220px_minmax(0,1fr)] md:pt-8">
-          <nav aria-label="目次" className="sticky top-[84px] hidden flex-col gap-0.5 self-start md:flex">
+        <div className="grid grid-cols-1 gap-12 pt-6 lg:grid-cols-[220px_minmax(0,1fr)] lg:pt-8">
+          <nav aria-label="目次" className="sticky top-[84px] hidden flex-col gap-0.5 self-start lg:flex">
             {toc.map((t) => (
               <a
                 key={t.href}

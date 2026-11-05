@@ -380,7 +380,7 @@ export function Flow({ data, total: year, tabs, summary }: { data: PageData; tot
   const kan = index > 0 ? flows[index - 1] : undefined
   const sum = flows.reduce((s, f) => s + Math.max(0, f.kan.yen), 0) || 1
   return (
-    <div ref={root} data-ask-view={kan ? `${kan.kan.name}（款）の内訳` : '款から項への全体図'} className="flex h-[calc(100svh-61px-53px-1.5rem)] min-h-[480px] min-w-0 scroll-mt-[122px] flex-col rounded-[20px] border bg-background md:h-[calc(100svh-61px-2rem)] md:scroll-mt-[77px]">
+    <div ref={root} data-ask-view={kan ? `${kan.kan.name}（款）の内訳` : '款から項への全体図'} className="flex h-[calc(100svh-61px-53px-1.5rem)] min-h-[480px] min-w-0 scroll-mt-[122px] flex-col rounded-[20px] border bg-background lg:h-[calc(100svh-61px-2rem)] lg:scroll-mt-[77px]">
       <div className="shrink-0 px-5 pt-5 sm:px-6">
         <div className="flex items-center justify-between gap-3">
           {tabs ?? <span />}
