@@ -45,6 +45,10 @@ EXCLUDE: dict[tuple[str, str], str] = {
         'public enterprise account whose revenue and capital statements both open with 款 1 under different names',
     ('132021', 'sewer-capital-expenditure-detail'):
         'public enterprise account whose revenue and capital statements both open with 款 1 under different names',
+    ('132039', 'water-revenue-expenditure-detail'):
+        'public enterprise account whose revenue and capital statements both open with 款 1 under different names',
+    ('132039', 'water-capital-expenditure-detail'):
+        'public enterprise account whose revenue and capital statements both open with 款 1 under different names',
     ('132195', 'sewer-revenue-expenditure-detail'):
         'public enterprise account whose revenue and capital statements both open with 款 1 under different names',
     ('132195', 'sewer-capital-expenditure-detail'):

@@ -9,6 +9,7 @@ import type { Drill, FlowDepth, IndexEntry, PageData, Setsu } from '../jurisdict
 import { clientIp, errorResponse, HttpError, rateLimit } from './http'
 import { VIEW_RATE_LIMIT } from './limits'
 import type { Env, RateLimiter } from './env'
+import { PROFILES } from '../jurisdiction/profiles'
 import { loadCatalog, loadDrillById, loadFlow, loadIndex, loadPage, loadSetsu, type CatalogEntry } from './jurisdiction'
 
 const TTL = 3600
@@ -55,7 +56,7 @@ async function jurisdictionPage(c: Context<{ Bindings: Env }>, path: string) {
     if (!entry) return notFound()
     const data = entry.settlementYears.length > 0 ? await page(c.env, entry) : null
     if (!data) return new Response(renderEmpty(entry, navOpen(c.req.header('Cookie'))), { headers: HTML_HEADERS })
-    return new Response(renderPage(data, c.env.TURNSTILE_SITE_KEY ?? '', navOpen(c.req.header('Cookie'))), { headers: HTML_HEADERS })
+    return new Response(renderPage({ ...data, profile: PROFILES[entry.code] ?? null }, c.env.TURNSTILE_SITE_KEY ?? '', navOpen(c.req.header('Cookie'))), { headers: HTML_HEADERS })
   } catch {
     return unavailable()
   }

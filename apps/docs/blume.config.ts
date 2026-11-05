@@ -1,5 +1,14 @@
 import { defineConfig } from 'blume'
 import { openapi } from 'blume/reference'
+import { readFileSync } from 'node:fs'
+
+// API リファレンスの各頁は operationId を kebab-case にした route に出る
+const spec = JSON.parse(readFileSync('openapi.json', 'utf8')) as {
+  paths: Record<string, Record<string, { operationId: string }>>
+}
+const operationRoutes = Object.values(spec.paths)
+  .flatMap((methods) => Object.values(methods))
+  .map((op) => `/reference/operations/${op.operationId.replaceAll('_', '-')}`)
 
 export default defineConfig({
   title: '風土記 Docs',
@@ -16,14 +25,22 @@ export default defineConfig({
       { label: 'ガイド', path: '/' },
       { label: 'API リファレンス', path: '/reference' },
     ],
+    // サポート・規約はサイドバーのヘルプに並べる。API リファレンスの行も含め、サイドバーは明示で組む
+    sidebar: [
+      '/',
+      { label: 'AI につなぐ', items: ['/mcp', '/chatgpt', '/claude', '/codex', '/claude-code', '/cursor'] },
+      { label: 'プログラムから使う', items: ['/rest'] },
+      { label: 'データ', items: ['/data', '/evaluations'] },
+      { label: 'ヘルプ', items: ['/support', '/privacy', '/terms'] },
+      // 明示のサイドバーでは API リファレンスの行も自動では作られないので、openapi.json の順に並べる。root を持つ group にするとタブで切り分けられる
+      { label: 'API リファレンス', root: '/reference', items: operationRoutes },
+    ],
     repo: 'https://github.com/fudoki-hensansitu/fudoki',
   },
+  // footer はアイコンと © だけ。サポート・規約はサイドバーのヘルプに置く
   footer: {
-    links: [
-      { label: 'サポート', href: '/support' },
-      { label: 'プライバシーポリシー', href: '/privacy' },
-      { label: '利用規約', href: '/terms' },
-    ],
+    copyright: '© 2026 風土記',
+    socials: { x: 'https://x.com/fudokijp' },
   },
   // 旧「ChatGPT・Claude などで使う」の頁。plugin の導入はクライアント別の頁へ移した
   redirects: [{ from: '/plugins', to: '/claude-code' }],

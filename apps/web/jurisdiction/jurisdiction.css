@@ -3,6 +3,9 @@
 @import "../chat/theme.css";
 @source "./";
 @source "../chat/components";
+@source "../chat/conversation.tsx";
+@source "../chat/view-frame.tsx";
+@source "../chat/markdown.tsx";
 @source "../chat/start-form.tsx";
 @source "../chat/composer.tsx";
 @source "../nav";
@@ -25,3 +28,14 @@
 .j-static th, .j-static td { padding: 6px 4px; border-bottom: 1px solid var(--border); text-align: left; font-weight: 400; }
 .j-static td { text-align: right; font-variant-numeric: tabular-nums; }
 .j-crumb { font-size: 12px; color: var(--muted-foreground); }
+
+/* 頁の間の移動を View Transition でつなぐ（入口・会話・自治体の頁がそれぞれ opt-in する。動きを減らす設定では使わない）。
+   サイドバーはそのまま残し、本文だけを薄く消して下から浮かせる。type を付け、一覧の中の切り替え（日本⇄都道府県）では本文を動かさない */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; types: page; }
+  html:active-view-transition-type(page) .site-main { view-transition-name: page; }
+  ::view-transition-old(page) { animation: 140ms ease-in both fudoki-page-out; }
+  ::view-transition-new(page) { animation: 260ms cubic-bezier(0.2, 0, 0, 1) both fudoki-page-in; }
+}
+@keyframes fudoki-page-out { to { opacity: 0; } }
+@keyframes fudoki-page-in { from { opacity: 0; transform: translateY(12px); } }

@@ -47,3 +47,14 @@
   #chat-start.ask { min-height: 56px; }
   #chat-start .ask-box { height: 56px; padding: 0 20px; }
 }
+
+/* 頁の間の移動を View Transition でつなぐ（入口・会話・自治体の頁がそれぞれ opt-in する。動きを減らす設定では使わない）。
+   サイドバーはそのまま残し、本文だけを薄く消して下から浮かせる。type を付け、一覧の中の切り替え（日本⇄都道府県）では本文を動かさない */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; types: page; }
+  html:active-view-transition-type(page) .site-main { view-transition-name: page; }
+  ::view-transition-old(page) { animation: 140ms ease-in both fudoki-page-out; }
+  ::view-transition-new(page) { animation: 260ms cubic-bezier(0.2, 0, 0, 1) both fudoki-page-in; }
+}
+@keyframes fudoki-page-out { to { opacity: 0; } }
+@keyframes fudoki-page-in { from { opacity: 0; transform: translateY(12px); } }
