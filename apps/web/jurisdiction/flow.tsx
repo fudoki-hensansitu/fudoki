@@ -53,7 +53,7 @@ function MokuGroup({ moku }: { moku: Moku }) {
           {rest.length > 0 ? (
             <li data-setsu-rest className="text-[11.5px] text-muted-foreground">
               <Tooltip>
-                <TooltipTrigger className="grid w-full grid-cols-[minmax(0,1fr)_auto] gap-x-2.5 text-left hover:text-foreground">
+                <TooltipTrigger delay={100} className="grid w-full grid-cols-[minmax(0,1fr)_auto] gap-x-2.5 text-left hover:text-foreground">
                   <span className="underline decoration-dotted underline-offset-2">ほか{rest.length}節</span>
                   {restYen !== null ? <span className="text-right tabular-nums">{formatYen(restYen)}</span> : null}
                 </TooltipTrigger>
@@ -90,11 +90,22 @@ function useEdgeFade(ref: React.RefObject<HTMLElement | null>, deps: React.Depen
       setEdge((e) => (e.top === top && e.bottom === bottom ? e : { top, bottom }))
     }
     update()
+    // 上端・下端でさらに回したら、箱の中で止めずに頁を送る（snap や跳ね返りで頁のスクロールに移らないことがあるため）
+    const onWheel = (e: WheelEvent) => {
+      if (e.ctrlKey || Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return
+      const atTop = el.scrollTop <= 1
+      const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 1
+      if (!((e.deltaY < 0 && atTop) || (e.deltaY > 0 && atBottom))) return
+      e.preventDefault()
+      const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? window.innerHeight : 1
+      window.scrollBy({ top: e.deltaY * unit, behavior: 'instant' })
+    }
     el.addEventListener('scroll', update, { passive: true })
+    el.addEventListener('wheel', onWheel, { passive: false })
     const observer = new ResizeObserver(update)
     observer.observe(el)
     for (const child of el.children) observer.observe(child)
-    return () => { el.removeEventListener('scroll', update); observer.disconnect() }
+    return () => { el.removeEventListener('scroll', update); el.removeEventListener('wheel', onWheel); observer.disconnect() }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps)
   const mask = `linear-gradient(to bottom, ${edge.top ? 'transparent 0, #000 48px' : '#000 0'}, ${edge.bottom ? '#000 calc(100% - 72px), transparent 100%' : '#000 100%'})`
@@ -283,7 +294,7 @@ function KanPanel({ drill, loading }: { drill: Drill; loading: boolean }) {
           ))}
         </TickMenu>
       ) : null}
-      <div ref={body} style={fade} className="h-full snap-y snap-mandatory scroll-pt-10 overflow-y-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" tabIndex={-1}>
+      <div ref={body} style={fade} className="h-full snap-y snap-proximity scroll-pt-10 overflow-y-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" tabIndex={-1}>
         {drill.kou.map((k, i) => (
           <KouSection key={k.id} kou={k} active={i === current} loading={loading} onBox={(el) => { sections.current[i] = el }} />
         ))}
