@@ -396,7 +396,8 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
           </span>
         </div>
 
-        <div className="mt-5 border-t border-foreground">
+        {/* 絞り込みで行が減っても頁の高さが急に縮まないよう、表の高さの下限を持たせる */}
+        <div className="mt-5 min-h-[min(80vh,44rem)] border-t border-foreground">
           <div className="hidden grid-cols-[minmax(0,13rem)_7rem_minmax(0,1fr)_9rem] gap-5 border-b px-2 py-2.5 text-xs text-muted-foreground md:grid">
             <span>自治体</span>
             <span>収録した決算</span>
