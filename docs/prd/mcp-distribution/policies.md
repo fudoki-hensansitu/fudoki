@@ -79,9 +79,11 @@ Email Routing は `cf email-routing settings get --zone fudoki.dev` で enabled=
 
 `mise exec -- bun run build:docs` は3ページを含む。main への反映で自動 deploy される。HTTPS の `/support`・`/privacy`・`/terms` が実際に閲覧できてから plugin metadata と submission.md を更新する。公開が必要な提出 URL は維持し、本文はサイドバーのヘルプから開く（2026-11-05 に footer をやめてサイドバーへ移した）。
 
-文書は `content/(usage)/`（接続・使い方）、`content/(data)/`（データ）、`content/(help)/`（ヘルプ）、`content/(legal)/`（法的文書）に配置する。括弧付きフォルダは Blume のグループであり、URL に階層を追加しない。privacy/terms はサイドバーのヘルプに GitHub と並べ、前後ページのリンクからは外す。
+文書は `content/(connect)/`（接続・使い方）、`content/(api)/`（REST API）、`content/(data)/`（データ）、`content/(help)/`（ヘルプ）、`content/(legal)/`（法的文書）に配置する。括弧付きフォルダは Blume のグループであり、URL に階層を追加しない。privacy/terms はサイドバーのヘルプに GitHub と並べ、前後ページのリンクからは外す。
 
 ## 最終状態の検証
+
+公開時（2026-10）の記録。footer とサイドバーの記述は当時のもので、2026-11-05 以降は上の配置に従う。
 
 - 文書 package の型検査に成功。
 - `bun run build:docs` に成功。通常 build に既存12ページと追加3ページを含み、cf の dry-run も成功。公開用 HTML に support@fudoki.dev とフッターの2リンクが含まれ、個人名・草案注記・公開前のTODOが残っていないことを確認した。
