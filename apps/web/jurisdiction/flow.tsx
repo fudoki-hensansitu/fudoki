@@ -7,6 +7,8 @@ import { Overview } from './sankey'
 import { formatYen, type Drill, type Kou, type Moku, type PageData, type YearTotal } from './types'
 
 const SETSU_SHOWN = 3
+/** 目の側に立てる棒の幅。項の棒（w-2）と揃える */
+const MOKU_BAR = 8
 const MOBILE_QUERY = '(max-width: 699px)'
 
 const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
@@ -54,7 +56,7 @@ function MokuGroup({ moku }: { moku: Moku }) {
 function KouSection({ kou, active, loading, onBox }: { kou: Kou; active: boolean; loading: boolean; onBox: (el: HTMLElement | null) => void }) {
   const box = React.useRef<HTMLElement | null>(null)
   const rib = React.useRef<HTMLDivElement>(null)
-  const [paths, setPaths] = React.useState<{ d: string }[]>([])
+  const [paths, setPaths] = React.useState<{ d: string; x: number; y: number; h: number }[]>([])
   const [bar, setBar] = React.useState({ top: 0, height: 0 })
   React.useLayoutEffect(() => {
     const el = box.current
@@ -65,22 +67,26 @@ function KouSection({ kou, active, loading, onBox }: { kou: Kou; active: boolean
       const rows = [...el.querySelectorAll<HTMLElement>('[data-moku]')]
       if (rows.length === 0) return setPaths([])
       const origin = lane.getBoundingClientRect().top
-      const first = rows[0]!.getBoundingClientRect()
-      const last = rows[rows.length - 1]!.getBoundingClientRect()
-      const height = Math.max(last.bottom - first.top, 24)
-      const sum = rows.reduce((s, row) => s + Number(row.dataset.yen), 0)
+      const boxes = rows.map((row) => row.getBoundingClientRect())
+      const yen = rows.map((row) => Number(row.dataset.yen))
+      const sum = yen.reduce((s, v) => s + v, 0)
+      const shares = yen.map((v) => (sum > 0 ? v / sum : 1 / rows.length))
+      // 帯は両端で同じ太さ（全体図と同じ読み方）。目の棒が次の目の行に重ならない太さまで縮める
+      const slots = boxes.map((r, i) => (boxes[i + 1] ? boxes[i + 1]!.top - r.top - 6 : r.height))
+      const scale = Math.max(Math.min(boxes.at(-1)!.bottom - boxes[0]!.top, ...shares.map((v, i) => (v > 0 ? slots[i]! / v : Infinity))), 24)
       const width = lane.clientWidth
-      let y = first.top - origin
-      setBar({ top: first.top - origin, height })
-      setPaths(rows.map((row) => {
-        const r = row.getBoundingClientRect()
+      const end = width - MOKU_BAR
+      const top = boxes[0]!.top - origin
+      let y = top
+      const next = boxes.map((r, i) => {
+        const h = Math.max(shares[i]! * scale, 2)
         const ty = r.top - origin
-        const th = Math.min(r.height, 26)
-        const h = sum > 0 ? Math.max((Number(row.dataset.yen) / sum) * height, 2) : height / rows.length
         const a = y
         y += h
-        return { d: `M0 ${a}C${width / 2} ${a},${width / 2} ${ty},${width} ${ty}L${width} ${ty + Math.max(th, 4)}C${width / 2} ${ty + Math.max(th, 4)},${width / 2} ${a + h},0 ${a + h}Z` }
-      }))
+        return { d: `M0 ${a}C${end / 2} ${a},${end / 2} ${ty},${end} ${ty}L${end} ${ty + h}C${end / 2} ${ty + h},${end / 2} ${a + h},0 ${a + h}Z`, x: end, y: ty, h }
+      })
+      setBar({ top, height: y - top })
+      setPaths(next)
     }
     measure()
     const observer = new ResizeObserver(measure)
@@ -100,9 +106,10 @@ function KouSection({ kou, active, loading, onBox }: { kou: Kou; active: boolean
       <div ref={rib} className="relative hidden sm:block" aria-hidden="true">
         <svg className="absolute inset-0 size-full overflow-visible">
           {paths.map((p, i) => <path key={i} d={p.d} className={`fill-primary/20 transition-opacity duration-500 ${active ? 'opacity-100' : 'opacity-0'}`} />)}
+          {paths.map((p, i) => <rect key={`b${i}`} x={p.x} y={p.y} width={MOKU_BAR} height={p.h} rx={2} className={`fill-primary transition-opacity duration-500 ${active ? 'opacity-100' : 'opacity-0'}`} />)}
         </svg>
       </div>
-      <div className="flex min-w-0 flex-col gap-3">
+      <div className="flex min-w-0 flex-col gap-3 sm:pl-2.5">
         {kou.moku.length > 0 ? (
           <div className="hidden grid-cols-[5fr_7fr] gap-4 text-[11px] text-muted-foreground sm:grid" aria-hidden="true">
             <span>目</span>

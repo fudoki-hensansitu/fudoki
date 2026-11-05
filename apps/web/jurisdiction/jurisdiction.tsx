@@ -170,36 +170,66 @@ const Empty = ({ children }: { children: React.ReactNode }) => (
 )
 
 /** どの年度も同じ並び（総額・お金の流れ・金額の大きい事業）。決算が無い年度・事業の一覧が無い年度は枠だけ出す */
+type Phase = 'settlement' | 'budget'
+const PHASES: { key: Phase; label: string }[] = [
+  { key: 'settlement', label: '決算' },
+  { key: 'budget', label: '予算' },
+]
+
+/** 予算の節。決算と予算をタブで切り替える。予算はまだ取り込んでいないので、どの年度も空の枠を出す */
 function Budget({ data, year }: { data: PageData; year: number }) {
-  const total = data.years.find((y) => y.year === year)
+  const [phase, setPhase] = React.useState<Phase>('settlement')
+  const settled = data.years.find((y) => y.year === year)
+  const total = phase === 'settlement' ? settled : undefined
   const prev = data.years.find((y) => y.year === year - 1)
   const isLatest = !!total && total.year === data.years.at(-1)?.year
   const pct = total ? changePct(total.yen, prev?.yen) : null
   const max = data.projects[0]?.yen ?? 1
-  // 見出しは表示している金額の段階。予算を取り込んだら、その年度は「予算」にする
+  const label = phase === 'settlement' ? '決算' : '予算'
+  const missing = `${reiwa(year)}の${label}は、まだ収録していません`
   return (
     <Section
       id="budget"
-      title="決算"
+      title="予算"
       aside={
-        <div className="flex flex-wrap items-baseline gap-x-3">
-          <span className="text-sm text-muted-foreground">歳出</span>
-          <b className={`text-[26px] font-normal leading-snug tabular-nums ${total ? '' : 'text-muted-foreground'}`}>{total ? formatYen(total.yen) : '—'}</b>
-          {pct !== null ? <span className={`text-[13px] tabular-nums ${pct < 0 ? 'text-[#aa5910]' : 'text-primary'}`}>前年度比 {pct >= 0 ? '+' : '−'}{Math.abs(pct).toFixed(1)}%</span> : null}
+        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+          <div role="tablist" aria-label="金額の段階" className="flex gap-1 self-center">
+            {PHASES.map((p) => (
+              <button
+                key={p.key}
+                type="button"
+                role="tab"
+                id={`tab-${p.key}`}
+                aria-selected={p.key === phase}
+                aria-controls="budget-panel"
+                onClick={() => setPhase(p.key)}
+                className={`rounded-full px-3 py-1.5 text-[13px] ${p.key === phase ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+              >
+                {p.label}
+              </button>
+            ))}
+          </div>
+          <div className="flex flex-wrap items-baseline gap-x-3">
+            <span className="text-sm text-muted-foreground">歳出</span>
+            <b className={`text-[26px] font-normal leading-snug tabular-nums ${total ? '' : 'text-muted-foreground'}`}>{total ? formatYen(total.yen) : '—'}</b>
+            {pct !== null ? <span className={`text-[13px] tabular-nums ${pct < 0 ? 'text-[#aa5910]' : 'text-primary'}`}>前年度比 {pct >= 0 ? '+' : '−'}{Math.abs(pct).toFixed(1)}%</span> : null}
+          </div>
         </div>
       }
     >
-      {total ? <Flow key={year} data={data} total={total} /> : <Empty>{reiwa(year)}の決算は、まだ収録していません</Empty>}
-      <h3 className="mt-4 text-lg">金額の大きい事業</h3>
-      {isLatest ? (
-        <ul className="border-t">
-          {data.projects.map((p, i) => (
-            <ProjectRow key={p.id} p={p} rank={i + 1} max={max} />
-          ))}
-        </ul>
-      ) : (
-        <Empty>{total ? `${reiwa(year)}の事業の一覧は、まだ出していません` : `${reiwa(year)}の決算は、まだ収録していません`}</Empty>
-      )}
+      <div id="budget-panel" role="tabpanel" aria-labelledby={`tab-${phase}`} className="flex flex-col gap-4">
+        {total ? <Flow key={year} data={data} total={total} /> : <Empty>{missing}</Empty>}
+        <h3 className="mt-4 text-lg">金額の大きい事業</h3>
+        {isLatest ? (
+          <ul className="border-t">
+            {data.projects.map((p, i) => (
+              <ProjectRow key={p.id} p={p} rank={i + 1} max={max} />
+            ))}
+          </ul>
+        ) : (
+          <Empty>{total ? `${reiwa(year)}の事業の一覧は、まだ出していません` : missing}</Empty>
+        )}
+      </div>
     </Section>
   )
 }
@@ -293,7 +323,7 @@ function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
 
   const toc: TocItem[] = [
     ...(py ? [{ href: '#policy', label: '方針' }, { href: '#domains', label: '政策領域' }, ...py.domains.map((d) => ({ href: `#d-${d.id}`, label: d.short ?? d.name, sub: true }))] : []),
-    { href: '#budget', label: '決算' },
+    { href: '#budget', label: '予算' },
     ...(py?.scrap ? [{ href: '#scrap', label: '事業の入れ替え' }] : []),
   ]
 
