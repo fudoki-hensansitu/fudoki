@@ -3,7 +3,7 @@ import { describe, expect, test } from 'bun:test'
 import web from '../worker'
 import type { Env, RateLimiter } from './env'
 import { CHAT_RATE_LIMIT, MAX_MESSAGES, MAX_USER_TEXT, VIEW_RATE_LIMIT } from './limits'
-import { parseChat } from './chat'
+import { CONTEXT_HEADING, parseChat } from './chat'
 import { parseRelay } from './relay'
 import { issueSession, SITEVERIFY_URL, TURNSTILE_ACTION, TURNSTILE_TEST_SECRET, verifySession, verifyTurnstile } from './session'
 
@@ -97,7 +97,7 @@ describe('View の中継の許可リスト', () => {
 })
 
 describe('会話の入力の上限', () => {
-  const user = (text: string, id = crypto.randomUUID()) => ({ id, role: 'user', parts: [{ type: 'text', text }] })
+  const user = (text: string, id: string = crypto.randomUUID()) => ({ id, role: 'user', parts: [{ type: 'text', text }] })
   test('文字数・件数・role・最後の発言を検査する', () => {
     const id = crypto.randomUUID()
     expect(parseChat({ id, messages: [user('a'.repeat(MAX_USER_TEXT))] }).messages).toHaveLength(1)
@@ -107,6 +107,15 @@ describe('会話の入力の上限', () => {
     expect(() => parseChat({ id, messages: [{ id: 'x', role: 'user', parts: [{ type: 'file', url: 'data:' }] }] })).toThrow(expect.objectContaining({ status: 400 }))
     expect(() => parseChat({ id, messages: [user('a'), { id: 'y', role: 'assistant', parts: [] }] })).toThrow(expect.objectContaining({ status: 400 }))
     expect(() => parseChat({ id, messages: [user('a')], viewContext: 'x'.repeat(2001) })).toThrow(expect.objectContaining({ status: 400 }))
+  })
+  test('頁の文脈は質問の直前の別の利用者の発言にし、長さを検査する', () => {
+    const id = crypto.randomUUID()
+    const parsed = parseChat({ id, messages: [{ ...user('これは何？', 'q'), context: '選んだ文: 「保育施設運営費」' }] })
+    expect(parsed.messages.map((m) => m.role)).toEqual(['user', 'user'])
+    expect(parsed.messages[0]!.parts).toEqual([{ type: 'text', text: `${CONTEXT_HEADING}\n選んだ文: 「保育施設運営費」` }])
+    expect(parsed.messages[1]!.parts).toEqual([{ type: 'text', text: 'これは何？' }])
+    expect(() => parseChat({ id, messages: [{ ...user('a'), context: 'x'.repeat(2001) }] })).toThrow(expect.objectContaining({ status: 400 }))
+    expect(() => parseChat({ id, messages: [{ ...user('a'), context: 1 }] })).toThrow(expect.objectContaining({ status: 400 }))
   })
   test('AI の発言から reasoning を落とす', () => {
     const parsed = parseChat({ id: 'x', messages: [{ id: 'a', role: 'assistant', parts: [{ type: 'reasoning', text: 'x' }, { type: 'text', text: 'ok' }] }, user('b')] })

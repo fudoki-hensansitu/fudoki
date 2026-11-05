@@ -6,6 +6,10 @@ export interface StoredSession {
   expiresAt: number
   /** 入口で入力して、まだ送っていない最初の質問 */
   pending?: string
+  /** 最初の質問を書いたときに頁で見ていたもの・選んだ文。質問とは別の利用者の発言として AI に渡す */
+  pendingContext?: string
+  /** 表とグラフの View が伝える、いま画面で見ているもの（system に参考として渡す） */
+  viewContext?: string
   messages?: UIMessage[]
 }
 

@@ -1,7 +1,7 @@
-"use client"
+'use client'
 
 import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip"
-import { cn } from "cn"
+import { cn } from "cn" 
 
 function TooltipProvider({
   delay = 0,
@@ -20,8 +20,9 @@ function Tooltip({ ...props }: TooltipPrimitive.Root.Props) {
   return <TooltipPrimitive.Root data-slot="tooltip" {...props} />
 }
 
-function TooltipTrigger({ ...props }: TooltipPrimitive.Trigger.Props) {
-  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />
+/** 出るまでの待ち時間は 300ms を既定にする（Base UI の既定 600ms は遅く感じる） */
+function TooltipTrigger({ delay = 300, ...props }: TooltipPrimitive.Trigger.Props) {
+  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" delay={delay} {...props} />
 }
 
 function TooltipContent({
