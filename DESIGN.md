@@ -162,7 +162,7 @@ shadcn/ui の語彙。ブランド色は `--primary`、`--accent` は hover の�
 - **データの面に出してよい色**: 前景・`--muted-foreground`・罫線・`--destructive`（検査が落ちているときだけ）。`--primary` と絵の色は出さない。例外は自治体の個別ページ（下の「自治体の個別ページ」）だけ
 
 ## Icons
-- lucide（`lucide-static@1.54.0` の path を inline の `<symbol>` に写す）・24px grid・stroke 1.5・round cap/join。外部サービスの公式 logo だけを例外とする
+- Phosphor（`@phosphor-icons/react`）の regular weight・256px grid。React の外の HTML（入口の頁）は同じ path を inline の `<symbol>` に写し、`fill: currentColor` で描く。外部サービスの logo（X・GitHub）も Phosphor のものを使う
 
 ## Logo
 - Logomark: 32 × 32 の grid に五本の短冊（幅4・空き2、左端 x=2／8／14／20／26、下端 y=28、高さ 14／22／10／26／17、角丸2）と基準線（x=2・y=29・幅28・高さ2、角丸1）。見える外形は幅28・高さ29で、黄金比は使っていない。短冊と文字は `--primary`、基準線だけ `--logo-rule-ink` で背景との明度差を 12% 増やす

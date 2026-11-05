@@ -13,7 +13,7 @@ import {
   type ViewData,
 } from './types'
 import { Button } from '@fudoki/ui/components/button'
-import { ArrowLeft, ExternalLink } from 'lucide-react'
+import { ArrowLeftIcon, ArrowSquareOutIcon } from '@phosphor-icons/react'
 import { Alert, AlertTitle, AlertDescription } from '@fudoki/ui/components/alert'
 import { Skeleton } from '@fudoki/ui/components/skeleton'
 import {
@@ -127,7 +127,7 @@ function OriginButton({ node, origin, bridge, showPdf }: {
   if (!origin) return null
   const page = [node.source_page, node.amount_source_page]
     .find((p): p is number => typeof p === 'number' && Number.isInteger(p) && p > 0)
-  // 形式は文字の札で示す（lucide には PDF・CSV を区別するアイコンがない）。PDF は View の中で開き、CSV などは host 経由で元の URL を開く
+  // 形式は文字の札で示す（icon のセットには PDF・CSV を区別するアイコンがない）。PDF は View の中で開き、CSV などは host 経由で元の URL を開く
   const format = <span className="ref-format" aria-hidden="true">{origin.format.toUpperCase()}</span>
   if (origin.format === 'pdf' && page)
     return (
@@ -139,7 +139,7 @@ function OriginButton({ node, origin, bridge, showPdf }: {
   return (
     <Button variant="outline" size="sm" className="ref" aria-label={`出典（${origin.format.toUpperCase()}、外部で開く）: ${node.name}`}
       onClick={() => bridge.openLink(origin.url)}>
-      {format}出典<ExternalLink aria-hidden="true" className="ref-external" />
+      {format}出典<ArrowSquareOutIcon aria-hidden="true" className="ref-external" />
     </Button>
   )
 }
@@ -171,7 +171,7 @@ function PathHeader({ crumbs, kind, title, scope, busy, children }: {
           <BreadcrumbList className="crumb-list">
             {onBack && (
               <BreadcrumbItem className="crumb-back-item">
-                <Button variant="link" className="crumb crumb-back" disabled={busy} onClick={onBack}><ArrowLeft aria-hidden="true" />戻る</Button>
+                <Button variant="link" className="crumb crumb-back" disabled={busy} onClick={onBack}><ArrowLeftIcon aria-hidden="true" />戻る</Button>
               </BreadcrumbItem>
             )}
             {crumbs.map((c, i) => (

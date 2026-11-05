@@ -69,7 +69,7 @@ ul,ol{margin:0;padding:0;list-style:none}
 :where(.site-main) a{color:inherit;text-decoration:none}
 a:focus-visible,button:focus-visible,summary:focus-visible,video:focus-visible{outline:3px solid color-mix(in srgb,var(--ring) 50%,transparent);outline-offset:2px;border-radius:var(--radius-sm)}
 code{font:13px/1.6 var(--font-mono);letter-spacing:0;overflow-wrap:anywhere}
-.i{display:block;flex:none;width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.i{display:block;flex:none;width:16px;height:16px;fill:currentColor}
 .num{font-variant-numeric:tabular-nums;letter-spacing:0;white-space:nowrap}
 .wrap{padding-inline:var(--gut)}
 .sec{padding-block:120px}
@@ -247,9 +247,7 @@ html{scroll-behavior:smooth}
 `
 
 const ICONS = `<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-<symbol id="arrow-right" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
-<symbol id="file-text" viewBox="0 0 24 24"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
-<symbol id="plug" viewBox="0 0 24 24"><path d="M12 22v-5"/><path d="M15 8V2"/><path d="M17 8a1 1 0 0 1 1 1v4a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1z"/><path d="M9 8V2"/></symbol>
+<symbol id="arrow-right" viewBox="0 0 256 256"><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"/></symbol>
 </svg>`
 
 const ledgerRows = (l: (typeof ledgers)[number]) =>

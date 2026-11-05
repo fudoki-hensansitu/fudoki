@@ -4,7 +4,7 @@ import * as React from 'react'
 import { createRoot } from 'react-dom/client'
 import { useChat } from '@ai-sdk/react'
 import { DefaultChatTransport, type DynamicToolUIPart, type UIMessage } from 'ai'
-import { CheckIcon, CircleAlertIcon } from 'lucide-react'
+import { CheckIcon, WarningCircleIcon } from '@phosphor-icons/react'
 import { readSuggestions } from '../../../packages/fiscal/suggestions'
 import { Bubble, BubbleContent } from '@/components/ui/bubble'
 import { Button } from '@/components/ui/button'
@@ -40,7 +40,7 @@ function ToolMarker({ part }: { part: DynamicToolUIPart }) {
   const done = part.state === 'output-available' && !failed
   return (
     <Marker>
-      <MarkerIcon>{failed ? <CircleAlertIcon /> : done ? <CheckIcon /> : <Spinner />}</MarkerIcon>
+      <MarkerIcon>{failed ? <WarningCircleIcon /> : done ? <CheckIcon /> : <Spinner />}</MarkerIcon>
       <MarkerContent className={done || failed ? undefined : 'shimmer'}>{failed ? `${label}に失敗しました` : label}</MarkerContent>
     </Marker>
   )
@@ -190,7 +190,7 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
             <div>
               <Marker>
                 <MarkerIcon>
-                  <CircleAlertIcon />
+                  <WarningCircleIcon />
                 </MarkerIcon>
                 <MarkerContent className="text-destructive">{errorMessage(error)}</MarkerContent>
               </Marker>

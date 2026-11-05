@@ -10,7 +10,7 @@
   --destructive: var(--shu);
   --destructive-foreground: var(--primary-foreground);
   /* サイドバーは、付いているか分からないくらいの薄緑（accent を地の色で薄めたもの）。今いる項目と hover は accent で区別する */
-  --sidebar: color-mix(in srgb, var(--accent) 45%, var(--background));
+  --sidebar: color-mix(in srgb, var(--accent) 25%, var(--background));
   --sidebar-foreground: var(--foreground);
   --sidebar-primary: var(--primary);
   --sidebar-primary-foreground: var(--primary-foreground);

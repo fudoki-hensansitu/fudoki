@@ -1,6 +1,6 @@
 // 全ページの左に置くサイドバー（shadcn の Sidebar）。サーバーが render.tsx で HTML に書き、nav.tsx（/_app/nav.js）が動かす
 import * as React from 'react'
-import { HomeIcon, LandmarkIcon, MessageSquareIcon, PlugIcon } from 'lucide-react'
+import { BankIcon, ChatIcon, GithubLogoIcon, HouseIcon, PlugIcon, SidebarSimpleIcon, XLogoIcon } from '@phosphor-icons/react'
 import {
   Sidebar,
   SidebarContent,
@@ -30,6 +30,27 @@ const Logo = ({ className }: { className?: string }) => (
   <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 146.2150 40" aria-hidden="true" dangerouslySetInnerHTML={{ __html: LOGO_G }} />
 )
 
+/** ロゴの左のマークだけ（LOGO_G の左端 40×40 を切り出す） */
+const Mark = ({ className }: { className?: string }) => (
+  <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" aria-hidden="true" dangerouslySetInnerHTML={{ __html: LOGO_G }} />
+)
+
+/** 閉じているときの頭。マークを出し、hover・focus で開く icon に替える */
+function CollapsedToggle() {
+  const { toggleSidebar } = useSidebar()
+  return (
+    <button
+      type="button"
+      onClick={toggleSidebar}
+      aria-label="メニューを開く"
+      className="group/toggle relative hidden size-10 items-center justify-center rounded-md text-sidebar-foreground transition-colors hover:bg-sidebar-accent focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:outline-none group-data-[collapsible=icon]:flex"
+    >
+      <Mark className="size-7 text-primary group-hover/toggle:opacity-0 group-focus-visible/toggle:opacity-0" />
+      <SidebarSimpleIcon className="absolute size-5 opacity-0 group-hover/toggle:opacity-100 group-focus-visible/toggle:opacity-100" />
+    </button>
+  )
+}
+
 /** サイドバーの項目。字と icon は shadcn の既定より一回り大きくし、閉じて icon だけのときだけ名前を tooltip で出す */
 const Item = ({ href, label, icon, active }: { href: string; label: string; icon: React.ReactNode; active?: boolean }) => {
   const { state, isMobile } = useSidebar()
@@ -55,20 +76,9 @@ const GITHUB = 'https://github.com/fudoki-hensansitu/fudoki'
 /** 風土記の X アカウント。空にすると icon を出さない */
 const X = 'https://x.com/fudokijp'
 
-/** lucide の Plug は幅が細く、同じ 20px の枠では他の icon が大きく見えるので、他を一回り小さく描いて Plug に揃える */
-const SMALL = 'scale-[0.84]'
-
-// ブランドのロゴ（Simple Icons の形）。lucide にはブランドの icon が無い
-const XIcon = () => (
-  <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" /></svg>
-)
-const GitHubIcon = () => (
-  <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" /></svg>
-)
 const Social = ({ href, label, icon, className }: { href: string; label: string; icon: React.ReactNode; className?: string }) => (
-  <a href={href} aria-label={label} target="_blank" rel="noopener noreferrer" className={cn('group/social flex size-10 items-center justify-center rounded-md', className)}>
-    {/* 塗りの丸に logo を白抜きで置き、上の行の icon より一回り小さくする */}
-    <span className="flex size-7 items-center justify-center rounded-full bg-sidebar-foreground/75 text-sidebar transition-colors group-hover/social:bg-sidebar-foreground [&_svg]:size-3.5">{icon}</span>
+  <a href={href} aria-label={label} target="_blank" rel="noopener noreferrer" className={cn('flex size-10 items-center justify-center rounded-md text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground [&_svg]:size-[18px]', className)}>
+    {icon}
   </a>
 )
 
@@ -97,10 +107,10 @@ function useHideOnScroll() {
 function BottomNav({ active }: { active?: NavSection }) {
   const [hidden, setHidden] = useHideOnScroll()
   const items = [
-    { href: '/', label: 'ホーム', icon: <HomeIcon className={SMALL} /> },
-    { href: '/jurisdictions', label: '自治体一覧', icon: <LandmarkIcon className={SMALL} />, active: active === 'jurisdictions' },
+    { href: '/', label: 'ホーム', icon: <HouseIcon /> },
+    { href: '/jurisdictions', label: '自治体一覧', icon: <BankIcon />, active: active === 'jurisdictions' },
     { href: MCP, label: 'MCP', icon: <PlugIcon /> },
-    { href: FEEDBACK, label: 'フィードバック', icon: <MessageSquareIcon className={SMALL} /> },
+    { href: FEEDBACK, label: 'フィードバック', icon: <ChatIcon /> },
   ]
   return (
     <nav
@@ -141,24 +151,25 @@ export function SiteNav({ active, open }: SiteNavProps) {
               {/* 色は svg に付ける（入口の頁の a { color: inherit } に負けて黒くならないように） */}
               <Logo className="block h-7 w-auto text-primary" />
             </a>
-            <SidebarTrigger />
+            <SidebarTrigger className="group-data-[collapsible=icon]:hidden" />
+            <CollapsedToggle />
           </SidebarHeader>
           <SidebarContent>
             <SidebarGroup>
               <SidebarMenu>
-                <Item href="/jurisdictions" label="自治体一覧" icon={<LandmarkIcon className={SMALL} />} active={active === 'jurisdictions'} />
+                <Item href="/jurisdictions" label="自治体一覧" icon={<BankIcon />} active={active === 'jurisdictions'} />
               </SidebarMenu>
             </SidebarGroup>
           </SidebarContent>
           <SidebarFooter className="gap-0 px-2 pt-2 pb-12">
             <SidebarMenu>
               <Item href={MCP} label="MCP" icon={<PlugIcon />} />
-              <Item href={FEEDBACK} label="フィードバック" icon={<MessageSquareIcon className={SMALL} />} />
+              <Item href={FEEDBACK} label="フィードバック" icon={<ChatIcon />} />
             </SidebarMenu>
             {/* 末端に X と GitHub。閉じて icon だけのときは X だけ残す */}
             <div className="flex justify-center gap-1">
-              {X ? <Social href={X} label="X" icon={<XIcon />} /> : null}
-              <Social href={GITHUB} label="GitHub" icon={<GitHubIcon />} className="group-data-[collapsible=icon]:hidden" />
+              {X ? <Social href={X} label="X" icon={<XLogoIcon weight="fill" />} /> : null}
+              <Social href={GITHUB} label="GitHub" icon={<GithubLogoIcon weight="fill" />} className="group-data-[collapsible=icon]:hidden" />
             </div>
           </SidebarFooter>
         </Sidebar>
