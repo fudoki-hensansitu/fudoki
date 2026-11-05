@@ -1,0 +1,28 @@
+---
+title: Cursor
+description: Cursor に風土記を追加する。
+sidebar:
+  icon: /icons/cursor.svg
+---
+
+## plugin で入れる（おすすめ）
+
+Customize の Plugins で「From GitHub Repository」を選び、次の URL を入れて marketplace を追加します。表示された風土記の plugin を、プロジェクトかユーザーの scope に Install します。歳出を比べるときの手順（skill `compare-expenditure`）も入ります。
+
+```text title="リポジトリの URL"
+https://github.com/fudoki-hensansitu/fudoki
+```
+
+## MCP だけ登録する
+
+`~/.cursor/mcp.json`（プロジェクトだけなら `.cursor/mcp.json`）に、既存の設定を残して `fudoki` を足します。
+
+```json title="~/.cursor/mcp.json"
+{
+  "mcpServers": {
+    "fudoki": { "url": "https://api.fudoki.dev/mcp" }
+  }
+}
+```
+
+Customize で有効になっていることを確かめます。画面が変わっていたら [Cursor の手順](https://cursor.com/docs/mcp)に従ってください。

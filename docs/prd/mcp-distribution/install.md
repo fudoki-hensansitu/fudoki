@@ -4,6 +4,8 @@
 
 ## Codex
 
+公開版はChatGPT・Codex共通のplugin ディレクトリにある（[風土記](https://chatgpt.com/plugins/plugin_asdk_app_6ad87dc03a608191a13bba05310ea5d9)）。ChatGPT desktopのCodexではPlugins Directoryで「風土記」を開いて「＋」でインストールする。以下はGitのsourceから入れる場合。
+
 このrepoの `.agents/plugins/marketplace.json` は `fudoki-plugins` というローカルsourceを宣言する。対応するChatGPT desktopのPlugins Directoryでこのsourceを選び、風土記をインストールする。必要なら先に `codex plugin marketplace add /absolute/path/to/fudoki` で登録する。
 
 Gitから導入する場合は `codex plugin marketplace add fudoki-hensansitu/fudoki` でsourceを登録する。現在のCLIでは `codex plugin add fudoki@fudoki-plugins` でインストールできる（導入先で `codex plugin add --help` を確認）。desktopのPlugins Directoryでも `fudoki-plugins` を選んでインストールできる。`compare-expenditure` skill（評価の検索の手順は `references/evaluation.md`）と5つのMCP toolが読み込まれたことを確認する。

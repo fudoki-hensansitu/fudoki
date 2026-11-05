@@ -1,13 +1,13 @@
 # 公開提出の準備
 
-状態: Claudeは2026-10-16にMCP connector（slug `fudoki`、認証なし、6 tool）を審査に提出した。Plugin bundle は2026-10-16に `wwwyo/fudoki` で提出したが、2026-10-25に repo を `fudoki-hensansitu/fudoki` へ移したため出し直した（`plugins/fudoki`、main を追跡、push webhook あり。Publish requested で審査待ち）。申請のソースは repo を変えられず、旧申請はリダイレクトで読めても push webhook が `wrong_repository`（422）で拒否されたので、旧申請は取り下げた。OpenAIは2026-10-21に発行者の本人確認（Individual）が通り、ドメイン確認（`api.fudoki.dev/.well-known/openai-apps-challenge`）を済ませてZIPを提出し、In reviewになった。提出画面はpositive 5件・negative 3件ちょうどを求める。提出時にカテゴリの確認とMCP checksのnon-blockingの警告が出ており、未対応。録画URLは#197より前のUIの記録。仕様確認日: 2026-10-14。
+状態: Claudeは2026-10-16にMCP connector（slug `fudoki`、認証なし、6 tool）を審査に提出した。Plugin bundle は2026-10-16に `wwwyo/fudoki` で提出したが、2026-10-25に repo を `fudoki-hensansitu/fudoki` へ移したため出し直した（`plugins/fudoki`、main を追跡、push webhook あり。Publish requested で審査待ち）。申請のソースは repo を変えられず、旧申請はリダイレクトで読めても push webhook が `wrong_repository`（422）で拒否されたので、旧申請は取り下げた。OpenAIは2026-10-21に発行者の本人確認（Individual）が通り、ドメイン確認（`api.fudoki.dev/.well-known/openai-apps-challenge`）を済ませてZIPを提出し、In reviewになった。提出画面はpositive 5件・negative 3件ちょうどを求める。提出時にカテゴリの確認とMCP checksのnon-blockingの警告が出ており、未対応。録画URLは#197より前のUIの記録。2026-11-05にOpenAIの審査を通り、ChatGPT・Codex共通のplugin ディレクトリに掲載された（https://chatgpt.com/plugins/plugin_asdk_app_6ad87dc03a608191a13bba05310ea5d9）。仕様確認日: 2026-10-14。
 
 ## 掲載する内容
 
 | 項目 | 値・状態 |
 | --- | --- |
 | 名称 | 風土記(fudoki)（package ID: fudoki） |
-| 発行者 | 風土記。本人確認は提出画面で未実施 |
+| 発行者 | 風土記。OpenAIは2026-10-21に本人確認（Individual）済み |
 | 提供国 | 日本（JP） |
 | 課金・購入 | なし |
 | MCP URL | https://api.fudoki.dev/mcp |
@@ -66,7 +66,7 @@ Computer pluginでの操作補助も可能だが、録画機能とは別であ�
 
 ## 後日、外部で行うこと
 
-OpenAIは公開用ZIPをDeveloper PortalのPluginsへ読み込み、既存MCP URLを接続する。登録済みapp IDや `.app.json` はauthor提供ZIPには含めない。掲載URL、発行者、レビュー情報、録画、国設定を確認し、portal検査を完了してから提出する。個人用custom MCP接続は公開提出を兼ねない。[OpenAIの提出](https://developers.openai.com/plugins/deploy/submission)
+OpenAIへの提出の手順（2026-11-05に公開済み。以下は提出時の記録）：公開用ZIPをDeveloper PortalのPluginsへ読み込み、既存MCP URLを接続する。登録済みapp IDや `.app.json` はauthor提供ZIPには含めない。掲載URL、発行者、レビュー情報、録画、国設定を確認し、portal検査を完了してから提出する。個人用custom MCP接続は公開提出を兼ねない。[OpenAIの提出](https://developers.openai.com/plugins/deploy/submission)
 
 Claudeは `claude.ai/directory/manage` でMCP connectorとPlugin bundleをそれぞれ準備する。pluginのrepoは `fudoki-hensansitu/fudoki`、pathは `plugins/fudoki`。repo を移すときは申請を出し直す（ソースの repo は変えられない）。GitHub連携・push権限の確認、連絡先、公開ポリシー、実機確認、portalのdata handling・complianceが残る。既存connectorとpluginを組み合わせる提出として扱う。[Claude connector](https://claude.com/docs/connectors/building/submission)・[Claude plugin](https://claude.com/docs/plugins/submit)
 
