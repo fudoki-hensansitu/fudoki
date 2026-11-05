@@ -64,7 +64,7 @@ function MokuGroup({ moku, kouYen }: { moku: Moku; kouYen: number }) {
           {rest.length > 0 ? (
             <li data-setsu-rest className="text-[11.5px] text-muted-foreground">
               <Tooltip>
-                <TooltipTrigger delay={100} className="grid w-full grid-cols-[minmax(0,1fr)_auto] gap-x-2.5 text-left hover:text-foreground">
+                <TooltipTrigger delay={100} className="grid w-full cursor-default! grid-cols-[minmax(0,1fr)_auto] gap-x-2.5 text-left hover:text-foreground">
                   <span className="underline decoration-dotted underline-offset-2">ほか{rest.length}節</span>
                   {restYen !== null ? <span className="text-right tabular-nums">{pctOr(restYen, mokuYen)}</span> : null}
                 </TooltipTrigger>
