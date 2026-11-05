@@ -1,7 +1,8 @@
 import { BINARY_ASSETS } from './assets'
-import { CHAT_SHELL_HTML } from './chat-shell'
+import { chatShellHtml } from './chat-shell'
 import { MINCHO_WOFF2 } from './font.generated'
-import { FAVICON_SVG, LANDING_HTML } from './landing'
+import { FAVICON_SVG, landingHtml } from './landing'
+import { navOpen } from './nav/render'
 import { Hono } from 'hono'
 import { MANIFEST, OFFLINE_HTML, OFFLINE_PATH_NAME, SERVICE_WORKER } from './pwa'
 import { api, type AppEnv } from './server/api'
@@ -25,6 +26,11 @@ const TURNSTILE_TEST_SITE_KEY = '1x00000000000000000000AA'
 const escapeAttr = (s: string) => s.replace(/[&"<>]/g, (c) => `&#${c.charCodeAt(0)};`)
 const html = (body: string, cache: string) => new Response(body, { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': cache } })
 
+// サイドバーの開閉（cookie）ごとに一度だけ組み立てる
+const LANDING = { open: landingHtml(true), closed: landingHtml(false) }
+const CHAT_SHELL = { open: chatShellHtml(true), closed: chatShellHtml(false) }
+const variant = (cookie: string | undefined) => (navOpen(cookie) ? 'open' : 'closed')
+
 const app = new Hono<AppEnv>()
 
 app.route('/', api)
@@ -35,9 +41,9 @@ app.get('/', (c) => {
   const { hostname } = new URL(c.req.url)
   // Turnstile の site key は config の var（未設定なら入口の島は入力を出さない）。手元は本番の widget の hostname に無いので試験用の鍵（.dev.vars の試験用 secret と対）にする
   const siteKey = hostname === 'localhost' || hostname === '127.0.0.1' ? TURNSTILE_TEST_SITE_KEY : (c.env.TURNSTILE_SITE_KEY ?? '')
-  return html(LANDING_HTML.replace('__TURNSTILE_SITE_KEY__', escapeAttr(siteKey)), CACHE)
+  return html(LANDING[variant(c.req.header('Cookie'))].replace('__TURNSTILE_SITE_KEY__', escapeAttr(siteKey)), CACHE)
 })
-app.get('/s/:id', (c, next) => (SESSION_ID.test(c.req.param('id')) ? html(CHAT_SHELL_HTML, 'no-store') : next()))
+app.get('/s/:id', (c, next) => (SESSION_ID.test(c.req.param('id')) ? html(CHAT_SHELL[variant(c.req.header('Cookie'))], 'no-store') : next()))
 // service worker は更新を遅らせない（ブラウザは 24 時間まで古い sw.js を使うので no-cache にする）
 app.get('/sw.js', () => new Response(SERVICE_WORKER, { headers: { 'Content-Type': 'text/javascript; charset=utf-8', 'Cache-Control': 'no-cache' } }))
 app.get(OFFLINE_PATH_NAME, () => html(OFFLINE_HTML, CACHE))

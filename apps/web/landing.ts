@@ -4,6 +4,7 @@ import { HOME } from './home-data'
 import { PWA_HEAD, PWA_REGISTER } from './pwa'
 import { BACKGROUND_DARK, BACKGROUND_LIGHT, THEME_COLOR_META } from './tokens'
 import { LOGO_G } from './logo'
+import { withSiteNav } from './nav/render'
 
 const MCP = 'https://api.fudoki.dev/mcp'
 const DOCS = 'https://docs.fudoki.dev'
@@ -81,22 +82,12 @@ code{font:13px/1.6 var(--font-mono);letter-spacing:0;overflow-wrap:anywhere}
 .btn .i{width:14px;height:14px}
 .logo{display:block;width:auto;color:var(--primary)}
 
-.nav{position:sticky;top:max(8px,env(safe-area-inset-top));z-index:20;padding-inline:calc(var(--gut) - 8px);transition:opacity .25s ease-out}
-.nav[data-hide]:not(:has(:focus-visible)){opacity:0;pointer-events:none}
-.bar{display:flex;align-items:center;height:56px;padding:0 8px 0 14px;border:.5px solid transparent;border-radius:999px;transition:background-color .3s ease-out,border-color .3s ease-out,box-shadow .3s ease-out}
-.nav[data-scrolled] .bar{border-color:var(--border);background:var(--background);box-shadow:var(--shadow-pill)}
-.nav .logo{height:28px}
-.links{display:flex;gap:28px;margin-inline:auto;font-size:14px}
-.links a{transition:color 150ms var(--ease)}
-.links a:hover{color:var(--muted-foreground)}
-.right{display:flex;gap:6px}
-.right .btn{height:36px;padding:0 14px;font-size:14px;font-weight:400}
-.right .go{cursor:pointer}
 dialog.setup{width:min(560px,calc(100% - 32px));padding:24px;border:.5px solid var(--border);border-radius:var(--radius-lg,16px);background:var(--background);color:var(--foreground)}
 dialog.setup::backdrop{background:color-mix(in srgb,var(--foreground) 40%,transparent)}
 dialog.setup h2{font-size:20px}
 dialog.setup p{margin-top:8px;font-size:14px;color:var(--muted-foreground)}
 dialog.setup pre{margin:16px 0;padding:14px;max-height:40svh;overflow:auto;border-radius:var(--radius-sm);background:var(--card);font:13px/1.7 var(--font-mono);letter-spacing:0;white-space:pre-wrap;overflow-wrap:anywhere}
+button.setup-open{margin-top:24px;cursor:pointer}
 dialog.setup .acts{display:flex;gap:8px;justify-content:flex-end}
 dialog.setup .btn{cursor:pointer}
 
@@ -221,8 +212,6 @@ footer{margin-top:96px;padding-top:80px;background:var(--secondary)}
 .sweep{background:linear-gradient(90deg,var(--foreground) 0 33.33%,var(--kincha) 40%,var(--shu) 46%,var(--sakura) 52%,var(--ai) 58%,var(--foreground) 66.67%) 0 0/300% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 
 @media (max-width:960px){
-.links{display:none}
-.right{margin-left:auto}
 .steps,.mcp,.faq{grid-template-columns:minmax(0,1fr)}
 .rail{display:none}
 .step{min-height:0;padding-block:0 96px}
@@ -254,7 +243,7 @@ html{scroll-behavior:smooth}
 .sweep.in{animation:sweep 1.4s var(--ease-sweep) both}
 @keyframes sweep{from{background-position:100% 0}to{background-position:0 0}}
 }
-@media (prefers-reduced-motion:reduce){.rail *{transition:none}.nav{transition:none}}
+@media (prefers-reduced-motion:reduce){.rail *{transition:none}}
 `
 
 const ICONS = `<svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -300,11 +289,6 @@ const SETUP_PROMPT = [
 ].join('\n')
 
 const BODY = `${ICONS}
-<nav class="nav" aria-label="サイト"><div class="bar">
-<a href="/" aria-label="風土記 ホーム">${logo('logo')}</a>
-<div class="links"><a href="#how">しくみ</a><a href="#mcp">AI から使う</a><a href="${DOCS}">ドキュメント</a><a href="#faq">よくある質問</a></div>
-<div class="right"><button class="btn go" type="button" data-open="setup">AI に接続</button></div>
-</div></nav>
 <dialog class="setup" id="setup" aria-labelledby="setup-h"><h2 id="setup-h">AI に貼り付けて接続する</h2>
 <p>下の文章をコピーして、お使いの AI（Claude・ChatGPT など）に貼り付けると、風土記の MCP を追加する手順を案内してくれます。</p>
 <pre id="setup-text">${SETUP_PROMPT}</pre>
@@ -351,14 +335,15 @@ const BODY = `${ICONS}
 <div class="stage pdf"><div class="art oats" aria-hidden="true"><i style="left:-30px;top:-40px">確</i></div>
 <figure class="sheet"><figcaption><span>${origin.jurisdiction} · ${origin.document}</span><span class="num">PDF ${origin.page}頁</span></figcaption>
 <div class="crop"><img src="/home/origin.webp" width="2136" height="879" loading="lazy" alt="${origin.jurisdiction}の決算書 ${origin.page}頁の切り抜き。「${origin.name}」の使った額 ${yen(origin.amount)}"><i class="mark" style="${markStyle}" aria-hidden="true"></i></div>
-<p>「${origin.name}」の使った額 <b class="num">${yen(origin.amount)}</b><small>囲みは、API が返す印字の位置</small></p></figure></div></div>
+<p>「${origin.name}」の使った額 <b class="num">${yen(origin.amount)}</b><small>囲みは、API が返す印字の位置</small></p></figure></div>
 </article>
 </div></div>
 </section>
 
 <section class="mcp wrap" id="mcp" aria-labelledby="mcp-h">
 <div><p class="eyebrow">AI から使う</p><h2 id="mcp-h">URL を一つ登録するだけ</h2>
-<ol class="howto"><li><b>一</b><span>MCP に対応した AI クライアントの設定を開く</span></li><li><b>二</b><span><code>${MCP}</code> を登録する（認証は要りません）</span></li><li><b>三</b><span>「北区に住んでいます。何の予算が見れますか？」と聞く</span></li></ol></div>
+<ol class="howto"><li><b>一</b><span>MCP に対応した AI クライアントの設定を開く</span></li><li><b>二</b><span><code>${MCP}</code> を登録する（認証は要りません）</span></li><li><b>三</b><span>「北区に住んでいます。何の予算が見れますか？」と聞く</span></li></ol>
+<button class="btn setup-open" type="button" data-open="setup">AI に貼り付けて接続する</button></div>
 <figure class="demo">
 <video src="/home/demo.mp4" poster="/home/demo-poster.webp" width="1280" height="840" muted loop playsinline preload="none" tabindex="0" aria-label="ChatGPT から風土記の MCP に、北区の決算を聞いた操作の録画。Enter で再生・停止"></video>
 <figcaption><a href="${DOCS}/mcp">MCP の使い方を見る${icon('arrow-right')}</a></figcaption>
@@ -384,8 +369,8 @@ const BODY = `${ICONS}
 <div class="legal"><span>713年、諸国に同じ様式で報告させた地誌にならって</span><span>© 2026 風土記</span></div>
 </footer>`
 
-// nav の浮き、見出しの sweep、3つのステップの現在地。どれも無くても読める
-const SCRIPT = `const n=document.querySelector('.nav'),sp=document.querySelector('.steps'),h=document.documentElement;let ly=0;const s=()=>{const y=scrollY,d=y-ly;n.toggleAttribute('data-scrolled',y>24);if(y<=80)n.removeAttribute('data-hide');else if(Math.abs(d)>=4)n.toggleAttribute('data-hide',d>0);if(Math.abs(d)>=4)ly=y;const b=sp.getBoundingClientRect();h.toggleAttribute('data-snap',b.top<=1&&b.bottom>=innerHeight-1)};addEventListener('scroll',s,{passive:true});s();
+// 見出しの sweep、3つのステップの現在地。どれも無くても読める
+const SCRIPT = `const sp=document.querySelector('.steps'),h=document.documentElement;const s=()=>{const b=sp.getBoundingClientRect();h.toggleAttribute('data-snap',b.top<=1&&b.bottom>=innerHeight-1)};addEventListener('scroll',s,{passive:true});s();
 if('IntersectionObserver'in window){const o=new IntersectionObserver(l=>l.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');o.unobserve(e.target)}}),{threshold:.6});document.querySelectorAll('.sweep').forEach(e=>o.observe(e));
 const r=document.querySelector('.rail'),t=[...document.querySelectorAll('.rail a')],st=[...document.querySelectorAll('.step')];const p=new IntersectionObserver(l=>l.forEach(e=>{if(e.isIntersecting){const i=st.indexOf(e.target);r.style.setProperty('--at',i);t.forEach((a,j)=>j===i?a.setAttribute('aria-current','step'):a.removeAttribute('aria-current'))}}),{rootMargin:'-45% 0px -45% 0px'});st.forEach(e=>p.observe(e))}
 const dg=document.getElementById('setup');if(dg&&dg.showModal){document.querySelector('[data-open]').addEventListener('click',()=>dg.showModal());dg.querySelector('[data-close]').addEventListener('click',()=>dg.close());dg.addEventListener('click',e=>{if(e.target===dg)dg.close()});const cb=dg.querySelector('[data-copy]');cb.addEventListener('click',()=>{const done=t=>{cb.textContent=t;setTimeout(()=>{cb.textContent='コピーする'},2000)};Promise.resolve().then(()=>navigator.clipboard.writeText(document.getElementById('setup-text').textContent)).then(()=>done('コピーしました'),()=>done('コピーできませんでした'))})}
@@ -399,7 +384,8 @@ if('IntersectionObserver'in window)new IntersectionObserver(l=>{if(l[0].isInters
 
 const DESCRIPTION = '日本の自治体の支出の予算と決算を事業ごとに集め、AI から問い合わせられるデータとして配る。'
 
-export const LANDING_HTML = `<!doctype html>
+/** 入口の1枚。open はサイドバーを開いて書くか（navOpen で cookie から決める） */
+export const landingHtml = (open: boolean) => `<!doctype html>
 <html lang="ja">
 <head>
 <meta charset="utf-8">
@@ -430,12 +416,15 @@ ${PWA_HEAD}
 ${TURNSTILE_SCRIPT}
 </head>
 <body>
-${BODY}
+${withSiteNav(BODY, { open })}
 <script>${SCRIPT}</script>
 ${PWA_REGISTER}
 </body>
 </html>
 `
+
+/** サイドバーを開いた既定の入口（字の subset を作る build:font が読む） */
+export const LANDING_HTML = landingHtml(true)
 
 export const FAVICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32.0000 32" role="img" aria-label="風土記">
   <title>風土記</title><style>svg { color: #2f5d43; --logo-rule-ink: #29523b; } @media (prefers-color-scheme: dark) { svg { color: #8fbfa2; --logo-rule-ink: #9cc7ad; } }</style>
