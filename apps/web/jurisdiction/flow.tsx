@@ -9,6 +9,8 @@ import { formatYen, type Drill, type Kou, type Moku, type PageData, type YearTot
 const SETSU_SHOWN = 3
 /** 目の側に立てる棒の幅。項の棒（w-2）と揃える */
 const MOKU_BAR = 8
+/** 節の側に立てる棒の幅 */
+const SETSU_BAR = 5
 const MOBILE_QUERY = '(max-width: 699px)'
 
 const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
@@ -18,13 +20,14 @@ const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
 }
 
 const amountText = (yen: number, missing?: boolean) => (missing ? '金額未記載' : formatYen(yen))
-const share = (yen: number, max: number, missing?: boolean) => (missing || max <= 0 ? 0 : (Math.max(0, yen) / max) * 100)
+const share = (yen: number, max: number, missing?: boolean) => (missing || max <= 0 ? 0 : Math.min(100, (Math.max(0, yen) / max) * 100))
 
-/** 節は目の内訳。棒は目の金額に占める割合で、上位だけ名前を出して残りは件数にまとめる */
+/** 節は目の内訳。上位だけ名前を出して残りは件数にまとめる。広い画面では目の棒から帯でつなぎ、狭い画面では目の金額に占める割合の横棒を出す */
 function MokuGroup({ moku }: { moku: Moku }) {
   const shown = moku.setsu.filter((s) => s.amountMissing || s.yen > 0)
   const top = shown.slice(0, SETSU_SHOWN)
-  const base = moku.amountMissing ? 0 : moku.yen
+  // 目の金額が印字されていないときは、一番大きい節を基準にして大小だけ見せる
+  const base = moku.amountMissing ? Math.max(0, ...top.filter((s) => !s.amountMissing).map((s) => s.yen)) : moku.yen
   return (
     <div data-moku data-yen={moku.amountMissing ? 0 : moku.yen} className="grid translate-y-1.5 grid-cols-1 items-start gap-1.5 opacity-30 transition-[opacity,transform] duration-500 group-data-[active=true]/kou:translate-y-0 group-data-[active=true]/kou:opacity-100 sm:grid-cols-[5fr_7fr] sm:gap-4">
       <div className="min-w-0">
@@ -32,13 +35,13 @@ function MokuGroup({ moku }: { moku: Moku }) {
         <div className="text-xs tabular-nums text-muted-foreground">{amountText(moku.yen, moku.amountMissing)}</div>
       </div>
       {top.length > 0 ? (
-        <ul className="grid min-w-0 gap-y-1 border-l pl-3 text-[12.5px] leading-snug" aria-label={`${moku.name}の節`}>
+        <ul data-setsu-list className="grid min-w-0 gap-y-1 border-l pl-3 text-[12.5px] leading-snug sm:border-0 sm:pl-4" aria-label={`${moku.name}の節`}>
           <li className="text-[11px] text-muted-foreground sm:hidden">節</li>
           {top.map((s) => (
-            <li key={s.name} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2.5">
+            <li key={s.name} data-setsu data-yen={s.amountMissing ? 0 : Math.max(0, s.yen)} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2.5">
               <span className="truncate">{s.name}</span>
               <span className="text-right tabular-nums text-muted-foreground">{amountText(s.yen, s.amountMissing)}</span>
-              <span className="col-span-2 h-1 overflow-hidden rounded-full bg-foreground/5">
+              <span className="col-span-2 h-1 overflow-hidden rounded-full bg-foreground/5 sm:hidden">
                 <span className="block h-full rounded-full bg-primary/55" style={{ width: `${share(s.yen, base, s.amountMissing)}%` }} />
               </span>
             </li>
@@ -52,18 +55,26 @@ function MokuGroup({ moku }: { moku: Moku }) {
   )
 }
 
-/** 項の帯を目の行へ渡す。狭い画面では出さない */
+interface Ribbon { d: string; x: number; y: number; h: number }
+/** x0 の y0 から太さ h0 で出て、x1 の y1 に太さ h1 で着く帯 */
+const band = (x0: number, y0: number, h0: number, x1: number, y1: number, h1: number) => {
+  const m = (x0 + x1) / 2
+  return `M${x0} ${y0}C${m} ${y0},${m} ${y1},${x1} ${y1}L${x1} ${y1 + h1}C${m} ${y1 + h1},${m} ${y0 + h0},${x0} ${y0 + h0}Z`
+}
+
+/** 項の帯を目の行へ、目の帯を上位の節へ渡す。狭い画面では出さない */
 function KouSection({ kou, active, loading, onBox }: { kou: Kou; active: boolean; loading: boolean; onBox: (el: HTMLElement | null) => void }) {
   const box = React.useRef<HTMLElement | null>(null)
   const rib = React.useRef<HTMLDivElement>(null)
-  const [paths, setPaths] = React.useState<{ d: string; x: number; y: number; h: number }[]>([])
+  const [paths, setPaths] = React.useState<Ribbon[]>([])
+  const [setsu, setSetsu] = React.useState<Ribbon[]>([])
   const [bar, setBar] = React.useState({ top: 0, height: 0 })
   React.useLayoutEffect(() => {
     const el = box.current
     const lane = rib.current
     if (!el || !lane) return
     const measure = () => {
-      if (window.matchMedia(MOBILE_QUERY).matches) return setPaths([])
+      if (window.matchMedia(MOBILE_QUERY).matches) { setSetsu([]); return setPaths([]) }
       const rows = [...el.querySelectorAll<HTMLElement>('[data-moku]')]
       if (rows.length === 0) return setPaths([])
       const origin = lane.getBoundingClientRect().top
@@ -74,25 +85,46 @@ function KouSection({ kou, active, loading, onBox }: { kou: Kou; active: boolean
       // 帯は両端で同じ太さ（全体図と同じ読み方）。目の棒が次の目の行に重ならない太さまで縮める
       const slots = boxes.map((r, i) => (boxes[i + 1] ? boxes[i + 1]!.top - r.top - 6 : r.height))
       const scale = Math.max(Math.min(boxes.at(-1)!.bottom - boxes[0]!.top, ...shares.map((v, i) => (v > 0 ? slots[i]! / v : Infinity))), 24)
-      const width = lane.clientWidth
+      const lanebox = lane.getBoundingClientRect()
+      const width = lanebox.width
       const end = width - MOKU_BAR
       const top = boxes[0]!.top - origin
       let y = top
-      const next = boxes.map((r, i) => {
+      const next: Ribbon[] = []
+      const twigs: Ribbon[] = []
+      boxes.forEach((r, i) => {
         const h = Math.max(shares[i]! * scale, 2)
         const ty = r.top - origin
-        const a = y
+        next.push({ d: band(0, y, h, end, ty, h), x: end, y: ty, h })
         y += h
-        return { d: `M0 ${a}C${end / 2} ${a},${end / 2} ${ty},${end} ${ty}L${end} ${ty + h}C${end / 2} ${ty + h},${end / 2} ${a + h},0 ${a + h}Z`, x: end, y: ty, h }
+        // 目の棒から上位の節へ。節の棒は目の金額に占める割合で、節の行に重ならない太さまで縮める
+        const list = rows[i]!.querySelector<HTMLElement>('[data-setsu-list]')
+        const items = list ? [...list.querySelectorAll<HTMLElement>('[data-setsu]')] : []
+        if (!list || items.length === 0 || yen[i]! <= 0) return
+        const x = list.getBoundingClientRect().left - lanebox.left
+        const rects = items.map((li) => li.getBoundingClientRect())
+        const parts = items.map((li) => Number(li.dataset.yen) / yen[i]!)
+        const gaps = rects.map((b, j) => (rects[j + 1] ? rects[j + 1]!.top - b.top - 3 : b.height))
+        const fit = Math.min(...parts.map((v, j) => (v > 0 ? gaps[j]! / v : Infinity)), rects.at(-1)!.bottom - rects[0]!.top)
+        let from = ty
+        rects.forEach((b, j) => {
+          const sh = Math.max(parts[j]! * h, 1)
+          const th = Math.max(parts[j]! * fit, 2)
+          twigs.push({ d: band(width, from, sh, x, b.top - origin, th), x, y: b.top - origin, h: th })
+          from += sh
+        })
       })
       setBar({ top, height: y - top })
       setPaths(next)
+      setSetsu(twigs)
     }
     measure()
     const observer = new ResizeObserver(measure)
     observer.observe(el)
-    return () => observer.disconnect()
-  }, [kou.moku.length])
+    // 目の行は開くときに少し動くので、動き終わってから測り直す
+    const settle = window.setTimeout(measure, 550)
+    return () => { observer.disconnect(); window.clearTimeout(settle) }
+  }, [kou.moku.length, active])
   return (
     <section ref={(el) => { box.current = el; onBox(el) }} data-kou={kou.id} data-active={active} className="group/kou grid min-h-full snap-start snap-always grid-cols-1 content-start gap-3 px-5 pb-5 pt-3 sm:grid-cols-[150px_10px_64px_minmax(0,1fr)] sm:gap-0 sm:pr-8">
       <div className="min-w-0 border-b pb-2 sm:border-0 sm:pb-0 sm:pr-2">
@@ -106,6 +138,8 @@ function KouSection({ kou, active, loading, onBox }: { kou: Kou; active: boolean
       <div ref={rib} className="relative hidden sm:block" aria-hidden="true">
         <svg className="absolute inset-0 size-full overflow-visible">
           {paths.map((p, i) => <path key={i} d={p.d} className={`fill-primary/20 transition-opacity duration-500 ${active ? 'opacity-100' : 'opacity-0'}`} />)}
+          {setsu.map((p, i) => <path key={`s${i}`} d={p.d} className={`fill-primary/15 transition-opacity duration-500 ${active ? 'opacity-100' : 'opacity-0'}`} />)}
+          {setsu.map((p, i) => <rect key={`t${i}`} x={p.x} y={p.y} width={SETSU_BAR} height={p.h} rx={1.5} className={`fill-primary/70 transition-opacity duration-500 ${active ? 'opacity-100' : 'opacity-0'}`} />)}
           {paths.map((p, i) => <rect key={`b${i}`} x={p.x} y={p.y} width={MOKU_BAR} height={p.h} rx={2} className={`fill-primary transition-opacity duration-500 ${active ? 'opacity-100' : 'opacity-0'}`} />)}
         </svg>
       </div>
@@ -113,7 +147,7 @@ function KouSection({ kou, active, loading, onBox }: { kou: Kou; active: boolean
         {kou.moku.length > 0 ? (
           <div className="hidden grid-cols-[5fr_7fr] gap-4 text-[11px] text-muted-foreground sm:grid" aria-hidden="true">
             <span>目</span>
-            <span className="pl-3">節</span>
+            <span className="pl-4">節</span>
           </div>
         ) : null}
         {kou.moku.length > 0 ? kou.moku.map((m) => <MokuGroup key={m.id} moku={m} />) : (
