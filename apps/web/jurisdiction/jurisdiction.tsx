@@ -3,11 +3,12 @@
 // 歳出の決算は API の値。方針・政策領域・事業の入れ替えは jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
 import * as React from 'react'
 import { createRoot } from 'react-dom/client'
-import { ArrowUpRightIcon, GlobeIcon, MapPinIcon, UsersIcon } from 'lucide-react'
+import { ArrowUpRightIcon, ChevronDownIcon, GlobeIcon, MapPinIcon, UsersIcon } from 'lucide-react'
 import { StartForm } from '../chat/start-form'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Flow } from './flow'
 import { assetPath, type Domain, type PolicyProject, type Profile, type ProfileYear, type ProjectStatus, type Scrap } from './profiles'
-import { changePct, formatYen, INDEX_PATH, reiwa, type PageData, type Project, type Setsu, type YearTotal } from './types'
+import { changePct, formatYen, INDEX_PATH, reiwa, yearName, type PageData, type Project, type Setsu, type YearTotal } from './types'
 
 const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
   const res = await fetch(url, { signal })
@@ -186,7 +187,7 @@ function Budget({ data, year }: { data: PageData; year: number }) {
   const pct = total ? changePct(total.yen, prev?.yen) : null
   const max = data.projects[0]?.yen ?? 1
   const label = phase === 'settlement' ? '決算' : '予算'
-  const missing = `${reiwa(year)}の${label}は、まだ収録していません`
+  const missing = `${yearName(year)}の${label}は、まだ収録していません`
   return (
     <Section
       id="budget"
@@ -227,7 +228,7 @@ function Budget({ data, year }: { data: PageData; year: number }) {
             ))}
           </ul>
         ) : (
-          <Empty>{total ? `${reiwa(year)}の事業の一覧は、まだ出していません` : missing}</Empty>
+          <Empty>{total ? `${yearName(year)}の事業の一覧は、まだ出していません` : missing}</Empty>
         )}
       </div>
     </Section>
@@ -288,20 +289,36 @@ interface TocItem {
   sub?: boolean
 }
 
+/** 直近の3年度は並べ、それより前は一つのメニューにまとめる */
+const RECENT_YEARS = 3
+
 function YearPicker({ years, current, onChange }: { years: number[]; current: number; onChange: (y: number) => void }) {
+  const recent = years.slice(0, RECENT_YEARS)
+  const older = years.slice(RECENT_YEARS)
+  const olderPicked = older.includes(current)
+  const pill = (on: boolean) => `rounded-full px-2.5 py-1.5 text-[13px] ${on ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground'}`
   return (
     <div role="group" aria-label="年度" className="flex gap-1">
-      {years.map((y) => (
-        <button
-          key={y}
-          type="button"
-          aria-pressed={y === current}
-          onClick={() => onChange(y)}
-          className={`rounded-full px-2.5 py-1.5 text-[13px] ${y === current ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-        >
-          {reiwa(y)}
+      {recent.map((y) => (
+        <button key={y} type="button" aria-pressed={y === current} onClick={() => onChange(y)} title={reiwa(y)} className={pill(y === current)}>
+          {yearName(y)}
         </button>
       ))}
+      {older.length > 0 ? (
+        <DropdownMenu>
+          <DropdownMenuTrigger className={`inline-flex items-center gap-0.5 ${pill(olderPicked)}`}>
+            {olderPicked ? reiwa(current) : 'それより前'}
+            <ChevronDownIcon className="size-3.5" aria-hidden="true" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-auto">
+            <DropdownMenuRadioGroup value={olderPicked ? String(current) : ''} onValueChange={(v) => onChange(Number(v))}>
+              {older.map((y) => (
+                <DropdownMenuRadioItem key={y} value={String(y)}>{reiwa(y)}</DropdownMenuRadioItem>
+              ))}
+            </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ) : null}
     </div>
   )
 }

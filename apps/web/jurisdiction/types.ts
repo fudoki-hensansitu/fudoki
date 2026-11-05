@@ -67,6 +67,15 @@ export interface PageData {
 }
 
 /** 西暦の会計年度を令和にする（2025 → 令和7年度） */
+/** 今日を含む会計年度（4月始まり） */
+export const currentFiscalYear = (now = new Date()) => (now.getMonth() >= 3 ? now.getFullYear() : now.getFullYear() - 1)
+
+/** 今年度からの近さで呼ぶ。今年度・昨年度・一昨年度・来年度のほかは和暦の年度 */
+export function yearName(year: number, now = new Date()): string {
+  const diff = currentFiscalYear(now) - year
+  return diff === 0 ? '今年度' : diff === 1 ? '昨年度' : diff === 2 ? '一昨年度' : diff === -1 ? '来年度' : reiwa(year)
+}
+
 export const reiwa = (year: number) => (year >= 2019 ? `令和${year - 2018 === 1 ? '元' : year - 2018}年度` : `${year}年度`)
 
 /** 1億円以上は億円、それ未満は万円。3桁ごとに区切る。円の細かい数字は出典の頁で確かめてもらう */
