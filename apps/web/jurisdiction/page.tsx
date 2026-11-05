@@ -460,7 +460,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
               {profile?.site ? (
                 <span className="inline-flex items-center gap-1.5">
                   <GlobeIcon className="size-4" aria-hidden="true" />
-                  <a href={profile.site} className="text-primary no-underline">{new URL(profile.site).host.replace(/^www\./, '')}</a>
+                  <a href={profile.site} target="_blank" rel="noopener" className="text-primary no-underline">公式サイト</a>
                 </span>
               ) : null}
             </div>
