@@ -52,8 +52,8 @@ const Item = ({ href, label, icon, active }: { href: string; label: string; icon
 const FEEDBACK = 'mailto:support@fudoki.dev'
 const MCP = `${DOCS}/mcp`
 const GITHUB = 'https://github.com/fudoki-hensansitu/fudoki'
-/** 風土記の X アカウント。決まるまでは空で、icon を出さない */
-const X = ''
+/** 風土記の X アカウント。空にすると icon を出さない */
+const X = 'https://x.com/fudokijp'
 
 // ブランドのロゴ（Simple Icons の形）。lucide にはブランドの icon が無い
 const XIcon = () => (
