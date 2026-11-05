@@ -250,9 +250,7 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
   return (
     <div className="mx-auto max-w-[1120px] px-4 pb-24 pt-8 sm:px-8 sm:pt-12">
       <h1 className="text-[clamp(2.2rem,1.6rem+2.4vw,3.4rem)] font-normal leading-tight">自治体を探す</h1>
-      <p className="mt-3 text-muted-foreground [word-break:auto-phrase]">
-        {entries.length ? `${entries.length} の自治体の決算を収録しています。地図か表から選ぶと、その街の歳出の内訳へ進めます。` : 'まだ決算を収録した自治体がありません。'}
-      </p>
+      {entries.length ? null : <p className="mt-3 text-muted-foreground">まだ決算を収録した自治体がありません。</p>}
 
       {/* Esc で選択を外し、都道府県自体に戻す */}
       <section className="mt-8 grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1fr)_320px]" aria-label="地図" onKeyDown={(ev) => ev.key === 'Escape' && setSelected('')}>
