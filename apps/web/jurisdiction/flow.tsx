@@ -235,6 +235,8 @@ function KanPanel({ drill, loading }: { drill: Drill; loading: boolean }) {
         {drill.kou.map((k, i) => (
           <KouSection key={k.id} kou={k} active={i === current} loading={loading} onBox={(el) => { sections.current[i] = el }} />
         ))}
+        {/* 下端にも止まる所を置く。最後の項の頭にしか止まれないと、下端まで送れず頁のスクロールにも渡らない */}
+        <div aria-hidden="true" className="h-px snap-end" />
       </div>
     </div>
   )
