@@ -19,6 +19,7 @@
   :is(#site-nav, [data-slot="sheet-content"]) :where(button) { font: inherit; letter-spacing: inherit; color: inherit; background: transparent; }
   :is(#site-nav, [data-slot="sheet-content"]) :where(button:not(:disabled)) { cursor: pointer; }
   :is(#site-nav, [data-slot="sheet-content"]) :where(ul) { list-style: none; }
+  :is(#site-nav, [data-slot="sheet-content"]) :where(a) { color: inherit; text-decoration: none; }
   :is(#site-nav, [data-slot="sheet-content"]) :where(svg) { display: block; vertical-align: middle; }
 }
 

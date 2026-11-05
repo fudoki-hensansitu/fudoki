@@ -9,12 +9,12 @@
   --input: var(--border);
   --destructive: var(--shu);
   --destructive-foreground: var(--primary-foreground);
-  /* サイドバーは薄緑（accent）。今いる項目と hover は、同じ緑を少し濃くして区別する */
-  --sidebar: var(--accent);
+  /* サイドバーは、付いているか分からないくらいの薄緑（accent を地の色で薄めたもの）。今いる項目と hover は accent で区別する */
+  --sidebar: color-mix(in srgb, var(--accent) 45%, var(--background));
   --sidebar-foreground: var(--foreground);
   --sidebar-primary: var(--primary);
   --sidebar-primary-foreground: var(--primary-foreground);
-  --sidebar-accent: color-mix(in srgb, var(--primary) 12%, var(--accent));
+  --sidebar-accent: var(--accent);
   --sidebar-accent-foreground: var(--accent-foreground);
   --sidebar-border: var(--border);
   --sidebar-ring: var(--ring);
@@ -60,8 +60,8 @@
   .site { padding-bottom: calc(3.5rem + env(safe-area-inset-bottom)); }
 }
 @media (min-width: 768px) {
-  :root { --nav-w: 16rem; }
-  :root:has(#site-nav [data-slot="sidebar"][data-state="collapsed"]) { --nav-w: 3rem; }
+  :root { --nav-w: 13rem; }
+  :root:has(#site-nav [data-slot="sidebar"][data-state="collapsed"]) { --nav-w: 3.5rem; }
   .site { display: flex; }
   .site-main { flex: 1; }
 }
