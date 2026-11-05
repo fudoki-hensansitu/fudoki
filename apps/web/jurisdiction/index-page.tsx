@@ -271,7 +271,7 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
                 ) : null}
               </BreadcrumbList>
             </Breadcrumb>
-            <span className="text-xs text-muted-foreground">{view ? (map ? '押して選ぶ・もう一度で戻す' : '') : '収録のある都道府県を選ぶ'}</span>
+            <span className="text-xs text-muted-foreground">{view ? '' : '収録のある都道府県を選ぶ'}</span>
           </div>
           <div className="flex flex-1 items-center">
             {view === null ? <JapanTiles counts={counts} onOpen={open} /> : map ? <PrefectureTiles map={map} entries={inView} selected={selected} onToggle={toggle} /> : <p className="w-full py-16 text-center text-sm text-muted-foreground">{viewName}の地図はまだありません。下の一覧から選べます。</p>}
