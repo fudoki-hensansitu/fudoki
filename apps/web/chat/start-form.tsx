@@ -1,6 +1,7 @@
 // 会話を始める入力（入口と自治体の個別ページが使う）。送ると Turnstile で確かめて会話を作り、/s/:id へ移る
 import * as React from 'react'
 import { Composer } from './composer'
+import { MAX_CONTEXT } from './history'
 import { saveSession, type StoredSession } from './store'
 import { mountTurnstile } from './turnstile'
 
@@ -22,7 +23,7 @@ export function StartForm({
   suggestions?: string[]
   /** Turnstile の鍵が無いとき入力の代わりに出す文 */
   unavailable?: string
-  /** 送るときに読む、画面で見ているもの（AI への参考。質問の本文には入れない） */
+  /** 送るときに読む、画面で見ているもの（質問とは別の利用者の発言として AI に渡す） */
   context?: () => string | undefined
   /** 渡すと /s/:id へ移らず、始めた会話をその場で開く */
   onStart?: (id: string, session: StoredSession) => void
@@ -55,8 +56,8 @@ export function StartForm({
       const res = await fetch('/api/sessions', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ turnstileToken }) })
       const body = (await res.json()) as { id?: string; token?: string; expiresAt?: number; error?: { message: string } }
       if (!res.ok || !body.id || !body.token) throw new Error(body.error?.message ?? '会話を始められませんでした')
-      const viewContext = context?.()?.slice(0, 2000)
-      const session: StoredSession = { token: body.token, expiresAt: body.expiresAt ?? 0, pending: prefix ? `${prefix}${text}` : text, ...(viewContext ? { viewContext } : {}) }
+      const pendingContext = context?.()?.slice(0, MAX_CONTEXT)
+      const session: StoredSession = { token: body.token, expiresAt: body.expiresAt ?? 0, pending: prefix ? `${prefix}${text}` : text, ...(pendingContext ? { pendingContext } : {}) }
       // 移った先は sessionStorage から token と質問を読むので、書けなければ移らない
       if (!saveSession(body.id, session))
         throw new Error('このブラウザでは会話を保存できないため始められません（プライベートブラウズや保存の制限を確かめてください）')

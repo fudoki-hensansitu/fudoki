@@ -419,7 +419,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
 
   return (
     <>
-      <div className={`fixed inset-x-0 top-0 z-30 border-b bg-background transition-transform duration-200 ease-out motion-reduce:transition-none ${mini ? '' : '-translate-y-full'}`} aria-hidden={!mini} inert={!mini}>
+      <div className={`fixed left-0 right-(--side-panel,0px) top-0 z-30 border-b bg-background transition-[transform,right] duration-200 ease-out motion-reduce:transition-none ${mini ? '' : '-translate-y-full'}`} aria-hidden={!mini} inert={!mini}>
         <div className="mx-auto flex h-[60px] max-w-[1120px] items-center gap-3 px-4">
           <span className="hidden size-10 shrink-0 place-items-center rounded-lg border bg-white p-1 sm:grid">{logo ? <img src={logo} alt="" className="w-full" /> : <span className="text-foreground">{data.name[0]}</span>}</span>
           <b className="shrink-0 text-lg font-normal">{data.name}</b>
@@ -512,12 +512,15 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
 }
 
 /** AI に聞く入力欄。最初は開いておき、読み進めるか Escape で右下のボタンに畳む。押すか「/」で開く。
- * 送ると頁を移らずに、下から会話の drawer を出す。閉じても会話は残り、右下のボタンで戻れる */
+ * 送ると頁を移らずに会話を開く。広い画面では右の side panel（頁は読み続けられる）、スマホでは下からの drawer。閉じても会話は残り、右下のボタンで戻れる */
 const DOCK_CLOSE_AFTER = 240
 /** 選んだ文として AI に渡す長さの上限 */
 const QUOTE_MAX = 600
 /** drawer の取っ手をこれだけ下へ引いたら閉じる */
 const DRAWER_DRAG_CLOSE = 80
+/** これより広い画面では右の side panel にする（Tailwind の md）。幅は SIDE_WIDTH */
+const WIDE_QUERY = '(min-width: 768px)'
+const SIDE_WIDTH = 440
 
 const Conversation = React.lazy(() => import('../chat/conversation').then((m) => ({ default: m.Conversation })))
 
@@ -561,7 +564,7 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
       const sel = document.getSelection()
       const node = sel?.anchorNode
       const inside = (n: Node | null | undefined) => !!n && (dock.current?.contains(n) || sheet.current?.contains(n))
-      if (inside(node) || inside(document.activeElement)) return
+      if (inside(node)) return
       const text = sel && !sel.isCollapsed ? sel.toString().replace(/\s+/g, ' ').trim() : ''
       setQuote(text.slice(0, QUOTE_MAX))
     }
@@ -625,12 +628,27 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
     })
   }
 
-  // drawer を開いている間は、下の頁を動かさない
+  // スマホの drawer を開いている間は、下の頁を動かさない。広い画面の side panel では頁を左へ寄せ、読み続けられるようにする
   React.useEffect(() => {
     if (!drawer) return
-    const overflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    return () => { document.body.style.overflow = overflow }
+    const body = document.body.style
+    const saved = { overflow: body.overflow, marginRight: body.marginRight }
+    const apply = () => {
+      const wide = matchMedia(WIDE_QUERY).matches
+      body.overflow = wide ? saved.overflow : 'hidden'
+      body.marginRight = wide ? `${SIDE_WIDTH}px` : saved.marginRight
+      // 固定の小さなヘッダーも panel の左で終える
+      document.documentElement.style.setProperty('--side-panel', wide ? `${SIDE_WIDTH}px` : '0px')
+    }
+    apply()
+    const media = matchMedia(WIDE_QUERY)
+    media.addEventListener('change', apply)
+    return () => {
+      media.removeEventListener('change', apply)
+      body.overflow = saved.overflow
+      body.marginRight = saved.marginRight
+      document.documentElement.style.removeProperty('--side-panel')
+    }
   }, [drawer])
 
   // 取っ手を下へ引いて閉じる
@@ -667,13 +685,13 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
 
   const header = chat ? (
     <div
-      className="flex touch-none cursor-grab flex-col items-center px-4 pb-2 pt-2 active:cursor-grabbing"
+      className="flex touch-none cursor-grab flex-col items-center px-4 pb-2 pt-2 active:cursor-grabbing md:cursor-auto md:touch-auto md:pt-3"
       onPointerDown={onHandleDown}
       onPointerMove={onHandleMove}
       onPointerUp={onHandleUp}
       onPointerCancel={onHandleUp}
     >
-      <span aria-hidden="true" className="mb-2 h-1.5 w-10 rounded-full bg-border" />
+      <span aria-hidden="true" className="mb-2 h-1.5 w-10 rounded-full bg-border md:hidden" />
       <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-2" onPointerDown={(e) => e.stopPropagation()}>
         <span className="text-sm text-muted-foreground">{name}について</span>
         <div className="flex items-center gap-1 text-muted-foreground">
@@ -698,7 +716,7 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
     <>
       <div ref={dock} onBlur={onDockBlur} className={`fixed inset-x-0 bottom-0 z-20 bg-gradient-to-t from-background from-60% to-transparent px-4 pb-[max(14px,env(safe-area-inset-bottom))] pt-3 transition-[opacity,transform] duration-200 motion-reduce:transition-none ${docked ? '' : 'pointer-events-none translate-y-4 opacity-0'}`} inert={!docked}>
         <div className="mx-auto max-w-[720px]">
-          <StartForm sitekey={sitekey} prefix={`${name}について：`} placeholder={`${name}について聞く…`} context={describe} onStart={start} before={chip} />
+          <StartForm sitekey={sitekey} placeholder={`${name}について聞く…`} context={describe} onStart={start} before={chip} />
         </div>
       </div>
       <button
@@ -714,19 +732,18 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
       </button>
       {chat ? (
         <>
-          <div aria-hidden="true" onClick={() => setDrawer(false)} className={`fixed inset-0 z-30 bg-foreground/20 transition-opacity duration-300 motion-reduce:transition-none ${drawer ? '' : 'pointer-events-none opacity-0'}`} />
+          <div aria-hidden="true" onClick={() => setDrawer(false)} className={`fixed inset-0 z-30 bg-foreground/20 md:hidden transition-opacity duration-300 motion-reduce:transition-none ${drawer ? '' : 'pointer-events-none opacity-0'}`} />
           <div
             ref={sheet}
             role="dialog"
-            aria-modal="true"
             aria-label={`${name}についての会話`}
             inert={!drawer}
             style={dragY ? { transform: `translateY(${dragY}px)`, transition: 'none' } : undefined}
-            className={`fixed inset-x-0 bottom-0 z-30 mx-auto flex h-[88dvh] max-w-4xl flex-col overflow-hidden rounded-t-[24px] border border-b-0 bg-background shadow-2xl transition-transform duration-300 ease-out motion-reduce:transition-none ${drawer ? '' : 'translate-y-[calc(100%+48px)]'}`}
+            className={`fixed inset-x-0 bottom-0 z-40 mx-auto flex h-[88dvh] max-w-4xl flex-col overflow-hidden rounded-t-[24px] border border-b-0 bg-background shadow-2xl transition-transform duration-300 ease-out motion-reduce:transition-none md:inset-x-auto md:right-0 md:top-0 md:h-auto md:w-[440px] md:max-w-none md:rounded-none md:border-y-0 md:border-r-0 md:shadow-xl ${drawer ? '' : 'translate-y-[calc(100%+48px)] md:translate-x-[calc(100%+48px)] md:translate-y-0'}`}
           >
             <div ref={scroller} className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
               <React.Suspense fallback={<p className="p-6 text-sm text-muted-foreground">会話を開いています…</p>}>
-                <Conversation key={chat.id} id={chat.id} stored={chat.session} header={header} scroller={scroller} />
+                <Conversation key={chat.id} id={chat.id} stored={chat.session} header={header} scroller={scroller} context={describe} beforeComposer={chip} onSend={() => setQuote('')} />
               </React.Suspense>
             </div>
           </div>

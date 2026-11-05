@@ -12,7 +12,7 @@ import { Marker, MarkerContent, MarkerIcon } from '@/components/ui/marker'
 import { Message, MessageContent } from '@/components/ui/message'
 import { Spinner } from '@/components/ui/spinner'
 import { Composer } from './composer'
-import { forServer } from './history'
+import { forServer, MAX_CONTEXT } from './history'
 import { Markdown } from './markdown'
 import { saveSession, type StoredSession } from './store'
 import { ViewFrame } from './view-frame'
@@ -22,7 +22,7 @@ const FADE_EDGE_PX = 4
 /** 一番下からこの距離以内なら、読み終えて追っていると見なす */
 const NEAR_BOTTOM_PX = 120
 
-type Metadata = { apps?: Record<string, string> }
+type Metadata = { apps?: Record<string, string>; context?: string }
 type ChatMessage = UIMessage<Metadata>
 
 const TOOL_LABELS: Record<string, string> = {
@@ -63,6 +63,9 @@ export function Conversation({
   header,
   scroller,
   autoFocus = true,
+  context,
+  beforeComposer,
+  onSend,
 }: {
   id: string
   stored: StoredSession
@@ -71,8 +74,17 @@ export function Conversation({
   /** 会話をスクロールする箱。無ければ頁全体 */
   scroller?: React.RefObject<HTMLElement | null>
   autoFocus?: boolean
+  /** 送るたびに読む、頁で見ているもの（自治体の頁の画面・選んだ文）。表とグラフの View が渡す文脈の前に足す */
+  context?: () => string | undefined
+  /** 続けて聞く入力欄の上に出すもの（選んだ文など） */
+  beforeComposer?: React.ReactNode
+  /** 続けて聞いたとき（選んだ文を外すなど） */
+  onSend?: () => void
 }) {
   const viewContext = React.useRef(stored.viewContext ?? '')
+  // 頁の文脈は質問ごとに読み、その発言の metadata に持たせる（server が質問とは別の利用者の発言にして AI に渡す）
+  const contextRef = React.useRef(context)
+  contextRef.current = context
   const transport = React.useMemo(
     () =>
       new DefaultChatTransport<ChatMessage>({
@@ -91,14 +103,21 @@ export function Conversation({
     onFinish: ({ messages }) => saveSession(id, { token: stored.token, expiresAt: stored.expiresAt, messages, ...(viewContext.current ? { viewContext: viewContext.current } : {}) }),
   })
   const busy = status === 'submitted' || status === 'streaming'
-  const send = React.useCallback((text: string) => void sendMessage({ text }), [sendMessage])
+  const onSendRef = React.useRef(onSend)
+  onSendRef.current = onSend
+  const send = React.useCallback((text: string, pageContext = contextRef.current?.()) => {
+    const ctx = pageContext?.slice(0, MAX_CONTEXT)
+    void sendMessage({ text, ...(ctx ? { metadata: { context: ctx } } : {}) })
+    onSendRef.current?.()
+  }, [sendMessage])
   // 入口で入力した最初の質問を1回だけ送る（StrictMode の二重実行でも1回）
   const sent = React.useRef(false)
   React.useEffect(() => {
     if (sent.current || !stored.pending) return
     sent.current = true
     saveSession(id, { token: stored.token, expiresAt: stored.expiresAt, messages: stored.messages, ...(stored.viewContext ? { viewContext: stored.viewContext } : {}) })
-    send(stored.pending)
+    // 入口で書いた最初の質問は、書いたときの文脈（選んだ文を含む）で送る
+    send(stored.pending, stored.pendingContext)
   }, [id, stored, send])
 
   // 一番下を読んでいる間は、送ったときも配信中も画面全体を最下部へ追う。利用者が上へ遡ったら追わない
@@ -168,6 +187,7 @@ export function Conversation({
         <div className="flex flex-1 flex-col gap-4 pb-6">
           {messages.map((m) => (
             <div key={m.id}>
+              {m.role === 'user' && m.metadata?.context ? <ContextNote text={m.metadata.context} /> : null}
               <Message align={m.role === 'user' ? 'end' : 'start'}>
                 <MessageContent>
                   {m.parts.map((p, i) => {
@@ -222,9 +242,28 @@ export function Conversation({
       <div className="sticky bottom-0 z-20 bg-background" style={{ transform: 'translateY(calc(-1 * var(--kb, 0px)))' }}>
         <div aria-hidden className={`pointer-events-none absolute inset-x-0 bottom-full h-10 bg-gradient-to-t from-background to-transparent transition-opacity duration-200 ${fade.bottom ? 'opacity-100' : 'opacity-0'}`} />
         <div className="mx-auto w-full max-w-3xl px-4 pt-2 ${scroller ? 'pb-[max(1rem,env(safe-area-inset-bottom))]' : 'pb-[calc(2rem+env(safe-area-inset-bottom))] sm:pb-12'}">
+          {beforeComposer}
           <Composer onSubmit={send} onStop={stop} busy={busy} placeholder="続けて聞く" autoFocus={autoFocus} compact />
         </div>
       </div>
+    </div>
+  )
+}
+
+/** 質問に添えた頁の文脈。質問の吹き出しとは分けて、その上に小さく出す。選んだ文はいつも見せ、画面の様子は開いて読む */
+function ContextNote({ text }: { text: string }) {
+  const lines = text.split('\n')
+  const quote = lines.find((l) => l.startsWith('選んだ文: '))?.slice('選んだ文: '.length)
+  const rest = lines.filter((l) => !l.startsWith('選んだ文: '))
+  return (
+    <div className="mb-1.5 ml-auto flex max-w-[85%] flex-col items-end gap-1 text-xs text-muted-foreground">
+      {quote ? <blockquote className="line-clamp-3 border-l-2 border-primary/60 pl-2.5 text-left">{quote}</blockquote> : null}
+      {rest.length ? (
+        <details className="group/ctx text-right">
+          <summary className="cursor-pointer list-none select-none hover:text-foreground [&::-webkit-details-marker]:hidden">見ていた画面を添えています</summary>
+          <p className="mt-1 whitespace-pre-wrap text-left">{rest.join('\n')}</p>
+        </details>
+      ) : null}
     </div>
   )
 }
