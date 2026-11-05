@@ -73,7 +73,7 @@ function BottomNav({ active }: { active?: NavSection }) {
     <nav
       aria-label="サイト"
       data-hidden={hidden || undefined}
-      className="fixed inset-x-0 bottom-0 z-40 border-t bg-background pb-[env(safe-area-inset-bottom)] transition-transform duration-200 ease-out data-hidden:translate-y-full md:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t bg-sidebar pb-[env(safe-area-inset-bottom)] transition-transform duration-200 ease-out data-hidden:translate-y-full md:hidden"
     >
       <ul className="grid h-14 grid-cols-4">
         {items.map((i) => (

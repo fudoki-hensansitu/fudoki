@@ -9,11 +9,12 @@
   --input: var(--border);
   --destructive: var(--shu);
   --destructive-foreground: var(--primary-foreground);
-  --sidebar: var(--card);
+  /* サイドバーは薄緑（accent）。今いる項目と hover は、同じ緑を少し濃くして区別する */
+  --sidebar: var(--accent);
   --sidebar-foreground: var(--foreground);
   --sidebar-primary: var(--primary);
   --sidebar-primary-foreground: var(--primary-foreground);
-  --sidebar-accent: var(--accent);
+  --sidebar-accent: color-mix(in srgb, var(--primary) 12%, var(--accent));
   --sidebar-accent-foreground: var(--accent-foreground);
   --sidebar-border: var(--border);
   --sidebar-ring: var(--ring);
