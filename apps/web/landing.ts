@@ -9,6 +9,7 @@ import { withSiteNav } from './nav/render'
 const MCP = 'https://api.fudoki.dev/mcp'
 const DOCS = 'https://docs.fudoki.dev'
 const GITHUB = 'https://github.com/fudoki-hensansitu/fudoki'
+const CHATGPT_PLUGIN = 'https://chatgpt.com/plugins/plugin_asdk_app_6ad87dc03a608191a13bba05310ea5d9'
 export const TURNSTILE_SCRIPT = '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>'
 
 const yen = (n: number) => `${n.toLocaleString('ja-JP')}円`
@@ -87,7 +88,7 @@ dialog.setup::backdrop{background:color-mix(in srgb,var(--foreground) 40%,transp
 dialog.setup h2{font-size:20px}
 dialog.setup p{margin-top:8px;font-size:14px;color:var(--muted-foreground)}
 dialog.setup pre{margin:16px 0;padding:14px;max-height:40svh;overflow:auto;border-radius:var(--radius-sm);background:var(--card);font:13px/1.7 var(--font-mono);letter-spacing:0;white-space:pre-wrap;overflow-wrap:anywhere}
-button.setup-open{margin-top:24px;cursor:pointer}
+button.setup-open{cursor:pointer}
 dialog.setup .acts{display:flex;gap:8px;justify-content:flex-end}
 dialog.setup .btn{cursor:pointer}
 
@@ -175,12 +176,24 @@ body.ask-docked{padding-bottom:144px}
 .sheet b{font-weight:600}
 .sheet small{display:block;font-size:12px;color:color-mix(in srgb,var(--page-foreground) 60%,var(--page))}
 
-.mcp{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:64px;align-items:center;padding-block:96px;background:var(--paper);color:var(--paper-foreground)}
+.mcp{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:64px;align-items:center;padding-block:96px;background:var(--paper);color:var(--paper-foreground)}
 .mcp h2{margin-top:16px;font-size:clamp(2.25rem,1.5rem + 3vw,4.25rem);line-height:1.25;color:var(--paper-foreground)}
 .mcp .eyebrow{color:var(--paper-foreground)}
-.howto{margin-top:24px;border-top:1px solid color-mix(in srgb,var(--paper-foreground) 25%,transparent)}
-.howto li{display:grid;grid-template-columns:2em 1fr;gap:12px;padding:14px 0;border-bottom:1px solid color-mix(in srgb,var(--paper-foreground) 25%,transparent);font-size:15px;line-height:1.7}
-.howto b{font:400 15px/1.7 var(--font-display)}
+.mcp .lead{margin-top:16px;font-size:15px;line-height:1.8}
+.connect{margin-top:24px;border:1px solid color-mix(in srgb,var(--paper-foreground) 20%,transparent);border-radius:var(--radius-card,16px);background:var(--background);color:var(--foreground);overflow:hidden}
+.ctabs{display:flex;gap:2px;margin:6px;padding:3px;border-radius:12px;background:var(--card);overflow-x:auto;scrollbar-width:none}
+.ctabs button{display:inline-flex;align-items:center;gap:6px;flex:none;height:34px;padding:0 10px;border:1px solid transparent;border-radius:9px;background:transparent;color:color-mix(in srgb,var(--foreground) 60%,transparent);font:500 14px/1 var(--font-sans);letter-spacing:.02em;white-space:nowrap;cursor:pointer}
+.ctabs button:hover{color:var(--foreground)}
+.ctabs button[aria-selected="true"]{background:var(--background);color:var(--foreground);box-shadow:0 1px 3px rgb(0 0 0/.1),0 1px 2px -1px rgb(0 0 0/.1)}
+.ctabs .i{width:16px;height:16px}
+.cpanel ol{display:grid;gap:18px;padding:16px 20px 22px}
+.cpanel li{display:grid;grid-template-columns:28px 1fr;gap:12px;font-size:15px;line-height:1.8}
+.cpanel li>div{min-width:0}
+.cpanel li>b{display:grid;place-items:center;width:28px;height:28px;margin-top:1px;border-radius:999px;background:var(--card);font:500 13px/1 var(--font-sans)}
+.cpanel .btn{margin-top:12px;display:flex;width:fit-content}
+.ccode{display:flex;align-items:flex-start;gap:8px;margin-top:10px;padding:8px 8px 8px 14px;border-radius:var(--radius-sm,8px);background:var(--card)}
+.ccode pre{flex:1;min-width:0;padding:4px 0;overflow-x:auto;font:13px/1.7 var(--font-mono);letter-spacing:0;white-space:pre}
+.ccopy{flex:none;height:28px;padding:0 10px;border:1px solid var(--border);border-radius:6px;background:var(--background);color:var(--foreground);font:500 12px/1 var(--font-sans);cursor:pointer}
 .demo{display:grid;gap:14px}
 .demo video{display:block;width:100%;height:auto;aspect-ratio:1280/840;border-radius:var(--radius-card);background:#f4f1e6;/* brand/config.json の paper。サムネ（OGP 画像）の地と揃える */box-shadow:var(--shadow-sheet)}
 .demo video{cursor:pointer}
@@ -248,6 +261,12 @@ html{scroll-behavior:smooth}
 
 const ICONS = `<svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <symbol id="arrow-right" viewBox="0 0 256 256"><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"/></symbol>
+<symbol id="i-openai" viewBox="0 0 256 256"><path d="M224.32,114.24a56,56,0,0,0-60.07-76.57A56,56,0,0,0,67.93,51.44a56,56,0,0,0-36.25,90.32A56,56,0,0,0,69,217,56.39,56.39,0,0,0,83.59,219a55.75,55.75,0,0,0,8.17-.61,56,56,0,0,0,96.31-13.78,56,56,0,0,0,36.25-90.32ZM182.85,54.43a40,40,0,0,1,28.56,48c-.95-.63-1.91-1.24-2.91-1.81L164,74.88a8,8,0,0,0-8,0l-44,25.41V81.81l40.5-23.38A39.76,39.76,0,0,1,182.85,54.43ZM144,137.24l-16,9.24-16-9.24V118.76l16-9.24,16,9.24ZM80,72a40,40,0,0,1,67.53-29c-1,.51-2,1-3,1.62L100,70.27a8,8,0,0,0-4,6.92V128l-16-9.24ZM40.86,86.93A39.75,39.75,0,0,1,64.12,68.57C64.05,69.71,64,70.85,64,72v51.38a8,8,0,0,0,4,6.93l44,25.4L96,165,55.5,141.57A40,40,0,0,1,40.86,86.93ZM73.15,201.57a40,40,0,0,1-28.56-48c.95.63,1.91,1.24,2.91,1.81L92,181.12a8,8,0,0,0,8,0l44-25.41v18.48l-40.5,23.38A39.76,39.76,0,0,1,73.15,201.57ZM176,184a40,40,0,0,1-67.52,29.05c1-.51,2-1.05,3-1.63L156,185.73a8,8,0,0,0,4-6.92V128l16,9.24Zm39.14-14.93a39.75,39.75,0,0,1-23.26,18.36c.07-1.14.12-2.28.12-3.43V132.62a8,8,0,0,0-4-6.93l-44-25.4,16-9.24,40.5,23.38A40,40,0,0,1,215.14,169.07Z"></path></symbol>
+<symbol id="i-asterisk" viewBox="0 0 256 256"><path d="M214.86,180.12a8,8,0,0,1-11,2.74L136,142.13V216a8,8,0,0,1-16,0V142.13L52.12,182.86a8,8,0,1,1-8.23-13.72L112.45,128,43.89,86.86a8,8,0,1,1,8.23-13.72L120,113.87V40a8,8,0,0,1,16,0v73.87l67.88-40.73a8,8,0,1,1,8.23,13.72L143.55,128l68.56,41.14A8,8,0,0,1,214.86,180.12Z"></path></symbol>
+<symbol id="i-terminal" viewBox="0 0 256 256"><path d="M128,128a8,8,0,0,1-3,6.25l-40,32a8,8,0,1,1-10-12.5L107.19,128,75,102.25a8,8,0,1,1,10-12.5l40,32A8,8,0,0,1,128,128Zm48,24H136a8,8,0,0,0,0,16h40a8,8,0,0,0,0-16Zm56-96V200a16,16,0,0,1-16,16H40a16,16,0,0,1-16-16V56A16,16,0,0,1,40,40H216A16,16,0,0,1,232,56ZM216,200V56H40V200H216Z"></path></symbol>
+<symbol id="i-cursor" viewBox="0 0 256 256"><path d="M168,132.69,214.08,115l.33-.13A16,16,0,0,0,213,85.07L52.92,32.8A15.95,15.95,0,0,0,32.8,52.92L85.07,213a15.82,15.82,0,0,0,14.41,11l.78,0a15.84,15.84,0,0,0,14.61-9.59l.13-.33L132.69,168,184,219.31a16,16,0,0,0,22.63,0l12.68-12.68a16,16,0,0,0,0-22.63ZM195.31,208,144,156.69a16,16,0,0,0-26,4.93c0,.11-.09.22-.13.32l-17.65,46L48,48l159.85,52.2-45.95,17.64-.32.13a16,16,0,0,0-4.93,26h0L208,195.31Z"></path></symbol>
+<symbol id="i-plug" viewBox="0 0 256 256"><path d="M237.66,66.34a8,8,0,0,0-11.32,0L192,100.69,155.31,64l34.35-34.34a8,8,0,1,0-11.32-11.32L144,52.69,117.66,26.34a8,8,0,0,0-11.32,11.32L112.69,44l-53,53a40,40,0,0,0,0,56.57l15.71,15.71L26.34,218.34a8,8,0,0,0,11.32,11.32l49.09-49.09,15.71,15.71a40,40,0,0,0,56.57,0l53-53,6.34,6.35a8,8,0,0,0,11.32-11.32L203.31,112l34.35-34.34A8,8,0,0,0,237.66,66.34ZM147.72,185a24,24,0,0,1-33.95,0L71,142.23a24,24,0,0,1,0-33.95l53-53L200.69,132Z"></path></symbol>
+<symbol id="arrow-up-right" viewBox="0 0 256 256"><path d="M200,64V168a8,8,0,0,1-16,0V83.31L69.66,197.66a8,8,0,0,1-11.32-11.32L172.69,72H88a8,8,0,0,1,0-16H192A8,8,0,0,1,200,64Z"/></symbol>
 </svg>`
 
 const ledgerRows = (l: (typeof ledgers)[number]) =>
@@ -287,9 +306,35 @@ const SETUP_PROMPT = [
   `追加できたら、「北区に住んでいます。何の予算が見れますか？」と聞いて、接続を確かめてください。`,
 ].join('\n')
 
+const ASK = '「北区に住んでいます。何の予算が見れますか？」と聞きます。'
+const code = (t: string) => `<div class="ccode"><pre><code>${t}</code></pre><button type="button" class="ccopy" data-copy-code>コピー</button></div>`
+// 「AI から使う」のタブ。手順は docs の各クライアントの頁と揃える
+const CONNECT = [
+  { id: 'chatgpt', label: 'ChatGPT', icon: 'i-openai', steps: [
+    `風土記の plugin を開いて「＋」で追加します。<a class="btn" href="${CHATGPT_PLUGIN}" target="_blank" rel="noopener">風土記の plugin を開く${icon('arrow-up-right')}</a>`,
+    `新しい会話で${ASK}ChatGPT でも Codex でも使えます。`,
+  ] },
+  { id: 'claude', label: 'Claude', icon: 'i-asterisk', steps: [
+    `設定の「コネクタ」で、カスタムコネクタを追加します。名前は「風土記」、URL は次のとおりです。認証はいりません。${code(MCP)}`,
+    `会話で風土記を有効にして、${ASK}`,
+  ] },
+  { id: 'claude-code', label: 'Claude Code', icon: 'i-terminal', steps: [
+    `ターミナルで次を実行します。${code('claude plugin marketplace add fudoki-hensansitu/fudoki\nclaude plugin install fudoki@fudoki-plugins')}`,
+    `新しい会話で${ASK}`,
+  ] },
+  { id: 'cursor', label: 'Cursor', icon: 'i-cursor', steps: [
+    `設定の Plugins で「From GitHub Repository」を選び、次の URL を入れて、出てきた風土記を Install します。${code(GITHUB)}`,
+    `新しい会話で${ASK}`,
+  ] },
+  { id: 'other', label: 'そのほか', icon: 'i-plug', steps: [
+    `AI の設定で、つなぎ先として次の URL を追加します。認証はいりません。${code(MCP)}`,
+    `やり方が分からなければ、AI に聞くのが早道です。<button class="btn setup-open" type="button" data-open="setup">AI に貼り付ける文章を見る</button>`,
+  ] },
+]
+
 const BODY = `${ICONS}
 <dialog class="setup" id="setup" aria-labelledby="setup-h"><h2 id="setup-h">AI に貼り付けて接続する</h2>
-<p>下の文章をコピーして、お使いの AI（Claude・ChatGPT など）に貼り付けると、風土記の MCP を追加する手順を案内してくれます。</p>
+<p>下の文章をコピーして、お使いの AI（Claude・ChatGPT など）に貼り付けると、風土記をつなぐ手順を案内してくれます。</p>
 <pre id="setup-text">${SETUP_PROMPT}</pre>
 <div class="acts"><button class="btn ol" type="button" data-close>閉じる</button><button class="btn" type="button" data-copy>コピーする</button></div></dialog>
 <main>
@@ -340,12 +385,15 @@ const BODY = `${ICONS}
 </section>
 
 <section class="mcp wrap" id="mcp" aria-labelledby="mcp-h">
-<div><p class="eyebrow">AI から使う</p><h2 id="mcp-h">URL を一つ登録するだけ</h2>
-<ol class="howto"><li><b>一</b><span>MCP に対応した AI クライアントの設定を開く</span></li><li><b>二</b><span><code>${MCP}</code> を登録する（認証は要りません）</span></li><li><b>三</b><span>「北区に住んでいます。何の予算が見れますか？」と聞く</span></li></ol>
-<button class="btn setup-open" type="button" data-open="setup">AI に貼り付けて接続する</button></div>
+<div><p class="eyebrow">AI から使う</p><h2 id="mcp-h">いつもの AI からも使えます</h2>
+<p class="lead">ChatGPT や Claude に風土記をつなぐと、会話の中で街の支出を調べられます。登録はいりません。</p>
+<div class="connect">
+<div class="ctabs" role="tablist" aria-label="使っている AI">${CONNECT.map((c, i) => `<button type="button" role="tab" id="ct-${c.id}" aria-controls="cp-${c.id}" aria-selected="${i === 0}"${i ? ' tabindex="-1"' : ''}>${icon(c.icon)}${c.label}</button>`).join('')}</div>
+${CONNECT.map((c, i) => `<div class="cpanel" role="tabpanel" id="cp-${c.id}" aria-labelledby="ct-${c.id}"${i ? ' hidden' : ''}><ol>${c.steps.map((st, j) => `<li><b>${j + 1}</b><div>${st}</div></li>`).join('')}</ol></div>`).join('')}
+</div></div>
 <figure class="demo">
-<video src="/home/demo.mp4" poster="/home/demo-poster.webp" width="1280" height="840" muted loop playsinline preload="none" tabindex="0" aria-label="ChatGPT から風土記の MCP に、北区の決算を聞いた操作の録画。Enter で再生・停止"></video>
-<figcaption><a href="${DOCS}/mcp">MCP の使い方を見る${icon('arrow-right')}</a></figcaption>
+<video src="/home/demo.mp4" poster="/home/demo-poster.webp" width="1280" height="840" muted loop playsinline preload="none" tabindex="0" aria-label="ChatGPT につないだ風土記に、北区の決算を聞いた操作の録画。Enter で再生・停止"></video>
+<figcaption><a href="${DOCS}">つなぎ方をくわしく見る${icon('arrow-right')}</a></figcaption>
 </figure>
 </section>
 
@@ -354,7 +402,7 @@ const BODY = `${ICONS}
 <details><summary>予備費が 0 円なのは、使わなかったからですか</summary><p>いいえ。決算の予備費は、他の費目へ補ったあとの使った額なので 0 円になります。どこへ補ったかは出典の備考にあり、風土記では注記の金額として、費目の金額とは別に持ちます。</p></details>
 <details><summary>共通分類（COFOG）は正しいのですか</summary><p>分類は出典にない、風土記の判断です。確かなもの・仮のもの・分類できないものを区別して返し、分類できない明細も合計から落としません。</p></details>
 <details><summary>どの自治体・年度が入っていますか</summary><p>収録する自治体と年度は、順次広げています。いま入っている範囲は、AI に聞くか<a href="${DOCS}">ドキュメント</a>で確かめられます。収録していないことは、支出がゼロであることを意味しません。</p></details>
-<details><summary>使うのにお金や登録は要りますか</summary><p>要りません。このサイトのチャットに質問を入力すれば、登録なしでそのまま調べられます。Claude や ChatGPT など MCP 対応の AI クライアントに URL を登録して使うこともできます。詳しくは<a href="${DOCS}/terms">利用規約</a>をご覧ください。</p></details>
+<details><summary>使うのにお金や登録は要りますか</summary><p>要りません。このサイトのチャットに質問を入力すれば、登録なしでそのまま調べられます。ChatGPT や Claude など、いつも使っている AI につないで使うこともできます。詳しくは<a href="${DOCS}/terms">利用規約</a>をご覧ください。</p></details>
 </div></section>
 </main>
 
@@ -378,6 +426,8 @@ ro.addEventListener('transitionend',()=>{if(i===n){ro.style.transition='none';i=
 const step=()=>{i++;ro.style.setProperty('--r',i);fit();ts.forEach((t,k)=>k===i%n?t.dataset.pos='cur':delete t.dataset.pos)};
 const run=()=>{clearInterval(id);if(vis)id=setInterval(step,2000)};
 new IntersectionObserver(l=>{vis=l[0].isIntersecting;run()}).observe(lg)}
+const tl=document.querySelector('.ctabs');if(tl){const tb=[...tl.querySelectorAll('[role=tab]')];const sel=(b,f)=>{tb.forEach(x=>{const on=x===b;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;document.getElementById(x.getAttribute('aria-controls')).hidden=!on});if(f)b.focus()};tb.forEach((b,i)=>{b.addEventListener('click',()=>sel(b));b.addEventListener('keydown',e=>{const n={ArrowRight:i+1,ArrowLeft:i-1,Home:0,End:tb.length-1}[e.key];if(n===undefined)return;e.preventDefault();sel(tb[(n+tb.length)%tb.length],true)})})}
+document.querySelectorAll('[data-copy-code]').forEach(b=>b.addEventListener('click',()=>{const t=b.previousElementSibling.textContent;Promise.resolve().then(()=>navigator.clipboard.writeText(t)).then(()=>{b.textContent='コピーしました';setTimeout(()=>{b.textContent='コピー'},2000)},()=>{})}))
 const v=document.querySelector('.demo video');if(v){let user=rm;const tg=()=>{if(v.paused){user=false;v.play()}else{user=true;v.pause()}};v.addEventListener('click',tg);v.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();tg()}});
 if('IntersectionObserver'in window)new IntersectionObserver(l=>{if(l[0].isIntersecting){if(!user)v.play().catch(()=>{})}else v.pause()},{threshold:.4}).observe(v)}`
 
