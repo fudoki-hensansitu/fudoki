@@ -214,7 +214,7 @@ function Budget({ data, year }: { data: PageData; year: number }) {
   return (
     <Section
       id="budget"
-      title="予算"
+      title="決算 / 予算"
     >
       <div id="budget-panel" role="tabpanel" aria-labelledby={`tab-${phase}`} data-ask-view={`${reiwa(year)}の${label}の金額`} className="flex flex-col gap-4">
         {total ? (
@@ -359,7 +359,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
 
   const toc: TocItem[] = [
     ...(py ? [{ href: '#policy', label: '方針' }, { href: '#domains', label: '政策領域' }, ...py.domains.map((d) => ({ href: `#d-${d.id}`, label: d.short ?? d.name, sub: true }))] : []),
-    { href: '#budget', label: '予算' },
+    { href: '#budget', label: '決算 / 予算' },
     { href: '#projects', label: '事業' },
     ...(py?.scrap ? [{ href: '#scrap', label: '事業の入れ替え' }] : []),
   ]
