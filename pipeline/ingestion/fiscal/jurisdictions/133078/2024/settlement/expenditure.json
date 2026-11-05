@@ -1,0 +1,1410 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "133078",
+    "fiscal_year": 2024,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "b9e056af78a992ca94fb7a8af20c3d421c26993d79033f34884753a170f317f0"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure-detail",
+        "pages": [
+          [
+            48,
+            127
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "headings": true
+                }
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p53-y128",
+            "page": 53,
+            "observed_name": "分担金",
+            "corrected_name": "多摩地域都市モノレール等建設促進協議会分担金",
+            "reason": "原画の頁53は「多摩地域都市モノレール等建設促進協議会分担金」。頁51の末尾の行に続く頁53の先頭の行。",
+            "y": 127.9,
+            "code": null
+          },
+          {
+            "id": "p53-y182",
+            "page": 53,
+            "observed_name": "西多摩地域広域行政圈協議会負担金",
+            "corrected_name": "西多摩地域広域行政圏協議会負担金",
+            "reason": "原画の頁53は「西多摩地域広域行政圏協議会負担金」。OCR が似た字に読んだ。",
+            "y": 182.1,
+            "code": null
+          },
+          {
+            "id": "p54-y551",
+            "page": 54,
+            "observed_name": "コミュニティセンタ一管理費",
+            "corrected_name": "コミュニティセンター管理費",
+            "reason": "原画の頁54は「コミュニティセンター管理費」。OCR が似た字に読んだ。",
+            "y": 551.2,
+            "code": "6"
+          },
+          {
+            "id": "p59-y414",
+            "page": 59,
+            "observed_name": "移住体驗等住宅備品購入費",
+            "corrected_name": "移住体験等住宅備品購入費",
+            "reason": "原画の頁59は「移住体験等住宅備品購入費」。OCR が似た字に読んだ。",
+            "y": 413.9,
+            "code": null
+          },
+          {
+            "id": "p59-y445",
+            "page": 59,
+            "observed_name": "定住促進サポ一卜事業補助金",
+            "corrected_name": "定住促進サポート事業補助金",
+            "reason": "原画の頁59は「定住促進サポート事業補助金」。OCR が似た字に読んだ。",
+            "y": 445.1,
+            "code": null
+          },
+          {
+            "id": "p63-y245",
+            "page": 63,
+            "observed_name": "課稅電算業務委託料",
+            "corrected_name": "課税電算業務委託料",
+            "reason": "原画の頁63は「課税電算業務委託料」。OCR が似た字に読んだ。",
+            "y": 245.2,
+            "code": null
+          },
+          {
+            "id": "p65-y645",
+            "page": 65,
+            "observed_name": "ポスタ一掲示場設置及び撤去工事",
+            "corrected_name": "ポスター掲示場設置及び撤去工事",
+            "reason": "原画の頁65は「ポスター掲示場設置及び撤去工事」。OCR が似た字に読んだ。",
+            "y": 645.5,
+            "code": null
+          },
+          {
+            "id": "p67-y330",
+            "page": 67,
+            "observed_name": "ポスタ一掲示場設置及び撤去工事",
+            "corrected_name": "ポスター掲示場設置及び撤去工事",
+            "reason": "原画の頁67は「ポスター掲示場設置及び撤去工事」。OCR が似た字に読んだ。",
+            "y": 329.7,
+            "code": null
+          },
+          {
+            "id": "p69-y656",
+            "page": 69,
+            "observed_name": "溫泉宅配車車検・修繕料",
+            "corrected_name": "温泉宅配車車検・修繕料",
+            "reason": "原画の頁69は「温泉宅配車車検・修繕料」。OCR が似た字に読んだ。",
+            "y": 655.6,
+            "code": null
+          },
+          {
+            "id": "p69-y729",
+            "page": 69,
+            "observed_name": "溫泉宅配車保険料",
+            "corrected_name": "温泉宅配車保険料",
+            "reason": "原画の頁69は「温泉宅配車保険料」。OCR が似た字に読んだ。",
+            "y": 729.5,
+            "code": null
+          },
+          {
+            "id": "p71-y129",
+            "page": 71,
+            "observed_name": "溫泉宅配委託料",
+            "corrected_name": "温泉宅配委託料",
+            "reason": "原画の頁71は「温泉宅配委託料」。OCR が似た字に読んだ。",
+            "y": 128.9,
+            "code": null
+          },
+          {
+            "id": "p71-y572",
+            "page": 71,
+            "observed_name": "重度障害者タクシ一乗車料金等助成金",
+            "corrected_name": "重度障害者タクシー乗車料金等助成金",
+            "reason": "原画の頁71は「重度障害者タクシー乗車料金等助成金」。OCR が似た字に読んだ。",
+            "y": 572.1,
+            "code": null
+          },
+          {
+            "id": "p73-y340",
+            "page": 73,
+            "observed_name": "要介護者タクシ一乗車料金等助成金",
+            "corrected_name": "要介護者タクシー乗車料金等助成金",
+            "reason": "原画の頁73は「要介護者タクシー乗車料金等助成金」。OCR が似た字に読んだ。",
+            "y": 340.5,
+            "code": null
+          },
+          {
+            "id": "p77-y667",
+            "page": 77,
+            "observed_name": "高等学校等就学世带生活支援交付金",
+            "corrected_name": "高等学校等就学世帯生活支援交付金",
+            "reason": "原画の頁77は「高等学校等就学世帯生活支援交付金」。OCR が似た字に読んだ。",
+            "y": 666.8,
+            "code": null
+          },
+          {
+            "id": "p76-y740",
+            "page": 76,
+            "observed_name": "こども家庭センタ一費",
+            "corrected_name": "こども家庭センター費",
+            "reason": "原画の頁76は「こども家庭センター費」。OCR が似た字に読んだ。",
+            "y": 740.0,
+            "code": "6"
+          },
+          {
+            "id": "p81-y656",
+            "page": 81,
+            "observed_name": "骨粗しよう症検診委託料",
+            "corrected_name": "骨粗しょう症検診委託料",
+            "reason": "原画の頁81は「骨粗しょう症検診委託料」。OCR が似た字に読んだ。",
+            "y": 656.0,
+            "code": null
+          },
+          {
+            "id": "p87-y350",
+            "page": 87,
+            "observed_name": "地域交流センタ一管理運営委託料",
+            "corrected_name": "地域交流センター管理運営委託料",
+            "reason": "原画の頁87は「地域交流センター管理運営委託料」。OCR が似た字に読んだ。",
+            "y": 350.1,
+            "code": null
+          },
+          {
+            "id": "p89-y256",
+            "page": 89,
+            "observed_name": "有害鳥獣驅除委託料",
+            "corrected_name": "有害鳥獣駆除委託料",
+            "reason": "原画の頁89は「有害鳥獣駆除委託料」。OCR が似た字に読んだ。",
+            "y": 256.0,
+            "code": null
+          },
+          {
+            "id": "p89-y698",
+            "page": 89,
+            "observed_name": "おもちや等工房敷地借上料",
+            "corrected_name": "おもちゃ等工房敷地借上料",
+            "reason": "原画の頁89は「おもちゃ等工房敷地借上料」。OCR が似た字に読んだ。",
+            "y": 698.3,
+            "code": null
+          },
+          {
+            "id": "p89-y719",
+            "page": 89,
+            "observed_name": "おもちや美術館駐車場用地借上料",
+            "corrected_name": "おもちゃ美術館駐車場用地借上料",
+            "reason": "原画の頁89は「おもちゃ美術館駐車場用地借上料」。OCR が似た字に読んだ。",
+            "y": 719.4,
+            "code": null
+          },
+          {
+            "id": "p89-y750",
+            "page": 89,
+            "observed_name": "負担金",
+            "corrected_name": "「多摩の森」活性化プロジェクト推進協議会負担金",
+            "reason": "原画の頁89は「「多摩の森」活性化プロジェクト推進協議会負担金」。2行に折り返した名称の1行目が名称に結ばれなかった。",
+            "y": 749.9,
+            "code": null
+          },
+          {
+            "id": "p91-y382",
+            "page": 91,
+            "observed_name": "おもちや美術館管理運営委託料",
+            "corrected_name": "おもちゃ美術館管理運営委託料",
+            "reason": "原画の頁91は「おもちゃ美術館管理運営委託料」。OCR が似た字に読んだ。",
+            "y": 382.5,
+            "code": null
+          },
+          {
+            "id": "p91-y572",
+            "page": 91,
+            "observed_name": "木製おもちや普及啓発事業負担金",
+            "corrected_name": "木製おもちゃ普及啓発事業負担金",
+            "reason": "原画の頁91は「木製おもちゃ普及啓発事業負担金」。OCR が似た字に読んだ。",
+            "y": 572.1,
+            "code": null
+          },
+          {
+            "id": "p93-y235",
+            "page": 93,
+            "observed_name": "奧多摩町・檜原村間連絡道路建設促進協議会負担金",
+            "corrected_name": "奥多摩町・檜原村間連絡道路建設促進協議会負担金",
+            "reason": "原画の頁93は「奥多摩町・檜原村間連絡道路建設促進協議会負担金」。OCR が似た字に読んだ。",
+            "y": 234.7,
+            "code": null
+          },
+          {
+            "id": "p93-y762",
+            "page": 93,
+            "observed_name": "じやがいも焼酎製造等施設火災保険料",
+            "corrected_name": "じゃがいも焼酎製造等施設火災保険料",
+            "reason": "原画の頁93は「じゃがいも焼酎製造等施設火災保険料」。OCR が似た字に読んだ。",
+            "y": 761.6,
+            "code": null
+          },
+          {
+            "id": "p94-y488",
+            "page": 94,
+            "observed_name": "温泉センタ一管理費",
+            "corrected_name": "温泉センター管理費",
+            "reason": "原画の頁94は「温泉センター管理費」。OCR が似た字に読んだ。",
+            "y": 487.6,
+            "code": "2"
+          },
+          {
+            "id": "p95-y561",
+            "page": 95,
+            "observed_name": "温泉センタ一配管等洗浄業務委託料",
+            "corrected_name": "温泉センター配管等洗浄業務委託料",
+            "reason": "原画の頁95は「温泉センター配管等洗浄業務委託料」。OCR が似た字に読んだ。",
+            "y": 561.5,
+            "code": null
+          },
+          {
+            "id": "p95-y614",
+            "page": 95,
+            "observed_name": "温泉センタ一敷地内法面補強工事",
+            "corrected_name": "温泉センター敷地内法面補強工事",
+            "reason": "原画の頁95は「温泉センター敷地内法面補強工事」。OCR が似た字に読んだ。",
+            "y": 614.0,
+            "code": null
+          },
+          {
+            "id": "p95-y624",
+            "page": 95,
+            "observed_name": "溫泉センタ一建築設備等改修工事",
+            "corrected_name": "温泉センター建築設備等改修工事",
+            "reason": "原画の頁95は「温泉センター建築設備等改修工事」。OCR が似た字に読んだ。",
+            "y": 624.1,
+            "code": null
+          },
+          {
+            "id": "p95-y656",
+            "page": 95,
+            "observed_name": "温泉センタ一村民開放事業負担金",
+            "corrected_name": "温泉センター村民開放事業負担金",
+            "reason": "原画の頁95は「温泉センター村民開放事業負担金」。OCR が似た字に読んだ。",
+            "y": 656.3,
+            "code": null
+          },
+          {
+            "id": "p97-y128",
+            "page": 97,
+            "observed_name": "工事",
+            "corrected_name": "神戸国際マス釣場建替工事仮設事務所設置工事",
+            "reason": "原画の頁97は「神戸国際マス釣場建替工事仮設事務所設置工事」。頁95の末尾の行に続く頁97の先頭の行。",
+            "y": 127.9,
+            "code": null
+          },
+          {
+            "id": "p97-y730",
+            "page": 97,
+            "observed_name": "小沢地区急傾斜地崩壞防止事業負担金",
+            "corrected_name": "小沢地区急傾斜地崩壊防止事業負担金",
+            "reason": "原画の頁97は「小沢地区急傾斜地崩壊防止事業負担金」。OCR が似た字に読んだ。",
+            "y": 729.7,
+            "code": null
+          },
+          {
+            "id": "p101-y276",
+            "page": 101,
+            "observed_name": "浄化槽污泥汲取料",
+            "corrected_name": "浄化槽汚泥汲取料",
+            "reason": "原画の頁101は「浄化槽汚泥汲取料」。OCR が似た字に読んだ。",
+            "y": 276.4,
+            "code": null
+          },
+          {
+            "id": "p102-y361",
+            "page": 102,
+            "observed_name": "ヘリポー卜管理費",
+            "corrected_name": "ヘリポート管理費",
+            "reason": "原画の頁102は「ヘリポート管理費」。OCR が似た字に読んだ。",
+            "y": 361.4,
+            "code": "4"
+          },
+          {
+            "id": "p105-y646",
+            "page": 105,
+            "observed_name": "西多摩地域広域行政圈多摩の子・多摩子ども詩集負担金",
+            "corrected_name": "西多摩地域広域行政圏多摩の子・多摩子ども詩集負担金",
+            "reason": "原画の頁105は「西多摩地域広域行政圏多摩の子・多摩子ども詩集負担金」。OCR が似た字に読んだ。",
+            "y": 646.0,
+            "code": null
+          },
+          {
+            "id": "p109-y161",
+            "page": 109,
+            "observed_name": "ホ一ル温風暖房機設備点検委託料",
+            "corrected_name": "ホール温風暖房機設備点検委託料",
+            "reason": "原画の頁109は「ホール温風暖房機設備点検委託料」。OCR が似た字に読んだ。",
+            "y": 161.0,
+            "code": null
+          },
+          {
+            "id": "p109-y245",
+            "page": 109,
+            "observed_name": "小学校特別活動教室(ホ一ル)空調設備設置工事",
+            "corrected_name": "小学校特別活動教室(ホール)空調設備設置工事",
+            "reason": "原画の頁109は「小学校特別活動教室(ホール)空調設備設置工事」。OCR が似た字に読んだ。",
+            "y": 245.0,
+            "code": null
+          },
+          {
+            "id": "p115-y688",
+            "page": 115,
+            "observed_name": "西多摩地域広域行政圈体育大会負担金",
+            "corrected_name": "西多摩地域広域行政圏体育大会負担金",
+            "reason": "原画の頁115は「西多摩地域広域行政圏体育大会負担金」。OCR が似た字に読んだ。",
+            "y": 687.7,
+            "code": null
+          },
+          {
+            "id": "p117-y635",
+            "page": 117,
+            "observed_name": "資料館館內燻蒸委託料",
+            "corrected_name": "資料館館内燻蒸委託料",
+            "reason": "原画の頁117は「資料館館内燻蒸委託料」。OCR が似た字に読んだ。",
+            "y": 635.4,
+            "code": null
+          },
+          {
+            "id": "p119-y530",
+            "page": 119,
+            "observed_name": "西多摩地域広域行政圈内図書館広域利用事業負担金",
+            "corrected_name": "西多摩地域広域行政圏内図書館広域利用事業負担金",
+            "reason": "原画の頁119は「西多摩地域広域行政圏内図書館広域利用事業負担金」。OCR が似た字に読んだ。",
+            "y": 529.6,
+            "code": null
+          },
+          {
+            "id": "p123-y266",
+            "page": 123,
+            "observed_name": "(第2工区)災害復旧測量調査委託料",
+            "corrected_name": "令和元年台風19号に伴う瀬戸沢林道(第2工区)災害復旧測量調査委託料",
+            "reason": "原画の頁123は「令和元年台風19号に伴う瀬戸沢林道(第2工区)災害復旧測量調査委託料」。2行に折り返した名称の1行目が名称に結ばれなかった。",
+            "y": 265.9,
+            "code": null
+          },
+          {
+            "id": "p123-y329",
+            "page": 123,
+            "observed_name": "(第1工区)災害復旧工事",
+            "corrected_name": "令和元年台風19号に伴う瀬戸沢林道(第1工区)災害復旧工事",
+            "reason": "原画の頁123は「令和元年台風19号に伴う瀬戸沢林道(第1工区)災害復旧工事」。2行に折り返した名称の1行目が名称に結ばれなかった。",
+            "y": 329.2,
+            "code": null
+          },
+          {
+            "id": "p122-y414",
+            "page": 122,
+            "observed_name": "道路橋りよう災害復旧費",
+            "corrected_name": "道路橋りょう災害復旧費",
+            "reason": "原画の頁122は「道路橋りょう災害復旧費」。OCR が似た字に読んだ。",
+            "y": 414.2,
+            "code": "1"
+          },
+          {
+            "id": "p123-y719",
+            "page": 123,
+            "observed_name": "(倒木撤去)委託料",
+            "corrected_name": "その他公共施設・公用施設災害復旧(倒木撤去)委託料",
+            "reason": "原画の頁123は「その他公共施設・公用施設災害復旧(倒木撤去)委託料」。2行に折り返した名称の1行目が名称に結ばれなかった。",
+            "y": 719.4,
+            "code": null
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-ocr-1",
+          "origin_sha256": "b9e056af78a992ca94fb7a8af20c3d421c26993d79033f34884753a170f317f0",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "950a3a0360522ed5a72fe30df0113c898308ac8e85c62510780ed4fbe116c88f",
+          "bytes": 3396810
+        },
+        {
+          "id": "general-ocr-2",
+          "origin_sha256": "b9e056af78a992ca94fb7a8af20c3d421c26993d79033f34884753a170f317f0",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              58,
+              59,
+              60,
+              61,
+              62,
+              63,
+              64,
+              65,
+              66,
+              67
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "5ed0dfdab54554810db8ba2ed5219e638c474bb101fe093eb8af614d78938f21",
+          "bytes": 3423723
+        },
+        {
+          "id": "general-ocr-3",
+          "origin_sha256": "b9e056af78a992ca94fb7a8af20c3d421c26993d79033f34884753a170f317f0",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              68,
+              69,
+              70,
+              71,
+              72,
+              73,
+              74,
+              75,
+              76,
+              77
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "d438299f9d88e53d108628c3e1497cc294fd3a99ddef1f7fdc45abaa9f0ad330",
+          "bytes": 3465278
+        },
+        {
+          "id": "general-ocr-4",
+          "origin_sha256": "b9e056af78a992ca94fb7a8af20c3d421c26993d79033f34884753a170f317f0",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              78,
+              79,
+              80,
+              81,
+              82,
+              83,
+              84,
+              85,
+              86,
+              87
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "afda6d258e74cb04d5f75f2ffd9ae885190385af9125336bb50cd945a244484d",
+          "bytes": 3355442
+        },
+        {
+          "id": "general-ocr-5",
+          "origin_sha256": "b9e056af78a992ca94fb7a8af20c3d421c26993d79033f34884753a170f317f0",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              88,
+              89,
+              90,
+              91,
+              92,
+              93,
+              94,
+              95,
+              96,
+              97
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "f16eed6727a603f0392dde22d53d859a317d3ac5863a4b541f4912e226c55c52",
+          "bytes": 3577047
+        },
+        {
+          "id": "general-ocr-6",
+          "origin_sha256": "b9e056af78a992ca94fb7a8af20c3d421c26993d79033f34884753a170f317f0",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              98,
+              99,
+              100,
+              101,
+              102,
+              103,
+              104,
+              105,
+              106,
+              107
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "54077a4eac70214646c739574bbb3e64560861f106d2f3864078e2cf46991c4b",
+          "bytes": 3594049
+        },
+        {
+          "id": "general-ocr-7",
+          "origin_sha256": "b9e056af78a992ca94fb7a8af20c3d421c26993d79033f34884753a170f317f0",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              108,
+              109,
+              110,
+              111,
+              112,
+              113,
+              114,
+              115,
+              116,
+              117
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "1569cb7d9624ad6651520bebcd04a897ef8cb76c15b169f336f98f3b3a1141d9",
+          "bytes": 3393649
+        },
+        {
+          "id": "general-ocr-8",
+          "origin_sha256": "b9e056af78a992ca94fb7a8af20c3d421c26993d79033f34884753a170f317f0",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              118,
+              119,
+              120,
+              121,
+              122,
+              123,
+              124,
+              125,
+              126,
+              127
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "9f46fb236d425aca559b9b483946f7492b96ade6505ca1d2ca9c1eb826097793",
+          "bytes": 2947502
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "nhi-business",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "afe3342a7c10585a1a750447f58bf16028348ae944fdad66b9413392453f8b05"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計事業勘定",
+        "table_id": "nhi-business-expenditure-detail",
+        "pages": [
+          [
+            18,
+            27
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "headings": true
+                }
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p19-y657",
+            "page": 19,
+            "observed_name": "国保稅賦課電算業務委託料",
+            "corrected_name": "国保税賦課電算業務委託料",
+            "reason": "原画の頁19は「国保税賦課電算業務委託料」。OCR が似た字に読んだ。",
+            "y": 656.5,
+            "code": null
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "nhi-business-ocr-1",
+          "origin_sha256": "afe3342a7c10585a1a750447f58bf16028348ae944fdad66b9413392453f8b05",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "079a819e016b4aa7f950b01b45c9d72cfa03af328c5c61e20c34467f188cc816",
+          "bytes": 2784944
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "nhi-business-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "nhi-clinic",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "afe3342a7c10585a1a750447f58bf16028348ae944fdad66b9413392453f8b05"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計診療施設勘定",
+        "table_id": "nhi-clinic-expenditure-detail",
+        "pages": [
+          [
+            48,
+            53
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "headings": true
+                }
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p51-y340",
+            "page": 51,
+            "observed_name": "一般診療等消費稅",
+            "corrected_name": "一般診療等消費税",
+            "reason": "原画の頁51は「一般診療等消費税」。OCR が似た字に読んだ。",
+            "y": 340.3,
+            "code": null
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "nhi-clinic-ocr-1",
+          "origin_sha256": "afe3342a7c10585a1a750447f58bf16028348ae944fdad66b9413392453f8b05",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              48,
+              49,
+              50,
+              51,
+              52,
+              53
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "f1767e0b50885a52f49fa4da43abf7443b0918e7412fc4403f3ffcbb98ee0406",
+          "bytes": 1475645
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "nhi-clinic-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "forest",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "afe3342a7c10585a1a750447f58bf16028348ae944fdad66b9413392453f8b05"
+        }
+      ],
+      "options": {
+        "account": "東京都都民の森管理運営事業特別会計",
+        "table_id": "forest-expenditure-detail",
+        "pages": [
+          [
+            72,
+            75
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "headings": true
+                }
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p75-y393",
+            "page": 75,
+            "observed_name": "しいたけ骨木等購入費",
+            "corrected_name": "しいたけ榾木等購入費",
+            "reason": "原画の頁75は「しいたけ榾木等購入費」。OCR が似た字に読んだ。",
+            "y": 392.8,
+            "code": null
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "forest-ocr-1",
+          "origin_sha256": "afe3342a7c10585a1a750447f58bf16028348ae944fdad66b9413392453f8b05",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              72,
+              73,
+              74,
+              75
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "05b59666e08d6c0366259aa2af9f0cffa95a0f6a272ae5565280b78d3e8d394f",
+          "bytes": 1170804
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "forest-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "care",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "afe3342a7c10585a1a750447f58bf16028348ae944fdad66b9413392453f8b05"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "care-expenditure-detail",
+        "pages": [
+          [
+            98,
+            111
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "headings": true
+                }
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p102-y424",
+            "page": 102,
+            "observed_name": "介護予防サ一ビス等諸費",
+            "corrected_name": "介護予防サービス等諸費",
+            "reason": "原画の頁102は「介護予防サービス等諸費」。OCR が似た字に読んだ。",
+            "y": 424.2,
+            "code": "2"
+          },
+          {
+            "id": "p104-y435",
+            "page": 104,
+            "observed_name": "高額介護サ一ビス等費",
+            "corrected_name": "高額介護サービス等費",
+            "reason": "原画の頁104は「高額介護サービス等費」。OCR が似た字に読んだ。",
+            "y": 434.8,
+            "code": "4"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "care-ocr-1",
+          "origin_sha256": "afe3342a7c10585a1a750447f58bf16028348ae944fdad66b9413392453f8b05",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              98,
+              99,
+              100,
+              101,
+              102,
+              103,
+              104,
+              105,
+              106,
+              107
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "cabf23cdfa335cfd696279c7ecddab01b5f0f5ab4f644e72c6ac3dec17964761",
+          "bytes": 2860647
+        },
+        {
+          "id": "care-ocr-2",
+          "origin_sha256": "afe3342a7c10585a1a750447f58bf16028348ae944fdad66b9413392453f8b05",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              108,
+              109,
+              110,
+              111
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "62691eccbe4fbfae1c5b8d07a54debf548630626bd998c032b39347f617453e3",
+          "bytes": 1076507
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "care-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "care-service",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "afe3342a7c10585a1a750447f58bf16028348ae944fdad66b9413392453f8b05"
+        }
+      ],
+      "options": {
+        "account": "介護サービス事業特別会計",
+        "table_id": "care-service-expenditure-detail",
+        "pages": [
+          [
+            130,
+            131
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "headings": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "care-service-ocr-1",
+          "origin_sha256": "afe3342a7c10585a1a750447f58bf16028348ae944fdad66b9413392453f8b05",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              130,
+              131
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "96b2ef2a6321b4b4f65aa3970e825c99d52deb477ef52e1a3f97912b3e8764c8",
+          "bytes": 582110
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "care-service-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "elderly",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "afe3342a7c10585a1a750447f58bf16028348ae944fdad66b9413392453f8b05"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-expenditure-detail",
+        "pages": [
+          [
+            148,
+            151
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "headings": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "elderly-ocr-1",
+          "origin_sha256": "afe3342a7c10585a1a750447f58bf16028348ae944fdad66b9413392453f8b05",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              148,
+              149,
+              150,
+              151
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "2d1b4e167ef470ab70035e89fadfbfbe14049743fe250c9a33cd699cfa40a706",
+          "bytes": 1035175
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "elderly-expenditure-detail"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-expenditure-detail",
+      "conversion_id": "general",
+      "input_fingerprint": "46aa289ce5138dc3f743904ca07b3e30eb0af51a487f786c7e1eb9dcb14afd0c",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '備考': 'indent'}。",
+        "金額の単位は column mark 40頁 から決めた。款の和 3,980,395,218 と印字の「歳出合計」3,980,395,218 が一致。",
+        "金額の注記 46 件（充用 14・流用 32）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（1363 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・翌年度繰越額継続費逓次繰越繰越明許費事故繰越→翌年度繰越額。",
+        "原画で確かめた名称の誤読 44 件を、管理 JSON の name_corrections で印字に直した: 分担金→多摩地域都市モノレール等建設促進協議会分担金・西多摩地域広域行政圈協議会負担金→西多摩地域広域行政圏協議会負担金・6コミュニティセンタ一管理費→6コミュニティセンター管理費・移住体驗等住宅備品購入費→移住体験等住宅備品購入費・定住促進サポ一卜事業補助金→定住促進サポート事業補助金・課稅電算業務委託料→課税電算業務委託料・ポスタ一掲示場設置及び撤去工事→ポスター掲示場設置及び撤去工事・ポスタ一掲示場設置及び撤去工事→ポスター掲示場設置及び撤去工事・溫泉宅配車車検・修繕料→温泉宅配車車検・修繕料・溫泉宅配車保険料→温泉宅配車保険料・溫泉宅配委託料→温泉宅配委託料・重度障害者タクシ一乗車料金等助成金→重度障害者タクシー乗車料金等助成金・要介護者タクシ一乗車料金等助成金→要介護者タクシー乗車料金等助成金・高等学校等就学世带生活支援交付金→高等学校等就学世帯生活支援交付金・6こども家庭センタ一費→6こども家庭センター費・骨粗しよう症検診委託料→骨粗しょう症検診委託料・地域交流センタ一管理運営委託料→地域交流センター管理運営委託料・有害鳥獣驅除委託料→有害鳥獣駆除委託料・おもちや等工房敷地借上料→おもちゃ等工房敷地借上料・おもちや美術館駐車場用地借上料→おもちゃ美術館駐車場用地借上料・負担金→「多摩の森」活性化プロジェクト推進協議会負担金・おもちや美術館管理運営委託料→おもちゃ美術館管理運営委託料・木製おもちや普及啓発事業負担金→木製おもちゃ普及啓発事業負担金・奧多摩町・檜原村間連絡道路建設促進協議会負担金→奥多摩町・檜原村間連絡道路建設促進協議会負担金・じやがいも焼酎製造等施設火災保険料→じゃがいも焼酎製造等施設火災保険料・2温泉センタ一管理費→2温泉センター管理費・温泉センタ一配管等洗浄業務委託料→温泉センター配管等洗浄業務委託料・温泉センタ一敷地内法面補強工事→温泉センター敷地内法面補強工事・溫泉センタ一建築設備等改修工事→温泉センター建築設備等改修工事・温泉センタ一村民開放事業負担金→温泉センター村民開放事業負担金・工事→神戸国際マス釣場建替工事仮設事務所設置工事・小沢地区急傾斜地崩壞防止事業負担金→小沢地区急傾斜地崩壊防止事業負担金・浄化槽污泥汲取料→浄化槽汚泥汲取料・4ヘリポー卜管理費→4ヘリポート管理費・西多摩地域広域行政圈多摩の子・多摩子ども詩集負担金→西多摩地域広域行政圏多摩の子・多摩子ども詩集負担金・ホ一ル温風暖房機設備点検委託料→ホール温風暖房機設備点検委託料・小学校特別活動教室(ホ一ル)空調設備設置工事→小学校特別活動教室(ホール)空調設備設置工事・西多摩地域広域行政圈体育大会負担金→西多摩地域広域行政圏体育大会負担金・資料館館內燻蒸委託料→資料館館内燻蒸委託料・西多摩地域広域行政圈内図書館広域利用事業負担金→西多摩地域広域行政圏内図書館広域利用事業負担金・(第2工区)災害復旧測量調査委託料→令和元年台風19号に伴う瀬戸沢林道(第2工区)災害復旧測量調査委託料・(第1工区)災害復旧工事→令和元年台風19号に伴う瀬戸沢林道(第1工区)災害復旧工事・1道路橋りよう災害復旧費→1道路橋りょう災害復旧費・(倒木撤去)委託料→その他公共施設・公用施設災害復旧(倒木撤去)委託料。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 76 件（p53:full-page:a0:result0:r88・p53:full-page:a0:result0:r88:w5・p57:full-page:a0:result0:r69・p57:full-page:a0:result0:r69:w1・p57:full-page:a0:result0:r126・p57:full-page:a0:result0:r126:w5・p58:full-page:a0:result0:r31・p58:full-page:a0:result0:r31:w3・p59:full-page:a0:result0:r46・p59:full-page:a0:result0:r46:w5・p62:full-page:a0:result0:r85・p62:full-page:a0:result0:r85:w0・p69:full-page:a0:result0:r129・p69:full-page:a0:result0:r129:w7・p69:full-page:a0:result0:r131・p69:full-page:a0:result0:r131:w5・p71:full-page:a0:result0:r39・p71:full-page:a0:result0:r39:w6・p75:full-page:a0:result0:r13・p75:full-page:a0:result0:r13:w5・p77:full-page:a0:result0:r79・p77:full-page:a0:result0:r79:w2・p83:full-page:a0:result0:r30・p83:full-page:a0:result0:r30:w5・p83:full-page:a0:result0:r140・p83:full-page:a0:result0:r140:w3・p85:full-page:a0:result0:r94・p85:full-page:a0:result0:r94:w5・p87:full-page:a0:result0:r107・p87:full-page:a0:result0:r107:w5・p89:full-page:a0:result0:r21・p89:full-page:a0:result0:r21:w6・p93:full-page:a0:result0:r41・p93:full-page:a0:result0:r41:w4・p97:full-page:a0:result0:r72・p97:full-page:a0:result0:r72:w5・p97:full-page:a0:result0:r97・p97:full-page:a0:result0:r97:w10・p99:full-page:a0:result0:r68・p99:full-page:a0:result0:r68:w12・p103:full-page:a0:result0:r24・p103:full-page:a0:result0:r24:w4・p107:full-page:a0:result0:r90・p107:full-page:a0:result0:r90:w2・p109:full-page:a0:result0:r87・p109:full-page:a0:result0:r87:w4・p109:full-page:a0:result0:r125・p109:full-page:a0:result0:r125:w2・p109:full-page:a0:result0:r131・p109:full-page:a0:result0:r131:w9・p109:full-page:a0:result0:r134・p109:full-page:a0:result0:r134:w8・p113:full-page:a0:result0:r89・p113:full-page:a0:result0:r89・p113:full-page:a0:result0:r89:w2・p113:full-page:a0:result0:r89:w5・p113:full-page:a0:result0:r93・p113:full-page:a0:result0:r93:w8・p113:full-page:a0:result0:r96・p113:full-page:a0:result0:r96:w9・p119:full-page:a0:result0:r44・p119:full-page:a0:result0:r44:w5・p119:full-page:a0:result0:r99・p119:full-page:a0:result0:r99:w2・p121:full-page:a0:result0:r64・p121:full-page:a0:result0:r64:w5・p126:full-page:a0:result0:r28・p126:full-page:a0:result0:r28:w4・p126:full-page:a0:result0:r49・p126:full-page:a0:result0:r49:w0・p127:full-page:a0:result0:r16・p127:full-page:a0:result0:r16:w2・p127:full-page:a0:result0:r21・p127:full-page:a0:result0:r21:w2・p127:full-page:a0:result0:r34・p127:full-page:a0:result0:r34:w4）・徵→徴 2 件（p60:full-page:a0:result0:r59・p60:full-page:a0:result0:r59:w2）・查→査 48 件（p51:full-page:a0:result0:r16・p51:full-page:a0:result0:r16:w7・p68:full-page:a0:result0:r34・p68:full-page:a0:result0:r34:w3・p69:full-page:a0:result0:r58・p69:full-page:a0:result0:r58:w7・p71:full-page:a0:result0:r73・p71:full-page:a0:result0:r73:w9・p77:full-page:a0:result0:r20・p77:full-page:a0:result0:r20:w7・p77:full-page:a0:result0:r35・p77:full-page:a0:result0:r35:w8・p77:full-page:a0:result0:r136・p77:full-page:a0:result0:r136:w9・p81:full-page:a0:result0:r138・p81:full-page:a0:result0:r138:w5・p83:full-page:a0:result0:r47・p83:full-page:a0:result0:r47:w5・p83:full-page:a0:result0:r52・p83:full-page:a0:result0:r52:w13・p85:full-page:a0:result0:r18・p85:full-page:a0:result0:r18:w6・p85:full-page:a0:result0:r27・p85:full-page:a0:result0:r27:w6・p85:full-page:a0:result0:r44・p85:full-page:a0:result0:r44:w6・p95:full-page:a0:result0:r91・p95:full-page:a0:result0:r91:w12・p98:full-page:a0:result0:r33・p98:full-page:a0:result0:r33:w5・p99:full-page:a0:result0:r51・p99:full-page:a0:result0:r51:w5・p107:full-page:a0:result0:r46・p107:full-page:a0:result0:r46:w8・p107:full-page:a0:result0:r149・p107:full-page:a0:result0:r149:w7・p111:full-page:a0:result0:r24・p111:full-page:a0:result0:r24:w5・p111:full-page:a0:result0:r31・p111:full-page:a0:result0:r31:w3・p111:full-page:a0:result0:r87・p111:full-page:a0:result0:r87:w7・p111:full-page:a0:result0:r109・p111:full-page:a0:result0:r109:w7・p113:full-page:a0:result0:r142・p113:full-page:a0:result0:r142:w3・p121:full-page:a0:result0:r92・p121:full-page:a0:result0:r92:w3）・產→産 26 件（p51:full-page:a0:result0:r16・p51:full-page:a0:result0:r16:w3・p52:full-page:a0:result0:r46・p52:full-page:a0:result0:r46:w2・p52:full-page:a0:result0:r64・p52:full-page:a0:result0:r64:w5・p53:full-page:a0:result0:r130・p53:full-page:a0:result0:r130:w3・p59:full-page:a0:result0:r70・p59:full-page:a0:result0:r70:w3・p83:full-page:a0:result0:r60・p83:full-page:a0:result0:r60:w4・p84:full-page:a0:result0:r110・p84:full-page:a0:result0:r110:w5・p85:full-page:a0:result0:r18・p85:full-page:a0:result0:r18:w1・p87:full-page:a0:result0:r0・p87:full-page:a0:result0:r0:w3・p89:full-page:a0:result0:r0・p89:full-page:a0:result0:r0:w3・p91:full-page:a0:result0:r0・p91:full-page:a0:result0:r0:w3・p93:full-page:a0:result0:r0・p93:full-page:a0:result0:r0:w3・p96:full-page:a0:result0:r63・p96:full-page:a0:result0:r63:w5）・齡→齢 16 件（p71:full-page:a0:result0:r24・p71:full-page:a0:result0:r24:w1・p71:full-page:a0:result0:r26・p71:full-page:a0:result0:r26:w1・p73:full-page:a0:result0:r22・p73:full-page:a0:result0:r22:w1・p73:full-page:a0:result0:r28・p73:full-page:a0:result0:r28:w1・p73:full-page:a0:result0:r41・p73:full-page:a0:result0:r41:w1・p73:full-page:a0:result0:r60・p73:full-page:a0:result0:r60:w1・p73:full-page:a0:result0:r71・p73:full-page:a0:result0:r71:w1・p74:full-page:a0:result0:r38・p74:full-page:a0:result0:r38:w5）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/133078/2024/settlement/expenditure/general-expenditure-detail-nodes.parquet",
+          "sha256": "8b05944e508ea4e6b3057957b9c2ecfe7b88c277971348868f82d9992bc9cd2c",
+          "bytes": 78120
+        },
+        "row_count": 2379
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/133078/2024/settlement/expenditure/general-expenditure-detail-amounts.parquet",
+          "sha256": "4546db89acdaf2f151a77d3c45f1b79eb54c9f2ddefb99cceecb10d3547a7273",
+          "bytes": 93656
+        },
+        "row_count": 5348
+      }
+    },
+    {
+      "table_id": "nhi-business-expenditure-detail",
+      "conversion_id": "nhi-business",
+      "input_fingerprint": "7b625b679897992f4d6ddd63ab28cd2360b0aa90bac5e0e3cf4996b0e3dca165",
+      "account": "国民健康保険特別会計事業勘定",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '備考': 'indent'}。",
+        "金額の単位は column mark 5頁 から決めた。款の和 330,881,798 と印字の「歳出合計」330,881,798 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（145 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・翌年度繰越額継続費逓次繰越繰越明許費事故繰越→翌年度繰越額。",
+        "原画で確かめた名称の誤読 1 件を、管理 JSON の name_corrections で印字に直した: 国保稅賦課電算業務委託料→国保税賦課電算業務委託料。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 4 件（p22:full-page:a0:result0:r57・p22:full-page:a0:result0:r57:w4・p22:full-page:a0:result0:r64・p22:full-page:a0:result0:r64:w4）・徵→徴 2 件（p18:full-page:a0:result0:r82・p18:full-page:a0:result0:r82:w2）・查→査 12 件（p19:full-page:a0:result0:r69・p19:full-page:a0:result0:r69:w4・p20:full-page:a0:result0:r86・p20:full-page:a0:result0:r86:w3・p21:full-page:a0:result0:r62・p21:full-page:a0:result0:r62:w4・p21:full-page:a0:result0:r66・p21:full-page:a0:result0:r66:w1・p24:full-page:a0:result0:r48・p24:full-page:a0:result0:r48:w7・p24:full-page:a0:result0:r56・p24:full-page:a0:result0:r56:w1）・產→産 2 件（p20:full-page:a0:result0:r144・p20:full-page:a0:result0:r144:w2）・齡→齢 4 件（p22:full-page:a0:result0:r118・p22:full-page:a0:result0:r118:w5・p23:full-page:a0:result0:r77・p23:full-page:a0:result0:r77:w9）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/133078/2024/settlement/expenditure/nhi-business-expenditure-detail-nodes.parquet",
+          "sha256": "beb4d39b9ea344ca23bd51263285d7688d43c766b1c3acb59b1767d6b26118ee",
+          "bytes": 10573
+        },
+        "row_count": 159
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/133078/2024/settlement/expenditure/nhi-business-expenditure-detail-amounts.parquet",
+          "sha256": "1e7a8f72306561cde0e6db53aac45ed4f495d25ceee2aa28c513332e62e7d5e8",
+          "bytes": 14428
+        },
+        "row_count": 701
+      }
+    },
+    {
+      "table_id": "nhi-clinic-expenditure-detail",
+      "conversion_id": "nhi-clinic",
+      "input_fingerprint": "5cf318d0f8b5c8e728f7640ebc201625e261b2ebaa0b6c15cfe11cd358035689",
+      "account": "国民健康保険特別会計診療施設勘定",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '備考': 'indent'}。",
+        "金額の単位は column mark 3頁 から決めた。款の和 202,856,412 と印字の「歳出合計」202,856,412 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（59 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・翌年度繰越額継続費逓次繰越繰越明許費事故繰越→翌年度繰越額。",
+        "原画で確かめた名称の誤読 1 件を、管理 JSON の name_corrections で印字に直した: 一般診療等消費稅→一般診療等消費税。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 4 件（p49:full-page:a0:result0:r88・p49:full-page:a0:result0:r88:w5・p49:full-page:a0:result0:r107・p49:full-page:a0:result0:r107:w7）・查→査 4 件（p49:full-page:a0:result0:r118・p49:full-page:a0:result0:r118:w3・p49:full-page:a0:result0:r126・p49:full-page:a0:result0:r126:w5）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/133078/2024/settlement/expenditure/nhi-clinic-expenditure-detail-nodes.parquet",
+          "sha256": "f92b3ad1d51f149e13355128a92851369b7fa1c5fdce1fcc0ab7f65586148366",
+          "bytes": 8638
+        },
+        "row_count": 119
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/133078/2024/settlement/expenditure/nhi-clinic-expenditure-detail-amounts.parquet",
+          "sha256": "81add054c24d5f6135d445a184b557dd9ef864d54c0f0af7e5c4d2def331951f",
+          "bytes": 9596
+        },
+        "row_count": 301
+      }
+    },
+    {
+      "table_id": "forest-expenditure-detail",
+      "conversion_id": "forest",
+      "input_fingerprint": "9b610813019861023257d8abe52d001af3168a212827a7305635c545fdf3af08",
+      "account": "東京都都民の森管理運営事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '備考': 'indent'}。",
+        "金額の単位は column mark 2頁 から決めた。款の和 127,475,358 と印字の「歳出合計」127,475,358 が一致。",
+        "金額の注記 2 件（流用 2）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（39 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・翌年度繰越額継続費逓次繰越繰越明許費事故繰越→翌年度繰越額。",
+        "原画で確かめた名称の誤読 1 件を、管理 JSON の name_corrections で印字に直した: しいたけ骨木等購入費→しいたけ榾木等購入費。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/133078/2024/settlement/expenditure/forest-expenditure-detail-nodes.parquet",
+          "sha256": "07ee20a1a065ba192790e348146fcbe25bc88ac4896258fdbce17f24167db390",
+          "bytes": 8515
+        },
+        "row_count": 118
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/133078/2024/settlement/expenditure/forest-expenditure-detail-amounts.parquet",
+          "sha256": "0a54cb4e4a958f3a9726e0ffd357da8b50018993da11accfd3601cf069e3ec71",
+          "bytes": 8120
+        },
+        "row_count": 215
+      }
+    },
+    {
+      "table_id": "care-expenditure-detail",
+      "conversion_id": "care",
+      "input_fingerprint": "e7ad214ade0de38fa969ad90657d6840e48982356ec3807d7a4bade3bc15b829",
+      "account": "介護保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '備考': 'indent'}。",
+        "金額の単位は column mark 7頁 から決めた。款の和 458,271,148 と印字の「歳出合計」458,271,148 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（225 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・翌年度繰越額継続費逓次繰越繰越明許費事故繰越→翌年度繰越額。",
+        "原画で確かめた名称の誤読 2 件を、管理 JSON の name_corrections で印字に直した: 2介護予防サ一ビス等諸費→2介護予防サービス等諸費・4高額介護サ一ビス等費→4高額介護サービス等費。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 10 件（p106:full-page:a0:result0:r109・p106:full-page:a0:result0:r109:w6・p106:full-page:a0:result0:r118・p106:full-page:a0:result0:r118:w0・p106:full-page:a0:result0:r148・p106:full-page:a0:result0:r148:w1・p108:full-page:a0:result0:r46・p108:full-page:a0:result0:r46:w5・p108:full-page:a0:result0:r103・p108:full-page:a0:result0:r103:w0）・查→査 14 件（p98:full-page:a0:result0:r78・p98:full-page:a0:result0:r78:w7・p98:full-page:a0:result0:r86・p98:full-page:a0:result0:r86:w1・p99:full-page:a0:result0:r105・p99:full-page:a0:result0:r105:w5・p104:full-page:a0:result0:r77・p104:full-page:a0:result0:r77:w3・p105:full-page:a0:result0:r46・p105:full-page:a0:result0:r46:w6・p108:full-page:a0:result0:r121・p108:full-page:a0:result0:r121:w3・p109:full-page:a0:result0:r108・p109:full-page:a0:result0:r108:w6）・齡→齢 2 件（p109:full-page:a0:result0:r73・p109:full-page:a0:result0:r73:w1）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/133078/2024/settlement/expenditure/care-expenditure-detail-nodes.parquet",
+          "sha256": "b5d8590bb14adee421bc0b192020a83ac230e69e4333f75321bc1e5f184faec9",
+          "bytes": 12908
+        },
+        "row_count": 222
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/133078/2024/settlement/expenditure/care-expenditure-detail-amounts.parquet",
+          "sha256": "e1a84f6755f235ec3b8ddc892a63f5bf1f6ea6fdeec9a414638e23119aa893d2",
+          "bytes": 17776
+        },
+        "row_count": 971
+      }
+    },
+    {
+      "table_id": "care-service-expenditure-detail",
+      "conversion_id": "care-service",
+      "input_fingerprint": "9b9ce63064a9e72b70fa420edbd577d411913b4746e1307a7c9e21d1c44b5d00",
+      "account": "介護サービス事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '備考': 'indent'}。",
+        "金額の単位は column mark 1頁 から決めた。款の和 45,392,660 と印字の「歳出合計」45,392,660 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（29 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・翌年度繰越額継続費逓次繰越繰越明許費事故繰越→翌年度繰越額。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 4 件（p130:full-page:a0:result0:r86・p130:full-page:a0:result0:r86:w0・p131:full-page:a0:result0:r64・p131:full-page:a0:result0:r64:w4）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/133078/2024/settlement/expenditure/care-service-expenditure-detail-nodes.parquet",
+          "sha256": "aff8dcdbc9ec40bd76250c1311eb862611dd6fb889fda6d7d5417b33d4472cdc",
+          "bytes": 4224
+        },
+        "row_count": 29
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/133078/2024/settlement/expenditure/care-service-expenditure-detail-amounts.parquet",
+          "sha256": "1e154371d3fcaaa70be0649a8d76901a98512d02186784f15bd7f9542efa4ea7",
+          "bytes": 5099
+        },
+        "row_count": 144
+      }
+    },
+    {
+      "table_id": "elderly-expenditure-detail",
+      "conversion_id": "elderly",
+      "input_fingerprint": "b9ebfa41a07f2ae5cd6ba57c4d6aec40e6838af51435f78fe1aa0f003979d386",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '備考': 'indent'}。",
+        "金額の単位は column mark 2頁 から決めた。款の和 89,211,353 と印字の「歳出合計」89,211,353 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（55 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・翌年度繰越額継続費逓次繰越繰越明許費事故繰越→翌年度繰越額。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 增→増 2 件（p148:full-page:a0:result0:r106・p148:full-page:a0:result0:r106:w6）・徵→徴 4 件（p148:full-page:a0:result0:r60・p148:full-page:a0:result0:r60:w2・p148:full-page:a0:result0:r66・p148:full-page:a0:result0:r66:w2）・齡→齢 4 件（p149:full-page:a0:result0:r0・p149:full-page:a0:result0:r0:w3・p151:full-page:a0:result0:r0・p151:full-page:a0:result0:r0:w3）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/133078/2024/settlement/expenditure/elderly-expenditure-detail-nodes.parquet",
+          "sha256": "cc244dc1e251e2a42de1cb77b56cf4a87d593f263857a6f13a0bea73b0c458ab",
+          "bytes": 5791
+        },
+        "row_count": 61
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/133078/2024/settlement/expenditure/elderly-expenditure-detail-amounts.parquet",
+          "sha256": "0211de3651d07f52a03daf90d8435ef0d112d62d95b7289bfe1d1dda2bc0acd1",
+          "bytes": 7655
+        },
+        "row_count": 270
+      }
+    }
+  ]
+}
