@@ -1,0 +1,813 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "131091",
+    "fiscal_year": 2025,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial-1",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "02dbdaf563e38896957b6d879561df9143ea1060661257c9bb99755baf32922a"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-1",
+        "workflow": {
+          "layout": {
+            "pattern": "stacked_titles",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              },
+              "columns": {
+                "本年度予額の財源内訳／算／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・保険料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予額の財源内訳／算／特定財源／特別区債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・保険料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予額の財源内訳／算／特定財源／特別区／債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・保険料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予額の財源内訳／算／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・保険料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予額の財源内訳／算／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・保険料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "説": {
+                  "heading": "説明",
+                  "axis_header": "説明"
+                },
+                "説／明": {
+                  "heading": "説明",
+                  "axis_header": "説明"
+                },
+                "説／千円(廃目)／(廃目)": {
+                  "heading": "説明",
+                  "axis_header": "説明"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "plain_names": [
+                    "補充用"
+                  ],
+                  "bare_amounts": true,
+                  "yen_marked": true,
+                  "note_kinds": {
+                    "総工事費": "債務負担行為",
+                    "総委託費": "債務負担行為",
+                    "債務負担行為額": "債務負担行為",
+                    "差引計上額": "債務負担行為",
+                    "療養給付費（都内分）": "積算",
+                    "療養給付費（委託分）": "積算",
+                    "療養費23.2円": "積算"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-1"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-2",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "1b110f75c7cc954c93cb7994708e36c18501c8ef321a7063e2e00c1374bfb48a"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-2",
+        "workflow": {
+          "layout": {
+            "pattern": "stacked_titles",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              },
+              "columns": {
+                "本年度予額の財源内訳／算／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・保険料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予額の財源内訳／算／特定財源／特別区債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・保険料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予額の財源内訳／算／特定財源／特別区／債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・保険料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予額の財源内訳／算／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・保険料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予額の財源内訳／算／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・保険料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "説": {
+                  "heading": "説明",
+                  "axis_header": "説明"
+                },
+                "説／明": {
+                  "heading": "説明",
+                  "axis_header": "説明"
+                },
+                "説／千円(廃目)／(廃目)": {
+                  "heading": "説明",
+                  "axis_header": "説明"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "plain_names": [
+                    "補充用"
+                  ],
+                  "bare_amounts": true,
+                  "yen_marked": true,
+                  "note_kinds": {
+                    "総工事費": "債務負担行為",
+                    "総委託費": "債務負担行為",
+                    "債務負担行為額": "債務負担行為",
+                    "差引計上額": "債務負担行為",
+                    "療養給付費（都内分）": "積算",
+                    "療養給付費（委託分）": "積算",
+                    "療養費23.2円": "積算"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-2"
+        }
+      ]
+    },
+    {
+      "id": "national-health-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5f1a8a14f62f301402a4aafec23852d692a756b6af594f785fc593772f498afd"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "stacked_titles",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              },
+              "columns": {
+                "本年度予額の財源内訳／算／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・保険料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予額の財源内訳／算／特定財源／特別区債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・保険料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予額の財源内訳／算／特定財源／特別区／債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・保険料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予額の財源内訳／算／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・保険料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予額の財源内訳／算／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・保険料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "説": {
+                  "heading": "説明",
+                  "axis_header": "説明"
+                },
+                "説／明": {
+                  "heading": "説明",
+                  "axis_header": "説明"
+                },
+                "説／千円(廃目)／(廃目)": {
+                  "heading": "説明",
+                  "axis_header": "説明"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "plain_names": [
+                    "補充用"
+                  ],
+                  "bare_amounts": true,
+                  "yen_marked": true,
+                  "note_kinds": {
+                    "総工事費": "債務負担行為",
+                    "総委託費": "債務負担行為",
+                    "債務負担行為額": "債務負担行為",
+                    "差引計上額": "債務負担行為",
+                    "療養給付費（都内分）": "積算",
+                    "療養給付費（委託分）": "積算",
+                    "療養費23.2円": "積算"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-initial"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5f1a8a14f62f301402a4aafec23852d692a756b6af594f785fc593772f498afd"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "stacked_titles",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              },
+              "columns": {
+                "本年度予額の財源内訳／算／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・保険料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予額の財源内訳／算／特定財源／特別区債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・保険料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予額の財源内訳／算／特定財源／特別区／債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・保険料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予額の財源内訳／算／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・保険料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予額の財源内訳／算／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・保険料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "説": {
+                  "heading": "説明",
+                  "axis_header": "説明"
+                },
+                "説／明": {
+                  "heading": "説明",
+                  "axis_header": "説明"
+                },
+                "説／千円(廃目)／(廃目)": {
+                  "heading": "説明",
+                  "axis_header": "説明"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "plain_names": [
+                    "補充用"
+                  ],
+                  "bare_amounts": true,
+                  "yen_marked": true,
+                  "note_kinds": {
+                    "総工事費": "債務負担行為",
+                    "総委託費": "債務負担行為",
+                    "債務負担行為額": "債務負担行為",
+                    "差引計上額": "債務負担行為",
+                    "療養給付費（都内分）": "積算",
+                    "療養給付費（委託分）": "積算",
+                    "療養費23.2円": "積算"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ]
+    },
+    {
+      "id": "care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5f1a8a14f62f301402a4aafec23852d692a756b6af594f785fc593772f498afd"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "stacked_titles",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              },
+              "columns": {
+                "本年度予額の財源内訳／算／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・保険料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予額の財源内訳／算／特定財源／特別区債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・保険料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予額の財源内訳／算／特定財源／特別区／債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・保険料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予額の財源内訳／算／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・保険料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予額の財源内訳／算／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・保険料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "説": {
+                  "heading": "説明",
+                  "axis_header": "説明"
+                },
+                "説／明": {
+                  "heading": "説明",
+                  "axis_header": "説明"
+                },
+                "説／千円(廃目)／(廃目)": {
+                  "heading": "説明",
+                  "axis_header": "説明"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "plain_names": [
+                    "補充用"
+                  ],
+                  "bare_amounts": true,
+                  "yen_marked": true,
+                  "note_kinds": {
+                    "総工事費": "債務負担行為",
+                    "総委託費": "債務負担行為",
+                    "債務負担行為額": "債務負担行為",
+                    "差引計上額": "債務負担行為",
+                    "療養給付費（都内分）": "積算",
+                    "療養給付費（委託分）": "積算",
+                    "療養費23.2円": "積算"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-initial"
+        }
+      ]
+    },
+    {
+      "id": "disaster-recovery-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5f1a8a14f62f301402a4aafec23852d692a756b6af594f785fc593772f498afd"
+        }
+      ],
+      "options": {
+        "account": "災害復旧特別会計",
+        "table_id": "disaster-recovery-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "stacked_titles",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              },
+              "columns": {
+                "本年度予額の財源内訳／算／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・保険料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予額の財源内訳／算／特定財源／特別区債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・保険料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予額の財源内訳／算／特定財源／特別区／債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・保険料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予額の財源内訳／算／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・保険料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予額の財源内訳／算／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・保険料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "説": {
+                  "heading": "説明",
+                  "axis_header": "説明"
+                },
+                "説／明": {
+                  "heading": "説明",
+                  "axis_header": "説明"
+                },
+                "説／千円(廃目)／(廃目)": {
+                  "heading": "説明",
+                  "axis_header": "説明"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "plain_names": [
+                    "補充用"
+                  ],
+                  "bare_amounts": true,
+                  "yen_marked": true,
+                  "note_kinds": {
+                    "総工事費": "債務負担行為",
+                    "総委託費": "債務負担行為",
+                    "債務負担行為額": "債務負担行為",
+                    "差引計上額": "債務負担行為",
+                    "療養給付費（都内分）": "積算",
+                    "療養給付費（委託分）": "積算",
+                    "療養費23.2円": "積算"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "disaster-recovery-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial-1",
+      "conversion_id": "general-initial-1",
+      "input_fingerprint": "c2bf2e83f204aca003f71e55db1eeab8739395a50e65fe5a367b2036f144db81",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は column mark 77頁 から決めた。分冊のため款の和 406,634,243 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 36 件（債務負担行為 36）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2025/initial/expenditure/general-initial-1-nodes.parquet",
+          "sha256": "e7c6f130ec61b9a8584578460a1b51c467b7fd6e49a0eb32022c6535187c15d1",
+          "bytes": 88398
+        },
+        "row_count": 2670
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2025/initial/expenditure/general-initial-1-amounts.parquet",
+          "sha256": "40aef95625f963b5a1f928abb09a85a144de575bfaa447783ae0423ea4afe389",
+          "bytes": 60083
+        },
+        "row_count": 2772
+      }
+    },
+    {
+      "table_id": "general-initial-2",
+      "conversion_id": "general-initial-2",
+      "input_fingerprint": "65e8883eacc562ea7410fde0018d7ced6f57beb03ca5f4fef7010fd4f81a3031",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は column mark 39頁 から決めた。分冊のため款の和 62,891,757 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 57 件（債務負担行為 57）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2025/initial/expenditure/general-initial-2-nodes.parquet",
+          "sha256": "4e906d4b9a93cf692898f115c1d673d8b6039a2cab962e7b3846442a4d487572",
+          "bytes": 47304
+        },
+        "row_count": 1258
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2025/initial/expenditure/general-initial-2-amounts.parquet",
+          "sha256": "8836819f4b7605cec7188f53ecc51d8a8a31c1928f5e5d1bc996982c41458b67",
+          "bytes": 33590
+        },
+        "row_count": 1294
+      }
+    },
+    {
+      "table_id": "national-health-initial",
+      "conversion_id": "national-health-initial",
+      "input_fingerprint": "25fa0397b27f12c729bad05103cf8eb4528becca79349e4c67df371cb6d68eb9",
+      "account": "国民健康保険事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は column mark 8頁 から決めた。款の和 34,384,515 と印字の「歳出合計」34,384,515 が一致。",
+        "金額の注記 3 件（積算 3）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2025/initial/expenditure/national-health-initial-nodes.parquet",
+          "sha256": "e8968d86085187db9959d0c185e5a8cd926d06b232df71c2270ee1c6a5761c1f",
+          "bytes": 10363
+        },
+        "row_count": 171
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2025/initial/expenditure/national-health-initial-amounts.parquet",
+          "sha256": "d65a3a2e265d0282d7c7ea6f52114eca0999983f5b067810209929507dc4b224",
+          "bytes": 7823
+        },
+        "row_count": 234
+      }
+    },
+    {
+      "table_id": "elderly-medical-initial",
+      "conversion_id": "elderly-medical-initial",
+      "input_fingerprint": "daf76e60660f635178339d8646b8c4736e13ecb8d63474ebc187c1882082c1e2",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は column mark 4頁 から決めた。款の和 11,000,237 と印字の「歳出合計」11,000,237 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2025/initial/expenditure/elderly-medical-initial-nodes.parquet",
+          "sha256": "cf1b6ea657991901ef127c3e184a38635ba3f028e8e73d41e61edc026358cb6e",
+          "bytes": 7103
+        },
+        "row_count": 96
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2025/initial/expenditure/elderly-medical-initial-amounts.parquet",
+          "sha256": "aae8dddabe14303b361ba5f6ce2ed83d16cd800cb3ed3814a7c9dc86b5396840",
+          "bytes": 5177
+        },
+        "row_count": 123
+      }
+    },
+    {
+      "table_id": "care-initial",
+      "conversion_id": "care-initial",
+      "input_fingerprint": "2b27e998c0b1b6122d90178f0e1ba37e643fee7b0f47fdd7f7444dcc270d8576",
+      "account": "介護保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は column mark 14頁 から決めた。款の和 28,110,560 と印字の「歳出合計」28,110,560 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2025/initial/expenditure/care-initial-nodes.parquet",
+          "sha256": "d034856b2b04da0f413961c1a6f38107e076fe69103856f67c7002d5135819a1",
+          "bytes": 12805
+        },
+        "row_count": 246
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2025/initial/expenditure/care-initial-amounts.parquet",
+          "sha256": "be561fd06c7dd7ffebbc0797e8d51e6a1a11b5f16cfa9ba5e936d3da82d9f66d",
+          "bytes": 9504
+        },
+        "row_count": 332
+      }
+    },
+    {
+      "table_id": "disaster-recovery-initial",
+      "conversion_id": "disaster-recovery-initial",
+      "input_fingerprint": "14683296252d8d678476069edc4b5106814b51167d4ebb66d7f5553ccf6264f2",
+      "account": "災害復旧特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は column mark 2頁 から決めた。款の和 1,500,000 と印字の「歳出合計」1,500,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2025/initial/expenditure/disaster-recovery-initial-nodes.parquet",
+          "sha256": "b5411e57b551715d66d233a39cb0cc48aa533e83a9518daf0548b10b9ee6a94a",
+          "bytes": 3321
+        },
+        "row_count": 15
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2025/initial/expenditure/disaster-recovery-initial-amounts.parquet",
+          "sha256": "69f2a90556765b7fda4086257844ad94ded6a40b34012f46e2dcdf2abcb7ddd5",
+          "bytes": 2396
+        },
+        "row_count": 19
+      }
+    }
+  ]
+}
