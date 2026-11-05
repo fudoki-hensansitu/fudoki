@@ -90,6 +90,6 @@ sidebar:
 | 429 | `PDF_UNAVAILABLE` | PDF 中継の上限を超えた |
 | 429 | `RESOURCE_EXHAUSTED` | 評価資料の検索の回数の上限。`Retry-After` だけ待つ |
 | 502 / 504 | `PDF_UNAVAILABLE` | PDF を取れない・32 MiB 超・20 秒超 |
-| 503 | `UNAVAILABLE` | 提供を止めている |
+| 503 | `UNAVAILABLE` | 提供を止めている。評価資料の検索では、検索の失敗・不正な応答や、流量・回数の上限を確かめる先の障害・設定の不備でも返る（0 件ではない。時間をおいて再試行する） |
 
 各操作の詳細は [API リファレンス](/reference)にあります。

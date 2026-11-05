@@ -7,7 +7,7 @@
 | 項目 | 値・状態 |
 | --- | --- |
 | 名称 | 風土記(fudoki)（package ID: fudoki） |
-| 発行者 | 風土記。本人確認は提出画面で未実施 |
+| 発行者 | 風土記。OpenAIは2026-10-21に本人確認（Individual）済み |
 | 提供国 | 日本（JP） |
 | 課金・購入 | なし |
 | MCP URL | https://api.fudoki.dev/mcp |
@@ -66,7 +66,7 @@ Computer pluginでの操作補助も可能だが、録画機能とは別であ�
 
 ## 後日、外部で行うこと
 
-OpenAIは公開用ZIPをDeveloper PortalのPluginsへ読み込み、既存MCP URLを接続する。登録済みapp IDや `.app.json` はauthor提供ZIPには含めない。掲載URL、発行者、レビュー情報、録画、国設定を確認し、portal検査を完了してから提出する。個人用custom MCP接続は公開提出を兼ねない。[OpenAIの提出](https://developers.openai.com/plugins/deploy/submission)
+OpenAIへの提出の手順（2026-11-05に公開済み。以下は提出時の記録）：公開用ZIPをDeveloper PortalのPluginsへ読み込み、既存MCP URLを接続する。登録済みapp IDや `.app.json` はauthor提供ZIPには含めない。掲載URL、発行者、レビュー情報、録画、国設定を確認し、portal検査を完了してから提出する。個人用custom MCP接続は公開提出を兼ねない。[OpenAIの提出](https://developers.openai.com/plugins/deploy/submission)
 
 Claudeは `claude.ai/directory/manage` でMCP connectorとPlugin bundleをそれぞれ準備する。pluginのrepoは `fudoki-hensansitu/fudoki`、pathは `plugins/fudoki`。repo を移すときは申請を出し直す（ソースの repo は変えられない）。GitHub連携・push権限の確認、連絡先、公開ポリシー、実機確認、portalのdata handling・complianceが残る。既存connectorとpluginを組み合わせる提出として扱う。[Claude connector](https://claude.com/docs/connectors/building/submission)・[Claude plugin](https://claude.com/docs/plugins/submit)
 
