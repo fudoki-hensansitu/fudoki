@@ -207,7 +207,7 @@ const matches = (e: IndexEntry, query: string) => {
   return !q || e.name.includes(q) || e.prefecture.includes(q) || slugOf(e).includes(q)
 }
 
-/** 表の種類のタグ。押すとその種類の候補を選べる combobox が開き、複数選べる */
+/** タグの候補の先頭に置く「すべての〇〇」の値 */
 const ALL = '__all__'
 
 /** 表の種類のタグ。押すとその種類の候補を選べる combobox が開き、複数選べる。先頭の「すべての〇〇」で選べる候補を一度に選ぶ・外す */
