@@ -53,7 +53,7 @@ function MokuGroup({ moku }: { moku: Moku }) {
           {rest.length > 0 ? (
             <li data-setsu-rest className="text-[11.5px] text-muted-foreground">
               <Tooltip>
-                <TooltipTrigger delay={100} className="grid w-full grid-cols-[minmax(0,1fr)_auto] gap-x-2.5 text-left hover:text-foreground">
+                <TooltipTrigger className="grid w-full grid-cols-[minmax(0,1fr)_auto] gap-x-2.5 text-left hover:text-foreground">
                   <span className="underline decoration-dotted underline-offset-2">ほか{rest.length}節</span>
                   {restYen !== null ? <span className="text-right tabular-nums">{formatYen(restYen)}</span> : null}
                 </TooltipTrigger>
@@ -109,6 +109,40 @@ const band = (x0: number, y0: number, h0: number, x1: number, y1: number, h1: nu
 }
 
 /** 項の帯を目の行へ、目の帯を上位の節へ渡す。狭い画面では出さない */
+/** 款・項の目盛り。hover すると一覧を tooltip に出し、押すとそこへ移る（目盛り自体もボタンで、キーボードはそちらで動かす） */
+function TickMenu({ items, current, onPick, side, label, className, children }: {
+  items: { key: string; name: string; note?: string }[]
+  current: number
+  onPick: (i: number) => void
+  side: 'bottom' | 'left'
+  label: string
+  className?: string
+  children: React.ReactNode
+}) {
+  return (
+    <Tooltip>
+      <TooltipTrigger render={<div role="group" aria-label={label} className={className} />}>{children}</TooltipTrigger>
+      <TooltipContent side={side} sideOffset={6} className="block max-h-[min(60vh,420px)] w-60 overflow-y-auto rounded-xl border bg-background p-1.5 text-foreground shadow-lg [&>:last-child]:hidden">
+        <ul className="grid gap-px">
+          {items.map((item, i) => (
+            <li key={item.key}>
+              <button
+                type="button"
+                tabIndex={-1}
+                onClick={() => onPick(i)}
+                className={`flex w-full items-baseline justify-between gap-3 rounded-md px-2.5 py-1.5 text-left text-[13px] ${i === current ? 'bg-secondary font-medium text-foreground' : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'}`}
+              >
+                <span className="min-w-0 truncate">{item.name}</span>
+                {item.note ? <span className="shrink-0 text-[11.5px] tabular-nums text-muted-foreground">{item.note}</span> : null}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </TooltipContent>
+    </Tooltip>
+  )
+}
+
 function KouSection({ kou, active, loading, onBox }: { kou: Kou; active: boolean; loading: boolean; onBox: (el: HTMLElement | null) => void }) {
   const box = React.useRef<HTMLElement | null>(null)
   const rib = React.useRef<HTMLDivElement>(null)
@@ -234,13 +268,20 @@ function KanPanel({ drill, loading }: { drill: Drill; loading: boolean }) {
     <div className="relative h-full w-full shrink-0 snap-start snap-always" data-panel>
       {drill.kou.length > 1 ? (
         // 項の目盛り。押すとその項へ縦に送る
-        <div className="absolute right-0.5 top-1/2 z-10 flex -translate-y-1/2 flex-col" role="group" aria-label={`${drill.kan.name}の項へ移る`}>
+        <TickMenu
+          label={`${drill.kan.name}の項へ移る`}
+          side="left"
+          current={current}
+          onPick={toKou}
+          items={drill.kou.map((k) => ({ key: k.id, name: k.name, note: amountText(k.yen, k.amountMissing) }))}
+          className="absolute right-0.5 top-1/2 z-10 flex -translate-y-1/2 flex-col"
+        >
           {drill.kou.map((k, i) => (
-            <button key={k.id} type="button" onClick={() => toKou(i)} aria-label={k.name} aria-current={i === current || undefined} title={k.name} className="group/dot px-1.5 py-[3px]">
+            <button key={k.id} type="button" onClick={() => toKou(i)} aria-label={k.name} aria-current={i === current || undefined} className="group/dot px-1.5 py-[3px]">
               <i className={`block w-[5px] rounded-full transition-all ${i === current ? 'h-4 bg-primary' : 'h-[5px] bg-border group-hover/dot:bg-primary/50'}`} />
             </button>
           ))}
-        </div>
+        </TickMenu>
       ) : null}
       <div ref={body} style={fade} className="h-full snap-y snap-mandatory scroll-pt-10 overflow-y-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" tabIndex={-1}>
         {drill.kou.map((k, i) => (
@@ -333,16 +374,23 @@ export function Flow({ data, total: year, tabs, summary }: { data: PageData; tot
           ) : summary}
         </div>
         {/* 款の目盛り。押すとその款（先頭は全体図）へ移る。押せる高さを取り、見える棒は細いまま */}
-        <div className="mt-1 flex gap-0.5" role="group" aria-label="款へ移る">
-          <button type="button" onClick={() => goTo(0)} aria-label="全体図" aria-current={index === 0 || undefined} title="全体図" className="group/seg w-3.5 py-1">
+        <TickMenu
+          label="款へ移る"
+          side="bottom"
+          current={index}
+          onPick={goTo}
+          items={[{ key: 'overview', name: '全体図' }, ...flows.map((f) => ({ key: f.kan.id, name: f.kan.name, note: amountText(f.kan.yen, f.kan.amountMissing) }))]}
+          className="mt-1 flex gap-0.5"
+        >
+          <button type="button" onClick={() => goTo(0)} aria-label="全体図" aria-current={index === 0 || undefined} className="group/seg w-3.5 py-1">
             <i className={`block h-1.5 rounded-sm transition-colors ${index === 0 ? 'bg-primary' : 'bg-border group-hover/seg:bg-primary/40'}`} />
           </button>
           {flows.map((f, i) => (
-            <button key={f.kan.id} type="button" onClick={() => goTo(i + 1)} aria-label={f.kan.name} aria-current={index === i + 1 || undefined} title={f.kan.name} className="group/seg min-w-[3px] py-1" style={{ flexGrow: Math.max(f.kan.yen, 0) / sum || 0.01, flexBasis: 0 }}>
+            <button key={f.kan.id} type="button" onClick={() => goTo(i + 1)} aria-label={f.kan.name} aria-current={index === i + 1 || undefined} className="group/seg min-w-[3px] py-1" style={{ flexGrow: Math.max(f.kan.yen, 0) / sum || 0.01, flexBasis: 0 }}>
               <i className={`block h-1.5 rounded-sm transition-colors ${index === i + 1 ? 'bg-primary' : 'bg-border group-hover/seg:bg-primary/40'}`} />
             </button>
           ))}
-        </div>
+        </TickMenu>
         <p className="mt-2 text-xs text-muted-foreground">
           {index > 0 ? <>縦にスクロールすると、款の中の項が一つずつ開きます。{index < total ? '横で次の款へ。' : null}</> : '横にスクロールすると、詳細が開きます。'}
         </p>
