@@ -10,6 +10,7 @@ the difference of a total.
 
 from __future__ import annotations
 
+import re
 import hashlib
 import json
 import unicodedata
@@ -123,6 +124,9 @@ class AmountRule:
     reason: str
 
 
+RUN_TOGETHER = re.compile(r'(?:[△▲−-]?[0-9]{1,3}(?:,[0-9]{3})+|0(?=[1-9△▲−-])){2,}')
+
+
 def _amount_key(amount: str, *, observed: bool = False) -> str:
     """A corrected amount has a digit and no letter. The observed side is whatever OCR
     returned (e.g. ``009 480 TT`` or ``C`` for 0). The caller must restrict digitless
@@ -132,7 +136,8 @@ def _amount_key(amount: str, *, observed: bool = False) -> str:
         raise ValueError('A digitless amount observation must be one glyph in a declared amount column')
     if not observed and (not any(char.isdigit() for char in key) or any(char.isalpha() for char in key)):
         raise ValueError("An amount rule must contain a digit and no letter")
-    if not observed and parse_amount(key) is None:
+    # Cells read as one word and put right as one word: the rules cut them (`0△208,304,2645,949,872,736`).
+    if not observed and parse_amount(key) is None and not RUN_TOGETHER.fullmatch(key):
         raise ValueError('A corrected amount must be one numeric value')
     return key
 

@@ -85,7 +85,7 @@ def _amount(text: str) -> bool:
     return bool(AMOUNT.fullmatch(_text(text)))
 
 
-RUN_TOGETHER = re.compile(r'([△▲−-]?[0-9]{1,3}(?:,[0-9]{3})+)([0-9]{1,3}(?:,[0-9]{3})+)')
+RUN_TOGETHER = re.compile(r'[△▲−-]?[0-9]{1,3}(?:,[0-9]{3})+|0(?=[1-9△▲−-])')
 
 
 def _split(word: Word, cuts: list[float]) -> list[Word]:
@@ -111,10 +111,11 @@ def _split(word: Word, cuts: list[float]) -> list[Word]:
         return [word] if _amount(word.text) else [Word(word.text, word.x0, word.y0, min(inside), word.y1)]
     # Two grouped amounts run together across one rule (`△77,756,000103,232,000`, 132276): the groups of three say
     # where the first ends. A share by width can be a digit off, and a sign makes the left part wider than it reads.
-    together = RUN_TOGETHER.fullmatch(re.sub(r'\s+', '', word.text))
-    if together and len(inside) == 1:
-        return [Word(together.group(1), word.x0, word.y0, inside[0], word.y1),
-                Word(together.group(2), inside[0], word.y0, word.x1, word.y1)]
+    joined = re.sub(r'\s+', '', word.text)
+    together = RUN_TOGETHER.findall(joined)
+    if len(together) == len(inside) + 1 and ''.join(together) == joined:
+        edges = [word.x0, *inside, word.x1]
+        return [Word(text, edges[i], word.y0, edges[i + 1], word.y1) for i, text in enumerate(together)]
     for x in [*inside, word.x1]:
         end = len(word.text) if x == word.x1 else max(used, min(len(word.text), round((x - word.x0) / width)))
         if end > used:

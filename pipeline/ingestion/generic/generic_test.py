@@ -695,6 +695,7 @@ class SpreadAndOwnerTest(unittest.TestCase):
 
     def test_leading_zero_is_a_bullet_and_marks_leave_the_name(self):
         from ingestion.generic.tree import _split_code
+        self.assertEqual(_split_code('3～4か月児健康診査委託料'), (None, '3～4か月児健康診査委託料'))
         self.assertEqual(_split_code('0ごみ・資源の排出'), (None, 'ごみ・資源の排出'))
         self.assertEqual(_split_code('〇区議会の運営'), (None, '区議会の運営'))
         self.assertEqual(_split_code('12委託料'), ('12', '委託料'))

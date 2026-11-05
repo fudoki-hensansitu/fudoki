@@ -282,6 +282,8 @@ def _split_code(line_text: str) -> tuple[str | None, str]:
     """A leading item number and the name. Numbers start from 1, so a leading 0 is a
     bullet drawn as a digit; bullet marks (〇) mark a level and are not part of the name."""
     found = CODE.match(line_text)
+    if found and line_text[found.end():found.end() + 1] in ('～', '〜', '~'):  # `3～4か月児…` is a range in a name
+        return None, line_text
     if not found or int(unicodedata.normalize('NFKC', found.group(1))) == 0:
         if found:
             line_text = line_text[found.end():].strip()
@@ -649,6 +651,11 @@ def items(group: Group, header: str, margins: set[int] | None = None,
                     entries[index] = (label, money, digits[:cut], raw[cut:])
                     code = digits[:cut]
                     break
+        # Where the number before it is on another page or in another cell, the settings say where the number ends.
+        for start, number in (settings.get('glued_numbers') or {}).items():
+            if raw.startswith(start):
+                entries[index] = (label, money, number, raw[len(number):])
+                code = number
         if label and code is not None and code.isdigit():
             last_at[slot] = int(code)
     result: list[Item] = []
@@ -803,7 +810,10 @@ def items(group: Group, header: str, margins: set[int] | None = None,
         # A name goes on a second line because it did not fit: its first line runs up to where the amount
         # is printed, or to the right edge of the name column when the amount has a column of its own. A short line followed by an indented line with an amount is two items
         # (`02 管理用備品` / `ICカードリーダーライター 5,280`, 132276).
-        reaches = (previous is not None and bool(money) and bool(previous.lines)
+        # `(翌年度へ繰越明許費 7,326,000)` closes the name above it: the line under it is the next item (132021).
+        closed = (bool(settings.get('bracket_line_closes_name')) and previous is not None and bool(previous.lines)
+                  and normalize(text(previous.lines[-1]))[-1:] in (')', '）'))
+        reaches = (previous is not None and bool(money) and bool(previous.lines) and not closed
                    and (limit is None or max(g.x1 for g in previous.lines[-1]) >= limit - 4 * (previous.lines[-1][0].y1 - previous.lines[-1][0].y0)))
         # A line led by a mark (`○あそべえ事業 222,656,920` under its heading, 132039) is an item of its own.
         marked = bool(label) and re.match(r'[〇○●◎□■◇◆]', label[0].text) is not None
@@ -866,6 +876,13 @@ def items(group: Group, header: str, margins: set[int] | None = None,
             item.amounts.append((header, run))
         _measure(item, label, code, ocr)
         result.append(item)
+    # OCR boxed a name a few points left of the print (132021): the line's start, read off the page, is declared.
+    for repair in settings.get('line_starts', ()):
+        for item in result:
+            first = item.lines[0][0] if item.lines and item.lines[0] else None
+            if first is not None and first.page == repair['page'] and abs(first.y0 - repair['y']) < 3:
+                first.x0 += float(repair['shift'])
+                item.indent += float(repair['shift'])
     if settings.get('opening_bracket_ink'):
         # OCR boxes the ink: a full-width opening bracket (`（一社）…`, `「さくら」…`) is drawn in the right half of its character.
         for item in result:
@@ -1376,7 +1393,8 @@ def shape_of(item: Item) -> str | None:
             if name == 'number' and item.code is None:
                 return None
             return name
-    return None
+    # A number printed between the two lines of a wrapped name (`負担金補助` / `18` / `及び交付金`, 132021).
+    return 'number' if item.code is not None and item.code.isdigit() else None
 
 
 INDENT_SPAN = 6.0  # one indentation step is a character (about 10pt); a level is narrower than this
