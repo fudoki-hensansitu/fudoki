@@ -141,7 +141,9 @@ function TickMenu({ items, current, onPick, side, label, className, children }: 
                 type="button"
                 tabIndex={-1}
                 onClick={() => onPick(i)}
-                className={`flex w-full items-baseline justify-between gap-3 rounded-md px-2.5 py-1.5 text-left text-[13px] ${i === current ? 'bg-secondary font-medium text-foreground' : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'}`}
+                data-current={i === current || undefined}
+                // 左の目次と同じ見た目（いまの所は地の色と左の縦線）
+                className="relative flex w-full items-baseline justify-between gap-3 rounded-lg px-3 py-1.5 text-left text-[13px] text-muted-foreground hover:bg-card hover:text-foreground data-[current]:bg-card data-[current]:text-foreground data-[current]:before:absolute data-[current]:before:inset-y-1.5 data-[current]:before:left-0 data-[current]:before:w-[3px] data-[current]:before:rounded-sm data-[current]:before:bg-primary"
               >
                 <span className="min-w-0 truncate">{item.name}</span>
                 {item.note ? <span className="shrink-0 text-[11.5px] tabular-nums text-muted-foreground">{item.note}</span> : null}
