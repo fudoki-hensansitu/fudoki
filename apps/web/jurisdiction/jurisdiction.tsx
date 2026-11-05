@@ -3,7 +3,7 @@
 // 歳出の決算は API の値。方針・政策領域・事業の入れ替えは jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
 import * as React from 'react'
 import { createRoot } from 'react-dom/client'
-import { ArrowUpRightIcon, ChevronDownIcon, GlobeIcon, MapPinIcon, UsersIcon } from 'lucide-react'
+import { ArrowUpRightIcon, ChevronDownIcon, GlobeIcon, MessageCircleIcon, MapPinIcon, UsersIcon } from 'lucide-react'
 import { StartForm } from '../chat/start-form'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Flow } from './flow'
@@ -494,15 +494,61 @@ function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
         </div>
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-20 bg-gradient-to-t from-background from-60% to-transparent px-4 pb-[max(14px,env(safe-area-inset-bottom))] pt-3">
+      <AskDock name={data.name} sitekey={sitekey} />
+    </>
+  )
+}
+
+/** AI に聞く入力欄。最初は開いておき、読み進めたら右下のボタンに畳む。押すか「/」で開く */
+const DOCK_CLOSE_AFTER = 240
+
+function AskDock({ name, sitekey }: { name: string; sitekey: string }) {
+  const [open, setOpen] = React.useState(true)
+  const dock = React.useRef<HTMLDivElement>(null)
+  const anchor = React.useRef(0)
+  const show = React.useCallback(() => {
+    anchor.current = window.scrollY
+    setOpen(true)
+    requestAnimationFrame(() => dock.current?.querySelector<HTMLElement>('textarea, input')?.focus())
+  }, [])
+  React.useEffect(() => {
+    if (!open) return
+    const onScroll = () => {
+      if (dock.current?.contains(document.activeElement)) return
+      if (window.scrollY - anchor.current > DOCK_CLOSE_AFTER) setOpen(false)
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [open])
+  React.useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const t = e.target as HTMLElement | null
+      if (e.key !== '/' || e.metaKey || e.ctrlKey || e.altKey || t?.closest('input, textarea, [contenteditable="true"]')) return
+      e.preventDefault()
+      show()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [show])
+  return (
+    <>
+      <div ref={dock} className={`fixed inset-x-0 bottom-0 z-20 bg-gradient-to-t from-background from-60% to-transparent px-4 pb-[max(14px,env(safe-area-inset-bottom))] pt-3 transition-[opacity,transform] duration-200 motion-reduce:transition-none ${open ? '' : 'pointer-events-none translate-y-4 opacity-0'}`} inert={!open}>
         <div className="mx-auto max-w-[720px]">
-          <StartForm
-            sitekey={sitekey}
-            prefix={`${data.name}について：`}
-            placeholder={`${data.name}について聞く…`}
-          />
+          <StartForm sitekey={sitekey} prefix={`${name}について：`} placeholder={`${name}について聞く…`} />
         </div>
       </div>
+      <button
+        type="button"
+        onClick={show}
+        aria-keyshortcuts="/"
+        className={`fixed bottom-[max(16px,env(safe-area-inset-bottom))] right-4 z-20 inline-flex items-center gap-2 rounded-full border bg-background px-4 py-2.5 text-sm shadow-md transition-[opacity,transform] duration-200 hover:border-primary motion-reduce:transition-none ${open ? 'pointer-events-none translate-y-4 opacity-0' : ''}`}
+        tabIndex={open ? -1 : 0}
+        aria-hidden={open}
+      >
+        <MessageCircleIcon className="size-4 text-primary" aria-hidden="true" />
+        {name}について聞く
+        <kbd className="hidden rounded border px-1.5 text-[11px] text-muted-foreground sm:inline">/</kbd>
+      </button>
     </>
   )
 }
