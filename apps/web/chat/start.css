@@ -40,6 +40,9 @@
 @media (max-width: 767px) {
   #chat-start:is([data-docked], [data-leaving]) > .ask-dock { bottom: calc(16px + max(var(--bottom-nav, 0px), env(safe-area-inset-bottom))); transition: bottom 200ms ease-out; }
 }
+@media (max-width: 767px) and (prefers-reduced-motion: reduce) {
+  #chat-start:is([data-docked], [data-leaving]) > .ask-dock { transition: none; }
+}
 @media (max-width: 639px) {
   #chat-start.ask { min-height: 56px; }
   #chat-start .ask-box { height: 56px; padding: 0 20px; }
