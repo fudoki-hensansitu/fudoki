@@ -513,7 +513,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
 
 /** AI に聞く入力欄。最初は開いておき、読み進めるか Escape で右下のボタンに畳む。押すか「/」で開く。
  * 送ると頁を移らずに会話を開く。広い画面では右の side panel（頁は読み続けられる）、スマホでは下からの drawer。閉じても会話は残り、右下のボタンで戻れる */
-const DOCK_CLOSE_AFTER = 240
+const DOCK_CLOSE_AFTER = 80
 /** 選んだ文として AI に渡す長さの上限 */
 const QUOTE_MAX = 600
 /** drawer の取っ手をこれだけ下へ引いたら閉じる */
@@ -542,6 +542,8 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
   const sheet = React.useRef<HTMLDivElement>(null)
   const scroller = React.useRef<HTMLDivElement>(null)
   const anchor = React.useRef(0)
+  /** 入力欄に focus した時刻。スマホでは focus で頁が動くので、その直後のスクロールでは閉じない */
+  const focusedAt = React.useRef(0)
   const show = React.useCallback(() => {
     if (chat) return setDrawer(true)
     anchor.current = window.scrollY
@@ -550,12 +552,22 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
   }, [chat])
   React.useEffect(() => {
     if (!open || chat) return
-    const onScroll = () => {
-      if (dock.current?.contains(document.activeElement)) return
-      if (window.scrollY - anchor.current > DOCK_CLOSE_AFTER) setOpen(false)
+    // 頁でもカードの中でも、スクロールしたら閉じる（上へ戻しても閉じる）。入力欄に書きかけの文があるときだけ残す
+    const close = () => {
+      const field = dock.current?.querySelector<HTMLTextAreaElement | HTMLInputElement>('textarea, input')
+      if (field?.value.trim()) return
+      if (field && document.activeElement === field) field.blur()
+      setOpen(false)
     }
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    const onScroll = (e: Event) => {
+      if (Date.now() - focusedAt.current < 800) { anchor.current = window.scrollY; return }
+      const target = e.target
+      if (target === document || target === document.documentElement) {
+        if (Math.abs(window.scrollY - anchor.current) > DOCK_CLOSE_AFTER) close()
+      } else if (target instanceof Node && !dock.current?.contains(target)) close()
+    }
+    document.addEventListener('scroll', onScroll, { passive: true, capture: true })
+    return () => document.removeEventListener('scroll', onScroll, { capture: true })
   }, [open, chat])
 
   // 頁の文を選んだら、その文を質問の文脈に入れる。入力欄を押して選択が外れても残し、頁の別の所を押したら外す
@@ -714,7 +726,7 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
   const docked = open && !chat
   return (
     <>
-      <div ref={dock} onBlur={onDockBlur} className={`fixed inset-x-0 bottom-0 z-20 max-md:bottom-(--bottom-nav) md:left-(--nav-w) md:right-(--side-panel,0px) bg-gradient-to-t from-background from-60% to-transparent px-4 pb-[max(14px,env(safe-area-inset-bottom))] pt-3 transition-[opacity,transform] duration-200 motion-reduce:transition-none ${docked ? '' : 'pointer-events-none translate-y-4 opacity-0'}`} inert={!docked}>
+      <div ref={dock} onBlur={onDockBlur} onFocus={() => { focusedAt.current = Date.now(); anchor.current = window.scrollY }} className={`fixed inset-x-0 bottom-0 z-20 max-md:bottom-(--bottom-nav) md:left-(--nav-w) md:right-(--side-panel,0px) bg-gradient-to-t from-background from-60% to-transparent px-4 pb-[max(14px,env(safe-area-inset-bottom))] pt-3 transition-[opacity,transform] duration-200 motion-reduce:transition-none ${docked ? '' : 'pointer-events-none translate-y-4 opacity-0'}`} inert={!docked}>
         <div className="mx-auto max-w-[720px]">
           <StartForm sitekey={sitekey} placeholder={`${name}について聞く…`} context={describe} onStart={start} before={chip} />
         </div>
