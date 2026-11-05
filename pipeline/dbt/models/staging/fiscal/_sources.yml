@@ -2084,6 +2084,102 @@ sources:
       direction: expenditure
       table_id: kouki-detail
       kind: nodes
+  - name: j132021_2024_settlement_care_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132021'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: care-expenditure-detail
+      kind: amounts
+  - name: j132021_2024_settlement_care_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132021'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: care-expenditure-detail
+      kind: nodes
+  - name: j132021_2024_settlement_elderly_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132021'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: elderly-expenditure-detail
+      kind: amounts
+  - name: j132021_2024_settlement_elderly_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132021'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: elderly-expenditure-detail
+      kind: nodes
+  - name: j132021_2024_settlement_general_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132021'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-detail
+      kind: amounts
+  - name: j132021_2024_settlement_general_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132021'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-detail
+      kind: nodes
+  - name: j132021_2024_settlement_keirin_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132021'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: keirin-expenditure-detail
+      kind: amounts
+  - name: j132021_2024_settlement_keirin_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132021'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: keirin-expenditure-detail
+      kind: nodes
+  - name: j132021_2024_settlement_nhi_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132021'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: nhi-expenditure-detail
+      kind: amounts
+  - name: j132021_2024_settlement_nhi_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132021'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: nhi-expenditure-detail
+      kind: nodes
+  - name: j132021_2024_settlement_parking_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132021'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: parking-expenditure-detail
+      kind: amounts
+  - name: j132021_2024_settlement_parking_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132021'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: parking-expenditure-detail
+      kind: nodes
   - name: j132021_2025_settlement_chushajo_expenditure_details_amounts
     meta:
       jurisdiction: '132021'

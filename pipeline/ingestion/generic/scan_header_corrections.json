@@ -3,6 +3,12 @@
   "normalization": "NFKC_REMOVE_WHITESPACE",
   "rules": [
     {
+      "id": "next-year-carryover-doubled-heading",
+      "observed_name": "翌翌年度繰越額",
+      "corrected_name": "翌年度繰越額",
+      "reason": "OCRが翌を重ねて読む見出しの誤り。立川市2024年度決算書の頁455で翌年度繰越額の印字を確認した。"
+    },
+    {
       "id": "initial-budget-heading",
       "observed_name": "当初子算額",
       "corrected_name": "当初予算額",

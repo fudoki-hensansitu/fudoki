@@ -433,3 +433,4 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 1608,sumida-2024-08,131075,一般会計,,衛生費,区民健康費,,区民健康診査費,eq,,assigned,07.4,retained,目,,墨田区 健康診査を公衆衛生サービスに分類する。名称からの判断。,true
 1609,hinohara-2024-01,133078,一般会計,,衛生費,保健衛生費,,保健師設置費,eq,,assigned,07.4,retained,目,,檜原村 保健師の設置を公衆衛生サービスに分類する。名称からの判断。,true
 1610,hinohara-2024-02,133078,一般会計,,衛生費,上水道費,,上水道施設費,eq,,assigned,06.3,retained,目,,檜原村 上水道の施設を給水に分類する。名称からの判断。,true
+1611,kind-fallback-keirin,,,競輪事業,,,,,,,assigned,08.1,retained,目,,競輪事業の会計の目を娯楽・スポーツ 08.1 に分類する。収益事業の面もあり、名称からの判断。,true
