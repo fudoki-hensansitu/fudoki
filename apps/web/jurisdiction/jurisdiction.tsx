@@ -310,6 +310,7 @@ function YearPicker({ years, current, onChange }: { years: number[]; current: nu
       {recent.map((y) => (
         <button key={y} type="button" aria-pressed={y === current} onClick={() => onChange(y)} title={reiwa(y)} className={pill(y === current)}>
           {yearName(y)}
+          {yearName(y) !== reiwa(y) ? <span className="hidden text-muted-foreground lg:inline"> ｜ {reiwa(y).replace(/度$/, '')}</span> : null}
         </button>
       ))}
       {older.length > 0 ? (
