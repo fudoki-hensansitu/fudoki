@@ -208,21 +208,39 @@ const matches = (e: IndexEntry, query: string) => {
 }
 
 /** 表の種類のタグ。押すとその種類の候補を選べる combobox が開き、複数選べる */
+const ALL = '__all__'
+
+/** 表の種類のタグ。押すとその種類の候補を選べる combobox が開き、複数選べる。先頭の「すべての〇〇」で選べる候補を一度に選ぶ・外す */
 function TagFilter({ label, count, options, picked, onChange }: { label: string; count: number; options: { value: string; label: string; sub?: string; disabled?: boolean }[]; picked: string[]; onChange: (v: string[]) => void }) {
   const byValue = new Map(options.map((o) => [o.value, o]))
+  const selectable = options.filter((o) => !o.disabled).map((o) => o.value)
+  const all = selectable.length > 0 && selectable.every((v) => picked.includes(v))
+  const change = (next: string[]) => {
+    if (next.includes(ALL) && !all) return onChange(selectable)
+    if (!next.includes(ALL) && all) return onChange([])
+    onChange(next.filter((v) => v !== ALL))
+  }
+  const summary = all ? 'すべて' : picked.length ? `${picked.length} 件を選択` : null
   return (
-    <Combobox multiple items={options.map((o) => o.value)} value={picked} onValueChange={(v) => onChange(v as string[])} itemToStringLabel={(v: string) => byValue.get(v)?.label ?? v}>
+    <Combobox multiple items={[ALL, ...options.map((o) => o.value)]} value={all ? [ALL, ...picked] : picked} onValueChange={(v) => change(v as string[])} itemToStringLabel={(v: string) => (v === ALL ? `すべての${label}` : (byValue.get(v)?.label ?? v))}>
       <ComboboxTrigger
-        render={<button type="button" aria-label={`${label}で絞る${picked.length ? `（${picked.length} 件を選択）` : ""}`} />}
+        render={<button type="button" aria-label={`${label}で絞る${summary ? `（${summary}）` : ''}`} />}
         className={cn(buttonVariants({ variant: picked.length ? 'default' : 'outline' }), 'gap-1 rounded-full px-3.5 text-[13px] font-normal [&_svg]:text-current', !picked.length && 'text-muted-foreground')}
       >
-        {label} <small className="opacity-70">{picked.length ? `${picked.length} 件を選択` : count}</small>
+        {label} <small className="opacity-70">{summary ?? count}</small>
       </ComboboxTrigger>
       <ComboboxContent className="w-64">
         <ComboboxInput showTrigger={false} placeholder={`${label}を探す`} aria-label={`${label}を探す`} className="has-[[data-slot=input-group-control]:focus-visible]:ring-ring/15" />
         <ComboboxEmpty>当たる{label}はありません</ComboboxEmpty>
         <ComboboxList>
           {(v: string) => {
+            if (v === ALL)
+              return (
+                <ComboboxItem key={v} value={v} className="border-b pb-1.5 mb-1 rounded-b-none">
+                  すべての{label}
+                  <small className="text-[11px] text-muted-foreground">{selectable.length}</small>
+                </ComboboxItem>
+              )
             const o = byValue.get(v)!
             return (
               <ComboboxItem key={v} value={v} disabled={o.disabled}>
