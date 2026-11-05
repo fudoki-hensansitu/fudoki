@@ -280,6 +280,7 @@ const SETUP_PROMPT = [
   `- 種類: リモート MCP サーバー（Streamable HTTP）`,
   `- URL: ${MCP}`,
   `- 認証: 不要`,
+  `- ChatGPT・Codex（ChatGPT デスクトップアプリ）なら、plugin ディレクトリの風土記（https://chatgpt.com/plugins/plugin_asdk_app_6ad87dc03a608191a13bba05310ea5d9）をインストールするだけで使えます`,
   ``,
   `私が使っているクライアントを確認したうえで、その設定画面（または設定ファイル）での追加手順を、一つずつ案内してください。`,
   `自分で設定を書き換えられる環境なら、書き換えてかまいません。`,

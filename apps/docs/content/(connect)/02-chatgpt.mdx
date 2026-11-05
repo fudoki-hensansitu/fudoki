@@ -1,29 +1,26 @@
 ---
 title: ChatGPT
-description: ChatGPT に風土記を追加する。
+description: ChatGPT の plugin ディレクトリから風土記を入れる。
 sidebar:
   icon: '<svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M224.32,114.24a56,56,0,0,0-60.07-76.57A56,56,0,0,0,67.93,51.44a56,56,0,0,0-36.25,90.32A56,56,0,0,0,69,217,56.39,56.39,0,0,0,83.59,219a55.75,55.75,0,0,0,8.17-.61,56,56,0,0,0,96.31-13.78,56,56,0,0,0,36.25-90.32ZM182.85,54.43a40,40,0,0,1,28.56,48c-.95-.63-1.91-1.24-2.91-1.81L164,74.88a8,8,0,0,0-8,0l-44,25.41V81.81l40.5-23.38A39.76,39.76,0,0,1,182.85,54.43ZM144,137.24l-16,9.24-16-9.24V118.76l16-9.24,16,9.24ZM80,72a40,40,0,0,1,67.53-29c-1,.51-2,1-3,1.62L100,70.27a8,8,0,0,0-4,6.92V128l-16-9.24ZM40.86,86.93A39.75,39.75,0,0,1,64.12,68.57C64.05,69.71,64,70.85,64,72v51.38a8,8,0,0,0,4,6.93l44,25.4L96,165,55.5,141.57A40,40,0,0,1,40.86,86.93ZM73.15,201.57a40,40,0,0,1-28.56-48c.95.63,1.91,1.24,2.91,1.81L92,181.12a8,8,0,0,0,8,0l44-25.41v18.48l-40.5,23.38A39.76,39.76,0,0,1,73.15,201.57ZM176,184a40,40,0,0,1-67.52,29.05c1-.51,2-1.05,3-1.63L156,185.73a8,8,0,0,0,4-6.92V128l16,9.24Zm39.14-14.93a39.75,39.75,0,0,1-23.26,18.36c.07-1.14.12-2.28.12-3.43V132.62a8,8,0,0,0-4-6.93l-44-25.4,16-9.24,40.5,23.38A40,40,0,0,1,215.14,169.07Z"></path></svg>'
 ---
 
 <Steps>
-  <Step title="カスタム MCP サーバーを追加する">
-    Plugins の「＋」から「Add custom MCP server」を選びます。
+  <Step title="風土記の plugin を開く">
+    [ChatGPT の plugin ディレクトリの風土記](https://chatgpt.com/plugins/plugin_asdk_app_6ad87dc03a608191a13bba05310ea5d9)を開きます。Plugins で「風土記」と検索しても見つかります。
   </Step>
-  <Step title="URL を入れる">
-    - Name：風土記
-    - Server URL：`https://api.fudoki.dev/mcp`
-    - Authentication：No authentication
+  <Step title="インストールする">
+    「＋」を押して入れます。認証は要りません。
   </Step>
-  <Step title="plugin として作る">
-    「Create as a plugin」で作成し、個人用 plugin をインストールします。
-  </Step>
-  <Step title="会話で呼ぶ">
-    新しい Work の会話で、`@` から風土記を選びます。
+  <Step title="会話で頼む">
+    新しい会話でそのまま頼むか、`@` から風土記を選びます。
   </Step>
 </Steps>
 
 <img src="/images/chatgpt-plugin.png" alt="ChatGPT の風土記プラグイン画面。収録範囲の確認や歳出の検索の質問例が並ぶ" width="2184" height="1641" loading="lazy" />
 
-:::note
-自分だけが使う接続で、公開ディレクトリへの提出ではありません。画面が変わっていたら [OpenAI の手順](https://developers.openai.com/plugins/deploy/connect-chatgpt)に従ってください。
+MCP の接続に加えて、歳出を比べるときの手順（skill `compare-expenditure`）も入ります。同じ plugin は ChatGPT デスクトップアプリの [Codex](/codex) でも使えます。
+
+:::note[ディレクトリの plugin を使えないとき]
+ワークスペースの管理者が公開 plugin を止めている場合は、Plugins の「＋」から「Add custom MCP server」を選び、Server URL に `https://api.fudoki.dev/mcp`、Authentication に No authentication を入れて自分用に追加します。
 :::

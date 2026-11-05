@@ -19,11 +19,13 @@ MCP に対応した AI クライアントに `https://api.fudoki.dev/mcp` を登
 claude mcp add --transport http fudoki https://api.fudoki.dev/mcp
 ```
 
+ChatGPT と Codex（ChatGPT デスクトップアプリ）なら、[plugin ディレクトリの風土記](https://chatgpt.com/plugins/plugin_asdk_app_6ad87dc03a608191a13bba05310ea5d9)を「＋」で入れるだけでよい。
+
 登録したら、会話で頼む。
 
 > 武蔵野市の 2025 年度の決算で、金額の大きい目を 5 件出して、COFOG の分類と出典の URL も添えて
 
-目の名前・金額と出典の URL が返れば使えている。Cursor・Codex などの登録方法と REST での使い方は[ドキュメント](https://docs.fudoki.dev/)にある。
+目の名前・金額と出典の URL が返れば使えている。Cursor・Codex CLI などの登録方法と REST での使い方は[ドキュメント](https://docs.fudoki.dev/)にある。
 
 ## Features
 
