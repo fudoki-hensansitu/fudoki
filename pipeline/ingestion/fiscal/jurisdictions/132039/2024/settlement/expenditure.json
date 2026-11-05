@@ -316,7 +316,261 @@
               }
             }
           }
-        }
+        },
+        "dropped_readings": [
+          {
+            "id": "p42-capital-revenue-r10",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r10",
+            "observed": "資本的收入",
+            "reason": "頁42は上に資本的収入、下に資本的支出の2つの表を印字している。この読みは資本的収入の表（款1 資本的収入 269,690,837 とその内訳）またはその間の題字「支出」で、歳出の表に入れない。"
+          },
+          {
+            "id": "p42-capital-revenue-r11",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r11",
+            "observed": "269,690,837",
+            "reason": "頁42は上に資本的収入、下に資本的支出の2つの表を印字している。この読みは資本的収入の表（款1 資本的収入 269,690,837 とその内訳）またはその間の題字「支出」で、歳出の表に入れない。"
+          },
+          {
+            "id": "p42-capital-revenue-r12",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r12",
+            "observed": "企業債",
+            "reason": "頁42は上に資本的収入、下に資本的支出の2つの表を印字している。この読みは資本的収入の表（款1 資本的収入 269,690,837 とその内訳）またはその間の題字「支出」で、歳出の表に入れない。"
+          },
+          {
+            "id": "p42-capital-revenue-r13",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r13",
+            "observed": "234,700,000",
+            "reason": "頁42は上に資本的収入、下に資本的支出の2つの表を印字している。この読みは資本的収入の表（款1 資本的収入 269,690,837 とその内訳）またはその間の題字「支出」で、歳出の表に入れない。"
+          },
+          {
+            "id": "p42-capital-revenue-r14",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r14",
+            "observed": "企業債",
+            "reason": "頁42は上に資本的収入、下に資本的支出の2つの表を印字している。この読みは資本的収入の表（款1 資本的収入 269,690,837 とその内訳）またはその間の題字「支出」で、歳出の表に入れない。"
+          },
+          {
+            "id": "p42-capital-revenue-r15",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r15",
+            "observed": "234,700,000",
+            "reason": "頁42は上に資本的収入、下に資本的支出の2つの表を印字している。この読みは資本的収入の表（款1 資本的収入 269,690,837 とその内訳）またはその間の題字「支出」で、歳出の表に入れない。"
+          },
+          {
+            "id": "p42-capital-revenue-r16",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r16",
+            "observed": "企業債",
+            "reason": "頁42は上に資本的収入、下に資本的支出の2つの表を印字している。この読みは資本的収入の表（款1 資本的収入 269,690,837 とその内訳）またはその間の題字「支出」で、歳出の表に入れない。"
+          },
+          {
+            "id": "p42-capital-revenue-r17",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r17",
+            "observed": "234,700,000",
+            "reason": "頁42は上に資本的収入、下に資本的支出の2つの表を印字している。この読みは資本的収入の表（款1 資本的収入 269,690,837 とその内訳）またはその間の題字「支出」で、歳出の表に入れない。"
+          },
+          {
+            "id": "p42-capital-revenue-r18",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r18",
+            "observed": "2",
+            "reason": "頁42は上に資本的収入、下に資本的支出の2つの表を印字している。この読みは資本的収入の表（款1 資本的収入 269,690,837 とその内訳）またはその間の題字「支出」で、歳出の表に入れない。"
+          },
+          {
+            "id": "p42-capital-revenue-r19",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r19",
+            "observed": "固定資產売却代金",
+            "reason": "頁42は上に資本的収入、下に資本的支出の2つの表を印字している。この読みは資本的収入の表（款1 資本的収入 269,690,837 とその内訳）またはその間の題字「支出」で、歳出の表に入れない。"
+          },
+          {
+            "id": "p42-capital-revenue-r20",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r20",
+            "observed": "198,787",
+            "reason": "頁42は上に資本的収入、下に資本的支出の2つの表を印字している。この読みは資本的収入の表（款1 資本的収入 269,690,837 とその内訳）またはその間の題字「支出」で、歳出の表に入れない。"
+          },
+          {
+            "id": "p42-capital-revenue-r21",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r21",
+            "observed": "1",
+            "reason": "頁42は上に資本的収入、下に資本的支出の2つの表を印字している。この読みは資本的収入の表（款1 資本的収入 269,690,837 とその内訳）またはその間の題字「支出」で、歳出の表に入れない。"
+          },
+          {
+            "id": "p42-capital-revenue-r22",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r22",
+            "observed": "固定資產売却代金",
+            "reason": "頁42は上に資本的収入、下に資本的支出の2つの表を印字している。この読みは資本的収入の表（款1 資本的収入 269,690,837 とその内訳）またはその間の題字「支出」で、歳出の表に入れない。"
+          },
+          {
+            "id": "p42-capital-revenue-r23",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r23",
+            "observed": "198,787",
+            "reason": "頁42は上に資本的収入、下に資本的支出の2つの表を印字している。この読みは資本的収入の表（款1 資本的収入 269,690,837 とその内訳）またはその間の題字「支出」で、歳出の表に入れない。"
+          },
+          {
+            "id": "p42-capital-revenue-r24",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r24",
+            "observed": "固定資產売却代金",
+            "reason": "頁42は上に資本的収入、下に資本的支出の2つの表を印字している。この読みは資本的収入の表（款1 資本的収入 269,690,837 とその内訳）またはその間の題字「支出」で、歳出の表に入れない。"
+          },
+          {
+            "id": "p42-capital-revenue-r25",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r25",
+            "observed": "198,787",
+            "reason": "頁42は上に資本的収入、下に資本的支出の2つの表を印字している。この読みは資本的収入の表（款1 資本的収入 269,690,837 とその内訳）またはその間の題字「支出」で、歳出の表に入れない。"
+          },
+          {
+            "id": "p42-capital-revenue-r26",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r26",
+            "observed": "負担金",
+            "reason": "頁42は上に資本的収入、下に資本的支出の2つの表を印字している。この読みは資本的収入の表（款1 資本的収入 269,690,837 とその内訳）またはその間の題字「支出」で、歳出の表に入れない。"
+          },
+          {
+            "id": "p42-capital-revenue-r27",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r27",
+            "observed": "34,792,050",
+            "reason": "頁42は上に資本的収入、下に資本的支出の2つの表を印字している。この読みは資本的収入の表（款1 資本的収入 269,690,837 とその内訳）またはその間の題字「支出」で、歳出の表に入れない。"
+          },
+          {
+            "id": "p42-capital-revenue-r28",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r28",
+            "observed": "1 負担金",
+            "reason": "頁42は上に資本的収入、下に資本的支出の2つの表を印字している。この読みは資本的収入の表（款1 資本的収入 269,690,837 とその内訳）またはその間の題字「支出」で、歳出の表に入れない。"
+          },
+          {
+            "id": "p42-capital-revenue-r29",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r29",
+            "observed": "34,792,050",
+            "reason": "頁42は上に資本的収入、下に資本的支出の2つの表を印字している。この読みは資本的収入の表（款1 資本的収入 269,690,837 とその内訳）またはその間の題字「支出」で、歳出の表に入れない。"
+          },
+          {
+            "id": "p42-capital-revenue-r30",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r30",
+            "observed": "工事負担金",
+            "reason": "頁42は上に資本的収入、下に資本的支出の2つの表を印字している。この読みは資本的収入の表（款1 資本的収入 269,690,837 とその内訳）またはその間の題字「支出」で、歳出の表に入れない。"
+          },
+          {
+            "id": "p42-capital-revenue-r31",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r31",
+            "observed": "0",
+            "reason": "頁42は上に資本的収入、下に資本的支出の2つの表を印字している。この読みは資本的収入の表（款1 資本的収入 269,690,837 とその内訳）またはその間の題字「支出」で、歳出の表に入れない。"
+          },
+          {
+            "id": "p42-capital-revenue-r32",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r32",
+            "observed": "他会計負担金",
+            "reason": "頁42は上に資本的収入、下に資本的支出の2つの表を印字している。この読みは資本的収入の表（款1 資本的収入 269,690,837 とその内訳）またはその間の題字「支出」で、歳出の表に入れない。"
+          },
+          {
+            "id": "p42-capital-revenue-r33",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r33",
+            "observed": "34,792,050",
+            "reason": "頁42は上に資本的収入、下に資本的支出の2つの表を印字している。この読みは資本的収入の表（款1 資本的収入 269,690,837 とその内訳）またはその間の題字「支出」で、歳出の表に入れない。"
+          },
+          {
+            "id": "p42-capital-revenue-r34",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r34",
+            "observed": "支",
+            "reason": "頁42は上に資本的収入、下に資本的支出の2つの表を印字している。この読みは資本的収入の表（款1 資本的収入 269,690,837 とその内訳）またはその間の題字「支出」で、歳出の表に入れない。"
+          },
+          {
+            "id": "p42-capital-revenue-r35",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r35",
+            "observed": "出",
+            "reason": "頁42は上に資本的収入、下に資本的支出の2つの表を印字している。この読みは資本的収入の表（款1 資本的収入 269,690,837 とその内訳）またはその間の題字「支出」で、歳出の表に入れない。"
+          },
+          {
+            "id": "p42-capital-revenue-r0",
+            "page": 42,
+            "observation_id": "p42:ink-0:a0:result0:r0",
+            "observed": "1",
+            "reason": "頁42は上に資本的収入、下に資本的支出の2つの表を印字している。この読みは資本的収入の表（款1 資本的収入 269,690,837 とその内訳）またはその間の題字「支出」で、歳出の表に入れない。"
+          },
+          {
+            "id": "p42-capital-revenue-r0",
+            "page": 42,
+            "observation_id": "p42:ink-1:a1:result0:r0",
+            "observed": "1",
+            "reason": "頁42は上に資本的収入、下に資本的支出の2つの表を印字している。この読みは資本的収入の表（款1 資本的収入 269,690,837 とその内訳）またはその間の題字「支出」で、歳出の表に入れない。"
+          },
+          {
+            "id": "p42-capital-revenue-r0",
+            "page": 42,
+            "observation_id": "p42:ink-2:a2:result0:r0",
+            "observed": "1",
+            "reason": "頁42は上に資本的収入、下に資本的支出の2つの表を印字している。この読みは資本的収入の表（款1 資本的収入 269,690,837 とその内訳）またはその間の題字「支出」で、歳出の表に入れない。"
+          },
+          {
+            "id": "p42-capital-revenue-r0",
+            "page": 42,
+            "observation_id": "p42:ink-3:a3:result0:r0",
+            "observed": "3 負担金",
+            "reason": "頁42は上に資本的収入、下に資本的支出の2つの表を印字している。この読みは資本的収入の表（款1 資本的収入 269,690,837 とその内訳）またはその間の題字「支出」で、歳出の表に入れない。"
+          },
+          {
+            "id": "p42-capital-header-r36",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r36",
+            "observed": "(消費税抜き。単位 円)",
+            "reason": "頁42の資本的支出の表が繰り返す見出し（款・項・目・節・金額）と単位の印字。資本的収入の読みを除いた後、頁の上の見出しと重ねて読まないよう、頁の上の見出しだけを使う。"
+          },
+          {
+            "id": "p42-capital-header-r37",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r37",
+            "observed": "款",
+            "reason": "頁42の資本的支出の表が繰り返す見出し（款・項・目・節・金額）と単位の印字。資本的収入の読みを除いた後、頁の上の見出しと重ねて読まないよう、頁の上の見出しだけを使う。"
+          },
+          {
+            "id": "p42-capital-header-r38",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r38",
+            "observed": "項",
+            "reason": "頁42の資本的支出の表が繰り返す見出し（款・項・目・節・金額）と単位の印字。資本的収入の読みを除いた後、頁の上の見出しと重ねて読まないよう、頁の上の見出しだけを使う。"
+          },
+          {
+            "id": "p42-capital-header-r39",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r39",
+            "observed": "目",
+            "reason": "頁42の資本的支出の表が繰り返す見出し（款・項・目・節・金額）と単位の印字。資本的収入の読みを除いた後、頁の上の見出しと重ねて読まないよう、頁の上の見出しだけを使う。"
+          },
+          {
+            "id": "p42-capital-header-r40",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r40",
+            "observed": "節",
+            "reason": "頁42の資本的支出の表が繰り返す見出し（款・項・目・節・金額）と単位の印字。資本的収入の読みを除いた後、頁の上の見出しと重ねて読まないよう、頁の上の見出しだけを使う。"
+          },
+          {
+            "id": "p42-capital-header-r41",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r41",
+            "observed": "金額",
+            "reason": "頁42の資本的支出の表が繰り返す見出し（款・項・目・節・金額）と単位の印字。資本的収入の読みを除いた後、頁の上の見出しと重ねて読まないよう、頁の上の見出しだけを使う。"
+          }
+        ]
       },
       "ocr_inputs": [
         {
@@ -496,31 +750,30 @@
     {
       "table_id": "water-capital-expenditure-detail",
       "conversion_id": "water-capital",
-      "input_fingerprint": "4848cb08a24aaf537d3993ca9c5f62ca8f89521b05f523fe17384c3799e23aea",
+      "input_fingerprint": "f47012bd975c3dbea89dfadb50772b8919dcefc76cb69dbed58ca14f41e5b451",
       "account": "水道事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '備考': 'indent'}。",
-        "金額の単位は printed 1頁 から決めた。款の和 1,097,554,682（頁に歳出合計の印字なし。桁だけを確かめた）。",
-        "金額の注記 0 件（なし）を注記軸に置いた。",
-        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 產→産 6 件（p42:full-page:a0:result0:r19・p42:full-page:a0:result0:r19:w3・p42:full-page:a0:result0:r22・p42:full-page:a0:result0:r22:w3・p42:full-page:a0:result0:r24・p42:full-page:a0:result0:r24:w3）。"
+        "金額の単位は printed 1頁 から決めた。款の和 827,863,845（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/132039/2024/settlement/expenditure/water-capital-expenditure-detail-nodes.parquet",
-          "sha256": "e90ce6082ed8e619c1da4f731748b69fe38bed0c4e916aaf9a2a7418a320b170",
-          "bytes": 4782
+          "sha256": "28ff436b50c2aae529a064c6fbafc9a5afeefb9b1ed04030290d712cb3790880",
+          "bytes": 4074
         },
-        "row_count": 39
+        "row_count": 27
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132039/2024/settlement/expenditure/water-capital-expenditure-detail-amounts.parquet",
-          "sha256": "9bd81b5f001fc4b56067b3cbb9f393bb4aec2f921f2c70a7a5fff524879aab5c",
-          "bytes": 3333
+          "sha256": "81fa1e79862466f6d5b6f620ca7775b059c28760ef82a43363350ca09797b473",
+          "bytes": 2890
         },
-        "row_count": 38
+        "row_count": 27
       }
     }
   ]
