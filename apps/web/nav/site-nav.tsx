@@ -126,7 +126,7 @@ export function SiteNav({ active, open }: SiteNavProps) {
               </SidebarMenu>
             </SidebarGroup>
           </SidebarContent>
-          <SidebarFooter className="px-2 pt-2 pb-6">
+          <SidebarFooter className="px-2 pt-2 pb-12">
             <SidebarMenu>
               <Item href={MCP} label="MCP" icon={<PlugIcon />} />
               <Item href={FEEDBACK} label="フィードバック" icon={<MessageSquareIcon />} />
