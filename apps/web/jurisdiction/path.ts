@@ -6,7 +6,15 @@ import registry from '../../../packages/jurisdictions/jurisdictions.json'
 const PREFECTURES: Record<string, string> = prefectures.slugs
 const SLUGS = new Map(Object.entries(registry.jurisdictions as Record<string, { slug?: string }>).map(([code, j]) => [code, j.slug]))
 
+/** 自治体の頁の下に置くテーマの段（/tokyo/shinagawa/elections）。都道府県自体のテーマ（/tokyo/elections）と
+ * 市区町村（/tokyo/shinagawa）が同じ段に並ぶので、市区町村の slug に使わない（テストで確かめる）。テーマを足すときはここにも足す */
+export const TOPIC_SEGMENTS = new Set(['spending', 'revenue', 'elections', 'budget', 'settlement'])
+
 export const PREFECTURE_SLUGS = new Set(Object.values(PREFECTURES))
 
-/** 全国地方公共団体コードから URL の path を作る。マスタに slug が無い自治体はコードで代える */
-export const jurisdictionPath = (code: string) => `/${PREFECTURES[code.slice(0, 2)]}/${SLUGS.get(code) ?? code}`
+/** 全国地方公共団体コードから URL の path を作る。マスタに slug が無い自治体はコードで代える。
+ * 都道府県自体（コードの3〜5桁目が 000。東京都は 130001）は /tokyo にする（/tokyo/tokyo にしない） */
+export const jurisdictionPath = (code: string) => {
+  const prefecture = `/${PREFECTURES[code.slice(0, 2)]}`
+  return code.slice(2, 5) === '000' ? prefecture : `${prefecture}/${SLUGS.get(code) ?? code}`
+}
