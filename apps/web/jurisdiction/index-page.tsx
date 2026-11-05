@@ -55,9 +55,11 @@ function SelectedCard({ e }: { e: IndexEntry }) {
       <div className="text-xs text-muted-foreground">{e.prefecture}</div>
       <div className="mt-0.5 text-3xl leading-tight">{e.name}</div>
       <div className="mt-4 text-xs text-muted-foreground">{reiwa(e.year)} 決算・一般会計の歳出</div>
-      <div className="text-[2rem] leading-tight tabular-nums">{formatYen(e.yen)}</div>
-      {e.amountMissing ? <div className="text-[11px] text-muted-foreground">{PARTIAL}</div> : null}
-      <div className="mt-4 text-xs text-muted-foreground">金額の大きい分野（款）{e.amountMissing ? '・金額の印字がある款の中で' : ''}</div>
+      <div className="text-[2rem] leading-tight tabular-nums" title={e.amountMissing ? PARTIAL : undefined}>
+        {formatYen(e.yen)}
+        {e.amountMissing ? '*' : ''}
+      </div>
+      <div className="mt-4 text-xs text-muted-foreground">金額の大きい分野（款）</div>
       <ul className="mt-1">
         {e.topKan.map((k) => (
           <li key={k.name} className="border-b py-1.5 text-[13px] last:border-b-0">
