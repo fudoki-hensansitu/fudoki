@@ -390,10 +390,10 @@ export function Flow({ data, total: year, tabs, summary }: { data: PageData; tot
           side="bottom"
           current={index}
           onPick={goTo}
-          items={[{ key: 'overview', name: '全体図' }, ...flows.map((f) => ({ key: f.kan.id, name: f.kan.name, note: amountText(f.kan.yen, f.kan.amountMissing) }))]}
+          items={[{ key: 'overview', name: '全体', note: formatYen(year.yen) }, ...flows.map((f) => ({ key: f.kan.id, name: f.kan.name, note: amountText(f.kan.yen, f.kan.amountMissing) }))]}
           className="mt-1 flex gap-0.5"
         >
-          <button type="button" onClick={() => goTo(0)} aria-label="全体図" aria-current={index === 0 || undefined} className="group/seg w-3.5 py-1">
+          <button type="button" onClick={() => goTo(0)} aria-label="全体" aria-current={index === 0 || undefined} className="group/seg w-3.5 py-1">
             <i className={`block h-1.5 rounded-sm transition-colors ${index === 0 ? 'bg-primary' : 'bg-border group-hover/seg:bg-primary/40'}`} />
           </button>
           {flows.map((f, i) => (
