@@ -37,20 +37,9 @@
           ]
         }
       ],
-      "reason": "部分選定。令和8年度当初予算として公式掲載の唯一の出典 R8tousho.pdf（物理1頁・文字PDF）は「市町村交付金（社会保障財源化分）が充てられる社会保障施策等に要する経費」表で、同一明細に事業名とその年度の事業費（当初予算ベース・千円、交付金充当額は別列の財源内訳）が載るため、社会福祉・社会保険・保健衛生の社会保障施策経費について事業粒度の歳出当初予算出典として採用する。出典に会計表記がなく複数会計横断の経費表のため、scopeの会計欄は出典の表題を保持した。不足: 一般会計の款・項・目別歳出明細、6特別会計（連絡船事業・国民健康保険診療所・国民健康保険事業・後期高齢者医療事業・温泉ロッジ事業〔令和8年度よりロッジとまりぎ事業〕・介護保険事業）・2公営企業会計（簡易水道事業・下水道事業）の歳出明細、全歳入明細は今回確認した掲載先ではリンク未確認。除外候補: 事務報告 r7.pdf（37頁・文字PDF）は一般会計当初予算を款別総額・構成比、特別/公営企業会計は会計別総額までしか載せず明細なしのため選定しない。村HP全体・議会（議案一覧は件名のみ）・東京都オープンデータカタログを照合してもこれ以上の歳出明細級の当初予算書は今回確認した掲載先ではリンク未確認。",
-      "selected_candidate_id": "r8-tousho-1p",
-      "archive": {
-        "bucket": "fudoki-inputs",
-        "candidate_id": "r8-tousho-1p",
-        "files": [
-          {
-            "key": "fiscal/source-selection/133639/2026/initial.pdf",
-            "sha256": "4c05298c517d193ca117619800d9d82f9a9b429d514e66ad002212e486f8f1ad",
-            "final_url": "https://www.niijima.com/gyousei/zaiseishokuin/files/R8tousho.pdf"
-          }
-        ],
-        "archived_at": "2026-10-07T16:26:39.119Z"
-      }
+      "reason": "未取得（掲載先 https://www.niijima.com/gyousei/zaiseishokuin/zaiseijoukyou.html と事務報告の一覧 https://www.niijima.com/gyousei/keikaku/gyouseijyouhou/jimuhoukoku.html を 2026-11-05 に確認。令和8年度の当初予算を款ごとに載せる事務報告（令和8年）はまだ掲載が無い）。R8tousho.pdf の「社会保障施策等に要する経費」は一部の事業の資料で款の金額が無いので歳出の出典に選定しない。以下は選び直し前の記録：部分選定。令和8年度当初予算として公式掲載の唯一の出典 R8tousho.pdf（物理1頁・文字PDF）は「市町村交付金（社会保障財源化分）が充てられる社会保障施策等に要する経費」表で、同一明細に事業名とその年度の事業費（当初予算ベース・千円、交付金充当額は別列の財源内訳）が載るため、社会福祉・社会保険・保健衛生の社会保障施策経費について事業粒度の歳出当初予算出典として採用する。出典に会計表記がなく複数会計横断の経費表のため、scopeの会計欄は出典の表題を保持した。不足: 一般会計の款・項・目別歳出明細、6特別会計（連絡船事業・国民健康保険診療所・国民健康保険事業・後期高齢者医療事業・温泉ロッジ事業〔令和8年度よりロッジとまりぎ事業〕・介護保険事業）・2公営企業会計（簡易水道事業・下水道事業）の歳出明細、全歳入明細は今回確認した掲載先ではリンク未確認。除外候補: 事務報告 r7.pdf（37頁・文字PDF）は一般会計当初予算を款別総額・構成比、特別/公営企業会計は会計別総額までしか載せず明細なしのため選定しない。村HP全体・議会（議案一覧は件名のみ）・東京都オープンデータカタログを照合してもこれ以上の歳出明細級の当初予算書は今回確認した掲載先ではリンク未確認。",
+      "selected_candidate_id": null,
+      "archive": null
     },
     {
       "target": {
@@ -152,24 +141,24 @@
       },
       "candidates": [
         {
-          "id": "r7-tousho-1p",
-          "title": "令和7年度当初予算（市町村交付金（社会保障財源化分）が充てられる社会保障施策等に要する経費）",
-          "landing_url": "https://www.niijima.com/gyousei/zaiseishokuin/zaiseijoukyou.html",
-          "inspected_at": "2026-10-08T04:14:36.948897+00:00",
+          "id": "jimuhoukoku-r7",
+          "title": "新島村 事務報告（令和7年）",
+          "landing_url": "https://www.niijima.com/gyousei/keikaku/gyouseijyouhou/jimuhoukoku.html",
+          "inspected_at": "2026-11-05T07:21:55+00:00",
           "files": [
             {
-              "download_url": "https://www.niijima.com/gyousei/zaiseishokuin/files/R7.tousho.pdf",
-              "sha256": "e7b94ae00594d82ae7981c218d07c49977dba2b14c7080430afc8492b4292f7f",
+              "download_url": "https://www.niijima.com/gyousei/keikaku/gyouseijyouhou/files/r7.pdf",
+              "sha256": "b2c2044e6892676357f4773472442770d8e25a93bb9e9fbd4463dd428a613828",
               "format": "pdf",
               "pdf_type": "text",
               "scope": [
                 {
-                  "account": "会計未記載（社会保障施策等に要する経費）",
+                  "account": "一般会計",
                   "direction": "expenditure",
                   "pages": [
                     {
-                      "start": 1,
-                      "end": 1
+                      "start": 7,
+                      "end": 7
                     }
                   ]
                 }
@@ -178,19 +167,19 @@
           ]
         }
       ],
-      "reason": "部分選定。令和7年度当初予算として村公式掲載一覧（財政状況等について）の唯一の出典 R7.tousho.pdf（物理1頁・文字PDF）は「市町村交付金（社会保障財源化分）が充てられる社会保障施策等に要する経費」表で、同一明細に事業名とその年度の事業費（単位：千円、交付金充当額は別列の財源内訳）が載り、歳入行なし。社会福祉・社会保険・保健衛生の社会保障施策経費について事業粒度の歳出当初予算出典として採用する。出典に会計表記がない複数会計横断の経費表のためscopeの会計欄は出典表題を保持。不足: 一般会計・特別会計・公営企業会計の款・項・目別歳出明細と全歳入明細は今回確認した掲載先（同一覧・議会・東京都オープンデータカタログ、別年度調査で確認済みの入口と同じ）ではリンク未確認。印字頁番号111は村予算書冊子内の頁番号と推定されるが単頁切り出しのため範囲は物理1頁。",
-      "selected_candidate_id": "r7-tousho-1p",
+      "reason": "2026-11-05 選び直し。村の事務報告（令和7年、https://www.niijima.com/gyousei/keikaku/gyouseijyouhou/files/r7.pdf、文字PDF、掲載 https://www.niijima.com/gyousei/keikaku/gyouseijyouhou/jimuhoukoku.html）の物理7頁「（３）令和7年度一般会計当初予算（単位：千円）」を選定する。歳出は款（議会費〜予備費の14款）ごとの予算額と構成比を載せ、款の合計が歳出合計4,770,000千円と一致する（2026-11-05 確認）。項・目以下の明細は無く、不足として残す。同じ頁の「特別会計 当初予算」「公営企業会計 当初予算」は会計ごとの総額だけで款が無いので選定しない（不足として残す）。「市町村交付金（社会保障財源化分）が充てられる社会保障施策等に要する経費」は一部の事業の資料で款の金額が無いので歳出の出典に選定しない。以下は選び直し前の記録：部分選定。令和7年度当初予算として村公式掲載一覧（財政状況等について）の唯一の出典 R7.tousho.pdf（物理1頁・文字PDF）は「市町村交付金（社会保障財源化分）が充てられる社会保障施策等に要する経費」表で、同一明細に事業名とその年度の事業費（単位：千円、交付金充当額は別列の財源内訳）が載り、歳入行なし。社会福祉・社会保険・保健衛生の社会保障施策経費について事業粒度の歳出当初予算出典として採用する。出典に会計表記がない複数会計横断の経費表のためscopeの会計欄は出典表題を保持。不足: 一般会計・特別会計・公営企業会計の款・項・目別歳出明細と全歳入明細は今回確認した掲載先（同一覧・議会・東京都オープンデータカタログ、別年度調査で確認済みの入口と同じ）ではリンク未確認。印字頁番号111は村予算書冊子内の頁番号と推定されるが単頁切り出しのため範囲は物理1頁。",
+      "selected_candidate_id": "jimuhoukoku-r7",
       "archive": {
         "bucket": "fudoki-inputs",
-        "candidate_id": "r7-tousho-1p",
+        "candidate_id": "jimuhoukoku-r7",
         "files": [
           {
             "key": "fiscal/source-selection/133639/2025/initial.pdf",
-            "sha256": "e7b94ae00594d82ae7981c218d07c49977dba2b14c7080430afc8492b4292f7f",
-            "final_url": "https://www.niijima.com/gyousei/zaiseishokuin/files/R7.tousho.pdf"
+            "sha256": "b2c2044e6892676357f4773472442770d8e25a93bb9e9fbd4463dd428a613828",
+            "final_url": "https://www.niijima.com/gyousei/keikaku/gyouseijyouhou/files/r7.pdf"
           }
         ],
-        "archived_at": "2026-10-08T04:14:57.512Z"
+        "archived_at": "2026-11-05T07:23:16.553Z"
       }
     },
     {
@@ -201,24 +190,24 @@
       },
       "candidates": [
         {
-          "id": "r6-tousho-1p",
-          "title": "令和6年度当初予算（市町村交付金（社会保障財源化分）が充てられる社会保障施策等に要する経費）",
-          "landing_url": "https://www.niijima.com/gyousei/zaiseishokuin/zaiseijoukyou.html",
-          "inspected_at": "2026-10-08T04:14:36.948897+00:00",
+          "id": "jimuhoukoku-r6",
+          "title": "新島村 事務報告（令和6年）",
+          "landing_url": "https://www.niijima.com/gyousei/keikaku/gyouseijyouhou/jimuhoukoku.html",
+          "inspected_at": "2026-11-05T07:21:55+00:00",
           "files": [
             {
-              "download_url": "https://www.niijima.com/gyousei/zaiseishokuin/files/r6toushoyosan.pdf",
-              "sha256": "5764abda0ba88daaa7a984ccb4b6930d03a2fd240ec0501474daf722f7402912",
+              "download_url": "https://www.niijima.com/gyousei/keikaku/gyouseijyouhou/files/r6.pdf",
+              "sha256": "1c1c3d42e5c4d8a36fd1f8624b94b61dbfdc9a04fd47fd11c610f7394649f501",
               "format": "pdf",
               "pdf_type": "text",
               "scope": [
                 {
-                  "account": "会計未記載（社会保障施策等に要する経費）",
+                  "account": "一般会計",
                   "direction": "expenditure",
                   "pages": [
                     {
-                      "start": 1,
-                      "end": 1
+                      "start": 7,
+                      "end": 7
                     }
                   ]
                 }
@@ -227,19 +216,19 @@
           ]
         }
       ],
-      "reason": "部分選定。令和6年度当初予算として村公式掲載一覧の唯一の出典 r6toushoyosan.pdf（物理1頁・文字PDF）は同様式の社会保障施策等経費表（単位：千円）で、同一明細に事業名と事業費が対応。歳出当初予算出典として採用。出典に会計表記なし。不足: 一般会計・特別会計・公営企業会計の款・項・目別歳出明細と全歳入明細は確認した掲載先ではリンク未確認（令和6年度の会計構成1一般+6特別+2公営企業はFY2024決算調査で議会資料より確認済み）。印字頁番号110。",
-      "selected_candidate_id": "r6-tousho-1p",
+      "reason": "2026-11-05 選び直し。村の事務報告（令和6年、https://www.niijima.com/gyousei/keikaku/gyouseijyouhou/files/r6.pdf、文字PDF、掲載 https://www.niijima.com/gyousei/keikaku/gyouseijyouhou/jimuhoukoku.html）の物理7頁「（３）令和6年度一般会計当初予算（単位：千円）」を選定する。歳出は款（議会費〜予備費の14款）ごとの予算額と構成比を載せ、款の合計が歳出合計4,830,000千円と一致する（2026-11-05 確認）。項・目以下の明細は無く、不足として残す。同じ頁の「特別会計 当初予算」「公営企業会計 当初予算」は会計ごとの総額だけで款が無いので選定しない（不足として残す）。「市町村交付金（社会保障財源化分）が充てられる社会保障施策等に要する経費」は一部の事業の資料で款の金額が無いので歳出の出典に選定しない。以下は選び直し前の記録：部分選定。令和6年度当初予算として村公式掲載一覧の唯一の出典 r6toushoyosan.pdf（物理1頁・文字PDF）は同様式の社会保障施策等経費表（単位：千円）で、同一明細に事業名と事業費が対応。歳出当初予算出典として採用。出典に会計表記なし。不足: 一般会計・特別会計・公営企業会計の款・項・目別歳出明細と全歳入明細は確認した掲載先ではリンク未確認（令和6年度の会計構成1一般+6特別+2公営企業はFY2024決算調査で議会資料より確認済み）。印字頁番号110。",
+      "selected_candidate_id": "jimuhoukoku-r6",
       "archive": {
         "bucket": "fudoki-inputs",
-        "candidate_id": "r6-tousho-1p",
+        "candidate_id": "jimuhoukoku-r6",
         "files": [
           {
             "key": "fiscal/source-selection/133639/2024/initial.pdf",
-            "sha256": "5764abda0ba88daaa7a984ccb4b6930d03a2fd240ec0501474daf722f7402912",
-            "final_url": "https://www.niijima.com/gyousei/zaiseishokuin/files/r6toushoyosan.pdf"
+            "sha256": "1c1c3d42e5c4d8a36fd1f8624b94b61dbfdc9a04fd47fd11c610f7394649f501",
+            "final_url": "https://www.niijima.com/gyousei/keikaku/gyouseijyouhou/files/r6.pdf"
           }
         ],
-        "archived_at": "2026-10-08T04:15:00.262Z"
+        "archived_at": "2026-11-05T07:23:21.251Z"
       }
     },
     {
@@ -250,24 +239,24 @@
       },
       "candidates": [
         {
-          "id": "r5-tousho-1p",
-          "title": "令和5年度当初予算（市町村交付金（社会保障財源化分）が充てられる社会保障施策等に要する経費）",
-          "landing_url": "https://www.niijima.com/gyousei/zaiseishokuin/zaiseijoukyou.html",
-          "inspected_at": "2026-10-08T04:14:36.948897+00:00",
+          "id": "jimuhoukoku-r5",
+          "title": "新島村 事務報告（令和5年）",
+          "landing_url": "https://www.niijima.com/gyousei/keikaku/gyouseijyouhou/jimuhoukoku.html",
+          "inspected_at": "2026-11-05T07:21:55+00:00",
           "files": [
             {
-              "download_url": "https://www.niijima.com/gyousei/zaiseishokuin/files/R5FstConsumptionTax.pdf",
-              "sha256": "6efff4b4e437089ac1d1181b10b2f96540a14f6d26be399d733c2bd8fcce70d1",
+              "download_url": "https://www.niijima.com/gyousei/keikaku/gyouseijyouhou/files/r5.pdf",
+              "sha256": "b3f530ac364c84581a4bd2dd8cd405c6bc15a0407b490604a042536b311f0c3a",
               "format": "pdf",
               "pdf_type": "text",
               "scope": [
                 {
-                  "account": "会計未記載（社会保障施策等に要する経費）",
+                  "account": "一般会計",
                   "direction": "expenditure",
                   "pages": [
                     {
-                      "start": 1,
-                      "end": 1
+                      "start": 7,
+                      "end": 7
                     }
                   ]
                 }
@@ -276,19 +265,19 @@
           ]
         }
       ],
-      "reason": "部分選定。令和5年度当初予算として村公式掲載一覧の唯一の出典 R5FstConsumptionTax.pdf（物理1頁・文字PDF）は同様式の社会保障施策等経費表（単位：千円）で、同一明細に事業名と事業費が対応。歳出当初予算出典として採用。出典に会計表記なし。不足: 一般会計・特別会計・公営企業会計の款・項・目別歳出明細と全歳入明細は確認した掲載先ではリンク未確認。印字頁番号109。",
-      "selected_candidate_id": "r5-tousho-1p",
+      "reason": "2026-11-05 選び直し。村の事務報告（令和5年、https://www.niijima.com/gyousei/keikaku/gyouseijyouhou/files/r5.pdf、文字PDF、掲載 https://www.niijima.com/gyousei/keikaku/gyouseijyouhou/jimuhoukoku.html）の物理7頁「（３）令和5年度一般会計当初予算（単位：千円）」を選定する。歳出は款（議会費〜予備費の14款）ごとの予算額と構成比を載せ、款の合計が歳出合計4,150,000千円と一致する（2026-11-05 確認）。項・目以下の明細は無く、不足として残す。同じ頁の「特別会計 当初予算」「公営企業会計 当初予算」は会計ごとの総額だけで款が無いので選定しない（不足として残す）。「市町村交付金（社会保障財源化分）が充てられる社会保障施策等に要する経費」は一部の事業の資料で款の金額が無いので歳出の出典に選定しない。以下は選び直し前の記録：部分選定。令和5年度当初予算として村公式掲載一覧の唯一の出典 R5FstConsumptionTax.pdf（物理1頁・文字PDF）は同様式の社会保障施策等経費表（単位：千円）で、同一明細に事業名と事業費が対応。歳出当初予算出典として採用。出典に会計表記なし。不足: 一般会計・特別会計・公営企業会計の款・項・目別歳出明細と全歳入明細は確認した掲載先ではリンク未確認。印字頁番号109。",
+      "selected_candidate_id": "jimuhoukoku-r5",
       "archive": {
         "bucket": "fudoki-inputs",
-        "candidate_id": "r5-tousho-1p",
+        "candidate_id": "jimuhoukoku-r5",
         "files": [
           {
             "key": "fiscal/source-selection/133639/2023/initial.pdf",
-            "sha256": "6efff4b4e437089ac1d1181b10b2f96540a14f6d26be399d733c2bd8fcce70d1",
-            "final_url": "https://www.niijima.com/gyousei/zaiseishokuin/files/R5FstConsumptionTax.pdf"
+            "sha256": "b3f530ac364c84581a4bd2dd8cd405c6bc15a0407b490604a042536b311f0c3a",
+            "final_url": "https://www.niijima.com/gyousei/keikaku/gyouseijyouhou/files/r5.pdf"
           }
         ],
-        "archived_at": "2026-10-08T04:15:05.044Z"
+        "archived_at": "2026-11-05T07:23:26.019Z"
       }
     },
     {
