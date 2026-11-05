@@ -16,7 +16,7 @@ import { forServer } from './history'
 import { Markdown } from './markdown'
 import { loadSession, saveSession, type StoredSession } from './store'
 import { ViewFrame } from './view-frame'
-import { LOGO_G } from '../logo'
+import { LOGO_G, LOGO_WIDTH } from '../logo'
 
 /** 頁の端からこの距離以内なら、その側のフェードは出さない */
 const FADE_EDGE_PX = 4
@@ -143,7 +143,7 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
       <div className="sticky top-0 z-20 bg-background">
       <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-3">
         <a href="/" aria-label="風土記 ホーム" className="text-primary">
-          <svg className="block h-7 w-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 146.2150 40" role="img" aria-hidden="true" dangerouslySetInnerHTML={{ __html: LOGO_G }} />
+          <svg className="block h-7 w-auto" xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${LOGO_WIDTH} 40`} role="img" aria-hidden="true" dangerouslySetInnerHTML={{ __html: LOGO_G }} />
         </a>
         <a href="/" aria-label="新しい会話" title="新しい会話" className="rounded-md p-2 text-muted-foreground hover:bg-secondary hover:text-foreground">
           <SquarePenIcon className="size-5" />

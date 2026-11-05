@@ -1,9 +1,9 @@
-// fudoki.dev の入口の1枚。視覚の規範は repo root の DESIGN.md、ロゴは public/logo.svg・favicon は public/favicon.svg の写し（Worker は assets を持たないので inline にする）
+// fudoki.dev の入口の1枚。視覚の規範は repo root の DESIGN.md、ロゴと favicon は build:brand が書く logo.ts から inline にする（Worker は assets を持たない）
 // 見出しの明朝は /fonts/mincho.woff2（この頁で使う字だけの subset）。文言を変えたら `bun run --cwd apps/web build:font` で作り直す
 import { HOME } from './home-data'
 import { PWA_HEAD, PWA_REGISTER } from './pwa'
 import { BACKGROUND_DARK, BACKGROUND_LIGHT, THEME_COLOR_META } from './tokens'
-import { LOGO_G } from './logo'
+import { LOGO_G, LOGO_WIDTH } from './logo'
 
 const MCP = 'https://api.fudoki.dev/mcp'
 const DOCS = 'https://docs.fudoki.dev'
@@ -20,7 +20,7 @@ const oku = (n: number) => {
 }
 const icon = (id: string) => `<svg class="i" aria-hidden="true"><use href="#${id}"/></svg>`
 
-export const logo = (cls: string) => `<svg class="${cls}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 146.2150 40" role="img" aria-label="風土記"><title>風土記</title>${LOGO_G}</svg>`
+export const logo = (cls: string) => `<svg class="${cls}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${LOGO_WIDTH} 40" role="img" aria-label="風土記"><title>風土記</title>${LOGO_G}</svg>`
 
 const { nakano, ledgers, origin, library } = HOME
 const libraryMax = Math.max(...library.rows.map((r) => r.amount))
@@ -32,7 +32,7 @@ export const TOKENS_CSS = `
 --background:${BACKGROUND_LIGHT};--foreground:#2b2723;--card:#f8f5ee;--card-foreground:#2b2723;
 --secondary:#ece6da;--secondary-foreground:#2b2723;--muted:#ece6da;--muted-foreground:#6b655c;
 --primary:#2f5d43;--primary-foreground:#f8f5ee;--accent:#e9efe9;--accent-foreground:#2f5d43;
---border:#ddd6c8;--ring:#2f5d43;--logo-rule-ink:#29523b;
+--border:#ddd6c8;--ring:#2f5d43;
 --paper:#e4d8bf;--paper-foreground:#2b2723;--night:#2b2723;--night-foreground:#f8f5ee;
 --page:#ffffff;--page-foreground:#2b2723;
 --shu:#c1553a;--ai:#33507a;--kincha:#e3a43c;--sakura:#ebcab9;
@@ -52,7 +52,7 @@ export const TOKENS_CSS = `
 --background:${BACKGROUND_DARK};--foreground:#ece6da;--card:#24211d;--card-foreground:#ece6da;
 --secondary:#302c26;--secondary-foreground:#ece6da;--muted:#302c26;--muted-foreground:#a8a094;
 --primary:#8fbfa2;--primary-foreground:#1b1916;--accent:#26332b;--accent-foreground:#8fbfa2;
---border:#3b362f;--ring:#8fbfa2;--logo-rule-ink:#9cc7ad;
+--border:#3b362f;--ring:#8fbfa2;
 --paper:#3a342b;--paper-foreground:#ece6da;--night:#0f0e0c;--night-foreground:#ece6da;
 --shu:#d46a4f;--ai:#6f8fc0;--sakura:#b98f80;--grain:.5;
 }}
@@ -435,10 +435,4 @@ ${BODY}
 ${PWA_REGISTER}
 </body>
 </html>
-`
-
-export const FAVICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32.0000 32" role="img" aria-label="風土記">
-  <title>風土記</title><style>svg { color: #2f5d43; --logo-rule-ink: #29523b; } @media (prefers-color-scheme: dark) { svg { color: #8fbfa2; --logo-rule-ink: #9cc7ad; } }</style>
-  <g fill="currentColor"><g transform="translate(0 0) scale(1)"><rect x="2.00000000" y="14.00000000" width="4.00000000" height="14.00000000" rx="2.00000000"/><rect x="8.00000000" y="6.00000000" width="4.00000000" height="22.00000000" rx="2.00000000"/><rect x="14.00000000" y="18.00000000" width="4.00000000" height="10.00000000" rx="2.00000000"/><rect x="20.00000000" y="2.00000000" width="4.00000000" height="26.00000000" rx="2.00000000"/><rect x="26.00000000" y="11.00000000" width="4.00000000" height="17.00000000" rx="2.00000000"/><rect x="2.00000000" y="29.00000000" width="28.00000000" height="2.00000000" rx="1.00000000" style="fill:var(--logo-rule-ink)"/></g></g>
-</svg>
 `

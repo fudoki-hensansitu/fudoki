@@ -2,6 +2,8 @@
 
 2026-10-04。候補比較であり、採用済みの `config.json` は変更していない。
 
+2026-11-05 に区画のマーク（`../logo-directions/`）へ移ったため、生成に使った `build-type-options.py`・`type-config.json` は削除した。再生成するときは削除前の commit から取り出す。
+
 - A: Noto Sans JP 700（現在の書体）
 - B: BIZ UDPゴシック Bold
 - C: M PLUS 1 700
