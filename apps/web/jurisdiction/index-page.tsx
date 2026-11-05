@@ -416,18 +416,17 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
 
         {/* 絞り込みで行が減っても頁の高さが急に縮まないよう、表の高さの下限を持たせる */}
         <div className="mt-5 min-h-[min(80vh,44rem)] border-t border-foreground">
-          <div className="hidden grid-cols-[minmax(0,13rem)_7rem_minmax(0,1fr)_9rem] gap-5 border-b px-2 py-2.5 text-xs text-muted-foreground md:grid">
+          <div className="hidden grid-cols-[minmax(0,13rem)_7rem_minmax(0,1fr)] gap-5 border-b px-2 py-2.5 text-xs text-muted-foreground md:grid">
             <span>自治体</span>
             <span>収録した決算</span>
             <span>歳出の総額（最新の決算・一般会計）</span>
-            <span>いちばん大きい分野</span>
           </div>
           <ul>
             {rows.map((e) => (
               <li key={e.code}>
                 <a
                   href={e.path}
-                  className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1.5 border-b px-2 py-3 transition-colors hover:bg-card md:grid-cols-[minmax(0,13rem)_7rem_minmax(0,1fr)_9rem] md:gap-5"
+                  className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1.5 border-b px-2 py-3 transition-colors hover:bg-card md:grid-cols-[minmax(0,13rem)_7rem_minmax(0,1fr)] md:gap-5"
                 >
                   <span className="min-w-0 truncate">
                     <span className="text-[16px]">{e.name}</span>
@@ -439,7 +438,6 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
                     <span className="whitespace-nowrap text-[13px] tabular-nums">{formatYen(e.yen)}</span>
                     <small className="whitespace-nowrap text-[11px] text-muted-foreground">{shortYear(e.year)}</small>
                   </span>
-                  <span className="hidden truncate text-[13px] text-muted-foreground md:block">{e.topKan[0]?.name}</span>
                 </a>
               </li>
             ))}
