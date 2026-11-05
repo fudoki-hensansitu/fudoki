@@ -54,7 +54,7 @@ function SelectedCard({ e }: { e: IndexEntry }) {
     <div className="flex flex-col rounded-[20px] border bg-background p-5 sm:p-6" aria-live="polite">
       <div className="text-xs text-muted-foreground">{e.prefecture}</div>
       <div className="mt-0.5 text-3xl leading-tight">{e.name}</div>
-      <div className="mt-4 text-xs text-muted-foreground">{reiwa(e.year)} 決算・一般会計の歳出</div>
+      <div className="mt-4 text-xs text-muted-foreground" title={reiwa(e.year)}>{shortYear(e.year)} 決算・一般会計の歳出</div>
       <div className="text-[2rem] leading-tight tabular-nums" title={e.amountMissing ? PARTIAL : undefined}>
         {formatYen(e.yen)}
         {e.amountMissing ? '*' : ''}
@@ -76,8 +76,8 @@ function SelectedCard({ e }: { e: IndexEntry }) {
       <div className="mt-4 text-xs text-muted-foreground">収録している決算</div>
       <div className="mb-5 mt-1 flex flex-wrap gap-1.5">
         {e.years.map((y) => (
-          <span key={y} className="rounded bg-accent px-2 py-0.5 text-[11px] text-accent-foreground">
-            {reiwa(y)}
+          <span key={y} className="rounded bg-accent px-2 py-0.5 text-[11px] text-accent-foreground" title={reiwa(y)}>
+            {shortYear(y)}
           </span>
         ))}
       </div>
