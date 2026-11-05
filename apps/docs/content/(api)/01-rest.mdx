@@ -64,7 +64,7 @@ sidebar:
 | boolean | `eq` |
 
 - 列をまたぐ OR と NOT は無いので、2 回に分けて問い合わせます。
-- `fiscal_year` の年数と条件の値は合わせて 90 個まで、文字列の値は 200 文字までです。
+- `fiscal_year` の年数と条件の値は合わせて 90 個まで、文字列の値は 200 文字までです。`prefix`・`suffix`・`contains` はさらに、escape（`*` `?` `[` は 3 バイト）と前後の `*` を含めて UTF-8 で 50 バイトまでです（和文はおよそ 16 文字）。
 
 ## ページング
 
@@ -74,7 +74,7 @@ sidebar:
 
 応答の `origins` に、行の `origin_id` が指す出典（資料名・公開 URL・形式・SHA-256）が入ります。自治体の一覧では `view=FULL` を付けると会計ごとの出典が返ります。
 
-`GET /v1/origins/{origin_id}/pdf` は自治体の公開 PDF を表示用に中継します。取得 URL は `X-Origin-Url`、取得日時は `X-Origin-Fetched-At` で返し、取り込み時との一致は検査しません。上限は [MCP の表示](/mcp#表で見るmcp-apps)と同じです。
+`GET /v1/origins/{origin_id}/pdf` は自治体の公開 PDF を表示用に中継します。取得 URL は `X-Origin-Url`（percent-encoding 済み。`decodeURIComponent` で戻す）、取得日時は `X-Origin-Fetched-At` で返し、取り込み時との一致は検査しません。上限は [MCP の表示](/mcp#表で見るmcp-apps)と同じです。
 
 ## エラー
 
