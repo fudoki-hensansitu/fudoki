@@ -169,7 +169,7 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
   const inView = municipalities.filter((e) => view !== null && prefOf(e) === view)
   const map = view ? MAPS.get(view) : undefined
   const shapeCodes = new Set<string>(map?.shapes.map((s) => s.code) ?? [])
-  const offMap = inView.filter((e) => !shapeCodes.has(e.code))
+  const offMap = map ? inView.filter((e) => !shapeCodes.has(e.code)) : []
   const viewName = view ? (map?.name ?? inView[0]?.prefecture ?? '') : '日本'
   const [selected, setSelected] = React.useState(() => (inView.length ? inView : entries).reduce<IndexEntry | null>((a, b) => (!a || b.yen > a.yen ? b : a), null)?.code ?? '')
   const open = (pref: string) => {
