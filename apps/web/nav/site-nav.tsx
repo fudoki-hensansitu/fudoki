@@ -77,7 +77,7 @@ const GITHUB = 'https://github.com/fudoki-hensansitu/fudoki'
 const X = 'https://x.com/fudokijp'
 
 const Social = ({ href, label, icon, className }: { href: string; label: string; icon: React.ReactNode; className?: string }) => (
-  <a href={href} aria-label={label} target="_blank" rel="noopener noreferrer" className={cn('flex size-10 items-center justify-center rounded-md text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground [&_svg]:size-[18px]', className)}>
+  <a href={href} aria-label={label} target="_blank" rel="noopener noreferrer" className={cn('flex size-10 items-center justify-center rounded-md text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground [&_svg]:size-5', className)}>
     {icon}
   </a>
 )
@@ -144,8 +144,7 @@ export function SiteNav({ active, open }: SiteNavProps) {
       {/* 頁の本文は島の外にあるので、provider の枠は箱を作らず（contents）、幅の変数だけを配る */}
       <SidebarProvider defaultOpen={open} className="contents" style={{ '--sidebar-width': '13rem', '--sidebar-width-icon': '3.5rem' } as React.CSSProperties}>
         <BottomNav active={active} />
-        {/* 地の色で本文と分かれるので、境の線は引かない */}
-        <Sidebar collapsible="icon" aria-label="サイト" className="group-data-[side=left]:border-r-0">
+        <Sidebar collapsible="icon" aria-label="サイト">
           <SidebarHeader className="flex-row items-center justify-between gap-2 px-3 pt-5 pb-4 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-2">
             <a href="/" aria-label="風土記 ホーム" className="ps-2 group-data-[collapsible=icon]:hidden">
               {/* 色は svg に付ける（入口の頁の a { color: inherit } に負けて黒くならないように） */}
