@@ -42,7 +42,9 @@ def titles(logical: layout.Logical, heading: str | None) -> list[tuple[str, str,
 
     The title prints no heading over its amount: the settings declare the one it is under (`header.title_amount`)."""
     found = []
-    for line in lines(logical.outside):
+    # `outside` holds each page's own coordinates: the lines of a spread are read page by page.
+    pages = sorted({g.page for g in logical.outside})
+    for line in (line for page in pages for line in lines([g for g in logical.outside if g.page == page])):
         if any(logical.below_foot(g) for g in line):
             continue
         parts = runs(line)
@@ -50,6 +52,10 @@ def titles(logical: layout.Logical, heading: str | None) -> list[tuple[str, str,
         if len(parts) > 1:
             shown = AMOUNT.fullmatch(normalize(text(parts[-1])))
             if shown:
+                if heading and logical.unit_of(heading) not in (None, shown.group(2)):
+                    # The amount is read in the unit of its column: a title printing another would be off by 1000.
+                    raise ValueError(f'A title prints its amount in {shown.group(2)}, the column is in '
+                                     f'{logical.unit_of(heading)}: p{line[0].page} {normalize(text(line))!r}')
                 amount = cut_unit(parts.pop(), shown.group(2))
         name = [g for part in parts for g in part]
         match = TITLE.match(normalize(text(name)))
