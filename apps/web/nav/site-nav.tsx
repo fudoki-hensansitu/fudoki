@@ -168,8 +168,8 @@ export function SiteNav({ active, open }: SiteNavProps) {
             </SidebarMenu>
             {/* 末端に X と GitHub。閉じて icon だけのときは X だけ残す */}
             <div className="flex justify-center gap-1">
-              {X ? <Social href={X} label="X" icon={<XLogoIcon weight="fill" />} /> : null}
-              <Social href={GITHUB} label="GitHub" icon={<GithubLogoIcon weight="fill" />} className="group-data-[collapsible=icon]:hidden" />
+              {X ? <Social href={X} label="X" icon={<XLogoIcon />} /> : null}
+              <Social href={GITHUB} label="GitHub" icon={<GithubLogoIcon />} className="group-data-[collapsible=icon]:hidden" />
             </div>
           </SidebarFooter>
         </Sidebar>
