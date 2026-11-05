@@ -131,6 +131,13 @@ describe('自治体の個別ページ', () => {
     expect(html).not.toContain('千代田区')
   })
 
+  test('一覧の総額は金額の印字が無い款を 0 と数えず、一部の款の和だと印を付ける', async () => {
+    const api = fixtureApi({ extraNodes: [node({ node_id: id(99), node_kind: '款', name: '予備費', amount_yen: null, fiscal_year: 2025 })] })
+    const html = await (await get('/jurisdictions', { ...env, API: api })).text()
+    const data = JSON.parse(html.match(/<script type="application\/json" id="j-index-data">(.*?)<\/script>/s)![1]!)
+    expect(data.map((e: { yen: number; amountMissing?: true }) => [e.yen, e.amountMissing])).toEqual([[1000, true]])
+  })
+
   test('URL のローマ字は自治体マスタの全自治体にあり、同じ都道府県の中で重ならない', () => {
     const seen = new Set<string>()
     for (const [code, j] of Object.entries(registry.jurisdictions as Record<string, { name: string; slug?: string }>)) {

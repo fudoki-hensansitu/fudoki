@@ -5,6 +5,7 @@ import { TOKYO_MAP } from './map.generated'
 import { formatYen, reiwa, type IndexEntry, type JurisdictionKind } from './types'
 
 type Sort = 'yen' | 'code'
+const PARTIAL = '金額の印字が無い款を除いた和'
 const KINDS: JurisdictionKind[] = ['都道府県', '区', '市', '町村']
 const MAP_CODES = new Set<string>(TOKYO_MAP.shapes.map((s) => s.code))
 
@@ -46,6 +47,7 @@ function SelectedCard({ e }: { e: IndexEntry }) {
       <div className="mt-0.5 text-3xl leading-tight">{e.name}</div>
       <div className="mt-4 text-xs text-muted-foreground">{reiwa(e.year)} 決算・一般会計の歳出</div>
       <div className="text-[2rem] leading-tight tabular-nums">{formatYen(e.yen)}</div>
+      {e.amountMissing ? <div className="text-[11px] text-muted-foreground">{PARTIAL}</div> : null}
       <div className="mt-4 text-xs text-muted-foreground">金額の大きい分野（款）</div>
       <ul className="mt-1">
         {e.topKan.map((k) => (
@@ -116,7 +118,7 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
   const byYen = React.useMemo(() => [...entries].sort((a, b) => b.yen - a.yen), [entries])
   const onMap = entries.filter((e) => MAP_CODES.has(e.code))
   const offMap = entries.filter((e) => !MAP_CODES.has(e.code))
-  const [selected, setSelected] = React.useState(() => (onMap.length ? onMap : entries).reduce((a, b) => (b.yen > a.yen ? b : a)).code)
+  const [selected, setSelected] = React.useState(() => (onMap.length ? onMap : entries).reduce<IndexEntry | null>((a, b) => (!a || b.yen > a.yen ? b : a), null)?.code ?? '')
   const [query, setQuery] = React.useState('')
   const [kind, setKind] = React.useState<JurisdictionKind | null>(null)
   const [sort, setSort] = React.useState<Sort>('yen')
@@ -126,7 +128,7 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
   const rows = (sort === 'yen' ? byYen : [...entries].sort((a, b) => a.code.localeCompare(b.code))).filter(
     (e) => (!kind || e.kind === kind) && (!q || e.name.includes(q) || e.prefecture.includes(q) || e.path.includes(q)),
   )
-  const current = entries.find((e) => e.code === selected)!
+  const current = entries.find((e) => e.code === selected)
   const prefectures = [...new Set(entries.map((e) => e.prefecture))]
 
   return (
@@ -163,7 +165,7 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
             </div>
           ) : null}
         </div>
-        <SelectedCard e={current} />
+        {current ? <SelectedCard e={current} /> : <p className="rounded-[20px] border p-6 text-muted-foreground">収録している自治体の決算を読み込めませんでした。</p>}
       </section>
 
       <section className="mt-14" aria-label="表で比べる">
@@ -224,7 +226,10 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
                   <YearPills years={e.years} all={allYears} />
                   <span className="col-span-2 flex min-w-0 items-center gap-2.5 md:col-span-1">
                     <span className="block h-2.5 rounded-sm bg-primary" style={{ width: `${Math.max(0.6, (e.yen / maxYen) * 80)}%` }} />
-                    <span className="whitespace-nowrap text-[13px] tabular-nums">{formatYen(e.yen)}</span>
+                    <span className="whitespace-nowrap text-[13px] tabular-nums" title={e.amountMissing ? PARTIAL : undefined}>
+                      {formatYen(e.yen)}
+                      {e.amountMissing ? '*' : ''}
+                    </span>
                     <small className="whitespace-nowrap text-[11px] text-muted-foreground">{reiwa(e.year).replace('年度', '')}</small>
                   </span>
                   <span className="hidden truncate text-[13px] text-muted-foreground md:block">{e.topKan[0]?.name}</span>

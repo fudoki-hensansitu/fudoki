@@ -109,6 +109,8 @@ export interface IndexEntry {
   yen: number
   /** 最新の決算で金額の大きい款（大きい順に3つまで） */
   topKan: { name: string; yen: number }[]
+  /** 出典に金額の印字が無い款があり、yen はそれを除いた款の和 */
+  amountMissing?: true
 }
 
 /** 名称の末尾から種類を決める。都道府県は自治体コードの5桁目までが 0（130001 → 13000） */

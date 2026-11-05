@@ -86,7 +86,7 @@ const TOP_KAN = 3
 export async function loadIndex(env: Env, entries: CatalogEntry[], pathOf: (code: string) => string): Promise<IndexEntry[]> {
   const have = entries.filter((e) => e.settlementYears.length > 0)
   const latest = new Map(have.map((e) => [e.code, e.settlementYears.at(-1)!]))
-  const kan = new Map<string, { name: string; yen: number }[]>()
+  const kan = new Map<string, { name: string; yen: number | null }[]>()
   // 最新の年度が同じ自治体ごとに引く（他の年度の款を取らない）
   for (const year of new Set(latest.values())) {
     const sameYear = have.filter((e) => latest.get(e.code) === year).map((e) => e.code)
@@ -100,13 +100,15 @@ export async function loadIndex(env: Env, entries: CatalogEntry[], pathOf: (code
           page_size: 1000,
           ...(token ? { page_token: token } : {}),
         })
-        for (const n of r.nodes) kan.set(n.jurisdiction_code, [...(kan.get(n.jurisdiction_code) ?? []), { name: n.name, yen: n.amount_yen ?? 0 }])
+        for (const n of r.nodes) kan.set(n.jurisdiction_code, [...(kan.get(n.jurisdiction_code) ?? []), { name: n.name, yen: n.amount_yen }])
         token = r.next_page_token ?? undefined
       } while (token)
     }
   }
   return have.flatMap((e) => {
-    const list = (kan.get(e.code) ?? []).sort((a, b) => b.yen - a.yen)
+    const all = kan.get(e.code) ?? []
+    // 印字の無い款は 0 円と数えず、総額が一部の款の和であることを amountMissing で画面に伝える
+    const list = all.flatMap((k) => (k.yen === null ? [] : [{ name: k.name, yen: k.yen }])).sort((a, b) => b.yen - a.yen)
     // 収録範囲に年度があっても款が引けない自治体は、金額を 0 と出さずに一覧から外す
     if (list.length === 0) return []
     return [{
@@ -119,6 +121,7 @@ export async function loadIndex(env: Env, entries: CatalogEntry[], pathOf: (code
       year: latest.get(e.code)!,
       yen: list.reduce((s, k) => s + k.yen, 0),
       topKan: list.slice(0, TOP_KAN),
+      ...(list.length < all.length ? { amountMissing: true as const } : {}),
     }]
   })
 }
