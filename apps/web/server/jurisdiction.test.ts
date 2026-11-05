@@ -136,7 +136,8 @@ describe('自治体の個別ページ', () => {
     expect(data.map((e: { name: string; year: number; yen: number; path: string }) => [e.name, e.year, e.yen, e.path])).toEqual([['中野区', 2025, 1000, '/tokyo/nakano']])
     // JavaScript が無くても個別ページへのリンクと金額が読める
     expect(html).toContain('href="/tokyo/nakano"')
-    expect(html).not.toContain('千代田区')
+    // 未収録の自治体はタイル図に名前だけを出し、個別ページへはつながない
+    expect(html).not.toContain('href="/tokyo/chiyoda"')
   })
 
   test('一覧の総額は金額の印字が無い款を 0 と数えず、一部の款の和だと印を付ける', async () => {
