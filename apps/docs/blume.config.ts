@@ -25,26 +25,22 @@ export default defineConfig({
       { label: 'ガイド', path: '/' },
       { label: 'API リファレンス', path: '/reference' },
     ],
-    // footer は置かず、規約とリポジトリもサイドバーに並べる。外部リンクを混ぜるため、ガイドのサイドバーは明示で組む
+    // サポート・規約はサイドバーのヘルプに並べる。API リファレンスの行も含め、サイドバーは明示で組む
     sidebar: [
       '/',
       { label: 'AI につなぐ', items: ['/mcp', '/chatgpt', '/claude', '/codex', '/claude-code', '/cursor'] },
       { label: 'プログラムから使う', items: ['/rest'] },
       { label: 'データ', items: ['/data', '/evaluations'] },
-      {
-        label: 'ヘルプ',
-        items: [
-          '/support',
-          '/privacy',
-          '/terms',
-          { label: 'GitHub', href: 'https://github.com/fudoki-hensansitu/fudoki', icon: '/icons/github-logo.svg' },
-        ],
-      },
+      { label: 'ヘルプ', items: ['/support', '/privacy', '/terms'] },
       // 明示のサイドバーでは API リファレンスの行も自動では作られないので、openapi.json の順に並べる。root を持つ group にするとタブで切り分けられる
       { label: 'API リファレンス', root: '/reference', items: operationRoutes },
     ],
-    // footer の GitHub アイコンも出さない（サイドバーのヘルプに置く）
-    repo: false,
+    repo: 'https://github.com/fudoki-hensansitu/fudoki',
+  },
+  // footer はアイコンと © だけ。サポート・規約はサイドバーのヘルプに置く
+  footer: {
+    copyright: '© 2026 風土記',
+    socials: { x: 'https://x.com/fudokijp' },
   },
   // 旧「ChatGPT・Claude などで使う」の頁。plugin の導入はクライアント別の頁へ移した
   redirects: [{ from: '/plugins', to: '/claude-code' }],
