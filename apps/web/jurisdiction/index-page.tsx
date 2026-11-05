@@ -48,7 +48,7 @@ function SelectedCard({ e }: { e: IndexEntry }) {
       <div className="mt-4 text-xs text-muted-foreground">{reiwa(e.year)} 決算・一般会計の歳出</div>
       <div className="text-[2rem] leading-tight tabular-nums">{formatYen(e.yen)}</div>
       {e.amountMissing ? <div className="text-[11px] text-muted-foreground">{PARTIAL}</div> : null}
-      <div className="mt-4 text-xs text-muted-foreground">金額の大きい分野（款）</div>
+      <div className="mt-4 text-xs text-muted-foreground">金額の大きい分野（款）{e.amountMissing ? '・金額の印字がある款の中で' : ''}</div>
       <ul className="mt-1">
         {e.topKan.map((k) => (
           <li key={k.name} className="border-b py-1.5 text-[13px] last:border-b-0">
@@ -234,15 +234,18 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
                     </span>
                     <small className="whitespace-nowrap text-[11px] text-muted-foreground">{reiwa(e.year).replace('年度', '')}</small>
                   </span>
-                  <span className="hidden truncate text-[13px] text-muted-foreground md:block">{e.topKan[0]?.name}</span>
+                  <span className="hidden truncate text-[13px] text-muted-foreground md:block" title={e.amountMissing ? PARTIAL : undefined}>
+                    {e.topKan[0]?.name}
+                    {e.amountMissing ? '*' : ''}
+                  </span>
                 </a>
               </li>
             ))}
           </ul>
-          {rows.length === 0 && entries.length ? <p className="px-2 py-8 text-center text-muted-foreground">{q ? `「${query}」に当たる自治体は、まだ収録していません。` : '条件に当たる自治体はありません。'}</p> : null}
+          {rows.length === 0 && entries.length ? <p className="px-2 py-8 text-center text-muted-foreground">{q && !kind ? `「${query}」に当たる自治体は、まだ収録していません。` : '条件に当たる自治体はありません。'}</p> : null}
         </div>
         <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-          R6 は令和6年度（2024年度）。点線は未収録の年度です。総額は、自治体ごとに最新の決算の一般会計の歳出（款の和）で、年度がそろっていない場合があります。* は金額の印字が無い款を除いた和です。人口の多い街ほど大きくなるので、住民1人あたりの比較は人口データを収録してから加えます。
+          R6 は令和6年度（2024年度）。点線は未収録の年度です。総額は、自治体ごとに最新の決算の一般会計の歳出（款の和）で、年度がそろっていない場合があります。* は金額の印字が無い款を除いた和と、その中でいちばん大きい分野です。人口の多い街ほど大きくなるので、住民1人あたりの比較は人口データを収録してから加えます。
         </p>
       </section>
     </div>
