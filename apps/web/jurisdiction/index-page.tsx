@@ -18,6 +18,13 @@ const SORTS: { value: Sort; label: string }[] = [
   { value: 'code', label: '自治体コード順' },
 ]
 const PARTIAL = '金額の印字が無い款を除いた和'
+/** 一部の款の和の印。注記の行を足すと選び直すたびに高さが変わるので、印だけを出し、説明は title と読み上げに置く（2026-11-05 yuito） */
+const Partial = () => (
+  <>
+    <span aria-hidden="true">*</span>
+    <span className="sr-only">（{PARTIAL}）</span>
+  </>
+)
 const KINDS: JurisdictionKind[] = ['都道府県', '区', '市', '町村']
 
 /** 塗りの濃さ。面積で見比べるので、金額の平方根に比例させる（最小でも地の色と区別できる濃さを残す） */
@@ -57,7 +64,7 @@ function SelectedCard({ e }: { e: IndexEntry }) {
       <div className="mt-4 text-xs text-muted-foreground" title={reiwa(e.year)}>{shortYear(e.year)} 決算・一般会計の歳出</div>
       <div className="text-[2rem] leading-tight tabular-nums" title={e.amountMissing ? PARTIAL : undefined}>
         {formatYen(e.yen)}
-        {e.amountMissing ? '*' : ''}
+        {e.amountMissing ? <Partial /> : null}
       </div>
       <div className="mt-4 text-xs text-muted-foreground">金額の大きい分野（款）</div>
       <ul className="mt-1">
@@ -350,13 +357,13 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
                     <span className="block h-2.5 rounded-sm bg-primary" style={{ width: `${Math.max(0.6, (e.yen / maxYen) * 80)}%` }} />
                     <span className="whitespace-nowrap text-[13px] tabular-nums" title={e.amountMissing ? PARTIAL : undefined}>
                       {formatYen(e.yen)}
-                      {e.amountMissing ? '*' : ''}
+                      {e.amountMissing ? <Partial /> : null}
                     </span>
                     <small className="whitespace-nowrap text-[11px] text-muted-foreground">{shortYear(e.year)}</small>
                   </span>
                   <span className="hidden truncate text-[13px] text-muted-foreground md:block" title={e.amountMissing ? PARTIAL : undefined}>
                     {e.topKan[0]?.name}
-                    {e.amountMissing ? '*' : ''}
+                    {e.amountMissing ? <Partial /> : null}
                   </span>
                 </a>
               </li>
