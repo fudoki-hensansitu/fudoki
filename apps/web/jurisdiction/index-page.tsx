@@ -312,7 +312,10 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
               </li>
             ))}
           </ul>
-          {rows.length === 0 && entries.length ? <p className="px-2 py-8 text-center text-muted-foreground">{q && !kind ? `「${query}」に当たる自治体は、まだ収録していません。` : '条件に当たる自治体はありません。'}</p> : null}
+          {/* 絞り込みの結果を読み上げる。空でないときは件数だけを画面外で伝える */}
+          <p role="status" aria-live="polite" className={rows.length === 0 && entries.length ? 'px-2 py-8 text-center text-muted-foreground' : 'sr-only'}>
+            {!entries.length ? '' : rows.length ? `${rows.length} の自治体` : q && !kind ? `「${query}」に当たる自治体は、まだ収録していません。` : '条件に当たる自治体はありません。'}
+          </p>
         </div>
         <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
           R6 は令和6年度（2024年度）。点線は未収録の年度です。総額は、自治体ごとに最新の決算の一般会計の歳出（款の和）で、年度がそろっていない場合があります。* は金額の印字が無い款を除いた和と、その中でいちばん大きい分野です。人口の多い街ほど大きくなるので、住民1人あたりの比較は人口データを収録してから加えます。
