@@ -52,6 +52,13 @@ export interface ProfileYear {
   domains: Domain[]
   scrap?: Scrap
   sources: string[]
+  /** 決算・予算の金額の出典（一般会計の歳出を載せた冊の PDF）。pipeline/source_selection の選定結果の URL */
+  documents?: { settlement?: SourceDoc[]; initial?: SourceDoc[] }
+}
+
+export interface SourceDoc {
+  label: string
+  href: string
 }
 
 export interface Profile {
@@ -80,6 +87,7 @@ const SHINAGAWA: Profile = {
     "2026": {
       "tagline": "区民の不安や不満といった「不」を取り除き、誰もが安心して暮らしていける社会へ",
       "policySource": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/729/20250730113250_2.pdf",
+      "documents": {"initial": [{"label": "予算書", "href": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/654/2026tousyoyosan_3.pdf"}]},
       "policies": [
         {
           "title": "ウェルビーイングの深化",
@@ -269,6 +277,7 @@ const SHINAGAWA: Profile = {
     "2025": {
       "tagline": "性別や障害の有無、家庭の状況などで選択を阻まれず、自分の望むように生き、幸せを感じられる社会へ",
       "policySource": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/730/20240730173216_1.pdf",
+      "documents": {"settlement": [{"label": "決算書", "href": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/751/r7/r7_2.pdf"}], "initial": [{"label": "予算書（1〜5款）", "href": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/655/2025tousyoyosan_5.pdf"}, {"label": "予算書（6〜9款）", "href": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/655/2025tousyoyosan_6.pdf"}]},
       "policies": [
         {
           "title": "ウェルビーイングの進化（深化）",
@@ -467,6 +476,7 @@ const SHINAGAWA: Profile = {
     "2024": {
         "tagline": "区民の幸福（ウェルビーイング）を軸に、新しい時代の品川を引っ張る",
         "policySource": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/731/20230731131455_1.pdf",
+        "documents": {"settlement": [{"label": "決算書", "href": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/751/r6/r6_2.pdf"}], "initial": [{"label": "予算書", "href": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/656/20240208145918_8.pdf"}]},
         "policies": [
           {
             "title": "誰もが自分らしく暮らせる品川区",

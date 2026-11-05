@@ -24,7 +24,9 @@ const BADGE: Record<ProjectStatus, { label: string; className: string }> = {
 }
 
 /** aside は見出しの横に並べる短い値（決算の総額など） */
-const Section = ({ id, title, aside, link, children }: { id: string; title: string; aside?: React.ReactNode; link?: { href: string; label: string }; children: React.ReactNode }) => (
+type SectionLink = { href: string; label: string }
+/** link は見出しの右に出す出典（PDF を直接開く）。複数あれば並べる */
+const Section = ({ id, title, aside, link, children }: { id: string; title: string; aside?: React.ReactNode; link?: SectionLink | SectionLink[]; children: React.ReactNode }) => (
   <section id={id} aria-labelledby={`h-${id}`} className="flex scroll-mt-32 md:scroll-mt-20 flex-col gap-4">
     <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
       <div className="flex flex-wrap items-baseline gap-x-5 gap-y-1">
@@ -34,10 +36,14 @@ const Section = ({ id, title, aside, link, children }: { id: string; title: stri
         {aside}
       </div>
       {link ? (
-        <a href={link.href} target="_blank" rel="noopener" className="inline-flex items-center gap-1 whitespace-nowrap text-[13px] text-primary no-underline hover:underline">
-          {link.label}
-          <ArrowUpRightIcon aria-hidden="true" className="size-3.5" />
-        </a>
+        <div className="flex flex-wrap gap-x-4 gap-y-1">
+          {(Array.isArray(link) ? link : [link]).map((l) => (
+            <a key={l.href} href={l.href} target="_blank" rel="noopener" className="inline-flex items-center gap-1 whitespace-nowrap text-[13px] text-primary no-underline hover:underline">
+              {l.label}
+              <ArrowUpRightIcon aria-hidden="true" className="size-3.5" />
+            </a>
+          ))}
+        </div>
       ) : null}
     </div>
     {children}
@@ -186,6 +192,9 @@ function Budget({ data, year }: { data: PageData; year: number }) {
   const pct = total ? changePct(total.yen, prev?.yen) : null
   const label = phase === 'settlement' ? '決算' : '予算'
   const missing = `${yearName(year)}の${label}は、まだ収録していません`
+  // その年度の決算書・予算書（歳出を載せた冊）の PDF を直接開く。公表前・未選定の冊は出さない
+  const documents = data.profile?.years[year]?.documents
+  const docs = [...(documents?.settlement ?? []), ...(documents?.initial ?? [])]
   const summary = (
     <>
       <span className="text-sm text-muted-foreground">全体</span>
@@ -215,6 +224,7 @@ function Budget({ data, year }: { data: PageData; year: number }) {
     <Section
       id="budget"
       title="決算 / 予算"
+      link={docs.length ? docs : undefined}
     >
       <div id="budget-panel" role="tabpanel" aria-labelledby={`tab-${phase}`} data-ask-view={`${reiwa(year)}の${label}の金額`} className="flex flex-col gap-4">
         {total ? (
