@@ -77,9 +77,9 @@ Email Routing は `cf email-routing settings get --zone fudoki.dev` で enabled=
 - 問い合わせメールとその複製は対応終了後90日以内に削除し、ごみ箱からも除く。手動の期限管理であり、自動削除機能を追加したものではない。法令上の保持義務があるものは必要期間に限って保持する。Gmail/Cloudflare 自体の保管・バックアップは提供元の方針に従う。
 - ログ設定・取扱い・提供条件を変更するときは、privacy/terms を先に見直す。公表文面を法的適合性の保証や portal の compliance 同意とは扱わない。
 
-`mise exec -- bun run build:docs` は3ページと共通フッターを含む。main への反映で自動 deploy される。HTTPS の `/support`・`/privacy`・`/terms` が実際に閲覧できてから plugin metadata と submission.md を更新する。公開が必要な提出 URL は維持し、本文はフッターから開く。
+`mise exec -- bun run build:docs` は3ページを含む。main への反映で自動 deploy される。HTTPS の `/support`・`/privacy`・`/terms` が実際に閲覧できてから plugin metadata と submission.md を更新する。公開が必要な提出 URL は維持し、本文はサイドバーのヘルプから開く（2026-11-05 に footer をやめてサイドバーへ移した）。
 
-文書は `content/(usage)/`（接続・使い方）、`content/(data)/`（データ）、`content/(help)/`（ヘルプ）、`content/(legal)/`（フッターから開く法的文書）に配置する。括弧付きフォルダは Blume のグループであり、URL に階層を追加しない。privacy/terms はサイドバー・前後ページのリンクから外す。
+文書は `content/(usage)/`（接続・使い方）、`content/(data)/`（データ）、`content/(help)/`（ヘルプ）、`content/(legal)/`（法的文書）に配置する。括弧付きフォルダは Blume のグループであり、URL に階層を追加しない。privacy/terms はサイドバーのヘルプに GitHub と並べ、前後ページのリンクからは外す。
 
 ## 最終状態の検証
 

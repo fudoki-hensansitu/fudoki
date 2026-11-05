@@ -80,7 +80,7 @@ const RateLimitedBody = z.object({ error: z.object({ code: z.string(), message: 
 /** `/openapi.json` と apps/docs の API リファレンスが同じ文書を使う */
 export const OPENAPI_CONFIG = {
   openapi: '3.1.0',
-  info: { title: '風土記 API', version: '1.0.0', description: 'Search Japanese municipal expenditure budgets and settlements down to individual projects, with coverage and sources.' },
+  info: { title: '風土記 API', version: '1.0.0', description: '自治体の歳出の予算・決算を、事業の単位まで収録範囲と出典つきで検索する。' },
   servers: [{ url: 'https://api.fudoki.dev' }],
 }
 
@@ -94,7 +94,7 @@ function registerRest(app: OpenAPIHono<AppEnv>, op: Operation) {
     method: op.method,
     path: op.path,
     operationId: op.name,
-    summary: op.summary,
+    summary: op.restSummary,
     description: op.description,
     request: {
       ...(params ? { params } : {}),
@@ -335,6 +335,8 @@ export function createApp(operations: Operation[] = defaultOperations) {
       method: 'get',
       path: '/health',
       operationId: 'health',
+      // 運用の監視用。API リファレンスと /openapi.json には載せない
+      hide: true,
       summary: '死活確認',
       description: 'Worker が応答できるかだけを返す。D1 は読まず、kill switch の状態に依らず 200 を返す。',
       responses: { 200: { description: '稼働中', content: { 'application/json': { schema: z.object({ status: z.literal('ok') }) } } } },
@@ -347,7 +349,7 @@ export function createApp(operations: Operation[] = defaultOperations) {
 
   app.openapi(createRoute({
     method: 'get', path: '/v1/origins/{origin_id}/pdf', operationId: 'get_origin_pdf',
-    summary: '出典 PDF の表示用中継',
+    summary: '出典の PDF を表示する',
     description: '出典 ID が指す自治体の公開 PDF を中継する。32 MiB・20秒、取得6回/分（同一URL1回/分）、閲覧120回/分、成功PDFを24時間・最大16 URL保持。上限は全利用者合計。取得 URL（percent-encoding）と取得日時を X-Origin-Url・X-Origin-Fetched-At で返す。取り込み時の内容との一致は保証しない。query・任意 URL・リダイレクト・CSV は受け付けない。',
     request: { params: z.object({ origin_id: z.string().min(1).max(256) }) },
     responses: {

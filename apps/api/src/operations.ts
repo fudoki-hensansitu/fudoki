@@ -98,7 +98,10 @@ export interface Ctx {
 
 export interface Operation {
   name: string
+  /** MCP の tool の title（英語） */
   summary: string
+  /** REST の OpenAPI の summary。API リファレンスの見出しとサイドバーに出る */
+  restSummary: string
   /** get は query と path、post は body に input を受ける */
   method: 'get' | 'post'
   /** REST の path（OpenAPI の `{param}` 形式） */
@@ -465,6 +468,7 @@ export const operations: Operation[] = [
   {
     name: 'list_jurisdictions',
     summary: 'Municipalities and expenditure coverage',
+    restSummary: '自治体と収録範囲の一覧',
     method: 'get',
     path: '/v1/jurisdictions',
     pathParams: [],
@@ -489,6 +493,7 @@ export const operations: Operation[] = [
   {
     name: 'search_expenditure_nodes',
     summary: 'Search expenditure tree nodes',
+    restSummary: '歳出の科目を検索する',
     method: 'post',
     path: '/v1/expenditure/nodes:search',
     pathParams: [],
@@ -506,6 +511,7 @@ export const operations: Operation[] = [
   {
     name: 'get_expenditure_node',
     summary: 'Expenditure node and children by axis',
+    restSummary: '科目とその内訳を取得する',
     method: 'get',
     path: '/v1/expenditure/nodes/{document_kind}/{node_id}',
     pathParams: ['document_kind', 'node_id'],
@@ -529,6 +535,7 @@ export const operations: Operation[] = [
   {
     name: 'describe_expenditure_columns',
     summary: 'Column descriptions and aggregation rules',
+    restSummary: '列の説明と合計の決まり',
     method: 'get',
     path: '/v1/expenditure/columns',
     pathParams: [],

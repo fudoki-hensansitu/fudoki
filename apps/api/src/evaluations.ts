@@ -401,6 +401,7 @@ async function searchEvaluations(ctx: Ctx, raw: Record<string, unknown>): Promis
 export const searchEvaluationsOperation: Operation = {
   name: 'search_evaluations',
   summary: 'Find project evaluation pages',
+  restSummary: '事業の評価資料を探す',
   method: 'post',
   path: '/v1/evaluations:search',
   pathParams: [],
