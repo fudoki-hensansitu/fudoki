@@ -4,8 +4,9 @@ import * as React from 'react'
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { AmountTip, TIP_CARD, TipCard } from './amount-tip'
 import { Overview } from './sankey'
-import { formatYen, type Drill, type Kou, type Moku, type PageData, type YearTotal } from './types'
+import { formatShare, formatYen, type Drill, type Kou, type Moku, type PageData, type YearTotal } from './types'
 
 const SETSU_SHOWN = 3
 /** 目の側に立てる棒の幅。項の棒（w-2）と揃える */
@@ -24,7 +25,11 @@ const amountText = (yen: number, missing?: boolean) => (missing ? '金額未記�
 const share = (yen: number, max: number, missing?: boolean) => (missing || max <= 0 ? 0 : Math.min(100, (Math.max(0, yen) / max) * 100))
 
 /** 節は目の内訳。上位だけ名前を出して残りは件数にまとめる。広い画面では目の棒から帯でつなぎ、狭い画面では目の金額に占める割合の横棒を出す */
-function MokuGroup({ moku }: { moku: Moku }) {
+/** 割合のラベル。基準が無い（金額未記載）ときは金額のまま出す */
+const pctOr = (yen: number, base: number, missing?: boolean) => formatShare(yen, base, missing) ?? amountText(yen, missing)
+
+/** kouYen は割合の基準（目は項に占める割合、節は目に占める割合）。金額はツールチップで見せる */
+function MokuGroup({ moku, kouYen }: { moku: Moku; kouYen: number }) {
   const shown = moku.setsu.filter((s) => s.amountMissing || s.yen > 0)
   const top = shown.slice(0, SETSU_SHOWN)
   const rest = shown.slice(SETSU_SHOWN)
@@ -32,19 +37,25 @@ function MokuGroup({ moku }: { moku: Moku }) {
   const restYen = rest.some((s) => s.amountMissing) ? null : rest.reduce((a, s) => a + s.yen, 0)
   // 目の金額が印字されていないときは、一番大きい節を基準にして大小だけ見せる
   const base = moku.amountMissing ? Math.max(0, ...top.filter((s) => !s.amountMissing).map((s) => s.yen)) : moku.yen
+  // 割合は目の金額が印字されているときだけ。無いときは節の金額をそのまま出す
+  const mokuYen = moku.amountMissing ? 0 : moku.yen
   return (
     <div data-moku data-yen={moku.amountMissing ? 0 : moku.yen} className="grid translate-y-1.5 grid-cols-1 items-start gap-1.5 opacity-30 transition-[opacity,transform] duration-500 group-data-[active=true]/kou:translate-y-0 group-data-[active=true]/kou:opacity-100 sm:grid-cols-[5fr_7fr] sm:gap-4">
       <div className="min-w-0">
-        <div className="text-sm leading-snug">{moku.name}</div>
-        <div className="text-xs tabular-nums text-muted-foreground">{amountText(moku.yen, moku.amountMissing)}</div>
+        <AmountTip name={moku.name} yen={moku.yen} missing={moku.amountMissing} side="right" className="inline-grid outline-none">
+          <span className="text-sm leading-snug">{moku.name}</span>
+          <span className="text-xs font-semibold tabular-nums text-primary">{pctOr(moku.yen, kouYen, moku.amountMissing)}</span>
+        </AmountTip>
       </div>
       {top.length > 0 ? (
         <ul data-setsu-list className="grid min-w-0 gap-y-1 border-l pl-3 text-[12.5px] leading-snug sm:border-0 sm:pl-4" aria-label={`${moku.name}の節`}>
           <li className="text-[11px] text-muted-foreground sm:hidden">節</li>
           {top.map((s) => (
             <li key={s.name} data-setsu data-yen={s.amountMissing ? 0 : Math.max(0, s.yen)} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2.5">
-              <span className="truncate">{s.name}</span>
-              <span className="text-right tabular-nums text-muted-foreground">{amountText(s.yen, s.amountMissing)}</span>
+              <AmountTip name={`${moku.name}・${s.name}`} yen={s.yen} missing={s.amountMissing} side="right" className="col-span-2 grid grid-cols-[minmax(0,1fr)_auto] gap-x-2.5 outline-none">
+                <span className="truncate">{s.name}</span>
+                <span className="text-right font-semibold tabular-nums text-primary">{pctOr(s.yen, mokuYen, s.amountMissing)}</span>
+              </AmountTip>
               <span className="col-span-2 h-1 overflow-hidden rounded-full bg-foreground/5 sm:hidden">
                 <span className="block h-full rounded-full bg-primary/55" style={{ width: `${share(s.yen, base, s.amountMissing)}%` }} />
               </span>
@@ -55,10 +66,11 @@ function MokuGroup({ moku }: { moku: Moku }) {
               <Tooltip>
                 <TooltipTrigger delay={100} className="grid w-full grid-cols-[minmax(0,1fr)_auto] gap-x-2.5 text-left hover:text-foreground">
                   <span className="underline decoration-dotted underline-offset-2">ほか{rest.length}節</span>
-                  {restYen !== null ? <span className="text-right tabular-nums">{formatYen(restYen)}</span> : null}
+                  {restYen !== null ? <span className="text-right tabular-nums">{pctOr(restYen, mokuYen)}</span> : null}
                 </TooltipTrigger>
-                <TooltipContent side="right" className="block max-w-72 border bg-background px-3 py-2 text-foreground shadow-md [&>:last-child]:border-b [&>:last-child]:border-l [&>:last-child]:bg-background [&>:last-child]:fill-background">
-                  <ul className="grid gap-y-0.5">
+                <TooltipContent side="right" className={`block max-w-72 ${TIP_CARD} [&>:last-child]:hidden`}>
+                  {restYen !== null ? <div className="mb-1.5"><TipCard name={`ほか${rest.length}節`} yen={restYen} /></div> : null}
+                  <ul className="grid gap-y-0.5 text-xs">
                     {rest.map((s) => (
                       <li key={s.name} className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3">
                         <span className="truncate">{s.name}</span>
@@ -249,7 +261,7 @@ function KouSection({ kou, active, loading, onBox }: { kou: Kou; active: boolean
             <span className="pl-4">節</span>
           </div>
         ) : null}
-        {kou.moku.length > 0 ? kou.moku.map((m) => <MokuGroup key={m.id} moku={m} />) : (
+        {kou.moku.length > 0 ? kou.moku.map((m) => <MokuGroup key={m.id} moku={m} kouYen={kou.amountMissing ? 0 : kou.yen} />) : (
           <p className="text-[12.5px] text-muted-foreground" role={loading ? 'status' : undefined}>{loading ? '内訳を読み込んでいます…' : 'この項に目はありません'}</p>
         )}
       </div>
@@ -420,7 +432,7 @@ export function Flow({ data, total: year, tabs, summary }: { data: PageData; tot
         >
           <div ref={overview} style={overviewFade} className="h-full w-full shrink-0 snap-start snap-always overflow-y-auto px-3 pb-3 pt-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:px-5">
             {flows.length > 0 ? (
-              <Overview flows={flows} onSelect={select} height={Math.min(560, typeof window === 'undefined' ? 520 : Math.max(380, window.innerHeight * 0.7))} />
+              <Overview flows={flows} total={year.yen} onSelect={select} height={Math.min(560, typeof window === 'undefined' ? 520 : Math.max(380, window.innerHeight * 0.7))} />
             ) : (
               <p className="grid h-full place-items-center text-sm text-muted-foreground" role={error ? undefined : 'status'}>{error ? '' : 'お金の流れを読み込んでいます…'}</p>
             )}

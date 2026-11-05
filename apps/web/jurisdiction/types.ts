@@ -102,3 +102,13 @@ export function kanChanges(years: YearTotal[]): { name: string; pct: number }[] 
 
 /** 自治体の一覧。個別ページの path は server 側の path.ts が作る */
 export const INDEX_PATH = '/jurisdictions'
+
+/** 全体に占める割合（%）の表記。サンキー図のラベルに使い、金額はツールチップで見せる。基準が無い・金額未記載のときは null */
+export function formatShare(yen: number, base: number, missing?: boolean): string | null {
+  if (missing || !(base > 0)) return null
+  const pct = (Math.max(0, yen) / base) * 100
+  if (pct === 0) return '0%'
+  if (pct < 0.1) return '<0.1%'
+  if (pct < 1) return `${pct.toFixed(1)}%`
+  return `${Math.round(pct)}%`
+}
