@@ -224,11 +224,22 @@ function KanPanel({ drill, loading }: { drill: Drill; loading: boolean }) {
     return () => observer.disconnect()
   }, [drill.kou.length])
   const fade = useEdgeFade(body, [drill.kou.length])
+  const toKou = (i: number) => {
+    const root = body.current
+    const el = sections.current[i]
+    if (!root || !el) return
+    root.scrollTo({ top: el.getBoundingClientRect().top - root.getBoundingClientRect().top + root.scrollTop, behavior: 'smooth' })
+  }
   return (
     <div className="relative h-full w-full shrink-0 snap-start snap-always" data-panel>
       {drill.kou.length > 1 ? (
-        <div className="pointer-events-none absolute right-2 top-1/2 z-10 flex -translate-y-1/2 flex-col gap-1.5" aria-hidden="true">
-          {drill.kou.map((k, i) => <i key={k.id} className={`block w-[5px] rounded-full transition-all ${i === current ? 'h-4 bg-primary' : 'h-[5px] bg-border'}`} />)}
+        // 項の目盛り。押すとその項へ縦に送る
+        <div className="absolute right-0.5 top-1/2 z-10 flex -translate-y-1/2 flex-col" role="group" aria-label={`${drill.kan.name}の項へ移る`}>
+          {drill.kou.map((k, i) => (
+            <button key={k.id} type="button" onClick={() => toKou(i)} aria-label={k.name} aria-current={i === current || undefined} title={k.name} className="group/dot px-1.5 py-[3px]">
+              <i className={`block w-[5px] rounded-full transition-all ${i === current ? 'h-4 bg-primary' : 'h-[5px] bg-border group-hover/dot:bg-primary/50'}`} />
+            </button>
+          ))}
         </div>
       ) : null}
       <div ref={body} style={fade} className="h-full snap-y snap-mandatory scroll-pt-10 overflow-y-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" tabIndex={-1}>
@@ -293,6 +304,7 @@ export function Flow({ data, total: year, tabs, summary }: { data: PageData; tot
     body.scrollTo({ top, behavior: 'instant' })
     el.focus({ preventScroll: true })
   }
+  const goTo = (i: number) => track.current?.scrollTo({ left: i * (track.current?.clientWidth ?? 0), behavior: 'smooth' })
   const go = (delta: number) => track.current?.scrollBy({ left: delta * (track.current?.clientWidth ?? 0), behavior: 'smooth' })
   const onKey = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowRight') { go(1); e.preventDefault() }
@@ -320,10 +332,15 @@ export function Flow({ data, total: year, tabs, summary }: { data: PageData; tot
             </>
           ) : summary}
         </div>
-        <div className="mt-2.5 flex gap-0.5" aria-hidden="true">
-          <i className={`block h-1.5 w-3.5 rounded-sm ${index === 0 ? 'bg-primary' : 'bg-border'}`} />
+        {/* 款の目盛り。押すとその款（先頭は全体図）へ移る。押せる高さを取り、見える棒は細いまま */}
+        <div className="mt-1 flex gap-0.5" role="group" aria-label="款へ移る">
+          <button type="button" onClick={() => goTo(0)} aria-label="全体図" aria-current={index === 0 || undefined} title="全体図" className="group/seg w-3.5 py-1">
+            <i className={`block h-1.5 rounded-sm transition-colors ${index === 0 ? 'bg-primary' : 'bg-border group-hover/seg:bg-primary/40'}`} />
+          </button>
           {flows.map((f, i) => (
-            <i key={f.kan.id} className={`block h-1.5 min-w-[3px] rounded-sm transition-colors ${index === i + 1 ? 'bg-primary' : 'bg-border'}`} style={{ flexGrow: Math.max(f.kan.yen, 0) / sum || 0.01, flexBasis: 0 }} />
+            <button key={f.kan.id} type="button" onClick={() => goTo(i + 1)} aria-label={f.kan.name} aria-current={index === i + 1 || undefined} title={f.kan.name} className="group/seg min-w-[3px] py-1" style={{ flexGrow: Math.max(f.kan.yen, 0) / sum || 0.01, flexBasis: 0 }}>
+              <i className={`block h-1.5 rounded-sm transition-colors ${index === i + 1 ? 'bg-primary' : 'bg-border group-hover/seg:bg-primary/40'}`} />
+            </button>
           ))}
         </div>
         <p className="mt-2 text-xs text-muted-foreground">
