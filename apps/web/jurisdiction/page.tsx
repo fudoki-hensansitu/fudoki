@@ -422,8 +422,8 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
       <div className={`fixed left-0 right-(--side-panel,0px) top-0 z-30 md:left-(--nav-w) border-b bg-background transition-[transform,right] duration-200 ease-out motion-reduce:transition-none ${mini ? '' : '-translate-y-full'}`} aria-hidden={!mini} inert={!mini}>
         <div className="mx-auto flex h-[60px] max-w-[1120px] items-center gap-3 px-4">
           <span className="hidden size-10 shrink-0 place-items-center rounded-lg border bg-white p-1 sm:grid">{logo ? <img src={logo} alt="" className="w-full" /> : <span className="text-foreground">{data.name[0]}</span>}</span>
-          <b className="shrink-0 text-lg font-normal">{data.name}</b>
-          {tagline ? <span className="hidden min-w-0 truncate text-[13px] text-muted-foreground sm:block">{tagline}</span> : null}
+          <b className="shrink-0 text-sm font-normal text-muted-foreground">{data.name}</b>
+          {tagline ? <span className="hidden min-w-0 truncate text-[15px] sm:block">{tagline}</span> : null}
           {years.length > 1 ? (
             <div className="ml-auto shrink-0">
               <YearPicker years={years} current={year} onChange={choose} />
@@ -443,8 +443,9 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
             {logo ? <img src={logo} alt={data.name} className="h-auto w-full" /> : <span className="text-3xl text-foreground sm:text-5xl">{data.name[0]}</span>}
           </div>
           <div className="flex min-w-0 flex-col gap-3">
-            <h1 ref={title} className="text-[clamp(2rem,1.5rem+2vw,2.8rem)] font-normal leading-tight">{data.name}</h1>
-            {tagline ? <p className="text-[17px] [text-wrap:pretty] [word-break:auto-phrase]">{tagline}</p> : null}
+            {/* 名前は小さく、その年度の一文（方針の要約）を大きく見せる。h1 は名前のまま（検索・読み上げで頁が何かを伝える） */}
+            <h1 ref={title} className="text-lg font-normal leading-tight text-muted-foreground sm:text-xl">{data.name}</h1>
+            {tagline ? <p className="text-[clamp(1.5rem,1.1rem+1.6vw,2.4rem)] leading-snug [text-wrap:pretty] [word-break:auto-phrase]">{tagline}</p> : null}
             <div className="flex flex-wrap gap-x-6 gap-y-1.5 text-sm text-muted-foreground">
               <span className="inline-flex items-center gap-1.5">
                 <MapPinIcon className="size-4" aria-hidden="true" />
