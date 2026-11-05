@@ -2,8 +2,10 @@
 import { TOKENS_CSS } from './landing'
 import { THEME_COLOR_META } from './tokens'
 import { PWA_HEAD, PWA_REGISTER } from './pwa'
+import { withSiteNav } from './nav/render'
 
-export const CHAT_SHELL_HTML = `<!doctype html>
+/** open はサイドバーを開いて書くか（navOpen で cookie から決める） */
+export const chatShellHtml = (open: boolean) => `<!doctype html>
 <html lang="ja">
 <head>
 <meta charset="utf-8">
@@ -21,7 +23,7 @@ ${PWA_HEAD}
 <script type="module" src="/_app/session.js"></script>
 </head>
 <body>
-<div id="chat-session"><noscript>会話には JavaScript を有効にしてください。</noscript></div>
+${withSiteNav('<div id="chat-session"><noscript>会話には JavaScript を有効にしてください。</noscript></div>', { open })}
 ${PWA_REGISTER}
 </body>
 </html>

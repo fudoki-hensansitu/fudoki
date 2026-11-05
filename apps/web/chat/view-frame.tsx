@@ -5,7 +5,7 @@ import * as React from 'react'
 import { createPortal } from 'react-dom'
 import { AppBridge, PostMessageTransport } from '@modelcontextprotocol/ext-apps/app-bridge'
 import type { McpUiDisplayMode, McpUiStyles } from '@modelcontextprotocol/ext-apps'
-import { GripHorizontalIcon, PanelRightOpenIcon, XIcon } from 'lucide-react'
+import { DotsSixIcon, SidebarSimpleIcon, XIcon } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
 import { cn } from '@/lib/utils'
@@ -429,7 +429,7 @@ export function ViewFrame({
             aria-label="右のパネルに開く（右へドラッグ、または Enter）"
             title="右へドラッグすると、会話の横に開きます"
           >
-            <GripHorizontalIcon className="size-4" />
+            <DotsSixIcon className="size-4" />
           </button>
         </div>
       ) : null}
@@ -443,7 +443,7 @@ export function ViewFrame({
     {side ? (
       // 右のパネルへ移した View の元の場所。急に消えたように見えないよう、ここで開いている場所を示す
       <div className="flex items-center justify-between gap-3 rounded-xl border border-dashed px-4 py-3 text-sm text-muted-foreground">
-        <span className="flex items-center gap-2"><PanelRightOpenIcon className="size-4" />右のパネルで開いています</span>
+        <span className="flex items-center gap-2"><SidebarSimpleIcon mirrored className="size-4" />右のパネルで開いています</span>
         <Button variant="outline" size="sm" onClick={() => setMode('inline')}>元に戻す</Button>
       </div>
     ) : null}

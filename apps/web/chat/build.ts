@@ -1,4 +1,4 @@
-// 入口の島（start）と会話の画面（session）の JS・CSS を static/_app/ に書く。Workers static assets が配る（生成物は commit しない）
+// 入口の島（start）と会話の画面（session）、自治体の頁（jurisdiction）、全頁のサイドバー（nav）の JS・CSS を static/_app/ に書く。Workers static assets が配る（生成物は commit しない）
 //   bun chat/build.ts
 import { mkdirSync, readFileSync, rmSync } from 'node:fs'
 import postcss, { type Plugin } from 'postcss'
@@ -10,7 +10,7 @@ rmSync(out, { recursive: true, force: true })
 mkdirSync(out, { recursive: true })
 
 const result = await Bun.build({
-  entrypoints: [`${dir}start.tsx`, `${dir}session.tsx`, `${dir}../jurisdiction/jurisdiction.tsx`],
+  entrypoints: [`${dir}start.tsx`, `${dir}session.tsx`, `${dir}../jurisdiction/jurisdiction.tsx`, `${dir}../nav/nav.tsx`],
   outdir: out,
   target: 'browser',
   format: 'esm',

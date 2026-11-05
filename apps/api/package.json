@@ -41,8 +41,8 @@
     "@fudoki/ui": "workspace:*",
     "@hono/zod-openapi": "1.6.3",
     "@modelcontextprotocol/server": "2.4.0",
+    "@phosphor-icons/react": "2.1.10",
     "hono": "4.13.14",
-    "lucide-react": "1.61.0",
     "zod": "catalog:"
   }
 }

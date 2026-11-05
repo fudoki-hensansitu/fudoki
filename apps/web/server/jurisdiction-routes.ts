@@ -2,6 +2,7 @@
 // 変わるのは取り込みのときだけなので、Worker の cache に1時間置く。内訳の API は誰でも読める GET で、IP ごとの流量と id の形の検査で守る
 import { Hono } from 'hono'
 import { renderEmpty, renderIndex, renderPage, sitemapXml } from '../jurisdiction/html'
+import { navOpen } from '../nav/render'
 import { jurisdictionPath, PREFECTURE_SLUGS } from '../jurisdiction/path'
 import { INDEX_PATH } from '../jurisdiction/types'
 import type { Drill, FlowDepth, PageData, Setsu } from '../jurisdiction/types'
@@ -12,7 +13,8 @@ import { loadCatalog, loadDrillById, loadFlow, loadPage, loadSetsu, type Catalog
 
 const TTL = 3600
 const NODE_ID = /^[0-9a-f]{64}$/
-const HTML_HEADERS = { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': `public, max-age=300` }
+// サイドバーの開閉を cookie で変えて書くので、Vary: Cookie で開閉の違う HTML を取り違えさせない
+const HTML_HEADERS = { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': `public, max-age=300`, Vary: 'Cookie' }
 
 /** Worker の cache（無い環境では毎回取り直す）。同じ isolate の中でも一度だけ取る */
 const inflight = new Map<string, Promise<unknown>>()
@@ -38,7 +40,7 @@ const unavailable = () => new Response('風土記の API に繋がりません�
 
 jurisdictions.get(INDEX_PATH, async (c) => {
   try {
-    return new Response(renderIndex(await catalog(c.env)), { headers: HTML_HEADERS })
+    return new Response(renderIndex(await catalog(c.env), navOpen(c.req.header('Cookie'))), { headers: HTML_HEADERS })
   } catch {
     return unavailable()
   }
@@ -53,8 +55,8 @@ jurisdictions.get('/:prefecture/:name', async (c, next) => {
     const entry = (await catalog(c.env)).find((e) => jurisdictionPath(e.code) === path)
     if (!entry) return notFound()
     const data = entry.settlementYears.length > 0 ? await page(c.env, entry) : null
-    if (!data) return new Response(renderEmpty(entry), { headers: HTML_HEADERS })
-    return new Response(renderPage(data, c.env.TURNSTILE_SITE_KEY ?? ''), { headers: HTML_HEADERS })
+    if (!data) return new Response(renderEmpty(entry, navOpen(c.req.header('Cookie'))), { headers: HTML_HEADERS })
+    return new Response(renderPage(data, c.env.TURNSTILE_SITE_KEY ?? '', navOpen(c.req.header('Cookie'))), { headers: HTML_HEADERS })
   } catch {
     return unavailable()
   }

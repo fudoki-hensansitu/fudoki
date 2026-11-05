@@ -9,6 +9,15 @@
   --input: var(--border);
   --destructive: var(--shu);
   --destructive-foreground: var(--primary-foreground);
+  /* サイドバーは、付いているか分からないくらいの薄緑（accent を地の色で薄めたもの）。今いる項目と hover は accent で区別する */
+  --sidebar: color-mix(in srgb, var(--accent) 25%, var(--background));
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--accent);
+  --sidebar-accent-foreground: var(--accent-foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
 }
 @theme inline {
   --color-background: var(--background);
@@ -29,4 +38,30 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+/* 全頁の骨組み。左にサイドバー（nav/render.tsx が書く #site-nav）、右に頁の本文。幅の狭い画面ではサイドバーの代わりに下にナビを置く。
+   --nav-w は画面に固定した要素（入口の入力など）を本文の中央に寄せるための、いまのサイドバーの幅 */
+.site { min-height: 100svh; }
+#site-nav { display: contents; }
+.site-main { min-width: 0; }
+/* 幅の狭い画面の下のナビ（nav/site-nav.tsx の BottomNav）の高さ。隠れている間は 0 にし、下に固定した要素がその分だけ上に載る */
+@media (max-width: 767px) {
+  :root { --bottom-nav: calc(3.5rem + env(safe-area-inset-bottom)); }
+  :root[data-nav-hidden] { --bottom-nav: 0px; }
+  .site { padding-bottom: calc(3.5rem + env(safe-area-inset-bottom)); }
+}
+@media (min-width: 768px) {
+  :root { --nav-w: 13rem; }
+  :root:has(#site-nav [data-slot="sidebar"][data-state="collapsed"]) { --nav-w: 3.5rem; }
+  .site { display: flex; }
+  .site-main { flex: 1; }
 }

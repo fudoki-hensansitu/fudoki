@@ -4,7 +4,7 @@ import * as React from 'react'
 import { createRoot } from 'react-dom/client'
 import { useChat } from '@ai-sdk/react'
 import { DefaultChatTransport, type DynamicToolUIPart, type UIMessage } from 'ai'
-import { CheckIcon, CircleAlertIcon, SquarePenIcon } from 'lucide-react'
+import { CheckIcon, WarningCircleIcon } from '@phosphor-icons/react'
 import { readSuggestions } from '../../../packages/fiscal/suggestions'
 import { Bubble, BubbleContent } from '@/components/ui/bubble'
 import { Button } from '@/components/ui/button'
@@ -16,7 +16,6 @@ import { forServer } from './history'
 import { Markdown } from './markdown'
 import { loadSession, saveSession, type StoredSession } from './store'
 import { ViewFrame } from './view-frame'
-import { LOGO_G, LOGO_WIDTH } from '../logo'
 
 /** 頁の端からこの距離以内なら、その側のフェードは出さない */
 const FADE_EDGE_PX = 4
@@ -41,7 +40,7 @@ function ToolMarker({ part }: { part: DynamicToolUIPart }) {
   const done = part.state === 'output-available' && !failed
   return (
     <Marker>
-      <MarkerIcon>{failed ? <CircleAlertIcon /> : done ? <CheckIcon /> : <Spinner />}</MarkerIcon>
+      <MarkerIcon>{failed ? <WarningCircleIcon /> : done ? <CheckIcon /> : <Spinner />}</MarkerIcon>
       <MarkerContent className={done || failed ? undefined : 'shimmer'}>{failed ? `${label}に失敗しました` : label}</MarkerContent>
     </Marker>
   )
@@ -140,15 +139,8 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
   const apps = (m: ChatMessage) => m.metadata?.apps ?? {}
   return (
     <div className="flex min-h-dvh w-full flex-col">
-      <div className="sticky top-0 z-20 bg-background">
-      <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-3">
-        <a href="/" aria-label="風土記 ホーム" className="text-primary">
-          <svg className="block h-7 w-auto" xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${LOGO_WIDTH} 40`} role="img" aria-hidden="true" dangerouslySetInnerHTML={{ __html: LOGO_G }} />
-        </a>
-        <a href="/" aria-label="新しい会話" title="新しい会話" className="rounded-md p-2 text-muted-foreground hover:bg-secondary hover:text-foreground">
-          <SquarePenIcon className="size-5" />
-        </a>
-      </header>
+      {/* ロゴと頁の行き来はサイドバー（nav/）に置く。ここは上端のフェードだけ */}
+      <div className="sticky top-0 z-20 h-6 bg-background">
       <div aria-hidden className={`pointer-events-none absolute inset-x-0 top-full h-10 bg-gradient-to-b from-background to-transparent transition-opacity duration-200 ${fade.top ? 'opacity-100' : 'opacity-0'}`} />
       </div>
       <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4">
@@ -198,7 +190,7 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
             <div>
               <Marker>
                 <MarkerIcon>
-                  <CircleAlertIcon />
+                  <WarningCircleIcon />
                 </MarkerIcon>
                 <MarkerContent className="text-destructive">{errorMessage(error)}</MarkerContent>
               </Marker>
@@ -206,7 +198,7 @@ function Session({ id, stored }: { id: string; stored: StoredSession }) {
           ) : null}
         </div>
       </div>
-      <div className="sticky bottom-0 z-20 bg-background" style={{ transform: 'translateY(calc(-1 * var(--kb, 0px)))' }}>
+      <div className="sticky bottom-0 z-20 bg-background max-md:bottom-(--bottom-nav) max-md:motion-safe:transition-[bottom] max-md:duration-200" style={{ transform: 'translateY(calc(-1 * var(--kb, 0px)))' }}>
         <div aria-hidden className={`pointer-events-none absolute inset-x-0 bottom-full h-10 bg-gradient-to-t from-background to-transparent transition-opacity duration-200 ${fade.bottom ? 'opacity-100' : 'opacity-0'}`} />
         <div className="mx-auto w-full max-w-3xl px-4 pt-2 pb-[calc(2rem+env(safe-area-inset-bottom))] sm:pb-12">
           <Composer onSubmit={send} onStop={stop} busy={busy} placeholder="続けて聞く" autoFocus compact />

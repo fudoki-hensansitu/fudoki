@@ -9,7 +9,7 @@ import { WorkerMessageHandler } from 'pdfjs-dist/build/pdf.worker.mjs'
 import { Button } from '@fudoki/ui/components/button'
 import { Alert, AlertDescription } from '@fudoki/ui/components/alert'
 import { Skeleton } from '@fudoki/ui/components/skeleton'
-import { ArrowLeft, ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react'
+import { ArrowLeftIcon, ArrowSquareOutIcon, CaretLeftIcon, CaretRightIcon } from '@phosphor-icons/react'
 import type { Origin, PdfLocation } from './types'
 
 Object.assign(globalThis, { pdfjsWorker: { WorkerMessageHandler } })
@@ -276,22 +276,22 @@ export function PdfViewer({
     >
       <h3 id="pdf-title" className="sr-only">{origin.title}</h3>
       <div className="toolbar">
-        <Button ref={close} variant="ghost" size="sm" onClick={onClose}><ArrowLeft aria-hidden="true" />戻る</Button>
+        <Button ref={close} variant="ghost" size="sm" onClick={onClose}><ArrowLeftIcon aria-hidden="true" />戻る</Button>
         {!error && <span className="pager">
           <Button variant="outline" size="icon-sm" aria-label="前のページ" disabled={!ready || pages[0]! <= 1}
-            onClick={() => setMovedPage(pages[0]! - 1)}><ChevronLeft aria-hidden="true" /></Button>
+            onClick={() => setMovedPage(pages[0]! - 1)}><CaretLeftIcon aria-hidden="true" /></Button>
           <span role="status" className="pager-status">{status}</span>
           <Button variant="outline" size="icon-sm" aria-label="次のページ" disabled={!ready || !document || pages[0]! >= document.numPages}
-            onClick={() => setMovedPage(pages[0]! + 1)}><ChevronRight aria-hidden="true" /></Button>
+            onClick={() => setMovedPage(pages[0]! + 1)}><CaretRightIcon aria-hidden="true" /></Button>
         </span>}
-        {!error && <a className="pdf-url" href={url} title={url} onClick={(event) => { event.preventDefault(); openLink(url) }}>出典<ExternalLink aria-hidden="true" /></a>}
+        {!error && <a className="pdf-url" href={url} title={url} onClick={(event) => { event.preventDefault(); openLink(url) }}>出典<ArrowSquareOutIcon aria-hidden="true" /></a>}
       </div>
       {error && (
         <Alert role="status">
           <AlertDescription className="flex flex-col items-start gap-2">
             <span>この PDF はここでは表示できません。出典{initialPages.length ? `の${initialPages.join('・')}ページ` : ''}を開いて確かめてください。</span>
             <Button size="sm" onClick={() => openLink(initialPages.length ? `${origin.url}#page=${initialPages[0]}` : origin.url)}>
-              出典の{initialPages[0] ? `${initialPages[0]}ページ` : 'PDF'}<ExternalLink aria-hidden="true" />
+              出典の{initialPages[0] ? `${initialPages[0]}ページ` : 'PDF'}<ArrowSquareOutIcon aria-hidden="true" />
             </Button>
           </AlertDescription>
         </Alert>
