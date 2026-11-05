@@ -188,7 +188,7 @@
     {
       "table_id": "general-expenditure-detail",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "d3a0168987e8f058d9325a5e111f916b6a0e361cb9c138a9206633517f96e4e9",
+      "input_fingerprint": "d703382a5a12326308460948598de0db669d39ecfd8c85597e746b06b8a929d7",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -201,16 +201,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131041/2024/settlement/expenditure/general-expenditure-detail-nodes.parquet",
-          "sha256": "aad6f470f391e6eae736ef88efce88d4c50c9dd1cacb88b819526ffb3ec0b807",
-          "bytes": 62590
+          "sha256": "069037ef2f463701ad19bc7a3429ebf884530a7925bd436eace662abcb080606",
+          "bytes": 62586
         },
         "row_count": 2294
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131041/2024/settlement/expenditure/general-expenditure-detail-amounts.parquet",
-          "sha256": "1455f0f374ed56beaec292cab7f76a4c928fa1f843136df5348c72e3be9404a4",
-          "bytes": 84864
+          "sha256": "e22f585dc681a3dd09d3865bab7cad71dc109e638a730b29e388546ea3486b38",
+          "bytes": 84651
         },
         "row_count": 7142
       }
@@ -218,7 +218,7 @@
     {
       "table_id": "kaigo-expenditure-detail",
       "conversion_id": "kaigo-settlement",
-      "input_fingerprint": "4928e142d074eef0e3075e8f9c01b7d16a632ca58ce2438d6d05c4ca61bc918a",
+      "input_fingerprint": "4999ca3bff940748d8936405529476c7ca55b8aeaab65b9566068cc123b62d64",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -231,16 +231,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131041/2024/settlement/expenditure/kaigo-expenditure-detail-nodes.parquet",
-          "sha256": "dffa67824d7aa229f195d64928bf72ca53835d76a4e97ced707d7c1789cc4d5d",
-          "bytes": 9631
+          "sha256": "f9258b372f868c711cfb2347059766829397283adbc757da2562a1a6f48fd860",
+          "bytes": 9660
         },
         "row_count": 184
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131041/2024/settlement/expenditure/kaigo-expenditure-detail-amounts.parquet",
-          "sha256": "b8cfd355448fc07fd9f82f6f1d54b68ad8184bf8c2e5a2975e7be861e50e3e00",
-          "bytes": 11046
+          "sha256": "6fd905885e977f8ad89efbac3e73bbae50c7ef25bb286a6dc1ed4f5fd69e79a3",
+          "bytes": 11050
         },
         "row_count": 766
       }
@@ -248,7 +248,7 @@
     {
       "table_id": "kokuho-expenditure-detail",
       "conversion_id": "kokuho-settlement",
-      "input_fingerprint": "d5e2c0fc160fb31de30c3c9ddcd0ce60354e8ced25f317ddcbad5ae3512abf89",
+      "input_fingerprint": "e8c7ed24cbaa1bda2c7546b28317285a5b1bd694933e3bbd598bbdd447dc6a35",
       "account": "国民健康保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -261,16 +261,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131041/2024/settlement/expenditure/kokuho-expenditure-detail-nodes.parquet",
-          "sha256": "04a11ca8cef675000ab6782bfb86a17e3f8efb5fb6949c9239eb98d978dde5bc",
-          "bytes": 9269
+          "sha256": "34d0ccf99fc8a81df2d0a346e8a028a37d9bc58b3f6e1dfadf87adf235959996",
+          "bytes": 9331
         },
         "row_count": 167
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131041/2024/settlement/expenditure/kokuho-expenditure-detail-amounts.parquet",
-          "sha256": "3319eb12745cedc93b4b1ca3be6e35777bf12c39e1d801faa4e3ca41b18e6455",
-          "bytes": 10270
+          "sha256": "8c709e6358859b46e0b241653028686bf135311b7b6156568ceacdfff97d7f52",
+          "bytes": 10339
         },
         "row_count": 770
       }
@@ -278,31 +278,31 @@
     {
       "table_id": "kouki-expenditure-detail",
       "conversion_id": "kouki-settlement",
-      "input_fingerprint": "1e34b02b8f3e7c8b11aa13588e4e5216815778f2fa8c9b61dbaf11f549544634",
+      "input_fingerprint": "a66a5aa6dcc330a221ba3adc2ec2d81afd0d4b23e57b4b70689de01387854314",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
-        "金額の単位は printed 3頁・default 1頁 から決めた。款の和 8,848,927,933 と印字の「歳出合計」8,848,927,933 が一致。",
+        "金額の単位は printed 3頁・column mark 1頁 から決めた。款の和 8,848,927,933 と印字の「歳出合計」8,848,927,933 が一致。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 1 種（23 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+        "共有辞書に無い金額の見出し 4 種（38 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・歳出／予算現額／予備費支出及び流用増減→予算現額／予備費支出及び流用増減・歳出／予算現額／継続費及び繰越事業費繰越額→予算現額／継続費及び繰越事業費繰越額・歳出／予算現額／補正予算額→予算現額／補正予算額。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131041/2024/settlement/expenditure/kouki-expenditure-detail-nodes.parquet",
-          "sha256": "1f92fa6972df5cb00daaf83a824325607e177a64ef15f5f45242a23ca71d8253",
-          "bytes": 5357
+          "sha256": "1390d0a2d4fe3567f6076565577be38c7cc1e5c3f0395e1a8301f332ccc723b9",
+          "bytes": 5536
         },
-        "row_count": 58
+        "row_count": 63
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131041/2024/settlement/expenditure/kouki-expenditure-detail-amounts.parquet",
-          "sha256": "93a5a246a4c6a234ef7470058b8c5512f2a92657b07b93933c8e279714eac876",
-          "bytes": 5522
+          "sha256": "b1a4a996755791555709f6ea650c931a2a4627c92dbcc2036e057473dc2b92a5",
+          "bytes": 5998
         },
-        "row_count": 246
+        "row_count": 296
       }
     }
   ]
