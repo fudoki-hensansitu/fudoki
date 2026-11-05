@@ -1,4 +1,9 @@
-"""東京都の自治体の境界データを組む。`bun run --cwd apps/web fetch:boundaries`
+"""都道府県ごとの自治体の境界データを組む。`bun run --cwd apps/web fetch:boundaries`
+
+東京都（`tokyo.geojson`）は自治体マスタの62自治体を母集団にする（下の `main_tokyo`）。
+他の都道府県（`OTHER_PREFECTURES`、今は兵庫県）はマスタに収録した自治体しか無いので、
+N03 の行政区域コードから6桁のコード（検査数字つき）を組み、市区町村をすべて描く
+（未収録の自治体も地図の地として要る）。政令市の区は市にまとめる（神戸市の9区 → 281000）。
 
 母集団は自治体マスタの東京都（JIS の都道府県コード `13`）の自治体だけ。マスタには
 都外の自治体が入り得る（例: 神戸市 281000）ので、絞らずに `N03_13` と突き合わせると
@@ -158,7 +163,7 @@ def _extract_geojson(zip_bytes: bytes) -> dict:
             return json.load(f)
 
 
-def main() -> None:
+def main_tokyo() -> None:
     master = json.loads(JURISDICTIONS.read_text(encoding="utf-8"))["jurisdictions"]
     # 地図は東京都の1枚だけを描く。母集団はマスタから都道府県コード 13 で絞る
     # （マスタに都外の自治体が増えても、この地図の母集団は変わらない）。
@@ -260,6 +265,79 @@ def _verify_rings(features: list[dict]) -> None:
                     problems.append(f"{code}: 有限でない座標")
     if problems:
         raise RuntimeError("簡略化後のリングが不正: " + "; ".join(problems[:10]))
+
+
+# 東京都以外の都道府県。原文の固定は東京と同じ（URL と SHA-256 を実測で確かめてから固定する）
+OTHER_PREFECTURES = {
+    "28": {
+        "url": "https://nlftp.mlit.go.jp/ksj/gml/data/N03/N03-2026/N03-20260101_28_GML.zip",
+        "sha256": "277f2784d46ff8909139ae5db24bc25351bc5c78632e8206971a472d9aa56796",
+        "entry": "N03-20260101_28.geojson",
+        "out": "hyogo.geojson",
+    },
+}
+
+
+def check_digit(code5: str) -> str:
+    """全国地方公共団体コードの検査数字。各桁に 6,5,4,3,2 を掛けた和を 11 で割った余り r から (11 - r) mod 10"""
+    r = sum(int(d) * w for d, w in zip(code5, (6, 5, 4, 3, 2))) % 11
+    return str((11 - r) % 10)
+
+
+def main_prefecture(pref: str) -> None:
+    src_def = OTHER_PREFECTURES[pref]
+    master = json.loads(JURISDICTIONS.read_text(encoding="utf-8"))["jurisdictions"]
+    with urllib.request.urlopen(urllib.request.Request(src_def["url"], headers={"User-Agent": UA}), timeout=120) as response:
+        body = response.read()
+    digest = hashlib.sha256(body).hexdigest()
+    if digest != src_def["sha256"]:
+        raise RuntimeError(f"原文の SHA-256 が変わっている（{digest}）。中身を確認したうえで URL と SHA256 を更新すること")
+    with zipfile.ZipFile(io.BytesIO(body)) as zf, zf.open(src_def["entry"]) as f:
+        src = json.load(f)
+
+    grouped: dict[str, list] = {}
+    names: dict[str, str] = {}
+    for feature in src["features"]:
+        p = feature["properties"]
+        code5 = p["N03_007"]
+        if not code5 or code5[2:] == "000":
+            continue  # 所属未定地
+        city, ward = p.get("N03_004"), p.get("N03_005")
+        name = city
+        # 政令市の区（N03_005 に区名がある）は市にまとめる。市のコードは区のコードの下2桁を 00 にしたもの
+        if ward:
+            code5 = code5[:3] + "00"
+        code6 = code5 + check_digit(code5)
+        names[code6] = name
+        geom = feature["geometry"]
+        polys = geom["coordinates"] if geom["type"] == "MultiPolygon" else [geom["coordinates"]]
+        grouped.setdefault(code6, []).extend(polys)
+
+    # 収録した自治体（マスタ）のコードが、組んだ6桁のコードとすべて一致することを確かめる
+    covered = {code for code in master if code.startswith(pref) and code[2:5] != "000"}
+    missing = covered - set(grouped)
+    if missing:
+        raise RuntimeError(f"マスタの自治体が N03 から組んだコードに無い: {sorted(missing)}")
+
+    features = [
+        {
+            "type": "Feature",
+            "properties": {"code": code6, "name": names[code6], "island": False},
+            "geometry": {"type": "MultiPolygon", "coordinates": [[_simplify_ring(ring, SIMPLIFY_TOLERANCE_DEG) for ring in poly] for poly in grouped[code6]]},
+        }
+        for code6 in sorted(grouped)
+    ]
+    _verify_rings(features)
+    encoded = json.dumps({"type": "FeatureCollection", "features": features}, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    out = OUT.parent / src_def["out"]
+    out.write_bytes(encoded)
+    print(f"ok  {len(features)} 自治体  {len(encoded) / 1024:.1f} KB  -> {out}")
+
+
+def main() -> None:
+    main_tokyo()
+    for pref in OTHER_PREFECTURES:
+        main_prefecture(pref)
 
 
 if __name__ == "__main__":

@@ -108,9 +108,8 @@ ${PWA_REGISTER}
 
 export function renderIndex(entries: IndexEntry[], open: boolean): string {
   const canonical = `${ORIGIN}${INDEX_PATH}`
-  const prefectures = [...new Set(entries.map((e) => e.prefecture))]
   const description = entries.length
-    ? `決算を収録している${prefectures.join('・')}の自治体（${entries.length}）を、地図と表で一覧にしています。歳出の総額と金額の大きい分野を見比べて、自治体ごとの款・項・目へ進めます。`
+    ? `決算を収録している自治体（${entries.length}）を、地図と表で一覧にしています。歳出の総額と金額の大きい分野を見比べて、自治体ごとの款・項・目へ進めます。`
     : '風土記が決算を収録した自治体の一覧です。まだ収録した自治体がありません。'
   return `<!doctype html>
 <html lang="ja">
