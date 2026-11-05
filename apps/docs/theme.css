@@ -62,21 +62,40 @@ h1, h2, h3, h4, h5, h6 { letter-spacing: 0.02em; }
 /* ロゴは本体サイトのヘッダと同じ 28px（DESIGN.md の Logo › Usage） */
 [data-blume-header] a > img[src^="/logo"] { height: 28px; }
 
-/* ヘッダの「ガイド／API リファレンス」は本体サイトの tag（自治体の頁の rounded-full の札）と同じ形にする:
-   選んでいる方は secondary の地、ほかは枠線だけ */
-:root { --fudoki-secondary: #ece6da; }
-:root[data-theme="dark"] { --fudoki-secondary: #302c26; }
-[data-blume-header] nav:has(> a[href="/reference"]) { gap: 0.5rem; align-items: center; }
+/* ヘッダの「ガイド／API リファレンス」は本体サイトの shadcn Tabs（base-nova の default）の形にし、
+   選んでいる方だけ風土記の緑（accent）の札にする */
+[data-blume-header] nav:has(> a[href="/reference"]) {
+  gap: 0;
+  align-items: center;
+  height: 2rem;
+  padding: 3px;
+  border-radius: var(--blume-radius);
+  background: var(--blume-muted);
+}
 [data-blume-header] nav:has(> a[href="/reference"]) > a {
-  padding: 0.25rem 0.75rem;
-  border: 1px solid var(--blume-border);
-  border-radius: 999px;
-  font-size: 13px;
+  height: 100%;
+  padding: 0 0.75rem;
+  border-radius: calc(var(--blume-radius) - 2px);
   color: var(--blume-muted-foreground);
+  transition: color .15s, background-color .15s;
 }
-[data-blume-header] nav:has(> a[href="/reference"]) > a:hover { background: var(--blume-muted); color: var(--blume-foreground); }
+[data-blume-header] nav:has(> a[href="/reference"]) > a:hover { background: transparent; color: var(--blume-foreground); }
 [data-blume-header] nav:has(> a[href="/reference"]) > a[aria-current="page"] {
-  border-color: var(--fudoki-secondary);
-  background: var(--fudoki-secondary);
-  color: var(--blume-foreground);
+  background: var(--blume-accent);
+  color: var(--blume-accent-foreground);
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / .1), 0 1px 2px -1px rgb(0 0 0 / .1);
 }
+
+/* icon は public/icons の Phosphor（regular）。<img> で出るので、mask にして文字色（currentColor）で塗る */
+img[src^="/icons/"] { background-color: currentColor; object-position: -99rem 0; }
+img[src="/icons/asterisk.svg"] { mask: url(/icons/asterisk.svg) center / contain no-repeat; }
+img[src="/icons/brackets-curly.svg"] { mask: url(/icons/brackets-curly.svg) center / contain no-repeat; }
+img[src="/icons/code.svg"] { mask: url(/icons/code.svg) center / contain no-repeat; }
+img[src="/icons/cursor.svg"] { mask: url(/icons/cursor.svg) center / contain no-repeat; }
+img[src="/icons/file-text.svg"] { mask: url(/icons/file-text.svg) center / contain no-repeat; }
+img[src="/icons/house.svg"] { mask: url(/icons/house.svg) center / contain no-repeat; }
+img[src="/icons/lifebuoy.svg"] { mask: url(/icons/lifebuoy.svg) center / contain no-repeat; }
+img[src="/icons/open-ai-logo.svg"] { mask: url(/icons/open-ai-logo.svg) center / contain no-repeat; }
+img[src="/icons/plug.svg"] { mask: url(/icons/plug.svg) center / contain no-repeat; }
+img[src="/icons/table.svg"] { mask: url(/icons/table.svg) center / contain no-repeat; }
+img[src="/icons/terminal-window.svg"] { mask: url(/icons/terminal-window.svg) center / contain no-repeat; }

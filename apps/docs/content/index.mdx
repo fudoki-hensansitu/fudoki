@@ -2,10 +2,8 @@
 title: はじめに
 description: 自治体の歳出を、AI との会話や API から事業の単位まで調べる。
 sidebar:
-  icon: '<svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M219.31,108.68l-80-80a16,16,0,0,0-22.62,0l-80,80A15.87,15.87,0,0,0,32,120v96a8,8,0,0,0,8,8h64a8,8,0,0,0,8-8V160h32v56a8,8,0,0,0,8,8h64a8,8,0,0,0,8-8V120A15.87,15.87,0,0,0,219.31,108.68ZM208,208H160V152a8,8,0,0,0-8-8H104a8,8,0,0,0-8,8v56H48V120l80-80,80,80Z"></path></svg>'
+  icon: /icons/house.svg
 ---
-
-import { asterisk, bracketsCurly, cursor, openAiLogo, plug, terminalWindow } from '../icons'
 
 風土記は、自治体の予算書・決算書から歳出の金額を款・項・目と事業の単位まで取り出し、自治体や年度をまたいで比べられるようにしたデータです。登録も API key も要りません。
 
@@ -18,12 +16,12 @@ https://api.fudoki.dev/mcp
 ```
 
 <CardGroup cols={3}>
-  <Card title="ChatGPT" href="/chatgpt" icon={openAiLogo}>plugin ディレクトリから追加</Card>
-  <Card title="Claude" href="/claude" icon={asterisk}>Connectors から追加</Card>
-  <Card title="Claude Code" href="/claude-code" icon={terminalWindow}>コマンド 1 行で追加</Card>
-  <Card title="Codex" href="/codex" icon={terminalWindow}>plugin ディレクトリかコマンドで追加</Card>
-  <Card title="Cursor" href="/cursor" icon={cursor}>`mcp.json` に追加</Card>
-  <Card title="その他のクライアント" href="/mcp" icon={plug}>URL・tool・制約</Card>
+  <Card title="ChatGPT" href="/chatgpt" icon="/icons/open-ai-logo.svg">plugin ディレクトリから追加</Card>
+  <Card title="Claude" href="/claude" icon="/icons/asterisk.svg">Connectors から追加</Card>
+  <Card title="Claude Code" href="/claude-code" icon="/icons/terminal-window.svg">コマンド 1 行で追加</Card>
+  <Card title="Codex" href="/codex" icon="/icons/terminal-window.svg">plugin ディレクトリかコマンドで追加</Card>
+  <Card title="Cursor" href="/cursor" icon="/icons/cursor.svg">`mcp.json` に追加</Card>
+  <Card title="その他のクライアント" href="/mcp" icon="/icons/plug.svg">URL・tool・制約</Card>
 </CardGroup>
 
 ## 試してみる
@@ -39,7 +37,7 @@ https://api.fudoki.dev/mcp
 ## プログラムから使う
 
 <CardGroup cols={2}>
-  <Card title="REST API" href="/rest" icon={bracketsCurly}>`https://api.fudoki.dev` に JSON で問い合わせる</Card>
+  <Card title="REST API" href="/rest" icon="/icons/brackets-curly.svg">`https://api.fudoki.dev` に JSON で問い合わせる</Card>
   <Card title="データの読み方" href="/data">金額を足すときの条件と、出典の位置</Card>
 </CardGroup>
 
