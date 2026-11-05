@@ -47,7 +47,8 @@ const Item = ({ href, label, icon, active }: { href: string; label: string; icon
   )
 }
 
-const FEEDBACK = `${DOCS}/support`
+/** お問い合わせ（入口の頁の下）と同じく、メールを開いてもらう */
+const FEEDBACK = 'mailto:support@fudoki.dev'
 const MCP = `${DOCS}/mcp`
 
 /** 下へ読み進めている間は隠し、上へ戻したら出す。隠れている間は html に data-nav-hidden を付け、下に固定した入力などが --bottom-nav で下がる */
