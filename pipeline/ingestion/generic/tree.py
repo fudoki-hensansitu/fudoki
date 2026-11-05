@@ -700,12 +700,14 @@ def items(group: Group, header: str, margins: set[int] | None = None,
     single = {i: tuple(ix) for ix in cells.values()
               if sum(entries[i][2] is not None for i in ix) == 1 and len(ix) > 1
               and sum(bool(entries[i][1]) for i in ix) <= 1 and wraps(0, ix) for i in ix}
+    repeated_headings: set[int] = set()
     if settings.get('heading_repeated_over_code'):
         # A page opens with the last line of the heading above (`医療費` over `02市単独事業`, 132276): it is no part of the number's name.
         for i, members in list(single.items()):
             number = next(m for m in members if entries[m][2] is not None)
             if i < number:
                 del single[i]
+                repeated_headings.add(i)
             else:
                 single[i] = tuple(m for m in members if m >= number)
     if settings.get('name_column'):
@@ -716,7 +718,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
         numbered = [i for i, entry in enumerate(entries) if entry[2] is not None and entry[0]]
         attached: dict[int, list[int]] = defaultdict(list)
         for i, (label, money, code, _) in enumerate(entries):
-            if code is not None or not label or money or i in single or not numbered:
+            if code is not None or not label or money or i in single or i in repeated_headings or not numbered:
                 continue
             nearest = min(numbered, key=lambda n: abs(middle(n) - middle(i)))
             if abs(middle(nearest) - middle(i)) <= float(settings.get('name_line_reach', 1)) * (label[0].y1 - label[0].y0):
@@ -914,7 +916,7 @@ def _name_start(item: Item) -> float:
         if len(first[0].text) == 1 and len(first) > 1:
             return first[1].x0
         return first[0].x0 + (first[0].y1 - first[0].y0)
-    if len(head) >= 5 and head.replace(',', '').isdigit():
+    if len(head) >= 5 and head.isdigit():
         if len(first) > 1 and first[1].x0 - first[0].x1 < 12:
             return first[1].x0
     glued = re.match(r'[0-9０-９]{5,}', first[0].text)

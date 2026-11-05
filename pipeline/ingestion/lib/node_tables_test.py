@@ -318,6 +318,9 @@ class NodeTablesTests(unittest.TestCase):
         word = [{'page': 1, 'bbox': [60., 1., 85., 9.], 'text': '179,856'}]
         counted = check_digit_coverage(word, NodeTables([{**node('p'), **box, 'name_text': '負担金179,856件'}], []))
         self.assertEqual(counted['counts'], {'label': 1})
+        glued = check_digit_coverage([{**word[0], 'text': '179,856件'}],
+                                     NodeTables([{**node('p'), **box, 'name_text': '負担金179,856件'}], []))
+        self.assertEqual(glued['counts'], {'label': 1})
         bare = check_digit_coverage(word, NodeTables([{**node('p'), **box, 'name_text': '負担金179,856'}], []))
         self.assertNotIn('label', bare['counts'])
 
