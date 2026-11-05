@@ -46,7 +46,7 @@ const Section = ({ id, title, aside, link, children }: { id: string; title: stri
 
 function Policies({ code, year }: { code: string; year: ProfileYear }) {
   return (
-    <Section id="policy" title="方針" link={{ href: year.policySource, label: '予算編成方針（PDF）' }}>
+    <Section id="policy" title="方針" link={{ href: year.policySource, label: '予算編成方針' }}>
       <ol className="border-t">
         {year.policies.map((p, i) => (
           <li key={p.title} className="grid grid-cols-[22px_104px_minmax(0,1fr)] items-start gap-3 border-b border-foreground/10 py-3.5 sm:grid-cols-[28px_176px_minmax(0,1fr)] sm:gap-4">
