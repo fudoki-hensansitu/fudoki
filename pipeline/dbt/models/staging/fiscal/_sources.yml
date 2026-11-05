@@ -3540,6 +3540,70 @@ sources:
       direction: expenditure
       table_id: general-expenditure-detail
       kind: nodes
+  - name: j132195_2024_settlement_kaigo_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132195'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kaigo-expenditure-detail
+      kind: amounts
+  - name: j132195_2024_settlement_kaigo_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132195'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kaigo-expenditure-detail
+      kind: nodes
+  - name: j132195_2024_settlement_kouki_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132195'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kouki-expenditure-detail
+      kind: amounts
+  - name: j132195_2024_settlement_kouki_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132195'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kouki-expenditure-detail
+      kind: nodes
+  - name: j132195_2024_settlement_nhi_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132195'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: nhi-expenditure-detail
+      kind: amounts
+  - name: j132195_2024_settlement_nhi_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132195'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: nhi-expenditure-detail
+      kind: nodes
+  - name: j132195_2024_settlement_parking_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132195'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: parking-expenditure-detail
+      kind: amounts
+  - name: j132195_2024_settlement_parking_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132195'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: parking-expenditure-detail
+      kind: nodes
   - name: j132195_2025_settlement_general_expenditure_amounts
     meta:
       jurisdiction: '132195'

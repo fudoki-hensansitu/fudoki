@@ -246,13 +246,505 @@
           "table_id": "general-expenditure-detail"
         }
       ]
+    },
+    {
+      "id": "nhi",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "303d7d797e346b5344d63081f4376a6fb81805b7fa07bb4e673fe67a6eb51887"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "nhi-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 215
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p128-ichijikin",
+            "page": 128,
+            "code": "1",
+            "observed_name": "出産育児時金",
+            "corrected_name": "出産育児一時金",
+            "reason": "原画の頁128は「出産育児一時金」（2行目は「一　時　金」と均等割付）。OCR が横1本の「一」を観測しなかった。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "nhi-ocr-1",
+          "origin_sha256": "303d7d797e346b5344d63081f4376a6fb81805b7fa07bb4e673fe67a6eb51887",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              124,
+              125,
+              126,
+              127,
+              128,
+              129,
+              130,
+              131,
+              132,
+              133
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215
+          },
+          "sha256": "8f1c05f7dc6b9b67ed046e3a2bb978111d4048f25950a029d7c17b311cdd36d7",
+          "bytes": 2710780
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "nhi-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "kouki",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "303d7d797e346b5344d63081f4376a6fb81805b7fa07bb4e673fe67a6eb51887"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 215
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "kouki-ocr-1",
+          "origin_sha256": "303d7d797e346b5344d63081f4376a6fb81805b7fa07bb4e673fe67a6eb51887",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              139,
+              140,
+              141,
+              142,
+              143
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215
+          },
+          "sha256": "47655c83f5072532b78f548c0398a29e7ad2b0b065d27e054a5d0894e49d46d2",
+          "bytes": 1180444
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kouki-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "kaigo",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "303d7d797e346b5344d63081f4376a6fb81805b7fa07bb4e673fe67a6eb51887"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "kaigo-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 215
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p156-shohi",
+            "page": 156,
+            "code": "2",
+            "observed_name": "介護予防サービス等費諸",
+            "corrected_name": "介護予防サービス等諸費",
+            "reason": "原画の頁156は「介護予防サービス等諸費」（3行目は「諸　　費」と均等割付）。右端の「費」の枠が「諸」より上に取られ、行の中の順が入れ替わった。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "kaigo-ocr-1",
+          "origin_sha256": "303d7d797e346b5344d63081f4376a6fb81805b7fa07bb4e673fe67a6eb51887",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              155,
+              156,
+              157,
+              158,
+              159,
+              160,
+              161,
+              162
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215
+          },
+          "sha256": "8b706f03b6936806c0c6992bc8e212cc35a629f6339acd05f66a761f4fa3032e",
+          "bytes": 2194041
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kaigo-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "parking",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "303d7d797e346b5344d63081f4376a6fb81805b7fa07bb4e673fe67a6eb51887"
+        }
+      ],
+      "options": {
+        "account": "駐車場事業特別会計",
+        "table_id": "parking-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 215
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "parking-ocr-1",
+          "origin_sha256": "303d7d797e346b5344d63081f4376a6fb81805b7fa07bb4e673fe67a6eb51887",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              166,
+              167
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215
+          },
+          "sha256": "20807f663cb3bf3d647866539d9431c78cdf7a1e1d15de2285836c4e1c8ea75e",
+          "bytes": 286478
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "parking-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "sewer-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "statement_kind": "public-enterprise",
+      "inputs": [
+        {
+          "sha256": "303d7d797e346b5344d63081f4376a6fb81805b7fa07bb4e673fe67a6eb51887"
+        }
+      ],
+      "options": {
+        "account": "下水道事業会計",
+        "table_id": "sewer-revenue-expenditure-detail",
+        "pages": [
+          [
+            205,
+            206
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "金額": {
+                  "heading": "決算額"
+                }
+              },
+              "rules": {
+                "dark": 215
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "note_kinds": {
+                    "予算額": "予算額"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p206-houtei",
+            "page": 206,
+            "code": "7",
+            "observed_name": "額",
+            "corrected_name": "法定福利費引当金繰入額",
+            "reason": "原画の頁206の節7は「法定福利費引当金繰入額」（2行に折り返し、番号は2行の中ほどに印字）。OCR は番号より上の1行目を名前に結ばず、2行目の「額」だけを名前にした。"
+          },
+          {
+            "id": "p206-yukei",
+            "page": 206,
+            "code": "1",
+            "observed_name": "費",
+            "corrected_name": "有形固定資産減価償却費",
+            "reason": "原画の頁206の節1は「有形固定資産減価償却費」（2行に折り返し、番号は2行の中ほどに印字）。OCR は番号より上の1行目を名前に結ばず、2行目の「費」だけを名前にした。"
+          },
+          {
+            "id": "p206-mukei",
+            "page": 206,
+            "code": "2",
+            "observed_name": "費",
+            "corrected_name": "無形固定資産減価償却費",
+            "reason": "原画の頁206の節2は「無形固定資産減価償却費」（2行に折り返し、番号は2行の中ほどに印字）。OCR は番号より上の1行目を名前に結ばず、2行目の「費」だけを名前にした。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "sewer-revenue-ocr-1",
+          "origin_sha256": "303d7d797e346b5344d63081f4376a6fb81805b7fa07bb4e673fe67a6eb51887",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              205,
+              206
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "2fb2d8a54d05a5ff6bf122576ed172bfd18fdfb5432596cedcb3c9fc93503ffb",
+          "bytes": 382181
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "sewer-revenue-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "sewer-capital",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "statement_kind": "public-enterprise",
+      "inputs": [
+        {
+          "sha256": "303d7d797e346b5344d63081f4376a6fb81805b7fa07bb4e673fe67a6eb51887"
+        }
+      ],
+      "options": {
+        "account": "下水道事業会計",
+        "table_id": "sewer-capital-expenditure-detail",
+        "pages": [
+          [
+            207,
+            207
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "金額": {
+                  "heading": "決算額"
+                }
+              },
+              "rules": {
+                "dark": 215
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "note_kinds": {
+                    "予算額": "予算額"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p207-houtei",
+            "page": 207,
+            "code": "7",
+            "observed_name": "額",
+            "corrected_name": "法定福利費引当金繰入額",
+            "reason": "原画の頁207の節7は「法定福利費引当金繰入額」（2行に折り返し、番号は2行の中ほどに印字）。OCR は番号より上の1行目を名前に結ばず、2行目の「額」だけを名前にした。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "sewer-capital-ocr-1",
+          "origin_sha256": "303d7d797e346b5344d63081f4376a6fb81805b7fa07bb4e673fe67a6eb51887",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              207
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "2399571e54c02898ad135e10e7694096901413ef72937f871b09270b023d9f47",
+          "bytes": 329153
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "sewer-capital-expenditure-detail"
+        }
+      ]
     }
   ],
   "tables": [
     {
       "table_id": "general-expenditure-detail",
       "conversion_id": "general",
-      "input_fingerprint": "5c395a01d1f04dbeb4adbe7b378b211221fd764efd793ae4f71e6555158fd0f3",
+      "input_fingerprint": "34a6f4f5d42e148028fc1af955bc72c65e296ffcb56ef96cc3115bb9e5e9be71",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '備考': 'indent'}。",
@@ -279,6 +771,194 @@
           "bytes": 66662
         },
         "row_count": 4498
+      }
+    },
+    {
+      "table_id": "nhi-expenditure-detail",
+      "conversion_id": "nhi",
+      "input_fingerprint": "a7f898804765f4d78a7185bb09a4e4e617d5a8a173056ed7203a6416bb0bee64",
+      "account": "国民健康保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '備考': 'indent'}。",
+        "金額の単位は printed 9頁・carried 1頁 から決めた。款の和 7,520,631,979 と印字の「歳出合計」7,520,631,979 が一致。",
+        "金額の注記 13 件（流用 13）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（51 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。",
+        "原画で確かめた名称の誤読 1 件を、管理 JSON の name_corrections で印字に直した: 1出産育児時金→1出産育児一時金。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 8 件（p128:full-page:a0:result0:r46・p128:full-page:a0:result0:r46:w3・p128:full-page:a0:result0:r59・p128:full-page:a0:result0:r59:w2・p128:full-page:a0:result0:r68・p128:full-page:a0:result0:r68:w3・p131:full-page:a0:result0:r43・p131:full-page:a0:result0:r43:w5）・增→増 14 件（p124:full-page:a0:result0:r16・p124:full-page:a0:result0:r16:w2・p125:full-page:a0:result0:r16・p125:full-page:a0:result0:r16:w2・p126:full-page:a0:result0:r15・p126:full-page:a0:result0:r15:w2・p130:full-page:a0:result0:r16・p130:full-page:a0:result0:r16:w2・p131:full-page:a0:result0:r16・p131:full-page:a0:result0:r16:w2・p132:full-page:a0:result0:r16・p132:full-page:a0:result0:r16:w2・p133:full-page:a0:result0:r15・p133:full-page:a0:result0:r15:w2）・徵→徴 4 件（p125:full-page:a0:result0:r19・p125:full-page:a0:result0:r19:w1・p125:full-page:a0:result0:r25・p125:full-page:a0:result0:r25:w3）・查→査 2 件（p126:full-page:a0:result0:r43・p126:full-page:a0:result0:r43:w2）・齡→齢 4 件（p129:full-page:a0:result0:r39・p129:full-page:a0:result0:r39:w4・p129:full-page:a0:result0:r52・p129:full-page:a0:result0:r52:w3）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132195/2024/settlement/expenditure/nhi-expenditure-detail-nodes.parquet",
+          "sha256": "f6b7684e5aa530b084abeb39a80f2e0487954c931d279a570a4064cc4b865699",
+          "bytes": 8153
+        },
+        "row_count": 116
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132195/2024/settlement/expenditure/nhi-expenditure-detail-amounts.parquet",
+          "sha256": "e115f568b9c82a44efb47522886296b145953ebb13dac949cfddc7f4f4f49e18",
+          "bytes": 12433
+        },
+        "row_count": 633
+      }
+    },
+    {
+      "table_id": "kouki-expenditure-detail",
+      "conversion_id": "kouki",
+      "input_fingerprint": "6f0215f67fe2e20fa8059ce72bdf5749278f356fa49db347db3fcbd9e7b3b0fb",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '備考': 'indent'}。",
+        "金額の単位は printed 5頁 から決めた。款の和 2,404,950,356 と印字の「歳出合計」2,404,950,356 が一致。",
+        "金額の注記 5 件（流用 5）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（23 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 增→増 10 件（p139:full-page:a0:result0:r15・p139:full-page:a0:result0:r15:w2・p140:full-page:a0:result0:r15・p140:full-page:a0:result0:r15:w2・p141:full-page:a0:result0:r15・p141:full-page:a0:result0:r15:w2・p142:full-page:a0:result0:r16・p142:full-page:a0:result0:r16:w2・p143:full-page:a0:result0:r15・p143:full-page:a0:result0:r15:w2）・徵→徴 4 件（p139:full-page:a0:result0:r46・p139:full-page:a0:result0:r46:w1・p139:full-page:a0:result0:r52・p139:full-page:a0:result0:r52:w1）・查→査 2 件（p140:full-page:a0:result0:r61・p140:full-page:a0:result0:r61:w5）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132195/2024/settlement/expenditure/kouki-expenditure-detail-nodes.parquet",
+          "sha256": "fadfa6103741e6cb22ff9fc51f991fcb904101a552a709c6b1354febb18228ac",
+          "bytes": 5148
+        },
+        "row_count": 49
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132195/2024/settlement/expenditure/kouki-expenditure-detail-amounts.parquet",
+          "sha256": "398d3da5b35ea9283cc01ea0a763cbd69496cfd132e1413dee015302ae664e13",
+          "bytes": 7104
+        },
+        "row_count": 265
+      }
+    },
+    {
+      "table_id": "kaigo-expenditure-detail",
+      "conversion_id": "kaigo",
+      "input_fingerprint": "19b1becd26bae2f6a9ba02293334f53c432a314fdd7ce781c9e63a07f04383e6",
+      "account": "介護保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '備考': 'indent'}。",
+        "金額の単位は printed 6頁・carried 2頁 から決めた。款の和 7,585,630,232 と印字の「歳出合計」7,585,630,232 が一致。",
+        "金額の注記 20 件（充用 2・流用 18）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（47 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。",
+        "原画で確かめた名称の誤読 1 件を、管理 JSON の name_corrections で印字に直した: 2介護予防サービス等費諸→2介護予防サービス等諸費。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 4 件（p158:full-page:a0:result0:r28・p158:full-page:a0:result0:r28:w0・p159:full-page:a0:result0:r18・p159:full-page:a0:result0:r18:w5）・增→増 16 件（p155:full-page:a0:result0:r16・p155:full-page:a0:result0:r16:w2・p156:full-page:a0:result0:r15・p156:full-page:a0:result0:r15:w2・p157:full-page:a0:result0:r15・p157:full-page:a0:result0:r15:w2・p158:full-page:a0:result0:r15・p158:full-page:a0:result0:r15:w2・p159:full-page:a0:result0:r16・p159:full-page:a0:result0:r16:w2・p160:full-page:a0:result0:r15・p160:full-page:a0:result0:r15:w2・p161:full-page:a0:result0:r16・p161:full-page:a0:result0:r16:w2・p162:full-page:a0:result0:r15・p162:full-page:a0:result0:r15:w2）・徵→徴 2 件（p155:full-page:a0:result0:r46・p155:full-page:a0:result0:r46:w3）・额→額 2 件（p160:full-page:a0:result1:r4・p160:full-page:a0:result1:r4:w2）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132195/2024/settlement/expenditure/kaigo-expenditure-detail-nodes.parquet",
+          "sha256": "88757a02bc98176c2a239a9f75c225ff9869e9947597cf9781d34401976a6a98",
+          "bytes": 7691
+        },
+        "row_count": 107
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132195/2024/settlement/expenditure/kaigo-expenditure-detail-amounts.parquet",
+          "sha256": "0451b7b24cdde6030a421832b08223d6af2c43c4a0f0ec3afcd138ba704ae33f",
+          "bytes": 11210
+        },
+        "row_count": 528
+      }
+    },
+    {
+      "table_id": "parking-expenditure-detail",
+      "conversion_id": "parking",
+      "input_fingerprint": "674aed9227006db00a2fc7e1fdd15e62231d458520790fb7efd9de6145dfe1a7",
+      "account": "駐車場事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '備考': 'indent'}。",
+        "金額の単位は printed 1頁・carried 1頁 から決めた。款の和 55,156,218 と印字の「歳出合計」55,156,218 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（6 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 增→増 4 件（p166:full-page:a0:result0:r16・p166:full-page:a0:result0:r16:w2・p167:full-page:a0:result0:r15・p167:full-page:a0:result0:r15:w2）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132195/2024/settlement/expenditure/parking-expenditure-detail-nodes.parquet",
+          "sha256": "0102b2f3653292b7b8da539dfcd2064f61db8802d661d583afac294fa481ed47",
+          "bytes": 2675
+        },
+        "row_count": 9
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132195/2024/settlement/expenditure/parking-expenditure-detail-amounts.parquet",
+          "sha256": "fb22df64bb556b486958ee9aa77f63a92114bcad929ef14bd5d5ce39e41cbb94",
+          "bytes": 3189
+        },
+        "row_count": 48
+      }
+    },
+    {
+      "table_id": "sewer-revenue-expenditure-detail",
+      "conversion_id": "sewer-revenue",
+      "input_fingerprint": "2e0466052427d459f3135d988cb088c2024b3ba98cd2880951150c2d41ced3bc",
+      "account": "下水道事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '備考': 'indent'}。",
+        "金額の単位は carried 1頁・default 1頁 から決めた。款の和 1,274,376,414（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 3 件を、管理 JSON の name_corrections で印字に直した: 7額→7法定福利費引当金繰入額・1費→1有形固定資産減価償却費・2費→2無形固定資産減価償却費。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 4 件（p205:full-page:a0:result0:r3・p205:full-page:a0:result0:r3:w5・p206:full-page:a0:result0:r4・p206:full-page:a0:result0:r4:w5）・產→産 4 件（p206:full-page:a0:result0:r58・p206:full-page:a0:result0:r58:w5・p206:full-page:a0:result0:r62・p206:full-page:a0:result0:r62:w5）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132195/2024/settlement/expenditure/sewer-revenue-expenditure-detail-nodes.parquet",
+          "sha256": "3bc5f07988c5e0134f68337f066feb6d9c8b9b39e3b6fdbb6a51db346be87478",
+          "bytes": 4740
+        },
+        "row_count": 43
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132195/2024/settlement/expenditure/sewer-revenue-expenditure-detail-amounts.parquet",
+          "sha256": "01e355b4f1cee30c16f7c703fc06c1b04a4122b5f1f1cfcaab574a48723a355a",
+          "bytes": 3615
+        },
+        "row_count": 43
+      }
+    },
+    {
+      "table_id": "sewer-capital-expenditure-detail",
+      "conversion_id": "sewer-capital",
+      "input_fingerprint": "872c5998b3efc847c785444494de24601c1ef0f0364cc6ef06b569ff18156f2d",
+      "account": "下水道事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '備考': 'indent'}。",
+        "金額の単位は default 1頁 から決めた。款の和 386,047,115（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 1 件を、管理 JSON の name_corrections で印字に直した: 7額→7法定福利費引当金繰入額。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 4 件（p207:full-page:a0:result0:r3・p207:full-page:a0:result0:r3:w5・p207:full-page:a0:result0:r60・p207:full-page:a0:result0:r60:w5）・產→産 4 件（p207:full-page:a0:result0:r109・p207:full-page:a0:result0:r109:w3・p207:full-page:a0:result0:r112・p207:full-page:a0:result0:r112:w5）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132195/2024/settlement/expenditure/sewer-capital-expenditure-detail-nodes.parquet",
+          "sha256": "95d079e1c453f9086f9bbcbafcae2531b5da0e528fb7a18e5433e9eb7c70d882",
+          "bytes": 3637
+        },
+        "row_count": 19
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132195/2024/settlement/expenditure/sewer-capital-expenditure-detail-amounts.parquet",
+          "sha256": "ba01b296e0b6725f5a6701d089bde4398a4584b25a3aa05a6ce8e1bd2d59d6a1",
+          "bytes": 2554
+        },
+        "row_count": 19
       }
     }
   ]
