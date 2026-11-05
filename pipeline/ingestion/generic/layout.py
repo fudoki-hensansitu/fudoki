@@ -96,6 +96,9 @@ class Logical:
     ocr: bool = False  # the words came from OCR (`ingestion/generic/scan.py`): rules for its misreads apply
     column_units: dict[str, str] = field(default_factory=dict)  # heading of a column whose own unit mark differs from the page's
     foot: dict[int, list] = field(default_factory=dict)  # per page, each band's (left, right, bottom rule): what is printed below its column is the page's foot
+    # The 款・項 titles a layout pattern read above each of the page's tables (`patterns/layout/stacked_titles`): level,
+    # code, name, name glyphs and amount glyphs. None: the tables are titled by their 款 only (`titles`).
+    level_titles: list | None = None
 
     def unit_of(self, header: str) -> str | None:
         """The unit of an amount under `header`: its column's own mark (`(千円)` over 当初予算額 on a 円 page), else the page's."""

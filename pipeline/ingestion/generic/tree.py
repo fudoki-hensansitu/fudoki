@@ -35,6 +35,8 @@ from ingestion.generic.layout import (SIGNS, SUBJECT_LEVELS, UNIT_CELL, Band, Gl
 CODE = re.compile(r'^[(（]?([0-9０-９]{1,4})[)）]?(?:[.．](?=[^0-9０-９]|$))?(?=\D|$)')
 UNIT_NOTATION = re.compile(r'[(（]単位[:：][^()（）]*[)）]')
 BARE_CODE = re.compile(r'^[0-9０-９]{1,4}$')
+# A reading in katakana printed in brackets right after a number (`73（ナナサン）`): the number is part of a name.
+READING = re.compile(r'[(（][ァ-ヶー]+[)）]')
 BRACKET_PAIRS = {')': '(', ']': '['}  # the closing and opening brackets of a bracketed amount
 CODE_LED = re.compile(r'^[0-9０-９]{1,4}[^0-9０-９,，.．]')  # a code joined to its name (`1商`)
 TRANSFER = re.compile(r'(流用|充用|充当|予備費支出|予備費充当|予備費[よか]り|第[0-9０-９]+節[へか]|^第[0-9０-９]+[款項目節]|^[○〇●]?同[款項目])')
@@ -89,6 +91,7 @@ class Item:
     heading: bool = False  # a name-only line that heads the lines under it (`headings`)
     decided: bool = False  # role chosen by a judgment, not by the geometric rules
     hint: str | None = None  # the kind of the note whose parts this item prints (`note_breakdown`)
+    title_depth: int = 1  # the depth of a title (level -1): 1 for a 款, 2 for a 項 (`Logical.level_titles`)
     kinds: list[tuple[list[Glyph], list[Glyph], str]] = field(default_factory=list)  # (label, amount run, heading) of kind lines
 
     @property
@@ -283,6 +286,8 @@ def _split_code(line_text: str) -> tuple[str | None, str]:
     bullet drawn as a digit; bullet marks (〇) mark a level and are not part of the name."""
     found = CODE.match(line_text)
     if found and line_text[found.end():found.end() + 1] in ('～', '〜', '~'):  # `3～4か月児…` is a range in a name
+        return None, line_text
+    if found and READING.match(line_text, found.end()):  # `73（ナナサン）歯科健診事業`: the number's reading, a name
         return None, line_text
     if not found or int(unicodedata.normalize('NFKC', found.group(1))) == 0:
         if found:
@@ -1805,7 +1810,16 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     item.role = 'annotation'  # An amount note or a transfer's account code, no item of the breakdown.
             found[id(group)] = group_items
         subject = next((g for g in ordered if g.subject), None)
-        if subject is not None and untitled(subject):
+        if subject is not None and untitled(subject) and logical.level_titles is not None:
+            # Tables stacked on the page, each under its 款・項 titles: the titles are the 款・項 items, in order.
+            for level_name, code, name, line, amount in logical.level_titles:
+                title = Item(subject, line[0].page, [line], code, name, line[0].x0, level=-1, level_name=level_name,
+                             title_depth=SUBJECT_LEVELS.index(level_name) + 1)
+                if amount is not None:
+                    title.amounts.append(amount)
+                found[id(subject)].append(title)
+            found[id(subject)].sort(key=lambda i: i.anchor)
+        elif subject is not None and untitled(subject):
             # A table without a 款 column under a title naming its 款: the title is the 款 item.
             for code, name, line in logical.titles:
                 # An indent group reads levels from where a code starts: the title stands where a 款 code would
@@ -1849,7 +1863,9 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             kept = []
             for item in found[id(group)]:
                 previous = kept[-1] if kept else None
-                if (previous is not None and previous.code is not None and previous.name
+                # (Under stacked titles a 目 abolished this year prints no number: `退職被保険` / `者等療養費` `0 1 △1`.)
+                if (previous is not None and previous.name
+                        and (previous.code is not None or (logical.level_titles is not None and id(previous) in column_amount_items))
                         and previous.role == item.role == 'node' and item.code is None and item.name
                         and not item.amounts
                         # (a name wrapped so that its amount is printed on the last line, none on the code's line: `1 居宅サービス` / `事業費 3,596,885`)
@@ -1863,7 +1879,10 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                         and (abs(item.indent - previous.indent) <= 3 or previous.lines[0][0].x1 <= item.indent <= previous.indent
                              if group.mode == 'indent' else
                              group.bands[item.level].header[-1] == group.bands[previous.level].header[-1])
-                        and 0 <= item.y0 - previous.y1 <= max(g.y1 - g.y0 for g in item.glyphs)):
+                        and (0 <= item.y0 - previous.y1 <= max(g.y1 - g.y0 for g in item.glyphs)
+                             # (under stacked titles a 目's name wraps over the lines of its ruled row, set further
+                             # apart than a line: `地域密着型` / `サービス事` / `業者指定等` / `事務費`)
+                             or (logical.level_titles is not None and within_row(logical, previous, item)))):
                     previous.name += item.name
                     previous.lines += item.lines
                     if id(item) in column_amount_items:
@@ -2045,7 +2064,9 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
     readings = {mode: load_pattern("breakdown", mode) for mode in modes}
     prepared = {mode: reading.prepare(all_items, levels, depth_of) for mode, reading in readings.items()}
     # 款 come from titles in this document: the 項・目 columns of untitled tables sit one level down.
-    titled = any(i.level == -1 for _, ordered, found in all_items for g in ordered if g.subject for i in found[id(g)])
+    # (The 項 titles of stacked tables put them two levels down.)
+    titled = max((i.title_depth for _, ordered, found in all_items for g in ordered if g.subject for i in found[id(g)]
+                  if i.level == -1), default=0)
     # Per amount column: (item, kind word) of a stacked kind word left at the foot of a page with its amount still to come.
     carried: dict[str, tuple[Item, str | None, list[Glyph]]] = {}
 
@@ -2064,7 +2085,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
         closing_headings = closing_department_headings([item for _, _, item in events])
         headings = heading_names(logical)
         subject_depth = max((g.levels or len(g.bands) for g in ordered if g.subject), default=3) \
-            + any(titled and title_shift(g) for g in ordered if g.subject)
+            + (titled if any(title_shift(g) for g in ordered if g.subject) else 0)
         row = None  # (subject item, top, bottom) of the latest subject row
         opening = True  # no subject with a code has begun on this page yet
         for _, _, item in events:
@@ -2087,8 +2108,10 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                               'amounts': [text(r) for _, r in item.amounts]})
                 if target is not None:
                     label = normalize(text([g for g in item.glyphs if not any(g in r for _, r in item.amounts)]))
+                    yen = bool((layout or {}).get(item.group.axis, {}).get('yen_marked')) and bool(item.amounts) \
+                        and all(yen_marked(logical, run) for _, run in item.amounts)
                     for header, run in item.amounts:
-                        annotations.append((target, f'{header}／注記／{label}', run, logical.unit_of(header)))
+                        annotations.append((target, f'{header}／注記／{label}', run, '円' if yen else logical.unit_of(header)))
                     remarks.append({'kind': 'annotation', 'target': target, 'heading': None,
                                     # A name that is only an account code (`・040102【151502】 400`) is the
                                     # counterpart of a transfer: its words (`1200へ予算流用増`) may sit on the
@@ -2096,7 +2119,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                                     'hint': item.hint or ('充用' if normalize(target.name) == '予備費'
                                                           else '流用' if is_account_code(item.name) else None),
                                     'label': [g for g in item.glyphs if not any(g in r for _, r in item.amounts)],
-                                    'runs': [run for _, run in item.amounts], 'unit': logical.unit})
+                                    'runs': [run for _, run in item.amounts], 'unit': '円' if yen else logical.unit})
                 continue
             if item.role == 'total':
                 notes.append({'kind': 'total', 'page': item.page, 'text': item.name}); continue
@@ -2121,9 +2144,12 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                         # Digits in the repeated name (`市制７０周年記念事業費`) are the open heading's own, not an amount.
                         repeated_codes.extend(g for g in item.glyphs if re.search(r'[0-9０-９]', g.text))
                         continue
-                depth = 1 if item.level == -1 else item.level + 1 + (titled and title_shift(item.group))
+                depth = item.title_depth if item.level == -1 else item.level + 1 + (titled if title_shift(item.group) else 0)
                 previous = stack[depth - 1] if len(stack) >= depth else None
-                if previous is None:  # bands that skip a level (a name band between the codes): find the open one by band
+                if previous is None and logical.level_titles is None:
+                    # Bands that skip a level (a name band between the codes): find the open one by band. (Under
+                    # stacked titles the open ones are titles or the 款 of the summary: a 目 of the same code and name
+                    # as its 款 is no repeat of it.)
                     previous = next((s for s in stack if s.level == item.level), None)
                 if previous is not None and repeats(previous, item, logical.ocr):
                     item.key = previous.key  # a repeated subject heading on a continuation page
@@ -2131,6 +2157,13 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     shown = next((g for g in item.glyphs[:3] if CODE.match(normalize(g.text))), None)
                     if shown is not None:  # `(1議会費)`: the bracket is a word of its own, the code follows it
                         repeated_codes.append(shown)
+                    if item.level == -1 and logical.level_titles is not None:
+                        # A stacked table's title printed again on a continuation page reprints its amount (`_dedupe`
+                        # keeps one and flags a difference): the amount of the open heading, not a new one.
+                        # The printed word, with the unit the amount leaves out (`24,930,655千円`).
+                        repeated_codes.extend(g for g in logical.outside if any(
+                            g.page == r.page and abs(g.y0 - r.y0) < 1 and g.x0 <= r.x0 + .5 and g.x1 >= r.x1 - .5
+                            for _, run in item.amounts for r in run))
                     continue
                 if not item.name:
                     level = item.level_name or (item.group.bands[item.level].header[-1]
@@ -2190,7 +2223,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 if item.role not in ('node', 'repeat') or item.key is None:
                     continue
                 for header, run in item.amounts:
-                    amounts.append(_amount(item.key, header, run, logical.unit_of(header)))
+                    marked = (layout or {}).get(item.group.axis, {}).get('yen_marked') and yen_marked(logical, run)
+                    amounts.append(_amount(item.key, header, run, '円' if marked else logical.unit_of(header)))
                 for label, run, heading in item.kinds:
                     remarks.append({'kind': 'kind line', 'target': item, 'heading': heading, 'label': label,
                                     'runs': [run], 'unit': logical.unit})
@@ -2366,6 +2400,18 @@ def judged_roles(judge, group: Group, margins: set[int] | None) -> dict[int, str
     return {int(key[1:]): role for key, (role, _) in judge(features).items()}
 
 
+def within_row(logical: Logical, previous: Item, item: Item) -> bool:
+    """The item's lines lie in the rule-bounded row of the amount column next to the subject columns (the
+    subject's own amounts: a 節 column further right rules a row for each 節)."""
+    edge = max(b.x1 for b in previous.group.bands)
+    y = previous.anchor
+    beside = [b for b in logical.bands if b.kind == 'amount' and b.x0 >= edge - 3 and b.body_top < y < b.body_bottom]
+    if not beside:
+        return False
+    top, bottom = _cell(min(beside, key=lambda b: b.x0), y)
+    return item.y0 >= previous.y1 and top - .5 <= item.y0 and item.y1 <= bottom + .5
+
+
 def subject_row(item: Item, logical: Logical) -> tuple[float, float]:
     """The narrowest rule-bounded row around a subject label among the amount bands whose body
     holds the label's height. (The other half of a spread may still be in its taller header at
@@ -2425,6 +2471,23 @@ def repeated_parent_rows(nodes: list[dict], amounts: list[dict], unowned: list[d
                 repeated += run
                 unowned.remove(record)
     return repeated
+
+
+def yen_marked(logical: Logical, run: list[Glyph]) -> bool:
+    """The amount prints 円 after it (`46.4円 × 1,115,000件 ＝ 51,736,000円`, touching it or set apart) in a column of
+    another unit: a reckoning in yen inside a column of 千円 (`yen_marked`). `_split_line` takes the 円 off the run."""
+    last = run[-1]
+    middle = (last.y0 + last.y1) / 2
+    for band in logical.bands:
+        for glyph in band.words:
+            if glyph.page != last.page or abs((glyph.y0 + glyph.y1) / 2 - middle) > 1.5:
+                continue
+            shown = normalize(glyph.text)
+            if shown.endswith('円') and abs(glyph.x0 - last.x0) <= .5 and shown[:-1].endswith(normalize(last.text)):
+                return True
+            if shown == '円' and 0 <= glyph.x0 - last.x1 <= 3:
+                return True
+    return False
 
 
 def _amount(key: str, header: str, run: list[Glyph], unit: str | None) -> dict:

@@ -67,7 +67,8 @@
         "ignore_frame_title": {"type": "boolean"},
         "staircase": {"const": true, "description": "The subject columns are a staircase: one header cell 款 項 目 over narrow code columns, and the 款・項 cells run down the page with no closing rule."},
         "agree_all_frames": {"const": true, "description": "Scan: every frame of a spread (not only the widest) takes the header reading most pages share, frame by frame from the left."},
-        "kind_by_characters": {"const": true, "description": "A stacked kind under its group whose two printed lines the text layer or OCR read across (翌年度繰越額／継逓繰続費次越) is the known kind its characters spell, not the group (headers.canonical)."}
+        "kind_by_characters": {"const": true, "description": "A stacked kind under its group whose two printed lines the text layer or OCR read across (翌年度繰越額／継逓繰続費次越) is the known kind its characters spell, not the group (headers.canonical)."},
+        "title_amount": {"type": "string", "minLength": 1, "description": "The heading of the amount a 款・項 title prints with no heading over it (`1款 総務費 24,930,655千円`, the layout pattern `stacked_titles`)."}
       }
     },
     "source_inconsistencies": {
@@ -160,7 +161,8 @@
           "headings": {"type": "boolean", "description": "A line without an amount, followed by a deeper line that prints one, is a heading of its own: the lines under it are its items."},
           "notes": {"type": "array", "items": {"type": "string", "minLength": 1}},
           "name_line_reach": {"type": "number", "minimum": 1, "maximum": 2, "description": "How far a name line wrapped around a number's line may sit from it, in heights of its box (default 1). A Paddle box is lower than the line pitch, so a scan read by Paddle declares a little over 1."},
-          "name_column": {"const": true, "description": "Names are set in a column of their own a space right of the numbers: a name wrapped around a line printing only its number starts up to a character past it."}
+          "name_column": {"const": true, "description": "Names are set in a column of their own a space right of the numbers: a name wrapped around a line printing only its number starts up to a character past it."},
+          "yen_marked": {"const": true, "description": "An amount that prints 円 after it in a column of another unit is in yen: a reckoning (`46.4円 × 1,115,000件 ＝ 51,736,000円`) set among the column's 千円."}
         }
       }
     }

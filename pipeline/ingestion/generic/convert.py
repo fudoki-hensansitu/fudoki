@@ -45,13 +45,15 @@ FOOTNOTE_MARK = re.compile(r'[※＊*][0-9]+')
 ITEM_NUMBER = re.compile(r'^[(（]?([0-9０-９]{1,4})(?:[)）]|[.．](?=$|[^0-9０-９]))')
 # The 事業 number printed in brackets under a name (`【010111】`): an identifier, no amount.
 # `…円）`: the end of a parenthetical remark that carries an amount of its own (a balance), no item's amount.
-CLOSING_AMOUNT = re.compile(r'[0-9][0-9,]*円[)）]')
+CLOSING_AMOUNT = re.compile(r'[0-9][0-9,]*(?:千)?円[)）]')
 # A unit price times a count (`560,000円×1人×11月`), the way a wrapped line breaks it (`円×13人×`): the digits are a
 # calculation, no amount. A price alone on its line (`12,600円`) is one only when the next line goes on with `×`.
 PRICE = r'(?:[0-9][0-9,]*)?円'
 COUNT = r'延?[0-9][0-9,]*(?:人|名|回|月|か月|日|件|台|個|世帯)?'
 FORMULA = re.compile(rf'(?:{PRICE})?(?:×(?:{COUNT})?)+|{COUNT}(?:×(?:{COUNT})?)+')
 LONE_PRICE = re.compile(r'[0-9][0-9,]*円')
+SPACED_COUNT = re.compile(r'延[0-9][0-9,]*(?:人|名|回|月|か月|日|件|台|個|世帯)')
+AMOUNT_TERM = re.compile(r'[0-9]{1,3}(?:,[0-9]{3})*')
 BRACKET_CODE = re.compile(r'[【\[][0-9０-９]+[】\]]')
 # The part number a work's name ends with (`舗装補修工事(7-1)`): digits of a name, a hyphen between them.
 NAME_PART_NUMBER = re.compile(r'[^0-9０-９(（][(（][0-9０-９]{1,2}[-－][0-9０-９]{1,2}[)）]')
@@ -252,7 +254,13 @@ def formula_words(observed) -> list[tuple]:
             lone = LONE_PRICE.fullmatch(joined) and any(
                 abs(other[0].x0 - run[0].x0) <= 12 and 0 < other[0].y0 - run[0].y0 <= 2 * (run[0].y1 - run[0].y0)
                 and following.startswith('×') for other, following in zip(runs, texts))
-            if lone or ('×' in joined and FORMULA.fullmatch(joined)):
+            # The terms set apart on their line: a price before the count it is paid for (`15,000円 延 94,200人`), and a
+            # number before the `×` it is multiplied by (`268,062 × 0.8 ＝ 214,450`).
+            after = ''.join(text for other, text in zip(runs[index + 1:index + 3], texts[index + 1:index + 3])
+                            if abs(other[0].y0 - run[0].y0) <= 1.5)
+            spaced = ((LONE_PRICE.fullmatch(joined) and SPACED_COUNT.match(after))
+                      or (AMOUNT_TERM.fullmatch(joined) and after.startswith('×')))
+            if lone or spaced or ('×' in joined and FORMULA.fullmatch(joined)):
                 found += [(page.number, (w.x0, w.y0, w.x1, w.y1), w.text) for w in run]
     return found
 
