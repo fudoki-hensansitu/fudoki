@@ -443,17 +443,18 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
       </div>
 
       <div className="mx-auto max-w-[1120px] px-4 pb-48">
-        {/* 狭い幅では紋章を小さくして名前・年度と1行に並べ、一文から下は全幅に出す。sm 以上は紋章の右に積む */}
-        <header className="grid grid-cols-[56px_minmax(0,1fr)] items-center gap-x-3 gap-y-4 border-b py-6 sm:grid-cols-[104px_minmax(0,1fr)] sm:items-start sm:gap-x-6 sm:py-7 lg:grid-cols-[132px_minmax(0,1fr)] lg:gap-x-7">
-          <div className="grid size-14 place-items-center rounded-xl border bg-white p-2 sm:row-span-2 sm:size-[104px] sm:rounded-2xl sm:p-3.5 lg:size-[132px] lg:p-[18px]">
-            {logo ? <img src={logo} alt={data.name} className="h-auto w-full" /> : <span className="text-2xl text-foreground sm:text-4xl lg:text-5xl">{data.name[0]}</span>}
+        <header className="relative grid grid-cols-[80px_minmax(0,1fr)] items-start gap-4 border-b py-7 sm:grid-cols-[132px_minmax(0,1fr)] sm:gap-7">
+          {years.length > 1 ? (
+            <div className="col-span-full -mb-2 justify-self-end sm:absolute sm:right-0 sm:top-7 sm:mb-0">
+              <YearPicker years={years} current={year} onChange={choose} />
+            </div>
+          ) : null}
+          <div className="grid size-20 place-items-center rounded-xl border bg-white p-2.5 sm:size-[132px] sm:rounded-2xl sm:p-[18px]">
+            {logo ? <img src={logo} alt={data.name} className="h-auto w-full" /> : <span className="text-3xl text-foreground sm:text-5xl">{data.name[0]}</span>}
           </div>
-          <div className="flex min-w-0 flex-wrap items-center justify-between gap-x-2 gap-y-2 sm:gap-x-4">
+          <div className="flex min-w-0 flex-col gap-3">
             {/* 一文（方針の要約）がある年度は名前を小さく一文を大きく見せる。無い自治体・年度は名前を大きく。h1 は名前のまま */}
             <h1 ref={title} className={tagline ? 'text-lg font-normal leading-tight text-muted-foreground sm:text-xl' : 'text-[clamp(1.75rem,1.4rem+1.2vw,2.25rem)] font-normal leading-tight'}>{data.name}</h1>
-            {years.length > 1 ? <YearPicker years={years} current={year} onChange={choose} /> : null}
-          </div>
-          <div className="col-span-full flex min-w-0 flex-col gap-3 sm:col-span-1 sm:col-start-2">
             {tagline ? <p className="text-[clamp(1.25rem,1.05rem+0.9vw,1.75rem)] leading-snug [text-wrap:pretty] [word-break:auto-phrase]">{tagline}</p> : null}
             <div className="flex flex-wrap gap-x-6 gap-y-1.5 text-sm text-muted-foreground">
               <span className="inline-flex items-center gap-1.5">
