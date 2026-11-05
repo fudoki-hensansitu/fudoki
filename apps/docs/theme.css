@@ -62,28 +62,10 @@ h1, h2, h3, h4, h5, h6 { letter-spacing: 0.02em; }
 /* ロゴは本体サイトのヘッダと同じ 28px（DESIGN.md の Logo › Usage） */
 [data-blume-header] a > img[src^="/logo"] { height: 28px; }
 
-/* ヘッダの「ガイド／API リファレンス」は本体サイトの shadcn Tabs（base-nova の default）の形にし、
-   選んでいる方だけ風土記の緑（accent）の札にする */
-[data-blume-header] nav:has(> a[href="/reference"]) {
-  gap: 0;
-  align-items: center;
-  height: 2rem;
-  padding: 3px;
-  border-radius: var(--blume-radius);
-  background: var(--blume-muted);
-}
-[data-blume-header] nav:has(> a[href="/reference"]) > a {
-  height: 100%;
-  padding: 0 0.75rem;
-  border-radius: calc(var(--blume-radius) - 2px);
-  color: var(--blume-muted-foreground);
-  transition: color .15s, background-color .15s;
-}
-[data-blume-header] nav:has(> a[href="/reference"]) > a:hover { background: transparent; color: var(--blume-foreground); }
+/* ヘッダの「ガイド／API リファレンス」は Blume 標準の丸い札のまま、選んでいる方だけ風土記の緑（accent）で塗る */
 [data-blume-header] nav:has(> a[href="/reference"]) > a[aria-current="page"] {
   background: var(--blume-accent);
   color: var(--blume-accent-foreground);
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / .1), 0 1px 2px -1px rgb(0 0 0 / .1);
 }
 
 /* icon は public/icons の Phosphor（regular）。<img> で出るので、mask にして文字色（currentColor）で塗る */
