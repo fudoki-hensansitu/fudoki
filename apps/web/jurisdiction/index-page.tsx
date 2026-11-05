@@ -149,27 +149,30 @@ function PrefectureTiles({ map, entries, selected, onToggle }: { map: Prefecture
     const col = recorded.reduce((a, t) => a + (t.col + 0.5) * yen(t.code), 0) / Math.max(recorded.reduce((a, t) => a + yen(t.code), 0), 1)
     el.scrollLeft = (col / map.cols) * el.scrollWidth - el.clientWidth / 2
   }, [map.code])
+  // 本土と島しょで同じマスの大きさ（狭い画面でも名前が読める 40px 以上）にする
+  const width = { maxWidth: map.cols * 56, minWidth: map.cols * 40 }
   return (
     // 日本のタイルと同じ view-transition-name を付け、切り替えでタイルがこの図へ拡大する（戻るときは縮む）
-    // 狭い画面では名前が読める大きさ（1マス 40px）を保ち、横にスクロールさせる
-    <div ref={scroller} className="w-full min-w-0 overflow-x-auto p-1" style={{ viewTransitionName: `pref-${map.code}` }}>
-      <div className="mx-auto" style={{ maxWidth: map.cols * 56, minWidth: map.cols * 40 }}>
-      <div className="grid gap-1" style={columns} role="group" aria-label={`${map.name}の市区町村のタイル図。収録している自治体を歳出の総額の濃さで塗っている`}>
-        {map.tiles.map((t) => (
-          <MunicipalityTile key={t.code} {...t} e={byCode.get(t.code)} style={{ gridColumn: t.col + 1, gridRow: t.row + 1 }} {...props} />
-        ))}
+    <div className="w-full min-w-0" style={{ viewTransitionName: `pref-${map.code}` }}>
+      {/* 狭い画面では横にスクロールさせる。島しょは区部へ寄せたスクロールに巻き込まれないよう、別の段にする */}
+      <div ref={scroller} className="overflow-x-auto p-1">
+        <div className="mx-auto grid gap-1" style={{ ...columns, ...width }} role="group" aria-label={`${map.name}の市区町村のタイル図。収録している自治体を歳出の総額の濃さで塗っている`}>
+          {map.tiles.map((t) => (
+            <MunicipalityTile key={t.code} {...t} e={byCode.get(t.code)} style={{ gridColumn: t.col + 1, gridRow: t.row + 1 }} {...props} />
+          ))}
+        </div>
       </div>
       {map.islands.length ? (
-        <div className="mt-3 border-t pt-3">
-          <div className="mb-1.5 text-[11px] text-muted-foreground">島しょ</div>
-          <div className="grid gap-1" style={columns} role="group" aria-label={`${map.name}の島しょの自治体`}>
+        <div className="mt-2 border-t pt-3">
+          <div className="mx-auto mb-1.5 px-1 text-[11px] text-muted-foreground" style={{ maxWidth: width.maxWidth }}>島しょ</div>
+          {/* 島は数が少ないので、スクロールさせずに折り返す。マスの幅は本土と同じにする */}
+          <div className="mx-auto flex flex-wrap gap-1 p-1" style={{ maxWidth: width.maxWidth }} role="group" aria-label={`${map.name}の島しょの自治体`}>
             {map.islands.map((t) => (
-              <MunicipalityTile key={t.code} {...t} e={byCode.get(t.code)} {...props} />
+              <MunicipalityTile key={t.code} {...t} e={byCode.get(t.code)} style={{ width: `max(40px, calc((100% - ${(map.cols - 1) * 4}px) / ${map.cols}))` }} {...props} />
             ))}
           </div>
         </div>
       ) : null}
-      </div>
     </div>
   )
 }
