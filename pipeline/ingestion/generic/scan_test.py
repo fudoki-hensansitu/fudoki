@@ -7,6 +7,15 @@ from copy import deepcopy
 
 
 class TextTest(unittest.TestCase):
+    def test_two_amounts_run_together_part_where_their_groups_of_three_say(self):
+        words = _cell_words([Word('△77,756,000103,232,000', 181, 636, 291, 647)], [237.0])
+        self.assertEqual([w.text for w in words], ['△77,756,000', '103,232,000'])
+
+    def test_a_long_number_before_a_name_is_not_regrouped_as_an_amount(self):
+        words = _cell_words([Word('9150776', 257, 695, 285, 705), Word('低所得世帯に対する', 290, 695, 500, 705)], [])
+        self.assertEqual(words[0].text[:7], '9150776')
+        self.assertEqual(_text('9150776'), '9,150,776')
+
     def test_only_horizontal_ink_joining_two_vertical_rules_closes_a_row(self):
         from pathlib import Path
         import numpy as np

@@ -57,7 +57,6 @@ shadcn/ui の語彙。ブランド色は `--primary`、`--accent` は hover の�
   --ai: #33507a;
   --kincha: #e3a43c;
   --sakura: #ebcab9;
-  --logo-rule-ink: #29523b;
 
   --font-display: "Fudoki Mincho", "BIZ UDPMincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
   --font-sans: "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", "Yu Gothic", Meiryo, system-ui, sans-serif;
@@ -118,7 +117,6 @@ shadcn/ui の語彙。ブランド色は `--primary`、`--accent` は hover の�
     --shu: #d46a4f;
     --ai: #6f8fc0;
     --sakura: #b98f80;
-    --logo-rule-ink: #9cc7ad;
   }
 }
 ```
@@ -165,11 +163,11 @@ shadcn/ui の語彙。ブランド色は `--primary`、`--accent` は hover の�
 - Phosphor（`@phosphor-icons/react`）の regular weight・256px grid。React の外の HTML（入口の頁）は同じ path を inline の `<symbol>` に写し、`fill: currentColor` で描く。外部サービスの logo（X・GitHub）も Phosphor のものを使う
 
 ## Logo
-- Logomark: 32 × 32 の grid に五本の短冊（幅4・空き2、左端 x=2／8／14／20／26、下端 y=28、高さ 14／22／10／26／17、角丸2）と基準線（x=2・y=29・幅28・高さ2、角丸1）。見える外形は幅28・高さ29で、黄金比は使っていない。短冊と文字は `--primary`、基準線だけ `--logo-rule-ink` で背景との明度差を 12% 増やす
-- Wordmark: 「風土記」。Zen角ゴシック New Bold（700、OFL-1.1）を SVG の path にしたもの。文字サイズ 32.5 単位・高さ 40 の viewBox、字間は 風–土・土–記とも 3.5（`palt` は使わず実際の輪郭で詰める）、字面の中心 y=21.5、改行しない
-- Lockup: 高さ 40、マークを 1.25 倍、マークの見える右端から文字まで 8、文字の先頭輪郭 x=45.5
+- Logomark: 区画。32 × 32 の grid で町の土地を5つの区画に割る（予算の内訳＝ツリーマップにも読める）。区画は (x, y, 幅, 高さ) = (2, 2, 15, 17)・(19, 2, 11, 10)・(19, 14, 11, 5)・(2, 21, 9, 9)・(13, 21, 17, 9)、空き2・角丸2.2、見える外形は 28 × 28。区画と文字は `--primary`、右の細い区画だけ `--shu`（朱）
+- Wordmark: 「風土記」。Zen角ゴシック New Medium（500、OFL-1.1）を SVG の path にしたもの。字面の高さ 28・中心 y=20（文字サイズ 31.435 単位）、高さ 40 の viewBox、字間は 風–土・土–記とも 3.5（`palt` は使わず実際の輪郭で詰める）、改行しない
+- Lockup: 高さ 40、マークは等倍で y=4 に置き（見える範囲 y=6〜34）、マークの見える右端から文字まで 12
 - Usage: ヘッダは横組み 28px、マーク単体は 24px・最小 16px、横組みの最小高さ 24px、フッタは先頭の列に横組み 30px（全幅の wordmark は置かない）。周囲は横組みの高さの 1/4 以上を空ける。黒一色・白抜き可、縁取り・影・グラデーションは付けない
-- Assets: 正本は `apps/web/brand/config.json`、生成は `bun run --cwd apps/web build:brand`、出力は `apps/web/public/`（`mark.svg`・`wordmark.svg`・`logo.svg` と各 `-dark.svg`、`favicon.svg`）。docs の public にも同期する
+- Assets: 正本は `apps/web/brand/config.json`、生成は `bun run --cwd apps/web build:brand`、出力は `apps/web/public/`（`mark.svg`・`wordmark.svg`・`logo.svg` と各 `-dark.svg`、`favicon.svg`）と画面へ inline にする `apps/web/logo.ts`。docs の public・api の favicon にも同期する。PNG のアイコン（favicon.ico・icon・apple-touch-icon・PWA）は `brand/pwa_icons.py` で描く
 
 ## Motion
 - 1 primitive: 見出しの sweep。表示域に入ったとき一度だけ、金茶・朱・桜・藍の帯が 1.4s（`--ease-sweep`）で文字を通り抜け、墨に戻る。最初の描画から墨で読める

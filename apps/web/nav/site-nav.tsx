@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/sidebar'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
-import { LOGO_G } from '../logo'
+import { LOGO_G, LOGO_WIDTH } from '../logo'
 
 export const NAV_SECTIONS = ['jurisdictions'] as const
 export type NavSection = (typeof NAV_SECTIONS)[number]
@@ -27,12 +27,12 @@ const DOCS = 'https://docs.fudoki.dev'
 export const SIDEBAR_COOKIE = 'sidebar_state'
 
 const Logo = ({ className }: { className?: string }) => (
-  <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 146.2150 40" aria-hidden="true" dangerouslySetInnerHTML={{ __html: LOGO_G }} />
+  <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${LOGO_WIDTH} 40`} aria-hidden="true" dangerouslySetInnerHTML={{ __html: LOGO_G }} />
 )
 
-/** ロゴの左のマークだけ（LOGO_G の左端 40×40 を切り出す） */
+/** ロゴの左のマークだけ（LOGO_G の左端、y=4 から 32×32 を切り出す） */
 const Mark = ({ className }: { className?: string }) => (
-  <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" aria-hidden="true" dangerouslySetInnerHTML={{ __html: LOGO_G }} />
+  <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 4 32 32" aria-hidden="true" dangerouslySetInnerHTML={{ __html: LOGO_G }} />
 )
 
 /** 閉じているときの頭。マークを出し、hover・focus で開く icon に替える */
