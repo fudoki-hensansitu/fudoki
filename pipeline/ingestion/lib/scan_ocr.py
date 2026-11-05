@@ -126,6 +126,22 @@ def _without_dashes(marks: Sequence[Sequence[float]], page: dict) -> list[tuple[
                                      and any(abs(a[2] - m[2]) <= 4.0 for a in amounts))]
 
 
+RULE_STEP_PT = (7.0, 2.5, 1.5)  # a step of a rule: at most this tall (along a horizontal rule) / this wide (along a vertical one), touching it within this
+
+
+def _without_rule_steps(marks: Sequence[Sequence[float]], rules: PageRules) -> list[Sequence[float]]:
+    """The marks that are not a step of a rule. On a skewed low-resolution scan a rule breaks into stair steps shorter
+    than ``RULE_RUN_PT``: a step lies along a detected rule and is thinner than a digit, while a figure sits between rules."""
+    tall, wide, near = RULE_STEP_PT
+    def step(mark: Sequence[float]) -> bool:
+        width, height, x, y = mark[2] - mark[0], mark[3] - mark[1], (mark[0] + mark[2]) / 2, (mark[1] + mark[3]) / 2
+        return (height <= tall and width >= 2 * height
+                and any(mark[1] - near <= r.position <= mark[3] + near and r.covers(x, near) for r in rules.horizontal)) or (
+            width <= wide and height >= 2 * width
+            and any(mark[0] - near <= r.position <= mark[2] + near and r.covers(y, near) for r in rules.vertical))
+    return [mark for mark in marks if not step(mark)]
+
+
 def ink_areas(marks: Sequence[Sequence[float]], rules: PageRules,
               boxes: Sequence[Sequence[float]] = ()) -> list[tuple[float, float, float, float]]:
     """Marks on one text line and in one cell become one tight area: OCR drops a lone 0 in a
@@ -548,15 +564,15 @@ def settle_seams(page: dict) -> dict:
 
 def supplement(path: Path, page: dict, config: PaddleConfig, previous: Mapping[str, str], *,
                vlm_fallback: bool = True, ink_dark: int = pdf_rules.DARK, unit_marks: bool = False,
-               merged_lines: bool = False) -> dict:
+               merged_lines: bool = False, rule_steps: bool = False) -> dict:
     """``_supplement``, then the seam pairs it left (``settle_seams``)."""
     return settle_seams(_supplement(path, page, config, previous, vlm_fallback=vlm_fallback, ink_dark=ink_dark,
-                                    unit_marks=unit_marks, merged_lines=merged_lines))
+                                    unit_marks=unit_marks, merged_lines=merged_lines, rule_steps=rule_steps))
 
 
 def _supplement(path: Path, page: dict, config: PaddleConfig, previous: Mapping[str, str], *,
                 vlm_fallback: bool = True, ink_dark: int = pdf_rules.DARK, unit_marks: bool = False,
-                merged_lines: bool = False) -> dict:
+                merged_lines: bool = False, rule_steps: bool = False) -> dict:
     """Read the ink OCR missed on one page: the engine on those areas, then the VLM on what remains.
 
     The engine reads each tight area (``ink_areas``) as a new region ``ink-<n>``. A reading that
@@ -581,6 +597,9 @@ def _supplement(path: Path, page: dict, config: PaddleConfig, previous: Mapping[
     # makes a dash's pixels count; the default level never saw them)
     missed = (lambda: _without_dashes(missed_ink(dark, scale, _boxes(page)), page)) if ink_dark != pdf_rules.DARK \
         else (lambda: missed_ink(dark, scale, _boxes(page)))
+    if rule_steps:
+        unstepped = missed
+        missed = lambda: _without_rule_steps(unstepped(), rules)
     marks = missed()
     if not marks:
         return page
@@ -796,6 +815,7 @@ def acquire(path: Path, request: Mapping, previous: Mapping | None = None) -> tu
     pinned = _pinned_answers(previous)
     result["pages"] = [supplement(path, page, config, pinned, vlm_fallback=request.get('vlm_fallback', True),
                           ink_dark=request.get('ink_dark', pdf_rules.DARK), unit_marks=bool(request.get('unit_marks')),
+                          rule_steps=bool(request.get('rule_steps')),
                           merged_lines=bool(request.get('merged_lines')))
                        for page in result["pages"]]
     observation = {"schema_version": 1, "request": dict(request), "vlm": _vlm_identity(),

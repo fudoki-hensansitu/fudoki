@@ -431,3 +431,6 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 1606,sumida-2024-06,131075,一般会計,,産業観光費,商工費,,産業会館費|経済総務費,eq,,assigned,04.1,retained,目,,墨田区 商工費の目（産業会館・経済総務）を一般経済商業業務に分類する。名称からの判断。,true
 1607,sumida-2024-07,131075,一般会計,,衛生費,保健所費,,新保健施設等複合施設建設費,eq,,assigned,07,retained,目,,墨田区 保健施設の建設を保健に分類する。保健センターを 07 に置く共通の規則（vocab-health-center）と同じ扱い。名称からの判断。,true
 1608,sumida-2024-08,131075,一般会計,,衛生費,区民健康費,,区民健康診査費,eq,,assigned,07.4,retained,目,,墨田区 健康診査を公衆衛生サービスに分類する。名称からの判断。,true
+1609,hinohara-2024-01,133078,一般会計,,衛生費,保健衛生費,,保健師設置費,eq,,assigned,07.4,retained,目,,檜原村 保健師の設置を公衆衛生サービスに分類する。名称からの判断。,true
+1610,hinohara-2024-02,133078,一般会計,,衛生費,上水道費,,上水道施設費,eq,,assigned,06.3,retained,目,,檜原村 上水道の施設を給水に分類する。名称からの判断。,true
+1611,kind-fallback-keirin,,,競輪事業,,,,,,,assigned,08.1,retained,目,,競輪事業の会計の目を娯楽・スポーツ 08.1 に分類する。収益事業の面もあり、名称からの判断。,true

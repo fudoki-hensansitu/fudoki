@@ -313,6 +313,17 @@ class NodeTablesTests(unittest.TestCase):
         self.assertTrue(result['passed'])
         self.assertEqual(result['counts'], {'split_amount': 1})
 
+    def test_digit_coverage_takes_a_count_in_a_name_but_not_an_amount_shaped_word(self):
+        box = {'x0': 1., 'y0': 1., 'x1': 90., 'y1': 9.}
+        word = [{'page': 1, 'bbox': [60., 1., 85., 9.], 'text': '179,856'}]
+        counted = check_digit_coverage(word, NodeTables([{**node('p'), **box, 'name_text': '負担金179,856件'}], []))
+        self.assertEqual(counted['counts'], {'label': 1})
+        glued = check_digit_coverage([{**word[0], 'text': '179,856件'}],
+                                     NodeTables([{**node('p'), **box, 'name_text': '負担金179,856件'}], []))
+        self.assertEqual(glued['counts'], {'label': 1})
+        bare = check_digit_coverage(word, NodeTables([{**node('p'), **box, 'name_text': '負担金179,856'}], []))
+        self.assertNotIn('label', bare['counts'])
+
     def test_digit_coverage_covers_common_non_amount_prints(self):
         tables = NodeTables([], [])
         words=[{'page': 1, 'bbox': [10., 1., 60., 9.], 'text': '98.4％'},

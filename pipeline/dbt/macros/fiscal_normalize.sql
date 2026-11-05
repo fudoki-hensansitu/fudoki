@@ -1,5 +1,5 @@
 {% macro fiscal_name(col) -%}
-    (select array_to_string(list_filter(string_split(text, ''), (ch, i) ->
+    (select array_to_string(list_filter(string_split(text, ''), lambda ch, i:
         not regexp_matches(ch, '\s')
         or coalesce(unicode(regexp_extract(substr(text, 1, i-1), '(\S)\s*$', 1)), 0) <= 127
         or coalesce(unicode(regexp_extract(substr(text, i+1), '^\s*(\S)', 1)), 0) <= 127), '')
@@ -31,9 +31,9 @@
 {% macro fiscal_char_distance(a, b) -%}
     {#- Levenshtein distance in characters. DuckDB's levenshtein() counts UTF-8 bytes (one kanji = 3), so a
         one-character misread of a 節 name would read as 3. Row by row: each step keeps the previous row. -#}
-    list_reduce(list_prepend(range(0, len({{ b }}) + 1), list_transform(range(1, len({{ a }}) + 1), i -> [i])),
-        (prev, x) -> list_reduce(list_prepend([x[1]], list_transform(range(1, len({{ b }}) + 1), j -> [j])),
-            (row, y) -> list_append(row, least(row[-1] + 1, prev[y[1] + 1] + 1,
+    list_reduce(list_prepend(range(0, len({{ b }}) + 1), list_transform(range(1, len({{ a }}) + 1), lambda i: [i])),
+        lambda prev, x: list_reduce(list_prepend([x[1]], list_transform(range(1, len({{ b }}) + 1), lambda j: [j])),
+            lambda row, y: list_append(row, least(row[-1] + 1, prev[y[1] + 1] + 1,
                 prev[y[1]] + case when substr({{ a }}, x[1]::integer, 1) = substr({{ b }}, y[1]::integer, 1)
                                   then 0 else 1 end))))[-1]
 {%- endmacro %}

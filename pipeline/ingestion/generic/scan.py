@@ -85,6 +85,9 @@ def _amount(text: str) -> bool:
     return bool(AMOUNT.fullmatch(_text(text)))
 
 
+RUN_TOGETHER = re.compile(r'[△▲−-]?[0-9]{1,3}(?:,[0-9]{3})+|0(?=[1-9△▲−-])')
+
+
 def _split(word: Word, cuts: list[float]) -> list[Word]:
     """Cut a piece that crosses vertical rules, giving each side its share of the characters."""
     inside = [x for x in cuts if word.x0 + 1 < x < word.x1 - 1]
@@ -106,6 +109,13 @@ def _split(word: Word, cuts: list[float]) -> list[Word]:
         # (`448` of `134,271 448`, `296` 3pt past it, 281000), and no whole digit fits in that sliver. The box
         # still ends at the rule, as a cut keeping every character gives it (`422` 1pt past it, 132152).
         return [word] if _amount(word.text) else [Word(word.text, word.x0, word.y0, min(inside), word.y1)]
+    # Two grouped amounts run together across one rule (`△77,756,000103,232,000`, 132276): the groups of three say
+    # where the first ends. A share by width can be a digit off, and a sign makes the left part wider than it reads.
+    joined = re.sub(r'\s+', '', word.text)
+    together = RUN_TOGETHER.findall(joined)
+    if len(together) == len(inside) + 1 and ''.join(together) == joined:
+        edges = [word.x0, *inside, word.x1]
+        return [Word(text, edges[i], word.y0, edges[i + 1], word.y1) for i, text in enumerate(together)]
     for x in [*inside, word.x1]:
         end = len(word.text) if x == word.x1 else max(used, min(len(word.text), round((x - word.x0) / width)))
         if end > used:
@@ -249,7 +259,14 @@ def _cell_words(pieces: list[Word], cuts: list[float], reach: float = 0) -> list
                                  max(last.y1, piece.y1))
                 continue
         words.append(piece)
-    return [Word(_text(w.text), w.x0, w.y0, w.x1, w.y1) for w in words if w.text.strip()]
+    def shown(index: int, word: Word) -> str:
+        # A long number with no separator, a name right after it, is the name's number (`9150776` `低所得世帯…`, 132276), not an amount to regroup.
+        following = words[index + 1] if index + 1 < len(words) else None
+        if (following is not None and re.fullmatch(r'[0-9]{5,}', word.text.strip()) and following.x0 - word.x1 < 12
+                and len(re.findall(r'[^\W\d_]', following.text)) >= 3):
+            return word.text.strip()
+        return _text(word.text)
+    return [Word(shown(i, w), w.x0, w.y0, w.x1, w.y1) for i, w in enumerate(words) if w.text.strip()]
 
 
 def short_rows(pdf: Path, detected: pdf_rules.PageRules, dark: int = pdf_rules.DARK,

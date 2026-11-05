@@ -1,0 +1,175 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132233",
+    "fiscal_year": 2024,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "sewer",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "64376cce5a4a70fd0badaa114a3c1ebfcacb03a011cf11628877630580e1679e"
+        }
+      ],
+      "options": {
+        "account": "下水道事業会計",
+        "table_id": "sewer-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "金額": {
+                  "heading": "決算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "note_kinds": {
+                    "予算額": "予算額"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p33-futankin",
+            "page": 33,
+            "code": "33",
+            "observed_name": "負担金.",
+            "corrected_name": "負担金",
+            "reason": "原画の頁33 節33 は「負担金」。末尾の点は紙の汚れで、印字ではない。"
+          },
+          {
+            "id": "p34-genka",
+            "page": 34,
+            "code": "5",
+            "observed_name": "源5減価償却費",
+            "corrected_name": "減価償却費",
+            "reason": "原画の頁34 目5 は「減価償却費」。頁の分割の継ぎ目で「減」の一部を別の字に読み、番号の前に残った。"
+          },
+          {
+            "id": "p34-yukei",
+            "page": 34,
+            "code": "1",
+            "observed_name": "却費",
+            "corrected_name": "有形固定資産減価償却費",
+            "reason": "原画の頁34 節1 は「有形固定資産減価償却費」（2行に折り返し）。OCR は2行目の「却費」だけを名称に結んだ。"
+          },
+          {
+            "id": "p34-shisan",
+            "page": 34,
+            "code": "6",
+            "observed_name": "瓷6資産減耗費",
+            "corrected_name": "資産減耗費",
+            "reason": "原画の頁34 目6 は「資産減耗費」。頁の分割の継ぎ目で「資」の一部を別の字に読み、番号の前に残った。"
+          },
+          {
+            "id": "p34-shiharai",
+            "page": 34,
+            "code": "1",
+            "observed_name": "支払利息及び企業債取扱諸費~",
+            "corrected_name": "支払利息及び企業債取扱諸費",
+            "reason": "原画の頁34 目1 は「支払利息及び企業債取扱諸費」。末尾の ~ は印字にない。"
+          },
+          {
+            "id": "p34-zatsu",
+            "page": 34,
+            "code": "3",
+            "observed_name": "杂3雑支出",
+            "corrected_name": "雑支出",
+            "reason": "原画の頁34 目3 は「雑支出」。頁の分割の継ぎ目で「雑」の一部を別の字に読み、番号の前に残った。"
+          },
+          {
+            "id": "p34-kanendo",
+            "page": 34,
+            "code": "1",
+            "observed_name": "近1過年度損益修正損",
+            "corrected_name": "過年度損益修正損",
+            "reason": "原画の頁34 目1 は「過年度損益修正損」。頁の分割の継ぎ目で「過」の一部を別の字に読み、番号の前に残った。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "sewer-ocr-1",
+          "origin_sha256": "64376cce5a4a70fd0badaa114a3c1ebfcacb03a011cf11628877630580e1679e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              33,
+              34,
+              35,
+              37
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 3
+            }
+          },
+          "sha256": "35f2eaff5c59d6021114f031e903a8938a784b91c73b17a15ca285a2b8f5202e",
+          "bytes": 678027
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "sewer-expenditure-detail"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "sewer-expenditure-detail",
+      "conversion_id": "sewer",
+      "input_fingerprint": "73ea6549f6e332935e879fef631a3c46139a939a269979dc3bd89e579365af83",
+      "account": "下水道事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
+        "金額の単位は column mark 4頁 から決めた。款の和 2,131,018,460（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 7 件を、管理 JSON の name_corrections で印字に直した: 33負担金.→33負担金・5源5減価償却費→5減価償却費・1却費→1有形固定資産減価償却費・6瓷6資産減耗費→6資産減耗費・1支払利息及び企業債取扱諸費~→1支払利息及び企業債取扱諸費・3杂3雑支出→3雑支出・1近1過年度損益修正損→1過年度損益修正損。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 產→産 8 件（p34:full-page:a0:result1:r14・p34:full-page:a0:result1:r14:w5・p34:full-page:a0:result1:r16・p34:full-page:a0:result1:r16:w5・p34:full-page:a0:result1:r19・p34:full-page:a0:result1:r19:w2・p34:full-page:a0:result1:r20・p34:full-page:a0:result1:r20:w5）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132233/2024/settlement/expenditure/sewer-expenditure-detail-nodes.parquet",
+          "sha256": "da969137092d2e12d000654d0fa2ddbc38fe4f16af2086f75054096edc77ca8e",
+          "bytes": 6827
+        },
+        "row_count": 75
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132233/2024/settlement/expenditure/sewer-expenditure-detail-amounts.parquet",
+          "sha256": "388752e7239c68e1852c719dd2246d85b6904fee38cc6339cb871259d0e7dbc0",
+          "bytes": 4990
+        },
+        "row_count": 75
+      }
+    }
+  ]
+}

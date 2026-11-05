@@ -9,26 +9,23 @@ import base64
 import shutil
 import subprocess
 import json
-import sys
 from functools import lru_cache
 from pathlib import Path
 
 from fonts import load_glyphs
-from geometry import geometries
+from geometry import PARCELS, RADIUS, RIGHT
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
 PUBLIC = HERE.parent / "public"
 CONFIG = json.loads((HERE / "config.json").read_text())
-INK, INK_DARK, PAPER = (CONFIG[k] for k in ("ink", "inkDark", "paper"))
+INK, INK_DARK, ACCENT, ACCENT_DARK, PAPER = (CONFIG[k] for k in ("ink", "inkDark", "accent", "accentDark", "paper"))
 NAME, WEIGHT = "風土記", CONFIG["weight"]
-RECTS = geometries()[CONFIG["markProportion"]]
-MARK_RIGHT = RECTS[-1][0] + RECTS[-1][2]
 H, TEXT_SIZE = CONFIG["canvasHeight"], CONFIG["textSize"]
 TEXT_CENTER_Y = H / 2 + 0.5 + CONFIG["textOffsetY"]
 MARK_SCALE = CONFIG["markScale"]
 MARK_X, MARK_Y = CONFIG["markOffsetX"], CONFIG["markOffsetY"]
-TEXT_X = MARK_X + MARK_RIGHT * MARK_SCALE + CONFIG["gap"]
+TEXT_X = MARK_X + RIGHT * MARK_SCALE + CONFIG["gap"]
 # 全角の advance は「土」の左右に空きすぎるため、見える字面間で指定する。
 PAIR_GAPS = CONFIG["pairGaps"]
 
@@ -64,34 +61,25 @@ def wordmark(size: float, x: float, cy: float) -> str:
     return "".join(parts)
 
 
-def rule_color(ink: str, dark: bool = False) -> str:
-    """細い基準線だけ背景との明度差を増やし、色相は保つ。"""
-    amount = CONFIG["ruleContrast"]
-    rgb = [int(ink[i:i + 2], 16) for i in (1, 3, 5)]
-    adjusted = [int((v + (255 - v) * amount if dark else v * (1 - amount)) + 0.5) for v in rgb]
-    return "#" + "".join(f"{v:02x}" for v in adjusted)
-
-
-def mark(scale: float = 1, x: float = 0, y: float = 0, ink: str = INK, dark: bool = False, themed: bool = False) -> str:
-    """32 単位の短冊を任意の位置・倍率で配置する。"""
-    strips = "".join(
-        f'<rect x="{sx:.8f}" y="{sy:.8f}" width="{w:.8f}" height="{h:.8f}" rx="{radius:.8f}"/>'
-        for sx, sy, w, h, radius in RECTS[:-1]
+def mark(scale: float = 1, x: float = 0, y: float = 0, accent: str = ACCENT) -> str:
+    """32 単位の区画を任意の位置・倍率で配置する。朱の区画だけ accent で塗る。"""
+    def fill(is_accent: bool) -> str:
+        if not is_accent:
+            return ""
+        # var() は fill= のような presentation attribute では解決されず、style の CSS プロパティ経由でだけ効く
+        return f' style="fill:{accent}"' if accent.startswith("var(") else f' fill="{accent}"'
+    parcels = "".join(
+        f'<rect x="{px:g}" y="{py:g}" width="{w:g}" height="{h:g}" rx="{RADIUS:g}"{fill(a)}/>'
+        for px, py, w, h, a in PARCELS
     )
-    rule_ink = "var(--logo-rule-ink)" if themed else rule_color(ink, dark)
-    # var() は fill= のような presentation attribute では解決されず、style の CSS プロパティ経由でだけ効く
-    rule_fill = f'style="fill:{rule_ink}"' if themed else f'fill="{rule_ink}"'
-    sx, sy, w, h, _ = RECTS[-1]
-    radius = CONFIG["ruleRadius"]
-    baseline = f'<rect x="{sx:.8f}" y="{sy:.8f}" width="{w:.8f}" height="{h:.8f}" rx="{radius:.8f}" {rule_fill}/>'
-    return f'<g transform="translate({x} {y}) scale({scale})">{strips}{baseline}</g>'
+    return f'<g transform="translate({x:g} {y:g}) scale({scale:g})">{parcels}</g>'
 
 
 def svg(width: float, height: float, content: str, ink: str, themed: bool = False) -> str:
-    """透過背景の SVG に同じ色相の塗りとアクセシブルな名前を付ける。"""
+    """透過背景の SVG に塗りとアクセシブルな名前を付ける。themed は OS の明暗に追従する。"""
     theme = (
-        f'<style>svg {{ color: {INK}; --logo-rule-ink: {rule_color(INK)}; }} '
-        f'@media (prefers-color-scheme: dark) {{ svg {{ color: {INK_DARK}; --logo-rule-ink: {rule_color(INK_DARK, True)}; }} }}</style>'
+        f'<style>svg {{ color: {INK}; --logo-accent: {ACCENT}; }} '
+        f'@media (prefers-color-scheme: dark) {{ svg {{ color: {INK_DARK}; --logo-accent: {ACCENT_DARK}; }} }}</style>'
         if themed else ""
     )
     fill = 'fill="currentColor"' if themed else f'fill="{ink}"'
@@ -102,17 +90,28 @@ def svg(width: float, height: float, content: str, ink: str, themed: bool = Fals
     )
 
 
+LOGO_WIDTH = TEXT_X + text_width(TEXT_SIZE) + 2
 PUBLIC.mkdir(parents=True, exist_ok=True)
-for suffix, ink in (("", INK), ("-dark", INK_DARK)):
-    (PUBLIC / f"mark{suffix}.svg").write_text(svg(32, 32, mark(ink=ink, dark=bool(suffix)), ink))
+for suffix, ink, accent in (("", INK, ACCENT), ("-dark", INK_DARK, ACCENT_DARK)):
+    (PUBLIC / f"mark{suffix}.svg").write_text(svg(32, 32, mark(accent=accent), ink))
     (PUBLIC / f"wordmark{suffix}.svg").write_text(
         svg(text_width(TEXT_SIZE) + 4, H, wordmark(TEXT_SIZE, 2, TEXT_CENTER_Y), ink)
     )
-    tx = TEXT_X
     (PUBLIC / f"logo{suffix}.svg").write_text(
-        svg(tx + text_width(TEXT_SIZE) + 2, H, mark(MARK_SCALE, MARK_X, MARK_Y, ink, bool(suffix)) + wordmark(TEXT_SIZE, tx, TEXT_CENTER_Y), ink)
+        svg(LOGO_WIDTH, H, mark(MARK_SCALE, MARK_X, MARK_Y, accent) + wordmark(TEXT_SIZE, TEXT_X, TEXT_CENTER_Y), ink)
     )
-(PUBLIC / "favicon.svg").write_text(svg(32, 32, mark(themed=True), INK, themed=True))
+FAVICON = svg(32, 32, mark(accent="var(--logo-accent)"), INK, themed=True)
+(PUBLIC / "favicon.svg").write_text(FAVICON)
+(ROOT / "apps/api/src/favicon.svg").write_text(FAVICON)
+
+# 画面に inline で埋める写し。文字と区画は使う側の color、朱は画面の --shu に従う。
+LOGO_G = f'<g fill="currentColor">{mark(MARK_SCALE, MARK_X, MARK_Y, f"var(--shu, {ACCENT})")}{wordmark(TEXT_SIZE, TEXT_X, TEXT_CENTER_Y)}</g>'
+(HERE.parent / "logo.ts").write_text(
+    "// build:brand が生成する（手で直さない）。正本は brand/config.json。Worker は assets を持たないので画面へ inline にする\n"
+    f"export const LOGO_WIDTH = {LOGO_WIDTH:.4f}\n"
+    f"export const LOGO_G = `{LOGO_G}`\n"
+    f"export const FAVICON_SVG = `{FAVICON}`\n"
+)
 
 for target in (ROOT / "apps/docs/public",):
     for name in ("mark.svg", "mark-dark.svg", "wordmark.svg", "wordmark-dark.svg", "logo.svg", "logo-dark.svg", "favicon.svg"):
@@ -173,5 +172,4 @@ try:
     ], check=True)
 finally:
     (HERE / ".og-render.svg").unlink(missing_ok=True)
-subprocess.run([sys.executable, str(HERE / "build-editor.py")], check=True)
-print("mark / wordmark / logo / favicon を各 public に同期、og.png を生成")
+print("mark / wordmark / logo / favicon・logo.ts を同期、og.png を生成")

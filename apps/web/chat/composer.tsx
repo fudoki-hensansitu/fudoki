@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { ArrowRightIcon, SquareIcon } from 'lucide-react'
+import { ArrowRightIcon, StopIcon } from '@phosphor-icons/react'
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupText, InputGroupTextarea } from '@/components/ui/input-group'
 import { Spinner } from '@/components/ui/spinner'
 import { cn } from '@/lib/utils'
@@ -87,7 +87,7 @@ export function Composer({
             {over ? <InputGroupText className="tabular-nums">{`${text.length} / ${MAX_TEXT}`}</InputGroupText> : null}
             {busy && onStop ? (
               <InputGroupButton type="button" variant="secondary" size="icon-sm" onClick={onStop} aria-label="止める" className="size-10 rounded-full">
-                <SquareIcon />
+                <StopIcon />
               </InputGroupButton>
             ) : (
               <InputGroupButton

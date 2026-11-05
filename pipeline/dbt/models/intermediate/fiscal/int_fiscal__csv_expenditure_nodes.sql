@@ -11,7 +11,7 @@ with base as (
 ), validated as (
     select *, case when len(list_filter(
             [account_raw, kan_raw, kou_raw, moku_raw, jika_raw, setsu_raw, saisai_raw],
-            c -> not regexp_full_match(coalesce(c, ''), '^[0-9]+.*$'))) > 0
+            lambda c: not regexp_full_match(coalesce(c, ''), '^[0-9]+.*$'))) > 0
         then error('CSV hierarchy cell without numeric prefix: ' || source_table_key)
         when amount is null
         then error('Unparseable CSV amount: ' || source_table_key || '/' || amount_text) end as _checked

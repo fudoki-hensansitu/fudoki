@@ -282,6 +282,8 @@ def _split_code(line_text: str) -> tuple[str | None, str]:
     """A leading item number and the name. Numbers start from 1, so a leading 0 is a
     bullet drawn as a digit; bullet marks (〇) mark a level and are not part of the name."""
     found = CODE.match(line_text)
+    if found and line_text[found.end():found.end() + 1] in ('～', '〜', '~'):  # `3～4か月児…` is a range in a name
+        return None, line_text
     if not found or int(unicodedata.normalize('NFKC', found.group(1))) == 0:
         if found:
             line_text = line_text[found.end():].strip()
@@ -521,6 +523,12 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
     return entries
 
 
+def same_amount_cell(logical: Logical, previous: Item, item: Item) -> bool:
+    """Whether no rule of an amount column separates a name's line from the wrapped line below it."""
+    return all(_cell(band, (previous.y0 + previous.y1) / 2) == _cell(band, (item.y0 + item.y1) / 2)
+               for band in logical.bands if band.kind == 'amount')
+
+
 def stacked_under(logical: Logical, previous: Item, item: Item) -> bool:
     """Whether the amounts printed on a name's wrapped line are the next rows of the amount cell the line above opens.
 
@@ -643,6 +651,11 @@ def items(group: Group, header: str, margins: set[int] | None = None,
                     entries[index] = (label, money, digits[:cut], raw[cut:])
                     code = digits[:cut]
                     break
+        # Where the number before it is on another page or in another cell, the settings say where the number ends.
+        for start, number in (settings.get('glued_numbers') or {}).items():
+            if raw.startswith(start):
+                entries[index] = (label, money, number, raw[len(number):])
+                code = number
         if label and code is not None and code.isdigit():
             last_at[slot] = int(code)
     result: list[Item] = []
@@ -694,6 +707,16 @@ def items(group: Group, header: str, margins: set[int] | None = None,
     single = {i: tuple(ix) for ix in cells.values()
               if sum(entries[i][2] is not None for i in ix) == 1 and len(ix) > 1
               and sum(bool(entries[i][1]) for i in ix) <= 1 and wraps(0, ix) for i in ix}
+    repeated_headings: set[int] = set()
+    if settings.get('heading_repeated_over_code'):
+        # A page opens with the last line of the heading above (`医療費` over `02市単独事業`, 132276): it is no part of the number's name.
+        for i, members in list(single.items()):
+            number = next(m for m in members if entries[m][2] is not None)
+            if i < number:
+                del single[i]
+                repeated_headings.add(i)
+            else:
+                single[i] = tuple(m for m in members if m >= number)
     if settings.get('name_column'):
         # A name wrapped above and below a line printing only its number, set tighter than the rows: a line
         # without a number whose middle is within a line height of a number's line is that number's name,
@@ -702,7 +725,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
         numbered = [i for i, entry in enumerate(entries) if entry[2] is not None and entry[0]]
         attached: dict[int, list[int]] = defaultdict(list)
         for i, (label, money, code, _) in enumerate(entries):
-            if code is not None or not label or money or i in single or not numbered:
+            if code is not None or not label or money or i in single or i in repeated_headings or not numbered:
                 continue
             nearest = min(numbered, key=lambda n: abs(middle(n) - middle(i)))
             if abs(middle(nearest) - middle(i)) <= float(settings.get('name_line_reach', 1)) * (label[0].y1 - label[0].y0):
@@ -787,7 +810,10 @@ def items(group: Group, header: str, margins: set[int] | None = None,
         # A name goes on a second line because it did not fit: its first line runs up to where the amount
         # is printed, or to the right edge of the name column when the amount has a column of its own. A short line followed by an indented line with an amount is two items
         # (`02 管理用備品` / `ICカードリーダーライター 5,280`, 132276).
-        reaches = (previous is not None and bool(money) and bool(previous.lines)
+        # `(翌年度へ繰越明許費 7,326,000)` closes the name above it: the line under it is the next item (132021).
+        closed = (bool(settings.get('bracket_line_closes_name')) and previous is not None and bool(previous.lines)
+                  and normalize(text(previous.lines[-1]))[-1:] in (')', '）'))
+        reaches = (previous is not None and bool(money) and bool(previous.lines) and not closed
                    and (limit is None or max(g.x1 for g in previous.lines[-1]) >= limit - 4 * (previous.lines[-1][0].y1 - previous.lines[-1][0].y0)))
         # A line led by a mark (`○あそべえ事業 222,656,920` under its heading, 132039) is an item of its own.
         marked = bool(label) and re.match(r'[〇○●◎□■◇◆]', label[0].text) is not None
@@ -799,7 +825,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
                    and not (headings and label[0].x0 > _name_start(previous) + HEADING_INDENT)
                    and (not money or bracketed
                         or (reaches and not ENDED_TRANSFER.search(previous.name) and (abs(label[0].x0 - previous.indent) <= 3
-                                         or abs(label[0].x0 - _name_start(previous)) <= 3)))
+                                         or abs(label[0].x0 - _name_start(previous)) <= 3 + float(settings.get('name_start_slack', 0)))))
                    and _cell(band_of(label[0]), label[0].y0) == _cell(band_of(previous.lines[-1][0]), previous.lines[-1][0].y0))
         # (Not only the rule-bounded cell: the name and the amount of a 備考 can have grids of their own.)
         wrapped = wrapped or (previous is not None and code is None and bool(label) and bool(money) and previous.code is not None
@@ -850,6 +876,19 @@ def items(group: Group, header: str, margins: set[int] | None = None,
             item.amounts.append((header, run))
         _measure(item, label, code, ocr)
         result.append(item)
+    # OCR boxed a name a few points left of the print (132021): the line's start, read off the page, is declared.
+    for repair in settings.get('line_starts', ()):
+        for item in result:
+            first = item.lines[0][0] if item.lines and item.lines[0] else None
+            if first is not None and first.page == repair['page'] and abs(first.y0 - repair['y']) < 3:
+                first.x0 += float(repair['shift'])
+                item.indent += float(repair['shift'])
+    if settings.get('opening_bracket_ink'):
+        # OCR boxes the ink: a full-width opening bracket (`（一社）…`, `「さくら」…`) is drawn in the right half of its character.
+        for item in result:
+            first = item.lines[0][0] if item.lines and item.lines[0] else None
+            if item.code is None and first is not None and first.text[:1] in '(（「『【〔':
+                item.indent -= (first.y1 - first.y0) / 2
     return result
 
 
@@ -1354,7 +1393,8 @@ def shape_of(item: Item) -> str | None:
             if name == 'number' and item.code is None:
                 return None
             return name
-    return None
+    # A number printed between the two lines of a wrapped name (`負担金補助` / `18` / `及び交付金`, 132021).
+    return 'number' if item.code is not None and item.code.isdigit() else None
 
 
 INDENT_SPAN = 6.0  # one indentation step is a character (about 10pt); a level is narrower than this
@@ -1812,13 +1852,22 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 if (previous is not None and previous.code is not None and previous.name
                         and previous.role == item.role == 'node' and item.code is None and item.name
                         and not item.amounts
-                        and (id(item) not in column_amount_items or stacked_under(logical, previous, item))
+                        # (a name wrapped so that its amount is printed on the last line, none on the code's line: `1 居宅サービス` / `事業費 3,596,885`)
+                        # (no rule between them in the amount columns: a subject of its own has its amount in a cell of its own)
+                        and (id(item) not in column_amount_items
+                             or (id(previous) not in column_amount_items and same_amount_cell(logical, previous, item))
+                             or stacked_under(logical, previous, item))
                         and not TOTAL.search(item.name) and item.page == previous.page
-                        and (abs(item.indent - previous.indent) <= 3 if group.mode == 'indent' else
+                        # (A line starting between the code's end and the name's start wraps that name: a name split from
+                        # its code by the width of its characters starts too far right, `3その他公共施` / `設・公用施設`, 133078.)
+                        and (abs(item.indent - previous.indent) <= 3 or previous.lines[0][0].x1 <= item.indent <= previous.indent
+                             if group.mode == 'indent' else
                              group.bands[item.level].header[-1] == group.bands[previous.level].header[-1])
                         and 0 <= item.y0 - previous.y1 <= max(g.y1 - g.y0 for g in item.glyphs)):
                     previous.name += item.name
                     previous.lines += item.lines
+                    if id(item) in column_amount_items:
+                        column_amount_items.add(id(previous))
                     continue
                 kept.append(item)
             if group.mode == "indent":

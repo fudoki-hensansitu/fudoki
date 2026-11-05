@@ -1,7 +1,7 @@
 // お金の流れ。初期は全款の款→項。横にスクロールすると款が一つずつ（snap）開き、縦にスクロールするとその款の項が一つずつ開く。
 // 項まで開くと、その項の目と節の上位を出す（節の金額は目ごとに大きい順、足し上げは作らない）。
 import * as React from 'react'
-import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
+import { CaretLeftIcon, CaretRightIcon } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { Overview } from './sankey'
@@ -374,8 +374,8 @@ export function Flow({ data, total: year, tabs, summary }: { data: PageData; tot
           {tabs ?? <span />}
           <div className="flex items-center gap-1.5">
             <span className="text-xs tabular-nums text-muted-foreground">{kan ? `款 ${index} / ${total}` : ''}</span>
-            <Button variant="outline" size="icon-sm" aria-label="前の款" disabled={index === 0} onClick={() => go(-1)} className="rounded-full [@media(hover:none)]:hidden"><ChevronLeftIcon /></Button>
-            <Button variant="outline" size="icon-sm" aria-label="次の款" disabled={index >= total} onClick={() => go(1)} className="rounded-full [@media(hover:none)]:hidden"><ChevronRightIcon /></Button>
+            <Button variant="outline" size="icon-sm" aria-label="前の款" disabled={index === 0} onClick={() => go(-1)} className="rounded-full [@media(hover:none)]:hidden"><CaretLeftIcon /></Button>
+            <Button variant="outline" size="icon-sm" aria-label="次の款" disabled={index >= total} onClick={() => go(1)} className="rounded-full [@media(hover:none)]:hidden"><CaretRightIcon /></Button>
           </div>
         </div>
         <div className="mt-3 flex min-h-9 flex-wrap items-baseline gap-x-3" aria-live="polite">

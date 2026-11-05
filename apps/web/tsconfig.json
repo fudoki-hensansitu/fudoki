@@ -5,6 +5,7 @@
     "paths": { "@/*": ["./chat/*"] }
   },
   "include": [
+    "nav",
     "jurisdiction",
     "worker.ts",
     "server",
