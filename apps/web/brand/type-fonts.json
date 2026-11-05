@@ -22,5 +22,13 @@
     "url": "https://raw.githubusercontent.com/google/fonts/9710da1eacb3be272583c3224dcb70f9da6eadbb/ofl/zenkakugothicnew/ZenKakuGothicNew-Bold.ttf",
     "source": "https://github.com/google/fonts/tree/9710da1eacb3be272583c3224dcb70f9da6eadbb/ofl/zenkakugothicnew",
     "sha256": "0081cedabc4921982fcd061f845a005664ac7fb642af2dd34b4007bc63ccd235"
+  },
+  {
+    "id": "zen-medium",
+    "name": "ZenKakuGothicNew-Medium.ttf",
+    "commit": "9710da1eacb3be272583c3224dcb70f9da6eadbb",
+    "url": "https://raw.githubusercontent.com/google/fonts/9710da1eacb3be272583c3224dcb70f9da6eadbb/ofl/zenkakugothicnew/ZenKakuGothicNew-Medium.ttf",
+    "source": "https://github.com/google/fonts/tree/9710da1eacb3be272583c3224dcb70f9da6eadbb/ofl/zenkakugothicnew",
+    "sha256": "651a3f7280b7f36262601ee76d8388a8dc4372dcc67aff025a608939a562b525"
   }
 ]
