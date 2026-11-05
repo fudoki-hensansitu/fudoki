@@ -79,5 +79,7 @@ img[src="/icons/house.svg"] { mask: url(/icons/house.svg) center / contain no-re
 img[src="/icons/lifebuoy.svg"] { mask: url(/icons/lifebuoy.svg) center / contain no-repeat; }
 img[src="/icons/open-ai-logo.svg"] { mask: url(/icons/open-ai-logo.svg) center / contain no-repeat; }
 img[src="/icons/plug.svg"] { mask: url(/icons/plug.svg) center / contain no-repeat; }
+img[src="/icons/scales.svg"] { mask: url(/icons/scales.svg) center / contain no-repeat; }
+img[src="/icons/shield-check.svg"] { mask: url(/icons/shield-check.svg) center / contain no-repeat; }
 img[src="/icons/table.svg"] { mask: url(/icons/table.svg) center / contain no-repeat; }
 img[src="/icons/terminal-window.svg"] { mask: url(/icons/terminal-window.svg) center / contain no-repeat; }
