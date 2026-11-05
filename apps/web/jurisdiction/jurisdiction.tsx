@@ -235,7 +235,7 @@ function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
       <Flow data={data} />
       <Projects data={data} />
       <Population code={data.code} />
-      <div className="fixed inset-x-0 bottom-0 z-20 max-md:bottom-(--bottom-nav) max-md:transition-[bottom] max-md:duration-200 motion-reduce:transition-none md:left-(--nav-w) bg-gradient-to-t from-background from-60% to-transparent px-4 pb-[max(14px,env(safe-area-inset-bottom))] pt-3">
+      <div className="fixed inset-x-0 bottom-0 z-20 max-md:bottom-(--bottom-nav) max-md:motion-safe:transition-[bottom] max-md:duration-200 md:left-(--nav-w) bg-gradient-to-t from-background from-60% to-transparent px-4 pb-[max(14px,env(safe-area-inset-bottom))] pt-3">
         <div className="mx-auto max-w-[720px]">
           <StartForm
             sitekey={sitekey}
