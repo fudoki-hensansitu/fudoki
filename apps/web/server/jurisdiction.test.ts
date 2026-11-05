@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { changePct, formatYen, kanChanges, reiwa, type YearTotal } from '../jurisdiction/types'
 import web from '../worker'
+import { renderIndex } from '../jurisdiction/html'
 import { searchInput } from '../../api/src/search'
 import type { Env } from './env'
 import prefectures from '../../../packages/jurisdictions/prefectures.json'
@@ -136,6 +137,10 @@ describe('自治体の個別ページ', () => {
     const html = await (await get('/jurisdictions', { ...env, API: api })).text()
     const data = JSON.parse(html.match(/<script type="application\/json" id="j-index-data">(.*?)<\/script>/s)![1]!)
     expect(data.map((e: { yen: number; amountMissing?: true }) => [e.yen, e.amountMissing])).toEqual([[1000, true]])
+  })
+
+  test('収録した自治体が無くても一覧は描け、案内を出す', () => {
+    expect(renderIndex([], true)).toContain('まだ決算を収録した自治体がありません。')
   })
 
   test('URL のローマ字は自治体マスタの全自治体にあり、同じ都道府県の中で重ならない', () => {

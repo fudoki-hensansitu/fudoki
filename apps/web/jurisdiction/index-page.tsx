@@ -32,7 +32,7 @@ function YearPills({ years, all }: { years: number[]; all: number[] }) {
           title={reiwa(y)}
           className={`inline-flex h-5 items-center rounded px-1.5 text-[11px] tabular-nums ${years.includes(y) ? 'bg-accent text-accent-foreground' : 'border border-dashed text-muted-foreground/60'}`}
         >
-          R{y - 2018}
+          {y >= 2019 ? `R${y - 2018}` : y}
         </span>
       ))}
     </span>
@@ -84,7 +84,7 @@ function TokyoMap({ entries, selected, onSelect }: { entries: IndexEntry[]; sele
   const touch = React.useRef(false)
   const sel = TOKYO_MAP.shapes.find((s) => s.code === selected)
   return (
-    <svg viewBox={`0 0 ${TOKYO_MAP.width} ${TOKYO_MAP.height}`} className="block h-auto w-full" role="img" aria-label="東京都の市区町村の地図。収録している自治体を歳出の総額の濃さで塗っている">
+    <svg viewBox={`0 0 ${TOKYO_MAP.width} ${TOKYO_MAP.height}`} className="block h-auto w-full" role="group" aria-label="東京都の市区町村の地図。収録している自治体を歳出の総額の濃さで塗っている">
       {TOKYO_MAP.shapes.map((s) => {
         const e = byCode.get(s.code)
         if (!e) return <path key={s.code} d={s.d} fill="var(--muted)" stroke="var(--background)" strokeWidth={1} strokeLinejoin="round" />
@@ -117,7 +117,8 @@ function TokyoMap({ entries, selected, onSelect }: { entries: IndexEntry[]; sele
 export function IndexPage({ entries }: { entries: IndexEntry[] }) {
   const byYen = React.useMemo(() => [...entries].sort((a, b) => b.yen - a.yen), [entries])
   const onMap = entries.filter((e) => MAP_CODES.has(e.code))
-  const offMap = entries.filter((e) => !MAP_CODES.has(e.code))
+  // 都道府県自体は市区町村と面が重なるので、地図にもチップにも出さず表の行だけにする
+  const offMap = entries.filter((e) => !MAP_CODES.has(e.code) && e.kind !== '都道府県')
   const [selected, setSelected] = React.useState(() => (onMap.length ? onMap : entries).reduce<IndexEntry | null>((a, b) => (!a || b.yen > a.yen ? b : a), null)?.code ?? '')
   const [query, setQuery] = React.useState('')
   const [kind, setKind] = React.useState<JurisdictionKind | null>(null)
@@ -126,7 +127,7 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
   const maxYen = byYen[0]?.yen ?? 1
   const q = query.trim().toLowerCase()
   const rows = (sort === 'yen' ? byYen : [...entries].sort((a, b) => a.code.localeCompare(b.code))).filter(
-    (e) => (!kind || e.kind === kind) && (!q || e.name.includes(q) || e.prefecture.includes(q) || e.path.includes(q)),
+    (e) => (!kind || e.kind === kind) && (!q || e.name.includes(q) || e.prefecture.includes(q) || (e.path.split('/').pop() ?? '').includes(q)),
   )
   const current = entries.find((e) => e.code === selected)
   const prefectures = [...new Set(entries.map((e) => e.prefecture))]
@@ -135,7 +136,7 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
     <div className="mx-auto max-w-[1120px] px-4 pb-24 pt-8 sm:px-8 sm:pt-12">
       <h1 className="text-[clamp(2.2rem,1.6rem+2.4vw,3.4rem)] font-normal leading-tight">自治体を探す</h1>
       <p className="mt-3 max-w-[640px] text-muted-foreground">
-        {prefectures.join('・')}の {entries.length} の自治体の決算を収録しています。地図か表から選ぶと、その街の歳出の内訳へ進めます。
+        {entries.length ? `${prefectures.join('・')}の ${entries.length} の自治体の決算を収録しています。地図か表から選ぶと、その街の歳出の内訳へ進めます。` : 'まだ決算を収録した自治体がありません。'}
       </p>
 
       <section className="mt-8 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_320px]" aria-label="地図から選ぶ">
@@ -178,6 +179,7 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
             type="search"
             value={query}
             onChange={(ev) => setQuery(ev.target.value)}
+            aria-label="自治体名で探す"
             placeholder="自治体名で探す（例：品川、shinagawa）"
             className="h-full min-w-0 flex-1 bg-transparent text-[15px] outline-none placeholder:text-muted-foreground"
           />
@@ -237,10 +239,10 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
               </li>
             ))}
           </ul>
-          {rows.length === 0 ? <p className="px-2 py-8 text-center text-muted-foreground">「{query}」に当たる自治体は、まだ収録していません。</p> : null}
+          {rows.length === 0 && entries.length ? <p className="px-2 py-8 text-center text-muted-foreground">{q ? `「${query}」に当たる自治体は、まだ収録していません。` : '条件に当たる自治体はありません。'}</p> : null}
         </div>
         <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-          R6 は令和6年度（2024年度）。点線は未収録の年度です。総額は、自治体ごとに最新の決算の一般会計の歳出（款の和）で、年度がそろっていない場合があります。人口の多い街ほど大きくなるので、住民1人あたりの比較は人口データを収録してから加えます。
+          R6 は令和6年度（2024年度）。点線は未収録の年度です。総額は、自治体ごとに最新の決算の一般会計の歳出（款の和）で、年度がそろっていない場合があります。* は金額の印字が無い款を除いた和です。人口の多い街ほど大きくなるので、住民1人あたりの比較は人口データを収録してから加えます。
         </p>
       </section>
     </div>

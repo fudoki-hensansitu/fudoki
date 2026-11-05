@@ -31,7 +31,7 @@ async function memo<T>(key: string, fn: () => Promise<T>): Promise<T> {
 }
 
 export const catalog = (env: Env) => memo<CatalogEntry[]>('catalog', () => loadCatalog(env))
-// 収録の一覧（catalog）と同じ TTL で置くので、取り込みで自治体が増えても1時間以内に一覧へ出る
+// catalog とは別の key で同じ TTL（1時間）を持つので、取り込みで自治体が増えてから一覧へ出るまで最大で約2時間かかる
 const index = (env: Env) => memo<IndexEntry[]>('index', async () => loadIndex(env, await catalog(env), jurisdictionPath))
 const page = (env: Env, e: CatalogEntry) => memo<PageData | null>(`page-${e.code}-${e.settlementYears.at(-1)}`, () => loadPage(env, e))
 
