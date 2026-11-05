@@ -12,10 +12,10 @@ import { JAPAN_TILES } from './japan-tiles'
 import { PREFECTURE_MAPS } from './map.generated'
 import { formatYen, reiwa, type IndexEntry, type JurisdictionKind } from './types'
 
-type Sort = 'yen' | 'code'
+type Sort = 'desc' | 'asc'
 const SORTS: { value: Sort; label: string }[] = [
-  { value: 'yen', label: '歳出の総額が大きい順' },
-  { value: 'code', label: '自治体コード順' },
+  { value: 'desc', label: '歳出の総額が大きい順' },
+  { value: 'asc', label: '歳出の総額が小さい順' },
 ]
 const PARTIAL = '金額の印字が無い款を除いた和'
 /** 一部の款の和の印。注記の行を足すと選び直すたびに高さが変わるので、印だけを出し、説明は title と読み上げに置く（2026-11-05 yuito） */
@@ -237,11 +237,11 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
     })
   const [query, setQuery] = React.useState('')
   const [kind, setKind] = React.useState<JurisdictionKind | null>(null)
-  const [sort, setSort] = React.useState<Sort>('yen')
+  const [sort, setSort] = React.useState<Sort>('desc')
   const allYears = [...new Set(entries.flatMap((e) => e.years))].sort()
   const maxYen = byYen[0]?.yen ?? 1
   const q = query.trim().toLowerCase()
-  const rows = (sort === 'yen' ? byYen : [...entries].sort((a, b) => a.code.localeCompare(b.code))).filter(
+  const rows = (sort === 'desc' ? byYen : [...byYen].reverse()).filter(
     (e) => (!kind || e.kind === kind) && (!q || e.name.includes(q) || e.prefecture.includes(q) || (e.path.split('/').pop() ?? '').includes(q)),
   )
   // 選んだ自治体が無いときは、開いている都道府県自体（収録していれば）
@@ -324,7 +324,7 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
               <SelectTrigger aria-label="並び" className="h-8 rounded-full bg-background pl-3.5 text-[13px] text-foreground">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent align="end" alignItemWithTrigger={false} className="w-auto min-w-(--anchor-width)">
                 {SORTS.map((o) => (
                   <SelectItem key={o.value} value={o.value}>
                     {o.label}
