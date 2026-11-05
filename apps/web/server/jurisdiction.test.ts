@@ -6,6 +6,7 @@ import { searchInput } from '../../api/src/search'
 import type { Env } from './env'
 import prefectures from '../../../packages/jurisdictions/prefectures.json'
 import registry from '../../../packages/jurisdictions/jurisdictions.json'
+import { TOPIC_SEGMENTS } from '../jurisdiction/path'
 
 describe('金額と年度の表記', () => {
   test('1億円以上は億円、未満は万円。100億円以上は小数を出さない', () => {
@@ -149,12 +150,13 @@ describe('自治体の個別ページ', () => {
     expect(renderIndex([], true)).toContain('まだ決算を収録した自治体がありません。')
   })
 
-  test('URL のローマ字は自治体マスタの全自治体にあり、同じ都道府県の中で重ならない', () => {
+  test('URL のローマ字は自治体マスタの全自治体にあり、同じ都道府県の中でもテーマの段とも重ならない', () => {
     const seen = new Set<string>()
     for (const [code, j] of Object.entries(registry.jurisdictions as Record<string, { name: string; slug?: string }>)) {
       expect(j.slug, `${code} ${j.name}`).toMatch(/^[a-z]+(-[a-z]+)*$/)
       const key = `${code.slice(0, 2)}/${j.slug}`
       expect(seen.has(key), `${code} ${j.name} の slug が重なる`).toBe(false)
+      expect(TOPIC_SEGMENTS.has(j.slug!), `${code} ${j.name} の slug がテーマの段と重なる`).toBe(false)
       seen.add(key)
     }
     expect(Object.keys(prefectures.slugs)).toHaveLength(47)
