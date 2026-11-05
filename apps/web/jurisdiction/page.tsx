@@ -459,7 +459,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
             <div className="flex flex-wrap gap-x-6 gap-y-1.5 text-sm text-muted-foreground">
               <span className="inline-flex items-center gap-1.5">
                 <MapPinIcon className="size-4" aria-hidden="true" />
-                <a href={`${INDEX_PATH}#${encodeURIComponent(data.prefecture)}`} className="text-primary no-underline">{data.prefecture}</a>
+                <a href={INDEX_PATH} className="text-primary no-underline">{data.prefecture}</a>
               </span>
               {profile?.population ? (
                 <span className="inline-flex items-center gap-1.5" title="人口">
