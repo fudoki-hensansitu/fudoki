@@ -66,6 +66,7 @@ function fixtureApi({ axis = '科目', code = '131148', name = '中野区', extr
       return Response.json({ jurisdictions: [
         { jurisdiction_code: code, name, prefecture_name: '東京都', coverage: [2024, 2025].map((fiscal_year) => ({ fiscal_year, document_kind: 'settlement', accounts: [{ account_name: '一般会計' }] })) },
         { jurisdiction_code: '131016', name: '千代田区', prefecture_name: '東京都', coverage: [] },
+        { jurisdiction_code: '130001', name: '東京都', prefecture_name: '東京都', coverage: [] },
       ] })
     if (url.pathname === '/v1/expenditure/nodes:search') {
       const parsed = searchInput.safeParse(await req.json())
@@ -114,6 +115,11 @@ describe('自治体の個別ページ', () => {
     expect(empty.status).toBe(200)
     expect(await empty.text()).toContain('<meta name="robots" content="noindex">')
     expect((await get('/tokyo/sonzaishinai')).status).toBe(404)
+    // 都道府県自体は /tokyo（/tokyo/tokyo にしない）
+    const tokyo = await get('/tokyo')
+    expect(tokyo.status).toBe(200)
+    expect(await tokyo.text()).toContain('<link rel="canonical" href="https://fudoki.dev/tokyo">')
+    expect((await get('/tokyo/tokyo')).status).toBe(404)
     // 都道府県の slug でなければ他の経路へ渡す（/s/:id などを奪わない）
     expect((await get('/jurisdictions')).status).toBe(200)
     expect((await get('/s/not-a-session')).status).not.toBe(200)

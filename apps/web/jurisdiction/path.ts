@@ -8,5 +8,9 @@ const SLUGS = new Map(Object.entries(registry.jurisdictions as Record<string, { 
 
 export const PREFECTURE_SLUGS = new Set(Object.values(PREFECTURES))
 
-/** 全国地方公共団体コードから URL の path を作る。マスタに slug が無い自治体はコードで代える */
-export const jurisdictionPath = (code: string) => `/${PREFECTURES[code.slice(0, 2)]}/${SLUGS.get(code) ?? code}`
+/** 全国地方公共団体コードから URL の path を作る。マスタに slug が無い自治体はコードで代える。
+ * 都道府県自体（コードの3〜5桁目が 000。東京都は 130001）は /tokyo にする（/tokyo/tokyo にしない） */
+export const jurisdictionPath = (code: string) => {
+  const prefecture = `/${PREFECTURES[code.slice(0, 2)]}`
+  return code.slice(2, 5) === '000' ? prefecture : `${prefecture}/${SLUGS.get(code) ?? code}`
+}

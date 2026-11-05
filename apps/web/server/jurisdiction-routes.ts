@@ -1,6 +1,6 @@
 // 自治体の個別ページ（/tokyo/nakano）・一覧（/jurisdictions）と、画面が款・目の内訳を引く /api/jurisdictions/*。データは apps/api の歳出の検索から組み、
 // 変わるのは取り込みのときだけなので、Worker の cache に1時間置く。内訳の API は誰でも読める GET で、IP ごとの流量と id の形の検査で守る
-import { Hono } from 'hono'
+import { Hono, type Context } from 'hono'
 import { renderEmpty, renderIndex, renderPage, sitemapXml } from '../jurisdiction/html'
 import { navOpen } from '../nav/render'
 import { jurisdictionPath, PREFECTURE_SLUGS } from '../jurisdiction/path'
@@ -48,12 +48,9 @@ jurisdictions.get(INDEX_PATH, async (c) => {
   }
 })
 
-// /<都道府県のローマ字>/<自治体のローマ字>。/s/:id・/api/* など他の経路とは、都道府県の slug かどうかで見分ける（違えば API を引かずに次へ渡す）
-jurisdictions.get('/:prefecture/:name', async (c, next) => {
-  const { prefecture, name } = c.req.param()
-  if (!PREFECTURE_SLUGS.has(prefecture)) return next()
+// /<都道府県のローマ字>/<自治体のローマ字>、都道府県自体は /<都道府県のローマ字>。/s/:id・/api/* など他の経路とは、都道府県の slug かどうかで見分ける（違えば API を引かずに次へ渡す）
+async function jurisdictionPage(c: Context<{ Bindings: Env }>, path: string) {
   try {
-    const path = `/${prefecture}/${name}`
     const entry = (await catalog(c.env)).find((e) => jurisdictionPath(e.code) === path)
     if (!entry) return notFound()
     const data = entry.settlementYears.length > 0 ? await page(c.env, entry) : null
@@ -62,6 +59,18 @@ jurisdictions.get('/:prefecture/:name', async (c, next) => {
   } catch {
     return unavailable()
   }
+}
+
+jurisdictions.get('/:prefecture', async (c, next) => {
+  const { prefecture } = c.req.param()
+  if (!PREFECTURE_SLUGS.has(prefecture)) return next()
+  return jurisdictionPage(c, `/${prefecture}`)
+})
+
+jurisdictions.get('/:prefecture/:name', async (c, next) => {
+  const { prefecture, name } = c.req.param()
+  if (!PREFECTURE_SLUGS.has(prefecture)) return next()
+  return jurisdictionPage(c, `/${prefecture}/${name}`)
 })
 
 jurisdictions.get('/sitemap.xml', async (c) => {
