@@ -51,7 +51,7 @@ function MokuGroup({ moku }: { moku: Moku }) {
           {rest.length > 0 ? (
             <li data-setsu-rest className="text-[11.5px] text-muted-foreground">
               <Tooltip>
-                <TooltipTrigger className="cursor-help underline decoration-dotted underline-offset-2 hover:text-foreground">ほか{rest.length}節</TooltipTrigger>
+                <TooltipTrigger className="underline decoration-dotted underline-offset-2 hover:text-foreground">ほか{rest.length}節</TooltipTrigger>
                 <TooltipContent side="right" className="block max-w-72 px-3 py-2">
                   <ul className="grid gap-y-0.5">
                     {rest.map((s) => (
