@@ -166,7 +166,7 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
             </div>
           ) : null}
         </div>
-        {current ? <SelectedCard e={current} /> : <p className="rounded-[20px] border p-6 text-muted-foreground">収録している自治体の決算を読み込めませんでした。</p>}
+        {current ? <SelectedCard e={current} /> : <p className="rounded-[20px] border p-6 text-muted-foreground">まだ決算を収録した自治体がありません。</p>}
       </section>
 
       <section className="mt-14" aria-label="表で比べる">
