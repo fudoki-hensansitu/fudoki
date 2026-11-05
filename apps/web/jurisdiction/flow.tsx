@@ -73,6 +73,29 @@ function MokuGroup({ moku }: { moku: Moku }) {
   )
 }
 
+/** 縦にスクロールする面で、上や下にまだ続きがあるか。続きがある側を fade にして、前後の要素が少し見えるようにする */
+function useEdgeFade(ref: React.RefObject<HTMLElement | null>, deps: React.DependencyList): React.CSSProperties {
+  const [edge, setEdge] = React.useState({ top: false, bottom: false })
+  React.useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const update = () => {
+      const top = el.scrollTop > 2
+      const bottom = el.scrollTop + el.clientHeight < el.scrollHeight - 2
+      setEdge((e) => (e.top === top && e.bottom === bottom ? e : { top, bottom }))
+    }
+    update()
+    el.addEventListener('scroll', update, { passive: true })
+    const observer = new ResizeObserver(update)
+    observer.observe(el)
+    for (const child of el.children) observer.observe(child)
+    return () => { el.removeEventListener('scroll', update); observer.disconnect() }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps)
+  const mask = `linear-gradient(to bottom, ${edge.top ? 'transparent 0, #000 48px' : '#000 0'}, ${edge.bottom ? '#000 calc(100% - 72px), transparent 100%' : '#000 100%'})`
+  return { maskImage: mask, WebkitMaskImage: mask }
+}
+
 interface Ribbon { d: string; x: number; y: number; h: number; rest?: boolean }
 /** x0 の y0 から太さ h0 で出て、x1 の y1 に太さ h1 で着く帯 */
 const band = (x0: number, y0: number, h0: number, x1: number, y1: number, h1: number) => {
@@ -149,7 +172,7 @@ function KouSection({ kou, active, loading, onBox }: { kou: Kou; active: boolean
     return () => { observer.disconnect(); window.clearTimeout(settle) }
   }, [kou.moku.length, active])
   return (
-    <section ref={(el) => { box.current = el; onBox(el) }} data-kou={kou.id} data-active={active} className="group/kou grid min-h-full snap-start snap-always grid-cols-1 content-start gap-3 px-5 pb-5 pt-3 sm:grid-cols-[150px_10px_64px_minmax(0,1fr)] sm:gap-0 sm:pr-8">
+    <section ref={(el) => { box.current = el; onBox(el) }} data-kou={kou.id} data-active={active} className="group/kou grid min-h-[calc(100%-7.5rem)] snap-start snap-always grid-cols-1 content-start gap-3 px-5 pb-5 pt-3 sm:grid-cols-[150px_10px_64px_minmax(0,1fr)] sm:gap-0 sm:pr-8">
       <div className="min-w-0 border-b pb-2 sm:border-0 sm:pb-0 sm:pr-2">
         <div className="text-[11px] text-muted-foreground">項</div>
         <div className="font-sans text-lg leading-snug">{kou.name}</div>
@@ -194,6 +217,7 @@ function KanPanel({ drill, loading }: { drill: Drill; loading: boolean }) {
     for (const el of sections.current) if (el) observer.observe(el)
     return () => observer.disconnect()
   }, [drill.kou.length])
+  const fade = useEdgeFade(body, [drill.kou.length])
   return (
     <div className="relative h-full w-full shrink-0 snap-start snap-always" data-panel>
       {drill.kou.length > 1 ? (
@@ -201,7 +225,7 @@ function KanPanel({ drill, loading }: { drill: Drill; loading: boolean }) {
           {drill.kou.map((k, i) => <i key={k.id} className={`block w-[5px] rounded-full transition-all ${i === current ? 'h-4 bg-primary' : 'h-[5px] bg-border'}`} />)}
         </div>
       ) : null}
-      <div ref={body} className="h-full snap-y snap-mandatory overflow-y-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" tabIndex={-1}>
+      <div ref={body} style={fade} className="h-full snap-y snap-mandatory scroll-pt-10 overflow-y-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" tabIndex={-1}>
         {drill.kou.map((k, i) => (
           <KouSection key={k.id} kou={k} active={i === current} loading={loading} onBox={(el) => { sections.current[i] = el }} />
         ))}
@@ -216,12 +240,14 @@ export function Flow({ data, total: year, tabs, summary }: { data: PageData; tot
   const isLatest = year.year === data.years.at(-1)?.year
   const root = React.useRef<HTMLDivElement>(null)
   const track = React.useRef<HTMLDivElement>(null)
+  const overview = React.useRef<HTMLDivElement>(null)
   const [detail, setDetail] = React.useState<Drill[]>()
   const [error, setError] = React.useState(false)
   const [attempt, setAttempt] = React.useState(0)
   const [near, setNear] = React.useState(false)
   const [index, setIndex] = React.useState(0)
   const flows = detail ?? (isLatest ? data.flow : [])
+  const overviewFade = useEdgeFade(overview, [flows.length])
   // 項の内訳（目・節）は、図が近づいたら読み込む。クリックは要らない
   React.useEffect(() => {
     const el = root.current
@@ -308,7 +334,7 @@ export function Flow({ data, total: year, tabs, summary }: { data: PageData; tot
           onKeyDown={onKey}
           className="flex h-[clamp(440px,80svh,700px)] snap-x snap-mandatory overflow-x-auto overflow-y-hidden overscroll-x-contain scroll-smooth rounded-b-[20px] [scrollbar-width:none] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring [&::-webkit-scrollbar]:hidden"
         >
-          <div className="h-full w-full shrink-0 snap-start snap-always overflow-y-auto px-3 pb-3 pt-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:px-5">
+          <div ref={overview} style={overviewFade} className="h-full w-full shrink-0 snap-start snap-always overflow-y-auto px-3 pb-3 pt-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:px-5">
             {flows.length > 0 ? (
               <Overview flows={flows} onSelect={select} height={Math.min(560, typeof window === 'undefined' ? 520 : Math.max(380, window.innerHeight * 0.7))} />
             ) : (
