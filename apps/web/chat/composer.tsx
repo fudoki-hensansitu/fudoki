@@ -1,13 +1,14 @@
 import * as React from 'react'
 import { ArrowRightIcon, SquareIcon } from 'lucide-react'
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput, InputGroupText } from '@/components/ui/input-group'
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupText, InputGroupTextarea } from '@/components/ui/input-group'
 import { Spinner } from '@/components/ui/spinner'
 import { cn } from '@/lib/utils'
 
 /** server/limits.ts の MAX_USER_TEXT と同じ。超えたら送れないことを先に見せる */
 export const MAX_TEXT = 2000
 
-/** 入口と会話の画面で共有する、丸い1行の入力欄。Enter で送り（変換中の Enter は確定に使う）、長い文は枠の中で横に流れる */
+/** 入口と会話の画面で共有する、丸い入力欄。Enter で送り、Shift+Enter で改行する（変換中の Enter は確定に使う。指で触る端末では Enter も改行）。
+ * 高さは field-sizing: content で文に合わせて伸ばし、上限を超えたら枠の中で縦に流す */
 export function Composer({
   onSubmit,
   onStop,
@@ -60,29 +61,29 @@ export function Composer({
         <InputGroup
           data-disabled={disabled || undefined}
           className={cn(
-            'h-14 rounded-full bg-background shadow-[var(--shadow-pill)] has-disabled:bg-background has-disabled:opacity-100 data-disabled:opacity-50 dark:bg-card dark:has-disabled:bg-card',
-            compact ? 'sm:h-14' : 'sm:h-18',
+            'min-h-14 rounded-[28px] bg-background shadow-[var(--shadow-pill)] has-disabled:bg-background has-disabled:opacity-100 data-disabled:opacity-50 dark:bg-card dark:has-disabled:bg-card',
+            compact ? undefined : 'sm:min-h-18 sm:rounded-[36px]',
           )}
         >
-          <InputGroupInput
+          <InputGroupTextarea
+            rows={1}
             aria-label="風土記の AI への質問"
             value={text}
             placeholder={placeholder}
             autoFocus={autoFocus}
             disabled={disabled}
             aria-invalid={over || undefined}
-            enterKeyHint="send"
-            className={cn('h-full pl-5 text-base placeholder:text-muted-foreground/80', compact ? 'sm:pl-6' : 'sm:pl-7 sm:text-xl md:text-xl')}
+            className={cn('max-h-48 min-h-0 py-4 pl-5 text-base leading-6 placeholder:text-muted-foreground/80 md:text-base', compact ? 'sm:pl-6' : 'sm:py-[22px] sm:pl-7 sm:text-xl sm:leading-7 md:text-xl')}
             onFocus={onFocus}
             onChange={(e) => setText(e.target.value)}
             onKeyDown={(e) => {
               // 変換中の Enter は確定に使う。Safari は確定の直後の Enter を keyCode 229 で送る
-              if (e.key !== 'Enter') return
+              if (e.key !== 'Enter' || e.shiftKey || matchMedia('(pointer: coarse)').matches) return
               e.preventDefault()
               if (!e.nativeEvent.isComposing && e.keyCode !== 229) submit()
             }}
           />
-          <InputGroupAddon align="inline-end" className="pr-2 sm:pr-3">
+          <InputGroupAddon align="inline-end" className={cn('self-end pr-2 pb-2 sm:pr-3', !compact && 'sm:pb-2.5')}>
             {over ? <InputGroupText className="tabular-nums">{`${text.length} / ${MAX_TEXT}`}</InputGroupText> : null}
             {busy && onStop ? (
               <InputGroupButton type="button" variant="secondary" size="icon-sm" onClick={onStop} aria-label="止める" className="size-10 rounded-full">

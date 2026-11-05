@@ -2,8 +2,9 @@
 // 型は企業のプロフィールページ: ヘッダー（ロゴ・名前・一文・属性）＋年度のタブ＋左の目次＋見出し付きの節。年度を切り替えるとページ全体がその年度になる。
 // 歳出の決算は API の値。方針・政策領域・事業の入れ替えは jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
 import * as React from 'react'
-import { ArrowUpRightIcon, ChevronDownIcon, GlobeIcon, MessageCircleIcon, MapPinIcon, UsersIcon } from 'lucide-react'
+import { ArrowUpRightIcon, ChevronDownIcon, GlobeIcon, MessageCircleIcon, MapPinIcon, SquarePenIcon, TextQuoteIcon, UsersIcon, XIcon } from 'lucide-react'
 import { StartForm } from '../chat/start-form'
+import type { StoredSession } from '../chat/store'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Flow } from './flow'
 import { assetPath, type Domain, type PolicyProject, type Profile, type ProfileYear, type ProjectStatus, type Scrap } from './profiles'
@@ -45,7 +46,7 @@ const Section = ({ id, title, aside, link, children }: { id: string; title: stri
 
 function Policies({ code, year }: { code: string; year: ProfileYear }) {
   return (
-    <Section id="policy" title="方針" link={{ href: year.policySource, label: '予算編成方針' }}>
+    <Section id="policy" title="方針" link={{ href: year.policySource, label: '予算編成方針（PDF）' }}>
       <ol className="border-t">
         {year.policies.map((p, i) => (
           <li key={p.title} className="grid grid-cols-[22px_104px_minmax(0,1fr)] items-start gap-3 border-b border-foreground/10 py-3.5 sm:grid-cols-[28px_176px_minmax(0,1fr)] sm:gap-4">
@@ -182,14 +183,12 @@ function Budget({ data, year }: { data: PageData; year: number }) {
   const settled = data.years.find((y) => y.year === year)
   const total = phase === 'settlement' ? settled : undefined
   const prev = data.years.find((y) => y.year === year - 1)
-  const isLatest = !!total && total.year === data.years.at(-1)?.year
   const pct = total ? changePct(total.yen, prev?.yen) : null
-  const max = data.projects[0]?.yen ?? 1
   const label = phase === 'settlement' ? '決算' : '予算'
   const missing = `${yearName(year)}の${label}は、まだ収録していません`
   const summary = (
     <>
-      <span className="text-sm text-muted-foreground">歳出</span>
+      <span className="text-sm text-muted-foreground">全体</span>
       <b className={`text-[26px] font-normal leading-snug tabular-nums ${total ? '' : 'text-muted-foreground'}`}>{total ? formatYen(total.yen) : '—'}</b>
       {pct !== null ? <span className={`text-[13px] tabular-nums ${pct < 0 ? 'text-[#aa5910]' : 'text-primary'}`}>前年度比 {pct >= 0 ? '+' : '−'}{Math.abs(pct).toFixed(1)}%</span> : null}
     </>
@@ -217,7 +216,7 @@ function Budget({ data, year }: { data: PageData; year: number }) {
       id="budget"
       title="予算"
     >
-      <div id="budget-panel" role="tabpanel" aria-labelledby={`tab-${phase}`} className="flex flex-col gap-4">
+      <div id="budget-panel" role="tabpanel" aria-labelledby={`tab-${phase}`} data-ask-view={`${reiwa(year)}の${label}の金額`} className="flex flex-col gap-4">
         {total ? (
           <Flow key={year} data={data} total={total} tabs={tabs} summary={summary} />
         ) : (
@@ -227,17 +226,27 @@ function Budget({ data, year }: { data: PageData; year: number }) {
             <p className="pb-10 pt-4 text-center text-sm text-muted-foreground">{missing}</p>
           </div>
         )}
-        <h3 className="mt-4 text-lg">金額の大きい事業</h3>
-        {isLatest ? (
-          <ul className="border-t">
-            {data.projects.map((p, i) => (
-              <ProjectRow key={p.id} p={p} rank={i + 1} max={max} />
-            ))}
-          </ul>
-        ) : (
-          <Empty>{total ? `${yearName(year)}の事業の一覧は、まだ出していません` : missing}</Empty>
-        )}
       </div>
+    </Section>
+  )
+}
+
+/** 決算の金額が大きい事業（目）。最新の決算の年度だけ出す */
+function Projects({ data, year }: { data: PageData; year: number }) {
+  const settled = data.years.find((y) => y.year === year)
+  const isLatest = !!settled && settled.year === data.years.at(-1)?.year
+  const max = data.projects[0]?.yen ?? 1
+  return (
+    <Section id="projects" title="金額の大きい事業">
+      {isLatest ? (
+        <ul className="border-t">
+          {data.projects.map((p, i) => (
+            <ProjectRow key={p.id} p={p} rank={i + 1} max={max} />
+          ))}
+        </ul>
+      ) : (
+        <Empty>{settled ? `${yearName(year)}の事業の一覧は、まだ出していません` : `${yearName(year)}の決算は、まだ収録していません`}</Empty>
+      )}
     </Section>
   )
 }
@@ -351,6 +360,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
   const toc: TocItem[] = [
     ...(py ? [{ href: '#policy', label: '方針' }, { href: '#domains', label: '政策領域' }, ...py.domains.map((d) => ({ href: `#d-${d.id}`, label: d.short ?? d.name, sub: true }))] : []),
     { href: '#budget', label: '予算' },
+    { href: '#projects', label: '事業' },
     ...(py?.scrap ? [{ href: '#scrap', label: '事業の入れ替え' }] : []),
   ]
 
@@ -490,43 +500,100 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
             {py ? <Policies code={data.code} year={py} /> : null}
             {py ? <Domains domains={py.domains} /> : null}
             <Budget data={data} year={year} />
+            <Projects data={data} year={year} />
             {py?.scrap ? <ScrapSection scrap={py.scrap} /> : null}
           </main>
         </div>
       </div>
 
-      <AskDock name={data.name} sitekey={sitekey} />
+      <AskDock name={data.name} sitekey={sitekey} year={year} section={toc.find((t) => isCurrent(t.href))?.label} />
     </>
   )
 }
 
-/** AI に聞く入力欄。最初は開いておき、読み進めるか Escape で右下のボタンに畳む。押すか「/」で開く */
+/** AI に聞く入力欄。最初は開いておき、読み進めるか Escape で右下のボタンに畳む。押すか「/」で開く。
+ * 送ると頁を移らずに、下から会話の drawer を出す。閉じても会話は残り、右下のボタンで戻れる */
 const DOCK_CLOSE_AFTER = 240
+/** 選んだ文として AI に渡す長さの上限 */
+const QUOTE_MAX = 600
+/** drawer の取っ手をこれだけ下へ引いたら閉じる */
+const DRAWER_DRAG_CLOSE = 80
 
-function AskDock({ name, sitekey }: { name: string; sitekey: string }) {
+const Conversation = React.lazy(() => import('../chat/conversation').then((m) => ({ default: m.Conversation })))
+
+/** 画面に見えている data-ask-view の印を、頁の順に読む */
+const visibleViews = () =>
+  [...document.querySelectorAll<HTMLElement>('[data-ask-view]')]
+    .filter((el) => {
+      const r = el.getBoundingClientRect()
+      return r.bottom > 0 && r.top < innerHeight && r.right > 0 && r.left < innerWidth && r.width > 0
+    })
+    .map((el) => el.dataset.askView!)
+
+function AskDock({ name, sitekey, year, section }: { name: string; sitekey: string; year: number; section?: string }) {
   const [open, setOpen] = React.useState(true)
+  const [chat, setChat] = React.useState<{ id: string; session: StoredSession }>()
+  const [drawer, setDrawer] = React.useState(false)
+  const [quote, setQuote] = React.useState('')
   const dock = React.useRef<HTMLDivElement>(null)
+  const sheet = React.useRef<HTMLDivElement>(null)
+  const scroller = React.useRef<HTMLDivElement>(null)
   const anchor = React.useRef(0)
   const show = React.useCallback(() => {
+    if (chat) return setDrawer(true)
     anchor.current = window.scrollY
     setOpen(true)
     requestAnimationFrame(() => dock.current?.querySelector<HTMLElement>('textarea, input')?.focus())
-  }, [])
+  }, [chat])
   React.useEffect(() => {
-    if (!open) return
+    if (!open || chat) return
     const onScroll = () => {
       if (dock.current?.contains(document.activeElement)) return
       if (window.scrollY - anchor.current > DOCK_CLOSE_AFTER) setOpen(false)
     }
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
-  }, [open])
+  }, [open, chat])
+
+  // 頁の文を選んだら、その文を質問の文脈に入れる。入力欄を押して選択が外れても残し、頁の別の所を押したら外す
+  React.useEffect(() => {
+    const onSelect = () => {
+      const sel = document.getSelection()
+      const node = sel?.anchorNode
+      const inside = (n: Node | null | undefined) => !!n && (dock.current?.contains(n) || sheet.current?.contains(n))
+      if (inside(node) || inside(document.activeElement)) return
+      const text = sel && !sel.isCollapsed ? sel.toString().replace(/\s+/g, ' ').trim() : ''
+      setQuote(text.slice(0, QUOTE_MAX))
+    }
+    document.addEventListener('selectionchange', onSelect)
+    return () => document.removeEventListener('selectionchange', onSelect)
+  }, [])
+
+  const describe = () => {
+    const views = [...new Set(visibleViews())]
+    return [
+      `${name}の頁（${location.pathname}）を見ている`,
+      `年度: ${reiwa(year)}（${year}年度）`,
+      section ? `いま読んでいる節: ${section}` : '',
+      views.length ? `画面に出ているもの: ${views.join('、')}` : '',
+      quote ? `選んだ文: 「${quote}」` : '',
+    ]
+      .filter(Boolean)
+      .join('\n')
+  }
+
+  // Escape で畳む（入力中でも閉じ、書きかけの文は残す）。drawer が開いていれば drawer を閉じる
+  const close = React.useCallback(() => {
+    ;(document.activeElement as HTMLElement | null)?.blur()
+    if (drawer) setDrawer(false)
+    else setOpen(false)
+  }, [drawer])
   React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      // Escape で畳む（入力中でも閉じ、書きかけの文は残す）
-      if (e.key === 'Escape' && open) {
-        ;(document.activeElement as HTMLElement | null)?.blur()
-        setOpen(false)
+      if (e.key === 'Escape' && (drawer || open)) {
+        // 表とグラフの全体表示（popover）は、その Escape で先に閉じる
+        if (document.querySelector(':popover-open')) return
+        close()
         return
       }
       const t = e.target as HTMLElement | null
@@ -536,26 +603,135 @@ function AskDock({ name, sitekey }: { name: string; sitekey: string }) {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [show, open])
+  }, [show, open, drawer, close])
+
+  // 拡張機能（Vimium など）は入力欄の Escape を先に受け取り、focus を外すだけで頁へ渡さない。
+  // キーも押さず指も触れずに入力欄から focus が抜けたら、Escape と見なして1回で畳む
+  const lastInput = React.useRef(0)
+  React.useEffect(() => {
+    const mark = () => (lastInput.current = performance.now())
+    window.addEventListener('pointerdown', mark, true)
+    window.addEventListener('keydown', mark, true)
+    return () => {
+      window.removeEventListener('pointerdown', mark, true)
+      window.removeEventListener('keydown', mark, true)
+    }
+  }, [])
+  const onDockBlur = (e: React.FocusEvent) => {
+    if (e.relatedTarget || !matchMedia('(pointer: fine)').matches) return
+    if (performance.now() - lastInput.current < 50) return
+    requestAnimationFrame(() => {
+      if (document.hasFocus() && document.visibilityState === 'visible' && !dock.current?.contains(document.activeElement)) setOpen(false)
+    })
+  }
+
+  // drawer を開いている間は、下の頁を動かさない
+  React.useEffect(() => {
+    if (!drawer) return
+    const overflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = overflow }
+  }, [drawer])
+
+  // 取っ手を下へ引いて閉じる
+  const drag = React.useRef<{ y: number; dy: number }>(undefined)
+  const [dragY, setDragY] = React.useState(0)
+  const onHandleDown = (e: React.PointerEvent) => {
+    drag.current = { y: e.clientY, dy: 0 }
+    ;(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId)
+  }
+  const onHandleMove = (e: React.PointerEvent) => {
+    if (!drag.current) return
+    drag.current.dy = Math.max(0, e.clientY - drag.current.y)
+    setDragY(drag.current.dy)
+  }
+  const onHandleUp = () => {
+    if (drag.current && drag.current.dy > DRAWER_DRAG_CLOSE) setDrawer(false)
+    drag.current = undefined
+    setDragY(0)
+  }
+
+  const start = (id: string, session: StoredSession) => {
+    setChat({ id, session })
+    setDrawer(true)
+    setOpen(false)
+    setQuote('')
+  }
+  const restart = () => {
+    setChat(undefined)
+    setDrawer(false)
+    anchor.current = window.scrollY
+    setOpen(true)
+    requestAnimationFrame(() => dock.current?.querySelector<HTMLElement>('textarea, input')?.focus())
+  }
+
+  const header = chat ? (
+    <div
+      className="flex touch-none cursor-grab flex-col items-center px-4 pb-2 pt-2 active:cursor-grabbing"
+      onPointerDown={onHandleDown}
+      onPointerMove={onHandleMove}
+      onPointerUp={onHandleUp}
+      onPointerCancel={onHandleUp}
+    >
+      <span aria-hidden="true" className="mb-2 h-1.5 w-10 rounded-full bg-border" />
+      <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-2" onPointerDown={(e) => e.stopPropagation()}>
+        <span className="text-sm text-muted-foreground">{name}について</span>
+        <div className="flex items-center gap-1 text-muted-foreground">
+          <a href={`/s/${chat.id}`} aria-label="会話を別の頁で開く" title="会話を別の頁で開く" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><ArrowUpRightIcon className="size-4" /></a>
+          <button type="button" onClick={restart} aria-label="新しい会話" title="新しい会話" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><SquarePenIcon className="size-4" /></button>
+          <button type="button" onClick={() => setDrawer(false)} aria-label="閉じる" title="閉じる（Esc）" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><XIcon className="size-4" /></button>
+        </div>
+      </div>
+    </div>
+  ) : null
+
+  const chip = quote ? (
+    <div className="mb-2 flex min-w-0 items-center gap-2 self-start rounded-full border bg-background py-1 pl-3 pr-1 text-[12.5px] text-muted-foreground shadow-sm">
+      <TextQuoteIcon className="size-3.5 shrink-0 text-primary" aria-hidden="true" />
+      <span className="min-w-0 truncate"><span className="sr-only">選んだ文: </span>{quote}</span>
+      <button type="button" onClick={() => setQuote('')} aria-label="選んだ文を外す" className="shrink-0 rounded-full p-1 hover:bg-secondary hover:text-foreground"><XIcon className="size-3" /></button>
+    </div>
+  ) : null
+
+  const docked = open && !chat
   return (
     <>
-      <div ref={dock} className={`fixed inset-x-0 bottom-0 z-20 bg-gradient-to-t from-background from-60% to-transparent px-4 pb-[max(14px,env(safe-area-inset-bottom))] pt-3 transition-[opacity,transform] duration-200 motion-reduce:transition-none ${open ? '' : 'pointer-events-none translate-y-4 opacity-0'}`} inert={!open}>
+      <div ref={dock} onBlur={onDockBlur} className={`fixed inset-x-0 bottom-0 z-20 bg-gradient-to-t from-background from-60% to-transparent px-4 pb-[max(14px,env(safe-area-inset-bottom))] pt-3 transition-[opacity,transform] duration-200 motion-reduce:transition-none ${docked ? '' : 'pointer-events-none translate-y-4 opacity-0'}`} inert={!docked}>
         <div className="mx-auto max-w-[720px]">
-          <StartForm sitekey={sitekey} prefix={`${name}について：`} placeholder={`${name}について聞く…`} />
+          <StartForm sitekey={sitekey} prefix={`${name}について：`} placeholder={`${name}について聞く…`} context={describe} onStart={start} before={chip} />
         </div>
       </div>
       <button
         type="button"
         onClick={show}
         aria-keyshortcuts="/"
-        className={`fixed bottom-[max(16px,env(safe-area-inset-bottom))] right-4 z-20 inline-flex items-center gap-2 rounded-full border bg-background px-4 py-2.5 text-sm shadow-md transition-[opacity,transform] duration-200 hover:border-primary motion-reduce:transition-none ${open ? 'pointer-events-none translate-y-4 opacity-0' : ''}`}
-        tabIndex={open ? -1 : 0}
-        aria-hidden={open}
+        className={`fixed bottom-[max(16px,env(safe-area-inset-bottom))] right-4 z-20 inline-flex items-center gap-2 rounded-full border bg-background px-4 py-2.5 text-sm shadow-md transition-[opacity,transform] duration-200 hover:border-primary motion-reduce:transition-none ${docked || drawer ? 'pointer-events-none translate-y-4 opacity-0' : ''}`}
+        tabIndex={docked || drawer ? -1 : 0}
+        aria-hidden={docked || drawer}
       >
         <MessageCircleIcon className="size-4 text-primary" aria-hidden="true" />
-        {name}について聞く
+        {chat ? '会話に戻る' : `${name}について聞く`}
       </button>
+      {chat ? (
+        <>
+          <div aria-hidden="true" onClick={() => setDrawer(false)} className={`fixed inset-0 z-30 bg-foreground/20 transition-opacity duration-300 motion-reduce:transition-none ${drawer ? '' : 'pointer-events-none opacity-0'}`} />
+          <div
+            ref={sheet}
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${name}についての会話`}
+            inert={!drawer}
+            style={dragY ? { transform: `translateY(${dragY}px)`, transition: 'none' } : undefined}
+            className={`fixed inset-x-0 bottom-0 z-30 mx-auto flex h-[88dvh] max-w-4xl flex-col overflow-hidden rounded-t-[24px] border border-b-0 bg-background shadow-2xl transition-transform duration-300 ease-out motion-reduce:transition-none ${drawer ? '' : 'translate-y-[calc(100%+48px)]'}`}
+          >
+            <div ref={scroller} className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+              <React.Suspense fallback={<p className="p-6 text-sm text-muted-foreground">会話を開いています…</p>}>
+                <Conversation key={chat.id} id={chat.id} stored={chat.session} header={header} scroller={scroller} />
+              </React.Suspense>
+            </div>
+          </div>
+        </>
+      ) : null}
     </>
   )
 }
-

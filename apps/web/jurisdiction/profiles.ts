@@ -79,7 +79,7 @@ const SHINAGAWA: Profile = {
   "years": {
     "2026": {
       "tagline": "区民の不安や不満といった「不」を取り除き、誰もが安心して暮らしていける社会へ",
-      "policySource": "https://www.city.shinagawa.tokyo.jp/kusei/zaisei/1005728/1005729.html",
+      "policySource": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/729/20250730113250_2.pdf",
       "policies": [
         {
           "title": "ウェルビーイングの深化",
@@ -268,7 +268,7 @@ const SHINAGAWA: Profile = {
     },
     "2025": {
       "tagline": "性別や障害の有無、家庭の状況などで選択を阻まれず、自分の望むように生き、幸せを感じられる社会へ",
-      "policySource": "https://www.city.shinagawa.tokyo.jp/kusei/zaisei/1005728/1005730.html",
+      "policySource": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/730/20240730173216_1.pdf",
       "policies": [
         {
           "title": "ウェルビーイングの進化（深化）",
@@ -466,7 +466,7 @@ const SHINAGAWA: Profile = {
     },
     "2024": {
         "tagline": "区民の幸福（ウェルビーイング）を軸に、新しい時代の品川を引っ張る",
-        "policySource": "https://www.city.shinagawa.tokyo.jp/kusei/zaisei/1005728/1005731.html",
+        "policySource": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/731/20230731131455_1.pdf",
         "policies": [
           {
             "title": "誰もが自分らしく暮らせる品川区",

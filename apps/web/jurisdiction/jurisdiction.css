@@ -3,6 +3,9 @@
 @import "../chat/theme.css";
 @source "./";
 @source "../chat/components";
+@source "../chat/conversation.tsx";
+@source "../chat/view-frame.tsx";
+@source "../chat/markdown.tsx";
 @source "../chat/start-form.tsx";
 @source "../chat/composer.tsx";
 

@@ -156,11 +156,12 @@ function KouSection({ kou, active, loading, onBox }: { kou: Kou; active: boolean
         const rects = rows2.map((li) => li.getBoundingClientRect())
         const parts = restRow && restPart > 0 ? [...topParts, restPart] : topParts
         const gaps = rects.map((b, j) => (rects[j + 1] ? rects[j + 1]!.top - b.top - 3 : b.height))
-        const fit = Math.min(...parts.map((v, j) => (v > 0 ? gaps[j]! / v : Infinity)), rects.at(-1)!.bottom - rects[0]!.top)
+        // 帯は目の棒と同じ縮尺（項の中で共通）で両端を同じ太さにする。目ごとに縮尺を変えると、同じ金額でも目によって太さが違って見える。
+        // 節の行の高さを超える分だけ、節の側で行の高さに収める
         let from = ty
         rects.forEach((b, j) => {
           const sh = Math.max(parts[j]! * h, 1)
-          const th = Math.max(parts[j]! * fit, 2)
+          const th = Math.min(Math.max(sh, 2), gaps[j]!)
           twigs.push({ d: band(width, from, sh, x, b.top - origin, th), x, y: b.top - origin, h: th, rest: rows2[j] === restRow })
           from += sh
         })
@@ -177,7 +178,7 @@ function KouSection({ kou, active, loading, onBox }: { kou: Kou; active: boolean
     return () => { observer.disconnect(); window.clearTimeout(settle) }
   }, [kou.moku.length, active])
   return (
-    <section ref={(el) => { box.current = el; onBox(el) }} data-kou={kou.id} data-active={active} className="group/kou grid min-h-[calc(100%-7.5rem)] snap-start snap-always grid-cols-1 content-start gap-3 px-5 pb-5 pt-3 sm:grid-cols-[150px_10px_64px_minmax(0,1fr)] sm:gap-0 sm:pr-8">
+    <section ref={(el) => { box.current = el; onBox(el) }} data-kou={kou.id} data-active={active} data-ask-view={active ? `${kou.name}（項）の目と節` : undefined} className="group/kou grid min-h-[calc(100%-7.5rem)] snap-start snap-always grid-cols-1 content-start gap-3 px-5 pb-5 pt-3 sm:grid-cols-[150px_10px_64px_minmax(0,1fr)] sm:gap-0 sm:pr-8">
       <div className="min-w-0 border-b pb-2 sm:border-0 sm:pb-0 sm:pr-2">
         <div className="text-[11px] text-muted-foreground">項</div>
         <div className="font-sans text-lg leading-snug">{kou.name}</div>
@@ -299,8 +300,8 @@ export function Flow({ data, total: year, tabs, summary }: { data: PageData; tot
   const kan = index > 0 ? flows[index - 1] : undefined
   const sum = flows.reduce((s, f) => s + Math.max(0, f.kan.yen), 0) || 1
   return (
-    <div ref={root} className="min-w-0 rounded-[20px] border bg-background">
-      <div className="px-5 pt-5 sm:px-6">
+    <div ref={root} data-ask-view={kan ? `${kan.kan.name}（款）の内訳` : '款から項への全体図'} className="flex h-[calc(100svh-61px-53px-1.5rem)] min-h-[480px] min-w-0 scroll-mt-[122px] flex-col rounded-[20px] border bg-background md:h-[calc(100svh-61px-2rem)] md:scroll-mt-[77px]">
+      <div className="shrink-0 px-5 pt-5 sm:px-6">
         <div className="flex items-center justify-between gap-3">
           {tabs ?? <span />}
           <div className="flex items-center gap-1.5">
@@ -323,13 +324,11 @@ export function Flow({ data, total: year, tabs, summary }: { data: PageData; tot
             <i key={f.kan.id} className={`block h-1.5 min-w-[3px] rounded-sm transition-colors ${index === i + 1 ? 'bg-primary' : 'bg-border'}`} style={{ flexGrow: Math.max(f.kan.yen, 0) / sum || 0.01, flexBasis: 0 }} />
           ))}
         </div>
-        {index > 0 ? (
-          <p className="mt-2 text-xs text-muted-foreground">
-            縦にスクロールすると、款の中の項が一つずつ開きます。{index < total ? '横で次の款へ。' : null}
-          </p>
-        ) : null}
+        <p className="mt-2 text-xs text-muted-foreground">
+          {index > 0 ? <>縦にスクロールすると、款の中の項が一つずつ開きます。{index < total ? '横で次の款へ。' : null}</> : '横にスクロールすると、詳細が開きます。'}
+        </p>
       </div>
-      <div className="relative mt-2">
+      <div className="relative mt-2 min-h-0 flex-1">
         <div
           ref={track}
           role="region"
@@ -337,7 +336,7 @@ export function Flow({ data, total: year, tabs, summary }: { data: PageData; tot
           tabIndex={0}
           onScroll={onScroll}
           onKeyDown={onKey}
-          className="flex h-[clamp(440px,80svh,700px)] snap-x snap-mandatory overflow-x-auto overflow-y-hidden overscroll-x-contain scroll-smooth rounded-b-[20px] [scrollbar-width:none] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring [&::-webkit-scrollbar]:hidden"
+          className="flex h-full snap-x snap-mandatory overflow-x-auto overflow-y-hidden overscroll-x-contain scroll-smooth rounded-b-[20px] [scrollbar-width:none] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring [&::-webkit-scrollbar]:hidden"
         >
           <div ref={overview} style={overviewFade} className="h-full w-full shrink-0 snap-start snap-always overflow-y-auto px-3 pb-3 pt-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:px-5">
             {flows.length > 0 ? (
