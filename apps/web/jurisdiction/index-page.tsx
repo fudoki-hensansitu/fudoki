@@ -4,7 +4,8 @@ import * as React from 'react'
 import { flushSync } from 'react-dom'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
 import { buttonVariants } from '@/components/ui/button'
-import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group'
+import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList, ComboboxTrigger } from '@/components/ui/combobox'
+import { InputGroupAddon } from '@/components/ui/input-group'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
 import { MagnifyingGlassIcon, SortDescendingIcon } from '@phosphor-icons/react'
@@ -17,14 +18,6 @@ const SORTS: { value: Sort; label: string }[] = [
   { value: 'desc', label: '歳出の総額が大きい順' },
   { value: 'asc', label: '歳出の総額が小さい順' },
 ]
-const PARTIAL = '金額の印字が無い款を除いた和'
-/** 一部の款の和の印。注記の行を足すと選び直すたびに高さが変わるので、印だけを出し、説明は title と読み上げに置く（2026-11-05 yuito） */
-const Partial = () => (
-  <>
-    <span aria-hidden="true">*</span>
-    <span className="sr-only">（{PARTIAL}）</span>
-  </>
-)
 const KINDS: JurisdictionKind[] = ['都道府県', '区', '市', '町村']
 
 /** 塗りの濃さ。面積で見比べるので、金額の平方根に比例させる（最小でも地の色と区別できる濃さを残す） */
@@ -62,14 +55,11 @@ function SelectedCard({ e }: { e: IndexEntry }) {
       <div className="text-xs text-muted-foreground">{e.prefecture}</div>
       <div className="mt-0.5 text-3xl leading-tight">{e.name}</div>
       <div className="mt-4 text-xs text-muted-foreground" title={reiwa(e.year)}>{shortYear(e.year)} 決算・一般会計の歳出</div>
-      <div className="text-[2rem] leading-tight tabular-nums" title={e.amountMissing ? PARTIAL : undefined}>
-        {formatYen(e.yen)}
-        {e.amountMissing ? <Partial /> : null}
-      </div>
+      <div className="text-[2rem] leading-tight tabular-nums">{formatYen(e.yen)}</div>
       <div className="mt-4 text-xs text-muted-foreground">金額の大きい分野（款）</div>
       <ul className="mt-1">
         {e.topKan.map((k) => (
-          <li key={k.name} className="border-b py-1.5 text-[13px] last:border-b-0">
+          <li key={k.name} className="py-1.5 text-[13px]">
             <div className="flex justify-between gap-2">
               <span className="truncate">{k.name}</span>
               <span className="tabular-nums">{formatYen(k.yen)}</span>
@@ -208,6 +198,45 @@ function JapanTiles({ counts, onOpen }: { counts: Map<string, number>; onOpen: (
   )
 }
 
+/** タイルの短い名前（東京・大阪）に都・府・県を付ける */
+const prefName = (n: string) => (n === '北海道' ? n : n === '東京' ? '東京都' : n === '大阪' || n === '京都' ? `${n}府` : `${n}県`)
+const slugOf = (e: IndexEntry) => e.path.split('/').pop() ?? ''
+/** 名前・都道府県名・ローマ字の slug のどれかに当たるか */
+const matches = (e: IndexEntry, query: string) => {
+  const q = query.trim().toLowerCase()
+  return !q || e.name.includes(q) || e.prefecture.includes(q) || slugOf(e).includes(q)
+}
+
+/** 表の種類のタグ。押すとその種類の候補を選べる combobox が開き、複数選べる */
+function TagFilter({ label, count, options, picked, onChange }: { label: string; count: number; options: { value: string; label: string; sub?: string; disabled?: boolean }[]; picked: string[]; onChange: (v: string[]) => void }) {
+  const byValue = new Map(options.map((o) => [o.value, o]))
+  return (
+    <Combobox multiple items={options.map((o) => o.value)} value={picked} onValueChange={(v) => onChange(v as string[])} itemToStringLabel={(v: string) => byValue.get(v)?.label ?? v}>
+      <ComboboxTrigger
+        render={<button type="button" aria-label={`${label}で絞る${picked.length ? `（${picked.length} 件を選択）` : ""}`} />}
+        className={cn(buttonVariants({ variant: picked.length ? 'default' : 'outline' }), 'gap-1 rounded-full px-3.5 text-[13px] font-normal [&_svg]:text-current', !picked.length && 'text-muted-foreground')}
+      >
+        {label} <small className="opacity-70">{picked.length ? `${picked.length} 件を選択` : count}</small>
+      </ComboboxTrigger>
+      <ComboboxContent className="w-64">
+        <ComboboxInput showTrigger={false} placeholder={`${label}を探す`} aria-label={`${label}を探す`} />
+        <ComboboxEmpty>当たる{label}はありません</ComboboxEmpty>
+        <ComboboxList>
+          {(v: string) => {
+            const o = byValue.get(v)!
+            return (
+              <ComboboxItem key={v} value={v} disabled={o.disabled}>
+                {o.label}
+                {o.sub ? <small className="text-[11px] text-muted-foreground">{o.sub}</small> : null}
+              </ComboboxItem>
+            )
+          }}
+        </ComboboxList>
+      </ComboboxContent>
+    </Combobox>
+  )
+}
+
 export function IndexPage({ entries }: { entries: IndexEntry[] }) {
   const byYen = React.useMemo(() => [...entries].sort((a, b) => b.yen - a.yen), [entries])
   // 都道府県自体は市区町村と面が重なるので、地図にもチップにも出さず表の行だけにする
@@ -235,25 +264,66 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
       setView(pref)
       setSelected('')
     })
-  const [query, setQuery] = React.useState('')
-  const [kind, setKind] = React.useState<JurisdictionKind | null>(null)
+  // 地図の検索で選んだ自治体を、その都道府県の図で選んだ状態にする（都道府県自体なら図を開くだけ）
+  const find = (e: IndexEntry) =>
+    transition(() => {
+      setView(prefOf(e))
+      setSelected(e.kind === '都道府県' ? '' : e.code)
+    })
+  // 表の絞り込み。種類ごとに選んだ値（都道府県はコードの先頭2桁、市区町村は自治体コード）
+  const [picked, setPicked] = React.useState<Record<JurisdictionKind, string[]>>({ 都道府県: [], 区: [], 市: [], 町村: [] })
+  const prefPicks = picked['都道府県']
+  const namePicks = [...picked['区'], ...picked['市'], ...picked['町村']]
+  const filtered = prefPicks.length + namePicks.length > 0
   const [sort, setSort] = React.useState<Sort>('desc')
   const allYears = [...new Set(entries.flatMap((e) => e.years))].sort()
   const maxYen = byYen[0]?.yen ?? 1
-  const q = query.trim().toLowerCase()
+  // 都道府県と市区町村の選択は AND（東京都 × 八王子市なら八王子市）。同じ都道府県・市区町村どうしは、どれかに当たれば残す
   const rows = (sort === 'desc' ? byYen : [...byYen].reverse()).filter(
-    (e) => (!kind || e.kind === kind) && (!q || e.name.includes(q) || e.prefecture.includes(q) || (e.path.split('/').pop() ?? '').includes(q)),
+    (e) => (!prefPicks.length || prefPicks.includes(prefOf(e))) && (!namePicks.length || namePicks.includes(e.code)),
   )
+  const prefCount = new Map<string, number>()
+  for (const e of entries) prefCount.set(prefOf(e), (prefCount.get(prefOf(e)) ?? 0) + 1)
+  const optionsOf = (k: JurisdictionKind) =>
+    k === '都道府県'
+      ? JAPAN_TILES.map((t) => t)
+          .sort((a, b) => a.code.localeCompare(b.code))
+          .map((t) => ({ value: t.code, label: prefName(t.name), sub: prefCount.get(t.code) ? `${prefCount.get(t.code)}` : '未収録', disabled: !prefCount.get(t.code) }))
+      : entries
+          .filter((e) => e.kind === k)
+          .sort((a, b) => a.code.localeCompare(b.code))
+          .map((e) => ({ value: e.code, label: e.name, sub: e.prefecture }))
   // 選んだ自治体が無いときは、開いている都道府県自体（収録していれば）
   const current = entries.find((e) => e.code === selected) ?? entries.find((e) => e.kind === '都道府県' && view !== null && prefOf(e) === view)
 
   return (
     <div className="mx-auto max-w-[1120px] px-4 pb-24 pt-8 sm:px-8 sm:pt-12">
       <h1 className="text-[clamp(2.2rem,1.6rem+2.4vw,3.4rem)] font-normal leading-tight">自治体を探す</h1>
-      {entries.length ? null : <p className="mt-3 text-muted-foreground">まだ決算を収録した自治体がありません。</p>}
+      {entries.length ? (
+        <Combobox autoHighlight items={byYen} filter={(e: IndexEntry, q: string) => matches(e, q)} itemToStringLabel={(e: IndexEntry) => e.name} value={null} onValueChange={(e) => e && find(e as IndexEntry)}>
+          <ComboboxInput showTrigger={false} aria-label="自治体名で探す" placeholder="自治体名で探す（例：品川、shinagawa）" className="mt-6 h-12 rounded-full bg-background px-2 text-[15px]">
+            <InputGroupAddon>
+              <MagnifyingGlassIcon />
+            </InputGroupAddon>
+          </ComboboxInput>
+          <ComboboxContent>
+            <ComboboxEmpty>当たる自治体は、まだ収録していません</ComboboxEmpty>
+            <ComboboxList>
+              {(e: IndexEntry) => (
+                <ComboboxItem key={e.code} value={e}>
+                  {e.name}
+                  <small className="text-[11px] text-muted-foreground">{e.kind === '都道府県' ? '都道府県' : e.prefecture}</small>
+                </ComboboxItem>
+              )}
+            </ComboboxList>
+          </ComboboxContent>
+        </Combobox>
+      ) : (
+        <p className="mt-3 text-muted-foreground">まだ決算を収録した自治体がありません。</p>
+      )}
 
       {/* Esc で選択を外し、都道府県自体に戻す */}
-      <section className="mt-8 grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1fr)_320px]" aria-label="地図" onKeyDown={(ev) => ev.key === 'Escape' && setSelected('')}>
+      <section className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1fr)_320px]" aria-label="地図" onKeyDown={(ev) => ev.key === 'Escape' && setSelected('')}>
         <div className="flex min-w-0 flex-col rounded-[20px] bg-card p-4 sm:p-6">
           <div className="mb-3 flex items-baseline justify-between gap-2">
             <Breadcrumb>
@@ -298,23 +368,14 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
 
       <section className="mt-14" aria-label="比較表">
         <h2 className="text-2xl font-normal">比較表</h2>
-        <InputGroup className="mt-4 h-12 rounded-full bg-background px-2">
-          <InputGroupAddon>
-            <MagnifyingGlassIcon />
-          </InputGroupAddon>
-          <InputGroupInput type="search" value={query} onChange={(ev) => setQuery(ev.target.value)} aria-label="自治体名で探す" placeholder="自治体名で探す（例：品川、shinagawa）" className="text-[15px]" />
-        </InputGroup>
         <div className="mt-4 flex flex-wrap items-center gap-2">
-          <Chip on={kind === null} onClick={() => setKind(null)}>
+          <Chip on={!filtered} onClick={() => setPicked({ 都道府県: [], 区: [], 市: [], 町村: [] })}>
             すべて <small className="opacity-70">{entries.length}</small>
           </Chip>
           {KINDS.map((k) => {
-            const n = entries.filter((e) => e.kind === k).length
-            return n ? (
-              <Chip key={k} on={kind === k} onClick={() => setKind(kind === k ? null : k)}>
-                {k} <small className="opacity-70">{n}</small>
-              </Chip>
-            ) : null
+            // 都道府県のタグは都道府県の単位で絞るので、収録のある都道府県の数を出す
+            const n = k === '都道府県' ? prefCount.size : entries.filter((e) => e.kind === k).length
+            return n ? <TagFilter key={k} label={k} count={n} options={optionsOf(k)} picked={picked[k]} onChange={(v) => setPicked((p) => ({ ...p, [k]: v }))} /> : null
           })}
           <span className="flex-1" />
           <span className="flex items-center gap-2 text-[13px] text-muted-foreground">
@@ -356,23 +417,17 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
                   <YearPills years={e.years} all={allYears} />
                   <span className="col-span-2 flex min-w-0 items-center gap-2.5 md:col-span-1">
                     <span className="block h-2.5 rounded-sm bg-primary" style={{ width: `${Math.max(0.6, (e.yen / maxYen) * 80)}%` }} />
-                    <span className="whitespace-nowrap text-[13px] tabular-nums" title={e.amountMissing ? PARTIAL : undefined}>
-                      {formatYen(e.yen)}
-                      {e.amountMissing ? <Partial /> : null}
-                    </span>
+                    <span className="whitespace-nowrap text-[13px] tabular-nums">{formatYen(e.yen)}</span>
                     <small className="whitespace-nowrap text-[11px] text-muted-foreground">{shortYear(e.year)}</small>
                   </span>
-                  <span className="hidden truncate text-[13px] text-muted-foreground md:block" title={e.amountMissing ? PARTIAL : undefined}>
-                    {e.topKan[0]?.name}
-                    {e.amountMissing ? <Partial /> : null}
-                  </span>
+                  <span className="hidden truncate text-[13px] text-muted-foreground md:block">{e.topKan[0]?.name}</span>
                 </a>
               </li>
             ))}
           </ul>
           {/* 絞り込みの結果を読み上げる。空でないときは件数だけを画面外で伝える */}
           <p role="status" aria-live="polite" className={rows.length === 0 && entries.length ? 'px-2 py-8 text-center text-muted-foreground' : 'sr-only'}>
-            {!entries.length ? '' : rows.length ? `${rows.length} の自治体` : q && !kind ? `「${query}」に当たる自治体は、まだ収録していません。` : '条件に当たる自治体はありません。'}
+            {!entries.length ? '' : rows.length ? `${rows.length} の自治体` : '条件に当たる自治体はありません。'}
           </p>
         </div>
       </section>
