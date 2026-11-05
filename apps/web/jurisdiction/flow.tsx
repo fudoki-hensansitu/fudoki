@@ -33,7 +33,7 @@ function MokuGroup({ moku }: { moku: Moku }) {
       </div>
       {top.length > 0 ? (
         <ul className="grid min-w-0 gap-y-1 border-l pl-3 text-[12.5px] leading-snug" aria-label={`${moku.name}の節`}>
-          <li className="text-[11px] text-muted-foreground sm:hidden">節（何に払ったか）</li>
+          <li className="text-[11px] text-muted-foreground sm:hidden">節</li>
           {top.map((s) => (
             <li key={s.name} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2.5">
               <span className="truncate">{s.name}</span>
@@ -113,7 +113,7 @@ function KouSection({ kou, active, loading, onBox }: { kou: Kou; active: boolean
         {kou.moku.length > 0 ? (
           <div className="hidden grid-cols-[5fr_7fr] gap-4 text-[11px] text-muted-foreground sm:grid" aria-hidden="true">
             <span>目</span>
-            <span className="pl-3">節（何に払ったか）</span>
+            <span className="pl-3">節</span>
           </div>
         ) : null}
         {kou.moku.length > 0 ? kou.moku.map((m) => <MokuGroup key={m.id} moku={m} />) : (
