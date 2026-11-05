@@ -154,7 +154,8 @@ function KanPanel({ drill, loading }: { drill: Drill; loading: boolean }) {
 }
 
 /** 款→項の全体図と款ごとの内訳。最新年度の款→項はページに埋めてあり、それ以外の年度は図が近づいたら読み込む */
-export function Flow({ data, total: year }: { data: PageData; total: YearTotal }) {
+/** tabs はカードの左上に置く切り替え（決算／予算）、summary は全体図のときに出す総額 */
+export function Flow({ data, total: year, tabs, summary }: { data: PageData; total: YearTotal; tabs?: React.ReactNode; summary?: React.ReactNode }) {
   const isLatest = year.year === data.years.at(-1)?.year
   const root = React.useRef<HTMLDivElement>(null)
   const track = React.useRef<HTMLDivElement>(null)
@@ -212,20 +213,21 @@ export function Flow({ data, total: year }: { data: PageData; total: YearTotal }
   return (
     <div ref={root} className="min-w-0 rounded-[20px] border bg-background">
       <div className="px-5 pt-5 sm:px-6">
-        <div className="flex items-baseline justify-between gap-3" aria-live="polite">
-          <div className="font-sans text-lg leading-snug">
-            {kan ? (
-              <>
-                {kan.kan.name}
-                <span className="ml-2.5 font-sans text-sm tabular-nums text-muted-foreground">{amountText(kan.kan.yen, kan.kan.amountMissing)}</span>
-              </>
-            ) : null}
-          </div>
+        <div className="flex items-center justify-between gap-3">
+          {tabs ?? <span />}
           <div className="flex items-center gap-1.5">
             <span className="text-xs tabular-nums text-muted-foreground">{kan ? `款 ${index} / ${total}` : ''}</span>
             <Button variant="outline" size="icon-sm" aria-label="前の款" disabled={index === 0} onClick={() => go(-1)} className="rounded-full [@media(hover:none)]:hidden"><ChevronLeftIcon /></Button>
             <Button variant="outline" size="icon-sm" aria-label="次の款" disabled={index >= total} onClick={() => go(1)} className="rounded-full [@media(hover:none)]:hidden"><ChevronRightIcon /></Button>
           </div>
+        </div>
+        <div className="mt-3 flex min-h-9 flex-wrap items-baseline gap-x-3" aria-live="polite">
+          {kan ? (
+            <>
+              <span className="text-sm text-muted-foreground">{kan.kan.name}</span>
+              <b className="text-[26px] font-normal leading-snug tabular-nums">{amountText(kan.kan.yen, kan.kan.amountMissing)}</b>
+            </>
+          ) : summary}
         </div>
         <div className="mt-2.5 flex gap-0.5" aria-hidden="true">
           <i className={`block h-1.5 w-3.5 rounded-sm ${index === 0 ? 'bg-primary' : 'bg-border'}`} />

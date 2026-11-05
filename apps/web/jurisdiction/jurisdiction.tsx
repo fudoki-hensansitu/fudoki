@@ -188,38 +188,46 @@ function Budget({ data, year }: { data: PageData; year: number }) {
   const max = data.projects[0]?.yen ?? 1
   const label = phase === 'settlement' ? '決算' : '予算'
   const missing = `${yearName(year)}の${label}は、まだ収録していません`
+  const summary = (
+    <>
+      <span className="text-sm text-muted-foreground">歳出</span>
+      <b className={`text-[26px] font-normal leading-snug tabular-nums ${total ? '' : 'text-muted-foreground'}`}>{total ? formatYen(total.yen) : '—'}</b>
+      {pct !== null ? <span className={`text-[13px] tabular-nums ${pct < 0 ? 'text-[#aa5910]' : 'text-primary'}`}>前年度比 {pct >= 0 ? '+' : '−'}{Math.abs(pct).toFixed(1)}%</span> : null}
+    </>
+  )
+  const tabs = (
+    <div role="tablist" aria-label="金額の段階" className="flex gap-1">
+      {PHASES.map((p) => (
+        <button
+          key={p.key}
+          type="button"
+          role="tab"
+          id={`tab-${p.key}`}
+          aria-selected={p.key === phase}
+          aria-controls="budget-panel"
+          onClick={() => setPhase(p.key)}
+          className={`rounded-full px-3 py-1.5 text-[13px] ${p.key === phase ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+        >
+          {p.label}
+        </button>
+      ))}
+    </div>
+  )
   return (
     <Section
       id="budget"
       title="予算"
-      aside={
-        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-          <div role="tablist" aria-label="金額の段階" className="flex gap-1 self-center">
-            {PHASES.map((p) => (
-              <button
-                key={p.key}
-                type="button"
-                role="tab"
-                id={`tab-${p.key}`}
-                aria-selected={p.key === phase}
-                aria-controls="budget-panel"
-                onClick={() => setPhase(p.key)}
-                className={`rounded-full px-3 py-1.5 text-[13px] ${p.key === phase ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-              >
-                {p.label}
-              </button>
-            ))}
-          </div>
-          <div className="flex flex-wrap items-baseline gap-x-3">
-            <span className="text-sm text-muted-foreground">歳出</span>
-            <b className={`text-[26px] font-normal leading-snug tabular-nums ${total ? '' : 'text-muted-foreground'}`}>{total ? formatYen(total.yen) : '—'}</b>
-            {pct !== null ? <span className={`text-[13px] tabular-nums ${pct < 0 ? 'text-[#aa5910]' : 'text-primary'}`}>前年度比 {pct >= 0 ? '+' : '−'}{Math.abs(pct).toFixed(1)}%</span> : null}
-          </div>
-        </div>
-      }
     >
       <div id="budget-panel" role="tabpanel" aria-labelledby={`tab-${phase}`} className="flex flex-col gap-4">
-        {total ? <Flow key={year} data={data} total={total} /> : <Empty>{missing}</Empty>}
+        {total ? (
+          <Flow key={year} data={data} total={total} tabs={tabs} summary={summary} />
+        ) : (
+          <div className="rounded-[20px] border bg-background px-5 pt-5 sm:px-6">
+            {tabs}
+            <div className="mt-3 flex min-h-9 flex-wrap items-baseline gap-x-3">{summary}</div>
+            <p className="pb-10 pt-4 text-center text-sm text-muted-foreground">{missing}</p>
+          </div>
+        )}
         <h3 className="mt-4 text-lg">金額の大きい事業</h3>
         {isLatest ? (
           <ul className="border-t">
