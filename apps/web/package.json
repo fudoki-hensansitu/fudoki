@@ -9,6 +9,7 @@
     "deploy": "bun run client && bun run --cwd deploy deploy",
     "dev": "bun run client && cd deploy && mise exec -- cf dev",
     "fetch:boundaries": "uv run python map/build.py",
+    "build:map": "bun jurisdiction/map-build.ts",
     "test": "bun test server",
     "typecheck": "tsc --noEmit",
     "build:font": "bun -e \"import { LANDING_HTML } from './landing'; process.stdout.write(LANDING_HTML)\" | uv run --no-project --exclude-newer 2026-09-26 --with fonttools==4.66.0 --with brotli==1.2.0 python brand/home_font.py",

@@ -1,15 +1,15 @@
 // 自治体の個別ページ（/tokyo/nakano）・一覧（/jurisdictions）と、画面が款・目の内訳を引く /api/jurisdictions/*。データは apps/api の歳出の検索から組み、
 // 変わるのは取り込みのときだけなので、Worker の cache に1時間置く。内訳の API は誰でも読める GET で、IP ごとの流量と id の形の検査で守る
-import { Hono } from 'hono'
+import { Hono, type Context } from 'hono'
 import { renderEmpty, renderIndex, renderPage, sitemapXml } from '../jurisdiction/html'
 import { navOpen } from '../nav/render'
 import { jurisdictionPath, PREFECTURE_SLUGS } from '../jurisdiction/path'
 import { INDEX_PATH } from '../jurisdiction/types'
-import type { Drill, FlowDepth, PageData, Setsu } from '../jurisdiction/types'
+import type { Drill, FlowDepth, IndexEntry, PageData, Setsu } from '../jurisdiction/types'
 import { clientIp, errorResponse, HttpError, rateLimit } from './http'
 import { VIEW_RATE_LIMIT } from './limits'
 import type { Env, RateLimiter } from './env'
-import { loadCatalog, loadDrillById, loadFlow, loadPage, loadSetsu, type CatalogEntry } from './jurisdiction'
+import { loadCatalog, loadDrillById, loadFlow, loadIndex, loadPage, loadSetsu, type CatalogEntry } from './jurisdiction'
 
 const TTL = 3600
 const NODE_ID = /^[0-9a-f]{64}$/
@@ -31,6 +31,8 @@ async function memo<T>(key: string, fn: () => Promise<T>): Promise<T> {
 }
 
 export const catalog = (env: Env) => memo<CatalogEntry[]>('catalog', () => loadCatalog(env))
+// catalog とは別の key で同じ TTL（1時間）を持つので、取り込みで自治体が増えてから一覧へ出るまで最大で約2時間かかる
+const index = (env: Env) => memo<IndexEntry[]>('index', async () => loadIndex(env, await catalog(env), jurisdictionPath))
 const page = (env: Env, e: CatalogEntry) => memo<PageData | null>(`page-${e.code}-${e.settlementYears.at(-1)}`, () => loadPage(env, e))
 
 export const jurisdictions = new Hono<{ Bindings: Env }>()
@@ -40,18 +42,15 @@ const unavailable = () => new Response('風土記の API に繋がりません�
 
 jurisdictions.get(INDEX_PATH, async (c) => {
   try {
-    return new Response(renderIndex(await catalog(c.env), navOpen(c.req.header('Cookie'))), { headers: HTML_HEADERS })
+    return new Response(renderIndex(await index(c.env), navOpen(c.req.header('Cookie'))), { headers: HTML_HEADERS })
   } catch {
     return unavailable()
   }
 })
 
-// /<都道府県のローマ字>/<自治体のローマ字>。/s/:id・/api/* など他の経路とは、都道府県の slug かどうかで見分ける（違えば API を引かずに次へ渡す）
-jurisdictions.get('/:prefecture/:name', async (c, next) => {
-  const { prefecture, name } = c.req.param()
-  if (!PREFECTURE_SLUGS.has(prefecture)) return next()
+// /<都道府県のローマ字>/<自治体のローマ字>、都道府県自体は /<都道府県のローマ字>。/s/:id・/api/* など他の経路とは、都道府県の slug かどうかで見分ける（違えば API を引かずに次へ渡す）
+async function jurisdictionPage(c: Context<{ Bindings: Env }>, path: string) {
   try {
-    const path = `/${prefecture}/${name}`
     const entry = (await catalog(c.env)).find((e) => jurisdictionPath(e.code) === path)
     if (!entry) return notFound()
     const data = entry.settlementYears.length > 0 ? await page(c.env, entry) : null
@@ -60,6 +59,18 @@ jurisdictions.get('/:prefecture/:name', async (c, next) => {
   } catch {
     return unavailable()
   }
+}
+
+jurisdictions.get('/:prefecture', async (c, next) => {
+  const { prefecture } = c.req.param()
+  if (!PREFECTURE_SLUGS.has(prefecture)) return next()
+  return jurisdictionPage(c, `/${prefecture}`)
+})
+
+jurisdictions.get('/:prefecture/:name', async (c, next) => {
+  const { prefecture, name } = c.req.param()
+  if (!PREFECTURE_SLUGS.has(prefecture)) return next()
+  return jurisdictionPage(c, `/${prefecture}/${name}`)
 })
 
 jurisdictions.get('/sitemap.xml', async (c) => {
