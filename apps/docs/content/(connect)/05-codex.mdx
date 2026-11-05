@@ -1,0 +1,29 @@
+---
+title: Codex
+description: Codex に風土記の plugin を入れる。
+sidebar:
+  icon: /icons/terminal-window.svg
+---
+
+MCP の接続に加えて、歳出を比べるときの手順（skill `compare-expenditure`）も入ります。
+
+## ChatGPT デスクトップアプリの Codex
+
+[plugin ディレクトリの風土記](https://chatgpt.com/plugins/plugin_asdk_app_6ad87dc03a608191a13bba05310ea5d9)を開くか、Plugins で「風土記」と検索し、「＋」で入れます。[ChatGPT](/chatgpt) と同じ plugin です。
+
+## Codex CLI
+
+```bash
+codex plugin marketplace add fudoki-hensansitu/fudoki
+codex plugin add fudoki@fudoki-plugins
+```
+
+入れたら新しい session を始めます。`/plugins` で入っているか確かめられます。
+
+## MCP だけ登録する
+
+```bash
+codex mcp add fudoki --url https://api.fudoki.dev/mcp
+```
+
+plugin と重ねて登録する必要はありません。

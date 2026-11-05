@@ -1,40 +1,46 @@
 ---
 title: はじめに
-description: 町の家計簿を作る。
+description: 自治体の歳出を、AI との会話や API から事業の単位まで調べる。
+sidebar:
+  icon: /icons/house.svg
 ---
 
-<img src="/images/hero.webp" alt="巻物に記した各地の報告を集める人々を描いた水墨画風のイラスト" width="1376" height="768" />
+風土記は、自治体の予算書・決算書から歳出の金額を款・項・目と事業の単位まで取り出し、自治体や年度をまたいで比べられるようにしたデータです。登録も API key も要りません。
 
-自治体の歳出の予算・決算を、款・項・目の下の事業の単位まで集めて管理する。
+## AI につなぐ
 
-風土記は、日本の地方自治体が公開した予算書・決算書（出典）から、歳出の金額を款・項・目の階層と節・備考などの内訳ごとに取り出し、自治体や年度をまたいで比べられる形にしたデータです。
+使っている AI に、次の URL を MCP サーバーとして登録します。
 
-713 年の官命で、諸国に地名の由来や産物を**同じ様式で報告させて集めた**地誌『風土記』から名付けています。
+```text title="MCP サーバーの URL"
+https://api.fudoki.dev/mcp
+```
 
-## 取得の方法
-
-<CardGroup cols={2}>
-  <Card title="MCP で使う" href="/mcp">
-    ChatGPT・Claude・Cursor などの AI クライアントに `https://api.fudoki.dev/mcp` を登録し、会話から問い合わせる。
-  </Card>
-  <Card title="REST で使う" href="/rest">
-    `https://api.fudoki.dev` に JSON で問い合わせる。認証は要りません。
-  </Card>
-  <Card title="データの読み方" href="/data">
-    資料区分・木のノード・軸・COFOG と、金額を足すときの条件。
-  </Card>
-  <Card title="ChatGPT・Claude などで使う" href="/plugins">
-    AI クライアントへの接続方法と plugin の導入方法。
-  </Card>
-  <Card title="API リファレンス" href="/reference">
-    各操作の入力と応答の schema（OpenAPI から生成）。
-  </Card>
+<CardGroup cols={3}>
+  <Card title="ChatGPT" href="/chatgpt" icon="/icons/open-ai-logo.svg">plugin ディレクトリから追加</Card>
+  <Card title="Claude" href="/claude" icon="/icons/asterisk.svg">Connectors から追加</Card>
+  <Card title="Claude Code" href="/claude-code" icon="/icons/terminal-window.svg">コマンド 1 行で追加</Card>
+  <Card title="Codex" href="/codex" icon="/icons/terminal-window.svg">plugin ディレクトリかコマンドで追加</Card>
+  <Card title="Cursor" href="/cursor" icon="/icons/cursor.svg">`mcp.json` に追加</Card>
+  <Card title="その他のクライアント" href="/mcp" icon="/icons/plug.svg">URL・tool・制約</Card>
 </CardGroup>
 
-## 出典に戻れる
+## 試してみる
 
-すべての行は `origin_id` で出典（資料名・公開 URL・SHA-256）を指し、PDF の場合は項目と金額が印字された頁と位置も持ちます。数字が怪しいと思ったときは、出典の該当箇所を開いて確かめられます。
+つないだら、たとえば次のように聞きます。
+
+<Prompt description="品川区で収録されている年度と会計を教えて" actions={["copy"]}>品川区で収録されている年度と会計を教えて</Prompt>
+
+<Prompt description="中野区の2025年度決算で、一般会計の目を金額の大きい順に3件見せて" actions={["copy"]}>中野区の2025年度決算で、一般会計の目を金額の大きい順に3件見せて</Prompt>
+
+<Prompt description="三鷹市と八王子市の民生費を、両方に収録がある年度で比べて" actions={["copy"]}>三鷹市と八王子市の民生費を、両方に収録がある年度で比べて</Prompt>
+
+## プログラムから使う
+
+<CardGroup cols={2}>
+  <Card title="REST API" href="/rest" icon="/icons/brackets-curly.svg">`https://api.fudoki.dev` に JSON で問い合わせる</Card>
+  <Card title="データの読み方" href="/data">金額を足すときの条件と、出典の位置</Card>
+</CardGroup>
 
 :::note
-款・項・目の金額は出典に印字された値です。COFOG の分類・会計の種類（`account_kind`）・繰出の印などは、出典にない対応を風土記が定めた**判断**で、列の説明でそれと分かるようにしています。
+すべての行は出典（自治体が公開した資料）を指し、PDF なら金額が印字された頁も持ちます。COFOG の分類など、出典に無い対応は風土記の**判断**として列の説明で区別しています。
 :::

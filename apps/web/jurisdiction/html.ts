@@ -7,9 +7,10 @@ import { Page } from './page'
 import { THEME_COLOR_META } from '../tokens'
 import { PWA_HEAD, PWA_REGISTER } from '../pwa'
 import type { CatalogEntry } from '../server/jurisdiction'
+import { IndexPage } from './index-page'
 import { jurisdictionPath } from './path'
 import { withSiteNav } from '../nav/render'
-import { formatYen, INDEX_PATH, reiwa, type PageData } from './types'
+import { formatYen, INDEX_PATH, reiwa, type IndexEntry, type PageData } from './types'
 
 const ORIGIN = 'https://fudoki.dev'
 export const esc = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`)
@@ -92,20 +93,19 @@ ${PWA_REGISTER}
 `
 }
 
-export function renderIndex(entries: CatalogEntry[], open: boolean): string {
-  const have = entries.filter((e) => e.settlementYears.length > 0)
+export function renderIndex(entries: IndexEntry[], open: boolean): string {
   const canonical = `${ORIGIN}${INDEX_PATH}`
-  const description = `決算を収録している自治体（${have.length}）の一覧。自治体ごとに歳出の款・項・目と、金額の推移を確かめられます。`
-  const byPref = new Map<string, CatalogEntry[]>()
-  for (const e of have) byPref.set(e.prefecture, [...(byPref.get(e.prefecture) ?? []), e])
-  const sections = [...byPref].map(([pref, list]) => `<h2 id="${esc(pref)}">${esc(pref)}</h2><ul class="j-list">${list.map((e) => `<li><a href="${jurisdictionPath(e.code)}">${esc(e.name)}</a></li>`).join('')}</ul>`).join('')
+  const description = entries.length
+    ? `決算を収録している自治体（${entries.length}）を、地図と表で一覧にしています。歳出の総額と金額の大きい分野を見比べて、自治体ごとの款・項・目へ進めます。`
+    : '風土記が決算を収録した自治体の一覧です。まだ収録した自治体がありません。'
   return `<!doctype html>
 <html lang="ja">
 <head>
-${head('自治体を探す｜風土記', description, canonical)}
+${head('自治体を探す｜風土記', description, canonical, '<script type="module" src="/_app/index.js"></script>')}
 </head>
 <body>
-${withSiteNav(`<main class="j-static"><h1>自治体を探す</h1><p>${esc(description)}</p>${sections}</main>`, nav(open))}
+${withSiteNav(`<main id="j-index">${renderToString(createElement(IndexPage, { entries }))}</main>`, nav(open))}
+<script type="application/json" id="j-index-data">${inlineJson(entries)}</script>
 ${PWA_REGISTER}
 </body>
 </html>

@@ -1,0 +1,26 @@
+---
+title: ChatGPT
+description: ChatGPT の plugin ディレクトリから風土記を入れる。
+sidebar:
+  icon: /icons/open-ai-logo.svg
+---
+
+<Steps>
+  <Step title="風土記の plugin を開く">
+    [ChatGPT の plugin ディレクトリの風土記](https://chatgpt.com/plugins/plugin_asdk_app_6ad87dc03a608191a13bba05310ea5d9)を開きます。Plugins で「風土記」と検索しても見つかります。
+  </Step>
+  <Step title="インストールする">
+    「＋」を押して入れます。認証は要りません。
+  </Step>
+  <Step title="会話で頼む">
+    新しい会話でそのまま頼むか、`@` から風土記を選びます。
+  </Step>
+</Steps>
+
+<img src="/images/chatgpt-plugin.png" alt="ChatGPT の風土記プラグイン画面。収録範囲の確認や歳出の検索の質問例が並ぶ" width="2184" height="1641" loading="lazy" />
+
+MCP の接続に加えて、歳出を比べるときの手順（skill `compare-expenditure`）も入ります。同じ plugin は ChatGPT デスクトップアプリの [Codex](/codex) でも使えます。
+
+:::note[ディレクトリの plugin を使えないとき]
+ワークスペースの管理者が公開 plugin を止めている場合は、Plugins の「＋」から「Add custom MCP server」を選び、Server URL に `https://api.fudoki.dev/mcp`、Authentication に No authentication を入れて自分用に追加します。
+:::

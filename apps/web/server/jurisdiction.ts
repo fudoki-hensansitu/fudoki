@@ -1,6 +1,6 @@
 // 自治体の個別ページのデータ。apps/api（Service Binding）の歳出の検索から、決算の款・事業・お金の流れを組む。
 // 金額は API が返した円をそのまま持つ。足すのは「同じ年度・会計・軸の款（兄弟）の和」だけで、api の sum_rules に従う
-import type { Drill, FlowDepth, Kou, Line, Moku, PageData, Project, Setsu, YearTotal } from '../jurisdiction/types'
+import { jurisdictionKind, type Drill, type FlowDepth, type IndexEntry, type Kou, type Line, type Moku, type PageData, type Project, type Setsu, type YearTotal } from '../jurisdiction/types'
 import { apiFetch, type Env } from './env'
 
 const API_ORIGIN = 'https://api.fudoki.dev'
@@ -73,6 +73,57 @@ export async function loadCatalog(env: Env): Promise<CatalogEntry[]> {
     token = r.next_page_token ?? undefined
   } while (token)
   return out
+}
+
+/** 一覧の1回の検索に載せる自治体の数。API は年と条件の値の bind を合わせて 90 個までにしている */
+const INDEX_BATCH = 60
+const TOP_KAN = 3
+
+/**
+ * 一覧（/jurisdictions）のデータ。収録している自治体の款を、自治体をまとめて検索して最新の決算ごとに足す。
+ * 総額の足し方は個別ページ（loadPage の totals）と同じ「一般会計の款の和」
+ */
+export async function loadIndex(env: Env, entries: CatalogEntry[], pathOf: (code: string) => string): Promise<IndexEntry[]> {
+  const have = entries.filter((e) => e.settlementYears.length > 0)
+  const latest = new Map(have.map((e) => [e.code, e.settlementYears.at(-1)!]))
+  const kan = new Map<string, { name: string; yen: number | null }[]>()
+  // 最新の年度が同じ自治体ごとに引く（他の年度の款を取らない）
+  for (const year of new Set(latest.values())) {
+    const sameYear = have.filter((e) => latest.get(e.code) === year).map((e) => e.code)
+    for (let i = 0; i < sameYear.length; i += INDEX_BATCH) {
+      let token: string | undefined
+      do {
+        const r = await call<SearchResponse & { nodes: (ApiNode & { jurisdiction_code: string })[] }>(env, '/v1/expenditure/nodes:search', {
+          document_kind: 'settlement',
+          fiscal_year: { min: year, max: year },
+          where: { jurisdiction_code: { eq: sameYear.slice(i, i + INDEX_BATCH) }, account_name: { eq: [ACCOUNT] }, is_subject: { eq: true }, node_kind: { eq: ['款'] } },
+          page_size: 1000,
+          ...(token ? { page_token: token } : {}),
+        })
+        for (const n of r.nodes) kan.set(n.jurisdiction_code, [...(kan.get(n.jurisdiction_code) ?? []), { name: n.name, yen: n.amount_yen }])
+        token = r.next_page_token ?? undefined
+      } while (token)
+    }
+  }
+  return have.flatMap((e) => {
+    const all = kan.get(e.code) ?? []
+    // 印字の無い款は 0 円と数えず、総額が一部の款の和であることを amountMissing で画面に伝える
+    const list = all.flatMap((k) => (k.yen === null ? [] : [{ name: k.name, yen: k.yen }])).sort((a, b) => b.yen - a.yen)
+    // 収録範囲に年度があっても款が引けない自治体は、金額を 0 と出さずに一覧から外す
+    if (list.length === 0) return []
+    return [{
+      code: e.code,
+      name: e.name,
+      prefecture: e.prefecture,
+      kind: jurisdictionKind(e.code, e.name),
+      path: pathOf(e.code),
+      years: e.settlementYears,
+      year: latest.get(e.code)!,
+      yen: list.reduce((s, k) => s + k.yen, 0),
+      topKan: list.slice(0, TOP_KAN),
+      ...(list.length < all.length ? { amountMissing: true as const } : {}),
+    }]
+  })
 }
 
 const search = (env: Env, code: string, years: { min: number; max: number }, nodeKind: string | string[] | undefined, extra: Record<string, unknown> = {}, pageSize = 200, pageToken?: string) =>

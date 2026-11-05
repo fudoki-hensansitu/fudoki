@@ -336,6 +336,344 @@
           "table_id": "general-expenditure-detail"
         }
       ]
+    },
+    {
+      "id": "nhi",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "1301286b5257b82dc868e6d7cd38038abd9e3182fe1eb4a0ff1ee35bae36e382"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "nhi-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "nhi-ocr-1",
+          "origin_sha256": "1301286b5257b82dc868e6d7cd38038abd9e3182fe1eb4a0ff1ee35bae36e382",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              155,
+              156,
+              157,
+              158,
+              159,
+              160,
+              161,
+              162,
+              163,
+              164
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "00e3af8627a1a16c60559813fd0de68345daed69943d5a17403a881986cd666c",
+          "bytes": 3402088
+        },
+        {
+          "id": "nhi-ocr-2",
+          "origin_sha256": "1301286b5257b82dc868e6d7cd38038abd9e3182fe1eb4a0ff1ee35bae36e382",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              165,
+              166,
+              167
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "b3da1b0ef4ef6b4611309ea7917c5223b6e308f4171fce3bde37b1193e2c5098",
+          "bytes": 892544
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "nhi-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "kouki",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "1301286b5257b82dc868e6d7cd38038abd9e3182fe1eb4a0ff1ee35bae36e382"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        },
+        "header_readings": [
+          {
+            "id": "kouki-header-carryover",
+            "pages": [
+              179,
+              180,
+              181,
+              182,
+              183,
+              184,
+              185
+            ],
+            "box": [
+              240.0,
+              93.0,
+              299.0,
+              126.0
+            ],
+            "text": "継続費及び繰越事業費繰越額",
+            "reason": "OCR が見出しの升を「継続費及び繰越事業費費繰越額」と1字重ねて読み、辞書に一致せず予算現額に寄せられていた。原典の描画で升の印字を確認した。升を区切り直すと隣の「予備費支出及び流用増減」の升に跨る語が外れるので、2つの升を揃えて宣言する。"
+          },
+          {
+            "id": "kouki-header-reserve",
+            "pages": [
+              179,
+              180,
+              181,
+              182,
+              183,
+              184,
+              185
+            ],
+            "box": [
+              299.5,
+              93.0,
+              362.0,
+              126.0
+            ],
+            "text": "予備費支出及び流用増減",
+            "reason": "OCR が見出しの升を「継続費及び繰越事業費費繰越額」と1字重ねて読み、辞書に一致せず予算現額に寄せられていた。原典の描画で升の印字を確認した。升を区切り直すと隣の「予備費支出及び流用増減」の升に跨る語が外れるので、2つの升を揃えて宣言する。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "kouki-ocr-1",
+          "origin_sha256": "1301286b5257b82dc868e6d7cd38038abd9e3182fe1eb4a0ff1ee35bae36e382",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              179,
+              180,
+              181,
+              182,
+              183,
+              184,
+              185
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "dec317298a0da0d7118ab61183af69fc14fe4b2cf25ab3d54c6f8a9943019aa2",
+          "bytes": 1825414
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kouki-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "kaigo",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "1301286b5257b82dc868e6d7cd38038abd9e3182fe1eb4a0ff1ee35bae36e382"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "kaigo-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p204-long-vowel-53",
+            "page": 204,
+            "observation_id": "p204:full-page:a0:result0:r53",
+            "observed_name": "サ一",
+            "corrected_name": "サー",
+            "reason": "原画の頁204は「サービス」と印字されている。Paddle は長音「ー」を漢数字の「一」に読んだ。字形の対応表は1字ずつで、カタカナの直後の「一」だけを直す規則は置けないので、この行だけを宣言する。"
+          },
+          {
+            "id": "p204-long-vowel-63",
+            "page": 204,
+            "observation_id": "p204:full-page:a0:result0:r63",
+            "observed_name": "サ一",
+            "corrected_name": "サー",
+            "reason": "原画の頁204は「サービス」と印字されている。Paddle は長音「ー」を漢数字の「一」に読んだ。字形の対応表は1字ずつで、カタカナの直後の「一」だけを直す規則は置けないので、この行だけを宣言する。"
+          },
+          {
+            "id": "p204-long-vowel-73",
+            "page": 204,
+            "observation_id": "p204:full-page:a0:result0:r73",
+            "observed_name": "サ一",
+            "corrected_name": "サー",
+            "reason": "原画の頁204は「サービス」と印字されている。Paddle は長音「ー」を漢数字の「一」に読んだ。字形の対応表は1字ずつで、カタカナの直後の「一」だけを直す規則は置けないので、この行だけを宣言する。"
+          },
+          {
+            "id": "p204-long-vowel-129",
+            "page": 204,
+            "observation_id": "p204:full-page:a0:result0:r129",
+            "observed_name": "サ一",
+            "corrected_name": "サー",
+            "reason": "原画の頁204は「サービス」と印字されている。Paddle は長音「ー」を漢数字の「一」に読んだ。字形の対応表は1字ずつで、カタカナの直後の「一」だけを直す規則は置けないので、この行だけを宣言する。"
+          },
+          {
+            "id": "p204-long-vowel-85-note",
+            "page": 204,
+            "observation_id": "p204:full-page:a0:result1:r85",
+            "observed_name": "サ一",
+            "corrected_name": "サー",
+            "reason": "原画の頁204は「サービス」と印字されている。Paddle は長音「ー」を漢数字の「一」に読んだ。字形の対応表は1字ずつで、カタカナの直後の「一」だけを直す規則は置けないので、この行だけを宣言する。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "kaigo-ocr-1",
+          "origin_sha256": "1301286b5257b82dc868e6d7cd38038abd9e3182fe1eb4a0ff1ee35bae36e382",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              202,
+              203,
+              204,
+              205,
+              206,
+              207,
+              208,
+              209,
+              210,
+              211
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "5323535e1bc4798aa73805f4c639ce327fd633e65a86a41548598f6cd6ad51b3",
+          "bytes": 3643456
+        },
+        {
+          "id": "kaigo-ocr-2",
+          "origin_sha256": "1301286b5257b82dc868e6d7cd38038abd9e3182fe1eb4a0ff1ee35bae36e382",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              212,
+              213
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "d7ffa169dc5c3a7e2c486b276e188fbef2d7cf72e57c9102d254f11c45556a86",
+          "bytes": 731456
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kaigo-expenditure-detail"
+        }
+      ]
     }
   ],
   "tables": [
@@ -369,6 +707,100 @@
           "bytes": 87992
         },
         "row_count": 8345
+      }
+    },
+    {
+      "table_id": "nhi-expenditure-detail",
+      "conversion_id": "nhi",
+      "input_fingerprint": "5579dbbac706d78ec2049c436297b361fd2f5e2d6d48d756ef18e788b821f08e",
+      "account": "国民健康保険事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent'}。",
+        "金額の単位は column mark 13頁 から決めた。款の和 22,020,855,192 と印字の「歳出合計」22,020,855,192 が一致。",
+        "金額の注記 18 件（充用 12・流用 6）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（63 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 32 件（p157:full-page:a0:result1:r23・p157:full-page:a0:result1:r23・p157:full-page:a0:result1:r23:w9・p157:full-page:a0:result1:r23:w20・p157:full-page:a0:result1:r30・p157:full-page:a0:result1:r30・p157:full-page:a0:result1:r30:w2・p157:full-page:a0:result1:r30:w13・p158:full-page:a0:result0:r120・p158:full-page:a0:result0:r120:w4・p158:full-page:a0:result0:r127・p158:full-page:a0:result0:r127:w4・p160:full-page:a0:result1:r18・p160:full-page:a0:result1:r18:w10・p161:full-page:a0:result1:r16・p161:full-page:a0:result1:r16:w13・p162:full-page:a0:result1:r16・p162:full-page:a0:result1:r16:w13・p163:full-page:a0:result1:r17・p163:full-page:a0:result1:r17:w15・p164:full-page:a0:result0:r0・p164:full-page:a0:result0:r0:w8・p164:full-page:a0:result0:r41・p164:full-page:a0:result0:r41:w6・p164:full-page:a0:result0:r70・p164:full-page:a0:result0:r70:w6・p164:full-page:a0:result1:r18・p164:full-page:a0:result1:r18:w10・p165:full-page:a0:result1:r19・p165:full-page:a0:result1:r19:w10・p167:full-page:a0:result1:r16・p167:full-page:a0:result1:r16:w15）・增→増 12 件（p161:full-page:a0:result0:r19・p161:full-page:a0:result0:r19:w2・p162:full-page:a0:result0:r19・p162:full-page:a0:result0:r19:w2・p163:full-page:a0:result0:r23・p163:full-page:a0:result0:r23:w3・p164:full-page:a0:result0:r27・p164:full-page:a0:result0:r27:w2・p165:ink-1:a1:result0:r1・p165:ink-1:a1:result0:r1:w0・p167:full-page:a0:result0:r18・p167:full-page:a0:result0:r18:w2）・查→査 4 件（p157:full-page:a0:result0:r94・p157:full-page:a0:result0:r94:w3・p164:full-page:a0:result0:r48・p164:full-page:a0:result0:r48:w7）・產→産 4 件（p158:full-page:a0:result0:r80・p158:full-page:a0:result0:r80:w3・p158:full-page:a0:result0:r86・p158:full-page:a0:result0:r86:w3）・额→額 2 件（p156:full-page:a0:result0:r18・p156:full-page:a0:result0:r18:w0）・齡→齢 2 件（p160:full-page:a0:result0:r87・p160:full-page:a0:result0:r87:w3）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131181/2024/settlement/expenditure/nhi-expenditure-detail-nodes.parquet",
+          "sha256": "c735c368e82b26006c8ab95728510278dfa1ec048ea99b32d1a19f43c1898ee7",
+          "bytes": 9633
+        },
+        "row_count": 151
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131181/2024/settlement/expenditure/nhi-expenditure-detail-amounts.parquet",
+          "sha256": "3f2693d0251c3f16209609b37d9acf4669d8c23ab22fcc35e2b182ca27998ea8",
+          "bytes": 16261
+        },
+        "row_count": 1096
+      }
+    },
+    {
+      "table_id": "kaigo-expenditure-detail",
+      "conversion_id": "kaigo",
+      "input_fingerprint": "2eac23cfca7c925360ee99484170f8cc35b40cc8f25ce756e927db3d15087dc3",
+      "account": "介護保険事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent'}。",
+        "金額の単位は column mark 12頁 から決めた。款の和 18,734,502,236 と印字の「歳出合計」18,734,502,236 が一致。",
+        "金額の注記 30 件（充用 18・流用 12）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（92 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。",
+        "原画で確かめた名称の誤読 5 件を、管理 JSON の name_corrections で印字に直した: 204頁 サ一→サー・204頁 サ一→サー・204頁 サ一→サー・204頁 サ一→サー・204頁 サ一→サー。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 30 件（p202:full-page:a0:result1:r18・p202:full-page:a0:result1:r18:w10・p205:full-page:a0:result0:r44・p205:full-page:a0:result0:r44:w5・p205:full-page:a0:result0:r52・p205:full-page:a0:result0:r52:w6・p205:full-page:a0:result1:r18・p205:full-page:a0:result1:r18:w10・p206:full-page:a0:result0:r51・p206:full-page:a0:result0:r51:w1・p206:full-page:a0:result0:r63・p206:full-page:a0:result0:r63:w4・p206:full-page:a0:result1:r44・p206:full-page:a0:result1:r44:w12・p207:full-page:a0:result0:r40・p207:full-page:a0:result0:r40:w5・p207:full-page:a0:result1:r88・p207:full-page:a0:result1:r88:w7・p209:full-page:a0:result1:r16・p209:full-page:a0:result1:r16:w13・p210:full-page:a0:result1:r16・p210:full-page:a0:result1:r16:w10・p210:full-page:a0:result1:r17・p210:full-page:a0:result1:r17:w10・p211:full-page:a0:result1:r16・p211:full-page:a0:result1:r16:w13・p212:full-page:a0:result1:r19・p212:full-page:a0:result1:r19:w10・p213:full-page:a0:result1:r15・p213:full-page:a0:result1:r15:w15）・增→増 12 件（p207:full-page:a0:result0:r21・p207:full-page:a0:result0:r21:w2・p208:full-page:a0:result0:r20・p208:full-page:a0:result0:r20:w3・p209:full-page:a0:result0:r20・p209:full-page:a0:result0:r20:w2・p210:full-page:a0:result0:r18・p210:full-page:a0:result0:r18:w2・p211:full-page:a0:result0:r18・p211:full-page:a0:result0:r18:w2・p213:full-page:a0:result0:r18・p213:full-page:a0:result0:r18:w2）・查→査 6 件（p204:full-page:a0:result0:r102・p204:full-page:a0:result0:r102:w3・p204:full-page:a0:result1:r30・p204:full-page:a0:result1:r30:w4・p208:full-page:a0:result0:r76・p208:full-page:a0:result0:r76:w3）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131181/2024/settlement/expenditure/kaigo-expenditure-detail-nodes.parquet",
+          "sha256": "5bcec8403ad67816c8537c59fce59c347c14d2a824d29feabb09c7ee62a601ec",
+          "bytes": 10323
+        },
+        "row_count": 176
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131181/2024/settlement/expenditure/kaigo-expenditure-detail-amounts.parquet",
+          "sha256": "9ff747f07689cd6c9dbcf28b20c42433e4956df2da941b63b7067d536e33b7e9",
+          "bytes": 16760
+        },
+        "row_count": 1122
+      }
+    },
+    {
+      "table_id": "kouki-expenditure-detail",
+      "conversion_id": "kouki",
+      "input_fingerprint": "a4b25103ba9699a7e3645f2af2d59e8f2fe6efdaf08d21ed082cee15241bd787",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent'}。",
+        "金額の単位は column mark 7頁 から決めた。款の和 5,436,773,248 と印字の「歳出合計」5,436,773,248 が一致。",
+        "金額の注記 12 件（充用 12）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（27 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 12 件（p179:full-page:a0:result1:r18・p179:full-page:a0:result1:r18:w10・p181:full-page:a0:result1:r17・p181:full-page:a0:result1:r17:w10・p182:full-page:a0:result1:r16・p182:full-page:a0:result1:r16:w15・p183:full-page:a0:result1:r17・p183:full-page:a0:result1:r17:w10・p184:full-page:a0:result1:r18・p184:full-page:a0:result1:r18:w10・p185:full-page:a0:result1:r15・p185:full-page:a0:result1:r15:w15）・增→増 8 件（p182:full-page:a0:result0:r19・p182:full-page:a0:result0:r19:w2・p183:full-page:a0:result0:r18・p183:full-page:a0:result0:r18:w2・p184:full-page:a0:result0:r21・p184:full-page:a0:result0:r21:w2・p185:full-page:a0:result0:r18・p185:full-page:a0:result0:r18:w2）・徵→徴 4 件（p179:full-page:a0:result0:r74・p179:full-page:a0:result0:r74:w2・p179:full-page:a0:result0:r80・p179:full-page:a0:result0:r80:w2）・查→査 2 件（p182:full-page:a0:result0:r42・p182:full-page:a0:result0:r42:w5）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131181/2024/settlement/expenditure/kouki-expenditure-detail-nodes.parquet",
+          "sha256": "db5fb050714e72c68f8bd959efa4ada772302466e83b99ead30894c0977b62ac",
+          "bytes": 5629
+        },
+        "row_count": 64
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131181/2024/settlement/expenditure/kouki-expenditure-detail-amounts.parquet",
+          "sha256": "ce6776a69ef1cc943a11008fcb175f163afe318b60bb5c7a4b2384e783b55931",
+          "bytes": 8499
+        },
+        "row_count": 424
       }
     }
   ]

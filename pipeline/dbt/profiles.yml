@@ -11,3 +11,7 @@ fudoki:
         - module: staging
       settings:
         memory_limit: '4GB'
+        # DuckDB 2.0.0 は並列実行で dict-surviving cache の INTERNAL Error を出す
+        # (duckdb/duckdb#28268, #27205)。上の threads は dbt の並列数で、こちらが
+        # DuckDB 自身の実行スレッド数。修正版 (2.0.1 以降) へ上げたら外す。
+        threads: 1
