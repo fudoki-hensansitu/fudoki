@@ -94,8 +94,9 @@ const mapCodes = (map: PrefectureMap | undefined) => new Set<string>(map ? [...m
 /** タイルに書く短い名前。種別（区・市・町・村）は落とし、1文字になるときだけ残す（港区・北区） */
 const tileName = (name: string) => (name.length > 2 ? name.replace(/[区市町村]$/, '') : name)
 
-type TileProps = { code: string; name: string; e: IndexEntry | undefined; max: number; selected: string; onToggle: (code: string) => void; style?: React.CSSProperties }
-function MunicipalityTile({ code, name, e, max, selected, onToggle, style }: TileProps) {
+type TileProps = { code: string; name: string; e: IndexEntry | undefined; max: number; selected: string; onPreview: (code: string) => void; style?: React.CSSProperties }
+/** 収録した自治体のタイルは個別ページへのリンク。マウスを載せる・フォーカスすると横のカードに中身を出す */
+function MunicipalityTile({ code, name, e, max, selected, onPreview, style }: TileProps) {
   const label = <span className="line-clamp-2 break-all px-0.5 text-center text-[10px] leading-tight sm:text-[11px]">{tileName(name)}</span>
   if (!e)
     return (
@@ -105,10 +106,10 @@ function MunicipalityTile({ code, name, e, max, selected, onToggle, style }: Til
     )
   const on = selected === code
   return (
-    <button
-      type="button"
-      onClick={() => onToggle(code)}
-      aria-pressed={on}
+    <a
+      href={e.path}
+      onPointerEnter={(ev) => ev.pointerType === 'mouse' && onPreview(code)}
+      onFocus={() => onPreview(code)}
       aria-label={`${name} ${formatYen(e.yen)}`}
       title={name}
       style={{ ...style, background: shade(e.yen, max) }}
@@ -119,16 +120,16 @@ function MunicipalityTile({ code, name, e, max, selected, onToggle, style }: Til
       )}
     >
       {label}
-    </button>
+    </a>
   )
 }
 
 /** 都道府県の市区町村のタイル図。各自治体を同じ大きさの四角で、おおよその位置に並べ、歳出の総額で塗る。島しょは下の段に北から並べる */
-function PrefectureTiles({ map, entries, selected, onToggle }: { map: PrefectureMap; entries: IndexEntry[]; selected: string; onToggle: (code: string) => void }) {
+function PrefectureTiles({ map, entries, selected, onPreview }: { map: PrefectureMap; entries: IndexEntry[]; selected: string; onPreview: (code: string) => void }) {
   const byCode = new Map(entries.map((e) => [e.code, e]))
   const max = Math.max(...entries.map((e) => e.yen), 1)
   const columns = { gridTemplateColumns: `repeat(${map.cols}, minmax(0, 1fr))` }
-  const props = { max, selected, onToggle }
+  const props = { max, selected, onPreview }
   // 横にスクロールする幅のときは、歳出の総額で重みを付けた収録自治体の重心が真ん中に来るところから見せる（東京都なら区部）
   const scroller = React.useRef<HTMLDivElement>(null)
   React.useEffect(() => {
@@ -268,9 +269,9 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
   const shapeCodes = mapCodes(map)
   const offMap = map ? inView.filter((e) => !shapeCodes.has(e.code)) : []
   const viewName = view ? (map?.name ?? inView[0]?.prefecture ?? '') : '日本'
-  // 選んだ自治体。空のときは開いている都道府県自体を見せる（最初は都道府県自体）
+  // カードに出す自治体。タイルにマウスを載せる・フォーカスした自治体で、空のときは開いている都道府県自体を見せる。
+  // タイルを押すと個別ページへ進む（押して選ぶ形はモバイルで何が変わったか分かりにくかった）
   const [selected, setSelected] = React.useState('')
-  const toggle = (code: string) => setSelected((s) => (s === code ? '' : code))
   // 日本⇄都道府県の切り替えは View Transition で拡大・縮小して見せる（未対応のブラウザと、動きを減らす設定ではそのまま切り替える）
   const transition = (update: () => void) => {
     const reduce = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -282,12 +283,8 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
       setView(pref)
       setSelected('')
     })
-  // 地図の検索で選んだ自治体を、その都道府県の図で選んだ状態にする（都道府県自体なら図を開くだけ）
-  const find = (e: IndexEntry) =>
-    transition(() => {
-      setView(prefOf(e))
-      setSelected(e.kind === '都道府県' ? '' : e.code)
-    })
+  // 地図の検索で選んだ市区町村は個別ページへ進む。都道府県ならその図を開く
+  const find = (e: IndexEntry) => (e.kind === '都道府県' ? open(prefOf(e)) : location.assign(e.path))
   // 表の絞り込み。種類ごとに選んだ値（都道府県はコードの先頭2桁、市区町村は自治体コード）
   const [picked, setPicked] = React.useState<Record<JurisdictionKind, string[]>>({ 都道府県: [], 区: [], 市: [], 町村: [] })
   const prefPicks = picked['都道府県']
@@ -340,9 +337,9 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
         <p className="mt-3 text-muted-foreground">まだ決算を収録した自治体がありません。</p>
       )}
 
-      {/* Esc で選択を外し、都道府県自体に戻す */}
-      <section className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1fr)_320px]" aria-label="地図" onKeyDown={(ev) => ev.key === 'Escape' && setSelected('')}>
-        <div className="flex min-w-0 flex-col rounded-[20px] bg-card p-4 sm:p-6">
+      <section className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1fr)_320px]" aria-label="地図">
+        {/* 地図からマウスが出たら、カードを都道府県自体に戻す */}
+        <div className="flex min-w-0 flex-col rounded-[20px] bg-card p-4 sm:p-6" onPointerLeave={(ev) => ev.pointerType === 'mouse' && setSelected('')}>
           <div className="mb-3 flex items-baseline justify-between gap-2">
             <Breadcrumb>
               <BreadcrumbList className="text-lg">
@@ -360,7 +357,7 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
             <span className="text-xs text-muted-foreground">{view ? '' : '収録のある都道府県を選ぶ'}</span>
           </div>
           <div className="flex flex-1 items-center">
-            {view === null ? <JapanTiles counts={counts} onOpen={open} /> : map ? <PrefectureTiles map={map} entries={inView} selected={selected} onToggle={toggle} /> : <p className="w-full py-16 text-center text-sm text-muted-foreground">{viewName}の地図はまだありません。下の一覧から選べます。</p>}
+            {view === null ? <JapanTiles counts={counts} onOpen={open} /> : map ? <PrefectureTiles map={map} entries={inView} selected={selected} onPreview={setSelected} /> : <p className="w-full py-16 text-center text-sm text-muted-foreground">{viewName}の地図はまだありません。下の一覧から選べます。</p>}
           </div>
           <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-muted-foreground">
             <span>{view ? '歳出の総額' : '収録した市区町村の数'}</span>
@@ -374,14 +371,14 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
             <div className="mt-4 flex flex-wrap items-center gap-2 border-t pt-4">
               <span className="text-xs text-muted-foreground">地図の外</span>
               {offMap.map((e) => (
-                <Chip key={e.code} on={selected === e.code} onClick={() => toggle(e.code)}>
+                <a key={e.code} href={e.path} onPointerEnter={(ev) => ev.pointerType === 'mouse' && setSelected(e.code)} onFocus={() => setSelected(e.code)} className={cn(buttonVariants({ variant: selected === e.code ? 'default' : 'outline' }), 'rounded-full px-3.5 text-[13px] font-normal')}>
                   {e.name}
-                </Chip>
+                </a>
               ))}
             </div>
           ) : null}
         </div>
-        {current ? <SelectedCard e={current} /> : <p className="rounded-[20px] border p-6 text-muted-foreground">{entries.length ? '地図から自治体を選ぶと、ここに歳出の総額と大きい分野が出ます。' : 'まだ決算を収録した自治体がありません。'}</p>}
+        {current ? <SelectedCard e={current} /> : <p className="rounded-[20px] border p-6 text-muted-foreground">{entries.length ? '地図の自治体にカーソルを載せると、ここに歳出の総額と大きい分野が出ます。' : 'まだ決算を収録した自治体がありません。'}</p>}
       </section>
 
       <section className="mt-14" aria-label="比較表">
