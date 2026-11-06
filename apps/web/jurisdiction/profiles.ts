@@ -319,11 +319,11 @@ const SHINAGAWA: Profile = {
         ],
         "initial": [
           {
-            "label": "予算書（1〜5款）",
+            "label": "予算書1",
             "href": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/655/2025tousyoyosan_5.pdf"
           },
           {
-            "label": "予算書（6〜9款）",
+            "label": "予算書2",
             "href": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/655/2025tousyoyosan_6.pdf"
           }
         ]
