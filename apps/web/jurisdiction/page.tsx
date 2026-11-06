@@ -1,9 +1,9 @@
 // 自治体の個別ページ（/:都道府県/:名称）の島。サーバーが書いた HTML（検索エンジン向け）を、同じデータで描き直す。
 // 型は企業のプロフィールページ: ヘッダー（ロゴ・名前・一文・属性）＋年度のタブ＋左の目次＋見出し付きの節。年度を切り替えるとページ全体がその年度になる。
-// 歳出の決算は API の値。新しく始めたこと・やめたこと（事業の入れ替え）は jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
+// 歳出の決算は API の値。事業評価から取った事業・やめたこと（事業の入れ替え）は jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
 import { Link } from '@void/react'
 import * as React from 'react'
-import { ArrowLeftIcon, ArrowRightIcon, ArrowSquareOutIcon, CaretRightIcon, MapPinAreaIcon, MapTrifoldIcon, SquaresFourIcon, BankIcon, BasketballIcon, CaretDownIcon, CheckCircleIcon, CircleHalfIcon, ClipboardTextIcon, ClockIcon, CoinsIcon, ChatCircleIcon, FirstAidKitIcon, GlobeIcon, HandHeartIcon, HouseLineIcon, LeafIcon, MapPinIcon, MinusCircleIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, StudentIcon, DotsThreeCircleIcon, UsersIcon, WarningCircleIcon, XIcon } from '@phosphor-icons/react'
+import { ArrowLeftIcon, ArrowRightIcon, ArrowSquareOutIcon, CaretRightIcon, MapPinAreaIcon, MapTrifoldIcon, SquaresFourIcon, BankIcon, BasketballIcon, CaretDownIcon, ClipboardTextIcon, CoinsIcon, ChatCircleIcon, FirstAidKitIcon, GlobeIcon, HandHeartIcon, HouseLineIcon, LeafIcon, MapPinIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, StudentIcon, DotsThreeCircleIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
 import { StartForm } from '../chat/start-form'
 import type { StoredSession } from '../chat/store'
 import { Hint } from '@/components/hint'
@@ -12,32 +12,13 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenu
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { DOMAIN_FRAMES, groupByFrame, OTHER_FRAME } from './domains'
 import { Flow } from './flow'
-import { assetPath, type PolicyProject, type ProfileYear, type ProjectStatus, type Scrap } from './profiles'
+import { assetPath, type EvaluatedProject, type ProfileYear, type Scrap } from './profiles'
 import { changePct, INDEX_PATH, formatAsOf, formatPeople, formatYen, reiwa, yearName, type FlowView, type PageData, type Project, type Setsu, type YearTotal } from './types'
 
 const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
   const res = await fetch(url, { signal })
   if (!res.ok) throw new Error(String(res.status))
   return (await res.json()) as T
-}
-
-/** 区の評価から読める結果。unmeasured は、評価の指標がこの取り組みではなく同じ事業の別の内容を測っているもの */
-const BADGE: Record<ProjectStatus, { label: string; className: string; icon: typeof ClockIcon }> = {
-  short: { label: '目標に届いていない', className: 'bg-[color-mix(in_srgb,var(--kincha)_22%,transparent)] text-[color-mix(in_srgb,var(--kincha-ink),var(--foreground)_15%)]', icon: WarningCircleIcon },
-  met: { label: '目標に届いた', className: 'bg-primary/15 text-primary', icon: CheckCircleIcon },
-  mixed: { label: '達成と未達が混在', className: 'bg-secondary text-muted-foreground', icon: CircleHalfIcon },
-  unmeasured: { label: '評価は別の内容', className: 'bg-secondary text-muted-foreground', icon: MinusCircleIcon },
-  none: { label: '評価前', className: 'border border-dashed text-muted-foreground', icon: ClockIcon },
-}
-
-function StatusBadge({ status }: { status: ProjectStatus }) {
-  const { label, className, icon: Icon } = BADGE[status]
-  return (
-    <span className={`inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full py-0.5 pl-1.5 pr-2.5 text-xs leading-5 ${className}`}>
-      <Icon aria-hidden="true" className="size-3.5" />
-      {label}
-    </span>
-  )
 }
 
 /** aside は見出しの横に並べる短い値（決算の総額など） */
@@ -86,56 +67,34 @@ function Grade({ grade, className }: { grade: string; className?: string }) {
   )
 }
 
-/** 予算書の金額のラベル。取り組みだけの金額が載っていないときは「〇〇全体」で、取り組みを含む事業の金額を出している */
-const amountLabel = (label?: string) => {
-  const whole = label?.match(/^(.+)全体$/)?.[1]
-  return whole ? <>{whole}の予算<span className="block">この取り組みを含む</span></> : label
-}
-
-function ProjectItem({ p }: { p: PolicyProject }) {
-  // 評価シートは小事業の単位。note の先頭の（）がその小事業名
-  const unit = p.evaluation ? /^（([^）]+)）/.exec(p.evaluation.note)?.[1] : undefined
-  const note = p.evaluation?.note.replace(/^（[^）]+）/, '')
-  // unmeasured は評価の指標が取り組みではなく、取り組みを含む事業の別の内容を測っている。
-  // 取り組みの評価は空にし、出す評価は含まれる事業のものだと文で言う
-  const unmeasured = p.status === 'unmeasured'
-  const badge = p.status && !unmeasured ? p.status : undefined
+function ProjectItem({ p, sheets }: { p: EvaluatedProject; sheets?: string }) {
+  const { name, unit, target, actual } = p.indicator
   return (
-    // 1列で上から読む。金額は名前と同じ行の右に置き、評価の枠は幅いっぱいに出す
+    // 1列で上から読む。金額は名前と同じ行の右に置き、評価の枠は幅いっぱいに出す。値はどれも評価シートのもの
     <div className="flex flex-col gap-2 border-b border-foreground/10 py-4">
       <div className="flex items-start justify-between gap-x-6">
-        <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-[15.5px]">
-          {p.name}
-          {badge ? <StatusBadge status={badge} /> : null}
-        </div>
-        <div className="flex shrink-0 flex-col gap-1 text-right text-sm">
-          {p.amounts.map((a) => (
-            <span key={`${a.yen}-${a.label ?? ''}`} className="tabular-nums">
-              {formatYen(a.yen)}
-              {a.label ? <small className="block text-xs leading-snug text-muted-foreground">{amountLabel(a.label)}</small> : null}
-            </span>
-          ))}
-        </div>
+        <span className="min-w-0 text-[15.5px]">{p.title}</span>
+        <span className="shrink-0 text-right text-sm tabular-nums">
+          {formatYen(p.settledYen)}
+          <small className="block text-xs leading-snug text-muted-foreground">決算額</small>
+        </span>
       </div>
       <p className="text-sm">{p.what}</p>
-      {p.evaluation ? (
-        // 評価の区分と説明は一続きの文として、同じ大きさ・色で読ませる
-        <p className="rounded-xl bg-sidebar px-3.5 py-2.5 text-[13px] leading-relaxed text-foreground [text-wrap:pretty]">
-          <span className="mr-2 inline-flex items-center gap-1 align-middle">
-            <ClipboardTextIcon aria-hidden="true" className="size-4 text-muted-foreground" />
-            評価
-          </span>
-          {/* 区分がまだ無い（評価が公表される前）ときも枠は出し、空のまま見せる。理由は説明の文で言う */}
-          {p.evaluation.grade && !unmeasured ? (
-            <Grade grade={p.evaluation.grade} className="align-middle" />
-          ) : (
-            <span className="inline-flex items-center gap-1.5 align-middle text-muted-foreground"><GradeMark grade="–" />{unmeasured ? 'この取り組みの評価なし' : '未公表'}</span>
-          )}
-          {note ? '。' : null}
-          {unmeasured && unit ? `${unit}全体の評価は「${p.evaluation.grade ?? '—'}」で、` : null}
-          {note}
-        </p>
-      ) : null}
+      {/* 評価の区分・方向性・指標は一続きの文として、同じ大きさ・色で読ませる。指標の良し悪しは風土記が判断しない */}
+      <p className="rounded-xl bg-sidebar px-3.5 py-2.5 text-[13px] leading-relaxed text-foreground [text-wrap:pretty]">
+        <span className="mr-2 inline-flex items-center gap-1 align-middle">
+          <ClipboardTextIcon aria-hidden="true" className="size-4 text-muted-foreground" />
+          評価
+        </span>
+        <Grade grade={p.grade} className="align-middle" />
+        （{p.direction}）。指標の「{name}」は、目標 {target}{unit}に対して実績 {actual}{unit}。
+        {sheets ? (
+          <Button variant="link" size="inline" nativeButton={false} render={<a href={`${sheets}#page=${p.page}`} target="_blank" rel="noopener" />} className="ml-1 align-baseline">
+            評価シート「{p.name}」
+            <ArrowSquareOutIcon aria-hidden="true" className="size-3.5" />
+          </Button>
+        ) : null}
+      </p>
     </div>
   )
 }
@@ -207,17 +166,20 @@ function DomainLink({ section, children }: { section?: string; children: React.R
   )
 }
 
-function Domains({ year }: { year: ProfileYear }) {
+function Domains({ year, fiscalYear }: { year: ProfileYear; fiscalYear: number }) {
+  const groups = groupByFrame(year.projects)
   return (
-    <Section id="domains" title="暮らしで何が変わった？" lead="この年度に新しく始めた・広げた取り組みと、それを自治体が自分で評価した結果です。" link={[{ href: year.budgetSource, label: '当初予算' }, { href: year.evaluationSource, label: '事業評価' }]}>
-      {groupByFrame(year.projects).map(({ frame: d, items }) => (
+    <Section id="domains" title="暮らしで何が変わった？" lead="区が事業ごとに目標と実績を振り返る「事業評価」から、分野ごとに決算額の大きい3事業です。" link={groups.length ? { href: year.evaluationSource, label: '事業評価' } : undefined}>
+      {/* 事業評価は実施した翌年度に公表する。まだの年度も節は出し、なぜ空かを言う */}
+      {groups.length ? null : <p className="rounded-xl border border-dashed px-4 py-6 text-sm text-muted-foreground">{reiwa(fiscalYear)}の事業の評価は、{reiwa(fiscalYear + 1)}に公表されます。まだ公表されていません。</p>}
+      {groups.map(({ frame: d, items }) => (
         <div key={d.id} id={`d-${d.id}`} className="flex scroll-mt-32 lg:scroll-mt-20 flex-col gap-1 [&+&]:mt-12">
           <h3 className="mb-1.5 flex items-center gap-2.5 text-[19px] leading-snug sm:text-[22px]">
             <DomainIcon id={d.id} />
             {d.name}
           </h3>
           <div className="border-t">
-            {items.map((p) => <ProjectItem key={p.name} p={p} />)}
+            {items.map((p) => <ProjectItem key={p.name} p={p} sheets={year.evaluationSheets} />)}
           </div>
         </div>
       ))}
@@ -703,7 +665,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
           </nav>
           <main className="flex min-w-0 flex-col gap-14">
             <Overview data={data} sections={new Set(py ? groupByFrame(py.projects).map(({ frame }) => frame.id) : [])} />
-            {py ? <Domains year={py} /> : null}
+            {py ? <Domains year={py} fiscalYear={year} /> : null}
             <Budget data={data} year={year} />
             <Projects data={data} year={year} />
             {py?.scrap ? <ScrapSection scrap={py.scrap} /> : null}
