@@ -23,7 +23,7 @@ const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
 
 /** 区の評価から読める結果。unmeasured は、評価の指標がこの取り組みではなく同じ事業の別の内容を測っているもの */
 const BADGE: Record<ProjectStatus, { label: string; className: string; icon: typeof ClockIcon }> = {
-  short: { label: '目標に届いていない', className: 'bg-[color-mix(in_srgb,var(--kincha)_22%,transparent)] text-[color-mix(in_srgb,var(--kincha-ink),black_15%)]', icon: WarningCircleIcon },
+  short: { label: '目標に届いていない', className: 'bg-[color-mix(in_srgb,var(--kincha)_22%,transparent)] text-[color-mix(in_srgb,var(--kincha-ink),var(--foreground)_15%)]', icon: WarningCircleIcon },
   met: { label: '目標に届いた', className: 'bg-primary/15 text-primary', icon: CheckCircleIcon },
   mixed: { label: '達成と未達が混在', className: 'bg-secondary text-muted-foreground', icon: CircleHalfIcon },
   unmeasured: { label: '評価は別の内容', className: 'bg-secondary text-muted-foreground', icon: MinusCircleIcon },
@@ -520,11 +520,11 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
     setYear(y)
     history.replaceState(null, '', `#y${y}`)
   }
-  // 「何をしている？」の金額は最新の決算なので、分野から移るときは決算のある年度に合わせる
+  // 「何をしている？」の金額は最新の決算なので、分野から移るときは最新の決算の年度に合わせる
   React.useEffect(() => {
     const onOpen = () => {
       const latest = data.years.at(-1)?.year
-      if (latest && !data.years.some((y) => y.year === year)) choose(latest)
+      if (latest && year !== latest) choose(latest)
     }
     window.addEventListener(OPEN_KAN, onOpen)
     return () => window.removeEventListener(OPEN_KAN, onOpen)
