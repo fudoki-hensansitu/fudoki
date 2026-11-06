@@ -1,5 +1,5 @@
 """PNG のアイコン（favicon.ico・icon.png・apple-touch-icon.png・PWA の icon-192/512・maskable）を区画のマークから描く。
-   any は余白を小さく、maskable は端が切られても欠けないよう中央の 60% に収める。assets.ts へ写すのは README の手順。
+   any は余白を小さく、maskable は端が切られても欠けないよう中央の 60% に収める。public/ に置けば Workers static assets がそのまま配る。
    uv run --no-project --exclude-newer 2026-10-09 --with pillow==12.3.0 python brand/pwa_icons.py"""
 import json
 from pathlib import Path

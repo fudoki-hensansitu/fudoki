@@ -5,7 +5,7 @@
 # 使い方: sh brand/home_demo.sh <slidex の apps/studio/src/decks/assets/fudoki-motion-demo.mp4>
 set -eu
 src=$1
-out=$(dirname "$0")/../static/home
+out=$(dirname "$0")/../public/home
 mkdir -p "$out"
 ffmpeg -v error -y -i "$src" -an \
   -vf "drawbox=x=580:y=448:w=530:h=60:color=0xffffff@1:t=fill:enable='lt(t,4.9)',scale=1280:-2,fps=30" \
