@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" 
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="500" height="500" xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <desc>Emblem of Nerima District</desc>
+  <defs>
+    <clipPath id="mask1">
+      <rect x="0" y="0" width="500" height="200" />
+      <rect x="0" y="300" width="500" height="200" />
+    </clipPath>
+  </defs>
+  <g clip-path="url(#mask1)">
+    <polyline points="240,5 90,495 240,390 390,495" fill="#663366" />
+  </g>
+  <path d="M40,150 H340 A120 120 180 0 1 340 390 H40 V280 H340 A10 10 180 0 0 340 260 H40 V150" fill="#663366" />
+</svg>

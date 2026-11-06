@@ -8,6 +8,7 @@ import { StartForm } from '../chat/start-form'
 import type { StoredSession } from '../chat/store'
 import { Hint } from '@/components/hint'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { EMBLEMS } from './emblems'
 import { Flow } from './flow'
 import { assetPath, type Domain, type PolicyProject, type Profile, type ProfileYear, type ProjectStatus, type Scrap } from './profiles'
 import { changePct, formatAsOf, formatPeople, formatYen, INDEX_PATH, reiwa, yearName, type PageData, type Project, type Setsu, type YearTotal } from './types'
@@ -429,7 +430,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
   }, [current])
 
   const tagline = py?.tagline
-  const logo = profile?.logo ? assetPath(data.code, profile.logo) : null
+  const logo = EMBLEMS[data.code] ? assetPath(data.code, 'emblem.svg') : null
 
   return (
     <>
@@ -454,7 +455,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
             </div>
           ) : null}
           <div className="grid size-20 place-items-center rounded-xl border bg-white p-2.5 sm:size-[132px] sm:rounded-2xl sm:p-[18px]">
-            {logo ? <img src={logo} alt={data.name} className="h-auto w-full" /> : <span className="text-3xl text-foreground sm:text-5xl">{data.name[0]}</span>}
+            {logo ? <img src={logo} alt="" className="h-auto w-full" /> : <span className="text-3xl text-foreground sm:text-5xl">{data.name[0]}</span>}
           </div>
           <div className="flex min-w-0 flex-col gap-3">
             {/* 一文（方針の要約）がある年度は名前を小さく一文を大きく見せる。無い自治体・年度は名前を大きく。h1 は名前のまま */}
