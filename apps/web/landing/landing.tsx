@@ -4,6 +4,7 @@
 import * as React from 'react'
 import { flushSync } from 'react-dom'
 import { Link } from '@void/react'
+import { Hint } from '@/components/hint'
 import { StartForm } from '../chat/start-form'
 import { HOME } from '../home-data'
 import { LOGO_G, LOGO_WIDTH } from '../logo'
@@ -334,9 +335,9 @@ function Steps() {
                 {nakano.kanList.map((k) => (
                   <div className="r" key={k.name}>
                     <span>{k.name}</span>
-                    <span className="num" title={yen(k.amount)}>
-                      {oku(k.amount)}
-                    </span>
+                    <Hint label={yen(k.amount)}>
+                      <span className="num">{oku(k.amount)}</span>
+                    </Hint>
                   </div>
                 ))}
               </div>
@@ -358,9 +359,9 @@ function Steps() {
                   <div className="b" key={r.jurisdiction}>
                     <span>{r.jurisdiction}</span>
                     <i style={{ width: `${((r.amount / libraryMax) * 100).toFixed(1)}%` }} aria-hidden="true" />
-                    <span className="num" title={yen(r.amount)}>
-                      {oku(r.amount)}
-                    </span>
+                    <Hint label={yen(r.amount)}>
+                      <span className="num">{oku(r.amount)}</span>
+                    </Hint>
                   </div>
                 ))}
               </div>

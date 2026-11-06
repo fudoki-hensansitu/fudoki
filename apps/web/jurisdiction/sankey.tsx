@@ -1,6 +1,6 @@
 // 款→項の全体図。款・項それぞれの列で、ラベルが重ならない高さを確保してから帯を渡す。
 import * as React from 'react'
-import { TIP_CARD, TipCard } from './amount-tip'
+import { AmountTip } from './amount-tip'
 import { formatShare, formatYen, type Drill } from './types'
 
 const BAR = 8
@@ -52,20 +52,11 @@ const pick = (fn: () => void) => ({
   onKeyDown: (e: React.KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn() } },
 })
 
-type Tip = { name: string; yen: number; missing?: boolean; x: number; y: number; side: 'left' | 'right' }
-
 /** total は割合の基準（その年度の全体）。ラベルは割合だけ出し、金額は hover・focus のツールチップで見せる */
 export function Overview({ flows, total: base, height = 520, onSelect }: { flows: Drill[]; total: number; height?: number; onSelect?: (kan: number, kou?: number) => void }) {
   const ref = React.useRef<HTMLDivElement>(null)
   const [width, setWidth] = React.useState(0)
-  const [tip, setTip] = React.useState<Tip | null>(null)
   const pct = (yen: number, missing?: boolean) => formatShare(yen, base, missing) ?? '—'
-  const hover = (t: Tip) => ({
-    onPointerEnter: () => setTip(t),
-    onPointerLeave: () => setTip((cur) => (cur?.name === t.name && cur.y === t.y ? null : cur)),
-    onFocus: () => setTip(t),
-    onBlur: () => setTip(null),
-  })
   React.useEffect(() => {
     const el = ref.current
     if (!el) return
@@ -113,38 +104,29 @@ export function Overview({ flows, total: base, height = 520, onSelect }: { flows
             const node = kans[i]!
             const label = cut(flow.kan.name, 9)
             return (
-              <g key={flow.kan.id} {...(onSelect ? pick(() => onSelect(i)) : {})} {...hover({ name: flow.kan.name, yen: flow.kan.yen, missing: flow.kan.amountMissing, x: x0 + BAR + 10, y: HEAD + node.top + node.size / 2, side: 'right' })} aria-label={`${flow.kan.name} ${amountText(flow.kan.yen, flow.kan.amountMissing)}${onSelect ? '、内訳を見る' : ''}`}>
+              <AmountTip key={flow.kan.id} name={flow.kan.name} yen={flow.kan.yen} missing={flow.kan.amountMissing} side="right" render={<g {...(onSelect ? pick(() => onSelect(i)) : {})} aria-label={`${flow.kan.name} ${amountText(flow.kan.yen, flow.kan.amountMissing)}${onSelect ? '、内訳を見る' : ''}`} />}>
                 <rect x={0} y={node.top} width={x0 + BAR} height={node.size} className="fill-transparent" />
                 <rect x={x0} y={node.y} width={BAR} height={Math.max(node.height, 2)} rx={2} className="fill-primary" />
                 <text x={x0 - 8} y={node.top + node.size / 2 - 2} textAnchor="end" className="fill-foreground" fontSize={narrow ? 10.5 : 13}>{label}</text>
                 <text x={x0 - 8} y={node.top + node.size / 2 + 12} textAnchor="end" className="fill-primary font-semibold tabular-nums" fontSize={narrow ? 10 : 11.5}>{pct(flow.kan.yen, flow.kan.amountMissing)}</text>
-              </g>
+              </AmountTip>
             )
           })}
           {kous.map(({ kanIndex, kouIndex, kou }, i) => {
             const node = kouNodes[i]!
             return (
-              <g key={kou.id} {...(onSelect ? pick(() => onSelect(kanIndex, kouIndex)) : {})} {...hover({ name: kou.name, yen: kou.yen, missing: kou.amountMissing, x: x1 - 10, y: HEAD + node.top + node.size / 2, side: 'left' })} aria-label={`${kou.name} ${amountText(kou.yen, kou.amountMissing)}${onSelect ? '、内訳を見る' : ''}`}>
+              <AmountTip key={kou.id} name={kou.name} yen={kou.yen} missing={kou.amountMissing} side="left" render={<g {...(onSelect ? pick(() => onSelect(kanIndex, kouIndex)) : {})} aria-label={`${kou.name} ${amountText(kou.yen, kou.amountMissing)}${onSelect ? '、内訳を見る' : ''}`} />}>
                 <rect x={x1} y={node.top} width={width - x1} height={node.size} className="fill-transparent" />
                 <rect x={x1} y={node.y} width={BAR} height={Math.max(node.height, 2)} rx={2} className="fill-primary" />
                 <text x={x1 + BAR + 8} y={node.top + node.size / 2 + 4} className="fill-foreground" fontSize={narrow ? 10.5 : 12}>
                   {cut(kou.name, 10)}
                   <tspan dx={6} className="fill-primary font-semibold tabular-nums" fontSize={narrow ? 10 : 11}>{pct(kou.yen, kou.amountMissing)}</tspan>
                 </text>
-              </g>
+              </AmountTip>
             )
           })}
           </g>
         </svg>
-      ) : null}
-      {tip ? (
-        <div
-          aria-hidden="true"
-          className={`pointer-events-none absolute z-10 w-max max-w-56 ${TIP_CARD}`}
-          style={{ left: tip.x, top: tip.y, transform: tip.side === 'left' ? 'translate(-100%, -50%)' : 'translateY(-50%)' }}
-        >
-          <TipCard name={tip.name} yen={tip.yen} missing={tip.missing} />
-        </div>
       ) : null}
     </div>
   )

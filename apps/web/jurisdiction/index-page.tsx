@@ -5,6 +5,7 @@ import { flushSync } from 'react-dom'
 import { Link, useRouter } from '@void/react'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
 import { buttonVariants } from '@/components/ui/button'
+import { Hint } from '@/components/hint'
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList, ComboboxTrigger } from '@/components/ui/combobox'
 import { InputGroupAddon } from '@/components/ui/input-group'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -37,13 +38,13 @@ function YearPills({ years, all }: { years: number[]; all: number[] }) {
   return (
     <span className="flex gap-1">
       {all.map((y) => (
-        <span
-          key={y}
-          title={reiwa(y)}
-          className={`inline-flex h-5 items-center rounded px-1.5 text-[11px] tabular-nums ${years.includes(y) ? 'bg-accent text-accent-foreground' : 'border border-dashed text-muted-foreground/60'}`}
-        >
-          {shortYear(y)}
-        </span>
+        <Hint key={y} label={reiwa(y)}>
+          <span
+            className={`inline-flex h-5 items-center rounded px-1.5 text-[11px] tabular-nums ${years.includes(y) ? 'bg-accent text-accent-foreground' : 'border border-dashed text-muted-foreground/60'}`}
+          >
+            {shortYear(y)}
+          </span>
+        </Hint>
       ))}
     </span>
   )
@@ -55,7 +56,9 @@ function SelectedCard({ e }: { e: IndexEntry }) {
     <div className="flex flex-col rounded-[20px] border bg-background p-5 sm:p-6" aria-live="polite">
       <div className="text-xs text-muted-foreground">{e.prefecture}</div>
       <div className="mt-0.5 text-3xl leading-tight">{e.name}</div>
-      <div className="mt-4 text-xs text-muted-foreground" title={reiwa(e.year)}>{shortYear(e.year)} 決算・一般会計の歳出</div>
+      <div className="mt-4 text-xs text-muted-foreground">
+        <Hint label={reiwa(e.year)}><span>{shortYear(e.year)}</span></Hint> 決算・一般会計の歳出
+      </div>
       <div className="text-[2rem] leading-tight tabular-nums">{formatYen(e.yen)}</div>
       <div className="mt-4 text-xs text-muted-foreground">金額の大きい分野（款）</div>
       <ul className="mt-1">
@@ -74,9 +77,9 @@ function SelectedCard({ e }: { e: IndexEntry }) {
       <div className="mt-4 text-xs text-muted-foreground">収録している決算</div>
       <div className="mb-5 mt-1 flex flex-wrap gap-1.5">
         {e.years.map((y) => (
-          <span key={y} className="rounded bg-accent px-2 py-0.5 text-[11px] text-accent-foreground" title={reiwa(y)}>
-            {shortYear(y)}
-          </span>
+          <Hint key={y} label={reiwa(y)}>
+            <span className="rounded bg-accent px-2 py-0.5 text-[11px] text-accent-foreground">{shortYear(y)}</span>
+          </Hint>
         ))}
       </div>
       <Link href={e.path} className={cn(buttonVariants({ size: 'lg' }), 'mt-auto h-11 rounded-full text-[15px]')}>
@@ -101,18 +104,20 @@ function MunicipalityTile({ code, name, e, max, selected, onPreview, style }: Ti
   const label = <span className="line-clamp-2 break-all px-0.5 text-center text-[10px] leading-tight sm:text-[11px]">{tileName(name)}</span>
   if (!e)
     return (
-      <div key={code} style={style} title={`${name}（未収録）`} className="flex aspect-square items-center justify-center rounded-md bg-muted text-muted-foreground/70">
-        {label}
-      </div>
+      <Hint key={code} label={`${name}（未収録）`}>
+        <div style={style} className="flex aspect-square items-center justify-center rounded-md bg-muted text-muted-foreground/70">
+          {label}
+        </div>
+      </Hint>
     )
   const on = selected === code
   return (
+    <Hint label={name}>
     <Link
       href={e.path}
       onPointerEnter={(ev) => ev.pointerType === 'mouse' && onPreview(code)}
       onFocus={() => onPreview(code)}
       aria-label={`${name} ${formatYen(e.yen)}`}
-      title={name}
       style={{ ...style, background: shade(e.yen, max) }}
       className={cn(
         'flex aspect-square items-center justify-center rounded-md transition hover:brightness-110 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none',
@@ -122,6 +127,7 @@ function MunicipalityTile({ code, name, e, max, selected, onPreview, style }: Ti
     >
       {label}
     </Link>
+    </Hint>
   )
 }
 
