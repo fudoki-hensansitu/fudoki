@@ -2,7 +2,7 @@
 // 型は企業のプロフィールページ: ヘッダー（ロゴ・名前・一文・属性）＋年度のタブ＋左の目次＋見出し付きの節。年度を切り替えるとページ全体がその年度になる。
 // 歳出の決算は API の値。方針・政策領域・事業の入れ替えは jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
 import * as React from 'react'
-import { ArrowUpRightIcon, CaretDownIcon, ChatCircleIcon, GlobeIcon, MapPinIcon, NotePencilIcon, QuotesIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
+import { ArrowSquareOutIcon, CaretDownIcon, ChatCircleIcon, GlobeIcon, MapPinIcon, NotePencilIcon, QuotesIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
 import { StartForm } from '../chat/start-form'
 import type { StoredSession } from '../chat/store'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
@@ -40,7 +40,7 @@ const Section = ({ id, title, aside, link, children }: { id: string; title: stri
           {(Array.isArray(link) ? link : [link]).map((l) => (
             <a key={l.href} href={l.href} target="_blank" rel="noopener" className="inline-flex items-center gap-1 whitespace-nowrap text-[13px] text-primary no-underline hover:underline">
               {l.label}
-              <ArrowUpRightIcon aria-hidden="true" className="size-3.5" />
+              <ArrowSquareOutIcon aria-hidden="true" className="size-3.5" />
             </a>
           ))}
         </div>
@@ -455,7 +455,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
           <div className="flex min-w-0 flex-col gap-3">
             {/* 一文（方針の要約）がある年度は名前を小さく一文を大きく見せる。無い自治体・年度は名前を大きく。h1 は名前のまま */}
             <h1 ref={title} className={tagline ? 'text-lg font-normal leading-tight text-muted-foreground sm:text-xl' : 'text-[clamp(1.75rem,1.4rem+1.2vw,2.25rem)] font-normal leading-tight'}>{data.name}</h1>
-            {tagline ? <p className="text-[clamp(1.25rem,1.05rem+0.9vw,1.75rem)] leading-snug [text-wrap:pretty] [word-break:auto-phrase]">{tagline}</p> : null}
+            {tagline ? <p className="text-[clamp(1.0625rem,0.95rem+0.5vw,1.375rem)] leading-snug [text-wrap:pretty] [word-break:auto-phrase]">{tagline}</p> : null}
             <div className="flex flex-wrap gap-x-6 gap-y-1.5 text-sm text-muted-foreground">
               <span className="inline-flex items-center gap-1.5">
                 <MapPinIcon className="size-4" aria-hidden="true" />
@@ -718,7 +718,7 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
       <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-2" onPointerDown={(e) => e.stopPropagation()}>
         <span className="text-sm text-muted-foreground">{name}について</span>
         <div className="flex items-center gap-1 text-muted-foreground">
-          <a href={`/s/${chat.id}`} aria-label="会話を別の頁で開く" title="会話を別の頁で開く" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><ArrowUpRightIcon className="size-4" /></a>
+          <a href={`/s/${chat.id}`} aria-label="会話を別の頁で開く" title="会話を別の頁で開く" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><ArrowSquareOutIcon className="size-4" /></a>
           <button type="button" onClick={restart} aria-label="新しい会話" title="新しい会話" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><NotePencilIcon className="size-4" /></button>
           <button type="button" onClick={() => setDrawer(false)} aria-label="閉じる" title="閉じる（Esc）" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><XIcon className="size-4" /></button>
         </div>
