@@ -281,7 +281,7 @@ const Jurisdiction = z
     ...pick(JURISDICTION_COLUMNS, ['jurisdiction_code', 'name', 'prefecture_code', 'prefecture_name', 'ocd_id', 'official_url']),
     population: z
       .array(Population)
-      .describe('住民基本台帳人口（基準日の昇順）。決算・予算の N 年度と比べるときは、N+1 年1月1日の値を当てる（地方財政状況調査の決算カードと同じ）。その値がまだ無い年度は、いちばん新しい基準日の値で代用し、代用したことを添える。'),
+      .describe('住民基本台帳人口（基準日の昇順）。決算・予算の N 年度と比べるときは、N+1 年1月1日の値を当てる（地方財政状況調査の決算カードと同じ）。この API は年度との対応を付けずに全基準日を返すので、その値がまだ無い年度は利用者がいちばん新しい基準日の値を選び、使った基準日を添える。'),
     coverage: z
       .array(Coverage)
       .describe('収録範囲（年度の昇順、同じ年度は当初予算・決算の順）。空なら、この自治体の明細は収録していない。明細があることを示し、会計全体・全事業を収録し終えたことは保証しない。'),

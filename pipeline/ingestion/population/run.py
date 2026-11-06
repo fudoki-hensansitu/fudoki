@@ -36,7 +36,8 @@ def origin_id(origin: dict) -> str:
 
 
 def object_key(origin: dict) -> str:
-    return f'population/resident-register/{origin["reference_date"]}.xlsx'
+    """R2 とキャッシュの key。URL を直したら別の key になり、古い資料を新しい URL のものとして読まない。"""
+    return f'population/resident-register/{origin["reference_date"]}/{origin_id(origin)}.xlsx'
 
 
 def fetch(origin: dict, *, remote: bool = False) -> Path:
