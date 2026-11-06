@@ -93,9 +93,13 @@ const amountLabel = (label?: string) => {
 }
 
 function ProjectItem({ p }: { p: PolicyProject }) {
+  // 評価シートは小事業の単位。note の先頭の（）がその小事業名
+  const unit = p.evaluation ? /^（([^）]+)）/.exec(p.evaluation.note)?.[1] : undefined
   const note = p.evaluation?.note.replace(/^（[^）]+）/, '')
-  // unmeasured は評価の指標が取り組みではなく事業の別の内容を測っているので、結果の印を付けない（どの事業かは金額のラベルで言う）
-  const badge = p.status && p.status !== 'unmeasured' ? p.status : undefined
+  // unmeasured は評価の指標が取り組みではなく、取り組みを含む事業の別の内容を測っている。
+  // 取り組みの評価は空にし、出す評価は含まれる事業のものだと文で言う
+  const unmeasured = p.status === 'unmeasured'
+  const badge = p.status && !unmeasured ? p.status : undefined
   return (
     // 1列で上から読む。金額は名前と同じ行の右に置き、評価の枠は幅いっぱいに出す
     <div className="flex flex-col gap-2 border-b border-foreground/10 py-4">
@@ -122,8 +126,13 @@ function ProjectItem({ p }: { p: PolicyProject }) {
             評価
           </span>
           {/* 区分がまだ無い（評価が公表される前）ときも枠は出し、空のまま見せる。理由は説明の文で言う */}
-          {p.evaluation.grade ? <Grade grade={p.evaluation.grade} className="align-middle" /> : <span className="inline-flex items-center gap-1.5 align-middle text-muted-foreground"><GradeMark grade="–" />未公表</span>}
+          {p.evaluation.grade && !unmeasured ? (
+            <Grade grade={p.evaluation.grade} className="align-middle" />
+          ) : (
+            <span className="inline-flex items-center gap-1.5 align-middle text-muted-foreground"><GradeMark grade="–" />{unmeasured ? 'この取り組みの評価なし' : '未公表'}</span>
+          )}
           {note ? '。' : null}
+          {unmeasured && unit ? `${unit}全体の評価は「${p.evaluation.grade ?? '—'}」で、` : null}
           {note}
         </p>
       ) : null}
