@@ -53,6 +53,8 @@ const Section = ({ id, title, aside, link, children }: { id: string; title: stri
 function Policies({ code, year }: { code: string; year: ProfileYear }) {
   return (
     <Section id="policy" title="方針" link={{ href: year.policySource, label: '予算編成方針' }}>
+      {/* 一文（方針の要約）は方針の頭に置く。header は名前と所在だけ */}
+      {year.tagline ? <p className="text-[clamp(1.0625rem,0.95rem+0.5vw,1.375rem)] leading-snug [text-wrap:pretty] [word-break:auto-phrase]">{year.tagline}</p> : null}
       <ol className="border-t">
         {year.policies.map((p, i) => (
           <li key={p.title} className="grid grid-cols-[22px_104px_minmax(0,1fr)] items-start gap-3 border-b border-foreground/10 py-3.5 sm:grid-cols-[28px_176px_minmax(0,1fr)] sm:gap-4">
@@ -424,7 +426,6 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
     if (bar && a) bar.scrollTo({ left: a.offsetLeft - 16, behavior: 'smooth' })
   }, [current])
 
-  const tagline = py?.tagline
   const logo = profile?.logo ? assetPath(data.code, profile.logo) : null
 
   return (
@@ -432,8 +433,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
       <div className={`fixed left-0 right-(--side-panel,0px) top-0 z-30 md:left-(--nav-w) border-b bg-background transition-[transform,right] duration-200 ease-out motion-reduce:transition-none ${mini ? '' : '-translate-y-full'}`} aria-hidden={!mini} inert={!mini}>
         <div className="mx-auto flex h-[60px] max-w-[1120px] items-center gap-3 px-4">
           <span className="hidden size-10 shrink-0 place-items-center rounded-lg border bg-white p-1 sm:grid">{logo ? <img src={logo} alt="" className="w-full" /> : <span className="text-foreground">{data.name[0]}</span>}</span>
-          <b className={`shrink-0 font-normal ${tagline ? 'text-sm text-muted-foreground' : 'text-lg'}`}>{data.name}</b>
-          {tagline ? <span className="hidden min-w-0 truncate text-[15px] sm:block">{tagline}</span> : null}
+          <b className="shrink-0 text-lg font-normal">{data.name}</b>
           {years.length > 1 ? (
             <div className="ml-auto shrink-0">
               <YearPicker years={years} current={year} onChange={choose} />
@@ -453,9 +453,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
             {logo ? <img src={logo} alt={data.name} className="h-auto w-full" /> : <span className="text-3xl text-foreground sm:text-5xl">{data.name[0]}</span>}
           </div>
           <div className="flex min-w-0 flex-col gap-3">
-            {/* 一文（方針の要約）がある年度は名前を小さく一文を大きく見せる。無い自治体・年度は名前を大きく。h1 は名前のまま */}
-            <h1 ref={title} className={tagline ? 'text-lg font-normal leading-tight text-muted-foreground sm:text-xl' : 'text-[clamp(1.75rem,1.4rem+1.2vw,2.25rem)] font-normal leading-tight'}>{data.name}</h1>
-            {tagline ? <p className="text-[clamp(1.0625rem,0.95rem+0.5vw,1.375rem)] leading-snug [text-wrap:pretty] [word-break:auto-phrase]">{tagline}</p> : null}
+            <h1 ref={title} className="text-[clamp(1.75rem,1.4rem+1.2vw,2.25rem)] font-normal leading-tight">{data.name}</h1>
             <div className="flex flex-wrap gap-x-6 gap-y-1.5 text-sm text-muted-foreground">
               <span className="inline-flex items-center gap-1.5">
                 <MapPinIcon className="size-4" aria-hidden="true" />
