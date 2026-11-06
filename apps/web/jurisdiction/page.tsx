@@ -75,7 +75,7 @@ const evaluationUnit = (note: string) => /^（([^）]+)）/.exec(note)?.[1]
 /** 予算書の金額のラベル。取り組みだけの金額が載っていないときは「〇〇全体」で、取り組みを含む事業の金額を出している */
 const amountLabel = (label?: string) => {
   const whole = label?.match(/^(.+)全体$/)?.[1]
-  return whole ? `${whole}の予算（この取り組みを含む）` : label
+  return whole ? <>{whole}の予算<span className="block">この取り組みを含む</span></> : label
 }
 
 function ProjectItem({ p }: { p: PolicyProject }) {
@@ -106,7 +106,7 @@ function ProjectItem({ p }: { p: PolicyProject }) {
         {p.amounts.map((a) => (
           <span key={`${a.yen}-${a.label ?? ''}`} className="tabular-nums">
             {formatYen(a.yen)}
-            {a.label ? <small className="ml-1 text-xs text-muted-foreground lg:ml-0 lg:block">{amountLabel(a.label)}</small> : null}
+            {a.label ? <small className="ml-1 text-xs leading-snug text-muted-foreground lg:ml-0 lg:block">{amountLabel(a.label)}</small> : null}
           </span>
         ))}
       </div>
