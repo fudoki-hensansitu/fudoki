@@ -451,3 +451,4 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 1634,edogawa-2024-15,131237,一般会計,,経営企画費,経営企画費,,DX推進費,eq,,assigned,01.3.3,retained,目,,江戸川区 行政のデジタル化を一般サービスに分類する。名称からの判断。,true
 1635,edogawa-2024-16,131237,一般会計,,都市開発費,建築管理費,,営繕関係費,eq,,assigned,01.3.3,retained,目,,江戸川区 区の施設の営繕を一般サービスに分類する。名称からの判断。,true
 1636,edogawa-2024-17,131237,一般会計,,都市開発費,建築管理費,,学校営繕関係費,eq,,assigned,09,retained,目,,江戸川区 学校施設の営繕を教育に分類する。学校の段階は名称から分けられない。名称からの判断。,true
+1612,kind-fallback-disaster-recovery,,,災害復旧,,,,,,,unclassifiable,,retained,目,,災害復旧の特別会計（例: 131091 品川区）の目は避難所の運営・被災家屋の解体撤去・公共施設の復旧・災害廃棄物の処理を1つにまとめ、機能が1つに決まらない。一般会計の公共施設の災害復旧（vocab-disaster-public-facility）にならい、捨てずに分類不能として残す。,false

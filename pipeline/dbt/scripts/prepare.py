@@ -45,6 +45,25 @@ def input_path(document: dict, table: dict, kind: str, candidate: Path | None,
     return path
 
 
+# The yen of one printed unit, as the rows model reads `unit_text` (int_fiscal__settlement_expenditure_rows).
+UNIT_YEN = {'円': 1, '千円': 1000}
+
+
+def declared_factor(con, nodes: str, key: tuple) -> int:
+    """The yen of one unit the declared parent prints in: a declaration (`source_inconsistencies`) gives the
+    printed values as the original prints them (`728,067` in a 千円 column), the test compares them in yen."""
+    amounts = nodes.removesuffix('_nodes') + '_amounts'
+    *_, axis, page, code, name = key
+    query = (f'select distinct a.unit_text from ingestion.{identifier(nodes)} n join ingestion.{identifier(amounts)} a'
+             ' using (node_key) where n.axis_header = ?')
+    units = {row[0] for row in con.execute(query + ' and n.physical_page = ? and n.name_text = ?', [axis, page, name]).fetchall()}
+    if not units:  # the parent's printed name or page reads otherwise: the unit the axis prints in
+        units = {row[0] for row in con.execute(query, [axis]).fetchall()}
+    if len(units) != 1 or next(iter(units)) not in UNIT_YEN:
+        raise ValueError(f'Declared inconsistency has no single printed unit: {nodes} p{page} {name} {sorted(map(str, units))}')
+    return UNIT_YEN[next(iter(units))]
+
+
 def inspect(con, path: Path, reference: dict, kind: str, amount_column: str | None = None) -> None:
     if kind == 'csv':
         columns = [row[0] for row in con.execute('describe select * from read_parquet(?)', [str(path)]).fetchall()]
@@ -171,9 +190,9 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
             if kind == 'nodes':
                 source_key = manifest.object_key(document, table['table_id']).removesuffix('.parquet')
                 for entry in declared_for(document, table['table_id']):
-                    inconsistencies.append((target['jurisdiction'], target['fiscal_year'], target['document_kind'],
+                    inconsistencies.append((declared['name'], (target['jurisdiction'], target['fiscal_year'], target['document_kind'],
                                             table['account'], entry['axis'], entry['page'], entry['parent']['code'],
-                                            entry['parent']['name'], entry['printed'], entry['children_sum']))
+                                            entry['parent']['name']), entry['printed'], entry['children_sum']))
                 tables.append((source_key, declared['name'].removesuffix('_nodes'), target['jurisdiction'],
                                target['fiscal_year'], target['document_kind'], spec['direction'],
                                table['table_id'], table['account'], table.get('division'), origin_id,
@@ -210,7 +229,10 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
             con.executemany('insert into ingestion.csv_tables values (?,?,?,?,?,?,?,?,?,?,?)', csv_tables)
         con.execute('create or replace table ingestion.source_inconsistencies (jurisdiction_code varchar, fiscal_year integer, document_kind varchar, account_name varchar, axis varchar, page integer, parent_code varchar, parent_name varchar, printed_yen bigint, children_sum_yen bigint)')
         if inconsistencies:
-            con.executemany('insert into ingestion.source_inconsistencies values (?,?,?,?,?,?,?,?,?,?)', inconsistencies)
+            con.executemany('insert into ingestion.source_inconsistencies values (?,?,?,?,?,?,?,?,?,?)',
+                            [(*key, printed * factor, children * factor) for key, printed, children, factor in
+                             ((key, printed, children, declared_factor(con, nodes, key))
+                              for nodes, key, printed, children in inconsistencies)])
         con.execute('create or replace table ingestion.origin (origin_id varchar, jurisdiction_code varchar, fiscal_year integer, document_kind varchar, amendment_number integer, title varchar, url varchar, format varchar, sha256 varchar)')
         con.executemany('insert into ingestion.origin values (?,?,?,?,?,?,?,?,?)', list(origins.values()))
         jurisdictions = load_jurisdictions(JURISDICTIONS)

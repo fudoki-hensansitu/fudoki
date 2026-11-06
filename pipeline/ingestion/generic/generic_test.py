@@ -153,6 +153,25 @@ class TrialRulesTest(unittest.TestCase):
         self.assertEqual(body, ['1', '総務費', '1', '社会福祉費', '1,000', '2,000'])
         self.assertEqual([(code, name) for code, name, _ in logical.titles], [('2', '民生費')])
 
+    def test_the_kan_and_kou_titles_between_stacked_tables_are_read_in_order_with_their_amount(self):
+        from ingestion.generic.patterns.layout import stacked_titles
+        # Two tables in the same columns; between them the next 款・項 titles, where no column rule is drawn.
+        verticals = [Rule(x, y0, x, y1) for x in (10, 100, 200) for y0, y1 in ((50, 150), (190, 300))]
+        horizontals = [Rule(10, y, 200, y) for y in (50, 70, 150, 190, 300)]
+        words = [Word('目', 20, 55, 29, 64), Word('本年度予算額', 110, 55, 164, 64),
+                 Word('1', 20, 80, 24.5, 89), Word('一般管理費', 30, 80, 75, 89), Word('1,000', 150, 80, 172.5, 89),
+                 Word('2款', 20, 160, 38, 169), Word('民生費', 42, 160, 69, 169), Word('3,000千円', 140, 160, 185, 169),
+                 Word('1項', 25, 175, 43, 184), Word('社会福祉費', 47, 175, 92, 184), Word('3,000千円', 140, 175, 185, 184),
+                 Word('1', 20, 200, 24.5, 209), Word('社会福祉総務費', 30, 200, 93, 209), Word('3,000', 150, 200, 172.5, 209)]
+        logical = stacked_titles.read([Page(1, 300, 500, words, verticals + horizontals)], header={'title_amount': '本年度予算額'})[0]
+        self.assertEqual([w.text for band in logical.bands for w in band.words],
+                         ['1', '一般管理費', '1', '社会福祉総務費', '1,000', '3,000'])
+        self.assertEqual([(level, code, name, amount[0], ''.join(g.text for g in amount[1]))
+                          for level, code, name, _, amount in logical.level_titles],
+                         [('款', '2', '民生費', '本年度予算額', '3,000'), ('項', '1', '社会福祉費', '本年度予算額', '3,000')])
+        with self.assertRaises(ValueError):  # an amount under no printed heading needs the declared one
+            stacked_titles.read([Page(1, 300, 500, words, verticals + horizontals)])
+
     def test_a_title_printed_under_the_last_rule_is_the_foot_of_the_page_not_a_kan_title(self):
         verticals = [Rule(x, 50, x, 400) for x in (10, 100, 200)]
         horizontals = [Rule(10, y, 200, y) for y in (50, 70, 100, 400)]
@@ -696,6 +715,7 @@ class SpreadAndOwnerTest(unittest.TestCase):
     def test_leading_zero_is_a_bullet_and_marks_leave_the_name(self):
         from ingestion.generic.tree import _split_code
         self.assertEqual(_split_code('3～4か月児健康診査委託料'), (None, '3～4か月児健康診査委託料'))
+        self.assertEqual(_split_code('73(ナナサン)歯科健診事業'), (None, '73(ナナサン)歯科健診事業'))  # the number's reading: a name
         self.assertEqual(_split_code('0ごみ・資源の排出'), (None, 'ごみ・資源の排出'))
         self.assertEqual(_split_code('〇区議会の運営'), (None, '区議会の運営'))
         self.assertEqual(_split_code('12委託料'), ('12', '委託料'))
