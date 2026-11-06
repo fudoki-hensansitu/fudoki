@@ -9,6 +9,7 @@ describe('会話の記録', () => {
     expect(redact('連絡は taro.y+1@example.co.jp か 090-1234-5678、03 1234 5678、+81-3-1234-5678 へ')).toBe(
       '連絡は [メール] か [電話番号]、[電話番号]、[電話番号] へ',
     )
+    expect(redact('(03) 1234-5678 と 03(1234)5678 と ０９０－１２３４－５６７８')).toBe('[電話番号] と [電話番号] と [電話番号]')
     expect(redact('品川区の2025年度の歳出 1234567円 と 0120 は？')).toBe('品川区の2025年度の歳出 1234567円 と 0120 は？')
   })
 
@@ -41,6 +42,12 @@ describe('会話の記録', () => {
     expect(runs[0]!.values[4]).toBe('[{"name":"search","input":{"q":"x"}}]')
     expect(runs[1]!.sql).toContain('DELETE')
     expect(runs[1]!.values).toEqual([1_000_000_000_000 - CHAT_LOG_RETENTION_DAYS * 86_400_000])
+  })
+
+  test('tool の引数の文字列も伏せる', async () => {
+    const { db, runs } = fakeDb()
+    await writeChatTurn(db, { ...turn, toolCalls: [{ name: 'search', input: { q: '連絡先\nfoo@example.com', limit: 5 } }] })
+    expect(JSON.parse(runs[0]!.values[4] as string)).toEqual([{ name: 'search', input: { q: '連絡先\n[メール]', limit: 5 } }])
   })
 
   test('記録の失敗は投げず、binding が無ければ何もしない', async () => {

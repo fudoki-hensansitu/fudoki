@@ -98,7 +98,7 @@ export function StartForm({
       <Composer onSubmit={start} pending={pending} placeholder={placeholder} onFocus={() => turnstile.current?.warm()} />
       <div ref={widget} className={challenge ? 'mt-3 flex justify-center' : 'hidden'} />
       {error ? <p role="alert" className="mt-3 text-sm text-destructive">{error}</p> : null}
-      <p className="mt-2 text-xs text-muted-foreground">質問は改善のため匿名で保存します（90日で削除）。</p>
+      <p className="mt-2 text-xs text-muted-foreground">質問は改善のため、IP などとは結びつけずに保存します（90日で削除）。個人情報は書かないでください。</p>
       {after?.(start, pending)}
     </div>
   )
