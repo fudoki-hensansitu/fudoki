@@ -44,7 +44,7 @@ export interface Scrap {
 }
 
 export interface ProfileYear {
-  /** 予算の考え方の一文。方針の節の頭に出す */
+  /** 予算の考え方の一文。方針の節の上に出す */
   tagline: string
   /** 方針の出典（予算編成方針の頁） */
   policySource: string

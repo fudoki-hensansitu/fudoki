@@ -1,6 +1,7 @@
 // 自治体の個別ページのデータ。apps/api（Service Binding）の歳出の検索から、決算の款・事業・お金の流れを組む。
 // 金額は API が返した円をそのまま持つ。足すのは「同じ年度・会計・軸の款（兄弟）の和」だけで、api の sum_rules に従う
-import { jurisdictionKind, type Drill, type FlowDepth, type IndexEntry, type Kou, type Line, type Moku, type PageData, type Project, type Setsu, type YearTotal } from '../jurisdiction/types'
+import { jurisdictionPath } from '../jurisdiction/path'
+import { INDEX_PATH, jurisdictionKind, type Drill, type FlowDepth, type IndexEntry, type Kou, type Line, type Moku, type PageData, type Project, type Setsu, type YearTotal } from '../jurisdiction/types'
 import { apiFetch, type Env } from './env'
 
 const API_ORIGIN = 'https://api.fudoki.dev'
@@ -250,6 +251,8 @@ export async function loadPage(env: Env, entry: CatalogEntry): Promise<PageData 
     code: entry.code,
     name: entry.name,
     prefecture: entry.prefecture,
+    // 都道府県自体の頁では自分を指さないよう一覧へ
+    prefecturePath: entry.code.slice(2, 5) === '000' ? INDEX_PATH : jurisdictionPath(`${entry.code.slice(0, 2)}0001`),
     originTitle: kanRes.origins?.find((o) => o.origin_id === kanRes.nodes.find((n) => n.fiscal_year === latest)?.origin_id)?.title ?? null,
     years: totals,
     flow: await loadFlow(env, entry.code, latest),

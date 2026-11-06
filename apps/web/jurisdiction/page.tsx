@@ -8,7 +8,7 @@ import type { StoredSession } from '../chat/store'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Flow } from './flow'
 import { assetPath, type Domain, type PolicyProject, type Profile, type ProfileYear, type ProjectStatus, type Scrap } from './profiles'
-import { changePct, formatYen, INDEX_PATH, reiwa, yearName, type PageData, type Project, type Setsu, type YearTotal } from './types'
+import { changePct, formatYen, reiwa, yearName, type PageData, type Project, type Setsu, type YearTotal } from './types'
 
 const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
   const res = await fetch(url, { signal })
@@ -52,22 +52,24 @@ const Section = ({ id, title, aside, link, children }: { id: string; title: stri
 
 function Policies({ code, year }: { code: string; year: ProfileYear }) {
   return (
-    <Section id="policy" title="方針" link={{ href: year.policySource, label: '予算編成方針' }}>
-      {/* 一文（方針の要約）は方針の頭に置く。header は名前と所在だけ */}
+    <div className="flex flex-col gap-8">
+      {/* 一文（方針の要約）は方針の節の上に置く。header は名前と所在だけ */}
       {year.tagline ? <p className="text-[clamp(1.0625rem,0.95rem+0.5vw,1.375rem)] leading-snug [text-wrap:pretty] [word-break:auto-phrase]">{year.tagline}</p> : null}
-      <ol className="border-t">
-        {year.policies.map((p, i) => (
-          <li key={p.title} className="grid grid-cols-[22px_104px_minmax(0,1fr)] items-start gap-3 border-b border-foreground/10 py-3.5 sm:grid-cols-[28px_176px_minmax(0,1fr)] sm:gap-4">
-            <span className="text-lg text-primary">{i + 1}</span>
-            <img src={assetPath(code, p.image)} alt="" loading="lazy" className="aspect-video w-full rounded-lg border border-foreground/10 object-cover" />
-            <div>
-              <b className="block text-base font-normal">{p.title}</b>
-              <p className="mt-0.5 text-sm text-muted-foreground">{p.body}</p>
-            </div>
-          </li>
-        ))}
-      </ol>
-    </Section>
+      <Section id="policy" title="方針" link={{ href: year.policySource, label: '予算編成方針' }}>
+        <ol className="border-t">
+          {year.policies.map((p, i) => (
+            <li key={p.title} className="grid grid-cols-[22px_104px_minmax(0,1fr)] items-start gap-3 border-b border-foreground/10 py-3.5 sm:grid-cols-[28px_176px_minmax(0,1fr)] sm:gap-4">
+              <span className="text-lg text-primary">{i + 1}</span>
+              <img src={assetPath(code, p.image)} alt="" loading="lazy" className="aspect-video w-full rounded-lg border border-foreground/10 object-cover" />
+              <div>
+                <b className="block text-base font-normal">{p.title}</b>
+                <p className="mt-0.5 text-sm text-muted-foreground">{p.body}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </Section>
+    </div>
   )
 }
 
@@ -454,21 +456,21 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
           </div>
           <div className="flex min-w-0 flex-col gap-3">
             <h1 ref={title} className="text-[clamp(1.75rem,1.4rem+1.2vw,2.25rem)] font-normal leading-tight">{data.name}</h1>
-            <div className="flex flex-wrap gap-x-6 gap-y-1.5 text-sm text-muted-foreground">
-              <span className="inline-flex items-center gap-1.5">
-                <MapPinIcon className="size-4" aria-hidden="true" />
-                <a href={INDEX_PATH} className="text-primary no-underline">{data.prefecture}</a>
+            <div className="flex flex-wrap gap-x-2.5 gap-y-1.5 whitespace-nowrap text-xs text-muted-foreground sm:gap-x-6 sm:text-sm">
+              <span className="inline-flex items-center gap-1 sm:gap-1.5">
+                <MapPinIcon className="size-3.5 sm:size-4" aria-hidden="true" />
+                <a href={data.prefecturePath} className="text-primary no-underline">{data.prefecture}</a>
               </span>
               {profile?.population ? (
-                <span className="inline-flex items-center gap-1.5" title="人口">
-                  <UsersIcon className="size-4" aria-hidden="true" />
+                <span className="inline-flex items-center gap-1 sm:gap-1.5" title="人口">
+                  <UsersIcon className="size-3.5 sm:size-4" aria-hidden="true" />
                   <span className="sr-only">人口 </span>
                   {(profile.population.people / 1e4).toFixed(1)}万人
                 </span>
               ) : null}
               {profile?.site ? (
-                <span className="inline-flex items-center gap-1.5">
-                  <GlobeIcon className="size-4" aria-hidden="true" />
+                <span className="inline-flex items-center gap-1 sm:gap-1.5">
+                  <GlobeIcon className="size-3.5 sm:size-4" aria-hidden="true" />
                   <a href={profile.site} target="_blank" rel="noopener" className="text-primary no-underline">公式サイト</a>
                 </span>
               ) : null}
