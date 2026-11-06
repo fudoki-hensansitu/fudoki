@@ -90,7 +90,7 @@ function ProjectItem({ p }: { p: PolicyProject }) {
       ) : null}
       <div className="flex flex-row flex-wrap gap-x-3 gap-y-1 text-sm lg:col-start-2 lg:row-span-3 lg:row-start-1 lg:flex-col lg:gap-0.5 lg:text-right">
         {p.amounts.map((a) => (
-          <span key={`${a.yen}-${a.label ?? ''}`} className="tabular-nums">
+          <span key={`${a.yen}-${a.label ?? ''}`} className="tabular-nums text-primary">
             {formatYen(a.yen)}
             {a.label ? <small className="ml-1 text-xs text-muted-foreground lg:ml-0 lg:block">{a.label}</small> : null}
           </span>
@@ -115,10 +115,10 @@ function Overview({ data }: { data: PageData }) {
     <Section id="about" title={`${kind}は何をしている？`}>
       {latest ? (
         <p className="text-[15px]">
-          {reiwa(latest.year)}に使ったお金は<b className="mx-1 text-xl font-normal tabular-nums">{formatYen(latest.yen)}</b>
+          {reiwa(latest.year)}に使ったお金は<b className="mx-1 text-xl font-normal tabular-nums text-primary">{formatYen(latest.yen)}</b>
           {people ? (
             <>
-              、住民1人あたり<b className="mx-1 text-xl font-normal tabular-nums">約{Math.round(latest.yen / people / 1e4).toLocaleString('ja-JP')}万円</b>
+              、住民1人あたり<b className="mx-1 text-xl font-normal tabular-nums text-primary">約{Math.round(latest.yen / people / 1e4).toLocaleString('ja-JP')}万円</b>
             </>
           ) : null}
           です。
@@ -137,7 +137,7 @@ function Overview({ data }: { data: PageData }) {
                 <span className="text-[13px] text-muted-foreground">{f.examples}</span>
               </div>
               <div className="shrink-0 text-right tabular-nums">
-                <span className="block text-[15px]">{spent ? formatYen(spent.yen) : '—'}</span>
+                <span className={`block text-[15px] ${spent ? 'text-primary' : 'text-muted-foreground'}`}>{spent ? formatYen(spent.yen) : '—'}</span>
                 {spent && people ? <span className="block text-xs text-muted-foreground">1人 約{Math.round(spent.yen / people / 1e3) / 10}万円</span> : null}
               </div>
             </li>
@@ -284,7 +284,7 @@ function Budget({ data, year }: { data: PageData; year: number }) {
   const summary = (
     <>
       <span className="text-sm text-muted-foreground">全体</span>
-      <b className={`text-[26px] font-normal leading-snug tabular-nums ${total ? '' : 'text-muted-foreground'}`}>{total ? formatYen(total.yen) : '—'}</b>
+      <b className={`text-[26px] font-normal leading-snug tabular-nums ${total ? 'text-primary' : 'text-muted-foreground'}`}>{total ? formatYen(total.yen) : '—'}</b>
       {pct !== null ? <span className={`text-[13px] tabular-nums ${pct < 0 ? 'text-[#aa5910]' : 'text-primary'}`}>前年度比 {pct >= 0 ? '+' : '−'}{Math.abs(pct).toFixed(1)}%</span> : null}
     </>
   )
@@ -378,7 +378,7 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
       <div className="flex max-w-[560px] flex-col gap-2">
         <div className="flex items-baseline justify-between gap-3">
           <span>やめたり減らしたりして浮かせたお金</span>
-          <b className="text-[28px] font-normal tabular-nums">
+          <b className="text-[28px] font-normal tabular-nums text-primary">
             {formatYen(scrap.raisedYen)}
             {target ? <small className="ml-1 text-sm text-muted-foreground">／ 目標 {formatYen(target)}</small> : null}
           </b>
