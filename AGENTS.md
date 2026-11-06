@@ -198,10 +198,6 @@ unit テストは、金額の正しさ・公開 API の安全性（認証・入�
 
 依存は exact ピン留めにする。公開から7日未満の版は `bunfig.toml`（`minimumReleaseAge`）と root の `pyproject.toml`（`exclude-newer`）で解決から外す。セキュリティ修正は severity に関わらず cooldown の例外として直ちに適用し、例外を解除できる日時を PR 本文に書き、公開から7日経ったら例外と補助の固定を外す。
 
-## 現在の優先範囲
-
-**ingestion → staging → intermediate → marts を先に完成させる。** 出典との対応、金額・単位・粒度・分類・収録範囲を検査し、固定入力から再構築できる状態を目指す。配布・検索のインフラ、版管理、公開・反映の方式はパイプライン完成後に検討する。
-
 ## 技術スタック
 
 - **パイプライン**（取得・OCR・dbt 変換・検証・保存・一時検証の規則）→ `pipeline/AGENTS.md`
