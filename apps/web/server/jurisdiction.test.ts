@@ -181,8 +181,8 @@ describe('自治体の個別ページ', () => {
 
   test('API に繋がらないときは投げて（頁は 502）、sitemap は入口と一覧だけで答える', async () => {
     const down: Env = { API: { fetch: async () => new Response('x', { status: 500 }) } }
-    expect(resolveJurisdiction(down, '/tokyo/nakano')).rejects.toThrow()
-    expect(indexEntries(down)).rejects.toThrow()
+    await expect(resolveJurisdiction(down, '/tokyo/nakano')).rejects.toThrow()
+    await expect(indexEntries(down)).rejects.toThrow()
     const sitemap = await get('/sitemap.xml', down)
     expect(sitemap.status).toBe(200)
     expect(await sitemap.text()).toContain('https://fudoki.dev/jurisdictions')
