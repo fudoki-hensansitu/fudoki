@@ -1,6 +1,6 @@
 // 自治体の個別ページ（/:都道府県/:名称）の島。サーバーが書いた HTML（検索エンジン向け）を、同じデータで描き直す。
 // 型は企業のプロフィールページ: ヘッダー（ロゴ・名前・一文・属性）＋年度のタブ＋左の目次＋見出し付きの節。年度を切り替えるとページ全体がその年度になる。
-// 歳出の決算は API の値。新しく始めた・広げた事業・事業の入れ替えは jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
+// 歳出の決算は API の値。新しく始めたこと・やめたこと（事業の入れ替え）は jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
 import { Link } from '@void/react'
 import * as React from 'react'
 import { ArrowSquareOutIcon, BabyIcon, BasketballIcon, CaretDownIcon, CoinsIcon, ChatCircleIcon, FirstAidKitIcon, GlobeIcon, HouseLineIcon, LeafIcon, MapPinIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
@@ -30,7 +30,8 @@ const BADGE: Record<ProjectStatus, { label: string; className: string }> = {
 /** aside は見出しの横に並べる短い値（決算の総額など） */
 type SectionLink = { href: string; label: string }
 /** link は見出しの右に出す出典（PDF を直接開く）。複数あれば並べる */
-const Section = ({ id, title, aside, link, children }: { id: string; title: string; aside?: React.ReactNode; link?: SectionLink | SectionLink[]; children: React.ReactNode }) => (
+/** lead は見出しの下の一文。区政を知らない人にその節で何が分かるかを言う */
+const Section = ({ id, title, lead, aside, link, children }: { id: string; title: string; lead?: string; aside?: React.ReactNode; link?: SectionLink | SectionLink[]; children: React.ReactNode }) => (
   <section id={id} aria-labelledby={`h-${id}`} className="flex scroll-mt-32 lg:scroll-mt-20 flex-col gap-4">
     <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
       <div className="flex flex-wrap items-baseline gap-x-5 gap-y-1">
@@ -50,6 +51,7 @@ const Section = ({ id, title, aside, link, children }: { id: string; title: stri
         </div>
       ) : null}
     </div>
+    {lead ? <p className="-mt-2 text-sm text-muted-foreground [text-wrap:pretty]">{lead}</p> : null}
     {children}
   </section>
 )
@@ -92,7 +94,7 @@ const DOMAIN_ICON: Record<string, typeof BabyIcon> = {
 
 function Domains({ year }: { year: ProfileYear }) {
   return (
-    <Section id="domains" title="新しく始めた・広げた事業" link={[{ href: year.budgetSource, label: '当初予算' }, { href: year.evaluationSource, label: '事業評価' }]}>
+    <Section id="domains" title="新しく始めたことは？" lead="その年度の予算で新しく始めたり広げたりしたことと、自治体が自分で付けた評価です。" link={[{ href: year.budgetSource, label: '当初予算' }, { href: year.evaluationSource, label: '事業評価' }]}>
       {groupByFrame(year.projects).map(({ frame: d, items }) => (
         <div key={d.id} id={`d-${d.id}`} className="flex scroll-mt-32 lg:scroll-mt-20 flex-col gap-1 [&+&]:mt-12">
           <h3 className="mb-3.5 flex items-center gap-2.5 text-[19px] leading-snug sm:text-[22px]">
@@ -221,7 +223,8 @@ function Budget({ data, year }: { data: PageData; year: number }) {
   return (
     <Section
       id="budget"
-      title="決算 / 予算"
+      title="お金は何に使われた？"
+      lead="1年間に使ったお金（決算）と、使う予定のお金（予算）を、使い道ごとに分けています。"
       link={docs.length ? docs : undefined}
     >
       <div id="budget-panel" role="tabpanel" aria-labelledby={`tab-${phase}`} data-ask-view={`${reiwa(year)}の${label}の金額`} className="flex flex-col gap-4">
@@ -245,7 +248,7 @@ function Projects({ data, year }: { data: PageData; year: number }) {
   const isLatest = !!settled && settled.year === data.years.at(-1)?.year
   const max = data.projects[0]?.yen ?? 1
   return (
-    <Section id="projects" title="金額の大きい事業">
+    <Section id="projects" title="いちばんお金がかかっているのは？" lead="決算で金額の大きい使い道の上位です。前の年と比べた増減も並べています。">
       {isLatest ? (
         <ul className="border-t">
           {data.projects.map((p, i) => (
@@ -268,10 +271,10 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
     ['D', 'やめる・終える'],
   ] as const
   return (
-    <Section id="scrap" title="事業の入れ替え">
+    <Section id="scrap" title="やめたこと・見直したことは？" lead="自治体は毎年、事業を自分で評価して、やめたり減らしたりして浮いたお金を新しいことに回しています。">
       <div className="flex max-w-[560px] flex-col gap-2">
         <div className="flex items-baseline justify-between gap-3">
-          <span>スクラップで捻出した財源</span>
+          <span>やめたり減らしたりして浮かせたお金</span>
           <b className="text-[28px] font-normal tabular-nums">
             {formatYen(scrap.raisedYen)}
             {target ? <small className="ml-1 text-sm text-muted-foreground">／ 目標 {formatYen(target)}</small> : null}
@@ -284,7 +287,7 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
           </div>
         ) : null}
       </div>
-      <h3 className="text-lg">{scrap.evaluated.toLocaleString('ja-JP')}事業の自己評価</h3>
+      <h3 className="text-lg">自治体が自分で付けた評価（{scrap.evaluated.toLocaleString('ja-JP')}事業）</h3>
       <div className="grid grid-cols-2 border-t sm:grid-cols-4">
         {grades.map(([g, label]) => (
           <div key={g} className="flex flex-col py-3">
@@ -370,10 +373,10 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
   }
 
   const toc: TocItem[] = [
-    ...(py ? [{ href: '#domains', label: '新しく始めた・広げた事業' }, ...groupByFrame(py.projects).map(({ frame: d }) => ({ href: `#d-${d.id}`, label: d.name, sub: true }))] : []),
-    { href: '#budget', label: '決算 / 予算' },
-    { href: '#projects', label: '事業' },
-    ...(py?.scrap ? [{ href: '#scrap', label: '事業の入れ替え' }] : []),
+    { href: '#budget', label: 'お金の使い道' },
+    { href: '#projects', label: '大きな支出' },
+    ...(py ? [{ href: '#domains', label: '新しく始めたこと' }, ...groupByFrame(py.projects).map(({ frame: d }) => ({ href: `#d-${d.id}`, label: d.name, sub: true }))] : []),
+    ...(py?.scrap ? [{ href: '#scrap', label: 'やめたこと' }] : []),
   ]
 
   // スクロールしたら小さなヘッダーを出す
@@ -533,9 +536,9 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
             ))}
           </nav>
           <main className="flex min-w-0 flex-col gap-14">
-            {py ? <Domains year={py} /> : null}
             <Budget data={data} year={year} />
             <Projects data={data} year={year} />
+            {py ? <Domains year={py} /> : null}
             {py?.scrap ? <ScrapSection scrap={py.scrap} /> : null}
           </main>
         </div>
