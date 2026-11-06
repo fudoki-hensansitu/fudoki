@@ -5,7 +5,7 @@ import { BACKGROUND_DARK, BACKGROUND_LIGHT } from './tokens'
 export const MANIFEST = JSON.stringify({
   name: '風土記（fudoki）— まちを、ひらく',
   short_name: '風土記',
-  description: '自治体のお金とデータを、誰でも見られて、誰でも書き足せる形にひらく。',
+  description: '自治体のことを、誰でも見られて、誰でも書き足せる形にひらく。',
   lang: 'ja',
   start_url: '/',
   scope: '/',

@@ -712,7 +712,7 @@ export function Landing({ sitekey }: { sitekey: string }) {
             <Link href="/" aria-label="風土記 ホーム">
               <svg className="logo" xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${LOGO_WIDTH} 40`} role="img" aria-label="風土記" dangerouslySetInnerHTML={{ __html: `<title>風土記</title>${LOGO_G}` }} />
             </Link>
-            <p>まちを、ひらく。自治体のお金とデータを、誰でも見られて、書き足せる形に。</p>
+            <p>まちを、ひらく。自治体のことを、誰でも見られて、書き足せる形に。</p>
           </div>
           <div>
             <h2>使う</h2>
