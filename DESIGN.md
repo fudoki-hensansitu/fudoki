@@ -20,7 +20,7 @@ Hallmark は検出すると pick をこれに従わせる。値を変えると�
 shadcn/ui の語彙。色の役割は次のとおり。
 
 - ブランド色 `--primary`（青丹）: 操作・リンク・選んだ項目・グラフの系列・各節の要の数字（数字を全部塗らない）
-- アクセント `--kincha`（金茶）: 目を引きたい面（進み具合の棒、注意の印）。文字に使うときは白地で読める `--kincha-ink`
+- アクセント `--kincha`（金茶）: 目を引きたい面（進み具合の棒、注意の印）と、ページ冒頭の使ったお金の数字。文字に使うときは白地で読める濃い `--kincha-ink`
 - 増減（前年度比など）は良し悪しを表さないので、プラスもマイナスも色を付けない
 - 絵の色 `--shu`・`--ai`・`--sakura`: 読み物の絵の面と帯だけ
 
@@ -64,7 +64,7 @@ shadcn/ui の語彙。色の役割は次のとおり。
   --ai: #33507a;
   --kincha: #e3a43c;
   /* 金茶を文字に使うときの濃さ（白地で読める） */
-  --kincha-ink: #aa5910;
+  --kincha-ink: #8f4a0c;
   --sakura: #ebcab9;
 
   --font-display: "Fudoki Mincho", "BIZ UDPMincho", "Hiragino Mincho ProN", "Yu Mincho", serif;

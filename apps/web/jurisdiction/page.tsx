@@ -116,10 +116,10 @@ function Overview({ data }: { data: PageData }) {
     <Section id="about" title={`${kind}は何をしている？`}>
       {latest ? (
         <p className="text-[15px]">
-          {reiwa(latest.year)}に使ったお金は<b className="mx-1 text-xl font-normal tabular-nums text-primary">{formatYen(latest.yen)}</b>
+          {reiwa(latest.year)}に使ったお金は<b className="mx-1 text-xl font-normal tabular-nums text-[var(--kincha-ink)]">{formatYen(latest.yen)}</b>
           {people ? (
             <>
-              、住民1人あたり<b className="mx-1 text-xl font-normal tabular-nums text-primary">約{Math.round(latest.yen / people / 1e4).toLocaleString('ja-JP')}万円</b>
+              、住民1人あたり<b className="mx-1 text-xl font-normal tabular-nums text-[var(--kincha-ink)]">約{Math.round(latest.yen / people / 1e4).toLocaleString('ja-JP')}万円</b>
             </>
           ) : null}
           です。
