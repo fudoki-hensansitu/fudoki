@@ -465,14 +465,15 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 -728,fallback-kou-accounting,,一般会計,,総務費,会計管理費|会計費,,,eq,,assigned,01.1.2,retained,目,,会計管理の項に属し語の規則に当たらない目を、会計管理の語の規則（keyword-fiscal-admin）と同じ 01.1.2 に暫定で置く。,true
 -727,fallback-kou-digital,,一般会計,,総務費,デジタルサービス費,,,eq,,assigned,01.3.3,retained,目,,デジタルサービス費の項（例: 130001）は行政の情報システム・デジタル化の管理であり、情報システムの語の規則（vocab-info-system）と同じ 01.3.3 に置く。区市町村・事業者向けの支援が混じるため暫定とする。,true
 -726,vocab-office-building,,一般会計,,総務費,,,庁舎等管理|新庁舎整備|新区役所整備|庁舎整備|庁舎建設,contains,,assigned,01.3.3,retained,目,,庁舎の管理・整備は庁舎管理の語の規則（keyword-property-admin）と同じ 01.3.3 その他一般サービスに置く。消防署・土木事務所など機能が決まる庁舎へ広げないよう総務費の款に限る。新庁舎の整備は 131237 の新庁舎整備費と同じく暫定とする。,true
--725,vocab-digital-admin,,一般会計,,総務費,,,デジタル推進|デジタル政策|DX推進,contains,,assigned,01.3.3,retained,目,,行政のデジタル化の推進を情報システムの語の規則（vocab-info-system）と同じ 01.3.3 に置く。消防署・土木事務所など機能が決まる庁舎へ広げないよう総務費の款に限る。131237 の DX推進費と同じく暫定とする。,true
-898,vocab-welfare-health-center,,一般会計,,民生費,,,保健センター,contains,,assigned,10,retained,目,,民生費に属する保健センター（保健福祉センター・生活・保健センターなど）は福祉と保健を兼ねる施設として、福祉センターの語の規則（vocab-welfare-center）と同じ 10 に暫定で置く。保健センターの語の規則（vocab-health-center、07）より先に当てる。,true
+-725,vocab-digital-admin,,一般会計,,総務費,,,デジタル推進|デジタル政策|DX推進,contains,,assigned,01.3.3,retained,目,,行政のデジタル化の推進を情報システムの語の規則（vocab-info-system）と同じ 01.3.3 に置く。131237 の DX推進費と同じく暫定とする。総務費の款に限り、産業・教育など他の款のデジタル化支援へ広げない。,true
+898,vocab-welfare-health-center,,一般会計,,民生費,,,保健センター,contains,,assigned,10,retained,目,,民生費に属する保健センター（福祉保健センター・生活・保健センターなど）は福祉と保健を兼ねる施設として、福祉センターの語の規則（vocab-welfare-center）と同じ 10 に暫定で置く。保健センターの語の規則（vocab-health-center、07）より先に当てる。,true
 1440,fallback-kou-child-welfare,,一般会計,,民生費,児童福祉費|こども家庭費|子ども家庭費|子育て支援費,,,eq,,assigned,10.4,retained,目,,民生費の児童福祉・こども家庭・子育て支援の項に属し語の規則に当たらない目を 10.4 家族及び児童に置く。子どもの医療費助成（07 との境界）や児童遊園（08.1）が混じるため暫定とする。,true
 1441,fallback-kou-elderly-welfare,,一般会計,,民生費,老人福祉費|高齢者福祉費,,,eq,,assigned,10.2,retained,目,,老人福祉・高齢者福祉の項に属し語の規則に当たらない目を 10.2 高齢に置く。老人医療費（07 との境界）が混じるため暫定とする。,true
 1442,fallback-kou-disability-welfare,,一般会計,,民生費,障害者福祉費|心身障害者福祉費,,,eq,,assigned,10.1,retained,目,,障害者福祉の項に属し語の規則に当たらない目を 10.1 疾病及び障害に置く。障害者医療費（07 との境界）が混じるため暫定とする。,true
 1443,fallback-kou-public-assistance,,一般会計,,民生費,生活保護費,,,eq,,assigned,10.7,retained,目,,生活保護費の項に属し語の規則に当たらない目を、生活保護の語の規則（keyword-public-assistance）と同じ 10.7 に分類する。,false
 1444,vocab-disability-social-welfare,,一般会計,,民生費,社会福祉費,,障害|障がい,contains,,assigned,10.1,retained,目,,社会福祉費の項にある障害者向けの目（例: 131091 障害者支援費）を 10.1 疾病及び障害に置く。自立支援医療など 07 との境界が混じるため暫定とする。,true
 1445,vocab-elderly-social-welfare,,一般会計,,民生費,社会福祉費,,老人|要介護高齢者|高齢者在宅|長寿,contains,,assigned,10.2,retained,目,,社会福祉費の項にある高齢者向けの目を 10.2 高齢に置く。後期高齢者医療（07）を拾わないよう「高齢者」単独では当てない。老人医療助成が混じるため暫定とする。,true
--797,keyword-health-promotion,,一般会計,,,,,健康推進,contains,,assigned,07.4,retained,目,,健康推進の目は保健所・保健センターの運営、健康教育、健診・予防など公衆衛生が中心（例: 131091 健康推進費）であり 07.4 公衆衛生サービスに置く。公害健康被害の補償など他の中分類が混じるため暫定とする。,true
+-797,keyword-health-promotion,,一般会計,,,,,健康推進|健康増進|健康づくり,contains,,assigned,07.4,retained,目,,健康推進・健康増進・健康づくりの目は保健所・保健センターの運営、健康教育、健診・予防など公衆衛生が中心（例: 131091 健康推進費）であり 07.4 公衆衛生サービスに置く。公害健康被害の補償や健康増進施設など他の中分類が混じるため暫定とする。vocab-health-promotion・vocab-health-building（07）より先に当てる。,true
 -786,ome-2024-01,132055,一般会計,,衛生費,保健衛生費,,環境政策費,eq,,assigned,05,retained,目,,青梅市 衛生費・保健衛生費の環境政策費（ゼロカーボンシティ推進・地球温暖化対策など）を環境保護に分類する。町田市（keyword-environment-policy-132098）にならう。名称と備考の事業名からの判断。,true
 -1301,ome-2024-02,132055,一般会計,,災害復旧費,土木施設災害復旧費,,土木施設災害復旧費,eq,,unclassifiable,,retained,目,,青梅市 土木施設（道路・河川など）の災害復旧は施設の種類を目の名前で分けられない（kobe-disaster-civil・vocab-disaster-public-facility にならう）。,false
+-888,keyword-fund-accumulation-general-admin,,一般会計,,総務費,,,積立金|積立基金,contains,,out-of-scope,,retained,目,,総務費の款にある基金への積立（例: 130001 会計管理費の積立金）は金融資産への振替として対象外とする（kind-x-fund-accumulation と同じ）。総務費の項の fallback と款の規則（somu）より先に当てる。,false
