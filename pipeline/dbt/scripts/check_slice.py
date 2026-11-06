@@ -54,7 +54,7 @@ def check(warehouse: Path, reference: Path | None = None) -> dict:
             output['cofog_reference_matches'] = len(records)
             output['cofog_descendant_diffs'] = allowed_descendant_diffs
         output['leaf_totals'] = con.execute("select jurisdiction_code,axis,count(*),sum(amount_yen) from (select * from int_fiscal__expenditure_nodes where document_kind = 'settlement') where is_leaf group by 1,2 order by 1,2").fetchall()
-        ids = con.execute('select node_id,parent_node_id from (select * from int_fiscal__expenditure_nodes where document_kind = 'settlement') order by node_id').fetchall()
+        ids = con.execute("select node_id,parent_node_id from (select * from int_fiscal__expenditure_nodes where document_kind = 'settlement') order by node_id").fetchall()
         output['node_count'] = len(ids)
         output['node_id_digest'] = hashlib.sha256(json.dumps(ids).encode()).hexdigest()
         return output
