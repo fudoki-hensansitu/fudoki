@@ -52,10 +52,18 @@ export interface YearTotal {
   kan: Line[]
 }
 
+/** 住民基本台帳人口。asOf は基準日（YYYY-MM-DD） */
+export interface Population {
+  people: number
+  asOf: string
+}
+
 export interface PageData {
   code: string
   name: string
   prefecture: string
+  officialUrl: string | null
+  population: Population | null
   originTitle: string | null
   /** 西暦、古い順 */
   years: YearTotal[]

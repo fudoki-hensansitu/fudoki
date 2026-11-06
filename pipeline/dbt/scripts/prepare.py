@@ -16,10 +16,12 @@ from ingestion.fiscal import manifest
 from ingestion.fiscal.storage import fetch, verify
 from ingestion.lib.node_tables import AMOUNT_COLUMNS, NODE_COLUMNS
 from ingestion.lib.source_inconsistencies import declared_for
+from ingestion.population import run as population
 
 DBT = Path(__file__).resolve().parents[1]
 PIPELINE = DBT.parent
 JURISDICTIONS = PIPELINE.parent / 'packages/jurisdictions/jurisdictions.json'
+SELECTIONS = PIPELINE / 'source_selection'
 
 
 def identifier(value: str) -> str:
@@ -143,8 +145,8 @@ def original_for(document: dict, table: dict) -> dict:
     return inputs[0]
 
 
-def load_jurisdictions(path: Path) -> list[tuple[str, str, str]]:
-    """自治体マスタ（ADR 0015）の自治体コード・名称・OCD ID。自治体コードの検査は dbt の marts が持つ。
+def load_jurisdictions(path: Path, selections: Path = SELECTIONS) -> list[tuple[str, str, str, str | None]]:
+    """自治体マスタ（ADR 0015）の自治体コード・名称・OCD ID と、出典の選定にある公式サイトの URL。自治体コードの検査は dbt の marts が持つ。
 
     API は入力の自治体名だけを NFKC で揃えて部分一致で引くので、マスタの名称が NFKC で変わる字を含むと当たらない。そのときは止める。
     """
@@ -152,7 +154,10 @@ def load_jurisdictions(path: Path) -> list[tuple[str, str, str]]:
     changed = [code for code, entry in registry.items() if unicodedata.normalize('NFKC', entry['name']) != entry['name']]
     if changed:
         raise ValueError(f'Jurisdiction names must be NFKC-normalized: {sorted(changed)}')
-    return [(code, entry['name'], entry['ocdId']) for code, entry in sorted(registry.items())]
+    def official_url(code: str) -> str | None:
+        selection = selections / f'{code}.json'
+        return json.loads(selection.read_text(encoding='utf-8')).get('official_url') if selection.is_file() else None
+    return [(code, entry['name'], entry['ocdId'], official_url(code)) for code, entry in sorted(registry.items())]
 
 
 def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = False) -> dict:
@@ -236,15 +241,25 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
         con.execute('create or replace table ingestion.origin (origin_id varchar, jurisdiction_code varchar, fiscal_year integer, document_kind varchar, amendment_number integer, title varchar, url varchar, format varchar, sha256 varchar)')
         con.executemany('insert into ingestion.origin values (?,?,?,?,?,?,?,?,?)', list(origins.values()))
         jurisdictions = load_jurisdictions(JURISDICTIONS)
-        con.execute('create or replace table ingestion.jurisdiction (jurisdiction_code varchar, name varchar, ocd_id varchar)')
-        con.executemany('insert into ingestion.jurisdiction values (?,?,?)', jurisdictions)
+        con.execute('create or replace table ingestion.jurisdiction (jurisdiction_code varchar, name varchar, ocd_id varchar, official_url varchar)')
+        con.executemany('insert into ingestion.jurisdiction values (?,?,?,?)', jurisdictions)
+        population_origins, residents = [], []
+        for origin in population.origins():
+            path = population.fetch(origin, remote=remote)
+            population_origins.append((population.origin_id(origin), origin['reference_date'], origin['url']))
+            residents += [(population.origin_id(origin), *row) for row in population.read(con, path, origin['reference_date'])]
+        con.execute('create or replace table ingestion.population_origin (origin_id varchar, reference_date date, url varchar)')
+        con.execute('create or replace table ingestion.resident_register (origin_id varchar, jurisdiction_code varchar, male bigint, female bigint, population bigint, households bigint)')
+        if population_origins:
+            con.executemany('insert into ingestion.population_origin values (?,?,?)', population_origins)
+            con.executemany('insert into ingestion.resident_register values (?,?,?,?,?,?)', residents)
         used = {root / 'manifest.json' for document in documents.values()
                 if (root := candidate_root(candidate, document['target'], document['direction'])) is not None}
         if provided - used:
             raise ValueError(f'Unused candidate manifests: {sorted(str(p) for p in provided - used)}')
         con.commit()
     return {'warehouse': str(warehouse), 'tables': len(tables), 'csv_tables': len(csv_tables),
-            'origins': len(origins), 'jurisdictions': len(jurisdictions),
+            'origins': len(origins), 'jurisdictions': len(jurisdictions), 'population_origins': len(population_origins),
             'nodes': sum(t[-2] for t in tables), 'amounts': sum(t[-1] for t in tables)}
 
 
@@ -267,7 +282,8 @@ def main() -> None:
         # --full-refresh: a seed that gains a column would otherwise fail against the table of an earlier build.
         subprocess.run(['dbt', 'build', '--full-refresh', '--project-dir', str(DBT), '--profiles-dir', str(DBT),
                         '--select', '+settlement_expenditure_node', '+initial_expenditure_node',
-                        '+origin', '+expenditure_coverage', '+jurisdiction_master', 'cofog_master'],
+                        '+origin', '+expenditure_coverage', '+jurisdiction_master', '+population_origin',
+                        '+jurisdiction_population', 'cofog_master'],
                        cwd=DBT, stdout=sys.stderr, check=True)
         result['dbt_build'] = 'passed'
     print(json.dumps(result, ensure_ascii=False))

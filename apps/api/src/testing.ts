@@ -80,11 +80,24 @@ export function insertOrigin(sqlite: Database, row: Record<string, string | numb
 }
 
 /** 自治体マスタの1行。 */
-export function insertJurisdiction(sqlite: Database, row: { jurisdiction_code: string; name: string; prefecture_name?: string }) {
+export function insertJurisdiction(sqlite: Database, row: { jurisdiction_code: string; name: string; prefecture_name?: string; official_url?: string }) {
   const prefecture_code = row.jurisdiction_code.slice(0, 2)
   sqlite
-    .query('INSERT INTO jurisdiction_master (jurisdiction_code, name, prefecture_code, prefecture_name, ocd_id) VALUES (?, ?, ?, ?, ?)')
-    .run(row.jurisdiction_code, row.name, prefecture_code, row.prefecture_name ?? '東京都', `ocd-division/country:jp/prefecture:${prefecture_code}/city:${row.jurisdiction_code}`)
+    .query('INSERT INTO jurisdiction_master (jurisdiction_code, name, prefecture_code, prefecture_name, ocd_id, official_url) VALUES (?, ?, ?, ?, ?, ?)')
+    .run(row.jurisdiction_code, row.name, prefecture_code, row.prefecture_name ?? '東京都', `ocd-division/country:jp/prefecture:${prefecture_code}/city:${row.jurisdiction_code}`, row.official_url ?? null)
+}
+
+/** 人口の資料と、その資料の自治体ごとの行。 */
+export function insertPopulation(
+  sqlite: Database,
+  origin: { origin_id: string; reference_date: string; url: string },
+  rows: { jurisdiction_code: string; male: number; female: number; population: number; households: number }[]
+) {
+  sqlite.query('INSERT OR IGNORE INTO population_origin (origin_id, reference_date, url) VALUES (?, ?, ?)').run(origin.origin_id, origin.reference_date, origin.url)
+  for (const r of rows)
+    sqlite
+      .query('INSERT INTO jurisdiction_population (population_id, origin_id, jurisdiction_code, reference_date, male, female, population, households) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
+      .run(`${origin.origin_id}:${r.jurisdiction_code}`, origin.origin_id, r.jurisdiction_code, origin.reference_date, r.male, r.female, r.population, r.households)
 }
 
 /** 収録範囲の1行。coverage_id は行の中身から作る（一意であればよい）。 */

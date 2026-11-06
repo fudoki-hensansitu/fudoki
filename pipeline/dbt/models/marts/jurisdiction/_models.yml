@@ -25,3 +25,5 @@ models:
     data_tests:
     - not_null
     - unique
+  - name: official_url
+    description: 自治体の公式サイトの URL。出典の選定（pipeline/source_selection）に記録した値で、選定の無い自治体は NULL。
