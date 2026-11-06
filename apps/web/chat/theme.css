@@ -4,8 +4,9 @@
 @custom-variant dark (@media (prefers-color-scheme: dark));
 
 :root {
-  --popover: var(--card);
-  --popover-foreground: var(--card-foreground);
+  /* DESIGN.md のとおり、浮かぶ面（select・menu）は明るいときは白、暗いときは card の色 */
+  --popover: var(--background);
+  --popover-foreground: var(--foreground);
   --input: var(--border);
   --destructive: var(--shu);
   --destructive-foreground: var(--primary-foreground);
@@ -18,6 +19,12 @@
   --sidebar-accent-foreground: var(--accent-foreground);
   --sidebar-border: var(--border);
   --sidebar-ring: var(--ring);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --popover: var(--card);
+    --popover-foreground: var(--card-foreground);
+  }
 }
 @theme inline {
   --color-background: var(--background);
