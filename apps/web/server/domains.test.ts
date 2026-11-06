@@ -1,0 +1,31 @@
+import { describe, expect, test } from 'bun:test'
+import { readFileSync } from 'node:fs'
+import { DOMAIN_FRAMES, frameOf, groupByFrame } from '../jurisdiction/domains'
+import { PROFILES } from '../jurisdiction/profiles'
+
+// 分野の枠から事業が漏れると、ページから黙って消える
+const masterCodes = readFileSync(new URL('../../../pipeline/dbt/seeds/fiscal/cofog_master.csv', import.meta.url), 'utf8')
+  .split('\n').slice(1).map((l) => l.split(',')[0]?.replace(/"/g, '')).filter(Boolean)
+
+describe('分野の枠', () => {
+  test('COFOG の全コードがどれか一つの枠に入る', () => {
+    for (const code of masterCodes) expect(frameOf(code!), code).toBeDefined()
+  })
+  test('細かいコードの対応が粗いコードより優先する', () => {
+    expect(frameOf('10.4')?.id).toBe('kosodate')
+    expect(frameOf('10.2')?.id).toBe('iryo')
+    expect(frameOf('04.5.1')?.id).toBe('kurashi')
+    expect(frameOf('04.1')?.id).toBe('sangyo')
+  })
+  test('自治体ページの事業は全て COFOG のマスタにあるコードを持ち、枠から漏れない', () => {
+    for (const profile of Object.values(PROFILES)) {
+      for (const [year, y] of Object.entries(profile.years)) {
+        for (const p of y.projects) expect(masterCodes, `${year} ${p.name}`).toContain(p.cofog)
+        expect(groupByFrame(y.projects).flatMap((g) => g.items).length).toBe(y.projects.length)
+      }
+    }
+  })
+  test('枠の id は重ならない', () => {
+    expect(new Set(DOMAIN_FRAMES.map((f) => f.id)).size).toBe(DOMAIN_FRAMES.length)
+  })
+})

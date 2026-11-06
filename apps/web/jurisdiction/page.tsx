@@ -2,10 +2,11 @@
 // 型は企業のプロフィールページ: ヘッダー（ロゴ・名前・一文・属性）＋年度のタブ＋左の目次＋見出し付きの節。年度を切り替えるとページ全体がその年度になる。
 // 歳出の決算は API の値。分野ごとの事業・事業の入れ替えは jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
 import * as React from 'react'
-import { ArrowSquareOutIcon, BabyIcon, CaretDownIcon, ChatCircleIcon, FirstAidKitIcon, GlobeIcon, HouseLineIcon, MapPinIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
+import { ArrowSquareOutIcon, BabyIcon, BasketballIcon, CaretDownIcon, CoinsIcon, ChatCircleIcon, FirstAidKitIcon, GlobeIcon, HouseLineIcon, LeafIcon, MapPinIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
 import { StartForm } from '../chat/start-form'
 import type { StoredSession } from '../chat/store'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { groupByFrame } from './domains'
 import { Flow } from './flow'
 import { assetPath, type PolicyProject, type ProfileYear, type ProjectStatus, type Scrap } from './profiles'
 import { changePct, formatYen, reiwa, yearName, type PageData, type Project, type Setsu, type YearTotal } from './types'
@@ -80,24 +81,23 @@ function ProjectItem({ p }: { p: PolicyProject }) {
   )
 }
 
-/** 分野の id ごとの icon。分野は有権者の関心ごとの枠（profiles.ts の domains） */
-const DOMAIN_ICON: Record<string, typeof BabyIcon> = { kosodate: BabyIcon, iryo: FirstAidKitIcon, bosai: ShieldCheckIcon, kurashi: HouseLineIcon }
+/** 分野の枠（domains.ts）の id ごとの icon */
+const DOMAIN_ICON: Record<string, typeof BabyIcon> = {
+  bosai: ShieldCheckIcon, kosodate: BabyIcon, iryo: FirstAidKitIcon, kurashi: HouseLineIcon,
+  sangyo: StorefrontIcon, kankyo: LeafIcon, gyosei: CoinsIcon, bunka: BasketballIcon,
+}
 
 function Domains({ year }: { year: ProfileYear }) {
   return (
     <Section id="domains" title="分野ごとの事業" link={[{ href: year.budgetSource, label: '当初予算' }, { href: year.evaluationSource, label: '事務事業評価' }]}>
-      {year.domains.map((d) => (
+      {groupByFrame(year.projects).map(({ frame: d, items }) => (
         <div key={d.id} id={`d-${d.id}`} className="flex scroll-mt-32 lg:scroll-mt-20 flex-col gap-1 [&+&]:mt-12">
           <h3 className="mb-3.5 flex items-center gap-2.5 text-[19px] leading-snug sm:text-[22px]">
             <DomainIcon id={d.id} />
             {d.name}
           </h3>
           <div className="border-t">
-            {d.projects.length ? (
-              d.projects.map((p) => <ProjectItem key={p.name} p={p} />)
-            ) : (
-              <p className="border-b border-foreground/10 py-4 text-sm text-muted-foreground">この年度の新規・拡充事業の中から、この領域に振り分けた事業はありません。</p>
-            )}
+            {items.map((p) => <ProjectItem key={p.name} p={p} />)}
           </div>
         </div>
       ))}
@@ -367,7 +367,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
   }
 
   const toc: TocItem[] = [
-    ...(py ? [{ href: '#domains', label: '分野ごとの事業' }, ...py.domains.map((d) => ({ href: `#d-${d.id}`, label: d.short ?? d.name, sub: true }))] : []),
+    ...(py ? [{ href: '#domains', label: '分野ごとの事業' }, ...groupByFrame(py.projects).map(({ frame: d }) => ({ href: `#d-${d.id}`, label: d.name, sub: true }))] : []),
     { href: '#budget', label: '決算 / 予算' },
     { href: '#projects', label: '事業' },
     ...(py?.scrap ? [{ href: '#scrap', label: '事業の入れ替え' }] : []),
