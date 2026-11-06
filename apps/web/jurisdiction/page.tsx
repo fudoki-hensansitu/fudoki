@@ -372,10 +372,15 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
     history.replaceState(null, '', `#y${y}`)
   }
 
-  const toc: TocItem[] = [
+  // 決算の無い年度（今年度など）は空の節から始めないよう、新しく始めたことを先に出す
+  const settled = data.years.some((y) => y.year === year)
+  const money: TocItem[] = [
     { href: '#budget', label: 'お金の使い道' },
     { href: '#projects', label: '大きな支出' },
-    ...(py ? [{ href: '#domains', label: '新しく始めたこと' }, ...groupByFrame(py.projects).map(({ frame: d }) => ({ href: `#d-${d.id}`, label: d.name, sub: true }))] : []),
+  ]
+  const fresh: TocItem[] = py ? [{ href: '#domains', label: '新しく始めたこと' }, ...groupByFrame(py.projects).map(({ frame: d }) => ({ href: `#d-${d.id}`, label: d.name, sub: true }))] : []
+  const toc: TocItem[] = [
+    ...(settled ? [...money, ...fresh] : [...fresh, ...money]),
     ...(py?.scrap ? [{ href: '#scrap', label: 'やめたこと' }] : []),
   ]
 
@@ -536,9 +541,10 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
             ))}
           </nav>
           <main className="flex min-w-0 flex-col gap-14">
+            {!settled && py ? <Domains year={py} /> : null}
             <Budget data={data} year={year} />
             <Projects data={data} year={year} />
-            {py ? <Domains year={py} /> : null}
+            {settled && py ? <Domains year={py} /> : null}
             {py?.scrap ? <ScrapSection scrap={py.scrap} /> : null}
           </main>
         </div>
