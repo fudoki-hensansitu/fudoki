@@ -3,7 +3,7 @@
 // 歳出の決算は API の値。新しく始めたこと・やめたこと（事業の入れ替え）は jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
 import { Link } from '@void/react'
 import * as React from 'react'
-import { ArrowSquareOutIcon, BabyIcon, BasketballIcon, CaretDownIcon, CoinsIcon, ChatCircleIcon, FirstAidKitIcon, GlobeIcon, HouseLineIcon, LeafIcon, MapPinIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
+import { ArrowSquareOutIcon, BabyIcon, BasketballIcon, CaretDownIcon, CheckCircleIcon, CircleHalfIcon, ClipboardTextIcon, ClockIcon, CoinsIcon, ChatCircleIcon, FirstAidKitIcon, GlobeIcon, HouseLineIcon, LeafIcon, MapPinIcon, MinusCircleIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, UsersIcon, WarningCircleIcon, XIcon } from '@phosphor-icons/react'
 import { StartForm } from '../chat/start-form'
 import type { StoredSession } from '../chat/store'
 import { Hint } from '@/components/hint'
@@ -19,12 +19,23 @@ const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
   return (await res.json()) as T
 }
 
-const BADGE: Record<ProjectStatus, { label: string; className: string }> = {
-  short: { label: '目標に届いていない', className: 'bg-[color-mix(in_srgb,var(--kincha)_22%,transparent)] text-[#aa5910]' },
-  met: { label: '目標に届いた', className: 'bg-primary/15 text-primary' },
-  mixed: { label: '達成と未達が混在', className: 'bg-secondary' },
-  unmeasured: { label: 'この事業の指標なし', className: 'bg-secondary' },
-  none: { label: '評価前', className: 'border border-dashed' },
+/** 区の評価から読める結果。unmeasured は、評価の指標がこの取り組みではなく同じ事業の別の内容を測っているもの */
+const BADGE: Record<ProjectStatus, { label: string; className: string; icon: typeof ClockIcon }> = {
+  short: { label: '目標に届いていない', className: 'bg-[color-mix(in_srgb,var(--kincha)_22%,transparent)] text-[#aa5910]', icon: WarningCircleIcon },
+  met: { label: '目標に届いた', className: 'bg-primary/15 text-primary', icon: CheckCircleIcon },
+  mixed: { label: '達成と未達が混在', className: 'bg-secondary text-muted-foreground', icon: CircleHalfIcon },
+  unmeasured: { label: '評価は別の内容', className: 'bg-secondary text-muted-foreground', icon: MinusCircleIcon },
+  none: { label: '評価前', className: 'border border-dashed text-muted-foreground', icon: ClockIcon },
+}
+
+function StatusBadge({ status }: { status: ProjectStatus }) {
+  const { label, className, icon: Icon } = BADGE[status]
+  return (
+    <span className={`inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full py-0.5 pl-1.5 pr-2.5 text-xs leading-5 ${className}`}>
+      <Icon aria-hidden="true" className="size-3.5" />
+      {label}
+    </span>
+  )
 }
 
 /** aside は見出しの横に並べる短い値（決算の総額など） */
@@ -59,14 +70,17 @@ const Section = ({ id, title, lead, aside, link, children }: { id: string; title
 function ProjectItem({ p }: { p: PolicyProject }) {
   return (
     <div className="grid grid-cols-1 gap-x-6 gap-y-1.5 border-b border-foreground/10 py-4 lg:grid-cols-[minmax(0,1fr)_210px]">
-      <div className="text-[15.5px]">
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[15.5px]">
         {p.name}
-        {p.status ? <span className={`ml-1.5 whitespace-nowrap rounded-full px-2 py-px align-middle text-xs ${BADGE[p.status].className}`}>{BADGE[p.status].label}</span> : null}
+        {p.status ? <StatusBadge status={p.status} /> : null}
       </div>
       <p className="text-sm lg:col-start-1">{p.what}</p>
       {p.evaluation ? (
         <p className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1 text-[13px] text-muted-foreground lg:col-start-1">
-          <span>区の評価</span>
+          <span className="inline-flex shrink-0 items-center gap-1 self-center">
+            <ClipboardTextIcon aria-hidden="true" className="size-4" />
+            区の評価
+          </span>
           <span>
             {p.evaluation.grade ? <b className="font-normal text-foreground">{p.evaluation.grade}</b> : null}
             {p.evaluation.grade ? '・' : ''}
