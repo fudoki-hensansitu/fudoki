@@ -85,4 +85,12 @@ SELECT datetime(a.created_at / 1000, 'unixepoch') AS at, json_extract(q.parts, '
   (SELECT group_concat(json_extract(p.value, '$.toolName')) FROM json_each(a.parts) p WHERE json_extract(p.value, '$.type') = 'dynamic-tool') AS tools
 FROM messages a JOIN messages q ON q.conversation_id = a.conversation_id AND q.seq = a.seq - 1
 WHERE a.role = 'assistant' AND a.error != '' ORDER BY a.created_at DESC LIMIT 50;
+
+-- 回答は返したが、途中の tool が失敗した質問（a.error は空。tool の失敗は回答の parts に残る）
+SELECT datetime(a.created_at / 1000, 'unixepoch') AS at, json_extract(q.parts, '$[0].text') AS question, json_extract(p.value, '$.toolName') AS tool,
+  coalesce(json_extract(p.value, '$.errorText'), json_extract(p.value, '$.output.content[0].text')) AS detail
+FROM messages a JOIN messages q ON q.conversation_id = a.conversation_id AND q.seq = a.seq - 1, json_each(a.parts) p
+WHERE a.role = 'assistant' AND a.error = '' AND json_extract(p.value, '$.type') = 'dynamic-tool'
+  AND (json_extract(p.value, '$.state') = 'output-error' OR json_extract(p.value, '$.output.isError') = 1)
+ORDER BY a.created_at DESC LIMIT 50;
 ```

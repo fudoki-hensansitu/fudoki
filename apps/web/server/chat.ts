@@ -25,6 +25,8 @@ export const CONTEXT_HEADING = '# 利用者が頁で見ているもの・選ん�
 
 /** 使用量が届いてから、画面に送った回答を待つ上限 */
 const ANSWER_WAIT_MS = 5000
+/** それを過ぎて回答なしで書いたあと、遅れて届いた回答で書き直すまで待つ上限（画面への送信が続く間は Worker が生きている） */
+const LATE_ANSWER_WAIT_MS = 60_000
 
 /** 会話を始めた頁の path。英小文字・数字・ハイフン・/ だけの短いもの（記録の entry） */
 const ENTRY = /^\/[a-z0-9/-]{0,63}$/
@@ -100,7 +102,7 @@ export async function handleChat(c: ApiRequest): Promise<Response> {
 
   const usage: Usage = { kind: 'chat', model: modelId, inputTokens: 0, outputTokens: 0, tools: {}, steps: 0, durationMs: 0, error: '' }
   // 保存は使用量（streamText の終わり）と画面に送った回答（UI の stream の終わり）が揃ってから1度だけ書く。
-  // どちらが先に来るかは決まっていないので、使用量が来てから回答を少しだけ待つ。応答を始める前の失敗では回答は無い
+  // どちらが先に来るかは決まっていないので、使用量が来てから回答を少しだけ待つ（遅れたら書き直す）。応答を始める前の失敗では回答は無い
   let written = false
   let streaming = false
   let settleUsage!: (u: Usage) => void
@@ -109,22 +111,30 @@ export async function handleChat(c: ApiRequest): Promise<Response> {
   const answerReady = new Promise<UIMessage | undefined>((resolve) => (settleAnswer = resolve))
   c.defer(
     usageReady.then(async (u) => {
-      const answer = await Promise.race([answerReady, new Promise<undefined>((resolve) => setTimeout(resolve, ANSWER_WAIT_MS))])
-      await writeChatTurn(env.CHAT_LOG, {
-        conversationId: chat.id,
-        turn: chat.turn,
-        entry: chat.entry,
-        questionId: chat.questionId,
-        question: chat.question,
-        context: chat.context,
-        ...(answer ? { answer } : {}),
-        model: u.model,
-        error: u.error,
-        inputTokens: u.inputTokens,
-        outputTokens: u.outputTokens,
-        steps: u.steps,
-        durationMs: u.durationMs,
-      })
+      const write = (answer: UIMessage | undefined) =>
+        writeChatTurn(env.CHAT_LOG, {
+          conversationId: chat.id,
+          turn: chat.turn,
+          entry: chat.entry,
+          questionId: chat.questionId,
+          question: chat.question,
+          context: chat.context,
+          ...(answer ? { answer } : {}),
+          model: u.model,
+          error: u.error,
+          inputTokens: u.inputTokens,
+          outputTokens: u.outputTokens,
+          steps: u.steps,
+          durationMs: u.durationMs,
+        })
+      const late = Symbol('late')
+      const wait = <T,>(ms: number, value: T) => new Promise<T>((resolve) => setTimeout(() => resolve(value), ms))
+      const answer = await Promise.race([answerReady, wait(ANSWER_WAIT_MS, late)])
+      if (answer !== late) return write(answer)
+      // 画面への送信が遅れている。先に回答なしで書き、回答が届いたら同じ行（会話と seq が同じ）を書き直す
+      await write(undefined)
+      const lateAnswer = await Promise.race([answerReady, wait(LATE_ANSWER_WAIT_MS, undefined)])
+      if (lateAnswer) await write(lateAnswer)
     }),
   )
   const record = (patch: Partial<Usage>) => {
