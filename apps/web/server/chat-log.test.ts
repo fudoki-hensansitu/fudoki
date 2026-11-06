@@ -10,6 +10,7 @@ describe('会話の記録', () => {
       '連絡は [メール] か [電話番号]、[電話番号]、[電話番号] へ',
     )
     expect(redact('(03) 1234-5678 と 03(1234)5678 と ０９０－１２３４－５６７８')).toBe('[電話番号] と [電話番号] と [電話番号]')
+    expect(redact('TEL090-1234-5678 と ＴＥＬ０９０－１２３４－５６７８')).toBe('TEL[電話番号] と TEL[電話番号]')
     expect(redact('taro＠example．com と ｔａｒｏ＿１＠ｅｘａｍｐｌｅ．ｊｐ')).toBe('[メール] と [メール]')
     expect(redact('品川区の2025年度の歳出 1234567円 と 0120 は？')).toBe('品川区の2025年度の歳出 1234567円 と 0120 は？')
   })
@@ -47,8 +48,8 @@ describe('会話の記録', () => {
 
   test('tool の引数の文字列も伏せる', async () => {
     const { db, runs } = fakeDb()
-    await writeChatTurn(db, { ...turn, toolCalls: [{ name: 'search', input: { q: '連絡先\nfoo@example.com', limit: 5 } }] })
-    expect(JSON.parse(runs[0]!.values[4] as string)).toEqual([{ name: 'search', input: { q: '連絡先\n[メール]', limit: 5 } }])
+    await writeChatTurn(db, { ...turn, toolCalls: [{ name: 'search', input: { q: '連絡先\nfoo@example.com TEL090-1234-5678', limit: 5 } }] })
+    expect(JSON.parse(runs[0]!.values[4] as string)).toEqual([{ name: 'search', input: { q: '連絡先\n[メール] TEL[電話番号]', limit: 5 } }])
   })
 
   test('長すぎる tool の引数は落とし、JSON のまま名前だけを残す', async () => {
