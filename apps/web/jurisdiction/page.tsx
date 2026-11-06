@@ -1,13 +1,13 @@
 // 自治体の個別ページ（/:都道府県/:名称）の島。サーバーが書いた HTML（検索エンジン向け）を、同じデータで描き直す。
 // 型は企業のプロフィールページ: ヘッダー（ロゴ・名前・一文・属性）＋年度のタブ＋左の目次＋見出し付きの節。年度を切り替えるとページ全体がその年度になる。
-// 歳出の決算は API の値。政策領域・事業の入れ替えは jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
+// 歳出の決算は API の値。分野ごとの事業・事業の入れ替えは jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
 import * as React from 'react'
 import { ArrowSquareOutIcon, CaretDownIcon, ChatCircleIcon, GlobeIcon, MapPinIcon, NotePencilIcon, QuotesIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
 import { StartForm } from '../chat/start-form'
 import type { StoredSession } from '../chat/store'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Flow } from './flow'
-import { assetPath, type Domain, type PolicyProject, type Profile, type ProjectStatus, type Scrap } from './profiles'
+import { assetPath, type Domain, type PolicyProject, type Profile, type ProfileYear, type ProjectStatus, type Scrap } from './profiles'
 import { changePct, formatYen, reiwa, yearName, type PageData, type Project, type Setsu, type YearTotal } from './types'
 
 const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
@@ -80,10 +80,10 @@ function ProjectItem({ p }: { p: PolicyProject }) {
   )
 }
 
-function Domains({ domains, policySource }: { domains: Domain[]; policySource: string }) {
+function Domains({ year }: { year: ProfileYear }) {
   return (
-    <Section id="domains" title="政策領域" link={{ href: policySource, label: '予算編成方針' }}>
-      {domains.map((d) => (
+    <Section id="domains" title="分野ごとの事業" link={[{ href: year.budgetSource, label: '当初予算' }, { href: year.evaluationSource, label: '事務事業評価' }]}>
+      {year.domains.map((d) => (
         <div key={d.id} id={`d-${d.id}`} className="flex scroll-mt-32 lg:scroll-mt-20 flex-col gap-1 [&+&]:mt-12">
           <h3 className="mb-3.5 border-l-4 border-primary py-0.5 pl-3.5 text-[19px] leading-snug sm:text-[22px]">{d.name}</h3>
           <div className="border-t">
@@ -351,7 +351,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
   }
 
   const toc: TocItem[] = [
-    ...(py ? [{ href: '#domains', label: '政策領域' }, ...py.domains.map((d) => ({ href: `#d-${d.id}`, label: d.short ?? d.name, sub: true }))] : []),
+    ...(py ? [{ href: '#domains', label: '分野ごとの事業' }, ...py.domains.map((d) => ({ href: `#d-${d.id}`, label: d.short ?? d.name, sub: true }))] : []),
     { href: '#budget', label: '決算 / 予算' },
     { href: '#projects', label: '事業' },
     ...(py?.scrap ? [{ href: '#scrap', label: '事業の入れ替え' }] : []),
@@ -489,7 +489,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
             ))}
           </nav>
           <main className="flex min-w-0 flex-col gap-14">
-            {py ? <Domains domains={py.domains} policySource={py.policySource} /> : null}
+            {py ? <Domains year={py} /> : null}
             <Budget data={data} year={year} />
             <Projects data={data} year={year} />
             {py?.scrap ? <ScrapSection scrap={py.scrap} /> : null}
