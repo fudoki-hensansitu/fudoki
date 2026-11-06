@@ -1,6 +1,6 @@
 // 公開する /api/* の守り（上限・Turnstile・会話の token・許可リスト）の試験。画面の振る舞いはここで見ない
 import { describe, expect, test } from 'bun:test'
-import web from '../worker'
+import { fetchRoute } from './routes.testing'
 import type { Env, RateLimiter } from './env'
 import { CHAT_RATE_LIMIT, MAX_MESSAGES, MAX_USER_TEXT, VIEW_RATE_LIMIT } from './limits'
 import { CONTEXT_HEADING, parseChat } from './chat'
@@ -13,7 +13,7 @@ const deny: RateLimiter = { limit: async () => ({ success: false }) }
 const env = (patch: Partial<Env> = {}): Env => ({ TURNSTILE_SECRET_KEY: SECRET, CHAT_RATE_LIMIT: allow, VIEW_RATE_LIMIT: allow, ...patch })
 const post = (path: string, body: unknown, headers: Record<string, string> = {}) =>
   new Request(`https://fudoki.dev${path}`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...headers }, body: JSON.stringify(body) })
-const call = async (req: Request, e: Env) => web.fetch(req, e)
+const call = (req: Request, e: Env) => fetchRoute(req, e)
 
 test('流量の上限は config の rate limit binding と同じ値', async () => {
   type Limit = { name: string; namespace_id: string; simple: unknown }

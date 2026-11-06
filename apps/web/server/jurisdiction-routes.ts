@@ -1,7 +1,6 @@
-// 自治体の個別ページ（/tokyo/nakano）・一覧（/jurisdictions）のデータと、画面が款・目の内訳を引く /api/jurisdictions/*。データは apps/api の歳出の検索から組み、
-// 変わるのは取り込みのときだけなので、Worker の cache に1時間置く。頁そのものは pages/（Void の Pages mode）の loader がここを呼んで描く。
-// 内訳の API は誰でも読める GET で、IP ごとの流量と id の形の検査で守る
-import { Hono } from 'hono'
+// 自治体の個別ページ（/tokyo/nakano）・一覧（/jurisdictions）のデータと、画面が款・目の内訳を引く /api/jurisdictions/*・sitemap の応答。
+// データは apps/api の歳出の検索から組み、変わるのは取り込みのときだけなので、Worker の cache に1時間置く。頁は pages/ の loader が、
+// 内訳の API と sitemap は routes/ がここを呼ぶ。内訳の API は誰でも読める GET で、IP ごとの流量と id の形の検査で守る
 import { sitemapXml } from '../jurisdiction/html'
 import { jurisdictionPath, PREFECTURE_SLUGS } from '../jurisdiction/path'
 import type { Drill, FlowDepth, IndexEntry, PageData, Setsu } from '../jurisdiction/types'
@@ -47,23 +46,21 @@ export async function resolveJurisdiction(env: Env, path: string): Promise<Juris
   return data ? { kind: 'page', data: { ...data, profile: PROFILES[entry.code] ?? null } } : { kind: 'empty', entry }
 }
 
-export const jurisdictions = new Hono<{ Bindings: Env }>()
-
-jurisdictions.get('/sitemap.xml', async (c) => {
+/** 収録のある自治体の頁を含む sitemap。API に繋がらなくても入口と一覧だけで答える */
+export async function sitemapResponse(env: Env): Promise<Response> {
   try {
-    return new Response(sitemapXml(await catalog(c.env)), { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
+    return new Response(sitemapXml(await catalog(env)), { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
   } catch {
-    // API が繋がらなくても sitemap は答える（入口と一覧だけ）
     return new Response(sitemapXml([]), { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'no-store' } })
   }
-})
+}
 
 const json = (body: unknown) => new Response(JSON.stringify(body), { headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': `public, max-age=${TTL}` } })
 
-async function guarded(c: { env: Env; req: { raw: Request } }, id: string, run: () => Promise<unknown>) {
+async function guarded(env: Env, request: Request, id: string, run: () => Promise<unknown>) {
   try {
     if (!NODE_ID.test(id)) throw new HttpError(400, 'INVALID_ARGUMENT', 'id の形が違います')
-    await rateLimit(c.env.VIEW_RATE_LIMIT as RateLimiter | undefined, clientIp(c.req.raw), VIEW_RATE_LIMIT.period)
+    await rateLimit(env.VIEW_RATE_LIMIT as RateLimiter | undefined, clientIp(request), VIEW_RATE_LIMIT.period)
     return json(await run())
   } catch (e) {
     if (e instanceof HttpError) return errorResponse(e)
@@ -71,20 +68,22 @@ async function guarded(c: { env: Env; req: { raw: Request } }, id: string, run: 
   }
 }
 
-jurisdictions.get('/api/jurisdictions/drill/:id', (c) => guarded(c, c.req.param('id'), () => memo<Drill>(`drill-${c.req.param('id')}`, () => loadDrillById(c.env, c.req.param('id')))))
-jurisdictions.get('/api/jurisdictions/setsu/:id', (c) => guarded(c, c.req.param('id'), () => memo<Setsu[]>(`setsu-${c.req.param('id')}`, () => loadSetsu(c.env, c.req.param('id')))))
+/** 款・項の内訳（/api/jurisdictions/drill/:id） */
+export const drillResponse = (env: Env, request: Request, id: string) => guarded(env, request, id, () => memo<Drill>(`drill-${id}`, () => loadDrillById(env, id)))
+/** 目の節（/api/jurisdictions/setsu/:id） */
+export const setsuResponse = (env: Env, request: Request, id: string) => guarded(env, request, id, () => memo<Setsu[]>(`setsu-${id}`, () => loadSetsu(env, id)))
 
-jurisdictions.get('/api/jurisdictions/flow/:code/:year/:depth', async (c) => {
+/** 一つの自治体・年度の全款の流れ（/api/jurisdictions/flow/:code/:year/:depth） */
+export async function flowResponse(env: Env, request: Request, { code, year, depth }: { code: string; year: string; depth: string }): Promise<Response> {
   try {
-    const { code, year, depth } = c.req.param()
     if (!/^\d{6}$/.test(code) || !/^\d{4}$/.test(year) || !['kou', 'moku', 'setsu'].includes(depth))
       throw new HttpError(400, 'INVALID_ARGUMENT', '自治体・年度・表示階層の指定が違います')
-    await rateLimit(c.env.VIEW_RATE_LIMIT as RateLimiter | undefined, clientIp(c.req.raw), VIEW_RATE_LIMIT.period)
-    const entry = (await catalog(c.env)).find((e) => e.code === code)
+    await rateLimit(env.VIEW_RATE_LIMIT as RateLimiter | undefined, clientIp(request), VIEW_RATE_LIMIT.period)
+    const entry = (await catalog(env)).find((e) => e.code === code)
     if (!entry?.settlementYears.includes(Number(year))) throw new HttpError(404, 'NOT_FOUND', 'この自治体・年度の一般会計の決算は収録されていません')
-    return json(await memo<Drill[]>(`flow-${code}-${year}-${depth}`, () => loadFlow(c.env, code, Number(year), depth as FlowDepth)))
+    return json(await memo<Drill[]>(`flow-${code}-${year}-${depth}`, () => loadFlow(env, code, Number(year), depth as FlowDepth)))
   } catch (e) {
     if (e instanceof HttpError) return errorResponse(e)
     return errorResponse(new HttpError(502, 'UNAVAILABLE', '決算データを表示できませんでした。少し待ってからもう一度開いてください。'))
   }
-})
+}

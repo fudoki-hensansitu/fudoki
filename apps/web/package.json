@@ -3,17 +3,16 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "bun run client && vite build",
-    "client": "bun chat/build.ts",
+    "build": "vite build",
     "build:brand": "uv run --no-project --exclude-newer 2026-09-26 --with fonttools==4.66.0 --with brotli==1.2.0 python brand/build.py",
     "deploy": "bun run build && wrangler deploy -c dist/ssr/wrangler.json",
-    "dev": "bun run client && vite dev",
+    "dev": "vite dev",
     "fetch:boundaries": "uv run python map/build.py",
     "build:map": "bun jurisdiction/map-build.ts",
     "test": "bun test server",
     "typecheck": "void prepare && tsc --noEmit",
-    "build:font": "bun -e \"import { LANDING_HTML } from './landing'; process.stdout.write(LANDING_HTML)\" | uv run --no-project --exclude-newer 2026-09-26 --with fonttools==4.66.0 --with brotli==1.2.0 python brand/home_font.py",
-    "build:font:check": "bun -e \"import { LANDING_HTML } from './landing'; process.stdout.write(LANDING_HTML)\" | uv run --no-project --exclude-newer 2026-09-26 --with fonttools==4.66.0 --with brotli==1.2.0 python brand/home_font.py --check",
+    "build:font": "bun landing/text.tsx | uv run --no-project --exclude-newer 2026-09-26 --with fonttools==4.66.0 --with brotli==1.2.0 python brand/home_font.py",
+    "build:font:check": "bun landing/text.tsx | uv run --no-project --exclude-newer 2026-09-26 --with fonttools==4.66.0 --with brotli==1.2.0 python brand/home_font.py --check",
     "build:origin": "uv run --no-project --exclude-newer 2026-10-09 --with pypdfium2==5.14.0 --with pillow==12.3.0 python brand/home_origin.py"
   },
   "devDependencies": {

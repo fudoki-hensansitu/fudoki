@@ -1,6 +1,6 @@
 // 一覧の都道府県の図（市区町村を同じ大きさのタイルで、おおよその位置に並べる）を jurisdiction/map.generated.ts に書く。
 //   bun run --cwd apps/web build:map
-// 位置の正本は public/<都道府県>.geojson（map/build.py が国土数値情報から作る）の境界。形は描かず、各自治体の重心から
+// 位置の正本は map/<都道府県>.geojson（map/build.py が国土数値情報から作る）の境界。形は描かず、各自治体の重心から
 // タイルの列・行だけを決めて commit する。面積の差で小さな区が潰れず、名前を書けるので、日本のタイル地図と同じ見せ方になる。
 // 島しょは本土と並べると位置が離れすぎるので、本土のタイルとは別の段に北から並べる
 import { readFileSync } from 'node:fs'
@@ -95,7 +95,7 @@ function grid(items: { code: string; name: string; lon: number; lat: number }[])
 }
 
 function build(file: string) {
-  const geo = JSON.parse(readFileSync(new URL(`../public/${file}.geojson`, import.meta.url), 'utf8')) as { features: Feature[] }
+  const geo = JSON.parse(readFileSync(new URL(`../map/${file}.geojson`, import.meta.url), 'utf8')) as { features: Feature[] }
   const items = geo.features.map((f) => {
     const [lon, lat] = centroid(f)
     return { code: f.properties.code, name: f.properties.name, island: f.properties.island, lon, lat }

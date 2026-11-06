@@ -21,9 +21,34 @@ const vars = {
 }
 
 export default defineConfig({
+  // 全頁の head の既定。頁ごとの title・説明・canonical は各頁の .server.ts の head。theme-color と View Transition の opt-in は middleware/01.site.ts
   head: {
     htmlAttrs: { lang: 'ja' },
-    meta: [{ charset: 'utf-8' }, { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' }],
+    meta: [
+      { charset: 'utf-8' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
+      // ホーム画面に追加できるようにする（manifest は routes/manifest.webmanifest.ts）
+      { name: 'mobile-web-app-capable', content: 'yes' },
+      { name: 'apple-mobile-web-app-capable', content: 'yes' },
+      { name: 'apple-mobile-web-app-title', content: '風土記' },
+      { property: 'og:type', content: 'website' },
+      { property: 'og:site_name', content: '風土記（fudoki）' },
+      { property: 'og:locale', content: 'ja_JP' },
+      { property: 'og:image', content: 'https://fudoki.dev/og.png' },
+      { property: 'og:image:width', content: '1200' },
+      { property: 'og:image:height', content: '630' },
+      { name: 'twitter:card', content: 'summary_large_image' },
+    ],
+    link: [
+      { rel: 'icon', href: '/favicon.ico', sizes: '48x48' },
+      { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },
+      { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
+      { rel: 'manifest', href: '/manifest.webmanifest' },
+      // 見出しの明朝（この site で使う字だけの subset）
+      { rel: 'preload', href: '/fonts/mincho.woff2', as: 'font', type: 'font/woff2', crossorigin: '' },
+    ],
+    // service worker（routes/sw.js.ts）は繋がらないときの案内だけを持つ
+    script: [{ innerHTML: "if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}))" }],
   },
   worker: {
     compatibility_date: '2026-08-23',

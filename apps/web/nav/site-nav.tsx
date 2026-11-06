@@ -1,5 +1,6 @@
-// 全ページの左に置くサイドバー（shadcn の Sidebar）。サーバーが render.tsx で HTML に書き、nav.tsx（/_app/nav.js）が動かす
+// 全ページの左に置くサイドバー（shadcn の Sidebar）。pages/layout.tsx が置き、頁の間を移っても描き直さない
 import * as React from 'react'
+import { Link } from '@void/react'
 import { BankIcon, ChatIcon, GithubLogoIcon, HouseIcon, PlugIcon, SidebarSimpleIcon, XLogoIcon } from '@phosphor-icons/react'
 import {
   Sidebar,
@@ -20,16 +21,12 @@ import { LOGO_G, LOGO_WIDTH } from '../logo'
 
 export const NAV_SECTIONS = ['jurisdictions'] as const
 export type NavSection = (typeof NAV_SECTIONS)[number]
-/** 頁の間を移動する link。Void の頁（pages/）では Void の Link を渡して頁を読み直さずに移る。入口・会話の島では普通の a */
-export type PageLink = React.ComponentType<React.AnchorHTMLAttributes<HTMLAnchorElement> & { href: string }>
-export type SiteNavProps = { active?: NavSection; open: boolean; pageLink?: PageLink }
-const PageLinkContext = React.createContext<PageLink | 'a'>('a')
-/** Void の頁（pages/）にある path。ここへの link だけ pageLink で移る */
-const PAGE_PATHS = new Set(['/jurisdictions'])
+export type SiteNavProps = { active?: NavSection; open: boolean }
+/** site の中の頁へは Void の Link で頁を読み直さずに移り、外（docs・mail・SNS）へは普通の a で出る */
 function NavLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement> & { href: string }) {
-  const Page = React.useContext(PageLinkContext)
-  const Tag = PAGE_PATHS.has(props.href) ? Page : 'a'
-  return <Tag {...props} />
+  if (!props.href.startsWith('/')) return <a {...props} />
+  // Void の Link の型は a と button の属性の交差なので、a の属性だけを渡すと event handler の型が合わない。描くのは a なので型だけ合わせる
+  return <Link {...(props as React.ComponentProps<typeof Link>)} />
 }
 
 const DOCS = 'https://docs.fudoki.dev'
@@ -148,19 +145,18 @@ function BottomNav({ active }: { active?: NavSection }) {
   )
 }
 
-export function SiteNav({ active, open, pageLink }: SiteNavProps) {
+export function SiteNav({ active, open }: SiteNavProps) {
   return (
-    <PageLinkContext.Provider value={pageLink ?? 'a'}>
     <TooltipProvider>
-      {/* 頁の本文は島の外にあるので、provider の枠は箱を作らず（contents）、幅の変数だけを配る */}
+      {/* 頁の本文は provider の外（.site-main）にあるので、provider の枠は箱を作らず（contents）、幅の変数だけを配る */}
       <SidebarProvider defaultOpen={open} className="contents" style={{ '--sidebar-width': '13rem', '--sidebar-width-icon': '3.5rem' } as React.CSSProperties}>
         <BottomNav active={active} />
         <Sidebar collapsible="icon" aria-label="サイト">
           <SidebarHeader className="flex-row items-center justify-between gap-2 px-3 pt-5 pb-4 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-2">
-            <a href="/" aria-label="風土記 ホーム" className="ps-2 group-data-[collapsible=icon]:hidden">
-              {/* 色は svg に付ける（入口の頁の a { color: inherit } に負けて黒くならないように） */}
+            <NavLink href="/" aria-label="風土記 ホーム" className="ps-2 group-data-[collapsible=icon]:hidden">
+              {/* 色は svg に付ける（a { color: inherit } に負けて黒くならないように） */}
               <Logo className="block h-7 w-auto text-primary" />
-            </a>
+            </NavLink>
             <SidebarTrigger className="group-data-[collapsible=icon]:hidden" />
             <CollapsedToggle />
           </SidebarHeader>
@@ -185,6 +181,5 @@ export function SiteNav({ active, open, pageLink }: SiteNavProps) {
         </Sidebar>
       </SidebarProvider>
     </TooltipProvider>
-    </PageLinkContext.Provider>
   )
 }

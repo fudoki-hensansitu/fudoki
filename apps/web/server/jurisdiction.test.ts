@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { changePct, formatYen, kanChanges, reiwa, type YearTotal } from '../jurisdiction/types'
-import web from '../worker'
+import { fetchRoute } from './routes.testing'
 import { emptyHead, indexHead, pageHead, type Head } from '../jurisdiction/html'
 import { indexEntries, resolveJurisdiction } from './jurisdiction-routes'
 import { searchInput } from '../../api/src/search'
@@ -93,7 +93,7 @@ function fixtureApi({ axis = '科目', code = '131148', name = '中野区', extr
 }
 const API = fixtureApi()
 const env: Env = { API, VIEW_RATE_LIMIT: { limit: async () => ({ success: true }) } }
-const get = (path: string, e: Env = env) => web.fetch(new Request(`https://fudoki.dev${path}`), e)
+const get = (path: string, e: Env = env) => fetchRoute(new Request(`https://fudoki.dev${path}`), e)
 const view = async (path: string, e: Env = env) => {
   const v = await resolveJurisdiction(e, path)
   if (v?.kind !== 'page') throw new Error(`${path} は個別ページにならなかった`)
@@ -127,7 +127,6 @@ describe('自治体の個別ページ', () => {
     // 都道府県の slug でなければ自治体のページにしない（/s/:id などを奪わない）
     expect(await resolveJurisdiction(env, '/jurisdictions')).toBeNull()
     expect(await resolveJurisdiction(env, '/s/not-a-session')).toBeNull()
-    expect((await get('/s/not-a-session')).status).not.toBe(200)
     expect((await get('/api/none')).status).toBe(404)
     const sitemap = await (await get('/sitemap.xml')).text()
     expect(sitemap).toContain('<loc>https://fudoki.dev/tokyo/nakano</loc>')

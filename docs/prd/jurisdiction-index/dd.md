@@ -21,7 +21,7 @@
 
 ## 地図のデータ
 
-位置の正本は `apps/web/public/<都道府県>.geojson`（`map/build.py` が国土数値情報 N03 から作る。東京都は自治体マスタの62自治体、他の都道府県は N03 の市区町村すべてを、検査数字を付けた6桁のコードで描き、政令市の区は市にまとめる）。`bun run --cwd apps/web build:map`（`jurisdiction/map-build.ts`）が、各自治体のいちばん大きなリングの重心を格子のマスに割り当て、列・行と名前だけを `jurisdiction/map.generated.ts`（東京都・兵庫県で約5KB）に書き、それを commit する。割り当ては、重心の座標と順位を 4:6 で混ぜて（23区のような密集を広げる）、タイル数の 1.35 倍のマスに距離の近い順で決め、2つのマスの入れ替えで距離の二乗和が減らなくなるまで直し、空いた行・列を詰める。島しょ（`island`）は格子に入れず、北から並べる。都道府県を足すときは `map/build.py` の `OTHER_PREFECTURES` と `map-build.ts` の `PREFECTURES` に並べる。
+位置の正本は `apps/web/map/<都道府県>.geojson`（`map/build.py` が国土数値情報 N03 から作る。東京都は自治体マスタの62自治体、他の都道府県は N03 の市区町村すべてを、検査数字を付けた6桁のコードで描き、政令市の区は市にまとめる）。`bun run --cwd apps/web build:map`（`jurisdiction/map-build.ts`）が、各自治体のいちばん大きなリングの重心を格子のマスに割り当て、列・行と名前だけを `jurisdiction/map.generated.ts`（東京都・兵庫県で約5KB）に書き、それを commit する。割り当ては、重心の座標と順位を 4:6 で混ぜて（23区のような密集を広げる）、タイル数の 1.35 倍のマスに距離の近い順で決め、2つのマスの入れ替えで距離の二乗和が減らなくなるまで直し、空いた行・列を詰める。島しょ（`island`）は格子に入れず、北から並べる。都道府県を足すときは `map/build.py` の `OTHER_PREFECTURES` と `map-build.ts` の `PREFECTURES` に並べる。
 
 ## 全国に広げるとき
 

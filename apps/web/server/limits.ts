@@ -1,5 +1,5 @@
 // チャットの乱用対策の上限。流量は void.config.ts の rate limit binding と同じ値で、security.test.ts が照合する。
-// config が import したファイルは cf dev（vite）の Worker から読めないので、apps/api と同じく値を二重に持つ。
+// 値は void.config.ts と二重に持つ（apps/api と同じ。config は build のたびに評価されるので、Worker のコードを import させない）。
 /** 1つの IP が1分に始められる会話と送れるメッセージの数（session の開始と /api/chat を合わせて数える） */
 export const CHAT_RATE_LIMIT = { limit: 10, period: 60 } as const
 /** View が表の移動・追加ページで呼ぶ tool の中継。1つの IP が1分に呼べる回数 */

@@ -1,6 +1,7 @@
+import { SessionPage } from '../../chat/session-page'
 import { JurisdictionView } from '../../jurisdiction/view'
-import type { JurisdictionProps } from '../../server/pages'
+import type { Props } from './[name].server'
 
-export default function Jurisdiction(props: JurisdictionProps) {
-  return <JurisdictionView {...props} />
+export default function Jurisdiction(props: Props) {
+  return props.kind === 'session' ? <SessionPage id={props.id} /> : <JurisdictionView {...props} />
 }

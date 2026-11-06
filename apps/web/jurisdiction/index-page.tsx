@@ -277,7 +277,7 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
   const transition = (update: () => void) => {
     const reduce = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reduce || typeof document === 'undefined' || !document.startViewTransition) return update()
-    // 頁の間の移動では本文（.site-main）を薄く消して浮かせるが、図の切り替えでは本文を動かさない（jurisdiction.css の data-map-transition）
+    // 頁の間の移動では本文（.site-main）を薄く消して浮かせるが、図の切り替えでは本文を動かさない（styles/app.css の data-map-transition）
     const root = document.documentElement
     root.dataset.mapTransition = ''
     document.startViewTransition(() => flushSync(update)).finished.finally(() => delete root.dataset.mapTransition)

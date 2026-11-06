@@ -1,5 +1,6 @@
 // 会話を始める入力（入口と自治体の個別ページが使う）。送ると Turnstile で確かめて会話を作り、/s/:id へ移る
 import * as React from 'react'
+import { useRouter } from '@void/react'
 import { Composer } from './composer'
 import { MAX_CONTEXT } from './history'
 import { saveSession, type StoredSession } from './store'
@@ -30,6 +31,7 @@ export function StartForm({
   /** 入力欄の上に出すもの（選んだ文など） */
   before?: React.ReactNode
 }) {
+  const router = useRouter()
   const widget = React.useRef<HTMLDivElement>(null)
   const turnstile = React.useRef<Awaited<ReturnType<typeof mountTurnstile>>>(undefined)
   const [pending, setPending] = React.useState(false)
@@ -66,7 +68,8 @@ export function StartForm({
         onStart(body.id, session)
         return true
       }
-      location.assign(`/s/${body.id}`)
+      // 頁を読み直さずに移る（サイドバーはそのまま）
+      void router.visit(`/s/${body.id}`)
       return true
     } catch (e) {
       setPending(false)

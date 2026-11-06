@@ -8,7 +8,8 @@
   "include": [
     "nav",
     "jurisdiction",
-    "worker.ts",
+    "landing",
+    "routes",
     "server",
     "chat",
     "pages",
