@@ -402,7 +402,7 @@ function Steps() {
 }
 
 const SETUP_PROMPT = [
-  `風土記（町の家計簿）の MCP サーバーを、私が使っているこの AI クライアントに追加したいです。`,
+  `風土記（自治体のデータ）の MCP サーバーを、私が使っているこの AI クライアントに追加したいです。`,
   `- 種類: リモート MCP サーバー（Streamable HTTP）`,
   `- URL: ${MCP}`,
   `- 認証: 不要`,
@@ -656,7 +656,7 @@ export function Landing({ sitekey }: { sitekey: string }) {
       <SetupDialog dialog={setup} />
       <main>
         <header className="hero wrap">
-          <p className="eyebrow">風土記 — 町の家計簿</p>
+          <p className="eyebrow">風土記 — まちを、ひらく</p>
           <Sweep>あなたの街は、何にいくら使ったか</Sweep>
           <p className="sub">自治体の予算書と決算書を、事業ごとの表にしました。AI に聞けば、他の街や他の年と同じ物差しで比べ、出典の頁まで返します。</p>
           <AskDock sitekey={sitekey} />
@@ -712,7 +712,7 @@ export function Landing({ sitekey }: { sitekey: string }) {
             <Link href="/" aria-label="風土記 ホーム">
               <svg className="logo" xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${LOGO_WIDTH} 40`} role="img" aria-label="風土記" dangerouslySetInnerHTML={{ __html: `<title>風土記</title>${LOGO_G}` }} />
             </Link>
-            <p>町の家計簿。自治体の支出を、事業ごとに。</p>
+            <p>まちを、ひらく。自治体のお金とデータを、誰でも見られて、書き足せる形に。</p>
           </div>
           <div>
             <h2>使う</h2>
