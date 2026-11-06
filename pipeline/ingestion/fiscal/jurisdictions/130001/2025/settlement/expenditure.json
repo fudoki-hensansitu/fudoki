@@ -1000,7 +1000,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "4370a6d60a21507fb3aa7cec2011804908b0614b1b89f8fa7a9543423a910d1c",
+      "input_fingerprint": "7426a4e28505f01de95fa7e1abd7a43a899e3768a04c6f5c692e96d85c5ff413",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -1030,7 +1030,7 @@
     {
       "table_id": "ward-fiscal-adjustment-expenditure",
       "conversion_id": "ward-fiscal-adjustment-settlement",
-      "input_fingerprint": "8ed6cf821ab80108940d72fa6e38847b4de3a358b7e713751cdc89b4afd464a2",
+      "input_fingerprint": "a2a4f0c82cdbbd83d0027e648e3b917df93b443f3ca064f4208e4105ffbb6d54",
       "account": "特別区財政調整会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -1060,7 +1060,7 @@
     {
       "table_id": "local-consumption-tax-settlement-expenditure",
       "conversion_id": "local-consumption-tax-settlement-settlement",
-      "input_fingerprint": "6833c68bfdc7944c0cb6d73f464e66d3966d43f24efa30329785e9af5bd33605",
+      "input_fingerprint": "a9bd22385be277bcd6efd41fa0c69240df8b1e515e393719fb1ff60f4163bee3",
       "account": "地方消費税清算会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -1090,7 +1090,7 @@
     {
       "table_id": "ogasawara-livelihood-reconstruction-expenditure",
       "conversion_id": "ogasawara-livelihood-reconstruction-settlement",
-      "input_fingerprint": "0f870d1c111d323ac1c60a1a1bc0027e9d0995808f6ade26fae5b820d9360a05",
+      "input_fingerprint": "04f58b7df63c4c52aef13d38361697f11f12bb1fc349e1c29b7430819ad0b683",
       "account": "小笠原諸島生活再建資金会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -1120,7 +1120,7 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "01a83b5542c43071dc9670b2a1ed29282750000329b55759045f72dc90cfb631",
+      "input_fingerprint": "5927f1fd3b23c0f8f0116540a311870f9222390e02db2c6f92213d6cecddc5c8",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -1150,7 +1150,7 @@
     {
       "table_id": "single-parent-welfare-loan-expenditure",
       "conversion_id": "single-parent-welfare-loan-settlement",
-      "input_fingerprint": "fe5c9fb8a5edccc425ccb4b27592e142808abab286301536e9b2ad24534ab2e0",
+      "input_fingerprint": "98d93b2a2377199914ae2113fc3b80f6923df3d8ac72c0e23c987f8e6a878689",
       "account": "母子父子福祉貸付資金会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -1180,7 +1180,7 @@
     {
       "table_id": "disability-dependants-pension-expenditure",
       "conversion_id": "disability-dependants-pension-settlement",
-      "input_fingerprint": "4f4dbe736830947196ca5b03b5b72a3496d4844b6f5c1811c9d6ce4a95ee0046",
+      "input_fingerprint": "33427d309499a4c5357dce93dae30c108d806dacc3c89a7a5008c830c453146e",
       "account": "心身障害者扶養年金会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -1210,7 +1210,7 @@
     {
       "table_id": "metropolitan-hospital-loan-expenditure",
       "conversion_id": "metropolitan-hospital-loan-settlement",
-      "input_fingerprint": "4866d99180babb79fb8036c8e8b0d2a65f4d0f0e0b637448aa1a661c03f17187",
+      "input_fingerprint": "d5356a5307fdbcb4f3a3ff3117c852ef8197af5d68f173110698bc1d97a8b3bb",
       "account": "地方独立行政法人東京都立病院機構貸付等事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -1240,7 +1240,7 @@
     {
       "table_id": "sme-equipment-fund-expenditure",
       "conversion_id": "sme-equipment-fund-settlement",
-      "input_fingerprint": "79a38540ae226453c4605cd1ef983f11f40103e4073bd295fd3a1a911f8fdd07",
+      "input_fingerprint": "c741e705385241f9064501a9a063b65a1dd0a57894d614249e7bba2622d1c954",
       "account": "中小企業設備導入等資金会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -1270,7 +1270,7 @@
     {
       "table_id": "forestry-improvement-fund-expenditure",
       "conversion_id": "forestry-improvement-fund-settlement",
-      "input_fingerprint": "39b74404178c217a509d9e8affa1295ed047c6232559b1481de0e037504ae5d0",
+      "input_fingerprint": "bf02ec2104a3b3e121cd3ea91346f12ad4db81094d9c8c69d2f4b268efb884af",
       "account": "林業・木材産業改善資金助成会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -1300,7 +1300,7 @@
     {
       "table_id": "coastal-fishery-improvement-fund-expenditure",
       "conversion_id": "coastal-fishery-improvement-fund-settlement",
-      "input_fingerprint": "f858a9d7ab23ce2d807e82c9a25fb4b51c34a23c6605e51d1a6e83c1f0acd0a7",
+      "input_fingerprint": "5d11cae57eb8b4d1641160de94db1c088b09a33d9046d6b07283fdaa52037722",
       "account": "沿岸漁業改善資金助成会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -1330,7 +1330,7 @@
     {
       "table_id": "slaughterhouse-expenditure",
       "conversion_id": "slaughterhouse-settlement",
-      "input_fingerprint": "9b3657ece694f71773a8681cfa389277b10c9c193b21422c520e7e9c96e3360f",
+      "input_fingerprint": "d8f6768f03c3e993cef65b70f6c370acdb13ae5e32f2001ff64a418cf95480d8",
       "account": "と場会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -1360,7 +1360,7 @@
     {
       "table_id": "metropolitan-housing-expenditure",
       "conversion_id": "metropolitan-housing-settlement",
-      "input_fingerprint": "9d047b003048a8f3a7c965ae58b787c9992f09fcd877e03179fb576032775199",
+      "input_fingerprint": "3b30cfd8dd75a55d054eba6025616c4872f9985af1c3338ffac134ae1981a405",
       "account": "都営住宅等事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -1390,7 +1390,7 @@
     {
       "table_id": "metropolitan-housing-deposit-expenditure",
       "conversion_id": "metropolitan-housing-deposit-settlement",
-      "input_fingerprint": "475f78d540ceebc4e36c2881e0a09a68eb04b6736f1f31be0e751161ff9e3f3c",
+      "input_fingerprint": "ee7e1ed1da7d3495190cf056bddb77ef82a95b6ae3ba7f58c701960bc4b861ea",
       "account": "都営住宅等保証金会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -1420,7 +1420,7 @@
     {
       "table_id": "urban-development-fund-expenditure",
       "conversion_id": "urban-development-fund-settlement",
-      "input_fingerprint": "76c781d09f7f2e1d25f0807cff4c4b76c98694b3770410d75ed571a61cc3ac14",
+      "input_fingerprint": "390286c3fee217f9a02d7c1a013de07653daeab94dc25f3172616bc9c848a5f8",
       "account": "都市開発資金会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -1450,7 +1450,7 @@
     {
       "table_id": "land-expenditure",
       "conversion_id": "land-settlement",
-      "input_fingerprint": "8a6ba3acc6bbc0b06f0d65fd5ceb954a33a21e51ff473119c16db314d639b589",
+      "input_fingerprint": "3f45715884c3220376b8df162dee2230efb84fbfe93ca9c6e8952f25f9b9b541",
       "account": "用地会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -1480,7 +1480,7 @@
     {
       "table_id": "public-debt-expenditure",
       "conversion_id": "public-debt-settlement",
-      "input_fingerprint": "07a28ddbd92805ead4793d42c46e7b0e79c761a64f8c9317b9a5a9c3f789cf87",
+      "input_fingerprint": "39024ac8515c522b60af5ce807629b1ea5f1d0445abeb50724033bb4499083ef",
       "account": "公債費会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -1510,7 +1510,7 @@
     {
       "table_id": "waterfront-infrastructure-expenditure",
       "conversion_id": "waterfront-infrastructure-settlement",
-      "input_fingerprint": "c289a80d0ddc1042f539eea73283898fc83ac8a6e08f9c7badf61786eb0760f3",
+      "input_fingerprint": "0ba2fd540e3b10e0b202605183f9092557276aa9fcafe88873923cd4dd6acc52",
       "account": "臨海都市基盤整備事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -1540,7 +1540,7 @@
     {
       "table_id": "industrial-water-liquidation-expenditure",
       "conversion_id": "industrial-water-liquidation-settlement",
-      "input_fingerprint": "a507b23232dcf2a2a0b88726207c8d4db1162e71affe4b6a7a8ec2f8633ee561",
+      "input_fingerprint": "022cbf8e25b6fea78a72d803a822a82dbf0cc9b60a03c758b6bc7cad975fdbaf",
       "account": "工業用水道事業清算会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
