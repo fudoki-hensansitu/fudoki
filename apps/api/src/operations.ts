@@ -65,7 +65,7 @@ export const DETAIL_SEARCH_EXAMPLE = {
 }
 
 export const SUM_RULES = [
-  '科目の表（search_expenditure_subjects）: 同じ自治体・年度・資料区分・会計で、level を一つ（款・項・目）に絞るか is_leaf = true の行（目と、目の無い項）に絞って足すと歳出の総額になる。親と子を混ぜて足さない。当初予算 CSV の親の額は子の和で、出典の印字値ではない。',
+  '科目の表（search_expenditure_subjects）: 同じ自治体・年度・資料区分・会計の level = "款" の行を足すと歳出の総額になる。level を一つ（項・目）に絞るか is_leaf = true の行（目と、目の無い項）に絞って足してもふつうは同じ額になるが、出典で子の印字が親に満たない科目があると款の和より小さくなる（例: 281000 の 2025 年度決算の一般会計は 170,000 円少ない）。その差を内訳の額で埋めない。親と子を混ぜて足さない。当初予算 CSV の親の額は子の和で、出典の印字値ではない。',
   'COFOG で比べるときは科目の表の目（level = "目"）を cofog_code の前方一致で集めて足す。assigned の目には COFOG のコードが一つだけ付くので二重計上は起きない。',
   'division のコードだけを持つ目（例: "10"）は配下のどの group に属するか決まっていない。"10.2*" の和にはそうした目を含めない。',
   '同じ自治体・年度・資料区分・会計の目について、COFOG の全 division の和と、cofog_status が unclassifiable と out-of-scope の目の和を足すと歳出の総額になる。',

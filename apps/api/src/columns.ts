@@ -50,7 +50,7 @@ const fiscalTable = (kind: FiscalTable['kind'], table: string, parentKey: string
   }
 }
 
-/** 款・項・目。同じ資料で level を一つに絞るか is_leaf の行を足すと総額 */
+/** 款・項・目。同じ資料・会計の款の和が総額（目・is_leaf の和は出典しだいで小さくなる） */
 export const SUBJECT_TABLE = fiscalTable('subjects', 'fiscal_expenditure_subject', 'parent_subject_id')
 /** 科目の下の内訳。同じ科目・同じ breakdown の depth = 1 の和が科目の額 */
 export const DETAIL_TABLE = fiscalTable('details', 'fiscal_expenditure_detail', 'parent_detail_id')

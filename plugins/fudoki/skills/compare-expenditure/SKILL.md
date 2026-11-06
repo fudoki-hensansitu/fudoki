@@ -17,7 +17,7 @@ description: 風土記のMCPで日本の自治体の当初予算・決算の歳�
 
 ## 二重集計を避ける
 
-- 款・項・目は科目（`search_expenditure_subjects`）、その下の事業・節は内訳（`search_expenditure_details`）にある。提供された金額を使う。当初予算CSVの親金額は子の和から生成した値で、出典の印字値ではない。同じ木の親と子を足さない。資料の総額は科目の `is_leaf=true` の和。
+- 款・項・目は科目（`search_expenditure_subjects`）、その下の事業・節は内訳（`search_expenditure_details`）にある。提供された金額を使う。当初予算CSVの親金額は子の和から生成した値で、出典の印字値ではない。同じ木の親と子を足さない。会計の総額は科目の `level=款` の和。`is_leaf=true` や目の和は、出典で子の印字が親に満たないと款の和より小さくなる。差を内訳の額で埋めない。
 - 内訳の `breakdown`（事業・節・その他）は同じ支出の別の切り口。`get_expenditure_subject` の内訳は breakdown ごとに返るので、一つの breakdown の中でだけ足す。科目と内訳も足さない。
 - COFOGの集計は目（科目の `level=目`）に限定し、`cofog_code` の前方一致を使う。暫定の `tentative` を含めたか明示する。`unclassifiable`・`out-of-scope` を分類済みとみなさない。divisionのみのコード（例 `10`）を特定group（例 `10.2`）に割り振らない。
 - `amount_yen=null` をゼロに置き換えない。欠損の件数・集計対象外を説明する。出典の注記金額を予算・執行額の合計に加えない。
