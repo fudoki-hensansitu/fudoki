@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-53.5 -39 107 78" width="428" height="312">
+<mask id="a">
+<path d="M-53.274991-14.274991H53.274991L33.774991 19.5h-67.549982z" fill="#fff"/>
+<circle r="26" stroke="#fff" stroke-width="26"/>
+<path d="M-1-40h2v80h-2z"/>
+</mask>
+<circle r="56" mask="url(#a)"/>
+</svg>

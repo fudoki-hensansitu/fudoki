@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-23 -23 46 46" width="400" height="400">
+<mask id="a">
+<circle r="21.5" stroke-width="3" stroke="#fff"/>
+<circle r="17.5" stroke-width="3" stroke="#fff"/>
+<circle r="13.5" stroke-width="3" stroke="#fff"/>
+<path d="M0-25L18-18L0 0z" transform="rotate(-22.5)"/>
+</mask>
+<circle r="23" mask="url(#a)" />
+<circle r="3"/>
+</svg>
