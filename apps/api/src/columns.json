@@ -1,454 +1,48 @@
 {
   "tables": {
-    "settlement_expenditure_node": {
-      "document_kind": "settlement",
-      "primary_key": "node_id",
-      "indexes": [
-        [
-          "fiscal_year",
-          "jurisdiction_code",
-          "node_kind"
-        ],
-        [
-          "fiscal_year",
-          "cofog_code"
-        ],
-        [
-          "parent_node_id"
-        ]
-      ],
+    "jurisdiction": {
+      "primary_key": "jurisdiction_code",
+      "indexes": [],
       "columns": [
-        {
-          "name": "node_id",
-          "type": "string",
-          "nullable": false,
-          "description": "自治体・年度・会計・款項目番号、または親ID・軸・段・番号・名称から生成。重複兄弟は印字順の連番を含む。年度をまたいだ同一性は保証しない。"
-        },
-        {
-          "name": "parent_node_id",
-          "type": "string",
-          "nullable": true,
-          "description": "出典の親子。款はNULL。別の軸の子を同じ金額に混ぜて足さない。"
-        },
         {
           "name": "jurisdiction_code",
           "type": "string",
           "nullable": false,
-          "description": "宣言の自治体コード。"
-        },
-        {
-          "name": "fiscal_year",
-          "type": "integer",
-          "nullable": false,
-          "description": "宣言の会計年度（西暦）。"
-        },
-        {
-          "name": "account_name",
-          "type": "string",
-          "nullable": false,
-          "description": "選定scope・管理JSONにある出典の会計名。"
-        },
-        {
-          "name": "axis",
-          "type": "string",
-          "nullable": false,
-          "description": "出典の分解の軸。科目・節・備考は同じ支出の独立した切り口で、軸をまたいで合算しない。"
-        },
-        {
-          "name": "is_subject",
-          "type": "boolean",
-          "nullable": false,
-          "description": "表の根ノードと同じ軸か。出典の軸名を保持したまま科目の枝を識別する。"
-        },
-        {
-          "name": "node_kind",
-          "type": "string",
-          "nullable": false,
-          "description": "出典の段の見出し、または根拠付きseedで風土記が名付けた段。"
-        },
-        {
-          "name": "code",
-          "type": "string",
-          "nullable": true,
-          "description": "出典の番号をNFKC・前後trimした値。番号がない段はNULL。"
+          "description": "全国地方公共団体コード（6桁、末尾は検査数字）。科目の表・fiscal_origin の jurisdiction_code と同じ値。検査数字を除いた先頭5桁でも一意に決まる。"
         },
         {
           "name": "name",
           "type": "string",
           "nullable": false,
-          "description": "出典の名称をNFKC・前後trimし、日本語の字間空白と折り返し改行を除いた値。英単語間の空白は保持。"
+          "description": "自治体の名称（例：武蔵野市）。全国では一意でない（府中市は東京都と広島県にある）ので、都道府県と合わせて区別する。"
         },
         {
-          "name": "amount_yen",
-          "type": "integer",
-          "nullable": true,
-          "description": "決算支出済額（円）。出典の金額を円換算し、見出しの対応を適用。立川の繰越内訳は支出済額＋本年度支出額。印字がない段はNULL。親と子を混ぜて合算しない。"
-        },
-        {
-          "name": "is_leaf",
-          "type": "boolean",
-          "nullable": false,
-          "description": "同じ軸の子を持たないか。総額は一つの軸の末端を選んで求め、軸の異なる末端を混ぜない。"
-        },
-        {
-          "name": "kan_code",
+          "name": "prefecture_code",
           "type": "string",
           "nullable": false,
-          "description": "所属する出典の款番号。"
+          "description": "都道府県コード（JIS X 0401）。自治体コードの先頭2桁。"
         },
         {
-          "name": "kou_code",
-          "type": "string",
-          "nullable": true,
-          "description": "所属する出典の項番号。款ではNULL。"
-        },
-        {
-          "name": "moku_code",
-          "type": "string",
-          "nullable": true,
-          "description": "所属する出典の目番号。款・項ではNULL。"
-        },
-        {
-          "name": "origin_id",
+          "name": "prefecture_name",
           "type": "string",
           "nullable": false,
-          "description": "出典選定のファイルを指すSHA由来のID。"
+          "description": "都道府県の名称。自治体マスタには無いので、自治体コードの先頭2桁から引いた値。"
         },
         {
-          "name": "source_page",
-          "type": "integer",
-          "nullable": false,
-          "description": "項目が印字された頁。出典ファイル（origin_id が指す1つの PDF）の1始まりのページ番号で、紙面に印刷されたページ番号ではない。分冊・抜粋のファイルでは、そのファイルの中での番号。"
-        },
-        {
-          "name": "source_x0",
-          "type": "number",
-          "nullable": true,
-          "description": "項目の印字の枠の左端。PDFだけ（頁`source_page`の左上原点のpt）。保存済みの取り込み表で値が無ければNULL（自治体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。"
-        },
-        {
-          "name": "source_y0",
-          "type": "number",
-          "nullable": true,
-          "description": "項目の印字の枠の上端。PDFだけ（頁`source_page`の左上原点のpt）。保存済みの取り込み表で値が無ければNULL（自治体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。"
-        },
-        {
-          "name": "source_x1",
-          "type": "number",
-          "nullable": true,
-          "description": "項目の印字の枠の右端。PDFだけ（頁`source_page`の左上原点のpt）。保存済みの取り込み表で値が無ければNULL（自治体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。"
-        },
-        {
-          "name": "source_y1",
-          "type": "number",
-          "nullable": true,
-          "description": "項目の印字の枠の下端。PDFだけ（頁`source_page`の左上原点のpt）。保存済みの取り込み表で値が無ければNULL（自治体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。"
-        },
-        {
-          "name": "amount_source_page",
-          "type": "integer",
-          "nullable": true,
-          "description": "採用した実績金額が印字された頁（source_page と同じ数え方の、出典ファイルの1始まりのページ番号）。不明ならNULL。繰越内訳を足す場合は、全額の頁が既知のときだけ最初の頁。"
-        },
-        {
-          "name": "amount_source_x0",
-          "type": "number",
-          "nullable": true,
-          "description": "採用した実績金額の印字の枠の左端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。"
-        },
-        {
-          "name": "amount_source_y0",
-          "type": "number",
-          "nullable": true,
-          "description": "採用した実績金額の印字の枠の上端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。"
-        },
-        {
-          "name": "amount_source_x1",
-          "type": "number",
-          "nullable": true,
-          "description": "採用した実績金額の印字の枠の右端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。"
-        },
-        {
-          "name": "amount_source_y1",
-          "type": "number",
-          "nullable": true,
-          "description": "採用した実績金額の印字の枠の下端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。"
-        },
-        {
-          "name": "kan_name",
+          "name": "ocd_id",
           "type": "string",
           "nullable": false,
-          "description": "所属する款の出典の名称（name と同じ正規化）。比較の絞り込みで親を辿らずに使う（ADR 0022）。"
+          "description": "Open Civic Data 形式の識別子。OCD の本家に未登録の市区町村は、同じ形式で風土記が定めた値。"
         },
         {
-          "name": "kou_name",
+          "name": "official_url",
           "type": "string",
           "nullable": true,
-          "description": "所属する項の出典の名称。款ではNULL。"
-        },
-        {
-          "name": "cofog_status",
-          "type": "string",
-          "nullable": true,
-          "description": "風土記の判断。目だけにassigned・tentative・unclassifiable・out-of-scopeを付け、他の段はNULL。tentativeは境界の判断で確信が持てないままコードを付けた暫定の割り当て。"
-        },
-        {
-          "name": "cofog_code",
-          "type": "string",
-          "nullable": true,
-          "description": "風土記が目に割り当てたCOFOGコード。一つのコードだけを持ち、上位は前方一致で求める。assigned・tentativeのときだけ値を持つ。"
-        },
-        {
-          "name": "account_kind",
-          "type": "string",
-          "nullable": false,
-          "description": "自治体共通の会計の種類（一般会計・国民健康保険・介護保険・後期高齢者医療・用地・駐車場・下水道・介護サービス事業・土地区画整理）。出典の会計名を account_kind_map の語で対応づけた風土記の判断。自治体をまたぐ比較はこの列で行う。辞書に無い会計名は構築を止める。"
-        },
-        {
-          "name": "is_interfund_transfer",
-          "type": "boolean",
-          "nullable": false,
-          "description": "会計間の繰出の印。科目の目で名称が「<会計名>繰出金」の形のものと、科目以外の軸で名称が「繰出金」または「<会計名>繰出金」のもの（法定の節・備考や説明の内訳）に付ける。節・備考の同名でも会計で終わらない内訳（例：保険基盤安定繰出金）は一会計の中の法定の負担で移転ではないため含まない。印は枝の最も上だけに付け、同じ目の下で節と備考の両方には付けない（節が優先）。節の軸が無い自治体は備考・説明の軸で拾う（131041）。節も備考も無い自治体（132012）は拾えない。印は網羅ではない。印の付いた金額はそのまま足せる（二重なし）。金額の消去はしない（ADR 0023）。"
-        },
-        {
-          "name": "interfund_transfer_to",
-          "type": "string",
-          "nullable": true,
-          "description": "繰出の受け手の会計の種類（account_kind_map で引く）。受け手が未収録でも付ける。名称末尾の【所管課】を除き、自身・祖先に印字された会計名で特定する。送り出す会計自身の種類を示す祖先名は使わない。受け手不明の節は、同じ目の備考・説明の一つの軸にある所管課付きの繰出内訳が節の全額と一致し、受け手の種類が一つに定まる場合も特定する。全額と1種類を確認できる軸が複数ある場合も、種類が一致するときだけ特定する。既存の受け手別内訳の印はその位置を維持する。いずれの根拠でも特定できなければNULL（「特別会計」とだけ印字された受け手は「不明」）。"
-        },
-        {
-          "name": "expenditure_setsu_id",
-          "type": "string",
-          "nullable": true,
-          "description": "節の軸のノードの法定の節の ID（setsu-master の expenditure_setsu_id。年度に合う定義を選ぶ）。節以外の軸は NULL。備考・事業説明の中の節の見出しは軸が違うため今回の範囲外とした。"
+          "description": "自治体の公式サイトの URL。出典の選定（pipeline/source_selection）に記録した値で、選定の無い自治体は NULL。"
         }
       ]
     },
-    "initial_expenditure_node": {
-      "document_kind": "initial",
-      "primary_key": "node_id",
-      "indexes": [
-        [
-          "fiscal_year",
-          "jurisdiction_code",
-          "node_kind"
-        ],
-        [
-          "fiscal_year",
-          "cofog_code"
-        ],
-        [
-          "parent_node_id"
-        ]
-      ],
-      "columns": [
-        {
-          "name": "node_id",
-          "type": "string",
-          "nullable": false,
-          "description": "自治体・年度・会計・款項目番号、または親ID・軸・段・番号・名称から生成。決算の木と同じ導出。"
-        },
-        {
-          "name": "parent_node_id",
-          "type": "string",
-          "nullable": true,
-          "description": "出典の親子。款はNULL。CSVの親は経路から機械的に決まる。別の軸の子を同じ金額に混ぜて足さない。"
-        },
-        {
-          "name": "jurisdiction_code",
-          "type": "string",
-          "nullable": false,
-          "description": "宣言の自治体コード。"
-        },
-        {
-          "name": "fiscal_year",
-          "type": "integer",
-          "nullable": false,
-          "description": "宣言の会計年度（西暦）。"
-        },
-        {
-          "name": "account_name",
-          "type": "string",
-          "nullable": false,
-          "description": "出典の会計名。CSVは01会計の番号を除いた値。"
-        },
-        {
-          "name": "axis",
-          "type": "string",
-          "nullable": false,
-          "description": "出典の分解の軸。PDFは科目・節・備考など、CSVは科目だけ。軸をまたいで合算しない。"
-        },
-        {
-          "name": "is_subject",
-          "type": "boolean",
-          "nullable": false,
-          "description": "表の根ノードと同じ軸か。CSVはすべて科目軸なのでtrue。"
-        },
-        {
-          "name": "node_kind",
-          "type": "string",
-          "nullable": false,
-          "description": "款・項・目、またはPDFの印字見出し・CSVの事項・節・細々節。"
-        },
-        {
-          "name": "code",
-          "type": "string",
-          "nullable": true,
-          "description": "出典の番号。CSVは番号+名称のセルから番号を分けた値。番号がない段はNULL。"
-        },
-        {
-          "name": "name",
-          "type": "string",
-          "nullable": false,
-          "description": "出典の名称を正規化した値。CSVは番号+名称のセルから名称を分けた値。"
-        },
-        {
-          "name": "amount_yen",
-          "type": "integer",
-          "nullable": true,
-          "description": "当初予算額（円）。PDFは千円の印字を1000倍、CSVは千円の08予算額を1000倍。CSVの親の金額は子の和の集計で、印字ではない。印字がない段はNULL。親と子を混ぜて合算しない。"
-        },
-        {
-          "name": "is_leaf",
-          "type": "boolean",
-          "nullable": false,
-          "description": "同じ軸の子を持たないか。総額は一つの軸の末端を選んで求め、軸の異なる末端を混ぜない。"
-        },
-        {
-          "name": "kan_code",
-          "type": "string",
-          "nullable": false,
-          "description": "所属する出典の款番号。"
-        },
-        {
-          "name": "kou_code",
-          "type": "string",
-          "nullable": true,
-          "description": "所属する出典の項番号。款ではNULL。"
-        },
-        {
-          "name": "moku_code",
-          "type": "string",
-          "nullable": true,
-          "description": "所属する出典の目番号。款・項ではNULL。"
-        },
-        {
-          "name": "origin_id",
-          "type": "string",
-          "nullable": false,
-          "description": "印字された出典ファイルを指すSHA由来のID。originのformatでPDFとCSVを区別できる。"
-        },
-        {
-          "name": "source_page",
-          "type": "integer",
-          "nullable": false,
-          "description": "PDFは項目が印字された頁で、出典ファイル（origin_id が指す1つの PDF）の1始まりのページ番号。紙面に印刷されたページ番号ではなく、分冊・抜粋のファイルではそのファイルの中での番号。CSVは出典ファイルの1始まりの物理行（見出しの行が1行目）で、末端は印字された行の開始行、CSVに行の無い親（款〜節）は子孫の行のうち最も小さい開始行。"
-        },
-        {
-          "name": "source_x0",
-          "type": "number",
-          "nullable": true,
-          "description": "項目の印字の枠の左端。PDFだけ（頁`source_page`の左上原点のpt）。CSVは座標を持たずNULL。保存済みの取り込み表で値が無ければNULL（自治体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。"
-        },
-        {
-          "name": "source_y0",
-          "type": "number",
-          "nullable": true,
-          "description": "項目の印字の枠の上端。PDFだけ（頁`source_page`の左上原点のpt）。CSVは座標を持たずNULL。保存済みの取り込み表で値が無ければNULL（自治体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。"
-        },
-        {
-          "name": "source_x1",
-          "type": "number",
-          "nullable": true,
-          "description": "項目の印字の枠の右端。PDFだけ（頁`source_page`の左上原点のpt）。CSVは座標を持たずNULL。保存済みの取り込み表で値が無ければNULL（自治体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。"
-        },
-        {
-          "name": "source_y1",
-          "type": "number",
-          "nullable": true,
-          "description": "項目の印字の枠の下端。PDFだけ（頁`source_page`の左上原点のpt）。CSVは座標を持たずNULL。保存済みの取り込み表で値が無ければNULL（自治体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。"
-        },
-        {
-          "name": "amount_source_page",
-          "type": "integer",
-          "nullable": true,
-          "description": "採用した当初予算額の位置。PDFは source_page と同じ数え方の、出典ファイルの1始まりのページ番号。CSVは1始まりの物理行。CSVの親の集計額はNULL。不明ならNULL。"
-        },
-        {
-          "name": "amount_source_x0",
-          "type": "number",
-          "nullable": true,
-          "description": "採用した当初予算額の印字の枠の左端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。"
-        },
-        {
-          "name": "amount_source_y0",
-          "type": "number",
-          "nullable": true,
-          "description": "採用した当初予算額の印字の枠の上端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。"
-        },
-        {
-          "name": "amount_source_x1",
-          "type": "number",
-          "nullable": true,
-          "description": "採用した当初予算額の印字の枠の右端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。"
-        },
-        {
-          "name": "amount_source_y1",
-          "type": "number",
-          "nullable": true,
-          "description": "採用した当初予算額の印字の枠の下端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。"
-        },
-        {
-          "name": "kan_name",
-          "type": "string",
-          "nullable": false,
-          "description": "所属する款の出典の名称（name と同じ正規化）。比較の絞り込みで親を辿らずに使う（ADR 0022）。"
-        },
-        {
-          "name": "kou_name",
-          "type": "string",
-          "nullable": true,
-          "description": "所属する項の出典の名称。款ではNULL。"
-        },
-        {
-          "name": "cofog_status",
-          "type": "string",
-          "nullable": true,
-          "description": "風土記の判断。目だけにassigned・tentative・unclassifiable・out-of-scopeを付け、他の段はNULL。"
-        },
-        {
-          "name": "cofog_code",
-          "type": "string",
-          "nullable": true,
-          "description": "風土記が目に割り当てたCOFOGコード。assigned・tentativeのときだけ値を持つ。"
-        },
-        {
-          "name": "account_kind",
-          "type": "string",
-          "nullable": false,
-          "description": "自治体共通の会計の種類（一般会計・国民健康保険・介護保険・後期高齢者医療・用地・駐車場・下水道・介護サービス事業・土地区画整理）。出典の会計名を account_kind_map の語で対応づけた風土記の判断。自治体をまたぐ比較はこの列で行う。辞書に無い会計名は構築を止める。決算の表と同じ共有 intermediate から付ける。"
-        },
-        {
-          "name": "is_interfund_transfer",
-          "type": "boolean",
-          "nullable": false,
-          "description": "会計間の繰出の印。決算の表と同じ規則・同じ共有 intermediate から付ける。科目の目で名称が「<会計名>繰出金」の形のものと、科目以外の軸で名称が「繰出金」または「<会計名>繰出金」のもの（法定の節・備考や説明の内訳）に付ける。印は枝の最も上だけに付け、同じ目の下で節と備考の両方には付けない（節が優先）。印の付いた金額はそのまま足せる（二重なし）。金額の消去はしない（ADR 0023）。"
-        },
-        {
-          "name": "interfund_transfer_to",
-          "type": "string",
-          "nullable": true,
-          "description": "繰出の受け手の会計の種類（account_kind_map で引く）。受け手が未収録でも付ける。名称末尾の【所管課】を除き、自身・祖先に印字された会計名で特定する。送り出す会計自身の種類を示す祖先名は使わない。受け手不明の節は、同じ目の備考・説明の一つの軸にある所管課付きの繰出内訳が節の全額と一致し、受け手の種類が一つに定まる場合も特定する。全額と1種類を確認できる軸が複数ある場合も、種類が一致するときだけ特定する。既存の受け手別内訳の印はその位置を維持する。いずれの根拠でも特定できなければNULL（「特別会計」とだけ印字された受け手は「不明」）。"
-        },
-        {
-          "name": "expenditure_setsu_id",
-          "type": "string",
-          "nullable": true,
-          "description": "節の軸のノードの法定の節の ID。決算の表と同じ規則・同じ共有 intermediate から付ける。節以外の軸は NULL。備考・事業説明の中の節の見出しは軸が違うため今回の範囲外とした。"
-        }
-      ]
-    },
-    "origin": {
+    "fiscal_origin": {
       "primary_key": "origin_id",
       "indexes": [],
       "columns": [
@@ -456,7 +50,7 @@
           "name": "origin_id",
           "type": "string",
           "nullable": false,
-          "description": "出典ファイルを指すSHA由来のID。木の表の origin_id が指す。"
+          "description": "出典ファイルを指すSHA由来のID。科目・内訳・印字の位置の表の origin_id が指す。"
         },
         {
           "name": "jurisdiction_code",
@@ -508,49 +102,469 @@
         }
       ]
     },
-    "jurisdiction_master": {
-      "primary_key": "jurisdiction_code",
-      "indexes": [],
+    "fiscal_expenditure_subject": {
+      "primary_key": "subject_id",
+      "indexes": [
+        [
+          "fiscal_year",
+          "document_kind",
+          "jurisdiction_code",
+          "level"
+        ],
+        [
+          "fiscal_year",
+          "document_kind",
+          "cofog_code"
+        ],
+        [
+          "parent_subject_id"
+        ]
+      ],
       "columns": [
+        {
+          "name": "subject_id",
+          "type": "string",
+          "nullable": false,
+          "description": "行の ID。資料区分・補正号・node_key から作る（sha256）。"
+        },
+        {
+          "name": "node_key",
+          "type": "string",
+          "nullable": false,
+          "description": "今の木の node_id。自治体・年度・会計・款項目番号、または親・軸・段・番号・名称から作り、資料区分を含まない。同じ自治体・年度の当初予算と決算の同じ科目は同じ値になる（内訳は見出し・名称が資料で違うと一致しない）。年度をまたいだ同一性は保証しない。"
+        },
+        {
+          "name": "parent_subject_id",
+          "type": "string",
+          "nullable": true,
+          "description": "親の科目（款は NULL）。"
+        },
         {
           "name": "jurisdiction_code",
           "type": "string",
           "nullable": false,
-          "description": "全国地方公共団体コード（6桁、末尾は検査数字）。木の表・origin の jurisdiction_code と同じ値。検査数字を除いた先頭5桁でも一意に決まる。"
+          "description": "宣言の自治体コード。"
+        },
+        {
+          "name": "fiscal_year",
+          "type": "integer",
+          "nullable": false,
+          "description": "宣言の会計年度（西暦）。"
+        },
+        {
+          "name": "document_kind",
+          "type": "string",
+          "nullable": false,
+          "description": "資料区分（settlement 決算・initial 当初予算）。意味の違う金額を足さないよう、検索は必ず一つに絞る。"
+        },
+        {
+          "name": "amendment_number",
+          "type": "integer",
+          "nullable": true,
+          "description": "補正予算の号数。補正予算は未収録なので今は常に NULL。"
+        },
+        {
+          "name": "amount_phase",
+          "type": "string",
+          "nullable": false,
+          "description": "金額の段階（executed 決算・執行実績、approved 当初予算）。document_kind と1対1。"
+        },
+        {
+          "name": "account_name",
+          "type": "string",
+          "nullable": false,
+          "description": "選定scope・管理JSONにある出典の会計名。"
+        },
+        {
+          "name": "account_kind",
+          "type": "string",
+          "nullable": false,
+          "description": "自治体共通の会計の種類（一般会計・国民健康保険・介護保険・後期高齢者医療・用地・駐車場・下水道・介護サービス事業・土地区画整理）。出典の会計名を account_kind_map の語で対応づけた風土記の判断。自治体をまたぐ比較はこの列で行う。辞書に無い会計名は構築を止める。"
+        },
+        {
+          "name": "level",
+          "type": "string",
+          "nullable": false,
+          "description": "科目の段（款・項・目）。足すときは同じ資料で一つの段か is_leaf に絞る。"
+        },
+        {
+          "name": "code",
+          "type": "string",
+          "nullable": true,
+          "description": "出典の番号をNFKC・前後trimした値。番号がない段はNULL。"
         },
         {
           "name": "name",
           "type": "string",
           "nullable": false,
-          "description": "自治体の名称（例：武蔵野市）。全国では一意でない（府中市は東京都と広島県にある）ので、都道府県と合わせて区別する。"
+          "description": "出典の名称をNFKC・前後trimし、日本語の字間空白と折り返し改行を除いた値。英単語間の空白は保持。"
         },
         {
-          "name": "prefecture_code",
+          "name": "kan_code",
           "type": "string",
           "nullable": false,
-          "description": "都道府県コード（JIS X 0401）。自治体コードの先頭2桁。"
+          "description": "所属する出典の款番号。"
         },
         {
-          "name": "prefecture_name",
+          "name": "kan_name",
           "type": "string",
           "nullable": false,
-          "description": "都道府県の名称。自治体マスタには無いので、自治体コードの先頭2桁から引いた値。"
+          "description": "所属する款の出典の名称（name と同じ正規化）。比較の絞り込みで親を辿らずに使う（ADR 0022）。"
         },
         {
-          "name": "ocd_id",
-          "type": "string",
-          "nullable": false,
-          "description": "Open Civic Data 形式の識別子。OCD の本家に未登録の市区町村は、同じ形式で風土記が定めた値。"
-        },
-        {
-          "name": "official_url",
+          "name": "kou_code",
           "type": "string",
           "nullable": true,
-          "description": "自治体の公式サイトの URL。出典の選定（pipeline/source_selection）に記録した値で、選定の無い自治体は NULL。"
+          "description": "所属する出典の項番号。款ではNULL。"
+        },
+        {
+          "name": "kou_name",
+          "type": "string",
+          "nullable": true,
+          "description": "所属する項の出典の名称。款ではNULL。"
+        },
+        {
+          "name": "moku_code",
+          "type": "string",
+          "nullable": true,
+          "description": "所属する出典の目番号。款・項ではNULL。"
+        },
+        {
+          "name": "moku_name",
+          "type": "string",
+          "nullable": true,
+          "description": "所属する目の名称（name と同じ正規化）。款・項では NULL。"
+        },
+        {
+          "name": "amount_yen",
+          "type": "integer",
+          "nullable": true,
+          "description": "資料区分の金額（円）。決算（amount_phase = executed）は支出済額、当初予算（approved）は当初予算額。出典の金額を円換算し、見出しの対応を適用する。立川の繰越内訳は支出済額＋本年度支出額。当初予算 CSV の親は子の和の集計で印字ではない。印字がない段は NULL。"
+        },
+        {
+          "name": "is_leaf",
+          "type": "boolean",
+          "nullable": false,
+          "description": "科目の子を持たないか（目と、目の無い項）。同じ資料の is_leaf の行の和が歳出の総額。例外は神戸市の2025年度一般会計で、170,000円足りない（内訳の表の is_subject_remainder を見る）。"
+        },
+        {
+          "name": "cofog_status",
+          "type": "string",
+          "nullable": true,
+          "description": "風土記の判断。目だけにassigned・tentative・unclassifiable・out-of-scopeを付け、他の段はNULL。tentativeは境界の判断で確信が持てないままコードを付けた暫定の割り当て。"
+        },
+        {
+          "name": "cofog_code",
+          "type": "string",
+          "nullable": true,
+          "description": "風土記が目に割り当てたCOFOGコード。一つのコードだけを持ち、上位は前方一致で求める。assigned・tentativeのときだけ値を持つ。"
+        },
+        {
+          "name": "is_interfund_transfer",
+          "type": "boolean",
+          "nullable": false,
+          "description": "会計間の繰出の印。科目の目で名称が「<会計名>繰出金」の形のものと、科目以外の軸で名称が「繰出金」または「<会計名>繰出金」のもの（法定の節・備考や説明の内訳）に付ける。節・備考の同名でも会計で終わらない内訳（例：保険基盤安定繰出金）は一会計の中の法定の負担で移転ではないため含まない。印は枝の最も上だけに付け、同じ目の下で節と備考の両方には付けない（節が優先）。節の軸が無い自治体は備考・説明の軸で拾う（131041）。節も備考も無い自治体（132012）は拾えない。印は網羅ではない。印の付いた金額はそのまま足せる（二重なし）。金額の消去はしない（ADR 0023）。"
+        },
+        {
+          "name": "interfund_transfer_to",
+          "type": "string",
+          "nullable": true,
+          "description": "繰出の受け手の会計の種類（account_kind_map で引く）。受け手が未収録でも付ける。名称末尾の【所管課】を除き、自身・祖先に印字された会計名で特定する。送り出す会計自身の種類を示す祖先名は使わない。受け手不明の節は、同じ目の備考・説明の一つの軸にある所管課付きの繰出内訳が節の全額と一致し、受け手の種類が一つに定まる場合も特定する。全額と1種類を確認できる軸が複数ある場合も、種類が一致するときだけ特定する。既存の受け手別内訳の印はその位置を維持する。いずれの根拠でも特定できなければNULL（「特別会計」とだけ印字された受け手は「不明」）。"
+        },
+        {
+          "name": "origin_id",
+          "type": "string",
+          "nullable": false,
+          "description": "出典選定のファイルを指すSHA由来のID。"
         }
       ]
     },
-    "expenditure_coverage": {
+    "fiscal_expenditure_detail": {
+      "primary_key": "detail_id",
+      "indexes": [
+        [
+          "subject_id",
+          "breakdown",
+          "depth"
+        ],
+        [
+          "parent_detail_id"
+        ],
+        [
+          "fiscal_year",
+          "document_kind",
+          "jurisdiction_code",
+          "breakdown"
+        ]
+      ],
+      "columns": [
+        {
+          "name": "detail_id",
+          "type": "string",
+          "nullable": false,
+          "description": "行の ID。資料区分・補正号・node_key から作る（sha256）。"
+        },
+        {
+          "name": "node_key",
+          "type": "string",
+          "nullable": false,
+          "description": "今の木の node_id。自治体・年度・会計・款項目番号、または親・軸・段・番号・名称から作り、資料区分を含まない。同じ自治体・年度の当初予算と決算の同じ科目は同じ値になる（内訳は見出し・名称が資料で違うと一致しない）。年度をまたいだ同一性は保証しない。"
+        },
+        {
+          "name": "parent_detail_id",
+          "type": "string",
+          "nullable": true,
+          "description": "親の内訳。枝の根（科目の直下）は NULL。"
+        },
+        {
+          "name": "subject_id",
+          "type": "string",
+          "nullable": false,
+          "description": "枝が属する科目（ほぼ目。目の無い項や、項の直下に付く内訳もある）。"
+        },
+        {
+          "name": "jurisdiction_code",
+          "type": "string",
+          "nullable": false,
+          "description": "宣言の自治体コード。"
+        },
+        {
+          "name": "fiscal_year",
+          "type": "integer",
+          "nullable": false,
+          "description": "宣言の会計年度（西暦）。"
+        },
+        {
+          "name": "document_kind",
+          "type": "string",
+          "nullable": false,
+          "description": "資料区分（settlement 決算・initial 当初予算）。意味の違う金額を足さないよう、検索は必ず一つに絞る。"
+        },
+        {
+          "name": "amendment_number",
+          "type": "integer",
+          "nullable": true,
+          "description": "補正予算の号数。補正予算は未収録なので今は常に NULL。"
+        },
+        {
+          "name": "amount_phase",
+          "type": "string",
+          "nullable": false,
+          "description": "金額の段階（executed 決算・執行実績、approved 当初予算）。document_kind と1対1。"
+        },
+        {
+          "name": "account_name",
+          "type": "string",
+          "nullable": false,
+          "description": "選定scope・管理JSONにある出典の会計名。"
+        },
+        {
+          "name": "account_kind",
+          "type": "string",
+          "nullable": false,
+          "description": "自治体共通の会計の種類（一般会計・国民健康保険・介護保険・後期高齢者医療・用地・駐車場・下水道・介護サービス事業・土地区画整理）。出典の会計名を account_kind_map の語で対応づけた風土記の判断。自治体をまたぐ比較はこの列で行う。辞書に無い会計名は構築を止める。"
+        },
+        {
+          "name": "kan_code",
+          "type": "string",
+          "nullable": false,
+          "description": "所属する出典の款番号。"
+        },
+        {
+          "name": "kan_name",
+          "type": "string",
+          "nullable": false,
+          "description": "所属する款の出典の名称（name と同じ正規化）。比較の絞り込みで親を辿らずに使う（ADR 0022）。"
+        },
+        {
+          "name": "kou_code",
+          "type": "string",
+          "nullable": true,
+          "description": "所属する出典の項番号。款ではNULL。"
+        },
+        {
+          "name": "kou_name",
+          "type": "string",
+          "nullable": true,
+          "description": "所属する項の出典の名称。款ではNULL。"
+        },
+        {
+          "name": "moku_code",
+          "type": "string",
+          "nullable": true,
+          "description": "所属する出典の目番号。款・項ではNULL。"
+        },
+        {
+          "name": "moku_name",
+          "type": "string",
+          "nullable": true,
+          "description": "所属する目の名称。項の直下の内訳では NULL。"
+        },
+        {
+          "name": "breakdown",
+          "type": "string",
+          "nullable": false,
+          "description": "風土記の判断。枝の分け方（事業・節・その他）。枝の根の見出しに出典ごとの宣言（seed fiscal_detail_breakdown）を当て、子孫へ継ぐ。同じ科目・同じ分け方の depth = 1 の和が科目の額。分け方を混ぜて足さない。"
+        },
+        {
+          "name": "source_heading",
+          "type": "string",
+          "nullable": false,
+          "description": "出典の見出し（備考・説明・節・細節など）。CSV は科目。"
+        },
+        {
+          "name": "node_kind",
+          "type": "string",
+          "nullable": false,
+          "description": "段の名前（内訳1・事項・節・細々節・細目など）。科目の軸の深さ以外は印字見出し、なければ内訳＋深さ（ADR 0025）。"
+        },
+        {
+          "name": "depth",
+          "type": "integer",
+          "nullable": false,
+          "description": "科目の直下を 1 とする深さ。"
+        },
+        {
+          "name": "code",
+          "type": "string",
+          "nullable": true,
+          "description": "出典の番号をNFKC・前後trimした値。番号がない段はNULL。"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "nullable": false,
+          "description": "出典の名称をNFKC・前後trimし、日本語の字間空白と折り返し改行を除いた値。英単語間の空白は保持。"
+        },
+        {
+          "name": "department",
+          "type": "string",
+          "nullable": true,
+          "description": "名称末尾の【…】の中身（所管課）。印字からの機械的な切り出しで、無ければ NULL。"
+        },
+        {
+          "name": "amount_yen",
+          "type": "integer",
+          "nullable": true,
+          "description": "資料区分の金額（円）。決算（amount_phase = executed）は支出済額、当初予算（approved）は当初予算額。出典の金額を円換算し、見出しの対応を適用する。立川の繰越内訳は支出済額＋本年度支出額。当初予算 CSV の親は子の和の集計で印字ではない。印字がない段は NULL。 金額を欠く行があると depth = 1 の和は科目の額と閉じない。"
+        },
+        {
+          "name": "is_leaf",
+          "type": "boolean",
+          "nullable": false,
+          "description": "内訳の子を持たないか。"
+        },
+        {
+          "name": "is_subject_remainder",
+          "type": "boolean",
+          "nullable": false,
+          "description": "末端でない科目（目を持つ項など）の直下の枝の根か。子の科目と並んで科目の額の一部を構成する（神戸市の福祉局の冊が目を立てずに印字した項の分、ADR 0030）。神戸市の2025年度一般会計は、科目の is_leaf の和にこの行を足しても款の和に 38,000円足りない（冊をまたいで足せない節がノードに無い）。depth = 1 の和の規則の外。"
+        },
+        {
+          "name": "expenditure_setsu_id",
+          "type": "string",
+          "nullable": true,
+          "description": "節の軸のノードの法定の節の ID（setsu-master の expenditure_setsu_id。年度に合う定義を選ぶ）。節以外の軸は NULL。備考・事業説明の中の節の見出しは軸が違うため今回の範囲外とした。"
+        },
+        {
+          "name": "is_interfund_transfer",
+          "type": "boolean",
+          "nullable": false,
+          "description": "会計間の繰出の印。科目の目で名称が「<会計名>繰出金」の形のものと、科目以外の軸で名称が「繰出金」または「<会計名>繰出金」のもの（法定の節・備考や説明の内訳）に付ける。節・備考の同名でも会計で終わらない内訳（例：保険基盤安定繰出金）は一会計の中の法定の負担で移転ではないため含まない。印は枝の最も上だけに付け、同じ目の下で節と備考の両方には付けない（節が優先）。節の軸が無い自治体は備考・説明の軸で拾う（131041）。節も備考も無い自治体（132012）は拾えない。印は網羅ではない。印の付いた金額はそのまま足せる（二重なし）。金額の消去はしない（ADR 0023）。"
+        },
+        {
+          "name": "interfund_transfer_to",
+          "type": "string",
+          "nullable": true,
+          "description": "繰出の受け手の会計の種類（account_kind_map で引く）。受け手が未収録でも付ける。名称末尾の【所管課】を除き、自身・祖先に印字された会計名で特定する。送り出す会計自身の種類を示す祖先名は使わない。受け手不明の節は、同じ目の備考・説明の一つの軸にある所管課付きの繰出内訳が節の全額と一致し、受け手の種類が一つに定まる場合も特定する。全額と1種類を確認できる軸が複数ある場合も、種類が一致するときだけ特定する。既存の受け手別内訳の印はその位置を維持する。いずれの根拠でも特定できなければNULL（「特別会計」とだけ印字された受け手は「不明」）。"
+        },
+        {
+          "name": "origin_id",
+          "type": "string",
+          "nullable": false,
+          "description": "出典選定のファイルを指すSHA由来のID。"
+        }
+      ]
+    },
+    "fiscal_expenditure_location": {
+      "primary_key": "row_id",
+      "indexes": [],
+      "columns": [
+        {
+          "name": "row_id",
+          "type": "string",
+          "nullable": false,
+          "description": "科目の表の subject_id か内訳の表の detail_id。"
+        },
+        {
+          "name": "origin_id",
+          "type": "string",
+          "nullable": false,
+          "description": "出典選定のファイルを指すSHA由来のID。"
+        },
+        {
+          "name": "source_page",
+          "type": "integer",
+          "nullable": true,
+          "description": "PDFは項目が印字された頁で、出典ファイル（origin_id が指す1つの PDF）の1始まりのページ番号。紙面に印刷されたページ番号ではなく、分冊・抜粋のファイルではそのファイルの中での番号。CSVは出典ファイルの1始まりの物理行（見出しの行が1行目）で、末端は印字された行の開始行、CSVに行の無い親（款〜節）は子孫の行のうち最も小さい開始行。"
+        },
+        {
+          "name": "source_x0",
+          "type": "number",
+          "nullable": true,
+          "description": "項目の印字の枠の左端。PDFだけ（頁`source_page`の左上原点のpt）。保存済みの取り込み表で値が無ければNULL（自治体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。"
+        },
+        {
+          "name": "source_y0",
+          "type": "number",
+          "nullable": true,
+          "description": "項目の印字の枠の上端。PDFだけ（頁`source_page`の左上原点のpt）。保存済みの取り込み表で値が無ければNULL（自治体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。"
+        },
+        {
+          "name": "source_x1",
+          "type": "number",
+          "nullable": true,
+          "description": "項目の印字の枠の右端。PDFだけ（頁`source_page`の左上原点のpt）。保存済みの取り込み表で値が無ければNULL（自治体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。"
+        },
+        {
+          "name": "source_y1",
+          "type": "number",
+          "nullable": true,
+          "description": "項目の印字の枠の下端。PDFだけ（頁`source_page`の左上原点のpt）。保存済みの取り込み表で値が無ければNULL（自治体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。"
+        },
+        {
+          "name": "amount_source_page",
+          "type": "integer",
+          "nullable": true,
+          "description": "採用した金額の位置。PDFは source_page と同じ数え方の、出典ファイルの1始まりのページ番号。CSVは1始まりの物理行。CSVの親の集計額はNULL。不明ならNULL。"
+        },
+        {
+          "name": "amount_source_x0",
+          "type": "number",
+          "nullable": true,
+          "description": "採用した金額の印字の枠の左端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。"
+        },
+        {
+          "name": "amount_source_y0",
+          "type": "number",
+          "nullable": true,
+          "description": "採用した金額の印字の枠の上端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。"
+        },
+        {
+          "name": "amount_source_x1",
+          "type": "number",
+          "nullable": true,
+          "description": "採用した金額の印字の枠の右端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。"
+        },
+        {
+          "name": "amount_source_y1",
+          "type": "number",
+          "nullable": true,
+          "description": "採用した金額の印字の枠の下端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。"
+        }
+      ]
+    },
+    "fiscal_coverage": {
       "primary_key": "coverage_id",
       "indexes": [
         [
@@ -568,31 +582,31 @@
           "name": "jurisdiction_code",
           "type": "string",
           "nullable": false,
-          "description": "自治体コード。木の表の jurisdiction_code。"
+          "description": "自治体コード。科目の表の jurisdiction_code。"
         },
         {
           "name": "fiscal_year",
           "type": "integer",
           "nullable": false,
-          "description": "会計年度（西暦）。木の表の fiscal_year。"
+          "description": "会計年度（西暦）。"
         },
         {
           "name": "document_kind",
           "type": "string",
           "nullable": false,
-          "description": "資料区分。settlement は決算（settlement_expenditure_node）、initial は当初予算（initial_expenditure_node）。"
+          "description": "資料区分（settlement 決算・initial 当初予算）。科目・内訳の表の document_kind。"
         },
         {
           "name": "account_name",
           "type": "string",
           "nullable": false,
-          "description": "出典の会計名。木の表の account_name と同じ値で、明細の検索の条件にそのまま使える。"
+          "description": "出典の会計名。科目の表の account_name と同じ値で、検索の条件にそのまま使える。"
         },
         {
           "name": "account_kind",
           "type": "string",
           "nullable": false,
-          "description": "自治体共通の会計の種類。木の表の account_kind（風土記の判断）。"
+          "description": "自治体共通の会計の種類（風土記の判断）。"
         },
         {
           "name": "origin_id",
@@ -626,7 +640,7 @@
         }
       ]
     },
-    "jurisdiction_population": {
+    "population": {
       "primary_key": "population_id",
       "indexes": [
         [
@@ -650,7 +664,7 @@
           "name": "jurisdiction_code",
           "type": "string",
           "nullable": false,
-          "description": "全国地方公共団体コード（6桁）。jurisdiction_master の jurisdiction_code。"
+          "description": "全国地方公共団体コード（6桁）。jurisdiction の jurisdiction_code。"
         },
         {
           "name": "reference_date",

@@ -2,7 +2,7 @@ import { test, beforeEach } from 'e2e'
 import { expect } from 'e2e'
 
 beforeEach(async ({ app }) => { await fetch(new URL('/__reset', app.baseUrl!), { method: 'POST' }) })
-const get = (baseUrl: string, id: string) => fetch(new URL(`/v1/origins/${id.split('?')[0]}/pdf${id.includes('?') ? '?' + id.split('?')[1] : ''}`, baseUrl))
+const get = (baseUrl: string, id: string) => fetch(new URL(`/v1/fiscal/origins/${id.split('?')[0]}/pdf${id.includes('?') ? '?' + id.split('?')[1] : ''}`, baseUrl))
 const advance = (baseUrl: string, ms: number) => fetch(new URL('/__advance', baseUrl), { method: 'POST', body: String(ms) })
 const hits = async (baseUrl: string) => (await fetch(new URL('/__stats', baseUrl))).json()
 
@@ -32,7 +32,7 @@ test('任意URL/query・CSV・内部URL・未知ID・POSTを拒否', async ({ ap
     expect(r.status).toBe(status)
     expect(r.headers.get('access-control-allow-origin')).toBe('*')
   }
-  expect((await fetch(new URL('/v1/origins/ok/pdf', app.baseUrl!), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })).status).toBe(405)
+  expect((await fetch(new URL('/v1/fiscal/origins/ok/pdf', app.baseUrl!), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })).status).toBe(405)
   expect(await hits(app.baseUrl!)).toEqual({})
 })
 

@@ -4,10 +4,10 @@ with expected(jurisdiction_code, fiscal_year, account_name, moku_count, amount_y
            ('132021',2025,'一般会計',102,93876812014::bigint)
 ), actual as (
     select jurisdiction_code, fiscal_year, account_name, count(*) as moku_count, sum(amount_yen) as amount_yen
-    from {{ ref('settlement_expenditure_node') }} where is_subject and node_kind = '目' group by 1,2,3
+    from (select * from {{ ref('int_fiscal__expenditure_nodes') }} where document_kind = 'settlement') where is_subject and node_kind = '目' group by 1,2,3
 ), leaves as (
     select jurisdiction_code, fiscal_year, account_name, axis, sum(amount_yen) as amount_yen
-    from {{ ref('settlement_expenditure_node') }} where not is_subject and is_leaf group by 1,2,3,4
+    from (select * from {{ ref('int_fiscal__expenditure_nodes') }} where document_kind = 'settlement') where not is_subject and is_leaf group by 1,2,3,4
 )
 select e.jurisdiction_code, 'moku_expected_count_sum' as failure from expected e
 left join actual a using (jurisdiction_code, fiscal_year, account_name)

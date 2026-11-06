@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-10.85 -11 21.7 21.3" width="434" height="426">
+<mask id="a">
+<circle id="b" cy="-4" r="7"  fill="#fff"/>
+<g id="c">
+<use xlink:href="#b" transform="rotate(72)"/>
+<use xlink:href="#b" transform="rotate(216)"/>
+</g>
+<use xlink:href="#c" transform="rotate(72)"/>
+<circle id="d" cy="-4" r="6"  fill="#000"/>
+<g id="e">
+<use xlink:href="#d" transform="rotate(72)"/>
+<use xlink:href="#d" transform="rotate(216)"/>
+</g>
+<use xlink:href="#e" transform="rotate(72)"/>
+<circle id="f" cy="-4" r="5"  fill="#fff"/>
+<g id="g">
+<use xlink:href="#f" transform="rotate(72)"/>
+<use xlink:href="#f" transform="rotate(216)"/>
+</g>
+<use xlink:href="#g" transform="rotate(72)"/>
+<circle id="h" cy="-4" r="4"  fill="#000"/>
+<g id="i">
+<use xlink:href="#h" transform="rotate(72)"/>
+<use xlink:href="#h" transform="rotate(216)"/>
+</g>
+<use xlink:href="#i" transform="rotate(72)"/>
+</mask>
+<circle r="11" mask="url(#a)" fill="#008000"/>
+</svg>

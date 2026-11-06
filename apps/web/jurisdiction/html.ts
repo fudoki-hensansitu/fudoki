@@ -68,7 +68,7 @@ export function indexHead(count: number): Head {
 }
 
 export const sitemapXml = (entries: CatalogEntry[]) =>
-  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${ORIGIN}/</loc></url><url><loc>${ORIGIN}${INDEX_PATH}</loc></url>${entries
+  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${ORIGIN}/</loc></url><url><loc>${ORIGIN}${INDEX_PATH}</loc></url><url><loc>${ORIGIN}/assistant</loc></url>${entries
     .filter((e) => e.settlementYears.length > 0)
     .map((e) => `<url><loc>${ORIGIN}${jurisdictionPath(e.code)}</loc></url>`)
     .join('')}</urlset>\n`

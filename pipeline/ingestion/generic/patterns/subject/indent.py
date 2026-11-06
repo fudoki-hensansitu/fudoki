@@ -94,6 +94,11 @@ def learn_levels(all_items):
         # A start printed once is a stray one. A table that prints one 款・項・目 chain has no level twice: keep its
         # starts (132063 公共用地, 款 項 目 of one name), or every line is level 0 and the chain reads as one repeated heading.
         kept_levels = [c for c in found_levels if len(c) >= max(2, len(starts) // 100)]
+        # The starts left of every repeated level are its outer levels printed once (a volume of one 款 and one 項
+        # over its 目: 132055 公債費), while 款・項・目 still fit.
+        outer = found_levels[:found_levels.index(kept_levels[0])] if kept_levels else []
+        if outer and len(outer) + len(kept_levels) <= len(SUBJECT_LEVELS):
+            kept_levels = outer + kept_levels
         return kept_levels or found_levels
     edge = lambda i: i.indent - (i.group.bands[0].x0 if id(i.group) in ocr_groups else 0)
     subject_levels = cluster(edge)

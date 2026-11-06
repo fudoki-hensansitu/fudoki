@@ -8,8 +8,8 @@ test('stepLog は tool の名前ごとの実行時間と token だけを出し�
     finishReason: 'tool-calls',
     usage: { inputTokens: 1200, outputTokens: 300, inputTokenDetails: { cacheReadTokens: 1000 }, outputTokenDetails: { reasoningTokens: 250 } },
     toolCalls: [
-      { toolCallId: 'a', toolName: 'search_expenditure_nodes', input: { q: '秘密の質問' } },
-      { toolCallId: 'b', toolName: 'search_expenditure_nodes', input: {} },
+      { toolCallId: 'a', toolName: 'search_expenditure_subjects', input: { q: '秘密の質問' } },
+      { toolCallId: 'b', toolName: 'search_expenditure_subjects', input: {} },
     ],
     performance: { stepTimeMs: 5400.6, responseTimeMs: 4000.2, timeToFirstOutputMs: 900.4, toolExecutionMs: { a: 700.2, b: 300.4 } },
     text: '利用者に見せる本文',
@@ -19,7 +19,7 @@ test('stepLog は tool の名前ごとの実行時間と token だけを出し�
   expect(out).toEqual({
     event: 'chat.step', step: 1, finish: 'tool-calls',
     inputTokens: 1200, cachedTokens: 1000, outputTokens: 300, reasoningTokens: 250,
-    stepMs: 5401, modelMs: 4000, firstMs: 900, toolMs: { search_expenditure_nodes: 1000 },
+    stepMs: 5401, modelMs: 4000, firstMs: 900, toolMs: { search_expenditure_subjects: 1000 },
   })
   expect(JSON.stringify(out)).not.toContain('秘密')
 })

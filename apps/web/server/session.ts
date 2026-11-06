@@ -7,6 +7,8 @@ export const SITEVERIFY_URL = 'https://challenges.cloudflare.com/turnstile/v0/si
 export const TURNSTILE_ACTION = 'chat-start'
 /** Cloudflare が公開している「常に通る」試験用の secret（preview と手元で使う）。この secret は action・hostname が本番と合わないダミー値を返す */
 export const TURNSTILE_TEST_SECRET = '1x0000000000000000000000000000000AA'
+/** siteverify を待つ上限。Cloudflare 側が遅いときに会話の開始を止めたままにしない */
+const SITEVERIFY_TIMEOUT_MS = 5_000
 
 const encoder = new TextEncoder()
 const b64url = (bytes: ArrayBuffer) =>
@@ -64,7 +66,7 @@ export async function verifyTurnstile(
   if (ip) form.append('remoteip', ip)
   let result: { success?: boolean; action?: string; hostname?: string }
   try {
-    const res = await fetcher(SITEVERIFY_URL, { method: 'POST', body: form })
+    const res = await fetcher(SITEVERIFY_URL, { method: 'POST', body: form, signal: AbortSignal.timeout(SITEVERIFY_TIMEOUT_MS) })
     if (!res.ok) throw new Error(String(res.status))
     result = await res.json()
   } catch {

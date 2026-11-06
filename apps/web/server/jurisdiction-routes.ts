@@ -7,6 +7,7 @@ import { jurisdictionPath, PREFECTURE_SLUGS } from '../jurisdiction/path'
 import { DEFAULT_INDEX_QUERY, parseIndexQuery, queryIndex, toMapEntry, type IndexTable, type MapEntry } from '../jurisdiction/index-table'
 import { INDEX_PATH, type Drill, type FlowDepth, type FlowView, type IndexEntry, type PageData, type Setsu } from '../jurisdiction/types'
 import { assetPath, PROFILES, type Profile } from '../jurisdiction/profiles'
+import { EMBLEMS } from '../jurisdiction/emblems'
 import { clientIp, errorResponse, HttpError, rateLimit } from './http'
 import { VIEW_RATE_LIMIT } from './limits'
 import type { Env, RateLimiter } from './env'
@@ -83,15 +84,12 @@ export async function resolveJurisdiction(env: Env, path: string): Promise<Juris
   const prefectureCode = `${entry.code.slice(0, 2)}0001`
   const prefecturePath = entry.code !== prefectureCode && entries.some((e) => e.code === prefectureCode) ? jurisdictionPath(prefectureCode) : INDEX_PATH
   const neighbors = nearby(entry, entries.filter((e) => e.code.slice(0, 2) === entry.code.slice(0, 2) && e.code !== entry.code && e.code !== prefectureCode && e.settlementYears.length > 0))
-    .map((e) => {
-      const logo = PROFILES[e.code]?.logo
-      return { code: e.code, name: e.name, path: jurisdictionPath(e.code), ...(logo ? { logo: assetPath(e.code, logo) } : {}) }
-    })
+    .map((e) => ({ code: e.code, name: e.name, path: jurisdictionPath(e.code), ...(EMBLEMS[e.code] ? { logo: assetPath(e.code, 'emblem.svg') } : {}) }))
   const data = entry.settlementYears.length > 0 ? await page(env, entry) : null
   return data ? { kind: 'page', data: { ...data, prefecturePath, neighbors, profile: PROFILES[entry.code] ?? null } } : { kind: 'empty', entry }
 }
 
-/** 収録のある自治体の頁を含む sitemap。API に繋がらなくても入口と一覧だけで答える */
+/** 収録のある自治体の頁を含む sitemap。API に繋がらなくても入口・一覧・アシスタントだけで答える */
 export async function sitemapResponse(env: Env): Promise<Response> {
   try {
     return new Response(sitemapXml(await catalog(env)), { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })

@@ -201,7 +201,11 @@
                 "minLength": 10
               },
               "corrected_code": {
-                "type": "string",
+                "description": "読んだ番号の訂正。null は、名前の頭の数字を番号と読んだ行（「6次産業化…」）の番号を外し、名前へ戻す。",
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "pattern": "^[0-9]+$"
               },
               "y": {
@@ -354,6 +358,47 @@
           "page",
           "observation_id",
           "observed",
+          "reason"
+        ]
+      }
+    },
+    "dropped_bands": {
+      "description": "分冊の境目の頁（前の冊の最後の頁と次の冊の最初の頁が同じ印字）で、この冊が読まない行の帯。頁と縦の範囲（PDF の pt、上端・下端）を原典の描画で確かめて宣言し、真ん中がその範囲にある読みを除く。見出しと罫線は残す。読みを1つも含まなければ止める。",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "y_range": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 10
+          }
+        },
+        "required": [
+          "id",
+          "page",
+          "y_range",
           "reason"
         ]
       }

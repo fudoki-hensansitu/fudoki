@@ -99,6 +99,14 @@ def _verified_total_boxes(words, tables, amount_columns, tolerance, candidate_ba
             total_labels[page, round(box[1])].append(box)
         if (page, round(box[1])) in candidate_baselines and re.fullmatch(r'[0-9,△▲\-－―—]+', _word_key(text)):
             baselines[page, round(box[1])].append((box, text))
+
+    def labels_on(page, y):
+        # A 計 printed in a larger face starts a little above its amount (`計` 366.5, `1,968,268,271` 368.9).
+        # It starts at most 4pt above the amount's top and no lower, and reaches down past that top: the label
+        # of the row above ends above it.
+        return [box for offset in range(-4, 3) for box in total_labels.get((page, y + offset), ())
+                if box[3] > y + 4]
+
     verified = set()
     for table in tables:
         nodes = {n['node_key']: n for n in table.nodes}
@@ -200,7 +208,7 @@ def _verified_total_boxes(words, tables, amount_columns, tolerance, candidate_ba
                 after = (page, y) > last
                 parent_balance = balance_cache[identity[0], expected, identity[-1]]
                 if not after and not leading:
-                    label_possible = total_labels[page, y] or any(
+                    label_possible = labels_on(page, y) or any(
                         _word_key(identity[-2].split('／')[-1]) == text for _, text in named_lines[page, y])
                     if not parent_balance or not label_possible:
                         continue
@@ -218,7 +226,7 @@ def _verified_total_boxes(words, tables, amount_columns, tolerance, candidate_ba
                          for start in range(len(run)) for end in range(start + 1, len(run) + 1)
                          if number(''.join(text for _, text in run[start:end])) == expected]
                 parts = exact[0] if len(exact) == 1 else []
-                labeled = parts and any(box[2] <= parts[0][0][0] for box in total_labels[page, y])
+                labeled = parts and any(box[2] <= parts[0][0][0] for box in labels_on(page, y))
                 if parts and any(_word_key(identity[-2].split('／')[-1]) == text and box[2] <= parts[0][0][0]
                                  for box, text in named_lines[page, y]):
                     labeled = True
@@ -247,7 +255,7 @@ def _verified_total_boxes(words, tables, amount_columns, tolerance, candidate_ba
                                   for index, (left_header, left_boxes) in enumerate(nonzero)
                                   for right_header, right_boxes in nonzero[index + 1:])
                 labeled = any(any(label[2] <= parts[0][0][0]
-                                                    for label in total_labels[page, y])
+                                                    for label in labels_on(page, y))
                               for _, expected, parts in group)
                 if independent or labeled:
                     verified.update((page, tuple(box)) for _, expected, parts in group

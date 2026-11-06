@@ -14,6 +14,7 @@ Hallmark は検出すると pick をこれに従わせる。値を変えると�
 
 画面は **読み物**（ホーム・利用条件・案内）と **データの面**（報告・分析）に分かれる。token と書体は共通で、
 絵の面（網点・大きな字・朱の楕円）を持つのは読み物だけ。データの面は紙・罫線・数字だけで組む。
+**明朝を使うのは入口の読み物（`/` の紹介）の見出しだけ。** アプリの中（自治体の一覧・個別ページ・アシスタント・会話）は見出しも含めてすべてゴシック（`--font-sans`）で組み、階層は太さと大きさで作る。
 
 ## Tokens
 
@@ -134,7 +135,7 @@ shadcn/ui の語彙。色の役割は次のとおり。
 ## Components
 
 ```css
-/* 見出しは明朝 400 だけ。太さではなく大きさと余白で階層を作る */
+/* 入口の読み物の見出しは明朝 400 だけ。太さではなく大きさと余白で階層を作る（アプリの中はゴシック） */
 .text-heading { font-family: var(--font-display); font-weight: 400; font-style: normal; letter-spacing: var(--letter-spacing-heading); word-break: auto-phrase; text-wrap: balance; }
 .text-body { font-family: var(--font-sans); font-size: var(--text-body); line-height: var(--line-height-body); letter-spacing: var(--letter-spacing-body); line-break: strict; word-break: normal; overflow-wrap: break-word; }
 .num { font-variant-numeric: tabular-nums; letter-spacing: 0; white-space: nowrap; }

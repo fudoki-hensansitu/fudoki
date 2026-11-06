@@ -4,7 +4,7 @@ import { CfWorkerJsonSchemaValidator } from '@modelcontextprotocol/server/valida
 import { createApp } from './app'
 import { UNCOVERED_SOURCES } from './operations'
 import type { Db } from './db'
-import { insertCoverage, insertJurisdiction, insertNode, insertOrigin, insertPopulation, testDb } from './testing'
+import { insertCoverage, insertJurisdiction, insertOrigin, insertPopulation, insertSubject, testDb } from './testing'
 
 let db: Db
 let sqlite: Database
@@ -154,7 +154,7 @@ describe('自治体と収録範囲（GET /v1/jurisdictions・list_jurisdictions�
   test('MCP の tool でも同じ結果を返し、structuredContent が outputSchema に通る', async () => {
     const tools = (await rpc('tools/list')).result.tools as { name: string; outputSchema: unknown; description: string }[]
     const tool = tools.find((t) => t.name === 'list_jurisdictions')!
-    expect(tool.description).toContain('search_expenditure_nodes')
+    expect(tool.description).toContain('search_expenditure_subjects')
     const validate = new CfWorkerJsonSchemaValidator().getValidator(tool.outputSchema as never)
     for (const args of [{ name: '武蔵野市' }, { code: '13203' }, {}, { page_size: 1 }]) {
       const body = await rpc('tools/call', { name: 'list_jurisdictions', arguments: args })
@@ -170,12 +170,12 @@ describe('自治体と収録範囲（GET /v1/jurisdictions・list_jurisdictions�
   })
 
   test('返った条件でそのまま明細を検索できる', async () => {
-    insertNode(sqlite, { document_kind: 'settlement', node_id: 'a'.repeat(64), jurisdiction_code: '132039', fiscal_year: 2024, account_name: '国民健康保険事業会計', node_kind: '款', origin_id: 'o2' })
+    insertSubject(sqlite, { document_kind: 'settlement', subject_id: 'a'.repeat(64), jurisdiction_code: '132039', fiscal_year: 2024, account_name: '国民健康保険事業会計', level: '款', origin_id: 'o2' })
     const j = (await list('?code=132039&view=FULL')).jurisdictions[0]
     const c = j.coverage.find((x: { document_kind: string }) => x.document_kind === 'settlement')
     const a = c.accounts.find((x: { account_name: string }) => x.account_name === '国民健康保険事業会計')
     const res = await app.request(
-      '/v1/expenditure/nodes:search',
+      '/v1/fiscal/expenditure/subjects:search',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -188,7 +188,7 @@ describe('自治体と収録範囲（GET /v1/jurisdictions・list_jurisdictions�
       { DB: db }
     )
     const found = await res.json()
-    expect(found.nodes).toHaveLength(1)
+    expect(found.subjects).toHaveLength(1)
     expect(found.origins.map((o: { origin_id: string }) => o.origin_id)).toEqual(a.origins.map((o: { origin_id: string }) => o.origin_id))
   })
 })

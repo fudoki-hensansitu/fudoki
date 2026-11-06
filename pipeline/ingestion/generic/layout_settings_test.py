@@ -134,6 +134,34 @@ class LayoutHintsTest(unittest.TestCase):
                 self.assertEqual([(item.name, item.indent) for item in result], [(name + '補助費', 98)])
                 self.assertEqual(result[0].amounts[0][1][0].text, '100')
 
+    def test_bracket_line_under_a_name_waiting_for_its_amount_is_the_name(self):
+        # `…委員報酬` / `(9人) 840,000` (132101): the count in the bracket is part of the name, not a note.
+        settings = {'wrap': 'amount_on_last_line', 'note_kinds': {'(': '内訳'}}
+        first = self.item('委員報酬', None, '委員報酬', 80, 10)
+        count = self.item('(9人)', None, '(9人)', 80, 23, '840,000')
+        result = apply_layout([first, count], settings, set())
+        self.assertEqual([(item.name, item.role) for item in result], [('委員報酬(9人)', 'node')])
+        self.assertEqual(result[0].amounts[0][1][0].text, '840,000')
+        # A name that already has its amount waits for nothing: the bracket line is the note it says it is.
+        paid = self.item('委員報酬', None, '委員報酬', 80, 10, '100')
+        note = self.item('(9人)', None, '(9人)', 80, 23, '840,000')
+        result = apply_layout([paid, note], settings, set())
+        self.assertEqual([item.role for item in result], ['node', 'annotation'])
+
+    def test_wrapped_bracket_note_takes_its_count_line(self):
+        # `(投票用紙読取分類機` / `3台 2,805,000)` (132101): the `3` opening the second line is no item number.
+        settings = {'note_kinds': {'(': '内訳'}}
+        note = self.item('(投票用紙読取分類機', None, '(投票用紙読取分類機', 80, 10)
+        count = self.item('3台', '3', '台', 80, 23, '2,805,000')
+        result = apply_layout([note, count], settings, set())
+        self.assertEqual([(item.name, item.role) for item in result], [('(投票用紙読取分類機3台', 'annotation')])
+        self.assertEqual(result[0].amounts[0][1][0].text, '2,805,000')
+        # Money of another column on the second line is no money of the note.
+        note = self.item('(投票用紙読取分類機', None, '(投票用紙読取分類機', 80, 10)
+        count = self.item('3台', '3', '台', 80, 23, '2,805,000')
+        with self.assertRaisesRegex(ValueError, 'separate-column money'):
+            apply_layout([note, count], settings, {id(count)})
+
     def test_configured_note_with_separate_column_money_stops_real_build(self):
         subject = Band(0, 40, 1, ('款',), [20, 100], 20, 100, kind='label')
         remarks = Band(40, 140, 1, ('備考',), [20, 100], 20, 100, kind='label')

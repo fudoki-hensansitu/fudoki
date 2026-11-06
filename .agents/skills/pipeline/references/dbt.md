@@ -31,3 +31,12 @@
 stagingされた表をすべて配布・集計する必要はない。後段のconsumerと検査が、表ごとの役割を使い分ける。
 
 金額辞書の空の `phase` は、見出しを確認したうえで段階別の比較・執行額の和に含めない欄（不用額・繰越額・予算の増減内訳・注記など）を表す。辞書にも軸の継承にも該当しない見出しと、円・千円以外の単位は `fiscal_amounts_contract` が構築を止める。`header_path` は取り込みで「／」、staging の NFKC 後は「/」になる。
+
+## 内訳の分け方（breakdown）を宣言する
+
+新しい出典（自治体・年度・資料区分）を取り込んだら、目の直下にある内訳の欄の見出し（`int_fiscal__expenditure_rows` の `source_heading`）ごとに、`seeds/fiscal/fiscal_detail_breakdown.csv` へ1行書く。宣言の無い見出しは検査 `fiscal_detail_breakdown_declared` が構築を止め、使われない宣言も同じ検査で止まる。設計は [配信する表の設計](../../../../docs/prd/fiscal-serving-tables/dd.md)。
+
+1. 見出しと、その下の名称の例を warehouse から引く（目の直下だけを見る）。
+2. 名称を見て分け方を決める。`節` は給料・委託料などの法定の節の名称。`事業` は事業名の一覧（備考・説明・事業名・CSV の事項など）。`その他` は事業とも節とも読めない欄（経費の品目が1割以上混ざる備考など）。金額の無い欄や財源内訳・割合・節説明は `除外` にする。
+3. 同じ見出しの語でも自治体で中身が違う（133035 などの備考は経費の品目）。他の自治体の行を写さず、出典ごとに確かめる。
+4. `basis` に確かめた中身（名称の例・品目の割合など）を書き、`bun run dbt:build` で検査と和の規則（`fiscal_serving_totals`・`fiscal_detail_branch_sums`）を確かめる。

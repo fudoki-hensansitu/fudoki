@@ -1,5 +1,5 @@
 // ホームに載せる数字。api.fudoki.dev の応答をそのまま写したもので、画面では足し算をしない（DESIGN.md「画面で集計しない」）
-// 取り直すときは POST /v1/expenditure/nodes:search（document_kind=settlement, fiscal_year=2025, account_name=一般会計）。出典の頁は source_page
+// 取り直すときは POST /v1/fiscal/expenditure/subjects:search（document_kind=settlement, fiscal_year=2025, account_name=一般会計）と、内訳は details:search。出典の頁は get の locations の source_page
 export const HOME = {
   nakano: {
     jurisdiction: '中野区',

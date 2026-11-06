@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { DOMAIN_FRAMES, groupByFrame, OTHER_FRAME } from './domains'
+import { EMBLEMS } from './emblems'
 import { Flow } from './flow'
 import { assetPath, type EvaluatedProject, type Initiative, type ProfileYear, type Scrap } from './profiles'
 import { changePct, INDEX_PATH, formatAsOf, formatPeople, formatYen, reiwa, yearName, type FlowView, type PageData, type Project, type Setsu, type YearTotal } from './types'
@@ -628,7 +629,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
     if (bar && a) bar.scrollTo({ left: a.offsetLeft - 16, behavior: 'smooth' })
   }, [current])
 
-  const logo = profile?.logo ? assetPath(data.code, profile.logo) : null
+  const logo = EMBLEMS[data.code] ? assetPath(data.code, 'emblem.svg') : null
 
   return (
     <>
@@ -653,7 +654,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
             </div>
           ) : null}
           <div className="grid size-20 place-items-center rounded-xl border bg-white p-2.5 sm:size-[132px] sm:rounded-2xl sm:p-[18px]">
-            {logo ? <img src={logo} alt={data.name} className="h-auto w-full" /> : <span className="text-3xl text-foreground sm:text-5xl">{data.name[0]}</span>}
+            {logo ? <img src={logo} alt="" className="h-auto w-full" /> : <span className="text-3xl text-foreground sm:text-5xl">{data.name[0]}</span>}
           </div>
           <div className="flex min-w-0 flex-col gap-3">
             <h1 ref={title} className="text-[clamp(1.75rem,1.4rem+1.2vw,2.25rem)] font-normal leading-tight">{data.name}</h1>

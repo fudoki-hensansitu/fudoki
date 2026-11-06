@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, test } from 'bun:test'
 import { createApp, RENDER_RESULT_TEXT } from './app'
 import type { Db } from './db'
 import type { Database } from 'bun:sqlite'
-import { insertJurisdiction, insertNode, insertOrigin, testDb } from './testing'
+import { insertJurisdiction, insertOrigin, insertSubject, testDb } from './testing'
 import { VIEW_HTML, VIEW_URI } from './gen/view'
 import { operations } from './operations'
 import { SUGGESTIONS_META_KEY } from '../../../packages/fiscal/suggestions'
@@ -36,7 +36,7 @@ describe('MCP Apps の View', () => {
     const withView = tools.filter((t) => t._meta).map((t) => t.name)
     expect(withView).toEqual(['render_expenditure_view'])
     expect(tools.find((t) => t.name === 'render_expenditure_view')!._meta).toEqual({ ui: { resourceUri: VIEW_URI }, 'ui/resourceUri': VIEW_URI })
-    for (const name of ['get_expenditure_node', 'list_jurisdictions', 'search_expenditure_nodes']) expect(tools.some((t) => t.name === name)).toBe(true)
+    for (const name of ['get_expenditure_subject', 'get_expenditure_detail', 'list_jurisdictions', 'search_expenditure_subjects', 'search_expenditure_details']) expect(tools.some((t) => t.name === name)).toBe(true)
   })
 
   test('どの tool も title を最上位と annotations の両方に持ち、読み取り専用と宣言する（Claude の提出画面の検査）', async () => {
@@ -49,11 +49,11 @@ describe('MCP Apps の View', () => {
     }
   })
 
-  test('Directory exposes six stable tool names with English capability descriptions', async () => {
+  test('Directory exposes eight stable tool names with English capability descriptions', async () => {
     const tools = (await rpc('tools/list')).result.tools as { name: string; title: string; description: string; inputSchema: { properties: Record<string, { enum?: string[] }> } }[]
     expect(tools.map((t) => t.name).sort()).toEqual([
-      'describe_expenditure_columns', 'get_expenditure_node', 'list_jurisdictions',
-      'render_expenditure_view', 'search_evaluations', 'search_expenditure_nodes',
+      'describe_expenditure_columns', 'get_expenditure_detail', 'get_expenditure_subject', 'list_jurisdictions',
+      'render_expenditure_view', 'search_evaluations', 'search_expenditure_details', 'search_expenditure_subjects',
     ])
     for (const t of tools) {
       expect(t.title).toMatch(/[A-Za-z]+ [A-Za-z]+/)
@@ -62,7 +62,7 @@ describe('MCP Apps の View', () => {
     // Data tool descriptions stay independent of the optional View.
     for (const op of operations) expect(tools.find((t) => t.name === op.name)!.description).toBe(op.description)
     const renderer = tools.find((t) => t.name === 'render_expenditure_view')!
-    expect(renderer.inputSchema.properties.tool!.enum).toEqual(['search_expenditure_nodes', 'get_expenditure_node'])
+    expect(renderer.inputSchema.properties.tool!.enum).toEqual(['search_expenditure_subjects', 'search_expenditure_details', 'get_expenditure_subject', 'get_expenditure_detail'])
     expect(renderer.description).toContain('tables and charts in clients that support MCP Apps')
     expect(renderer.description).toContain('structuredContent')
     expect(renderer.description).toContain('text acknowledgement')
@@ -76,18 +76,18 @@ describe('MCP Apps の View', () => {
     expect(init.instructions).not.toContain('when an MCP Apps View is unavailable')
     insertJurisdiction(sqlite, { jurisdiction_code: '132039', name: '武蔵野市' })
     insertOrigin(sqlite, { origin_id: 'o1', title: '決算書', url: 'https://example.test/settlement.pdf', sha256: 'abc123' })
-    const nodeId = 'a'.repeat(64)
-    insertNode(sqlite, { document_kind: 'settlement', node_id: nodeId, name: '総務費', amount_yen: 123456, origin_id: 'o1' })
+    const subjectId = 'a'.repeat(64)
+    insertSubject(sqlite, { subject_id: subjectId, name: '総務費', amount_yen: 123456, origin_id: 'o1' })
     const calls = [
-      { name: 'search_expenditure_nodes', arguments: { document_kind: 'settlement', fiscal_year: { min: 2024, max: 2024 } } },
-      { name: 'get_expenditure_node', arguments: { document_kind: 'settlement', node_id: nodeId } },
+      { name: 'search_expenditure_subjects', arguments: { document_kind: 'settlement', fiscal_year: { min: 2024, max: 2024 } } },
+      { name: 'get_expenditure_subject', arguments: { subject_id: subjectId } },
     ]
     for (const call of calls) {
       const direct = (await rpc('tools/call', call)).result
       expect(direct.isError).toBeUndefined()
       const text = JSON.parse(direct.content[0].text)
       expect(text).toEqual(direct.structuredContent)
-      const node = text.node ?? text.nodes[0]
+      const node = text.subject ?? text.subjects[0]
       expect(node).toMatchObject({ name: '総務費', amount_yen: 123456, fiscal_year: 2024, document_kind: 'settlement', origin_id: 'o1' })
       expect(text.origins).toContainEqual(expect.objectContaining({ title: '決算書', url: 'https://example.test/settlement.pdf', sha256: 'abc123' }))
       const rendered = (await rpc('tools/call', { name: 'render_expenditure_view', arguments: { tool: call.name, arguments: call.arguments } })).result
@@ -99,15 +99,15 @@ describe('MCP Apps の View', () => {
 
   test('描画 tool はデータ tool と同じ結果を返し、入力が不正なら isError', async () => {
     insertJurisdiction(sqlite, { jurisdiction_code: '132039', name: '武蔵野市' })
-    insertNode(sqlite, { document_kind: 'settlement', node_id: 'n1', name: '総務費', node_kind: '款', amount_yen: 100 })
+    insertSubject(sqlite, { subject_id: 'n1', name: '総務費', level: '款', amount_yen: 100 })
     const args = { document_kind: 'settlement', fiscal_year: { min: 2024, max: 2024 } }
-    const direct = (await rpc('tools/call', { name: 'search_expenditure_nodes', arguments: args })).result
-    const rendered = (await rpc('tools/call', { name: 'render_expenditure_view', arguments: { tool: 'search_expenditure_nodes', arguments: args } })).result
+    const direct = (await rpc('tools/call', { name: 'search_expenditure_subjects', arguments: args })).result
+    const rendered = (await rpc('tools/call', { name: 'render_expenditure_view', arguments: { tool: 'search_expenditure_subjects', arguments: args } })).result
     expect(rendered.structuredContent).toEqual(direct.structuredContent)
     // データは structuredContent だけで返し、text に同じ内容を写さない（会話の文脈を膨らませないため）
     expect(rendered.content).toEqual([{ type: 'text', text: RENDER_RESULT_TEXT }])
     expect(rendered._meta).toEqual(direct._meta)
-    const bad = (await rpc('tools/call', { name: 'render_expenditure_view', arguments: { tool: 'get_expenditure_node', arguments: {} } })).result
+    const bad = (await rpc('tools/call', { name: 'render_expenditure_view', arguments: { tool: 'get_expenditure_subject', arguments: {} } })).result
     expect(bad.isError).toBe(true)
     // 自治体の一覧は View を持たず、描画 tool では呼べない
     const noView = (await rpc('tools/call', { name: 'render_expenditure_view', arguments: { tool: 'list_jurisdictions', arguments: {} } })).result
@@ -116,18 +116,18 @@ describe('MCP Apps の View', () => {
 
   test('描画 tool は、結果の自治体コードに対応する自治体名を _meta にだけ載せる', async () => {
     insertJurisdiction(sqlite, { jurisdiction_code: '132039', name: '武蔵野市' })
-    insertNode(sqlite, { document_kind: 'settlement', node_id: 'n1', name: '総務費', node_kind: '款', amount_yen: 100 })
-    const res = (await rpc('tools/call', { name: 'render_expenditure_view', arguments: { tool: 'search_expenditure_nodes', arguments: { document_kind: 'settlement', fiscal_year: { min: 2024, max: 2024 } } } })).result
+    insertSubject(sqlite, { subject_id: 'n1', name: '総務費', level: '款', amount_yen: 100 })
+    const res = (await rpc('tools/call', { name: 'render_expenditure_view', arguments: { tool: 'search_expenditure_subjects', arguments: { document_kind: 'settlement', fiscal_year: { min: 2024, max: 2024 } } } })).result
     expect(res._meta.jurisdictionNames).toEqual({ '132039': '武蔵野市' })
     expect(JSON.stringify(res.structuredContent)).not.toContain('武蔵野市')
   })
 
   test('結果の _meta に次の質問の候補を載せ、text と structuredContent には載せない', async () => {
     insertJurisdiction(sqlite, { jurisdiction_code: '132039', name: '武蔵野市' })
-    insertNode(sqlite, { document_kind: 'settlement', node_id: 'n1', name: '総務費', node_kind: '款', amount_yen: 100, is_leaf: 0 })
-    insertNode(sqlite, { document_kind: 'settlement', node_id: 'n2', name: '民生費', node_kind: '款', amount_yen: 900, is_leaf: 0 })
+    insertSubject(sqlite, { subject_id: 'n1', name: '総務費', level: '款', amount_yen: 100, is_leaf: 0 })
+    insertSubject(sqlite, { subject_id: 'n2', name: '民生費', level: '款', amount_yen: 900, is_leaf: 0 })
     const args = { document_kind: 'settlement', fiscal_year: { min: 2024, max: 2024 } }
-    const res = (await rpc('tools/call', { name: 'search_expenditure_nodes', arguments: args })).result
+    const res = (await rpc('tools/call', { name: 'search_expenditure_subjects', arguments: args })).result
     expect(res._meta[SUGGESTIONS_META_KEY]).toEqual([
       { label: '「民生費」の内訳を見る', prompt: '武蔵野市の2024年度決算（一般会計）の「民生費」の内訳を見せて' },
       { label: '「民生費」を他の年度と比べる', prompt: '武蔵野市の2024年度決算（一般会計）の「民生費」を他の年度と比べて' },

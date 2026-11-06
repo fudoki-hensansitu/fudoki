@@ -316,6 +316,16 @@ def _split_line(line: list[Glyph], amount_brackets: bool = False, bare_amounts: 
             run = _cut(parts[-1], len(text(parts[-1])) - 1)[0]
             if run and is_amount(text(run)) and number(text(run)) is not None:
                 return [g for part in parts[:-1] for g in part], [run]
+        # OCR left the opening bracket unread (`負担金補助及び交付金` `48,005,970)`), or read it as a letter
+        # (`C21,368,656)`): a grouped amount closed by the bracket is the bracketed amount all the same.
+        take = 2 if len(parts) > 2 and normalize(text(parts[-1])) == closing else 1  # `48,005,970` `)`
+        last = [g for part in parts[-take:] for g in part] if len(parts) > take else []
+        unopened = re.fullmatch(r'([CcＣ]?)([△▲]?[0-9]{1,3}(?:,[0-9]{3})+)[)\]）］]', normalize(text(last)))
+        if unopened and BRACKET_PAIRS[closing] not in normalize(text(line)):
+            tail = _cut(last, len(unopened.group(1)))[1]  # the letter OCR read for the bracket is no name
+            tail = _cut(tail, len(unopened.group(2)))[0]  # the closing bracket is no digit
+            if number(normalize(text(tail))) is not None:
+                return [g for part in parts[:-take] for g in part], [tail]
         # The bracket printed flush against a long name, inside one of Poppler's words (`…課）(1,04` `7,226)`).
         glyphs = [g for part in parts for g in part]
         flush = re.match(r'^(.*[^(\[（［])([(\[（［][△▲]?[0-9]{1,3}(?:,[0-9]{3})*[)\]）］])$', text(glyphs))
@@ -1504,7 +1514,16 @@ def closing_department_headings(ordered: list[Item]) -> set[int]:
         if item.group.subject or not department_heading(item):
             continue
         parts = []
-        for other in ordered[index + 1:]:
+        for position in range(index + 1, len(ordered)):
+            other = ordered[position]
+            if other.group.subject and not other.amounts and other.page != item.page:
+                # The subject printed again at the top of the next page (`(1 保健衛生費)`): the parts run on. A new
+                # subject there (its amounts may sit in a column not yet joined to it) ends them.
+                open_one = next((s for s in reversed(ordered[:position])
+                                 if s.group.subject and s.level == other.level), None)
+                if open_one is not None and repeats(open_one, other, ocr=True):
+                    continue
+                break
             if other.group.subject or other.group.axis != item.group.axis:
                 break
             start = lambda it: it.lines[0][0].x0  # where the line starts, its number included
@@ -1618,6 +1637,17 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
             item.indent = layout_name_start(item, settings.get('hang_chars'))
         raw = normalize(text(item.lines[0]))
         note = raw.startswith(prefixes)
+        waiting = result[-1] if result else None
+        if (note and raw.startswith(('(', '（')) and settings.get('wrap') == 'amount_on_last_line' and waiting is not None and waiting.role in ('node', 'note')
+                and not waiting.amounts and id(waiting) not in column_amount_items
+                and waiting.page == item.page
+                and abs(item.lines[0][0].x0 - waiting.indent) <= max(g.y1 - g.y0 for g in item.glyphs)  # a character
+                and 0 <= item.y0 - waiting.y1 <= max(g.y1 - g.y0 for g in item.glyphs)):
+            # The second line of a name still waiting for its amount (`…委員報酬` / `(9人) 840,000`); the count in
+            # its bracket is no item number. Only a bracket: a note of another prefix under a name (`1報酬` /
+            # `1項1目18節から 169,664`, 132055) is the note it says it is.
+            note = False
+            item.code, item.name, item.indent = None, raw, waiting.indent
         mark = next((m for m in ordered_marks
                      if (shape_of(item) == shapes[m] if m in shapes else raw.startswith(normalize(m)))), None)
         if note:
@@ -1633,6 +1663,18 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
             else:
                 item.level = marks[mark] - 1
         previous = result[-1] if result else None
+        if (previous and previous.role == 'annotation' and not previous.amounts and item.page == previous.page
+                and normalize(previous.name).startswith(('(', '（')) and not re.search(r'[)）]', normalize(previous.name))
+                and (item.amounts or re.search(r'[)）]$', normalize(text(item.lines[-1]))))
+                and 0 <= item.y0 - previous.y1 <= max(g.y1 - g.y0 for g in item.glyphs)):
+            # A bracketed note wrapped before its count (`(投票用紙読取分類機` / `3台 2,805,000)`): the number
+            # starting the second line is the count, not an item's number.
+            if id(item) in column_amount_items:
+                raise ValueError(f'Configured note carries separate-column money: p{item.page} {item.name!r}')
+            previous.name += ''.join(normalize(text(line)) for line in item.lines)
+            previous.lines += item.lines
+            previous.amounts += item.amounts
+            continue
         if (settings.get('rows') and previous and item.code is None and mark is None and not note
                 and item.role == previous.role == 'node' and item.page == previous.page and not item.amounts
                 and _cell(item.group.bands[0], previous.anchor) == _cell(item.group.bands[0], item.anchor)):
@@ -1760,7 +1802,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
         scan_margins, scan_edges, scan_limits = code_margins(scanned), number_edges(scanned, pattern), line_limits(scanned)
         text_taught = (margins, edges, limits)
     skipped: list[Logical] = []
-    open_headings: dict[str, int] = {}  # per axis: the depth of the department heading line that is open
+    open_headings: dict[str, tuple[int, float]] = {}  # per axis: the depth and line start of the open department heading
     for logical in logicals:
         if scanned:
             margins, edges, limits = (scan_margins, scan_edges, scan_limits) if logical.ocr else text_taught
@@ -2075,6 +2117,14 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
         if entry is not None and entry[1] is not None and SUPPLEMENT_ROUND.fullmatch(entry[1]):
             unpaid_rounds.extend(entry[2])
 
+    def page_events(logical, ordered, found):
+        events = sorted(((subject_row(item, logical)[0] if group.subject else item.anchor,
+                          ordered.index(group), item.level or 0, item.anchor, item)
+                         for group in ordered for item in found[id(group)]), key=lambda e: e[:4])
+        return [e[4] for e in events]
+
+    # A department heading's parts can run on to the next page (132055 p52-54): its sum is checked over the pages.
+    closing_headings = closing_department_headings([item for entry in all_items for item in page_events(*entry)])
     for logical, ordered, found in all_items:
         # A subject item opens at the top of its rule-bounded row: its label may be
         # centred lower than the first remark of its block.
@@ -2082,7 +2132,6 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                           ordered.index(group), item.level or 0, item.anchor, item)
                          for group in ordered for item in found[id(group)]), key=lambda e: e[:4])
         events = [(e[0], e[1], e[4]) for e in events]
-        closing_headings = closing_department_headings([item for _, _, item in events])
         headings = heading_names(logical)
         subject_depth = max((g.levels or len(g.bands) for g in ordered if g.subject), default=3) \
             + (titled if any(title_shift(g) for g in ordered if g.subject) else 0)
@@ -2193,10 +2242,14 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     depth = item.level + 1  # the configured mark names a breakdown level
                 axis = item.group.axis
                 if id(item) in closing_headings:
-                    open_headings[axis] = depth  # its parts follow one level down
+                    open_headings[axis] = (depth, item.lines[0][0].x0)  # its parts follow one level down
                 elif axis in open_headings:
-                    if depth < open_headings[axis] or department_heading(item):
-                        del open_headings[axis]  # shallower than the heading, or another department
+                    heading_depth, heading_start = open_headings[axis]
+                    if (depth < heading_depth or department_heading(item)
+                            or item.lines[0][0].x0 < heading_start - 3):
+                        # shallower than the heading, another department, or printed left of the heading
+                        # (`3 個人番号カード交付事務経費` after `(前年度繰越明許費)`): its parts have ended
+                        del open_headings[axis]
                     else:
                         depth += 1  # under the department's heading line, one level down
                 open_items = branch.setdefault(item.group.axis, [])

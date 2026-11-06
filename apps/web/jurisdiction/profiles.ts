@@ -75,8 +75,6 @@ export interface SourceDoc {
 
 export interface Profile {
   code: string
-  /** 自治体の紋章（区章・市章など）。品川区は Wikimedia Commons の Public domain の SVG */
-  logo?: string
   tags: string[]
   /** 基本構想が掲げる都市像（まちの将来像）。年度によらず header の名前の下に出す */
   vision?: { text: string; source: string }
@@ -88,7 +86,6 @@ export const assetPath = (code: string, file: string) => `/jurisdictions/${code}
 
 const SHINAGAWA: Profile = {
   "code": "131091",
-  "logo": "emblem.svg",
   "tags": [],
   "vision": {
     "text": "輝く笑顔 住み続けたいまち しながわ",
