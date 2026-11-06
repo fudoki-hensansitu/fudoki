@@ -34,7 +34,7 @@ async function memo<T>(key: string, fn: () => Promise<T>): Promise<T> {
 export const catalog = (env: Env) => memo<CatalogEntry[]>('catalog', () => loadCatalog(env))
 // catalog とは別の key で同じ TTL（1時間）を持つので、取り込みで自治体が増えてから一覧へ出るまで最大で約2時間かかる
 const index = (env: Env) => memo<IndexEntry[]>('index', async () => loadIndex(env, await catalog(env), jurisdictionPath))
-const page = (env: Env, e: CatalogEntry) => memo<PageData | null>(`page-${e.code}-${e.settlementYears.at(-1)}`, () => loadPage(env, e))
+const page = (env: Env, e: CatalogEntry) => memo<Omit<PageData, 'prefecturePath'> | null>(`page-${e.code}-${e.settlementYears.at(-1)}`, () => loadPage(env, e))
 
 export const jurisdictions = new Hono<{ Bindings: Env }>()
 
@@ -52,11 +52,15 @@ jurisdictions.get(INDEX_PATH, async (c) => {
 // /<都道府県のローマ字>/<自治体のローマ字>、都道府県自体は /<都道府県のローマ字>。/s/:id・/api/* など他の経路とは、都道府県の slug かどうかで見分ける（違えば API を引かずに次へ渡す）
 async function jurisdictionPage(c: Context<{ Bindings: Env }>, path: string) {
   try {
-    const entry = (await catalog(c.env)).find((e) => jurisdictionPath(e.code) === path)
+    const entries = await catalog(c.env)
+    const entry = entries.find((e) => jurisdictionPath(e.code) === path)
     if (!entry) return notFound()
+    // 都道府県名は都道府県自体の頁へ。都道府県自体の頁と、都道府県がカタログに無い（頁が無い）ときは一覧へ
+    const prefectureCode = `${entry.code.slice(0, 2)}0001`
+    const prefecturePath = entry.code !== prefectureCode && entries.some((e) => e.code === prefectureCode) ? jurisdictionPath(prefectureCode) : INDEX_PATH
     const data = entry.settlementYears.length > 0 ? await page(c.env, entry) : null
     if (!data) return new Response(renderEmpty(entry, navOpen(c.req.header('Cookie'))), { headers: HTML_HEADERS })
-    return new Response(renderPage({ ...data, profile: PROFILES[entry.code] ?? null }, c.env.TURNSTILE_SITE_KEY ?? '', navOpen(c.req.header('Cookie'))), { headers: HTML_HEADERS })
+    return new Response(renderPage({ ...data, prefecturePath, profile: PROFILES[entry.code] ?? null }, c.env.TURNSTILE_SITE_KEY ?? '', navOpen(c.req.header('Cookie'))), { headers: HTML_HEADERS })
   } catch {
     return unavailable()
   }
