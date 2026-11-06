@@ -91,7 +91,7 @@ export function Conversation({
         api: '/api/chat',
         headers: { Authorization: `Bearer ${stored.token}` },
         prepareSendMessagesRequest: ({ messages }) => ({
-          body: { id, messages: forServer(messages), ...(viewContext.current ? { viewContext: viewContext.current } : {}) },
+          body: { id, messages: forServer(messages), ...(stored.entry ? { entry: stored.entry } : {}), ...(viewContext.current ? { viewContext: viewContext.current } : {}) },
         }),
       }),
     [id, stored.token],
@@ -100,7 +100,7 @@ export function Conversation({
     id,
     messages: (stored.messages ?? []) as ChatMessage[],
     transport,
-    onFinish: ({ messages }) => saveSession(id, { token: stored.token, expiresAt: stored.expiresAt, messages, ...(viewContext.current ? { viewContext: viewContext.current } : {}) }),
+    onFinish: ({ messages }) => saveSession(id, { token: stored.token, expiresAt: stored.expiresAt, messages, ...(stored.entry ? { entry: stored.entry } : {}), ...(viewContext.current ? { viewContext: viewContext.current } : {}) }),
   })
   const busy = status === 'submitted' || status === 'streaming'
   const onSendRef = React.useRef(onSend)
@@ -115,7 +115,7 @@ export function Conversation({
   React.useEffect(() => {
     if (sent.current || !stored.pending) return
     sent.current = true
-    saveSession(id, { token: stored.token, expiresAt: stored.expiresAt, messages: stored.messages, ...(stored.viewContext ? { viewContext: stored.viewContext } : {}) })
+    saveSession(id, { token: stored.token, expiresAt: stored.expiresAt, messages: stored.messages, ...(stored.entry ? { entry: stored.entry } : {}), ...(stored.viewContext ? { viewContext: stored.viewContext } : {}) })
     // 入口で書いた最初の質問は、書いたときの文脈（選んだ文を含む）で送る
     send(stored.pending, stored.pendingContext)
   }, [id, stored, send])

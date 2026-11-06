@@ -62,7 +62,7 @@ export function StartForm({
       const body = (await res.json()) as { id?: string; token?: string; expiresAt?: number; error?: { message: string } }
       if (!res.ok || !body.id || !body.token) throw new Error(body.error?.message ?? '会話を始められませんでした')
       const pendingContext = context?.()?.slice(0, MAX_CONTEXT)
-      const session: StoredSession = { token: body.token, expiresAt: body.expiresAt ?? 0, pending: prefix ? `${prefix}${text}` : text, ...(pendingContext ? { pendingContext } : {}) }
+      const session: StoredSession = { token: body.token, expiresAt: body.expiresAt ?? 0, pending: prefix ? `${prefix}${text}` : text, entry: location.pathname, ...(pendingContext ? { pendingContext } : {}) }
       // 移った先は sessionStorage から token と質問を読むので、書けなければ移らない
       if (!saveSession(body.id, session))
         throw new Error('このブラウザでは会話を保存できないため始められません（プライベートブラウズや保存の制限を確かめてください）')
@@ -98,6 +98,7 @@ export function StartForm({
       <Composer onSubmit={start} pending={pending} placeholder={placeholder} onFocus={() => turnstile.current?.warm()} />
       <div ref={widget} className={challenge ? 'mt-3 flex justify-center' : 'hidden'} />
       {error ? <p role="alert" className="mt-3 text-sm text-destructive">{error}</p> : null}
+      <p className="mt-2 text-xs text-muted-foreground">質問は改善のため匿名で保存します（90日で削除）。</p>
       {after?.(start, pending)}
     </div>
   )
