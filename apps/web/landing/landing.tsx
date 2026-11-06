@@ -197,14 +197,14 @@ function Ledger() {
     let id: ReturnType<typeof setInterval> | undefined
     const io = new IntersectionObserver(([e]) => {
       clearInterval(id)
-      if (e?.isIntersecting) id = setInterval(() => setR((x) => x + 1), 2000)
+      if (e?.isIntersecting) id = setInterval(() => setR((x) => Math.min(x + 1, n)), 2000)
     })
     io.observe(el)
     return () => {
       io.disconnect()
       clearInterval(id)
     }
-  }, [])
+  }, [n])
   const onRolled = (e: React.TransitionEvent<HTMLSpanElement>) => {
     const el = e.currentTarget
     if (e.target !== el || r !== n) return

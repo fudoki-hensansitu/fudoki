@@ -20,12 +20,14 @@ function Expired() {
 }
 
 export function SessionPage({ id }: { id: string }) {
-  // undefined はまだ読んでいない（サーバーと最初の描画）、null は無い・期限切れ
-  const [stored, setStored] = React.useState<StoredSession | null | undefined>(undefined)
+  // 読んだ会話をその id と組で持つ。別の会話へ移った直後（前の id の値が残っている間）はまだ読んでいない扱いにする。
+  // session が undefined はまだ読んでいない（サーバーと最初の描画）、null は無い・期限切れ
+  const [loaded, setLoaded] = React.useState<{ id: string; session: StoredSession | null }>()
   React.useEffect(() => {
     const s = loadSession(id)
-    setStored(s && s.expiresAt * 1000 > Date.now() ? s : null)
+    setLoaded({ id, session: s && s.expiresAt * 1000 > Date.now() ? s : null })
   }, [id])
+  const stored = loaded?.id === id ? loaded.session : undefined
   return (
     <div id="chat-session">
       <noscript>会話には JavaScript を有効にしてください。</noscript>

@@ -69,7 +69,7 @@ export function StartForm({
         return true
       }
       // 頁を読み直さずに移る（サイドバーはそのまま）
-      void router.visit(`/s/${body.id}`)
+      await router.visit(`/s/${body.id}`)
       return true
     } catch (e) {
       setPending(false)
