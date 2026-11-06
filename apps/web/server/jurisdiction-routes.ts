@@ -67,7 +67,7 @@ export async function resolveJurisdiction(env: Env, path: string): Promise<Juris
   return data ? { kind: 'page', data: { ...data, profile: PROFILES[entry.code] ?? null } } : { kind: 'empty', entry }
 }
 
-/** 収録のある自治体の頁を含む sitemap。API に繋がらなくても入口と一覧だけで答える */
+/** 収録のある自治体の頁を含む sitemap。API に繋がらなくても入口・一覧・アシスタントだけで答える */
 export async function sitemapResponse(env: Env): Promise<Response> {
   try {
     return new Response(sitemapXml(await catalog(env)), { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
