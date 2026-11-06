@@ -1504,7 +1504,16 @@ def closing_department_headings(ordered: list[Item]) -> set[int]:
         if item.group.subject or not department_heading(item):
             continue
         parts = []
-        for other in ordered[index + 1:]:
+        for position in range(index + 1, len(ordered)):
+            other = ordered[position]
+            if other.group.subject and not other.amounts and other.page != item.page:
+                # The subject printed again at the top of the next page (`(1 保健衛生費)`): the parts run on. A new
+                # subject there (its amounts may sit in a column not yet joined to it) ends them.
+                open_one = next((s for s in reversed(ordered[:position])
+                                 if s.group.subject and s.level == other.level), None)
+                if open_one is not None and repeats(open_one, other, ocr=True):
+                    continue
+                break
             if other.group.subject or other.group.axis != item.group.axis:
                 break
             start = lambda it: it.lines[0][0].x0  # where the line starts, its number included
@@ -1760,7 +1769,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
         scan_margins, scan_edges, scan_limits = code_margins(scanned), number_edges(scanned, pattern), line_limits(scanned)
         text_taught = (margins, edges, limits)
     skipped: list[Logical] = []
-    open_headings: dict[str, int] = {}  # per axis: the depth of the department heading line that is open
+    open_headings: dict[str, tuple[int, float]] = {}  # per axis: the depth and line start of the open department heading
     for logical in logicals:
         if scanned:
             margins, edges, limits = (scan_margins, scan_edges, scan_limits) if logical.ocr else text_taught
@@ -2075,6 +2084,14 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
         if entry is not None and entry[1] is not None and SUPPLEMENT_ROUND.fullmatch(entry[1]):
             unpaid_rounds.extend(entry[2])
 
+    def page_events(logical, ordered, found):
+        events = sorted(((subject_row(item, logical)[0] if group.subject else item.anchor,
+                          ordered.index(group), item.level or 0, item.anchor, item)
+                         for group in ordered for item in found[id(group)]), key=lambda e: e[:4])
+        return [e[4] for e in events]
+
+    # A department heading's parts can run on to the next page (132055 p52-54): its sum is checked over the pages.
+    closing_headings = closing_department_headings([item for entry in all_items for item in page_events(*entry)])
     for logical, ordered, found in all_items:
         # A subject item opens at the top of its rule-bounded row: its label may be
         # centred lower than the first remark of its block.
@@ -2082,7 +2099,6 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                           ordered.index(group), item.level or 0, item.anchor, item)
                          for group in ordered for item in found[id(group)]), key=lambda e: e[:4])
         events = [(e[0], e[1], e[4]) for e in events]
-        closing_headings = closing_department_headings([item for _, _, item in events])
         headings = heading_names(logical)
         subject_depth = max((g.levels or len(g.bands) for g in ordered if g.subject), default=3) \
             + (titled if any(title_shift(g) for g in ordered if g.subject) else 0)
@@ -2193,10 +2209,14 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     depth = item.level + 1  # the configured mark names a breakdown level
                 axis = item.group.axis
                 if id(item) in closing_headings:
-                    open_headings[axis] = depth  # its parts follow one level down
+                    open_headings[axis] = (depth, item.lines[0][0].x0)  # its parts follow one level down
                 elif axis in open_headings:
-                    if depth < open_headings[axis] or department_heading(item):
-                        del open_headings[axis]  # shallower than the heading, or another department
+                    heading_depth, heading_start = open_headings[axis]
+                    if (depth < heading_depth or department_heading(item)
+                            or item.lines[0][0].x0 < heading_start - 3):
+                        # shallower than the heading, another department, or printed left of the heading
+                        # (`3 個人番号カード交付事務経費` after `(前年度繰越明許費)`): its parts have ended
+                        del open_headings[axis]
                     else:
                         depth += 1  # under the department's heading line, one level down
                 open_items = branch.setdefault(item.group.axis, [])

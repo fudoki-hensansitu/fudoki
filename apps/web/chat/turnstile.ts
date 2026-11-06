@@ -1,4 +1,4 @@
-// Turnstile の widget。送るときに実行して token を1つ取る。api.js は入口の頁が head で読み、無い頁（頁の間を移動して開いた自治体の頁など）ではここで読む
+// Turnstile の widget。送るときに実行して token を1つ取る。api.js は全頁では読まず、会話を始める入力を出したときにここで読む
 interface Turnstile {
   render(el: HTMLElement, options: Record<string, unknown>): string
   execute(id: string): void

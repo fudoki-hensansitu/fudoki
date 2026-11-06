@@ -1,7 +1,9 @@
 -- Stable published nodes must remain present and usable in comparisons.
 with expected(node_id, expected_cofog, expected_recipient) as (
     values ('38957757dc1a68d3a380e4552c88fd4d36f5d8c89b7ca89cd562a0972bb041ab', '10.2', null),
-           ('855a6a544f297d5e8b73830c261899edfa1cb020f33b73ca84e5a3383bd4ec2c', null, '介護保険')
+           ('855a6a544f297d5e8b73830c261899edfa1cb020f33b73ca84e5a3383bd4ec2c', null, '介護保険'),
+           -- 土木費・防災費の防災費（R6 決算）: civil protection is COFOG 03.2, not unclassifiable.
+           ('2c067608592d0c581c08049b02ffd1195e46c5cb5e23a48fdd52f815eb164437', '03.2', null)
 )
 select e.node_id
 from expected e left join (select * from {{ ref('int_fiscal__expenditure_nodes') }} where document_kind = 'settlement') n using (node_id)
