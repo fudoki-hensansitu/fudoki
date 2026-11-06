@@ -24,12 +24,12 @@ export interface ChatTurn {
 
 const EMAIL = /[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g
 // 0 から始まる国内の番号（ハイフン・空白あり／なし）と +81 の番号。金額や年度（4桁まで）を巻き込まないよう 10 桁以上だけを伏せる
-// 括弧の市外局番（(03) 1234-5678・03(1234)5678）も含める。全角の数字・＋－（）＠．は先に半角にする（他の字は変えない）
+// 括弧の市外局番（(03) 1234-5678・03(1234)5678）も含める。全角の英数字・＋－（）＠．＿は先に半角にする（他の字は変えない）
 const PHONE = /(?:\+81[-\s]?(?:\(0\))?|\(?\b0)\d{1,4}\)?[-\s]?\(?\d{1,4}\)?[-\s]?\d{3,4}\b/g
 
 /** 文からメールアドレス・電話番号の形のものを伏せる */
 export function redact(text: string): string {
-  return text.replace(/[０-９＋－（）＠．]/g, (ch) => String.fromCharCode(ch.charCodeAt(0) - 0xfee0)).replace(EMAIL, '[メール]').replace(PHONE, (m) => (m.replace(/\D/g, '').length >= 10 ? '[電話番号]' : m))
+  return text.replace(/[０-９Ａ-Ｚａ-ｚ＋－（）＠．＿]/g, (ch) => String.fromCharCode(ch.charCodeAt(0) - 0xfee0)).replace(EMAIL, '[メール]').replace(PHONE, (m) => (m.replace(/\D/g, '').length >= 10 ? '[電話番号]' : m))
 }
 
 export function writeChatTurn(db: ChatLogDatabase | undefined, t: ChatTurn, now = Date.now()): Promise<unknown> {
