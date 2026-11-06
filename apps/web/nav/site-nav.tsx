@@ -110,15 +110,13 @@ function useHideOnScroll() {
   return [hidden, setHidden] as const
 }
 
-/** 幅の狭い画面では、サイドバーの代わりに画面の下へ並べる */
+/** 幅の狭い画面では、サイドバーの代わりに画面の下へ並べる。MCP・フィードバックは載せない */
 function BottomNav({ active }: { active?: NavSection }) {
   const [hidden, setHidden] = useHideOnScroll()
   const items = [
     { href: '/', label: 'ホーム', icon: <HouseIcon /> },
     { href: '/jurisdictions', label: '自治体一覧', icon: <BankIcon />, active: active === 'jurisdictions' },
     { href: '/assistant', label: 'アシスタント', icon: <RobotIcon />, active: active === 'assistant' },
-    { href: MCP, label: 'MCP', icon: <PlugIcon /> },
-    { href: FEEDBACK, label: 'フィードバック', icon: <ChatIcon /> },
   ]
   return (
     <nav
@@ -128,13 +126,13 @@ function BottomNav({ active }: { active?: NavSection }) {
       onFocus={() => setHidden(false)}
       className="fixed inset-x-0 bottom-0 z-40 bg-sidebar pb-[env(safe-area-inset-bottom)] transition-transform duration-200 ease-out motion-reduce:transition-none data-hidden:translate-y-full md:hidden"
     >
-      <ul className="grid h-14 grid-cols-5">
+      <ul className="grid h-14 grid-cols-3">
         {items.map((i) => (
           <li key={i.href}>
             <NavLink
               href={i.href}
               aria-current={i.active ? 'page' : undefined}
-              className="flex h-full flex-col items-center justify-center gap-0.5 text-[10px] leading-none whitespace-nowrap text-muted-foreground aria-[current=page]:text-primary [&_svg]:size-5"
+              className="flex h-full flex-col items-center justify-center gap-0.5 text-[11px] leading-none text-muted-foreground aria-[current=page]:text-primary [&_svg]:size-5"
             >
               {i.icon}
               {i.label}
