@@ -17,6 +17,9 @@ with doc as (
     where k.division is not null and k.node_kind = '項' and k.axis_header = k.subject_axis
       and not exists (select 1 from rows m where m.source_table_key = k.source_table_key
                       and m.parent_node_key = k.node_key and m.node_kind = '目')
+      -- 統合後に末端（is_leaf）になった項は leaf_sum に入っているので足さない
+      and not exists (select 1 from {{ ref('fiscal_expenditure_subject') }} s
+                      where s.node_key = k.node_id and s.document_kind = 'settlement' and s.is_leaf)
     group by all
 )
 select doc.jurisdiction_code || ':' || doc.fiscal_year || ':' || doc.document_kind || ':' || doc.account_name as key,
