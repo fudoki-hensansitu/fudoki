@@ -1,6 +1,6 @@
 // 自治体の個別ページ（/:都道府県/:名称）の島。サーバーが書いた HTML（検索エンジン向け）を、同じデータで描き直す。
 // 型は企業のプロフィールページ: ヘッダー（ロゴ・名前・一文・属性）＋年度のタブ＋左の目次＋見出し付きの節。年度を切り替えるとページ全体がその年度になる。
-// 歳出の決算は API の値。分野ごとの事業・事業の入れ替えは jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
+// 歳出の決算は API の値。新しく始めた・広げた事業・事業の入れ替えは jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
 import * as React from 'react'
 import { ArrowSquareOutIcon, BabyIcon, BasketballIcon, CaretDownIcon, CoinsIcon, ChatCircleIcon, FirstAidKitIcon, GlobeIcon, HouseLineIcon, LeafIcon, MapPinIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
 import { StartForm } from '../chat/start-form'
@@ -89,7 +89,7 @@ const DOMAIN_ICON: Record<string, typeof BabyIcon> = {
 
 function Domains({ year }: { year: ProfileYear }) {
   return (
-    <Section id="domains" title="分野ごとの事業" link={[{ href: year.budgetSource, label: '当初予算' }, { href: year.evaluationSource, label: '事務事業評価' }]}>
+    <Section id="domains" title="新しく始めた・広げた事業" link={[{ href: year.budgetSource, label: '当初予算' }, { href: year.evaluationSource, label: '事務事業評価' }]}>
       {groupByFrame(year.projects).map(({ frame: d, items }) => (
         <div key={d.id} id={`d-${d.id}`} className="flex scroll-mt-32 lg:scroll-mt-20 flex-col gap-1 [&+&]:mt-12">
           <h3 className="mb-3.5 flex items-center gap-2.5 text-[19px] leading-snug sm:text-[22px]">
@@ -367,7 +367,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
   }
 
   const toc: TocItem[] = [
-    ...(py ? [{ href: '#domains', label: '分野ごとの事業' }, ...groupByFrame(py.projects).map(({ frame: d }) => ({ href: `#d-${d.id}`, label: d.name, sub: true }))] : []),
+    ...(py ? [{ href: '#domains', label: '新しく始めた・広げた事業' }, ...groupByFrame(py.projects).map(({ frame: d }) => ({ href: `#d-${d.id}`, label: d.name, sub: true }))] : []),
     { href: '#budget', label: '決算 / 予算' },
     { href: '#projects', label: '事業' },
     ...(py?.scrap ? [{ href: '#scrap', label: '事業の入れ替え' }] : []),
