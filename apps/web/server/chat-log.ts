@@ -1,5 +1,5 @@
 // 風土記の AI との会話を D1（CHAT_LOG）に保存する。表は migrations/0001_conversations.sql。あとで会話を開き直す（復元）のと、改善の分析の両方に使う。
-// 利用者を特定する情報（IP・UA・cookie）は書かない。利用者が書いたもの（質問・頁の文脈・AI が質問から写す tool の引数）のメールアドレス・電話番号の形は伏せる。
+// 利用者を特定する情報（IP・UA・cookie）は書かない。利用者が書いたものと、AI がそれを写しうるもの（質問・頁の文脈・tool の引数・回答の文）のメールアドレス・電話番号の形は伏せる。tool の結果は風土記の公開データなので伏せない。
 // ログインしていない会話は、最後の発言から90日を過ぎたら書くたびに消す
 import type { UIMessage } from 'ai'
 import type { ChatLogDatabase } from './env'
@@ -40,9 +40,12 @@ export function redact(text: string): string {
 
 type Part = UIMessage['parts'][number]
 
-/** 回答の parts を保存する JSON にする。tool の引数は伏せ、長すぎるときは tool の結果、次に文以外を落とす */
+/** 回答の parts を保存する JSON にする。tool の引数と回答の文は伏せ、長すぎるときは tool の結果、次に文以外を落とす */
 export function answerParts(parts: Part[]): string {
-  const hide = (p: Part): Part => ('input' in p && p.input !== undefined ? ({ ...p, input: JSON.parse(JSON.stringify(p.input, (_, v: unknown) => (typeof v === 'string' ? redact(v) : v))) } as Part) : p)
+  const hide = (p: Part): Part => {
+    if (p.type === 'text') return { ...p, text: redact(p.text) }
+    return 'input' in p && p.input !== undefined ? ({ ...p, input: JSON.parse(JSON.stringify(p.input, (_, v: unknown) => (typeof v === 'string' ? redact(v) : v))) } as Part) : p
+  }
   const full = JSON.stringify(parts.filter((p) => p.type !== 'reasoning').map(hide))
   if (full.length <= MAX_PARTS_CHARS) return full
   const withoutOutput = JSON.stringify(
@@ -52,7 +55,7 @@ export function answerParts(parts: Part[]): string {
     }),
   )
   if (withoutOutput.length <= MAX_PARTS_CHARS) return withoutOutput
-  return JSON.stringify(parts.filter((p) => p.type === 'text').map((p) => ({ ...p, text: (p as { text: string }).text.slice(0, MAX_PARTS_CHARS / 2) })))
+  return JSON.stringify(parts.filter((p) => p.type === 'text').map((p) => ({ ...p, text: redact((p as { text: string }).text).slice(0, MAX_PARTS_CHARS / 2) })))
 }
 
 /** 1往復（質問と回答の2行）を書き、ログインしていない古い会話を消す。失敗しても応答は落とさない */

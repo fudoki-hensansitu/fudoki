@@ -22,7 +22,7 @@ CREATE TABLE messages (
   -- 画面の発言の ID（AI SDK の UIMessage の id）
   message_id TEXT NOT NULL,
   role TEXT NOT NULL CHECK (role IN ('user', 'assistant')),
-  -- UIMessage の parts の JSON。質問の文と、AI の回答・tool の呼び出しと結果。メールアドレス・電話番号の形のものは伏せてある
+  -- UIMessage の parts の JSON。質問の文と、AI の回答・tool の呼び出しと結果。質問・tool の引数・回答の文のメールアドレス・電話番号の形のものは伏せてある（tool の結果は公開データなのでそのまま）
   parts TEXT NOT NULL,
   -- 質問と一緒に送った、頁で見ていたもの・選んだ文（user の行だけ。無ければ空）
   context TEXT NOT NULL DEFAULT '',

@@ -33,7 +33,7 @@ describe('会話の保存', () => {
     questionId: 'q2',
     question: 'mail a@b.jp',
     context: '選んだ文 090-1234-5678',
-    answer: answer([{ type: 'text', text: '品川区は…' }]),
+    answer: answer([{ type: 'text', text: '品川区は… a@b.jp へ' }]),
     model: 'm',
     error: '',
     inputTokens: 1,
@@ -54,13 +54,13 @@ describe('会話の保存', () => {
   }
   const row = (runs: { sql: string; values: unknown[] }[], role: string) => runs.find((r) => r.sql.startsWith('INSERT OR REPLACE INTO messages') && r.values[3] === role)!.values
 
-  test('質問と回答を2行で書き、質問と頁の文脈は伏せ、ログインしていない古い会話を消す', async () => {
+  test('質問と回答を2行で書き、質問・頁の文脈・回答の文は伏せ、ログインしていない古い会話を消す', async () => {
     const { db, runs } = fakeDb()
     const now = 1_000_000_000_000
     await writeChatTurn(db, turn, now)
     expect(runs[0]!.values).toEqual(['c', '/', now, now])
     expect(row(runs, 'user').slice(0, 6)).toEqual(['c', 3, 'q2', 'user', '[{"type":"text","text":"mail [メール]"}]', '選んだ文 [電話番号]'])
-    expect(row(runs, 'assistant').slice(0, 5)).toEqual(['c', 4, 'a1', 'assistant', '[{"type":"text","text":"品川区は…"}]'])
+    expect(row(runs, 'assistant').slice(0, 5)).toEqual(['c', 4, 'a1', 'assistant', '[{"type":"text","text":"品川区は… [メール] へ"}]'])
     const deletes = runs.filter((r) => r.sql.startsWith('DELETE'))
     expect(deletes.map((r) => r.sql.includes('user_id IS NULL'))).toEqual([true, true])
     expect(deletes.map((r) => r.values)).toEqual([[now - CHAT_LOG_RETENTION_DAYS * 86_400_000], [now - CHAT_LOG_RETENTION_DAYS * 86_400_000]])
