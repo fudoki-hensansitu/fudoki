@@ -8,8 +8,11 @@ import { AmountTip, TIP_CARD, TipCard } from './amount-tip'
 import { Overview } from './sankey'
 import { formatShare, formatYen, type Drill, type FlowView, type Kou, type Moku, type PageData, type YearTotal } from './types'
 
-/** 分け方ごとの1段目・2段目の呼び名。分野で分けると2段目は款（分野に入った目だけの和）になる */
-const LEVELS: Record<FlowView, { kan: string; kou: string }> = { cofog: { kan: '分野', kou: '款' }, kan: { kan: '款', kou: '項' } }
+/** 分け方ごとの段の呼び名。分野で分けると2段目は COFOG の中分類（目的）、3段目は自治体の科目（目）、4段目はその内訳（節・事業） */
+const LEVELS: Record<FlowView, { kan: string; kou: string; moku: string; setsu: string }> = {
+  cofog: { kan: '分野', kou: '目的', moku: '科目', setsu: '内訳' },
+  kan: { kan: '款', kou: '項', moku: '目', setsu: '節' },
+}
 type Levels = (typeof LEVELS)[FlowView]
 
 const SETSU_SHOWN = 3
@@ -33,7 +36,7 @@ const share = (yen: number, max: number, missing?: boolean) => (missing || max <
 const pctOr = (yen: number, base: number, missing?: boolean) => formatShare(yen, base, missing) ?? amountText(yen, missing)
 
 /** kouYen は割合の基準（目は項に占める割合、節は目に占める割合）。金額はツールチップで見せる */
-function MokuGroup({ moku, kouYen }: { moku: Moku; kouYen: number }) {
+function MokuGroup({ moku, kouYen, levels }: { moku: Moku; kouYen: number; levels: Levels }) {
   const shown = moku.setsu.filter((s) => s.amountMissing || s.yen > 0)
   const top = shown.slice(0, SETSU_SHOWN)
   const rest = shown.slice(SETSU_SHOWN)
@@ -46,15 +49,15 @@ function MokuGroup({ moku, kouYen }: { moku: Moku; kouYen: number }) {
   return (
     <div data-moku data-yen={moku.amountMissing ? 0 : moku.yen} className="grid translate-y-1.5 grid-cols-1 items-start gap-1.5 opacity-30 transition-[opacity,transform] duration-500 group-data-[active=true]/kou:translate-y-0 group-data-[active=true]/kou:opacity-100 sm:grid-cols-[5fr_7fr] sm:gap-4">
       <div className="min-w-0">
-        <div className="text-[11px] text-muted-foreground sm:hidden">目</div>
+        <div className="text-[11px] text-muted-foreground sm:hidden">{levels.moku}</div>
         <AmountTip name={moku.name} yen={moku.yen} missing={moku.amountMissing} side="right" className="inline-grid outline-none">
           <span className="text-sm leading-snug">{moku.name}</span>
           <span className="text-xs font-semibold tabular-nums text-primary">{pctOr(moku.yen, kouYen, moku.amountMissing)}</span>
         </AmountTip>
       </div>
       {top.length > 0 ? (
-        <ul data-setsu-list className="grid min-w-0 gap-y-1 border-l pl-3 text-[12.5px] leading-snug sm:border-0 sm:pl-4" aria-label={`${moku.name}の節`}>
-          <li className="text-[11px] text-muted-foreground sm:hidden">節</li>
+        <ul data-setsu-list className="grid min-w-0 gap-y-1 border-l pl-3 text-[12.5px] leading-snug sm:border-0 sm:pl-4" aria-label={`${moku.name}の${levels.setsu}`}>
+          <li className="text-[11px] text-muted-foreground sm:hidden">{levels.setsu}</li>
           {top.map((s) => (
             <li key={s.name} data-setsu data-yen={s.amountMissing ? 0 : Math.max(0, s.yen)} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2.5">
               <AmountTip name={`${moku.name}・${s.name}`} yen={s.yen} missing={s.amountMissing} side="right" className="col-span-2 grid grid-cols-[minmax(0,1fr)_auto] gap-x-2.5 outline-none">
@@ -70,11 +73,11 @@ function MokuGroup({ moku, kouYen }: { moku: Moku; kouYen: number }) {
             <li data-setsu-rest className="text-[11.5px] text-muted-foreground">
               <Tooltip>
                 <TooltipTrigger delay={100} className="grid w-full cursor-default! grid-cols-[minmax(0,1fr)_auto] gap-x-2.5 text-left hover:text-foreground">
-                  <span className="underline decoration-dotted underline-offset-2">ほか{rest.length}節</span>
+                  <span className="underline decoration-dotted underline-offset-2">ほか{rest.length}件</span>
                   {restYen !== null ? <span className="text-right tabular-nums">{pctOr(restYen, mokuYen)}</span> : null}
                 </TooltipTrigger>
                 <TooltipContent side="right" className={`block max-w-72 ${TIP_CARD}`}>
-                  {restYen !== null ? <div className="mb-1.5"><TipCard name={`ほか${rest.length}節`} yen={restYen} /></div> : null}
+                  {restYen !== null ? <div className="mb-1.5"><TipCard name={`ほか${rest.length}件`} yen={restYen} /></div> : null}
                   <ul className="grid gap-y-0.5 text-xs">
                     {rest.map((s) => (
                       <li key={s.name} className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3">
@@ -242,7 +245,7 @@ function KouSection({ kou, active, loading, onBox, levels }: { kou: Kou; active:
     return () => { observer.disconnect(); window.clearTimeout(settle) }
   }, [kou.moku.length, active])
   return (
-    <section ref={(el) => { box.current = el; onBox(el) }} data-kou={kou.id} data-active={active} data-ask-view={active ? `${kou.name}（${levels.kou}）の目と節` : undefined} className="group/kou grid min-h-[calc(100%-7.5rem)] snap-start snap-always grid-cols-1 content-start gap-3 px-5 pb-5 pt-3 sm:grid-cols-[150px_10px_64px_minmax(0,1fr)] sm:gap-0 sm:pr-8">
+    <section ref={(el) => { box.current = el; onBox(el) }} data-kou={kou.id} data-active={active} data-ask-view={active ? `${kou.name}（${levels.kou}）の${levels.moku}と${levels.setsu}` : undefined} className="group/kou grid min-h-[calc(100%-7.5rem)] snap-start snap-always grid-cols-1 content-start gap-3 px-5 pb-5 pt-3 sm:grid-cols-[150px_10px_64px_minmax(0,1fr)] sm:gap-0 sm:pr-8">
       <div className="min-w-0 border-b pb-2 sm:border-0 sm:pb-0 sm:pr-2">
         <div className="text-[11px] text-muted-foreground">{levels.kou}</div>
         <div className="font-sans text-lg leading-snug">{kou.name}</div>
@@ -262,12 +265,12 @@ function KouSection({ kou, active, loading, onBox, levels }: { kou: Kou; active:
       <div className="flex min-w-0 flex-col gap-3 sm:pl-2.5">
         {kou.moku.length > 0 ? (
           <div className="hidden grid-cols-[5fr_7fr] gap-4 text-[11px] text-muted-foreground sm:grid" aria-hidden="true">
-            <span>目</span>
-            <span className="pl-4">節</span>
+            <span>{levels.moku}</span>
+            <span className="pl-4">{levels.setsu}</span>
           </div>
         ) : null}
-        {kou.moku.length > 0 ? kou.moku.map((m) => <MokuGroup key={m.id} moku={m} kouYen={kou.amountMissing ? 0 : kou.yen} />) : (
-          <p className="text-[12.5px] text-muted-foreground" role={loading ? 'status' : undefined}>{loading ? '内訳を読み込んでいます…' : `この${levels.kou}に目はありません`}</p>
+        {kou.moku.length > 0 ? kou.moku.map((m) => <MokuGroup key={m.id} moku={m} kouYen={kou.amountMissing ? 0 : kou.yen} levels={levels} />) : (
+          <p className="text-[12.5px] text-muted-foreground" role={loading ? 'status' : undefined}>{loading ? '内訳を読み込んでいます…' : `この${levels.kou}に${levels.moku}はありません`}</p>
         )}
       </div>
     </section>

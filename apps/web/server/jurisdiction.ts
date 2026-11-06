@@ -1,6 +1,7 @@
 // 自治体の個別ページのデータ。apps/api（Service Binding）の歳出の検索から、決算の款・事業・お金の流れを組む。
 // 金額は API が返した円をそのまま持つ。足すのは「同じ年度・会計・軸の款（兄弟）の和」だけで、api の sum_rules に従う
 import { jurisdictionKind, populationForYear, type Drill, type FlowDepth, type IndexEntry, type Kou, type Line, type Moku, type PageData, type Population, type Project, type Setsu, type YearTotal } from '../jurisdiction/types'
+import { COFOG_DIVISIONS, COFOG_GROUPS } from '@fudoki/fiscal/cofog-master'
 import { DOMAIN_FRAMES, frameOf, OTHER_FRAME } from '../jurisdiction/domains'
 import { apiFetch, type Env } from './env'
 
@@ -222,28 +223,36 @@ const partial = (lines: { amountMissing?: true }[]) => (lines.some((l) => l.amou
  * 款は枠の中に入った目だけの和で、出典の款の金額ではない。並びは金額の順で「その他」を最後に置く。depth が kou なら目を返さない（全体図だけに使う）
  */
 export async function loadCofogFlow(env: Env, code: string, year: number, depth: FlowDepth = 'kou'): Promise<Drill[]> {
-  const nodes = await searchAll(env, code, year, ['款', '目'])
-  const kanByName = new Map(nodes.filter((n) => n.node_kind === '款').map((n) => [n.name, n]))
-  const moku = nodes.filter((n) => n.node_kind === '目')
+  const moku = await searchAll(env, code, year, ['目'])
   const setsuByMoku = depth === 'setsu' ? await loadSetsuByMoku(env, code, year, moku.map((n) => n.node_id)) : new Map<string, Setsu[]>()
-  // 枠の id → 款の名前 → 目。目の親は項なので、款は kan_name で引く
+  // 枠の id → COFOG の中分類（目的）→ 目。款・項は使わない（分野で分けた図に自治体の科目を混ぜない）
   const frames = new Map<string, Map<string, ApiNode[]>>()
   for (const n of moku) {
     const frame = (n.cofog_code ? frameOf(n.cofog_code) : undefined) ?? OTHER_FRAME
-    const kanName = n.kan_name ?? ''
-    const byKan = frames.get(frame.id) ?? new Map<string, ApiNode[]>()
-    byKan.set(kanName, [...(byKan.get(kanName) ?? []), n])
-    frames.set(frame.id, byKan)
+    const group = cofogGroup(n.cofog_code)
+    const byGroup = frames.get(frame.id) ?? new Map<string, ApiNode[]>()
+    byGroup.set(group, [...(byGroup.get(group) ?? []), n])
+    frames.set(frame.id, byGroup)
   }
   return [...DOMAIN_FRAMES, OTHER_FRAME].flatMap((frame) => {
-    const byKan = frames.get(frame.id)
-    if (!byKan) return []
-    const kou = [...byKan].map(([kanName, list]) => {
+    const byGroup = frames.get(frame.id)
+    if (!byGroup) return []
+    const kou = [...byGroup].map(([group, list]) => {
       const mokuLines = list.sort(byAmount).map((m) => ({ ...line(m), setsu: setsuByMoku.get(m.node_id) ?? [] }))
-      return { id: `${frame.id}-${kanByName.get(kanName)?.node_id ?? kanName}`, name: kanName, yen: sumYen(mokuLines), ...partial(mokuLines), page: null, moku: depth === 'kou' ? [] : mokuLines }
+      return { id: `${frame.id}-${group || 'none'}`, name: cofogGroupName(group), yen: sumYen(mokuLines), ...partial(mokuLines), page: null, moku: depth === 'kou' ? [] : mokuLines }
     }).sort((a, b) => b.yen - a.yen)
     return [{ kan: { id: frame.id, name: frame.name, yen: kou.reduce((sum, k) => sum + k.yen, 0), ...partial(kou), page: null }, kou }]
   }).sort((a, b) => Number(a.kan.id === OTHER_FRAME.id) - Number(b.kan.id === OTHER_FRAME.id) || b.kan.yen - a.kan.yen)
+}
+
+/** 目の COFOG コードを中分類（`09.1`）までに丸める。大分類までしか決まっていない目は大分類（`09`）、コードが無い目は空文字 */
+const cofogGroup = (cofog: string | null | undefined) => (cofog ? cofog.split('.').slice(0, 2).join('.') : '')
+
+/** 中分類の名前。大分類までの目は大分類の名前、コードの無い目は「目的を決められない支出」 */
+function cofogGroupName(group: string) {
+  if (!group) return '目的を決められない支出'
+  // 名前の表は規則が使うコードを全部持つ（cofog-master.ts）。漏れたときもページは落とさずコードを出す
+  return (group.includes('.') ? COFOG_GROUPS : COFOG_DIVISIONS)[group] ?? `COFOG ${group}`
 }
 
 async function children(env: Env, id: string): Promise<Record<string, ApiNode[]>> {
