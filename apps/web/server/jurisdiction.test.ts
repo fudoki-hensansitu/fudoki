@@ -181,13 +181,15 @@ describe('自治体の個別ページ', () => {
     expect(data.projects[0]!.prevYen).toBeNull()
   })
 
-  test('API に繋がらないときは投げて（頁は 502）、sitemap は入口と一覧だけで答える', async () => {
+  test('API に繋がらないときは投げて（頁は 502）、sitemap は入口・一覧・アシスタントだけで答える', async () => {
     const down: Env = { API: { fetch: async () => new Response('x', { status: 500 }) } }
     await expect(resolveJurisdiction(down, '/tokyo/nakano')).rejects.toThrow()
     await expect(indexPageData(down)).rejects.toThrow()
     const sitemap = await get('/sitemap.xml', down)
     expect(sitemap.status).toBe(200)
-    expect(await sitemap.text()).toContain('https://fudoki.dev/jurisdictions')
+    const xml = await sitemap.text()
+    expect(xml).toContain('https://fudoki.dev/jurisdictions')
+    expect(xml).toContain('https://fudoki.dev/assistant')
   })
 })
 

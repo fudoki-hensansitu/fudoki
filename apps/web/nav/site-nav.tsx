@@ -1,7 +1,7 @@
 // 全ページの左に置くサイドバー（shadcn の Sidebar）。pages/layout.tsx が置き、頁の間を移っても描き直さない
 import * as React from 'react'
 import { Link } from '@void/react'
-import { BankIcon, ChatIcon, GithubLogoIcon, HouseIcon, PlugIcon, SidebarSimpleIcon, XLogoIcon } from '@phosphor-icons/react'
+import { BankIcon, ChatIcon, RobotIcon, GithubLogoIcon, HouseIcon, PlugIcon, SidebarSimpleIcon, XLogoIcon } from '@phosphor-icons/react'
 import {
   Sidebar,
   SidebarContent,
@@ -19,7 +19,7 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import { LOGO_G, LOGO_WIDTH } from '../logo'
 
-export const NAV_SECTIONS = ['jurisdictions'] as const
+export const NAV_SECTIONS = ['jurisdictions', 'assistant'] as const
 export type NavSection = (typeof NAV_SECTIONS)[number]
 export type SiteNavProps = { active?: NavSection; open: boolean }
 /** site の中の頁へは Void の Link で頁を読み直さずに移り、外（docs・mail・SNS）へは普通の a で出る */
@@ -38,7 +38,7 @@ const Logo = ({ className }: { className?: string }) => (
 )
 
 /** ロゴの左のマークだけ（LOGO_G の左端、y=4 から 32×32 を切り出す） */
-const Mark = ({ className }: { className?: string }) => (
+export const Mark = ({ className }: { className?: string }) => (
   <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 4 32 32" aria-hidden="true" dangerouslySetInnerHTML={{ __html: LOGO_G }} />
 )
 
@@ -110,14 +110,13 @@ function useHideOnScroll() {
   return [hidden, setHidden] as const
 }
 
-/** 幅の狭い画面では、サイドバーの代わりに画面の下へ並べる */
+/** 幅の狭い画面では、サイドバーの代わりに画面の下へ並べる。MCP・フィードバックは載せない */
 function BottomNav({ active }: { active?: NavSection }) {
   const [hidden, setHidden] = useHideOnScroll()
   const items = [
     { href: '/', label: 'ホーム', icon: <HouseIcon /> },
     { href: '/jurisdictions', label: '自治体一覧', icon: <BankIcon />, active: active === 'jurisdictions' },
-    { href: MCP, label: 'MCP', icon: <PlugIcon /> },
-    { href: FEEDBACK, label: 'フィードバック', icon: <ChatIcon /> },
+    { href: '/assistant', label: 'アシスタント', icon: <RobotIcon />, active: active === 'assistant' },
   ]
   return (
     <nav
@@ -127,7 +126,7 @@ function BottomNav({ active }: { active?: NavSection }) {
       onFocus={() => setHidden(false)}
       className="fixed inset-x-0 bottom-0 z-40 bg-sidebar pb-[env(safe-area-inset-bottom)] transition-transform duration-200 ease-out motion-reduce:transition-none data-hidden:translate-y-full md:hidden"
     >
-      <ul className="grid h-14 grid-cols-4">
+      <ul className="grid h-14 grid-cols-3">
         {items.map((i) => (
           <li key={i.href}>
             <NavLink
@@ -164,6 +163,7 @@ export function SiteNav({ active, open }: SiteNavProps) {
             <SidebarGroup>
               <SidebarMenu>
                 <Item href="/jurisdictions" label="自治体一覧" icon={<BankIcon />} active={active === 'jurisdictions'} />
+                <Item href="/assistant" label="アシスタント" icon={<RobotIcon />} active={active === 'assistant'} />
               </SidebarMenu>
             </SidebarGroup>
           </SidebarContent>
