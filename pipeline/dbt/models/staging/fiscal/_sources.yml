@@ -6340,6 +6340,54 @@ sources:
       direction: expenditure
       table_id: nhi-clinic-expenditure-detail
       kind: nodes
+  - name: j133086_2024_settlement_kaigo_expenditure_detail_amounts
+    meta:
+      jurisdiction: '133086'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kaigo-expenditure-detail
+      kind: amounts
+  - name: j133086_2024_settlement_kaigo_expenditure_detail_nodes
+    meta:
+      jurisdiction: '133086'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kaigo-expenditure-detail
+      kind: nodes
+  - name: j133086_2024_settlement_kouki_expenditure_detail_amounts
+    meta:
+      jurisdiction: '133086'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kouki-expenditure-detail
+      kind: amounts
+  - name: j133086_2024_settlement_kouki_expenditure_detail_nodes
+    meta:
+      jurisdiction: '133086'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kouki-expenditure-detail
+      kind: nodes
+  - name: j133086_2024_settlement_nhi_expenditure_detail_amounts
+    meta:
+      jurisdiction: '133086'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: nhi-expenditure-detail
+      kind: amounts
+  - name: j133086_2024_settlement_nhi_expenditure_detail_nodes
+    meta:
+      jurisdiction: '133086'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: nhi-expenditure-detail
+      kind: nodes
   - name: j133621_2024_settlement_elderly_medical_expenditure_amounts
     meta:
       jurisdiction: '133621'

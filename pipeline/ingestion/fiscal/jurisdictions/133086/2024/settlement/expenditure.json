@@ -1,0 +1,1039 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "133086",
+    "fiscal_year": 2024,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "tables": [
+    {
+      "table_id": "nhi-expenditure-detail",
+      "conversion_id": "nhi",
+      "input_fingerprint": "c8cf0381c86ee010cc1db1046ab61dcad7f9d222964e34aef1857a3797a14535",
+      "account": "国民健康保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
+        "金額の単位は printed 8頁 から決めた。款の和 644,125,807 と印字の「歳出合計」644,125,807 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（39 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。",
+        "原画で確かめた名称の誤読 1 件を、管理 JSON の name_corrections で印字に直した: 異常值放置者受診勧奨事業委託→異常値放置者受診勧奨事業委託。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 42 件（p13:full-page:a0:result0:r105・p13:full-page:a0:result0:r105:w4・p13:full-page:a0:result0:r135・p13:full-page:a0:result0:r135:w4・p13:full-page:a0:result0:r161・p13:full-page:a0:result0:r161:w4・p13:full-page:a0:result0:r169・p13:full-page:a0:result0:r169:w6・p14:full-page:a0:result0:r114・p14:full-page:a0:result0:r114:w4・p14:full-page:a0:result0:r140・p14:full-page:a0:result0:r140:w4・p15:full-page:a0:result0:r58・p15:full-page:a0:result0:r58:w4・p15:full-page:a0:result0:r85・p15:full-page:a0:result0:r85:w4・p15:full-page:a0:result0:r120・p15:full-page:a0:result0:r120:w4・p15:full-page:a0:result0:r155・p15:full-page:a0:result0:r155:w4・p16:full-page:a0:result0:r76・p16:full-page:a0:result0:r76:w4・p16:full-page:a0:result0:r102・p16:full-page:a0:result0:r102:w3・p16:full-page:a0:result0:r114・p16:full-page:a0:result0:r114:w4・p16:full-page:a0:result0:r160・p16:full-page:a0:result0:r160:w4・p17:full-page:a0:result0:r57・p17:full-page:a0:result0:r57:w4・p17:full-page:a0:result0:r92・p17:full-page:a0:result0:r92:w4・p17:full-page:a0:result0:r137・p17:full-page:a0:result0:r137:w4・p19:full-page:a0:result0:r63・p19:full-page:a0:result0:r63:w4・p19:full-page:a0:result0:r109・p19:full-page:a0:result0:r109:w4・p19:full-page:a0:result0:r135・p19:full-page:a0:result0:r135:w4・p20:full-page:a0:result0:r24・p20:full-page:a0:result0:r24:w4）・减→減 6 件（p13:full-page:a0:result0:r22・p13:full-page:a0:result0:r22:w6・p14:full-page:a0:result0:r26・p14:full-page:a0:result0:r26:w6・p18:full-page:a0:result0:r26・p18:full-page:a0:result0:r26:w6）・增→増 2 件（p14:full-page:a0:result0:r26・p14:full-page:a0:result0:r26:w5）・徵→徴 10 件（p14:full-page:a0:result0:r2・p14:full-page:a0:result0:r2:w13・p14:full-page:a0:result0:r3・p14:full-page:a0:result0:r3:w4・p14:full-page:a0:result0:r28・p14:full-page:a0:result0:r28:w1・p14:full-page:a0:result0:r37・p14:full-page:a0:result0:r37:w1・p14:full-page:a0:result0:r46・p14:full-page:a0:result0:r46:w3）・查→査 22 件（p13:full-page:a0:result0:r169・p13:full-page:a0:result0:r169:w5・p14:full-page:a0:result0:r157・p14:full-page:a0:result0:r157:w4・p14:full-page:a0:result0:r166・p14:full-page:a0:result0:r166:w1・p15:full-page:a0:result0:r1・p15:full-page:a0:result0:r1:w22・p15:full-page:a0:result0:r25・p15:full-page:a0:result0:r25:w4・p17:full-page:a0:result0:r153・p17:full-page:a0:result0:r153:w6・p17:full-page:a0:result0:r172・p17:full-page:a0:result0:r172:w0・p17:full-page:a0:result0:r173・p17:full-page:a0:result0:r173:w8・p18:full-page:a0:result0:r2・p18:full-page:a0:result0:r2:w18・p18:full-page:a0:result0:r51・p18:full-page:a0:result0:r51:w5・p18:full-page:a0:result0:r62・p18:full-page:a0:result0:r62:w3）・產→産 4 件（p15:full-page:a0:result0:r127・p15:full-page:a0:result0:r127:w2・p16:full-page:a0:result0:r2・p16:full-page:a0:result0:r2:w14）・额→額 2 件（p14:full-page:a0:result0:r26・p14:full-page:a0:result0:r26:w2）・齡→齢 6 件（p17:full-page:a0:result0:r1・p17:full-page:a0:result0:r1・p17:full-page:a0:result0:r1:w24・p17:full-page:a0:result0:r1:w44・p17:full-page:a0:result0:r26・p17:full-page:a0:result0:r26:w4）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/133086/2024/settlement/expenditure/nhi-expenditure-detail-nodes.parquet",
+          "sha256": "f5bfb2e052455144fb8c39c13e29091302bd7f8b374b67162cbeb7fb859ebfc8",
+          "bytes": 10873
+        },
+        "row_count": 152
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/133086/2024/settlement/expenditure/nhi-expenditure-detail-amounts.parquet",
+          "sha256": "8e6a77b4571c96f50ca9d188d018214ea05d7a7eaa8cdb706a653eece598a21e",
+          "bytes": 15772
+        },
+        "row_count": 864
+      }
+    },
+    {
+      "table_id": "kouki-expenditure-detail",
+      "conversion_id": "kouki",
+      "input_fingerprint": "cdee146f4a9db843fee24040d813ac7bf08b970a995a7cb9af316fe911b963f4",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
+        "金額の単位は printed 4頁 から決めた。款の和 233,405,696 と印字の「歳出合計」233,405,696 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（18 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 12 件（p11:full-page:a0:result0:r179・p11:full-page:a0:result0:r179:w4・p12:full-page:a0:result0:r33・p12:full-page:a0:result0:r33:w4・p12:full-page:a0:result0:r139・p12:full-page:a0:result0:r139:w4・p13:full-page:a0:result0:r24・p13:full-page:a0:result0:r24:w4・p13:full-page:a0:result0:r50・p13:full-page:a0:result0:r50:w4・p13:full-page:a0:result0:r76・p13:full-page:a0:result0:r76:w4）・减→減 2 件（p12:full-page:a0:result0:r25・p12:full-page:a0:result0:r25:w6）・增→増 4 件（p12:full-page:a0:result0:r25・p12:full-page:a0:result0:r25:w5・p14:full-page:a0:result0:r21・p14:full-page:a0:result0:r21:w5）・徵→徴 6 件（p11:full-page:a0:result0:r90・p11:full-page:a0:result0:r90:w1・p11:full-page:a0:result0:r99・p11:full-page:a0:result0:r99:w1・p11:full-page:a0:result0:r108・p11:full-page:a0:result0:r108:w3）・查→査 8 件（p12:full-page:a0:result0:r59・p12:full-page:a0:result0:r59:w4・p12:full-page:a0:result0:r68・p12:full-page:a0:result0:r68:w6・p12:full-page:a0:result0:r92・p12:full-page:a0:result0:r92:w3・p12:full-page:a0:result0:r99・p12:full-page:a0:result0:r99:w5）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/133086/2024/settlement/expenditure/kouki-expenditure-detail-nodes.parquet",
+          "sha256": "bf92d4a368a40d7f38f5f8f46dedca7145853ce1c7487c75f8272c28f9c0992d",
+          "bytes": 6578
+        },
+        "row_count": 69
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/133086/2024/settlement/expenditure/kouki-expenditure-detail-amounts.parquet",
+          "sha256": "37a86f6334cb4ff4f3e7c238f4c7787868c49e8e55c8e7469e3781bc31754e60",
+          "bytes": 8881
+        },
+        "row_count": 361
+      }
+    },
+    {
+      "table_id": "kaigo-expenditure-detail",
+      "conversion_id": "kaigo",
+      "input_fingerprint": "7a612468f9f92fb8191dca2991bec3ce445e3aae4f66e6c0cb2da4f4970a96b9",
+      "account": "介護保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
+        "金額の単位は printed 8頁 から決めた。款の和 845,628,363 と印字の「歳出合計」845,628,363 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（41 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。",
+        "原画で確かめた名称の誤読 3 件を、管理 JSON の name_corrections で印字に直した: 05認知症地域支援・ケ了向上事業費→05認知症地域支援・ケア向上事業費・02介護予防サ一ビス等諸費→02介護予防サービス等諸費・04高額介護サ一ビス等費→04高額介護サービス等費。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 58 件（p16:full-page:a0:result0:r150・p16:full-page:a0:result0:r150:w4・p17:full-page:a0:result0:r159・p17:full-page:a0:result0:r159:w4・p18:full-page:a0:result0:r56・p18:full-page:a0:result0:r56:w4・p18:full-page:a0:result0:r134・p18:full-page:a0:result0:r134:w4・p18:full-page:a0:result0:r175・p18:full-page:a0:result0:r175:w4・p19:full-page:a0:result0:r55・p19:full-page:a0:result0:r55:w4・p19:full-page:a0:result0:r75・p19:full-page:a0:result0:r75:w5・p19:full-page:a0:result0:r86・p19:full-page:a0:result0:r86:w5・p19:full-page:a0:result0:r118・p19:full-page:a0:result0:r118:w4・p19:full-page:a0:result0:r162・p19:full-page:a0:result0:r162:w1・p20:full-page:a0:result0:r2・p20:full-page:a0:result0:r2・p20:full-page:a0:result0:r2:w22・p20:full-page:a0:result0:r2:w39・p20:full-page:a0:result0:r34・p20:full-page:a0:result0:r34:w2・p20:full-page:a0:result0:r45・p20:full-page:a0:result0:r45:w4・p20:full-page:a0:result0:r46・p20:full-page:a0:result0:r46:w20・p20:full-page:a0:result0:r63・p20:full-page:a0:result0:r63:w4・p20:full-page:a0:result0:r86・p20:full-page:a0:result0:r86:w4・p20:full-page:a0:result0:r87・p20:full-page:a0:result0:r87:w20・p20:full-page:a0:result0:r121・p20:full-page:a0:result0:r121:w10・p20:full-page:a0:result0:r130・p20:full-page:a0:result0:r130:w4・p20:full-page:a0:result0:r131・p20:full-page:a0:result0:r131:w20・p21:full-page:a0:result0:r1・p21:full-page:a0:result0:r1・p21:full-page:a0:result0:r1:w22・p21:full-page:a0:result0:r1:w39・p21:full-page:a0:result0:r39・p21:full-page:a0:result0:r39:w4・p21:full-page:a0:result0:r71・p21:full-page:a0:result0:r71:w4・p21:full-page:a0:result0:r115・p21:full-page:a0:result0:r115:w4・p22:full-page:a0:result0:r25・p22:full-page:a0:result0:r25:w4・p22:full-page:a0:result0:r51・p22:full-page:a0:result0:r51:w4・p22:full-page:a0:result0:r90・p22:full-page:a0:result0:r90:w4）・减→減 16 件（p16:full-page:a0:result0:r24・p16:full-page:a0:result0:r24:w6・p17:full-page:a0:result0:r22・p17:full-page:a0:result0:r22:w6・p18:full-page:a0:result0:r24・p18:full-page:a0:result0:r24:w6・p19:full-page:a0:result0:r22・p19:full-page:a0:result0:r22:w6・p20:full-page:a0:result0:r23・p20:full-page:a0:result0:r23:w6・p21:full-page:a0:result0:r24・p21:full-page:a0:result0:r24:w6・p22:full-page:a0:result0:r23・p22:full-page:a0:result0:r23:w6・p23:full-page:a0:result0:r21・p23:full-page:a0:result0:r21:w6）・增→増 14 件（p16:full-page:a0:result0:r24・p16:full-page:a0:result0:r24:w5・p17:full-page:a0:result0:r22・p17:full-page:a0:result0:r22:w5・p18:full-page:a0:result0:r24・p18:full-page:a0:result0:r24:w5・p19:full-page:a0:result0:r22・p19:full-page:a0:result0:r22:w5・p21:full-page:a0:result0:r24・p21:full-page:a0:result0:r24:w5・p22:full-page:a0:result0:r23・p22:full-page:a0:result0:r23:w5・p23:full-page:a0:result0:r21・p23:full-page:a0:result0:r21:w5）・徵→徴 6 件（p16:full-page:a0:result0:r114・p16:full-page:a0:result0:r114:w1・p16:full-page:a0:result0:r123・p16:full-page:a0:result0:r123:w3・p16:full-page:a0:result0:r132・p16:full-page:a0:result0:r132:w5）・查→査 20 件（p16:full-page:a0:result0:r158・p16:full-page:a0:result0:r158:w6・p16:full-page:a0:result0:r178・p16:full-page:a0:result0:r178:w8・p17:full-page:a0:result0:r1・p17:full-page:a0:result0:r1・p17:full-page:a0:result0:r1:w17・p17:full-page:a0:result0:r1:w29・p17:full-page:a0:result0:r45・p17:full-page:a0:result0:r45:w4・p17:full-page:a0:result0:r55・p17:full-page:a0:result0:r55:w6・p17:full-page:a0:result0:r79・p17:full-page:a0:result0:r79:w5・p18:full-page:a0:result0:r90・p18:full-page:a0:result0:r90:w4・p18:full-page:a0:result0:r99・p18:full-page:a0:result0:r99:w1・p19:full-page:a0:result0:r116・p19:full-page:a0:result0:r116:w1）・额→額 14 件（p16:full-page:a0:result0:r18・p16:full-page:a0:result0:r18:w4・p17:full-page:a0:result0:r16・p17:full-page:a0:result0:r16:w4・p19:full-page:a0:result0:r16・p19:full-page:a0:result0:r16:w4・p19:full-page:a0:result0:r22・p19:full-page:a0:result0:r22:w2・p20:full-page:a0:result0:r17・p20:full-page:a0:result0:r17:w4・p22:full-page:a0:result0:r17・p22:full-page:a0:result0:r17・p22:full-page:a0:result0:r17:w4・p22:full-page:a0:result0:r17:w9）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/133086/2024/settlement/expenditure/kaigo-expenditure-detail-nodes.parquet",
+          "sha256": "bfcb810d2dd09dfa780b1f49b66ae12bff95b34aa968c8fcf2922015568fb3dc",
+          "bytes": 11506
+        },
+        "row_count": 162
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/133086/2024/settlement/expenditure/kaigo-expenditure-detail-amounts.parquet",
+          "sha256": "9469bbd0b7ac5087655d4e99dd26d5357b0aee37b818584850eee694b9005560",
+          "bytes": 15082
+        },
+        "row_count": 787
+      }
+    }
+  ],
+  "conversions": [
+    {
+      "id": "nhi",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "85e47f8e62e0c5e8773e06dd99dc29bbc7b051eb82920f9b21833de1bb614a3d"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "nhi-expenditure-detail",
+        "pages": [
+          [
+            13,
+            20
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "p14-03-審查支払手数-1",
+            "page": 14,
+            "observation_id": "p14:full-page:a0:result0:r147",
+            "observed": "03審查支払手",
+            "reason": "2行に折り返した科目「03 審査支払手数料」の行ごとの読み。金額は2行の間に印字され、2行目に付いて名前が分かれる。読みを除き、番号と名前を1つの科目として宣言する"
+          },
+          {
+            "id": "p14-03-審查支払手数-2",
+            "page": 14,
+            "observation_id": "p14:full-page:a0:result0:r156",
+            "observed": "数料",
+            "reason": "2行に折り返した科目「03 審査支払手数料」の行ごとの読み。金額は2行の間に印字され、2行目に付いて名前が分かれる。読みを除き、番号と名前を1つの科目として宣言する"
+          },
+          {
+            "id": "p15-01-出產育児一時-1",
+            "page": 15,
+            "observation_id": "p15:full-page:a0:result0:r136",
+            "observed": "01出產育児一",
+            "reason": "2行に折り返した科目「01 出産育児一時金」の行ごとの読み。金額は2行の間に印字され、2行目に付いて名前が分かれる。読みを除き、番号と名前を1つの科目として宣言する"
+          },
+          {
+            "id": "p15-01-出產育児一時-2",
+            "page": 15,
+            "observation_id": "p15:full-page:a0:result0:r145",
+            "observed": "時金",
+            "reason": "2行に折り返した科目「01 出産育児一時金」の行ごとの読み。金額は2行の間に印字され、2行目に付いて名前が分かれる。読みを除き、番号と名前を1つの科目として宣言する"
+          },
+          {
+            "id": "p17-01-介護納付金分-1",
+            "page": 17,
+            "observation_id": "p17:full-page:a0:result0:r73",
+            "observed": "01介護納付金",
+            "reason": "2行に折り返した科目「01 介護納付金分」の行ごとの読み。金額は2行の間に印字され、2行目に付いて名前が分かれる。読みを除き、番号と名前を1つの科目として宣言する"
+          },
+          {
+            "id": "p17-01-介護納付金分-2",
+            "page": 17,
+            "observation_id": "p17:full-page:a0:result0:r82",
+            "observed": "分",
+            "reason": "2行に折り返した科目「01 介護納付金分」の行ごとの読み。金額は2行の間に印字され、2行目に付いて名前が分かれる。読みを除き、番号と名前を1つの科目として宣言する"
+          },
+          {
+            "id": "p18-02-保健衛生普及-1",
+            "page": 18,
+            "observation_id": "p18:full-page:a0:result0:r113",
+            "observed": "02保健衛生普",
+            "reason": "2行に折り返した科目「02 保健衛生普及費」の行ごとの読み。金額は2行の間に印字され、2行目に付いて名前が分かれる。読みを除き、番号と名前を1つの科目として宣言する"
+          },
+          {
+            "id": "p18-02-保健衛生普及-2",
+            "page": 18,
+            "observation_id": "p18:full-page:a0:result0:r122",
+            "observed": "及費",
+            "reason": "2行に折り返した科目「02 保健衛生普及費」の行ごとの読み。金額は2行の間に印字され、2行目に付いて名前が分かれる。読みを除き、番号と名前を1つの科目として宣言する"
+          },
+          {
+            "id": "p19-01-償還金及び還-1",
+            "page": 19,
+            "observation_id": "p19:full-page:a0:result0:r79",
+            "observed": "01償還金及び還",
+            "reason": "2行に折り返した科目「01 償還金及び還付金」の行ごとの読み。金額は2行の間に印字され、2行目に付いて名前が分かれる。読みを除き、番号と名前を1つの科目として宣言する"
+          },
+          {
+            "id": "p19-01-償還金及び還-2",
+            "page": 19,
+            "observation_id": "p19:full-page:a0:result0:r88",
+            "observed": "付金",
+            "reason": "2行に折り返した科目「01 償還金及び還付金」の行ごとの読み。金額は2行の間に印字され、2行目に付いて名前が分かれる。読みを除き、番号と名前を1つの科目として宣言する"
+          }
+        ],
+        "code_readings": [
+          {
+            "id": "p14-03-審查支払手数",
+            "page": 14,
+            "box": [
+              23.8,
+              455.2,
+              32.4,
+              463.3
+            ],
+            "code": "03",
+            "name": "審査支払手数料",
+            "name_box": [
+              33.4,
+              455.2,
+              75.1,
+              463.3
+            ],
+            "reason": "2行に折り返した科目「03 審査支払手数料」。原典の描画で番号と2行の名前を確かめ、1行目の位置に番号と名前を宣言する"
+          },
+          {
+            "id": "p15-01-出產育児一時",
+            "page": 15,
+            "box": [
+              23.0,
+              454.2,
+              31.6,
+              463.8
+            ],
+            "code": "01",
+            "name": "出産育児一時金",
+            "name_box": [
+              32.6,
+              454.2,
+              75.1,
+              463.8
+            ],
+            "reason": "2行に折り返した科目「01 出産育児一時金」。原典の描画で番号と2行の名前を確かめ、1行目の位置に番号と名前を宣言する"
+          },
+          {
+            "id": "p17-01-介護納付金分",
+            "page": 17,
+            "box": [
+              23.0,
+              246.4,
+              31.6,
+              256.0
+            ],
+            "code": "01",
+            "name": "介護納付金分",
+            "name_box": [
+              32.6,
+              246.4,
+              75.6,
+              256.0
+            ],
+            "reason": "2行に折り返した科目「01 介護納付金分」。原典の描画で番号と2行の名前を確かめ、1行目の位置に番号と名前を宣言する"
+          },
+          {
+            "id": "p18-02-保健衛生普及",
+            "page": 18,
+            "box": [
+              24.0,
+              341.5,
+              32.6,
+              349.8
+            ],
+            "code": "02",
+            "name": "保健衛生普及費",
+            "name_box": [
+              33.6,
+              341.5,
+              75.3,
+              349.8
+            ],
+            "reason": "2行に折り返した科目「02 保健衛生普及費」。原典の描画で番号と2行の名前を確かめ、1行目の位置に番号と名前を宣言する"
+          },
+          {
+            "id": "p19-01-償還金及び還",
+            "page": 19,
+            "box": [
+              13.7,
+              246.2,
+              22.3,
+              255.8
+            ],
+            "code": "01",
+            "name": "償還金及び還付金",
+            "name_box": [
+              23.3,
+              246.2,
+              74.6,
+              255.8
+            ],
+            "reason": "2行に折り返した科目「01 償還金及び還付金」。原典の描画で番号と2行の名前を確かめ、1行目の位置に番号と名前を宣言する"
+          }
+        ],
+        "header_readings": [
+          {
+            "id": "nhi-継続費及び繰越事業費繰越額",
+            "pages": [
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "box": [
+              198.5,
+              75.5,
+              247.9,
+              104.5
+            ],
+            "text": "継続費及び繰越事業費繰越額",
+            "reason": "予算現額の「継続費及び繰越事業費繰越額」の升は3行に分けて印字し、OCR が字を重ねて読む（「繰越額額」）か隣の升と続けて読み、見出しが「予算現額」だけになる頁がある。原典の描画で升の印字と罫線の位置を確かめ、どの頁も同じ位置なので升の見出しを宣言する"
+          },
+          {
+            "id": "nhi-予備費支出及び流用増減",
+            "pages": [
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "box": [
+              247.9,
+              75.5,
+              293.5,
+              104.5
+            ],
+            "text": "予備費支出及び流用増減",
+            "reason": "予算現額の「予備費支出及び流用増減」の升は3行に分けて印字し、OCR が字を重ねて読む（「流流用増減」）か隣の升と続けて読み、見出しが「予算現額」だけになる頁がある。原典の描画で升の印字と罫線の位置を確かめ、どの頁も同じ位置なので升の見出しを宣言する"
+          },
+          {
+            "id": "nhi-翌年度繰越額",
+            "pages": [
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "box": [
+              517.0,
+              60.0,
+              582.0,
+              104.5
+            ],
+            "text": "翌年度繰越額",
+            "reason": "翌年度繰越額の升は、見出しの下に繰越の種類（継続費逓次繰越・繰越明許費の別・事故繰越）を小さく並べ、行ごとにどの種類かを金額の横に印字する様式の説明。種類は見出しの一部ではないので、升の見出しを「翌年度繰越額」と宣言する（共通の金額の見出しの辞書にある語）"
+          }
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現額／区分／節": {
+                  "kind": "label",
+                  "axis_header": "節"
+                },
+                "事業": {
+                  "kind": "label",
+                  "axis_header": "科目"
+                }
+              },
+              "rules": {
+                "row_gaps": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "amounts": "next_row",
+              "fourth_level_axis": "事業"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "headings": true,
+                  "under": "節"
+                }
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "nhi-p18-abnormal-value",
+            "page": 18,
+            "code": null,
+            "observed_name": "異常值放置者受診勧奨事業委託",
+            "corrected_name": "異常値放置者受診勧奨事業委託",
+            "y": 331.9,
+            "reason": "物理18頁の備考。OCR が「値」を中国語の字形の「值」と読んだ。原典の描画で「異常値放置者受診勧奨事業委託」の印字を確かめた。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "nhi-ocr-1",
+          "origin_sha256": "85e47f8e62e0c5e8773e06dd99dc29bbc7b051eb82920f9b21833de1bb614a3d",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "da0b631f2857c03c2f91ce9444121c70c7e6efaeddb9c927b869789e27ab6da7",
+          "bytes": 3449350
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "nhi-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "kouki",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "f3a41b0dd89b771a940841d1b82535169b620e7d512042687d3195b358b6fa52"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-expenditure-detail",
+        "pages": [
+          [
+            11,
+            14
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "p14-carry-kinds",
+            "page": 14,
+            "observation_id": "p14:full-page:a0:result0:r23",
+            "observed": "逓明事計",
+            "reason": "歳出合計の行の翌年度繰越額の欄に、繰越の種類の頭文字（逓・明・事・計）を縦に並べて印字し、横に各0円を置く。種類の見出しで金額ではないので、縦の読みを除く"
+          },
+          {
+            "id": "p11-01-広域連合分賦-1",
+            "page": 11,
+            "observation_id": "p11:full-page:a0:result0:r160",
+            "observed": "01広域連合分",
+            "reason": "2行に折り返した科目「01 広域連合分賦金」の行ごとの読み。金額は2行の間に印字され、2行目に付いて名前が分かれる。読みを除き、番号と名前を1つの科目として宣言する"
+          },
+          {
+            "id": "p11-01-広域連合分賦-2",
+            "page": 11,
+            "observation_id": "p11:full-page:a0:result0:r169",
+            "observed": "賦金",
+            "reason": "2行に折り返した科目「01 広域連合分賦金」の行ごとの読み。金額は2行の間に印字され、2行目に付いて名前が分かれる。読みを除き、番号と名前を1つの科目として宣言する"
+          },
+          {
+            "id": "p13-03-広域連合返還-1",
+            "page": 13,
+            "observation_id": "p13:full-page:a0:result0:r57",
+            "observed": "03広域連合返",
+            "reason": "2行に折り返した科目「03 広域連合返還金」の行ごとの読み。金額は2行の間に印字され、2行目に付いて名前が分かれる。読みを除き、番号と名前を1つの科目として宣言する"
+          },
+          {
+            "id": "p13-03-広域連合返還-2",
+            "page": 13,
+            "observation_id": "p13:full-page:a0:result0:r66",
+            "observed": "還金",
+            "reason": "2行に折り返した科目「03 広域連合返還金」の行ごとの読み。金額は2行の間に印字され、2行目に付いて名前が分かれる。読みを除き、番号と名前を1つの科目として宣言する"
+          }
+        ],
+        "code_readings": [
+          {
+            "id": "p11-01-広域連合分賦",
+            "page": 11,
+            "box": [
+              23.5,
+              455.2,
+              32.1,
+              463.3
+            ],
+            "code": "01",
+            "name": "広域連合分賦金",
+            "name_box": [
+              33.1,
+              455.2,
+              74.9,
+              463.3
+            ],
+            "reason": "2行に折り返した科目「01 広域連合分賦金」。原典の描画で番号と2行の名前を確かめ、1行目の位置に番号と名前を宣言する"
+          },
+          {
+            "id": "p13-03-広域連合返還",
+            "page": 13,
+            "box": [
+              23.3,
+              217.6,
+              31.9,
+              227.2
+            ],
+            "code": "03",
+            "name": "広域連合返還金",
+            "name_box": [
+              32.9,
+              217.6,
+              75.6,
+              227.2
+            ],
+            "reason": "2行に折り返した科目「03 広域連合返還金」。原典の描画で番号と2行の名前を確かめ、1行目の位置に番号と名前を宣言する"
+          }
+        ],
+        "header_readings": [
+          {
+            "id": "kouki-継続費及び繰越事業費繰越額",
+            "pages": [
+              11,
+              12,
+              13,
+              14
+            ],
+            "box": [
+              198.5,
+              75.5,
+              247.9,
+              104.5
+            ],
+            "text": "継続費及び繰越事業費繰越額",
+            "reason": "予算現額の「継続費及び繰越事業費繰越額」の升は3行に分けて印字し、OCR が字を重ねて読む（「繰越額額」）か隣の升と続けて読み、見出しが「予算現額」だけになる頁がある。原典の描画で升の印字と罫線の位置を確かめ、どの頁も同じ位置なので升の見出しを宣言する"
+          },
+          {
+            "id": "kouki-予備費支出及び流用増減",
+            "pages": [
+              11,
+              12,
+              13,
+              14
+            ],
+            "box": [
+              247.9,
+              75.5,
+              293.5,
+              104.5
+            ],
+            "text": "予備費支出及び流用増減",
+            "reason": "予算現額の「予備費支出及び流用増減」の升は3行に分けて印字し、OCR が字を重ねて読む（「流流用増減」）か隣の升と続けて読み、見出しが「予算現額」だけになる頁がある。原典の描画で升の印字と罫線の位置を確かめ、どの頁も同じ位置なので升の見出しを宣言する"
+          },
+          {
+            "id": "kouki-翌年度繰越額",
+            "pages": [
+              11,
+              12,
+              13,
+              14
+            ],
+            "box": [
+              517.0,
+              60.0,
+              582.0,
+              104.5
+            ],
+            "text": "翌年度繰越額",
+            "reason": "翌年度繰越額の升は、見出しの下に繰越の種類（継続費逓次繰越・繰越明許費の別・事故繰越）を小さく並べ、行ごとにどの種類かを金額の横に印字する様式の説明。種類は見出しの一部ではないので、升の見出しを「翌年度繰越額」と宣言する（共通の金額の見出しの辞書にある語）"
+          }
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現額／区分／節": {
+                  "kind": "label",
+                  "axis_header": "節"
+                },
+                "事業": {
+                  "kind": "label",
+                  "axis_header": "科目"
+                },
+                "翌年度繰越額": {
+                  "kind": "amount"
+                }
+              },
+              "rules": {
+                "row_gaps": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "amounts": "next_row",
+              "fourth_level_axis": "事業"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "headings": true,
+                  "under": "節"
+                }
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "kouki-ocr-1",
+          "origin_sha256": "f3a41b0dd89b771a940841d1b82535169b620e7d512042687d3195b358b6fa52",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              11,
+              12,
+              13,
+              14
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "c65ce78dc7e7a41aa690d15767ec987bd57192f82c3d9b36ad148cf6414672a5",
+          "bytes": 1520604
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kouki-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "kaigo",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "91a36f3033c31d68e7ef867096aef8b90817794aeca971fd614256e3367e4939"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "kaigo-expenditure-detail",
+        "pages": [
+          [
+            16,
+            23
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "p16-01-介護認定審查-1",
+            "page": 16,
+            "observation_id": "p16:full-page:a0:result0:r168",
+            "observed": "01介護認定審",
+            "reason": "2行に折り返した科目「01 介護認定審査会費」の行ごとの読み。金額は2行の間に印字され、2行目に付いて名前が分かれる。読みを除き、番号と名前を1つの科目として宣言する"
+          },
+          {
+            "id": "p16-01-介護認定審查-2",
+            "page": 16,
+            "observation_id": "p16:full-page:a0:result0:r177",
+            "observed": "查会費",
+            "reason": "2行に折り返した科目「01 介護認定審査会費」の行ごとの読み。金額は2行の間に印字され、2行目に付いて名前が分かれる。読みを除き、番号と名前を1つの科目として宣言する"
+          },
+          {
+            "id": "p17-01-介護サービス-1",
+            "page": 17,
+            "observation_id": "p17:full-page:a0:result0:r140",
+            "observed": "01介護サービ",
+            "reason": "2行に折り返した科目「01 介護サービス等諸費」の行ごとの読み。金額は2行の間に印字され、2行目に付いて名前が分かれる。読みを除き、番号と名前を1つの科目として宣言する"
+          },
+          {
+            "id": "p17-01-介護サービス-2",
+            "page": 17,
+            "observation_id": "p17:full-page:a0:result0:r149",
+            "observed": "ス等諸費",
+            "reason": "2行に折り返した科目「01 介護サービス等諸費」の行ごとの読み。金額は2行の間に印字され、2行目に付いて名前が分かれる。読みを除き、番号と名前を1つの科目として宣言する"
+          },
+          {
+            "id": "p18-01-審查支払手数-1",
+            "page": 18,
+            "observation_id": "p18:full-page:a0:result0:r80",
+            "observed": "01審查支払手",
+            "reason": "2行に折り返した科目「01 審査支払手数料」の行ごとの読み。金額は2行の間に印字され、2行目に付いて名前が分かれる。読みを除き、番号と名前を1つの科目として宣言する"
+          },
+          {
+            "id": "p18-01-審查支払手数-2",
+            "page": 18,
+            "observation_id": "p18:full-page:a0:result0:r89",
+            "observed": "数料",
+            "reason": "2行に折り返した科目「01 審査支払手数料」の行ごとの読み。金額は2行の間に印字され、2行目に付いて名前が分かれる。読みを除き、番号と名前を1つの科目として宣言する"
+          },
+          {
+            "id": "p18-01-町特別給付費-1",
+            "page": 18,
+            "observation_id": "p18:full-page:a0:result0:r156",
+            "observed": "01町特別給付",
+            "reason": "2行に折り返した科目「01 町特別給付費」の行ごとの読み。金額は2行の間に印字され、2行目に付いて名前が分かれる。読みを除き、番号と名前を1つの科目として宣言する"
+          },
+          {
+            "id": "p18-01-町特別給付費-2",
+            "page": 18,
+            "observation_id": "p18:full-page:a0:result0:r165",
+            "observed": "費",
+            "reason": "2行に折り返した科目「01 町特別給付費」の行ごとの読み。金額は2行の間に印字され、2行目に付いて名前が分かれる。読みを除き、番号と名前を1つの科目として宣言する"
+          },
+          {
+            "id": "p22-01-一般会計繰出-1",
+            "page": 22,
+            "observation_id": "p22:full-page:a0:result0:r106",
+            "observed": "01一般会計繰",
+            "reason": "2行に折り返した科目「01 一般会計繰出金」の行ごとの読み。金額は2行の間に印字され、2行目に付いて名前が分かれる。読みを除き、番号と名前を1つの科目として宣言する"
+          },
+          {
+            "id": "p22-01-一般会計繰出-2",
+            "page": 22,
+            "observation_id": "p22:full-page:a0:result0:r115",
+            "observed": "出金",
+            "reason": "2行に折り返した科目「01 一般会計繰出金」の行ごとの読み。金額は2行の間に印字され、2行目に付いて名前が分かれる。読みを除き、番号と名前を1つの科目として宣言する"
+          }
+        ],
+        "code_readings": [
+          {
+            "id": "p16-01-介護認定審查",
+            "page": 16,
+            "box": [
+              23.3,
+              492.4,
+              31.9,
+              501.3
+            ],
+            "code": "01",
+            "name": "介護認定審査会費",
+            "name_box": [
+              32.9,
+              492.4,
+              75.6,
+              501.3
+            ],
+            "reason": "2行に折り返した科目「01 介護認定審査会費」。原典の描画で番号と2行の名前を確かめ、1行目の位置に番号と名前を宣言する"
+          },
+          {
+            "id": "p17-01-介護サービス",
+            "page": 17,
+            "box": [
+              23.3,
+              407.2,
+              31.9,
+              416.3
+            ],
+            "code": "01",
+            "name": "介護サービス等諸費",
+            "name_box": [
+              32.9,
+              407.2,
+              75.8,
+              416.3
+            ],
+            "reason": "2行に折り返した科目「01 介護サービス等諸費」。原典の描画で番号と2行の名前を確かめ、1行目の位置に番号と名前を宣言する"
+          },
+          {
+            "id": "p18-01-審查支払手数",
+            "page": 18,
+            "box": [
+              23.5,
+              246.9,
+              32.1,
+              255.3
+            ],
+            "code": "01",
+            "name": "審査支払手数料",
+            "name_box": [
+              33.1,
+              246.9,
+              75.3,
+              255.3
+            ],
+            "reason": "2行に折り返した科目「01 審査支払手数料」。原典の描画で番号と2行の名前を確かめ、1行目の位置に番号と名前を宣言する"
+          },
+          {
+            "id": "p18-01-町特別給付費",
+            "page": 18,
+            "box": [
+              23.3,
+              445.1,
+              31.9,
+              454.0
+            ],
+            "code": "01",
+            "name": "町特別給付費",
+            "name_box": [
+              32.9,
+              445.1,
+              74.9,
+              454.0
+            ],
+            "reason": "2行に折り返した科目「01 町特別給付費」。原典の描画で番号と2行の名前を確かめ、1行目の位置に番号と名前を宣言する"
+          },
+          {
+            "id": "p22-01-一般会計繰出",
+            "page": 22,
+            "box": [
+              23.0,
+              369.0,
+              31.6,
+              378.6
+            ],
+            "code": "01",
+            "name": "一般会計繰出金",
+            "name_box": [
+              32.6,
+              369.0,
+              75.3,
+              378.6
+            ],
+            "reason": "2行に折り返した科目「01 一般会計繰出金」。原典の描画で番号と2行の名前を確かめ、1行目の位置に番号と名前を宣言する"
+          }
+        ],
+        "header_readings": [
+          {
+            "id": "kaigo-継続費及び繰越事業費繰越額",
+            "pages": [
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23
+            ],
+            "box": [
+              198.5,
+              75.5,
+              247.9,
+              104.5
+            ],
+            "text": "継続費及び繰越事業費繰越額",
+            "reason": "予算現額の「継続費及び繰越事業費繰越額」の升は3行に分けて印字し、OCR が字を重ねて読む（「繰越額額」）か隣の升と続けて読み、見出しが「予算現額」だけになる頁がある。原典の描画で升の印字と罫線の位置を確かめ、どの頁も同じ位置なので升の見出しを宣言する"
+          },
+          {
+            "id": "kaigo-予備費支出及び流用増減",
+            "pages": [
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23
+            ],
+            "box": [
+              247.9,
+              75.5,
+              293.5,
+              104.5
+            ],
+            "text": "予備費支出及び流用増減",
+            "reason": "予算現額の「予備費支出及び流用増減」の升は3行に分けて印字し、OCR が字を重ねて読む（「流流用増減」）か隣の升と続けて読み、見出しが「予算現額」だけになる頁がある。原典の描画で升の印字と罫線の位置を確かめ、どの頁も同じ位置なので升の見出しを宣言する"
+          },
+          {
+            "id": "kaigo-翌年度繰越額",
+            "pages": [
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23
+            ],
+            "box": [
+              517.0,
+              60.0,
+              582.0,
+              104.5
+            ],
+            "text": "翌年度繰越額",
+            "reason": "翌年度繰越額の升は、見出しの下に繰越の種類（継続費逓次繰越・繰越明許費の別・事故繰越）を小さく並べ、行ごとにどの種類かを金額の横に印字する様式の説明。種類は見出しの一部ではないので、升の見出しを「翌年度繰越額」と宣言する（共通の金額の見出しの辞書にある語）"
+          }
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現額／区分／節": {
+                  "kind": "label",
+                  "axis_header": "節"
+                },
+                "事業": {
+                  "kind": "label",
+                  "axis_header": "科目"
+                }
+              },
+              "rules": {
+                "row_gaps": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "amounts": "next_row",
+              "fourth_level_axis": "事業"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "headings": true,
+                  "under": "節"
+                }
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "kaigo-p20-05-care",
+            "page": 20,
+            "code": "05",
+            "observed_name": "認知症地域支援・ケ了向上事業費",
+            "corrected_name": "認知症地域支援・ケア向上事業費",
+            "y": 450.4,
+            "reason": "物理20頁の事業。OCR が「ア」を「了」と読んだ。原典の描画で「認知症地域支援・ケア向上事業費」の印字を確かめた。"
+          },
+          {
+            "id": "kaigo-p18-02-service",
+            "page": 18,
+            "code": "02",
+            "observed_name": "介護予防サ一ビス等諸費",
+            "corrected_name": "介護予防サービス等諸費",
+            "y": 104.6,
+            "reason": "物理18頁の目。OCR が長音の「ー」を漢数字の「一」と読んだ。原典の描画で「介護予防サービス等諸費」の印字を確かめた。"
+          },
+          {
+            "id": "kaigo-p18-04-service",
+            "page": 18,
+            "code": "04",
+            "observed_name": "高額介護サ一ビス等費",
+            "corrected_name": "高額介護サービス等費",
+            "y": 322.3,
+            "reason": "物理18頁の目。OCR が長音の「ー」を漢数字の「一」と読んだ。原典の描画で「高額介護サービス等費」の印字を確かめた。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "kaigo-ocr-1",
+          "origin_sha256": "91a36f3033c31d68e7ef867096aef8b90817794aeca971fd614256e3367e4939",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "151a9d8561919396aa2c1b809f79be358fcc3101f76d3d888a49d5857ccd5a8d",
+          "bytes": 3620132
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kaigo-expenditure-detail"
+        }
+      ]
+    }
+  ]
+}

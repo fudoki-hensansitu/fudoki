@@ -78,6 +78,15 @@
                 },
                 "codes": {
                   "const": "right"
+                },
+                "fourth_level_axis": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "The subject column prints a level below 目 in its staircase (133086's 事業 `(01)一般管理費`): the items of that fourth level are a breakdown of the 目 on the named axis, at its depth 1."
+                },
+                "amounts": {
+                  "const": "next_row",
+                  "description": "A subject item prints its amounts alone in the ruled row below its name (133086's 事業: `(01)一般管理費` / `11,872,000 …`): an amount with no label on its line or in its row belongs to the item of the nearest subject group whose last line is in the row just above."
                 }
               }
             },

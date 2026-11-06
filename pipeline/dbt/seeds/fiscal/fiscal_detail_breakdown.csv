@@ -76,6 +76,8 @@ jurisdiction_code,fiscal_year,document_kind,source_heading,breakdown,basis
 132098,2024,settlement,節,節,法定の節の見出し
 132098,2025,settlement,備考,その他,備考に経費の品目が混ざる（目の直下の19%が品目名）ので事業と呼ばない
 132098,2025,settlement,節,節,法定の節の見出し
+132101,2024,settlement,備考,事業,備考が目の額を事業ごとに分ける（品目名は目の直下の0%）
+132101,2024,settlement,節,節,法定の節の見出し
 132101,2025,settlement,備考,事業,備考が目の額を事業ごとに分ける（品目名は目の直下の0%）
 132101,2025,settlement,節,節,法定の節の見出し
 132128,2024,settlement,備考,事業,備考が目の額を事業ごとに分ける（品目名は目の直下の0%）
@@ -134,6 +136,7 @@ jurisdiction_code,fiscal_year,document_kind,source_heading,breakdown,basis
 133051,2025,settlement,節,節,法定の節の見出し
 133078,2024,settlement,備考,その他,備考に経費の品目が混ざる（目の直下の12%が品目名）ので事業と呼ばない
 133078,2024,settlement,節,節,法定の節の見出し
+133086,2024,settlement,事業,事業,目の下の事業（「(01)一般管理費」「(01)一般被保険者療養給付費」など66件）。節と備考は事業の下にある
 133621,2024,settlement,備考,事業,備考が目の額を事業ごとに分ける（品目名は目の直下の1%）
 133621,2024,settlement,節,節,法定の節の見出し
 133621,2025,settlement,備考,事業,備考が目の額を事業ごとに分ける（品目名は目の直下の0%）

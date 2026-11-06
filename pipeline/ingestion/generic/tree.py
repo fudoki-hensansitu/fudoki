@@ -1283,10 +1283,10 @@ def join_last_lines(items_: list[Item], depth_of, amount_depth) -> list[Item]:
 
 
 def owner(amount: list[Glyph], band: Band, ordered: list[Group], found: dict[int, list[Item]],
-          roles: tuple[str, ...] = ('node', 'repeat', 'total'), *, ocr: bool = False) -> Item | None:
+          roles: tuple[str, ...] = ('node', 'repeat', 'total'), *, ocr: bool = False, next_row: bool = False) -> Item | None:
     """`_owner`, but a heading the page prints again (`営業費用`) does not take the amounts of the line it is on when
     the row it opens is the next item of its ruled cell (`5 減価償却費`, whose `計` is printed beside the heading)."""
-    item = _owner(amount, band, ordered, found, roles, ocr=ocr)
+    item = _owner(amount, band, ordered, found, roles, ocr=ocr, next_row=next_row)
     if item is None or item.role != 'repeat' or not band.rows:
         return item  # a column without rules draws no cell: the heading stays the owner
     digits = [g for g in amount if g.text not in ('△', '▲')] or amount  # the line `_owner` reads the amount at
@@ -1299,7 +1299,7 @@ def owner(amount: list[Glyph], band: Band, ordered: list[Group], found: dict[int
 
 
 def _owner(amount: list[Glyph], band: Band, ordered: list[Group], found: dict[int, list[Item]],
-           roles: tuple[str, ...] = ('node', 'repeat', 'total'), *, ocr: bool = False) -> Item | None:
+           roles: tuple[str, ...] = ('node', 'repeat', 'total'), *, ocr: bool = False, next_row: bool = False) -> Item | None:
     """The item printed on the amount's own line in the nearest label group to its left;
     failing that, the item in its rule-bounded row (a label centred in a tall cell).
 
@@ -1353,6 +1353,19 @@ def _owner(amount: list[Glyph], band: Band, ordered: list[Group], found: dict[in
                  and not any(centre(i.lines[-1]) < rule < y for rule in band.rows)]
         if above:
             return min(above, key=lambda i: y - centre(i.lines[-1]))
+    if next_row and band.rows:
+        # The workflow's `hierarchy.subject.amounts: next_row`: a subject item prints its name in one ruled row and
+        # its amounts alone in the row below (133086's 事業: `(01)一般管理費` / `11,872,000 …`). Nothing is printed
+        # on the amount's line or in its row (the rules above found no owner), so it is the item whose last line
+        # is in the row just above: one rule of the amount's column between them.
+        top = _cell(band, y)[0]
+        for group in left:
+            if not group.subject:
+                continue
+            above = [i for i in found[id(group)] if i.role == 'node' and i.lines and i.lines[-1]
+                     and _cell(band, centre(i.lines[-1]))[1] == top]
+            if above:
+                return max(above, key=lambda i: centre(i.lines[-1]))
     if band.inline:
         # Kind lines stacked in the cell of the item that opens them (`計` / `当初` / `補正` …, one line each): the
         # nearest item above in the nearest label group, within the height of the stack.
@@ -1767,7 +1780,8 @@ def level_indents(all_items: list, mixed: bool) -> tuple[dict[str, list[float]],
 
 
 def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: str | dict = 'indent',
-          layout: dict | None = None, codes_right: bool = False, *, strict: bool = False) -> Built:
+          layout: dict | None = None, codes_right: bool = False, *, strict: bool = False,
+          amounts_next_row: bool = False) -> Built:
     """`detail` is one breakdown pattern for every axis, or a mapping axis → pattern."""
     """`judge(lines) -> {line id: (role, confidence)}` replaces the codeless-line rules (variant B)."""
     shapes: dict[str, list[str]] = {}  # numbering shapes per breakdown axis, in order of first use
@@ -1776,6 +1790,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
     branch: dict[str, list[Item]] = {}  # open items per other axis
     levels: dict[str, list[float]] = {}
     nodes, amounts, unowned, notes = [], [], [], []
+    placed: list[Item] = []  # the items of `nodes`, in order
     repeated_codes: list = []
     for logical in logicals:
         for group in groups(logical, pattern):
@@ -2111,6 +2126,10 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                   if i.level == -1), default=0)
     # Per amount column: (item, kind word) of a stacked kind word left at the foot of a page with its amount still to come.
     carried: dict[str, tuple[Item, str | None, list[Glyph]]] = {}
+    # `amounts_next_row`: the last subject item of the page before, still without an amount (its amounts row is the
+    # first row of this page), and the items that took an amount.
+    waiting_subject: Item | None = None
+    owned: set[str] = set()
 
     def drop_carried_round(entry) -> None:
         # A round printed at the foot of a page that no amount follows: its number is no amount.
@@ -2263,6 +2282,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 if item.parent is None:
                     unowned.append({'kind': 'no subject parent', 'page': item.page, 'text': item.name})
             item.key = node_key(item)
+            placed.append(item)
             x0, y0, x1, y1 = _bbox(item.glyphs)
             nodes.append({'node_key': item.key, 'parent_node_key': item.parent.key if item.parent else None,
                           'axis_header': item.group.axis, 'depth': item.depth,
@@ -2336,7 +2356,13 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     candidate = ''.join(g.text for g in money)
                     if not is_amount(candidate):
                         unowned.append({'kind': 'unreadable amount', 'page': money[0].page, 'text': candidate}); continue
-                    target = owner(money, band, ordered, found, ocr=logical.ocr)
+                    target = owner(money, band, ordered, found, ocr=logical.ocr, next_row=amounts_next_row)
+                    if (target is None and amounts_next_row and waiting_subject is not None
+                            and _cell(band, money[0].y0)[0] == band.body_top
+                            and not any(i.role == 'node' and i.anchor < money[0].y0
+                                        for g in ordered if g.subject for i in found[id(g)])):
+                        # The amounts row of the item that ends the page before opens this page.
+                        target = waiting_subject
                     if target is None and stacked is not None and previous is not None:
                         # `事故繰越` / `19,968,000` printed two lines below its 節 under `31,321,000`: the amount
                         # under a kind word, in the same cell as the amount above it, belongs to that amount's item.
@@ -2402,6 +2428,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                             remarks.append({'kind': 'kind line', 'target': target, 'heading': header, 'label': stacked_label,
                                             'runs': [money], 'unit': logical.unit_of(header)})
                     amounts.append(_amount(target.key, header, money, logical.unit_of(header)))
+                    owned.add(target.key)
                     previous = (target, _cell(band, y))
                 drop_carried_round(carry)  # no amount line in this column at all
                 if unpaid and previous is not None and stacked[1] == previous[1]:
@@ -2413,6 +2440,10 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     if previous is not None and previous[1][1] >= band.body_bottom - .5:
                         # The cell at the foot may run on: its kind word, printed again on the next page, is the item's.
                         carried['／'.join(band.header)] = (previous[0], None, [])
+            if amounts_next_row:
+                subjects = [i for g in ordered if g.subject for i in found[id(g)] if i.role == 'node' and i.key is not None]
+                last = max(subjects, key=lambda i: i.anchor, default=None)
+                waiting_subject = last if last is not None and last.key not in owned and not last.amounts else None
     for entry in carried.values():
         drop_carried_round(entry)  # the document ends with a round no amount follows
     for target, header, run, unit in annotations:
@@ -2428,8 +2459,39 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
         marked.append({'kind': remark['kind'], 'node_key': remark['target'].key, 'parent_node_key': cursor.key,
                        'heading': remark['heading'], 'label': remark['label'], 'runs': remark['runs'],
                        'unit': remark['unit'], 'hint': remark.get('hint')})
+    nest_by_rows(nodes, placed, layout)
     repeated_amounts = repeated_parent_rows(nodes, amounts, unowned, unowned_runs)
     return Built(nodes, _dedupe(amounts, unowned), unowned, notes, marked, skipped, repeated_codes, repeated_amounts, unpaid_rounds)
+
+
+def nest_by_rows(nodes: list[dict], placed: list[Item], layout: dict | None) -> None:
+    """The breakdown setting `under` (an axis): an item of this axis that hangs from its subject item belongs to the
+    item of the named axis whose ruled row it is printed in, under the same subject item (133086 prints the 備考 of
+    a 節 beside it, its lines centred on the 節's row: `10 需用費 339,059` with `消耗品費 129,619` / `印刷製本費
+    209,440`). A line above the page's first such item goes on from the last one of the page before. A line in
+    no such row stays where it was. Its own items move with it, and the depth (counted within the axis) stays."""
+    by_key = {n['node_key']: n for n in nodes}
+    for axis, hints in (layout or {}).items():
+        under = (hints or {}).get('under')
+        if not under:
+            continue
+        hosts = [i for i in placed if i.group.axis == under and i.role == 'node' and i.group.bands]
+        for item in placed:
+            if item.group.axis != axis or item.parent is None or not item.parent.group.subject:
+                continue
+            band = lambda host: host.group.bands[0]
+            found = [h for h in hosts if h.parent is item.parent and h.page == item.page
+                     and _cell(band(h), item.anchor) == _cell(band(h), h.anchor)]
+            if not found and not any(h.parent is item.parent and h.page == item.page and h.anchor < item.anchor
+                                     for h in hosts):
+                # The lines go on over a page break (`12 委託料` with `審査支払事務委託` … at the foot of a page and
+                # `療養費審査委託` at the top of the next): the last item of the axis on the page before.
+                before = [h for h in hosts if h.parent is item.parent and h.page == item.page - 1]
+                found = [max(before, key=lambda h: h.anchor)] if before else []
+            if len(found) != 1:
+                continue
+            item.parent = found[0]
+            by_key[item.key]['parent_node_key'] = found[0].key
 
 
 def judged_roles(judge, group: Group, margins: set[int] | None) -> dict[int, str]:
