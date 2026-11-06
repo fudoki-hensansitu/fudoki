@@ -455,7 +455,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
             </div>
           ) : null}
           <div className="grid size-20 place-items-center rounded-xl border bg-white p-2.5 sm:size-[132px] sm:rounded-2xl sm:p-[18px]">
-            {logo ? <img src={logo} alt={data.name} className="h-auto w-full" /> : <span className="text-3xl text-foreground sm:text-5xl">{data.name[0]}</span>}
+            {logo ? <img src={logo} alt="" className="h-auto w-full" /> : <span className="text-3xl text-foreground sm:text-5xl">{data.name[0]}</span>}
           </div>
           <div className="flex min-w-0 flex-col gap-3">
             {/* 一文（方針の要約）がある年度は名前を小さく一文を大きく見せる。無い自治体・年度は名前を大きく。h1 は名前のまま */}

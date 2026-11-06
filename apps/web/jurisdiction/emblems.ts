@@ -71,5 +71,3 @@ export const EMBLEMS: Record<string, Emblem> = {
   '134210': { file: 'Emblem_of_Ogasawara,_Tokyo.svg', license: 'PD-ineligible / PD-Japan-exempt' }, // 小笠原村
   '281000': { file: 'Emblem_of_Kobe,_Hyogo.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 神戸市
 }
-
-export const commonsUrl = (file: string) => `https://commons.wikimedia.org/wiki/File:${file}`
