@@ -336,7 +336,7 @@ export function ViewFrame({
       {fullscreen ? (
         <div className="flex shrink-0 items-center justify-between border-b px-4 py-2">
           <span className="text-sm text-muted-foreground">風土記の表とグラフ</span>
-          <Hint label="元の大きさに戻す（Esc）">
+          <Hint label="元の大きさに戻す（Esc）" container={box}>
             <Button ref={close} variant="ghost" size="icon-sm" aria-label="元の大きさに戻す（Esc）" onClick={() => setMode('inline')}>
               <XIcon />
             </Button>
@@ -396,7 +396,7 @@ export function ViewFrame({
                   >
                     {label}
                   </button>
-                  <Hint label={selected ? '閉じて会話の中へ元に戻す（Esc、タブで Delete）' : '閉じて会話の中へ元に戻す'}>
+                  <Hint label={selected ? '閉じて会話の中へ元に戻す（Esc、タブで Delete）' : '閉じて会話の中へ元に戻す'} container={box}>
                     <button
                       type="button"
                       tabIndex={-1}
