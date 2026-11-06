@@ -69,32 +69,44 @@ const Section = ({ id, title, lead, aside, link, children }: { id: string; title
   </section>
 )
 
+/** 評価シートの小事業名。note の先頭の（）に書いてある */
+const evaluationUnit = (note: string) => /^（([^）]+)）/.exec(note)?.[1]
+
+/** 予算書の金額のラベル。取り組みだけの金額が載っていないときは「〇〇全体」で、取り組みを含む事業の金額を出している */
+const amountLabel = (label?: string) => {
+  const whole = label?.match(/^(.+)全体$/)?.[1]
+  return whole ? `${whole}の予算（この取り組みを含む）` : label
+}
+
 function ProjectItem({ p }: { p: PolicyProject }) {
+  const unit = p.evaluation ? evaluationUnit(p.evaluation.note) : undefined
+  const note = p.evaluation?.note.replace(/^（[^）]+）/, '')
+  // unmeasured は評価の指標が取り組みではなく事業の別の内容を測っているので、結果の印を付けず、どの事業の評価かを見出しで言う
+  const badge = p.status && p.status !== 'unmeasured' ? p.status : undefined
   return (
-    <div className="grid grid-cols-1 gap-x-6 gap-y-1.5 border-b border-foreground/10 py-4 lg:grid-cols-[minmax(0,1fr)_210px]">
+    <div className="grid grid-cols-1 gap-x-6 gap-y-2 border-b border-foreground/10 py-4 lg:grid-cols-[minmax(0,1fr)_220px]">
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[15.5px]">
         {p.name}
-        {p.status ? <StatusBadge status={p.status} /> : null}
+        {badge ? <StatusBadge status={badge} /> : null}
       </div>
       <p className="text-sm lg:col-start-1">{p.what}</p>
       {p.evaluation ? (
-        <p className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1 text-[13px] text-muted-foreground lg:col-start-1">
-          <span className="inline-flex shrink-0 items-center gap-1 self-center">
-            <ClipboardTextIcon aria-hidden="true" className="size-4" />
-            区の評価
-          </span>
-          <span>
-            {p.evaluation.grade ? <b className="font-normal text-foreground">{p.evaluation.grade}</b> : null}
-            {p.evaluation.grade ? '・' : ''}
-            {p.evaluation.note}
-          </span>
-        </p>
+        <div className="flex flex-col gap-1 rounded-xl bg-secondary/50 px-3.5 py-2.5 lg:col-start-1">
+          <p className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[13px]">
+            <span className="inline-flex shrink-0 items-center gap-1 text-muted-foreground">
+              <ClipboardTextIcon aria-hidden="true" className="size-4" />
+              {unit ? `区の評価（${unit}）` : '区の評価'}
+            </span>
+            {p.evaluation.grade ? <b className="text-[14px] font-normal text-foreground">{p.evaluation.grade}</b> : null}
+          </p>
+          {note ? <p className="text-[13px] text-muted-foreground [text-wrap:pretty]">{note}</p> : null}
+        </div>
       ) : null}
-      <div className="flex flex-row flex-wrap gap-x-3 gap-y-1 text-sm lg:col-start-2 lg:row-span-3 lg:row-start-1 lg:flex-col lg:gap-0.5 lg:text-right">
+      <div className="flex flex-row flex-wrap gap-x-4 gap-y-1 text-sm lg:col-start-2 lg:row-span-3 lg:row-start-1 lg:flex-col lg:gap-1 lg:text-right">
         {p.amounts.map((a) => (
           <span key={`${a.yen}-${a.label ?? ''}`} className="tabular-nums">
             {formatYen(a.yen)}
-            {a.label ? <small className="ml-1 text-xs text-muted-foreground lg:ml-0 lg:block">{a.label}</small> : null}
+            {a.label ? <small className="ml-1 text-xs text-muted-foreground lg:ml-0 lg:block">{amountLabel(a.label)}</small> : null}
           </span>
         ))}
       </div>
