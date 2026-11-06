@@ -7,18 +7,14 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbP
 import { buttonVariants } from '@/components/ui/button'
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList, ComboboxTrigger } from '@/components/ui/combobox'
 import { InputGroupAddon } from '@/components/ui/input-group'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
-import { MagnifyingGlassIcon, SortDescendingIcon } from '@phosphor-icons/react'
+import { ArrowDownIcon, ArrowsDownUpIcon, ArrowUpIcon, MagnifyingGlassIcon } from '@phosphor-icons/react'
+import { flexRender, getCoreRowModel, getSortedRowModel, useReactTable, type ColumnDef, type SortingState } from '@tanstack/react-table'
 import { JAPAN_TILES } from './japan-tiles'
 import { PREFECTURE_MAPS } from './map.generated'
 import { formatAsOf, formatPeople, formatPerCapita, formatYen, reiwa, type IndexEntry, type JurisdictionKind } from './types'
 
-type Sort = 'desc' | 'asc'
-const SORTS: { value: Sort; label: string }[] = [
-  { value: 'desc', label: '1人あたりの歳出が大きい順' },
-  { value: 'asc', label: '1人あたりの歳出が小さい順' },
-]
 const KINDS: JurisdictionKind[] = ['都道府県', '区', '市', '町村']
 
 /** 塗りの濃さ。面積で見比べるので、金額の平方根に比例させる（最小でも地の色と区別できる濃さを残す） */
@@ -32,6 +28,76 @@ const Chip = ({ on, onClick, children }: { on?: boolean; onClick?: () => void; c
 
 /** 令和の年度は R7 のように短く書く（2019年より前は西暦のまま） */
 const shortYear = (y: number) => (y >= 2019 ? `R${y - 2018}` : String(y))
+
+/** 比較表の列。見出しを押すとその列で並べ替える。数値の列は大きい順から、人口の無い自治体はどちらの向きでも末尾に置く */
+const columns: ColumnDef<IndexEntry>[] = [
+  {
+    id: 'name',
+    header: '自治体',
+    // 自治体コードの順（都道府県ごとにまとまる）
+    accessorFn: (e) => e.code,
+    sortDescFirst: false,
+    cell: ({ row: { original: e } }) => (
+      <Link href={e.path} className="after:absolute after:inset-0 focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-ring/40">
+        <span className="text-[16px]">{e.name}</span>
+        <small className="ml-2 text-[11px] text-muted-foreground">{e.prefecture}</small>
+      </Link>
+    ),
+  },
+  {
+    id: 'population',
+    header: '人口',
+    accessorFn: (e) => e.population?.people,
+    sortUndefined: 'last',
+    sortDescFirst: true,
+    meta: { numeric: true },
+    cell: ({ row: { original: e } }) =>
+      e.population ? <span title={`住民基本台帳人口（${formatAsOf(e.population.asOf)}時点）`}>{formatPeople(e.population.people)}</span> : <span className="text-muted-foreground">—</span>,
+  },
+  {
+    id: 'perCapita',
+    header: '1人あたりの歳出',
+    accessorFn: (e) => e.perCapita ?? undefined,
+    sortUndefined: 'last',
+    sortDescFirst: true,
+    meta: { numeric: true },
+    cell: ({ row: { original: e }, table }) => {
+      if (e.perCapita === null) return <span className="text-[13px] text-muted-foreground">人口が無く出せません</span>
+      const max = table.options.meta?.maxPerCapita ?? 1
+      return (
+        <span className="flex items-center justify-end gap-2.5">
+          <span className="block h-2.5 w-24 sm:w-40">
+            <span className="block h-full rounded-sm bg-primary" style={{ width: `${Math.max(1, (e.perCapita / max) * 100)}%` }} />
+          </span>
+          <span className="w-[5.5rem] text-right">{formatPerCapita(e.perCapita)}</span>
+        </span>
+      )
+    },
+  },
+  {
+    id: 'yen',
+    header: '歳出の総額',
+    accessorFn: (e) => e.yen,
+    sortDescFirst: true,
+    meta: { numeric: true },
+    cell: ({ row: { original: e } }) => (
+      <span>
+        {formatYen(e.yen)}
+        <small className="ml-2 text-[11px] text-muted-foreground" title={reiwa(e.year)}>{shortYear(e.year)}</small>
+      </span>
+    ),
+  },
+]
+
+declare module '@tanstack/react-table' {
+  interface ColumnMeta<TData, TValue> {
+    numeric?: boolean
+  }
+  interface TableMeta<TData> {
+    /** 棒の長さの基準。絞り込んでも変えないよう、全自治体の最大 */
+    maxPerCapita: number
+  }
+}
 
 function SelectedCard({ e }: { e: IndexEntry }) {
   const max = e.topKan[0]?.yen ?? 1
@@ -279,15 +345,15 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
   const prefPicks = picked['都道府県']
   const namePicks = [...picked['区'], ...picked['市'], ...picked['町村']]
   const filtered = prefPicks.length + namePicks.length > 0
-  const [sort, setSort] = React.useState<Sort>('desc')
-  // 表は1人あたりの歳出で並べる。人口が無い自治体は、どちらの並びでも末尾に置く
-  const withPerCapita = entries.filter((e) => e.perCapita !== null).sort((a, b) => b.perCapita! - a.perCapita!)
-  const withoutPerCapita = entries.filter((e) => e.perCapita === null)
-  const maxPerCapita = withPerCapita[0]?.perCapita ?? 1
+  const maxPerCapita = React.useMemo(() => Math.max(1, ...entries.map((e) => e.perCapita ?? 0)), [entries])
+  const [sorting, setSorting] = React.useState<SortingState>([{ id: 'perCapita', desc: true }])
   // 都道府県と市区町村の選択は AND（東京都 × 八王子市なら八王子市）。同じ都道府県・市区町村どうしは、どれかに当たれば残す
-  const rows = [...(sort === 'desc' ? withPerCapita : [...withPerCapita].reverse()), ...withoutPerCapita].filter(
-    (e) => (!prefPicks.length || prefPicks.includes(prefOf(e))) && (!namePicks.length || namePicks.includes(e.code)),
+  const data = React.useMemo(
+    () => entries.filter((e) => (!prefPicks.length || prefPicks.includes(prefOf(e))) && (!namePicks.length || namePicks.includes(e.code))),
+    [entries, prefPicks.join(), namePicks.join()],
   )
+  const table = useReactTable({ data, columns, state: { sorting }, onSortingChange: setSorting, getCoreRowModel: getCoreRowModel(), getSortedRowModel: getSortedRowModel(), getRowId: (e) => e.code, meta: { maxPerCapita } })
+  const rows = table.getRowModel().rows
   const prefCount = new Map<string, number>()
   for (const e of entries) prefCount.set(prefOf(e), (prefCount.get(prefOf(e)) ?? 0) + 1)
   const optionsOf = (k: JurisdictionKind) =>
@@ -388,61 +454,41 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
             const n = k === '都道府県' ? prefCount.size : entries.filter((e) => e.kind === k).length
             return n ? <TagFilter key={k} label={k} count={n} options={optionsOf(k)} picked={picked[k]} onChange={(v) => setPicked((p) => ({ ...p, [k]: v }))} /> : null
           })}
-          <span className="flex-1" />
-          <span className="flex items-center gap-2 text-[13px] text-muted-foreground">
-            <SortDescendingIcon className="size-4" aria-hidden="true" />
-            並び
-            <Select items={SORTS} value={sort} onValueChange={(v) => v && setSort(v as Sort)}>
-              <SelectTrigger aria-label="並び" className="h-8 rounded-full bg-background pl-3.5 text-[13px] text-foreground">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent align="end" alignItemWithTrigger={false} className="w-auto min-w-(--anchor-width)">
-                {SORTS.map((o) => (
-                  <SelectItem key={o.value} value={o.value}>
-                    {o.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </span>
         </div>
 
         {/* 絞り込みで行が減っても頁の高さが急に縮まないよう、表の高さの下限を持たせる */}
         <div className="mt-5 min-h-[min(80vh,44rem)] border-t border-foreground">
-          <div className="hidden grid-cols-[minmax(0,13rem)_6rem_minmax(0,1fr)] gap-5 border-b px-2 py-2.5 text-xs text-muted-foreground md:grid">
-            <span>自治体</span>
-            <span className="text-right">人口</span>
-            <span>1人あたりの歳出（最新の決算・一般会計）</span>
-          </div>
-          <ul>
-            {rows.map((e) => (
-              <li key={e.code}>
-                <Link
-                  href={e.path}
-                  className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1.5 border-b px-2 py-3 transition-colors hover:bg-card md:grid-cols-[minmax(0,13rem)_6rem_minmax(0,1fr)] md:gap-5"
-                >
-                  <span className="min-w-0 truncate">
-                    <span className="text-[16px]">{e.name}</span>
-                    <small className="ml-2 text-[11px] text-muted-foreground">{e.prefecture}</small>
-                  </span>
-                  <span className="text-right text-[13px] tabular-nums" title={e.population ? `住民基本台帳人口（${formatAsOf(e.population.asOf)}時点）` : undefined}>
-                    {e.population ? formatPeople(e.population.people) : '—'}
-                  </span>
-                  <span className="col-span-2 flex min-w-0 items-center gap-2.5 md:col-span-1">
-                    {e.perCapita !== null ? (
-                      <>
-                        <span className="block h-2.5 rounded-sm bg-primary" style={{ width: `${Math.max(0.6, (e.perCapita / maxPerCapita) * 80)}%` }} />
-                        <span className="whitespace-nowrap text-[13px] tabular-nums" title={`歳出の総額 ${formatYen(e.yen)}`}>{formatPerCapita(e.perCapita)}</span>
-                      </>
-                    ) : (
-                      <span className="whitespace-nowrap text-[13px] text-muted-foreground">人口が無く出せません</span>
-                    )}
-                    <small className="whitespace-nowrap text-[11px] text-muted-foreground" title={reiwa(e.year)}>{shortYear(e.year)}</small>
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <Table className="tabular-nums">
+            <TableHeader>
+              {table.getHeaderGroups().map((g) => (
+                <TableRow key={g.id} className="hover:bg-transparent">
+                  {g.headers.map((h) => {
+                    const dir = h.column.getIsSorted()
+                    const Icon = dir === 'asc' ? ArrowUpIcon : dir === 'desc' ? ArrowDownIcon : ArrowsDownUpIcon
+                    return (
+                      <TableHead key={h.id} aria-sort={dir === 'asc' ? 'ascending' : dir === 'desc' ? 'descending' : 'none'} className={cn('h-auto py-1.5 text-xs font-normal text-muted-foreground', h.column.columnDef.meta?.numeric && 'text-right')}>
+                        <button type="button" onClick={h.column.getToggleSortingHandler()} className={cn('inline-flex items-center gap-1 rounded px-1 py-1 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40', dir && 'text-foreground')}>
+                          {flexRender(h.column.columnDef.header, h.getContext())}
+                          <Icon className={cn('size-3.5', !dir && 'opacity-40')} aria-hidden="true" />
+                        </button>
+                      </TableHead>
+                    )
+                  })}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {rows.map((r) => (
+                <TableRow key={r.id} className="relative hover:bg-card">
+                  {r.getVisibleCells().map((c) => (
+                    <TableCell key={c.id} className={cn('py-3 text-[13px]', c.column.columnDef.meta?.numeric && 'text-right')}>
+                      {flexRender(c.column.columnDef.cell, c.getContext())}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
           {/* 絞り込みの結果を読み上げる。空でないときは件数だけを画面外で伝える */}
           <p role="status" aria-live="polite" className={rows.length === 0 && entries.length ? 'px-2 py-8 text-center text-muted-foreground' : 'sr-only'}>
             {!entries.length ? '' : rows.length ? `${rows.length} の自治体` : '条件に当たる自治体はありません。'}
