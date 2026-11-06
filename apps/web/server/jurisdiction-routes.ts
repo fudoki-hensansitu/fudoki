@@ -5,8 +5,8 @@ import { PREFECTURE_MAPS } from '../jurisdiction/map.generated'
 import { sitemapXml } from '../jurisdiction/html'
 import { jurisdictionPath, PREFECTURE_SLUGS } from '../jurisdiction/path'
 import { DEFAULT_INDEX_QUERY, parseIndexQuery, queryIndex, toMapEntry, type IndexTable, type MapEntry } from '../jurisdiction/index-table'
-import { INDEX_PATH, type Direction, type Drill, type FlowDepth, type FlowView, type IndexEntry, type PageData, type Setsu } from '../jurisdiction/types'
-import { PROFILES, type Profile } from '../jurisdiction/profiles'
+import { INDEX_PATH, type Drill, type FlowDepth, type FlowView, type IndexEntry, type PageData, type Setsu } from '../jurisdiction/types'
+import { assetPath, PROFILES, type Profile } from '../jurisdiction/profiles'
 import { clientIp, errorResponse, HttpError, rateLimit } from './http'
 import { VIEW_RATE_LIMIT } from './limits'
 import type { Env, RateLimiter } from './env'
@@ -59,24 +59,16 @@ export async function tableResponse(env: Env, request: Request): Promise<Respons
 /** 最後の節に出す近くの自治体の数 */
 const NEARBY_COUNT = 6
 
-/** 近い順の自治体と、自身から見た向き（8方位）。都道府県の図（map.generated.ts）のタイルの位置で測り、図の無い自治体は自治体コードの近さで測る（向きは無し） */
-function nearby(entry: CatalogEntry, candidates: CatalogEntry[]): { e: CatalogEntry; dir?: Direction }[] {
+/** 近い順の自治体。都道府県の図（map.generated.ts）のタイルの位置で測り、図の無い自治体は自治体コードの近さで測る */
+function nearby(entry: CatalogEntry, candidates: CatalogEntry[]): CatalogEntry[] {
   const tiles = new Map<string, { col: number; row: number }>(PREFECTURE_MAPS.flatMap((m) => m.tiles.map((t) => [t.code, t] as const)))
   const here = tiles.get(entry.code)
-  return candidates
-    .map((e) => {
-      const t = tiles.get(e.code)
-      if (!here || !t) return { e, d: 1e3 + Math.abs(Number(e.code) - Number(entry.code)) }
-      // row は北から南へ増える。東を 0 に反時計回りの角度から8方位を決める
-      const angle = Math.atan2(here.row - t.row, t.col - here.col)
-      const dir = DIRECTIONS[(Math.round(angle / (Math.PI / 4)) + 8) % 8]
-      return { e, d: Math.hypot(t.col - here.col, t.row - here.row), dir }
-    })
-    .sort((a, b) => a.d - b.d || a.e.code.localeCompare(b.e.code))
-    .slice(0, NEARBY_COUNT)
+  const distance = (e: CatalogEntry) => {
+    const t = tiles.get(e.code)
+    return here && t ? Math.hypot(t.col - here.col, t.row - here.row) : 1e3 + Math.abs(Number(e.code) - Number(entry.code))
+  }
+  return candidates.map((e) => ({ e, d: distance(e) })).sort((a, b) => a.d - b.d || a.e.code.localeCompare(b.e.code)).slice(0, NEARBY_COUNT).map((x) => x.e)
 }
-
-const DIRECTIONS: Direction[] = ['e', 'ne', 'n', 'nw', 'w', 'sw', 's', 'se']
 
 /** 個別ページに出すもの。収録の無い自治体は empty、存在しない名称や都道府県の slug でない path は null（404） */
 export type JurisdictionView = { kind: 'page'; data: PageData & { profile: Profile | null } } | { kind: 'empty'; entry: CatalogEntry }
@@ -91,7 +83,10 @@ export async function resolveJurisdiction(env: Env, path: string): Promise<Juris
   const prefectureCode = `${entry.code.slice(0, 2)}0001`
   const prefecturePath = entry.code !== prefectureCode && entries.some((e) => e.code === prefectureCode) ? jurisdictionPath(prefectureCode) : INDEX_PATH
   const neighbors = nearby(entry, entries.filter((e) => e.code.slice(0, 2) === entry.code.slice(0, 2) && e.code !== entry.code && e.code !== prefectureCode && e.settlementYears.length > 0))
-    .map(({ e, dir }) => ({ name: e.name, path: jurisdictionPath(e.code), ...(dir ? { dir } : {}) }))
+    .map((e) => {
+      const logo = PROFILES[e.code]?.logo
+      return { code: e.code, name: e.name, path: jurisdictionPath(e.code), ...(logo ? { logo: assetPath(e.code, logo) } : {}) }
+    })
   const data = entry.settlementYears.length > 0 ? await page(env, entry) : null
   return data ? { kind: 'page', data: { ...data, prefecturePath, neighbors, profile: PROFILES[entry.code] ?? null } } : { kind: 'empty', entry }
 }

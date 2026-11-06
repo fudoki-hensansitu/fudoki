@@ -3,7 +3,7 @@
 // 歳出の決算は API の値。新しく始めたこと・やめたこと（事業の入れ替え）は jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
 import { Link } from '@void/react'
 import * as React from 'react'
-import { ArrowDownIcon, ArrowDownLeftIcon, ArrowDownRightIcon, ArrowLeftIcon, ArrowRightIcon, ArrowSquareOutIcon, ArrowUpIcon, ArrowUpLeftIcon, ArrowUpRightIcon, BankIcon, BasketballIcon, CaretDownIcon, CheckCircleIcon, CircleHalfIcon, ClipboardTextIcon, ClockIcon, CoinsIcon, ChatCircleIcon, FirstAidKitIcon, GlobeIcon, HandHeartIcon, HouseLineIcon, LeafIcon, MapPinIcon, MinusCircleIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, StudentIcon, DotsThreeCircleIcon, UsersIcon, WarningCircleIcon, XIcon } from '@phosphor-icons/react'
+import { ArrowLeftIcon, ArrowRightIcon, ArrowSquareOutIcon, CaretRightIcon, MapPinAreaIcon, BankIcon, BasketballIcon, CaretDownIcon, CheckCircleIcon, CircleHalfIcon, ClipboardTextIcon, ClockIcon, CoinsIcon, ChatCircleIcon, FirstAidKitIcon, GlobeIcon, HandHeartIcon, HouseLineIcon, LeafIcon, MapPinIcon, MinusCircleIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, StudentIcon, DotsThreeCircleIcon, UsersIcon, WarningCircleIcon, XIcon } from '@phosphor-icons/react'
 import { StartForm } from '../chat/start-form'
 import type { StoredSession } from '../chat/store'
 import { Hint } from '@/components/hint'
@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { DOMAIN_FRAMES, groupByFrame, OTHER_FRAME } from './domains'
 import { Flow } from './flow'
 import { assetPath, type PolicyProject, type ProfileYear, type ProjectStatus, type Scrap } from './profiles'
-import { changePct, INDEX_PATH, type Direction, formatAsOf, formatPeople, formatYen, reiwa, yearName, type FlowView, type PageData, type Project, type Setsu, type YearTotal } from './types'
+import { changePct, INDEX_PATH, formatAsOf, formatPeople, formatYen, reiwa, yearName, type FlowView, type PageData, type Project, type Setsu, type YearTotal } from './types'
 
 const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
   const res = await fetch(url, { signal })
@@ -167,13 +167,7 @@ function Domains({ year }: { year: ProfileYear }) {
   )
 }
 
-/** 近くの自治体の向き（8方位）の矢印 */
-const DIRECTION_ICON: Record<Direction, typeof ArrowUpIcon> = {
-  n: ArrowUpIcon, ne: ArrowUpRightIcon, e: ArrowRightIcon, se: ArrowDownRightIcon, s: ArrowDownIcon, sw: ArrowDownLeftIcon, w: ArrowLeftIcon, nw: ArrowUpLeftIcon,
-}
-const DIRECTION_NAME: Record<Direction, string> = { n: '北', ne: '北東', e: '東', se: '南東', s: '南', sw: '南西', w: '西', nw: '北西' }
-
-/** 最後の節。都道府県へ戻るリンク、近くの自治体のカード（向きの矢印つき）、全国の一覧へのリンク */
+/** 最後の節。都道府県へ戻るリンク、近くの自治体のカード（区章があれば区章）、全国の一覧へのリンク */
 function Elsewhere({ data }: { data: PageData }) {
   return (
     <Section id="elsewhere" title="ほかの自治体も見る">
@@ -184,15 +178,19 @@ function Elsewhere({ data }: { data: PageData }) {
         </Link>
       ) : null}
       {data.neighbors.length ? (
-        <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+        <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {data.neighbors.map((n) => {
-            const Icon = n.dir ? DIRECTION_ICON[n.dir] : MapPinIcon
             return (
               <li key={n.path}>
-                <Link href={n.path} className="flex items-center gap-2.5 rounded-xl border px-4 py-3 text-[15px] text-foreground no-underline hover:bg-card">
-                  <Icon aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
-                  <span className="min-w-0 truncate">{n.name}</span>
-                  {n.dir ? <span className="ml-auto shrink-0 text-xs text-muted-foreground">{DIRECTION_NAME[n.dir]}</span> : null}
+                <Link href={n.path} className="group flex items-center gap-3.5 rounded-2xl border bg-background p-3.5 text-foreground no-underline transition-colors hover:border-primary/40 hover:bg-card">
+                  <span className="grid size-12 shrink-0 place-items-center rounded-xl border bg-white p-1.5">
+                    {n.logo ? <img src={n.logo} alt="" className="h-auto w-full" /> : <MapPinAreaIcon aria-hidden="true" className="size-6 text-primary" />}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <b className="block truncate text-[16px] font-normal">{n.name}</b>
+                    <span className="text-xs text-muted-foreground">{data.name}の近く</span>
+                  </span>
+                  <CaretRightIcon aria-hidden="true" className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
                 </Link>
               </li>
             )
