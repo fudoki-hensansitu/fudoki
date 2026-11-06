@@ -247,7 +247,7 @@ export async function loadCofogFlow(env: Env, code: string, year: number, depth:
 /** 中分類の名前。大分類までしか決めていない目・コードの無い目はそう書く */
 function cofogGroupName(group: string) {
   if (!group) return '分類を決められない支出'
-  if (!group.includes('.')) return '中分類を決めていない支出'
+  if (!group.includes('.')) return '未分類'
   // 名前の表は規則が使うコードを全部持つ（cofog-master.ts）。漏れたときもページは落とさずコードを出す
   return COFOG_GROUPS[group] ?? `COFOG ${group}`
 }
