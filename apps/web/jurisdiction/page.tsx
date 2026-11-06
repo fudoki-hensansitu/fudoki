@@ -127,7 +127,7 @@ function ProjectItem({ p }: { p: PolicyProject }) {
             </span>
             {p.evaluation.grade ? <Grade grade={p.evaluation.grade} className="text-[14px] text-foreground" /> : null}
           </p>
-          {note ? <p className="text-[13px] text-muted-foreground [text-wrap:pretty]">{note}</p> : null}
+          {note ? <p className="text-[13px] text-foreground [text-wrap:pretty]">{note}</p> : null}
         </div>
       ) : null}
     </div>
