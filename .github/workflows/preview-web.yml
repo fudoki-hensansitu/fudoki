@@ -1,6 +1,7 @@
 name: preview-web
 # PR ごとに公開 web（fudoki.dev）の preview を pr-<番号>.fudoki.dev に出す。push のたびに同じ URL を更新する
-# PR を閉じたら（merge を含む）preview を消す。cf には削除のコマンドが無いので wrangler を使う
+# build（vite build）が書き出す dist/ssr/wrangler.json を wrangler preview に渡す。preview の binding・var は apps/web/void.config.ts の previews が正本
+# PR を閉じたら（merge を含む）preview を消す
 on:
   pull_request:
     types: [opened, synchronize, reopened, closed]
@@ -29,9 +30,9 @@ jobs:
         with:
           version: 2026.8.6
       - run: bun install --frozen-lockfile
-      - run: bun run --cwd apps/web client
-      - run: mise exec -- cf previews deploy "pr-${{ github.event.pull_request.number }}"
-        working-directory: apps/web/deploy
+      - run: bun run --cwd apps/web build
+      - run: ./node_modules/.bin/wrangler preview --name "pr-${{ github.event.pull_request.number }}" -c dist/ssr/wrangler.json
+        working-directory: apps/web
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

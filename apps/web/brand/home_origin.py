@@ -1,7 +1,7 @@
 """ホームの「確かめる」に載せる出典の切り抜きを、新宿区の決算書 PDF から書き出す。
 
 出典は自治体が公開した PDF そのもの。頁と切り抜く範囲（pt）は home-data.ts の HOME.origin と揃える。
-static/home/origin.webp を書く（Worker の static assets として配る）。
+public/home/origin.webp を書く（Worker の static assets として配る）。
 """
 
 import hashlib
@@ -49,7 +49,7 @@ def main() -> None:
     buffer = io.BytesIO()
     image.save(buffer, "WEBP", quality=72, method=6)
     data = buffer.getvalue()
-    out = WEB / "static/home/origin.webp"
+    out = WEB / "public/home/origin.webp"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_bytes(data)
     print(f"{image.width}x{image.height} · {len(data) // 1024} KiB → {out.relative_to(ROOT)}")

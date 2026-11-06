@@ -10,7 +10,7 @@ N03 の行政区域コードから6桁のコード（検査数字つき）を組
 「見つからない」で止まる。
 
 ホームページの地図（自治体クリック→その自治体のパイプラインへ）に使う表示用データ。
-正本ではなく表示用の派生物なので `apps/web/public/tokyo.geojson` に置く
+正本ではなく表示用の派生物なので `apps/web/map/tokyo.geojson` に置く（配信はしない）
 （`apps/web/brand/build.py` と同じ「生成物と consumer の近くに置く」置き場）。
 
 取得元は国土数値情報 行政区域データ（N03、国土交通省、CC BY 4.0）。
@@ -37,7 +37,7 @@ import urllib.request
 import zipfile
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent.parent.parent
-OUT = ROOT / "apps" / "web" / "public" / "tokyo.geojson"
+OUT = ROOT / "apps" / "web" / "map" / "tokyo.geojson"
 JURISDICTIONS = ROOT / "packages" / "jurisdictions" / "jurisdictions.json"
 UA = "fudoki/0.1 (+https://github.com/fudoki-hensansitu/fudoki)"
 

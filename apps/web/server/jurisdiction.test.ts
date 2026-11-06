@@ -1,7 +1,8 @@
 import { describe, expect, test } from 'bun:test'
 import { changePct, formatYen, kanChanges, reiwa, type YearTotal } from '../jurisdiction/types'
-import web from '../worker'
-import { renderIndex } from '../jurisdiction/html'
+import { fetchRoute } from './routes.testing'
+import { emptyHead, indexHead, pageHead, type Head } from '../jurisdiction/html'
+import { indexEntries, resolveJurisdiction } from './jurisdiction-routes'
 import { searchInput } from '../../api/src/search'
 import type { Env } from './env'
 import prefectures from '../../../packages/jurisdictions/prefectures.json'
@@ -92,63 +93,56 @@ function fixtureApi({ axis = '科目', code = '131148', name = '中野区', extr
 }
 const API = fixtureApi()
 const env: Env = { API, VIEW_RATE_LIMIT: { limit: async () => ({ success: true }) } }
-const get = (path: string, e: Env = env) => web.fetch(new Request(`https://fudoki.dev${path}`), e)
+const get = (path: string, e: Env = env) => fetchRoute(new Request(`https://fudoki.dev${path}`), e)
+const view = async (path: string, e: Env = env) => {
+  const v = await resolveJurisdiction(e, path)
+  if (v?.kind !== 'page') throw new Error(`${path} は個別ページにならなかった`)
+  return v.data
+}
+const canonical = (h: Head) => h.link.find((l) => l.rel === 'canonical')?.href
 
 describe('自治体の個別ページ', () => {
-  test('款の和・事業・前年度の同じ目から組み、HTML に金額と自治体名を入れる', async () => {
-    const res = await get('/tokyo/nakano', { ...env, TURNSTILE_SITE_KEY: 'public-test-key' })
-    expect(res.status).toBe(200)
-    const html = await res.text()
-    expect(html).toContain('<title>中野区の歳出｜令和7年度決算｜風土記</title>')
-    expect(html).toContain('https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit')
-    expect(html).toContain('<link rel="canonical" href="https://fudoki.dev/tokyo/nakano">')
+  test('款の和・事業・前年度の同じ目から組み、head に金額と自治体名を入れる', async () => {
+    const data = await view('/tokyo/nakano')
+    const head = pageHead(data)
+    expect(head.title).toBe('中野区の歳出｜令和7年度決算｜風土記')
+    expect(canonical(head)).toBe('https://fudoki.dev/tokyo/nakano')
     // 年度ごとの総額は、その年度の款（兄弟）の和
-    const data = JSON.parse(html.match(/<script type="application\/json" id="j-data">(.*?)<\/script>/s)![1]!)
-    expect(data.years.map((y: { year: number; yen: number }) => [y.year, y.yen])).toEqual([[2024, 500], [2025, 1000]])
+    expect(data.years.map((y) => [y.year, y.yen])).toEqual([[2024, 500], [2025, 1000]])
     // 積立の款は事業の候補から外し、前年度の同じ目（款・項・名前が一致）だけを前年に使う
-    expect(data.projects.map((p: { name: string; prevYen: number | null }) => [p.name, p.prevYen])).toEqual([['保育園費', 200]])
-    expect(data.flow.map((d: { kan: { name: string }; kou: { name: string; moku: unknown[] }[] }) => [d.kan.name, d.kou.map((k) => k.name)])).toEqual([['子ども教育費', ['子ども費']], ['総務費', ['総務管理費']]])
-    expect(data.flow[0].kou[0].moku).toEqual([])
+    expect(data.projects.map((p) => [p.name, p.prevYen])).toEqual([['保育園費', 200]])
+    expect(data.flow.map((d) => [d.kan.name, d.kou.map((k) => k.name)])).toEqual([['子ども教育費', ['子ども費']], ['総務費', ['総務管理費']]])
+    expect(data.flow[0]!.kou[0]!.moku).toEqual([])
   })
 
   test('収録の無い自治体は検索に出さず、名前が違えば 404、sitemap には収録のある自治体だけ', async () => {
-    const empty = await get('/tokyo/chiyoda')
-    expect(empty.status).toBe(200)
-    expect(await empty.text()).toContain('<meta name="robots" content="noindex">')
-    expect((await get('/tokyo/sonzaishinai')).status).toBe(404)
+    const empty = await resolveJurisdiction(env, '/tokyo/chiyoda')
+    expect(empty?.kind).toBe('empty')
+    if (empty?.kind === 'empty') expect(emptyHead(empty.entry).meta).toContainEqual({ name: 'robots', content: 'noindex' })
+    expect(await resolveJurisdiction(env, '/tokyo/sonzaishinai')).toBeNull()
     // 都道府県自体は /tokyo（/tokyo/tokyo にしない）
-    const tokyo = await get('/tokyo')
-    expect(tokyo.status).toBe(200)
-    expect(await tokyo.text()).toContain('<link rel="canonical" href="https://fudoki.dev/tokyo">')
-    expect((await get('/tokyo/tokyo')).status).toBe(404)
-    // 都道府県の slug でなければ他の経路へ渡す（/s/:id などを奪わない）
-    expect((await get('/jurisdictions')).status).toBe(200)
-    expect((await get('/s/not-a-session')).status).not.toBe(200)
+    const tokyo = await resolveJurisdiction(env, '/tokyo')
+    expect(tokyo?.kind === 'empty' && canonical(emptyHead(tokyo.entry))).toBe('https://fudoki.dev/tokyo')
+    expect(await resolveJurisdiction(env, '/tokyo/tokyo')).toBeNull()
+    // 都道府県の slug でなければ自治体のページにしない（/s/:id などを奪わない）
+    expect(await resolveJurisdiction(env, '/jurisdictions')).toBeNull()
+    expect(await resolveJurisdiction(env, '/s/not-a-session')).toBeNull()
     expect((await get('/api/none')).status).toBe(404)
     const sitemap = await (await get('/sitemap.xml')).text()
     expect(sitemap).toContain('<loc>https://fudoki.dev/tokyo/nakano</loc>')
     expect(sitemap).not.toContain('chiyoda')
   })
 
-  test('一覧は収録のある自治体だけを、最新の決算の款の和で HTML に載せる', async () => {
-    const html = await (await get('/jurisdictions')).text()
-    const data = JSON.parse(html.match(/<script type="application\/json" id="j-index-data">(.*?)<\/script>/s)![1]!)
-    expect(data.map((e: { name: string; year: number; yen: number; path: string }) => [e.name, e.year, e.yen, e.path])).toEqual([['中野区', 2025, 1000, '/tokyo/nakano']])
-    // JavaScript が無くても個別ページへのリンクと金額が読める
-    expect(html).toContain('href="/tokyo/nakano"')
-    // 未収録の自治体はタイル図に名前だけを出し、個別ページへはつながない
-    expect(html).not.toContain('href="/tokyo/chiyoda"')
+  test('一覧は収録のある自治体だけを、最新の決算の款の和で載せる', async () => {
+    const entries = await indexEntries(env)
+    expect(entries.map((e) => [e.name, e.year, e.yen, e.path])).toEqual([['中野区', 2025, 1000, '/tokyo/nakano']])
+    expect(canonical(indexHead(entries))).toBe('https://fudoki.dev/jurisdictions')
   })
 
   test('一覧の総額は金額の印字が無い款を 0 と数えず、一部の款の和だと印を付ける', async () => {
     const api = fixtureApi({ extraNodes: [node({ node_id: id(99), node_kind: '款', name: '予備費', amount_yen: null, fiscal_year: 2025 })] })
-    const html = await (await get('/jurisdictions', { ...env, API: api })).text()
-    const data = JSON.parse(html.match(/<script type="application\/json" id="j-index-data">(.*?)<\/script>/s)![1]!)
-    expect(data.map((e: { yen: number; amountMissing?: true }) => [e.yen, e.amountMissing])).toEqual([[1000, true]])
-  })
-
-  test('収録した自治体が無くても一覧は描け、案内を出す', () => {
-    expect(renderIndex([], true)).toContain('まだ決算を収録した自治体がありません。')
+    const entries = await indexEntries({ ...env, API: api })
+    expect(entries.map((e) => [e.yen, e.amountMissing])).toEqual([[1000, true]])
   })
 
   test('URL のローマ字は自治体マスタの全自治体にあり、同じ都道府県の中でもテーマの段とも重ならない', () => {
@@ -179,17 +173,15 @@ describe('自治体の個別ページ', () => {
       }
       return API.fetch(req)
     } } }
-    const res = await get('/tokyo/nakano', sparse)
-    expect(res.status).toBe(200)
-    const html = await res.text()
-    const data = JSON.parse(html.match(/<script type="application\/json" id="j-data">(.*?)<\/script>/s)![1]!)
+    const data = await view('/tokyo/nakano', sparse)
     expect(data.years.map((y: YearTotal) => [y.year, y.yen])).toEqual([[2021, 250], [2023, 300], [2025, 1000]])
-    expect(data.projects[0].prevYen).toBeNull()
+    expect(data.projects[0]!.prevYen).toBeNull()
   })
 
-  test('API に繋がらないときは 502 で、sitemap は入口と一覧だけで答える', async () => {
+  test('API に繋がらないときは投げて（頁は 502）、sitemap は入口と一覧だけで答える', async () => {
     const down: Env = { API: { fetch: async () => new Response('x', { status: 500 }) } }
-    expect((await get('/jurisdictions', down)).status).toBe(502)
+    await expect(resolveJurisdiction(down, '/tokyo/nakano')).rejects.toThrow()
+    await expect(indexEntries(down)).rejects.toThrow()
     const sitemap = await get('/sitemap.xml', down)
     expect(sitemap.status).toBe(200)
     expect(await sitemap.text()).toContain('https://fudoki.dev/jurisdictions')

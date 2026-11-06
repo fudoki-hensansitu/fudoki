@@ -107,10 +107,9 @@ FAVICON = svg(32, 32, mark(accent="var(--logo-accent)"), INK, themed=True)
 # 画面に inline で埋める写し。文字と区画は使う側の color、朱は画面の --shu に従う。
 LOGO_G = f'<g fill="currentColor">{mark(MARK_SCALE, MARK_X, MARK_Y, f"var(--shu, {ACCENT})")}{wordmark(TEXT_SIZE, TEXT_X, TEXT_CENTER_Y)}</g>'
 (HERE.parent / "logo.ts").write_text(
-    "// build:brand が生成する（手で直さない）。正本は brand/config.json。Worker は assets を持たないので画面へ inline にする\n"
+    "// build:brand が生成する（手で直さない）。正本は brand/config.json。色を画面の token に従わせるため、画面へ inline にする\n"
     f"export const LOGO_WIDTH = {LOGO_WIDTH:.4f}\n"
     f"export const LOGO_G = `{LOGO_G}`\n"
-    f"export const FAVICON_SVG = `{FAVICON}`\n"
 )
 
 for target in (ROOT / "apps/docs/public",):
@@ -165,10 +164,10 @@ try:
         "mise", "x", "imagemagick@7.1.2_27", "--", "magick", "-density", "192",
         str(HERE / ".og-render.svg"), "-resize", f"{OW}x{OH}", "-strip", f"PNG24:{PUBLIC / 'og.png'}",
     ], check=True)
-    # ホームのデモ動画のサムネは、入口の通信量を抑えるため WebP にして static/ から配る。
+    # ホームのデモ動画のサムネは、入口の通信量を抑えるため WebP にして public/ から配る。
     subprocess.run([
         "mise", "x", "imagemagick@7.1.2_27", "--", "magick", str(PUBLIC / "og.png"),
-        "-quality", "80", "-define", "webp:method=6", str(HERE.parent / "static/home/demo-poster.webp"),
+        "-quality", "80", "-define", "webp:method=6", str(HERE.parent / "public/home/demo-poster.webp"),
     ], check=True)
 finally:
     (HERE / ".og-render.svg").unlink(missing_ok=True)
