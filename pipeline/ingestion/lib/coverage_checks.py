@@ -44,7 +44,7 @@ CODE_WORD = re.compile(r'[0-9０-９]+[^0-9０-９,△▲\-－―—\.\(\)（）
 
 
 QUANTITY_PHRASE = re.compile(
-    r'(?:[^0-9円]|[0-9][0-9,]*(?:人|名|件|食|回|日|個|台|戸|世帯|本|床|箇所|校|番|丁目|歳|か月|カ月|ヶ月|ヵ月|号|基|m2|㎡|km|m|ｍ|年|月|路線|園|冊|区画))+'
+    r'(?:[^0-9円]|[0-9][0-9,]*(?:人|名|件|食|回|日|個|台|戸|世帯|本|床|箇所|校|番|丁目|歳|か月|カ月|ヶ月|ヵ月|号|基|m2|㎡|km|m|ｍ|年|月|路線|園|冊|区画|泊))+'
     # an era-year range (`平成12～令和5年度`) and a unit price counted in people (`10,000円延113,835人`)
     r'|(?:令和|平成|昭和|大正|明治)[0-9]+[～〜~](?:令和|平成|昭和)?[0-9]+年度?[^0-9円]*'
     r'|[0-9][0-9,]*円(?:延|×)?[0-9][0-9,]*(?:人|名|件|回|日|個|台|戸|世帯|本|冊|校|園)')
@@ -53,6 +53,8 @@ QUANTITY_PHRASE = re.compile(
 # A date in an era's short form (`10. 5. 5から流用`: 令和 left out) opening a transfer remark. The words come without
 # their dots (`10` `5` `5から流用`), so the date is the digits that lead into `から流用`.
 ABBREVIATED_DATE = re.compile(r'[0-9]{2,6}(?:から|より)(?:流用|充用)[^0-9円]*')
+# A date with the era's initial (`(R7.3.31)`: 令和7年3月31日, the day a count in a remark is taken).
+ERA_INITIAL_DATE = re.compile(r'[(（]?[RHS][0-9]{1,2}[.．](?:0?[1-9]|1[0-2])[.．](?:0?[1-9]|[12][0-9]|3[01])[)）]?')
 
 
 ORDINAL_PHRASE = re.compile(r'(?:[^0-9,円]|第[0-9]+(?:款|項|目|節|条|土曜日|ブロック|期|農園?)|[0-9]+ブロック|同[款項目節][0-9]+)+')
@@ -530,7 +532,8 @@ def check_digit_coverage(words, tables, *, tolerance=0.5, exclusions=(), amount_
                 word['covered'] = 'excluded'
                 exclusion_counts[candidates[hit][0]] += 1
     for word in normalized:
-        if word['covered'] is None and NON_AMOUNT_WORD.fullmatch(_word_key(word['text'])):
+        if word['covered'] is None and (NON_AMOUNT_WORD.fullmatch(_word_key(word['text']))
+                                        or ERA_INITIAL_DATE.fullmatch(_word_key(word['text']))):
             word['covered'] = 'non_amount'
     for word in normalized:
         if word['covered'] is None and PERCENT_WORD.fullmatch(_word_key(word['text'])):

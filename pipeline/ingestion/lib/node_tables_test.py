@@ -570,6 +570,13 @@ class NodeTablesTests(unittest.TestCase):
                                      amount_columns=[{'header': '金額', 'x_range': [10, 30]}])
         self.assertEqual(result['counts'], {'non_amount': 1, 'blocked': 1})
 
+    def test_a_date_with_the_era_initial_and_nights_of_a_trip_are_non_amounts(self):
+        result = check_digit_coverage([(1, (10., 10., 30., 19.), '（R7.3.31）'),
+                                      (1, (10., 30., 30., 39.), '関西方面2泊3日'),
+                                      (1, (10., 50., 30., 59.), 'R7.3')], NodeTables([], []),
+                                     amount_columns=[{'header': '金額', 'x_range': [10, 30]}])
+        self.assertEqual(result['counts'], {'non_amount': 2, 'blocked': 1})
+
     def test_coverage_reports_elapsed_seconds(self):
         result = check_digit_coverage([], NodeTables([], []))
         self.assertTrue(result['passed'])
