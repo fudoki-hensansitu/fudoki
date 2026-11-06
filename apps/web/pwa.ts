@@ -1,10 +1,11 @@
-// ホーム画面に追加できるようにするための manifest・service worker・オフライン時の頁。
+// ホーム画面に追加できるようにするための manifest・service worker・オフライン時の頁（routes/ の manifest.webmanifest・sw.js・offline が返す）。
+// head の manifest の link と service worker の登録は void.config.ts の head。
 // service worker は「繋がらないときの案内」だけを持つ。会話・データは常に通信で取るので、頁も API もキャッシュしない
-import { BACKGROUND_DARK, BACKGROUND_LIGHT, THEME_COLOR_META } from './tokens'
+import { BACKGROUND_DARK, BACKGROUND_LIGHT } from './tokens'
 export const MANIFEST = JSON.stringify({
-  name: '風土記（fudoki）— 町の家計簿',
+  name: '風土記（fudoki）— まちを、ひらく',
   short_name: '風土記',
-  description: '日本の自治体の支出の予算と決算を事業ごとに集め、AI から問い合わせられるデータとして配る。',
+  description: '自治体のことを、誰でも見られて、誰でも書き足せる形にひらく。',
   lang: 'ja',
   start_url: '/',
   scope: '/',
@@ -17,14 +18,6 @@ export const MANIFEST = JSON.stringify({
     { src: '/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
   ],
 })
-
-/** 各頁の <head> に入れる、manifest と iOS のホーム画面用の指定 */
-export const PWA_HEAD = `<link rel="manifest" href="/manifest.webmanifest">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="風土記">`
-
-export const PWA_REGISTER = `<script>if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}))</script>`
 
 const OFFLINE_PATH = '/offline'
 const CACHE_NAME = 'fudoki-offline-v1'
@@ -39,8 +32,6 @@ self.addEventListener('fetch', (e) => {
 })
 `
 
-export const OFFLINE_PATH_NAME = OFFLINE_PATH
-
 export const OFFLINE_HTML = `<!doctype html>
 <html lang="ja">
 <head>
@@ -48,7 +39,6 @@ export const OFFLINE_HTML = `<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>オフライン — 風土記</title>
 <meta name="robots" content="noindex">
-${THEME_COLOR_META}
 <style>
 :root{color-scheme:light dark;--bg:${BACKGROUND_LIGHT};--fg:#1b1916}
 @media(prefers-color-scheme:dark){:root{--bg:${BACKGROUND_DARK};--fg:#f3f0ea}}

@@ -1,9 +1,11 @@
-// 自治体一覧（/jurisdictions）の本文。サーバーが renderToString で HTML にし（検索エンジン・JavaScript が無い環境でも全自治体のリンクと金額が載る）、
-// 画面では index.tsx が同じデータで hydrate して、地図の選択と表の絞り込み・並べ替えを動かす
+// 自治体一覧（/jurisdictions）の本文。Void の頁（pages/jurisdictions.tsx）としてサーバーが HTML にし（検索エンジン・JavaScript が無い環境でも全自治体のリンクと金額が載る）、
+// 画面では同じデータで hydrate して、地図の選択と表の絞り込み・並べ替えを動かす。個別ページへは Void の Link で頁を読み直さずに移る
 import * as React from 'react'
 import { flushSync } from 'react-dom'
+import { Link, useRouter } from '@void/react'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
 import { buttonVariants } from '@/components/ui/button'
+import { Hint } from '@/components/hint'
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList, ComboboxTrigger } from '@/components/ui/combobox'
 import { InputGroupAddon } from '@/components/ui/input-group'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -36,13 +38,13 @@ function YearPills({ years, all }: { years: number[]; all: number[] }) {
   return (
     <span className="flex gap-1">
       {all.map((y) => (
-        <span
-          key={y}
-          title={reiwa(y)}
-          className={`inline-flex h-5 items-center rounded px-1.5 text-[11px] tabular-nums ${years.includes(y) ? 'bg-accent text-accent-foreground' : 'border border-dashed text-muted-foreground/60'}`}
-        >
-          {shortYear(y)}
-        </span>
+        <Hint key={y} label={reiwa(y)}>
+          <span
+            className={`inline-flex h-5 items-center rounded px-1.5 text-[11px] tabular-nums ${years.includes(y) ? 'bg-accent text-accent-foreground' : 'border border-dashed text-muted-foreground/60'}`}
+          >
+            {shortYear(y)}
+          </span>
+        </Hint>
       ))}
     </span>
   )
@@ -54,7 +56,9 @@ function SelectedCard({ e }: { e: IndexEntry }) {
     <div className="flex flex-col rounded-[20px] border bg-background p-5 sm:p-6" aria-live="polite">
       <div className="text-xs text-muted-foreground">{e.prefecture}</div>
       <div className="mt-0.5 text-3xl leading-tight">{e.name}</div>
-      <div className="mt-4 text-xs text-muted-foreground" title={reiwa(e.year)}>{shortYear(e.year)} 決算・一般会計の歳出</div>
+      <div className="mt-4 text-xs text-muted-foreground">
+        <Hint label={reiwa(e.year)}><span>{shortYear(e.year)}</span></Hint> 決算・一般会計の歳出
+      </div>
       <div className="text-[2rem] leading-tight tabular-nums">{formatYen(e.yen)}</div>
       <div className="mt-4 text-xs text-muted-foreground">金額の大きい分野（款）</div>
       <ul className="mt-1">
@@ -73,14 +77,14 @@ function SelectedCard({ e }: { e: IndexEntry }) {
       <div className="mt-4 text-xs text-muted-foreground">収録している決算</div>
       <div className="mb-5 mt-1 flex flex-wrap gap-1.5">
         {e.years.map((y) => (
-          <span key={y} className="rounded bg-accent px-2 py-0.5 text-[11px] text-accent-foreground" title={reiwa(y)}>
-            {shortYear(y)}
-          </span>
+          <Hint key={y} label={reiwa(y)}>
+            <span className="rounded bg-accent px-2 py-0.5 text-[11px] text-accent-foreground">{shortYear(y)}</span>
+          </Hint>
         ))}
       </div>
-      <a href={e.path} className={cn(buttonVariants({ size: 'lg' }), 'mt-auto h-11 rounded-full text-[15px]')}>
+      <Link href={e.path} className={cn(buttonVariants({ size: 'lg' }), 'mt-auto h-11 rounded-full text-[15px]')}>
         {e.name}を開く →
-      </a>
+      </Link>
     </div>
   )
 }
@@ -94,23 +98,26 @@ const mapCodes = (map: PrefectureMap | undefined) => new Set<string>(map ? [...m
 /** タイルに書く短い名前。種別（区・市・町・村）は落とし、1文字になるときだけ残す（港区・北区） */
 const tileName = (name: string) => (name.length > 2 ? name.replace(/[区市町村]$/, '') : name)
 
-type TileProps = { code: string; name: string; e: IndexEntry | undefined; max: number; selected: string; onToggle: (code: string) => void; style?: React.CSSProperties }
-function MunicipalityTile({ code, name, e, max, selected, onToggle, style }: TileProps) {
+type TileProps = { code: string; name: string; e: IndexEntry | undefined; max: number; selected: string; onPreview: (code: string) => void; style?: React.CSSProperties }
+/** 収録した自治体のタイルは個別ページへのリンク。マウスを載せる・フォーカスすると横のカードに中身を出す */
+function MunicipalityTile({ code, name, e, max, selected, onPreview, style }: TileProps) {
   const label = <span className="line-clamp-2 break-all px-0.5 text-center text-[10px] leading-tight sm:text-[11px]">{tileName(name)}</span>
   if (!e)
     return (
-      <div key={code} style={style} title={`${name}（未収録）`} className="flex aspect-square items-center justify-center rounded-md bg-muted text-muted-foreground/70">
-        {label}
-      </div>
+      <Hint key={code} label={`${name}（未収録）`}>
+        <div style={style} className="flex aspect-square items-center justify-center rounded-md bg-muted text-muted-foreground/70">
+          {label}
+        </div>
+      </Hint>
     )
   const on = selected === code
   return (
-    <button
-      type="button"
-      onClick={() => onToggle(code)}
-      aria-pressed={on}
+    <Hint label={name}>
+    <Link
+      href={e.path}
+      onPointerEnter={(ev) => ev.pointerType === 'mouse' && onPreview(code)}
+      onFocus={() => onPreview(code)}
       aria-label={`${name} ${formatYen(e.yen)}`}
-      title={name}
       style={{ ...style, background: shade(e.yen, max) }}
       className={cn(
         'flex aspect-square items-center justify-center rounded-md transition hover:brightness-110 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none',
@@ -119,16 +126,17 @@ function MunicipalityTile({ code, name, e, max, selected, onToggle, style }: Til
       )}
     >
       {label}
-    </button>
+    </Link>
+    </Hint>
   )
 }
 
 /** 都道府県の市区町村のタイル図。各自治体を同じ大きさの四角で、おおよその位置に並べ、歳出の総額で塗る。島しょは下の段に北から並べる */
-function PrefectureTiles({ map, entries, selected, onToggle }: { map: PrefectureMap; entries: IndexEntry[]; selected: string; onToggle: (code: string) => void }) {
+function PrefectureTiles({ map, entries, selected, onPreview }: { map: PrefectureMap; entries: IndexEntry[]; selected: string; onPreview: (code: string) => void }) {
   const byCode = new Map(entries.map((e) => [e.code, e]))
   const max = Math.max(...entries.map((e) => e.yen), 1)
   const columns = { gridTemplateColumns: `repeat(${map.cols}, minmax(0, 1fr))` }
-  const props = { max, selected, onToggle }
+  const props = { max, selected, onPreview }
   // 横にスクロールする幅のときは、歳出の総額で重みを付けた収録自治体の重心が真ん中に来るところから見せる（東京都なら区部）
   const scroller = React.useRef<HTMLDivElement>(null)
   React.useEffect(() => {
@@ -268,26 +276,26 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
   const shapeCodes = mapCodes(map)
   const offMap = map ? inView.filter((e) => !shapeCodes.has(e.code)) : []
   const viewName = view ? (map?.name ?? inView[0]?.prefecture ?? '') : '日本'
-  // 選んだ自治体。空のときは開いている都道府県自体を見せる（最初は都道府県自体）
+  // カードに出す自治体。タイルにマウスを載せる・フォーカスした自治体で、空のときは開いている都道府県自体を見せる。
+  // タイルを押すと個別ページへ進む（押して選ぶ形はモバイルで何が変わったか分かりにくかった）
   const [selected, setSelected] = React.useState('')
-  const toggle = (code: string) => setSelected((s) => (s === code ? '' : code))
   // 日本⇄都道府県の切り替えは View Transition で拡大・縮小して見せる（未対応のブラウザと、動きを減らす設定ではそのまま切り替える）
   const transition = (update: () => void) => {
     const reduce = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reduce || typeof document === 'undefined' || !document.startViewTransition) return update()
-    document.startViewTransition(() => flushSync(update))
+    // 頁の間の移動では本文（.site-main）を薄く消して浮かせるが、図の切り替えでは本文を動かさない（styles/app.css の data-map-transition）
+    const root = document.documentElement
+    root.dataset.mapTransition = ''
+    document.startViewTransition(() => flushSync(update)).finished.finally(() => delete root.dataset.mapTransition)
   }
   const open = (pref: string) =>
     transition(() => {
       setView(pref)
       setSelected('')
     })
-  // 地図の検索で選んだ自治体を、その都道府県の図で選んだ状態にする（都道府県自体なら図を開くだけ）
-  const find = (e: IndexEntry) =>
-    transition(() => {
-      setView(prefOf(e))
-      setSelected(e.kind === '都道府県' ? '' : e.code)
-    })
+  // 地図の検索で選んだ市区町村は個別ページへ進む。都道府県ならその図を開く
+  const router = useRouter()
+  const find = (e: IndexEntry) => (e.kind === '都道府県' ? open(prefOf(e)) : router.visit(e.path))
   // 表の絞り込み。種類ごとに選んだ値（都道府県はコードの先頭2桁、市区町村は自治体コード）
   const [picked, setPicked] = React.useState<Record<JurisdictionKind, string[]>>({ 都道府県: [], 区: [], 市: [], 町村: [] })
   const prefPicks = picked['都道府県']
@@ -340,8 +348,13 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
         <p className="mt-3 text-muted-foreground">まだ決算を収録した自治体がありません。</p>
       )}
 
-      {/* Esc で選択を外し、都道府県自体に戻す */}
-      <section className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1fr)_320px]" aria-label="地図" onKeyDown={(ev) => ev.key === 'Escape' && setSelected('')}>
+      {/* 地図とカードの外へマウスかフォーカスが出たら、カードを都道府県自体に戻す（カードのボタンへ動かす間は下見を保つ） */}
+      <section
+        className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1fr)_320px]"
+        aria-label="地図"
+        onPointerLeave={(ev) => ev.pointerType === 'mouse' && !ev.currentTarget.contains(document.activeElement) && setSelected('')}
+        onBlur={(ev) => !ev.currentTarget.contains(ev.relatedTarget) && setSelected('')}
+      >
         <div className="flex min-w-0 flex-col rounded-[20px] bg-card p-4 sm:p-6">
           <div className="mb-3 flex items-baseline justify-between gap-2">
             <Breadcrumb>
@@ -360,7 +373,7 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
             <span className="text-xs text-muted-foreground">{view ? '' : '収録のある都道府県を選ぶ'}</span>
           </div>
           <div className="flex flex-1 items-center">
-            {view === null ? <JapanTiles counts={counts} onOpen={open} /> : map ? <PrefectureTiles map={map} entries={inView} selected={selected} onToggle={toggle} /> : <p className="w-full py-16 text-center text-sm text-muted-foreground">{viewName}の地図はまだありません。下の一覧から選べます。</p>}
+            {view === null ? <JapanTiles counts={counts} onOpen={open} /> : map ? <PrefectureTiles map={map} entries={inView} selected={selected} onPreview={setSelected} /> : <p className="w-full py-16 text-center text-sm text-muted-foreground">{viewName}の地図はまだありません。下の一覧から選べます。</p>}
           </div>
           <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-muted-foreground">
             <span>{view ? '歳出の総額' : '収録した市区町村の数'}</span>
@@ -374,14 +387,14 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
             <div className="mt-4 flex flex-wrap items-center gap-2 border-t pt-4">
               <span className="text-xs text-muted-foreground">地図の外</span>
               {offMap.map((e) => (
-                <Chip key={e.code} on={selected === e.code} onClick={() => toggle(e.code)}>
+                <Link key={e.code} href={e.path} onPointerEnter={(ev) => ev.pointerType === 'mouse' && setSelected(e.code)} onFocus={() => setSelected(e.code)} className={cn(buttonVariants({ variant: selected === e.code ? 'default' : 'outline' }), 'rounded-full px-3.5 text-[13px] font-normal')}>
                   {e.name}
-                </Chip>
+                </Link>
               ))}
             </div>
           ) : null}
         </div>
-        {current ? <SelectedCard e={current} /> : <p className="rounded-[20px] border p-6 text-muted-foreground">{entries.length ? '地図から自治体を選ぶと、ここに歳出の総額と大きい分野が出ます。' : 'まだ決算を収録した自治体がありません。'}</p>}
+        {current ? <SelectedCard e={current} /> : <p className="rounded-[20px] border p-6 text-muted-foreground">{entries.length ? (view ? '地図の自治体にカーソルを載せると、ここに歳出の総額と大きい分野が出ます。' : '都道府県を選ぶと、その市区町村の図が開きます。') : 'まだ決算を収録した自治体がありません。'}</p>}
       </section>
 
       <section className="mt-14" aria-label="比較表">
@@ -424,7 +437,7 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
           <ul>
             {rows.map((e) => (
               <li key={e.code}>
-                <a
+                <Link
                   href={e.path}
                   className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1.5 border-b px-2 py-3 transition-colors hover:bg-card md:grid-cols-[minmax(0,13rem)_7rem_minmax(0,1fr)] md:gap-5"
                 >
@@ -438,7 +451,7 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
                     <span className="whitespace-nowrap text-[13px] tabular-nums">{formatYen(e.yen)}</span>
                     <small className="whitespace-nowrap text-[11px] text-muted-foreground">{shortYear(e.year)}</small>
                   </span>
-                </a>
+                </Link>
               </li>
             ))}
           </ul>

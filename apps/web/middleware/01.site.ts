@@ -1,0 +1,29 @@
+// 全頁に共通するもの。サイドバーの開閉（cookie）を layout へ渡し（useShared）、HTML の <head> に Void の head では書けないものを足す:
+// ライト・ダークの theme-color（Void の head は meta を name で1つにまとめる）と、読み直しの移動でも View Transition でつなぐ opt-in（style）
+import { defineMiddleware } from 'void'
+import { SIDEBAR_COOKIE } from '../nav/site-nav'
+import { THEME_COLOR_META } from '../tokens'
+
+declare module 'void' {
+  interface CloudContextVariables {
+    shared: { navOpen: boolean }
+  }
+}
+
+/**
+ * 頁を読み直す移動（他のサイトから来たとき・再読み込み）も View Transition でつなぐ opt-in。<head> に直接書く。
+ * 外部の CSS に置くと移動のたびに再検証で届くのが遅れ、Chrome が新しい頁を見せる時点で opt-in を見つけられず transition を飛ばしていた（2026-11-06 に本番で確認）
+ */
+const PAGE_TRANSITION_STYLE = '<style>@media (prefers-reduced-motion: no-preference) { @view-transition { navigation: auto; } }</style>'
+
+/** 閉じたことがある利用者は cookie に false が残る。無ければ開いて出す */
+export const navOpen = (cookie: string | undefined) => !new RegExp(`(?:^|;\\s*)${SIDEBAR_COOKIE}=false(?:;|$)`).test(cookie ?? '')
+
+export default defineMiddleware(async (c, next) => {
+  c.set('shared', { navOpen: navOpen(c.req.header('Cookie')) })
+  await next()
+  if (!c.res.headers.get('Content-Type')?.startsWith('text/html')) return
+  // サイドバーの開閉を cookie で変えて書くので、開閉の違う HTML を取り違えさせない
+  c.res.headers.append('Vary', 'Cookie')
+  c.res = new HTMLRewriter().on('head', { element: (e) => void e.append(`${THEME_COLOR_META}\n${PAGE_TRANSITION_STYLE}`, { html: true }) }).transform(c.res)
+})

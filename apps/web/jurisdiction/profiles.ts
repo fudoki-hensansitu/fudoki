@@ -1,5 +1,5 @@
 // 自治体の個別ページに載せる、新しく始めた・広げた事業・事業の入れ替え。API にはまだ無いので、出典（当初予算の主な施策・
-// 事務事業評価・基本構想）から手で起こした値をここに置く。金額は出典の千円を円にしたもの。紋章は static/jurisdictions/<code>/ に置く
+// 事務事業評価・基本構想）から手で起こした値をここに置く。金額は出典の千円を円にしたもの。紋章は public/jurisdictions/<code>/ に置く
 // 事業への COFOG の付与・文の要約は風土記の判断で、出典の文言そのものではない
 
 export interface Amount {
@@ -52,8 +52,6 @@ export interface Profile {
   code: string
   /** 自治体の紋章（区章・市章など）。品川区は Wikimedia Commons の Public domain の SVG */
   logo?: string
-  site: string
-  population?: { people: number; asOf: string }
   tags: string[]
   /** 基本構想が掲げる都市像（まちの将来像）。年度によらず header の名前の下に出す */
   vision?: { text: string; source: string }
@@ -66,11 +64,6 @@ export const assetPath = (code: string, file: string) => `/jurisdictions/${code}
 const SHINAGAWA: Profile = {
   "code": "131091",
   "logo": "emblem.svg",
-  "site": "https://www.city.shinagawa.tokyo.jp/",
-  "population": {
-    "people": 418666,
-    "asOf": "2026-09-01"
-  },
   "tags": [],
   "vision": {
     "text": "輝く笑顔 住み続けたいまち しながわ",

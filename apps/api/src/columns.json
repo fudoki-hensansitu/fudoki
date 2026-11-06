@@ -541,6 +541,12 @@
           "type": "string",
           "nullable": false,
           "description": "Open Civic Data 形式の識別子。OCD の本家に未登録の市区町村は、同じ形式で風土記が定めた値。"
+        },
+        {
+          "name": "official_url",
+          "type": "string",
+          "nullable": true,
+          "description": "自治体の公式サイトの URL。出典の選定（pipeline/source_selection）に記録した値で、選定の無い自治体は NULL。"
         }
       ]
     },
@@ -593,6 +599,88 @@
           "type": "string",
           "nullable": false,
           "description": "この自治体・年度・資料区分・会計の明細が指す出典。分冊などで一つの会計に複数の出典があれば、出典ごとに行がある。"
+        }
+      ]
+    },
+    "population_origin": {
+      "primary_key": "origin_id",
+      "indexes": [],
+      "columns": [
+        {
+          "name": "origin_id",
+          "type": "string",
+          "nullable": false,
+          "description": "資料の識別子。資料の URL から導いた値。"
+        },
+        {
+          "name": "reference_date",
+          "type": "string",
+          "nullable": false,
+          "description": "基準日（YYYY-MM-DD）。この日時点の人数・世帯数を表す（期間の値ではない）。"
+        },
+        {
+          "name": "url",
+          "type": "string",
+          "nullable": false,
+          "description": "資料（xlsx）の URL。"
+        }
+      ]
+    },
+    "jurisdiction_population": {
+      "primary_key": "population_id",
+      "indexes": [
+        [
+          "jurisdiction_code"
+        ]
+      ],
+      "columns": [
+        {
+          "name": "population_id",
+          "type": "string",
+          "nullable": false,
+          "description": "行の識別子。origin_id と jurisdiction_code を「:」でつないだ値。"
+        },
+        {
+          "name": "origin_id",
+          "type": "string",
+          "nullable": false,
+          "description": "資料の識別子。population_origin の origin_id。"
+        },
+        {
+          "name": "jurisdiction_code",
+          "type": "string",
+          "nullable": false,
+          "description": "全国地方公共団体コード（6桁）。jurisdiction_master の jurisdiction_code。"
+        },
+        {
+          "name": "reference_date",
+          "type": "string",
+          "nullable": false,
+          "description": "基準日。population_origin の reference_date の写し。この日時点の人数・世帯数を表す。"
+        },
+        {
+          "name": "male",
+          "type": "integer",
+          "nullable": false,
+          "description": "男性の人数。"
+        },
+        {
+          "name": "female",
+          "type": "integer",
+          "nullable": false,
+          "description": "女性の人数。"
+        },
+        {
+          "name": "population",
+          "type": "integer",
+          "nullable": false,
+          "description": "人口の総数（出典の「計」）。性別欄が空欄の外国人住民を含むので、male と female の和より大きいことがある。"
+        },
+        {
+          "name": "households",
+          "type": "integer",
+          "nullable": false,
+          "description": "世帯数。"
         }
       ]
     }

@@ -1,22 +1,17 @@
-// 自治体の個別ページ（/tokyo/nakano）・一覧（/jurisdictions）と、画面が款・目の内訳を引く /api/jurisdictions/*。データは apps/api の歳出の検索から組み、
-// 変わるのは取り込みのときだけなので、Worker の cache に1時間置く。内訳の API は誰でも読める GET で、IP ごとの流量と id の形の検査で守る
-import { Hono, type Context } from 'hono'
-import { renderEmpty, renderIndex, renderPage, sitemapXml } from '../jurisdiction/html'
-import { navOpen } from '../nav/render'
+// 自治体の個別ページ（/tokyo/nakano）・一覧（/jurisdictions）のデータと、画面が款・目の内訳を引く /api/jurisdictions/*・sitemap の応答。
+// データは apps/api の歳出の検索から組み、変わるのは取り込みのときだけなので、Worker の cache に1時間置く。頁は pages/ の loader が、
+// 内訳の API と sitemap は routes/ がここを呼ぶ。内訳の API は誰でも読める GET で、IP ごとの流量と id の形の検査で守る
+import { sitemapXml } from '../jurisdiction/html'
 import { jurisdictionPath, PREFECTURE_SLUGS } from '../jurisdiction/path'
-import { INDEX_PATH } from '../jurisdiction/types'
-import type { Drill, FlowDepth, IndexEntry, PageData, Setsu } from '../jurisdiction/types'
+import { INDEX_PATH, type Drill, type FlowDepth, type IndexEntry, type PageData, type Setsu } from '../jurisdiction/types'
+import { PROFILES, type Profile } from '../jurisdiction/profiles'
 import { clientIp, errorResponse, HttpError, rateLimit } from './http'
 import { VIEW_RATE_LIMIT } from './limits'
 import type { Env, RateLimiter } from './env'
-import { PROFILES } from '../jurisdiction/profiles'
 import { loadCatalog, loadDrillById, loadFlow, loadIndex, loadPage, loadSetsu, type CatalogEntry } from './jurisdiction'
 
 const TTL = 3600
 const NODE_ID = /^[0-9a-f]{64}$/
-// サイドバーの開閉を cookie で変えて書くので、Vary: Cookie で開閉の違う HTML を取り違えさせない
-const HTML_HEADERS = { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': `public, max-age=300`, Vary: 'Cookie' }
-
 /** Worker の cache（無い環境では毎回取り直す）。同じ isolate の中でも一度だけ取る */
 const inflight = new Map<string, Promise<unknown>>()
 async function memo<T>(key: string, fn: () => Promise<T>): Promise<T> {
@@ -36,63 +31,40 @@ export const catalog = (env: Env) => memo<CatalogEntry[]>('catalog', () => loadC
 const index = (env: Env) => memo<IndexEntry[]>('index', async () => loadIndex(env, await catalog(env), jurisdictionPath))
 const page = (env: Env, e: CatalogEntry) => memo<Omit<PageData, 'prefecturePath'> | null>(`page-${e.code}-${e.settlementYears.at(-1)}`, () => loadPage(env, e))
 
-export const jurisdictions = new Hono<{ Bindings: Env }>()
+/** 一覧（/jurisdictions）に並べる自治体。API に繋がらなければ投げる */
+export const indexEntries = (env: Env) => index(env)
 
-const notFound = () => new Response('Not Found\n', { status: 404, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
-const unavailable = () => new Response('風土記の API に繋がりませんでした。少し待ってからもう一度開いてください。\n', { status: 502, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' } })
+/** 個別ページに出すもの。収録の無い自治体は empty、存在しない名称や都道府県の slug でない path は null（404） */
+export type JurisdictionView = { kind: 'page'; data: PageData & { profile: Profile | null } } | { kind: 'empty'; entry: CatalogEntry }
 
-jurisdictions.get(INDEX_PATH, async (c) => {
+/** /<都道府県のローマ字>/<自治体のローマ字>、都道府県自体は /<都道府県のローマ字>。API に繋がらなければ投げる */
+export async function resolveJurisdiction(env: Env, path: string): Promise<JurisdictionView | null> {
+  if (!PREFECTURE_SLUGS.has(path.split('/')[1] ?? '')) return null
+  const entries = await catalog(env)
+  const entry = entries.find((e) => jurisdictionPath(e.code) === path)
+  if (!entry) return null
+  // 都道府県名は都道府県自体の頁へ。都道府県自体の頁と、都道府県がカタログに無い（頁が無い）ときは一覧へ
+  const prefectureCode = `${entry.code.slice(0, 2)}0001`
+  const prefecturePath = entry.code !== prefectureCode && entries.some((e) => e.code === prefectureCode) ? jurisdictionPath(prefectureCode) : INDEX_PATH
+  const data = entry.settlementYears.length > 0 ? await page(env, entry) : null
+  return data ? { kind: 'page', data: { ...data, prefecturePath, profile: PROFILES[entry.code] ?? null } } : { kind: 'empty', entry }
+}
+
+/** 収録のある自治体の頁を含む sitemap。API に繋がらなくても入口と一覧だけで答える */
+export async function sitemapResponse(env: Env): Promise<Response> {
   try {
-    return new Response(renderIndex(await index(c.env), navOpen(c.req.header('Cookie'))), { headers: HTML_HEADERS })
+    return new Response(sitemapXml(await catalog(env)), { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
   } catch {
-    return unavailable()
-  }
-})
-
-// /<都道府県のローマ字>/<自治体のローマ字>、都道府県自体は /<都道府県のローマ字>。/s/:id・/api/* など他の経路とは、都道府県の slug かどうかで見分ける（違えば API を引かずに次へ渡す）
-async function jurisdictionPage(c: Context<{ Bindings: Env }>, path: string) {
-  try {
-    const entries = await catalog(c.env)
-    const entry = entries.find((e) => jurisdictionPath(e.code) === path)
-    if (!entry) return notFound()
-    // 都道府県名は都道府県自体の頁へ。都道府県自体の頁と、都道府県がカタログに無い（頁が無い）ときは一覧へ
-    const prefectureCode = `${entry.code.slice(0, 2)}0001`
-    const prefecturePath = entry.code !== prefectureCode && entries.some((e) => e.code === prefectureCode) ? jurisdictionPath(prefectureCode) : INDEX_PATH
-    const data = entry.settlementYears.length > 0 ? await page(c.env, entry) : null
-    if (!data) return new Response(renderEmpty(entry, navOpen(c.req.header('Cookie'))), { headers: HTML_HEADERS })
-    return new Response(renderPage({ ...data, prefecturePath, profile: PROFILES[entry.code] ?? null }, c.env.TURNSTILE_SITE_KEY ?? '', navOpen(c.req.header('Cookie'))), { headers: HTML_HEADERS })
-  } catch {
-    return unavailable()
+    return new Response(sitemapXml([]), { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'no-store' } })
   }
 }
 
-jurisdictions.get('/:prefecture', async (c, next) => {
-  const { prefecture } = c.req.param()
-  if (!PREFECTURE_SLUGS.has(prefecture)) return next()
-  return jurisdictionPage(c, `/${prefecture}`)
-})
-
-jurisdictions.get('/:prefecture/:name', async (c, next) => {
-  const { prefecture, name } = c.req.param()
-  if (!PREFECTURE_SLUGS.has(prefecture)) return next()
-  return jurisdictionPage(c, `/${prefecture}/${name}`)
-})
-
-jurisdictions.get('/sitemap.xml', async (c) => {
-  try {
-    return new Response(sitemapXml(await catalog(c.env)), { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
-  } catch {
-    // API が繋がらなくても sitemap は答える（入口と一覧だけ）
-    return new Response(sitemapXml([]), { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'no-store' } })
-  }
-})
-
 const json = (body: unknown) => new Response(JSON.stringify(body), { headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': `public, max-age=${TTL}` } })
 
-async function guarded(c: { env: Env; req: { raw: Request } }, id: string, run: () => Promise<unknown>) {
+async function guarded(env: Env, request: Request, id: string, run: () => Promise<unknown>) {
   try {
     if (!NODE_ID.test(id)) throw new HttpError(400, 'INVALID_ARGUMENT', 'id の形が違います')
-    await rateLimit(c.env.VIEW_RATE_LIMIT as RateLimiter | undefined, clientIp(c.req.raw), VIEW_RATE_LIMIT.period)
+    await rateLimit(env.VIEW_RATE_LIMIT as RateLimiter | undefined, clientIp(request), VIEW_RATE_LIMIT.period)
     return json(await run())
   } catch (e) {
     if (e instanceof HttpError) return errorResponse(e)
@@ -100,20 +72,22 @@ async function guarded(c: { env: Env; req: { raw: Request } }, id: string, run: 
   }
 }
 
-jurisdictions.get('/api/jurisdictions/drill/:id', (c) => guarded(c, c.req.param('id'), () => memo<Drill>(`drill-${c.req.param('id')}`, () => loadDrillById(c.env, c.req.param('id')))))
-jurisdictions.get('/api/jurisdictions/setsu/:id', (c) => guarded(c, c.req.param('id'), () => memo<Setsu[]>(`setsu-${c.req.param('id')}`, () => loadSetsu(c.env, c.req.param('id')))))
+/** 款・項の内訳（/api/jurisdictions/drill/:id） */
+export const drillResponse = (env: Env, request: Request, id: string) => guarded(env, request, id, () => memo<Drill>(`drill-${id}`, () => loadDrillById(env, id)))
+/** 目の節（/api/jurisdictions/setsu/:id） */
+export const setsuResponse = (env: Env, request: Request, id: string) => guarded(env, request, id, () => memo<Setsu[]>(`setsu-${id}`, () => loadSetsu(env, id)))
 
-jurisdictions.get('/api/jurisdictions/flow/:code/:year/:depth', async (c) => {
+/** 一つの自治体・年度の全款の流れ（/api/jurisdictions/flow/:code/:year/:depth） */
+export async function flowResponse(env: Env, request: Request, { code, year, depth }: { code: string; year: string; depth: string }): Promise<Response> {
   try {
-    const { code, year, depth } = c.req.param()
     if (!/^\d{6}$/.test(code) || !/^\d{4}$/.test(year) || !['kou', 'moku', 'setsu'].includes(depth))
       throw new HttpError(400, 'INVALID_ARGUMENT', '自治体・年度・表示階層の指定が違います')
-    await rateLimit(c.env.VIEW_RATE_LIMIT as RateLimiter | undefined, clientIp(c.req.raw), VIEW_RATE_LIMIT.period)
-    const entry = (await catalog(c.env)).find((e) => e.code === code)
+    await rateLimit(env.VIEW_RATE_LIMIT as RateLimiter | undefined, clientIp(request), VIEW_RATE_LIMIT.period)
+    const entry = (await catalog(env)).find((e) => e.code === code)
     if (!entry?.settlementYears.includes(Number(year))) throw new HttpError(404, 'NOT_FOUND', 'この自治体・年度の一般会計の決算は収録されていません')
-    return json(await memo<Drill[]>(`flow-${code}-${year}-${depth}`, () => loadFlow(c.env, code, Number(year), depth as FlowDepth)))
+    return json(await memo<Drill[]>(`flow-${code}-${year}-${depth}`, () => loadFlow(env, code, Number(year), depth as FlowDepth)))
   } catch (e) {
     if (e instanceof HttpError) return errorResponse(e)
     return errorResponse(new HttpError(502, 'UNAVAILABLE', '決算データを表示できませんでした。少し待ってからもう一度開いてください。'))
   }
-})
+}

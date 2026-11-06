@@ -6,6 +6,10 @@ import {
   DOCUMENT_KIND_DESCRIPTION,
   JURISDICTION_COLUMNS,
   JURISDICTION_SELECT_LIST,
+  POPULATION_COLUMNS,
+  POPULATION_ORIGIN_COLUMNS,
+  POPULATION_ORIGIN_TABLE,
+  POPULATION_TABLE,
   JURISDICTION_TABLE,
   NODE_TABLES,
   ORIGIN_COLUMNS,
@@ -265,9 +269,19 @@ const Coverage = z
   })
   .meta({ id: 'Coverage', description: '明細がある年度・資料区分と、その会計。' })
 
+const Population = z
+  .strictObject({
+    ...pick(POPULATION_COLUMNS, ['reference_date', 'male', 'female', 'population', 'households']),
+    url: field(POPULATION_ORIGIN_COLUMNS, 'url'),
+  })
+  .meta({ id: 'Population', description: '住民基本台帳人口（日本人住民と外国人住民の総計）。基準日時点の人数で、期間の値ではない。' })
+
 const Jurisdiction = z
   .strictObject({
-    ...pick(JURISDICTION_COLUMNS, ['jurisdiction_code', 'name', 'prefecture_code', 'prefecture_name', 'ocd_id']),
+    ...pick(JURISDICTION_COLUMNS, ['jurisdiction_code', 'name', 'prefecture_code', 'prefecture_name', 'ocd_id', 'official_url']),
+    population: z
+      .array(Population)
+      .describe('住民基本台帳人口（基準日の昇順）。決算・予算の N 年度と比べるときは、N+1 年1月1日の値を当てる（地方財政状況調査の決算カードと同じ）。この API は年度との対応を付けずに全基準日を返すので、その値がまだ無い年度は利用者がいちばん新しい基準日の値を選び、使った基準日を添える。'),
     coverage: z
       .array(Coverage)
       .describe('収録範囲（年度の昇順、同じ年度は当初予算・決算の順）。空なら、この自治体の明細は収録していない。明細があることを示し、会計全体・全事業を収録し終えたことは保証しない。'),
@@ -357,7 +371,7 @@ async function listJurisdictions(ctx: Ctx, input: Record<string, unknown>) {
   const pageSql = `SELECT "jurisdiction_code" FROM ${JURISDICTION_TABLE} WHERE ${where} ORDER BY "jurisdiction_code" LIMIT ? OFFSET ?`
 
   // 自治体と収録範囲を1つの batch で読み、同期の入れ替えをまたいで食い違わないようにする。集計は marts で済ませてあり、ここでは並べ替えて入れ子にするだけ。
-  const [page, coverage] = await db.batch([
+  const [page, coverage, population] = await db.batch([
     db
       .prepare(`SELECT ${JURISDICTION_SELECT_LIST} FROM ${JURISDICTION_TABLE} WHERE ${where} ORDER BY "jurisdiction_code" LIMIT ? OFFSET ?`)
       .bind(...params, limit + 1, offset),
@@ -374,12 +388,24 @@ async function listJurisdictions(ctx: Ctx, input: Record<string, unknown>) {
               `ORDER BY c."jurisdiction_code", c."fiscal_year", c."document_kind", c."account_kind" <> '一般会計', c."account_name"`
       )
       .bind(...params, limit, offset),
+    db
+      .prepare(
+        `SELECT p."jurisdiction_code", p."reference_date", p."male", p."female", p."population", p."households", o."url" ` +
+          `FROM ${POPULATION_TABLE} p JOIN ${POPULATION_ORIGIN_TABLE} o ON o."origin_id" = p."origin_id" ` +
+          `WHERE p."jurisdiction_code" IN (${pageSql}) ORDER BY p."jurisdiction_code", p."reference_date"`
+      )
+      .bind(...params, limit, offset),
   ])
   const more = page!.results.length > limit
   const nested = nestCoverage(coverage!.results as unknown as CoverageRow[], full)
+  const residents = new Map<string, z.infer<typeof Population>[]>()
+  for (const { jurisdiction_code, ...r } of population!.results as unknown as (z.infer<typeof Population> & { jurisdiction_code: string })[]) {
+    residents.set(jurisdiction_code, [...(residents.get(jurisdiction_code) ?? []), r])
+  }
   return {
     jurisdictions: page!.results.slice(0, limit).map((r) => ({
       ...toRow(JURISDICTION_COLUMNS, r),
+      population: residents.get(String(r.jurisdiction_code)) ?? [],
       coverage: nested.get(String(r.jurisdiction_code)) ?? [],
     })),
     next_page_token: more ? await nextToken(offset + limit, fp) : null,

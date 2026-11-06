@@ -4,7 +4,7 @@ import { CfWorkerJsonSchemaValidator } from '@modelcontextprotocol/server/valida
 import { createApp } from './app'
 import { UNCOVERED_SOURCES } from './operations'
 import type { Db } from './db'
-import { insertCoverage, insertJurisdiction, insertNode, insertOrigin, testDb } from './testing'
+import { insertCoverage, insertJurisdiction, insertNode, insertOrigin, insertPopulation, testDb } from './testing'
 
 let db: Db
 let sqlite: Database
@@ -28,9 +28,17 @@ const rpc = async (method: string, params: unknown = {}) =>
 beforeEach(() => {
   ;({ db, sqlite } = testDb())
   insertJurisdiction(sqlite, { jurisdiction_code: '131016', name: '千代田区' })
-  insertJurisdiction(sqlite, { jurisdiction_code: '132039', name: '武蔵野市' })
+  insertJurisdiction(sqlite, { jurisdiction_code: '132039', name: '武蔵野市', official_url: 'https://www.city.musashino.lg.jp/' })
   insertJurisdiction(sqlite, { jurisdiction_code: '132063', name: '府中市' })
   insertJurisdiction(sqlite, { jurisdiction_code: '342076', name: '府中市', prefecture_name: '広島県' })
+  // 新しい基準日を先に入れても、基準日の昇順で返る
+  insertPopulation(sqlite, { origin_id: 'p2026', reference_date: '2026-01-01', url: 'https://example.test/2026.xlsx' }, [
+    { jurisdiction_code: '132039', male: 72000, female: 76000, population: 148001, households: 76000 },
+  ])
+  insertPopulation(sqlite, { origin_id: 'p2025', reference_date: '2025-01-01', url: 'https://example.test/2025.xlsx' }, [
+    { jurisdiction_code: '132039', male: 71000, female: 75000, population: 146000, households: 75000 },
+    { jurisdiction_code: '132063', male: 130000, female: 130000, population: 260000, households: 130000 },
+  ])
   insertOrigin(sqlite, { origin_id: 'o1', title: '令和6年度決算書', url: 'https://example.test/o1.pdf', sha256: 'a' })
   insertOrigin(sqlite, { origin_id: 'o2', title: '令和6年度決算書（特別会計）', url: 'https://example.test/o2.pdf', sha256: 'b' })
   insertOrigin(sqlite, { origin_id: 'o3', title: '令和6年度予算', url: 'https://example.test/o3.csv', document_kind: 'initial', format: 'csv', sha256: 'c' })
@@ -69,6 +77,11 @@ describe('自治体と収録範囲（GET /v1/jurisdictions・list_jurisdictions�
           prefecture_code: '13',
           prefecture_name: '東京都',
           ocd_id: 'ocd-division/country:jp/prefecture:13/city:132039',
+          official_url: 'https://www.city.musashino.lg.jp/',
+          population: [
+            { reference_date: '2025-01-01', male: 71000, female: 75000, population: 146000, households: 75000, url: 'https://example.test/2025.xlsx' },
+            { reference_date: '2026-01-01', male: 72000, female: 76000, population: 148001, households: 76000, url: 'https://example.test/2026.xlsx' },
+          ],
           coverage: [
             {
               fiscal_year: 2024,
@@ -98,6 +111,7 @@ describe('自治体と収録範囲（GET /v1/jurisdictions・list_jurisdictions�
   test('収録の無い自治体でも、空の収録範囲と一緒に統計の出典の案内を返す', async () => {
     const body = await list('?code=131016')
     expect(body.jurisdictions[0].coverage).toEqual([])
+    expect(body.jurisdictions[0].population).toEqual([])
     expect(body.uncovered_sources.map((s: { url: string }) => s.url)).toEqual([
       'https://www.soumu.go.jp/iken/zaisei/card.html',
       'https://www.e-stat.go.jp/stat-search/files?toukei=00200251&tstat=000001077755',

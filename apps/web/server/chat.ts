@@ -3,13 +3,12 @@
 import { createMCPClient, mcpAppClientCapabilities } from '@ai-sdk/mcp'
 import { convertToModelMessages, stepCountIs, streamText, type ToolSet, type UIMessage } from 'ai'
 import { createWorkersAI } from 'workers-ai-provider'
-import type { AppContext } from './api'
+import type { ApiRequest } from './api'
 import { apiFetch, MCP_URL } from './env'
 import { HttpError } from './http'
 import { MAX_MESSAGES, MAX_OUTPUT_TOKENS, MAX_STEPS, MAX_USER_TEXT, MAX_VIEW_CONTEXT } from './limits'
 import { toolText } from '../tool-text'
 import { logError, logStep, logTiming } from './log'
-import { waitUntil } from './http'
 import { writeUsage, type Usage } from './usage'
 
 const SYSTEM = [
@@ -60,11 +59,11 @@ export function reasoningEffort(value: string | undefined): { reasoning_effort?:
   return {}
 }
 
-export async function handleChat(c: AppContext): Promise<Response> {
+export async function handleChat(c: ApiRequest): Promise<Response> {
   const started = Date.now()
   const { env } = c
-  const { sessionId, ip } = c.var
-  const chat = parseChat(c.var.body)
+  const { sessionId, ip } = c
+  const chat = parseChat(c.body)
   if (chat.id !== sessionId) throw new HttpError(403, 'PERMISSION_DENIED', '別の会話の token です')
   const modelId = env.CHAT_MODEL
   if (!modelId || !env.AI) throw new HttpError(503, 'UNAVAILABLE', 'チャットはまだ準備中です')
@@ -101,7 +100,7 @@ export async function handleChat(c: AppContext): Promise<Response> {
     if (typeof uri === 'string') apps[name] = uri
     Object.assign(t, { toModelOutput: ({ output }: { output: unknown }) => ({ type: 'text' as const, value: toolText(name, output) }) })
   }
-  const close = () => waitUntil(c, mcp.close().catch(() => {}))
+  const close = () => c.defer(mcp.close().catch(() => {}))
 
   let messages
   try {
@@ -128,7 +127,7 @@ export async function handleChat(c: AppContext): Promise<Response> {
     tools,
     stopWhen: stepCountIs(MAX_STEPS),
     maxOutputTokens: MAX_OUTPUT_TOKENS,
-    abortSignal: c.req.raw.signal,
+    abortSignal: c.request.signal,
     onStepEnd: (step) => {
       stepsDone++
       logStep(step)
