@@ -244,7 +244,7 @@ function ProjectRow({ p, rank, max }: { p: Project; rank: number; max: number })
           </div>
         </div>
         <div className="text-right text-[15px] tabular-nums">{p.amountMissing ? '金額未記載' : formatYen(p.yen)}</div>
-        <div className={`hidden text-right text-[15px] tabular-nums sm:block ${pct !== null && pct < 0 ? 'text-foreground' : 'text-primary'}`}>
+        <div className={`hidden text-right text-[15px] tabular-nums sm:block ${pct !== null && pct < 0 ? 'text-[var(--negative)]' : 'text-primary'}`}>
           {pct === null ? '—' : `${pct >= 0 ? '+' : '−'}${Math.abs(pct).toFixed(1)}%`}
           <i className="block text-[11px] not-italic text-muted-foreground">前年度比</i>
         </div>
@@ -302,7 +302,7 @@ function Budget({ data, year }: { data: PageData; year: number }) {
     <>
       <span className="text-sm text-muted-foreground">全体</span>
       <b className={`text-[26px] font-normal leading-snug tabular-nums ${total ? 'text-[var(--kincha-ink)]' : 'text-muted-foreground'}`}>{total ? formatYen(total.yen) : '—'}</b>
-      {pct !== null ? <span className={`text-[13px] tabular-nums ${pct < 0 ? 'text-foreground' : 'text-primary'}`}>前年度比 {pct >= 0 ? '+' : '−'}{Math.abs(pct).toFixed(1)}%</span> : null}
+      {pct !== null ? <span className={`text-[13px] tabular-nums ${pct < 0 ? 'text-[var(--negative)]' : 'text-primary'}`}>前年度比 {pct >= 0 ? '+' : '−'}{Math.abs(pct).toFixed(1)}%</span> : null}
     </>
   )
   // 決算・予算のタブは左、分類のメニューは右に置く
