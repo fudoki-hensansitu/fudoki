@@ -4,7 +4,7 @@ import { HOME } from './home-data'
 import { PWA_HEAD, PWA_REGISTER } from './pwa'
 import { BACKGROUND_DARK, BACKGROUND_LIGHT, THEME_COLOR_META } from './tokens'
 import { LOGO_G, LOGO_WIDTH } from './logo'
-import { withSiteNav } from './nav/render'
+import { withSiteNav, PAGE_TRANSITION_STYLE } from './nav/render'
 
 const MCP = 'https://api.fudoki.dev/mcp'
 const DOCS = 'https://docs.fudoki.dev'
@@ -442,6 +442,7 @@ export const landingHtml = (open: boolean) => `<!doctype html>
 <title>風土記（fudoki）— 町の家計簿</title>
 <meta name="description" content="${DESCRIPTION}">
 ${THEME_COLOR_META}
+${PAGE_TRANSITION_STYLE}
 <link rel="canonical" href="https://fudoki.dev/">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">

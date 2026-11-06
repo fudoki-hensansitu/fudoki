@@ -9,7 +9,7 @@ import { PWA_HEAD, PWA_REGISTER } from '../pwa'
 import type { CatalogEntry } from '../server/jurisdiction'
 import { IndexPage } from './index-page'
 import { jurisdictionPath } from './path'
-import { withSiteNav } from '../nav/render'
+import { withSiteNav, PAGE_TRANSITION_STYLE } from '../nav/render'
 import { formatYen, INDEX_PATH, reiwa, type IndexEntry, type PageData } from './types'
 
 const ORIGIN = 'https://fudoki.dev'
@@ -29,6 +29,7 @@ const head = (title: string, description: string, canonical: string, extra = '')
 <meta property="og:image" content="${ORIGIN}/og.png">
 <meta name="twitter:card" content="summary_large_image">
 ${THEME_COLOR_META}
+${PAGE_TRANSITION_STYLE}
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 ${PWA_HEAD}

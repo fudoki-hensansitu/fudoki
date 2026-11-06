@@ -2,7 +2,7 @@
 import { TOKENS_CSS } from './landing'
 import { THEME_COLOR_META } from './tokens'
 import { PWA_HEAD, PWA_REGISTER } from './pwa'
-import { withSiteNav } from './nav/render'
+import { withSiteNav, PAGE_TRANSITION_STYLE } from './nav/render'
 
 /** open はサイドバーを開いて書くか（navOpen で cookie から決める） */
 export const chatShellHtml = (open: boolean) => `<!doctype html>
@@ -14,6 +14,7 @@ export const chatShellHtml = (open: boolean) => `<!doctype html>
 <meta name="robots" content="noindex">
 <meta name="referrer" content="no-referrer">
 ${THEME_COLOR_META}
+${PAGE_TRANSITION_STYLE}
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 ${PWA_HEAD}
