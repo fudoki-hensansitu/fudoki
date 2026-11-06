@@ -119,7 +119,7 @@ function ProjectItem({ p }: { p: PolicyProject }) {
       </div>
       <p className="text-sm">{p.what}</p>
       {p.evaluation ? (
-        <div className="flex flex-col gap-1 rounded-xl bg-secondary/50 px-3.5 py-2.5">
+        <div className="flex flex-col gap-1 rounded-xl bg-sidebar px-3.5 py-2.5">
           <p className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[13px]">
             <span className="inline-flex shrink-0 items-center gap-1 text-muted-foreground">
               <ClipboardTextIcon aria-hidden="true" className="size-4" />
