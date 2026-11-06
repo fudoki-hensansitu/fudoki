@@ -86,6 +86,8 @@ export interface PageData {
   prefecture: string
   /** 都道府県自体の頁（/tokyo）。header の都道府県名から移る */
   prefecturePath: string
+  /** 同じ都道府県で収録のある自治体（自身と都道府県自体を除く）。最後の節から回遊させる */
+  neighbors: { name: string; path: string }[]
   officialUrl: string | null
   population: Population | null
   originTitle: string | null
@@ -93,7 +95,7 @@ export interface PageData {
   years: YearTotal[]
   /** 最新年度の全款から全項への流れ */
   flow: Drill[]
-  /** 最新年度の分野（COFOG の枠）から款への流れ。Drill の kan に枠、kou に款が入る */
+  /** 最新年度の COFOG の流れ。Drill の kan に大分類、kou に中分類が入る */
   cofogFlow: Drill[]
   projects: Project[]
   /** 方針・政策領域・事業の入れ替え（jurisdiction/profiles.ts）。手で起こした自治体だけにある */

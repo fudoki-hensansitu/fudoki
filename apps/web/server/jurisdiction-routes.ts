@@ -16,7 +16,7 @@ const NODE_ID = /^[0-9a-f]{64}$/
 /** Worker の cache（無い環境では毎回取り直す）。同じ isolate の中でも一度だけ取る */
 const inflight = new Map<string, Promise<unknown>>()
 async function memo<T>(key: string, fn: () => Promise<T>): Promise<T> {
-  const url = `https://fudoki.dev/__cache/jurisdiction-v7/${key}`
+  const url = `https://fudoki.dev/__cache/jurisdiction-v8/${key}`
   const cache = typeof caches === 'undefined' ? undefined : (caches as unknown as { default?: Cache }).default
   const hit = await cache?.match(url)
   if (hit) return (await hit.json()) as T
@@ -30,7 +30,7 @@ async function memo<T>(key: string, fn: () => Promise<T>): Promise<T> {
 export const catalog = (env: Env) => memo<CatalogEntry[]>('catalog', () => loadCatalog(env))
 // catalog とは別の key で同じ TTL（1時間）を持つので、取り込みで自治体が増えてから一覧へ出るまで最大で約2時間かかる
 const index = (env: Env) => memo<IndexEntry[]>('index', async () => loadIndex(env, await catalog(env), jurisdictionPath))
-const page = (env: Env, e: CatalogEntry) => memo<Omit<PageData, 'prefecturePath'> | null>(`page-${e.code}-${e.settlementYears.at(-1)}`, () => loadPage(env, e))
+const page = (env: Env, e: CatalogEntry) => memo<Omit<PageData, 'prefecturePath' | 'neighbors'> | null>(`page-${e.code}-${e.settlementYears.at(-1)}`, () => loadPage(env, e))
 
 /** 一覧（/jurisdictions）の頁に載せるもの。地図・検索の要約は全自治体、表は既定の並びの最初の1頁。API に繋がらなければ投げる */
 export async function indexPageData(env: Env): Promise<{ map: MapEntry[]; table: IndexTable }> {
@@ -67,8 +67,12 @@ export async function resolveJurisdiction(env: Env, path: string): Promise<Juris
   // 都道府県名は都道府県自体の頁へ。都道府県自体の頁と、都道府県がカタログに無い（頁が無い）ときは一覧へ
   const prefectureCode = `${entry.code.slice(0, 2)}0001`
   const prefecturePath = entry.code !== prefectureCode && entries.some((e) => e.code === prefectureCode) ? jurisdictionPath(prefectureCode) : INDEX_PATH
+  const neighbors = entries
+    .filter((e) => e.code.slice(0, 2) === entry.code.slice(0, 2) && e.code !== entry.code && e.code !== prefectureCode && e.settlementYears.length > 0)
+    .sort((a, b) => a.code.localeCompare(b.code))
+    .map((e) => ({ name: e.name, path: jurisdictionPath(e.code) }))
   const data = entry.settlementYears.length > 0 ? await page(env, entry) : null
-  return data ? { kind: 'page', data: { ...data, prefecturePath, profile: PROFILES[entry.code] ?? null } } : { kind: 'empty', entry }
+  return data ? { kind: 'page', data: { ...data, prefecturePath, neighbors, profile: PROFILES[entry.code] ?? null } } : { kind: 'empty', entry }
 }
 
 /** 収録のある自治体の頁を含む sitemap。API に繋がらなくても入口と一覧だけで答える */

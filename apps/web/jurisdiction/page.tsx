@@ -3,7 +3,7 @@
 // 歳出の決算は API の値。新しく始めたこと・やめたこと（事業の入れ替え）は jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
 import { Link } from '@void/react'
 import * as React from 'react'
-import { ArrowSquareOutIcon, BankIcon, BasketballIcon, CaretDownIcon, CheckCircleIcon, CircleHalfIcon, ClipboardTextIcon, ClockIcon, CoinsIcon, ChatCircleIcon, FirstAidKitIcon, GlobeIcon, HandHeartIcon, HouseLineIcon, LeafIcon, MapPinIcon, MinusCircleIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, StudentIcon, UsersIcon, WarningCircleIcon, XIcon } from '@phosphor-icons/react'
+import { ArrowRightIcon, ArrowSquareOutIcon, BankIcon, BasketballIcon, CaretDownIcon, CheckCircleIcon, CircleHalfIcon, ClipboardTextIcon, ClockIcon, CoinsIcon, ChatCircleIcon, FirstAidKitIcon, GlobeIcon, HandHeartIcon, HouseLineIcon, LeafIcon, MapPinIcon, MinusCircleIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, StudentIcon, DotsThreeCircleIcon, UsersIcon, WarningCircleIcon, XIcon } from '@phosphor-icons/react'
 import { StartForm } from '../chat/start-form'
 import type { StoredSession } from '../chat/store'
 import { Hint } from '@/components/hint'
@@ -11,7 +11,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenu
 import { DOMAIN_FRAMES, groupByFrame, OTHER_FRAME } from './domains'
 import { Flow } from './flow'
 import { assetPath, type PolicyProject, type ProfileYear, type ProjectStatus, type Scrap } from './profiles'
-import { changePct, formatAsOf, formatPeople, formatYen, reiwa, yearName, type FlowView, type PageData, type Project, type Setsu, type YearTotal } from './types'
+import { changePct, INDEX_PATH, formatAsOf, formatPeople, formatYen, reiwa, yearName, type FlowView, type PageData, type Project, type Setsu, type YearTotal } from './types'
 
 const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
   const res = await fetch(url, { signal })
@@ -103,7 +103,7 @@ function ProjectItem({ p }: { p: PolicyProject }) {
 /** 分野（domains.ts）の id ごとの icon */
 const DOMAIN_ICON: Record<string, typeof BankIcon> = {
   bosai: ShieldCheckIcon, fukushi: HandHeartIcon, kyoiku: StudentIcon, iryo: FirstAidKitIcon, kurashi: HouseLineIcon,
-  sangyo: StorefrontIcon, kankyo: LeafIcon, bunka: BasketballIcon, gyosei: BankIcon,
+  sangyo: StorefrontIcon, kankyo: LeafIcon, bunka: BasketballIcon, gyosei: BankIcon, other: DotsThreeCircleIcon,
 }
 
 /** 区政を知らない人の入口。自治体の仕事を分野の例で見せ、1年に使うお金を住民1人あたりで言う（最新の決算） */
@@ -162,6 +162,30 @@ function Domains({ year }: { year: ProfileYear }) {
           </div>
         </div>
       ))}
+    </Section>
+  )
+}
+
+/** 最後の節。都道府県と同じ都道府県の自治体、全国の一覧へ回遊させる */
+function Elsewhere({ data }: { data: PageData }) {
+  const pill = 'inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-[14px] text-foreground no-underline hover:bg-card'
+  return (
+    <Section id="elsewhere" title="ほかの自治体も見る">
+      <div className="flex flex-wrap gap-2">
+        {data.prefecturePath !== INDEX_PATH ? (
+          <Link href={data.prefecturePath} className={`${pill} border-primary/40 text-primary`}>
+            <MapPinIcon aria-hidden="true" className="size-4" />
+            {data.prefecture}
+          </Link>
+        ) : null}
+        {data.neighbors.map((n) => (
+          <Link key={n.path} href={n.path} className={pill}>{n.name}</Link>
+        ))}
+        <Link href={INDEX_PATH} className={pill}>
+          すべての自治体
+          <ArrowRightIcon aria-hidden="true" className="size-4" />
+        </Link>
+      </div>
     </Section>
   )
 }
@@ -303,7 +327,7 @@ function Budget({ data, year }: { data: PageData; year: number }) {
     <Section
       id="budget"
       title="お金は何に使われた？"
-      lead="機能分類は国際的な分け方（COFOG）で、どの自治体も同じなので比べられます。自治体分類は予算書・決算書の分け方のままです。"
+      lead="機能分類は使い道の目的別に世界共通の分類（COFOG）で分けていて、自治体分類は予算書・決算書の表記のままです。"
       link={docs.length ? docs : undefined}
     >
       <div id="budget-panel" role="tabpanel" aria-labelledby={`tab-${phase}`} data-ask-view={`${reiwa(year)}の${label}の金額（${VIEWS.find((v) => v.key === view)!.label}）`} className="flex flex-col gap-4">
@@ -462,6 +486,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
     ...fresh,
     ...money,
     ...(py?.scrap ? [{ href: '#scrap', label: 'やめたこと' }] : []),
+    { href: '#elsewhere', label: 'ほかの自治体' },
   ]
 
   // スクロールしたら小さなヘッダーを出す
@@ -572,8 +597,8 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
               </span>
               {data.population ? (
                 <Hint label={`住民基本台帳人口（${formatAsOf(data.population.asOf)}時点）`}>
-                  <span className="inline-flex items-center gap-1 sm:gap-1.5">
-                    <UsersIcon className="size-3.5 sm:size-4" aria-hidden="true" />
+                  <span className="inline-flex items-center gap-1 text-foreground sm:gap-1.5">
+                    <UsersIcon className="size-3.5 text-muted-foreground sm:size-4" aria-hidden="true" />
                     <span className="sr-only">人口 </span>
                     {formatPeople(data.population.people)}
                   </span>
@@ -624,6 +649,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
             <Budget data={data} year={year} />
             <Projects data={data} year={year} />
             {py?.scrap ? <ScrapSection scrap={py.scrap} /> : null}
+            <Elsewhere data={data} />
           </main>
         </div>
       </div>

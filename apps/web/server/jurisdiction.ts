@@ -287,8 +287,8 @@ export async function loadDrill(env: Env, kan: Line): Promise<Drill> {
   return { kan, kou }
 }
 
-/** 都道府県の頁へのリンク（prefecturePath）はカタログを見て route 側で決める */
-export async function loadPage(env: Env, entry: CatalogEntry): Promise<Omit<PageData, 'prefecturePath'> | null> {
+/** 都道府県の頁へのリンク（prefecturePath）・同じ都道府県の自治体（neighbors）はカタログを見て route 側で決める */
+export async function loadPage(env: Env, entry: CatalogEntry): Promise<Omit<PageData, 'prefecturePath' | 'neighbors'> | null> {
   const latest = entry.settlementYears.at(-1)
   if (latest === undefined) return null
   const years = entry.settlementYears.filter((year) => year >= latest - MAX_YEARS + 1)
