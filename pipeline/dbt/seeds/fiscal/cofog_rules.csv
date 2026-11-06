@@ -455,3 +455,5 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 1637,shibuya-2024-01,131130,一般会計,,衛生費,衛生管理費,,保健施設費,eq,,assigned,07,retained,目,,渋谷区 保健所・保健センターなどの保健の施設の経費を保健に分類する。病院か公衆衛生かは名称から分けられない。名称からの判断。,true
 1638,koto-2024-01,131083,一般会計,,衛生費,衛生管理費,,医務費,eq,,assigned,07,retained,目,,江東区 医療の確保・医療機関との連携等の事務を保健に分類する。名称からの判断。,true
 1639,koto-2024-02,131083,一般会計,,衛生費,衛生管理費,,障害者自立支援医療費等給付費,eq,,assigned,07,retained,目,,江東区 衛生費に計上する自立支援医療（精神通院医療等）の給付を保健に分類する。名称からの判断。,true
+-786,ome-2024-01,132055,一般会計,,衛生費,保健衛生費,,環境政策費,eq,,assigned,05,retained,目,,青梅市 衛生費・保健衛生費の環境政策費（ゼロカーボンシティ推進・地球温暖化対策など）を環境保護に分類する。町田市（keyword-environment-policy-132098）にならう。名称と備考の事業名からの判断。,true
+-1301,ome-2024-02,132055,一般会計,,災害復旧費,土木施設災害復旧費,,土木施設災害復旧費,eq,,unclassifiable,,retained,目,,青梅市 土木施設（道路・河川など）の災害復旧は施設の種類を目の名前で分けられない（kobe-disaster-civil・vocab-disaster-public-facility にならう）。,false
