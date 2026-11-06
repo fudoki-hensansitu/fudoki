@@ -359,13 +359,24 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
 
   // スクロールしたら小さなヘッダーを出す
   const title = React.useRef<HTMLHeadingElement>(null)
+  const headerRef = React.useRef<HTMLElement>(null)
   const [mini, setMini] = React.useState(false)
+  const [headerWide, setHeaderWide] = React.useState(true)
   React.useEffect(() => {
     const el = title.current
     if (!el) return
     const observer = new IntersectionObserver(([e]) => setMini(!e!.isIntersecting && e!.boundingClientRect.top < 0))
     observer.observe(el)
     return () => observer.disconnect()
+  }, [])
+  React.useEffect(() => {
+    const el = headerRef.current
+    if (!el) return
+    const update = () => setHeaderWide(el.getBoundingClientRect().width >= 500)
+    update()
+    const ro = new ResizeObserver(update)
+    ro.observe(el)
+    return () => ro.disconnect()
   }, [])
 
   // 目次をスクロールに追従させる
@@ -425,9 +436,9 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
       </div>
 
       <div className="mx-auto max-w-[1120px] px-4 pb-48">
-        <header className="relative grid grid-cols-[80px_minmax(0,1fr)] items-start gap-4 border-b py-7 sm:grid-cols-[132px_minmax(0,1fr)] sm:gap-7">
+        <header ref={headerRef} className="relative grid grid-cols-[80px_minmax(0,1fr)] items-start gap-4 border-b py-7 sm:grid-cols-[132px_minmax(0,1fr)] sm:gap-7">
           {years.length > 1 ? (
-            <div className="col-span-full -mb-2 justify-self-end sm:absolute sm:right-0 sm:top-7 sm:mb-0">
+            <div className={headerWide ? 'col-span-full -mb-2 justify-self-end sm:absolute sm:right-0 sm:top-7 sm:mb-0' : 'col-span-full -mb-2 justify-self-end'}>
               <YearPicker years={years} current={year} onChange={choose} />
             </div>
           ) : null}
