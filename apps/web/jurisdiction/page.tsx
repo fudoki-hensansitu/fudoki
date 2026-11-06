@@ -137,7 +137,7 @@ const DOMAIN_ICON: Record<string, typeof BankIcon> = {
 }
 
 /** 区政を知らない人の入口。自治体の仕事を分野の例で見せ、1年に使うお金を住民1人あたりで言う（最新の決算） */
-function Overview({ data }: { data: PageData }) {
+function Overview({ data, sections }: { data: PageData; sections: Set<string> }) {
   const latest = data.years.at(-1)
   const people = data.population?.people
   const kind = data.name.slice(-1)
@@ -161,7 +161,7 @@ function Overview({ data }: { data: PageData }) {
           if (f === OTHER_FRAME && !spent) return null
           return (
             <li key={f.id} className="border-b border-foreground/10">
-              <DomainLink kanId={spent ? `cofog-${f.cofog || 'none'}` : undefined}>
+              <DomainLink section={sections.has(f.id) ? `d-${f.id}` : undefined}>
               <DomainIcon id={f.id} />
               <div className="min-w-0 flex-1">
                 <b className="block text-[15px] font-normal">{f.name}</b>
@@ -180,18 +180,16 @@ function Overview({ data }: { data: PageData }) {
   )
 }
 
-/** お金の流れで大分類を開くよう頼むイベント。detail は大分類の id（cofog-10 など） */
-const OPEN_KAN = 'fudoki:open-kan'
-
-/** 分野の行。金額があれば、お金の流れのその分野へ移るリンクにする */
-function DomainLink({ kanId, children }: { kanId?: string; children: React.ReactNode }) {
+/** 分野の行。その年度の「暮らしで何が変わった？」にその分野があれば、そこへ移るリンクにする */
+function DomainLink({ section, children }: { section?: string; children: React.ReactNode }) {
   // アイコン・名前・金額の3列を全行で同じ幅にし、行は隣の列の行と同じ高さいっぱいに広げて中央に揃える
   const row = 'grid h-full grid-cols-[1.75rem_minmax(0,1fr)_5.5rem] items-center gap-3 py-3'
-  if (!kanId) return <div className={row}>{children}</div>
+  if (!section) return <div className={row}>{children}</div>
   return (
     <a
-      href="#budget"
-      onClick={(e) => { e.preventDefault(); window.dispatchEvent(new CustomEvent(OPEN_KAN, { detail: kanId })) }}
+      href={`#${section}`}
+      // 目次と同じく #yYYYY を節の fragment に置き換えない
+      onClick={(e) => { const t = document.getElementById(section); if (!t) return; e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }) }}
       className={`${row} text-foreground no-underline transition-colors hover:bg-card`}
     >
       {children}
@@ -327,19 +325,6 @@ const VIEWS: { key: FlowView; label: string }[] = [
 function Budget({ data, year }: { data: PageData; year: number }) {
   const [phase, setPhase] = React.useState<Phase>('settlement')
   const [view, setView] = React.useState<FlowView>('cofog')
-  // year は開く先の年度（「何をしている？」と同じ最新の決算）。n は押すたびに増やし、同じ分野を続けて押しても送り直す
-  const [open, setOpen] = React.useState<{ id: string; n: number; year?: number }>()
-  const seq = React.useRef(0)
-  // 「何をしている？」の分野から来たら、決算の機能分類に切り替えてその大分類を開く
-  React.useEffect(() => {
-    const onOpen = (e: Event) => {
-      setPhase('settlement')
-      setView('cofog')
-      setOpen({ id: (e as CustomEvent<string>).detail, n: ++seq.current, year: data.years.at(-1)?.year })
-    }
-    window.addEventListener(OPEN_KAN, onOpen)
-    return () => window.removeEventListener(OPEN_KAN, onOpen)
-  }, [data.years])
   const settled = data.years.find((y) => y.year === year)
   const total = phase === 'settlement' ? settled : undefined
   const prev = data.years.find((y) => y.year === year - 1)
@@ -395,7 +380,7 @@ function Budget({ data, year }: { data: PageData; year: number }) {
     >
       <div id="budget-panel" role="tabpanel" aria-labelledby={`tab-${phase}`} data-ask-view={`${reiwa(year)}の${label}の金額（${VIEWS.find((v) => v.key === view)!.label}）`} className="flex flex-col gap-4">
         {total ? (
-          <Flow key={`${year}-${view}`} data={data} total={total} view={view} tabs={tabs} summary={summary} open={open?.year === year && view === 'cofog' ? open : undefined} onOpened={() => setOpen(undefined)} />
+          <Flow key={`${year}-${view}`} data={data} total={total} view={view} tabs={tabs} summary={summary} />
         ) : (
           <div className="rounded-[20px] border bg-background px-5 pt-5 sm:px-6">
             {tabs}
@@ -537,15 +522,6 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
     setYear(y)
     history.replaceState(null, '', `#y${y}`)
   }
-  // 「何をしている？」の金額は最新の決算なので、分野から移るときは最新の決算の年度に合わせる
-  React.useEffect(() => {
-    const onOpen = () => {
-      const latest = data.years.at(-1)?.year
-      if (latest && year !== latest) choose(latest)
-    }
-    window.addEventListener(OPEN_KAN, onOpen)
-    return () => window.removeEventListener(OPEN_KAN, onOpen)
-  })
 
   const money: TocItem[] = [
     { href: '#budget', label: 'お金の使い道' },
@@ -716,7 +692,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
             ))}
           </nav>
           <main className="flex min-w-0 flex-col gap-14">
-            <Overview data={data} />
+            <Overview data={data} sections={new Set(py ? groupByFrame(py.projects).map(({ frame }) => frame.id) : [])} />
             {py ? <Domains year={py} /> : null}
             <Budget data={data} year={year} />
             <Projects data={data} year={year} />

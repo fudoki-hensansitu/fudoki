@@ -329,7 +329,7 @@ function KanPanel({ drill, loading, levels }: { drill: Drill; loading: boolean; 
 
 /** 款→項の全体図と款ごとの内訳。最新年度の款→項はページに埋めてあり、それ以外の年度は図が近づいたら読み込む */
 /** tabs はカードの左上に置く切り替え（決算／予算・分け方）、summary は全体図のときに出す総額。view は分野（COFOG の枠）か款か */
-export function Flow({ data, total: year, view = 'kan', tabs, summary, open, onOpened }: { data: PageData; total: YearTotal; view?: FlowView; tabs?: React.ReactNode; summary?: React.ReactNode; open?: { id: string; n: number }; onOpened?: () => void }) {
+export function Flow({ data, total: year, view = 'kan', tabs, summary }: { data: PageData; total: YearTotal; view?: FlowView; tabs?: React.ReactNode; summary?: React.ReactNode }) {
   const levels = LEVELS[view]
   const isLatest = year.year === data.years.at(-1)?.year
   const root = React.useRef<HTMLDivElement>(null)
@@ -379,19 +379,6 @@ export function Flow({ data, total: year, view = 'kan', tabs, summary, open, onO
     body.scrollTo({ top, behavior: 'instant' })
     el.focus({ preventScroll: true })
   }
-  // 外から開く大分類を指定されたら、図まで縦に送ってその面へ移る
-  // 一度開いたら onOpened で取り消してもらい、年度を変えて作り直したときに再び動かないようにする
-  const scrolled = React.useRef<number>(undefined)
-  React.useEffect(() => {
-    if (!open) return
-    if (scrolled.current !== open.n) { root.current?.scrollIntoView({ behavior: 'smooth' }); scrolled.current = open.n }
-    if (error) { onOpened?.(); return }
-    if (!flows.length) return
-    const i = flows.findIndex((f) => f.kan.id === open.id)
-    if (i >= 0) select(i)
-    onOpened?.()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, flows.length, error])
   const goTo = (i: number) => track.current?.scrollTo({ left: i * (track.current?.clientWidth ?? 0), behavior: 'smooth' })
   const go = (delta: number) => track.current?.scrollBy({ left: delta * (track.current?.clientWidth ?? 0), behavior: 'smooth' })
   const onKey = (e: React.KeyboardEvent) => {
