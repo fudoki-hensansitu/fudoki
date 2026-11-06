@@ -8,7 +8,7 @@
 --border:#ddd6c8;--ring:#2f5d43;
 --paper:#e4d8bf;--paper-foreground:#2b2723;--night:#2b2723;--night-foreground:#f8f5ee;
 --page:#ffffff;--page-foreground:#2b2723;
---shu:#c1553a;--ai:#33507a;--kincha:#e3a43c;--kincha-ink:#aa5910;--negative:#c8456b;--sakura:#ebcab9;
+--shu:#c1553a;--ai:#33507a;--kincha:#e3a43c;--kincha-ink:#aa5910;--sakura:#ebcab9;
 --font-display:"Fudoki Mincho","BIZ UDPMincho","Hiragino Mincho ProN","Yu Mincho",serif;
 --font-sans:"Hiragino Sans","Noto Sans JP","Yu Gothic UI","Yu Gothic",Meiryo,system-ui,sans-serif;
 --font-mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
@@ -27,7 +27,7 @@
 --primary:#8fbfa2;--primary-foreground:#1b1916;--accent:#26332b;--accent-foreground:#8fbfa2;
 --border:#3b362f;--ring:#8fbfa2;
 --paper:#3a342b;--paper-foreground:#ece6da;--night:#0f0e0c;--night-foreground:#ece6da;
---shu:#d46a4f;--ai:#6f8fc0;--kincha-ink:#e3a43c;--negative:#e47b98;--sakura:#b98f80;--grain:.5;
+--shu:#d46a4f;--ai:#6f8fc0;--kincha-ink:#e3a43c;--sakura:#b98f80;--grain:.5;
 }}
 /* 広い画面では本文の左右の余白を広げる */
 @media (min-width: 961px) { :root { --gut: max(56px, env(safe-area-inset-left), env(safe-area-inset-right), calc((100% - 1200px) / 2)); } }
