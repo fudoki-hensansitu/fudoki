@@ -15,9 +15,9 @@ describe('金額と年度の表記', () => {
     expect(formatYen(355_826_620)).toBe('3.6億円')
     expect(formatYen(76_543_210)).toBe('7,654万円')
   })
-  test('西暦を令和にする', () => {
-    expect(reiwa(2025)).toBe('令和7年度')
-    expect(reiwa(2019)).toBe('令和元年度')
+  test('西暦を令和の R 表記にする', () => {
+    expect(reiwa(2025)).toBe('R7年度')
+    expect(reiwa(2019)).toBe('R1年度')
     expect(reiwa(2018)).toBe('2018年度')
   })
   test('前の年度が無い・0 のときは増減を出さない', () => {
@@ -99,7 +99,7 @@ describe('自治体の個別ページ', () => {
     const res = await get('/tokyo/nakano', { ...env, TURNSTILE_SITE_KEY: 'public-test-key' })
     expect(res.status).toBe(200)
     const html = await res.text()
-    expect(html).toContain('<title>中野区の歳出｜令和7年度決算｜風土記</title>')
+    expect(html).toContain('<title>中野区の歳出｜R7年度決算｜風土記</title>')
     expect(html).toContain('https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit')
     expect(html).toContain('<link rel="canonical" href="https://fudoki.dev/tokyo/nakano">')
     // 年度ごとの総額は、その年度の款（兄弟）の和
