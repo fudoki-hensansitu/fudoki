@@ -76,6 +76,8 @@ jurisdiction_code,fiscal_year,document_kind,source_heading,breakdown,basis
 132098,2024,settlement,節,節,法定の節の見出し
 132098,2025,settlement,備考,その他,備考に経費の品目が混ざる（目の直下の19%が品目名）ので事業と呼ばない
 132098,2025,settlement,節,節,法定の節の見出し
+132101,2024,settlement,備考,事業,備考が目の額を事業ごとに分ける（品目名は目の直下の0%）
+132101,2024,settlement,節,節,法定の節の見出し
 132101,2025,settlement,備考,事業,備考が目の額を事業ごとに分ける（品目名は目の直下の0%）
 132101,2025,settlement,節,節,法定の節の見出し
 132128,2024,settlement,備考,事業,備考が目の額を事業ごとに分ける（品目名は目の直下の0%）
