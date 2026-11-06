@@ -231,8 +231,8 @@ const PHASES: { key: Phase; label: string }[] = [
 ]
 /** お金の流れの分け方。既定は分野（COFOG の枠）で、どの自治体も同じ枠で比べられる。款は予算書・決算書の科目のまま */
 const VIEWS: { key: FlowView; label: string }[] = [
-  { key: 'cofog', label: '分野ごと' },
-  { key: 'kan', label: '予算書の分け方' },
+  { key: 'cofog', label: '全国共通の区分' },
+  { key: 'kan', label: '自治体の区分' },
 ]
 
 /** 予算の節。決算と予算をタブで切り替える。予算はまだ取り込んでいないので、どの年度も空の枠を出す */
@@ -273,27 +273,28 @@ function Budget({ data, year }: { data: PageData; year: number }) {
         </button>
       ))}
     </div>
-    <div role="radiogroup" aria-label="分け方" className="flex rounded-full border p-0.5">
-      {VIEWS.map((v) => (
-        <button
-          key={v.key}
-          type="button"
-          role="radio"
-          aria-checked={v.key === view}
-          onClick={() => setView(v.key)}
-          className={`rounded-full px-2.5 py-1 text-[12px] ${v.key === view ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-        >
-          {v.label}
-        </button>
-      ))}
-    </div>
+    {/* 決算・予算のタブとは別の形（メニュー）にし、金額の段階の切り替えと分け方の切り替えを見分けられるようにする */}
+    <DropdownMenu>
+      <DropdownMenuTrigger aria-label="区分の切り替え" className="inline-flex items-center gap-1 rounded-md px-1.5 py-1 text-[13px] text-muted-foreground hover:text-foreground">
+        <span>区分：</span>
+        <span className="text-foreground">{VIEWS.find((v) => v.key === view)!.label}</span>
+        <CaretDownIcon aria-hidden="true" className="size-3.5" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="w-auto">
+        <DropdownMenuRadioGroup value={view} onValueChange={(v) => setView(v as FlowView)}>
+          {VIEWS.map((v) => (
+            <DropdownMenuRadioItem key={v.key} value={v.key}>{v.label}</DropdownMenuRadioItem>
+          ))}
+        </DropdownMenuRadioGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
     </div>
   )
   return (
     <Section
       id="budget"
       title="お金は何に使われた？"
-      lead="1年間に使ったお金（決算）と、使う予定のお金（予算）を、使い道ごとに分けています。分野ごとの分け方はどの自治体も同じなので、ほかの自治体と比べられます。"
+      lead="1年間に使ったお金（決算）と、使う予定のお金（予算）を、使い道ごとに分けています。全国共通の区分はどの自治体も同じ分け方なので、ほかの自治体と比べられます。"
       link={docs.length ? docs : undefined}
     >
       <div id="budget-panel" role="tabpanel" aria-labelledby={`tab-${phase}`} data-ask-view={`${reiwa(year)}の${label}の金額（${VIEWS.find((v) => v.key === view)!.label}）`} className="flex flex-col gap-4">
