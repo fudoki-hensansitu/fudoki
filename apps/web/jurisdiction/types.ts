@@ -36,7 +36,7 @@ export interface Drill {
 }
 
 export type FlowDepth = 'kou' | 'moku' | 'setsu'
-/** お金の流れの分け方。cofog は分野（jurisdiction/domains.ts の枠）→ 款、kan は自治体の科目（款 → 項） */
+/** お金の流れの分け方。cofog は分野（COFOG の大分類）→ 中分類、kan は自治体の科目（款 → 項） */
 export type FlowView = 'cofog' | 'kan'
 
 export interface Project extends Line {

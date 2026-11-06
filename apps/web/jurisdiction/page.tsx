@@ -91,7 +91,7 @@ function ProjectItem({ p }: { p: PolicyProject }) {
       ) : null}
       <div className="flex flex-row flex-wrap gap-x-3 gap-y-1 text-sm lg:col-start-2 lg:row-span-3 lg:row-start-1 lg:flex-col lg:gap-0.5 lg:text-right">
         {p.amounts.map((a) => (
-          <span key={`${a.yen}-${a.label ?? ''}`} className="tabular-nums text-[var(--kincha-ink)]">
+          <span key={`${a.yen}-${a.label ?? ''}`} className="tabular-nums">
             {formatYen(a.yen)}
             {a.label ? <small className="ml-1 text-xs text-muted-foreground lg:ml-0 lg:block">{a.label}</small> : null}
           </span>
@@ -138,8 +138,8 @@ function Overview({ data }: { data: PageData }) {
                 <span className="text-[13px] text-muted-foreground">{f.examples}</span>
               </div>
               <div className="shrink-0 text-right tabular-nums">
-                <span className={`block text-[15px] ${spent ? 'text-[var(--kincha-ink)]' : 'text-muted-foreground'}`}>{spent ? formatYen(spent.yen) : '—'}</span>
-                {spent && people ? <span className="block text-xs text-muted-foreground">1人 約{Math.round(spent.yen / people / 1e3) / 10}万円</span> : null}
+                <span className={`block text-[15px] ${spent ? '' : 'text-muted-foreground'}`}>{spent ? (spent.amountMissing ? '金額未記載' : formatYen(spent.yen)) : '—'}</span>
+                {spent && !spent.amountMissing && people ? <span className="block text-xs text-muted-foreground">1人 約{Math.round(spent.yen / people / 1e3) / 10}万円</span> : null}
               </div>
             </li>
           )
@@ -301,7 +301,7 @@ function Budget({ data, year }: { data: PageData; year: number }) {
   const summary = (
     <>
       <span className="text-sm text-muted-foreground">全体</span>
-      <b className={`text-[26px] font-normal leading-snug tabular-nums ${total ? 'text-[var(--kincha-ink)]' : 'text-muted-foreground'}`}>{total ? formatYen(total.yen) : '—'}</b>
+      <b className={`text-[26px] font-normal leading-snug tabular-nums ${total ? '' : 'text-muted-foreground'}`}>{total ? formatYen(total.yen) : '—'}</b>
       {pct !== null ? <span className={`text-[13px] tabular-nums text-muted-foreground`}>前年度比 {pct >= 0 ? '+' : '−'}{Math.abs(pct).toFixed(1)}%</span> : null}
     </>
   )

@@ -218,9 +218,9 @@ const sumYen = (lines: { yen: number; amountMissing?: true }[]) => lines.reduce(
 const partial = (lines: { amountMissing?: true }[]) => (lines.some((l) => l.amountMissing) ? { amountMissing: true as const } : {})
 
 /**
- * 分野（jurisdiction/domains.ts の COFOG をまとめた枠）→ 款 → 目 の流れ。目に付いた COFOG のコードで枠を決め、
- * 枠の金額は目の和（api の sum_rules: COFOG は目を前方一致で集めて足す。分類できない目・対象外の目は「その他」に入れ、全枠の和が総額になる。印字の無い目を含む枠・款は amountMissing を付ける）。
- * 款は枠の中に入った目だけの和で、出典の款の金額ではない。並びは金額の順で「その他」を最後に置く。depth が kou なら目を返さない（全体図だけに使う）
+ * 分野（COFOG の大分類）→ 中分類 → 目 の流れ。款・項は使わない。目に付いた COFOG のコードで大分類・中分類を決め、
+ * 金額は目の和（api の sum_rules: COFOG は目を前方一致で集めて足す。分類できない目・対象外の目は「その他」に入れ、全分類の和が総額になる。印字の無い目を含む分類は amountMissing を付ける）。
+ * 並びは金額の順で「その他」を最後に置く。depth が kou なら目を返さない（全体図だけに使う）
  */
 export async function loadCofogFlow(env: Env, code: string, year: number, depth: FlowDepth = 'kou'): Promise<Drill[]> {
   const moku = await searchAll(env, code, year, ['目'])

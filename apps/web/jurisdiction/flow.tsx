@@ -398,7 +398,7 @@ export function Flow({ data, total: year, view = 'kan', tabs, summary }: { data:
             {kan ? (
               <>
                 <span className="text-sm text-muted-foreground">{kan.kan.name}</span>
-                <b className="text-[26px] font-normal leading-snug tabular-nums text-[var(--kincha-ink)]">{amountText(kan.kan.yen, kan.kan.amountMissing)}</b>
+                <b className="text-[26px] font-normal leading-snug tabular-nums">{amountText(kan.kan.yen, kan.kan.amountMissing)}</b>
               </>
             ) : summary}
           </div>
