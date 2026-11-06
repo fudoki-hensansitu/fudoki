@@ -833,6 +833,78 @@ def add_code_readings(observed: list[Page], readings: list[dict] | None, key: st
     return [Page(p.number, p.width, p.height, words[p.number], p.rules) for p in observed]
 
 
+def drop_bands(observed: list[Page], bands: list[dict] | None) -> list[Page]:
+    """Leave out the readings of a declared band of rows (`dropped_bands`): the words whose middle lies
+    within the band's height on that page. A page printed in two originals (the last page of one 款別の分冊
+    is the first of the next, 132101) holds the end of one volume's 款 and the start of the next; each
+    volume reads only its own rows. The page's headings stay, and so do its rules. A band that holds no
+    reading is no band the declaration saw, and the conversion stops."""
+    words = {p.number: list(p.words) for p in observed}
+    for band in bands or ():
+        top, bottom = band['y_range']
+        if band['page'] not in words or not top < bottom:
+            raise ValueError(f'A dropped band needs a scoped page and a band of rows: {band["id"]}')
+        kept = [w for w in words[band['page']] if not top <= (w.y0 + w.y1) / 2 < bottom]
+        if len(kept) == len(words[band['page']]):
+            raise ValueError(f'A dropped band holds no reading: {band["id"]} {band["y_range"]}')
+        words[band['page']] = kept
+    return [Page(p.number, p.width, p.height, words[p.number], p.rules) for p in observed]
+
+
+ORDINAL_GAP = 9.0  # pt: the space OCR leaves between `その` and its number (4.3–7.7 at 132101)
+
+
+def join_ordinals(observed: list[Page]) -> list[Page]:
+    """Put back the number of a `その1`, `その2` in a name (`施設警備委託料その1`) where OCR read it as a word of
+    its own: a lone digit or two just right of a word that ends the line's text in `その` is part of the name,
+    not an amount (132101 備考: `施設警備委託料その` `1` `4,758,930`), and so is the number after `第`
+    (`東小金井北第` `1`). OCR may also cut `そ` from `の`, and the name may wrap between them. So is a count in
+    an opening bracket at the end of the line (`会計年度任用職員報酬(`
+    `14` / `人)`: fourteen people, not an amount)."""
+    pages = []
+    for page in observed:
+        words = list(page.words)
+        middle = lambda w: (w.y0 + w.y1) / 2
+        for index, word in enumerate(words):
+            if word is None or not re.fullmatch(r'[0-9]{1,3}', word.text):
+                continue
+            line = sorted((w for w in words if w is not None and w is not word and abs(middle(w) - middle(word)) < 3
+                           and w.x1 <= word.x0 + 0.5), key=lambda w: w.x1)
+            if not line or word.x0 - line[-1].x1 > ORDINAL_GAP:
+                continue
+            before = line[-1]
+            text = before.text if len(line) < 2 or before.x0 - line[-2].x1 > ORDINAL_GAP else line[-2].text + before.text
+            if normalize(text) == 'の' and len(line) == 1:
+                # `そ` ends the line above and the name wraps (`…（令和元年度導入分）そ` / `の 2`).
+                above = [w for w in words if w is not None and 6 < middle(word) - middle(w) < 14
+                         and w.x0 < word.x0 + 120 and w.x1 > before.x0]
+                text = max(above, key=lambda w: w.x1).text + text if above else text
+            if not normalize(text).endswith(('その', '第', '(')):
+                continue
+            joined = Word(before.text + word.text, before.x0, min(before.y0, word.y0), word.x1, max(before.y1, word.y1))
+            words[words.index(before)] = joined
+            words[index] = None
+        for index, word in enumerate(words):
+            # The number wrapped to the next line with what follows it (`エアコン借上料その` / `1 (平成27年度導入分)`,
+            # `（東小金井北第` / `1自転車駐車場)`, `地下水保全会議委員報酬 （` / `5人)`).
+            found = word is not None and re.fullmatch(r'([0-9]{1,2})\s*([^0-9\s].*)', word.text)
+            if not found:
+                continue
+            if any(w is not None and w is not word and abs(middle(w) - middle(word)) < 3 and w.x1 <= word.x0 + 0.5
+                   for w in words):
+                continue  # not the start of its line
+            above = [w for w in words if w is not None and 6 < middle(word) - middle(w) < 14
+                     and w.x0 < word.x0 + 120 and w.x1 > word.x0]
+            if not above or not normalize((last := max(above, key=lambda w: w.x1)).text).endswith(('その', '第', '(')):
+                continue
+            width = (word.x1 - word.x0) / len(word.text)
+            cut = word.x0 + width * (len(word.text) - len(found.group(2)))
+            words[words.index(last)] = Word(last.text + found.group(1), last.x0, last.y0, last.x1 + width * len(found.group(1)), last.y1)
+            words[index] = Word(found.group(2), cut, word.y0, word.x1, word.y1)
+        pages.append(Page(page.number, page.width, page.height, [w for w in words if w is not None], page.rules))
+    return pages
+
+
 SECTION_TITLES = {'収入': 'revenue', '支出': 'expenditure'}
 SECTION_TITLE_REACH = 60.0  # pt: how far under its title the table's top rule may lie
 
@@ -1061,6 +1133,8 @@ def build_table(source: dict, options: dict, *, stop: bool = True, rules: dict |
     header = (settings or {}).get('header')
     by_node = [r for r in options.get('name_corrections', ()) if 'observation_id' not in r]
     printed, observation, variants = read_pages(source, options, settings, selected, rules)
+    printed = drop_bands(printed, options.get('dropped_bands'))
+    printed = join_ordinals(printed)
     printed, other_sections, sectioned = direction_sections(printed, source.get('direction'))
     printed, recovered = recover_codes(printed, Path(source['path']), columns, spread=spread, header=header)
     report = Report()

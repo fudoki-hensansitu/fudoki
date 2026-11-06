@@ -78,6 +78,9 @@ class LineTest(unittest.TestCase):
         # The bracket flush against a long name inside one word (`…課）(1,04` `7,226)`), cut where it opens.
         self.assertEqual(read(('事務（公共施設マネジ', 300), ('メント課）(1,04', 390), ('7,226)', 507)),
                          ('事務（公共施設マネジメント課）', ['(1,047,226)']))
+        # OCR left the opening bracket unread, or read it as a letter: still the bracketed amount (132101).
+        self.assertEqual(read(('負担金補助及び交付金', 300), ('48,005,970)', 500)), ('負担金補助及び交付金', ['48,005,970']))
+        self.assertEqual(read(('委託料', 300), ('C21,368,656)', 500)), ('委託料', ['21,368,656']))
         # Without the setting, a bracket stays text.
         label, money = _split_line([glyph('議員人件費', 300, 100), glyph('[187,037,067]', 500, 100)])
         self.assertNotEqual([''.join(g.text for g in run) for run in money], ['[187,037,067]'])

@@ -316,6 +316,16 @@ def _split_line(line: list[Glyph], amount_brackets: bool = False, bare_amounts: 
             run = _cut(parts[-1], len(text(parts[-1])) - 1)[0]
             if run and is_amount(text(run)) and number(text(run)) is not None:
                 return [g for part in parts[:-1] for g in part], [run]
+        # OCR left the opening bracket unread (`負担金補助及び交付金` `48,005,970)`), or read it as a letter
+        # (`C21,368,656)`): a grouped amount closed by the bracket is the bracketed amount all the same.
+        take = 2 if len(parts) > 2 and normalize(text(parts[-1])) == closing else 1  # `48,005,970` `)`
+        last = [g for part in parts[-take:] for g in part] if len(parts) > take else []
+        unopened = re.fullmatch(r'([CcＣ]?)([△▲]?[0-9]{1,3}(?:,[0-9]{3})+)[)\]）］]', normalize(text(last)))
+        if unopened and BRACKET_PAIRS[closing] not in normalize(text(line)):
+            tail = _cut(last, len(unopened.group(1)))[1]  # the letter OCR read for the bracket is no name
+            tail = _cut(tail, len(unopened.group(2)))[0]  # the closing bracket is no digit
+            if number(normalize(text(tail))) is not None:
+                return [g for part in parts[:-take] for g in part], [tail]
         # The bracket printed flush against a long name, inside one of Poppler's words (`…課）(1,04` `7,226)`).
         glyphs = [g for part in parts for g in part]
         flush = re.match(r'^(.*[^(\[（［])([(\[（［][△▲]?[0-9]{1,3}(?:,[0-9]{3})*[)\]）］])$', text(glyphs))
@@ -1627,6 +1637,17 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
             item.indent = layout_name_start(item, settings.get('hang_chars'))
         raw = normalize(text(item.lines[0]))
         note = raw.startswith(prefixes)
+        waiting = result[-1] if result else None
+        if (note and raw.startswith(('(', '（')) and settings.get('wrap') == 'amount_on_last_line' and waiting is not None and waiting.role in ('node', 'note')
+                and not waiting.amounts and id(waiting) not in column_amount_items
+                and waiting.page == item.page
+                and abs(item.lines[0][0].x0 - waiting.indent) <= max(g.y1 - g.y0 for g in item.glyphs)  # a character
+                and 0 <= item.y0 - waiting.y1 <= max(g.y1 - g.y0 for g in item.glyphs)):
+            # The second line of a name still waiting for its amount (`…委員報酬` / `(9人) 840,000`); the count in
+            # its bracket is no item number. Only a bracket: a note of another prefix under a name (`1報酬` /
+            # `1項1目18節から 169,664`, 132055) is the note it says it is.
+            note = False
+            item.code, item.name, item.indent = None, raw, waiting.indent
         mark = next((m for m in ordered_marks
                      if (shape_of(item) == shapes[m] if m in shapes else raw.startswith(normalize(m)))), None)
         if note:
@@ -1642,6 +1663,18 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
             else:
                 item.level = marks[mark] - 1
         previous = result[-1] if result else None
+        if (previous and previous.role == 'annotation' and not previous.amounts and item.page == previous.page
+                and normalize(previous.name).startswith(('(', '（')) and not re.search(r'[)）]', normalize(previous.name))
+                and (item.amounts or re.search(r'[)）]$', normalize(text(item.lines[-1]))))
+                and 0 <= item.y0 - previous.y1 <= max(g.y1 - g.y0 for g in item.glyphs)):
+            # A bracketed note wrapped before its count (`(投票用紙読取分類機` / `3台 2,805,000)`): the number
+            # starting the second line is the count, not an item's number.
+            if id(item) in column_amount_items:
+                raise ValueError(f'Configured note carries separate-column money: p{item.page} {item.name!r}')
+            previous.name += ''.join(normalize(text(line)) for line in item.lines)
+            previous.lines += item.lines
+            previous.amounts += item.amounts
+            continue
         if (settings.get('rows') and previous and item.code is None and mark is None and not note
                 and item.role == previous.role == 'node' and item.page == previous.page and not item.amounts
                 and _cell(item.group.bands[0], previous.anchor) == _cell(item.group.bands[0], item.anchor)):
