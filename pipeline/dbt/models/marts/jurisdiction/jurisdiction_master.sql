@@ -4,6 +4,7 @@ select j.jurisdiction_code,
     j.name,
     p.prefecture_code,
     p.prefecture_name,
-    j.ocd_id
+    j.ocd_id,
+    j.official_url
 from {{ source('registry', 'jurisdiction') }} j
 left join {{ ref('prefecture_master') }} p on p.prefecture_code = substr(j.jurisdiction_code, 1, 2)

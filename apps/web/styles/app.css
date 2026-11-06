@@ -1,0 +1,35 @@
+/* 全頁の CSS。layout（pages/layout.tsx）が読む。Tailwind（preflight 込み）と shadcn の token の対応、色・字の token、
+   サイドバーと本文の骨組み、頁の間の View Transition を置く。頁ごとの見た目は各頁の CSS（landing/landing.css・jurisdiction/jurisdiction.css）に置く */
+@import "tailwindcss" source(none);
+@import "./tokens.css";
+@import "../chat/theme.css";
+@source "../chat";
+@source "../nav";
+@source "../jurisdiction";
+@source "../landing";
+@source "../pages";
+
+@layer base {
+  * { border-color: var(--border); }
+  html { background: var(--background); }
+  body { margin: 0; background: var(--background); color: var(--foreground); font: 400 15px/1.7 var(--font-sans); -webkit-font-smoothing: antialiased; }
+  button:not(:disabled) { cursor: pointer; }
+  a { color: inherit; }
+  /* ホーム画面から開いたとき、ダブルタップの拡大待ちと横向きの切り欠きへの食い込みを避ける */
+  body { touch-action: manipulation; }
+}
+@theme inline {
+  --font-sans: "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", "Yu Gothic", Meiryo, system-ui, sans-serif;
+}
+
+/* 頁の間の移動を View Transition でつなぐ。SPA の移動は Void（vite.config.ts の viewTransitions）が、
+   読み直しの移動（他のサイトから戻ったときなど）は head の @view-transition（middleware/01.site.ts）が opt-in する。
+   サイドバーはそのまま残し、本文だけを薄く消して下から浮かせる。一覧の中の切り替え（日本⇄都道府県）では本文を動かさない */
+@media (prefers-reduced-motion: no-preference) {
+  .site-main { view-transition-name: page; }
+  html[data-map-transition] .site-main { view-transition-name: none; }
+  ::view-transition-old(page) { animation: 140ms ease-in both fudoki-page-out; }
+  ::view-transition-new(page) { animation: 260ms cubic-bezier(0.2, 0, 0, 1) both fudoki-page-in; }
+}
+@keyframes fudoki-page-out { to { opacity: 0; } }
+@keyframes fudoki-page-in { from { opacity: 0; transform: translateY(12px); } }

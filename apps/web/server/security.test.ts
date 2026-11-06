@@ -1,6 +1,6 @@
 // 公開する /api/* の守り（上限・Turnstile・会話の token・許可リスト）の試験。画面の振る舞いはここで見ない
 import { describe, expect, test } from 'bun:test'
-import web from '../worker'
+import { fetchRoute } from './routes.testing'
 import type { Env, RateLimiter } from './env'
 import { CHAT_RATE_LIMIT, MAX_MESSAGES, MAX_USER_TEXT, VIEW_RATE_LIMIT } from './limits'
 import { CONTEXT_HEADING, parseChat } from './chat'
@@ -13,15 +13,16 @@ const deny: RateLimiter = { limit: async () => ({ success: false }) }
 const env = (patch: Partial<Env> = {}): Env => ({ TURNSTILE_SECRET_KEY: SECRET, CHAT_RATE_LIMIT: allow, VIEW_RATE_LIMIT: allow, ...patch })
 const post = (path: string, body: unknown, headers: Record<string, string> = {}) =>
   new Request(`https://fudoki.dev${path}`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...headers }, body: JSON.stringify(body) })
-const call = async (req: Request, e: Env) => web.fetch(req, e)
+const call = (req: Request, e: Env) => fetchRoute(req, e)
 
 test('流量の上限は config の rate limit binding と同じ値', async () => {
-  type Config = { worker: { env: Record<string, { simple: unknown; namespace: string }> } }
-  const config = ((await import('../deploy/cloudflare.config')).default as unknown as (ctx: { isPreview: boolean }) => Config)({ isPreview: false })
-  expect(config.worker.env.CHAT_RATE_LIMIT!.simple).toEqual(CHAT_RATE_LIMIT)
-  expect(config.worker.env.VIEW_RATE_LIMIT!.simple).toEqual(VIEW_RATE_LIMIT)
+  type Limit = { name: string; namespace_id: string; simple: unknown }
+  const config = (await import('../void.config')).default as unknown as { cloudflare: { ratelimits: Limit[] } }
+  const limit = (name: string) => config.cloudflare.ratelimits.find((l) => l.name === name)!
+  expect(limit('CHAT_RATE_LIMIT').simple).toEqual(CHAT_RATE_LIMIT)
+  expect(limit('VIEW_RATE_LIMIT').simple).toEqual(VIEW_RATE_LIMIT)
   // apps/api の評価の検索（1001）と同じ namespace を使わない
-  expect(new Set(['1001', config.worker.env.CHAT_RATE_LIMIT!.namespace, config.worker.env.VIEW_RATE_LIMIT!.namespace]).size).toBe(3)
+  expect(new Set(['1001', limit('CHAT_RATE_LIMIT').namespace_id, limit('VIEW_RATE_LIMIT').namespace_id]).size).toBe(3)
 })
 
 describe('会話の token', () => {

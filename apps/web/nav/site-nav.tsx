@@ -1,5 +1,6 @@
-// 全ページの左に置くサイドバー（shadcn の Sidebar）。サーバーが render.tsx で HTML に書き、nav.tsx（/_app/nav.js）が動かす
+// 全ページの左に置くサイドバー（shadcn の Sidebar）。pages/layout.tsx が置き、頁の間を移っても描き直さない
 import * as React from 'react'
+import { Link } from '@void/react'
 import { BankIcon, ChatIcon, GithubLogoIcon, HouseIcon, PlugIcon, SidebarSimpleIcon, XLogoIcon } from '@phosphor-icons/react'
 import {
   Sidebar,
@@ -21,6 +22,12 @@ import { LOGO_G, LOGO_WIDTH } from '../logo'
 export const NAV_SECTIONS = ['jurisdictions'] as const
 export type NavSection = (typeof NAV_SECTIONS)[number]
 export type SiteNavProps = { active?: NavSection; open: boolean }
+/** site の中の頁へは Void の Link で頁を読み直さずに移り、外（docs・mail・SNS）へは普通の a で出る */
+function NavLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement> & { href: string }) {
+  if (!props.href.startsWith('/')) return <a {...props} />
+  // Void の Link の型は a と button の属性の交差なので、a の属性だけを渡すと event handler の型が合わない。描くのは a なので型だけ合わせる
+  return <Link {...(props as React.ComponentProps<typeof Link>)} />
+}
 
 const DOCS = 'https://docs.fudoki.dev'
 /** 開閉の状態を残す cookie（shadcn の SidebarProvider が書く名前） */
@@ -57,7 +64,7 @@ const Item = ({ href, label, icon, active }: { href: string; label: string; icon
   return (
     <SidebarMenuItem>
       <SidebarMenuButton
-        render={<a href={href} aria-current={active ? 'page' : undefined} />}
+        render={<NavLink href={href} aria-current={active ? 'page' : undefined} />}
         isActive={active}
         tooltip={state === 'collapsed' && !isMobile ? label : undefined}
         className="h-10 gap-3 px-3 text-sm group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:p-2.5! [&_svg]:size-5"
@@ -123,14 +130,14 @@ function BottomNav({ active }: { active?: NavSection }) {
       <ul className="grid h-14 grid-cols-4">
         {items.map((i) => (
           <li key={i.href}>
-            <a
+            <NavLink
               href={i.href}
               aria-current={i.active ? 'page' : undefined}
               className="flex h-full flex-col items-center justify-center gap-0.5 text-[11px] leading-none text-muted-foreground aria-[current=page]:text-primary [&_svg]:size-5"
             >
               {i.icon}
               {i.label}
-            </a>
+            </NavLink>
           </li>
         ))}
       </ul>
@@ -141,15 +148,15 @@ function BottomNav({ active }: { active?: NavSection }) {
 export function SiteNav({ active, open }: SiteNavProps) {
   return (
     <TooltipProvider>
-      {/* 頁の本文は島の外にあるので、provider の枠は箱を作らず（contents）、幅の変数だけを配る */}
+      {/* 頁の本文は provider の外（.site-main）にあるので、provider の枠は箱を作らず（contents）、幅の変数だけを配る */}
       <SidebarProvider defaultOpen={open} className="contents" style={{ '--sidebar-width': '13rem', '--sidebar-width-icon': '3.5rem' } as React.CSSProperties}>
         <BottomNav active={active} />
         <Sidebar collapsible="icon" aria-label="サイト">
           <SidebarHeader className="flex-row items-center justify-between gap-2 px-3 pt-5 pb-4 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-2">
-            <a href="/" aria-label="風土記 ホーム" className="ps-2 group-data-[collapsible=icon]:hidden">
-              {/* 色は svg に付ける（入口の頁の a { color: inherit } に負けて黒くならないように） */}
+            <NavLink href="/" aria-label="風土記 ホーム" className="ps-2 group-data-[collapsible=icon]:hidden">
+              {/* 色は svg に付ける（a { color: inherit } に負けて黒くならないように） */}
               <Logo className="block h-7 w-auto text-primary" />
-            </a>
+            </NavLink>
             <SidebarTrigger className="group-data-[collapsible=icon]:hidden" />
             <CollapsedToggle />
           </SidebarHeader>

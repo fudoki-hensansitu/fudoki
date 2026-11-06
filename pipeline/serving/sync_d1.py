@@ -57,7 +57,8 @@ MEMORY_LIMIT = '1GB'
 READ_ROWS_PER_CALL = 4000
 
 # 参照される表（自治体マスタ・origin）を先に、参照する表を後に。収録範囲は木の表と同じ warehouse から同じ同期で入れ替える
-TABLE_ORDER = ['jurisdiction_master', 'origin', 'settlement_expenditure_node', 'initial_expenditure_node', 'expenditure_coverage']
+TABLE_ORDER = ['jurisdiction_master', 'origin', 'settlement_expenditure_node', 'initial_expenditure_node', 'expenditure_coverage',
+               'population_origin', 'jurisdiction_population']
 
 Table = dict  # columns.json の1表
 
@@ -143,10 +144,15 @@ def open_warehouse(path: Path) -> duckdb.DuckDBPyConnection:
 
 
 def scope_where(jurisdictions: Sequence[str] | None) -> str:
-    """一部の自治体だけを入れるときの絞り込み。どの表も jurisdiction_code で絞る。DuckDB と SQLite のどちらでも同じ。"""
+    """一部の自治体だけを入れるときの絞り込み。jurisdiction_code を持つ表をこれで絞る。DuckDB と SQLite のどちらでも同じ。"""
     if not jurisdictions:
         return ''
     return ' where "jurisdiction_code" in (' + ', '.join(literal(j) for j in jurisdictions) + ')'
+
+
+def scoped(where: str, names: list[str]) -> str:
+    """自治体コードの列を持たない表（人口の資料）は、一部の自治体だけを入れるときも全行を入れる。"""
+    return where if 'jurisdiction_code' in names else ''
 
 
 def table_rows(con: duckdb.DuckDBPyConnection, table: str, names: list[str], order: str, where: str = '') -> Iterator[tuple]:
@@ -261,7 +267,7 @@ class D1:
         return results
 
 
-def verify(d1: D1, con: duckdb.DuckDBPyConnection, tables: dict[str, Table], where: str = '') -> list[str]:
+def verify(d1: D1, con: duckdb.DuckDBPyConnection, tables: dict[str, Table], where_all: str = '') -> list[str]:
     """`__new` の全行を主キーの先頭1文字ごとに読み戻し、warehouse の同じ行と全列で突き合わせる。
 
     1回の cf 呼び出しは READ_ROWS_PER_CALL 行ほどにまとめる。メモリにあるのはその分だけ。
@@ -271,6 +277,7 @@ def verify(d1: D1, con: duckdb.DuckDBPyConnection, tables: dict[str, Table], whe
         spec = tables[name]
         names = [c['name'] for c in spec['columns']]
         key = spec['primary_key']
+        where = scoped(where_all, names)
         buckets = bucket_chars(con, name, key, where)
         cols = ', '.join(f'"{n}"' for n in names)
         total = d1.batch([{'sql': f'select count(*) from "{new_name(name)}"'}])[0]['results']['rows'][0][0]
@@ -317,8 +324,9 @@ def sync(d1: D1 | None, warehouse: Path, dry_run: bool, jurisdictions: Sequence[
             spec = tables[name]
             names = [c['name'] for c in spec['columns']]
             order = 'jurisdiction_code, fiscal_year, node_id' if spec.get('document_kind') else spec['primary_key']
+            table_where = scoped(where, names)
 
-            def statements(name=name, spec=spec, names=names, order=order) -> Iterator[str]:
+            def statements(name=name, spec=spec, names=names, order=order, where=table_where) -> Iterator[str]:
                 yield f'drop table if exists "{new_name(name)}"'
                 yield contract.create_table_sql(name, spec, new_name(name))
                 yield from insert_statements(new_name(name), names, table_rows(con, name, names, order, where))
@@ -329,7 +337,7 @@ def sync(d1: D1 | None, warehouse: Path, dry_run: bool, jurisdictions: Sequence[
                 size += sum(len(s['sql'].encode()) for s in batch)
                 if d1 and not dry_run:
                     d1.batch(batch)
-            log(f'{name}: {con.execute(f'select count(*) from main."{name}"{where}').fetchone()[0]} 行 / {calls} 回 / {size / 1e6:.1f}MB / RSS最大 {rss_mb():.0f}MB')
+            log(f'{name}: {con.execute(f'select count(*) from main."{name}"{table_where}').fetchone()[0]} 行 / {calls} 回 / {size / 1e6:.1f}MB / RSS最大 {rss_mb():.0f}MB')
         if dry_run:
             log('dry-run: D1 には書いていない')
             return 0
@@ -354,7 +362,7 @@ def main() -> int:
     parser.add_argument('--persist-to', type=Path, default=LOCAL_PERSIST_TO, help='--local の状態の置き場')
     parser.add_argument('--warehouse', type=Path, default=contract.WAREHOUSE)
     parser.add_argument('--jurisdiction', action='append', metavar='自治体コード',
-                        help='一部の自治体だけを入れる（複数指定可）。どの表も jurisdiction_code で絞る。省略は全件')
+                        help='一部の自治体だけを入れる（複数指定可）。jurisdiction_code を持つ表を絞る。省略は全件')
     parser.add_argument('--dry-run', action='store_true', help='文を作って数えるだけで、書かない')
     args = parser.parse_args()
     database_id = args.database_id or (LOCAL_DATABASE_ID if args.local else None)

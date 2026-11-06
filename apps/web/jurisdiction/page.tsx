@@ -1,6 +1,7 @@
 // 自治体の個別ページ（/:都道府県/:名称）の島。サーバーが書いた HTML（検索エンジン向け）を、同じデータで描き直す。
 // 型は企業のプロフィールページ: ヘッダー（ロゴ・名前・一文・属性）＋年度のタブ＋左の目次＋見出し付きの節。年度を切り替えるとページ全体がその年度になる。
 // 歳出の決算は API の値。方針・政策領域・事業の入れ替えは jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
+import { Link } from '@void/react'
 import * as React from 'react'
 import { ArrowUpRightIcon, CaretDownIcon, ChatCircleIcon, GlobeIcon, MapPinIcon, NotePencilIcon, QuotesIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
 import { StartForm } from '../chat/start-form'
@@ -462,21 +463,23 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
             <div className="flex flex-wrap gap-x-6 gap-y-1.5 text-sm text-muted-foreground">
               <span className="inline-flex items-center gap-1.5">
                 <MapPinIcon className="size-4" aria-hidden="true" />
-                <a href={INDEX_PATH} className="text-primary no-underline">{data.prefecture}</a>
+                <Link href={INDEX_PATH} className="text-primary no-underline">{data.prefecture}</Link>
               </span>
-              {profile?.population ? (
-                <Hint label="人口">
+              {data.population ? (
+                <Hint label={`住民基本台帳人口（${data.population.asOf.replace(/^(\d+)-0?(\d+)-0?(\d+)$/, '$1年$2月$3日')}時点）`}>
                   <span className="inline-flex items-center gap-1.5">
                     <UsersIcon className="size-4" aria-hidden="true" />
                     <span className="sr-only">人口 </span>
-                    {(profile.population.people / 1e4).toFixed(1)}万人
+                    {data.population.people >= 1e4
+                      ? `${(data.population.people / 1e4).toFixed(1)}万人`
+                      : `${data.population.people.toLocaleString('ja-JP')}人`}
                   </span>
                 </Hint>
               ) : null}
-              {profile?.site ? (
+              {data.officialUrl ? (
                 <span className="inline-flex items-center gap-1.5">
                   <GlobeIcon className="size-4" aria-hidden="true" />
-                  <a href={profile.site} target="_blank" rel="noopener" className="text-primary no-underline">公式サイト</a>
+                  <a href={data.officialUrl} target="_blank" rel="noopener" className="text-primary no-underline">公式サイト</a>
                 </span>
               ) : null}
             </div>
@@ -723,7 +726,7 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
       <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-2" onPointerDown={(e) => e.stopPropagation()}>
         <span className="text-sm text-muted-foreground">{name}について</span>
         <div className="flex items-center gap-1 text-muted-foreground">
-          <Hint label="会話を別の頁で開く"><a href={`/s/${chat.id}`} aria-label="会話を別の頁で開く" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><ArrowUpRightIcon className="size-4" /></a></Hint>
+          <Hint label="会話を別の頁で開く"><Link href={`/s/${chat.id}`} aria-label="会話を別の頁で開く" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><ArrowUpRightIcon className="size-4" /></Link></Hint>
           <Hint label="新しい会話"><button type="button" onClick={restart} aria-label="新しい会話" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><NotePencilIcon className="size-4" /></button></Hint>
           <Hint label="閉じる（Esc）"><button type="button" onClick={() => setDrawer(false)} aria-label="閉じる" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><XIcon className="size-4" /></button></Hint>
         </div>
