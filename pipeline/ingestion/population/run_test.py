@@ -9,6 +9,8 @@ HEAD = [
     (None, None, None, '男', '女', '計', '世帯数'),
     ('団体コード', '都道府県名', '市区町村名', '人', '人', '人', '世帯'),
 ]
+# 47都道府県の行が揃わないと途中で切れた資料とみなすので、東京都以外の都道府県の行を足す
+OTHER_PREFECTURES = [(f'{n:02d}0001', '県', '-', '1', '1', '2', '1') for n in range(1, 48) if n != 13]
 
 
 class ParseTest(unittest.TestCase):
@@ -16,14 +18,20 @@ class ParseTest(unittest.TestCase):
         rows = HEAD + [('-', '合計', '-', '1', '2', '3', '4'),
                        ('130001', '東京都', '-', '6909523', '7168017', '14077553', '7778945'),
                        ('131091', '東京都', '品川区', '203897', '211747', '415644', '240687'),
+                       *OTHER_PREFECTURES,
                        ('注2：外国人住民のうち…', None, None, None, None, None, None)]
-        self.assertEqual(parse(rows, '2026-01-01'), [('130001', 6909523, 7168017, 14077553, 7778945),
+        self.assertEqual([row for row in parse(rows, '2026-01-01') if row[0].startswith('13')], [('130001', 6909523, 7168017, 14077553, 7778945),
                                        ('131091', 203897, 211747, 415644, 240687)])
 
     def test_changed_columns_stop(self):
         rows = [*HEAD[:2], (None, None, None, '男', '女', '世帯数', '計'), HEAD[3],
                 ('131091', '東京都', '品川区', '1', '2', '3', '4')]
         with self.assertRaisesRegex(ValueError, 'header'):
+            parse(rows, '2026-01-01')
+
+    def test_truncated_file_stops(self):
+        rows = HEAD + [('130001', '東京都', '-', '1', '2', '3', '4'), *OTHER_PREFECTURES[:-1]]
+        with self.assertRaisesRegex(ValueError, 'missing prefectures'):
             parse(rows, '2026-01-01')
 
     def test_reference_date_that_differs_from_the_title_stops(self):

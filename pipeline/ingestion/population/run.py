@@ -111,6 +111,12 @@ def parse(rows: list[tuple], reference_date: str) -> list[tuple[str, int, int, i
         out.append((code, *(int(value) for value in row[3:7])))
     if not out:
         raise ValueError('Resident register has no rows')
+    # 途中で切れた資料を保存しないよう、47都道府県の行（市区町村名が「-」）が揃うことを確かめる。
+    # 沖縄県は末尾の方にあるので、後ろが欠けるとここで止まる
+    prefectures = {row[0][:2] for row in rows[start + 1:]
+                   if row and row[0] and len(row[0]) == 6 and row[0].isdigit() and row[2] == '-'}
+    if prefectures != {f'{n:02d}' for n in range(1, 48)}:
+        raise ValueError(f'Resident register is missing prefectures: {47 - len(prefectures)} of 47')
     return out
 
 
