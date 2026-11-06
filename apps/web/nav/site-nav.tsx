@@ -1,7 +1,7 @@
 // 全ページの左に置くサイドバー（shadcn の Sidebar）。pages/layout.tsx が置き、頁の間を移っても描き直さない
 import * as React from 'react'
 import { Link } from '@void/react'
-import { BankIcon, ChatIcon, GithubLogoIcon, HouseIcon, PlugIcon, SidebarSimpleIcon, XLogoIcon } from '@phosphor-icons/react'
+import { BankIcon, ChatIcon, SparkleIcon, GithubLogoIcon, HouseIcon, PlugIcon, SidebarSimpleIcon, XLogoIcon } from '@phosphor-icons/react'
 import {
   Sidebar,
   SidebarContent,
@@ -19,7 +19,7 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import { LOGO_G, LOGO_WIDTH } from '../logo'
 
-export const NAV_SECTIONS = ['jurisdictions'] as const
+export const NAV_SECTIONS = ['jurisdictions', 'assistant'] as const
 export type NavSection = (typeof NAV_SECTIONS)[number]
 export type SiteNavProps = { active?: NavSection; open: boolean }
 /** site の中の頁へは Void の Link で頁を読み直さずに移り、外（docs・mail・SNS）へは普通の a で出る */
@@ -38,7 +38,7 @@ const Logo = ({ className }: { className?: string }) => (
 )
 
 /** ロゴの左のマークだけ（LOGO_G の左端、y=4 から 32×32 を切り出す） */
-const Mark = ({ className }: { className?: string }) => (
+export const Mark = ({ className }: { className?: string }) => (
   <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 4 32 32" aria-hidden="true" dangerouslySetInnerHTML={{ __html: LOGO_G }} />
 )
 
@@ -116,6 +116,7 @@ function BottomNav({ active }: { active?: NavSection }) {
   const items = [
     { href: '/', label: 'ホーム', icon: <HouseIcon /> },
     { href: '/jurisdictions', label: '自治体一覧', icon: <BankIcon />, active: active === 'jurisdictions' },
+    { href: '/assistant', label: 'アシスタント', icon: <SparkleIcon />, active: active === 'assistant' },
     { href: MCP, label: 'MCP', icon: <PlugIcon /> },
     { href: FEEDBACK, label: 'フィードバック', icon: <ChatIcon /> },
   ]
@@ -127,13 +128,13 @@ function BottomNav({ active }: { active?: NavSection }) {
       onFocus={() => setHidden(false)}
       className="fixed inset-x-0 bottom-0 z-40 bg-sidebar pb-[env(safe-area-inset-bottom)] transition-transform duration-200 ease-out motion-reduce:transition-none data-hidden:translate-y-full md:hidden"
     >
-      <ul className="grid h-14 grid-cols-4">
+      <ul className="grid h-14 grid-cols-5">
         {items.map((i) => (
           <li key={i.href}>
             <NavLink
               href={i.href}
               aria-current={i.active ? 'page' : undefined}
-              className="flex h-full flex-col items-center justify-center gap-0.5 text-[11px] leading-none text-muted-foreground aria-[current=page]:text-primary [&_svg]:size-5"
+              className="flex h-full flex-col items-center justify-center gap-0.5 text-[10px] leading-none whitespace-nowrap text-muted-foreground aria-[current=page]:text-primary [&_svg]:size-5"
             >
               {i.icon}
               {i.label}
@@ -164,6 +165,7 @@ export function SiteNav({ active, open }: SiteNavProps) {
             <SidebarGroup>
               <SidebarMenu>
                 <Item href="/jurisdictions" label="自治体一覧" icon={<BankIcon />} active={active === 'jurisdictions'} />
+                <Item href="/assistant" label="アシスタント" icon={<SparkleIcon />} active={active === 'assistant'} />
               </SidebarMenu>
             </SidebarGroup>
           </SidebarContent>

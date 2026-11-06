@@ -1,6 +1,6 @@
 # 公開 web
 
-入口の1枚（`/`、`landing/`）と会話の画面（`/s/:id`、下の「風土記の AI に聞く」）、自治体ごとの頁（`/jurisdictions`・`/tokyo/nakano`、下の「自治体の個別ページ」）を返す。favicon・OG 画像・robots.txt・見出しの明朝・ホームの録画と出典の切り抜きなどのファイルは `public/` に置き、Workers static assets で配る。sitemap.xml と PWA 用の `/manifest.webmanifest`・`/sw.js`・`/offline`（`pwa.ts`）は `routes/` が返す。service worker は繋がらないときの案内を出すだけで、頁・API はキャッシュしない。PWA のアイコンは `brand/pwa_icons.py` で `public/` に描く。他は 404。main に入ると `.github/workflows/deploy-web.yml` が自動で deploy する（手元からは `bun run --cwd apps/web deploy`）。web を変える PR は `.github/workflows/preview-web.yml` が `pr-<番号>.fudoki.dev` に preview を出す（binding・var は `void.config.ts` の `previews`。push のたびに同じ URL を更新し、PR を閉じたら消す。Access で Cloudflare アカウントのログインだけを通す。利用状況は書かない）。
+入口の1枚（`/`、`landing/`）と会話を始めるアシスタントの頁（`/assistant`、`chat/assistant-home.tsx`）・会話の画面（`/s/:id`、下の「風土記の AI に聞く」）、自治体ごとの頁（`/jurisdictions`・`/tokyo/nakano`、下の「自治体の個別ページ」）を返す。favicon・OG 画像・robots.txt・見出しの明朝・ホームの録画と出典の切り抜きなどのファイルは `public/` に置き、Workers static assets で配る。sitemap.xml と PWA 用の `/manifest.webmanifest`・`/sw.js`・`/offline`（`pwa.ts`）は `routes/` が返す。service worker は繋がらないときの案内を出すだけで、頁・API はキャッシュしない。PWA のアイコンは `brand/pwa_icons.py` で `public/` に描く。他は 404。main に入ると `.github/workflows/deploy-web.yml` が自動で deploy する（手元からは `bun run --cwd apps/web deploy`）。web を変える PR は `.github/workflows/preview-web.yml` が `pr-<番号>.fudoki.dev` に preview を出す（binding・var は `void.config.ts` の `previews`。push のたびに同じ URL を更新し、PR を閉じたら消す。Access で Cloudflare アカウントのログインだけを通す。利用状況は書かない）。
 
 ```bash
 bun run dev:web
@@ -11,7 +11,7 @@ bun run build:web
 
 [Void](https://void.cloud/)（Vite）で build する。設定は `void.config.ts`（head の既定・var・Cloudflare の binding と preview の差し替え）と `vite.config.ts`。`vite build` が `dist/ssr/`（Worker）・`dist/client/`（`public/` を含む assets）と `dist/ssr/wrangler.json` を書き、`deploy` は `wrangler deploy -c dist/ssr/wrangler.json`、PR の preview は `wrangler preview` が同じ file を読む。
 
-- **頁は `pages/`**（Void の Pages）: `index`（入口）・`jurisdictions`・`[prefecture]/index`・`[prefecture]/[name]` の `.server.ts` が loader と head を持ち、`.tsx` が React の画面を描く。`pages/layout.tsx` がサイドバーを置き、`Link`・`useRouter().visit` で頁の間を移ると layout は描き直さず本文だけを差し替える（`voidReact({ viewTransitions: true })` で View Transition も効く）。全頁の head の既定（charset・viewport・OG・icon・manifest・明朝の preload・service worker の登録）は `void.config.ts` の `head`
+- **頁は `pages/`**（Void の Pages）: `index`（入口）・`assistant`・`jurisdictions`・`[prefecture]/index`・`[prefecture]/[name]` の `.server.ts` が loader と head を持ち、`.tsx` が React の画面を描く。`pages/layout.tsx` がサイドバーを置き、`Link`・`useRouter().visit` で頁の間を移ると layout は描き直さず本文だけを差し替える（`voidReact({ viewTransitions: true })` で View Transition も効く）。全頁の head の既定（charset・viewport・OG・icon・manifest・明朝の preload・service worker の登録）は `void.config.ts` の `head`
 - **会話の画面（`/s/:id`）は `pages/[prefecture]/[name]` が受ける**: Void は動的な経路を pattern の文字の順に当てるので、`pages/s/[id]` を置いても `/:prefecture/:name` が先に当たる。loader が先頭の段が `s` のときだけ会話の画面の props（`server/pages.ts` の `sessionProps`）を返し、`.tsx` が `chat/session-page.tsx` を描く
 - **API・sitemap・PWA は `routes/`**（Void の routes。`routes/api/*.ts` は `server/api.ts` の `handleApi` を呼ぶ）。試験は `server/routes.testing.ts` が同じ file を Hono に組んで叩く
 - **`middleware/01.site.ts`**: サイドバーの開閉の cookie を `useShared()` へ渡し、HTML に Void の head では書けないもの（ライト・ダークの theme-color の対、頁の間の View Transition の opt-in）を足す。開閉で HTML が変わるので `Vary: Cookie` を付ける
