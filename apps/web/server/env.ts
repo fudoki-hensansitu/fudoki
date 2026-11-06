@@ -1,4 +1,4 @@
-// Worker の binding のうち、使う部分だけの型。実体は deploy/cloudflare.config.ts が宣言し、試験は同じ形の偽物を渡す。
+// Worker の binding のうち、使う部分だけの型。実体は void.config.ts が宣言し、試験は同じ形の偽物を渡す。
 export interface RateLimiter {
   limit(options: { key: string }): Promise<{ success: boolean }>
 }

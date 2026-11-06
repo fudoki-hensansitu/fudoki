@@ -26,3 +26,7 @@ dist-ssr
 # 会話の画面の bundle（chat/build.ts が作る）
 static/_app/
 .dev.vars
+
+# Void（vite build）の生成物と型
+.void/
+.void-wrangler.jsonc

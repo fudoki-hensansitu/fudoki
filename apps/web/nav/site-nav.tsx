@@ -20,7 +20,17 @@ import { LOGO_G, LOGO_WIDTH } from '../logo'
 
 export const NAV_SECTIONS = ['jurisdictions'] as const
 export type NavSection = (typeof NAV_SECTIONS)[number]
-export type SiteNavProps = { active?: NavSection; open: boolean }
+/** 頁の間を移動する link。Void の頁（pages/）では Void の Link を渡して頁を読み直さずに移る。入口・会話の島では普通の a */
+export type PageLink = React.ComponentType<React.AnchorHTMLAttributes<HTMLAnchorElement> & { href: string }>
+export type SiteNavProps = { active?: NavSection; open: boolean; pageLink?: PageLink }
+const PageLinkContext = React.createContext<PageLink | 'a'>('a')
+/** Void の頁（pages/）にある path。ここへの link だけ pageLink で移る */
+const PAGE_PATHS = new Set(['/jurisdictions'])
+function NavLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement> & { href: string }) {
+  const Page = React.useContext(PageLinkContext)
+  const Tag = PAGE_PATHS.has(props.href) ? Page : 'a'
+  return <Tag {...props} />
+}
 
 const DOCS = 'https://docs.fudoki.dev'
 /** 開閉の状態を残す cookie（shadcn の SidebarProvider が書く名前） */
@@ -57,7 +67,7 @@ const Item = ({ href, label, icon, active }: { href: string; label: string; icon
   return (
     <SidebarMenuItem>
       <SidebarMenuButton
-        render={<a href={href} aria-current={active ? 'page' : undefined} />}
+        render={<NavLink href={href} aria-current={active ? 'page' : undefined} />}
         isActive={active}
         tooltip={state === 'collapsed' && !isMobile ? label : undefined}
         className="h-10 gap-3 px-3 text-sm group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:p-2.5! [&_svg]:size-5"
@@ -123,14 +133,14 @@ function BottomNav({ active }: { active?: NavSection }) {
       <ul className="grid h-14 grid-cols-4">
         {items.map((i) => (
           <li key={i.href}>
-            <a
+            <NavLink
               href={i.href}
               aria-current={i.active ? 'page' : undefined}
               className="flex h-full flex-col items-center justify-center gap-0.5 text-[11px] leading-none text-muted-foreground aria-[current=page]:text-primary [&_svg]:size-5"
             >
               {i.icon}
               {i.label}
-            </a>
+            </NavLink>
           </li>
         ))}
       </ul>
@@ -138,8 +148,9 @@ function BottomNav({ active }: { active?: NavSection }) {
   )
 }
 
-export function SiteNav({ active, open }: SiteNavProps) {
+export function SiteNav({ active, open, pageLink }: SiteNavProps) {
   return (
+    <PageLinkContext.Provider value={pageLink ?? 'a'}>
     <TooltipProvider>
       {/* 頁の本文は島の外にあるので、provider の枠は箱を作らず（contents）、幅の変数だけを配る */}
       <SidebarProvider defaultOpen={open} className="contents" style={{ '--sidebar-width': '13rem', '--sidebar-width-icon': '3.5rem' } as React.CSSProperties}>
@@ -174,5 +185,6 @@ export function SiteNav({ active, open }: SiteNavProps) {
         </Sidebar>
       </SidebarProvider>
     </TooltipProvider>
+    </PageLinkContext.Provider>
   )
 }

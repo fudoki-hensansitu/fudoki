@@ -1,7 +1,8 @@
-// 自治体一覧（/jurisdictions）の本文。サーバーが renderToString で HTML にし（検索エンジン・JavaScript が無い環境でも全自治体のリンクと金額が載る）、
-// 画面では index.tsx が同じデータで hydrate して、地図の選択と表の絞り込み・並べ替えを動かす
+// 自治体一覧（/jurisdictions）の本文。Void の頁（pages/jurisdictions.tsx）としてサーバーが HTML にし（検索エンジン・JavaScript が無い環境でも全自治体のリンクと金額が載る）、
+// 画面では同じデータで hydrate して、地図の選択と表の絞り込み・並べ替えを動かす。個別ページへは Void の Link で頁を読み直さずに移る
 import * as React from 'react'
 import { flushSync } from 'react-dom'
+import { Link, useRouter } from '@void/react'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
 import { buttonVariants } from '@/components/ui/button'
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList, ComboboxTrigger } from '@/components/ui/combobox'
@@ -78,9 +79,9 @@ function SelectedCard({ e }: { e: IndexEntry }) {
           </span>
         ))}
       </div>
-      <a href={e.path} className={cn(buttonVariants({ size: 'lg' }), 'mt-auto h-11 rounded-full text-[15px]')}>
+      <Link href={e.path} className={cn(buttonVariants({ size: 'lg' }), 'mt-auto h-11 rounded-full text-[15px]')}>
         {e.name}を開く →
-      </a>
+      </Link>
     </div>
   )
 }
@@ -106,7 +107,7 @@ function MunicipalityTile({ code, name, e, max, selected, onPreview, style }: Ti
     )
   const on = selected === code
   return (
-    <a
+    <Link
       href={e.path}
       onPointerEnter={(ev) => ev.pointerType === 'mouse' && onPreview(code)}
       onFocus={() => onPreview(code)}
@@ -120,7 +121,7 @@ function MunicipalityTile({ code, name, e, max, selected, onPreview, style }: Ti
       )}
     >
       {label}
-    </a>
+    </Link>
   )
 }
 
@@ -276,7 +277,10 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
   const transition = (update: () => void) => {
     const reduce = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reduce || typeof document === 'undefined' || !document.startViewTransition) return update()
-    document.startViewTransition(() => flushSync(update))
+    // 頁の間の移動では本文（.site-main）を薄く消して浮かせるが、図の切り替えでは本文を動かさない（jurisdiction.css の data-map-transition）
+    const root = document.documentElement
+    root.dataset.mapTransition = ''
+    document.startViewTransition(() => flushSync(update)).finished.finally(() => delete root.dataset.mapTransition)
   }
   const open = (pref: string) =>
     transition(() => {
@@ -284,7 +288,8 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
       setSelected('')
     })
   // 地図の検索で選んだ市区町村は個別ページへ進む。都道府県ならその図を開く
-  const find = (e: IndexEntry) => (e.kind === '都道府県' ? open(prefOf(e)) : location.assign(e.path))
+  const router = useRouter()
+  const find = (e: IndexEntry) => (e.kind === '都道府県' ? open(prefOf(e)) : router.visit(e.path))
   // 表の絞り込み。種類ごとに選んだ値（都道府県はコードの先頭2桁、市区町村は自治体コード）
   const [picked, setPicked] = React.useState<Record<JurisdictionKind, string[]>>({ 都道府県: [], 区: [], 市: [], 町村: [] })
   const prefPicks = picked['都道府県']
@@ -376,9 +381,9 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
             <div className="mt-4 flex flex-wrap items-center gap-2 border-t pt-4">
               <span className="text-xs text-muted-foreground">地図の外</span>
               {offMap.map((e) => (
-                <a key={e.code} href={e.path} onPointerEnter={(ev) => ev.pointerType === 'mouse' && setSelected(e.code)} onFocus={() => setSelected(e.code)} className={cn(buttonVariants({ variant: selected === e.code ? 'default' : 'outline' }), 'rounded-full px-3.5 text-[13px] font-normal')}>
+                <Link key={e.code} href={e.path} onPointerEnter={(ev) => ev.pointerType === 'mouse' && setSelected(e.code)} onFocus={() => setSelected(e.code)} className={cn(buttonVariants({ variant: selected === e.code ? 'default' : 'outline' }), 'rounded-full px-3.5 text-[13px] font-normal')}>
                   {e.name}
-                </a>
+                </Link>
               ))}
             </div>
           ) : null}
@@ -426,7 +431,7 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
           <ul>
             {rows.map((e) => (
               <li key={e.code}>
-                <a
+                <Link
                   href={e.path}
                   className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1.5 border-b px-2 py-3 transition-colors hover:bg-card md:grid-cols-[minmax(0,13rem)_7rem_minmax(0,1fr)] md:gap-5"
                 >
@@ -440,7 +445,7 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
                     <span className="whitespace-nowrap text-[13px] tabular-nums">{formatYen(e.yen)}</span>
                     <small className="whitespace-nowrap text-[11px] text-muted-foreground">{shortYear(e.year)}</small>
                   </span>
-                </a>
+                </Link>
               </li>
             ))}
           </ul>

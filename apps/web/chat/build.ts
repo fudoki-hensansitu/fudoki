@@ -1,4 +1,5 @@
-// 入口の島（start）と会話の画面（session）、自治体の頁（jurisdiction）と一覧（index）、全頁のサイドバー（nav）の JS・CSS を static/_app/ に書く。Workers static assets が配る（生成物は commit しない）
+// 入口の島（start）と会話の画面（session）、その2つの頁のサイドバー（nav）の JS・CSS を static/_app/ に書く。Workers static assets が配る（生成物は commit しない）。
+// 自治体の頁（pages/）の JS・CSS は Void（vite build）が作る
 //   bun chat/build.ts
 import { mkdirSync, readFileSync, rmSync } from 'node:fs'
 import postcss, { type Plugin } from 'postcss'
@@ -10,7 +11,7 @@ rmSync(out, { recursive: true, force: true })
 mkdirSync(out, { recursive: true })
 
 const result = await Bun.build({
-  entrypoints: [`${dir}start.tsx`, `${dir}session.tsx`, `${dir}../jurisdiction/jurisdiction.tsx`, `${dir}../jurisdiction/index.tsx`, `${dir}../nav/nav.tsx`],
+  entrypoints: [`${dir}start.tsx`, `${dir}session.tsx`, `${dir}../nav/nav.tsx`],
   outdir: out,
   target: 'browser',
   format: 'esm',
@@ -21,7 +22,7 @@ const result = await Bun.build({
 })
 if (!result.success) throw new AggregateError(result.logs, 'chat の bundle に失敗した')
 
-for (const [name, from] of [['start', `${dir}start.css`], ['session', `${dir}session.css`], ['jurisdiction', `${dir}../jurisdiction/jurisdiction.css`]] as const) {
+for (const [name, from] of [['start', `${dir}start.css`], ['session', `${dir}session.css`]] as const) {
   const css = await postcss([tailwind({ base: dir, optimize: true }) as Plugin]).process(readFileSync(from, 'utf8'), { from })
   await Bun.write(`${out}${name}.css`, css.css)
 }

@@ -6,8 +6,7 @@
     "packages": [
       "apps/*",
       "packages/*",
-      "pipeline",
-      "apps/web/deploy"
+      "pipeline"
     ],
     "catalog": {
       "@types/bun": "1.4.4",

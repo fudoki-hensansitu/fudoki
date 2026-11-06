@@ -1,4 +1,4 @@
-// Turnstile の widget（入口の頁が api.js?render=explicit を読む）。送るときに実行して token を1つ取る
+// Turnstile の widget。送るときに実行して token を1つ取る。api.js は入口の頁が head で読み、無い頁（頁の間を移動して開いた自治体の頁など）ではここで読む
 interface Turnstile {
   render(el: HTMLElement, options: Record<string, unknown>): string
   execute(id: string): void
@@ -14,7 +14,15 @@ declare global {
 /** 先に取った token を使い回せる時間。token は約5分で切れるので、余裕を見て4分 */
 const WARM_TTL_MS = 240_000
 
+const SRC = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
+
 async function loaded(timeoutMs = 15_000): Promise<Turnstile> {
+  if (!window.turnstile && !document.querySelector(`script[src="${SRC}"]`)) {
+    const script = document.createElement('script')
+    script.src = SRC
+    script.async = true
+    document.head.appendChild(script)
+  }
   const start = Date.now()
   while (!window.turnstile) {
     if (Date.now() - start > timeoutMs) throw new Error('チャットを始めるための確認を読み込めませんでした。ページを再読み込みしてください。')

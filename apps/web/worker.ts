@@ -11,8 +11,12 @@ import type { Env } from './server/env'
 import { jurisdictions } from './server/jurisdiction-routes'
 
 // 入口の1枚と、検索エンジン・ブラウザが取りに来る小さなファイル、会話の画面（/s/:id）と その API（/api/*）を配る。
+// Worker の入口は Void（vite.config.ts）で、middleware/01.legacy.ts がまずここに聞く。ここが答えない GET は PASS の印を付けて返し、
+// Void の pages/（自治体の一覧・個別ページ）と static/ の assets へ渡す
 // データの提供は api.fudoki.dev（Service Binding で繋ぐ）、文書は docs.fudoki.dev。会話の画面の JS・CSS は static/_app/ を assets で配る
 const CACHE = 'public, max-age=300'
+/** ここが答えない GET に付ける印（middleware/01.legacy.ts が見て Void へ渡す） */
+export const PASS = 'X-Fudoki-Pass'
 const ROBOTS = 'User-agent: *\nAllow: /\nDisallow: /s/\nDisallow: /api/\nSitemap: https://fudoki.dev/sitemap.xml\n'
 
 const TEXT: Record<string, [string, string]> = {
@@ -55,10 +59,11 @@ for (const [path, { type, base64 }] of Object.entries({ '/fonts/mincho.woff2': {
   app.get(path, () => new Response(Uint8Array.from(atob(base64), (c) => c.charCodeAt(0)), { headers: { 'Content-Type': type, 'Cache-Control': CACHE } }))
 app.all('*', (c) =>
   c.req.method === 'GET' || c.req.method === 'HEAD'
-    ? new Response('Not Found\n', { status: 404, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': CACHE } })
+    ? new Response('Not Found\n', { status: 404, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': CACHE, [PASS]: '1' } })
     : new Response('Method Not Allowed\n', { status: 405, headers: { Allow: 'GET, HEAD' } }),
 )
 
-export default {
+export const legacy = {
   fetch: (request: Request, env: Env = {}, ctx?: Parameters<typeof app.fetch>[2]) => app.fetch(request, env, ctx),
 }
+export default legacy

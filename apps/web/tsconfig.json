@@ -2,7 +2,8 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "jsx": "react-jsx",
-    "paths": { "@/*": ["./chat/*"] }
+    "paths": { "@/*": ["./chat/*"] },
+    "types": ["void/env", "bun", "vite/client"]
   },
   "include": [
     "nav",
@@ -10,7 +11,11 @@
     "worker.ts",
     "server",
     "chat",
-    "deploy/*.ts"
+    "pages",
+    "middleware",
+    "void.config.ts",
+    "vite.config.ts",
+    ".void/*.d.ts"
   ],
   "exclude": []
 }
