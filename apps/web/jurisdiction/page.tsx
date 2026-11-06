@@ -22,7 +22,7 @@ const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
 
 /** 区の評価から読める結果。unmeasured は、評価の指標がこの取り組みではなく同じ事業の別の内容を測っているもの */
 const BADGE: Record<ProjectStatus, { label: string; className: string; icon: typeof ClockIcon }> = {
-  short: { label: '目標に届いていない', className: 'bg-[color-mix(in_srgb,var(--kincha)_22%,transparent)] text-[#aa5910]', icon: WarningCircleIcon },
+  short: { label: '目標に届いていない', className: 'bg-[color-mix(in_srgb,var(--kincha)_22%,transparent)] text-[var(--kincha-ink)]', icon: WarningCircleIcon },
   met: { label: '目標に届いた', className: 'bg-primary/15 text-primary', icon: CheckCircleIcon },
   mixed: { label: '達成と未達が混在', className: 'bg-secondary text-muted-foreground', icon: CircleHalfIcon },
   unmeasured: { label: '評価は別の内容', className: 'bg-secondary text-muted-foreground', icon: MinusCircleIcon },
@@ -91,7 +91,7 @@ function ProjectItem({ p }: { p: PolicyProject }) {
       ) : null}
       <div className="flex flex-row flex-wrap gap-x-3 gap-y-1 text-sm lg:col-start-2 lg:row-span-3 lg:row-start-1 lg:flex-col lg:gap-0.5 lg:text-right">
         {p.amounts.map((a) => (
-          <span key={`${a.yen}-${a.label ?? ''}`} className="tabular-nums text-primary">
+          <span key={`${a.yen}-${a.label ?? ''}`} className="tabular-nums text-[var(--kincha-ink)]">
             {formatYen(a.yen)}
             {a.label ? <small className="ml-1 text-xs text-muted-foreground lg:ml-0 lg:block">{a.label}</small> : null}
           </span>
@@ -116,10 +116,10 @@ function Overview({ data }: { data: PageData }) {
     <Section id="about" title={`${kind}は何をしている？`}>
       {latest ? (
         <p className="text-[15px]">
-          {reiwa(latest.year)}に使ったお金は<b className="mx-1 text-xl font-normal tabular-nums text-primary">{formatYen(latest.yen)}</b>
+          {reiwa(latest.year)}に使ったお金は<b className="mx-1 text-xl font-normal tabular-nums text-[var(--kincha-ink)]">{formatYen(latest.yen)}</b>
           {people ? (
             <>
-              、住民1人あたり<b className="mx-1 text-xl font-normal tabular-nums text-primary">約{Math.round(latest.yen / people / 1e4).toLocaleString('ja-JP')}万円</b>
+              、住民1人あたり<b className="mx-1 text-xl font-normal tabular-nums text-[var(--kincha-ink)]">約{Math.round(latest.yen / people / 1e4).toLocaleString('ja-JP')}万円</b>
             </>
           ) : null}
           です。
@@ -138,7 +138,7 @@ function Overview({ data }: { data: PageData }) {
                 <span className="text-[13px] text-muted-foreground">{f.examples}</span>
               </div>
               <div className="shrink-0 text-right tabular-nums">
-                <span className={`block text-[15px] ${spent ? 'text-primary' : 'text-muted-foreground'}`}>{spent ? formatYen(spent.yen) : '—'}</span>
+                <span className={`block text-[15px] ${spent ? 'text-[var(--kincha-ink)]' : 'text-muted-foreground'}`}>{spent ? formatYen(spent.yen) : '—'}</span>
                 {spent && people ? <span className="block text-xs text-muted-foreground">1人 約{Math.round(spent.yen / people / 1e3) / 10}万円</span> : null}
               </div>
             </li>
@@ -244,7 +244,7 @@ function ProjectRow({ p, rank, max }: { p: Project; rank: number; max: number })
           </div>
         </div>
         <div className="text-right text-[15px] tabular-nums">{p.amountMissing ? '金額未記載' : formatYen(p.yen)}</div>
-        <div className={`hidden text-right text-[15px] tabular-nums sm:block ${pct !== null && pct < 0 ? 'text-[#aa5910]' : 'text-primary'}`}>
+        <div className={`hidden text-right text-[15px] tabular-nums sm:block ${pct !== null && pct < 0 ? 'text-foreground' : 'text-primary'}`}>
           {pct === null ? '—' : `${pct >= 0 ? '+' : '−'}${Math.abs(pct).toFixed(1)}%`}
           <i className="block text-[11px] not-italic text-muted-foreground">前年度比</i>
         </div>
@@ -301,8 +301,8 @@ function Budget({ data, year }: { data: PageData; year: number }) {
   const summary = (
     <>
       <span className="text-sm text-muted-foreground">全体</span>
-      <b className={`text-[26px] font-normal leading-snug tabular-nums ${total ? 'text-primary' : 'text-muted-foreground'}`}>{total ? formatYen(total.yen) : '—'}</b>
-      {pct !== null ? <span className={`text-[13px] tabular-nums ${pct < 0 ? 'text-[#aa5910]' : 'text-primary'}`}>前年度比 {pct >= 0 ? '+' : '−'}{Math.abs(pct).toFixed(1)}%</span> : null}
+      <b className={`text-[26px] font-normal leading-snug tabular-nums ${total ? 'text-[var(--kincha-ink)]' : 'text-muted-foreground'}`}>{total ? formatYen(total.yen) : '—'}</b>
+      {pct !== null ? <span className={`text-[13px] tabular-nums ${pct < 0 ? 'text-foreground' : 'text-primary'}`}>前年度比 {pct >= 0 ? '+' : '−'}{Math.abs(pct).toFixed(1)}%</span> : null}
     </>
   )
   // 決算・予算のタブは左、分類のメニューは右に置く
@@ -390,7 +390,7 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
       <div className="flex max-w-[560px] flex-col gap-2">
         <div className="flex items-baseline justify-between gap-3">
           <span>やめたり減らしたりして浮かせたお金</span>
-          <b className="text-[28px] font-normal tabular-nums text-primary">
+          <b className="text-[28px] font-normal tabular-nums text-[var(--kincha-ink)]">
             {formatYen(scrap.raisedYen)}
             {target ? <small className="ml-1 text-sm text-muted-foreground">／ 目標 {formatYen(target)}</small> : null}
           </b>
