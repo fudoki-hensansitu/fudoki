@@ -79,7 +79,7 @@ describe('Turnstile', () => {
 
 describe('View の中継の許可リスト', () => {
   test('データの tool と風土記の View だけを通す', () => {
-    expect(parseRelay({ method: 'tools/call', params: { name: 'search_expenditure_nodes', arguments: { page_size: 1 } } })).toMatchObject({ params: { name: 'search_expenditure_nodes' } })
+    expect(parseRelay({ method: 'tools/call', params: { name: 'search_expenditure_subjects', arguments: { page_size: 1 } } })).toMatchObject({ params: { name: 'search_expenditure_subjects' } })
     expect(parseRelay({ method: 'resources/read', params: { uri: 'ui://fudoki/view-06a8e196f6a7.html' } })).toMatchObject({ method: 'resources/read' })
   })
   test('描画 tool・評価の検索・自治体の一覧・他の method・他の resource は 403', () => {
@@ -148,7 +148,7 @@ describe('/api/* の入口', () => {
   })
   test('body の上限を超えたら 413', async () => {
     const s = await issueSession(SECRET)
-    const res = await call(post('/api/mcp', { method: 'tools/call', params: { name: 'search_expenditure_nodes', arguments: { x: 'a'.repeat(20_000) } } }, { Authorization: `Bearer ${s.token}` }), env())
+    const res = await call(post('/api/mcp', { method: 'tools/call', params: { name: 'search_expenditure_subjects', arguments: { x: 'a'.repeat(20_000) } } }, { Authorization: `Bearer ${s.token}` }), env())
     expect(res.status).toBe(413)
   })
 })
@@ -156,7 +156,7 @@ describe('/api/* の入口', () => {
 test('上流の MCP が JSON でない応答を返したら 502', async () => {
   const s = await issueSession(SECRET)
   const API = { fetch: async () => new Response('<html>Bad Gateway</html>', { status: 502, headers: { 'Content-Type': 'text/html' } }) }
-  const res = await call(post('/api/mcp', { method: 'tools/call', params: { name: 'search_expenditure_nodes', arguments: {} } }, { Authorization: `Bearer ${s.token}` }), env({ API }))
+  const res = await call(post('/api/mcp', { method: 'tools/call', params: { name: 'search_expenditure_subjects', arguments: {} } }, { Authorization: `Bearer ${s.token}` }), env({ API }))
   expect(res.status).toBe(502)
 })
 

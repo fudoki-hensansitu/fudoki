@@ -25,13 +25,13 @@ def _is_descendant(actual_code: str, ref_code: str) -> bool:
 def check(warehouse: Path, reference: Path | None = None) -> dict:
     with duckdb.connect(str(warehouse), read_only=True) as con:
         actual = {j: (n, amount) for j, n, amount in con.execute(
-            "select jurisdiction_code,count(*),sum(amount_yen) from settlement_expenditure_node where fiscal_year=2025 and account_name='一般会計' and is_subject and node_kind='目' group by 1").fetchall()}
+            "select jurisdiction_code,count(*),sum(amount_yen) from (select * from int_fiscal__expenditure_nodes where document_kind = 'settlement') where fiscal_year=2025 and account_name='一般会計' and is_subject and node_kind='目' group by 1").fetchall()}
         slice_actual = {j: actual.get(j) for j in EXPECTED}
         if slice_actual != EXPECTED:
             raise ValueError(f'Slice expectations differ: {slice_actual}')
         keys = ['jurisdiction_code', 'kan_code', 'kou_code', 'moku_code']
         # 参照の CSV は slice（3自治体の一般会計）だけを持つので、比較も slice に絞る。
-        records = con.execute("select m.jurisdiction_code,m.kan_code,m.kou_code,m.moku_code,m.name,m.amount_yen,c.rule_id,m.cofog_status,m.cofog_code from settlement_expenditure_node m join int_fiscal__settlement_expenditure_cofog c on c.node_id = m.node_id and c.document_kind = 'settlement' where m.is_subject and m.node_kind='目' and m.fiscal_year=2025 and m.account_name='一般会計' and m.jurisdiction_code in ?", [list(EXPECTED)]).fetchall()
+        records = con.execute("select m.jurisdiction_code,m.kan_code,m.kou_code,m.moku_code,m.name,m.amount_yen,c.rule_id,m.cofog_status,m.cofog_code from (select * from int_fiscal__expenditure_nodes where document_kind = 'settlement') m join int_fiscal__settlement_expenditure_cofog c on c.node_id = m.node_id and c.document_kind = 'settlement' where m.is_subject and m.node_kind='目' and m.fiscal_year=2025 and m.account_name='一般会計' and m.jurisdiction_code in ?", [list(EXPECTED)]).fetchall()
         output = {'mokus': sum(n for n, _ in actual.values()), 'total_yen': sum(a for _, a in actual.values()), 'jurisdictions': actual}
         if reference:
             with reference.open() as stream:
@@ -53,8 +53,8 @@ def check(warehouse: Path, reference: Path | None = None) -> dict:
                 raise ValueError(f'COFOG reference differs: {differences}')
             output['cofog_reference_matches'] = len(records)
             output['cofog_descendant_diffs'] = allowed_descendant_diffs
-        output['leaf_totals'] = con.execute("select jurisdiction_code,axis,count(*),sum(amount_yen) from settlement_expenditure_node where is_leaf group by 1,2 order by 1,2").fetchall()
-        ids = con.execute('select node_id,parent_node_id from settlement_expenditure_node order by node_id').fetchall()
+        output['leaf_totals'] = con.execute("select jurisdiction_code,axis,count(*),sum(amount_yen) from (select * from int_fiscal__expenditure_nodes where document_kind = 'settlement') where is_leaf group by 1,2 order by 1,2").fetchall()
+        ids = con.execute('select node_id,parent_node_id from (select * from int_fiscal__expenditure_nodes where document_kind = 'settlement') order by node_id').fetchall()
         output['node_count'] = len(ids)
         output['node_id_digest'] = hashlib.sha256(json.dumps(ids).encode()).hexdigest()
         return output

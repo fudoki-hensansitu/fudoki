@@ -23,32 +23,32 @@ sidebar:
   </Step>
   <Step title="列の説明を読む">
     ```bash
-    curl https://api.fudoki.dev/v1/expenditure/columns
+    curl https://api.fudoki.dev/v1/fiscal/expenditure/columns
     ```
 
     列の意味、`where` の条件、金額を足すときの条件（`sum_rules`）、入力の例が返ります。
   </Step>
-  <Step title="ノードを検索する">
+  <Step title="科目を検索する">
     ```bash
-    curl -X POST 'https://api.fudoki.dev/v1/expenditure/nodes:search' \
+    curl -X POST 'https://api.fudoki.dev/v1/fiscal/expenditure/subjects:search' \
       -H 'Content-Type: application/json' \
       -d '{
         "document_kind": "settlement",
         "fiscal_year": { "min": 2025, "max": 2025 },
-        "where": { "node_kind": { "eq": ["目"] }, "cofog_code": { "prefix": "10.4" } },
+        "where": { "level": { "eq": ["目"] }, "cofog_code": { "prefix": "10.4" } },
         "order_by": [{ "column": "amount_yen", "desc": true }],
         "page_size": 50
       }'
     ```
 
-    `document_kind`（`settlement` は決算、`initial` は当初予算）と `fiscal_year`（西暦、5 年以内）が必須です。
+    `document_kind`（`settlement` は決算、`initial` は当初予算）と `fiscal_year`（西暦、5 年以内）が必須です。款・項・目は科目（`subjects:search`）、その下の事業・節は内訳（`POST /v1/fiscal/expenditure/details:search`）を同じ形で検索します。
   </Step>
   <Step title="内訳を辿る">
     ```bash
-    curl 'https://api.fudoki.dev/v1/expenditure/nodes/settlement/<node_id>'
+    curl 'https://api.fudoki.dev/v1/fiscal/expenditure/subjects/<subject_id>'
     ```
 
-    ノードと、その子を軸（`axis`）ごとに返します。
+    科目と、子の科目、直下の内訳を分け方（`breakdown`：事業・節・その他）ごとに返します。内訳の子は `GET /v1/fiscal/expenditure/details/<detail_id>` で辿ります。印字の位置は `locations` に入ります。
   </Step>
 </Steps>
 
@@ -68,13 +68,13 @@ sidebar:
 
 ## 続きのページを取る
 
-応答の `next_page_token` が null でなければ、次の要求に `page_token` として渡します（ノード取得と自治体の一覧では query に付けます）。`page_size` は 1〜1000（既定 100）、自治体の一覧は 1〜100（既定 20）。100,000 件目より先は条件を絞ってください。
+応答の `next_page_token` が null でなければ、次の要求に `page_token` として渡します（科目・内訳の取得と自治体の一覧では query に付けます）。`page_size` は 1〜1000（既定 100）、自治体の一覧は 1〜100（既定 20）。100,000 件目より先は条件を絞ってください。
 
 ## 出典を確かめる
 
 応答の `origins` に、行の `origin_id` が指す出典（資料名・公開 URL・形式・SHA-256）が入ります。自治体の一覧では `view=FULL` を付けると会計ごとの出典が返ります。
 
-`GET /v1/origins/{origin_id}/pdf` は自治体の公開 PDF を表示用に中継します。取得 URL は `X-Origin-Url`（percent-encoding 済み。`decodeURIComponent` で戻す）、取得日時は `X-Origin-Fetched-At` で返し、取り込み時との一致は検査しません。上限は [MCP の表示](/mcp#表で見るmcp-apps)と同じです。
+`GET /v1/fiscal/origins/{origin_id}/pdf` は自治体の公開 PDF を表示用に中継します。取得 URL は `X-Origin-Url`（percent-encoding 済み。`decodeURIComponent` で戻す）、取得日時は `X-Origin-Fetched-At` で返し、取り込み時との一致は検査しません。上限は [MCP の表示](/mcp#表で見るmcp-apps)と同じです。
 
 ## エラーに対処する
 
@@ -83,7 +83,7 @@ sidebar:
 | HTTP | code | 起きるとき |
 | --- | --- | --- |
 | 400 | `INVALID_ARGUMENT` | 入力が schema に合わない |
-| 404 | `NOT_FOUND` | ノードや path が無い |
+| 404 | `NOT_FOUND` | 科目・内訳や path が無い |
 | 405 | `METHOD_NOT_ALLOWED` | 受け付けないメソッド |
 | 413 | `PAYLOAD_TOO_LARGE` | body が 16 KiB を超える |
 | 415 | `UNSUPPORTED_MEDIA_TYPE` | `Content-Type` が `application/json` でない |

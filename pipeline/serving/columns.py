@@ -21,27 +21,23 @@ MODELS = [PIPELINE / 'dbt/models/marts/fiscal/_models.yml', PIPELINE / 'dbt/mode
 WAREHOUSE = PIPELINE / '.build/warehouse.duckdb'
 OUTPUT = PIPELINE.parent / 'apps/api/src/columns.json'
 
-# marts の表 → 資料区分（木の表）。木の表以外は資料区分を持たない
-TABLES = {
-    'settlement_expenditure_node': 'settlement',
-    'initial_expenditure_node': 'initial',
-    'origin': None,
-    'jurisdiction_master': None,
-    'expenditure_coverage': None,
-    'population_origin': None,
-    'jurisdiction_population': None,
+# D1 に写す marts の表（同期の順は sync_d1.TABLE_ORDER）
+TABLES = ['jurisdiction', 'fiscal_origin', 'fiscal_expenditure_subject', 'fiscal_expenditure_detail',
+          'fiscal_expenditure_location', 'fiscal_coverage', 'population_origin', 'population']
+PRIMARY_KEYS = {'jurisdiction': 'jurisdiction_code', 'fiscal_origin': 'origin_id',
+                'fiscal_expenditure_subject': 'subject_id', 'fiscal_expenditure_detail': 'detail_id',
+                'fiscal_expenditure_location': 'row_id', 'fiscal_coverage': 'coverage_id',
+                'population_origin': 'origin_id', 'population': 'population_id'}
+# index（docs/prd/fiscal-serving-tables/dd.md）。科目は自治体の一覧・比較・COFOG・子、内訳は科目の下・子・自治体の事業。
+# 収録範囲と人口は自治体のページごとに自治体コードで引く
+INDEXES = {
+    'fiscal_expenditure_subject': [['fiscal_year', 'document_kind', 'jurisdiction_code', 'level'],
+                                   ['fiscal_year', 'document_kind', 'cofog_code'], ['parent_subject_id']],
+    'fiscal_expenditure_detail': [['subject_id', 'breakdown', 'depth'], ['parent_detail_id'],
+                                  ['fiscal_year', 'document_kind', 'jurisdiction_code', 'breakdown']],
+    'fiscal_coverage': [['jurisdiction_code']],
+    'population': [['jurisdiction_code']],
 }
-# 木の表の index（ADR 0022 の v3 改訂）。主キーは node_id、origin は origin_id
-NODE_INDEXES = [
-    ['fiscal_year', 'jurisdiction_code', 'node_kind'],
-    ['fiscal_year', 'cofog_code'],
-    ['parent_node_id'],
-]
-PRIMARY_KEYS = {'origin': 'origin_id', 'jurisdiction_master': 'jurisdiction_code', 'expenditure_coverage': 'coverage_id',
-                'population_origin': 'origin_id', 'jurisdiction_population': 'population_id'}
-# 木の表以外の index。収録範囲と人口は自治体のページごとに自治体コードで引く
-INDEXES = {'expenditure_coverage': [['jurisdiction_code']], 'jurisdiction_population': [['jurisdiction_code']]}
-DEFAULT_PRIMARY_KEY = 'node_id'
 
 TYPES = {'VARCHAR': 'string', 'INTEGER': 'integer', 'BIGINT': 'integer', 'HUGEINT': 'integer', 'BOOLEAN': 'boolean',
          'DOUBLE': 'number', 'FLOAT': 'number'}
@@ -96,12 +92,8 @@ def build(columns: dict[str, list[tuple[str, str]]] | None = None) -> dict:
     descriptions = model_descriptions()
     not_null = model_not_null()
     tables = {}
-    for table, document_kind in TABLES.items():
-        spec: dict = {}
-        if document_kind:
-            spec['document_kind'] = document_kind
-        spec['primary_key'] = PRIMARY_KEYS.get(table, DEFAULT_PRIMARY_KEY)
-        spec['indexes'] = NODE_INDEXES if document_kind else INDEXES.get(table, [])
+    for table in TABLES:
+        spec: dict = {'primary_key': PRIMARY_KEYS[table], 'indexes': INDEXES.get(table, [])}
         spec['columns'] = [{'name': name, 'type': type_, 'nullable': name not in not_null[table],
                             'description': descriptions[table].get(name)}
                            for name, type_ in columns[table]]

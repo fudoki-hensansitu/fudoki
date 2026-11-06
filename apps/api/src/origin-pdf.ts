@@ -1,3 +1,4 @@
+import { ORIGIN_TABLE } from './columns'
 import type { Db } from './db'
 import { ApiError, errorBody, invalid } from './errors'
 
@@ -39,7 +40,7 @@ function publicUrl(raw: string): boolean {
 /** URLは利用者から受け取らず、出典の宣言からだけ解決する。 */
 export async function originPdf(db: Db, relay: RelayNamespace | undefined, request: Request, originId: string): Promise<Response> {
   if (new URL(request.url).search) throw invalid('出典 PDF に query は指定できません')
-  const origin = await db.prepare('SELECT url, format FROM origin WHERE origin_id = ?').bind(originId).first<{ url: string; format: string }>()
+  const origin = await db.prepare(`SELECT url, format FROM ${ORIGIN_TABLE} WHERE origin_id = ?`).bind(originId).first<{ url: string; format: string }>()
   if (!origin) throw new ApiError(404, 'NOT_FOUND', '出典が見つかりません')
   if (origin.format !== 'pdf' || !publicUrl(origin.url)) throw invalid('中継対象の公開 PDF ではありません')
   if (!relay) throw new ApiError(503, 'UNAVAILABLE', '出典 PDF の中継を利用できません')

@@ -2,7 +2,7 @@
 -- 5桁で指定された自治体を先頭5桁の一致で引くので、この規則が崩れると別の自治体に当たりうる。
 -- OCD ID は都道府県コードを含み、市区町村は自治体コードも含む。都道府県のコードは3〜5桁目が000。
 select jurisdiction_code, ocd_id
-from {{ ref('jurisdiction_master') }}
+from {{ ref('jurisdiction') }}
 where not regexp_full_match(jurisdiction_code, '[0-9]{6}')
     or (11 - (6 * substr(jurisdiction_code, 1, 1)::int + 5 * substr(jurisdiction_code, 2, 1)::int
               + 4 * substr(jurisdiction_code, 3, 1)::int + 3 * substr(jurisdiction_code, 4, 1)::int

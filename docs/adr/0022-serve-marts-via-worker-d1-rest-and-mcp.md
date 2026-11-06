@@ -1,6 +1,6 @@
 # ADR 0022: 提供用データは Worker と D1 から、一つの操作定義で REST と MCP に出す
 
-状態: 採用（2026-10-11）。2026-10-12 改訂・実装
+状態: 採用（2026-10-11）。2026-10-12 改訂・実装。データの形・操作・表名は [ADR 0038](0038-split-serving-tables-by-grain.md) で置き換えた（2026-11-06）
 
 提供用データ（marts）の歳出の木を Cloudflare D1 に載せ、Cloudflare Workers（Workers Paid）が `https://api.fudoki.dev` で REST と MCP の両方を返す。操作は一度だけ定義し、Hono の REST の route と MCP の tool の両方に登録する。検索は AIP-136 の custom method（`:search`）として POST し、条件は構造化した JSON で受ける。Get は AIP-131 に従う。生 SQL と集計の操作は持たない。主な利用者は MCP 経由の AI で、問い合わせは絞り込みが中心になる。この規模（決算10自治体・当初予算2自治体で約3.8万行、全国でも1年度・1資料区分で約850万行）なら、D1 と Worker だけの最小構成で足りる。
 

@@ -4,7 +4,7 @@ import columnsJson from './columns.json'
 export type ColumnType = 'string' | 'integer' | 'number' | 'boolean'
 
 // columns.json は pipeline/serving の生成物（D1 の表と列の契約）。手で編集しない。
-// 表は marts と同名で、木の表は document_kind を持つ（表の列としては持たない）。
+// 表は marts と同名（docs/prd/fiscal-serving-tables/dd.md）。
 export interface ColumnSpec {
   name: string
   type: ColumnType
@@ -14,7 +14,7 @@ export interface ColumnSpec {
 }
 
 interface TableSpec {
-  document_kind?: string
+  primary_key: string
   columns: ColumnSpec[]
 }
 
@@ -22,49 +22,61 @@ const TABLES = (columnsJson as unknown as { tables: Record<string, TableSpec> })
 
 const selectList = (columns: ColumnSpec[]) => columns.map((c) => `"${c.name}"`).join(', ')
 
-export interface NodeTable {
-  documentKind: string
+/** 資料区分。科目・内訳の表の列で、検索は必ず一つに絞る（意味の違う金額を一つの応答に混ぜない） */
+export const DOCUMENT_KINDS = ['settlement', 'initial'] as const
+
+/** 歳出の科目の表・内訳の表。検索と取得の対象 */
+export interface FiscalTable {
+  /** 操作名に使う複数形（subjects・details） */
+  kind: 'subjects' | 'details'
   table: string
+  primaryKey: string
+  parentKey: string
   columns: ColumnSpec[]
   types: ReadonlyMap<string, ColumnType>
   selectList: string
 }
 
-/** 資料区分から木の表を選ぶ。補正予算は表がまだ無いので受け付けない。 */
-export const NODE_TABLES: ReadonlyMap<string, NodeTable> = new Map(
-  Object.entries(TABLES)
-    .filter(([, t]) => t.document_kind !== undefined)
-    .map(([table, t]) => [
-      t.document_kind!,
-      {
-        documentKind: t.document_kind!,
-        table,
-        columns: t.columns,
-        types: new Map(t.columns.map((c) => [c.name, c.type])),
-        selectList: selectList(t.columns),
-      },
-    ])
-)
+const fiscalTable = (kind: FiscalTable['kind'], table: string, parentKey: string): FiscalTable => {
+  const t = TABLES[table]!
+  return {
+    kind,
+    table,
+    primaryKey: t.primary_key,
+    parentKey,
+    columns: t.columns,
+    types: new Map(t.columns.map((c) => [c.name, c.type])),
+    selectList: selectList(t.columns),
+  }
+}
 
-export const DOCUMENT_KINDS = [...NODE_TABLES.keys()] as [string, ...string[]]
+/** 款・項・目。同じ資料で level を一つに絞るか is_leaf の行を足すと総額 */
+export const SUBJECT_TABLE = fiscalTable('subjects', 'fiscal_expenditure_subject', 'parent_subject_id')
+/** 科目の下の内訳。同じ科目・同じ breakdown の depth = 1 の和が科目の額 */
+export const DETAIL_TABLE = fiscalTable('details', 'fiscal_expenditure_detail', 'parent_detail_id')
 
-export const ORIGIN_TABLE = 'origin'
+/** 科目・内訳の行が印字された位置（row_id は subject_id か detail_id） */
+export const LOCATION_TABLE = 'fiscal_expenditure_location'
+export const LOCATION_COLUMNS = TABLES[LOCATION_TABLE]!.columns
+export const LOCATION_SELECT_LIST = selectList(LOCATION_COLUMNS)
+
+export const ORIGIN_TABLE = 'fiscal_origin'
 export const ORIGIN_COLUMNS = TABLES[ORIGIN_TABLE]!.columns
 export const ORIGIN_SELECT_LIST = selectList(ORIGIN_COLUMNS)
 
 /** 自治体マスタ。収録の無い自治体も含む全自治体 */
-export const JURISDICTION_TABLE = 'jurisdiction_master'
+export const JURISDICTION_TABLE = 'jurisdiction'
 export const JURISDICTION_COLUMNS = TABLES[JURISDICTION_TABLE]!.columns
 export const JURISDICTION_SELECT_LIST = selectList(JURISDICTION_COLUMNS)
 
 /** 住民基本台帳人口。自治体マスタの自治体ごと・資料（基準日）ごとに1行 */
-export const POPULATION_TABLE = 'jurisdiction_population'
+export const POPULATION_TABLE = 'population'
 export const POPULATION_COLUMNS = TABLES[POPULATION_TABLE]!.columns
 export const POPULATION_ORIGIN_TABLE = 'population_origin'
 export const POPULATION_ORIGIN_COLUMNS = TABLES[POPULATION_ORIGIN_TABLE]!.columns
 
-/** 収録範囲。木の表に明細がある自治体・年度・資料区分・会計と出典の組 */
-export const COVERAGE_TABLE = 'expenditure_coverage'
+/** 収録範囲。科目・内訳の表に行がある自治体・年度・資料区分・会計と出典の組 */
+export const COVERAGE_TABLE = 'fiscal_coverage'
 export const COVERAGE_COLUMNS = TABLES[COVERAGE_TABLE]!.columns
 
 export const DOCUMENT_KIND_DESCRIPTION =

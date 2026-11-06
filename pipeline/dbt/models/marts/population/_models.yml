@@ -18,7 +18,7 @@ models:
     data_tests:
     - not_null
     - unique
-- name: jurisdiction_population
+- name: population
   description: 自治体ごとの住民基本台帳人口（日本人住民と外国人住民の総計）。1行は1つの資料の1自治体。自治体マスタにある自治体だけを持つ。決算・予算の年度と比べるときは、N 年度に N+1 年1月1日の値を当てる（地方財政状況調査の決算カードと同じ）。
   columns:
   - name: population_id
@@ -35,12 +35,12 @@ models:
           to: ref('population_origin')
           field: origin_id
   - name: jurisdiction_code
-    description: 全国地方公共団体コード（6桁）。jurisdiction_master の jurisdiction_code。
+    description: 全国地方公共団体コード（6桁）。jurisdiction の jurisdiction_code。
     data_tests:
     - not_null
     - relationships:
         arguments:
-          to: ref('jurisdiction_master')
+          to: ref('jurisdiction')
           field: jurisdiction_code
   - name: reference_date
     description: 基準日。population_origin の reference_date の写し。この日時点の人数・世帯数を表す。

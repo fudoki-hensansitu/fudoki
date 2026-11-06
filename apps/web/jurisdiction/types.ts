@@ -3,14 +3,12 @@ import type { Profile } from './profiles'
 
 /** 款・項・目・節など、出典の1行。金額は API が返した円（画面で足し引きしない） */
 export interface Line {
-  /** apps/api の node_id。子を引くときに使う */
+  /** apps/api の subject_id（科目の表の行）。子を引くときに使う */
   id: string
   name: string
   yen: number
   /** 出典に金額の印字がない。yen の 0 は表示に使わない */
   amountMissing?: true
-  /** 出典の頁（金額の印字の頁） */
-  page: number | null
 }
 
 export interface Setsu {

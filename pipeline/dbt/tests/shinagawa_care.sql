@@ -4,7 +4,7 @@ with expected(node_id, expected_cofog, expected_recipient) as (
            ('855a6a544f297d5e8b73830c261899edfa1cb020f33b73ca84e5a3383bd4ec2c', null, '介護保険')
 )
 select e.node_id
-from expected e left join {{ ref('settlement_expenditure_node') }} n using (node_id)
+from expected e left join (select * from {{ ref('int_fiscal__expenditure_nodes') }} where document_kind = 'settlement') n using (node_id)
 where n.node_id is null
    or (e.expected_cofog is not null and n.cofog_code is distinct from e.expected_cofog)
    or (e.expected_recipient is not null and

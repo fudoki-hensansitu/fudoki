@@ -4,6 +4,8 @@
 更新日: `2026-10-11`
 状態: Draft
 
+> 2026-11-06: marts と配信の表（木の表 `settlement_expenditure_node`・`initial_expenditure_node` ほか）は、科目・内訳・印字の位置の表に分けた（[配信する表の設計](../fiscal-serving-tables/dd.md)、[ADR 0038](../../adr/0038-split-serving-tables-by-grain.md)）。取り込みと intermediate の木の設計はこの文書のまま。
+
 ## Summary
 
 取り込み表（R2 の Parquet）は変換器ごとに列構成が違い、dbt が自治体をまたいで共通に読むための条件が決まっていない。目より細かい内訳（事業・節）は自治体ごとに段の数も種類も違い、固定の列へ揃えると、印字のない段と該当のない段を区別できなくなる。

@@ -19,17 +19,22 @@ const biggest = (nodes: Node[]) => nodes.reduce<Node | undefined>((top, n) => (n
 
 /**
  * 結果から決定的に作る次の質問の候補。AI には作らせない。
- * 内訳は金額が最大の「子を持つ」ノード、比較は注目するノード（詳細ならそのノード、検索なら金額が最大のもの）について出す。
+ * 内訳は金額が最大の「子を持つ」行、比較は注目するノード（詳細ならそのノード、検索なら金額が最大のもの）について出す。
  */
 export function suggestionsFor(tool: string, out: unknown, jurisdictionNames: Record<string, string>): Suggestion[] {
   let focus: Node | undefined
   let drill: Node | undefined
-  if (tool === 'get_expenditure_node') {
-    const o = out as { node: Node; children: Record<string, Node[]> }
-    focus = o.node
-    drill = biggest(Object.values(o.children).flat().filter((n) => !n.is_leaf))
-  } else if (tool === 'search_expenditure_nodes') {
-    const nodes = (out as { nodes: Node[] }).nodes
+  if (tool === 'get_expenditure_subject') {
+    const o = out as { subject: Node; children: Node[]; details: Record<string, Node[]> }
+    focus = o.subject
+    drill = biggest([...o.children, ...Object.values(o.details).flat()].filter((n) => !n.is_leaf))
+  } else if (tool === 'get_expenditure_detail') {
+    const o = out as { detail: Node; children: Node[] }
+    focus = o.detail
+    drill = biggest(o.children.filter((n) => !n.is_leaf))
+  } else if (tool === 'search_expenditure_subjects' || tool === 'search_expenditure_details') {
+    const rows = (out as { subjects?: Node[]; details?: Node[] })
+    const nodes = rows.subjects ?? rows.details ?? []
     focus = biggest(nodes)
     drill = biggest(nodes.filter((n) => !n.is_leaf))
   }

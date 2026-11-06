@@ -11,7 +11,11 @@ import {
   POPULATION_ORIGIN_TABLE,
   POPULATION_TABLE,
   JURISDICTION_TABLE,
-  NODE_TABLES,
+  DETAIL_TABLE,
+  LOCATION_COLUMNS,
+  LOCATION_SELECT_LIST,
+  LOCATION_TABLE,
+  SUBJECT_TABLE,
   ORIGIN_COLUMNS,
   ORIGIN_SELECT_LIST,
   ORIGIN_TABLE,
@@ -19,7 +23,7 @@ import {
   nullableIf,
   zodOf,
   type ColumnSpec,
-  type NodeTable,
+  type FiscalTable,
   type Row,
 } from './columns'
 import type { Db } from './db'
@@ -34,7 +38,7 @@ import {
   MAX_YEARS,
   buildWhere,
   canonicalJson,
-  searchInput,
+  searchInputFor,
   type SearchInput,
 } from './search'
 
@@ -44,20 +48,28 @@ export const REQUIRED_HELP =
   `必須は document_kind（"settlement" は決算・支出済額、"initial" は当初予算額。意味の違う金額を足さない）と、` +
   `fiscal_year の {min, max}（西暦、幅 ${MAX_YEARS} 年以内）。`
 
-export const SEARCH_EXAMPLE = {
+export const SUBJECT_SEARCH_EXAMPLE = {
   document_kind: 'settlement',
   fiscal_year: { min: 2025, max: 2025 },
-  where: { node_kind: { eq: ['目'] }, cofog_code: { prefix: '10.4' } },
+  where: { level: { eq: ['目'] }, cofog_code: { prefix: '10.4' } },
+  order_by: [{ column: 'amount_yen', desc: true }],
+  page_size: 50,
+}
+
+export const DETAIL_SEARCH_EXAMPLE = {
+  document_kind: 'settlement',
+  fiscal_year: { min: 2025, max: 2025 },
+  where: { jurisdiction_code: { eq: ['131091'] }, breakdown: { eq: ['事業'] }, depth: { eq: [1] }, name: { contains: '子ども' } },
   order_by: [{ column: 'amount_yen', desc: true }],
   page_size: 50,
 }
 
 export const SUM_RULES = [
-  '比較には提供された款・項・目の金額を使い、親と子を混ぜて合算しない。当初予算CSVの親金額は子の和から生成した値で、出典の印字値ではない。',
-  'COFOG で比べるときは cofog_code の前方一致で目（node_kind = "目"）を集めて足す。assigned の目には COFOG のコードが一つだけ付くので二重計上は起きない。',
+  '科目の表（search_expenditure_subjects）: 同じ自治体・年度・資料区分・会計で、level を一つ（款・項・目）に絞るか is_leaf = true の行（目と、目の無い項）に絞って足すと歳出の総額になる。親と子を混ぜて足さない。当初予算 CSV の親の額は子の和で、出典の印字値ではない。',
+  'COFOG で比べるときは科目の表の目（level = "目"）を cofog_code の前方一致で集めて足す。assigned の目には COFOG のコードが一つだけ付くので二重計上は起きない。',
   'division のコードだけを持つ目（例: "10"）は配下のどの group に属するか決まっていない。"10.2*" の和にはそうした目を含めない。',
   '同じ自治体・年度・資料区分・会計の目について、COFOG の全 division の和と、cofog_status が unclassifiable と out-of-scope の目の和を足すと歳出の総額になる。',
-  '軸（axis）の異なる末端（is_leaf = true）を混ぜて足さない。科目・節・備考は同じ支出の独立した切り口で、一つの軸の末端だけを足す。',
+  '内訳の表（search_expenditure_details）: 同じ科目（subject_id）・同じ breakdown（事業・節・その他）の depth = 1 の行を足すと、その科目の額になる（出典が金額を欠く行があると閉じない）。breakdown や深さの違う行を混ぜて足さない。事業と節は同じ支出の別の分け方。',
 ]
 
 // Get の子のページング。MCP は型を強制しない整数、REST の query は文字列から整数にする（どちらも 1〜1000）。
@@ -78,21 +90,21 @@ const Origin = z
   .strictObject(Object.fromEntries(ORIGIN_COLUMNS.map((c) => [c.name, nullableIf(zodOf(c.type), c)])))
   .meta({ id: 'Origin', description: '出典（資料名・URL・SHA-256）。' })
 
-// 木の表の列は資料区分が違っても同じ集合（pipeline の生成器が検査する）。応答の行には document_kind を先頭に付ける。
-const anyTable = NODE_TABLES.values().next().value as NodeTable
-const Node = z
-  .strictObject({
-    document_kind: z.string(),
-    ...Object.fromEntries(anyTable.columns.map((c) => [c.name, nullableIf(zodOf(c.type), c)])),
-  })
-  .meta({ id: 'Node', description: '歳出の木のノード。列の意味は describe_expenditure_columns。' })
+const Location = z
+  .strictObject(Object.fromEntries(LOCATION_COLUMNS.map((c) => [c.name, nullableIf(zodOf(c.type), c)])))
+  .meta({ id: 'Location', description: '行が印字された出典の頁と枠。row_id は subject_id か detail_id。' })
+
+const rowSchema = (t: FiscalTable, id: string, description: string) =>
+  z.strictObject(Object.fromEntries(t.columns.map((c) => [c.name, nullableIf(zodOf(c.type), c)]))).meta({ id, description })
+
+const Subject = rowSchema(SUBJECT_TABLE, 'Subject', '歳出の科目（款・項・目）。列の意味は describe_expenditure_columns。')
+const Detail = rowSchema(DETAIL_TABLE, 'Detail', '歳出の内訳（科目の下の事業・節など）。列の意味は describe_expenditure_columns。')
 
 const ORIGINS_HELP = '結果の行が指す出典。行の origin_id から引く。'
+const LOCATIONS_HELP = '結果の行が印字された位置。行の subject_id・detail_id を row_id で引く。'
 
-const withKind = (t: NodeTable, raw: Record<string, unknown>): Row => ({
-  document_kind: t.documentKind,
-  ...toRow(t.columns, raw),
-})
+const subjectSearchInput = searchInputFor(SUBJECT_TABLE)
+const detailSearchInput = searchInputFor(DETAIL_TABLE)
 
 export interface Ctx {
   db: Db
@@ -164,20 +176,18 @@ export async function decodeToken(token: string | undefined, parts: unknown[]): 
   return parsed.o
 }
 
-async function searchNodes(ctx: Ctx, raw: Record<string, unknown>) {
+const searchRows = (t: FiscalTable) => async (ctx: Ctx, raw: Record<string, unknown>) => {
   const { db } = ctx
   const input = raw as unknown as SearchInput
-  const t = NODE_TABLES.get(input.document_kind)
-  if (!t) throw invalid(`document_kind は ${DOCUMENT_KINDS.join('・')} のどれかです: ${input.document_kind}`)
-  const where = buildWhere(t, input.fiscal_year, input.where as never)
+  const where = buildWhere(t, input.document_kind, input.fiscal_year, input.where as never)
   const order = [...(input.order_by ?? [])]
-  if (!order.some((k) => k.column === 'node_id')) order.push({ column: 'node_id' })
+  if (!order.some((k) => k.column === t.primaryKey)) order.push({ column: t.primaryKey })
   const orderSql = order.map((k) => `"${k.column}"${k.desc ? ' DESC' : ''}`).join(', ')
   const { page_size: limit, page_token: token, ...query } = input
-  const fp = ['search', canonicalJson(query)]
+  const fp = [`search_${t.kind}`, canonicalJson(query)]
   const offset = await decodeToken(token, fp)
 
-  // ノードと出典は1つの batch（トランザクション）で読み、同期の入れ替えをまたいで食い違わないようにする。
+  // 行と出典は1つの batch（トランザクション）で読み、同期の入れ替えをまたいで食い違わないようにする。
   const [page, origins] = await db.batch([
     db
       .prepare(`SELECT ${t.selectList} FROM ${t.table} WHERE ${where.sql} ORDER BY ${orderSql} LIMIT ? OFFSET ?`)
@@ -191,45 +201,80 @@ async function searchNodes(ctx: Ctx, raw: Record<string, unknown>) {
   ])
   const more = page!.results.length > limit
   return {
-    nodes: page!.results.slice(0, limit).map((r) => withKind(t, r)),
+    [t.kind]: page!.results.slice(0, limit).map((r) => toRow(t.columns, r)),
     next_page_token: more ? await nextToken(offset + limit, fp) : null,
     origins: origins!.results,
   }
 }
 
-async function getNode(ctx: Ctx, input: Record<string, unknown>) {
-  const { db } = ctx
-  const kind = input.document_kind as string
-  const nodeId = input.node_id as string
-  const t = NODE_TABLES.get(kind)
-  if (!t) throw invalid(`document_kind は ${DOCUMENT_KINDS.join('・')} のどれかです: ${kind}`)
-  const limit = (input.page_size as number | undefined) ?? DEFAULT_PAGE_SIZE
-  const fp = ['get', kind, nodeId]
-  const offset = await decodeToken(input.page_token as string | undefined, fp)
-  const childrenSql = `SELECT ${t.selectList} FROM ${t.table} WHERE parent_node_id = ? ORDER BY "axis", "node_id" LIMIT ? OFFSET ?`
+/** 印字の位置と出典を、取得した行の ID の集合から引く文（1つの batch に入れる）。 */
+const locationsOf = (ctx: Ctx, ids: string) =>
+  ctx.db.prepare(`SELECT ${LOCATION_SELECT_LIST} FROM ${LOCATION_TABLE} WHERE row_id IN (${ids}) ORDER BY row_id`)
+const originsOf = (ctx: Ctx, ids: string) =>
+  ctx.db.prepare(`SELECT ${ORIGIN_SELECT_LIST} FROM ${ORIGIN_TABLE} WHERE origin_id IN (SELECT origin_id FROM ${LOCATION_TABLE} WHERE row_id IN (${ids})) ORDER BY origin_id`)
 
-  // ノード・子・出典を1つの batch で読む（search と同じく、入れ替えをまたいで食い違わない）。
-  const [self, kids, origins] = await db.batch([
-    db.prepare(`SELECT ${t.selectList} FROM ${t.table} WHERE node_id = ?`).bind(nodeId),
-    db.prepare(childrenSql).bind(nodeId, limit + 1, offset),
+/** 子の科目は少ない（款の下の項、項の下の目）のでページを切らずに返す。上限は D1 の走査を抑えるため */
+const MAX_CHILD_SUBJECTS = 1000
+
+async function getSubject(ctx: Ctx, input: Record<string, unknown>) {
+  const { db } = ctx
+  const id = input.subject_id as string
+  const limit = (input.page_size as number | undefined) ?? DEFAULT_PAGE_SIZE
+  const fp = ['get_subject', id]
+  const offset = await decodeToken(input.page_token as string | undefined, fp)
+  const s = SUBJECT_TABLE
+  const d = DETAIL_TABLE
+  // 直下の内訳（depth = 1）だけをページで切る。子の科目と印字の位置・出典は同じ batch で読む。
+  const detailIds = `SELECT "detail_id" FROM ${d.table} WHERE "subject_id" = ? AND "depth" = 1 ORDER BY "breakdown", "detail_id" LIMIT ? OFFSET ?`
+  const ids = `SELECT ? UNION ALL SELECT "subject_id" FROM ${s.table} WHERE "parent_subject_id" = ? UNION ALL SELECT * FROM (${detailIds})`
+  const idParams = [id, id, id, limit, offset]
+  const [self, children, details, locations, origins] = await db.batch([
+    db.prepare(`SELECT ${s.selectList} FROM ${s.table} WHERE "subject_id" = ?`).bind(id),
+    db.prepare(`SELECT ${s.selectList} FROM ${s.table} WHERE "parent_subject_id" = ? ORDER BY "code", "subject_id" LIMIT ?`).bind(id, MAX_CHILD_SUBJECTS),
     db
-      .prepare(
-        `SELECT ${ORIGIN_SELECT_LIST} FROM ${ORIGIN_TABLE} WHERE origin_id IN ` +
-          `(SELECT origin_id FROM ${t.table} WHERE node_id = ? ` +
-          `UNION SELECT origin_id FROM (SELECT origin_id FROM ${t.table} WHERE parent_node_id = ? ORDER BY "axis", "node_id" LIMIT ? OFFSET ?)) ORDER BY origin_id`
-      )
-      .bind(nodeId, nodeId, limit, offset),
+      .prepare(`SELECT ${d.selectList} FROM ${d.table} WHERE "subject_id" = ? AND "depth" = 1 ORDER BY "breakdown", "detail_id" LIMIT ? OFFSET ?`)
+      .bind(id, limit + 1, offset),
+    locationsOf(ctx, ids).bind(...idParams),
+    originsOf(ctx, ids).bind(...idParams),
   ])
   const raw = self!.results[0]
-  if (!raw) throw new ApiError(404, 'NOT_FOUND', `ノードが見つかりません: ${kind}/${nodeId}`)
-  const more = kids!.results.length > limit
-  const rows = kids!.results.slice(0, limit).map((r) => withKind(t, r))
-  const children: Record<string, Row[]> = {}
-  for (const r of rows) (children[String(r.axis)] ??= []).push(r)
+  if (!raw) throw new ApiError(404, 'NOT_FOUND', `科目が見つかりません: ${id}`)
+  const more = details!.results.length > limit
+  const byBreakdown: Record<string, Row[]> = {}
+  for (const r of details!.results.slice(0, limit).map((r) => toRow(d.columns, r))) (byBreakdown[String(r.breakdown)] ??= []).push(r)
   return {
-    node: withKind(t, raw),
-    children,
+    subject: toRow(s.columns, raw),
+    children: children!.results.map((r) => toRow(s.columns, r)),
+    details: byBreakdown,
     next_page_token: more ? await nextToken(offset + limit, fp) : null,
+    locations: locations!.results,
+    origins: origins!.results,
+  }
+}
+
+async function getDetail(ctx: Ctx, input: Record<string, unknown>) {
+  const { db } = ctx
+  const id = input.detail_id as string
+  const limit = (input.page_size as number | undefined) ?? DEFAULT_PAGE_SIZE
+  const fp = ['get_detail', id]
+  const offset = await decodeToken(input.page_token as string | undefined, fp)
+  const d = DETAIL_TABLE
+  const pageIds = `SELECT "detail_id" FROM ${d.table} WHERE "parent_detail_id" = ? ORDER BY "detail_id" LIMIT ? OFFSET ?`
+  const ids = `SELECT ? UNION ALL SELECT * FROM (${pageIds})`
+  const [self, kids, locations, origins] = await db.batch([
+    db.prepare(`SELECT ${d.selectList} FROM ${d.table} WHERE "detail_id" = ?`).bind(id),
+    db.prepare(`SELECT ${d.selectList} FROM ${d.table} WHERE "parent_detail_id" = ? ORDER BY "detail_id" LIMIT ? OFFSET ?`).bind(id, limit + 1, offset),
+    locationsOf(ctx, ids).bind(id, id, limit, offset),
+    originsOf(ctx, ids).bind(id, id, limit, offset),
+  ])
+  const raw = self!.results[0]
+  if (!raw) throw new ApiError(404, 'NOT_FOUND', `内訳が見つかりません: ${id}`)
+  const more = kids!.results.length > limit
+  return {
+    detail: toRow(d.columns, raw),
+    children: kids!.results.slice(0, limit).map((r) => toRow(d.columns, r)),
+    next_page_token: more ? await nextToken(offset + limit, fp) : null,
+    locations: locations!.results,
     origins: origins!.results,
   }
 }
@@ -335,7 +380,7 @@ function nestCoverage(rows: CoverageRow[], full: boolean) {
     out.set(r.jurisdiction_code, list)
     let cov = list.at(-1)
     if (!cov || cov.fiscal_year !== r.fiscal_year || cov.document_kind !== r.document_kind) {
-      cov = { fiscal_year: r.fiscal_year, document_kind: r.document_kind, accounts: [] }
+      cov = { fiscal_year: r.fiscal_year, document_kind: r.document_kind as (typeof DOCUMENT_KINDS)[number], accounts: [] }
       list.push(cov)
     }
     let account = cov.accounts.at(-1)
@@ -439,35 +484,36 @@ const jurisdictionViewDescription =
   'BASIC (default) returns municipalities and covered fiscal years, document kinds and accounts. FULL also returns sources per account (origin_id, title, URL and format). Use FULL only when source details are needed.'
 
 async function describeColumns() {
-  // 資料区分ごとの説明を列名でまとめる（列の集合は表をまたいで同じ）
-  const columns = new Map<string, { name: string; type: string; description: Record<string, string> }>()
-  columns.set('document_kind', {
-    name: 'document_kind',
-    type: 'string',
-    description: Object.fromEntries([...NODE_TABLES.keys()].map((k) => [k, DOCUMENT_KIND_DESCRIPTION])),
+  const describe = (t: FiscalTable) => ({
+    table: t.kind,
+    where_columns: t.columns.map((c) => c.name).filter((n) => n !== 'document_kind' && n !== 'fiscal_year'),
+    order_by_columns: t.columns.map((c) => c.name).filter((n) => n !== 'document_kind'),
+    columns: t.columns,
   })
-  for (const t of NODE_TABLES.values())
-    for (const c of t.columns) {
-      const entry = columns.get(c.name) ?? { name: c.name, type: c.type, description: {} }
-      entry.description[t.documentKind] = c.description ?? ''
-      columns.set(c.name, entry)
-    }
-  const names = [...columns.keys()]
   return {
     document_kinds: [
-      { name: 'settlement', description: '決算。amount_yen は支出済額（円）。' },
-      { name: 'initial', description: '当初予算。amount_yen は当初予算額（円）。' },
+      { name: 'settlement', description: '決算。amount_yen は支出済額（円）、amount_phase は executed。' },
+      { name: 'initial', description: '当初予算。amount_yen は当初予算額（円）、amount_phase は approved。' },
     ],
-    where_columns: names.filter((n) => n !== 'document_kind' && n !== 'fiscal_year'),
-    order_by_columns: names.filter((n) => n !== 'document_kind'),
     required_input: REQUIRED_HELP,
-    search_example: SEARCH_EXAMPLE,
+    subjects: { ...describe(SUBJECT_TABLE), search_example: SUBJECT_SEARCH_EXAMPLE },
+    details: { ...describe(DETAIL_TABLE), search_example: DETAIL_SEARCH_EXAMPLE },
     where_conditions: WHERE_HELP,
     sum_rules: SUM_RULES,
-    columns: [...columns.values()],
+    location_columns: LOCATION_COLUMNS,
     origin_columns: ORIGIN_COLUMNS,
   }
 }
+
+const ColumnOut = z.strictObject({ name: z.string(), type: z.string(), description: z.string().nullable(), nullable: z.boolean().optional() })
+const tableDescription = (example: z.ZodType) =>
+  z.strictObject({
+    table: z.string(),
+    where_columns: z.array(z.string()),
+    order_by_columns: z.array(z.string()),
+    columns: z.array(ColumnOut),
+    search_example: example,
+  })
 
 const WHERE_HELP = {
   string: `eq・not_eq（${MAX_LIST} 個まで、eq は OR）、prefix・suffix・contains（前方・後方・部分一致）、is_null`,
@@ -477,18 +523,23 @@ const WHERE_HELP = {
   combine: `列どうしは AND。列をまたぐ OR と NOT は無いので、2回に分けて問い合わせる。fiscal_year の年数と条件の値の合計は ${MAX_BINDS} 個まで。`,
 }
 
-const searchDescription =
-  'Search expenditure tree nodes (款/kan, 項/kou, 目/moku and breakdowns on separate axes such as 節/setsu and notes). Read describe_expenditure_columns once before searching. ' +
-  'Text filters match names printed in the source subject, project, setsu or notes fields (name, kan_name, kou_name). Narrative body text is not in these tables; if a project name is not printed, search words in the subject name. ' +
-  'For comparisons across municipalities, filter node_kind to a consistent level such as "目", then use get_expenditure_node to explore details. ' +
-  'Do not add amounts across document kinds or axes. Follow sum_rules from describe_expenditure_columns when summing. where has no cross-column OR or NOT; use separate queries for those alternatives.'
+const searchSubjectsDescription =
+  'Search expenditure subjects: 款/kan, 項/kou and 目/moku printed in budget and settlement documents (level column). Read describe_expenditure_columns once before searching. ' +
+  'For comparisons across municipalities or years, filter level to "目" (or use cofog_code), then use get_expenditure_subject to see child subjects and the breakdowns below a 目. ' +
+  'Text filters match printed names (name, kan_name, kou_name, moku_name). Do not add amounts across document kinds or levels; follow sum_rules. where has no cross-column OR or NOT; use separate queries.'
+
+const searchDetailsDescription =
+  'Search expenditure details: items printed below a subject (mostly 目), such as projects (breakdown "事業"), statutory setsu (breakdown "節") or other source breakdowns ("その他"). ' +
+  'Read describe_expenditure_columns once before searching. Filter breakdown "事業" with depth 1 to list projects of a 目; department holds the responsible division printed at the end of the name. ' +
+  'Narrative body text is not in these tables; if a project name is not printed, search the subject names instead. Narrow by jurisdiction_code when searching names to keep scans small. ' +
+  'Sum only rows with the same subject_id, the same breakdown and depth 1; never mix breakdowns. Use get_expenditure_detail to see deeper items.'
 
 const listJurisdictionsDescription =
   'List municipality names, six-digit jurisdiction codes, prefectures and available expenditure coverage (fiscal years, document kinds and accounts). With view FULL, also return source titles and URLs for each account. ' +
   'Before searching expenditure, use this tool to check the municipality code and whether the years and document kinds you want to compare are covered. ' +
   'Filter by partial municipality name or a five- or six-digit code. Without filters, results are ordered by jurisdiction code. Pages default to 20 municipalities (maximum 100); follow next_page_token for more. Municipalities without data have empty coverage. ' +
   'When a wanted settlement year is not covered (for example, the municipality has not published its settlement document), do not treat it as zero; point the user to uncovered_sources, which hold official statistics at kan/kou level for the ordinary account (普通会計), not comparable to Fudoki general-account totals. ' +
-  'Use returned jurisdiction_code (six digits), fiscal_year, document_kind and account_name directly in search_expenditure_nodes. Search does not accept five-digit codes as matches: resolve the six-digit code here first. Name and code filters are combined with AND.'
+  'Use returned jurisdiction_code (six digits), fiscal_year, document_kind and account_name directly in search_expenditure_subjects and search_expenditure_details. Search does not accept five-digit codes as matches: resolve the six-digit code here first. Name and code filters are combined with AND.'
 
 export const operations: Operation[] = [
   {
@@ -517,68 +568,110 @@ export const operations: Operation[] = [
     run: listJurisdictions,
   },
   {
-    name: 'search_expenditure_nodes',
-    summary: 'Search expenditure tree nodes',
-    restSummary: '歳出の科目を検索する',
+    name: 'search_expenditure_subjects',
+    summary: 'Search expenditure subjects (kan, kou, moku)',
+    restSummary: '歳出の科目（款・項・目）を検索する',
     method: 'post',
-    path: '/v1/expenditure/nodes:search',
+    path: '/v1/fiscal/expenditure/subjects:search',
     pathParams: [],
-    description: searchDescription,
-    input: searchInput,
-    example: SEARCH_EXAMPLE,
+    description: searchSubjectsDescription,
+    input: subjectSearchInput,
+    example: SUBJECT_SEARCH_EXAMPLE,
     output: z.strictObject({
-      nodes: z.array(Node),
+      subjects: z.array(Subject),
       next_page_token: z.string().nullable().describe(NEXT_PAGE_TOKEN_HELP),
       origins: z.array(Origin).describe(ORIGINS_HELP),
     }),
     view: true,
-    run: searchNodes,
+    run: searchRows(SUBJECT_TABLE),
   },
   {
-    name: 'get_expenditure_node',
-    summary: 'Expenditure node and children by axis',
-    restSummary: '科目とその内訳を取得する',
+    name: 'search_expenditure_details',
+    summary: 'Search expenditure details (projects, setsu)',
+    restSummary: '歳出の内訳（事業・節）を検索する',
+    method: 'post',
+    path: '/v1/fiscal/expenditure/details:search',
+    pathParams: [],
+    description: searchDetailsDescription,
+    input: detailSearchInput,
+    example: DETAIL_SEARCH_EXAMPLE,
+    output: z.strictObject({
+      details: z.array(Detail),
+      next_page_token: z.string().nullable().describe(NEXT_PAGE_TOKEN_HELP),
+      origins: z.array(Origin).describe(ORIGINS_HELP),
+    }),
+    view: true,
+    run: searchRows(DETAIL_TABLE),
+  },
+  {
+    name: 'get_expenditure_subject',
+    summary: 'Expenditure subject with child subjects and details',
+    restSummary: '科目と、その子の科目・内訳を取得する',
     method: 'get',
-    path: '/v1/expenditure/nodes/{document_kind}/{node_id}',
-    pathParams: ['document_kind', 'node_id'],
-    description: 'Return one expenditure node, identified by document_kind and node_id, and its children grouped by axis. Use this to explore the breakdown of a node found by search_expenditure_nodes. Do not sum children from different axes together.',
+    path: '/v1/fiscal/expenditure/subjects/{subject_id}',
+    pathParams: ['subject_id'],
+    description:
+      'Return one expenditure subject (款/項/目) by subject_id, its child subjects, and the details directly below it (depth 1) grouped by breakdown (事業・節・その他), with print locations. ' +
+      'Details are paged with page_size and page_token; child subjects are returned in full. Sum details only within one breakdown.',
     input: z.strictObject({
-      document_kind: z.enum(DOCUMENT_KINDS).describe('Document kind: settlement (executed expenditure) or initial (initial budget).'),
-      node_id: z.string().regex(/^[0-9a-f]{64}$/).describe('node_id from a search response (64 lowercase hexadecimal characters).'),
+      subject_id: z.string().regex(/^[0-9a-f]{64}$/).describe('subject_id from a search response (64 lowercase hexadecimal characters).'),
       page_size: getPageSize,
       page_token: pageToken,
     }),
     restQuery: z.strictObject({ page_size: queryPageSize, page_token: pageToken }),
     output: z.strictObject({
-      node: Node,
-      children: z.record(z.string(), z.array(Node)).describe('軸（axis）ごとの子。別の軸の子を同じ金額に混ぜて足さない。'),
+      subject: Subject,
+      children: z.array(Subject).describe('子の科目（款なら項、項なら目）。'),
+      details: z.record(z.string(), z.array(Detail)).describe('直下の内訳（depth = 1）を breakdown ごとに。breakdown の違う内訳を同じ金額に混ぜて足さない。'),
       next_page_token: z.string().nullable().describe(NEXT_PAGE_TOKEN_HELP),
+      locations: z.array(Location).describe(LOCATIONS_HELP),
       origins: z.array(Origin).describe(ORIGINS_HELP),
     }),
     view: true,
-    run: getNode,
+    run: getSubject,
+  },
+  {
+    name: 'get_expenditure_detail',
+    summary: 'Expenditure detail and its children',
+    restSummary: '内訳とその子を取得する',
+    method: 'get',
+    path: '/v1/fiscal/expenditure/details/{detail_id}',
+    pathParams: ['detail_id'],
+    description: 'Return one expenditure detail by detail_id and its child details, with print locations. Children share the parent breakdown.',
+    input: z.strictObject({
+      detail_id: z.string().regex(/^[0-9a-f]{64}$/).describe('detail_id from a search response (64 lowercase hexadecimal characters).'),
+      page_size: getPageSize,
+      page_token: pageToken,
+    }),
+    restQuery: z.strictObject({ page_size: queryPageSize, page_token: pageToken }),
+    output: z.strictObject({
+      detail: Detail,
+      children: z.array(Detail).describe('子の内訳。'),
+      next_page_token: z.string().nullable().describe(NEXT_PAGE_TOKEN_HELP),
+      locations: z.array(Location).describe(LOCATIONS_HELP),
+      origins: z.array(Origin).describe(ORIGINS_HELP),
+    }),
+    view: true,
+    run: getDetail,
   },
   {
     name: 'describe_expenditure_columns',
     summary: 'Column descriptions and aggregation rules',
     restSummary: '列の説明と合計の決まり',
     method: 'get',
-    path: '/v1/expenditure/columns',
+    path: '/v1/fiscal/expenditure/columns',
     pathParams: [],
-    description: 'Describe expenditure tree columns, rules for adding amounts (sum_rules), and an example search input (search_example). Read this once before searching; follow sum_rules to avoid double counting parents and children or mixing independent breakdown axes.',
+    description: 'Describe the columns of expenditure subjects and details, rules for adding amounts (sum_rules), and example search inputs. Read this once before searching; follow sum_rules to avoid double counting parents and children or mixing breakdowns.',
     input: z.strictObject({}),
     output: z.strictObject({
       document_kinds: z.array(z.strictObject({ name: z.string(), description: z.string() })),
-      where_columns: z.array(z.string()),
-      order_by_columns: z.array(z.string()),
       required_input: z.string(),
-      search_example: searchInput,
+      subjects: tableDescription(subjectSearchInput),
+      details: tableDescription(detailSearchInput),
       where_conditions: z.record(z.string(), z.string()),
       sum_rules: z.array(z.string()),
-      columns: z.array(
-        z.strictObject({ name: z.string(), type: z.string(), description: z.record(z.string(), z.string()) })
-      ),
-      origin_columns: z.array(z.strictObject({ name: z.string(), type: z.string(), description: z.string().nullable(), nullable: z.boolean().optional() })),
+      location_columns: z.array(ColumnOut),
+      origin_columns: z.array(ColumnOut),
     }),
     run: describeColumns,
   },

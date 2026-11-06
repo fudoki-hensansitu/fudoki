@@ -35,10 +35,12 @@ const headScopeOf = (n: TreeNode, names: Names) =>
 const scopeOf = (n: TreeNode, names: Names) =>
   `${names[n.jurisdiction_code] ?? n.jurisdiction_code} · ${n.fiscal_year}年度 ${KIND_LABEL[n.document_kind] ?? n.document_kind} · ${n.account_name}`
 interface Named { kind: string; name: string }
-/** 自身より上の科目（款・項）。自身が款・項ならその手前まで */
-const ancestorsOf = (n: TreeNode): Named[] =>
-  [{ kind: '款', name: n.kan_name }, { kind: '項', name: n.kou_name ?? '' }]
-    .filter((a) => !!a.name && a.name !== n.name)
+/** 自身より上の科目（款・項・目）。自身が科目ならその手前まで */
+const ancestorsOf = (n: TreeNode): Named[] => {
+  const levels = [{ kind: '款', name: n.kan_name }, { kind: '項', name: n.kou_name ?? '' }, { kind: '目', name: n.moku_name ?? '' }]
+  const own = n.is_subject ? levels.findIndex((a) => a.kind === n.node_kind) : -1
+  return (own >= 0 ? levels.slice(0, own) : levels).filter((a) => !!a.name)
+}
 
 /** 区分のタグ。科目の軸は段（款・項・目）、それ以外の軸は軸の名前（節・事業）で呼ぶ */
 const kindOf = (n: TreeNode) => (n.is_subject ? n.node_kind : n.axis)
@@ -54,28 +56,21 @@ function crumbsOf(node: TreeNode, history: { data: ViewData }[], bridge: Bridge,
     n.fiscal_year === node.fiscal_year && n.account_name === node.account_name
   const visitedIndex = (kind: string, name: string) => history.findIndex(({ data }) =>
     'node' in data && same(data.node) && kindOf(data.node) === kind && data.node.name === name)
-  const listIndex = history.findIndex(({ data }) => 'nodes' in data && siblings(data.nodes) && data.nodes[0]!.node_kind === '款' && same(data.nodes[0]!))
+  const listIndex = history.findIndex(({ data }) => 'nodes' in data && siblings(data.nodes) && data.nodes[0]!.is_subject && data.nodes[0]!.node_kind === '款' && same(data.nodes[0]!))
   const root: Crumb = {
     name: node.account_name,
-    back: listIndex >= 0 ? () => bridge.backTo(listIndex) : () => void bridge.call('search_expenditure_nodes', {
+    back: listIndex >= 0 ? () => bridge.backTo(listIndex) : () => void bridge.call('search_expenditure_subjects', {
       document_kind: node.document_kind,
       fiscal_year: { min: node.fiscal_year, max: node.fiscal_year },
-      where: { jurisdiction_code: { eq: [node.jurisdiction_code] }, account_name: { eq: [node.account_name] }, node_kind: { eq: ['款'] } },
+      where: { jurisdiction_code: { eq: [node.jurisdiction_code] }, account_name: { eq: [node.account_name] }, level: { eq: ['款'] } },
       page_size: 100,
     }, 'reset'),
   }
-  const levels = levelsOf(node)
-  // 節・事業は目の名前を列に持たないので、通ってきた目があれば段に加える
-  if (!node.is_subject || !['款', '項', '目'].includes(node.node_kind)) {
-    const moku = history.map(({ data }) => data).find((d): d is Extract<ViewData, { node: TreeNode }> =>
-      'node' in d && same(d.node) && d.node.node_kind === '目' && d.node.is_subject === true)
-    if (moku) levels.push({ kind: '目', name: moku.node.name })
-  }
-  return [root, ...levels.map((a) => {
+  return [root, ...levelsOf(node).map((a) => {
     const index = visitedIndex(a.kind, a.name)
     const kind = a.kind
     return { ...a, back: index >= 0 ? () => bridge.backTo(index)
-      : kind === '款' || kind === '項' ? () => void bridge.openLevel(node, kind) : undefined }
+      : kind === '款' || kind === '項' || kind === '目' ? () => void bridge.openLevel(node, kind) : undefined }
   })]
 }
 
@@ -105,8 +100,8 @@ function groupByScope(rows: TreeNode[]): TreeNode[][] | undefined {
 /** 全行が同じ資料・会計・親・段にあるなら、割合を出せる兄弟とみなす */
 function siblings(rows: TreeNode[]) {
   const key = (n: TreeNode) => JSON.stringify([n.document_kind, n.jurisdiction_code, n.fiscal_year,
-    n.account_name, n.axis, n.node_kind, n.parent_node_id ?? null])
-  return rows.length > 0 && rows.every((n) => n.parent_node_id !== undefined && key(n) === key(rows[0]!))
+    n.account_name, n.axis, n.node_kind, n.parent_id])
+  return rows.length > 0 && rows.every((n) => key(n) === key(rows[0]!))
 }
 
 function describe(data: ViewData, names: Names) {
@@ -115,7 +110,7 @@ function describe(data: ViewData, names: Names) {
       .sort((a, b) => (b.amount_yen ?? 0) - (a.amount_yen ?? 0)).slice(0, 5)
       .map((n) => `${scopeOf(n, names)} ${pathOf(n)} ${yen(n.amount_yen)}`).join(' / ')}`
   const n = data.node
-  return `風土記の View で「${scopeOf(n, names)} ${pathOf(n)}」（${yen(n.amount_yen)}、document_kind=${n.document_kind}、node_id=${n.node_id}）の内訳を表示中。`
+  return `風土記の View で「${scopeOf(n, names)} ${pathOf(n)}」（${yen(n.amount_yen)}、document_kind=${n.document_kind}、${n.is_subject ? 'subject_id' : 'detail_id'}=${n.id}）の内訳を表示中。`
 }
 
 function OriginButton({ node, origin, bridge, showPdf }: {
@@ -223,8 +218,8 @@ function NodeResult({ data, crumbs, names, bridge, showPdf, busy }: {
           {axes.length > 1 && <div className="group-head"><h3>{rows[0]!.is_subject ? rows[0]!.node_kind : axis}ごとの内訳</h3></div>}
           <BarList label={`${node.name}の${axis}ごとの内訳`} share={shareable(rows, data.next_page_token)} busy={busy}
             bars={rows.map((n) => ({
-              key: n.node_id, label: n.name, kind: kindOf(n), amount: n.amount_yen,
-              onSelect: () => void bridge.call('get_expenditure_node', { document_kind: n.document_kind, node_id: n.node_id }, 'drill', n),
+              key: n.id, label: n.name, kind: kindOf(n), amount: n.amount_yen,
+              onSelect: () => void bridge.call(n.open.tool, n.open.args, 'drill', n),
             }))} />
         </section>
       ))}
@@ -296,7 +291,7 @@ function NodesResult({ rows, next, history, names, bridge, busy, failed, fold, e
   if (!rows.length) return <p className="quiet">該当する歳出明細はありません。</p>
   const drill = (n: TreeNode) => () => {
     expand()
-    void bridge.call('get_expenditure_node', { document_kind: n.document_kind, node_id: n.node_id }, 'drill', n)
+    void bridge.call(n.open.tool, n.open.args, 'drill', n)
   }
   // 明細の画面に置き換わるまでの間、同じ見出しを出しておく
   if (autoOpens(rows, next)) {
@@ -323,7 +318,7 @@ function NodesResult({ rows, next, history, names, bridge, busy, failed, fold, e
           {total !== undefined && <span className="total-short" title={yen(total)}>{shortYen(total)}</span>}
         </PathHeader>
         <BarList label={title} share={share} busy={busy} fold={fold}
-          bars={rows.map((n) => ({ key: `${n.document_kind}-${n.node_id}`, label: n.name, kind: kindOf(n), amount: n.amount_yen, onSelect: drill(n) }))} />
+          bars={rows.map((n) => ({ key: n.id, label: n.name, kind: kindOf(n), amount: n.amount_yen, onSelect: drill(n) }))} />
       </>
     )
   }
@@ -352,7 +347,7 @@ function NodesResult({ rows, next, history, names, bridge, busy, failed, fold, e
                 {gShare && <span className="group-total" title={yen(gTotal)}>{shortYen(gTotal)}</span>}
               </div>
               <BarList label={label} share={gShare} busy={busy} fold={INLINE_FOLD}
-                bars={group.map((n) => ({ key: `${n.document_kind}-${n.node_id}`, label: n.name, kind: kindOf(n), amount: n.amount_yen, onSelect: drill(n) }))} />
+                bars={group.map((n) => ({ key: n.id, label: n.name, kind: kindOf(n), amount: n.amount_yen, onSelect: drill(n) }))} />
             </section>
           )
         })}
@@ -369,7 +364,7 @@ function NodesResult({ rows, next, history, names, bridge, busy, failed, fold, e
         scope={[d.scope, !d.oneScope && d.commonLevels ? rows[0]!.account_name : undefined].filter(Boolean).join(' · ') || undefined} busy={busy} />
       <BarList label={title} share={false} busy={busy} keepOrder={d.byYear} fold={fold}
         bars={ordered.map((n) => ({
-          key: `${n.document_kind}-${n.node_id}`,
+          key: n.id,
           label: d.label(n),
           kind: d.title ? undefined : kindOf(n),
           note: d.note(n),
@@ -397,7 +392,7 @@ function View({ bridge }: { bridge: Bridge }) {
   useEffect(() => {
     if (entry && 'nodes' in entry.data && autoOpens(entry.data.nodes, entry.data.next_page_token)) {
       const n = entry.data.nodes[0]!
-      void bridge.call('get_expenditure_node', { document_kind: n.document_kind, node_id: n.node_id }, 'reset', n)
+      void bridge.call(n.open.tool, n.open.args, 'reset', n)
     }
     setPdf(undefined)
     if (autoFullscreen.current) foldBack()

@@ -119,8 +119,10 @@ describe('公開の範囲', () => {
   test('operations の一覧の末尾に登録してあり、既存の操作の順序は変わらない', () => {
     expect(operations.map((o) => o.name)).toEqual([
       'list_jurisdictions',
-      'search_expenditure_nodes',
-      'get_expenditure_node',
+      'search_expenditure_subjects',
+      'search_expenditure_details',
+      'get_expenditure_subject',
+      'get_expenditure_detail',
       'describe_expenditure_columns',
       'search_evaluations',
     ])

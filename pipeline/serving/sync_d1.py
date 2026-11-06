@@ -57,8 +57,11 @@ MEMORY_LIMIT = '1GB'
 READ_ROWS_PER_CALL = 4000
 
 # 参照される表（自治体マスタ・origin）を先に、参照する表を後に。収録範囲は木の表と同じ warehouse から同じ同期で入れ替える
-TABLE_ORDER = ['jurisdiction_master', 'origin', 'settlement_expenditure_node', 'initial_expenditure_node', 'expenditure_coverage',
-               'population_origin', 'jurisdiction_population']
+TABLE_ORDER = ['jurisdiction', 'fiscal_origin', 'fiscal_expenditure_subject', 'fiscal_expenditure_detail',
+               'fiscal_expenditure_location', 'fiscal_coverage', 'population_origin', 'population']
+# 2026-11 の作り直し（docs/prd/fiscal-serving-tables/dd.md）より前の表。新しい Worker の deploy を確かめてから --drop-legacy で消す
+LEGACY_TABLES = ['jurisdiction_master', 'origin', 'settlement_expenditure_node', 'initial_expenditure_node',
+                 'expenditure_coverage', 'jurisdiction_population']
 
 Table = dict  # columns.json の1表
 
@@ -323,7 +326,7 @@ def sync(d1: D1 | None, warehouse: Path, dry_run: bool, jurisdictions: Sequence[
         for name in TABLE_ORDER:
             spec = tables[name]
             names = [c['name'] for c in spec['columns']]
-            order = 'jurisdiction_code, fiscal_year, node_id' if spec.get('document_kind') else spec['primary_key']
+            order = spec['primary_key']
             table_where = scoped(where, names)
 
             def statements(name=name, spec=spec, names=names, order=order, where=table_where) -> Iterator[str]:
@@ -364,11 +367,19 @@ def main() -> int:
     parser.add_argument('--jurisdiction', action='append', metavar='自治体コード',
                         help='一部の自治体だけを入れる（複数指定可）。jurisdiction_code を持つ表を絞る。省略は全件')
     parser.add_argument('--dry-run', action='store_true', help='文を作って数えるだけで、書かない')
+    parser.add_argument('--drop-legacy', action='store_true',
+                        help='同期せず、作り直し前の表（LEGACY_TABLES）を drop する。新しい Worker の deploy を確かめてから流す')
     args = parser.parse_args()
     database_id = args.database_id or (LOCAL_DATABASE_ID if args.local else None)
     if not database_id and not args.dry_run:
         parser.error('--database-id か --local が要る')
     d1 = D1(database_id, args.local, args.persist_to) if database_id else None
+    if args.drop_legacy:
+        statements = [{'sql': f'drop table if exists "{name}"'} for name in LEGACY_TABLES]
+        if d1 and not args.dry_run:
+            d1.batch(statements)
+        print('\n'.join(s['sql'] for s in statements) + ('\ndry-run: D1 には書いていない' if args.dry_run or not d1 else ''))
+        return 0
     return sync(d1, args.warehouse, args.dry_run, args.jurisdiction)
 
 

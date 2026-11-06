@@ -131,8 +131,10 @@ export const VIEW_MIME_TYPE = 'text/html;profile=mcp-app'
 
 /** View が自治体コードの代わりに自治体名を出すための対応。structuredContent の契約は変えず、MCP の _meta にだけ載せる */
 async function jurisdictionNames(ctx: Ctx, out: unknown): Promise<Record<string, string>> {
-  const o = out as { nodes?: { jurisdiction_code: string }[]; node?: { jurisdiction_code: string } }
-  const codes = [...new Set([...(o.nodes ?? []), ...(o.node ? [o.node] : [])].map((n) => n.jurisdiction_code))]
+  type Coded = { jurisdiction_code: string }
+  const o = out as { subjects?: Coded[]; details?: Coded[] | Record<string, Coded[]>; subject?: Coded; detail?: Coded }
+  const details = Array.isArray(o.details) ? o.details : Object.values(o.details ?? {}).flat()
+  const codes = [...new Set([...(o.subjects ?? []), ...details, ...(o.subject ? [o.subject] : []), ...(o.detail ? [o.detail] : [])].map((n) => n.jurisdiction_code))]
   if (!codes.length) return {}
   // D1 は1文の bind を100個までに制限するので、100件ずつに分けて1つの batch で読む
   const chunks = Array.from({ length: Math.ceil(codes.length / 100) }, (_, i) => codes.slice(i * 100, i * 100 + 100))
@@ -151,8 +153,8 @@ export const RENDER_TOOL = 'render_expenditure_view'
 export const RENDER_RESULT_TEXT = 'Display requested. The display data is in structuredContent.'
 
 const RENDER_DESCRIPTION =
-  'Render search_expenditure_nodes results and get_expenditure_node breakdowns as tables and charts in clients that support MCP Apps. ' +
-  "Accepts tool (one of those two names) and arguments (the selected tool's input). " +
+  'Render expenditure search results (search_expenditure_subjects, search_expenditure_details) and breakdowns (get_expenditure_subject, get_expenditure_detail) as tables and charts in clients that support MCP Apps. ' +
+  "Accepts tool (one of those names) and arguments (the selected tool's input). " +
   "Returns the selected tool's result in structuredContent and a text acknowledgement."
 
 function mcpServer(ctx: Ctx, apiOrigin: string, operations: Operation[]): McpServer {
@@ -269,7 +271,7 @@ export function createApp(operations: Operation[] = defaultOperations) {
   app.get('/robots.txt', (c) => c.text('User-agent: *\nDisallow: /\n'))
 
   // sandbox iframe は opaque origin（Origin: null）。PDF の公開中継だけ資格情報なしで読ませる。
-  app.use('/v1/origins/:origin_id/pdf', async (c, next) => {
+  app.use('/v1/fiscal/origins/:origin_id/pdf', async (c, next) => {
     await next()
     c.res.headers.set('Access-Control-Allow-Origin', '*')
     c.res.headers.set('Access-Control-Expose-Headers', 'X-Origin-Url, X-Origin-Fetched-At')
@@ -319,7 +321,7 @@ export function createApp(operations: Operation[] = defaultOperations) {
     const origin = new URL(c.req.url).origin
     return c.json({
       name: '風土記 API',
-      rest: `${origin}/v1/expenditure/nodes:search`,
+      rest: `${origin}/v1/fiscal/expenditure/subjects:search`,
       jurisdictions: `${origin}/v1/jurisdictions`,
       openapi: `${origin}/openapi.json`,
       health: `${origin}/health`,
@@ -348,7 +350,7 @@ export function createApp(operations: Operation[] = defaultOperations) {
   for (const op of operations) registerRest(app, op)
 
   app.openapi(createRoute({
-    method: 'get', path: '/v1/origins/{origin_id}/pdf', operationId: 'get_origin_pdf',
+    method: 'get', path: '/v1/fiscal/origins/{origin_id}/pdf', operationId: 'get_origin_pdf',
     summary: '出典の PDF を表示する',
     description: '出典 ID が指す自治体の公開 PDF を中継する。32 MiB・20秒、取得6回/分（同一URL1回/分）、閲覧120回/分、成功PDFを24時間・最大16 URL保持。上限は全利用者合計。取得 URL（percent-encoding）と取得日時を X-Origin-Url・X-Origin-Fetched-At で返す。取り込み時の内容との一致は保証しない。query・任意 URL・リダイレクト・CSV は受け付けない。',
     request: { params: z.object({ origin_id: z.string().min(1).max(256) }) },
@@ -357,7 +359,7 @@ export function createApp(operations: Operation[] = defaultOperations) {
       ...Object.fromEntries([400, 404, 429, 502, 503, 504].map((status) => [status, { description: '表示できない', content: { 'application/json': { schema: ErrorBody } } }])),
     },
   }), async (c) => originPdf(c.env.DB, c.env.ORIGIN_PDF, c.req.raw, c.req.param('origin_id')))
-  app.all('/v1/origins/:origin_id/pdf', (c) => c.json(errorBody('METHOD_NOT_ALLOWED', 'GET だけを受け付けます'), 405, { Allow: 'GET' }))
+  app.all('/v1/fiscal/origins/:origin_id/pdf', (c) => c.json(errorBody('METHOD_NOT_ALLOWED', 'GET だけを受け付けます'), 405, { Allow: 'GET' }))
 
   app.doc31('/openapi.json', OPENAPI_CONFIG)
 
