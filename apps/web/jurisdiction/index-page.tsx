@@ -337,9 +337,14 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
         <p className="mt-3 text-muted-foreground">まだ決算を収録した自治体がありません。</p>
       )}
 
-      <section className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1fr)_320px]" aria-label="地図">
-        {/* 地図からマウスが出たら、カードを都道府県自体に戻す */}
-        <div className="flex min-w-0 flex-col rounded-[20px] bg-card p-4 sm:p-6" onPointerLeave={(ev) => ev.pointerType === 'mouse' && setSelected('')}>
+      {/* 地図とカードの外へマウスかフォーカスが出たら、カードを都道府県自体に戻す（カードのボタンへ動かす間は下見を保つ） */}
+      <section
+        className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1fr)_320px]"
+        aria-label="地図"
+        onPointerLeave={(ev) => ev.pointerType === 'mouse' && !ev.currentTarget.contains(document.activeElement) && setSelected('')}
+        onBlur={(ev) => !ev.currentTarget.contains(ev.relatedTarget) && setSelected('')}
+      >
+        <div className="flex min-w-0 flex-col rounded-[20px] bg-card p-4 sm:p-6">
           <div className="mb-3 flex items-baseline justify-between gap-2">
             <Breadcrumb>
               <BreadcrumbList className="text-lg">
@@ -378,7 +383,7 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
             </div>
           ) : null}
         </div>
-        {current ? <SelectedCard e={current} /> : <p className="rounded-[20px] border p-6 text-muted-foreground">{entries.length ? '地図の自治体にカーソルを載せると、ここに歳出の総額と大きい分野が出ます。' : 'まだ決算を収録した自治体がありません。'}</p>}
+        {current ? <SelectedCard e={current} /> : <p className="rounded-[20px] border p-6 text-muted-foreground">{entries.length ? (view ? '地図の自治体にカーソルを載せると、ここに歳出の総額と大きい分野が出ます。' : '都道府県を選ぶと、その市区町村の図が開きます。') : 'まだ決算を収録した自治体がありません。'}</p>}
       </section>
 
       <section className="mt-14" aria-label="比較表">
