@@ -137,7 +137,7 @@ function Overview({ data }: { data: PageData }) {
               <DomainIcon id={f.id} />
               <div className="min-w-0 flex-1">
                 <b className="block text-[15px] font-normal">{f.name}</b>
-                <span className="text-[13px] text-muted-foreground">{f.examples}</span>
+                <span className="block text-[13px] leading-snug text-muted-foreground">{f.examples}</span>
               </div>
               <div className="shrink-0 text-right tabular-nums">
                 <span className={`block text-[15px] ${spent ? '' : 'text-muted-foreground'}`}>{spent ? (spent.amountMissing ? '金額未記載' : formatYen(spent.yen)) : '—'}</span>
