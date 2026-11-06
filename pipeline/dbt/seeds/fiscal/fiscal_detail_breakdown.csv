@@ -57,6 +57,8 @@ jurisdiction_code,fiscal_year,document_kind,source_heading,breakdown,basis
 132047,2024,initial,科目,事業,CSV の事項（目の下の事業）
 132047,2024,settlement,科目,事業,CSV の事項（目の下の事業）
 132047,2025,settlement,節,節,法定の節の見出し
+132055,2024,settlement,備考,事業,備考が目の額を事業ごとに分ける（品目名は目の直下の0%）
+132055,2024,settlement,節,節,法定の節の見出し
 132055,2025,settlement,備考,事業,備考が目の額を事業ごとに分ける（品目名は目の直下の0%）
 132055,2025,settlement,節,節,法定の節の見出し
 132063,2024,settlement,備考,事業,備考が目の額を事業ごとに分ける（品目名は目の直下の0%）
