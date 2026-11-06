@@ -236,7 +236,7 @@ function ProjectRow({ p, rank, max }: { p: Project; rank: number; max: number })
         <span className="text-xl text-muted-foreground">{rank}</span>
         <div className="min-w-0">
           <b className="block text-[15px] font-normal leading-snug">{p.name}</b>
-          <span className="text-xs text-muted-foreground">{p.kanName}</span>
+          <span className="text-xs text-muted-foreground">{p.domain}</span>
         </div>
         <div className="order-5 col-span-full sm:order-none sm:col-span-1">
           <div className="h-2.5 overflow-hidden rounded-full bg-foreground/5">
@@ -339,7 +339,7 @@ function Budget({ data, year }: { data: PageData; year: number }) {
     <Section
       id="budget"
       title="お金は何に使われた？"
-      lead="機能分類は使い道の目的別に世界共通の分類（COFOG）で分けていて、自治体分類は予算書・決算書の表記のままです。"
+      lead="機能分類は、使い道を目的ごとに分ける世界共通の分類（COFOG）です。自治体分類は、予算書・決算書の分け方そのままです。"
       link={docs.length ? docs : undefined}
     >
       <div id="budget-panel" role="tabpanel" aria-labelledby={`tab-${phase}`} data-ask-view={`${reiwa(year)}の${label}の金額（${VIEWS.find((v) => v.key === view)!.label}）`} className="flex flex-col gap-4">

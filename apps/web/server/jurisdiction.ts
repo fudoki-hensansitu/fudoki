@@ -310,6 +310,7 @@ export async function loadPage(env: Env, entry: CatalogEntry): Promise<Omit<Page
     ...line(n),
     kanName: n.kan_name ?? '',
     kouName: n.kou_name,
+    domain: ((n.cofog_code ? frameOf(n.cofog_code) : undefined) ?? OTHER_FRAME).name,
     prevYen: prevRes.nodes.find((p) => p.name === n.name && p.kan_name === n.kan_name && p.kou_name === n.kou_name)?.amount_yen ?? null,
   }))
   return {

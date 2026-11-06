@@ -42,6 +42,8 @@ export type FlowView = 'cofog' | 'kan'
 export interface Project extends Line {
   kanName: string
   kouName: string | null
+  /** COFOG の大分類で決まる分野の名前（domains.ts）。COFOG の付かない目は「その他」 */
+  domain: string
   /** 前の年度の同じ目（款・項・名前が一致したもの）。無ければ null */
   prevYen: number | null
 }
