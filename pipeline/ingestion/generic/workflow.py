@@ -75,8 +75,24 @@ def build_reading(logicals, document_kind='settlement', judge=None, layout=None,
     hierarchy = workflow['hierarchy']
     subject = hierarchy['subject']['pattern']
     detail = {axis: value['pattern'] for axis, value in hierarchy['breakdown'].items()}
-    built = build(logicals, judge, subject, detail, layout, codes_right, strict=True)
+    built = build(logicals, judge, subject, detail, layout, codes_right, strict=True,
+                  amounts_next_row=hierarchy['subject'].get('amounts') == 'next_row')
+    if (fourth := hierarchy['subject'].get('fourth_level_axis')):
+        fourth_level_axis(built.nodes, fourth)
     return built, {'chosen': subject, 'detail': detail, 'units': units}
+
+
+def fourth_level_axis(nodes: list[dict], axis: str) -> None:
+    """The workflow's `hierarchy.subject.fourth_level_axis`: the subject column prints a level below 目 in its
+    staircase (133086's 事業 `(01)一般管理費` under the 目 `01 一般管理費`). The subject axis holds 款・項・目
+    only, so the items one level below 目 are a breakdown of the 目 on an axis of their own, at its depth 1.
+    They keep their parent, their key and their amounts; their own items keep theirs."""
+    subject = {n['axis_header'] for n in nodes if n['level_header'] == '款'}
+    for node in nodes:
+        if node['axis_header'] in subject and node['depth'] == 4:
+            node.update(axis_header=axis, depth=1, level_header=None)
+        elif node['axis_header'] in subject and node['depth'] > 4:
+            raise ValueError(f'A subject item below the fourth level: {node["node_key"]} {node["name_text"]!r}')
 
 
 def effective_settings(source: dict, options: dict, *, text_pdf: bool) -> dict:

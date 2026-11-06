@@ -333,7 +333,8 @@ def with_mark(item: dict, pieces: list[Word] | None) -> list[Word] | None:
 
 
 def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None = None,
-         used: set[str] | None = None, detected: pdf_rules.PageRules | None = None, keep_marks: bool = False) -> Page:
+         used: set[str] | None = None, detected: pdf_rules.PageRules | None = None, keep_marks: bool = False,
+         row_gaps: bool = False) -> Page:
     number = observation_page['page_number']
     detected = detected or pdf_rules.detect(pdf, number)
     rules = [Rule(r.position, r.start, r.position, r.end) for r in detected.vertical]
@@ -408,8 +409,21 @@ def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None
                     pieces = None
                 if keep_marks:
                     pieces = with_mark(item, pieces)
-                words += _cell_words(pieces or [Word(item['raw_text'], *item['bbox_pdf_pt'])], cuts, reach)
+                words += _cell_words(pieces or [Word(item['raw_text'], *item['bbox_pdf_pt'])],
+                                     line_cuts(detected, item['bbox_pdf_pt']) if row_gaps else cuts, reach)
     return Page(number, detected.width, detected.height, drop_covered_digits(words), rules)
+
+
+def line_cuts(detected: pdf_rules.PageRules, box: list[float] | None) -> list[float]:
+    """The layout setting `rules.row_gaps`: the vertical rules that cut one OCR line are those drawn across its
+    middle. A rule the page leaves out for a row lets the row's text run on into the next column (133086 prints a
+    事業 `(01)一般管理費` across the rule between the subject and the first amount column, which stops above and
+    goes on below its row). Only where declared: a scan elsewhere loses pieces of its rules where ink is faint, and
+    its words must still be cut there."""
+    if not box:
+        return sorted(r.position for r in detected.vertical)
+    middle = (box[1] + box[3]) / 2
+    return sorted({r.position for r in detected.vertical if r.start <= middle <= r.end})
 
 
 def drop_covered_digits(words: list[Word]) -> list[Word]:
@@ -582,7 +596,7 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
           columns: dict | None = None, rules: dict | None = None, *, spread: dict | None = None,
           header: dict | None = None, code_corrections: list[dict] | None = None,
           header_readings: list[dict] | None = None, rule_dark: int = pdf_rules.DARK, rule_hook=None,
-          keep_marks: bool = False) -> list[Page]:
+          keep_marks: bool = False, row_gaps: bool = False) -> list[Page]:
     """`rule_hook(PageRules) -> PageRules` completes the rules read from a rendered page before the words are cut at
     them; `keep_marks` keeps the bullet that starts a line in its first word (both for a text document's OCR pages, `mixed.py`)."""
     every = bool((header or {}).get('agree_all_frames'))
@@ -659,7 +673,7 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
     if code_rules:
         corrections = amount_dictionary([r.__dict__ for r in [*(corrections.rules if corrections else ()), *code_rules]])
     used = set()
-    found = [page(p, pdf, corrections, used, detected(p['page_number']), keep_marks) for p in observation['pages']]
+    found = [page(p, pdf, corrections, used, detected(p['page_number']), keep_marks, row_gaps) for p in observation['pages']]
     unused = {r.id for r in corrections.rules} - used if corrections else set()
     if unused:
         raise ValueError(f'Amount corrections matched no observation: {sorted(unused)}')
@@ -1110,7 +1124,7 @@ def read_pages(source: dict, options: dict, settings: dict | None, selected: lis
                     spread=spread, header=header, code_corrections=options.get('code_corrections'),
                     header_readings=options.get('header_readings'),
                     rule_dark=((settings or {}).get('rules') or {}).get('dark', pdf_rules.DARK), rule_hook=rule_hook,
-                    keep_marks=keep_marks)
+                    keep_marks=keep_marks, row_gaps=bool(((settings or {}).get('rules') or {}).get('row_gaps')))
     printed = add_code_readings(printed, options.get('code_readings'))
     printed = add_code_readings(printed, [{**r, 'box': box} for r in options.get('amount_readings', ()) for box in r['boxes']],
                                 'amount', r'△?(0|[1-9][0-9]{0,2}(,[0-9]{3})*)')

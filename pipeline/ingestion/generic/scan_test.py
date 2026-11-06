@@ -93,6 +93,69 @@ class OrdinalTest(unittest.TestCase):
                          ['委託料', '1自転車駐車場'])
 
 
+class OkutamaRulesTest(unittest.TestCase):
+    """133086: a staircase subject column with a 事業 level below 目, amounts in the row under the name,
+    and 備考 centred on their 節's row."""
+
+    def test_a_rule_left_out_for_a_row_does_not_cut_its_line(self):
+        from ingestion.generic.scan import line_cuts
+        from ingestion.lib import pdf_rules
+        rules = pdf_rules.PageRules(13, 800, 600, (pdf_rules.Rule(80.8, 66, 161.5), pdf_rules.Rule(80.8, 180, 379),
+                                                   pdf_rules.Rule(95.0, 66, 540)), ())
+        self.assertEqual(line_cuts(rules, [35.3, 166.0, 94.1, 175.2]), [95.0])  # `(01)一般管理費` runs on
+        self.assertEqual(line_cuts(rules, [23.8, 200.0, 75.3, 209.0]), [80.8, 95.0])
+        self.assertEqual(line_cuts(rules, None), [80.8, 80.8, 95.0])
+        from ingestion.generic.layout_settings import validator
+        validator().validate({'schema_version': 1, 'rules': {'row_gaps': True}})
+
+    def test_the_fourth_subject_level_is_a_breakdown_of_its_moku(self):
+        from ingestion.generic.workflow import fourth_level_axis
+        node = lambda key, axis, depth, level, parent=None: {'node_key': key, 'parent_node_key': parent, 'axis_header': axis,
+                                                              'depth': depth, 'level_header': level, 'name_text': key}
+        nodes = [node('款', '科目', 1, '款'), node('項', '科目', 2, '項', '款'), node('目', '科目', 3, '目', '項'),
+                 node('事業', '科目', 4, None, '目'), node('節', '節', 1, None, '事業')]
+        fourth_level_axis(nodes, '事業')
+        self.assertEqual([(n['axis_header'], n['depth'], n['level_header'], n['parent_node_key']) for n in nodes],
+                         [('科目', 1, '款', None), ('科目', 2, '項', '款'), ('科目', 3, '目', '項'),
+                          ('事業', 1, None, '目'), ('節', 1, None, '事業')])
+        with self.assertRaisesRegex(ValueError, 'below the fourth level'):
+            fourth_level_axis([node('款', '科目', 1, '款'), node('x', '科目', 5, None, '款')], '事業')
+
+    def test_an_amount_alone_in_the_row_under_a_name_is_that_items(self):
+        from ingestion.generic.layout import Band, Glyph
+        from ingestion.generic.tree import Group, Item, owner
+        label = Band(30, 80, 1, ('事業',), [20, 40, 60, 100], 0, 100)
+        group = Group([label], '科目', True)
+        item = Item(group, 1, [[Glyph('(01)一般管理費', 35, 25, 75, 34, 1, 0)]], '01', '一般管理費', 35)
+        money = Band(80, 140, 1, ('当初予算額',), [20, 40, 60, 100], 0, 100, kind='amount')
+        amount = [Glyph('11,872,000', 95, 45, 138, 54, 1, 0)]
+        self.assertIs(owner(amount, money, [group], {id(group): [item]}, next_row=True), item)
+        # Two rows below is no amounts row of the item.
+        farther = [Glyph('11,872,000', 95, 65, 138, 74, 1, 0)]
+        self.assertIsNone(owner(farther, money, [group], {id(group): [item]}, next_row=True))
+
+    def test_a_remark_goes_under_the_setsu_of_its_ruled_row(self):
+        from ingestion.generic.layout import Band, Glyph
+        from ingestion.generic.tree import Group, Item, nest_by_rows
+        subject = Group([Band(0, 80, 1, ('科目',), [], 0, 100)], '科目', True)
+        setsu = Group([Band(350, 400, 1, ('節',), [20, 50, 80, 100], 0, 100)], '節', False)
+        remark = Group([Band(630, 830, 1, ('備考',), [], 0, 100)], '備考', False)
+        glyph = lambda y, page=1: [Glyph('x', 0, y, 9, y + 8, page, 0)]
+        moku = Item(subject, 1, [glyph(5)], '01', '一般管理費', 0, key='目')
+        first = Item(setsu, 1, [glyph(31)], '10', '需用費', 350, key='需用費', parent=moku)
+        second = Item(setsu, 1, [glyph(61)], '12', '委託料', 350, key='委託料', parent=moku)
+        inside = Item(remark, 1, [glyph(25)], None, '消耗品費', 630, key='消耗品費', parent=moku)
+        later = Item(remark, 1, [glyph(85)], None, '審査支払事務委託', 630, key='審査支払事務委託', parent=moku)
+        on_next = Item(remark, 2, [glyph(10, 2)], None, '療養費審査委託', 630, key='療養費審査委託', parent=moku)
+        placed = [moku, first, second, inside, later, on_next]
+        nodes = [{'node_key': i.key, 'parent_node_key': i.parent.key if i.parent else None} for i in placed]
+        nest_by_rows(nodes, placed, {'備考': {'under': '節'}})
+        self.assertEqual({n['node_key']: n['parent_node_key'] for n in nodes}['消耗品費'], '需用費')
+        # In no 節 row (below the last rule): stays under the 目. Over a page break: the last 節 of the page before.
+        self.assertEqual({n['node_key']: n['parent_node_key'] for n in nodes}['審査支払事務委託'], '目')
+        self.assertEqual({n['node_key']: n['parent_node_key'] for n in nodes}['療養費審査委託'], '委託料')
+
+
 class DroppedBandTest(unittest.TestCase):
     def test_only_the_readings_centred_in_the_band_are_left_out(self):
         rules = [Rule(0, 50, 600, 50)]
