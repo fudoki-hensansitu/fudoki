@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
+import { COFOG_DIVISION_LABELS, COFOG_DIVISIONS } from '@fudoki/fiscal/cofog-master'
 import { DOMAIN_FRAMES, frameOf, groupByFrame } from '../jurisdiction/domains'
 import { PROFILES } from '../jurisdiction/profiles'
 
@@ -24,6 +25,10 @@ describe('分野の枠', () => {
         expect(groupByFrame(y.projects).flatMap((g) => g.items).length).toBe(y.projects.length)
       }
     }
+  })
+  test('大分類の言い換えは正式名と同じコードを持ち、分野は大分類と一対一', () => {
+    expect(Object.keys(COFOG_DIVISION_LABELS).sort()).toEqual(Object.keys(COFOG_DIVISIONS).sort())
+    expect(DOMAIN_FRAMES.map((f) => f.cofog).sort()).toEqual(Object.keys(COFOG_DIVISIONS).sort())
   })
   test('枠の id は重ならない', () => {
     expect(new Set(DOMAIN_FRAMES.map((f) => f.id)).size).toBe(DOMAIN_FRAMES.length)
