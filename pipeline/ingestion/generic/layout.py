@@ -96,6 +96,9 @@ class Logical:
     ocr: bool = False  # the words came from OCR (`ingestion/generic/scan.py`): rules for its misreads apply
     column_units: dict[str, str] = field(default_factory=dict)  # heading of a column whose own unit mark differs from the page's
     foot: dict[int, list] = field(default_factory=dict)  # per page, each band's (left, right, bottom rule): what is printed below its column is the page's foot
+    # The 款・項 titles a layout pattern read above each of the page's tables (`patterns/layout/stacked_titles`): level,
+    # code, name, name glyphs and amount glyphs. None: the tables are titled by their 款 only (`titles`).
+    level_titles: list | None = None
 
     def unit_of(self, header: str) -> str | None:
         """The unit of an amount under `header`: its column's own mark (`(千円)` over 当初予算額 on a 円 page), else the page's."""
@@ -318,17 +321,19 @@ def _header_bottom(page: Page, frame) -> float:
     return full[1] if len(full) > 1 else top
 
 
-def level_cells(cells: list[tuple[tuple, str]], edges: list[float]) -> list[tuple[tuple, str]]:
+def level_cells(cells: list[tuple[tuple, str]], edges: list[float], levels: str = '款項目') -> list[tuple[tuple, str]]:
     """A header cell printing the levels together (`款 項 目`) over as many columns as it names gives each
     column its own level: in a staircase the rules between the narrow code columns start below the header.
     The columns name the levels in order, so a scan's reading that drops one of the spaced characters
-    (`款目`) still gives 款・項・目 to its three columns."""
+    (`款目`) still gives 款・項・目 to its three columns. `levels` `款項目節` (`header.staircase: "款項目節"`) also
+    reads a cell naming 節 over four columns, the fourth being 節 (武蔵野の水道事業の明細書)."""
     result = []
     for key, value in cells:
         inner = [(left, right) for left, right in zip(edges, edges[1:]) if key[0] - 1 <= left and right <= key[1] + 1]
-        if (value.startswith('款') and set(value) <= set('款項目') and len(set(value)) == len(value)
-                and len(inner) in (2, 3) and len(value) <= len(inner)):
-            result.extend(((left, right, key[2], key[3]), level) for (left, right), level in zip(inner, '款項目'))
+        four = levels == '款項目節' and '節' in value and len(inner) == 4
+        if (value.startswith('款') and set(value) <= set(levels) and len(set(value)) == len(value)
+                and (len(inner) in (2, 3) or four) and len(value) <= len(inner)):
+            result.extend(((left, right, key[2], key[3]), level) for (left, right), level in zip(inner, levels))
         else:
             result.append((key, value))
     return result
@@ -367,7 +372,8 @@ def page_bands(page: Page, spread: dict | None = None,
             cells[left, right, upper, lower].append(word)
         header_cells = sorted(((key, normalize(reading(ws))) for key, ws in cells.items()), key=lambda c: c[0][2])
         if staircase:
-            header_cells = level_cells(header_cells, edges)
+            levels = (header or {})['staircase']
+            header_cells = level_cells(header_cells, edges, levels if isinstance(levels, str) else '款項目')
         covering_of = lambda middle: [(key, text) for key, text in header_cells if key[0] - 1 <= middle <= key[1] + 1 and text]
         # Only a rule between two 款・項・目 columns splits a body word of digits (`１１` = 項1・目1);
         # amounts stay whole even when a rule crosses them.

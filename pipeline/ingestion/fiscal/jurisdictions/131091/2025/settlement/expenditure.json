@@ -210,7 +210,7 @@
     {
       "table_id": "care-expenditure",
       "conversion_id": "care-settlement",
-      "input_fingerprint": "c510c9711013cb80e8da987f818e29604b004df4775803711f5abdf011b3e659",
+      "input_fingerprint": "97b42ec53b38970edba9147351f6d84ba683bec1999ab6d415289e15e7fd4c38",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -223,16 +223,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131091/2025/settlement/expenditure/care-expenditure-nodes.parquet",
-          "sha256": "41915486f8896f93b84f0de6ddb1d82869dc96ca3e9c2b84b066b5028b87485c",
-          "bytes": 13198
+          "sha256": "5cf1a0e3dff8a34d2d90464af2052c85a108871a8bcfd8b82e0ef1a7c402e878",
+          "bytes": 13250
         },
         "row_count": 272
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131091/2025/settlement/expenditure/care-expenditure-amounts.parquet",
-          "sha256": "760aca5c0ff0593d282ec3195bcf78271f706783f7b0653409794956e07abe36",
-          "bytes": 16362
+          "sha256": "facca825748b5ef8225fbdcce548579ccf49311b60ea8e30c4187f5be82b04ba",
+          "bytes": 16430
         },
         "row_count": 977
       }
@@ -240,7 +240,7 @@
     {
       "table_id": "national-health-expenditure",
       "conversion_id": "national-health-settlement",
-      "input_fingerprint": "fce5fdaac42e3aa52ea52b20ddf1eaa4401d94df9bf2c06fa3f93eb0adaf9492",
+      "input_fingerprint": "c9206c809860fd3f6fd52c5baded011ba00b9c226a8a96d1ba0bfee6dba540d5",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'shape'}。",
@@ -253,16 +253,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131091/2025/settlement/expenditure/national-health-expenditure-nodes.parquet",
-          "sha256": "acdb2833a693d4da189ed3e3746a68cb7f2a77c89d23b36b688dfce119a73d88",
-          "bytes": 10328
+          "sha256": "85124bec44140a2c51f13ea728de7e5e398ec21925cfb752316507aecdbc55ea",
+          "bytes": 10313
         },
         "row_count": 180
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131091/2025/settlement/expenditure/national-health-expenditure-amounts.parquet",
-          "sha256": "4a8658a17375ed5ba68f20a94ed371540057825ce80cfe763d6ea8704db39590",
-          "bytes": 12102
+          "sha256": "64ecd768a1a238b92d9278f6a0d00f79ac64cda651250e0b0258f91455fd347e",
+          "bytes": 12168
         },
         "row_count": 653
       }
@@ -270,7 +270,7 @@
     {
       "table_id": "elderly-medical-expenditure",
       "conversion_id": "elderly-medical-settlement",
-      "input_fingerprint": "426cf7eadf462168172923da0658ec19725cdc08a6e505f731fa755ee79eb54a",
+      "input_fingerprint": "0c34a26419ec428c2aebde78230c3b45bbe50adbef08a4d31a6fc3548536d24b",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -283,16 +283,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131091/2025/settlement/expenditure/elderly-medical-expenditure-nodes.parquet",
-          "sha256": "fda015ac250774f0a39f60b82127f417d38632d900da769b578b6eb8d120d351",
-          "bytes": 7077
+          "sha256": "adf200c09c8533abd59784436aa8a7de6d48453496095411869ae071b236ddc0",
+          "bytes": 7146
         },
         "row_count": 92
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131091/2025/settlement/expenditure/elderly-medical-expenditure-amounts.parquet",
-          "sha256": "bfd7cfe1b0f436853959a97313fceafb9a0f1be7c77ac106d4de99b14463b80d",
-          "bytes": 7849
+          "sha256": "b897beaa7be73f52ba29ed90295d454548521ed78c67c1550f45ed5068695514",
+          "bytes": 7879
         },
         "row_count": 314
       }

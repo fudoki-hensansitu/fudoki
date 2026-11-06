@@ -445,7 +445,7 @@ def _header(page: Page, every: bool = False) -> list[tuple[list[float], float, f
     return result
 
 
-def agreed_headers(pages: list[Page], every: bool = False) -> list[Page]:
+def agreed_headers(pages: list[Page], every: bool = False, on_bottom: bool = False) -> list[Page]:
     """Give pages printed on one frame the header most of them read, column by column.
 
     Every page of a scanned statement repeats the same header, but OCR reads it differently
@@ -454,7 +454,9 @@ def agreed_headers(pages: list[Page], every: bool = False) -> list[Page]:
     have the same band widths share one reading: for each band, the text most pages read
     (ties to the longer), with the words of a page that read it, moved onto each page.
     The widest frame is agreed; `every` (`header.agree_all_frames`) agrees each frame of a
-    spread, matched by its place from the left.
+    spread, matched by its place from the left. `on_bottom` (`header.agree_on_bottom`) moves the words onto the
+    header's bottom rule instead of the frame's top: a frame that boxes the page's title above the header (the
+    first spread of each account, 江戸川) starts at the same top with its header lower down.
     """
     replaced = {i: list(p.words) for i, p in enumerate(pages)}
     framed = [_header(p, every) for p in pages]
@@ -481,12 +483,13 @@ def agreed_headers(pages: list[Page], every: bool = False) -> list[Page]:
                 best = max(counts, key=lambda text: (counts[text], len(text)))
                 chosen.append((band, next(i for i in members if readings[i] == best)))
             for index in members:
-                edges, top, _, words = headers[index]
+                edges, top, bottom, words = headers[index]
                 header_ids = {id(w) for w in words}
                 moved = []
                 for band, source in chosen:
-                    source_edges, source_top, _, source_words = headers[source]
-                    dx, dy = edges[band] - source_edges[band], top - source_top
+                    source_edges, source_top, source_bottom, source_words = headers[source]
+                    dx = edges[band] - source_edges[band]
+                    dy = bottom - source_bottom if on_bottom else top - source_top
                     moved += [Word(w.text, w.x0 + dx, w.y0 + dy, w.x1 + dx, w.y1 + dy) for w in source_words
                               if source_edges[band] < (w.x0 + w.x1) / 2 < source_edges[band + 1]]
                 replaced[index] = [w for w in replaced[index] if id(w) not in header_ids] + moved
@@ -583,9 +586,10 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
     """`rule_hook(PageRules) -> PageRules` completes the rules read from a rendered page before the words are cut at
     them; `keep_marks` keeps the bullet that starts a line in its first word (both for a text document's OCR pages, `mixed.py`)."""
     every = bool((header or {}).get('agree_all_frames'))
+    on_bottom = bool((header or {}).get('agree_on_bottom'))
 
     def agreed(found):
-        return agreed_headers(read_headers(found, header_readings), every)
+        return agreed_headers(read_headers(found, header_readings), every, on_bottom)
 
     @cache
     def detected(number):
