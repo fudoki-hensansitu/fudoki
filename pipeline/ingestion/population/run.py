@@ -23,8 +23,9 @@ from ingestion.paths import CACHE
 ORIGINS = Path(__file__).with_name('origins.json')
 OBJECTS = CACHE / 'objects'
 # 見出しの行（「人口」の下の段）。この並びでなければ様式が変わったので止める
-MAX_ROWS = 10000
 HEADER = ('男', '女', '計', '世帯数')
+# 読む行の上限（read を参照）
+MAX_ROWS = 10000
 
 
 def origins() -> list[dict]:
