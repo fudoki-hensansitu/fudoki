@@ -465,7 +465,9 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
                 <span className="inline-flex items-center gap-1.5" title={`住民基本台帳人口（${data.population.asOf.replace(/^(\d+)-0?(\d+)-0?(\d+)$/, '$1年$2月$3日')}時点）`}>
                   <UsersIcon className="size-4" aria-hidden="true" />
                   <span className="sr-only">人口 </span>
-                  {(data.population.people / 1e4).toFixed(1)}万人
+                  {data.population.people >= 1e4
+                    ? `${(data.population.people / 1e4).toFixed(1)}万人`
+                    : `${data.population.people.toLocaleString('ja-JP')}人`}
                 </span>
               ) : null}
               {data.officialUrl ? (
