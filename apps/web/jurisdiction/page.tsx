@@ -94,7 +94,7 @@ const DOMAIN_ICON: Record<string, typeof BabyIcon> = {
 
 function Domains({ year }: { year: ProfileYear }) {
   return (
-    <Section id="domains" title="新しく始めたことは？" lead="その年度の予算で新しく始めたり広げたりしたことと、自治体が自分で付けた評価です。" link={[{ href: year.budgetSource, label: '当初予算' }, { href: year.evaluationSource, label: '事業評価' }]}>
+    <Section id="domains" title="暮らしで何が変わった？" lead="その年度に新しく始まったり広がったりしたことです。うまくいったかは、自治体が自分で付けた評価を並べています。" link={[{ href: year.budgetSource, label: '当初予算' }, { href: year.evaluationSource, label: '事業評価' }]}>
       {groupByFrame(year.projects).map(({ frame: d, items }) => (
         <div key={d.id} id={`d-${d.id}`} className="flex scroll-mt-32 lg:scroll-mt-20 flex-col gap-1 [&+&]:mt-12">
           <h3 className="mb-3.5 flex items-center gap-2.5 text-[19px] leading-snug sm:text-[22px]">
@@ -372,15 +372,15 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
     history.replaceState(null, '', `#y${y}`)
   }
 
-  // 決算の無い年度（今年度など）は空の節から始めないよう、新しく始めたことを先に出す
-  const settled = data.years.some((y) => y.year === year)
   const money: TocItem[] = [
     { href: '#budget', label: 'お金の使い道' },
     { href: '#projects', label: '大きな支出' },
   ]
-  const fresh: TocItem[] = py ? [{ href: '#domains', label: '新しく始めたこと' }, ...groupByFrame(py.projects).map(({ frame: d }) => ({ href: `#d-${d.id}`, label: d.name, sub: true }))] : []
+  // 区政を知らない人には金額より暮らしの具体例が先。変わったことから入り、お金の内訳へ進む
+  const fresh: TocItem[] = py ? [{ href: '#domains', label: '暮らしで変わったこと' }, ...groupByFrame(py.projects).map(({ frame: d }) => ({ href: `#d-${d.id}`, label: d.name, sub: true }))] : []
   const toc: TocItem[] = [
-    ...(settled ? [...money, ...fresh] : [...fresh, ...money]),
+    ...fresh,
+    ...money,
     ...(py?.scrap ? [{ href: '#scrap', label: 'やめたこと' }] : []),
   ]
 
@@ -541,10 +541,9 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
             ))}
           </nav>
           <main className="flex min-w-0 flex-col gap-14">
-            {!settled && py ? <Domains year={py} /> : null}
+            {py ? <Domains year={py} /> : null}
             <Budget data={data} year={year} />
             <Projects data={data} year={year} />
-            {settled && py ? <Domains year={py} /> : null}
             {py?.scrap ? <ScrapSection scrap={py.scrap} /> : null}
           </main>
         </div>
