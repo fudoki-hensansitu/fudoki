@@ -8,7 +8,8 @@ export interface Amount {
   label?: string
 }
 
-export type ProjectStatus = 'short' | 'met' | 'mixed' | 'none'
+/** 区の評価の指標と目標の比べ。unmeasured は評価はあるが、指標がその事業の効果を測っていないもの。none は評価前 */
+export type ProjectStatus = 'short' | 'met' | 'mixed' | 'unmeasured' | 'none'
 
 export interface PolicyProject {
   name: string
@@ -16,7 +17,7 @@ export interface PolicyProject {
   cofog: string
   what: string
   amounts: Amount[]
-  /** 区の事務事業評価の結果。評価前の年度は持たない */
+  /** 区の事務事業評価の結果。事業の始まった翌年度の評価に載る。note の（）は評価シートの小事業名 */
   status?: ProjectStatus
   evaluation?: { grade?: string; note: string }
 }
@@ -95,7 +96,12 @@ const SHINAGAWA: Profile = {
               "yen": 3177795000,
               "label": "給食運営費全体"
             }
-          ]
+          ],
+          "status": "unmeasured",
+          "evaluation": {
+            "grade": "C やり方を見直す",
+            "note": "（給食運営費）指標は調理業務の評価や紙パックの回収で、無償化の効果は測っていない"
+          }
         },
         {
           "name": "補助教材費の保護者負担をなくす",
@@ -106,7 +112,12 @@ const SHINAGAWA: Profile = {
               "yen": 1011667000,
               "label": "教材教具費全体"
             }
-          ]
+          ],
+          "status": "met",
+          "evaluation": {
+            "grade": "B 今のまま続ける",
+            "note": "（教材教具費）公費で負担した児童生徒 23,395人／目標 23,115人"
+          }
         },
         {
           "name": "メタバースを使った不登校支援",
@@ -117,7 +128,12 @@ const SHINAGAWA: Profile = {
               "yen": 161054000,
               "label": "不登校対策事業費全体"
             }
-          ]
+          ],
+          "status": "short",
+          "evaluation": {
+            "grade": "B 今のまま続ける",
+            "note": "（不登校対策事業費）メタバースの登録 76人。どこの支援にもつながっていない子の割合 36%／目標 25%、生徒の不登校出現率は都を1として 1.04／目標 1.00"
+          }
         },
         {
           "name": "介護職員の居住支援手当",
@@ -128,7 +144,12 @@ const SHINAGAWA: Profile = {
               "yen": 611282000,
               "label": "福祉人材確保・定着事業全体"
             }
-          ]
+          ],
+          "status": "met",
+          "evaluation": {
+            "grade": "C やり方を見直す",
+            "note": "（福祉人材確保・定着事業）居住支援手当 1,602件／目標 1,538件"
+          }
         },
         {
           "name": "孤独・孤立対策",
@@ -139,7 +160,12 @@ const SHINAGAWA: Profile = {
               "yen": 188823000,
               "label": "地域福祉推進費全体"
             }
-          ]
+          ],
+          "status": "met",
+          "evaluation": {
+            "grade": "A 広げる",
+            "note": "（地域福祉推進費）孤独・孤立対策の協議会で支援につながった件数 1件／目標 1件"
+          }
         },
         {
           "name": "生殖補助医療費の助成",
@@ -150,7 +176,12 @@ const SHINAGAWA: Profile = {
               "yen": 58198000,
               "label": "不妊治療等支援事業全体"
             }
-          ]
+          ],
+          "status": "short",
+          "evaluation": {
+            "grade": "B 今のまま続ける",
+            "note": "（不妊治療等支援事業）生殖補助医療の助成 479件／目標 1,000件、不妊・不育の相談 13件／目標 80件"
+          }
         },
         {
           "name": "携帯トイレの全戸配布と、中学生の防災プロジェクト",
@@ -161,7 +192,12 @@ const SHINAGAWA: Profile = {
               "yen": 695891000,
               "label": "防災普及教育費全体"
             }
-          ]
+          ],
+          "status": "unmeasured",
+          "evaluation": {
+            "grade": "C 対象・規模を見直す",
+            "note": "（防災普及教育費）指標は防災体験館・防災学校の利用で、携帯トイレの配布の効果は測っていない。中学生の防災プロジェクトの目標は R7 から"
+          }
         },
         {
           "name": "避暑シェルターの運用補助",
@@ -172,7 +208,12 @@ const SHINAGAWA: Profile = {
               "yen": 18707000,
               "label": "危機管理経費全体"
             }
-          ]
+          ],
+          "status": "unmeasured",
+          "evaluation": {
+            "grade": "C 一部をやめる",
+            "note": "（危機管理経費）指標は消毒液・マスクの備蓄で、避暑シェルターの利用は測っていない"
+          }
         },
         {
           "name": "キャッシュレス決済のポイント還元",
@@ -183,7 +224,12 @@ const SHINAGAWA: Profile = {
               "yen": 829953000,
               "label": "共通商品券普及促進事業全体"
             }
-          ]
+          ],
+          "status": "unmeasured",
+          "evaluation": {
+            "grade": "B 今のまま続ける",
+            "note": "（共通商品券普及促進事業）指標は紙の商品券の申込・販売で、ポイント還元の効果は測っていない"
+          }
         },
         {
           "name": "省エネ家電の設置助成",
@@ -194,7 +240,12 @@ const SHINAGAWA: Profile = {
               "yen": 34069000,
               "label": "省エネルギー対策事業全体"
             }
-          ]
+          ],
+          "status": "short",
+          "evaluation": {
+            "grade": "A 広げる",
+            "note": "（省エネルギー対策事業）省エネ家電の助成の申請 720件／目標 750件"
+          }
         },
         {
           "name": "デマンド交通とグリーンスローモビリティの実証実験",
@@ -205,7 +256,12 @@ const SHINAGAWA: Profile = {
               "yen": 154495000,
               "label": "地域交通検討経費全体"
             }
-          ]
+          ],
+          "status": "unmeasured",
+          "evaluation": {
+            "grade": "B 今のまま続ける",
+            "note": "（地域交通検討経費）指標はコミュニティバスの利用者数・満足度で、実証実験の効果は測っていない"
+          }
         }
       ],
       "scrap": {
@@ -251,7 +307,7 @@ const SHINAGAWA: Profile = {
         ]
       },
       "budgetSource": "https://www.city.shinagawa.tokyo.jp/kusei/zaisei/1005653/1005656.html",
-      "evaluationSource": "https://www.city.shinagawa.tokyo.jp/kusei/shisakukeikaku/1005171/1005180/1005181.html"
+      "evaluationSource": "https://www.city.shinagawa.tokyo.jp/kusei/shisakukeikaku/1005171/1005172/1005173.html"
     },
     "2025": {
       "documents": {
@@ -282,7 +338,11 @@ const SHINAGAWA: Profile = {
               "yen": 1102057000,
               "label": "保育料助成全体"
             }
-          ]
+          ],
+          "status": "none",
+          "evaluation": {
+            "note": "新規事業。R7 の実績の評価（R8年度の事務事業評価）はまだ公表されていない"
+          }
         },
         {
           "name": "朝の子どもの居場所づくり",
@@ -293,7 +353,11 @@ const SHINAGAWA: Profile = {
               "yen": 1708686000,
               "label": "子どもの居場所運営費全体"
             }
-          ]
+          ],
+          "status": "none",
+          "evaluation": {
+            "note": "新規事業。R7 の実績の評価（R8年度の事務事業評価）はまだ公表されていない"
+          }
         },
         {
           "name": "不登校の子どもへの昼食と、フリースクールの利用料助成",
@@ -304,7 +368,11 @@ const SHINAGAWA: Profile = {
               "yen": 168600000,
               "label": "不登校対策事業全体"
             }
-          ]
+          ],
+          "status": "none",
+          "evaluation": {
+            "note": "新規事業。R7 の実績の評価（R8年度の事務事業評価）はまだ公表されていない"
+          }
         },
         {
           "name": "障害児の通所支援の利用者負担を無償に",
@@ -315,7 +383,11 @@ const SHINAGAWA: Profile = {
               "yen": 1819751000,
               "label": "障害児支援給付全体"
             }
-          ]
+          ],
+          "status": "none",
+          "evaluation": {
+            "note": "新規事業。R7 の実績の評価（R8年度の事務事業評価）はまだ公表されていない"
+          }
         },
         {
           "name": "中等度難聴の人の補聴器と、介護タクシーの助成",
@@ -326,7 +398,11 @@ const SHINAGAWA: Profile = {
               "yen": 214854000,
               "label": "社会参加支援事業全体"
             }
-          ]
+          ],
+          "status": "none",
+          "evaluation": {
+            "note": "新規事業。R7 の実績の評価（R8年度の事務事業評価）はまだ公表されていない"
+          }
         },
         {
           "name": "介護職員の宿舎の借り上げ支援",
@@ -337,7 +413,11 @@ const SHINAGAWA: Profile = {
               "yen": 572651000,
               "label": "福祉人材確保・定着事業全体"
             }
-          ]
+          ],
+          "status": "none",
+          "evaluation": {
+            "note": "新規事業。R7 の実績の評価（R8年度の事務事業評価）はまだ公表されていない"
+          }
         },
         {
           "name": "住まいの相談窓口と、エアコンの設置・買い替え助成",
@@ -348,7 +428,11 @@ const SHINAGAWA: Profile = {
               "yen": 42730000,
               "label": "居住支援事業全体"
             }
-          ]
+          ],
+          "status": "none",
+          "evaluation": {
+            "note": "新規事業。R7 の実績の評価（R8年度の事務事業評価）はまだ公表されていない"
+          }
         },
         {
           "name": "マンション防災と、事業者向けの防災啓発",
@@ -359,7 +443,11 @@ const SHINAGAWA: Profile = {
               "yen": 150648000,
               "label": "防災普及教育費全体"
             }
-          ]
+          ],
+          "status": "none",
+          "evaluation": {
+            "note": "新規事業。R7 の実績の評価（R8年度の事務事業評価）はまだ公表されていない"
+          }
         },
         {
           "name": "建物の省エネ化の助成と、区民参加の CO2 クレジット",
@@ -370,7 +458,11 @@ const SHINAGAWA: Profile = {
               "yen": 100620000,
               "label": "省エネルギー対策事業全体"
             }
-          ]
+          ],
+          "status": "none",
+          "evaluation": {
+            "note": "新規事業。R7 の実績の評価（R8年度の事務事業評価）はまだ公表されていない"
+          }
         },
         {
           "name": "AI オンデマンド交通とグリーンスローモビリティの実証運行",
@@ -381,7 +473,11 @@ const SHINAGAWA: Profile = {
               "yen": 154754000,
               "label": "地域交通検討経費全体"
             }
-          ]
+          ],
+          "status": "none",
+          "evaluation": {
+            "note": "新規事業。R7 の実績の評価（R8年度の事務事業評価）はまだ公表されていない"
+          }
         }
       ],
       "scrap": {
@@ -428,7 +524,7 @@ const SHINAGAWA: Profile = {
         ]
       },
       "budgetSource": "https://www.city.shinagawa.tokyo.jp/kusei/zaisei/1005653/1005655.html",
-      "evaluationSource": "https://www.city.shinagawa.tokyo.jp/kusei/shisakukeikaku/1005171/1005176/1005177.html"
+      "evaluationSource": "https://www.city.shinagawa.tokyo.jp/kusei/shisakukeikaku/1005171/1008977/index.html"
     },
     "2026": {
       "documents": {
