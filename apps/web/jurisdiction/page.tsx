@@ -116,10 +116,10 @@ function Overview({ data }: { data: PageData }) {
     <Section id="about" title={`${kind}は何をしている？`}>
       {latest ? (
         <p className="text-[15px]">
-          {reiwa(latest.year)}に使ったお金は<b className="mx-1 text-xl font-normal tabular-nums text-[var(--kincha-ink)]">{formatYen(latest.yen)}</b>
+          {reiwa(latest.year)}に使ったお金は<b className="mx-1 text-xl font-normal tabular-nums text-primary">{formatYen(latest.yen)}</b>
           {people ? (
             <>
-              、住民1人あたり<b className="mx-1 text-xl font-normal tabular-nums text-[var(--kincha-ink)]">約{Math.round(latest.yen / people / 1e4).toLocaleString('ja-JP')}万円</b>
+              、住民1人あたり<b className="mx-1 text-xl font-normal tabular-nums text-primary">約{Math.round(latest.yen / people / 1e4).toLocaleString('ja-JP')}万円</b>
             </>
           ) : null}
           です。
@@ -390,7 +390,7 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
       <div className="flex max-w-[560px] flex-col gap-2">
         <div className="flex items-baseline justify-between gap-3">
           <span>やめたり減らしたりして浮かせたお金</span>
-          <b className="text-[28px] font-normal tabular-nums text-[var(--kincha-ink)]">
+          <b className="text-[28px] font-normal tabular-nums text-primary">
             {formatYen(scrap.raisedYen)}
             {target ? <small className="ml-1 text-sm text-muted-foreground">／ 目標 {formatYen(target)}</small> : null}
           </b>
