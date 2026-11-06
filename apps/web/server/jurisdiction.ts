@@ -213,10 +213,12 @@ export async function loadFlow(env: Env, code: string, year: number, depth: Flow
 }
 
 const sumYen = (lines: { yen: number; amountMissing?: true }[]) => lines.reduce((s, l) => s + (l.amountMissing ? 0 : l.yen), 0)
+/** 金額の印字が無い目を含む和は、印字された分だけの和であることを amountMissing で画面に伝える（一覧の総額と同じ扱い） */
+const partial = (lines: { amountMissing?: true }[]) => (lines.some((l) => l.amountMissing) ? { amountMissing: true as const } : {})
 
 /**
  * 分野（jurisdiction/domains.ts の COFOG をまとめた枠）→ 款 → 目 の流れ。目に付いた COFOG のコードで枠を決め、
- * 枠の金額は目の和（api の sum_rules: COFOG は目を前方一致で集めて足す。分類できない目・対象外の目は「その他」に入れ、全枠の和が総額になる）。
+ * 枠の金額は目の和（api の sum_rules: COFOG は目を前方一致で集めて足す。分類できない目・対象外の目は「その他」に入れ、全枠の和が総額になる。印字の無い目を含む枠・款は amountMissing を付ける）。
  * 款は枠の中に入った目だけの和で、出典の款の金額ではない。並びは金額の順で「その他」を最後に置く。depth が kou なら目を返さない（全体図だけに使う）
  */
 export async function loadCofogFlow(env: Env, code: string, year: number, depth: FlowDepth = 'kou'): Promise<Drill[]> {
@@ -238,9 +240,9 @@ export async function loadCofogFlow(env: Env, code: string, year: number, depth:
     if (!byKan) return []
     const kou = [...byKan].map(([kanName, list]) => {
       const mokuLines = list.sort(byAmount).map((m) => ({ ...line(m), setsu: setsuByMoku.get(m.node_id) ?? [] }))
-      return { id: `${frame.id}-${kanByName.get(kanName)?.node_id ?? kanName}`, name: kanName, yen: sumYen(mokuLines), page: null, moku: depth === 'kou' ? [] : mokuLines }
+      return { id: `${frame.id}-${kanByName.get(kanName)?.node_id ?? kanName}`, name: kanName, yen: sumYen(mokuLines), ...partial(mokuLines), page: null, moku: depth === 'kou' ? [] : mokuLines }
     }).sort((a, b) => b.yen - a.yen)
-    return [{ kan: { id: frame.id, name: frame.name, yen: sumYen(kou), page: null }, kou }]
+    return [{ kan: { id: frame.id, name: frame.name, yen: kou.reduce((sum, k) => sum + k.yen, 0), ...partial(kou), page: null }, kou }]
   }).sort((a, b) => Number(a.kan.id === OTHER_FRAME.id) - Number(b.kan.id === OTHER_FRAME.id) || b.kan.yen - a.kan.yen)
 }
 
