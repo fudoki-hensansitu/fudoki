@@ -3,7 +3,7 @@
 // 歳出の決算は API の値。新しく始めたこと・やめたこと（事業の入れ替え）は jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
 import { Link } from '@void/react'
 import * as React from 'react'
-import { ArrowLeftIcon, ArrowRightIcon, ArrowSquareOutIcon, CaretRightIcon, MapPinAreaIcon, BankIcon, BasketballIcon, CaretDownIcon, CheckCircleIcon, CircleHalfIcon, ClipboardTextIcon, ClockIcon, CoinsIcon, ChatCircleIcon, FirstAidKitIcon, GlobeIcon, HandHeartIcon, HouseLineIcon, LeafIcon, MapPinIcon, MinusCircleIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, StudentIcon, DotsThreeCircleIcon, UsersIcon, WarningCircleIcon, XIcon } from '@phosphor-icons/react'
+import { ArrowLeftIcon, ArrowRightIcon, ArrowSquareOutIcon, CaretRightIcon, MapPinAreaIcon, MapTrifoldIcon, SquaresFourIcon, BankIcon, BasketballIcon, CaretDownIcon, CheckCircleIcon, CircleHalfIcon, ClipboardTextIcon, ClockIcon, CoinsIcon, ChatCircleIcon, FirstAidKitIcon, GlobeIcon, HandHeartIcon, HouseLineIcon, LeafIcon, MapPinIcon, MinusCircleIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, StudentIcon, DotsThreeCircleIcon, UsersIcon, WarningCircleIcon, XIcon } from '@phosphor-icons/react'
 import { StartForm } from '../chat/start-form'
 import type { StoredSession } from '../chat/store'
 import { Hint } from '@/components/hint'
@@ -167,40 +167,30 @@ function Domains({ year }: { year: ProfileYear }) {
   )
 }
 
-/** 最後の節。都道府県へ戻るリンク、近くの自治体のカード（区章があれば区章）、全国の一覧へのリンク */
+/** 最後の節の行き先のカード。icon の箱（紋章があれば紋章）と名前 */
+function PlaceCard({ href, name, logo, icon: Icon }: { href: string; name: string; logo?: string; icon: typeof MapPinAreaIcon }) {
+  return (
+    <li>
+      <Link href={href} className="group flex items-center gap-3.5 rounded-2xl border bg-background p-3.5 text-foreground no-underline transition-colors hover:border-primary/40 hover:bg-card">
+        <span className="grid size-12 shrink-0 place-items-center rounded-xl border bg-white p-1.5">
+          {logo ? <img src={logo} alt="" className="h-auto w-full" /> : <Icon aria-hidden="true" className="size-6 text-primary" />}
+        </span>
+        <b className="min-w-0 flex-1 truncate text-[16px] font-normal">{name}</b>
+        <CaretRightIcon aria-hidden="true" className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+      </Link>
+    </li>
+  )
+}
+
+/** 最後の節。都道府県・近くの自治体（紋章があれば紋章）・全国の一覧を同じカードで並べる */
 function Elsewhere({ data }: { data: PageData }) {
   return (
     <Section id="elsewhere" title="ほかの自治体も見る">
-      {data.prefecturePath !== INDEX_PATH ? (
-        <Link href={data.prefecturePath} className="inline-flex w-fit items-center gap-1.5 text-[15px] text-foreground no-underline hover:underline">
-          <ArrowLeftIcon aria-hidden="true" className="size-4" />
-          {data.prefecture}
-        </Link>
-      ) : null}
-      {data.neighbors.length ? (
-        <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {data.neighbors.map((n) => {
-            return (
-              <li key={n.path}>
-                <Link href={n.path} className="group flex items-center gap-3.5 rounded-2xl border bg-background p-3.5 text-foreground no-underline transition-colors hover:border-primary/40 hover:bg-card">
-                  <span className="grid size-12 shrink-0 place-items-center rounded-xl border bg-white p-1.5">
-                    {n.logo ? <img src={n.logo} alt="" className="h-auto w-full" /> : <MapPinAreaIcon aria-hidden="true" className="size-6 text-primary" />}
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <b className="block truncate text-[16px] font-normal">{n.name}</b>
-                    <span className="text-xs text-muted-foreground">{data.name}の近く</span>
-                  </span>
-                  <CaretRightIcon aria-hidden="true" className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
-                </Link>
-              </li>
-            )
-          })}
-        </ul>
-      ) : null}
-      <Link href={INDEX_PATH} className="inline-flex w-fit items-center gap-1.5 text-[14px] text-foreground no-underline hover:underline">
-        すべての自治体
-        <ArrowRightIcon aria-hidden="true" className="size-4" />
-      </Link>
+      <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {data.prefecturePath !== INDEX_PATH ? <PlaceCard href={data.prefecturePath} name={data.prefecture} icon={MapTrifoldIcon} /> : null}
+        {data.neighbors.map((n) => <PlaceCard key={n.path} href={n.path} name={n.name} logo={n.logo} icon={MapPinAreaIcon} />)}
+        <PlaceCard href={INDEX_PATH} name="すべての自治体" icon={SquaresFourIcon} />
+      </ul>
     </Section>
   )
 }
