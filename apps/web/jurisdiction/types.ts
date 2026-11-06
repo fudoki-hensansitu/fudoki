@@ -87,7 +87,7 @@ export interface PageData {
   /** 都道府県自体の頁（/tokyo）。header の都道府県名から移る */
   prefecturePath: string
   /** 同じ都道府県で収録のある近くの自治体（自身と都道府県自体を除き、近い順に数件）。最後の節から回遊させる */
-  neighbors: { code: string; name: string; path: string; /** 紋章の URL（profiles.ts に紋章がある自治体だけ） */ logo?: string }[]
+  neighbors: { code: string; name: string; path: string; /** 紋章の URL（emblems.ts に紋章がある自治体だけ） */ logo?: string }[]
   officialUrl: string | null
   population: Population | null
   originTitle: string | null
