@@ -43,9 +43,12 @@ function appendData(previous: ViewData, next: ViewData): ViewData {
   if ('nodes' in previous && 'nodes' in next)
     return { ...next, nodes: [...previous.nodes, ...next.nodes], origins }
   if ('node' in previous && 'node' in next) {
+    // 科目の子は get_expenditure_subject の全ページに毎回載るので、id で重ねない
     const children = { ...previous.children }
-    for (const [axis, rows] of Object.entries(next.children))
-      children[axis] = [...(children[axis] ?? []), ...rows]
+    for (const [axis, rows] of Object.entries(next.children)) {
+      const seen = new Set((children[axis] ?? []).map((r) => r.id))
+      children[axis] = [...(children[axis] ?? []), ...rows.filter((r) => !seen.has(r.id))]
+    }
     return { ...next, children, origins }
   }
   throw new Error('追加ページの形式が一致しません')
