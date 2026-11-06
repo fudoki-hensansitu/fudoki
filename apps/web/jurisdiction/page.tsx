@@ -6,6 +6,7 @@ import * as React from 'react'
 import { ArrowUpRightIcon, CaretDownIcon, ChatCircleIcon, GlobeIcon, MapPinIcon, NotePencilIcon, QuotesIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
 import { StartForm } from '../chat/start-form'
 import type { StoredSession } from '../chat/store'
+import { Hint } from '@/components/hint'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Flow } from './flow'
 import { assetPath, type Domain, type PolicyProject, type Profile, type ProfileYear, type ProjectStatus, type Scrap } from './profiles'
@@ -327,10 +328,12 @@ function YearPicker({ years, current, onChange }: { years: number[]; current: nu
   return (
     <div role="group" aria-label="年度" className="flex gap-1">
       {recent.map((y) => (
-        <button key={y} type="button" aria-pressed={y === current} onClick={() => onChange(y)} title={reiwa(y)} className={pill(y === current)}>
-          {yearName(y)}
-          {yearName(y) !== reiwa(y) ? <span className="hidden text-muted-foreground lg:inline">（{reiwa(y).replace(/度$/, '')}）</span> : null}
-        </button>
+        <Hint key={y} label={reiwa(y)}>
+          <button type="button" aria-pressed={y === current} onClick={() => onChange(y)} className={pill(y === current)}>
+            {yearName(y)}
+            {yearName(y) !== reiwa(y) ? <span className="hidden text-muted-foreground lg:inline">（{reiwa(y).replace(/度$/, '')}）</span> : null}
+          </button>
+        </Hint>
       ))}
       {older.length > 0 ? (
         <DropdownMenu>
@@ -463,11 +466,13 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
                 <Link href={INDEX_PATH} className="text-primary no-underline">{data.prefecture}</Link>
               </span>
               {data.population ? (
-                <span className="inline-flex items-center gap-1.5" title={`住民基本台帳人口（${formatAsOf(data.population.asOf)}時点）`}>
-                  <UsersIcon className="size-4" aria-hidden="true" />
-                  <span className="sr-only">人口 </span>
-                  {formatPeople(data.population.people)}
-                </span>
+                <Hint label={`住民基本台帳人口（${formatAsOf(data.population.asOf)}時点）`}>
+                  <span className="inline-flex items-center gap-1.5">
+                    <UsersIcon className="size-4" aria-hidden="true" />
+                    <span className="sr-only">人口 </span>
+                    {formatPeople(data.population.people)}
+                  </span>
+                </Hint>
               ) : null}
               {data.officialUrl ? (
                 <span className="inline-flex items-center gap-1.5">
@@ -719,9 +724,9 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
       <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-2" onPointerDown={(e) => e.stopPropagation()}>
         <span className="text-sm text-muted-foreground">{name}について</span>
         <div className="flex items-center gap-1 text-muted-foreground">
-          <Link href={`/s/${chat.id}`} aria-label="会話を別の頁で開く" title="会話を別の頁で開く" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><ArrowUpRightIcon className="size-4" /></Link>
-          <button type="button" onClick={restart} aria-label="新しい会話" title="新しい会話" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><NotePencilIcon className="size-4" /></button>
-          <button type="button" onClick={() => setDrawer(false)} aria-label="閉じる" title="閉じる（Esc）" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><XIcon className="size-4" /></button>
+          <Hint label="会話を別の頁で開く"><Link href={`/s/${chat.id}`} aria-label="会話を別の頁で開く" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><ArrowUpRightIcon className="size-4" /></Link></Hint>
+          <Hint label="新しい会話"><button type="button" onClick={restart} aria-label="新しい会話" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><NotePencilIcon className="size-4" /></button></Hint>
+          <Hint label="閉じる（Esc）"><button type="button" onClick={() => setDrawer(false)} aria-label="閉じる" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><XIcon className="size-4" /></button></Hint>
         </div>
       </div>
     </div>

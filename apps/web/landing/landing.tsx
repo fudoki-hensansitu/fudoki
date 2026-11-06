@@ -4,6 +4,7 @@
 import * as React from 'react'
 import { flushSync } from 'react-dom'
 import { Link } from '@void/react'
+import { Hint } from '@/components/hint'
 import { StartForm } from '../chat/start-form'
 import { HOME } from '../home-data'
 import { LOGO_G, LOGO_WIDTH } from '../logo'
@@ -334,9 +335,9 @@ function Steps() {
                 {nakano.kanList.map((k) => (
                   <div className="r" key={k.name}>
                     <span>{k.name}</span>
-                    <span className="num" title={yen(k.amount)}>
-                      {oku(k.amount)}
-                    </span>
+                    <Hint label={yen(k.amount)}>
+                      <span className="num">{oku(k.amount)}</span>
+                    </Hint>
                   </div>
                 ))}
               </div>
@@ -358,9 +359,9 @@ function Steps() {
                   <div className="b" key={r.jurisdiction}>
                     <span>{r.jurisdiction}</span>
                     <i style={{ width: `${((r.amount / libraryMax) * 100).toFixed(1)}%` }} aria-hidden="true" />
-                    <span className="num" title={yen(r.amount)}>
-                      {oku(r.amount)}
-                    </span>
+                    <Hint label={yen(r.amount)}>
+                      <span className="num">{oku(r.amount)}</span>
+                    </Hint>
                   </div>
                 ))}
               </div>
@@ -402,7 +403,7 @@ function Steps() {
 }
 
 const SETUP_PROMPT = [
-  `風土記（町の家計簿）の MCP サーバーを、私が使っているこの AI クライアントに追加したいです。`,
+  `風土記（自治体のデータ）の MCP サーバーを、私が使っているこの AI クライアントに追加したいです。`,
   `- 種類: リモート MCP サーバー（Streamable HTTP）`,
   `- URL: ${MCP}`,
   `- 認証: 不要`,
@@ -656,7 +657,7 @@ export function Landing({ sitekey }: { sitekey: string }) {
       <SetupDialog dialog={setup} />
       <main>
         <header className="hero wrap">
-          <p className="eyebrow">風土記 — 町の家計簿</p>
+          <p className="eyebrow">風土記 — まちを、ひらく</p>
           <Sweep>あなたの街は、何にいくら使ったか</Sweep>
           <p className="sub">自治体の予算書と決算書を、事業ごとの表にしました。AI に聞けば、他の街や他の年と同じ物差しで比べ、出典の頁まで返します。</p>
           <AskDock sitekey={sitekey} />
@@ -712,7 +713,7 @@ export function Landing({ sitekey }: { sitekey: string }) {
             <Link href="/" aria-label="風土記 ホーム">
               <svg className="logo" xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${LOGO_WIDTH} 40`} role="img" aria-label="風土記" dangerouslySetInnerHTML={{ __html: `<title>風土記</title>${LOGO_G}` }} />
             </Link>
-            <p>町の家計簿。自治体の支出を、事業ごとに。</p>
+            <p>まちを、ひらく。自治体のことを、誰でも見られて、書き足せる形に。</p>
           </div>
           <div>
             <h2>使う</h2>

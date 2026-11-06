@@ -5,6 +5,7 @@ import { flushSync } from 'react-dom'
 import { Link, useRouter } from '@void/react'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
 import { buttonVariants } from '@/components/ui/button'
+import { Hint } from '@/components/hint'
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList, ComboboxTrigger } from '@/components/ui/combobox'
 import { InputGroupAddon } from '@/components/ui/input-group'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
@@ -52,7 +53,13 @@ const columns: ColumnDef<IndexEntry>[] = [
     sortDescFirst: true,
     meta: { numeric: true },
     cell: ({ row: { original: e } }) =>
-      e.population ? <span title={`住民基本台帳人口（${formatAsOf(e.population.asOf)}時点）`}>{formatPeople(e.population.people)}</span> : <span className="text-muted-foreground">—</span>,
+      e.population ? (
+        <Hint label={`住民基本台帳人口（${formatAsOf(e.population.asOf)}時点）`}>
+          <span className="relative z-10">{formatPeople(e.population.people)}</span>
+        </Hint>
+      ) : (
+        <span className="text-muted-foreground">—</span>
+      ),
   },
   {
     id: 'perCapita',
@@ -71,7 +78,9 @@ const columns: ColumnDef<IndexEntry>[] = [
     cell: ({ row: { original: e } }) => (
       <span>
         {formatYen(e.yen)}
-        <small className="ml-2 text-[11px] text-muted-foreground" title={reiwa(e.year)}>{shortYear(e.year)}</small>
+        <Hint label={reiwa(e.year)}>
+          <small className="relative z-10 ml-2 text-[11px] text-muted-foreground">{shortYear(e.year)}</small>
+        </Hint>
       </span>
     ),
   },
@@ -98,15 +107,17 @@ function MunicipalityTile({ code, name, e, max, style }: TileProps) {
   const label = <span className="line-clamp-2 break-all px-0.5 text-center text-[10px] leading-tight sm:text-[11px]">{tileName(name)}</span>
   if (!e)
     return (
-      <div key={code} style={style} title={`${name}（未収録）`} className="flex aspect-square items-center justify-center rounded-md bg-muted text-muted-foreground/70">
-        {label}
-      </div>
+      <Hint key={code} label={`${name}（未収録）`}>
+        <div style={style} className="flex aspect-square items-center justify-center rounded-md bg-muted text-muted-foreground/70">
+          {label}
+        </div>
+      </Hint>
     )
   return (
+    <Hint label={name}>
     <Link
       href={e.path}
       aria-label={`${name} ${formatYen(e.yen)}`}
-      title={name}
       style={{ ...style, background: shade(e.yen, max) }}
       className={cn(
         'flex aspect-square items-center justify-center rounded-md transition hover:brightness-110 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none',
@@ -115,6 +126,7 @@ function MunicipalityTile({ code, name, e, max, style }: TileProps) {
     >
       {label}
     </Link>
+    </Hint>
   )
 }
 
