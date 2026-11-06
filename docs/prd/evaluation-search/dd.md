@@ -45,7 +45,7 @@
 
 - 出典の選定: `pipeline/source_selection/<自治体>.json` の `evaluation_selections` に、評価資料を URL と sha256 で固定済み（当初は北区・中野区。拡大の分は[手順7](#実装の順序と依存)）。型は `schema.ts` の `evaluationSelectionSchema` で、`archive` は null だけを受ける。target は評価する実績の決算（例: 令和8年度事務事業評価なら2025年度の決算）で、決算の選定（`selections`）とは独立している（同じ年度の決算が未選定でも評価資料を選べる。2026-10-22 のユーザーの判断）。
 - 出典の保存: `archive.ts` は `selections`（金額の出典）だけを扱い、`fiscal/source-selection/<自治体>/<年度>/<資料区分>[-n].<形式>` に保存する。置き換えでない保存では、`<資料区分>-` で始まる key を一覧し、残さない key を削除する。
-- API: `apps/api` は ADR 0022 の構成で、`operations.ts` に定義した操作を REST と MCP の両方に登録する。D1 の `control` 表の `serving` が kill switch で、WAF が IP あたり20回/10秒に制限する。`columns.json` は pipeline の script が書く生成物で、公開 app は `pipeline/` を import しない。出典 PDF の中継（`/v1/origins/{origin_id}/pdf`）は D1 の `origin`（marts の出典）だけを対象にし、自治体の URL から取得する。
+- API: `apps/api` は ADR 0022 の構成で、`operations.ts` に定義した操作を REST と MCP の両方に登録する。D1 の `control` 表の `serving` が kill switch で、WAF が IP あたり20回/10秒に制限する。`columns.json` は pipeline の script が書く生成物で、公開 app は `pipeline/` を import しない。出典 PDF の中継（`/v1/fiscal/origins/{origin_id}/pdf`）は D1 の `fiscal_origin`（marts の出典）だけを対象にし、自治体の URL から取得する。
 - Cloudflare AI Search: 登録する1つのファイルを item、item から区切った本文を chunk と呼ぶ。Worker からは binding で検索と item の操作（登録・一覧・状態・chunk の一覧）ができ、`@cloudflare/config` 0.17.0 は `bindings.aiSearch` と `bindings.rateLimit` を持つ。binding の検索の既定値は `keyword_match_mode: and`・`max_num_results: 10`・`return_on_failure: true`（一部の処理が失敗しても部分的な結果を返す）で、試行の条件と違う（[検索](https://developers.cloudflare.com/ai-search/api/search/workers-binding/)、[item](https://developers.cloudflare.com/ai-search/api/items/workers-binding/)）。custom metadata は1インスタンス5項目まで、OCR なしの PDF は1ファイル4MiB まで、hybrid のインスタンスは50万ファイルまで（[上限](https://developers.cloudflare.com/ai-search/platform/limits-pricing/)）。いずれも2026-10-14に確認した。
 
 ## Design
@@ -352,7 +352,7 @@ A・B・C の選択は、[選ぶ側の問い](#次の検証で確かめること
 ## Cross-Cutting Concerns
 
 - 出典の利用条件: 検索は出典の文を、所在と軽微な抜粋（最大150文字）の形でだけ返す。2自治体のサイトの利用条件は、私的使用・引用を除く無断の転載・送信・二次利用を禁じている（北区「著作権・免責」、中野区「サイトポリシー」、2026-10-14確認）。区のオープンデータの規約（CC BY）は、オープンデータとして掲載したデータに限る（北区は明記、中野区は案内頁の記述）ので、評価資料には頼らない。このため頁の全文は返さず、検索の所在と軽微な抜粋だけを返す（著作権法第47条の5の所在検索サービスの軽微利用に寄せる）。出典の文を配布物の列として配ることはしないので、[ADR 0006](../../adr/0006-license-per-layer.md) の配布物の `licenses` には評価資料を載せない。拡大で足す自治体は、自治体ごとの利用条件を確かめない。所在と軽微な抜粋だけを返す設計は、転載を禁じる条件でも成り立つ形として選んだので、自治体の条件の違いで結論が変わらない（2026-10-14 のユーザーの判断）。自治体から検索の対象からの除外を求められたら、その出典を選定と索引から外す。
-- 固定した出典への到達: 応答は自治体の URL・sha256・物理頁（`page_url`）を返し、利用者はそこから自分で出典 PDF の該当頁を取得し、sha256 で選定と同じバイト列かを確かめられる。R2 の写しは配らず、出典 PDF の中継（`/v1/origins/{origin_id}/pdf`）にも評価資料を足さない。どちらも利用条件が禁じる転載・送信に当たるためである（2026-10-14決定）。この代わりに、自治体の URL の内容が変わるか消えると、利用者は固定した出典まで辿れない。そのときは sha256 の不一致または取得の失敗として利用者に見え、風土記は R2 の写しで索引を作り直すか、選定を差し替えて catalog から外す。
+- 固定した出典への到達: 応答は自治体の URL・sha256・物理頁（`page_url`）を返し、利用者はそこから自分で出典 PDF の該当頁を取得し、sha256 で選定と同じバイト列かを確かめられる。R2 の写しは配らず、出典 PDF の中継（`/v1/fiscal/origins/{origin_id}/pdf`）にも評価資料を足さない。どちらも利用条件が禁じる転載・送信に当たるためである（2026-10-14決定）。この代わりに、自治体の URL の内容が変わるか消えると、利用者は固定した出典まで辿れない。そのときは sha256 の不一致または取得の失敗として利用者に見え、風土記は R2 の写しで索引を作り直すか、選定を差し替えて catalog から外す。
 - 出典の文に含まれる指示: 抜粋も、AI が取得する出典の頁も自治体の資料だが、AI にとっては外部の文である。tool の説明で、出典の文の中の指示に従わないことを明示する。Worker は抽出器が足した見出しを除いて、空白をまとめ、短く切り出す以外に本文を加工しない。
 - ログ: 検索文には利用者の関心が含まれる。Worker のログには状態、候補の件数、捨てた件数、時間、スコアを残し、検索文は残さない。検証の観測は検証の実行環境で別に記録する。
 - 再現性: 索引は出典から作り直せるが、AI Search の抜き出しと区切りは同じになる保証がない。測定は索引の作成日とインスタンス名を記録し、索引を作り直したら測定もやり直す。

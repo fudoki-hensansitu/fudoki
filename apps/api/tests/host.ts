@@ -2,7 +2,7 @@ import {
   AppBridge,
   PostMessageTransport,
 } from '@modelcontextprotocol/ext-apps/app-bridge'
-import { chartData, hierarchyIds, levelData, uiData } from './ui-fixture'
+import { chartData, hierarchyIds, levelData, toServer, uiData } from './ui-fixture'
 import type { McpUiStyles } from '@modelcontextprotocol/ext-apps'
 
 const frame = document.querySelector<HTMLIFrameElement>('iframe')!
@@ -26,12 +26,12 @@ const initialArgs = {
   document_kind: 'settlement',
   fiscal_year: { min: year, max: year },
   page_size: scenario ? 1 : 100,
-  ...(scenario === 'chart-kan' ? { where: { kan_name: { eq: ['総務費'] }, node_kind: { eq: ['項'] } } } : {}),
+  ...(scenario === 'chart-kan' ? { where: { kan_name: { eq: ['総務費'] }, level: { eq: ['項'] } } } : {}),
 }
 const result = scenario
   ? undefined
   : await rpc('tools/call', {
-      name: 'search_expenditure_nodes',
+      name: 'search_expenditure_subjects',
       arguments: initialArgs,
     })
 const listed = await rpc('resources/list', {})
@@ -60,9 +60,9 @@ bridge.onrequestdisplaymode = async ({ mode }) => {
 const calls: { name: string; arguments?: unknown }[] = []
 let release: (() => void) | undefined
 let failures = 0
-const toolResult = (data: unknown) => ({
+const toolResult = (data: Parameters<typeof toServer>[0]) => ({
   content: [],
-  structuredContent: data,
+  structuredContent: toServer(data),
   _meta: { apiOrigin: location.origin, jurisdictionNames: { '000001': '試験市', '000002': '未収録町', '000003': '比較市' } },
 })
 bridge.oncalltool = async (params) => {
@@ -71,22 +71,25 @@ bridge.oncalltool = async (params) => {
   // プレビューでは本番に近い待ち時間を置き、取得中の見え方を確かめられるようにする
   if (preview) await new Promise((resolve) => setTimeout(resolve, 500))
   const input = params.arguments ?? {}
-  if (scenario === 'pdf-locations' && params.name === 'get_expenditure_node') {
+  const isGet = params.name === 'get_expenditure_subject' || params.name === 'get_expenditure_detail'
+  const openedId = String(input.subject_id ?? input.detail_id)
+  if (scenario === 'pdf-locations' && isGet) {
     const data = uiData(scenario)
-    if ('nodes' in data) return toolResult({ node: data.nodes.find((n) => n.node_id === input.node_id), children: {}, origins: data.origins })
-  }
-  // 経路の款・項は名前で検索して開くので、どの場面でも試験の階層から答える
-  const level = params.name === 'search_expenditure_nodes' && input.where ? levelData(input.where as Record<string, { eq?: unknown[] }>) : undefined
-  if (level) return toolResult(level)
-  if (params.name === 'get_expenditure_node' && hierarchyIds.has(String(input.node_id)))
-    return toolResult(chartData('chart', String(input.node_id)))
-  // 比較や2自治体の一覧の行は試験の階層に無いので、押した行そのものを内訳なしの明細として返す
-  if (scenario.startsWith('chart') && params.name === 'get_expenditure_node') {
-    const data = uiData(scenario)
-    const hit = 'nodes' in data ? data.nodes.find((n) => n.node_id === input.node_id) : undefined
+    const hit = 'nodes' in data ? data.nodes.find((n) => n.node_id === openedId) : undefined
     if (hit) return toolResult({ node: hit, children: {}, origins: data.origins })
   }
-  if (scenario.startsWith('chart')) return toolResult(uiData(scenario, !!input.page_token, params.name === 'get_expenditure_node' ? String(input.node_id) : undefined))
+  // 経路の款・項は名前で検索して開くので、どの場面でも試験の階層から答える
+  const level = params.name === 'search_expenditure_subjects' && input.where ? levelData(input.where as Record<string, { eq?: unknown[] }>) : undefined
+  if (level) return toolResult(level)
+  if (isGet && hierarchyIds.has(openedId))
+    return toolResult(chartData('chart', openedId))
+  // 比較や2自治体の一覧の行は試験の階層に無いので、押した行そのものを内訳なしの明細として返す
+  if (scenario.startsWith('chart') && isGet) {
+    const data = uiData(scenario)
+    const hit = 'nodes' in data ? data.nodes.find((n) => n.node_id === openedId) : undefined
+    if (hit) return toolResult({ node: hit, children: {}, origins: data.origins })
+  }
+  if (scenario.startsWith('chart')) return toolResult(uiData(scenario, !!input.page_token, isGet ? openedId : undefined))
   if (scenario === 'slow' || scenario === 'race')
     await new Promise<void>((resolve) => {
       release = resolve
@@ -98,8 +101,8 @@ bridge.oncalltool = async (params) => {
     }
   return toolResult(
     uiData(
-      params.name === 'get_expenditure_node'
-        ? input.node_id === 'ui-child'
+      isGet
+        ? openedId === 'ui-child'
           ? 'leaf'
           : 'detail'
         : scenario,

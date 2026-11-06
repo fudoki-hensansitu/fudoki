@@ -51,31 +51,50 @@ export function testDb(): { db: Db; sqlite: Database } {
   return { db, sqlite }
 }
 
-const NODE_TABLE = { settlement: 'settlement_expenditure_node', initial: 'initial_expenditure_node' } as const
-
-/** document_kind は表の選択に使い、列には入れない。 */
-export function insertNode(
-  sqlite: Database,
-  row: Record<string, string | number | null> & { document_kind: keyof typeof NODE_TABLE }
-) {
-  const { document_kind, ...rest } = row
+function insertRow(sqlite: Database, table: string, defaults: Record<string, unknown>, row: Record<string, unknown>) {
   // 非 NULL の列は、指定が無ければ型ごとの既定値で埋める（MCP の outputSchema の検査に通る行にする）
-  const required = Object.fromEntries(
-    TABLES[NODE_TABLE[document_kind]]!.columns.filter((c) => c.nullable === false).map((c) => [c.name, c.type === 'string' ? 'x' : 1])
-  )
-  const full = { ...required, jurisdiction_code: '132039', fiscal_year: 2024, account_name: '一般会計', ...rest }
+  const required = Object.fromEntries(TABLES[table]!.columns.filter((c) => c.nullable === false).map((c) => [c.name, c.type === 'string' ? 'x' : 1]))
+  const full = { ...required, ...defaults, ...row }
   const keys = Object.keys(full)
-  sqlite
-    .query(`INSERT INTO ${NODE_TABLE[document_kind]} (${keys.join(',')}) VALUES (${keys.map(() => '?').join(',')})`)
-    .run(...(Object.values(full) as never[]))
+  sqlite.query(`INSERT INTO ${table} (${keys.join(',')}) VALUES (${keys.map(() => '?').join(',')})`).run(...(Object.values(full) as never[]))
+}
+
+const PHASE: Record<string, string> = { settlement: 'executed', initial: 'approved' }
+const docDefaults = (row: Record<string, unknown>) => {
+  const kind = (row.document_kind as string | undefined) ?? 'settlement'
+  return { jurisdiction_code: '132039', fiscal_year: 2024, account_name: '一般会計', account_kind: '一般会計', document_kind: kind, amount_phase: PHASE[kind] }
+}
+
+/** marts と同じく、科目・内訳の1行ごとに印字の位置の行を置く（出典はここから引く）。 */
+function insertOwnLocation(sqlite: Database, rowId: unknown, originId: unknown) {
+  if (originId !== undefined && originId !== null) insertLocation(sqlite, { row_id: rowId as string, origin_id: originId as string })
+}
+
+/** 科目の表の1行。subject_id を省くと node_key と同じにする。origin_id があれば印字の位置の行も置く。 */
+export function insertSubject(sqlite: Database, row: Record<string, string | number | null>) {
+  const id = row.subject_id ?? row.node_key ?? crypto.randomUUID()
+  insertRow(sqlite, 'fiscal_expenditure_subject', { ...docDefaults(row), subject_id: id, node_key: id, level: '目', is_leaf: row.level && row.level !== '目' ? 0 : 1 }, row)
+  insertOwnLocation(sqlite, id, row.origin_id)
+}
+
+/** 内訳の表の1行。origin_id があれば印字の位置の行も置く。 */
+export function insertDetail(sqlite: Database, row: Record<string, string | number | null>) {
+  const id = row.detail_id ?? row.node_key ?? crypto.randomUUID()
+  insertRow(sqlite, 'fiscal_expenditure_detail', { ...docDefaults(row), detail_id: id, node_key: id, breakdown: '事業', source_heading: '備考', node_kind: '内訳1', depth: 1, is_leaf: 1, is_subject_remainder: 0 }, row)
+  insertOwnLocation(sqlite, id, row.origin_id)
+}
+
+/** 印字の位置の1行。 */
+export function insertLocation(sqlite: Database, row: Record<string, string | number | null>) {
+  insertRow(sqlite, 'fiscal_expenditure_location', {}, row)
 }
 
 /** origin の列は columns.json にあるものだけ入れる。 */
 export function insertOrigin(sqlite: Database, row: Record<string, string | number | null>) {
-  const names = new Set(TABLES.origin!.columns.map((c) => c.name))
+  const names = new Set(TABLES.fiscal_origin!.columns.map((c) => c.name))
   const full = Object.entries({ jurisdiction_code: '132039', fiscal_year: 2024, document_kind: 'settlement', format: 'pdf', ...row }).filter(([k]) => names.has(k))
   sqlite
-    .query(`INSERT INTO origin (${full.map(([k]) => k).join(',')}) VALUES (${full.map(() => '?').join(',')})`)
+    .query(`INSERT INTO fiscal_origin (${full.map(([k]) => k).join(',')}) VALUES (${full.map(() => '?').join(',')})`)
     .run(...(full.map(([, v]) => v) as never[]))
 }
 
@@ -83,7 +102,7 @@ export function insertOrigin(sqlite: Database, row: Record<string, string | numb
 export function insertJurisdiction(sqlite: Database, row: { jurisdiction_code: string; name: string; prefecture_name?: string; official_url?: string }) {
   const prefecture_code = row.jurisdiction_code.slice(0, 2)
   sqlite
-    .query('INSERT INTO jurisdiction_master (jurisdiction_code, name, prefecture_code, prefecture_name, ocd_id, official_url) VALUES (?, ?, ?, ?, ?, ?)')
+    .query('INSERT INTO jurisdiction (jurisdiction_code, name, prefecture_code, prefecture_name, ocd_id, official_url) VALUES (?, ?, ?, ?, ?, ?)')
     .run(row.jurisdiction_code, row.name, prefecture_code, row.prefecture_name ?? '東京都', `ocd-division/country:jp/prefecture:${prefecture_code}/city:${row.jurisdiction_code}`, row.official_url ?? null)
 }
 
@@ -96,7 +115,7 @@ export function insertPopulation(
   sqlite.query('INSERT OR IGNORE INTO population_origin (origin_id, reference_date, url) VALUES (?, ?, ?)').run(origin.origin_id, origin.reference_date, origin.url)
   for (const r of rows)
     sqlite
-      .query('INSERT INTO jurisdiction_population (population_id, origin_id, jurisdiction_code, reference_date, male, female, population, households) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
+      .query('INSERT INTO population (population_id, origin_id, jurisdiction_code, reference_date, male, female, population, households) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
       .run(`${origin.origin_id}:${r.jurisdiction_code}`, origin.origin_id, r.jurisdiction_code, origin.reference_date, r.male, r.female, r.population, r.households)
 }
 
@@ -107,6 +126,6 @@ export function insertCoverage(
 ) {
   const full = { account_kind: row.account_name, ...row }
   sqlite
-    .query('INSERT INTO expenditure_coverage (coverage_id, jurisdiction_code, fiscal_year, document_kind, account_name, account_kind, origin_id) VALUES (?, ?, ?, ?, ?, ?, ?)')
+    .query('INSERT INTO fiscal_coverage (coverage_id, jurisdiction_code, fiscal_year, document_kind, account_name, account_kind, origin_id) VALUES (?, ?, ?, ?, ?, ?, ?)')
     .run(JSON.stringify(full), full.jurisdiction_code, full.fiscal_year, full.document_kind, full.account_name, full.account_kind, full.origin_id)
 }

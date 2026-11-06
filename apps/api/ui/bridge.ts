@@ -5,7 +5,7 @@ import {
   applyHostStyleVariables,
   type McpUiHostContext,
 } from '@modelcontextprotocol/ext-apps'
-import { toolFor, type Json, type TreeNode, type ViewData } from './types'
+import { toView, toolFor, type Json, type TreeNode, type ViewData } from './types'
 
 interface Entry {
   tool: string
@@ -43,9 +43,12 @@ function appendData(previous: ViewData, next: ViewData): ViewData {
   if ('nodes' in previous && 'nodes' in next)
     return { ...next, nodes: [...previous.nodes, ...next.nodes], origins }
   if ('node' in previous && 'node' in next) {
+    // 科目の子は get_expenditure_subject の全ページに毎回載るので、id で重ねない
     const children = { ...previous.children }
-    for (const [axis, rows] of Object.entries(next.children))
-      children[axis] = [...(children[axis] ?? []), ...rows]
+    for (const [axis, rows] of Object.entries(next.children)) {
+      const seen = new Set((children[axis] ?? []).map((r) => r.id))
+      children[axis] = [...(children[axis] ?? []), ...rows.filter((r) => !seen.has(r.id))]
+    }
     return { ...next, children, origins }
   }
   throw new Error('追加ページの形式が一致しません')
@@ -145,7 +148,7 @@ export function createBridge() {
       return
     }
     update({
-      entry: { tool, args, data: data as ViewData, revision: epoch },
+      entry: { tool, args, data: toView(data), revision: epoch },
       history: [],
       busy: false,
       error: undefined,
@@ -203,8 +206,8 @@ export function createBridge() {
         if (toolFor(data) !== tool) throw new Error('表示できない結果です')
         const combined =
           mode === 'append'
-            ? appendData(previous.data, data as ViewData)
-            : (data as ViewData)
+            ? appendData(previous.data, toView(data))
+            : toView(data)
         update({
           entry: {
             tool,
@@ -232,11 +235,11 @@ export function createBridge() {
       }
     },
     /**
-     * 経路の款・項へ移る。同じ自治体・年度・資料・会計の中から名前でその段を検索し、見つかった明細を開く。
+     * 経路の款・項・目へ移る。同じ自治体・年度・資料・会計の中から名前でその段を検索し、見つかった明細を開く。
      * 親の ID を持たない明細（検索結果から開いたものなど）でも、どの段にも移れるようにする。
      * 移った先より深い明細の履歴は経路と食い違うので捨てる。
      */
-    async openLevel(from: TreeNode, kind: '款' | '項') {
+    async openLevel(from: TreeNode, kind: '款' | '項' | '目') {
       if (disposed || state.busy || !state.entry) return
       const id = ++epoch
       request = new AbortController()
@@ -245,29 +248,30 @@ export function createBridge() {
         const result = await app.callServerTool({ name, arguments: args }, { signal: request!.signal })
         const data = result.structuredContent as Json | undefined
         if (result.isError || !data || toolFor(data) !== name) throw new Error(result.isError ? message(result) : '表示できない結果です')
-        return { data: data as ViewData, meta: result._meta }
+        return { data: toView(data), meta: result._meta }
       }
       try {
-        const found = await fetchTool('search_expenditure_nodes', {
+        const found = await fetchTool('search_expenditure_subjects', {
           document_kind: from.document_kind,
           fiscal_year: { min: from.fiscal_year, max: from.fiscal_year },
           where: {
             jurisdiction_code: { eq: [from.jurisdiction_code] },
             account_name: { eq: [from.account_name] },
-            node_kind: { eq: [kind] },
+            level: { eq: [kind] },
             kan_name: { eq: [from.kan_name] },
-            ...(kind === '項' && from.kou_name ? { kou_name: { eq: [from.kou_name] } } : {}),
+            ...(kind !== '款' && from.kou_name ? { kou_name: { eq: [from.kou_name] } } : {}),
+            ...(kind === '目' && from.moku_name ? { moku_name: { eq: [from.moku_name] } } : {}),
           },
           page_size: 1,
         })
         if (disposed || id !== epoch) return
         const target = 'nodes' in found.data ? found.data.nodes[0] : undefined
-        if (!target) throw new Error(`${kind === '款' ? from.kan_name : from.kou_name}が見つかりませんでした`)
-        const args = { document_kind: target.document_kind, node_id: target.node_id }
-        const opened = await fetchTool('get_expenditure_node', args)
+        if (!target) throw new Error(`${kind === '款' ? from.kan_name : kind === '項' ? from.kou_name : from.moku_name}が見つかりませんでした`)
+        const { tool, args } = target.open
+        const opened = await fetchTool(tool, args)
         if (disposed || id !== epoch) return
         update({
-          entry: { tool: 'get_expenditure_node', args, data: opened.data, revision: id },
+          entry: { tool, args, data: opened.data, revision: id },
           // 明細の履歴は別の枝なので捨て、来た一覧には経路の会計から戻れるように残す
           history: state.history.filter((e) => !('node' in e.data)),
           names: { ...state.names, ...namesOf(opened.meta) },

@@ -11,4 +11,4 @@ select r.origin_id || ':' || r.jurisdiction_code as population_id,
     r.households
 from {{ source('population', 'resident_register') }} r
 join {{ source('population', 'population_origin') }} o using (origin_id)
-join {{ ref('jurisdiction_master') }} j using (jurisdiction_code)
+join {{ ref('jurisdiction') }} j using (jurisdiction_code)

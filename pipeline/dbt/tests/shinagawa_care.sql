@@ -6,7 +6,7 @@ with expected(node_id, expected_cofog, expected_recipient) as (
            ('2c067608592d0c581c08049b02ffd1195e46c5cb5e23a48fdd52f815eb164437', '03.2', null)
 )
 select e.node_id
-from expected e left join {{ ref('settlement_expenditure_node') }} n using (node_id)
+from expected e left join (select * from {{ ref('int_fiscal__expenditure_nodes') }} where document_kind = 'settlement') n using (node_id)
 where n.node_id is null
    or (e.expected_cofog is not null and n.cofog_code is distinct from e.expected_cofog)
    or (e.expected_recipient is not null and
