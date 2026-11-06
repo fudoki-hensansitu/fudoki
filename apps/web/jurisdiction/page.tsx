@@ -112,9 +112,7 @@ function DomainIcon({ id }: { id: string }) {
   const Icon = DOMAIN_ICON[id]
   if (!Icon) return <span aria-hidden="true" className="h-6 w-1 rounded-full bg-primary" />
   return (
-    <span aria-hidden="true" className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary sm:size-10">
-      <Icon className="size-5 sm:size-6" weight="duotone" />
-    </span>
+    <Icon aria-hidden="true" className="size-6 shrink-0 text-muted-foreground sm:size-7" />
   )
 }
 
