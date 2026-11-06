@@ -8,7 +8,7 @@ import { StartForm } from '../chat/start-form'
 import type { StoredSession } from '../chat/store'
 import { Hint } from '@/components/hint'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { groupByFrame } from './domains'
+import { DOMAIN_FRAMES, groupByFrame } from './domains'
 import { Flow } from './flow'
 import { assetPath, type PolicyProject, type ProfileYear, type ProjectStatus, type Scrap } from './profiles'
 import { changePct, formatYen, reiwa, yearName, type PageData, type Project, type Setsu, type YearTotal } from './types'
@@ -90,6 +90,39 @@ function ProjectItem({ p }: { p: PolicyProject }) {
 const DOMAIN_ICON: Record<string, typeof BabyIcon> = {
   bosai: ShieldCheckIcon, kosodate: BabyIcon, iryo: FirstAidKitIcon, kurashi: HouseLineIcon,
   sangyo: StorefrontIcon, kankyo: LeafIcon, gyosei: CoinsIcon, bunka: BasketballIcon,
+}
+
+/** 区政を知らない人の入口。自治体の仕事を分野の例で見せ、1年に使うお金を住民1人あたりで言う（最新の決算） */
+function Overview({ data }: { data: PageData }) {
+  const latest = data.years.at(-1)
+  const people = data.population?.people
+  const kind = data.name.slice(-1)
+  return (
+    <Section id="about" title={`${kind}は何をしている？`} lead={`${data.name}は、暮らしの身近なことの多くを受け持っています。分野ごとの主な仕事です。`}>
+      {latest ? (
+        <p className="text-[15px]">
+          {reiwa(latest.year)}に使ったお金は<b className="mx-1 text-xl font-normal tabular-nums">{formatYen(latest.yen)}</b>
+          {people ? (
+            <>
+              、住民1人あたり<b className="mx-1 text-xl font-normal tabular-nums">約{Math.round(latest.yen / people / 1e4).toLocaleString('ja-JP')}万円</b>
+            </>
+          ) : null}
+          です（一般会計の決算）。
+        </p>
+      ) : null}
+      <ul className="grid grid-cols-1 gap-x-8 border-t sm:grid-cols-2">
+        {DOMAIN_FRAMES.map((f) => (
+          <li key={f.id} className="flex items-center gap-3 border-b border-foreground/10 py-3">
+            <DomainIcon id={f.id} />
+            <div className="min-w-0">
+              <b className="block text-[15px] font-normal">{f.name}</b>
+              <span className="text-[13px] text-muted-foreground">{f.examples}</span>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </Section>
+  )
 }
 
 function Domains({ year }: { year: ProfileYear }) {
@@ -379,6 +412,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
   // 区政を知らない人には金額より暮らしの具体例が先。変わったことから入り、お金の内訳へ進む
   const fresh: TocItem[] = py ? [{ href: '#domains', label: '暮らしで変わったこと' }, ...groupByFrame(py.projects).map(({ frame: d }) => ({ href: `#d-${d.id}`, label: d.name, sub: true }))] : []
   const toc: TocItem[] = [
+    { href: '#about', label: `${data.name.slice(-1)}の仕事` },
     ...fresh,
     ...money,
     ...(py?.scrap ? [{ href: '#scrap', label: 'やめたこと' }] : []),
@@ -541,6 +575,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
             ))}
           </nav>
           <main className="flex min-w-0 flex-col gap-14">
+            <Overview data={data} />
             {py ? <Domains year={py} /> : null}
             <Budget data={data} year={year} />
             <Projects data={data} year={year} />

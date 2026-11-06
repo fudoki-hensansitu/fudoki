@@ -8,17 +8,19 @@ export interface DomainFrame {
   name: string
   /** この枠に入る COFOG コードの前方一致。長い（細かい）コードが優先する */
   cofog: string[]
+  /** 区政を知らない人向けの、この枠に入る自治体の仕事の例。COFOG の振り分け規則（cofog_rules）と食い違わないものだけ */
+  examples: string
 }
 
 export const DOMAIN_FRAMES: DomainFrame[] = [
-  { id: 'bosai', name: '防災・安全', cofog: ['03'] },
-  { id: 'kosodate', name: '子育て・教育', cofog: ['09', '10.4'] },
-  { id: 'iryo', name: '医療・介護・福祉', cofog: ['07', '10'] },
-  { id: 'kurashi', name: '暮らし・まち', cofog: ['06', '04.5'] },
-  { id: 'sangyo', name: '産業・しごと', cofog: ['04'] },
-  { id: 'kankyo', name: '環境', cofog: ['05'] },
-  { id: 'gyosei', name: '行政・お金の使い方', cofog: ['01', '02'] },
-  { id: 'bunka', name: '文化・スポーツ', cofog: ['08'] },
+  { id: 'bosai', name: '防災・安全', cofog: ['03'] , examples: '避難所・防災の備え・防犯' },
+  { id: 'kosodate', name: '子育て・教育', cofog: ['09', '10.4'] , examples: '保育園・小中学校・学童' },
+  { id: 'iryo', name: '医療・介護・福祉', cofog: ['07', '10'] , examples: '健診・介護・障害のある人の支援・生活保護' },
+  { id: 'kurashi', name: '暮らし・まち', cofog: ['06', '04.5'] , examples: '道路・住まい・まちづくり・バス' },
+  { id: 'sangyo', name: '産業・しごと', cofog: ['04'] , examples: '商店街・中小企業・仕事さがしの支援' },
+  { id: 'kankyo', name: '環境', cofog: ['05'] , examples: 'ごみ・リサイクル・省エネ' },
+  { id: 'gyosei', name: '行政・お金の使い方', cofog: ['01', '02'] , examples: '窓口・議会・借金の返済' },
+  { id: 'bunka', name: '文化・スポーツ', cofog: ['08'] , examples: '図書館・体育館・公園' },
 ]
 
 const covers = (prefix: string, code: string) => code === prefix || code.startsWith(`${prefix}.`)
