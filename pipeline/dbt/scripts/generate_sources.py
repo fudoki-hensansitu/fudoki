@@ -27,6 +27,8 @@ EXCLUDE: dict[tuple[str, str], str] = {
         'public enterprise account without kan/kou/moku numbers',
     ('132071', 'akishima-enterprise-expenditure-capital-detail'):
         'public enterprise account without kan/kou/moku numbers',
+    ('132012', 'sewer-revenue-expenditure-detail'):
+        'public enterprise account without kan/kou/moku numbers',
     ('132063', 'racing-expenditure'):
         'public enterprise account whose revenue and capital statements both open with 款 1 under different names',
     ('132063', 'sewerage-expenditure'):

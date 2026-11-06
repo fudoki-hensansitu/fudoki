@@ -552,6 +552,14 @@ class RepeatedHeadingTest(unittest.TestCase):
             item = Item(group, 2, [], second, names[1], 0)
             self.assertFalse(repeats(previous, item, ocr=True))
 
+    def test_without_codes_only_the_same_name_repeats_a_heading(self):
+        # 132012 下水道事業会計: 営業外費用 under 営業費用 is a new 項, not a misread of it.
+        from ingestion.generic.tree import Group, Item, repeats
+        group = Group([], '科目', True)
+        open_kou = Item(group, 1, [], None, '営業費用', 0)
+        self.assertFalse(repeats(open_kou, Item(group, 3, [], None, '営業外費用', 0), ocr=True))
+        self.assertTrue(repeats(open_kou, Item(group, 3, [], None, '営業費用', 0), ocr=True))
+
 
 class VariantCharsTest(unittest.TestCase):
     def observation(self, engine):
