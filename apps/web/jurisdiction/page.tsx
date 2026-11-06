@@ -8,6 +8,7 @@ import { StartForm } from '../chat/start-form'
 import type { StoredSession } from '../chat/store'
 import { Hint } from '@/components/hint'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { EMBLEMS } from './emblems'
 import { Flow } from './flow'
 import { assetPath, type Domain, type PolicyProject, type Profile, type ProfileYear, type ProjectStatus, type Scrap } from './profiles'
 import { changePct, formatAsOf, formatPeople, formatYen, INDEX_PATH, reiwa, yearName, type PageData, type Project, type Setsu, type YearTotal } from './types'
@@ -429,7 +430,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
   }, [current])
 
   const tagline = py?.tagline
-  const logo = profile?.logo ? assetPath(data.code, profile.logo) : null
+  const logo = EMBLEMS[data.code] ? assetPath(data.code, 'emblem.svg') : null
 
   return (
     <>
