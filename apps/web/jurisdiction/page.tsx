@@ -131,7 +131,8 @@ function Overview({ data }: { data: PageData }) {
           const spent = data.cofogFlow.find((d) => d.kan.id === `cofog-${f.cofog || 'none'}`)?.kan
           if (f === OTHER_FRAME && !spent) return null
           return (
-            <li key={f.id} className="flex items-center gap-3 border-b border-foreground/10 py-3">
+            <li key={f.id} className="border-b border-foreground/10">
+              <DomainLink kanId={spent ? `cofog-${f.cofog || 'none'}` : undefined}>
               <DomainIcon id={f.id} />
               <div className="min-w-0 flex-1">
                 <b className="block text-[15px] font-normal">{f.name}</b>
@@ -141,11 +142,31 @@ function Overview({ data }: { data: PageData }) {
                 <span className={`block text-[15px] ${spent ? '' : 'text-muted-foreground'}`}>{spent ? (spent.amountMissing ? '金額未記載' : formatYen(spent.yen)) : '—'}</span>
                 {spent && !spent.amountMissing && people ? <span className="block text-xs text-muted-foreground">1人 約{Math.round(spent.yen / people / 1e3) / 10}万円</span> : null}
               </div>
+              </DomainLink>
             </li>
           )
         })}
       </ul>
     </Section>
+  )
+}
+
+/** お金の流れで大分類を開くよう頼むイベント。detail は大分類の id（cofog-10 など） */
+const OPEN_KAN = 'fudoki:open-kan'
+
+/** 分野の行。金額があれば、お金の流れのその分野へ移るリンクにする */
+function DomainLink({ kanId, children }: { kanId?: string; children: React.ReactNode }) {
+  const row = 'flex items-center gap-3 py-3'
+  if (!kanId) return <div className={row}>{children}</div>
+  return (
+    <a
+      href="#budget"
+      onClick={(e) => { e.preventDefault(); window.dispatchEvent(new CustomEvent(OPEN_KAN, { detail: kanId })) }}
+      className={`group ${row} text-foreground no-underline transition-colors hover:bg-card`}
+    >
+      {children}
+      <CaretRightIcon aria-hidden="true" className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+    </a>
   )
 }
 
@@ -277,6 +298,18 @@ const VIEWS: { key: FlowView; label: string }[] = [
 function Budget({ data, year }: { data: PageData; year: number }) {
   const [phase, setPhase] = React.useState<Phase>('settlement')
   const [view, setView] = React.useState<FlowView>('cofog')
+  const [open, setOpen] = React.useState<{ id: string; n: number }>()
+  // 「何をしている？」の分野から来たら、決算の機能分類に切り替えてその大分類を開く
+  React.useEffect(() => {
+    const onOpen = (e: Event) => {
+      setPhase('settlement')
+      setView('cofog')
+      setOpen((prev) => ({ id: (e as CustomEvent<string>).detail, n: (prev?.n ?? 0) + 1 }))
+      if (!data.years.some((y) => y.year === year)) document.getElementById('budget')?.scrollIntoView({ behavior: 'smooth' })
+    }
+    window.addEventListener(OPEN_KAN, onOpen)
+    return () => window.removeEventListener(OPEN_KAN, onOpen)
+  }, [data.years, year])
   const settled = data.years.find((y) => y.year === year)
   const total = phase === 'settlement' ? settled : undefined
   const prev = data.years.find((y) => y.year === year - 1)
@@ -332,7 +365,7 @@ function Budget({ data, year }: { data: PageData; year: number }) {
     >
       <div id="budget-panel" role="tabpanel" aria-labelledby={`tab-${phase}`} data-ask-view={`${reiwa(year)}の${label}の金額（${VIEWS.find((v) => v.key === view)!.label}）`} className="flex flex-col gap-4">
         {total ? (
-          <Flow key={`${year}-${view}`} data={data} total={total} view={view} tabs={tabs} summary={summary} />
+          <Flow key={`${year}-${view}`} data={data} total={total} view={view} tabs={tabs} summary={summary} open={open} onOpened={() => setOpen(undefined)} />
         ) : (
           <div className="rounded-[20px] border bg-background px-5 pt-5 sm:px-6">
             {tabs}
