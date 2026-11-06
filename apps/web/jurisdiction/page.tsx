@@ -162,10 +162,9 @@ function DomainLink({ kanId, children }: { kanId?: string; children: React.React
     <a
       href="#budget"
       onClick={(e) => { e.preventDefault(); window.dispatchEvent(new CustomEvent(OPEN_KAN, { detail: kanId })) }}
-      className={`group ${row} text-foreground no-underline transition-colors hover:bg-card`}
+      className={`${row} text-foreground no-underline transition-colors hover:bg-card`}
     >
       {children}
-      <CaretRightIcon aria-hidden="true" className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
     </a>
   )
 }
@@ -305,11 +304,10 @@ function Budget({ data, year }: { data: PageData; year: number }) {
       setPhase('settlement')
       setView('cofog')
       setOpen((prev) => ({ id: (e as CustomEvent<string>).detail, n: (prev?.n ?? 0) + 1 }))
-      if (!data.years.some((y) => y.year === year)) document.getElementById('budget')?.scrollIntoView({ behavior: 'smooth' })
     }
     window.addEventListener(OPEN_KAN, onOpen)
     return () => window.removeEventListener(OPEN_KAN, onOpen)
-  }, [data.years, year])
+  }, [])
   const settled = data.years.find((y) => y.year === year)
   const total = phase === 'settlement' ? settled : undefined
   const prev = data.years.find((y) => y.year === year - 1)
@@ -507,6 +505,15 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
     setYear(y)
     history.replaceState(null, '', `#y${y}`)
   }
+  // 「何をしている？」の金額は最新の決算なので、分野から移るときは決算のある年度に合わせる
+  React.useEffect(() => {
+    const onOpen = () => {
+      const latest = data.years.at(-1)?.year
+      if (latest && !data.years.some((y) => y.year === year)) choose(latest)
+    }
+    window.addEventListener(OPEN_KAN, onOpen)
+    return () => window.removeEventListener(OPEN_KAN, onOpen)
+  })
 
   const money: TocItem[] = [
     { href: '#budget', label: 'お金の使い道' },
