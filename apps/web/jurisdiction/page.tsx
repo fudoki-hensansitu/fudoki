@@ -11,7 +11,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenu
 import { DOMAIN_FRAMES, groupByFrame } from './domains'
 import { Flow } from './flow'
 import { assetPath, type PolicyProject, type ProfileYear, type ProjectStatus, type Scrap } from './profiles'
-import { changePct, formatYen, reiwa, yearName, type PageData, type Project, type Setsu, type YearTotal } from './types'
+import { changePct, formatAsOf, formatPeople, formatYen, reiwa, yearName, type PageData, type Project, type Setsu, type YearTotal } from './types'
 
 const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
   const res = await fetch(url, { signal })
@@ -525,13 +525,11 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
                 <Link href={data.prefecturePath} className="text-primary no-underline">{data.prefecture}</Link>
               </span>
               {data.population ? (
-                <Hint label={`住民基本台帳人口（${data.population.asOf.replace(/^(\d+)-0?(\d+)-0?(\d+)$/, '$1年$2月$3日')}時点）`}>
+                <Hint label={`住民基本台帳人口（${formatAsOf(data.population.asOf)}時点）`}>
                   <span className="inline-flex items-center gap-1 sm:gap-1.5">
                     <UsersIcon className="size-3.5 sm:size-4" aria-hidden="true" />
                     <span className="sr-only">人口 </span>
-                    {data.population.people >= 1e4
-                      ? `${(data.population.people / 1e4).toFixed(1)}万人`
-                      : `${data.population.people.toLocaleString('ja-JP')}人`}
+                    {formatPeople(data.population.people)}
                   </span>
                 </Hint>
               ) : null}
