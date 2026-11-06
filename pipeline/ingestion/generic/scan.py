@@ -857,8 +857,9 @@ ORDINAL_GAP = 9.0  # pt: the space OCR leaves between `その` and its number (4
 def join_ordinals(observed: list[Page]) -> list[Page]:
     """Put back the number of a `その1`, `その2` in a name (`施設警備委託料その1`) where OCR read it as a word of
     its own: a lone digit or two just right of a word that ends the line's text in `その` is part of the name,
-    not an amount (132101 備考: `施設警備委託料その` `1` `4,758,930`). OCR may also cut `そ` from `の`, and the
-    name may wrap between them. So is a count in an opening bracket at the end of the line (`会計年度任用職員報酬(`
+    not an amount (132101 備考: `施設警備委託料その` `1` `4,758,930`), and so is the number after `第`
+    (`東小金井北第` `1`). OCR may also cut `そ` from `の`, and the name may wrap between them. So is a count in
+    an opening bracket at the end of the line (`会計年度任用職員報酬(`
     `14` / `人)`: fourteen people, not an amount)."""
     pages = []
     for page in observed:
@@ -878,7 +879,7 @@ def join_ordinals(observed: list[Page]) -> list[Page]:
                 above = [w for w in words if w is not None and 6 < middle(word) - middle(w) < 14
                          and w.x0 < word.x0 + 120 and w.x1 > before.x0]
                 text = max(above, key=lambda w: w.x1).text + text if above else text
-            if not (normalize(text).endswith('その') or normalize(text).endswith('(')):
+            if not normalize(text).endswith(('その', '第', '(')):
                 continue
             joined = Word(before.text + word.text, before.x0, min(before.y0, word.y0), word.x1, max(before.y1, word.y1))
             words[words.index(before)] = joined

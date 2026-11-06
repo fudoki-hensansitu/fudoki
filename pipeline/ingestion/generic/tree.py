@@ -1669,6 +1669,8 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
                 and 0 <= item.y0 - previous.y1 <= max(g.y1 - g.y0 for g in item.glyphs)):
             # A bracketed note wrapped before its count (`(投票用紙読取分類機` / `3台 2,805,000)`): the number
             # starting the second line is the count, not an item's number.
+            if id(item) in column_amount_items:
+                raise ValueError(f'Configured note carries separate-column money: p{item.page} {item.name!r}')
             previous.name += ''.join(normalize(text(line)) for line in item.lines)
             previous.lines += item.lines
             previous.amounts += item.amounts

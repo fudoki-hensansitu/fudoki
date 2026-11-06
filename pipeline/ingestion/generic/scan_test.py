@@ -1,7 +1,7 @@
 import unittest
 
 from ingestion.generic.observe import Page, Rule, Word
-from ingestion.generic.scan import _cell_words, _text, agreed_headers, apply_variant_chars
+from ingestion.generic.scan import _cell_words, _text, agreed_headers, apply_variant_chars, drop_bands, join_ordinals
 from unittest.mock import patch
 from copy import deepcopy
 
@@ -64,6 +64,49 @@ class TextTest(unittest.TestCase):
         self.assertEqual(_text('一 般 管 理 費'), '一 般 管 理 費')
         self.assertEqual(_text('0'), '0')
         self.assertEqual(_text('予備費'), '予備費')
+
+
+class OrdinalTest(unittest.TestCase):
+    def texts(self, *words):
+        return [w.text for w in join_ordinals([Page(1, 600, 800, [Word(*w) for w in words])])[0].words]
+
+    def test_a_number_read_apart_after_sono_dai_or_a_bracket_joins_the_name(self):
+        # 132101: `施設警備委託料その` `1` `4,758,930`, `東小金井北第` `1`, `会計年度任用職員報酬(` `14` `人)`.
+        self.assertEqual(self.texts(('施設警備委託料その', 100, 100, 190, 109), ('1', 195, 100, 200, 109),
+                                    ('4,758,930', 400, 100, 450, 109)), ['施設警備委託料その1', '4,758,930'])
+        self.assertEqual(self.texts(('東小金井北第', 100, 100, 160, 109), ('1', 165, 100, 170, 109)), ['東小金井北第1'])
+        self.assertEqual(self.texts(('会計年度任用職員報酬(', 100, 100, 210, 109), ('14', 214, 100, 224, 109),
+                                    ('人)', 226, 100, 240, 109)), ['会計年度任用職員報酬(14', '人)'])
+
+    def test_a_number_farther_off_or_after_other_text_stays_apart(self):
+        self.assertEqual(self.texts(('施設警備委託料その', 100, 100, 190, 109), ('1', 205, 100, 210, 109)),
+                         ['施設警備委託料その', '1'])
+        self.assertEqual(self.texts(('委託料', 100, 100, 130, 109), ('12', 133, 100, 143, 109)), ['委託料', '12'])
+
+    def test_a_number_wrapped_to_the_next_line_goes_back(self):
+        # `エアコン借上料その` / `1 (平成27年度導入分)`, `（東小金井北第` / `1自転車駐車場)`.
+        self.assertEqual(self.texts(('エアコン借上料その', 100, 100, 190, 109), ('1(平成27年度導入分)', 100, 111, 200, 120)),
+                         ['エアコン借上料その1', '(平成27年度導入分)'])
+        self.assertEqual(self.texts(('(東小金井北第', 100, 100, 170, 109), ('1自転車駐車場)', 100, 111, 170, 120)),
+                         ['(東小金井北第1', '自転車駐車場)'])
+        self.assertEqual(self.texts(('委託料', 100, 100, 130, 109), ('1自転車駐車場', 100, 111, 170, 120)),
+                         ['委託料', '1自転車駐車場'])
+
+
+class DroppedBandTest(unittest.TestCase):
+    def test_only_the_readings_centred_in_the_band_are_left_out(self):
+        rules = [Rule(0, 50, 600, 50)]
+        page = Page(4, 600, 800, [Word('款の行', 10, 100, 60, 110), Word('次の款', 10, 300, 60, 310)], rules)
+        kept = drop_bands([page], [{'id': 'next', 'page': 4, 'y_range': [290, 800]}])[0]
+        self.assertEqual([w.text for w in kept.words], ['款の行'])
+        self.assertEqual(kept.rules, rules)
+
+    def test_a_band_off_the_scope_or_holding_no_reading_stops(self):
+        page = Page(4, 600, 800, [Word('款の行', 10, 100, 60, 110)])
+        for band in ({'id': 'p', 'page': 5, 'y_range': [0, 800]}, {'id': 'r', 'page': 4, 'y_range': [300, 200]},
+                     {'id': 'e', 'page': 4, 'y_range': [300, 800]}):
+            with self.subTest(band=band['id']), self.assertRaises(ValueError):
+                drop_bands([page], [band])
 
 
 class CorrectionTest(unittest.TestCase):
