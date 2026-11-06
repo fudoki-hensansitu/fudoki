@@ -205,7 +205,7 @@ function DomainLink({ kanId, children }: { kanId?: string; children: React.React
 
 function Domains({ year }: { year: ProfileYear }) {
   return (
-    <Section id="domains" title="暮らしで何が変わった？" lead="うまくいったかどうかは、自治体が自分で評価しています。" link={[{ href: year.budgetSource, label: '当初予算' }, { href: year.evaluationSource, label: '事業評価' }]}>
+    <Section id="domains" title="暮らしで何が変わった？" lead="この年度に新しく始めた・広げた取り組みと、それを自治体が自分で評価した結果です。" link={[{ href: year.budgetSource, label: '当初予算' }, { href: year.evaluationSource, label: '事業評価' }]}>
       {groupByFrame(year.projects).map(({ frame: d, items }) => (
         <div key={d.id} id={`d-${d.id}`} className="flex scroll-mt-32 lg:scroll-mt-20 flex-col gap-1 [&+&]:mt-12">
           <h3 className="mb-1.5 flex items-center gap-2.5 text-[19px] leading-snug sm:text-[22px]">
