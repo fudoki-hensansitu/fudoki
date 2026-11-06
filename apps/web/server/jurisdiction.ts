@@ -1,6 +1,6 @@
 // 自治体の個別ページのデータ。apps/api（Service Binding）の歳出の検索から、決算の款・事業・お金の流れを組む。
 // 金額は API が返した円をそのまま持つ。足すのは「同じ年度・会計・軸の款（兄弟）の和」だけで、api の sum_rules に従う
-import { jurisdictionKind, type Drill, type FlowDepth, type IndexEntry, type Kou, type Line, type Moku, type PageData, type Project, type Setsu, type YearTotal } from '../jurisdiction/types'
+import { jurisdictionKind, type Drill, type FlowDepth, type IndexEntry, type Kou, type Line, type Moku, type PageData, type Population, type Project, type Setsu, type YearTotal } from '../jurisdiction/types'
 import { apiFetch, type Env } from './env'
 
 const API_ORIGIN = 'https://api.fudoki.dev'
@@ -44,6 +44,9 @@ export interface CatalogEntry {
   prefecture: string
   /** 一般会計の決算がある年度（西暦、古い順） */
   settlementYears: number[]
+  officialUrl: string | null
+  /** いちばん新しい基準日の住民基本台帳人口 */
+  population: Population | null
 }
 
 async function call<T>(env: Env, path: string, body?: unknown): Promise<T> {
@@ -60,7 +63,15 @@ export async function loadCatalog(env: Env): Promise<CatalogEntry[]> {
   let token: string | undefined
   do {
     const r = await call<{
-      jurisdictions: { jurisdiction_code: string; name: string; prefecture_name: string; coverage: { fiscal_year: number; document_kind: string; accounts: { account_name: string }[] }[] }[]
+      jurisdictions: {
+        jurisdiction_code: string
+        name: string
+        prefecture_name: string
+        // 同期前の API は返さない
+        official_url?: string | null
+        population?: { reference_date: string; population: number }[]
+        coverage: { fiscal_year: number; document_kind: string; accounts: { account_name: string }[] }[]
+      }[]
       next_page_token?: string | null
     }>(env, `/v1/jurisdictions${token ? `?page_token=${encodeURIComponent(token)}` : ''}`)
     for (const j of r.jurisdictions)
@@ -69,6 +80,8 @@ export async function loadCatalog(env: Env): Promise<CatalogEntry[]> {
         name: j.name,
         prefecture: j.prefecture_name,
         settlementYears: j.coverage.filter((c) => c.document_kind === 'settlement' && c.accounts.some((a) => a.account_name === ACCOUNT)).map((c) => c.fiscal_year).sort((a, b) => a - b),
+        officialUrl: j.official_url ?? null,
+        population: ((p) => (p ? { people: p.population, asOf: p.reference_date } : null))(j.population?.at(-1)),
       })
     token = r.next_page_token ?? undefined
   } while (token)
@@ -250,6 +263,8 @@ export async function loadPage(env: Env, entry: CatalogEntry): Promise<PageData 
     code: entry.code,
     name: entry.name,
     prefecture: entry.prefecture,
+    officialUrl: entry.officialUrl,
+    population: entry.population,
     originTitle: kanRes.origins?.find((o) => o.origin_id === kanRes.nodes.find((n) => n.fiscal_year === latest)?.origin_id)?.title ?? null,
     years: totals,
     flow: await loadFlow(env, entry.code, latest),

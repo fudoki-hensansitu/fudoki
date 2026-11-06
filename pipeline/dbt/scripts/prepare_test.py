@@ -53,7 +53,8 @@ class PrepareTest(unittest.TestCase):
         with patch.object(prepare, 'DBT', self.dbt), \
              patch.object(prepare.manifest, 'validate', return_value=self.document), \
              patch.object(prepare.manifest, 'resolved_inputs', return_value=[original]), \
-             patch.object(prepare.manifest, 'selection_for', return_value={'candidates': [{'title': 'original'}]}):
+             patch.object(prepare.manifest, 'selection_for', return_value={'candidates': [{'title': 'original'}]}), \
+             patch.object(prepare.population, 'origins', return_value=[]):
             return prepare.prepare(self.warehouse, self.candidate)
 
     def test_missing_conversion_identifies_table(self):
@@ -154,6 +155,9 @@ class PrepareTest(unittest.TestCase):
             self.assertEqual(result['jurisdictions'], len(registry))
             self.assertEqual(con.execute("select name, ocd_id from ingestion.jurisdiction where jurisdiction_code = '132039'").fetchone(),
                              ('武蔵野市', 'ocd-division/country:jp/prefecture:13/city:132039'))
+            # 公式サイトは出典の選定の official_url から引く
+            self.assertEqual(con.execute("select official_url from ingestion.jurisdiction where jurisdiction_code = '131091'").fetchone(),
+                             ('http://www.city.shinagawa.tokyo.jp/',))
 
 
 if __name__ == '__main__':

@@ -1,0 +1,64 @@
+version: 2
+models:
+- name: population_origin
+  description: 人口の資料。総務省「住民基本台帳に基づく人口、人口動態及び世帯数」の市区町村別・総計の xlsx 1つが1行。毎年1月1日時点の値で、例年7月末に公表される。
+  columns:
+  - name: origin_id
+    description: 資料の識別子。資料の URL から導いた値。
+    data_tests:
+    - not_null
+    - unique
+  - name: reference_date
+    description: 基準日（YYYY-MM-DD）。この日時点の人数・世帯数を表す（期間の値ではない）。
+    data_tests:
+    - not_null
+    - unique
+  - name: url
+    description: 資料（xlsx）の URL。
+    data_tests:
+    - not_null
+    - unique
+- name: jurisdiction_population
+  description: 自治体ごとの住民基本台帳人口（日本人住民と外国人住民の総計）。1行は1つの資料の1自治体。自治体マスタにある自治体だけを持つ。決算・予算の年度と比べるときは、N 年度に N+1 年1月1日の値を当てる（地方財政状況調査の決算カードと同じ）。
+  columns:
+  - name: population_id
+    description: 行の識別子。origin_id と jurisdiction_code を「:」でつないだ値。
+    data_tests:
+    - not_null
+    - unique
+  - name: origin_id
+    description: 資料の識別子。population_origin の origin_id。
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('population_origin')
+          field: origin_id
+  - name: jurisdiction_code
+    description: 全国地方公共団体コード（6桁）。jurisdiction_master の jurisdiction_code。
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('jurisdiction_master')
+          field: jurisdiction_code
+  - name: reference_date
+    description: 基準日。population_origin の reference_date の写し。この日時点の人数・世帯数を表す。
+    data_tests:
+    - not_null
+  - name: male
+    description: 男性の人数。
+    data_tests:
+    - not_null
+  - name: female
+    description: 女性の人数。
+    data_tests:
+    - not_null
+  - name: population
+    description: 人口の総数（出典の「計」）。性別欄が空欄の外国人住民を含むので、male と female の和より大きいことがある。
+    data_tests:
+    - not_null
+  - name: households
+    description: 世帯数。
+    data_tests:
+    - not_null
