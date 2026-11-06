@@ -1,6 +1,6 @@
 // 自治体の個別ページのデータ。apps/api（Service Binding）の歳出の検索から、決算の款・事業・お金の流れを組む。
 // 金額は API が返した円をそのまま持つ。足すのは「同じ年度・会計・軸の款（兄弟）の和」だけで、api の sum_rules に従う
-import { jurisdictionKind, type Drill, type FlowDepth, type IndexEntry, type Kou, type Line, type Moku, type PageData, type Population, type Project, type Setsu, type YearTotal } from '../jurisdiction/types'
+import { jurisdictionKind, populationForYear, type Drill, type FlowDepth, type IndexEntry, type Kou, type Line, type Moku, type PageData, type Population, type Project, type Setsu, type YearTotal } from '../jurisdiction/types'
 import { apiFetch, type Env } from './env'
 
 const API_ORIGIN = 'https://api.fudoki.dev'
@@ -47,6 +47,8 @@ export interface CatalogEntry {
   officialUrl: string | null
   /** いちばん新しい基準日の住民基本台帳人口 */
   population: Population | null
+  /** 住民基本台帳人口の全基準日（古い順） */
+  populations: Population[]
 }
 
 async function call<T>(env: Env, path: string, body?: unknown): Promise<T> {
@@ -74,15 +76,18 @@ export async function loadCatalog(env: Env): Promise<CatalogEntry[]> {
       }[]
       next_page_token?: string | null
     }>(env, `/v1/jurisdictions${token ? `?page_token=${encodeURIComponent(token)}` : ''}`)
-    for (const j of r.jurisdictions)
+    for (const j of r.jurisdictions) {
+      const populations = (j.population ?? []).map((p) => ({ people: p.population, asOf: p.reference_date }))
       out.push({
         code: j.jurisdiction_code,
         name: j.name,
         prefecture: j.prefecture_name,
         settlementYears: j.coverage.filter((c) => c.document_kind === 'settlement' && c.accounts.some((a) => a.account_name === ACCOUNT)).map((c) => c.fiscal_year).sort((a, b) => a - b),
         officialUrl: j.official_url ?? null,
-        population: ((p) => (p ? { people: p.population, asOf: p.reference_date } : null))(j.population?.at(-1)),
+        population: populations.at(-1) ?? null,
+        populations,
       })
+    }
     token = r.next_page_token ?? undefined
   } while (token)
   return out
@@ -90,7 +95,6 @@ export async function loadCatalog(env: Env): Promise<CatalogEntry[]> {
 
 /** 一覧の1回の検索に載せる自治体の数。API は年と条件の値の bind を合わせて 90 個までにしている */
 const INDEX_BATCH = 60
-const TOP_KAN = 3
 
 /**
  * 一覧（/jurisdictions）のデータ。収録している自治体の款を、自治体をまとめて検索して最新の決算ごとに足す。
@@ -124,16 +128,18 @@ export async function loadIndex(env: Env, entries: CatalogEntry[], pathOf: (code
     const list = all.flatMap((k) => (k.yen === null ? [] : [{ name: k.name, yen: k.yen }])).sort((a, b) => b.yen - a.yen)
     // 収録範囲に年度があっても款が引けない自治体は、金額を 0 と出さずに一覧から外す
     if (list.length === 0) return []
+    const yen = list.reduce((s, k) => s + k.yen, 0)
+    const population = populationForYear(e.populations, latest.get(e.code)!)
     return [{
       code: e.code,
       name: e.name,
       prefecture: e.prefecture,
       kind: jurisdictionKind(e.code, e.name),
       path: pathOf(e.code),
-      years: e.settlementYears,
       year: latest.get(e.code)!,
-      yen: list.reduce((s, k) => s + k.yen, 0),
-      topKan: list.slice(0, TOP_KAN),
+      yen,
+      population,
+      perCapita: population && population.people > 0 ? yen / population.people : null,
       ...(list.length < all.length ? { amountMissing: true as const } : {}),
     }]
   })

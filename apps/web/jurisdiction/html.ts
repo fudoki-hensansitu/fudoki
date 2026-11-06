@@ -2,7 +2,7 @@
 // Void がサーバーで書き、同じ props で hydrate する。ここは頁ごとの title・説明・canonical・JSON-LD を組む
 import type { CatalogEntry } from '../server/jurisdiction'
 import { jurisdictionPath } from './path'
-import { formatYen, INDEX_PATH, reiwa, type IndexEntry, type PageData } from './types'
+import { formatYen, INDEX_PATH, reiwa, type PageData } from './types'
 
 const ORIGIN = 'https://fudoki.dev'
 /** JSON を script の中に置くときに </script> や <!-- で抜けないようにする */
@@ -59,9 +59,9 @@ export function pageHead(d: PageData): Head {
 export const emptyHead = (e: CatalogEntry): Head =>
   head(`${e.name}｜風土記`, `${e.name}の歳出は風土記にまだ収録されていません。`, `${ORIGIN}${jurisdictionPath(e.code)}`, { meta: [{ name: 'robots', content: 'noindex' }] })
 
-export function indexHead(entries: IndexEntry[]): Head {
-  const description = entries.length
-    ? `決算を収録している自治体（${entries.length}）を、地図と表で一覧にしています。歳出の総額と金額の大きい分野を見比べて、自治体ごとの款・項・目へ進めます。`
+export function indexHead(count: number): Head {
+  const description = count
+    ? `決算を収録している自治体（${count}）を、地図と表で一覧にしています。人口・1人あたりの歳出・歳出の総額を見比べて、自治体ごとの款・項・目へ進めます。`
     : '風土記が決算を収録した自治体の一覧です。まだ収録した自治体がありません。'
   return head('自治体を探す｜風土記', description, `${ORIGIN}${INDEX_PATH}`)
 }
