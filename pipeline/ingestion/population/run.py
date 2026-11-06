@@ -73,11 +73,12 @@ def save(origin: dict) -> Path:
         # 様式が違う・エラーの頁が返ったときは、読めずにここで止まり、キャッシュも R2 も上書きしない
         with duckdb.connect() as con:
             read(con, temporary, origin['reference_date'])
+        # R2 に上がってからキャッシュを置き換える。上げ損ねた資料をキャッシュだけが持つことはない
+        subprocess.run(['cf', 'r2', 'objects', 'put', object_key(origin), '--bucket-name', BUCKET,
+                        '--file', str(temporary), '--quiet'], check=True, stdout=subprocess.DEVNULL)
         os.replace(temporary, path)
     finally:
         temporary.unlink(missing_ok=True)
-    subprocess.run(['cf', 'r2', 'objects', 'put', object_key(origin), '--bucket-name', BUCKET,
-                    '--file', str(path), '--quiet'], check=True, stdout=subprocess.DEVNULL)
     return path
 
 
