@@ -86,7 +86,7 @@ export interface PageData {
   prefecture: string
   /** 都道府県自体の頁（/tokyo）。header の都道府県名から移る */
   prefecturePath: string
-  /** 同じ都道府県で収録のある自治体（自身と都道府県自体を除く）。最後の節から回遊させる */
+  /** 同じ都道府県で収録のある近くの自治体（自身と都道府県自体を除き、近い順に数件）。最後の節から回遊させる */
   neighbors: { name: string; path: string }[]
   officialUrl: string | null
   population: Population | null

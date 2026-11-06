@@ -1,6 +1,7 @@
 // 自治体の個別ページ（/tokyo/nakano）・一覧（/jurisdictions）のデータと、画面が款・目の内訳を引く /api/jurisdictions/*・sitemap の応答。
 // データは apps/api の歳出の検索から組み、変わるのは取り込みのときだけなので、Worker の cache に1時間置く。頁は pages/ の loader が、
 // 内訳の API と sitemap は routes/ がここを呼ぶ。内訳の API は誰でも読める GET で、IP ごとの流量と id の形の検査で守る
+import { PREFECTURE_MAPS } from '../jurisdiction/map.generated'
 import { sitemapXml } from '../jurisdiction/html'
 import { jurisdictionPath, PREFECTURE_SLUGS } from '../jurisdiction/path'
 import { DEFAULT_INDEX_QUERY, parseIndexQuery, queryIndex, toMapEntry, type IndexTable, type MapEntry } from '../jurisdiction/index-table'
@@ -55,6 +56,20 @@ export async function tableResponse(env: Env, request: Request): Promise<Respons
   }
 }
 
+/** 最後の節に出す近くの自治体の数 */
+const NEARBY_COUNT = 6
+
+/** 近い順の自治体。都道府県の図（map.generated.ts）のタイルの位置で測り、図の無い自治体は自治体コードの近さで測る */
+function nearby(entry: CatalogEntry, candidates: CatalogEntry[]): CatalogEntry[] {
+  const tiles = new Map<string, { col: number; row: number }>(PREFECTURE_MAPS.flatMap((m) => m.tiles.map((t) => [t.code, t] as const)))
+  const here = tiles.get(entry.code)
+  const distance = (e: CatalogEntry) => {
+    const t = tiles.get(e.code)
+    return here && t ? Math.hypot(t.col - here.col, t.row - here.row) : 1e3 + Math.abs(Number(e.code) - Number(entry.code))
+  }
+  return candidates.map((e) => ({ e, d: distance(e) })).sort((a, b) => a.d - b.d || a.e.code.localeCompare(b.e.code)).slice(0, NEARBY_COUNT).map((x) => x.e)
+}
+
 /** 個別ページに出すもの。収録の無い自治体は empty、存在しない名称や都道府県の slug でない path は null（404） */
 export type JurisdictionView = { kind: 'page'; data: PageData & { profile: Profile | null } } | { kind: 'empty'; entry: CatalogEntry }
 
@@ -67,9 +82,7 @@ export async function resolveJurisdiction(env: Env, path: string): Promise<Juris
   // 都道府県名は都道府県自体の頁へ。都道府県自体の頁と、都道府県がカタログに無い（頁が無い）ときは一覧へ
   const prefectureCode = `${entry.code.slice(0, 2)}0001`
   const prefecturePath = entry.code !== prefectureCode && entries.some((e) => e.code === prefectureCode) ? jurisdictionPath(prefectureCode) : INDEX_PATH
-  const neighbors = entries
-    .filter((e) => e.code.slice(0, 2) === entry.code.slice(0, 2) && e.code !== entry.code && e.code !== prefectureCode && e.settlementYears.length > 0)
-    .sort((a, b) => a.code.localeCompare(b.code))
+  const neighbors = nearby(entry, entries.filter((e) => e.code.slice(0, 2) === entry.code.slice(0, 2) && e.code !== entry.code && e.code !== prefectureCode && e.settlementYears.length > 0))
     .map((e) => ({ name: e.name, path: jurisdictionPath(e.code) }))
   const data = entry.settlementYears.length > 0 ? await page(env, entry) : null
   return data ? { kind: 'page', data: { ...data, prefecturePath, neighbors, profile: PROFILES[entry.code] ?? null } } : { kind: 'empty', entry }
