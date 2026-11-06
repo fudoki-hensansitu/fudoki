@@ -292,7 +292,12 @@ function useIndexTable(initial: IndexTable, key: string, initialKey: string) {
     }
   }, [])
   React.useEffect(() => {
-    if (key !== state.key) void load(key, 0)
+    if (key !== state.key) return void load(key, 0)
+    // 取り直しの途中で表示中の条件へ戻したときは、その取り直しを捨てる（遅れて届いた行で表が入れ替わらないように）
+    request.current?.abort()
+    request.current = null
+    setLoading(false)
+    setFailed(null)
   }, [key])
   const stale = state.key !== key
   return {
@@ -309,7 +314,9 @@ function useIndexTable(initial: IndexTable, key: string, initialKey: string) {
 function LoadMore({ onVisible, loading }: { onVisible: () => void; loading: boolean }) {
   const ref = React.useRef<HTMLDivElement>(null)
   const latest = React.useRef(onVisible)
-  latest.current = onVisible
+  React.useEffect(() => {
+    latest.current = onVisible
+  })
   React.useEffect(() => {
     const el = ref.current
     if (!el || typeof IntersectionObserver === 'undefined') return
