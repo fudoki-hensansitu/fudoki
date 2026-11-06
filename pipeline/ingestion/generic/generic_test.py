@@ -1329,6 +1329,29 @@ class PageTopHeadingTest(unittest.TestCase):
         self.assertEqual(sorted((owner[a['node_key']], a['amount_text']) for a in built.amounts),
                          [('土地対策費', '2,000'), ('土地対策費', '300'), ('財産管理費', '1,000')])
 
+    def test_without_codes_the_page_top_ends_with_the_first_subject_that_is_no_reprint(self):
+        # 132012 下水道事業会計: the page goes on with 職員給与費, so the later 営業外費用 is a new subject, not a
+        # name-only reprint of the open 営業費用 one character apart.
+        from ingestion.generic.layout import Logical
+        from ingestion.generic.tree import build
+        logicals = []
+        for page in (1, 2):
+            label = Band(0, 120, page, ('科目',), [70, 82, 94, 106, 200], 70, 200, kind='label')
+            paid = Band(120, 170, page, ('決算額',), [70, 82, 94, 106, 200], 70, 200, kind='amount')
+            make = lambda text, x, y, width: Glyph(text, x, y, x + width, y + 9, page, 0)
+            if page == 1:
+                label.words = [make('営業費用', 25, 72, 40), make('管路費', 40, 84, 30)]
+                paid.words = [make('1,300', 130, 72, 30), make('1,000', 130, 84, 30)]
+            else:
+                # 営業外費用 prints no amount of its own here; its 目 支払利息 below does.
+                label.words = [make('職員給与費', 40, 72, 50), make('営業外費用', 25, 84, 50), make('支払利息', 40, 96, 40)]
+                paid.words = [make('300', 130, 72, 30), make('2,000', 130, 96, 30)]
+            logicals.append(Logical([page], [label, paid], '円', []))
+        built = build(logicals, pattern='indent')
+        self.assertEqual([n['name_text'] for n in built.nodes], ['営業費用', '管路費', '職員給与費', '営業外費用', '支払利息'])
+        depth = {n['name_text']: n['depth'] for n in built.nodes}
+        self.assertEqual((depth['営業外費用'], depth['支払利息']), (depth['営業費用'], depth['管路費']))
+
 
 class SupplementRoundTest(unittest.TestCase):
     def build_pages(self, round_on_next_page=True, round_at_foot=False, stacked_on_first_page=True, foot_label='第５次補正',

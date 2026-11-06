@@ -1480,6 +1480,10 @@ def repeats(previous: Item, item: Item, ocr: bool = False) -> bool:
     Printed text repeats the code (and the name). For OCR (`scan.near_code`), a line of codes only (`10 2 3`
     at the top of a page) repeats the open heading when its code is near, and a line with a name of three
     characters or more repeats it when its code is near and its name agrees to one character."""
+    if previous.code is None and item.code is None:
+        # Without codes nothing backs the one character `same_heading` allows: 営業外費用 is no misread of the
+        # open 営業費用 (132012 下水道事業会計), so a line repeats the heading only by the same name.
+        return not item.name or normalize(previous.name or '') == normalize(item.name)
     if previous.code == item.code and (not item.name or same_heading(previous.name, item.name)):
         return True
     if not ocr:
@@ -2212,6 +2216,10 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                         # Digits in the repeated name (`市制７０周年記念事業費`) are the open heading's own, not an amount.
                         repeated_codes.extend(g for g in item.glyphs if re.search(r'[0-9０-９]', g.text))
                         continue
+                if item.role == 'node':
+                    # A subject not printed again has begun on the page: the headings printed again are over. In a
+                    # table without codes (132012 下水道事業会計) a later 営業外費用 is no reprint of the open 営業費用.
+                    opening = False
                 depth = item.title_depth if item.level == -1 else item.level + 1 + (titled if title_shift(item.group) else 0)
                 previous = stack[depth - 1] if len(stack) >= depth else None
                 if previous is None and logical.level_titles is None:
