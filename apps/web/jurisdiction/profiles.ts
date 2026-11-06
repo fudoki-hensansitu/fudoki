@@ -1,5 +1,5 @@
 // 自治体の個別ページに載せる、区の方針・政策領域・事業の入れ替え。API にはまだ無いので、出典（予算編成方針・当初予算の主な施策・
-// 事務事業評価）から手で起こした値をここに置く。金額は出典の千円を円にしたもの。画像は static/jurisdictions/<code>/ に置く
+// 事務事業評価・基本構想）から手で起こした値をここに置く。金額は出典の千円を円にしたもの。画像は static/jurisdictions/<code>/ に置く
 // 政策領域への事業の振り分けと文の要約は風土記の判断で、出典の文言そのものではない
 
 export interface Amount {
@@ -44,8 +44,6 @@ export interface Scrap {
 }
 
 export interface ProfileYear {
-  /** 予算の考え方の一文。header の名前の下に出す */
-  tagline: string
   /** 方針の出典（予算編成方針の頁） */
   policySource: string
   policies: Policy[]
@@ -68,6 +66,8 @@ export interface Profile {
   site: string
   population?: { people: number; asOf: string }
   tags: string[]
+  /** 基本構想が掲げる都市像（まちの将来像）。年度によらず header の名前の下に出す */
+  vision?: { text: string; source: string }
   /** 会計年度（西暦）ごと */
   years: Record<string, ProfileYear>
 }
@@ -83,9 +83,12 @@ const SHINAGAWA: Profile = {
     "asOf": "2026-09-01"
   },
   "tags": [],
+  "vision": {
+    "text": "輝く笑顔 住み続けたいまち しながわ",
+    "source": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/004/987/kihonkoso0327.pdf"
+  },
   "years": {
     "2026": {
-      "tagline": "区民の不安や不満といった「不」を取り除き、誰もが安心して暮らしていける社会へ",
       "policySource": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/729/20250730113250_2.pdf",
       "documents": {"initial": [{"label": "予算書", "href": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/654/2026tousyoyosan_3.pdf"}]},
       "policies": [
@@ -275,7 +278,6 @@ const SHINAGAWA: Profile = {
       ]
     },
     "2025": {
-      "tagline": "性別や障害の有無、家庭の状況などで選択を阻まれず、自分の望むように生き、幸せを感じられる社会へ",
       "policySource": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/730/20240730173216_1.pdf",
       "documents": {"settlement": [{"label": "決算書", "href": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/751/r7/r7_2.pdf"}], "initial": [{"label": "予算書（1〜5款）", "href": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/655/2025tousyoyosan_5.pdf"}, {"label": "予算書（6〜9款）", "href": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/655/2025tousyoyosan_6.pdf"}]},
       "policies": [
@@ -474,7 +476,6 @@ const SHINAGAWA: Profile = {
       ]
     },
     "2024": {
-        "tagline": "区民の幸福（ウェルビーイング）を軸に、新しい時代の品川を引っ張る",
         "policySource": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/731/20230731131455_1.pdf",
         "documents": {"settlement": [{"label": "決算書", "href": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/751/r6/r6_2.pdf"}], "initial": [{"label": "予算書", "href": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/656/20240208145918_8.pdf"}]},
         "policies": [
