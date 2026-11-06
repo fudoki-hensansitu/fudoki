@@ -233,22 +233,23 @@ describe('内訳の API', () => {
       expect(flows.find((flow) => flow.kan.id === id(2))!.kou[0]!.yen).toBe(0)
     }
   })
-  test('分野ごとの流れは COFOG で目を枠に分け、COFOG の中分類（目的）ごとにまとめ、印字のない目を含む枠・中分類に amountMissing を付ける', async () => {
+  test('機能分類の流れは COFOG の大分類・中分類で目を分け、印字のない目を含む分類に amountMissing を付ける', async () => {
     const cofog: Env = { ...env, API: fixtureApi({ code: '132012', name: '八王子市', extraNodes: [
       node({ node_id: id(30), parent_node_id: id(20), node_kind: '目', name: '児童手当費', amount_yen: null, fiscal_year: 2025, kan_name: '子ども教育費', kou_name: '子ども費', cofog_code: '10.4' }),
       node({ node_id: id(31), parent_node_id: id(20), node_kind: '目', name: '学校費', amount_yen: 50, fiscal_year: 2025, kan_name: '子ども教育費', kou_name: '子ども費', cofog_code: '09.1' }),
+      node({ node_id: id(32), parent_node_id: id(20), node_kind: '目', name: '保育費', amount_yen: 70, fiscal_year: 2025, kan_name: '子ども教育費', kou_name: '子ども費', cofog_code: '10' }),
     ] }) }
     const res = await get('/api/jurisdictions/flow/132012/2025/moku?view=cofog', cofog)
     expect(res.status).toBe(200)
-    const flows = await res.json() as { kan: { id: string; yen: number; amountMissing?: true }; kou: { name: string; yen: number; amountMissing?: true; moku: { name: string }[] }[] }[]
-    const kosodate = flows.find((f) => f.kan.id === 'kosodate')!
-    expect(kosodate.kan).toMatchObject({ yen: 50, amountMissing: true })
-    // 款（子ども教育費）は使わず、COFOG の中分類の名前で分ける
-    expect(kosodate.kou.map((k) => k.name)).toEqual(['就学前教育及び初等教育', '家族及び児童'])
-    expect(kosodate.kou[1]).toMatchObject({ yen: 0, amountMissing: true })
-    expect(kosodate.kou[0]!.moku.map((m) => m.name)).toEqual(['学校費'])
+    const flows = await res.json() as { kan: { id: string; name: string; yen: number; amountMissing?: true }; kou: { name: string; yen: number; amountMissing?: true; moku: { name: string }[] }[] }[]
+    // 款（子ども教育費）は使わず、COFOG の名前で分ける
+    const social = flows.find((f) => f.kan.id === 'cofog-10')!
+    expect(social.kan).toMatchObject({ name: '福祉・子育て', yen: 70, amountMissing: true })
+    expect(social.kou.map((k) => k.name)).toEqual(['中分類を決めていない支出', '家族及び児童'])
+    expect(social.kou[1]).toMatchObject({ yen: 0, amountMissing: true })
+    expect(flows.find((f) => f.kan.id === 'cofog-09')!.kou[0]).toMatchObject({ name: '就学前教育及び初等教育', yen: 50, moku: [{ name: '学校費' }] })
     // COFOG の付かない目は「その他」に入り、最後に置く
-    expect(flows.at(-1)!.kan.id).toBe('other')
+    expect(flows.at(-1)!.kan.id).toBe('cofog-none')
     expect(flows.at(-1)!.kan.amountMissing).toBeUndefined()
   })
   test('後続ページの節を優先し、全ページの金額から上位の内訳を選ぶ', async () => {

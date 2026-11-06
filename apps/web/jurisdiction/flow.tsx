@@ -8,9 +8,9 @@ import { AmountTip, TIP_CARD, TipCard } from './amount-tip'
 import { Overview } from './sankey'
 import { formatShare, formatYen, type Drill, type FlowView, type Kou, type Moku, type PageData, type YearTotal } from './types'
 
-/** 分け方ごとの段の呼び名。分野で分けると2段目は COFOG の中分類（目的）、3段目は自治体の科目（目）、4段目はその内訳（節・事業） */
+/** 分け方ごとの段の呼び名。機能分類は COFOG の大分類・中分類のあとに自治体の科目（目）とその内訳（節・事業）が来る */
 const LEVELS: Record<FlowView, { kan: string; kou: string; moku: string; setsu: string }> = {
-  cofog: { kan: '分野', kou: '目的', moku: '科目', setsu: '内訳' },
+  cofog: { kan: '大分類', kou: '中分類', moku: '科目', setsu: '内訳' },
   kan: { kan: '款', kou: '項', moku: '目', setsu: '節' },
 }
 type Levels = (typeof LEVELS)[FlowView]

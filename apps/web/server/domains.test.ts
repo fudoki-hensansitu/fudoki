@@ -11,11 +11,11 @@ describe('分野の枠', () => {
   test('COFOG の全コードがどれか一つの枠に入る', () => {
     for (const code of masterCodes) expect(frameOf(code!), code).toBeDefined()
   })
-  test('細かいコードの対応が粗いコードより優先する', () => {
-    expect(frameOf('10.4')?.id).toBe('kosodate')
-    expect(frameOf('10.2')?.id).toBe('iryo')
-    expect(frameOf('04.5.1')?.id).toBe('kurashi')
-    expect(frameOf('04.1')?.id).toBe('sangyo')
+  test('分野は COFOG の大分類で決まる', () => {
+    expect(frameOf('10.4')?.id).toBe('fukushi')
+    expect(frameOf('09.1')?.id).toBe('kyoiku')
+    expect(frameOf('04.5.1')?.id).toBe('sangyo')
+    expect(frameOf('01')?.id).toBe('gyosei')
   })
   test('自治体ページの事業は全て COFOG のマスタにあるコードを持ち、枠から漏れない', () => {
     for (const profile of Object.values(PROFILES)) {

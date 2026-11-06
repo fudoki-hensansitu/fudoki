@@ -3,12 +3,12 @@
 // 歳出の決算は API の値。新しく始めたこと・やめたこと（事業の入れ替え）は jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
 import { Link } from '@void/react'
 import * as React from 'react'
-import { ArrowSquareOutIcon, BabyIcon, BasketballIcon, CaretDownIcon, CheckCircleIcon, CircleHalfIcon, ClipboardTextIcon, ClockIcon, CoinsIcon, ChatCircleIcon, FirstAidKitIcon, GlobeIcon, HouseLineIcon, LeafIcon, MapPinIcon, MinusCircleIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, UsersIcon, WarningCircleIcon, XIcon } from '@phosphor-icons/react'
+import { ArrowSquareOutIcon, BankIcon, BasketballIcon, CaretDownIcon, CheckCircleIcon, CircleHalfIcon, ClipboardTextIcon, ClockIcon, CoinsIcon, ChatCircleIcon, FirstAidKitIcon, GlobeIcon, HandHeartIcon, HouseLineIcon, LeafIcon, MapPinIcon, MinusCircleIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, StudentIcon, UsersIcon, WarningCircleIcon, XIcon } from '@phosphor-icons/react'
 import { StartForm } from '../chat/start-form'
 import type { StoredSession } from '../chat/store'
 import { Hint } from '@/components/hint'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { DOMAIN_FRAMES, groupByFrame } from './domains'
+import { DOMAIN_FRAMES, groupByFrame, OTHER_FRAME } from './domains'
 import { Flow } from './flow'
 import { assetPath, type PolicyProject, type ProfileYear, type ProjectStatus, type Scrap } from './profiles'
 import { changePct, formatAsOf, formatPeople, formatYen, reiwa, yearName, type FlowView, type PageData, type Project, type Setsu, type YearTotal } from './types'
@@ -100,10 +100,10 @@ function ProjectItem({ p }: { p: PolicyProject }) {
   )
 }
 
-/** 分野の枠（domains.ts）の id ごとの icon */
-const DOMAIN_ICON: Record<string, typeof BabyIcon> = {
-  bosai: ShieldCheckIcon, kosodate: BabyIcon, iryo: FirstAidKitIcon, kurashi: HouseLineIcon,
-  sangyo: StorefrontIcon, kankyo: LeafIcon, gyosei: CoinsIcon, bunka: BasketballIcon,
+/** 分野（domains.ts）の id ごとの icon */
+const DOMAIN_ICON: Record<string, typeof BankIcon> = {
+  bosai: ShieldCheckIcon, fukushi: HandHeartIcon, kyoiku: StudentIcon, iryo: FirstAidKitIcon, kurashi: HouseLineIcon,
+  sangyo: StorefrontIcon, kankyo: LeafIcon, bunka: BasketballIcon, gyosei: BankIcon,
 }
 
 /** 区政を知らない人の入口。自治体の仕事を分野の例で見せ、1年に使うお金を住民1人あたりで言う（最新の決算） */
@@ -112,7 +112,7 @@ function Overview({ data }: { data: PageData }) {
   const people = data.population?.people
   const kind = data.name.slice(-1)
   return (
-    <Section id="about" title={`${kind}は何をしている？`} lead={`${data.name}は、暮らしの身近なことの多くを受け持っています。分野ごとの主な仕事です。`}>
+    <Section id="about" title={`${kind}は何をしている？`}>
       {latest ? (
         <p className="text-[15px]">
           {reiwa(latest.year)}に使ったお金は<b className="mx-1 text-xl font-normal tabular-nums">{formatYen(latest.yen)}</b>
@@ -125,15 +125,24 @@ function Overview({ data }: { data: PageData }) {
         </p>
       ) : null}
       <ul className="grid grid-cols-1 gap-x-8 border-t sm:grid-cols-2">
-        {DOMAIN_FRAMES.map((f) => (
-          <li key={f.id} className="flex items-center gap-3 border-b border-foreground/10 py-3">
-            <DomainIcon id={f.id} />
-            <div className="min-w-0">
-              <b className="block text-[15px] font-normal">{f.name}</b>
-              <span className="text-[13px] text-muted-foreground">{f.examples}</span>
-            </div>
-          </li>
-        ))}
+        {[...DOMAIN_FRAMES.filter((f) => f.examples), OTHER_FRAME].map((f) => {
+          // 最新の決算を COFOG の大分類で分けた額（お金の流れの機能分類と同じ値）
+          const spent = data.cofogFlow.find((d) => d.kan.id === `cofog-${f.cofog || 'none'}`)?.kan
+          if (f === OTHER_FRAME && !spent) return null
+          return (
+            <li key={f.id} className="flex items-center gap-3 border-b border-foreground/10 py-3">
+              <DomainIcon id={f.id} />
+              <div className="min-w-0 flex-1">
+                <b className="block text-[15px] font-normal">{f.name}</b>
+                <span className="text-[13px] text-muted-foreground">{f.examples}</span>
+              </div>
+              <div className="shrink-0 text-right tabular-nums">
+                <span className="block text-[15px]">{spent ? formatYen(spent.yen) : '—'}</span>
+                {spent && people ? <span className="block text-xs text-muted-foreground">1人 約{Math.round(spent.yen / people / 1e3) / 10}万円</span> : null}
+              </div>
+            </li>
+          )
+        })}
       </ul>
     </Section>
   )
@@ -141,7 +150,7 @@ function Overview({ data }: { data: PageData }) {
 
 function Domains({ year }: { year: ProfileYear }) {
   return (
-    <Section id="domains" title="暮らしで何が変わった？" lead="その年度に新しく始まったり広がったりしたことです。うまくいったかどうかは、自治体が自分で評価しています。" link={[{ href: year.budgetSource, label: '当初予算' }, { href: year.evaluationSource, label: '事業評価' }]}>
+    <Section id="domains" title="暮らしで何が変わった？" lead="うまくいったかどうかは、自治体が自分で評価しています。" link={[{ href: year.budgetSource, label: '当初予算' }, { href: year.evaluationSource, label: '事業評価' }]}>
       {groupByFrame(year.projects).map(({ frame: d, items }) => (
         <div key={d.id} id={`d-${d.id}`} className="flex scroll-mt-32 lg:scroll-mt-20 flex-col gap-1 [&+&]:mt-12">
           <h3 className="mb-1.5 flex items-center gap-2.5 text-[19px] leading-snug sm:text-[22px]">
@@ -294,7 +303,7 @@ function Budget({ data, year }: { data: PageData; year: number }) {
     <Section
       id="budget"
       title="お金は何に使われた？"
-      lead="1年間に使ったお金（決算）と、使う予定のお金（予算）を、使い道ごとに分けています。機能分類は使い道の目的で分けていて、どの自治体も同じ分け方なので比べられます。自治体分類は予算書・決算書の款・項のままです。"
+      lead="機能分類は国際的な分け方（COFOG）で、どの自治体も同じなので比べられます。自治体分類は予算書・決算書の分け方のままです。"
       link={docs.length ? docs : undefined}
     >
       <div id="budget-panel" role="tabpanel" aria-labelledby={`tab-${phase}`} data-ask-view={`${reiwa(year)}の${label}の金額（${VIEWS.find((v) => v.key === view)!.label}）`} className="flex flex-col gap-4">
@@ -318,7 +327,7 @@ function Projects({ data, year }: { data: PageData; year: number }) {
   const isLatest = !!settled && settled.year === data.years.at(-1)?.year
   const max = data.projects[0]?.yen ?? 1
   return (
-    <Section id="projects" title="いちばんお金がかかっているのは？" lead="決算で金額の大きい使い道の上位です。前の年からの増減も載せています。">
+    <Section id="projects" title="いちばんお金がかかっているのは？">
       {isLatest ? (
         <ul className="border-t">
           {data.projects.map((p, i) => (
