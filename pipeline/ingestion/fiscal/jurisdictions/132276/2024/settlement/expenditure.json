@@ -2122,7 +2122,7 @@
     {
       "table_id": "general-expenditure-detail",
       "conversion_id": "general",
-      "input_fingerprint": "43e469bd2e36023417e49151cb9d055aa4c1c3a012856e21a71f9aa9b4ea4251",
+      "input_fingerprint": "2abd83c6aa52e2e5fcb5b7f6609df9b3205d4164c14845a3401758c6adaa455d",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '備考': 'position'}。",
@@ -2154,7 +2154,7 @@
     {
       "table_id": "nhi-expenditure-detail",
       "conversion_id": "nhi",
-      "input_fingerprint": "f9d168ef059005f928959dd7bdd219e5c44b7875873022229c15f2e239797db1",
+      "input_fingerprint": "ac2de495427acf97f54978c26ebc22669f2beb639db659236c893f4c5fc866b0",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '備考': 'position'}。",
@@ -2186,7 +2186,7 @@
     {
       "table_id": "elderly-expenditure-detail",
       "conversion_id": "elderly",
-      "input_fingerprint": "228039655103149402d12ebec3ff996e648026461638c512a1863205578850c9",
+      "input_fingerprint": "eb4aab82e531ec81abdc9d04e186d3a138a7e94fd1d946b1759a6b147cd444d6",
       "account": "後期高齢者医療会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '備考': 'position'}。",
@@ -2217,7 +2217,7 @@
     {
       "table_id": "care-expenditure-detail",
       "conversion_id": "care",
-      "input_fingerprint": "25f2d6c7d8ca48cf110a24efda5f9ceb8e41634bf7c93bdc3f9fd59ff7f64a05",
+      "input_fingerprint": "4c814b4e86101deb13c7b0e65ebb3b3f3393acb2ce7b938160670506ea2538d3",
       "account": "介護保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '備考': 'position'}。",
@@ -2249,7 +2249,7 @@
     {
       "table_id": "nishiguchi-expenditure-detail",
       "conversion_id": "nishiguchi",
-      "input_fingerprint": "bb582f21ca726366041376833105a575e4f6232eed231397965c436aff99d6b9",
+      "input_fingerprint": "fd31c001d8b02ec29a8d4f2371344904627c1d9f9c56a8cf790fa23053908dc4",
       "account": "羽村市福生都市計画事業羽村駅西口土地区画整理事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '備考': 'position'}。",
@@ -2280,7 +2280,7 @@
     {
       "table_id": "water-revenue-expenditure-detail",
       "conversion_id": "water-revenue",
-      "input_fingerprint": "48884f498d9f3648221b1719005d0f1ec44034621c260a4aa0dc73d01ebfdbb1",
+      "input_fingerprint": "0273fc1a6531aace35b1160746a107c7a0ce27230300fea9dcde9c592bc541fd",
       "account": "水道事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -2309,7 +2309,7 @@
     {
       "table_id": "water-capital-expenditure-detail",
       "conversion_id": "water-capital",
-      "input_fingerprint": "c6b23b4a894a06e2e7b35753d11e749251a6a3040659b8ad4788881b4d06cf12",
+      "input_fingerprint": "982b2be1fe09558aa914f074e4fead4c1a3362ccd9074316997f90b66f38564c",
       "account": "水道事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -2338,7 +2338,7 @@
     {
       "table_id": "sewer-revenue-expenditure-detail",
       "conversion_id": "sewer-revenue",
-      "input_fingerprint": "7322e793ac01e85215472cbf9ea0fda67fc950d03c87fca858109d2a53fa9b2f",
+      "input_fingerprint": "204b15a55aeeb7bc01522c31103b1a3a4814f3dffcc69567fc44312b7a82ed07",
       "account": "下水道事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -2367,7 +2367,7 @@
     {
       "table_id": "sewer-capital-expenditure-detail",
       "conversion_id": "sewer-capital",
-      "input_fingerprint": "d8d3bb149884869170e3f45872c765df2fe77ef176ec01c59b3be28b23a032c5",
+      "input_fingerprint": "c8b9f145376315991180e35405b18802fced7764c0899752217c33206110fe5b",
       "account": "下水道事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",

@@ -1,0 +1,870 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "131199",
+    "fiscal_year": 2024,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure-detail",
+        "pages": [
+          [
+            248,
+            457
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-ocr-1",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              248,
+              249,
+              250,
+              251,
+              252,
+              253,
+              254,
+              255,
+              256,
+              257
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "7164d64b4485ee28ffd0f8f774b7d19677d789ad3a446695466d7e9aeec3dcd4",
+          "bytes": 2544672
+        },
+        {
+          "id": "general-ocr-2",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              258,
+              259,
+              260,
+              261,
+              262,
+              263,
+              264,
+              265,
+              266,
+              267
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "ae92ad5cdfc6ee22feff76fba75a251734b1cdfe7fa72c8100f1f52596ecdc0a",
+          "bytes": 2446555
+        },
+        {
+          "id": "general-ocr-3",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              268,
+              269,
+              270,
+              271,
+              272,
+              273,
+              274,
+              275,
+              276,
+              277
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "7abb0d404af01137999160068d815b156f6ca6989657a2919c3696e572ef3c69",
+          "bytes": 2470752
+        },
+        {
+          "id": "general-ocr-4",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              278,
+              279,
+              280,
+              281,
+              282,
+              283,
+              284,
+              285,
+              286,
+              287
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "9281e5904fbbf67f61ce22def2b1a67c3e90c1cd15b45c7a4269bfcd42d02c73",
+          "bytes": 2692605
+        },
+        {
+          "id": "general-ocr-5",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              288,
+              289,
+              290,
+              291,
+              292,
+              293,
+              294,
+              295,
+              296,
+              297
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "adf276256deca4a2750b9c3c5515928d48984d33fe762fdbcf04cc541135fa12",
+          "bytes": 2611957
+        },
+        {
+          "id": "general-ocr-6",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              298,
+              299,
+              300,
+              301,
+              302,
+              303,
+              304,
+              305,
+              306,
+              307
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "2eb6de5b132e8771349ac59012a0742182242ca6144b9fb8989ebfdba6f05769",
+          "bytes": 2252836
+        },
+        {
+          "id": "general-ocr-7",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              308,
+              309,
+              310,
+              311,
+              312,
+              313,
+              314,
+              315,
+              316,
+              317
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "4e1f5edc639c0b559debfc1525387c176c28b943949438093b63ec7d321ad35d",
+          "bytes": 2437136
+        },
+        {
+          "id": "general-ocr-8",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              318,
+              319,
+              320,
+              321,
+              322,
+              323,
+              324,
+              325,
+              326,
+              327
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "61d68190c81c39ed53cf6c68d97365713340c2aeed35df804c4695f3bee12e8e",
+          "bytes": 2530787
+        },
+        {
+          "id": "general-ocr-9",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              328,
+              329,
+              330,
+              331,
+              332,
+              333,
+              334,
+              335,
+              336,
+              337
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "c28f2a3546fdef18eb2ea87d1a798f499b4aed6179a81d9e388172046edfe06d",
+          "bytes": 2275275
+        },
+        {
+          "id": "general-ocr-10",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              338,
+              339,
+              340,
+              341,
+              342,
+              343,
+              344,
+              345,
+              346,
+              347
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "31bf632e926292d6ec56d86105b5ddd8ed6a2a90151659081678fb3e15d57299",
+          "bytes": 2271389
+        },
+        {
+          "id": "general-ocr-11",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              348,
+              349,
+              350,
+              351,
+              352,
+              353,
+              354,
+              355,
+              356,
+              357
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "2d4ed0b3ef0ef9c3a100ec39955f8f165d1868dee0bda2310c239e94045298db",
+          "bytes": 2289683
+        },
+        {
+          "id": "general-ocr-12",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              358,
+              359,
+              360,
+              361,
+              362,
+              363,
+              364,
+              365,
+              366,
+              367
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "96839038536c294525d08a5ccd40581746c02c10b685ba72942683a02ed9bdb7",
+          "bytes": 2464650
+        },
+        {
+          "id": "general-ocr-13",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              368,
+              369,
+              370,
+              371,
+              372,
+              373,
+              374,
+              375,
+              376,
+              377
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "e7907e9a74c8d2bd2f97b775f2bcef5f5bff4b3d55f74fd856e1bc965eee17d6",
+          "bytes": 2402732
+        },
+        {
+          "id": "general-ocr-14",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              378,
+              379,
+              380,
+              381,
+              382,
+              383,
+              384,
+              385,
+              386,
+              387
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "c1fa2fee8b80712a1cef1b597bbf2338c6e9e37bdd80adaff6da952e22690692",
+          "bytes": 2489384
+        },
+        {
+          "id": "general-ocr-15",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              388,
+              389,
+              390,
+              391,
+              392,
+              393,
+              394,
+              395,
+              396,
+              397
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "db89738d796f50aaa1c3d199e842ea56a337f5e08bd29fa46ae6bf0ae427f769",
+          "bytes": 2477733
+        },
+        {
+          "id": "general-ocr-16",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              398,
+              399,
+              400,
+              401,
+              402,
+              403,
+              404,
+              405,
+              406,
+              407
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "e515d1e559ff7050f894139250f45178072f3253e869310462b9d61b12c09218",
+          "bytes": 2419443
+        },
+        {
+          "id": "general-ocr-17",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              408,
+              409,
+              410,
+              411,
+              412,
+              413,
+              414,
+              415,
+              416,
+              417
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "c7f0f20fab43f6ae74ec03b1e33aa7d9e8543b46fc97e1cd5bcaaaee2bacdeec",
+          "bytes": 2607812
+        },
+        {
+          "id": "general-ocr-18",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              418,
+              419,
+              420,
+              421,
+              422,
+              423,
+              424,
+              425,
+              426,
+              427
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "d7d320f7f3616b3fee9d5a8dc4469390192523085c577871dd0c1b9d164adec8",
+          "bytes": 2348530
+        },
+        {
+          "id": "general-ocr-19",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              428,
+              429,
+              430,
+              431,
+              432,
+              433,
+              434,
+              435,
+              436,
+              437
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "3835ede3d2b985fe5903785ff6506259be369b481c37c37bcd05955304c01f3c",
+          "bytes": 2402816
+        },
+        {
+          "id": "general-ocr-20",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              438,
+              439,
+              440,
+              441,
+              442,
+              443,
+              444,
+              445,
+              446,
+              447
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "df1f23f7adb8b8790d76de4a82e0998e0256334c5f51d00f315cd8ef88e47fc6",
+          "bytes": 2112686
+        },
+        {
+          "id": "general-ocr-21",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              448,
+              449,
+              450,
+              451,
+              452,
+              453,
+              454,
+              455,
+              456,
+              457
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "aef9507706c0066177be286b73e70ba4d8caacc701404f801f827f44ca47e3fe",
+          "bytes": 1762064
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "nhi",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "nhi-expenditure-detail",
+        "pages": [
+          [
+            490,
+            521
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "nhi-ocr-1",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              490,
+              491,
+              492,
+              493,
+              494,
+              495,
+              496,
+              497,
+              498,
+              499
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "9a9030b3829f69fe5aa71de1bcd719fd625d502c48188e47f420277a07c078b8",
+          "bytes": 1689901
+        },
+        {
+          "id": "nhi-ocr-2",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              500,
+              501,
+              502,
+              503,
+              504,
+              505,
+              506,
+              507,
+              508,
+              509
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "09dab2dcc552cb7e2181e70d01d97947a328caff24f35b9e34ef24d1b3d9ce63",
+          "bytes": 1548327
+        },
+        {
+          "id": "nhi-ocr-3",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              510,
+              511,
+              512,
+              513,
+              514,
+              515,
+              516,
+              517,
+              518,
+              519
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "334885e20c561715f1447128536a6e67f2f8c9d48cd3033ffcb3e4ce7528c488",
+          "bytes": 1628068
+        },
+        {
+          "id": "nhi-ocr-4",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              520,
+              521
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "ab3ac756aacc47a25b3161450c59565ba5e0f3222601ce271e78c586818fcf02",
+          "bytes": 169467
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "nhi-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "kaigo",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "kaigo-expenditure-detail",
+        "pages": [
+          [
+            554,
+            579
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "kaigo-ocr-1",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              554,
+              555,
+              556,
+              557,
+              558,
+              559,
+              560,
+              561,
+              562,
+              563
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "18cf511b54d7a51002dce087bac3a5c15a1a2a91ea333417e8a63b45f1e31285",
+          "bytes": 1965945
+        },
+        {
+          "id": "kaigo-ocr-2",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              564,
+              565,
+              566,
+              567,
+              568,
+              569,
+              570,
+              571,
+              572,
+              573
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "ffb61b9d9fd62476ecb3b5ee1cbf9c3282f5c71c278b3ca4b02fba2981eca1bd",
+          "bytes": 2173378
+        },
+        {
+          "id": "kaigo-ocr-3",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              574,
+              575,
+              576,
+              577,
+              578,
+              579
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "0c74968c86d3937719c9a1aadfebd3de25e40985ba990c23c81a0dbc11c61797",
+          "bytes": 981831
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kaigo-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "kouki",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療事業特別会計",
+        "table_id": "kouki-expenditure-detail",
+        "pages": [
+          [
+            598,
+            609
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "kouki-ocr-1",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              598,
+              599,
+              600,
+              601,
+              602,
+              603,
+              604,
+              605,
+              606,
+              607
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "c88c91f271c1ad06253e4aa856220fcb7003746a9a501451bfb5872a69cbda23",
+          "bytes": 1341717
+        },
+        {
+          "id": "kouki-ocr-2",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              608,
+              609
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "c9db8475c0bea510606d9821dcf48a7f6ee6fab228e17cd7b407f20a574067c8",
+          "bytes": 158742
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kouki-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "tobu",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935"
+        }
+      ],
+      "options": {
+        "account": "東武東上線連続立体化事業特別会計",
+        "table_id": "tobu-expenditure-detail",
+        "pages": [
+          [
+            622,
+            627
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "tobu-ocr-1",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              622,
+              623,
+              624,
+              625,
+              626,
+              627
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "528d05e8d4b0eb3938dec7b537d76126e554f81268a46fd3ee4de38c7ab8eca6",
+          "bytes": 841785
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "tobu-expenditure-detail"
+        }
+      ]
+    }
+  ],
+  "tables": []
+}

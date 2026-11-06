@@ -1504,9 +1504,16 @@ def closing_department_headings(ordered: list[Item]) -> set[int]:
         if item.group.subject or not department_heading(item):
             continue
         parts = []
-        for other in ordered[index + 1:]:
+        for position in range(index + 1, len(ordered)):
+            other = ordered[position]
             if other.group.subject and not other.amounts and other.page != item.page:
-                continue  # the subject printed again at the top of the next page: the parts run on
+                # The subject printed again at the top of the next page (`(1 保健衛生費)`): the parts run on. A new
+                # subject there (its amounts may sit in a column not yet joined to it) ends them.
+                open_one = next((s for s in reversed(ordered[:position])
+                                 if s.group.subject and s.level == other.level), None)
+                if open_one is not None and repeats(open_one, other, ocr=True):
+                    continue
+                break
             if other.group.subject or other.group.axis != item.group.axis:
                 break
             start = lambda it: it.lines[0][0].x0  # where the line starts, its number included

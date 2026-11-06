@@ -1,0 +1,1507 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132101",
+    "fiscal_year": 2024,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-01",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7f7854adae1b755f200e16d46f5795b70b3d628d007159d647833cfc96ebaf5d"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-01-expenditure-detail",
+        "pages": [
+          [
+            1,
+            4
+          ]
+        ],
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              },
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-01-ocr-1",
+          "origin_sha256": "7f7854adae1b755f200e16d46f5795b70b3d628d007159d647833cfc96ebaf5d",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "eb4b33b4921f6bf147dfd77a0aa858ef2d064568bf1377c67aadc1df2ff1c7ab",
+          "bytes": 1797335
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-01-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "general-02",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "a0929347062c150bf9fb97d661083ac4996b7fdee791a91494da2a00f0df20c2"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-02-expenditure-detail",
+        "pages": [
+          [
+            2,
+            57
+          ]
+        ],
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              },
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-02-ocr-1",
+          "origin_sha256": "a0929347062c150bf9fb97d661083ac4996b7fdee791a91494da2a00f0df20c2",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "9adf29d63b12ea6e051fae51bd97d47f88fe500f1d2894f3609efc32e31dacb2",
+          "bytes": 3596014
+        },
+        {
+          "id": "general-02-ocr-2",
+          "origin_sha256": "a0929347062c150bf9fb97d661083ac4996b7fdee791a91494da2a00f0df20c2",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "acb0ecb0a872fbdc2c29dee10dbc8666a1e074dc7ab918f743f448a039c9772a",
+          "bytes": 3182763
+        },
+        {
+          "id": "general-02-ocr-3",
+          "origin_sha256": "a0929347062c150bf9fb97d661083ac4996b7fdee791a91494da2a00f0df20c2",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "44b6d40172c20ae310a5aa582fd99c66455578d037ddd162ba892c585d3601fe",
+          "bytes": 3942005
+        },
+        {
+          "id": "general-02-ocr-4",
+          "origin_sha256": "a0929347062c150bf9fb97d661083ac4996b7fdee791a91494da2a00f0df20c2",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "de4e9af9bd4a4e4fa3c43b4207431a690a77291853d88e3edf2ac842a6be6336",
+          "bytes": 3943386
+        },
+        {
+          "id": "general-02-ocr-5",
+          "origin_sha256": "a0929347062c150bf9fb97d661083ac4996b7fdee791a91494da2a00f0df20c2",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "5d183395600d149d6bb5f8e112e2f26968220c94518de506fd045a85e4d19fb9",
+          "bytes": 4325855
+        },
+        {
+          "id": "general-02-ocr-6",
+          "origin_sha256": "a0929347062c150bf9fb97d661083ac4996b7fdee791a91494da2a00f0df20c2",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              52,
+              53,
+              54,
+              55,
+              56,
+              57
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "c64fc7329e097b7bc451679091a2c1ea433ce1e2b8b96808814a23d35317c263",
+          "bytes": 2586114
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-02-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "general-03",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "eafa3b624a5343b4d63be3dc6e31b01c59de75f301db7b3275a39dbfb8d785ed"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-03-expenditure-detail",
+        "pages": [
+          [
+            1,
+            68
+          ]
+        ],
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              },
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-03-ocr-1",
+          "origin_sha256": "eafa3b624a5343b4d63be3dc6e31b01c59de75f301db7b3275a39dbfb8d785ed",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "7cf80073e977c068ca435b89b7f74f1a38eb0cb590acfad1a0d283fb239598d6",
+          "bytes": 3590061
+        },
+        {
+          "id": "general-03-ocr-2",
+          "origin_sha256": "eafa3b624a5343b4d63be3dc6e31b01c59de75f301db7b3275a39dbfb8d785ed",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "eee043da11fbdf3feca79e2d69d52a651fa4b657356e850c4fbf9c544a8e1bc2",
+          "bytes": 3634600
+        },
+        {
+          "id": "general-03-ocr-3",
+          "origin_sha256": "eafa3b624a5343b4d63be3dc6e31b01c59de75f301db7b3275a39dbfb8d785ed",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "42373a6391387ef8223ce059a8a77602a0c4637e7fe032268e72a07e5e149178",
+          "bytes": 3073093
+        },
+        {
+          "id": "general-03-ocr-4",
+          "origin_sha256": "eafa3b624a5343b4d63be3dc6e31b01c59de75f301db7b3275a39dbfb8d785ed",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "fb64aac1f3cf0b2fae6c5892df0d08bf8e59159d09ec6edbbc360d5714b504eb",
+          "bytes": 4288036
+        },
+        {
+          "id": "general-03-ocr-5",
+          "origin_sha256": "eafa3b624a5343b4d63be3dc6e31b01c59de75f301db7b3275a39dbfb8d785ed",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "bc3076a84151c3f4385ec15da9783997f9737288ce7c37ee4810eb28948a3427",
+          "bytes": 3115829
+        },
+        {
+          "id": "general-03-ocr-6",
+          "origin_sha256": "eafa3b624a5343b4d63be3dc6e31b01c59de75f301db7b3275a39dbfb8d785ed",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "8b1cc2f295d4381116e712f3ad0079b82f6c6246a1d854ca2450d9edf5ceb000",
+          "bytes": 4007258
+        },
+        {
+          "id": "general-03-ocr-7",
+          "origin_sha256": "eafa3b624a5343b4d63be3dc6e31b01c59de75f301db7b3275a39dbfb8d785ed",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              61,
+              62,
+              63,
+              64,
+              65,
+              66,
+              67,
+              68
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "78275e825d20317eec02cf9bd262680a93fbeade60e7916977f212f73dc08a17",
+          "bytes": 3743031
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-03-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "general-04",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "a402e0aeeb472ba1b799a21c90c707327d9fe83ee2a55f132a1b2d73bead511c"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-04-expenditure-detail",
+        "pages": [
+          [
+            2,
+            37
+          ]
+        ],
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              },
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-04-ocr-1",
+          "origin_sha256": "a402e0aeeb472ba1b799a21c90c707327d9fe83ee2a55f132a1b2d73bead511c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "d9922169cf339daf27f324c9f465a97972fc75395f99408b715890571bea0686",
+          "bytes": 3136603
+        },
+        {
+          "id": "general-04-ocr-2",
+          "origin_sha256": "a402e0aeeb472ba1b799a21c90c707327d9fe83ee2a55f132a1b2d73bead511c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "122029b0b19bc35bc58473aeba0385065ba8317fcf866e1acf05ea74db2ecc89",
+          "bytes": 3413170
+        },
+        {
+          "id": "general-04-ocr-3",
+          "origin_sha256": "a402e0aeeb472ba1b799a21c90c707327d9fe83ee2a55f132a1b2d73bead511c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "0ac804acb07546ea7514406c1ba7b351c1eb6f334cc0b2fbe3db500cb6aa570a",
+          "bytes": 3853751
+        },
+        {
+          "id": "general-04-ocr-4",
+          "origin_sha256": "a402e0aeeb472ba1b799a21c90c707327d9fe83ee2a55f132a1b2d73bead511c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              32,
+              33,
+              34,
+              35,
+              36,
+              37
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "684983688db48a2ed4b3b1c92d50848d4fff5fa012a0faa5f586f8187fef1ba8",
+          "bytes": 2040583
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-04-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "general-05",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "4640e91ba561ba849e1278d6ab683329eb6e18ecbb2cdc657088fd006308462f"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-05-expenditure-detail",
+        "pages": [
+          [
+            2,
+            2
+          ]
+        ],
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              },
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-05-ocr-1",
+          "origin_sha256": "4640e91ba561ba849e1278d6ab683329eb6e18ecbb2cdc657088fd006308462f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              2
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "27237d066863c3f117a5c4469bf60fd2f91ea12d82e9b304208493bda773bdff",
+          "bytes": 541709
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-05-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "general-06",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "3f51ba066f9c358153cb8804fc4eb10128aacd04a657770f033555a68981e0d5"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-06-expenditure-detail",
+        "pages": [
+          [
+            2,
+            2
+          ]
+        ],
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              },
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-06-ocr-1",
+          "origin_sha256": "3f51ba066f9c358153cb8804fc4eb10128aacd04a657770f033555a68981e0d5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              2
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "2dffb5490d8aac679250be5c9ee8c8fccc4291a4a1195d35e684e65f129921f2",
+          "bytes": 508803
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-06-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "general-07",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "81907eb7fa60dd45d91d89dbfda81f0a8eb440cd976195e090ca9809b4db5fb5"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-07-expenditure-detail",
+        "pages": [
+          [
+            1,
+            4
+          ]
+        ],
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              },
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-07-ocr-1",
+          "origin_sha256": "81907eb7fa60dd45d91d89dbfda81f0a8eb440cd976195e090ca9809b4db5fb5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "96f0c1ebf1a20f1aa85d5fa014b1267dc7dc13b0fc5b6516b3a7c53b29dbc77e",
+          "bytes": 1861455
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-07-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "general-08",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "10a7b67520124a6e4109e4a869b72c8457707bd5a29a875145f7861e32e707a6"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-08-expenditure-detail",
+        "pages": [
+          [
+            2,
+            23
+          ]
+        ],
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              },
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-08-ocr-1",
+          "origin_sha256": "10a7b67520124a6e4109e4a869b72c8457707bd5a29a875145f7861e32e707a6",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "cd803962ed31e079ac0eb86dd5597bd8cbf1fee0af1e4262a9def1dd1e075505",
+          "bytes": 4241365
+        },
+        {
+          "id": "general-08-ocr-2",
+          "origin_sha256": "10a7b67520124a6e4109e4a869b72c8457707bd5a29a875145f7861e32e707a6",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "2712b176f3cd0d7f5532fa5c3ea8b73dd72059213d70be056bd2828c65565109",
+          "bytes": 4111937
+        },
+        {
+          "id": "general-08-ocr-3",
+          "origin_sha256": "10a7b67520124a6e4109e4a869b72c8457707bd5a29a875145f7861e32e707a6",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              22,
+              23
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "4ae46e2bc72a046f14ce073843d0f57677b3e0e22e80b29c084148e818cbc304",
+          "bytes": 1035501
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-08-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "general-09",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "770e954af3a0f9879b1a65b346fb370d51fa37700b105fb69fb337086fe0d7a8"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-09-expenditure-detail",
+        "pages": [
+          [
+            2,
+            5
+          ]
+        ],
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              },
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-09-ocr-1",
+          "origin_sha256": "770e954af3a0f9879b1a65b346fb370d51fa37700b105fb69fb337086fe0d7a8",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              2,
+              3,
+              4,
+              5
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "42c4f842a16b8b91cbb9bf0e47dbbea4259f0aba4ddf9bd877e453476f469426",
+          "bytes": 1581355
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-09-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "general-10",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "8c28cd2ad5811d70da785ba86db2fa87b77e96be1584bae957654c677f3be14f"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-10-expenditure-detail",
+        "pages": [
+          [
+            2,
+            57
+          ]
+        ],
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              },
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-10-ocr-1",
+          "origin_sha256": "8c28cd2ad5811d70da785ba86db2fa87b77e96be1584bae957654c677f3be14f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "d803f9d425c9a6de49dfe82b9c7457817a88957993ca854e599cacd9bec30984",
+          "bytes": 3815001
+        },
+        {
+          "id": "general-10-ocr-2",
+          "origin_sha256": "8c28cd2ad5811d70da785ba86db2fa87b77e96be1584bae957654c677f3be14f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "c0c7643311954532abec855ff97413e6a9b87cd362f9587471560c583f7a56bc",
+          "bytes": 3603688
+        },
+        {
+          "id": "general-10-ocr-3",
+          "origin_sha256": "8c28cd2ad5811d70da785ba86db2fa87b77e96be1584bae957654c677f3be14f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "0c09a777474ac03f6da2ebf3b37aa94a65af824d9ef776d9eb2583304480b053",
+          "bytes": 3995287
+        },
+        {
+          "id": "general-10-ocr-4",
+          "origin_sha256": "8c28cd2ad5811d70da785ba86db2fa87b77e96be1584bae957654c677f3be14f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "8828ea64c7a0a3a464c37fa2068d68fb0e41c731b12b378f2741c6c161c90e81",
+          "bytes": 3948402
+        },
+        {
+          "id": "general-10-ocr-5",
+          "origin_sha256": "8c28cd2ad5811d70da785ba86db2fa87b77e96be1584bae957654c677f3be14f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "b0ff73c1771238260ff37f8e7ea19a62b96488d6d2769c4011680133e3751ab2",
+          "bytes": 3849244
+        },
+        {
+          "id": "general-10-ocr-6",
+          "origin_sha256": "8c28cd2ad5811d70da785ba86db2fa87b77e96be1584bae957654c677f3be14f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              52,
+              53,
+              54,
+              55,
+              56,
+              57
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "680febacae04762bf7afce5f28d24bd5ea900ffd9d9f94f6c57e68599c316e5b",
+          "bytes": 2323370
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-10-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "general-11",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "c479b24f289f0d63c02e869c704a2b478a655952231dbc295f5a63821bcf9940"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-11-expenditure-detail",
+        "pages": [
+          [
+            2,
+            2
+          ]
+        ],
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              },
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-11-ocr-1",
+          "origin_sha256": "c479b24f289f0d63c02e869c704a2b478a655952231dbc295f5a63821bcf9940",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              2
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "50e41c6937bfe1fa4b08e2cde43da21882f507d9c940ce0337cac37838bf2feb",
+          "bytes": 168413
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-11-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "nhi",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "6e40820d2a722ee72fc3030feffb4578d307e8fe9696a94466447ddaf1f0be7d"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "nhi-expenditure-detail",
+        "pages": [
+          [
+            1,
+            9
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              },
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "nhi-ocr-1",
+          "origin_sha256": "6e40820d2a722ee72fc3030feffb4578d307e8fe9696a94466447ddaf1f0be7d",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "e293015aa16b1ad8f95fb60d1afbae6d0c368b0679db0f314bec573d93843f06",
+          "bytes": 4998682
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "nhi-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "kaigo",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "760da33937ef6165dbee885e3e6aa80d0e5ae335c3438e151b69685789828e31"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "kaigo-expenditure-detail",
+        "pages": [
+          [
+            1,
+            17
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              },
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "kaigo-ocr-1",
+          "origin_sha256": "760da33937ef6165dbee885e3e6aa80d0e5ae335c3438e151b69685789828e31",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "5840a91e251184bed082fac8d3de2eb59ac4f8487fe7bc809bcfdf471b823b8a",
+          "bytes": 5598338
+        },
+        {
+          "id": "kaigo-ocr-2",
+          "origin_sha256": "760da33937ef6165dbee885e3e6aa80d0e5ae335c3438e151b69685789828e31",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "64e14939cbc1fdb63afd5f5d03b588792c5ccfe6b345b9797e75a3e7a5de3926",
+          "bytes": 2698910
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kaigo-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "kouki",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "f006525b4817845ac864c69e5437ee908c68789b7bc664d9a416b1cacc7e7cfe"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-expenditure-detail",
+        "pages": [
+          [
+            1,
+            3
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              },
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "kouki-ocr-1",
+          "origin_sha256": "f006525b4817845ac864c69e5437ee908c68789b7bc664d9a416b1cacc7e7cfe",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "9afcd3f778422c1f8afac67b6a3d043963ccf44ba69802060d49f09cf50b2ebe",
+          "bytes": 1720913
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kouki-expenditure-detail"
+        }
+      ]
+    }
+  ],
+  "tables": []
+}
