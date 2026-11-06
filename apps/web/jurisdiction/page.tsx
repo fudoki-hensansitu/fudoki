@@ -86,9 +86,6 @@ function Grade({ grade, className }: { grade: string; className?: string }) {
   )
 }
 
-/** 評価シートの小事業名。note の先頭の（）に書いてある */
-const evaluationUnit = (note: string) => /^（([^）]+)）/.exec(note)?.[1]
-
 /** 予算書の金額のラベル。取り組みだけの金額が載っていないときは「〇〇全体」で、取り組みを含む事業の金額を出している */
 const amountLabel = (label?: string) => {
   const whole = label?.match(/^(.+)全体$/)?.[1]
@@ -96,9 +93,8 @@ const amountLabel = (label?: string) => {
 }
 
 function ProjectItem({ p }: { p: PolicyProject }) {
-  const unit = p.evaluation ? evaluationUnit(p.evaluation.note) : undefined
   const note = p.evaluation?.note.replace(/^（[^）]+）/, '')
-  // unmeasured は評価の指標が取り組みではなく事業の別の内容を測っているので、結果の印を付けず、どの事業の評価かを見出しで言う
+  // unmeasured は評価の指標が取り組みではなく事業の別の内容を測っているので、結果の印を付けない（どの事業かは金額のラベルで言う）
   const badge = p.status && p.status !== 'unmeasured' ? p.status : undefined
   return (
     // 1列で上から読む。金額は名前と同じ行の右に置き、評価の枠は幅いっぱいに出す
@@ -123,7 +119,7 @@ function ProjectItem({ p }: { p: PolicyProject }) {
           <p className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[13px]">
             <span className="inline-flex shrink-0 items-center gap-1 text-muted-foreground">
               <ClipboardTextIcon aria-hidden="true" className="size-4" />
-              {unit ? `区の評価（${unit}）` : '区の評価'}
+              評価
             </span>
             {p.evaluation.grade ? <Grade grade={p.evaluation.grade} className="text-[14px] text-foreground" /> : null}
           </p>
