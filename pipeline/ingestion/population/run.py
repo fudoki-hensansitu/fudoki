@@ -15,6 +15,8 @@ import tempfile
 import urllib.request
 from pathlib import Path
 
+import duckdb
+
 from ingestion.fiscal.manifest import BUCKET
 from ingestion.paths import CACHE
 
@@ -63,7 +65,15 @@ def save(origin: dict) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     with urllib.request.urlopen(origin['url'], timeout=60) as response:
         data = response.read()
-    path.write_bytes(data)
+    temporary = path.with_suffix('.download')
+    temporary.write_bytes(data)
+    try:
+        # 様式が違う・エラーの頁が返ったときは、読めずにここで止まり、キャッシュも R2 も上書きしない
+        with duckdb.connect() as con:
+            read(con, temporary)
+        os.replace(temporary, path)
+    finally:
+        temporary.unlink(missing_ok=True)
     subprocess.run(['cf', 'r2', 'objects', 'put', object_key(origin), '--bucket-name', BUCKET,
                     '--file', str(path), '--quiet'], check=True, stdout=subprocess.DEVNULL)
     return path
