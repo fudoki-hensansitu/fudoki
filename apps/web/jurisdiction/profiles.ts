@@ -8,7 +8,7 @@ export interface Amount {
   label?: string
 }
 
-/** 区の評価の指標と目標の比べ。unmeasured は評価はあるが、指標がその事業の効果を測っていないもの。none は評価前 */
+/** 区の評価の指標と目標の比べ。unmeasured は評価シートはあるが、指標がその事業を対象にしていないもの。none は評価前 */
 export type ProjectStatus = 'short' | 'met' | 'mixed' | 'unmeasured' | 'none'
 
 export interface PolicyProject {
@@ -100,7 +100,7 @@ const SHINAGAWA: Profile = {
           "status": "unmeasured",
           "evaluation": {
             "grade": "C やり方を見直す",
-            "note": "（給食運営費）指標は調理業務の評価や紙パックの回収で、無償化の効果は測っていない"
+            "note": "（給食運営費）指標は調理業務の評価や紙パックの回収"
           }
         },
         {
@@ -196,7 +196,7 @@ const SHINAGAWA: Profile = {
           "status": "unmeasured",
           "evaluation": {
             "grade": "C 対象・規模を見直す",
-            "note": "（防災普及教育費）指標は防災体験館・防災学校の利用で、携帯トイレの配布の効果は測っていない。中学生の防災プロジェクトの目標は R7 から"
+            "note": "（防災普及教育費）指標は防災体験館・防災学校の利用。中学生の防災プロジェクトの目標は R7 から"
           }
         },
         {
@@ -212,7 +212,7 @@ const SHINAGAWA: Profile = {
           "status": "unmeasured",
           "evaluation": {
             "grade": "C 一部をやめる",
-            "note": "（危機管理経費）指標は消毒液・マスクの備蓄で、避暑シェルターの利用は測っていない"
+            "note": "（危機管理経費）指標は消毒液・マスクの備蓄"
           }
         },
         {
@@ -228,7 +228,7 @@ const SHINAGAWA: Profile = {
           "status": "unmeasured",
           "evaluation": {
             "grade": "B 今のまま続ける",
-            "note": "（共通商品券普及促進事業）指標は紙の商品券の申込・販売で、ポイント還元の効果は測っていない"
+            "note": "（共通商品券普及促進事業）指標はプレミアム付区内共通商品券の申込・販売"
           }
         },
         {
@@ -260,7 +260,7 @@ const SHINAGAWA: Profile = {
           "status": "unmeasured",
           "evaluation": {
             "grade": "B 今のまま続ける",
-            "note": "（地域交通検討経費）指標はコミュニティバスの利用者数・満足度で、実証実験の効果は測っていない"
+            "note": "（地域交通検討経費）指標はコミュニティバスの利用者数・満足度"
           }
         }
       ],

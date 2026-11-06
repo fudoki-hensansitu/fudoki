@@ -23,7 +23,7 @@ const BADGE: Record<ProjectStatus, { label: string; className: string }> = {
   short: { label: '目標に届いていない', className: 'bg-[color-mix(in_srgb,var(--kincha)_22%,transparent)] text-[#aa5910]' },
   met: { label: '目標に届いた', className: 'bg-primary/15 text-primary' },
   mixed: { label: '達成と未達が混在', className: 'bg-secondary' },
-  unmeasured: { label: '効果を測っていない', className: 'bg-secondary' },
+  unmeasured: { label: 'この事業の指標なし', className: 'bg-secondary' },
   none: { label: '評価前', className: 'border border-dashed' },
 }
 
