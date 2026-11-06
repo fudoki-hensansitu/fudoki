@@ -417,7 +417,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "469e39006bd852c1f9996c9c57b76c2891ceaf7e79e3636607aa7c17b48787a9",
+      "input_fingerprint": "ca0a4882d64dea0277609f47e76b74d33d257dc97c78aec47a55d871a354f517",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent', '予算現額に対する支出割合': 'indent', '支出総額に対する割合': 'indent'}。",
@@ -447,7 +447,7 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "f9814b1bde885772caa82ef071c7d4dfad4a3d256bd4f38ab5b3931dc1ec5051",
+      "input_fingerprint": "3b8a9a809bf4e2448922b43179414df4778135dfd16725f99bba3dc3062aaa2b",
       "account": "国民健康保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent', '予算現額に対する支出割合': 'indent', '支出総額に対する割合': 'indent'}。",
@@ -477,7 +477,7 @@
     {
       "table_id": "land-readjustment-expenditure",
       "conversion_id": "land-readjustment-settlement",
-      "input_fingerprint": "34f62ebbd7bd1c543412ea0e319b297a7604f2215d1c21a44fbbe92cac722bea",
+      "input_fingerprint": "1edf9e9ef1c7ccd02dcf86caa8edd3f24912f2d06ff385aae7a60d18c05bd9cf",
       "account": "福生都市計画瑞穂町箱根ケ崎駅西土地区画整理事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent', '予算現額に対する支出割合': 'indent', '支出総額に対する割合': 'indent'}。",
@@ -507,7 +507,7 @@
     {
       "table_id": "long-term-care-expenditure",
       "conversion_id": "long-term-care-settlement",
-      "input_fingerprint": "3d0faa0fa9b03e63d4c89c289b81957bd3ebba2341e7750d30a3bfe5e4aa169a",
+      "input_fingerprint": "610c7891266899fbcebbb317d394c3c4e6b841a0395ce1d1375bbea5a34a2b63",
       "account": "瑞穂町介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent', '予算現額に対する支出割合': 'indent', '支出総額に対する割合': 'indent'}。",
@@ -537,7 +537,7 @@
     {
       "table_id": "elderly-medical-expenditure",
       "conversion_id": "elderly-medical-settlement",
-      "input_fingerprint": "613ee31a255cba5103eb2910f882164d357191fb906cbcf483f101a923ab819e",
+      "input_fingerprint": "17d21be5e14cf67dacd46fe85df8cf38f9ebb48cdad3f52e806f1325395c2bef",
       "account": "瑞穂町後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent', '予算現額に対する支出割合': 'indent', '支出総額に対する割合': 'indent'}。",
@@ -567,7 +567,7 @@
     {
       "table_id": "property-ward-tonogaya-expenditure",
       "conversion_id": "property-ward-tonogaya-settlement",
-      "input_fingerprint": "8d3efbfbddc479f978e6a7ca714f4d2fbd050c227284e390b3a95090c32dc09e",
+      "input_fingerprint": "c6bd33b68c89276b2c0fe29a9aa0daa917f11ec4acbbcd50cc83106715bc859a",
       "account": "瑞穂町殿ケ谷財産区特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent', '予算現額に対する支出割合': 'indent', '支出総額に対する割合': 'indent'}。",
@@ -597,7 +597,7 @@
     {
       "table_id": "property-ward-ishihata-expenditure",
       "conversion_id": "property-ward-ishihata-settlement",
-      "input_fingerprint": "38f276ed2751c7c1313c8b660786bc7c0eff500ab96b29d2b84aa6e44c8252e5",
+      "input_fingerprint": "bfba8b290983297c0333a8ea3445700f6518f104ae43c685c79756e2426cff6a",
       "account": "瑞穂町石畑財産区特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent', '予算現額に対する支出割合': 'indent', '支出総額に対する割合': 'indent'}。",
@@ -627,7 +627,7 @@
     {
       "table_id": "property-ward-hakonegasaki-expenditure",
       "conversion_id": "property-ward-hakonegasaki-settlement",
-      "input_fingerprint": "4845a3f7a491c7f6a85160ba25f08594649871b836b75fd98ed9af8038d078b1",
+      "input_fingerprint": "53796e7cc4ff17809861c79c8a0924d577307e057d17126cf6f50427cd2e91fe",
       "account": "瑞穂町箱根ケ崎財産区特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent', '予算現額に対する支出割合': 'indent', '支出総額に対する割合': 'indent'}。",
@@ -657,7 +657,7 @@
     {
       "table_id": "property-ward-nagaoka-expenditure",
       "conversion_id": "property-ward-nagaoka-settlement",
-      "input_fingerprint": "587532562d8992db0016be0993bd88190d1fd821888d7ea8c057dcc56c570bd3",
+      "input_fingerprint": "9c19ff8e6dd5dde88aa10cc64d0c172a08b12114a4ead44fa0a2ce20f3a7e08a",
       "account": "瑞穂町長岡財産区特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent', '予算現額に対する支出割合': 'indent', '支出総額に対する割合': 'indent'}。",

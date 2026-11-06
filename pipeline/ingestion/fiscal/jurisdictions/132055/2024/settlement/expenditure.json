@@ -6833,7 +6833,7 @@
     {
       "table_id": "general-01-expenditure-detail",
       "conversion_id": "general-01",
-      "input_fingerprint": "f4405ddc8d61444bc053e8e8186e1c7bf22a159c8bd4c470d89e1a4c4d78056d",
+      "input_fingerprint": "e896396e58333db8f0b6d8f0f8c719ee7fd69e05bd19cf3ba96672bc248c3e4f",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -6864,7 +6864,7 @@
     {
       "table_id": "general-02-expenditure-detail",
       "conversion_id": "general-02",
-      "input_fingerprint": "4e0a45bb5b3c3cfd12ad5652f086e6f443a92508f4ef186f7eebefcb6560eddc",
+      "input_fingerprint": "09921e5c29bde39b7ec493fbf57fb50a56861466490924debb4b558325d6b851",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -6896,7 +6896,7 @@
     {
       "table_id": "general-03-expenditure-detail",
       "conversion_id": "general-03",
-      "input_fingerprint": "7e491d1dacf674caec401b8fe0b6a0375f1c6f0b8633c8cb3229a662b7052721",
+      "input_fingerprint": "36eb41cb393252927de0f323a35703c5a507929d3e810be78c5b1fcd317b819b",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -6928,7 +6928,7 @@
     {
       "table_id": "general-04-expenditure-detail",
       "conversion_id": "general-04",
-      "input_fingerprint": "141db82c632ffcfba1b6f829bea6bd19f75701b9816cf0287d3ac6fef3ad3da3",
+      "input_fingerprint": "9db079d8756b9d74844bf52a82bd31c4a20021ec5a1654873a93f1a66ac90358",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -6960,7 +6960,7 @@
     {
       "table_id": "general-05-expenditure-detail",
       "conversion_id": "general-05",
-      "input_fingerprint": "2d0ccd5cc447c7a27955a31438ec533fccdafbd099b24087b6854e939daab5d0",
+      "input_fingerprint": "d0b6be352c2918470cef6bacb9081feaf7dea8306730abb622f1e16424203001",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -6991,7 +6991,7 @@
     {
       "table_id": "general-06-expenditure-detail",
       "conversion_id": "general-06",
-      "input_fingerprint": "e07b7aebdf7b45ca56166c93a3aff60335f8a005b0e6fbcb54458f586de73c67",
+      "input_fingerprint": "0e0bc28b7223d8d37a8289f5c1b34392a30dff3eca46f45008993870c88e0757",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -7023,7 +7023,7 @@
     {
       "table_id": "general-07-expenditure-detail",
       "conversion_id": "general-07",
-      "input_fingerprint": "da620aae99f18420357be8e039e73c257ae476e9c876c2c3e7046e3c037c1560",
+      "input_fingerprint": "e4762106df2deb246e1e702a8726891e43bdc73e9e2fc4743df5f1a3cadcab69",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -7055,7 +7055,7 @@
     {
       "table_id": "general-08-expenditure-detail",
       "conversion_id": "general-08",
-      "input_fingerprint": "9222e5a1f88dda602a571ded4948f5df6719d6fe64c1c8d85ce709ef2bf69f27",
+      "input_fingerprint": "4f4521b1a8b12845c540700bbddfd89b05c63f6f418beb7467f11d1c19179d06",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -7087,7 +7087,7 @@
     {
       "table_id": "general-09-expenditure-detail",
       "conversion_id": "general-09",
-      "input_fingerprint": "e311b8a453ad217090d4946b064ccb5c225ceb43246f87d5e4a48e38be68c5c2",
+      "input_fingerprint": "69287ba61dc98164c9b5b20c778fce4011b0ee862fb4a471a3167e27b055ccc8",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -7119,7 +7119,7 @@
     {
       "table_id": "general-10-expenditure-detail",
       "conversion_id": "general-10",
-      "input_fingerprint": "c4458e71225d2684609def4c65d5552b062bc85d3e67eb73d849153cb3422bd2",
+      "input_fingerprint": "8e63753a44f290beef8863dd6bd57ab2b951942fd8fbb794ba0f3e3bdd0c977d",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -7151,7 +7151,7 @@
     {
       "table_id": "general-11-expenditure-detail",
       "conversion_id": "general-11",
-      "input_fingerprint": "0b73144cc75fe7580bcbf3bb2a39402a430ca219d372a554de55a1458005a205",
+      "input_fingerprint": "b5c9f4bd6a78458738c75b2dfa3c38e4f64d4684577e823785ebab69dcd2fb5c",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -7182,7 +7182,7 @@
     {
       "table_id": "general-12-expenditure-detail",
       "conversion_id": "general-12",
-      "input_fingerprint": "bf6e10ab2e48fa5e87bd90f86adc7b4118ccc84b95e84b514462849a3ace980d",
+      "input_fingerprint": "a2f54ce86c0f2f60b9b0864166883427940936ad842b01a74a1560bcb11cd0cf",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -7213,7 +7213,7 @@
     {
       "table_id": "general-13-expenditure-detail",
       "conversion_id": "general-13",
-      "input_fingerprint": "f71f1522fe666794cd80c91e8d279197c865677d485b6f139f321cd9af8f5477",
+      "input_fingerprint": "e42edaec54041354577d9fa20530e2128681737d3e9cb2d1649a1fdb2ded5e32",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -7244,7 +7244,7 @@
     {
       "table_id": "general-14-expenditure-detail",
       "conversion_id": "general-14",
-      "input_fingerprint": "31d6a90a63866ae3faae17c93f84cc306c879508bc82f5b970928992427d737d",
+      "input_fingerprint": "426831a332ebe4caaab2ba33e1fc911f9dc5fa8f238de5d46f50a7aea7bac3bb",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -7274,7 +7274,7 @@
     {
       "table_id": "kouki-expenditure-detail",
       "conversion_id": "kouki",
-      "input_fingerprint": "77826ec889c474fbf5fa745b8299a95841397bb04333cbe86282b3c121f4bbff",
+      "input_fingerprint": "f1abd8244fea90f604d720dab9ec106de9a4be0dc6ac468d5ba3f8dff453c0fa",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -7306,7 +7306,7 @@
     {
       "table_id": "kaigo-expenditure-detail",
       "conversion_id": "kaigo",
-      "input_fingerprint": "88972cbed53faeec778b63cd3f231133be7ddf935c0a3fd63f54941ac735331a",
+      "input_fingerprint": "94127faefe2d956504b29a23022c53228d5a51808c15cca7c3c42195aed92988",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -7338,7 +7338,7 @@
     {
       "table_id": "nhi-expenditure-detail",
       "conversion_id": "nhi",
-      "input_fingerprint": "57849be9edb8dbca7ae865b182373bfd4a1560788861d0ae6586b898d5413e18",
+      "input_fingerprint": "b8af9d3eafd4b7b6c4672216007ceb82bed6e72e86901d4c0e12e664c2f187c4",
       "account": "国民健康保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",

@@ -101,9 +101,11 @@ def _verified_total_boxes(words, tables, amount_columns, tolerance, candidate_ba
             baselines[page, round(box[1])].append((box, text))
 
     def labels_on(page, y):
-        # A 計 printed in a larger face starts a little above its amount (`計` 366.5, `1,968,268,271` 368.9);
-        # rows are a dozen points apart.
-        return [box for offset in range(-4, 5) for box in total_labels.get((page, y + offset), ())]
+        # A 計 printed in a larger face starts a little above its amount (`計` 366.5, `1,968,268,271` 368.9).
+        # It starts at most 4pt above the amount's top and no lower, and reaches down past that top: the label
+        # of the row above ends above it.
+        return [box for offset in range(-4, 3) for box in total_labels.get((page, y + offset), ())
+                if box[3] > y + 4]
 
     verified = set()
     for table in tables:

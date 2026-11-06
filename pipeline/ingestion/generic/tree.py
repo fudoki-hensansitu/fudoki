@@ -1505,7 +1505,7 @@ def closing_department_headings(ordered: list[Item]) -> set[int]:
             continue
         parts = []
         for other in ordered[index + 1:]:
-            if other.group.subject and not other.amounts:
+            if other.group.subject and not other.amounts and other.page != item.page:
                 continue  # the subject printed again at the top of the next page: the parts run on
             if other.group.subject or other.group.axis != item.group.axis:
                 break
