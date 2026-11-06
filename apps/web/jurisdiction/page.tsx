@@ -115,7 +115,7 @@ function InitiativeItem({ p, sheets }: { p: Initiative; sheets?: string }) {
       <p className="rounded-xl bg-sidebar px-3.5 py-2.5 text-[13px] leading-relaxed text-foreground [text-wrap:pretty]">
         <EvalLabel />
         この取り組みだけの評価はない。含まれる事業「{p.name}」（決算額 {formatYen(p.settledYen)}）の評価は
-        <Grade grade={p.grade} className="mx-1" />
+        <Grade grade={p.grade} className="ml-1" />
         （{p.direction}）。
         <SheetLink sheets={sheets} page={p.page} name={p.name} />
       </p>
