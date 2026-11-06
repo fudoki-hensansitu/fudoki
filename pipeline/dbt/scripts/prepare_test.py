@@ -157,7 +157,7 @@ class PrepareTest(unittest.TestCase):
                              ('武蔵野市', 'ocd-division/country:jp/prefecture:13/city:132039'))
             # 公式サイトは出典の選定の official_url から引く
             self.assertEqual(con.execute("select official_url from ingestion.jurisdiction where jurisdiction_code = '131091'").fetchone(),
-                             ('http://www.city.shinagawa.tokyo.jp/',))
+                             ('https://www.city.shinagawa.tokyo.jp/',))
 
 
 if __name__ == '__main__':
