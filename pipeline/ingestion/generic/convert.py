@@ -402,7 +402,8 @@ def correct_names(nodes: list[dict], rules: list[dict] | None) -> list[str]:
     conversion's options, each checked on the rendered page). A rule names the page, the code and the name as
     read (and its top `y` in points when the same misread repeats on the page); it must find exactly that one
     node, or the conversion stops. A breakdown item's misread number
-    (`corrected_code`) is put right with it: the item's place in the tree never depended on it."""
+    (`corrected_code`) is put right with it: the item's place in the tree never depended on it. A null
+    `corrected_code` takes the number off a name that begins with a digit (`6次産業化…` read as `6`)."""
     notes = []
     for rule in rules or ():
         found = [n for n in nodes if n['physical_page'] == rule['page'] and n['name_text'] == rule['observed_name']
@@ -410,9 +411,10 @@ def correct_names(nodes: list[dict], rules: list[dict] | None) -> list[str]:
         if len(found) != 1:
             raise ValueError(f'A name correction must find one node: {rule["id"]} ({len(found)})')
         found[0]['name_text'] = rule['corrected_name']
-        if rule.get('corrected_code'):
+        if 'corrected_code' in rule:
             found[0]['code_text'] = rule['corrected_code']
-        notes.append(f'{rule.get("code") or ""}{rule["observed_name"]}→{rule.get("corrected_code") or rule.get("code") or ""}{rule["corrected_name"]}')
+        code = rule['corrected_code'] if 'corrected_code' in rule else rule.get('code')
+        notes.append(f'{rule.get("code") or ""}{rule["observed_name"]}→{code or ""}{rule["corrected_name"]}')
     return notes
 
 

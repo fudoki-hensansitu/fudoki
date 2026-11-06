@@ -201,7 +201,11 @@
                 "minLength": 10
               },
               "corrected_code": {
-                "type": "string",
+                "description": "読んだ番号の訂正。null は、名前の頭の数字を番号と読んだ行（「6次産業化…」）の番号を外し、名前へ戻す。",
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "pattern": "^[0-9]+$"
               },
               "y": {

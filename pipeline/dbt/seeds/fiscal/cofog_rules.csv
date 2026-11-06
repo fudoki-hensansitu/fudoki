@@ -473,4 +473,6 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 1443,fallback-kou-public-assistance,,一般会計,,民生費,生活保護費,,,eq,,assigned,10.7,retained,目,,生活保護費の項に属し語の規則に当たらない目を、生活保護の語の規則（keyword-public-assistance）と同じ 10.7 に分類する。,false
 1444,vocab-disability-social-welfare,,一般会計,,民生費,社会福祉費,,障害|障がい,contains,,assigned,10.1,retained,目,,社会福祉費の項にある障害者向けの目（例: 131091 障害者支援費）を 10.1 疾病及び障害に置く。自立支援医療など 07 との境界が混じるため暫定とする。,true
 1445,vocab-elderly-social-welfare,,一般会計,,民生費,社会福祉費,,老人|要介護高齢者|高齢者在宅|長寿,contains,,assigned,10.2,retained,目,,社会福祉費の項にある高齢者向けの目を 10.2 高齢に置く。後期高齢者医療（07）を拾わないよう「高齢者」単独では当てない。老人医療助成が混じるため暫定とする。,true
--786,keyword-health-promotion,,一般会計,,,,,健康推進,contains,,assigned,07.4,retained,目,,健康推進の目は保健所・保健センターの運営、健康教育、健診・予防など公衆衛生が中心（例: 131091 健康推進費）であり 07.4 公衆衛生サービスに置く。公害健康被害の補償など他の中分類が混じるため暫定とする。,true
+-797,keyword-health-promotion,,一般会計,,,,,健康推進,contains,,assigned,07.4,retained,目,,健康推進の目は保健所・保健センターの運営、健康教育、健診・予防など公衆衛生が中心（例: 131091 健康推進費）であり 07.4 公衆衛生サービスに置く。公害健康被害の補償など他の中分類が混じるため暫定とする。,true
+-786,ome-2024-01,132055,一般会計,,衛生費,保健衛生費,,環境政策費,eq,,assigned,05,retained,目,,青梅市 衛生費・保健衛生費の環境政策費（ゼロカーボンシティ推進・地球温暖化対策など）を環境保護に分類する。町田市（keyword-environment-policy-132098）にならう。名称と備考の事業名からの判断。,true
+-1301,ome-2024-02,132055,一般会計,,災害復旧費,土木施設災害復旧費,,土木施設災害復旧費,eq,,unclassifiable,,retained,目,,青梅市 土木施設（道路・河川など）の災害復旧は施設の種類を目の名前で分けられない（kobe-disaster-civil・vocab-disaster-public-facility にならう）。,false
