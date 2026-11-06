@@ -67,6 +67,17 @@ function Grade({ grade, className }: { grade: string; className?: string }) {
   )
 }
 
+/** 金額の数字を大きく、単位（億円・万円）を小さく出す */
+function YenText({ yen, className }: { yen: number; className?: string }) {
+  const [, num, unit] = /^([\d,.]+)(.*)$/.exec(formatYen(yen)) ?? [, formatYen(yen), '']
+  return (
+    <span className={`tabular-nums ${className ?? ''}`}>
+      <span className="text-xl">{num}</span>
+      <span className="ml-0.5 text-xs text-muted-foreground">{unit}</span>
+    </span>
+  )
+}
+
 function ProjectItem({ p, sheets }: { p: EvaluatedProject; sheets?: string }) {
   const i = p.indicator
   return (
@@ -74,7 +85,7 @@ function ProjectItem({ p, sheets }: { p: EvaluatedProject; sheets?: string }) {
     <div className="flex flex-col gap-2 border-b border-foreground/10 py-4">
       <div className="flex items-start justify-between gap-x-6">
         <span className="min-w-0 text-[15.5px]">{p.title}</span>
-        <span className="shrink-0 text-right text-lg leading-snug tabular-nums">{formatYen(p.settledYen)}</span>
+        <YenText yen={p.settledYen} className="shrink-0 text-right leading-snug" />
       </div>
       <p className="text-sm">{p.what}</p>
       {/* 評価の区分・方向性・指標は一続きの文として、同じ大きさ・色で読ませる。指標の良し悪しは風土記が判断しない */}
