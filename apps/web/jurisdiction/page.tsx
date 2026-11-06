@@ -12,7 +12,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenu
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { DOMAIN_FRAMES, groupByFrame, OTHER_FRAME } from './domains'
 import { Flow } from './flow'
-import { assetPath, type EvaluatedProject, type ProfileYear, type Scrap } from './profiles'
+import { assetPath, type EvaluatedProject, type Initiative, type ProfileYear, type Scrap } from './profiles'
 import { changePct, INDEX_PATH, formatAsOf, formatPeople, formatYen, reiwa, yearName, type FlowView, type PageData, type Project, type Setsu, type YearTotal } from './types'
 
 const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
@@ -79,30 +79,69 @@ function YenText({ yen, className }: { yen: number; className?: string }) {
   )
 }
 
+/** 新しく始めたことの2つの形。シートごと新しくできた事業か、今ある事業の中で始めた取り組みか */
+type Fresh = ({ kind: 'sheet' } & EvaluatedProject) | ({ kind: 'initiative' } & Initiative)
+const freshOf = (y: ProfileYear): Fresh[] => [...y.projects.map((p) => ({ kind: 'sheet' as const, ...p })), ...(y.initiatives ?? []).map((p) => ({ kind: 'initiative' as const, ...p }))]
+
+const KIND_LABEL: Record<Fresh['kind'], string> = { sheet: '新しい事業', initiative: '今ある事業の中で' }
+const KindLabel = ({ kind }: { kind: Fresh['kind'] }) => <span className="text-xs text-muted-foreground">{KIND_LABEL[kind]}</span>
+
+function SheetLink({ sheets, page, name }: { sheets?: string; page: number; name: string }) {
+  if (!sheets) return null
+  return (
+    <Button variant="link" size="inline" nativeButton={false} render={<a href={`${sheets}#page=${page}`} target="_blank" rel="noopener" />} className="ml-1 align-baseline">
+      評価シート「{name}」
+      <ArrowSquareOutIcon aria-hidden="true" className="size-3.5" />
+    </Button>
+  )
+}
+
+const EvalLabel = () => (
+  <span className="mr-2 inline-flex items-center gap-1 align-middle">
+    <ClipboardTextIcon aria-hidden="true" className="size-4 text-muted-foreground" />
+    評価
+  </span>
+)
+
+/** 今ある事業の中で始めた取り組み。何を始めたかはシートの文をそのまま引き、評価は含まれる事業全体のものだと文で言う */
+function InitiativeItem({ p, sheets }: { p: Initiative; sheets?: string }) {
+  return (
+    <div className="flex flex-col gap-2 border-b border-foreground/10 py-4">
+      <div className="flex flex-col">
+        <KindLabel kind="initiative" />
+        <span className="text-[15.5px]">{p.title}</span>
+      </div>
+      <blockquote className="border-l-2 border-foreground/15 pl-3 text-sm [text-wrap:pretty]">{p.quote}</blockquote>
+      <p className="rounded-xl bg-sidebar px-3.5 py-2.5 text-[13px] leading-relaxed text-foreground [text-wrap:pretty]">
+        <EvalLabel />
+        この取り組みだけの評価はない。含まれる事業「{p.name}」（決算額 {formatYen(p.settledYen)}）の評価は
+        <Grade grade={p.grade} className="mx-1" />
+        （{p.direction}）。
+        <SheetLink sheets={sheets} page={p.page} name={p.name} />
+      </p>
+    </div>
+  )
+}
+
 function ProjectItem({ p, sheets }: { p: EvaluatedProject; sheets?: string }) {
   const i = p.indicator
   return (
     // 1列で上から読む。金額は名前と同じ行の右に置き、評価の枠は幅いっぱいに出す。値はどれも評価シートのもの
     <div className="flex flex-col gap-2 border-b border-foreground/10 py-4">
       <div className="flex items-start justify-between gap-x-6">
-        <span className="min-w-0 text-[15.5px]">{p.title}</span>
+        <div className="flex min-w-0 flex-col">
+          <KindLabel kind="sheet" />
+          <span className="text-[15.5px]">{p.title}</span>
+        </div>
         <YenText yen={p.settledYen} className="shrink-0 text-right leading-snug" />
       </div>
       <p className="text-sm">{p.what}</p>
       {/* 評価の区分・方向性・指標は一続きの文として、同じ大きさ・色で読ませる。指標の良し悪しは風土記が判断しない */}
       <p className="rounded-xl bg-sidebar px-3.5 py-2.5 text-[13px] leading-relaxed text-foreground [text-wrap:pretty]">
-        <span className="mr-2 inline-flex items-center gap-1 align-middle">
-          <ClipboardTextIcon aria-hidden="true" className="size-4 text-muted-foreground" />
-          評価
-        </span>
+        <EvalLabel />
         <Grade grade={p.grade} />
         （{p.direction}）。{i ? `指標の「${i.name}」は、目標 ${i.target}${i.unit}に対して実績 ${i.actual}${i.unit}。` : '目標と実績を並べた指標は載っていない。'}
-        {sheets ? (
-          <Button variant="link" size="inline" nativeButton={false} render={<a href={`${sheets}#page=${p.page}`} target="_blank" rel="noopener" />} className="ml-1 align-baseline">
-            評価シート「{p.name}」
-            <ArrowSquareOutIcon aria-hidden="true" className="size-3.5" />
-          </Button>
-        ) : null}
+        <SheetLink sheets={sheets} page={p.page} name={p.name} />
       </p>
     </div>
   )
@@ -176,9 +215,9 @@ function DomainLink({ section, children }: { section?: string; children: React.R
 }
 
 function Domains({ year, fiscalYear }: { year: ProfileYear; fiscalYear: number }) {
-  const groups = groupByFrame(year.projects)
+  const groups = groupByFrame(freshOf(year))
   return (
-    <Section id="domains" title="新しく何を始めた？" lead="区が事業ごとに目標と実績を振り返る「事業評価」のうち、この年度に新しくできた事業とその評価です。" link={groups.length ? { href: year.evaluationSource, label: '事業評価' } : undefined}>
+    <Section id="domains" title="新しく何を始めた？" lead="区が事業ごとに目標と実績を振り返る「事業評価」から、この年度に新しくできた事業と、今ある事業の中で始めた取り組みを並べています。" link={groups.length ? { href: year.evaluationSource, label: '事業評価' } : undefined}>
       {/* 事業評価は実施した翌年度に公表する。まだの年度も節は出し、なぜ空かを言う */}
       {groups.length ? null : <p className="rounded-xl border border-dashed px-4 py-6 text-sm text-muted-foreground">{reiwa(fiscalYear)}の事業の評価は、{reiwa(fiscalYear + 1)}に公表されます。まだ公表されていません。</p>}
       {groups.map(({ frame: d, items }) => (
@@ -188,7 +227,7 @@ function Domains({ year, fiscalYear }: { year: ProfileYear; fiscalYear: number }
             {d.name}
           </h3>
           <div className="border-t">
-            {items.map((p) => <ProjectItem key={p.page} p={p} sheets={year.evaluationSheets} />)}
+            {items.map((p) => (p.kind === 'sheet' ? <ProjectItem key={`s${p.page}`} p={p} sheets={year.evaluationSheets} /> : <InitiativeItem key={`i${p.page}-${p.title}`} p={p} sheets={year.evaluationSheets} />))}
           </div>
         </div>
       ))}
@@ -509,7 +548,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
     { href: '#projects', label: '大きな支出' },
   ]
   // 区政を知らない人には金額より暮らしの具体例が先。変わったことから入り、お金の内訳へ進む
-  const fresh: TocItem[] = py ? [{ href: '#domains', label: '新しく始めたこと' }, ...groupByFrame(py.projects).map(({ frame: d }) => ({ href: `#d-${d.id}`, label: d.name, sub: true }))] : []
+  const fresh: TocItem[] = py ? [{ href: '#domains', label: '新しく始めたこと' }, ...groupByFrame(freshOf(py)).map(({ frame: d }) => ({ href: `#d-${d.id}`, label: d.name, sub: true }))] : []
   const toc: TocItem[] = [
     { href: '#about', label: `${data.name.slice(-1)}の仕事` },
     ...fresh,
@@ -673,7 +712,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
             ))}
           </nav>
           <main className="flex min-w-0 flex-col gap-14">
-            <Overview data={data} sections={new Set(py ? groupByFrame(py.projects).map(({ frame }) => frame.id) : [])} />
+            <Overview data={data} sections={new Set(py ? groupByFrame(freshOf(py)).map(({ frame }) => frame.id) : [])} />
             {py ? <Domains year={py} fiscalYear={year} /> : null}
             <Budget data={data} year={year} />
             <Projects data={data} year={year} />
