@@ -7,7 +7,7 @@ import { StartForm } from '../chat/start-form'
 import type { StoredSession } from '../chat/store'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Flow } from './flow'
-import { assetPath, type Domain, type PolicyProject, type Profile, type ProfileYear, type ProjectStatus, type Scrap } from './profiles'
+import { assetPath, type Domain, type PolicyProject, type Profile, type ProjectStatus, type Scrap } from './profiles'
 import { changePct, formatYen, reiwa, yearName, type PageData, type Project, type Setsu, type YearTotal } from './types'
 
 const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
@@ -50,25 +50,6 @@ const Section = ({ id, title, aside, link, children }: { id: string; title: stri
   </section>
 )
 
-function Policies({ code, year }: { code: string; year: ProfileYear }) {
-  return (
-    <Section id="policy" title="方針" link={{ href: year.policySource, label: '予算編成方針' }}>
-      <ol className="border-t">
-        {year.policies.map((p, i) => (
-          <li key={p.title} className="grid grid-cols-[22px_104px_minmax(0,1fr)] items-start gap-3 border-b border-foreground/10 py-3.5 sm:grid-cols-[28px_176px_minmax(0,1fr)] sm:gap-4">
-            <span className="text-lg text-primary">{i + 1}</span>
-            <img src={assetPath(code, p.image)} alt="" loading="lazy" className="aspect-video w-full rounded-lg border border-foreground/10 object-cover" />
-            <div>
-              <b className="block text-base font-normal">{p.title}</b>
-              <p className="mt-0.5 text-sm text-muted-foreground">{p.body}</p>
-            </div>
-          </li>
-        ))}
-      </ol>
-    </Section>
-  )
-}
-
 function ProjectItem({ p }: { p: PolicyProject }) {
   return (
     <div className="grid grid-cols-1 gap-x-6 gap-y-1.5 border-b border-foreground/10 py-4 lg:grid-cols-[minmax(0,1fr)_210px]">
@@ -99,9 +80,9 @@ function ProjectItem({ p }: { p: PolicyProject }) {
   )
 }
 
-function Domains({ domains }: { domains: Domain[] }) {
+function Domains({ domains, policySource }: { domains: Domain[]; policySource: string }) {
   return (
-    <Section id="domains" title="政策領域">
+    <Section id="domains" title="政策領域" link={{ href: policySource, label: '予算編成方針' }}>
       {domains.map((d) => (
         <div key={d.id} id={`d-${d.id}`} className="flex scroll-mt-32 lg:scroll-mt-20 flex-col gap-1 [&+&]:mt-12">
           <h3 className="mb-3.5 border-l-4 border-primary py-0.5 pl-3.5 text-[19px] leading-snug sm:text-[22px]">{d.name}</h3>
@@ -370,7 +351,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
   }
 
   const toc: TocItem[] = [
-    ...(py ? [{ href: '#policy', label: '方針' }, { href: '#domains', label: '政策領域' }, ...py.domains.map((d) => ({ href: `#d-${d.id}`, label: d.short ?? d.name, sub: true }))] : []),
+    ...(py ? [{ href: '#domains', label: '政策領域' }, ...py.domains.map((d) => ({ href: `#d-${d.id}`, label: d.short ?? d.name, sub: true }))] : []),
     { href: '#budget', label: '決算 / 予算' },
     { href: '#projects', label: '事業' },
     ...(py?.scrap ? [{ href: '#scrap', label: '事業の入れ替え' }] : []),
@@ -508,8 +489,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
             ))}
           </nav>
           <main className="flex min-w-0 flex-col gap-14">
-            {py ? <Policies code={data.code} year={py} /> : null}
-            {py ? <Domains domains={py.domains} /> : null}
+            {py ? <Domains domains={py.domains} policySource={py.policySource} /> : null}
             <Budget data={data} year={year} />
             <Projects data={data} year={year} />
             {py?.scrap ? <ScrapSection scrap={py.scrap} /> : null}
