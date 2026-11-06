@@ -168,9 +168,9 @@ function Domains({ year }: { year: ProfileYear }) {
 }
 
 /** 最後の節の行き先のカード。icon の箱（紋章があれば紋章）と名前 */
-function PlaceCard({ href, name, logo, icon: Icon }: { href: string; name: string; logo?: string; icon: typeof MapPinAreaIcon }) {
+function PlaceCard({ href, name, logo, icon: Icon, className }: { href: string; name: string; logo?: string; icon: typeof MapPinAreaIcon; className?: string }) {
   return (
-    <li>
+    <li className={className}>
       <Link href={href} className="group flex items-center gap-3.5 rounded-2xl border bg-background p-3.5 text-foreground no-underline transition-colors hover:border-primary/40 hover:bg-card">
         <span className="grid size-12 shrink-0 place-items-center rounded-xl border bg-white p-1.5">
           {logo ? <img src={logo} alt="" className="h-auto w-full" /> : <Icon aria-hidden="true" className="size-6 text-primary" />}
@@ -189,7 +189,7 @@ function Elsewhere({ data }: { data: PageData }) {
       <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {data.prefecturePath !== INDEX_PATH ? <PlaceCard href={data.prefecturePath} name={data.prefecture} icon={MapTrifoldIcon} /> : null}
         {data.neighbors.map((n) => <PlaceCard key={n.path} href={n.path} name={n.name} logo={n.logo} icon={MapPinAreaIcon} />)}
-        <PlaceCard href={INDEX_PATH} name="すべての自治体" icon={SquaresFourIcon} />
+        <PlaceCard href={INDEX_PATH} name="すべての自治体" icon={SquaresFourIcon} className="sm:col-span-2" />
       </ul>
     </Section>
   )

@@ -17,7 +17,7 @@ const NODE_ID = /^[0-9a-f]{64}$/
 /** Worker の cache（無い環境では毎回取り直す）。同じ isolate の中でも一度だけ取る */
 const inflight = new Map<string, Promise<unknown>>()
 async function memo<T>(key: string, fn: () => Promise<T>): Promise<T> {
-  const url = `https://fudoki.dev/__cache/jurisdiction-v8/${key}`
+  const url = `https://fudoki.dev/__cache/jurisdiction-v9/${key}`
   const cache = typeof caches === 'undefined' ? undefined : (caches as unknown as { default?: Cache }).default
   const hit = await cache?.match(url)
   if (hit) return (await hit.json()) as T
@@ -57,7 +57,7 @@ export async function tableResponse(env: Env, request: Request): Promise<Respons
 }
 
 /** 最後の節に出す近くの自治体の数 */
-const NEARBY_COUNT = 6
+const NEARBY_COUNT = 3
 
 /** 近い順の自治体。都道府県の図（map.generated.ts）のタイルの位置で測り、図の無い自治体は自治体コードの近さで測る */
 function nearby(entry: CatalogEntry, candidates: CatalogEntry[]): CatalogEntry[] {
