@@ -12,12 +12,12 @@ import { cn } from '@/lib/utils'
 import { MagnifyingGlassIcon, SortDescendingIcon } from '@phosphor-icons/react'
 import { JAPAN_TILES } from './japan-tiles'
 import { PREFECTURE_MAPS } from './map.generated'
-import { formatYen, reiwa, type IndexEntry, type JurisdictionKind } from './types'
+import { formatAsOf, formatPeople, formatPerCapita, formatYen, reiwa, type IndexEntry, type JurisdictionKind } from './types'
 
 type Sort = 'desc' | 'asc'
 const SORTS: { value: Sort; label: string }[] = [
-  { value: 'desc', label: '歳出の総額が大きい順' },
-  { value: 'asc', label: '歳出の総額が小さい順' },
+  { value: 'desc', label: '1人あたりの歳出が大きい順' },
+  { value: 'asc', label: '1人あたりの歳出が小さい順' },
 ]
 const KINDS: JurisdictionKind[] = ['都道府県', '区', '市', '町村']
 
@@ -32,22 +32,6 @@ const Chip = ({ on, onClick, children }: { on?: boolean; onClick?: () => void; c
 
 /** 令和の年度は R7 のように短く書く（2019年より前は西暦のまま） */
 const shortYear = (y: number) => (y >= 2019 ? `R${y - 2018}` : String(y))
-
-function YearPills({ years, all }: { years: number[]; all: number[] }) {
-  return (
-    <span className="flex gap-1">
-      {all.map((y) => (
-        <span
-          key={y}
-          title={reiwa(y)}
-          className={`inline-flex h-5 items-center rounded px-1.5 text-[11px] tabular-nums ${years.includes(y) ? 'bg-accent text-accent-foreground' : 'border border-dashed text-muted-foreground/60'}`}
-        >
-          {shortYear(y)}
-        </span>
-      ))}
-    </span>
-  )
-}
 
 function SelectedCard({ e }: { e: IndexEntry }) {
   const max = e.topKan[0]?.yen ?? 1
@@ -296,10 +280,12 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
   const namePicks = [...picked['区'], ...picked['市'], ...picked['町村']]
   const filtered = prefPicks.length + namePicks.length > 0
   const [sort, setSort] = React.useState<Sort>('desc')
-  const allYears = [...new Set(entries.flatMap((e) => e.years))].sort()
-  const maxYen = byYen[0]?.yen ?? 1
+  // 表は1人あたりの歳出で並べる。人口が無い自治体は、どちらの並びでも末尾に置く
+  const withPerCapita = entries.filter((e) => e.perCapita !== null).sort((a, b) => b.perCapita! - a.perCapita!)
+  const withoutPerCapita = entries.filter((e) => e.perCapita === null)
+  const maxPerCapita = withPerCapita[0]?.perCapita ?? 1
   // 都道府県と市区町村の選択は AND（東京都 × 八王子市なら八王子市）。同じ都道府県・市区町村どうしは、どれかに当たれば残す
-  const rows = (sort === 'desc' ? byYen : [...byYen].reverse()).filter(
+  const rows = [...(sort === 'desc' ? withPerCapita : [...withPerCapita].reverse()), ...withoutPerCapita].filter(
     (e) => (!prefPicks.length || prefPicks.includes(prefOf(e))) && (!namePicks.length || namePicks.includes(e.code)),
   )
   const prefCount = new Map<string, number>()
@@ -423,27 +409,35 @@ export function IndexPage({ entries }: { entries: IndexEntry[] }) {
 
         {/* 絞り込みで行が減っても頁の高さが急に縮まないよう、表の高さの下限を持たせる */}
         <div className="mt-5 min-h-[min(80vh,44rem)] border-t border-foreground">
-          <div className="hidden grid-cols-[minmax(0,13rem)_7rem_minmax(0,1fr)] gap-5 border-b px-2 py-2.5 text-xs text-muted-foreground md:grid">
+          <div className="hidden grid-cols-[minmax(0,13rem)_6rem_minmax(0,1fr)] gap-5 border-b px-2 py-2.5 text-xs text-muted-foreground md:grid">
             <span>自治体</span>
-            <span>収録した決算</span>
-            <span>歳出の総額（最新の決算・一般会計）</span>
+            <span className="text-right">人口</span>
+            <span>1人あたりの歳出（最新の決算・一般会計）</span>
           </div>
           <ul>
             {rows.map((e) => (
               <li key={e.code}>
                 <Link
                   href={e.path}
-                  className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1.5 border-b px-2 py-3 transition-colors hover:bg-card md:grid-cols-[minmax(0,13rem)_7rem_minmax(0,1fr)] md:gap-5"
+                  className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1.5 border-b px-2 py-3 transition-colors hover:bg-card md:grid-cols-[minmax(0,13rem)_6rem_minmax(0,1fr)] md:gap-5"
                 >
                   <span className="min-w-0 truncate">
                     <span className="text-[16px]">{e.name}</span>
                     <small className="ml-2 text-[11px] text-muted-foreground">{e.prefecture}</small>
                   </span>
-                  <YearPills years={e.years} all={allYears} />
+                  <span className="text-right text-[13px] tabular-nums" title={e.population ? `住民基本台帳人口（${formatAsOf(e.population.asOf)}時点）` : undefined}>
+                    {e.population ? formatPeople(e.population.people) : '—'}
+                  </span>
                   <span className="col-span-2 flex min-w-0 items-center gap-2.5 md:col-span-1">
-                    <span className="block h-2.5 rounded-sm bg-primary" style={{ width: `${Math.max(0.6, (e.yen / maxYen) * 80)}%` }} />
-                    <span className="whitespace-nowrap text-[13px] tabular-nums">{formatYen(e.yen)}</span>
-                    <small className="whitespace-nowrap text-[11px] text-muted-foreground">{shortYear(e.year)}</small>
+                    {e.perCapita !== null ? (
+                      <>
+                        <span className="block h-2.5 rounded-sm bg-primary" style={{ width: `${Math.max(0.6, (e.perCapita / maxPerCapita) * 80)}%` }} />
+                        <span className="whitespace-nowrap text-[13px] tabular-nums" title={`歳出の総額 ${formatYen(e.yen)}`}>{formatPerCapita(e.perCapita)}</span>
+                      </>
+                    ) : (
+                      <span className="whitespace-nowrap text-[13px] text-muted-foreground">人口が無く出せません</span>
+                    )}
+                    <small className="whitespace-nowrap text-[11px] text-muted-foreground" title={reiwa(e.year)}>{shortYear(e.year)}</small>
                   </span>
                 </Link>
               </li>

@@ -58,6 +58,26 @@ export interface Population {
   asOf: string
 }
 
+/**
+ * 年度の金額と比べる人口。N 年度には N+1 年1月1日（年度末に近い基準日）の値を当て、まだ無ければいちばん新しい基準日の値で代える。
+ * 代えたかどうかは asOf を見れば分かる
+ */
+export function populationForYear(list: Population[], fiscalYear: number): Population | null {
+  return list.find((p) => p.asOf === `${fiscalYear + 1}-01-01`) ?? list.at(-1) ?? null
+}
+
+/** 1人あたりの金額。万円の小数1桁まで（52.3万円）。1万円未満は円で出す */
+export function formatPerCapita(yen: number): string {
+  if (yen < 1e4) return `${Math.round(yen).toLocaleString('ja-JP')}円`
+  return `${(yen / 1e4).toLocaleString('ja-JP', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}万円`
+}
+
+/** 人口。1万人以上は万人の小数1桁（41.6万人）、それ未満は人単位（303人） */
+export const formatPeople = (people: number) => (people >= 1e4 ? `${(people / 1e4).toFixed(1)}万人` : `${people.toLocaleString('ja-JP')}人`)
+
+/** 基準日（2026-01-01）を「2026年1月1日」に */
+export const formatAsOf = (asOf: string) => asOf.replace(/^(\d+)-0?(\d+)-0?(\d+)$/, '$1年$2月$3日')
+
 export interface PageData {
   code: string
   name: string
@@ -139,6 +159,10 @@ export interface IndexEntry {
   yen: number
   /** 最新の決算で金額の大きい款（大きい順に3つまで） */
   topKan: { name: string; yen: number }[]
+  /** 最新の決算の年度と比べる人口（populationForYear）。無ければ null */
+  population: Population | null
+  /** 歳出の総額を population で割った1人あたりの金額 */
+  perCapita: number | null
   /** 出典に金額の印字が無い款があり、yen はそれを除いた款の和 */
   amountMissing?: true
 }
