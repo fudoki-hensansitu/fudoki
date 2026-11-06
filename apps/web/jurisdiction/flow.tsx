@@ -391,21 +391,22 @@ export function Flow({ data, total: year, view = 'kan', tabs, summary }: { data:
   return (
     <div ref={root} data-ask-view={kan ? `${kan.kan.name}（${levels.kan}）の内訳` : `${levels.kan}から${levels.kou}への全体図`} className="flex h-[calc(100svh-61px-53px-1.5rem)] min-h-[480px] min-w-0 scroll-mt-[122px] flex-col rounded-[20px] border bg-background lg:h-[calc(100svh-61px-2rem)] lg:scroll-mt-[77px]">
       <div className="shrink-0 px-5 pt-5 sm:px-6">
-        <div className="flex items-center justify-between gap-3">
-          {tabs ?? <span />}
-          <div className="flex items-center gap-1.5">
+        {tabs}
+        {/* 見出しと金額の行。右に今いる段（大分類 4 / 8）と前後の矢印を置く */}
+        <div className="mt-3 flex min-h-9 items-center justify-between gap-3">
+          <div className="flex min-w-0 flex-wrap items-baseline gap-x-3" aria-live="polite">
+            {kan ? (
+              <>
+                <span className="text-sm text-muted-foreground">{kan.kan.name}</span>
+                <b className="text-[26px] font-normal leading-snug tabular-nums text-primary">{amountText(kan.kan.yen, kan.kan.amountMissing)}</b>
+              </>
+            ) : summary}
+          </div>
+          <div className="flex shrink-0 items-center gap-1.5">
             <span className="text-xs tabular-nums text-muted-foreground">{kan ? `${levels.kan} ${index} / ${total}` : ''}</span>
             <Button variant="outline" size="icon-sm" aria-label={`前の${levels.kan}`} disabled={index === 0} onClick={() => go(-1)} className="rounded-full [@media(hover:none)]:hidden"><CaretLeftIcon /></Button>
             <Button variant="outline" size="icon-sm" aria-label={`次の${levels.kan}`} disabled={index >= total} onClick={() => go(1)} className="rounded-full [@media(hover:none)]:hidden"><CaretRightIcon /></Button>
           </div>
-        </div>
-        <div className="mt-3 flex min-h-9 flex-wrap items-baseline gap-x-3" aria-live="polite">
-          {kan ? (
-            <>
-              <span className="text-sm text-muted-foreground">{kan.kan.name}</span>
-              <b className="text-[26px] font-normal leading-snug tabular-nums">{amountText(kan.kan.yen, kan.kan.amountMissing)}</b>
-            </>
-          ) : summary}
         </div>
         {/* 款の目盛り。押すとその款（先頭は全体図）へ移る。押せる高さを取り、見える棒は細いまま */}
         <TickMenu

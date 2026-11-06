@@ -80,6 +80,9 @@ export const formatPeople = (people: number) => (people >= 1e4 ? `${(people / 1e
 /** 基準日（2026-01-01）を「2026年1月1日」に */
 export const formatAsOf = (asOf: string) => asOf.replace(/^(\d+)-0?(\d+)-0?(\d+)$/, '$1年$2月$3日')
 
+/** 8方位。近くの自治体が自身から見てどちらにあるか */
+export type Direction = 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | 'nw'
+
 export interface PageData {
   code: string
   name: string
@@ -87,7 +90,7 @@ export interface PageData {
   /** 都道府県自体の頁（/tokyo）。header の都道府県名から移る */
   prefecturePath: string
   /** 同じ都道府県で収録のある近くの自治体（自身と都道府県自体を除き、近い順に数件）。最後の節から回遊させる */
-  neighbors: { name: string; path: string }[]
+  neighbors: { name: string; path: string; dir?: Direction }[]
   officialUrl: string | null
   population: Population | null
   originTitle: string | null

@@ -3,15 +3,16 @@
 // 歳出の決算は API の値。新しく始めたこと・やめたこと（事業の入れ替え）は jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
 import { Link } from '@void/react'
 import * as React from 'react'
-import { ArrowRightIcon, ArrowSquareOutIcon, BankIcon, BasketballIcon, CaretDownIcon, CheckCircleIcon, CircleHalfIcon, ClipboardTextIcon, ClockIcon, CoinsIcon, ChatCircleIcon, FirstAidKitIcon, GlobeIcon, HandHeartIcon, HouseLineIcon, LeafIcon, MapPinIcon, MinusCircleIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, StudentIcon, DotsThreeCircleIcon, UsersIcon, WarningCircleIcon, XIcon } from '@phosphor-icons/react'
+import { ArrowDownIcon, ArrowDownLeftIcon, ArrowDownRightIcon, ArrowLeftIcon, ArrowRightIcon, ArrowSquareOutIcon, ArrowUpIcon, ArrowUpLeftIcon, ArrowUpRightIcon, BankIcon, BasketballIcon, CaretDownIcon, CheckCircleIcon, CircleHalfIcon, ClipboardTextIcon, ClockIcon, CoinsIcon, ChatCircleIcon, FirstAidKitIcon, GlobeIcon, HandHeartIcon, HouseLineIcon, LeafIcon, MapPinIcon, MinusCircleIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, StudentIcon, DotsThreeCircleIcon, UsersIcon, WarningCircleIcon, XIcon } from '@phosphor-icons/react'
 import { StartForm } from '../chat/start-form'
 import type { StoredSession } from '../chat/store'
 import { Hint } from '@/components/hint'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { DOMAIN_FRAMES, groupByFrame, OTHER_FRAME } from './domains'
 import { Flow } from './flow'
 import { assetPath, type PolicyProject, type ProfileYear, type ProjectStatus, type Scrap } from './profiles'
-import { changePct, INDEX_PATH, formatAsOf, formatPeople, formatYen, reiwa, yearName, type FlowView, type PageData, type Project, type Setsu, type YearTotal } from './types'
+import { changePct, INDEX_PATH, type Direction, formatAsOf, formatPeople, formatYen, reiwa, yearName, type FlowView, type PageData, type Project, type Setsu, type YearTotal } from './types'
 
 const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
   const res = await fetch(url, { signal })
@@ -166,26 +167,42 @@ function Domains({ year }: { year: ProfileYear }) {
   )
 }
 
-/** 最後の節。都道府県と同じ都道府県の自治体、全国の一覧へ回遊させる */
+/** 近くの自治体の向き（8方位）の矢印 */
+const DIRECTION_ICON: Record<Direction, typeof ArrowUpIcon> = {
+  n: ArrowUpIcon, ne: ArrowUpRightIcon, e: ArrowRightIcon, se: ArrowDownRightIcon, s: ArrowDownIcon, sw: ArrowDownLeftIcon, w: ArrowLeftIcon, nw: ArrowUpLeftIcon,
+}
+const DIRECTION_NAME: Record<Direction, string> = { n: '北', ne: '北東', e: '東', se: '南東', s: '南', sw: '南西', w: '西', nw: '北西' }
+
+/** 最後の節。都道府県へ戻るリンク、近くの自治体のカード（向きの矢印つき）、全国の一覧へのリンク */
 function Elsewhere({ data }: { data: PageData }) {
-  const pill = 'inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-[14px] text-foreground no-underline hover:bg-card'
   return (
     <Section id="elsewhere" title="ほかの自治体も見る">
-      <div className="flex flex-wrap gap-2">
-        {data.prefecturePath !== INDEX_PATH ? (
-          <Link href={data.prefecturePath} className={`${pill} border-primary/40 text-primary`}>
-            <MapPinIcon aria-hidden="true" className="size-4" />
-            {data.prefecture}
-          </Link>
-        ) : null}
-        {data.neighbors.map((n) => (
-          <Link key={n.path} href={n.path} className={pill}>{n.name}</Link>
-        ))}
-        <Link href={INDEX_PATH} className={pill}>
-          すべての自治体
-          <ArrowRightIcon aria-hidden="true" className="size-4" />
+      {data.prefecturePath !== INDEX_PATH ? (
+        <Link href={data.prefecturePath} className="inline-flex w-fit items-center gap-1.5 text-[15px] text-foreground no-underline hover:underline">
+          <ArrowLeftIcon aria-hidden="true" className="size-4" />
+          {data.prefecture}
         </Link>
-      </div>
+      ) : null}
+      {data.neighbors.length ? (
+        <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+          {data.neighbors.map((n) => {
+            const Icon = n.dir ? DIRECTION_ICON[n.dir] : MapPinIcon
+            return (
+              <li key={n.path}>
+                <Link href={n.path} className="flex items-center gap-2.5 rounded-xl border px-4 py-3 text-[15px] text-foreground no-underline hover:bg-card">
+                  <Icon aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
+                  <span className="min-w-0 truncate">{n.name}</span>
+                  {n.dir ? <span className="ml-auto shrink-0 text-xs text-muted-foreground">{DIRECTION_NAME[n.dir]}</span> : null}
+                </Link>
+              </li>
+            )
+          })}
+        </ul>
+      ) : null}
+      <Link href={INDEX_PATH} className="inline-flex w-fit items-center gap-1.5 text-[14px] text-foreground no-underline hover:underline">
+        すべての自治体
+        <ArrowRightIcon aria-hidden="true" className="size-4" />
+      </Link>
     </Section>
   )
 }
@@ -288,8 +305,9 @@ function Budget({ data, year }: { data: PageData; year: number }) {
       {pct !== null ? <span className={`text-[13px] tabular-nums ${pct < 0 ? 'text-[#aa5910]' : 'text-primary'}`}>前年度比 {pct >= 0 ? '+' : '−'}{Math.abs(pct).toFixed(1)}%</span> : null}
     </>
   )
+  // 決算・予算のタブは左、分類のメニューは右に置く
   const tabs = (
-    <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+    <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5">
     <div role="tablist" aria-label="金額の段階" className="flex gap-1">
       {PHASES.map((p) => (
         <button
@@ -306,21 +324,15 @@ function Budget({ data, year }: { data: PageData; year: number }) {
         </button>
       ))}
     </div>
-    {/* 決算・予算のタブとは別の形（メニュー）にし、金額の段階の切り替えと分け方の切り替えを見分けられるようにする */}
-    <DropdownMenu>
-      <DropdownMenuTrigger className="inline-flex items-center gap-1 rounded-md px-1.5 py-1 text-[13px] text-muted-foreground hover:text-foreground">
-        <span>分類：</span>
-        <span className="text-foreground">{VIEWS.find((v) => v.key === view)!.label}</span>
-        <CaretDownIcon aria-hidden="true" className="size-3.5" />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-auto">
-        <DropdownMenuRadioGroup value={view} onValueChange={(v) => setView(v as FlowView)}>
-          {VIEWS.map((v) => (
-            <DropdownMenuRadioItem key={v.key} value={v.key}>{v.label}</DropdownMenuRadioItem>
-          ))}
-        </DropdownMenuRadioGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    {/* 決算・予算のタブとは別の形（select）にし、金額の段階の切り替えと分け方の切り替えを見分けられるようにする */}
+    <Select items={VIEWS.map((v) => ({ value: v.key, label: v.label }))} value={view} onValueChange={(v) => v && setView(v as FlowView)}>
+      <SelectTrigger size="sm" aria-label="分類" className="text-[13px]">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent align="end">
+        {VIEWS.map((v) => <SelectItem key={v.key} value={v.key}>{v.label}</SelectItem>)}
+      </SelectContent>
+    </Select>
     </div>
   )
   return (
