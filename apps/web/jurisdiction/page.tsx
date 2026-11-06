@@ -81,7 +81,7 @@ function YenText({ yen, className }: { yen: number; className?: string }) {
 
 /** 新しく始めたことの2つの形。シートごと新しくできた事業か、今ある事業の中で始めた取り組みか */
 type Fresh = ({ kind: 'sheet' } & EvaluatedProject) | ({ kind: 'initiative' } & Initiative)
-const freshOf = (y: ProfileYear): Fresh[] => [...y.projects.map((p) => ({ kind: 'sheet' as const, ...p })), ...(y.initiatives ?? []).map((p) => ({ kind: 'initiative' as const, ...p }))]
+const freshOf = (y: ProfileYear): Fresh[] => [...y.projects.map((p) => ({ kind: 'sheet' as const, ...p })), ...[...(y.initiatives ?? [])].sort((a, b) => b.settledYen - a.settledYen).map((p) => ({ kind: 'initiative' as const, ...p }))]
 
 const KIND_LABEL: Record<Fresh['kind'], string> = { sheet: '新しい事業', initiative: '今ある事業の中で' }
 const KindLabel = ({ kind }: { kind: Fresh['kind'] }) => <span className="text-xs text-muted-foreground">{KIND_LABEL[kind]}</span>
