@@ -7,7 +7,7 @@ import { StartForm } from '../chat/start-form'
 import type { StoredSession } from '../chat/store'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Flow } from './flow'
-import { assetPath, type Domain, type PolicyProject, type Profile, type ProfileYear, type ProjectStatus, type Scrap } from './profiles'
+import { assetPath, type PolicyProject, type ProfileYear, type ProjectStatus, type Scrap } from './profiles'
 import { changePct, formatYen, reiwa, yearName, type PageData, type Project, type Setsu, type YearTotal } from './types'
 
 const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
