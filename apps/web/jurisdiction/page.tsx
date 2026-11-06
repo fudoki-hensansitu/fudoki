@@ -127,7 +127,7 @@ function Overview({ data }: { data: PageData }) {
 
 function Domains({ year }: { year: ProfileYear }) {
   return (
-    <Section id="domains" title="暮らしで何が変わった？" lead="その年度に新しく始まったり広がったりしたことです。うまくいったかは、自治体が自分で付けた評価を並べています。" link={[{ href: year.budgetSource, label: '当初予算' }, { href: year.evaluationSource, label: '事業評価' }]}>
+    <Section id="domains" title="暮らしで何が変わった？" lead="その年度に新しく始まったり広がったりしたことです。うまくいったかどうかは、自治体が自分で評価しています。" link={[{ href: year.budgetSource, label: '当初予算' }, { href: year.evaluationSource, label: '事業評価' }]}>
       {groupByFrame(year.projects).map(({ frame: d, items }) => (
         <div key={d.id} id={`d-${d.id}`} className="flex scroll-mt-32 lg:scroll-mt-20 flex-col gap-1 [&+&]:mt-12">
           <h3 className="mb-1.5 flex items-center gap-2.5 text-[19px] leading-snug sm:text-[22px]">
@@ -281,7 +281,7 @@ function Projects({ data, year }: { data: PageData; year: number }) {
   const isLatest = !!settled && settled.year === data.years.at(-1)?.year
   const max = data.projects[0]?.yen ?? 1
   return (
-    <Section id="projects" title="いちばんお金がかかっているのは？" lead="決算で金額の大きい使い道の上位です。前の年と比べた増減も並べています。">
+    <Section id="projects" title="いちばんお金がかかっているのは？" lead="決算で金額の大きい使い道の上位です。前の年からの増減も載せています。">
       {isLatest ? (
         <ul className="border-t">
           {data.projects.map((p, i) => (
