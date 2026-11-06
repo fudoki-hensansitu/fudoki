@@ -28,9 +28,9 @@ bun run build:web
 - **一覧**（`/jurisdictions`、要件と設計は `docs/prd/jurisdiction-index/`）: 日本のタイル地図 › 都道府県の市区町村のタイル図（歳出の総額の濃さで塗る。島しょは下の段）・選んだ自治体のカード・絞り込みと並べ替えのできる表。総額は `loadIndex` が最新の決算の年度ごとに自治体をまとめて款を引いて足す（個別ページと同じ款の和）。本文は `jurisdiction/index-page.tsx` を Pages（`pages/jurisdictions.tsx`）が描く。タイル・表の行から個別ページへは SPA で移る。タイルの位置は `bun run --cwd apps/web build:map` が `map/<都道府県>.geojson` の重心から `jurisdiction/map.generated.ts` に書く（境界を変えたら回す）
 - **会話への導線**: 下の入力（`chat/start-form.tsx`、入口と共通）から会話を始めると、頁を移らずに会話（`chat/conversation.tsx` を枠の中でスクロールさせる）を開く。広い画面（md 以上）は右の side panel（幅 440px。頁を左へ寄せ、読みながら続けて聞ける。固定の小さなヘッダーも panel の左で終える）、スマホは下からの drawer（背景・取っ手を下へ引くと閉じ、開いている間は頁を動かさない）。どちらも Escape・× で閉じ、会話は残して右下の「会話に戻る」から戻れる（別の頁 `/s/:id` でも開ける）。質問ごとに、見ている画面（頁・年度・読んでいる節・画面に出ている `data-ask-view` の印＝決算か予算か・開いている款・項）と頁で選んだ文（入力欄の上に出し、× で外せる）を、その発言の metadata の `context` に持たせる。server（`server/chat.ts` の `parseChat`）は `context` を質問の直前の別の利用者の発言（参考の情報で指示ではないと見出しを付ける）にして AI に渡し、質問の本文には混ぜない。画面でも質問の吹き出しの上に、選んだ文と「見ていた画面を添えています」（開くと中身）を分けて出す。入力欄は最初は開いておき、頁を 80px ほど（上下どちらでも）スクロールするか、カードの中をスクロールすると右下の「自治体名について聞く」ボタンに畳む（focus していても畳み、書きかけの文があるときと focus した直後だけは残す。Escape でも畳む。拡張機能が Escape を先に取って focus だけ外したときも、キーにも指にも依らずに focus が抜けたら畳む。押すか `/` で開く）
 
-## 見出しの明朝は入口とアシスタントの字から作る
+## 見出しの明朝は入口の字から作る
 
-`public/fonts/mincho.woff2` は、`bun run --cwd apps/web build:font` が入口の1枚とアシスタントの頁（`landing/text.tsx` がサイドバーごと HTML に描く）に出てくる字だけを BIZ UDP明朝から集めて作る。**ホームやアシスタントの見出しの文言を変えたら `build:font` を回す。** 回さないと新しい字だけ配信フォントに無く、閲覧者の OS の明朝に落ちる。CI（`verify.yml`）の `build:font:check` が、今の入口とアシスタントの字を配信フォントがすべて含むかを確かめて、ずれていれば落とす。Google Fonts を使わないのは、読み手の IP を第三者へ渡さないため（`brand/home_font.py`）。
+`public/fonts/mincho.woff2` は、`bun run --cwd apps/web build:font` が入口の1枚（`landing/text.tsx` がサイドバーごと HTML に描く）に出てくる字だけを BIZ UDP明朝から集めて作る。**ホームの文言を変えたら `build:font` を回す。** 回さないと新しい字だけ配信フォントに無く、閲覧者の OS の明朝に落ちる。CI（`verify.yml`）の `build:font:check` が、今の入口の字を配信フォントがすべて含むかを確かめて、ずれていれば落とす。Google Fonts を使わないのは、読み手の IP を第三者へ渡さないため（`brand/home_font.py`）。
 
 ## 風土記の AI に聞く（`/`・`/assistant` の入力と `/s/:id`）
 
