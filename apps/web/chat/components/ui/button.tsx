@@ -23,6 +23,8 @@ const buttonVariants = cva(
         "icon-xs": "size-6 rounded-[min(var(--radius-md),10px)] in-data-[slot=button-group]:rounded-lg [&_svg:not([class*='size-'])]:size-3",
         "icon-sm": "size-7 rounded-[min(var(--radius-md),12px)] in-data-[slot=button-group]:rounded-lg",
         "icon-lg": "size-9",
+        // 文中のリンク（variant="link"）。高さと余白を付けず、文字の大きさは周りに合わせる
+        inline: "h-auto gap-1 rounded-sm p-0 font-normal text-[length:inherit]",
       },
     },
     defaultVariants: {

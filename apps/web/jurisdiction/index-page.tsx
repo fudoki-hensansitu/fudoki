@@ -4,7 +4,7 @@ import * as React from 'react'
 import { flushSync } from 'react-dom'
 import { Link, useRouter } from '@void/react'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
-import { buttonVariants } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { Hint } from '@/components/hint'
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList, ComboboxTrigger } from '@/components/ui/combobox'
 import { InputGroupAddon } from '@/components/ui/input-group'
@@ -429,9 +429,9 @@ export function IndexPage({ map: entries, initial }: { map: MapEntry[]; initial:
               </BreadcrumbList>
             </Breadcrumb>
             {prefEntry ? (
-              <Link href={prefEntry.path} className="text-[13px] text-primary underline-offset-4 hover:underline">
+              <Button variant="link" size="inline" nativeButton={false} render={<Link href={prefEntry.path} />} className="text-[13px]">
                 {prefEntry.name}を開く →
-              </Link>
+              </Button>
             ) : (
               <span className="text-xs text-muted-foreground">{view ? '' : '収録のある都道府県を選ぶ'}</span>
             )}

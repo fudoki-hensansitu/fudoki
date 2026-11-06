@@ -3,7 +3,7 @@
 export const HOME = {
   nakano: {
     jurisdiction: '中野区',
-    period: '令和7年度 決算',
+    period: 'R7年度 決算',
     document: '令和7年度中野区各会計歳入歳出決算書',
     // 款の上位7つ（支出済額の大きい順）
     kanList: [
@@ -178,7 +178,7 @@ export const HOME = {
   library: {
     name: '図書館費',
     cofog: '08.2',
-    period: '令和7年度決算 · 一般会計 · 各自治体の決算書',
+    period: 'R7年度決算 · 一般会計 · 各自治体の決算書',
     rows: [
       { jurisdiction: '新宿区', amount: 1750575436 },
       { jurisdiction: '北区', amount: 1093837046 },

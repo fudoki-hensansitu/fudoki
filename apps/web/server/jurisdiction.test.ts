@@ -19,9 +19,9 @@ describe('金額と年度の表記', () => {
     expect(formatYen(355_826_620)).toBe('3.6億円')
     expect(formatYen(76_543_210)).toBe('7,654万円')
   })
-  test('西暦を令和にする', () => {
-    expect(reiwa(2025)).toBe('令和7年度')
-    expect(reiwa(2019)).toBe('令和元年度')
+  test('西暦を令和の R 表記にする', () => {
+    expect(reiwa(2025)).toBe('R7年度')
+    expect(reiwa(2019)).toBe('R1年度')
     expect(reiwa(2018)).toBe('2018年度')
   })
   test('前の年度が無い・0 のときは増減を出さない', () => {
@@ -115,7 +115,7 @@ describe('自治体の個別ページ', () => {
   test('款の和・事業・前年度の同じ目から組み、head に金額と自治体名を入れる', async () => {
     const data = await view('/tokyo/nakano')
     const head = pageHead(data)
-    expect(head.title).toBe('中野区の歳出｜令和7年度決算｜風土記')
+    expect(head.title).toBe('中野区の歳出｜R7年度決算｜風土記')
     expect(canonical(head)).toBe('https://fudoki.dev/tokyo/nakano')
     // 年度ごとの総額は、その年度の款（兄弟）の和
     expect(data.years.map((y) => [y.year, y.yen])).toEqual([[2024, 500], [2025, 1000]])
@@ -242,6 +242,25 @@ describe('内訳の API', () => {
       expect(flows.find((flow) => flow.kan.id === id(2))!.kou[0]!.amountMissing).toBeUndefined()
       expect(flows.find((flow) => flow.kan.id === id(2))!.kou[0]!.yen).toBe(0)
     }
+  })
+  test('機能分類の流れは COFOG の大分類・中分類で目を分け、印字のない目を含む分類に amountMissing を付ける', async () => {
+    const cofog: Env = { ...env, API: fixtureApi({ code: '132012', name: '八王子市', extraNodes: [
+      node({ node_id: id(30), parent_node_id: id(20), node_kind: '目', name: '児童手当費', amount_yen: null, fiscal_year: 2025, kan_name: '子ども教育費', kou_name: '子ども費', cofog_code: '10.4' }),
+      node({ node_id: id(31), parent_node_id: id(20), node_kind: '目', name: '学校費', amount_yen: 50, fiscal_year: 2025, kan_name: '子ども教育費', kou_name: '子ども費', cofog_code: '09.1' }),
+      node({ node_id: id(32), parent_node_id: id(20), node_kind: '目', name: '保育費', amount_yen: 70, fiscal_year: 2025, kan_name: '子ども教育費', kou_name: '子ども費', cofog_code: '10' }),
+    ] }) }
+    const res = await get('/api/jurisdictions/flow/132012/2025/moku?view=cofog', cofog)
+    expect(res.status).toBe(200)
+    const flows = await res.json() as { kan: { id: string; name: string; yen: number; amountMissing?: true }; kou: { name: string; yen: number; amountMissing?: true; moku: { name: string }[] }[] }[]
+    // 款（子ども教育費）は使わず、COFOG の名前で分ける
+    const social = flows.find((f) => f.kan.id === 'cofog-10')!
+    expect(social.kan).toMatchObject({ name: '福祉・子育て', yen: 70, amountMissing: true })
+    expect(social.kou.map((k) => k.name)).toEqual(['未分類', '家族及び児童'])
+    expect(social.kou[1]).toMatchObject({ yen: 0, amountMissing: true })
+    expect(flows.find((f) => f.kan.id === 'cofog-09')!.kou[0]).toMatchObject({ name: '就学前教育及び初等教育', yen: 50, moku: [{ name: '学校費' }] })
+    // COFOG の付かない目は「その他」に入り、最後に置く
+    expect(flows.at(-1)!.kan.id).toBe('cofog-none')
+    expect(flows.at(-1)!.kan.amountMissing).toBeUndefined()
   })
   test('後続ページの節を優先し、全ページの金額から上位の内訳を選ぶ', async () => {
     const paginated: Env = { ...env, API: { fetch: async (req) => {

@@ -1,17 +1,20 @@
 // 自治体の個別ページ（/:都道府県/:名称）の島。サーバーが書いた HTML（検索エンジン向け）を、同じデータで描き直す。
 // 型は企業のプロフィールページ: ヘッダー（ロゴ・名前・一文・属性）＋年度のタブ＋左の目次＋見出し付きの節。年度を切り替えるとページ全体がその年度になる。
-// 歳出の決算は API の値。方針・政策領域・事業の入れ替えは jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
+// 歳出の決算は API の値。事業評価から取った事業・やめたこと（事業の入れ替え）は jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
 import { Link } from '@void/react'
 import * as React from 'react'
-import { ArrowUpRightIcon, CaretDownIcon, ChatCircleIcon, GlobeIcon, MapPinIcon, NotePencilIcon, QuotesIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
+import { ArrowLeftIcon, ArrowRightIcon, ArrowSquareOutIcon, CaretRightIcon, MapPinAreaIcon, MapTrifoldIcon, SquaresFourIcon, BankIcon, BasketballIcon, CaretDownIcon, ClipboardTextIcon, CoinsIcon, ChatCircleIcon, FirstAidKitIcon, GlobeIcon, HandHeartIcon, HouseLineIcon, LeafIcon, MapPinIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, StudentIcon, DotsThreeCircleIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
 import { StartForm } from '../chat/start-form'
 import type { StoredSession } from '../chat/store'
 import { Hint } from '@/components/hint'
+import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { DOMAIN_FRAMES, groupByFrame, OTHER_FRAME } from './domains'
 import { EMBLEMS } from './emblems'
 import { Flow } from './flow'
-import { assetPath, type Domain, type PolicyProject, type Profile, type ProfileYear, type ProjectStatus, type Scrap } from './profiles'
-import { changePct, formatAsOf, formatPeople, formatYen, INDEX_PATH, reiwa, yearName, type PageData, type Project, type Setsu, type YearTotal } from './types'
+import { assetPath, type EvaluatedProject, type Initiative, type ProfileYear, type Scrap } from './profiles'
+import { changePct, INDEX_PATH, formatAsOf, formatPeople, formatYen, reiwa, yearName, type FlowView, type PageData, type Project, type Setsu, type YearTotal } from './types'
 
 const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
   const res = await fetch(url, { signal })
@@ -19,18 +22,12 @@ const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
   return (await res.json()) as T
 }
 
-const BADGE: Record<ProjectStatus, { label: string; className: string }> = {
-  short: { label: '目標に届いていない', className: 'bg-[color-mix(in_srgb,var(--kincha)_22%,transparent)] text-[#aa5910]' },
-  met: { label: '目標に届いた', className: 'bg-primary/15 text-primary' },
-  mixed: { label: '達成と未達が混在', className: 'bg-secondary' },
-  none: { label: '評価前', className: 'border border-dashed' },
-}
-
 /** aside は見出しの横に並べる短い値（決算の総額など） */
 type SectionLink = { href: string; label: string }
 /** link は見出しの右に出す出典（PDF を直接開く）。複数あれば並べる */
-const Section = ({ id, title, aside, link, children }: { id: string; title: string; aside?: React.ReactNode; link?: SectionLink | SectionLink[]; children: React.ReactNode }) => (
-  <section id={id} aria-labelledby={`h-${id}`} className="flex scroll-mt-32 md:scroll-mt-20 flex-col gap-4">
+/** lead は見出しの下の一文。区政を知らない人にその節で何が分かるかを言う */
+const Section = ({ id, title, lead, aside, link, children }: { id: string; title: string; lead?: string; aside?: React.ReactNode; link?: SectionLink | SectionLink[]; children: React.ReactNode }) => (
+  <section id={id} aria-labelledby={`h-${id}`} className="flex scroll-mt-32 lg:scroll-mt-20 flex-col gap-4">
     <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
       <div className="flex flex-wrap items-baseline gap-x-5 gap-y-1">
         <h2 id={`h-${id}`} className="font-sans text-[26px] font-normal leading-snug">
@@ -41,83 +38,237 @@ const Section = ({ id, title, aside, link, children }: { id: string; title: stri
       {link ? (
         <div className="flex flex-wrap gap-x-4 gap-y-1">
           {(Array.isArray(link) ? link : [link]).map((l) => (
-            <a key={l.href} href={l.href} target="_blank" rel="noopener" className="inline-flex items-center gap-1 whitespace-nowrap text-[13px] text-primary no-underline hover:underline">
+            <Button key={l.href} variant="link" size="inline" nativeButton={false} render={<a href={l.href} target="_blank" rel="noopener" />} className="text-[13px]">
               {l.label}
-              <ArrowUpRightIcon aria-hidden="true" className="size-3.5" />
-            </a>
+              <ArrowSquareOutIcon aria-hidden="true" className="size-3.5" />
+            </Button>
           ))}
         </div>
       ) : null}
     </div>
+    {lead ? <p className="-mt-2 text-sm text-muted-foreground [text-wrap:pretty]">{lead}</p> : null}
     {children}
   </section>
 )
 
-function Policies({ code, year }: { code: string; year: ProfileYear }) {
+/** 区の評価の区分（A〜D）を丸で囲んだ印。良し悪しの色は付けない */
+function GradeMark({ grade }: { grade: string }) {
+  return <span aria-hidden="true" className="inline-grid size-5 shrink-0 place-items-center rounded-full border border-current align-middle text-[11px] leading-none">{grade}</span>
+}
+
+/** 「C やり方を見直す」を印と言葉に分ける */
+function Grade({ grade, className }: { grade: string; className?: string }) {
+  const m = /^([A-D])\s*(.*)$/.exec(grade)
+  if (!m) return <span className={className}>{grade}</span>
   return (
-    <Section id="policy" title="方針" link={{ href: year.policySource, label: '予算編成方針' }}>
-      <ol className="border-t">
-        {year.policies.map((p, i) => (
-          <li key={p.title} className="grid grid-cols-[22px_104px_minmax(0,1fr)] items-start gap-3 border-b border-foreground/10 py-3.5 sm:grid-cols-[28px_176px_minmax(0,1fr)] sm:gap-4">
-            <span className="text-lg text-primary">{i + 1}</span>
-            <img src={assetPath(code, p.image)} alt="" loading="lazy" className="aspect-video w-full rounded-lg border border-foreground/10 object-cover" />
-            <div>
-              <b className="block text-base font-normal">{p.title}</b>
-              <p className="mt-0.5 text-sm text-muted-foreground">{p.body}</p>
-            </div>
-          </li>
-        ))}
-      </ol>
-    </Section>
+    // 区分の言葉は前後の文と同じ行の流れで折り返す（inline-flex だと言葉だけが箱になり、文と別物に見える）
+    <span className={className}>
+      <GradeMark grade={m[1]!} />
+      <span className="ml-1.5"><span className="sr-only">{m[1]} </span>{m[2]}</span>
+    </span>
   )
 }
 
-function ProjectItem({ p }: { p: PolicyProject }) {
+/** 金額の数字を大きく、単位（億円・万円）を小さく出す */
+function YenText({ yen, className }: { yen: number; className?: string }) {
+  const [, num, unit] = /^([\d,.]+)(.*)$/.exec(formatYen(yen)) ?? [, formatYen(yen), '']
   return (
-    <div className="grid grid-cols-1 gap-x-6 gap-y-1.5 border-b border-foreground/10 py-4 md:grid-cols-[minmax(0,1fr)_210px]">
-      <div className="text-[15.5px]">
-        {p.name}
-        {p.status ? <span className={`ml-1.5 whitespace-nowrap rounded-full px-2 py-px align-middle text-xs ${BADGE[p.status].className}`}>{BADGE[p.status].label}</span> : null}
+    <span className={`tabular-nums ${className ?? ''}`}>
+      <span className="text-xl">{num}</span>
+      <span className="ml-0.5 text-xs text-muted-foreground">{unit}</span>
+    </span>
+  )
+}
+
+/** 新しく始めたことの2つの形。シートごと新しくできた事業か、今ある事業の中で始めた取り組みか */
+type Fresh = ({ kind: 'sheet' } & EvaluatedProject) | ({ kind: 'initiative' } & Initiative)
+const freshOf = (y: ProfileYear): Fresh[] => [...y.projects.map((p) => ({ kind: 'sheet' as const, ...p })), ...[...(y.initiatives ?? [])].sort((a, b) => b.settledYen - a.settledYen).map((p) => ({ kind: 'initiative' as const, ...p }))]
+
+const KIND_LABEL: Record<Fresh['kind'], string> = { sheet: '新しい事業', initiative: '今ある事業の中で' }
+const KindLabel = ({ kind }: { kind: Fresh['kind'] }) => <span className="text-xs text-muted-foreground">{KIND_LABEL[kind]}</span>
+
+function SheetLink({ sheets, page, name }: { sheets?: string; page: number; name: string }) {
+  if (!sheets) return null
+  return (
+    <Button variant="link" size="inline" nativeButton={false} render={<a href={`${sheets}#page=${page}`} target="_blank" rel="noopener" />} className="ml-1 align-baseline">
+      評価シート「{name}」
+      <ArrowSquareOutIcon aria-hidden="true" className="size-3.5" />
+    </Button>
+  )
+}
+
+const EvalLabel = () => (
+  <span className="mr-2 inline-flex items-center gap-1 align-middle">
+    <ClipboardTextIcon aria-hidden="true" className="size-4 text-muted-foreground" />
+    評価
+  </span>
+)
+
+/** 今ある事業の中で始めた取り組み。何を始めたかはシートの文をそのまま引き、評価は含まれる事業全体のものだと文で言う */
+function InitiativeItem({ p, sheets }: { p: Initiative; sheets?: string }) {
+  return (
+    <div className="flex flex-col gap-2 border-b border-foreground/10 py-4">
+      <div className="flex flex-col">
+        <KindLabel kind="initiative" />
+        <span className="text-[15.5px]">{p.title}</span>
       </div>
-      <p className="text-sm md:col-start-1">{p.what}</p>
-      {p.evaluation ? (
-        <p className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1 text-[13px] text-muted-foreground md:col-start-1">
-          <span>区の評価</span>
-          <span>
-            {p.evaluation.grade ? <b className="font-normal text-foreground">{p.evaluation.grade}</b> : null}
-            {p.evaluation.grade ? '・' : ''}
-            {p.evaluation.note}
-          </span>
-        </p>
-      ) : null}
-      <div className="flex flex-row flex-wrap gap-x-3 gap-y-1 text-sm md:col-start-2 md:row-span-3 md:row-start-1 md:flex-col md:gap-0.5 md:text-right">
-        {p.amounts.map((a) => (
-          <span key={`${a.yen}-${a.label ?? ''}`} className="tabular-nums">
-            {formatYen(a.yen)}
-            {a.label ? <small className="ml-1 text-xs text-muted-foreground md:ml-0 md:block">{a.label}</small> : null}
-          </span>
-        ))}
-      </div>
+      <blockquote className="border-l-2 border-foreground/15 pl-3 text-sm [text-wrap:pretty]">{p.quote}</blockquote>
+      <p className="rounded-xl bg-sidebar px-3.5 py-2.5 text-[13px] leading-relaxed text-foreground [text-wrap:pretty]">
+        <EvalLabel />
+        この取り組みだけの評価はない。含まれる事業「{p.name}」（決算額 {formatYen(p.settledYen)}）の評価は
+        <Grade grade={p.grade} className="ml-1" />
+        （{p.direction}）。
+        <SheetLink sheets={sheets} page={p.page} name={p.name} />
+      </p>
     </div>
   )
 }
 
-function Domains({ domains }: { domains: Domain[] }) {
+function ProjectItem({ p, sheets }: { p: EvaluatedProject; sheets?: string }) {
+  const i = p.indicator
   return (
-    <Section id="domains" title="政策領域">
-      {domains.map((d) => (
-        <div key={d.id} id={`d-${d.id}`} className="flex scroll-mt-32 md:scroll-mt-20 flex-col gap-1 [&+&]:mt-12">
-          <h3 className="mb-3.5 border-l-4 border-primary py-0.5 pl-3.5 text-[19px] leading-snug sm:text-[22px]">{d.name}</h3>
+    // 1列で上から読む。金額は名前と同じ行の右に置き、評価の枠は幅いっぱいに出す。値はどれも評価シートのもの
+    <div className="flex flex-col gap-2 border-b border-foreground/10 py-4">
+      <div className="flex items-start justify-between gap-x-6">
+        <div className="flex min-w-0 flex-col">
+          <KindLabel kind="sheet" />
+          <span className="text-[15.5px]">{p.title}</span>
+        </div>
+        <YenText yen={p.settledYen} className="shrink-0 text-right leading-snug" />
+      </div>
+      <p className="text-sm">{p.what}</p>
+      {/* 評価の区分・方向性・指標は一続きの文として、同じ大きさ・色で読ませる。指標の良し悪しは風土記が判断しない */}
+      <p className="rounded-xl bg-sidebar px-3.5 py-2.5 text-[13px] leading-relaxed text-foreground [text-wrap:pretty]">
+        <EvalLabel />
+        <Grade grade={p.grade} />
+        （{p.direction}）。{i ? `指標の「${i.name}」は、目標 ${i.target}${i.unit}に対して実績 ${i.actual}${i.unit}。` : '目標と実績を並べた指標は載っていない。'}
+        <SheetLink sheets={sheets} page={p.page} name={p.name} />
+      </p>
+    </div>
+  )
+}
+
+/** 分野（domains.ts）の id ごとの icon */
+const DOMAIN_ICON: Record<string, typeof BankIcon> = {
+  bosai: ShieldCheckIcon, fukushi: HandHeartIcon, kyoiku: StudentIcon, iryo: FirstAidKitIcon, kurashi: HouseLineIcon,
+  sangyo: StorefrontIcon, kankyo: LeafIcon, bunka: BasketballIcon, gyosei: BankIcon, other: DotsThreeCircleIcon,
+}
+
+/** 区政を知らない人の入口。自治体の仕事を分野の例で見せ、1年に使うお金を住民1人あたりで言う（最新の決算） */
+function Overview({ data, sections }: { data: PageData; sections: Set<string> }) {
+  const latest = data.years.at(-1)
+  const people = data.population?.people
+  const kind = data.name.slice(-1)
+  return (
+    <Section id="about" title={`${kind}は何をしている？`}>
+      {latest ? (
+        <p className="text-[15px]">
+          {reiwa(latest.year)}に使ったお金は<b className="mx-1 text-xl font-normal tabular-nums text-[var(--kincha-ink)]">{formatYen(latest.yen)}</b>
+          {people ? (
+            <>
+              、住民1人あたり<b className="mx-1 text-xl font-normal tabular-nums text-[var(--kincha-ink)]">約{Math.round(latest.yen / people / 1e4).toLocaleString('ja-JP')}万円</b>
+            </>
+          ) : null}
+          です。
+        </p>
+      ) : null}
+      <ul className="grid grid-cols-1 gap-x-8 border-t sm:grid-cols-2">
+        {[...DOMAIN_FRAMES.filter((f) => f.examples), OTHER_FRAME].map((f) => {
+          // 最新の決算を COFOG の大分類で分けた額（お金の流れの機能分類と同じ値）
+          const spent = data.cofogFlow.find((d) => d.kan.id === `cofog-${f.cofog || 'none'}`)?.kan
+          if (f === OTHER_FRAME && !spent) return null
+          return (
+            <li key={f.id} className="border-b border-foreground/10">
+              <DomainLink section={sections.has(f.id) ? `d-${f.id}` : undefined}>
+              <DomainIcon id={f.id} />
+              <div className="min-w-0 flex-1">
+                <b className="block text-[15px] font-normal">{f.name}</b>
+                <span className="block text-[13px] leading-snug text-muted-foreground">{f.examples}</span>
+              </div>
+              <div className="text-right tabular-nums">
+                <span className={`block text-[15px] ${spent ? '' : 'text-muted-foreground'}`}>{spent ? (spent.amountMissing ? '金額未記載' : formatYen(spent.yen)) : '—'}</span>
+                {spent && !spent.amountMissing && people ? <span className="block text-xs text-muted-foreground">1人 約{Math.round(spent.yen / people / 1e3) / 10}万円</span> : null}
+              </div>
+              </DomainLink>
+            </li>
+          )
+        })}
+      </ul>
+    </Section>
+  )
+}
+
+/** 分野の行。その年度の「新しく何を始めた？」にその分野があれば、そこへ移るリンクにする */
+function DomainLink({ section, children }: { section?: string; children: React.ReactNode }) {
+  // アイコン・名前・金額の3列を全行で同じ幅にし、行は隣の列の行と同じ高さいっぱいに広げて中央に揃える
+  const row = 'grid h-full grid-cols-[1.75rem_minmax(0,1fr)_5.5rem] items-center gap-3 py-3'
+  if (!section) return <div className={row}>{children}</div>
+  return (
+    <a
+      href={`#${section}`}
+      // 目次と同じく #yYYYY を節の fragment に置き換えない
+      onClick={(e) => { const t = document.getElementById(section); if (!t) return; e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }) }}
+      className={`${row} text-foreground no-underline transition-colors hover:bg-card`}
+    >
+      {children}
+    </a>
+  )
+}
+
+function Domains({ year, fiscalYear }: { year: ProfileYear; fiscalYear: number }) {
+  const groups = groupByFrame(freshOf(year))
+  return (
+    <Section id="domains" title="新しく何を始めた？" lead="区が事業ごとに目標と実績を振り返る「事業評価」から、この年度に新しくできた事業と、今ある事業の中で始めた取り組みを並べています。" link={groups.length ? { href: year.evaluationSource, label: '事業評価' } : undefined}>
+      {/* 事業評価は実施した翌年度に公表する。まだの年度も節は出し、なぜ空かを言う */}
+      {groups.length ? null : <p className="rounded-xl border border-dashed px-4 py-6 text-sm text-muted-foreground">{reiwa(fiscalYear)}の事業の評価は、{reiwa(fiscalYear + 1)}に公表されます。まだ公表されていません。</p>}
+      {groups.map(({ frame: d, items }) => (
+        <div key={d.id} id={`d-${d.id}`} className="flex scroll-mt-32 lg:scroll-mt-20 flex-col gap-1 [&+&]:mt-12">
+          <h3 className="mb-1.5 flex items-center gap-2.5 text-[19px] leading-snug sm:text-[22px]">
+            <DomainIcon id={d.id} />
+            {d.name}
+          </h3>
           <div className="border-t">
-            {d.projects.length ? (
-              d.projects.map((p) => <ProjectItem key={p.name} p={p} />)
-            ) : (
-              <p className="border-b border-foreground/10 py-4 text-sm text-muted-foreground">この年度の新規・拡充事業の中から、この領域に振り分けた事業はありません。</p>
-            )}
+            {items.map((p) => (p.kind === 'sheet' ? <ProjectItem key={`s${p.page}`} p={p} sheets={year.evaluationSheets} /> : <InitiativeItem key={`i${p.page}-${p.title}`} p={p} sheets={year.evaluationSheets} />))}
           </div>
         </div>
       ))}
     </Section>
+  )
+}
+
+/** 最後の節の行き先のカード。icon の箱（紋章があれば紋章）と名前 */
+function PlaceCard({ href, name, logo, icon: Icon, className }: { href: string; name: string; logo?: string; icon: typeof MapPinAreaIcon; className?: string }) {
+  return (
+    <li className={className}>
+      <Link href={href} className="group flex items-center gap-3.5 rounded-2xl border bg-background p-3.5 text-foreground no-underline transition-colors hover:border-primary/40 hover:bg-card">
+        <span className="grid size-12 shrink-0 place-items-center rounded-xl border bg-white p-1.5">
+          {logo ? <img src={logo} alt="" className="h-auto w-full" /> : <Icon aria-hidden="true" className="size-6 text-primary" />}
+        </span>
+        <b className="min-w-0 flex-1 truncate text-[16px] font-normal">{name}</b>
+        <CaretRightIcon aria-hidden="true" className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+      </Link>
+    </li>
+  )
+}
+
+/** 最後の節。都道府県・近くの自治体（紋章があれば紋章）・全国の一覧を同じカードで並べる */
+function Elsewhere({ data }: { data: PageData }) {
+  return (
+    <Section id="elsewhere" title="ほかの自治体も見る">
+      <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {data.prefecturePath !== INDEX_PATH ? <PlaceCard href={data.prefecturePath} name={data.prefecture} icon={MapTrifoldIcon} /> : null}
+        {data.neighbors.map((n) => <PlaceCard key={n.path} href={n.path} name={n.name} logo={n.logo} icon={MapPinAreaIcon} />)}
+        <PlaceCard href={INDEX_PATH} name="すべての自治体" icon={SquaresFourIcon} className="sm:col-span-2" />
+      </ul>
+    </Section>
+  )
+}
+
+function DomainIcon({ id }: { id: string }) {
+  const Icon = DOMAIN_ICON[id]
+  if (!Icon) return <span aria-hidden="true" className="h-6 w-1 rounded-full bg-primary" />
+  return (
+    <Icon aria-hidden="true" className="size-6 shrink-0 text-primary sm:size-7" />
   )
 }
 
@@ -142,7 +293,7 @@ function ProjectRow({ p, rank, max }: { p: Project; rank: number; max: number })
         <span className="text-xl text-muted-foreground">{rank}</span>
         <div className="min-w-0">
           <b className="block text-[15px] font-normal leading-snug">{p.name}</b>
-          <span className="text-xs text-muted-foreground">{p.kanName}</span>
+          <span className="text-xs text-muted-foreground">{p.domain}</span>
         </div>
         <div className="order-5 col-span-full sm:order-none sm:col-span-1">
           <div className="h-2.5 overflow-hidden rounded-full bg-foreground/5">
@@ -150,7 +301,7 @@ function ProjectRow({ p, rank, max }: { p: Project; rank: number; max: number })
           </div>
         </div>
         <div className="text-right text-[15px] tabular-nums">{p.amountMissing ? '金額未記載' : formatYen(p.yen)}</div>
-        <div className={`hidden text-right text-[15px] tabular-nums sm:block ${pct !== null && pct < 0 ? 'text-[#aa5910]' : 'text-primary'}`}>
+        <div className={`hidden text-right text-[15px] tabular-nums sm:block text-foreground`}>
           {pct === null ? '—' : `${pct >= 0 ? '+' : '−'}${Math.abs(pct).toFixed(1)}%`}
           <i className="block text-[11px] not-italic text-muted-foreground">前年度比</i>
         </div>
@@ -185,10 +336,16 @@ const PHASES: { key: Phase; label: string }[] = [
   { key: 'settlement', label: '決算' },
   { key: 'budget', label: '予算' },
 ]
+/** お金の流れの分け方。既定は機能分類（目的で分ける COFOG を domains.ts の枠にまとめたもの）で、どの自治体も同じ枠で比べられる。自治体分類は予算書・決算書の款・項のまま */
+const VIEWS: { key: FlowView; label: string }[] = [
+  { key: 'cofog', label: '機能分類' },
+  { key: 'kan', label: '自治体分類' },
+]
 
 /** 予算の節。決算と予算をタブで切り替える。予算はまだ取り込んでいないので、どの年度も空の枠を出す */
 function Budget({ data, year }: { data: PageData; year: number }) {
   const [phase, setPhase] = React.useState<Phase>('settlement')
+  const [view, setView] = React.useState<FlowView>('cofog')
   const settled = data.years.find((y) => y.year === year)
   const total = phase === 'settlement' ? settled : undefined
   const prev = data.years.find((y) => y.year === year - 1)
@@ -202,10 +359,12 @@ function Budget({ data, year }: { data: PageData; year: number }) {
     <>
       <span className="text-sm text-muted-foreground">全体</span>
       <b className={`text-[26px] font-normal leading-snug tabular-nums ${total ? '' : 'text-muted-foreground'}`}>{total ? formatYen(total.yen) : '—'}</b>
-      {pct !== null ? <span className={`text-[13px] tabular-nums ${pct < 0 ? 'text-[#aa5910]' : 'text-primary'}`}>前年度比 {pct >= 0 ? '+' : '−'}{Math.abs(pct).toFixed(1)}%</span> : null}
+      {pct !== null ? <span className={`text-[13px] tabular-nums text-muted-foreground`}>前年度比 {pct >= 0 ? '+' : '−'}{Math.abs(pct).toFixed(1)}%</span> : null}
     </>
   )
+  // 決算・予算のタブは左、分類のメニューは右に置く
   const tabs = (
+    <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5">
     <div role="tablist" aria-label="金額の段階" className="flex gap-1">
       {PHASES.map((p) => (
         <button
@@ -222,16 +381,27 @@ function Budget({ data, year }: { data: PageData; year: number }) {
         </button>
       ))}
     </div>
+    {/* 決算・予算のタブとは別の形（select）にし、金額の段階の切り替えと分け方の切り替えを見分けられるようにする */}
+    <Select items={VIEWS.map((v) => ({ value: v.key, label: v.label }))} value={view} onValueChange={(v) => v && setView(v as FlowView)}>
+      <SelectTrigger size="sm" aria-label={`分類：${VIEWS.find((v) => v.key === view)!.label}`} className="text-[13px]">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent align="end">
+        {VIEWS.map((v) => <SelectItem key={v.key} value={v.key}>{v.label}</SelectItem>)}
+      </SelectContent>
+    </Select>
+    </div>
   )
   return (
     <Section
       id="budget"
-      title="決算 / 予算"
+      title="お金は何に使われた？"
+      lead="機能分類は、使い道を目的ごとに分ける世界共通の分類（COFOG）です。自治体分類は、予算書・決算書の分け方そのままです。"
       link={docs.length ? docs : undefined}
     >
-      <div id="budget-panel" role="tabpanel" aria-labelledby={`tab-${phase}`} data-ask-view={`${reiwa(year)}の${label}の金額`} className="flex flex-col gap-4">
+      <div id="budget-panel" role="tabpanel" aria-labelledby={`tab-${phase}`} data-ask-view={`${reiwa(year)}の${label}の金額（${VIEWS.find((v) => v.key === view)!.label}）`} className="flex flex-col gap-4">
         {total ? (
-          <Flow key={year} data={data} total={total} tabs={tabs} summary={summary} />
+          <Flow key={`${year}-${view}`} data={data} total={total} view={view} tabs={tabs} summary={summary} />
         ) : (
           <div className="rounded-[20px] border bg-background px-5 pt-5 sm:px-6">
             {tabs}
@@ -250,7 +420,7 @@ function Projects({ data, year }: { data: PageData; year: number }) {
   const isLatest = !!settled && settled.year === data.years.at(-1)?.year
   const max = data.projects[0]?.yen ?? 1
   return (
-    <Section id="projects" title="金額の大きい事業">
+    <Section id="projects" title="いちばんお金がかかっているのは？">
       {isLatest ? (
         <ul className="border-t">
           {data.projects.map((p, i) => (
@@ -273,11 +443,11 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
     ['D', 'やめる・終える'],
   ] as const
   return (
-    <Section id="scrap" title="事業の入れ替え">
+    <Section id="scrap" title="やめたこと・見直したことは？" lead="自治体は毎年、事業を自分で評価して、やめたり減らしたりして浮いたお金を新しいことに回しています。">
       <div className="flex max-w-[560px] flex-col gap-2">
         <div className="flex items-baseline justify-between gap-3">
-          <span>スクラップで捻出した財源</span>
-          <b className="text-[28px] font-normal tabular-nums">
+          <span>やめたり減らしたりして浮かせたお金</span>
+          <b className="text-[28px] font-normal tabular-nums text-primary">
             {formatYen(scrap.raisedYen)}
             {target ? <small className="ml-1 text-sm text-muted-foreground">／ 目標 {formatYen(target)}</small> : null}
           </b>
@@ -289,12 +459,12 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
           </div>
         ) : null}
       </div>
-      <h3 className="text-lg">{scrap.evaluated.toLocaleString('ja-JP')}事業の自己評価</h3>
+      <h3 className="text-lg">自治体が自分で付けた評価（{scrap.evaluated.toLocaleString('ja-JP')}事業）</h3>
       <div className="grid grid-cols-2 border-t sm:grid-cols-4">
         {grades.map(([g, label]) => (
           <div key={g} className="flex flex-col py-3">
             <b className="text-2xl font-normal leading-snug tabular-nums">{scrap.grades[g]}</b>
-            <span className="text-[13px] text-muted-foreground">{g} {label}</span>
+            <Grade grade={`${g} ${label}`} className="text-[13px] text-muted-foreground" />
           </div>
         ))}
       </div>
@@ -332,7 +502,7 @@ function YearPicker({ years, current, onChange }: { years: number[]; current: nu
         <Hint key={y} label={reiwa(y)}>
           <button type="button" aria-pressed={y === current} onClick={() => onChange(y)} className={pill(y === current)}>
             {yearName(y)}
-            {yearName(y) !== reiwa(y) ? <span className="hidden text-muted-foreground lg:inline">（{reiwa(y).replace(/度$/, '')}）</span> : null}
+            {yearName(y) !== reiwa(y) ? <span className="hidden text-muted-foreground lg:inline">（{reiwa(y).replace(/年度$/, '')}）</span> : null}
           </button>
         </Hint>
       ))}
@@ -367,27 +537,57 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
     if (y && years.includes(y)) setYear(y)
   }, [years])
   const py = profile?.years[String(year)]
+  // 基本構想の都市像。年度で変わらない
+  const vision = profile?.vision?.text
   const choose = (y: number) => {
     setYear(y)
     history.replaceState(null, '', `#y${y}`)
   }
 
+  const money: TocItem[] = [
+    { href: '#budget', label: 'お金の使い道' },
+    { href: '#projects', label: '大きな支出' },
+  ]
+  // 区政を知らない人には金額より暮らしの具体例が先。変わったことから入り、お金の内訳へ進む
+  const fresh: TocItem[] = py ? [{ href: '#domains', label: '新しく始めたこと' }, ...groupByFrame(freshOf(py)).map(({ frame: d }) => ({ href: `#d-${d.id}`, label: d.name, sub: true }))] : []
   const toc: TocItem[] = [
-    ...(py ? [{ href: '#policy', label: '方針' }, { href: '#domains', label: '政策領域' }, ...py.domains.map((d) => ({ href: `#d-${d.id}`, label: d.short ?? d.name, sub: true }))] : []),
-    { href: '#budget', label: '決算 / 予算' },
-    { href: '#projects', label: '事業' },
-    ...(py?.scrap ? [{ href: '#scrap', label: '事業の入れ替え' }] : []),
+    { href: '#about', label: `${data.name.slice(-1)}の仕事` },
+    ...fresh,
+    ...money,
+    ...(py?.scrap ? [{ href: '#scrap', label: 'やめたこと' }] : []),
+    { href: '#elsewhere', label: 'ほかの自治体' },
   ]
 
   // スクロールしたら小さなヘッダーを出す
   const title = React.useRef<HTMLHeadingElement>(null)
+  const headerRef = React.useRef<HTMLElement>(null)
+  const pickerRef = React.useRef<HTMLDivElement>(null)
   const [mini, setMini] = React.useState(false)
+  const [headerWide, setHeaderWide] = React.useState(true)
   React.useEffect(() => {
     const el = title.current
     if (!el) return
     const observer = new IntersectionObserver(([e]) => setMini(!e!.isIntersecting && e!.boundingClientRect.top < 0))
     observer.observe(el)
     return () => observer.disconnect()
+  }, [])
+  React.useEffect(() => {
+    const el = headerRef.current
+    const name = title.current
+    const picker = pickerRef.current
+    if (!el || !name || !picker) return
+    // 名前の文字の右端と年度選択の幅を実測し、右上に重ねずに置けるときだけ絶対配置にする（名前の長さ・会話パネルで幅が変わる）
+    const range = document.createRange()
+    const update = () => {
+      range.selectNodeContents(name)
+      const textRight = range.getBoundingClientRect().right - el.getBoundingClientRect().left
+      setHeaderWide(textRight + 24 + picker.getBoundingClientRect().width <= el.getBoundingClientRect().width)
+    }
+    update()
+    const ro = new ResizeObserver(update)
+    ro.observe(el)
+    ro.observe(picker)
+    return () => ro.disconnect()
   }, [])
 
   // 目次をスクロールに追従させる
@@ -429,7 +629,6 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
     if (bar && a) bar.scrollTo({ left: a.offsetLeft - 16, behavior: 'smooth' })
   }, [current])
 
-  const tagline = py?.tagline
   const logo = EMBLEMS[data.code] ? assetPath(data.code, 'emblem.svg') : null
 
   return (
@@ -437,8 +636,8 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
       <div className={`fixed left-0 right-(--side-panel,0px) top-0 z-30 md:left-(--nav-w) border-b bg-background transition-[transform,right] duration-200 ease-out motion-reduce:transition-none ${mini ? '' : '-translate-y-full'}`} aria-hidden={!mini} inert={!mini}>
         <div className="mx-auto flex h-[60px] max-w-[1120px] items-center gap-3 px-4">
           <span className="hidden size-10 shrink-0 place-items-center rounded-lg border bg-white p-1 sm:grid">{logo ? <img src={logo} alt="" className="w-full" /> : <span className="text-foreground">{data.name[0]}</span>}</span>
-          <b className={`shrink-0 font-normal ${tagline ? 'text-sm text-muted-foreground' : 'text-lg'}`}>{data.name}</b>
-          {tagline ? <span className="hidden min-w-0 truncate text-[15px] sm:block">{tagline}</span> : null}
+          <b className="shrink-0 text-lg font-normal">{data.name}</b>
+          {vision ? <span className="hidden min-w-0 truncate text-[13px] text-muted-foreground sm:block">{vision}</span> : null}
           {years.length > 1 ? (
             <div className="ml-auto shrink-0">
               <YearPicker years={years} current={year} onChange={choose} />
@@ -448,9 +647,9 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
       </div>
 
       <div className="mx-auto max-w-[1120px] px-4 pb-48">
-        <header className="relative grid grid-cols-[80px_minmax(0,1fr)] items-start gap-4 border-b py-7 sm:grid-cols-[132px_minmax(0,1fr)] sm:gap-7">
+        <header ref={headerRef} className="relative grid grid-cols-[80px_minmax(0,1fr)] items-start gap-4 border-b py-7 sm:grid-cols-[132px_minmax(0,1fr)] sm:gap-7">
           {years.length > 1 ? (
-            <div className="col-span-full -mb-2 justify-self-end sm:absolute sm:right-0 sm:top-7 sm:mb-0">
+            <div ref={pickerRef} className={headerWide ? 'col-span-full -mb-2 justify-self-end sm:absolute sm:right-0 sm:top-7 sm:mb-0' : 'col-span-full -mb-2 justify-self-end'}>
               <YearPicker years={years} current={year} onChange={choose} />
             </div>
           ) : null}
@@ -458,27 +657,26 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
             {logo ? <img src={logo} alt="" className="h-auto w-full" /> : <span className="text-3xl text-foreground sm:text-5xl">{data.name[0]}</span>}
           </div>
           <div className="flex min-w-0 flex-col gap-3">
-            {/* 一文（方針の要約）がある年度は名前を小さく一文を大きく見せる。無い自治体・年度は名前を大きく。h1 は名前のまま */}
-            <h1 ref={title} className={tagline ? 'text-lg font-normal leading-tight text-muted-foreground sm:text-xl' : 'text-[clamp(2rem,1.5rem+2vw,2.8rem)] font-normal leading-tight'}>{data.name}</h1>
-            {tagline ? <p className="text-[clamp(1.5rem,1.1rem+1.6vw,2.4rem)] leading-snug [text-wrap:pretty] [word-break:auto-phrase]">{tagline}</p> : null}
-            <div className="flex flex-wrap gap-x-6 gap-y-1.5 text-sm text-muted-foreground">
-              <span className="inline-flex items-center gap-1.5">
-                <MapPinIcon className="size-4" aria-hidden="true" />
-                <Link href={INDEX_PATH} className="text-primary no-underline">{data.prefecture}</Link>
+            <h1 ref={title} className="text-[clamp(1.75rem,1.4rem+1.2vw,2.25rem)] font-normal leading-tight">{data.name}</h1>
+            {vision ? <p className="text-[17px] [text-wrap:pretty] [word-break:auto-phrase]">{vision}</p> : null}
+            <div className="flex flex-wrap gap-x-2.5 gap-y-1.5 whitespace-nowrap text-xs text-muted-foreground sm:gap-x-6 sm:text-sm">
+              <span className="inline-flex items-center gap-1 sm:gap-1.5">
+                <MapPinIcon className="size-3.5 sm:size-4" aria-hidden="true" />
+                <Button variant="link" size="inline" nativeButton={false} render={<Link href={data.prefecturePath} />}>{data.prefecture}</Button>
               </span>
               {data.population ? (
                 <Hint label={`住民基本台帳人口（${formatAsOf(data.population.asOf)}時点）`}>
-                  <span className="inline-flex items-center gap-1.5">
-                    <UsersIcon className="size-4" aria-hidden="true" />
+                  <span className="inline-flex items-center gap-1 text-foreground sm:gap-1.5">
+                    <UsersIcon className="size-3.5 text-muted-foreground sm:size-4" aria-hidden="true" />
                     <span className="sr-only">人口 </span>
                     {formatPeople(data.population.people)}
                   </span>
                 </Hint>
               ) : null}
               {data.officialUrl ? (
-                <span className="inline-flex items-center gap-1.5">
-                  <GlobeIcon className="size-4" aria-hidden="true" />
-                  <a href={data.officialUrl} target="_blank" rel="noopener" className="text-primary no-underline">公式サイト</a>
+                <span className="inline-flex items-center gap-1 sm:gap-1.5">
+                  <GlobeIcon className="size-3.5 sm:size-4" aria-hidden="true" />
+                  <Button variant="link" size="inline" nativeButton={false} render={<a href={data.officialUrl} target="_blank" rel="noopener" />}>公式サイト</Button>
                 </span>
               ) : null}
             </div>
@@ -492,7 +690,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
           </div>
         </header>
 
-        <nav ref={spBar} aria-label="目次" className={`sticky z-20 -mx-4 flex gap-1.5 overflow-x-auto border-b bg-background px-4 py-2.5 [scrollbar-width:none] md:hidden ${mini ? 'top-[61px]' : 'top-0'}`}>
+        <nav ref={spBar} aria-label="目次" className={`sticky z-20 -mx-4 flex gap-1.5 overflow-x-auto border-b bg-background px-4 py-2.5 [scrollbar-width:none] lg:hidden ${mini ? 'top-[61px]' : 'top-0'}`}>
           {toc.filter((t) => !t.sub).map((t) => (
             <a key={t.href} href={t.href} onClick={jump} data-current={isCurrent(t.href) || undefined} className="shrink-0 rounded-full border px-3 py-1 text-[13px] text-muted-foreground no-underline data-[current]:border-primary data-[current]:bg-primary data-[current]:text-primary-foreground">
               {t.label}
@@ -500,8 +698,8 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
           ))}
         </nav>
 
-        <div className="grid grid-cols-1 gap-12 pt-6 md:grid-cols-[220px_minmax(0,1fr)] md:pt-8">
-          <nav aria-label="目次" className="sticky top-[84px] hidden flex-col gap-0.5 self-start md:flex">
+        <div className="grid grid-cols-1 gap-12 pt-6 lg:grid-cols-[220px_minmax(0,1fr)] lg:pt-8">
+          <nav aria-label="目次" className="sticky top-[84px] hidden flex-col gap-0.5 self-start lg:flex">
             {toc.map((t) => (
               <a
                 key={t.href}
@@ -515,11 +713,12 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
             ))}
           </nav>
           <main className="flex min-w-0 flex-col gap-14">
-            {py ? <Policies code={data.code} year={py} /> : null}
-            {py ? <Domains domains={py.domains} /> : null}
+            <Overview data={data} sections={new Set(py ? groupByFrame(freshOf(py)).map(({ frame }) => frame.id) : [])} />
+            {py ? <Domains year={py} fiscalYear={year} /> : null}
             <Budget data={data} year={year} />
             <Projects data={data} year={year} />
             {py?.scrap ? <ScrapSection scrap={py.scrap} /> : null}
+            <Elsewhere data={data} />
           </main>
         </div>
       </div>
@@ -725,7 +924,7 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
       <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-2" onPointerDown={(e) => e.stopPropagation()}>
         <span className="text-sm text-muted-foreground">{name}について</span>
         <div className="flex items-center gap-1 text-muted-foreground">
-          <Hint label="会話を別の頁で開く"><Link href={`/s/${chat.id}`} aria-label="会話を別の頁で開く" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><ArrowUpRightIcon className="size-4" /></Link></Hint>
+          <Hint label="会話を別の頁で開く"><Link href={`/s/${chat.id}`} aria-label="会話を別の頁で開く" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><ArrowSquareOutIcon className="size-4" /></Link></Hint>
           <Hint label="新しい会話"><button type="button" onClick={restart} aria-label="新しい会話" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><NotePencilIcon className="size-4" /></button></Hint>
           <Hint label="閉じる（Esc）"><button type="button" onClick={() => setDrawer(false)} aria-label="閉じる" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><XIcon className="size-4" /></button></Hint>
         </div>

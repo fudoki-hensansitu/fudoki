@@ -1,36 +1,45 @@
-// 自治体の個別ページに載せる、区の方針・政策領域・事業の入れ替え。API にはまだ無いので、出典（予算編成方針・当初予算の主な施策・
-// 事務事業評価）から手で起こした値をここに置く。金額は出典の千円を円にしたもの。画像は public/jurisdictions/<code>/ に置く
-// 政策領域への事業の振り分けと文の要約は風土記の判断で、出典の文言そのものではない
+// 自治体の個別ページに載せる、事務事業評価から取った事業・事業の入れ替え。API にはまだ無いので、出典（事務事業評価・基本構想）から
+// 手で起こした値をここに置く。金額は出典の千円を円にしたもの。紋章は emblems.ts が扱う
+// 事業への COFOG の付与・名前の言い換え・文の要約は風土記の判断で、出典の文言そのものではない
 
-export interface Amount {
-  yen: number
-  /** 金額が事業の一部・全体のどちらかなど、金額の範囲 */
-  label?: string
-}
-
-export type ProjectStatus = 'short' | 'met' | 'mixed' | 'none'
-
-export interface PolicyProject {
+/** 事務事業評価シート一枚（小事業）から取った事業。金額・指標・区分はシートの値だけを使う */
+export interface EvaluatedProject {
+  /** 評価シートの小事業名 */
   name: string
-  what: string
-  amounts: Amount[]
-  /** 区の事務事業評価の結果。評価前の年度は持たない */
-  status?: ProjectStatus
-  evaluation?: { grade?: string; note: string }
-}
-
-export interface Domain {
-  id: string
-  name: string
-  /** 目次に出す短い名前 */
-  short?: string
-  projects: PolicyProject[]
-}
-
-export interface Policy {
+  /** 区政を知らない人に伝わる言い換え（風土記の判断） */
   title: string
-  body: string
-  image: string
+  /** 評価シートの予算科目（目）に付いた COFOG コード（cofog_master のコード）。分野の枠はこれで決まる（domains.ts） */
+  cofog: string
+  /** 目的・概要の要約（風土記の判断） */
+  what: string
+  /** 評価シートの決算額 */
+  settledYen: number
+  /** シートの指標のうち、その年度の目標と実績が両方載っている最初のもの。値はシートの表記のまま。載っていなければ持たない */
+  indicator?: { name: string; unit: string; target: string; actual: string }
+  /** 最終評価の区分（「C 改善・見直しする事業」）と今後の方向性 */
+  grade: string
+  direction: string
+  /** 評価シートの PDF（evaluationSheets）の頁 */
+  page: number
+}
+
+/** 今ある小事業の中で、その年度に始めた取り組み。評価シートの特徴的事項・取組内容から、始めたことを書いた一文を抜き出したもの。
+ * 評価は取り組みだけのものはなく、含まれる小事業全体のもの */
+export interface Initiative {
+  /** 区政を知らない人に伝わる言い換え（風土記の判断） */
+  title: string
+  /** 評価シートの文そのもの（空白だけ詰める）。要約しない */
+  quote: string
+  /** 含まれる小事業の名前（評価シートの小事業名） */
+  name: string
+  /** 含まれる小事業の予算科目（目）の COFOG コード */
+  cofog: string
+  /** 含まれる小事業全体の決算額・最終評価の区分・方向性 */
+  settledYen: number
+  grade: string
+  direction: string
+  /** 評価シートの PDF（evaluationSheets）の頁 */
+  page: number
 }
 
 export interface Scrap {
@@ -44,14 +53,17 @@ export interface Scrap {
 }
 
 export interface ProfileYear {
-  /** 予算の考え方の一文。ヘッダーの説明に出す */
-  tagline: string
-  /** 方針の出典（予算編成方針の頁） */
-  policySource: string
-  policies: Policy[]
-  domains: Domain[]
+  /** その年度に新しくできた事業。事務事業評価（翌年度に公表）のシートのうち、事業期間がその年度から始まり、
+   * 前年度の行政コストが0で、前年度までの指標の実績が無いもの。決算額の大きい順。評価がまだ公表されていない年度は空。分野の枠へは COFOG で振り分ける（domains.ts）。区の「政策領域」とは別 */
+  projects: EvaluatedProject[]
+  /** 今ある小事業の中でその年度に始めた取り組み。候補はシートの文（「令和6年度から」「開始」など）と費用の増え方で機械的に絞り、
+   * 始めたことを書いた一文を抜き出す（今は品川 R6 の見本を手で置いている） */
+  initiatives?: Initiative[]
   scrap?: Scrap
-  sources: string[]
+  /** 事務事業評価の結果の頁 */
+  evaluationSource: string
+  /** 事業を取った評価シート（全部局をまとめた PDF） */
+  evaluationSheets?: string
   /** 決算・予算の金額の出典（一般会計の歳出を載せた冊の PDF）。pipeline/source_selection の選定結果の URL */
   documents?: { settlement?: SourceDoc[]; initial?: SourceDoc[] }
 }
@@ -64,6 +76,8 @@ export interface SourceDoc {
 export interface Profile {
   code: string
   tags: string[]
+  /** 基本構想が掲げる都市像（まちの将来像）。年度によらず header の名前の下に出す */
+  vision?: { text: string; source: string }
   /** 会計年度（西暦）ごと */
   years: Record<string, ProfileYear>
 }
@@ -73,347 +87,423 @@ export const assetPath = (code: string, file: string) => `/jurisdictions/${code}
 const SHINAGAWA: Profile = {
   "code": "131091",
   "tags": [],
+  "vision": {
+    "text": "輝く笑顔 住み続けたいまち しながわ",
+    "source": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/004/987/kihonkoso0327.pdf"
+  },
   "years": {
-    "2026": {
-      "tagline": "区民の不安や不満といった「不」を取り除き、誰もが安心して暮らしていける社会へ",
-      "policySource": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/729/20250730113250_2.pdf",
-      "documents": {"initial": [{"label": "予算書", "href": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/654/2026tousyoyosan_3.pdf"}]},
-      "policies": [
-        {
-          "title": "ウェルビーイングの深化",
-          "body": "4つの政策領域の事業で、誰もが使う基礎的な行政サービスと、災害や疾病など誰もが抱えうるリスクへの備えを等しく提供する。",
-          "image": "policy-1.jpg"
-        },
-        {
-          "title": "未来志向の戦略的な投資",
-          "body": "SDGs 未来都市として、持続可能な経済・環境・社会をつくる。AI やデジタルツールで内部事務を効率化し、人材を育てる。",
-          "image": "policy-2.jpg"
-        },
-        {
-          "title": "持続可能な自治体経営",
-          "body": "事業に優先順位をつけて入れ替える。背景・課題・費用対効果を明確にしてから予算を要求する。",
-          "image": "policy-3.jpg"
-        }
-      ],
-      "domains": [
-        {
-          "id": "anzen",
-          "name": "安全安心を守る",
-          "projects": [
-            {
-              "name": "シェードポリシーの策定と、非課税世帯のエアコン購入費助成",
-              "what": "街なかの日陰を増やす都市戦略を都内で初めてつくる。住民税が非課税の世帯にエアコンの購入費を助成する。",
-              "amounts": [
-                {
-                  "yen": 7500000,
-                  "label": "シェードポリシー"
-                },
-                {
-                  "yen": 33920000,
-                  "label": "エアコン助成"
-                }
-              ],
-              "status": "none",
-              "evaluation": {
-                "note": "新規事業。成果の指標はまだない"
-              }
-            },
-            {
-              "name": "ストーカー・DV対策",
-              "what": "被害者が避難するときの宿泊費を最大21泊助成。加害者の更生プログラムの費用も助成する。",
-              "amounts": [
-                {
-                  "yen": 15610000
-                }
-              ],
-              "status": "none",
-              "evaluation": {
-                "note": "新規事業。効果を測る指標は公開資料に示されていない"
-              }
-            }
-          ]
-        },
-        {
-          "id": "kodomo",
-          "name": "社会全体で子どもと子育てを支える",
-          "short": "子どもと子育てを支える",
-          "projects": [
-            {
-              "name": "子どもの公共施設の利用料を無料に",
-              "what": "区のプール・体育館など区有施設の利用料を、18歳以下は0円にする。",
-              "amounts": [
-                {
-                  "yen": 30470000
-                }
-              ],
-              "status": "short",
-              "evaluation": {
-                "grade": "B 今のまま続ける",
-                "note": "（学校施設の開放）・温水プールの利用者 186,018人／目標 205,000人"
-              }
-            },
-            {
-              "name": "すまいるスクールの無料体験活動",
-              "what": "全小学校の放課後の居場所で、無料の体験活動を新しく始める。朝の居場所づくりも全校に広げる。",
-              "amounts": [
-                {
-                  "yen": 1861062000,
-                  "label": "居場所運営費全体"
-                }
-              ],
-              "status": "mixed",
-              "evaluation": {
-                "grade": "A 広げる",
-                "note": "登録児童と満足度は目標超え、地域の人による教室は 1,399回／目標 3,700回"
-              }
-            },
-            {
-              "name": "子育て世帯の転居助成と、こども誰でも通園の月30時間化",
-              "what": "区内で家を買って転居する子育て世帯に最大30万円、賃貸なら最大15万円。0〜2歳の通園を国の基準の月10時間から月30時間へ広げる。",
-              "amounts": [
-                {
-                  "yen": 19690000,
-                  "label": "転居助成など"
-                },
-                {
-                  "yen": 941600000,
-                  "label": "誰でも通園"
-                }
-              ],
-              "status": "none",
-              "evaluation": {
-                "note": "新規事業。転出がどれだけ減ったかを測る指標は公開資料に見当たらない"
-              }
-            }
-          ]
-        },
-        {
-          "id": "yasashii",
-          "name": "生きづらさをなくし住み続けられるやさしい社会をつくる",
-          "short": "やさしい社会をつくる",
-          "projects": [
-            {
-              "name": "がん検診の自己負担を無料に",
-              "what": "胃がん（バリウム・内視鏡）と乳がん（マンモグラフィ）の検診を無料にする。これまでは数百円〜2,000円の自己負担があった。",
-              "amounts": [
-                {
-                  "yen": 137540000,
-                  "label": "胃がん検診"
-                },
-                {
-                  "yen": 165680000,
-                  "label": "乳がん検診"
-                }
-              ],
-              "status": "mixed",
-              "evaluation": {
-                "grade": "C やり方を見直す",
-                "note": "胃がん検診の受診率 7.9%／目標 11.6%、乳がん検診 30.9%／目標 30.9%"
-              }
-            }
-          ]
-        },
-        {
-          "id": "mirai",
-          "name": "未来に希望の持てるサステナブルな社会をつくる",
-          "short": "サステナブルな社会をつくる",
-          "projects": []
-        }
-      ],
-      "scrap": {
-        "raisedYen": 1522098000,
-        "targetYen": 2000000000,
-        "evaluated": 652,
-        "grades": {
-          "A": 16,
-          "B": 339,
-          "C": 271,
-          "D": 26
-        },
-        "exits": [
+    "2024": {
+      "documents": {
+        "settlement": [
           {
-            "name": "区民斎場「なぎさ会館」",
-            "reason": "使う人が減り、近くに代わりの斎場もある",
-            "result": "廃止"
-          },
+            "label": "決算書",
+            "href": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/751/r6/r6_2.pdf"
+          }
+        ],
+        "initial": [
           {
-            "name": "冊子「ミニ区政概要」",
-            "reason": "区のホームページと内容が重なる",
-            "result": "廃止"
-          },
-          {
-            "name": "荏原町安全安心ステーション",
-            "reason": "防犯カメラが普及した",
-            "result": "廃止"
-          },
-          {
-            "name": "企業・大学との連携促進",
-            "reason": "連携が広がり、当初の目的を果たした",
-            "result": "廃止"
-          },
-          {
-            "name": "公園へのミスト設置",
-            "reason": "シェードポリシーの中で考え直す",
-            "result": "見送り"
+            "label": "予算書",
+            "href": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/656/20240208145918_8.pdf"
           }
         ]
       },
-      "sources": [
-        "https://www.city.shinagawa.tokyo.jp/kusei/zaisei/1005728/1005729.html",
-        "https://www.city.shinagawa.tokyo.jp/kusei/zaisei/1005653/1005654.html",
-        "https://www.city.shinagawa.tokyo.jp/kusei/shisakukeikaku/1005171/1005172/1005173.html"
-      ]
+      "projects": [
+        {
+          "name": "定額減税補足給付金",
+          "title": "定額減税で引ききれない分の給付",
+          "cofog": "01.1",
+          "what": "国の定額減税（住民税1万円・所得税3万円×人数）で税額から引ききれない人に、その差額を給付した。",
+          "settledYen": 1441439000,
+          "indicator": {
+            "name": "給付者数",
+            "unit": "人",
+            "target": "44,351",
+            "actual": "37,424"
+          },
+          "grade": "D 完了・廃止する事業",
+          "direction": "事業の完了",
+          "page": 22
+        },
+        {
+          "name": "児童入所施設措置費等支弁経費",
+          "title": "施設や里親に預けた子どもの費用",
+          "cofog": "10",
+          "what": "区の児童相談所が子どもを児童福祉施設や里親に預けたときの生活費や医療費などを支払う。",
+          "settledYen": 429671000,
+          "indicator": {
+            "name": "児童福祉施設等の措置児童数等",
+            "unit": "人",
+            "target": "510",
+            "actual": "553"
+          },
+          "grade": "B 継続する事業",
+          "direction": "法定受託事務・法定扶助費等",
+          "page": 170
+        },
+        {
+          "name": "選挙執行費",
+          "title": "衆議院議員選挙の執行",
+          "cofog": "01.6",
+          "what": "衆議院議員選挙と最高裁判所裁判官の国民審査の投票・開票、選挙公報の配布、ポスター掲示場の設置などを行った。",
+          "settledYen": 223204000,
+          "indicator": {
+            "name": "選挙の効力に関する異議申出の件数",
+            "unit": "件",
+            "target": "0",
+            "actual": "0"
+          },
+          "grade": "B 継続する事業",
+          "direction": "法定受託事務・法定扶助費等",
+          "page": 652
+        },
+        {
+          "name": "選挙執行費",
+          "title": "東京都知事選挙の執行",
+          "cofog": "01.6",
+          "what": "東京都知事選挙と都議会議員補欠選挙の投票・開票、選挙公報の配布、ポスター掲示場の設置などを行った。",
+          "settledYen": 204373000,
+          "indicator": {
+            "name": "選挙の効力に関する異議申出の件数",
+            "unit": "件",
+            "target": "0",
+            "actual": "0"
+          },
+          "grade": "B 継続する事業",
+          "direction": "法定受託事務・法定扶助費等",
+          "page": 651
+        },
+        {
+          "name": "児童相談所運営費",
+          "title": "区の児童相談所の運営",
+          "cofog": "10",
+          "what": "区が自ら児童相談所を運営し、虐待の通告を24時間受け、子どもと家庭の相談・支援を行う。医師や弁護士も確保し、職員の研修を行う。",
+          "settledYen": 149439000,
+          "indicator": {
+            "name": "虐待相談対応件数",
+            "unit": "件",
+            "target": "913",
+            "actual": "602"
+          },
+          "grade": "A 拡大する事業",
+          "direction": "新規の取組み",
+          "page": 218
+        },
+        {
+          "name": "児童相談所維持管理経費",
+          "title": "児童相談所の建物の管理",
+          "cofog": "10",
+          "what": "児童相談所と一時保護所の光熱水費、警備・清掃、設備の維持管理、修繕を行う。",
+          "settledYen": 76933000,
+          "grade": "B 継続する事業",
+          "direction": "現状維持",
+          "page": 220
+        },
+        {
+          "name": "戸籍住民関係事務費",
+          "title": "戸籍住民課の窓口の案内と遠隔支援",
+          "cofog": "01.3",
+          "what": "戸籍住民課の受付案内システムとフロアマネージャーを置き、地域センターの窓口を本庁の職員がWebカメラで支える。",
+          "settledYen": 63302000,
+          "indicator": {
+            "name": "年間来庁者数",
+            "unit": "件",
+            "target": "100,000",
+            "actual": "114,347"
+          },
+          "grade": "C 改善・見直しする事業",
+          "direction": "対象・規模等の見直し",
+          "page": 106
+        },
+        {
+          "name": "一時保護所運営費",
+          "title": "一時保護所の運営",
+          "cofog": "10",
+          "what": "虐待などで家庭から一時的に離れた2歳から18歳までの子どもが暮らす一時保護所で、生活用品・学習・運動・食事を用意する。",
+          "settledYen": 40106000,
+          "indicator": {
+            "name": "一時保護所入所児童数",
+            "unit": "人",
+            "target": "42",
+            "actual": "78"
+          },
+          "grade": "B 継続する事業",
+          "direction": "現状維持",
+          "page": 219
+        },
+        {
+          "name": "粗大ごみ再商品化経費",
+          "title": "粗大ごみのリユース・リサイクル",
+          "cofog": "05.1",
+          "what": "粗大ごみの中から木製品・衣装ケース・自転車・羽毛布団を選び出し、リユースやリサイクルに回す。",
+          "settledYen": 39777000,
+          "indicator": {
+            "name": "粗大ごみからのリユース・リサイクル率",
+            "unit": "％",
+            "target": "45",
+            "actual": "47.8"
+          },
+          "grade": "C 改善・見直しする事業",
+          "direction": "対象・規模等の見直し",
+          "page": 518
+        },
+        {
+          "name": "整備地域不燃化加速事業",
+          "title": "燃えにくいまちへの建て替え支援を広げる",
+          "cofog": "06.2",
+          "what": "不燃化特区のほかにも火事の危険が高い地区（中延四丁目・小山二丁目）で、古い建物の取り壊しや建て替えの費用を助成し、専門家を派遣する。都の事業を使う。",
+          "settledYen": 34036000,
+          "indicator": {
+            "name": "中延四丁目地区の不燃領域率",
+            "unit": "％",
+            "target": "61",
+            "actual": "53.2"
+          },
+          "grade": "B 継続する事業",
+          "direction": "計画・規定どおり",
+          "page": 476
+        },
+        {
+          "name": "出石つばさの家運営費",
+          "title": "障害者のグループホーム「出石つばさの家」",
+          "cofog": "10",
+          "what": "知的障害のある人が暮らすグループホームと、家族が介護できないときの短期入所を運営する。",
+          "settledYen": 32419000,
+          "indicator": {
+            "name": "共同生活援助年間延べ利用者数",
+            "unit": "人",
+            "target": "130",
+            "actual": "121"
+          },
+          "grade": "B 継続する事業",
+          "direction": "現状維持",
+          "page": 253
+        },
+        {
+          "name": "子ども家庭センター開設準備経費",
+          "title": "子ども家庭センターの開設準備",
+          "cofog": "10.4",
+          "what": "母子保健と児童福祉が一緒に相談に乗る「子ども家庭センター」をR7年4月に開くための準備をした。",
+          "settledYen": 17373000,
+          "grade": "D 完了・廃止する事業",
+          "direction": "事業の完了",
+          "page": 183
+        },
+        {
+          "name": "社会的養護推進経費",
+          "title": "里親と養子縁組の後押し",
+          "cofog": "10",
+          "what": "里親の登録を増やし、特別養子縁組の手数料の一部を補助し、児童養護施設や里親に補助金を出す。",
+          "settledYen": 3608000,
+          "indicator": {
+            "name": "里親新規登録数",
+            "unit": "家庭",
+            "target": "1",
+            "actual": "0"
+          },
+          "grade": "B 継続する事業",
+          "direction": "現状維持",
+          "page": 171
+        },
+        {
+          "name": "児童相談等運営支援事業",
+          "title": "児童福祉審議会と子どもの意見を聞く支援員",
+          "cofog": "10",
+          "what": "児童福祉審議会を開き、児童相談所が関わる子どもに意見表明等支援員を派遣する。",
+          "settledYen": 2361000,
+          "indicator": {
+            "name": "児童福祉審議会の開催回数",
+            "unit": "回",
+            "target": "1",
+            "actual": "1"
+          },
+          "grade": "B 継続する事業",
+          "direction": "法定受託事務・法定扶助費等",
+          "page": 169
+        },
+        {
+          "name": "特別支援学校補助教材費保護者負担軽減事業",
+          "title": "特別支援学校の補助教材費を支給",
+          "cofog": "09.8",
+          "what": "特別支援学校に通う区内の子の保護者に、補助教材費の実費を支給する。",
+          "settledYen": 561000,
+          "indicator": {
+            "name": "支給者数",
+            "unit": "人",
+            "target": "121",
+            "actual": "67"
+          },
+          "grade": "C 改善・見直しする事業",
+          "direction": "手法等の改善",
+          "page": 604
+        }
+      ],
+      "initiatives": [
+        {
+          "title": "学校給食の無償化",
+          "quote": "子育て支援策として給食無償化事業を開始したため、行政費用の補助費等が大幅に増加している。",
+          "name": "給食運営費",
+          "cofog": "09",
+          "settledYen": 3047859000,
+          "grade": "C 改善・見直しする事業",
+          "direction": "手法等の改善",
+          "page": 601
+        },
+        {
+          "title": "補助教材費の公費負担",
+          "quote": "令和6年4月から、区立学校対象学年の全員が使用する補助教材等の費用を公費負担し、保護者負担の軽減を図った。",
+          "name": "教材教具費",
+          "cofog": "09",
+          "settledYen": 748825000,
+          "grade": "B 継続する事業",
+          "direction": "現状維持",
+          "page": 594
+        },
+        {
+          "title": "メタバースを使った不登校支援",
+          "quote": "メタバースによる不登校支援事業（東京都バーチャル・ラーニング・プラットフォーム事業）での支援を令和6年6月から開始した。",
+          "name": "不登校対策事業費",
+          "cofog": "09.8",
+          "settledYen": 152232000,
+          "grade": "B 継続する事業",
+          "direction": "計画・規定どおり",
+          "page": 634
+        },
+        {
+          "title": "教育支援センター「マイスクール西大井」",
+          "quote": "教育支援センター「マイスクール西大井」を令和6年5月から開設した。",
+          "name": "不登校対策事業費",
+          "cofog": "09.8",
+          "settledYen": 152232000,
+          "grade": "B 継続する事業",
+          "direction": "計画・規定どおり",
+          "page": 634
+        },
+        {
+          "title": "幼児教育の探究活動（とうきょうすくわくプログラム）",
+          "quote": "令和6年度から幼保共通の「とうきょうすくわくプログラム」の活用等により、幼児教育における探究活動を通じて、子どもの豊かな育ちを支援し、小学校における探究的な学習へつなげていく。",
+          "name": "保幼小連携推進経費",
+          "cofog": "09.8",
+          "settledYen": 2790000,
+          "grade": "C 改善・見直しする事業",
+          "direction": "取組みの一部廃止",
+          "page": 616
+        },
+        {
+          "title": "介護職員の居住支援手当",
+          "quote": "住宅費負担の軽減と住環境整備により就労環境を改善し、介護人材の確保・定着を図るため、令和6年度から区内介護事業所を通じて居住支援手当を支給した。",
+          "name": "福祉人材確保・定着事業",
+          "cofog": "10.2",
+          "settledYen": 318532000,
+          "grade": "C 改善・見直しする事業",
+          "direction": "手法等の改善",
+          "page": 262
+        },
+        {
+          "title": "生殖補助医療の医療費助成",
+          "quote": "令和6年7月より実施した「不妊治療（生殖補助医療）医療費助成」における申請が増加傾向にあるため、今後も執行率は高いと予想される。",
+          "name": "不妊治療等支援事業",
+          "cofog": "07.4",
+          "settledYen": 26433000,
+          "grade": "B 継続する事業",
+          "direction": "現状維持",
+          "page": 357
+        },
+        {
+          "title": "グリーンスローモビリティの実証運行",
+          "quote": "グリーンスローモビリティの実証運行を令和6年10月から11月にかけて北品川・天王洲エリアで実施した。",
+          "name": "地域交通検討経費",
+          "cofog": "04.5",
+          "settledYen": 152037000,
+          "grade": "B 継続する事業",
+          "direction": "計画・規定どおり",
+          "page": 520
+        },
+        {
+          "title": "コミュニティバスの子育て支援割",
+          "quote": "令和4年10月1日より運行間隔を30分から20分間隔へ短縮、令和6年8月1日より子育て支援割の導入を開始した。",
+          "name": "地域交通検討経費",
+          "cofog": "04.5",
+          "settledYen": 152037000,
+          "grade": "B 継続する事業",
+          "direction": "計画・規定どおり",
+          "page": 520
+        },
+        {
+          "title": "人材スキルアップ支援事業",
+          "quote": "補助費については、新たに「人材スキルアップ支援事業」を始めたため、その分増加している。",
+          "name": "雇用確保支援事業",
+          "cofog": "04.1",
+          "settledYen": 50312000,
+          "grade": "C 改善・見直しする事業",
+          "direction": "手法等の改善",
+          "page": 123
+        }
+      ],
+      "scrap": {
+        "raisedYen": 2364986000,
+        "evaluated": 665,
+        "grades": {
+          "A": 40,
+          "B": 262,
+          "C": 324,
+          "D": 39
+        },
+        "exits": [
+          {
+            "name": "イメージアップ運動",
+            "reason": "区民サービスの向上に向けて事業を考え直した",
+            "result": "廃止"
+          },
+          {
+            "name": "シティプロモーション推進",
+            "reason": "都市ブランディングの考え方を含めて事業を組み直す",
+            "result": "廃止"
+          },
+          {
+            "name": "外国人観光客の誘致",
+            "reason": "総合的な戦略を検討し、事業を組み直す",
+            "result": "廃止"
+          },
+          {
+            "name": "社会教育委員会議",
+            "reason": "会議のあり方を考え直した",
+            "result": "廃止"
+          },
+          {
+            "name": "親元近居支援",
+            "reason": "助け合いにより効果的な事業を考え直す",
+            "result": "廃止"
+          },
+          {
+            "name": "防災フェア",
+            "reason": "地区の総合防災訓練と合わせて組み直す",
+            "result": "廃止"
+          }
+        ]
+      },
+      "evaluationSource": "https://www.city.shinagawa.tokyo.jp/kusei/shisakukeikaku/1005171/1005172/1005173.html",
+      "evaluationSheets": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/173/20240222105532_36.pdf"
     },
     "2025": {
-      "tagline": "性別や障害の有無、家庭の状況などで選択を阻まれず、自分の望むように生き、幸せを感じられる社会へ",
-      "policySource": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/730/20240730173216_1.pdf",
-      "documents": {"settlement": [{"label": "決算書", "href": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/751/r7/r7_2.pdf"}], "initial": [{"label": "予算書（1〜5款）", "href": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/655/2025tousyoyosan_5.pdf"}, {"label": "予算書（6〜9款）", "href": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/655/2025tousyoyosan_6.pdf"}]},
-      "policies": [
-        {
-          "title": "ウェルビーイングの進化（深化）",
-          "body": "区民アンケートから選んだ4つの政策領域で、区民の幸福を高める取り組みを加速する。事務事業評価で20億円を生み出し、その財源にあてる。",
-          "image": "policy-1.jpg"
-        },
-        {
-          "title": "SDGs の達成を加速する",
-          "body": "SDGs 未来都市と自治体 SDGs モデル事業に選ばれたことを機に、「子どもとともに創るウェルビーイングシティしながわ」を目指す。区民・企業・大学などと共に施策をつくる。",
-          "image": "domain-mirai.jpg"
-        },
-        {
-          "title": "働き方を変える",
-          "body": "新庁舎への移転を見据えて DX 人材を育てる。生成 AI やデジタルツールで業務を効率化し、人と財源をより重要な事業に回す。",
-          "image": "policy-2.jpg"
-        }
-      ],
-      "domains": [
-        {
-          "id": "anzen",
-          "name": "安全安心を守る",
-          "projects": [
-            {
-              "name": "住まいの相談窓口と、エアコンの設置・買い替え助成",
-              "what": "家を借りにくい高齢者などの相談窓口「あんしん住まいる相談デスク」を新しく開く。家主向けの保険と、エアコンの設置・買い替えの費用助成も始める。",
-              "amounts": [
-                {
-                  "yen": 42730000,
-                  "label": "居住支援事業全体"
-                }
-              ]
-            },
-            {
-              "name": "マンション防災と、事業者向けの防災啓発",
-              "what": "マンションの住民どうしで災害に備える取り組みと、区内の事業者向けの防災啓発を新しく始める。",
-              "amounts": [
-                {
-                  "yen": 150648000,
-                  "label": "防災普及教育費全体"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": "kodomo",
-          "name": "社会全体で子どもと子育てを支える",
-          "short": "子どもと子育てを支える",
-          "projects": [
-            {
-              "name": "認証保育所などの第一子の保育料を無償に",
-              "what": "令和7年9月から、認証保育所や認可外の保育施設に通う第一子の保育料を無償にする。",
-              "amounts": [
-                {
-                  "yen": 1102057000,
-                  "label": "保育料助成全体"
-                }
-              ]
-            },
-            {
-              "name": "朝の子どもの居場所づくり",
-              "what": "放課後の居場所「すまいるスクール」に加えて、登校前の朝に子どもが過ごせる居場所を確保する事業を始める。",
-              "amounts": [
-                {
-                  "yen": 1708686000,
-                  "label": "子どもの居場所運営費全体"
-                }
-              ]
-            },
-            {
-              "name": "不登校の子どもへの昼食と、フリースクールの利用料助成",
-              "what": "区の不登校支援教室「マイスクール」で昼食を出す。フリースクールなどの利用料も助成する。",
-              "amounts": [
-                {
-                  "yen": 168600000,
-                  "label": "不登校対策事業全体"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": "yasashii",
-          "name": "生きづらさをなくし住み続けられるやさしい社会をつくる",
-          "short": "やさしい社会をつくる",
-          "projects": [
-            {
-              "name": "障害児の通所支援の利用者負担を無償に",
-              "what": "児童発達支援や放課後等デイサービスなど、障害児の通所支援の利用者負担をなくす。区外の特別支援学校への通学も支える。",
-              "amounts": [
-                {
-                  "yen": 1819751000,
-                  "label": "障害児支援給付全体"
-                }
-              ]
-            },
-            {
-              "name": "中等度難聴の人の補聴器と、介護タクシーの助成",
-              "what": "身体障害者手帳の対象にならない中等度難聴の人の補聴器購入と、介護タクシーの利用を新しく助成する。",
-              "amounts": [
-                {
-                  "yen": 214854000,
-                  "label": "社会参加支援事業全体"
-                }
-              ]
-            },
-            {
-              "name": "介護職員の宿舎の借り上げ支援",
-              "what": "介護事業者が職員の宿舎を借り上げる費用を支援する。外国人の介護人材を雇う事業者も支える。",
-              "amounts": [
-                {
-                  "yen": 572651000,
-                  "label": "福祉人材確保・定着事業全体"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": "mirai",
-          "name": "未来に希望の持てるサステナブルな社会をつくる",
-          "short": "サステナブルな社会をつくる",
-          "projects": [
-            {
-              "name": "建物の省エネ化の助成と、区民参加の CO2 クレジット",
-              "what": "ZEB の設計や新築の ZEH 化を新しく助成する。区民の省エネで減らした CO2 をクレジットにする取り組みも始める。",
-              "amounts": [
-                {
-                  "yen": 100620000,
-                  "label": "省エネルギー対策事業全体"
-                }
-              ]
-            },
-            {
-              "name": "AI オンデマンド交通とグリーンスローモビリティの実証運行",
-              "what": "予約に応じて走る乗合交通と、低速の電動車による地域交通を試しに走らせ、本格運行を検討する。",
-              "amounts": [
-                {
-                  "yen": 154754000,
-                  "label": "地域交通検討経費全体"
-                }
-              ]
-            }
-          ]
-        }
-      ],
+      "documents": {
+        "settlement": [
+          {
+            "label": "決算書",
+            "href": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/751/r7/r7_2.pdf"
+          }
+        ],
+        "initial": [
+          {
+            "label": "予算書1",
+            "href": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/655/2025tousyoyosan_5.pdf"
+          },
+          {
+            "label": "予算書2",
+            "href": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/655/2025tousyoyosan_6.pdf"
+          }
+        ]
+      },
+      "projects": [],
       "scrap": {
         "raisedYen": 2014563000,
         "targetYen": 2000000000,
@@ -457,220 +547,58 @@ const SHINAGAWA: Profile = {
           }
         ]
       },
-      "sources": [
-        "https://www.city.shinagawa.tokyo.jp/kusei/zaisei/1005728/1005730.html",
-        "https://www.city.shinagawa.tokyo.jp/kusei/zaisei/1005653/1005655.html",
-        "https://www.city.shinagawa.tokyo.jp/kusei/shisakukeikaku/1005171/1005176/1005177.html"
-      ]
+      "evaluationSource": "https://www.city.shinagawa.tokyo.jp/kusei/shisakukeikaku/1005171/1008977/index.html"
     },
-    "2024": {
-        "tagline": "区民の幸福（ウェルビーイング）を軸に、新しい時代の品川を引っ張る",
-        "policySource": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/731/20230731131455_1.pdf",
-        "documents": {"settlement": [{"label": "決算書", "href": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/751/r6/r6_2.pdf"}], "initial": [{"label": "予算書", "href": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/656/20240208145918_8.pdf"}]},
-        "policies": [
+    "2026": {
+      "documents": {
+        "initial": [
           {
-            "title": "誰もが自分らしく暮らせる品川区",
-            "body": "子ども、現役世代、高齢者、障害者など、誰もが生きがいを感じて暮らせる区を目指す。いまも将来も、区民の誰もが幸福を実感できる施策を進める。",
-            "image": "policy-1.jpg"
-          },
-          {
-            "title": "職員の提案を施策にする",
-            "body": "職員事業提案制度を始める。提案された事業は、関係する部署が今の課題や既存の事業との関係を踏まえて、新しい施策として実施を検討する。",
-            "image": "policy-2.jpg"
-          },
-          {
-            "title": "事務事業評価で無駄をなくす",
-            "body": "物価の高騰を踏まえ、事務事業評価で見直すべき事業を確かめて無駄をなくす。実施計画と SDGs を進めるため、歳出と歳入の両方で工夫する。",
-            "image": "policy-3.jpg"
+            "label": "予算書",
+            "href": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/654/2026tousyoyosan_3.pdf"
           }
-        ],
-        "domains": [
-          {
-            "id": "anzen",
-            "name": "安全安心を守る",
-            "projects": [
-              {
-                "name": "携帯トイレの全戸配布と、中学生の防災プロジェクト",
-                "what": "災害時に使う携帯トイレを区内の全戸に配る。中学生向けの防災プロジェクトも新しく始める。",
-                "amounts": [
-                  {
-                    "yen": 695891000,
-                    "label": "防災普及教育費全体"
-                  }
-                ]
-              },
-              {
-                "name": "避暑シェルターの運用補助",
-                "what": "暑い日に誰でも涼める「避暑シェルター」を運用する施設に補助金を出す。",
-                "amounts": [
-                  {
-                    "yen": 18707000,
-                    "label": "危機管理経費全体"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "id": "kodomo",
-            "name": "社会全体で子どもと子育てを支える",
-            "short": "子どもと子育てを支える",
-            "projects": [
-              {
-                "name": "学校給食の無償化",
-                "what": "区立学校の給食費を無償にする取り組みを続ける。",
-                "amounts": [
-                  {
-                    "yen": 3177795000,
-                    "label": "給食運営費全体"
-                  }
-                ]
-              },
-              {
-                "name": "補助教材費の保護者負担をなくす",
-                "what": "これまで保護者が負担していた補助教材の費用を区が負担する。",
-                "amounts": [
-                  {
-                    "yen": 1011667000,
-                    "label": "教材教具費全体"
-                  }
-                ]
-              },
-              {
-                "name": "メタバースを使った不登校支援",
-                "what": "学校に行きにくい子どもが、仮想空間で学んだり人と関わったりできる支援を新しく始める。",
-                "amounts": [
-                  {
-                    "yen": 161054000,
-                    "label": "不登校対策事業費全体"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "id": "yasashii",
-            "name": "生きづらさをなくし住み続けられるやさしい社会をつくる",
-            "short": "やさしい社会をつくる",
-            "projects": [
-              {
-                "name": "介護職員の居住支援手当",
-                "what": "区内の介護施設で働く職員に、住まいの費用を支える手当を新しく出す。有償ボランティアと介護施設のマッチングも始める。",
-                "amounts": [
-                  {
-                    "yen": 611282000,
-                    "label": "福祉人材確保・定着事業全体"
-                  }
-                ]
-              },
-              {
-                "name": "孤独・孤立対策",
-                "what": "孤独や孤立に悩む人を支える取り組みを新しく始め、分野をまたいで相談を受ける体制を検討する。",
-                "amounts": [
-                  {
-                    "yen": 188823000,
-                    "label": "地域福祉推進費全体"
-                  }
-                ]
-              },
-              {
-                "name": "生殖補助医療費の助成",
-                "what": "体外受精などの生殖補助医療にかかる費用を新しく助成する。不妊の相談事業も始める。",
-                "amounts": [
-                  {
-                    "yen": 58198000,
-                    "label": "不妊治療等支援事業全体"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "id": "mirai",
-            "name": "未来に希望の持てるサステナブルな社会をつくる",
-            "short": "サステナブルな社会をつくる",
-            "projects": [
-              {
-                "name": "キャッシュレス決済のポイント還元",
-                "what": "区内の店でキャッシュレス決済をした人にポイントを還元する事業を新しく始める。",
-                "amounts": [
-                  {
-                    "yen": 829953000,
-                    "label": "共通商品券普及促進事業全体"
-                  }
-                ]
-              },
-              {
-                "name": "省エネ家電の設置助成",
-                "what": "エアコンや冷蔵庫を省エネ型に買い替える費用を新しく助成する。",
-                "amounts": [
-                  {
-                    "yen": 34069000,
-                    "label": "省エネルギー対策事業全体"
-                  }
-                ]
-              },
-              {
-                "name": "デマンド交通とグリーンスローモビリティの実証実験",
-                "what": "予約に応じて走る乗合交通と、低速の電動車を試しに走らせ、地域の交通を充実させる方法を検討する。",
-                "amounts": [
-                  {
-                    "yen": 154495000,
-                    "label": "地域交通検討経費全体"
-                  }
-                ]
-              }
-            ]
-          }
-        ],
-        "scrap": {
-          "raisedYen": 2364986000,
-          "evaluated": 665,
-          "grades": {
-            "A": 40,
-            "B": 262,
-            "C": 324,
-            "D": 39
-          },
-          "exits": [
-            {
-              "name": "イメージアップ運動",
-              "reason": "区民サービスの向上に向けて事業を考え直した",
-              "result": "廃止"
-            },
-            {
-              "name": "シティプロモーション推進",
-              "reason": "都市ブランディングの考え方を含めて事業を組み直す",
-              "result": "廃止"
-            },
-            {
-              "name": "外国人観光客の誘致",
-              "reason": "総合的な戦略を検討し、事業を組み直す",
-              "result": "廃止"
-            },
-            {
-              "name": "社会教育委員会議",
-              "reason": "会議のあり方を考え直した",
-              "result": "廃止"
-            },
-            {
-              "name": "親元近居支援",
-              "reason": "助け合いにより効果的な事業を考え直す",
-              "result": "廃止"
-            },
-            {
-              "name": "防災フェア",
-              "reason": "地区の総合防災訓練と合わせて組み直す",
-              "result": "廃止"
-            }
-          ]
-        },
-        "sources": [
-          "https://www.city.shinagawa.tokyo.jp/kusei/zaisei/1005728/1005731.html",
-          "https://www.city.shinagawa.tokyo.jp/kusei/zaisei/1005653/1005656.html",
-          "https://www.city.shinagawa.tokyo.jp/kusei/shisakukeikaku/1005171/1005180/1005181.html"
         ]
-      }
+      },
+      "projects": [],
+      "scrap": {
+        "raisedYen": 1522098000,
+        "targetYen": 2000000000,
+        "evaluated": 652,
+        "grades": {
+          "A": 16,
+          "B": 339,
+          "C": 271,
+          "D": 26
+        },
+        "exits": [
+          {
+            "name": "区民斎場「なぎさ会館」",
+            "reason": "使う人が減り、近くに代わりの斎場もある",
+            "result": "廃止"
+          },
+          {
+            "name": "冊子「ミニ区政概要」",
+            "reason": "区のホームページと内容が重なる",
+            "result": "廃止"
+          },
+          {
+            "name": "荏原町安全安心ステーション",
+            "reason": "防犯カメラが普及した",
+            "result": "廃止"
+          },
+          {
+            "name": "企業・大学との連携促進",
+            "reason": "連携が広がり、当初の目的を果たした",
+            "result": "廃止"
+          },
+          {
+            "name": "公園へのミスト設置",
+            "reason": "シェードポリシーの中で考え直す",
+            "result": "見送り"
+          }
+        ]
+      },
+      "evaluationSource": "https://www.city.shinagawa.tokyo.jp/kusei/shisakukeikaku/1005171/1005172/1005173.html"
+    }
   }
 }
 

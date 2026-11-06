@@ -460,7 +460,7 @@ const connect = (openSetup: () => void) => [
         風土記の plugin を開いて「＋」で追加します。
         <a className="btn" href={CHATGPT_PLUGIN} target="_blank" rel="noopener">
           風土記の plugin を開く
-          <Icon id="arrow-up-right" />
+          <Icon id="arrow-square-out" />
         </a>
       </>,
       <>新しい会話で{ASK}ChatGPT でも Codex でも使えます。</>,
