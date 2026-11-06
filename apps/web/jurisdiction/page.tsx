@@ -188,7 +188,7 @@ function Domains({ year, fiscalYear }: { year: ProfileYear; fiscalYear: number }
             {d.name}
           </h3>
           <div className="border-t">
-            {items.map((p) => <ProjectItem key={p.name} p={p} sheets={year.evaluationSheets} />)}
+            {items.map((p) => <ProjectItem key={p.page} p={p} sheets={year.evaluationSheets} />)}
           </div>
         </div>
       ))}
