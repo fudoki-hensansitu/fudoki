@@ -107,7 +107,7 @@ function Overview({ data }: { data: PageData }) {
               、住民1人あたり<b className="mx-1 text-xl font-normal tabular-nums">約{Math.round(latest.yen / people / 1e4).toLocaleString('ja-JP')}万円</b>
             </>
           ) : null}
-          です（一般会計の決算）。
+          です。
         </p>
       ) : null}
       <ul className="grid grid-cols-1 gap-x-8 border-t sm:grid-cols-2">
