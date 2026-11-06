@@ -74,7 +74,7 @@ function ProjectItem({ p, sheets }: { p: EvaluatedProject; sheets?: string }) {
     <div className="flex flex-col gap-2 border-b border-foreground/10 py-4">
       <div className="flex items-start justify-between gap-x-6">
         <span className="min-w-0 text-[15.5px]">{p.title}</span>
-        <span className="shrink-0 text-right text-sm tabular-nums">{formatYen(p.settledYen)}</span>
+        <span className="shrink-0 text-right text-lg leading-snug tabular-nums">{formatYen(p.settledYen)}</span>
       </div>
       <p className="text-sm">{p.what}</p>
       {/* 評価の区分・方向性・指標は一続きの文として、同じ大きさ・色で読ませる。指標の良し悪しは風土記が判断しない */}
