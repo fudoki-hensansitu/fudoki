@@ -121,8 +121,9 @@ function ProjectItem({ p }: { p: PolicyProject }) {
             <ClipboardTextIcon aria-hidden="true" className="size-4 text-muted-foreground" />
             評価
           </span>
-          {p.evaluation.grade ? <Grade grade={p.evaluation.grade} className="align-middle" /> : null}
-          {p.evaluation.grade && note ? '。' : null}
+          {/* 区分がまだ無い（評価が公表される前）ときも枠は出し、空のまま見せる。理由は説明の文で言う */}
+          {p.evaluation.grade ? <Grade grade={p.evaluation.grade} className="align-middle" /> : <span className="inline-flex items-center gap-1.5 align-middle text-muted-foreground"><GradeMark grade="–" />未公表</span>}
+          {note ? '。' : null}
           {note}
         </p>
       ) : null}
