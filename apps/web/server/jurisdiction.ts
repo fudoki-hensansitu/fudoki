@@ -95,7 +95,6 @@ export async function loadCatalog(env: Env): Promise<CatalogEntry[]> {
 
 /** 一覧の1回の検索に載せる自治体の数。API は年と条件の値の bind を合わせて 90 個までにしている */
 const INDEX_BATCH = 60
-const TOP_KAN = 3
 
 /**
  * 一覧（/jurisdictions）のデータ。収録している自治体の款を、自治体をまとめて検索して最新の決算ごとに足す。
@@ -137,10 +136,8 @@ export async function loadIndex(env: Env, entries: CatalogEntry[], pathOf: (code
       prefecture: e.prefecture,
       kind: jurisdictionKind(e.code, e.name),
       path: pathOf(e.code),
-      years: e.settlementYears,
       year: latest.get(e.code)!,
       yen,
-      topKan: list.slice(0, TOP_KAN),
       population,
       perCapita: population && population.people > 0 ? yen / population.people : null,
       ...(list.length < all.length ? { amountMissing: true as const } : {}),

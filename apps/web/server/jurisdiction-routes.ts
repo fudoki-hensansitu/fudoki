@@ -3,6 +3,7 @@
 // 内訳の API と sitemap は routes/ がここを呼ぶ。内訳の API は誰でも読める GET で、IP ごとの流量と id の形の検査で守る
 import { sitemapXml } from '../jurisdiction/html'
 import { jurisdictionPath, PREFECTURE_SLUGS } from '../jurisdiction/path'
+import { DEFAULT_INDEX_QUERY, parseIndexQuery, queryIndex, toMapEntry, type IndexTable, type MapEntry } from '../jurisdiction/index-table'
 import type { Drill, FlowDepth, IndexEntry, PageData, Setsu } from '../jurisdiction/types'
 import { PROFILES, type Profile } from '../jurisdiction/profiles'
 import { clientIp, errorResponse, HttpError, rateLimit } from './http'
@@ -15,7 +16,7 @@ const NODE_ID = /^[0-9a-f]{64}$/
 /** Worker の cache（無い環境では毎回取り直す）。同じ isolate の中でも一度だけ取る */
 const inflight = new Map<string, Promise<unknown>>()
 async function memo<T>(key: string, fn: () => Promise<T>): Promise<T> {
-  const url = `https://fudoki.dev/__cache/jurisdiction-v4/${key}`
+  const url = `https://fudoki.dev/__cache/jurisdiction-v5/${key}`
   const cache = typeof caches === 'undefined' ? undefined : (caches as unknown as { default?: Cache }).default
   const hit = await cache?.match(url)
   if (hit) return (await hit.json()) as T
@@ -31,8 +32,28 @@ export const catalog = (env: Env) => memo<CatalogEntry[]>('catalog', () => loadC
 const index = (env: Env) => memo<IndexEntry[]>('index', async () => loadIndex(env, await catalog(env), jurisdictionPath))
 const page = (env: Env, e: CatalogEntry) => memo<PageData | null>(`page-${e.code}-${e.settlementYears.at(-1)}`, () => loadPage(env, e))
 
-/** 一覧（/jurisdictions）に並べる自治体。API に繋がらなければ投げる */
-export const indexEntries = (env: Env) => index(env)
+/** 一覧（/jurisdictions）の頁に載せるもの。地図・検索の要約は全自治体、表は既定の並びの最初の1頁。API に繋がらなければ投げる */
+export async function indexPageData(env: Env): Promise<{ map: MapEntry[]; table: IndexTable }> {
+  const entries = await index(env)
+  return { map: entries.map(toMapEntry), table: queryIndex(entries, DEFAULT_INDEX_QUERY) }
+}
+
+/** 比較表の続き・並べ替え・絞り込み（/api/jurisdictions/table?sort=&order=&offset=&pref=&code=）。30件ずつ返す */
+export async function tableResponse(env: Env, request: Request): Promise<Response> {
+  try {
+    let q
+    try {
+      q = parseIndexQuery(new URL(request.url).searchParams)
+    } catch (e) {
+      throw new HttpError(400, 'INVALID_ARGUMENT', (e as Error).message)
+    }
+    await rateLimit(env.VIEW_RATE_LIMIT as RateLimiter | undefined, clientIp(request), VIEW_RATE_LIMIT.period)
+    return json(queryIndex(await index(env), q))
+  } catch (e) {
+    if (e instanceof HttpError) return errorResponse(e)
+    return errorResponse(new HttpError(502, 'UNAVAILABLE', '風土記の API に繋がりませんでした'))
+  }
+}
 
 /** 個別ページに出すもの。収録の無い自治体は empty、存在しない名称や都道府県の slug でない path は null（404） */
 export type JurisdictionView = { kind: 'page'; data: PageData & { profile: Profile | null } } | { kind: 'empty'; entry: CatalogEntry }

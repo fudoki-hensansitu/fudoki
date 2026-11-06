@@ -152,13 +152,9 @@ export interface IndexEntry {
   kind: JurisdictionKind
   /** 個別ページの path（/tokyo/shinagawa） */
   path: string
-  /** 一般会計の決算がある年度（西暦、古い順） */
-  years: number[]
   /** 最新の決算の年度と、一般会計の歳出の総額（款の和） */
   year: number
   yen: number
-  /** 最新の決算で金額の大きい款（大きい順に3つまで） */
-  topKan: { name: string; yen: number }[]
   /** 最新の決算の年度と比べる人口（populationForYear）。無ければ null */
   population: Population | null
   /** 歳出の総額を population で割った1人あたりの金額 */
