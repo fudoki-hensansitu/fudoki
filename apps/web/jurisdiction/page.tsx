@@ -360,6 +360,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
   // スクロールしたら小さなヘッダーを出す
   const title = React.useRef<HTMLHeadingElement>(null)
   const headerRef = React.useRef<HTMLElement>(null)
+  const pickerRef = React.useRef<HTMLDivElement>(null)
   const [mini, setMini] = React.useState(false)
   const [headerWide, setHeaderWide] = React.useState(true)
   React.useEffect(() => {
@@ -371,11 +372,20 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
   }, [])
   React.useEffect(() => {
     const el = headerRef.current
-    if (!el) return
-    const update = () => setHeaderWide(el.getBoundingClientRect().width >= 500)
+    const name = title.current
+    const picker = pickerRef.current
+    if (!el || !name || !picker) return
+    // 名前の文字の右端と年度選択の幅を実測し、右上に重ねずに置けるときだけ絶対配置にする（名前の長さ・会話パネルで幅が変わる）
+    const range = document.createRange()
+    const update = () => {
+      range.selectNodeContents(name)
+      const textRight = range.getBoundingClientRect().right - el.getBoundingClientRect().left
+      setHeaderWide(textRight + 24 + picker.getBoundingClientRect().width <= el.getBoundingClientRect().width)
+    }
     update()
     const ro = new ResizeObserver(update)
     ro.observe(el)
+    ro.observe(picker)
     return () => ro.disconnect()
   }, [])
 
@@ -438,7 +448,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
       <div className="mx-auto max-w-[1120px] px-4 pb-48">
         <header ref={headerRef} className="relative grid grid-cols-[80px_minmax(0,1fr)] items-start gap-4 border-b py-7 sm:grid-cols-[132px_minmax(0,1fr)] sm:gap-7">
           {years.length > 1 ? (
-            <div className={headerWide ? 'col-span-full -mb-2 justify-self-end sm:absolute sm:right-0 sm:top-7 sm:mb-0' : 'col-span-full -mb-2 justify-self-end'}>
+            <div ref={pickerRef} className={headerWide ? 'col-span-full -mb-2 justify-self-end sm:absolute sm:right-0 sm:top-7 sm:mb-0' : 'col-span-full -mb-2 justify-self-end'}>
               <YearPicker years={years} current={year} onChange={choose} />
             </div>
           ) : null}
