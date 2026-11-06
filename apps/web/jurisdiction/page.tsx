@@ -52,7 +52,7 @@ const Section = ({ id, title, lead, aside, link, children }: { id: string; title
 
 /** 区の評価の区分（A〜D）を丸で囲んだ印。良し悪しの色は付けない */
 function GradeMark({ grade }: { grade: string }) {
-  return <span aria-hidden="true" className="inline-grid size-5 shrink-0 place-items-center rounded-full border border-current text-[11px] leading-none">{grade}</span>
+  return <span aria-hidden="true" className="inline-grid size-5 shrink-0 place-items-center rounded-full border border-current align-middle text-[11px] leading-none">{grade}</span>
 }
 
 /** 「C やり方を見直す」を印と言葉に分ける */
@@ -60,9 +60,10 @@ function Grade({ grade, className }: { grade: string; className?: string }) {
   const m = /^([A-D])\s*(.*)$/.exec(grade)
   if (!m) return <span className={className}>{grade}</span>
   return (
-    <span className={`inline-flex items-center gap-1.5 ${className ?? ''}`}>
+    // 区分の言葉は前後の文と同じ行の流れで折り返す（inline-flex だと言葉だけが箱になり、文と別物に見える）
+    <span className={className}>
       <GradeMark grade={m[1]!} />
-      <span><span className="sr-only">{m[1]} </span>{m[2]}</span>
+      <span className="ml-1.5"><span className="sr-only">{m[1]} </span>{m[2]}</span>
     </span>
   )
 }
@@ -94,7 +95,7 @@ function ProjectItem({ p, sheets }: { p: EvaluatedProject; sheets?: string }) {
           <ClipboardTextIcon aria-hidden="true" className="size-4 text-muted-foreground" />
           評価
         </span>
-        <Grade grade={p.grade} className="align-middle" />
+        <Grade grade={p.grade} />
         （{p.direction}）。{i ? `指標の「${i.name}」は、目標 ${i.target}${i.unit}に対して実績 ${i.actual}${i.unit}。` : '目標と実績を並べた指標は載っていない。'}
         {sheets ? (
           <Button variant="link" size="inline" nativeButton={false} render={<a href={`${sheets}#page=${p.page}`} target="_blank" rel="noopener" />} className="ml-1 align-baseline">
