@@ -326,7 +326,7 @@ function Budget({ data, year }: { data: PageData; year: number }) {
     </div>
     {/* 決算・予算のタブとは別の形（select）にし、金額の段階の切り替えと分け方の切り替えを見分けられるようにする */}
     <Select items={VIEWS.map((v) => ({ value: v.key, label: v.label }))} value={view} onValueChange={(v) => v && setView(v as FlowView)}>
-      <SelectTrigger size="sm" aria-label="分類" className="text-[13px]">
+      <SelectTrigger size="sm" aria-label={`分類：${VIEWS.find((v) => v.key === view)!.label}`} className="text-[13px]">
         <SelectValue />
       </SelectTrigger>
       <SelectContent align="end">
