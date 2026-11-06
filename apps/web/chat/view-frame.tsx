@@ -6,6 +6,7 @@ import { createPortal } from 'react-dom'
 import { AppBridge, PostMessageTransport } from '@modelcontextprotocol/ext-apps/app-bridge'
 import type { McpUiDisplayMode, McpUiStyles } from '@modelcontextprotocol/ext-apps'
 import { DotsSixIcon, SidebarSimpleIcon, XIcon } from '@phosphor-icons/react'
+import { Hint } from '@/components/hint'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
 import { cn } from '@/lib/utils'
@@ -335,9 +336,11 @@ export function ViewFrame({
       {fullscreen ? (
         <div className="flex shrink-0 items-center justify-between border-b px-4 py-2">
           <span className="text-sm text-muted-foreground">風土記の表とグラフ</span>
-          <Button ref={close} variant="ghost" size="icon-sm" aria-label="元の大きさに戻す（Esc）" title="元の大きさに戻す（Esc）" onClick={() => setMode('inline')}>
-            <XIcon />
-          </Button>
+          <Hint label="元の大きさに戻す（Esc）">
+            <Button ref={close} variant="ghost" size="icon-sm" aria-label="元の大きさに戻す（Esc）" onClick={() => setMode('inline')}>
+              <XIcon />
+            </Button>
+          </Hint>
         </div>
       ) : null}
       {activeTab ? (
@@ -393,16 +396,17 @@ export function ViewFrame({
                   >
                     {label}
                   </button>
-                  <button
-                    type="button"
-                    tabIndex={-1}
-                    aria-label={`「${label}」を閉じて会話の中へ元に戻す`}
-                    title={selected ? '閉じて会話の中へ元に戻す（Esc、タブで Delete）' : '閉じて会話の中へ元に戻す'}
-                    onClick={() => closeAndFocus(t)}
-                    className="mr-1 flex size-6 shrink-0 items-center justify-center rounded text-muted-foreground/60 hover:bg-secondary hover:text-muted-foreground"
-                  >
-                    <XIcon className="size-3.5" />
-                  </button>
+                  <Hint label={selected ? '閉じて会話の中へ元に戻す（Esc、タブで Delete）' : '閉じて会話の中へ元に戻す'}>
+                    <button
+                      type="button"
+                      tabIndex={-1}
+                      aria-label={`「${label}」を閉じて会話の中へ元に戻す`}
+                      onClick={() => closeAndFocus(t)}
+                      className="mr-1 flex size-6 shrink-0 items-center justify-center rounded text-muted-foreground/60 hover:bg-secondary hover:text-muted-foreground"
+                    >
+                      <XIcon className="size-3.5" />
+                    </button>
+                  </Hint>
                 </div>
               )
             })}
@@ -413,24 +417,25 @@ export function ViewFrame({
         // 常には出さず、View にホバー（またはキーボードの focus）したときだけ、上辺の真ん中に出す。掴んで右へ離すと右パネルに開く。
         // iframe の上のホバーが親に届かない場合に備え、上辺の真ん中は親側の領域（group/zone）でも出す
         <div className="group/zone absolute top-0 left-1/2 z-10 h-6 w-16 -translate-x-1/2">
-          <button
-            type="button"
-            onPointerDown={startDrag}
-            onClick={() => {
-              // 押しただけ（キーボードの Enter も含む）で右に開く。ドラッグしたあとの click は無視する
-              if (!dragged.current) setMode('fullscreen')
-              dragged.current = false
-            }}
-            className={cn(
-              'absolute top-0.5 left-1/2 flex h-5 w-12 -translate-x-1/2 cursor-grab touch-none items-center justify-center rounded-full border bg-background/90 text-muted-foreground shadow-sm backdrop-blur select-none',
-              'pointer-events-none opacity-0 group-focus-within/view:pointer-events-auto group-focus-within/view:opacity-100 group-hover/view:pointer-events-auto group-hover/zone:pointer-events-auto group-hover/view:opacity-100 group-hover/zone:opacity-100 focus-visible:opacity-100 motion-safe:transition-opacity motion-safe:duration-150',
-              'hover:text-foreground active:cursor-grabbing',
-            )}
-            aria-label="右のパネルに開く（右へドラッグ、または Enter）"
-            title="右へドラッグすると、会話の横に開きます"
-          >
-            <DotsSixIcon className="size-4" />
-          </button>
+          <Hint label="右へドラッグすると、会話の横に開きます">
+            <button
+              type="button"
+              onPointerDown={startDrag}
+              onClick={() => {
+                // 押しただけ（キーボードの Enter も含む）で右に開く。ドラッグしたあとの click は無視する
+                if (!dragged.current) setMode('fullscreen')
+                dragged.current = false
+              }}
+              className={cn(
+                'absolute top-0.5 left-1/2 flex h-5 w-12 -translate-x-1/2 cursor-grab touch-none items-center justify-center rounded-full border bg-background/90 text-muted-foreground shadow-sm backdrop-blur select-none',
+                'pointer-events-none opacity-0 group-focus-within/view:pointer-events-auto group-focus-within/view:opacity-100 group-hover/view:pointer-events-auto group-hover/zone:pointer-events-auto group-hover/view:opacity-100 group-hover/zone:opacity-100 focus-visible:opacity-100 motion-safe:transition-opacity motion-safe:duration-150',
+                'hover:text-foreground active:cursor-grabbing',
+              )}
+              aria-label="右のパネルに開く（右へドラッグ、または Enter）"
+            >
+              <DotsSixIcon className="size-4" />
+            </button>
+          </Hint>
         </div>
       ) : null}
       {!ready ? (

@@ -68,7 +68,7 @@ function MokuGroup({ moku, kouYen }: { moku: Moku; kouYen: number }) {
                   <span className="underline decoration-dotted underline-offset-2">ほか{rest.length}節</span>
                   {restYen !== null ? <span className="text-right tabular-nums">{pctOr(restYen, mokuYen)}</span> : null}
                 </TooltipTrigger>
-                <TooltipContent side="right" className={`block max-w-72 ${TIP_CARD} [&>:last-child]:hidden`}>
+                <TooltipContent side="right" className={`block max-w-72 ${TIP_CARD}`}>
                   {restYen !== null ? <div className="mb-1.5"><TipCard name={`ほか${rest.length}節`} yen={restYen} /></div> : null}
                   <ul className="grid gap-y-0.5 text-xs">
                     {rest.map((s) => (
@@ -145,7 +145,7 @@ function TickMenu({ items, current, onPick, side, label, className, children }: 
   return (
     <Tooltip>
       <TooltipTrigger render={<div role="group" aria-label={label} className={className} />}>{children}</TooltipTrigger>
-      <TooltipContent side={side} sideOffset={6} className="block max-h-[min(60vh,420px)] w-60 overflow-y-auto rounded-xl border bg-background p-1.5 text-foreground shadow-lg [&>:last-child]:hidden">
+      <TooltipContent side={side} sideOffset={6} className="block max-h-[min(60vh,420px)] w-60 overflow-y-auto rounded-xl p-1.5 shadow-lg">
         <ul className="grid gap-px">
           {items.map((item, i) => (
             <li key={item.key}>

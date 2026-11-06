@@ -20,21 +20,22 @@ export function TipCard({ name, yen, missing }: { name: string; yen: number; mis
   )
 }
 
-export const TIP_CARD = 'rounded-xl border bg-background px-3 py-2 text-foreground shadow-lg'
+export const TIP_CARD = 'rounded-xl px-3 py-2 shadow-lg'
 
-/** HTML の行に付けるツールチップ。children が割合のラベル */
-export function AmountTip({ name, yen, missing, className, children, side = 'top' }: {
+/** 金額のツールチップ。children が割合のラベル。render を渡すとその要素（SVG の g など）を trigger にする */
+export function AmountTip({ name, yen, missing, className, children, side = 'top', render }: {
   name: string
   yen: number
   missing?: boolean
   className?: string
   children: React.ReactNode
   side?: 'top' | 'right' | 'left' | 'bottom'
+  render?: React.ReactElement
 }) {
   return (
     <Tooltip>
-      <TooltipTrigger delay={100} render={<span tabIndex={0} className={className} />}>{children}</TooltipTrigger>
-      <TooltipContent side={side} className={`block ${TIP_CARD} [&>:last-child]:hidden`}>
+      <TooltipTrigger delay={100} render={render ?? <span tabIndex={0} className={className} />}>{children}</TooltipTrigger>
+      <TooltipContent side={side} className={`block ${TIP_CARD}`}>
         <TipCard name={name} yen={yen} missing={missing} />
       </TooltipContent>
     </Tooltip>
