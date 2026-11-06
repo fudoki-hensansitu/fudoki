@@ -4,19 +4,19 @@
 import { sitemapXml } from '../jurisdiction/html'
 import { jurisdictionPath, PREFECTURE_SLUGS } from '../jurisdiction/path'
 import { DEFAULT_INDEX_QUERY, parseIndexQuery, queryIndex, toMapEntry, type IndexTable, type MapEntry } from '../jurisdiction/index-table'
-import { INDEX_PATH, type Drill, type FlowDepth, type IndexEntry, type PageData, type Setsu } from '../jurisdiction/types'
+import { INDEX_PATH, type Drill, type FlowDepth, type FlowView, type IndexEntry, type PageData, type Setsu } from '../jurisdiction/types'
 import { PROFILES, type Profile } from '../jurisdiction/profiles'
 import { clientIp, errorResponse, HttpError, rateLimit } from './http'
 import { VIEW_RATE_LIMIT } from './limits'
 import type { Env, RateLimiter } from './env'
-import { loadCatalog, loadDrillById, loadFlow, loadIndex, loadPage, loadSetsu, type CatalogEntry } from './jurisdiction'
+import { loadCatalog, loadCofogFlow, loadDrillById, loadFlow, loadIndex, loadPage, loadSetsu, type CatalogEntry } from './jurisdiction'
 
 const TTL = 3600
 const NODE_ID = /^[0-9a-f]{64}$/
 /** Worker の cache（無い環境では毎回取り直す）。同じ isolate の中でも一度だけ取る */
 const inflight = new Map<string, Promise<unknown>>()
 async function memo<T>(key: string, fn: () => Promise<T>): Promise<T> {
-  const url = `https://fudoki.dev/__cache/jurisdiction-v5/${key}`
+  const url = `https://fudoki.dev/__cache/jurisdiction-v6/${key}`
   const cache = typeof caches === 'undefined' ? undefined : (caches as unknown as { default?: Cache }).default
   const hit = await cache?.match(url)
   if (hit) return (await hit.json()) as T
@@ -98,15 +98,17 @@ export const drillResponse = (env: Env, request: Request, id: string) => guarded
 /** 目の節（/api/jurisdictions/setsu/:id） */
 export const setsuResponse = (env: Env, request: Request, id: string) => guarded(env, request, id, () => memo<Setsu[]>(`setsu-${id}`, () => loadSetsu(env, id)))
 
-/** 一つの自治体・年度の全款の流れ（/api/jurisdictions/flow/:code/:year/:depth） */
+/** 一つの自治体・年度の全款の流れ（/api/jurisdictions/flow/:code/:year/:depth）。?view=cofog なら分野 → 款の流れ */
 export async function flowResponse(env: Env, request: Request, { code, year, depth }: { code: string; year: string; depth: string }): Promise<Response> {
   try {
     if (!/^\d{6}$/.test(code) || !/^\d{4}$/.test(year) || !['kou', 'moku', 'setsu'].includes(depth))
       throw new HttpError(400, 'INVALID_ARGUMENT', '自治体・年度・表示階層の指定が違います')
     await rateLimit(env.VIEW_RATE_LIMIT as RateLimiter | undefined, clientIp(request), VIEW_RATE_LIMIT.period)
+    const view: FlowView = new URL(request.url).searchParams.get('view') === 'cofog' ? 'cofog' : 'kan'
     const entry = (await catalog(env)).find((e) => e.code === code)
     if (!entry?.settlementYears.includes(Number(year))) throw new HttpError(404, 'NOT_FOUND', 'この自治体・年度の一般会計の決算は収録されていません')
-    return json(await memo<Drill[]>(`flow-${code}-${year}-${depth}`, () => loadFlow(env, code, Number(year), depth as FlowDepth)))
+    const load = view === 'cofog' ? loadCofogFlow : loadFlow
+    return json(await memo<Drill[]>(`flow-${view}-${code}-${year}-${depth}`, () => load(env, code, Number(year), depth as FlowDepth)))
   } catch (e) {
     if (e instanceof HttpError) return errorResponse(e)
     return errorResponse(new HttpError(502, 'UNAVAILABLE', '決算データを表示できませんでした。少し待ってからもう一度開いてください。'))

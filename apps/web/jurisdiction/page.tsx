@@ -11,7 +11,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenu
 import { DOMAIN_FRAMES, groupByFrame } from './domains'
 import { Flow } from './flow'
 import { assetPath, type PolicyProject, type ProfileYear, type ProjectStatus, type Scrap } from './profiles'
-import { changePct, formatAsOf, formatPeople, formatYen, reiwa, yearName, type PageData, type Project, type Setsu, type YearTotal } from './types'
+import { changePct, formatAsOf, formatPeople, formatYen, reiwa, yearName, type FlowView, type PageData, type Project, type Setsu, type YearTotal } from './types'
 
 const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
   const res = await fetch(url, { signal })
@@ -215,10 +215,16 @@ const PHASES: { key: Phase; label: string }[] = [
   { key: 'settlement', label: '決算' },
   { key: 'budget', label: '予算' },
 ]
+/** お金の流れの分け方。既定は分野（COFOG の枠）で、どの自治体も同じ枠で比べられる。款は予算書・決算書の科目のまま */
+const VIEWS: { key: FlowView; label: string }[] = [
+  { key: 'cofog', label: '分野ごと' },
+  { key: 'kan', label: '予算書の分け方' },
+]
 
 /** 予算の節。決算と予算をタブで切り替える。予算はまだ取り込んでいないので、どの年度も空の枠を出す */
 function Budget({ data, year }: { data: PageData; year: number }) {
   const [phase, setPhase] = React.useState<Phase>('settlement')
+  const [view, setView] = React.useState<FlowView>('cofog')
   const settled = data.years.find((y) => y.year === year)
   const total = phase === 'settlement' ? settled : undefined
   const prev = data.years.find((y) => y.year === year - 1)
@@ -236,6 +242,7 @@ function Budget({ data, year }: { data: PageData; year: number }) {
     </>
   )
   const tabs = (
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
     <div role="tablist" aria-label="金額の段階" className="flex gap-1">
       {PHASES.map((p) => (
         <button
@@ -252,17 +259,32 @@ function Budget({ data, year }: { data: PageData; year: number }) {
         </button>
       ))}
     </div>
+    <div role="radiogroup" aria-label="分け方" className="flex rounded-full border p-0.5">
+      {VIEWS.map((v) => (
+        <button
+          key={v.key}
+          type="button"
+          role="radio"
+          aria-checked={v.key === view}
+          onClick={() => setView(v.key)}
+          className={`rounded-full px-2.5 py-1 text-[12px] ${v.key === view ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+        >
+          {v.label}
+        </button>
+      ))}
+    </div>
+    </div>
   )
   return (
     <Section
       id="budget"
       title="お金は何に使われた？"
-      lead="1年間に使ったお金（決算）と、使う予定のお金（予算）を、使い道ごとに分けています。"
+      lead="1年間に使ったお金（決算）と、使う予定のお金（予算）を、使い道ごとに分けています。分野ごとの分け方はどの自治体も同じなので、ほかの自治体と比べられます。"
       link={docs.length ? docs : undefined}
     >
-      <div id="budget-panel" role="tabpanel" aria-labelledby={`tab-${phase}`} data-ask-view={`${reiwa(year)}の${label}の金額`} className="flex flex-col gap-4">
+      <div id="budget-panel" role="tabpanel" aria-labelledby={`tab-${phase}`} data-ask-view={`${reiwa(year)}の${label}の金額（${VIEWS.find((v) => v.key === view)!.label}）`} className="flex flex-col gap-4">
         {total ? (
-          <Flow key={year} data={data} total={total} tabs={tabs} summary={summary} />
+          <Flow key={`${year}-${view}`} data={data} total={total} view={view} tabs={tabs} summary={summary} />
         ) : (
           <div className="rounded-[20px] border bg-background px-5 pt-5 sm:px-6">
             {tabs}

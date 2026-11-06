@@ -36,6 +36,8 @@ export interface Drill {
 }
 
 export type FlowDepth = 'kou' | 'moku' | 'setsu'
+/** お金の流れの分け方。cofog は分野（jurisdiction/domains.ts の枠）→ 款、kan は自治体の科目（款 → 項） */
+export type FlowView = 'cofog' | 'kan'
 
 export interface Project extends Line {
   kanName: string
@@ -91,6 +93,8 @@ export interface PageData {
   years: YearTotal[]
   /** 最新年度の全款から全項への流れ */
   flow: Drill[]
+  /** 最新年度の分野（COFOG の枠）から款への流れ。Drill の kan に枠、kou に款が入る */
+  cofogFlow: Drill[]
   projects: Project[]
   /** 方針・政策領域・事業の入れ替え（jurisdiction/profiles.ts）。手で起こした自治体だけにある */
   profile?: Profile | null

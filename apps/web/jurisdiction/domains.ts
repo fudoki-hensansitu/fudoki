@@ -23,6 +23,9 @@ export const DOMAIN_FRAMES: DomainFrame[] = [
   { id: 'bunka', name: '文化・スポーツ', cofog: ['08'] , examples: '図書館・体育館・公園' },
 ]
 
+/** COFOG のコードが付かない目（分類できない・分類の対象外）の入る枠。お金の流れで全枠の和を総額に合わせるために使う */
+export const OTHER_FRAME: DomainFrame = { id: 'other', name: 'その他', cofog: [], examples: '分野を一つに決められない支出' }
+
 const covers = (prefix: string, code: string) => code === prefix || code.startsWith(`${prefix}.`)
 
 /** COFOG コードが入る枠。最も細かく一致した前方一致の枠を返す */

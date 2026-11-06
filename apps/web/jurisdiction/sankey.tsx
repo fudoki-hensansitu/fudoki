@@ -53,7 +53,7 @@ const pick = (fn: () => void) => ({
 })
 
 /** total は割合の基準（その年度の全体）。ラベルは割合だけ出し、金額は hover・focus のツールチップで見せる */
-export function Overview({ flows, total: base, height = 520, onSelect }: { flows: Drill[]; total: number; height?: number; onSelect?: (kan: number, kou?: number) => void }) {
+export function Overview({ flows, total: base, height = 520, levels = { kan: '款', kou: '項' }, onSelect }: { flows: Drill[]; total: number; height?: number; levels?: { kan: string; kou: string }; onSelect?: (kan: number, kou?: number) => void }) {
   const ref = React.useRef<HTMLDivElement>(null)
   const [width, setWidth] = React.useState(0)
   const pct = (yen: number, missing?: boolean) => formatShare(yen, base, missing) ?? '—'
@@ -86,10 +86,10 @@ export function Overview({ flows, total: base, height = 520, onSelect }: { flows
   return (
     <div ref={ref} className="relative w-full">
       {width ? (
-        <svg width={width} height={total + HEAD} role="img" aria-label="款から項への歳出の流れ" className="block font-sans">
+        <svg width={width} height={total + HEAD} role="img" aria-label={`${levels.kan}から${levels.kou}への歳出の流れ`} className="block font-sans">
           <g aria-hidden="true" className="fill-muted-foreground" fontSize={11}>
-            <text x={x0 + BAR} y={11} textAnchor="end">款</text>
-            <text x={x1} y={11}>項</text>
+            <text x={x0 + BAR} y={11} textAnchor="end">{levels.kan}</text>
+            <text x={x1} y={11}>{levels.kou}</text>
           </g>
           <g transform={`translate(0 ${HEAD})`}>
           {kous.map(({ kanIndex, kou }, i) => {

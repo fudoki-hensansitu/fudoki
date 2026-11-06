@@ -1,6 +1,7 @@
 // 自治体の個別ページのデータ。apps/api（Service Binding）の歳出の検索から、決算の款・事業・お金の流れを組む。
 // 金額は API が返した円をそのまま持つ。足すのは「同じ年度・会計・軸の款（兄弟）の和」だけで、api の sum_rules に従う
 import { jurisdictionKind, populationForYear, type Drill, type FlowDepth, type IndexEntry, type Kou, type Line, type Moku, type PageData, type Population, type Project, type Setsu, type YearTotal } from '../jurisdiction/types'
+import { DOMAIN_FRAMES, frameOf, OTHER_FRAME } from '../jurisdiction/domains'
 import { apiFetch, type Env } from './env'
 
 const API_ORIGIN = 'https://api.fudoki.dev'
@@ -27,6 +28,8 @@ interface ApiNode {
   amount_source_page: number | null
   source_page: number | null
   origin_id: string
+  /** 目だけに付く。assigned・tentative のときだけコードがある */
+  cofog_code?: string | null
 }
 interface SearchResponse {
   nodes: ApiNode[]
@@ -168,6 +171,27 @@ async function searchAll(env: Env, code: string, year: number, kinds: string[] |
 
 const byAmount = (a: ApiNode, b: ApiNode) => (b.amount_yen ?? 0) - (a.amount_yen ?? 0)
 
+/** 目の直下の節（無ければ備考）。目の id ごとに大きい順 */
+async function loadSetsuByMoku(env: Env, code: string, year: number, mokuIds: string[]): Promise<Map<string, Setsu[]>> {
+  const setsuByMoku = new Map<string, Setsu[]>()
+  // 年度・自治体・会計・軸の条件と合わせても API の bind 上限に収まる件数。
+  for (let i = 0; i < mokuIds.length; i += 50) {
+    const rows = await searchAll(env, code, year, undefined, { is_subject: { eq: false }, axis: { eq: ['節', '備考'] }, parent_node_id: { eq: mokuIds.slice(i, i + 50) } })
+    const groups = new Map<string, ApiNode[]>()
+    for (const n of rows) {
+      if (!n.parent_node_id) continue
+      const siblings = groups.get(n.parent_node_id) ?? []
+      siblings.push(n)
+      groups.set(n.parent_node_id, siblings)
+    }
+    for (const [parent, children] of groups) {
+      const setsu = children.filter((n) => n.axis === '節')
+      setsuByMoku.set(parent, (setsu.length ? setsu : children.filter((n) => n.axis === '備考')).sort(byAmount).map((n) => ({ name: n.name, yen: n.amount_yen ?? 0, ...(n.amount_yen === null ? { amountMissing: true as const } : {}) })))
+    }
+  }
+  return setsuByMoku
+}
+
 /** すべての款を同じ深さで表示する。節は目の直下を取り、異なる軸の数字を混ぜない。 */
 export async function loadFlow(env: Env, code: string, year: number, depth: FlowDepth = 'kou'): Promise<Drill[]> {
   const nodes = await searchAll(env, code, year, depth === 'kou' ? ['款', '項'] : ['款', '項', '目'])
@@ -178,25 +202,7 @@ export async function loadFlow(env: Env, code: string, year: number, depth: Flow
     siblings.push(n)
     byParent.set(n.parent_node_id, siblings)
   }
-  const setsuByMoku = new Map<string, Setsu[]>()
-  if (depth === 'setsu') {
-    const mokuIds = nodes.filter((n) => n.node_kind === '目').map((n) => n.node_id)
-    // 年度・自治体・会計・軸の条件と合わせても API の bind 上限に収まる件数。
-    for (let i = 0; i < mokuIds.length; i += 50) {
-      const rows = await searchAll(env, code, year, undefined, { is_subject: { eq: false }, axis: { eq: ['節', '備考'] }, parent_node_id: { eq: mokuIds.slice(i, i + 50) } })
-      const groups = new Map<string, ApiNode[]>()
-      for (const n of rows) {
-        if (!n.parent_node_id) continue
-        const siblings = groups.get(n.parent_node_id) ?? []
-        siblings.push(n)
-        groups.set(n.parent_node_id, siblings)
-      }
-      for (const [parent, children] of groups) {
-        const setsu = children.filter((n) => n.axis === '節')
-        setsuByMoku.set(parent, (setsu.length ? setsu : children.filter((n) => n.axis === '備考')).sort(byAmount).map((n) => ({ name: n.name, yen: n.amount_yen ?? 0, ...(n.amount_yen === null ? { amountMissing: true as const } : {}) })))
-      }
-    }
-  }
+  const setsuByMoku = depth === 'setsu' ? await loadSetsuByMoku(env, code, year, nodes.filter((n) => n.node_kind === '目').map((n) => n.node_id)) : new Map<string, Setsu[]>()
   return nodes.filter((n) => n.node_kind === '款').sort(byAmount).map((kan) => ({
     kan: line(kan),
     kou: (byParent.get(kan.node_id) ?? []).filter((n) => n.node_kind === '項').sort(byAmount).map((kou) => ({
@@ -204,6 +210,38 @@ export async function loadFlow(env: Env, code: string, year: number, depth: Flow
       moku: (byParent.get(kou.node_id) ?? []).filter((n) => n.node_kind === '目').sort(byAmount).map((moku) => ({ ...line(moku), setsu: setsuByMoku.get(moku.node_id) ?? [] })),
     })),
   }))
+}
+
+const sumYen = (lines: { yen: number; amountMissing?: true }[]) => lines.reduce((s, l) => s + (l.amountMissing ? 0 : l.yen), 0)
+
+/**
+ * 分野（jurisdiction/domains.ts の COFOG をまとめた枠）→ 款 → 目 の流れ。目に付いた COFOG のコードで枠を決め、
+ * 枠の金額は目の和（api の sum_rules: COFOG は目を前方一致で集めて足す。分類できない目・対象外の目は「その他」に入れ、全枠の和が総額になる）。
+ * 款は枠の中に入った目だけの和で、出典の款の金額ではない。並びは金額の順で「その他」を最後に置く。depth が kou なら目を返さない（全体図だけに使う）
+ */
+export async function loadCofogFlow(env: Env, code: string, year: number, depth: FlowDepth = 'kou'): Promise<Drill[]> {
+  const nodes = await searchAll(env, code, year, ['款', '目'])
+  const kanByName = new Map(nodes.filter((n) => n.node_kind === '款').map((n) => [n.name, n]))
+  const moku = nodes.filter((n) => n.node_kind === '目')
+  const setsuByMoku = depth === 'setsu' ? await loadSetsuByMoku(env, code, year, moku.map((n) => n.node_id)) : new Map<string, Setsu[]>()
+  // 枠の id → 款の名前 → 目。目の親は項なので、款は kan_name で引く
+  const frames = new Map<string, Map<string, ApiNode[]>>()
+  for (const n of moku) {
+    const frame = (n.cofog_code ? frameOf(n.cofog_code) : undefined) ?? OTHER_FRAME
+    const kanName = n.kan_name ?? ''
+    const byKan = frames.get(frame.id) ?? new Map<string, ApiNode[]>()
+    byKan.set(kanName, [...(byKan.get(kanName) ?? []), n])
+    frames.set(frame.id, byKan)
+  }
+  return [...DOMAIN_FRAMES, OTHER_FRAME].flatMap((frame) => {
+    const byKan = frames.get(frame.id)
+    if (!byKan) return []
+    const kou = [...byKan].map(([kanName, list]) => {
+      const mokuLines = list.sort(byAmount).map((m) => ({ ...line(m), setsu: setsuByMoku.get(m.node_id) ?? [] }))
+      return { id: `${frame.id}-${kanByName.get(kanName)?.node_id ?? kanName}`, name: kanName, yen: sumYen(mokuLines), page: null, moku: depth === 'kou' ? [] : mokuLines }
+    }).sort((a, b) => b.yen - a.yen)
+    return [{ kan: { id: frame.id, name: frame.name, yen: sumYen(kou), page: null }, kou }]
+  }).sort((a, b) => Number(a.kan.id === OTHER_FRAME.id) - Number(b.kan.id === OTHER_FRAME.id) || b.kan.yen - a.kan.yen)
 }
 
 async function children(env: Env, id: string): Promise<Record<string, ApiNode[]>> {
@@ -275,6 +313,7 @@ export async function loadPage(env: Env, entry: CatalogEntry): Promise<Omit<Page
     originTitle: kanRes.origins?.find((o) => o.origin_id === kanRes.nodes.find((n) => n.fiscal_year === latest)?.origin_id)?.title ?? null,
     years: totals,
     flow: await loadFlow(env, entry.code, latest),
+    cofogFlow: await loadCofogFlow(env, entry.code, latest),
     projects,
   }
 }
