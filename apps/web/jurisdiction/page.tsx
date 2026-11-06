@@ -52,24 +52,20 @@ const Section = ({ id, title, aside, link, children }: { id: string; title: stri
 
 function Policies({ code, year }: { code: string; year: ProfileYear }) {
   return (
-    <div className="flex flex-col gap-8">
-      {/* 一文（方針の要約）は方針の節の上に置く。header は名前と所在だけ */}
-      {year.tagline ? <p className="text-[clamp(1.0625rem,0.95rem+0.5vw,1.375rem)] leading-snug [text-wrap:pretty] [word-break:auto-phrase]">{year.tagline}</p> : null}
-      <Section id="policy" title="方針" link={{ href: year.policySource, label: '予算編成方針' }}>
-        <ol className="border-t">
-          {year.policies.map((p, i) => (
-            <li key={p.title} className="grid grid-cols-[22px_104px_minmax(0,1fr)] items-start gap-3 border-b border-foreground/10 py-3.5 sm:grid-cols-[28px_176px_minmax(0,1fr)] sm:gap-4">
-              <span className="text-lg text-primary">{i + 1}</span>
-              <img src={assetPath(code, p.image)} alt="" loading="lazy" className="aspect-video w-full rounded-lg border border-foreground/10 object-cover" />
-              <div>
-                <b className="block text-base font-normal">{p.title}</b>
-                <p className="mt-0.5 text-sm text-muted-foreground">{p.body}</p>
-              </div>
-            </li>
-          ))}
-        </ol>
-      </Section>
-    </div>
+    <Section id="policy" title="方針" link={{ href: year.policySource, label: '予算編成方針' }}>
+      <ol className="border-t">
+        {year.policies.map((p, i) => (
+          <li key={p.title} className="grid grid-cols-[22px_104px_minmax(0,1fr)] items-start gap-3 border-b border-foreground/10 py-3.5 sm:grid-cols-[28px_176px_minmax(0,1fr)] sm:gap-4">
+            <span className="text-lg text-primary">{i + 1}</span>
+            <img src={assetPath(code, p.image)} alt="" loading="lazy" className="aspect-video w-full rounded-lg border border-foreground/10 object-cover" />
+            <div>
+              <b className="block text-base font-normal">{p.title}</b>
+              <p className="mt-0.5 text-sm text-muted-foreground">{p.body}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </Section>
   )
 }
 
@@ -366,6 +362,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
     if (y && years.includes(y)) setYear(y)
   }, [years])
   const py = profile?.years[String(year)]
+  const tagline = py?.tagline
   const choose = (y: number) => {
     setYear(y)
     history.replaceState(null, '', `#y${y}`)
@@ -436,6 +433,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
         <div className="mx-auto flex h-[60px] max-w-[1120px] items-center gap-3 px-4">
           <span className="hidden size-10 shrink-0 place-items-center rounded-lg border bg-white p-1 sm:grid">{logo ? <img src={logo} alt="" className="w-full" /> : <span className="text-foreground">{data.name[0]}</span>}</span>
           <b className="shrink-0 text-lg font-normal">{data.name}</b>
+          {tagline ? <span className="hidden min-w-0 truncate text-[13px] text-muted-foreground sm:block">{tagline}</span> : null}
           {years.length > 1 ? (
             <div className="ml-auto shrink-0">
               <YearPicker years={years} current={year} onChange={choose} />
@@ -456,6 +454,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
           </div>
           <div className="flex min-w-0 flex-col gap-3">
             <h1 ref={title} className="text-[clamp(1.75rem,1.4rem+1.2vw,2.25rem)] font-normal leading-tight">{data.name}</h1>
+            {tagline ? <p className="text-[17px] [text-wrap:pretty] [word-break:auto-phrase]">{tagline}</p> : null}
             <div className="flex flex-wrap gap-x-2.5 gap-y-1.5 whitespace-nowrap text-xs text-muted-foreground sm:gap-x-6 sm:text-sm">
               <span className="inline-flex items-center gap-1 sm:gap-1.5">
                 <MapPinIcon className="size-3.5 sm:size-4" aria-hidden="true" />
