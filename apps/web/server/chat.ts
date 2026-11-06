@@ -112,7 +112,7 @@ export async function handleChat(c: ApiRequest): Promise<Response> {
   c.defer(
     usageReady.then(async (u) => {
       const write = (answer: UIMessage | undefined) =>
-        writeChatTurn(env.CHAT_LOG, {
+        writeChatTurn(env.DB, {
           conversationId: chat.id,
           turn: chat.turn,
           entry: chat.entry,

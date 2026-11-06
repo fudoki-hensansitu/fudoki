@@ -3,7 +3,7 @@ import { describe, expect, test } from 'bun:test'
 import type { UIMessage } from 'ai'
 import { CHAT_LOG_RETENTION_DAYS, redact, writeChatTurn, type ChatTurn } from './chat-log'
 import { parseChat } from './chat'
-import type { ChatLogDatabase } from './env'
+import type { WebDatabase } from './env'
 
 describe('会話の保存', () => {
   test('質問のメールアドレスと電話番号を伏せ、金額や年度は残す', () => {
@@ -43,7 +43,7 @@ describe('会話の保存', () => {
   }
   const fakeDb = (fail = false) => {
     const runs: { sql: string; values: unknown[] }[] = []
-    const db: ChatLogDatabase = {
+    const db: WebDatabase = {
       prepare: (sql) => {
         const statement = { bind: (...values: unknown[]) => (runs.push({ sql, values }), statement) }
         return statement

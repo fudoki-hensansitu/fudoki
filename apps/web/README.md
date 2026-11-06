@@ -39,7 +39,7 @@ bun run build:web
 - **流れ**: 入力を送ると Turnstile で確かめ（`POST /api/sessions` がサーバー側で siteverify）、その会話だけに使える署名付き token（2時間）を受けて `/s/:id` に頁を読み直さずに移る。`POST /api/chat` が Workers AI（`workers-ai-provider`、モデルは config の `CHAT_MODEL`、推論の深さは `CHAT_REASONING_EFFORT`）と AI SDK の MCP client で応答を stream する。apps/api とは Service Binding（`API`）で繋ぐ
 - **表示**: AI が `render_expenditure_view` を呼んだ結果は、apps/api の MCP Apps の View を `srcdoc` + `sandbox="allow-scripts"` の iframe に置き、`AppBridge` + `PostMessageTransport` で渡す（`chat/view-frame.tsx`、土台は `apps/api/tests/host.ts`）。View が呼ぶ tool と resource の読み込みは `POST /api/mcp` が許可リスト（`server/limits.ts` の `VIEW_TOOLS`・`VIEW_RESOURCE`）で中継する
 - **AI に渡すもの**: tool の結果は text の側だけ（`server/chat.ts` の `textOnly`）。structuredContent と `_meta` は View にだけ流れる（`_meta` の `fudoki.dev/suggestions` の候補だけは会話の画面も読み、回答の下にチップで出す。押すと候補の `prompt` を質問として送る。`packages/fiscal/suggestions.ts` が型と検査を共有する）
-- **画面の会話の履歴はブラウザに置く**: 画面の会話の履歴と token はブラウザの sessionStorage に置く。サーバーは利用状況を Analytics Engine に（本文・IP・会話 ID は書かない）、会話（質問と回答）を D1 `fudoki-chat-log`（binding `CHAT_LOG`、本番だけ）に保存する。あとで会話を開き直す（復元）のと改善の分析の両方に使う。質問・頁の文脈・tool の引数・回答の文のメール・電話番号は伏せ字にし（tool の結果は風土記の公開データなので原文のまま）、IP・UA・cookie は書かない。ログインしていない会話は最後の発言から90日を過ぎたら書くたびに消す（`server/chat-log.ts`）。入力欄の下とプライバシーポリシーに書いてある
+- **画面の会話の履歴はブラウザに置く**: 画面の会話の履歴と token はブラウザの sessionStorage に置く。サーバーは利用状況を Analytics Engine に（本文・IP・会話 ID は書かない）、会話（質問と回答）を D1 `fudoki-web`（binding `DB`、本番だけ）に保存する。あとで会話を開き直す（復元）のと改善の分析の両方に使う。質問・頁の文脈・tool の引数・回答の文のメール・電話番号は伏せ字にし（tool の結果は風土記の公開データなので原文のまま）、IP・UA・cookie は書かない。ログインしていない会話は最後の発言から90日を過ぎたら書くたびに消す（`server/chat-log.ts`）。入力欄の下とプライバシーポリシーに書いてある
 - **上限**: IP ごとの流量（`CHAT_RATE_LIMIT`・`VIEW_RATE_LIMIT`、値は `server/limits.ts` と config で二重に持ち、試験が照合する）、段数・出力 token・文字数・件数・body の大きさ（`server/limits.ts`）。流量の binding・Turnstile の secret・site key のどれかが無ければ、チャットは止まる（入口は入力を出さない）
 
 ### 手で設定するもの
@@ -71,7 +71,7 @@ ORDER BY day
 
 ### 会話の保存
 
-D1 `fudoki-chat-log` の `conversations`（会話1件1行。`user_id` は認証を入れるまで NULL）と `messages`（1往復で質問と回答の2行。`parts` は AI SDK の UIMessage の parts の JSON で、回答の行に tool の呼び出しと結果、モデル・失敗・token・所要時間を持つ）に書く（列は `migrations/0001_conversations.sql`）。migration は自動では当たらないので、変えたら apps/web で `bun run build` のあと `bunx wrangler d1 migrations apply fudoki-chat-log --remote -c dist/ssr/wrangler.json` を手で流す（apps/web には wrangler の設定ファイルが無いので、build が書き出す設定を渡す）。読むのは `bunx wrangler d1 execute fudoki-chat-log --remote -c dist/ssr/wrangler.json --command "<SQL>"`。
+D1 `fudoki-web` の `conversations`（会話1件1行。`user_id` は認証を入れるまで NULL）と `messages`（1往復で質問と回答の2行。`parts` は AI SDK の UIMessage の parts の JSON で、回答の行に tool の呼び出しと結果、モデル・失敗・token・所要時間を持つ）に書く（列は `migrations/0001_conversations.sql`）。migration は自動では当たらないので、変えたら apps/web で `bun run build` のあと `bunx wrangler d1 migrations apply fudoki-web --remote -c dist/ssr/wrangler.json` を手で流す（apps/web には wrangler の設定ファイルが無いので、build が書き出す設定を渡す）。読むのは `bunx wrangler d1 execute fudoki-web --remote -c dist/ssr/wrangler.json --command "<SQL>"`。
 
 ```sql
 -- 直近7日の質問を、始めた頁ごとに多い順

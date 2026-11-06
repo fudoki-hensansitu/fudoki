@@ -1,8 +1,8 @@
-// 風土記の AI との会話を D1（CHAT_LOG）に保存する。表は migrations/0001_conversations.sql。あとで会話を開き直す（復元）のと、改善の分析の両方に使う。
+// 風土記の AI との会話を web の D1（binding DB・fudoki-web）に保存する。表は migrations/0001_conversations.sql。あとで会話を開き直す（復元）のと、改善の分析の両方に使う。
 // 利用者を特定する情報（IP・UA・cookie）は書かない。利用者が書いたものと、AI がそれを写しうるもの（質問・頁の文脈・tool の引数・回答の文）のメールアドレス・電話番号の形は伏せる。tool の結果は風土記の公開データなので伏せない。
 // ログインしていない会話は、最後の発言から90日を過ぎたら書くたびに消す
 import type { UIMessage } from 'ai'
-import type { ChatLogDatabase } from './env'
+import type { WebDatabase } from './env'
 import { logError } from './log'
 
 /** ログインしていない会話を残す日数。プライバシーポリシー（apps/docs の legal）と入力欄の下の注記に同じ日数を書いている */
@@ -59,7 +59,7 @@ export function answerParts(parts: Part[]): string {
 }
 
 /** 1往復（質問と回答の2行）を書き、ログインしていない古い会話を消す。失敗しても応答は落とさない */
-export function writeChatTurn(db: ChatLogDatabase | undefined, t: ChatTurn, now = Date.now()): Promise<unknown> {
+export function writeChatTurn(db: WebDatabase | undefined, t: ChatTurn, now = Date.now()): Promise<unknown> {
   if (!db) return Promise.resolve()
   const expired = now - CHAT_LOG_RETENTION_DAYS * 86_400_000
   const insertMessage =
