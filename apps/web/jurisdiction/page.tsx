@@ -2,7 +2,7 @@
 // 型は企業のプロフィールページ: ヘッダー（ロゴ・名前・一文・属性）＋年度のタブ＋左の目次＋見出し付きの節。年度を切り替えるとページ全体がその年度になる。
 // 歳出の決算は API の値。分野ごとの事業・事業の入れ替えは jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
 import * as React from 'react'
-import { ArrowSquareOutIcon, CaretDownIcon, ChatCircleIcon, GlobeIcon, MapPinIcon, NotePencilIcon, QuotesIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
+import { ArrowSquareOutIcon, BabyIcon, CaretDownIcon, ChatCircleIcon, FirstAidKitIcon, GlobeIcon, HouseLineIcon, MapPinIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
 import { StartForm } from '../chat/start-form'
 import type { StoredSession } from '../chat/store'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
@@ -80,12 +80,18 @@ function ProjectItem({ p }: { p: PolicyProject }) {
   )
 }
 
+/** 分野の id ごとの icon。分野は有権者の関心ごとの枠（profiles.ts の domains） */
+const DOMAIN_ICON: Record<string, typeof BabyIcon> = { kosodate: BabyIcon, iryo: FirstAidKitIcon, bosai: ShieldCheckIcon, kurashi: HouseLineIcon }
+
 function Domains({ year }: { year: ProfileYear }) {
   return (
     <Section id="domains" title="分野ごとの事業" link={[{ href: year.budgetSource, label: '当初予算' }, { href: year.evaluationSource, label: '事務事業評価' }]}>
       {year.domains.map((d) => (
         <div key={d.id} id={`d-${d.id}`} className="flex scroll-mt-32 lg:scroll-mt-20 flex-col gap-1 [&+&]:mt-12">
-          <h3 className="mb-3.5 border-l-4 border-primary py-0.5 pl-3.5 text-[19px] leading-snug sm:text-[22px]">{d.name}</h3>
+          <h3 className="mb-3.5 flex items-center gap-2.5 text-[19px] leading-snug sm:text-[22px]">
+            <DomainIcon id={d.id} />
+            {d.name}
+          </h3>
           <div className="border-t">
             {d.projects.length ? (
               d.projects.map((p) => <ProjectItem key={p.name} p={p} />)
@@ -96,6 +102,16 @@ function Domains({ year }: { year: ProfileYear }) {
         </div>
       ))}
     </Section>
+  )
+}
+
+function DomainIcon({ id }: { id: string }) {
+  const Icon = DOMAIN_ICON[id]
+  if (!Icon) return <span aria-hidden="true" className="h-6 w-1 rounded-full bg-primary" />
+  return (
+    <span aria-hidden="true" className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary sm:size-10">
+      <Icon className="size-5 sm:size-6" weight="duotone" />
+    </span>
   )
 }
 
