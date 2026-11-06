@@ -362,6 +362,47 @@
         ]
       }
     },
+    "dropped_bands": {
+      "description": "分冊の境目の頁（前の冊の最後の頁と次の冊の最初の頁が同じ印字）で、この冊が読まない行の帯。頁と縦の範囲（PDF の pt、上端・下端）を原典の描画で確かめて宣言し、真ん中がその範囲にある読みを除く。見出しと罫線は残す。読みを1つも含まなければ止める。",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "y_range": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 10
+          }
+        },
+        "required": [
+          "id",
+          "page",
+          "y_range",
+          "reason"
+        ]
+      }
+    },
     "header_readings": {
       "description": "OCR が読み違えた・読めなかった見出しの升の印字（字間の空いた「予　算　現　額」を「額」だけ読む等）。原画で確かめた升の位置（PDF の pt）と印字を、同じ組版の頁の一覧で宣言する。升に中心がある語を宣言の印字に置き換える。範囲外の頁や、金額の読みを含む升なら止める。",
       "type": "array",

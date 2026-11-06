@@ -602,7 +602,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "ae1e6f3de15af1283f0d81a417cbcf95780b0f08145015282bccd753f9248ce7",
+      "input_fingerprint": "f2ad08d79369e99b2dca7e46bea98b466669077cf5a714a7ceb8276e9900f902",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -632,7 +632,7 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "99bf528754844bdef759dcc92a1fd95082dff60c779287e9cb9996755ab42a14",
+      "input_fingerprint": "8036c7f8db1fa61845f9be0cc334929872cef8a1fb6add690d741ba8be192289",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -662,7 +662,7 @@
     {
       "table_id": "long-term-care-expenditure",
       "conversion_id": "long-term-care-settlement",
-      "input_fingerprint": "342af73be711739db9c3d04007e5ff8a9db4053b0f3c2e32bf942d1ce82852bb",
+      "input_fingerprint": "22403951d600c31f4c816a5203de80b6a99d1d38536e1d4e7b30282843a7d1be",
       "account": "介護保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -720,7 +720,7 @@
     {
       "table_id": "water-revenue-expenditure-detail",
       "conversion_id": "water-revenue",
-      "input_fingerprint": "6db633e9c4f56fd9084d28ff127d1a98cedac17247cf1b8c84414b7f224f9e74",
+      "input_fingerprint": "ff373be2934f30c2aca2d61d1392909f68649d170305f69810b3433964613069",
       "account": "水道事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '備考': 'indent'}。",
@@ -750,7 +750,7 @@
     {
       "table_id": "water-capital-expenditure-detail",
       "conversion_id": "water-capital",
-      "input_fingerprint": "10994abe6797aecad192bcad95bff6eca340d4455014aa332a2201706d637c08",
+      "input_fingerprint": "3579ef6f9be2cec8da05480625c5683b33f40d27d841e3195d5a05c9d89d519e",
       "account": "水道事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '備考': 'indent'}。",
