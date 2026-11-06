@@ -69,6 +69,23 @@ const Section = ({ id, title, lead, aside, link, children }: { id: string; title
   </section>
 )
 
+/** 区の評価の区分（A〜D）を丸で囲んだ印。良し悪しの色は付けない */
+function GradeMark({ grade }: { grade: string }) {
+  return <span aria-hidden="true" className="inline-grid size-5 shrink-0 place-items-center rounded-full border border-current text-[11px] leading-none">{grade}</span>
+}
+
+/** 「C やり方を見直す」を印と言葉に分ける */
+function Grade({ grade, className }: { grade: string; className?: string }) {
+  const m = /^([A-D])\s*(.*)$/.exec(grade)
+  if (!m) return <span className={className}>{grade}</span>
+  return (
+    <span className={`inline-flex items-center gap-1.5 ${className ?? ''}`}>
+      <GradeMark grade={m[1]!} />
+      <span><span className="sr-only">{m[1]} </span>{m[2]}</span>
+    </span>
+  )
+}
+
 /** 評価シートの小事業名。note の先頭の（）に書いてある */
 const evaluationUnit = (note: string) => /^（([^）]+)）/.exec(note)?.[1]
 
@@ -97,7 +114,7 @@ function ProjectItem({ p }: { p: PolicyProject }) {
               <ClipboardTextIcon aria-hidden="true" className="size-4" />
               {unit ? `区の評価（${unit}）` : '区の評価'}
             </span>
-            {p.evaluation.grade ? <b className="text-[14px] font-normal text-foreground">{p.evaluation.grade}</b> : null}
+            {p.evaluation.grade ? <Grade grade={p.evaluation.grade} className="text-[14px] text-foreground" /> : null}
           </p>
           {note ? <p className="text-[13px] text-muted-foreground [text-wrap:pretty]">{note}</p> : null}
         </div>
@@ -442,7 +459,7 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
         {grades.map(([g, label]) => (
           <div key={g} className="flex flex-col py-3">
             <b className="text-2xl font-normal leading-snug tabular-nums">{scrap.grades[g]}</b>
-            <span className="text-[13px] text-muted-foreground">{g} {label}</span>
+            <Grade grade={`${g} ${label}`} className="text-[13px] text-muted-foreground" />
           </div>
         ))}
       </div>
