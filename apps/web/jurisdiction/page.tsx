@@ -275,7 +275,7 @@ function Budget({ data, year }: { data: PageData; year: number }) {
     </div>
     {/* 決算・予算のタブとは別の形（メニュー）にし、金額の段階の切り替えと分け方の切り替えを見分けられるようにする */}
     <DropdownMenu>
-      <DropdownMenuTrigger aria-label="区分の切り替え" className="inline-flex items-center gap-1 rounded-md px-1.5 py-1 text-[13px] text-muted-foreground hover:text-foreground">
+      <DropdownMenuTrigger className="inline-flex items-center gap-1 rounded-md px-1.5 py-1 text-[13px] text-muted-foreground hover:text-foreground">
         <span>区分：</span>
         <span className="text-foreground">{VIEWS.find((v) => v.key === view)!.label}</span>
         <CaretDownIcon aria-hidden="true" className="size-3.5" />
