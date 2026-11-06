@@ -23,7 +23,7 @@ const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
 
 /** 区の評価から読める結果。unmeasured は、評価の指標がこの取り組みではなく同じ事業の別の内容を測っているもの */
 const BADGE: Record<ProjectStatus, { label: string; className: string; icon: typeof ClockIcon }> = {
-  short: { label: '目標に届いていない', className: 'bg-[color-mix(in_srgb,var(--kincha)_22%,transparent)] text-[var(--kincha-ink)]', icon: WarningCircleIcon },
+  short: { label: '目標に届いていない', className: 'bg-[color-mix(in_srgb,var(--kincha)_22%,transparent)] text-[color-mix(in_srgb,var(--kincha-ink),black_15%)]', icon: WarningCircleIcon },
   met: { label: '目標に届いた', className: 'bg-primary/15 text-primary', icon: CheckCircleIcon },
   mixed: { label: '達成と未達が混在', className: 'bg-secondary text-muted-foreground', icon: CircleHalfIcon },
   unmeasured: { label: '評価は別の内容', className: 'bg-secondary text-muted-foreground', icon: MinusCircleIcon },
@@ -310,17 +310,19 @@ const VIEWS: { key: FlowView; label: string }[] = [
 function Budget({ data, year }: { data: PageData; year: number }) {
   const [phase, setPhase] = React.useState<Phase>('settlement')
   const [view, setView] = React.useState<FlowView>('cofog')
-  const [open, setOpen] = React.useState<{ id: string; n: number }>()
+  // year は開く先の年度（「何をしている？」と同じ最新の決算）。n は押すたびに増やし、同じ分野を続けて押しても送り直す
+  const [open, setOpen] = React.useState<{ id: string; n: number; year?: number }>()
+  const seq = React.useRef(0)
   // 「何をしている？」の分野から来たら、決算の機能分類に切り替えてその大分類を開く
   React.useEffect(() => {
     const onOpen = (e: Event) => {
       setPhase('settlement')
       setView('cofog')
-      setOpen((prev) => ({ id: (e as CustomEvent<string>).detail, n: (prev?.n ?? 0) + 1 }))
+      setOpen({ id: (e as CustomEvent<string>).detail, n: ++seq.current, year: data.years.at(-1)?.year })
     }
     window.addEventListener(OPEN_KAN, onOpen)
     return () => window.removeEventListener(OPEN_KAN, onOpen)
-  }, [])
+  }, [data.years])
   const settled = data.years.find((y) => y.year === year)
   const total = phase === 'settlement' ? settled : undefined
   const prev = data.years.find((y) => y.year === year - 1)
@@ -376,7 +378,7 @@ function Budget({ data, year }: { data: PageData; year: number }) {
     >
       <div id="budget-panel" role="tabpanel" aria-labelledby={`tab-${phase}`} data-ask-view={`${reiwa(year)}の${label}の金額（${VIEWS.find((v) => v.key === view)!.label}）`} className="flex flex-col gap-4">
         {total ? (
-          <Flow key={`${year}-${view}`} data={data} total={total} view={view} tabs={tabs} summary={summary} open={open} onOpened={() => setOpen(undefined)} />
+          <Flow key={`${year}-${view}`} data={data} total={total} view={view} tabs={tabs} summary={summary} open={open?.year === year && view === 'cofog' ? open : undefined} onOpened={() => setOpen(undefined)} />
         ) : (
           <div className="rounded-[20px] border bg-background px-5 pt-5 sm:px-6">
             {tabs}

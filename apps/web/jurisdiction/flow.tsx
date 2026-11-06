@@ -385,12 +385,13 @@ export function Flow({ data, total: year, view = 'kan', tabs, summary, open, onO
   React.useEffect(() => {
     if (!open) return
     if (scrolled.current !== open.n) { root.current?.scrollIntoView({ behavior: 'smooth' }); scrolled.current = open.n }
+    if (error) { onOpened?.(); return }
     if (!flows.length) return
     const i = flows.findIndex((f) => f.kan.id === open.id)
     if (i >= 0) select(i)
     onOpened?.()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, flows.length])
+  }, [open, flows.length, error])
   const goTo = (i: number) => track.current?.scrollTo({ left: i * (track.current?.clientWidth ?? 0), behavior: 'smooth' })
   const go = (delta: number) => track.current?.scrollBy({ left: delta * (track.current?.clientWidth ?? 0), behavior: 'smooth' })
   const onKey = (e: React.KeyboardEvent) => {
