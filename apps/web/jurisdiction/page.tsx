@@ -151,7 +151,7 @@ function Overview({ data }: { data: PageData }) {
                 <b className="block text-[15px] font-normal">{f.name}</b>
                 <span className="block text-[13px] leading-snug text-muted-foreground">{f.examples}</span>
               </div>
-              <div className="shrink-0 text-right tabular-nums">
+              <div className="text-right tabular-nums">
                 <span className={`block text-[15px] ${spent ? '' : 'text-muted-foreground'}`}>{spent ? (spent.amountMissing ? '金額未記載' : formatYen(spent.yen)) : '—'}</span>
                 {spent && !spent.amountMissing && people ? <span className="block text-xs text-muted-foreground">1人 約{Math.round(spent.yen / people / 1e3) / 10}万円</span> : null}
               </div>
@@ -169,7 +169,8 @@ const OPEN_KAN = 'fudoki:open-kan'
 
 /** 分野の行。金額があれば、お金の流れのその分野へ移るリンクにする */
 function DomainLink({ kanId, children }: { kanId?: string; children: React.ReactNode }) {
-  const row = 'flex items-center gap-3 py-3'
+  // アイコン・名前・金額の3列を全行で同じ幅にし、行は隣の列の行と同じ高さいっぱいに広げて中央に揃える
+  const row = 'grid h-full grid-cols-[1.75rem_minmax(0,1fr)_5.5rem] items-center gap-3 py-3'
   if (!kanId) return <div className={row}>{children}</div>
   return (
     <a
