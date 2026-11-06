@@ -71,7 +71,7 @@ ORDER BY day
 
 ### 会話の記録
 
-D1 `fudoki-chat-log` の `chat_turns` に1往復1行で書く（列は `migrations/0001_chat_turns.sql`）。migration は自動では当たらないので、変えたら apps/web で `bunx wrangler d1 migrations apply fudoki-chat-log --remote` を手で流す（build 後の `dist/ssr/wrangler.json` か、同じ binding を書いた設定を `-c` で渡す）。読むのは `bunx wrangler d1 execute fudoki-chat-log --remote --command "<SQL>"`。
+D1 `fudoki-chat-log` の `chat_turns` に1往復1行で書く（列は `migrations/0001_chat_turns.sql`）。migration は自動では当たらないので、変えたら apps/web で `bun run build` のあと `bunx wrangler d1 migrations apply fudoki-chat-log --remote -c dist/ssr/wrangler.json` を手で流す（apps/web には wrangler の設定ファイルが無いので、build が書き出す設定を渡す）。読むのは `bunx wrangler d1 execute fudoki-chat-log --remote -c dist/ssr/wrangler.json --command "<SQL>"`。
 
 ```sql
 -- 直近7日の質問を、始めた頁ごとに多い順

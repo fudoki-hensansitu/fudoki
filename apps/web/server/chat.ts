@@ -142,6 +142,9 @@ export async function handleChat(c: ApiRequest): Promise<Response> {
   ].join('')
 
   let stepsDone = 0
+  // 段ごとに tool の呼び出しを貯める。失敗・中断したときも、それまでに使った tool を記録に残す
+  const counts: Record<string, number> = {}
+  const calls: ChatTurn['toolCalls'] = []
   const workersai = createWorkersAI({ binding: env.AI as never })
   const result = streamText({
     // 同じ会話を同じ replica に送り、送り直す履歴の prefix cache を効かせる（鍵は会話の無作為な ID だけ）
@@ -154,16 +157,13 @@ export async function handleChat(c: ApiRequest): Promise<Response> {
     abortSignal: c.request.signal,
     onStepEnd: (step) => {
       stepsDone++
+      for (const call of step.toolCalls) {
+        counts[call.toolName] = (counts[call.toolName] ?? 0) + 1
+        calls.push({ name: call.toolName, input: call.input })
+      }
       logStep(step)
     },
     onEnd: (event) => {
-      const counts: Record<string, number> = {}
-      const calls: ChatTurn['toolCalls'] = []
-      for (const step of event.steps)
-        for (const call of step.toolCalls) {
-          counts[call.toolName] = (counts[call.toolName] ?? 0) + 1
-          calls.push({ name: call.toolName, input: call.input })
-        }
       record(
         {
           inputTokens: event.totalUsage.inputTokens ?? 0,
@@ -179,12 +179,12 @@ export async function handleChat(c: ApiRequest): Promise<Response> {
     onError: ({ error }) => {
       logError(error)
       logTiming({ connectMs, totalMs: Date.now() - started, steps: stepsDone, error: 'model' })
-      record({ error: 'model' })
+      record({ error: 'model', tools: counts, steps: stepsDone }, calls)
       close()
     },
     onAbort: () => {
       logTiming({ connectMs, totalMs: Date.now() - started, steps: stepsDone, error: 'aborted' })
-      record({ error: 'aborted' })
+      record({ error: 'aborted', tools: counts, steps: stepsDone }, calls)
       close()
     },
   })

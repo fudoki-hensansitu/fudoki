@@ -10,6 +10,7 @@ describe('会話の記録', () => {
       '連絡は [メール] か [電話番号]、[電話番号]、[電話番号] へ',
     )
     expect(redact('(03) 1234-5678 と 03(1234)5678 と ０９０－１２３４－５６７８')).toBe('[電話番号] と [電話番号] と [電話番号]')
+    expect(redact('taro＠example．com')).toBe('[メール]')
     expect(redact('品川区の2025年度の歳出 1234567円 と 0120 は？')).toBe('品川区の2025年度の歳出 1234567円 と 0120 は？')
   })
 
@@ -48,6 +49,12 @@ describe('会話の記録', () => {
     const { db, runs } = fakeDb()
     await writeChatTurn(db, { ...turn, toolCalls: [{ name: 'search', input: { q: '連絡先\nfoo@example.com', limit: 5 } }] })
     expect(JSON.parse(runs[0]!.values[4] as string)).toEqual([{ name: 'search', input: { q: '連絡先\n[メール]', limit: 5 } }])
+  })
+
+  test('長すぎる tool の引数は落とし、JSON のまま名前だけを残す', async () => {
+    const { db, runs } = fakeDb()
+    await writeChatTurn(db, { ...turn, toolCalls: [{ name: 'search', input: { q: 'あ'.repeat(5000) } }] })
+    expect(JSON.parse(runs[0]!.values[4] as string)).toEqual([{ name: 'search', truncated: true }])
   })
 
   test('記録の失敗は投げず、binding が無ければ何もしない', async () => {
