@@ -120,7 +120,7 @@ erDiagram
 ### 識別子
 
 - `node_key`: 今の `node_id`。資料区分を含まないので、同じ自治体・年度の当初予算と決算の同じ項目が同じ値になる。予算と決算の突き合わせに使う。
-- `subject_id` / `detail_id`: `sha256(to_json([document_kind, amendment_number, node_key]))`。資料区分と補正号を含むので、一つの表で一意になる。取得の操作はこの ID で引く。
+- `subject_id` / `detail_id`: `sha256(to_json([document_kind, amendment_number::varchar, node_key]))`。資料区分と補正号を含むので、一つの表で一意になる。取得の操作はこの ID で引く。
 
 ### `fiscal_expenditure_subject`
 
