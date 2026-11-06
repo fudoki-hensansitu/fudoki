@@ -1,7 +1,7 @@
 // 全ページの左に置くサイドバー（shadcn の Sidebar）。pages/layout.tsx が置き、頁の間を移っても描き直さない
 import * as React from 'react'
 import { Link } from '@void/react'
-import { BankIcon, ChatIcon, SparkleIcon, GithubLogoIcon, HouseIcon, PlugIcon, SidebarSimpleIcon, XLogoIcon } from '@phosphor-icons/react'
+import { BankIcon, ChatIcon, RobotIcon, GithubLogoIcon, HouseIcon, PlugIcon, SidebarSimpleIcon, XLogoIcon } from '@phosphor-icons/react'
 import {
   Sidebar,
   SidebarContent,
@@ -116,7 +116,7 @@ function BottomNav({ active }: { active?: NavSection }) {
   const items = [
     { href: '/', label: 'ホーム', icon: <HouseIcon /> },
     { href: '/jurisdictions', label: '自治体一覧', icon: <BankIcon />, active: active === 'jurisdictions' },
-    { href: '/assistant', label: 'アシスタント', icon: <SparkleIcon />, active: active === 'assistant' },
+    { href: '/assistant', label: 'アシスタント', icon: <RobotIcon />, active: active === 'assistant' },
     { href: MCP, label: 'MCP', icon: <PlugIcon /> },
     { href: FEEDBACK, label: 'フィードバック', icon: <ChatIcon /> },
   ]
@@ -165,7 +165,7 @@ export function SiteNav({ active, open }: SiteNavProps) {
             <SidebarGroup>
               <SidebarMenu>
                 <Item href="/jurisdictions" label="自治体一覧" icon={<BankIcon />} active={active === 'jurisdictions'} />
-                <Item href="/assistant" label="アシスタント" icon={<SparkleIcon />} active={active === 'assistant'} />
+                <Item href="/assistant" label="アシスタント" icon={<RobotIcon />} active={active === 'assistant'} />
               </SidebarMenu>
             </SidebarGroup>
           </SidebarContent>
