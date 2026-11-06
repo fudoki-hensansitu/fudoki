@@ -247,7 +247,7 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
         for origin in population.origins():
             path = population.fetch(origin, remote=remote)
             population_origins.append((population.origin_id(origin), origin['reference_date'], origin['url']))
-            residents += [(population.origin_id(origin), *row) for row in population.read(con, path)]
+            residents += [(population.origin_id(origin), *row) for row in population.read(con, path, origin['reference_date'])]
         con.execute('create or replace table ingestion.population_origin (origin_id varchar, reference_date date, url varchar)')
         con.execute('create or replace table ingestion.resident_register (origin_id varchar, jurisdiction_code varchar, male bigint, female bigint, population bigint, households bigint)')
         if population_origins:

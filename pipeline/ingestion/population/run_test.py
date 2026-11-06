@@ -17,14 +17,19 @@ class ParseTest(unittest.TestCase):
                        ('130001', '東京都', '-', '6909523', '7168017', '14077553', '7778945'),
                        ('131091', '東京都', '品川区', '203897', '211747', '415644', '240687'),
                        ('注2：外国人住民のうち…', None, None, None, None, None, None)]
-        self.assertEqual(parse(rows), [('130001', 6909523, 7168017, 14077553, 7778945),
+        self.assertEqual(parse(rows, '2026-01-01'), [('130001', 6909523, 7168017, 14077553, 7778945),
                                        ('131091', 203897, 211747, 415644, 240687)])
 
     def test_changed_columns_stop(self):
         rows = [*HEAD[:2], (None, None, None, '男', '女', '世帯数', '計'), HEAD[3],
                 ('131091', '東京都', '品川区', '1', '2', '3', '4')]
         with self.assertRaisesRegex(ValueError, 'header'):
-            parse(rows)
+            parse(rows, '2026-01-01')
+
+    def test_reference_date_that_differs_from_the_title_stops(self):
+        rows = HEAD + [('131091', '東京都', '品川区', '1', '2', '3', '4')]
+        with self.assertRaisesRegex(ValueError, 'title'):
+            parse(rows, '2025-01-01')
 
 
 if __name__ == '__main__':

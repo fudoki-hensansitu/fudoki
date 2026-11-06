@@ -23,6 +23,7 @@ from ingestion.paths import CACHE
 ORIGINS = Path(__file__).with_name('origins.json')
 OBJECTS = CACHE / 'objects'
 # 見出しの行（「人口」の下の段）。この並びでなければ様式が変わったので止める
+MAX_ROWS = 10000
 HEADER = ('男', '女', '計', '世帯数')
 
 
@@ -71,7 +72,7 @@ def save(origin: dict) -> Path:
     try:
         # 様式が違う・エラーの頁が返ったときは、読めずにここで止まり、キャッシュも R2 も上書きしない
         with duckdb.connect() as con:
-            read(con, temporary)
+            read(con, temporary, origin['reference_date'])
         os.replace(temporary, path)
     finally:
         temporary.unlink(missing_ok=True)
@@ -80,8 +81,22 @@ def save(origin: dict) -> Path:
     return path
 
 
-def parse(rows: list[tuple]) -> list[tuple[str, int, int, int, int]]:
-    """xlsx の行（文字列）から (自治体コード, 男, 女, 計, 世帯数)。合計の行（コード「-」）と注記は読まない。"""
+def printed_date(reference_date: str) -> str:
+    """基準日を表題の印字（「令和8年1月1日」）に直す。令和より前の資料は扱わない。"""
+    year, month, day = (int(part) for part in reference_date.split('-'))
+    if year < 2020:
+        raise ValueError(f'Reference date before Reiwa 2 is not supported: {reference_date}')
+    return f'令和{year - 2018}年{month}月{day}日'
+
+
+def parse(rows: list[tuple], reference_date: str) -> list[tuple[str, int, int, int, int]]:
+    """xlsx の行（文字列）から (自治体コード, 男, 女, 計, 世帯数)。合計の行（コード「-」）と注記は読まない。
+
+    宣言の URL と基準日を取り違えないよう、表題に印字された基準日を宣言と突き合わせる。
+    """
+    title = rows[0][0] if rows and rows[0] else None
+    if not title or not title.startswith(printed_date(reference_date) + '住民基本台帳'):
+        raise ValueError(f'Resident register title does not match {reference_date}: {title}')
     start = next((i for i, row in enumerate(rows) if row and row[0] == '団体コード'), None)
     if start is None or start < 2 or tuple(rows[start - 1][3:7]) != HEADER:
         raise ValueError('Unexpected resident register layout: header row not found')
@@ -99,12 +114,15 @@ def parse(rows: list[tuple]) -> list[tuple[str, int, int, int, int]]:
     return out
 
 
-def read(con, path: Path) -> list[tuple[str, int, int, int, int]]:
+def read(con, path: Path, reference_date: str) -> list[tuple[str, int, int, int, int]]:
     con.execute('install excel')
     con.execute('load excel')
-    rows = con.execute("select * from read_xlsx(?, header = false, all_varchar = true, range = 'A1:G5000')",
+    # 範囲を開けると空の行まで100万行読むので上限を置き、上限の行まで埋まっていたら切れたとみなして止める
+    rows = con.execute(f"select * from read_xlsx(?, header = false, all_varchar = true, range = 'A1:G{MAX_ROWS}')",
                        [str(path)]).fetchall()
-    return parse(rows)
+    if len(rows) >= MAX_ROWS and any(rows[-1]):
+        raise ValueError(f'Resident register may exceed {MAX_ROWS} rows; raise MAX_ROWS')
+    return parse(rows, reference_date)
 
 
 def main() -> None:
