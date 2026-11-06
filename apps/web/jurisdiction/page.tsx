@@ -68,7 +68,7 @@ function Grade({ grade, className }: { grade: string; className?: string }) {
 }
 
 function ProjectItem({ p, sheets }: { p: EvaluatedProject; sheets?: string }) {
-  const { name, unit, target, actual } = p.indicator
+  const i = p.indicator
   return (
     // 1列で上から読む。金額は名前と同じ行の右に置き、評価の枠は幅いっぱいに出す。値はどれも評価シートのもの
     <div className="flex flex-col gap-2 border-b border-foreground/10 py-4">
@@ -84,7 +84,7 @@ function ProjectItem({ p, sheets }: { p: EvaluatedProject; sheets?: string }) {
           評価
         </span>
         <Grade grade={p.grade} className="align-middle" />
-        （{p.direction}）。指標の「{name}」は、目標 {target}{unit}に対して実績 {actual}{unit}。
+        （{p.direction}）。{i ? `指標の「${i.name}」は、目標 ${i.target}${i.unit}に対して実績 ${i.actual}${i.unit}。` : '目標と実績を並べた指標は載っていない。'}
         {sheets ? (
           <Button variant="link" size="inline" nativeButton={false} render={<a href={`${sheets}#page=${p.page}`} target="_blank" rel="noopener" />} className="ml-1 align-baseline">
             評価シート「{p.name}」
@@ -146,7 +146,7 @@ function Overview({ data, sections }: { data: PageData; sections: Set<string> })
   )
 }
 
-/** 分野の行。その年度の「暮らしで何が変わった？」にその分野があれば、そこへ移るリンクにする */
+/** 分野の行。その年度の「新しく何を始めた？」にその分野があれば、そこへ移るリンクにする */
 function DomainLink({ section, children }: { section?: string; children: React.ReactNode }) {
   // アイコン・名前・金額の3列を全行で同じ幅にし、行は隣の列の行と同じ高さいっぱいに広げて中央に揃える
   const row = 'grid h-full grid-cols-[1.75rem_minmax(0,1fr)_5.5rem] items-center gap-3 py-3'
@@ -166,7 +166,7 @@ function DomainLink({ section, children }: { section?: string; children: React.R
 function Domains({ year, fiscalYear }: { year: ProfileYear; fiscalYear: number }) {
   const groups = groupByFrame(year.projects)
   return (
-    <Section id="domains" title="暮らしで何が変わった？" lead="区が事業ごとに目標と実績を振り返る「事業評価」から、分野ごとに決算額の大きい3事業です。" link={groups.length ? { href: year.evaluationSource, label: '事業評価' } : undefined}>
+    <Section id="domains" title="新しく何を始めた？" lead="区が事業ごとに目標と実績を振り返る「事業評価」のうち、この年度に新しくできた事業とその評価です。" link={groups.length ? { href: year.evaluationSource, label: '事業評価' } : undefined}>
       {/* 事業評価は実施した翌年度に公表する。まだの年度も節は出し、なぜ空かを言う */}
       {groups.length ? null : <p className="rounded-xl border border-dashed px-4 py-6 text-sm text-muted-foreground">{reiwa(fiscalYear)}の事業の評価は、{reiwa(fiscalYear + 1)}に公表されます。まだ公表されていません。</p>}
       {groups.map(({ frame: d, items }) => (
@@ -497,7 +497,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
     { href: '#projects', label: '大きな支出' },
   ]
   // 区政を知らない人には金額より暮らしの具体例が先。変わったことから入り、お金の内訳へ進む
-  const fresh: TocItem[] = py ? [{ href: '#domains', label: '暮らしで変わったこと' }, ...groupByFrame(py.projects).map(({ frame: d }) => ({ href: `#d-${d.id}`, label: d.name, sub: true }))] : []
+  const fresh: TocItem[] = py ? [{ href: '#domains', label: '新しく始めたこと' }, ...groupByFrame(py.projects).map(({ frame: d }) => ({ href: `#d-${d.id}`, label: d.name, sub: true }))] : []
   const toc: TocItem[] = [
     { href: '#about', label: `${data.name.slice(-1)}の仕事` },
     ...fresh,
