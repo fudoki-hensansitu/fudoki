@@ -5,7 +5,7 @@ export interface RateLimiter {
 export interface AnalyticsDataset {
   writeDataPoint(point: { indexes?: string[]; blobs?: string[]; doubles?: number[] }): void
 }
-/** D1 の使う部分だけ（会話の記録を書く） */
+/** D1 の使う部分だけ（会話を保存する） */
 export interface ChatLogStatement {
   bind(...values: unknown[]): ChatLogStatement
 }
@@ -26,7 +26,7 @@ export interface Env {
   VIEW_RATE_LIMIT?: RateLimiter
   /** 利用状況（会話の本文・IP は書かない） */
   CHAT_USAGE?: AnalyticsDataset
-  /** 改善のための会話の記録（server/chat-log.ts。IP・回答本文は書かない）。無ければ書かない */
+  /** 会話の保存（server/chat-log.ts。復元と分析に使う。IP は書かない）。無ければ書かない */
   CHAT_LOG?: ChatLogDatabase
   /** Workers AI のモデル ID。config の var で切り替える */
   CHAT_MODEL?: string

@@ -1,6 +1,6 @@
 // 公開 web の Worker（fudoki）の設定。build（vite build）が dist/ssr/wrangler.json に書き出し、deploy は wrangler がそれを読む。
 // データ（D1・R2・KV など）の binding は持たせず、データは apps/api に Service Binding で聞く（pipeline/verify/boundaries.ts が検査する）。
-// 例外は AI との会話の記録（CHAT_LOG）だけ。風土記のデータではなく、web が書くだけの別の D1 にする
+// 例外は AI との会話の保存（CHAT_LOG）だけ。風土記のデータではなく、web が書くだけの別の D1 にする
 import { defineConfig } from 'void/config'
 
 // 本番と PR ごとの preview（wrangler preview）で同じにする binding。preview は previews に書いたものしか持たないので、両方に渡す
@@ -70,7 +70,7 @@ export default defineConfig({
     // 利用状況（時刻・モデル・token 数・tool の回数・段数・所要時間・失敗の有無）。会話の本文と IP は書かない。
     // preview には渡さない（本番の集計に混ぜない。dataset が無ければ server/usage.ts は何もしない）
     analytics_engine_datasets: [{ binding: 'CHAT_USAGE', dataset: 'fudoki_web_chat' }],
-    // 会話の1往復ごとの記録（質問・使った tool・失敗・token など。AI の回答と IP・UA は書かない。90日で消す）。改善の分析に SQL で読む。
+    // 会話の保存（質問と回答・使った tool・失敗・token など。IP・UA は書かない。ログインしていない会話は90日で消す）。復元と改善の分析に使う。
     // migration は自動では当たらないので、変えたら apps/web で wrangler d1 migrations apply --remote を手で流す（README）。preview には渡さない
     d1_databases: [{ binding: 'CHAT_LOG', database_name: 'fudoki-chat-log', database_id: 'ad5e6652-6ae8-4a77-8277-93aecaf1905c', migrations_dir: 'migrations' }],
     previews: {

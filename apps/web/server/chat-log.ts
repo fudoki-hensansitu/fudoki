@@ -1,19 +1,25 @@
-// 風土記の AI との会話を、改善のための分析用に D1（CHAT_LOG）へ1往復1行で書く。表は migrations/0001_chat_turns.sql。
-// 利用者を特定する情報（IP・UA・cookie）と AI の回答本文は書かない。質問のメールアドレス・電話番号の形は伏せ、90日を過ぎた行は書くたびに消す
+// 風土記の AI との会話を D1（CHAT_LOG）に保存する。表は migrations/0001_conversations.sql。あとで会話を開き直す（復元）のと、改善の分析の両方に使う。
+// 利用者を特定する情報（IP・UA・cookie）は書かない。利用者が書いたもの（質問・頁の文脈・AI が質問から写す tool の引数）のメールアドレス・電話番号の形は伏せる。
+// ログインしていない会話は、最後の発言から90日を過ぎたら書くたびに消す
+import type { UIMessage } from 'ai'
 import type { ChatLogDatabase } from './env'
 import { logError } from './log'
 
-/** 記録を残す日数。プライバシーポリシー（apps/docs の legal）と入力欄の下の注記に同じ日数を書いている */
+/** ログインしていない会話を残す日数。プライバシーポリシー（apps/docs の legal）と入力欄の下の注記に同じ日数を書いている */
 export const CHAT_LOG_RETENTION_DAYS = 90
-/** tool の引数の JSON がこの文字数を超えたら、引数を落として tool の名前だけを残す（列は JSON のまま読めるようにする） */
-const MAX_TOOL_CALLS_CHARS = 4000
+/** 回答の parts の JSON がこの文字数を超えたら、tool の結果を落とす（それでも超えたら回答の文だけにする） */
+const MAX_PARTS_CHARS = 200_000
 
 export interface ChatTurn {
   conversationId: string
+  /** 何回目の質問か（1 から） */
   turn: number
   entry: string
+  questionId: string
   question: string
-  toolCalls: { name: string; input: unknown }[]
+  context: string
+  /** 画面に送った AI の回答。応答を始める前に失敗したときは無い */
+  answer?: UIMessage
   model: string
   error: string
   inputTokens: number
@@ -32,21 +38,45 @@ export function redact(text: string): string {
   return text.replace(/[０-９Ａ-Ｚａ-ｚ＋－（）＠．＿]/g, (ch) => String.fromCharCode(ch.charCodeAt(0) - 0xfee0)).replace(EMAIL, '[メール]').replace(PHONE, (m) => (m.replace(/\D/g, '').length >= 10 ? '[電話番号]' : m))
 }
 
+type Part = UIMessage['parts'][number]
+
+/** 回答の parts を保存する JSON にする。tool の引数は伏せ、長すぎるときは tool の結果、次に文以外を落とす */
+export function answerParts(parts: Part[]): string {
+  const hide = (p: Part): Part => ('input' in p && p.input !== undefined ? ({ ...p, input: JSON.parse(JSON.stringify(p.input, (_, v: unknown) => (typeof v === 'string' ? redact(v) : v))) } as Part) : p)
+  const full = JSON.stringify(parts.filter((p) => p.type !== 'reasoning').map(hide))
+  if (full.length <= MAX_PARTS_CHARS) return full
+  const withoutOutput = JSON.stringify(
+    parts.filter((p) => p.type !== 'reasoning').map((p) => {
+      const { output: _output, ...rest } = hide(p) as Part & { output?: unknown }
+      return 'output' in p ? ({ ...rest, outputDropped: true } as unknown as Part) : rest
+    }),
+  )
+  if (withoutOutput.length <= MAX_PARTS_CHARS) return withoutOutput
+  return JSON.stringify(parts.filter((p) => p.type === 'text').map((p) => ({ ...p, text: (p as { text: string }).text.slice(0, MAX_PARTS_CHARS / 2) })))
+}
+
+/** 1往復（質問と回答の2行）を書き、ログインしていない古い会話を消す。失敗しても応答は落とさない */
 export function writeChatTurn(db: ChatLogDatabase | undefined, t: ChatTurn, now = Date.now()): Promise<unknown> {
   if (!db) return Promise.resolve()
-  // AI が質問の文を tool の引数に写すことがあるので、引数の文字列も伏せる
-  const calls = JSON.stringify(t.toolCalls, (_, v: unknown) => (typeof v === 'string' ? redact(v) : v))
+  const expired = now - CHAT_LOG_RETENTION_DAYS * 86_400_000
+  const insertMessage =
+    'INSERT OR REPLACE INTO messages (conversation_id, seq, message_id, role, parts, context, model, error, input_tokens, output_tokens, steps, duration_ms, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
   return db
     .batch([
       db
-        .prepare(
-          'INSERT INTO chat_turns (conversation_id, turn, entry, question, tool_calls, model, error, input_tokens, output_tokens, steps, duration_ms, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-        )
-        .bind(t.conversationId, t.turn, t.entry, redact(t.question), calls.length > MAX_TOOL_CALLS_CHARS ? JSON.stringify(t.toolCalls.map((c) => ({ name: c.name, truncated: true }))) : calls, t.model, t.error, t.inputTokens, t.outputTokens, t.steps, t.durationMs, now),
-      db.prepare('DELETE FROM chat_turns WHERE created_at < ?').bind(now - CHAT_LOG_RETENTION_DAYS * 86_400_000),
+        .prepare('INSERT INTO conversations (id, user_id, entry, created_at, updated_at) VALUES (?, NULL, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET updated_at = excluded.updated_at')
+        .bind(t.conversationId, t.entry, now, now),
+      db
+        .prepare(insertMessage)
+        .bind(t.conversationId, t.turn * 2 - 1, t.questionId, 'user', JSON.stringify([{ type: 'text', text: redact(t.question) }]), redact(t.context), null, null, null, null, null, null, now),
+      db
+        .prepare(insertMessage)
+        .bind(t.conversationId, t.turn * 2, t.answer?.id ?? '', 'assistant', answerParts(t.answer?.parts ?? []), '', t.model, t.error, t.inputTokens, t.outputTokens, t.steps, t.durationMs, now),
+      db.prepare('DELETE FROM messages WHERE conversation_id IN (SELECT id FROM conversations WHERE user_id IS NULL AND updated_at < ?)').bind(expired),
+      db.prepare('DELETE FROM conversations WHERE user_id IS NULL AND updated_at < ?').bind(expired),
     ])
     .catch((e: unknown) => {
-      // 記録の失敗で応答を落とさない
+      // 保存の失敗で応答を落とさない
       logError(e)
     })
 }
