@@ -7,6 +7,7 @@ import { ArrowLeftIcon, ArrowRightIcon, ArrowSquareOutIcon, CaretRightIcon, MapP
 import { StartForm } from '../chat/start-form'
 import type { StoredSession } from '../chat/store'
 import { Hint } from '@/components/hint'
+import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { DOMAIN_FRAMES, groupByFrame, OTHER_FRAME } from './domains'
@@ -55,10 +56,10 @@ const Section = ({ id, title, lead, aside, link, children }: { id: string; title
       {link ? (
         <div className="flex flex-wrap gap-x-4 gap-y-1">
           {(Array.isArray(link) ? link : [link]).map((l) => (
-            <a key={l.href} href={l.href} target="_blank" rel="noopener" className="inline-flex items-center gap-1 whitespace-nowrap text-[13px] text-primary no-underline hover:underline">
+            <Button key={l.href} variant="link" size="inline" nativeButton={false} render={<a href={l.href} target="_blank" rel="noopener" />} className="text-[13px]">
               {l.label}
               <ArrowSquareOutIcon aria-hidden="true" className="size-3.5" />
-            </a>
+            </Button>
           ))}
         </div>
       ) : null}
@@ -633,7 +634,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
             <div className="flex flex-wrap gap-x-2.5 gap-y-1.5 whitespace-nowrap text-xs text-muted-foreground sm:gap-x-6 sm:text-sm">
               <span className="inline-flex items-center gap-1 sm:gap-1.5">
                 <MapPinIcon className="size-3.5 sm:size-4" aria-hidden="true" />
-                <Link href={data.prefecturePath} className="text-primary no-underline">{data.prefecture}</Link>
+                <Button variant="link" size="inline" nativeButton={false} render={<Link href={data.prefecturePath} />}>{data.prefecture}</Button>
               </span>
               {data.population ? (
                 <Hint label={`住民基本台帳人口（${formatAsOf(data.population.asOf)}時点）`}>
@@ -647,7 +648,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
               {data.officialUrl ? (
                 <span className="inline-flex items-center gap-1 sm:gap-1.5">
                   <GlobeIcon className="size-3.5 sm:size-4" aria-hidden="true" />
-                  <a href={data.officialUrl} target="_blank" rel="noopener" className="text-primary no-underline">公式サイト</a>
+                  <Button variant="link" size="inline" nativeButton={false} render={<a href={data.officialUrl} target="_blank" rel="noopener" />}>公式サイト</Button>
                 </span>
               ) : null}
             </div>
