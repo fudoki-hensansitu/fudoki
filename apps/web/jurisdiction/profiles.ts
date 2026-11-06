@@ -1,5 +1,5 @@
-// 自治体の個別ページに載せる、区の方針・政策領域・事業の入れ替え。API にはまだ無いので、出典（予算編成方針・当初予算の主な施策・
-// 事務事業評価・基本構想）から手で起こした値をここに置く。金額は出典の千円を円にしたもの。画像は static/jurisdictions/<code>/ に置く
+// 自治体の個別ページに載せる、区の政策領域・事業の入れ替え。API にはまだ無いので、出典（予算編成方針・当初予算の主な施策・
+// 事務事業評価・基本構想）から手で起こした値をここに置く。金額は出典の千円を円にしたもの。紋章は static/jurisdictions/<code>/ に置く
 // 政策領域への事業の振り分けと文の要約は風土記の判断で、出典の文言そのものではない
 
 export interface Amount {
@@ -27,12 +27,6 @@ export interface Domain {
   projects: PolicyProject[]
 }
 
-export interface Policy {
-  title: string
-  body: string
-  image: string
-}
-
 export interface Scrap {
   /** 事務事業評価で捻出した財源 */
   raisedYen: number
@@ -46,7 +40,6 @@ export interface Scrap {
 export interface ProfileYear {
   /** 方針の出典（予算編成方針の頁） */
   policySource: string
-  policies: Policy[]
   domains: Domain[]
   scrap?: Scrap
   sources: string[]
@@ -91,23 +84,6 @@ const SHINAGAWA: Profile = {
     "2026": {
       "policySource": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/729/20250730113250_2.pdf",
       "documents": {"initial": [{"label": "予算書", "href": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/654/2026tousyoyosan_3.pdf"}]},
-      "policies": [
-        {
-          "title": "ウェルビーイングの深化",
-          "body": "4つの政策領域の事業で、誰もが使う基礎的な行政サービスと、災害や疾病など誰もが抱えうるリスクへの備えを等しく提供する。",
-          "image": "policy-1.jpg"
-        },
-        {
-          "title": "未来志向の戦略的な投資",
-          "body": "SDGs 未来都市として、持続可能な経済・環境・社会をつくる。AI やデジタルツールで内部事務を効率化し、人材を育てる。",
-          "image": "policy-2.jpg"
-        },
-        {
-          "title": "持続可能な自治体経営",
-          "body": "事業に優先順位をつけて入れ替える。背景・課題・費用対効果を明確にしてから予算を要求する。",
-          "image": "policy-3.jpg"
-        }
-      ],
       "domains": [
         {
           "id": "anzen",
@@ -280,23 +256,6 @@ const SHINAGAWA: Profile = {
     "2025": {
       "policySource": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/730/20240730173216_1.pdf",
       "documents": {"settlement": [{"label": "決算書", "href": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/751/r7/r7_2.pdf"}], "initial": [{"label": "予算書（1〜5款）", "href": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/655/2025tousyoyosan_5.pdf"}, {"label": "予算書（6〜9款）", "href": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/655/2025tousyoyosan_6.pdf"}]},
-      "policies": [
-        {
-          "title": "ウェルビーイングの進化（深化）",
-          "body": "区民アンケートから選んだ4つの政策領域で、区民の幸福を高める取り組みを加速する。事務事業評価で20億円を生み出し、その財源にあてる。",
-          "image": "policy-1.jpg"
-        },
-        {
-          "title": "SDGs の達成を加速する",
-          "body": "SDGs 未来都市と自治体 SDGs モデル事業に選ばれたことを機に、「子どもとともに創るウェルビーイングシティしながわ」を目指す。区民・企業・大学などと共に施策をつくる。",
-          "image": "domain-mirai.jpg"
-        },
-        {
-          "title": "働き方を変える",
-          "body": "新庁舎への移転を見据えて DX 人材を育てる。生成 AI やデジタルツールで業務を効率化し、人と財源をより重要な事業に回す。",
-          "image": "policy-2.jpg"
-        }
-      ],
       "domains": [
         {
           "id": "anzen",
@@ -478,23 +437,6 @@ const SHINAGAWA: Profile = {
     "2024": {
         "policySource": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/731/20230731131455_1.pdf",
         "documents": {"settlement": [{"label": "決算書", "href": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/751/r6/r6_2.pdf"}], "initial": [{"label": "予算書", "href": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/656/20240208145918_8.pdf"}]},
-        "policies": [
-          {
-            "title": "誰もが自分らしく暮らせる品川区",
-            "body": "子ども、現役世代、高齢者、障害者など、誰もが生きがいを感じて暮らせる区を目指す。いまも将来も、区民の誰もが幸福を実感できる施策を進める。",
-            "image": "policy-1.jpg"
-          },
-          {
-            "title": "職員の提案を施策にする",
-            "body": "職員事業提案制度を始める。提案された事業は、関係する部署が今の課題や既存の事業との関係を踏まえて、新しい施策として実施を検討する。",
-            "image": "policy-2.jpg"
-          },
-          {
-            "title": "事務事業評価で無駄をなくす",
-            "body": "物価の高騰を踏まえ、事務事業評価で見直すべき事業を確かめて無駄をなくす。実施計画と SDGs を進めるため、歳出と歳入の両方で工夫する。",
-            "image": "policy-3.jpg"
-          }
-        ],
         "domains": [
           {
             "id": "anzen",
