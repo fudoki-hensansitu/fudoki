@@ -229,10 +229,10 @@ const PHASES: { key: Phase; label: string }[] = [
   { key: 'settlement', label: '決算' },
   { key: 'budget', label: '予算' },
 ]
-/** お金の流れの分け方。既定は分野（COFOG の枠）で、どの自治体も同じ枠で比べられる。款は予算書・決算書の科目のまま */
+/** お金の流れの分け方。既定は機能分類（目的で分ける COFOG を domains.ts の枠にまとめたもの）で、どの自治体も同じ枠で比べられる。自治体分類は予算書・決算書の款・項のまま */
 const VIEWS: { key: FlowView; label: string }[] = [
-  { key: 'cofog', label: '全国共通の区分' },
-  { key: 'kan', label: '自治体の区分' },
+  { key: 'cofog', label: '機能分類' },
+  { key: 'kan', label: '自治体分類' },
 ]
 
 /** 予算の節。決算と予算をタブで切り替える。予算はまだ取り込んでいないので、どの年度も空の枠を出す */
@@ -276,7 +276,7 @@ function Budget({ data, year }: { data: PageData; year: number }) {
     {/* 決算・予算のタブとは別の形（メニュー）にし、金額の段階の切り替えと分け方の切り替えを見分けられるようにする */}
     <DropdownMenu>
       <DropdownMenuTrigger className="inline-flex items-center gap-1 rounded-md px-1.5 py-1 text-[13px] text-muted-foreground hover:text-foreground">
-        <span>区分：</span>
+        <span>分類：</span>
         <span className="text-foreground">{VIEWS.find((v) => v.key === view)!.label}</span>
         <CaretDownIcon aria-hidden="true" className="size-3.5" />
       </DropdownMenuTrigger>
@@ -294,7 +294,7 @@ function Budget({ data, year }: { data: PageData; year: number }) {
     <Section
       id="budget"
       title="お金は何に使われた？"
-      lead="1年間に使ったお金（決算）と、使う予定のお金（予算）を、使い道ごとに分けています。全国共通の区分はどの自治体も同じ分け方なので、ほかの自治体と比べられます。"
+      lead="1年間に使ったお金（決算）と、使う予定のお金（予算）を、使い道ごとに分けています。機能分類は使い道の目的で分けていて、どの自治体も同じ分け方なので比べられます。自治体分類は予算書・決算書の款・項のままです。"
       link={docs.length ? docs : undefined}
     >
       <div id="budget-panel" role="tabpanel" aria-labelledby={`tab-${phase}`} data-ask-view={`${reiwa(year)}の${label}の金額（${VIEWS.find((v) => v.key === view)!.label}）`} className="flex flex-col gap-4">
