@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs'
 import { COFOG_DIVISION_LABELS, COFOG_DIVISIONS } from '@fudoki/fiscal/cofog-master'
 import { DOMAIN_FRAMES, frameOf, groupByFrame } from '../jurisdiction/domains'
 import { PROFILES } from '../jurisdiction/profiles'
+import { BUDGET_PRESS } from '../jurisdiction/budget-press'
 
 // 分野の枠から事業が漏れると、ページから黙って消える
 const masterCodes = readFileSync(new URL('../../../pipeline/dbt/seeds/fiscal/cofog_master.csv', import.meta.url), 'utf8')
@@ -23,10 +24,15 @@ describe('分野の枠', () => {
       for (const [year, y] of Object.entries(profile.years)) {
         for (const p of y.projects) expect(masterCodes, `${year} ${p.name}`).toContain(p.cofog)
         expect(groupByFrame(y.projects).flatMap((g) => g.items).length).toBe(y.projects.length)
-        // 予算の資料の項目は、分類できない目（空）なら「その他」に入る
-        for (const p of y.budgetNew ?? []) if (p.cofog) expect(masterCodes, `${year} ${p.name}`).toContain(p.cofog)
-        expect(groupByFrame(y.budgetNew ?? []).flatMap((g) => g.items).length).toBe(y.budgetNew?.length ?? 0)
-        for (const p of y.budgetNew ?? []) if (!p.cofog) expect(groupByFrame([p]).map((g) => g.frame.id), `${year} ${p.name}`).toEqual(['other'])
+      }
+    }
+  })
+  test('予算案のプレス発表の施策は COFOG のマスタにあるコードを持ち、分類できないもの（空）は「その他」に入る', () => {
+    for (const years of Object.values(BUDGET_PRESS)) {
+      for (const [year, { items }] of Object.entries(years)) {
+        for (const p of items) if (p.cofog) expect(masterCodes, `${year} p${p.page}`).toContain(p.cofog)
+        expect(groupByFrame(items).flatMap((g) => g.items).length).toBe(items.length)
+        for (const p of items) if (!p.cofog) expect(groupByFrame([p]).map((g) => g.frame.id), `${year} p${p.page}`).toEqual(['other'])
       }
     }
   })

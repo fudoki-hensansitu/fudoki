@@ -11,9 +11,10 @@ import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { StopIcon, NewIcon, UpIcon } from './fresh-icons'
 import { DOMAIN_FRAMES, groupByFrame, OTHER_FRAME } from './domains'
+import type { PressItem } from './budget-press'
 import { EMBLEMS } from './emblems'
 import { Flow } from './flow'
-import { assetPath, type BudgetNew, type EvaluatedProject, type Initiative, type ProfileYear, type Scrap } from './profiles'
+import { assetPath, type EvaluatedProject, type Initiative, type ProfileYear, type Scrap } from './profiles'
 import { changePct, INDEX_PATH, formatAsOf, formatPeople, formatYen, reiwa, yearName, type FlowView, type PageData, type Project, type Setsu, type YearTotal } from './types'
 
 const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
@@ -81,12 +82,12 @@ function YenText({ yen, className }: { yen: number; className?: string }) {
 }
 
 /** 新しく始めたことの形。事業評価のシートごと新しくできた事業か、今ある事業の中で始めた取り組みか、予算の資料で新規・レベルアップ（画面では拡大）と印の付いた項目か */
-type Fresh = ({ kind: 'sheet' } & EvaluatedProject) | ({ kind: 'initiative' } & Initiative) | ({ kind: 'budget' } & BudgetNew)
+type Fresh = ({ kind: 'sheet' } & EvaluatedProject) | ({ kind: 'initiative' } & Initiative) | ({ kind: 'budget' } & PressItem)
 const evaluatedOf = (y: ProfileYear): Fresh[] => [...y.projects.map((p) => ({ kind: 'sheet' as const, ...p })), ...[...(y.initiatives ?? [])].sort((a, b) => b.settledYen - a.settledYen).map((p) => ({ kind: 'initiative' as const, ...p }))]
 /** 実績と評価のある事業評価を優先し、まだ公表されていない年度だけ予算の資料から出す */
 const freshOf = (y: ProfileYear): Fresh[] => {
   const evaluated = evaluatedOf(y)
-  return evaluated.length ? evaluated : [...(y.budgetNew ?? [])].sort((a, b) => Number(!!b.press?.length) - Number(!!a.press?.length) || b.budgetYen - a.budgetYen).map((p) => ({ kind: 'budget' as const, ...p }))
+  return evaluated.length ? evaluated : [...(y.budgetNew ?? [])].sort((a, b) => b.budgetYen - a.budgetYen).map((p) => ({ kind: 'budget' as const, ...p }))
 }
 
 
@@ -95,7 +96,17 @@ const isPlanned = (y: ProfileYear) => freshOf(y)[0]?.kind === 'budget'
 const freshTitle = (y: ProfileYear) => (isPlanned(y) ? '新しく何を始める？' : '新しく何を始めた？')
 
 /** 新しく始めたことの1行。名前の左に新規（New!）か拡大・今ある事業の中での取り組み（Up!）かのバッジ、右に金額、下に中身。評価・予算どの年度も同じ形にする */
+/** 住民の数。新しく始めたことの金額の下に住民1人あたりの額を添えるのに使う（Domains の外から渡す） */
+const PeopleContext = React.createContext<number | undefined>(undefined)
+
+/** 住民1人あたりの額。1万円未満は円、それ以上は万円の小数1桁 */
+const perPerson = (yen: number, people: number) => {
+  const v = yen / people
+  return v < 1e4 ? `${Math.round(v).toLocaleString('ja-JP')}円` : `${(Math.round(v / 1e3) / 10).toLocaleString('ja-JP')}万円`
+}
+
 function FreshRow({ up, upLabel = '拡大', title, yen, children }: { up: boolean; upLabel?: string; title: string; yen: number; children: React.ReactNode }) {
+  const people = React.useContext(PeopleContext)
   const label = up ? upLabel : '新規'
   return (
     <div className="flex flex-col gap-2 border-b border-foreground/10 py-4">
@@ -109,7 +120,10 @@ function FreshRow({ up, upLabel = '拡大', title, yen, children }: { up: boolea
           </Hint>
           {title}
         </span>
-        <YenText yen={yen} className="shrink-0 text-right leading-snug" />
+        <span className="shrink-0 text-right">
+          <YenText yen={yen} className="block leading-snug" />
+          {people && yen ? <span className="block text-xs text-muted-foreground tabular-nums">1人 約{perPerson(yen, people)}</span> : null}
+        </span>
       </div>
       {children}
     </div>
@@ -138,24 +152,20 @@ function InitiativeItem({ p }: { p: Initiative }) {
   )
 }
 
-/** 予算の資料で新規・レベルアップと印の付いた項目を含む事業。事業評価の事業と同じく名前と金額を並べ、その下に項目を資料の文言のまま書く。
- * 資料は項目だけの額を載せないので、見出しは項目ではなく金額の対象である事業にする。新規を含む事業は新規の印、それ以外は拡大の印を名前の左に置く */
-function BudgetItem({ p }: { p: BudgetNew }) {
-  const quote = (xs: string[]) => xs.map((i) => `「${i}」`).join('')
+/** 予算案のプレス発表資料の施策。見出しは頁の見出し（「〜」の副題は外す）、金額は資料の予算額、その下に POINT を資料の文のまま並べる。
+ * 事業名に「新規」の印があれば新規、無ければ拡大の印。分野の根拠として、紐付けた予算書の内訳を小さく添える */
+function BudgetItem({ p }: { p: PressItem }) {
+  const title = p.title.replace(/[~〜～].*$/, '').trim() || p.names.join('・')
   return (
-    <FreshRow up={!p.items.length} title={p.name} yen={p.budgetYen}>
-      <p className="text-sm">
-        {p.items.length ? `${quote(p.items)}を新しく始める。` : null}
-        {p.upgrades.length ? `${quote(p.upgrades)}を拡大する。` : null}
-      </p>
-      {/* 予算案のプレス発表資料に説明があれば、その POINT を資料の文のまま添える */}
-      {p.press?.length ? (
+    <FreshRow up={!p.isNew} title={title} yen={p.budgetYen}>
+      {p.points.length ? (
         <ul className="flex flex-col gap-1 rounded-xl bg-sidebar px-3.5 py-2.5 text-[13px] leading-relaxed [text-wrap:pretty]">
-          {p.press.flatMap((x) => x.points.map((pt, i) => (
-            <li key={`${x.page}-${i}`} className="relative pl-3.5 before:absolute before:left-0 before:top-[0.6em] before:size-1.5 before:rounded-full before:bg-primary/60">{pt}</li>
-          )))}
+          {p.points.map((pt, i) => (
+            <li key={i} className="relative pl-3.5 before:absolute before:left-0 before:top-[0.6em] before:size-1.5 before:rounded-full before:bg-primary/60">{pt}</li>
+          ))}
         </ul>
       ) : null}
+      {p.link ? <p className="text-xs text-muted-foreground">予算書では「{p.link.name}」（{p.link.moku}）に計上</p> : null}
     </FreshRow>
   )
 }
@@ -229,7 +239,7 @@ function FrameItems<T>({ items, render }: { items: T[]; render: (item: T) => Rea
           variant="outline"
           onClick={toggle}
           aria-expanded={open}
-          className={`rounded-full bg-background px-5 shadow-sm hover:bg-card ${open ? 'mt-4' : 'absolute bottom-2 left-1/2 -translate-x-1/2'}`}
+          className={`rounded-full bg-background px-5 shadow-sm transition-colors hover:bg-card aria-expanded:bg-background ${open ? 'mt-4' : 'absolute bottom-2 left-1/2 -translate-x-1/2'}`}
         >
           {open ? '閉じる' : `ほか${rest}件を見る`}
           <CaretDownIcon aria-hidden="true" className={`size-3.5 transition-transform ${open ? 'rotate-180' : ''}`} />
@@ -353,9 +363,9 @@ function Domains({ year, fiscalYear }: { year: ProfileYear; fiscalYear: number }
   const groups = groupByFrame(fresh)
   const byBudget = isPlanned(year)
   const lead = byBudget
-    ? 'この年度の予算で、区が新しく始める事業と、広げる事業です。金額は事業全体の予算です。'
+    ? '区が予算案の発表で取り上げた、この年度に新しく始める事業と広げる事業です。'
     : '区が事業ごとに目標と実績を振り返る「事業評価」から、この年度に新しくできた事業と、今ある事業の中で始めた取り組みを並べています。'
-  const link = !groups.length ? undefined : byBudget ? [...(year.budgetHighlights ? [{ href: year.budgetHighlights, label: '主な施策（予算）' }] : []), ...(year.budgetPress ? [{ href: year.budgetPress, label: 'プレス発表' }] : [])] : { href: year.evaluationSource, label: '事業評価' }
+  const link = !groups.length ? undefined : byBudget ? (year.budgetPress ? { href: year.budgetPress, label: 'プレス発表' } : undefined) : { href: year.evaluationSource, label: '事業評価' }
   return (
     <Section id="domains" title={freshTitle(year)} lead={lead} link={link}>
       {/* 事業評価は実施した翌年度に公表する。予算の資料も無い年度は節だけ出し、なぜ空かを言う */}
@@ -367,7 +377,7 @@ function Domains({ year, fiscalYear }: { year: ProfileYear; fiscalYear: number }
             {d.name}
           </h3>
           <div className="flex flex-col border-t">
-            <FrameItems items={items} render={(p) => (p.kind === 'sheet' ? <ProjectItem key={`s${p.page}`} p={p} /> : p.kind === 'initiative' ? <InitiativeItem key={`i${p.page}-${p.title}`} p={p} /> : <BudgetItem key={`b${p.page}-${p.name}`} p={p} />)} />
+            <FrameItems items={items} render={(p) => (p.kind === 'sheet' ? <ProjectItem key={`s${p.page}`} p={p} /> : p.kind === 'initiative' ? <InitiativeItem key={`i${p.page}-${p.title}`} p={p} /> : <BudgetItem key={`b${p.page}`} p={p} />)} />
           </div>
         </div>
       ))}
@@ -845,7 +855,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
           </nav>
           <main className="flex min-w-0 flex-col gap-14">
             <Overview data={data} year={year} sections={new Set(py ? groupByFrame(freshOf(py)).map(({ frame }) => frame.id) : [])} />
-            {py ? <Domains year={py} fiscalYear={year} /> : null}
+            {py ? <PeopleContext.Provider value={data.population?.people}><Domains year={py} fiscalYear={year} /></PeopleContext.Provider> : null}
             <Budget data={data} year={year} />
             <Projects data={data} year={year} />
             {py?.scrap ? <ScrapSection scrap={py.scrap} /> : null}
