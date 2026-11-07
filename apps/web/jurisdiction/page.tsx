@@ -86,12 +86,15 @@ const evaluatedOf = (y: ProfileYear): Fresh[] => [...y.projects.map((p) => ({ ki
 /** 実績と評価のある事業評価を優先し、まだ公表されていない年度だけ予算の資料から出す */
 const freshOf = (y: ProfileYear): Fresh[] => {
   const evaluated = evaluatedOf(y)
-  // 金額は事業全体の額で新規の項目の大きさではないので並べ替えず、資料の順（款の順）のまま
-  return evaluated.length ? evaluated : (y.budgetNew ?? []).map((p) => ({ kind: 'budget' as const, ...p }))
+  return evaluated.length ? evaluated : [...(y.budgetNew ?? [])].sort((a, b) => b.budgetYen - a.budgetYen).map((p) => ({ kind: 'budget' as const, ...p }))
 }
 
-const KIND_LABEL: Record<Fresh['kind'], string> = { sheet: '新しい事業', initiative: '今ある事業の中で', budget: '予算で新規' }
-const KindLabel = ({ kind }: { kind: Fresh['kind'] }) => <span className="text-xs text-muted-foreground">{KIND_LABEL[kind]}</span>
+// 節に並ぶのは新しいものだけなので、新しい事業・予算の新規には印を付けず、今ある事業の中で始めた取り組みだけ見分ける
+/** 予算の資料はその年度にこれから始める計画、事業評価は実施した結果なので、見出しの時制を分ける */
+const isPlanned = (y: ProfileYear) => freshOf(y)[0]?.kind === 'budget'
+const freshTitle = (y: ProfileYear) => (isPlanned(y) ? '新しく何を始める？' : '新しく何を始めた？')
+
+const InitiativeLabel = () => <span className="text-xs text-muted-foreground">今ある事業の中で</span>
 
 function SheetLink({ sheets, page, name }: { sheets?: string; page: number; name: string }) {
   if (!sheets) return null
@@ -115,7 +118,7 @@ function InitiativeItem({ p, sheets }: { p: Initiative; sheets?: string }) {
   return (
     <div className="flex flex-col gap-2 border-b border-foreground/10 py-4">
       <div className="flex flex-col">
-        <KindLabel kind="initiative" />
+        <InitiativeLabel />
         <span className="text-[15.5px]">{p.title}</span>
       </div>
       <blockquote className="border-l-2 border-foreground/15 pl-3 text-sm [text-wrap:pretty]">{p.quote}</blockquote>
@@ -130,25 +133,16 @@ function InitiativeItem({ p, sheets }: { p: Initiative; sheets?: string }) {
   )
 }
 
-/** 予算の資料で新規と印の付いた項目。項目は資料の文言のまま並べる。金額は項目を含む事業全体の予算額なので、項目の額に見えないよう大きく出さず、事業名に添える */
-function BudgetItem({ p, source }: { p: BudgetNew; source?: string }) {
+/** 予算の資料で新規と印の付いた項目を含む事業。事業評価の事業と同じく名前と金額を並べ、その下に新しく始める項目を資料の文言のまま書く。
+ * 資料は新規の項目だけの額を載せないので、見出しは項目ではなく金額の対象である事業にする */
+function BudgetItem({ p }: { p: BudgetNew }) {
   return (
     <div className="flex flex-col gap-2 border-b border-foreground/10 py-4">
-      <div className="flex flex-col">
-        <KindLabel kind="budget" />
-        <ul className="flex flex-col gap-0.5">
-          {p.items.map((item) => <li key={item} className="text-[15.5px]">{item}</li>)}
-        </ul>
+      <div className="flex items-start justify-between gap-x-6">
+        <span className="min-w-0 text-[15.5px]">{p.name}</span>
+        <YenText yen={p.budgetYen} className="shrink-0 text-right leading-snug" />
       </div>
-      <p className="text-[13px] text-muted-foreground">
-        含まれる事業「{p.name}」（予算 {formatYen(p.budgetYen)}）
-        {source ? (
-          <Button variant="link" size="inline" nativeButton={false} render={<a href={`${source}#page=${p.page}`} target="_blank" rel="noopener" />} className="ml-1 align-baseline">
-            資料の{p.page}頁
-            <ArrowSquareOutIcon aria-hidden="true" className="size-3.5" />
-          </Button>
-        ) : null}
-      </p>
+      <p className="text-sm">{p.items.map((i) => `「${i}」`).join('')}を新しく始める。</p>
     </div>
   )
 }
@@ -160,7 +154,6 @@ function ProjectItem({ p, sheets }: { p: EvaluatedProject; sheets?: string }) {
     <div className="flex flex-col gap-2 border-b border-foreground/10 py-4">
       <div className="flex items-start justify-between gap-x-6">
         <div className="flex min-w-0 flex-col">
-          <KindLabel kind="sheet" />
           <span className="text-[15.5px]">{p.title}</span>
         </div>
         <YenText yen={p.settledYen} className="shrink-0 text-right leading-snug" />
@@ -227,7 +220,7 @@ function Overview({ data, sections }: { data: PageData; sections: Set<string> })
   )
 }
 
-/** 分野の行。その年度の「新しく何を始めた？」にその分野があれば、そこへ移るリンクにする */
+/** 分野の行。その年度の「新しく何を始めた（始める）？」にその分野があれば、そこへ移るリンクにする */
 function DomainLink({ section, children }: { section?: string; children: React.ReactNode }) {
   // アイコン・名前・金額の3列を全行で同じ幅にし、行は隣の列の行と同じ高さいっぱいに広げて中央に揃える
   const row = 'grid h-full grid-cols-[1.75rem_minmax(0,1fr)_5.5rem] items-center gap-3 py-3'
@@ -247,13 +240,13 @@ function DomainLink({ section, children }: { section?: string; children: React.R
 function Domains({ year, fiscalYear }: { year: ProfileYear; fiscalYear: number }) {
   const fresh = freshOf(year)
   const groups = groupByFrame(fresh)
-  const byBudget = fresh[0]?.kind === 'budget'
+  const byBudget = isPlanned(year)
   const lead = byBudget
-    ? `区の事業評価は${reiwa(fiscalYear + 1)}に公表されるため、それまでは当初予算の資料「款別予算等の主な施策」で区が新規と印を付けた項目を、分野ごとに資料の順で並べています。添えた金額は項目を含む事業全体の予算額で、新規の項目だけの額ではありません。`
+    ? `区の事業評価は${reiwa(fiscalYear + 1)}に公表されるため、それまでは当初予算の資料「款別予算等の主な施策」で区が新規と印を付けた項目を、それを含む事業ごとに並べています。金額は事業全体の予算額です。`
     : '区が事業ごとに目標と実績を振り返る「事業評価」から、この年度に新しくできた事業と、今ある事業の中で始めた取り組みを並べています。'
   const link = !groups.length ? undefined : byBudget ? (year.budgetHighlights ? { href: year.budgetHighlights, label: '主な施策（予算）' } : undefined) : { href: year.evaluationSource, label: '事業評価' }
   return (
-    <Section id="domains" title="新しく何を始めた？" lead={lead} link={link}>
+    <Section id="domains" title={freshTitle(year)} lead={lead} link={link}>
       {/* 事業評価は実施した翌年度に公表する。予算の資料も無い年度は節だけ出し、なぜ空かを言う */}
       {groups.length ? null : <p className="rounded-xl border border-dashed px-4 py-6 text-sm text-muted-foreground">{reiwa(fiscalYear)}の事業の評価は、{reiwa(fiscalYear + 1)}に公表されます。まだ公表されていません。</p>}
       {groups.map(({ frame: d, items }) => (
@@ -263,7 +256,7 @@ function Domains({ year, fiscalYear }: { year: ProfileYear; fiscalYear: number }
             {d.name}
           </h3>
           <div className="border-t">
-            {items.map((p) => (p.kind === 'sheet' ? <ProjectItem key={`s${p.page}`} p={p} sheets={year.evaluationSheets} /> : p.kind === 'initiative' ? <InitiativeItem key={`i${p.page}-${p.title}`} p={p} sheets={year.evaluationSheets} /> : <BudgetItem key={`b${p.page}-${p.name}`} p={p} source={year.budgetHighlights} />))}
+            {items.map((p) => (p.kind === 'sheet' ? <ProjectItem key={`s${p.page}`} p={p} sheets={year.evaluationSheets} /> : p.kind === 'initiative' ? <InitiativeItem key={`i${p.page}-${p.title}`} p={p} sheets={year.evaluationSheets} /> : <BudgetItem key={`b${p.page}-${p.name}`} p={p} />))}
           </div>
         </div>
       ))}
@@ -584,7 +577,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
     { href: '#projects', label: '大きな支出' },
   ]
   // 区政を知らない人には金額より暮らしの具体例が先。変わったことから入り、お金の内訳へ進む
-  const fresh: TocItem[] = py ? [{ href: '#domains', label: '新しく始めたこと' }, ...groupByFrame(freshOf(py)).map(({ frame: d }) => ({ href: `#d-${d.id}`, label: d.name, sub: true }))] : []
+  const fresh: TocItem[] = py ? [{ href: '#domains', label: isPlanned(py) ? '新しく始めること' : '新しく始めたこと' }, ...groupByFrame(freshOf(py)).map(({ frame: d }) => ({ href: `#d-${d.id}`, label: d.name, sub: true }))] : []
   const toc: TocItem[] = [
     { href: '#about', label: `${data.name.slice(-1)}の仕事` },
     ...fresh,
