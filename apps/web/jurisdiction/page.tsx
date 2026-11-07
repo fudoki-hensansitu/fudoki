@@ -859,11 +859,13 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
   )
 }
 
-/** AI に聞く入力欄。最初は開いておき、読み進めるか Escape で右下のボタンに畳む。押すか「/」で開く。
+/** AI に聞く入力欄。最初は開いておき、読み進めるか Escape で右下のボタンに畳む。押すか「/」、頁の文を選んで文脈が入ったときに開く。
  * 送ると頁を移らずに会話を開く。広い画面では右の side panel（頁は読み続けられる）、スマホでは下からの drawer。閉じても会話は残り、右下のボタンで戻れる */
 const DOCK_CLOSE_AFTER = 80
 /** 選んだ文として AI に渡す長さの上限 */
 const QUOTE_MAX = 600
+/** 選択が最後に動いてから、これだけ待って聞く欄を開く */
+const QUOTE_OPEN_DELAY = 350
 /** drawer の取っ手をこれだけ下へ引いたら閉じる */
 const DRAWER_DRAG_CLOSE = 80
 /** これより広い画面では右の side panel にする（Tailwind の md）。幅は SIDE_WIDTH */
@@ -917,6 +919,8 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
   const sheet = React.useRef<HTMLDivElement>(null)
   const scroller = React.useRef<HTMLDivElement>(null)
   const anchor = React.useRef(0)
+  /** 指やマウスを押している間 true。選択を広げている途中で聞く欄を開かない */
+  const held = React.useRef(false)
   /** 入力欄に focus した時刻。スマホでは focus で頁が動くので、その直後のスクロールでは閉じない */
   const focusedAt = React.useRef(0)
   const show = React.useCallback(() => {
@@ -959,6 +963,30 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
     return () => document.removeEventListener('selectionchange', onSelect)
   }, [])
 
+  // 文脈が入ったら、聞く欄を開いて chip を見せる。選択を広げている途中で開くと手元が隠れるので、選択が落ち着いてから開く。
+  // 入力欄へ focus は移さない（移すと頁の選択が外れる）。狭い画面の drawer は頁を覆うので、会話中は開かない
+  React.useEffect(() => {
+    if (!quote) return
+    const reveal = () => {
+      if (chat) {
+        if (matchMedia(WIDE_QUERY).matches) setDrawer(true)
+        return
+      }
+      anchor.current = window.scrollY
+      setOpen(true)
+    }
+    // マウスで選択を広げている間は待ち、離したときに開く
+    const onUp = () => reveal()
+    const timer = setTimeout(() => {
+      if (held.current) window.addEventListener('pointerup', onUp, { once: true })
+      else reveal()
+    }, QUOTE_OPEN_DELAY)
+    return () => {
+      clearTimeout(timer)
+      window.removeEventListener('pointerup', onUp)
+    }
+  }, [quote, chat])
+
   const describe = () => {
     const views = [...new Set(visibleViews())]
     return [
@@ -1000,10 +1028,19 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
   const lastInput = React.useRef(0)
   React.useEffect(() => {
     const mark = () => (lastInput.current = performance.now())
-    window.addEventListener('pointerdown', mark, true)
+    const press = () => {
+      mark()
+      held.current = true
+    }
+    const release = () => (held.current = false)
+    window.addEventListener('pointerdown', press, true)
+    window.addEventListener('pointerup', release, true)
+    window.addEventListener('pointercancel', release, true)
     window.addEventListener('keydown', mark, true)
     return () => {
-      window.removeEventListener('pointerdown', mark, true)
+      window.removeEventListener('pointerdown', press, true)
+      window.removeEventListener('pointerup', release, true)
+      window.removeEventListener('pointercancel', release, true)
       window.removeEventListener('keydown', mark, true)
     }
   }, [])
