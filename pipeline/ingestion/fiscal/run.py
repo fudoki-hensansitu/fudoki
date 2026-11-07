@@ -14,7 +14,7 @@ import duckdb
 from ingestion.fiscal import manifest, unit_checks
 from ingestion.fiscal.storage import fetch, fetch_ocr, save, save_ocr, cleanup, verify, write_ocr
 from ingestion.paths import BUILD
-from ingestion.lib import coverage_checks, digit_recheck, heavy_lock, node_tables, source_inconsistencies, tree_checks
+from ingestion.lib import coverage_checks, digit_recheck, heavy_lock, node_tables, poppler, source_inconsistencies, tree_checks
 
 MATCH, MISMATCH, NOT_APPLICABLE = '一致', '不一致', '対象外'
 
@@ -686,6 +686,8 @@ def main() -> None:
         from ingestion.fiscal.refresh import plan
         print(json.dumps(plan(manifests), ensure_ascii=False))
         return
+    if args.command in ('convert', 'refresh'):
+        poppler.require()  # the words of a text PDF depend on the Poppler version (ingestion/lib/poppler.py)
     holder = heavy_lock.acquire(args.command, targets=manifests or ())
     if holder is not None:
         atexit.register(holder.close)

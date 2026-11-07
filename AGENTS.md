@@ -204,6 +204,7 @@ docs/ は共有文書として Git で管理し、判断の記録はコードと
 mise install
 bun install
 uv sync
+bash pipeline/scripts/install_poppler.sh   # Linux のみ。Mac は brew install poppler && brew pin poppler（版は pipeline/poppler-version）
 
 bun run --cwd pipeline ingestion:check   # 取り込みの宣言・選定・fingerprint を検査
 bun run typecheck:all                    # 型検査（root と全 package）

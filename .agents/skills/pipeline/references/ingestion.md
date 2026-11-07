@@ -49,7 +49,8 @@
 1. 対象頁を表示し、文字層から必要な本文を取得できるか確認する。頁番号だけが文字で本文が画像なら、本文はscan PDFとして扱う。
 2. **Popplerの `pdftotext -bbox-layout` で単語と座標を取得する。** 通常の入口は単語単位とし、文字単位への再分割を標準処理にしない。単語は抽出器の区切りであり、日本語の意味上の単語とは限らない。
 3. 文字層があるのに文字化けする場合は、先に抽出ツールの実行パス・実際の版とフォント定義を確かめる。`Missing language pack` の警告で数字まで消えることがある。起動コマンドで版を指定したときも、指定だけで判断せず、変換を呼ぶPythonから `shutil.which('pdftotext')` と `pdftotext -v` を確かめる（`env`・`uv run` を挟むとPATHの解決先が異なる場合がある）。環境を揃えても復元できない文字層は、文字対応表・フォントの復元を検討する。復元できない領域だけOCRへ回す。アウトライン化された文字もOCRの対象になる。
-4. 生の単語・座標を保持し、次の「PDFの表の組み立て」でノードと金額へまとめる。
+4. **Poppler の版は `pipeline/poppler-version` に固定する。** 版と CJK の対応表で読める単語が変わり、表の中身が変わる（2026-11-05 実測: apt の 24.02 は poppler-data が無いと新宿区の総括の頁の単語を落とし、重ね刷りの数字から余分な `0` を出した。Mac の Homebrew 26.10.0 と揃えると全表が保存済みと一致した）。`ingestion:convert`・`refresh` は版が違えば止まる（`ingestion/lib/poppler.py`）。Mac は `brew install poppler && brew pin poppler`、Linux（クラウド・CI）は `bash pipeline/scripts/install_poppler.sh`（conda-forge の版を入れ、対応表の場所を直して `~/.local/bin` に置く。mise の conda 版をそのまま使うと対応表を読めない）。版を上げるときは、Mac とクラウドを同時に上げ、`.cache/generic-observation` を消してから全表を `ingestion:refresh --remote` で比べる。この単語キャッシュの鍵に版は入っていない。
+5. 生の単語・座標を保持し、次の「PDFの表の組み立て」でノードと金額へまとめる。
 
 座標は原点、単位、CropBox・回転の扱いを記録する。異なる抽出手段を混ぜるときは、同じ表示頁の座標系へ変換してから対応付ける。
 
