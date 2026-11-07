@@ -447,7 +447,7 @@ function Budget({ data, year }: { data: PageData; year: number }) {
     <Section
       id="budget"
       title="お金は何に使われた？"
-      lead="機能分類は、使い道を目的ごとに分ける世界共通の分類（COFOG）です。自治体分類は、予算書・決算書の分け方そのままです。"
+      lead="機能分類は、使い道を目的ごとに分ける世界共通の分類（COFOG）です。予算書・決算書の科目に COFOG を当てたのは風土記の判断なので、誤っていることがあります。自治体分類は、予算書・決算書の分け方そのままです。"
       link={docs.length ? docs : undefined}
     >
       <div id="budget-panel" role="tabpanel" aria-labelledby={`tab-${phase}`} data-ask-view={`${reiwa(year)}の${label}の金額（${VIEWS.find((v) => v.key === view)!.label}）`} className="flex flex-col gap-4">
