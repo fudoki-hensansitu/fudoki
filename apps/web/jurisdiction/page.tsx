@@ -3,7 +3,7 @@
 // 歳出の決算は API の値。事業評価から取った事業・やめたこと（事業の入れ替え）は jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
 import { Link } from '@void/react'
 import * as React from 'react'
-import { ArrowLeftIcon, ArrowRightIcon, ArrowSquareOutIcon, CaretRightIcon, MapPinAreaIcon, MapTrifoldIcon, SquaresFourIcon, BankIcon, BasketballIcon, CaretDownIcon, ClipboardTextIcon, CoinsIcon, ChatCircleIcon, FirstAidKitIcon, GlobeIcon, HandHeartIcon, HouseLineIcon, LeafIcon, MapPinIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, StudentIcon, DotsThreeCircleIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
+import { ArrowCircleUpIcon, ArrowLeftIcon, ArrowRightIcon, ArrowSquareOutIcon, CaretRightIcon, MapPinAreaIcon, MapTrifoldIcon, SquaresFourIcon, BankIcon, BasketballIcon, CaretDownIcon, ClipboardTextIcon, CoinsIcon, ChatCircleIcon, FirstAidKitIcon, GlobeIcon, HandHeartIcon, HouseLineIcon, LeafIcon, MapPinIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, SparkleIcon, StorefrontIcon, StudentIcon, DotsThreeCircleIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
 import { StartForm } from '../chat/start-form'
 import type { StoredSession } from '../chat/store'
 import { Hint } from '@/components/hint'
@@ -80,7 +80,7 @@ function YenText({ yen, className }: { yen: number; className?: string }) {
   )
 }
 
-/** 新しく始めたことの形。事業評価のシートごと新しくできた事業か、今ある事業の中で始めた取り組みか、予算の資料で新規と印の付いた項目か */
+/** 新しく始めたことの形。事業評価のシートごと新しくできた事業か、今ある事業の中で始めた取り組みか、予算の資料で新規・レベルアップと印の付いた項目か */
 type Fresh = ({ kind: 'sheet' } & EvaluatedProject) | ({ kind: 'initiative' } & Initiative) | ({ kind: 'budget' } & BudgetNew)
 const evaluatedOf = (y: ProfileYear): Fresh[] => [...y.projects.map((p) => ({ kind: 'sheet' as const, ...p })), ...[...(y.initiatives ?? [])].sort((a, b) => b.settledYen - a.settledYen).map((p) => ({ kind: 'initiative' as const, ...p }))]
 /** 実績と評価のある事業評価を優先し、まだ公表されていない年度だけ予算の資料から出す */
@@ -89,20 +89,31 @@ const freshOf = (y: ProfileYear): Fresh[] => {
   return evaluated.length ? evaluated : [...(y.budgetNew ?? [])].sort((a, b) => b.budgetYen - a.budgetYen).map((p) => ({ kind: 'budget' as const, ...p }))
 }
 
-// 節に並ぶのは新しいものだけなので、新しい事業・予算の新規には印を付けず、今ある事業の中で始めた取り組みだけ見分ける
+
 /** 予算の資料はその年度にこれから始める計画、事業評価は実施した結果なので、見出しの時制を分ける */
 const isPlanned = (y: ProfileYear) => freshOf(y)[0]?.kind === 'budget'
 const freshTitle = (y: ProfileYear) => (isPlanned(y) ? '新しく何を始める？' : '新しく何を始めた？')
 
-const InitiativeLabel = () => <span className="text-xs text-muted-foreground">今ある事業の中で</span>
-
-function SheetLink({ sheets, page, name }: { sheets?: string; page: number; name: string }) {
-  if (!sheets) return null
+/** 新しく始めたことの1行。名前の左に新規かレベルアップ（今ある事業の中での取り組み）かの印、右に金額、下に中身。評価・予算どの年度も同じ形にする */
+function FreshRow({ up, upLabel = 'レベルアップ', title, yen, children }: { up: boolean; upLabel?: string; title: string; yen: number; children: React.ReactNode }) {
+  const Icon = up ? ArrowCircleUpIcon : SparkleIcon
+  const label = up ? upLabel : '新規'
   return (
-    <Button variant="link" size="inline" nativeButton={false} render={<a href={`${sheets}#page=${page}`} target="_blank" rel="noopener" />} className="ml-1 align-baseline">
-      評価シート「{name}」
-      <ArrowSquareOutIcon aria-hidden="true" className="size-3.5" />
-    </Button>
+    <div className="flex flex-col gap-2 border-b border-foreground/10 py-4">
+      <div className="flex items-start justify-between gap-x-6">
+        <span className="flex min-w-0 items-start gap-2 text-[15.5px]">
+          <Hint label={label}>
+            <span className="mt-[3px] shrink-0">
+              <Icon aria-hidden="true" className="size-[18px] text-muted-foreground" />
+              <span className="sr-only">{label}</span>
+            </span>
+          </Hint>
+          {title}
+        </span>
+        <YenText yen={yen} className="shrink-0 text-right leading-snug" />
+      </div>
+      {children}
+    </div>
   )
 }
 
@@ -113,60 +124,70 @@ const EvalLabel = () => (
   </span>
 )
 
-/** 今ある事業の中で始めた取り組み。何を始めたかはシートの文をそのまま引き、評価は含まれる事業全体のものだと文で言う */
-function InitiativeItem({ p, sheets }: { p: Initiative; sheets?: string }) {
+/** 今ある事業の中で始めた取り組み。何を始めたかはシートの文をそのまま引き、金額と評価は含まれる事業全体のものだと文で言う */
+function InitiativeItem({ p }: { p: Initiative }) {
   return (
-    <div className="flex flex-col gap-2 border-b border-foreground/10 py-4">
-      <div className="flex flex-col">
-        <InitiativeLabel />
-        <span className="text-[15.5px]">{p.title}</span>
-      </div>
-      <blockquote className="border-l-2 border-foreground/15 pl-3 text-sm [text-wrap:pretty]">{p.quote}</blockquote>
+    <FreshRow up upLabel="今ある事業の中で" title={p.title} yen={p.settledYen}>
+      <p className="text-sm [text-wrap:pretty]">「{p.quote}」</p>
       <p className="rounded-xl bg-sidebar px-3.5 py-2.5 text-[13px] leading-relaxed text-foreground [text-wrap:pretty]">
         <EvalLabel />
-        この取り組みだけの評価はない。含まれる事業「{p.name}」（決算額 {formatYen(p.settledYen)}）の評価は
+        この取り組みだけの評価はない。金額と評価は、含まれる事業「{p.name}」全体の決算額と評価で、評価は
         <Grade grade={p.grade} className="ml-1" />
         （{p.direction}）。
-        <SheetLink sheets={sheets} page={p.page} name={p.name} />
       </p>
-    </div>
+    </FreshRow>
   )
 }
 
-/** 予算の資料で新規と印の付いた項目を含む事業。事業評価の事業と同じく名前と金額を並べ、その下に新しく始める項目を資料の文言のまま書く。
- * 資料は新規の項目だけの額を載せないので、見出しは項目ではなく金額の対象である事業にする */
+/** 予算の資料で新規・レベルアップと印の付いた項目を含む事業。事業評価の事業と同じく名前と金額を並べ、その下に項目を資料の文言のまま書く。
+ * 資料は項目だけの額を載せないので、見出しは項目ではなく金額の対象である事業にする。新規を含む事業は新規の印、それ以外はレベルアップの印を名前の左に置く */
 function BudgetItem({ p }: { p: BudgetNew }) {
+  const quote = (xs: string[]) => xs.map((i) => `「${i}」`).join('')
   return (
-    <div className="flex flex-col gap-2 border-b border-foreground/10 py-4">
-      <div className="flex items-start justify-between gap-x-6">
-        <span className="min-w-0 text-[15.5px]">{p.name}</span>
-        <YenText yen={p.budgetYen} className="shrink-0 text-right leading-snug" />
-      </div>
-      <p className="text-sm">{p.items.map((i) => `「${i}」`).join('')}を新しく始める。</p>
-    </div>
+    <FreshRow up={!p.items.length} title={p.name} yen={p.budgetYen}>
+      <p className="text-sm">
+        {p.items.length ? `${quote(p.items)}を新しく始める。` : null}
+        {p.upgrades.length ? `${quote(p.upgrades)}をレベルアップする。` : null}
+      </p>
+    </FreshRow>
   )
 }
 
-function ProjectItem({ p, sheets }: { p: EvaluatedProject; sheets?: string }) {
+/** 分野の中の事業。金額の大きい3件を出し、残りは薄く消えていく1件だけ見せて「ほか○件」で開く */
+const FRAME_PREVIEW = 3
+function FrameItems<T>({ items, render }: { items: T[]; render: (item: T) => React.ReactNode }) {
+  const [open, setOpen] = React.useState(false)
+  const rest = items.length - FRAME_PREVIEW
+  if (rest <= 0) return <>{items.map(render)}</>
+  return (
+    <>
+      {(open ? items : items.slice(0, FRAME_PREVIEW)).map(render)}
+      {open ? null : (
+        <div aria-hidden="true" inert className="pointer-events-none max-h-20 overflow-hidden [mask-image:linear-gradient(to_bottom,black,transparent)]">
+          {render(items[FRAME_PREVIEW]!)}
+        </div>
+      )}
+      <Button variant="ghost" size="sm" onClick={() => setOpen((v) => !v)} aria-expanded={open} className="mt-1 self-start text-muted-foreground">
+        {open ? '閉じる' : `ほか${rest}件を開く`}
+        <CaretDownIcon aria-hidden="true" className={`size-3.5 transition-transform ${open ? 'rotate-180' : ''}`} />
+      </Button>
+    </>
+  )
+}
+
+function ProjectItem({ p }: { p: EvaluatedProject }) {
   const i = p.indicator
   return (
-    // 1列で上から読む。金額は名前と同じ行の右に置き、評価の枠は幅いっぱいに出す。値はどれも評価シートのもの
-    <div className="flex flex-col gap-2 border-b border-foreground/10 py-4">
-      <div className="flex items-start justify-between gap-x-6">
-        <div className="flex min-w-0 flex-col">
-          <span className="text-[15.5px]">{p.title}</span>
-        </div>
-        <YenText yen={p.settledYen} className="shrink-0 text-right leading-snug" />
-      </div>
+    // 金額は名前と同じ行の右に置き、評価の枠は幅いっぱいに出す。値はどれも評価シートのもの
+    <FreshRow up={false} title={p.title} yen={p.settledYen}>
       <p className="text-sm">{p.what}</p>
       {/* 評価の区分・方向性・指標は一続きの文として、同じ大きさ・色で読ませる。指標の良し悪しは風土記が判断しない */}
       <p className="rounded-xl bg-sidebar px-3.5 py-2.5 text-[13px] leading-relaxed text-foreground [text-wrap:pretty]">
         <EvalLabel />
         <Grade grade={p.grade} />
         （{p.direction}）。{i ? `指標の「${i.name}」は、目標 ${i.target}${i.unit}に対して実績 ${i.actual}${i.unit}。` : '目標と実績を並べた指標は載っていない。'}
-        <SheetLink sheets={sheets} page={p.page} name={p.name} />
       </p>
-    </div>
+    </FreshRow>
   )
 }
 
@@ -177,7 +198,7 @@ const DOMAIN_ICON: Record<string, typeof BankIcon> = {
 }
 
 /** 区政を知らない人の入口。自治体の仕事を分野の例で見せ、1年に使うお金を住民1人あたりで言う（最新の決算） */
-function Overview({ data, sections }: { data: PageData; sections: Set<string> }) {
+function Overview({ data, sections, year }: { data: PageData; sections: Set<string>; year: number }) {
   const latest = data.years.at(-1)
   const people = data.population?.people
   const kind = data.name.slice(-1)
@@ -192,6 +213,8 @@ function Overview({ data, sections }: { data: PageData; sections: Set<string> })
             </>
           ) : null}
           です。
+          {/* 金額は収録している最新の決算だけを持つ。選んだ年度と違うときは、どの年度の額かを言う（R8 を選んで R6 の額だけが出ると選んだ年度の額に読める） */}
+          {year !== latest.year ? <span className="mt-1 block text-[13px] text-muted-foreground">{data.years.some((y) => y.year === year) ? '' : `${reiwa(year)}の決算はまだ収録していないため、`}ここの金額は収録している最新の決算（{reiwa(latest.year)}）のものです。</span> : null}
         </p>
       ) : null}
       <ul className="grid grid-cols-1 gap-x-8 border-t sm:grid-cols-2">
@@ -242,7 +265,7 @@ function Domains({ year, fiscalYear }: { year: ProfileYear; fiscalYear: number }
   const groups = groupByFrame(fresh)
   const byBudget = isPlanned(year)
   const lead = byBudget
-    ? `区の事業評価は${reiwa(fiscalYear + 1)}に公表されるため、それまでは当初予算の資料「款別予算等の主な施策」で区が新規と印を付けた項目を、それを含む事業ごとに並べています。金額は事業全体の予算額です。`
+    ? `区の事業評価は${reiwa(fiscalYear + 1)}に公表されるため、それまでは当初予算の資料「款別予算等の主な施策」で区が新規・レベルアップと印を付けた項目を、それを含む事業ごとに並べています。金額は事業全体の予算額です。`
     : '区が事業ごとに目標と実績を振り返る「事業評価」から、この年度に新しくできた事業と、今ある事業の中で始めた取り組みを並べています。'
   const link = !groups.length ? undefined : byBudget ? (year.budgetHighlights ? { href: year.budgetHighlights, label: '主な施策（予算）' } : undefined) : { href: year.evaluationSource, label: '事業評価' }
   return (
@@ -255,8 +278,8 @@ function Domains({ year, fiscalYear }: { year: ProfileYear; fiscalYear: number }
             <DomainIcon id={d.id} />
             {d.name}
           </h3>
-          <div className="border-t">
-            {items.map((p) => (p.kind === 'sheet' ? <ProjectItem key={`s${p.page}`} p={p} sheets={year.evaluationSheets} /> : p.kind === 'initiative' ? <InitiativeItem key={`i${p.page}-${p.title}`} p={p} sheets={year.evaluationSheets} /> : <BudgetItem key={`b${p.page}-${p.name}`} p={p} />))}
+          <div className="flex flex-col border-t">
+            <FrameItems items={items} render={(p) => (p.kind === 'sheet' ? <ProjectItem key={`s${p.page}`} p={p} /> : p.kind === 'initiative' ? <InitiativeItem key={`i${p.page}-${p.title}`} p={p} /> : <BudgetItem key={`b${p.page}-${p.name}`} p={p} />)} />
           </div>
         </div>
       ))}
@@ -741,7 +764,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
             ))}
           </nav>
           <main className="flex min-w-0 flex-col gap-14">
-            <Overview data={data} sections={new Set(py ? groupByFrame(freshOf(py)).map(({ frame }) => frame.id) : [])} />
+            <Overview data={data} year={year} sections={new Set(py ? groupByFrame(freshOf(py)).map(({ frame }) => frame.id) : [])} />
             {py ? <Domains year={py} fiscalYear={year} /> : null}
             <Budget data={data} year={year} />
             <Projects data={data} year={year} />
