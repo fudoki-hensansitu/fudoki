@@ -168,9 +168,11 @@ function FrameItems<T>({ items, render }: { items: T[]; render: (item: T) => Rea
   const toggle = () => {
     const el = body.current
     if (!el) return
+    const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (!open) {
       setOpen(true)
-      setHeight(el.scrollHeight)
+      // 動きを減らす設定では transition が走らず transitionend も来ないので、最初から auto にする
+      setHeight(still ? 'auto' : el.scrollHeight)
       return
     }
     // 閉じるときは今の高さを固定してから縮め、閉じた場所が画面の外なら、その場所までスクロールで戻す
@@ -178,7 +180,7 @@ function FrameItems<T>({ items, render }: { items: T[]; render: (item: T) => Rea
     requestAnimationFrame(() => requestAnimationFrame(() => setHeight(FRAME_PEEK)))
     setOpen(false)
     const top = (wrap.current?.getBoundingClientRect().top ?? 0) + window.scrollY - 160
-    if (top < window.scrollY) window.scrollTo({ top, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })
+    if (top < window.scrollY) window.scrollTo({ top, behavior: still ? 'auto' : 'smooth' })
   }
   return (
     <>
