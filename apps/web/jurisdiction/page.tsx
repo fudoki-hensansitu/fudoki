@@ -859,11 +859,13 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
   )
 }
 
-/** AI に聞く入力欄。最初は開いておき、読み進めるか Escape で右下のボタンに畳む。押すか「/」で開く。
+/** AI に聞く入力欄。最初は開いておき、読み進めるか Escape で右下のボタンに畳む。押すか「/」、頁の文を選んで文脈が入ったときに開く。
  * 送ると頁を移らずに会話を開く。広い画面では右の side panel（頁は読み続けられる）、スマホでは下からの drawer。閉じても会話は残り、右下のボタンで戻れる */
 const DOCK_CLOSE_AFTER = 80
 /** 選んだ文として AI に渡す長さの上限 */
 const QUOTE_MAX = 600
+/** 選択が最後に動いてから、これだけ待って聞く欄を開く */
+const QUOTE_OPEN_DELAY = 350
 /** drawer の取っ手をこれだけ下へ引いたら閉じる */
 const DRAWER_DRAG_CLOSE = 80
 /** これより広い画面では右の side panel にする（Tailwind の md）。幅は SIDE_WIDTH */
@@ -917,6 +919,10 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
   const sheet = React.useRef<HTMLDivElement>(null)
   const scroller = React.useRef<HTMLDivElement>(null)
   const anchor = React.useRef(0)
+  /** 指やマウスを押している間 true。選択を広げている途中で聞く欄を開かない */
+  const held = React.useRef(false)
+  /** 文脈で聞く欄を開く予約を取り消す。開く前に Escape で畳んだら、後から開き直さない */
+  const cancelReveal = React.useRef(() => {})
   /** 入力欄に focus した時刻。スマホでは focus で頁が動くので、その直後のスクロールでは閉じない */
   const focusedAt = React.useRef(0)
   const show = React.useCallback(() => {
@@ -959,6 +965,32 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
     return () => document.removeEventListener('selectionchange', onSelect)
   }, [])
 
+  // 文脈が入ったら、聞く欄を開いて chip を見せる。選択を広げている途中で開くと手元が隠れるので、選択が落ち着いてから開く。
+  // 入力欄へ focus は移さない（移すと頁の選択が外れる）。狭い画面の drawer は頁を覆うので、会話中は開かない
+  React.useEffect(() => {
+    if (!quote) return
+    const reveal = () => {
+      if (chat) {
+        if (matchMedia(WIDE_QUERY).matches) setDrawer(true)
+        return
+      }
+      anchor.current = window.scrollY
+      setOpen(true)
+    }
+    // マウスで選択を広げている間は待ち、離したときに開く
+    const onUp = () => reveal()
+    const timer = setTimeout(() => {
+      if (held.current) window.addEventListener('pointerup', onUp, { once: true })
+      else reveal()
+    }, QUOTE_OPEN_DELAY)
+    const cancel = () => {
+      clearTimeout(timer)
+      window.removeEventListener('pointerup', onUp)
+    }
+    cancelReveal.current = cancel
+    return cancel
+  }, [quote, chat])
+
   const describe = () => {
     const views = [...new Set(visibleViews())]
     return [
@@ -975,11 +1007,13 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
   // Escape で畳む（入力中でも閉じ、書きかけの文は残す）。drawer が開いていれば drawer を閉じる
   const close = React.useCallback(() => {
     ;(document.activeElement as HTMLElement | null)?.blur()
+    cancelReveal.current()
     if (drawer) setDrawer(false)
     else setOpen(false)
   }, [drawer])
   React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') cancelReveal.current()
       if (e.key === 'Escape' && (drawer || open)) {
         // 表とグラフの全体表示（popover）は、その Escape で先に閉じる
         if (document.querySelector(':popover-open')) return
@@ -1000,10 +1034,19 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
   const lastInput = React.useRef(0)
   React.useEffect(() => {
     const mark = () => (lastInput.current = performance.now())
-    window.addEventListener('pointerdown', mark, true)
+    const press = () => {
+      mark()
+      held.current = true
+    }
+    const release = () => (held.current = false)
+    window.addEventListener('pointerdown', press, true)
+    window.addEventListener('pointerup', release, true)
+    window.addEventListener('pointercancel', release, true)
     window.addEventListener('keydown', mark, true)
     return () => {
-      window.removeEventListener('pointerdown', mark, true)
+      window.removeEventListener('pointerdown', press, true)
+      window.removeEventListener('pointerup', release, true)
+      window.removeEventListener('pointercancel', release, true)
       window.removeEventListener('keydown', mark, true)
     }
   }, [])
@@ -1038,6 +1081,12 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
     }
   }, [drawer])
 
+  // ×・背景・取っ手で閉じたら、文脈で開く予約も取り消す（Escape は close() で取り消す）
+  const hideDrawer = () => {
+    cancelReveal.current()
+    setDrawer(false)
+  }
+
   // 取っ手を下へ引いて閉じる
   const drag = React.useRef<{ y: number; dy: number }>(undefined)
   const [dragY, setDragY] = React.useState(0)
@@ -1051,7 +1100,7 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
     setDragY(drag.current.dy)
   }
   const onHandleUp = () => {
-    if (drag.current && drag.current.dy > DRAWER_DRAG_CLOSE) setDrawer(false)
+    if (drag.current && drag.current.dy > DRAWER_DRAG_CLOSE) hideDrawer()
     drag.current = undefined
     setDragY(0)
   }
@@ -1084,14 +1133,14 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
         <div className="flex items-center gap-1 text-muted-foreground">
           <Hint label="会話を別の頁で開く"><Link href={`/s/${chat.id}`} aria-label="会話を別の頁で開く" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><ArrowSquareOutIcon className="size-4" /></Link></Hint>
           <Hint label="新しい会話"><button type="button" onClick={restart} aria-label="新しい会話" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><NotePencilIcon className="size-4" /></button></Hint>
-          <Hint label="閉じる（Esc）"><button type="button" onClick={() => setDrawer(false)} aria-label="閉じる" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><XIcon className="size-4" /></button></Hint>
+          <Hint label="閉じる（Esc）"><button type="button" onClick={hideDrawer} aria-label="閉じる" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><XIcon className="size-4" /></button></Hint>
         </div>
       </div>
     </div>
   ) : null
 
   const chip = quote ? (
-    <div className="mb-2 flex min-w-0 items-center gap-2 self-start rounded-full border bg-background py-1 pl-3 pr-1 text-[12.5px] text-muted-foreground shadow-sm">
+    <div className="mb-2 flex min-w-0 max-w-full items-center gap-2 self-start rounded-full border bg-background py-1 pl-3 pr-1 text-[12.5px] text-muted-foreground shadow-sm">
       <QuotesIcon className="size-3.5 shrink-0 text-primary" aria-hidden="true" />
       <span className="min-w-0 truncate"><span className="sr-only">選んだ文: </span>{quote}</span>
       <button type="button" onClick={() => setQuote('')} aria-label="選んだ文を外す" className="shrink-0 rounded-full p-1 hover:bg-secondary hover:text-foreground"><XIcon className="size-3" /></button>
@@ -1120,7 +1169,7 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
       </button>
       {chat ? (
         <>
-          <div aria-hidden="true" onClick={() => setDrawer(false)} className={`fixed inset-0 z-30 bg-foreground/20 md:hidden transition-opacity duration-300 motion-reduce:transition-none ${drawer ? '' : 'pointer-events-none opacity-0'}`} />
+          <div aria-hidden="true" onClick={hideDrawer} className={`fixed inset-0 z-30 bg-foreground/20 md:hidden transition-opacity duration-300 motion-reduce:transition-none ${drawer ? '' : 'pointer-events-none opacity-0'}`} />
           <div
             ref={sheet}
             role="dialog"
