@@ -47,6 +47,7 @@ for library in sorted(staging.glob('lib/libpoppler.so.*')):
 if patched != 1:
     sys.exit(f'expected one libpoppler to patch, patched {patched}')
 PY
+  rm -rf "$target"  # a damaged install would otherwise take the staging dir inside it
   mv "$target.tmp" "$target"
 fi
 
