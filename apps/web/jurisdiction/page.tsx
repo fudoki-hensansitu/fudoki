@@ -86,7 +86,7 @@ const evaluatedOf = (y: ProfileYear): Fresh[] => [...y.projects.map((p) => ({ ki
 /** 実績と評価のある事業評価を優先し、まだ公表されていない年度だけ予算の資料から出す */
 const freshOf = (y: ProfileYear): Fresh[] => {
   const evaluated = evaluatedOf(y)
-  return evaluated.length ? evaluated : [...(y.budgetNew ?? [])].sort((a, b) => b.budgetYen - a.budgetYen).map((p) => ({ kind: 'budget' as const, ...p }))
+  return evaluated.length ? evaluated : [...(y.budgetNew ?? [])].sort((a, b) => Number(!!b.press?.length) - Number(!!a.press?.length) || b.budgetYen - a.budgetYen).map((p) => ({ kind: 'budget' as const, ...p }))
 }
 
 
