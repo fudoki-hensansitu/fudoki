@@ -23,9 +23,8 @@ jobs:
       - run: bun run --cwd pipeline ingestion:check
       - name: Python tests with PDF observation tools
         run: |
-          bash pipeline/scripts/install_poppler.sh
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
-          PATH="$HOME/.local/bin:$PATH" bun run --cwd pipeline test:python
+          mise install conda:poppler@26.09.0
+          mise exec conda:poppler@26.09.0 -- bun run --cwd pipeline test:python
       - run: bun run --cwd pipeline serving:evaluation-catalog --check
       - run: bun run --cwd apps/web build:font:check
       - run: bun run build:web
