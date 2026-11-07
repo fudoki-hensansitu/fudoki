@@ -5,7 +5,7 @@ import type { UIMessage } from 'ai'
 import type { WebDatabase } from './env'
 import { logError } from './log'
 
-/** ログインしていない会話を残す日数。プライバシーポリシー（apps/docs の legal）と入力欄の下の注記に同じ日数を書いている */
+/** ログインしていない会話を残す日数。プライバシーポリシー（apps/docs の legal）にも同じ日数を書いている */
 export const CHAT_LOG_RETENTION_DAYS = 90
 /** 回答の parts の JSON がこの文字数を超えたら、tool の結果を落とす（それでも超えたら回答の文だけにする） */
 const MAX_PARTS_CHARS = 200_000
