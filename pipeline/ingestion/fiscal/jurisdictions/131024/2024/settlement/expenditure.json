@@ -1001,7 +1001,7 @@
     {
       "table_id": "chuo-general-settlement",
       "conversion_id": "chuo-text-settlement-general",
-      "input_fingerprint": "56bb40d0ccc36aed7c7584878ef773dcab495fa0cf224db095bc704e840237cd",
+      "input_fingerprint": "e4ca5a0dfeed6a5b94565c55169fb06d151986fc1a57d1b8abff63732828c825",
       "account": "一般会計",
       "notes": [
         "人数・件数・率・月額の基準および職員人数は金額の分解ではなく金額表に入れない。明細金額は最深の事業金額の反復であり二重計上しない。内表の縦結合金額は原典セルの位置で一度だけ数え、所属する印字区分の文字をまとめて保持する。",
@@ -1029,7 +1029,7 @@
     {
       "table_id": "chuo-care-settlement",
       "conversion_id": "chuo-text-settlement-care-detail",
-      "input_fingerprint": "67b2480d9bf1ef7dd8442d15543a7c535b23803e81f14f74dfb61bba53ccdf42",
+      "input_fingerprint": "2ce6a28805b1a948e11ebc415c3c000b30371d0044894f9b30b5b67343acf75a",
       "account": "介護保険事業会計",
       "notes": [
         "人数・件数・率・月額の基準および職員人数は金額の分解ではなく金額表に入れない。明細金額は最深の事業金額の反復であり二重計上しない。内表の縦結合金額は原典セルの位置で一度だけ数え、所属する印字区分の文字をまとめて保持する。",
@@ -1057,7 +1057,7 @@
     {
       "table_id": "chuo-kokuho-settlement",
       "conversion_id": "chuo-text-settlement-kokuho-detail",
-      "input_fingerprint": "e3f38e0945035910c61bcd40cd0d83edbf71f4baa1380b063ae80961abfe698f",
+      "input_fingerprint": "ad5fd83cd83c91a5260fca07035c9e261af3477f04370702531cb72618cedf13",
       "account": "国民健康保険事業会計",
       "notes": [
         "人数・件数・率・月額の基準および職員人数は金額の分解ではなく金額表に入れない。明細金額は最深の事業金額の反復であり二重計上しない。内表の縦結合金額は原典セルの位置で一度だけ数え、所属する印字区分の文字をまとめて保持する。",
@@ -1085,7 +1085,7 @@
     {
       "table_id": "chuo-kouki-settlement",
       "conversion_id": "chuo-text-settlement-kouki-detail",
-      "input_fingerprint": "1419f7a90e78a970a9045393cb14ace72d19a5e0f04c1921fd9c3a1e00803b4a",
+      "input_fingerprint": "0808da55e4ca8d36b8992a5932e19836ac64d1b64fce3550f24b64f745292d30",
       "account": "後期高齢者医療会計",
       "notes": [
         "人数・件数・率・月額の基準および職員人数は金額の分解ではなく金額表に入れない。明細金額は最深の事業金額の反復であり二重計上しない。内表の縦結合金額は原典セルの位置で一度だけ数え、所属する印字区分の文字をまとめて保持する。",
