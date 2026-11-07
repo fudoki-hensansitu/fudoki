@@ -4,8 +4,8 @@ import { siteKey } from '../server/pages'
 
 export type Props = { sitekey: string }
 
-const TITLE = '風土記（fudoki）— まちを、ひらく'
-const DESCRIPTION = '自治体の行政情報を、誰でも見られて、誰でも書き足せる形にひらく。'
+const TITLE = '風土記（fudoki）— うちのまち、なにしてる？'
+const DESCRIPTION = 'まちが何を決めて、何をしているかを、出典つきで誰でも見られる形に。'
 const ORGANIZATION = { '@context': 'https://schema.org', '@type': 'Organization', name: '風土記（fudoki）', url: 'https://fudoki.dev/', logo: 'https://fudoki.dev/icon.png', sameAs: ['https://github.com/fudoki-hensansitu', 'https://docs.fudoki.dev/'] }
 
 export const loader = defineHandler<Props>((c) => {

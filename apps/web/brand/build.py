@@ -119,13 +119,13 @@ for target in (ROOT / "apps/docs/public",):
 # OS の設定を追うファビコンと、画面の .dark で選ぶ SVG は分ける。
 # 画像内部の prefers-color-scheme は画面側のクラスを参照できない。
 OW, OH = 1200, 630
-TAGLINE = "まちを、ひらく"
+TAGLINE = "うちのまち、なにしてる？"
 og_height = 100
 scale = og_height / H
 LEFT = 80
 # 右に置く実画面は brand/og-card.png（ホームの決算表と入力欄を 2 倍で撮ったもの）。幅は右端まで。
 CARD_X, CARD_W, CARD_H = 560, OW - 560, round((OW - 560) * 1031 / 1280)
-tag_size = 40
+tag_size = 34
 
 
 def tagline(size: float, x: float, baseline: float) -> str:
@@ -136,7 +136,7 @@ def tagline(size: float, x: float, baseline: float) -> str:
         g = found[ch]
         k = size / g["upm"]
         parts.append(f'<path transform="translate({x:.4f} {baseline:.4f}) scale({k:.5f} -{k:.5f})" d="{g["d"]}"/>')
-        x += g["adv"] * k + size * 0.12
+        x += g["adv"] * k + size * 0.06
     return "".join(parts)
 
 
