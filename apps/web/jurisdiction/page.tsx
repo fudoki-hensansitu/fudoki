@@ -155,25 +155,54 @@ function BudgetItem({ p }: { p: BudgetNew }) {
 
 /** 分野の中の事業。金額の大きい3件を出し、残りは薄く消えていく1件だけ見せて「ほか○件」で開く */
 const FRAME_PREVIEW = 3
+/** 閉じているときに見せる、薄く消える行の高さ（px） */
+const FRAME_PEEK = 96
+
 function FrameItems<T>({ items, render }: { items: T[]; render: (item: T) => React.ReactNode }) {
   const [open, setOpen] = React.useState(false)
+  // 高さは閉じているとき FRAME_PEEK、開くときは中身の高さへ動かし、開き終わったら auto にして幅の変化に追従させる
+  const [height, setHeight] = React.useState<number | 'auto'>(FRAME_PEEK)
+  const wrap = React.useRef<HTMLDivElement>(null)
+  const body = React.useRef<HTMLDivElement>(null)
   const rest = items.length - FRAME_PREVIEW
   if (rest <= 0) return <>{items.map(render)}</>
+  const toggle = () => {
+    const el = body.current
+    if (!el) return
+    if (!open) {
+      setOpen(true)
+      setHeight(el.scrollHeight)
+      return
+    }
+    // 閉じるときは今の高さを固定してから縮め、閉じた場所が画面の外なら、その場所までスクロールで戻す
+    setHeight(el.scrollHeight)
+    requestAnimationFrame(() => requestAnimationFrame(() => setHeight(FRAME_PEEK)))
+    setOpen(false)
+    const top = (wrap.current?.getBoundingClientRect().top ?? 0) + window.scrollY - 160
+    if (top < window.scrollY) window.scrollTo({ top, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })
+  }
   return (
     <>
-      {(open ? items : items.slice(0, FRAME_PREVIEW)).map(render)}
-      {/* 開くボタンは薄く消える行に重ねて真ん中に置く。開いたあとは閉じるを最後の行の下の真ん中に置く */}
-      <div className={`relative flex justify-center ${open ? 'pt-4' : ''}`}>
-        {open ? null : (
-          <div aria-hidden="true" inert className="pointer-events-none max-h-24 w-full overflow-hidden [mask-image:linear-gradient(to_bottom,black_10%,transparent)]">
-            {render(items[FRAME_PREVIEW]!)}
-          </div>
-        )}
+      {items.slice(0, FRAME_PREVIEW).map(render)}
+      {/* 残りは最初から描き、閉じているときは1件目だけ薄く消える形で見せる。開くボタンはその上の真ん中、開いたあとは最後の行の下の真ん中に置く */}
+      <div ref={wrap} className="relative flex flex-col items-center">
+        <div
+          ref={body}
+          inert={!open}
+          aria-hidden={!open}
+          onTransitionEnd={(e) => {
+            if (e.target === e.currentTarget && open) setHeight('auto')
+          }}
+          style={{ height }}
+          className={`w-full overflow-hidden transition-[height] duration-300 ease-out motion-reduce:transition-none ${open ? '' : 'pointer-events-none [mask-image:linear-gradient(to_bottom,black_10%,transparent)]'}`}
+        >
+          {items.slice(FRAME_PREVIEW).map(render)}
+        </div>
         <Button
           variant="outline"
-          onClick={() => setOpen((v) => !v)}
+          onClick={toggle}
           aria-expanded={open}
-          className={`rounded-full bg-background px-5 shadow-sm hover:bg-card ${open ? '' : 'absolute bottom-2 left-1/2 -translate-x-1/2'}`}
+          className={`rounded-full bg-background px-5 shadow-sm hover:bg-card ${open ? 'mt-4' : 'absolute bottom-2 left-1/2 -translate-x-1/2'}`}
         >
           {open ? '閉じる' : `ほか${rest}件を見る`}
           <CaretDownIcon aria-hidden="true" className={`size-3.5 transition-transform ${open ? 'rotate-180' : ''}`} />
@@ -205,6 +234,18 @@ const DOMAIN_ICON: Record<string, typeof BankIcon> = {
   sangyo: StorefrontIcon, kankyo: LeafIcon, bunka: BasketballIcon, gyosei: BankIcon, other: DotsThreeCircleIcon,
 }
 
+/** 強調する金額。数字を大きく、単位（億円・万円）と「約」は小さくする */
+function Emph({ text }: { text: string }) {
+  const [, pre = '', num = text, unit = ''] = /^(約?)([\d,.]+)(.*)$/.exec(text) ?? []
+  return (
+    <b className="mx-1 font-normal tabular-nums text-primary">
+      {pre ? <span className="text-sm">{pre}</span> : null}
+      <span className="text-2xl">{num}</span>
+      <span className="ml-0.5 text-sm">{unit}</span>
+    </b>
+  )
+}
+
 /** 区政を知らない人の入口。自治体の仕事を分野の例で見せ、1年に使うお金を住民1人あたりで言う（最新の決算） */
 function Overview({ data, sections, year }: { data: PageData; sections: Set<string>; year: number }) {
   const latest = data.years.at(-1)
@@ -217,10 +258,10 @@ function Overview({ data, sections, year }: { data: PageData; sections: Set<stri
     <Section id="about" title={`${kind}は何をしている？`}>
       {shown && latest ? (
         <p className="text-[15px]">
-          {shown.lead}<b className="mx-1 text-xl font-normal tabular-nums text-primary">{formatYen(shown.yen)}</b>
+          {shown.lead}<Emph text={formatYen(shown.yen)} />
           {people ? (
             <>
-              、住民1人あたり<b className="mx-1 text-xl font-normal tabular-nums text-primary">約{Math.round(shown.yen / people / 1e4).toLocaleString('ja-JP')}万円</b>
+              、住民1人あたり<Emph text={`約${Math.round(shown.yen / people / 1e4).toLocaleString('ja-JP')}万円`} />
             </>
           ) : null}
           です。
@@ -244,8 +285,12 @@ function Overview({ data, sections, year }: { data: PageData; sections: Set<stri
                 <span className="block text-[13px] leading-snug text-muted-foreground">{f.examples}</span>
               </div>
               <div className="text-right tabular-nums">
-                <span className={`block text-[15px] ${spent ? '' : 'text-muted-foreground'}`}>{spent ? (spent.amountMissing ? '金額未記載' : formatYen(spent.yen)) : '—'}</span>
-                {spent && !spent.amountMissing && people ? <span className="block text-xs text-muted-foreground">1人 約{Math.round(spent.yen / people / 1e3) / 10}万円</span> : null}
+                {/* 分野の額は全体に占める割合で出す（額は「お金は何に使われた？」で見られる） */}
+                {spent && !spent.amountMissing && shown?.yen ? (
+                  <span className="block text-primary"><span className="text-xl">{((spent.yen / shown.yen) * 100).toFixed(1)}</span><span className="ml-0.5 text-xs">%</span></span>
+                ) : (
+                  <span className="block text-[15px] text-muted-foreground">{spent ? '金額未記載' : '—'}</span>
+                )}
               </div>
               </DomainLink>
             </li>
