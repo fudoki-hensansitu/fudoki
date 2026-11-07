@@ -217,10 +217,10 @@ function Overview({ data, sections, year }: { data: PageData; sections: Set<stri
     <Section id="about" title={`${kind}は何をしている？`}>
       {shown && latest ? (
         <p className="text-[15px]">
-          {shown.lead}<b className="mx-1 text-xl font-normal tabular-nums text-[var(--kincha-ink)]">{formatYen(shown.yen)}</b>
+          {shown.lead}<b className="mx-1 text-xl font-normal tabular-nums text-primary">{formatYen(shown.yen)}</b>
           {people ? (
             <>
-              、住民1人あたり<b className="mx-1 text-xl font-normal tabular-nums text-[var(--kincha-ink)]">約{Math.round(shown.yen / people / 1e4).toLocaleString('ja-JP')}万円</b>
+              、住民1人あたり<b className="mx-1 text-xl font-normal tabular-nums text-primary">約{Math.round(shown.yen / people / 1e4).toLocaleString('ja-JP')}万円</b>
             </>
           ) : null}
           です。
