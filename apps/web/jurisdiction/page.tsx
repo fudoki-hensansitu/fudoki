@@ -10,6 +10,7 @@ import { Hint } from '@/components/hint'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { NewIcon, UpIcon } from './fresh-icons'
 import { DOMAIN_FRAMES, groupByFrame, OTHER_FRAME } from './domains'
 import { EMBLEMS } from './emblems'
 import { Flow } from './flow'
@@ -102,8 +103,8 @@ function FreshRow({ up, upLabel = '拡大', title, yen, children }: { up: boolea
       <div className="flex items-start justify-between gap-x-6">
         <span className="flex min-w-0 items-start gap-2 text-[15.5px]">
           <Hint label={label}>
-            <span className="mt-[2px] inline-flex h-[19px] w-[42px] shrink-0 items-center justify-center rounded-full border border-primary/30 bg-primary/10 text-[11px] font-bold tracking-wide text-primary">
-              <span aria-hidden="true">{up ? 'Up!' : 'New!'}</span>
+            <span className="-mt-[3px] shrink-0 text-primary">
+              {up ? <UpIcon className="size-[26px]" /> : <NewIcon className="size-[26px]" />}
               <span className="sr-only">{label}</span>
             </span>
           </Hint>
