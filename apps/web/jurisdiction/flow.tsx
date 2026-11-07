@@ -20,7 +20,8 @@ const SETSU_SHOWN = 3
 const MOKU_BAR = 8
 /** 節の側に立てる棒の幅 */
 const SETSU_BAR = 5
-const MOBILE_QUERY = '(max-width: 699px)'
+/** 帯を描かない幅。項の段の並び（sm: で横並びになる）と同じ境目にする。ずれると、横並びなのに帯が出ない幅ができる */
+const MOBILE_QUERY = '(max-width: 639.98px)'
 
 const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
   const res = await fetch(url, { signal })
@@ -182,6 +183,10 @@ function KouSection({ kou, active, loading, onBox, levels }: { kou: Kou; active:
   const [paths, setPaths] = React.useState<Ribbon[]>([])
   const [setsu, setSetsu] = React.useState<Ribbon[]>([])
   const [bar, setBar] = React.useState({ top: 0, height: 0 })
+  // 帯の上を流れる光（全体図と同じ）。動きを減らす設定では出さない
+  const [still, setStill] = React.useState(true)
+  React.useEffect(() => setStill(window.matchMedia('(prefers-reduced-motion: reduce)').matches), [])
+  const lightId = `flow-light${React.useId().replace(/[^a-zA-Z0-9_-]/g, '')}`
   React.useLayoutEffect(() => {
     const el = box.current
     const lane = rib.current
@@ -256,10 +261,24 @@ function KouSection({ kou, active, loading, onBox, levels }: { kou: Kou; active:
       </div>
       <div ref={rib} className="relative hidden sm:block" aria-hidden="true">
         <svg className="absolute inset-0 size-full overflow-visible">
-          {paths.map((p, i) => <path key={i} d={p.d} className={`fill-primary/20 transition-opacity duration-500 ${active ? 'opacity-100' : 'opacity-0'}`} />)}
-          {setsu.map((p, i) => <path key={`s${i}`} d={p.d} className={`${p.rest ? 'fill-primary/10' : 'fill-primary/15'} transition-opacity duration-500 ${active ? 'opacity-100' : 'opacity-0'}`} />)}
-          {setsu.map((p, i) => <rect key={`t${i}`} x={p.x} y={p.y} width={SETSU_BAR} height={p.h} rx={1.5} className={`${p.rest ? 'fill-primary/35' : 'fill-primary/70'} transition-opacity duration-500 ${active ? 'opacity-100' : 'opacity-0'}`} />)}
-          {paths.map((p, i) => <rect key={`b${i}`} x={p.x} y={p.y} width={MOKU_BAR} height={p.h} rx={2} className={`fill-primary transition-opacity duration-500 ${active ? 'opacity-100' : 'opacity-0'}`} />)}
+          {/* 光は帯ごとの幅で左から右へ動く（objectBoundingBox の中で -1 → 1 へ平行移動） */}
+          {active && !still ? (
+            <defs>
+              <linearGradient id={lightId}>
+                <stop offset="0.3" stopColor="var(--primary)" stopOpacity={0} />
+                <stop offset="0.5" stopColor="var(--primary)" stopOpacity={0.3} />
+                <stop offset="0.7" stopColor="var(--primary)" stopOpacity={0} />
+                <animateTransform attributeName="gradientTransform" type="translate" from="-1 0" to="1 0" dur="2.4s" begin="1s" repeatCount="indefinite" />
+              </linearGradient>
+            </defs>
+          ) : null}
+          {/* 項が開いたら、中分類（項）→科目（目）→内訳（節）の順に帯が左から右へ伸びて流れ込む（全体図と同じ動き。styles/app.css）。閉じている項は出さない */}
+          {paths.map((p, i) => <path key={`${active}${i}`} d={p.d} style={{ animationDelay: `${i * 40}ms` }} className={`fill-primary/20 ${active ? 'flow-ribbon' : 'opacity-0'}`} />)}
+          {active && !still ? paths.map((p, i) => <path key={`l${i}`} d={p.d} fill={`url(#${lightId})`} />) : null}
+          {active && !still ? setsu.map((p, i) => <path key={`ls${i}`} d={p.d} fill={`url(#${lightId})`} />) : null}
+          {paths.map((p, i) => <rect key={`b${active}${i}`} x={p.x} y={p.y} width={MOKU_BAR} height={p.h} rx={2} style={{ animationDelay: `${300 + i * 40}ms` }} className={`fill-primary ${active ? 'flow-node' : 'opacity-0'}`} />)}
+          {setsu.map((p, i) => <path key={`s${active}${i}`} d={p.d} style={{ animationDelay: `${450 + i * 20}ms` }} className={`${p.rest ? 'fill-primary/10' : 'fill-primary/15'} ${active ? 'flow-ribbon' : 'opacity-0'}`} />)}
+          {setsu.map((p, i) => <rect key={`t${active}${i}`} x={p.x} y={p.y} width={SETSU_BAR} height={p.h} rx={1.5} style={{ animationDelay: `${750 + i * 20}ms` }} className={`${p.rest ? 'fill-primary/35' : 'fill-primary/70'} ${active ? 'flow-node' : 'opacity-0'}`} />)}
         </svg>
       </div>
       <div className="flex min-w-0 flex-col gap-3 sm:pl-2.5">
@@ -328,10 +347,10 @@ function KanPanel({ drill, loading, levels }: { drill: Drill; loading: boolean; 
 }
 
 /** 款→項の全体図と款ごとの内訳。最新年度の款→項はページに埋めてあり、それ以外の年度は図が近づいたら読み込む */
-/** tabs はカードの左上に置く切り替え（決算／予算・分け方）、summary は全体図のときに出す総額。view は分野（COFOG の枠）か款か */
-export function Flow({ data, total: year, view = 'kan', tabs, summary }: { data: PageData; total: YearTotal; view?: FlowView; tabs?: React.ReactNode; summary?: React.ReactNode }) {
+/** tabs はカードの左上に置く切り替え（分け方）、summary は全体図のときに出す総額。view は分野（COFOG の枠）か款か */
+export function Flow({ data, total: year, view = 'kan', phase = 'settlement', tabs, summary }: { data: PageData; total: YearTotal; view?: FlowView; /** 決算の無い年度は当初予算（initial）の流れを読む */ phase?: 'settlement' | 'initial'; tabs?: React.ReactNode; summary?: React.ReactNode }) {
   const levels = LEVELS[view]
-  const isLatest = year.year === data.years.at(-1)?.year
+  const isLatest = phase === 'settlement' && year.year === data.years.at(-1)?.year
   const root = React.useRef<HTMLDivElement>(null)
   const track = React.useRef<HTMLDivElement>(null)
   const overview = React.useRef<HTMLDivElement>(null)
@@ -354,12 +373,12 @@ export function Flow({ data, total: year, view = 'kan', tabs, summary }: { data:
     if (!near || detail) return
     setError(false)
     const controller = new AbortController()
-    fetchJson<Drill[]>(`/api/jurisdictions/flow/${data.code}/${year.year}/setsu${view === 'cofog' ? '?view=cofog' : ''}`, controller.signal).then(
+    fetchJson<Drill[]>(`/api/jurisdictions/flow/${data.code}/${year.year}/setsu?${new URLSearchParams({ ...(view === 'cofog' ? { view: 'cofog' } : {}), ...(phase === 'initial' ? { phase: 'initial' } : {}) })}`, controller.signal).then(
       (value) => { if (!controller.signal.aborted) setDetail(value) },
       () => { if (!controller.signal.aborted) setError(true) },
     )
     return () => controller.abort()
-  }, [near, detail, data.code, year.year, view, attempt])
+  }, [near, detail, data.code, year.year, view, phase, attempt])
   const onScroll = () => {
     const el = track.current
     if (!el) return

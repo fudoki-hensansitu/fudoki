@@ -1,6 +1,6 @@
 // 自治体の個別ページのデータ。apps/api（Service Binding）の歳出の検索から、決算の款・事業・お金の流れを組む。
 // 金額は API が返した円をそのまま持つ。足すのは「同じ年度・会計の款（兄弟）の和」だけで、api の sum_rules に従う
-import { jurisdictionKind, populationForYear, type Drill, type FlowDepth, type IndexEntry, type Kou, type Line, type Moku, type PageData, type Population, type Project, type Setsu, type YearTotal } from '../jurisdiction/types'
+import { jurisdictionKind, populationForYear, type Drill, type FlowDepth, type IndexEntry, type Kou, type Line, type Moku, type PageData, type Population, type Project, type Setsu, type YearTotal, type BudgetTotal } from '../jurisdiction/types'
 import { COFOG_GROUPS } from '@fudoki/fiscal/cofog-master'
 import { frameOf, OTHER_FRAME } from '../jurisdiction/domains'
 import { apiFetch, type Env } from './env'
@@ -58,6 +58,8 @@ export interface CatalogEntry {
   prefecture: string
   /** 一般会計の決算がある年度（西暦、古い順） */
   settlementYears: number[]
+  /** 一般会計の当初予算がある年度（西暦、古い順） */
+  initialYears: number[]
   officialUrl: string | null
   /** いちばん新しい基準日の住民基本台帳人口 */
   population: Population | null
@@ -98,6 +100,7 @@ export async function loadCatalog(env: Env): Promise<CatalogEntry[]> {
         name: j.name,
         prefecture: j.prefecture_name,
         settlementYears: j.coverage.filter((c) => c.document_kind === 'settlement' && c.accounts.some((a) => a.account_name === ACCOUNT)).map((c) => c.fiscal_year).sort((a, b) => a - b),
+        initialYears: [...new Set(j.coverage.filter((c) => c.document_kind === 'initial' && c.accounts.some((a) => a.account_name === ACCOUNT)).map((c) => c.fiscal_year))].sort((a, b) => a - b),
         officialUrl: j.official_url ?? null,
         population: populations.at(-1) ?? null,
         populations,
@@ -171,12 +174,15 @@ const search = (env: Env, code: string, years: { min: number; max: number }, lev
   }).then((r) => ({ ...r, subjects: r.subjects ?? [] }))
 
 /** 検索の続きを最後まで引く。科目の表と内訳の表のどちらにも使う */
-async function searchAll<T>(env: Env, path: string, code: string, year: number, where: Record<string, unknown>): Promise<T[]> {
+/** 資料の種類。決算か当初予算か。決算の無い年度だけ当初予算を読む */
+export type DocumentKind = 'settlement' | 'initial'
+
+async function searchAll<T>(env: Env, path: string, code: string, year: number, where: Record<string, unknown>, documentKind: DocumentKind = 'settlement'): Promise<T[]> {
   const out: T[] = []
   let token: string | undefined
   do {
     const r = await call<SearchResponse<T>>(env, path, {
-      document_kind: 'settlement',
+      document_kind: documentKind,
       fiscal_year: { min: year, max: year },
       where: { jurisdiction_code: { eq: [code] }, account_name: { eq: [ACCOUNT] }, ...where },
       order_by: [{ column: 'amount_yen', desc: true }],
@@ -195,11 +201,11 @@ const byAmount = (a: { amount_yen: number | null }, b: { amount_yen: number | nu
 const pickBreakdown = (byBreakdown: Record<string, ApiDetail[]>) => byBreakdown['節']?.length ? byBreakdown['節'] : (byBreakdown['事業'] ?? [])
 
 /** 目の直下の内訳（節、無ければ事業）。目の id ごとに大きい順 */
-async function loadSetsuByMoku(env: Env, code: string, year: number, mokuIds: string[]): Promise<Map<string, Setsu[]>> {
+async function loadSetsuByMoku(env: Env, code: string, year: number, mokuIds: string[], kind: DocumentKind = 'settlement'): Promise<Map<string, Setsu[]>> {
   const setsuByMoku = new Map<string, Setsu[]>()
   // 年度・資料・自治体・会計・分け方・深さの条件と合わせても API の bind 上限（90）に収まる件数。
   for (let i = 0; i < mokuIds.length; i += 50) {
-    const rows = await searchAll<ApiDetail>(env, DETAILS, code, year, { depth: { eq: [1] }, breakdown: { eq: ['節', '事業'] }, subject_id: { eq: mokuIds.slice(i, i + 50) } })
+    const rows = await searchAll<ApiDetail>(env, DETAILS, code, year, { depth: { eq: [1] }, breakdown: { eq: ['節', '事業'] }, subject_id: { eq: mokuIds.slice(i, i + 50) } }, kind)
     const groups = new Map<string, Record<string, ApiDetail[]>>()
     for (const n of rows) {
       const byBreakdown = groups.get(n.subject_id) ?? {}
@@ -212,8 +218,8 @@ async function loadSetsuByMoku(env: Env, code: string, year: number, mokuIds: st
 }
 
 /** すべての款を同じ深さで表示する。節は目の直下の内訳を取り、分け方の違う数字を混ぜない。 */
-export async function loadFlow(env: Env, code: string, year: number, depth: FlowDepth = 'kou'): Promise<Drill[]> {
-  const subjects = await searchAll<ApiSubject>(env, SUBJECTS, code, year, { level: { eq: depth === 'kou' ? ['款', '項'] : ['款', '項', '目'] } })
+export async function loadFlow(env: Env, code: string, year: number, depth: FlowDepth = 'kou', kind: DocumentKind = 'settlement'): Promise<Drill[]> {
+  const subjects = await searchAll<ApiSubject>(env, SUBJECTS, code, year, { level: { eq: depth === 'kou' ? ['款', '項'] : ['款', '項', '目'] } }, kind)
   const byParent = new Map<string, ApiSubject[]>()
   for (const n of subjects) {
     if (!n.parent_subject_id) continue
@@ -221,7 +227,7 @@ export async function loadFlow(env: Env, code: string, year: number, depth: Flow
     siblings.push(n)
     byParent.set(n.parent_subject_id, siblings)
   }
-  const setsuByMoku = depth === 'setsu' ? await loadSetsuByMoku(env, code, year, subjects.filter((n) => n.level === '目').map((n) => n.subject_id)) : new Map<string, Setsu[]>()
+  const setsuByMoku = depth === 'setsu' ? await loadSetsuByMoku(env, code, year, subjects.filter((n) => n.level === '目').map((n) => n.subject_id), kind) : new Map<string, Setsu[]>()
   return subjects.filter((n) => n.level === '款').sort(byAmount).map((kan) => ({
     kan: line(kan),
     kou: (byParent.get(kan.subject_id) ?? []).filter((n) => n.level === '項').sort(byAmount).map((kou) => ({
@@ -240,9 +246,9 @@ const partial = (lines: { amountMissing?: true }[]) => (lines.some((l) => l.amou
  * 金額は目の和（api の sum_rules: COFOG は目を前方一致で集めて足す。分類できない目・対象外の目は「その他」に入れ、全分類の和が総額になる。印字の無い目を含む分類は amountMissing を付ける）。
  * 並びは金額の順で「その他」を最後に置く。depth が kou なら目を返さない（全体図だけに使う）
  */
-export async function loadCofogFlow(env: Env, code: string, year: number, depth: FlowDepth = 'kou'): Promise<Drill[]> {
-  const moku = await searchAll<ApiSubject>(env, SUBJECTS, code, year, { level: { eq: ['目'] } })
-  const setsuByMoku = depth === 'setsu' ? await loadSetsuByMoku(env, code, year, moku.map((n) => n.subject_id)) : new Map<string, Setsu[]>()
+export async function loadCofogFlow(env: Env, code: string, year: number, depth: FlowDepth = 'kou', kind: DocumentKind = 'settlement'): Promise<Drill[]> {
+  const moku = await searchAll<ApiSubject>(env, SUBJECTS, code, year, { level: { eq: ['目'] } }, kind)
+  const setsuByMoku = depth === 'setsu' ? await loadSetsuByMoku(env, code, year, moku.map((n) => n.subject_id), kind) : new Map<string, Setsu[]>()
   // COFOG の大分類 → 中分類 → 目。款・項は使わない（COFOG で分けた図に自治体の科目の階層を混ぜない）。コードの無い目は空文字
   const divisions = new Map<string, Map<string, ApiSubject[]>>()
   for (const n of moku) {
@@ -308,6 +314,37 @@ export async function loadDrill(env: Env, kan: Line): Promise<Drill> {
   return { kan, kou }
 }
 
+/**
+ * 決算がまだ無い年度の当初予算。総額と、目の COFOG の大分類ごとの和（loadCofogFlow の大分類と同じ分け方）。
+ * 概要（区は何をしている？）で、決算の無い年度を選んだときに最新の決算の額ではなくその年度の予算を出すために使う
+ */
+async function loadBudget(env: Env, code: string, year: number): Promise<BudgetTotal> {
+  const subjects = await searchAll<ApiSubject>(env, SUBJECTS, code, year, { level: { eq: ['款', '目'] } }, 'initial')
+  const moku = subjects.filter((n) => n.level === '目')
+  const byDivision = new Map<string, ApiSubject[]>()
+  for (const n of moku) {
+    const id = `cofog-${n.cofog_code?.split('.')[0] || 'none'}`
+    byDivision.set(id, [...(byDivision.get(id) ?? []), n])
+  }
+  const lines = moku.map(line)
+  // 大きな支出の節に出す事業。決算と同じく積立・公債・予備費の款は外す。前年度との比較は出さない（決算と予算を比べないため）
+  const projects: Project[] = moku.filter((n) => !NOT_PROJECT_KAN.has(n.kan_name ?? '')).sort(byAmount).slice(0, PROJECT_COUNT).map((n) => ({
+    ...line(n),
+    kanName: n.kan_name ?? '',
+    kouName: n.kou_name,
+    domain: ((n.cofog_code ? frameOf(n.cofog_code) : undefined) ?? OTHER_FRAME).name,
+    prevYen: null,
+  }))
+  return {
+    year,
+    yen: sumYen(lines),
+    ...partial(lines),
+    kan: subjects.filter((n) => n.level === '款').sort(byAmount).map(line),
+    divisions: [...byDivision].map(([id, list]) => ({ id, yen: sumYen(list.map(line)), ...partial(list.map(line)) })),
+    projects,
+  }
+}
+
 /** 都道府県の頁へのリンク（prefecturePath）・同じ都道府県の自治体（neighbors）はカタログを見て route 側で決める */
 export async function loadPage(env: Env, entry: CatalogEntry): Promise<Omit<PageData, 'prefecturePath' | 'neighbors'> | null> {
   const latest = entry.settlementYears.at(-1)
@@ -344,6 +381,7 @@ export async function loadPage(env: Env, entry: CatalogEntry): Promise<Omit<Page
     years: totals,
     flow: await loadFlow(env, entry.code, latest),
     cofogFlow: await loadCofogFlow(env, entry.code, latest),
+    budgets: await Promise.all(entry.initialYears.filter((y) => y > latest).map((y) => loadBudget(env, entry.code, y))),
     projects,
   }
 }

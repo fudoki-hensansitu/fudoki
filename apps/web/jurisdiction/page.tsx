@@ -3,17 +3,17 @@
 // 歳出の決算は API の値。事業評価から取った事業・やめたこと（事業の入れ替え）は jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
 import { Link } from '@void/react'
 import * as React from 'react'
-import { ArrowLeftIcon, ArrowRightIcon, ArrowSquareOutIcon, CaretRightIcon, MapPinAreaIcon, MapTrifoldIcon, SquaresFourIcon, BankIcon, BasketballIcon, CaretDownIcon, ClipboardTextIcon, CoinsIcon, ChatCircleIcon, FirstAidKitIcon, GlobeIcon, HandHeartIcon, HouseLineIcon, LeafIcon, MapPinIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, StudentIcon, DotsThreeCircleIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
+import { ArrowLeftIcon, ArrowUpIcon, ArrowRightIcon, ArrowSquareOutIcon, CaretRightIcon, MapPinAreaIcon, MapTrifoldIcon, SquaresFourIcon, BankIcon, BasketballIcon, CaretDownIcon, ClipboardTextIcon, CoinsIcon, RobotIcon, FirstAidKitIcon, GlobeIcon, HandHeartIcon, HouseLineIcon, LeafIcon, MapPinIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, StudentIcon, DotsThreeCircleIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
 import { StartForm } from '../chat/start-form'
 import type { StoredSession } from '../chat/store'
 import { Hint } from '@/components/hint'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { StopIcon, NewIcon, UpIcon } from './fresh-icons'
 import { DOMAIN_FRAMES, groupByFrame, OTHER_FRAME } from './domains'
 import { EMBLEMS } from './emblems'
 import { Flow } from './flow'
-import { assetPath, type EvaluatedProject, type Initiative, type ProfileYear, type Scrap } from './profiles'
+import { assetPath, type BudgetNew, type EvaluatedProject, type Initiative, type ProfileYear, type Scrap } from './profiles'
 import { changePct, INDEX_PATH, formatAsOf, formatPeople, formatYen, reiwa, yearName, type FlowView, type PageData, type Project, type Setsu, type YearTotal } from './types'
 
 const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
@@ -80,20 +80,39 @@ function YenText({ yen, className }: { yen: number; className?: string }) {
   )
 }
 
-/** 新しく始めたことの2つの形。シートごと新しくできた事業か、今ある事業の中で始めた取り組みか */
-type Fresh = ({ kind: 'sheet' } & EvaluatedProject) | ({ kind: 'initiative' } & Initiative)
-const freshOf = (y: ProfileYear): Fresh[] => [...y.projects.map((p) => ({ kind: 'sheet' as const, ...p })), ...[...(y.initiatives ?? [])].sort((a, b) => b.settledYen - a.settledYen).map((p) => ({ kind: 'initiative' as const, ...p }))]
+/** 新しく始めたことの形。事業評価のシートごと新しくできた事業か、今ある事業の中で始めた取り組みか、予算の資料で新規・レベルアップ（画面では拡大）と印の付いた項目か */
+type Fresh = ({ kind: 'sheet' } & EvaluatedProject) | ({ kind: 'initiative' } & Initiative) | ({ kind: 'budget' } & BudgetNew)
+const evaluatedOf = (y: ProfileYear): Fresh[] => [...y.projects.map((p) => ({ kind: 'sheet' as const, ...p })), ...[...(y.initiatives ?? [])].sort((a, b) => b.settledYen - a.settledYen).map((p) => ({ kind: 'initiative' as const, ...p }))]
+/** 実績と評価のある事業評価を優先し、まだ公表されていない年度だけ予算の資料から出す */
+const freshOf = (y: ProfileYear): Fresh[] => {
+  const evaluated = evaluatedOf(y)
+  return evaluated.length ? evaluated : [...(y.budgetNew ?? [])].sort((a, b) => Number(!!b.press?.length) - Number(!!a.press?.length) || b.budgetYen - a.budgetYen).map((p) => ({ kind: 'budget' as const, ...p }))
+}
 
-const KIND_LABEL: Record<Fresh['kind'], string> = { sheet: '新しい事業', initiative: '今ある事業の中で' }
-const KindLabel = ({ kind }: { kind: Fresh['kind'] }) => <span className="text-xs text-muted-foreground">{KIND_LABEL[kind]}</span>
 
-function SheetLink({ sheets, page, name }: { sheets?: string; page: number; name: string }) {
-  if (!sheets) return null
+/** 予算の資料はその年度にこれから始める計画、事業評価は実施した結果なので、見出しの時制を分ける */
+const isPlanned = (y: ProfileYear) => freshOf(y)[0]?.kind === 'budget'
+const freshTitle = (y: ProfileYear) => (isPlanned(y) ? '新しく何を始める？' : '新しく何を始めた？')
+
+/** 新しく始めたことの1行。名前の左に新規（New!）か拡大・今ある事業の中での取り組み（Up!）かのバッジ、右に金額、下に中身。評価・予算どの年度も同じ形にする */
+function FreshRow({ up, upLabel = '拡大', title, yen, children }: { up: boolean; upLabel?: string; title: string; yen: number; children: React.ReactNode }) {
+  const label = up ? upLabel : '新規'
   return (
-    <Button variant="link" size="inline" nativeButton={false} render={<a href={`${sheets}#page=${page}`} target="_blank" rel="noopener" />} className="ml-1 align-baseline">
-      評価シート「{name}」
-      <ArrowSquareOutIcon aria-hidden="true" className="size-3.5" />
-    </Button>
+    <div className="flex flex-col gap-2 border-b border-foreground/10 py-4">
+      <div className="flex items-start justify-between gap-x-6">
+        <span className="flex min-w-0 items-start gap-2 text-[15.5px]">
+          <Hint label={label}>
+            <span className="-mt-[3px] shrink-0 text-primary">
+              {up ? <UpIcon className="size-7" /> : <NewIcon className="size-7" />}
+              <span className="sr-only">{label}</span>
+            </span>
+          </Hint>
+          {title}
+        </span>
+        <YenText yen={yen} className="shrink-0 text-right leading-snug" />
+      </div>
+      {children}
+    </div>
   )
 }
 
@@ -104,47 +123,135 @@ const EvalLabel = () => (
   </span>
 )
 
-/** 今ある事業の中で始めた取り組み。何を始めたかはシートの文をそのまま引き、評価は含まれる事業全体のものだと文で言う */
-function InitiativeItem({ p, sheets }: { p: Initiative; sheets?: string }) {
+/** 今ある事業の中で始めた取り組み。何を始めたかはシートの文をそのまま引き、金額と評価は含まれる事業全体のものだと文で言う */
+function InitiativeItem({ p }: { p: Initiative }) {
   return (
-    <div className="flex flex-col gap-2 border-b border-foreground/10 py-4">
-      <div className="flex flex-col">
-        <KindLabel kind="initiative" />
-        <span className="text-[15.5px]">{p.title}</span>
-      </div>
-      <blockquote className="border-l-2 border-foreground/15 pl-3 text-sm [text-wrap:pretty]">{p.quote}</blockquote>
+    <FreshRow up upLabel="今ある事業の中で" title={p.title} yen={p.settledYen}>
+      <p className="text-sm [text-wrap:pretty]">「{p.quote}」</p>
       <p className="rounded-xl bg-sidebar px-3.5 py-2.5 text-[13px] leading-relaxed text-foreground [text-wrap:pretty]">
         <EvalLabel />
-        この取り組みだけの評価はない。含まれる事業「{p.name}」（決算額 {formatYen(p.settledYen)}）の評価は
+        この取り組みだけの評価はない。金額と評価は、含まれる事業「{p.name}」全体の決算額と評価で、評価は
         <Grade grade={p.grade} className="ml-1" />
         （{p.direction}）。
-        <SheetLink sheets={sheets} page={p.page} name={p.name} />
       </p>
-    </div>
+    </FreshRow>
   )
 }
 
-function ProjectItem({ p, sheets }: { p: EvaluatedProject; sheets?: string }) {
+/** 予算の資料で新規・レベルアップと印の付いた項目を含む事業。事業評価の事業と同じく名前と金額を並べ、その下に項目を資料の文言のまま書く。
+ * 資料は項目だけの額を載せないので、見出しは項目ではなく金額の対象である事業にする。新規を含む事業は新規の印、それ以外は拡大の印を名前の左に置く */
+function BudgetItem({ p }: { p: BudgetNew }) {
+  const quote = (xs: string[]) => xs.map((i) => `「${i}」`).join('')
+  return (
+    <FreshRow up={!p.items.length} title={p.name} yen={p.budgetYen}>
+      <p className="text-sm">
+        {p.items.length ? `${quote(p.items)}を新しく始める。` : null}
+        {p.upgrades.length ? `${quote(p.upgrades)}を拡大する。` : null}
+      </p>
+      {/* 予算案のプレス発表資料に説明があれば、その POINT を資料の文のまま添える */}
+      {p.press?.length ? (
+        <ul className="flex flex-col gap-1 rounded-xl bg-sidebar px-3.5 py-2.5 text-[13px] leading-relaxed [text-wrap:pretty]">
+          {p.press.flatMap((x) => x.points.map((pt, i) => (
+            <li key={`${x.page}-${i}`} className="relative pl-3.5 before:absolute before:left-0 before:top-[0.6em] before:size-1.5 before:rounded-full before:bg-primary/60">{pt}</li>
+          )))}
+        </ul>
+      ) : null}
+    </FreshRow>
+  )
+}
+
+/** 分野の中の事業。金額の大きい3件を出し、残りは薄く消えていく1件だけ見せて「ほか○件」で開く */
+const FRAME_PREVIEW = 3
+/** 閉じているときに見せる、薄く消える行の高さ（px） */
+const FRAME_PEEK = 96
+/** 開閉で高さが動く時間（ms）。Tailwind の duration-300 と揃える */
+const FRAME_DURATION = 300
+
+/** ブラウザの smooth は時間を決められないので、指定の時間で ease-out にスクロールする */
+function scrollToIn(top: number, ms: number) {
+  const from = window.scrollY
+  if (ms <= 0) return window.scrollTo(0, top)
+  const start = performance.now()
+  const step = (now: number) => {
+    const t = Math.min(1, (now - start) / ms)
+    window.scrollTo(0, from + (top - from) * (1 - (1 - t) ** 3))
+    if (t < 1) requestAnimationFrame(step)
+  }
+  requestAnimationFrame(step)
+}
+
+function FrameItems<T>({ items, render }: { items: T[]; render: (item: T) => React.ReactNode }) {
+  const [open, setOpen] = React.useState(false)
+  // 高さは閉じているとき FRAME_PEEK、開くときは中身の高さへ動かし、開き終わったら auto にして幅の変化に追従させる
+  const [height, setHeight] = React.useState<number | 'auto'>(FRAME_PEEK)
+  const wrap = React.useRef<HTMLDivElement>(null)
+  const body = React.useRef<HTMLDivElement>(null)
+  const rest = items.length - FRAME_PREVIEW
+  if (rest <= 0) return <>{items.map(render)}</>
+  const toggle = () => {
+    const el = body.current
+    if (!el) return
+    const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (!open) {
+      setOpen(true)
+      // 動きを減らす設定では transition が走らず transitionend も来ないので、最初から auto にする
+      setHeight(still ? 'auto' : el.scrollHeight)
+      return
+    }
+    // 閉じるときは今の高さを固定してから縮める。同時に、最後に見せている行（3件目）が画面の真ん中に来るまで、縮みと同じ時間でスクロールを戻す
+    setHeight(el.scrollHeight)
+    requestAnimationFrame(() => requestAnimationFrame(() => setHeight(FRAME_PEEK)))
+    setOpen(false)
+    const last = wrap.current?.previousElementSibling
+    if (!last) return
+    const r = last.getBoundingClientRect()
+    const target = Math.max(0, window.scrollY + r.top + r.height / 2 - window.innerHeight / 2)
+    if (target < window.scrollY) scrollToIn(target, still ? 0 : FRAME_DURATION)
+  }
+  return (
+    <>
+      {items.slice(0, FRAME_PREVIEW).map(render)}
+      {/* 残りは最初から描き、閉じているときは1件目だけ薄く消える形で見せる。開くボタンはその上の真ん中、開いたあとは最後の行の下の真ん中に置く */}
+      <div ref={wrap} className="relative flex flex-col items-center">
+        <div
+          ref={body}
+          inert={!open}
+          aria-hidden={!open}
+          onTransitionEnd={(e) => {
+            if (e.target === e.currentTarget && open) setHeight('auto')
+          }}
+          style={{ height }}
+          className={`w-full overflow-hidden transition-[height] duration-300 ease-out motion-reduce:transition-none ${open ? '' : 'pointer-events-none [mask-image:linear-gradient(to_bottom,black_10%,transparent)]'}`}
+        >
+          {items.slice(FRAME_PREVIEW).map(render)}
+        </div>
+        <Button
+          variant="outline"
+          onClick={toggle}
+          aria-expanded={open}
+          className={`rounded-full bg-background px-5 shadow-sm hover:bg-card ${open ? 'mt-4' : 'absolute bottom-2 left-1/2 -translate-x-1/2'}`}
+        >
+          {open ? '閉じる' : `ほか${rest}件を見る`}
+          <CaretDownIcon aria-hidden="true" className={`size-3.5 transition-transform ${open ? 'rotate-180' : ''}`} />
+        </Button>
+      </div>
+    </>
+  )
+}
+
+function ProjectItem({ p }: { p: EvaluatedProject }) {
   const i = p.indicator
   return (
-    // 1列で上から読む。金額は名前と同じ行の右に置き、評価の枠は幅いっぱいに出す。値はどれも評価シートのもの
-    <div className="flex flex-col gap-2 border-b border-foreground/10 py-4">
-      <div className="flex items-start justify-between gap-x-6">
-        <div className="flex min-w-0 flex-col">
-          <KindLabel kind="sheet" />
-          <span className="text-[15.5px]">{p.title}</span>
-        </div>
-        <YenText yen={p.settledYen} className="shrink-0 text-right leading-snug" />
-      </div>
+    // 金額は名前と同じ行の右に置き、評価の枠は幅いっぱいに出す。値はどれも評価シートのもの
+    <FreshRow up={false} title={p.title} yen={p.settledYen}>
       <p className="text-sm">{p.what}</p>
       {/* 評価の区分・方向性・指標は一続きの文として、同じ大きさ・色で読ませる。指標の良し悪しは風土記が判断しない */}
       <p className="rounded-xl bg-sidebar px-3.5 py-2.5 text-[13px] leading-relaxed text-foreground [text-wrap:pretty]">
         <EvalLabel />
         <Grade grade={p.grade} />
         （{p.direction}）。{i ? `指標の「${i.name}」は、目標 ${i.target}${i.unit}に対して実績 ${i.actual}${i.unit}。` : '目標と実績を並べた指標は載っていない。'}
-        <SheetLink sheets={sheets} page={p.page} name={p.name} />
       </p>
-    </div>
+    </FreshRow>
   )
 }
 
@@ -154,28 +261,47 @@ const DOMAIN_ICON: Record<string, typeof BankIcon> = {
   sangyo: StorefrontIcon, kankyo: LeafIcon, bunka: BasketballIcon, gyosei: BankIcon, other: DotsThreeCircleIcon,
 }
 
+/** 強調する金額。数字を大きく、単位（億円・万円）と「約」は小さくする */
+function Emph({ text }: { text: string }) {
+  const [, pre = '', num = text, unit = ''] = /^(約?)([\d,.]+)(.*)$/.exec(text) ?? []
+  return (
+    <b className="mx-1 font-normal tabular-nums text-primary">
+      {pre ? <span className="text-sm">{pre}</span> : null}
+      <span className="text-2xl">{num}</span>
+      <span className="ml-0.5 text-sm">{unit}</span>
+    </b>
+  )
+}
+
 /** 区政を知らない人の入口。自治体の仕事を分野の例で見せ、1年に使うお金を住民1人あたりで言う（最新の決算） */
-function Overview({ data, sections }: { data: PageData; sections: Set<string> }) {
+function Overview({ data, sections, year }: { data: PageData; sections: Set<string>; year: number }) {
   const latest = data.years.at(-1)
   const people = data.population?.people
   const kind = data.name.slice(-1)
+  // 決算がまだ無い年度は、その年度の当初予算を出す（最新の決算の額を出すと、選んだ年度の額に読める）
+  const budget = (data.budgets ?? []).find((b) => b.year === year)
+  const shown = budget ? { yen: budget.yen, lead: `${reiwa(year)}の予算は` } : latest ? { yen: latest.yen, lead: `${reiwa(latest.year)}に使ったお金は` } : null
   return (
     <Section id="about" title={`${kind}は何をしている？`}>
-      {latest ? (
+      {shown && latest ? (
         <p className="text-[15px]">
-          {reiwa(latest.year)}に使ったお金は<b className="mx-1 text-xl font-normal tabular-nums text-[var(--kincha-ink)]">{formatYen(latest.yen)}</b>
+          {shown.lead}<Emph text={formatYen(shown.yen)} />
           {people ? (
             <>
-              、住民1人あたり<b className="mx-1 text-xl font-normal tabular-nums text-[var(--kincha-ink)]">約{Math.round(latest.yen / people / 1e4).toLocaleString('ja-JP')}万円</b>
+              、住民1人あたり<Emph text={`約${Math.round(shown.yen / people / 1e4).toLocaleString('ja-JP')}万円`} />
             </>
           ) : null}
           です。
+          {!budget && year !== latest.year ? (
+            <span className="mt-1 block text-[13px] text-muted-foreground">{data.years.some((y) => y.year === year) ? '' : `${reiwa(year)}の決算はまだ収録していないため、`}ここの金額は収録している最新の決算（{reiwa(latest.year)}）のものです。</span>
+          ) : null}
         </p>
       ) : null}
       <ul className="grid grid-cols-1 gap-x-8 border-t sm:grid-cols-2">
         {[...DOMAIN_FRAMES.filter((f) => f.examples), OTHER_FRAME].map((f) => {
-          // 最新の決算を COFOG の大分類で分けた額（お金の流れの機能分類と同じ値）
-          const spent = data.cofogFlow.find((d) => d.kan.id === `cofog-${f.cofog || 'none'}`)?.kan
+          // 最新の決算（決算の無い年度は当初予算）を COFOG の大分類で分けた額（お金の流れの機能分類と同じ分け方）
+          const id = `cofog-${f.cofog || 'none'}`
+          const spent = budget ? budget.divisions.find((d) => d.id === id) : data.cofogFlow.find((d) => d.kan.id === id)?.kan
           if (f === OTHER_FRAME && !spent) return null
           return (
             <li key={f.id} className="border-b border-foreground/10">
@@ -186,8 +312,15 @@ function Overview({ data, sections }: { data: PageData; sections: Set<string> })
                 <span className="block text-[13px] leading-snug text-muted-foreground">{f.examples}</span>
               </div>
               <div className="text-right tabular-nums">
-                <span className={`block text-[15px] ${spent ? '' : 'text-muted-foreground'}`}>{spent ? (spent.amountMissing ? '金額未記載' : formatYen(spent.yen)) : '—'}</span>
-                {spent && !spent.amountMissing && people ? <span className="block text-xs text-muted-foreground">1人 約{Math.round(spent.yen / people / 1e3) / 10}万円</span> : null}
+                {/* 分野の額は全体に占める割合で出し、その下に住民1人あたりの額を小さく添える */}
+                {spent && !spent.amountMissing && shown?.yen ? (
+                  <>
+                    <span className="block text-primary"><span className="text-xl">{((spent.yen / shown.yen) * 100).toFixed(1)}</span><span className="ml-0.5 text-xs">%</span></span>
+                    {people ? <span className="block text-xs text-muted-foreground">1人 約{(Math.round(spent.yen / people / 1e3) / 10).toLocaleString('ja-JP')}万円</span> : null}
+                  </>
+                ) : (
+                  <span className="block text-[15px] text-muted-foreground">{spent ? '金額未記載' : '—'}</span>
+                )}
               </div>
               </DomainLink>
             </li>
@@ -198,7 +331,7 @@ function Overview({ data, sections }: { data: PageData; sections: Set<string> })
   )
 }
 
-/** 分野の行。その年度の「新しく何を始めた？」にその分野があれば、そこへ移るリンクにする */
+/** 分野の行。その年度の「新しく何を始めた（始める）？」にその分野があれば、そこへ移るリンクにする */
 function DomainLink({ section, children }: { section?: string; children: React.ReactNode }) {
   // アイコン・名前・金額の3列を全行で同じ幅にし、行は隣の列の行と同じ高さいっぱいに広げて中央に揃える
   const row = 'grid h-full grid-cols-[1.75rem_minmax(0,1fr)_5.5rem] items-center gap-3 py-3'
@@ -216,10 +349,16 @@ function DomainLink({ section, children }: { section?: string; children: React.R
 }
 
 function Domains({ year, fiscalYear }: { year: ProfileYear; fiscalYear: number }) {
-  const groups = groupByFrame(freshOf(year))
+  const fresh = freshOf(year)
+  const groups = groupByFrame(fresh)
+  const byBudget = isPlanned(year)
+  const lead = byBudget
+    ? 'この年度の予算で、区が新しく始める事業と、広げる事業です。金額は事業全体の予算です。'
+    : '区が事業ごとに目標と実績を振り返る「事業評価」から、この年度に新しくできた事業と、今ある事業の中で始めた取り組みを並べています。'
+  const link = !groups.length ? undefined : byBudget ? [...(year.budgetHighlights ? [{ href: year.budgetHighlights, label: '主な施策（予算）' }] : []), ...(year.budgetPress ? [{ href: year.budgetPress, label: 'プレス発表' }] : [])] : { href: year.evaluationSource, label: '事業評価' }
   return (
-    <Section id="domains" title="新しく何を始めた？" lead="区が事業ごとに目標と実績を振り返る「事業評価」から、この年度に新しくできた事業と、今ある事業の中で始めた取り組みを並べています。" link={groups.length ? { href: year.evaluationSource, label: '事業評価' } : undefined}>
-      {/* 事業評価は実施した翌年度に公表する。まだの年度も節は出し、なぜ空かを言う */}
+    <Section id="domains" title={freshTitle(year)} lead={lead} link={link}>
+      {/* 事業評価は実施した翌年度に公表する。予算の資料も無い年度は節だけ出し、なぜ空かを言う */}
       {groups.length ? null : <p className="rounded-xl border border-dashed px-4 py-6 text-sm text-muted-foreground">{reiwa(fiscalYear)}の事業の評価は、{reiwa(fiscalYear + 1)}に公表されます。まだ公表されていません。</p>}
       {groups.map(({ frame: d, items }) => (
         <div key={d.id} id={`d-${d.id}`} className="flex scroll-mt-32 lg:scroll-mt-20 flex-col gap-1 [&+&]:mt-12">
@@ -227,8 +366,8 @@ function Domains({ year, fiscalYear }: { year: ProfileYear; fiscalYear: number }
             <DomainIcon id={d.id} />
             {d.name}
           </h3>
-          <div className="border-t">
-            {items.map((p) => (p.kind === 'sheet' ? <ProjectItem key={`s${p.page}`} p={p} sheets={year.evaluationSheets} /> : <InitiativeItem key={`i${p.page}-${p.title}`} p={p} sheets={year.evaluationSheets} />))}
+          <div className="flex flex-col border-t">
+            <FrameItems items={items} render={(p) => (p.kind === 'sheet' ? <ProjectItem key={`s${p.page}`} p={p} /> : p.kind === 'initiative' ? <InitiativeItem key={`i${p.page}-${p.title}`} p={p} /> : <BudgetItem key={`b${p.page}-${p.name}`} p={p} />)} />
           </div>
         </div>
       ))}
@@ -331,82 +470,66 @@ const Empty = ({ children }: { children: React.ReactNode }) => (
 )
 
 /** どの年度も同じ並び（総額・お金の流れ・金額の大きい事業）。決算が無い年度・事業の一覧が無い年度は枠だけ出す */
-type Phase = 'settlement' | 'budget'
-const PHASES: { key: Phase; label: string }[] = [
-  { key: 'settlement', label: '決算' },
-  { key: 'budget', label: '予算' },
-]
 /** お金の流れの分け方。既定は機能分類（目的で分ける COFOG を domains.ts の枠にまとめたもの）で、どの自治体も同じ枠で比べられる。自治体分類は予算書・決算書の款・項のまま */
 const VIEWS: { key: FlowView; label: string }[] = [
   { key: 'cofog', label: '機能分類' },
   { key: 'kan', label: '自治体分類' },
 ]
 
-/** 予算の節。決算と予算をタブで切り替える。予算はまだ取り込んでいないので、どの年度も空の枠を出す */
+/** お金の流れの節。決算があればその年度の決算、無ければ当初予算を出す（決算と予算は切り替えない）。予算の年度は見出しを「使う」と言う */
 function Budget({ data, year }: { data: PageData; year: number }) {
-  const [phase, setPhase] = React.useState<Phase>('settlement')
   const [view, setView] = React.useState<FlowView>('cofog')
   const settled = data.years.find((y) => y.year === year)
-  const total = phase === 'settlement' ? settled : undefined
-  const prev = data.years.find((y) => y.year === year - 1)
-  const pct = total ? changePct(total.yen, prev?.yen) : null
-  const label = phase === 'settlement' ? '決算' : '予算'
-  const missing = `${yearName(year)}の${label}は、まだ収録していません`
-  // その年度の決算書・予算書（歳出を載せた冊）の PDF を直接開く。公表前・未選定の冊は出さない
+  const budget = settled ? undefined : (data.budgets ?? []).find((b) => b.year === year)
+  const total: YearTotal | undefined = settled ?? (budget ? { year, yen: budget.yen, kan: budget.kan } : undefined)
+  const prev = settled ? data.years.find((y) => y.year === year - 1) : undefined
+  const pct = total && prev ? changePct(total.yen, prev.yen) : null
+  const label = budget ? '予算' : '決算'
+  // その年度の決算書（無ければ予算書）の歳出を載せた冊の PDF を直接開く。公表前・未選定の冊は出さない
   const documents = data.profile?.years[year]?.documents
-  const docs = [...(documents?.settlement ?? []), ...(documents?.initial ?? [])]
+  const docs = (budget ? documents?.initial : documents?.settlement) ?? []
   const summary = (
     <>
-      <span className="text-sm text-muted-foreground">全体</span>
+      <span className="text-sm text-muted-foreground">{budget ? '予算の全体' : '全体'}</span>
       <b className={`text-[26px] font-normal leading-snug tabular-nums ${total ? '' : 'text-muted-foreground'}`}>{total ? formatYen(total.yen) : '—'}</b>
       {pct !== null ? <span className={`text-[13px] tabular-nums text-muted-foreground`}>前年度比 {pct >= 0 ? '+' : '−'}{Math.abs(pct).toFixed(1)}%</span> : null}
     </>
   )
-  // 決算・予算のタブは左、分類のメニューは右に置く
+  // 分け方の切り替えはヘッダーの年度の切り替えと同じ丸いボタンの並びにする
   const tabs = (
-    <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5">
-    <div role="tablist" aria-label="金額の段階" className="flex gap-1">
-      {PHASES.map((p) => (
+    <div className="flex items-center justify-between gap-3">
+      {/* 左上に、この図が予算か決算かを出す */}
+      <span className="text-[15px]">{label}</span>
+      <div role="group" aria-label="分類" className="flex gap-1">
+      {VIEWS.map((v) => (
         <button
-          key={p.key}
+          key={v.key}
           type="button"
-          role="tab"
-          id={`tab-${p.key}`}
-          aria-selected={p.key === phase}
-          aria-controls="budget-panel"
-          onClick={() => setPhase(p.key)}
-          className={`rounded-full px-3 py-1.5 text-[13px] ${p.key === phase ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+          aria-pressed={v.key === view}
+          onClick={() => setView(v.key)}
+          className={`rounded-full px-2.5 py-1.5 text-[13px] transition-colors ${v.key === view ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
         >
-          {p.label}
+          {v.label}
         </button>
       ))}
-    </div>
-    {/* 決算・予算のタブとは別の形（select）にし、金額の段階の切り替えと分け方の切り替えを見分けられるようにする */}
-    <Select items={VIEWS.map((v) => ({ value: v.key, label: v.label }))} value={view} onValueChange={(v) => v && setView(v as FlowView)}>
-      <SelectTrigger size="sm" aria-label={`分類：${VIEWS.find((v) => v.key === view)!.label}`} className="text-[13px]">
-        <SelectValue />
-      </SelectTrigger>
-      <SelectContent align="end">
-        {VIEWS.map((v) => <SelectItem key={v.key} value={v.key}>{v.label}</SelectItem>)}
-      </SelectContent>
-    </Select>
+      </div>
     </div>
   )
   return (
     <Section
       id="budget"
-      title="お金は何に使われた？"
-      lead="機能分類は、使い道を目的ごとに分ける世界共通の分類（COFOG）です。自治体分類は、予算書・決算書の分け方そのままです。"
+      title={budget ? 'お金は何に使う？' : 'お金は何に使われた？'}
+      lead="機能分類は、使い道を目的ごとに分ける世界共通の分類（COFOG）です。独自評価のため誤っていることがあります。自治体分類は、予算書・決算書の分け方のまま表示。"
       link={docs.length ? docs : undefined}
     >
-      <div id="budget-panel" role="tabpanel" aria-labelledby={`tab-${phase}`} data-ask-view={`${reiwa(year)}の${label}の金額（${VIEWS.find((v) => v.key === view)!.label}）`} className="flex flex-col gap-4">
+      <div id="budget-panel" data-ask-view={`${reiwa(year)}の${label}の金額（${VIEWS.find((v) => v.key === view)!.label}）`} className="flex flex-col gap-4">
         {total ? (
-          <Flow key={`${year}-${view}`} data={data} total={total} view={view} tabs={tabs} summary={summary} />
+          <Flow key={`${year}-${view}`} data={data} total={total} view={view} phase={budget ? 'initial' : 'settlement'} tabs={tabs} summary={summary} />
         ) : (
           <div className="rounded-[20px] border bg-background px-5 pt-5 sm:px-6">
             {tabs}
             <div className="mt-3 flex min-h-9 flex-wrap items-baseline gap-x-3">{summary}</div>
-            <p className="pb-10 pt-4 text-center text-sm text-muted-foreground">{missing}</p>
+            <p className="pb-10 pt-4 text-center text-sm text-muted-foreground">{yearName(year)}の決算・予算は、まだ収録していません</p>
           </div>
         )}
       </div>
@@ -414,25 +537,30 @@ function Budget({ data, year }: { data: PageData; year: number }) {
   )
 }
 
-/** 決算の金額が大きい事業（目）。最新の決算の年度だけ出す */
+/** 金額が大きい事業（目）。最新の決算の年度は決算、決算の無い年度は当初予算から出す */
 function Projects({ data, year }: { data: PageData; year: number }) {
   const settled = data.years.find((y) => y.year === year)
   const isLatest = !!settled && settled.year === data.years.at(-1)?.year
-  const max = data.projects[0]?.yen ?? 1
+  const budget = settled ? undefined : (data.budgets ?? []).find((b) => b.year === year)
+  const projects = isLatest ? data.projects : (budget?.projects ?? [])
+  const max = projects[0]?.yen ?? 1
   return (
-    <Section id="projects" title="いちばんお金がかかっているのは？">
-      {isLatest ? (
+    <Section id="projects" title={budget ? 'いちばんお金がかかるのは？' : 'いちばんお金がかかっているのは？'}>
+      {projects.length ? (
         <ul className="border-t">
-          {data.projects.map((p, i) => (
+          {projects.map((p, i) => (
             <ProjectRow key={p.id} p={p} rank={i + 1} max={max} />
           ))}
         </ul>
       ) : (
-        <Empty>{settled ? `${yearName(year)}の事業の一覧は、まだ出していません` : `${yearName(year)}の決算は、まだ収録していません`}</Empty>
+        <Empty>{settled ? `${yearName(year)}の事業の一覧は、まだ出していません` : `${yearName(year)}の決算・予算は、まだ収録していません`}</Empty>
       )}
     </Section>
   )
 }
+
+/** やめた事業の結果の言い方。「廃止」は STOP の印で伝わるので書かず、区の言葉の「廃止を検討」はやわらかく言い換える */
+const exitResult = (result: string) => (result === '廃止' ? '' : result === '廃止を検討' ? 'やめるか検討中' : result)
 
 function ScrapSection({ scrap }: { scrap: Scrap }) {
   const target = scrap.targetYen
@@ -472,9 +600,12 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
       <ul className="border-t">
         {scrap.exits.map((e) => (
           <li key={e.name} className="grid grid-cols-[minmax(0,1fr)_72px] items-baseline gap-x-4 gap-y-1 border-b border-foreground/10 py-3 text-sm sm:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_80px]">
-            <span>{e.name}</span>
+            <span className="relative pl-8">
+              <StopIcon className="absolute -top-[3px] left-0 size-6 text-primary" />
+              {e.name}
+            </span>
             <span className="col-span-full row-start-2 text-[13.5px] text-muted-foreground sm:col-span-1 sm:row-start-auto">{e.reason}</span>
-            <span className="text-right text-[13px] text-muted-foreground">{e.result}</span>
+            <span className="text-right text-[13px] text-muted-foreground">{exitResult(e.result)}</span>
           </li>
         ))}
       </ul>
@@ -549,7 +680,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
     { href: '#projects', label: '大きな支出' },
   ]
   // 区政を知らない人には金額より暮らしの具体例が先。変わったことから入り、お金の内訳へ進む
-  const fresh: TocItem[] = py ? [{ href: '#domains', label: '新しく始めたこと' }, ...groupByFrame(freshOf(py)).map(({ frame: d }) => ({ href: `#d-${d.id}`, label: d.name, sub: true }))] : []
+  const fresh: TocItem[] = py ? [{ href: '#domains', label: isPlanned(py) ? '新しく始めること' : '新しく始めたこと' }, ...groupByFrame(freshOf(py)).map(({ frame: d }) => ({ href: `#d-${d.id}`, label: d.name, sub: true }))] : []
   const toc: TocItem[] = [
     { href: '#about', label: `${data.name.slice(-1)}の仕事` },
     ...fresh,
@@ -635,7 +766,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
     <>
       <div className={`fixed left-0 right-(--side-panel,0px) top-0 z-30 md:left-(--nav-w) border-b bg-background transition-[transform,right] duration-200 ease-out motion-reduce:transition-none ${mini ? '' : '-translate-y-full'}`} aria-hidden={!mini} inert={!mini}>
         <div className="mx-auto flex h-[60px] max-w-[1120px] items-center gap-3 px-4">
-          <span className="hidden size-10 shrink-0 place-items-center rounded-lg border bg-white p-1 sm:grid">{logo ? <img src={logo} alt="" className="w-full" /> : <span className="text-foreground">{data.name[0]}</span>}</span>
+          <span className="grid size-9 shrink-0 place-items-center rounded-lg border bg-white p-1 sm:size-10">{logo ? <img src={logo} alt="" className="w-full" /> : <span className="text-foreground">{data.name[0]}</span>}</span>
           <b className="shrink-0 text-lg font-normal">{data.name}</b>
           {vision ? <span className="hidden min-w-0 truncate text-[13px] text-muted-foreground sm:block">{vision}</span> : null}
           {years.length > 1 ? (
@@ -690,9 +821,9 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
           </div>
         </header>
 
-        <nav ref={spBar} aria-label="目次" className={`sticky z-20 -mx-4 flex gap-1.5 overflow-x-auto border-b bg-background px-4 py-2.5 [scrollbar-width:none] lg:hidden ${mini ? 'top-[61px]' : 'top-0'}`}>
+        <nav ref={spBar} aria-label="目次" className={`sticky z-20 -mx-4 flex gap-5 overflow-x-auto border-b bg-background px-4 [scrollbar-width:none] lg:hidden ${mini ? 'top-[61px]' : 'top-0'}`}>
           {toc.filter((t) => !t.sub).map((t) => (
-            <a key={t.href} href={t.href} onClick={jump} data-current={isCurrent(t.href) || undefined} className="shrink-0 rounded-full border px-3 py-1 text-[13px] text-muted-foreground no-underline data-[current]:border-primary data-[current]:bg-primary data-[current]:text-primary-foreground">
+            <a key={t.href} href={t.href} onClick={jump} data-current={isCurrent(t.href) || undefined} className="relative shrink-0 py-3 text-[13.5px] text-muted-foreground no-underline after:absolute after:inset-x-0 after:bottom-0 after:h-[2px] after:rounded-full data-[current]:text-foreground data-[current]:after:bg-primary">
               {t.label}
             </a>
           ))}
@@ -713,7 +844,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
             ))}
           </nav>
           <main className="flex min-w-0 flex-col gap-14">
-            <Overview data={data} sections={new Set(py ? groupByFrame(freshOf(py)).map(({ frame }) => frame.id) : [])} />
+            <Overview data={data} year={year} sections={new Set(py ? groupByFrame(freshOf(py)).map(({ frame }) => frame.id) : [])} />
             {py ? <Domains year={py} fiscalYear={year} /> : null}
             <Budget data={data} year={year} />
             <Projects data={data} year={year} />
@@ -749,6 +880,33 @@ const visibleViews = () =>
       return r.bottom > 0 && r.top < innerHeight && r.right > 0 && r.left < innerWidth && r.width > 0
     })
     .map((el) => el.dataset.askView!)
+
+/** 一定より下までスクロールしたら左下（質問のボタンと同じ高さ）に出す、頁の先頭へ戻るボタン */
+const BACK_TO_TOP_AFTER = 800
+function BackToTop({ hidden }: { hidden: boolean }) {
+  const [shown, setShown] = React.useState(false)
+  React.useEffect(() => {
+    const onScroll = () => setShown(window.scrollY > BACK_TO_TOP_AFTER)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+  const off = hidden || !shown
+  return (
+    <Hint label="上に戻る">
+      <button
+        type="button"
+        aria-label="上に戻る"
+        onClick={() => window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })}
+        tabIndex={off ? -1 : 0}
+        aria-hidden={off}
+        className={`fixed bottom-[max(16px,env(safe-area-inset-bottom))] left-4 z-20 grid size-11 place-items-center rounded-full border bg-background text-muted-foreground shadow-md transition-[opacity,transform] duration-200 hover:border-primary hover:text-foreground max-md:bottom-[calc(16px+var(--bottom-nav))] md:left-[calc(var(--nav-w)+16px)] motion-reduce:transition-none ${off ? 'pointer-events-none translate-y-4 opacity-0' : ''}`}
+      >
+        <ArrowUpIcon className="size-4" aria-hidden="true" />
+      </button>
+    </Hint>
+  )
+}
 
 function AskDock({ name, sitekey, year, section }: { name: string; sitekey: string; year: number; section?: string }) {
   const [open, setOpen] = React.useState(true)
@@ -943,6 +1101,7 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
   const docked = open && !chat
   return (
     <>
+      <BackToTop hidden={docked || drawer} />
       <div ref={dock} onBlur={onDockBlur} onFocus={() => { focusedAt.current = Date.now(); anchor.current = window.scrollY }} className={`fixed inset-x-0 bottom-0 z-20 max-md:bottom-(--bottom-nav) md:left-(--nav-w) md:right-(--side-panel,0px) bg-gradient-to-t from-background from-60% to-transparent px-4 pb-[max(14px,env(safe-area-inset-bottom))] pt-3 transition-[opacity,transform] duration-200 motion-reduce:transition-none ${docked ? '' : 'pointer-events-none translate-y-4 opacity-0'}`} inert={!docked}>
         <div className="mx-auto max-w-[720px]">
           <StartForm sitekey={sitekey} placeholder={`${name}について聞く…`} context={describe} onStart={start} before={chip} />
@@ -956,7 +1115,7 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
         tabIndex={docked || drawer ? -1 : 0}
         aria-hidden={docked || drawer}
       >
-        <ChatCircleIcon className="size-4 text-primary" aria-hidden="true" />
+        <RobotIcon className="size-4 text-primary" aria-hidden="true" />
         {chat ? '会話に戻る' : `${name}について聞く`}
       </button>
       {chat ? (

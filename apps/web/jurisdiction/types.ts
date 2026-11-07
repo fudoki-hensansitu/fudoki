@@ -54,6 +54,18 @@ export interface YearTotal {
   kan: Line[]
 }
 
+/** 決算がまだ無い年度の一般会計の当初予算。目の和と、目の COFOG の大分類ごとの和（id は cofogFlow の kan.id と同じ cofog-XX / cofog-none） */
+export interface BudgetTotal {
+  year: number
+  yen: number
+  amountMissing?: true
+  /** 款ごとの当初予算（大きい順） */
+  kan: Line[]
+  divisions: { id: string; yen: number; amountMissing?: true }[]
+  /** 当初予算の大きい事業（目）。前年度との比較は持たない */
+  projects: Project[]
+}
+
 /** 住民基本台帳人口。asOf は基準日（YYYY-MM-DD） */
 export interface Population {
   people: number
@@ -97,6 +109,8 @@ export interface PageData {
   flow: Drill[]
   /** 最新年度の COFOG の流れ。Drill の kan に大分類、kou に中分類が入る */
   cofogFlow: Drill[]
+  /** 最新の決算より後の年度の当初予算（古い順）。決算の無い年度の概要に使う */
+  budgets: BudgetTotal[]
   projects: Project[]
   /** 方針・政策領域・事業の入れ替え（jurisdiction/profiles.ts）。手で起こした自治体だけにある */
   profile?: Profile | null

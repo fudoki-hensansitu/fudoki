@@ -8,17 +8,18 @@ import { DEFAULT_INDEX_QUERY, parseIndexQuery, queryIndex, toMapEntry, type Inde
 import { INDEX_PATH, type Drill, type FlowDepth, type FlowView, type IndexEntry, type PageData, type Setsu } from '../jurisdiction/types'
 import { assetPath, PROFILES, type Profile } from '../jurisdiction/profiles'
 import { EMBLEMS } from '../jurisdiction/emblems'
+import { BUDGET_PRESS } from '../jurisdiction/budget-press'
 import { clientIp, errorResponse, HttpError, rateLimit } from './http'
 import { VIEW_RATE_LIMIT } from './limits'
 import type { Env, RateLimiter } from './env'
-import { loadCatalog, loadCofogFlow, loadDrillById, loadFlow, loadIndex, loadPage, loadSetsu, type CatalogEntry } from './jurisdiction'
+import { loadCatalog, loadCofogFlow, loadDrillById, loadFlow, loadIndex, loadPage, loadSetsu, type CatalogEntry, type DocumentKind } from './jurisdiction'
 
 const TTL = 3600
 const NODE_ID = /^[0-9a-f]{64}$/
 /** Worker の cache（無い環境では毎回取り直す）。同じ isolate の中でも一度だけ取る */
 const inflight = new Map<string, Promise<unknown>>()
 async function memo<T>(key: string, fn: () => Promise<T>): Promise<T> {
-  const url = `https://fudoki.dev/__cache/jurisdiction-v10/${key}`
+  const url = `https://fudoki.dev/__cache/jurisdiction-v13/${key}`
   const cache = typeof caches === 'undefined' ? undefined : (caches as unknown as { default?: Cache }).default
   const hit = await cache?.match(url)
   if (hit) return (await hit.json()) as T
@@ -86,7 +87,19 @@ export async function resolveJurisdiction(env: Env, path: string): Promise<Juris
   const neighbors = nearby(entry, entries.filter((e) => e.code.slice(0, 2) === entry.code.slice(0, 2) && e.code !== entry.code && e.code !== prefectureCode && e.settlementYears.length > 0))
     .map((e) => ({ code: e.code, name: e.name, path: jurisdictionPath(e.code), ...(EMBLEMS[e.code] ? { logo: assetPath(e.code, 'emblem.svg') } : {}) }))
   const data = entry.settlementYears.length > 0 ? await page(env, entry) : null
-  return data ? { kind: 'page', data: { ...data, prefecturePath, neighbors, profile: PROFILES[entry.code] ?? null } } : { kind: 'empty', entry }
+  return data ? { kind: 'page', data: { ...data, prefecturePath, neighbors, profile: withPress(entry.code, PROFILES[entry.code] ?? null) } } : { kind: 'empty', entry }
+}
+
+/** 予算の新規（budgetNew）に、予算案のプレス発表資料の POINT を事業名で足す */
+function withPress(code: string, profile: Profile | null): Profile | null {
+  const press = BUDGET_PRESS[code]
+  if (!profile || !press) return profile
+  const years = Object.fromEntries(Object.entries(profile.years).map(([y, py]) => {
+    const p = press[y]
+    if (!p || !py.budgetNew) return [y, py]
+    return [y, { ...py, budgetPress: p.source, budgetNew: py.budgetNew.map((b) => (p.items[b.name] ? { ...b, press: p.items[b.name] } : b)) }]
+  }))
+  return { ...profile, years }
 }
 
 /** 収録のある自治体の頁を含む sitemap。API に繋がらなくても入口・一覧・アシスタントだけで答える */
@@ -123,10 +136,13 @@ export async function flowResponse(env: Env, request: Request, { code, year, dep
       throw new HttpError(400, 'INVALID_ARGUMENT', '自治体・年度・表示階層の指定が違います')
     await rateLimit(env.VIEW_RATE_LIMIT as RateLimiter | undefined, clientIp(request), VIEW_RATE_LIMIT.period)
     const view: FlowView = new URL(request.url).searchParams.get('view') === 'cofog' ? 'cofog' : 'kan'
+    // 決算の無い年度は当初予算を読む（?phase=initial）。決算のある年度に予算は出さない
+    const kind: DocumentKind = new URL(request.url).searchParams.get('phase') === 'initial' ? 'initial' : 'settlement'
     const entry = (await catalog(env)).find((e) => e.code === code)
-    if (!entry?.settlementYears.includes(Number(year))) throw new HttpError(404, 'NOT_FOUND', 'この自治体・年度の一般会計の決算は収録されていません')
+    const ok = kind === 'initial' ? entry?.initialYears.includes(Number(year)) && !entry.settlementYears.includes(Number(year)) : entry?.settlementYears.includes(Number(year))
+    if (!ok) throw new HttpError(404, 'NOT_FOUND', kind === 'initial' ? 'この自治体・年度の決算の無い一般会計の当初予算は収録されていません' : 'この自治体・年度の一般会計の決算は収録されていません')
     const load = view === 'cofog' ? loadCofogFlow : loadFlow
-    return json(await memo<Drill[]>(`flow-${view}-${code}-${year}-${depth}`, () => load(env, code, Number(year), depth as FlowDepth)))
+    return json(await memo<Drill[]>(`flow-${view}-${kind}-${code}-${year}-${depth}`, () => load(env, code, Number(year), depth as FlowDepth, kind)))
   } catch (e) {
     if (e instanceof HttpError) return errorResponse(e)
     return errorResponse(new HttpError(502, 'UNAVAILABLE', '決算データを表示できませんでした。少し待ってからもう一度開いてください。'))

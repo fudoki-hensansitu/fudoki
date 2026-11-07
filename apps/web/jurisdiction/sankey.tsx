@@ -56,6 +56,18 @@ const pick = (fn: () => void) => ({
 export function Overview({ flows, total: base, height = 520, levels = { kan: '款', kou: '項' }, onSelect }: { flows: Drill[]; total: number; height?: number; levels?: { kan: string; kou: string }; onSelect?: (kan: number, kou?: number) => void }) {
   const ref = React.useRef<HTMLDivElement>(null)
   const [width, setWidth] = React.useState(0)
+  // 図が画面に入ってから流れの動きを始める。動きを減らす設定なら、帯の上を流れる光も出さない
+  const [seen, setSeen] = React.useState(false)
+  const [still, setStill] = React.useState(true)
+  React.useEffect(() => {
+    setStill(window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+    const el = ref.current
+    if (!el) return
+    const observer = new IntersectionObserver(([e]) => { if (e?.isIntersecting) { setSeen(true); observer.disconnect() } }, { threshold: 0.2 })
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+  const flowId = React.useId()
   const pct = (yen: number, missing?: boolean) => formatShare(yen, base, missing) ?? '—'
   React.useEffect(() => {
     const el = ref.current
@@ -86,7 +98,16 @@ export function Overview({ flows, total: base, height = 520, levels = { kan: '�
   return (
     <div ref={ref} className="relative w-full">
       {width ? (
-        <svg width={width} height={total + HEAD} role="img" aria-label={`${levels.kan}から${levels.kou}への歳出の流れ`} className="block font-sans">
+        <svg width={width} height={total + HEAD} role="img" aria-label={`${levels.kan}から${levels.kou}への歳出の流れ`} data-seen={seen ? '' : undefined} className="flow-svg block font-sans">
+          {/* 帯の上を左から右へ流れる光。大分類（款）から中分類（項）へお金が流れていく感じを出す */}
+          <defs>
+            <linearGradient id={flowId} gradientUnits="userSpaceOnUse" x1={x0 - 160} x2={x0} y1={0} y2={0}>
+              <stop offset="0" stopColor="var(--primary)" stopOpacity={0} />
+              <stop offset="0.5" stopColor="var(--primary)" stopOpacity={0.28} />
+              <stop offset="1" stopColor="var(--primary)" stopOpacity={0} />
+              {seen && !still ? <animateTransform attributeName="gradientTransform" type="translate" from="0 0" to={`${x1 - x0 + 160} 0`} dur="2.8s" begin="1s" repeatCount="indefinite" /> : null}
+            </linearGradient>
+          </defs>
           <g aria-hidden="true" className="fill-muted-foreground" fontSize={11}>
             <text x={x0 + BAR} y={11} textAnchor="end">{levels.kan}</text>
             <text x={x1} y={11}>{levels.kou}</text>
@@ -98,7 +119,13 @@ export function Overview({ flows, total: base, height = 520, levels = { kan: '�
             const h = kouNodes[i]!.height
             offsets.set(kanIndex, offset + h)
             if (h <= 0) return null
-            return <path key={kou.id} d={ribbon(x0 + BAR, source.y + offset, h, x1, kouNodes[i]!.y, h)} className="fill-primary/20" />
+            const d = ribbon(x0 + BAR, source.y + offset, h, x1, kouNodes[i]!.y, h)
+            return (
+              <g key={kou.id} className="flow-ribbon" style={{ animationDelay: `${Math.min(i * 25, 600)}ms` }}>
+                <path d={d} className="fill-primary/20" />
+                {!still ? <path d={d} fill={`url(#${CSS.escape(flowId)})`} /> : null}
+              </g>
+            )
           })}
           {flows.map((flow, i) => {
             const node = kans[i]!
@@ -116,12 +143,14 @@ export function Overview({ flows, total: base, height = 520, levels = { kan: '�
             const node = kouNodes[i]!
             return (
               <AmountTip key={kou.id} name={kou.name} yen={kou.yen} missing={kou.amountMissing} side="left" render={<g {...(onSelect ? pick(() => onSelect(kanIndex, kouIndex)) : {})} aria-label={`${kou.name} ${amountText(kou.yen, kou.amountMissing)}${onSelect ? '、内訳を見る' : ''}`} />}>
+                <g className="flow-node" style={{ animationDelay: `${500 + Math.min(i * 25, 600)}ms` }}>
                 <rect x={x1} y={node.top} width={width - x1} height={node.size} className="fill-transparent" />
                 <rect x={x1} y={node.y} width={BAR} height={Math.max(node.height, 2)} rx={2} className="fill-primary" />
                 <text x={x1 + BAR + 8} y={node.top + node.size / 2 + 4} className="fill-foreground" fontSize={narrow ? 10.5 : 12}>
                   {cut(kou.name, 10)}
                   <tspan dx={6} className="fill-primary font-semibold tabular-nums" fontSize={narrow ? 10 : 11}>{pct(kou.yen, kou.amountMissing)}</tspan>
                 </text>
+                </g>
               </AmountTip>
             )
           })}
