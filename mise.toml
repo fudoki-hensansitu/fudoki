@@ -5,3 +5,5 @@ bun = "1.3.14"
 duckdb = "1.5.5"
 python = "3.13.15"
 uv = "0.12.5"
+# Reads text PDFs (ingestion/lib/poppler.py). The script lets conda-forge's build find its CJK data.
+"conda:poppler" = { version = "26.10.0", postinstall = "python3 \"{{config_root}}/pipeline/scripts/fix_poppler_datadir.py\"" }
