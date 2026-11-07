@@ -15,7 +15,7 @@ import type { PressItem } from './budget-press'
 import { EMBLEMS } from './emblems'
 import { Flow } from './flow'
 import { assetPath, type EvaluatedProject, type Initiative, type ProfileYear, type Scrap } from './profiles'
-import { changePct, INDEX_PATH, formatAsOf, formatPeople, formatYen, reiwa, yearName, type FlowView, type PageData, type Project, type Setsu, type YearTotal } from './types'
+import { changePct, INDEX_PATH, formatAsOf, formatPeople, formatPerCapita, formatYen, reiwa, yearName, type FlowView, type PageData, type Project, type Setsu, type YearTotal } from './types'
 
 const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
   const res = await fetch(url, { signal })
@@ -95,16 +95,10 @@ const freshOf = (y: ProfileYear): Fresh[] => {
 const isPlanned = (y: ProfileYear) => freshOf(y)[0]?.kind === 'budget'
 const freshTitle = (y: ProfileYear) => (isPlanned(y) ? '新しく何を始める？' : '新しく何を始めた？')
 
-/** 新しく始めたことの1行。名前の左に新規（New!）か拡大・今ある事業の中での取り組み（Up!）かのバッジ、右に金額、下に中身。評価・予算どの年度も同じ形にする */
 /** 住民の数。新しく始めたことの金額の下に住民1人あたりの額を添えるのに使う（Domains の外から渡す） */
 const PeopleContext = React.createContext<number | undefined>(undefined)
 
-/** 住民1人あたりの額。1万円未満は円、それ以上は万円の小数1桁 */
-const perPerson = (yen: number, people: number) => {
-  const v = yen / people
-  return v < 1e4 ? `${Math.round(v).toLocaleString('ja-JP')}円` : `${(Math.round(v / 1e3) / 10).toLocaleString('ja-JP')}万円`
-}
-
+/** 新しく始めたことの1行。名前の左に新規（New!）か拡大・今ある事業の中での取り組み（Up!）かのバッジ、右に金額、下に中身。評価・予算どの年度も同じ形にする */
 function FreshRow({ up, upLabel = '拡大', title, yen, children }: { up: boolean; upLabel?: string; title: string; yen: number; children: React.ReactNode }) {
   const people = React.useContext(PeopleContext)
   const label = up ? upLabel : '新規'
@@ -122,7 +116,7 @@ function FreshRow({ up, upLabel = '拡大', title, yen, children }: { up: boolea
         </span>
         <span className="shrink-0 text-right">
           <YenText yen={yen} className="block leading-snug" />
-          {people && yen ? <span className="block text-xs text-muted-foreground tabular-nums">1人 約{perPerson(yen, people)}</span> : null}
+          {people && yen ? <span className="block text-xs text-muted-foreground tabular-nums">1人 約{formatPerCapita(yen / people)}</span> : null}
         </span>
       </div>
       {children}
@@ -157,7 +151,7 @@ function InitiativeItem({ p }: { p: Initiative }) {
 function BudgetItem({ p }: { p: PressItem }) {
   const title = p.title.replace(/[~〜～].*$/, '').trim() || p.names.join('・')
   return (
-    <FreshRow up={!p.isNew} title={title} yen={p.budgetYen}>
+    <FreshRow up={!p.isNew} upLabel="継続・拡大" title={title} yen={p.budgetYen}>
       {p.points.length ? (
         <ul className="flex flex-col gap-1 rounded-xl bg-sidebar px-3.5 py-2.5 text-[13px] leading-relaxed [text-wrap:pretty]">
           {p.points.map((pt, i) => (
@@ -165,7 +159,7 @@ function BudgetItem({ p }: { p: PressItem }) {
           ))}
         </ul>
       ) : null}
-      {p.link ? <p className="text-xs text-muted-foreground">予算書では「{p.link.name}」（{p.link.moku}）に計上</p> : null}
+      {p.link ? <p className="text-xs text-muted-foreground">予算書では「{p.link.name}」{p.names.length > 1 ? 'など' : ''}（{p.link.moku}）に計上</p> : null}
     </FreshRow>
   )
 }
@@ -363,7 +357,7 @@ function Domains({ year, fiscalYear }: { year: ProfileYear; fiscalYear: number }
   const groups = groupByFrame(fresh)
   const byBudget = isPlanned(year)
   const lead = byBudget
-    ? '区が予算案の発表で取り上げた、この年度に新しく始める事業と広げる事業です。'
+    ? '区が予算案の発表で取り上げた、この年度の主な施策です。新規の印のないものは、今ある事業を続けたり広げたりするものです。'
     : '区が事業ごとに目標と実績を振り返る「事業評価」から、この年度に新しくできた事業と、今ある事業の中で始めた取り組みを並べています。'
   const link = !groups.length ? undefined : byBudget ? (year.budgetPress ? { href: year.budgetPress, label: 'プレス発表' } : undefined) : { href: year.evaluationSource, label: '事業評価' }
   return (
