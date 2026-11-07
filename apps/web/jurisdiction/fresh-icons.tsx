@@ -1,3 +1,4 @@
+// 新しく始めたこと・やめたことの印。やめた事業は八角形（止まれの形）に「END」。
 // 新しく始めたことの印。新規はギザギザのシールに「NEW」、拡大（今ある事業の中での取り組みも）は上向きの矢印に「UP」。形で見分けられるようにする。
 // 文字は Inter Bold（SIL OFL）の字形をパスにしたもの。SVG の text はページの書体で幅が変わり、枠からはみ出したため。色は currentColor と primary-foreground
 export const NewIcon = ({ className }: { className?: string }) => (
@@ -11,5 +12,12 @@ export const UpIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 32 32" aria-hidden="true" className={className}>
     <path d="M16 1.8L30 15.6H22.6V28.6a2 2 0 0 1-2 2H11.4a2 2 0 0 1-2-2V15.6H2Z" fill="currentColor" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
     <path d="M12.99 25.85C14.57 25.85 15.63 24.91 15.63 23.51V19.35H14.31V23.4C14.31 24.15 13.79 24.69 12.99 24.69C12.18 24.69 11.66 24.15 11.66 23.4V19.35H10.35V23.51C10.35 24.91 11.39 25.85 12.99 25.85ZM16.87 25.75H18.18V23.66H19.34C20.81 23.66 21.65 22.78 21.65 21.52C21.65 20.26 20.82 19.35 19.37 19.35H16.87ZM18.18 22.61V20.44H19.12C19.92 20.44 20.3 20.87 20.3 21.52C20.3 22.16 19.92 22.61 19.12 22.61Z" fill="var(--primary-foreground)" />
+  </svg>
+)
+
+export const EndIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 32 32" aria-hidden="true" className={className}>
+    <polygon points="30.04,21.82 21.82,30.04 10.18,30.04 1.96,21.82 1.96,10.18 10.18,1.96 21.82,1.96 30.04,10.18" fill="currentColor" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
+    <path d="M6.93 19.3H11.36V18.18H8.28V16.52H11.12V15.42H8.28V13.82H11.35V12.7H6.93ZM12.53 19.3H13.91V16.27C13.91 15.88 13.87 15.17 13.82 14.37C14.23 15.19 14.47 15.68 14.84 16.27L16.74 19.3H18.25V12.7H16.87V15.87C16.87 16.3 16.9 17.01 16.95 17.66C16.66 16.97 16.38 16.47 16.12 16.04L14.04 12.7H12.53ZM21.85 19.3C23.86 19.3 25.07 18.06 25.07 16C25.07 13.94 23.86 12.7 21.88 12.7H19.53V19.3ZM20.88 18.14V13.86H21.8C23.06 13.86 23.72 14.52 23.72 16C23.72 17.48 23.06 18.14 21.79 18.14Z" fill="var(--primary-foreground)" />
   </svg>
 )

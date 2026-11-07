@@ -10,7 +10,7 @@ import { Hint } from '@/components/hint'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { NewIcon, UpIcon } from './fresh-icons'
+import { EndIcon, NewIcon, UpIcon } from './fresh-icons'
 import { DOMAIN_FRAMES, groupByFrame, OTHER_FRAME } from './domains'
 import { EMBLEMS } from './emblems'
 import { Flow } from './flow'
@@ -538,7 +538,11 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
       <ul className="border-t">
         {scrap.exits.map((e) => (
           <li key={e.name} className="grid grid-cols-[minmax(0,1fr)_72px] items-baseline gap-x-4 gap-y-1 border-b border-foreground/10 py-3 text-sm sm:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_80px]">
-            <span>{e.name}</span>
+            <span className="flex items-start gap-2">
+              <EndIcon className="-mt-[2px] size-6 shrink-0 text-primary" />
+              <span className="sr-only">やめた事業</span>
+              {e.name}
+            </span>
             <span className="col-span-full row-start-2 text-[13.5px] text-muted-foreground sm:col-span-1 sm:row-start-auto">{e.reason}</span>
             <span className="text-right text-[13px] text-muted-foreground">{e.result}</span>
           </li>
