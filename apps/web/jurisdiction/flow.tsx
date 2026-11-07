@@ -20,7 +20,8 @@ const SETSU_SHOWN = 3
 const MOKU_BAR = 8
 /** 節の側に立てる棒の幅 */
 const SETSU_BAR = 5
-const MOBILE_QUERY = '(max-width: 699px)'
+/** 帯を描かない幅。項の段の並び（sm: で横並びになる）と同じ境目にする。ずれると、横並びなのに帯が出ない幅ができる */
+const MOBILE_QUERY = '(max-width: 639.98px)'
 
 const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
   const res = await fetch(url, { signal })
