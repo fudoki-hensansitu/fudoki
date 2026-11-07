@@ -159,6 +159,17 @@ class HeadingTest(unittest.TestCase):
         kept, _ = canonical_headings(amounts, nodes, 'settlement')
         self.assertEqual([a['header_path'] for a in kept], ['科目／款', '節／金額'])
 
+    def test_flat_columns_beside_a_printed_current_budget_are_its_parts(self):
+        from ingestion.generic.convert import canonical_headings
+        nodes = [{'node_key': 'k', 'axis_header': '科目', 'level_header': '目'}]
+        heads = ['当初予算額', '補正予算額', '予備費充用及び予算流用増減', '予算現額']
+        kept, _ = canonical_headings([{'node_key': 'k', 'header_path': h} for h in heads], nodes, 'settlement')
+        self.assertEqual([a['header_path'] for a in kept],
+                         ['当初予算額', '予算現額／補正予算額', '予算現額／予備費充用及び予算流用増減', '予算現額'])
+        # Without a 予算現額 column of its own the bare heading stays as printed.
+        kept, _ = canonical_headings([{'node_key': 'k', 'header_path': '補正予算額'}], nodes, 'settlement')
+        self.assertEqual(kept[0]['header_path'], '補正予算額')
+
     def test_a_page_with_no_title_has_the_direction_of_the_page_before_it(self):
         from ingestion.generic.build import page_titles
         from ingestion.generic.observe import Page, Word

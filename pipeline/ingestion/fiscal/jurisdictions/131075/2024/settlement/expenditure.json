@@ -352,7 +352,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "35290f5b8df75ed2f47d6a52b9cdac46fe9143f103e8fd101b8a3f766ed120d1",
+      "input_fingerprint": "fa621b50a77fd4246ae5facd286ac8b00374da0148502756b3dd77e8bd7a9d9d",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は shared_names、内訳の段は {'区分': 'indent', '予算現額': 'indent', '備考': 'indent', '節': 'indent'}。",
@@ -382,7 +382,7 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "ed2382d636c1ab089f3c861d9f4eb4de2475ce5f261e4ea501280a278b699b47",
+      "input_fingerprint": "b67d729985601c8d08d411c6ff8e475bd4006c8c00d3a31bd3e49578e233d0a9",
       "account": "国民健康保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は shared_names、内訳の段は {'区分': 'indent', '予算現額': 'indent', '備考': 'indent', '節': 'indent'}。",
@@ -412,7 +412,7 @@
     {
       "table_id": "care-insurance-expenditure",
       "conversion_id": "care-insurance-settlement",
-      "input_fingerprint": "cf40f3d277ce84b9374c6c524b810224a2e2d0c72a57560ae3942141778fc97a",
+      "input_fingerprint": "fceef30c9044895ae8bfba4c2aa6ac4824795558b6dfa52f53cd402813fd301f",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は shared_names、内訳の段は {'区分': 'indent', '予算現額': 'indent', '備考': 'indent', '節': 'indent'}。",
@@ -442,7 +442,7 @@
     {
       "table_id": "late-elderly-medical-expenditure",
       "conversion_id": "late-elderly-medical-settlement",
-      "input_fingerprint": "93b4f2b04deca31f040c66381ae827702a89a451534f9f33be33e38a0fbe6855",
+      "input_fingerprint": "47b7ec547d7f07a8ac01c83496ae122a85486c17ee25560a7ab89e019b86cc3e",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は shared_names、内訳の段は {'区分': 'indent', '予算現額': 'indent', '備考': 'indent', '節': 'indent'}。",
