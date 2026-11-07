@@ -8,8 +8,10 @@ from shared.amount import number
 
 
 def check_subject(nodes: list[dict], amounts: list[dict], document_kind: str,
-                  statement_kind: str = 'ordinary', direction: str = 'expenditure') -> dict:
-    """Require 款 with executed amounts and a strict majority of printed 目 with them."""
+                  statement_kind: str = 'ordinary', direction: str = 'expenditure', partial: bool = False) -> dict:
+    """Require 款 with executed amounts and a strict majority of printed 目 with them. A part of an account
+    (`partial`) that starts inside a 款 prints the 款 only in its running header, with no amount: there the printed
+    目 alone are required (足立の分冊10 is all inside 教育費)."""
     if document_kind != 'settlement' or direction != 'expenditure' or statement_kind == 'public-enterprise':
         return {'passed': True, 'applicable': False, 'statement_kind': statement_kind}
     kan = [n for n in nodes if n.get('level_header') == '款' and n.get('parent_node_key') is None
@@ -26,6 +28,7 @@ def check_subject(nodes: list[dict], amounts: list[dict], document_kind: str,
     moku_printed = len(moku & printed)
     # Some accounts print only 款・項. No unprinted 目 is invented for that denominator;
     # the 款 still must print an executed amount, including a printed zero.
-    passed = bool(kan_printed) and (not moku or moku_printed * 2 > len(moku))
+    unprinted_kan = partial and not {n['node_key'] for n in kan} & {a['node_key'] for a in amounts}
+    passed = (bool(kan_printed) or (unprinted_kan and bool(moku))) and (not moku or moku_printed * 2 > len(moku))
     return {'passed': passed, 'applicable': True, 'kan': len(kan), 'executed_kan': kan_printed,
             'moku': len(moku), 'executed_moku': moku_printed}

@@ -15,6 +15,35 @@
       "const": true,
       "description": "The original is one volume of an account printed in several originals: its 款 are some of the account's, so the sum and digit checks of the unit are reported, not enforced."
     },
+    "continued_rows": {
+      "type": "array",
+      "description": "The original starts inside a 事務事業 the volume before it opened (an account printed in volumes cut anywhere, with the layout setting `explained_projects`): the 事務事業 rows still open at the end of the volume before, outermost first, as that volume prints them (a total row, then its department row with `department`, then a 細事業 `(1)`). Empty when the volume starts at a 事務事業 of a 目 the volume before opened. The 款・項・目 come from the running header of the first page (ingestion/generic/explained_projects.py `continue_rows`).",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "name"],
+        "properties": {
+          "code": {"type": "string", "pattern": "^(?:[0-9]+|\\([0-9]+\\))$"},
+          "name": {"type": "string", "minLength": 1},
+          "department": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "explained_names": {
+      "type": "array",
+      "description": "The names of explanation items (the layout setting `explained_projects`) that OCR left unread on the facing page, read from the rendered page: the item's page, code and amount as the left page prints them, and the name the facing page prints. A declaration that names no item stops the conversion.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["page", "code", "amount", "name"],
+        "properties": {
+          "page": {"type": "integer", "minimum": 1},
+          "code": {"type": "string", "minLength": 1},
+          "amount": {"type": "string", "pattern": "^[0-9]{1,3}(?:,[0-9]{3})*$"},
+          "name": {"type": "string", "minLength": 1}
+        }
+      }
+    },
     "amount_corrections": {
       "description": "OCR の金額の誤読の訂正（ocr_names.AmountRule）。頁と観測IDで1つの観測に結び付け、木の検査で正しさを確かめる。",
       "type": "array",

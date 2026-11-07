@@ -4,6 +4,8 @@
 -- a node they share takes the sum of their amounts, which has no single printed box.
 -- A table without a division prints the whole; where one prints the node, it stands
 -- for the node and the shares are checked against it (tests/fiscal_rows_contract.sql).
+-- A volume that continues a row of the volume before (131211's general account, cut anywhere) prints it again
+-- with no amount (`continued_rows`): the row that prints the amount stands for the node.
 with ranked as (
     select r.*,
         count(*) filter (where r.division is null) over node as whole_rows,
@@ -24,7 +26,7 @@ with ranked as (
         case when whole_rows = 0 and division_rows > 1 then null else amount_source_y1 end as amount_source_y1)
     from ranked
     qualify row_number() over (partition by document_kind, node_id
-        order by division is not null, origin_id, physical_page, y0, x0, source_table_key, node_key) = 1
+        order by division is not null, amount_yen is null, origin_id, physical_page, y0, x0, source_table_key, node_key) = 1
 )
 select n.node_id, n.parent_node_id, n.jurisdiction_code, n.fiscal_year, n.document_kind, n.account_name,
     n.axis_header as axis, n.axis_header = n.subject_axis as is_subject, n.node_kind, n.code_text as code, n.name, n.amount_yen,

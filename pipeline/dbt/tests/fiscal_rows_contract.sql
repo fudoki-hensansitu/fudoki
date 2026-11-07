@@ -1,4 +1,11 @@
-with rows as (select * from {{ ref('int_fiscal__settlement_expenditure_rows') }}),
+-- A volume that starts inside a row of the volume before prints it again, with no amount, in the running header
+-- of its first page (131211's general account, `continued_rows`): that copy is the node the amount-printing row
+-- of the volume before stands for (int_fiscal__settlement_expenditure_nodes), not a second print of it.
+with printed as (select * from {{ ref('int_fiscal__settlement_expenditure_rows') }}),
+rows as (
+    select *, amount_yen is null and physical_page = min(physical_page) over (partition by source_table_key) as continued
+    from printed
+),
 counts as (select source_table_key, count(*) as n from rows group by 1),
 annotations as (
     select source_table_key, count(*) as n from {{ ref('stg_fiscal__nodes') }}
@@ -24,7 +31,7 @@ where axis_header = subject_axis and node_kind in ('款', '項', '目')
 group by jurisdiction_code, fiscal_year, document_kind, account_name, kan_code, kou_code, moku_code, node_id
 having count(distinct name) <> 1
     or count(distinct amount_yen) filter (where division is null) > 1
-    or (count(amount_yen) > 0 and count(amount_yen) <> count(*))
+    or (count(amount_yen) > 0 and count(amount_yen) <> count(*) filter (where not continued))
     or count(distinct parent_node_id) > 1
     or (count(*) filter (where division is null) > 0 and count(*) filter (where division is not null) > 0
         and sum(amount_yen) filter (where division is not null)
@@ -33,7 +40,7 @@ union all
 -- Two divisions print the same 節 of the same 目 as one node; a table never prints it twice.
 select min(source_table_key), 'non_subject_id_collision' from rows
 where axis_header <> subject_axis group by document_kind, node_id
-having count(*) > 1 and (count(*) filter (where division is null) > 0
+having count(*) filter (where not continued) > 1 and (count(*) filter (where division is null) > 0
     or count(distinct source_table_key) <> count(*)
     or (count(amount_yen) > 0 and count(amount_yen) <> count(*)))
 union all

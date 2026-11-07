@@ -106,6 +106,17 @@ class UnitCheckTest(unittest.TestCase):
         self.assertFalse(result['passed'])
         self.assertEqual(result['kan'], 0)
 
+    def test_a_part_starting_inside_a_kan_needs_only_its_printed_moku(self):
+        from ingestion.fiscal.subject_checks import check_subject
+        nodes = [node('k', None, '款', '教育費'), node('kk', 'k', '項', '中学校費', depth=2),
+                 node('m1', 'kk', '目', '教育振興費', depth=3), node('m2', 'kk', '目', '学校給食費', depth=3)]
+        amounts = [amount('m1', '100'), amount('m2', '200')]  # the 款 and 項 only in the running header
+        self.assertTrue(check_subject(nodes, amounts, 'settlement', partial=True)['passed'])
+        self.assertFalse(check_subject(nodes, amounts, 'settlement')['passed'])
+        # a 款 that prints a budget but no executed amount is not one of a running header
+        self.assertFalse(check_subject(nodes, amounts + [amount('k', '300', header='予算現額')], 'settlement',
+                                       partial=True)['passed'])
+
     def test_declared_enterprise_form_keeps_tree_and_unit_checks(self):
         nodes, amounts = table('100,000,000')
         for a in amounts:

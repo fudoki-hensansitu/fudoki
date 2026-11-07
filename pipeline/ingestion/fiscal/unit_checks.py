@@ -135,7 +135,7 @@ def check_table(nodes: list[dict], amounts: list[dict], *, document_kind: str, a
     if ambiguous:
         notes = [note for note in notes if note not in ofphase]
     result = check_units(SimpleNamespace(nodes=shaped, amounts=amounts, notes=notes), document_kind, account, partial)
-    result['subject_check'] = check_subject(nodes, amounts, document_kind, statement_kind, direction)
+    result['subject_check'] = check_subject(nodes, amounts, document_kind, statement_kind, direction, partial)
     result['stopped'] = result['stopped'] or not result['subject_check']['passed']
     result['printed_totals'] = len(notes)
     result['ambiguous_totals'] = ambiguous
