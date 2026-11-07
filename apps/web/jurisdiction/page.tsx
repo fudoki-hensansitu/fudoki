@@ -265,7 +265,7 @@ function Domains({ year, fiscalYear }: { year: ProfileYear; fiscalYear: number }
   const groups = groupByFrame(fresh)
   const byBudget = isPlanned(year)
   const lead = byBudget
-    ? `区の事業評価は${reiwa(fiscalYear + 1)}に公表されるため、それまでは当初予算の資料「款別予算等の主な施策」で区が新規・レベルアップと印を付けた項目を、それを含む事業ごとに並べています。金額は事業全体の予算額です。`
+    ? `区の事業評価が公表されるまでは、当初予算の資料「款別予算等の主な施策」で区が新規・レベルアップと印を付けた項目を、それを含む事業ごとに並べています。金額は事業全体の予算額です。`
     : '区が事業ごとに目標と実績を振り返る「事業評価」から、この年度に新しくできた事業と、今ある事業の中で始めた取り組みを並べています。'
   const link = !groups.length ? undefined : byBudget ? (year.budgetHighlights ? { href: year.budgetHighlights, label: '主な施策（予算）' } : undefined) : { href: year.evaluationSource, label: '事業評価' }
   return (
