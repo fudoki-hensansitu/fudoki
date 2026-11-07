@@ -5,6 +5,14 @@ export interface RateLimiter {
 export interface AnalyticsDataset {
   writeDataPoint(point: { indexes?: string[]; blobs?: string[]; doubles?: number[] }): void
 }
+/** D1 の使う部分だけ（会話を保存する） */
+export interface ChatLogStatement {
+  bind(...values: unknown[]): ChatLogStatement
+}
+export interface WebDatabase {
+  prepare(sql: string): ChatLogStatement
+  batch(statements: ChatLogStatement[]): Promise<unknown>
+}
 export interface Fetcher {
   fetch(request: Request): Promise<Response>
 }
@@ -18,6 +26,8 @@ export interface Env {
   VIEW_RATE_LIMIT?: RateLimiter
   /** 利用状況（会話の本文・IP は書かない） */
   CHAT_USAGE?: AnalyticsDataset
+  /** 会話の保存（server/chat-log.ts。復元と分析に使う。IP は書かない）。無ければ書かない */
+  DB?: WebDatabase
   /** Workers AI のモデル ID。config の var で切り替える */
   CHAT_MODEL?: string
   /** 推論の深さ（low・medium・high・none）。未設定・不明な値ならモデルの既定 */

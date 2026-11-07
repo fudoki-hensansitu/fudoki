@@ -10,6 +10,8 @@ export interface StoredSession {
   pendingContext?: string
   /** 表とグラフの View が伝える、いま画面で見ているもの（system に参考として渡す） */
   viewContext?: string
+  /** 会話を始めた頁のパス（例: /tokyo/shinagawa）。どこから聞かれたかを質問の記録に残す */
+  entry?: string
   messages?: UIMessage[]
 }
 
