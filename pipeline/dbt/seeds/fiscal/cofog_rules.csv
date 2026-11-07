@@ -477,3 +477,9 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 -786,ome-2024-01,132055,一般会計,,衛生費,保健衛生費,,環境政策費,eq,,assigned,05,retained,目,,青梅市 衛生費・保健衛生費の環境政策費（ゼロカーボンシティ推進・地球温暖化対策など）を環境保護に分類する。町田市（keyword-environment-policy-132098）にならう。名称と備考の事業名からの判断。,true
 -1301,ome-2024-02,132055,一般会計,,災害復旧費,土木施設災害復旧費,,土木施設災害復旧費,eq,,unclassifiable,,retained,目,,青梅市 土木施設（道路・河川など）の災害復旧は施設の種類を目の名前で分けられない（kobe-disaster-civil・vocab-disaster-public-facility にならう）。,false
 -888,keyword-fund-accumulation-general-admin,,一般会計,,総務費,,,積立金|積立基金,contains,,out-of-scope,,retained,目,,総務費の款にある基金への積立（例: 130001 会計管理費の積立金）は金融資産への振替として対象外とする（kind-x-fund-accumulation と同じ）。総務費の項の fallback と款の規則（somu）より先に当てる。,false
+1640,kind-fallback-grade-separation,,,連続立体化,,,,,,,assigned,04.5,retained,目,,鉄道の連続立体化（立体交差）事業の会計の目を運輸 04.5 に分類する（例: 131199 板橋区の東武東上線連続立体化事業特別会計）。踏切の除却と鉄道の高架化による交通の改善。まちづくりの面を地域開発 06.2 とみる見方との境界のため暫定。,true
+1641,itabashi-2024-01,131199,一般会計,,資源環境費,収集処分費,,,eq,,assigned,05.1,retained,目,,板橋区 資源環境費の収集処分費（収集総務費・収集運搬費・処理処分費）をごみの収集・処分として廃棄物管理に分類する。名称からの判断。,false
+1642,itabashi-2024-02,131199,一般会計,,資源環境費,資源管理費,,,eq,,assigned,05.1,retained,目,,板橋区 資源環境費の資源管理費（資源総務費・資源循環推進費・資源施設費）を資源回収・リサイクルとして廃棄物管理に分類する。名称からの判断。,true
+1643,itabashi-2024-03,131199,一般会計,,資源環境費,環境管理費,,環境公害費,eq,,assigned,05.3,retained,目,,板橋区 環境公害費を公害の監視・規制として汚染防止に分類する（keyword-pollution にならう）。名称からの判断。,true
+1644,itabashi-2024-04,131199,一般会計,,資源環境費,環境管理費,,環境施設費,eq,,assigned,05,retained,目,,板橋区 環境管理費の環境施設費（環境の学習・啓発の施設など）を環境保護に分類する。中分類を名称から決められないため大分類に置く。,true
+1645,itabashi-2024-05,131199,一般会計,,衛生費,保健所費,,衛生保健指導費,eq,,assigned,07.4,retained,目,,板橋区 保健所費の衛生保健指導費（保健指導・健康相談など）を公衆衛生サービスに分類する（keyword-medicine-nutrition にならう）。名称からの判断。,true

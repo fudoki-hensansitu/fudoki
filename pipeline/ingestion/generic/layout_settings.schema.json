@@ -12,7 +12,19 @@
       "additionalProperties": false,
       "properties": {
         "dark": {"type": "integer", "minimum": 129, "maximum": 255},
-        "row_gaps": {"const": true, "description": "A vertical rule the page leaves out for a row lets the row's text run on into the next column (133086's 事業 names): an OCR line is cut only at the rules drawn across its middle."}
+        "row_gaps": {"const": true, "description": "A vertical rule the page leaves out for a row lets the row's text run on into the next column (133086's 事業 names): an OCR line is cut only at the rules drawn across its middle."},
+        "short_columns": {"const": true, "description": "A column rule drawn only over one short row (shorter than the page-wide detector keeps) is still a rule: a short vertical stroke joining two horizontal rules at the place of a vertical rule the page draws elsewhere closes the cell, as in a staircase (131199's 目 rows between 事務事業 blocks)."}
+      }
+    },
+    "inner_tables": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["marker", "left", "heading"],
+      "description": "Blocks printed under a subject row across the amount columns, where the column rules stop (131199: 事業説明 and a boxed 事務事業 table under each 目). They are cut out before the columns are read; the boxed table whose first column header is `heading` becomes a breakdown of the subject above, on the axis `heading`.",
+      "properties": {
+        "marker": {"type": "string", "minLength": 1, "description": "The header of the first amount column; the vertical rule left of it stops over a block."},
+        "left": {"type": "string", "minLength": 1, "description": "The header of the deepest subject column; a block runs right of the rule left of it."},
+        "heading": {"type": "string", "minLength": 1, "description": "The first column header of the boxed table, and the breakdown axis of its rows."}
       }
     },
     "accounts": {

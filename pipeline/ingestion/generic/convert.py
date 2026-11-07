@@ -436,9 +436,15 @@ def canonical_headings(amounts: list[dict], nodes: list[dict], document_kind: st
     axis = {n['node_key']: n['axis_header'] for n in nodes}
     level = {n['node_key']: n['level_header'] for n in nodes}
     changed: Counter = Counter()
+    # A table that prints 予算現額 as a column of its own may print the columns it is made of flat beside it, with no
+    # 予算現額 over them (131199: 当初予算額・補正予算額・…・予算現額): such a column is the dictionary's 予算現額／….
+    current = any(a['header_path'] == '予算現額' for a in amounts)
     for amount in amounts:
         path = canonical(amount['header_path'], axis.get(amount['node_key']), known,
                          bool((header or {}).get('kind_by_characters')), (header or {}).get('_headers_pattern'))
+        if (current and '／' not in path and path not in known
+                and f'予算現額／{path}' in known):
+            path = f'予算現額／{path}'
         if path == '金額' and axis.get(amount['node_key']) == '科目' and level.get(amount['node_key']):
             # A 款・項・目 row that prints its total in the 節 金額 column: the column of that level (`科目／款`).
             path = f"科目／{level[amount['node_key']]}"

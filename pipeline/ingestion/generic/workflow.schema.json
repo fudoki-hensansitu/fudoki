@@ -37,6 +37,9 @@
                 "rules": {
                   "type": "object"
                 },
+                "inner_tables": {
+                  "type": "object"
+                },
                 "text_layer": {
                   "type": "object"
                 }
