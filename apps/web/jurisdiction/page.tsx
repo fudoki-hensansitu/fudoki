@@ -395,57 +395,33 @@ const Empty = ({ children }: { children: React.ReactNode }) => (
 )
 
 /** どの年度も同じ並び（総額・お金の流れ・金額の大きい事業）。決算が無い年度・事業の一覧が無い年度は枠だけ出す */
-type Phase = 'settlement' | 'budget'
-const PHASES: { key: Phase; label: string }[] = [
-  { key: 'settlement', label: '決算' },
-  { key: 'budget', label: '予算' },
-]
 /** お金の流れの分け方。既定は機能分類（目的で分ける COFOG を domains.ts の枠にまとめたもの）で、どの自治体も同じ枠で比べられる。自治体分類は予算書・決算書の款・項のまま */
 const VIEWS: { key: FlowView; label: string }[] = [
   { key: 'cofog', label: '機能分類' },
   { key: 'kan', label: '自治体分類' },
 ]
 
-/** 予算の節。決算と予算をタブで切り替える。予算はまだ取り込んでいないので、どの年度も空の枠を出す */
+/** お金の流れの節。決算があればその年度の決算、無ければ当初予算を出す（決算と予算は切り替えない）。予算の年度は見出しを「使う」と言う */
 function Budget({ data, year }: { data: PageData; year: number }) {
-  const [phase, setPhase] = React.useState<Phase>('settlement')
   const [view, setView] = React.useState<FlowView>('cofog')
   const settled = data.years.find((y) => y.year === year)
-  const total = phase === 'settlement' ? settled : undefined
-  const prev = data.years.find((y) => y.year === year - 1)
-  const pct = total ? changePct(total.yen, prev?.yen) : null
-  const label = phase === 'settlement' ? '決算' : '予算'
-  const missing = `${yearName(year)}の${label}は、まだ収録していません`
-  // その年度の決算書・予算書（歳出を載せた冊）の PDF を直接開く。公表前・未選定の冊は出さない
+  const budget = settled ? undefined : (data.budgets ?? []).find((b) => b.year === year)
+  const total: YearTotal | undefined = settled ?? (budget ? { year, yen: budget.yen, kan: budget.kan } : undefined)
+  const prev = settled ? data.years.find((y) => y.year === year - 1) : undefined
+  const pct = total && prev ? changePct(total.yen, prev.yen) : null
+  const label = budget ? '予算' : '決算'
+  // その年度の決算書（無ければ予算書）の歳出を載せた冊の PDF を直接開く。公表前・未選定の冊は出さない
   const documents = data.profile?.years[year]?.documents
-  const docs = [...(documents?.settlement ?? []), ...(documents?.initial ?? [])]
+  const docs = (budget ? documents?.initial : documents?.settlement) ?? []
   const summary = (
     <>
-      <span className="text-sm text-muted-foreground">全体</span>
+      <span className="text-sm text-muted-foreground">{budget ? '予算の全体' : '全体'}</span>
       <b className={`text-[26px] font-normal leading-snug tabular-nums ${total ? '' : 'text-muted-foreground'}`}>{total ? formatYen(total.yen) : '—'}</b>
       {pct !== null ? <span className={`text-[13px] tabular-nums text-muted-foreground`}>前年度比 {pct >= 0 ? '+' : '−'}{Math.abs(pct).toFixed(1)}%</span> : null}
     </>
   )
-  // 決算・予算のタブは左、分類のメニューは右に置く
   const tabs = (
-    <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5">
-    <div role="tablist" aria-label="金額の段階" className="flex gap-1">
-      {PHASES.map((p) => (
-        <button
-          key={p.key}
-          type="button"
-          role="tab"
-          id={`tab-${p.key}`}
-          aria-selected={p.key === phase}
-          aria-controls="budget-panel"
-          onClick={() => setPhase(p.key)}
-          className={`rounded-full px-3 py-1.5 text-[13px] ${p.key === phase ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-        >
-          {p.label}
-        </button>
-      ))}
-    </div>
-    {/* 決算・予算のタブとは別の形（select）にし、金額の段階の切り替えと分け方の切り替えを見分けられるようにする */}
+    <div className="flex flex-wrap items-center justify-end gap-x-3 gap-y-1.5">
     <Select items={VIEWS.map((v) => ({ value: v.key, label: v.label }))} value={view} onValueChange={(v) => v && setView(v as FlowView)}>
       <SelectTrigger size="sm" aria-label={`分類：${VIEWS.find((v) => v.key === view)!.label}`} className="text-[13px]">
         <SelectValue />
@@ -459,18 +435,18 @@ function Budget({ data, year }: { data: PageData; year: number }) {
   return (
     <Section
       id="budget"
-      title="お金は何に使われた？"
+      title={budget ? 'お金は何に使う？' : 'お金は何に使われた？'}
       lead="機能分類は、使い道を目的ごとに分ける世界共通の分類（COFOG）です。予算書・決算書の科目に COFOG を当てたのは風土記の判断なので、誤っていることがあります。自治体分類は、予算書・決算書の分け方そのままです。"
       link={docs.length ? docs : undefined}
     >
-      <div id="budget-panel" role="tabpanel" aria-labelledby={`tab-${phase}`} data-ask-view={`${reiwa(year)}の${label}の金額（${VIEWS.find((v) => v.key === view)!.label}）`} className="flex flex-col gap-4">
+      <div id="budget-panel" data-ask-view={`${reiwa(year)}の${label}の金額（${VIEWS.find((v) => v.key === view)!.label}）`} className="flex flex-col gap-4">
         {total ? (
-          <Flow key={`${year}-${view}`} data={data} total={total} view={view} tabs={tabs} summary={summary} />
+          <Flow key={`${year}-${view}`} data={data} total={total} view={view} phase={budget ? 'initial' : 'settlement'} tabs={tabs} summary={summary} />
         ) : (
           <div className="rounded-[20px] border bg-background px-5 pt-5 sm:px-6">
             {tabs}
             <div className="mt-3 flex min-h-9 flex-wrap items-baseline gap-x-3">{summary}</div>
-            <p className="pb-10 pt-4 text-center text-sm text-muted-foreground">{missing}</p>
+            <p className="pb-10 pt-4 text-center text-sm text-muted-foreground">{yearName(year)}の決算・予算は、まだ収録していません</p>
           </div>
         )}
       </div>
@@ -478,21 +454,23 @@ function Budget({ data, year }: { data: PageData; year: number }) {
   )
 }
 
-/** 決算の金額が大きい事業（目）。最新の決算の年度だけ出す */
+/** 金額が大きい事業（目）。最新の決算の年度は決算、決算の無い年度は当初予算から出す */
 function Projects({ data, year }: { data: PageData; year: number }) {
   const settled = data.years.find((y) => y.year === year)
   const isLatest = !!settled && settled.year === data.years.at(-1)?.year
-  const max = data.projects[0]?.yen ?? 1
+  const budget = settled ? undefined : (data.budgets ?? []).find((b) => b.year === year)
+  const projects = isLatest ? data.projects : (budget?.projects ?? [])
+  const max = projects[0]?.yen ?? 1
   return (
-    <Section id="projects" title="いちばんお金がかかっているのは？">
-      {isLatest ? (
+    <Section id="projects" title={budget ? 'いちばんお金がかかるのは？' : 'いちばんお金がかかっているのは？'}>
+      {projects.length ? (
         <ul className="border-t">
-          {data.projects.map((p, i) => (
+          {projects.map((p, i) => (
             <ProjectRow key={p.id} p={p} rank={i + 1} max={max} />
           ))}
         </ul>
       ) : (
-        <Empty>{settled ? `${yearName(year)}の事業の一覧は、まだ出していません` : `${yearName(year)}の決算は、まだ収録していません`}</Empty>
+        <Empty>{settled ? `${yearName(year)}の事業の一覧は、まだ出していません` : `${yearName(year)}の決算・予算は、まだ収録していません`}</Empty>
       )}
     </Section>
   )
