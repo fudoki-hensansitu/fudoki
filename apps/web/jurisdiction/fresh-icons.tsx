@@ -1,14 +1,13 @@
-// 新しく始めたことの印。New! はギザギザのシール、Up!（拡大・今ある事業の中での取り組み）は上向きの矢印。色は currentColor
+// 新しく始めたことの印。右が尖ったタグに、新規は「NEW」、拡大（今ある事業の中での取り組みも）は上向きの矢印と「UP」。
+// 文字はフォントに頼らず線で描く（ページの書体によって幅が変わり、枠からはみ出したため）。色は currentColor
 export const NewIcon = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 32 32" aria-hidden="true" className={className}>
-    <polygon points="16.00,0.50 18.58,3.05 21.93,1.68 23.33,5.02 26.96,5.04 26.98,8.67 30.32,10.07 28.95,13.42 31.50,16.00 28.95,18.58 30.32,21.93 26.98,23.33 26.96,26.96 23.33,26.98 21.93,30.32 18.58,28.95 16.00,31.50 13.42,28.95 10.07,30.32 8.67,26.98 5.04,26.96 5.02,23.33 1.68,21.93 3.05,18.58 0.50,16.00 3.05,13.42 1.68,10.07 5.02,8.67 5.04,5.04 8.67,5.02 10.07,1.68 13.42,3.05" fill="currentColor" />
-    <text x="16" y="19.6" textAnchor="middle" fontSize="9.5" fontWeight="800" fill="#fff" letterSpacing="-.2">NEW</text>
+  <svg viewBox="0 0 40 22" aria-hidden="true" className={className}>
+    <path d="M3 2H33L39 11L33 20H3a2.5 2.5 0 0 1-2.5-2.5V4.5A2.5 2.5 0 0 1 3 2Z" fill="currentColor"/><g fill="none" stroke="#fff" strokeWidth="2.37" strokeLinecap="round" strokeLinejoin="round"><path d="M0 10V0L6 10V0" transform="translate(8.46 7.00) scale(0.800)" /><path d="M5 0H0V10H5M0 5H4.2" transform="translate(14.54 7.00) scale(0.800)" /><path d="M0 0L2 10L4.2 3L6.4 10L8.4 0" transform="translate(19.82 7.00) scale(0.800)" /></g>
   </svg>
 )
 
 export const UpIcon = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 32 32" aria-hidden="true" className={className}>
-    <path d="M16 1.5 L29.5 15 H22 V29 a1.5 1.5 0 0 1 -1.5 1.5 H11.5 A1.5 1.5 0 0 1 10 29 V15 H2.5 Z" fill="currentColor" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-    <text x="16" y="24" textAnchor="middle" fontSize="8.5" fontWeight="800" fill="#fff">UP</text>
+  <svg viewBox="0 0 40 22" aria-hidden="true" className={className}>
+    <path d="M3 2H33L39 11L33 20H3a2.5 2.5 0 0 1-2.5-2.5V4.5A2.5 2.5 0 0 1 3 2Z" fill="currentColor"/><path d="M9 15V7M5.6 10.4L9 7L12.4 10.4" fill="none" stroke="#fff" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"/><g fill="none" stroke="#fff" strokeWidth="2.37" strokeLinecap="round" strokeLinejoin="round"><path d="M0 0V6.6A3 3 0 0 0 6 6.6V0" transform="translate(17.22 7.00) scale(0.800)" /><path d="M0 10V0H3A2.6 2.6 0 0 1 3 5.6H0" transform="translate(23.30 7.00) scale(0.800)" /></g>
   </svg>
 )

@@ -103,8 +103,8 @@ function FreshRow({ up, upLabel = '拡大', title, yen, children }: { up: boolea
       <div className="flex items-start justify-between gap-x-6">
         <span className="flex min-w-0 items-start gap-2 text-[15.5px]">
           <Hint label={label}>
-            <span className="-mt-[3px] shrink-0 text-primary">
-              {up ? <UpIcon className="size-[26px]" /> : <NewIcon className="size-[26px]" />}
+            <span className="mt-[2px] shrink-0 text-primary">
+              {up ? <UpIcon className="h-5 w-9" /> : <NewIcon className="h-5 w-9" />}
               <span className="sr-only">{label}</span>
             </span>
           </Hint>
@@ -701,7 +701,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
     <>
       <div className={`fixed left-0 right-(--side-panel,0px) top-0 z-30 md:left-(--nav-w) border-b bg-background transition-[transform,right] duration-200 ease-out motion-reduce:transition-none ${mini ? '' : '-translate-y-full'}`} aria-hidden={!mini} inert={!mini}>
         <div className="mx-auto flex h-[60px] max-w-[1120px] items-center gap-3 px-4">
-          <span className="hidden size-10 shrink-0 place-items-center rounded-lg border bg-white p-1 sm:grid">{logo ? <img src={logo} alt="" className="w-full" /> : <span className="text-foreground">{data.name[0]}</span>}</span>
+          <span className="grid size-9 shrink-0 place-items-center rounded-lg border bg-white p-1 sm:size-10">{logo ? <img src={logo} alt="" className="w-full" /> : <span className="text-foreground">{data.name[0]}</span>}</span>
           <b className="shrink-0 text-lg font-normal">{data.name}</b>
           {vision ? <span className="hidden min-w-0 truncate text-[13px] text-muted-foreground sm:block">{vision}</span> : null}
           {years.length > 1 ? (
