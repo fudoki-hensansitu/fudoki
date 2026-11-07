@@ -90,14 +90,14 @@ export async function resolveJurisdiction(env: Env, path: string): Promise<Juris
   return data ? { kind: 'page', data: { ...data, prefecturePath, neighbors, profile: withPress(entry.code, PROFILES[entry.code] ?? null) } } : { kind: 'empty', entry }
 }
 
-/** 予算の新規（budgetNew）に、予算案のプレス発表資料の POINT を事業名で足す */
+/** 事業評価がまだの年度に、予算案のプレス発表資料の施策（budgetNew）を足す。評価のある年度は足さない */
 function withPress(code: string, profile: Profile | null): Profile | null {
   const press = BUDGET_PRESS[code]
   if (!profile || !press) return profile
   const years = Object.fromEntries(Object.entries(profile.years).map(([y, py]) => {
     const p = press[y]
-    if (!p || !py.budgetNew) return [y, py]
-    return [y, { ...py, budgetPress: p.source, budgetNew: py.budgetNew.map((b) => (p.items[b.name] ? { ...b, press: p.items[b.name] } : b)) }]
+    if (!p || py.projects.length || py.initiatives?.length) return [y, py]
+    return [y, { ...py, budgetPress: p.source, budgetNew: p.items }]
   }))
   return { ...profile, years }
 }
