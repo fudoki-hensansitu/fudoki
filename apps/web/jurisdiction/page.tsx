@@ -161,15 +161,23 @@ function FrameItems<T>({ items, render }: { items: T[]; render: (item: T) => Rea
   return (
     <>
       {(open ? items : items.slice(0, FRAME_PREVIEW)).map(render)}
-      {open ? null : (
-        <div aria-hidden="true" inert className="pointer-events-none max-h-20 overflow-hidden [mask-image:linear-gradient(to_bottom,black,transparent)]">
-          {render(items[FRAME_PREVIEW]!)}
-        </div>
-      )}
-      <Button variant="ghost" size="sm" onClick={() => setOpen((v) => !v)} aria-expanded={open} className="mt-1 self-start text-muted-foreground">
-        {open ? '閉じる' : `ほか${rest}件を開く`}
-        <CaretDownIcon aria-hidden="true" className={`size-3.5 transition-transform ${open ? 'rotate-180' : ''}`} />
-      </Button>
+      {/* 開くボタンは薄く消える行に重ねて真ん中に置く。開いたあとは閉じるを最後の行の下の真ん中に置く */}
+      <div className={`relative flex justify-center ${open ? 'pt-4' : ''}`}>
+        {open ? null : (
+          <div aria-hidden="true" inert className="pointer-events-none max-h-24 w-full overflow-hidden [mask-image:linear-gradient(to_bottom,black_10%,transparent)]">
+            {render(items[FRAME_PREVIEW]!)}
+          </div>
+        )}
+        <Button
+          variant="outline"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          className={`rounded-full bg-background px-5 shadow-sm hover:bg-card ${open ? '' : 'absolute bottom-2 left-1/2 -translate-x-1/2'}`}
+        >
+          {open ? '閉じる' : `ほか${rest}件を見る`}
+          <CaretDownIcon aria-hidden="true" className={`size-3.5 transition-transform ${open ? 'rotate-180' : ''}`} />
+        </Button>
+      </div>
     </>
   )
 }
