@@ -491,7 +491,7 @@ function Budget({ data, year }: { data: PageData; year: number }) {
   const tabs = (
     <div className="flex items-center justify-between gap-3">
       {/* 左上に、この図が予算か決算かを出す */}
-      <span className="text-[15px]">{reiwa(year)}の{label}</span>
+      <span className="text-[15px]">{label}</span>
       <div role="group" aria-label="分類" className="flex gap-1">
       {VIEWS.map((v) => (
         <button
