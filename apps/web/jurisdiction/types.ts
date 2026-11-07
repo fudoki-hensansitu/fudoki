@@ -59,7 +59,11 @@ export interface BudgetTotal {
   year: number
   yen: number
   amountMissing?: true
+  /** 款ごとの当初予算（大きい順） */
+  kan: Line[]
   divisions: { id: string; yen: number; amountMissing?: true }[]
+  /** 当初予算の大きい事業（目）。前年度との比較は持たない */
+  projects: Project[]
 }
 
 /** 住民基本台帳人口。asOf は基準日（YYYY-MM-DD） */

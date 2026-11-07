@@ -141,7 +141,7 @@ const SHINAGAWA: Profile = {
             "target": "44,351",
             "actual": "37,424"
           },
-          "grade": "D 完了・廃止する事業",
+          "grade": "D やめる・終える",
           "direction": "事業の完了",
           "page": 22
         },
@@ -305,7 +305,7 @@ const SHINAGAWA: Profile = {
           "cofog": "10.4",
           "what": "母子保健と児童福祉が一緒に相談に乗る「子ども家庭センター」をR7年4月に開くための準備をした。",
           "settledYen": 17373000,
-          "grade": "D 完了・廃止する事業",
+          "grade": "D やめる・終える",
           "direction": "事業の完了",
           "page": 183
         },
@@ -406,7 +406,7 @@ const SHINAGAWA: Profile = {
           "cofog": "09.8",
           "settledYen": 2790000,
           "grade": "C 改善・見直しする事業",
-          "direction": "取組みの一部廃止",
+          "direction": "取組みの一部をやめる",
           "page": 616
         },
         {
