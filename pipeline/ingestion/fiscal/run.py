@@ -666,6 +666,7 @@ def main() -> None:
     refresh.add_argument('--output', type=Path, help='Report file (default: .build/ingestion-refresh/report.json)')
     refresh.add_argument('--remote', action='store_true', help='Restore missing originals and saved tables from R2 (read only; nothing is uploaded)')
     refresh.add_argument('--dry-run', action='store_true', help='Compare only; do not rewrite any manifest')
+    refresh.add_argument('--all', action='store_true', help='Re-read every conversion, not only stale ones (after a Poppler change)')
     refresh.add_argument('--plan', action='store_true', help='List stale conversions only; no original reads, conversion, or writes')
     ocr = sub.add_parser('ocr', help='Read declared OCR requests and pin observation SHA (Paddle; run outside the sandbox)')
     ocr.add_argument('--manifest', type=Path, required=True)
@@ -763,7 +764,7 @@ def main() -> None:
     elif args.command == 'refresh':
         from ingestion.fiscal.refresh import refresh_all
         report = refresh_all(args.manifest or manifest.paths(), remote=args.remote, dry_run=args.dry_run,
-                             output=args.output or BUILD / 'ingestion-refresh' / 'report.json')
+                             output=args.output or BUILD / 'ingestion-refresh' / 'report.json', everything=args.all)
         print(json.dumps(report['summary'], ensure_ascii=False))
         raise SystemExit(0 if report['ok'] else 1)
     else:

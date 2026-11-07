@@ -3,7 +3,7 @@
 Words come from `pdftotext -bbox`; another version, or one without its CJK data, reads the same PDF into
 other words, and a conversion then differs from the saved table for reasons outside the code. The words
 cached in `.cache/generic-observation` are keyed without the version: after changing Poppler, empty that
-directory before converting.
+directory before converting. `require` checks the version only; `scripts/install_poppler.sh` checks the CJK data.
 """
 from __future__ import annotations
 

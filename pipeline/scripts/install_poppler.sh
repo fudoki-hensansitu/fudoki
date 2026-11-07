@@ -51,6 +51,7 @@ PY
   mv "$target.tmp" "$target"
 fi
 
+[[ -d "$target/share/poppler/cMap/Adobe-Japan1" ]] || { echo "$target has no Japanese CJK data (share/poppler/cMap/Adobe-Japan1)" >&2; exit 1; }
 mkdir -p "$bin"
 for tool in pdftotext pdftoppm pdftocairo pdfinfo pdffonts pdfimages; do
   [[ -x "$target/bin/$tool" ]] && ln -sfn "$target/bin/$tool" "$bin/$tool"

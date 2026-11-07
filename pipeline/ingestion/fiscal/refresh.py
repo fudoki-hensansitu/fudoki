@@ -192,7 +192,7 @@ def plan(paths: list[Path]) -> dict:
     return {'manifests': affected, 'conversions': sum(len(item['conversions']) for item in affected)}
 
 
-def refresh_manifest(path: Path, *, remote: bool, dry_run: bool, work: Path) -> dict:
+def refresh_manifest(path: Path, *, remote: bool, dry_run: bool, work: Path, everything: bool = False) -> dict:
     started = time.monotonic()
     original_bytes = path.read_bytes()
     document = manifest.read(path)
@@ -210,8 +210,9 @@ def refresh_manifest(path: Path, *, remote: bool, dry_run: bool, work: Path) -> 
     if not document['tables']:
         return finish(NO_TABLES)
     current = manifest.fingerprints(document)
+    # `everything` re-reads current conversions too: a change outside the code (the Poppler version) moves no fingerprint.
     stale = sorted({table['conversion_id'] for table in document['tables']
-                    if table['input_fingerprint'] != current[table['conversion_id']]})
+                    if everything or table['input_fingerprint'] != current[table['conversion_id']]})
     if not stale:
         return finish(CURRENT)
     result['stale_conversions'] = stale
@@ -271,7 +272,7 @@ def refresh_manifest(path: Path, *, remote: bool, dry_run: bool, work: Path) -> 
     return finish(WOULD_REFRESH if dry_run else REFRESHED)
 
 
-def refresh_all(paths: list[Path], *, remote: bool, dry_run: bool, output: Path) -> dict:
+def refresh_all(paths: list[Path], *, remote: bool, dry_run: bool, output: Path, everything: bool = False) -> dict:
     started = time.monotonic()
     output.parent.mkdir(parents=True, exist_ok=True)
     # A caller waits for this file to appear to know the run finished. Drop a previous run's report
@@ -281,7 +282,7 @@ def refresh_all(paths: list[Path], *, remote: bool, dry_run: bool, output: Path)
     manifests = []
     for path in paths:
         try:
-            item = refresh_manifest(path, remote=remote, dry_run=dry_run, work=work)
+            item = refresh_manifest(path, remote=remote, dry_run=dry_run, work=work, everything=everything)
         except Exception as error:
             item = {'manifest': str(path), 'status': ERROR, 'stage': 'read', 'reason': f'{type(error).__name__}: {error}'}
         print(f'{item["manifest"]}: {item["status"]}', file=sys.stderr, flush=True)
