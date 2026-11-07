@@ -921,6 +921,8 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
   const anchor = React.useRef(0)
   /** 指やマウスを押している間 true。選択を広げている途中で聞く欄を開かない */
   const held = React.useRef(false)
+  /** 文脈で聞く欄を開く予約を取り消す。開く前に Escape で畳んだら、後から開き直さない */
+  const cancelReveal = React.useRef(() => {})
   /** 入力欄に focus した時刻。スマホでは focus で頁が動くので、その直後のスクロールでは閉じない */
   const focusedAt = React.useRef(0)
   const show = React.useCallback(() => {
@@ -981,10 +983,12 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
       if (held.current) window.addEventListener('pointerup', onUp, { once: true })
       else reveal()
     }, QUOTE_OPEN_DELAY)
-    return () => {
+    const cancel = () => {
       clearTimeout(timer)
       window.removeEventListener('pointerup', onUp)
     }
+    cancelReveal.current = cancel
+    return cancel
   }, [quote, chat])
 
   const describe = () => {
@@ -1003,11 +1007,13 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
   // Escape で畳む（入力中でも閉じ、書きかけの文は残す）。drawer が開いていれば drawer を閉じる
   const close = React.useCallback(() => {
     ;(document.activeElement as HTMLElement | null)?.blur()
+    cancelReveal.current()
     if (drawer) setDrawer(false)
     else setOpen(false)
   }, [drawer])
   React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') cancelReveal.current()
       if (e.key === 'Escape' && (drawer || open)) {
         // 表とグラフの全体表示（popover）は、その Escape で先に閉じる
         if (document.querySelector(':popover-open')) return
