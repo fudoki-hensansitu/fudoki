@@ -224,9 +224,7 @@ function Overview({ data, sections, year }: { data: PageData; sections: Set<stri
             </>
           ) : null}
           です。
-          {budget ? (
-            <span className="mt-1 block text-[13px] text-muted-foreground">決算はまだ出ていないので、年度のはじめに決めた予算（当初予算）の額です。</span>
-          ) : year !== latest.year ? (
+          {!budget && year !== latest.year ? (
             <span className="mt-1 block text-[13px] text-muted-foreground">{data.years.some((y) => y.year === year) ? '' : `${reiwa(year)}の決算はまだ収録していないため、`}ここの金額は収録している最新の決算（{reiwa(latest.year)}）のものです。</span>
           ) : null}
         </p>
