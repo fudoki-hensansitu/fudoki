@@ -23,6 +23,9 @@ describe('分野の枠', () => {
       for (const [year, y] of Object.entries(profile.years)) {
         for (const p of y.projects) expect(masterCodes, `${year} ${p.name}`).toContain(p.cofog)
         expect(groupByFrame(y.projects).flatMap((g) => g.items).length).toBe(y.projects.length)
+        // 予算の資料の項目は、分類できない目（空）なら「その他」に入る
+        for (const p of y.budgetNew ?? []) if (p.cofog) expect(masterCodes, `${year} ${p.name}`).toContain(p.cofog)
+        expect(groupByFrame(y.budgetNew ?? []).flatMap((g) => g.items).length).toBe(y.budgetNew?.length ?? 0)
       }
     }
   })

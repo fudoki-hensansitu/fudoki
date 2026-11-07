@@ -39,7 +39,7 @@ export function frameOf(cofog: string): DomainFrame | undefined {
   return DOMAIN_FRAMES.find((f) => covers(f.cofog, cofog))
 }
 
-/** 事業を枠ごとに並べる。事業の無い枠は出さない。並びは DOMAIN_FRAMES の順、枠の中は元の順 */
+/** 事業を枠ごとに並べる。事業の無い枠は出さない。並びは DOMAIN_FRAMES の順で、COFOG の無い事業は最後の「その他」に入れる。枠の中は元の順 */
 export function groupByFrame<T extends { cofog: string }>(items: T[]): { frame: DomainFrame; items: T[] }[] {
-  return DOMAIN_FRAMES.map((frame) => ({ frame, items: items.filter((p) => frameOf(p.cofog) === frame) })).filter((g) => g.items.length)
+  return [...DOMAIN_FRAMES, OTHER_FRAME].map((frame) => ({ frame, items: items.filter((p) => (frameOf(p.cofog) ?? OTHER_FRAME) === frame) })).filter((g) => g.items.length)
 }

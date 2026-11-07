@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { DOMAIN_FRAMES, groupByFrame, OTHER_FRAME } from './domains'
 import { EMBLEMS } from './emblems'
 import { Flow } from './flow'
-import { assetPath, type EvaluatedProject, type Initiative, type ProfileYear, type Scrap } from './profiles'
+import { assetPath, type BudgetNew, type EvaluatedProject, type Initiative, type ProfileYear, type Scrap } from './profiles'
 import { changePct, INDEX_PATH, formatAsOf, formatPeople, formatYen, reiwa, yearName, type FlowView, type PageData, type Project, type Setsu, type YearTotal } from './types'
 
 const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
@@ -80,11 +80,16 @@ function YenText({ yen, className }: { yen: number; className?: string }) {
   )
 }
 
-/** 新しく始めたことの2つの形。シートごと新しくできた事業か、今ある事業の中で始めた取り組みか */
-type Fresh = ({ kind: 'sheet' } & EvaluatedProject) | ({ kind: 'initiative' } & Initiative)
-const freshOf = (y: ProfileYear): Fresh[] => [...y.projects.map((p) => ({ kind: 'sheet' as const, ...p })), ...[...(y.initiatives ?? [])].sort((a, b) => b.settledYen - a.settledYen).map((p) => ({ kind: 'initiative' as const, ...p }))]
+/** 新しく始めたことの形。事業評価のシートごと新しくできた事業か、今ある事業の中で始めた取り組みか、予算の資料で新規と印の付いた項目か */
+type Fresh = ({ kind: 'sheet' } & EvaluatedProject) | ({ kind: 'initiative' } & Initiative) | ({ kind: 'budget' } & BudgetNew)
+const evaluatedOf = (y: ProfileYear): Fresh[] => [...y.projects.map((p) => ({ kind: 'sheet' as const, ...p })), ...[...(y.initiatives ?? [])].sort((a, b) => b.settledYen - a.settledYen).map((p) => ({ kind: 'initiative' as const, ...p }))]
+/** 実績と評価のある事業評価を優先し、まだ公表されていない年度だけ予算の資料から出す */
+const freshOf = (y: ProfileYear): Fresh[] => {
+  const evaluated = evaluatedOf(y)
+  return evaluated.length ? evaluated : [...(y.budgetNew ?? [])].sort((a, b) => b.budgetYen - a.budgetYen).map((p) => ({ kind: 'budget' as const, ...p }))
+}
 
-const KIND_LABEL: Record<Fresh['kind'], string> = { sheet: '新しい事業', initiative: '今ある事業の中で' }
+const KIND_LABEL: Record<Fresh['kind'], string> = { sheet: '新しい事業', initiative: '今ある事業の中で', budget: '予算で新規' }
 const KindLabel = ({ kind }: { kind: Fresh['kind'] }) => <span className="text-xs text-muted-foreground">{KIND_LABEL[kind]}</span>
 
 function SheetLink({ sheets, page, name }: { sheets?: string; page: number; name: string }) {
@@ -119,6 +124,32 @@ function InitiativeItem({ p, sheets }: { p: Initiative; sheets?: string }) {
         <Grade grade={p.grade} className="ml-1" />
         （{p.direction}）。
         <SheetLink sheets={sheets} page={p.page} name={p.name} />
+      </p>
+    </div>
+  )
+}
+
+/** 予算の資料で新規と印の付いた項目。項目は資料の文言のまま並べ、金額は項目を含む事業全体の予算額 */
+function BudgetItem({ p, source }: { p: BudgetNew; source?: string }) {
+  return (
+    <div className="flex flex-col gap-2 border-b border-foreground/10 py-4">
+      <div className="flex items-start justify-between gap-x-6">
+        <div className="flex min-w-0 flex-col">
+          <KindLabel kind="budget" />
+          <ul className="flex flex-col gap-0.5">
+            {p.items.map((item) => <li key={item} className="text-[15.5px]">{item}</li>)}
+          </ul>
+        </div>
+        <YenText yen={p.budgetYen} className="shrink-0 text-right leading-snug" />
+      </div>
+      <p className="text-[13px] text-muted-foreground">
+        含まれる事業「{p.name}」の予算額
+        {source ? (
+          <Button variant="link" size="inline" nativeButton={false} render={<a href={`${source}#page=${p.page}`} target="_blank" rel="noopener" />} className="ml-1 align-baseline">
+            資料の{p.page}頁
+            <ArrowSquareOutIcon aria-hidden="true" className="size-3.5" />
+          </Button>
+        ) : null}
       </p>
     </div>
   )
@@ -216,10 +247,16 @@ function DomainLink({ section, children }: { section?: string; children: React.R
 }
 
 function Domains({ year, fiscalYear }: { year: ProfileYear; fiscalYear: number }) {
-  const groups = groupByFrame(freshOf(year))
+  const fresh = freshOf(year)
+  const groups = groupByFrame(fresh)
+  const byBudget = fresh[0]?.kind === 'budget'
+  const lead = byBudget
+    ? `区の事業評価は${reiwa(fiscalYear + 1)}に公表されるため、それまでは当初予算の資料「款別予算等の主な施策」で区が新規と印を付けた項目を並べています。金額は項目を含む事業全体の予算額です。`
+    : '区が事業ごとに目標と実績を振り返る「事業評価」から、この年度に新しくできた事業と、今ある事業の中で始めた取り組みを並べています。'
+  const link = !groups.length ? undefined : byBudget ? (year.budgetHighlights ? { href: year.budgetHighlights, label: '主な施策（予算）' } : undefined) : { href: year.evaluationSource, label: '事業評価' }
   return (
-    <Section id="domains" title="新しく何を始めた？" lead="区が事業ごとに目標と実績を振り返る「事業評価」から、この年度に新しくできた事業と、今ある事業の中で始めた取り組みを並べています。" link={groups.length ? { href: year.evaluationSource, label: '事業評価' } : undefined}>
-      {/* 事業評価は実施した翌年度に公表する。まだの年度も節は出し、なぜ空かを言う */}
+    <Section id="domains" title="新しく何を始めた？" lead={lead} link={link}>
+      {/* 事業評価は実施した翌年度に公表する。予算の資料も無い年度は節だけ出し、なぜ空かを言う */}
       {groups.length ? null : <p className="rounded-xl border border-dashed px-4 py-6 text-sm text-muted-foreground">{reiwa(fiscalYear)}の事業の評価は、{reiwa(fiscalYear + 1)}に公表されます。まだ公表されていません。</p>}
       {groups.map(({ frame: d, items }) => (
         <div key={d.id} id={`d-${d.id}`} className="flex scroll-mt-32 lg:scroll-mt-20 flex-col gap-1 [&+&]:mt-12">
@@ -228,7 +265,7 @@ function Domains({ year, fiscalYear }: { year: ProfileYear; fiscalYear: number }
             {d.name}
           </h3>
           <div className="border-t">
-            {items.map((p) => (p.kind === 'sheet' ? <ProjectItem key={`s${p.page}`} p={p} sheets={year.evaluationSheets} /> : <InitiativeItem key={`i${p.page}-${p.title}`} p={p} sheets={year.evaluationSheets} />))}
+            {items.map((p) => (p.kind === 'sheet' ? <ProjectItem key={`s${p.page}`} p={p} sheets={year.evaluationSheets} /> : p.kind === 'initiative' ? <InitiativeItem key={`i${p.page}-${p.title}`} p={p} sheets={year.evaluationSheets} /> : <BudgetItem key={`b${p.page}-${p.name}`} p={p} source={year.budgetHighlights} />))}
           </div>
         </div>
       ))}
