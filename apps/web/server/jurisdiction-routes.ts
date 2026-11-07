@@ -8,6 +8,7 @@ import { DEFAULT_INDEX_QUERY, parseIndexQuery, queryIndex, toMapEntry, type Inde
 import { INDEX_PATH, type Drill, type FlowDepth, type FlowView, type IndexEntry, type PageData, type Setsu } from '../jurisdiction/types'
 import { assetPath, PROFILES, type Profile } from '../jurisdiction/profiles'
 import { EMBLEMS } from '../jurisdiction/emblems'
+import { BUDGET_PRESS } from '../jurisdiction/budget-press'
 import { clientIp, errorResponse, HttpError, rateLimit } from './http'
 import { VIEW_RATE_LIMIT } from './limits'
 import type { Env, RateLimiter } from './env'
@@ -86,7 +87,19 @@ export async function resolveJurisdiction(env: Env, path: string): Promise<Juris
   const neighbors = nearby(entry, entries.filter((e) => e.code.slice(0, 2) === entry.code.slice(0, 2) && e.code !== entry.code && e.code !== prefectureCode && e.settlementYears.length > 0))
     .map((e) => ({ code: e.code, name: e.name, path: jurisdictionPath(e.code), ...(EMBLEMS[e.code] ? { logo: assetPath(e.code, 'emblem.svg') } : {}) }))
   const data = entry.settlementYears.length > 0 ? await page(env, entry) : null
-  return data ? { kind: 'page', data: { ...data, prefecturePath, neighbors, profile: PROFILES[entry.code] ?? null } } : { kind: 'empty', entry }
+  return data ? { kind: 'page', data: { ...data, prefecturePath, neighbors, profile: withPress(entry.code, PROFILES[entry.code] ?? null) } } : { kind: 'empty', entry }
+}
+
+/** 予算の新規（budgetNew）に、予算案のプレス発表資料の POINT を事業名で足す */
+function withPress(code: string, profile: Profile | null): Profile | null {
+  const press = BUDGET_PRESS[code]
+  if (!profile || !press) return profile
+  const years = Object.fromEntries(Object.entries(profile.years).map(([y, py]) => {
+    const p = press[y]
+    if (!p || !py.budgetNew) return [y, py]
+    return [y, { ...py, budgetPress: p.source, budgetNew: py.budgetNew.map((b) => (p.items[b.name] ? { ...b, press: p.items[b.name] } : b)) }]
+  }))
+  return { ...profile, years }
 }
 
 /** 収録のある自治体の頁を含む sitemap。API に繋がらなくても入口・一覧・アシスタントだけで答える */

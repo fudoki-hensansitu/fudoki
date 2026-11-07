@@ -57,6 +57,8 @@ export interface BudgetNew {
   cofog: string
   /** 資料の PDF（budgetHighlights）の頁 */
   page: number
+  /** 予算案のプレス発表資料の POINT（budget-press.ts）。サーバーで profile を渡すときに足す */
+  press?: import('./budget-press').BudgetPress[]
 }
 
 export interface Scrap {
@@ -80,6 +82,8 @@ export interface ProfileYear {
   budgetNew?: BudgetNew[]
   /** budgetNew を取った「款別予算等の主な施策」の PDF */
   budgetHighlights?: string
+  /** budgetNew の press を取った予算案のプレス発表資料の PDF。サーバーで足す */
+  budgetPress?: string
   scrap?: Scrap
   /** 事務事業評価の結果の頁 */
   evaluationSource: string

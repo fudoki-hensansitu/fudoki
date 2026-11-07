@@ -148,6 +148,14 @@ function BudgetItem({ p }: { p: BudgetNew }) {
         {p.items.length ? `${quote(p.items)}を新しく始める。` : null}
         {p.upgrades.length ? `${quote(p.upgrades)}を拡大する。` : null}
       </p>
+      {/* 予算案のプレス発表資料に説明があれば、その POINT を資料の文のまま添える */}
+      {p.press?.length ? (
+        <ul className="flex flex-col gap-1 rounded-xl bg-sidebar px-3.5 py-2.5 text-[13px] leading-relaxed [text-wrap:pretty]">
+          {p.press.flatMap((x) => x.points.map((pt, i) => (
+            <li key={`${x.page}-${i}`} className="relative pl-3.5 before:absolute before:left-0 before:top-[0.6em] before:size-1.5 before:rounded-full before:bg-primary/60">{pt}</li>
+          )))}
+        </ul>
+      ) : null}
     </FreshRow>
   )
 }
@@ -347,7 +355,7 @@ function Domains({ year, fiscalYear }: { year: ProfileYear; fiscalYear: number }
   const lead = byBudget
     ? 'この年度の予算で、区が新しく始める事業と、広げる事業です。金額は事業全体の予算です。'
     : '区が事業ごとに目標と実績を振り返る「事業評価」から、この年度に新しくできた事業と、今ある事業の中で始めた取り組みを並べています。'
-  const link = !groups.length ? undefined : byBudget ? (year.budgetHighlights ? { href: year.budgetHighlights, label: '主な施策（予算）' } : undefined) : { href: year.evaluationSource, label: '事業評価' }
+  const link = !groups.length ? undefined : byBudget ? [...(year.budgetHighlights ? [{ href: year.budgetHighlights, label: '主な施策（予算）' }] : []), ...(year.budgetPress ? [{ href: year.budgetPress, label: 'プレス発表' }] : [])] : { href: year.evaluationSource, label: '事業評価' }
   return (
     <Section id="domains" title={freshTitle(year)} lead={lead} link={link}>
       {/* 事業評価は実施した翌年度に公表する。予算の資料も無い年度は節だけ出し、なぜ空かを言う */}
