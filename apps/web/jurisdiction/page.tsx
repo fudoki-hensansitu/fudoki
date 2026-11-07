@@ -1081,6 +1081,12 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
     }
   }, [drawer])
 
+  // ×・背景・取っ手で閉じたら、文脈で開く予約も取り消す（Escape は close() で取り消す）
+  const hideDrawer = () => {
+    cancelReveal.current()
+    setDrawer(false)
+  }
+
   // 取っ手を下へ引いて閉じる
   const drag = React.useRef<{ y: number; dy: number }>(undefined)
   const [dragY, setDragY] = React.useState(0)
@@ -1094,7 +1100,7 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
     setDragY(drag.current.dy)
   }
   const onHandleUp = () => {
-    if (drag.current && drag.current.dy > DRAWER_DRAG_CLOSE) setDrawer(false)
+    if (drag.current && drag.current.dy > DRAWER_DRAG_CLOSE) hideDrawer()
     drag.current = undefined
     setDragY(0)
   }
@@ -1127,7 +1133,7 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
         <div className="flex items-center gap-1 text-muted-foreground">
           <Hint label="会話を別の頁で開く"><Link href={`/s/${chat.id}`} aria-label="会話を別の頁で開く" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><ArrowSquareOutIcon className="size-4" /></Link></Hint>
           <Hint label="新しい会話"><button type="button" onClick={restart} aria-label="新しい会話" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><NotePencilIcon className="size-4" /></button></Hint>
-          <Hint label="閉じる（Esc）"><button type="button" onClick={() => setDrawer(false)} aria-label="閉じる" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><XIcon className="size-4" /></button></Hint>
+          <Hint label="閉じる（Esc）"><button type="button" onClick={hideDrawer} aria-label="閉じる" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><XIcon className="size-4" /></button></Hint>
         </div>
       </div>
     </div>
@@ -1163,7 +1169,7 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
       </button>
       {chat ? (
         <>
-          <div aria-hidden="true" onClick={() => setDrawer(false)} className={`fixed inset-0 z-30 bg-foreground/20 md:hidden transition-opacity duration-300 motion-reduce:transition-none ${drawer ? '' : 'pointer-events-none opacity-0'}`} />
+          <div aria-hidden="true" onClick={hideDrawer} className={`fixed inset-0 z-30 bg-foreground/20 md:hidden transition-opacity duration-300 motion-reduce:transition-none ${drawer ? '' : 'pointer-events-none opacity-0'}`} />
           <div
             ref={sheet}
             role="dialog"
