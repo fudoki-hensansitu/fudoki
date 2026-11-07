@@ -103,8 +103,8 @@ function FreshRow({ up, upLabel = '拡大', title, yen, children }: { up: boolea
       <div className="flex items-start justify-between gap-x-6">
         <span className="flex min-w-0 items-start gap-2 text-[15.5px]">
           <Hint label={label}>
-            <span className="mt-[2px] shrink-0 text-primary">
-              {up ? <UpIcon className="h-5 w-9" /> : <NewIcon className="h-5 w-9" />}
+            <span className="-mt-[3px] shrink-0 text-primary">
+              {up ? <UpIcon className="size-7" /> : <NewIcon className="size-7" />}
               <span className="sr-only">{label}</span>
             </span>
           </Hint>

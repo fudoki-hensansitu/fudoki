@@ -1,13 +1,15 @@
-// 新しく始めたことの印。右が尖ったタグに、新規は「NEW」、拡大（今ある事業の中での取り組みも）は上向きの矢印と「UP」。
-// 文字はフォントに頼らず線で描く（ページの書体によって幅が変わり、枠からはみ出したため）。色は currentColor
+// 新しく始めたことの印。新規はギザギザのシールに「NEW」、拡大（今ある事業の中での取り組みも）は上向きの矢印に「UP」。形で見分けられるようにする。
+// 文字は Inter Bold（SIL OFL）の字形をパスにしたもの。SVG の text はページの書体で幅が変わり、枠からはみ出したため。色は currentColor と primary-foreground
 export const NewIcon = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 40 22" aria-hidden="true" className={className}>
-    <path d="M3 2H33L39 11L33 20H3a2.5 2.5 0 0 1-2.5-2.5V4.5A2.5 2.5 0 0 1 3 2Z" fill="currentColor"/><g fill="none" stroke="var(--primary-foreground)" strokeWidth="2.37" strokeLinecap="round" strokeLinejoin="round"><path d="M0 10V0L6 10V0" transform="translate(8.46 7.00) scale(0.800)" /><path d="M5 0H0V10H5M0 5H4.2" transform="translate(14.54 7.00) scale(0.800)" /><path d="M0 0L2 10L4.2 3L6.4 10L8.4 0" transform="translate(19.82 7.00) scale(0.800)" /></g>
+  <svg viewBox="0 0 32 32" aria-hidden="true" className={className}>
+    <polygon points="16.00,1.00 18.76,3.91 22.51,2.49 23.73,6.31 27.73,6.65 27.17,10.62 30.62,12.66 28.40,16.00 30.62,19.34 27.17,21.38 27.73,25.35 23.73,25.69 22.51,29.51 18.76,28.09 16.00,31.00 13.24,28.09 9.49,29.51 8.27,25.69 4.27,25.35 4.83,21.38 1.38,19.34 3.60,16.00 1.38,12.66 4.83,10.62 4.27,6.65 8.27,6.31 9.49,2.49 13.24,3.91" fill="currentColor" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
+    <path d="M6.04 19.1H7.34V16.25C7.34 15.88 7.3 15.22 7.26 14.47C7.64 15.24 7.87 15.7 8.21 16.25L10 19.1H11.41V12.9H10.12V15.88C10.12 16.28 10.15 16.95 10.2 17.56C9.92 16.91 9.66 16.44 9.42 16.04L7.46 12.9H6.04ZM12.62 19.1H16.78V18.05H13.89V16.49H16.55V15.45H13.89V13.95H16.77V12.9H12.62ZM19.19 19.1H20.64L21.46 15.93C21.58 15.46 21.65 14.96 21.73 14.45C21.82 14.98 21.9 15.48 22.02 15.93L22.84 19.1H24.29L25.96 12.9H24.57L23.85 15.95C23.72 16.52 23.61 17.18 23.51 17.81C23.4 17.18 23.29 16.52 23.15 15.95L22.4 12.9H21.08L20.32 15.95C20.18 16.52 20.07 17.19 19.96 17.83C19.86 17.19 19.75 16.52 19.63 15.95L18.91 12.9H17.52Z" fill="var(--primary-foreground)" />
   </svg>
 )
 
 export const UpIcon = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 40 22" aria-hidden="true" className={className}>
-    <path d="M3 2H33L39 11L33 20H3a2.5 2.5 0 0 1-2.5-2.5V4.5A2.5 2.5 0 0 1 3 2Z" fill="currentColor"/><path d="M9 15V7M5.6 10.4L9 7L12.4 10.4" fill="none" stroke="var(--primary-foreground)" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"/><g fill="none" stroke="var(--primary-foreground)" strokeWidth="2.37" strokeLinecap="round" strokeLinejoin="round"><path d="M0 0V6.6A3 3 0 0 0 6 6.6V0" transform="translate(17.22 7.00) scale(0.800)" /><path d="M0 10V0H3A2.6 2.6 0 0 1 3 5.6H0" transform="translate(23.30 7.00) scale(0.800)" /></g>
+  <svg viewBox="0 0 32 32" aria-hidden="true" className={className}>
+    <path d="M16 1.8L30 15.6H22.6V28.6a2 2 0 0 1-2 2H11.4a2 2 0 0 1-2-2V15.6H2Z" fill="currentColor" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+    <path d="M12.99 25.85C14.57 25.85 15.63 24.91 15.63 23.51V19.35H14.31V23.4C14.31 24.15 13.79 24.69 12.99 24.69C12.18 24.69 11.66 24.15 11.66 23.4V19.35H10.35V23.51C10.35 24.91 11.39 25.85 12.99 25.85ZM16.87 25.75H18.18V23.66H19.34C20.81 23.66 21.65 22.78 21.65 21.52C21.65 20.26 20.82 19.35 19.37 19.35H16.87ZM18.18 22.61V20.44H19.12C19.92 20.44 20.3 20.87 20.3 21.52C20.3 22.16 19.92 22.61 19.12 22.61Z" fill="var(--primary-foreground)" />
   </svg>
 )
