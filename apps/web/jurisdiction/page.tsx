@@ -80,7 +80,7 @@ function YenText({ yen, className }: { yen: number; className?: string }) {
   )
 }
 
-/** 新しく始めたことの形。事業評価のシートごと新しくできた事業か、今ある事業の中で始めた取り組みか、予算の資料で新規・レベルアップと印の付いた項目か */
+/** 新しく始めたことの形。事業評価のシートごと新しくできた事業か、今ある事業の中で始めた取り組みか、予算の資料で新規・レベルアップ（画面では拡大）と印の付いた項目か */
 type Fresh = ({ kind: 'sheet' } & EvaluatedProject) | ({ kind: 'initiative' } & Initiative) | ({ kind: 'budget' } & BudgetNew)
 const evaluatedOf = (y: ProfileYear): Fresh[] => [...y.projects.map((p) => ({ kind: 'sheet' as const, ...p })), ...[...(y.initiatives ?? [])].sort((a, b) => b.settledYen - a.settledYen).map((p) => ({ kind: 'initiative' as const, ...p }))]
 /** 実績と評価のある事業評価を優先し、まだ公表されていない年度だけ予算の資料から出す */
@@ -94,8 +94,8 @@ const freshOf = (y: ProfileYear): Fresh[] => {
 const isPlanned = (y: ProfileYear) => freshOf(y)[0]?.kind === 'budget'
 const freshTitle = (y: ProfileYear) => (isPlanned(y) ? '新しく何を始める？' : '新しく何を始めた？')
 
-/** 新しく始めたことの1行。名前の左に新規かレベルアップ（今ある事業の中での取り組み）かの印、右に金額、下に中身。評価・予算どの年度も同じ形にする */
-function FreshRow({ up, upLabel = 'レベルアップ', title, yen, children }: { up: boolean; upLabel?: string; title: string; yen: number; children: React.ReactNode }) {
+/** 新しく始めたことの1行。名前の左に新規（New!）か拡大・今ある事業の中での取り組み（Up!）かのバッジ、右に金額、下に中身。評価・予算どの年度も同じ形にする */
+function FreshRow({ up, upLabel = '拡大', title, yen, children }: { up: boolean; upLabel?: string; title: string; yen: number; children: React.ReactNode }) {
   const label = up ? upLabel : '新規'
   return (
     <div className="flex flex-col gap-2 border-b border-foreground/10 py-4">
@@ -139,14 +139,14 @@ function InitiativeItem({ p }: { p: Initiative }) {
 }
 
 /** 予算の資料で新規・レベルアップと印の付いた項目を含む事業。事業評価の事業と同じく名前と金額を並べ、その下に項目を資料の文言のまま書く。
- * 資料は項目だけの額を載せないので、見出しは項目ではなく金額の対象である事業にする。新規を含む事業は新規の印、それ以外はレベルアップの印を名前の左に置く */
+ * 資料は項目だけの額を載せないので、見出しは項目ではなく金額の対象である事業にする。新規を含む事業は新規の印、それ以外は拡大の印を名前の左に置く */
 function BudgetItem({ p }: { p: BudgetNew }) {
   const quote = (xs: string[]) => xs.map((i) => `「${i}」`).join('')
   return (
     <FreshRow up={!p.items.length} title={p.name} yen={p.budgetYen}>
       <p className="text-sm">
         {p.items.length ? `${quote(p.items)}を新しく始める。` : null}
-        {p.upgrades.length ? `${quote(p.upgrades)}をレベルアップする。` : null}
+        {p.upgrades.length ? `${quote(p.upgrades)}を拡大する。` : null}
       </p>
     </FreshRow>
   )
@@ -201,25 +201,32 @@ function Overview({ data, sections, year }: { data: PageData; sections: Set<stri
   const latest = data.years.at(-1)
   const people = data.population?.people
   const kind = data.name.slice(-1)
+  // 決算がまだ無い年度は、その年度の当初予算を出す（最新の決算の額を出すと、選んだ年度の額に読める）
+  const budget = (data.budgets ?? []).find((b) => b.year === year)
+  const shown = budget ? { yen: budget.yen, lead: `${reiwa(year)}の予算は` } : latest ? { yen: latest.yen, lead: `${reiwa(latest.year)}に使ったお金は` } : null
   return (
     <Section id="about" title={`${kind}は何をしている？`}>
-      {latest ? (
+      {shown && latest ? (
         <p className="text-[15px]">
-          {reiwa(latest.year)}に使ったお金は<b className="mx-1 text-xl font-normal tabular-nums text-[var(--kincha-ink)]">{formatYen(latest.yen)}</b>
+          {shown.lead}<b className="mx-1 text-xl font-normal tabular-nums text-[var(--kincha-ink)]">{formatYen(shown.yen)}</b>
           {people ? (
             <>
-              、住民1人あたり<b className="mx-1 text-xl font-normal tabular-nums text-[var(--kincha-ink)]">約{Math.round(latest.yen / people / 1e4).toLocaleString('ja-JP')}万円</b>
+              、住民1人あたり<b className="mx-1 text-xl font-normal tabular-nums text-[var(--kincha-ink)]">約{Math.round(shown.yen / people / 1e4).toLocaleString('ja-JP')}万円</b>
             </>
           ) : null}
           です。
-          {/* 金額は収録している最新の決算だけを持つ。選んだ年度と違うときは、どの年度の額かを言う（R8 を選んで R6 の額だけが出ると選んだ年度の額に読める） */}
-          {year !== latest.year ? <span className="mt-1 block text-[13px] text-muted-foreground">{data.years.some((y) => y.year === year) ? '' : `${reiwa(year)}の決算はまだ収録していないため、`}ここの金額は収録している最新の決算（{reiwa(latest.year)}）のものです。</span> : null}
+          {budget ? (
+            <span className="mt-1 block text-[13px] text-muted-foreground">決算はまだ出ていないので、年度のはじめに決めた予算（当初予算）の額です。</span>
+          ) : year !== latest.year ? (
+            <span className="mt-1 block text-[13px] text-muted-foreground">{data.years.some((y) => y.year === year) ? '' : `${reiwa(year)}の決算はまだ収録していないため、`}ここの金額は収録している最新の決算（{reiwa(latest.year)}）のものです。</span>
+          ) : null}
         </p>
       ) : null}
       <ul className="grid grid-cols-1 gap-x-8 border-t sm:grid-cols-2">
         {[...DOMAIN_FRAMES.filter((f) => f.examples), OTHER_FRAME].map((f) => {
-          // 最新の決算を COFOG の大分類で分けた額（お金の流れの機能分類と同じ値）
-          const spent = data.cofogFlow.find((d) => d.kan.id === `cofog-${f.cofog || 'none'}`)?.kan
+          // 最新の決算（決算の無い年度は当初予算）を COFOG の大分類で分けた額（お金の流れの機能分類と同じ分け方）
+          const id = `cofog-${f.cofog || 'none'}`
+          const spent = budget ? budget.divisions.find((d) => d.id === id) : data.cofogFlow.find((d) => d.kan.id === id)?.kan
           if (f === OTHER_FRAME && !spent) return null
           return (
             <li key={f.id} className="border-b border-foreground/10">
@@ -264,7 +271,7 @@ function Domains({ year, fiscalYear }: { year: ProfileYear; fiscalYear: number }
   const groups = groupByFrame(fresh)
   const byBudget = isPlanned(year)
   const lead = byBudget
-    ? `区の事業評価が公表されるまでは、当初予算の資料「款別予算等の主な施策」で区が新規・レベルアップと印を付けた項目を、それを含む事業ごとに並べています。金額は事業全体の予算額です。`
+    ? 'この年度の予算で、区が新しく始める事業と、広げる事業です。金額は事業全体の予算です。'
     : '区が事業ごとに目標と実績を振り返る「事業評価」から、この年度に新しくできた事業と、今ある事業の中で始めた取り組みを並べています。'
   const link = !groups.length ? undefined : byBudget ? (year.budgetHighlights ? { href: year.budgetHighlights, label: '主な施策（予算）' } : undefined) : { href: year.evaluationSource, label: '事業評価' }
   return (
@@ -740,9 +747,9 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
           </div>
         </header>
 
-        <nav ref={spBar} aria-label="目次" className={`sticky z-20 -mx-4 flex gap-1.5 overflow-x-auto border-b bg-background px-4 py-2.5 [scrollbar-width:none] lg:hidden ${mini ? 'top-[61px]' : 'top-0'}`}>
+        <nav ref={spBar} aria-label="目次" className={`sticky z-20 -mx-4 flex gap-5 overflow-x-auto border-b bg-background px-4 [scrollbar-width:none] lg:hidden ${mini ? 'top-[61px]' : 'top-0'}`}>
           {toc.filter((t) => !t.sub).map((t) => (
-            <a key={t.href} href={t.href} onClick={jump} data-current={isCurrent(t.href) || undefined} className="shrink-0 rounded-full border px-3 py-1 text-[13px] text-muted-foreground no-underline data-[current]:border-primary data-[current]:bg-primary data-[current]:text-primary-foreground">
+            <a key={t.href} href={t.href} onClick={jump} data-current={isCurrent(t.href) || undefined} className="relative shrink-0 py-3 text-[13.5px] text-muted-foreground no-underline after:absolute after:inset-x-0 after:bottom-0 after:h-[2px] after:rounded-full data-[current]:text-foreground data-[current]:after:bg-primary">
               {t.label}
             </a>
           ))}

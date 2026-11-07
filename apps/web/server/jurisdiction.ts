@@ -1,6 +1,6 @@
 // 自治体の個別ページのデータ。apps/api（Service Binding）の歳出の検索から、決算の款・事業・お金の流れを組む。
 // 金額は API が返した円をそのまま持つ。足すのは「同じ年度・会計の款（兄弟）の和」だけで、api の sum_rules に従う
-import { jurisdictionKind, populationForYear, type Drill, type FlowDepth, type IndexEntry, type Kou, type Line, type Moku, type PageData, type Population, type Project, type Setsu, type YearTotal } from '../jurisdiction/types'
+import { jurisdictionKind, populationForYear, type Drill, type FlowDepth, type IndexEntry, type Kou, type Line, type Moku, type PageData, type Population, type Project, type Setsu, type YearTotal, type BudgetTotal } from '../jurisdiction/types'
 import { COFOG_GROUPS } from '@fudoki/fiscal/cofog-master'
 import { frameOf, OTHER_FRAME } from '../jurisdiction/domains'
 import { apiFetch, type Env } from './env'
@@ -58,6 +58,8 @@ export interface CatalogEntry {
   prefecture: string
   /** 一般会計の決算がある年度（西暦、古い順） */
   settlementYears: number[]
+  /** 一般会計の当初予算がある年度（西暦、古い順） */
+  initialYears: number[]
   officialUrl: string | null
   /** いちばん新しい基準日の住民基本台帳人口 */
   population: Population | null
@@ -98,6 +100,7 @@ export async function loadCatalog(env: Env): Promise<CatalogEntry[]> {
         name: j.name,
         prefecture: j.prefecture_name,
         settlementYears: j.coverage.filter((c) => c.document_kind === 'settlement' && c.accounts.some((a) => a.account_name === ACCOUNT)).map((c) => c.fiscal_year).sort((a, b) => a - b),
+        initialYears: [...new Set(j.coverage.filter((c) => c.document_kind === 'initial' && c.accounts.some((a) => a.account_name === ACCOUNT)).map((c) => c.fiscal_year))].sort((a, b) => a - b),
         officialUrl: j.official_url ?? null,
         population: populations.at(-1) ?? null,
         populations,
@@ -171,12 +174,12 @@ const search = (env: Env, code: string, years: { min: number; max: number }, lev
   }).then((r) => ({ ...r, subjects: r.subjects ?? [] }))
 
 /** 検索の続きを最後まで引く。科目の表と内訳の表のどちらにも使う */
-async function searchAll<T>(env: Env, path: string, code: string, year: number, where: Record<string, unknown>): Promise<T[]> {
+async function searchAll<T>(env: Env, path: string, code: string, year: number, where: Record<string, unknown>, documentKind: 'settlement' | 'initial' = 'settlement'): Promise<T[]> {
   const out: T[] = []
   let token: string | undefined
   do {
     const r = await call<SearchResponse<T>>(env, path, {
-      document_kind: 'settlement',
+      document_kind: documentKind,
       fiscal_year: { min: year, max: year },
       where: { jurisdiction_code: { eq: [code] }, account_name: { eq: [ACCOUNT] }, ...where },
       order_by: [{ column: 'amount_yen', desc: true }],
@@ -308,6 +311,26 @@ export async function loadDrill(env: Env, kan: Line): Promise<Drill> {
   return { kan, kou }
 }
 
+/**
+ * 決算がまだ無い年度の当初予算。総額と、目の COFOG の大分類ごとの和（loadCofogFlow の大分類と同じ分け方）。
+ * 概要（区は何をしている？）で、決算の無い年度を選んだときに最新の決算の額ではなくその年度の予算を出すために使う
+ */
+async function loadBudget(env: Env, code: string, year: number): Promise<BudgetTotal> {
+  const moku = await searchAll<ApiSubject>(env, SUBJECTS, code, year, { level: { eq: ['目'] } }, 'initial')
+  const byDivision = new Map<string, ApiSubject[]>()
+  for (const n of moku) {
+    const id = `cofog-${n.cofog_code?.split('.')[0] || 'none'}`
+    byDivision.set(id, [...(byDivision.get(id) ?? []), n])
+  }
+  const lines = moku.map(line)
+  return {
+    year,
+    yen: sumYen(lines),
+    ...partial(lines),
+    divisions: [...byDivision].map(([id, list]) => ({ id, yen: sumYen(list.map(line)), ...partial(list.map(line)) })),
+  }
+}
+
 /** 都道府県の頁へのリンク（prefecturePath）・同じ都道府県の自治体（neighbors）はカタログを見て route 側で決める */
 export async function loadPage(env: Env, entry: CatalogEntry): Promise<Omit<PageData, 'prefecturePath' | 'neighbors'> | null> {
   const latest = entry.settlementYears.at(-1)
@@ -344,6 +367,7 @@ export async function loadPage(env: Env, entry: CatalogEntry): Promise<Omit<Page
     years: totals,
     flow: await loadFlow(env, entry.code, latest),
     cofogFlow: await loadCofogFlow(env, entry.code, latest),
+    budgets: await Promise.all(entry.initialYears.filter((y) => y > latest).map((y) => loadBudget(env, entry.code, y))),
     projects,
   }
 }
