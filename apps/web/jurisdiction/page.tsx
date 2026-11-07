@@ -3,7 +3,7 @@
 // 歳出の決算は API の値。事業評価から取った事業・やめたこと（事業の入れ替え）は jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
 import { Link } from '@void/react'
 import * as React from 'react'
-import { ArrowLeftIcon, ArrowUpIcon, ArrowRightIcon, ArrowSquareOutIcon, CaretRightIcon, MapPinAreaIcon, MapTrifoldIcon, SquaresFourIcon, BankIcon, BasketballIcon, CaretDownIcon, ClipboardTextIcon, CoinsIcon, ChatCircleIcon, FirstAidKitIcon, GlobeIcon, HandHeartIcon, HouseLineIcon, LeafIcon, MapPinIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, StudentIcon, DotsThreeCircleIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
+import { ArrowLeftIcon, ArrowUpIcon, ArrowRightIcon, ArrowSquareOutIcon, CaretRightIcon, MapPinAreaIcon, MapTrifoldIcon, SquaresFourIcon, BankIcon, BasketballIcon, CaretDownIcon, ClipboardTextIcon, CoinsIcon, RobotIcon, FirstAidKitIcon, GlobeIcon, HandHeartIcon, HouseLineIcon, LeafIcon, MapPinIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, StudentIcon, DotsThreeCircleIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
 import { StartForm } from '../chat/start-form'
 import type { StoredSession } from '../chat/store'
 import { Hint } from '@/components/hint'
@@ -1107,7 +1107,7 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
         tabIndex={docked || drawer ? -1 : 0}
         aria-hidden={docked || drawer}
       >
-        <ChatCircleIcon className="size-4 text-primary" aria-hidden="true" />
+        <RobotIcon className="size-4 text-primary" aria-hidden="true" />
         {chat ? '会話に戻る' : `${name}について聞く`}
       </button>
       {chat ? (
