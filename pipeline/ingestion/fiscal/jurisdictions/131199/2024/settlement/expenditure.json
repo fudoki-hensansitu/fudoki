@@ -1421,7 +1421,7 @@
     {
       "table_id": "general-expenditure-detail",
       "conversion_id": "general",
-      "input_fingerprint": "822de92427167b9b6d4bab837736f1c40c14e0468454f83980ad23e2eb1fe60a",
+      "input_fingerprint": "f7eaa221b46e7bd2673401eb696e3c9cc5c85d955a07c806e3f836ca815df843",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -1453,7 +1453,7 @@
     {
       "table_id": "nhi-expenditure-detail",
       "conversion_id": "nhi",
-      "input_fingerprint": "c4d40f811fb201c2abe18be69a4e38ef5ba435ae9660914a56b5e3c2c1cc99f6",
+      "input_fingerprint": "062905efa117f883eecb7e158c317bd0bc9b06f7254fc8fde6d3de730011072c",
       "account": "国民健康保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -1484,7 +1484,7 @@
     {
       "table_id": "kaigo-expenditure-detail",
       "conversion_id": "kaigo",
-      "input_fingerprint": "dd8a9ccf2581a7b343d4af7de4b57cfb44e231349089c53966c7acdf3465e4ca",
+      "input_fingerprint": "b390c19fe46d55c9b0fceaa796cc82a015c2165399baaf523d8f4db766e31884",
       "account": "介護保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -1516,7 +1516,7 @@
     {
       "table_id": "kouki-expenditure-detail",
       "conversion_id": "kouki",
-      "input_fingerprint": "bf8c75d9de83b0779df3bf5ce792ce2e41748f106d4a68bd22b3301e650a778b",
+      "input_fingerprint": "28bb2a2d5dc25909d6915ce878dcc7e252664cc4350f73f5d11ba1730151f87d",
       "account": "後期高齢者医療事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -1547,7 +1547,7 @@
     {
       "table_id": "tobu-expenditure-detail",
       "conversion_id": "tobu",
-      "input_fingerprint": "82e2c97290bd8b35ead9134021e8e2734d0fc96bc6fe648659a0a56433386481",
+      "input_fingerprint": "f34768ab2d6acf34b54311932360f025ce67e144e34b03aacdf8c82a7a77a5ba",
       "account": "東武東上線連続立体化事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",

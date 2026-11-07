@@ -483,3 +483,4 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 1643,itabashi-2024-03,131199,一般会計,,資源環境費,環境管理費,,環境公害費,eq,,assigned,05.3,retained,目,,板橋区 環境公害費を公害の監視・規制として汚染防止に分類する（keyword-pollution にならう）。名称からの判断。,true
 1644,itabashi-2024-04,131199,一般会計,,資源環境費,環境管理費,,環境施設費,eq,,assigned,05,retained,目,,板橋区 環境管理費の環境施設費（環境の学習・啓発の施設など）を環境保護に分類する。中分類を名称から決められないため大分類に置く。,true
 1645,itabashi-2024-05,131199,一般会計,,衛生費,保健所費,,衛生保健指導費,eq,,assigned,07.4,retained,目,,板橋区 保健所費の衛生保健指導費（保健指導・健康相談など）を公衆衛生サービスに分類する（keyword-medicine-nutrition にならう）。名称からの判断。,true
+1646,adachi-2024-01,131211,一般会計,,産業経済費,,,勤労費,eq,,assigned,04.1.2,retained,目,,足立区 勤労者への支援を一般労働業務に分類する。名称からの判断。,true

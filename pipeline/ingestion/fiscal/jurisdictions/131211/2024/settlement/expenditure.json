@@ -1,0 +1,2095 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "131211",
+    "fiscal_year": 2024,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-05",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "4e565e182f27e639d56ad935f7e73d3e1a6c40d37ae02bc7ea5bf09917c39460"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-05-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "row_gaps": true
+              },
+              "header": {
+                "staircase": "款項目事務事業"
+              },
+              "columns": {
+                "決算額": {
+                  "kind": "amount"
+                }
+              },
+              "explained_projects": {
+                "budget": "予算現額",
+                "settled": "決算",
+                "items_axis": "決算説明",
+                "title": "予算説明",
+                "rows_axis": "事務事業"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "事務事業": {
+                "pattern": "indent"
+              }
+            }
+          }
+        },
+        "partial": true,
+        "explained_names": [
+          {
+            "page": 23,
+            "code": "ア",
+            "amount": "973,986,500",
+            "name": "システム構築・改造委託"
+          },
+          {
+            "page": 35,
+            "code": "エ",
+            "amount": "52,464",
+            "name": "地内旅費"
+          },
+          {
+            "page": 41,
+            "code": "エ",
+            "amount": "731,500",
+            "name": "共催事業"
+          },
+          {
+            "page": 43,
+            "code": "キ",
+            "amount": "3,086,032",
+            "name": "ＬＧＢＴ推進"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-05-ocr-left-1",
+          "origin_sha256": "4e565e182f27e639d56ad935f7e73d3e1a6c40d37ae02bc7ea5bf09917c39460",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              3,
+              5,
+              7,
+              9,
+              11,
+              13,
+              15,
+              17,
+              19
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "3982750f79c606817fdfc1a3139254a374494a6b5b13264408be92db3e90f7ea",
+          "bytes": 3416444
+        },
+        {
+          "id": "general-05-ocr-left-2",
+          "origin_sha256": "4e565e182f27e639d56ad935f7e73d3e1a6c40d37ae02bc7ea5bf09917c39460",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              21,
+              23,
+              25,
+              27,
+              29,
+              31,
+              33,
+              35,
+              37,
+              39
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "47967d2885bc5f5b82dfa42a6aa893c9517fa1258f1ad851349a0bc3db7c60ef",
+          "bytes": 3028498
+        },
+        {
+          "id": "general-05-ocr-left-3",
+          "origin_sha256": "4e565e182f27e639d56ad935f7e73d3e1a6c40d37ae02bc7ea5bf09917c39460",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              41,
+              43
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "38057c4dc2dd316375d6bb82fbfcd8f9c342775dc412a2ff92e24e0cadf7edbe",
+          "bytes": 614599
+        },
+        {
+          "id": "general-05-ocr-right-1",
+          "origin_sha256": "4e565e182f27e639d56ad935f7e73d3e1a6c40d37ae02bc7ea5bf09917c39460",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              2,
+              4,
+              6,
+              8,
+              10,
+              12,
+              14,
+              16,
+              18,
+              20
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1
+            }
+          },
+          "sha256": "a1826abc18070e7cb4bf185d94e110caa1700a1ce2c1a3154aee53dc80f56371",
+          "bytes": 2974892
+        },
+        {
+          "id": "general-05-ocr-right-2",
+          "origin_sha256": "4e565e182f27e639d56ad935f7e73d3e1a6c40d37ae02bc7ea5bf09917c39460",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              22,
+              24,
+              26,
+              28,
+              30,
+              32,
+              34,
+              36,
+              38,
+              40
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1
+            }
+          },
+          "sha256": "c82b567fc883dda70ec967bc8cec6c00cb92dba42793cb500fe6d627ffe17329",
+          "bytes": 3289112
+        },
+        {
+          "id": "general-05-ocr-right-3",
+          "origin_sha256": "4e565e182f27e639d56ad935f7e73d3e1a6c40d37ae02bc7ea5bf09917c39460",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              42,
+              44
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1
+            }
+          },
+          "sha256": "4e16d40d3a00be589fba6f8fdf5be6fcca28a076d25b00b162f895aef4b150d0",
+          "bytes": 543189
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-05-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "general-06",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "95c9eb05fce66cd9b054f47a6a5070451439f9a9ddef74f4b394f0f6fb2e61dd"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-06-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "row_gaps": true
+              },
+              "header": {
+                "staircase": "款項目事務事業"
+              },
+              "columns": {
+                "決算額": {
+                  "kind": "amount"
+                }
+              },
+              "explained_projects": {
+                "budget": "予算現額",
+                "settled": "決算",
+                "items_axis": "決算説明",
+                "title": "予算説明",
+                "rows_axis": "事務事業"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "事務事業": {
+                "pattern": "indent"
+              }
+            }
+          }
+        },
+        "continued_rows": [
+          {
+            "code": "1",
+            "name": "戸籍整備事務"
+          },
+          {
+            "code": "1",
+            "name": "戸籍整備事務",
+            "department": "区民部"
+          }
+        ],
+        "partial": true,
+        "explained_names": [
+          {
+            "page": 1,
+            "code": "ウ",
+            "amount": "11,557,049",
+            "name": "Ｊ－Ｌｉｓ証明書交付センター運営負担金等"
+          },
+          {
+            "page": 29,
+            "code": "オ",
+            "amount": "93,192",
+            "name": "窓あき封筒作成"
+          },
+          {
+            "page": 37,
+            "code": "ア",
+            "amount": "3,823,392",
+            "name": "認知症関連イベント事業等"
+          },
+          {
+            "page": 37,
+            "code": "イ",
+            "amount": "21,581,801",
+            "name": "認知症検診推進事業"
+          },
+          {
+            "page": 37,
+            "code": "オ",
+            "amount": "23,782",
+            "name": "関係図書"
+          },
+          {
+            "page": 41,
+            "code": "オ",
+            "amount": "37,960,487",
+            "name": "紙おむつ支給事業"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-06-ocr-left-1",
+          "origin_sha256": "95c9eb05fce66cd9b054f47a6a5070451439f9a9ddef74f4b394f0f6fb2e61dd",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              3,
+              5,
+              7,
+              9,
+              11,
+              13,
+              15,
+              17,
+              19
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "edb5367dfd73f1f447715a71d44236fc11eab78d139bef8577d7255dfcd68ac0",
+          "bytes": 3307417
+        },
+        {
+          "id": "general-06-ocr-left-2",
+          "origin_sha256": "95c9eb05fce66cd9b054f47a6a5070451439f9a9ddef74f4b394f0f6fb2e61dd",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              21,
+              23,
+              25,
+              27,
+              29,
+              31,
+              33,
+              35,
+              37,
+              39
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "b8267471537b6b7b66d3ad7edd798efed4b74db7729e4a39eba2db19573fc1e4",
+          "bytes": 3284985
+        },
+        {
+          "id": "general-06-ocr-left-3",
+          "origin_sha256": "95c9eb05fce66cd9b054f47a6a5070451439f9a9ddef74f4b394f0f6fb2e61dd",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              41,
+              43
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "56271e2b07e8ebc9da5b0e4e216db840671c8c2a581b4759640cbe05492ff249",
+          "bytes": 690466
+        },
+        {
+          "id": "general-06-ocr-right-1",
+          "origin_sha256": "95c9eb05fce66cd9b054f47a6a5070451439f9a9ddef74f4b394f0f6fb2e61dd",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              2,
+              4,
+              6,
+              8,
+              10,
+              12,
+              14,
+              16,
+              18,
+              20
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1
+            }
+          },
+          "sha256": "655f3a556f40b7792ae66d3a7a379ee563da10a4372017064e90999adf1363fa",
+          "bytes": 3076822
+        },
+        {
+          "id": "general-06-ocr-right-2",
+          "origin_sha256": "95c9eb05fce66cd9b054f47a6a5070451439f9a9ddef74f4b394f0f6fb2e61dd",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              22,
+              24,
+              26,
+              28,
+              30,
+              32,
+              34,
+              36,
+              38,
+              40
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1
+            }
+          },
+          "sha256": "cb17dab0b02bd067e7672b0391b01803ed93cc820aab5c8dcaff309d49898e90",
+          "bytes": 3292125
+        },
+        {
+          "id": "general-06-ocr-right-3",
+          "origin_sha256": "95c9eb05fce66cd9b054f47a6a5070451439f9a9ddef74f4b394f0f6fb2e61dd",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              42,
+              44
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1
+            }
+          },
+          "sha256": "7a532939e9eeee2d60949f13aabf696f2fcbcb9d70fb3aed84ef5bc8d48a1ed2",
+          "bytes": 672709
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-06-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "general-07",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "e8fcc24c99b5dcbc322b65e6a3bc0fadd610347c8fa5a91fdcbf0513d1f63867"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-07-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "row_gaps": true
+              },
+              "header": {
+                "staircase": "款項目事務事業"
+              },
+              "columns": {
+                "決算額": {
+                  "kind": "amount"
+                }
+              },
+              "explained_projects": {
+                "budget": "予算現額",
+                "settled": "決算",
+                "items_axis": "決算説明",
+                "title": "予算説明",
+                "rows_axis": "事務事業"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "事務事業": {
+                "pattern": "indent"
+              }
+            }
+          }
+        },
+        "continued_rows": [
+          {
+            "code": "4",
+            "name": "地域集会所運営委託事務"
+          },
+          {
+            "code": "4",
+            "name": "地域集会所運営委託事務",
+            "department": "地域のちから推進部"
+          }
+        ],
+        "partial": true,
+        "explained_names": [
+          {
+            "page": 1,
+            "code": "ウ",
+            "amount": "4,578,000",
+            "name": "ＵＲ団地使用料（総合ボランティアセンター）"
+          },
+          {
+            "page": 19,
+            "code": "サ",
+            "amount": "203,000",
+            "name": "ＮＰＯ等による伴走型コミュニケーション支援"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-07-ocr-left-1",
+          "origin_sha256": "e8fcc24c99b5dcbc322b65e6a3bc0fadd610347c8fa5a91fdcbf0513d1f63867",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              3,
+              5,
+              7,
+              9,
+              11,
+              13,
+              15,
+              17,
+              19
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "b3820297f37ec1d7bdd73fcfcf631d475366066e0b96741ae5e6c3011cb8cc7f",
+          "bytes": 3128653
+        },
+        {
+          "id": "general-07-ocr-left-2",
+          "origin_sha256": "e8fcc24c99b5dcbc322b65e6a3bc0fadd610347c8fa5a91fdcbf0513d1f63867",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              21,
+              23,
+              25,
+              27,
+              29,
+              31,
+              33,
+              35,
+              37,
+              39
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "cc1e9711711c73309c731815caa37639150dedad0070f9ab912a34827e440747",
+          "bytes": 3304002
+        },
+        {
+          "id": "general-07-ocr-left-3",
+          "origin_sha256": "e8fcc24c99b5dcbc322b65e6a3bc0fadd610347c8fa5a91fdcbf0513d1f63867",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              41,
+              43
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "9ea10689a766357f84297e785ad439e17116da4e29efa6c29cb66fc1263699fe",
+          "bytes": 660683
+        },
+        {
+          "id": "general-07-ocr-right-1",
+          "origin_sha256": "e8fcc24c99b5dcbc322b65e6a3bc0fadd610347c8fa5a91fdcbf0513d1f63867",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              2,
+              4,
+              6,
+              8,
+              10,
+              12,
+              14,
+              16,
+              18,
+              20
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1
+            }
+          },
+          "sha256": "6ade2a7a3927e1947168d3e56316ad3d6f40e9217ab43ef10134d1a1d6b0cadf",
+          "bytes": 3175222
+        },
+        {
+          "id": "general-07-ocr-right-2",
+          "origin_sha256": "e8fcc24c99b5dcbc322b65e6a3bc0fadd610347c8fa5a91fdcbf0513d1f63867",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              22,
+              24,
+              26,
+              28,
+              30,
+              32,
+              34,
+              36,
+              38,
+              40
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1
+            }
+          },
+          "sha256": "07a7ff01a9fb616d588cd76335e8e6e255bac92f6c417c401dfd2cabcd9a3881",
+          "bytes": 3113066
+        },
+        {
+          "id": "general-07-ocr-right-3",
+          "origin_sha256": "e8fcc24c99b5dcbc322b65e6a3bc0fadd610347c8fa5a91fdcbf0513d1f63867",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              42,
+              44
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1
+            }
+          },
+          "sha256": "ae6c759da0b641d6ea2c1fb94293295c75ec5d2806bc18177d30bd282dcf6681",
+          "bytes": 620052
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-07-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "general-08",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "8b69ff35a4d97d785e645da2432ec34bc1ab39ac9e70313870ad8a7cda3ec549"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-08-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "row_gaps": true
+              },
+              "header": {
+                "staircase": "款項目事務事業"
+              },
+              "columns": {
+                "決算額": {
+                  "kind": "amount"
+                }
+              },
+              "explained_projects": {
+                "budget": "予算現額",
+                "settled": "決算",
+                "items_axis": "決算説明",
+                "title": "予算説明",
+                "rows_axis": "事務事業"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "事務事業": {
+                "pattern": "indent"
+              }
+            }
+          }
+        },
+        "continued_rows": [
+          {
+            "code": "2",
+            "name": "農業委員会運営事務"
+          }
+        ],
+        "partial": true,
+        "explained_names": [
+          {
+            "page": 21,
+            "code": "カ",
+            "amount": "709,000",
+            "name": "葬祭料"
+          },
+          {
+            "page": 25,
+            "code": "エ",
+            "amount": "96,247",
+            "name": "光熱水費"
+          },
+          {
+            "page": 27,
+            "code": "ア",
+            "amount": "4,282,080",
+            "name": "ＡＩシステムを利用した食品ロス削減実証事業委託"
+          },
+          {
+            "page": 35,
+            "code": "エ",
+            "amount": "4,103,561",
+            "name": "貸与被服"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-08-ocr-left-1",
+          "origin_sha256": "8b69ff35a4d97d785e645da2432ec34bc1ab39ac9e70313870ad8a7cda3ec549",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              3,
+              5,
+              7,
+              9,
+              11,
+              13,
+              15,
+              17,
+              19
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "fef4b6a39db630be88b1c4a7ecb8cbadc0ed882bd8d70560730038fa89613fdc",
+          "bytes": 3025865
+        },
+        {
+          "id": "general-08-ocr-left-2",
+          "origin_sha256": "8b69ff35a4d97d785e645da2432ec34bc1ab39ac9e70313870ad8a7cda3ec549",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              21,
+              23,
+              25,
+              27,
+              29,
+              31,
+              33,
+              35,
+              37,
+              39
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "11fb2fafe0b952fb707fcae0a0b1abda005acf62640a494ca5ebcae23e980b7a",
+          "bytes": 3236631
+        },
+        {
+          "id": "general-08-ocr-left-3",
+          "origin_sha256": "8b69ff35a4d97d785e645da2432ec34bc1ab39ac9e70313870ad8a7cda3ec549",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              41,
+              43
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "f15c30b7678dcd065c362e616f6b08894660698c6596ac55a813df99d1cd7dab",
+          "bytes": 526006
+        },
+        {
+          "id": "general-08-ocr-right-1",
+          "origin_sha256": "8b69ff35a4d97d785e645da2432ec34bc1ab39ac9e70313870ad8a7cda3ec549",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              2,
+              4,
+              6,
+              8,
+              10,
+              12,
+              14,
+              16,
+              18,
+              20
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1
+            }
+          },
+          "sha256": "de6e7f34a4976bf54c4eb44716caed687c02b360f4b4eff57e4eece8e6ec45fe",
+          "bytes": 3140753
+        },
+        {
+          "id": "general-08-ocr-right-2",
+          "origin_sha256": "8b69ff35a4d97d785e645da2432ec34bc1ab39ac9e70313870ad8a7cda3ec549",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              22,
+              24,
+              26,
+              28,
+              30,
+              32,
+              34,
+              36,
+              38,
+              40
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1
+            }
+          },
+          "sha256": "c4c5f796966ca91fc8f86ad459a2c42a5025526a121f08934ea2ce62c9a8368b",
+          "bytes": 2974546
+        },
+        {
+          "id": "general-08-ocr-right-3",
+          "origin_sha256": "8b69ff35a4d97d785e645da2432ec34bc1ab39ac9e70313870ad8a7cda3ec549",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              42,
+              44
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1
+            }
+          },
+          "sha256": "59c1699733642c7c637218599bae7e7f02b67c19b8818ff82c5ba96416fd1591",
+          "bytes": 746839
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-08-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "general-09",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "54b1637061e9243672d0ff51913b6e474df0963b4e39fe5dc7224e753b1afe66"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-09-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "row_gaps": true
+              },
+              "header": {
+                "staircase": "款項目事務事業"
+              },
+              "columns": {
+                "決算額": {
+                  "kind": "amount"
+                }
+              },
+              "explained_projects": {
+                "budget": "予算現額",
+                "settled": "決算",
+                "items_axis": "決算説明",
+                "title": "予算説明",
+                "rows_axis": "事務事業"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "事務事業": {
+                "pattern": "indent"
+              }
+            }
+          }
+        },
+        "continued_rows": [
+          {
+            "code": "1",
+            "name": "道路の改良事業"
+          },
+          {
+            "code": "1",
+            "name": "道路の改良事業",
+            "department": "都市建設部"
+          },
+          {
+            "code": "(1)",
+            "name": "道路の改良事業"
+          }
+        ],
+        "partial": true,
+        "explained_names": [
+          {
+            "page": 1,
+            "code": "ア",
+            "amount": "4,895,000",
+            "name": "西新井大師西駅第４自転車駐車場改修設計委託"
+          },
+          {
+            "page": 3,
+            "code": "エ",
+            "amount": "13,047",
+            "name": "郵送料"
+          },
+          {
+            "page": 11,
+            "code": "カ",
+            "amount": "20,291,700",
+            "name": "公園整備"
+          },
+          {
+            "page": 19,
+            "code": "ア",
+            "amount": "34,900,000",
+            "name": "（仮称）区営住宅大谷田二丁目アパート・東部福祉課合築施設新築工事設計等業務委託"
+          },
+          {
+            "page": 27,
+            "code": "オ",
+            "amount": "1,189,452",
+            "name": "自動車賃借"
+          },
+          {
+            "page": 35,
+            "code": "エ",
+            "amount": "389,615",
+            "name": "職員旅費"
+          },
+          {
+            "page": 37,
+            "code": "カ",
+            "amount": "4,121,409",
+            "name": "消耗品等"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-09-ocr-left-1",
+          "origin_sha256": "54b1637061e9243672d0ff51913b6e474df0963b4e39fe5dc7224e753b1afe66",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              3,
+              5,
+              7,
+              9,
+              11,
+              13,
+              15,
+              17,
+              19
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "a59be08ed270d1f93e844fab1f6d693089f58f61354276db5c220a3fcca4a95d",
+          "bytes": 3233221
+        },
+        {
+          "id": "general-09-ocr-left-2",
+          "origin_sha256": "54b1637061e9243672d0ff51913b6e474df0963b4e39fe5dc7224e753b1afe66",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              21,
+              23,
+              25,
+              27,
+              29,
+              31,
+              33,
+              35,
+              37,
+              39
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "2a113e0d2629a39261021c9db83d2d290ba0d06e3018ab0f576a7a73530530c3",
+          "bytes": 3130024
+        },
+        {
+          "id": "general-09-ocr-left-3",
+          "origin_sha256": "54b1637061e9243672d0ff51913b6e474df0963b4e39fe5dc7224e753b1afe66",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              41,
+              43
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "b77e80eecec39bc01fb5000a545b7aa2539e465aa3781527ce873c6efc267726",
+          "bytes": 656325
+        },
+        {
+          "id": "general-09-ocr-right-1",
+          "origin_sha256": "54b1637061e9243672d0ff51913b6e474df0963b4e39fe5dc7224e753b1afe66",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              2,
+              4,
+              6,
+              8,
+              10,
+              12,
+              14,
+              16,
+              18,
+              20
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1
+            }
+          },
+          "sha256": "6f2c4d9310e67b5b5f3344b6b7424b627eef2cd684cb2f55f1476b4066c0cbd5",
+          "bytes": 3290317
+        },
+        {
+          "id": "general-09-ocr-right-2",
+          "origin_sha256": "54b1637061e9243672d0ff51913b6e474df0963b4e39fe5dc7224e753b1afe66",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              22,
+              24,
+              26,
+              28,
+              30,
+              32,
+              34,
+              36,
+              38,
+              40
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1
+            }
+          },
+          "sha256": "f7553778ddecb710b83c72ad6d4b5d462edfb477d226a724bd3205a77287eb6c",
+          "bytes": 3324972
+        },
+        {
+          "id": "general-09-ocr-right-3",
+          "origin_sha256": "54b1637061e9243672d0ff51913b6e474df0963b4e39fe5dc7224e753b1afe66",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              42,
+              44
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1
+            }
+          },
+          "sha256": "ee558af1f3240882a7297a185c59696e9e1dab0128e26878df2a118feefa74d9",
+          "bytes": 681300
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-09-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "general-10",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "3030d34ff5186995f805cb78f4be54e116a9f9e13fd041083b0acdc116a3536f"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-10-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "row_gaps": true
+              },
+              "header": {
+                "staircase": "款項目事務事業"
+              },
+              "columns": {
+                "決算額": {
+                  "kind": "amount"
+                }
+              },
+              "explained_projects": {
+                "budget": "予算現額",
+                "settled": "決算",
+                "items_axis": "決算説明",
+                "title": "予算説明",
+                "rows_axis": "事務事業"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "事務事業": {
+                "pattern": "indent"
+              }
+            }
+          }
+        },
+        "continued_rows": [
+          {
+            "code": "7",
+            "name": "学校支援事業"
+          },
+          {
+            "code": "7",
+            "name": "学校支援事業",
+            "department": "教育指導部"
+          },
+          {
+            "code": "(1)",
+            "name": "学力向上対策推進事業"
+          }
+        ],
+        "partial": true,
+        "explained_names": [
+          {
+            "page": 21,
+            "code": "エ",
+            "amount": "2,378,144",
+            "name": "給食扶助"
+          },
+          {
+            "page": 23,
+            "code": "カ",
+            "amount": "1,270,610",
+            "name": "結核検診"
+          },
+          {
+            "page": 27,
+            "code": "エ",
+            "amount": "30,948,372",
+            "name": "電気料"
+          },
+          {
+            "page": 27,
+            "code": "シ",
+            "amount": "42,885,086",
+            "name": "過年度返還金"
+          },
+          {
+            "page": 31,
+            "code": "エ",
+            "amount": "420,000",
+            "name": "ＪＯＢＡＮアートライン協議会負担金等"
+          },
+          {
+            "page": 37,
+            "code": "ウ",
+            "amount": "1,728,817",
+            "name": "ＣＤ・ＤＶＤ・録音図書"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-10-ocr-left-1",
+          "origin_sha256": "3030d34ff5186995f805cb78f4be54e116a9f9e13fd041083b0acdc116a3536f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              3,
+              5,
+              7,
+              9,
+              11,
+              13,
+              15,
+              17,
+              19
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "d69450d22fd796ada3af1f94b0207ed186269f646a8c8b0e865d62a08fb06a85",
+          "bytes": 3193677
+        },
+        {
+          "id": "general-10-ocr-left-2",
+          "origin_sha256": "3030d34ff5186995f805cb78f4be54e116a9f9e13fd041083b0acdc116a3536f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              21,
+              23,
+              25,
+              27,
+              29,
+              31,
+              33,
+              35,
+              37,
+              39
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "be4688b33f1edb0e3d92863af7f90e3878887ebf8380fe5e28bed6739736721e",
+          "bytes": 3270838
+        },
+        {
+          "id": "general-10-ocr-left-3",
+          "origin_sha256": "3030d34ff5186995f805cb78f4be54e116a9f9e13fd041083b0acdc116a3536f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              41,
+              43
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "f071860d23b2379d962e0109dfb426f6da3f5ae515a420eae91ea5bdc134ca7a",
+          "bytes": 674197
+        },
+        {
+          "id": "general-10-ocr-right-1",
+          "origin_sha256": "3030d34ff5186995f805cb78f4be54e116a9f9e13fd041083b0acdc116a3536f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              2,
+              4,
+              6,
+              8,
+              10,
+              12,
+              14,
+              16,
+              18,
+              20
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1
+            }
+          },
+          "sha256": "23100c7d73c649d09c5ad254def869197032b4ff8647e87515af218a104863ff",
+          "bytes": 3192520
+        },
+        {
+          "id": "general-10-ocr-right-2",
+          "origin_sha256": "3030d34ff5186995f805cb78f4be54e116a9f9e13fd041083b0acdc116a3536f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              22,
+              24,
+              26,
+              28,
+              30,
+              32,
+              34,
+              36,
+              38,
+              40
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1
+            }
+          },
+          "sha256": "2a7ac5e5822b1d0ab6531a32665b715de038c46e3f53f4eecd749317bbd582a2",
+          "bytes": 3434266
+        },
+        {
+          "id": "general-10-ocr-right-3",
+          "origin_sha256": "3030d34ff5186995f805cb78f4be54e116a9f9e13fd041083b0acdc116a3536f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              42,
+              44
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1
+            }
+          },
+          "sha256": "d3591376ea69fc13d70a026db88f23034c8a183707df2e5f70e988d0cc9a3df2",
+          "bytes": 659795
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-10-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "general-11",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "59c98e1f1cb66b48c12b7db8428c44c3cd61bc972ada91032fdfd882f4532714"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-11-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "row_gaps": true
+              },
+              "header": {
+                "staircase": "款項目事務事業"
+              },
+              "columns": {
+                "決算額": {
+                  "kind": "amount"
+                }
+              },
+              "explained_projects": {
+                "budget": "予算現額",
+                "settled": "決算",
+                "items_axis": "決算説明",
+                "title": "予算説明",
+                "rows_axis": "事務事業"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "事務事業": {
+                "pattern": "indent"
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            1,
+            6
+          ]
+        ],
+        "continued_rows": [
+          {
+            "code": "4",
+            "name": "社会体育団体の育成事業"
+          },
+          {
+            "code": "4",
+            "name": "社会体育団体の育成事業",
+            "department": "地域のちから推進部"
+          }
+        ],
+        "partial": true,
+        "explained_names": [
+          {
+            "page": 3,
+            "code": "オ",
+            "amount": "1,487,543,809",
+            "name": "教育債"
+          },
+          {
+            "page": 3,
+            "code": "オ",
+            "amount": "116,292,845",
+            "name": "教育債"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-11-ocr-left-1",
+          "origin_sha256": "59c98e1f1cb66b48c12b7db8428c44c3cd61bc972ada91032fdfd882f4532714",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              3,
+              5
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "9f186944f87dca84880dc34dbf8a394e8b3abcc05995e1fbe9ef45814a4458ed",
+          "bytes": 955329
+        },
+        {
+          "id": "general-11-ocr-right-1",
+          "origin_sha256": "59c98e1f1cb66b48c12b7db8428c44c3cd61bc972ada91032fdfd882f4532714",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              2,
+              4,
+              6
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1
+            }
+          },
+          "sha256": "02663409782aa68e80768e7c89ac6de9cf9be937b0a9c6b9fee606ca48e31bfa",
+          "bytes": 799667
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-11-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "nhi",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "ae87d3c685876a800197b35f43bf01eba93ec1ea6276bda8bb3ff033d49c3994"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "nhi-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "row_gaps": true
+              },
+              "header": {
+                "staircase": "款項目事務事業"
+              },
+              "columns": {
+                "決算額": {
+                  "kind": "amount"
+                }
+              },
+              "explained_projects": {
+                "budget": "予算現額",
+                "settled": "決算",
+                "items_axis": "決算説明",
+                "title": "予算説明",
+                "rows_axis": "事務事業"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "事務事業": {
+                "pattern": "indent"
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            22,
+            37
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "nhi-ocr-left-1",
+          "origin_sha256": "ae87d3c685876a800197b35f43bf01eba93ec1ea6276bda8bb3ff033d49c3994",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              22,
+              24,
+              26,
+              28,
+              30,
+              32,
+              34,
+              36
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "fc8fb4b1c387b84fd3c9dbd5df97f28b16b4902f775754aaf71da9fa36ba633f",
+          "bytes": 2812765
+        },
+        {
+          "id": "nhi-ocr-right-1",
+          "origin_sha256": "ae87d3c685876a800197b35f43bf01eba93ec1ea6276bda8bb3ff033d49c3994",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              23,
+              25,
+              27,
+              29,
+              31,
+              33,
+              35,
+              37
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1
+            }
+          },
+          "sha256": "00e72d996c2f09f6b9729d6729cdc0054bf881f62c7021c568a936fbb3138037",
+          "bytes": 2063552
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "nhi-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "kaigo",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "90e47d38c86b469347959af05f0d9c76ecbc7f53f2d2c5fb097814a5b2a61077"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "kaigo-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "row_gaps": true
+              },
+              "header": {
+                "staircase": "款項目事務事業"
+              },
+              "columns": {
+                "決算額": {
+                  "kind": "amount"
+                }
+              },
+              "explained_projects": {
+                "budget": "予算現額",
+                "settled": "決算",
+                "items_axis": "決算説明",
+                "title": "予算説明",
+                "rows_axis": "事務事業"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "事務事業": {
+                "pattern": "indent"
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            20,
+            33
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "kaigo-ocr-left-1",
+          "origin_sha256": "90e47d38c86b469347959af05f0d9c76ecbc7f53f2d2c5fb097814a5b2a61077",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              20,
+              22,
+              24,
+              26,
+              28,
+              30,
+              32
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "d952ca7120784f9d0814acd20da692d1baffd58ac45362c28d68ad095e327e5c",
+          "bytes": 2574904
+        },
+        {
+          "id": "kaigo-ocr-right-1",
+          "origin_sha256": "90e47d38c86b469347959af05f0d9c76ecbc7f53f2d2c5fb097814a5b2a61077",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              21,
+              23,
+              25,
+              27,
+              29,
+              31,
+              33
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1
+            }
+          },
+          "sha256": "2349614189355452e1bdb140417475df30e92bcb5539ef6fdc7cbd9c97efc00f",
+          "bytes": 2075137
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kaigo-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "kouki",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "68f76e902044d1ce1219a49d2f9c6d495d895d2ef347634d918dfd724517324c"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "row_gaps": true
+              },
+              "header": {
+                "staircase": "款項目事務事業"
+              },
+              "columns": {
+                "決算額": {
+                  "kind": "amount"
+                }
+              },
+              "explained_projects": {
+                "budget": "予算現額",
+                "settled": "決算",
+                "items_axis": "決算説明",
+                "title": "予算説明",
+                "rows_axis": "事務事業"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "事務事業": {
+                "pattern": "indent"
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            16,
+            23
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "kouki-ocr-left-1",
+          "origin_sha256": "68f76e902044d1ce1219a49d2f9c6d495d895d2ef347634d918dfd724517324c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              16,
+              18,
+              20,
+              22
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "f0c83df11711eee033d10a648e46abc4dd8ac62fb8c77c7f561bb387d796beff",
+          "bytes": 1313282
+        },
+        {
+          "id": "kouki-ocr-right-1",
+          "origin_sha256": "68f76e902044d1ce1219a49d2f9c6d495d895d2ef347634d918dfd724517324c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              17,
+              19,
+              21,
+              23
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1
+            }
+          },
+          "sha256": "351da1bb89eb499b8dc71141d09d23a04a78f6497fd5ff396bfb3356327adc85",
+          "bytes": 1000427
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kouki-expenditure-detail"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-05-expenditure-detail",
+      "conversion_id": "general-05",
+      "input_fingerprint": "6df0b118206f30e3e6e479c5fac065dcba3a2d65ef8df96d460ad3c29c5490d9",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'事務事業': 'indent'}。",
+        "金額の単位は carried 21頁・default 1頁 から決めた。分冊のため款の和 45,841,083,542 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 136 件（不用額 134・繰越額 2）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 94 件（p6:full-page:a0:result0:r27・p6:full-page:a0:result0:r27:w5・p6:full-page:a0:result0:r44・p6:full-page:a0:result0:r44・p6:full-page:a0:result0:r44:w14・p6:full-page:a0:result0:r44:w25・p6:full-page:a0:result0:r50・p6:full-page:a0:result0:r50:w23・p7:full-page:a0:result0:r23・p7:full-page:a0:result0:r23:w8・p8:full-page:a0:result0:r44・p8:full-page:a0:result0:r44:w8・p8:full-page:a0:result0:r61・p8:full-page:a0:result0:r61・p8:full-page:a0:result0:r61:w3・p8:full-page:a0:result0:r61:w6・p12:full-page:a0:result0:r13・p12:full-page:a0:result0:r13:w12・p17:full-page:a0:result0:r15・p17:full-page:a0:result0:r15:w6・p17:full-page:a0:result0:r16・p17:full-page:a0:result0:r16:w6・p17:full-page:a0:result0:r18・p17:full-page:a0:result0:r18:w7・p18:full-page:a0:result0:r17・p18:full-page:a0:result0:r17・p18:full-page:a0:result0:r17:w2・p18:full-page:a0:result0:r17:w14・p18:full-page:a0:result0:r26・p18:full-page:a0:result0:r26:w4・p18:full-page:a0:result0:r28・p18:full-page:a0:result0:r28:w7・p19:full-page:a0:result0:r26・p19:full-page:a0:result0:r26:w4・p19:full-page:a0:result0:r27・p19:full-page:a0:result0:r27:w4・p19:full-page:a0:result0:r29・p19:full-page:a0:result0:r29:w4・p20:full-page:a0:result0:r45・p20:full-page:a0:result0:r45:w4・p20:full-page:a0:result0:r51・p20:full-page:a0:result0:r51:w4・p21:full-page:a0:result0:r14・p21:full-page:a0:result0:r14:w9・p22:full-page:a0:result0:r21・p22:full-page:a0:result0:r21:w9・p24:full-page:a0:result0:r17・p24:full-page:a0:result0:r17:w2・p28:full-page:a0:result0:r50・p28:full-page:a0:result0:r50:w12・p30:full-page:a0:result0:r45・p30:full-page:a0:result0:r45:w14・p30:full-page:a0:result0:r75・p30:full-page:a0:result0:r75:w3・p30:full-page:a0:result0:r79・p30:full-page:a0:result0:r79:w3・p32:full-page:a0:result0:r34・p32:full-page:a0:result0:r34:w6・p32:full-page:a0:result0:r37・p32:full-page:a0:result0:r37:w4・p34:full-page:a0:result0:r69・p34:full-page:a0:result0:r69:w11・p36:full-page:a0:result0:r10・p36:full-page:a0:result0:r10:w9・p36:full-page:a0:result0:r38・p36:full-page:a0:result0:r38:w7・p36:full-page:a0:result0:r82・p36:full-page:a0:result0:r82:w4・p36:full-page:a0:result0:r84・p36:full-page:a0:result0:r84・p36:full-page:a0:result0:r84・p36:full-page:a0:result0:r84:w2・p36:full-page:a0:result0:r84:w14・p36:full-page:a0:result0:r84:w28・p39:full-page:a0:result0:r24・p39:full-page:a0:result0:r24:w8・p39:full-page:a0:result0:r25・p39:full-page:a0:result0:r25:w8・p40:full-page:a0:result0:r56・p40:full-page:a0:result0:r56:w7・p41:full-page:a0:result0:r14・p41:full-page:a0:result0:r14:w4・p41:full-page:a0:result0:r15・p41:full-page:a0:result0:r15:w3・p42:full-page:a0:result0:r14・p42:full-page:a0:result0:r14:w2・p42:full-page:a0:result0:r35・p42:full-page:a0:result0:r35:w3・p42:full-page:a0:result0:r69・p42:full-page:a0:result0:r69:w5・p44:full-page:a0:result0:r23・p44:full-page:a0:result0:r23:w4・p44:full-page:a0:result0:r73・p44:full-page:a0:result0:r73:w4）・徵→徴 6 件（p33:full-page:a0:result0:r14・p33:full-page:a0:result0:r14:w2・p35:full-page:a0:result0:r2・p35:full-page:a0:result0:r2:w2・p35:full-page:a0:result0:r3・p35:full-page:a0:result0:r3:w4）・查→査 14 件（p15:full-page:a0:result0:r34・p15:full-page:a0:result0:r34:w6・p16:full-page:a0:result0:r83・p16:full-page:a0:result0:r83:w6・p19:full-page:a0:result0:r26・p19:full-page:a0:result0:r26:w3・p19:full-page:a0:result0:r27・p19:full-page:a0:result0:r27:w3・p19:full-page:a0:result0:r29・p19:full-page:a0:result0:r29:w3・p20:full-page:a0:result0:r45・p20:full-page:a0:result0:r45:w3・p20:full-page:a0:result0:r51・p20:full-page:a0:result0:r51:w3）・產→産 14 件（p19:full-page:a0:result0:r34・p19:full-page:a0:result0:r34:w3・p19:full-page:a0:result0:r35・p19:full-page:a0:result0:r35:w3・p19:full-page:a0:result0:r36・p19:full-page:a0:result0:r36:w3・p20:full-page:a0:result0:r83・p20:full-page:a0:result0:r83:w3・p20:full-page:a0:result0:r85・p20:full-page:a0:result0:r85:w6・p21:full-page:a0:result0:r3・p21:full-page:a0:result0:r3:w3・p22:full-page:a0:result0:r14・p22:full-page:a0:result0:r14:w2）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2024/settlement/expenditure/general-05-expenditure-detail-nodes.parquet",
+          "sha256": "1c02e20c8cdb1cbbb70ce2e676ca6fba84b9792ea87542620df00073c5720efe",
+          "bytes": 33768
+        },
+        "row_count": 699
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2024/settlement/expenditure/general-05-expenditure-detail-amounts.parquet",
+          "sha256": "c3641efe45175348b13b37bf118728faed3cccb84ae522f8651b3991bc3e33ba",
+          "bytes": 23978
+        },
+        "row_count": 971
+      }
+    },
+    {
+      "table_id": "general-06-expenditure-detail",
+      "conversion_id": "general-06",
+      "input_fingerprint": "0d15811e8fbe4ccaadac711ecd7c5b7645f2294c6ea17dc86dfb8de7e176a38e",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'事務事業': 'indent'}。",
+        "金額の単位は carried 21頁・default 1頁 から決めた。分冊のため款の和 158,680,734,253 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 130 件（不用額 125・繰越額 5）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 72 件（p3:full-page:a0:result0:r27・p3:full-page:a0:result0:r27:w7・p3:full-page:a0:result0:r28・p3:full-page:a0:result0:r28:w7・p3:full-page:a0:result0:r32・p3:full-page:a0:result0:r32:w9・p5:full-page:a0:result0:r14・p5:full-page:a0:result0:r14:w9・p5:full-page:a0:result0:r17・p5:full-page:a0:result0:r17:w9・p11:full-page:a0:result0:r18・p11:full-page:a0:result0:r18:w4・p11:full-page:a0:result0:r19・p11:full-page:a0:result0:r19:w4・p12:full-page:a0:result0:r14・p12:full-page:a0:result0:r14:w4・p12:full-page:a0:result0:r45・p12:full-page:a0:result0:r45:w2・p14:full-page:a0:result0:r22・p14:full-page:a0:result0:r22:w2・p16:full-page:a0:result0:r47・p16:full-page:a0:result0:r47:w6・p16:full-page:a0:result0:r57・p16:full-page:a0:result0:r57:w6・p16:full-page:a0:result0:r62・p16:full-page:a0:result0:r62:w6・p16:full-page:a0:result0:r70・p16:full-page:a0:result0:r70:w6・p16:full-page:a0:result0:r84・p16:full-page:a0:result0:r84:w23・p18:full-page:a0:result0:r72・p18:full-page:a0:result0:r72:w7・p21:full-page:a0:result0:r17・p21:full-page:a0:result0:r17:w5・p22:full-page:a0:result0:r36・p22:full-page:a0:result0:r36:w6・p26:full-page:a0:result0:r40・p26:full-page:a0:result0:r40:w4・p26:full-page:a0:result0:r41・p26:full-page:a0:result0:r41:w5・p29:full-page:a0:result0:r20・p29:full-page:a0:result0:r20:w10・p29:full-page:a0:result0:r21・p29:full-page:a0:result0:r21:w10・p30:full-page:a0:result0:r34・p30:full-page:a0:result0:r34:w8・p36:full-page:a0:result0:r44・p36:full-page:a0:result0:r44:w5・p40:full-page:a0:result0:r13・p40:full-page:a0:result0:r13・p40:full-page:a0:result0:r13・p40:full-page:a0:result0:r13:w13・p40:full-page:a0:result0:r13:w16・p40:full-page:a0:result0:r13:w19・p40:full-page:a0:result0:r48・p40:full-page:a0:result0:r48:w4・p40:full-page:a0:result0:r50・p40:full-page:a0:result0:r50:w3・p40:full-page:a0:result0:r71・p40:full-page:a0:result0:r71:w3・p43:full-page:a0:result0:r22・p43:full-page:a0:result0:r22:w12・p43:full-page:a0:result0:r29・p43:full-page:a0:result0:r29:w12・p44:full-page:a0:result0:r36・p44:full-page:a0:result0:r36:w12・p44:full-page:a0:result0:r67・p44:full-page:a0:result0:r67:w12・p44:full-page:a0:result0:r82・p44:full-page:a0:result0:r82・p44:full-page:a0:result0:r82:w16・p44:full-page:a0:result0:r82:w22）・徵→徴 2 件（p22:full-page:a0:result0:r11・p22:full-page:a0:result0:r11:w5）・查→査 48 件（p3:full-page:a0:result0:r32・p3:full-page:a0:result0:r32:w21・p5:full-page:a0:result0:r14・p5:full-page:a0:result0:r14:w21・p5:full-page:a0:result0:r17・p5:full-page:a0:result0:r17:w21・p5:full-page:a0:result0:r21・p5:full-page:a0:result0:r21:w5・p6:full-page:a0:result0:r63・p6:full-page:a0:result0:r63:w3・p6:full-page:a0:result0:r84・p6:full-page:a0:result0:r84:w7・p6:full-page:a0:result0:r86・p6:full-page:a0:result0:r86:w3・p7:full-page:a0:result0:r15・p7:full-page:a0:result0:r15:w3・p7:full-page:a0:result0:r16・p7:full-page:a0:result0:r16:w3・p7:full-page:a0:result0:r17・p7:full-page:a0:result0:r17:w3・p7:full-page:a0:result0:r18・p7:full-page:a0:result0:r18:w2・p7:full-page:a0:result0:r23・p7:full-page:a0:result0:r23:w2・p7:full-page:a0:result0:r25・p7:full-page:a0:result0:r25:w2・p8:full-page:a0:result0:r11・p8:full-page:a0:result0:r11:w7・p8:full-page:a0:result0:r27・p8:full-page:a0:result0:r27:w3・p8:full-page:a0:result0:r28・p8:full-page:a0:result0:r28:w2・p8:full-page:a0:result0:r55・p8:full-page:a0:result0:r55:w1・p8:full-page:a0:result0:r56・p8:full-page:a0:result0:r56:w2・p20:full-page:a0:result0:r67・p20:full-page:a0:result0:r67:w10・p21:full-page:a0:result0:r23・p21:full-page:a0:result0:r23:w14・p21:full-page:a0:result0:r24・p21:full-page:a0:result0:r24:w14・p22:full-page:a0:result0:r61・p22:full-page:a0:result0:r61:w13・p34:full-page:a0:result0:r54・p34:full-page:a0:result0:r54:w8・p42:full-page:a0:result0:r29・p42:full-page:a0:result0:r29:w7）・產→産 2 件（p32:full-page:a0:result0:r64・p32:full-page:a0:result0:r64:w2）・齡→齢 16 件（p29:full-page:a0:result0:r21・p29:full-page:a0:result0:r21:w3・p29:full-page:a0:result0:r32・p29:full-page:a0:result0:r32:w3・p30:full-page:a0:result0:r34・p30:full-page:a0:result0:r34:w1・p30:full-page:a0:result0:r76・p30:full-page:a0:result0:r76:w1・p30:full-page:a0:result0:r97・p30:full-page:a0:result0:r97:w1・p33:full-page:a0:result0:r23・p33:full-page:a0:result0:r23:w3・p35:full-page:a0:result0:r26・p35:full-page:a0:result0:r26:w3・p36:full-page:a0:result0:r69・p36:full-page:a0:result0:r69:w3）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2024/settlement/expenditure/general-06-expenditure-detail-nodes.parquet",
+          "sha256": "af466ebced2397124902a0b28f0c0a15fdecd322de464ba971614b1a397aad4f",
+          "bytes": 33173
+        },
+        "row_count": 686
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2024/settlement/expenditure/general-06-expenditure-detail-amounts.parquet",
+          "sha256": "c6ddca43c7995a5882dcf2562b301afb1020f9f61b3e2f0e9e039e3614d1e8b9",
+          "bytes": 23401
+        },
+        "row_count": 945
+      }
+    },
+    {
+      "table_id": "general-07-expenditure-detail",
+      "conversion_id": "general-07",
+      "input_fingerprint": "5037f43768a1fb4d132b7dc9586df7041fff36575c67c94d90b9d4c8186c95fe",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'事務事業': 'indent'}。",
+        "金額の単位は carried 21頁・default 1頁 から決めた。分冊のため款の和 5,515,403,236 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 120 件（不用額 120）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 72 件（p2:full-page:a0:result0:r41・p2:full-page:a0:result0:r41:w5・p2:full-page:a0:result0:r42・p2:full-page:a0:result0:r42:w6・p6:full-page:a0:result0:r64・p6:full-page:a0:result0:r64:w7・p8:full-page:a0:result0:r69・p8:full-page:a0:result0:r69:w4・p10:full-page:a0:result0:r88・p10:full-page:a0:result0:r88:w10・p12:full-page:a0:result0:r28・p12:full-page:a0:result0:r28:w3・p12:full-page:a0:result0:r49・p12:full-page:a0:result0:r49:w8・p15:full-page:a0:result0:r14・p15:full-page:a0:result0:r14:w4・p15:full-page:a0:result0:r15・p15:full-page:a0:result0:r15:w4・p15:full-page:a0:result0:r23・p15:full-page:a0:result0:r23:w6・p15:full-page:a0:result0:r24・p15:full-page:a0:result0:r24:w6・p16:full-page:a0:result0:r24・p16:full-page:a0:result0:r24:w5・p16:full-page:a0:result0:r47・p16:full-page:a0:result0:r47:w4・p16:full-page:a0:result0:r54・p16:full-page:a0:result0:r54:w7・p18:full-page:a0:result0:r17・p18:full-page:a0:result0:r17:w2・p18:full-page:a0:result0:r19・p18:full-page:a0:result0:r19:w3・p24:full-page:a0:result0:r55・p24:full-page:a0:result0:r55:w6・p24:full-page:a0:result0:r62・p24:full-page:a0:result0:r62:w5・p24:full-page:a0:result0:r66・p24:full-page:a0:result0:r66:w8・p27:full-page:a0:result0:r24・p27:full-page:a0:result0:r24:w13・p28:full-page:a0:result0:r52・p28:full-page:a0:result0:r52:w6・p28:full-page:a0:result0:r68・p28:full-page:a0:result0:r68:w13・p30:full-page:a0:result0:r51・p30:full-page:a0:result0:r51・p30:full-page:a0:result0:r51・p30:full-page:a0:result0:r51:w5・p30:full-page:a0:result0:r51:w8・p30:full-page:a0:result0:r51:w15・p30:full-page:a0:result0:r73・p30:full-page:a0:result0:r73:w4・p32:full-page:a0:result0:r62・p32:full-page:a0:result0:r62・p32:full-page:a0:result0:r62:w8・p32:full-page:a0:result0:r62:w12・p32:full-page:a0:result0:r68・p32:full-page:a0:result0:r68:w4・p34:full-page:a0:result0:r113・p34:full-page:a0:result0:r113・p34:full-page:a0:result0:r113:w7・p34:full-page:a0:result0:r113:w13・p41:full-page:a0:result0:r31・p41:full-page:a0:result0:r31:w4・p42:full-page:a0:result0:r65・p42:full-page:a0:result0:r65:w4・p42:full-page:a0:result0:r67・p42:full-page:a0:result0:r67:w2・p43:full-page:a0:result0:r14・p43:full-page:a0:result0:r14:w3・p44:full-page:a0:result0:r10・p44:full-page:a0:result0:r10:w4）・查→査 10 件（p8:full-page:a0:result0:r75・p8:full-page:a0:result0:r75:w6・p10:full-page:a0:result0:r23・p10:full-page:a0:result0:r23:w5・p10:full-page:a0:result0:r42・p10:full-page:a0:result0:r42:w5・p16:full-page:a0:result0:r84・p16:full-page:a0:result0:r84:w9・p26:full-page:a0:result0:r64・p26:full-page:a0:result0:r64:w7）・產→産 62 件（p8:full-page:a0:result0:r69・p8:full-page:a0:result0:r69・p8:full-page:a0:result0:r69:w2・p8:full-page:a0:result0:r69:w5・p19:full-page:a0:result0:r27・p19:full-page:a0:result0:r27:w2・p19:full-page:a0:result0:r28・p19:full-page:a0:result0:r28:w2・p20:full-page:a0:result0:r89・p20:full-page:a0:result0:r89:w3・p21:full-page:a0:result0:r29・p21:full-page:a0:result0:r29:w5・p21:full-page:a0:result0:r30・p21:full-page:a0:result0:r30:w5・p22:full-page:a0:result0:r90・p22:full-page:a0:result0:r90:w3・p24:full-page:a0:result0:r37・p24:full-page:a0:result0:r37:w3・p35:full-page:a0:result0:r14・p35:full-page:a0:result0:r14:w2・p35:full-page:a0:result0:r18・p35:full-page:a0:result0:r18:w2・p35:full-page:a0:result0:r28・p35:full-page:a0:result0:r28:w2・p35:full-page:a0:result0:r29・p35:full-page:a0:result0:r29:w2・p35:full-page:a0:result0:r31・p35:full-page:a0:result0:r31:w2・p36:full-page:a0:result0:r61・p36:full-page:a0:result0:r61:w0・p36:full-page:a0:result0:r67・p36:full-page:a0:result0:r67:w2・p37:full-page:a0:result0:r1・p37:full-page:a0:result0:r1:w2・p37:full-page:a0:result0:r2・p37:full-page:a0:result0:r2:w2・p37:full-page:a0:result0:r20・p37:full-page:a0:result0:r20:w2・p37:full-page:a0:result0:r21・p37:full-page:a0:result0:r21:w2・p37:full-page:a0:result0:r25・p37:full-page:a0:result0:r25:w2・p37:full-page:a0:result0:r32・p37:full-page:a0:result0:r32:w3・p38:full-page:a0:result0:r59・p38:full-page:a0:result0:r59:w2・p38:full-page:a0:result0:r75・p38:full-page:a0:result0:r75:w3・p39:full-page:a0:result0:r2・p39:full-page:a0:result0:r2:w2・p39:full-page:a0:result0:r3・p39:full-page:a0:result0:r3:w2・p41:full-page:a0:result0:r1・p41:full-page:a0:result0:r1:w2・p41:full-page:a0:result0:r3・p41:full-page:a0:result0:r3:w2・p42:full-page:a0:result0:r71・p42:full-page:a0:result0:r71:w2・p43:full-page:a0:result0:r1・p43:full-page:a0:result0:r1:w2・p43:full-page:a0:result0:r2・p43:full-page:a0:result0:r2:w2）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2024/settlement/expenditure/general-07-expenditure-detail-nodes.parquet",
+          "sha256": "ff0030cf80af9ebcdb032c6960fb2370efe85d889edb6cf55a99fccd33e69db8",
+          "bytes": 33535
+        },
+        "row_count": 719
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2024/settlement/expenditure/general-07-expenditure-detail-amounts.parquet",
+          "sha256": "7b887134e496caeb97dd2eefcf02754fe814cdac12e30009f6ff4851631b6c4c",
+          "bytes": 24075
+        },
+        "row_count": 955
+      }
+    },
+    {
+      "table_id": "general-08-expenditure-detail",
+      "conversion_id": "general-08",
+      "input_fingerprint": "675bea8bb5b0ed6464d23f1ced2aed62c434ecf18069af05b6dbd3c3ee929bc6",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'事務事業': 'indent'}。",
+        "金額の単位は carried 21頁・default 1頁 から決めた。分冊のため款の和 48,987,237,435 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 113 件（不用額 110・繰越額 3）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 90 件（p1:full-page:a0:result0:r22・p1:full-page:a0:result0:r22:w9・p2:full-page:a0:result0:r36・p2:full-page:a0:result0:r36:w9・p5:full-page:a0:result0:r18・p5:full-page:a0:result0:r18:w3・p6:full-page:a0:result0:r39・p6:full-page:a0:result0:r39:w4・p6:full-page:a0:result0:r78・p6:full-page:a0:result0:r78:w13・p11:full-page:a0:result0:r23・p11:full-page:a0:result0:r23:w11・p12:full-page:a0:result0:r30・p12:full-page:a0:result0:r30:w11・p12:full-page:a0:result0:r35・p12:full-page:a0:result0:r35:w4・p12:full-page:a0:result0:r53・p12:full-page:a0:result0:r53:w6・p12:full-page:a0:result0:r71・p12:full-page:a0:result0:r71:w2・p13:full-page:a0:result0:r18・p13:full-page:a0:result0:r18:w12・p14:full-page:a0:result0:r41・p14:full-page:a0:result0:r41・p14:full-page:a0:result0:r41:w5・p14:full-page:a0:result0:r41:w12・p15:full-page:a0:result0:r24・p15:full-page:a0:result0:r24:w8・p16:full-page:a0:result0:r37・p16:full-page:a0:result0:r37:w8・p16:full-page:a0:result0:r42・p16:full-page:a0:result0:r42:w4・p16:full-page:a0:result0:r79・p16:full-page:a0:result0:r79:w7・p18:full-page:a0:result0:r13・p18:full-page:a0:result0:r13:w4・p19:full-page:a0:result0:r29・p19:full-page:a0:result0:r29:w3・p20:full-page:a0:result0:r40・p20:full-page:a0:result0:r40:w3・p20:full-page:a0:result0:r92・p20:full-page:a0:result0:r92:w2・p21:full-page:a0:result0:r14・p21:full-page:a0:result0:r14:w4・p21:full-page:a0:result0:r22・p21:full-page:a0:result0:r22:w7・p21:full-page:a0:result0:r24・p21:full-page:a0:result0:r24:w9・p22:full-page:a0:result0:r36・p22:full-page:a0:result0:r36:w7・p22:full-page:a0:result0:r78・p22:full-page:a0:result0:r78:w9・p24:full-page:a0:result0:r35・p24:full-page:a0:result0:r35:w14・p24:full-page:a0:result0:r55・p24:full-page:a0:result0:r55・p24:full-page:a0:result0:r55:w5・p24:full-page:a0:result0:r55:w9・p24:full-page:a0:result0:r56・p24:full-page:a0:result0:r56・p24:full-page:a0:result0:r56:w7・p24:full-page:a0:result0:r56:w12・p25:full-page:a0:result0:r27・p25:full-page:a0:result0:r27:w5・p26:full-page:a0:result0:r55・p26:full-page:a0:result0:r55:w5・p26:full-page:a0:result0:r71・p26:full-page:a0:result0:r71:w6・p30:full-page:a0:result0:r29・p30:full-page:a0:result0:r29:w5・p34:full-page:a0:result0:r18・p34:full-page:a0:result0:r18:w2・p37:full-page:a0:result0:r27・p37:full-page:a0:result0:r27:w8・p37:full-page:a0:result0:r28・p37:full-page:a0:result0:r28:w8・p38:full-page:a0:result0:r65・p38:full-page:a0:result0:r65:w11・p38:full-page:a0:result0:r76・p38:full-page:a0:result0:r76:w8・p40:full-page:a0:result0:r85・p40:full-page:a0:result0:r85:w14・p42:full-page:a0:result0:r31・p42:full-page:a0:result0:r31:w14・p42:full-page:a0:result0:r47・p42:full-page:a0:result0:r47:w7・p42:full-page:a0:result0:r52・p42:full-page:a0:result0:r52:w7・p42:full-page:a0:result0:r69・p42:full-page:a0:result0:r69:w4）・增→増 4 件（p17:full-page:a0:result0:r25・p17:full-page:a0:result0:r25:w4・p18:full-page:a0:result0:r82・p18:full-page:a0:result0:r82:w4）・查→査 108 件（p4:full-page:a0:result0:r41・p4:full-page:a0:result0:r41:w6・p4:full-page:a0:result0:r45・p4:full-page:a0:result0:r45:w5・p4:full-page:a0:result0:r59・p4:full-page:a0:result0:r59:w6・p8:full-page:a0:result0:r64・p8:full-page:a0:result0:r64:w7・p13:full-page:a0:result0:r15・p13:full-page:a0:result0:r15:w7・p13:full-page:a0:result0:r17・p13:full-page:a0:result0:r17:w8・p13:full-page:a0:result0:r18・p13:full-page:a0:result0:r18:w19・p14:full-page:a0:result0:r17・p14:full-page:a0:result0:r17:w5・p14:full-page:a0:result0:r19・p14:full-page:a0:result0:r19:w8・p14:full-page:a0:result0:r20・p14:full-page:a0:result0:r20:w6・p14:full-page:a0:result0:r26・p14:full-page:a0:result0:r26:w11・p14:full-page:a0:result0:r34・p14:full-page:a0:result0:r34:w6・p14:full-page:a0:result0:r41・p14:full-page:a0:result0:r41:w19・p14:full-page:a0:result0:r46・p14:full-page:a0:result0:r46:w9・p14:full-page:a0:result0:r49・p14:full-page:a0:result0:r49:w9・p14:full-page:a0:result0:r52・p14:full-page:a0:result0:r52:w6・p16:full-page:a0:result0:r42・p16:full-page:a0:result0:r42:w10・p16:full-page:a0:result0:r47・p16:full-page:a0:result0:r47:w7・p16:full-page:a0:result0:r55・p16:full-page:a0:result0:r55:w8・p16:full-page:a0:result0:r57・p16:full-page:a0:result0:r57:w8・p16:full-page:a0:result0:r62・p16:full-page:a0:result0:r62:w6・p17:full-page:a0:result0:r28・p17:full-page:a0:result0:r28:w11・p18:full-page:a0:result0:r84・p18:full-page:a0:result0:r84:w11・p19:full-page:a0:result0:r14・p19:full-page:a0:result0:r14:w10・p20:full-page:a0:result0:r15・p20:full-page:a0:result0:r15:w10・p20:full-page:a0:result0:r27・p20:full-page:a0:result0:r27:w5・p22:full-page:a0:result0:r37・p22:full-page:a0:result0:r37:w10・p22:full-page:a0:result0:r38・p22:full-page:a0:result0:r38:w9・p22:full-page:a0:result0:r39・p22:full-page:a0:result0:r39:w14・p22:full-page:a0:result0:r40・p22:full-page:a0:result0:r40:w13・p22:full-page:a0:result0:r47・p22:full-page:a0:result0:r47:w3・p22:full-page:a0:result0:r48・p22:full-page:a0:result0:r48:w4・p24:full-page:a0:result0:r79・p24:full-page:a0:result0:r79:w8・p25:full-page:a0:result0:r26・p25:full-page:a0:result0:r26:w7・p25:full-page:a0:result0:r27・p25:full-page:a0:result0:r27:w9・p26:full-page:a0:result0:r49・p26:full-page:a0:result0:r49:w7・p26:full-page:a0:result0:r50・p26:full-page:a0:result0:r50:w1・p26:full-page:a0:result0:r55・p26:full-page:a0:result0:r55:w9・p26:full-page:a0:result0:r56・p26:full-page:a0:result0:r56:w1・p37:full-page:a0:result0:r27・p37:full-page:a0:result0:r27・p37:full-page:a0:result0:r27:w7・p37:full-page:a0:result0:r27:w10・p37:full-page:a0:result0:r28・p37:full-page:a0:result0:r28・p37:full-page:a0:result0:r28:w7・p37:full-page:a0:result0:r28:w10・p38:full-page:a0:result0:r76・p38:full-page:a0:result0:r76・p38:full-page:a0:result0:r76:w7・p38:full-page:a0:result0:r76:w10・p39:full-page:a0:result0:r17・p39:full-page:a0:result0:r17:w5・p39:full-page:a0:result0:r18・p39:full-page:a0:result0:r18:w5・p40:full-page:a0:result0:r24・p40:full-page:a0:result0:r24:w5・p40:full-page:a0:result0:r26・p40:full-page:a0:result0:r26:w4・p40:full-page:a0:result0:r31・p40:full-page:a0:result0:r31:w6・p40:full-page:a0:result0:r33・p40:full-page:a0:result0:r33:w4・p40:full-page:a0:result0:r35・p40:full-page:a0:result0:r35:w5・p40:full-page:a0:result0:r36・p40:full-page:a0:result0:r36:w8・p44:full-page:a0:result0:r47・p44:full-page:a0:result0:r47:w7）・產→産 14 件（p1:full-page:a0:result0:r1・p1:full-page:a0:result0:r1:w2・p1:full-page:a0:result0:r20・p1:full-page:a0:result0:r20:w6・p2:full-page:a0:result0:r28・p2:full-page:a0:result0:r28:w6・p2:full-page:a0:result0:r39・p2:full-page:a0:result0:r39:w4・p12:full-page:a0:result0:r35・p12:full-page:a0:result0:r35:w2・p12:full-page:a0:result0:r71・p12:full-page:a0:result0:r71:w1・p28:full-page:a0:result0:r79・p28:full-page:a0:result0:r79:w1）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2024/settlement/expenditure/general-08-expenditure-detail-nodes.parquet",
+          "sha256": "42f5c5fc4e96d0f08f1aa37049e73cb574cdfcce351382bb7ef007bd497c68dc",
+          "bytes": 33312
+        },
+        "row_count": 711
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2024/settlement/expenditure/general-08-expenditure-detail-amounts.parquet",
+          "sha256": "02757ec6b8e50873de5ebf9ee5fb82389e5f27becce9b0dbf275e846ad7759c8",
+          "bytes": 23918
+        },
+        "row_count": 935
+      }
+    },
+    {
+      "table_id": "general-09-expenditure-detail",
+      "conversion_id": "general-09",
+      "input_fingerprint": "a88f94c4f1c735c72223f31a5de575c187608f9123ba38b074039003ba2d93f7",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'事務事業': 'indent'}。",
+        "金額の単位は carried 21頁・default 1頁 から決めた。分冊のため款の和 50,398,051,603 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 123 件（不用額 112・繰越額 11）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 100 件（p3:full-page:a0:result0:r27・p3:full-page:a0:result0:r27:w6・p4:full-page:a0:result0:r11・p4:full-page:a0:result0:r11:w15・p4:full-page:a0:result0:r50・p4:full-page:a0:result0:r50:w18・p4:full-page:a0:result0:r65・p4:full-page:a0:result0:r65:w2・p4:full-page:a0:result0:r67・p4:full-page:a0:result0:r67:w6・p6:full-page:a0:result0:r48・p6:full-page:a0:result0:r48:w2・p8:full-page:a0:result0:r14・p8:full-page:a0:result0:r14:w5・p12:full-page:a0:result0:r45・p12:full-page:a0:result0:r45:w4・p14:full-page:a0:result0:r68・p14:full-page:a0:result0:r68:w2・p20:full-page:a0:result0:r56・p20:full-page:a0:result0:r56:w17・p20:full-page:a0:result0:r59・p20:full-page:a0:result0:r59:w17・p23:full-page:a0:result0:r37・p23:full-page:a0:result0:r37:w9・p23:full-page:a0:result0:r38・p23:full-page:a0:result0:r38:w9・p23:full-page:a0:result0:r39・p23:full-page:a0:result0:r39:w3・p23:full-page:a0:result0:r42・p23:full-page:a0:result0:r42:w9・p24:full-page:a0:result0:r65・p24:full-page:a0:result0:r65:w4・p24:full-page:a0:result0:r82・p24:full-page:a0:result0:r82:w9・p25:full-page:a0:result0:r14・p25:full-page:a0:result0:r14:w9・p25:full-page:a0:result0:r16・p25:full-page:a0:result0:r16:w5・p25:full-page:a0:result0:r19・p25:full-page:a0:result0:r19:w9・p26:full-page:a0:result0:r11・p26:full-page:a0:result0:r11:w3・p26:full-page:a0:result0:r13・p26:full-page:a0:result0:r13:w8・p26:full-page:a0:result0:r15・p26:full-page:a0:result0:r15・p26:full-page:a0:result0:r15:w5・p26:full-page:a0:result0:r15:w10・p26:full-page:a0:result0:r31・p26:full-page:a0:result0:r31:w3・p26:full-page:a0:result0:r33・p26:full-page:a0:result0:r33:w8・p26:full-page:a0:result0:r35・p26:full-page:a0:result0:r35・p26:full-page:a0:result0:r35:w6・p26:full-page:a0:result0:r35:w11・p26:full-page:a0:result0:r56・p26:full-page:a0:result0:r56:w9・p26:full-page:a0:result0:r57・p26:full-page:a0:result0:r57:w11・p26:full-page:a0:result0:r70・p26:full-page:a0:result0:r70:w5・p28:full-page:a0:result0:r12・p28:full-page:a0:result0:r12:w16・p28:full-page:a0:result0:r17・p28:full-page:a0:result0:r17:w6・p28:full-page:a0:result0:r45・p28:full-page:a0:result0:r45:w17・p28:full-page:a0:result0:r47・p28:full-page:a0:result0:r47:w14・p30:full-page:a0:result0:r54・p30:full-page:a0:result0:r54:w21・p30:full-page:a0:result0:r61・p30:full-page:a0:result0:r61:w14・p30:full-page:a0:result0:r76・p30:full-page:a0:result0:r76:w13・p32:full-page:a0:result0:r18・p32:full-page:a0:result0:r18・p32:full-page:a0:result0:r18:w6・p32:full-page:a0:result0:r18:w12・p32:full-page:a0:result0:r90・p32:full-page:a0:result0:r90:w5・p32:full-page:a0:result0:r91・p32:full-page:a0:result0:r91:w2・p36:full-page:a0:result0:r29・p36:full-page:a0:result0:r29:w17・p36:full-page:a0:result0:r52・p36:full-page:a0:result0:r52:w11・p36:full-page:a0:result0:r71・p36:full-page:a0:result0:r71:w6・p36:full-page:a0:result0:r81・p36:full-page:a0:result0:r81:w6・p42:full-page:a0:result0:r43・p42:full-page:a0:result0:r43:w8・p42:full-page:a0:result0:r56・p42:full-page:a0:result0:r56:w9・p44:full-page:a0:result0:r57・p44:full-page:a0:result0:r57:w17・p44:full-page:a0:result0:r61・p44:full-page:a0:result0:r61:w9）・查→査 12 件（p4:full-page:a0:result0:r30・p4:full-page:a0:result0:r30:w7・p14:full-page:a0:result0:r34・p14:full-page:a0:result0:r34:w12・p22:full-page:a0:result0:r21・p22:full-page:a0:result0:r21:w12・p30:full-page:a0:result0:r21・p30:full-page:a0:result0:r21:w20・p30:full-page:a0:result0:r36・p30:full-page:a0:result0:r36:w9・p40:full-page:a0:result0:r45・p40:full-page:a0:result0:r45:w4）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2024/settlement/expenditure/general-09-expenditure-detail-nodes.parquet",
+          "sha256": "1ad0d0a6603672e49186b1c0cae6bc3ed25864d75c853ef0c97993be7300a473",
+          "bytes": 34305
+        },
+        "row_count": 716
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2024/settlement/expenditure/general-09-expenditure-detail-amounts.parquet",
+          "sha256": "652b2d587864bc0d28a03b52ca82d3ad5e4db3124de5b4c5be0e4be898e16cb6",
+          "bytes": 23835
+        },
+        "row_count": 946
+      }
+    },
+    {
+      "table_id": "general-10-expenditure-detail",
+      "conversion_id": "general-10",
+      "input_fingerprint": "e4e41a5a9dd5720d61dc2a2b52f45b11e39fdb1ec6d5e6510086edc2fe2e4089",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'事務事業': 'indent'}。",
+        "金額の単位は carried 21頁・default 1頁 から決めた。分冊のため款の和 0 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 115 件（不用額 113・繰越額 2）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 62 件（p6:full-page:a0:result0:r50・p6:full-page:a0:result0:r50:w3・p6:full-page:a0:result0:r55・p6:full-page:a0:result0:r55:w3・p6:full-page:a0:result0:r57・p6:full-page:a0:result0:r57:w2・p6:full-page:a0:result0:r62・p6:full-page:a0:result0:r62:w3・p6:full-page:a0:result0:r76・p6:full-page:a0:result0:r76:w6・p7:full-page:a0:result0:r30・p7:full-page:a0:result0:r30:w8・p7:full-page:a0:result0:r31・p7:full-page:a0:result0:r31:w7・p10:full-page:a0:result0:r23・p10:full-page:a0:result0:r23:w3・p10:full-page:a0:result0:r39・p10:full-page:a0:result0:r39:w3・p10:full-page:a0:result0:r43・p10:full-page:a0:result0:r43:w3・p10:full-page:a0:result0:r47・p10:full-page:a0:result0:r47:w3・p16:full-page:a0:result0:r26・p16:full-page:a0:result0:r26:w3・p18:full-page:a0:result0:r10・p18:full-page:a0:result0:r10:w3・p18:full-page:a0:result0:r16・p18:full-page:a0:result0:r16:w3・p18:full-page:a0:result0:r23・p18:full-page:a0:result0:r23:w3・p18:full-page:a0:result0:r58・p18:full-page:a0:result0:r58:w2・p19:full-page:a0:result0:r27・p19:full-page:a0:result0:r27:w8・p19:full-page:a0:result0:r28・p19:full-page:a0:result0:r28:w8・p20:full-page:a0:result0:r62・p20:full-page:a0:result0:r62:w3・p20:full-page:a0:result0:r86・p20:full-page:a0:result0:r86:w3・p28:full-page:a0:result0:r16・p28:full-page:a0:result0:r16:w28・p30:full-page:a0:result0:r33・p30:full-page:a0:result0:r33:w2・p30:full-page:a0:result0:r74・p30:full-page:a0:result0:r74:w5・p34:full-page:a0:result0:r49・p34:full-page:a0:result0:r49:w22・p37:full-page:a0:result0:r24・p37:full-page:a0:result0:r24:w12・p38:full-page:a0:result0:r21・p38:full-page:a0:result0:r21:w6・p38:full-page:a0:result0:r47・p38:full-page:a0:result0:r47:w12・p38:full-page:a0:result0:r51・p38:full-page:a0:result0:r51:w2・p38:full-page:a0:result0:r53・p38:full-page:a0:result0:r53・p38:full-page:a0:result0:r53:w2・p38:full-page:a0:result0:r53:w4・p42:full-page:a0:result0:r16・p42:full-page:a0:result0:r16:w12）・查→査 10 件（p2:full-page:a0:result0:r79・p2:full-page:a0:result0:r79:w7・p12:full-page:a0:result0:r94・p12:full-page:a0:result0:r94:w4・p24:full-page:a0:result0:r25・p24:full-page:a0:result0:r25:w3・p24:full-page:a0:result0:r65・p24:full-page:a0:result0:r65:w4・p40:full-page:a0:result0:r72・p40:full-page:a0:result0:r72:w9）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2024/settlement/expenditure/general-10-expenditure-detail-nodes.parquet",
+          "sha256": "5782d97886813c81436f89d04090a10218c58b6a50920e66a08ed982ff4ba346",
+          "bytes": 33379
+        },
+        "row_count": 728
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2024/settlement/expenditure/general-10-expenditure-detail-amounts.parquet",
+          "sha256": "81ace1f0fad4536d6a115f124d9d08626ae3cf3f5212b668130feeeefee73171",
+          "bytes": 24038
+        },
+        "row_count": 951
+      }
+    },
+    {
+      "table_id": "general-11-expenditure-detail",
+      "conversion_id": "general-11",
+      "input_fingerprint": "8bc3684e50038620b153db8f7d43061a9fecbd0db55a4f186159d41bac13d997",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'事務事業': 'indent'}。",
+        "金額の単位は carried 2頁・default 1頁 から決めた。分冊のため款の和 28,277,449,494 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 13 件（不用額 13）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 18 件（p2:full-page:a0:result0:r68・p2:full-page:a0:result0:r68・p2:full-page:a0:result0:r68・p2:full-page:a0:result0:r68・p2:full-page:a0:result0:r68・p2:full-page:a0:result0:r68・p2:full-page:a0:result0:r68・p2:full-page:a0:result0:r68:w19・p2:full-page:a0:result0:r68:w22・p2:full-page:a0:result0:r68:w25・p2:full-page:a0:result0:r68:w28・p2:full-page:a0:result0:r68:w31・p2:full-page:a0:result0:r68:w34・p2:full-page:a0:result0:r68:w37・p6:full-page:a0:result0:r15・p6:full-page:a0:result0:r15:w11・p6:full-page:a0:result0:r17・p6:full-page:a0:result0:r17:w12）・查→査 2 件（p6:full-page:a0:result0:r35・p6:full-page:a0:result0:r35:w4）・產→産 2 件（p4:full-page:a0:result0:r86・p4:full-page:a0:result0:r86:w2）・齡→齢 2 件（p5:full-page:a0:result0:r15・p5:full-page:a0:result0:r15:w5）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2024/settlement/expenditure/general-11-expenditure-detail-nodes.parquet",
+          "sha256": "14f899378ec562764ff2653e79e7e46d266f89064ff1b97af07d93d74e01512a",
+          "bytes": 8072
+        },
+        "row_count": 90
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2024/settlement/expenditure/general-11-expenditure-detail-amounts.parquet",
+          "sha256": "aa6e28bcb1f99cd7d686f6654aac8a7b3f19ae2418ab110fce102f51ed9c5f6b",
+          "bytes": 5561
+        },
+        "row_count": 122
+      }
+    },
+    {
+      "table_id": "nhi-expenditure-detail",
+      "conversion_id": "nhi",
+      "input_fingerprint": "e3788772378f6f812c3ea82df57367d9c2365ed49add74e4775fe2ab3fe4fa85",
+      "account": "国民健康保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'事務事業': 'indent'}。",
+        "金額の単位は carried 7頁・default 1頁 から決めた。款の和 68,268,827,784 と印字の「歳出合計」68,268,827,784 が一致。",
+        "金額の注記 44 件（不用額 44）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 34 件（p27:full-page:a0:result0:r10・p27:full-page:a0:result0:r10:w4・p30:full-page:a0:result0:r23・p30:full-page:a0:result0:r23:w4・p30:full-page:a0:result0:r24・p30:full-page:a0:result0:r24:w4・p30:full-page:a0:result0:r25・p30:full-page:a0:result0:r25:w4・p30:full-page:a0:result0:r26・p30:full-page:a0:result0:r26:w4・p32:full-page:a0:result0:r38・p32:full-page:a0:result0:r38:w4・p32:full-page:a0:result0:r39・p32:full-page:a0:result0:r39:w4・p32:full-page:a0:result0:r41・p32:full-page:a0:result0:r41:w4・p32:full-page:a0:result0:r45・p32:full-page:a0:result0:r45:w6・p32:full-page:a0:result0:r46・p32:full-page:a0:result0:r46:w6・p32:full-page:a0:result0:r48・p32:full-page:a0:result0:r48:w6・p33:full-page:a0:result0:r63・p33:full-page:a0:result0:r63:w4・p33:full-page:a0:result0:r68・p33:full-page:a0:result0:r68:w4・p33:full-page:a0:result0:r84・p33:full-page:a0:result0:r84:w6・p33:full-page:a0:result0:r95・p33:full-page:a0:result0:r95:w5・p34:full-page:a0:result0:r14・p34:full-page:a0:result0:r14:w5・p35:full-page:a0:result0:r13・p35:full-page:a0:result0:r13:w6）・徵→徴 10 件（p24:full-page:a0:result0:r26・p24:full-page:a0:result0:r26:w1・p24:full-page:a0:result0:r31・p24:full-page:a0:result0:r31:w2・p25:full-page:a0:result0:r78・p25:full-page:a0:result0:r78:w9・p26:full-page:a0:result0:r2・p26:full-page:a0:result0:r2:w2・p26:full-page:a0:result0:r3・p26:full-page:a0:result0:r3:w2）・查→査 16 件（p26:full-page:a0:result0:r38・p26:full-page:a0:result0:r38:w6・p26:full-page:a0:result0:r39・p26:full-page:a0:result0:r39:w7・p27:full-page:a0:result0:r96・p27:full-page:a0:result0:r96:w7・p28:full-page:a0:result0:r3・p28:full-page:a0:result0:r3:w3・p32:full-page:a0:result0:r43・p32:full-page:a0:result0:r43:w7・p32:full-page:a0:result0:r44・p32:full-page:a0:result0:r44:w7・p34:full-page:a0:result0:r2・p34:full-page:a0:result0:r2:w7・p34:ink-1:a1:result0:r0・p34:ink-1:a1:result0:r0:w7）・產→産 6 件（p28:full-page:a0:result0:r46・p28:full-page:a0:result0:r46:w3・p28:full-page:a0:result0:r47・p28:full-page:a0:result0:r47:w3・p30:full-page:a0:result0:r2・p30:full-page:a0:result0:r2:w2）・齡→齢 4 件（p30:full-page:a0:result0:r46・p30:full-page:a0:result0:r46:w11・p32:full-page:a0:result1:r1・p32:full-page:a0:result1:r1:w11）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2024/settlement/expenditure/nhi-expenditure-detail-nodes.parquet",
+          "sha256": "742fc9b62558b942f7671830ea5501b0f32a5bc25cb17469d509b9b9d5c81925",
+          "bytes": 14234
+        },
+        "row_count": 227
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2024/settlement/expenditure/nhi-expenditure-detail-amounts.parquet",
+          "sha256": "1359f6113bdef50251641f1114ca43aa18c84f042141ce2ac4e47ddc7399de48",
+          "bytes": 11159
+        },
+        "row_count": 366
+      }
+    },
+    {
+      "table_id": "kaigo-expenditure-detail",
+      "conversion_id": "kaigo",
+      "input_fingerprint": "7b475239eb7906f9f71ad8448b9852f3b4ac24eda857e6cc26767cb56a2a11ac",
+      "account": "介護保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'事務事業': 'indent'}。",
+        "金額の単位は carried 6頁・default 1頁 から決めた。款の和 68,186,628,714 と印字の「歳出合計」68,186,628,714 が一致。",
+        "金額の注記 38 件（不用額 38）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 28 件（p21:full-page:a0:result0:r57・p21:full-page:a0:result0:r57:w6・p27:full-page:a0:result0:r54・p27:full-page:a0:result0:r54:w5・p27:full-page:a0:result0:r56・p27:full-page:a0:result0:r56:w5・p28:full-page:a0:result0:r19・p28:full-page:a0:result0:r19:w9・p28:full-page:a0:result0:r21・p28:full-page:a0:result0:r21:w9・p30:full-page:a0:result0:r3・p30:full-page:a0:result0:r3:w7・p30:full-page:a0:result0:r28・p30:full-page:a0:result0:r28:w6・p30:full-page:a0:result0:r29・p30:full-page:a0:result0:r29:w6・p30:full-page:a0:result0:r30・p30:full-page:a0:result0:r30:w6・p30:full-page:a0:result0:r32・p30:full-page:a0:result0:r32:w6・p31:full-page:a0:result0:r64・p31:full-page:a0:result0:r64:w5・p31:full-page:a0:result0:r75・p31:full-page:a0:result0:r75:w6・p31:full-page:a0:result0:r77・p31:full-page:a0:result0:r77:w20・p32:full-page:a0:result0:r3・p32:full-page:a0:result0:r3:w7）・徵→徴 6 件（p20:full-page:a0:result0:r35・p20:full-page:a0:result0:r35:w1・p22:full-page:a0:result0:r2・p22:full-page:a0:result0:r2:w2・p22:full-page:a0:result0:r3・p22:full-page:a0:result0:r3:w4）・查→査 4 件（p23:full-page:a0:result0:r49・p23:full-page:a0:result0:r49:w6・p27:full-page:a0:result0:r55・p27:full-page:a0:result0:r55:w2）・齡→齢 6 件（p29:full-page:a0:result0:r40・p29:full-page:a0:result0:r40:w3・p30:full-page:a0:result0:r21・p30:full-page:a0:result0:r21:w5・p31:full-page:a0:result0:r39・p31:full-page:a0:result0:r39:w4）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2024/settlement/expenditure/kaigo-expenditure-detail-nodes.parquet",
+          "sha256": "13245ea03fef402989e0cec7644c86e47f2be93aa05e9a1318cb92c665b2d4d1",
+          "bytes": 14055
+        },
+        "row_count": 226
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2024/settlement/expenditure/kaigo-expenditure-detail-amounts.parquet",
+          "sha256": "72b38f60246d2b110899448c7d79955180e23ad02340dd425833798187fbe4f0",
+          "bytes": 10301
+        },
+        "row_count": 335
+      }
+    },
+    {
+      "table_id": "kouki-expenditure-detail",
+      "conversion_id": "kouki",
+      "input_fingerprint": "b36ff92495302e07ee247afd5e7b08d0147c0d0b6fed7c51199c92ebcbdf1ba8",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'事務事業': 'indent'}。",
+        "金額の単位は carried 3頁・default 1頁 から決めた。款の和 18,804,411,366 と印字の「歳出合計」18,804,411,366 が一致。",
+        "金額の注記 23 件（不用額 23）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 增→増 4 件（p18:full-page:a0:result0:r44・p18:full-page:a0:result0:r44:w6・p20:full-page:a0:result0:r2・p20:full-page:a0:result0:r2:w6）・徵→徴 12 件（p16:full-page:a0:result0:r32・p16:full-page:a0:result0:r32:w1・p18:full-page:a0:result0:r2・p18:full-page:a0:result0:r2:w2・p18:full-page:a0:result0:r3・p18:full-page:a0:result0:r3:w2・p18:full-page:a0:result0:r14・p18:full-page:a0:result0:r14:w2・p18:full-page:a0:result0:r15・p18:full-page:a0:result0:r15:w12・p18:full-page:a0:result0:r16・p18:full-page:a0:result0:r16:w12）・查→査 14 件（p18:full-page:a0:result0:r46・p18:full-page:a0:result0:r46:w10・p20:full-page:a0:result0:r14・p20:full-page:a0:result0:r14:w10・p20:full-page:a0:result0:r16・p20:full-page:a0:result0:r16:w10・p20:full-page:a0:result0:r18・p20:full-page:a0:result0:r18:w10・p21:full-page:a0:result0:r10・p21:full-page:a0:result0:r10:w10・p21:full-page:a0:result0:r20・p21:full-page:a0:result0:r20:w10・p21:full-page:a0:result0:r28・p21:full-page:a0:result0:r28:w10）・齡→齢 16 件（p16:full-page:a0:result0:r23・p16:full-page:a0:result0:r23:w5・p17:full-page:a0:result0:r38・p17:full-page:a0:result0:r38:w3・p17:full-page:a0:result0:r44・p17:full-page:a0:result0:r44:w5・p18:full-page:a0:result0:r15・p18:full-page:a0:result0:r15:w5・p19:full-page:a0:result0:r0・p19:full-page:a0:result0:r0:w5・p20:full-page:a0:result0:r16・p20:full-page:a0:result0:r16:w5・p20:full-page:a0:result0:r18・p20:full-page:a0:result0:r18:w5・p21:full-page:a0:result0:r0・p21:full-page:a0:result0:r0:w5）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2024/settlement/expenditure/kouki-expenditure-detail-nodes.parquet",
+          "sha256": "5f7a91bdff7ccbf81ccf88f8851dd1e4a3e8a7bbd2a746366a19a5e3f7a4ae6a",
+          "bytes": 8609
+        },
+        "row_count": 111
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2024/settlement/expenditure/kouki-expenditure-detail-amounts.parquet",
+          "sha256": "e03bef6906438c5e93768bff95480cc846bed69dbe6d71ad09e19ae46b71a2f2",
+          "bytes": 6755
+        },
+        "row_count": 171
+      }
+    }
+  ]
+}

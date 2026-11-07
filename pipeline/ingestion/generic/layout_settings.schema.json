@@ -27,6 +27,19 @@
         "heading": {"type": "string", "minLength": 1, "description": "The first column header of the boxed table, and the breakdown axis of its rows."}
       }
     },
+    "explained_projects": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["budget", "settled", "items_axis", "rows_axis"],
+      "description": "A 事業別決算説明書 (131211): the left page of each spread prints 款・項・目 and 事務事業 rows with the budget and settled amounts. Department rows, code copies, explanation items and 不用額 are arranged before the columns are read (ingestion/generic/explained_projects.py).",
+      "properties": {
+        "budget": {"type": "string", "minLength": 1, "description": "The heading of the budget column (予算現額)."},
+        "settled": {"type": "string", "minLength": 1, "description": "A word of the heading of the settled column (決算)."},
+        "items_axis": {"type": "string", "minLength": 1, "description": "The axis of the explanation's items (ア・イ・(ア)), compared with the row's settled amount alone."},
+        "rows_axis": {"type": "string", "minLength": 1, "description": "The axis of the 事務事業 rows (the breakdown of the 目): the axis of the rows a volume continues (`continued_rows`)."},
+        "title": {"type": "string", "minLength": 1, "description": "A title printed over the name and budget columns (予算説明): it heads no amount column."}
+      }
+    },
     "accounts": {
       "type": "object",
       "propertyNames": {"minLength": 1},
@@ -78,7 +91,7 @@
       "additionalProperties": false,
       "properties": {
         "ignore_frame_title": {"type": "boolean"},
-        "staircase": {"enum": [true, "款項目節"], "description": "The subject columns are a staircase: one header cell 款 項 目 over narrow code columns, and the 款・項 cells run down the page with no closing rule. \"款項目節\" also reads a header cell 款 項 目 節 over four columns, the fourth being 節."},
+        "staircase": {"enum": [true, "款項目節", "款項目事務事業"], "description": "The subject columns are a staircase: one header cell 款 項 目 over narrow code columns, and the 款・項 cells run down the page with no closing rule. \"款項目節\" also reads a header cell 款 項 目 節 over four columns, the fourth being 節."},
         "agree_on_bottom": {"const": true, "description": "Scan: the agreed header reading is moved onto each page aligned on the header's bottom rule, not the frame's top (a frame boxing the page title above the header on some pages)."},
         "agree_all_frames": {"const": true, "description": "Scan: every frame of a spread (not only the widest) takes the header reading most pages share, frame by frame from the left."},
         "kind_by_characters": {"const": true, "description": "A stacked kind under its group whose two printed lines the text layer or OCR read across (翌年度繰越額／継逓繰続費次越) is the known kind its characters spell, not the group (headers.canonical)."},

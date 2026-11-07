@@ -17,7 +17,7 @@ from pathlib import Path
 from functools import cache
 import re
 
-from ingestion.generic import inner_tables
+from ingestion.generic import explained_projects, inner_tables
 from ingestion.generic.layout import SIGNS, _frames, _header_bottom, normalize
 from ingestion.generic.observe import Page, Rule, Word
 from ingestion.generic.workflow import read_layout
@@ -1160,13 +1160,28 @@ def build_table(source: dict, options: dict, *, stop: bool = True, rules: dict |
     report.skipped_pages = [p for p, title in titles.items() if title not in (None, direction)] + other_sections
     observed = [p for p in printed if p.number not in report.skipped_pages]
     inner = (settings or {}).get('inner_tables')
-    laid, blocks = inner_tables.cut(observed, inner) if inner else (observed, [])
+    explained = (settings or {}).get('explained_projects')
+    continued = options.get('continued_rows')
+    arranged, taken, items, levels = explained_projects.arrange(observed, explained, continued) if explained \
+        else (observed, [], [], {})
+    laid, blocks = inner_tables.cut(arranged, inner) if inner else (arranged, [])
     logical = _layout(laid, columns, spread=spread, header=header)
     kind = source['target']['document_kind']
     built, report.pattern = build_reading(logical, kind, layout=(settings or {}).get('breakdown'),
                                          codes_right=(settings or {}).get('codes') == 'right',
                                          workflow=options.get('workflow'))
     prose, figures = inner_tables.attach(built, blocks, inner) if inner else ([], [])
+    if explained and continued is not None:
+        subject = next(n['axis_header'] for n in built.nodes if n.get('level_header') in ('款', '項', '目'))
+        problems = explained_projects.continue_rows(built, observed, continued, levels, subject, explained['rows_axis'],
+                                                    explained)
+        built.unowned.extend({'kind': 'continued rows', 'detail': p} for p in problems)
+    if explained:
+        built.unowned.extend({'kind': 'explained item', 'detail': p} for p in explained_projects.attach(
+            built, items, explained, declared=options.get('explained_names')))
+        built.unowned.extend({'kind': 'explained note', 'detail': p} for p in explained_projects.notes(built, taken))
+        for node in built.nodes:
+            node.pop('continued', None)
     declared_unread(built, logical, columns, observation)
     # Ink OCR left unread in a block's prose (a line of its 事業説明) lies over the amount columns, though the
     # block is no row of them; ink in its boxed table still stops the conversion.
@@ -1197,6 +1212,16 @@ def build_table(source: dict, options: dict, *, stop: bool = True, rules: dict |
     excluded += coverage_regions([(page, (w.x0, w.y0, w.x1, w.y1), w.text) for page, w in figures
                                   if re.search(r'[0-9０-９]', w.text)], kind='数量表',
                                  reason='事務事業の表の名前の欄に罫で囲んだ実績の表（件数・費用額・被保険者数など）。事業の予算現額・決算額ではない。')
+    excluded += coverage_regions([(m.page, (m.word.x0, m.word.y0, m.word.x1, m.word.y1), m.word.text) for m in taken
+                                  if m.kind == 'code copy' and re.search(r'[0-9０-９]', m.word.text)], kind='本文',
+                                 reason='決算額の欄の左に印字した、その行の番号の写し（1・(2)）。金額ではない。')
+    excluded += coverage_regions([(m.page, (m.word.x0, m.word.y0, m.word.x1, m.word.y1), m.word.text) for m in taken
+                                  if m.kind == 'misread code'], kind='本文',
+                                 reason='決算説明の項目の記号「イ」を OCR が「1」と読んだもの。金額ではなく、項目の記号イとして読んだ。')
+    excluded += coverage_regions([(m.page, (m.word.x0, m.word.y0, m.word.x1, m.word.y1), m.word.text) for m in taken
+                                  if m.kind == 'explanation' and re.search(r'[0-9０-９]', m.word.text)], kind='本文',
+                                 reason='見開きの右頁（決算説明）の数字。説明の文の件数・金額・主な不用額説明と、翌年度繰越額・不用額・執行率の欄。'
+                                        '項目の名前だけを左頁の項目に付け、不用額・翌年度繰越額は左頁に印字した同じ額を注記にした。')
     return Table(nodes, amounts, unresolved, excluded, built, report, observed, logical, headings)
 
 
