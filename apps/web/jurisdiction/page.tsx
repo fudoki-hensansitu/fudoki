@@ -86,7 +86,8 @@ const evaluatedOf = (y: ProfileYear): Fresh[] => [...y.projects.map((p) => ({ ki
 /** 実績と評価のある事業評価を優先し、まだ公表されていない年度だけ予算の資料から出す */
 const freshOf = (y: ProfileYear): Fresh[] => {
   const evaluated = evaluatedOf(y)
-  return evaluated.length ? evaluated : [...(y.budgetNew ?? [])].sort((a, b) => b.budgetYen - a.budgetYen).map((p) => ({ kind: 'budget' as const, ...p }))
+  // 金額は事業全体の額で新規の項目の大きさではないので並べ替えず、資料の順（款の順）のまま
+  return evaluated.length ? evaluated : (y.budgetNew ?? []).map((p) => ({ kind: 'budget' as const, ...p }))
 }
 
 const KIND_LABEL: Record<Fresh['kind'], string> = { sheet: '新しい事業', initiative: '今ある事業の中で', budget: '予算で新規' }
@@ -129,21 +130,18 @@ function InitiativeItem({ p, sheets }: { p: Initiative; sheets?: string }) {
   )
 }
 
-/** 予算の資料で新規と印の付いた項目。項目は資料の文言のまま並べ、金額は項目を含む事業全体の予算額 */
+/** 予算の資料で新規と印の付いた項目。項目は資料の文言のまま並べる。金額は項目を含む事業全体の予算額なので、項目の額に見えないよう大きく出さず、事業名に添える */
 function BudgetItem({ p, source }: { p: BudgetNew; source?: string }) {
   return (
     <div className="flex flex-col gap-2 border-b border-foreground/10 py-4">
-      <div className="flex items-start justify-between gap-x-6">
-        <div className="flex min-w-0 flex-col">
-          <KindLabel kind="budget" />
-          <ul className="flex flex-col gap-0.5">
-            {p.items.map((item) => <li key={item} className="text-[15.5px]">{item}</li>)}
-          </ul>
-        </div>
-        <YenText yen={p.budgetYen} className="shrink-0 text-right leading-snug" />
+      <div className="flex flex-col">
+        <KindLabel kind="budget" />
+        <ul className="flex flex-col gap-0.5">
+          {p.items.map((item) => <li key={item} className="text-[15.5px]">{item}</li>)}
+        </ul>
       </div>
       <p className="text-[13px] text-muted-foreground">
-        含まれる事業「{p.name}」の予算額
+        含まれる事業「{p.name}」（予算 {formatYen(p.budgetYen)}）
         {source ? (
           <Button variant="link" size="inline" nativeButton={false} render={<a href={`${source}#page=${p.page}`} target="_blank" rel="noopener" />} className="ml-1 align-baseline">
             資料の{p.page}頁
@@ -251,7 +249,7 @@ function Domains({ year, fiscalYear }: { year: ProfileYear; fiscalYear: number }
   const groups = groupByFrame(fresh)
   const byBudget = fresh[0]?.kind === 'budget'
   const lead = byBudget
-    ? `区の事業評価は${reiwa(fiscalYear + 1)}に公表されるため、それまでは当初予算の資料「款別予算等の主な施策」で区が新規と印を付けた項目を並べています。金額は項目を含む事業全体の予算額です。`
+    ? `区の事業評価は${reiwa(fiscalYear + 1)}に公表されるため、それまでは当初予算の資料「款別予算等の主な施策」で区が新規と印を付けた項目を、資料の順に並べています。添えた金額は項目を含む事業全体の予算額で、新規の項目だけの額ではありません。`
     : '区が事業ごとに目標と実績を振り返る「事業評価」から、この年度に新しくできた事業と、今ある事業の中で始めた取り組みを並べています。'
   const link = !groups.length ? undefined : byBudget ? (year.budgetHighlights ? { href: year.budgetHighlights, label: '主な施策（予算）' } : undefined) : { href: year.evaluationSource, label: '事業評価' }
   return (
