@@ -517,9 +517,8 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
       <ul className="border-t">
         {scrap.exits.map((e) => (
           <li key={e.name} className="grid grid-cols-[minmax(0,1fr)_72px] items-baseline gap-x-4 gap-y-1 border-b border-foreground/10 py-3 text-sm sm:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_80px]">
-            <span className="flex items-start gap-2">
-              <StopIcon className="-mt-[2px] size-6 shrink-0 text-primary" />
-              <span className="sr-only">やめた事業</span>
+            <span className="relative pl-8">
+              <StopIcon className="absolute -top-[3px] left-0 size-6 text-primary" />
               {e.name}
             </span>
             <span className="col-span-full row-start-2 text-[13.5px] text-muted-foreground sm:col-span-1 sm:row-start-auto">{e.reason}</span>
