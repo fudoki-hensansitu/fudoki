@@ -56,3 +56,7 @@ for tool in pdftotext pdftoppm pdftocairo pdfinfo pdffonts pdfimages; do
   [[ -x "$target/bin/$tool" ]] && ln -sfn "$target/bin/$tool" "$bin/$tool"
 done
 "$bin/pdftotext" -v 2>&1 | head -1
+# convert/refresh run the pdftotext found first on PATH (ingestion/lib/poppler.py)
+if [[ "$(command -v pdftotext || true)" != "$bin/pdftotext" ]]; then
+  echo "warning: pdftotext on PATH is $(command -v pdftotext || echo none). Put $bin first: export PATH=\"$bin:\$PATH\"" >&2
+fi
