@@ -257,10 +257,11 @@ function KouSection({ kou, active, loading, onBox, levels }: { kou: Kou; active:
       </div>
       <div ref={rib} className="relative hidden sm:block" aria-hidden="true">
         <svg className="absolute inset-0 size-full overflow-visible">
-          {paths.map((p, i) => <path key={i} d={p.d} className={`fill-primary/20 transition-opacity duration-500 ${active ? 'opacity-100' : 'opacity-0'}`} />)}
-          {setsu.map((p, i) => <path key={`s${i}`} d={p.d} className={`${p.rest ? 'fill-primary/10' : 'fill-primary/15'} transition-opacity duration-500 ${active ? 'opacity-100' : 'opacity-0'}`} />)}
-          {setsu.map((p, i) => <rect key={`t${i}`} x={p.x} y={p.y} width={SETSU_BAR} height={p.h} rx={1.5} className={`${p.rest ? 'fill-primary/35' : 'fill-primary/70'} transition-opacity duration-500 ${active ? 'opacity-100' : 'opacity-0'}`} />)}
-          {paths.map((p, i) => <rect key={`b${i}`} x={p.x} y={p.y} width={MOKU_BAR} height={p.h} rx={2} className={`fill-primary transition-opacity duration-500 ${active ? 'opacity-100' : 'opacity-0'}`} />)}
+          {/* 項が開いたら、中分類（項）→科目（目）→内訳（節）の順に帯が左から右へ伸びて流れ込む（全体図と同じ動き。styles/app.css）。閉じている項は出さない */}
+          {paths.map((p, i) => <path key={`${active}${i}`} d={p.d} style={{ animationDelay: `${i * 40}ms` }} className={`fill-primary/20 ${active ? 'flow-ribbon' : 'opacity-0'}`} />)}
+          {paths.map((p, i) => <rect key={`b${active}${i}`} x={p.x} y={p.y} width={MOKU_BAR} height={p.h} rx={2} style={{ animationDelay: `${300 + i * 40}ms` }} className={`fill-primary ${active ? 'flow-node' : 'opacity-0'}`} />)}
+          {setsu.map((p, i) => <path key={`s${active}${i}`} d={p.d} style={{ animationDelay: `${450 + i * 20}ms` }} className={`${p.rest ? 'fill-primary/10' : 'fill-primary/15'} ${active ? 'flow-ribbon' : 'opacity-0'}`} />)}
+          {setsu.map((p, i) => <rect key={`t${active}${i}`} x={p.x} y={p.y} width={SETSU_BAR} height={p.h} rx={1.5} style={{ animationDelay: `${750 + i * 20}ms` }} className={`${p.rest ? 'fill-primary/35' : 'fill-primary/70'} ${active ? 'flow-node' : 'opacity-0'}`} />)}
         </svg>
       </div>
       <div className="flex min-w-0 flex-col gap-3 sm:pl-2.5">

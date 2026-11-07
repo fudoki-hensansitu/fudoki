@@ -156,6 +156,21 @@ function BudgetItem({ p }: { p: BudgetNew }) {
 const FRAME_PREVIEW = 3
 /** 閉じているときに見せる、薄く消える行の高さ（px） */
 const FRAME_PEEK = 96
+/** 開閉で高さが動く時間（ms）。Tailwind の duration-300 と揃える */
+const FRAME_DURATION = 300
+
+/** ブラウザの smooth は時間を決められないので、指定の時間で ease-out にスクロールする */
+function scrollToIn(top: number, ms: number) {
+  const from = window.scrollY
+  if (ms <= 0) return window.scrollTo(0, top)
+  const start = performance.now()
+  const step = (now: number) => {
+    const t = Math.min(1, (now - start) / ms)
+    window.scrollTo(0, from + (top - from) * (1 - (1 - t) ** 3))
+    if (t < 1) requestAnimationFrame(step)
+  }
+  requestAnimationFrame(step)
+}
 
 function FrameItems<T>({ items, render }: { items: T[]; render: (item: T) => React.ReactNode }) {
   const [open, setOpen] = React.useState(false)
@@ -175,12 +190,15 @@ function FrameItems<T>({ items, render }: { items: T[]; render: (item: T) => Rea
       setHeight(still ? 'auto' : el.scrollHeight)
       return
     }
-    // 閉じるときは今の高さを固定してから縮め、閉じた場所が画面の外なら、その場所までスクロールで戻す
+    // 閉じるときは今の高さを固定してから縮める。同時に、最後に見せている行（3件目）が画面の真ん中に来るまで、縮みと同じ時間でスクロールを戻す
     setHeight(el.scrollHeight)
     requestAnimationFrame(() => requestAnimationFrame(() => setHeight(FRAME_PEEK)))
     setOpen(false)
-    const top = (wrap.current?.getBoundingClientRect().top ?? 0) + window.scrollY - 160
-    if (top < window.scrollY) window.scrollTo({ top, behavior: still ? 'auto' : 'smooth' })
+    const last = wrap.current?.previousElementSibling
+    if (!last) return
+    const r = last.getBoundingClientRect()
+    const target = Math.max(0, window.scrollY + r.top + r.height / 2 - window.innerHeight / 2)
+    if (target < window.scrollY) scrollToIn(target, still ? 0 : FRAME_DURATION)
   }
   return (
     <>
@@ -286,9 +304,12 @@ function Overview({ data, sections, year }: { data: PageData; sections: Set<stri
                 <span className="block text-[13px] leading-snug text-muted-foreground">{f.examples}</span>
               </div>
               <div className="text-right tabular-nums">
-                {/* 分野の額は全体に占める割合で出す（額は「お金は何に使われた？」で見られる） */}
+                {/* 分野の額は全体に占める割合で出し、その下に住民1人あたりの額を小さく添える */}
                 {spent && !spent.amountMissing && shown?.yen ? (
-                  <span className="block text-primary"><span className="text-xl">{((spent.yen / shown.yen) * 100).toFixed(1)}</span><span className="ml-0.5 text-xs">%</span></span>
+                  <>
+                    <span className="block text-primary"><span className="text-xl">{((spent.yen / shown.yen) * 100).toFixed(1)}</span><span className="ml-0.5 text-xs">%</span></span>
+                    {people ? <span className="block text-xs text-muted-foreground">1人 約{(Math.round(spent.yen / people / 1e3) / 10).toLocaleString('ja-JP')}万円</span> : null}
+                  </>
                 ) : (
                   <span className="block text-[15px] text-muted-foreground">{spent ? '金額未記載' : '—'}</span>
                 )}
@@ -490,7 +511,7 @@ function Budget({ data, year }: { data: PageData; year: number }) {
     <Section
       id="budget"
       title={budget ? 'お金は何に使う？' : 'お金は何に使われた？'}
-      lead="機能分類は、使い道を目的ごとに分ける世界共通の分類（COFOG）です。予算書・決算書の科目に COFOG を当てたのは風土記の判断なので、誤っていることがあります。自治体分類は、予算書・決算書の分け方そのままです。"
+      lead="機能分類は、使い道を目的ごとに分ける世界共通の分類（COFOG）です。独自評価のため誤っていることがあります。自治体分類は、予算書・決算書の分け方のまま表示。"
       link={docs.length ? docs : undefined}
     >
       <div id="budget-panel" data-ask-view={`${reiwa(year)}の${label}の金額（${VIEWS.find((v) => v.key === view)!.label}）`} className="flex flex-col gap-4">
