@@ -445,6 +445,21 @@ class NodeTablesTests(unittest.TestCase):
         self.assertEqual(result['counts'], {'non_amount': 6, 'blocked': 2})
         self.assertEqual([w['text'] for w in result['uncovered']], ['1,234', '22'])
 
+    def test_a_list_of_document_numbers_wrapped_within_a_number_is_no_amount(self):
+        words = [(1, (10., 10., 100., 19.), '第53号、令和7年議案第9'), (1, (10., 20., 60., 29.), '号区議会議決'),
+                 (1, (10., 40., 60., 49.), '第53号、9'), (1, (10., 60., 60., 69.), '第9')]
+        result = check_digit_coverage(words, NodeTables([], []),
+                                     amount_columns=[{'header': '金額', 'x_range': [10, 100]}])
+        self.assertEqual(result['counts'], {'non_amount': 1, 'blocked': 2})
+        self.assertEqual([w['text'] for w in result['uncovered']], ['第53号、9', '第9'])
+
+    def test_a_label_word_that_drops_the_number_bracket_but_keeps_the_name_bracket_is_covered(self):
+        tables = NodeTables([{**node('a'), 'code_text': '(2)', 'name_text': '総合行政情報誌(P295)',
+                              'x0': 10., 'y0': 10., 'x1': 80., 'y1': 19.}], [])
+        result = check_digit_coverage([(1, (10., 10., 80., 19.), '2総合行政情報誌 (P295)')], tables,
+                                     amount_columns=[{'header': '金額', 'x_range': [10, 80]}])
+        self.assertEqual(result['counts'], {'label': 1})
+
     def test_overhanging_glyph_requires_exact_reconstruction_of_its_amount(self):
         tables = NodeTables([], [{**amount('a', '20'), 'x0': 10., 'y0': 10., 'x1': 20., 'y1': 19.}])
         words = [(1, (10., 10., 19., 19.), '2'), (1, (15., 10., 24., 19.), '0')]

@@ -525,8 +525,10 @@ def check_digit_coverage(words, tables, *, tolerance=0.5, exclusions=(), amount_
             printed = code + _word_key(str(node.get('name_text') or ''))
             # A sub-item number's bracket may be dropped from the word (`10(1)消耗品費` read `1消耗品費`).
             # A count printed in the name (`療養給付費負担金179,856件`) is the name's, though it reads like an amount.
+            # Brackets are compared away on both sides: the word may keep the name's page reference in them
+            # (`2総合行政情報誌 (P295)`) while the number's bracket is gone (`(2)`, 131199).
             if word['key'] and (word['key'].removesuffix('件') + '件' in printed or not _amount_shaped(word['key']) and (
-                    word['key'] in printed or word['key'] in re.sub(r'[()（）]', '', printed)
+                    word['key'] in printed or re.sub(r'[()（）]', '', word['key']) in re.sub(r'[()（）]', '', printed)
                     or word['key'] in _level_marks(code, node.get('level_header')))):
                 word['covered'] = 'label'
                 break

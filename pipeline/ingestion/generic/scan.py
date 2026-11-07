@@ -17,6 +17,7 @@ from pathlib import Path
 from functools import cache
 import re
 
+from ingestion.generic import inner_tables
 from ingestion.generic.layout import SIGNS, _frames, _header_bottom, normalize
 from ingestion.generic.observe import Page, Rule, Word
 from ingestion.generic.workflow import read_layout
@@ -596,7 +597,7 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
           columns: dict | None = None, rules: dict | None = None, *, spread: dict | None = None,
           header: dict | None = None, code_corrections: list[dict] | None = None,
           header_readings: list[dict] | None = None, rule_dark: int = pdf_rules.DARK, rule_hook=None,
-          keep_marks: bool = False, row_gaps: bool = False) -> list[Page]:
+          keep_marks: bool = False, row_gaps: bool = False, short_columns: bool = False) -> list[Page]:
     """`rule_hook(PageRules) -> PageRules` completes the rules read from a rendered page before the words are cut at
     them; `keep_marks` keeps the bullet that starts a line in its first word (both for a text document's OCR pages, `mixed.py`)."""
     every = bool((header or {}).get('agree_all_frames'))
@@ -608,7 +609,7 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
     @cache
     def detected(number):
         found = short_rows(pdf, (rules or {}).get(number) or pdf_rules.detect(pdf, number, dark=rule_dark), rule_dark,
-                           bool((header or {}).get('staircase')))
+                           bool((header or {}).get('staircase')) or short_columns)
         return rule_hook(found) if rule_hook else found
 
     code_rules, shrunk = [], []
@@ -1124,7 +1125,8 @@ def read_pages(source: dict, options: dict, settings: dict | None, selected: lis
                     spread=spread, header=header, code_corrections=options.get('code_corrections'),
                     header_readings=options.get('header_readings'),
                     rule_dark=((settings or {}).get('rules') or {}).get('dark', pdf_rules.DARK), rule_hook=rule_hook,
-                    keep_marks=keep_marks, row_gaps=bool(((settings or {}).get('rules') or {}).get('row_gaps')))
+                    keep_marks=keep_marks, row_gaps=bool(((settings or {}).get('rules') or {}).get('row_gaps')),
+                    short_columns=bool(((settings or {}).get('rules') or {}).get('short_columns')))
     printed = add_code_readings(printed, options.get('code_readings'))
     printed = add_code_readings(printed, [{**r, 'box': box} for r in options.get('amount_readings', ()) for box in r['boxes']],
                                 'amount', r'△?(0|[1-9][0-9]{0,2}(,[0-9]{3})*)')
@@ -1138,6 +1140,7 @@ def build_table(source: dict, options: dict, *, stop: bool = True, rules: dict |
     from ingestion.generic.convert import Table, canonical_headings, correct_names, excluded_regions, fine_sections, scope_pages, split_notes
     from ingestion.generic.repair import Report
     from ingestion.generic.units import check as check_units
+    from ingestion.lib.node_tables import coverage_regions
     if source.get('format') != 'pdf' or source.get('pdf_type') != 'scan':
         raise ValueError('The scan builder requires a scan PDF')
     selected = scope_pages(source, options['account'], options.get('pages'))
@@ -1156,12 +1159,27 @@ def build_table(source: dict, options: dict, *, stop: bool = True, rules: dict |
     titles = page_titles([p for p in printed if p.number not in sectioned]) if direction else {}
     report.skipped_pages = [p for p, title in titles.items() if title not in (None, direction)] + other_sections
     observed = [p for p in printed if p.number not in report.skipped_pages]
-    logical = _layout(observed, columns, spread=spread, header=header)
+    inner = (settings or {}).get('inner_tables')
+    laid, blocks = inner_tables.cut(observed, inner) if inner else (observed, [])
+    logical = _layout(laid, columns, spread=spread, header=header)
     kind = source['target']['document_kind']
     built, report.pattern = build_reading(logical, kind, layout=(settings or {}).get('breakdown'),
                                          codes_right=(settings or {}).get('codes') == 'right',
                                          workflow=options.get('workflow'))
+    prose, figures = inner_tables.attach(built, blocks, inner) if inner else ([], [])
     declared_unread(built, logical, columns, observation)
+    # Ink OCR left unread in a block's prose (a line of its 事業説明) lies over the amount columns, though the
+    # block is no row of them; ink in its boxed table still stops the conversion.
+    built.unowned = [u for u in built.unowned if not (u['kind'] == 'unread ink in amount column'
+                                                      and inner_tables.in_prose(blocks, u['page'], u['box']))]
+    # Ink a declared reading covers (`amount_readings`, `code_readings`: what OCR left unread, read from the rendered
+    # page) is read: the reading stands for it.
+    declared = [(r['page'], box) for r in options.get('amount_readings', ()) for box in r['boxes']]
+    declared += [(r['page'], r['box']) for r in options.get('code_readings', ())]
+    built.unowned = [u for u in built.unowned if not (
+        u['kind'] == 'unread ink in amount column'
+        and any(page == u['page'] and box[0] <= (u['box'][0] + u['box'][2]) / 2 <= box[2]
+                and box[1] <= (u['box'][1] + u['box'][3]) / 2 <= box[3] for page, box in declared))]
     built.notes.extend(recovered)
     report.unit = check_units(built, kind, options['account'], bool(options.get('partial')))
     if report.unit['stopped'] and stop:
@@ -1172,8 +1190,14 @@ def build_table(source: dict, options: dict, *, stop: bool = True, rules: dict |
     nodes = [*built.nodes, *notes]
     amounts, headings = canonical_headings([*kept, *amounts], nodes, kind, header)
     fine_sections(nodes)
-    return Table(nodes, amounts, unresolved, excluded_regions(built, logical, codes, observed),
-                 built, report, observed, logical, headings)
+    excluded = excluded_regions(built, logical, codes, observed)
+    excluded += coverage_regions([(page, (w.x0, w.y0, w.x1, w.y1), w.text) for page, w in prose
+                                  if re.search(r'[0-9０-９]', w.text)], kind='本文',
+                                 reason='科目の下の説明（事業説明・残額説明）の文の中の数字。金額の欄ではない。')
+    excluded += coverage_regions([(page, (w.x0, w.y0, w.x1, w.y1), w.text) for page, w in figures
+                                  if re.search(r'[0-9０-９]', w.text)], kind='数量表',
+                                 reason='事務事業の表の名前の欄に罫で囲んだ実績の表（件数・費用額・被保険者数など）。事業の予算現額・決算額ではない。')
+    return Table(nodes, amounts, unresolved, excluded, built, report, observed, logical, headings)
 
 
 def near_code(first: str | None, second: str | None) -> bool:
