@@ -328,7 +328,7 @@ function KanPanel({ drill, loading, levels }: { drill: Drill; loading: boolean; 
 }
 
 /** 款→項の全体図と款ごとの内訳。最新年度の款→項はページに埋めてあり、それ以外の年度は図が近づいたら読み込む */
-/** tabs はカードの左上に置く切り替え（決算／予算・分け方）、summary は全体図のときに出す総額。view は分野（COFOG の枠）か款か */
+/** tabs はカードの左上に置く切り替え（分け方）、summary は全体図のときに出す総額。view は分野（COFOG の枠）か款か */
 export function Flow({ data, total: year, view = 'kan', phase = 'settlement', tabs, summary }: { data: PageData; total: YearTotal; view?: FlowView; /** 決算の無い年度は当初予算（initial）の流れを読む */ phase?: 'settlement' | 'initial'; tabs?: React.ReactNode; summary?: React.ReactNode }) {
   const levels = LEVELS[view]
   const isLatest = phase === 'settlement' && year.year === data.years.at(-1)?.year
