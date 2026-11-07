@@ -9,7 +9,6 @@ import type { StoredSession } from '../chat/store'
 import { Hint } from '@/components/hint'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { StopIcon, NewIcon, UpIcon } from './fresh-icons'
 import { DOMAIN_FRAMES, groupByFrame, OTHER_FRAME } from './domains'
 import { EMBLEMS } from './emblems'
@@ -465,16 +464,20 @@ function Budget({ data, year }: { data: PageData; year: number }) {
       {pct !== null ? <span className={`text-[13px] tabular-nums text-muted-foreground`}>前年度比 {pct >= 0 ? '+' : '−'}{Math.abs(pct).toFixed(1)}%</span> : null}
     </>
   )
+  // 分け方の切り替えはヘッダーの年度の切り替えと同じ丸いボタンの並びにする
   const tabs = (
-    <div className="flex flex-wrap items-center justify-end gap-x-3 gap-y-1.5">
-    <Select items={VIEWS.map((v) => ({ value: v.key, label: v.label }))} value={view} onValueChange={(v) => v && setView(v as FlowView)}>
-      <SelectTrigger size="sm" aria-label={`分類：${VIEWS.find((v) => v.key === view)!.label}`} className="text-[13px]">
-        <SelectValue />
-      </SelectTrigger>
-      <SelectContent align="end">
-        {VIEWS.map((v) => <SelectItem key={v.key} value={v.key}>{v.label}</SelectItem>)}
-      </SelectContent>
-    </Select>
+    <div role="group" aria-label="分類" className="flex justify-end gap-1">
+      {VIEWS.map((v) => (
+        <button
+          key={v.key}
+          type="button"
+          aria-pressed={v.key === view}
+          onClick={() => setView(v.key)}
+          className={`rounded-full px-2.5 py-1.5 text-[13px] transition-colors ${v.key === view ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+        >
+          {v.label}
+        </button>
+      ))}
     </div>
   )
   return (
