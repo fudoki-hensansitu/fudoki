@@ -4,9 +4,11 @@ The words of a text PDF come from `pdftotext -bbox`, so Poppler's version and CJ
 (ingestion/lib/poppler.py). libpoppler keeps its data directory in a fixed-length string. mise's conda backend
 writes the install path there and fills the rest with NULs, which also cuts the `/cMap`-style suffixes, so
 Japanese CID fonts report "Missing language pack" and their words are lost. The NULs are replaced here with
-`/`, which names the same directory. Running it again changes nothing.
+`/`, which names the same directory. Running it again changes nothing. On macOS the edited library is
+signed again (ad hoc, as conda-forge ships it): arm64 kills a process that loads a library whose signature broke.
 """
 import os
+import subprocess
 import sys
 from pathlib import Path
 
@@ -27,6 +29,8 @@ for library in libraries:
     width = end - start - 1  # the last NUL ends the string
     data[start:start + width] = datadir + b'/' * (width - len(datadir))
     library.write_bytes(bytes(data))
+    if sys.platform == 'darwin':
+        subprocess.run(['codesign', '--force', '--sign', '-', str(library)], check=True)
     patched += 1
 if patched + fixed != 1:
     sys.exit(f'{root}: expected one libpoppler holding {datadir.decode()}, found {patched} to patch and {fixed} patched')
