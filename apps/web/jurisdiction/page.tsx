@@ -3,7 +3,7 @@
 // 歳出の決算は API の値。事業評価から取った事業・やめたこと（事業の入れ替え）は jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
 import { Link } from '@void/react'
 import * as React from 'react'
-import { ArrowCircleUpIcon, ArrowLeftIcon, ArrowRightIcon, ArrowSquareOutIcon, CaretRightIcon, MapPinAreaIcon, MapTrifoldIcon, SquaresFourIcon, BankIcon, BasketballIcon, CaretDownIcon, ClipboardTextIcon, CoinsIcon, ChatCircleIcon, FirstAidKitIcon, GlobeIcon, HandHeartIcon, HouseLineIcon, LeafIcon, MapPinIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, SparkleIcon, StorefrontIcon, StudentIcon, DotsThreeCircleIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
+import { ArrowLeftIcon, ArrowRightIcon, ArrowSquareOutIcon, CaretRightIcon, MapPinAreaIcon, MapTrifoldIcon, SquaresFourIcon, BankIcon, BasketballIcon, CaretDownIcon, ClipboardTextIcon, CoinsIcon, ChatCircleIcon, FirstAidKitIcon, GlobeIcon, HandHeartIcon, HouseLineIcon, LeafIcon, MapPinIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, StudentIcon, DotsThreeCircleIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
 import { StartForm } from '../chat/start-form'
 import type { StoredSession } from '../chat/store'
 import { Hint } from '@/components/hint'
@@ -96,15 +96,14 @@ const freshTitle = (y: ProfileYear) => (isPlanned(y) ? '新しく何を始める
 
 /** 新しく始めたことの1行。名前の左に新規かレベルアップ（今ある事業の中での取り組み）かの印、右に金額、下に中身。評価・予算どの年度も同じ形にする */
 function FreshRow({ up, upLabel = 'レベルアップ', title, yen, children }: { up: boolean; upLabel?: string; title: string; yen: number; children: React.ReactNode }) {
-  const Icon = up ? ArrowCircleUpIcon : SparkleIcon
   const label = up ? upLabel : '新規'
   return (
     <div className="flex flex-col gap-2 border-b border-foreground/10 py-4">
       <div className="flex items-start justify-between gap-x-6">
         <span className="flex min-w-0 items-start gap-2 text-[15.5px]">
           <Hint label={label}>
-            <span className="mt-[3px] shrink-0">
-              <Icon aria-hidden="true" className="size-[18px] text-muted-foreground" />
+            <span className="mt-[2px] inline-flex h-[19px] w-[42px] shrink-0 items-center justify-center rounded-full border border-primary/30 bg-primary/10 text-[11px] font-bold tracking-wide text-primary">
+              <span aria-hidden="true">{up ? 'Up!' : 'New!'}</span>
               <span className="sr-only">{label}</span>
             </span>
           </Hint>
