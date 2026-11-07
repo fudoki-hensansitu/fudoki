@@ -2,6 +2,7 @@
 // 会話は sessionStorage にしか無いので、サーバーは枠だけを書き、ブラウザで読んでから描く
 import * as React from 'react'
 import { Link } from '@void/react'
+import { Button } from '@/components/ui/button'
 import { Conversation } from './conversation'
 import { loadSession, type StoredSession } from './store'
 
@@ -12,9 +13,9 @@ function Expired() {
   return (
     <div className="mx-auto flex h-dvh max-w-xl flex-col items-center justify-center gap-4 px-4 text-center">
       <p>この会話はこのブラウザに残っていないか、期限が切れました。会話は保存していないため、最初から聞き直してください。</p>
-      <Link href="/" className="text-primary underline underline-offset-4">
+      <Button variant="link" size="inline" nativeButton={false} render={<Link href="/" />}>
         風土記のトップへ
-      </Link>
+      </Button>
     </div>
   )
 }

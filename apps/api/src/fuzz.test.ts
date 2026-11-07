@@ -2,8 +2,11 @@ import { describe, expect, test } from 'bun:test'
 import { createApp } from './app'
 import { ApiError } from './errors'
 import { decodeToken, operations } from './operations'
-import { MAX_BINDS, countBinds, searchInput } from './search'
-import { insertNode, testDb } from './testing'
+import { SUBJECT_TABLE } from './columns'
+import { MAX_BINDS, countBinds, searchInputFor } from './search'
+import { insertSubject, testDb } from './testing'
+
+const searchInput = searchInputFor(SUBJECT_TABLE)
 
 // 固定した種の乱数で、ランダムな JSON を schema・handler・REST に当てる。
 // 結果が「400 か正常」のどちらかになり、想定外の例外・500・長い停止が出ないことを確かめる。
@@ -20,7 +23,7 @@ function rng(seed: number) {
 }
 const pick = <T>(r: () => number, xs: readonly T[]) => xs[Math.floor(r() * xs.length)]!
 
-const columns = ['name', 'code', 'node_kind', 'cofog_code', 'amount_yen', 'is_leaf', 'fiscal_year', 'document_kind', 'row_hash', 'axis', '__proto__', 'constructor', '']
+const columns = ['name', 'code', 'level', 'cofog_code', 'amount_yen', 'is_leaf', 'fiscal_year', 'document_kind', 'row_hash', 'node_kind', '__proto__', 'constructor', '']
 const ops = ['eq', 'not_eq', 'prefix', 'suffix', 'contains', 'min', 'max', 'is_null', 'like', '__proto__']
 const strings = ['', 'a', '目', '庁*', '*', '[', '?', "' OR 1=1 --", '"', '\\', '\u0000', '\ud800', '😀', 'x'.repeat(201), 'NaN', 'Infinity', '-0', '1e999']
 const numbers = [0, -0, 1, -1, 2024, 9999, 10000, 0.5, 1.5, 1e20, -1e20, 9007199254740991, 9007199254740993, Number.MAX_VALUE, 5e-324]
@@ -60,7 +63,7 @@ function validQuery(r: () => number): unknown {
   const str = (): Record<string, unknown> => ({ ...(r() < 0.4 && { eq: list(text) }), ...(r() < 0.3 && { not_eq: list(text) }), ...(r() < 0.3 && { prefix: text() }), ...(r() < 0.3 && { suffix: text() }), ...(r() < 0.3 && { contains: text() }), ...(r() < 0.2 && { is_null: r() < 0.5 }) })
   const int = (): Record<string, unknown> => ({ ...(r() < 0.4 && { eq: list(() => Math.floor(r() * 3000) - 5) }), ...(r() < 0.3 && { min: Math.floor(r() * 100) - 50 }), ...(r() < 0.3 && { max: Math.floor(r() * 100) }), ...(r() < 0.2 && { is_null: r() < 0.5 }) })
   const where: Record<string, unknown> = {}
-  for (const [col, make] of [['name', str], ['code', str], ['node_kind', str], ['cofog_code', str], ['amount_yen', int]] as const) {
+  for (const [col, make] of [['name', str], ['code', str], ['level', str], ['cofog_code', str], ['amount_yen', int]] as const) {
     const c = make()
     if (r() < 0.5 && Object.keys(c).length > 0) where[col] = c
   }
@@ -70,13 +73,13 @@ function validQuery(r: () => number): unknown {
     document_kind: pick(r, ['settlement', 'initial']),
     fiscal_year: { min, max: min + Math.floor(r() * 5) },
     where,
-    order_by: Array.from({ length: Math.floor(r() * 4) }, () => ({ column: pick(r, ['name', 'amount_yen', 'node_id', 'axis', 'code']), desc: r() < 0.5 })).filter((k, i, a) => a.findIndex((x) => x.column === k.column) === i),
+    order_by: Array.from({ length: Math.floor(r() * 4) }, () => ({ column: pick(r, ['name', 'amount_yen', 'subject_id', 'level', 'code']), desc: r() < 0.5 })).filter((k, i, a) => a.findIndex((x) => x.column === k.column) === i),
     page_size: 1 + Math.floor(r() * 50),
   }
 }
 
 const COUNT = 3000
-const search = operations.find((o) => o.name === 'search_expenditure_nodes')!
+const search = operations.find((o) => o.name === 'search_expenditure_subjects')!
 
 describe('schema の fuzz', () => {
   test('ランダムな JSON と壊れた問い合わせで schema が例外を出さない', () => {
@@ -115,7 +118,7 @@ describe('schema の fuzz', () => {
 describe('handler の fuzz', () => {
   test('schema を通った入力は正常に終わるか ApiError だけ', async () => {
     const { db, sqlite } = testDb()
-    insertNode(sqlite, { document_kind: 'settlement', node_id: 'a'.repeat(64), node_kind: '目', name: '庁舎', amount_yen: 5, is_leaf: 1 })
+    insertSubject(sqlite, { document_kind: 'settlement', subject_id: 'a'.repeat(64), level: '目', name: '庁舎', amount_yen: 5, is_leaf: 1 })
     const r = rng(12)
     const started = performance.now()
     let ran = 0
@@ -146,7 +149,7 @@ describe('REST の fuzz', () => {
     for (let i = 0; i < 1500; i++) bodies.push(JSON.stringify(i % 3 === 0 ? randomValue(r, 0) : randomQuery(r)))
     const started = performance.now()
     for (const body of bodies) {
-      const res = await app.request('/v1/expenditure/nodes:search', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body }, { DB: db })
+      const res = await app.request('/v1/fiscal/expenditure/subjects:search', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body }, { DB: db })
       expect([200, 400, 413], body.slice(0, 120)).toContain(res.status)
       if (res.status !== 200) expect((await res.json()).error.code).toBe('INVALID_ARGUMENT')
     }

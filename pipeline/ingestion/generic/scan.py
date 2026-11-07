@@ -333,7 +333,8 @@ def with_mark(item: dict, pieces: list[Word] | None) -> list[Word] | None:
 
 
 def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None = None,
-         used: set[str] | None = None, detected: pdf_rules.PageRules | None = None, keep_marks: bool = False) -> Page:
+         used: set[str] | None = None, detected: pdf_rules.PageRules | None = None, keep_marks: bool = False,
+         row_gaps: bool = False) -> Page:
     number = observation_page['page_number']
     detected = detected or pdf_rules.detect(pdf, number)
     rules = [Rule(r.position, r.start, r.position, r.end) for r in detected.vertical]
@@ -408,8 +409,21 @@ def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None
                     pieces = None
                 if keep_marks:
                     pieces = with_mark(item, pieces)
-                words += _cell_words(pieces or [Word(item['raw_text'], *item['bbox_pdf_pt'])], cuts, reach)
+                words += _cell_words(pieces or [Word(item['raw_text'], *item['bbox_pdf_pt'])],
+                                     line_cuts(detected, item['bbox_pdf_pt']) if row_gaps else cuts, reach)
     return Page(number, detected.width, detected.height, drop_covered_digits(words), rules)
+
+
+def line_cuts(detected: pdf_rules.PageRules, box: list[float] | None) -> list[float]:
+    """The layout setting `rules.row_gaps`: the vertical rules that cut one OCR line are those drawn across its
+    middle. A rule the page leaves out for a row lets the row's text run on into the next column (133086 prints a
+    事業 `(01)一般管理費` across the rule between the subject and the first amount column, which stops above and
+    goes on below its row). Only where declared: a scan elsewhere loses pieces of its rules where ink is faint, and
+    its words must still be cut there."""
+    if not box:
+        return sorted(r.position for r in detected.vertical)
+    middle = (box[1] + box[3]) / 2
+    return sorted({r.position for r in detected.vertical if r.start <= middle <= r.end})
 
 
 def drop_covered_digits(words: list[Word]) -> list[Word]:
@@ -582,7 +596,7 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
           columns: dict | None = None, rules: dict | None = None, *, spread: dict | None = None,
           header: dict | None = None, code_corrections: list[dict] | None = None,
           header_readings: list[dict] | None = None, rule_dark: int = pdf_rules.DARK, rule_hook=None,
-          keep_marks: bool = False) -> list[Page]:
+          keep_marks: bool = False, row_gaps: bool = False) -> list[Page]:
     """`rule_hook(PageRules) -> PageRules` completes the rules read from a rendered page before the words are cut at
     them; `keep_marks` keeps the bullet that starts a line in its first word (both for a text document's OCR pages, `mixed.py`)."""
     every = bool((header or {}).get('agree_all_frames'))
@@ -659,7 +673,7 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
     if code_rules:
         corrections = amount_dictionary([r.__dict__ for r in [*(corrections.rules if corrections else ()), *code_rules]])
     used = set()
-    found = [page(p, pdf, corrections, used, detected(p['page_number']), keep_marks) for p in observation['pages']]
+    found = [page(p, pdf, corrections, used, detected(p['page_number']), keep_marks, row_gaps) for p in observation['pages']]
     unused = {r.id for r in corrections.rules} - used if corrections else set()
     if unused:
         raise ValueError(f'Amount corrections matched no observation: {sorted(unused)}')
@@ -831,6 +845,78 @@ def add_code_readings(observed: list[Page], readings: list[dict] | None, key: st
                 raise ValueError(f'A name reading overlaps a reading: {reading["id"]}')
             words[reading['page']].append(Word(reading['name'], n0, m0, n1, m1))
     return [Page(p.number, p.width, p.height, words[p.number], p.rules) for p in observed]
+
+
+def drop_bands(observed: list[Page], bands: list[dict] | None) -> list[Page]:
+    """Leave out the readings of a declared band of rows (`dropped_bands`): the words whose middle lies
+    within the band's height on that page. A page printed in two originals (the last page of one 款別の分冊
+    is the first of the next, 132101) holds the end of one volume's 款 and the start of the next; each
+    volume reads only its own rows. The page's headings stay, and so do its rules. A band that holds no
+    reading is no band the declaration saw, and the conversion stops."""
+    words = {p.number: list(p.words) for p in observed}
+    for band in bands or ():
+        top, bottom = band['y_range']
+        if band['page'] not in words or not top < bottom:
+            raise ValueError(f'A dropped band needs a scoped page and a band of rows: {band["id"]}')
+        kept = [w for w in words[band['page']] if not top <= (w.y0 + w.y1) / 2 < bottom]
+        if len(kept) == len(words[band['page']]):
+            raise ValueError(f'A dropped band holds no reading: {band["id"]} {band["y_range"]}')
+        words[band['page']] = kept
+    return [Page(p.number, p.width, p.height, words[p.number], p.rules) for p in observed]
+
+
+ORDINAL_GAP = 9.0  # pt: the space OCR leaves between `その` and its number (4.3–7.7 at 132101)
+
+
+def join_ordinals(observed: list[Page]) -> list[Page]:
+    """Put back the number of a `その1`, `その2` in a name (`施設警備委託料その1`) where OCR read it as a word of
+    its own: a lone digit or two just right of a word that ends the line's text in `その` is part of the name,
+    not an amount (132101 備考: `施設警備委託料その` `1` `4,758,930`), and so is the number after `第`
+    (`東小金井北第` `1`). OCR may also cut `そ` from `の`, and the name may wrap between them. So is a count in
+    an opening bracket at the end of the line (`会計年度任用職員報酬(`
+    `14` / `人)`: fourteen people, not an amount)."""
+    pages = []
+    for page in observed:
+        words = list(page.words)
+        middle = lambda w: (w.y0 + w.y1) / 2
+        for index, word in enumerate(words):
+            if word is None or not re.fullmatch(r'[0-9]{1,3}', word.text):
+                continue
+            line = sorted((w for w in words if w is not None and w is not word and abs(middle(w) - middle(word)) < 3
+                           and w.x1 <= word.x0 + 0.5), key=lambda w: w.x1)
+            if not line or word.x0 - line[-1].x1 > ORDINAL_GAP:
+                continue
+            before = line[-1]
+            text = before.text if len(line) < 2 or before.x0 - line[-2].x1 > ORDINAL_GAP else line[-2].text + before.text
+            if normalize(text) == 'の' and len(line) == 1:
+                # `そ` ends the line above and the name wraps (`…（令和元年度導入分）そ` / `の 2`).
+                above = [w for w in words if w is not None and 6 < middle(word) - middle(w) < 14
+                         and w.x0 < word.x0 + 120 and w.x1 > before.x0]
+                text = max(above, key=lambda w: w.x1).text + text if above else text
+            if not normalize(text).endswith(('その', '第', '(')):
+                continue
+            joined = Word(before.text + word.text, before.x0, min(before.y0, word.y0), word.x1, max(before.y1, word.y1))
+            words[words.index(before)] = joined
+            words[index] = None
+        for index, word in enumerate(words):
+            # The number wrapped to the next line with what follows it (`エアコン借上料その` / `1 (平成27年度導入分)`,
+            # `（東小金井北第` / `1自転車駐車場)`, `地下水保全会議委員報酬 （` / `5人)`).
+            found = word is not None and re.fullmatch(r'([0-9]{1,2})\s*([^0-9\s].*)', word.text)
+            if not found:
+                continue
+            if any(w is not None and w is not word and abs(middle(w) - middle(word)) < 3 and w.x1 <= word.x0 + 0.5
+                   for w in words):
+                continue  # not the start of its line
+            above = [w for w in words if w is not None and 6 < middle(word) - middle(w) < 14
+                     and w.x0 < word.x0 + 120 and w.x1 > word.x0]
+            if not above or not normalize((last := max(above, key=lambda w: w.x1)).text).endswith(('その', '第', '(')):
+                continue
+            width = (word.x1 - word.x0) / len(word.text)
+            cut = word.x0 + width * (len(word.text) - len(found.group(2)))
+            words[words.index(last)] = Word(last.text + found.group(1), last.x0, last.y0, last.x1 + width * len(found.group(1)), last.y1)
+            words[index] = Word(found.group(2), cut, word.y0, word.x1, word.y1)
+        pages.append(Page(page.number, page.width, page.height, [w for w in words if w is not None], page.rules))
+    return pages
 
 
 SECTION_TITLES = {'収入': 'revenue', '支出': 'expenditure'}
@@ -1038,7 +1124,7 @@ def read_pages(source: dict, options: dict, settings: dict | None, selected: lis
                     spread=spread, header=header, code_corrections=options.get('code_corrections'),
                     header_readings=options.get('header_readings'),
                     rule_dark=((settings or {}).get('rules') or {}).get('dark', pdf_rules.DARK), rule_hook=rule_hook,
-                    keep_marks=keep_marks)
+                    keep_marks=keep_marks, row_gaps=bool(((settings or {}).get('rules') or {}).get('row_gaps')))
     printed = add_code_readings(printed, options.get('code_readings'))
     printed = add_code_readings(printed, [{**r, 'box': box} for r in options.get('amount_readings', ()) for box in r['boxes']],
                                 'amount', r'△?(0|[1-9][0-9]{0,2}(,[0-9]{3})*)')
@@ -1061,6 +1147,8 @@ def build_table(source: dict, options: dict, *, stop: bool = True, rules: dict |
     header = (settings or {}).get('header')
     by_node = [r for r in options.get('name_corrections', ()) if 'observation_id' not in r]
     printed, observation, variants = read_pages(source, options, settings, selected, rules)
+    printed = drop_bands(printed, options.get('dropped_bands'))
+    printed = join_ordinals(printed)
     printed, other_sections, sectioned = direction_sections(printed, source.get('direction'))
     printed, recovered = recover_codes(printed, Path(source['path']), columns, spread=spread, header=header)
     report = Report()

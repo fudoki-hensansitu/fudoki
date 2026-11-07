@@ -11,7 +11,8 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "dark": {"type": "integer", "minimum": 129, "maximum": 255}
+        "dark": {"type": "integer", "minimum": 129, "maximum": 255},
+        "row_gaps": {"const": true, "description": "A vertical rule the page leaves out for a row lets the row's text run on into the next column (133086's 事業 names): an OCR line is cut only at the rules drawn across its middle."}
       }
     },
     "accounts": {
@@ -163,6 +164,7 @@
           "notes": {"type": "array", "items": {"type": "string", "minLength": 1}},
           "name_line_reach": {"type": "number", "minimum": 1, "maximum": 2, "description": "How far a name line wrapped around a number's line may sit from it, in heights of its box (default 1). A Paddle box is lower than the line pitch, so a scan read by Paddle declares a little over 1."},
           "name_column": {"const": true, "description": "Names are set in a column of their own a space right of the numbers: a name wrapped around a line printing only its number starts up to a character past it."},
+          "under": {"type": "string", "minLength": 1, "description": "An item of this axis that hangs from its subject item belongs to the item of the named axis whose ruled row it is printed in, under the same subject item (133086: the 備考 of a 節, centred on the 節's row)."},
           "yen_marked": {"const": true, "description": "An amount that prints 円 after it in a column of another unit is in yen: a reckoning (`46.4円 × 1,115,000件 ＝ 51,736,000円`) set among the column's 千円."}
         }
       }

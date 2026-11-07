@@ -10,7 +10,7 @@ with account_sums as (
         sum(amount_yen) filter (where node_kind = '項') as kou_sum,
         sum(amount_yen) filter (where node_kind = '目') as moku_sum,
         count(*) filter (where node_kind = '目') as moku_count
-    from {{ ref('settlement_expenditure_node') }}
+    from (select * from {{ ref('int_fiscal__expenditure_nodes') }} where document_kind = 'settlement')
     where is_subject
     group by 1, 2, 3
 ), rows as (

@@ -5,15 +5,15 @@ import columnsJson from './columns.json'
 import { CfWorkerJsonSchemaValidator } from '@modelcontextprotocol/server/validators/cf-worker'
 import { operations } from './operations'
 import type { Db } from './db'
-import { insertNode, insertOrigin, testDb } from './testing'
+import { insertDetail, insertOrigin, insertSubject, testDb } from './testing'
 
 let db: Db
 let sqlite: Database
 const app = createApp()
 
-// node_id は小文字 16 進 64 文字
+// subject_id・detail_id は小文字 16 進 64 文字。当初予算の款（K1I）は決算の款と node_key が同じで ID が違う
 const id = (prefix: string) => prefix.padEnd(64, '0')
-const [K1, M1, M2, S1, OLD] = [id('a1'), id('b1'), id('b2'), id('c1'), id('d1')]
+const [K1, M1, M2, S1, OLD, K1I] = [id('a1'), id('b1'), id('b2'), id('c1'), id('d1'), id('a2')]
 
 /** MCP の応答の body。2025 年代の client には SDK が SSE（`data: {...}`）で返し、2026-07-28 の要求には JSON で返す。 */
 const rpcBody = async (res: Response) => {
@@ -29,26 +29,27 @@ const post = (path: string, body: unknown, headers: Record<string, string> = {})
     { method: 'POST', headers: { 'Content-Type': 'application/json', ...headers }, body: typeof body === 'string' ? body : JSON.stringify(body) },
     { DB: db }
   )
-const SEARCH = '/v1/expenditure/nodes:search'
+const SEARCH = '/v1/fiscal/expenditure/subjects:search'
+const SUBJECT = (subjectId: string) => `/v1/fiscal/expenditure/subjects/${subjectId}`
 const search = (body: Record<string, unknown>) => post(SEARCH, { document_kind: 'settlement', fiscal_year: { min: 2024, max: 2024 }, ...body })
-const ids = (body: { nodes: { node_id: string }[] }) => body.nodes.map((n) => n.node_id)
+const ids = (body: { subjects: { subject_id: string }[] }) => body.subjects.map((n) => n.subject_id)
 
 beforeEach(() => {
   ;({ db, sqlite } = testDb())
   insertOrigin(sqlite, { origin_id: 'o1', title: '決算書', url: 'https://example.test/o1', sha256: 'aaa' })
   insertOrigin(sqlite, { origin_id: 'o2', title: '決算書2', url: 'https://example.test/o2', sha256: 'bbb' })
-  insertNode(sqlite, { document_kind: 'settlement', node_id: K1, node_kind: '款', axis: '科目', name: '総務費', amount_yen: 900, is_leaf: 0, is_subject: 1, origin_id: 'o1' })
-  insertNode(sqlite, { document_kind: 'settlement', node_id: M1, parent_node_id: K1, node_kind: '目', axis: '科目', name: '庁舎管理費', amount_yen: 500, is_leaf: 1, cofog_code: '01.3', origin_id: 'o1' })
-  insertNode(sqlite, { document_kind: 'settlement', node_id: M2, parent_node_id: K1, node_kind: '目', axis: '科目', name: '広報費', amount_yen: 400, is_leaf: 1, cofog_code: '01.3', origin_id: 'o1' })
-  insertNode(sqlite, { document_kind: 'settlement', node_id: S1, parent_node_id: K1, node_kind: '節', axis: '節', name: '委託料', amount_yen: 900, is_leaf: 1, origin_id: 'o2' })
-  insertNode(sqlite, { document_kind: 'initial', node_id: K1, node_kind: '款', axis: '科目', name: '総務費', amount_yen: 950, origin_id: 'o1' })
-  insertNode(sqlite, { document_kind: 'settlement', node_id: OLD, fiscal_year: 2019, node_kind: '目', name: '古い', amount_yen: 1 })
+  insertSubject(sqlite, { subject_id: K1, level: '款', name: '総務費', amount_yen: 900, origin_id: 'o1' })
+  insertSubject(sqlite, { subject_id: M1, parent_subject_id: K1, level: '目', name: '庁舎管理費', amount_yen: 500, cofog_code: '01.3', origin_id: 'o1' })
+  insertSubject(sqlite, { subject_id: M2, parent_subject_id: K1, level: '目', name: '広報費', amount_yen: 400, cofog_code: '01.3', origin_id: 'o1' })
+  insertDetail(sqlite, { detail_id: S1, subject_id: M1, breakdown: '節', source_heading: '節', node_kind: '節', name: '委託料', amount_yen: 500, origin_id: 'o2' })
+  insertSubject(sqlite, { document_kind: 'initial', subject_id: K1I, node_key: K1, level: '款', name: '総務費', amount_yen: 950, origin_id: 'o1' })
+  insertSubject(sqlite, { subject_id: OLD, fiscal_year: 2019, level: '目', name: '古い', amount_yen: 1 })
 })
 
 describe('kill switch', () => {
   test('serving が on 以外なら全パスで 503 と no-store', async () => {
     sqlite.query(`UPDATE control SET value = 'off' WHERE key = 'serving'`).run()
-    for (const path of ['/', '/openapi.json', '/v1/expenditure/columns']) {
+    for (const path of ['/', '/openapi.json', '/v1/fiscal/expenditure/columns']) {
       const res = await get(path)
       expect(res.status).toBe(503)
       expect(res.headers.get('Cache-Control')).toBe('no-store')
@@ -101,42 +102,52 @@ describe('GET /health', () => {
 
 describe('search', () => {
   test('絞り込み・boolean の復元・origins は一度ずつ', async () => {
-    const res = await search({ where: { node_kind: { eq: ['目'] } }, order_by: [{ column: 'amount_yen', desc: true }] })
+    const res = await search({ where: { level: { eq: ['目'] } }, order_by: [{ column: 'amount_yen', desc: true }] })
     expect(res.status).toBe(200)
     const body = await res.json()
     expect(ids(body)).toEqual([M1, M2])
-    expect(body.nodes[0].is_leaf).toBe(true)
-    expect(body.nodes[0].parent_node_id).toBe(K1)
-    expect(body.nodes[0].cofog_status).toBeNull()
+    expect(body.subjects[0].is_leaf).toBe(true)
+    expect(body.subjects[0].parent_subject_id).toBe(K1)
+    expect(body.subjects[0].cofog_status).toBeNull()
     expect(body.next_page_token).toBeNull()
     expect(body.origins).toHaveLength(1)
     expect(body.origins[0].origin_id).toBe('o1')
   })
 
-  test('document_kind で表を選び、行には document_kind が付く', async () => {
+  test('document_kind で行を絞り、決算と当初予算は node_key で対応する', async () => {
     const body = await (await post(SEARCH, { document_kind: 'initial', fiscal_year: { min: 2024, max: 2024 } })).json()
-    expect(body.nodes).toHaveLength(1)
-    expect(body.nodes[0].document_kind).toBe('initial')
-    expect(Object.keys(body.nodes[0])[0]).toBe('document_kind')
-    expect(body.nodes[0].amount_yen).toBe(950)
+    expect(ids(body)).toEqual([K1I])
+    expect(body.subjects[0].document_kind).toBe('initial')
+    expect(body.subjects[0].amount_phase).toBe('approved')
+    expect(body.subjects[0].node_key).toBe(K1)
+    expect(body.subjects[0].amount_yen).toBe(950)
+  })
+
+  test('内訳の検索は breakdown で絞れる', async () => {
+    const res = await post('/v1/fiscal/expenditure/details:search', { document_kind: 'settlement', fiscal_year: { min: 2024, max: 2024 }, where: { breakdown: { eq: ['節'] } } })
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body.details.map((d: { detail_id: string }) => d.detail_id)).toEqual([S1])
+    expect(body.details[0].subject_id).toBe(M1)
+    expect(body.origins.map((o: { origin_id: string }) => o.origin_id)).toEqual(['o2'])
   })
 
   test('GLOB の特殊文字は escape される', async () => {
-    insertNode(sqlite, { document_kind: 'settlement', node_id: id('e1'), name: 'a*b[c]?' })
-    insertNode(sqlite, { document_kind: 'settlement', node_id: id('e2'), name: 'axb' })
+    insertSubject(sqlite, { subject_id: id('e1'), name: 'a*b[c]?' })
+    insertSubject(sqlite, { subject_id: id('e2'), name: 'axb' })
     const body = await (await search({ where: { name: { prefix: 'a*b' } } })).json()
     expect(ids(body)).toEqual([id('e1')])
     expect(ids(await (await search({ where: { name: { contains: '[c]?' } } })).json())).toEqual([id('e1')])
   })
 
-  test('ページングは order_by の末尾に node_id を足して順序を決める', async () => {
-    const base = { order_by: [{ column: 'axis' }], page_size: 2 }
+  test('ページングは order_by の末尾に subject_id を足して順序を決める', async () => {
+    const base = { order_by: [{ column: 'level' }], page_size: 2 }
     const page1 = await (await search(base)).json()
-    expect(page1.nodes).toHaveLength(2)
+    expect(page1.subjects).toHaveLength(2)
     expect(page1.next_page_token).toBeString()
     const page2 = await (await search({ ...base, page_token: page1.next_page_token })).json()
     expect(page2.next_page_token).toBeNull()
-    expect([...ids(page1), ...ids(page2)]).toEqual([K1, M1, M2, S1]) // axis 科目 → 節、同じ軸は node_id 順
+    expect([...ids(page1), ...ids(page2)]).toEqual([K1, M1, M2]) // 款 → 目、同じ level は subject_id 順
   })
 
   test('page_token は page_size を変えても使え、別の問い合わせでは 400', async () => {
@@ -187,7 +198,7 @@ describe('search', () => {
   })
 
   test('bind がちょうど上限なら通る', async () => {
-    const eq = Array.from({ length: 89 }, (_, i) => `n${i}`) // 年 1 つと合わせて 90
+    const eq = Array.from({ length: 88 }, (_, i) => `n${i}`) // 資料区分・年 1 つと合わせて 90
     expect((await search({ where: { name: { eq } } })).status).toBe(200)
     expect((await search({ where: { name: { eq: [...eq, 'x'] } } })).status).toBe(400)
   })
@@ -202,32 +213,50 @@ describe('search', () => {
 
   test('SQL インジェクションの値は bind される', async () => {
     const body = await (await search({ where: { name: { eq: [`x' OR 1=1 --`], prefix: `"; DROP TABLE control; --` } } })).json()
-    expect(body.nodes).toEqual([])
+    expect(body.subjects).toEqual([])
     expect(sqlite.query('SELECT count(*) AS n FROM control').get()).toEqual({ n: 4 })
   })
 
 })
 
 describe('get', () => {
-  test('ノードと軸ごとの子', async () => {
-    const res = await get(`/v1/expenditure/nodes/settlement/${K1}`)
+  test('款は子の科目を返し、直下の内訳は無い', async () => {
+    const res = await get(SUBJECT(K1))
     expect(res.status).toBe(200)
     const body = await res.json()
-    expect(body.node.node_id).toBe(K1)
-    expect(Object.keys(body.children).sort()).toEqual(['科目', '節'])
-    expect(body.children['科目'].map((n: { node_id: string }) => n.node_id)).toEqual([M1, M2])
+    expect(body.subject.subject_id).toBe(K1)
+    expect(body.children.map((n: { subject_id: string }) => n.subject_id)).toEqual([M1, M2])
+    expect(body.details).toEqual({})
     expect(body.next_page_token).toBeNull()
+    expect(body.origins.map((o: { origin_id: string }) => o.origin_id)).toEqual(['o1'])
+    expect(body.locations.map((l: { row_id: string }) => l.row_id).sort()).toEqual([K1, M1, M2])
+  })
+
+  test('目は直下の内訳を breakdown ごとに返し、内訳の出典も含む', async () => {
+    const body = await (await get(SUBJECT(M1))).json()
+    expect(body.children).toEqual([])
+    expect(Object.keys(body.details)).toEqual(['節'])
+    expect(body.details['節'].map((d: { detail_id: string }) => d.detail_id)).toEqual([S1])
     expect(body.origins.map((o: { origin_id: string }) => o.origin_id)).toEqual(['o1', 'o2'])
   })
 
-  test('資料区分が違えば別のノード、無ければ 404、補正と不正な node_id は 400', async () => {
-    expect((await (await get(`/v1/expenditure/nodes/initial/${K1}`)).json()).node.amount_yen).toBe(950)
-    const missing = await get(`/v1/expenditure/nodes/settlement/${id('ff')}`)
+  test('内訳を取得する', async () => {
+    const res = await get(`/v1/fiscal/expenditure/details/${S1}`)
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body.detail.detail_id).toBe(S1)
+    expect(body.children).toEqual([])
+    expect(body.origins.map((o: { origin_id: string }) => o.origin_id)).toEqual(['o2'])
+  })
+
+  test('資料区分ごとに別の ID、無ければ 404、不正な ID は 400', async () => {
+    expect((await (await get(SUBJECT(K1I))).json()).subject.amount_yen).toBe(950)
+    const missing = await get(SUBJECT(id('ff')))
     expect(missing.status).toBe(404)
     expect((await missing.json()).error.code).toBe('NOT_FOUND')
-    expect((await get(`/v1/expenditure/nodes/supplementary/${K1}`)).status).toBe(400)
-    expect((await get('/v1/expenditure/nodes/settlement/k1')).status).toBe(400)
-    expect((await get(`/v1/expenditure/nodes/settlement/${K1.toUpperCase()}`)).status).toBe(400)
+    expect((await get(`/v1/fiscal/expenditure/details/${id('ff')}`)).status).toBe(404)
+    expect((await get(SUBJECT('k1'))).status).toBe(400)
+    expect((await get(SUBJECT(K1.toUpperCase()))).status).toBe(400)
   })
 })
 
@@ -254,24 +283,26 @@ describe('MCP', () => {
     const list = await rpc('tools/list')
     expect(list.body.result.tools.map((t: { name: string }) => t.name).sort()).toEqual([
       'describe_expenditure_columns',
-      'get_expenditure_node',
+      'get_expenditure_detail',
+      'get_expenditure_subject',
       'list_jurisdictions',
       'render_expenditure_view',
       'search_evaluations',
-      'search_expenditure_nodes',
+      'search_expenditure_details',
+      'search_expenditure_subjects',
     ])
-    const res = await call('search_expenditure_nodes', { ...base, where: { node_kind: { eq: ['目'] } }, page_size: 1 })
+    const res = await call('search_expenditure_subjects', { ...base, where: { level: { eq: ['目'] } }, page_size: 1 })
     const out = JSON.parse(res.body.result.content[0].text)
-    expect(out.nodes).toHaveLength(1)
+    expect(out.subjects).toHaveLength(1)
     expect(out.next_page_token).toBeString()
     expect(res.body.result.isError).toBeUndefined()
   })
 
   test('入力の誤りは tool の結果として返る（isError か JSON-RPC の error）', async () => {
-    const bad = await call('search_expenditure_nodes', { document_kind: 'settlement' })
+    const bad = await call('search_expenditure_subjects', { document_kind: 'settlement' })
     const failed = bad.body.error !== undefined || bad.body.result.isError === true
     expect(failed).toBe(true)
-    const get404 = await call('get_expenditure_node', { document_kind: 'settlement', node_id: id('ff') })
+    const get404 = await call('get_expenditure_subject', { subject_id: id('ff') })
     expect(get404.body.result.isError).toBe(true)
     expect(JSON.parse(get404.body.result.content[0].text).error.code).toBe('NOT_FOUND')
   })
@@ -281,7 +312,7 @@ describe('MCP', () => {
 const MCP_HEADERS = { 'Content-Type': 'application/json', Accept: 'application/json, text/event-stream' }
 const mcp = (body: string | unknown, headers: Record<string, string> = MCP_HEADERS) =>
   app.request('/mcp', { method: 'POST', headers, body: typeof body === 'string' ? body : JSON.stringify(body) }, { DB: db })
-const toolCall = (args: unknown, id = 1) => ({ jsonrpc: '2.0', id, method: 'tools/call', params: { name: 'search_expenditure_nodes', arguments: args } })
+const toolCall = (args: unknown, id = 1) => ({ jsonrpc: '2.0', id, method: 'tools/call', params: { name: 'search_expenditure_subjects', arguments: args } })
 const valid = { document_kind: 'settlement', fiscal_year: { min: 2024, max: 2024 } }
 
 describe('MCP の batch', () => {
@@ -294,7 +325,7 @@ describe('MCP の batch', () => {
     expect(body.jsonrpc).toBe('2.0')
     expect(body.error.code).toBe(-32600)
     expect(body.id).toBeNull()
-    expect(calls.filter((c) => c.includes('settlement_expenditure_node'))).toEqual([])
+    expect(calls.filter((c) => c.includes('fiscal_expenditure_subject'))).toEqual([])
     expect((await mcp([])).status).toBe(400)
   })
 
@@ -308,7 +339,7 @@ describe('MCP の batch', () => {
   })
 
   test('想定外の例外の詳細は tool の結果に出さない', async () => {
-    sqlite.query('DROP TABLE settlement_expenditure_node').run()
+    sqlite.query('DROP TABLE fiscal_expenditure_subject').run()
     const orig = console.error
     const logged: unknown[] = []
     console.error = (...a: unknown[]) => void logged.push(a)
@@ -324,7 +355,7 @@ describe('MCP の batch', () => {
   })
 
   test('REST も想定外の例外の詳細を返さない', async () => {
-    sqlite.query('DROP TABLE settlement_expenditure_node').run()
+    sqlite.query('DROP TABLE fiscal_expenditure_subject').run()
     const orig = console.error
     console.error = () => {}
     try {
@@ -382,12 +413,12 @@ describe('REST の入口の検査', () => {
   })
 
   test('Get の query と path は strict', async () => {
-    expect((await get(`/v1/expenditure/nodes/settlement/${K1}?foo=1`)).status).toBe(400)
-    expect((await get(`/v1/expenditure/nodes/settlement/${K1}?page_size=abc`)).status).toBe(400)
-    expect((await get(`/v1/expenditure/nodes/settlement/${K1}?page_size=0`)).status).toBe(400)
-    expect((await get(`/v1/expenditure/nodes/settlement/${K1}?page_size=1001`)).status).toBe(400)
-    expect((await get(`/v1/expenditure/nodes/settlement/${K1}?page_size=2`)).status).toBe(200)
-    expect((await get('/v1/expenditure/columns?foo=1')).status).toBe(400)
+    expect((await get(`${SUBJECT(K1)}?foo=1`)).status).toBe(400)
+    expect((await get(`${SUBJECT(K1)}?page_size=abc`)).status).toBe(400)
+    expect((await get(`${SUBJECT(K1)}?page_size=0`)).status).toBe(400)
+    expect((await get(`${SUBJECT(K1)}?page_size=1001`)).status).toBe(400)
+    expect((await get(`${SUBJECT(K1)}?page_size=2`)).status).toBe(200)
+    expect((await get('/v1/fiscal/expenditure/columns?foo=1')).status).toBe(400)
   })
 
 })
@@ -397,9 +428,9 @@ describe('応答のヘッダー', () => {
     const responses = [
       await get('/'),
       await get('/openapi.json'),
-      await get('/v1/expenditure/columns'),
-      await get(`/v1/expenditure/nodes/settlement/${K1}`),
-      await get(`/v1/expenditure/nodes/settlement/${id('ff')}`),
+      await get('/v1/fiscal/expenditure/columns'),
+      await get(SUBJECT(K1)),
+      await get(SUBJECT(id('ff'))),
       await get('/nope'),
       await search({}),
       await search({ where: { name: {} } }),
@@ -446,13 +477,14 @@ describe('入力の文字と位置', () => {
   })
 })
 
-describe('ノードと出典は1つの batch で読む', () => {
-  test('search と get は D1 の batch を1回だけ使い、ノードと出典の文を同時に渡す', async () => {
+describe('行と出典は1つの batch で読む', () => {
+  test('search と get は D1 の batch を1回だけ使い、行・印字の位置・出典の文を同時に渡す', async () => {
     const batches: number[] = []
     const spy: Db = { prepare: (sql) => db.prepare(sql), batch: (s) => (batches.push(s.length), db.batch(s)) }
     await app.request(SEARCH, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(valid) }, { DB: spy })
-    await app.request(`/v1/expenditure/nodes/settlement/${K1}`, {}, { DB: spy })
-    expect(batches).toEqual([2, 3])
+    await app.request(SUBJECT(K1), {}, { DB: spy })
+    await app.request(`/v1/fiscal/expenditure/details/${S1}`, {}, { DB: spy })
+    expect(batches).toEqual([2, 5, 4])
   })
 
 })
@@ -482,16 +514,18 @@ describe('MCP 2026-07-28', () => {
     const list = await rpcBody(await modern('tools/list'))
     expect(list.result.tools.map((t: { name: string }) => t.name).sort()).toEqual([
       'describe_expenditure_columns',
-      'get_expenditure_node',
+      'get_expenditure_detail',
+      'get_expenditure_subject',
       'list_jurisdictions',
       'render_expenditure_view',
       'search_evaluations',
-      'search_expenditure_nodes',
+      'search_expenditure_details',
+      'search_expenditure_subjects',
     ])
-    const res = await modern('tools/call', { name: 'search_expenditure_nodes', arguments: valid }, { 'Mcp-Name': 'search_expenditure_nodes' })
+    const res = await modern('tools/call', { name: 'search_expenditure_subjects', arguments: valid }, { 'Mcp-Name': 'search_expenditure_subjects' })
     const body = await rpcBody(res)
     expect(body.result.isError).toBeUndefined()
-    expect(JSON.parse(body.result.content[0].text).nodes.length).toBeGreaterThan(0)
+    expect(JSON.parse(body.result.content[0].text).subjects.length).toBeGreaterThan(0)
   })
 
   test('Mcp-Method ヘッダが無い要求は検索を実行せずに断る', async () => {
@@ -506,7 +540,7 @@ describe('MCP 2026-07-28', () => {
         {
           method: 'POST',
           headers: { ...MCP_HEADERS, 'MCP-Protocol-Version': '2026-07-28' },
-          body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'search_expenditure_nodes', arguments: valid, _meta: meta } }),
+          body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'search_expenditure_subjects', arguments: valid, _meta: meta } }),
         },
         { DB: spy }
       )
@@ -514,7 +548,7 @@ describe('MCP 2026-07-28', () => {
       console.error = orig
     }
     expect(res.status).toBe(400)
-    expect(calls.filter((c) => c.includes('settlement_expenditure_node'))).toEqual([])
+    expect(calls.filter((c) => c.includes('fiscal_expenditure_subject'))).toEqual([])
   })
 
   test('subscriptions/listen は長い SSE を開かずに 400 で断る。listChanged は名乗らない', async () => {
@@ -529,28 +563,31 @@ describe('MCP 2026-07-28', () => {
   test('batch は 2026-07-28 の形でも 400 で、検索は実行されない', async () => {
     const calls: string[] = []
     const spy: Db = { prepare: (sql) => (calls.push(sql), db.prepare(sql)), batch: (s) => db.batch(s) }
-    const one = (id: number) => ({ jsonrpc: '2.0', id, method: 'tools/call', params: { name: 'search_expenditure_nodes', arguments: valid, _meta: meta } })
+    const one = (id: number) => ({ jsonrpc: '2.0', id, method: 'tools/call', params: { name: 'search_expenditure_subjects', arguments: valid, _meta: meta } })
     const res = await app.request('/mcp', { method: 'POST', headers: { ...MCP_HEADERS, 'MCP-Protocol-Version': '2026-07-28' }, body: JSON.stringify([one(1), one(2)]) }, { DB: spy })
     expect(res.status).toBe(400)
-    expect(calls.filter((c) => c.includes('settlement_expenditure_node'))).toEqual([])
+    expect(calls.filter((c) => c.includes('fiscal_expenditure_subject'))).toEqual([])
   })
 })
 
 describe('operation の応答は output の schema に合う', () => {
   // marts の列と columns.json がずれたら、実行時ではなくここで落とす。
   // 上の fixture は列を疎にしているので、この describe では非 NULL の列を columns.json から全部埋めた行を使う。
-  const [P, C] = [id('e1'), id('e2')]
+  // 決算と当初予算で ID が違う（同じ node_key の行でも別の行）
+  const IDS = { settlement: { P: id('e1'), C: id('e2'), D: id('e3') }, initial: { P: id('f1'), C: id('f2'), D: id('f3') } } as const
   const filled = (table: string, row: Record<string, string | number>) => {
     const cols = (columnsJson as unknown as { tables: Record<string, { columns: { name: string; type: string; nullable: boolean }[] }> }).tables[table]!.columns
     const dflt = (type: string) => (type === 'string' ? 'x' : 1)
     return { ...Object.fromEntries(cols.filter((c) => !c.nullable).map((c) => [c.name, dflt(c.type)])), ...row }
   }
   beforeEach(() => {
-    insertOrigin(sqlite, filled('origin', { origin_id: 'of', fiscal_year: 2023, sha256: 'f'.repeat(64) }))
+    insertOrigin(sqlite, filled('fiscal_origin', { origin_id: 'of', fiscal_year: 2023, sha256: 'f'.repeat(64) }))
     for (const document_kind of ['settlement', 'initial'] as const) {
-      const table = `${document_kind}_expenditure_node`
-      insertNode(sqlite, { document_kind, ...filled(table, { node_id: P, fiscal_year: 2023, origin_id: 'of', node_kind: '款', is_leaf: 0 }) })
-      insertNode(sqlite, { document_kind, ...filled(table, { node_id: C, parent_node_id: P, fiscal_year: 2023, origin_id: 'of', node_kind: '目', is_leaf: 1 }) })
+      const { P, C, D } = IDS[document_kind]
+      const amount_phase = document_kind === 'settlement' ? 'executed' : 'approved'
+      insertSubject(sqlite, filled('fiscal_expenditure_subject', { document_kind, amount_phase, subject_id: P, fiscal_year: 2023, origin_id: 'of', level: '款', is_leaf: 0 }))
+      insertSubject(sqlite, filled('fiscal_expenditure_subject', { document_kind, amount_phase, subject_id: C, parent_subject_id: P, fiscal_year: 2023, origin_id: 'of', level: '目', is_leaf: 1 }))
+      insertDetail(sqlite, filled('fiscal_expenditure_detail', { document_kind, amount_phase, detail_id: D, subject_id: C, fiscal_year: 2023, origin_id: 'of', breakdown: '事業', depth: 1 }))
     }
   })
 
@@ -564,22 +601,28 @@ describe('operation の応答は output の schema に合う', () => {
   }
   const year = { min: 2023, max: 2023 }
 
-  test('search_expenditure_nodes（決算・当初予算・空の結果・次ページ）', async () => {
+  test('search_expenditure_subjects・details（決算・当初予算・空の結果・次ページ）', async () => {
     for (const document_kind of ['settlement', 'initial']) {
-      const out = (await run('search_expenditure_nodes', { document_kind, fiscal_year: year })) as { nodes: unknown[]; origins: unknown[] }
-      expect(out.nodes).toHaveLength(2)
+      const out = (await run('search_expenditure_subjects', { document_kind, fiscal_year: year })) as { subjects: unknown[]; origins: unknown[] }
+      expect(out.subjects).toHaveLength(2)
       expect(out.origins).toHaveLength(1)
-      parse('search_expenditure_nodes', out)
+      parse('search_expenditure_subjects', out)
+      const details = (await run('search_expenditure_details', { document_kind, fiscal_year: year })) as { details: unknown[] }
+      expect(details.details).toHaveLength(1)
+      parse('search_expenditure_details', details)
     }
-    parse('search_expenditure_nodes', await run('search_expenditure_nodes', { document_kind: 'settlement', fiscal_year: year, where: { name: { eq: ['存在しない'] } } }))
-    const paged = (await run('search_expenditure_nodes', { document_kind: 'settlement', fiscal_year: year, page_size: 1 })) as { next_page_token: string | null }
+    parse('search_expenditure_subjects', await run('search_expenditure_subjects', { document_kind: 'settlement', fiscal_year: year, where: { name: { eq: ['存在しない'] } } }))
+    const paged = (await run('search_expenditure_subjects', { document_kind: 'settlement', fiscal_year: year, page_size: 1 })) as { next_page_token: string | null }
     expect(paged.next_page_token).toBeString()
-    parse('search_expenditure_nodes', paged)
+    parse('search_expenditure_subjects', paged)
   })
 
-  test('get_expenditure_node（子のある款・子のない目）', async () => {
-    for (const document_kind of ['settlement', 'initial'])
-      for (const node_id of [P, C]) parse('get_expenditure_node', await run('get_expenditure_node', { document_kind, node_id }))
+  test('get_expenditure_subject・detail（子のある款・内訳のある目・内訳）', async () => {
+    for (const document_kind of ['settlement', 'initial'] as const) {
+      const { P, C, D } = IDS[document_kind]
+      for (const subject_id of [P, C]) parse('get_expenditure_subject', await run('get_expenditure_subject', { subject_id }))
+      parse('get_expenditure_detail', await run('get_expenditure_detail', { detail_id: D }))
+    }
   })
 
   // client は tools/list の outputSchema（JSON Schema）で structuredContent を検証する。zod の parse は未知のキーを黙って落とすので、
@@ -597,9 +640,12 @@ describe('operation の応答は output の schema に合う', () => {
       expect(body.result.isError, name).toBeUndefined()
       return body.result.structuredContent
     }
-    for (const document_kind of ['settlement', 'initial']) {
-      validate('search_expenditure_nodes', await call('search_expenditure_nodes', { document_kind, fiscal_year: year, page_size: 1 }))
-      for (const node_id of [P, C]) validate('get_expenditure_node', await call('get_expenditure_node', { document_kind, node_id }))
+    for (const document_kind of ['settlement', 'initial'] as const) {
+      const { P, C, D } = IDS[document_kind]
+      validate('search_expenditure_subjects', await call('search_expenditure_subjects', { document_kind, fiscal_year: year, page_size: 1 }))
+      validate('search_expenditure_details', await call('search_expenditure_details', { document_kind, fiscal_year: year, page_size: 1 }))
+      for (const subject_id of [P, C]) validate('get_expenditure_subject', await call('get_expenditure_subject', { subject_id }))
+      validate('get_expenditure_detail', await call('get_expenditure_detail', { detail_id: D }))
     }
     validate('describe_expenditure_columns', await call('describe_expenditure_columns', {}))
     // 検査自体が効いていること: schema に無いキーは落とす
@@ -607,12 +653,13 @@ describe('operation の応答は output の schema に合う', () => {
     const description = await call('describe_expenditure_columns', {})
     const validator = validators.getValidator(schema)
     expect(validator({ ...description, extra: 1 }).valid).toBe(false)
+    const example = description.subjects.search_example
     for (const search_example of [
-      { ...description.search_example, document_kind: 123 },
-      { ...description.search_example, page_size: '50' },
-      { ...description.search_example, fiscal_year: { min: '2025', max: 2025 } },
-      { ...description.search_example, where: { node_kind: { eq: [123] } } },
-      { ...description.search_example, order_by: [{ column: 'unknown_column' }] },
-    ]) expect(validator({ ...description, search_example }).valid).toBe(false)
+      { ...example, document_kind: 123 },
+      { ...example, page_size: '50' },
+      { ...example, fiscal_year: { min: '2025', max: 2025 } },
+      { ...example, where: { level: { eq: [123] } } },
+      { ...example, order_by: [{ column: 'unknown_column' }] },
+    ]) expect(validator({ ...description, subjects: { ...description.subjects, search_example } }).valid).toBe(false)
   })
 })

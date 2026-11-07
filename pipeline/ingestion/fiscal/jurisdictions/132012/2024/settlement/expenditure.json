@@ -87,13 +87,103 @@
           "table_id": "kouki-detail"
         }
       ]
+    },
+    {
+      "id": "sewer-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "statement_kind": "public-enterprise",
+      "inputs": [
+        {
+          "sha256": "47a49b647762a3d8227afbb94a85292dc26338c1374c5ab56a5bd2271f762b3d"
+        }
+      ],
+      "options": {
+        "account": "下水道事業会計",
+        "table_id": "sewer-revenue-expenditure-detail",
+        "pages": [
+          [
+            34,
+            37
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "款": {
+                  "kind": "label",
+                  "axis_header": "科目"
+                },
+                "項": {
+                  "kind": "label",
+                  "axis_header": "科目"
+                },
+                "目": {
+                  "kind": "label",
+                  "axis_header": "科目"
+                },
+                "金額": {
+                  "heading": "決算額"
+                }
+              },
+              "header": {
+                "staircase": "款項目節"
+              },
+              "rules": {
+                "row_gaps": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "sewer-revenue-ocr-1",
+          "origin_sha256": "47a49b647762a3d8227afbb94a85292dc26338c1374c5ab56a5bd2271f762b3d",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              34,
+              35,
+              36,
+              37
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "85e5dc58b67a154d9a78ac0a392c589e8fbb99a8303c14aaa8b2dd704430dfab",
+          "bytes": 774078
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "sewer-revenue-expenditure-detail"
+        }
+      ]
     }
   ],
   "tables": [
     {
       "table_id": "kaigo-detail",
       "conversion_id": "kaigo-settlement-detail",
-      "input_fingerprint": "1aa3aed031e19d4b7dbc423adb8ce613be535529ece3edcd25fa41568043df43",
+      "input_fingerprint": "e58aa16ca6ad4edbc7b722ed5026d5c9bced4c6678ee8dec14eecf55b820eca2",
       "account": "介護保険特別会計",
       "notes": [
         "「主要な施策の成果・事務報告書」の歳出部（物理504-505・510-527頁）。款・項・目の印字された名称・金額・位置を保持する。項の金額は印字されない場合がある。目の下の事業は主要施策の抜粋であるため、この表には含めない。範囲番号の目は一つの目として保持する。款の財源内訳は別の金額欄である。（予算現額）・<前年度決算額>は印字通りの文字列。網羅検査の対象は処理した頁の文字層であり、採用表以外の事業説明・財源内訳・内表・注記の数字は件数と例を報告する。款の資金分解5列は原典款見出しの印字どおり（保険料・国庫支出金・都支出金・一般会計繰入金・その他）で、一般会計の分解（国庫支出金・都支出金・市債・その他・一般財源）とは列名が異なる。決算額・執行率と合わせた7列が款集計行に対応する。宣言された統計表（保険給付費の状況）の (n) 行は表断片として annex へ送り、属する事業行を葉とする。",
@@ -121,7 +211,7 @@
     {
       "table_id": "kouki-detail",
       "conversion_id": "kouki-settlement-detail",
-      "input_fingerprint": "5a2e548981f83af07fe9ce7c709e6fd18a7dd53c72a007c764ce90746eec8af6",
+      "input_fingerprint": "d79d3d9a3cbcde9339ebfbfb20395fbdcd6db360b75e49562f44363920f970f9",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "「主要な施策の成果・事務報告書」の歳出部（物理488-489・493-503頁）。款・項・目の印字された名称・金額・位置を保持する。項の金額は印字されない場合がある。目の下の事業は主要施策の抜粋であるため、この表には含めない。範囲番号の目は一つの目として保持する。款の財源内訳は別の金額欄である。（予算現額）・<前年度決算額>は印字通りの文字列。網羅検査の対象は処理した頁の文字層であり、採用表以外の事業説明・財源内訳・内表・注記の数字は件数と例を報告する。款の資金分解5列は原典款見出しの印字どおり（保険料・国庫支出金・都支出金・一般会計繰入金・その他）で、一般会計の分解（国庫支出金・都支出金・市債・その他・一般財源）とは列名が異なる。決算額・執行率と合わせた7列が款集計行に対応する。",
@@ -144,6 +234,36 @@
           "bytes": 3349
         },
         "row_count": 45
+      }
+    },
+    {
+      "table_id": "sewer-revenue-expenditure-detail",
+      "conversion_id": "sewer-revenue",
+      "input_fingerprint": "35e06f5b2ed08cedb0c9e80d6bb5d0edab02693762a2c66dd037f8d61738f7df",
+      "account": "下水道事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape'}。",
+        "金額の単位は printed 4頁 から決めた。款の和 12,203,317,751 と印字の「費用合計」12,203,317,751 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 8 件（p34:full-page:a0:result0:r2・p34:full-page:a0:result0:r2:w5・p35:full-page:a0:result0:r0・p35:full-page:a0:result0:r0:w5・p36:full-page:a0:result0:r0・p36:full-page:a0:result0:r0:w5・p37:full-page:a0:result0:r0・p37:full-page:a0:result0:r0:w5）・產→産 14 件（p36:full-page:a0:result0:r14・p36:full-page:a0:result0:r14:w5・p36:full-page:a0:result0:r16・p36:full-page:a0:result0:r16:w5・p36:full-page:a0:result0:r18・p36:full-page:a0:result0:r18:w1・p36:full-page:a0:result0:r20・p36:full-page:a0:result0:r20:w5・p36:full-page:a0:result0:r48・p36:full-page:a0:result0:r48:w3・p36:full-page:a0:result0:r50・p36:full-page:a0:result0:r50:w5・p37:full-page:a0:result0:r40・p37:full-page:a0:result0:r40:w5）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132012/2024/settlement/expenditure/sewer-revenue-expenditure-detail-nodes.parquet",
+          "sha256": "b8be5843b91c5e19b9518e3723765c15b515c522a798777f130c3fd91578b053",
+          "bytes": 7716
+        },
+        "row_count": 122
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132012/2024/settlement/expenditure/sewer-revenue-expenditure-detail-amounts.parquet",
+          "sha256": "eabf77320e3e79bb50aee61fd6ed1167712151ae6ebd3f654799a2a1761a0c26",
+          "bytes": 6267
+        },
+        "row_count": 122
       }
     }
   ]

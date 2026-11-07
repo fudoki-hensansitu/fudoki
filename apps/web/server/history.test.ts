@@ -11,9 +11,9 @@ const tool = (toolName: string, output: unknown) =>
   ({ type: 'dynamic-tool', toolName, toolCallId: toolName, state: 'output-available', input: {}, output }) as UIMessage['parts'][number]
 
 test('toolText は長い結果を切り詰め、二度切っても変わらない', () => {
-  const once = toolText('search_expenditure_nodes', big(100_000))
+  const once = toolText('search_expenditure_subjects', big(100_000))
   expect(once.length).toBeLessThan(MAX_TOOL_TEXT + 300)
-  expect(toolText('search_expenditure_nodes', { content: [{ type: 'text', text: once }] })).toBe(once)
+  expect(toolText('search_expenditure_subjects', { content: [{ type: 'text', text: once }] })).toBe(once)
 })
 
 test('render_expenditure_view の結果は画面に出した旨だけを AI に渡す', () => {
@@ -27,7 +27,7 @@ test('forServer は大きな結果を何回呼んでも body の上限に収め�
     messages.push({
       id: `a${i}`,
       role: 'assistant',
-      parts: [tool('search_expenditure_nodes', big(100_000)), tool('render_expenditure_view', big(100_000)), { type: 'text', text: '答え' }],
+      parts: [tool('search_expenditure_subjects', big(100_000)), tool('render_expenditure_view', big(100_000)), { type: 'text', text: '答え' }],
     })
   }
   const body = JSON.stringify({ id: 'x', messages: forServer(messages) })
@@ -37,9 +37,9 @@ test('forServer は大きな結果を何回呼んでも body の上限に収め�
 test('forServer は最後の質問より前の結果を省き、今回の結果は残す', () => {
   const messages: UIMessage[] = [
     { id: 'u0', role: 'user', parts: [{ type: 'text', text: 'a' }] },
-    { id: 'a0', role: 'assistant', parts: [tool('search_expenditure_nodes', big(100))] },
+    { id: 'a0', role: 'assistant', parts: [tool('search_expenditure_subjects', big(100))] },
     { id: 'u1', role: 'user', parts: [{ type: 'text', text: 'b' }] },
-    { id: 'a1', role: 'assistant', parts: [tool('search_expenditure_nodes', big(100))] },
+    { id: 'a1', role: 'assistant', parts: [tool('search_expenditure_subjects', big(100))] },
   ]
   const out = JSON.stringify(forServer(messages))
   expect(out).toContain(OMITTED)

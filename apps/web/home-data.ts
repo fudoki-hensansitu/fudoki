@@ -1,9 +1,9 @@
 // ホームに載せる数字。api.fudoki.dev の応答をそのまま写したもので、画面では足し算をしない（DESIGN.md「画面で集計しない」）
-// 取り直すときは POST /v1/expenditure/nodes:search（document_kind=settlement, fiscal_year=2025, account_name=一般会計）。出典の頁は source_page
+// 取り直すときは POST /v1/fiscal/expenditure/subjects:search（document_kind=settlement, fiscal_year=2025, account_name=一般会計）と、内訳は details:search。出典の頁は get の locations の source_page
 export const HOME = {
   nakano: {
     jurisdiction: '中野区',
-    period: '令和7年度 決算',
+    period: 'R7年度 決算',
     document: '令和7年度中野区各会計歳入歳出決算書',
     // 款の上位7つ（支出済額の大きい順）
     kanList: [
@@ -178,7 +178,7 @@ export const HOME = {
   library: {
     name: '図書館費',
     cofog: '08.2',
-    period: '令和7年度決算 · 一般会計 · 各自治体の決算書',
+    period: 'R7年度決算 · 一般会計 · 各自治体の決算書',
     rows: [
       { jurisdiction: '新宿区', amount: 1750575436 },
       { jurisdiction: '北区', amount: 1093837046 },

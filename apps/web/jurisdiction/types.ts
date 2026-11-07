@@ -3,14 +3,12 @@ import type { Profile } from './profiles'
 
 /** 款・項・目・節など、出典の1行。金額は API が返した円（画面で足し引きしない） */
 export interface Line {
-  /** apps/api の node_id。子を引くときに使う */
+  /** apps/api の subject_id（科目の表の行）。子を引くときに使う */
   id: string
   name: string
   yen: number
   /** 出典に金額の印字がない。yen の 0 は表示に使わない */
   amountMissing?: true
-  /** 出典の頁（金額の印字の頁） */
-  page: number | null
 }
 
 export interface Setsu {
@@ -36,10 +34,14 @@ export interface Drill {
 }
 
 export type FlowDepth = 'kou' | 'moku' | 'setsu'
+/** お金の流れの分け方。cofog は分野（COFOG の大分類）→ 中分類、kan は自治体の科目（款 → 項） */
+export type FlowView = 'cofog' | 'kan'
 
 export interface Project extends Line {
   kanName: string
   kouName: string | null
+  /** COFOG の大分類で決まる分野の名前（domains.ts）。COFOG の付かない目は「その他」 */
+  domain: string
   /** 前の年度の同じ目（款・項・名前が一致したもの）。無ければ null */
   prevYen: number | null
 }
@@ -82,6 +84,10 @@ export interface PageData {
   code: string
   name: string
   prefecture: string
+  /** 都道府県自体の頁（/tokyo）。header の都道府県名から移る */
+  prefecturePath: string
+  /** 同じ都道府県で収録のある近くの自治体（自身と都道府県自体を除き、近い順に数件）。最後の節から回遊させる */
+  neighbors: { code: string; name: string; path: string; /** 紋章の URL（emblems.ts に紋章がある自治体だけ） */ logo?: string }[]
   officialUrl: string | null
   population: Population | null
   originTitle: string | null
@@ -89,12 +95,13 @@ export interface PageData {
   years: YearTotal[]
   /** 最新年度の全款から全項への流れ */
   flow: Drill[]
+  /** 最新年度の COFOG の流れ。Drill の kan に大分類、kou に中分類が入る */
+  cofogFlow: Drill[]
   projects: Project[]
   /** 方針・政策領域・事業の入れ替え（jurisdiction/profiles.ts）。手で起こした自治体だけにある */
   profile?: Profile | null
 }
 
-/** 西暦の会計年度を令和にする（2025 → 令和7年度） */
 /** 今日を含む会計年度（4月始まり） */
 export const currentFiscalYear = (now = new Date()) => (now.getMonth() >= 3 ? now.getFullYear() : now.getFullYear() - 1)
 
@@ -104,7 +111,8 @@ export function yearName(year: number, now = new Date()): string {
   return diff === 0 ? '今年度' : diff === 1 ? '昨年度' : diff === 2 ? '一昨年度' : diff === -1 ? '来年度' : reiwa(year)
 }
 
-export const reiwa = (year: number) => (year >= 2019 ? `令和${year - 2018 === 1 ? '元' : year - 2018}年度` : `${year}年度`)
+/** 西暦の会計年度を令和の R 表記にする（2025 → R7年度）。2019年より前は西暦のまま */
+export const reiwa = (year: number) => (year >= 2019 ? `R${year - 2018}年度` : `${year}年度`)
 
 /** 1億円以上は億円、それ未満は万円。3桁ごとに区切る。円の細かい数字は出典の頁で確かめてもらう */
 export function formatYen(yen: number): string {

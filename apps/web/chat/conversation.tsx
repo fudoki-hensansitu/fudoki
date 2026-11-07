@@ -26,8 +26,10 @@ type Metadata = { apps?: Record<string, string>; context?: string }
 type ChatMessage = UIMessage<Metadata>
 
 const TOOL_LABELS: Record<string, string> = {
-  search_expenditure_nodes: '支出を検索',
-  get_expenditure_node: '明細を開く',
+  search_expenditure_subjects: '支出を検索',
+  search_expenditure_details: '内訳を検索',
+  get_expenditure_subject: '科目を開く',
+  get_expenditure_detail: '内訳を開く',
   list_jurisdictions: '収録している自治体を確認',
   describe_expenditure_columns: '列の意味を確認',
   search_evaluations: '事業の評価を検索',

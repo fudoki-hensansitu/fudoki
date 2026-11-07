@@ -56,7 +56,12 @@ export async function fixture(real = false) {
     }
     return new Response(samplePdf(), { headers: { 'Content-Type': 'application/pdf' } })
   } })
-  const build = await Bun.build({ entrypoints: [new URL('./worker.ts', import.meta.url).pathname], target: 'browser', format: 'esm', minify: false })
+  // app.ts の `?raw` の import（vite の書き方）を Bun.build でも文字列として読む
+  const raw: import('bun').BunPlugin = { name: 'raw', setup(b) {
+    b.onResolve({ filter: /\?raw$/ }, (args) => ({ path: new URL(args.path.replace(/\?raw$/, ''), `file://${args.importer}`).pathname, namespace: 'raw' }))
+    b.onLoad({ filter: /.*/, namespace: 'raw' }, async (args) => ({ contents: await Bun.file(args.path).text(), loader: 'text' }))
+  } }
+  const build = await Bun.build({ entrypoints: [new URL('./worker.ts', import.meta.url).pathname], target: 'browser', format: 'esm', minify: false, plugins: [raw] })
   if (!build.success) throw new AggregateError(build.logs)
   const mf = new Miniflare({
     name: 'pdf-test', modules: true, script: await build.outputs[0]!.text(), compatibilityDate: '2026-07-28',
@@ -83,10 +88,10 @@ export async function fixture(real = false) {
     await db.prepare(`INSERT INTO ${table} (${Object.keys(data).join(',')}) VALUES (${Object.keys(data).map(() => '?').join(',')})`).bind(...Object.values(data) as never[]).run()
   }
   const paths = ['navigation', 'ok', 'rotated', 'pending', 'skinny', 'missing', 'recover', 'redirect', 'html', 'fake', 'big-header', 'big-stream', 'limit', 'slow', 'slow-body', ...Array.from({ length: 18 }, (_, i) => `extra-${i}`)]
-  for (const path of paths) await insert('origin', { origin_id: path, title: `試験出典 ${path}`, url: `https://city.fudoki.dev/${path}.pdf`, format: 'pdf' })
-  await insert('origin', { origin_id: 'same', title: '同じ URL', url: 'https://city.fudoki.dev/ok.pdf', format: 'pdf' })
-  await insert('origin', { origin_id: 'csv', title: 'CSV', url: 'https://city.fudoki.dev/csv', format: 'csv' })
-  await insert('origin', { origin_id: 'private', title: 'private', url: 'http://127.0.0.1/pdf', format: 'pdf' })
+  for (const path of paths) await insert('fiscal_origin', { origin_id: path, title: `試験出典 ${path}`, url: `https://city.fudoki.dev/${path}.pdf`, format: 'pdf' })
+  await insert('fiscal_origin', { origin_id: 'same', title: '同じ URL', url: 'https://city.fudoki.dev/ok.pdf', format: 'pdf' })
+  await insert('fiscal_origin', { origin_id: 'csv', title: 'CSV', url: 'https://city.fudoki.dev/csv', format: 'csv' })
+  await insert('fiscal_origin', { origin_id: 'private', title: 'private', url: 'http://127.0.0.1/pdf', format: 'pdf' })
   const scenarios = [
     { name: '頁送り', origin_id: 'navigation', source_page: 1, amount_source_page: 2, source_x0: 35, source_y0: 40, source_x1: 240, source_y1: 80 },
     { name: '枠あり', origin_id: 'ok', source_page: 1, source_x0: 35, source_y0: 40, source_x1: 240, source_y1: 80, amount_source_page: 1, amount_source_x0: 35, amount_source_y0: 140, amount_source_x1: 240, amount_source_y1: 180 },
@@ -103,12 +108,20 @@ export async function fixture(real = false) {
     { name: '取得待ち', origin_id: 'pending', source_page: 1 },
     { name: '極端な用紙寸法', origin_id: 'skinny', source_page: 1 },
   ]
-  for (const [i, row] of scenarios.entries()) await insert('settlement_expenditure_node', { jurisdiction_code: '000001', fiscal_year: 2024, account_name: '一般会計', kan_name: '総務費', node_kind: '目', axis: '科目', amount_yen: 12345, node_id: String(i + 1).padStart(64, '0'), ...row })
+  for (const [i, { name, origin_id, ...location }] of scenarios.entries()) {
+    const id = String(i + 1).padStart(64, '0')
+    await insert('fiscal_expenditure_subject', { subject_id: id, node_key: id, jurisdiction_code: '000001', fiscal_year: 2024, document_kind: 'settlement', amount_phase: 'executed', account_name: '一般会計', kan_name: '総務費', level: '目', name, amount_yen: 12345, origin_id })
+    await insert('fiscal_expenditure_location', { row_id: id, origin_id, ...location })
+  }
   if (real) {
-    const response = await fetch('https://api.fudoki.dev/v1/expenditure/nodes:search', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ document_kind: 'settlement', fiscal_year: { min: 2025, max: 2025 }, where: { jurisdiction_code: { eq: ['132039'] } }, page_size: 2 }) })
-    const data = await response.json() as { nodes: Record<string, unknown>[]; origins: Record<string, unknown>[] }
-    for (const origin of data.origins) await insert('origin', origin)
-    for (const { document_kind, ...node } of data.nodes) await insert('settlement_expenditure_node', node)
+    const response = await fetch('https://api.fudoki.dev/v1/fiscal/expenditure/subjects:search', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ document_kind: 'settlement', fiscal_year: { min: 2025, max: 2025 }, where: { jurisdiction_code: { eq: ['132039'] } }, page_size: 2 }) })
+    const data = await response.json() as { subjects: Record<string, unknown>[]; origins: Record<string, unknown>[] }
+    for (const origin of data.origins) await insert('fiscal_origin', origin)
+    for (const subject of data.subjects) {
+      await insert('fiscal_expenditure_subject', subject)
+      const detail = await (await fetch(`https://api.fudoki.dev/v1/fiscal/expenditure/subjects/${subject.subject_id}`)).json() as { locations: Record<string, unknown>[] }
+      for (const location of detail.locations.filter((l) => l.row_id === subject.subject_id)) await insert('fiscal_expenditure_location', location)
+    }
   }
   return {
     mf, hits, releasePdf: () => releasePdf(), async reset() { releasePdf(); pendingPdf = new Promise<void>(resolve => { releasePdf = resolve }); await mf.dispatchFetch('http://localhost/__reset', { method: 'POST' }); hits.clear(); fail = true },

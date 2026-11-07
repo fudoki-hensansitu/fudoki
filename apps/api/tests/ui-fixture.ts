@@ -1,4 +1,41 @@
-import type { Origin, TreeNode, ViewData } from '../ui/types'
+import type { Origin, TreeNode } from '../ui/types'
+
+/**
+ * 試験の行は旧来の木の形（node_id・axis）で書き、host が返す前に server の形（科目・内訳と印字の位置）へ直す。
+ * axis が「科目」の行は科目、それ以外は内訳として返す。
+ */
+type FixtureNode = Omit<TreeNode, 'id' | 'parent_id' | 'is_subject' | 'open' | 'moku_name'> & {
+  node_id: string
+  parent_node_id?: string | null
+  is_subject?: boolean
+  moku_name?: string | null
+}
+type ViewData = { origins?: Origin[]; next_page_token?: string | null } & (
+  | { nodes: FixtureNode[] }
+  | { node: FixtureNode; children: Record<string, FixtureNode[]> }
+)
+const LOCATION_KEYS = ['source_page', 'source_x0', 'source_y0', 'source_x1', 'source_y1', 'amount_source_page', 'amount_source_x0', 'amount_source_y0', 'amount_source_x1', 'amount_source_y1'] as const
+const isSubject = (n: FixtureNode) => n.axis === '科目'
+const row = (n: FixtureNode) => {
+  const { node_id, parent_node_id, is_subject: _, axis, node_kind, ...rest } = n
+  for (const k of LOCATION_KEYS) delete (rest as Record<string, unknown>)[k]
+  return isSubject(n)
+    ? { ...rest, subject_id: node_id, parent_subject_id: parent_node_id ?? null, level: node_kind, moku_name: n.moku_name ?? (node_kind === '目' ? n.name : null), is_leaf: node_kind === '目' }
+    : { ...rest, detail_id: node_id, parent_detail_id: null, subject_id: parent_node_id ?? 'ui-parent', breakdown: axis, node_kind, moku_name: n.moku_name ?? null, is_leaf: true }
+}
+const locationOf = (n: FixtureNode) => ({ row_id: n.node_id, origin_id: n.origin_id, ...Object.fromEntries(LOCATION_KEYS.map((k) => [k, n[k]])) })
+
+/** 試験の結果を、server の tool が返す structuredContent の形にする */
+export function toServer(data: ViewData) {
+  const common = { origins: data.origins ?? [], next_page_token: data.next_page_token ?? null }
+  if ('nodes' in data)
+    return data.nodes.length && !data.nodes.every(isSubject) ? { ...common, details: data.nodes.map(row) } : { ...common, subjects: data.nodes.map(row) }
+  const all = [data.node, ...Object.values(data.children).flat()]
+  if (!isSubject(data.node)) return { ...common, detail: row(data.node), children: Object.values(data.children).flat().map(row), locations: all.map(locationOf) }
+  const details: Record<string, unknown[]> = {}
+  for (const [axis, rows] of Object.entries(data.children)) if (axis !== '科目') details[axis] = rows.map(row)
+  return { ...common, subject: row(data.node), children: (data.children['科目'] ?? []).map(row), details, locations: all.map(locationOf) }
+}
 
 const origin: Origin = {
   origin_id: 'ok',
@@ -6,7 +43,7 @@ const origin: Origin = {
   url: 'https://city.fudoki.dev/ok.pdf',
   format: 'pdf',
 }
-export const node: TreeNode = {
+export const node: FixtureNode = {
   document_kind: 'settlement',
   node_id: 'ui-parent',
   jurisdiction_code: '000001',
@@ -100,7 +137,7 @@ export function uiData(scenario: string, more = false, nodeId?: string): ViewDat
 }
 
 const fiscal = (id: string, name: string, kind: string, amount: number | null, parent: string | null,
-  kan = name, kou: string | null = null): TreeNode => ({
+  kan = name, kou: string | null = null): FixtureNode => ({
   ...node, node_id: id, name, node_kind: kind, amount_yen: amount === null ? null : amount * 1_000_000,
   parent_node_id: parent, is_subject: true, kan_name: kan, kou_name: kou,
 })
@@ -114,12 +151,12 @@ const mokuPlan = fiscal('moku-plan', '企画費', '目', 1500, 'kou-admin', '総
 const mokuTax = fiscal('moku-tax', '税務総務費', '目', 2000, 'kou-tax', '総務費', '徴税費')
 const mokuWelfare = fiscal('moku-welfare', '福祉総務費', '目', 4000, 'kou-welfare', '民生費', '社会福祉費')
 const hierarchy = [kanGeneral, kanWelfare, kouAdmin, kouTax, kouWelfare, mokuAdmin, mokuPlan, mokuTax, mokuWelfare]
-/** 経路の款・項を名前で引く検索に、試験の階層から答える */
+/** 経路の款・項・目を名前で引く検索に、試験の階層から答える */
 export function levelData(where: Record<string, { eq?: unknown[] } | undefined>): ViewData | undefined {
-  const kind = where.node_kind?.eq?.[0]
-  if (kind !== '款' && kind !== '項') return undefined
-  const match = (column: 'kan_name' | 'kou_name', n: TreeNode) => !where[column]?.eq || where[column]!.eq!.includes(n[column])
-  return { nodes: hierarchy.filter((n) => n.node_kind === kind && match('kan_name', n) && match('kou_name', n)), origins: [origin], next_page_token: null }
+  const kind = where.level?.eq?.[0]
+  if (kind !== '款' && kind !== '項' && kind !== '目') return undefined
+  const match = (column: 'kan_name' | 'kou_name' | 'moku_name', n: FixtureNode) => !where[column]?.eq || where[column]!.eq!.includes(n[column])
+  return { nodes: hierarchy.filter((n) => n.node_kind === kind && match('kan_name', n) && match('kou_name', n) && match('moku_name', n)), origins: [origin], next_page_token: null }
 }
 export const hierarchyIds = new Set(hierarchy.map((n) => n.node_id))
 

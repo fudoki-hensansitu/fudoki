@@ -2980,6 +2980,278 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: nodes
+  - name: j132055_2024_settlement_general_01_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-01-expenditure-detail
+      kind: amounts
+  - name: j132055_2024_settlement_general_01_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-01-expenditure-detail
+      kind: nodes
+  - name: j132055_2024_settlement_general_02_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-02-expenditure-detail
+      kind: amounts
+  - name: j132055_2024_settlement_general_02_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-02-expenditure-detail
+      kind: nodes
+  - name: j132055_2024_settlement_general_03_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-03-expenditure-detail
+      kind: amounts
+  - name: j132055_2024_settlement_general_03_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-03-expenditure-detail
+      kind: nodes
+  - name: j132055_2024_settlement_general_04_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-04-expenditure-detail
+      kind: amounts
+  - name: j132055_2024_settlement_general_04_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-04-expenditure-detail
+      kind: nodes
+  - name: j132055_2024_settlement_general_05_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-05-expenditure-detail
+      kind: amounts
+  - name: j132055_2024_settlement_general_05_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-05-expenditure-detail
+      kind: nodes
+  - name: j132055_2024_settlement_general_06_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-06-expenditure-detail
+      kind: amounts
+  - name: j132055_2024_settlement_general_06_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-06-expenditure-detail
+      kind: nodes
+  - name: j132055_2024_settlement_general_07_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-07-expenditure-detail
+      kind: amounts
+  - name: j132055_2024_settlement_general_07_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-07-expenditure-detail
+      kind: nodes
+  - name: j132055_2024_settlement_general_08_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-08-expenditure-detail
+      kind: amounts
+  - name: j132055_2024_settlement_general_08_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-08-expenditure-detail
+      kind: nodes
+  - name: j132055_2024_settlement_general_09_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-09-expenditure-detail
+      kind: amounts
+  - name: j132055_2024_settlement_general_09_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-09-expenditure-detail
+      kind: nodes
+  - name: j132055_2024_settlement_general_10_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-10-expenditure-detail
+      kind: amounts
+  - name: j132055_2024_settlement_general_10_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-10-expenditure-detail
+      kind: nodes
+  - name: j132055_2024_settlement_general_11_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-11-expenditure-detail
+      kind: amounts
+  - name: j132055_2024_settlement_general_11_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-11-expenditure-detail
+      kind: nodes
+  - name: j132055_2024_settlement_general_12_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-12-expenditure-detail
+      kind: amounts
+  - name: j132055_2024_settlement_general_12_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-12-expenditure-detail
+      kind: nodes
+  - name: j132055_2024_settlement_general_13_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-13-expenditure-detail
+      kind: amounts
+  - name: j132055_2024_settlement_general_13_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-13-expenditure-detail
+      kind: nodes
+  - name: j132055_2024_settlement_general_14_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-14-expenditure-detail
+      kind: amounts
+  - name: j132055_2024_settlement_general_14_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-14-expenditure-detail
+      kind: nodes
+  - name: j132055_2024_settlement_kaigo_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kaigo-expenditure-detail
+      kind: amounts
+  - name: j132055_2024_settlement_kaigo_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kaigo-expenditure-detail
+      kind: nodes
+  - name: j132055_2024_settlement_kouki_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kouki-expenditure-detail
+      kind: amounts
+  - name: j132055_2024_settlement_kouki_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kouki-expenditure-detail
+      kind: nodes
+  - name: j132055_2024_settlement_nhi_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: nhi-expenditure-detail
+      kind: amounts
+  - name: j132055_2024_settlement_nhi_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132055'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: nhi-expenditure-detail
+      kind: nodes
   - name: j132055_2025_settlement_expenditure_settlement_1_amounts
     meta:
       jurisdiction: '132055'
@@ -3251,6 +3523,230 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: national-health-insurance-expenditure
+      kind: nodes
+  - name: j132101_2024_settlement_general_01_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-01-expenditure-detail
+      kind: amounts
+  - name: j132101_2024_settlement_general_01_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-01-expenditure-detail
+      kind: nodes
+  - name: j132101_2024_settlement_general_02_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-02-expenditure-detail
+      kind: amounts
+  - name: j132101_2024_settlement_general_02_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-02-expenditure-detail
+      kind: nodes
+  - name: j132101_2024_settlement_general_03_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-03-expenditure-detail
+      kind: amounts
+  - name: j132101_2024_settlement_general_03_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-03-expenditure-detail
+      kind: nodes
+  - name: j132101_2024_settlement_general_04_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-04-expenditure-detail
+      kind: amounts
+  - name: j132101_2024_settlement_general_04_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-04-expenditure-detail
+      kind: nodes
+  - name: j132101_2024_settlement_general_05_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-05-expenditure-detail
+      kind: amounts
+  - name: j132101_2024_settlement_general_05_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-05-expenditure-detail
+      kind: nodes
+  - name: j132101_2024_settlement_general_06_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-06-expenditure-detail
+      kind: amounts
+  - name: j132101_2024_settlement_general_06_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-06-expenditure-detail
+      kind: nodes
+  - name: j132101_2024_settlement_general_07_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-07-expenditure-detail
+      kind: amounts
+  - name: j132101_2024_settlement_general_07_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-07-expenditure-detail
+      kind: nodes
+  - name: j132101_2024_settlement_general_08_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-08-expenditure-detail
+      kind: amounts
+  - name: j132101_2024_settlement_general_08_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-08-expenditure-detail
+      kind: nodes
+  - name: j132101_2024_settlement_general_09_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-09-expenditure-detail
+      kind: amounts
+  - name: j132101_2024_settlement_general_09_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-09-expenditure-detail
+      kind: nodes
+  - name: j132101_2024_settlement_general_10_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-10-expenditure-detail
+      kind: amounts
+  - name: j132101_2024_settlement_general_10_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-10-expenditure-detail
+      kind: nodes
+  - name: j132101_2024_settlement_general_11_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-11-expenditure-detail
+      kind: amounts
+  - name: j132101_2024_settlement_general_11_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-11-expenditure-detail
+      kind: nodes
+  - name: j132101_2024_settlement_kaigo_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kaigo-expenditure-detail
+      kind: amounts
+  - name: j132101_2024_settlement_kaigo_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kaigo-expenditure-detail
+      kind: nodes
+  - name: j132101_2024_settlement_kouki_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kouki-expenditure-detail
+      kind: amounts
+  - name: j132101_2024_settlement_kouki_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kouki-expenditure-detail
+      kind: nodes
+  - name: j132101_2024_settlement_nhi_expenditure_detail_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: nhi-expenditure-detail
+      kind: amounts
+  - name: j132101_2024_settlement_nhi_expenditure_detail_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: nhi-expenditure-detail
       kind: nodes
   - name: j132101_2025_settlement_expenditure_settlement_10_amounts
     meta:
@@ -5843,6 +6339,54 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: nhi-clinic-expenditure-detail
+      kind: nodes
+  - name: j133086_2024_settlement_kaigo_expenditure_detail_amounts
+    meta:
+      jurisdiction: '133086'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kaigo-expenditure-detail
+      kind: amounts
+  - name: j133086_2024_settlement_kaigo_expenditure_detail_nodes
+    meta:
+      jurisdiction: '133086'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kaigo-expenditure-detail
+      kind: nodes
+  - name: j133086_2024_settlement_kouki_expenditure_detail_amounts
+    meta:
+      jurisdiction: '133086'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kouki-expenditure-detail
+      kind: amounts
+  - name: j133086_2024_settlement_kouki_expenditure_detail_nodes
+    meta:
+      jurisdiction: '133086'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kouki-expenditure-detail
+      kind: nodes
+  - name: j133086_2024_settlement_nhi_expenditure_detail_amounts
+    meta:
+      jurisdiction: '133086'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: nhi-expenditure-detail
+      kind: amounts
+  - name: j133086_2024_settlement_nhi_expenditure_detail_nodes
+    meta:
+      jurisdiction: '133086'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: nhi-expenditure-detail
       kind: nodes
   - name: j133621_2024_settlement_elderly_medical_expenditure_amounts
     meta:

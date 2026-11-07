@@ -137,7 +137,7 @@ export function PdfViewer({
         if (abort.signal.aborted) return
         try {
           const response = await fetch(
-            `${apiOrigin}/v1/origins/${encodeURIComponent(origin.origin_id)}/pdf`,
+            `${apiOrigin}/v1/fiscal/origins/${encodeURIComponent(origin.origin_id)}/pdf`,
             { signal: abort.signal, credentials: 'omit' },
           )
           if (!response.ok) {

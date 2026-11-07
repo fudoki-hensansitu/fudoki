@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-150 -100 300 220" width="450" height="330">
+<mask id="a">
+<circle r="82" fill="#000" stroke="#fff" stroke-width="36"/>
+<path d="M-150-28h300v56h-300z" fill="#000" />
+<path d="M-150-22h300L112.57163 22h-225.14326z"  fill="#fff" />
+<path d="M0-54L22.5 33M0-54L-22.5 33" fill="#000" stroke="#000" stroke-width="16"/>
+<path d="M0-54L45 120h-90z" fill="#fff"/>
+</mask>
+<path d="M-150-100h300v220h-300z" fill="#007f04" mask="url(#a)" />
+</svg>

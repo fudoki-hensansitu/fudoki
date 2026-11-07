@@ -78,6 +78,9 @@ class LineTest(unittest.TestCase):
         # The bracket flush against a long name inside one word (`…課）(1,04` `7,226)`), cut where it opens.
         self.assertEqual(read(('事務（公共施設マネジ', 300), ('メント課）(1,04', 390), ('7,226)', 507)),
                          ('事務（公共施設マネジメント課）', ['(1,047,226)']))
+        # OCR left the opening bracket unread, or read it as a letter: still the bracketed amount (132101).
+        self.assertEqual(read(('負担金補助及び交付金', 300), ('48,005,970)', 500)), ('負担金補助及び交付金', ['48,005,970']))
+        self.assertEqual(read(('委託料', 300), ('C21,368,656)', 500)), ('委託料', ['21,368,656']))
         # Without the setting, a bracket stays text.
         label, money = _split_line([glyph('議員人件費', 300, 100), glyph('[187,037,067]', 500, 100)])
         self.assertNotEqual([''.join(g.text for g in run) for run in money], ['[187,037,067]'])
@@ -1325,6 +1328,29 @@ class PageTopHeadingTest(unittest.TestCase):
         owner = {n['node_key']: n['name_text'] for n in built.nodes}
         self.assertEqual(sorted((owner[a['node_key']], a['amount_text']) for a in built.amounts),
                          [('土地対策費', '2,000'), ('土地対策費', '300'), ('財産管理費', '1,000')])
+
+    def test_without_codes_the_page_top_ends_with_the_first_subject_that_is_no_reprint(self):
+        # 132012 下水道事業会計: the page goes on with 職員給与費, so the later 営業外費用 is a new subject, not a
+        # name-only reprint of the open 営業費用 one character apart.
+        from ingestion.generic.layout import Logical
+        from ingestion.generic.tree import build
+        logicals = []
+        for page in (1, 2):
+            label = Band(0, 120, page, ('科目',), [70, 82, 94, 106, 200], 70, 200, kind='label')
+            paid = Band(120, 170, page, ('決算額',), [70, 82, 94, 106, 200], 70, 200, kind='amount')
+            make = lambda text, x, y, width: Glyph(text, x, y, x + width, y + 9, page, 0)
+            if page == 1:
+                label.words = [make('営業費用', 25, 72, 40), make('管路費', 40, 84, 30)]
+                paid.words = [make('1,300', 130, 72, 30), make('1,000', 130, 84, 30)]
+            else:
+                # 営業外費用 prints no amount of its own here; its 目 支払利息 below does.
+                label.words = [make('職員給与費', 40, 72, 50), make('営業外費用', 25, 84, 50), make('支払利息', 40, 96, 40)]
+                paid.words = [make('300', 130, 72, 30), make('2,000', 130, 96, 30)]
+            logicals.append(Logical([page], [label, paid], '円', []))
+        built = build(logicals, pattern='indent')
+        self.assertEqual([n['name_text'] for n in built.nodes], ['営業費用', '管路費', '職員給与費', '営業外費用', '支払利息'])
+        depth = {n['name_text']: n['depth'] for n in built.nodes}
+        self.assertEqual((depth['営業外費用'], depth['支払利息']), (depth['営業費用'], depth['管路費']))
 
 
 class SupplementRoundTest(unittest.TestCase):

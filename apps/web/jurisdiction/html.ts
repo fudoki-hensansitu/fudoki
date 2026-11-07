@@ -32,8 +32,9 @@ const head = (title: string, description: string, canonical: string, extra: Part
 /** 個別ページの説明文。検索結果に出るので、金額は API の値だけで書く（人口や仮の値は入れない） */
 export function pageDescription(d: PageData): string {
   const latest = d.years.at(-1)!
-  const top = latest.kan[0]
-  return `${d.name}の${reiwa(latest.year)}決算（一般会計）の歳出は約${formatYen(latest.yen)}。最も大きい款は${top ? `${top.name}（${formatYen(top.yen)}）` : '—'}。款・項・目の金額を、出典の頁と照らして確かめられます。`
+  // 分野は COFOG の大分類（cofogFlow は大きい順で「その他」が最後）
+  const top = d.cofogFlow.find((f) => f.kan.id !== 'cofog-none')?.kan
+  return `${d.name}の${reiwa(latest.year)}決算（一般会計）の歳出は約${formatYen(latest.yen)}。いちばん大きい分野は${top ? `${top.name}（${formatYen(top.yen)}）` : '—'}。使い道ごとの金額を、出典の頁と照らして確かめられます。`
 }
 
 export function pageHead(d: PageData): Head {

@@ -1,7 +1,7 @@
 import unittest
 
 from ingestion.generic.observe import Page, Rule, Word
-from ingestion.generic.scan import _cell_words, _text, agreed_headers, apply_variant_chars
+from ingestion.generic.scan import _cell_words, _text, agreed_headers, apply_variant_chars, drop_bands, join_ordinals
 from unittest.mock import patch
 from copy import deepcopy
 
@@ -64,6 +64,112 @@ class TextTest(unittest.TestCase):
         self.assertEqual(_text('一 般 管 理 費'), '一 般 管 理 費')
         self.assertEqual(_text('0'), '0')
         self.assertEqual(_text('予備費'), '予備費')
+
+
+class OrdinalTest(unittest.TestCase):
+    def texts(self, *words):
+        return [w.text for w in join_ordinals([Page(1, 600, 800, [Word(*w) for w in words])])[0].words]
+
+    def test_a_number_read_apart_after_sono_dai_or_a_bracket_joins_the_name(self):
+        # 132101: `施設警備委託料その` `1` `4,758,930`, `東小金井北第` `1`, `会計年度任用職員報酬(` `14` `人)`.
+        self.assertEqual(self.texts(('施設警備委託料その', 100, 100, 190, 109), ('1', 195, 100, 200, 109),
+                                    ('4,758,930', 400, 100, 450, 109)), ['施設警備委託料その1', '4,758,930'])
+        self.assertEqual(self.texts(('東小金井北第', 100, 100, 160, 109), ('1', 165, 100, 170, 109)), ['東小金井北第1'])
+        self.assertEqual(self.texts(('会計年度任用職員報酬(', 100, 100, 210, 109), ('14', 214, 100, 224, 109),
+                                    ('人)', 226, 100, 240, 109)), ['会計年度任用職員報酬(14', '人)'])
+
+    def test_a_number_farther_off_or_after_other_text_stays_apart(self):
+        self.assertEqual(self.texts(('施設警備委託料その', 100, 100, 190, 109), ('1', 205, 100, 210, 109)),
+                         ['施設警備委託料その', '1'])
+        self.assertEqual(self.texts(('委託料', 100, 100, 130, 109), ('12', 133, 100, 143, 109)), ['委託料', '12'])
+
+    def test_a_number_wrapped_to_the_next_line_goes_back(self):
+        # `エアコン借上料その` / `1 (平成27年度導入分)`, `（東小金井北第` / `1自転車駐車場)`.
+        self.assertEqual(self.texts(('エアコン借上料その', 100, 100, 190, 109), ('1(平成27年度導入分)', 100, 111, 200, 120)),
+                         ['エアコン借上料その1', '(平成27年度導入分)'])
+        self.assertEqual(self.texts(('(東小金井北第', 100, 100, 170, 109), ('1自転車駐車場)', 100, 111, 170, 120)),
+                         ['(東小金井北第1', '自転車駐車場)'])
+        self.assertEqual(self.texts(('委託料', 100, 100, 130, 109), ('1自転車駐車場', 100, 111, 170, 120)),
+                         ['委託料', '1自転車駐車場'])
+
+
+class OkutamaRulesTest(unittest.TestCase):
+    """133086: a staircase subject column with a 事業 level below 目, amounts in the row under the name,
+    and 備考 centred on their 節's row."""
+
+    def test_a_rule_left_out_for_a_row_does_not_cut_its_line(self):
+        from ingestion.generic.scan import line_cuts
+        from ingestion.lib import pdf_rules
+        rules = pdf_rules.PageRules(13, 800, 600, (pdf_rules.Rule(80.8, 66, 161.5), pdf_rules.Rule(80.8, 180, 379),
+                                                   pdf_rules.Rule(95.0, 66, 540)), ())
+        self.assertEqual(line_cuts(rules, [35.3, 166.0, 94.1, 175.2]), [95.0])  # `(01)一般管理費` runs on
+        self.assertEqual(line_cuts(rules, [23.8, 200.0, 75.3, 209.0]), [80.8, 95.0])
+        self.assertEqual(line_cuts(rules, None), [80.8, 80.8, 95.0])
+        from ingestion.generic.layout_settings import validator
+        validator().validate({'schema_version': 1, 'rules': {'row_gaps': True}})
+
+    def test_the_fourth_subject_level_is_a_breakdown_of_its_moku(self):
+        from ingestion.generic.workflow import fourth_level_axis
+        node = lambda key, axis, depth, level, parent=None: {'node_key': key, 'parent_node_key': parent, 'axis_header': axis,
+                                                              'depth': depth, 'level_header': level, 'name_text': key}
+        nodes = [node('款', '科目', 1, '款'), node('項', '科目', 2, '項', '款'), node('目', '科目', 3, '目', '項'),
+                 node('事業', '科目', 4, None, '目'), node('節', '節', 1, None, '事業')]
+        fourth_level_axis(nodes, '事業')
+        self.assertEqual([(n['axis_header'], n['depth'], n['level_header'], n['parent_node_key']) for n in nodes],
+                         [('科目', 1, '款', None), ('科目', 2, '項', '款'), ('科目', 3, '目', '項'),
+                          ('事業', 1, None, '目'), ('節', 1, None, '事業')])
+        with self.assertRaisesRegex(ValueError, 'below the fourth level'):
+            fourth_level_axis([node('款', '科目', 1, '款'), node('x', '科目', 5, None, '款')], '事業')
+
+    def test_an_amount_alone_in_the_row_under_a_name_is_that_items(self):
+        from ingestion.generic.layout import Band, Glyph
+        from ingestion.generic.tree import Group, Item, owner
+        label = Band(30, 80, 1, ('事業',), [20, 40, 60, 100], 0, 100)
+        group = Group([label], '科目', True)
+        item = Item(group, 1, [[Glyph('(01)一般管理費', 35, 25, 75, 34, 1, 0)]], '01', '一般管理費', 35)
+        money = Band(80, 140, 1, ('当初予算額',), [20, 40, 60, 100], 0, 100, kind='amount')
+        amount = [Glyph('11,872,000', 95, 45, 138, 54, 1, 0)]
+        self.assertIs(owner(amount, money, [group], {id(group): [item]}, next_row=True), item)
+        # Two rows below is no amounts row of the item.
+        farther = [Glyph('11,872,000', 95, 65, 138, 74, 1, 0)]
+        self.assertIsNone(owner(farther, money, [group], {id(group): [item]}, next_row=True))
+
+    def test_a_remark_goes_under_the_setsu_of_its_ruled_row(self):
+        from ingestion.generic.layout import Band, Glyph
+        from ingestion.generic.tree import Group, Item, nest_by_rows
+        subject = Group([Band(0, 80, 1, ('科目',), [], 0, 100)], '科目', True)
+        setsu = Group([Band(350, 400, 1, ('節',), [20, 50, 80, 100], 0, 100)], '節', False)
+        remark = Group([Band(630, 830, 1, ('備考',), [], 0, 100)], '備考', False)
+        glyph = lambda y, page=1: [Glyph('x', 0, y, 9, y + 8, page, 0)]
+        moku = Item(subject, 1, [glyph(5)], '01', '一般管理費', 0, key='目')
+        first = Item(setsu, 1, [glyph(31)], '10', '需用費', 350, key='需用費', parent=moku)
+        second = Item(setsu, 1, [glyph(61)], '12', '委託料', 350, key='委託料', parent=moku)
+        inside = Item(remark, 1, [glyph(25)], None, '消耗品費', 630, key='消耗品費', parent=moku)
+        later = Item(remark, 1, [glyph(85)], None, '審査支払事務委託', 630, key='審査支払事務委託', parent=moku)
+        on_next = Item(remark, 2, [glyph(10, 2)], None, '療養費審査委託', 630, key='療養費審査委託', parent=moku)
+        placed = [moku, first, second, inside, later, on_next]
+        nodes = [{'node_key': i.key, 'parent_node_key': i.parent.key if i.parent else None} for i in placed]
+        nest_by_rows(nodes, placed, {'備考': {'under': '節'}})
+        self.assertEqual({n['node_key']: n['parent_node_key'] for n in nodes}['消耗品費'], '需用費')
+        # In no 節 row (below the last rule): stays under the 目. Over a page break: the last 節 of the page before.
+        self.assertEqual({n['node_key']: n['parent_node_key'] for n in nodes}['審査支払事務委託'], '目')
+        self.assertEqual({n['node_key']: n['parent_node_key'] for n in nodes}['療養費審査委託'], '委託料')
+
+
+class DroppedBandTest(unittest.TestCase):
+    def test_only_the_readings_centred_in_the_band_are_left_out(self):
+        rules = [Rule(0, 50, 600, 50)]
+        page = Page(4, 600, 800, [Word('款の行', 10, 100, 60, 110), Word('次の款', 10, 300, 60, 310)], rules)
+        kept = drop_bands([page], [{'id': 'next', 'page': 4, 'y_range': [290, 800]}])[0]
+        self.assertEqual([w.text for w in kept.words], ['款の行'])
+        self.assertEqual(kept.rules, rules)
+
+    def test_a_band_off_the_scope_or_holding_no_reading_stops(self):
+        page = Page(4, 600, 800, [Word('款の行', 10, 100, 60, 110)])
+        for band in ({'id': 'p', 'page': 5, 'y_range': [0, 800]}, {'id': 'r', 'page': 4, 'y_range': [300, 200]},
+                     {'id': 'e', 'page': 4, 'y_range': [300, 800]}):
+            with self.subTest(band=band['id']), self.assertRaises(ValueError):
+                drop_bands([page], [band])
 
 
 class CorrectionTest(unittest.TestCase):
@@ -445,6 +551,14 @@ class RepeatedHeadingTest(unittest.TestCase):
             previous = Item(group, 1, [], first, names[0], 0)
             item = Item(group, 2, [], second, names[1], 0)
             self.assertFalse(repeats(previous, item, ocr=True))
+
+    def test_without_codes_only_the_same_name_repeats_a_heading(self):
+        # 132012 下水道事業会計: 営業外費用 under 営業費用 is a new 項, not a misread of it.
+        from ingestion.generic.tree import Group, Item, repeats
+        group = Group([], '科目', True)
+        open_kou = Item(group, 1, [], None, '営業費用', 0)
+        self.assertFalse(repeats(open_kou, Item(group, 3, [], None, '営業外費用', 0), ocr=True))
+        self.assertTrue(repeats(open_kou, Item(group, 3, [], None, '営業費用', 0), ocr=True))
 
 
 class VariantCharsTest(unittest.TestCase):
