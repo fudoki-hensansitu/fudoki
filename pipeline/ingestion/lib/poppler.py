@@ -41,9 +41,12 @@ def unfixed_library() -> Path | None:
     if '/mise/shims/' in found:  # a shim resolves the tool only when asked
         found = subprocess.run(['mise', 'which', 'pdftotext'], capture_output=True, text=True, check=False).stdout.strip()
     prefix = Path(found).resolve().parent.parent
-    datadir = f'{prefix}/share/poppler'.encode() + b'\0'
+    # A C string ends in one NUL (Homebrew's is followed by the next string); conda's unfixed one in a long run.
+    padded = f'{prefix}/share/poppler'.encode() + b'\0' * 32
+    if not (prefix / 'conda-meta').is_dir():  # only conda's build is relocated this way
+        return None
     for library in [*prefix.glob('lib/libpoppler.so.*'), *prefix.glob('lib/libpoppler.*.dylib')]:
-        if not library.is_symlink() and datadir in library.read_bytes():
+        if not library.is_symlink() and padded in library.read_bytes():
             return library
     return None
 
