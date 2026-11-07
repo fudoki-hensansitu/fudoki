@@ -468,7 +468,10 @@ function Budget({ data, year }: { data: PageData; year: number }) {
   )
   // 分け方の切り替えはヘッダーの年度の切り替えと同じ丸いボタンの並びにする
   const tabs = (
-    <div role="group" aria-label="分類" className="flex justify-end gap-1">
+    <div className="flex items-center justify-between gap-3">
+      {/* 左上に、この図が予算か決算かを出す */}
+      <span className="text-[15px]">{reiwa(year)}の{label}</span>
+      <div role="group" aria-label="分類" className="flex gap-1">
       {VIEWS.map((v) => (
         <button
           key={v.key}
@@ -480,6 +483,7 @@ function Budget({ data, year }: { data: PageData; year: number }) {
           {v.label}
         </button>
       ))}
+      </div>
     </div>
   )
   return (
