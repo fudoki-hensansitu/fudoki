@@ -237,7 +237,8 @@ html:has(.landing){scroll-behavior:smooth}
 .landing .cta p{font-size:15px;opacity:.85}
 
 @media (max-width:960px){
-.landing .hero,.landing .feat,.landing .stance,.landing .pair-g{grid-template-columns:minmax(0,1fr)}
+.landing .hero,.landing .feat,.landing .stance,.landing .pair-g,.landing .mcp{grid-template-columns:minmax(0,1fr)}
+.landing .mcp{gap:40px}
 .landing .feat.flip .feat-t{order:0}
 .landing .hero{min-height:0;gap:24px}
 .landing .cycle ol{grid-template-columns:repeat(2,minmax(0,1fr))}

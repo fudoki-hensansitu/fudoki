@@ -349,6 +349,9 @@ export function Home(props: HomeProps) {
       <footer className="mt-12 flex flex-wrap items-center justify-between gap-4 text-xs text-muted-foreground">
         <span>© 2026 風土記</span>
         <span className="flex flex-wrap gap-x-5 gap-y-2">
+          <Link href="/about" className="hover:text-foreground">
+            風土記について
+          </Link>
           <a href={`${DOCS}/terms`} target="_blank" rel="noopener" className="inline-flex items-center gap-1 hover:text-foreground">
             利用規約
             <ArrowSquareOutIcon aria-hidden="true" className="size-3" />
