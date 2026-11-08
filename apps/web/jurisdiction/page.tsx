@@ -3,7 +3,7 @@
 // 歳出の決算は API の値。事業評価から取った事業・やめたこと（事業の入れ替え）は jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
 import { Link } from '@void/react'
 import * as React from 'react'
-import { ArrowLeftIcon, ArrowUpIcon, ArrowRightIcon, ArrowSquareOutIcon, CaretRightIcon, MapPinAreaIcon, MapTrifoldIcon, SquaresFourIcon, BankIcon, BasketballIcon, CaretDownIcon, ClipboardTextIcon, CoinsIcon, RobotIcon, FirstAidKitIcon, GlobeIcon, HandHeartIcon, HouseLineIcon, LeafIcon, MapPinIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, StudentIcon, DotsThreeCircleIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
+import { ArrowLeftIcon, ArrowUpIcon, ArrowRightIcon, ArrowSquareOutIcon, CaretRightIcon, MapPinAreaIcon, MapTrifoldIcon, SquaresFourIcon, BankIcon, BasketballIcon, CaretDownIcon, CheckCircleIcon, ArrowsMergeIcon, HourglassMediumIcon, ClipboardTextIcon, CoinsIcon, RobotIcon, FirstAidKitIcon, GlobeIcon, HandHeartIcon, HouseLineIcon, LeafIcon, MapPinIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, StudentIcon, DotsThreeCircleIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
 import { StartForm } from '../chat/start-form'
 import type { StoredSession } from '../chat/store'
 import { Hint } from '@/components/hint'
@@ -100,7 +100,7 @@ const freshTitle = (y: ProfileYear) => (isPlanned(y) ? '新しく何を始める
 const PeopleContext = React.createContext<number | undefined>(undefined)
 
 /** 新しく始めたことの1行。名前の左に新規（New!）か拡大・今ある事業の中での取り組み（Up!）かのバッジ、右に金額、下に中身。評価・予算どの年度も同じ形にする */
-function FreshRow({ up, upLabel = '拡大', title, yen, source, children }: { up: boolean; upLabel?: string; title: string; yen: number; /** 名前の下に置く、資料の該当ページへのリンク */ source?: { href: string; label: string }; children: React.ReactNode }) {
+function FreshRow({ up, upLabel = '拡大', title, yen, source, children }: { up: boolean; upLabel?: string; title: string; yen: number; /** 名前の後ろに続けて置く、資料の該当ページへのリンク */ source?: { href: string; label: string }; children: React.ReactNode }) {
   const people = React.useContext(PeopleContext)
   const label = up ? upLabel : '新規'
   return (
@@ -115,15 +115,17 @@ function FreshRow({ up, upLabel = '拡大', title, yen, source, children }: { up
                 <span className="sr-only">{label}</span>
               </span>
             </Hint>
-            {title}
+            {/* 資料のリンクは名前の後ろに続けて置き、名前が折り返したときも最後の行の後ろに入るならそこへ入れる */}
+            <span className="min-w-0">
+              {title}
+              {source ? (
+                <a href={source.href} target="_blank" rel="noopener" className="ml-2 inline-flex items-center gap-0.5 whitespace-nowrap align-baseline text-xs text-muted-foreground underline-offset-4 hover:underline">
+                  {source.label}
+                  <ArrowSquareOutIcon aria-hidden="true" className="size-3" />
+                </a>
+              ) : null}
+            </span>
           </h4>
-          {/* 資料のリンクは名前の文字の頭（アイコン28px＋間8px）に揃える */}
-          {source ? (
-            <Button variant="link" size="inline" nativeButton={false} render={<a href={source.href} target="_blank" rel="noopener" />} className="ml-9 text-xs text-muted-foreground">
-              {source.label}
-              <ArrowSquareOutIcon aria-hidden="true" className="size-3" />
-            </Button>
-          ) : null}
         </div>
         <span className="shrink-0 text-right">
           <YenText yen={yen} className="block leading-7" />
@@ -148,7 +150,7 @@ const EvalLabel = () => (
 /** 今ある事業の中で始めた取り組み。何を始めたかはシートの文をそのまま引き、金額と評価は含まれる事業全体のものだと文で言う */
 function InitiativeItem({ p, sheets }: { p: Initiative; sheets?: string }) {
   return (
-    <FreshRow up upLabel="今ある事業の中で" title={p.title} yen={p.settledYen} source={pdfPage(sheets, p.page, '評価シートで詳しく見る')}>
+    <FreshRow up upLabel="今ある事業の中で" title={p.title} yen={p.settledYen} source={pdfPage(sheets, p.page, '評価シート')}>
       <p className="text-sm [text-wrap:pretty]">「{p.quote}」</p>
       <p className="rounded-xl bg-sidebar px-3.5 py-2.5 text-[13px] leading-relaxed text-foreground [text-wrap:pretty]">
         <EvalLabel />
@@ -165,7 +167,7 @@ function InitiativeItem({ p, sheets }: { p: Initiative; sheets?: string }) {
 function BudgetItem({ p, press }: { p: PressItem; press?: string }) {
   const title = p.title.replace(/[~〜～].*$/, '').trim() || p.names.join('・')
   return (
-    <FreshRow up={!p.isNew} title={title} yen={p.budgetYen} source={pdfPage(press, p.page, '区の発表資料で詳しく見る')}>
+    <FreshRow up={!p.isNew} title={title} yen={p.budgetYen} source={pdfPage(press, p.page, '発表資料')}>
       {p.points.length ? (
         <ul className="flex flex-col gap-1 rounded-xl bg-sidebar px-3.5 py-2.5 text-[13px] leading-relaxed [text-wrap:pretty]">
           {p.points.map((pt, i) => (
@@ -260,7 +262,7 @@ function ProjectItem({ p, sheets }: { p: EvaluatedProject; sheets?: string }) {
   const i = p.indicator
   return (
     // 金額は名前と同じ行の右に置き、評価の枠は幅いっぱいに出す。値はどれも評価シートのもの
-    <FreshRow up={false} title={p.title} yen={p.settledYen} source={pdfPage(sheets, p.page, '評価シートで詳しく見る')}>
+    <FreshRow up={false} title={p.title} yen={p.settledYen} source={pdfPage(sheets, p.page, '評価シート')}>
       <p className="text-sm">{p.what}</p>
       {/* 評価の区分・方向性・指標は一続きの文として、同じ大きさ・色で読ませる。指標の良し悪しは風土記が判断しない */}
       <p className="rounded-xl bg-sidebar px-3.5 py-2.5 text-[13px] leading-relaxed text-foreground [text-wrap:pretty]">
@@ -623,8 +625,31 @@ function Projects({ data, year }: { data: PageData; year: number }) {
   )
 }
 
-/** やめた事業の結果の言い方。「廃止」は STOP の印で伝わり、「見送り」なども書かない。区の言葉の「廃止を検討」だけやわらかく言い換えて出す */
-const exitResult = (result: string) => (result === '廃止を検討' ? 'やめるか検討中' : '')
+/** D 評価の結果の見せ方。「廃止」は STOP の印だけで伝え、完了・統合は良し悪しの無い灰色の印にする。区の言葉の「廃止を検討」はやわらかく言い換える */
+const EXIT_LOOK: Record<string, { icon: 'stop' | 'done' | 'merge' | 'wait'; label: string }> = {
+  廃止: { icon: 'stop', label: 'やめた' },
+  完了: { icon: 'done', label: '完了' },
+  '移管・統合': { icon: 'merge', label: 'ほかの事業へ統合' },
+  廃止を検討: { icon: 'wait', label: 'やめるか検討中' },
+}
+
+/** A〜C 評価の「今後の取組の方向性」の言い方 */
+const DIRECTION_LABEL: Record<string, string> = {
+  新規の取組み: '新しい取り組みを始める',
+  '対象・規模等の拡大': '対象・規模を広げる',
+  現状維持: '今のまま続ける',
+  '法定受託事務・法定扶助費等': '法令で決まっている',
+  '計画・規定どおり': '計画どおり続ける',
+  手法等の改善: 'やり方を見直す',
+  '対象・規模等の見直し': '対象・規模を見直す',
+  取組みの一部廃止: '一部をやめる',
+}
+
+function ExitMark({ icon }: { icon: 'stop' | 'done' | 'merge' | 'wait' }) {
+  if (icon === 'stop') return <StopIcon className="absolute -top-[3px] left-0 size-6 text-primary" />
+  const Icon = icon === 'done' ? CheckCircleIcon : icon === 'merge' ? ArrowsMergeIcon : HourglassMediumIcon
+  return <Icon aria-hidden="true" className="absolute left-0.5 top-0.5 size-5 text-muted-foreground" />
+}
 
 function ScrapSection({ scrap }: { scrap: Scrap }) {
   const target = scrap.targetYen
@@ -633,11 +658,13 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
     ['A', '広げる'],
     ['B', '続ける'],
     ['C', '見直す'],
-    ['D', '完了'],
+    ['D', '終える'],
   ] as const
+  const [grade, setGrade] = React.useState<'A' | 'B' | 'C' | 'D'>('D')
   return (
     <Section id="scrap" title="やめたこと・見直したことは？" lead="自治体は毎年、前の年度までに行った事業を評価して、やめる事業や減らす事業を決め、その分を新しい予算に回しています。">
-      <div className="flex max-w-[560px] flex-col gap-2">
+      {/* 浮かせたお金の棒は節の中央に置き、下の「自治体が付けた評価」の見出しと離す（棒の見出しに見えないように） */}
+      <div className="mx-auto mb-8 mt-2 flex w-full max-w-[560px] flex-col gap-2">
         <div className="flex items-baseline justify-between gap-3">
           <span>やめたり減らしたりして浮かせたお金</span>
           <b className="text-[28px] font-normal tabular-nums text-primary">
@@ -653,28 +680,49 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
         ) : null}
       </div>
       <h3 className="text-lg">自治体が付けた評価（{scrap.evaluated.toLocaleString('ja-JP')}事業）</h3>
-      <div className="grid grid-cols-2 border-t sm:grid-cols-4">
-        {grades.map(([g, label]) => (
-          // 評価の区分（A 広げる など）を先に読ませ、件数はその下に小さく
-          <div key={g} className="flex flex-col gap-1 py-3">
-            <Grade grade={`${g} ${label}`} className="text-sm" />
-            <span className="pl-[26px] text-sm tabular-nums">{scrap.grades[g]}事業</span>
-          </div>
-        ))}
+      {/* 評価の区分はカードで選び、下にその区分の事業を出す。最初は D（終える＝完了・統合・やめた事業）を見せる */}
+      <div role="radiogroup" aria-label="評価の区分" className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        {grades.map(([g, label]) => {
+          const on = g === grade
+          const ready = g === 'D' || !!scrap.graded
+          return (
+            <button key={g} type="button" role="radio" aria-checked={on} disabled={!ready} onClick={() => setGrade(g)} className={cn('flex flex-col gap-1 rounded-xl border px-3 py-3 text-left transition-colors', on ? 'border-primary bg-primary/5' : 'border-foreground/10 hover:bg-foreground/[0.03]', !ready && 'cursor-default opacity-60 hover:bg-transparent')}>
+              <Grade grade={`${g} ${label}`} className="text-sm" />
+              <span className="pl-[26px] text-sm tabular-nums">{scrap.grades[g]}事業</span>
+            </button>
+          )
+        })}
       </div>
-      <h3 className="text-lg">やめた事業</h3>
-      <ul className="border-t">
-        {scrap.exits.map((e) => (
-          <li key={e.name} className="grid grid-cols-[minmax(0,1fr)_72px] items-baseline gap-x-4 gap-y-1 border-b border-foreground/10 py-3 text-sm sm:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_80px]">
-            <span className="relative pl-8">
-              <StopIcon className="absolute -top-[3px] left-0 size-6 text-primary" />
-              {e.name}
-            </span>
-            <span className="col-span-full row-start-2 text-[13.5px] text-muted-foreground sm:col-span-1 sm:row-start-auto">{e.reason}</span>
-            <span className="text-right text-[13px] text-muted-foreground">{exitResult(e.result)}</span>
-          </li>
-        ))}
-      </ul>
+      <div key={grade} role="list" className="border-t">
+        {grade === 'D' ? (
+          <FrameItems
+            items={scrap.exits}
+            render={(e) => {
+              const look = EXIT_LOOK[e.result] ?? EXIT_LOOK['完了']!
+              return (
+                <div role="listitem" key={e.name} className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-4 gap-y-1 border-b border-foreground/10 py-3 text-sm sm:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_112px]">
+                  <span className="relative pl-8">
+                    <ExitMark icon={look.icon} />
+                    {e.name}
+                  </span>
+                  <span className="col-span-full row-start-2 text-[13.5px] text-muted-foreground sm:col-span-1 sm:row-start-auto">{e.reason}</span>
+                  <span className="text-right text-[13px] text-muted-foreground">{look.label}</span>
+                </div>
+              )
+            }}
+          />
+        ) : (
+          <FrameItems
+            items={(scrap.graded?.[grade] ?? []).map((p, i) => ({ ...p, i }))}
+            render={(p) => (
+              <div role="listitem" key={p.i} className="flex items-baseline justify-between gap-4 border-b border-foreground/10 py-3 text-sm">
+                <span>{p.name}</span>
+                <span className="shrink-0 text-right text-[13px] text-muted-foreground">{DIRECTION_LABEL[p.direction] ?? p.direction}</span>
+              </div>
+            )}
+          />
+        )}
+      </div>
     </Section>
   )
 }
