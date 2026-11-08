@@ -60,7 +60,7 @@
 | 資料の一覧（決算書・予算書） | `profiles.ts` の `documents` | API `list_jurisdictions`（`view=FULL`）の出典 |
 | ほかの自治体も見る | API `list_jurisdictions` | 移行済み |
 
-`profiles.ts` の `tags`（常に空）と `vision.source`（描画していない）は移さずに消す。
+`profiles.ts` の `tags`（常に空）は移さずに消す。`vision.source`（基本構想の PDF の URL）は描画していないが、都市像の出典なので `jurisdiction` に移す。
 
 ### 手書きの値の中身（品川区）
 
@@ -129,9 +129,9 @@ pipeline の既存の規約に合わせて分ける。
   - 型は JSON Schema（`ingestion/fiscal/manifest.schema.json` と同じ形）で定め、`ingestion:check` で検査する。
   - `dbt:prepare`（`dbt/scripts/prepare.py`）が読み、`ingestion` schema に入れる。自治体マスタの JSON と同じ扱いになる。
 - **判断（平らな行）**: dbt の seed（`pipeline/dbt/seeds/evaluation/`、`pipeline/dbt/seeds/press/`）。今の `fiscal_detail_breakdown.csv`・`cofog_rules.csv` と同じ扱いにする。
-- **都市像**: `jurisdiction` の入力（`packages/jurisdictions/jurisdictions.json`）に `vision` を足す。出典の選定の `official_url` と同じく、`jurisdiction` の列（`vision`）に載せる。
+- **都市像**: `jurisdiction` の入力（`packages/jurisdictions/jurisdictions.json`）に都市像の本文と出典の URL を足す。出典の選定の `official_url` と同じく、`jurisdiction` の列（`vision`・`vision_url`）に載せる。
 
-入力と seed は、自然キーで行を書く。評価シートなら（自治体・年度・資料の種類・頁）で、出典の sha256 は使わない。品川には、サイトの再保存で sha256 が変わった実例があり、sha256 で書くと出典を差し替えたときに全行が外れる。ID は dbt で自然キーから導出する。
+入力と seed は、自然キーで行を書く。評価シートなら（自治体・年度・頁）で、出典の sha256 は使わない。品川には、サイトの再保存で sha256 が変わった実例があり、sha256 で書くと出典を差し替えたときに全行が外れる。ID は dbt で自然キーから導出する。
 
 段階1の入力は、`profiles.ts`・`budget-press.ts` から一度きりの script で書き出す。書き出しの script も同じ PR に残す（生成物には生成手段を残す規約）。
 
@@ -141,11 +141,13 @@ pipeline の既存の規約に合わせて分ける。
 
 | 資料 | 品川の年度 | 選定の key |
 | --- | --- | --- |
-| 評価シート | 2023・2024 は選定済み。2024 の評価の結果に対応するシートを足す | `evaluation_selections`（既存） |
+| 評価シート | 2023（R6評価、`_19.pdf`）・2024（R7評価、`_36.pdf`）は選定済み。2024 年度の頁の「やめたこと」が使う 2022 年度実施分（R5評価、`_15.pdf`）を足す | `evaluation_selections`（既存） |
 | 評価の結果 | R5評価・R6評価・R7評価の結果の PDF | `evaluation_result_selections`（新設） |
 | 予算のプレス発表 | R7・R8 | `press_selections`（新設） |
 
 既存の `evaluation_selections` は、1つの target に1件しか持てない。保存先の slot も `evaluation-settlement` に固定されている。そのため、評価の結果とプレス発表は別の key・別の slot にする（`evaluation-result[-n].pdf`・`press[-n].pdf`）。AI Search の索引（`evaluation_search/plan.py`）の対象は、今の `evaluation_selections` だけのままにし、新しい key は索引に入れない。
+
+今の `archive.ts` は、選定の種類（`ArchiveKind.field`）が `selections` と `evaluation_selections` の2つだけで、slot も `storage.ts` で `evaluation-settlement` に固定されている。schema・`ArchiveKind`・`storage.ts`・CLI（今は `--evaluation` だけ）を広げる作業を、段階1に含める。
 
 ### 表の構成
 
@@ -162,7 +164,11 @@ erDiagram
   press_item_judgment }o--o| fiscal_expenditure_detail : "内訳への紐付け"
 ```
 
-表名は「領域_中身」（ADR 0038）にそろえる。領域は `evaluation` と `press` である。すべての表は、単一の主キー `<表>_id` を持つ。主キーの値は `sha256(to_json([<自然キー>]))` で導出する（`serving/sync_d1.py` は、単一の主キーの先頭1文字ごとに表を突き合わせる）。配列・オブジェクトの列は、marts で `to_json(...)::varchar` にして文字列で持つ（`serving/columns.py` の型は LIST・STRUCT を持たない）。API は、配列・オブジェクトに戻して返す。
+表名は「領域_中身」（ADR 0038）にそろえる。領域は `evaluation` と `press` である。すべての表は単一の主キーを持つ（`serving/sync_d1.py` は、単一の主キーの先頭1文字ごとに表を突き合わせる）。主キーは次の3通りである。
+
+- 出典の表（`evaluation_origin`・`press_origin`）: `origin_id`。`fiscal_origin` と同じく、選定のファイルの sha256 から導出する。
+- 判断の表のうち1対1のもの（`evaluation_sheet_judgment`・`press_item_judgment`）: 親の ID（`evaluation_sheet_id`・`press_item_id`）。
+- それ以外: `<表>_id`。値は `sha256(to_json([<自然キー>]))` で導出する。配列・オブジェクトの列は、marts で `to_json(...)::varchar` にして文字列で持つ（`serving/columns.py` の型は LIST・STRUCT を持たない）。API は、配列・オブジェクトに戻して返す。
 
 以下の列は、段階1で埋まるものだけを挙げる。予算科目・事業期間・前年度のコストなど、段階2の取り込みで埋まる列は、段階2で足す（schema は最小形から）。
 
@@ -287,19 +293,20 @@ erDiagram
 
 ### 公開 API
 
-既存の評価資料の全文検索は、`search_evaluations`（`POST /v1/evaluations:search`）である。新しい操作は、パスを同じ `/v1/evaluations/` の下に置き、表の名前を操作の名前に入れて区別する。検索の条件の書き方（`where` の `eq`・`prefix` など）は、科目・内訳の検索と同じにする。`jurisdiction_code` と年度は必須にする。
+既存の評価資料の全文検索は、`search_evaluations`（`POST /v1/evaluations:search`）である。新しい操作は、パスをすべて同じ `/v1/evaluations/` の下に置き、表の名前を操作の名前に入れて区別する。プレス発表は評価ではないが、どちらも「金額以外の出典から取った事業の記録」で、web が同じ組み立てで読むので、パスの親を分けない。検索の条件の書き方（`where` の `eq`・`prefix` など）は、科目・内訳の検索と同じにする。`jurisdiction_code` と年度は必須にする。
 
 | 操作 | REST | 中身 |
 | --- | --- | --- |
 | `search_evaluation_sheets` | `POST /v1/evaluations/sheets:search` | 評価シートの検索。行に `headline_indicator`（`is_headline` の1件）と `judgment`（言い換え・要約・COFOG・新しい事業か）を添える |
 | `search_evaluation_excerpts` | `POST /v1/evaluations/excerpts:search` | 抜き出した一文の検索。行に、シートの名前・決算額・区分の記号・方向性・出典と、判断の COFOG を添える |
 | `search_evaluation_results` | `POST /v1/evaluations/results:search` | 評価の結果と、その事業の一覧。`budget_year` か `evaluated_year` で引く |
-| `search_press_items` | `POST /v1/press/items:search` | プレス発表の施策と判断 |
-| `list_jurisdictions`（既存） | `GET /v1/jurisdictions` | `vision` を足す |
+| `search_press_items` | `POST /v1/evaluations/press-items:search` | プレス発表の施策と判断 |
+| `list_jurisdictions`（既存） | `GET /v1/jurisdictions` | `vision`・`vision_url` を足す |
 
 - 応答は、既存の検索と同じく `origins` を一度だけ付ける。行は `origin_id` と `page` で出典を指す。
 - 判断の値は行の `judgment` の下にまとめ、出典の値と同じ階層に置かない。
 - 段階1では、上の4つの操作を REST にだけ登録する。MCP の tool にするのは、段階2で品川の全シートが入ってからにする。そのときに、tool の説明に収録範囲を書く。
+  - 今の `Operation`（`apps/api/src/operations.ts`）には REST と MCP を選ぶ列が無く、`app.ts` は全件を両方に登録している。そこで `Operation` に `restOnly?: true` を足し、MCP の登録で除く。既存の操作（`search_evaluations` を含む）は、今までどおり両方に出る。
 - 1枚の詳細を引く操作（`get_evaluation_sheet`）は、web が使わないので段階1では作らない。
 
 ### web の組み立てと cache
@@ -322,7 +329,7 @@ web は、自治体の頁の memo（`page-<自治体>-<最新の決算年度>`�
 段階2で足す予算科目の列（`kan_*`・`kou_*`・`moku_*`・`project_*` のコードと名前）は、この共通の項目に合わせる。
 
 - 予算科目のコードを印字する自治体がある（杉並の款05 項01 目04 事業008、府中の会計・款・項・目・予算事業コード）。コードがあれば、目への紐付けは判断ではなく照合になる（`method = 'code'`）。
-- 杉並 R7「耐震化の促進」と府中 R7「保健センター費」は、シートの決算額が、科目・内訳の表の金額と1円まで一致した。紐付けの検査に、決算額の一致を使える。
+- 府中 R7「保健センター費」は、シートの決算額（円）が科目の表の金額と1円まで一致した。杉並 R7「耐震化の促進」は、シートの千円の表示（291,691千円）が内訳の表の金額（291,691,140円）と千円の桁で一致した。紐付けの検査に、決算額の一致を使える。比べるときは、シートの金額の単位で丸めて比べる（千円のシートなら、内訳の金額を千円未満で切り捨て・四捨五入のどちらで印字しているかも確かめる）。
 - 施策ごとの評価（港）と、評価の語の一覧だけの自治体（板橋）は、`evaluation_sheet` の1行にならない。この設計では扱わない。
 
 ### ADR が要る判断
@@ -380,12 +387,14 @@ web の呼び出しは1回で済む。しかし、操作が画面の節の形に
 1. 評価の結果・プレス発表の PDF を選定に足し、`archive.ts` で保存する。
 2. 入力の JSON Schema と seed の形を定める。`profiles.ts`・`budget-press.ts` から入力と seed を書き出す script を作る。
 3. dbt の staging・marts を足す。配信の契約として、`serving/columns.py` の表・主キー・index と `_models.yml` を更新し、`serving:columns` を作り直す。`serving/sync_d1.py` の `TABLE_ORDER` も更新する。
-4. 公開 API に、REST だけの4つの操作を足す。`list_jurisdictions` に `vision` を足す。
+4. 公開 API に、REST だけの4つの操作を足す。`list_jurisdictions` に `vision`・`vision_url` を足す。
 5. web の組み立てを API に移し、`profiles.ts`・`budget-press.ts` を消す。memo の版を上げる。
 
 確かめ方:
 
-- 移行の前後で、品川区の全年度の `PageData`（`profile` を含む）を JSON で書き出して比べ、一致させる。
+- 移行の前後で、品川区の全年度の `PageData`（`profile` を含む）を JSON で書き出して比べる。期待する差は次の2つだけで、それ以外は一致させる。
+  - `profile.tags` が無くなる。
+  - `profile.vision` が `{ text, source }` のまま、`jurisdiction` の `vision`・`vision_url` から組み立てたものになる（値は同じ）。
 - `press_item_judgment.cofog_code` が今の `budget-press.ts` の値と一致することを、dbt の検査にする。
 - 画面を、PC とスマホのスクリーンショットで比べる。
 
@@ -404,7 +413,7 @@ web の呼び出しは1回で済む。しかし、操作が画面の節の形に
 確かめ方:
 
 - 段階1の値と取り込みの値が一致すること。
-- シートの決算額と、紐付けた目・内訳の金額の一致率を出す。
+- シートの決算額と、紐付けた目・内訳の金額の一致率を出す。比べるのは、シートの金額の単位に丸めた値である。
 
 取り込みの設計は、別の dd にする。
 
@@ -414,5 +423,5 @@ web の呼び出しは1回で済む。しかし、操作が画面の節の形に
 
 ## Open Questions
 
-- `summary`（今の `what`）を、REST・MCP で返すか。事実の書き直しでも、表現が出典に近いと翻案に当たりうる。web は REST で読むので、返さないなら web 専用の経路が要る。段階1は REST だけなので、MCP に出す段階2までに決める。
+- `summary`（今の `what`）を MCP でも返すか。段階1は web が読むために REST で返す。事実の書き直しでも、表現が出典に近いと翻案に当たりうるので、MCP に出す段階2までに、MCP で返すか（REST からも外すなら web 専用の経路が要る）を決める。
 - 資料の一覧の分冊の順が、`list_jurisdictions` の `view=FULL` で再現できるか（段階1で確かめる）。
