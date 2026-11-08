@@ -49,8 +49,19 @@
 .landing .hero h1{font-size:clamp(2.5rem,1.4rem + 4.4vw,5.5rem);line-height:1.18;max-width:11em}
 .landing .hero .sub{max-width:34em;font-size:17px;line-height:1.9}
 .landing .acts{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
-.landing .ask{width:min(100%,640px);text-align:left}
-body.ask-docked{padding-bottom:144px}
+
+.landing .sec-h{display:grid;gap:16px;max-width:40em}
+.landing .sec-h h2{font-size:clamp(1.75rem,1.3rem + 1.6vw,2.75rem);line-height:1.4}
+.landing .sec-h .lead{font-size:15px;line-height:1.9}
+.landing .topics ul,.landing .rules ol{display:grid;gap:16px;margin-top:48px}
+.landing .topics ul{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.landing .rules ol{grid-template-columns:repeat(3,minmax(0,1fr))}
+.landing .topics li,.landing .rules li{display:grid;align-content:start;gap:10px;padding:24px;border:1px solid var(--hair);border-radius:var(--radius-card);background:var(--card)}
+.landing .topics li[data-soon]{border-style:dashed;background:transparent}
+.landing .topics .k,.landing .rules .k{display:flex;align-items:center;gap:8px;font:400 14px/1.4 var(--font-display);color:var(--primary)}
+.landing .topics .k small{font:400 11px/1 var(--font-sans);color:var(--muted-foreground);padding:3px 8px;border:1px solid var(--hair);border-radius:999px}
+.landing .topics h3,.landing .rules h3{font-size:20px;line-height:1.45}
+.landing .topics p,.landing .rules p{font-size:14px;line-height:1.85;color:var(--muted-foreground)}
 .landing .ledger-stage{position:relative;margin-top:64px;height:620px;overflow:hidden;border-radius:var(--radius)}
 .landing .ledger-stage .art{inset:0}
 .landing .ledger{left:6%;right:6%;top:56px;bottom:-40px;padding:26px 30px}
@@ -161,7 +172,7 @@ body.ask-docked{padding-bottom:144px}
 .landing .sweep{background:linear-gradient(90deg,var(--foreground) 0 33.33%,var(--kincha) 40%,var(--shu) 46%,var(--sakura) 52%,var(--ai) 58%,var(--foreground) 66.67%) 0 0/300% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 
 @media (max-width:960px){
-.landing .steps,.landing .mcp,.landing .faq{grid-template-columns:minmax(0,1fr)}
+.landing .steps,.landing .mcp,.landing .faq,.landing .rules ol{grid-template-columns:minmax(0,1fr)}
 .landing .rail{display:none}
 .landing .step{min-height:0;padding-block:0 96px}
 .landing .step:last-child{padding-bottom:0}
@@ -193,25 +204,3 @@ html:has(.landing){scroll-behavior:smooth}
 }
 @media (prefers-reduced-motion:reduce){.landing .rail *{transition:none}}
 @keyframes sweep{from{background-position:100% 0}to{background-position:0 0}}
-/* 入力は最初は hero の元の位置に置き、スクロールして画面の上に出たら画面の下に固定する（landing.tsx の AskDock が data-docked を付ける）。
-   固定の間も元の位置の高さは空けておき、戻したときに頁がずれないようにする。 */
-#chat-start.ask { width: min(100%, 760px); min-height: 72px; }
-#chat-start:is([data-docked], [data-leaving]) > .ask-dock { position: fixed; left: calc(50% + var(--nav-w, 0px) / 2); bottom: 48px; z-index: 50; width: min(calc(100% - var(--nav-w, 0px) - 2 * var(--gut)), 760px); transform: translateX(-50%); transform-origin: 50% 100%; }
-/* 固定に切り替わるときは、下から少し大きくなりながら現れ、元の位置へ戻るときは小さくなりながら消える（動きが無いと、入力が急に現れたように見える）。最初の表示では動かさない */
-@keyframes ask-dock-in { from { opacity: 0; transform: translate(-50%, 24px) scale(0.92); } to { opacity: 1; transform: translate(-50%, 0) scale(1); } }
-@keyframes ask-dock-out { from { opacity: 1; transform: translate(-50%, 0) scale(1); } to { opacity: 0; transform: translate(-50%, 24px) scale(0.92); } }
-#chat-start[data-docked] > .ask-dock { animation: ask-dock-in 320ms cubic-bezier(0.2, 0.8, 0.2, 1); }
-#chat-start[data-leaving] > .ask-dock { animation: ask-dock-out 200ms cubic-bezier(0.4, 0, 1, 1) forwards; }
-@media (prefers-reduced-motion: reduce) {
-  #chat-start[data-docked] > .ask-dock, #chat-start[data-leaving] > .ask-dock { animation: none; }
-}
-/* 下のナビ（768px 未満）が出ている間は、その上に載せる */
-@media (max-width: 767px) {
-  #chat-start:is([data-docked], [data-leaving]) > .ask-dock { bottom: calc(16px + max(var(--bottom-nav, 0px), env(safe-area-inset-bottom))); transition: bottom 200ms ease-out; }
-}
-@media (max-width: 767px) and (prefers-reduced-motion: reduce) {
-  #chat-start:is([data-docked], [data-leaving]) > .ask-dock { transition: none; }
-}
-@media (max-width: 639px) {
-  #chat-start.ask { min-height: 56px; }
-}

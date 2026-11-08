@@ -1,16 +1,13 @@
-// このサイトについて（/about）。旧トップの紹介の読み物。Turnstile の site key だけを渡し、本文は landing/landing.tsx が描く
+// このサイトについて（/about）。本文は landing/landing.tsx が描く
 import { defineHandler, defineHead } from 'void'
-import { siteKey } from '../server/pages'
-
-export type Props = { sitekey: string }
 
 const TITLE = '風土記について — うちのまち、なにしてる？'
-const DESCRIPTION = 'まちが何を決めて、何をしているかを、出典つきで誰でも見られる形に。'
+const DESCRIPTION = '自治体が何を決め、何にいくら使い、どう振り返ったかを、同じ物差しの表にして出典と並べて見られるようにしています。'
 const ORGANIZATION = { '@context': 'https://schema.org', '@type': 'Organization', name: '風土記（fudoki）', url: 'https://fudoki.dev/', logo: 'https://fudoki.dev/icon.png', sameAs: ['https://github.com/fudoki-hensansitu', 'https://docs.fudoki.dev/'] }
 
-export const loader = defineHandler<Props>((c) => {
+export const loader = defineHandler((c) => {
   c.header('Cache-Control', 'public, max-age=300')
-  return { sitekey: siteKey(c) }
+  return {}
 })
 
 export const head = defineHead(() => ({

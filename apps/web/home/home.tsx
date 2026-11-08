@@ -3,7 +3,7 @@
 // 面の色は、主張したい面（うちのまち）が緑（--primary）の地で中の押せるものは白、押せるものの状態は生成り。見出しも含めてゴシック（明朝は /about の読み物だけ）
 import * as React from 'react'
 import { Link } from '@void/react'
-import { ArrowRightIcon, BankIcon, ArrowSquareOutIcon, CheckSquareOffsetIcon, ClipboardTextIcon, CoinsIcon, GavelIcon, MagnifyingGlassIcon, NavigationArrowIcon, PencilSimpleIcon } from '@phosphor-icons/react'
+import { ArrowRightIcon, BankIcon, ArrowSquareOutIcon, CheckSquareOffsetIcon, ClipboardTextIcon, CoinsIcon, GavelIcon, MagnifyingGlassIcon, NavigationArrowIcon } from '@phosphor-icons/react'
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from '@/components/ui/combobox'
 import { InputGroupAddon } from '@/components/ui/input-group'
 import { cn } from '@/lib/utils'
@@ -81,11 +81,9 @@ function Picker({ entries, onPick, placeholder }: { entries: MapEntry[]; onPick:
 }
 
 /** うちのまちで出す、その自治体の情報の入口。hash は自治体の頁の目次の id か年度（#y2024）。くわしい頁の無い自治体には無い節は出さない */
-const townLinks = (name: string, detail?: Featured) => [
+const townLinks = (name: string) => [
   { label: `${name.slice(-1)}の仕事`, hash: '#about', icon: <BankIcon /> },
   { label: 'お金の使い道', hash: '#budget', icon: <CoinsIcon /> },
-  ...(detail ? [{ label: '新しく始めること', hash: '#domains', icon: <PencilSimpleIcon /> }] : []),
-  ...(detail?.evalYear ? [{ label: '事業評価', hash: `#y${detail.evalYear}`, icon: <ClipboardTextIcon /> }] : []),
   { label: '議会', icon: <GavelIcon /> },
   { label: '選挙', icon: <CheckSquareOffsetIcon /> },
 ]
@@ -159,8 +157,8 @@ function MyTown({ entries, featured }: HomeProps) {
             </span>
             <ArrowRightIcon className="size-5 shrink-0 opacity-80 transition-transform group-hover:translate-x-1" />
           </Link>
-          <ul className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
-            {townLinks(town.name, featured.find((f) => f.code === town.code)).map((l) => (
+          <ul className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {townLinks(town.name).map((l) => (
               <li key={l.label}>
                 {l.hash ? (
                   <Link href={`${town.path}${l.hash}`} className="flex h-full flex-col gap-2 rounded-2xl bg-background p-3.5 text-sm text-foreground transition-colors hover:bg-card [&_svg]:size-5 [&_svg]:text-accent-foreground">

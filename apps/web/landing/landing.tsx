@@ -1,11 +1,10 @@
-// fudoki.dev の入口の1枚。視覚の規範は repo root の DESIGN.md、CSS は landing.css（.landing の中に閉じる）。
+// 風土記について（/about）の読み物。視覚の規範は repo root の DESIGN.md、CSS は landing.css（.landing の中に閉じる）。
 // 見出しの明朝は /fonts/mincho.woff2（この頁で使う字だけの subset）。文言を変えたら `bun run --cwd apps/web build:font` で作り直す
 // 動き（見出しの sweep・3つのステップの現在地・表の切り替え・録画の再生）はどれも無くても読める
 import * as React from 'react'
 import { flushSync } from 'react-dom'
 import { Link } from '@void/react'
 import { Hint } from '@/components/hint'
-import { StartForm } from '../chat/start-form'
 import { HOME } from '../home-data'
 import { LOGO_G, LOGO_WIDTH } from '../logo'
 import { ICON_SYMBOLS } from './icons'
@@ -14,9 +13,6 @@ const MCP = 'https://api.fudoki.dev/mcp'
 const DOCS = 'https://docs.fudoki.dev'
 const GITHUB = 'https://github.com/fudoki-hensansitu/fudoki'
 const CHATGPT_PLUGIN = 'https://chatgpt.com/plugins/plugin_asdk_app_6ad87dc03a608191a13bba05310ea5d9'
-/** 入力の placeholder に置く問いの例。幅390px の pill でも切れない長さにする */
-const EXAMPLE = '例：中野区で一番お金を使った分野は？'
-const UNAVAILABLE = '風土記の AI に聞く機能は準備中です。下の「自分の AI に接続する」から、お使いの AI で使えます。'
 
 const yen = (n: number) => `${n.toLocaleString('ja-JP')}円`
 // 億・万の表記。万未満は切り捨てるので、正確な額は title に yen で添える
@@ -57,43 +53,6 @@ function useFlash(idle: string): [string, (t: string) => void] {
 
 const { nakano, ledgers, origin, library } = HOME
 const libraryMax = Math.max(...library.rows.map((r) => r.amount))
-
-/** 入力。最初は hero の元の位置に置き、元の位置が画面の上へ出たら下に固定する。下に外れている（まだ読んでいない）間は動かさない */
-function AskDock({ sitekey }: { sitekey: string }) {
-  const root = React.useRef<HTMLDivElement>(null)
-  React.useEffect(() => {
-    const el = root.current
-    // 入力が出ない（鍵が無い）ときは固定する物が無いので、下余白も足さない
-    if (!el || !sitekey) return
-    let leave: ReturnType<typeof setTimeout> | undefined
-    const io = new IntersectionObserver(([entry]) => {
-      if (!entry) return
-      const docked = !entry.isIntersecting && entry.boundingClientRect.top < 0
-      const was = el.hasAttribute('data-docked')
-      clearTimeout(leave)
-      el.removeAttribute('data-leaving')
-      el.toggleAttribute('data-docked', docked)
-      document.body.classList.toggle('ask-docked', docked)
-      // 元の位置へ戻るときは、固定のまま小さく消えてから流れに戻す（動きを減らす設定では即座に戻す）
-      if (was && !docked && !reducedMotion()) {
-        el.setAttribute('data-leaving', '')
-        leave = setTimeout(() => el.removeAttribute('data-leaving'), 200)
-      }
-    })
-    io.observe(el)
-    return () => {
-      io.disconnect()
-      clearTimeout(leave)
-      document.body.classList.remove('ask-docked')
-    }
-  }, [sitekey])
-  return (
-    <div id="chat-start" className="ask" ref={root}>
-      <StartForm sitekey={sitekey} placeholder={EXAMPLE} unavailable={UNAVAILABLE} />
-      <noscript>AI に聞くには JavaScript を有効にしてください。</noscript>
-    </div>
-  )
-}
 
 /** 見出し。画面に入ったら一度だけ色を流す */
 function Sweep({ children }: { children: React.ReactNode }) {
@@ -634,22 +593,39 @@ function Demo() {
 const FAQ: [string, React.ReactNode][] = [
   ['数字はどこから来ていますか', '自治体が公開した予算書・決算書（PDF または CSV）です。表に読み込んだあと、出典の中で重ねて印字された合計どうしが一致するかを確かめています。明細ごとに、出典の頁と印字された位置を持っています。'],
   ['予備費が 0 円なのは、使わなかったからですか', 'いいえ。決算の予備費は、他の費目へ補ったあとの使った額なので 0 円になります。どこへ補ったかは出典の備考にあり、風土記では注記の金額として、費目の金額とは別に持ちます。'],
+  ['事業や議員の良し悪しを評価していますか', 'いいえ。風土記は評価を書かず、順位や良し悪しの色も付けません。事業評価は自治体が自分で振り返った結果で、風土記の評価ではありません。'],
   ['共通分類（COFOG）は正しいのですか', '分類は出典にない、風土記の判断です。確かなもの・仮のもの・分類できないものを区別して返し、分類できない明細も合計から落としません。'],
   [
     'どの自治体・年度が入っていますか',
     <>
-      収録する自治体と年度は、順次広げています。いま入っている範囲は、AI に聞くか<a href={DOCS}>ドキュメント</a>で確かめられます。収録していないことは、支出がゼロであることを意味しません。
+      収録する自治体と年度は、順次広げています。いま入っている範囲は<Link href="/jurisdictions">自治体の一覧</Link>で確かめられます。収録していないことは、支出がゼロであることを意味しません。
     </>,
   ],
   [
     '使うのにお金や登録は要りますか',
     <>
-      このサイトのチャットや、ふだんの調べものに使うなら要りません。チャットに質問を入力すれば、登録なしでそのまま調べられます。ChatGPT や Claude など、いつも使っている AI につないで使うこともできます。会社の製品やサービスに組み込むなど商用で使うときは、事前にお問い合わせください。詳しくは<a href={`${DOCS}/terms`}>利用規約</a>をご覧ください。
+      このサイトで見たり、アシスタントに聞いたり、ふだんの調べものに使うなら要りません。ChatGPT や Claude など、いつも使っている AI につないで使うこともできます。会社の製品やサービスに組み込むなど商用で使うときは、事前にお問い合わせください。詳しくは<a href={`${DOCS}/terms`}>利用規約</a>をご覧ください。
     </>,
   ],
 ]
 
-export function Landing({ sitekey }: { sitekey: string }) {
+/** 風土記で見られるもの。ready でないものは準備中 */
+const TOPICS = [
+  { k: '計画', title: 'まちが目指す姿', note: '基本構想に書かれた将来の姿と、その年に新しく始めること。', ready: true },
+  { k: '予算・決算', title: '何にいくら使うか、使ったか', note: '大きな分類から事業の単位まで。予算案・当初予算・補正後・決算を別の金額として持ちます。', ready: true },
+  { k: '事業評価', title: 'どう振り返ったか', note: '自治体が自分の事業を振り返った結果を、そのままの言葉で。', ready: true },
+  { k: '議会', title: '何が提案され、どう決まったか', note: '議案と議決を、予算や事業とつなげて。', ready: false },
+  { k: '選挙', title: '誰が立ち、どう選ばれたか', note: '候補者と結果を、同じ様式で。', ready: false },
+]
+
+/** 見せ方の決まり */
+const RULES = [
+  { k: '並べる', title: '良し悪しは書きません', note: '数字や事業、議員・候補者に順位や色を付けず、出典と並べるところまでにします。読み解くのは、読む人です。' },
+  { k: '揃える', title: '同じ物差しで', note: '街ごとに違う科目の名前を、共通の分類に揃えます。他の街とも、他の年とも比べられます。' },
+  { k: '配る', title: '誰でも使える形で', note: '画面に出しているのと同じデータを、出典つきで API・MCP・オープンデータとして配っています。' },
+]
+
+export function Landing() {
   const setup = React.useRef<HTMLDialogElement>(null)
   return (
     <div className="landing">
@@ -657,17 +633,16 @@ export function Landing({ sitekey }: { sitekey: string }) {
       <SetupDialog dialog={setup} />
       <main>
         <header className="hero wrap">
-          <p className="eyebrow">風土記 — うちのまち、なにしてる？</p>
-          <Sweep>あなたの街は、何にいくら使ったか</Sweep>
-          <p className="sub">自治体の予算書と決算書を、事業ごとの表にしました。AI に聞けば、他の街や他の年と同じ物差しで比べ、出典の頁まで返します。</p>
-          <AskDock sitekey={sitekey} />
+          <p className="eyebrow">風土記について</p>
+          <Sweep>うちのまち、なにしてる？</Sweep>
+          <p className="sub">自治体が何を決め、何にいくら使い、どう振り返ったか。行政の資料を同じ物差しの表にして、出典と並べて見られるようにしています。</p>
           <div className="acts">
-            <a className="btn ol" href="#mcp">
-              自分の AI に接続する
+            <Link className="btn" href="/jurisdictions">
+              自治体を探す
               <Icon id="arrow-right" />
-            </a>
-            <a className="btn ol" href={DOCS}>
-              ドキュメント
+            </Link>
+            <a className="btn ol" href="#mcp">
+              自分の AI から使う
             </a>
           </div>
         </header>
@@ -680,15 +655,51 @@ export function Landing({ sitekey }: { sitekey: string }) {
           </div>
         </div>
 
+        <section className="sec wrap topics" id="what" aria-labelledby="what-h">
+          <div className="sec-h">
+            <p className="eyebrow">見られること</p>
+            <h2 id="what-h">決めたこと、使ったお金、その振り返り</h2>
+            <p className="lead">扱うのは行政の情報です。計画・予算・決算・事業評価を中心に、その手前にある議会と選挙も載せていきます。</p>
+          </div>
+          <ul>
+            {TOPICS.map((t) => (
+              <li key={t.k} data-soon={t.ready ? undefined : ''}>
+                <span className="k">
+                  {t.k}
+                  {!t.ready && <small>準備中</small>}
+                </span>
+                <h3>{t.title}</h3>
+                <p>{t.note}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+
         <section className="sec wrap" id="how" aria-label="3つのステップ">
           <Steps />
+        </section>
+
+        <section className="sec wrap rules" id="rules" aria-labelledby="rules-h">
+          <div className="sec-h">
+            <p className="eyebrow">見せ方の決まり</p>
+            <h2 id="rules-h">評価は書かず、出典と並べる</h2>
+          </div>
+          <ol>
+            {RULES.map((r) => (
+              <li key={r.k}>
+                <span className="k">{r.k}</span>
+                <h3>{r.title}</h3>
+                <p>{r.note}</p>
+              </li>
+            ))}
+          </ol>
         </section>
 
         <section className="mcp wrap" id="mcp" aria-labelledby="mcp-h">
           <div>
             <p className="eyebrow">AI から使う</p>
             <h2 id="mcp-h">いつもの AI からも使えます</h2>
-            <p className="lead">ChatGPT や Claude に風土記をつなぐと、会話の中で街の支出を調べられます。登録はいりません。</p>
+            <p className="lead">ChatGPT や Claude に風土記をつなぐと、会話の中で街の予算・決算・事業評価を調べられます。登録はいりません。</p>
             <Connect openSetup={() => setup.current?.showModal?.()} />
           </div>
           <Demo />
@@ -719,7 +730,13 @@ export function Landing({ sitekey }: { sitekey: string }) {
             <h2>使う</h2>
             <ul>
               <li>
+                <Link href="/">ホーム</Link>
+              </li>
+              <li>
                 <Link href="/jurisdictions">自治体を探す</Link>
+              </li>
+              <li>
+                <Link href="/assistant">アシスタント</Link>
               </li>
               <li>
                 <a href="#mcp">AI から使う</a>
