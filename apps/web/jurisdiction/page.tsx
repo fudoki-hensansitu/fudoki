@@ -718,7 +718,7 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
   }
   const rows = grade === 'D' ? scrap.exits.map((e, i) => ({ i, name: e.name, kind: e.result, reason: e.reason })) : (scrap.graded?.[grade] ?? []).map((p, i) => ({ i, name: p.name, kind: p.direction, reason: p.reason }))
   return (
-    <Section id="scrap" title="やめたこと・見直したことは？" lead="自治体は毎年、前の年度までに行った事業を評価して、やめる事業や減らす事業を決め、その分を新しい予算に回しています。">
+    <Section id="scrap" title="やめたこと・見直したことは？" link={{ href: scrap.source, label: '事業評価の結果' }} lead="自治体は毎年、前の年度までに行った事業を評価して、やめる事業や減らす事業を決め、その分を新しい予算に回しています。">
       {/* 浮かせたお金の棒は節の中央に置き、下の「自治体が付けた評価」の見出しと離す（棒の見出しに見えないように） */}
       <div className="mx-auto mb-8 mt-2 flex w-full max-w-[560px] flex-col gap-2">
         <div className="flex items-baseline justify-between gap-3">

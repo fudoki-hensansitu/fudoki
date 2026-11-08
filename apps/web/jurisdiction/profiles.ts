@@ -43,6 +43,8 @@ export interface Initiative {
 }
 
 export interface Scrap {
+  /** 数字と事業を取った、事務事業評価の結果の資料（PDF）。その年度の予算に反映された前年の評価 */
+  source: string
   /** 事務事業評価で捻出した財源 */
   raisedYen: number
   /** 区が掲げた捻出の目標。目標を示していない年度は持たない */
@@ -447,6 +449,7 @@ const SHINAGAWA: Profile = {
         }
       ],
       "scrap": {
+        "source": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/181/20240222105532_16.pdf",
         "raisedYen": 2364986000,
         "evaluated": 665,
         "grades": {
@@ -512,6 +515,7 @@ const SHINAGAWA: Profile = {
       },
       "projects": [],
       "scrap": {
+        "source": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/177/20240222105532_18.pdf",
         "raisedYen": 2014563000,
         "targetYen": 2000000000,
         "evaluated": 669,
@@ -567,6 +571,7 @@ const SHINAGAWA: Profile = {
       },
       "projects": [],
       "scrap": {
+        "source": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/173/20240222105532_35.pdf",
         "raisedYen": 1522098000,
         "targetYen": 2000000000,
         "evaluated": 652,
