@@ -3,7 +3,7 @@
 // 歳出の決算は API の値。事業評価から取った事業・やめたこと（事業の入れ替え）は jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
 import { Link } from '@void/react'
 import * as React from 'react'
-import { ArrowLeftIcon, ArrowUpIcon, ArrowRightIcon, ArrowSquareOutIcon, CaretRightIcon, MapPinAreaIcon, MapTrifoldIcon, SquaresFourIcon, BankIcon, BasketballIcon, CaretDownIcon, ClipboardTextIcon, CoinsIcon, RobotIcon, FirstAidKitIcon, GlobeIcon, HandHeartIcon, HouseLineIcon, LeafIcon, MapPinIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, StudentIcon, DotsThreeCircleIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
+import { ArrowLeftIcon, ArrowUpIcon, ArrowRightIcon, ArrowSquareOutIcon, CaretRightIcon, MapPinAreaIcon, MapTrifoldIcon, SquaresFourIcon, BankIcon, BasketballIcon, CaretDownIcon, CoinsIcon, RobotIcon, FirstAidKitIcon, GlobeIcon, HandHeartIcon, HouseLineIcon, LeafIcon, MapPinIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, StudentIcon, DotsThreeCircleIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
 import { StartForm } from '../chat/start-form'
 import type { StoredSession } from '../chat/store'
 import { Hint } from '@/components/hint'
@@ -140,24 +140,27 @@ function FreshRow({ up, upLabel = '拡大', title, yen, source, children }: { up
 /** 資料の PDF の該当ページへのリンク。PDF の #page で開く。リンク名は何の資料で何ができるかを言う（頁番号は出さない） */
 const pdfPage = (pdf: string | undefined, page: number, label: string) => (pdf ? { href: `${pdf}#page=${page}`, label } : undefined)
 
-const EvalLabel = () => (
-  <span className="mr-2 inline-flex items-center gap-1 align-middle">
-    <ClipboardTextIcon aria-hidden="true" className="size-4 text-muted-foreground" />
-    評価
-  </span>
-)
+/** 評価の枠。1行目に区分と方向性、2行目にその中身を置く */
+function EvalBox({ grade, direction, children }: { grade: string; direction: string; children: React.ReactNode }) {
+  return (
+    <div className="space-y-1 rounded-xl bg-sidebar px-3.5 py-2.5 text-[13px] leading-relaxed text-foreground [text-wrap:pretty]">
+      <p>
+        <span className="mr-2 align-middle">評価</span>
+        <Grade grade={grade} />（{direction}）
+      </p>
+      <p>{children}</p>
+    </div>
+  )
+}
 
 /** 今ある事業の中で始めた取り組み。何を始めたかはシートの文をそのまま引き、金額と評価は含まれる事業全体のものだと文で言う */
 function InitiativeItem({ p, sheets }: { p: Initiative; sheets?: string }) {
   return (
     <FreshRow up upLabel="今ある事業の中で" title={p.title} yen={p.settledYen} source={pdfPage(sheets, p.page, '評価シート')}>
       <p className="text-sm [text-wrap:pretty]">「{p.quote}」</p>
-      <p className="rounded-xl bg-sidebar px-3.5 py-2.5 text-[13px] leading-relaxed text-foreground [text-wrap:pretty]">
-        <EvalLabel />
-        この取り組みだけの評価はない。金額と評価は、含まれる事業「{p.name}」全体の決算額と評価で、評価は
-        <Grade grade={p.grade} className="ml-1" />
-        （{p.direction}）。
-      </p>
+      <EvalBox grade={p.grade} direction={p.direction}>
+        この取り組みだけの評価はない。金額と評価は、含まれる事業「{p.name}」全体の決算額と評価。
+      </EvalBox>
     </FreshRow>
   )
 }
@@ -310,12 +313,10 @@ function ProjectItem({ p, sheets }: { p: EvaluatedProject; sheets?: string }) {
     // 金額は名前と同じ行の右に置き、評価の枠は幅いっぱいに出す。値はどれも評価シートのもの
     <FreshRow up={false} title={p.title} yen={p.settledYen} source={pdfPage(sheets, p.page, '評価シート')}>
       <p className="text-sm">{p.what}</p>
-      {/* 評価の区分・方向性・指標は一続きの文として、同じ大きさ・色で読ませる。指標の良し悪しは風土記が判断しない */}
-      <p className="rounded-xl bg-sidebar px-3.5 py-2.5 text-[13px] leading-relaxed text-foreground [text-wrap:pretty]">
-        <EvalLabel />
-        <Grade grade={p.grade} />
-        （{p.direction}）。{i ? `指標の「${i.name}」は、目標 ${i.target}${i.unit}に対して実績 ${i.actual}${i.unit}。` : '目標と実績を並べた指標は載っていない。'}
-      </p>
+      {/* 指標は区分と同じ大きさ・色で読ませる。指標の良し悪しは風土記が判断しない */}
+      <EvalBox grade={p.grade} direction={p.direction}>
+        {i ? `指標の「${i.name}」は、目標 ${i.target}${i.unit}に対して実績 ${i.actual}${i.unit}。` : '目標と実績を並べた指標は載っていない。'}
+      </EvalBox>
     </FreshRow>
   )
 }
