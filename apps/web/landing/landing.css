@@ -61,8 +61,8 @@
 .landing .sheet b{font-weight:600}
 .landing .sheet small{display:block;font-size:12px;color:color-mix(in srgb,var(--page-foreground) 60%,var(--page))}
 
-.landing .mcp{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:64px;align-items:center;padding-block:96px;background:var(--paper);color:var(--paper-foreground)}
-.landing .mcp h2{margin-top:16px;font-size:clamp(2.25rem,1.5rem + 3vw,4.25rem);line-height:1.25;color:var(--paper-foreground)}
+.landing .mcp{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:56px;align-items:center;padding-block:96px;background:var(--paper);color:var(--paper-foreground)}
+.landing .mcp h2{margin-top:16px;font-size:clamp(1.9rem,1.3rem + 2vw,3.25rem);line-height:1.35;color:var(--paper-foreground)}
 .landing .mcp .eyebrow{color:var(--paper-foreground)}
 .landing .mcp .lead{margin-top:16px;font-size:15px;line-height:1.8}
 .landing .connect{margin-top:24px;border:1px solid color-mix(in srgb,var(--paper-foreground) 20%,transparent);border-radius:var(--radius-card,16px);background:var(--background);color:var(--foreground);overflow:hidden}
@@ -237,8 +237,8 @@ html:has(.landing){scroll-behavior:smooth}
 .landing .cta p{font-size:15px;opacity:.85}
 
 @media (max-width:960px){
-.landing .hero,.landing .feat,.landing .stance,.landing .pair-g,.landing .mcp{grid-template-columns:minmax(0,1fr)}
-.landing .mcp{gap:40px}
+.landing .hero,.landing .feat,.landing .stance,.landing .pair-g{grid-template-columns:minmax(0,1fr)}
+
 .landing .feat.flip .feat-t{order:0}
 .landing .hero{min-height:0;gap:24px}
 .landing .cycle ol{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -266,3 +266,5 @@ html:has(.landing){scroll-behavior:smooth}
 .landing .m-big em{font-size:38px}
 }
 .landing .m-cands small{white-space:nowrap}
+/* AI の節は手順の札と録画を並べるので、サイドバーを除いた幅が狭いうちは1列にする */
+@media (max-width:1180px){.landing .mcp{grid-template-columns:minmax(0,1fr);gap:40px}}
