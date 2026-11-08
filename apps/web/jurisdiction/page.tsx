@@ -3,14 +3,14 @@
 // 歳出の決算は API の値。事業評価から取った事業・やめたこと（事業の入れ替え）は jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
 import { Link } from '@void/react'
 import * as React from 'react'
-import { ArrowLeftIcon, ArrowUpIcon, ArrowRightIcon, ArrowSquareOutIcon, CaretRightIcon, MapPinAreaIcon, MapTrifoldIcon, SquaresFourIcon, BankIcon, BasketballIcon, CaretDownIcon, CheckCircleIcon, ArrowsMergeIcon, HourglassMediumIcon, ClipboardTextIcon, CoinsIcon, RobotIcon, FirstAidKitIcon, GlobeIcon, HandHeartIcon, HouseLineIcon, LeafIcon, MapPinIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, StudentIcon, DotsThreeCircleIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
+import { ArrowLeftIcon, ArrowUpIcon, ArrowRightIcon, ArrowSquareOutIcon, CaretRightIcon, MapPinAreaIcon, MapTrifoldIcon, SquaresFourIcon, BankIcon, BasketballIcon, CaretDownIcon, ClipboardTextIcon, CoinsIcon, RobotIcon, FirstAidKitIcon, GlobeIcon, HandHeartIcon, HouseLineIcon, LeafIcon, MapPinIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, StudentIcon, DotsThreeCircleIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
 import { StartForm } from '../chat/start-form'
 import type { StoredSession } from '../chat/store'
 import { Hint } from '@/components/hint'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { StopIcon, NewIcon, UpIcon } from './fresh-icons'
+import { StopIcon, NewIcon, UpIcon, KeepIcon, LawIcon, PlanIcon, FixIcon, SizeIcon, CutIcon, DoneIcon, JoinIcon, MaybeStopIcon } from './fresh-icons'
 import { DOMAIN_FRAMES, groupByFrame, OTHER_FRAME } from './domains'
 import type { PressItem } from './budget-press'
 import { EMBLEMS } from './emblems'
@@ -625,31 +625,37 @@ function Projects({ data, year }: { data: PageData; year: number }) {
   )
 }
 
-/** D 評価の結果の見せ方。「廃止」は STOP の印だけで伝え、完了・統合は良し悪しの無い灰色の印にする。区の言葉の「廃止を検討」はやわらかく言い換える */
-const EXIT_LOOK: Record<string, { icon: 'stop' | 'done' | 'merge' | 'wait'; label: string }> = {
-  廃止: { icon: 'stop', label: 'やめた' },
-  完了: { icon: 'done', label: '完了' },
-  '移管・統合': { icon: 'merge', label: 'ほかの事業へ統合' },
-  廃止を検討: { icon: 'wait', label: 'やめるか検討中' },
+/** 評価の方向性（A〜C は今後の取組の方向性、D は評価結果の表の区分）ごとの印と言い方。言葉は印の説明（ヒントと凡例）にだけ使う */
+const MARKS: Record<string, { Icon: (p: { className?: string }) => React.ReactNode; label: string }> = {
+  新規の取組み: { Icon: NewIcon, label: '新しい取り組みを始める' },
+  '対象・規模等の拡大': { Icon: UpIcon, label: '対象・規模を広げる' },
+  現状維持: { Icon: KeepIcon, label: '今のまま続ける' },
+  '法定受託事務・法定扶助費等': { Icon: LawIcon, label: '法令で決まっている' },
+  '計画・規定どおり': { Icon: PlanIcon, label: '計画どおり続ける' },
+  手法等の改善: { Icon: FixIcon, label: 'やり方を見直す' },
+  '対象・規模等の見直し': { Icon: SizeIcon, label: '対象・規模を見直す' },
+  取組みの一部廃止: { Icon: CutIcon, label: '一部をやめる' },
+  完了: { Icon: DoneIcon, label: '完了した' },
+  '移管・統合': { Icon: JoinIcon, label: 'ほかの事業へ統合' },
+  廃止: { Icon: StopIcon, label: 'やめた' },
+  廃止を検討: { Icon: MaybeStopIcon, label: 'やめるか検討中' },
 }
 
-/** A〜C 評価の「今後の取組の方向性」の言い方 */
-const DIRECTION_LABEL: Record<string, string> = {
-  新規の取組み: '新しい取り組みを始める',
-  '対象・規模等の拡大': '対象・規模を広げる',
-  現状維持: '今のまま続ける',
-  '法定受託事務・法定扶助費等': '法令で決まっている',
-  '計画・規定どおり': '計画どおり続ける',
-  手法等の改善: 'やり方を見直す',
-  '対象・規模等の見直し': '対象・規模を見直す',
-  取組みの一部廃止: '一部をやめる',
+function Mark({ kind }: { kind: string }) {
+  const m = MARKS[kind]
+  if (!m) return null
+  return (
+    <Hint label={m.label}>
+      <span className="absolute -top-[3px] left-0 flex text-primary">
+        <m.Icon className="size-6" />
+        <span className="sr-only">{m.label}</span>
+      </span>
+    </Hint>
+  )
 }
 
-function ExitMark({ icon }: { icon: 'stop' | 'done' | 'merge' | 'wait' }) {
-  if (icon === 'stop') return <StopIcon className="absolute -top-[3px] left-0 size-6 text-primary" />
-  const Icon = icon === 'done' ? CheckCircleIcon : icon === 'merge' ? ArrowsMergeIcon : HourglassMediumIcon
-  return <Icon aria-hidden="true" className="absolute left-0.5 top-0.5 size-5 text-muted-foreground" />
-}
+/** 行の印ごとの件数。MARKS の順に並べる */
+const legendOf = (rows: { kind: string }[]) => Object.keys(MARKS).map((k) => [k, rows.filter((r) => r.kind === k).length] as const).filter(([, n]) => n > 0)
 
 function ScrapSection({ scrap }: { scrap: Scrap }) {
   const target = scrap.targetYen
@@ -661,6 +667,7 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
     ['D', '終える'],
   ] as const
   const [grade, setGrade] = React.useState<'A' | 'B' | 'C' | 'D'>('D')
+  const rows = grade === 'D' ? scrap.exits.map((e, i) => ({ i, name: e.name, kind: e.result, reason: e.reason })) : (scrap.graded?.[grade] ?? []).map((p, i) => ({ i, name: p.name, kind: p.direction, reason: '' }))
   return (
     <Section id="scrap" title="やめたこと・見直したことは？" lead="自治体は毎年、前の年度までに行った事業を評価して、やめる事業や減らす事業を決め、その分を新しい予算に回しています。">
       {/* 浮かせたお金の棒は節の中央に置き、下の「自治体が付けた評価」の見出しと離す（棒の見出しに見えないように） */}
@@ -693,35 +700,32 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
           )
         })}
       </div>
+      {/* 選んだ区分にある印の凡例。行には印だけを付ける */}
+      <ul className="flex flex-wrap gap-x-5 gap-y-2 text-[13px] text-muted-foreground">
+        {legendOf(rows).map(([kind, n]) => {
+          const m = MARKS[kind]!
+          return (
+            <li key={kind} className="flex items-center gap-1.5">
+              <m.Icon className="size-5 text-primary" />
+              {m.label}
+              <span className="tabular-nums">{n}</span>
+            </li>
+          )
+        })}
+      </ul>
       <div key={grade} role="list" className="border-t">
-        {grade === 'D' ? (
-          <FrameItems
-            items={scrap.exits}
-            render={(e) => {
-              const look = EXIT_LOOK[e.result] ?? EXIT_LOOK['完了']!
-              return (
-                <div role="listitem" key={e.name} className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-4 gap-y-1 border-b border-foreground/10 py-3 text-sm sm:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_112px]">
-                  <span className="relative pl-8">
-                    <ExitMark icon={look.icon} />
-                    {e.name}
-                  </span>
-                  <span className="col-span-full row-start-2 text-[13.5px] text-muted-foreground sm:col-span-1 sm:row-start-auto">{e.reason}</span>
-                  <span className="text-right text-[13px] text-muted-foreground">{look.label}</span>
-                </div>
-              )
-            }}
-          />
-        ) : (
-          <FrameItems
-            items={(scrap.graded?.[grade] ?? []).map((p, i) => ({ ...p, i }))}
-            render={(p) => (
-              <div role="listitem" key={p.i} className="flex items-baseline justify-between gap-4 border-b border-foreground/10 py-3 text-sm">
-                <span>{p.name}</span>
-                <span className="shrink-0 text-right text-[13px] text-muted-foreground">{DIRECTION_LABEL[p.direction] ?? p.direction}</span>
-              </div>
-            )}
-          />
-        )}
+        <FrameItems
+          items={rows}
+          render={(r) => (
+            <div role="listitem" key={r.i} className="grid grid-cols-1 items-baseline gap-x-4 gap-y-1 border-b border-foreground/10 py-3 text-sm sm:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
+              <span className="relative pl-8">
+                <Mark kind={r.kind} />
+                {r.name}
+              </span>
+              {r.reason ? <span className="pl-8 text-[13.5px] text-muted-foreground sm:pl-0">{r.reason}</span> : null}
+            </div>
+          )}
+        />
       </div>
     </Section>
   )
