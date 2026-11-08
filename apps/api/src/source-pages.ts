@@ -30,12 +30,15 @@ export type SourcePageResult =
 
 interface Origin { sha256: string; title: string; url: string }
 
+const officialUrl = (url: string, landing: string) => (new URL(url).hostname === 'web.archive.org' ? landing : url)
+
 async function resolveOrigin(db: Db, origin: string): Promise<Origin | null> {
   if (SHA256.test(origin)) {
     const row = await db.prepare(`SELECT title, url FROM ${ORIGIN_TABLE} WHERE sha256 = ? ORDER BY origin_id LIMIT 1`).bind(origin).first<{ title: string; url: string }>()
     if (row) return { sha256: origin, title: row.title, url: row.url }
     const doc = CATALOG.find((d) => d.origin_sha256 === origin)
-    return doc ? { sha256: origin, title: doc.title, url: doc.url } : null
+    // catalog の url は自治体から消えた資料だと Wayback Machine の写しになる。利用者に示すのは自治体の公式の頁にする
+    return doc ? { sha256: origin, title: doc.title, url: officialUrl(doc.url, doc.landing_url) } : null
   }
   const row = await db.prepare(`SELECT sha256, title, url FROM ${ORIGIN_TABLE} WHERE origin_id = ?`).bind(origin).first<{ sha256: string | null; title: string; url: string }>()
   return row?.sha256 && SHA256.test(row.sha256) ? { sha256: row.sha256, title: row.title, url: row.url } : null

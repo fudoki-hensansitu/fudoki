@@ -3,6 +3,7 @@
 web のアシスタントが apps/api の内部 RPC（`SourcePages`）から、出典の1頁を読むために使う（docs/prd/source-reading/dd.md）。
 対象は出典の選定（`selections`・`evaluation_selections`）で R2 に保存済みの、文字の層がある PDF（`pdf_type: text`）だけ。
 既定は計画の表示だけで、`--write` で R2 へ書く。R2 に同じ key があれば作り直さない（key は出典の sha256 で、中身は出典から決まる）。
+抜き出し方を変えたときは `--refresh` で保存済みの key も作り直す。
 """
 from __future__ import annotations
 
@@ -162,12 +163,13 @@ def main(argv: list[str]) -> int:
     parser.add_argument('--write', action='store_true', help='R2 へ書く（既定は計画の表示だけ）')
     parser.add_argument('--jurisdiction', help='自治体コード（6桁）で絞る')
     parser.add_argument('--kind', choices=['initial', 'settlement', 'supplementary', 'evaluation'], help='資料の種類で絞る')
+    parser.add_argument('--refresh', action='store_true', help='R2 にある key も作り直す（抜き出し方を変えたとき）')
     parser.add_argument('--jobs', type=int, default=4, help='同時に処理する出典の数')
     parser.add_argument('--keep-cache', action='store_true', help='取った出典 PDF を cache に残す（既定は1件ごとに消す）')
     args = parser.parse_args(argv)
     origins = [o for o in load_origins()
                if (not args.jurisdiction or o.jurisdiction == args.jurisdiction) and (not args.kind or o.kind == args.kind)]
-    existing = saved_keys()
+    existing = set() if args.refresh else saved_keys()
     todo = [o for o in origins if object_key(o.sha256) not in existing]
     print(json.dumps({'mode': 'write' if args.write else 'plan', 'origins': len(origins),
                       'saved': len(origins) - len(todo), 'to_write': len(todo)}, ensure_ascii=False), flush=True)

@@ -1,5 +1,6 @@
 import { expect, test } from 'bun:test'
 import { MAX_PAGE_CHARS, readSourcePage, type SourceTextBucket } from './source-pages'
+import { CATALOG } from './evaluations'
 import { testDb } from './testing'
 
 const SHA = 'a'.repeat(64)
@@ -42,4 +43,17 @@ test('頁の範囲外と不正な入力は invalid、長い頁は上限で切る
   expect((await readSourcePage(db, bucket, { origin: 'o1', page: 1, key: 'x' })).status).toBe('invalid')
   const r = await readSourcePage(db, bucket, { origin: 'o1', page: 1 })
   expect(r.status === 'ok' && [r.text.length, r.truncated]).toEqual([MAX_PAGE_CHARS, true])
+})
+
+test('評価資料の catalog の出典は、Wayback Machine の写しでなく自治体の公式の頁を返す', async () => {
+  const { db } = setup([])
+  const doc = { origin_sha256: OTHER, jurisdiction: '131016', fiscal_year: 2020, title: '評価', url: 'https://web.archive.org/web/2025id_/https://city.example.jp/r2.pdf', landing_url: 'https://city.example.jp/r2.html', item_format: 'pdf' as const, pages: [] }
+  CATALOG.push(doc)
+  try {
+    const bucket: SourceTextBucket = { get: async () => ({ text: async () => JSON.stringify({ pages: ['本文'] }) }) }
+    const r = await readSourcePage(db, bucket, { origin: OTHER, page: 1 })
+    expect(r.status === 'ok' && r.url).toBe('https://city.example.jp/r2.html')
+  } finally {
+    CATALOG.splice(CATALOG.indexOf(doc), 1)
+  }
 })

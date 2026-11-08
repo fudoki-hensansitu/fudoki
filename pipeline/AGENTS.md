@@ -13,7 +13,7 @@ script はこの package が所有する。実行は `bun run --cwd pipeline <na
 | dbt | `dbt:prepare`（入力準備だけ）/ `dbt:build`（入力準備から marts まで。候補は `--candidate-dir`、保存済みで未キャッシュなら `--remote`） |
 | 配信 | `serving:columns`（`apps/api/src/columns.json` を warehouse の列と `_models.yml` の説明から生成。`--check` で最新か検査）/ `serving:sync`（marts の表を D1 へ同名・同列で写す。`--database-id <uuid>` か `--local`、`--persist-to`、`--dry-run`。ネットワーク・cf を使うので sandbox 外） |
 | 評価の検索 | `evaluation:index`（保存済みの評価資料を R2 から取り、1頁ずつの PDF にして AI Search `fudoki-evaluation-v2` へ登録する。既定は計画の表示だけ、`--write` で書き、全 item が completed で数と metadata が計画と一致した出典の記録を `evaluation_search/instance.json` に書く。分割 PDF は保存しない。ネットワーク・cf を使うので sandbox 外）/ `serving:evaluation-catalog`（登録の記録があり指紋が今の選定と設定に一致する出典だけを `apps/api/src/evaluation-catalog.json` に生成。`--check` で最新か検査し、CI で回す） |
-| 出典の頁の文字 | `source-text:save`（保存済みの文字の層がある出典 PDF を R2 から取り、頁ごとの文字を非公開 R2 の `source-text/<sha256>.json` に置く。web のアシスタントが apps/api の内部 RPC から読む。既定は計画の表示だけ、`--write` で書き、R2 にある key は作り直さない。`--jurisdiction`・`--kind`・`--jobs`。ネットワーク・cf を使うので sandbox 外） |
+| 出典の頁の文字 | `source-text:save`（保存済みの文字の層がある出典 PDF を R2 から取り、頁ごとの文字を非公開 R2 の `source-text/<sha256>.json` に置く。web のアシスタントが apps/api の内部 RPC から読む。既定は計画の表示だけ、`--write` で書き、R2 にある key は作り直さない。`--jurisdiction`・`--kind`・`--jobs`、抜き出し方を変えたら `--refresh`。ネットワーク・cf を使うので sandbox 外） |
 | 検査 | `test`（bun）/ `test:python`（unittest）/ `test:dbt`（入力準備の unittest） |
 
 出典選定は `bun pipeline/source_selection/check.ts` と `archive.ts`。事業の評価の資料（`evaluation_selections`）は `archive.ts --evaluation` で決算書とは別の key（`.../evaluation-settlement[-<n>].pdf`）に保存する。`settlement-` で始めると決算書の保存が消す。dbt は入力準備（`dbt/scripts/`）、staging・intermediate・marts のモデル、seeds を持つ。
