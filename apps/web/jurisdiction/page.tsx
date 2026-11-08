@@ -726,7 +726,7 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
     setGrade(next)
     e.currentTarget.querySelector<HTMLButtonElement>(`[data-grade="${next}"]`)?.focus()
   }
-  const rows = grade === 'D' ? scrap.exits.map((e, i) => ({ i, name: e.name, kind: e.result, reason: e.reason })) : (scrap.graded?.[grade] ?? []).map((p, i) => ({ i, name: p.name, kind: p.direction, reason: undefined as string | undefined }))
+  const rows = grade === 'D' ? scrap.exits.map((e, i) => ({ i, name: e.name, kind: e.result, page: e.page, reason: e.reason })) : (scrap.graded?.[grade] ?? []).map((p, i) => ({ i, name: p.name, kind: p.direction, page: p.page, reason: undefined as string | undefined }))
   return (
     <Section id="scrap" title="やめたこと・見直したことは？" link={{ href: scrap.source, label: '事業評価の結果' }} lead="自治体は毎年、前の年度までに行った事業を評価して、やめる事業や減らす事業を決め、その分を新しい予算に回しています。">
       {/* 浮かせたお金の棒は節の中央に置き、下の「自治体が付けた評価」の見出しと離す（棒の見出しに見えないように） */}
@@ -786,6 +786,10 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
               <span className="relative pl-8">
                 <Mark kind={r.kind} />
                 {r.name}
+                <a href={`${scrap.sheets}#page=${r.page}`} target="_blank" rel="noopener" className="ml-2 inline-flex items-center gap-0.5 whitespace-nowrap align-baseline text-xs text-muted-foreground underline-offset-4 hover:underline">
+                  評価シート
+                  <ArrowSquareOutIcon aria-hidden="true" className="size-3" />
+                </a>
               </span>
               {r.reason ? <span className="pl-8 text-[13.5px] text-muted-foreground sm:pl-0">{r.reason}</span> : null}
             </div>
