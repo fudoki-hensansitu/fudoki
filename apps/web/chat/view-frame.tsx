@@ -455,7 +455,7 @@ export function ViewFrame({
         <Button variant="outline" size="sm" onClick={() => setMode('inline')}>元に戻す</Button>
       </div>
     ) : null}
-    {!expanded && !wide && ready ? (
+    {!expanded && (!wide || !movable) && ready ? (
       <button type="button" onClick={() => setMode('fullscreen')} className="mt-1 text-xs text-muted-foreground underline underline-offset-4 hover:text-foreground">
         大きく開く
       </button>
