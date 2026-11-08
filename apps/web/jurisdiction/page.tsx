@@ -3,18 +3,20 @@
 // 歳出の決算は API の値。事業評価から取った事業・やめたこと（事業の入れ替え）は jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
 import { Link } from '@void/react'
 import * as React from 'react'
-import { ArrowLeftIcon, ArrowUpIcon, ArrowRightIcon, ArrowSquareOutIcon, CaretRightIcon, MapPinAreaIcon, MapTrifoldIcon, SquaresFourIcon, BankIcon, BasketballIcon, CaretDownIcon, ClipboardTextIcon, CoinsIcon, RobotIcon, FirstAidKitIcon, GlobeIcon, HandHeartIcon, HouseLineIcon, LeafIcon, MapPinIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, StudentIcon, DotsThreeCircleIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
+import { ArrowLeftIcon, ArrowUpIcon, ArrowRightIcon, ArrowSquareOutIcon, CaretRightIcon, MapPinAreaIcon, MapTrifoldIcon, SquaresFourIcon, BankIcon, BasketballIcon, CaretDownIcon, CoinsIcon, RobotIcon, FirstAidKitIcon, GlobeIcon, HandHeartIcon, HouseLineIcon, LeafIcon, MapPinIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, StudentIcon, DotsThreeCircleIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
 import { StartForm } from '../chat/start-form'
 import type { StoredSession } from '../chat/store'
 import { Hint } from '@/components/hint'
 import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { StopIcon, NewIcon, UpIcon } from './fresh-icons'
+import { StopIcon, NewIcon, UpIcon, KeepIcon, LawIcon, PlanIcon, FixIcon, SizeIcon, CutIcon, DoneIcon, JoinIcon, MaybeStopIcon } from './fresh-icons'
 import { DOMAIN_FRAMES, groupByFrame, OTHER_FRAME } from './domains'
+import type { PressItem } from './budget-press'
 import { EMBLEMS } from './emblems'
 import { Flow } from './flow'
-import { assetPath, type BudgetNew, type EvaluatedProject, type Initiative, type ProfileYear, type Scrap } from './profiles'
-import { changePct, INDEX_PATH, formatAsOf, formatPeople, formatYen, reiwa, yearName, type FlowView, type PageData, type Project, type Setsu, type YearTotal } from './types'
+import { assetPath, type EvaluatedProject, type Initiative, type ProfileYear, type Scrap } from './profiles'
+import { changePct, INDEX_PATH, formatAsOf, formatPeople, formatPerCapita, formatYen, reiwa, yearName, type FlowView, type PageData, type Project, type Setsu, type YearTotal } from './types'
 
 const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
   const res = await fetch(url, { signal })
@@ -27,7 +29,7 @@ type SectionLink = { href: string; label: string }
 /** link は見出しの右に出す出典（PDF を直接開く）。複数あれば並べる */
 /** lead は見出しの下の一文。区政を知らない人にその節で何が分かるかを言う */
 const Section = ({ id, title, lead, aside, link, children }: { id: string; title: string; lead?: string; aside?: React.ReactNode; link?: SectionLink | SectionLink[]; children: React.ReactNode }) => (
-  <section id={id} aria-labelledby={`h-${id}`} className="flex scroll-mt-32 lg:scroll-mt-20 flex-col gap-4">
+  <section id={id} aria-labelledby={`h-${id}`} className="flex scroll-mt-32 @4xl:scroll-mt-20 flex-col gap-4">
     <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
       <div className="flex flex-wrap items-baseline gap-x-5 gap-y-1">
         <h2 id={`h-${id}`} className="font-sans text-[26px] font-normal leading-snug">
@@ -56,7 +58,7 @@ function GradeMark({ grade }: { grade: string }) {
   return <span aria-hidden="true" className="inline-grid size-5 shrink-0 place-items-center rounded-full border border-current align-middle text-[11px] leading-none">{grade}</span>
 }
 
-/** 「C やり方を見直す」を印と言葉に分ける */
+/** 「C 見直す」を印と言葉に分ける */
 function Grade({ grade, className }: { grade: string; className?: string }) {
   const m = /^([A-D])\s*(.*)$/.exec(grade)
   if (!m) return <span className={className}>{grade}</span>
@@ -75,18 +77,18 @@ function YenText({ yen, className }: { yen: number; className?: string }) {
   return (
     <span className={`tabular-nums ${className ?? ''}`}>
       <span className="text-xl">{num}</span>
-      <span className="ml-0.5 text-xs text-muted-foreground">{unit}</span>
+      <span className="ml-0.5 text-xs">{unit}</span>
     </span>
   )
 }
 
 /** 新しく始めたことの形。事業評価のシートごと新しくできた事業か、今ある事業の中で始めた取り組みか、予算の資料で新規・レベルアップ（画面では拡大）と印の付いた項目か */
-type Fresh = ({ kind: 'sheet' } & EvaluatedProject) | ({ kind: 'initiative' } & Initiative) | ({ kind: 'budget' } & BudgetNew)
+type Fresh = ({ kind: 'sheet' } & EvaluatedProject) | ({ kind: 'initiative' } & Initiative) | ({ kind: 'budget' } & PressItem)
 const evaluatedOf = (y: ProfileYear): Fresh[] => [...y.projects.map((p) => ({ kind: 'sheet' as const, ...p })), ...[...(y.initiatives ?? [])].sort((a, b) => b.settledYen - a.settledYen).map((p) => ({ kind: 'initiative' as const, ...p }))]
 /** 実績と評価のある事業評価を優先し、まだ公表されていない年度だけ予算の資料から出す */
 const freshOf = (y: ProfileYear): Fresh[] => {
   const evaluated = evaluatedOf(y)
-  return evaluated.length ? evaluated : [...(y.budgetNew ?? [])].sort((a, b) => Number(!!b.press?.length) - Number(!!a.press?.length) || b.budgetYen - a.budgetYen).map((p) => ({ kind: 'budget' as const, ...p }))
+  return evaluated.length ? evaluated : [...(y.budgetNew ?? [])].sort((a, b) => b.budgetYen - a.budgetYen).map((p) => ({ kind: 'budget' as const, ...p }))
 }
 
 
@@ -94,76 +96,98 @@ const freshOf = (y: ProfileYear): Fresh[] => {
 const isPlanned = (y: ProfileYear) => freshOf(y)[0]?.kind === 'budget'
 const freshTitle = (y: ProfileYear) => (isPlanned(y) ? '新しく何を始める？' : '新しく何を始めた？')
 
-/** 新しく始めたことの1行。名前の左に新規（New!）か拡大・今ある事業の中での取り組み（Up!）かのバッジ、右に金額、下に中身。評価・予算どの年度も同じ形にする */
-function FreshRow({ up, upLabel = '拡大', title, yen, children }: { up: boolean; upLabel?: string; title: string; yen: number; children: React.ReactNode }) {
+/** 住民の数。新しく始めたことの金額の下に住民1人あたりの額を添えるのに使う（Domains の外から渡す） */
+const PeopleContext = React.createContext<number | undefined>(undefined)
+
+/** 新しく始めたことの1行。名前の左に新規か拡大・今ある事業の中での取り組みかの印、右に金額、下に中身。評価・予算どの年度も同じ形にする */
+function FreshRow({ up, upLabel = '拡大', title, yen, source, children }: { up: boolean; upLabel?: string; title: string; yen: number; /** 名前の後ろに続けて置く、資料の該当ページへのリンク */ source?: { href: string; label: string }; children: React.ReactNode }) {
+  const people = React.useContext(PeopleContext)
   const label = up ? upLabel : '新規'
   return (
     <div className="flex flex-col gap-2 border-b border-foreground/10 py-4">
       <div className="flex items-start justify-between gap-x-6">
-        <span className="flex min-w-0 items-start gap-2 text-[15.5px]">
-          <Hint label={label}>
-            <span className="-mt-[3px] shrink-0 text-primary">
-              {up ? <UpIcon className="size-7" /> : <NewIcon className="size-7" />}
-              <span className="sr-only">{label}</span>
+        <div className="min-w-0">
+          {/* 行の名前は分野（h3）の下の見出し。行の高さをアイコン（28px）と同じにして、アイコンを1行目の真ん中に揃える */}
+          <h4 className="flex items-start gap-2 text-base font-normal leading-7">
+            <Hint label={label}>
+              <span className="flex shrink-0 text-primary">
+                {up ? <UpIcon className="size-7" /> : <NewIcon className="size-7" />}
+                <span className="sr-only">{label}</span>
+              </span>
+            </Hint>
+            {/* 資料のリンクは名前の後ろに続けて置き、名前が折り返したときも最後の行の後ろに入るならそこへ入れる */}
+            <span className="min-w-0">
+              {title}
+              {source ? (
+                <a href={source.href} target="_blank" rel="noopener" className="ml-2 inline-flex items-center gap-0.5 whitespace-nowrap align-baseline text-xs text-muted-foreground underline-offset-4 hover:underline">
+                  {source.label}
+                  <ArrowSquareOutIcon aria-hidden="true" className="size-3" />
+                </a>
+              ) : null}
             </span>
-          </Hint>
-          {title}
+          </h4>
+        </div>
+        <span className="shrink-0 text-right">
+          <YenText yen={yen} className="block leading-7" />
+          {people && yen ? <span className="block text-xs text-muted-foreground tabular-nums">1人 {formatPerCapita(yen / people)}</span> : null}
         </span>
-        <YenText yen={yen} className="shrink-0 text-right leading-snug" />
       </div>
       {children}
     </div>
   )
 }
 
-const EvalLabel = () => (
-  <span className="mr-2 inline-flex items-center gap-1 align-middle">
-    <ClipboardTextIcon aria-hidden="true" className="size-4 text-muted-foreground" />
-    評価
-  </span>
-)
+/** 資料の PDF の該当ページへのリンク。PDF の #page で開く。リンク名は何の資料で何ができるかを言う（頁番号は出さない） */
+const pdfPage = (pdf: string | undefined, page: number, label: string) => (pdf ? { href: `${pdf}#page=${page}`, label } : undefined)
+
+/** 評価の枠。1行目に区分と方向性、2行目にその中身を置く */
+function EvalBox({ grade, direction, children }: { grade: string; direction: string; children: React.ReactNode }) {
+  return (
+    <div className="space-y-1 rounded-xl bg-sidebar px-3.5 py-2.5 text-[13px] leading-relaxed text-foreground [text-wrap:pretty]">
+      <p>
+        <span className="mr-2 align-middle">評価</span>
+        <Grade grade={grade} />（{direction}）
+      </p>
+      <p>{children}</p>
+    </div>
+  )
+}
 
 /** 今ある事業の中で始めた取り組み。何を始めたかはシートの文をそのまま引き、金額と評価は含まれる事業全体のものだと文で言う */
-function InitiativeItem({ p }: { p: Initiative }) {
+function InitiativeItem({ p, sheets }: { p: Initiative; sheets?: string }) {
   return (
-    <FreshRow up upLabel="今ある事業の中で" title={p.title} yen={p.settledYen}>
+    <FreshRow up upLabel="今ある事業の中で" title={p.title} yen={p.settledYen} source={pdfPage(sheets, p.page, '評価シート')}>
       <p className="text-sm [text-wrap:pretty]">「{p.quote}」</p>
-      <p className="rounded-xl bg-sidebar px-3.5 py-2.5 text-[13px] leading-relaxed text-foreground [text-wrap:pretty]">
-        <EvalLabel />
-        この取り組みだけの評価はない。金額と評価は、含まれる事業「{p.name}」全体の決算額と評価で、評価は
-        <Grade grade={p.grade} className="ml-1" />
-        （{p.direction}）。
-      </p>
+      <EvalBox grade={p.grade} direction={p.direction}>
+        この取り組みだけの評価はない。金額と評価は、含まれる事業「{p.name}」全体の決算額と評価。
+      </EvalBox>
     </FreshRow>
   )
 }
 
-/** 予算の資料で新規・レベルアップと印の付いた項目を含む事業。事業評価の事業と同じく名前と金額を並べ、その下に項目を資料の文言のまま書く。
- * 資料は項目だけの額を載せないので、見出しは項目ではなく金額の対象である事業にする。新規を含む事業は新規の印、それ以外は拡大の印を名前の左に置く */
-function BudgetItem({ p }: { p: BudgetNew }) {
-  const quote = (xs: string[]) => xs.map((i) => `「${i}」`).join('')
+/** 予算案のプレス発表資料の施策。見出しは頁の見出し（「〜」の副題は外す）、金額は資料の予算額、その下に POINT を資料の文のまま並べる。
+ * 出すのは事業名に「新規」の印がある施策だけ（サーバーの withPress で絞る）。予算書の内訳への紐付けは分野分けにだけ使い、画面には出さない */
+function BudgetItem({ p, press }: { p: PressItem; press?: string }) {
+  const title = p.title.replace(/[~〜～].*$/, '').trim() || p.names.join('・')
   return (
-    <FreshRow up={!p.items.length} title={p.name} yen={p.budgetYen}>
-      <p className="text-sm">
-        {p.items.length ? `${quote(p.items)}を新しく始める。` : null}
-        {p.upgrades.length ? `${quote(p.upgrades)}を拡大する。` : null}
-      </p>
-      {/* 予算案のプレス発表資料に説明があれば、その POINT を資料の文のまま添える */}
-      {p.press?.length ? (
+    <FreshRow up={!p.isNew} title={title} yen={p.budgetYen} source={pdfPage(press, p.page, '発表資料')}>
+      {p.points.length ? (
         <ul className="flex flex-col gap-1 rounded-xl bg-sidebar px-3.5 py-2.5 text-[13px] leading-relaxed [text-wrap:pretty]">
-          {p.press.flatMap((x) => x.points.map((pt, i) => (
-            <li key={`${x.page}-${i}`} className="relative pl-3.5 before:absolute before:left-0 before:top-[0.6em] before:size-1.5 before:rounded-full before:bg-primary/60">{pt}</li>
-          )))}
+          {p.points.map((pt, i) => (
+            <li key={i} className="relative pl-3.5 before:absolute before:left-0 before:top-[0.6em] before:size-1.5 before:rounded-full before:bg-primary/60">{pt}</li>
+          ))}
         </ul>
       ) : null}
     </FreshRow>
   )
 }
 
-/** 分野の中の事業。金額の大きい3件を出し、残りは薄く消えていく1件だけ見せて「ほか○件」で開く */
+/** 分野の中の事業。金額の大きい3件を出し、残りは薄く消えていく1件だけ見せて「もっと見る」で limit 件ずつ開く */
 const FRAME_PREVIEW = 3
 /** 閉じているときに見せる、薄く消える行の高さ（px） */
 const FRAME_PEEK = 96
+/** 「見る」1回で開く件数の既定値 */
+const FRAME_LIMIT = 25
 /** 開閉で高さが動く時間（ms）。Tailwind の duration-300 と揃える */
 const FRAME_DURATION = 300
 
@@ -180,38 +204,72 @@ function scrollToIn(top: number, ms: number) {
   requestAnimationFrame(step)
 }
 
-function FrameItems<T>({ items, render }: { items: T[]; render: (item: T) => React.ReactNode }) {
-  const [open, setOpen] = React.useState(false)
+function FrameItems<T>({ items, render, limit = FRAME_LIMIT }: { items: T[]; render: (item: T) => React.ReactNode; /** 1回の「見る」で開く件数 */ limit?: number }) {
+  // 開いている残りの件数。0 は閉じている
+  const [count, setCount] = React.useState(0)
+  const open = count > 0
   // 高さは閉じているとき FRAME_PEEK、開くときは中身の高さへ動かし、開き終わったら auto にして幅の変化に追従させる
   const [height, setHeight] = React.useState<number | 'auto'>(FRAME_PEEK)
+  // 「さらに見る」で行を足したあと、足した分の高さまで動かす
+  const grow = React.useRef(false)
   const wrap = React.useRef<HTMLDivElement>(null)
   const body = React.useRef<HTMLDivElement>(null)
-  const rest = items.length - FRAME_PREVIEW
+  // 押したボタンは開閉で入れ替わって消えるので、描き直したあと次に押すボタンへフォーカスを移す
+  const refocus = React.useRef(false)
+  const restItems = items.slice(FRAME_PREVIEW)
+  const rest = restItems.length
+  React.useLayoutEffect(() => {
+    if (!grow.current || !body.current) return
+    grow.current = false
+    const el = body.current
+    requestAnimationFrame(() => setHeight(el.scrollHeight))
+  }, [count])
+  React.useEffect(() => {
+    if (!refocus.current) return
+    refocus.current = false
+    wrap.current?.querySelector<HTMLButtonElement>('[data-frame-toggle]')?.focus({ preventScroll: true })
+  }, [count])
   if (rest <= 0) return <>{items.map(render)}</>
-  const toggle = () => {
+  const still = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const more = () => {
     const el = body.current
     if (!el) return
-    const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const next = Math.min(rest, count + limit)
+    // 開くとき・最後の「もっと見る」を押したときはボタンが入れ替わる
+    refocus.current = !open || next >= rest
     if (!open) {
-      setOpen(true)
+      // 閉じているときも最初の limit 件までは描いてあるので、その高さへそのまま動かす
+      setCount(next)
       // 動きを減らす設定では transition が走らず transitionend も来ないので、最初から auto にする
-      setHeight(still ? 'auto' : el.scrollHeight)
+      setHeight(still() ? 'auto' : el.scrollHeight)
       return
     }
+    setCount(next)
+    if (still()) return
+    // 今の高さを固定してから行を足し、足した分の高さへ動かす
+    setHeight(el.scrollHeight)
+    grow.current = true
+  }
+  const close = () => {
+    const el = body.current
+    if (!el) return
     // 閉じるときは今の高さを固定してから縮める。同時に、最後に見せている行（3件目）が画面の真ん中に来るまで、縮みと同じ時間でスクロールを戻す
     setHeight(el.scrollHeight)
     requestAnimationFrame(() => requestAnimationFrame(() => setHeight(FRAME_PEEK)))
-    setOpen(false)
+    setCount(0)
+    refocus.current = true
     const last = wrap.current?.previousElementSibling
     if (!last) return
     const r = last.getBoundingClientRect()
     const target = Math.max(0, window.scrollY + r.top + r.height / 2 - window.innerHeight / 2)
-    if (target < window.scrollY) scrollToIn(target, still ? 0 : FRAME_DURATION)
+    if (target < window.scrollY) scrollToIn(target, still() ? 0 : FRAME_DURATION)
   }
+  const left = rest - count
+  const button = 'rounded-full bg-background px-5 shadow-sm transition-colors hover:bg-card aria-expanded:bg-background'
   return (
     <>
       {items.slice(0, FRAME_PREVIEW).map(render)}
-      {/* 残りは最初から描き、閉じているときは1件目だけ薄く消える形で見せる。開くボタンはその上の真ん中、開いたあとは最後の行の下の真ん中に置く */}
+      {/* 残りは limit 件ずつ描く。閉じているときは1件目だけ薄く消える形で見せる。開くボタンはその上の真ん中、開いたあとは最後の行の下の真ん中に置く */}
       <div ref={wrap} className="relative flex flex-col items-center">
         <div
           ref={body}
@@ -223,34 +281,42 @@ function FrameItems<T>({ items, render }: { items: T[]; render: (item: T) => Rea
           style={{ height }}
           className={`w-full overflow-hidden transition-[height] duration-300 ease-out motion-reduce:transition-none ${open ? '' : 'pointer-events-none [mask-image:linear-gradient(to_bottom,black_10%,transparent)]'}`}
         >
-          {items.slice(FRAME_PREVIEW).map(render)}
+          {restItems.slice(0, open ? count : Math.min(limit, rest)).map(render)}
         </div>
-        <Button
-          variant="outline"
-          onClick={toggle}
-          aria-expanded={open}
-          className={`rounded-full bg-background px-5 shadow-sm hover:bg-card ${open ? 'mt-4' : 'absolute bottom-2 left-1/2 -translate-x-1/2'}`}
-        >
-          {open ? '閉じる' : `ほか${rest}件を見る`}
-          <CaretDownIcon aria-hidden="true" className={`size-3.5 transition-transform ${open ? 'rotate-180' : ''}`} />
-        </Button>
+        {open ? (
+          <div className="mt-4 flex flex-wrap justify-center gap-2">
+            {left > 0 ? (
+              <Button variant="outline" onClick={more} aria-expanded data-frame-toggle className={button}>
+                もっと見る
+                <CaretDownIcon aria-hidden="true" className="size-3.5" />
+              </Button>
+            ) : null}
+            <Button variant="outline" onClick={close} data-frame-toggle className={button}>
+              閉じる
+              <CaretDownIcon aria-hidden="true" className="size-3.5 rotate-180" />
+            </Button>
+          </div>
+        ) : (
+          <Button variant="outline" onClick={more} aria-expanded={false} data-frame-toggle className={`${button} absolute bottom-2 left-1/2 -translate-x-1/2`}>
+            もっと見る
+            <CaretDownIcon aria-hidden="true" className="size-3.5" />
+          </Button>
+        )}
       </div>
     </>
   )
 }
 
-function ProjectItem({ p }: { p: EvaluatedProject }) {
+function ProjectItem({ p, sheets }: { p: EvaluatedProject; sheets?: string }) {
   const i = p.indicator
   return (
     // 金額は名前と同じ行の右に置き、評価の枠は幅いっぱいに出す。値はどれも評価シートのもの
-    <FreshRow up={false} title={p.title} yen={p.settledYen}>
+    <FreshRow up={false} title={p.title} yen={p.settledYen} source={pdfPage(sheets, p.page, '評価シート')}>
       <p className="text-sm">{p.what}</p>
-      {/* 評価の区分・方向性・指標は一続きの文として、同じ大きさ・色で読ませる。指標の良し悪しは風土記が判断しない */}
-      <p className="rounded-xl bg-sidebar px-3.5 py-2.5 text-[13px] leading-relaxed text-foreground [text-wrap:pretty]">
-        <EvalLabel />
-        <Grade grade={p.grade} />
-        （{p.direction}）。{i ? `指標の「${i.name}」は、目標 ${i.target}${i.unit}に対して実績 ${i.actual}${i.unit}。` : '目標と実績を並べた指標は載っていない。'}
-      </p>
+      {/* 指標は区分と同じ大きさ・色で読ませる。指標の良し悪しは風土記が判断しない */}
+      <EvalBox grade={p.grade} direction={p.direction}>
+        {i ? `指標の「${i.name}」は、目標 ${i.target}${i.unit}に対して実績 ${i.actual}${i.unit}。` : '目標と実績を並べた指標は載っていない。'}
+      </EvalBox>
     </FreshRow>
   )
 }
@@ -288,7 +354,7 @@ function Overview({ data, sections, year }: { data: PageData; sections: Set<stri
           {shown.lead}<Emph text={formatYen(shown.yen)} />
           {people ? (
             <>
-              、住民1人あたり<Emph text={`約${Math.round(shown.yen / people / 1e4).toLocaleString('ja-JP')}万円`} />
+              、住民1人あたり<Emph text={`${Math.round(shown.yen / people / 1e4).toLocaleString('ja-JP')}万円`} />
             </>
           ) : null}
           です。
@@ -316,7 +382,7 @@ function Overview({ data, sections, year }: { data: PageData; sections: Set<stri
                 {spent && !spent.amountMissing && shown?.yen ? (
                   <>
                     <span className="block text-primary"><span className="text-xl">{((spent.yen / shown.yen) * 100).toFixed(1)}</span><span className="ml-0.5 text-xs">%</span></span>
-                    {people ? <span className="block text-xs text-muted-foreground">1人 約{(Math.round(spent.yen / people / 1e3) / 10).toLocaleString('ja-JP')}万円</span> : null}
+                    {people ? <span className="block text-xs text-muted-foreground">1人 {(Math.round(spent.yen / people / 1e3) / 10).toLocaleString('ja-JP')}万円</span> : null}
                   </>
                 ) : (
                   <span className="block text-[15px] text-muted-foreground">{spent ? '金額未記載' : '—'}</span>
@@ -353,21 +419,21 @@ function Domains({ year, fiscalYear }: { year: ProfileYear; fiscalYear: number }
   const groups = groupByFrame(fresh)
   const byBudget = isPlanned(year)
   const lead = byBudget
-    ? 'この年度の予算で、区が新しく始める事業と、広げる事業です。金額は事業全体の予算です。'
+    ? '区が予算案の発表で取り上げた、この年度に新しく始める事業です。'
     : '区が事業ごとに目標と実績を振り返る「事業評価」から、この年度に新しくできた事業と、今ある事業の中で始めた取り組みを並べています。'
-  const link = !groups.length ? undefined : byBudget ? [...(year.budgetHighlights ? [{ href: year.budgetHighlights, label: '主な施策（予算）' }] : []), ...(year.budgetPress ? [{ href: year.budgetPress, label: 'プレス発表' }] : [])] : { href: year.evaluationSource, label: '事業評価' }
+  const link = !groups.length ? undefined : byBudget ? (year.budgetPress ? { href: year.budgetPress, label: 'プレス発表' } : undefined) : { href: year.evaluationSource, label: '事業評価' }
   return (
     <Section id="domains" title={freshTitle(year)} lead={lead} link={link}>
       {/* 事業評価は実施した翌年度に公表する。予算の資料も無い年度は節だけ出し、なぜ空かを言う */}
       {groups.length ? null : <p className="rounded-xl border border-dashed px-4 py-6 text-sm text-muted-foreground">{reiwa(fiscalYear)}の事業の評価は、{reiwa(fiscalYear + 1)}に公表されます。まだ公表されていません。</p>}
       {groups.map(({ frame: d, items }) => (
-        <div key={d.id} id={`d-${d.id}`} className="flex scroll-mt-32 lg:scroll-mt-20 flex-col gap-1 [&+&]:mt-12">
+        <div key={d.id} id={`d-${d.id}`} className="flex scroll-mt-32 @4xl:scroll-mt-20 flex-col gap-1 [&+&]:mt-12">
           <h3 className="mb-1.5 flex items-center gap-2.5 text-[19px] leading-snug sm:text-[22px]">
             <DomainIcon id={d.id} />
             {d.name}
           </h3>
           <div className="flex flex-col border-t">
-            <FrameItems items={items} render={(p) => (p.kind === 'sheet' ? <ProjectItem key={`s${p.page}`} p={p} /> : p.kind === 'initiative' ? <InitiativeItem key={`i${p.page}-${p.title}`} p={p} /> : <BudgetItem key={`b${p.page}-${p.name}`} p={p} />)} />
+            <FrameItems items={items} render={(p) => (p.kind === 'sheet' ? <ProjectItem key={`s${p.page}`} p={p} sheets={year.evaluationSheets} /> : p.kind === 'initiative' ? <InitiativeItem key={`i${p.page}-${p.title}`} p={p} sheets={year.evaluationSheets} /> : <BudgetItem key={`b${p.page}`} p={p} press={year.budgetPress} />)} />
           </div>
         </div>
       ))}
@@ -403,15 +469,13 @@ function Elsewhere({ data }: { data: PageData }) {
   )
 }
 
-function DomainIcon({ id }: { id: string }) {
+function DomainIcon({ id, className }: { id: string; className?: string }) {
   const Icon = DOMAIN_ICON[id]
   if (!Icon) return <span aria-hidden="true" className="h-6 w-1 rounded-full bg-primary" />
-  return (
-    <Icon aria-hidden="true" className="size-6 shrink-0 text-primary sm:size-7" />
-  )
+  return <Icon aria-hidden="true" className={cn('size-6 shrink-0 text-primary sm:size-7', className)} />
 }
 
-function ProjectRow({ p, rank, max }: { p: Project; rank: number; max: number }) {
+function ProjectRow({ p, rank, max, total, people, showChange, shown }: { p: Project; rank: number; max: number; total?: number; people?: number; showChange: boolean; shown: boolean }) {
   const [setsu, setSetsu] = React.useState<Setsu[]>()
   const [error, setError] = React.useState(false)
   const [attempt, setAttempt] = React.useState(0)
@@ -428,22 +492,49 @@ function ProjectRow({ p, rank, max }: { p: Project; rank: number; max: number })
   }, [p.id, attempt])
   return (
     <li className="border-b border-foreground/10">
-      <div className="grid grid-cols-[22px_minmax(0,1fr)_auto] items-center gap-x-3.5 gap-y-1 py-3 sm:grid-cols-[22px_minmax(120px,190px)_1fr_110px_90px]">
-        <span className="text-xl text-muted-foreground">{rank}</span>
+      <div className={`grid grid-cols-[22px_minmax(0,1fr)_auto] items-center gap-x-3.5 gap-y-2 py-4 ${showChange ? 'sm:grid-cols-[22px_minmax(140px,200px)_1fr_150px_80px]' : 'sm:grid-cols-[22px_minmax(140px,200px)_1fr_150px]'}`}>
+        <span className="text-xl tabular-nums">{rank}</span>
         <div className="min-w-0">
-          <b className="block text-[15px] font-normal leading-snug">{p.name}</b>
-          <span className="text-xs text-muted-foreground">{p.domain}</span>
+          <h3 className="text-base font-normal leading-snug">{p.name}</h3>
+          {/* 分野は名前の下に、薄い枠だけのラベルで控えめに出す（名前より目立たせない。塗ると年度の切り替えと同じ形になり押せそうに見える）。icon は「新しく何を始める？」の分野と同じ */}
+          <span className="mt-1 inline-flex items-center gap-1 rounded-md border border-foreground/10 py-px pl-1 pr-1.5 text-xs text-muted-foreground">
+            <DomainIcon id={DOMAIN_FRAMES.find((f) => f.name === p.domain)?.id ?? OTHER_FRAME.id} className="size-3 text-muted-foreground sm:size-3" />
+            {p.domain}
+          </span>
         </div>
-        <div className="order-5 col-span-full sm:order-none sm:col-span-1">
-          <div className="h-2.5 overflow-hidden rounded-full bg-foreground/5">
-            <div className="h-full rounded-full bg-primary" style={{ width: `${(p.yen / max) * 100}%` }} />
+        {/* 棒は1位を満たした長さ。スマホでは名前の下に、名前の左端から並べる */}
+        <div className="order-5 col-span-2 col-start-2 sm:order-none sm:col-span-1 sm:col-start-auto">
+          <div className="h-2 overflow-hidden rounded-full bg-foreground/5">
+            {/* 画面に入ったら、上の順位から少しずつ遅らせて伸ばす */}
+            <div className="h-full rounded-full bg-primary transition-[width] duration-[1200ms] ease-out motion-reduce:transition-none" style={{ width: shown ? `${(p.yen / max) * 100}%` : 0, transitionDelay: `${(rank - 1) * 120}ms` }} />
           </div>
         </div>
-        <div className="text-right text-[15px] tabular-nums">{p.amountMissing ? '金額未記載' : formatYen(p.yen)}</div>
-        <div className={`hidden text-right text-[15px] tabular-nums sm:block text-foreground`}>
-          {pct === null ? '—' : `${pct >= 0 ? '+' : '−'}${Math.abs(pct).toFixed(1)}%`}
-          <i className="block text-[11px] not-italic text-muted-foreground">前年度比</i>
+        <div className="text-right">
+          {p.amountMissing ? (
+            <span className="text-sm text-muted-foreground">金額未記載</span>
+          ) : (
+            <>
+              {/* 全体に占める割合を大きく出し、金額と1人あたりはその下に薄く */}
+              {total ? (
+                <span className="block leading-snug tabular-nums">
+                  <span className="mr-0.5 text-xs text-muted-foreground">全体の</span>
+                  <span className="text-xl">{((p.yen / total) * 100).toFixed(1)}</span>
+                  <span className="ml-0.5 text-xs">%</span>
+                </span>
+              ) : null}
+              <span className="flex justify-end gap-x-2 whitespace-nowrap text-xs text-muted-foreground tabular-nums">
+                <span>{formatYen(p.yen)}</span>
+                {people ? <span>1人 {formatPerCapita(p.yen / people)}</span> : null}
+              </span>
+            </>
+          )}
         </div>
+        {showChange ? (
+          <div className="hidden text-right text-base tabular-nums sm:block">
+            {pct === null ? '—' : `${pct >= 0 ? '+' : '−'}${Math.abs(pct).toFixed(1)}%`}
+            <i className="block text-xs not-italic text-muted-foreground">前年度比</i>
+          </div>
+        ) : null}
       </div>
       {error ? (
         <div role="alert" className="flex flex-wrap items-center gap-2 pb-3 pl-9 text-[13px] text-destructive">
@@ -490,16 +581,19 @@ function Budget({ data, year }: { data: PageData; year: number }) {
   const docs = (budget ? documents?.initial : documents?.settlement) ?? []
   const summary = (
     <>
-      <span className="text-sm text-muted-foreground">{budget ? '予算の全体' : '全体'}</span>
-      <b className={`text-[26px] font-normal leading-snug tabular-nums ${total ? '' : 'text-muted-foreground'}`}>{total ? formatYen(total.yen) : '—'}</b>
-      {pct !== null ? <span className={`text-[13px] tabular-nums text-muted-foreground`}>前年度比 {pct >= 0 ? '+' : '−'}{Math.abs(pct).toFixed(1)}%</span> : null}
+      {/* スマホでは名前（と前年度比）の行の下に金額を置く。広い画面では「全体 金額 前年度比」と横に並べる */}
+      <span className="flex gap-x-2 text-sm text-muted-foreground sm:contents">
+        <span className="shrink-0">全体</span>
+        {pct !== null ? <span className="truncate tabular-nums sm:order-last">前年度比 {pct >= 0 ? '+' : '−'}{Math.abs(pct).toFixed(1)}%</span> : null}
+      </span>
+      <b className={`shrink-0 text-[26px] font-normal leading-snug tabular-nums ${total ? '' : 'text-muted-foreground'}`}>{total ? formatYen(total.yen) : '—'}</b>
     </>
   )
   // 分け方の切り替えはヘッダーの年度の切り替えと同じ丸いボタンの並びにする
   const tabs = (
     <div className="flex items-center justify-between gap-3">
       {/* 左上に、この図が予算か決算かを出す */}
-      <span className="text-[15px]">{label}</span>
+      <span className="text-lg">{label}</span>
       <div role="group" aria-label="分類" className="flex gap-1">
       {VIEWS.map((v) => (
         <button
@@ -528,13 +622,27 @@ function Budget({ data, year }: { data: PageData; year: number }) {
         ) : (
           <div className="rounded-[20px] border bg-background px-5 pt-5 sm:px-6">
             {tabs}
-            <div className="mt-3 flex min-h-9 flex-wrap items-baseline gap-x-3">{summary}</div>
+            <div className="mt-3 flex min-h-9 min-w-0 flex-col sm:flex-row sm:items-baseline sm:gap-x-3">{summary}</div>
             <p className="pb-10 pt-4 text-center text-sm text-muted-foreground">{yearName(year)}の決算・予算は、まだ収録していません</p>
           </div>
         )}
       </div>
     </Section>
   )
+}
+
+/** 要素が画面に入ったら true になる（一度だけ）。棒グラフを画面に入ったときに伸ばすのに使う */
+function useInView<T extends Element>(): [(el: T | null) => void, boolean] {
+  // 要素は callback ref で受け取る。年度の切り替えで要素が作り直されても、新しい要素を見張り直す
+  const [el, setEl] = React.useState<T | null>(null)
+  const [seen, setSeen] = React.useState(false)
+  React.useEffect(() => {
+    if (!el || seen) return
+    const io = new IntersectionObserver(([e]) => { if (e?.isIntersecting) { setSeen(true); io.disconnect() } }, { rootMargin: '0px 0px -10% 0px' })
+    io.observe(el)
+    return () => io.disconnect()
+  }, [el, seen])
+  return [setEl, seen]
 }
 
 /** 金額が大きい事業（目）。最新の決算の年度は決算、決算の無い年度は当初予算から出す */
@@ -544,12 +652,17 @@ function Projects({ data, year }: { data: PageData; year: number }) {
   const budget = settled ? undefined : (data.budgets ?? []).find((b) => b.year === year)
   const projects = isLatest ? data.projects : (budget?.projects ?? [])
   const max = projects[0]?.yen ?? 1
+  // 割合の分母は、同じ年度・同じ段階の一般会計の歳出の合計（お金は何に使う？の「全体」と同じ）
+  const total = isLatest ? settled?.yen : budget?.yen
+  // 予算の年度は前年度との比較を持たないので、列ごと出さない
+  const showChange = projects.some((p) => p.prevYen != null)
+  const [listRef, shown] = useInView<HTMLUListElement>()
   return (
     <Section id="projects" title={budget ? 'いちばんお金がかかるのは？' : 'いちばんお金がかかっているのは？'}>
       {projects.length ? (
-        <ul className="border-t">
+        <ul ref={listRef} className="border-t">
           {projects.map((p, i) => (
-            <ProjectRow key={p.id} p={p} rank={i + 1} max={max} />
+            <ProjectRow key={p.id} p={p} rank={i + 1} max={max} total={total} people={data.population?.people} showChange={showChange} shown={shown} />
           ))}
         </ul>
       ) : (
@@ -559,20 +672,67 @@ function Projects({ data, year }: { data: PageData; year: number }) {
   )
 }
 
-/** やめた事業の結果の言い方。「廃止」は STOP の印で伝わるので書かず、区の言葉の「廃止を検討」はやわらかく言い換える */
-const exitResult = (result: string) => (result === '廃止' ? '' : result === '廃止を検討' ? 'やめるか検討中' : result)
+/** 評価の方向性（A〜C は今後の取組の方向性、D は評価結果の表の区分）ごとの印と言い方。言葉は印の説明（ヒントと凡例）にだけ使う */
+const MARKS: Record<string, { Icon: (p: { className?: string }) => React.ReactNode; label: string }> = {
+  新規の取組み: { Icon: NewIcon, label: '新しい取り組みを始める' },
+  '対象・規模等の拡大': { Icon: UpIcon, label: '対象・規模を広げる' },
+  現状維持: { Icon: KeepIcon, label: '今のまま続ける' },
+  '法定受託事務・法定扶助費等': { Icon: LawIcon, label: '法令で決まっている' },
+  '計画・規定どおり': { Icon: PlanIcon, label: '計画どおり続ける' },
+  手法等の改善: { Icon: FixIcon, label: 'やり方を見直す' },
+  '対象・規模等の見直し': { Icon: SizeIcon, label: '対象・規模を見直す' },
+  取組みの一部廃止: { Icon: CutIcon, label: '一部をやめる' },
+  完了: { Icon: DoneIcon, label: '完了した' },
+  '移管・統合': { Icon: JoinIcon, label: 'ほかの事業へ統合' },
+  廃止: { Icon: StopIcon, label: 'やめた' },
+  廃止を検討: { Icon: MaybeStopIcon, label: 'やめるか検討中' },
+}
+
+function Mark({ kind }: { kind: string }) {
+  const m = MARKS[kind]
+  if (!m) return null
+  return (
+    <Hint label={m.label}>
+      {/* 意味は隣の「今後の方向」の列が文字で伝えるので、読み上げでは印を飛ばす */}
+      <span aria-hidden="true" className="absolute -top-[3px] left-0 flex text-primary">
+        <m.Icon className="size-6" />
+      </span>
+    </Hint>
+  )
+}
+
+/** 行の印ごとの件数。MARKS の順に並べる */
+const legendOf = (rows: { kind: string }[]) => Object.keys(MARKS).map((k) => [k, rows.filter((r) => r.kind === k).length] as const).filter(([, n]) => n > 0)
 
 function ScrapSection({ scrap }: { scrap: Scrap }) {
   const target = scrap.targetYen
+  const [barRef, shown] = useInView<HTMLDivElement>()
   const grades = [
     ['A', '広げる'],
-    ['B', '今のまま続ける'],
-    ['C', 'やり方を見直す'],
-    ['D', 'やめる・終える'],
+    ['B', '続ける'],
+    ['C', '見直す'],
+    ['D', '終える'],
   ] as const
+  const [picked, setGrade] = React.useState<'A' | 'B' | 'C' | 'D'>('D')
+  // A〜C の一覧を持たない年度は D に丸める（年度を切り替えたときに、押せない区分が選ばれたまま残らないように）
+  const grade = scrap.graded ? picked : 'D'
+  const ready = (g: string) => g === 'D' || !!scrap.graded
+  // 矢印キーで区分を移る（radio group の操作）。押せない区分は飛ばす
+  const onKey = (e: React.KeyboardEvent) => {
+    const step = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0
+    if (!step) return
+    e.preventDefault()
+    const keys = grades.map(([g]) => g).filter(ready)
+    const next = keys[(keys.indexOf(grade) + step + keys.length) % keys.length]!
+    setGrade(next)
+    e.currentTarget.querySelector<HTMLButtonElement>(`[data-grade="${next}"]`)?.focus()
+  }
+  const rows = grade === 'D' ? scrap.exits.map((e, i) => ({ i, name: e.name, kind: e.result, page: e.page })) : (scrap.graded?.[grade] ?? []).map((p, i) => ({ i, name: p.name, kind: p.direction, page: p.page }))
+  const cols = 'sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_auto]'
   return (
-    <Section id="scrap" title="やめたこと・見直したことは？" lead="自治体は毎年、事業を自分で評価して、やめたり減らしたりして浮いたお金を新しいことに回しています。">
-      <div className="flex max-w-[560px] flex-col gap-2">
+    <Section id="scrap" title="やめたこと・見直したことは？" link={{ href: scrap.source, label: '事業評価の結果' }} lead="自治体は毎年、前の年度までに行った事業を評価して、やめる事業や減らす事業を決め、その分を新しい予算に回しています。">
+      {/* 浮かせたお金の棒は節の中央に置き、下の「自治体が付けた評価」の見出しと離す（棒の見出しに見えないように） */}
+      <div className="mx-auto mb-8 mt-2 flex w-full max-w-[560px] flex-col gap-2">
         <div className="flex items-baseline justify-between gap-3">
           <span>やめたり減らしたりして浮かせたお金</span>
           <b className="text-[28px] font-normal tabular-nums text-primary">
@@ -581,34 +741,71 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
           </b>
         </div>
         {target ? (
-          <div className="relative h-2.5 rounded-full bg-foreground/5" role="img" aria-label={`目標${formatYen(target)}に対して${formatYen(scrap.raisedYen)}`}>
-            <div className="absolute inset-y-0 left-0 rounded-full bg-[var(--kincha)]" style={{ width: `${Math.min(1, scrap.raisedYen / target) * 100}%` }} />
+          <div ref={barRef} className="relative h-2.5 rounded-full bg-foreground/5" role="img" aria-label={`目標${formatYen(target)}に対して${formatYen(scrap.raisedYen)}`}>
+            <div className="absolute inset-y-0 left-0 rounded-full bg-[var(--kincha)] transition-[width] duration-[1200ms] ease-out motion-reduce:transition-none" style={{ width: shown ? `${Math.min(1, scrap.raisedYen / target) * 100}%` : 0 }} />
             <div className="absolute -top-1 right-0 h-[18px] w-0.5 bg-foreground" />
           </div>
         ) : null}
       </div>
-      <h3 className="text-lg">自治体が自分で付けた評価（{scrap.evaluated.toLocaleString('ja-JP')}事業）</h3>
-      <div className="grid grid-cols-2 border-t sm:grid-cols-4">
-        {grades.map(([g, label]) => (
-          <div key={g} className="flex flex-col py-3">
-            <b className="text-2xl font-normal leading-snug tabular-nums">{scrap.grades[g]}</b>
-            <Grade grade={`${g} ${label}`} className="text-[13px] text-muted-foreground" />
-          </div>
-        ))}
+      <h3 className="text-lg">自治体が付けた評価（{scrap.evaluated.toLocaleString('ja-JP')}事業）</h3>
+      {/* 評価の区分はカードで選び、下にその区分の事業を出す。最初は D（終える＝完了・統合・やめた事業）を見せる */}
+      <div role="radiogroup" aria-label="評価の区分" onKeyDown={onKey} className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        {grades.map(([g, label]) => {
+          const on = g === grade
+          return (
+            <button key={g} type="button" role="radio" data-grade={g} aria-checked={on} tabIndex={on ? 0 : -1} disabled={!ready(g)} onClick={() => setGrade(g)} className={cn('flex flex-col gap-1 rounded-xl border px-3 py-3 text-left transition-colors', on ? 'border-primary bg-primary/5' : 'border-foreground/10 hover:bg-foreground/[0.03]', !ready(g) && 'cursor-default opacity-60 hover:bg-transparent')}>
+              <Grade grade={`${g} ${label}`} className="text-sm" />
+              <span className="pl-[26px] tabular-nums"><b className="text-2xl font-normal">{scrap.grades[g]}</b><small className="ml-0.5 text-sm">事業</small></span>
+            </button>
+          )
+        })}
       </div>
-      <h3 className="text-lg">やめた事業</h3>
-      <ul className="border-t">
-        {scrap.exits.map((e) => (
-          <li key={e.name} className="grid grid-cols-[minmax(0,1fr)_72px] items-baseline gap-x-4 gap-y-1 border-b border-foreground/10 py-3 text-sm sm:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_80px]">
-            <span className="relative pl-8">
-              <StopIcon className="absolute -top-[3px] left-0 size-6 text-primary" />
-              {e.name}
-            </span>
-            <span className="col-span-full row-start-2 text-[13.5px] text-muted-foreground sm:col-span-1 sm:row-start-auto">{e.reason}</span>
-            <span className="text-right text-[13px] text-muted-foreground">{exitResult(e.result)}</span>
-          </li>
-        ))}
+      {/* 一覧が区分の全件でないときは、そのことを書く */}
+      {!scrap.graded || (grade === 'D' && scrap.exits.length !== scrap.grades.D) ? (
+        <p className="text-[13px] text-muted-foreground">
+          {!scrap.graded ? 'この年度は A〜C の事業の一覧を出していません。' : ''}
+          {grade === 'D' && scrap.exits.length !== scrap.grades.D ? `D の${scrap.grades.D}事業のうち、区が結果を示した${scrap.exits.length}事業を出しています。` : ''}
+        </p>
+      ) : null}
+      {/* 選んだ区分にある印の凡例。行には印だけを付ける */}
+      <ul className="flex flex-wrap gap-x-5 gap-y-2 text-[13px] text-muted-foreground">
+        {legendOf(rows).map(([kind, n]) => {
+          const m = MARKS[kind]!
+          return (
+            <li key={kind} className="flex items-center gap-1.5">
+              <m.Icon className="size-5 text-primary" />
+              {m.label}
+              <span className="tabular-nums">{n}</span>
+            </li>
+          )
+        })}
       </ul>
+      {/* 表の形で並べる。資料のリンクは最後の列。狭い画面では列を縦に積む */}
+      <div key={grade} role="table" aria-label={`${grade} ${grades.find(([g]) => g === grade)?.[1] ?? ''}の事業`} className="text-sm">
+        <div role="row" className={`hidden gap-x-4 border-b py-2 text-xs text-muted-foreground sm:grid ${cols}`}>
+          <span role="columnheader" className="pl-8">事業</span>
+          <span role="columnheader">今後の方向</span>
+          <span role="columnheader" className="text-right">資料</span>
+        </div>
+        <FrameItems
+          items={rows}
+          render={(r) => (
+            <div role="row" key={r.i} className={`grid grid-cols-1 items-baseline gap-x-4 gap-y-1 border-b border-foreground/10 py-3 ${cols}`}>
+              <span role="cell" className="relative pl-8">
+                <Mark kind={r.kind} />
+                {r.name}
+              </span>
+              <span role="cell" className="pl-8 text-[13.5px] text-muted-foreground sm:pl-0">{MARKS[r.kind]?.label ?? r.kind}</span>
+              <span role="cell" className="pl-8 sm:pl-0 sm:text-right">
+                <a href={`${scrap.sheets}#page=${r.page}`} target="_blank" rel="noopener" className="inline-flex items-center gap-0.5 whitespace-nowrap text-xs text-muted-foreground underline-offset-4 hover:underline">
+                  評価シート
+                  <ArrowSquareOutIcon aria-hidden="true" className="size-3" />
+                </a>
+              </span>
+            </div>
+          )}
+        />
+      </div>
     </Section>
   )
 }
@@ -777,7 +974,8 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
         </div>
       </div>
 
-      <div className="mx-auto max-w-[1120px] px-4 pb-48">
+      {/* 目次は本文の幅で切り替える（会話を横に開いて本文が狭くなったら、左の目次を閉じて上の横並びにする） */}
+      <div className="@container mx-auto max-w-[1120px] px-4 pb-48">
         <header ref={headerRef} className="relative grid grid-cols-[80px_minmax(0,1fr)] items-start gap-4 border-b py-7 sm:grid-cols-[132px_minmax(0,1fr)] sm:gap-7">
           {years.length > 1 ? (
             <div ref={pickerRef} className={headerWide ? 'col-span-full -mb-2 justify-self-end sm:absolute sm:right-0 sm:top-7 sm:mb-0' : 'col-span-full -mb-2 justify-self-end'}>
@@ -821,7 +1019,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
           </div>
         </header>
 
-        <nav ref={spBar} aria-label="目次" className={`sticky z-20 -mx-4 flex gap-5 overflow-x-auto border-b bg-background px-4 [scrollbar-width:none] lg:hidden ${mini ? 'top-[61px]' : 'top-0'}`}>
+        <nav ref={spBar} aria-label="目次" className={`sticky z-20 -mx-4 flex gap-5 overflow-x-auto border-b bg-background px-4 [scrollbar-width:none] @4xl:hidden ${mini ? 'top-[61px]' : 'top-0'}`}>
           {toc.filter((t) => !t.sub).map((t) => (
             <a key={t.href} href={t.href} onClick={jump} data-current={isCurrent(t.href) || undefined} className="relative shrink-0 py-3 text-[13.5px] text-muted-foreground no-underline after:absolute after:inset-x-0 after:bottom-0 after:h-[2px] after:rounded-full data-[current]:text-foreground data-[current]:after:bg-primary">
               {t.label}
@@ -829,8 +1027,8 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
           ))}
         </nav>
 
-        <div className="grid grid-cols-1 gap-12 pt-6 lg:grid-cols-[220px_minmax(0,1fr)] lg:pt-8">
-          <nav aria-label="目次" className="sticky top-[84px] hidden flex-col gap-0.5 self-start lg:flex">
+        <div className="grid grid-cols-1 gap-12 pt-6 @4xl:grid-cols-[220px_minmax(0,1fr)] @4xl:pt-8">
+          <nav aria-label="目次" className="sticky top-[84px] hidden flex-col gap-0.5 self-start @4xl:flex">
             {toc.map((t) => (
               <a
                 key={t.href}
@@ -845,10 +1043,10 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
           </nav>
           <main className="flex min-w-0 flex-col gap-14">
             <Overview data={data} year={year} sections={new Set(py ? groupByFrame(freshOf(py)).map(({ frame }) => frame.id) : [])} />
-            {py ? <Domains year={py} fiscalYear={year} /> : null}
+            {py ? <PeopleContext.Provider value={data.population?.people}><Domains year={py} fiscalYear={year} /></PeopleContext.Provider> : null}
             <Budget data={data} year={year} />
             <Projects data={data} year={year} />
-            {py?.scrap ? <ScrapSection scrap={py.scrap} /> : null}
+            {py?.scrap ? <ScrapSection key={year} scrap={py.scrap} /> : null}
             <Elsewhere data={data} />
           </main>
         </div>
@@ -1129,7 +1327,7 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
     >
       <span aria-hidden="true" className="mb-2 h-1.5 w-10 rounded-full bg-border md:hidden" />
       <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-2" onPointerDown={(e) => e.stopPropagation()}>
-        <span className="text-sm text-muted-foreground">{name}について</span>
+        <span className="flex items-center gap-1.5 text-sm text-muted-foreground"><RobotIcon className="size-4 text-primary" aria-hidden="true" />{name}について</span>
         <div className="flex items-center gap-1 text-muted-foreground">
           <Hint label="会話を別の頁で開く"><Link href={`/s/${chat.id}`} aria-label="会話を別の頁で開く" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><ArrowSquareOutIcon className="size-4" /></Link></Hint>
           <Hint label="新しい会話"><button type="button" onClick={restart} aria-label="新しい会話" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><NotePencilIcon className="size-4" /></button></Hint>
