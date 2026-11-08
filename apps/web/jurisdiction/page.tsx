@@ -105,9 +105,10 @@ function FreshRow({ up, upLabel = '拡大', title, yen, children }: { up: boolea
   return (
     <div className="flex flex-col gap-2 border-b border-foreground/10 py-4">
       <div className="flex items-start justify-between gap-x-6">
-        <span className="flex min-w-0 items-start gap-2 text-[15.5px]">
+        {/* 行の高さをアイコン（28px）と同じにして、アイコンを1行目の真ん中に揃える */}
+        <span className="flex min-w-0 items-start gap-2 text-[15.5px] leading-7">
           <Hint label={label}>
-            <span className="-mt-[3px] shrink-0 text-primary">
+            <span className="flex shrink-0 text-primary">
               {up ? <UpIcon className="size-7" /> : <NewIcon className="size-7" />}
               <span className="sr-only">{label}</span>
             </span>
