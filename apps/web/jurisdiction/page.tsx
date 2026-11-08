@@ -179,7 +179,7 @@ function BudgetItem({ p, press }: { p: PressItem; press?: string }) {
   )
 }
 
-/** 分野の中の事業。金額の大きい3件を出し、残りは薄く消えていく1件だけ見せて「ほか○件」で開く */
+/** 分野の中の事業。金額の大きい3件を出し、残りは薄く消えていく1件だけ見せて「もっと見る」で limit 件ずつ開く */
 const FRAME_PREVIEW = 3
 /** 閉じているときに見せる、薄く消える行の高さ（px） */
 const FRAME_PEEK = 96
@@ -211,6 +211,8 @@ function FrameItems<T>({ items, render, limit = FRAME_LIMIT }: { items: T[]; ren
   const grow = React.useRef(false)
   const wrap = React.useRef<HTMLDivElement>(null)
   const body = React.useRef<HTMLDivElement>(null)
+  // 押したボタンは開閉で入れ替わって消えるので、描き直したあと次に押すボタンへフォーカスを移す
+  const refocus = React.useRef(false)
   const restItems = items.slice(FRAME_PREVIEW)
   const rest = restItems.length
   React.useLayoutEffect(() => {
@@ -219,12 +221,19 @@ function FrameItems<T>({ items, render, limit = FRAME_LIMIT }: { items: T[]; ren
     const el = body.current
     requestAnimationFrame(() => setHeight(el.scrollHeight))
   }, [count])
+  React.useEffect(() => {
+    if (!refocus.current) return
+    refocus.current = false
+    wrap.current?.querySelector<HTMLButtonElement>('[data-frame-toggle]')?.focus({ preventScroll: true })
+  }, [count])
   if (rest <= 0) return <>{items.map(render)}</>
   const still = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
   const more = () => {
     const el = body.current
     if (!el) return
     const next = Math.min(rest, count + limit)
+    // 開くとき・最後の「もっと見る」を押したときはボタンが入れ替わる
+    refocus.current = !open || next >= rest
     if (!open) {
       // 閉じているときも最初の limit 件までは描いてあるので、その高さへそのまま動かす
       setCount(next)
@@ -245,6 +254,7 @@ function FrameItems<T>({ items, render, limit = FRAME_LIMIT }: { items: T[]; ren
     setHeight(el.scrollHeight)
     requestAnimationFrame(() => requestAnimationFrame(() => setHeight(FRAME_PEEK)))
     setCount(0)
+    refocus.current = true
     const last = wrap.current?.previousElementSibling
     if (!last) return
     const r = last.getBoundingClientRect()
@@ -273,18 +283,18 @@ function FrameItems<T>({ items, render, limit = FRAME_LIMIT }: { items: T[]; ren
         {open ? (
           <div className="mt-4 flex flex-wrap justify-center gap-2">
             {left > 0 ? (
-              <Button variant="outline" onClick={more} className={button}>
+              <Button variant="outline" onClick={more} aria-expanded data-frame-toggle className={button}>
                 もっと見る
                 <CaretDownIcon aria-hidden="true" className="size-3.5" />
               </Button>
             ) : null}
-            <Button variant="outline" onClick={close} aria-expanded className={button}>
+            <Button variant="outline" onClick={close} data-frame-toggle className={button}>
               閉じる
               <CaretDownIcon aria-hidden="true" className="size-3.5 rotate-180" />
             </Button>
           </div>
         ) : (
-          <Button variant="outline" onClick={more} aria-expanded={false} className={`${button} absolute bottom-2 left-1/2 -translate-x-1/2`}>
+          <Button variant="outline" onClick={more} aria-expanded={false} data-frame-toggle className={`${button} absolute bottom-2 left-1/2 -translate-x-1/2`}>
             もっと見る
             <CaretDownIcon aria-hidden="true" className="size-3.5" />
           </Button>
