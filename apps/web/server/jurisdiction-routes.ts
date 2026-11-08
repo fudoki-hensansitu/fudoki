@@ -41,6 +41,9 @@ export async function indexPageData(env: Env): Promise<{ map: MapEntry[]; table:
   return { map: entries.map(toMapEntry), table: queryIndex(entries, DEFAULT_INDEX_QUERY) }
 }
 
+/** ホーム（/）に載せる全自治体の要約 */
+export const homeEntries = async (env: Env): Promise<MapEntry[]> => (await index(env)).map(toMapEntry)
+
 /** 比較表の続き・並べ替え・絞り込み（/api/jurisdictions/table?sort=&order=&offset=&pref=&code=）。30件ずつ返す */
 export async function tableResponse(env: Env, request: Request): Promise<Response> {
   try {

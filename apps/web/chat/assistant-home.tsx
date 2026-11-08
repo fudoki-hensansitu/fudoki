@@ -17,7 +17,7 @@ const ERASE_MS = 35
 const HOLD_MS = 1800
 
 /** 例を1字ずつ打ち、少し止めてから1字ずつ消し、次の例へ移る。動きを減らす設定では最初の例を出したままにする */
-function useTypedPlaceholder(examples: string[]) {
+export function useTypedPlaceholder(examples: string[]) {
   const [text, setText] = React.useState(examples[0] ?? '')
   React.useEffect(() => {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return

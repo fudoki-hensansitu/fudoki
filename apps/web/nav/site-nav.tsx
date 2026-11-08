@@ -19,7 +19,7 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import { LOGO_G, LOGO_WIDTH } from '../logo'
 
-export const NAV_SECTIONS = ['jurisdictions', 'assistant'] as const
+export const NAV_SECTIONS = ['home', 'jurisdictions', 'assistant'] as const
 export type NavSection = (typeof NAV_SECTIONS)[number]
 export type SiteNavProps = { active?: NavSection; open: boolean }
 /** site の中の頁へは Void の Link で頁を読み直さずに移り、外（docs・mail・SNS）へは普通の a で出る */
@@ -114,7 +114,7 @@ function useHideOnScroll() {
 function BottomNav({ active }: { active?: NavSection }) {
   const [hidden, setHidden] = useHideOnScroll()
   const items = [
-    { href: '/', label: 'ホーム', icon: <HouseIcon /> },
+    { href: '/', label: 'ホーム', icon: <HouseIcon />, active: active === 'home' },
     { href: '/jurisdictions', label: '自治体一覧', icon: <BankIcon />, active: active === 'jurisdictions' },
     { href: '/assistant', label: 'アシスタント', icon: <RobotIcon />, active: active === 'assistant' },
   ]
@@ -162,6 +162,7 @@ export function SiteNav({ active, open }: SiteNavProps) {
           <SidebarContent>
             <SidebarGroup>
               <SidebarMenu>
+                <Item href="/" label="ホーム" icon={<HouseIcon />} active={active === 'home'} />
                 <Item href="/jurisdictions" label="自治体一覧" icon={<BankIcon />} active={active === 'jurisdictions'} />
                 <Item href="/assistant" label="アシスタント" icon={<RobotIcon />} active={active === 'assistant'} />
               </SidebarMenu>
