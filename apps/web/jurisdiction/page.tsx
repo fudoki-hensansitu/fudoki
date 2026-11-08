@@ -623,8 +623,8 @@ function Projects({ data, year }: { data: PageData; year: number }) {
   )
 }
 
-/** やめた事業の結果の言い方。「廃止」は STOP の印で伝わるので書かず、区の言葉の「廃止を検討」はやわらかく言い換える */
-const exitResult = (result: string) => (result === '廃止' ? '' : result === '廃止を検討' ? 'やめるか検討中' : result)
+/** やめた事業の結果の言い方。「廃止」は STOP の印で伝わり、「見送り」なども書かない。区の言葉の「廃止を検討」だけやわらかく言い換えて出す */
+const exitResult = (result: string) => (result === '廃止を検討' ? 'やめるか検討中' : '')
 
 function ScrapSection({ scrap }: { scrap: Scrap }) {
   const target = scrap.targetYen
