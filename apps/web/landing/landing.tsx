@@ -328,12 +328,10 @@ const SHARES = [
   { name: '産業・交通', pct: 4.3 },
   { name: '健康・医療', pct: 4.1 },
 ]
-/** 品川区 R8年度の新しく始める事業（当初予算の主な施策から） */
+/** 品川区 R8年度の新しく始める事業（当初予算の主な施策。事業の予算額は profiles.ts の budgetNew と同じ） */
 const NEW_PROJECTS = [
-  { mark: 'NEW', name: '学校改築推進経費', note: '改築が難しい区立学校2校の建替えに向けた基本構想', amount: '111', unit: '億円' },
-  { mark: 'NEW', name: '乳児等通園支援事業費', note: '在宅で子育てする世帯の子どもにも通園の機会を', amount: '9.4', unit: '億円' },
-  { mark: 'NEW', name: '子ども・若者活動拠点経費', note: '中高生・若者が企画できる多世代のスペース', amount: '6.8', unit: '億円' },
-  { mark: 'UP', name: 'ベビーシッター利用支援事業費', note: 'マッチング型の利用助成を広げる', amount: '4.7', unit: '億円' },
+  { name: '乳児等通園支援事業費', note: '運営費助成（80園）。在宅で子育てする世帯の子どもにも通園の機会を', amount: '9.4', unit: '億円' },
+  { name: '子ども・若者活動拠点経費', note: '子ども・若者活動拠点施設等の整備。中高生・若者が企画できる多世代のスペース', amount: '6.8', unit: '億円' },
 ]
 /** 議会のイメージ（架空） */
 const BILLS = [
@@ -553,7 +551,7 @@ export function Landing() {
               <ul className="m-list">
                 {NEW_PROJECTS.map((p) => (
                   <li key={p.name}>
-                    <span className={`m-badge ${p.mark === 'NEW' ? 'new' : 'up'}`}>{p.mark}</span>
+                    <span className="m-badge new">NEW</span>
                     <span>
                       {p.name}
                       <small>{p.note}</small>
@@ -565,6 +563,7 @@ export function Landing() {
                   </li>
                 ))}
               </ul>
+              <p className="m-note">ほかにも、防災・教育・まちづくりなどの事業が並びます</p>
             </div>
           </Feature>
 
