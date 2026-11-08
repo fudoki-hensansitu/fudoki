@@ -1,6 +1,6 @@
 // ホーム（/）。「うちのまち」（選んだ自治体の情報への入口）、見られる情報の種類（予算・決算・事業評価・議会・選挙）、収録の更新を並べるハブ。
 // 自治体を探す・比べるのは自治体一覧（/jurisdictions）、AI との会話はアシスタント（/assistant）が受け持つので、ここでは重ねない。
-// 面の色は、主張したい面（うちのまち）が薄緑（--accent）の地、押せるものの状態は生成り。見出しも含めてゴシック（明朝は /about の読み物だけ）
+// 面の色は、主張したい面（うちのまち）が緑（--primary）の地で中の押せるものは白、押せるものの状態は生成り。見出しも含めてゴシック（明朝は /about の読み物だけ）
 import * as React from 'react'
 import { Link } from '@void/react'
 import { ArrowRightIcon, BankIcon, ArrowSquareOutIcon, CheckSquareOffsetIcon, ClipboardTextIcon, CoinsIcon, GavelIcon, MagnifyingGlassIcon, NavigationArrowIcon, PencilSimpleIcon } from '@phosphor-icons/react'
@@ -108,12 +108,12 @@ function LocateButton({ entries, onPick }: { entries: MapEntry[]; onPick: (e: Ma
   }
   return (
     <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1">
-      <button type="button" onClick={() => void locate()} disabled={state.busy} className="inline-flex items-center gap-1.5 rounded-full bg-background px-3.5 py-1.5 text-[13px] text-accent-foreground transition-colors hover:bg-card disabled:opacity-60">
+      <button type="button" onClick={() => void locate()} disabled={state.busy} className="inline-flex items-center gap-1.5 rounded-full bg-background px-3.5 py-1.5 text-[13px] text-foreground transition-colors hover:bg-card disabled:opacity-60">
         <NavigationArrowIcon aria-hidden="true" className="size-4" />
         {state.busy ? '現在地を調べています…' : '現在地から選ぶ'}
       </button>
       {state.error ? (
-        <span role="status" className="text-[13px] text-muted-foreground">
+        <span role="status" className="text-[13px] opacity-80">
           {state.error}
         </span>
       ) : null}
@@ -138,13 +138,13 @@ function MyTown({ entries, featured }: HomeProps) {
     setEditing(false)
   }
   return (
-    <section aria-labelledby="town-h" className="rounded-[24px] bg-accent p-5 sm:p-7">
+    <section aria-labelledby="town-h" className="rounded-[24px] bg-primary p-5 text-primary-foreground sm:p-7">
       <div className="flex items-center justify-between gap-3">
-        <h2 id="town-h" className="text-sm text-accent-foreground">
+        <h2 id="town-h" className="text-sm opacity-80">
           うちのまち
         </h2>
         {town && !editing ? (
-          <button type="button" onClick={() => setEditing(true)} className="rounded-full px-3 py-1 text-[13px] text-accent-foreground transition-colors hover:bg-background">
+          <button type="button" onClick={() => setEditing(true)} className="rounded-full px-3 py-1 text-[13px] opacity-80 transition hover:bg-white/10 hover:opacity-100">
             変える
           </button>
         ) : null}
@@ -155,20 +155,20 @@ function MyTown({ entries, featured }: HomeProps) {
             <Emblem code={town.code} name={town.name} className="size-14 rounded-2xl border-0 p-2 sm:size-16" />
             <span className="min-w-0 flex-1">
               <span className="block text-2xl font-bold sm:text-[28px]">{town.name}</span>
-              {vision ? <span className="mt-0.5 block truncate text-sm text-muted-foreground">{vision}</span> : null}
+              {vision ? <span className="mt-0.5 block truncate text-sm opacity-80">{vision}</span> : null}
             </span>
-            <ArrowRightIcon className="size-5 shrink-0 text-accent-foreground transition-transform group-hover:translate-x-1" />
+            <ArrowRightIcon className="size-5 shrink-0 opacity-80 transition-transform group-hover:translate-x-1" />
           </Link>
           <ul className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
             {townLinks(town.name, featured.find((f) => f.code === town.code)).map((l) => (
               <li key={l.label}>
                 {l.hash ? (
-                  <Link href={`${town.path}${l.hash}`} className="flex h-full flex-col gap-2 rounded-2xl bg-background p-3.5 text-sm transition-colors hover:bg-card [&_svg]:size-5 [&_svg]:text-accent-foreground">
+                  <Link href={`${town.path}${l.hash}`} className="flex h-full flex-col gap-2 rounded-2xl bg-background p-3.5 text-sm text-foreground transition-colors hover:bg-card [&_svg]:size-5 [&_svg]:text-accent-foreground">
                     {l.icon}
                     {l.label}
                   </Link>
                 ) : (
-                  <span className="flex h-full flex-col gap-2 rounded-2xl border border-dashed border-primary/20 p-3.5 text-sm text-muted-foreground [&_svg]:size-5">
+                  <span className="flex h-full flex-col gap-2 rounded-2xl border border-dashed border-white/25 p-3.5 text-sm opacity-70 [&_svg]:size-5">
                     {l.icon}
                     <span>
                       {l.label}
@@ -185,15 +185,15 @@ function MyTown({ entries, featured }: HomeProps) {
           <p className="text-xl font-bold sm:text-2xl">住んでいるまちを選ぶ</p>
           {entries.length ? (
             <>
-              <p className="mt-1 mb-4 text-sm text-muted-foreground">選ぶと、そのまちのお金・事業・議会・選挙への入口がここに並びます。</p>
+              <p className="mt-1 mb-4 text-sm opacity-80">選ぶと、そのまちのお金・事業・議会・選挙への入口がここに並びます。</p>
               <Picker entries={entries} onPick={pick} placeholder="自治体名で探す（例：品川）" />
               <LocateButton entries={entries} onPick={pick} />
             </>
           ) : (
-            <p className="mt-1 text-sm text-muted-foreground">今は自治体の一覧を読み込めません。少し時間をおいて開き直してください。</p>
+            <p className="mt-1 text-sm opacity-80">今は自治体の一覧を読み込めません。少し時間をおいて開き直してください。</p>
           )}
           {editing ? (
-            <button type="button" onClick={() => setEditing(false)} className="mt-3 text-[13px] text-accent-foreground hover:underline">
+            <button type="button" onClick={() => setEditing(false)} className="mt-3 text-[13px] opacity-80 hover:opacity-100">
               やめる
             </button>
           ) : null}
