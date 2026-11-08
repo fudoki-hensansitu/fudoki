@@ -5,7 +5,7 @@ import { BACKGROUND_DARK, BACKGROUND_LIGHT } from './tokens'
 export const MANIFEST = JSON.stringify({
   name: '風土記（fudoki）— うちのまち、なにしてる？',
   short_name: '風土記',
-  description: '自治体の予算・決算・事業評価を、出典つきでわかりやすく見られるサイトです。',
+  description: '自治体の行政が何を決め、何にいくら使い、どう振り返ったかを、わかりやすく見られるサイトです。',
   lang: 'ja',
   start_url: '/',
   scope: '/',

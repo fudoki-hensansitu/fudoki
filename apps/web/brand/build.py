@@ -123,7 +123,7 @@ TAGLINE = "うちのまち、なにしてる？"
 og_height = 100
 scale = og_height / H
 LEFT = 80
-# 右に置く実画面は brand/og-card.png（ホームの決算表と入力欄を 2 倍で撮ったもの）。幅は右端まで。
+# 右に置く実画面は brand/og-card.png（ホームの「うちのまち」と見られる情報を 2 倍で撮ったもの）。幅は右端まで。
 CARD_X, CARD_W, CARD_H = 560, OW - 560, round((OW - 560) * 1031 / 1280)
 tag_size = 34
 
