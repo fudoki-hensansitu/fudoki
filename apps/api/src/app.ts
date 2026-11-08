@@ -154,6 +154,8 @@ export const RENDER_RESULT_TEXT = 'Display requested. The display data is in str
 
 const RENDER_DESCRIPTION =
   'Render expenditure search results (search_expenditure_subjects, search_expenditure_details) and breakdowns (get_expenditure_subject, get_expenditure_detail) as tables and charts in clients that support MCP Apps. ' +
+  'Use it only when a table or chart is clearer than text: the user asks to see a list, a breakdown or a comparison, or the result has many rows. ' +
+  'Not needed when a single amount or a yes/no settles the question. Call it once, after the data tool, with the same input. ' +
   "Accepts tool (one of those names) and arguments (the selected tool's input). " +
   "Returns the selected tool's result in structuredContent and a text acknowledgement."
 
