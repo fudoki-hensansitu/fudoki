@@ -1,7 +1,7 @@
 // 全ページの左に置くサイドバー（shadcn の Sidebar）。pages/layout.tsx が置き、頁の間を移っても描き直さない
 import * as React from 'react'
 import { Link } from '@void/react'
-import { BankIcon, ChatIcon, InfoIcon, RobotIcon, GithubLogoIcon, HouseIcon, PlugIcon, SidebarSimpleIcon, XLogoIcon } from '@phosphor-icons/react'
+import { BankIcon, ChatIcon, RobotIcon, GithubLogoIcon, HouseIcon, PlugIcon, SidebarSimpleIcon, XLogoIcon } from '@phosphor-icons/react'
 import {
   Sidebar,
   SidebarContent,
@@ -20,7 +20,7 @@ import { cn } from '@/lib/utils'
 import { LOGO_G, LOGO_WIDTH } from '../logo'
 import { FEEDBACK } from './feedback'
 
-export const NAV_SECTIONS = ['home', 'jurisdictions', 'assistant', 'about'] as const
+export const NAV_SECTIONS = ['home', 'jurisdictions', 'assistant'] as const
 export type NavSection = (typeof NAV_SECTIONS)[number]
 export type SiteNavProps = { active?: NavSection; open: boolean }
 /** site の中の頁へは Void の Link で頁を読み直さずに移り、外（docs・mail・SNS）へは普通の a で出る */
@@ -169,7 +169,6 @@ export function SiteNav({ active, open }: SiteNavProps) {
           </SidebarContent>
           <SidebarFooter className="gap-0 px-2 pt-2 pb-12">
             <SidebarMenu>
-              <Item href="/about" label="風土記について" icon={<InfoIcon />} active={active === 'about'} />
               <Item href={MCP} label="MCP" icon={<PlugIcon />} />
               <Item href={FEEDBACK} label="フィードバック" icon={<ChatIcon />} />
             </SidebarMenu>

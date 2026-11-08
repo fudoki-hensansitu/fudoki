@@ -205,9 +205,10 @@ html:has(.landing){scroll-behavior:smooth}
 .landing .m-bills small{grid-column:1/-1;font-size:11px;color:var(--muted-foreground)}
 .landing .m-bills b{padding:4px 10px;border-radius:999px;background:var(--secondary);font-size:12px;font-weight:500;white-space:nowrap}
 .landing .m-vote{grid-column:1/-1;font-size:12px;color:var(--muted-foreground)}
-.landing .m-cands li{grid-template-columns:auto minmax(0,1fr) auto}
+.landing .m-cands li{grid-template-columns:auto minmax(0,1fr)}
 .landing .m-face{display:grid;place-items:center;width:40px;height:40px;border-radius:999px;background:var(--secondary);font:500 15px/1 var(--font-sans)}
-.landing .m-words{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px}
+.landing .m-words{display:flex;flex-wrap:wrap;gap:6px}
+.landing .m-cands .m-words{grid-column:2}
 .landing .m-words i{padding:3px 10px;border:1px solid var(--hair);border-radius:999px;font-style:normal;font-size:12px}
 .landing .m-note{font-size:12px;color:var(--muted-foreground)}
 .landing .m-eval{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:16px}
@@ -253,8 +254,6 @@ html:has(.landing){scroll-behavior:smooth}
 .landing .m-card{padding:20px 18px}
 .landing .m-bars li{grid-template-columns:7.5em minmax(0,1fr) 4em;font-size:13px}
 .landing .m-eval{grid-template-columns:minmax(0,1fr)}
-.landing .m-cands li{grid-template-columns:auto minmax(0,1fr)}
-.landing .m-words{grid-column:2;justify-content:flex-start}
 .landing .bars .b{grid-template-columns:4.5em minmax(0,1fr) 6.5em}
 .landing .cta{padding:56px 20px;margin-inline:calc(-1 * var(--gut) + 8px)}
 }

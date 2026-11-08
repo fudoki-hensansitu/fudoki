@@ -10,7 +10,6 @@ const sectionOf = (path: string): NavSection | undefined => {
   if (path === '/') return 'home'
   if (path === INDEX_PATH || PREFECTURE_SLUGS.has(path.split('/')[1] ?? '')) return 'jurisdictions'
   if (path === '/assistant' || path.startsWith('/s/')) return 'assistant'
-  if (path === '/about') return 'about'
   return undefined
 }
 
