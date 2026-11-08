@@ -1,0 +1,12 @@
+version: 2
+sources:
+- name: evaluation
+  schema: ingestion
+  description: 入力準備（dbt/scripts/prepare.py）が ingestion/evaluation の読み方で出典の PDF から読んだ、事業評価（評価シート・評価の結果）と予算案のプレス発表。
+  tables:
+  - name: evaluation_origin
+  - name: evaluation_sheet
+  - name: evaluation_indicator
+  - name: evaluation_indicator_value
+  - name: evaluation_result
+  - name: press_item

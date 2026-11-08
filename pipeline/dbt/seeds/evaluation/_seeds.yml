@@ -1,0 +1,27 @@
+version: 2
+
+seeds:
+  - name: press_item_link
+    meta:
+      role: judgment
+    description: |
+      予算案のプレス発表の施策を、同じ年度の当初予算書の内訳（事業）の1行に紐付けた結果。**風土記の判断**。
+      `bun run --cwd pipeline evaluation:link-press` が seed に無い施策だけを紐付けて足す（手順は
+      .agents/skills/web-frontend-ops/references/link-to-budget-detail.md）。行がある施策は聞き直さない。
+    config:
+      column_types:
+        jurisdiction_code: varchar
+        fiscal_year: integer
+        page: integer
+        detail_id: varchar
+        method: varchar
+        confidence: double
+        model: varchar
+    columns:
+      - name: method
+        description: name（名前と額で直接当たった）・jev（候補12件から Jev が確信度 0.6 以上で選んだ）・none（紐付かない）。
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['name', 'jev', 'none']

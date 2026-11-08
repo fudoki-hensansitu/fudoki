@@ -697,6 +697,514 @@
           "description": "世帯数。"
         }
       ]
+    },
+    "evaluation_origin": {
+      "primary_key": "origin_id",
+      "indexes": [],
+      "columns": [
+        {
+          "name": "origin_id",
+          "type": "string",
+          "nullable": false,
+          "description": "出典の識別子。PDF の sha256。"
+        },
+        {
+          "name": "jurisdiction_code",
+          "type": "string",
+          "nullable": false,
+          "description": "全国地方公共団体コード（6桁）。jurisdiction の jurisdiction_code。"
+        },
+        {
+          "name": "document_type",
+          "type": "string",
+          "nullable": false,
+          "description": "資料の種類。sheets（事務事業評価シート）・result（事務事業評価の結果）・press（予算案のプレス発表）。"
+        },
+        {
+          "name": "fiscal_year",
+          "type": "integer",
+          "nullable": false,
+          "description": "会計年度（西暦）。sheets と result は評価した事業を実施した年度、press は予算の年度。"
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "nullable": true,
+          "description": "資料の名前。"
+        },
+        {
+          "name": "url",
+          "type": "string",
+          "nullable": false,
+          "description": "資料（PDF）の URL。"
+        },
+        {
+          "name": "landing_url",
+          "type": "string",
+          "nullable": true,
+          "description": "資料を載せた自治体のページの URL。"
+        },
+        {
+          "name": "sha256",
+          "type": "string",
+          "nullable": false,
+          "description": "読んだ PDF の sha256。"
+        }
+      ]
+    },
+    "evaluation_sheet": {
+      "primary_key": "sheet_id",
+      "indexes": [
+        [
+          "jurisdiction_code",
+          "fiscal_year"
+        ],
+        [
+          "detail_id"
+        ]
+      ],
+      "columns": [
+        {
+          "name": "sheet_id",
+          "type": "string",
+          "nullable": false,
+          "description": "行の ID。origin_id と頁から作る（sha256）。"
+        },
+        {
+          "name": "origin_id",
+          "type": "string",
+          "nullable": false,
+          "description": "出典。evaluation_origin の origin_id。"
+        },
+        {
+          "name": "jurisdiction_code",
+          "type": "string",
+          "nullable": false,
+          "description": "全国地方公共団体コード（6桁）。"
+        },
+        {
+          "name": "fiscal_year",
+          "type": "integer",
+          "nullable": false,
+          "description": "評価した事業を実施した会計年度（西暦）。"
+        },
+        {
+          "name": "evaluation_year",
+          "type": "integer",
+          "nullable": false,
+          "description": "評価した年度（西暦）。シートの題の年度で、実施した年度の翌年度。"
+        },
+        {
+          "name": "page",
+          "type": "integer",
+          "nullable": false,
+          "description": "出典の PDF の頁（1始まり、印字の頁番号ではない）。"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "nullable": false,
+          "description": "シートの小事業名。"
+        },
+        {
+          "name": "account_name",
+          "type": "string",
+          "nullable": true,
+          "description": "シートの予算科目の会計。"
+        },
+        {
+          "name": "kan_name",
+          "type": "string",
+          "nullable": true,
+          "description": "シートの予算科目の款。"
+        },
+        {
+          "name": "kou_name",
+          "type": "string",
+          "nullable": true,
+          "description": "シートの予算科目の項。"
+        },
+        {
+          "name": "moku_name",
+          "type": "string",
+          "nullable": true,
+          "description": "シートの予算科目の目。"
+        },
+        {
+          "name": "jigyo_name",
+          "type": "string",
+          "nullable": true,
+          "description": "シートの予算科目の事業。"
+        },
+        {
+          "name": "department",
+          "type": "string",
+          "nullable": true,
+          "description": "シートの担当部署。"
+        },
+        {
+          "name": "division",
+          "type": "string",
+          "nullable": true,
+          "description": "シートの担当課。"
+        },
+        {
+          "name": "period_start_year",
+          "type": "integer",
+          "nullable": true,
+          "description": "シートの事業期間の始まりの年度（西暦）。印字が無ければ空。"
+        },
+        {
+          "name": "period_end_year",
+          "type": "integer",
+          "nullable": true,
+          "description": "シートの事業期間の終わりの年度（西暦）。印字が無ければ空。"
+        },
+        {
+          "name": "budget_yen",
+          "type": "integer",
+          "nullable": true,
+          "description": "シートの予算・決算（概要）の計の予算現額（円）。"
+        },
+        {
+          "name": "settled_yen",
+          "type": "integer",
+          "nullable": true,
+          "description": "シートの予算・決算（概要）の計の決算額（円）。"
+        },
+        {
+          "name": "cost_previous_yen",
+          "type": "integer",
+          "nullable": true,
+          "description": "シートの行政コスト計算書の行政費用の小計（D）の前年度の額（円）。"
+        },
+        {
+          "name": "cost_current_yen",
+          "type": "integer",
+          "nullable": true,
+          "description": "シートの行政コスト計算書の行政費用の小計（D）の実施年度の額（円）。"
+        },
+        {
+          "name": "grade_code",
+          "type": "string",
+          "nullable": false,
+          "description": "最終評価の区分の記号（A〜D）。"
+        },
+        {
+          "name": "grade_label",
+          "type": "string",
+          "nullable": true,
+          "description": "最終評価の区分の名前（シートの表記、例「改善・見直しする事業」）。"
+        },
+        {
+          "name": "direction",
+          "type": "string",
+          "nullable": true,
+          "description": "最終評価の今後の取組の方向性（シートの表記、例「手法等の改善」）。"
+        },
+        {
+          "name": "subject_id",
+          "type": "string",
+          "nullable": true,
+          "description": "風土記の判断。シートの予算科目（会計・款・項・目の名前）が1つに当たる、同じ年度の決算書の目。fiscal_expenditure_subject の subject_id。当たらなければ空。"
+        },
+        {
+          "name": "detail_id",
+          "type": "string",
+          "nullable": true,
+          "description": "風土記の判断。subject_id の目の下で、シートの予算科目の事業と同じ名前（内訳の末尾の【所管課】以降を除く）の内訳（分け方が事業）が1つだけあるときの、その内訳。fiscal_expenditure_detail の detail_id。1つの内訳に複数の小事業（シート）が入ることがあり、そのときシートの決算額は内訳の額より小さい。"
+        },
+        {
+          "name": "cofog_code",
+          "type": "string",
+          "nullable": true,
+          "description": "風土記の判断。subject_id の目に付けた COFOG コード（fiscal_expenditure_subject の cofog_code の写し）。"
+        },
+        {
+          "name": "is_new_project",
+          "type": "boolean",
+          "nullable": false,
+          "description": "風土記の判断。実施年度に新しくできた事業の印。事業期間が実施年度から始まり、前年度の行政費用が0で、前年度までの指標の実績が無いもの。"
+        }
+      ]
+    },
+    "evaluation_indicator": {
+      "primary_key": "indicator_id",
+      "indexes": [
+        [
+          "sheet_id"
+        ]
+      ],
+      "columns": [
+        {
+          "name": "indicator_id",
+          "type": "string",
+          "nullable": false,
+          "description": "行の ID。シートと指標の順から作る（sha256）。"
+        },
+        {
+          "name": "sheet_id",
+          "type": "string",
+          "nullable": false,
+          "description": "evaluation_sheet の sheet_id。"
+        },
+        {
+          "name": "position",
+          "type": "integer",
+          "nullable": false,
+          "description": "シートの中での順（1始まり）。"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "nullable": true,
+          "description": "指標名。"
+        },
+        {
+          "name": "unit",
+          "type": "string",
+          "nullable": true,
+          "description": "単位（シートの表記）。"
+        },
+        {
+          "name": "definition",
+          "type": "string",
+          "nullable": true,
+          "description": "指標の定義（シートの表記）。"
+        },
+        {
+          "name": "final_target_text",
+          "type": "string",
+          "nullable": true,
+          "description": "目標（達成年度）の欄の値（シートの表記のまま）。"
+        },
+        {
+          "name": "final_target_year_text",
+          "type": "string",
+          "nullable": true,
+          "description": "目標の達成年度（シートの表記のまま、例「令和8年度」）。"
+        }
+      ]
+    },
+    "evaluation_indicator_value": {
+      "primary_key": "value_id",
+      "indexes": [
+        [
+          "indicator_id"
+        ]
+      ],
+      "columns": [
+        {
+          "name": "value_id",
+          "type": "string",
+          "nullable": false,
+          "description": "行の ID。指標と年度から作る（sha256）。"
+        },
+        {
+          "name": "indicator_id",
+          "type": "string",
+          "nullable": false,
+          "description": "evaluation_indicator の indicator_id。"
+        },
+        {
+          "name": "fiscal_year",
+          "type": "integer",
+          "nullable": false,
+          "description": "会計年度（西暦）。"
+        },
+        {
+          "name": "target_text",
+          "type": "string",
+          "nullable": true,
+          "description": "その年度の目標（シートの表記のまま）。"
+        },
+        {
+          "name": "actual_text",
+          "type": "string",
+          "nullable": true,
+          "description": "その年度の実績（シートの表記のまま）。"
+        }
+      ]
+    },
+    "evaluation_result": {
+      "primary_key": "origin_id",
+      "indexes": [
+        [
+          "jurisdiction_code"
+        ]
+      ],
+      "columns": [
+        {
+          "name": "origin_id",
+          "type": "string",
+          "nullable": false,
+          "description": "出典。evaluation_origin の origin_id。"
+        },
+        {
+          "name": "jurisdiction_code",
+          "type": "string",
+          "nullable": false,
+          "description": "全国地方公共団体コード（6桁）。"
+        },
+        {
+          "name": "evaluated_year",
+          "type": "integer",
+          "nullable": false,
+          "description": "評価した事業を実施した会計年度（西暦）。"
+        },
+        {
+          "name": "budget_year",
+          "type": "integer",
+          "nullable": false,
+          "description": "評価を反映した予算の会計年度（西暦）。"
+        },
+        {
+          "name": "page",
+          "type": "integer",
+          "nullable": true,
+          "description": "合計の行を読んだ出典の PDF の頁。"
+        },
+        {
+          "name": "evaluated_count",
+          "type": "integer",
+          "nullable": true,
+          "description": "評価した事業の数。"
+        },
+        {
+          "name": "grade_a",
+          "type": "integer",
+          "nullable": true,
+          "description": "A 評価の事業の数。"
+        },
+        {
+          "name": "grade_b",
+          "type": "integer",
+          "nullable": true,
+          "description": "B 評価の事業の数。"
+        },
+        {
+          "name": "grade_c",
+          "type": "integer",
+          "nullable": true,
+          "description": "C 評価の事業の数。"
+        },
+        {
+          "name": "grade_d",
+          "type": "integer",
+          "nullable": true,
+          "description": "D 評価の事業の数。"
+        },
+        {
+          "name": "reduced_yen",
+          "type": "integer",
+          "nullable": true,
+          "description": "評価で見直した予算の削減額の合計（円）。"
+        },
+        {
+          "name": "sheets_origin_id",
+          "type": "string",
+          "nullable": true,
+          "description": "同じ評価の評価シートの出典（evaluation_origin の origin_id）。読んでいなければ空。"
+        }
+      ]
+    },
+    "press_item": {
+      "primary_key": "press_item_id",
+      "indexes": [
+        [
+          "jurisdiction_code",
+          "fiscal_year"
+        ],
+        [
+          "detail_id"
+        ]
+      ],
+      "columns": [
+        {
+          "name": "press_item_id",
+          "type": "string",
+          "nullable": false,
+          "description": "行の ID。origin_id と頁から作る（sha256）。"
+        },
+        {
+          "name": "origin_id",
+          "type": "string",
+          "nullable": false,
+          "description": "出典。evaluation_origin の origin_id。"
+        },
+        {
+          "name": "jurisdiction_code",
+          "type": "string",
+          "nullable": false,
+          "description": "全国地方公共団体コード（6桁）。"
+        },
+        {
+          "name": "fiscal_year",
+          "type": "integer",
+          "nullable": false,
+          "description": "予算の会計年度（西暦）。"
+        },
+        {
+          "name": "page",
+          "type": "integer",
+          "nullable": false,
+          "description": "出典の PDF の頁（1始まり）。"
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "nullable": true,
+          "description": "頁の見出し（副題を含む、資料の表記）。"
+        },
+        {
+          "name": "names",
+          "type": "string",
+          "nullable": true,
+          "description": "事業名の欄（JSON の文字列の配列。複数のことがある）。"
+        },
+        {
+          "name": "is_new",
+          "type": "boolean",
+          "nullable": true,
+          "description": "事業名に「新規」の印がある。"
+        },
+        {
+          "name": "budget_yen",
+          "type": "integer",
+          "nullable": true,
+          "description": "予算額（円）。事業名が複数なら合計。"
+        },
+        {
+          "name": "points",
+          "type": "string",
+          "nullable": true,
+          "description": "POINT の箇条書き（JSON の文字列の配列、資料の表記）。"
+        },
+        {
+          "name": "detail_id",
+          "type": "string",
+          "nullable": true,
+          "description": "風土記の判断。施策を紐付けた、同じ年度の当初予算書の内訳（fiscal_expenditure_detail の detail_id）。紐付かなければ空。"
+        },
+        {
+          "name": "link_method",
+          "type": "string",
+          "nullable": false,
+          "description": "風土記の判断。紐付けの方法。name（名前と額で直接当たった）・jev（候補12件から TypeSafe の Jev が確信度 0.6 以上で選んだ）・none（紐付かない）。"
+        },
+        {
+          "name": "link_confidence",
+          "type": "number",
+          "nullable": true,
+          "description": "風土記の判断。link_method が jev のときの Jev の確信度。"
+        },
+        {
+          "name": "cofog_code",
+          "type": "string",
+          "nullable": true,
+          "description": "風土記の判断。detail_id の内訳が属する目の COFOG コード。紐付かなければ空（分野は「その他」）。"
+        }
+      ]
     }
   }
 }
