@@ -381,7 +381,7 @@ function PlaceCard({ href, name, logo, icon: Icon, className }: { href: string; 
     <li className={className}>
       <Link href={href} className="group flex items-center gap-3.5 rounded-2xl border bg-background p-3.5 text-foreground no-underline transition-colors hover:border-primary/40 hover:bg-card">
         <span className="grid size-12 shrink-0 place-items-center rounded-xl border bg-white p-1.5">
-          {logo ? <img src={logo} alt="" className="h-auto w-full" /> : <Icon aria-hidden="true" className="size-6 text-primary" />}
+          {logo ? <img src={logo} alt="" className="size-full min-h-0 min-w-0 object-contain" /> : <Icon aria-hidden="true" className="size-6 text-primary" />}
         </span>
         <b className="min-w-0 flex-1 truncate text-[16px] font-normal">{name}</b>
         <CaretRightIcon aria-hidden="true" className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
@@ -766,7 +766,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
     <>
       <div className={`fixed left-0 right-(--side-panel,0px) top-0 z-30 md:left-(--nav-w) border-b bg-background transition-[transform,right] duration-200 ease-out motion-reduce:transition-none ${mini ? '' : '-translate-y-full'}`} aria-hidden={!mini} inert={!mini}>
         <div className="mx-auto flex h-[60px] max-w-[1120px] items-center gap-3 px-4">
-          <span className="grid size-9 shrink-0 place-items-center rounded-lg border bg-white p-1 sm:size-10">{logo ? <img src={logo} alt="" className="w-full" /> : <span className="text-foreground">{data.name[0]}</span>}</span>
+          <span className="grid size-9 shrink-0 place-items-center rounded-lg border bg-white p-1 sm:size-10">{logo ? <img src={logo} alt="" className="size-full min-h-0 min-w-0 object-contain" /> : <span className="text-foreground">{data.name[0]}</span>}</span>
           <b className="shrink-0 text-lg font-normal">{data.name}</b>
           {vision ? <span className="hidden min-w-0 truncate text-[13px] text-muted-foreground sm:block">{vision}</span> : null}
           {years.length > 1 ? (
@@ -785,7 +785,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
             </div>
           ) : null}
           <div className="grid size-20 place-items-center rounded-xl border bg-white p-2.5 sm:size-[132px] sm:rounded-2xl sm:p-[18px]">
-            {logo ? <img src={logo} alt="" className="h-auto w-full" /> : <span className="text-3xl text-foreground sm:text-5xl">{data.name[0]}</span>}
+            {logo ? <img src={logo} alt="" className="size-full min-h-0 min-w-0 object-contain" /> : <span className="text-3xl text-foreground sm:text-5xl">{data.name[0]}</span>}
           </div>
           <div className="flex min-w-0 flex-col gap-3">
             <h1 ref={title} className="text-[clamp(1.75rem,1.4rem+1.2vw,2.25rem)] font-normal leading-tight">{data.name}</h1>
