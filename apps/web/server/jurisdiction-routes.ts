@@ -19,7 +19,7 @@ const NODE_ID = /^[0-9a-f]{64}$/
 /** Worker の cache（無い環境では毎回取り直す）。同じ isolate の中でも一度だけ取る */
 const inflight = new Map<string, Promise<unknown>>()
 async function memo<T>(key: string, fn: () => Promise<T>): Promise<T> {
-  const url = `https://fudoki.dev/__cache/jurisdiction-v18/${key}`
+  const url = `https://fudoki.dev/__cache/jurisdiction-v19/${key}`
   const cache = typeof caches === 'undefined' ? undefined : (caches as unknown as { default?: Cache }).default
   const hit = await cache?.match(url)
   if (hit) return (await hit.json()) as T
