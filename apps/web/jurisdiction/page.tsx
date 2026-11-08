@@ -117,7 +117,7 @@ function FreshRow({ up, upLabel = '拡大', title, yen, children }: { up: boolea
         </h4>
         <span className="shrink-0 text-right">
           <YenText yen={yen} className="block leading-snug" />
-          {people && yen ? <span className="block text-xs text-muted-foreground tabular-nums">1人 約{formatPerCapita(yen / people)}</span> : null}
+          {people && yen ? <span className="block text-xs text-muted-foreground tabular-nums">1人 {formatPerCapita(yen / people)}</span> : null}
         </span>
       </div>
       {children}
@@ -292,7 +292,7 @@ function Overview({ data, sections, year }: { data: PageData; sections: Set<stri
           {shown.lead}<Emph text={formatYen(shown.yen)} />
           {people ? (
             <>
-              、住民1人あたり<Emph text={`約${Math.round(shown.yen / people / 1e4).toLocaleString('ja-JP')}万円`} />
+              、住民1人あたり<Emph text={`${Math.round(shown.yen / people / 1e4).toLocaleString('ja-JP')}万円`} />
             </>
           ) : null}
           です。
@@ -320,7 +320,7 @@ function Overview({ data, sections, year }: { data: PageData; sections: Set<stri
                 {spent && !spent.amountMissing && shown?.yen ? (
                   <>
                     <span className="block text-primary"><span className="text-xl">{((spent.yen / shown.yen) * 100).toFixed(1)}</span><span className="ml-0.5 text-xs">%</span></span>
-                    {people ? <span className="block text-xs text-muted-foreground">1人 約{(Math.round(spent.yen / people / 1e3) / 10).toLocaleString('ja-JP')}万円</span> : null}
+                    {people ? <span className="block text-xs text-muted-foreground">1人 {(Math.round(spent.yen / people / 1e3) / 10).toLocaleString('ja-JP')}万円</span> : null}
                   </>
                 ) : (
                   <span className="block text-[15px] text-muted-foreground">{spent ? '金額未記載' : '—'}</span>
