@@ -55,7 +55,13 @@ export async function readSourcePage(db: Db, bucket: SourceTextBucket | undefine
   if (!found) return { status: 'not_found', message: '風土記の出典に無い origin です' }
   const object = await bucket.get(`source-text/${found.sha256}.json`)
   if (!object) return { status: 'unavailable', message: 'この出典の文字はまだ用意していません（文字の層の無い PDF・CSV を含む）。url の公式の資料を案内してください' }
-  const { pages } = JSON.parse(await object.text()) as { pages: string[] }
+  let pages: unknown
+  try {
+    pages = (JSON.parse(await object.text()) as { pages?: unknown }).pages
+  } catch {
+    pages = undefined
+  }
+  if (!Array.isArray(pages) || !pages.every((p) => typeof p === 'string')) return { status: 'unavailable', message: 'この出典の文字を読めません' }
   if (page > pages.length) return { status: 'invalid', message: `この出典は ${pages.length} 頁です` }
   const text = pages[page - 1] ?? ''
   const chars = [...text]

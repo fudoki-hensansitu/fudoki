@@ -135,7 +135,8 @@ def fetch(origin: Origin) -> Path:
             return path
         temporary.unlink(missing_ok=True)
         last = 'sha256 が選定と違う' if result.returncode == 0 else result.stderr.decode(errors='replace').strip()[-300:]
-        time.sleep(5 * (attempt + 1))
+        if attempt < 2:
+            time.sleep(5 * (attempt + 1))
     raise RuntimeError(f'R2 の出典を取れない: {origin.r2_key}: {last}')
 
 
