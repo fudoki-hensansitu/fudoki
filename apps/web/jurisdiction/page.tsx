@@ -58,7 +58,7 @@ function GradeMark({ grade }: { grade: string }) {
   return <span aria-hidden="true" className="inline-grid size-5 shrink-0 place-items-center rounded-full border border-current align-middle text-[11px] leading-none">{grade}</span>
 }
 
-/** 「C やり方を見直す」を印と言葉に分ける */
+/** 「C 見直す」を印と言葉に分ける */
 function Grade({ grade, className }: { grade: string; className?: string }) {
   const m = /^([A-D])\s*(.*)$/.exec(grade)
   if (!m) return <span className={className}>{grade}</span>

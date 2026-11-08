@@ -124,7 +124,7 @@ const SHINAGAWA: Profile = {
             "target": "44,351",
             "actual": "37,424"
           },
-          "grade": "D やめる・終える",
+          "grade": "D 完了",
           "direction": "事業の完了",
           "page": 22
         },
@@ -140,7 +140,7 @@ const SHINAGAWA: Profile = {
             "target": "510",
             "actual": "553"
           },
-          "grade": "B 継続する事業",
+          "grade": "B 続ける",
           "direction": "法定受託事務・法定扶助費等",
           "page": 170
         },
@@ -156,7 +156,7 @@ const SHINAGAWA: Profile = {
             "target": "0",
             "actual": "0"
           },
-          "grade": "B 継続する事業",
+          "grade": "B 続ける",
           "direction": "法定受託事務・法定扶助費等",
           "page": 652
         },
@@ -172,7 +172,7 @@ const SHINAGAWA: Profile = {
             "target": "0",
             "actual": "0"
           },
-          "grade": "B 継続する事業",
+          "grade": "B 続ける",
           "direction": "法定受託事務・法定扶助費等",
           "page": 651
         },
@@ -188,7 +188,7 @@ const SHINAGAWA: Profile = {
             "target": "913",
             "actual": "602"
           },
-          "grade": "A 拡大する事業",
+          "grade": "A 広げる",
           "direction": "新規の取組み",
           "page": 218
         },
@@ -198,7 +198,7 @@ const SHINAGAWA: Profile = {
           "cofog": "10",
           "what": "児童相談所と一時保護所の光熱水費、警備・清掃、設備の維持管理、修繕を行う。",
           "settledYen": 76933000,
-          "grade": "B 継続する事業",
+          "grade": "B 続ける",
           "direction": "現状維持",
           "page": 220
         },
@@ -214,7 +214,7 @@ const SHINAGAWA: Profile = {
             "target": "100,000",
             "actual": "114,347"
           },
-          "grade": "C 改善・見直しする事業",
+          "grade": "C 見直す",
           "direction": "対象・規模等の見直し",
           "page": 106
         },
@@ -230,7 +230,7 @@ const SHINAGAWA: Profile = {
             "target": "42",
             "actual": "78"
           },
-          "grade": "B 継続する事業",
+          "grade": "B 続ける",
           "direction": "現状維持",
           "page": 219
         },
@@ -246,7 +246,7 @@ const SHINAGAWA: Profile = {
             "target": "45",
             "actual": "47.8"
           },
-          "grade": "C 改善・見直しする事業",
+          "grade": "C 見直す",
           "direction": "対象・規模等の見直し",
           "page": 518
         },
@@ -262,7 +262,7 @@ const SHINAGAWA: Profile = {
             "target": "61",
             "actual": "53.2"
           },
-          "grade": "B 継続する事業",
+          "grade": "B 続ける",
           "direction": "計画・規定どおり",
           "page": 476
         },
@@ -278,7 +278,7 @@ const SHINAGAWA: Profile = {
             "target": "130",
             "actual": "121"
           },
-          "grade": "B 継続する事業",
+          "grade": "B 続ける",
           "direction": "現状維持",
           "page": 253
         },
@@ -288,7 +288,7 @@ const SHINAGAWA: Profile = {
           "cofog": "10.4",
           "what": "母子保健と児童福祉が一緒に相談に乗る「子ども家庭センター」をR7年4月に開くための準備をした。",
           "settledYen": 17373000,
-          "grade": "D やめる・終える",
+          "grade": "D 完了",
           "direction": "事業の完了",
           "page": 183
         },
@@ -304,7 +304,7 @@ const SHINAGAWA: Profile = {
             "target": "1",
             "actual": "0"
           },
-          "grade": "B 継続する事業",
+          "grade": "B 続ける",
           "direction": "現状維持",
           "page": 171
         },
@@ -320,7 +320,7 @@ const SHINAGAWA: Profile = {
             "target": "1",
             "actual": "1"
           },
-          "grade": "B 継続する事業",
+          "grade": "B 続ける",
           "direction": "法定受託事務・法定扶助費等",
           "page": 169
         },
@@ -336,7 +336,7 @@ const SHINAGAWA: Profile = {
             "target": "121",
             "actual": "67"
           },
-          "grade": "C 改善・見直しする事業",
+          "grade": "C 見直す",
           "direction": "手法等の改善",
           "page": 604
         }
@@ -348,7 +348,7 @@ const SHINAGAWA: Profile = {
           "name": "給食運営費",
           "cofog": "09",
           "settledYen": 3047859000,
-          "grade": "C 改善・見直しする事業",
+          "grade": "C 見直す",
           "direction": "手法等の改善",
           "page": 601
         },
@@ -358,7 +358,7 @@ const SHINAGAWA: Profile = {
           "name": "教材教具費",
           "cofog": "09",
           "settledYen": 748825000,
-          "grade": "B 継続する事業",
+          "grade": "B 続ける",
           "direction": "現状維持",
           "page": 594
         },
@@ -368,7 +368,7 @@ const SHINAGAWA: Profile = {
           "name": "不登校対策事業費",
           "cofog": "09.8",
           "settledYen": 152232000,
-          "grade": "B 継続する事業",
+          "grade": "B 続ける",
           "direction": "計画・規定どおり",
           "page": 634
         },
@@ -378,7 +378,7 @@ const SHINAGAWA: Profile = {
           "name": "不登校対策事業費",
           "cofog": "09.8",
           "settledYen": 152232000,
-          "grade": "B 継続する事業",
+          "grade": "B 続ける",
           "direction": "計画・規定どおり",
           "page": 634
         },
@@ -388,7 +388,7 @@ const SHINAGAWA: Profile = {
           "name": "保幼小連携推進経費",
           "cofog": "09.8",
           "settledYen": 2790000,
-          "grade": "C 改善・見直しする事業",
+          "grade": "C 見直す",
           "direction": "取組みの一部をやめる",
           "page": 616
         },
@@ -398,7 +398,7 @@ const SHINAGAWA: Profile = {
           "name": "福祉人材確保・定着事業",
           "cofog": "10.2",
           "settledYen": 318532000,
-          "grade": "C 改善・見直しする事業",
+          "grade": "C 見直す",
           "direction": "手法等の改善",
           "page": 262
         },
@@ -408,7 +408,7 @@ const SHINAGAWA: Profile = {
           "name": "不妊治療等支援事業",
           "cofog": "07.4",
           "settledYen": 26433000,
-          "grade": "B 継続する事業",
+          "grade": "B 続ける",
           "direction": "現状維持",
           "page": 357
         },
@@ -418,7 +418,7 @@ const SHINAGAWA: Profile = {
           "name": "地域交通検討経費",
           "cofog": "04.5",
           "settledYen": 152037000,
-          "grade": "B 継続する事業",
+          "grade": "B 続ける",
           "direction": "計画・規定どおり",
           "page": 520
         },
@@ -428,7 +428,7 @@ const SHINAGAWA: Profile = {
           "name": "地域交通検討経費",
           "cofog": "04.5",
           "settledYen": 152037000,
-          "grade": "B 継続する事業",
+          "grade": "B 続ける",
           "direction": "計画・規定どおり",
           "page": 520
         },
@@ -438,7 +438,7 @@ const SHINAGAWA: Profile = {
           "name": "雇用確保支援事業",
           "cofog": "04.1",
           "settledYen": 50312000,
-          "grade": "C 改善・見直しする事業",
+          "grade": "C 見直す",
           "direction": "手法等の改善",
           "page": 123
         }
