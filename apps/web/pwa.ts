@@ -19,6 +19,9 @@ export const MANIFEST = JSON.stringify({
   ],
 })
 
+/** head に inline で置く service worker の登録。CSP（server/csp.ts）はこの文字列の hash で許す */
+export const SW_REGISTER = "if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}))"
+
 const OFFLINE_PATH = '/offline'
 const CACHE_NAME = 'fudoki-offline-v1'
 
@@ -43,11 +46,11 @@ export const OFFLINE_HTML = `<!doctype html>
 :root{color-scheme:light dark;--bg:${BACKGROUND_LIGHT};--fg:#1b1916}
 @media(prefers-color-scheme:dark){:root{--bg:${BACKGROUND_DARK};--fg:#f3f0ea}}
 body{margin:0;min-height:100dvh;display:grid;place-items:center;padding:24px;background:var(--bg);color:var(--fg);font:400 16px/1.8 system-ui,sans-serif;text-align:center}
-button{margin-top:16px;font:inherit;padding:10px 24px;border-radius:999px;border:1px solid currentColor;background:transparent;color:inherit}
+a.reload{display:inline-block;text-decoration:none;margin-top:16px;font:inherit;padding:10px 24px;border-radius:999px;border:1px solid currentColor;background:transparent;color:inherit}
 </style>
 </head>
 <body>
-<main><h1 style="font-size:1.25rem;font-weight:600">ネットワークに繋がっていません</h1><p>風土記は通信して答えを探します。繋がってからもう一度開いてください。</p><button onclick="location.reload()">再読み込み</button></main>
+<main><h1 style="font-size:1.25rem;font-weight:600">ネットワークに繋がっていません</h1><p>風土記は通信して答えを探します。繋がってからもう一度開いてください。</p><a class="reload" href="">再読み込み</a></main>
 </body>
 </html>
 `
