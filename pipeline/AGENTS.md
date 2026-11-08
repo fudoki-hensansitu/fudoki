@@ -13,6 +13,7 @@ script はこの package が所有する。実行は `bun run --cwd pipeline <na
 | dbt | `dbt:prepare`（入力準備だけ）/ `dbt:build`（入力準備から marts まで。候補は `--candidate-dir`、保存済みで未キャッシュなら `--remote`） |
 | 配信 | `serving:columns`（`apps/api/src/columns.json` を warehouse の列と `_models.yml` の説明から生成。`--check` で最新か検査）/ `serving:sync`（marts の表を D1 へ同名・同列で写す。`--database-id <uuid>` か `--local`、`--persist-to`、`--dry-run`。ネットワーク・cf を使うので sandbox 外） |
 | 評価の検索 | `evaluation:index`（保存済みの評価資料を R2 から取り、1頁ずつの PDF にして AI Search `fudoki-evaluation-v2` へ登録する。既定は計画の表示だけ、`--write` で書き、全 item が completed で数と metadata が計画と一致した出典の記録を `evaluation_search/instance.json` に書く。分割 PDF は保存しない。ネットワーク・cf を使うので sandbox 外）/ `serving:evaluation-catalog`（登録の記録があり指紋が今の選定と設定に一致する出典だけを `apps/api/src/evaluation-catalog.json` に生成。`--check` で最新か検査し、CI で回す） |
+| 出典の頁の文字 | `source-text:save`（保存済みの文字の層がある出典 PDF を R2 から取り、頁ごとの文字を非公開 R2 の `source-text/<sha256>.json` に置く。web のアシスタントが apps/api の内部 RPC から読む。既定は計画の表示だけ、`--write` で書き、R2 にある key は作り直さない。`--jurisdiction`・`--kind`・`--jobs`、抜き出し方を変えたら `--refresh`。ネットワーク・cf を使うので sandbox 外） |
 | 検査 | `test`（bun）/ `test:python`（unittest）/ `test:dbt`（入力準備の unittest） |
 
 出典選定は `bun pipeline/source_selection/check.ts` と `archive.ts`。事業の評価の資料（`evaluation_selections`）は `archive.ts --evaluation` で決算書とは別の key（`.../evaluation-settlement[-<n>].pdf`）に保存する。`settlement-` で始めると決算書の保存が消す。dbt は入力準備（`dbt/scripts/`）、staging・intermediate・marts のモデル、seeds を持つ。
@@ -44,6 +45,7 @@ script はこの package が所有する。実行は `bun run --cwd pipeline <na
   | scan PDFのOCR観測 | 非公開R2の `fiscal/ingestion/<対象>/<方向>/ocr/<id>.json.gz` | 依頼とSHA（`ocr_inputs`）だけ |
   | Jev の聞き直しの答え（入力の fingerprint と確率。出典の文字は持たない） | `ingestion/fiscal/jurisdictions/<自治体>/<年度>/<資料区分>/<方向>.digit-recheck.jsonl` | 管理する |
   | 変換設定・現在の表・ハッシュ・保存先 | `ingestion/fiscal/jurisdictions/<自治体>/<年度>/<資料区分>/<方向>.json` | 管理する |
+  | 出典の頁ごとの文字 | 非公開R2の `source-text/<sha256>.json` | 管理しない（R2 の出典から `source-text:save` で作り直す） |
   | 住民基本台帳人口の xlsx | 非公開R2の `population/resident-register/<基準日>/<origin_id>.xlsx` | URL と基準日（`ingestion/population/origins.json`）だけ |
   | 評価資料の索引の設定と登録の記録（出典ごとの sha256・頁数・指紋・確認日時） | `evaluation_search/instance.json` | 管理する |
   | 評価資料の頁ごとの PDF・chunk | AI Search `fudoki-evaluation-v2` の built-in storage | 管理しない（R2 の出典から `evaluation:index` で作り直す） |
