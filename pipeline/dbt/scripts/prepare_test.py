@@ -54,7 +54,8 @@ class PrepareTest(unittest.TestCase):
              patch.object(prepare.manifest, 'validate', return_value=self.document), \
              patch.object(prepare.manifest, 'resolved_inputs', return_value=[original]), \
              patch.object(prepare.manifest, 'selection_for', return_value={'candidates': [{'title': 'original'}]}), \
-             patch.object(prepare.population, 'origins', return_value=[]):
+             patch.object(prepare.population, 'origins', return_value=[]), \
+             patch.object(prepare.evaluation, 'load', return_value={name: [] for name in prepare.evaluation.SCHEMAS}):
             return prepare.prepare(self.warehouse, self.candidate)
 
     def test_missing_conversion_identifies_table(self):
