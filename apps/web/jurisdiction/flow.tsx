@@ -261,24 +261,24 @@ function KouSection({ kou, active, loading, onBox, levels }: { kou: Kou; active:
       </div>
       <div ref={rib} className="relative hidden sm:block" aria-hidden="true">
         <svg className="absolute inset-0 size-full overflow-visible">
-          {/* 光は帯ごとの幅で左から右へ動く（objectBoundingBox の中で -1 → 1 へ平行移動） */}
+          {/* 光は帯が伸びきったあとに一度だけ、帯ごとの幅で左から右へ動く（objectBoundingBox の中で -1 → 1 へ平行移動）。繰り返すと読むときに気が散るため */}
           {active && !still ? (
             <defs>
               <linearGradient id={lightId}>
                 <stop offset="0.3" stopColor="var(--primary)" stopOpacity={0} />
                 <stop offset="0.5" stopColor="var(--primary)" stopOpacity={0.3} />
                 <stop offset="0.7" stopColor="var(--primary)" stopOpacity={0} />
-                <animateTransform attributeName="gradientTransform" type="translate" from="-1 0" to="1 0" dur="2.4s" begin="1s" repeatCount="indefinite" />
+                <animateTransform attributeName="gradientTransform" type="translate" from="-1 0" to="1 0" dur="2.4s" begin="1.1s" repeatCount="1" />
               </linearGradient>
             </defs>
           ) : null}
-          {/* 項が開いたら、中分類（項）→科目（目）→内訳（節）の順に帯が左から右へ伸びて流れ込む（全体図と同じ動き。styles/app.css）。閉じている項は出さない */}
-          {paths.map((p, i) => <path key={`${active}${i}`} d={p.d} style={{ animationDelay: `${i * 40}ms` }} className={`fill-primary/20 ${active ? 'flow-ribbon' : 'opacity-0'}`} />)}
+          {/* 項が開いたら、中分類（項）→科目（目）→内訳（節）の順に帯が左から右へ伸びて流れ込む（全体図と同じ動き。styles/app.css）。帯は段ごとにまとめて一枚で伸ばす。閉じている項は出さない */}
+          <g key={`r${active}`} className={active ? 'flow-ribbon' : 'opacity-0'}>{paths.map((p, i) => <path key={i} d={p.d} className="fill-primary/20" />)}</g>
           {active && !still ? paths.map((p, i) => <path key={`l${i}`} d={p.d} fill={`url(#${lightId})`} />) : null}
           {active && !still ? setsu.map((p, i) => <path key={`ls${i}`} d={p.d} fill={`url(#${lightId})`} />) : null}
-          {paths.map((p, i) => <rect key={`b${active}${i}`} x={p.x} y={p.y} width={MOKU_BAR} height={p.h} rx={2} style={{ animationDelay: `${300 + i * 40}ms` }} className={`fill-primary ${active ? 'flow-node' : 'opacity-0'}`} />)}
-          {setsu.map((p, i) => <path key={`s${active}${i}`} d={p.d} style={{ animationDelay: `${450 + i * 20}ms` }} className={`${p.rest ? 'fill-primary/10' : 'fill-primary/15'} ${active ? 'flow-ribbon' : 'opacity-0'}`} />)}
-          {setsu.map((p, i) => <rect key={`t${active}${i}`} x={p.x} y={p.y} width={SETSU_BAR} height={p.h} rx={1.5} style={{ animationDelay: `${750 + i * 20}ms` }} className={`${p.rest ? 'fill-primary/35' : 'fill-primary/70'} ${active ? 'flow-node' : 'opacity-0'}`} />)}
+          {paths.map((p, i) => <rect key={`b${active}${i}`} x={p.x} y={p.y} width={MOKU_BAR} height={p.h} rx={2} style={{ animationDelay: `${550 + Math.min(i * 15, 150)}ms` }} className={`fill-primary ${active ? 'flow-node' : 'opacity-0'}`} />)}
+          <g key={`s${active}`} style={{ animationDelay: '450ms' }} className={active ? 'flow-ribbon' : 'opacity-0'}>{setsu.map((p, i) => <path key={i} d={p.d} className={p.rest ? 'fill-primary/10' : 'fill-primary/15'} />)}</g>
+          {setsu.map((p, i) => <rect key={`t${active}${i}`} x={p.x} y={p.y} width={SETSU_BAR} height={p.h} rx={1.5} style={{ animationDelay: `${1000 + Math.min(i * 10, 150)}ms` }} className={`${p.rest ? 'fill-primary/35' : 'fill-primary/70'} ${active ? 'flow-node' : 'opacity-0'}`} />)}
         </svg>
       </div>
       <div className="flex min-w-0 flex-col gap-3 sm:pl-2.5">
