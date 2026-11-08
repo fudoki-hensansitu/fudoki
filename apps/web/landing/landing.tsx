@@ -382,6 +382,7 @@ const Soon = () => <span className="m-soon">画面はイメージです</span>
 function HeroCard() {
   return (
     <div className="hcard" aria-hidden="true">
+      <Soon />
       <div className="m-town">
         <div className="m-town-h">
           <img src="/jurisdictions/131091/emblem.svg" alt="" width={44} height={44} />
