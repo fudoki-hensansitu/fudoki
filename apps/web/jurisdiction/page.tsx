@@ -99,7 +99,7 @@ const freshTitle = (y: ProfileYear) => (isPlanned(y) ? '新しく何を始める
 /** 住民の数。新しく始めたことの金額の下に住民1人あたりの額を添えるのに使う（Domains の外から渡す） */
 const PeopleContext = React.createContext<number | undefined>(undefined)
 
-/** 新しく始めたことの1行。名前の左に新規（New!）か拡大・今ある事業の中での取り組み（Up!）かのバッジ、右に金額、下に中身。評価・予算どの年度も同じ形にする */
+/** 新しく始めたことの1行。名前の左に新規か拡大・今ある事業の中での取り組みかの印、右に金額、下に中身。評価・予算どの年度も同じ形にする */
 function FreshRow({ up, upLabel = '拡大', title, yen, source, children }: { up: boolean; upLabel?: string; title: string; yen: number; /** 名前の後ろに続けて置く、資料の該当ページへのリンク */ source?: { href: string; label: string }; children: React.ReactNode }) {
   const people = React.useContext(PeopleContext)
   const label = up ? upLabel : '新規'
