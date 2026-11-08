@@ -159,7 +159,6 @@ function BudgetItem({ p }: { p: PressItem }) {
           ))}
         </ul>
       ) : null}
-      {p.link ? <p className="text-xs text-muted-foreground">予算書では「{p.link.name}」{p.names.length > 1 ? 'など' : ''}（{p.link.moku}）に計上</p> : null}
     </FreshRow>
   )
 }
