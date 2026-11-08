@@ -636,7 +636,7 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
     ['D', 'やめる・終える'],
   ] as const
   return (
-    <Section id="scrap" title="やめたこと・見直したことは？" lead="自治体は毎年、事業を自分で評価して、やめたり減らしたりして浮いたお金を新しいことに回しています。">
+    <Section id="scrap" title="やめたこと・見直したことは？" lead="自治体は毎年、事業を評価して見直しを行い、新しい予算に回しています。">
       <div className="flex max-w-[560px] flex-col gap-2">
         <div className="flex items-baseline justify-between gap-3">
           <span>やめたり減らしたりして浮かせたお金</span>
@@ -652,7 +652,7 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
           </div>
         ) : null}
       </div>
-      <h3 className="text-lg">自治体が自分で付けた評価（{scrap.evaluated.toLocaleString('ja-JP')}事業）</h3>
+      <h3 className="text-lg">自治体が付けた評価（{scrap.evaluated.toLocaleString('ja-JP')}事業）</h3>
       <div className="grid grid-cols-2 border-t sm:grid-cols-4">
         {grades.map(([g, label]) => (
           <div key={g} className="flex flex-col py-3">
