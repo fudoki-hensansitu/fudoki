@@ -328,10 +328,10 @@ const SHARES = [
   { name: '産業・交通', pct: 4.3 },
   { name: '健康・医療', pct: 4.1 },
 ]
-/** 品川区 R8年度の新しく始める事業（当初予算の主な施策。事業の予算額は profiles.ts の budgetNew と同じ） */
+/** 品川区 R8年度の新しく始める事業（当初予算の主な施策のうち新規の印のもの。金額は budget-press.ts と同じ） */
 const NEW_PROJECTS = [
   { name: '乳児等通園支援事業費', note: '運営費助成（80園）。在宅で子育てする世帯の子どもにも通園の機会を', amount: '9.4', unit: '億円' },
-  { name: '子ども・若者活動拠点経費', note: '子ども・若者活動拠点施設等の整備。中高生・若者が企画できる多世代のスペース', amount: '6.8', unit: '億円' },
+  { name: '障害児通所支援等の利用料の無償化', note: '障害児通所支援等の利用者負担を、区独自の助成で所得制限なく無償に', amount: '7,452', unit: '万円' },
 ]
 /** 議会のイメージ（架空） */
 const BILLS = [
@@ -409,8 +409,8 @@ function HeroCard() {
       <div className="m-float f1">
         <span className="m-badge new">NEW</span>
         <span>
-          子ども・若者活動拠点
-          <small>6.8億円</small>
+          乳児等通園支援
+          <small>9.4億円</small>
         </span>
       </div>
       <div className="m-float f2">
