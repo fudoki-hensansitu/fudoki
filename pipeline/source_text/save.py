@@ -118,21 +118,24 @@ def saved_keys() -> set[str]:
 
 
 def fetch(origin: Origin) -> Path:
-    """R2 の出典を cache に置き、sha256 を選定と照らす。"""
+    """R2 の出典を cache に置き、sha256 を選定と照らす。取得の失敗と途中で切れた取得（sha256 の不一致）は3回まで取り直す。"""
     CACHE.mkdir(parents=True, exist_ok=True)
     path = CACHE / f'{origin.sha256}.pdf'
-    if not path.exists() or hashlib.sha256(path.read_bytes()).hexdigest() != origin.sha256:
+    if path.exists() and hashlib.sha256(path.read_bytes()).hexdigest() == origin.sha256:
+        return path
+    last = ''
+    for attempt in range(3):
         with tempfile.NamedTemporaryFile(dir=CACHE, delete=False) as stream:
             temporary = Path(stream.name)
-        try:
-            subprocess.run(['cf', 'r2', 'objects', 'get', origin.r2_key, '--bucket-name', BUCKET, '--quiet'],
-                           stdout=temporary.open('wb'), check=True)
-            if hashlib.sha256(temporary.read_bytes()).hexdigest() != origin.sha256:
-                raise ValueError(f'R2 の出典の sha256 が選定と違う: {origin.r2_key}')
+            result = subprocess.run(['cf', 'r2', 'objects', 'get', origin.r2_key, '--bucket-name', BUCKET, '--quiet'],
+                                    stdout=stream, stderr=subprocess.PIPE, text=False)
+        if result.returncode == 0 and hashlib.sha256(temporary.read_bytes()).hexdigest() == origin.sha256:
             temporary.replace(path)
-        finally:
-            temporary.unlink(missing_ok=True)
-    return path
+            return path
+        temporary.unlink(missing_ok=True)
+        last = 'sha256 が選定と違う' if result.returncode == 0 else result.stderr.decode(errors='replace').strip()[-300:]
+        time.sleep(5 * (attempt + 1))
+    raise RuntimeError(f'R2 の出典を取れない: {origin.r2_key}: {last}')
 
 
 def put(key: str, body: bytes) -> None:
