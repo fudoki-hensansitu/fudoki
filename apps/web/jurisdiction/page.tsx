@@ -430,7 +430,7 @@ function ProjectRow({ p, rank, max, total, people, showChange, shown }: { p: Pro
   }, [p.id, attempt])
   return (
     <li className="border-b border-foreground/10">
-      <div className={`grid grid-cols-[22px_minmax(0,1fr)_auto] items-center gap-x-3.5 gap-y-2 py-4 ${showChange ? 'sm:grid-cols-[22px_minmax(140px,200px)_1fr_auto_80px]' : 'sm:grid-cols-[22px_minmax(140px,200px)_1fr_auto]'}`}>
+      <div className={`grid grid-cols-[22px_minmax(0,1fr)_auto] items-center gap-x-3.5 gap-y-2 py-4 ${showChange ? 'sm:grid-cols-[22px_minmax(140px,200px)_1fr_170px_80px]' : 'sm:grid-cols-[22px_minmax(140px,200px)_1fr_170px]'}`}>
         <span className="text-xl tabular-nums text-muted-foreground">{rank}</span>
         <div className="min-w-0">
           <h3 className="text-base font-normal leading-snug">{p.name}</h3>
@@ -512,9 +512,12 @@ function Budget({ data, year }: { data: PageData; year: number }) {
   const docs = (budget ? documents?.initial : documents?.settlement) ?? []
   const summary = (
     <>
-      <span className="min-w-0 shrink-0 text-sm text-muted-foreground">全体</span>
+      {/* スマホでは名前（と前年度比）の行の下に金額を置く。広い画面では「全体 金額 前年度比」と横に並べる */}
+      <span className="flex gap-x-2 text-sm text-muted-foreground sm:contents">
+        <span className="shrink-0">全体</span>
+        {pct !== null ? <span className="truncate tabular-nums sm:order-last">前年度比 {pct >= 0 ? '+' : '−'}{Math.abs(pct).toFixed(1)}%</span> : null}
+      </span>
       <b className={`shrink-0 text-[26px] font-normal leading-snug tabular-nums ${total ? '' : 'text-muted-foreground'}`}>{total ? formatYen(total.yen) : '—'}</b>
-      {pct !== null ? <span className={`min-w-0 truncate text-sm tabular-nums text-muted-foreground`}>前年度比 {pct >= 0 ? '+' : '−'}{Math.abs(pct).toFixed(1)}%</span> : null}
     </>
   )
   // 分け方の切り替えはヘッダーの年度の切り替えと同じ丸いボタンの並びにする
@@ -550,7 +553,7 @@ function Budget({ data, year }: { data: PageData; year: number }) {
         ) : (
           <div className="rounded-[20px] border bg-background px-5 pt-5 sm:px-6">
             {tabs}
-            <div className="mt-3 flex min-h-9 min-w-0 items-baseline gap-x-3">{summary}</div>
+            <div className="mt-3 flex min-h-9 min-w-0 flex-col sm:flex-row sm:items-baseline sm:gap-x-3">{summary}</div>
             <p className="pb-10 pt-4 text-center text-sm text-muted-foreground">{yearName(year)}の決算・予算は、まだ収録していません</p>
           </div>
         )}
