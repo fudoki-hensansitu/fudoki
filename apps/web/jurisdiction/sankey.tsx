@@ -99,13 +99,13 @@ export function Overview({ flows, total: base, height = 520, levels = { kan: '�
     <div ref={ref} className="relative w-full">
       {width ? (
         <svg width={width} height={total + HEAD} role="img" aria-label={`${levels.kan}から${levels.kou}への歳出の流れ`} data-seen={seen ? '' : undefined} className="flow-svg block font-sans">
-          {/* 帯の上を左から右へ流れる光。大分類（款）から中分類（項）へお金が流れていく感じを出す。帯が伸びきったあとに一度だけ流す */}
+          {/* 帯の上を左から右へ流れる光。大分類（款）から中分類（項）へお金が流れていく感じを出す。帯が伸びきったあとから流す */}
           <defs>
             <linearGradient id={flowId} gradientUnits="userSpaceOnUse" x1={x0 - 160} x2={x0} y1={0} y2={0}>
               <stop offset="0" stopColor="var(--primary)" stopOpacity={0} />
               <stop offset="0.5" stopColor="var(--primary)" stopOpacity={0.28} />
               <stop offset="1" stopColor="var(--primary)" stopOpacity={0} />
-              {seen && !still ? <animateTransform attributeName="gradientTransform" type="translate" from="0 0" to={`${x1 - x0 + 160} 0`} dur="2.4s" begin="1.1s" repeatCount="1" /> : null}
+              {seen && !still ? <animateTransform attributeName="gradientTransform" type="translate" from="0 0" to={`${x1 - x0 + 160} 0`} dur="2.8s" begin="1.1s" repeatCount="indefinite" /> : null}
             </linearGradient>
           </defs>
           <g aria-hidden="true" className="fill-muted-foreground" fontSize={11}>

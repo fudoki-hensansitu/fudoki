@@ -17,6 +17,9 @@ type Levels = (typeof LEVELS)[FlowView]
 
 const SETSU_SHOWN = 3
 /** 目の側に立てる棒の幅。項の棒（w-2）と揃える */
+/** 帯の上を流れる光の幅と速さ（px、px/秒） */
+const LIGHT = 140
+const LIGHT_SPEED = 320
 const MOKU_BAR = 8
 /** 節の側に立てる棒の幅 */
 const SETSU_BAR = 5
@@ -186,6 +189,8 @@ function KouSection({ kou, active, loading, onBox, levels }: { kou: Kou; active:
   // 帯の上を流れる光（全体図と同じ）。動きを減らす設定では出さない
   const [still, setStill] = React.useState(true)
   React.useEffect(() => setStill(window.matchMedia('(prefers-reduced-motion: reduce)').matches), [])
+  // 光が流れる右端。節の帯があればその先、無ければ目の棒まで
+  const reach = Math.max(paths.at(0)?.x ?? 0, ...setsu.map((t) => t.x))
   const lightId = `flow-light${React.useId().replace(/[^a-zA-Z0-9_-]/g, '')}`
   React.useLayoutEffect(() => {
     const el = box.current
@@ -261,14 +266,14 @@ function KouSection({ kou, active, loading, onBox, levels }: { kou: Kou; active:
       </div>
       <div ref={rib} className="relative hidden sm:block" aria-hidden="true">
         <svg className="absolute inset-0 size-full overflow-visible">
-          {/* 光は帯が伸びきったあとに一度だけ、帯ごとの幅で左から右へ動く（objectBoundingBox の中で -1 → 1 へ平行移動）。繰り返すと読むときに気が散るため */}
+          {/* 光は項の棒から目、節の帯まで一続きで左から右へ流れる（帯全体の座標で動かす。帯ごとの幅で動かすと段ごとに速さがずれて、流れて見えないため） */}
           {active && !still ? (
             <defs>
-              <linearGradient id={lightId}>
-                <stop offset="0.3" stopColor="var(--primary)" stopOpacity={0} />
+              <linearGradient id={lightId} gradientUnits="userSpaceOnUse" x1={-LIGHT} x2={0} y1={0} y2={0}>
+                <stop offset="0" stopColor="var(--primary)" stopOpacity={0} />
                 <stop offset="0.5" stopColor="var(--primary)" stopOpacity={0.3} />
-                <stop offset="0.7" stopColor="var(--primary)" stopOpacity={0} />
-                <animateTransform attributeName="gradientTransform" type="translate" from="-1 0" to="1 0" dur="2.4s" begin="1.1s" repeatCount="1" />
+                <stop offset="1" stopColor="var(--primary)" stopOpacity={0} />
+                <animateTransform attributeName="gradientTransform" type="translate" from="0 0" to={`${reach + LIGHT} 0`} dur={`${((reach + LIGHT) / LIGHT_SPEED).toFixed(2)}s`} begin="1.4s" repeatCount="indefinite" />
               </linearGradient>
             </defs>
           ) : null}
