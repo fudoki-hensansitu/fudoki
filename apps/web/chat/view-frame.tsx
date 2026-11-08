@@ -1,5 +1,6 @@
 // MCP Apps の View（apps/api の ui/）を sandbox の iframe に置き、AppBridge で tool の入力と結果を渡す。
-// iframe は srcdoc + sandbox="allow-scripts"（同じオリジンを与えない）で、View の CSP は resource の _meta.ui.csp から作る。
+// iframe は器（/view-frame、server/csp.ts）+ sandbox="allow-scripts"（同じオリジンを与えない）で、View の HTML は器へ postMessage で渡し、View の CSP は resource の _meta.ui.csp から作る。
+// srcdoc にしないのは、srcdoc の文書が親の頁の CSP を引き継ぎ、View の inline の script が止まるため。
 // 試作の土台は apps/api/tests/host.ts
 import * as React from 'react'
 import { createPortal } from 'react-dom'
@@ -10,6 +11,7 @@ import { Hint } from '@/components/hint'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
 import { cn } from '@/lib/utils'
+import { VIEW_HTML_MESSAGE, VIEW_READY_MESSAGE } from '../server/csp'
 import { relay } from './relay'
 
 interface Resource {
@@ -218,6 +220,7 @@ export function ViewFrame({
     const iframe = frame.current
     if (!iframe) return
     let bridge: AppBridge | undefined
+    let stopReady: (() => void) | undefined
     let disposed = false
     const media = matchMedia('(prefers-color-scheme: dark)')
     const onTheme = () => bridge?.setHostContext(hostContext(modeRef.current))
@@ -257,7 +260,17 @@ export function ViewFrame({
         }
         const connected = bridge.connect(new PostMessageTransport(iframe.contentWindow!, iframe.contentWindow!))
         const policy = `default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; connect-src ${resource.connectDomains.join(' ') || "'none'"}; worker-src 'none'; frame-src 'none'; form-action 'none'; base-uri 'none'`
-        iframe.srcdoc = resource.html.replace('<head>', `<head><meta http-equiv="Content-Security-Policy" content="${policy}">`)
+        const html = resource.html.replace('<head>', `<head><meta http-equiv="Content-Security-Policy" content="${policy}">`)
+        // 器の文書は sandbox で origin を持たないので宛先を絞れない。器は親（この頁）からのメッセージだけを受け取る。
+        // iframe の load は最初の about:blank でも起きるので、器が自分で知らせる準備の合図を待つ
+        const onReady = (e: MessageEvent) => {
+          if (e.source !== iframe.contentWindow || (e.data as { type?: unknown } | null)?.type !== VIEW_READY_MESSAGE) return
+          removeEventListener('message', onReady)
+          iframe.contentWindow!.postMessage({ type: VIEW_HTML_MESSAGE, html }, '*')
+        }
+        stopReady = () => removeEventListener('message', onReady)
+        addEventListener('message', onReady)
+        iframe.src = '/view-frame'
         media.addEventListener('change', onTheme)
         return connected
       })
@@ -266,6 +279,7 @@ export function ViewFrame({
       })
     return () => {
       disposed = true
+      stopReady?.()
       bridgeRef.current = undefined
       media.removeEventListener('change', onTheme)
       void bridge?.teardownResource({}).catch(() => {})

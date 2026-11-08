@@ -2,6 +2,7 @@
 // データ（D1・R2・KV など）の binding は持たせず、データは apps/api に Service Binding で聞く（pipeline/verify/boundaries.ts が検査する）。
 // 例外は web 自身のデータの D1（binding DB・fudoki-web。今は AI との会話の保存）だけ。風土記のデータではなく、web だけが使う別の D1 にする
 import { defineConfig } from 'void/config'
+import { SW_REGISTER } from './pwa'
 
 // 本番と PR ごとの preview（wrangler preview）で同じにする binding。preview は previews に書いたものしか持たないので、両方に渡す
 const shared = {
@@ -53,7 +54,7 @@ export default defineConfig({
       { rel: 'preload', href: '/fonts/mincho.woff2', as: 'font', type: 'font/woff2', crossorigin: '' },
     ],
     // service worker（routes/sw.js.ts）は繋がらないときの案内だけを持つ
-    script: [{ innerHTML: "if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}))" }],
+    script: [{ innerHTML: SW_REGISTER }],
   },
   worker: {
     compatibility_date: '2026-08-23',

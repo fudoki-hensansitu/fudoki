@@ -19,6 +19,9 @@ export const MANIFEST = JSON.stringify({
   ],
 })
 
+/** head に inline で置く service worker の登録。CSP（server/csp.ts）はこの文字列の hash で許す */
+export const SW_REGISTER = "if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}))"
+
 const OFFLINE_PATH = '/offline'
 const CACHE_NAME = 'fudoki-offline-v1'
 

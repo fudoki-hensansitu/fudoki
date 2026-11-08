@@ -1,7 +1,8 @@
-// 全頁に共通するもの。サイドバーの開閉（cookie）を layout へ渡し（useShared）、HTML の <head> に Void の head では書けないものを足す:
+// 全頁に共通するもの。サイドバーの開閉（cookie）を layout へ渡し（useShared）、HTML の応答に CSP（server/csp.ts）を付け、<head> に Void の head では書けないものを足す:
 // ライト・ダークの theme-color（Void の head は meta を name で1つにまとめる）と、読み直しの移動でも View Transition でつなぐ opt-in（style）
 import { defineMiddleware } from 'void'
 import { SIDEBAR_COOKIE } from '../nav/site-nav'
+import { pageCsp } from '../server/csp'
 import { THEME_COLOR_META } from '../tokens'
 
 declare module 'void' {
@@ -25,5 +26,7 @@ export default defineMiddleware(async (c, next) => {
   if (!c.res.headers.get('Content-Type')?.startsWith('text/html')) return
   // サイドバーの開閉を cookie で変えて書くので、開閉の違う HTML を取り違えさせない
   c.res.headers.append('Vary', 'Cookie')
+  // View の器（routes/view-frame.ts）のように自分の policy を持つ応答はそのままにする
+  if (!c.res.headers.has('Content-Security-Policy')) c.res.headers.set('Content-Security-Policy', await pageCsp())
   c.res = new HTMLRewriter().on('head', { element: (e) => void e.append(`${THEME_COLOR_META}\n${PAGE_TRANSITION_STYLE}`, { html: true }) }).transform(c.res)
 })
