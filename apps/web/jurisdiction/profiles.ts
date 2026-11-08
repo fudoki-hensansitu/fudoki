@@ -551,7 +551,7 @@ const SHINAGAWA: Profile = {
           }
         ]
       },
-      "evaluationSource": "https://www.city.shinagawa.tokyo.jp/kusei/shisakukeikaku/1005171/1008977/index.html"
+      "evaluationSource": "https://www.city.shinagawa.tokyo.jp/kusei/shisakukeikaku/1005171/1005176/1005177.html"
     },
     "2026": {
       "documents": {
