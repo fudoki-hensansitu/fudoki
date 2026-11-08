@@ -29,7 +29,7 @@ type SectionLink = { href: string; label: string }
 /** link は見出しの右に出す出典（PDF を直接開く）。複数あれば並べる */
 /** lead は見出しの下の一文。区政を知らない人にその節で何が分かるかを言う */
 const Section = ({ id, title, lead, aside, link, children }: { id: string; title: string; lead?: string; aside?: React.ReactNode; link?: SectionLink | SectionLink[]; children: React.ReactNode }) => (
-  <section id={id} aria-labelledby={`h-${id}`} className="flex scroll-mt-32 lg:scroll-mt-20 flex-col gap-4">
+  <section id={id} aria-labelledby={`h-${id}`} className="flex scroll-mt-32 @4xl:scroll-mt-20 flex-col gap-4">
     <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
       <div className="flex flex-wrap items-baseline gap-x-5 gap-y-1">
         <h2 id={`h-${id}`} className="font-sans text-[26px] font-normal leading-snug">
@@ -378,7 +378,7 @@ function Domains({ year, fiscalYear }: { year: ProfileYear; fiscalYear: number }
       {/* 事業評価は実施した翌年度に公表する。予算の資料も無い年度は節だけ出し、なぜ空かを言う */}
       {groups.length ? null : <p className="rounded-xl border border-dashed px-4 py-6 text-sm text-muted-foreground">{reiwa(fiscalYear)}の事業の評価は、{reiwa(fiscalYear + 1)}に公表されます。まだ公表されていません。</p>}
       {groups.map(({ frame: d, items }) => (
-        <div key={d.id} id={`d-${d.id}`} className="flex scroll-mt-32 lg:scroll-mt-20 flex-col gap-1 [&+&]:mt-12">
+        <div key={d.id} id={`d-${d.id}`} className="flex scroll-mt-32 @4xl:scroll-mt-20 flex-col gap-1 [&+&]:mt-12">
           <h3 className="mb-1.5 flex items-center gap-2.5 text-[19px] leading-snug sm:text-[22px]">
             <DomainIcon id={d.id} />
             {d.name}
@@ -457,7 +457,7 @@ function ProjectRow({ p, rank, max, total, people, showChange, shown }: { p: Pro
         <div className="order-5 col-span-2 col-start-2 sm:order-none sm:col-span-1 sm:col-start-auto">
           <div className="h-2 overflow-hidden rounded-full bg-foreground/5">
             {/* 画面に入ったら、上の順位から少しずつ遅らせて伸ばす */}
-            <div className="h-full rounded-full bg-primary transition-[width] duration-700 ease-out motion-reduce:transition-none" style={{ width: shown ? `${(p.yen / max) * 100}%` : 0, transitionDelay: `${(rank - 1) * 80}ms` }} />
+            <div className="h-full rounded-full bg-primary transition-[width] duration-[1200ms] ease-out motion-reduce:transition-none" style={{ width: shown ? `${(p.yen / max) * 100}%` : 0, transitionDelay: `${(rank - 1) * 120}ms` }} />
           </div>
         </div>
         <div className="text-right">
@@ -647,7 +647,7 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
         </div>
         {target ? (
           <div ref={barRef} className="relative h-2.5 rounded-full bg-foreground/5" role="img" aria-label={`目標${formatYen(target)}に対して${formatYen(scrap.raisedYen)}`}>
-            <div className="absolute inset-y-0 left-0 rounded-full bg-[var(--kincha)] transition-[width] duration-700 ease-out motion-reduce:transition-none" style={{ width: shown ? `${Math.min(1, scrap.raisedYen / target) * 100}%` : 0 }} />
+            <div className="absolute inset-y-0 left-0 rounded-full bg-[var(--kincha)] transition-[width] duration-[1200ms] ease-out motion-reduce:transition-none" style={{ width: shown ? `${Math.min(1, scrap.raisedYen / target) * 100}%` : 0 }} />
             <div className="absolute -top-1 right-0 h-[18px] w-0.5 bg-foreground" />
           </div>
         ) : null}
@@ -842,7 +842,8 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
         </div>
       </div>
 
-      <div className="mx-auto max-w-[1120px] px-4 pb-48">
+      {/* 目次は本文の幅で切り替える（会話を横に開いて本文が狭くなったら、左の目次を閉じて上の横並びにする） */}
+      <div className="@container mx-auto max-w-[1120px] px-4 pb-48">
         <header ref={headerRef} className="relative grid grid-cols-[80px_minmax(0,1fr)] items-start gap-4 border-b py-7 sm:grid-cols-[132px_minmax(0,1fr)] sm:gap-7">
           {years.length > 1 ? (
             <div ref={pickerRef} className={headerWide ? 'col-span-full -mb-2 justify-self-end sm:absolute sm:right-0 sm:top-7 sm:mb-0' : 'col-span-full -mb-2 justify-self-end'}>
@@ -886,7 +887,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
           </div>
         </header>
 
-        <nav ref={spBar} aria-label="目次" className={`sticky z-20 -mx-4 flex gap-5 overflow-x-auto border-b bg-background px-4 [scrollbar-width:none] lg:hidden ${mini ? 'top-[61px]' : 'top-0'}`}>
+        <nav ref={spBar} aria-label="目次" className={`sticky z-20 -mx-4 flex gap-5 overflow-x-auto border-b bg-background px-4 [scrollbar-width:none] @4xl:hidden ${mini ? 'top-[61px]' : 'top-0'}`}>
           {toc.filter((t) => !t.sub).map((t) => (
             <a key={t.href} href={t.href} onClick={jump} data-current={isCurrent(t.href) || undefined} className="relative shrink-0 py-3 text-[13.5px] text-muted-foreground no-underline after:absolute after:inset-x-0 after:bottom-0 after:h-[2px] after:rounded-full data-[current]:text-foreground data-[current]:after:bg-primary">
               {t.label}
@@ -894,8 +895,8 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
           ))}
         </nav>
 
-        <div className="grid grid-cols-1 gap-12 pt-6 lg:grid-cols-[220px_minmax(0,1fr)] lg:pt-8">
-          <nav aria-label="目次" className="sticky top-[84px] hidden flex-col gap-0.5 self-start lg:flex">
+        <div className="grid grid-cols-1 gap-12 pt-6 @4xl:grid-cols-[220px_minmax(0,1fr)] @4xl:pt-8">
+          <nav aria-label="目次" className="sticky top-[84px] hidden flex-col gap-0.5 self-start @4xl:flex">
             {toc.map((t) => (
               <a
                 key={t.href}
@@ -1194,7 +1195,7 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
     >
       <span aria-hidden="true" className="mb-2 h-1.5 w-10 rounded-full bg-border md:hidden" />
       <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-2" onPointerDown={(e) => e.stopPropagation()}>
-        <span className="text-sm text-muted-foreground">{name}について</span>
+        <span className="flex items-center gap-1.5 text-sm text-muted-foreground"><RobotIcon className="size-4 text-primary" aria-hidden="true" />{name}について</span>
         <div className="flex items-center gap-1 text-muted-foreground">
           <Hint label="会話を別の頁で開く"><Link href={`/s/${chat.id}`} aria-label="会話を別の頁で開く" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><ArrowSquareOutIcon className="size-4" /></Link></Hint>
           <Hint label="新しい会話"><button type="button" onClick={restart} aria-label="新しい会話" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><NotePencilIcon className="size-4" /></button></Hint>
