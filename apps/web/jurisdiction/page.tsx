@@ -100,30 +100,43 @@ const freshTitle = (y: ProfileYear) => (isPlanned(y) ? '新しく何を始める
 const PeopleContext = React.createContext<number | undefined>(undefined)
 
 /** 新しく始めたことの1行。名前の左に新規（New!）か拡大・今ある事業の中での取り組み（Up!）かのバッジ、右に金額、下に中身。評価・予算どの年度も同じ形にする */
-function FreshRow({ up, upLabel = '拡大', title, yen, children }: { up: boolean; upLabel?: string; title: string; yen: number; children: React.ReactNode }) {
+function FreshRow({ up, upLabel = '拡大', title, yen, source, children }: { up: boolean; upLabel?: string; title: string; yen: number; /** 名前の下に置く、資料の該当ページへのリンク */ source?: { href: string; label: string }; children: React.ReactNode }) {
   const people = React.useContext(PeopleContext)
   const label = up ? upLabel : '新規'
   return (
-    // 金額（と1人あたり）は右の列に縦に置き、名前のすぐ下からポイントを始める（金額の2行分の高さで名前の下に空白ができないように）
-    <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-6 gap-y-2 border-b border-foreground/10 py-4">
-      {/* 行の名前は分野（h3）の下の見出し。行の高さをアイコン（28px）と同じにして、アイコンを1行目の真ん中に揃える */}
-      <h4 className="flex min-w-0 items-start gap-2 text-base font-normal leading-7">
-        <Hint label={label}>
-          <span className="flex shrink-0 text-primary">
-            {up ? <UpIcon className="size-7" /> : <NewIcon className="size-7" />}
-            <span className="sr-only">{label}</span>
-          </span>
-        </Hint>
-        {title}
-      </h4>
-      <span className="row-span-2 shrink-0 text-right">
-        <YenText yen={yen} className="block leading-7" />
-        {people && yen ? <span className="block text-xs text-muted-foreground tabular-nums">1人 {formatPerCapita(yen / people)}</span> : null}
-      </span>
-      <div className="flex min-w-0 flex-col gap-2 empty:hidden">{children}</div>
+    <div className="flex flex-col gap-2 border-b border-foreground/10 py-4">
+      <div className="flex items-start justify-between gap-x-6">
+        <div className="min-w-0">
+          {/* 行の名前は分野（h3）の下の見出し。行の高さをアイコン（28px）と同じにして、アイコンを1行目の真ん中に揃える */}
+          <h4 className="flex items-start gap-2 text-base font-normal leading-7">
+            <Hint label={label}>
+              <span className="flex shrink-0 text-primary">
+                {up ? <UpIcon className="size-7" /> : <NewIcon className="size-7" />}
+                <span className="sr-only">{label}</span>
+              </span>
+            </Hint>
+            {title}
+          </h4>
+          {/* 資料のリンクは名前の文字の頭（アイコン28px＋間8px）に揃える */}
+          {source ? (
+            <Button variant="link" size="inline" nativeButton={false} render={<a href={source.href} target="_blank" rel="noopener" />} className="ml-9 text-xs text-muted-foreground">
+              {source.label}
+              <ArrowSquareOutIcon aria-hidden="true" className="size-3" />
+            </Button>
+          ) : null}
+        </div>
+        <span className="shrink-0 text-right">
+          <YenText yen={yen} className="block leading-7" />
+          {people && yen ? <span className="block text-xs text-muted-foreground tabular-nums">1人 {formatPerCapita(yen / people)}</span> : null}
+        </span>
+      </div>
+      {children}
     </div>
   )
 }
+
+/** 資料の PDF の該当ページへのリンク。PDF の #page で開く */
+const pdfPage = (pdf: string | undefined, page: number, name: string) => (pdf ? { href: `${pdf}#page=${page}`, label: `${name} ${page}ページ` } : undefined)
 
 const EvalLabel = () => (
   <span className="mr-2 inline-flex items-center gap-1 align-middle">
@@ -133,9 +146,9 @@ const EvalLabel = () => (
 )
 
 /** 今ある事業の中で始めた取り組み。何を始めたかはシートの文をそのまま引き、金額と評価は含まれる事業全体のものだと文で言う */
-function InitiativeItem({ p }: { p: Initiative }) {
+function InitiativeItem({ p, sheets }: { p: Initiative; sheets?: string }) {
   return (
-    <FreshRow up upLabel="今ある事業の中で" title={p.title} yen={p.settledYen}>
+    <FreshRow up upLabel="今ある事業の中で" title={p.title} yen={p.settledYen} source={pdfPage(sheets, p.page, '評価シート')}>
       <p className="text-sm [text-wrap:pretty]">「{p.quote}」</p>
       <p className="rounded-xl bg-sidebar px-3.5 py-2.5 text-[13px] leading-relaxed text-foreground [text-wrap:pretty]">
         <EvalLabel />
@@ -149,10 +162,10 @@ function InitiativeItem({ p }: { p: Initiative }) {
 
 /** 予算案のプレス発表資料の施策。見出しは頁の見出し（「〜」の副題は外す）、金額は資料の予算額、その下に POINT を資料の文のまま並べる。
  * 出すのは事業名に「新規」の印がある施策だけ（サーバーの withPress で絞る）。予算書の内訳への紐付けは分野分けにだけ使い、画面には出さない */
-function BudgetItem({ p }: { p: PressItem }) {
+function BudgetItem({ p, press }: { p: PressItem; press?: string }) {
   const title = p.title.replace(/[~〜～].*$/, '').trim() || p.names.join('・')
   return (
-    <FreshRow up={!p.isNew} title={title} yen={p.budgetYen}>
+    <FreshRow up={!p.isNew} title={title} yen={p.budgetYen} source={pdfPage(press, p.page, 'プレス資料')}>
       {p.points.length ? (
         <ul className="flex flex-col gap-1 rounded-xl bg-sidebar px-3.5 py-2.5 text-[13px] leading-relaxed [text-wrap:pretty]">
           {p.points.map((pt, i) => (
@@ -243,11 +256,11 @@ function FrameItems<T>({ items, render }: { items: T[]; render: (item: T) => Rea
   )
 }
 
-function ProjectItem({ p }: { p: EvaluatedProject }) {
+function ProjectItem({ p, sheets }: { p: EvaluatedProject; sheets?: string }) {
   const i = p.indicator
   return (
     // 金額は名前と同じ行の右に置き、評価の枠は幅いっぱいに出す。値はどれも評価シートのもの
-    <FreshRow up={false} title={p.title} yen={p.settledYen}>
+    <FreshRow up={false} title={p.title} yen={p.settledYen} source={pdfPage(sheets, p.page, '評価シート')}>
       <p className="text-sm">{p.what}</p>
       {/* 評価の区分・方向性・指標は一続きの文として、同じ大きさ・色で読ませる。指標の良し悪しは風土記が判断しない */}
       <p className="rounded-xl bg-sidebar px-3.5 py-2.5 text-[13px] leading-relaxed text-foreground [text-wrap:pretty]">
@@ -371,7 +384,7 @@ function Domains({ year, fiscalYear }: { year: ProfileYear; fiscalYear: number }
             {d.name}
           </h3>
           <div className="flex flex-col border-t">
-            <FrameItems items={items} render={(p) => (p.kind === 'sheet' ? <ProjectItem key={`s${p.page}`} p={p} /> : p.kind === 'initiative' ? <InitiativeItem key={`i${p.page}-${p.title}`} p={p} /> : <BudgetItem key={`b${p.page}`} p={p} />)} />
+            <FrameItems items={items} render={(p) => (p.kind === 'sheet' ? <ProjectItem key={`s${p.page}`} p={p} sheets={year.evaluationSheets} /> : p.kind === 'initiative' ? <InitiativeItem key={`i${p.page}-${p.title}`} p={p} sheets={year.evaluationSheets} /> : <BudgetItem key={`b${p.page}`} p={p} press={year.budgetPress} />)} />
           </div>
         </div>
       ))}
