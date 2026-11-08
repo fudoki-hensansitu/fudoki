@@ -655,10 +655,10 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
       <h3 className="text-lg">自治体が付けた評価（{scrap.evaluated.toLocaleString('ja-JP')}事業）</h3>
       <div className="grid grid-cols-2 border-t sm:grid-cols-4">
         {grades.map(([g, label]) => (
-          // 評価の区分（A 広げる など）を先に読ませ、件数はその下に控えめに
+          // 評価の区分（A 広げる など）を先に読ませ、件数はその下に小さく
           <div key={g} className="flex flex-col gap-1 py-3">
             <Grade grade={`${g} ${label}`} className="text-sm" />
-            <span className="pl-[26px] text-sm tabular-nums text-muted-foreground">{scrap.grades[g]}事業</span>
+            <span className="pl-[26px] text-sm tabular-nums">{scrap.grades[g]}事業</span>
           </div>
         ))}
       </div>
