@@ -105,8 +105,8 @@ function FreshRow({ up, upLabel = '拡大', title, yen, children }: { up: boolea
   return (
     <div className="flex flex-col gap-2 border-b border-foreground/10 py-4">
       <div className="flex items-start justify-between gap-x-6">
-        {/* 行の高さをアイコン（28px）と同じにして、アイコンを1行目の真ん中に揃える */}
-        <span className="flex min-w-0 items-start gap-2 text-[15.5px] leading-7">
+        {/* 行の名前は分野（h3）の下の見出し。行の高さをアイコン（28px）と同じにして、アイコンを1行目の真ん中に揃える */}
+        <h4 className="flex min-w-0 items-start gap-2 text-base font-normal leading-7">
           <Hint label={label}>
             <span className="flex shrink-0 text-primary">
               {up ? <UpIcon className="size-7" /> : <NewIcon className="size-7" />}
@@ -114,7 +114,7 @@ function FreshRow({ up, upLabel = '拡大', title, yen, children }: { up: boolea
             </span>
           </Hint>
           {title}
-        </span>
+        </h4>
         <span className="shrink-0 text-right">
           <YenText yen={yen} className="block leading-snug" />
           {people && yen ? <span className="block text-xs text-muted-foreground tabular-nums">1人 約{formatPerCapita(yen / people)}</span> : null}
