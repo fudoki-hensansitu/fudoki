@@ -7,7 +7,11 @@ import { defineConfig } from 'void/config'
 const shared = {
   ai: { binding: 'AI' },
   // 風土記の MCP（apps/api）。workers.dev を閉じているので Worker 間で直接呼ぶ
-  services: [{ binding: 'API', service: 'fudoki-api' }],
+  services: [
+    { binding: 'API', service: 'fudoki-api' },
+    // 出典の頁の文字を読む内部の RPC（apps/api の SourcePages）。R2 の binding は apps/api だけが持つ
+    { binding: 'SOURCES', service: 'fudoki-api', entrypoint: 'SourcePages' },
+  ],
   // 値は server/limits.ts の CHAT_RATE_LIMIT・VIEW_RATE_LIMIT と同じ（試験が照合する）。namespace は apps/api の 1001 と別にする
   ratelimits: [
     { name: 'CHAT_RATE_LIMIT', namespace_id: '1002', simple: { limit: 10, period: 60 } },

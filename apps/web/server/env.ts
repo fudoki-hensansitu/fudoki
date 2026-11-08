@@ -22,6 +22,8 @@ export interface Env {
   AI?: unknown
   /** apps/api（fudoki-api）への Service Binding。無ければ（手元の試験など）公開 URL に繋ぐ */
   API?: Fetcher
+  /** apps/api の内部の RPC（entrypoint SourcePages）。出典の頁の文字を読む（server/source-pages.ts）。無ければ tool を出さない */
+  SOURCES?: import('./source-pages').SourcePagesRpc
   CHAT_RATE_LIMIT?: RateLimiter
   VIEW_RATE_LIMIT?: RateLimiter
   /** 利用状況（会話の本文・IP は書かない） */
