@@ -64,9 +64,9 @@ def direct(item: dict, details: list[dict]) -> dict | None:
     names = {normalize(n) for n in item['names']}
     budget = item['budget_yen']
     exact = [d for d in details if normalize(d['name']) in names]
-    if len(exact) > 1 and budget:
-        exact = [d for d in exact if d['amount_yen'] == budget]
     if exact:
+        if len(exact) > 1 and budget:
+            exact = [d for d in exact if d['amount_yen'] == budget]
         return exact[0] if len(exact) == 1 else None
     partial = [d for d in details if budget and d['amount_yen'] == budget
                and any(n in normalize(d['name']) or normalize(d['name']) in n for n in names)]
