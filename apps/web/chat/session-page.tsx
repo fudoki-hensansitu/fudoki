@@ -32,7 +32,7 @@ export function SessionPage({ id }: { id: string }) {
   return (
     <div id="chat-session">
       <noscript>会話には JavaScript を有効にしてください。</noscript>
-      {stored === undefined ? null : stored ? <Conversation key={id} id={id} stored={stored} header={header} /> : <Expired />}
+      {stored === undefined ? null : stored ? <Conversation key={id} id={id} stored={stored} header={header} movableViews /> : <Expired />}
     </div>
   )
 }
