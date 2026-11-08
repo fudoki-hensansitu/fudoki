@@ -444,7 +444,7 @@ function ProjectRow({ p, rank, max, total, people, showChange, shown }: { p: Pro
   return (
     <li className="border-b border-foreground/10">
       <div className={`grid grid-cols-[22px_minmax(0,1fr)_auto] items-center gap-x-3.5 gap-y-2 py-4 ${showChange ? 'sm:grid-cols-[22px_minmax(140px,200px)_1fr_150px_80px]' : 'sm:grid-cols-[22px_minmax(140px,200px)_1fr_150px]'}`}>
-        <span className="text-xl tabular-nums text-muted-foreground">{rank}</span>
+        <span className="text-xl tabular-nums">{rank}</span>
         <div className="min-w-0">
           <h3 className="text-base font-normal leading-snug">{p.name}</h3>
           {/* 分野は「新しく何を始める？」の分野と同じ icon を添える */}
