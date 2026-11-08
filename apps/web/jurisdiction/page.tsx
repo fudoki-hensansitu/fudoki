@@ -728,6 +728,8 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
     e.currentTarget.querySelector<HTMLButtonElement>(`[data-grade="${next}"]`)?.focus()
   }
   const rows = grade === 'D' ? scrap.exits.map((e, i) => ({ i, name: e.name, kind: e.result, page: e.page, reason: e.reason })) : (scrap.graded?.[grade] ?? []).map((p, i) => ({ i, name: p.name, kind: p.direction, page: p.page, reason: undefined as string | undefined }))
+  const hasReason = rows.some((r) => r.reason)
+  const cols = hasReason ? 'sm:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)_minmax(0,1.4fr)_auto]' : 'sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_auto]'
   return (
     <Section id="scrap" title="やめたこと・見直したことは？" link={{ href: scrap.source, label: '事業評価の結果' }} lead="自治体は毎年、前の年度までに行った事業を評価して、やめる事業や減らす事業を決め、その分を新しい予算に回しています。">
       {/* 浮かせたお金の棒は節の中央に置き、下の「自治体が付けた評価」の見出しと離す（棒の見出しに見えないように） */}
@@ -779,20 +781,30 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
           )
         })}
       </ul>
-      <div key={grade} role="list" className="border-t">
+      {/* 表の形で並べる。資料のリンクは最後の列。狭い画面では列を縦に積む */}
+      <div key={grade} role="table" aria-label={`${grade} ${grades.find(([g]) => g === grade)?.[1] ?? ''}の事業`} className="text-sm">
+        <div role="row" className={`hidden gap-x-4 border-b py-2 text-xs text-muted-foreground sm:grid ${cols}`}>
+          <span role="columnheader" className="pl-8">事業</span>
+          <span role="columnheader">今後の方向</span>
+          {hasReason ? <span role="columnheader">理由</span> : null}
+          <span role="columnheader" className="text-right">資料</span>
+        </div>
         <FrameItems
           items={rows}
           render={(r) => (
-            <div role="listitem" key={r.i} className="grid grid-cols-1 items-baseline gap-x-4 gap-y-1 border-b border-foreground/10 py-3 text-sm sm:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
-              <span className="relative pl-8">
+            <div role="row" key={r.i} className={`grid grid-cols-1 items-baseline gap-x-4 gap-y-1 border-b border-foreground/10 py-3 ${cols}`}>
+              <span role="cell" className="relative pl-8">
                 <Mark kind={r.kind} />
                 {r.name}
-                <a href={`${scrap.sheets}#page=${r.page}`} target="_blank" rel="noopener" className="ml-2 inline-flex items-center gap-0.5 whitespace-nowrap align-baseline text-xs text-muted-foreground underline-offset-4 hover:underline">
+              </span>
+              <span role="cell" className="pl-8 text-[13.5px] text-muted-foreground sm:pl-0">{MARKS[r.kind]?.label ?? r.kind}</span>
+              {hasReason ? <span role="cell" className="pl-8 text-[13.5px] text-muted-foreground sm:pl-0">{r.reason}</span> : null}
+              <span role="cell" className="pl-8 sm:pl-0 sm:text-right">
+                <a href={`${scrap.sheets}#page=${r.page}`} target="_blank" rel="noopener" className="inline-flex items-center gap-0.5 whitespace-nowrap text-xs text-muted-foreground underline-offset-4 hover:underline">
                   評価シート
                   <ArrowSquareOutIcon aria-hidden="true" className="size-3" />
                 </a>
               </span>
-              {r.reason ? <span className="pl-8 text-[13.5px] text-muted-foreground sm:pl-0">{r.reason}</span> : null}
             </div>
           )}
         />
