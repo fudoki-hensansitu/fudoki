@@ -7,8 +7,8 @@ import type { Env } from '../server/env'
 
 export type Props = HomeProps
 
-const TITLE = '風土記 — うちのまちの選挙・議会・お金の使い道を、わかりやすく'
-const DESCRIPTION = '自治体で、誰が決め、何を決め、何にいくら使い、どう振り返ったかを、わかりやすく見られるサイトです。'
+const TITLE = '風土記 — あなたの一票が、まちのお金の使い道になる'
+const DESCRIPTION = 'あなたの一票が、まちのお金の使い道になる。選挙・議会から予算・決算・事業評価まで、うちのまちのことをわかりやすく見られるサイトです。'
 const ORGANIZATION = { '@context': 'https://schema.org', '@type': 'Organization', name: '風土記（fudoki）', url: 'https://fudoki.dev/', logo: 'https://fudoki.dev/icon.png', sameAs: ['https://github.com/fudoki-hensansitu', 'https://docs.fudoki.dev/'] }
 
 export const loader = defineHandler<Props>(async (c) => {

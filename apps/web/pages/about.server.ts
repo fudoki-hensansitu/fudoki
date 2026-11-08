@@ -1,8 +1,8 @@
 // このサイトについて（/about）。本文は landing/landing.tsx が描く
 import { defineHandler, defineHead } from 'void'
 
-const TITLE = '風土記について — うちのまちの選挙・議会・お金の使い道を、わかりやすく'
-const DESCRIPTION = '選挙で誰が選ばれ、議会で何が決まり、自治体が何にいくら使い、どう振り返ったか。風土記は、その一続きをわかりやすく見せるサイトです。ほかの自治体と同じ物差しで比べられ、どの数字も出典の資料まで辿れます。'
+const TITLE = '風土記について — あなたの一票が、まちのお金の使い道になる'
+const DESCRIPTION = 'あなたの一票が、まちのお金の使い道になる。風土記は、選挙で選ばれた人が議会で何を決め、自治体が何にいくら使い、どう振り返ったかを、わかりやすく見せるサイトです。ほかの自治体と同じ物差しで比べられ、どの数字も出典の資料まで辿れます。'
 const ORGANIZATION = { '@context': 'https://schema.org', '@type': 'Organization', name: '風土記（fudoki）', url: 'https://fudoki.dev/', logo: 'https://fudoki.dev/icon.png', sameAs: ['https://github.com/fudoki-hensansitu', 'https://docs.fudoki.dev/'] }
 
 export const loader = defineHandler((c) => {
