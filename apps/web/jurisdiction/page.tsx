@@ -666,7 +666,20 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
     ['C', '見直す'],
     ['D', '終える'],
   ] as const
-  const [grade, setGrade] = React.useState<'A' | 'B' | 'C' | 'D'>('D')
+  const [picked, setGrade] = React.useState<'A' | 'B' | 'C' | 'D'>('D')
+  // A〜C の一覧を持たない年度は D に丸める（年度を切り替えたときに、押せない区分が選ばれたまま残らないように）
+  const grade = scrap.graded ? picked : 'D'
+  const ready = (g: string) => g === 'D' || !!scrap.graded
+  // 矢印キーで区分を移る（radio group の操作）。押せない区分は飛ばす
+  const onKey = (e: React.KeyboardEvent) => {
+    const step = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0
+    if (!step) return
+    e.preventDefault()
+    const keys = grades.map(([g]) => g).filter(ready)
+    const next = keys[(keys.indexOf(grade) + step + keys.length) % keys.length]!
+    setGrade(next)
+    e.currentTarget.querySelector<HTMLButtonElement>(`[data-grade="${next}"]`)?.focus()
+  }
   const rows = grade === 'D' ? scrap.exits.map((e, i) => ({ i, name: e.name, kind: e.result, reason: e.reason })) : (scrap.graded?.[grade] ?? []).map((p, i) => ({ i, name: p.name, kind: p.direction, reason: '' }))
   return (
     <Section id="scrap" title="やめたこと・見直したことは？" lead="自治体は毎年、前の年度までに行った事業を評価して、やめる事業や減らす事業を決め、その分を新しい予算に回しています。">
@@ -688,18 +701,24 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
       </div>
       <h3 className="text-lg">自治体が付けた評価（{scrap.evaluated.toLocaleString('ja-JP')}事業）</h3>
       {/* 評価の区分はカードで選び、下にその区分の事業を出す。最初は D（終える＝完了・統合・やめた事業）を見せる */}
-      <div role="radiogroup" aria-label="評価の区分" className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+      <div role="radiogroup" aria-label="評価の区分" onKeyDown={onKey} className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         {grades.map(([g, label]) => {
           const on = g === grade
-          const ready = g === 'D' || !!scrap.graded
           return (
-            <button key={g} type="button" role="radio" aria-checked={on} disabled={!ready} onClick={() => setGrade(g)} className={cn('flex flex-col gap-1 rounded-xl border px-3 py-3 text-left transition-colors', on ? 'border-primary bg-primary/5' : 'border-foreground/10 hover:bg-foreground/[0.03]', !ready && 'cursor-default opacity-60 hover:bg-transparent')}>
+            <button key={g} type="button" role="radio" data-grade={g} aria-checked={on} tabIndex={on ? 0 : -1} disabled={!ready(g)} onClick={() => setGrade(g)} className={cn('flex flex-col gap-1 rounded-xl border px-3 py-3 text-left transition-colors', on ? 'border-primary bg-primary/5' : 'border-foreground/10 hover:bg-foreground/[0.03]', !ready(g) && 'cursor-default opacity-60 hover:bg-transparent')}>
               <Grade grade={`${g} ${label}`} className="text-sm" />
               <span className="pl-[26px] tabular-nums"><b className="text-2xl font-normal">{scrap.grades[g]}</b><small className="ml-0.5 text-sm">事業</small></span>
             </button>
           )
         })}
       </div>
+      {/* 一覧が区分の全件でないときは、そのことを書く */}
+      {!scrap.graded || (grade === 'D' && scrap.exits.length !== scrap.grades.D) ? (
+        <p className="text-[13px] text-muted-foreground">
+          {!scrap.graded ? 'この年度は A〜C の事業の一覧を出していません。' : ''}
+          {grade === 'D' && scrap.exits.length !== scrap.grades.D ? `D の${scrap.grades.D}事業のうち、区が結果を示した${scrap.exits.length}事業を出しています。` : ''}
+        </p>
+      ) : null}
       {/* 選んだ区分にある印の凡例。行には印だけを付ける */}
       <ul className="flex flex-wrap gap-x-5 gap-y-2 text-[13px] text-muted-foreground">
         {legendOf(rows).map(([kind, n]) => {
@@ -967,7 +986,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
             {py ? <PeopleContext.Provider value={data.population?.people}><Domains year={py} fiscalYear={year} /></PeopleContext.Provider> : null}
             <Budget data={data} year={year} />
             <Projects data={data} year={year} />
-            {py?.scrap ? <ScrapSection scrap={py.scrap} /> : null}
+            {py?.scrap ? <ScrapSection key={year} scrap={py.scrap} /> : null}
             <Elsewhere data={data} />
           </main>
         </div>
