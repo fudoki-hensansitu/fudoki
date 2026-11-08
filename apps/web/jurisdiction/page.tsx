@@ -631,9 +631,9 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
   const [barRef, shown] = useInView<HTMLDivElement>()
   const grades = [
     ['A', '広げる'],
-    ['B', '今のまま続ける'],
-    ['C', 'やり方を見直す'],
-    ['D', 'やめる・終える'],
+    ['B', '続ける'],
+    ['C', '見直す'],
+    ['D', '完了'],
   ] as const
   return (
     <Section id="scrap" title="やめたこと・見直したことは？" lead="自治体は毎年、前の年度までに行った事業を評価して、やめる事業や減らす事業を決め、その分を新しい予算に回しています。">
