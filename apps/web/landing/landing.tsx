@@ -6,6 +6,7 @@ import { Link } from '@void/react'
 import { Hint } from '@/components/hint'
 import { HOME } from '../home-data'
 import { LOGO_G, LOGO_WIDTH } from '../logo'
+import { FEEDBACK } from '../nav/feedback'
 import { ICON_SYMBOLS } from './icons'
 
 const MCP = 'https://api.fudoki.dev/mcp'
@@ -784,6 +785,9 @@ export function Landing() {
               </li>
               <li>
                 <a href={`${DOCS}/support`}>サポート</a>
+              </li>
+              <li>
+                <a href={FEEDBACK}>フィードバック</a>
               </li>
               <li>
                 <a href="mailto:support@fudoki.dev">お問い合わせ</a>

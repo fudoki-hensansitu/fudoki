@@ -9,6 +9,7 @@ import { InputGroupAddon } from '@/components/ui/input-group'
 import { cn } from '@/lib/utils'
 import type { MapEntry } from '../jurisdiction/index-table'
 import { INDEX_PATH } from '../jurisdiction/types'
+import { FEEDBACK } from '../nav/feedback'
 import { LocateError, locateMunicipality } from './locate'
 import { loadHomeCode, loadRecent, saveHomeCode } from './recent'
 
@@ -363,6 +364,10 @@ export function Home(props: HomeProps) {
           </a>
           <a href={GITHUB} target="_blank" rel="noopener" className="inline-flex items-center gap-1 hover:text-foreground">
             GitHub
+            <ArrowSquareOutIcon aria-hidden="true" className="size-3" />
+          </a>
+          <a href={FEEDBACK} target="_blank" rel="noopener" className="inline-flex items-center gap-1 hover:text-foreground">
+            フィードバック
             <ArrowSquareOutIcon aria-hidden="true" className="size-3" />
           </a>
           <a href="mailto:support@fudoki.dev" className="hover:text-foreground">
