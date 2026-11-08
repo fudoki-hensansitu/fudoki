@@ -160,6 +160,8 @@ def read_page(page, number: int) -> Sheet | None:
             grade_label = rest[0] if rest else None
             direction = ''.join(rest[1:]).lstrip('◆') or None
             break
+    if grade_code is None:
+        raise ValueError(f'p{number}: 最終評価の区分（◆A〜◆D）が読めない')
 
     return Sheet(number, evaluation_year, evaluation_year - 1, _norm(name), account, kan, kou, moku, jigyo,
                  department, division, period_start, period_end, budget_thousand, settled_thousand,

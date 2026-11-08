@@ -6,7 +6,7 @@
 入力は dbt を build した warehouse（`ingestion.press_item` と `fiscal_expenditure_detail`）。手順は
 .agents/skills/web-frontend-ops/references/link-to-budget-detail.md。
 
-1. 名前と額で直接当たるもの（正規化した名前の一致、または部分一致かつ予算額が円まで一致）を先に確定する（method=name）。
+1. 名前と額で1行に決まるもの（正規化した名前の一致、または部分一致かつ予算額が円まで一致）を先に確定する（method=name）。
 2. 残りは単語の Dice 係数で上位12件の候補を出し、Jev に「どれでもない」を含めて選ばせる。確信度 0.6 以上だけ採る（method=jev）。
 3. どれにも当たらない施策も行を残す（method=none、detail_id 空）。seed に行があれば次からは聞き直さない。
 """
@@ -60,18 +60,17 @@ def dice(a: set[str], b: set[str]) -> float:
 
 
 def direct(item: dict, details: list[dict]) -> dict | None:
-    names = [normalize(n) for n in item['names']]
-    for name in names:
-        for detail in details:
-            if normalize(detail['name']) == name:
-                return detail
+    """名前と額で1行に決まる内訳。同じ名前が複数あれば額で絞り、それでも1つに決まらなければ Jev に回す。"""
+    names = {normalize(n) for n in item['names']}
     budget = item['budget_yen']
-    for name in names:
-        for detail in details:
-            other = normalize(detail['name'])
-            if budget and detail['amount_yen'] == budget and (name in other or other in name):
-                return detail
-    return None
+    exact = [d for d in details if normalize(d['name']) in names]
+    if len(exact) > 1 and budget:
+        exact = [d for d in exact if d['amount_yen'] == budget]
+    if exact:
+        return exact[0] if len(exact) == 1 else None
+    partial = [d for d in details if budget and d['amount_yen'] == budget
+               and any(n in normalize(d['name']) or normalize(d['name']) in n for n in names)]
+    return partial[0] if len(partial) == 1 else None
 
 
 def ask(key: str, item: dict, candidates: list[dict], model: str) -> tuple[dict | None, float]:
