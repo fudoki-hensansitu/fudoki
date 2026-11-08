@@ -135,8 +135,8 @@ function FreshRow({ up, upLabel = '拡大', title, yen, source, children }: { up
   )
 }
 
-/** 資料の PDF の該当ページへのリンク。PDF の #page で開く */
-const pdfPage = (pdf: string | undefined, page: number, name: string) => (pdf ? { href: `${pdf}#page=${page}`, label: `${name} ${page}ページ` } : undefined)
+/** 資料の PDF の該当ページへのリンク。PDF の #page で開く。リンク名は何の資料で何ができるかを言う（頁番号は出さない） */
+const pdfPage = (pdf: string | undefined, page: number, label: string) => (pdf ? { href: `${pdf}#page=${page}`, label } : undefined)
 
 const EvalLabel = () => (
   <span className="mr-2 inline-flex items-center gap-1 align-middle">
@@ -148,7 +148,7 @@ const EvalLabel = () => (
 /** 今ある事業の中で始めた取り組み。何を始めたかはシートの文をそのまま引き、金額と評価は含まれる事業全体のものだと文で言う */
 function InitiativeItem({ p, sheets }: { p: Initiative; sheets?: string }) {
   return (
-    <FreshRow up upLabel="今ある事業の中で" title={p.title} yen={p.settledYen} source={pdfPage(sheets, p.page, '評価シート')}>
+    <FreshRow up upLabel="今ある事業の中で" title={p.title} yen={p.settledYen} source={pdfPage(sheets, p.page, '評価シートで詳しく見る')}>
       <p className="text-sm [text-wrap:pretty]">「{p.quote}」</p>
       <p className="rounded-xl bg-sidebar px-3.5 py-2.5 text-[13px] leading-relaxed text-foreground [text-wrap:pretty]">
         <EvalLabel />
@@ -165,7 +165,7 @@ function InitiativeItem({ p, sheets }: { p: Initiative; sheets?: string }) {
 function BudgetItem({ p, press }: { p: PressItem; press?: string }) {
   const title = p.title.replace(/[~〜～].*$/, '').trim() || p.names.join('・')
   return (
-    <FreshRow up={!p.isNew} title={title} yen={p.budgetYen} source={pdfPage(press, p.page, 'プレス資料')}>
+    <FreshRow up={!p.isNew} title={title} yen={p.budgetYen} source={pdfPage(press, p.page, '区の発表資料で詳しく見る')}>
       {p.points.length ? (
         <ul className="flex flex-col gap-1 rounded-xl bg-sidebar px-3.5 py-2.5 text-[13px] leading-relaxed [text-wrap:pretty]">
           {p.points.map((pt, i) => (
@@ -260,7 +260,7 @@ function ProjectItem({ p, sheets }: { p: EvaluatedProject; sheets?: string }) {
   const i = p.indicator
   return (
     // 金額は名前と同じ行の右に置き、評価の枠は幅いっぱいに出す。値はどれも評価シートのもの
-    <FreshRow up={false} title={p.title} yen={p.settledYen} source={pdfPage(sheets, p.page, '評価シート')}>
+    <FreshRow up={false} title={p.title} yen={p.settledYen} source={pdfPage(sheets, p.page, '評価シートで詳しく見る')}>
       <p className="text-sm">{p.what}</p>
       {/* 評価の区分・方向性・指標は一続きの文として、同じ大きさ・色で読ませる。指標の良し悪しは風土記が判断しない */}
       <p className="rounded-xl bg-sidebar px-3.5 py-2.5 text-[13px] leading-relaxed text-foreground [text-wrap:pretty]">
