@@ -147,7 +147,7 @@ function InitiativeItem({ p }: { p: Initiative }) {
 }
 
 /** 予算案のプレス発表資料の施策。見出しは頁の見出し（「〜」の副題は外す）、金額は資料の予算額、その下に POINT を資料の文のまま並べる。
- * 事業名に「新規」の印があれば新規、無ければ拡大の印。分野の根拠として、紐付けた予算書の内訳を小さく添える */
+ * 出すのは事業名に「新規」の印がある施策だけ（サーバーの withPress で絞る）。予算書の内訳への紐付けは分野分けにだけ使い、画面には出さない */
 function BudgetItem({ p }: { p: PressItem }) {
   const title = p.title.replace(/[~〜～].*$/, '').trim() || p.names.join('・')
   return (
