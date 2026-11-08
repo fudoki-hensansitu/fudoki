@@ -446,12 +446,12 @@ function ProjectRow({ p, rank, max, total, people, showChange, shown }: { p: Pro
       <div className={`grid grid-cols-[22px_minmax(0,1fr)_auto] items-center gap-x-3.5 gap-y-2 py-4 ${showChange ? 'sm:grid-cols-[22px_minmax(140px,200px)_1fr_150px_80px]' : 'sm:grid-cols-[22px_minmax(140px,200px)_1fr_150px]'}`}>
         <span className="text-xl tabular-nums">{rank}</span>
         <div className="min-w-0">
-          {/* 分野は名前の上に、枠だけのラベルで出す（塗ると年度の切り替えと同じ形になり、押せそうに見える）。icon は「新しく何を始める？」の分野と同じ */}
-          <span className="mb-1 inline-flex items-center gap-1 rounded-md border py-px pl-1.5 pr-2 text-xs text-muted-foreground">
-            <DomainIcon id={DOMAIN_FRAMES.find((f) => f.name === p.domain)?.id ?? OTHER_FRAME.id} className="size-3.5 text-muted-foreground sm:size-3.5" />
+          <h3 className="text-base font-normal leading-snug">{p.name}</h3>
+          {/* 分野は名前の下に、薄い枠だけのラベルで控えめに出す（名前より目立たせない。塗ると年度の切り替えと同じ形になり押せそうに見える）。icon は「新しく何を始める？」の分野と同じ */}
+          <span className="mt-1 inline-flex items-center gap-1 rounded-md border border-foreground/10 py-px pl-1 pr-1.5 text-xs text-muted-foreground">
+            <DomainIcon id={DOMAIN_FRAMES.find((f) => f.name === p.domain)?.id ?? OTHER_FRAME.id} className="size-3 text-muted-foreground sm:size-3" />
             {p.domain}
           </span>
-          <h3 className="text-base font-normal leading-snug">{p.name}</h3>
         </div>
         {/* 棒は1位を満たした長さ。スマホでは名前の下に、名前の左端から並べる */}
         <div className="order-5 col-span-2 col-start-2 sm:order-none sm:col-span-1 sm:col-start-auto">
