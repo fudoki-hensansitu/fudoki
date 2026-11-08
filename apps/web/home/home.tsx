@@ -183,7 +183,7 @@ function MyTown({ entries, featured }: HomeProps) {
           <p className="text-xl font-bold sm:text-2xl">住んでいるまちを選ぶ</p>
           {entries.length ? (
             <>
-              <p className="mt-1 mb-4 text-sm opacity-80">選ぶと、そのまちのお金・事業・議会・選挙への入口がここに並びます。</p>
+              <p className="mt-1 mb-4 text-sm opacity-80">選ぶと、そのまちの仕事とお金への入口がここに並びます。議会・選挙は準備中です。</p>
               <Picker entries={entries} onPick={pick} placeholder="自治体名で探す（例：品川）" />
               <LocateButton entries={entries} onPick={pick} />
             </>

@@ -1,5 +1,5 @@
-/* 入口の1枚（landing/landing.tsx）の CSS。視覚の規範は repo root の DESIGN.md、token は styles/tokens.css。
-   CSS は頁の間を移っても残るので、どの規則も .landing の中に閉じる（頁の外に効かせるのは、入口を開いている間だけ html・body に付く印と keyframes） */
+/* 紹介の頁（/about、landing/landing.tsx）の CSS。視覚の規範は repo root の DESIGN.md、token は styles/tokens.css。
+   CSS は頁の間を移っても残るので、どの規則も .landing の中に閉じる（頁の外に効かせるのは、紹介の頁を開いている間だけ html・body に付く印と keyframes） */
 .landing{margin:0;background:var(--background);color:var(--foreground);font:400 16px/1.8 var(--font-sans);letter-spacing:.03em;-webkit-font-smoothing:antialiased;line-break:strict;word-break:normal;overflow-wrap:break-word;overflow-x:clip}
 .landing h1,.landing h2,.landing h3,.landing h4{margin:0;font-family:var(--font-display);font-weight:400;letter-spacing:.02em;color:var(--foreground);word-break:auto-phrase;text-wrap:balance}
 .landing p,.landing figure{margin:0}
