@@ -688,7 +688,7 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
           return (
             <button key={g} type="button" role="radio" aria-checked={on} disabled={!ready} onClick={() => setGrade(g)} className={cn('flex flex-col gap-1 rounded-xl border px-3 py-3 text-left transition-colors', on ? 'border-primary bg-primary/5' : 'border-foreground/10 hover:bg-foreground/[0.03]', !ready && 'cursor-default opacity-60 hover:bg-transparent')}>
               <Grade grade={`${g} ${label}`} className="text-sm" />
-              <span className="pl-[26px] text-sm tabular-nums">{scrap.grades[g]}事業</span>
+              <span className="pl-[26px] tabular-nums"><b className="text-2xl font-normal">{scrap.grades[g]}</b><small className="ml-0.5 text-sm">事業</small></span>
             </button>
           )
         })}
