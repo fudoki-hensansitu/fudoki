@@ -6,7 +6,7 @@ Hallmark は検出すると pick をこれに従わせる。値を変えると�
 
 ## System
 - Genre · editorial（地誌・帳面）
-- Theme · 白い机に生成りの紙。見出しは低コントラストの明朝 400。色はブランドの青丹とアクセントの金茶、朱と藍は絵の面にだけ置く
+- Theme · 白い机に生成りの紙。見出しはゴシックで、太さと大きさで階層を作る。色はブランドの青丹とアクセントの金茶、朱と藍は絵の面にだけ置く
 - Vibe · 静か、紙、帳面、確かめられる、少しの諧謔
 
 **実データそのものが製品の説明を担う。** 紹介の最初の画面に置くのは、実際の自治体の予算を載せた、自治体の頁を模した札。
@@ -14,7 +14,7 @@ Hallmark は検出すると pick をこれに従わせる。値を変えると�
 
 画面は **読み物**（紹介 `/about`・利用条件・案内）と **データの面**（ホーム・自治体の頁・アシスタントなどの報告・分析）に分かれる。token と書体は共通で、
 絵の面（網点・大きな字・朱の楕円）を持つのは読み物だけ。データの面は紙・罫線・数字だけで組む。
-**明朝を使うのは紹介の読み物（`/about`）の見出しだけ。** アプリの中（ホーム・自治体の一覧・個別ページ・アシスタント・会話）は見出しも含めてすべてゴシック（`--font-sans`）で組み、階層は太さと大きさで作る。
+**画面はすべてゴシック（`--font-sans`）で組む。** アプリの中（ホーム・自治体の一覧・個別ページ・アシスタント・会話）も紹介（`/about`）も見出しを含めてゴシックにし、階層は太さと大きさで作る。紹介の見出しは太く（700）詰める。
 
 ## Tokens
 
@@ -136,11 +136,11 @@ shadcn/ui の語彙。色の役割は次のとおり。
 ## Components
 
 ```css
-/* 紹介の読み物の見出しは明朝 400 だけ。太さではなく大きさと余白で階層を作る（アプリの中はゴシック） */
-.text-heading { font-family: var(--font-display); font-weight: 400; font-style: normal; letter-spacing: var(--letter-spacing-heading); word-break: auto-phrase; text-wrap: balance; }
+/* 見出しはゴシック。紹介の見出しは 700 で詰める */
+.text-heading { font-family: var(--font-sans); font-weight: 700; font-style: normal; letter-spacing: var(--letter-spacing-heading); word-break: auto-phrase; text-wrap: balance; }
 .text-body { font-family: var(--font-sans); font-size: var(--text-body); line-height: var(--line-height-body); letter-spacing: var(--letter-spacing-body); line-break: strict; word-break: normal; overflow-wrap: break-word; }
 .num { font-variant-numeric: tabular-nums; letter-spacing: 0; white-space: nowrap; }
-.eyebrow { font: 400 var(--text-ui)/1.4 var(--font-display); color: var(--foreground); }
+.eyebrow { font: 600 13px/1.4 var(--font-sans); letter-spacing: .08em; color: var(--primary); }
 
 /* ボタンはピル。hover は塗りの色だけを変える */
 .btn { height: 44px; padding: 0 var(--space-5); border-radius: 999px; background: var(--primary); color: var(--primary-foreground); font: 500 15px/1 var(--font-sans); white-space: nowrap; transition: background-color var(--duration) var(--ease); }
@@ -163,11 +163,11 @@ shadcn/ui の語彙。色の役割は次のとおり。
 ```
 
 - **帯**: 白い節の間に、生成りの紙（`--paper`、MCP の案内）を全幅で1本だけ挟む。帯の文字は `--paper-foreground`。右には実際の操作の録画を置き、音なし・繰り返しで、表示域に入ったら再生する（クリックで止める・動きを減らす設定では自動で再生しない）。説明文や再生ボタンは添えない
-- **紹介（`/about`）の構成**: 自治体の頁を模した札の冒頭 → 住民の問い → まちの一年（選ぶ・決める・使う・振り返る）→ 機能ごとの画面のイメージ（文と画面を左右交互）→ 比べる・確かめる → 評価をしない姿勢 → MCP の帯 → FAQ → 緑の面の呼びかけ。まだ無い機能（議会・選挙など）の画面は架空のデータで組み、「画面はイメージです」を添えて実在の自治体名を付けない
+- **紹介（`/about`）の構成**: 中央の見出し（「なにしてる？」を手描きの丸で囲む・鉛筆の落書き）→ 下が切れた自治体の頁の画面と、タブで中身が替わる札1枚 → 住民の問い → 若草の札3枚（使う・新しく始める・振り返る）→ 方眼の面に浮かぶ札（まちの一年）と使う人の4列 → 若草の札2枚（議会・選挙）→ 比べる・確かめる → 評価をしない姿勢の4列 → AI から使う → 議員・会派向け AI の相談 → FAQ → 中央の呼びかけ。地は薄い若草（#f6faf6）、札は濃い若草（#e4f1e6）に粒子と角丸 28px、画面のイメージは白で下を切る。色は landing.css の `.landing` の中だけで持ち、要の色はブランド色（`--primary`）。まだ無い機能（議会・選挙など）の画面は架空のデータで組み、「画面はイメージです」を添えて実在の自治体名を付けない
 - **出典の面**: 「確かめる」は、出典の PDF の切り抜きを `--page` の紙に載せ、API が返す印字の位置を朱の囲みで重ねる。例には金額が実際に入っている明細を選ぶ（0 円の科目は使わない）
 - **コピーに作業の記録を書かない**: 取得日・更新日・件数など、時点で変わる値や作業の経緯は画面に載せない
 - **自治体の個別ページ（`/:都道府県/:名称`）**: 見出し・金額・本文はすべて `--font-sans` のゴシック体にし、ロゴはホームと同じ SVG を使う。流れ図は全款・全項を初期表示し、目・節も全款を同じ深さへ展開する。グラフを主役にするため、データの面でもブランド色とアクセントを使う（Tokens の色の役割）。款・分野ごとの色分けはしない。数字は `shadcn/ui` の chart（recharts）と自前の流れ図で描き、収録していない年度は「未収録」と書く。API にまだ無い値（特色・将来推計）は仮の値で、数字の隣に「仮」を付け、検索エンジンへ渡す HTML には入れない
-- **FAQ**: 罫線の上に明朝の問い、`+` が開くと 45° 回る。答えは `--muted-foreground`
+- **FAQ**: 罫線の上にゴシックの問い、`+` が開くと 45° 回る。答えは `--muted-foreground`
 - **データの面に出してよい色**: 前景・`--muted-foreground`・罫線に加え、ブランド色・アクセント（Tokens の色の役割）と `--destructive`（検査が落ちているときだけ）。絵の色は出さない
 
 ## Icons
@@ -181,8 +181,7 @@ shadcn/ui の語彙。色の役割は次のとおり。
 - Assets: 正本は `apps/web/brand/config.json`、生成は `bun run --cwd apps/web build:brand`、出力は `apps/web/public/`（`mark.svg`・`wordmark.svg`・`logo.svg` と各 `-dark.svg`、`favicon.svg`）と画面へ inline にする `apps/web/logo.ts`。docs の public・api の favicon にも同期する。PNG のアイコン（favicon.ico・icon・apple-touch-icon・PWA）は `brand/pwa_icons.py` で描く
 
 ## Motion
-- 1 primitive: 見出しの sweep。表示域に入ったとき一度だけ、金茶・朱・桜・藍の帯が 1.4s（`--ease-sweep`）で文字を通り抜け、墨に戻る。最初の描画から墨で読める
-- 他に動くのは hover の色（150ms）、nav の浮き（300ms ease-out）、紹介の節の浮き上がり（700ms、JavaScript が動いてから隠して浮かせる）・冒頭の札の小さな揺れ・画面のイメージの棒の伸び（1.1s `--ease-sweep`）、FAQ の `+` だけ。紙・絵は動かさない
+- 動くのは hover・選んだタブの色（150ms）、nav の浮き（300ms ease-out）、紹介の冒頭の札がタブを替えたときに浮き上がる動き（360ms）、FAQ の `+`、AI の節の録画だけ。スクロールに合わせて動かさない。紙・絵は動かさない
 - すべて `prefers-reduced-motion: no-preference` の中に置く
 
 ## 守る規則
@@ -195,7 +194,7 @@ shadcn/ui の語彙。色の役割は次のとおり。
 
 ## Exports
 - `apps/web/styles/tokens.css` の `:root` は本ファイルの Tokens から写す。直接の値の変更はここを先に直す
-- 見出しの明朝は BIZ UDP明朝 Regular（google/fonts の commit `9710da1e` で固定、SHA-256 は `apps/web/brand/home_font.py`、OFL は `apps/web/brand/fonts/bizudpmincho-OFL.txt`）を、頁で使う字だけに絞って自前で配る。文言を変えたら `bun run --cwd apps/web build:font` で `public/fonts/mincho.woff2` を作り直す
+- 明朝（`--font-display`）は今どの画面でも使っていない。subset の仕組みは残してある: BIZ UDP明朝 Regular（google/fonts の commit `9710da1e` で固定、SHA-256 は `apps/web/brand/home_font.py`、OFL は `apps/web/brand/fonts/bizudpmincho-OFL.txt`）を、頁で使う字だけに絞って自前で配る。文言を変えたら `bun run --cwd apps/web build:font` で `public/fonts/mincho.woff2` を作り直す
 - 重いファイル（ホームの録画・出典の切り抜き）は `apps/web/public/` に置き、Workers static assets で配る。録画は `apps/web/brand/home_demo.sh`（冒頭に映る利用者名を覆う）、切り抜きは `bun run --cwd apps/web build:origin` で作り直す
 - 閲覧者の IP を第三者へ渡さないため、Google Fonts などの外部 CDN から書体を読まない。外部へ送るのは、利用者がブラウザで許可した操作に限る（ホームでうちのまちを選んでいないときと「現在地から選ぶ」を押したときに、位置情報の許可があれば国土地理院の逆ジオコーダーへ緯度・経度を送る。プライバシーポリシーに記載）
 
