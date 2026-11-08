@@ -263,3 +263,4 @@ html:has(.landing){scroll-behavior:smooth}
 .landing .m-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}
 .landing .m-big em{font-size:38px}
 }
+.landing .m-cands small{white-space:nowrap}
