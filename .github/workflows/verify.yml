@@ -22,7 +22,13 @@ jobs:
           path: ~/.cache/uv
           key: uv-${{ runner.os }}-${{ hashFiles('uv.lock') }}
           restore-keys: uv-${{ runner.os }}-
-      - run: uv sync --frozen
+      # The cache is empty on the first run, so retry with waits longer than the build's own retries.
+      - run: |
+          for wait in 30 60 0; do
+            uv sync --frozen && exit 0
+            sleep "$wait"
+          done
+          exit 1
       - run: bun run typecheck:all
       - run: bun run test
       - run: bun pipeline/source_selection/check.ts
