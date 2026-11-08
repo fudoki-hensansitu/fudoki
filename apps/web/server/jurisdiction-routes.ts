@@ -97,7 +97,8 @@ function withPress(code: string, profile: Profile | null): Profile | null {
   const years = Object.fromEntries(Object.entries(profile.years).map(([y, py]) => {
     const p = press[y]
     if (!p || py.projects.length || py.initiatives?.length) return [y, py]
-    return [y, { ...py, budgetPress: p.source, budgetNew: p.items }]
+    // 出すのは「新規」の印が付いた施策だけ。印の無い施策は拡大か継続かを資料から決められないので出さない（データには紐付けごと残す）
+    return [y, { ...py, budgetPress: p.source, budgetNew: p.items.filter((i) => i.isNew) }]
   }))
   return { ...profile, years }
 }

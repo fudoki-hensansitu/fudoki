@@ -151,7 +151,7 @@ function InitiativeItem({ p }: { p: Initiative }) {
 function BudgetItem({ p }: { p: PressItem }) {
   const title = p.title.replace(/[~〜～].*$/, '').trim() || p.names.join('・')
   return (
-    <FreshRow up={!p.isNew} upLabel="継続・拡大" title={title} yen={p.budgetYen}>
+    <FreshRow up={!p.isNew} title={title} yen={p.budgetYen}>
       {p.points.length ? (
         <ul className="flex flex-col gap-1 rounded-xl bg-sidebar px-3.5 py-2.5 text-[13px] leading-relaxed [text-wrap:pretty]">
           {p.points.map((pt, i) => (
@@ -357,7 +357,7 @@ function Domains({ year, fiscalYear }: { year: ProfileYear; fiscalYear: number }
   const groups = groupByFrame(fresh)
   const byBudget = isPlanned(year)
   const lead = byBudget
-    ? '区が予算案の発表で取り上げた、この年度の主な施策です。新規の印のないものは、今ある事業を続けたり広げたりするものです。'
+    ? '区が予算案の発表で取り上げた、この年度に新しく始める事業です。'
     : '区が事業ごとに目標と実績を振り返る「事業評価」から、この年度に新しくできた事業と、今ある事業の中で始めた取り組みを並べています。'
   const link = !groups.length ? undefined : byBudget ? (year.budgetPress ? { href: year.budgetPress, label: 'プレス発表' } : undefined) : { href: year.evaluationSource, label: '事業評価' }
   return (
