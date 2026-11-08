@@ -53,7 +53,7 @@ export interface Scrap {
   targetYen?: number
   evaluated: number
   grades: { A: number; B: number; C: number; D: number }
-  /** D評価（完了・中止・廃止）の事業。result は 廃止・移管・統合・完了・廃止を検討（評価結果の表の区分） */
+  /** D評価（完了・中止・廃止）の事業。result は 廃止・移管・統合・完了・廃止を検討（評価結果の表の区分）。reason は評価結果の「予算の削減」の理由を言い換えたもので、今は画面に出さない */
   exits: { name: string; reason: string; result: string; page: number }[]
   /** A〜C 評価の事業。評価結果の表（最終評価および削減額一覧）の事業名・今後の取組の方向性。表を起こしていない年度は持たない */
   graded?: Record<'A' | 'B' | 'C', { name: string; direction: string; page: number }[]>

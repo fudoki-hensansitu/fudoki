@@ -727,9 +727,8 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
     setGrade(next)
     e.currentTarget.querySelector<HTMLButtonElement>(`[data-grade="${next}"]`)?.focus()
   }
-  const rows = grade === 'D' ? scrap.exits.map((e, i) => ({ i, name: e.name, kind: e.result, page: e.page, reason: e.reason })) : (scrap.graded?.[grade] ?? []).map((p, i) => ({ i, name: p.name, kind: p.direction, page: p.page, reason: undefined as string | undefined }))
-  const hasReason = rows.some((r) => r.reason)
-  const cols = hasReason ? 'sm:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)_minmax(0,1.4fr)_auto]' : 'sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_auto]'
+  const rows = grade === 'D' ? scrap.exits.map((e, i) => ({ i, name: e.name, kind: e.result, page: e.page })) : (scrap.graded?.[grade] ?? []).map((p, i) => ({ i, name: p.name, kind: p.direction, page: p.page }))
+  const cols = 'sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_auto]'
   return (
     <Section id="scrap" title="やめたこと・見直したことは？" link={{ href: scrap.source, label: '事業評価の結果' }} lead="自治体は毎年、前の年度までに行った事業を評価して、やめる事業や減らす事業を決め、その分を新しい予算に回しています。">
       {/* 浮かせたお金の棒は節の中央に置き、下の「自治体が付けた評価」の見出しと離す（棒の見出しに見えないように） */}
@@ -786,7 +785,6 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
         <div role="row" className={`hidden gap-x-4 border-b py-2 text-xs text-muted-foreground sm:grid ${cols}`}>
           <span role="columnheader" className="pl-8">事業</span>
           <span role="columnheader">今後の方向</span>
-          {hasReason ? <span role="columnheader">理由</span> : null}
           <span role="columnheader" className="text-right">資料</span>
         </div>
         <FrameItems
@@ -798,7 +796,6 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
                 {r.name}
               </span>
               <span role="cell" className="pl-8 text-[13.5px] text-muted-foreground sm:pl-0">{MARKS[r.kind]?.label ?? r.kind}</span>
-              {hasReason ? <span role="cell" className="pl-8 text-[13.5px] text-muted-foreground sm:pl-0">{r.reason}</span> : null}
               <span role="cell" className="pl-8 sm:pl-0 sm:text-right">
                 <a href={`${scrap.sheets}#page=${r.page}`} target="_blank" rel="noopener" className="inline-flex items-center gap-0.5 whitespace-nowrap text-xs text-muted-foreground underline-offset-4 hover:underline">
                   評価シート
