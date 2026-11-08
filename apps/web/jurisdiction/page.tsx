@@ -636,7 +636,7 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
     ['D', 'やめる・終える'],
   ] as const
   return (
-    <Section id="scrap" title="やめたこと・見直したことは？" lead="自治体は毎年、事業を評価して見直しを行い、新しい予算に回しています。">
+    <Section id="scrap" title="やめたこと・見直したことは？" lead="自治体は毎年、前の年度までに行った事業を評価して、やめる事業や減らす事業を決め、その分を新しい予算に回しています。">
       <div className="flex max-w-[560px] flex-col gap-2">
         <div className="flex items-baseline justify-between gap-3">
           <span>やめたり減らしたりして浮かせたお金</span>
