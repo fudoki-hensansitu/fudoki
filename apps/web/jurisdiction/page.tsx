@@ -443,13 +443,13 @@ function ProjectRow({ p, rank, max, total, people, showChange, shown }: { p: Pro
   }, [p.id, attempt])
   return (
     <li className="border-b border-foreground/10">
-      <div className={`grid grid-cols-[22px_minmax(0,1fr)_auto] items-center gap-x-3.5 gap-y-2 py-4 ${showChange ? 'sm:grid-cols-[22px_minmax(140px,200px)_1fr_190px_80px]' : 'sm:grid-cols-[22px_minmax(140px,200px)_1fr_190px]'}`}>
+      <div className={`grid grid-cols-[22px_minmax(0,1fr)_auto] items-center gap-x-3.5 gap-y-2 py-4 ${showChange ? 'sm:grid-cols-[22px_minmax(140px,200px)_1fr_150px_80px]' : 'sm:grid-cols-[22px_minmax(140px,200px)_1fr_150px]'}`}>
         <span className="text-xl tabular-nums text-muted-foreground">{rank}</span>
         <div className="min-w-0">
           <h3 className="text-base font-normal leading-snug">{p.name}</h3>
           {/* 分野は「新しく何を始める？」の分野と同じ icon を添える */}
-          <span className="flex items-center gap-1 text-xs text-muted-foreground">
-            <DomainIcon id={DOMAIN_FRAMES.find((f) => f.name === p.domain)?.id ?? OTHER_FRAME.id} className="size-4 text-muted-foreground sm:size-4" />
+          <span className="mt-1 inline-flex items-center gap-1 rounded-full bg-secondary py-0.5 pl-1.5 pr-2.5 text-xs text-muted-foreground">
+            <DomainIcon id={DOMAIN_FRAMES.find((f) => f.name === p.domain)?.id ?? OTHER_FRAME.id} className="size-3.5 text-muted-foreground sm:size-3.5" />
             {p.domain}
           </span>
         </div>
@@ -465,18 +465,18 @@ function ProjectRow({ p, rank, max, total, people, showChange, shown }: { p: Pro
             <span className="text-sm text-muted-foreground">金額未記載</span>
           ) : (
             <>
-              {/* 金額と全体に占める割合を同じ大きさで並べ、1人あたりはその下に薄く */}
-              <span className="flex items-baseline justify-end gap-x-2.5 whitespace-nowrap leading-snug">
-                <YenText yen={p.yen} />
-                {total ? (
-                  <span className="tabular-nums">
-                    <span className="mr-0.5 text-xs text-muted-foreground">全体の</span>
-                    <span className="text-xl">{((p.yen / total) * 100).toFixed(1)}</span>
-                    <span className="ml-0.5 text-xs">%</span>
-                  </span>
-                ) : null}
+              {/* 全体に占める割合を大きく出し、金額と1人あたりはその下に薄く */}
+              {total ? (
+                <span className="block leading-snug tabular-nums">
+                  <span className="mr-0.5 text-xs text-muted-foreground">全体の</span>
+                  <span className="text-xl">{((p.yen / total) * 100).toFixed(1)}</span>
+                  <span className="ml-0.5 text-xs">%</span>
+                </span>
+              ) : null}
+              <span className="flex justify-end gap-x-2 whitespace-nowrap text-xs text-muted-foreground tabular-nums">
+                <span>{formatYen(p.yen)}</span>
+                {people ? <span>1人 {formatPerCapita(p.yen / people)}</span> : null}
               </span>
-              {people ? <span className="block text-xs text-muted-foreground tabular-nums">1人 {formatPerCapita(p.yen / people)}</span> : null}
             </>
           )}
         </div>
