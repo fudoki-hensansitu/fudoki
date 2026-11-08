@@ -62,7 +62,7 @@ export const emptyHead = (e: CatalogEntry): Head =>
 
 export function indexHead(count: number): Head {
   const description = count
-    ? `決算を収録している自治体（${count}）を、地図と表で一覧にしています。人口・1人あたりの歳出・歳出の総額を見比べて、自治体ごとの款・項・目へ進めます。`
+    ? `決算を収録している自治体（${count}）を、地図と表で一覧にしています。人口・1人あたりの歳出・歳出の総額を見比べて、自治体ごとのお金の使い道へ進めます。`
     : '風土記が決算を収録した自治体の一覧です。まだ収録した自治体がありません。'
   return head('自治体を探す｜風土記', description, `${ORIGIN}${INDEX_PATH}`)
 }

@@ -1,8 +1,8 @@
 // このサイトについて（/about）。本文は landing/landing.tsx が描く
 import { defineHandler, defineHead } from 'void'
 
-const TITLE = '風土記について — うちのまち、なにしてる？'
-const DESCRIPTION = '自治体が何を決め、何にいくら使い、どう振り返ったかを、同じ物差しの表にして出典と並べて見られるようにしています。'
+const TITLE = '風土記について — 自治体の予算・決算・事業評価を出典つきで'
+const DESCRIPTION = '風土記は、自治体の予算・決算・事業評価を事業ごとにわかりやすくまとめ、どの数字も自治体の資料の頁まで辿れるようにしたサイトです。ほかの自治体と同じ物差しで比べられ、ChatGPT や Claude からも使えます。'
 const ORGANIZATION = { '@context': 'https://schema.org', '@type': 'Organization', name: '風土記（fudoki）', url: 'https://fudoki.dev/', logo: 'https://fudoki.dev/icon.png', sameAs: ['https://github.com/fudoki-hensansitu', 'https://docs.fudoki.dev/'] }
 
 export const loader = defineHandler((c) => {
