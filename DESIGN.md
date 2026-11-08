@@ -182,7 +182,7 @@ shadcn/ui の語彙。色の役割は次のとおり。
 
 ## Motion
 - 1 primitive: 見出しの sweep。表示域に入ったとき一度だけ、金茶・朱・桜・藍の帯が 1.4s（`--ease-sweep`）で文字を通り抜け、墨に戻る。最初の描画から墨で読める
-- 他に動くのは hover の色（150ms）、nav の浮き（300ms ease-out）、紹介の節の浮き上がり（700ms、JavaScript が動くときだけ）・冒頭の札の小さな揺れ・画面のイメージの棒の伸び（1.1s `--ease-sweep`）、FAQ の `+` だけ。紙・絵は動かさない
+- 他に動くのは hover の色（150ms）、nav の浮き（300ms ease-out）、紹介の節の浮き上がり（700ms、JavaScript が動いてから隠して浮かせる）・冒頭の札の小さな揺れ・画面のイメージの棒の伸び（1.1s `--ease-sweep`）、FAQ の `+` だけ。紙・絵は動かさない
 - すべて `prefers-reduced-motion: no-preference` の中に置く
 
 ## 守る規則

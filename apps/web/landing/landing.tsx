@@ -360,14 +360,19 @@ const CYCLE = [
   { n: '振り返る', k: '事業評価', note: '事業をどうするか見直す' },
 ]
 
-/** 画面に入ったら一度だけ .in を付ける（動きを減らす設定では最初から付ける） */
+/** 画面に入ったら一度だけ .in を付ける。隠すのは .rv-on を付けた後だけ（動きを減らす設定では隠さない） */
 function useReveal() {
   React.useEffect(() => {
+    const root = document.querySelector('.landing')
     const els = [...document.querySelectorAll('.landing .rv')]
-    if (reducedMotion()) return els.forEach((e) => e.classList.add('in'))
+    if (!root || reducedMotion()) return
+    root.classList.add('rv-on')
     const io = new IntersectionObserver((l) => l.forEach((e) => e.isIntersecting && (e.target.classList.add('in'), io.unobserve(e.target))), { rootMargin: '0px 0px -12% 0px' })
     els.forEach((e) => io.observe(e))
-    return () => io.disconnect()
+    return () => {
+      io.disconnect()
+      root.classList.remove('rv-on')
+    }
   }, [])
 }
 
