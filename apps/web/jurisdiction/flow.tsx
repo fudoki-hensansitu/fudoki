@@ -16,10 +16,10 @@ const LEVELS: Record<FlowView, { kan: string; kou: string; moku: string; setsu: 
 type Levels = (typeof LEVELS)[FlowView]
 
 const SETSU_SHOWN = 3
-/** 目の側に立てる棒の幅。項の棒（w-2）と揃える */
 /** 帯の上を流れる光の幅と速さ（px、px/秒） */
 const LIGHT = 140
 const LIGHT_SPEED = 320
+/** 目の側に立てる棒の幅。項の棒（w-2）と揃える */
 const MOKU_BAR = 8
 /** 節の側に立てる棒の幅 */
 const SETSU_BAR = 5
