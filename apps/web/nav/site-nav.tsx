@@ -162,7 +162,6 @@ export function SiteNav({ active, open }: SiteNavProps) {
           <SidebarContent>
             <SidebarGroup>
               <SidebarMenu>
-                <Item href="/" label="ホーム" icon={<HouseIcon />} active={active === 'home'} />
                 <Item href="/jurisdictions" label="自治体一覧" icon={<BankIcon />} active={active === 'jurisdictions'} />
                 <Item href="/assistant" label="アシスタント" icon={<RobotIcon />} active={active === 'assistant'} />
               </SidebarMenu>

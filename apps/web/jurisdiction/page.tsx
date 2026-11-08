@@ -6,6 +6,7 @@ import * as React from 'react'
 import { ArrowLeftIcon, ArrowUpIcon, ArrowRightIcon, ArrowSquareOutIcon, CaretRightIcon, MapPinAreaIcon, MapTrifoldIcon, SquaresFourIcon, BankIcon, BasketballIcon, CaretDownIcon, ClipboardTextIcon, CoinsIcon, RobotIcon, FirstAidKitIcon, GlobeIcon, HandHeartIcon, HouseLineIcon, LeafIcon, MapPinIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, StudentIcon, DotsThreeCircleIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
 import { StartForm } from '../chat/start-form'
 import type { StoredSession } from '../chat/store'
+import { rememberJurisdiction } from '../home/recent'
 import { Hint } from '@/components/hint'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
@@ -667,6 +668,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
     const y = yearFromHash()
     if (y && years.includes(y)) setYear(y)
   }, [years])
+  React.useEffect(() => rememberJurisdiction({ code: data.code, name: data.name, path: location.pathname }), [data.code, data.name])
   const py = profile?.years[String(year)]
   // 基本構想の都市像。年度で変わらない
   const vision = profile?.vision?.text

@@ -1,46 +1,42 @@
-// ホーム（/）。アプリの入口として、自治体を探す・くわしく見られる自治体・アシスタント・収録の更新・自分の AI からの使い方を一枚に並べる。
-// 見出しも含めてゴシック（明朝は使わない）。データは loader（pages/index.server.ts）が渡す自治体の要約だけで、画面では集計しない
+// ホーム（/）。「うちのまち」（選んだ自治体の情報への入口）、見られる情報の種類（予算・決算・事業評価・議会・選挙）、収録の更新を並べるハブ。
+// 自治体を探す・比べるのは自治体一覧（/jurisdictions）、AI との会話はアシスタント（/assistant）が受け持つので、ここでは重ねない。
+// 面の色は、主張したい面（うちのまち）が緑の地、押せるものの状態は生成り。見出しも含めてゴシック（明朝は /about の読み物だけ）
 import * as React from 'react'
-import { Link, useRouter } from '@void/react'
-import { ArrowRightIcon, ArrowUpRightIcon, BookOpenIcon, ChatsIcon, MagnifyingGlassIcon, PlugIcon, SparkleIcon } from '@phosphor-icons/react'
+import { Link } from '@void/react'
+import { ArrowRightIcon, ArrowUpRightIcon, CheckSquareOffsetIcon, ClipboardTextIcon, CoinsIcon, GavelIcon, MagnifyingGlassIcon, PencilSimpleIcon } from '@phosphor-icons/react'
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from '@/components/ui/combobox'
 import { InputGroupAddon } from '@/components/ui/input-group'
-import { Button } from '@/components/ui/button'
-import { StartForm } from '../chat/start-form'
-import { useTypedPlaceholder } from '../chat/assistant-home'
+import { cn } from '@/lib/utils'
 import type { MapEntry } from '../jurisdiction/index-table'
-import { formatYen, INDEX_PATH } from '../jurisdiction/types'
-import { Mark } from '../nav/site-nav'
+import { INDEX_PATH } from '../jurisdiction/types'
+import { loadHomeCode, loadRecent, saveHomeCode } from './recent'
 
 export interface Featured {
   code: string
   name: string
   path: string
   vision?: string
-  /** 頁で見られる節の名前 */
-  sections: string[]
 }
 
 export interface HomeProps {
-  sitekey: string
   entries: MapEntry[]
+  /** くわしい頁（事業評価・新しく始めること）のある自治体 */
   featured: Featured[]
 }
 
 const DOCS = 'https://docs.fudoki.dev'
-const CHATGPT_PLUGIN = 'https://chatgpt.com/plugins/plugin_asdk_app_6ad87dc03a608191a13bba05310ea5d9'
 const GITHUB = 'https://github.com/fudoki-hensansitu/fudoki'
 
-/** 入力欄の placeholder に打っては消して見せる問いの例 */
-const TYPED_EXAMPLES = ['品川区で一番大きな金額の事業は？', '世田谷区は子育てにいくら使っている？', '八王子市と町田市の1人あたりの歳出を比べて']
-
-/** 最近ふえた収録（取り込みの PR から手で写したもの） */
+/** 最近ふえた収録（取り込みの PR から手で写したもの。一覧に出ていない自治体の行は出さない） */
 const UPDATES: { date: string; code: string; text: string }[] = [
   { date: '11/8', code: '131211', text: 'R6年度 決算（事業別の説明書）' },
   { date: '11/7', code: '131199', text: 'R6年度 決算・5会計' },
   { date: '11/7', code: '132101', text: 'R6年度 決算' },
   { date: '11/7', code: '133086', text: 'R6年度 決算・特別会計3つ' },
   { date: '11/6', code: '132055', text: 'R6年度 決算' },
+  { date: '11/6', code: '131083', text: 'R6年度 決算・4会計' },
+  { date: '11/6', code: '131130', text: 'R6年度 決算・4会計' },
+  { date: '11/6', code: '131091', text: 'R6〜R8年度 当初予算' },
 ]
 
 const emblem = (code: string) => `/jurisdictions/${code}/emblem.svg`
@@ -49,33 +45,19 @@ const matches = (e: MapEntry, q: string) => {
   return !s || e.name.includes(s) || e.path.includes(s.toLowerCase())
 }
 
-function Emblem({ code, className = 'size-10' }: { code: string; className?: string }) {
+function Emblem({ code, name, className = 'size-10' }: { code: string; name: string; className?: string }) {
+  const [failed, setFailed] = React.useState(false)
   return (
-    <span className={`flex shrink-0 items-center justify-center rounded-xl border bg-background p-1.5 ${className}`}>
-      <img src={emblem(code)} alt="" loading="lazy" className="size-full object-contain" onError={(e) => (e.currentTarget.style.visibility = 'hidden')} />
+    <span className={cn('grid shrink-0 place-items-center rounded-xl border bg-white p-1.5', className)}>
+      {failed ? <span className="text-sm text-foreground">{name[0]}</span> : <img src={emblem(code)} alt="" loading="lazy" className="size-full object-contain" onError={() => setFailed(true)} />}
     </span>
   )
 }
 
-function SectionHead({ title, href, more }: { title: string; href?: string; more?: string }) {
+function Picker({ entries, onPick, placeholder }: { entries: MapEntry[]; onPick: (e: MapEntry) => void; placeholder: string }) {
   return (
-    <div className="mb-4 flex items-baseline justify-between gap-3">
-      <h2 className="text-lg font-bold tracking-[0.02em]">{title}</h2>
-      {href && more ? (
-        <Button variant="link" size="inline" nativeButton={false} render={<Link href={href} />} className="text-[13px]">
-          {more}
-          <ArrowRightIcon />
-        </Button>
-      ) : null}
-    </div>
-  )
-}
-
-function FindJurisdiction({ entries }: { entries: MapEntry[] }) {
-  const router = useRouter()
-  return (
-    <Combobox autoHighlight items={entries} filter={(e: MapEntry, q: string) => matches(e, q)} itemToStringLabel={(e: MapEntry) => e.name} value={null} onValueChange={(e) => e && router.visit((e as MapEntry).path)}>
-      <ComboboxInput showTrigger={false} aria-label="自治体名で探す" placeholder="自治体名で探す（例：品川）" className="h-14 rounded-full bg-background px-3 text-base shadow-[0_6px_24px_-12px_rgb(0_0_0/0.25)] has-[[data-slot=input-group-control]:focus-visible]:ring-ring/15">
+    <Combobox autoHighlight items={entries} filter={(e: MapEntry, q: string) => matches(e, q)} itemToStringLabel={(e: MapEntry) => e.name} value={null} onValueChange={(e) => e && onPick(e as MapEntry)}>
+      <ComboboxInput showTrigger={false} aria-label="自治体名で探す" placeholder={placeholder} className="h-12 rounded-full border-0 bg-background px-2 text-[15px] text-foreground has-[[data-slot=input-group-control]:focus-visible]:ring-white/40">
         <InputGroupAddon>
           <MagnifyingGlassIcon className="size-5" />
         </InputGroupAddon>
@@ -95,66 +77,134 @@ function FindJurisdiction({ entries }: { entries: MapEntry[] }) {
   )
 }
 
-function FeaturedCard({ f }: { f: Featured }) {
-  return (
-    <Link href={f.path} className="group flex h-full flex-col rounded-[var(--radius-card)] border bg-card p-5 transition-colors hover:border-primary sm:p-6">
-      <div className="flex items-center gap-4">
-        <Emblem code={f.code} className="size-16" />
-        <div className="min-w-0">
-          <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <SparkleIcon className="size-3.5 text-primary" />
-            くわしく見られます
-          </p>
-          <p className="mt-0.5 text-2xl font-bold">{f.name}</p>
-          {f.vision ? <p className="mt-1 truncate text-sm text-muted-foreground">{f.vision}</p> : null}
-        </div>
-      </div>
-      <ul className="mt-5 flex flex-wrap gap-2">
-        {f.sections.map((s) => (
-          <li key={s} className="rounded-full bg-accent px-3 py-1 text-[13px] text-accent-foreground">
-            {s}
-          </li>
-        ))}
-      </ul>
-      <span className="mt-auto flex items-center gap-1 pt-5 text-sm text-primary">
-        {f.name}のページを開く
-        <ArrowRightIcon className="transition-transform group-hover:translate-x-0.5" />
-      </span>
-    </Link>
-  )
-}
+/** うちのまちで出す、その自治体の情報の入口。hash は自治体の頁の目次の id。くわしい頁の無い自治体には無い節は出さない */
+const townLinks = (name: string, detailed: boolean) => [
+  { label: 'お金の使い道', hash: '#budget', icon: <CoinsIcon /> },
+  ...(detailed
+    ? [
+        { label: '新しく始めること', hash: '#domains', icon: <PencilSimpleIcon /> },
+        { label: `${name.slice(-1)}の仕事と評価`, hash: '#about', icon: <ClipboardTextIcon /> },
+      ]
+    : []),
+  { label: '議会', icon: <GavelIcon /> },
+  { label: '選挙', icon: <CheckSquareOffsetIcon /> },
+]
 
-function AskCard({ sitekey }: { sitekey: string }) {
-  const placeholder = useTypedPlaceholder(TYPED_EXAMPLES)
+/**
+ * うちのまち。選んだ自治体はブラウザに残し、サーバーで描く HTML では選ぶ前の形を出す（描いたあとに読む）。
+ * まだ選んでいなければ最近見た自治体で代える
+ */
+function MyTown({ entries, featured }: HomeProps) {
+  const byCode = React.useMemo(() => new Map(entries.map((e) => [e.code, e])), [entries])
+  const [code, setCode] = React.useState<string | null>(null)
+  const [editing, setEditing] = React.useState(false)
+  React.useEffect(() => setCode(loadHomeCode() ?? loadRecent()[0]?.code ?? null), [])
+  const town = code ? byCode.get(code) : undefined
+  const vision = town && featured.find((f) => f.code === town.code)?.vision
+  const pick = (e: MapEntry) => {
+    saveHomeCode(e.code)
+    setCode(e.code)
+    setEditing(false)
+  }
   return (
-    <div className="flex h-full flex-col rounded-[var(--radius-card)] border bg-card p-5 sm:p-6">
-      <p className="flex items-center gap-2 text-base font-bold">
-        <ChatsIcon className="size-5 text-muted-foreground" />
-        アシスタントに聞く
-      </p>
-      <p className="mt-1 mb-4 text-sm text-muted-foreground">予算・決算のことを、出典の頁つきで答えます。</p>
-      <div className="mt-auto">
-        <StartForm sitekey={sitekey} placeholder={placeholder} />
+    <section aria-labelledby="town-h" className="rounded-[24px] bg-primary p-5 text-primary-foreground sm:p-7">
+      <div className="flex items-center justify-between gap-3">
+        <h2 id="town-h" className="text-sm opacity-80">
+          うちのまち
+        </h2>
+        {town && !editing ? (
+          <button type="button" onClick={() => setEditing(true)} className="rounded-full px-3 py-1 text-[13px] opacity-80 transition hover:bg-white/10 hover:opacity-100">
+            変える
+          </button>
+        ) : null}
       </div>
-    </div>
-  )
-}
-
-function Tiles({ entries }: { entries: MapEntry[] }) {
-  return (
-    <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
-      {entries.map((e) => (
-        <li key={e.code}>
-          <Link href={e.path} className="flex items-center gap-3 rounded-xl border bg-background p-2.5 transition-colors hover:border-primary hover:bg-accent">
-            <Emblem code={e.code} className="size-9" />
-            <span className="min-w-0">
-              <span className="block truncate text-sm font-medium">{e.name}</span>
-              <span className="block text-xs text-muted-foreground tabular-nums">歳出 {formatYen(e.yen)}</span>
+      {town && !editing ? (
+        <>
+          <Link href={town.path} className="group mt-3 flex items-center gap-4">
+            <Emblem code={town.code} name={town.name} className="size-14 rounded-2xl border-0 p-2 sm:size-16" />
+            <span className="min-w-0 flex-1">
+              <span className="block text-2xl font-bold sm:text-[28px]">{town.name}</span>
+              {vision ? <span className="mt-0.5 block truncate text-sm opacity-80">{vision}</span> : null}
             </span>
+            <ArrowRightIcon className="size-5 shrink-0 opacity-80 transition-transform group-hover:translate-x-1" />
           </Link>
-        </li>
-      ))}
-    </ul>
+          <ul className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-5">
+            {townLinks(town.name, featured.some((f) => f.code === town.code)).map((l) => (
+              <li key={l.label}>
+                {l.hash ? (
+                  <Link href={`${town.path}${l.hash}`} className="flex h-full flex-col gap-2 rounded-2xl bg-white/10 p-3.5 text-sm transition-colors hover:bg-white/20 [&_svg]:size-5">
+                    {l.icon}
+                    {l.label}
+                  </Link>
+                ) : (
+                  <span className="flex h-full flex-col gap-2 rounded-2xl border border-white/15 p-3.5 text-sm opacity-60 [&_svg]:size-5">
+                    {l.icon}
+                    <span>
+                      {l.label}
+                      <span className="ml-1.5 text-[11px]">準備中</span>
+                    </span>
+                  </span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : (
+        <div className="mt-3">
+          <p className="text-xl font-bold sm:text-2xl">住んでいるまちを選ぶ</p>
+          <p className="mt-1 mb-4 text-sm opacity-80">選ぶと、そのまちのお金・事業・議会・選挙への入口がここに並びます。</p>
+          {entries.length ? <Picker entries={entries} onPick={pick} placeholder="自治体名で探す（例：品川）" /> : null}
+          {editing ? (
+            <button type="button" onClick={() => setEditing(false)} className="mt-3 text-[13px] opacity-80 hover:opacity-100">
+              やめる
+            </button>
+          ) : null}
+        </div>
+      )}
+    </section>
+  )
+}
+
+/** 見られる情報の種類。収録の無いものは準備中として並べる */
+function Topics({ entries, featured }: HomeProps) {
+  const topics = [
+    { title: '予算・決算', body: '何にいくら使ったか', meta: `${entries.length}の自治体`, href: INDEX_PATH, icon: <CoinsIcon /> },
+    { title: '事業評価', body: '事業をどう振り返ったか', meta: featured.map((f) => f.name).join('・'), href: featured[0] ? `${featured[0].path}#about` : undefined, icon: <ClipboardTextIcon /> },
+    { title: '議会', body: '何を決めたか（議案・議決）', icon: <GavelIcon /> },
+    { title: '選挙', body: '誰が立ち、どうなったか', icon: <CheckSquareOffsetIcon /> },
+  ]
+  return (
+    <section aria-labelledby="topics-h" className="mt-12">
+      <h2 id="topics-h" className="mb-4 text-lg font-bold">
+        見られる情報
+      </h2>
+      <ul className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {topics.map((t) => {
+          const inner = (
+            <>
+              <span className="flex items-center justify-between text-muted-foreground [&_svg]:size-6">
+                {t.icon}
+                {t.href ? <ArrowRightIcon className="size-4!" /> : <span className="rounded-full bg-secondary px-2 py-0.5 text-[11px] text-secondary-foreground">準備中</span>}
+              </span>
+              <span className="mt-6 block text-base font-bold">{t.title}</span>
+              <span className="mt-0.5 block text-[13px] text-muted-foreground">{t.body}</span>
+              {t.meta ? <span className="mt-3 block text-xs text-primary">{t.meta}</span> : null}
+            </>
+          )
+          return (
+            <li key={t.title}>
+              {t.href ? (
+                <Link href={t.href} className="flex h-full flex-col rounded-2xl border bg-background p-4 transition-colors hover:bg-card sm:p-5">
+                  {inner}
+                </Link>
+              ) : (
+                <div className="flex h-full flex-col rounded-2xl border border-dashed bg-background p-4 opacity-70 sm:p-5">{inner}</div>
+              )}
+            </li>
+          )
+        })}
+      </ul>
+    </section>
   )
 }
 
@@ -163,92 +213,82 @@ function Updates({ entries }: { entries: MapEntry[] }) {
   const rows = UPDATES.flatMap((u) => {
     const e = byCode.get(u.code)
     return e ? [{ ...u, e }] : []
-  })
+  }).slice(0, 5)
   if (!rows.length) return null
   return (
-    <ul className="divide-y rounded-[var(--radius-card)] border bg-background">
-      {rows.map((u) => (
-        <li key={`${u.code}-${u.text}`}>
-          <Link href={u.e.path} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-accent">
-            <span className="w-10 shrink-0 text-xs text-muted-foreground tabular-nums">{u.date}</span>
-            <Emblem code={u.code} className="size-7 rounded-lg p-1" />
-            <span className="min-w-0 flex-1 truncate text-sm">
-              <span className="font-medium">{u.e.name}</span>
-              <span className="text-muted-foreground">　{u.text}を追加</span>
-            </span>
-            <ArrowRightIcon className="size-4 shrink-0 text-muted-foreground" />
-          </Link>
-        </li>
-      ))}
-    </ul>
+    <section aria-labelledby="updates-h" className="mt-12">
+      <h2 id="updates-h" className="mb-4 text-lg font-bold">
+        最近の更新
+      </h2>
+      <ul className="divide-y rounded-2xl border bg-background">
+        {rows.map((u) => (
+          <li key={`${u.code}-${u.text}`}>
+            <Link href={u.e.path} className="flex items-center gap-3 px-4 py-3 transition-colors first:rounded-t-2xl last:rounded-b-2xl hover:bg-card">
+              <span className="w-9 shrink-0 text-xs text-muted-foreground tabular-nums">{u.date}</span>
+              <Emblem code={u.code} name={u.e.name} className="size-7 rounded-lg p-1" />
+              <span className="min-w-0 flex-1 truncate text-sm">
+                <span className="font-medium">{u.e.name}</span>
+                <span className="ml-2 text-muted-foreground">{u.text}</span>
+              </span>
+              <ArrowRightIcon className="size-4 shrink-0 text-muted-foreground" />
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </section>
   )
 }
 
-const CONNECT = [
-  { title: 'ChatGPT で使う', body: 'plugin を追加すると、会話の中で調べられます', href: CHATGPT_PLUGIN, icon: <PlugIcon /> },
-  { title: 'Claude などで使う（MCP）', body: '接続先の URL を登録するだけ。登録はいりません', href: `${DOCS}/mcp`, icon: <PlugIcon /> },
-  { title: 'API・データの説明', body: 'REST API と、データの読み方', href: DOCS, icon: <BookOpenIcon /> },
+const MORE = [
+  { title: 'アシスタントに聞く', body: '予算・決算のことを AI に聞く', href: '/assistant' },
+  { title: '自分の AI から使う', body: 'ChatGPT・Claude などにつなぐ（MCP）', href: `${DOCS}/mcp` },
+  { title: 'API・データ', body: 'REST API とデータの読み方', href: DOCS },
+  { title: '風土記について', body: '何を、どう集めているか', href: '/about' },
 ]
 
-export function Home({ sitekey, entries, featured }: HomeProps) {
-  const municipalities = React.useMemo(() => entries.filter((e) => e.kind !== '都道府県'), [entries])
-  const tiles = React.useMemo(() => [...municipalities].sort((a, b) => b.yen - a.yen).slice(0, 12), [municipalities])
+function More() {
   return (
-    <main id="home" className="mx-auto w-full max-w-5xl px-4 pt-12 pb-28 sm:px-8 sm:pt-16">
-      <header className="mx-auto max-w-2xl text-center">
-        <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-accent">
-          <Mark className="size-7 text-primary" />
-        </div>
-        <h1 className="mt-5 text-[28px] leading-[1.35] font-bold tracking-[0.02em] sm:text-4xl">うちのまち、なにしてる？</h1>
-        <p className="mt-3 text-[15px] text-muted-foreground">
-          自治体が何を決めて、何にいくら使ったか。
-          <br className="sm:hidden" />
-          {municipalities.length ? `${entries.length}の自治体の予算・決算を、出典つきで。` : '予算・決算を、出典つきで。'}
-        </p>
-        <div className="mt-7 text-left">{entries.length ? <FindJurisdiction entries={entries} /> : null}</div>
+    <nav aria-label="ほかの使い方" className="mt-12 grid gap-x-8 border-t sm:grid-cols-2">
+      {MORE.map((m) => {
+        const external = !m.href.startsWith('/')
+        const cls = 'flex items-center gap-3 border-b py-4 transition-colors hover:text-primary'
+        const inner = (
+          <>
+            <span className="min-w-0 flex-1">
+              <span className="block text-sm font-medium">{m.title}</span>
+              <span className="block text-xs text-muted-foreground">{m.body}</span>
+            </span>
+            {external ? <ArrowUpRightIcon className="size-4 text-muted-foreground" /> : <ArrowRightIcon className="size-4 text-muted-foreground" />}
+          </>
+        )
+        return external ? (
+          <a key={m.title} href={m.href} className={cls}>
+            {inner}
+          </a>
+        ) : (
+          <Link key={m.title} href={m.href} className={cls}>
+            {inner}
+          </Link>
+        )
+      })}
+    </nav>
+  )
+}
+
+export function Home(props: HomeProps) {
+  return (
+    <main id="home" className="mx-auto w-full max-w-4xl px-4 pt-10 pb-28 sm:px-8 sm:pt-16">
+      <header className="mb-6">
+        <h1 className="text-[26px] leading-[1.35] font-bold tracking-[0.02em] sm:text-[32px]">うちのまち、なにしてる？</h1>
+        <p className="mt-1.5 text-[15px] text-muted-foreground">自治体が何を決めて、何にいくら使ったかを、出典つきで。</p>
       </header>
-
-      <section className="mt-14 grid gap-4 md:grid-cols-2" aria-label="はじめる">
-        {featured.map((f) => (
-          <FeaturedCard key={f.code} f={f} />
-        ))}
-        <AskCard sitekey={sitekey} />
-      </section>
-
-      {tiles.length ? (
-        <section className="mt-14" aria-label="自治体から見る">
-          <SectionHead title="自治体から見る" href={INDEX_PATH} more={`すべての自治体（${entries.length}）`} />
-          <Tiles entries={tiles} />
-        </section>
-      ) : null}
-
-      <div className="mt-14 grid gap-10 md:grid-cols-[1.2fr_1fr] md:gap-8">
-        <section aria-label="最近ふえたデータ">
-          <SectionHead title="最近ふえたデータ" />
-          <Updates entries={entries} />
-        </section>
-        <section aria-label="自分の AI から使う">
-          <SectionHead title="自分の AI から使う" />
-          <ul className="grid gap-2">
-            {CONNECT.map((c) => (
-              <li key={c.title}>
-                <a href={c.href} target="_blank" rel="noopener noreferrer" className="flex items-start gap-3 rounded-xl border bg-background p-3.5 transition-colors hover:border-primary hover:bg-accent [&>svg]:mt-0.5 [&>svg]:size-5 [&>svg]:shrink-0 [&>svg]:text-muted-foreground">
-                  {c.icon}
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-sm font-medium">{c.title}</span>
-                    <span className="block text-xs text-muted-foreground">{c.body}</span>
-                  </span>
-                  <ArrowUpRightIcon className="size-4! text-muted-foreground" />
-                </a>
-              </li>
-            ))}
-          </ul>
-        </section>
-      </div>
-
-      <footer className="mt-20 flex flex-wrap items-center justify-between gap-4 border-t pt-6 text-xs text-muted-foreground">
+      <MyTown {...props} />
+      <Topics {...props} />
+      <Updates entries={props.entries} />
+      <More />
+      <footer className="mt-12 flex flex-wrap items-center justify-between gap-4 text-xs text-muted-foreground">
         <span>© 2026 風土記</span>
-        <nav aria-label="決まりごと" className="flex flex-wrap gap-x-5 gap-y-2">
+        <span className="flex flex-wrap gap-x-5 gap-y-2">
           <a href={`${DOCS}/terms`} className="hover:text-foreground">
             利用規約
           </a>
@@ -261,7 +301,7 @@ export function Home({ sitekey, entries, featured }: HomeProps) {
           <a href="mailto:support@fudoki.dev" className="hover:text-foreground">
             お問い合わせ
           </a>
-        </nav>
+        </span>
       </footer>
     </main>
   )
