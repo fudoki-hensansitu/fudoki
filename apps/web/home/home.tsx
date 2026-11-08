@@ -88,7 +88,7 @@ const townLinks = (name: string) => [
   { label: '選挙', icon: <CheckSquareOffsetIcon /> },
 ]
 
-/** 現在地から自治体を選ぶボタン。押したときだけ位置情報の許可を求める */
+/** 現在地から自治体を選ぶボタン。開いた時点の自動の判定で取れなかったときや、変えるときに使う */
 function LocateButton({ entries, onPick }: { entries: MapEntry[]; onPick: (e: MapEntry) => void }) {
   const [state, setState] = React.useState<{ busy?: boolean; error?: string }>({})
   const locate = async () => {
@@ -121,18 +121,39 @@ function LocateButton({ entries, onPick }: { entries: MapEntry[]; onPick: (e: Ma
 
 /**
  * うちのまち。選んだ自治体はブラウザに残し、サーバーで描く HTML では選ぶ前の形を出す（描いたあとに読む）。
- * まだ選んでいなければ最近見た自治体で代える
+ * まだ選んでいなければ開いた時点で現在地を調べて出し（保存はしない）、取れなければ最近見た自治体で代える
  */
 function MyTown({ entries, featured }: HomeProps) {
   const byCode = React.useMemo(() => new Map(entries.map((e) => [e.code, e])), [entries])
   const [code, setCode] = React.useState<string | null>(null)
   const [editing, setEditing] = React.useState(false)
-  React.useEffect(() => setCode(loadHomeCode() ?? loadRecent()[0]?.code ?? null), [])
+  const [here, setHere] = React.useState<'locating' | 'found' | null>(null)
+  React.useEffect(() => {
+    const saved = loadHomeCode()
+    const fallback = () => setCode(saved ?? loadRecent()[0]?.code ?? null)
+    if (saved || !entries.length) return fallback()
+    // まだ選んでいなければ、開いた時点で現在地を調べる。取れなければ最近見た自治体で代える
+    let alive = true
+    setHere('locating')
+    locateMunicipality()
+      .then((muni) => {
+        const hit = entries.find((e) => e.code.startsWith(muni))
+        if (!alive) return
+        if (!hit) return (setHere(null), fallback())
+        setCode(hit.code)
+        setHere('found')
+      })
+      .catch(() => alive && (setHere(null), fallback()))
+    return () => {
+      alive = false
+    }
+  }, [entries])
   const town = code ? byCode.get(code) : undefined
   const vision = town && featured.find((f) => f.code === town.code)?.vision
   const pick = (e: MapEntry) => {
     saveHomeCode(e.code)
     setCode(e.code)
+    setHere(null)
     setEditing(false)
   }
   return (
@@ -140,6 +161,7 @@ function MyTown({ entries, featured }: HomeProps) {
       <div className="flex items-center justify-between gap-3">
         <h2 id="town-h" className="text-sm opacity-80">
           うちのまち
+          {town && !editing && here === 'found' ? <span className="ml-2 text-[12px]">· 現在地から</span> : null}
         </h2>
         {town && !editing ? (
           <button type="button" onClick={() => setEditing(true)} className="rounded-full px-3 py-1 text-[13px] opacity-80 transition hover:bg-white/10 hover:opacity-100">
@@ -180,7 +202,7 @@ function MyTown({ entries, featured }: HomeProps) {
         </>
       ) : (
         <div className="mt-3">
-          <p className="text-xl font-bold sm:text-2xl">住んでいるまちを選ぶ</p>
+          <p className="text-xl font-bold sm:text-2xl">{here === 'locating' && !editing ? '現在地のまちを調べています…' : '住んでいるまちを選ぶ'}</p>
           {entries.length ? (
             <>
               <p className="mt-1 mb-4 text-sm opacity-80">選ぶと、そのまちの仕事とお金への入口がここに並びます。議会・選挙は準備中です。</p>
