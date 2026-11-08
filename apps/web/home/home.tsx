@@ -167,7 +167,7 @@ function MyTown({ entries, featured }: HomeProps) {
         </h2>
         {town && !editing ? (
           <button type="button" onClick={() => setEditing(true)} className="rounded-full px-3 py-1 text-[13px] opacity-80 transition hover:bg-white/10 hover:opacity-100">
-            変える
+            位置情報をリセット
           </button>
         ) : null}
       </div>
@@ -179,7 +179,10 @@ function MyTown({ entries, featured }: HomeProps) {
               <span className="block text-2xl font-bold sm:text-[28px]">{town.name}</span>
               {vision ? <span className="mt-0.5 block truncate text-sm opacity-80">{vision}</span> : null}
             </span>
-            <ArrowRightIcon className="size-5 shrink-0 opacity-80 transition-transform group-hover:translate-x-1" />
+            <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-background px-3.5 py-2 text-[13px] font-medium text-foreground transition-colors group-hover:bg-card">
+              <span className="hidden sm:inline">ページを見る</span>
+              <ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-0.5" />
+            </span>
           </Link>
           <ul className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
             {townLinks(town.name).map((l) => (

@@ -606,7 +606,7 @@ export function Landing() {
               <Circle />
             </span>
           </h1>
-          <p className="sub">まちが決めたこと、使ったお金、その振り返り。議会の議決や選挙の候補者まで、あなたのまちのことを、ひとつの場所で、出典つきで。</p>
+          <p className="sub">自治体の予算・決算・事業評価を、事業ごとにわかりやすくまとめています。議会の議案や選挙の候補者も、同じ場所で見られます。どの数字も、自治体の資料の頁まで辿れます。</p>
           <div className="acts">
             <Link className="btn" href={JURISDICTIONS}>
               自分のまちを見る
@@ -922,7 +922,7 @@ export function Landing() {
             <Link href="/" aria-label="風土記 ホーム">
               <svg className="logo" xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${LOGO_WIDTH} 40`} role="img" aria-label="風土記" dangerouslySetInnerHTML={{ __html: `<title>風土記</title>${LOGO_G}` }} />
             </Link>
-            <p>うちのまち、なにしてる？まちが何を決めて、何をしているかを、出典つきで誰でも見られる形に。</p>
+            <p>自治体の予算・決算・事業評価を、出典つきでわかりやすく見られるサイトです。</p>
           </div>
           <div>
             <h2>使う</h2>
