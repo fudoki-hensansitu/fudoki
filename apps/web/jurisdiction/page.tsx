@@ -8,6 +8,7 @@ import { StartForm } from '../chat/start-form'
 import type { StoredSession } from '../chat/store'
 import { Hint } from '@/components/hint'
 import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { StopIcon, NewIcon, UpIcon } from './fresh-icons'
 import { DOMAIN_FRAMES, groupByFrame, OTHER_FRAME } from './domains'
@@ -406,12 +407,10 @@ function Elsewhere({ data }: { data: PageData }) {
   )
 }
 
-function DomainIcon({ id }: { id: string }) {
+function DomainIcon({ id, className }: { id: string; className?: string }) {
   const Icon = DOMAIN_ICON[id]
   if (!Icon) return <span aria-hidden="true" className="h-6 w-1 rounded-full bg-primary" />
-  return (
-    <Icon aria-hidden="true" className="size-6 shrink-0 text-primary sm:size-7" />
-  )
+  return <Icon aria-hidden="true" className={cn('size-6 shrink-0 text-primary sm:size-7', className)} />
 }
 
 function ProjectRow({ p, rank, max, total, people, showChange, shown }: { p: Project; rank: number; max: number; total?: number; people?: number; showChange: boolean; shown: boolean }) {
@@ -435,7 +434,11 @@ function ProjectRow({ p, rank, max, total, people, showChange, shown }: { p: Pro
         <span className="text-xl tabular-nums text-muted-foreground">{rank}</span>
         <div className="min-w-0">
           <h3 className="text-base font-normal leading-snug">{p.name}</h3>
-          <span className="text-xs text-muted-foreground">{p.domain}</span>
+          {/* 分野は「新しく何を始める？」の分野と同じ icon を添える */}
+          <span className="flex items-center gap-1 text-xs text-muted-foreground">
+            <DomainIcon id={DOMAIN_FRAMES.find((f) => f.name === p.domain)?.id ?? OTHER_FRAME.id} className="size-4 sm:size-4" />
+            {p.domain}
+          </span>
         </div>
         {/* 棒は1位を満たした長さ。スマホでは名前の下に、名前の左端から並べる */}
         <div className="order-5 col-span-2 col-start-2 sm:order-none sm:col-span-1 sm:col-start-auto">
