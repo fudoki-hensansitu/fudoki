@@ -274,8 +274,7 @@ function FrameItems<T>({ items, render, limit = FRAME_LIMIT }: { items: T[]; ren
           <div className="mt-4 flex flex-wrap justify-center gap-2">
             {left > 0 ? (
               <Button variant="outline" onClick={more} className={button}>
-                {`さらに${Math.min(limit, left)}件を見る`}
-                <span className="text-muted-foreground tabular-nums">（残り{left}件）</span>
+                もっと見る
                 <CaretDownIcon aria-hidden="true" className="size-3.5" />
               </Button>
             ) : null}
@@ -286,7 +285,7 @@ function FrameItems<T>({ items, render, limit = FRAME_LIMIT }: { items: T[]; ren
           </div>
         ) : (
           <Button variant="outline" onClick={more} aria-expanded={false} className={`${button} absolute bottom-2 left-1/2 -translate-x-1/2`}>
-            {rest > limit ? `ほか${rest}件から${limit}件を見る` : `ほか${rest}件を見る`}
+            もっと見る
             <CaretDownIcon aria-hidden="true" className="size-3.5" />
           </Button>
         )}
