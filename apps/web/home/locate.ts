@@ -1,5 +1,5 @@
 // 現在地の市区町村。ブラウザの位置情報（押したときだけ許可を求める）を国土地理院の逆ジオコーダーに渡し、市区町村コード（検査数字を除く5桁）を得る。
-// 位置は風土記のサーバーには送らない
+// 緯度・経度と IP アドレスは国土地理院に届く（プライバシーポリシーに記載）。風土記のサーバーには送らない
 const REVERSE_GEOCODER = 'https://mreversegeocoder.gsi.go.jp/reverse-geocoder/LonLatToAddress'
 
 export class LocateError extends Error {}

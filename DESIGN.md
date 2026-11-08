@@ -198,7 +198,7 @@ shadcn/ui の語彙。色の役割は次のとおり。
 - `apps/web/styles/tokens.css` の `:root` は本ファイルの Tokens から写す。直接の値の変更はここを先に直す
 - 見出しの明朝は BIZ UDP明朝 Regular（google/fonts の commit `9710da1e` で固定、SHA-256 は `apps/web/brand/home_font.py`、OFL は `apps/web/brand/fonts/bizudpmincho-OFL.txt`）を、頁で使う字だけに絞って自前で配る。文言を変えたら `bun run --cwd apps/web build:font` で `public/fonts/mincho.woff2` を作り直す
 - 重いファイル（ホームの録画・出典の切り抜き）は `apps/web/public/` に置き、Workers static assets で配る。録画は `apps/web/brand/home_demo.sh`（冒頭に映る利用者名を覆う）、切り抜きは `bun run --cwd apps/web build:origin` で作り直す
-- 閲覧者の IP を第三者へ渡さないため、Google Fonts などの外部 CDN から書体を読まない
+- 閲覧者の IP を第三者へ渡さないため、Google Fonts などの外部 CDN から書体を読まない。外部へ送るのは、利用者が押したときの操作に限る（ホームの「現在地から選ぶ」が国土地理院の逆ジオコーダーへ緯度・経度を送る。プライバシーポリシーに記載）
 
 ## Notes
 - 参考の質感は flavors.design の Groanola（白い机・oat の窓・低コントラストの serif・ピル・紙と網点のコラージュ）。黄緑の紙と桃・藤の網点は、青丹と緑が2つ並ぶため生成り・朱・藍に置き換えた
