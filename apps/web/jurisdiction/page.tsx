@@ -183,6 +183,8 @@ function BudgetItem({ p, press }: { p: PressItem; press?: string }) {
 const FRAME_PREVIEW = 3
 /** 閉じているときに見せる、薄く消える行の高さ（px） */
 const FRAME_PEEK = 96
+/** 「見る」1回で開く件数の既定値 */
+const FRAME_LIMIT = 25
 /** 開閉で高さが動く時間（ms）。Tailwind の duration-300 と揃える */
 const FRAME_DURATION = 300
 
@@ -199,38 +201,62 @@ function scrollToIn(top: number, ms: number) {
   requestAnimationFrame(step)
 }
 
-function FrameItems<T>({ items, render }: { items: T[]; render: (item: T) => React.ReactNode }) {
-  const [open, setOpen] = React.useState(false)
+function FrameItems<T>({ items, render, limit = FRAME_LIMIT }: { items: T[]; render: (item: T) => React.ReactNode; /** 1回の「見る」で開く件数 */ limit?: number }) {
+  // 開いている残りの件数。0 は閉じている
+  const [count, setCount] = React.useState(0)
+  const open = count > 0
   // 高さは閉じているとき FRAME_PEEK、開くときは中身の高さへ動かし、開き終わったら auto にして幅の変化に追従させる
   const [height, setHeight] = React.useState<number | 'auto'>(FRAME_PEEK)
+  // 「さらに見る」で行を足したあと、足した分の高さまで動かす
+  const grow = React.useRef(false)
   const wrap = React.useRef<HTMLDivElement>(null)
   const body = React.useRef<HTMLDivElement>(null)
-  const rest = items.length - FRAME_PREVIEW
+  const restItems = items.slice(FRAME_PREVIEW)
+  const rest = restItems.length
+  React.useLayoutEffect(() => {
+    if (!grow.current || !body.current) return
+    grow.current = false
+    const el = body.current
+    requestAnimationFrame(() => setHeight(el.scrollHeight))
+  }, [count])
   if (rest <= 0) return <>{items.map(render)}</>
-  const toggle = () => {
+  const still = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const more = () => {
     const el = body.current
     if (!el) return
-    const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const next = Math.min(rest, count + limit)
     if (!open) {
-      setOpen(true)
+      // 閉じているときも最初の limit 件までは描いてあるので、その高さへそのまま動かす
+      setCount(next)
       // 動きを減らす設定では transition が走らず transitionend も来ないので、最初から auto にする
-      setHeight(still ? 'auto' : el.scrollHeight)
+      setHeight(still() ? 'auto' : el.scrollHeight)
       return
     }
+    setCount(next)
+    if (still()) return
+    // 今の高さを固定してから行を足し、足した分の高さへ動かす
+    setHeight(el.scrollHeight)
+    grow.current = true
+  }
+  const close = () => {
+    const el = body.current
+    if (!el) return
     // 閉じるときは今の高さを固定してから縮める。同時に、最後に見せている行（3件目）が画面の真ん中に来るまで、縮みと同じ時間でスクロールを戻す
     setHeight(el.scrollHeight)
     requestAnimationFrame(() => requestAnimationFrame(() => setHeight(FRAME_PEEK)))
-    setOpen(false)
+    setCount(0)
     const last = wrap.current?.previousElementSibling
     if (!last) return
     const r = last.getBoundingClientRect()
     const target = Math.max(0, window.scrollY + r.top + r.height / 2 - window.innerHeight / 2)
-    if (target < window.scrollY) scrollToIn(target, still ? 0 : FRAME_DURATION)
+    if (target < window.scrollY) scrollToIn(target, still() ? 0 : FRAME_DURATION)
   }
+  const left = rest - count
+  const button = 'rounded-full bg-background px-5 shadow-sm transition-colors hover:bg-card aria-expanded:bg-background'
   return (
     <>
       {items.slice(0, FRAME_PREVIEW).map(render)}
-      {/* 残りは最初から描き、閉じているときは1件目だけ薄く消える形で見せる。開くボタンはその上の真ん中、開いたあとは最後の行の下の真ん中に置く */}
+      {/* 残りは limit 件ずつ描く。閉じているときは1件目だけ薄く消える形で見せる。開くボタンはその上の真ん中、開いたあとは最後の行の下の真ん中に置く */}
       <div ref={wrap} className="relative flex flex-col items-center">
         <div
           ref={body}
@@ -242,17 +268,28 @@ function FrameItems<T>({ items, render }: { items: T[]; render: (item: T) => Rea
           style={{ height }}
           className={`w-full overflow-hidden transition-[height] duration-300 ease-out motion-reduce:transition-none ${open ? '' : 'pointer-events-none [mask-image:linear-gradient(to_bottom,black_10%,transparent)]'}`}
         >
-          {items.slice(FRAME_PREVIEW).map(render)}
+          {restItems.slice(0, open ? count : Math.min(limit, rest)).map(render)}
         </div>
-        <Button
-          variant="outline"
-          onClick={toggle}
-          aria-expanded={open}
-          className={`rounded-full bg-background px-5 shadow-sm transition-colors hover:bg-card aria-expanded:bg-background ${open ? 'mt-4' : 'absolute bottom-2 left-1/2 -translate-x-1/2'}`}
-        >
-          {open ? '閉じる' : `ほか${rest}件を見る`}
-          <CaretDownIcon aria-hidden="true" className={`size-3.5 transition-transform ${open ? 'rotate-180' : ''}`} />
-        </Button>
+        {open ? (
+          <div className="mt-4 flex flex-wrap justify-center gap-2">
+            {left > 0 ? (
+              <Button variant="outline" onClick={more} className={button}>
+                {`さらに${Math.min(limit, left)}件を見る`}
+                <span className="text-muted-foreground tabular-nums">（残り{left}件）</span>
+                <CaretDownIcon aria-hidden="true" className="size-3.5" />
+              </Button>
+            ) : null}
+            <Button variant="outline" onClick={close} aria-expanded className={button}>
+              閉じる
+              <CaretDownIcon aria-hidden="true" className="size-3.5 rotate-180" />
+            </Button>
+          </div>
+        ) : (
+          <Button variant="outline" onClick={more} aria-expanded={false} className={`${button} absolute bottom-2 left-1/2 -translate-x-1/2`}>
+            {rest > limit ? `ほか${rest}件から${limit}件を見る` : `ほか${rest}件を見る`}
+            <CaretDownIcon aria-hidden="true" className="size-3.5" />
+          </Button>
+        )}
       </div>
     </>
   )
@@ -680,7 +717,7 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
     setGrade(next)
     e.currentTarget.querySelector<HTMLButtonElement>(`[data-grade="${next}"]`)?.focus()
   }
-  const rows = grade === 'D' ? scrap.exits.map((e, i) => ({ i, name: e.name, kind: e.result, reason: e.reason })) : (scrap.graded?.[grade] ?? []).map((p, i) => ({ i, name: p.name, kind: p.direction, reason: '' }))
+  const rows = grade === 'D' ? scrap.exits.map((e, i) => ({ i, name: e.name, kind: e.result, reason: e.reason })) : (scrap.graded?.[grade] ?? []).map((p, i) => ({ i, name: p.name, kind: p.direction, reason: p.reason }))
   return (
     <Section id="scrap" title="やめたこと・見直したことは？" lead="自治体は毎年、前の年度までに行った事業を評価して、やめる事業や減らす事業を決め、その分を新しい予算に回しています。">
       {/* 浮かせたお金の棒は節の中央に置き、下の「自治体が付けた評価」の見出しと離す（棒の見出しに見えないように） */}
