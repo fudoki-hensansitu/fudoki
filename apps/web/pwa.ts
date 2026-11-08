@@ -5,7 +5,7 @@ import { BACKGROUND_DARK, BACKGROUND_LIGHT } from './tokens'
 export const MANIFEST = JSON.stringify({
   name: '風土記（fudoki）— うちのまち、なにしてる？',
   short_name: '風土記',
-  description: 'あなたの一票が、まちのお金の使い道になる。選挙・議会から予算・決算・事業評価まで、うちのまちのことをわかりやすく見られるサイトです。',
+  description: 'あなたの一票が、まちのお金の使い道になる。選挙で選んだ人が議会で予算を決め、まちがそれを使い、振り返る。風土記は、その一続きをうちのまちごとに、わかりやすく見せます。',
   lang: 'ja',
   start_url: '/',
   scope: '/',

@@ -922,7 +922,7 @@ export function Landing() {
             <Link href="/" aria-label="風土記 ホーム">
               <svg className="logo" xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${LOGO_WIDTH} 40`} role="img" aria-label="風土記" dangerouslySetInnerHTML={{ __html: `<title>風土記</title>${LOGO_G}` }} />
             </Link>
-            <p>あなたの一票が、まちのお金の使い道になる。選挙・議会から予算・決算・事業評価まで、うちのまちのことをわかりやすく見られるサイトです。</p>
+            <p>あなたの一票が、まちのお金の使い道になる。選挙で選んだ人が議会で予算を決め、まちがそれを使い、振り返る。風土記は、その一続きをうちのまちごとに、わかりやすく見せます。</p>
           </div>
           <div>
             <h2>使う</h2>
