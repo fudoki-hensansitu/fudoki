@@ -1,8 +1,7 @@
-// 風土記について（/about）の読み物。視覚の規範は repo root の DESIGN.md、CSS は landing.css（.landing の中に閉じる）。
+// 風土記について（/about）。利用者に風土記を知ってもらう LP。視覚の規範は repo root の DESIGN.md、CSS は landing.css（.landing の中に閉じる）。
 // 見出しの明朝は /fonts/mincho.woff2（この頁で使う字だけの subset）。文言を変えたら `bun run --cwd apps/web build:font` で作り直す
-// 動き（見出しの sweep・3つのステップの現在地・表の切り替え・録画の再生）はどれも無くても読める
+// 動き（見出しの sweep・節の浮き上がり・録画の再生）はどれも無くても読める。議会・選挙・事業評価の画面は架空のデータのイメージ
 import * as React from 'react'
-import { flushSync } from 'react-dom'
 import { Link } from '@void/react'
 import { Hint } from '@/components/hint'
 import { HOME } from '../home-data'
@@ -51,7 +50,7 @@ function useFlash(idle: string): [string, (t: string) => void] {
   ]
 }
 
-const { nakano, ledgers, origin, library } = HOME
+const { origin, library } = HOME
 const libraryMax = Math.max(...library.rows.map((r) => r.amount))
 
 /** 見出し。画面に入ったら一度だけ色を流す */
@@ -80,286 +79,12 @@ function Sweep({ children }: { children: React.ReactNode }) {
   )
 }
 
-function LedgerRows({ l }: { l: (typeof ledgers)[number] }) {
-  return (
-    <>
-      <tr className="k">
-        <td>
-          <span className="lv">大</span>
-          {l.kan.name}
-        </td>
-        <td />
-        <td className="n">{yen(l.kan.amount)}</td>
-        <td className="n">{l.kan.page}頁</td>
-      </tr>
-      <tr className="ko">
-        <td>
-          <span className="lv">中</span>
-          {l.kou.name}
-        </td>
-        <td />
-        <td className="n">{yen(l.kou.amount)}</td>
-        <td className="n">{l.kou.page}頁</td>
-      </tr>
-      {l.moku.map((m) => (
-        <React.Fragment key={m.name}>
-          <tr className="mo">
-            <td>
-              <span className="lv">小</span>
-              {m.name}
-            </td>
-            <td>
-              <span className="tag">{m.cofog}</span>
-            </td>
-            <td className="n">{yen(m.amount)}</td>
-            <td className="n">{m.page}頁</td>
-          </tr>
-          {m.detail.map((d) => (
-            <tr className="su" key={d.name}>
-              <td>
-                <span className="lv">{d.kind}</span>
-                {d.name}
-              </td>
-              <td />
-              <td className="n">{yen(d.amount)}</td>
-              <td className="n">{d.page}頁</td>
-            </tr>
-          ))}
-        </React.Fragment>
-      ))}
-    </>
-  )
-}
 
-/** 自治体を順に切り替える表。見えている間だけ2秒ごとに次へ送り、題の自治体名を縦に回す（最後の次は先頭の写しへ回し、着いたら動きなしで先頭へ戻す） */
-function Ledger() {
-  const n = ledgers.length
-  const [r, setR] = React.useState(0)
-  const [animated, setAnimated] = React.useState(false)
-  const roll = React.useRef<HTMLSpanElement>(null)
-  const fit = React.useCallback(() => {
-    const el = roll.current
-    const name = el?.children[r] as HTMLElement | undefined
-    if (el?.parentElement && name) el.parentElement.style.width = `${name.offsetWidth}px`
-  }, [r])
-  React.useLayoutEffect(() => {
-    if (animated) fit()
-  }, [animated, fit])
-  React.useEffect(() => {
-    if (!animated) return
-    void document.fonts?.ready.then(fit)
-  }, [animated, fit])
-  const stage = React.useRef<HTMLDivElement>(null)
-  React.useEffect(() => {
-    const el = stage.current
-    if (!el || reducedMotion()) return
-    setAnimated(true)
-    let id: ReturnType<typeof setInterval> | undefined
-    const io = new IntersectionObserver(([e]) => {
-      clearInterval(id)
-      if (e?.isIntersecting) id = setInterval(() => setR((x) => Math.min(x + 1, n)), 2000)
-    })
-    io.observe(el)
-    return () => {
-      io.disconnect()
-      clearInterval(id)
-    }
-  }, [n])
-  const onRolled = (e: React.TransitionEvent<HTMLSpanElement>) => {
-    const el = e.currentTarget
-    if (e.target !== el || r !== n) return
-    el.style.transition = 'none'
-    flushSync(() => setR(0))
-    void el.offsetWidth
-    el.style.transition = ''
-  }
-  return (
-    <div className="win ledger" ref={stage}>
-      <p className="ttl" aria-hidden="true">
-        <span className="roll">
-          <span className="roll-in" ref={roll} style={{ '--r': r } as React.CSSProperties} onTransitionEnd={onRolled}>
-            {[...ledgers, ledgers[0]!].map((l, i) => (
-              <span key={i}>{l.jurisdiction}</span>
-            ))}
-          </span>
-        </span>
-        <span>· {nakano.period} · 一般会計</span>
-      </p>
-      <div className="tbls">
-        {ledgers.map((l, i) => (
-          <table className="tbl" key={l.jurisdiction} data-pos={i === r % n ? 'cur' : undefined}>
-            <caption>
-              {l.jurisdiction} · {nakano.period} · 一般会計
-            </caption>
-            <thead>
-              <tr>
-                <th scope="col">項目</th>
-                <th scope="col">共通分類</th>
-                <th scope="col" className="n">
-                  使った額
-                </th>
-                <th scope="col" className="n">
-                  出典
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <LedgerRows l={l} />
-            </tbody>
-          </table>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-const STEPS = [
-  { id: 'see', n: '一', title: '見る', note: '大きな分類から、細かい事業まで' },
-  { id: 'compare', n: '二', title: '比べる', note: '共通の分類で、街をまたいで並べる' },
-  { id: 'check', n: '三', title: '確かめる', note: '出典の頁と、印字の位置で' },
-]
-
-// 出典の切り抜きの上に、印字の位置を % で重ねる（3pt の余白を付ける）
 const [cx0, cy0, cx1, cy1] = origin.crop
 const [mx0, my0, mx1, my1] = origin.mark
 const pct = (v: number, w: number) => `${((v / w) * 100).toFixed(2)}%`
 const markStyle = { left: pct(mx0 - 3 - cx0, cx1 - cx0), top: pct(my0 - 3 - cy0, cy1 - cy0), width: pct(mx1 - mx0 + 6, cx1 - cx0), height: pct(my1 - my0 + 6, cy1 - cy0) }
 
-/** 3つのステップ。幅の広い画面では左の rail が今読んでいるステップを指し、この節を読んでいる間だけ縦の scroll snap を効かせる */
-function Steps() {
-  const [at, setAt] = React.useState(0)
-  const root = React.useRef<HTMLDivElement>(null)
-  React.useEffect(() => {
-    const el = root.current
-    if (!el) return
-    const html = document.documentElement
-    const snap = () => {
-      const b = el.getBoundingClientRect()
-      html.toggleAttribute('data-snap', b.top <= 1 && b.bottom >= innerHeight - 1)
-    }
-    addEventListener('scroll', snap, { passive: true })
-    snap()
-    const steps = [...el.querySelectorAll('.step')]
-    const io = new IntersectionObserver((l) => l.forEach((e) => e.isIntersecting && setAt(steps.indexOf(e.target))), { rootMargin: '-45% 0px -45% 0px' })
-    steps.forEach((s) => io.observe(s))
-    return () => {
-      removeEventListener('scroll', snap)
-      html.removeAttribute('data-snap')
-      io.disconnect()
-    }
-  }, [])
-  return (
-    <div className="steps" ref={root}>
-      <nav className="rail" aria-label="3つのステップ" style={{ '--at': at } as React.CSSProperties}>
-        <div className="rail-n" aria-hidden="true">
-          <span className="win-n">
-            {STEPS.map((s) => (
-              <span key={s.id}>{s.n}</span>
-            ))}
-          </span>
-          <small>／ 三</small>
-        </div>
-        <span className="gauge" aria-hidden="true">
-          <i />
-        </span>
-        <ol>
-          {STEPS.map((s, i) => (
-            <li key={s.id}>
-              <a href={`#${s.id}`} aria-current={i === at ? 'step' : undefined}>
-                <b>{s.n}</b>
-                <span>
-                  <strong>{s.title}</strong>
-                  <small>{s.note}</small>
-                </span>
-              </a>
-            </li>
-          ))}
-        </ol>
-      </nav>
-      <div>
-        <article className="step" id="see">
-          <span className="k">ステップ一　見る</span>
-          <h3>一つの街の支出を、事業の単位で</h3>
-          <p>大きな分類から、その内訳、さらに細かい事業まで、出典の並びのまま引けます。予算案・当初予算・途中で組み替えた予算・決算（実際に使った額）は、別々の金額として持ちます。</p>
-          <div className="stage">
-            <div className="art paper" aria-hidden="true">
-              <i style={{ right: -20, top: -30 }}>見</i>
-              <s />
-            </div>
-            <div className="win">
-              <h4 className="win-h">
-                {nakano.jurisdiction}の大きな分類 · {nakano.period}
-              </h4>
-              <div className="lines">
-                {nakano.kanList.map((k) => (
-                  <div className="r" key={k.name}>
-                    <span>{k.name}</span>
-                    <Hint label={yen(k.amount)}>
-                      <span className="num">{oku(k.amount)}</span>
-                    </Hint>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </article>
-        <article className="step" id="compare">
-          <span className="k">ステップ二　比べる</span>
-          <h3>別の街と、同じ物差しで</h3>
-          <p>大きな分類の名前は街ごとに違います。中野区には「民生費」という分類がありません。だから細かい分類ごとに、目的別の共通分類（国際基準 COFOG）を割り当て、街をまたいで並べられるようにしています。</p>
-          <div className="stage">
-            <div className="art burst" aria-hidden="true" />
-            <div className="win">
-              <h4 className="win-h">
-                「{library.name}」 · 共通分類 {library.cofog}
-              </h4>
-              <div className="bars">
-                {library.rows.map((r) => (
-                  <div className="b" key={r.jurisdiction}>
-                    <span>{r.jurisdiction}</span>
-                    <i style={{ width: `${((r.amount / libraryMax) * 100).toFixed(1)}%` }} aria-hidden="true" />
-                    <Hint label={yen(r.amount)}>
-                      <span className="num">{oku(r.amount)}</span>
-                    </Hint>
-                  </div>
-                ))}
-              </div>
-              <p className="muted" style={{ fontSize: 12 }}>
-                {library.period}。人口あたりの額ではありません。
-              </p>
-            </div>
-          </div>
-        </article>
-        <article className="step" id="check">
-          <span className="k">ステップ三　確かめる</span>
-          <h3>怪しい数字は、出典の頁で</h3>
-          <p>明細ごとに出典の頁と印字の位置を持ち、分類が確かか・仮か・できないかも返します。数字に引っかかったら、その頁を開けば確かめられます。</p>
-          <div className="stage pdf">
-            <div className="art oats" aria-hidden="true">
-              <i style={{ left: -30, top: -40 }}>確</i>
-            </div>
-            <figure className="sheet">
-              <figcaption>
-                <span>
-                  {origin.jurisdiction} · {origin.document}
-                </span>
-                <span className="num">PDF {origin.page}頁</span>
-              </figcaption>
-              <div className="crop">
-                <img src="/home/origin.webp" width={2136} height={879} loading="lazy" alt={`${origin.jurisdiction}の決算書 ${origin.page}頁の切り抜き。「${origin.name}」の使った額 ${yen(origin.amount)}`} />
-                <i className="mark" style={markStyle} aria-hidden="true" />
-              </div>
-              <p>
-                「{origin.name}」の使った額 <b className="num">{yen(origin.amount)}</b>
-                <small>囲みは、API が返す印字の位置</small>
-              </p>
-            </figure>
-          </div>
-        </article>
-      </div>
-    </div>
-  )
-}
 
 const SETUP_PROMPT = [
   `風土記（自治体の行政情報）の MCP サーバーを、私が使っているこの AI クライアントに追加したいです。`,
@@ -590,116 +315,405 @@ function Demo() {
   )
 }
 
+
+const SHINAGAWA = '/tokyo/shinagawa'
+const JURISDICTIONS = '/jurisdictions'
+
+/** 品川区 R8年度当初予算の分野別の割合（自治体の頁と同じ値） */
+const SHARES = [
+  { name: '福祉・子育て', pct: 50.7 },
+  { name: '教育', pct: 13.2 },
+  { name: '行政・議会', pct: 10.1 },
+  { name: '住まい・まちづくり', pct: 6.4 },
+  { name: '産業・交通', pct: 4.3 },
+  { name: '健康・医療', pct: 4.1 },
+]
+/** 品川区 R8年度の新しく始める事業（当初予算の主な施策から） */
+const NEW_PROJECTS = [
+  { mark: 'NEW', name: '学校改築推進経費', note: '改築が難しい区立学校2校の建替えに向けた基本構想', amount: '111', unit: '億円' },
+  { mark: 'NEW', name: '乳児等通園支援事業費', note: '在宅で子育てする世帯の子どもにも通園の機会を', amount: '9.4', unit: '億円' },
+  { mark: 'NEW', name: '子ども・若者活動拠点経費', note: '中高生・若者が企画できる多世代のスペース', amount: '6.8', unit: '億円' },
+  { mark: 'UP', name: 'ベビーシッター利用支援事業費', note: 'マッチング型の利用助成を広げる', amount: '4.7', unit: '億円' },
+]
+/** 議会のイメージ（架空） */
+const BILLS = [
+  { no: '第45号議案', title: '令和8年度 一般会計補正予算（第2号）', result: '可決', vote: [24, 16] },
+  { no: '第46号議案', title: '区立学校設置条例の一部を改正する条例', result: '可決', vote: [40, 0] },
+  { no: '請願第3号', title: '駅前の自転車置き場の増設を求める請願', result: '継続審査', vote: null },
+] as const
+/** 選挙のイメージ（架空。並びは届出順） */
+const CANDIDATES = [
+  { tag: 'A', age: 52, from: '元区職員', words: ['子育て', '防災'] },
+  { tag: 'B', age: 44, from: 'NPO 代表', words: ['若者の居場所', '公園'] },
+  { tag: 'C', age: 61, from: '会社経営', words: ['商店街', '税の使い方'] },
+]
+const QUESTIONS = [
+  { q: '区の予算、いちばん多く使っているのは？', k: 'お金' },
+  { q: '今年、新しく始まることは？', k: '事業' },
+  { q: '議会で、何が決まった？', k: '議会' },
+  { q: '次の選挙、誰が立候補している？', k: '選挙' },
+  { q: 'やめた事業、見直した事業は？', k: '事業' },
+  { q: '隣のまちと比べると、どう違う？', k: '比べる' },
+]
+const CYCLE = [
+  { n: '選ぶ', k: '選挙', note: '区長と議員を選ぶ' },
+  { n: '決める', k: '議会', note: '予算と条例を決める' },
+  { n: '使う', k: '予算・決算', note: '事業にお金を使う' },
+  { n: '振り返る', k: '事業評価', note: '事業をどうするか見直す' },
+]
+
+/** 画面に入ったら一度だけ .in を付ける（動きを減らす設定では最初から付ける） */
+function useReveal() {
+  React.useEffect(() => {
+    const els = [...document.querySelectorAll('.landing .rv')]
+    if (reducedMotion()) return els.forEach((e) => e.classList.add('in'))
+    const io = new IntersectionObserver((l) => l.forEach((e) => e.isIntersecting && (e.target.classList.add('in'), io.unobserve(e.target))), { rootMargin: '0px 0px -12% 0px' })
+    els.forEach((e) => io.observe(e))
+    return () => io.disconnect()
+  }, [])
+}
+
+const Soon = () => <span className="m-soon">画面はイメージです</span>
+
+/** 冒頭の、自治体の頁を模した札 */
+function HeroCard() {
+  return (
+    <div className="hcard" aria-hidden="true">
+      <div className="m-town">
+        <div className="m-town-h">
+          <img src="/jurisdictions/131091/emblem.svg" alt="" width={44} height={44} />
+          <div>
+            <b>品川区</b>
+            <small>輝く笑顔 住み続けたいまち しながわ</small>
+          </div>
+        </div>
+        <p className="m-big">
+          R8年度の予算 <em>2,369</em>
+          <small>億円</small>
+        </p>
+        <p className="m-sub">
+          住民1人あたり 約<em>57</em>
+          <small>万円</small>
+        </p>
+        <ul className="m-tabs">
+          <li>区の仕事</li>
+          <li>お金の使い道</li>
+          <li>議会</li>
+          <li>選挙</li>
+        </ul>
+      </div>
+      <div className="m-float f1">
+        <span className="m-badge new">NEW</span>
+        <span>
+          子ども・若者活動拠点
+          <small>6.8億円</small>
+        </span>
+      </div>
+      <div className="m-float f2">
+        <span className="m-badge vote">選挙</span>
+        <span>
+          区長選挙
+          <small>投票日 11月15日（日）</small>
+        </span>
+      </div>
+      <div className="m-float f3">
+        <span className="m-badge gikai">議会</span>
+        <span>
+          補正予算（第2号）
+          <small>可決</small>
+        </span>
+      </div>
+    </div>
+  )
+}
+
+function Feature({ id, k, title, body, children, flip }: { id: string; k: string; title: React.ReactNode; body: React.ReactNode; children: React.ReactNode; flip?: boolean }) {
+  return (
+    <article className={flip ? 'feat flip rv' : 'feat rv'} id={id}>
+      <div className="feat-t">
+        <span className="k">{k}</span>
+        <h3>{title}</h3>
+        <p>{body}</p>
+      </div>
+      <div className="feat-m">{children}</div>
+    </article>
+  )
+}
+
 const FAQ: [string, React.ReactNode][] = [
-  ['数字はどこから来ていますか', '自治体が公開した予算書・決算書（PDF または CSV）です。表に読み込んだあと、出典の中で重ねて印字された合計どうしが一致するかを確かめています。明細ごとに、出典の頁と印字された位置を持っています。'],
-  ['予備費が 0 円なのは、使わなかったからですか', 'いいえ。決算の予備費は、他の費目へ補ったあとの使った額なので 0 円になります。どこへ補ったかは出典の備考にあり、風土記では注記の金額として、費目の金額とは別に持ちます。'],
-  ['事業や議員の良し悪しを評価していますか', 'いいえ。風土記は評価を書かず、順位や良し悪しの色も付けません。事業評価は自治体が自分で振り返った結果で、風土記の評価ではありません。'],
-  ['共通分類（COFOG）は正しいのですか', '分類は出典にない、風土記の判断です。確かなもの・仮のもの・分類できないものを区別して返し、分類できない明細も合計から落としません。'],
+  ['数字はどこから来ていますか', '自治体が公開した予算書・決算書・事業評価などの資料です。表に読み込んだあと、資料の中で重ねて印字された合計どうしが一致するかを確かめています。明細ごとに、資料の頁と印字された位置を持っています。'],
+  ['議員や候補者、事業の良し悪しを評価していますか', 'いいえ。風土記は評価を書かず、順位や良し悪しの色も付けません。事業評価は自治体が自分で振り返った結果で、風土記の評価ではありません。'],
+  ['議会や選挙の情報はいつ見られますか', '準備を進めています。予算や事業とつなげて、議案・議決や候補者・結果を同じ様式で載せていきます。'],
   [
-    'どの自治体・年度が入っていますか',
+    'どのまちが入っていますか',
     <>
-      収録する自治体と年度は、順次広げています。いま入っている範囲は<Link href="/jurisdictions">自治体の一覧</Link>で確かめられます。収録していないことは、支出がゼロであることを意味しません。
+      収録するまちと年度は、順次広げています。いま入っている範囲は<Link href={JURISDICTIONS}>自治体の一覧</Link>で確かめられます。
     </>,
   ],
   [
     '使うのにお金や登録は要りますか',
     <>
-      このサイトで見たり、アシスタントに聞いたり、ふだんの調べものに使うなら要りません。ChatGPT や Claude など、いつも使っている AI につないで使うこともできます。会社の製品やサービスに組み込むなど商用で使うときは、事前にお問い合わせください。詳しくは<a href={`${DOCS}/terms`}>利用規約</a>をご覧ください。
+      このサイトで見たり、アシスタントに聞いたり、ふだんの調べものに使うなら要りません。会社の製品やサービスに組み込むなど商用で使うときは、事前にお問い合わせください。詳しくは<a href={`${DOCS}/terms`}>利用規約</a>をご覧ください。
     </>,
   ],
 ]
 
-/** 風土記で見られるもの。ready でないものは準備中 */
-const TOPICS = [
-  { k: '計画', title: 'まちが目指す姿', note: '基本構想に書かれた将来の姿と、その年に新しく始めること。', ready: true },
-  { k: '予算・決算', title: '何にいくら使うか、使ったか', note: '大きな分類から事業の単位まで。予算案・当初予算・補正後・決算を別の金額として持ちます。', ready: true },
-  { k: '事業評価', title: 'どう振り返ったか', note: '自治体が自分の事業を振り返った結果を、そのままの言葉で。', ready: true },
-  { k: '議会', title: '何が提案され、どう決まったか', note: '議案と議決を、予算や事業とつなげて。', ready: false },
-  { k: '選挙', title: '誰が立ち、どう選ばれたか', note: '候補者と結果を、同じ様式で。', ready: false },
-]
-
-/** 見せ方の決まり */
-const RULES = [
-  { k: '並べる', title: '良し悪しは書きません', note: '数字や事業、議員・候補者に順位や色を付けず、出典と並べるところまでにします。読み解くのは、読む人です。' },
-  { k: '揃える', title: '同じ物差しで', note: '街ごとに違う科目の名前を、共通の分類に揃えます。他の街とも、他の年とも比べられます。' },
-  { k: '配る', title: '誰でも使える形で', note: '画面に出しているのと同じデータを、出典つきで API・MCP・オープンデータとして配っています。' },
-]
-
 export function Landing() {
   const setup = React.useRef<HTMLDialogElement>(null)
+  useReveal()
   return (
     <div className="landing">
       <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden="true" dangerouslySetInnerHTML={{ __html: ICON_SYMBOLS }} />
       <SetupDialog dialog={setup} />
       <main>
         <header className="hero wrap">
-          <p className="eyebrow">風土記について</p>
-          <Sweep>うちのまち、なにしてる？</Sweep>
-          <p className="sub">自治体が何を決め、何にいくら使い、どう振り返ったか。行政の資料を同じ物差しの表にして、出典と並べて見られるようにしています。</p>
-          <div className="acts">
-            <Link className="btn" href="/jurisdictions">
-              自治体を探す
-              <Icon id="arrow-right" />
-            </Link>
-            <a className="btn ol" href="#mcp">
-              自分の AI から使う
-            </a>
-          </div>
-        </header>
-        <div className="wrap">
-          <div className="ledger-stage">
-            <div className="art oats" aria-hidden="true">
-              <i style={{ left: -40, top: -40 }}>帳</i>
+          <div className="hero-t">
+            <p className="eyebrow">風土記</p>
+            <Sweep>
+              うちのまち、
+              <br />
+              なにしてる？
+            </Sweep>
+            <p className="sub">まちが決めたこと、使ったお金、その振り返り。議会の議決や選挙の候補者まで、あなたのまちのことを、ひとつの場所で、出典つきで。</p>
+            <div className="acts">
+              <Link className="btn" href={JURISDICTIONS}>
+                自分のまちを見る
+                <Icon id="arrow-right" />
+              </Link>
+              <Link className="btn ol" href={SHINAGAWA}>
+                品川区の例を見る
+              </Link>
             </div>
-            <Ledger />
           </div>
-        </div>
+          <HeroCard />
+        </header>
 
-        <section className="sec wrap topics" id="what" aria-labelledby="what-h">
-          <div className="sec-h">
-            <p className="eyebrow">見られること</p>
-            <h2 id="what-h">決めたこと、使ったお金、その振り返り</h2>
-            <p className="lead">扱うのは行政の情報です。計画・予算・決算・事業評価を中心に、その手前にある議会と選挙も載せていきます。</p>
-          </div>
+        <section className="sec wrap qs" aria-labelledby="qs-h">
+          <h2 id="qs-h" className="rv">
+            気になったこと、
+            <br />
+            ありませんか
+          </h2>
           <ul>
-            {TOPICS.map((t) => (
-              <li key={t.k} data-soon={t.ready ? undefined : ''}>
-                <span className="k">
-                  {t.k}
-                  {!t.ready && <small>準備中</small>}
-                </span>
-                <h3>{t.title}</h3>
-                <p>{t.note}</p>
+            {QUESTIONS.map((q, i) => (
+              <li key={q.q} className="rv" style={{ '--d': `${i * 60}ms` } as React.CSSProperties}>
+                <span className="k">{q.k}</span>
+                {q.q}
               </li>
             ))}
           </ul>
+          <p className="qs-a rv">ぜんぶ、風土記で見られます。</p>
         </section>
 
-        <section className="sec wrap" id="how" aria-label="3つのステップ">
-          <Steps />
-        </section>
-
-        <section className="sec wrap rules" id="rules" aria-labelledby="rules-h">
-          <div className="sec-h">
-            <p className="eyebrow">見せ方の決まり</p>
-            <h2 id="rules-h">評価は書かず、出典と並べる</h2>
+        <section className="sec wrap cycle" aria-labelledby="cycle-h">
+          <div className="sec-h rv">
+            <p className="eyebrow">まちの一年</p>
+            <h2 id="cycle-h">選んで、決めて、使って、振り返る</h2>
+            <p className="lead">まちの仕事は、ひとつながりです。選挙で選ばれた人が議会で予算を決め、まちがそのお金で事業をし、事業を振り返って次の予算につなげる。風土記は、その一周をつなげて見せます。</p>
           </div>
           <ol>
-            {RULES.map((r) => (
-              <li key={r.k}>
-                <span className="k">{r.k}</span>
-                <h3>{r.title}</h3>
-                <p>{r.note}</p>
+            {CYCLE.map((c, i) => (
+              <li key={c.n} className="rv" style={{ '--d': `${i * 90}ms` } as React.CSSProperties}>
+                <b>{c.n}</b>
+                <span className="k">{c.k}</span>
+                <small>{c.note}</small>
               </li>
             ))}
           </ol>
         </section>
 
+        <section className="wrap feats" aria-label="風土記で見られること">
+          <Feature id="money" k="使う ── お金の使い道" title="いくらを、何に使っているか" body="予算書と決算書を、事業の単位まで読み込みました。分野ごとの割合も、住民1人あたりの額も、ひと目でわかります。">
+            <div className="m-card">
+              <p className="m-h">
+                品川区 · R8年度の予算
+                <span>
+                  <em>2,369</em>
+                  <small>億円</small>
+                </span>
+              </p>
+              <ul className="m-bars">
+                {SHARES.map((s) => (
+                  <li key={s.name}>
+                    <span>{s.name}</span>
+                    <i style={{ '--w': `${s.pct * 1.6}%` } as React.CSSProperties} />
+                    <b>
+                      {s.pct}
+                      <small>%</small>
+                    </b>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </Feature>
+
+          <Feature id="new" flip k="使う ── 新しく始めること" title="今年、何が始まり、何が変わるか" body="毎年の予算で新しく始まる事業、広げる事業、やめる事業を拾い出します。区の広報を読み込まなくても、変わったところがわかります。">
+            <div className="m-card">
+              <p className="m-h">品川区 · R8年度に新しく始めること</p>
+              <ul className="m-list">
+                {NEW_PROJECTS.map((p) => (
+                  <li key={p.name}>
+                    <span className={`m-badge ${p.mark === 'NEW' ? 'new' : 'up'}`}>{p.mark}</span>
+                    <span>
+                      {p.name}
+                      <small>{p.note}</small>
+                    </span>
+                    <b>
+                      {p.amount}
+                      <small>{p.unit}</small>
+                    </b>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </Feature>
+
+          <Feature id="council" k="決める ── 議会" title="議会で、何が決まったか" body="提案された議案と、その結果を一覧にします。会派ごとの賛否も、そのまま並べます。お金の使い道とつながっているので、決まったことが何に効くかまで辿れます。">
+            <div className="m-card">
+              <p className="m-h">
+                〇〇区議会 · 第4回定例会 <Soon />
+              </p>
+              <ul className="m-bills">
+                {BILLS.map((b) => (
+                  <li key={b.no}>
+                    <small>{b.no}</small>
+                    <span>{b.title}</span>
+                    <b>{b.result}</b>
+                    {b.vote && (
+                      <span className="m-vote">
+                        賛成 {b.vote[0]}・反対 {b.vote[1]}
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </Feature>
+
+          <Feature id="election" flip k="選ぶ ── 選挙" title="次の選挙、誰が、何を訴えているか" body="候補者の経歴と訴えを、同じ様式で並べます。並びは届出順。順位も、良し悪しの色も付けません。比べて決めるのは、あなたです。">
+            <div className="m-card">
+              <p className="m-h">
+                〇〇区長選挙 · 投票日 11月15日（日） <Soon />
+              </p>
+              <ul className="m-cands">
+                {CANDIDATES.map((c) => (
+                  <li key={c.tag}>
+                    <span className="m-face">{c.tag}</span>
+                    <span>
+                      候補者{c.tag}
+                      <small>
+                        {c.age}歳・{c.from}
+                      </small>
+                    </span>
+                    <span className="m-words">
+                      {c.words.map((w) => (
+                        <i key={w}>{w}</i>
+                      ))}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <p className="m-note">前回の投票率 32.6%（イメージ）</p>
+            </div>
+          </Feature>
+
+          <Feature id="review" k="振り返る ── 事業評価" title="まちは、自分の事業をどう振り返ったか" body="自治体が毎年まとめる事業評価を、事業ごとに読める形にします。目標にどこまで届いたか、これからどうするかを、まちの言葉のまま。">
+            <div className="m-card">
+              <p className="m-h">放課後子ども教室 · R7年度の評価</p>
+              <div className="m-eval">
+                <div>
+                  <small>参加した子ども（目標 9,000人）</small>
+                  <p>
+                    <em>8,420</em>
+                    <small>人</small>
+                    
+                  </p>
+                  <span className="m-meter">
+                    <i style={{ '--w': '93.6%' } as React.CSSProperties} />
+                  </span>
+                </div>
+                <div className="m-dir">
+                  <small>これから</small>
+                  <b>拡充</b>
+                  <span>実施校を増やす</span>
+                </div>
+              </div>
+              <p className="m-note">
+                <Soon />
+              </p>
+            </div>
+          </Feature>
+        </section>
+
+        <section className="sec wrap pair" aria-labelledby="pair-h">
+          <div className="sec-h rv">
+            <p className="eyebrow">比べる・確かめる</p>
+            <h2 id="pair-h">隣のまちと、同じ物差しで。数字は、出典の頁まで。</h2>
+          </div>
+          <div className="pair-g">
+            <figure className="m-card rv">
+              <p className="m-h">
+                「{library.name}」に使った額 · {library.period}
+              </p>
+              <div className="bars">
+                {library.rows.map((r) => (
+                  <div className="b" key={r.jurisdiction}>
+                    <span>{r.jurisdiction}</span>
+                    <i style={{ width: `${((r.amount / libraryMax) * 100).toFixed(1)}%` }} aria-hidden="true" />
+                    <Hint label={yen(r.amount)}>
+                      <span className="num">{oku(r.amount)}</span>
+                    </Hint>
+                  </div>
+                ))}
+              </div>
+              <figcaption>まちごとに違う科目の名前を、国際基準の共通分類（COFOG）にそろえて並べます。人口あたりの額ではありません。</figcaption>
+            </figure>
+            <figure className="sheet rv">
+              <figcaption>
+                <span>
+                  {origin.jurisdiction} · {origin.document}
+                </span>
+                <span className="num">PDF {origin.page}頁</span>
+              </figcaption>
+              <div className="crop">
+                <img src="/home/origin.webp" width={2136} height={879} loading="lazy" alt={`${origin.jurisdiction}の決算書 ${origin.page}頁の切り抜き。「${origin.name}」の使った額 ${yen(origin.amount)}`} />
+                <i className="mark" style={markStyle} aria-hidden="true" />
+              </div>
+              <p>
+                「{origin.name}」の使った額 <b className="num">{yen(origin.amount)}</b>
+                <small>どの数字も、資料のどの頁のどこに印字されているかまで辿れます。</small>
+              </p>
+            </figure>
+          </div>
+        </section>
+
+        <section className="sec wrap stance" aria-labelledby="stance-h">
+          <h2 id="stance-h" className="rv">
+            評価はしません。
+            <br />
+            並べて、見せるだけ。
+          </h2>
+          <ul>
+            <li className="rv">
+              <b>良し悪しを書かない</b>
+              <span>事業にも、議員や候補者にも、順位や色を付けません。読み解くのは、読む人です。</span>
+            </li>
+            <li className="rv">
+              <b>同じ様式で集める</b>
+              <span>713年、諸国に同じ様式で報告させて集めた地誌『風土記』にならい、どのまちも同じ形で載せます。</span>
+            </li>
+            <li className="rv">
+              <b>誰でも使える</b>
+              <span>画面に出しているのと同じデータを、出典つきで API・MCP・オープンデータとして配っています。</span>
+            </li>
+          </ul>
+        </section>
+
         <section className="mcp wrap" id="mcp" aria-labelledby="mcp-h">
           <div>
             <p className="eyebrow">AI から使う</p>
-            <h2 id="mcp-h">いつもの AI からも使えます</h2>
-            <p className="lead">ChatGPT や Claude に風土記をつなぐと、会話の中で街の予算・決算・事業評価を調べられます。登録はいりません。</p>
+            <h2 id="mcp-h">いつもの AI からも</h2>
+            <p className="lead">ChatGPT や Claude に風土記をつなぐと、会話の中でまちの予算・決算・事業評価を調べられます。登録はいりません。</p>
             <Connect openSetup={() => setup.current?.showModal?.()} />
           </div>
           <Demo />
@@ -714,6 +728,17 @@ export function Landing() {
                 <p>{a}</p>
               </details>
             ))}
+          </div>
+        </section>
+
+        <section className="wrap" aria-labelledby="cta-h">
+          <div className="cta rv">
+            <h2 id="cta-h">あなたのまちを、のぞいてみよう。</h2>
+            <p>まちの名前を選ぶだけ。登録はいりません。</p>
+            <Link className="btn wh" href={JURISDICTIONS}>
+              自分のまちを見る
+              <Icon id="arrow-right" />
+            </Link>
           </div>
         </section>
       </main>
