@@ -138,12 +138,13 @@ function MyTown({ entries, featured }: HomeProps) {
     locateMunicipality()
       .then((muni) => {
         const hit = entries.find((e) => e.code.startsWith(muni))
-        if (!alive) return
+        // 調べている間に利用者が選んでいたら、その選択を残す
+        if (!alive || loadHomeCode()) return setHere(null)
         if (!hit) return (setHere(null), fallback())
         setCode(hit.code)
         setHere('found')
       })
-      .catch(() => alive && (setHere(null), fallback()))
+      .catch(() => alive && !loadHomeCode() && (setHere(null), fallback()))
     return () => {
       alive = false
     }
