@@ -3,7 +3,7 @@
 // 面の色は、主張したい面（うちのまち）が緑の地、押せるものの状態は生成り。見出しも含めてゴシック（明朝は /about の読み物だけ）
 import * as React from 'react'
 import { Link } from '@void/react'
-import { ArrowRightIcon, ArrowUpRightIcon, CheckSquareOffsetIcon, ClipboardTextIcon, CoinsIcon, GavelIcon, MagnifyingGlassIcon, PencilSimpleIcon } from '@phosphor-icons/react'
+import { ArrowRightIcon, BankIcon, ArrowUpRightIcon, CheckSquareOffsetIcon, ClipboardTextIcon, CoinsIcon, GavelIcon, MagnifyingGlassIcon, PencilSimpleIcon } from '@phosphor-icons/react'
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from '@/components/ui/combobox'
 import { InputGroupAddon } from '@/components/ui/input-group'
 import { cn } from '@/lib/utils'
@@ -16,6 +16,8 @@ export interface Featured {
   name: string
   path: string
   vision?: string
+  /** 事業評価の載る年度 */
+  evalYear?: number
 }
 
 export interface HomeProps {
@@ -77,15 +79,12 @@ function Picker({ entries, onPick, placeholder }: { entries: MapEntry[]; onPick:
   )
 }
 
-/** うちのまちで出す、その自治体の情報の入口。hash は自治体の頁の目次の id。くわしい頁の無い自治体には無い節は出さない */
-const townLinks = (name: string, detailed: boolean) => [
+/** うちのまちで出す、その自治体の情報の入口。hash は自治体の頁の目次の id か年度（#y2024）。くわしい頁の無い自治体には無い節は出さない */
+const townLinks = (name: string, detail?: Featured) => [
+  { label: `${name.slice(-1)}の仕事`, hash: '#about', icon: <BankIcon /> },
   { label: 'お金の使い道', hash: '#budget', icon: <CoinsIcon /> },
-  ...(detailed
-    ? [
-        { label: '新しく始めること', hash: '#domains', icon: <PencilSimpleIcon /> },
-        { label: `${name.slice(-1)}の仕事と評価`, hash: '#about', icon: <ClipboardTextIcon /> },
-      ]
-    : []),
+  ...(detail ? [{ label: '新しく始めること', hash: '#domains', icon: <PencilSimpleIcon /> }] : []),
+  ...(detail?.evalYear ? [{ label: '事業評価', hash: `#y${detail.evalYear}`, icon: <ClipboardTextIcon /> }] : []),
   { label: '議会', icon: <GavelIcon /> },
   { label: '選挙', icon: <CheckSquareOffsetIcon /> },
 ]
@@ -128,8 +127,8 @@ function MyTown({ entries, featured }: HomeProps) {
             </span>
             <ArrowRightIcon className="size-5 shrink-0 opacity-80 transition-transform group-hover:translate-x-1" />
           </Link>
-          <ul className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-5">
-            {townLinks(town.name, featured.some((f) => f.code === town.code)).map((l) => (
+          <ul className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
+            {townLinks(town.name, featured.find((f) => f.code === town.code)).map((l) => (
               <li key={l.label}>
                 {l.hash ? (
                   <Link href={`${town.path}${l.hash}`} className="flex h-full flex-col gap-2 rounded-2xl bg-white/10 p-3.5 text-sm transition-colors hover:bg-white/20 [&_svg]:size-5">
@@ -152,8 +151,14 @@ function MyTown({ entries, featured }: HomeProps) {
       ) : (
         <div className="mt-3">
           <p className="text-xl font-bold sm:text-2xl">住んでいるまちを選ぶ</p>
-          <p className="mt-1 mb-4 text-sm opacity-80">選ぶと、そのまちのお金・事業・議会・選挙への入口がここに並びます。</p>
-          {entries.length ? <Picker entries={entries} onPick={pick} placeholder="自治体名で探す（例：品川）" /> : null}
+          {entries.length ? (
+            <>
+              <p className="mt-1 mb-4 text-sm opacity-80">選ぶと、そのまちのお金・事業・議会・選挙への入口がここに並びます。</p>
+              <Picker entries={entries} onPick={pick} placeholder="自治体名で探す（例：品川）" />
+            </>
+          ) : (
+            <p className="mt-1 text-sm opacity-80">今は自治体の一覧を読み込めません。少し時間をおいて開き直してください。</p>
+          )}
           {editing ? (
             <button type="button" onClick={() => setEditing(false)} className="mt-3 text-[13px] opacity-80 hover:opacity-100">
               やめる
@@ -167,9 +172,11 @@ function MyTown({ entries, featured }: HomeProps) {
 
 /** 見られる情報の種類。収録の無いものは準備中として並べる */
 function Topics({ entries, featured }: HomeProps) {
+  const evaluated = featured.filter((f) => f.evalYear)
   const topics = [
-    { title: '予算・決算', body: '何にいくら使ったか', meta: `${entries.length}の自治体`, href: INDEX_PATH, icon: <CoinsIcon /> },
-    { title: '事業評価', body: '事業をどう振り返ったか', meta: featured.map((f) => f.name).join('・'), href: featured[0] ? `${featured[0].path}#about` : undefined, icon: <ClipboardTextIcon /> },
+    // 一覧を読めなかったときは件数を出さない（0件と取り違えないように）
+    { title: '予算・決算', body: '何にいくら使ったか', meta: entries.length ? `${entries.length}の自治体` : undefined, href: INDEX_PATH, icon: <CoinsIcon /> },
+    { title: '事業評価', body: '事業をどう振り返ったか', meta: evaluated.map((f) => f.name).join('・'), href: evaluated[0] ? `${evaluated[0].path}#y${evaluated[0].evalYear}` : undefined, icon: <ClipboardTextIcon /> },
     { title: '議会', body: '何を決めたか（議案・議決）', icon: <GavelIcon /> },
     { title: '選挙', body: '誰が立ち、どうなったか', icon: <CheckSquareOffsetIcon /> },
   ]

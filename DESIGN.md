@@ -12,7 +12,7 @@ Hallmark は検出すると pick をこれに従わせる。値を変えると�
 **実データの表そのものが製品の説明を担う。** 最初の画面に置くのは、出典の階層（款・項・目）と金額・頁を持つ帳面の紙。
 飾りの絵は紙の後ろに敷く添え物で、本文やデータを覆わない。
 
-画面は **読み物**（ホーム・利用条件・案内）と **データの面**（報告・分析）に分かれる。token と書体は共通で、
+画面は **読み物**（紹介 `/about`・利用条件・案内）と **データの面**（ホーム・自治体の頁・アシスタントなどの報告・分析）に分かれる。token と書体は共通で、
 絵の面（網点・大きな字・朱の楕円）を持つのは読み物だけ。データの面は紙・罫線・数字だけで組む。
 **明朝を使うのは紹介の読み物（`/about`）の見出しだけ。** アプリの中（ホーム・自治体の一覧・個別ページ・アシスタント・会話）は見出しも含めてすべてゴシック（`--font-sans`）で組み、階層は太さと大きさで作る。
 
@@ -136,7 +136,7 @@ shadcn/ui の語彙。色の役割は次のとおり。
 ## Components
 
 ```css
-/* 入口の読み物の見出しは明朝 400 だけ。太さではなく大きさと余白で階層を作る（アプリの中はゴシック） */
+/* 紹介の読み物の見出しは明朝 400 だけ。太さではなく大きさと余白で階層を作る（アプリの中はゴシック） */
 .text-heading { font-family: var(--font-display); font-weight: 400; font-style: normal; letter-spacing: var(--letter-spacing-heading); word-break: auto-phrase; text-wrap: balance; }
 .text-body { font-family: var(--font-sans); font-size: var(--text-body); line-height: var(--line-height-body); letter-spacing: var(--letter-spacing-body); line-break: strict; word-break: normal; overflow-wrap: break-word; }
 .num { font-variant-numeric: tabular-nums; letter-spacing: 0; white-space: nowrap; }
@@ -172,7 +172,7 @@ shadcn/ui の語彙。色の役割は次のとおり。
 - **データの面に出してよい色**: 前景・`--muted-foreground`・罫線に加え、ブランド色・アクセント（Tokens の色の役割）と `--destructive`（検査が落ちているときだけ）。絵の色は出さない
 
 ## Icons
-- Phosphor（`@phosphor-icons/react`）の regular weight・256px grid。React の外の HTML（入口の頁）は同じ path を inline の `<symbol>` に写し、`fill: currentColor` で描く。外部サービスの logo（X・GitHub）も Phosphor のものを使う
+- Phosphor（`@phosphor-icons/react`）の regular weight・256px grid。React の外の HTML（紹介の頁）は同じ path を inline の `<symbol>` に写し、`fill: currentColor` で描く。外部サービスの logo（X・GitHub）も Phosphor のものを使う
 
 ## Logo
 - Logomark: 区画。32 × 32 の grid で町の土地を5つの区画に割る（予算の内訳＝ツリーマップにも読める）。区画は (x, y, 幅, 高さ) = (2, 2, 15, 17)・(19, 2, 11, 10)・(19, 14, 11, 5)・(2, 21, 9, 9)・(13, 21, 17, 9)、空き2・角丸2.2、見える外形は 28 × 28。区画と文字は `--primary`、右の細い区画だけ `--shu`（朱）

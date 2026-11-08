@@ -17,7 +17,9 @@ export const loader = defineHandler<Props>(async (c) => {
   const entries = await homeEntries(c.env as unknown as Env).catch(() => [])
   const featured = Object.values(PROFILES).flatMap((p) => {
     const e = entries.find((x) => x.code === p.code)
-    return e ? [{ code: p.code, name: e.name, path: e.path, vision: p.vision?.text }] : []
+    // 事業評価の載る年度（評価シートの事業がある最新の年度）。頁は #y2024 でその年度を開く
+    const evalYear = Math.max(...Object.entries(p.years).flatMap(([y, py]) => (py.projects?.length ? [Number(y)] : [])))
+    return e ? [{ code: p.code, name: e.name, path: e.path, vision: p.vision?.text, ...(Number.isFinite(evalYear) ? { evalYear } : {}) }] : []
   })
   return { entries, featured }
 })
