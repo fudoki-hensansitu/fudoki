@@ -563,17 +563,17 @@ function Budget({ data, year }: { data: PageData; year: number }) {
 }
 
 /** 要素が画面に入ったら true になる（一度だけ）。棒グラフを画面に入ったときに伸ばすのに使う */
-function useInView<T extends Element>(): [React.RefObject<T | null>, boolean] {
-  const ref = React.useRef<T>(null)
+function useInView<T extends Element>(): [(el: T | null) => void, boolean] {
+  // 要素は callback ref で受け取る。年度の切り替えで要素が作り直されても、新しい要素を見張り直す
+  const [el, setEl] = React.useState<T | null>(null)
   const [seen, setSeen] = React.useState(false)
   React.useEffect(() => {
-    const el = ref.current
     if (!el || seen) return
     const io = new IntersectionObserver(([e]) => { if (e?.isIntersecting) { setSeen(true); io.disconnect() } }, { rootMargin: '0px 0px -10% 0px' })
     io.observe(el)
     return () => io.disconnect()
-  }, [seen])
-  return [ref, seen]
+  }, [el, seen])
+  return [setEl, seen]
 }
 
 /** 金額が大きい事業（目）。最新の決算の年度は決算、決算の無い年度は当初予算から出す */
