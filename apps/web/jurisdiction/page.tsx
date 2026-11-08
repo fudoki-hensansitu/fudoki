@@ -76,7 +76,7 @@ function YenText({ yen, className }: { yen: number; className?: string }) {
   return (
     <span className={`tabular-nums ${className ?? ''}`}>
       <span className="text-xl">{num}</span>
-      <span className="ml-0.5 text-xs text-muted-foreground">{unit}</span>
+      <span className="ml-0.5 text-xs">{unit}</span>
     </span>
   )
 }
