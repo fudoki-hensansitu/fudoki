@@ -19,7 +19,7 @@ const NODE_ID = /^[0-9a-f]{64}$/
 /** Worker の cache（無い環境では毎回取り直す）。同じ isolate の中でも一度だけ取る */
 const inflight = new Map<string, Promise<unknown>>()
 async function memo<T>(key: string, fn: () => Promise<T>): Promise<T> {
-  const url = `https://fudoki.dev/__cache/jurisdiction-v13/${key}`
+  const url = `https://fudoki.dev/__cache/jurisdiction-v19/${key}`
   const cache = typeof caches === 'undefined' ? undefined : (caches as unknown as { default?: Cache }).default
   const hit = await cache?.match(url)
   if (hit) return (await hit.json()) as T
@@ -93,14 +93,15 @@ export async function resolveJurisdiction(env: Env, path: string): Promise<Juris
   return data ? { kind: 'page', data: { ...data, prefecturePath, neighbors, profile: withPress(entry.code, PROFILES[entry.code] ?? null) } } : { kind: 'empty', entry }
 }
 
-/** 予算の新規（budgetNew）に、予算案のプレス発表資料の POINT を事業名で足す */
+/** 事業評価がまだの年度に、予算案のプレス発表資料の施策（budgetNew）を足す。評価のある年度は足さない */
 function withPress(code: string, profile: Profile | null): Profile | null {
   const press = BUDGET_PRESS[code]
   if (!profile || !press) return profile
   const years = Object.fromEntries(Object.entries(profile.years).map(([y, py]) => {
     const p = press[y]
-    if (!p || !py.budgetNew) return [y, py]
-    return [y, { ...py, budgetPress: p.source, budgetNew: py.budgetNew.map((b) => (p.items[b.name] ? { ...b, press: p.items[b.name] } : b)) }]
+    if (!p || py.projects.length || py.initiatives?.length) return [y, py]
+    // 出すのは「新規」の印が付いた施策だけ。印の無い施策は拡大か継続かを資料から決められないので出さない（データには紐付けごと残す）
+    return [y, { ...py, budgetPress: p.source, budgetNew: p.items.filter((i) => i.isNew) }]
   }))
   return { ...profile, years }
 }

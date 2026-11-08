@@ -16,6 +16,9 @@ const LEVELS: Record<FlowView, { kan: string; kou: string; moku: string; setsu: 
 type Levels = (typeof LEVELS)[FlowView]
 
 const SETSU_SHOWN = 3
+/** 帯の上を流れる光の幅と速さ（px、px/秒） */
+const LIGHT = 140
+const LIGHT_SPEED = 320
 /** 目の側に立てる棒の幅。項の棒（w-2）と揃える */
 const MOKU_BAR = 8
 /** 節の側に立てる棒の幅 */
@@ -186,6 +189,8 @@ function KouSection({ kou, active, loading, onBox, levels }: { kou: Kou; active:
   // 帯の上を流れる光（全体図と同じ）。動きを減らす設定では出さない
   const [still, setStill] = React.useState(true)
   React.useEffect(() => setStill(window.matchMedia('(prefers-reduced-motion: reduce)').matches), [])
+  // 光が流れる右端。節の帯があればその先、無ければ目の棒まで
+  const reach = Math.max(paths.at(0)?.x ?? 0, ...setsu.map((t) => t.x))
   const lightId = `flow-light${React.useId().replace(/[^a-zA-Z0-9_-]/g, '')}`
   React.useLayoutEffect(() => {
     const el = box.current
@@ -261,24 +266,24 @@ function KouSection({ kou, active, loading, onBox, levels }: { kou: Kou; active:
       </div>
       <div ref={rib} className="relative hidden sm:block" aria-hidden="true">
         <svg className="absolute inset-0 size-full overflow-visible">
-          {/* 光は帯ごとの幅で左から右へ動く（objectBoundingBox の中で -1 → 1 へ平行移動） */}
+          {/* 光は項の棒から目、節の帯まで一続きで左から右へ流れる（帯全体の座標で動かす。帯ごとの幅で動かすと段ごとに速さがずれて、流れて見えないため） */}
           {active && !still ? (
             <defs>
-              <linearGradient id={lightId}>
-                <stop offset="0.3" stopColor="var(--primary)" stopOpacity={0} />
+              <linearGradient id={lightId} gradientUnits="userSpaceOnUse" x1={-LIGHT} x2={0} y1={0} y2={0}>
+                <stop offset="0" stopColor="var(--primary)" stopOpacity={0} />
                 <stop offset="0.5" stopColor="var(--primary)" stopOpacity={0.3} />
-                <stop offset="0.7" stopColor="var(--primary)" stopOpacity={0} />
-                <animateTransform attributeName="gradientTransform" type="translate" from="-1 0" to="1 0" dur="2.4s" begin="1s" repeatCount="indefinite" />
+                <stop offset="1" stopColor="var(--primary)" stopOpacity={0} />
+                <animateTransform attributeName="gradientTransform" type="translate" from="0 0" to={`${reach + LIGHT} 0`} dur={`${((reach + LIGHT) / LIGHT_SPEED).toFixed(2)}s`} begin="1.4s" repeatCount="indefinite" />
               </linearGradient>
             </defs>
           ) : null}
-          {/* 項が開いたら、中分類（項）→科目（目）→内訳（節）の順に帯が左から右へ伸びて流れ込む（全体図と同じ動き。styles/app.css）。閉じている項は出さない */}
-          {paths.map((p, i) => <path key={`${active}${i}`} d={p.d} style={{ animationDelay: `${i * 40}ms` }} className={`fill-primary/20 ${active ? 'flow-ribbon' : 'opacity-0'}`} />)}
+          {/* 項が開いたら、中分類（項）→科目（目）→内訳（節）の順に帯が左から右へ伸びて流れ込む（全体図と同じ動き。styles/app.css）。帯は段ごとにまとめて一枚で伸ばす。閉じている項は出さない */}
+          <g key={`r${active}`} className={active ? 'flow-ribbon' : 'opacity-0'}>{paths.map((p, i) => <path key={i} d={p.d} className="fill-primary/20" />)}</g>
           {active && !still ? paths.map((p, i) => <path key={`l${i}`} d={p.d} fill={`url(#${lightId})`} />) : null}
           {active && !still ? setsu.map((p, i) => <path key={`ls${i}`} d={p.d} fill={`url(#${lightId})`} />) : null}
-          {paths.map((p, i) => <rect key={`b${active}${i}`} x={p.x} y={p.y} width={MOKU_BAR} height={p.h} rx={2} style={{ animationDelay: `${300 + i * 40}ms` }} className={`fill-primary ${active ? 'flow-node' : 'opacity-0'}`} />)}
-          {setsu.map((p, i) => <path key={`s${active}${i}`} d={p.d} style={{ animationDelay: `${450 + i * 20}ms` }} className={`${p.rest ? 'fill-primary/10' : 'fill-primary/15'} ${active ? 'flow-ribbon' : 'opacity-0'}`} />)}
-          {setsu.map((p, i) => <rect key={`t${active}${i}`} x={p.x} y={p.y} width={SETSU_BAR} height={p.h} rx={1.5} style={{ animationDelay: `${750 + i * 20}ms` }} className={`${p.rest ? 'fill-primary/35' : 'fill-primary/70'} ${active ? 'flow-node' : 'opacity-0'}`} />)}
+          {paths.map((p, i) => <rect key={`b${active}${i}`} x={p.x} y={p.y} width={MOKU_BAR} height={p.h} rx={2} style={{ animationDelay: `${550 + Math.min(i * 15, 150)}ms` }} className={`fill-primary ${active ? 'flow-node' : 'opacity-0'}`} />)}
+          <g key={`s${active}`} style={{ animationDelay: '450ms' }} className={active ? 'flow-ribbon' : 'opacity-0'}>{setsu.map((p, i) => <path key={i} d={p.d} className={p.rest ? 'fill-primary/10' : 'fill-primary/15'} />)}</g>
+          {setsu.map((p, i) => <rect key={`t${active}${i}`} x={p.x} y={p.y} width={SETSU_BAR} height={p.h} rx={1.5} style={{ animationDelay: `${1000 + Math.min(i * 10, 150)}ms` }} className={`${p.rest ? 'fill-primary/35' : 'fill-primary/70'} ${active ? 'flow-node' : 'opacity-0'}`} />)}
         </svg>
       </div>
       <div className="flex min-w-0 flex-col gap-3 sm:pl-2.5">
@@ -408,16 +413,17 @@ export function Flow({ data, total: year, view = 'kan', phase = 'settlement', ta
   const kan = index > 0 ? flows[index - 1] : undefined
   const sum = flows.reduce((s, f) => s + Math.max(0, f.kan.yen), 0) || 1
   return (
-    <div ref={root} data-ask-view={kan ? `${kan.kan.name}（${levels.kan}）の内訳` : `${levels.kan}から${levels.kou}への全体図`} className="flex h-[calc(100svh-61px-53px-1.5rem)] min-h-[480px] min-w-0 scroll-mt-[122px] flex-col rounded-[20px] border bg-background lg:h-[calc(100svh-61px-2rem)] lg:scroll-mt-[77px]">
+    <div ref={root} data-ask-view={kan ? `${kan.kan.name}（${levels.kan}）の内訳` : `${levels.kan}から${levels.kou}への全体図`} className="flex h-[calc(100svh-61px-53px-1.5rem)] min-h-[480px] min-w-0 scroll-mt-[122px] flex-col rounded-[20px] border bg-background @4xl:h-[calc(100svh-61px-2rem)] @4xl:scroll-mt-[77px]">
       <div className="shrink-0 px-5 pt-5 sm:px-6">
         {tabs}
         {/* 見出しと金額の行。右に今いる段（大分類 4 / 8）と前後の矢印を置く */}
         <div className="mt-3 flex min-h-9 items-center justify-between gap-3">
-          <div className="flex min-w-0 flex-wrap items-baseline gap-x-3" aria-live="polite">
+          {/* 名前と金額の置き方を段ごとに変えない（名前の長さで折り返すと、横に送るたびに金額の位置と行の高さが動いて見える）。スマホは名前の下に金額、広い画面は横に並べる */}
+          <div className="flex min-w-0 flex-col sm:flex-row sm:items-baseline sm:gap-x-3" aria-live="polite">
             {kan ? (
               <>
-                <span className="text-sm text-muted-foreground">{kan.kan.name}</span>
-                <b className="text-[26px] font-normal leading-snug tabular-nums">{amountText(kan.kan.yen, kan.kan.amountMissing)}</b>
+                <span className="min-w-0 truncate text-sm text-muted-foreground">{kan.kan.name}</span>
+                <b className="shrink-0 text-[26px] font-normal leading-snug tabular-nums">{amountText(kan.kan.yen, kan.kan.amountMissing)}</b>
               </>
             ) : summary}
           </div>

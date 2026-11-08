@@ -99,13 +99,13 @@ export function Overview({ flows, total: base, height = 520, levels = { kan: '�
     <div ref={ref} className="relative w-full">
       {width ? (
         <svg width={width} height={total + HEAD} role="img" aria-label={`${levels.kan}から${levels.kou}への歳出の流れ`} data-seen={seen ? '' : undefined} className="flow-svg block font-sans">
-          {/* 帯の上を左から右へ流れる光。大分類（款）から中分類（項）へお金が流れていく感じを出す */}
+          {/* 帯の上を左から右へ流れる光。大分類（款）から中分類（項）へお金が流れていく感じを出す。帯が伸びきったあとから流す */}
           <defs>
             <linearGradient id={flowId} gradientUnits="userSpaceOnUse" x1={x0 - 160} x2={x0} y1={0} y2={0}>
               <stop offset="0" stopColor="var(--primary)" stopOpacity={0} />
               <stop offset="0.5" stopColor="var(--primary)" stopOpacity={0.28} />
               <stop offset="1" stopColor="var(--primary)" stopOpacity={0} />
-              {seen && !still ? <animateTransform attributeName="gradientTransform" type="translate" from="0 0" to={`${x1 - x0 + 160} 0`} dur="2.8s" begin="1s" repeatCount="indefinite" /> : null}
+              {seen && !still ? <animateTransform attributeName="gradientTransform" type="translate" from="0 0" to={`${x1 - x0 + 160} 0`} dur="2.8s" begin="1.1s" repeatCount="indefinite" /> : null}
             </linearGradient>
           </defs>
           <g aria-hidden="true" className="fill-muted-foreground" fontSize={11}>
@@ -113,6 +113,8 @@ export function Overview({ flows, total: base, height = 520, levels = { kan: '�
             <text x={x1} y={11}>{levels.kou}</text>
           </g>
           <g transform={`translate(0 ${HEAD})`}>
+          {/* 帯はまとめて一枚で左から右へ伸ばす。帯ごとにずらすと先端がぎざぎざになり、切れて見えるため */}
+          <g className="flow-ribbon">
           {kous.map(({ kanIndex, kou }, i) => {
             const source = kans[kanIndex]!
             const offset = offsets.get(kanIndex) ?? 0
@@ -121,12 +123,13 @@ export function Overview({ flows, total: base, height = 520, levels = { kan: '�
             if (h <= 0) return null
             const d = ribbon(x0 + BAR, source.y + offset, h, x1, kouNodes[i]!.y, h)
             return (
-              <g key={kou.id} className="flow-ribbon" style={{ animationDelay: `${Math.min(i * 25, 600)}ms` }}>
+              <g key={kou.id}>
                 <path d={d} className="fill-primary/20" />
                 {!still ? <path d={d} fill={`url(#${CSS.escape(flowId)})`} /> : null}
               </g>
             )
           })}
+          </g>
           {flows.map((flow, i) => {
             const node = kans[i]!
             const label = cut(flow.kan.name, 9)
@@ -143,7 +146,7 @@ export function Overview({ flows, total: base, height = 520, levels = { kan: '�
             const node = kouNodes[i]!
             return (
               <AmountTip key={kou.id} name={kou.name} yen={kou.yen} missing={kou.amountMissing} side="left" render={<g {...(onSelect ? pick(() => onSelect(kanIndex, kouIndex)) : {})} aria-label={`${kou.name} ${amountText(kou.yen, kou.amountMissing)}${onSelect ? '、内訳を見る' : ''}`} />}>
-                <g className="flow-node" style={{ animationDelay: `${500 + Math.min(i * 25, 600)}ms` }}>
+                <g className="flow-node" style={{ animationDelay: `${650 + Math.min(i * 12, 240)}ms` }}>
                 <rect x={x1} y={node.top} width={width - x1} height={node.size} className="fill-transparent" />
                 <rect x={x1} y={node.y} width={BAR} height={Math.max(node.height, 2)} rx={2} className="fill-primary" />
                 <text x={x1 + BAR + 8} y={node.top + node.size / 2 + 4} className="fill-foreground" fontSize={narrow ? 10.5 : 12}>
