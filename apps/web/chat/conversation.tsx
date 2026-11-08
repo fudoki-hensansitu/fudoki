@@ -68,6 +68,7 @@ export function Conversation({
   context,
   beforeComposer,
   onSend,
+  movableViews = false,
 }: {
   id: string
   stored: StoredSession
@@ -82,6 +83,8 @@ export function Conversation({
   beforeComposer?: React.ReactNode
   /** 続けて聞いたとき（選んだ文を外すなど） */
   onSend?: () => void
+  /** 表とグラフを会話の横のパネルへ移せるか。会話の頁だけ。自治体の頁のように会話がパネルの中にあるときは移さない */
+  movableViews?: boolean
 }) {
   const viewContext = React.useRef(stored.viewContext ?? '')
   // 頁の文脈は質問ごとに読み、その発言の metadata に持たせる（server が質問とは別の利用者の発言にして AI に渡す）
@@ -205,7 +208,7 @@ export function Conversation({
                     // View は結果の structuredContent を描く。履歴から復元した結果で structuredContent が無いときは印だけにする
                     if (uri && output && !output.isError && output.structuredContent)
                       return (
-                        <ViewFrame key={i} token={stored.token} uri={uri} input={p.input} output={output} onContext={(text) => (viewContext.current = text.slice(0, 2000))} />
+                        <ViewFrame key={i} token={stored.token} uri={uri} movable={movableViews} input={p.input} output={output} onContext={(text) => (viewContext.current = text.slice(0, 2000))} />
                       )
                     return <ToolMarker key={i} part={p} />
                   })}

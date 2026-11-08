@@ -130,6 +130,7 @@ export function ViewFrame({
   input,
   output,
   onContext,
+  movable,
 }: {
   token: string
   uri: string
@@ -139,6 +140,8 @@ export function ViewFrame({
   output: unknown
   /** View が「いま見ているもの」を AI に伝えるとき */
   onContext: (text: string) => void
+  /** 取っ手で会話の横のパネルへ移せるか。移せないときは、広い画面でも大きく開くと全画面に重ねる */
+  movable: boolean
 }) {
   const frame = React.useRef<HTMLIFrameElement>(null)
   const [height, setHeight] = React.useState(360)
@@ -154,9 +157,9 @@ export function ViewFrame({
     media.addEventListener('change', onChange)
     return () => media.removeEventListener('change', onChange)
   }, [])
-  const side = expanded && wide
+  const side = expanded && wide && movable
   const me = React.useRef({})
-  const fullscreen = expanded && !wide
+  const fullscreen = expanded && !side
   // 取っ手を掴んでいる間だけ、右半分に置き場を出す。iframe の上では pointer が奪われるので、掴む場所は View の外に置く
   const [drag, setDrag] = React.useState<{ over: boolean }>()
   const dragged = React.useRef(false)
@@ -198,7 +201,7 @@ export function ViewFrame({
     window.addEventListener('blur', cancel)
     stopDrag.current = cancel
   }
-  const grippable = !expanded && wide && ready
+  const grippable = movable && !expanded && wide && ready
   React.useEffect(() => {
     if (!grippable) stopDrag.current?.()
   }, [grippable])
