@@ -34,6 +34,7 @@ const TOOL_LABELS: Record<string, string> = {
   describe_expenditure_columns: '列の意味を確認',
   search_evaluations: '事業の評価を検索',
   render_expenditure_view: '表とグラフを用意',
+  read_source_page: '資料を読む',
 }
 
 function ToolMarker({ part }: { part: DynamicToolUIPart }) {

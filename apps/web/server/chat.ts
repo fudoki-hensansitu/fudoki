@@ -11,6 +11,7 @@ import { toolText } from '../tool-text'
 import { logError, logStep, logTiming } from './log'
 import { writeUsage, type Usage } from './usage'
 import { writeChatTurn } from './chat-log'
+import { SOURCE_PAGE_TOOL, sourcePageTool } from './source-pages'
 
 const SYSTEM = [
   'あなたは「風土記」の案内役です。風土記は、日本の自治体が何にいくら使ったか（歳出の予算・決算）を、事業の単位まで集めたデータです。',
@@ -25,6 +26,7 @@ const SYSTEM = [
   '',
   '# データで答えるとき',
   '- 風土記の tool で調べた結果だけを根拠に、日本語で短く答えてください。tool で確かめていない金額や事業名を書かないでください。',
+  '- 事業の目的・内容・実績・評価など、金額だけでは答えられない詳細を聞かれたら、read_source_page で出典の該当頁を読んでから答えてください。頁は search_evaluations の page や、内訳・科目の印字の位置（source_page）から決めます。読んだ内容は要約して書き、長く引用しないでください。出典は read_source_page の結果の url（自治体の公式の資料）と頁で示してください。',
   '- 収録されていない自治体・年度・資料は、無いと正直に伝えてください。決算の年度が無いときは、list_jurisdictions の uncovered_sources にある統計の出典を案内してください。統計は普通会計の分野ごとの合計で、事業の単位は無く、風土記の数字とは合計が合わないことも添えてください。',
   '',
   '# 表とグラフ（render_expenditure_view）を出すとき',
@@ -184,6 +186,7 @@ export async function handleChat(c: ApiRequest): Promise<Response> {
     if (typeof uri === 'string') apps[name] = uri
     Object.assign(t, { toModelOutput: ({ output }: { output: unknown }) => ({ type: 'text' as const, value: toolText(name, output) }) })
   }
+  if (env.SOURCES) tools[SOURCE_PAGE_TOOL] = sourcePageTool(env.SOURCES)
   const close = () => c.defer(mcp.close().catch(() => {}))
 
   let messages
