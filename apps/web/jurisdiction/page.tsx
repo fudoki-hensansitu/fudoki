@@ -103,24 +103,23 @@ function FreshRow({ up, upLabel = '拡大', title, yen, children }: { up: boolea
   const people = React.useContext(PeopleContext)
   const label = up ? upLabel : '新規'
   return (
-    <div className="flex flex-col gap-2 border-b border-foreground/10 py-4">
-      <div className="flex items-start justify-between gap-x-6">
-        {/* 行の名前は分野（h3）の下の見出し。行の高さをアイコン（28px）と同じにして、アイコンを1行目の真ん中に揃える */}
-        <h4 className="flex min-w-0 items-start gap-2 text-base font-normal leading-7">
-          <Hint label={label}>
-            <span className="flex shrink-0 text-primary">
-              {up ? <UpIcon className="size-7" /> : <NewIcon className="size-7" />}
-              <span className="sr-only">{label}</span>
-            </span>
-          </Hint>
-          {title}
-        </h4>
-        <span className="shrink-0 text-right">
-          <YenText yen={yen} className="block leading-snug" />
-          {people && yen ? <span className="block text-xs text-muted-foreground tabular-nums">1人 {formatPerCapita(yen / people)}</span> : null}
-        </span>
-      </div>
-      {children}
+    // 金額（と1人あたり）は右の列に縦に置き、名前のすぐ下からポイントを始める（金額の2行分の高さで名前の下に空白ができないように）
+    <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-6 gap-y-2 border-b border-foreground/10 py-4">
+      {/* 行の名前は分野（h3）の下の見出し。行の高さをアイコン（28px）と同じにして、アイコンを1行目の真ん中に揃える */}
+      <h4 className="flex min-w-0 items-start gap-2 text-base font-normal leading-7">
+        <Hint label={label}>
+          <span className="flex shrink-0 text-primary">
+            {up ? <UpIcon className="size-7" /> : <NewIcon className="size-7" />}
+            <span className="sr-only">{label}</span>
+          </span>
+        </Hint>
+        {title}
+      </h4>
+      <span className="row-span-2 shrink-0 text-right">
+        <YenText yen={yen} className="block leading-7" />
+        {people && yen ? <span className="block text-xs text-muted-foreground tabular-nums">1人 {formatPerCapita(yen / people)}</span> : null}
+      </span>
+      <div className="flex min-w-0 flex-col gap-2 empty:hidden">{children}</div>
     </div>
   )
 }
@@ -415,7 +414,7 @@ function DomainIcon({ id }: { id: string }) {
   )
 }
 
-function ProjectRow({ p, rank, max }: { p: Project; rank: number; max: number }) {
+function ProjectRow({ p, rank, max, total, people, showChange, shown }: { p: Project; rank: number; max: number; total?: number; people?: number; showChange: boolean; shown: boolean }) {
   const [setsu, setSetsu] = React.useState<Setsu[]>()
   const [error, setError] = React.useState(false)
   const [attempt, setAttempt] = React.useState(0)
@@ -432,22 +431,38 @@ function ProjectRow({ p, rank, max }: { p: Project; rank: number; max: number })
   }, [p.id, attempt])
   return (
     <li className="border-b border-foreground/10">
-      <div className="grid grid-cols-[22px_minmax(0,1fr)_auto] items-center gap-x-3.5 gap-y-1 py-3 sm:grid-cols-[22px_minmax(120px,190px)_1fr_110px_90px]">
-        <span className="text-xl text-muted-foreground">{rank}</span>
+      <div className={`grid grid-cols-[22px_minmax(0,1fr)_auto] items-center gap-x-3.5 gap-y-2 py-4 ${showChange ? 'sm:grid-cols-[22px_minmax(140px,200px)_1fr_auto_80px]' : 'sm:grid-cols-[22px_minmax(140px,200px)_1fr_auto]'}`}>
+        <span className="text-xl tabular-nums text-muted-foreground">{rank}</span>
         <div className="min-w-0">
-          <b className="block text-[15px] font-normal leading-snug">{p.name}</b>
+          <h3 className="text-base font-normal leading-snug">{p.name}</h3>
           <span className="text-xs text-muted-foreground">{p.domain}</span>
         </div>
-        <div className="order-5 col-span-full sm:order-none sm:col-span-1">
-          <div className="h-2.5 overflow-hidden rounded-full bg-foreground/5">
-            <div className="h-full rounded-full bg-primary" style={{ width: `${(p.yen / max) * 100}%` }} />
+        {/* 棒は1位を満たした長さ。スマホでは名前の下に、名前の左端から並べる */}
+        <div className="order-5 col-span-2 col-start-2 sm:order-none sm:col-span-1 sm:col-start-auto">
+          <div className="h-2 overflow-hidden rounded-full bg-foreground/5">
+            {/* 画面に入ったら、上の順位から少しずつ遅らせて伸ばす */}
+            <div className="h-full rounded-full bg-primary transition-[width] duration-700 ease-out motion-reduce:transition-none" style={{ width: shown ? `${(p.yen / max) * 100}%` : 0, transitionDelay: `${(rank - 1) * 80}ms` }} />
           </div>
         </div>
-        <div className="text-right text-[15px] tabular-nums">{p.amountMissing ? '金額未記載' : formatYen(p.yen)}</div>
-        <div className={`hidden text-right text-[15px] tabular-nums sm:block text-foreground`}>
-          {pct === null ? '—' : `${pct >= 0 ? '+' : '−'}${Math.abs(pct).toFixed(1)}%`}
-          <i className="block text-[11px] not-italic text-muted-foreground">前年度比</i>
+        <div className="text-right">
+          {p.amountMissing ? (
+            <span className="text-sm text-muted-foreground">金額未記載</span>
+          ) : (
+            <>
+              <YenText yen={p.yen} className="block leading-snug" />
+              <span className="flex justify-end gap-x-2 whitespace-nowrap text-xs text-muted-foreground tabular-nums">
+                {total ? <span>全体の{((p.yen / total) * 100).toFixed(1)}%</span> : null}
+                {people ? <span>1人 {formatPerCapita(p.yen / people)}</span> : null}
+              </span>
+            </>
+          )}
         </div>
+        {showChange ? (
+          <div className="hidden text-right text-base tabular-nums sm:block">
+            {pct === null ? '—' : `${pct >= 0 ? '+' : '−'}${Math.abs(pct).toFixed(1)}%`}
+            <i className="block text-xs not-italic text-muted-foreground">前年度比</i>
+          </div>
+        ) : null}
       </div>
       {error ? (
         <div role="alert" className="flex flex-wrap items-center gap-2 pb-3 pl-9 text-[13px] text-destructive">
@@ -494,16 +509,16 @@ function Budget({ data, year }: { data: PageData; year: number }) {
   const docs = (budget ? documents?.initial : documents?.settlement) ?? []
   const summary = (
     <>
-      <span className="text-sm text-muted-foreground">{budget ? '予算の全体' : '全体'}</span>
-      <b className={`text-[26px] font-normal leading-snug tabular-nums ${total ? '' : 'text-muted-foreground'}`}>{total ? formatYen(total.yen) : '—'}</b>
-      {pct !== null ? <span className={`text-[13px] tabular-nums text-muted-foreground`}>前年度比 {pct >= 0 ? '+' : '−'}{Math.abs(pct).toFixed(1)}%</span> : null}
+      <span className="min-w-0 shrink-0 text-sm text-muted-foreground">全体</span>
+      <b className={`shrink-0 text-[26px] font-normal leading-snug tabular-nums ${total ? '' : 'text-muted-foreground'}`}>{total ? formatYen(total.yen) : '—'}</b>
+      {pct !== null ? <span className={`min-w-0 truncate text-sm tabular-nums text-muted-foreground`}>前年度比 {pct >= 0 ? '+' : '−'}{Math.abs(pct).toFixed(1)}%</span> : null}
     </>
   )
   // 分け方の切り替えはヘッダーの年度の切り替えと同じ丸いボタンの並びにする
   const tabs = (
     <div className="flex items-center justify-between gap-3">
       {/* 左上に、この図が予算か決算かを出す */}
-      <span className="text-[15px]">{label}</span>
+      <span className="text-lg">{label}</span>
       <div role="group" aria-label="分類" className="flex gap-1">
       {VIEWS.map((v) => (
         <button
@@ -532,13 +547,27 @@ function Budget({ data, year }: { data: PageData; year: number }) {
         ) : (
           <div className="rounded-[20px] border bg-background px-5 pt-5 sm:px-6">
             {tabs}
-            <div className="mt-3 flex min-h-9 flex-wrap items-baseline gap-x-3">{summary}</div>
+            <div className="mt-3 flex min-h-9 min-w-0 items-baseline gap-x-3">{summary}</div>
             <p className="pb-10 pt-4 text-center text-sm text-muted-foreground">{yearName(year)}の決算・予算は、まだ収録していません</p>
           </div>
         )}
       </div>
     </Section>
   )
+}
+
+/** 要素が画面に入ったら true になる（一度だけ）。棒グラフを画面に入ったときに伸ばすのに使う */
+function useInView<T extends Element>(): [React.RefObject<T | null>, boolean] {
+  const ref = React.useRef<T>(null)
+  const [seen, setSeen] = React.useState(false)
+  React.useEffect(() => {
+    const el = ref.current
+    if (!el || seen) return
+    const io = new IntersectionObserver(([e]) => { if (e?.isIntersecting) { setSeen(true); io.disconnect() } }, { rootMargin: '0px 0px -10% 0px' })
+    io.observe(el)
+    return () => io.disconnect()
+  }, [seen])
+  return [ref, seen]
 }
 
 /** 金額が大きい事業（目）。最新の決算の年度は決算、決算の無い年度は当初予算から出す */
@@ -548,12 +577,17 @@ function Projects({ data, year }: { data: PageData; year: number }) {
   const budget = settled ? undefined : (data.budgets ?? []).find((b) => b.year === year)
   const projects = isLatest ? data.projects : (budget?.projects ?? [])
   const max = projects[0]?.yen ?? 1
+  // 割合の分母は、同じ年度・同じ段階の一般会計の歳出の合計（お金は何に使う？の「全体」と同じ）
+  const total = isLatest ? settled?.yen : budget?.yen
+  // 予算の年度は前年度との比較を持たないので、列ごと出さない
+  const showChange = projects.some((p) => p.prevYen != null)
+  const [listRef, shown] = useInView<HTMLUListElement>()
   return (
     <Section id="projects" title={budget ? 'いちばんお金がかかるのは？' : 'いちばんお金がかかっているのは？'}>
       {projects.length ? (
-        <ul className="border-t">
+        <ul ref={listRef} className="border-t">
           {projects.map((p, i) => (
-            <ProjectRow key={p.id} p={p} rank={i + 1} max={max} />
+            <ProjectRow key={p.id} p={p} rank={i + 1} max={max} total={total} people={data.population?.people} showChange={showChange} shown={shown} />
           ))}
         </ul>
       ) : (
@@ -568,6 +602,7 @@ const exitResult = (result: string) => (result === '廃止' ? '' : result === '�
 
 function ScrapSection({ scrap }: { scrap: Scrap }) {
   const target = scrap.targetYen
+  const [barRef, shown] = useInView<HTMLDivElement>()
   const grades = [
     ['A', '広げる'],
     ['B', '今のまま続ける'],
@@ -585,8 +620,8 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
           </b>
         </div>
         {target ? (
-          <div className="relative h-2.5 rounded-full bg-foreground/5" role="img" aria-label={`目標${formatYen(target)}に対して${formatYen(scrap.raisedYen)}`}>
-            <div className="absolute inset-y-0 left-0 rounded-full bg-[var(--kincha)]" style={{ width: `${Math.min(1, scrap.raisedYen / target) * 100}%` }} />
+          <div ref={barRef} className="relative h-2.5 rounded-full bg-foreground/5" role="img" aria-label={`目標${formatYen(target)}に対して${formatYen(scrap.raisedYen)}`}>
+            <div className="absolute inset-y-0 left-0 rounded-full bg-[var(--kincha)] transition-[width] duration-700 ease-out motion-reduce:transition-none" style={{ width: shown ? `${Math.min(1, scrap.raisedYen / target) * 100}%` : 0 }} />
             <div className="absolute -top-1 right-0 h-[18px] w-0.5 bg-foreground" />
           </div>
         ) : null}

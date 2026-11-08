@@ -413,11 +413,12 @@ export function Flow({ data, total: year, view = 'kan', phase = 'settlement', ta
         {tabs}
         {/* 見出しと金額の行。右に今いる段（大分類 4 / 8）と前後の矢印を置く */}
         <div className="mt-3 flex min-h-9 items-center justify-between gap-3">
-          <div className="flex min-w-0 flex-wrap items-baseline gap-x-3" aria-live="polite">
+          {/* 名前と金額は折り返さず1行に置く。折り返すと名前の長さで金額の位置と行の高さが段ごとに変わり、横に送るたびに動いて見える。入らない名前は省略する */}
+          <div className="flex min-w-0 items-baseline gap-x-3" aria-live="polite">
             {kan ? (
               <>
-                <span className="text-sm text-muted-foreground">{kan.kan.name}</span>
-                <b className="text-[26px] font-normal leading-snug tabular-nums">{amountText(kan.kan.yen, kan.kan.amountMissing)}</b>
+                <span className="min-w-0 truncate text-sm text-muted-foreground">{kan.kan.name}</span>
+                <b className="shrink-0 text-[26px] font-normal leading-snug tabular-nums">{amountText(kan.kan.yen, kan.kan.amountMissing)}</b>
               </>
             ) : summary}
           </div>
