@@ -13,6 +13,7 @@ user-invocable: false
 | やること | 読む reference |
 | --- | --- |
 | `DESIGN.md` に何を書くか・書かないかを判断したい | [references/design-md.md](references/design-md.md) |
+| 資料の施策（プレス発表など）に分野を付ける・予算書の事業へ紐付ける | [references/link-to-budget-detail.md](references/link-to-budget-detail.md) |
 
 ## 関連 skill
 
