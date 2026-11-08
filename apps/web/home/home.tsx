@@ -152,10 +152,24 @@ function MyTown({ entries, featured }: HomeProps) {
   }, [entries])
   const town = code ? byCode.get(code) : undefined
   const vision = town && featured.find((f) => f.code === town.code)?.vision
+  const undo = React.useRef<string | null>(null)
   const pick = (e: MapEntry) => {
     saveHomeCode(e.code)
+    undo.current = null
     setCode(e.code)
     setHere(null)
+    setEditing(false)
+  }
+  // 位置情報をリセット: 保存した選択と現在地の結果を消して選び直す。「やめる」で戻したら元の選択を保存し直す
+  const reset = () => {
+    undo.current = loadHomeCode()
+    saveHomeCode(null)
+    setHere(null)
+    setEditing(true)
+  }
+  const cancel = () => {
+    if (undo.current) saveHomeCode(undo.current)
+    undo.current = null
     setEditing(false)
   }
   return (
@@ -166,7 +180,7 @@ function MyTown({ entries, featured }: HomeProps) {
           {town && !editing && here === 'found' ? <span className="ml-2 text-[12px]">· 現在地から</span> : null}
         </h2>
         {town && !editing ? (
-          <button type="button" onClick={() => setEditing(true)} className="rounded-full px-3 py-1 text-[13px] opacity-80 transition hover:bg-white/10 hover:opacity-100">
+          <button type="button" onClick={reset} className="rounded-full px-3 py-1 text-[13px] opacity-80 transition hover:bg-white/10 hover:opacity-100">
             位置情報をリセット
           </button>
         ) : null}
@@ -218,7 +232,7 @@ function MyTown({ entries, featured }: HomeProps) {
             <p className="mt-1 text-sm opacity-80">今は自治体の一覧を読み込めません。少し時間をおいて開き直してください。</p>
           )}
           {editing ? (
-            <button type="button" onClick={() => setEditing(false)} className="mt-3 text-[13px] opacity-80 hover:opacity-100">
+            <button type="button" onClick={cancel} className="mt-3 text-[13px] opacity-80 hover:opacity-100">
               やめる
             </button>
           ) : null}
