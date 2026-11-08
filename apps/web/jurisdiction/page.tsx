@@ -693,9 +693,9 @@ function Mark({ kind }: { kind: string }) {
   if (!m) return null
   return (
     <Hint label={m.label}>
-      <span className="absolute -top-[3px] left-0 flex text-primary">
+      {/* 意味は隣の「今後の方向」の列が文字で伝えるので、読み上げでは印を飛ばす */}
+      <span aria-hidden="true" className="absolute -top-[3px] left-0 flex text-primary">
         <m.Icon className="size-6" />
-        <span className="sr-only">{m.label}</span>
       </span>
     </Hint>
   )
