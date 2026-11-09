@@ -5,7 +5,7 @@ import { siteKey } from '../server/pages'
 export type Props = { sitekey: string }
 
 const TITLE = 'アシスタント — 風土記'
-const DESCRIPTION = '自治体の予算・決算・事業評価について、風土記の AI に聞けます。答えには出典の資料を添えます。'
+const DESCRIPTION = '自治体の予算・決算・事業評価について、風土記の AI に聞けます。'
 
 export const loader = defineHandler<Props>((c) => {
   c.header('Cache-Control', 'public, max-age=300')
