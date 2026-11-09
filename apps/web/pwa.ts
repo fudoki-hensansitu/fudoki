@@ -3,9 +3,9 @@
 // service worker は「繋がらないときの案内」だけを持つ。会話・データは常に通信で取るので、頁も API もキャッシュしない
 import { BACKGROUND_DARK, BACKGROUND_LIGHT } from './tokens'
 export const MANIFEST = JSON.stringify({
-  name: '風土記（fudoki）— うちのまち、なにしてる？',
+  name: '風土記（fudoki）— まちのお金、何に使ってる？',
   short_name: '風土記',
-  description: 'まちが何を決めて、何をしているかを、出典つきで誰でも見られる形に。',
+  description: 'まちのお金、何に使ってる？ 風土記は、自治体が何にいくら使い、どう振り返ったかを、事業ごとにわかりやすく見せるサイトです。ほかのまちと同じ物差しで比べられ、出典の資料まで辿れます。',
   lang: 'ja',
   start_url: '/',
   scope: '/',

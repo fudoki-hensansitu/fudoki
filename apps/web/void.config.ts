@@ -51,7 +51,6 @@ export default defineConfig({
       { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
       { rel: 'manifest', href: '/manifest.webmanifest' },
       // 見出しの明朝（この site で使う字だけの subset）
-      { rel: 'preload', href: '/fonts/mincho.woff2', as: 'font', type: 'font/woff2', crossorigin: '' },
     ],
     // service worker（routes/sw.js.ts）は繋がらないときの案内だけを持つ
     script: [{ innerHTML: SW_REGISTER }],
