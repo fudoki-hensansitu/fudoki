@@ -164,7 +164,7 @@ type 事業評価 = {
 }
 type 評価シート = {         // 1枚 = 小事業の1年度
   評価シートID: 評価シートID // PK。表の sheet_id
-  事業?: 事業ID と 年度          // FK。★案。今は予算書の内訳から導く。決算書の無い年度など紐付かないシートもある
+  事業?: 事業ID と 年度          // FK。★案。今は決算書の内訳から導く。決算書の無い年度など紐付かないシートもある
   事業名: 文字                // 小事業の名前。資料のまま
   所管課: 文字
   事業期間: 始めた年度〜終わる年度
@@ -233,7 +233,7 @@ type 事業の金額 = {
 | 事業・事業の金額 | なし | 案（下の「表の案」） |
 | 歳出 | `fiscal_expenditure_subject`（目）・`fiscal_expenditure_detail`（`breakdown='事業'`） | あり |
 | 事業評価 | `project_evaluation_result`（root。事業を行った年度は表の `evaluated_year`。`budget_year` とシートの `evaluation_year` は表にあるが、モデルでは事業を行った年度から導く）・`project_evaluation_sheet`・`project_evaluation_indicator`・`project_evaluation_indicator_value` | あり。シートは `detail_id` で内訳を指す |
-| 予算案の発表・施策 | `project_budget_initiative` | あり。施策1件1行で `detail_id` を指す。根の表は無く、出典は `project_origin` |
+| 予算案の発表・施策 | `project_budget_initiative` | あり。施策1件1行で `detail_id` を指す。根の表は無く、出典は `project_origin`。`points` は箇条書きの配列で、モデルの説明（文字）とは形が違う |
 | 出典 | `fiscal_origin`・`project_origin`・`population_origin` | あり。`population_origin` は資料名・形式・SHA256 を持たない（基準日と URL だけ）。`project_origin` は形式を持たない（事業の資料は PDF だけ） |
 
 品川の R6 で測った数（2026-11-09）:
@@ -267,7 +267,7 @@ type 事業の金額 = {
 | `project` | 事業1つ | `project_id`・`jurisdiction_code`・`name`・`first_year`・`last_year` |
 | `project_year` | 事業の1年度 | `project_id`・`fiscal_year`・`subject_id`（含む目）・`budget_detail_id`・`settlement_detail_id`（含む内訳。無ければ空）・`cofog_code` |
 
-`project_evaluation_sheet` と `project_budget_initiative` には列を足さず、`detail_id` から `project_year` を引いて事業と年度を得る。施策を多対多にするときは `project_budget_initiative_link` に行を足す。
+`project_evaluation_sheet` と `project_budget_initiative` には列を足さず、`detail_id`（内訳の無い自治体は目と評価シートの事業名で決めた seed の判断）から `project_year` を引いて事業と年度を得る。施策を多対多にするときは `project_budget_initiative_link` に行を足す。
 
 `project_id` は最初の年度の `project_year` の内訳から作る。年度をまたぐ判断を直すと事業の識別子が変わるので、公開 API で `project_id` を出す前に、識別子を固定する方法を決める。
 
