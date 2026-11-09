@@ -18,12 +18,14 @@ import {
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import { LOGO_G, LOGO_WIDTH } from '../logo'
+import { FEEDBACK } from './feedback'
 
-export const NAV_SECTIONS = ['jurisdictions', 'assistant'] as const
+export const NAV_SECTIONS = ['home', 'jurisdictions', 'assistant'] as const
 export type NavSection = (typeof NAV_SECTIONS)[number]
 export type SiteNavProps = { active?: NavSection; open: boolean }
 /** site の中の頁へは Void の Link で頁を読み直さずに移り、外（docs・mail・SNS）へは普通の a で出る */
 function NavLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement> & { href: string }) {
+  if (props.href.startsWith('https://')) return <a target="_blank" rel="noopener" {...props} />
   if (!props.href.startsWith('/')) return <a {...props} />
   // Void の Link の型は a と button の属性の交差なので、a の属性だけを渡すと event handler の型が合わない。描くのは a なので型だけ合わせる
   return <Link {...(props as React.ComponentProps<typeof Link>)} />
@@ -76,8 +78,6 @@ const Item = ({ href, label, icon, active }: { href: string; label: string; icon
   )
 }
 
-/** お問い合わせ（入口の頁の下）と同じく、メールを開いてもらう */
-const FEEDBACK = 'mailto:support@fudoki.dev'
 const MCP = `${DOCS}/mcp`
 const GITHUB = 'https://github.com/fudoki-hensansitu/fudoki'
 /** 風土記の X アカウント。空にすると icon を出さない */
@@ -114,7 +114,7 @@ function useHideOnScroll() {
 function BottomNav({ active }: { active?: NavSection }) {
   const [hidden, setHidden] = useHideOnScroll()
   const items = [
-    { href: '/', label: 'ホーム', icon: <HouseIcon /> },
+    { href: '/', label: 'ホーム', icon: <HouseIcon />, active: active === 'home' },
     { href: '/jurisdictions', label: '自治体一覧', icon: <BankIcon />, active: active === 'jurisdictions' },
     { href: '/assistant', label: 'アシスタント', icon: <RobotIcon />, active: active === 'assistant' },
   ]

@@ -1,6 +1,5 @@
 /* 色・字・角の token（DESIGN.md が正本）。--background は tokens.ts の BACKGROUND_LIGHT・BACKGROUND_DARK と揃える（試験が照合する）。
    全頁が styles/app.css 経由で読む */
-@font-face{font-family:"Fudoki Mincho";src:url("/fonts/mincho.woff2") format("woff2");font-weight:400;font-display:swap}
 :root{
 --background:#ffffff;--foreground:#2b2723;--card:#f8f5ee;--card-foreground:#2b2723;
 --secondary:#ece6da;--secondary-foreground:#2b2723;--muted:#ece6da;--muted-foreground:#6b655c;
@@ -9,7 +8,7 @@
 --paper:#e4d8bf;--paper-foreground:#2b2723;--night:#2b2723;--night-foreground:#f8f5ee;
 --page:#ffffff;--page-foreground:#2b2723;
 --shu:#c1553a;--ai:#33507a;--kincha:#e3a43c;--kincha-ink:#b85c00;--sakura:#ebcab9;
---font-display:"Fudoki Mincho","BIZ UDPMincho","Hiragino Mincho ProN","Yu Mincho",serif;
+--font-display:"BIZ UDPMincho","Hiragino Mincho ProN","Yu Mincho","YuMincho","Noto Serif JP","Noto Serif CJK JP",serif;
 --font-sans:"Hiragino Sans","Noto Sans JP","Yu Gothic UI","Yu Gothic",Meiryo,system-ui,sans-serif;
 --font-mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 --radius:8px;--radius-sm:4px;--radius-card:16px;--radius-sheet:24px;

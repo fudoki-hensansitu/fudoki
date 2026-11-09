@@ -119,13 +119,13 @@ for target in (ROOT / "apps/docs/public",):
 # OS の設定を追うファビコンと、画面の .dark で選ぶ SVG は分ける。
 # 画像内部の prefers-color-scheme は画面側のクラスを参照できない。
 OW, OH = 1200, 630
-TAGLINE = "うちのまち、なにしてる？"
+TAGLINE = "まちのお金、何に使ってる？"
 og_height = 100
 scale = og_height / H
 LEFT = 80
-# 右に置く実画面は brand/og-card.png（ホームの決算表と入力欄を 2 倍で撮ったもの）。幅は右端まで。
+# 右に置く実画面は brand/og-card.png（ホームの「うちのまち」と見られる情報を 2 倍で撮ったもの）。幅は右端まで。
 CARD_X, CARD_W, CARD_H = 560, OW - 560, round((OW - 560) * 1031 / 1280)
-tag_size = 34
+tag_size = 32
 
 
 def tagline(size: float, x: float, baseline: float) -> str:
