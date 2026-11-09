@@ -239,7 +239,7 @@
     {
       "table_id": "sewer-revenue-expenditure-detail",
       "conversion_id": "sewer-revenue",
-      "input_fingerprint": "c714bc902ea577ff63ee8ae44670363195fc8d0c782fb838340fd57dd3486307",
+      "input_fingerprint": "2cd069b97c9a14f57335a965ef21b41a601f6e5a56a52325d4852fdb395f4980",
       "account": "下水道事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape'}。",

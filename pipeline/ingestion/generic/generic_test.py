@@ -142,6 +142,17 @@ class TrialRulesTest(unittest.TestCase):
         self.assertEqual(found['事業'], ['(05)災害対策用職員住宅管', '理費', '一般管理'])
         self.assertEqual(found['当初予算額'], ['費用'])
 
+    def test_row_gaps_pair_fragments_of_a_line_with_a_word_centred_between_them(self):
+        rules = [Rule(10, 50, 10, 200), Rule(100, 50, 100, 110), Rule(100, 125, 100, 200), Rule(150, 50, 150, 200)] + \
+            [Rule(10, y, 150, y) for y in (50, 70, 200)]
+        words = [Word('事業', 15, 55, 33, 64), Word('当初予算額', 105, 55, 145, 64),
+                 Word('(05)災害対策用職員住宅管', 15, 112, 104, 121), Word('理費', 104, 112.8, 122, 121.8),
+                 Word('1,000', 125, 112.4, 145, 121.4)]  # its centre falls between the two fragments'
+        found = {'／'.join(b.header): [w.text for w in b.words]
+                 for b in page_bands(Page(1, 200, 300, words, rules), row_gaps=True)[0]}
+        self.assertEqual(found['事業'], ['(05)災害対策用職員住宅管', '理費'])
+        self.assertEqual(found['当初予算額'], ['1,000'])
+
     def test_an_amount_running_into_the_next_band_keeps_its_digits(self):
         self.assertEqual(_leading_amount(glyph('44,406,439,217明許', 662, 700)).text, '44,406,439,217')
         self.assertEqual(_leading_amount(glyph('301,286,948', 662, 700)).text, '301,286,948')

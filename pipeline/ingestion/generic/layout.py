@@ -426,13 +426,19 @@ def run_on_starts(body: list[tuple[int, Word]], verticals: list[Rule]) -> dict[i
     a text word touching the end of the word before it on its line, with no rule drawn across the line between
     them, is read where that word starts (133086 prints `(05)災害対策用職員住宅管理費` across the rule between the
     事業 and the first amount column, and Poppler cuts `理費` off at it)."""
-    words = sorted((word for _, word in body), key=lambda w: ((w.y0 + w.y1) / 2, w.x0))
+    centre = lambda w: (w.y0 + w.y1) / 2
+    ends: dict[int, list[Word]] = {}
+    for _, word in body:
+        if not is_amount(word.text):
+            ends.setdefault(round(word.x1), []).append(word)
     starts: dict[int, float] = {}
-    for before, word in zip(words, words[1:]):
-        cy = (word.y0 + word.y1) / 2
-        if (abs((before.y0 + before.y1) / 2 - cy) > 1 or not -.5 <= word.x0 - before.x1 <= .5
-                or is_amount(word.text) or is_amount(before.text)):
+    for word in sorted((w for _, w in body if not is_amount(w.text)), key=lambda w: w.x0):
+        cy = centre(word)
+        touching = [b for x in range(round(word.x0) - 1, round(word.x0) + 2) for b in ends.get(x, ())
+                    if b is not word and abs(centre(b) - cy) <= 1 and -.5 <= word.x0 - b.x1 <= .5]
+        if not touching:
             continue
+        before = min(touching, key=lambda b: (abs(centre(b) - cy), abs(word.x0 - b.x1)))
         if any(before.x0 + 1 < r.x0 < word.x0 + min(2, (word.x1 - word.x0) / 2) + 1 and _crosses(r, cy) for r in verticals):
             continue
         starts[id(word)] = starts.get(id(before), before.x0 + min(2, (before.x1 - before.x0) / 2))

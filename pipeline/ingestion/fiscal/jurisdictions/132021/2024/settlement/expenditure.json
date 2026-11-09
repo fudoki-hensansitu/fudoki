@@ -2160,7 +2160,7 @@
     {
       "table_id": "keirin-expenditure-detail",
       "conversion_id": "keirin",
-      "input_fingerprint": "0a8de71273fa364bf8bebdaaf09d2115c78cbb99fa1a67db23da8867003d8f5c",
+      "input_fingerprint": "1871a5368543296701187c41d4969610ad84ca45dc1f02181b21265ac0dc61aa",
       "account": "競輪事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '備考': 'position'}。",
@@ -2192,7 +2192,7 @@
     {
       "table_id": "nhi-expenditure-detail",
       "conversion_id": "nhi",
-      "input_fingerprint": "6703bc4ef84074b1a696b1e117a8e6d6944fee48c1ac8964f762c809c8888e38",
+      "input_fingerprint": "dbe5b5a69fa8141fdab4f0c4547b9f578c74a4f245df099cf44750d4a2111fe3",
       "account": "国民健康保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '備考': 'position'}。",
@@ -2223,7 +2223,7 @@
     {
       "table_id": "parking-expenditure-detail",
       "conversion_id": "parking",
-      "input_fingerprint": "2ddb9ecf644c2dc6d42d7da4a7afc3a302d45cf16c1f53a1938d15986a0eba89",
+      "input_fingerprint": "7b560a9edae40f6ee77973c9908972c7398d8a70fa43cedbfcdbb67d1073e17e",
       "account": "駐車場事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '備考': 'position'}。",
@@ -2254,7 +2254,7 @@
     {
       "table_id": "care-expenditure-detail",
       "conversion_id": "care",
-      "input_fingerprint": "2040f28f1cb44036a1ad22fcbaa4b91f886db2a5c07aadf67ba65b20e082b1ca",
+      "input_fingerprint": "34e5205afb226336019fd2da51e6e4fc3917fc6c44a9615197596f1d259c01d9",
       "account": "介護保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '備考': 'position'}。",
@@ -2286,7 +2286,7 @@
     {
       "table_id": "elderly-expenditure-detail",
       "conversion_id": "elderly",
-      "input_fingerprint": "ecb5c7ed510df51d4949a30cb3fcef0b2b1d8de2a522f0b0bdbb219e53a5a26f",
+      "input_fingerprint": "3026d64e47f2f14af20a10a7e4517d5cb4deac88bf173e52004109c29a041099",
       "account": "後期高齢者医療事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '備考': 'position'}。",
@@ -2317,7 +2317,7 @@
     {
       "table_id": "general-expenditure-detail",
       "conversion_id": "general",
-      "input_fingerprint": "365354059c7d4f09603f607f82b3ccd348c1c2e7c6be106f7edf2ee470789885",
+      "input_fingerprint": "fa3123640bfb94e75f3bdc1e5fa0aedb40bb9285bb83a2cc9514bdd722aae430",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '備考': 'position'}。",
@@ -2349,7 +2349,7 @@
     {
       "table_id": "sewer-revenue-expenditure-detail",
       "conversion_id": "sewer-revenue",
-      "input_fingerprint": "dbb385e1de054c096de5a68c4f74069f939daa3baf17a1e160d3a9686e1cf6e7",
+      "input_fingerprint": "b3ddae1a4fd322035bbd18461a023093c82c67b4df978a66a989ee5de8870278",
       "account": "下水道事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -2378,7 +2378,7 @@
     {
       "table_id": "sewer-capital-expenditure-detail",
       "conversion_id": "sewer-capital",
-      "input_fingerprint": "1433f0d2153445f53a96503895d7525c2cd2baad528f01c97c71fa32882527fb",
+      "input_fingerprint": "244a906e1e4bb188d8bdac9be50ef281856a3de7895d12ece5ea03dc2624a973",
       "account": "下水道事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
