@@ -93,8 +93,8 @@ def load(*, remote: bool = False) -> dict[str, list[tuple]]:
     """入力準備の表の行。表名 → 行の list。"""
     declared = origins()
     tables: dict[str, list[tuple]] = {name: [] for name in (
-        'project_origin', 'evaluation_sheet', 'evaluation_indicator', 'evaluation_indicator_value',
-        'evaluation_result', 'budget_initiative')}
+        'project_origin', 'project_evaluation_sheet', 'project_evaluation_indicator', 'project_evaluation_indicator_value',
+        'project_evaluation_result', 'project_budget_initiative')}
     for origin in sheet_sources(declared['sheets']):
         path = fetch(origin['reference'], remote=remote)
         sheets = read_cached(path, origin)
@@ -103,19 +103,19 @@ def load(*, remote: bool = False) -> dict[str, list[tuple]]:
         for sheet in sheets:
             if sheet['fiscal_year'] != origin['fiscal_year']:
                 raise ValueError(f'評価シートの実施年度が選定と違う: p{sheet["page"]} {sheet["fiscal_year"]}')
-            tables['evaluation_sheet'].append((
+            tables['project_evaluation_sheet'].append((
                 origin_id(origin), sheet['page'], sheet['evaluation_year'], sheet['name'], sheet['account'],
                 sheet['kan'], sheet['kou'], sheet['moku'], sheet['jigyo'], sheet['department'], sheet['division'],
                 sheet['period_start'], sheet['period_end'], sheet['budget_thousand'], sheet['settled_thousand'],
                 sheet['cost_previous_thousand'], sheet['cost_current_thousand'], sheet['grade_code'],
                 sheet['grade_label'], sheet['direction']))
             for indicator in sheet['indicators']:
-                tables['evaluation_indicator'].append((
+                tables['project_evaluation_indicator'].append((
                     origin_id(origin), sheet['page'], indicator['position'], indicator['name'], indicator['unit'],
                     indicator['definition'], indicator['targets'].get('target'), indicator['target_year_text']))
                 years = sorted({k for k in (*indicator['targets'], *indicator['actuals']) if k != 'target'})
                 for year in years:
-                    tables['evaluation_indicator_value'].append((
+                    tables['project_evaluation_indicator_value'].append((
                         origin_id(origin), sheet['page'], indicator['position'], int(year),
                         indicator['targets'].get(year), indicator['actuals'].get(year)))
     for origin in declared['results']:
@@ -124,7 +124,7 @@ def load(*, remote: bool = False) -> dict[str, list[tuple]]:
         tables['project_origin'].append((origin_id(origin), origin['jurisdiction'], 'result', origin['evaluated_year'],
                                             origin['title'], origin['url'], origin['landing_url'], origin['sha256']))
         counts = result['grade_counts']
-        tables['evaluation_result'].append((
+        tables['project_evaluation_result'].append((
             origin_id(origin), origin['evaluated_year'], origin['budget_year'], result['page'],
             result['evaluated_count'], counts['A'], counts['B'], counts['C'], counts['D'], result['reduced_thousand']))
     for origin in declared['press']:
@@ -133,7 +133,7 @@ def load(*, remote: bool = False) -> dict[str, list[tuple]]:
         tables['project_origin'].append((origin_id(origin), origin['jurisdiction'], 'press', origin['fiscal_year'],
                                             origin['title'], origin['url'], origin['landing_url'], origin['sha256']))
         for item in items:
-            tables['budget_initiative'].append((
+            tables['project_budget_initiative'].append((
                 origin_id(origin), item['page'], item['title'], json.dumps(item['names'], ensure_ascii=False),
                 item['is_new'], item['budget_thousand'], json.dumps(item['points'], ensure_ascii=False)))
     return tables
@@ -142,19 +142,19 @@ def load(*, remote: bool = False) -> dict[str, list[tuple]]:
 SCHEMAS = {
     'project_origin': 'origin_id varchar, jurisdiction_code varchar, document_type varchar, fiscal_year integer, '
                          'title varchar, url varchar, landing_url varchar, sha256 varchar',
-    'evaluation_sheet': 'origin_id varchar, page integer, evaluation_year integer, name varchar, account_name varchar, '
+    'project_evaluation_sheet': 'origin_id varchar, page integer, evaluation_year integer, name varchar, account_name varchar, '
                         'kan varchar, kou varchar, moku varchar, jigyo varchar, department varchar, division varchar, '
                         'period_start_year integer, period_end_year integer, budget_thousand bigint, '
                         'settled_thousand bigint, cost_previous_thousand bigint, cost_current_thousand bigint, '
                         'grade_code varchar, grade_label varchar, direction varchar',
-    'evaluation_indicator': 'origin_id varchar, page integer, position integer, name varchar, unit varchar, '
+    'project_evaluation_indicator': 'origin_id varchar, page integer, position integer, name varchar, unit varchar, '
                             'definition varchar, final_target_text varchar, final_target_year_text varchar',
-    'evaluation_indicator_value': 'origin_id varchar, page integer, position integer, fiscal_year integer, '
+    'project_evaluation_indicator_value': 'origin_id varchar, page integer, position integer, fiscal_year integer, '
                                   'target_text varchar, actual_text varchar',
-    'evaluation_result': 'origin_id varchar, evaluated_year integer, budget_year integer, page integer, '
+    'project_evaluation_result': 'origin_id varchar, evaluated_year integer, budget_year integer, page integer, '
                          'evaluated_count integer, grade_a integer, grade_b integer, grade_c integer, grade_d integer, '
                          'reduced_thousand bigint',
-    'budget_initiative': 'origin_id varchar, page integer, title varchar, names varchar, is_new boolean, '
+    'project_budget_initiative': 'origin_id varchar, page integer, title varchar, names varchar, is_new boolean, '
                   'budget_thousand bigint, points varchar',
 }
 

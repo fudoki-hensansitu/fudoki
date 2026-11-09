@@ -36,11 +36,11 @@
 
 | ページの値 | 今の出どころ | 作る表・列 |
 | --- | --- | --- |
-| 新しくできた事業（名前・決算額・指標・評価・方向性・頁） | `profiles.ts` の `projects` | `evaluation_sheet`（`is_new_project`）・`evaluation_indicator`・`evaluation_indicator_value` |
-| 新しくできた事業の分野 | `profiles.ts` の `cofog` | `evaluation_sheet.cofog_code`（決算書の目の COFOG） |
-| やめた事業・A〜C の一覧 | `profiles.ts` の `scrap.exits`・`graded` | `evaluation_sheet`（`grade_code`・`direction`） |
-| 捻出額・評価した数・A〜D の数 | `profiles.ts` の `scrap` | `evaluation_result` |
-| 予算の年度の新しい施策 | `budget-press.ts` | `budget_initiative` と seed `budget_initiative_link` |
+| 新しくできた事業（名前・決算額・指標・評価・方向性・頁） | `profiles.ts` の `projects` | `project_evaluation_sheet`（`is_new_project`）・`project_evaluation_indicator`・`project_evaluation_indicator_value` |
+| 新しくできた事業の分野 | `profiles.ts` の `cofog` | `project_evaluation_sheet.cofog_code`（決算書の目の COFOG） |
+| やめた事業・A〜C の一覧 | `profiles.ts` の `scrap.exits`・`graded` | `project_evaluation_sheet`（`grade_code`・`direction`） |
+| 捻出額・評価した数・A〜D の数 | `profiles.ts` の `scrap` | `project_evaluation_result` |
+| 予算の年度の新しい施策 | `budget-press.ts` | `project_budget_initiative` と seed `project_budget_initiative_link` |
 
 ### 確かめたこと（2026-11-08）
 
@@ -57,7 +57,7 @@
 
 1. `project:save` が、`ingestion/project/origins.json` の評価の結果とプレス発表の PDF を取得し、宣言の sha256 と同じときだけ非公開 R2 の `project/<種類>/<自治体>/<年度>/<sha256>.pdf` に置く。評価シートは出典の選定（`evaluation_selections`）で保存済みのものを使う。
 2. 入力準備（`dbt/scripts/prepare.py`）が PDF を宣言の様式で読み、`ingestion` スキーマの表にする。読んだ結果は PDF と読み方のコードの指紋ごとに `.cache/project/` に置く（評価シート1冊を読むのに約1分かかる）。
-3. dbt の marts が、出典の値に判断の列を足す。施策の紐付けは seed `budget_initiative_link` を読む。
+3. dbt の marts が、出典の値に判断の列を足す。施策の紐付けは seed `project_budget_initiative_link` を読む。
 4. `serving:sync` が marts の6表を D1 に写す。
 
 ### 領域
@@ -85,11 +85,11 @@
 | 表 | 1行 | 主キー |
 | --- | --- | --- |
 | `project_origin` | 資料（PDF）1つ。`document_type` は sheets・result・press | `origin_id`（sha256） |
-| `evaluation_sheet` | 評価シート1枚 | `sheet_id`（出典と頁） |
-| `evaluation_indicator` | シートの指標1つ | `indicator_id`（シートと順） |
-| `evaluation_indicator_value` | 指標の1年度の目標と実績 | `value_id`（指標と年度） |
-| `evaluation_result` | 評価の結果の資料1つ | `origin_id` |
-| `budget_initiative` | 予算案の施策1件（品川はプレス発表の1頁） | `initiative_id`（出典と頁） |
+| `project_evaluation_sheet` | 評価シート1枚 | `sheet_id`（出典と頁） |
+| `project_evaluation_indicator` | シートの指標1つ | `indicator_id`（シートと順） |
+| `project_evaluation_indicator_value` | 指標の1年度の目標と実績 | `value_id`（指標と年度） |
+| `project_evaluation_result` | 評価の結果の資料1つ | `origin_id` |
+| `project_budget_initiative` | 予算案の施策1件（品川はプレス発表の1頁） | `initiative_id`（出典と頁） |
 
 金額は千円の印字を円にする。指標の値は単位や「令和8年度」を含むのでシートの表記のまま文字列で持つ。プレス発表の事業名と POINT は JSON の文字列の配列で持つ。
 
@@ -97,12 +97,12 @@
 
 | 列 | 決め方 |
 | --- | --- |
-| `evaluation_sheet.subject_id` | 予算科目の会計・款・項・目の名前が、同じ年度の決算書の目に1つだけ当たるとき |
-| `evaluation_sheet.detail_id` | その目の下で、予算科目の事業と同じ名前（内訳の末尾の【所管課】以降を除く）の内訳（分け方が事業）が1つだけあるとき |
-| `evaluation_sheet.cofog_code` | `subject_id` の目の COFOG |
-| `evaluation_sheet.is_new_project` | 事業期間が実施年度から始まり、前年度の行政費用が0で、前年度までの指標の実績が無い |
-| `budget_initiative.detail_id`・`link_method`・`link_confidence` | seed `budget_initiative_link`（下記） |
-| `budget_initiative.cofog_code` | `detail_id` の内訳が属する目の COFOG |
+| `project_evaluation_sheet.subject_id` | 予算科目の会計・款・項・目の名前が、同じ年度の決算書の目に1つだけ当たるとき |
+| `project_evaluation_sheet.detail_id` | その目の下で、予算科目の事業と同じ名前（内訳の末尾の【所管課】以降を除く）の内訳（分け方が事業）が1つだけあるとき |
+| `project_evaluation_sheet.cofog_code` | `subject_id` の目の COFOG |
+| `project_evaluation_sheet.is_new_project` | 事業期間が実施年度から始まり、前年度の行政費用が0で、前年度までの指標の実績が無い |
+| `project_budget_initiative.detail_id`・`link_method`・`link_confidence` | seed `project_budget_initiative_link`（下記） |
+| `project_budget_initiative.cofog_code` | `detail_id` の内訳が属する目の COFOG |
 
 施策の紐付けは [link-to-budget-detail](../../../.agents/skills/pipeline/references/link-to-budget-detail.md) の手順を `project:link-initiatives` にした。名前と額で直接当たるものを先に決め、残りは単語の Dice 係数の上位12件から Jev に選ばせ、確信度 0.6 以上だけを採る。seed に行がある施策は聞き直さない。R7・R8 の160行は `budget-press.ts` の紐付け（同じ手順で作ったもの）を移した。`--refresh` で作り直すと、Jev の答えの揺れで25行が変わる（2026-11-08）。
 

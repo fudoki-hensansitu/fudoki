@@ -5,8 +5,8 @@ sources:
   description: 入力準備（dbt/scripts/prepare.py）が ingestion/project の読み方で出典の PDF から読んだ、事業についての資料（事業評価の評価シート・評価の結果と、予算案のプレス発表の施策）。
   tables:
   - name: project_origin
-  - name: evaluation_sheet
-  - name: evaluation_indicator
-  - name: evaluation_indicator_value
-  - name: evaluation_result
-  - name: budget_initiative
+  - name: project_evaluation_sheet
+  - name: project_evaluation_indicator
+  - name: project_evaluation_indicator_value
+  - name: project_evaluation_result
+  - name: project_budget_initiative

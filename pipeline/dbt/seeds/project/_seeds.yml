@@ -1,7 +1,7 @@
 version: 2
 
 seeds:
-  - name: budget_initiative_link
+  - name: project_budget_initiative_link
     meta:
       role: judgment
     description: |

@@ -752,7 +752,7 @@
         }
       ]
     },
-    "evaluation_sheet": {
+    "project_evaluation_sheet": {
       "primary_key": "sheet_id",
       "indexes": [
         [
@@ -928,7 +928,7 @@
         }
       ]
     },
-    "evaluation_indicator": {
+    "project_evaluation_indicator": {
       "primary_key": "indicator_id",
       "indexes": [
         [
@@ -946,7 +946,7 @@
           "name": "sheet_id",
           "type": "string",
           "nullable": false,
-          "description": "evaluation_sheet の sheet_id。"
+          "description": "project_evaluation_sheet の sheet_id。"
         },
         {
           "name": "position",
@@ -986,7 +986,7 @@
         }
       ]
     },
-    "evaluation_indicator_value": {
+    "project_evaluation_indicator_value": {
       "primary_key": "value_id",
       "indexes": [
         [
@@ -1004,7 +1004,7 @@
           "name": "indicator_id",
           "type": "string",
           "nullable": false,
-          "description": "evaluation_indicator の indicator_id。"
+          "description": "project_evaluation_indicator の indicator_id。"
         },
         {
           "name": "fiscal_year",
@@ -1026,7 +1026,7 @@
         }
       ]
     },
-    "evaluation_result": {
+    "project_evaluation_result": {
       "primary_key": "origin_id",
       "indexes": [
         [
@@ -1108,7 +1108,7 @@
         }
       ]
     },
-    "budget_initiative": {
+    "project_budget_initiative": {
       "primary_key": "initiative_id",
       "indexes": [
         [

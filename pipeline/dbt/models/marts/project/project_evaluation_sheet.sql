@@ -3,7 +3,7 @@
 with sheet as (
     select s.*, o.jurisdiction_code, o.fiscal_year,
         sha256(to_json([s.origin_id, s.page::varchar])) as sheet_id
-    from {{ source('project', 'evaluation_sheet') }} s
+    from {{ source('project', 'project_evaluation_sheet') }} s
     join {{ source('project', 'project_origin') }} o using (origin_id)
 ),
 moku as (
@@ -33,7 +33,7 @@ detail as (
 -- 前の年度までに実績を印字した指標がある
 previous_actual as (
     select distinct origin_id, page
-    from {{ source('project', 'evaluation_indicator_value') }} v
+    from {{ source('project', 'project_evaluation_indicator_value') }} v
     join {{ source('project', 'project_origin') }} o using (origin_id)
     where v.fiscal_year < o.fiscal_year and nullif(trim(v.actual_text), '') is not null
 )
