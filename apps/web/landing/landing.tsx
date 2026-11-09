@@ -1,5 +1,5 @@
 // 風土記について（/about）。利用者に風土記を知ってもらう LP。視覚の規範は repo root の DESIGN.md、CSS は landing.css（.landing の中に閉じる）。
-// 書体はゴシック1つ（--font-sans）。動くのは色の切り替え・冒頭の札の浮き上がり・録画の再生だけで、スクロールでは動かさない。議会・選挙・事業評価の画面は架空のデータのイメージ
+// 書体はゴシック1つ（--font-sans）。動くのは色の切り替え・冒頭の札の浮き上がり・録画の再生だけで、スクロールでは動かさない。事業評価の画面は架空のデータのイメージ
 import * as React from 'react'
 import { ArrowRightIcon, CodeIcon, EnvelopeSimpleIcon, FileTextIcon, GavelIcon, HouseLineIcon, NewspaperIcon, ScalesIcon, StackIcon, UsersThreeIcon } from '@phosphor-icons/react'
 import { Link } from '@void/react'
@@ -307,31 +307,19 @@ const NEW_PROJECTS = [
   { name: 'こども誰でも通園制度の開始', amount: '9.4', unit: '億円' },
   { name: '区の施設の「子ども料金」を無償に', amount: '3,047', unit: '万円' },
 ]
-/** 議会のイメージ（架空） */
-const BILLS = [
-  { no: '第45号議案', title: '令和8年度 一般会計補正予算（第2号）', result: '可決', vote: [24, 16] },
-  { no: '第46号議案', title: '区立学校設置条例の一部を改正する条例', result: '可決', vote: [40, 0] },
-  { no: '請願第3号', title: '駅前の自転車置き場の増設を求める請願', result: '継続審査', vote: null },
-] as const
-/** 選挙のイメージ（架空。並びは届出順） */
-const CANDIDATES = [
-  { tag: 'A', age: 52, from: '元区職員', words: ['子育て', '防災'] },
-  { tag: 'B', age: 44, from: 'NPO 代表', words: ['若者の居場所', '公園'] },
-  { tag: 'C', age: 61, from: '会社経営', words: ['商店街', '税の使い方'] },
-]
 const QUESTIONS = [
   { q: '区の予算、いちばん多く使っているのは？', k: 'お金' },
   { q: '今年、新しく始まることは？', k: '事業' },
-  { q: '議会で、何が決まった？', k: '議会' },
-  { q: '次の選挙、誰が立候補している？', k: '選挙' },
+  { q: 'いちばんお金がかかっている事業は？', k: 'お金' },
+  { q: '同じ事業に、毎年いくら使っている？', k: 'お金' },
   { q: 'やめた事業、見直した事業は？', k: '事業' },
   { q: '隣のまちと比べると、どう違う？', k: '比べる' },
 ]
 const CYCLE = [
-  { n: '選ぶ', k: '選挙', note: '区長と議員を選ぶ' },
-  { n: '決める', k: '議会', note: '予算と条例を決める' },
-  { n: '使う', k: '予算・決算', note: '事業にお金を使う' },
-  { n: '振り返る', k: '事業評価', note: '事業をどうするか見直す' },
+  { n: '組む', k: '予算', note: '1年の使い道を決める' },
+  { n: '使う', k: '決算', note: '事業にお金を使う' },
+  { n: '振り返る', k: '事業評価', note: '事業の成果を確かめる' },
+  { n: '見直す', k: '次の予算', note: '広げる・やめるを決める' },
 ]
 
 /** 議員・会派向けの AI 構築の相談の宛先 */
@@ -398,40 +386,23 @@ const STAGE = [
     ),
   },
   {
-    id: 'council',
-    label: '議会',
-    title: '〇〇区議会 · 第4回定例会',
+    id: 'review',
+    label: '振り返り',
+    title: '放課後子ども教室 · R7年度の事業評価',
     soon: true,
     body: (
-      <ul className="m-bills">
-        {BILLS.slice(0, 2).map((b) => (
-          <li key={b.no}>
-            <span>{b.title}</span>
-            <b>{b.result}</b>
-          </li>
-        ))}
-      </ul>
-    ),
-  },
-  {
-    id: 'election',
-    label: '選挙',
-    title: '〇〇区長選挙 · 投票日 11月15日（日）',
-    soon: true,
-    body: (
-      <ul className="m-cands">
-        {CANDIDATES.map((c) => (
-          <li key={c.tag}>
-            <span className="m-face">{c.tag}</span>
-            <span>
-              候補者{c.tag}
-              <small>
-                {c.age}歳・{c.from}
-              </small>
-            </span>
-          </li>
-        ))}
-      </ul>
+      <div className="m-eval">
+        <small>参加した子ども（目標 9,000人）</small>
+        <p>
+          <em>8,420</em>
+          <small>人</small>
+        </p>
+        <p className="m-dir">
+          <small>これから</small>
+          <b>拡充</b>
+          <span>実施校を増やす</span>
+        </p>
+      </div>
     ),
   },
 ]
@@ -494,8 +465,8 @@ function Stage() {
               <ul className="m-tabs">
                 <li>区の仕事</li>
                 <li>お金の使い道</li>
-                <li>議会</li>
-                <li>選挙</li>
+                <li>新しく始めること</li>
+                <li>振り返り</li>
               </ul>
             </div>
             <p className="m-h">R8年度に新しく始めること</p>
@@ -558,12 +529,12 @@ function Sand({ k, title, body, children, className }: { k: string; title: React
 
 const ROLES = [
   { icon: HouseLineIcon, who: '住んでいる人', note: '自分のまちが何にお金を使い、今年何を始めるかを知る' },
-  { icon: GavelIcon, who: '議員・候補者', note: '予算や事業の下調べに。ほかのまちとも同じ物差しで比べる' },
+  { icon: GavelIcon, who: '議員・職員', note: '予算・決算委員会の調査に。ほかのまちとも同じ物差しで比べる' },
   { icon: NewspaperIcon, who: '記者・研究者', note: '気になった数字を、出典の頁と印字の位置まで辿る' },
   { icon: CodeIcon, who: '開発者', note: '画面と同じデータを、API・MCP・オープンデータで使う' },
 ]
 const STANCE = [
-  { icon: ScalesIcon, b: '良し悪しを書かない', s: '事業にも、議員や候補者にも、順位や色を付けません。読み解くのは、読む人です。' },
+  { icon: ScalesIcon, b: '良し悪しを書かない', s: '事業にも、自治体にも、順位や色を付けません。読み解くのは、読む人です。' },
   { icon: StackIcon, b: '同じ様式で集める', s: '713年、諸国に同じ様式で報告させて集めた地誌『風土記』にならい、どのまちも同じ形で載せます。' },
   { icon: FileTextIcon, b: '出典まで辿れる', s: 'どの数字も、自治体の資料のどの頁のどこに印字されているかを持っています。' },
   { icon: UsersThreeIcon, b: '誰でも使える', s: '画面に出しているのと同じデータを、出典つきで API・MCP・オープンデータとして配っています。' },
@@ -571,8 +542,7 @@ const STANCE = [
 
 const FAQ: [string, React.ReactNode][] = [
   ['数字はどこから来ていますか', '自治体が公開した予算書・決算書・事業評価などの資料です。表に読み込んだあと、資料の中で重ねて印字された合計どうしが一致するかを確かめています。明細ごとに、資料の頁と印字された位置を持っています。'],
-  ['議員や候補者、事業の良し悪しを評価していますか', 'いいえ。風土記は評価を書かず、順位や良し悪しの色も付けません。事業評価は自治体が自分で振り返った結果で、風土記の評価ではありません。'],
-  ['議会や選挙の情報はいつ見られますか', '準備を進めています。予算や事業とつなげて、議案・議決や候補者・結果を同じ様式で載せていきます。'],
+  ['事業や自治体の良し悪しを評価していますか', 'いいえ。風土記は評価を書かず、順位や良し悪しの色も付けません。事業評価は自治体が自分で振り返った結果で、風土記の評価ではありません。'],
   [
     'どのまちが入っていますか',
     <>
@@ -599,14 +569,14 @@ export function Landing() {
           <Dashes className="d-hero-r" />
           <p className="eyebrow">風土記</p>
           <h1>
-            うちのまち、
+            まちのお金、
             <br />
             <span className="circled">
-              なにしてる？
+              何に使ってる？
               <Circle />
             </span>
           </h1>
-          <p className="sub">あなたの一票が、まちのお金の使い道になる。選挙で選ばれた人が議会で予算を決め、自治体がそれを使い、振り返る。その一続きを、わかりやすく見せます。</p>
+          <p className="sub">自治体が何にいくら使い、どう振り返ったかを、事業ごとに見られます。ほかのまちと同じ物差しで比べられ、どの数字も出典の資料まで辿れます。</p>
           <div className="acts">
             <Link className="btn" href={JURISDICTIONS}>
               自分のまちを見る
@@ -709,11 +679,11 @@ export function Landing() {
             <div className="field-t">
               <p className="eyebrow">まちの一年</p>
               <h2 id="cycle-h">
-                選んで、決めて、
+                組んで、使って、
                 <br />
-                使って、振り返る
+                振り返る
               </h2>
-              <p className="lead">選挙で選ばれた人が議会で予算を決め、まちがそのお金で事業をし、事業を振り返って次の予算につなげる。風土記は、その一周をつなげて見せます。</p>
+              <p className="lead">自治体は予算を組み、そのお金で事業をし、事業を振り返って次の予算につなげます。風土記は、その一周をつなげて見せます。</p>
             </div>
             <ol className="tiles">
               {CYCLE.map((c, i) => (
@@ -734,57 +704,6 @@ export function Landing() {
               </li>
             ))}
           </ul>
-        </section>
-
-        <section className="wrap duo" aria-labelledby="duo-h">
-          <div className="sec-h">
-            <h2 id="duo-h">議会と選挙も、同じ様式で</h2>
-            <p className="lead">お金の使い道とつなげて、決まったことと選ぶ人を並べます。いま準備を進めています。</p>
-          </div>
-          <div className="duo-g">
-            <Sand k="決める ── 議会" title="議会で、何が決まったか" body="議案と結果、会派ごとの賛否を、そのまま並べます。">
-              <p className="m-h">
-                〇〇区議会 · 第4回定例会 <Soon />
-              </p>
-              <ul className="m-bills">
-                {BILLS.map((b) => (
-                  <li key={b.no}>
-                    <small>{b.no}</small>
-                    <span>{b.title}</span>
-                    <b>{b.result}</b>
-                    {b.vote && (
-                      <span className="m-vote">
-                        賛成 {b.vote[0]}・反対 {b.vote[1]}
-                      </span>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </Sand>
-            <Sand k="選ぶ ── 選挙" title="次の選挙、誰が、何を訴えているか" body="経歴と訴えを届出順に。順位も、良し悪しの色も付けません。">
-              <p className="m-h">
-                〇〇区長選挙 · 投票日 11月15日（日） <Soon />
-              </p>
-              <ul className="m-cands">
-                {CANDIDATES.map((c) => (
-                  <li key={c.tag}>
-                    <span className="m-face">{c.tag}</span>
-                    <span>
-                      候補者{c.tag}
-                      <small>
-                        {c.age}歳・{c.from}
-                      </small>
-                    </span>
-                    <span className="m-words">
-                      {c.words.map((w) => (
-                        <i key={w}>{w}</i>
-                      ))}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </Sand>
-          </div>
         </section>
 
         <section className="sec wrap duo" aria-labelledby="pair-h">
@@ -875,16 +794,16 @@ export function Landing() {
             <div>
               <p className="eyebrow">議員・会派の方へ</p>
               <h2 id="council-ai-h">
-                議会の下調べに使える AI を、
+                予算・決算委員会の調査を、
                 <br />
-                一緒につくります
+                AI で
               </h2>
-              <p className="lead">風土記のデータをもとに、予算・決算・事業評価を調べて答える AI を、議員・会派ごとに組み立てます。答えには出典の頁を添えます。</p>
+              <p className="lead">担当する分野の事業と金額の推移を、風土記のデータと議事録・委員会資料から AI で調べる仕組みを、議員・会派ごとに一緒につくります。数字には出典の頁を添えます。</p>
             </div>
             <ul>
-              <li>担当する分野の予算と事業の下調べ</li>
-              <li>ほかのまちとの比べ方の相談</li>
-              <li>会派の関心に合わせた調べものの手順</li>
+              <li>担当分野の事業と、金額の年ごとの推移</li>
+              <li>ほかのまちの同じ事業との比較</li>
+              <li>議員・会派ごとの使い方と、始める順番の相談</li>
             </ul>
             <a className="btn" href={COUNCIL_AI}>
               <EnvelopeSimpleIcon className="i" />
@@ -922,7 +841,7 @@ export function Landing() {
             <Link href="/" aria-label="風土記 ホーム">
               <svg className="logo" xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${LOGO_WIDTH} 40`} role="img" aria-label="風土記" dangerouslySetInnerHTML={{ __html: `<title>風土記</title>${LOGO_G}` }} />
             </Link>
-            <p>あなたの一票が、まちのお金の使い道になる。選挙で選んだ人が議会で予算を決め、まちがそれを使い、振り返る。風土記は、その一続きをうちのまちごとに、わかりやすく見せます。</p>
+            <p>まちのお金、何に使ってる？ 風土記は、自治体が何にいくら使い、どう振り返ったかを、事業ごとにわかりやすく見せるサイトです。ほかのまちと同じ物差しで比べられ、どの数字も出典の資料まで辿れます。</p>
           </div>
           <div>
             <h2>使う</h2>

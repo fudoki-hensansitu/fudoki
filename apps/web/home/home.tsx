@@ -1,9 +1,9 @@
-// ホーム（/）。「うちのまち」（選んだ自治体の情報への入口）、見られる情報の種類（予算・決算・事業評価・議会・選挙）、収録の更新を並べるハブ。
+// ホーム（/）。「うちのまち」（選んだ自治体の情報への入口）、見られる情報の種類（予算・決算・事業評価）、収録の更新を並べるハブ。
 // 自治体を探す・比べるのは自治体一覧（/jurisdictions）、AI との会話はアシスタント（/assistant）が受け持つので、ここでは重ねない。
 // 面の色は、主張したい面（うちのまち）が緑（--primary）の地で中の押せるものは白、押せるものの状態は生成り。見出しも含めてゴシック（明朝は /about の読み物だけ）
 import * as React from 'react'
 import { Link } from '@void/react'
-import { ArrowRightIcon, BankIcon, ArrowSquareOutIcon, CheckSquareOffsetIcon, ClipboardTextIcon, CoinsIcon, GavelIcon, MagnifyingGlassIcon, NavigationArrowIcon } from '@phosphor-icons/react'
+import { ArrowRightIcon, BankIcon, ArrowSquareOutIcon, ChartBarIcon, ClipboardTextIcon, CoinsIcon, MagnifyingGlassIcon, NavigationArrowIcon } from '@phosphor-icons/react'
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from '@/components/ui/combobox'
 import { InputGroupAddon } from '@/components/ui/input-group'
 import { cn } from '@/lib/utils'
@@ -85,8 +85,7 @@ function Picker({ entries, onPick, placeholder }: { entries: MapEntry[]; onPick:
 const townLinks = (name: string) => [
   { label: `${name.slice(-1)}の仕事`, hash: '#about', icon: <BankIcon /> },
   { label: 'お金の使い道', hash: '#budget', icon: <CoinsIcon /> },
-  { label: '議会', icon: <GavelIcon /> },
-  { label: '選挙', icon: <CheckSquareOffsetIcon /> },
+  { label: 'お金のかかる事業', hash: '#projects', icon: <ChartBarIcon /> },
 ]
 
 /** 現在地から自治体を選ぶボタン。開いた時点の自動の判定で取れなかったときや、変えるときに使う */
@@ -198,7 +197,7 @@ function MyTown({ entries, featured }: HomeProps) {
               <ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-0.5" />
             </span>
           </Link>
-          <ul className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <ul className="mt-5 grid grid-cols-3 gap-2">
             {townLinks(town.name).map((l) => (
               <li key={l.label}>
                 {l.hash ? (
@@ -224,7 +223,7 @@ function MyTown({ entries, featured }: HomeProps) {
           <p className="text-xl font-bold sm:text-2xl">{here === 'locating' && !editing ? '現在地のまちを調べています…' : '住んでいるまちを選ぶ'}</p>
           {entries.length ? (
             <>
-              <p className="mt-1 mb-4 text-sm opacity-80">選ぶと、そのまちの仕事とお金への入口がここに並びます。議会・選挙は準備中です。</p>
+              <p className="mt-1 mb-4 text-sm opacity-80">選ぶと、そのまちの仕事とお金への入口がここに並びます。</p>
               <Picker entries={entries} onPick={pick} placeholder="自治体名で探す（例：品川）" />
               <LocateButton entries={entries} onPick={pick} />
             </>
@@ -249,15 +248,13 @@ function Topics({ entries, featured }: HomeProps) {
     // 一覧を読めなかったときは件数を出さない（0件と取り違えないように）
     { title: '予算・決算', body: '何にいくら使ったか', meta: entries.length ? `${entries.length}の自治体` : undefined, href: INDEX_PATH, icon: <CoinsIcon /> },
     { title: '事業評価', body: '事業をどう振り返ったか', meta: evaluated.map((f) => f.name).join('・'), href: evaluated[0] ? `${evaluated[0].path}#y${evaluated[0].evalYear}` : undefined, icon: <ClipboardTextIcon /> },
-    { title: '議会', body: '何を決めたか（議案・議決）', icon: <GavelIcon /> },
-    { title: '選挙', body: '誰が立ち、どうなったか', icon: <CheckSquareOffsetIcon /> },
   ]
   return (
     <section aria-labelledby="topics-h" className="mt-12">
       <h2 id="topics-h" className="mb-4 text-lg font-bold">
         見られる情報
       </h2>
-      <ul className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <ul className="grid grid-cols-2 gap-3">
         {topics.map((t) => {
           const inner = (
             <>
@@ -358,8 +355,8 @@ export function Home(props: HomeProps) {
   return (
     <main id="home" className="mx-auto w-full max-w-4xl px-4 pt-10 pb-28 sm:px-8 sm:pt-16">
       <header className="mb-6">
-        <h1 className="text-[26px] leading-[1.35] font-bold tracking-[0.02em] sm:text-[32px]">うちのまち、なにしてる？</h1>
-        <p className="mt-1.5 text-[15px] text-muted-foreground">あなたの一票が、まちのお金の使い道になる。</p>
+        <h1 className="text-[26px] leading-[1.35] font-bold tracking-[0.02em] sm:text-[32px]">まちのお金、何に使ってる？</h1>
+        <p className="mt-1.5 text-[15px] text-muted-foreground">自治体が何にいくら使い、どう振り返ったかを、事業ごとに見られます。</p>
       </header>
       <MyTown {...props} />
       <Topics {...props} />

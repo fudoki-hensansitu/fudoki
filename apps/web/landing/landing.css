@@ -75,20 +75,10 @@
 .landing .m-bars i{display:block;height:10px;border-radius:999px;background:var(--l-acc);width:var(--w)}
 .landing .m-bars b,.landing .m-list b{text-align:right;font:600 17px/1 var(--font-sans);letter-spacing:0;white-space:nowrap}
 .landing .m-bars b small,.landing .m-list b small{margin-left:2px;font-size:11px;font-weight:400;color:var(--l-muted)}
-.landing .m-list,.landing .m-bills,.landing .m-cands{display:grid}
-.landing .m-list li,.landing .m-bills li,.landing .m-cands li{display:grid;align-items:center;gap:4px 12px;padding:11px 0;border-top:1px solid var(--l-line);font-size:14px;line-height:1.45}
+.landing .m-list{display:grid}
+.landing .m-list li{display:grid;align-items:center;gap:4px 12px;padding:11px 0;border-top:1px solid var(--l-line);font-size:14px;line-height:1.45}
 .landing .m-list li{grid-template-columns:auto minmax(0,1fr) auto}
-.landing .m-list small,.landing .m-cands small{display:block;font-size:12px;color:var(--l-muted)}
-.landing .m-bills li{grid-template-columns:minmax(0,1fr) auto}
-.landing .m-bills small{grid-column:1/-1;font-size:11px;color:var(--l-muted)}
-.landing .m-bills b{padding:4px 10px;border-radius:999px;background:var(--l-sand);font-size:12px;font-weight:600;white-space:nowrap}
-.landing .m-vote{grid-column:1/-1;font-size:12px;color:var(--l-muted)}
-.landing .m-cands li{grid-template-columns:auto minmax(0,1fr)}
-.landing .m-cands small{white-space:nowrap}
-.landing .m-cands .m-words{grid-column:2}
-.landing .m-face{display:grid;place-items:center;width:38px;height:38px;border-radius:999px;background:var(--l-sand);font:600 15px/1 var(--font-sans)}
-.landing .m-words{display:flex;flex-wrap:wrap;gap:6px}
-.landing .m-words i{padding:2px 10px;border:1px solid var(--l-line);border-radius:999px;font-style:normal;font-size:12px}
+.landing .m-list small{display:block;font-size:12px;color:var(--l-muted)}
 .landing .m-badge{display:inline-grid;place-items:center;flex:none;min-width:40px;height:22px;padding:0 8px;border-radius:999px;background:var(--l-acc);color:var(--l-on-acc);font:700 10px/1 var(--font-sans);letter-spacing:.04em}
 .landing .m-eval{display:grid;gap:8px}
 .landing .m-eval small{font-size:12px;color:var(--l-muted)}
