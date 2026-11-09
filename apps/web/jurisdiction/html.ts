@@ -53,7 +53,14 @@ export function pageHead(d: PageData): Head {
     creator: { '@type': 'Organization', name: '風土記', url: `${ORIGIN}/` },
     ...(d.originTitle ? { isBasedOn: d.originTitle } : {}),
   }
-  return head(title, description, canonical, { script: [{ type: 'application/ld+json', innerHTML: inlineJson(ld) }] })
+  // 検索結果にパンくず（風土記 › 東京都 › 品川区）を出す。都道府県の頁が無ければ一覧を挟む
+  const parent = d.prefecturePath === INDEX_PATH ? { name: '自治体を探す', path: INDEX_PATH } : { name: d.prefecture, path: d.prefecturePath }
+  const breadcrumb = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [{ name: '風土記', path: '/' }, parent, { name: d.name, path: jurisdictionPath(d.code) }].map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.name, item: `${ORIGIN}${c.path}` })),
+  }
+  return head(title, description, canonical, { script: [{ type: 'application/ld+json', innerHTML: inlineJson([ld, breadcrumb]) }] })
 }
 
 /** 収録がまだ無い自治体。検索の対象にはしない */

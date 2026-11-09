@@ -117,6 +117,12 @@ describe('自治体の個別ページ', () => {
     const head = pageHead(data)
     expect(head.title).toBe('中野区の歳出｜R7年度決算｜風土記')
     expect(canonical(head)).toBe('https://fudoki.dev/tokyo/nakano')
+    const ld = JSON.parse(head.script![0]!.innerHTML!) as { '@type': string; itemListElement?: { position: number; name: string; item: string }[] }[]
+    expect(ld.find((x) => x['@type'] === 'BreadcrumbList')?.itemListElement?.map((x) => [x.position, x.name, x.item])).toEqual([
+      [1, '風土記', 'https://fudoki.dev/'],
+      [2, '東京都', 'https://fudoki.dev/tokyo'],
+      [3, '中野区', 'https://fudoki.dev/tokyo/nakano'],
+    ])
     // 年度ごとの総額は、その年度の款（兄弟）の和
     expect(data.years.map((y) => [y.year, y.yen])).toEqual([[2024, 500], [2025, 1000]])
     // 積立の款は事業の候補から外し、前年度の同じ目（款・項・名前が一致）だけを前年に使う
