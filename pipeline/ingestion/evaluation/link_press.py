@@ -4,7 +4,7 @@
     bun run --cwd pipeline evaluation:link-press --refresh  # 全部を紐付け直す
 
 入力は dbt を build した warehouse（`ingestion.press_item` と `fiscal_expenditure_detail`）。手順は
-.agents/skills/web-frontend-ops/references/link-to-budget-detail.md。
+.agents/skills/pipeline/references/link-to-budget-detail.md。
 
 1. 名前と額で1行に決まるもの（正規化した名前の一致、または部分一致かつ予算額が円まで一致）を先に確定する（method=name）。
 2. 残りは単語の Dice 係数で上位12件の候補を出し、Jev に「どれでもない」を含めて選ばせる。確信度 0.6 以上だけ採る（method=jev）。
