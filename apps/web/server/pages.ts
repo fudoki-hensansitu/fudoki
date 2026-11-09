@@ -3,11 +3,9 @@ import { HTTPException } from 'hono/http-exception'
 import type { Context } from 'hono'
 import { emptyHead, pageHead, type Head } from '../jurisdiction/html'
 import type { Env } from './env'
-import { legacyPath, resolveJurisdiction, type JurisdictionView } from './jurisdiction-routes'
+import { resolveJurisdiction, type JurisdictionView } from './jurisdiction-routes'
 
 export const notFound = () => new Response('Not Found\n', { status: 404, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
-/** 旧 URL から今の URL へ。検索エンジンに移ったことを伝える */
-const movedPermanently = (path: string) => new Response(null, { status: 301, headers: { Location: path, 'Cache-Control': 'public, max-age=86400' } })
 export const unavailable = () => new Response('風土記の API に繋がりませんでした。少し待ってからもう一度開いてください。\n', { status: 502, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' } })
 
 /** 自治体の頁（/tokyo、/tokyo/nakano）の props。sitekey は頁の中の「この自治体について聞く」の Turnstile */
@@ -24,10 +22,7 @@ export async function jurisdictionProps(c: Context, path: string): Promise<Juris
   } catch {
     throw new HTTPException(502, { res: unavailable() })
   }
-  if (!view) {
-    const moved = await legacyPath(env, path).catch(() => null)
-    throw new HTTPException(moved ? 301 : 404, { res: moved ? movedPermanently(moved) : notFound() })
-  }
+  if (!view) throw new HTTPException(404, { res: notFound() })
   return { ...view, sitekey: siteKey(c) }
 }
 

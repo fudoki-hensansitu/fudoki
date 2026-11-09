@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import { changePct, formatYen, kanChanges, reiwa, type YearTotal } from '../jurisdiction/types'
 import { fetchRoute } from './routes.testing'
 import { emptyHead, indexHead, pageHead, type Head } from '../jurisdiction/html'
-import { indexPageData, legacyPath, resolveJurisdiction } from './jurisdiction-routes'
+import { indexPageData, resolveJurisdiction } from './jurisdiction-routes'
 import { DEFAULT_INDEX_QUERY, queryIndex } from '../jurisdiction/index-table'
 import type { IndexEntry } from '../jurisdiction/types'
 import { DETAIL_TABLE, SUBJECT_TABLE } from '../../api/src/columns'
@@ -145,14 +145,6 @@ describe('自治体の個別ページ', () => {
     expect(sitemap).not.toContain('chiyoda')
   })
 
-  test('ローマ字にする前の日本語の URL を今の URL に引き、引けなければ null', async () => {
-    expect(await legacyPath(env, `/${encodeURIComponent('東京都')}/${encodeURIComponent('中野区')}`)).toBe('/tokyo/nakano')
-    expect(await legacyPath(env, '/東京都')).toBe('/tokyo')
-    expect(await legacyPath(env, '/自治体')).toBe('/jurisdictions')
-    expect(await legacyPath(env, '/東京都/存在しない区')).toBeNull()
-    expect(await legacyPath(env, '/tokyo/sonzaishinai')).toBeNull()
-    expect(await legacyPath(env, '/%E0%A4%A')).toBeNull()
-  })
 
   test('一覧は収録のある自治体だけを、最新の決算の款の和で載せる', async () => {
     const { map, table } = await indexPageData(env)

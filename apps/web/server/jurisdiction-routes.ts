@@ -93,21 +93,6 @@ export async function resolveJurisdiction(env: Env, path: string): Promise<Juris
   return data ? { kind: 'page', data: { ...data, prefecturePath, neighbors, profile: withPress(entry.code, PROFILES[entry.code] ?? null) } } : { kind: 'empty', entry }
 }
 
-/** ローマ字にする前の日本語の URL（/東京都/品川区・/東京都・/自治体）を今の URL に引く。検索結果に残っている旧 URL を 301 で移すためのもの。日本語の path でなければ API を読まずに null */
-export async function legacyPath(env: Env, path: string): Promise<string | null> {
-  let decoded: string
-  try {
-    decoded = decodeURIComponent(path)
-  } catch {
-    return null
-  }
-  if (/^[\x00-\x7f]*$/.test(decoded)) return null
-  if (decoded === '/自治体') return INDEX_PATH
-  const [prefecture, name] = decoded.split('/').slice(1)
-  const entry = (await catalog(env)).find((e) => (name === undefined ? e.code.slice(2, 5) === '000' && e.name === prefecture : e.prefecture === prefecture && e.name === name))
-  return entry ? jurisdictionPath(entry.code) : null
-}
-
 /** 事業評価がまだの年度に、予算案のプレス発表資料の施策（budgetNew）を足す。評価のある年度は足さない */
 function withPress(code: string, profile: Profile | null): Profile | null {
   const press = BUDGET_PRESS[code]
