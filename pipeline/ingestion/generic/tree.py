@@ -639,10 +639,11 @@ def line_limits(logicals: list[Logical]) -> dict[str, float]:
 
 def items(group: Group, header: str, margins: set[int] | None = None,
           roles: dict[int, str] | None = None, limit: float | None = None, ocr: bool = False,
-          amount_brackets: bool = False, settings: dict | None = None) -> list[Item]:
+          amount_brackets: bool = False, settings: dict | None = None, joined_codes: bool = False) -> list[Item]:
     """Lines of a label group into items; amounts printed inside the group stay on their item.
 
-    `roles` (variant B) replaces the geometric decisions for codeless lines.
+    `roles` (variant B) replaces the geometric decisions for codeless lines. `joined_codes`: a word of the text layer
+    that joins a code and the first character of its name (`03戸`) is measured as an OCR word is (`_measure`).
     """
     entries = entries_of(group, margins, amount_brackets, bool((settings or {}).get('bare_amounts')))
     settings = settings or {}
@@ -769,7 +770,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
             for i in members:
                 for run in entries[i][1]:
                     item.amounts.append((header, run))
-            _measure(item, entries[code_index][0], entries[code_index][2], ocr)
+            _measure(item, entries[code_index][0], entries[code_index][2], ocr or joined_codes)
             result.append(item)
             continue
         previous = result[-1] if result else None
@@ -889,7 +890,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
         item = Item(group, label[0].page, [label], code, name, 0)
         for run in money:
             item.amounts.append((header, run))
-        _measure(item, label, code, ocr)
+        _measure(item, label, code, ocr or joined_codes)
         result.append(item)
     # OCR boxed a name a few points left of the print (132021): the line's start, read off the page, is declared.
     for repair in settings.get('line_starts', ()):
@@ -960,8 +961,9 @@ def _name_start(item: Item) -> float:
     return item.indent
 
 
-def _measure(item: Item, label: list[Glyph], code: str | None, ocr: bool = False) -> None:
-    """Indentation is where the name starts; subject level is the band of the first glyph."""
+def _measure(item: Item, label: list[Glyph], code: str | None, joined: bool = False) -> None:
+    """Indentation is where the name starts; subject level is the band of the first glyph. `joined`: a word
+    that joins the code and the name is measured by the digits' own width."""
     first = label[0]
     if code is not None:
         consumed, offset = 0, None
@@ -975,8 +977,8 @@ def _measure(item: Item, label: list[Glyph], code: str | None, ocr: bool = False
         for glyph in label:
             if consumed + len(glyph.text) > length:
                 width = (glyph.x1 - glyph.x0) / max(len(glyph.text), 1)
-                if ocr and any(not c.isascii() for c in glyph.text) and all(c.isascii() and c.isdigit() for c in glyph.text[:length - consumed]):
-                    # An OCR word that joins the code and the name (`10需用費`): half-width digits are half a
+                if joined and any(not c.isascii() for c in glyph.text) and all(c.isascii() and c.isdigit() for c in glyph.text[:length - consumed]):
+                    # A word that joins the code and the name (OCR `10需用費`, text `03戸`): half-width digits are half a
                     # kanji wide, so the name starts after the digits' own width, not after an even share.
                     wide = sum(1 for c in glyph.text if not c.isascii())
                     width = (glyph.x1 - glyph.x0) / (len(glyph.text) - wide + 2 * wide) if wide else width
@@ -1847,7 +1849,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                                     bool(layout and layout.get(group.axis, {}).get('amount_brackets')),
                                     (layout or {}).get(group.axis))
             elif group.mode == 'indent':
-                group_items = items(group, group.axis)
+                # The subject of a text layer (133086 `03戸` / `籍住民基本`, wrapped to `台帳費` at the name's start).
+                group_items = items(group, group.axis, joined_codes=not logical.ocr)
             else:
                 for band in group.bands:
                     band.words = split_glued_numbers(band.words, edges)
