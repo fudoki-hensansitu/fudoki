@@ -93,7 +93,6 @@ type 歳出 = {
 type 出典 = {
   資料名: 文字                // 例: 令和7年度 品川区予算書
   URL: URL                    // 公式サイトの公開 URL（ファイルそのもの）
-  掲載ページ?: URL            // そのファイルを載せている公式サイトの頁
   形式: 'PDF' | 'CSV' | 'Excel'
   SHA256: 文字                // 風土記が保存したファイルの指紋。ファイル本体は非公開の保管場所に置く
 }
@@ -228,7 +227,7 @@ type 評価の結果 = {
 | 評価 | `project_evaluation_sheet`・`project_evaluation_indicator`・`project_evaluation_indicator_value` | あり。`detail_id` で内訳を指す |
 | 予算案での説明 | `project_budget_initiative` | あり。施策1件1行で `detail_id` を指す |
 | 評価の結果（集計値） | `project_evaluation_result` | あり |
-| 出典 | `fiscal_origin`・`project_origin`・`population_origin` | あり。`population_origin` は資料名・形式・SHA256 を持たない（基準日と URL だけ）。`掲載ページ` は `project_origin.landing_url` だけが持つ |
+| 出典 | `fiscal_origin`・`project_origin`・`population_origin` | あり。`population_origin` は資料名・形式・SHA256 を持たない（基準日と URL だけ） |
 
 品川の R6 で測った数（2026-11-09）:
 
