@@ -1,5 +1,4 @@
 // fudoki.dev の入口の1枚。視覚の規範は repo root の DESIGN.md、CSS は landing.css（.landing の中に閉じる）。
-// 見出しの明朝は /fonts/mincho.woff2（この頁で使う字だけの subset）。文言を変えたら `bun run --cwd apps/web build:font` で作り直す
 // 動き（見出しの sweep・3つのステップの現在地・表の切り替え・録画の再生）はどれも無くても読める
 import * as React from 'react'
 import { flushSync } from 'react-dom'

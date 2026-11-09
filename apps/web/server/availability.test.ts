@@ -17,7 +17,7 @@ test('入口の1枚は MCP とプライバシーポリシーへ繋ぎ、検索�
   expect(html).toContain('https://api.fudoki.dev/mcp')
   expect(html).toContain('https://docs.fudoki.dev/privacy')
   expect(html).toContain('id="chat-start"')
-  for (const path of ['/fonts/mincho.woff2', '/favicon.svg', '/favicon.ico', '/icon.png', '/apple-touch-icon.png', '/og.png', '/robots.txt', '/home/origin.webp', '/home/demo.mp4']) expect(served(path), path).toBe(true)
+  for (const path of ['/favicon.svg', '/favicon.ico', '/icon.png', '/apple-touch-icon.png', '/og.png', '/robots.txt', '/home/origin.webp', '/home/demo.mp4']) expect(served(path), path).toBe(true)
   expect((await get('/sitemap.xml')).status).toBe(200)
   const meta = config.head?.meta ?? []
   expect(meta).toContainEqual({ property: 'og:image', content: 'https://fudoki.dev/og.png' })
