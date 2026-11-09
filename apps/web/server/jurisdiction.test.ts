@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import { changePct, formatYen, kanChanges, reiwa, type YearTotal } from '../jurisdiction/types'
 import { fetchRoute } from './routes.testing'
 import { emptyHead, indexHead, pageHead, type Head } from '../jurisdiction/html'
-import { indexPageData, resolveJurisdiction } from './jurisdiction-routes'
+import { indexPageData, legacyPath, resolveJurisdiction } from './jurisdiction-routes'
 import { DEFAULT_INDEX_QUERY, queryIndex } from '../jurisdiction/index-table'
 import type { IndexEntry } from '../jurisdiction/types'
 import { DETAIL_TABLE, SUBJECT_TABLE } from '../../api/src/columns'
@@ -117,6 +117,8 @@ describe('自治体の個別ページ', () => {
     const head = pageHead(data)
     expect(head.title).toBe('中野区の歳出｜R7年度決算｜風土記')
     expect(canonical(head)).toBe('https://fudoki.dev/tokyo/nakano')
+    const ld = JSON.parse(head.script![0]!.innerHTML!) as { '@type': string; itemListElement?: { item: string }[] }[]
+    expect(ld.find((x) => x['@type'] === 'BreadcrumbList')?.itemListElement?.at(-1)?.item).toBe('https://fudoki.dev/tokyo/nakano')
     // 年度ごとの総額は、その年度の款（兄弟）の和
     expect(data.years.map((y) => [y.year, y.yen])).toEqual([[2024, 500], [2025, 1000]])
     // 積立の款は事業の候補から外し、前年度の同じ目（款・項・名前が一致）だけを前年に使う
@@ -141,6 +143,15 @@ describe('自治体の個別ページ', () => {
     const sitemap = await (await get('/sitemap.xml')).text()
     expect(sitemap).toContain('<loc>https://fudoki.dev/tokyo/nakano</loc>')
     expect(sitemap).not.toContain('chiyoda')
+  })
+
+  test('ローマ字にする前の日本語の URL を今の URL に引き、引けなければ null', async () => {
+    expect(await legacyPath(env, `/${encodeURIComponent('東京都')}/${encodeURIComponent('中野区')}`)).toBe('/tokyo/nakano')
+    expect(await legacyPath(env, '/東京都')).toBe('/tokyo')
+    expect(await legacyPath(env, '/自治体')).toBe('/jurisdictions')
+    expect(await legacyPath(env, '/東京都/存在しない区')).toBeNull()
+    expect(await legacyPath(env, '/tokyo/sonzaishinai')).toBeNull()
+    expect(await legacyPath(env, '/%E0%A4%A')).toBeNull()
   })
 
   test('一覧は収録のある自治体だけを、最新の決算の款の和で載せる', async () => {
