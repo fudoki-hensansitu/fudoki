@@ -1,7 +1,7 @@
 """評価の結果の合計の行の読み方。捻出額（予算削減額）と A〜D の数を取り違えると、やめた事業の節の数字が全部ずれる。"""
 import unittest
 
-from ingestion.evaluation.layouts.shinagawa_result import parse
+from ingestion.project.layouts.shinagawa_result import parse
 
 
 class ParseTest(unittest.TestCase):

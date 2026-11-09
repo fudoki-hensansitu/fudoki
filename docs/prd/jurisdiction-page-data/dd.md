@@ -13,7 +13,7 @@
 
 この設計では、この値を **出典の PDF から pipeline で読み、dbt の marts を通して D1 に入れる**。手で起こした値を入力に移すのではなく、読み方をコードにする。
 
-> 出典の PDF（非公開 R2）→ 入力準備で読む（`ingestion/evaluation/layouts/`）→ dbt の marts → D1
+> 出典の PDF（非公開 R2）→ 入力準備で読む（`ingestion/project/layouts/`）→ dbt の marts → D1
 
 1. 事務事業評価シート・事務事業評価の結果・予算案のプレス発表を、様式ごとの読み方で PDF の文字の層から読む。
 2. 出典に無い値（決算書の目・事業への紐付け、COFOG、新しくできた事業の印、施策の予算書の内訳への紐付け）は **風土記の判断** として、列の説明にそう書く。施策の紐付けは Jev を使うので seed に置き、取り込みのときに一度だけ作る。
@@ -27,7 +27,8 @@
 - Non-Goal: 公開 API の操作と web の切り替え。表が入ってから別の PR で行う。
 - Non-Goal: 品川区以外の自治体。読み方は様式ごとの部品にし、宣言で選ぶ。
 - Non-Goal: 評価シートの文章（目的・取組・課題）とプレス発表の背景・事業概要。利用条件が転載を禁じているので読まない（[利用条件](#cross-cutting-concerns)）。
-- Non-Goal: 分かりやすい言い換え（今の `title`・`what`）と、既存の事業の中で始めた取り組みの一文（`initiatives`）。文章を読む判断なので、この段階では入れない。
+- Non-Goal: 分かりやすい言い換え（今の `title`・`what`）。画面には資料の事業名をそのまま出す（2026-11-09 決定）。
+- Non-Goal: 既存の事業の中で始めた取り組みの一文（今の `initiatives`）。文章を読む判断なので、この段階では入れない。
 
 ## Background
 
@@ -39,7 +40,7 @@
 | 新しくできた事業の分野 | `profiles.ts` の `cofog` | `evaluation_sheet.cofog_code`（決算書の目の COFOG） |
 | やめた事業・A〜C の一覧 | `profiles.ts` の `scrap.exits`・`graded` | `evaluation_sheet`（`grade_code`・`direction`） |
 | 捻出額・評価した数・A〜D の数 | `profiles.ts` の `scrap` | `evaluation_result` |
-| 予算の年度の新しい施策 | `budget-press.ts` | `press_item` と seed `press_item_link` |
+| 予算の年度の新しい施策 | `budget-press.ts` | `budget_initiative` と seed `budget_initiative_link` |
 
 ### 確かめたこと（2026-11-08）
 
@@ -54,18 +55,22 @@
 
 ### 全体の流れ
 
-1. `evaluation:save` が、`ingestion/evaluation/origins.json` の評価の結果とプレス発表の PDF を取得し、宣言の sha256 と同じときだけ非公開 R2 の `evaluation/<種類>/<自治体>/<年度>/<sha256>.pdf` に置く。評価シートは出典の選定（`evaluation_selections`）で保存済みのものを使う。
-2. 入力準備（`dbt/scripts/prepare.py`）が PDF を宣言の様式で読み、`ingestion` スキーマの表にする。読んだ結果は PDF と読み方のコードの指紋ごとに `.cache/evaluation/` に置く（評価シート1冊を読むのに約1分かかる）。
-3. dbt の marts が、出典の値に判断の列を足す。施策の紐付けは seed `press_item_link` を読む。
+1. `project:save` が、`ingestion/project/origins.json` の評価の結果とプレス発表の PDF を取得し、宣言の sha256 と同じときだけ非公開 R2 の `project/<種類>/<自治体>/<年度>/<sha256>.pdf` に置く。評価シートは出典の選定（`evaluation_selections`）で保存済みのものを使う。
+2. 入力準備（`dbt/scripts/prepare.py`）が PDF を宣言の様式で読み、`ingestion` スキーマの表にする。読んだ結果は PDF と読み方のコードの指紋ごとに `.cache/project/` に置く（評価シート1冊を読むのに約1分かかる）。
+3. dbt の marts が、出典の値に判断の列を足す。施策の紐付けは seed `budget_initiative_link` を読む。
 4. `serving:sync` が marts の6表を D1 に写す。
+
+### 領域
+
+評価シートも予算案の施策も、行き先は予算書・決算書の事業（内訳）なので、1つの領域 `project`（事業）にまとめる（`ingestion/project/`・`marts/project/`）。行は資料の粒度のまま（評価シート1枚、施策1件）にする。評価シートは小事業の単位で1つの事業に複数付くことがあり、年度をまたいで同じ事業と決める判断もまだ無いので、事業そのものの表は作らず、各行が予算書・決算書の事業（`detail_id`）を指す。
 
 ### 宣言
 
-`ingestion/evaluation/origins.json` に、資料の種類ごとに自治体・年度・様式（`layout`）・URL・sha256 を書く。評価シートは自治体と様式だけを書き、どの PDF を読むかは出典の選定に従う。
+`ingestion/project/origins.json` に、資料の種類ごとに自治体・年度・様式（`layout`）・URL・sha256 を書く。評価シートは自治体と様式だけを書き、どの PDF を読むかは出典の選定に従う。
 
 人口（`ingestion/population/origins.json`）と同じく、出典の選定の schema は広げない。評価の結果とプレス発表は金額の表ではなく、`fiscal_coverage` の対象にもしないため。
 
-### 読み方（`ingestion/evaluation/layouts/`）
+### 読み方（`ingestion/project/layouts/`）
 
 | 様式 | 読む欄 | 止める条件 |
 | --- | --- | --- |
@@ -79,12 +84,12 @@
 
 | 表 | 1行 | 主キー |
 | --- | --- | --- |
-| `evaluation_origin` | 資料（PDF）1つ。`document_type` は sheets・result・press | `origin_id`（sha256） |
+| `project_origin` | 資料（PDF）1つ。`document_type` は sheets・result・press | `origin_id`（sha256） |
 | `evaluation_sheet` | 評価シート1枚 | `sheet_id`（出典と頁） |
 | `evaluation_indicator` | シートの指標1つ | `indicator_id`（シートと順） |
 | `evaluation_indicator_value` | 指標の1年度の目標と実績 | `value_id`（指標と年度） |
 | `evaluation_result` | 評価の結果の資料1つ | `origin_id` |
-| `press_item` | プレス発表の1頁（1施策） | `press_item_id`（出典と頁） |
+| `budget_initiative` | 予算案の施策1件（品川はプレス発表の1頁） | `initiative_id`（出典と頁） |
 
 金額は千円の印字を円にする。指標の値は単位や「令和8年度」を含むのでシートの表記のまま文字列で持つ。プレス発表の事業名と POINT は JSON の文字列の配列で持つ。
 
@@ -96,10 +101,10 @@
 | `evaluation_sheet.detail_id` | その目の下で、予算科目の事業と同じ名前（内訳の末尾の【所管課】以降を除く）の内訳（分け方が事業）が1つだけあるとき |
 | `evaluation_sheet.cofog_code` | `subject_id` の目の COFOG |
 | `evaluation_sheet.is_new_project` | 事業期間が実施年度から始まり、前年度の行政費用が0で、前年度までの指標の実績が無い |
-| `press_item.detail_id`・`link_method`・`link_confidence` | seed `press_item_link`（下記） |
-| `press_item.cofog_code` | `detail_id` の内訳が属する目の COFOG |
+| `budget_initiative.detail_id`・`link_method`・`link_confidence` | seed `budget_initiative_link`（下記） |
+| `budget_initiative.cofog_code` | `detail_id` の内訳が属する目の COFOG |
 
-施策の紐付けは [link-to-budget-detail](../../../.agents/skills/pipeline/references/link-to-budget-detail.md) の手順を `evaluation:link-press` にした。名前と額で直接当たるものを先に決め、残りは単語の Dice 係数の上位12件から Jev に選ばせ、確信度 0.6 以上だけを採る。seed に行がある施策は聞き直さない。R7・R8 の160行は `budget-press.ts` の紐付け（同じ手順で作ったもの）を移した。`--refresh` で作り直すと、Jev の答えの揺れで25行が変わる（2026-11-08）。
+施策の紐付けは [link-to-budget-detail](../../../.agents/skills/pipeline/references/link-to-budget-detail.md) の手順を `project:link-initiatives` にした。名前と額で直接当たるものを先に決め、残りは単語の Dice 係数の上位12件から Jev に選ばせ、確信度 0.6 以上だけを採る。seed に行がある施策は聞き直さない。R7・R8 の160行は `budget-press.ts` の紐付け（同じ手順で作ったもの）を移した。`--refresh` で作り直すと、Jev の答えの揺れで25行が変わる（2026-11-08）。
 
 ## Alternatives Considered
 
@@ -125,10 +130,10 @@ fiscal-serving-tables と同じく、判断も列に置き、列の説明で区�
 
 1. ローカルで `dbt:build` → `serving:sync --local` を流し、上の「確かめたこと」の数を D1 の行で確かめる。
 2. 本番 D1 へは yuito の go を取ってから `serving:sync` を流す。新しい表を足すだけで、今の表と API は変わらない。
-3. 次の PR で、公開 API の操作（検索）を足し、web の節を D1 から組み立てて `profiles.ts`・`budget-press.ts` の評価とプレス発表の部分を消す。言い換えと取り組みの一文は、その前に作り方を決める。
+3. 次の PR で、公開 API の操作（検索）を足し、web の節を D1 から組み立てて `profiles.ts`・`budget-press.ts` の評価とプレス発表の部分を消す。画面の事業名は資料の表記（小事業名）を出す。取り組みの一文は、その前に作り方を決める。
 
 ## Open Questions
 
-- 言い換え（`title`・`what`）と取り組みの一文（`initiatives`）を、判断として seed に置くか、画面では出典の表記（小事業名）を出すか。
+- 取り組みの一文（`initiatives`）を、判断として seed に置くか、出さないか。
 - やめた事業の区分（今の `exits.result` の「廃止・移管・統合・完了」）は評価の結果の資料の表にあり、シートの方向性とは言い方が違う。表を読むか、シートの方向性で出すか。
 - R5 の評価シートを決算書に紐付けるには、品川の R5 決算書を取り込む必要がある。

@@ -1,6 +1,8 @@
-"""事業評価（評価シート・評価の結果）と予算案のプレス発表を、出典の PDF から読んで入力準備の表にする。
+"""事業についての資料（事業評価の評価シート・評価の結果、予算案のプレス発表）を、出典の PDF から読んで入力準備の表にする。
 
-    bun run --cwd pipeline evaluation:save   # 宣言の PDF を取得し、指紋を確かめて R2 に保存する（ネットワークを使う。CI では回さない）
+各行は資料の粒度のまま（評価シート1枚、施策1件）にし、予算書・決算書の事業（内訳）への紐付けは dbt と seed で足す。
+
+    bun run --cwd pipeline project:save   # 宣言の PDF を取得し、指紋を確かめて R2 に保存する（ネットワークを使う。CI では回さない）
 
 評価シートは出典の選定（`evaluation_selections`）で保存済みの PDF を、評価の結果とプレス発表は `origins.json` の宣言の PDF を読む。
 どの様式で読むかは `origins.json` の `layout` で決める。読んだ結果は PDF の指紋と読み方のコードの指紋ごとにキャッシュし、
@@ -25,7 +27,7 @@ from ingestion.paths import CACHE
 HERE = Path(__file__).parent
 ORIGINS = HERE / 'origins.json'
 SELECTIONS = HERE.parents[1] / 'source_selection'
-READINGS = CACHE / 'evaluation'
+READINGS = CACHE / 'project'
 
 
 def origins() -> dict:
@@ -34,7 +36,7 @@ def origins() -> dict:
 
 def object_key(kind: str, origin: dict) -> str:
     year = origin.get('budget_year', origin.get('fiscal_year'))
-    return f'evaluation/{kind}/{origin["jurisdiction"]}/{year}/{origin["sha256"]}.pdf'
+    return f'project/{kind}/{origin["jurisdiction"]}/{year}/{origin["sha256"]}.pdf'
 
 
 def reference(kind: str, origin: dict) -> dict:
@@ -62,7 +64,7 @@ def sheet_sources(declared: list[dict], selections: Path = SELECTIONS) -> list[d
 
 
 def layout(name: str):
-    return importlib.import_module(f'ingestion.evaluation.layouts.{name}')
+    return importlib.import_module(f'ingestion.project.layouts.{name}')
 
 
 def code_fingerprint(name: str) -> str:
@@ -91,12 +93,12 @@ def load(*, remote: bool = False) -> dict[str, list[tuple]]:
     """入力準備の表の行。表名 → 行の list。"""
     declared = origins()
     tables: dict[str, list[tuple]] = {name: [] for name in (
-        'evaluation_origin', 'evaluation_sheet', 'evaluation_indicator', 'evaluation_indicator_value',
-        'evaluation_result', 'press_item')}
+        'project_origin', 'evaluation_sheet', 'evaluation_indicator', 'evaluation_indicator_value',
+        'evaluation_result', 'budget_initiative')}
     for origin in sheet_sources(declared['sheets']):
         path = fetch(origin['reference'], remote=remote)
         sheets = read_cached(path, origin)
-        tables['evaluation_origin'].append((origin_id(origin), origin['jurisdiction'], 'sheets', origin['fiscal_year'],
+        tables['project_origin'].append((origin_id(origin), origin['jurisdiction'], 'sheets', origin['fiscal_year'],
                                             origin['title'], origin['url'], origin['landing_url'], origin['sha256']))
         for sheet in sheets:
             if sheet['fiscal_year'] != origin['fiscal_year']:
@@ -119,7 +121,7 @@ def load(*, remote: bool = False) -> dict[str, list[tuple]]:
     for origin in declared['results']:
         path = fetch(reference('results', origin), remote=remote)
         result = read_cached(path, origin)
-        tables['evaluation_origin'].append((origin_id(origin), origin['jurisdiction'], 'result', origin['evaluated_year'],
+        tables['project_origin'].append((origin_id(origin), origin['jurisdiction'], 'result', origin['evaluated_year'],
                                             origin['title'], origin['url'], origin['landing_url'], origin['sha256']))
         counts = result['grade_counts']
         tables['evaluation_result'].append((
@@ -128,17 +130,17 @@ def load(*, remote: bool = False) -> dict[str, list[tuple]]:
     for origin in declared['press']:
         path = fetch(reference('press', origin), remote=remote)
         items = read_cached(path, origin)
-        tables['evaluation_origin'].append((origin_id(origin), origin['jurisdiction'], 'press', origin['fiscal_year'],
+        tables['project_origin'].append((origin_id(origin), origin['jurisdiction'], 'press', origin['fiscal_year'],
                                             origin['title'], origin['url'], origin['landing_url'], origin['sha256']))
         for item in items:
-            tables['press_item'].append((
+            tables['budget_initiative'].append((
                 origin_id(origin), item['page'], item['title'], json.dumps(item['names'], ensure_ascii=False),
                 item['is_new'], item['budget_thousand'], json.dumps(item['points'], ensure_ascii=False)))
     return tables
 
 
 SCHEMAS = {
-    'evaluation_origin': 'origin_id varchar, jurisdiction_code varchar, document_type varchar, fiscal_year integer, '
+    'project_origin': 'origin_id varchar, jurisdiction_code varchar, document_type varchar, fiscal_year integer, '
                          'title varchar, url varchar, landing_url varchar, sha256 varchar',
     'evaluation_sheet': 'origin_id varchar, page integer, evaluation_year integer, name varchar, account_name varchar, '
                         'kan varchar, kou varchar, moku varchar, jigyo varchar, department varchar, division varchar, '
@@ -152,7 +154,7 @@ SCHEMAS = {
     'evaluation_result': 'origin_id varchar, evaluated_year integer, budget_year integer, page integer, '
                          'evaluated_count integer, grade_a integer, grade_b integer, grade_c integer, grade_d integer, '
                          'reduced_thousand bigint',
-    'press_item': 'origin_id varchar, page integer, title varchar, names varchar, is_new boolean, '
+    'budget_initiative': 'origin_id varchar, page integer, title varchar, names varchar, is_new boolean, '
                   'budget_thousand bigint, points varchar',
 }
 

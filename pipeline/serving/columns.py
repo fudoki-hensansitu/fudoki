@@ -17,21 +17,21 @@ import yaml
 
 PIPELINE = Path(__file__).resolve().parents[1]
 MODELS = [PIPELINE / 'dbt/models/marts/fiscal/_models.yml', PIPELINE / 'dbt/models/marts/jurisdiction/_models.yml',
-          PIPELINE / 'dbt/models/marts/population/_models.yml', PIPELINE / 'dbt/models/marts/evaluation/_models.yml']
+          PIPELINE / 'dbt/models/marts/population/_models.yml', PIPELINE / 'dbt/models/marts/project/_models.yml']
 WAREHOUSE = PIPELINE / '.build/warehouse.duckdb'
 OUTPUT = PIPELINE.parent / 'apps/api/src/columns.json'
 
 # D1 に写す marts の表（同期の順は sync_d1.TABLE_ORDER）
 TABLES = ['jurisdiction', 'fiscal_origin', 'fiscal_expenditure_subject', 'fiscal_expenditure_detail',
           'fiscal_expenditure_location', 'fiscal_coverage', 'population_origin', 'population',
-          'evaluation_origin', 'evaluation_sheet', 'evaluation_indicator', 'evaluation_indicator_value',
-          'evaluation_result', 'press_item']
+          'project_origin', 'evaluation_sheet', 'evaluation_indicator', 'evaluation_indicator_value',
+          'evaluation_result', 'budget_initiative']
 PRIMARY_KEYS = {'jurisdiction': 'jurisdiction_code', 'fiscal_origin': 'origin_id',
                 'fiscal_expenditure_subject': 'subject_id', 'fiscal_expenditure_detail': 'detail_id',
                 'fiscal_expenditure_location': 'row_id', 'fiscal_coverage': 'coverage_id',
                 'population_origin': 'origin_id', 'population': 'population_id',
-                'evaluation_origin': 'origin_id', 'evaluation_sheet': 'sheet_id', 'evaluation_indicator': 'indicator_id',
-                'evaluation_indicator_value': 'value_id', 'evaluation_result': 'origin_id', 'press_item': 'press_item_id'}
+                'project_origin': 'origin_id', 'evaluation_sheet': 'sheet_id', 'evaluation_indicator': 'indicator_id',
+                'evaluation_indicator_value': 'value_id', 'evaluation_result': 'origin_id', 'budget_initiative': 'initiative_id'}
 # index（docs/prd/fiscal-serving-tables/dd.md）。科目は自治体の一覧・比較・COFOG・子、内訳は科目の下・子・自治体の事業。
 # 収録範囲と人口は自治体のページごとに自治体コードで引く
 INDEXES = {
@@ -45,7 +45,7 @@ INDEXES = {
     'evaluation_indicator': [['sheet_id']],
     'evaluation_indicator_value': [['indicator_id']],
     'evaluation_result': [['jurisdiction_code']],
-    'press_item': [['jurisdiction_code', 'fiscal_year'], ['detail_id']],
+    'budget_initiative': [['jurisdiction_code', 'fiscal_year'], ['detail_id']],
 }
 
 TYPES = {'VARCHAR': 'string', 'INTEGER': 'integer', 'BIGINT': 'integer', 'HUGEINT': 'integer', 'BOOLEAN': 'boolean',

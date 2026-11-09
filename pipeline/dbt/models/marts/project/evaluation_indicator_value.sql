@@ -2,4 +2,4 @@
 select sha256(to_json([v.origin_id, v.page::varchar, v.position::varchar, v.fiscal_year::varchar])) as value_id,
     sha256(to_json([v.origin_id, v.page::varchar, v.position::varchar])) as indicator_id,
     v.fiscal_year, v.target_text, v.actual_text
-from {{ source('evaluation', 'evaluation_indicator_value') }} v
+from {{ source('project', 'evaluation_indicator_value') }} v

@@ -1,7 +1,7 @@
 version: 2
 models:
-- name: evaluation_origin
-  description: 事業評価（評価シート・評価の結果）と予算案のプレス発表の出典。PDF 1つが1行。
+- name: project_origin
+  description: 事業についての資料（事業評価の評価シート・評価の結果、予算案のプレス発表）の出典。PDF 1つが1行。
   columns:
   - name: origin_id
     description: 出典の識別子。PDF の sha256。
@@ -41,12 +41,12 @@ models:
     description: 行の ID。origin_id と頁から作る（sha256）。
     data_tests: [not_null, unique]
   - name: origin_id
-    description: 出典。evaluation_origin の origin_id。
+    description: 出典。project_origin の origin_id。
     data_tests:
     - not_null
     - relationships:
         arguments:
-          to: ref('evaluation_origin')
+          to: ref('project_origin')
           field: origin_id
   - name: jurisdiction_code
     description: 全国地方公共団体コード（6桁）。
@@ -171,13 +171,13 @@ models:
   description: 事務事業評価の結果。資料1つ（1回の評価）が1行。金額は出典の千円を円にしたもの。
   columns:
   - name: origin_id
-    description: 出典。evaluation_origin の origin_id。
+    description: 出典。project_origin の origin_id。
     data_tests:
     - not_null
     - unique
     - relationships:
         arguments:
-          to: ref('evaluation_origin')
+          to: ref('project_origin')
           field: origin_id
   - name: jurisdiction_code
     description: 全国地方公共団体コード（6桁）。
@@ -203,20 +203,20 @@ models:
   - name: reduced_yen
     description: 評価で見直した予算の削減額の合計（円）。
   - name: sheets_origin_id
-    description: 同じ評価の評価シートの出典（evaluation_origin の origin_id）。読んでいなければ空。
-- name: press_item
-  description: 予算案のプレス発表の施策。資料の1頁（1施策）が1行。金額は出典の千円を円にしたもの。背景・目的と事業概要の文章は持たない。
+    description: 同じ評価の評価シートの出典（project_origin の origin_id）。読んでいなければ空。
+- name: budget_initiative
+  description: 予算案に載った施策。品川は予算案のプレス発表の1頁（1施策）が1行。金額は出典の千円を円にしたもの。背景・目的と事業概要の文章は持たない。
   columns:
-  - name: press_item_id
+  - name: initiative_id
     description: 行の ID。origin_id と頁から作る（sha256）。
     data_tests: [not_null, unique]
   - name: origin_id
-    description: 出典。evaluation_origin の origin_id。
+    description: 出典。project_origin の origin_id。
     data_tests:
     - not_null
     - relationships:
         arguments:
-          to: ref('evaluation_origin')
+          to: ref('project_origin')
           field: origin_id
   - name: jurisdiction_code
     description: 全国地方公共団体コード（6桁）。

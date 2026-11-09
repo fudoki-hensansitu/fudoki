@@ -1,9 +1,9 @@
 """予算案のプレス発表の施策を、同じ年度の当初予算書の内訳（事業）の1行に紐付け、seed に書く（風土記の判断）。
 
-    bun run --cwd pipeline evaluation:link-press            # seed に無い施策だけ紐付ける（Jev を呼ぶ。CI では回さない）
-    bun run --cwd pipeline evaluation:link-press --refresh  # 全部を紐付け直す
+    bun run --cwd pipeline project:link-initiatives            # seed に無い施策だけ紐付ける（Jev を呼ぶ。CI では回さない）
+    bun run --cwd pipeline project:link-initiatives --refresh  # 全部を紐付け直す
 
-入力は dbt を build した warehouse（`ingestion.press_item` と `fiscal_expenditure_detail`）。手順は
+入力は dbt を build した warehouse（`ingestion.budget_initiative` と `fiscal_expenditure_detail`）。手順は
 .agents/skills/pipeline/references/link-to-budget-detail.md。
 
 1. 名前と額で1行に決まるもの（正規化した名前の一致、または部分一致かつ予算額が円まで一致）を先に確定する（method=name）。
@@ -27,7 +27,7 @@ import yaml
 from ingestion.lib.digit_recheck import KEY_ENV, MODEL, _post
 
 PIPELINE = Path(__file__).resolve().parents[2]
-SEED = PIPELINE / 'dbt/seeds/evaluation/press_item_link.csv'
+SEED = PIPELINE / 'dbt/seeds/project/budget_initiative_link.csv'
 SEGMENT = Path(__file__).with_name('segment.ts')
 COLUMNS = ('jurisdiction_code', 'fiscal_year', 'page', 'detail_id', 'method', 'confidence', 'model')
 CANDIDATES = 12
@@ -113,7 +113,7 @@ def link(*, refresh: bool = False, model: str = MODEL) -> dict:
         items = [dict(zip(('jurisdiction_code', 'fiscal_year', 'page', 'title', 'names', 'budget_yen', 'points'), row))
                  for row in con.execute(
                      "select o.jurisdiction_code, o.fiscal_year, p.page, p.title, p.names, p.budget_thousand * 1000, p.points"
-                     " from ingestion.press_item p join ingestion.evaluation_origin o using (origin_id)"
+                     " from ingestion.budget_initiative p join ingestion.project_origin o using (origin_id)"
                      " order by 1, 2, 3").fetchall()]
         todo = [i for i in items if (i['jurisdiction_code'], i['fiscal_year'], i['page']) not in seed]
         details: dict[tuple, list[dict]] = {}

@@ -698,7 +698,7 @@
         }
       ]
     },
-    "evaluation_origin": {
+    "project_origin": {
       "primary_key": "origin_id",
       "indexes": [],
       "columns": [
@@ -774,7 +774,7 @@
           "name": "origin_id",
           "type": "string",
           "nullable": false,
-          "description": "出典。evaluation_origin の origin_id。"
+          "description": "出典。project_origin の origin_id。"
         },
         {
           "name": "jurisdiction_code",
@@ -1038,7 +1038,7 @@
           "name": "origin_id",
           "type": "string",
           "nullable": false,
-          "description": "出典。evaluation_origin の origin_id。"
+          "description": "出典。project_origin の origin_id。"
         },
         {
           "name": "jurisdiction_code",
@@ -1104,12 +1104,12 @@
           "name": "sheets_origin_id",
           "type": "string",
           "nullable": true,
-          "description": "同じ評価の評価シートの出典（evaluation_origin の origin_id）。読んでいなければ空。"
+          "description": "同じ評価の評価シートの出典（project_origin の origin_id）。読んでいなければ空。"
         }
       ]
     },
-    "press_item": {
-      "primary_key": "press_item_id",
+    "budget_initiative": {
+      "primary_key": "initiative_id",
       "indexes": [
         [
           "jurisdiction_code",
@@ -1121,7 +1121,7 @@
       ],
       "columns": [
         {
-          "name": "press_item_id",
+          "name": "initiative_id",
           "type": "string",
           "nullable": false,
           "description": "行の ID。origin_id と頁から作る（sha256）。"
@@ -1130,7 +1130,7 @@
           "name": "origin_id",
           "type": "string",
           "nullable": false,
-          "description": "出典。evaluation_origin の origin_id。"
+          "description": "出典。project_origin の origin_id。"
         },
         {
           "name": "jurisdiction_code",

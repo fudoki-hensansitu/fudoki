@@ -16,7 +16,7 @@ from ingestion.fiscal import manifest
 from ingestion.fiscal.storage import fetch, verify
 from ingestion.lib.node_tables import AMOUNT_COLUMNS, NODE_COLUMNS
 from ingestion.lib.source_inconsistencies import declared_for
-from ingestion.evaluation import run as evaluation
+from ingestion.project import run as project
 from ingestion.population import run as population
 
 DBT = Path(__file__).resolve().parents[1]
@@ -254,8 +254,8 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
         if population_origins:
             con.executemany('insert into ingestion.population_origin values (?,?,?)', population_origins)
             con.executemany('insert into ingestion.resident_register values (?,?,?,?,?,?)', residents)
-        evaluation_tables = evaluation.load(remote=remote)
-        evaluation.write(con, evaluation_tables)
+        project_tables = project.load(remote=remote)
+        project.write(con, project_tables)
         used = {root / 'manifest.json' for document in documents.values()
                 if (root := candidate_root(candidate, document['target'], document['direction'])) is not None}
         if provided - used:
@@ -263,7 +263,7 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
         con.commit()
     return {'warehouse': str(warehouse), 'tables': len(tables), 'csv_tables': len(csv_tables),
             'origins': len(origins), 'jurisdictions': len(jurisdictions), 'population_origins': len(population_origins),
-            'evaluation_sheets': len(evaluation_tables['evaluation_sheet']), 'press_items': len(evaluation_tables['press_item']),
+            'evaluation_sheets': len(project_tables['evaluation_sheet']), 'budget_initiatives': len(project_tables['budget_initiative']),
             'nodes': sum(t[-2] for t in tables), 'amounts': sum(t[-1] for t in tables)}
 
 
@@ -288,8 +288,8 @@ def main() -> None:
                         '--select', '+fiscal_expenditure_subject', '+fiscal_expenditure_detail',
                         '+fiscal_expenditure_location', '+fiscal_origin', '+fiscal_coverage', '+jurisdiction',
                         '+population_origin', '+population', 'cofog_master',
-                        '+evaluation_origin', '+evaluation_sheet', '+evaluation_indicator',
-                        '+evaluation_indicator_value', '+evaluation_result', '+press_item'],
+                        '+project_origin', '+evaluation_sheet', '+evaluation_indicator',
+                        '+evaluation_indicator_value', '+evaluation_result', '+budget_initiative'],
                        cwd=DBT, stdout=sys.stderr, check=True)
         result['dbt_build'] = 'passed'
     print(json.dumps(result, ensure_ascii=False))

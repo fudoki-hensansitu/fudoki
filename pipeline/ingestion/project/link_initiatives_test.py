@@ -1,7 +1,7 @@
 """施策を予算書の内訳に名前で紐付ける規則。取り違えると施策に別の目の分野が付く。"""
 import unittest
 
-from ingestion.evaluation.link_press import direct
+from ingestion.project.link_initiatives import direct
 
 
 def detail(detail_id, name, amount):

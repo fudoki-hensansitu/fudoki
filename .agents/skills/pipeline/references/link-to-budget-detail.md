@@ -9,7 +9,7 @@
 3. **TypeSafe の Jev に選ばせる。** `POST https://api.typesafe.ai/v1/systemone`、`model: jev-latest`、`choice` の質問1つ。state は施策の見出し・事業名・予算額・要点。criteria は候補ごとに「予算書の内訳『名前』（款・目）」と、`none`「この施策を含む内訳は上のどれでもない」。
 4. **確信度 0.6 以上なら採用する。** その行の `detail_id` と目の COFOG を持つ。0.6 未満と `none` は紐付け無しにして、分野は「その他」に入れる。名前からの推測で分野を決めない（根拠が予算書の行に無いものは分けない）。
 
-紐付けは取り込みのときに一度作ってデータとして置く。画面を開くたびに Jev を呼ばない。予算案のプレス発表の施策は `bun run --cwd pipeline evaluation:link-press`（`pipeline/ingestion/evaluation/link_press.py`）がこの手順で紐付け、seed `pipeline/dbt/seeds/evaluation/press_item_link.csv` に足す。seed に行がある施策は聞き直さない。
+紐付けは取り込みのときに一度作ってデータとして置く。画面を開くたびに Jev を呼ばない。予算案のプレス発表の施策は `bun run --cwd pipeline project:link-initiatives`（`pipeline/ingestion/project/link_initiatives.py`）がこの手順で紐付け、seed `pipeline/dbt/seeds/project/budget_initiative_link.csv` に足す。seed に行がある施策は聞き直さない。
 
 ## なぜこの形か（品川 R8/R7、名前と額で直接当たらなかった51頁での比較）
 
