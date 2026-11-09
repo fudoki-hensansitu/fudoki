@@ -111,7 +111,7 @@ type 科目 = {
   階層: '款' | '項' | '目'
   番号?: 文字                 // 資料に印字された款・項・目の番号（例: 「2 総務費」の 2）。同じ親の中でだけ重ならない
   名前: 文字
-  金額: 円                    // 印字の額。子の科目の和と合う（取り込みで検査する）
+  金額: 円                    // PDF は印字の額、CSV の親は子の和。子の科目の和と合う（取り込みで検査し、資料の印字が合わないところは宣言済みのずれとして残す）
   分野?: COFOG              // FK。目だけ（風土記の判断）
   分野の確かさ?: '確定' | '暫定' | '分類できない' | '対象外' // 目だけ
   繰出先?: 会計の種類         // 他の会計への繰出金のとき（風土記の判断）
@@ -225,7 +225,7 @@ type 評価の結果 = {
 | 評価 | `project_evaluation_sheet`・`project_evaluation_indicator`・`project_evaluation_indicator_value` | あり。`detail_id` で内訳を指す |
 | 予算案での説明 | `project_budget_initiative` | あり。施策1件1行で `detail_id` を指す |
 | 評価の結果 | `project_evaluation_result` | あり |
-| 出典 | `fiscal_origin`・`project_origin`・`population_origin` | あり。`population_origin` は資料名・形式・SHA256 を持たない（基準日と URL だけ） |
+| 出典 | `fiscal_origin`・`project_origin`・`population_origin` | あり。`population_origin` は資料名・形式・SHA256 を持たない（基準日と URL だけ）。`project_origin` は形式を持たない（事業の資料は PDF だけ） |
 
 品川の R6 で測った数（2026-11-09）:
 
