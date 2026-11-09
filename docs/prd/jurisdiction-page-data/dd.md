@@ -99,7 +99,7 @@
 | `press_item.detail_id`・`link_method`・`link_confidence` | seed `press_item_link`（下記） |
 | `press_item.cofog_code` | `detail_id` の内訳が属する目の COFOG |
 
-施策の紐付けは [link-to-budget-detail](../../../.agents/skills/web-frontend-ops/references/link-to-budget-detail.md) の手順を `evaluation:link-press` にした。名前と額で直接当たるものを先に決め、残りは単語の Dice 係数の上位12件から Jev に選ばせ、確信度 0.6 以上だけを採る。seed に行がある施策は聞き直さない。R7・R8 の160行は `budget-press.ts` の紐付け（同じ手順で作ったもの）を移した。`--refresh` で作り直すと、Jev の答えの揺れで25行が変わる（2026-11-08）。
+施策の紐付けは [link-to-budget-detail](../../../.agents/skills/pipeline/references/link-to-budget-detail.md) の手順を `evaluation:link-press` にした。名前と額で直接当たるものを先に決め、残りは単語の Dice 係数の上位12件から Jev に選ばせ、確信度 0.6 以上だけを採る。seed に行がある施策は聞き直さない。R7・R8 の160行は `budget-press.ts` の紐付け（同じ手順で作ったもの）を移した。`--refresh` で作り直すと、Jev の答えの揺れで25行が変わる（2026-11-08）。
 
 ## Alternatives Considered
 

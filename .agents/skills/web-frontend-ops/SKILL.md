@@ -1,6 +1,6 @@
 ---
 name: web-frontend-ops
-description: fudoki の apps/web（Cloudflare Workers、現在は入口の1枚だけ）と repo root の DESIGN.md を触るときに参照する。DESIGN.md に何を書くか迷った、といった非自明なハマりどころを持つ。
+description: fudoki の apps/web と repo root の DESIGN.md を触るときに参照する。DESIGN.md に何を書くか迷った、といった非自明なハマりどころを持つ。
 user-invocable: false
 ---
 
@@ -13,9 +13,9 @@ user-invocable: false
 | やること | 読む reference |
 | --- | --- |
 | `DESIGN.md` に何を書くか・書かないかを判断したい | [references/design-md.md](references/design-md.md) |
-| 資料の施策（プレス発表など）に分野を付ける・予算書の事業へ紐付ける | [references/link-to-budget-detail.md](references/link-to-budget-detail.md) |
 
 ## 関連 skill
 
 - 全体設計・配布の方針は repo ルートの `AGENTS.md` が正本（このスキルは重複させない）
 - apps/api 側の運用ハマりどころは `.agents/skills/cloudflare-api-ops/`
+- web が出すデータ（事業評価・プレス発表の施策・その紐付けなど）は pipeline で作る。作り方は `.agents/skills/pipeline/`
