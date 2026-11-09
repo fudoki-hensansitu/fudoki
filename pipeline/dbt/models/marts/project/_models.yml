@@ -168,7 +168,7 @@ models:
   - name: actual_text
     description: その年度の実績（シートの表記のまま）。
 - name: project_evaluation_result
-  description: 事務事業評価の結果。資料1つ（1回の評価）が1行。金額は出典の千円を円にしたもの。
+  description: 事務事業評価の結果。資料1つ（1回の評価）が1行。
   columns:
   - name: origin_id
     description: 出典。project_origin の origin_id。
@@ -200,8 +200,6 @@ models:
     description: C 評価の事業の数。
   - name: grade_d
     description: D 評価の事業の数。
-  - name: reduced_yen
-    description: 評価で見直した予算の削減額の合計（円）。
   - name: sheets_origin_id
     description: 同じ評価の評価シートの出典（project_origin の origin_id）。読んでいなければ空。
 - name: project_budget_initiative

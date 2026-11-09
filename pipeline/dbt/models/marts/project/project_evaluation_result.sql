@@ -1,6 +1,6 @@
--- 事務事業評価の結果。資料1つ（1回の評価）が1行。金額は出典の千円を円にしたもの。
+-- 事務事業評価の結果。資料1つ（1回の評価）が1行。
 select r.origin_id, o.jurisdiction_code, r.evaluated_year, r.budget_year, r.page, r.evaluated_count,
-    r.grade_a, r.grade_b, r.grade_c, r.grade_d, r.reduced_thousand * 1000 as reduced_yen,
+    r.grade_a, r.grade_b, r.grade_c, r.grade_d,
     s.origin_id as sheets_origin_id
 from {{ source('project', 'project_evaluation_result') }} r
 join {{ source('project', 'project_origin') }} o using (origin_id)

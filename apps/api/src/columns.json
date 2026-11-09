@@ -1095,12 +1095,6 @@
           "description": "D 評価の事業の数。"
         },
         {
-          "name": "reduced_yen",
-          "type": "integer",
-          "nullable": true,
-          "description": "評価で見直した予算の削減額の合計（円）。"
-        },
-        {
           "name": "sheets_origin_id",
           "type": "string",
           "nullable": true,

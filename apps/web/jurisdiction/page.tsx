@@ -706,8 +706,6 @@ function Mark({ kind }: { kind: string }) {
 const legendOf = (rows: { kind: string }[]) => Object.keys(MARKS).map((k) => [k, rows.filter((r) => r.kind === k).length] as const).filter(([, n]) => n > 0)
 
 function ScrapSection({ scrap }: { scrap: Scrap }) {
-  const target = scrap.targetYen
-  const [barRef, shown] = useInView<HTMLDivElement>()
   const grades = [
     ['A', '広げる'],
     ['B', '続ける'],
@@ -732,22 +730,6 @@ function ScrapSection({ scrap }: { scrap: Scrap }) {
   const cols = 'sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_auto]'
   return (
     <Section id="scrap" title="やめたこと・見直したことは？" link={{ href: scrap.source, label: '事業評価の結果' }} lead="自治体は毎年、前の年度までに行った事業を評価して、やめる事業や減らす事業を決め、その分を新しい予算に回しています。">
-      {/* 浮かせたお金の棒は節の中央に置き、下の「自治体が付けた評価」の見出しと離す（棒の見出しに見えないように） */}
-      <div className="mx-auto mb-8 mt-2 flex w-full max-w-[560px] flex-col gap-2">
-        <div className="flex items-baseline justify-between gap-3">
-          <span>やめたり減らしたりして浮かせたお金</span>
-          <b className="text-[28px] font-normal tabular-nums text-primary">
-            {formatYen(scrap.raisedYen)}
-            {target ? <small className="ml-1 text-sm text-muted-foreground">／ 目標 {formatYen(target)}</small> : null}
-          </b>
-        </div>
-        {target ? (
-          <div ref={barRef} className="relative h-2.5 rounded-full bg-foreground/5" role="img" aria-label={`目標${formatYen(target)}に対して${formatYen(scrap.raisedYen)}`}>
-            <div className="absolute inset-y-0 left-0 rounded-full bg-[var(--kincha)] transition-[width] duration-[1200ms] ease-out motion-reduce:transition-none" style={{ width: shown ? `${Math.min(1, scrap.raisedYen / target) * 100}%` : 0 }} />
-            <div className="absolute -top-1 right-0 h-[18px] w-0.5 bg-foreground" />
-          </div>
-        ) : null}
-      </div>
       <h3 className="text-lg">自治体が付けた評価（{scrap.evaluated.toLocaleString('ja-JP')}事業）</h3>
       {/* 評価の区分はカードで選び、下にその区分の事業を出す。最初は D（終える＝完了・統合・やめた事業）を見せる */}
       <div role="radiogroup" aria-label="評価の区分" onKeyDown={onKey} className="grid grid-cols-2 gap-2 sm:grid-cols-4">

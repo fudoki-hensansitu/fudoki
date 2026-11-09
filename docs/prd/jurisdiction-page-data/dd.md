@@ -39,7 +39,7 @@
 | 新しくできた事業（名前・決算額・指標・評価・方向性・頁） | `profiles.ts` の `projects` | `project_evaluation_sheet`（`is_new_project`）・`project_evaluation_indicator`・`project_evaluation_indicator_value` |
 | 新しくできた事業の分野 | `profiles.ts` の `cofog` | `project_evaluation_sheet.cofog_code`（決算書の目の COFOG） |
 | やめた事業・A〜C の一覧 | `profiles.ts` の `scrap.exits`・`graded` | `project_evaluation_sheet`（`grade_code`・`direction`） |
-| 捻出額・評価した数・A〜D の数 | `profiles.ts` の `scrap` | `project_evaluation_result` |
+| 評価した数・A〜D の数 | `profiles.ts` の `scrap` | `project_evaluation_result` |
 | 予算の年度の新しい施策 | `budget-press.ts` | `project_budget_initiative` と seed `project_budget_initiative_link` |
 
 ### 確かめたこと（2026-11-08）
