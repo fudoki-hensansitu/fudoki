@@ -5,7 +5,7 @@ import { BACKGROUND_DARK, BACKGROUND_LIGHT } from './tokens'
 export const MANIFEST = JSON.stringify({
   name: '風土記（fudoki）— まちのお金、何に使ってる？',
   short_name: '風土記',
-  description: 'まちのお金、何に使ってる？ 風土記は、自治体が何にいくら使い、どう振り返ったかを、事業ごとにわかりやすく見せるサイトです。ほかのまちと同じ物差しで比べられ、どの数字も出典の資料まで辿れます。',
+  description: 'まちのお金、何に使ってる？ 風土記は、自治体が何にいくら使い、どう振り返ったかを、事業ごとにわかりやすく見せるサイトです。ほかのまちと同じ物差しで比べられ、出典の資料まで辿れます。',
   lang: 'ja',
   start_url: '/',
   scope: '/',

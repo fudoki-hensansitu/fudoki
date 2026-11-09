@@ -576,7 +576,7 @@ export function Landing() {
               <Circle />
             </span>
           </h1>
-          <p className="sub">自治体が何にいくら使い、どう振り返ったかを、事業ごとに見られます。ほかのまちと同じ物差しで比べられ、どの数字も出典の資料まで辿れます。</p>
+          <p className="sub">自治体が何にいくら使い、どう振り返ったかを、事業ごとに見られます。ほかのまちと同じ物差しで比べられ、出典の資料まで辿れます。</p>
           <div className="acts">
             <Link className="btn" href={JURISDICTIONS}>
               自分のまちを見る
@@ -841,7 +841,7 @@ export function Landing() {
             <Link href="/" aria-label="風土記 ホーム">
               <svg className="logo" xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${LOGO_WIDTH} 40`} role="img" aria-label="風土記" dangerouslySetInnerHTML={{ __html: `<title>風土記</title>${LOGO_G}` }} />
             </Link>
-            <p>まちのお金、何に使ってる？ 風土記は、自治体が何にいくら使い、どう振り返ったかを、事業ごとにわかりやすく見せるサイトです。ほかのまちと同じ物差しで比べられ、どの数字も出典の資料まで辿れます。</p>
+            <p>まちのお金、何に使ってる？ 風土記は、自治体が何にいくら使い、どう振り返ったかを、事業ごとにわかりやすく見せるサイトです。ほかのまちと同じ物差しで比べられ、出典の資料まで辿れます。</p>
           </div>
           <div>
             <h2>使う</h2>
