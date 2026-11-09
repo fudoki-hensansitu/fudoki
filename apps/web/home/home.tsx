@@ -200,20 +200,10 @@ function MyTown({ entries, featured }: HomeProps) {
           <ul className="mt-5 grid grid-cols-3 gap-2">
             {townLinks(town.name).map((l) => (
               <li key={l.label}>
-                {l.hash ? (
-                  <Link href={`${town.path}${l.hash}`} className="flex h-full flex-col gap-2 rounded-2xl bg-background p-3.5 text-sm text-foreground transition-colors hover:bg-card [&_svg]:size-5 [&_svg]:text-accent-foreground">
-                    {l.icon}
-                    {l.label}
-                  </Link>
-                ) : (
-                  <span className="flex h-full flex-col gap-2 rounded-2xl border border-dashed border-white/25 p-3.5 text-sm opacity-70 [&_svg]:size-5">
-                    {l.icon}
-                    <span>
-                      {l.label}
-                      <span className="ml-1.5 text-[11px]">準備中</span>
-                    </span>
-                  </span>
-                )}
+                <Link href={`${town.path}${l.hash}`} className="flex h-full flex-col gap-2 rounded-2xl bg-background p-3.5 text-sm text-foreground transition-colors hover:bg-card [&_svg]:size-5 [&_svg]:text-accent-foreground">
+                  {l.icon}
+                  {l.label}
+                </Link>
               </li>
             ))}
           </ul>
