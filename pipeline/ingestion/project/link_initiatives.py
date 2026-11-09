@@ -127,28 +127,30 @@ def link(*, refresh: bool = False, model: str = MODEL) -> dict:
                 raise ValueError(f'当初予算書の内訳（事業）が無い: {jurisdiction} {year}')
     key = os.environ.get(KEY_ENV)
     counts = {'name': 0, 'jev': 0, 'none': 0}
-    for item in todo:
-        item['names'], item['points'] = json.loads(item['names']), json.loads(item['points'])
-        pool = details[(item['jurisdiction_code'], item['fiscal_year'])]
-        row = {'jurisdiction_code': item['jurisdiction_code'], 'fiscal_year': item['fiscal_year'], 'page': item['page']}
-        found = direct(item, pool)
-        if found:
-            row.update(detail_id=found['detail_id'], method='name')
-        else:
-            if not key:
-                raise ValueError(f'{KEY_ENV} が無いので Jev に聞けない')
-            texts = segment([' '.join([item['title'], *item['names']]), *(d['name'] for d in pool)])
-            mine = words(texts[0])
-            ranked = sorted(zip(pool, texts[1:]), key=lambda pair: (-dice(mine, words(pair[1])), pair[0]['detail_id']))
-            choice, confidence = ask(key, item, [d for d, _ in ranked[:CANDIDATES]], model)
-            row.update(confidence=round(confidence, 2), model=model)
-            if choice and confidence >= THRESHOLD:
-                row.update(detail_id=choice['detail_id'], method='jev')
+    try:
+        for item in todo:
+            item['names'], item['points'] = json.loads(item['names']), json.loads(item['points'])
+            pool = details[(item['jurisdiction_code'], item['fiscal_year'])]
+            row = {'jurisdiction_code': item['jurisdiction_code'], 'fiscal_year': item['fiscal_year'], 'page': item['page']}
+            found = direct(item, pool)
+            if found:
+                row.update(detail_id=found['detail_id'], method='name')
             else:
-                row.update(method='none')
-        counts[row['method']] += 1
-        seed[(item['jurisdiction_code'], item['fiscal_year'], item['page'])] = row
-    write_seed(seed)
+                if not key:
+                    raise ValueError(f'{KEY_ENV} が無いので Jev に聞けない')
+                texts = segment([' '.join([item['title'], *item['names']]), *(d['name'] for d in pool)])
+                mine = words(texts[0])
+                ranked = sorted(zip(pool, texts[1:]), key=lambda pair: (-dice(mine, words(pair[1])), pair[0]['detail_id']))
+                choice, confidence = ask(key, item, [d for d, _ in ranked[:CANDIDATES]], model)
+                row.update(confidence=round(confidence, 2), model=model)
+                if choice and confidence >= THRESHOLD:
+                    row.update(detail_id=choice['detail_id'], method='jev')
+                else:
+                    row.update(method='none')
+            counts[row['method']] += 1
+            seed[(item['jurisdiction_code'], item['fiscal_year'], item['page'])] = row
+    finally:
+        write_seed(seed)  # 途中で失敗しても、決まった分は残す
     return {'linked': counts, 'kept': len(items) - len(todo)}
 
 
