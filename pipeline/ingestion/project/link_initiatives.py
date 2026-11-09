@@ -108,7 +108,8 @@ def warehouse() -> Path:
 
 
 def link(*, refresh: bool = False, model: str = MODEL) -> dict:
-    seed = {} if refresh else read_seed()
+    previous = read_seed()
+    seed = {} if refresh else dict(previous)
     with duckdb.connect(str(warehouse()), read_only=True) as con:
         items = [dict(zip(('jurisdiction_code', 'fiscal_year', 'page', 'title', 'names', 'budget_yen', 'points'), row))
                  for row in con.execute(
@@ -149,8 +150,10 @@ def link(*, refresh: bool = False, model: str = MODEL) -> dict:
                     row.update(method='none')
             counts[row['method']] += 1
             seed[(item['jurisdiction_code'], item['fiscal_year'], item['page'])] = row
-    finally:
-        write_seed(seed)  # 途中で失敗しても、決まった分は残す
+    except BaseException:
+        write_seed({**previous, **seed})  # 途中で失敗したら、決まった分を足して前の行は残す
+        raise
+    write_seed(seed)
     return {'linked': counts, 'kept': len(items) - len(todo)}
 
 
