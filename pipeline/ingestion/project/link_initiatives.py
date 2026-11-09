@@ -141,7 +141,7 @@ def link(*, refresh: bool = False, model: str = MODEL) -> dict:
                     raise ValueError(f'{KEY_ENV} が無いので Jev に聞けない')
                 texts = segment([' '.join([item['title'], *item['names']]), *(d['name'] for d in pool)])
                 mine = words(texts[0])
-                ranked = sorted(zip(pool, texts[1:]), key=lambda pair: (-dice(mine, words(pair[1])), pair[0]['detail_id']))
+                ranked = sorted(zip(pool, texts[1:], strict=True), key=lambda pair: (-dice(mine, words(pair[1])), pair[0]['detail_id']))
                 choice, confidence = ask(key, item, [d for d, _ in ranked[:CANDIDATES]], model)
                 row.update(confidence=round(confidence, 2), model=model)
                 if choice and confidence >= THRESHOLD:
