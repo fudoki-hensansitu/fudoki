@@ -50,7 +50,6 @@ export default defineConfig({
       { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },
       { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
       { rel: 'manifest', href: '/manifest.webmanifest' },
-      // 見出しの明朝（この site で使う字だけの subset）
     ],
     // service worker（routes/sw.js.ts）は繋がらないときの案内だけを持つ
     script: [{ innerHTML: SW_REGISTER }],

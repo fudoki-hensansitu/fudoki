@@ -69,7 +69,7 @@ shadcn/ui の語彙。色の役割は次のとおり。
   --kincha-ink: #b85c00;
   --sakura: #ebcab9;
 
-  --font-display: "Fudoki Mincho", "BIZ UDPMincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --font-display: "BIZ UDPMincho", "Hiragino Mincho ProN", "Yu Mincho", "YuMincho", "Noto Serif JP", "Noto Serif CJK JP", serif;
   --font-sans: "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", "Yu Gothic", Meiryo, system-ui, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --text-caption: 12px;
@@ -194,9 +194,9 @@ shadcn/ui の語彙。色の役割は次のとおり。
 
 ## Exports
 - `apps/web/styles/tokens.css` の `:root` は本ファイルの Tokens から写す。直接の値の変更はここを先に直す
-- 明朝（`--font-display`）は今どの画面でも使っていない。subset の仕組みは残してある: BIZ UDP明朝 Regular（google/fonts の commit `9710da1e` で固定、SHA-256 は `apps/web/brand/home_font.py`、OFL は `apps/web/brand/fonts/bizudpmincho-OFL.txt`）を、頁で使う字だけに絞って自前で配る。文言を変えたら `bun run --cwd apps/web build:font` で `public/fonts/mincho.woff2` を作り直す
+- 明朝（`--font-display`）は今どの画面でも使っていない。使うときは Web フォントを配らず、端末の明朝で組む
 - 重いファイル（ホームの録画・出典の切り抜き）は `apps/web/public/` に置き、Workers static assets で配る。録画は `apps/web/brand/home_demo.sh`（冒頭に映る利用者名を覆う）、切り抜きは `bun run --cwd apps/web build:origin` で作り直す
-- 閲覧者の IP を第三者へ渡さないため、Google Fonts などの外部 CDN から書体を読まない。外部へ送るのは、利用者がブラウザで許可した操作に限る（ホームでうちのまちを選んでいないときと「現在地から選ぶ」を押したときに、位置情報の許可があれば国土地理院の逆ジオコーダーへ緯度・経度を送る。プライバシーポリシーに記載）
+- 外部へ送るのは、利用者がブラウザで許可した操作に限る（ホームでうちのまちを選んでいないときと「現在地から選ぶ」を押したときに、位置情報の許可があれば国土地理院の逆ジオコーダーへ緯度・経度を送る。プライバシーポリシーに記載）
 
 ## Notes
 - 参考の質感は flavors.design の Groanola（白い机・oat の窓・低コントラストの serif・ピル・紙と網点のコラージュ）。黄緑の紙と桃・藤の網点は、青丹と緑が2つ並ぶため生成り・朱・藍に置き換えた
