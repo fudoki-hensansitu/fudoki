@@ -6,6 +6,8 @@ const TURNSTILE = 'https://challenges.cloudflare.com'
 // Cloudflare Web Analytics。zone の設定で edge が HTML に beacon の script を差し込み、計測を cloudflareinsights.com へ送る
 const INSIGHTS_SCRIPT = 'https://static.cloudflareinsights.com'
 const INSIGHTS_REPORT = 'https://cloudflareinsights.com'
+// ホームの「現在地から選ぶ」が緯度・経度を渡す国土地理院の逆ジオコーダー（home/locate.ts）
+const GSI_GEOCODER = 'https://mreversegeocoder.gsi.go.jp'
 
 const sha256 = async (text: string) => btoa(String.fromCharCode(...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)))))
 
@@ -19,7 +21,7 @@ export const pageCsp = () =>
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob:",
       "font-src 'self' data:",
-      `connect-src 'self' ${INSIGHTS_REPORT}`,
+      `connect-src 'self' ${INSIGHTS_REPORT} ${GSI_GEOCODER}`,
       // View の器（同じ origin の /view-frame）と Turnstile の widget
       `frame-src 'self' ${TURNSTILE}`,
       "worker-src 'self'",
