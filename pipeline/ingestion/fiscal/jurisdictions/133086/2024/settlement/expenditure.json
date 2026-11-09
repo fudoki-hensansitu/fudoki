@@ -10,7 +10,7 @@
     {
       "table_id": "nhi-expenditure-detail",
       "conversion_id": "nhi",
-      "input_fingerprint": "a4fba4f10d50be033c0c89a5bd91cfb965df92b32b06cb5c9972fbf53ebab04d",
+      "input_fingerprint": "b52cf2d1878999d74135965703905c74de7b9857d25b8d5498825dfa7f289edc",
       "account": "国民健康保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -42,7 +42,7 @@
     {
       "table_id": "kouki-expenditure-detail",
       "conversion_id": "kouki",
-      "input_fingerprint": "b5864579e99986353255764060cf7aa05676deea1109faf518fe3b1d300d194d",
+      "input_fingerprint": "41fa12ff5c39a25c52d63aef96b8931bd0153330a4735e5af86a66c9ac8ad515",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -73,7 +73,7 @@
     {
       "table_id": "kaigo-expenditure-detail",
       "conversion_id": "kaigo",
-      "input_fingerprint": "3a6ced78e4015ce87972466a794a33e79dc16e1d09847760986abfe8fd4ff8c8",
+      "input_fingerprint": "6524c18df77e9fde65fd815dc1b2b54c9ccd14da5c27835544d73f1f3ef90ccb",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -100,6 +100,37 @@
           "bytes": 15082
         },
         "row_count": 787
+      }
+    },
+    {
+      "table_id": "general-expenditure-detail",
+      "conversion_id": "general",
+      "input_fingerprint": "af5df675f32ccfd6000ee503ef0873aae13b5ecefa05669e77a09e59a3e2cde8",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
+        "金額の単位は printed 103頁 から決めた。款の和 6,993,624,326 と印字の「歳出合計」6,993,624,326 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（2626 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・翌年度繰越額／継続費逓次繰越繰越明許費の別事故繰越→翌年度繰越額。",
+        "原画で確かめた名称の誤読 5 件を、管理 JSON の name_corrections で印字に直した: 01)1歳6か月児健康診査事業費→011歳6か月児健康診査事業費・03)3・4か月児健康診査・産婦健康診査事業費→033・4か月児健康診査・産婦健康診査事業費・05)6・9か月児健康診査事業費→056・9か月児健康診査事業費・06)3歳児健康診査事業費→063歳児健康診査事業費・07)5歳児健康診査事業費→075歳児健康診査事業費。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/133086/2024/settlement/expenditure/general-expenditure-detail-nodes.parquet",
+          "sha256": "7fb71035b922474c5db6484189f638528b8ca76f33c2f45d6bc8a111ab595f6e",
+          "bytes": 94759
+        },
+        "row_count": 3183
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/133086/2024/settlement/expenditure/general-expenditure-detail-amounts.parquet",
+          "sha256": "ab3536f1a0cea4195842c27cdf307ead7f703f7246d3e4dd6060942366af994c",
+          "bytes": 100886
+        },
+        "row_count": 9498
       }
     }
   ],
@@ -1032,6 +1063,111 @@
       "expected_tables": [
         {
           "table_id": "kaigo-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4d5519181e05054d0ed42089f3394dafed7504b4ac28c925650067c3be9c7075"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "事業": {
+                  "kind": "label",
+                  "axis_header": "科目"
+                },
+                "予算現額／区分／節": {
+                  "kind": "label",
+                  "axis_header": "節"
+                }
+              },
+              "rules": {
+                "row_gaps": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "amounts": "next_row",
+              "fourth_level_axis": "事業"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "headings": true,
+                  "under": "節",
+                  "plain_names": [
+                    "高額調整事務委託"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "general-p82-01",
+            "page": 82,
+            "code": "01",
+            "observed_name": ")1歳6か月児健康診査事業費",
+            "corrected_name": "1歳6か月児健康診査事業費",
+            "reason": "物理82頁の事業「(01) 1歳6か月児健康診査事業費」。名前が数字で始まり、番号の閉じ括弧が名前の頭に残った。原典の描画で番号と名前の印字を確かめた。"
+          },
+          {
+            "id": "general-p82-03",
+            "page": 82,
+            "code": "03",
+            "observed_name": ")3・4か月児健康診査・産婦健康診査事業費",
+            "corrected_name": "3・4か月児健康診査・産婦健康診査事業費",
+            "reason": "物理82頁の事業「(03) 3・4か月児健康診査・産婦健康診査事業費」。名前が数字で始まり、番号の閉じ括弧が名前の頭に残った。原典の描画で番号と名前の印字を確かめた。"
+          },
+          {
+            "id": "general-p83-05",
+            "page": 83,
+            "code": "05",
+            "observed_name": ")6・9か月児健康診査事業費",
+            "corrected_name": "6・9か月児健康診査事業費",
+            "reason": "物理83頁の事業「(05) 6・9か月児健康診査事業費」。名前が数字で始まり、番号の閉じ括弧が名前の頭に残った。原典の描画で番号と名前の印字を確かめた。"
+          },
+          {
+            "id": "general-p83-06",
+            "page": 83,
+            "code": "06",
+            "observed_name": ")3歳児健康診査事業費",
+            "corrected_name": "3歳児健康診査事業費",
+            "reason": "物理83頁の事業「(06) 3歳児健康診査事業費」。名前が数字で始まり、番号の閉じ括弧が名前の頭に残った。原典の描画で番号と名前の印字を確かめた。"
+          },
+          {
+            "id": "general-p83-07",
+            "page": 83,
+            "code": "07",
+            "observed_name": ")5歳児健康診査事業費",
+            "corrected_name": "5歳児健康診査事業費",
+            "reason": "物理83頁の事業「(07) 5歳児健康診査事業費」。名前が数字で始まり、番号の閉じ括弧が名前の頭に残った。原典の描画で番号と名前の印字を確かめた。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-detail"
         }
       ]
     }

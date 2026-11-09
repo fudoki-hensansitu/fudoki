@@ -344,8 +344,13 @@ def level_cells(cells: list[tuple[tuple, str]], edges: list[float], levels: str 
 
 
 def page_bands(page: Page, spread: dict | None = None,
-               header: dict | None = None, split_text: bool = False) -> tuple[list[Band], list[Word]]:
-    """Bands of every frame on one physical page, and the words outside frames."""
+               header: dict | None = None, split_text: bool = False,
+               row_gaps: bool = False) -> tuple[list[Band], list[Word]]:
+    """Bands of every frame on one physical page, and the words outside frames.
+
+    `row_gaps` (the layout setting `rules.row_gaps`): a vertical rule the page leaves out for a row lets the row's
+    text run on into the next column. A word that Poppler cut off where the name crossed the column's edge, touching
+    the word before it on the line, stays in that word's band when no rule is drawn across the line there."""
     verticals = [r for r in page.rules if r.vertical]
     horizontals = [r for r in page.rules if not r.vertical]
     # Header words split at rules (a spanning header prints 款項 as one word);
@@ -388,6 +393,7 @@ def page_bands(page: Page, spread: dict | None = None,
         body = [(index, piece) for index, word in whole for part in (split_text_at_rules(word, verticals) if split_text else [word])
                 for piece in split_digits_at_rules(part, between)]
         skip = repeated_header(page, frame, header_bottom, body, {normalize(w.text) for ws in cells.values() for w in ws})
+        carried = run_on_starts(body, verticals) if row_gaps else {}
         for left, right in zip(edges, edges[1:]):
             middle = (left + right) / 2
             covering = covering_of(middle)
@@ -402,6 +408,7 @@ def page_bands(page: Page, spread: dict | None = None,
                 if index in skip or (staircase and FOLIO.fullmatch(normalize(word.text))):
                     continue  # a staircase frame runs to the foot of the page, over its folio (`-6-`)
                 sx, cy = word.x0 + min(2, (word.x1 - word.x0) / 2), (word.y0 + word.y1) / 2
+                sx = carried.get(id(word), sx)
                 if re.match(r'^[△▲]|.*,[0-9]{3}', word.text) and is_amount(word.text):
                     # A grouped or signed amount belongs to the column that holds most of it: its sign or
                     # first digits can overhang the column on its left (`△22,990,000`, 133051).
@@ -412,6 +419,24 @@ def page_bands(page: Page, spread: dict | None = None,
             bands.append(band)
     outside = [w for i, w in enumerate(page.words) if i not in used]
     return bands, outside
+
+
+def run_on_starts(body: list[tuple[int, Word]], verticals: list[Rule]) -> dict[int, float]:
+    """The place a word's band is read from when it runs on from the word before it (`page_bands`, `row_gaps`):
+    a text word touching the end of the word before it on its line, with no rule drawn across the line between
+    them, is read where that word starts (133086 prints `(05)災害対策用職員住宅管理費` across the rule between the
+    事業 and the first amount column, and Poppler cuts `理費` off at it)."""
+    words = sorted((word for _, word in body), key=lambda w: ((w.y0 + w.y1) / 2, w.x0))
+    starts: dict[int, float] = {}
+    for before, word in zip(words, words[1:]):
+        cy = (word.y0 + word.y1) / 2
+        if (abs((before.y0 + before.y1) / 2 - cy) > 1 or not -.5 <= word.x0 - before.x1 <= .5
+                or is_amount(word.text) or is_amount(before.text)):
+            continue
+        if any(before.x0 + 1 < r.x0 < word.x0 + min(2, (word.x1 - word.x0) / 2) + 1 and _crosses(r, cy) for r in verticals):
+            continue
+        starts[id(word)] = starts.get(id(before), before.x0 + min(2, (before.x1 - before.x0) / 2))
+    return starts
 
 
 def lines(words: list[Glyph], tolerance: float = 2.0) -> list[list[Glyph]]:
@@ -494,12 +519,14 @@ def inline_kind(band: Band, line: list[Glyph]) -> bool:
 
 
 def logical_pages(pages: list[Page], *, columns: dict | None = None, spread: dict | None = None,
-                  header: dict | None = None, split_text: bool = False, ocr_pages: frozenset = frozenset()) -> list[Logical]:
+                  header: dict | None = None, split_text: bool = False, ocr_pages: frozenset = frozenset(),
+                  row_gaps: bool = False) -> list[Logical]:
     """Read each page's bands, classify them once per document, then join spreads.
 
     `ocr_pages`: pages of a text document whose words OCR read (`mixed.py`). Their bands are classified by what
     the text pages teach (their headings corrected as a scan's are) and never teach anything themselves."""
-    per_page = [(page, *page_bands(page, spread, header, split_text)) for page in pages]
+    per_page = [(page, *page_bands(page, spread, header, split_text, row_gaps and page.number not in ocr_pages))
+                for page in pages]
     if ocr_pages:
         from ingestion.generic.scan import header_path
         # A heading the text pages print is the document's own spelling: the scan correction (`事故繰越し` → `事故繰越`,

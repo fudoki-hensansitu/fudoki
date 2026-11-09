@@ -6580,6 +6580,22 @@ sources:
       direction: expenditure
       table_id: nhi-clinic-expenditure-detail
       kind: nodes
+  - name: j133086_2024_settlement_general_expenditure_detail_amounts
+    meta:
+      jurisdiction: '133086'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-detail
+      kind: amounts
+  - name: j133086_2024_settlement_general_expenditure_detail_nodes
+    meta:
+      jurisdiction: '133086'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure-detail
+      kind: nodes
   - name: j133086_2024_settlement_kaigo_expenditure_detail_amounts
     meta:
       jurisdiction: '133086'

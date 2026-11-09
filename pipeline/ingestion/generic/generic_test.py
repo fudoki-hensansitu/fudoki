@@ -129,6 +129,19 @@ class TrialRulesTest(unittest.TestCase):
         self.assertEqual(texts['項'], ['１', '１１'])
         self.assertEqual(texts['目'], ['１'])
 
+    def test_row_gaps_keep_a_name_cut_off_at_a_rule_the_row_leaves_out_in_its_band(self):
+        # 133086: the rule between 事業 and 当初予算額 stops above the 事業 row and goes on below it.
+        rules = [Rule(10, 50, 10, 200), Rule(100, 50, 100, 110), Rule(100, 125, 100, 200), Rule(150, 50, 150, 200)] + \
+            [Rule(10, y, 150, y) for y in (50, 70, 200)]
+        words = [Word('事業', 15, 55, 33, 64), Word('当初予算額', 105, 55, 145, 64),
+                 Word('(05)災害対策用職員住宅管', 15, 112, 104, 121), Word('理費', 104, 112, 122, 121),  # no rule at x=100 here
+                 Word('一般管理', 15, 150, 99, 159), Word('費用', 99, 150, 117, 159)]  # the rule is drawn here
+        texts = lambda bands: {'／'.join(b.header): [w.text for w in b.words] for b in bands}
+        self.assertEqual(texts(page_bands(Page(1, 200, 300, words, rules))[0])['事業'], ['(05)災害対策用職員住宅管', '一般管理'])
+        found = texts(page_bands(Page(1, 200, 300, words, rules), row_gaps=True)[0])
+        self.assertEqual(found['事業'], ['(05)災害対策用職員住宅管', '理費', '一般管理'])
+        self.assertEqual(found['当初予算額'], ['費用'])
+
     def test_an_amount_running_into_the_next_band_keeps_its_digits(self):
         self.assertEqual(_leading_amount(glyph('44,406,439,217明許', 662, 700)).text, '44,406,439,217')
         self.assertEqual(_leading_amount(glyph('301,286,948', 662, 700)).text, '301,286,948')
@@ -1670,14 +1683,14 @@ class HeaderSubsetTest(unittest.TestCase):
 
 
 class OcrCodeWordTest(unittest.TestCase):
-    def test_an_ocr_word_joining_the_code_and_the_name_starts_its_name_after_the_digits(self):
+    def test_a_word_joining_the_code_and_the_name_starts_its_name_after_the_digits_when_declared_joined(self):
         from ingestion.generic.tree import Group, Item, _measure
         # `10需用費`: 2 half-width digits and 3 kanji over 35pt; a digit is half a kanji wide.
         glyph = Glyph('10需用費', 422.2, 0, 457.2, 9, 1, 0)
         shared = Group.__new__(Group)
         shared.subject = False
         item = Item(shared, 1, [[glyph]], '10', '需用費', 0)
-        _measure(item, [glyph], '10', ocr=True)
+        _measure(item, [glyph], '10', joined=True)
         self.assertAlmostEqual(item.indent, 422.2 + 2 * 35 / 8, places=3)
         _measure(item, [glyph], '10')
         self.assertAlmostEqual(item.indent, 422.2 + 2 * 35 / 5, places=3)
