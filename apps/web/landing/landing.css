@@ -24,7 +24,7 @@
 .landing .logo{display:block;width:auto;color:var(--primary)}
 .landing .acts{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
 .landing .sec-h{display:grid;justify-items:center;gap:14px;max-width:44em;margin-inline:auto;text-align:center}
-.landing .sec-h h2,.landing .qs h2,.landing .stance h2,.landing .field-t h2,.landing .faq h2{font-size:clamp(1.9rem,1.3rem + 2vw,3rem)}
+.landing .sec-h h2,.landing .qs h2,.landing .field-t h2,.landing .faq h2{font-size:clamp(1.9rem,1.3rem + 2vw,3rem)}
 
 /* 鉛筆の落書きと、見出しの一語を囲む手描きの丸 */
 .landing .doodle{position:absolute;fill:none;stroke:var(--l-pencil);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
@@ -40,7 +40,7 @@
 .landing .d-hero-l{width:84px;left:max(var(--gut),4%);top:120px;transform:rotate(-12deg)}
 .landing .d-hero-r{width:60px;right:max(var(--gut),6%);top:96px}
 
-/* 冒頭の画面。下は切れていて、札（.pop）が1枚だけ浮く */
+/* 冒頭の画面。下は切れていて、タブで右半分（.pane-side）が替わる。緑の札のボタンも選んだタブに合わせて色が替わる */
 .landing .stage{display:grid;justify-items:center;gap:20px}
 .landing .pills{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;padding:5px;border:1px solid var(--l-line);border-radius:999px;background:var(--l-pane)}
 .landing .pills button{height:36px;padding:0 16px;border:0;border-radius:999px;background:transparent;color:var(--l-muted);font:600 14px/1 var(--font-sans);letter-spacing:.02em;white-space:nowrap;cursor:pointer;transition:background-color 150ms var(--ease),color 150ms var(--ease)}
@@ -49,8 +49,6 @@
 .landing .pane-wrap{position:relative;width:min(100%,1040px);height:440px;padding:0 24px;overflow:hidden;border-bottom:1px solid var(--l-line)}
 .landing .pane{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start;gap:28px;height:520px;padding:32px;border:1px solid var(--l-line);border-bottom:0;border-radius:28px 28px 0 0;background:var(--l-pane);box-shadow:0 30px 80px -40px color-mix(in srgb,var(--l-fg) 35%,transparent)}
 .landing .pane-main{display:grid;align-content:start;gap:14px;padding:24px;border-radius:20px;background:var(--l-acc);color:var(--l-on-acc)}
-.landing .pane-col{display:grid;gap:16px}
-.landing .pane-col>.m-h{margin-top:8px}
 .landing .pane-side{display:grid;align-content:start;gap:16px;padding-top:8px}
 .landing .m-town-h{display:flex;align-items:center;gap:14px}
 .landing .m-town-h img{width:52px;height:52px;padding:6px;border-radius:14px;background:#fff}
@@ -60,9 +58,9 @@
 .landing .m-big em{margin-left:6px;font:700 44px/1 var(--font-sans);font-style:normal;letter-spacing:0}
 .landing .m-sub em{font:700 22px/1 var(--font-sans);font-style:normal;letter-spacing:0}
 .landing .m-big small,.landing .m-sub small{margin-left:2px;font-size:13px}
-.landing .m-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:6px}
-.landing .m-tabs li{padding:12px 6px;border-radius:14px;background:var(--l-pane);color:var(--l-fg);font-size:12px;text-align:center;white-space:nowrap}
-.landing .pop{position:absolute;right:max(24px,5%);top:290px;z-index:1;display:grid;gap:12px;width:min(400px,calc(100% - 48px));padding:20px 22px;border:1px solid color-mix(in srgb,var(--l-acc) 45%,var(--l-line));border-radius:20px;background:var(--l-pane);box-shadow:0 0 0 6px color-mix(in srgb,var(--l-acc) 10%,transparent),0 24px 60px -16px color-mix(in srgb,var(--l-acc) 50%,transparent)}
+.landing .m-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:6px}
+.landing .m-tabs li{padding:12px 6px;border:1px solid color-mix(in srgb,var(--l-on-acc) 35%,transparent);border-radius:14px;color:var(--l-on-acc);font-size:12px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:background-color 200ms var(--ease),color 200ms var(--ease)}
+.landing .m-tabs li.on{border-color:var(--l-pane);background:var(--l-pane);color:var(--l-fg);font-weight:600}
 .landing .d-pane{width:64px;left:0;top:6px;z-index:1}
 
 /* 画面のイメージの部品（アプリと同じゴシックで組む） */
@@ -135,17 +133,14 @@
 .landing .tiles .t3{right:7%;bottom:56px;transform:rotate(-2deg)}
 .landing .tiles .t4{left:7%;bottom:64px;transform:rotate(3deg)}
 .landing .roles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin-top:56px}
-.landing .roles li,.landing .stance li{display:grid;align-content:start;gap:8px;padding:4px 28px}
-.landing .roles li+li,.landing .stance li+li{border-left:1px solid var(--l-line)}
-.landing .roles li:first-child,.landing .stance li:first-child{padding-left:0}
+.landing .roles li{display:grid;align-content:start;gap:8px;padding:4px 28px}
+.landing .roles li+li{border-left:1px solid var(--l-line)}
+.landing .roles li:first-child{padding-left:0}
 .landing .ri{width:26px;height:26px;color:var(--l-muted)}
-.landing .roles b,.landing .stance b{margin-top:6px;font-size:17px;font-weight:700;line-height:1.4}
-.landing .roles span,.landing .stance span{font-size:14px;line-height:1.8;color:var(--l-muted)}
+.landing .roles b{margin-top:6px;font-size:17px;font-weight:700;line-height:1.4}
+.landing .roles span{font-size:14px;line-height:1.8;color:var(--l-muted)}
 
 /* 評価をしない姿勢 */
-.landing .stance{display:grid;gap:48px;padding-block:96px;border-block:1px solid var(--l-line)}
-.landing .stance h2{text-align:center}
-.landing .stance ul{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
 
 /* AI から使う */
 .landing .mcp{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);grid-template-rows:auto;gap:48px;align-items:center;padding:48px}
@@ -231,10 +226,10 @@
 .landing .tiles{grid-template-columns:minmax(0,1fr)}
 }
 
-/* 動くのは色の切り替えと、札の浮き上がりだけ。スクロールでは動かさない */
+/* 動くのは色の切り替えと、タブで替わる中身の浮き上がりだけ。スクロールでは動かさない */
 @media (prefers-reduced-motion:no-preference){
 html:has(.landing){scroll-behavior:smooth}
-.landing .pop{animation:pop-rise 360ms var(--ease) both}
+.landing .pane-side{animation:pop-rise 360ms var(--ease) both}
 }
 @keyframes pop-rise{from{opacity:0;transform:translateY(14px)}}
 
@@ -245,24 +240,18 @@ html:has(.landing){scroll-behavior:smooth}
 .landing .council .btn{grid-column:1/-1;justify-self:start}
 }
 @media (max-width:1100px){
-.landing .roles,.landing .stance ul{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:36px}
-.landing .roles li:nth-child(3),.landing .stance li:nth-child(3){padding-left:0;border-left:0}
+.landing .roles{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:36px}
+.landing .roles li:nth-child(3){padding-left:0;border-left:0}
 }
 @media (max-width:960px){
 .landing .pane{grid-template-columns:minmax(0,1fr)}
-.landing .pane-col{display:grid;gap:16px}
-.landing .pane-col>.m-h{margin-top:8px}
-.landing .pane-side{display:none}
-.landing .pop{top:auto;bottom:24px;right:50%;transform:translateX(50%)}
+.landing .pane-wrap{height:620px}
+.landing .pane{height:auto;min-height:680px}
 .landing .duo-g,.landing .faq{grid-template-columns:minmax(0,1fr)}
 .landing .faq{gap:24px}
 .landing .cols{grid-template-columns:repeat(2,minmax(0,1fr))}
 .landing .doodle.d-hero-l,.landing .doodle.d-hero-r{display:none}
 }
-@media (prefers-reduced-motion:no-preference) and (max-width:960px){
-.landing .pop{animation-name:pop-rise-c}
-}
-@keyframes pop-rise-c{from{opacity:0;transform:translate(50%,14px)}}
 @media (max-width:720px){
 .landing .council{grid-template-columns:minmax(0,1fr);padding:32px 24px;gap:24px}
 .landing .mcp{padding:32px 20px}
@@ -272,20 +261,18 @@ html:has(.landing){scroll-behavior:smooth}
 .landing .pills{flex-wrap:nowrap;justify-content:flex-start;max-width:100%;overflow-x:auto;scrollbar-width:none}
 .landing .pills button{flex:none}
 .landing .hero{padding-top:64px}
-.landing .pane-wrap{height:400px;padding:0}
+.landing .pane-wrap{height:600px;padding:0}
 .landing .pane{padding:16px}
 .landing .pane-main{padding:18px}
 .landing .m-big em{font-size:36px}
-.landing .m-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}
-.landing .pop{width:calc(100% - 24px);bottom:12px;padding:16px}
 .landing .sand{padding:24px 18px 0;margin-inline:calc(-1 * var(--gut) + 8px)}
 .landing .mini{padding:18px 16px 0}
 .landing .mini.open{padding-bottom:18px;margin-bottom:18px}
 .landing .m-bars li{grid-template-columns:7em minmax(0,1fr) 3.6em;gap:8px}
 .landing .bars .b{grid-template-columns:4.5em minmax(0,1fr) 6.5em}
-.landing .roles,.landing .stance ul{grid-template-columns:minmax(0,1fr)}
-.landing .roles li,.landing .stance li{padding:0 0 0 0;border-left:0}
-.landing .roles li+li,.landing .stance li+li{padding-top:28px;border-top:1px solid var(--l-line)}
+.landing .roles{grid-template-columns:minmax(0,1fr)}
+.landing .roles li{padding:0 0 0 0;border-left:0}
+.landing .roles li+li{padding-top:28px;border-top:1px solid var(--l-line)}
 .landing .qs li{text-align:left;font-size:14px;padding:11px 16px}
 .landing .mcp.sand{margin-inline:calc(-1 * var(--gut) + 8px)}
 .landing .d-cta{display:none}

@@ -1,7 +1,7 @@
 // 風土記について（/about）。利用者に風土記を知ってもらう LP。視覚の規範は repo root の DESIGN.md、CSS は landing.css（.landing の中に閉じる）。
-// 書体はゴシック1つ（--font-sans）。動くのは色の切り替え・冒頭の札の浮き上がり・録画の再生だけで、スクロールでは動かさない。事業評価の画面は架空のデータのイメージ
+// 書体はゴシック1つ（--font-sans）。動くのは色の切り替え・冒頭のタブで替わる中身の浮き上がり・録画の再生だけで、スクロールでは動かさない。事業評価の画面は架空のデータのイメージ
 import * as React from 'react'
-import { ArrowRightIcon, CodeIcon, EnvelopeSimpleIcon, FileTextIcon, GavelIcon, HouseLineIcon, NewspaperIcon, ScalesIcon, StackIcon, UsersThreeIcon } from '@phosphor-icons/react'
+import { ArrowRightIcon, CodeIcon, EnvelopeSimpleIcon, GavelIcon, HouseLineIcon, NewspaperIcon } from '@phosphor-icons/react'
 import { Link } from '@void/react'
 import { Hint } from '@/components/hint'
 import { HOME } from '../home-data'
@@ -345,15 +345,15 @@ const Dashes = ({ className }: { className: string }) => (
   </svg>
 )
 
-/** 冒頭の画面のタブ。押すと札（popover）の中身が替わる */
+/** 冒頭の画面のタブ。押すと画面の右半分の中身と、緑の札のボタンの色が替わる */
 const STAGE = [
   {
     id: 'money',
     label: 'お金の使い道',
-    title: '品川区 · R8年度の予算の使い道',
+    title: '品川区 · R8年度の予算の使い道（分野ごとの割合）',
     body: (
       <ul className="m-bars">
-        {SHARES.slice(0, 3).map((s) => (
+        {SHARES.map((s) => (
           <li key={s.name}>
             <span>{s.name}</span>
             <i style={{ '--w': `${s.pct * 1.6}%` } as React.CSSProperties} />
@@ -397,6 +397,9 @@ const STAGE = [
           <em>8,420</em>
           <small>人</small>
         </p>
+        <span className="m-meter">
+          <i style={{ '--w': '93.6%' } as React.CSSProperties} />
+        </span>
         <p className="m-dir">
           <small>これから</small>
           <b>拡充</b>
@@ -444,67 +447,38 @@ function Stage() {
       </div>
       <div className="pane-wrap">
         <Spiral className="d-pane" />
-        <div className="pane" aria-hidden="true">
-          <div className="pane-col">
-            <div className="pane-main">
-              <div className="m-town-h">
-                <img src="/jurisdictions/131091/emblem.svg" alt="" width={44} height={44} />
-                <div>
-                  <b>品川区</b>
-                  <small>輝く笑顔 住み続けたいまち しながわ</small>
-                </div>
+        <div className="pane">
+          <div className="pane-main" aria-hidden="true">
+            <div className="m-town-h">
+              <img src="/jurisdictions/131091/emblem.svg" alt="" width={44} height={44} />
+              <div>
+                <b>品川区</b>
+                <small>輝く笑顔 住み続けたいまち しながわ</small>
               </div>
-              <p className="m-big">
-                R8年度の予算 <em>2,369</em>
-                <small>億円</small>
-              </p>
-              <p className="m-sub">
-                住民1人あたり 約<em>57</em>
-                <small>万円</small>
-              </p>
-              <ul className="m-tabs">
-                <li>区の仕事</li>
-                <li>お金の使い道</li>
-                <li>新しい事業</li>
-                <li>振り返り</li>
-              </ul>
             </div>
-            <p className="m-h">R8年度に新しく始めること</p>
-            <ul className="m-list">
-              {NEW_PROJECTS.map((p) => (
-                <li key={p.name}>
-                  <span className="m-badge">NEW</span>
-                  <span>{p.name}</span>
-                  <b>
-                    {p.amount}
-                    <small>{p.unit}</small>
-                  </b>
+            <p className="m-big">
+              R8年度の予算 <em>2,369</em>
+              <small>億円</small>
+            </p>
+            <p className="m-sub">
+              住民1人あたり 約<em>57</em>
+              <small>万円</small>
+            </p>
+            <ul className="m-tabs">
+              {STAGE.map((t, i) => (
+                <li key={t.id} className={i === sel ? 'on' : undefined}>
+                  {t.label}
                 </li>
               ))}
             </ul>
           </div>
-          <div className="pane-side">
-            <p className="m-h">分野ごとの割合</p>
-            <ul className="m-bars">
-              {SHARES.map((s) => (
-                <li key={s.name}>
-                  <span>{s.name}</span>
-                  <i style={{ '--w': `${s.pct * 1.6}%` } as React.CSSProperties} />
-                  <b>
-                    {s.pct}
-                    <small>%</small>
-                  </b>
-                </li>
-              ))}
-            </ul>
+          <div className="pane-side" role="tabpanel" id="st-panel" aria-labelledby={`st-${cur.id}`} key={cur.id}>
+            <p className="m-h">
+              {cur.title}
+              {cur.soon && <Soon />}
+            </p>
+            {cur.body}
           </div>
-        </div>
-        <div className="pop" role="tabpanel" id="st-panel" aria-labelledby={`st-${cur.id}`} key={cur.id}>
-          <p className="m-h">
-            {cur.title}
-            {cur.soon && <Soon />}
-          </p>
-          {cur.body}
         </div>
       </div>
     </div>
@@ -532,12 +506,6 @@ const ROLES = [
   { icon: GavelIcon, who: '議員・職員', note: '予算・決算委員会の調査に。ほかのまちとも同じ物差しで比べる' },
   { icon: NewspaperIcon, who: '記者・研究者', note: '気になった数字を、出典の頁と印字の位置まで辿る' },
   { icon: CodeIcon, who: '開発者', note: '画面と同じデータを、API・MCP・オープンデータで使う' },
-]
-const STANCE = [
-  { icon: ScalesIcon, b: '良し悪しを書かない', s: '事業にも、自治体にも、順位や色を付けません。読み解くのは、読む人です。' },
-  { icon: StackIcon, b: '同じ様式で集める', s: '713年、諸国に同じ様式で報告させて集めた地誌『風土記』にならい、どのまちも同じ形で載せます。' },
-  { icon: FileTextIcon, b: '出典まで辿れる', s: 'どの数字も、自治体の資料のどの頁のどこに印字されているかを持っています。' },
-  { icon: UsersThreeIcon, b: '誰でも使える', s: '画面に出しているのと同じデータを、出典つきで API・MCP・オープンデータとして配っています。' },
 ]
 
 const FAQ: [string, React.ReactNode][] = [
@@ -758,23 +726,6 @@ export function Landing() {
               </div>
             </figure>
           </div>
-        </section>
-
-        <section className="wrap stance" aria-labelledby="stance-h">
-          <h2 id="stance-h">
-            評価はしません。
-            <br />
-            並べて、見せるだけ。
-          </h2>
-          <ul>
-            {STANCE.map(({ icon: I, b, s }) => (
-              <li key={b}>
-                <I className="ri" />
-                <b>{b}</b>
-                <span>{s}</span>
-              </li>
-            ))}
-          </ul>
         </section>
 
         <section className="sec wrap" id="mcp" aria-labelledby="mcp-h">
