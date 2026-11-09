@@ -12,11 +12,10 @@ const get = (path: string) => fetchRoute(new Request(`https://fudoki.dev${path}`
 const PUBLIC = new URL('../public/', import.meta.url).pathname
 const served = (path: string) => existsSync(`${PUBLIC}${path.slice(1)}`)
 
-test('入口の1枚は MCP とプライバシーポリシーへ繋ぎ、検索エンジン・ブラウザが取りに来るファイルを配る', async () => {
-  const html = renderToString(createElement(Landing, { sitekey: '' }))
+test('紹介の頁は MCP とプライバシーポリシーへ繋ぎ、検索エンジン・ブラウザが取りに来るファイルを配る', async () => {
+  const html = renderToString(createElement(Landing))
   expect(html).toContain('https://api.fudoki.dev/mcp')
   expect(html).toContain('https://docs.fudoki.dev/privacy')
-  expect(html).toContain('id="chat-start"')
   for (const path of ['/favicon.svg', '/favicon.ico', '/icon.png', '/apple-touch-icon.png', '/og.png', '/robots.txt', '/home/origin.webp', '/home/demo.mp4']) expect(served(path), path).toBe(true)
   expect((await get('/sitemap.xml')).status).toBe(200)
   const meta = config.head?.meta ?? []

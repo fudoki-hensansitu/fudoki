@@ -12,7 +12,7 @@ const operationRoutes = Object.values(spec.paths)
 
 export default defineConfig({
   title: '風土記 Docs',
-  description: 'うちのまち、なにしてる？自治体の行政情報をわかりやすく見せ、オープンデータにする風土記を、MCP と REST で使うための文書。',
+  description: 'まちのお金、何に使ってる？自治体の予算・決算・事業評価をわかりやすく見せ、オープンデータにする風土記を、MCP と REST で使うための文書。',
   // ロゴは本体サイト（fudoki.dev）への戻り口にする。別の「サイトへ戻る」リンクは置かない
   logo: { image: { light: '/logo.svg', dark: '/logo-dark.svg', alt: '風土記' }, text: '', href: 'https://fudoki.dev/' },
   content: { root: 'content' },
