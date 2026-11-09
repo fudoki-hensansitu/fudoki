@@ -465,7 +465,7 @@ function Stage() {
               <ul className="m-tabs">
                 <li>区の仕事</li>
                 <li>お金の使い道</li>
-                <li>新しく始めること</li>
+                <li>新しい事業</li>
                 <li>振り返り</li>
               </ul>
             </div>
@@ -879,7 +879,7 @@ export function Landing() {
                 <a href="mailto:support@fudoki.dev">お問い合わせ</a>
               </li>
               <li>
-                <a href={COUNCIL_AI}>議員・会派向け AI の相談</a>
+                <a href={COUNCIL_AI}>議員・会派向けの調査の相談</a>
               </li>
             </ul>
           </div>
