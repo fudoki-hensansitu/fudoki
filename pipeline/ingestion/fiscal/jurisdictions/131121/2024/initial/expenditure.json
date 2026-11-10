@@ -1,0 +1,483 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "131121",
+    "fiscal_year": 2024,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ed4691a730e04471cbaa4a9a6d09a7ceba208056e0f7310fae6549c00f81aba9"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "listed_sources",
+            "options": {
+              "columns": {
+                "財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の種類ごとの額が複数行で印字される財源の内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "wrap": "amount_on_last_line",
+                  "note_kinds": {
+                    "特財": "財源内訳",
+                    "その他": "財源内訳",
+                    "特別区債": "財源内訳",
+                    "、": "財源内訳"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    },
+    {
+      "id": "national-health-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "6da281a9268f54cc5ba7ab56d1264560e9b77f38b7b9cd5b9dde4dbae4f5cea5"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "listed_sources",
+            "options": {
+              "columns": {
+                "財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の種類ごとの額が複数行で印字される財源の内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "wrap": "amount_on_last_line",
+                  "note_kinds": {
+                    "特財": "財源内訳",
+                    "その他": "財源内訳",
+                    "特別区債": "財源内訳",
+                    "、": "財源内訳"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-initial"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "1f44e29a9783f6ce47e0341ec6d9232d6ff0462df51574ecaf96d661aef24204"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "listed_sources",
+            "options": {
+              "columns": {
+                "財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の種類ごとの額が複数行で印字される財源の内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "wrap": "amount_on_last_line",
+                  "note_kinds": {
+                    "特財": "財源内訳",
+                    "その他": "財源内訳",
+                    "特別区債": "財源内訳",
+                    "、": "財源内訳"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ]
+    },
+    {
+      "id": "care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e14ebe7b66616707ec794e83c40ec3be314f8d51ef5fc002bac130fc88603b25"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業会計",
+        "table_id": "care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "listed_sources",
+            "options": {
+              "columns": {
+                "財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の種類ごとの額が複数行で印字される財源の内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "wrap": "amount_on_last_line",
+                  "note_kinds": {
+                    "特財": "財源内訳",
+                    "その他": "財源内訳",
+                    "特別区債": "財源内訳",
+                    "、": "財源内訳"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-initial"
+        }
+      ]
+    },
+    {
+      "id": "school-lunch-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e7a3669edbaf85aa144a95bf8ff9416c5421534c2e2828d4d87f589b7b2f1234"
+        }
+      ],
+      "options": {
+        "account": "学校給食費会計",
+        "table_id": "school-lunch-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "listed_sources",
+            "options": {
+              "columns": {
+                "財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の種類ごとの額が複数行で印字される財源の内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "wrap": "amount_on_last_line",
+                  "note_kinds": {
+                    "特財": "財源内訳",
+                    "その他": "財源内訳",
+                    "特別区債": "財源内訳",
+                    "、": "財源内訳"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "school-lunch-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "378fb9fb425a62494e1fb73f039ef4e902bb412f6569b68b1f589903c216f31f",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は printed 84頁 から決めた。款の和 371,551,547（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 814 件（財源内訳 814）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131121/2024/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "773dab9cffd43fcd6812fd16cb58d166b68c036c83edb94e6f2518ddf791b969",
+          "bytes": 108470
+        },
+        "row_count": 3029
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131121/2024/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "281617d194d035d7cda853a3f1237fad758729888d0cf2c4407f273eb494feec",
+          "bytes": 93734
+        },
+        "row_count": 3371
+      }
+    },
+    {
+      "table_id": "national-health-initial",
+      "conversion_id": "national-health-initial",
+      "input_fingerprint": "d8977db9ae68ac006dc81b33d8ed487e2eb7b9117a127d6739436870c8a97c36",
+      "account": "国民健康保険事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は printed 18頁 から決めた。款の和 85,439,597（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 47 件（財源内訳 47）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131121/2024/initial/expenditure/national-health-initial-nodes.parquet",
+          "sha256": "a66dc980b410592bcc635f17c7273cb9a013b477c69ecec0eb55b1ffa1f8b86c",
+          "bytes": 12156
+        },
+        "row_count": 222
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131121/2024/initial/expenditure/national-health-initial-amounts.parquet",
+          "sha256": "cce15bad1cb63b7e0e4f7ddfd9adb59aed18ee696cb2ce16234c3136587fdaad",
+          "bytes": 10801
+        },
+        "row_count": 330
+      }
+    },
+    {
+      "table_id": "elderly-medical-initial",
+      "conversion_id": "elderly-medical-initial",
+      "input_fingerprint": "caa9a741c342f27fe9e36dcfda9fa391f5895a5a0dafce96c071e87bd977b331",
+      "account": "後期高齢者医療会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は printed 6頁 から決めた。款の和 26,037,871（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 17 件（財源内訳 17）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131121/2024/initial/expenditure/elderly-medical-initial-nodes.parquet",
+          "sha256": "0711a56c94d2ae2270735cde1ada1d8dd64d802fd31e400ee3c32d849fcd154d",
+          "bytes": 6469
+        },
+        "row_count": 80
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131121/2024/initial/expenditure/elderly-medical-initial-amounts.parquet",
+          "sha256": "6dac7ad7d475778ac048a2c38d5cd0c58a12948c1a1dd4e17116344f51b006df",
+          "bytes": 5328
+        },
+        "row_count": 118
+      }
+    },
+    {
+      "table_id": "care-initial",
+      "conversion_id": "care-initial",
+      "input_fingerprint": "db7990c9fda85232c834eb5369c203ad3177df02c0cef84d87b2d1514bc10e3d",
+      "account": "介護保険事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は printed 21頁 から決めた。款の和 73,037,554（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 111 件（財源内訳 111）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131121/2024/initial/expenditure/care-initial-nodes.parquet",
+          "sha256": "eb288f1108d1232bc9f96e6ac54ed5503d1123a434a75ca76f0e51cfbe2935b1",
+          "bytes": 13839
+        },
+        "row_count": 297
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131121/2024/initial/expenditure/care-initial-amounts.parquet",
+          "sha256": "ee6025c4a80158bbc16913ffe8ce017358b2e775843d1fb1c043b7a999b390fa",
+          "bytes": 12097
+        },
+        "row_count": 401
+      }
+    },
+    {
+      "table_id": "school-lunch-initial",
+      "conversion_id": "school-lunch-initial",
+      "input_fingerprint": "9d7d1eb7d126786a0585fc2a771c52fc690317b27eaac94d944bbd8a8658d6a6",
+      "account": "学校給食費会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は printed 1頁 から決めた。款の和 3,533,104（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 1 件（財源内訳 1）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131121/2024/initial/expenditure/school-lunch-initial-nodes.parquet",
+          "sha256": "53fbd52acbad9f2fed4e581d1d4c4bfde0352dc6e2d1b1f384b59578bdcc45d3",
+          "bytes": 2727
+        },
+        "row_count": 8
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131121/2024/initial/expenditure/school-lunch-initial-amounts.parquet",
+          "sha256": "504c938676a8cc046d647c4f395bc257c2a9b2ca70640396ef66f66e7ee9dd62",
+          "bytes": 2172
+        },
+        "row_count": 14
+      }
+    }
+  ]
+}

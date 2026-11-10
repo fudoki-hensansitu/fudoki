@@ -2,7 +2,7 @@ import unittest
 from types import SimpleNamespace
 
 from ingestion.generic.layout import Glyph, Logical
-from ingestion.generic.observe import Rule, Word
+from ingestion.generic.observe import Page, Rule, Word
 from ingestion.generic.patterns.layout import running_titles
 
 
@@ -15,6 +15,37 @@ class RunningTitlesTest(unittest.TestCase):
         self.assertEqual(running_titles.title([glyph('(款)', 0, 0), glyph('1', 30, 0), glyph('議会費', 50, 0)]), ('款', '1', '議会費'))
         self.assertEqual(running_titles.title([glyph('第2項', 0, 0), glyph('防災費', 40, 0)]), ('項', '2', '防災費'))
         self.assertIsNone(running_titles.title([glyph('1', 0, 0), glyph('議会費', 20, 0)]))
+        # The point after the code is the code's (檜原村 `（款） 2.総務費`).
+        self.assertEqual(running_titles.title([glyph('（款）', 0, 0), glyph('2.総務費', 40, 0)]), ('款', '2', '総務費'))
+
+    def test_a_line_printing_the_kan_and_the_kou_reads_as_two_titles(self):
+        line = [glyph('（款）', 0, 0), glyph('1', 40, 0), glyph('議会費', 60, 0), glyph('（項）', 150, 0),
+                glyph('1', 190, 0), glyph('議会費', 210, 0), glyph('（単位：千円）', 600, 0)]
+        found = running_titles.titles(Logical([1], [], None, line), None)
+        self.assertEqual([(t[0], t[1], t[2]) for t in found], [('款', '1', '議会費'), ('項', '1', '議会費')])
+
+    def test_a_box_drawn_under_the_table_draws_no_column(self):
+        rules = [Rule(38, y, 580, y) for y in (128, 160, 490)] + [Rule(x, 128, x, 490) for x in (38, 519.4, 580)]
+        rules += [Rule(145, 564, 523.7, 564), Rule(145, 655, 523.7, 655), Rule(145, 564, 145, 655), Rule(523.7, 564, 523.7, 655)]
+        page = running_titles.drop_outside_columns(Page(9, 595, 842, [], rules))
+        self.assertEqual(sorted(r.x0 for r in page.rules if r.vertical), [38, 519.4, 580])
+
+    def test_a_frame_with_no_header_is_read_in_the_columns_of_the_table_under_it(self):
+        columns = (39, 111, 589, 798)
+        rules = [Rule(39, y, 798, y) for y in (100, 236, 250, 278, 318, 508)]
+        rules += [Rule(x, 100, x, 250) for x in columns] + [Rule(x, 278, x, 508) for x in columns]
+        words = [Word('13400110', 595, 103, 630, 112), Word('990', 784, 103, 797, 112), Word('計', 60, 240, 70, 249),
+                 Word('（款）', 41, 262, 60, 271), Word('目', 70, 290, 80, 299), Word('説明', 650, 290, 670, 299)]
+        page = Page(43, 842, 595, words, rules)
+        found = running_titles.headless_top(page)
+        self.assertEqual(found, (100, 250))
+        inside = running_titles.in_headless_top(page, found)
+        self.assertEqual([w.text for w in words if inside(w)], ['13400110', '990', '計'])
+        layout_page = running_titles.without_headless_rules(page, found)
+        self.assertEqual(sorted({r.y0 for r in layout_page.rules if not r.vertical}), [278, 318, 508])
+        # A frame that opens with its header is left as it is.
+        headed = Page(42, 842, 595, [Word('目', 70, 104, 80, 113)], rules)
+        self.assertIsNone(running_titles.headless_top(headed))
 
     def test_the_unit_after_an_amount_is_not_part_of_the_amount(self):
         words = [glyph('事務費', 0, 0), glyph('361,665千円', 100, 0), glyph('291,731', 200, 0, width=35), glyph('千円', 237, 0)]
