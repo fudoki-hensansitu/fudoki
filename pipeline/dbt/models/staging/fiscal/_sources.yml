@@ -8756,6 +8756,22 @@ sources:
       direction: expenditure
       table_id: nhi-expenditure-detail
       kind: nodes
+  - name: j133612_2024_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '133612'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j133612_2024_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '133612'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
   - name: j133621_2024_settlement_elderly_medical_expenditure_amounts
     meta:
       jurisdiction: '133621'
@@ -8915,6 +8931,22 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: national-health-insurance-clinic-expenditure
+      kind: nodes
+  - name: j133817_2024_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '133817'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j133817_2024_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '133817'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
       kind: nodes
   - name: j134015_2024_settlement_general_expenditure_amounts
     meta:
