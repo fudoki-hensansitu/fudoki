@@ -117,7 +117,7 @@ export function pageHead(d: PageData, year?: number): Head {
     '@type': 'BreadcrumbList',
     itemListElement: [{ name: '風土記', path: '/' }, parent, { name: d.name, path: jurisdictionPath(d.code) }].map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.name, item: `${ORIGIN}${c.path}` })),
   }
-  // 紋章と決算のある自治体の最新の頁は、OG 画像を自治体のもの（build:og が最新の決算の総額・分野から public/jurisdictions/<code>/og.png に作る）に差し替える。
+  // 紋章と決算のある自治体の最新の頁は、OG 画像を自治体のもの（routes/jurisdictions/[code]/og.png.ts が最新の決算の総額・分野から描く）に差し替える。
   // 画像の金額は最新の決算なので、過去の年度の頁は全頁共通の画像のまま
   const own = !past && EMBLEMS[d.code] && d.cofogFlow.some((f) => f.kan.yen > 0)
   const meta = own ? [{ property: 'og:image', content: `${ORIGIN}${assetPath(d.code, 'og.png')}` }] : []
