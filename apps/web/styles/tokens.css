@@ -1,13 +1,14 @@
 /* 色・字・角の token（DESIGN.md が正本）。--background は tokens.ts の BACKGROUND_LIGHT・BACKGROUND_DARK と揃える（試験が照合する）。
    全頁が styles/app.css 経由で読む */
 :root{
---background:#ffffff;--foreground:#2b2723;--card:#f8f5ee;--card-foreground:#2b2723;
---secondary:#ece6da;--secondary-foreground:#2b2723;--muted:#ece6da;--muted-foreground:#6b655c;
---primary:#2f5d43;--primary-foreground:#f8f5ee;--accent:#e9efe9;--accent-foreground:#2f5d43;
---border:#ddd6c8;--ring:#2f5d43;
---paper:#e4d8bf;--paper-foreground:#2b2723;--night:#2b2723;--night-foreground:#f8f5ee;
+--background:light-dark(#ffffff,#1b1916);--foreground:light-dark(#2b2723,#ece6da);--card:light-dark(#f8f5ee,#24211d);--card-foreground:light-dark(#2b2723,#ece6da);
+--secondary:light-dark(#ece6da,#302c26);--secondary-foreground:light-dark(#2b2723,#ece6da);--muted:light-dark(#ece6da,#302c26);--muted-foreground:light-dark(#6b655c,#a8a094);
+--primary:light-dark(#2f5d43,#8fbfa2);--primary-foreground:light-dark(#f8f5ee,#1b1916);--accent:light-dark(#e9efe9,#26332b);--accent-foreground:light-dark(#2f5d43,#8fbfa2);
+--border:light-dark(#ddd6c8,#3b362f);--ring:light-dark(#2f5d43,#8fbfa2);
+--paper:light-dark(#e4d8bf,#3a342b);--paper-foreground:light-dark(#2b2723,#ece6da);--night:light-dark(#2b2723,#0f0e0c);--night-foreground:light-dark(#f8f5ee,#ece6da);
 --page:#ffffff;--page-foreground:#2b2723;
---shu:#c1553a;--ai:#33507a;--kincha:#e3a43c;--kincha-ink:#b85c00;--sakura:#ebcab9;
+--brand:#2f5d43;--brand-foreground:light-dark(#f8f5ee,#ece6da);--emblem:light-dark(#ffffff,#e6e0d4);
+--shu:light-dark(#c1553a,#d46a4f);--ai:light-dark(#33507a,#6f8fc0);--kincha:#e3a43c;--kincha-ink:light-dark(#b85c00,#e3a43c);--sakura:light-dark(#ebcab9,#b98f80);
 --font-display:"BIZ UDPMincho","Hiragino Mincho ProN","Yu Mincho","YuMincho","Noto Serif JP","Noto Serif CJK JP",serif;
 --font-sans:"Hiragino Sans","Noto Sans JP","Yu Gothic UI","Yu Gothic",Meiryo,system-ui,sans-serif;
 --font-mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
@@ -20,13 +21,10 @@
 --grain:.32;--halftone:7px;--rays:28;
 --noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
-@media (prefers-color-scheme:dark){:root{
---background:#1b1916;--foreground:#ece6da;--card:#24211d;--card-foreground:#ece6da;
---secondary:#302c26;--secondary-foreground:#ece6da;--muted:#302c26;--muted-foreground:#a8a094;
---primary:#8fbfa2;--primary-foreground:#1b1916;--accent:#26332b;--accent-foreground:#8fbfa2;
---border:#3b362f;--ring:#8fbfa2;
---paper:#3a342b;--paper-foreground:#ece6da;--night:#0f0e0c;--night-foreground:#ece6da;
---shu:#d46a4f;--ai:#6f8fc0;--kincha-ink:#e3a43c;--sakura:#b98f80;--grain:.5;
-}}
+/* ライト・ダークは color-scheme で切り替え、色の token は light-dark() で両方を持つ。サイドバーのテーマの切り替え（nav/theme.ts）は html に data-theme を付ける。無ければ端末の設定に従う */
+:root{color-scheme:light dark}
+:root[data-theme=light]{color-scheme:light}
+:root[data-theme=dark]{color-scheme:dark;--grain:.5}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--grain:.5}}
 /* 広い画面では本文の左右の余白を広げる */
 @media (min-width: 961px) { :root { --gut: max(56px, env(safe-area-inset-left), env(safe-area-inset-right), calc((100% - 1200px) / 2)); } }

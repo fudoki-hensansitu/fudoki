@@ -1,11 +1,15 @@
 /* 会話の画面と入口の島が共有する shadcn の token の対応。色の値は landing.ts の TOKENS_CSS（DESIGN.md）が正本で、ここでは名前を繋ぐだけ */
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@custom-variant dark (@media (prefers-color-scheme: dark));
+/* dark: は html の data-theme（サイドバーのテーマの切り替え）を優先し、無ければ端末の設定に従う */
+@custom-variant dark {
+  &:where([data-theme=dark], [data-theme=dark] *) { @slot; }
+  @media (prefers-color-scheme: dark) { &:where(:root:not([data-theme=light]), :root:not([data-theme=light]) *) { @slot; } }
+}
 
 :root {
   /* DESIGN.md のとおり、浮かぶ面（select・menu）は明るいときは白、暗いときは card の色 */
-  --popover: var(--background);
+  --popover: light-dark(var(--background), var(--card));
   --popover-foreground: var(--foreground);
   --input: var(--border);
   --destructive: var(--shu);
@@ -19,12 +23,6 @@
   --sidebar-accent-foreground: var(--accent-foreground);
   --sidebar-border: var(--border);
   --sidebar-ring: var(--ring);
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --popover: var(--card);
-    --popover-foreground: var(--card-foreground);
-  }
 }
 @theme inline {
   --color-background: var(--background);
@@ -45,6 +43,9 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-emblem: var(--emblem);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);

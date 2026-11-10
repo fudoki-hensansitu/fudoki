@@ -1,7 +1,7 @@
 // 全ページの左に置くサイドバー（shadcn の Sidebar）。pages/layout.tsx が置き、頁の間を移っても描き直さない
 import * as React from 'react'
 import { Link } from '@void/react'
-import { BankIcon, ChatIcon, RobotIcon, GithubLogoIcon, HouseIcon, PlugIcon, SidebarSimpleIcon, XLogoIcon } from '@phosphor-icons/react'
+import { BankIcon, ChatIcon, CircleHalfIcon, DesktopIcon, GithubLogoIcon, HouseIcon, MoonIcon, PlugIcon, RobotIcon, SidebarSimpleIcon, SunIcon, XLogoIcon } from '@phosphor-icons/react'
 import {
   Sidebar,
   SidebarContent,
@@ -15,14 +15,16 @@ import {
   SidebarTrigger,
   useSidebar,
 } from '@/components/ui/sidebar'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import { LOGO_G, LOGO_WIDTH } from '../logo'
 import { FEEDBACK } from './feedback'
+import { applyTheme, type Theme } from './theme'
 
 export const NAV_SECTIONS = ['home', 'jurisdictions', 'assistant'] as const
 export type NavSection = (typeof NAV_SECTIONS)[number]
-export type SiteNavProps = { active?: NavSection; open: boolean }
+export type SiteNavProps = { active?: NavSection; open: boolean; theme: Theme }
 /** site の中の頁へは Void の Link で頁を読み直さずに移り、外（docs・mail・SNS）へは普通の a で出る */
 function NavLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement> & { href: string }) {
   if (props.href.startsWith('https://')) return <a target="_blank" rel="noopener" {...props} />
@@ -74,6 +76,50 @@ const Item = ({ href, label, icon, active }: { href: string; label: string; icon
         {icon}
         <span>{label}</span>
       </SidebarMenuButton>
+    </SidebarMenuItem>
+  )
+}
+
+const THEME_OPTIONS: { value: Theme; label: string; icon: React.ReactNode }[] = [
+  { value: 'system', label: '端末に合わせる', icon: <DesktopIcon /> },
+  { value: 'light', label: 'ライト', icon: <SunIcon /> },
+  { value: 'dark', label: 'ダーク', icon: <MoonIcon /> },
+]
+
+/** テーマ（ライト・ダーク・端末に合わせる）を選ぶ。項目の見た目は他のサイドバーの項目と同じにし、押すと上に選択肢を開く */
+function ThemeItem({ initial }: { initial: Theme }) {
+  const { state, isMobile } = useSidebar()
+  const [theme, setTheme] = React.useState(initial)
+  const pick = (value: unknown) => {
+    const t = value as Theme
+    setTheme(t)
+    applyTheme(t)
+  }
+  return (
+    <SidebarMenuItem>
+      <DropdownMenu>
+        <SidebarMenuButton
+          render={<DropdownMenuTrigger />}
+          tooltip={state === 'collapsed' && !isMobile ? 'テーマ' : undefined}
+          className="h-10 gap-3 px-3 text-sm group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:p-2.5! [&_svg]:size-5"
+        >
+          <CircleHalfIcon />
+          <span>テーマ</span>
+        </SidebarMenuButton>
+        <DropdownMenuContent side={state === 'collapsed' ? 'right' : 'top'} align="start" className="w-44">
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>テーマ</DropdownMenuLabel>
+          </DropdownMenuGroup>
+          <DropdownMenuRadioGroup value={theme} onValueChange={pick}>
+            {THEME_OPTIONS.map((o) => (
+              <DropdownMenuRadioItem key={o.value} value={o.value} className="gap-2 [&_svg]:size-4 [&_svg]:text-muted-foreground">
+                {o.icon}
+                {o.label}
+              </DropdownMenuRadioItem>
+            ))}
+          </DropdownMenuRadioGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </SidebarMenuItem>
   )
 }
@@ -144,7 +190,7 @@ function BottomNav({ active }: { active?: NavSection }) {
   )
 }
 
-export function SiteNav({ active, open }: SiteNavProps) {
+export function SiteNav({ active, open, theme }: SiteNavProps) {
   return (
     <TooltipProvider>
       {/* 頁の本文は provider の外（.site-main）にあるので、provider の枠は箱を作らず（contents）、幅の変数だけを配る */}
@@ -171,6 +217,7 @@ export function SiteNav({ active, open }: SiteNavProps) {
             <SidebarMenu>
               <Item href={MCP} label="MCP" icon={<PlugIcon />} />
               <Item href={FEEDBACK} label="フィードバック" icon={<ChatIcon />} />
+              <ThemeItem initial={theme} />
             </SidebarMenu>
             {/* 末端に X と GitHub。閉じて icon だけのときは X だけ残す */}
             <div className="flex justify-center gap-1">

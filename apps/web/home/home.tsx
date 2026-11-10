@@ -52,7 +52,7 @@ const matches = (e: MapEntry, q: string) => {
 function Emblem({ code, name, className = 'size-10' }: { code: string; name: string; className?: string }) {
   const [failed, setFailed] = React.useState(false)
   return (
-    <span className={cn('grid shrink-0 place-items-center rounded-xl border bg-white p-1.5', className)}>
+    <span className={cn('grid shrink-0 place-items-center rounded-xl border bg-emblem p-1.5', className)}>
       {failed ? <span className="text-sm text-foreground">{name[0]}</span> : <img src={emblem(code)} alt="" loading="lazy" className="size-full object-contain" onError={() => setFailed(true)} />}
     </span>
   )
@@ -61,7 +61,7 @@ function Emblem({ code, name, className = 'size-10' }: { code: string; name: str
 function Picker({ entries, onPick, placeholder }: { entries: MapEntry[]; onPick: (e: MapEntry) => void; placeholder: string }) {
   return (
     <Combobox autoHighlight items={entries} filter={(e: MapEntry, q: string) => matches(e, q)} itemToStringLabel={(e: MapEntry) => e.name} value={null} onValueChange={(e) => e && onPick(e as MapEntry)}>
-      <ComboboxInput showTrigger={false} aria-label="自治体名で探す" placeholder={placeholder} className="h-12 rounded-full border-0 bg-background px-2 text-[15px] text-foreground shadow-[var(--shadow-pill)] has-[[data-slot=input-group-control]:focus-visible]:ring-ring/15">
+      <ComboboxInput showTrigger={false} aria-label="自治体名で探す" placeholder={placeholder} className="h-12 rounded-full border-0 bg-background px-2 text-[15px] text-foreground shadow-[var(--shadow-pill)] dark:bg-background has-[[data-slot=input-group-control]:focus-visible]:ring-ring/15">
         <InputGroupAddon>
           <MagnifyingGlassIcon className="size-5" />
         </InputGroupAddon>
@@ -172,7 +172,7 @@ function MyTown({ entries, featured }: HomeProps) {
     setEditing(false)
   }
   return (
-    <section aria-labelledby="town-h" className="rounded-[24px] bg-primary p-5 text-primary-foreground sm:p-7">
+    <section aria-labelledby="town-h" className="rounded-[24px] bg-brand p-5 text-brand-foreground sm:p-7">
       <div className="flex items-center justify-between gap-3">
         <h2 id="town-h" className="text-sm opacity-80">
           うちのまち

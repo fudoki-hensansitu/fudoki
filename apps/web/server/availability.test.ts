@@ -39,6 +39,6 @@ test('PWA: manifest・service worker・アイコン・オフラインの頁を�
 
 test('画面の背景色は tokens.ts と styles/tokens.css で同じ', async () => {
   const css = await Bun.file(new URL('../styles/tokens.css', import.meta.url)).text()
-  const backgrounds = [...css.matchAll(/--background:(#[0-9a-f]{6})/g)].map((m) => m[1])
+  const backgrounds = css.match(/--background:light-dark\((#[0-9a-f]{6}),(#[0-9a-f]{6})\)/)?.slice(1)
   expect(backgrounds).toEqual([BACKGROUND_LIGHT, BACKGROUND_DARK])
 })
