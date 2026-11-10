@@ -8,7 +8,7 @@ coverage as (
     select distinct jurisdiction_code, account_name, fiscal_year from {{ ref('int_project__lines') }}
 ),
 bounds as (
-    select jurisdiction_code, account_name, min(fiscal_year) as first_covered, max(fiscal_year) as last_covered
+    select jurisdiction_code, account_name, max(fiscal_year) as last_covered
     from coverage group by all
 ),
 latest as (
@@ -27,7 +27,11 @@ parents as (
 )
 select l.project_id, l.jurisdiction_code, l.name, l.account_name,
     s.first_year,
-    case when s.first_year = b.first_covered then 'before_coverage' else 'confirmed' end as first_year_kind,
+    case
+        when exists (select 1 from coverage c where c.jurisdiction_code = l.jurisdiction_code
+            and c.account_name = l.account_name and c.fiscal_year = s.first_year - 1) then 'confirmed'
+        else 'before_coverage'
+    end as first_year_kind,
     case when s.last_year = b.last_covered then null else s.last_year end as last_year,
     case
         when s.last_year = b.last_covered then 'latest'

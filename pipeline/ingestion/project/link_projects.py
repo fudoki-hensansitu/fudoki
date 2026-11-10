@@ -8,7 +8,7 @@
 
 1. 当初予算の事業の行を1つずつ、事業の1年度にする。
 2. 同じ年度の決算の行を、会計・款・項・目と名前の並びが同じ当初予算の行に結ぶ。並びが両方に同じ数だけあるときだけ、印字の順で結ぶ。
-   結べない決算の行は、決算の行だけを持つ事業の1年度にする。
+   並びの中は印字の順（int_project__lines の print_order）で並べる。結べない決算の行は、決算の行だけを持つ事業の1年度にする。
 3. 前の年度の事業の1年度と、上の段から結ぶ。目の直下は会計・款・項・目と名前、その下は親が同じ事業の中で名前が、
    両方に1つずつあるときだけ同じ事業にする。前の年度に無い事業は新しい事業にする（手順4の Jev はまだ使わない）。
 
@@ -47,6 +47,7 @@ class Line:
     parent_detail_id: str | None
     key: tuple
     name: str
+    print_order: int = 0
 
     @property
     def scope(self) -> tuple:
@@ -77,10 +78,10 @@ class Year:
 def load_lines(warehouse: Path) -> dict[str, dict[int, dict[str, list[Line]]]]:
     """自治体 → 年度 → 資料区分 → 事業の行"""
     con = duckdb.connect(str(warehouse), read_only=True)
-    rows = con.sql(f'select detail_id, parent_detail_id, {", ".join(KEY)}, name from int_project__lines').fetchall()
+    rows = con.sql(f'select detail_id, parent_detail_id, {", ".join(KEY)}, name, print_order from int_project__lines').fetchall()
     out: dict = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
-    for detail_id, parent, *key, name in rows:
-        line = Line(detail_id, parent, tuple(key), name)
+    for detail_id, parent, *key, name, print_order in rows:
+        line = Line(detail_id, parent, tuple(key), name, print_order)
         out[key[0]][key[1]][key[2]].append(line)
     return out
 
@@ -99,13 +100,6 @@ def name_paths(lines: list[Line]) -> dict[str, tuple]:
     return {x.detail_id: path(x) for x in lines}
 
 
-def ordinal(line: Line) -> int:
-    """鍵の path の末尾の `#n`（同じ親・同じ名前の印字の順）"""
-    last = json.loads(line.key[7])[-1]
-    m = re.search(r'#(\d+)$', last)
-    return int(m.group(1)) if m else 1
-
-
 def build_years(docs: dict[str, list[Line]]) -> list[Year]:
     """手順1・2: 1つの年度の事業の1年度"""
     initial, settlement = docs.get('initial', []), docs.get('settlement', [])
@@ -118,7 +112,7 @@ def build_years(docs: dict[str, list[Line]]) -> list[Year]:
     years: list[Year] = []
     for budget, settled in groups.values():
         if len(budget) == len(settled):
-            pairs = zip(sorted(budget, key=ordinal), sorted(settled, key=ordinal))
+            pairs = zip(sorted(budget, key=lambda x: x.print_order), sorted(settled, key=lambda x: x.print_order))
             years += [Year(initial=b, settlement=s) for b, s in pairs]
         else:
             years += [Year(initial=b) for b in budget] + [Year(settlement=s) for s in settled]

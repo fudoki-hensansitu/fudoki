@@ -25,7 +25,7 @@ const searchDescription =
 
 const getDescription =
   'Return one project by project_id: its years, child projects, the evaluation sheets attached to its settlement lines and the budget proposal measures attached to its initial-budget lines. ' +
-  'first_year_kind before_coverage means the project already existed in the first covered year; last_year_kind latest means it is in the latest covered year, unknown means the next year is not covered. ' +
+  'first_year_kind before_coverage means the previous year is not covered, so the project may be older; last_year_kind latest means it is in the latest covered year, unknown means the next year is not covered. ' +
   PROJECTS
 
 export const projectTools = {

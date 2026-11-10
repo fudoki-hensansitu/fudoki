@@ -2,6 +2,7 @@
 -- 鍵は自治体・年度・資料区分・会計・款・項・目と、枝の根からの名前の並び（path）。detail_id は名前を含む hash で取り込みを直すと変わるので、
 -- 事業の seed（project_line）はこの鍵で行を引く（docs/prd/jurisdiction-page-data/project-domain-model.md の「事業を作る」）。
 -- 同じ親の下に同じ名前が複数あるときは、印字の順（出典・頁・上端・行）で2つ目から `#2` のように番号を付ける。
+-- print_order は資料の中の印字の順（同じ年度の当初予算と決算の行を、名前の並びが同じときに印字の順で結ぶのに使う）。
 -- 対象は事業を作る自治体（seed の project_jurisdiction）だけ。
 with recursive business as (
     select d.detail_id, d.parent_detail_id, d.subject_id, d.name, d.amount_yen,
@@ -10,7 +11,11 @@ with recursive business as (
         row_number() over (
             partition by coalesce(d.parent_detail_id, d.subject_id), d.name
             order by l.origin_id, l.source_page, l.source_y0, l.source_line, d.detail_id
-        ) as ordinal
+        ) as ordinal,
+        row_number() over (
+            partition by e.jurisdiction_code, e.fiscal_year, e.document_kind
+            order by l.origin_id, l.source_page, l.source_y0, l.source_line, d.detail_id
+        ) as print_order
     from {{ ref('expenditure_detail') }} d
     join {{ ref('expenditure') }} e using (expenditure_id)
     left join (
@@ -30,6 +35,6 @@ paths as (
     from labeled c join paths p on c.parent_detail_id = p.detail_id
 )
 select l.detail_id, l.parent_detail_id, l.jurisdiction_code, l.fiscal_year, l.document_kind, l.account_name,
-    l.kan_name, l.kou_name, l.moku_name, to_json(p.path)::varchar as path, len(p.path) as depth, l.name, l.amount_yen
+    l.kan_name, l.kou_name, l.moku_name, to_json(p.path)::varchar as path, len(p.path) as depth, l.name, l.amount_yen, l.print_order
 from labeled l
 join paths p using (detail_id)

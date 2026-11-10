@@ -1426,7 +1426,7 @@
           "name": "first_year_kind",
           "type": "string",
           "nullable": false,
-          "description": "confirmed（前の年度の資料があり、そこに無かった）か before_coverage（収録の最初の年度にあり、それより前は分からない）。",
+          "description": "confirmed（前の年度の資料があり、そこに無かった）か before_coverage（前の年度の資料が無く、それより前は分からない）。",
           "values": [
             "confirmed",
             "before_coverage"

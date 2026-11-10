@@ -24,7 +24,7 @@ models:
     description: 事業の行がある最初の会計年度（西暦）。
     data_tests: [not_null]
   - name: first_year_kind
-    description: confirmed（前の年度の資料があり、そこに無かった）か before_coverage（収録の最初の年度にあり、それより前は分からない）。
+    description: confirmed（前の年度の資料があり、そこに無かった）か before_coverage（前の年度の資料が無く、それより前は分からない）。
     data_tests:
     - not_null
     - accepted_values:
