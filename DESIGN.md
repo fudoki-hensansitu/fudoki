@@ -141,10 +141,10 @@ shadcn/ui の語彙。色の役割は次のとおり。
     --ai: #6f8fc0;
     --sakura: #b98f80;
     --brand-foreground: #ece6da;
-    --brand-fill: rgb(255 255 255 / .12);
-    --brand-fill-hover: rgb(255 255 255 / .18);
-    --brand-fill-foreground: #ece6da;
-    --brand-fill-muted: rgb(236 230 218 / .72);
+    --brand-fill: rgb(255 255 255 / .08);
+    --brand-fill-hover: rgb(255 255 255 / .12);
+    --brand-fill-foreground: #f3f0ea;
+    --brand-fill-muted: rgb(243 240 234 / .9);
     --emblem: #e6e0d4;
   }
 }

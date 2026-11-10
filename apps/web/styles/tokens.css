@@ -8,7 +8,7 @@
 --paper:light-dark(#e4d8bf,#3a342b);--paper-foreground:light-dark(#2b2723,#ece6da);--night:light-dark(#2b2723,#0f0e0c);--night-foreground:light-dark(#f8f5ee,#ece6da);
 --page:#ffffff;--page-foreground:#2b2723;
 --brand:#2f5d43;--brand-foreground:light-dark(#f8f5ee,#ece6da);
---brand-fill:light-dark(#ffffff,rgb(255 255 255 / .12));--brand-fill-hover:light-dark(#f8f5ee,rgb(255 255 255 / .18));--brand-fill-foreground:light-dark(#2b2723,#ece6da);--brand-fill-muted:light-dark(#6b655c,rgb(236 230 218 / .72));--emblem:light-dark(#ffffff,#e6e0d4);
+--brand-fill:light-dark(#ffffff,rgb(255 255 255 / .08));--brand-fill-hover:light-dark(#f8f5ee,rgb(255 255 255 / .12));--brand-fill-foreground:light-dark(#2b2723,#f3f0ea);--brand-fill-muted:light-dark(#6b655c,rgb(243 240 234 / .9));--emblem:light-dark(#ffffff,#e6e0d4);
 --shu:light-dark(#c1553a,#d46a4f);--ai:light-dark(#33507a,#6f8fc0);--kincha:#e3a43c;--kincha-ink:light-dark(#b85c00,#e3a43c);--sakura:light-dark(#ebcab9,#b98f80);
 --font-display:"BIZ UDPMincho","Hiragino Mincho ProN","Yu Mincho","YuMincho","Noto Serif JP","Noto Serif CJK JP",serif;
 --font-sans:"Hiragino Sans","Noto Sans JP","Yu Gothic UI","Yu Gothic",Meiryo,system-ui,sans-serif;
