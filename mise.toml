@@ -7,3 +7,8 @@ python = "3.13.15"
 uv = "0.12.5"
 # Reads text PDFs (ingestion/lib/poppler.py). The script lets conda-forge's build find its CJK data.
 "conda:poppler" = { version = "26.10.0", postinstall = "python3 \"{{config_root}}/pipeline/scripts/fix_poppler_datadir.py\"" }
+fnox = { version = "1.46.0", workflow = "release.yml" }
+
+[env]
+# secret ではない（dashboard の URL にも出る）。CI は GitHub secret から渡している。
+CLOUDFLARE_ACCOUNT_ID = "0f82b8922b8393c603b89b58c7b9d169"

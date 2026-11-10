@@ -218,7 +218,7 @@ class Recheck:
                 if required:
                     raise RecheckUnavailable(
                         f'Jev answers missing for {len(missing)} printed digits and {KEY_ENV} is not set; '
-                        'ask once with the key to store them beside the manifest')
+                        'run once through `fnox exec --` to ask and store them beside the manifest')
             else:
                 started = time.perf_counter()
                 try:
