@@ -71,7 +71,10 @@ def middle_in(word, x_range):
 def numbers(words):
     """Runs of abutting amount fragments in a line (`562,` `750` → `562,750`), each with its words."""
     runs = []
-    for word in words:
+    for previous, word in zip([None, *words], words):
+        if previous is not None and previous.text in ('△', '▲') and re.match(r'[0-9]', word.text) \
+                and word.x0 - previous.x1 <= JOIN:
+            raise ValueError(f'A sign printed apart from its amount: {previous.text} {word.text}')
         if runs and runs[-1] is not None and word.x0 - runs[-1][-1].x1 <= JOIN and re.fullmatch(r'[0-9,]+', word.text) \
                 and runs[-1][-1].text.endswith(','):
             runs[-1].append(word)
@@ -244,8 +247,8 @@ class Reader(Reading):
         for page in pages:
             geo = self.geometry(page)
             if geo is None:
-                if any(re.search(r'[0-9]', w.text) for w in page.words if w.y0 < page.height * .9):
-                    report['pages without a frame (digits)'] += 1
+                if any(re.search(r'[0-9]', compact(w.text)) for w in page.words if w.y0 < page.height * .9):
+                    raise ValueError(f'Page {page.number}: digits on a page without a frame')
                 continue
             kind = self.kind(page, geo)
             report[f'pages {kind}'] += 1
@@ -383,8 +386,7 @@ class Reader(Reading):
                 raise ValueError(f'Page {page.number}: the title 項 {kou_code} {kou_name} is not in the summary')
             kou = kou_entry[0]
         if state['kou'] is not kou:
-            if state['kou'] is not None and state['kou']['node_key'] in state.setdefault('closed', set()) \
-                    and kou['node_key'] in state['closed']:
+            if kou['node_key'] in state.setdefault('closed', set()):
                 raise ValueError(f'Page {page.number}: the 項 {kou_name} returns after another')
             if state['kou'] is not None:
                 state['closed'].add(state['kou']['node_key'])
