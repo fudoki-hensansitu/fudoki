@@ -52,7 +52,8 @@
     "titled_pages": "ingestion.generic.patterns.readings.titled_pages",
     "labelled_spread": "ingestion.generic.patterns.readings.labelled_spread",
     "facing_explanations": "ingestion.generic.patterns.readings.facing_explanations",
-    "annotated_spread": "ingestion.generic.patterns.readings.annotated_spread"
+    "annotated_spread": "ingestion.generic.patterns.readings.annotated_spread",
+    "paired_summary": "ingestion.generic.patterns.readings.paired_summary"
   },
   "component": {
     "marked_subjects": "ingestion.generic.patterns.components.marked_subjects",

@@ -10388,6 +10388,38 @@ sources:
       direction: expenditure
       table_id: general-expenditure
       kind: nodes
+  - name: j133612_2025_initial_general_expenditure_amounts
+    meta:
+      jurisdiction: '133612'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j133612_2025_initial_general_expenditure_nodes
+    meta:
+      jurisdiction: '133612'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
+  - name: j133612_2026_initial_general_expenditure_amounts
+    meta:
+      jurisdiction: '133612'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j133612_2026_initial_general_expenditure_nodes
+    meta:
+      jurisdiction: '133612'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
   - name: j133621_2024_initial_elderly_medical_initial_amounts
     meta:
       jurisdiction: '133621'

@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "133639",
+    "fiscal_year": 2024,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "1c1c3d42e5c4d8a36fd1f8624b94b61dbfdc9a04fd47fd11c610f7394649f501"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure",
+        "workflow": {
+          "reading": {
+            "pattern": "paired_summary",
+            "profile": "fiscal/jurisdictions/133639/layouts/general_initial_2024.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-expenditure",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "579fa3fea49b6b616ad0aa009ecbed0251e1d9af2f563de8af4490803ebed1bc",
+      "account": "一般会計",
+      "notes": [
+        "物理7頁の「（３）令和6年度一般会計当初予算（単位：千円）」は歳入と歳出を左右に並べた表なので、右の「歳出」の枠だけを読んだ（読み方 paired_summary）。左の歳入と頁の他の表は取り込んでいない。",
+        "款の行 14 行を、印字のとおり款として置いた。款の番号は印字されていない。項・目は印字されていない。",
+        "金額の欄に見出しの印字が無いので、表の題のとおり「当初予算額」の見出しで持った。",
+        "金額の単位は表の題の「（単位：千円）」。款の和と印字の「歳出合計」が一致。",
+        "構成比の欄は金額ではないので取り込んでいない。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/133639/2024/initial/expenditure/general-expenditure-nodes.parquet",
+          "sha256": "11252acb1d68e2e2c270ecd04cf8f7a6fdca5ea248d979e5c734be6fbcf7d483",
+          "bytes": 2912
+        },
+        "row_count": 14
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/133639/2024/initial/expenditure/general-expenditure-amounts.parquet",
+          "sha256": "6d2065b1f7242a7682207acc37e8d63d0a11dba9f94f9aeac65c353e6145592a",
+          "bytes": 2385
+        },
+        "row_count": 14
+      }
+    }
+  ]
+}
