@@ -7198,5 +7198,373 @@
       },
       "reason": "令和5年度に実施した30事業を評価した令和6年度事務事業評価の中間結果（令和6年10月公表）。各シートの事業費の列は「令和3年度（決算額）・令和4年度（決算額）・令和5年度（決算見込額）・令和6年度（予算額）」で、評価指標の実績値も「令和3年度（実績値）・令和4年度（実績値）・令和5年度（実績値）」まで。評価している実績は最新で令和5年度（2023年度）。事業の目的・内容、事業費、活動・成果指標の目標値と実績値、課題と改善への取組、必要性・有効性・効率性の検証と評価コメントを載せる。文字として読める。なお、中間結果で令和5年度の事業費は決算見込額、対象は30事業のみ。選定した30ファイルは、2024年度の選定を R7sesakuhyouka.pdf に差し替える前（PR #181）に2024年度の key `evaluation-settlement-1〜30` で R2 に保存し、いまはどの選定からも参照されていない30件と同一バイト列（sha256 の集合が一致）であることを確認した。"
     }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "132292",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "西東京市長記者会見 資料（令和6年2月20日実施分）",
+          "landing_url": "https://www.city.nishitokyo.lg.jp/press/2024/press_kishakaiken_20240220.html",
+          "inspected_at": "2026-11-10T07:09:15+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/press/2024/press_kishakaiken_20240220.files/siryo_1.pdf",
+              "sha256": "843c361f6d747b2bde4a132248c3ac79d5b93943895c389d9e905a97bdb6315f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/press/2024/press_kishakaiken_20240220.files/siryo_2.pdf",
+              "sha256": "9306a838290d1477daedae690e004b8844fbb44b7876eb857b60f4bd21ea1c31",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/press/2024/press_kishakaiken_20240220.files/siryo_3.pdf",
+              "sha256": "7d68a94b2371bc72727a78507b4d10f335e599de554ef684b0ebc83cc34c7b49",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/press/2024/press_kishakaiken_20240220.files/siryo_4.pdf",
+              "sha256": "aa7addc8730e52ef73aeedc80981e779b9276a2e113c7841b5cb7ae0344a69e2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/press/2024/press_kishakaiken_20240220.files/siryo_5.pdf",
+              "sha256": "f71c7e0ea74ae949fd0881431a8e977b5353d72a76aba73593f3e3ee8014fbb1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/press/2024/press_kishakaiken_20240220.files/siryo_6.pdf",
+              "sha256": "35e655c4656d813e65d10f7f12d686fb274aa075d0b20ebb2836bd98f37f0b23",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/press/2024/press_kishakaiken_20240220.files/siryo_7.pdf",
+              "sha256": "3b10fdb66cba76f90c476e05e90d5e79549fee7d623d41b7a9d996c6bb20b539",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/press/2024/press_kishakaiken_20240220.files/siryo_8.pdf",
+              "sha256": "fcd3a0122d1558d020d43c09da12cc81965e17948086172441f52859163e0385",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/press/2024/press_kishakaiken_20240220.files/siryo_9.pdf",
+              "sha256": "85d96043888bbfbf79c4ae7c17a4e34be5eafef45e90e3d270eb61103a37d7e2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132292/2024/press-initial-4.pdf",
+            "sha256": "843c361f6d747b2bde4a132248c3ac79d5b93943895c389d9e905a97bdb6315f",
+            "final_url": "https://www.city.nishitokyo.lg.jp/press/2024/press_kishakaiken_20240220.files/siryo_1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/press-initial-6.pdf",
+            "sha256": "9306a838290d1477daedae690e004b8844fbb44b7876eb857b60f4bd21ea1c31",
+            "final_url": "https://www.city.nishitokyo.lg.jp/press/2024/press_kishakaiken_20240220.files/siryo_2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/press-initial-3.pdf",
+            "sha256": "7d68a94b2371bc72727a78507b4d10f335e599de554ef684b0ebc83cc34c7b49",
+            "final_url": "https://www.city.nishitokyo.lg.jp/press/2024/press_kishakaiken_20240220.files/siryo_3.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/press-initial-7.pdf",
+            "sha256": "aa7addc8730e52ef73aeedc80981e779b9276a2e113c7841b5cb7ae0344a69e2",
+            "final_url": "https://www.city.nishitokyo.lg.jp/press/2024/press_kishakaiken_20240220.files/siryo_4.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/press-initial-8.pdf",
+            "sha256": "f71c7e0ea74ae949fd0881431a8e977b5353d72a76aba73593f3e3ee8014fbb1",
+            "final_url": "https://www.city.nishitokyo.lg.jp/press/2024/press_kishakaiken_20240220.files/siryo_5.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/press-initial-1.pdf",
+            "sha256": "35e655c4656d813e65d10f7f12d686fb274aa075d0b20ebb2836bd98f37f0b23",
+            "final_url": "https://www.city.nishitokyo.lg.jp/press/2024/press_kishakaiken_20240220.files/siryo_6.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/press-initial-2.pdf",
+            "sha256": "3b10fdb66cba76f90c476e05e90d5e79549fee7d623d41b7a9d996c6bb20b539",
+            "final_url": "https://www.city.nishitokyo.lg.jp/press/2024/press_kishakaiken_20240220.files/siryo_7.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/press-initial-9.pdf",
+            "sha256": "fcd3a0122d1558d020d43c09da12cc81965e17948086172441f52859163e0385",
+            "final_url": "https://www.city.nishitokyo.lg.jp/press/2024/press_kishakaiken_20240220.files/siryo_8.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/press-initial-5.pdf",
+            "sha256": "85d96043888bbfbf79c4ae7c17a4e34be5eafef45e90e3d270eb61103a37d7e2",
+            "final_url": "https://www.city.nishitokyo.lg.jp/press/2024/press_kishakaiken_20240220.files/siryo_9.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:09:39.538Z"
+      },
+      "reason": "記者会見の記録（https://www.city.nishitokyo.lg.jp/siseizyoho/mayor/kisyakaiken/r6/index.html）から辿る「西東京市長記者会見 資料（令和6年2月20日実施分）」（https://www.city.nishitokyo.lg.jp/press/2024/press_kishakaiken_20240220.html）の当初予算（案）の発表資料。まちづくりの柱ごとに分かれた資料1〜9（子どもがど真ん中、ゼロカーボンシティ、恒久平和、若者の参画、健康で元気なまち、集える場とつながり、安心安全で快適なまち、市民とともに発展するまち、行財政基盤の強化）の9冊（各1〜4頁、計19頁、いずれも文字PDF）を、施策が載る分冊として全部1候補にまとめた。各冊は「記者会見資料」として取組ごとに見出し・目的や概要（対象・助成額・開始時期など）・「予算額（案）」（万円）・問い合わせ先の課を載せ、新設・創設などは見出しや本文で示す。資料9（人材育成基本方針の見直し）は予算額の記載が無いが、同じ発表の施策の冊なので含める。予算の頁の「令和6年度予算の概要」（https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/R6yosannogaiyou.html）と「事務事業の概要」編は別の資料で、ここには含めない。確認日 2026-11-10T07:09:15+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132292",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "西東京市長記者会見 資料（令和7年2月19日実施分）",
+          "landing_url": "https://www.city.nishitokyo.lg.jp/press/2025/press_kishakaiken_20250219.html",
+          "inspected_at": "2026-11-10T07:09:15+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/press/2025/press_kishakaiken_20250219.files/shiryo_1.pdf",
+              "sha256": "e2703255e257a8f6bb225b3e9f46cb62ab774be7c096cb8546c890a57e5ca072",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/press/2025/press_kishakaiken_20250219.files/shiryo_2.pdf",
+              "sha256": "8853ba82a8e82b05474f0de9df20fd01234a03ed94716da928b0cd29a04cd907",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/press/2025/press_kishakaiken_20250219.files/shiryo_3.pdf",
+              "sha256": "f7b633aa63b23b38548935f999b18b61f74836cbac8ae2fcf792dace7b81682c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/press/2025/press_kishakaiken_20250219.files/shiryo_4.pdf",
+              "sha256": "01b49a41a398e976573dc8789c35253f6d33e4669c9a015072be70a54e2ee6ad",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/press/2025/press_kishakaiken_20250219.files/shiryo_5.pdf",
+              "sha256": "c1188326c31309124dbe68a19910c748fe8dcac9721fcf02c8ecce610dee25cc",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/press/2025/press_kishakaiken_20250219.files/shiryo_6.pdf",
+              "sha256": "ceb8e8b5713b4f1391e3cdbeaa6994311e1771c2d8544075df2b221dbbdb13dd",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/press/2025/press_kishakaiken_20250219.files/shiryo_7.pdf",
+              "sha256": "c6e7fa292bb54c7bfd260fb0a0edcec507aa5e42cb5370bc22a6f81fd64bd54f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/press/2025/press_kishakaiken_20250219.files/shiryo_8.pdf",
+              "sha256": "7879e290b48c5cffd079f538a43229a25ce2fbf6920d5a8432fa21c996bb63e9",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/press/2025/press_kishakaiken_20250219.files/shiryo_9.pdf",
+              "sha256": "e19bd4d885454cc2fef4fc8eba2051d719c59691bbfaa03e744cf1f10cfb2d80",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132292/2025/press-initial-8.pdf",
+            "sha256": "e2703255e257a8f6bb225b3e9f46cb62ab774be7c096cb8546c890a57e5ca072",
+            "final_url": "https://www.city.nishitokyo.lg.jp/press/2025/press_kishakaiken_20250219.files/shiryo_1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/press-initial-3.pdf",
+            "sha256": "8853ba82a8e82b05474f0de9df20fd01234a03ed94716da928b0cd29a04cd907",
+            "final_url": "https://www.city.nishitokyo.lg.jp/press/2025/press_kishakaiken_20250219.files/shiryo_2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/press-initial-9.pdf",
+            "sha256": "f7b633aa63b23b38548935f999b18b61f74836cbac8ae2fcf792dace7b81682c",
+            "final_url": "https://www.city.nishitokyo.lg.jp/press/2025/press_kishakaiken_20250219.files/shiryo_3.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/press-initial-1.pdf",
+            "sha256": "01b49a41a398e976573dc8789c35253f6d33e4669c9a015072be70a54e2ee6ad",
+            "final_url": "https://www.city.nishitokyo.lg.jp/press/2025/press_kishakaiken_20250219.files/shiryo_4.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/press-initial-4.pdf",
+            "sha256": "c1188326c31309124dbe68a19910c748fe8dcac9721fcf02c8ecce610dee25cc",
+            "final_url": "https://www.city.nishitokyo.lg.jp/press/2025/press_kishakaiken_20250219.files/shiryo_5.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/press-initial-6.pdf",
+            "sha256": "ceb8e8b5713b4f1391e3cdbeaa6994311e1771c2d8544075df2b221dbbdb13dd",
+            "final_url": "https://www.city.nishitokyo.lg.jp/press/2025/press_kishakaiken_20250219.files/shiryo_6.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/press-initial-5.pdf",
+            "sha256": "c6e7fa292bb54c7bfd260fb0a0edcec507aa5e42cb5370bc22a6f81fd64bd54f",
+            "final_url": "https://www.city.nishitokyo.lg.jp/press/2025/press_kishakaiken_20250219.files/shiryo_7.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/press-initial-2.pdf",
+            "sha256": "7879e290b48c5cffd079f538a43229a25ce2fbf6920d5a8432fa21c996bb63e9",
+            "final_url": "https://www.city.nishitokyo.lg.jp/press/2025/press_kishakaiken_20250219.files/shiryo_8.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/press-initial-7.pdf",
+            "sha256": "e19bd4d885454cc2fef4fc8eba2051d719c59691bbfaa03e744cf1f10cfb2d80",
+            "final_url": "https://www.city.nishitokyo.lg.jp/press/2025/press_kishakaiken_20250219.files/shiryo_9.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:09:53.994Z"
+      },
+      "reason": "記者会見の記録（https://www.city.nishitokyo.lg.jp/siseizyoho/mayor/kisyakaiken/r7/index.html）から辿る「西東京市長記者会見 資料（令和7年2月19日実施分）」（https://www.city.nishitokyo.lg.jp/press/2025/press_kishakaiken_20250219.html）の当初予算（案）の発表資料。まちづくりの柱ごとに分かれた資料1〜9（子どもがど真ん中、次世代につなぐ環境施策、恒久平和、若者とともに進めるまちづくり、健康で元気なまち、集える場とつながり、安心安全で快適なまち、市民とともに発展するまち、行財政基盤の強化）の9冊（各2〜5頁、計25頁、いずれも文字PDF）を、施策が載る分冊として全部1候補にまとめた。各冊は「記者会見資料」として取組ごとに見出し・目的や概要（対象・助成額・開始時期など）・「予算額（案）」（万円）・問い合わせ先の課を載せ、新設・創設などは見出しや本文で示す。予算の頁の「令和7年度予算の概要」（https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/R7yosannogaiyou.html）と「事務事業の概要」編は別の資料で、ここには含めない。確認日 2026-11-10T07:09:15+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132292",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "西東京市長記者会見 資料（令和8年2月19日実施分）",
+          "landing_url": "https://www.city.nishitokyo.lg.jp/press/2026/20260219.html",
+          "inspected_at": "2026-11-10T07:09:15+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/press/2026/20260219.files/shiryo1.pdf",
+              "sha256": "d2ce2595533d6da94817adeaa4da7abe854366940e7c3cce0a3875433fe24de4",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/press/2026/20260219.files/shiryo2.pdf",
+              "sha256": "c439e986950b4acdc58940aee4e3251beac42d94a3c8b1dcc55d3b66c5175122",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/press/2026/20260219.files/shiryo3.pdf",
+              "sha256": "b003fc8c53cbaa7a79adae14a1ee0f3fc9bcff4aac9e4c811a74cba274e31009",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/press/2026/20260219.files/shiryo4.pdf",
+              "sha256": "e3ba0df5855b13bff0595ef26e42cf315429eafe481f527e6b0bc1fd302c0938",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/press/2026/20260219.files/shiryo5.pdf",
+              "sha256": "abf6523c56baf7b994167452b3711fb75381b57f308ae1e1c201606c01df6d49",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/press/2026/20260219.files/shiryo6.pdf",
+              "sha256": "43c9e5bdc2b2f894894f4d132e14cf481e89e13af474319e4ae441f30a9a4a9e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132292/2026/press-initial-5.pdf",
+            "sha256": "d2ce2595533d6da94817adeaa4da7abe854366940e7c3cce0a3875433fe24de4",
+            "final_url": "https://www.city.nishitokyo.lg.jp/press/2026/20260219.files/shiryo1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2026/press-initial-4.pdf",
+            "sha256": "c439e986950b4acdc58940aee4e3251beac42d94a3c8b1dcc55d3b66c5175122",
+            "final_url": "https://www.city.nishitokyo.lg.jp/press/2026/20260219.files/shiryo2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2026/press-initial-3.pdf",
+            "sha256": "b003fc8c53cbaa7a79adae14a1ee0f3fc9bcff4aac9e4c811a74cba274e31009",
+            "final_url": "https://www.city.nishitokyo.lg.jp/press/2026/20260219.files/shiryo3.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2026/press-initial-6.pdf",
+            "sha256": "e3ba0df5855b13bff0595ef26e42cf315429eafe481f527e6b0bc1fd302c0938",
+            "final_url": "https://www.city.nishitokyo.lg.jp/press/2026/20260219.files/shiryo4.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2026/press-initial-2.pdf",
+            "sha256": "abf6523c56baf7b994167452b3711fb75381b57f308ae1e1c201606c01df6d49",
+            "final_url": "https://www.city.nishitokyo.lg.jp/press/2026/20260219.files/shiryo5.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2026/press-initial-1.pdf",
+            "sha256": "43c9e5bdc2b2f894894f4d132e14cf481e89e13af474319e4ae441f30a9a4a9e",
+            "final_url": "https://www.city.nishitokyo.lg.jp/press/2026/20260219.files/shiryo6.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:10:05.432Z"
+      },
+      "reason": "記者会見の記録（https://www.city.nishitokyo.lg.jp/siseizyoho/mayor/kisyakaiken/r8/index.html）から辿る「西東京市長記者会見 資料（令和8年2月19日実施分）」（https://www.city.nishitokyo.lg.jp/press/2026/20260219.html）の当初予算（案）の発表資料。まちづくりの柱ごとに分かれた資料1〜6（子どもにやさしいまち～子どもがど真ん中～、健康で元気なまち、集える場とつながりのあるまち、安心安全で快適なまち、市民とともに発展するまち、行財政基盤の強化を絶えず目指すまち）の6冊（各2〜5頁、計18頁、いずれも文字PDF）を、施策が載る分冊として全部1候補にまとめた。各冊は「記者会見資料」として取組ごとに見出し・目的や概要（対象・助成額・開始時期など）・「予算額（案）」（万円）・問い合わせ先の課を載せ、新設・創設などは見出しや本文で示す。予算の頁の「令和8年度予算の概要」（https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/R8yosannogaiyou.html）と「事務事業の概要」編は別の資料で、ここには含めない。確認日 2026-11-10T07:09:15+00:00。"
+    }
   ]
 }

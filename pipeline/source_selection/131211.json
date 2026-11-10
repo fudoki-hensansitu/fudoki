@@ -3011,5 +3011,121 @@
       },
       "reason": "令和5年度に実施した事業を区民評価委員会が令和6年度に評価した区民評価報告書3分冊。1冊目が「令和６年度（令和５年度実施事業分）」、残り2冊が「令和６年度重点プロジェクト事業評価調書（令和５年度事業分）」。一般事務事業は必要性・手法・負担・評価と理由・今後の方向性を、重点プロジェクトはロジックモデル・指標の達成度・事業費・評価を事業ごとに載せる。文字として読める。なお、対象は重点プロジェクトと区民評価対象事業に限られ、全650事業の事務事業評価調書は公表されていない。"
     }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "131211",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度 予算編成のあらまし",
+          "landing_url": "https://www.city.adachi.tokyo.jp/zaise/ku/kuse/zaise-y-r6tosyo.html",
+          "inspected_at": "2026-11-10T07:19:33+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.adachi.tokyo.jp/documents/64031/1-r6aramashi.pdf",
+              "sha256": "4f770fcd2e683aa97c454841e5abe232667ec57af73adcddd501ce12d5d6430e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131211/2024/press-initial.pdf",
+            "sha256": "4f770fcd2e683aa97c454841e5abe232667ec57af73adcddd501ce12d5d6430e",
+            "final_url": "https://www.city.adachi.tokyo.jp/documents/64031/1-r6aramashi.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:20:10.886Z"
+      },
+      "reason": "当初予算の頁「足立区予算（令和6年度当初予算 予算編成のあらまし）」（https://www.city.adachi.tokyo.jp/zaise/ku/kuse/zaise-y-r6tosyo.html）に載る令和6年度予算編成のあらまし（84頁、文字PDF。区長の序文の日付は令和6年1月（PDF作成2024-01-24）で、予算案の発表時の冊子）。目次のとおり、予算編成の特色・予算(案)の概要・財政状況に続き、「令和6年度予算のあらまし」で主な施策・事業一覧表、主要施策（P.22〜）、主要事業（P.36〜。事業ごとに事業名・予算額（千円、前年度当初予算額と財源内訳つき）・事業の目的と概要）、主な新規事業・拡充事業・縮小事業の一覧表を載せる。区長記者会見の頁（https://www.city.adachi.tokyo.jp/hisho/ku/kucho/kishakaiken.html）の「当初予算案記者会見資料」（240131.pdf、32頁）は会見のスライドで、各頁に「予算編成のあらまし」の該当頁を示す要約なので、冊子のこちらを選ぶ。同じ頁の補助金・助成金当初予算一覧表は含めない。確認日 2026-11-10T07:19:33+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131211",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度 予算編成のあらまし",
+          "landing_url": "https://www.city.adachi.tokyo.jp/zaise/ku/kuse/zaise-y-r7tosyo.html",
+          "inspected_at": "2026-11-10T07:19:33+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.adachi.tokyo.jp/documents/71328/r7_yosan_aramashi_link.pdf",
+              "sha256": "ce05d43a2afe71261ef2ecdfc1701140401700005a209e39b678144666e3a7bb",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131211/2025/press-initial.pdf",
+            "sha256": "ce05d43a2afe71261ef2ecdfc1701140401700005a209e39b678144666e3a7bb",
+            "final_url": "https://www.city.adachi.tokyo.jp/documents/71328/r7_yosan_aramashi_link.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:20:16.970Z"
+      },
+      "reason": "当初予算の頁「足立区予算（令和7年度当初予算 予算編成のあらまし）」（https://www.city.adachi.tokyo.jp/zaise/ku/kuse/zaise-y-r7tosyo.html）に載る令和7年度予算編成のあらまし（82頁、文字PDF。区長の序文の日付は令和7年1月で、予算案の発表時の冊子）。目次のとおり、予算編成の特色・予算(案)の概要・財政状況に続き、「令和7年度予算のあらまし」で主な施策・事業一覧表、主要施策（P.20〜）、主要事業（P.40〜。事業ごとに事業名・予算額（千円、前年度当初予算額と財源内訳つき）・事業の目的と概要）、主な新規事業・拡充事業・縮小事業の一覧表を載せる。区長記者会見の頁（https://www.city.adachi.tokyo.jp/hisho/ku/kucho/kishakaiken.html）の「当初予算案記者会見資料」（250131.pdf、35頁）は会見のスライドで、各頁に「予算編成のあらまし」の該当頁を示す要約なので、冊子のこちらを選ぶ。同じ頁の補助金・助成金当初予算一覧表は含めない。確認日 2026-11-10T07:19:33+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131211",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度 予算編成のあらまし",
+          "landing_url": "https://www.city.adachi.tokyo.jp/zaise/ku/kuse/zaise-y-r8tosyo.html",
+          "inspected_at": "2026-11-10T07:19:33+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.adachi.tokyo.jp/documents/74956/r8_yosan_aramashi_link.pdf",
+              "sha256": "7a13a29b5add6b89b7885baee23df9198355015d698e02414c093b3e92c7fa5a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131211/2026/press-initial.pdf",
+            "sha256": "7a13a29b5add6b89b7885baee23df9198355015d698e02414c093b3e92c7fa5a",
+            "final_url": "https://www.city.adachi.tokyo.jp/documents/74956/r8_yosan_aramashi_link.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:20:24.338Z"
+      },
+      "reason": "当初予算の頁「足立区予算（令和8年度当初予算 予算編成のあらまし）」（https://www.city.adachi.tokyo.jp/zaise/ku/kuse/zaise-y-r8tosyo.html）に載る令和8年度予算編成のあらまし（86頁、文字PDF。区長の序文の日付は令和8年1月で、予算案の発表時の冊子）。目次のとおり、予算編成の特色・予算(案)の概要・財政状況に続き、「令和8年度予算のあらまし」で主な施策・事業一覧表、主要施策（P.20〜）、主要事業（P.38〜。事業ごとに事業名・予算額（千円、前年度当初予算額と財源内訳つき）・事業の目的と概要）、主な新規事業・拡充事業・縮小事業の一覧表を載せる。区長記者会見の頁（https://www.city.adachi.tokyo.jp/hisho/ku/kucho/kishakaiken.html）の「当初予算案記者会見資料」（20260130_yosan.pdf、37頁）は会見のスライドで、各頁に「予算編成のあらまし」の該当頁を示す要約なので、冊子のこちらを選ぶ。同じ頁の補助金・助成金当初予算一覧表は含めない。確認日 2026-11-10T07:19:33+00:00。"
+    }
   ]
 }

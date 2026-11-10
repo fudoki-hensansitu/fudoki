@@ -5348,6 +5348,86 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: nodes
+  - name: j132233_2025_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '132233'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j132233_2025_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '132233'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
+  - name: j132233_2025_settlement_kaigo_expenditure_amounts
+    meta:
+      jurisdiction: '132233'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: kaigo-expenditure
+      kind: amounts
+  - name: j132233_2025_settlement_kaigo_expenditure_nodes
+    meta:
+      jurisdiction: '132233'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: kaigo-expenditure
+      kind: nodes
+  - name: j132233_2025_settlement_kokuho_expenditure_amounts
+    meta:
+      jurisdiction: '132233'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: kokuho-expenditure
+      kind: amounts
+  - name: j132233_2025_settlement_kokuho_expenditure_nodes
+    meta:
+      jurisdiction: '132233'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: kokuho-expenditure
+      kind: nodes
+  - name: j132233_2025_settlement_kouki_expenditure_amounts
+    meta:
+      jurisdiction: '132233'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: kouki-expenditure
+      kind: amounts
+  - name: j132233_2025_settlement_kouki_expenditure_nodes
+    meta:
+      jurisdiction: '132233'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: kouki-expenditure
+      kind: nodes
+  - name: j132233_2025_settlement_toshikaku_expenditure_amounts
+    meta:
+      jurisdiction: '132233'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: toshikaku-expenditure
+      kind: amounts
+  - name: j132233_2025_settlement_toshikaku_expenditure_nodes
+    meta:
+      jurisdiction: '132233'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: toshikaku-expenditure
+      kind: nodes
   - name: j132241_2024_settlement_elderly_medical_expenditure_amounts
     meta:
       jurisdiction: '132241'

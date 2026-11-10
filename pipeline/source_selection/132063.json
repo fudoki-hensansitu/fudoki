@@ -3760,5 +3760,121 @@
       },
       "reason": "対象年度を令和5年度とする府中市の事務事業評価シート（記載年月 令和6年9月）。基本施策ごとの28分冊。シートに「対象年度 令和5年度」と明記され、PDCA欄は「R 4年度実績（Do）／R 4年度評価（Check）」と「R 5年度実績（Do）／R 5年度評価（Check）」を持ち、最新の実績は令和5年度。事業の概要・目標・内容、指標の計画値・実績・差異の要因、予算額・決算額・執行率、評価（A〜D）を載せる。文字として読める。 2026-10-15の取得確認で、候補作成時のURL（…e28〜e55.pdf）は404（botよけのHTML）を返したが、公式頁の現在のリンク（…e28〜e55administrative_evaluation.pdf）は全28ファイルが候補のsha256と一致した。download_url は取得できた現在の公式URLに直した。"
     }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "132063",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度 予算のあらまし",
+          "landing_url": "https://www.city.fuchu.tokyo.jp/gyosei/zaise/yosan/toushoyosan/6yosannoaramashi.html",
+          "inspected_at": "2026-11-10T07:08:22+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.fuchu.tokyo.jp/gyosei/zaise/yosan/toushoyosan/6yosannoaramashi.files/R6yosannoaramashi.pdf",
+              "sha256": "91f1e16b68c561cdbce9768819bee4282daed8ebc14ac2b69fa4fb73bd95f319",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132063/2024/press-initial.pdf",
+            "sha256": "91f1e16b68c561cdbce9768819bee4282daed8ebc14ac2b69fa4fb73bd95f319",
+            "final_url": "https://www.city.fuchu.tokyo.jp/gyosei/zaise/yosan/toushoyosan/6yosannoaramashi.files/R6yosannoaramashi.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:08:38.262Z"
+      },
+      "reason": "当初予算の頁「令和6年度予算のあらまし」（https://www.city.fuchu.tokyo.jp/gyosei/zaise/yosan/toushoyosan/6yosannoaramashi.html）に載る冊子（92頁、文字PDF）。予算の特徴・予算規模・一般会計の歳入歳出・基金・市債・総合計画と重点プロジェクトのあと、「9 基本施策別予算の取組状況」（印字25頁〜）で基本施策ごとの予算額と、新規（新）・レベルアップ（レ）・投資的（投）事業を中心に事業名・区分・予算額・概要を載せ、巻末の参考資料に「令和6年度施策別予算事業一覧」（施策体系別の全予算事業と予算額）を持つ。府中市は当初予算の記者発表資料を頁に載せておらず（補正予算の概要には〔記者会見用資料〕の表記があるが当初予算には無い）、議決後に当初予算の特徴を示すこの冊子を選んだ。確認日 2026-11-10T07:08:22+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132063",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度 予算のあらまし",
+          "landing_url": "https://www.city.fuchu.tokyo.jp/gyosei/zaise/yosan/toushoyosan/7yosannoaramashi.html",
+          "inspected_at": "2026-11-10T07:08:26+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.fuchu.tokyo.jp/gyosei/zaise/yosan/toushoyosan/7yosannoaramashi.files/R7yosannoaramashi.pdf",
+              "sha256": "0a68cb82ddc687b655d8ab1a4826fb70390fdc80ca226bb8ed13d43f09bd35a8",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132063/2025/press-initial.pdf",
+            "sha256": "0a68cb82ddc687b655d8ab1a4826fb70390fdc80ca226bb8ed13d43f09bd35a8",
+            "final_url": "https://www.city.fuchu.tokyo.jp/gyosei/zaise/yosan/toushoyosan/7yosannoaramashi.files/R7yosannoaramashi.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:08:43.679Z"
+      },
+      "reason": "当初予算の頁「令和7年度予算のあらまし」（https://www.city.fuchu.tokyo.jp/gyosei/zaise/yosan/toushoyosan/7yosannoaramashi.html）に載る冊子（92頁、文字PDF）。予算の特徴（新規46事業・レベルアップ47事業）・予算規模・一般会計の歳入歳出・基金・市債・総合計画と重点プロジェクトのあと、「9 基本施策別予算の取組状況」（印字25頁〜）で基本施策ごとの予算額と、新規（新）・レベルアップ（レ）・投資的（投）事業を中心に事業名・区分・予算額・概要を載せ、巻末の参考資料に「令和7年度施策別予算事業一覧」を持つ。府中市は当初予算の記者発表資料を頁に載せておらず、議決後に当初予算の特徴を示すこの冊子を選んだ。確認日 2026-11-10T07:08:26+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132063",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度 予算のあらまし",
+          "landing_url": "https://www.city.fuchu.tokyo.jp/gyosei/zaise/yosan/toushoyosan/8yosannoaramashi.html",
+          "inspected_at": "2026-11-10T07:08:31+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.fuchu.tokyo.jp/gyosei/zaise/yosan/toushoyosan/8yosannoaramashi.files/R8yosannoaramashi.pdf",
+              "sha256": "ac39c9807833acd0c48838d65d050f53ec57137743b48c21e2a5837ed92b6fde",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132063/2026/press-initial.pdf",
+            "sha256": "ac39c9807833acd0c48838d65d050f53ec57137743b48c21e2a5837ed92b6fde",
+            "final_url": "https://www.city.fuchu.tokyo.jp/gyosei/zaise/yosan/toushoyosan/8yosannoaramashi.files/R8yosannoaramashi.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:08:46.562Z"
+      },
+      "reason": "当初予算の頁「令和8年度予算のあらまし」（https://www.city.fuchu.tokyo.jp/gyosei/zaise/yosan/toushoyosan/8yosannoaramashi.html）に載る冊子（92頁、文字PDF）。予算の特徴・予算規模・一般会計の歳入歳出・基金・市債・総合計画と重点プロジェクトのあと、「9 基本施策別予算の取組状況」（印字26頁〜）で基本施策ごとの予算額と、新規（新）・レベルアップ（レ）・投資的（投）事業を中心に事業名・区分・予算額・概要を載せ、巻末（印字41頁〜）の参考資料に「令和8年度施策別予算事業一覧」を持つ。府中市は当初予算の記者発表資料を頁に載せておらず、議決後に当初予算の特徴を示すこの冊子を選んだ。確認日 2026-11-10T07:08:31+00:00。"
+    }
   ]
 }

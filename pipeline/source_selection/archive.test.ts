@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto'
 import { expect, test } from 'bun:test'
-import { archiveGroup, archiveSelected, evaluationKind, isMissingR2ObjectError, matchesDeclaredFormat, planArchives, planFiles, isArchived, type ArchiveTransport } from './archive'
-import { evaluationSelectionsSchema, sourceSelectionsSchema, type EvaluationSelection, type SourceFile, type SourceSelection } from './schema'
+import { archiveGroup, archiveSelected, evaluationKind, pressKind, isMissingR2ObjectError, matchesDeclaredFormat, planArchives, planFiles, isArchived, type ArchiveTransport } from './archive'
+import { evaluationSelectionsSchema, pressSelectionsSchema, sourceSelectionsSchema, type EvaluationSelection, type PressSelection, type SourceFile, type SourceSelection } from './schema'
 import { evaluationObjectKey, originObjectKey } from './storage'
 
 const pdfBody = (text: string) => new TextEncoder().encode(`%PDF-1.7\n${text}\n`)
@@ -227,6 +227,23 @@ test('evaluation originals are saved under evaluation-settlement keys, numbered 
   const two = await archiveSelected(evaluation([evaluationFile(body, 'results'), evaluationFile(secondBody, 'second')]), several.api, evaluationKind)
   expect(new Set(two.archive!.files.map(item => item.key))).toEqual(new Set(['fiscal/source-selection/132047/2024/evaluation-settlement-1.pdf', 'fiscal/source-selection/132047/2024/evaluation-settlement-2.pdf']))
   expect(evaluationSelectionsSchema.safeParse([two]).success).toBe(true)
+})
+
+// 予算案のプレス発表: 予算書と同じ自治体・年度で、別の slot（press-initial）に保存し、予算書の key を一覧・削除しない。
+test('press originals are saved under press-initial keys and leave initial budget keys alone', async () => {
+  const initialTarget = { jurisdiction: '132047', fiscal_year: 2026, document_kind: 'initial' as const }
+  const press: PressSelection = { target: initialTarget,
+    candidates: [{ id: 'press', title: '当初予算案の概要', landing_url: 'https://example.com/press', inspected_at: '2026-11-10T00:00:00Z', files: [evaluationFile(body, 'press')] }],
+    selected_candidate_id: 'press', archive: null, reason: '主な施策を事業名と予算額つきで載せる。' }
+  const budgetKeys = ['fiscal/source-selection/132047/2026/initial.pdf', 'fiscal/source-selection/132047/2026/initial-1.pdf']
+  const fake = store([...budgetKeys, 'fiscal/source-selection/132047/2026/press-initial-2.pdf'])
+  const saved = await archiveSelected(press, fake.api, pressKind)
+  expect(saved.archive!.files.map(item => item.key)).toEqual(['fiscal/source-selection/132047/2026/press-initial.pdf'])
+  expect(fake.listed).toEqual(['fiscal/source-selection/132047/2026/press-initial-'])
+  for (const key of budgetKeys) expect(fake.keys.has(key)).toBe(true)
+  expect(pressSelectionsSchema.safeParse([saved]).success).toBe(true)
+  expect(isArchived([saved], undefined, undefined, pressKind)).toBe(true)
+  expect(pressSelectionsSchema.safeParse([{ ...saved, target: settlementTarget }]).success).toBe(false)
 })
 
 test('an evaluation original whose bytes differ from the selection stops before any upload', async () => {

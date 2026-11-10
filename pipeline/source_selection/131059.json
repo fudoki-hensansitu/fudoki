@@ -2686,5 +2686,133 @@
       },
       "reason": "「文の京」総合戦略の令和6年度進行管理 戦略点検シート（1冊・166頁）。1頁目に「令和6年度進行管理 戦略点検シート」、施策のシートに「事業費（令和5年度）上段：実績 下段：当初予算」、主な取組実績の列は「R4(2022) R5(2023) R6(2024)」（最新の実績は令和5年度＝2023年度、R6は空欄）と画像で確認した。文字の層の状態: pdffonts に85フォントがあるが日本語のToUnicodeが無く、pdftotext の漢字は0字（数字と英字のみ・1750トークン）。本文は読めないため pdf_type=scan。頁を100dpiで描画して目視で確認した。"
     }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "131059",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度予算案の概要（資料第1号）",
+          "landing_url": "https://www.city.bunkyo.lg.jp/b003/p006026.html",
+          "inspected_at": "2026-11-10T07:08:00+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.bunkyo.lg.jp/documents/7451/2024129163748_1.pdf",
+              "sha256": "d5461333de19d35b5b02ed38c9a4f1f232513325c9c399cac2075a9c40bd9b51",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131059/2024/press-initial.pdf",
+            "sha256": "d5461333de19d35b5b02ed38c9a4f1f232513325c9c399cac2075a9c40bd9b51",
+            "final_url": "https://www.city.bunkyo.lg.jp/documents/7451/2024129163748_1.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:09:01.762Z"
+      },
+      "reason": "報道発表の頁「令和6年度予算案を報道発表しました」（https://www.city.bunkyo.lg.jp/b003/p006026.html）に載る「令和6年度予算案の概要」（資料第1号、37頁、文字PDF、令和6年1月）。予算編成における主な取組・予算規模・歳入・歳出に続き、「主な新規・レベルアップ等事業」（8頁〜、重点施策ごとに事業名・新規/レベルアップ/継続/重点の印・予算額と前年度予算額（百万円）・説明・所管課）と組織及び定数を載せる。同じ頁の「主要事業等抜粋」（資料第2号、24頁）は概要に載る事業の詳細の抜粋、「概要図」は1枚の要約、「主要事業一覧表」「補助金一覧表」は部別の予算資料、「当初予算総括表」は総括表なので選ばない。確認日 2026-11-10T07:08:00+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131059",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度当初予算案の概要（資料第1号・第2号）",
+          "landing_url": "https://www.city.bunkyo.lg.jp/b003/p007976.html",
+          "inspected_at": "2026-11-10T07:08:00+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.bunkyo.lg.jp/documents/10590/1gaiyo.pdf",
+              "sha256": "a95f1c3f039bc8e2621f1742fd66af74df63b186333a46c1367a02dc98e84b48",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.bunkyo.lg.jp/documents/10590/2gaiyo.pdf",
+              "sha256": "431835ad7f1237611b3d071e0481e2b601731001818dcd0243bedc0f3a3456c7",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131059/2025/press-initial-2.pdf",
+            "sha256": "a95f1c3f039bc8e2621f1742fd66af74df63b186333a46c1367a02dc98e84b48",
+            "final_url": "https://www.city.bunkyo.lg.jp/documents/10590/1gaiyo.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131059/2025/press-initial-1.pdf",
+            "sha256": "431835ad7f1237611b3d071e0481e2b601731001818dcd0243bedc0f3a3456c7",
+            "final_url": "https://www.city.bunkyo.lg.jp/documents/10590/2gaiyo.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:09:07.429Z"
+      },
+      "reason": "報道発表の頁「令和7年度予算案を報道発表しました」（https://www.city.bunkyo.lg.jp/b003/p007976.html）に載る「令和7年度当初予算案の概要」の2冊（文字PDF）。資料第1号（51頁、令和7年1月30日）は予算規模・歳入・歳出に続き、重点的に推進すべき優先度の高い施策（6分野）の事業ごとに事業名・予算額（千円）・説明・所管課を載せる。資料第2号（施設整備、組織・定数編、5頁）は施設整備の事業ごとに事業名・概要・年次計画・令和7年度予算額（千円）を載せるので、同じ概要の分冊として含める。同じ頁の「重点施策・事業企画書（新規・レベルアップ事業）」（参考資料、44頁）は事業ごとの企画書、「主要事業一覧表」「補助金一覧表」は部別の予算資料、総括表は総括表なので選ばない。確認日 2026-11-10T07:08:00+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131059",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度文京区当初予算案",
+          "landing_url": "https://www.city.bunkyo.lg.jp/b003/p008191.html",
+          "inspected_at": "2026-11-10T07:08:00+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.bunkyo.lg.jp/documents/12451/yosannann3.pdf",
+              "sha256": "6cb7e5b8684ad4a26ceb931724015407f18219304d3fcdc316b4d958baff152e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131059/2026/press-initial.pdf",
+            "sha256": "6cb7e5b8684ad4a26ceb931724015407f18219304d3fcdc316b4d958baff152e",
+            "final_url": "https://www.city.bunkyo.lg.jp/documents/12451/yosannann3.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:09:12.741Z"
+      },
+      "reason": "報道発表の頁「令和8年度予算案を報道発表しました」（https://www.city.bunkyo.lg.jp/b003/p008191.html）に載る「令和8年度文京区当初予算案」（34頁、文字PDF、令和8年1月30日）。当初予算案の概要（予算編成における主な取組・予算規模・歳入・歳出）と、重点的に推進する施策（主要課題の解決に繋がる施策・区制80周年記念に関する施策）の事業ごとに事業名・予算額（千円）・説明を載せる。同じ頁の「重点施策・事業企画書（新規・レベルアップ事業）」（参考資料、44頁）は事業ごとの企画書、「主要事業一覧表」（82頁）・「補助金一覧表」は部別の予算資料、総括表は総括表なので選ばない。予算の頁（https://www.city.bunkyo.lg.jp/kuseijouhou/zaisei/yosan/toushoyosan/index.html）の「令和8年度当初予算の概要」は別のファイルで含めない。確認日 2026-11-10T07:08:00+00:00。"
+    }
   ]
 }

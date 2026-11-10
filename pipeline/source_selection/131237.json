@@ -2686,7 +2686,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "未選定（未公表）。令和7年度実績（2025年度）を評価する2026年（令和8年）度の行政評価は未公表。Orca のブラウザで描画した行政評価の一覧（https://www.city.edogawa.tokyo.jp/kuseijoho/zaisei/gyoseikaikaku/hyoka/index.html）の最新は「2025年(令和7年)度江戸川区行政評価」（令和7年度実施報告書、令和6年度実績＝2024年度分としてすでに選んでいる）で、2026年度分の掲載は無い。確認日：2026-10-23T09:47:41+00:00（UTC）。"
+      "reason": "未選定（未公表）。令和7年度実績（2025年度）を評価する2026年（令和8年）度の行政評価は未公表。Orca のブラウザで描画した行政評価の一覧（https://www.city.edogawa.tokyo.jp/kuseijoho/zaisei/gyoseikaikaku/hyoka/index.html）の最新は「2025年(令和7年)度江戸川区行政評価」（令和7年度実施報告書、令和6年度実績＝2024年度分としてすでに選んでいる）で、2026年度分の掲載は無い。確認日：2026-11-10T07:25:45+00:00（UTC）。"
     },
     {
       "target": {
@@ -2763,6 +2763,122 @@
         "archived_at": "2026-10-15T12:47:37.968Z"
       },
       "reason": "令和5年度実績を令和6年度に評価した江戸川区行政評価の実施報告書。本文に「【令和５年度 経営企画部財政課 課別（歳出目別）財務レポート】」とあり、評価は令和5年度決算（2023年度）の財務レポートに基づく。事業（課）ごとに組織目標・所管事務、課別財務レポート、行政評価シート（目的・目標・成果指標・費用対効果・課題認識の5段階評価と理由、外部評価委員の意見・質問と回答、今後の事業推進）を載せる。文字として読める。"
+    }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "131237",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度（2024年度）江戸川区予算概要",
+          "landing_url": "https://www.city.edogawa.tokyo.jp/e002/kuseijoho/zaisei/toshoyosan/r6nendo.html",
+          "inspected_at": "2026-11-10T07:25:45+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.edogawa.tokyo.jp/documents/49549/r6yosanngaiyou.pdf",
+              "sha256": "87d5a28ba697bc0b7d22d01d5e274d96a0f077ffeb649fd8b199cf32338dd9f5",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131237/2024/press-initial.pdf",
+            "sha256": "87d5a28ba697bc0b7d22d01d5e274d96a0f077ffeb649fd8b199cf32338dd9f5",
+            "final_url": "https://www.city.edogawa.tokyo.jp/documents/49549/r6yosanngaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:25:49.783Z"
+      },
+      "reason": "当初予算の頁「令和6年度」（https://www.city.edogawa.tokyo.jp/e002/kuseijoho/zaisei/toshoyosan/r6nendo.html）に「令和6年度予算編成について」として載る令和6年度（2024年度）江戸川区予算概要（令和6年1月、30頁、文字PDF）。予算編成について・各会計の規模に続き、「令和6年度 新規・拡充事業の概要」で事業ごとに番号・事業名・（新規）（拡充）の印・所管課・予算額（千円、括弧内に前年度額）・説明を載せ、SDGsの目標との対応表と分野別の主な新規拡充事業の図解もある。同じ頁の「令和6年度主要施策の概要」（yokoban.pdf、80頁）は款・項の順に全事業の事業概要と予算額を並べた予算説明に近い資料で、施策の発表資料ではないので選ばない。区長記者会見の頁（https://www.city.edogawa.tokyo.jp/e004/kuseijoho/kohokocho/press/ の各年の当初予算案記者会見）は会見の要点を HTML で載せるだけで、発表資料の PDF は無い。確認日 2026-11-10T07:25:45+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131237",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度（2025年度）江戸川区予算概要",
+          "landing_url": "https://www.city.edogawa.tokyo.jp/e002/kuseijoho/zaisei/toshoyosan/r7nendo.html",
+          "inspected_at": "2026-11-10T07:25:45+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.edogawa.tokyo.jp/documents/58935/01r7edogawakuyosanngaiyou_1.pdf",
+              "sha256": "b932c8708bbe8eb0aa07d797ef5355fc74b2768e6f97cbafd21ce69ddb5c7e49",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131237/2025/press-initial.pdf",
+            "sha256": "b932c8708bbe8eb0aa07d797ef5355fc74b2768e6f97cbafd21ce69ddb5c7e49",
+            "final_url": "https://www.city.edogawa.tokyo.jp/documents/58935/01r7edogawakuyosanngaiyou_1.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:25:52.043Z"
+      },
+      "reason": "当初予算の頁「令和7年度」（https://www.city.edogawa.tokyo.jp/e002/kuseijoho/zaisei/toshoyosan/r7nendo.html）に「令和7年度予算編成について」として載る令和7年度（2025年度）江戸川区予算概要（令和7年2月、28頁、文字PDF）。予算編成について・各会計の規模に続き、「令和7年度 新規・拡充事業の概要」で事業ごとに番号・事業名・（新規）（拡充）の印・所管課・予算額（千円、括弧内に前年度額）・説明を載せ、SDGsの目標との対応表と分野別の主な新規拡充事業の図解もある。同じ頁の「令和7年度主要施策の概要」（02r7edogawakusyuyousesakunogiyou.pdf、76頁）は款・項の順に全事業の事業概要と予算額を並べた予算説明に近い資料で、施策の発表資料ではないので選ばない。区長記者会見の頁（https://www.city.edogawa.tokyo.jp/e004/kuseijoho/kohokocho/press/ の各年の当初予算案記者会見）は会見の要点を HTML で載せるだけで、発表資料の PDF は無い。確認日 2026-11-10T07:25:45+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131237",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度（2026年度）江戸川区予算（案）概要",
+          "landing_url": "https://www.city.edogawa.tokyo.jp/e002/kuseijoho/zaisei/toshoyosan/r8nendo.html",
+          "inspected_at": "2026-11-10T07:25:45+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.edogawa.tokyo.jp/documents/66965/r8tateban.pdf",
+              "sha256": "17709689fafa60ff1b1642e81a1d7bdeafd89d432299b9872c7943ba166081f3",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131237/2026/press-initial.pdf",
+            "sha256": "17709689fafa60ff1b1642e81a1d7bdeafd89d432299b9872c7943ba166081f3",
+            "final_url": "https://www.city.edogawa.tokyo.jp/documents/66965/r8tateban.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:25:56.379Z"
+      },
+      "reason": "当初予算の頁「令和8年度」（https://www.city.edogawa.tokyo.jp/e002/kuseijoho/zaisei/toshoyosan/r8nendo.html）に「令和8年度予算編成について」として載る令和8年度（2026年度）江戸川区予算（案）概要（令和8年1月、33頁、文字PDF）。予算編成について・各会計の規模に続き、「令和8年度 新規・拡充事業の概要」で事業ごとに番号・事業名・（新規）（拡充）の印・所管課・予算額（千円、括弧内に前年度額）・説明を載せ、SDGsの目標との対応表と分野別の主な新規拡充事業の図解もある。同じ頁の「令和8年度主要施策の概要」（r8yokoban.pdf、75頁）は款・項の順に全事業の事業概要と予算額を並べた予算説明に近い資料で、施策の発表資料ではないので選ばない。区長記者会見の頁（https://www.city.edogawa.tokyo.jp/e004/kuseijoho/kohokocho/press/ の各年の当初予算案記者会見）は会見の要点を HTML で載せるだけで、発表資料の PDF は無い。確認日 2026-11-10T07:25:45+00:00。"
     }
   ]
 }

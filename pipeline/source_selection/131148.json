@@ -2178,5 +2178,121 @@
       },
       "reason": "令和5年度決算の主要な施策の成果（決算説明資料）。「令和５年度中野区各会計歳入歳出決算に係る主要な施策の成果」の文言と「令和５年度歳入歳出決算の概要」を1〜2頁目で確認。部ごとの主な課題の実施状況（事業の概要、活動内容・実績、予算現額・支出済額・執行率）と、令和6年度行政評価（令和5年度事業の評価）で事業ごとの内部評価（コスト・実績・効果、事業の方向と理由）を載せる。文字として読める。"
     }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "131148",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6（2024）年度当初予算（案）の概要",
+          "landing_url": "https://www.city.tokyo-nakano.lg.jp/kusei/public/houdou/2024/yosanan.html",
+          "inspected_at": "2026-11-10T07:00:54+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.tokyo-nakano.lg.jp/kusei/public/houdou/2024/yosanan.files/R6yosanan.pdf",
+              "sha256": "3cd426543cc38de7f6144b8fcf3f54ce811cd8251f0f99505bba66c3c79b8602",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131148/2024/press-initial.pdf",
+            "sha256": "3cd426543cc38de7f6144b8fcf3f54ce811cd8251f0f99505bba66c3c79b8602",
+            "final_url": "https://www.city.tokyo-nakano.lg.jp/kusei/public/houdou/2024/yosanan.files/R6yosanan.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:01:00.703Z"
+      },
+      "reason": "報道発表の頁「2024年2月1日 令和6（2024）年度中野区当初予算案区長記者会見」（https://www.city.tokyo-nakano.lg.jp/kusei/public/houdou/2024/yosanan.html）に載る令和6（2024）年度当初予算（案）の概要（表紙に「予算プレス用資料」。50頁、文字PDF）。目次のとおり、予算編成方針・歳入歳出の規模・債務負担行為・特別区債に続き、「各部予算の概要・主な事業」（P.20〜）で款（企画費〜まちづくり推進費、全庁横断的な経費）ごとに「■主な事業」として事業名・（新規）（拡充）（推進）（見直し）の印・予算額（括弧内に前年度当初予算額）・説明・問合せ先を載せる。同じ頁の「区長記者会見資料」（R6yosanankisyakaikensiryou.pdf、36頁）は重点の取組を抜き出したスライドで、各事業に本冊子の該当頁を【P】で示しているため、冊子のこちらを選ぶ。予算の頁（https://www.city.tokyo-nakano.lg.jp/kusei/zaisei/yosan/tosho.html）には議決後の「当初予算の概要」が別にあり、これは選ばない。確認日 2026-11-10T07:00:54+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131148",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7（2025）年度当初予算（案）の概要",
+          "landing_url": "https://www.city.tokyo-nakano.lg.jp/kusei/public/houdou/2025/yosanan.html",
+          "inspected_at": "2026-11-10T07:00:54+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.tokyo-nakano.lg.jp/kusei/public/houdou/2025/yosanan.files/R7gaiyo.pdf",
+              "sha256": "9253bd238f446892fb6c635c3be681511bef5192444dd0432bcac405aa42c378",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131148/2025/press-initial.pdf",
+            "sha256": "9253bd238f446892fb6c635c3be681511bef5192444dd0432bcac405aa42c378",
+            "final_url": "https://www.city.tokyo-nakano.lg.jp/kusei/public/houdou/2025/yosanan.files/R7gaiyo.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:01:05.107Z"
+      },
+      "reason": "報道発表の頁「2025年2月6日 令和7（2025）年度中野区当初予算案区長記者会見」（https://www.city.tokyo-nakano.lg.jp/kusei/public/houdou/2025/yosanan.html）に載る令和7（2025）年度当初予算（案）の概要（表紙に「予算プレス用資料」。42頁、文字PDF）。目次のとおり、予算編成方針・歳入歳出の規模・債務負担行為・特別区債に続き、「各部予算の概要・主な事業」（P.10〜）で款（企画費〜まちづくり推進費、全庁横断的な経費）ごとに「■主な事業」として事業名・（新規）（拡充）（推進）（見直し）の印・予算額（括弧内に前年度当初予算額）・説明・問合せ先を載せる。同じ頁の「区長記者会見資料」（20250206yosanpress.pdf、50頁）は重点の取組を抜き出したスライドで、各事業に本冊子の該当頁を【P】で示しているため、冊子のこちらを選ぶ。予算の頁（https://www.city.tokyo-nakano.lg.jp/kusei/zaisei/yosan/tosho.html）には議決後の「当初予算の概要」が別にあり、これは選ばない。確認日 2026-11-10T07:00:54+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131148",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8（2026）年度当初予算（案）の概要",
+          "landing_url": "https://www.city.tokyo-nakano.lg.jp/kusei/public/houdou/2026/yosanan.html",
+          "inspected_at": "2026-11-10T07:00:54+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.tokyo-nakano.lg.jp/kusei/public/houdou/2026/yosanan.files/R8gaiyo.pdf",
+              "sha256": "e375c2dca3025ebea4a64e9fa8fac3e11f53575c05a8294077bf8b99282706f4",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131148/2026/press-initial.pdf",
+            "sha256": "e375c2dca3025ebea4a64e9fa8fac3e11f53575c05a8294077bf8b99282706f4",
+            "final_url": "https://www.city.tokyo-nakano.lg.jp/kusei/public/houdou/2026/yosanan.files/R8gaiyo.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:01:09.581Z"
+      },
+      "reason": "報道発表の頁「2026年2月5日 令和8（2026）年度中野区当初予算案区長記者会見」（https://www.city.tokyo-nakano.lg.jp/kusei/public/houdou/2026/yosanan.html）に載る令和8（2026）年度当初予算（案）の概要（表紙に「予算プレス用資料」。49頁、文字PDF）。目次のとおり、予算編成方針・歳入歳出の規模・債務負担行為・特別区債に続き、「各部予算の概要・主な事業」（P.11〜）で款（企画費〜まちづくり推進費、全庁横断的な経費）ごとに「■主な事業」として事業名・（新規）（拡充）（推進）（見直し）の印・予算額（括弧内に前年度当初予算額）・説明・問合せ先を載せる。同じ頁の「区長記者会見資料」（20260205yosanpress.pdf、45頁）は重点の取組を抜き出したスライドで、各事業に本冊子の該当頁を【P】で示しているため、冊子のこちらを選ぶ。予算の頁（https://www.city.tokyo-nakano.lg.jp/kusei/zaisei/yosan/tosho.html）には議決後の「当初予算の概要」が別にあり、これは選ばない。確認日 2026-11-10T07:00:54+00:00。"
+    }
   ]
 }

@@ -2257,5 +2257,121 @@
       },
       "reason": "令和5年度決算に係る調布市の行政評価報告書（施策・事務事業マネジメントシート30施策）。各シートの表題は「施策・事務事業マネジメントシート【令和6年度】」で、施策を構成する基本計画事業等の「Ｒ５取組実績」を載せ、まちづくり指標は実績値（令和3・4年度）と目標値を示す。施策ごとに目的・方向、施策全体の考察、構成事業の取組実績と今後の方向を載せる。文字として読める。施策16のみファイル名が令和6年度（30-16_r6sesaku16.pdf）で、内容は同じく令和6年度シート。"
     }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "132080",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度 市政経営の概要《施策と予算》",
+          "landing_url": "https://www.city.chofu.lg.jp/010020/p001117.html",
+          "inspected_at": "2026-11-10T07:15:33+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/11292/6.pdf",
+              "sha256": "9634942ef2400a73b27bc7c03af86638452882099effc372d592de42d181d918",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132080/2024/press-initial.pdf",
+            "sha256": "9634942ef2400a73b27bc7c03af86638452882099effc372d592de42d181d918",
+            "final_url": "https://www.city.chofu.lg.jp/documents/11292/6.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:17:57.891Z"
+      },
+      "reason": "予算の頁「令和6年度予算概要」（https://www.city.chofu.lg.jp/010020/p001117.html）に載る「令和6年度市政経営の概要《施策と予算》」（表紙「令和6年度予算参考資料」、271頁、文字PDF）。市政経営・予算編成の考え方のあと、「令和6年度予算（案）における市政経営の重点」で主要な新規・拡充事業と5つの重点プロジェクトの主な取組を、事業ごとに事業名・基本計画事業の番号・所管部・[新規][拡充]の印・予算額（万円）・内容の説明で載せ、続けて予算（案）の概要（予算規模・財政フレーム・歳入歳出）と施策別の事業を載せる。令和6年の定例記者会見の資料一覧（https://www.city.chofu.lg.jp/shiseijouhou/kouhou/pressrelease/r06/index.html）からは予算案の会見資料を確認できなかった。確認日 2026-11-10T07:15:33+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132080",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度 市政経営の概要《施策と予算》",
+          "landing_url": "https://www.city.chofu.lg.jp/010020/p001126.html",
+          "inspected_at": "2026-11-10T07:16:01+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/14046/r7siseikeinogaiyou.pdf",
+              "sha256": "f62ff8310763e4b9449e093acd9ee528bd2f745b4fa4a265374c3090dafb97d9",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132080/2025/press-initial.pdf",
+            "sha256": "f62ff8310763e4b9449e093acd9ee528bd2f745b4fa4a265374c3090dafb97d9",
+            "final_url": "https://www.city.chofu.lg.jp/documents/14046/r7siseikeinogaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:18:46.987Z"
+      },
+      "reason": "予算の頁「令和7年度予算概要」（https://www.city.chofu.lg.jp/010020/p001126.html）に載る「令和7年度市政経営の概要《施策と予算》」（表紙「令和7年度予算参考資料」、273頁、文字PDF）。市政経営・予算編成の考え方のあと、「令和7年度予算（案）における市政経営の重点」で主要な新規・拡充事業と5つの重点プロジェクトの主な取組を、事業ごとに事業名・基本計画事業の番号・所管部・[新規][拡充]の印・予算額（万円）・内容の説明で載せ、続けて予算（案）の概要（予算規模・財政フレーム・歳入歳出）と施策別の事業を載せる。令和7年第1回定例記者会見（https://www.city.chofu.lg.jp/010040/p013196.html）の資料3「令和7年度市政経営の概要(抜粋版)」（https://www.city.chofu.lg.jp/documents/14045/siryou3.pdf、18頁）はこの冊子の抜粋（予算規模・歳入歳出と主な新規・拡充事業）なので、冊子のほうを選んだ。確認日 2026-11-10T07:16:01+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132080",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度 市政経営の概要《施策と予算》",
+          "landing_url": "https://www.city.chofu.lg.jp/010020/p003005.html",
+          "inspected_at": "2026-11-10T07:16:44+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.chofu.lg.jp/documents/16867/r8siseikeieinogaiyou.pdf",
+              "sha256": "96df2621971ba9928dc6f73d48409aace14cc6e9d00d8e63efc2cc704cd49d91",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132080/2026/press-initial.pdf",
+            "sha256": "96df2621971ba9928dc6f73d48409aace14cc6e9d00d8e63efc2cc704cd49d91",
+            "final_url": "https://www.city.chofu.lg.jp/documents/16867/r8siseikeieinogaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:19:33.435Z"
+      },
+      "reason": "予算の頁「令和8年度予算概要」（https://www.city.chofu.lg.jp/010020/p003005.html）に載る「令和8年度市政経営の概要《施策と予算》」（表紙「令和8年度予算参考資料」、249頁、文字PDF）。市政経営・予算編成の考え方のあと、「令和8年度予算（案）における市政経営の重点」で主要な新規・拡充事業と5つの重点プロジェクトの主な取組を、事業ごとに事業名・基本計画事業の番号・所管部・[新規][拡充]の印・予算額（万円）・内容の説明で載せ、続けて予算（案）の概要（予算規模・財政フレーム・歳入歳出）と施策別の事業を載せる。令和8年第1回定例記者会見（https://www.city.chofu.lg.jp/010040/p078129.html）の資料3「R8市政経営の概要(抜粋版)」（https://www.city.chofu.lg.jp/documents/16811/04.pdf、18頁）はこの冊子の抜粋（予算規模・歳入歳出と主な新規・拡充事業）なので、冊子のほうを選んだ。確認日 2026-11-10T07:16:44+00:00。"
+    }
   ]
 }

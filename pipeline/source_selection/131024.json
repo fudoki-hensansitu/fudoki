@@ -2081,5 +2081,121 @@
       },
       "reason": "令和5年度決算の主要な施策の成果と行政評価を一冊にした全体版（386頁、令和6年9月）。事業ごとに2頁で、事業概要、財務情報（令和4・5年度の決算額と増減理由）、実施内容、関連データ、総括（令和5年度の成果と課題）、今後の方向性を載せる。文字として読める。基本政策別の分冊（11本）と同じ内容で、1本にまとまる全体版を選んだ。"
     }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "131024",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度 中央区予算(案)の概要",
+          "landing_url": "https://www.city.chuo.lg.jp/a0002/kusei/zaisei/yosan/r6/r6tousyo_press.html",
+          "inspected_at": "2026-11-10T06:55:00+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.chuo.lg.jp/documents/15419/r6_press.pdf",
+              "sha256": "61fbd5f793b06e3e3f31efd35aadb3798401c423b3702e8c6afdaa15dbb65532",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131024/2024/press-initial.pdf",
+            "sha256": "61fbd5f793b06e3e3f31efd35aadb3798401c423b3702e8c6afdaa15dbb65532",
+            "final_url": "https://www.city.chuo.lg.jp/documents/15419/r6_press.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:56:43.538Z"
+      },
+      "reason": "予算の頁の「令和6年度当初予算（案）の概要」（https://www.city.chuo.lg.jp/a0002/kusei/zaisei/yosan/r6/r6tousyo_press.html）に載る冊子「中央区予算(案)の概要」（56頁、文字PDF、令和6年2月）。予算の特色・財政規模・一般会計の状況に続き、重点的な分野（施策名と新規/充実の印・説明・頁）と「主な新規・充実等事業」（基本計画2023の9つの基本政策とその他の事業ごとに、事業名・新規/充実の印・予算額（千円）・説明）を載せる。同じ頁の「中央区予算（案）の概要（資料）」（表題「記者会見用」、27頁）は一部の事業の詳細説明、「参考資料」（令和6年2月8日の中央区予算案プレス発表のスライド、10頁）は要約で、いずれも冊子に含まれる事業の抜粋なので選ばない。「各会計予算計上額総括表」は総括表なので選ばない。確認日 2026-11-10T06:55:00+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131024",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度 中央区予算(案)の概要",
+          "landing_url": "https://www.city.chuo.lg.jp/a0002/kusei/zaisei/yosan/r7/r7tousyo_press.html",
+          "inspected_at": "2026-11-10T06:55:00+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.chuo.lg.jp/documents/16917/r7_press.pdf",
+              "sha256": "c14d5e6849182d8f377d8774a28d3ceb4756f66a3a3721938d8681fb39c9593d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131024/2025/press-initial.pdf",
+            "sha256": "c14d5e6849182d8f377d8774a28d3ceb4756f66a3a3721938d8681fb39c9593d",
+            "final_url": "https://www.city.chuo.lg.jp/documents/16917/r7_press.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:56:46.578Z"
+      },
+      "reason": "予算の頁の「令和7年度当初予算（案）の概要」（https://www.city.chuo.lg.jp/a0002/kusei/zaisei/yosan/r7/r7tousyo_press.html、掲載日2025年2月6日）に載る冊子「中央区予算(案)の概要」（57頁、文字PDF、令和7年2月）。予算の特色・財政規模・一般会計の状況に続き、重点的な分野と「主な新規・充実等事業」（9つの基本政策とその他の事業ごとに、事業名・新規/充実の印・予算額（千円）・説明）を載せる。同じ頁の「中央区予算（案）の概要（資料）」（29頁）は一部の事業の詳細説明、「参考資料」（令和7年2月6日の中央区予算案プレス発表のスライド、11頁）は要約で、冊子に含まれる事業の抜粋なので選ばない。総括表も選ばない。確認日 2026-11-10T06:55:00+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131024",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度 中央区予算(案)の概要",
+          "landing_url": "https://www.city.chuo.lg.jp/a0002/kusei/zaisei/yosan/r8/r8tousyo_press.html",
+          "inspected_at": "2026-11-10T06:55:00+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.chuo.lg.jp/documents/17921/r8_press.pdf",
+              "sha256": "53236c1deef458025f00e34b0524597c11681531625d060d04145889115c45e6",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131024/2026/press-initial.pdf",
+            "sha256": "53236c1deef458025f00e34b0524597c11681531625d060d04145889115c45e6",
+            "final_url": "https://www.city.chuo.lg.jp/documents/17921/r8_press.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:56:52.161Z"
+      },
+      "reason": "予算の頁の「令和8年度当初予算（案）の概要」（https://www.city.chuo.lg.jp/a0002/kusei/zaisei/yosan/r8/r8tousyo_press.html）に載る冊子「中央区予算(案)の概要」（51頁、文字PDF、令和8年2月）。予算の特色・財政規模・一般会計の状況に続き、重点的な分野と「主な新規・充実等事業」（P12〜、9つの基本政策とその他の事業ごとに、事業名・新規/充実の印・予算額（千円）・説明）を載せる。同じ頁の「参考資料」（中央区当初予算案報道発表資料、27頁）は重点分野の事業を抜粋した報道発表のスライドで、冊子に含まれる事業の抜粋なので選ばない。総括表も選ばない。確認日 2026-11-10T06:55:00+00:00。"
+    }
   ]
 }

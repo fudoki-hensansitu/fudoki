@@ -2650,5 +2650,121 @@
       "archive": null,
       "reason": "ブラウザで描画した行政評価の一覧（https://www.city.kita.lg.jp/city-information/evaluation/1011919/index.html、https://www.city.kita.lg.jp/city-information/evaluation/1011919/1011920.html）の掲載は令和8・7・5・4年度の事務事業評価の概要と平成30年度施策評価のみで、令和6年度（令和5年度実績）の事務事業評価は掲載されていない（令和7年度評価から新制度で、令和5年度評価の決算は令和4年度＝2022年度）。2023年度を評価した資料は無い。確認日：2026-10-23（UTC）。"
     }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "131172",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度予算案主な事業（2024年度）",
+          "landing_url": "https://www.city.kita.lg.jp/city-information/finance/1014484/1014486.html",
+          "inspected_at": "2026-11-10T07:09:19+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.kita.lg.jp/_res/projects/default_project/_page_/001/014/486/24yosanan.pdf",
+              "sha256": "0a7ce39359d579522e8b030eea78d065ed1b93d5c4dbd69032946541ef61a4e8",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131172/2024/press-initial.pdf",
+            "sha256": "0a7ce39359d579522e8b030eea78d065ed1b93d5c4dbd69032946541ef61a4e8",
+            "final_url": "https://www.city.kita.lg.jp/_res/projects/default_project/_page_/001/014/486/24yosanan.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:09:22.719Z"
+      },
+      "reason": "予算の頁「令和8年度予算案主な事業（予算プレス資料）」（https://www.city.kita.lg.jp/city-information/finance/1014484/1014486.html。過年度分も並べて掲載）に載る令和6年度予算案主な事業（令和6年2月、68頁、文字PDF）。目次（物理2頁〜）のとおり、予算案の特徴（編成方針・一般会計・基金と特別区債・リーディングプロジェクト）のあと、主要政策ごとの「主な事業」で施策ごとに事業名・【新】新規の印・予算額（千円）・ここがポイント・事業概要・担当課を載せる。同じ予算の頁群にある「予算の概要」（https://www.city.kita.lg.jp/city-information/finance/1014484/1014485.html）は議決後の規模・歳入歳出の説明で、選ばない。確認日 2026-11-10T07:09:19+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131172",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度予算案主な事業",
+          "landing_url": "https://www.city.kita.lg.jp/city-information/finance/1014484/1014486.html",
+          "inspected_at": "2026-11-10T07:09:19+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.kita.lg.jp/_res/projects/default_project/_page_/001/014/486/omonajigyouzenntai.pdf",
+              "sha256": "faf0d66ac6ac269a7fbd94d15c0f9d30b7ea9c96921675f0db974346fc765b4f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131172/2025/press-initial.pdf",
+            "sha256": "faf0d66ac6ac269a7fbd94d15c0f9d30b7ea9c96921675f0db974346fc765b4f",
+            "final_url": "https://www.city.kita.lg.jp/_res/projects/default_project/_page_/001/014/486/omonajigyouzenntai.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:09:25.239Z"
+      },
+      "reason": "予算の頁「令和8年度予算案主な事業（予算プレス資料）」（https://www.city.kita.lg.jp/city-information/finance/1014484/1014486.html。過年度分も並べて掲載）に載る令和7年度予算案主な事業（54頁、文字PDF。表紙は無く目次から始まる）。目次（物理1頁）のとおり、予算案の特徴（予算規模・歳入・歳出・基金と特別区債）のあと、主要政策ごとの「主な事業」で施策ごとに事業名・【新】新規の印・予算額（千円）・ここがポイント・事業概要・担当課を載せる。同じ予算の頁群にある「予算の概要」（https://www.city.kita.lg.jp/city-information/finance/1014484/1014485.html）は議決後の規模・歳入歳出の説明で、選ばない。確認日 2026-11-10T07:09:19+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131172",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度予算案主な事業（2026年度）",
+          "landing_url": "https://www.city.kita.lg.jp/city-information/finance/1014484/1014486.html",
+          "inspected_at": "2026-11-10T07:09:19+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.kita.lg.jp/_res/projects/default_project/_page_/001/014/486/260209_yosan.pdf",
+              "sha256": "9d5b681183f2555acd45a7e4a6d91f418a6c50d1b1d351310a1a805ad188f89d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131172/2026/press-initial.pdf",
+            "sha256": "9d5b681183f2555acd45a7e4a6d91f418a6c50d1b1d351310a1a805ad188f89d",
+            "final_url": "https://www.city.kita.lg.jp/_res/projects/default_project/_page_/001/014/486/260209_yosan.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:09:27.539Z"
+      },
+      "reason": "予算の頁「令和8年度予算案主な事業（予算プレス資料）」（https://www.city.kita.lg.jp/city-information/finance/1014484/1014486.html）に載る令和8年度予算案主な事業（表紙に press release、67頁、文字PDF）。目次（物理2頁〜）のとおり、予算案の特徴（予算規模・歳入・歳出・持続可能な財政運営）、3つのリーディングプロジェクト、7つの主要政策の順に、施策ごとに事業名・新規の印・予算額（千円）・ポイント・事業概要・担当課を載せる。同じ予算の頁群にある「予算の概要」（https://www.city.kita.lg.jp/city-information/finance/1014484/1014485.html）は議決後の規模・歳入歳出の説明で、選ばない。確認日 2026-11-10T07:09:19+00:00。"
+    }
   ]
 }
