@@ -66,7 +66,7 @@ function Picker({ entries, onPick, placeholder }: { entries: MapEntry[]; onPick:
   const [query, setQuery] = React.useState('')
   return (
     <>
-    <Combobox autoHighlight items={entries} onInputValueChange={setQuery} filter={(e: MapEntry, q: string) => matches(e, q)} itemToStringLabel={(e: MapEntry) => e.name} value={null} onValueChange={(e) => e && onPick(e as MapEntry)}>
+    <Combobox autoHighlight items={entries} onInputValueChange={(v, d) => d.reason === 'input-change' && setQuery(v)} filter={(e: MapEntry, q: string) => matches(e, q)} itemToStringLabel={(e: MapEntry) => e.name} value={null} onValueChange={(e) => e && onPick(e as MapEntry)}>
       <ComboboxInput showTrigger={false} aria-label="自治体名で探す" placeholder={placeholder} className="h-12 rounded-full border-0 bg-brand-fill px-2 text-[15px] text-brand-fill-foreground shadow-[var(--shadow-pill)] dark:bg-brand-fill dark:shadow-none [&_input]:placeholder:text-brand-fill-muted [&_svg]:text-brand-fill-muted has-[[data-slot=input-group-control]:focus-visible]:ring-ring/15">
         <InputGroupAddon>
           <MagnifyingGlassIcon className="size-5" />
@@ -84,7 +84,8 @@ function Picker({ entries, onPick, placeholder }: { entries: MapEntry[]; onPick:
         </ComboboxList>
       </ComboboxContent>
     </Combobox>
-    {/* 候補の窓の中のリンクはキーボードで辿れないので、要望フォームへの入口は検索欄の下に出す */}
+    {/* 候補の窓の中のリンクはキーボードで辿れないので、要望フォームへの入口は検索欄の下に出す。
+        窓が閉じるときに入力欄が空に戻されても Tab でリンクへ進めるよう、手で打った語だけを覚える */}
     {noMatch(entries, query) ? <RequestTown className="mt-2 text-[13px]" /> : null}
     </>
   )

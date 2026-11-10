@@ -390,7 +390,7 @@ export function IndexPage({ map: entries, initial }: { map: MapEntry[]; initial:
       <h1 className="text-[clamp(2.2rem,1.6rem+2.4vw,3.4rem)] font-normal leading-tight">自治体を探す</h1>
       {entries.length ? (
         <>
-        <Combobox autoHighlight items={byYen} onInputValueChange={setTyped} filter={(e: MapEntry, q: string) => matches(e, q)} itemToStringLabel={(e: MapEntry) => e.name} value={null} onValueChange={(e) => e && find(e as MapEntry)}>
+        <Combobox autoHighlight items={byYen} onInputValueChange={(v, d) => d.reason === 'input-change' && setTyped(v)} filter={(e: MapEntry, q: string) => matches(e, q)} itemToStringLabel={(e: MapEntry) => e.name} value={null} onValueChange={(e) => e && find(e as MapEntry)}>
           <ComboboxInput showTrigger={false} aria-label="自治体名で探す" placeholder="自治体名で探す（例：品川、shinagawa）" className="mt-6 h-12 rounded-full bg-background px-2 text-[15px] has-[[data-slot=input-group-control]:focus-visible]:ring-ring/15">
             <InputGroupAddon>
               <MagnifyingGlassIcon />
@@ -408,7 +408,8 @@ export function IndexPage({ map: entries, initial }: { map: MapEntry[]; initial:
             </ComboboxList>
           </ComboboxContent>
         </Combobox>
-        {/* 候補の窓の中のリンクはキーボードで辿れないので、要望フォームへの入口は検索欄の下に出す */}
+        {/* 候補の窓の中のリンクはキーボードで辿れないので、要望フォームへの入口は検索欄の下に出す。
+        窓が閉じるときに入力欄が空に戻されても Tab でリンクへ進めるよう、手で打った語だけを覚える */}
         {typed.trim() && !entries.some((e) => matches(e, typed)) ? <RequestTown className="mt-2 text-[13px] text-muted-foreground" /> : null}
         </>
       ) : (
