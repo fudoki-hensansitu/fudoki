@@ -1,10 +1,11 @@
-// 事業評価・予算案の操作（REST と MCP）。応答が出力の schema に合うか、404・ページ・bind を確かめる。
+// 事業評価・予算案・事業の操作（REST と MCP）。応答が出力の schema に合うか、404・ページ・bind を確かめる。
 import { beforeEach, describe, expect, test } from 'bun:test'
 import type { Database } from 'bun:sqlite'
 import { createApp } from './app'
 import { BudgetProposalOutput, MeasureSearchOutput } from './budget-proposal/model'
 import type { Db } from './db'
 import { EvaluationOutput, SheetOutput, SheetSearchOutput } from './evaluation/model'
+import { ProjectOutput, ProjectSearchOutput } from './project/model'
 import { testDb } from './testing'
 
 let db: Db
@@ -85,5 +86,41 @@ describe('予算案', () => {
       await (await post('/v1/budget-proposals/measures:search', { fiscal_year: { min: 2026, max: 2026 }, where: { is_new: { eq: true } } })).json()
     )
     expect(body.measures.map((m) => m.title)).toEqual(['施策0'])
+  })
+})
+
+describe('事業', () => {
+  const P = H('a')
+  const CHILD = H('c')
+  beforeEach(() => {
+    sqlite.query(`UPDATE evaluation_sheet SET detail_id = 'd-settled' WHERE sheet_id = ?`).run(H('0'))
+    sqlite.query(`UPDATE budget_measure SET detail_id = 'd-initial' WHERE measure_id = ?`).run(H('5'))
+    for (const [id, name, parent] of [[P, '子育て支援費', null], [CHILD, '子育て相談', P]] as const)
+      insert('project', { project_id: id, jurisdiction_code: '131091', name, account_name: '一般会計', first_year: 2024, first_year_kind: 'before_coverage', last_year: null, last_year_kind: 'latest', parent_project_id: parent })
+    for (const [fy, budget, settled] of [[2024, 'd-old', 'd-settled'], [2026, 'd-initial', null]] as const)
+      insert('project_year', {
+        project_year_id: H(String(fy % 10)), project_id: P, jurisdiction_code: '131091', fiscal_year: fy, name: '子育て支援費', account_name: '一般会計',
+        kan_name: '民生費', kou_name: '児童福祉費', moku_name: '児童福祉総務費', budget_detail_id: budget, settlement_detail_id: settled, budget_yen: 1000, settled_yen: settled ? 900 : null,
+      })
+  })
+
+  test('事業は年度・直下の事業・付いた評価シートと施策を返す', async () => {
+    const body = ProjectOutput.parse(await (await get(`/v1/projects/${P}`)).json())
+    expect(body.years.map((y) => y.fiscal_year)).toEqual([2024, 2026])
+    expect(body.children.map((c) => c.project_id)).toEqual([CHILD])
+    expect(body.evaluation_sheets.map((s) => s.sheet_id)).toEqual([H('0')])
+    expect(body.budget_measures.map((m) => m.measure_id)).toEqual([H('5')])
+    expect((await get(`/v1/projects/${H('f')}`)).status).toBe(404)
+    expect((await get('/v1/projects/xyz')).status).toBe(400)
+  })
+
+  test('事業の年度の検索は年度が必須で、値は bind する', async () => {
+    expect((await post('/v1/projects:search', { where: {} })).status).toBe(400)
+    const body = ProjectSearchOutput.parse(
+      await (await post('/v1/projects:search', { fiscal_year: { min: 2026, max: 2026 }, where: { name: { contains: "子育て' OR 1=1 --" } } })).json()
+    )
+    expect(body.project_years).toEqual([])
+    const hit = ProjectSearchOutput.parse(await (await post('/v1/projects:search', { fiscal_year: { min: 2024, max: 2026 }, where: { name: { contains: '子育て' } } })).json())
+    expect(hit.project_years.map((y) => y.fiscal_year).sort()).toEqual([2024, 2026])
   })
 })

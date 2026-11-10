@@ -282,19 +282,21 @@ describe('MCP', () => {
   test('initialize → tools/list → tools/call', async () => {
     const init = await rpc('initialize', { protocolVersion: '2025-03-26', capabilities: {}, clientInfo: { name: 't', version: '0' } })
     expect(init.body.result.serverInfo.name).toBe('fudoki-api')
-    expect(init.body.result.instructions).toContain('read-only search of Japanese municipal expenditure budgets and settlements, project evaluation sheets and budget proposal press releases')
+    expect(init.body.result.instructions).toContain('read-only search of Japanese municipal expenditure budgets and settlements, project evaluation sheets, budget proposal press releases and projects')
     const list = await rpc('tools/list')
     expect(list.body.result.tools.map((t: { name: string }) => t.name).sort()).toEqual([
       'get_budget_proposal',
       'get_evaluation',
       'get_evaluation_sheet',
       'get_expenditure_line',
+      'get_project',
       'list_jurisdictions',
       'render_expenditure_view',
       'search_budget_measures',
       'search_evaluation_sheets',
       'search_expenditure_details',
       'search_expenditure_subjects',
+      'search_projects',
     ])
     const res = await call('search_expenditure_subjects', { ...base, where: { level: { eq: ['目'] } }, page_size: 1 })
     const out = JSON.parse(res.body.result.content[0].text)
@@ -520,12 +522,14 @@ describe('MCP 2026-07-28', () => {
       'get_evaluation',
       'get_evaluation_sheet',
       'get_expenditure_line',
+      'get_project',
       'list_jurisdictions',
       'render_expenditure_view',
       'search_budget_measures',
       'search_evaluation_sheets',
       'search_expenditure_details',
       'search_expenditure_subjects',
+      'search_projects',
     ])
     const res = await modern('tools/call', { name: 'search_expenditure_subjects', arguments: valid }, { 'Mcp-Name': 'search_expenditure_subjects' })
     const body = await rpcBody(res)

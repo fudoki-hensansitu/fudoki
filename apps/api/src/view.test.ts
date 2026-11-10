@@ -52,8 +52,9 @@ describe('MCP Apps の View', () => {
   test('Directory exposes stable tool names with English capability descriptions', async () => {
     const tools = (await rpc('tools/list')).result.tools as { name: string; title: string; description: string; inputSchema: { properties: Record<string, { enum?: string[] }> } }[]
     expect(tools.map((t) => t.name).sort()).toEqual([
-      'get_budget_proposal', 'get_evaluation', 'get_evaluation_sheet', 'get_expenditure_line', 'list_jurisdictions',
+      'get_budget_proposal', 'get_evaluation', 'get_evaluation_sheet', 'get_expenditure_line', 'get_project', 'list_jurisdictions',
       'render_expenditure_view', 'search_budget_measures', 'search_evaluation_sheets', 'search_expenditure_details', 'search_expenditure_subjects',
+      'search_projects',
     ])
     for (const t of tools) {
       expect(t.title).toMatch(/[A-Za-z]+ [A-Za-z]+/)
