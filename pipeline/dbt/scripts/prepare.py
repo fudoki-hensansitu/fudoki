@@ -263,7 +263,7 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
         con.commit()
     return {'warehouse': str(warehouse), 'tables': len(tables), 'csv_tables': len(csv_tables),
             'origins': len(origins), 'jurisdictions': len(jurisdictions), 'population_origins': len(population_origins),
-            'evaluation_sheets': len(project_tables['project_evaluation_sheet']), 'budget_initiatives': len(project_tables['project_budget_initiative']),
+            'evaluation_sheets': len(project_tables['project_evaluation_sheet']), 'budget_measures': len(project_tables['project_budget_measure']),
             'nodes': sum(t[-2] for t in tables), 'amounts': sum(t[-1] for t in tables)}
 
 
@@ -285,11 +285,8 @@ def main() -> None:
     if args.build:
         # --full-refresh: a seed that gains a column would otherwise fail against the table of an earlier build.
         subprocess.run(['dbt', 'build', '--full-refresh', '--project-dir', str(DBT), '--profiles-dir', str(DBT),
-                        '--select', '+fiscal_expenditure_subject', '+fiscal_expenditure_detail',
-                        '+fiscal_expenditure_location', '+fiscal_origin', '+fiscal_coverage', '+jurisdiction',
-                        '+population_origin', '+population', 'cofog_master',
-                        '+project_origin', '+project_evaluation_sheet', '+project_evaluation_indicator',
-                        '+project_evaluation_indicator_value', '+project_evaluation_result', '+project_budget_initiative'],
+                        '--select', 'marts.expenditure+', '+marts.expenditure', '+jurisdiction',
+                        '+marts.population', 'cofog_master', '+marts.evaluation', '+marts.budget_proposal'],
                        cwd=DBT, stdout=sys.stderr, check=True)
         result['dbt_build'] = 'passed'
     print(json.dumps(result, ensure_ascii=False))

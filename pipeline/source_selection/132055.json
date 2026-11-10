@@ -6534,7 +6534,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "未選定（未公表）。令和7年度実施事業（2025年度）を評価する令和8年度の青梅市行政評価シートは未公表。Orca のブラウザで描画した行政評価（事務事業評価）の頁（https://www.city.ome.tokyo.jp/soshiki/80/65722.html、2026年3月30日更新）の最新は「令和7年度青梅市行政評価シート（令和6年度実施事務事業）」（2024年度分としてすでに選んでいる）と同種施設比較分析表（令和6年度決算分）で、令和8年度の掲載は無い。確認日：2026-10-23T09:47:41+00:00（UTC）。"
+      "reason": "未選定（未公表）。令和7年度実施事業（2025年度）を評価する令和8年度の青梅市行政評価シートは未公表。Orca のブラウザで描画した行政評価（事務事業評価）の頁（https://www.city.ome.tokyo.jp/soshiki/80/65722.html、2026年3月30日更新）の最新は「令和7年度青梅市行政評価シート（令和6年度実施事務事業）」（2024年度分としてすでに選んでいる）と同種施設比較分析表（令和6年度決算分）で、令和8年度の掲載は無い。確認日：2026-11-10T07:06:45+00:00（UTC）。"
     },
     {
       "target": {
@@ -6611,6 +6611,122 @@
         "archived_at": "2026-10-15T12:48:12.188Z"
       },
       "reason": "令和5年度に実施した事務事業のうち19事業を抽出して令和6年度に評価した行政評価シート。表紙に「令和6年度 青梅市行政評価シート （令和5年度実施事務事業）」とあり、評価対象は令和5年度。事業ごとに目的・概要・事業費、成果指標の目標値と実績値、視点別事業評価（必要性・効率性・有効性）、事業目標達成度評価、今後の方向性を載せる。文字として読める。"
+    }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "132055",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度 青梅市 当初予算（当初予算の概要）",
+          "landing_url": "https://www.city.ome.tokyo.jp/site/omezaisei/118386.html",
+          "inspected_at": "2026-11-10T07:06:38+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.ome.tokyo.jp/uploaded/attachment/55009.pdf",
+              "sha256": "c6f95eef84f767d7d046ffc736767549233d06eeb5324c353c833c062d3bca0c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132055/2024/press-initial.pdf",
+            "sha256": "c6f95eef84f767d7d046ffc736767549233d06eeb5324c353c833c062d3bca0c",
+            "final_url": "https://www.city.ome.tokyo.jp/uploaded/attachment/55009.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:06:49.501Z"
+      },
+      "reason": "市の財政の「令和6年度 予算の概要」の頁（https://www.city.ome.tokyo.jp/site/omezaisei/118386.html）に載る「令和6年度当初予算の概要」（15頁、文字PDF）。予算編成方針・財政規模・一般会計の歳入歳出の款別表のあと、「一般会計予算のポイント」（物理10〜12頁）で総合長期計画の施策分野ごとに事業名・【新】新規/【拡】拡充/【投】投資的/【継】継続の印・予算額（千円）・款を1行ずつ載せる（説明文は無い）。末尾は使用料等の改定・基金と市債・特別会計と企業会計の概要。青梅市は市長の記者会見・報道発表の頁を持たず（市長の部屋は施政方針演説のみ）、予算案の発表資料はこれに当たる。施政方針演説は市長の説明文なので選ばない。確認日 2026-11-10T07:06:38+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132055",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度 青梅市 当初予算（当初予算の概要）",
+          "landing_url": "https://www.city.ome.tokyo.jp/site/omezaisei/118381.html",
+          "inspected_at": "2026-11-10T07:06:40+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.ome.tokyo.jp/uploaded/attachment/78086.pdf",
+              "sha256": "2202a788478a189ae6a031d0132e26dfad0d399900480b05fb651bdceb8ae5d8",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132055/2025/press-initial.pdf",
+            "sha256": "2202a788478a189ae6a031d0132e26dfad0d399900480b05fb651bdceb8ae5d8",
+            "final_url": "https://www.city.ome.tokyo.jp/uploaded/attachment/78086.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:06:56.405Z"
+      },
+      "reason": "市の財政の「令和7年度 予算の概要」の頁（https://www.city.ome.tokyo.jp/site/omezaisei/118381.html）に載る「令和7年度当初予算の概要」（15頁、文字PDF）。予算編成方針・財政規模・一般会計の歳入歳出の款別表のあと、「一般会計予算のポイント」（物理10〜12頁）で総合長期計画の施策分野ごとに事業名・【新】新規/【拡】拡充/【投】投資的/【継】継続の印・予算額（千円）・款を1行ずつ載せる（説明文は無い）。末尾は使用料等の改定・基金と市債・特別会計と企業会計の概要。青梅市は市長の記者会見・報道発表の頁を持たず（市長の部屋は施政方針演説のみ）、予算案の発表資料はこれに当たる。施政方針演説は市長の説明文なので選ばない。確認日 2026-11-10T07:06:40+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132055",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度 青梅市 当初予算（当初予算の概要）",
+          "landing_url": "https://www.city.ome.tokyo.jp/site/omezaisei/118378.html",
+          "inspected_at": "2026-11-10T07:06:43+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.ome.tokyo.jp/uploaded/attachment/78087.pdf",
+              "sha256": "21d6085840f7eb405ece7cb336e6ce74064c1764675973ed38207f38a7531d64",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132055/2026/press-initial.pdf",
+            "sha256": "21d6085840f7eb405ece7cb336e6ce74064c1764675973ed38207f38a7531d64",
+            "final_url": "https://www.city.ome.tokyo.jp/uploaded/attachment/78087.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:06:58.783Z"
+      },
+      "reason": "市の財政の「令和8年度 予算の概要」の頁（https://www.city.ome.tokyo.jp/site/omezaisei/118378.html）に載る「令和8年度当初予算の概要」（14頁、文字PDF）。予算編成方針・財政規模・一般会計の歳入歳出の款別表のあと、「一般会計予算のポイント」（物理10〜11頁）で総合長期計画の施策分野ごとに事業名・★重点事業の印・【新】新規/【拡】拡充/【投】投資的/【継】継続の印・予算額（千円）・款を1行ずつ載せる（説明文は無い）。末尾は使用料等の改定・基金と市債・特別会計と企業会計の概要。青梅市は市長の記者会見・報道発表の頁を持たず（市長の部屋は施政方針演説のみ）、予算案の発表資料はこれに当たる。施政方針演説は市長の説明文なので選ばない。確認日 2026-11-10T07:06:43+00:00。"
     }
   ]
 }

@@ -5386,5 +5386,121 @@
       "archive": null,
       "reason": "選ばない。2023年度（令和5年度）の評価は、2024年度に選んだ施策分野評価シート35冊（https://www.town.mizuho.tokyo.jp/tyosei/002/001/002/p009025.html、更新日2026-02-26）の令和5年度の列（施策数値指標の実績、予算額・決算額）と重点施策の令和5年度の進捗状況・評価にも載っている。ただし同じ35ファイルは令和3〜6年度を1冊に持つ最新版1組だけの公開で、令和5年度版は別に公開されていない。各頁に令和3〜6年度の列が並ぶ作りで、頁の範囲で令和5年度分だけを分けられない。同じファイルは2024年度に選んだので2023年度には選ばない。令和5年度の実績・決算額・評価は2024年度の選定の資料で引ける。行政評価の頁（https://www.town.mizuho.tokyo.jp/tyosei/004/index.html）は行政評価委員会の資料のみ。事務報告書は活動報告。確認日：2026-10-23（UTC）。"
     }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度 瑞穂町予算（案）の概要",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/tyosei/003/012/018/p009907.html",
+          "inspected_at": "2026-11-10T06:54:24+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/003/012/018/p009907_d/fil/R6yosanngaiyou.pdf",
+              "sha256": "6a09870186625f0725d87b3739a0c5a5b461d1cde79c1f053dc0bf233ba56cc0",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2024/press-initial.pdf",
+            "sha256": "6a09870186625f0725d87b3739a0c5a5b461d1cde79c1f053dc0bf233ba56cc0",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/003/012/018/p009907_d/fil/R6yosanngaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:54:39.369Z"
+      },
+      "reason": "予算の頁の令和6年度の記事「令和6年度瑞穂町予算（案）の概要」（https://www.town.mizuho.tokyo.jp/tyosei/003/012/018/p009907.html、更新日 令和6年2月22日）の PDF（20頁、令和6年2月）。町長の記者会見・報道発表の頁に当初予算の発表資料は見当たらないため、この概要を選ぶ。予算編成の考え方・予算の規模・歳入の主な状況のあと、物理9〜16頁の「第5次瑞穂町長期総合計画の基本目標にそった令和6年度一般会計予算（案）の概要」で基本目標ごと・部ごとに事業名と予算額（万円単位）と（新規）（継続）の印を並べる。事業の説明文は無い。末尾の物理17〜20頁は会計別・款別の巻末資料。物理1〜16頁は文字が抽出できず（画像 XObject も無く輪郭化された文字）、画像として読む必要があるため scan。同じ年度の「当初予算説明資料」（https://www.town.mizuho.tokyo.jp/tyosei/003/012/001/p001153.html の 6siryou.pdf）は選ばない。確認日 2026-11-10T06:54:24+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度 瑞穂町予算（案）の概要",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/tyosei/003/012/019/p010651.html",
+          "inspected_at": "2026-11-10T06:54:24+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/003/012/019/p010651_d/fil/R6yosanngaiyou.pdf",
+              "sha256": "d31949127c61b863fc5a4c5c71147dfe12fa4472bbab28126e6a345407f65579",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2025/press-initial.pdf",
+            "sha256": "d31949127c61b863fc5a4c5c71147dfe12fa4472bbab28126e6a345407f65579",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/003/012/019/p010651_d/fil/R6yosanngaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:54:41.544Z"
+      },
+      "reason": "予算の頁の令和7年度の記事「令和7年度瑞穂町予算（案）の概要」（https://www.town.mizuho.tokyo.jp/tyosei/003/012/019/p010651.html、更新日 令和7年2月21日）の PDF（24頁、令和7年2月、文字PDF。ファイル名は R6yosanngaiyou.pdf だが中身は令和7年度）。町長の記者会見・報道発表の頁に当初予算の発表資料は見当たらないため、この概要を選ぶ。予算編成方針の抜粋・予算の規模・会計別の表のあと、物理11〜20頁で長期総合計画の基本目標ごとに主な取組の説明（箇条書き）と、事業名・予算額（万円単位）・新規の印（新）を並べる。物理21頁以降は款別の巻末資料。同じ年度の「まちの予算」（https://www.town.mizuho.tokyo.jp/tyosei/003/012/019/p010703.html）は選ばない。確認日 2026-11-10T06:54:24+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "133035",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度 瑞穂町予算（案）の概要",
+          "landing_url": "https://www.town.mizuho.tokyo.jp/tyosei/003/012/020/p011463.html",
+          "inspected_at": "2026-11-10T06:54:24+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.mizuho.tokyo.jp/tyosei/003/012/020/p011463_d/fil/R7yosanngaiyou.pdf",
+              "sha256": "d85338e4aba9d869bc23a9e90754cfcfe38b210fde52ff9a8dbcd9ed012ce0c9",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133035/2026/press-initial.pdf",
+            "sha256": "d85338e4aba9d869bc23a9e90754cfcfe38b210fde52ff9a8dbcd9ed012ce0c9",
+            "final_url": "https://www.town.mizuho.tokyo.jp/tyosei/003/012/020/p011463_d/fil/R7yosanngaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:54:44.828Z"
+      },
+      "reason": "予算の頁の令和8年度の記事「令和8年度瑞穂町予算（案）の概要」（https://www.town.mizuho.tokyo.jp/tyosei/003/012/020/p011463.html、更新日 令和8年2月19日）の PDF（24頁、令和8年2月。ファイル名は R7yosanngaiyou.pdf だが中身は令和8年度）。町長の記者会見・報道発表の頁に当初予算の発表資料は見当たらないため、この概要を選ぶ。予算編成の考え方・財政状況・予算の規模のあと、物理10〜19頁の「Point 令和8年度 主要施策と関連する予算」で基本目標・施策ごとに取組の説明（箇条書き）と、事業名・予算額（万円単位）・新規の印（新）を枠で並べる。物理20〜23頁は款別の巻末資料、物理24頁は主な工事。説明文は文字として読めるが、事業名・予算額の枠（物理10〜19頁）は文字が抽出できず画像として読む必要があるため scan。同じ年度の「まちの予算」（https://www.town.mizuho.tokyo.jp/tyosei/003/012/020/p011456.html）は選ばない。確認日 2026-11-10T06:54:24+00:00。"
+    }
   ]
 }

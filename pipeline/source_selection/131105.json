@@ -2400,5 +2400,157 @@
       "archive": null,
       "reason": "ブラウザで描画した主要な施策の成果等報告書の掲載一覧（https://www.city.meguro.tokyo.jp/zaisei/kusei/yosan/shuyou.html）に令和5年度（2023年度）主要な施策の成果等報告書（r5syuyousesaku.pdf、540頁）がある。目次は「実施計画事業等の執行実績」「款別予算決算比較表・部別款別予算決算一覧表・歳出各款の執行状況」で、実施計画事業は予算額・執行額と計画期間の達成状況の短い記述のみ、本体は予算決算比較表と不用額の理由で、事業ごとの目標・成果指標・評価・課題の欄が無いため選ばない。決算の頁（https://www.city.meguro.tokyo.jp/kaikei/kusei/yosan/kessan.html）は決算書のみ。DuckDuckGo の site 検索（事務事業評価・行政評価・施策評価・事業評価・成果 評価 令和6年度）では全庁の事業評価は無く、事務事業見直し（財源確保）、指定管理者運営評価、教育委員会の点検・評価、子ども総合計画や保健医療福祉計画など分野別の計画の評価（https://www.city.meguro.tokyo.jp/kusei/keikaku/kosodate/jigyouhyouka/index.html）のみで、全体を覆う評価資料ではない。確認日：2026-10-23（UTC）。"
     }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "131105",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度（2024年度）目黒区当初予算案プレス発表資料（本編・資料編）",
+          "landing_url": "https://www.city.meguro.tokyo.jp/zaisei/kusei/yosan/gaiyou06.html",
+          "inspected_at": "2026-11-10T07:14:55+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.meguro.tokyo.jp/documents/14537/r06_yosan_honpen.pdf",
+              "sha256": "2cd6819b2dae1cff75b3959730fff08d600d5727f917e5d8c9dfc11b1b77aa83",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.meguro.tokyo.jp/documents/14537/r06_yosan_siryou.pdf",
+              "sha256": "5b342d17d8d807300c3316a89ac37bdc30147fdfe2242468c50fee5f96e6fc8c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131105/2024/press-initial-1.pdf",
+            "sha256": "2cd6819b2dae1cff75b3959730fff08d600d5727f917e5d8c9dfc11b1b77aa83",
+            "final_url": "https://www.city.meguro.tokyo.jp/documents/14537/r06_yosan_honpen.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131105/2024/press-initial-2.pdf",
+            "sha256": "5b342d17d8d807300c3316a89ac37bdc30147fdfe2242468c50fee5f96e6fc8c",
+            "final_url": "https://www.city.meguro.tokyo.jp/documents/14537/r06_yosan_siryou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:15:04.925Z"
+      },
+      "reason": "予算の頁「令和6年度予算の概要」（https://www.city.meguro.tokyo.jp/zaisei/kusei/yosan/gaiyou06.html）に載る令和6年2月1日の当初予算案プレス発表資料の2冊（いずれも全頁版、文字PDF）。本編（26頁）は予算案の概要（考え方・規模・内訳）と予算案の主な事業（施策ごとに事業名・新規の印・予算額（万円）・目的・概要・担当課）、資料編（76頁）は予算案の概要と資料2 実施計画事業・資料3 重点化対象事業等（事業名・予算額（千円）・説明）・主要建設事業一覧・見直し事項一覧・各会計歳入歳出予算を載せる。施策が載る冊が2冊に分かれるので2冊を1つの候補にまとめる。区長記者会見の別の頁は見つからなかった（報道発表の一覧 https://www.city.meguro.tokyo.jp/kusei/kouhou/houdounews/r06nendo/index.html には補正予算の発表のみ）。確認日 2026-11-10T07:14:55+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131105",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度（2025年度）目黒区当初予算案プレス発表資料（本編・資料編）",
+          "landing_url": "https://www.city.meguro.tokyo.jp/zaisei/kusei/yosan/gaiyo07.html",
+          "inspected_at": "2026-11-10T07:14:55+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.meguro.tokyo.jp/documents/17203/r07_yosan_honpen.pdf",
+              "sha256": "4f9d7c98e3bee10d4a539d4b4d09e4d65860b8a012d02ba79c64ac6bd4f7d60f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.meguro.tokyo.jp/documents/17203/r07_yosan_siryou.pdf",
+              "sha256": "13727a86f9e498005ce0d1063d9b9fd2c86f7fc85dd39ea29917d25ec7adbd29",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131105/2025/press-initial-2.pdf",
+            "sha256": "4f9d7c98e3bee10d4a539d4b4d09e4d65860b8a012d02ba79c64ac6bd4f7d60f",
+            "final_url": "https://www.city.meguro.tokyo.jp/documents/17203/r07_yosan_honpen.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131105/2025/press-initial-1.pdf",
+            "sha256": "13727a86f9e498005ce0d1063d9b9fd2c86f7fc85dd39ea29917d25ec7adbd29",
+            "final_url": "https://www.city.meguro.tokyo.jp/documents/17203/r07_yosan_siryou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:15:10.395Z"
+      },
+      "reason": "予算の頁「令和7年度予算の概要」（https://www.city.meguro.tokyo.jp/zaisei/kusei/yosan/gaiyo07.html）に載る当初予算案プレス発表資料の2冊（いずれも全頁版、文字PDF）。本編（20頁）は予算案の概要と主な事業（施策ごとに事業名・新規の印・予算額（万円）・目的・概要・担当課）、資料編（71頁）は実施計画事業・重点化対象事業等（事業名・予算額（千円）・説明）などを載せる。施策が載る冊が2冊に分かれるので2冊を1つの候補にまとめる。確認日 2026-11-10T07:14:55+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131105",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度（2026年度）目黒区当初予算案プレス発表資料（本編・資料編）",
+          "landing_url": "https://www.city.meguro.tokyo.jp/zaisei/kusei/yosan/gaiyo08.html",
+          "inspected_at": "2026-11-10T07:14:55+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.meguro.tokyo.jp/documents/19579/r08_yosan_honpen.pdf",
+              "sha256": "fc125cfd21bac364764fd6b6467beb8921f908833ec80f28d4c0c99bba7a9057",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.meguro.tokyo.jp/documents/19579/r08_yosan_siryou.pdf",
+              "sha256": "d255e51e4dbbbda1c03de1da7580b104569cd1397b32f25d1cd550c1795469b8",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131105/2026/press-initial-2.pdf",
+            "sha256": "fc125cfd21bac364764fd6b6467beb8921f908833ec80f28d4c0c99bba7a9057",
+            "final_url": "https://www.city.meguro.tokyo.jp/documents/19579/r08_yosan_honpen.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131105/2026/press-initial-1.pdf",
+            "sha256": "d255e51e4dbbbda1c03de1da7580b104569cd1397b32f25d1cd550c1795469b8",
+            "final_url": "https://www.city.meguro.tokyo.jp/documents/19579/r08_yosan_siryou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:15:16.184Z"
+      },
+      "reason": "予算の頁「令和8年度予算案の概要を発表しました」（https://www.city.meguro.tokyo.jp/zaisei/kusei/yosan/gaiyo08.html）に載る令和8年2月2日の当初予算案プレス発表資料の2冊（いずれも全頁版、文字PDF）。本編（18頁）は予算案の概要と主な事業（施策ごとに事業名・新規の印・予算額（万円）・目的・概要・担当課）、資料編（80頁）は実施計画事業・重点化対象事業等（課題ごとに事業名・予算額（千円）・説明）・期間設定方式・見直し事項・主要建設事業一覧・各会計歳入歳出予算を載せる。施策が載る冊が2冊に分かれるので2冊を1つの候補にまとめる。確認日 2026-11-10T07:14:55+00:00。"
+    }
   ]
 }

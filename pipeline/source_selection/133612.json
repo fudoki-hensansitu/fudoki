@@ -1329,7 +1329,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "未選定。大島町に2025年度の評価資料の公表なし。教育委員会の点検評価の掲載頁（https://www.town.oshima.tokyo.jp/soshiki/kyouiku/kyouiku-jimu-tenken.html、2015年更新）は平成25年度実績報告書のみで最新なし。サイト内検索（行政評価・主要施策の成果）にも該当する評価資料なし。確認日：2026-10-22T04:14:58+00:00（UTC）。"
+      "reason": "未選定。大島町に2025年度の評価資料の公表なし。教育委員会の点検評価の掲載頁（https://www.town.oshima.tokyo.jp/soshiki/kyouiku/kyouiku-jimu-tenken.html、2015年更新）は平成25年度実績報告書のみで最新なし。サイト内検索（行政評価・主要施策の成果）にも該当する評価資料なし。確認日：2026-11-10T07:01:55+00:00（UTC）。"
     },
     {
       "target": {
@@ -1352,6 +1352,122 @@
       "selected_candidate_id": null,
       "archive": null,
       "reason": "大島町の評価資料を探した。ブラウザで描画して確認した頁: https://www.town.oshima.tokyo.jp/life/4/32/93/index.html（施策・計画）。DuckDuckGo の site 検索（事務事業評価・行政評価・施策評価・総合計画 進捗 評価など）でも、事業ごとの目標・実績・評価・課題を載せる事務事業評価・施策評価・行政評価の公表は出ず、教育委員会の点検・評価（選ばない対象）、社会資本総合整備計画の事後評価、総合計画・個別計画の本体、事務報告書（活動報告）のみ。確認日：2026-10-23（UTC）。"
+    }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "133612",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度当初予算資料",
+          "landing_url": "https://www.town.oshima.tokyo.jp/soshiki/seisaku/yosan12.html",
+          "inspected_at": "2026-11-10T07:01:36+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.oshima.tokyo.jp/uploaded/attachment/5910.pdf",
+              "sha256": "f3ef94edfefba54eb0fd0421e381199314e31e00712bf3e6764aa8c38e85f8c7",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133612/2024/press-initial.pdf",
+            "sha256": "f3ef94edfefba54eb0fd0421e381199314e31e00712bf3e6764aa8c38e85f8c7",
+            "final_url": "https://www.town.oshima.tokyo.jp/uploaded/attachment/5910.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:01:45.436Z"
+      },
+      "reason": "政策推進課の「大島町財政状況の公表について」の頁（https://www.town.oshima.tokyo.jp/soshiki/seisaku/yosan12.html）に載る「令和6年度当初予算資料」（5910.pdf、10頁、文字PDF、題は「令和6年度 東京都大島町予算資料」、令和6年4月）。町長の記者会見・報道発表の頁や予算（案）の概要・主要事業の資料は見当たらず、事業名と予算額が載るのはこの資料だけ。会計別・一般会計歳入・目的別歳出・性質別歳出・基金の表のあと、物理7〜9頁の「６．事業等一覧表」で款ごとに主な事業の事業名（括弧で内容）・事業費（千円）・財源内訳（国・都・地方債・その他・一般財源）を並べる。新規・拡充の印と説明文は無い。同じ頁の当初予算編成方針（方針だけ）は選ばない。確認日 2026-11-10T07:01:36+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "133612",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度当初予算資料",
+          "landing_url": "https://www.town.oshima.tokyo.jp/soshiki/seisaku/yosan12.html",
+          "inspected_at": "2026-11-10T07:01:36+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.oshima.tokyo.jp/uploaded/attachment/8391.pdf",
+              "sha256": "df816003930fd5bdc2c707af5438b76d77fa093a732d7bd95b01d1f7e0638859",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133612/2025/press-initial.pdf",
+            "sha256": "df816003930fd5bdc2c707af5438b76d77fa093a732d7bd95b01d1f7e0638859",
+            "final_url": "https://www.town.oshima.tokyo.jp/uploaded/attachment/8391.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:01:47.340Z"
+      },
+      "reason": "政策推進課の「大島町財政状況の公表について」の頁（https://www.town.oshima.tokyo.jp/soshiki/seisaku/yosan12.html）に載る「令和7年度当初予算資料」（8391.pdf、9頁、文字PDF、題は「令和7年度 東京都大島町予算資料」、令和7年4月）。町長の記者会見・報道発表の頁や予算（案）の概要・主要事業の資料は見当たらず、事業名と予算額が載るのはこの資料だけ。会計別・一般会計歳入・目的別歳出・性質別歳出・基金の表のあと、物理7〜9頁の「６．事業等一覧表」で款ごとに主な事業の事業名（括弧で内容）・事業費（千円）・財源内訳（国・都・地方債・その他・一般財源）を並べる。新規・拡充の印と説明文は無い。同じ頁の当初予算編成方針（方針だけ）は選ばない。確認日 2026-11-10T07:01:36+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "133612",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度当初予算資料",
+          "landing_url": "https://www.town.oshima.tokyo.jp/soshiki/seisaku/yosan12.html",
+          "inspected_at": "2026-11-10T07:01:36+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.oshima.tokyo.jp/uploaded/attachment/8390.pdf",
+              "sha256": "ee12416a0ecd6db13e7bb24389aba1474209363b5df0550aab6e2ffb26eb20a6",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133612/2026/press-initial.pdf",
+            "sha256": "ee12416a0ecd6db13e7bb24389aba1474209363b5df0550aab6e2ffb26eb20a6",
+            "final_url": "https://www.town.oshima.tokyo.jp/uploaded/attachment/8390.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:01:49.785Z"
+      },
+      "reason": "政策推進課の「大島町財政状況の公表について」の頁（https://www.town.oshima.tokyo.jp/soshiki/seisaku/yosan12.html）に載る「令和8年度当初予算資料」（8390.pdf、9頁、文字PDF、題は「令和8年度 東京都大島町予算資料」、令和8年4月）。町長の記者会見・報道発表の頁や予算（案）の概要・主要事業の資料は見当たらず、事業名と予算額が載るのはこの資料だけ。会計別・一般会計歳入・目的別歳出・性質別歳出・基金の表のあと、物理7〜9頁の「６．事業等一覧表」で款ごとに主な事業の事業名（括弧で内容）・事業費（千円）・財源内訳（国・都・地方債・その他・一般財源）を並べる。新規・拡充の印と説明文は無い。同じ頁の当初予算編成方針（方針だけ）は選ばない。確認日 2026-11-10T07:01:36+00:00。"
     }
   ]
 }

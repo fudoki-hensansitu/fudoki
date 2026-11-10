@@ -1820,5 +1820,325 @@
       "archive": null,
       "reason": "ブラウザで描画した主要施策の成果の頁（https://www.city.ota.tokyo.jp/kuseijoho/ota_plan/kihonkeikaku/past/plan_seika/index.html）に「事業内容と決算額を合わせて、分野ごとに取りまとめています」とある。令和5年度主要施策の成果（r5aramashi.pdf など、従前の調査で確認）は事業の取組内容と決算額・実績件数が中心で、目標・評価・課題・方向の欄が無いため選ばない。総合計画推進プロジェクト（行政評価等）の頁（https://www.city.ota.tokyo.jp/kuseijoho/ota_plan/kihonkeikaku/shin_kihonkeikaku/suishin_project/index.html）は行政評価（施策評価・事務事業評価）の運用手引き（manual.pdf）のみで、評価結果の掲載は無い。予算編成過程及び事業レビュー結果の公表の頁（https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r06yosan/r06-hennseikatei.html）は予算案の付属資料の案内、令和7年度事業見直し（R7jigyouminaoshi.pdf、48頁）は見直し対象46事業のみで、いずれも全体を覆う評価資料ではない。DuckDuckGo の site 検索（事務事業評価・行政評価・施策評価・主要施策の成果・事業評価 令和6年度）でも他の評価資料は出ない。確認日：2026-10-23（UTC）。"
     }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "131113",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度 大田区予算（案）概要（表紙・目次と事業説明資料）",
+          "landing_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r06yosan/r06-yosan.html",
+          "inspected_at": "2026-11-10T07:18:55+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r06yosan/r06-yosan.files/01r6_hyoushi.pdf",
+              "sha256": "91c55514951992a0bf4eb0517399989438b8d08c4c2454955cc0032c87176cfc",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r06yosan/r06-yosan.files/03r6_jigyousetsumei1.pdf",
+              "sha256": "ef514eda00146b1ddf1bc05181d366ee86f986c2d96e293090469aa637fdbb13",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r06yosan/r06-yosan.files/04r6_jigyousetsumei2.pdf",
+              "sha256": "fe87bd38a32b5619cdf7f3a4af38dba29371e209b85cebaa79e40c6d377fd631",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r06yosan/r06-yosan.files/05r6_jigyousetsumei3.pdf",
+              "sha256": "c5f19cd354055f671bfb78ae9a257dc22b3f50755c90beca30d4dda96ac05c28",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r06yosan/r06-yosan.files/06r6_jigyousetsumei4.pdf",
+              "sha256": "0137035b7df9a3c026ba2965cb80d149537d7e1743284adad3d96524dd321d44",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r06yosan/r06-yosan.files/07r6_jigyousetsumei5.pdf",
+              "sha256": "1702314c9bd529090550800248506310b30722ca2854dba84e58e357f8d55b9c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131113/2024/press-initial-3.pdf",
+            "sha256": "91c55514951992a0bf4eb0517399989438b8d08c4c2454955cc0032c87176cfc",
+            "final_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r06yosan/r06-yosan.files/01r6_hyoushi.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131113/2024/press-initial-5.pdf",
+            "sha256": "ef514eda00146b1ddf1bc05181d366ee86f986c2d96e293090469aa637fdbb13",
+            "final_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r06yosan/r06-yosan.files/03r6_jigyousetsumei1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131113/2024/press-initial-6.pdf",
+            "sha256": "fe87bd38a32b5619cdf7f3a4af38dba29371e209b85cebaa79e40c6d377fd631",
+            "final_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r06yosan/r06-yosan.files/04r6_jigyousetsumei2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131113/2024/press-initial-4.pdf",
+            "sha256": "c5f19cd354055f671bfb78ae9a257dc22b3f50755c90beca30d4dda96ac05c28",
+            "final_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r06yosan/r06-yosan.files/05r6_jigyousetsumei3.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131113/2024/press-initial-1.pdf",
+            "sha256": "0137035b7df9a3c026ba2965cb80d149537d7e1743284adad3d96524dd321d44",
+            "final_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r06yosan/r06-yosan.files/06r6_jigyousetsumei4.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131113/2024/press-initial-2.pdf",
+            "sha256": "1702314c9bd529090550800248506310b30722ca2854dba84e58e357f8d55b9c",
+            "final_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r06yosan/r06-yosan.files/07r6_jigyousetsumei5.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:19:30.755Z"
+      },
+      "reason": "区長記者会見の一覧（https://www.city.ota.tokyo.jp/kucho/kucho_kisyakaiken/index.html）は令和8年2月以降の会見のみで令和6年度予算案の会見の頁が無いため、予算の頁「令和6年度予算の概要」（https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r06yosan/r06-yosan.html）の冊子「令和6年度 大田区予算（案）概要」（令和6年2月13日、文字PDF）を選ぶ。冊子は章ごとに分割して載るので、施策の目次を載せる表紙・目次（01、7頁）と、事業説明資料の5冊（03〜07、計88頁。施策の柱ごとに事業名・新規/拡充の印・予算額（万円・千円）・ポイント・事業概要）を1つの候補にまとめる（01r6_hyoushi.pdf・03r6_jigyousetsumei1.pdf・04r6_jigyousetsumei2.pdf・05r6_jigyousetsumei3.pdf・06r6_jigyousetsumei4.pdf・07r6_jigyousetsumei5.pdf）。予算編成の概要（02、規模・方針）、1枚の「予算（案）概要」（00）、附属資料（08、予算編成過程・事業レビュー・組織改正）、英語・中国語版は選ばない。確認日 2026-11-10T07:18:55+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131113",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度 大田区予算（案）概要（表紙・目次と事業説明資料）",
+          "landing_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r07yosan/r07-yosan.html",
+          "inspected_at": "2026-11-10T07:18:55+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r07yosan/r07-yosan.files/01r7_hyoushi.pdf",
+              "sha256": "f43c52a3b8c76b0de7f9955739919d0a40283f523f4e6b9970a2d594232d7a32",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r07yosan/r07-yosan.files/03r7_jigyousetsumei1.pdf",
+              "sha256": "1e55bc8993b329528dfc97446fd57441370a92cf7e307e5b40c83493712b2b86",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r07yosan/r07-yosan.files/04r7_jigyousetsumei2.pdf",
+              "sha256": "46f80eb94576640bae10ee8e18dc4884a857f23578f57187fe6f0eb19cbddccc",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r07yosan/r07-yosan.files/05r7_jigyousetsumei3.pdf",
+              "sha256": "0d78e85933f189619bea9e3d92eed0d936c81e504273153d77801161c28c0d9c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r07yosan/r07-yosan.files/06r7_jigyousetsumei4.pdf",
+              "sha256": "9740499652c350077fd1a85f90f07eaac91fc47c5dd1059b2c7064de60ebd972",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r07yosan/r07-yosan.files/07r7_jigyousetsumei5.pdf",
+              "sha256": "fe2ed79d03e5ca28834db611925c9735594ab3888c9b2f92663feaf4f051e38d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r07yosan/r07-yosan.files/08r7_jigyousetsumei6.pdf",
+              "sha256": "134e427d7b76aa14c3bcbcc5b5b37818f364782a3479f5c2bcf3eb1983f9729a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r07yosan/r07-yosan.files/09r7_jigyousetsumei7.pdf",
+              "sha256": "4e2b9a54ccac42fc7c0839c523aa438e79cd90a7cf7d9a13a25765b98af7d24e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131113/2025/press-initial-7.pdf",
+            "sha256": "f43c52a3b8c76b0de7f9955739919d0a40283f523f4e6b9970a2d594232d7a32",
+            "final_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r07yosan/r07-yosan.files/01r7_hyoushi.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131113/2025/press-initial-3.pdf",
+            "sha256": "1e55bc8993b329528dfc97446fd57441370a92cf7e307e5b40c83493712b2b86",
+            "final_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r07yosan/r07-yosan.files/03r7_jigyousetsumei1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131113/2025/press-initial-4.pdf",
+            "sha256": "46f80eb94576640bae10ee8e18dc4884a857f23578f57187fe6f0eb19cbddccc",
+            "final_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r07yosan/r07-yosan.files/04r7_jigyousetsumei2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131113/2025/press-initial-1.pdf",
+            "sha256": "0d78e85933f189619bea9e3d92eed0d936c81e504273153d77801161c28c0d9c",
+            "final_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r07yosan/r07-yosan.files/05r7_jigyousetsumei3.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131113/2025/press-initial-6.pdf",
+            "sha256": "9740499652c350077fd1a85f90f07eaac91fc47c5dd1059b2c7064de60ebd972",
+            "final_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r07yosan/r07-yosan.files/06r7_jigyousetsumei4.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131113/2025/press-initial-8.pdf",
+            "sha256": "fe2ed79d03e5ca28834db611925c9735594ab3888c9b2f92663feaf4f051e38d",
+            "final_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r07yosan/r07-yosan.files/07r7_jigyousetsumei5.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131113/2025/press-initial-2.pdf",
+            "sha256": "134e427d7b76aa14c3bcbcc5b5b37818f364782a3479f5c2bcf3eb1983f9729a",
+            "final_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r07yosan/r07-yosan.files/08r7_jigyousetsumei6.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131113/2025/press-initial-5.pdf",
+            "sha256": "4e2b9a54ccac42fc7c0839c523aa438e79cd90a7cf7d9a13a25765b98af7d24e",
+            "final_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r07yosan/r07-yosan.files/09r7_jigyousetsumei7.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:19:47.313Z"
+      },
+      "reason": "区長記者会見の一覧（https://www.city.ota.tokyo.jp/kucho/kucho_kisyakaiken/index.html）は令和8年2月以降の会見のみで令和7年度予算案の会見の頁が無いため、予算の頁「令和7年度予算の概要」（https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r07yosan/r07-yosan.html）の冊子「令和7年度 大田区予算（案）概要」（令和7年2月10日、文字PDF）を選ぶ。章ごとに分割して載るので、表紙・目次（01、7頁）と事業説明資料の7冊（03〜09、計90頁。施策の柱と公共施設マネジメント・DX ごとに事業名・新規/拡充の印・予算額・ポイント・事業概要）を1つの候補にまとめる（01r7_hyoushi.pdf・03r7_jigyousetsumei1.pdf・04r7_jigyousetsumei2.pdf・05r7_jigyousetsumei3.pdf・06r7_jigyousetsumei4.pdf・07r7_jigyousetsumei5.pdf・08r7_jigyousetsumei6.pdf・09r7_jigyousetsumei7.pdf）。予算編成の概要（02）、1枚の「予算（案）概要」（00）、附属資料（10、予算編成過程・事業見直し結果）、英語・中国語版は選ばない。確認日 2026-11-10T07:18:55+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131113",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度 大田区予算（案）概要（表紙・目次と事業説明資料）",
+          "landing_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r08yosan/r08-yosan.html",
+          "inspected_at": "2026-11-10T07:18:55+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r08yosan/r08-yosan.files/01r8_hyoushi.pdf",
+              "sha256": "ebdca40a9e18bbbb5c39f86e056ecd08f1ff255d2e3420031d0945903bc0e4ab",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r08yosan/r08-yosan.files/03r8_jigyousetsumei1.pdf",
+              "sha256": "fff42b2cc7ab7ece11c7dac606b0db8acc023b03d5571dae91b984784bdfd915",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r08yosan/r08-yosan.files/04r8_jigyousetsumei1.pdf",
+              "sha256": "26c99403eec2a3d704e8c9e88b42482b343d4e609c81b0ba8d26b60d959684a4",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r08yosan/r08-yosan.files/05r5_jigyousetsumei1.pdf",
+              "sha256": "774ce05375c7588d41b3e0a81b47f2f76909fa3d796084d3163b24efb0149793",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r08yosan/r08-yosan.files/06r8_jigyousetsumei1.pdf",
+              "sha256": "570f2dcdc19002697dfd2c76e544cff39276ba8157b519f67d2cc1fdd5eccec6",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r08yosan/r08-yosan.files/07r8_jigyousetsumei1.pdf",
+              "sha256": "2aa0e7e84991a60e0e63902a7bd6338319c27231eca4b31e8985271727fa93e4",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131113/2026/press-initial-5.pdf",
+            "sha256": "ebdca40a9e18bbbb5c39f86e056ecd08f1ff255d2e3420031d0945903bc0e4ab",
+            "final_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r08yosan/r08-yosan.files/01r8_hyoushi.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131113/2026/press-initial-6.pdf",
+            "sha256": "fff42b2cc7ab7ece11c7dac606b0db8acc023b03d5571dae91b984784bdfd915",
+            "final_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r08yosan/r08-yosan.files/03r8_jigyousetsumei1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131113/2026/press-initial-1.pdf",
+            "sha256": "26c99403eec2a3d704e8c9e88b42482b343d4e609c81b0ba8d26b60d959684a4",
+            "final_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r08yosan/r08-yosan.files/04r8_jigyousetsumei1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131113/2026/press-initial-4.pdf",
+            "sha256": "774ce05375c7588d41b3e0a81b47f2f76909fa3d796084d3163b24efb0149793",
+            "final_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r08yosan/r08-yosan.files/05r5_jigyousetsumei1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131113/2026/press-initial-3.pdf",
+            "sha256": "570f2dcdc19002697dfd2c76e544cff39276ba8157b519f67d2cc1fdd5eccec6",
+            "final_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r08yosan/r08-yosan.files/06r8_jigyousetsumei1.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/131113/2026/press-initial-2.pdf",
+            "sha256": "2aa0e7e84991a60e0e63902a7bd6338319c27231eca4b31e8985271727fa93e4",
+            "final_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r08yosan/r08-yosan.files/07r8_jigyousetsumei1.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:20:04.228Z"
+      },
+      "reason": "区長記者会見の頁「令和8年度予算（案）区長記者会見」（https://www.city.ota.tokyo.jp/kucho/kucho_kisyakaiken/20260210kaiken.html、令和8年2月10日）の会見資料（31頁）はスライドで、予算規模のほかは施策名と取組の見出しだけで事業ごとの予算額が無いため選ばない。会見資料が「詳細はこちら」と案内する予算の頁（https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r08yosan/r08-yosan.html）の冊子「令和8年度 大田区予算（案）概要」（文字PDF）を選ぶ。章ごとに分割して載るので、表紙・目次（01、7頁）と事業説明資料の5冊（03〜07、計72頁。基本目標の4施策とDXごとに事業名・新規/拡充の印・予算額（万円）・ポイント・事業概要）を1つの候補にまとめる（01r8_hyoushi.pdf・03r8_jigyousetsumei1.pdf・04r8_jigyousetsumei1.pdf・05r5_jigyousetsumei1.pdf・06r8_jigyousetsumei1.pdf・07r8_jigyousetsumei1.pdf）。予算編成の概要（02）、1枚の「予算（案）概要」（00）、附属資料（08）、英語・中国語版は選ばない。確認日 2026-11-10T07:18:55+00:00。"
+    }
   ]
 }

@@ -7885,7 +7885,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "選ばない（未公表）。令和7年度実績を評価する資料は掲載されていない。ブラウザで描画して見た頁: 決算の頁（https://www.city.tama.lg.jp/shisei/zaisei/kessan/index.html）、決算事業報告書（https://www.city.tama.lg.jp/shisei/zaisei/kessan/1004930.html、更新日2026-04-17。「令和4年度から令和6年度決算事業報告書はデータを公開」とあり、データの頁は令和6・5・4年度のみ。令和6年度分のデータ頁 https://www.city.tama.lg.jp/shisei/zaisei/kessan/1004932.html の更新日は2026-03-11で、公開は決算の翌年）、決算書（https://www.city.tama.lg.jp/shisei/zaisei/kessan/1004929.html、令和6年度が最新）、決算についての資料（https://www.city.tama.lg.jp/shisei/zaisei/kessan/1004928.html、令和7年度は健全化判断比率の速報値のみ）、多摩市行政評価レポート（https://www.city.tama.lg.jp/shisei/keikaku/sougoukeikaku/1017054.html、更新日2026-03-05）。行政評価レポート「令和7(2025)年度における行政評価の取組」（R7.pdf、95頁、令和8年2月発行）は政策・施策レベルの内部評価と、議会による令和6年度決算審査事業評価を載せ、事務事業の評価は決算事業報告書の事業カルテに委ねると明記しており、令和7年度の実績を評価する事業ごとの資料ではないため選ばない。令和7年度決算事業報告書（事業カルテ）は公表され次第、2025年度の評価資料として選ぶ。確認日：2026-10-23（UTC）。"
+      "reason": "選ばない（未公表）。令和7年度実績を評価する資料は掲載されていない。ブラウザで描画して見た頁: 決算の頁（https://www.city.tama.lg.jp/shisei/zaisei/kessan/index.html）、決算事業報告書（https://www.city.tama.lg.jp/shisei/zaisei/kessan/1004930.html、更新日2026-04-17。「令和4年度から令和6年度決算事業報告書はデータを公開」とあり、データの頁は令和6・5・4年度のみ。令和6年度分のデータ頁 https://www.city.tama.lg.jp/shisei/zaisei/kessan/1004932.html の更新日は2026-03-11で、公開は決算の翌年）、決算書（https://www.city.tama.lg.jp/shisei/zaisei/kessan/1004929.html、令和6年度が最新）、決算についての資料（https://www.city.tama.lg.jp/shisei/zaisei/kessan/1004928.html、令和7年度は健全化判断比率の速報値のみ）、多摩市行政評価レポート（https://www.city.tama.lg.jp/shisei/keikaku/sougoukeikaku/1017054.html、更新日2026-03-05）。行政評価レポート「令和7(2025)年度における行政評価の取組」（R7.pdf、95頁、令和8年2月発行）は政策・施策レベルの内部評価と、議会による令和6年度決算審査事業評価を載せ、事務事業の評価は決算事業報告書の事業カルテに委ねると明記しており、令和7年度の実績を評価する事業ごとの資料ではないため選ばない。令和7年度決算事業報告書（事業カルテ）は公表され次第、2025年度の評価資料として選ぶ。確認日：2026-11-10（UTC）。"
     },
     {
       "target": {
@@ -9405,6 +9405,134 @@
         "archived_at": "2026-10-15T23:54:53.116Z"
       },
       "reason": "令和2年度決算の「決算事業報告書」の《事業カルテ》36ファイル（計808頁）。決算事業報告書は決算書・主要施策の成果説明書を補完し、事業カルテは事業の活動実績・活動量・成果・実施水準・見直しの方向性を共通の切り口から評価するもの。事業ごとに当年度の目標・成果指標（目標値と実績値）・自己点検（今後の見通し、今後の課題や方向性）・執行状況及び成果等を載せる。文字として読める。令和2年度分は現行サイトから外れており（旧頁 /shisei/zaisei/kessan/1004932.html、現在は同じ番号を令和6年度分が使う）、さらに Wayback Machine の 2023-11 の保存版は約1MiBで切れるため、後年の完全な保存版（2024〜2025取得）から取得した。download_url は実際に取得した Wayback のURL（元の公式URLは https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/932/<ファイル名>）。不足: 商工費の事業カルテ（201907shoko.pdf）は公式URLが404で Wayback に保存版が無く取得できないため含めない（商工費の事業評価が欠ける）。また 2023・2024年度の調査は決算書の頁しか見ておらず、この決算事業報告書を見落として多摩市を「評価資料なし」としていた。"
+    }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "132241",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度 予算の概要",
+          "landing_url": "https://www.city.tama.lg.jp/shisei/zaisei/yosan/1014261.html",
+          "inspected_at": "2026-11-10T07:01:09+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/261/r6yosannnogayou.pdf",
+              "sha256": "66068ea6fe05985d67acacb708cda09d858e45f5539f9bcf47fbfc60818c77d4",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132241/2024/press-initial.pdf",
+            "sha256": "66068ea6fe05985d67acacb708cda09d858e45f5539f9bcf47fbfc60818c77d4",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/014/261/r6yosannnogayou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:01:13.029Z"
+      },
+      "reason": "記者会見資料の頁（https://www.city.tama.lg.jp/shisei/johokoukai/kishakaiken/index.html）には令和7・8年度の定例記者会見資料だけが載り、令和7年2月以前の予算記者会見の資料は残っていないため、予算の頁「令和6年度 予算の概要」（https://www.city.tama.lg.jp/shisei/zaisei/yosan/1014261.html）の「令和6年度 予算の概要」（58頁、文字PDF）を選んだ。後半の「Ⅲ 新規・レベルアップや普通建設事業などの概要」（物理39〜46頁）に、款ごとに事業名・事業費（百万円、括弧で一般財源等）・所管課と（新規）（新規項目）（レベルアップ）の区分・事業の概要・予算編成方針の該当項目を表で載せる。前半は市民向けの予算の全体像・歳出歳入の説明・予算の移り変わり、中ほどは会計別・款別・性質別の予算額。同じ頁の補正予算の概要と、予算書本体は選ばない。確認日 2026-11-10T07:01:09+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132241",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度 当初予算の概要",
+          "landing_url": "https://www.city.tama.lg.jp/shisei/zaisei/yosan/1016891.html",
+          "inspected_at": "2026-11-10T07:01:09+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/016/891/R7-yosannnogaiyou.pdf",
+              "sha256": "3b4d6ac7f835a8c5fcd1d4e33ff45c44227589b83814800070b6863386ae5574",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132241/2025/press-initial.pdf",
+            "sha256": "3b4d6ac7f835a8c5fcd1d4e33ff45c44227589b83814800070b6863386ae5574",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/016/891/R7-yosannnogaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:01:17.359Z"
+      },
+      "reason": "記者会見資料の頁（https://www.city.tama.lg.jp/shisei/johokoukai/kishakaiken/index.html）には令和7・8年度の定例記者会見資料だけが載り、令和7年2月以前の予算記者会見の資料は残っていないため、予算の頁「令和7年度 予算の概要」（https://www.city.tama.lg.jp/shisei/zaisei/yosan/1016891.html）の「令和7年度 予算の概要」（57頁、文字PDF）を選んだ。後半の「Ⅲ 新規・レベルアップや普通建設事業などの概要」（物理38〜44頁）に、款ごとに事業名・事業費（百万円、括弧で一般財源等）・所管課と（新規）（新規項目）（レベルアップ）の区分・事業の概要・予算編成方針の該当項目を表で載せる。前半は市民向けの予算の全体像・歳出歳入の説明・予算の移り変わり、中ほどは会計別・款別・性質別の予算額。同じ頁の補正予算の概要と、予算書本体は選ばない。確認日 2026-11-10T07:01:09+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132241",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度多摩市予算(案)の重点施策・令和8年度当初予算原案の概要（予算記者会見資料2・3）",
+          "landing_url": "https://www.city.tama.lg.jp/shisei/johokoukai/kishakaiken/1017326/1019570.html",
+          "inspected_at": "2026-11-10T07:01:09+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/019/570/080213siryou2.pdf",
+              "sha256": "49e2484ca1db1196db1f6d7b644a7908e1abfd32aa0e40847fe47e25d0d3d90b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/019/570/080218_shiryo3.pdf",
+              "sha256": "26b2667a1445a5120bba60bab33f71a894e6a7a69fbdeb9e99844ae9788c79b2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132241/2026/press-initial-2.pdf",
+            "sha256": "49e2484ca1db1196db1f6d7b644a7908e1abfd32aa0e40847fe47e25d0d3d90b",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/019/570/080213siryou2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2026/press-initial-1.pdf",
+            "sha256": "26b2667a1445a5120bba60bab33f71a894e6a7a69fbdeb9e99844ae9788c79b2",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/019/570/080218_shiryo3.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:01:23.061Z"
+      },
+      "reason": "記者会見資料の頁「予算記者会見（令和8年2月13日金曜日開催）」（https://www.city.tama.lg.jp/shisei/johokoukai/kishakaiken/1017326/1019570.html）に載る予算(案)の発表資料のうち、施策が載る2冊を1候補にまとめた。資料2「令和8年度多摩市予算(案)の重点施策」（6頁、文字PDF）は、ジャンル別（環境との共生など）に主な取り組みの説明・【予算上の事業名】・予算額（百万円）・所管部課と、新規事業（N）・レベルアップ事業（L）・目玉事業（★）の印を載せる。資料3「令和8年度当初予算原案の概要」（17頁、令和8年1月30日、文字PDF）は会計別・款別・性質別の予算額のあと、「Ⅲ 新規・レベルアップや普通建設事業などの概要」（物理10〜17頁）に款ごとに事業名・事業費（百万円、括弧で一般財源等）・所管課と（新規）（新規項目）（レベルアップ）の区分・事業の概要を表で載せる。同じ頁の資料1「令和8年度多摩市予算(案)について」（2頁）は予算規模・編成の視点・特徴の要約で主要事業は別紙参照としているため選ばず、記者会見議題（1頁）も選ばない。予算の頁の「令和8年度 当初予算の概要」（https://www.city.tama.lg.jp/shisei/zaisei/yosan/1019539.html、R8yosangaiyou.pdf）は予算の頁に別に載る冊子で、ここには含めない。確認日 2026-11-10T07:01:09+00:00。"
     }
   ]
 }

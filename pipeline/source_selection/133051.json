@@ -3628,5 +3628,121 @@
       "archive": null,
       "reason": "ブラウザで描画した行政評価（主要事業評価）の頁（https://www.town.hinode.tokyo.jp/0000004872.html）、第五次日の出町長期総合計画・後期基本計画の頁（https://www.town.hinode.tokyo.jp/0000003495.html）、前期基本計画評価報告書の頁（https://www.town.hinode.tokyo.jp/0000003594.html）を確認した。評価結果の掲載は、前期基本計画評価報告書と令和4年度（2022年度）事務事業評価シート6冊、令和6年度実施の事務事業評価結果報告書（R6jimujigyou.pdf）、令和7年度の後期基本計画評価報告書と事務事業評価シートで、令和5年度（2023年度）実施事業の評価は掲載されていない。総合戦略評価報告書は戦略の指標の評価で事業の評価ではない。確認日：2026-10-23（UTC）。"
     }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "133051",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度 日の出町一般会計予算概要",
+          "landing_url": "https://www.town.hinode.tokyo.jp/0000000058.html",
+          "inspected_at": "2026-11-10T06:56:10+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.hinode.tokyo.jp/cmsfiles/contents/0000000/58/R6_gaiyou.pdf",
+              "sha256": "64761b502888d0cd79db8d916a510a1d0df5cdf35e2bf8852ae9c27ab5265cb3",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133051/2024/press-initial.pdf",
+            "sha256": "64761b502888d0cd79db8d916a510a1d0df5cdf35e2bf8852ae9c27ab5265cb3",
+            "final_url": "https://www.town.hinode.tokyo.jp/cmsfiles/contents/0000000/58/R6_gaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:56:21.473Z"
+      },
+      "reason": "財政の「予算の概要」の頁（https://www.town.hinode.tokyo.jp/0000000058.html）に載る「令和6年度 日の出町一般会計予算概要」（R6_gaiyou.pdf、36頁、文字PDF）。町長の記者会見・報道発表の頁は見当たらず、この頁の資料から選ぶ。物理2〜13頁は予算編成の概要・会計別規模・款別・性質別・歳入の表、物理14頁からの「主要事業」（令和6年2月）で第五次長期総合計画の柱・施策ごと、担当課ごとに事業（経費）と主たる支出項目の名称、R4決算・R5予算・R6予算（千円）と増減、事業概要の説明を並べ、特別会計・一部事務組合負担金まで続く。同じ頁に2頁の「令和6年度 日の出町一般会計予算のポイント」（R6_gaiyoupoint.pdf、主な取組を事業名・予算額・【新】の印で並べる要約）もあるが、冊子を選ぶ方針で選ばない。確認日 2026-11-10T06:56:10+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "133051",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度 日の出町一般会計予算概要",
+          "landing_url": "https://www.town.hinode.tokyo.jp/0000000058.html",
+          "inspected_at": "2026-11-10T06:56:10+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.hinode.tokyo.jp/cmsfiles/contents/0000000/58/R7_gaiyou.pdf",
+              "sha256": "1bc6ab06d9f5aa14741de1ab02c97b48c86b88c5f23556353addaf9e69e82c18",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133051/2025/press-initial.pdf",
+            "sha256": "1bc6ab06d9f5aa14741de1ab02c97b48c86b88c5f23556353addaf9e69e82c18",
+            "final_url": "https://www.town.hinode.tokyo.jp/cmsfiles/contents/0000000/58/R7_gaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:56:23.627Z"
+      },
+      "reason": "財政の「予算の概要」の頁（https://www.town.hinode.tokyo.jp/0000000058.html）に載る「令和7年度 日の出町一般会計予算概要【広報用】」（R7_gaiyou.pdf、40頁、文字PDF）。町長の記者会見・報道発表の頁は見当たらず、この頁の資料から選ぶ。物理2〜13頁は予算編成の概要・会計別規模・款別・性質別・歳入の表、物理14頁からの「主要事業」（令和7年2月）で第五次長期総合計画の柱・施策ごと、担当課ごとに事業（経費）と主たる支出項目の名称、R5決算・R6予算・R7予算（千円）と増減、事業概要の説明を並べ、合併70周年記念事業・特別会計・下水道事業会計・一部事務組合負担金まで続く。同じ頁に2頁の「令和7年度 日の出町一般会計予算のポイント」（R7_gaiyoupoint.pdf、主な取組を事業名・予算額・【新】の印で並べる要約）もあるが、冊子を選ぶ方針で選ばない。確認日 2026-11-10T06:56:10+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "133051",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度 日の出町一般会計予算のポイント",
+          "landing_url": "https://www.town.hinode.tokyo.jp/0000000058.html",
+          "inspected_at": "2026-11-10T06:56:10+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.hinode.tokyo.jp/cmsfiles/contents/0000000/58/R8_gaiyoupoint.pdf",
+              "sha256": "c2f1e45dfd172c45d7e2dd5d3ce018be3096d95377ef10344552c52ac0fda547",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133051/2026/press-initial.pdf",
+            "sha256": "c2f1e45dfd172c45d7e2dd5d3ce018be3096d95377ef10344552c52ac0fda547",
+            "final_url": "https://www.town.hinode.tokyo.jp/cmsfiles/contents/0000000/58/R8_gaiyoupoint.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:56:25.732Z"
+      },
+      "reason": "財政の「予算の概要」の頁（https://www.town.hinode.tokyo.jp/0000000058.html）に載る「令和8年度 日の出町一般会計予算のポイント」（R8_gaiyoupoint.pdf、3頁、文字PDF、令和8年4月1日付の「令和8年度 日の出町予算の概要」）。予算編成方針・会計別予算規模・一般会計予算フレーム・特別会計等の概要のあと、物理3頁の「第六次長期総合計画の政策（基本目標）に沿った主な取組」で基本目標1〜6ごとに事業名・予算額（千円）と【新】【拡】の印を並べる（説明文は無い）。同じ頁の「令和8年度 日の出町一般会計予算概要」（R8_gaiyou.pdf、13頁）は令和6・7年度と違い主要事業の頁が無く、予算編成の概要と款別・性質別・歳入の表だけなので選ばない。町長の記者会見・報道発表の頁は見当たらない。確認日 2026-11-10T06:56:10+00:00。"
+    }
   ]
 }

@@ -5,11 +5,11 @@
 ## 手順
 
 1. **名前と額で直接当たるものを先に確定する。** 正規化（NFKC、空白・括弧・記号・末尾の【課名】を除く）した名前が一致するもの、または部分一致かつ予算額が円まで一致するもの。
-2. **残りは候補を12件出す。** 施策名と内訳名を `Intl.Segmenter('ja', { granularity: 'word' })` で単語に分け、どの行にも付く語（事業・経費・推進・支援・運営・整備・管理など）、助詞、1文字の平仮名を外す。単語の Dice 係数（2×共通語数÷両方の語数の合計）で、同じ自治体・年度・当初予算の `fiscal_expenditure_detail`（`breakdown='事業'`、全深さ）から上位12件を取る。
+2. **残りは候補を12件出す。** 施策名と内訳名を `Intl.Segmenter('ja', { granularity: 'word' })` で単語に分け、どの行にも付く語（事業・経費・推進・支援・運営・整備・管理など）、助詞、1文字の平仮名を外す。単語の Dice 係数（2×共通語数÷両方の語数の合計）で、同じ自治体・年度・当初予算の `expenditure_detail`（`breakdown='事業'`、全深さ）から上位12件を取る。
 3. **TypeSafe の Jev に選ばせる。** `POST https://api.typesafe.ai/v1/systemone`、`model: jev-latest`、`choice` の質問1つ。state は施策の見出し・事業名・予算額・要点。criteria は候補ごとに「予算書の内訳『名前』（款・目）」と、`none`「この施策を含む内訳は上のどれでもない」。
 4. **確信度 0.6 以上なら採用する。** その行の `detail_id` を持つ（分野はその行の目の COFOG を引く）。0.6 未満と `none` は紐付け無しにして、分野は「その他」に入れる。名前からの推測で分野を決めない（根拠が予算書の行に無いものは分けない）。
 
-紐付けは取り込みのときに一度作ってデータとして置く。画面を開くたびに Jev を呼ばない。予算案のプレス発表の施策は `bun run --cwd pipeline project:link-initiatives`（`pipeline/ingestion/project/link_initiatives.py`）がこの手順で紐付け、seed `pipeline/dbt/seeds/project/project_budget_initiative_link.csv` に足す。seed に行がある施策は聞き直さない。
+紐付けは取り込みのときに一度作ってデータとして置く。画面を開くたびに Jev を呼ばない。予算案のプレス発表の施策は `bun run --cwd pipeline project:link-measures`（`pipeline/ingestion/project/link_measures.py`）がこの手順で紐付け、seed `pipeline/dbt/seeds/project/budget_measure_link.csv` に足す。seed に行がある施策は聞き直さない。
 
 ## なぜこの形か（品川 R8/R7、名前と額で直接当たらなかった51頁での比較）
 
@@ -28,4 +28,4 @@
 ## 料金・鍵
 
 - Jev は入力 $0.042 / 100万トークン、出力は無料。候補方式は1件約1,000トークン。
-- 鍵は `TYPESAFE_API_KEY`（クラウド環境に登録済み）。API の書き方は dotfiles の `typesafe-ai` skill と https://docs.typesafe.ai/llms.txt を見る。
+- 鍵は `TYPESAFE_API_KEY`（root の `fnox.toml`）。`fnox exec --if-missing error -- bun run --cwd pipeline project:link-measures ...` のように fnox 経由で渡す（cloud 環境も `FNOX_AGE_KEY` で同じく開く。AGENTS.md の「secret」）。API の書き方は wwwyo/skills の `typesafe-ai` skill と https://docs.typesafe.ai/llms.txt を見る。

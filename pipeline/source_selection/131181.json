@@ -3607,5 +3607,121 @@
       },
       "reason": "令和5年度に実施した事務事業を令和6年度に評価した事務事業分析シート53冊。各シートの表題は「事務事業分析シート（令和6年度）」で、事務事業ごとに目的・対象・内容、指標の推移（目標値・実績値）、予算・決算額の推移、実績の推移、評価・課題・今後の方向性を載せる（zeimuka・kankyoka・gakumukaの先頭頁を文字抽出で確認）。文字として読める（pdffontsに埋込フォントあり）のためpdf_type=text。掲載頁「令和6年度事務事業分析シート《所管部課別》」（ページID 37913、2026-10-22確認）の所管部課別53課のシートを全て選定。候補54ファイルのうち https://www.city.arakawa.tokyo.jp/documents/37913/gyoseihyoka.pdf（sha256 6cdd3634ce8a8240ea28533ad0ea992da94104ae4aa2dd5cb540fb871cb2bc3a）は現在404で掲載頁からもリンクが消えている。Wayback Machineに原本の保存は無く（CDXに当該URLの200保存なし、2026-10-22にweb.archive.org/web/<時刻>id_/形式の原本取得を複数時点で試みたがいずれも未保存応答）、sha一致の保存版は得られなかったため53ファイルで選定する。欠けた1ファイルの所管部課は、現行頁の53課の部課別一覧に対照できる部課がなく、ファイル名（行政評価関連を示唆）からも特定できないため未確認。残る53ファイルは2026-10-22に現行URLから取り直し、候補のsha256と全て一致した。政策・施策・施設分析シートは施策・施設単位のため、事業単位の事務事業分析シートを代表にした。"
     }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "131181",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度荒川区予算案の概要",
+          "landing_url": "https://www.city.arakawa.tokyo.jp/a002/zaisei/yosan/yosanangaiyo6.html",
+          "inspected_at": "2026-11-10T07:12:15+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/33458/r06yosangaiyou.pdf",
+              "sha256": "ca580dc0cf2b8c57dff0ca0d0419ed240a08ee06baef7e3cc874fec5219e71a8",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131181/2024/press-initial.pdf",
+            "sha256": "ca580dc0cf2b8c57dff0ca0d0419ed240a08ee06baef7e3cc874fec5219e71a8",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/33458/r06yosangaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:12:20.981Z"
+      },
+      "reason": "予算案の頁「令和6年度荒川区予算案の概要及び予算重点施策」（https://www.city.arakawa.tokyo.jp/a002/zaisei/yosan/yosanangaiyo6.html。予算案の主な内容をプレス発表した資料として公表）に載る令和6年度荒川区予算案の概要（43頁、文字PDF）。目次のとおり、編成方針・予算規模・歳入・歳出・基金と区債残高に続き、「予算の主要な事業」（P.10〜）で基本構想の都市像ごとに事業名・新（新規）／充（充実）の印・予算額（千円）・説明を載せる。同じ頁の「令和6年度予算重点施策」（r06jyuuten.pdf、約157MB）は重点の施策を抜き出した資料、「リーフレット」（r06leaflet_1.pdf）は区民向けの要約で、主要な事業を網羅するこちらを選ぶ。確認日 2026-11-10T07:12:15+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131181",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度荒川区予算案の概要",
+          "landing_url": "https://www.city.arakawa.tokyo.jp/a002/zaisei/yosan/yosanangaiyo7.html",
+          "inspected_at": "2026-11-10T07:12:15+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/39293/r07yosangaiyou.pdf",
+              "sha256": "8044c1fa966a99a92fea8d604fa886538e464ddc173c035c4695f847b5ed08a2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131181/2025/press-initial.pdf",
+            "sha256": "8044c1fa966a99a92fea8d604fa886538e464ddc173c035c4695f847b5ed08a2",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/39293/r07yosangaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:12:23.405Z"
+      },
+      "reason": "予算案の頁「令和7年度荒川区予算案の概要及び予算重点事業」（https://www.city.arakawa.tokyo.jp/a002/zaisei/yosan/yosanangaiyo7.html。予算案の主な内容をプレス発表した資料として公表）に載る令和7年度荒川区予算案の概要（47頁、文字PDF）。目次のとおり、編成方針・予算規模・歳入・歳出・基金と区債残高に続き、「予算の主要な事業」（P.9〜）で基本構想の都市像ごとに事業名・新（新規）／充（充実）の印・予算額（千円）・説明を載せる。同じ頁の「令和7年度予算重点事業」（r07yosanjyuuten.pdf、37頁。重点の約30事業を1事業1頁で、事業名・【新規】等・予算額・施策内容）はこの概要の主要な事業から抜き出したもの（防災キャップ・補助教材等の無償化・公衆浴場などが概要にも載る）で、「令和7年度予算プレス発表資料」（r07yosanpress.pdf、43頁）は会見のスライドの要約なので、主要な事業を網羅するこちらを選ぶ。確認日 2026-11-10T07:12:15+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131181",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度荒川区予算案の概要",
+          "landing_url": "https://www.city.arakawa.tokyo.jp/a002/zaisei/yosan/yosanangaiyo8.html",
+          "inspected_at": "2026-11-10T07:12:15+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.arakawa.tokyo.jp/documents/43445/r08yosangaiyou.pdf",
+              "sha256": "637eff5afcbb86ddc50110ee4d56beaac2360f6a20c42ef83c57fda36462cec5",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131181/2026/press-initial.pdf",
+            "sha256": "637eff5afcbb86ddc50110ee4d56beaac2360f6a20c42ef83c57fda36462cec5",
+            "final_url": "https://www.city.arakawa.tokyo.jp/documents/43445/r08yosangaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:12:25.736Z"
+      },
+      "reason": "予算案の頁「令和8年度荒川区予算案の概要及び予算重点事業」（https://www.city.arakawa.tokyo.jp/a002/zaisei/yosan/yosanangaiyo8.html。予算案の主な内容をプレス発表した資料として公表）に載る令和8年度荒川区予算案の概要（49頁、文字PDF）。目次のとおり、編成方針・予算規模・歳入・歳出・基金と区債残高に続き、「予算の主要な事業」（P.9〜）で基本構想の都市像ごとに事業名・新（新規）／充（充実）の印・予算額（千円）・説明を載せる。同じ頁の「令和8年度予算重点事業」（r08yosanjyuuten.pdf、38頁）は重点の事業を1事業1頁で抜き出したもの、「令和8年度予算プレス発表資料」（r08yosanpress.pdf、23頁）は会見のスライドの要約なので、主要な事業を網羅するこちらを選ぶ。確認日 2026-11-10T07:12:15+00:00。"
+    }
   ]
 }

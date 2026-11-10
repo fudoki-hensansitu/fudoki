@@ -2,6 +2,9 @@
   "name": "@fudoki/api",
   "private": true,
   "type": "module",
+  "exports": {
+    "./rpc": "./src/rpc.ts"
+  },
   "scripts": {
     "build": "bun run view && bun run build.ts",
     "deploy": "bun run view && bun run build.ts --deploy",

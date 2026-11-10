@@ -1,0 +1,466 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132233",
+    "fiscal_year": 2025,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "40e3bf2dde00d3e52adb81c4d9ac7b3e8a0848b039983e93868f6f963f808c4a"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "令和6年度／決算額": {
+                  "heading": "前年度決算額"
+                },
+                "令和7年度／構成比": {
+                  "kind": "ignore"
+                },
+                "令和6年度／構成比": {
+                  "kind": "ignore"
+                },
+                "対前年度比較／増減率": {
+                  "kind": "ignore"
+                },
+                "区分": {
+                  "heading": "款"
+                },
+                "対前年度比較／増減額": {
+                  "heading": "比較"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "kokuho",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "40e3bf2dde00d3e52adb81c4d9ac7b3e8a0848b039983e93868f6f963f808c4a"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "kokuho-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "令和6年度／決算額": {
+                  "heading": "前年度決算額"
+                },
+                "令和7年度／構成比": {
+                  "kind": "ignore"
+                },
+                "令和6年度／構成比": {
+                  "kind": "ignore"
+                },
+                "対前年度比較／増減率": {
+                  "kind": "ignore"
+                },
+                "区分": {
+                  "heading": "款"
+                },
+                "対前年度比較／増減額": {
+                  "heading": "比較"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p28-kan2",
+            "page": 28,
+            "code": "2",
+            "observed_name": "保険給付費国民健康保険",
+            "corrected_name": "保険給付費",
+            "reason": "原画の物理28頁 款2 は「保険給付費」。款3 の名称「国民健康保険事業費納付金」が2行に折り返して印字され、1行目の「国民健康保険」が款2 の名称に結ばれた。"
+          },
+          {
+            "id": "p28-kan3",
+            "page": 28,
+            "code": "3",
+            "observed_name": "事業費納付金",
+            "corrected_name": "国民健康保険事業費納付金",
+            "reason": "原画の物理28頁 款3 は「国民健康保険事業費納付金」（2行に折り返し）。1行目の「国民健康保険」が款2 の名称に結ばれ、2行目だけが残った。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kokuho-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "kaigo",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "40e3bf2dde00d3e52adb81c4d9ac7b3e8a0848b039983e93868f6f963f808c4a"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "kaigo-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "令和6年度／決算額": {
+                  "heading": "前年度決算額"
+                },
+                "令和7年度／構成比": {
+                  "kind": "ignore"
+                },
+                "令和6年度／構成比": {
+                  "kind": "ignore"
+                },
+                "対前年度比較／増減率": {
+                  "kind": "ignore"
+                },
+                "区分": {
+                  "heading": "款"
+                },
+                "対前年度比較／増減額": {
+                  "heading": "比較"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p31-kan2",
+            "page": 31,
+            "code": "2",
+            "observed_name": "保険給付費財政安定化基金",
+            "corrected_name": "保険給付費",
+            "reason": "原画の物理31頁 款2 は「保険給付費」。款3 の名称「財政安定化基金拠出金」が2行に折り返して印字され、1行目の「財政安定化基金」が款2 の名称に結ばれた。"
+          },
+          {
+            "id": "p31-kan3",
+            "page": 31,
+            "code": "3",
+            "observed_name": "拠出金",
+            "corrected_name": "財政安定化基金拠出金",
+            "reason": "原画の物理31頁 款3 は「財政安定化基金拠出金」（2行に折り返し）。1行目の「財政安定化基金」が款2 の名称に結ばれ、2行目だけが残った。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "toshikaku",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "40e3bf2dde00d3e52adb81c4d9ac7b3e8a0848b039983e93868f6f963f808c4a"
+        }
+      ],
+      "options": {
+        "account": "都市核地区土地区画整理事業特別会計",
+        "table_id": "toshikaku-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "令和6年度／決算額": {
+                  "heading": "前年度決算額"
+                },
+                "令和7年度／構成比": {
+                  "kind": "ignore"
+                },
+                "令和6年度／構成比": {
+                  "kind": "ignore"
+                },
+                "対前年度比較／増減率": {
+                  "kind": "ignore"
+                },
+                "区分": {
+                  "heading": "款"
+                },
+                "対前年度比較／増減額": {
+                  "heading": "比較"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "toshikaku-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "kouki",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "40e3bf2dde00d3e52adb81c4d9ac7b3e8a0848b039983e93868f6f963f808c4a"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "令和6年度／決算額": {
+                  "heading": "前年度決算額"
+                },
+                "令和7年度／構成比": {
+                  "kind": "ignore"
+                },
+                "令和6年度／構成比": {
+                  "kind": "ignore"
+                },
+                "対前年度比較／増減率": {
+                  "kind": "ignore"
+                },
+                "区分": {
+                  "heading": "款"
+                },
+                "対前年度比較／増減額": {
+                  "heading": "比較"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-expenditure"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-expenditure",
+      "conversion_id": "general",
+      "input_fingerprint": "8eabf6e5deb5d5d1e6188cbc2ae0e5c813c5534944637a4f8ee1649de450e27b",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {}。",
+        "金額の単位は printed 1頁 から決めた。款の和 36,419,761,824 と印字の「合計」36,419,761,824 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132233/2025/settlement/expenditure/general-expenditure-nodes.parquet",
+          "sha256": "8d4ca11699f465cb4c9158d2999b67a956eb93f63c786a333b779265556c74c6",
+          "bytes": 2797
+        },
+        "row_count": 11
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132233/2025/settlement/expenditure/general-expenditure-amounts.parquet",
+          "sha256": "1ea83b3ef93e0453915fa2a881326859fe7e0b597b10d708e9c6c103fc879acc",
+          "bytes": 2684
+        },
+        "row_count": 33
+      }
+    },
+    {
+      "table_id": "kokuho-expenditure",
+      "conversion_id": "kokuho",
+      "input_fingerprint": "7b3b4334e96f936e40e72e375d8788c45fc722467629d8dedf64cb95bbf1211f",
+      "account": "国民健康保険事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {}。",
+        "金額の単位は printed 1頁 から決めた。款の和 7,563,491,337 と印字の「合計」7,563,491,337 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 2 件を、管理 JSON の name_corrections で印字に直した: 2保険給付費国民健康保険→2保険給付費・3事業費納付金→3国民健康保険事業費納付金。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132233/2025/settlement/expenditure/kokuho-expenditure-nodes.parquet",
+          "sha256": "f6719d0a4243021cb95317d0d6b2b523122a1276487df1a096e68569acdd0fa2",
+          "bytes": 2704
+        },
+        "row_count": 8
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132233/2025/settlement/expenditure/kokuho-expenditure-amounts.parquet",
+          "sha256": "81f4d937018775b4bf620d3218d819667534eab94b5b3f8e0826e1f27e5fa62a",
+          "bytes": 2432
+        },
+        "row_count": 24
+      }
+    },
+    {
+      "table_id": "kaigo-expenditure",
+      "conversion_id": "kaigo",
+      "input_fingerprint": "f8f543df1d2e7a89d32f0ee8adaf40b4652cde0000bbade16e67cff9b56cfc8a",
+      "account": "介護保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {}。",
+        "金額の単位は printed 1頁 から決めた。款の和 6,321,382,614 と印字の「合計」6,321,382,614 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 2 件を、管理 JSON の name_corrections で印字に直した: 2保険給付費財政安定化基金→2保険給付費・3拠出金→3財政安定化基金拠出金。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132233/2025/settlement/expenditure/kaigo-expenditure-nodes.parquet",
+          "sha256": "ebe32986f05f4e2d0f0b1dd87be3fe5b326d3b842c6771b48c0397f95faefb13",
+          "bytes": 2742
+        },
+        "row_count": 8
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132233/2025/settlement/expenditure/kaigo-expenditure-amounts.parquet",
+          "sha256": "009f5f172334cd0f17782cd74032341267068dffc0ee17fe3dcbfead8d263513",
+          "bytes": 2411
+        },
+        "row_count": 24
+      }
+    },
+    {
+      "table_id": "toshikaku-expenditure",
+      "conversion_id": "toshikaku",
+      "input_fingerprint": "7559d7318a7f494f53b98ac14bab8d6000ccb0738ee350da29c3acc08d28d202",
+      "account": "都市核地区土地区画整理事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {}。",
+        "金額の単位は printed 1頁 から決めた。款の和 894,958,210 と印字の「合計」894,958,210 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132233/2025/settlement/expenditure/toshikaku-expenditure-nodes.parquet",
+          "sha256": "a66266e474bcce2c13c4389cfcfa2abd039d511a25bd8dcd8fd0c257f271e6ad",
+          "bytes": 1972
+        },
+        "row_count": 4
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132233/2025/settlement/expenditure/toshikaku-expenditure-amounts.parquet",
+          "sha256": "ae3844fb9d6169a98d07daa84e09e7487132ebb8009f1f449a95241bcefe3b17",
+          "bytes": 2138
+        },
+        "row_count": 12
+      }
+    },
+    {
+      "table_id": "kouki-expenditure",
+      "conversion_id": "kouki",
+      "input_fingerprint": "b677c5bfbdecc678324ff52ae5eab47b3b30a8a09a1ddf6e9f5e4281582a76f7",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {}。",
+        "金額の単位は printed 1頁 から決めた。款の和 2,178,358,880 と印字の「合計」2,178,358,880 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132233/2025/settlement/expenditure/kouki-expenditure-nodes.parquet",
+          "sha256": "05442152719c53578a7587bc2ffe3e5b3ca0e4d21a0927c31a57f7cc659926fe",
+          "bytes": 2605
+        },
+        "row_count": 6
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132233/2025/settlement/expenditure/kouki-expenditure-amounts.parquet",
+          "sha256": "5e2a767f0661c61c6443a8bfeb2f7ed616f09e66c0ed66521f7dc2ab9e3ccb46",
+          "bytes": 2281
+        },
+        "row_count": 18
+      }
+    }
+  ]
+}

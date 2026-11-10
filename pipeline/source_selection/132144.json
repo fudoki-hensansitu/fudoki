@@ -1633,7 +1633,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "選ばない（未公表）。令和7年度実績を評価する令和8年度の事務事業評価・施策評価は掲載されていない。ブラウザで描画して見た頁: 事務事業評価の掲載一覧（https://www.city.kokubunji.tokyo.jp/shisei/houshin/shiryou/1020308/index.html、令和7年度〜令和3年度事務事業評価の5件で、最新は令和7年度事務事業評価＝令和6年度実施分の https://www.city.kokubunji.tokyo.jp/shisei/houshin/shiryou/1020308/1037388.html）、施策評価の掲載一覧（https://www.city.kokubunji.tokyo.jp/shisei/houshin/shiryou/1020278.html、最新は「令和7年度施策評価（評価対象：令和6年度）」）、行政評価の入口（https://www.city.kokubunji.tokyo.jp/shisei/houshin/shiryou/index.html、施策評価と事務事業評価の2項目のみ）。いずれも評価対象が令和7年度の資料は無い。確認日：2026-10-23（UTC）。"
+      "reason": "選ばない（未公表）。令和7年度実績を評価する令和8年度の事務事業評価・施策評価は掲載されていない。ブラウザで描画して見た頁: 事務事業評価の掲載一覧（https://www.city.kokubunji.tokyo.jp/shisei/houshin/shiryou/1020308/index.html、令和7年度〜令和3年度事務事業評価の5件で、最新は令和7年度事務事業評価＝令和6年度実施分の https://www.city.kokubunji.tokyo.jp/shisei/houshin/shiryou/1020308/1037388.html）、施策評価の掲載一覧（https://www.city.kokubunji.tokyo.jp/shisei/houshin/shiryou/1020278.html、最新は「令和7年度施策評価（評価対象：令和6年度）」）、行政評価の入口（https://www.city.kokubunji.tokyo.jp/shisei/houshin/shiryou/index.html、施策評価と事務事業評価の2項目のみ）。いずれも評価対象が令和7年度の資料は無い。確認日：2026-11-10T07:09:13+00:00（UTC）。"
     },
     {
       "target": {
@@ -1974,6 +1974,158 @@
         "archived_at": "2026-10-15T12:53:14.220Z"
       },
       "reason": "令和5年度に実施した事務事業を令和6年度に評価した事務事業評価（13冊）。各票の事業費の列は「令和4年度 決算額／令和5年度 予算額・決算額・執行率／令和6年度 当初予算額／令和7年度 当初予算額」で、最新の決算額は令和5年度。KPIは「令和4年度・令和5年度の実績／令和6年度の上半期・下半期見込み／令和7年度目標値」。本文に「令和５年度は、新たな議事堂への移転に伴う備品購入費等により決算額が大きくなっている」とあり評価対象は令和5年度。事業の目的・対象・概要、事業費、KPIの目標値と実績値、現状分析（有効性・妥当性）、次年度の実施方針を載せる。文字として読める。"
+    }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "132144",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度予算記者会見資料 No.1 令和6年度における国分寺市の主な取組・No.3 令和6年度政策的経費の内容",
+          "landing_url": "https://www.city.kokubunji.tokyo.jp/shisei/zaisei/yosan/1031990.html",
+          "inspected_at": "2026-11-10T07:09:13+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/031/990/omonatorikumi.pdf",
+              "sha256": "25d7174eacaa008e5b6e4f439dd8117a8c9042373909fa4e5600c4db47b95e4e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/031/990/seisakutekikeihinaiyou.pdf",
+              "sha256": "79093b51875c4787643be96c7b00fdae6a7a9bb0eaa14ae48f6256df4a82792a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132144/2024/press-initial-1.pdf",
+            "sha256": "25d7174eacaa008e5b6e4f439dd8117a8c9042373909fa4e5600c4db47b95e4e",
+            "final_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/031/990/omonatorikumi.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132144/2024/press-initial-2.pdf",
+            "sha256": "79093b51875c4787643be96c7b00fdae6a7a9bb0eaa14ae48f6256df4a82792a",
+            "final_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/031/990/seisakutekikeihinaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:09:25.759Z"
+      },
+      "reason": "予算の頁の「令和6年度予算記者会見資料の公表」（https://www.city.kokubunji.tokyo.jp/shisei/zaisei/yosan/1031990.html）に載る令和6年2月19日の予算記者会見資料。分冊なので施策が載る2冊を1候補にした。記者会見資料No.1「令和6年度における国分寺市の主な取組」（38頁、文字PDF）は主な取組ごとに事業の内容・事業名称・予算額（千円）・問合せ先を1〜2頁で載せる。No.3「令和6年度政策的経費の内容」（28頁、文字PDF）は都市像・施策ごとに実行計画事業の印、事業区分（新規・継続・レベルアップ）、単年度/複数年度、事業名・主管課・事業費（R6）と財源内訳を表で載せる。次第と「令和6年度予算（案）の概要」（r6_yoasngaiyou.pdf、歳入歳出の規模・構成だけ）は含めない。確認日 2026-11-10T07:09:13+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132144",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度予算記者会見資料 No.1 令和7年度における国分寺市の主な取組・No.3 令和7年度政策的経費の内容",
+          "landing_url": "https://www.city.kokubunji.tokyo.jp/shisei/zaisei/yosan/1033648.html",
+          "inspected_at": "2026-11-10T07:09:13+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/033/648/07syuyoujigyou.pdf",
+              "sha256": "9d5e20015ba9e1ce823ffa1a538c16c9c0587ba81b46493a83d8ecc202dd0174",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/033/648/07seisakutekikeihi.pdf",
+              "sha256": "600f9a2d4f31b9a4479ca6e17064630d9666eb5ec108544d989055f8253bccd9",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132144/2025/press-initial-2.pdf",
+            "sha256": "9d5e20015ba9e1ce823ffa1a538c16c9c0587ba81b46493a83d8ecc202dd0174",
+            "final_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/033/648/07syuyoujigyou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132144/2025/press-initial-1.pdf",
+            "sha256": "600f9a2d4f31b9a4479ca6e17064630d9666eb5ec108544d989055f8253bccd9",
+            "final_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/033/648/07seisakutekikeihi.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:09:31.084Z"
+      },
+      "reason": "予算の頁の「令和7年度予算記者会見資料の公表」（https://www.city.kokubunji.tokyo.jp/shisei/zaisei/yosan/1033648.html）に載る令和7年2月17日の予算記者会見資料。分冊なので施策が載る2冊を1候補にした。記者会見資料No.1「令和7年度における国分寺市の主な取組」（35頁、文字PDF）は主な取組ごとに事業の内容・事業名称・予算額（千円）・問合せ先を1〜2頁で載せる。No.3「令和7年度政策的経費の内容」（15頁、文字PDF）は都市像別の事業費合計と、都市像・施策ごとに実行計画事業の印（◎）、事業区分（新規・継続・レベルアップ）、単年度/複数年度、事業名・主管課・事業費（R7）と財源内訳を表で載せる。次第と「令和7年度予算（案）の概要」（No.2、8頁、歳入歳出の規模・構成だけ）は含めない。確認日 2026-11-10T07:09:13+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132144",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年2月17日 国分寺市定例記者会見資料・資料No.2 令和8年度政策的経費の内容",
+          "landing_url": "https://www.city.kokubunji.tokyo.jp/shisei/zaisei/yosan/1036995.html",
+          "inspected_at": "2026-11-10T07:09:13+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/036/995/0217kisyakaiken.pdf",
+              "sha256": "51e2cc035300595b3388dbb34a1faef584148b591c06cb489d803fabdabe3037",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/036/995/r8seisakutekikeihi.pdf",
+              "sha256": "4c1dc423eabb23af5887d5006dd5313c80e909ccf54eccd71d27ac79abd2c5b3",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132144/2026/press-initial-2.pdf",
+            "sha256": "51e2cc035300595b3388dbb34a1faef584148b591c06cb489d803fabdabe3037",
+            "final_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/036/995/0217kisyakaiken.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132144/2026/press-initial-1.pdf",
+            "sha256": "4c1dc423eabb23af5887d5006dd5313c80e909ccf54eccd71d27ac79abd2c5b3",
+            "final_url": "https://www.city.kokubunji.tokyo.jp/_res/projects/default_project/_page_/001/036/995/r8seisakutekikeihi.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:09:36.005Z"
+      },
+      "reason": "予算の頁の「定例記者会見資料の公表（令和8年度予算関連）」（https://www.city.kokubunji.tokyo.jp/shisei/zaisei/yosan/1036995.html）に載る令和8年2月17日の定例記者会見資料。分冊なので施策が載る2冊を1候補にした。「国分寺市 定例記者会見」（57頁、文字PDF）は市政報告・定例会提出案件に続けて「令和8年度の主な取組予定」を取組ごとに内容と【予算額】（千円）で載せる（令和6・7年度の「主な取組」の冊に当たる部分が会見全体のスライドに入った）。資料No.2「令和8年度政策的経費の内容」（15頁、文字PDF）は都市像・施策ごとに実行計画事業の印、事業区分（新規・継続・レベルアップ）、事業名・主管課・事業費（R8）と財源内訳を表で載せる。資料No.1「令和8年度予算（案）の概要」（r8yosangaiyou.pdf、歳入歳出の規模・構成だけ）は含めない。確認日 2026-11-10T07:09:13+00:00。"
     }
   ]
 }
