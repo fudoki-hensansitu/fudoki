@@ -9,6 +9,7 @@
   "required": ["page", "title", "unit", "header_rows", "body", "total_row", "label_column", "columns", "row_sums"],
   "properties": {
     "page": {"type": "integer", "minimum": 1},
+    "turned": {"type": "boolean", "description": "false: the page is rotated in the PDF and its text layer already runs in the table's own frame, so word boxes are read as they are (default true: the table is printed turned 90° counterclockwise on an upright page)."},
     "title": {"$ref": "#/$defs/text"},
     "unit": {
       "type": "object", "additionalProperties": false, "required": ["printed", "text"],
