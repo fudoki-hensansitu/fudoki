@@ -58,7 +58,9 @@ READ_ROWS_PER_CALL = 4000
 
 # 参照される表（自治体マスタ・origin）を先に、参照する表を後に。収録範囲は木の表と同じ warehouse から同じ同期で入れ替える
 TABLE_ORDER = ['jurisdiction', 'fiscal_origin', 'fiscal_expenditure_subject', 'fiscal_expenditure_detail',
-               'fiscal_expenditure_location', 'fiscal_coverage', 'population_origin', 'population']
+               'fiscal_expenditure_location', 'fiscal_coverage', 'population_origin', 'population',
+               'project_origin', 'project_evaluation_sheet', 'project_evaluation_indicator', 'project_evaluation_indicator_value',
+               'project_evaluation_result', 'project_budget_initiative']
 # 2026-11 の作り直し（docs/prd/fiscal-serving-tables/dd.md）より前の表。新しい Worker の deploy を確かめてから --drop-legacy で消す
 LEGACY_TABLES = ['jurisdiction_master', 'origin', 'settlement_expenditure_node', 'initial_expenditure_node',
                  'expenditure_coverage', 'jurisdiction_population']

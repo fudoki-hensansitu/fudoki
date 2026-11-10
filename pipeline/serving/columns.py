@@ -1,7 +1,7 @@
 """D1 に写す表の契約と、API が読む `apps/api/src/columns.json` の生成器（ADR 0022）。
 
 D1 の表は marts の表を同名・同列・同順で写したもの。列・順序・型は warehouse の information_schema から、
-説明は marts の `_models.yml`（財政・自治体マスタ・人口）から引く。warehouse は read_only で開く（構築は dbt:build）。
+説明は marts の `_models.yml`（財政・自治体マスタ・人口・事業評価）から引く。warehouse は read_only で開く（構築は dbt:build）。
 
     bun run --cwd pipeline serving:columns           # columns.json を書き直す
     bun run --cwd pipeline serving:columns -- --check  # 最新かだけ検査する
@@ -17,17 +17,21 @@ import yaml
 
 PIPELINE = Path(__file__).resolve().parents[1]
 MODELS = [PIPELINE / 'dbt/models/marts/fiscal/_models.yml', PIPELINE / 'dbt/models/marts/jurisdiction/_models.yml',
-          PIPELINE / 'dbt/models/marts/population/_models.yml']
+          PIPELINE / 'dbt/models/marts/population/_models.yml', PIPELINE / 'dbt/models/marts/project/_models.yml']
 WAREHOUSE = PIPELINE / '.build/warehouse.duckdb'
 OUTPUT = PIPELINE.parent / 'apps/api/src/columns.json'
 
 # D1 に写す marts の表（同期の順は sync_d1.TABLE_ORDER）
 TABLES = ['jurisdiction', 'fiscal_origin', 'fiscal_expenditure_subject', 'fiscal_expenditure_detail',
-          'fiscal_expenditure_location', 'fiscal_coverage', 'population_origin', 'population']
+          'fiscal_expenditure_location', 'fiscal_coverage', 'population_origin', 'population',
+          'project_origin', 'project_evaluation_sheet', 'project_evaluation_indicator', 'project_evaluation_indicator_value',
+          'project_evaluation_result', 'project_budget_initiative']
 PRIMARY_KEYS = {'jurisdiction': 'jurisdiction_code', 'fiscal_origin': 'origin_id',
                 'fiscal_expenditure_subject': 'subject_id', 'fiscal_expenditure_detail': 'detail_id',
                 'fiscal_expenditure_location': 'row_id', 'fiscal_coverage': 'coverage_id',
-                'population_origin': 'origin_id', 'population': 'population_id'}
+                'population_origin': 'origin_id', 'population': 'population_id',
+                'project_origin': 'origin_id', 'project_evaluation_sheet': 'sheet_id', 'project_evaluation_indicator': 'indicator_id',
+                'project_evaluation_indicator_value': 'value_id', 'project_evaluation_result': 'origin_id', 'project_budget_initiative': 'initiative_id'}
 # index（docs/prd/fiscal-serving-tables/dd.md）。科目は自治体の一覧・比較・COFOG・子、内訳は科目の下・子・自治体の事業。
 # 収録範囲と人口は自治体のページごとに自治体コードで引く
 INDEXES = {
@@ -37,6 +41,11 @@ INDEXES = {
                                   ['fiscal_year', 'document_kind', 'jurisdiction_code', 'breakdown']],
     'fiscal_coverage': [['jurisdiction_code']],
     'population': [['jurisdiction_code']],
+    'project_evaluation_sheet': [['jurisdiction_code', 'fiscal_year'], ['detail_id']],
+    'project_evaluation_indicator': [['sheet_id']],
+    'project_evaluation_indicator_value': [['indicator_id']],
+    'project_evaluation_result': [['jurisdiction_code']],
+    'project_budget_initiative': [['jurisdiction_code', 'fiscal_year'], ['detail_id']],
 }
 
 TYPES = {'VARCHAR': 'string', 'INTEGER': 'integer', 'BIGINT': 'integer', 'HUGEINT': 'integer', 'BOOLEAN': 'boolean',

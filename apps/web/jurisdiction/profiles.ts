@@ -47,10 +47,6 @@ export interface Scrap {
   source: string
   /** 同じ評価の評価シート（全部局）の PDF。事業ごとの page はこの PDF の頁 */
   sheets: string
-  /** 事務事業評価で捻出した財源 */
-  raisedYen: number
-  /** 区が掲げた捻出の目標。目標を示していない年度は持たない */
-  targetYen?: number
   evaluated: number
   grades: { A: number; B: number; C: number; D: number }
   /** D評価（完了・中止・廃止）の事業。result は 廃止・移管・統合・完了・廃止を検討（評価結果の表の区分） */
@@ -453,7 +449,6 @@ const SHINAGAWA: Profile = {
       "scrap": {
         "source": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/181/20240222105532_16.pdf",
         "sheets": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/181/20240222105532_15.pdf",
-        "raisedYen": 2364986000,
         "evaluated": 665,
         "grades": {
           "A": 40,
@@ -520,8 +515,6 @@ const SHINAGAWA: Profile = {
       "scrap": {
         "source": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/177/20240222105532_18.pdf",
         "sheets": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/177/20240222105532_19.pdf",
-        "raisedYen": 2014563000,
-        "targetYen": 2000000000,
         "evaluated": 669,
         "grades": {
           "A": 34,
@@ -577,8 +570,6 @@ const SHINAGAWA: Profile = {
       "scrap": {
         "source": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/173/20240222105532_35.pdf",
         "sheets": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/173/20240222105532_36.pdf",
-        "raisedYen": 1522098000,
-        "targetYen": 2000000000,
         "evaluated": 652,
         "grades": {
           "A": 16,

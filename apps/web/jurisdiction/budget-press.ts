@@ -1,7 +1,7 @@
 // 予算案のプレス発表資料（区が予算案の発表で出す、主な施策を1件1頁で説明した資料）の施策。「新しく何を始める？」の予算の年度に、この施策だけを並べる。
 // 見出し・事業名・予算額・新規の印・POINT は資料のまま。分野は、施策を予算書の内訳（事業）の1行に紐付け、その行の目の COFOG を写したもの（風土記の判断）。
 // 紐付けは名前と額で直接当たるもの（via: name）を先に決め、残りは単語の重なりで出した候補12件から TypeSafe の Jev に選ばせ、確信度 0.6 以上のもの（via: jev）だけを採った。
-// 紐付かないものは link を null、cofog を空にして「その他」に入れる。手順は .agents/skills/web-frontend-ops/references/link-to-budget-detail.md
+// 紐付かないものは link を null、cofog を空にして「その他」に入れる。手順は .agents/skills/pipeline/references/link-to-budget-detail.md
 export interface PressLink {
   /** 予算書の内訳（fiscal_expenditure_detail）の id */
   detailId: string
