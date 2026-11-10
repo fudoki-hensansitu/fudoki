@@ -1,3 +1,4 @@
+#:schema https://fnox.jdx.dev/schema.json
 # 手元で使う secret。値は age で recipients 全員の公開鍵宛てに暗号化して commit する（平文は置かない）。
 # 手順は AGENTS.md の「secret」を参照。CI・deploy の secret は GitHub secret / Cloudflare の Worker secret に置き、ここには入れない。
 default_provider = "age"
