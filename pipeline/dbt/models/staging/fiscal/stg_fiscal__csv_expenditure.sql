@@ -1,5 +1,8 @@
-{# Raw CSV rows 1:1. Column roles (kan/kou/moku numbers and names, amounts) are\n   declared here; the tree shape is built in intermediate. Unit conversion,\n   code/name splitting, and cross-account checks belong downstream. #}
-{% for item in fiscal_csv_relations() %}{% set relation = item['relation'] %}
+{# Raw CSV rows 1:1 for the numbered layout (01会計…07細々節, each cell 番号+名称). Column roles
+   (kan/kou/moku numbers and names, amounts) are declared here; the tree shape is built in
+   intermediate. Unit conversion, code/name splitting, and cross-account checks belong downstream. #}
+{% set relations = fiscal_csv_layout_relations('numbered') %}
+{% for item in relations %}{% set relation = item['relation'] %}
 select t.source_table_key,
     {{ trim_cell('"01会計"') }} as account_raw,
     {{ trim_cell('"02款"') }} as kan_raw,
@@ -16,3 +19,10 @@ cross join {{ source('fiscal_metadata', 'csv_tables') }} t
 where t.relation_prefix = '{{ relation }}'
 {% if not loop.last %}union all{% endif %}
 {% endfor %}
+{% if not relations %}
+select null::varchar as source_table_key, null::varchar as account_raw, null::varchar as kan_raw,
+    null::varchar as kou_raw, null::varchar as moku_raw, null::varchar as jika_raw, null::varchar as setsu_raw,
+    null::varchar as saisai_raw, null::varchar as amount_text, null::bigint as amount,
+    null::integer as source_line_start, null::integer as source_line_end
+where false
+{% endif %}
