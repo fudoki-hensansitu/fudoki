@@ -2,7 +2,8 @@
   "layout": {
     "ruled": "ingestion.generic.patterns.layout.ruled",
     "open_edge": "ingestion.generic.patterns.layout.open_edge",
-    "stacked_titles": "ingestion.generic.patterns.layout.stacked_titles"
+    "stacked_titles": "ingestion.generic.patterns.layout.stacked_titles",
+    "paren_titles": "ingestion.generic.patterns.layout.paren_titles"
   },
   "headers": {
     "standard": "ingestion.generic.patterns.headers.standard",
@@ -18,7 +19,8 @@
   "breakdown": {
     "indent": "ingestion.generic.patterns.breakdown.indent",
     "shape": "ingestion.generic.patterns.breakdown.shape",
-    "position": "ingestion.generic.patterns.breakdown.position"
+    "position": "ingestion.generic.patterns.breakdown.position",
+    "flat": "ingestion.generic.patterns.breakdown.flat"
   },
   "repairs": {
     "opening_cell": "ingestion.generic.patterns.repairs.opening_cell",
