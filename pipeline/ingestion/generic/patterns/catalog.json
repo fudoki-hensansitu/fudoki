@@ -3,7 +3,8 @@
     "ruled": "ingestion.generic.patterns.layout.ruled",
     "open_edge": "ingestion.generic.patterns.layout.open_edge",
     "stacked_titles": "ingestion.generic.patterns.layout.stacked_titles",
-    "funded_explanation": "ingestion.generic.patterns.layout.funded_explanation"
+    "funded_explanation": "ingestion.generic.patterns.layout.funded_explanation",
+    "staircase_codes": "ingestion.generic.patterns.layout.staircase_codes"
   },
   "headers": {
     "standard": "ingestion.generic.patterns.headers.standard",
