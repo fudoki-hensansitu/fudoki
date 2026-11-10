@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["workflow"],
+  "properties": {
+    "workflow": {"type": "object", "description": "The layered workflow (generic_text) that reads the 目的別 section."}
+  }
+}

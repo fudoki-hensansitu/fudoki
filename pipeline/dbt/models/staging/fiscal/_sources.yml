@@ -6052,6 +6052,134 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-initial
       kind: nodes
+  - name: j132144_2024_settlement_general_settlement_amounts
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-settlement
+      kind: amounts
+  - name: j132144_2024_settlement_general_settlement_nodes
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-settlement
+      kind: nodes
+  - name: j132144_2024_settlement_kaigo_settlement_amounts
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kaigo-settlement
+      kind: amounts
+  - name: j132144_2024_settlement_kaigo_settlement_nodes
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kaigo-settlement
+      kind: nodes
+  - name: j132144_2024_settlement_kokuho_settlement_amounts
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kokuho-settlement
+      kind: amounts
+  - name: j132144_2024_settlement_kokuho_settlement_nodes
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kokuho-settlement
+      kind: nodes
+  - name: j132144_2024_settlement_kouki_settlement_amounts
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kouki-settlement
+      kind: amounts
+  - name: j132144_2024_settlement_kouki_settlement_nodes
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kouki-settlement
+      kind: nodes
+  - name: j132144_2025_settlement_general_settlement_amounts
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-settlement
+      kind: amounts
+  - name: j132144_2025_settlement_general_settlement_nodes
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-settlement
+      kind: nodes
+  - name: j132144_2025_settlement_kaigo_settlement_amounts
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: kaigo-settlement
+      kind: amounts
+  - name: j132144_2025_settlement_kaigo_settlement_nodes
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: kaigo-settlement
+      kind: nodes
+  - name: j132144_2025_settlement_kokuho_settlement_amounts
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: kokuho-settlement
+      kind: amounts
+  - name: j132144_2025_settlement_kokuho_settlement_nodes
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: kokuho-settlement
+      kind: nodes
+  - name: j132144_2025_settlement_kouki_settlement_amounts
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: kouki-settlement
+      kind: amounts
+  - name: j132144_2025_settlement_kouki_settlement_nodes
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: kouki-settlement
+      kind: nodes
   - name: j132152_2024_settlement_general_expenditure_detail_amounts
     meta:
       jurisdiction: '132152'
@@ -8756,6 +8884,38 @@ sources:
       direction: expenditure
       table_id: nhi-expenditure-detail
       kind: nodes
+  - name: j133612_2024_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '133612'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j133612_2024_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '133612'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
+  - name: j133621_2024_initial_elderly_medical_initial_amounts
+    meta:
+      jurisdiction: '133621'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: elderly-medical-initial
+      kind: amounts
+  - name: j133621_2024_initial_elderly_medical_initial_nodes
+    meta:
+      jurisdiction: '133621'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: elderly-medical-initial
+      kind: nodes
   - name: j133621_2024_settlement_elderly_medical_expenditure_amounts
     meta:
       jurisdiction: '133621'
@@ -8835,6 +8995,22 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: national-health-insurance-clinic-expenditure
+      kind: nodes
+  - name: j133621_2025_initial_elderly_medical_initial_amounts
+    meta:
+      jurisdiction: '133621'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: elderly-medical-initial
+      kind: amounts
+  - name: j133621_2025_initial_elderly_medical_initial_nodes
+    meta:
+      jurisdiction: '133621'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: elderly-medical-initial
       kind: nodes
   - name: j133621_2025_settlement_elderly_medical_expenditure_amounts
     meta:
@@ -8916,6 +9092,70 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-clinic-expenditure
       kind: nodes
+  - name: j133621_2026_initial_elderly_medical_initial_amounts
+    meta:
+      jurisdiction: '133621'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: elderly-medical-initial
+      kind: amounts
+  - name: j133621_2026_initial_elderly_medical_initial_nodes
+    meta:
+      jurisdiction: '133621'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: elderly-medical-initial
+      kind: nodes
+  - name: j133817_2024_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '133817'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j133817_2024_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '133817'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
+  - name: j134015_2024_initial_long_term_care_initial_amounts
+    meta:
+      jurisdiction: '134015'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: long-term-care-initial
+      kind: amounts
+  - name: j134015_2024_initial_long_term_care_initial_nodes
+    meta:
+      jurisdiction: '134015'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: long-term-care-initial
+      kind: nodes
+  - name: j134015_2024_initial_national_health_insurance_initial_amounts
+    meta:
+      jurisdiction: '134015'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: national-health-insurance-initial
+      kind: amounts
+  - name: j134015_2024_initial_national_health_insurance_initial_nodes
+    meta:
+      jurisdiction: '134015'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: national-health-insurance-initial
+      kind: nodes
   - name: j134015_2024_settlement_general_expenditure_amounts
     meta:
       jurisdiction: '134015'
@@ -8948,6 +9188,38 @@ sources:
       direction: expenditure
       table_id: long-term-care-expenditure
       kind: nodes
+  - name: j134015_2025_initial_long_term_care_initial_amounts
+    meta:
+      jurisdiction: '134015'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: long-term-care-initial
+      kind: amounts
+  - name: j134015_2025_initial_long_term_care_initial_nodes
+    meta:
+      jurisdiction: '134015'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: long-term-care-initial
+      kind: nodes
+  - name: j134015_2025_initial_national_health_insurance_initial_amounts
+    meta:
+      jurisdiction: '134015'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: national-health-insurance-initial
+      kind: amounts
+  - name: j134015_2025_initial_national_health_insurance_initial_nodes
+    meta:
+      jurisdiction: '134015'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: national-health-insurance-initial
+      kind: nodes
   - name: j134015_2025_settlement_general_expenditure_amounts
     meta:
       jurisdiction: '134015'
@@ -8979,6 +9251,38 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: long-term-care-expenditure
+      kind: nodes
+  - name: j134015_2026_initial_long_term_care_initial_amounts
+    meta:
+      jurisdiction: '134015'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: long-term-care-initial
+      kind: amounts
+  - name: j134015_2026_initial_long_term_care_initial_nodes
+    meta:
+      jurisdiction: '134015'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: long-term-care-initial
+      kind: nodes
+  - name: j134015_2026_initial_national_health_insurance_initial_amounts
+    meta:
+      jurisdiction: '134015'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: national-health-insurance-initial
+      kind: amounts
+  - name: j134015_2026_initial_national_health_insurance_initial_nodes
+    meta:
+      jurisdiction: '134015'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: national-health-insurance-initial
       kind: nodes
   - name: j281000_2025_settlement_care_fukushi_amounts
     meta:

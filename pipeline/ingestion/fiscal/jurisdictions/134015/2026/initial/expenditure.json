@@ -1,0 +1,149 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "134015",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "0947d783d6505058529b1bb3f4680dfe62fd16c5b126f3390e53cb12012e977c"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-initial"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "6177fd08f7f80cd4141d3f27d0e880bc20783944f846871b87afa747d80b6433"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "long-term-care-initial",
+      "conversion_id": "long-term-care-initial",
+      "input_fingerprint": "26493ec4475684bc17ddd9095cae1c1dd3a6deecd6261bf2e0e548730c353518",
+      "account": "介護保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は printed 11頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 1 件（充用 1）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/134015/2026/initial/expenditure/long-term-care-initial-nodes.parquet",
+          "sha256": "313ab4512bf8b9184b8ed88256cb3265d3a14b20f8dfc1d1fcc8ec4d81788910",
+          "bytes": 11055
+        },
+        "row_count": 246
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/134015/2026/initial/expenditure/long-term-care-initial-amounts.parquet",
+          "sha256": "57ab629c9872a5f6f72fcae3b4f69fc9eb11263b3eb12529b3f0261824b149b6",
+          "bytes": 9009
+        },
+        "row_count": 562
+      }
+    },
+    {
+      "table_id": "national-health-insurance-initial",
+      "conversion_id": "national-health-insurance-initial",
+      "input_fingerprint": "20720658bbdf84bddfd1eb52b9881f55a2eebec0f6d47b893861249db6d3d003",
+      "account": "国民健康保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は printed 9頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 1 件（充用 1）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/134015/2026/initial/expenditure/national-health-insurance-initial-nodes.parquet",
+          "sha256": "e138b8b46b939cfd8178ef72d8a149587b77c0613d2978d9b13ec484b281d443",
+          "bytes": 9517
+        },
+        "row_count": 189
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/134015/2026/initial/expenditure/national-health-insurance-initial-amounts.parquet",
+          "sha256": "052defdae39a3998d2c42a2f4084f3ef010c4385721a8ed2bf395e14f304b46b",
+          "bytes": 7849
+        },
+        "row_count": 406
+      }
+    }
+  ]
+}
