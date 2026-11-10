@@ -28,4 +28,4 @@
 ## 料金・鍵
 
 - Jev は入力 $0.042 / 100万トークン、出力は無料。候補方式は1件約1,000トークン。
-- 鍵は `TYPESAFE_API_KEY`（root の `fnox.toml`）。`fnox exec --if-missing error -- bun run --cwd pipeline project:link-initiatives ...` のように fnox 経由で渡す（cloud 環境も `FNOX_AGE_KEY` で同じく開く。AGENTS.md の「secret」）。API の書き方は wwwyo/skills の `typesafe-ai` skill と https://docs.typesafe.ai/llms.txt を見る。
+- 鍵は `TYPESAFE_API_KEY`（root の `fnox.toml`）。`fnox exec --if-missing error -- bun run --cwd pipeline project:link-measures ...` のように fnox 経由で渡す（cloud 環境も `FNOX_AGE_KEY` で同じく開く。AGENTS.md の「secret」）。API の書き方は wwwyo/skills の `typesafe-ai` skill と https://docs.typesafe.ai/llms.txt を見る。
