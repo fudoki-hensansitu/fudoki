@@ -8,8 +8,8 @@
 `bracketed`）の金額にする。
 
 一つの頁に歳入と歳出の表を上下に並べる資料もあるので、表は支出の見出し（profile の `frame_heading`）の
-下の年度の行で探す。行は左頁の款の番号と、最初の金額の欄で決める。合計の行は款にせず、単位の確かめの
-ための印字として網羅の範囲に残す。
+下の年度の行で探す。行は左頁の款の番号と、最初の金額の欄で決める。合計の行は款にせず、網羅の検査が款の和と
+突き合わせる印字として残す（右頁の合計は総括として除く）。
 """
 from __future__ import annotations
 
@@ -32,6 +32,9 @@ YEAR_DIGIT = re.compile(r'[0-9０-９]{1,2}')
 TOTAL = '合計'
 LINE = 2.0  # points: words of one printed line
 RATIO = 'ratio'
+# How far right of the last year digit's centre a number set right in the last column may end (half a column of
+# this table's widest amounts, about 40pt, with room to spare); a digit further right is outside the table.
+LAST_COLUMN_OVERHANG = 80.0
 
 
 class Reader(Reading):
@@ -111,7 +114,7 @@ class Reader(Reading):
         percentage about its centre, and either ends past the centre of its year digit and before the next one
         (a short amount set right, `778`, has its centre nearer the next column's digit)."""
         index = next((i for i in range(len(centres) - 1, -1, -1) if centres[i] <= word['xMax']), None)
-        return None if index is None or (index == len(centres) - 1 and word['xMax'] > centres[-1] + 80) else index
+        return None if index is None or (index == len(centres) - 1 and word['xMax'] > centres[-1] + LAST_COLUMN_OVERHANG) else index
 
     @staticmethod
     def edges(line: list[dict]) -> list[tuple[float, float]]:
@@ -189,7 +192,7 @@ class Reader(Reading):
                         raise ValueError(f'Two amounts in column {heading} at page {page}, y={word["yMin"]}')
                     cells[heading] = (text, page, word)
             if self.joined(labels) == TOTAL:
-                # The 合計 row: the unit check reads it from the coverage scope. Its right-page amounts are printed
+                # The 合計 row is no 款: the coverage check matches its left-page amounts to the 款 sums. Its right-page amounts are printed
                 # above and below its baseline (the bracketed 翌年度繰越額 over the 不用額), where the control-total
                 # baseline does not reach them.
                 exclusions.append({'kind': '総括', 'reason': '合計の行。款の和には入れない統制値。',
@@ -200,8 +203,7 @@ class Reader(Reading):
             if code_word is None:
                 raise ValueError(f'No 款 number at page {left_page}, y={y}')
             code, rest = CODE.fullmatch(code_word['text']).groups()
-            name = (rest + ''.join(w['text'] for w in ordered if w is not code_word)) if rest else \
-                ''.join(w['text'] for w in ordered if w is not code_word)
+            name = rest + ''.join(w['text'] for w in ordered if w is not code_word)
             name = name.replace(' ', '')
             if not name:
                 raise ValueError(f'No 款 name at page {left_page}, y={y}')
