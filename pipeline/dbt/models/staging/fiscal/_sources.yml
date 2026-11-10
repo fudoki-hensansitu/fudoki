@@ -9108,6 +9108,22 @@ sources:
       direction: expenditure
       table_id: elderly-medical-initial
       kind: nodes
+  - name: j133817_2024_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '133817'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j133817_2024_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '133817'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
   - name: j134015_2024_initial_long_term_care_initial_amounts
     meta:
       jurisdiction: '134015'
