@@ -126,6 +126,8 @@ def counted(glyph: Glyph, after: Glyph) -> bool:
     """A figure in the middle of a 説明 line, before the line's amount: a count with its unit (`1回 185,000 部`,
     `年額 12,500 円`)."""
     shown = normalize(glyph.text)
+    if re.search(r'[0-9][0-9,]*' + COUNTERS + '$', shown):  # the text layer's one word: `1回175,000部`, `年額12,500円`
+        return True
     if not COUNTED.match(shown) or not any(c.isdigit() for c in shown):
         return False
     return not shown[-1].isdigit() or re.match(COUNTERS, normalize(after.text)) is not None
@@ -326,7 +328,7 @@ def read(pages, **options):
                 figures.append(body)
                 circles += [g for g in line if g.x0 >= circle]
                 continue
-            figures += [[g] for g, after in zip(body, body[1:-1] + [None]) if after is not None and counted(g, after)]
+            figures += [[g] for g, after in zip(body[:-1], body[1:]) if counted(g, after)]
             circles += [g for g in line if g.x0 >= circle]
             explanation += [shifted(g, 2 * SETSU_OFFSET) for g in merged([g for g in line if g.x0 < circle])]
         template = bands[0]
