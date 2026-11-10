@@ -1,10 +1,14 @@
-// 公開 web の Worker（fudoki）の設定。build（vite build）が dist/ssr/wrangler.json に書き出し、deploy は wrangler がそれを読む。
+// 公開 web の Worker（fudoki）の設定。build（vite build）が cf の形で .cloudflare/output/v0 に書き出し、deploy・preview は cf がそれを読む。
 // データ（D1・R2・KV など）の binding は持たせず、データは apps/api に Service Binding で聞く（pipeline/verify/boundaries.ts が検査する）。
 // 例外は web 自身のデータの D1（binding DB・fudoki-web。今は AI との会話の保存）だけ。風土記のデータではなく、web だけが使う別の D1 にする
 import { defineConfig } from 'void/config'
 import { SW_REGISTER } from './pwa'
 
-// 本番と PR ごとの preview（wrangler preview）で同じにする binding。preview は previews に書いたものしか持たないので、両方に渡す
+// PR ごとの preview の build か。cf previews deploy と preview-web.yml が CLOUDFLARE_PREVIEW_BUILD=true で build する。
+// void は Cloudflare の設定を cf の形へ移すとき wrangler の previews を受け付けないので、preview の差し替えはここで分ける
+const preview = process.env.CLOUDFLARE_PREVIEW_BUILD === 'true'
+
+// 本番と preview で同じにする binding
 const shared = {
   ai: { binding: 'AI' },
   // 風土記の MCP（apps/api）。workers.dev を閉じているので Worker 間で直接呼ぶ
@@ -56,31 +60,35 @@ export default defineConfig({
   },
   worker: {
     compatibility_date: '2026-08-23',
-    vars: {
-      ...vars,
-      // Turnstile の site key（公開値）。Cloudflare の dashboard で widget を作って書く。空の間は入口の入力を出さない。
-      // secret key は本番の Worker の secret に手で置く（TURNSTILE_SECRET_KEY）
-      TURNSTILE_SITE_KEY: '0x4AAAAAAFbNaowr2DVLbWDn',
-    },
+    vars: preview
+      ? // preview（Access で保護済み）は AI エージェントも操作できるよう、Cloudflare が公開している「常に通る」試験用の鍵にする
+        // （本番の widget の hostname は fudoki.dev で、pr-<番号>.fudoki.dev では動かない）。secret も公開の試験用の値なので var で渡す
+        { ...vars, TURNSTILE_SITE_KEY: '1x00000000000000000000AA', TURNSTILE_SECRET_KEY: '1x0000000000000000000000000000000AA' }
+      : {
+          ...vars,
+          // Turnstile の site key（公開値）。Cloudflare の dashboard で widget を作って書く。空の間は入口の入力を出さない。
+          // secret key は本番の Worker の secret に手で置く（TURNSTILE_SECRET_KEY）
+          TURNSTILE_SITE_KEY: '0x4AAAAAAFbNaowr2DVLbWDn',
+        },
   },
   cloudflare: {
     name: 'fudoki',
-    // PR ごとの preview（.github/workflows/preview-web.yml）を pr-<番号>.fudoki.dev で出す（*.fudoki.dev の DNS・証明書は Cloudflare が作る。api・docs は明示のレコードが勝つ）
-    routes: [{ pattern: 'fudoki.dev', custom_domain: true, previews_enabled: true }],
+    // void はこの route を cf の domains の文字列（本番だけ）に移す。PR ごとの preview を pr-<番号>.fudoki.dev で出す設定は
+    // vite.config.ts の previewDomains が build の出力に足す（*.fudoki.dev の DNS・証明書は Cloudflare が作る。api・docs は明示のレコードが勝つ）
+    routes: [{ pattern: 'fudoki.dev', custom_domain: true }],
     workers_dev: false,
     observability: { enabled: true, head_sampling_rate: 1, traces: { enabled: true, head_sampling_rate: 1 } },
     ...shared,
-    // 利用状況（時刻・モデル・token 数・tool の回数・段数・所要時間・失敗の有無）。会話の本文と IP は書かない。
-    // preview には渡さない（本番の集計に混ぜない。dataset が無ければ server/usage.ts は何もしない）
-    analytics_engine_datasets: [{ binding: 'CHAT_USAGE', dataset: 'fudoki_web_chat' }],
-    // 会話の保存（質問と回答・使った tool・失敗・token など。IP・UA は書かない。ログインしていない会話は90日で消す）。復元と改善の分析に使う。
-    // migration は自動では当たらないので、変えたら apps/web で wrangler d1 migrations apply --remote を手で流す（README）。preview には渡さない
-    d1_databases: [{ binding: 'DB', database_name: 'fudoki-web', database_id: '760c7476-6e46-4b44-b174-1bfdd1b4f957', migrations_dir: 'migrations' }],
-    previews: {
-      ...shared,
-      // preview（Access で保護済み）は AI エージェントも操作できるよう、Cloudflare が公開している「常に通る」試験用の鍵にする
-      // （本番の widget の hostname は fudoki.dev で、pr-<番号>.fudoki.dev では動かない）。secret も公開の試験用の値なので var で渡す
-      vars: { ...vars, TURNSTILE_SITE_KEY: '1x00000000000000000000AA', TURNSTILE_SECRET_KEY: '1x0000000000000000000000000000000AA' },
-    },
+    // 以下は本番だけ。preview には渡さない
+    ...(preview
+      ? {}
+      : {
+          // 利用状況（時刻・モデル・token 数・tool の回数・段数・所要時間・失敗の有無）。会話の本文と IP は書かない。
+          // 本番の集計に混ぜない（dataset が無ければ server/usage.ts は何もしない）
+          analytics_engine_datasets: [{ binding: 'CHAT_USAGE', dataset: 'fudoki_web_chat' }],
+          // 会話の保存（質問と回答・使った tool・失敗・token など。IP・UA は書かない。ログインしていない会話は90日で消す）。復元と改善の分析に使う。
+          // migration は自動では当たらないので、変えたら apps/web で cf d1 migrations apply を手で流す（README）
+          d1_databases: [{ binding: 'DB', database_name: 'fudoki-web', database_id: '760c7476-6e46-4b44-b174-1bfdd1b4f957', migrations_dir: 'migrations' }],
+        }),
   },
 })
