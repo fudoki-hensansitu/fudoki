@@ -1,6 +1,6 @@
 import unittest
 
-from ingestion.generic.observe import Page, Word
+from ingestion.generic.observe import Page, Rule, Word
 from ingestion.generic.patterns.layout import subject_cards
 
 
@@ -82,3 +82,16 @@ class SubjectCardsTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+    def test_a_block_is_divided_by_the_strokes_that_cross_it_whole(self):
+        rules = [Rule(0, 100, 400, 100), Rule(0, 200, 400, 200), Rule(0, 300, 400, 300),  # rows of the block
+                 Rule(150, 100, 150, 300),  # a cell edge from the first row to the last
+                 Rule(250, 100, 250, 130),  # a short stroke inside a cell
+                 Rule(100, 120, 300, 120)]  # a rule across part of the block
+        page = Page(1, 400, 600, [], rules)
+        verticals, horizontals = subject_cards.dividing(page, 90, 310, 0, 400)
+        self.assertEqual(verticals, [150])
+        self.assertEqual(horizontals, [100, 200, 300])
+        # The last card of a page: the empty space under its last row does not count against an edge.
+        verticals, _ = subject_cards.dividing(page, 90, 560, 0, 400)
+        self.assertEqual(verticals, [150])

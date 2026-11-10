@@ -130,7 +130,7 @@ def split_cards(page: Page, left: float, right: float):
     for index, (found, top, line) in enumerate(marks):
         end = marks[index + 1][1] if index + 1 < len(marks) else bottom
         heading = {id(w) for w in line} if found != 'header' else set()
-        words = [w for w in page.words if top <= (w.y0 + w.y1) / 2 < end and id(w) not in heading]
+        words = [w for w in page.words if top <= (w.y0 + w.y1) / 2 < end and id(w) not in heading and id(w) not in empty]
         blocks.append((found if found != 'header' else 'subject', top, end, words, line))
     first = marks[0][1]
     outside = [w for w in page.words if (w.y0 + w.y1) / 2 < first and id(w) not in empty]
@@ -446,7 +446,9 @@ def place_page(page: Page, columns: Columns | None):
                 before = rows_of[priced[-2]][0][0].y0 if len(priced) > 1 else None
                 for row in rows_of:
                     y = row[0][0].y0
-                    if before is None or (y > before and abs(y - last) < abs(y - before)):
+                    # With no priced row above it, only the row and the lines wrapped under it: the rows above (a
+                    # 款 or 項 that prints no amount of its own) keep their marks.
+                    if (y >= last) if before is None else (y > before and abs(y - last) < abs(y - before)):
                         row[1] = '目'
             heads = {}  # a name's first line printed on its mark's line (`（目） 地域密着型介護` over `8 サービス等給付`)
             for (rest, _), following in zip(rows_of, rows_of[1:]):
