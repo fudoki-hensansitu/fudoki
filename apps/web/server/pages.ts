@@ -19,6 +19,12 @@ export const YEAR_SEGMENT = /^\d{4}$/
 /** Cloudflare が公開している「常に通る」試験用の site key。手元は本番の widget の hostname に無いのでこれを使う */
 const TURNSTILE_TEST_SITE_KEY = '1x00000000000000000000AA'
 
+/**
+ * 自治体・都道府県・一覧の頁（HTML と頁を移る時の JSON）をブラウザに置く時間。戻る遷移で取り直さないようにする。
+ * deploy の直後に前の形の JSON が残ると新しい JS で描けないので、ホーム（5分）より短くする
+ */
+export const PAGE_CACHE = 'public, max-age=60'
+
 export async function jurisdictionProps(c: Context, path: string, yearSegment?: string): Promise<JurisdictionProps> {
   const env = c.env as unknown as Env
   let view: JurisdictionView | null
@@ -28,6 +34,7 @@ export async function jurisdictionProps(c: Context, path: string, yearSegment?: 
     throw new HTTPException(502, { res: unavailable() })
   }
   if (!view) throw new HTTPException(404, { res: notFound() })
+  c.header('Cache-Control', PAGE_CACHE)
   if (yearSegment === undefined) return { ...view, sitekey: siteKey(c) }
   // 年度の頁: 頁で選べない年度は 404、既定の年度は自治体の頁そのものへ寄せる（同じ中身の URL を2つ作らない）
   const years = view.kind === 'page' ? pageYears(view.data) : []
