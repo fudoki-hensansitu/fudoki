@@ -50,7 +50,7 @@ const Section = ({ id, title, lead, aside, link, children }: { id: string; title
         </div>
       ) : null}
     </div>
-    {lead ? <p className="-mt-2 text-sm text-muted-foreground [text-wrap:pretty]">{lead}</p> : null}
+    {lead ? <p className="-mt-2 text-sm text-muted-foreground">{lead}</p> : null}
     {children}
   </section>
 )
@@ -159,7 +159,7 @@ function EvalBox({ grade, direction, children }: { grade: string; direction: str
 function InitiativeItem({ p, sheets }: { p: Initiative; sheets?: string }) {
   return (
     <FreshRow up upLabel="今ある事業の中で" title={p.title} yen={p.settledYen} source={pdfPage(sheets, p.page, '評価シート')}>
-      <p className="text-sm [text-wrap:pretty]">「{p.quote}」</p>
+      <p className="text-sm">「{p.quote}」</p>
       <EvalBox grade={p.grade} direction={p.direction}>
         この取り組みだけの評価はない。金額と評価は、含まれる事業「{p.name}」全体の決算額と評価。
       </EvalBox>
@@ -333,7 +333,7 @@ const DOMAIN_ICON: Record<string, typeof BankIcon> = {
 function Emph({ text }: { text: string }) {
   const [, pre = '', num = text, unit = ''] = /^(約?)([\d,.]+)(.*)$/.exec(text) ?? []
   return (
-    <b className="mx-1 font-normal tabular-nums text-primary">
+    <b className="mx-1 whitespace-nowrap font-normal tabular-nums text-primary">
       {pre ? <span className="text-sm">{pre}</span> : null}
       <span className="text-2xl">{num}</span>
       <span className="ml-0.5 text-sm">{unit}</span>
@@ -353,13 +353,15 @@ function Overview({ data, sections, year }: { data: PageData; sections: Set<stri
     <Section id="about" title={`${kind}は何をしている？`}>
       {shown && latest ? (
         <p className="text-[15px]">
-          {shown.lead}<Emph text={formatYen(shown.yen)} />
+          {/* スマホで折り返すときは予算と1人あたりの間で折る（数字と単位の途中で折らない） */}
           {people ? (
             <>
-              、住民1人あたり<Emph text={`${Math.round(shown.yen / people / 1e4).toLocaleString('ja-JP')}万円`} />
+              <span className="inline-block">{shown.lead}<Emph text={formatYen(shown.yen)} />、</span>
+              <span className="inline-block">住民1人あたり<Emph text={`${Math.round(shown.yen / people / 1e4).toLocaleString('ja-JP')}万円`} />です。</span>
             </>
-          ) : null}
-          です。
+          ) : (
+            <span className="inline-block">{shown.lead}<Emph text={formatYen(shown.yen)} />です。</span>
+          )}
           {!budget && year !== latest.year ? (
             <span className="mt-1 block text-[13px] text-muted-foreground">{data.years.some((y) => y.year === year) ? '' : `${reiwa(year)}の決算はまだ収録していないため、`}ここの金額は収録している最新の決算（{reiwa(latest.year)}）のものです。</span>
           ) : null}
@@ -494,7 +496,7 @@ function ProjectRow({ p, rank, max, total, people, showChange, shown }: { p: Pro
   }, [p.id, attempt])
   return (
     <li className="border-b border-foreground/10">
-      <div className={`grid grid-cols-[22px_minmax(0,1fr)_auto] items-center gap-x-3.5 gap-y-2 py-4 ${showChange ? 'sm:grid-cols-[22px_minmax(140px,200px)_1fr_150px_80px]' : 'sm:grid-cols-[22px_minmax(140px,200px)_1fr_150px]'}`}>
+      <div className={`grid grid-cols-[22px_minmax(0,1fr)_auto] items-baseline gap-x-3.5 gap-y-2 py-4 ${showChange ? 'sm:grid-cols-[22px_minmax(140px,200px)_1fr_150px_80px]' : 'sm:grid-cols-[22px_minmax(140px,200px)_1fr_150px]'}`}>
         <span className="text-xl tabular-nums">{rank}</span>
         <div className="min-w-0">
           <h3 className="text-base font-normal leading-snug">{p.name}</h3>
@@ -504,8 +506,8 @@ function ProjectRow({ p, rank, max, total, people, showChange, shown }: { p: Pro
             {p.domain}
           </span>
         </div>
-        {/* 棒は1位を満たした長さ。スマホでは名前の下に、名前の左端から並べる */}
-        <div className="order-5 col-span-2 col-start-2 sm:order-none sm:col-span-1 sm:col-start-auto">
+        {/* 棒は1位を満たした長さ。スマホでは名前の下に、名前の左端から並べる。順位・名前・割合は1行目の文字のベースラインでそろえ、棒だけ行の真ん中に置く */}
+        <div className="order-5 col-span-2 col-start-2 self-center sm:order-none sm:col-span-1 sm:col-start-auto">
           <div className="h-2 overflow-hidden rounded-full bg-foreground/5">
             {/* 画面に入ったら、上の順位から少しずつ遅らせて伸ばす */}
             <div className="h-full rounded-full bg-primary transition-[width] duration-[1200ms] ease-out motion-reduce:transition-none" style={{ width: shown ? `${(p.yen / max) * 100}%` : 0, transitionDelay: `${(rank - 1) * 120}ms` }} />
@@ -979,7 +981,7 @@ export function Page({ data, sitekey, initialYear }: { data: PageData; sitekey: 
           </div>
           <div className="flex min-w-0 flex-col gap-3">
             <h1 ref={title} className="text-[clamp(1.75rem,1.4rem+1.2vw,2.25rem)] font-normal leading-tight">{data.name}</h1>
-            {vision ? <p className="text-[17px] [text-wrap:pretty] [word-break:auto-phrase]">{vision}</p> : null}
+            {vision ? <p className="text-[17px]">{vision}</p> : null}
             <div className="flex flex-wrap gap-x-2.5 gap-y-1.5 whitespace-nowrap text-xs text-muted-foreground sm:gap-x-6 sm:text-sm">
               <span className="inline-flex items-center gap-1 sm:gap-1.5">
                 <MapPinIcon className="size-3.5 sm:size-4" aria-hidden="true" />

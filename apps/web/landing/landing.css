@@ -2,7 +2,7 @@
    CSS は頁の間を移っても残るので、どの規則も .landing の中に閉じる（頁の外に効かせるのは、紹介の頁を開いている間だけ html に付く印と keyframes）。
    地は薄い若草の紙（--l-bg）、札は濃い若草（--l-sand）に粒子、画面のイメージは白（--l-pane）。書体はゴシック1つで、見出しは太く詰める */
 .landing{--l-bg:light-dark(#f6faf6,#131a16);--l-sand:light-dark(#e4f1e6,#1c2620);--l-fg:light-dark(#1f2d27,#e3eee7);--l-muted:light-dark(#566a60,#9db2a6);--l-line:light-dark(#cfe2d4,#2d3c34);--l-pane:light-dark(#ffffff,#18211c);--l-acc:var(--primary);--l-on-acc:var(--primary-foreground);--l-panel:var(--brand);--l-on-panel:var(--brand-foreground);--l-grid:color-mix(in srgb,var(--l-line) 70%,transparent);--l-pencil:color-mix(in srgb,var(--l-fg) 55%,transparent)}
-.landing{margin:0;background:var(--l-bg);color:var(--l-fg);font:400 16px/1.8 var(--font-sans);letter-spacing:.02em;-webkit-font-smoothing:antialiased;line-break:strict;word-break:normal;overflow-wrap:break-word;overflow-x:clip}
+.landing{margin:0;background:var(--l-bg);color:var(--l-fg);font:400 16px/1.8 var(--font-sans);letter-spacing:.02em;-webkit-font-smoothing:antialiased;line-break:strict;word-break:auto-phrase;overflow-wrap:break-word;overflow-x:clip}
 .landing h1,.landing h2,.landing h3{margin:0;font-family:var(--font-sans);font-weight:700;font-feature-settings:"palt";letter-spacing:-.01em;line-height:1.3;color:var(--l-fg);word-break:auto-phrase;text-wrap:balance}
 .landing p,.landing figure{margin:0}
 .landing ul,.landing ol{margin:0;padding:0;list-style:none}
