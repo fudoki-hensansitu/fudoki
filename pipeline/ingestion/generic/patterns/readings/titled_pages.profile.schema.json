@@ -10,7 +10,8 @@
     "funding_rule",
     "note_kinds",
     "total_label",
-    "marker_edges"
+    "marker_edges",
+    "divider_text"
   ],
   "$defs": {
     "range": {
@@ -123,6 +124,11 @@
         "type": "number"
       },
       "description": "The right bound of the left edge of each depth's markers, from the top: an item's depth is where its marker starts (a misprinted `２` at the place of `⑵` is the second depth)."
+    },
+    "divider_text": {
+      "type": "string",
+      "minLength": 1,
+      "description": "A page without a frame whose digits are this regex (compacted text) is a divider and is skipped; any other one stops."
     }
   }
 }

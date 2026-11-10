@@ -64,7 +64,7 @@ def centered_codes(found):
         if CODE.match(text) and above is not None and line[0].y0 - above[0].y0 <= 10 \
                 and not CODE.match(compact(''.join(w.text for w in above))):
             first = line[0]
-            code, rest = re.match(r'^([0-9]+)(.*)$', first.text.strip()).groups()
+            code, rest = re.match(r'^([0-9]+)(.*)$', compact(first.text)).groups()
             head = [Word(code, first.x0, first.y0, first.x1, first.y1)]
             tail = [Word(rest, first.x0, first.y0, first.x1, first.y1)] if rest else []
             result[-1] = [*head, *above, *tail, *line[1:]]
@@ -104,7 +104,10 @@ def inside(word, x_range):
 def numbers(words):
     """Runs of abutting amount fragments in a line (`562,` `750` → `562,750`), each with its words."""
     runs = []
-    for word in words:
+    for previous, word in zip([None, *words], words):
+        if previous is not None and previous.text in ('△', '▲') and re.match(r'[0-9]', word.text) \
+                and word.x0 - previous.x1 <= JOIN:
+            raise ValueError(f'A sign printed apart from its amount: {previous.text} {word.text}')
         if runs and runs[-1] is not None and word.x0 - runs[-1][-1].x1 <= JOIN and re.fullmatch(r'[0-9,]+[)）]?', word.text) \
                 and runs[-1][-1].text.endswith(','):
             runs[-1].append(word)
@@ -181,10 +184,10 @@ class Reader(Reading):
                 result[text] = current
             elif text.startswith('(単位'):
                 current = None
-                found = re.search(r'(千円|円)', text)
+                found = re.search(r'(百万円|千円|円)', text)
                 result['unit'] = found.group(1) if found else 'pending'
             elif result['unit'] == 'pending':
-                found = re.search(r'(千円|円)', text)
+                found = re.search(r'(百万円|千円|円)', text)
                 result['unit'] = found.group(1) if found else None
             elif result['unit'] is not None and re.fullmatch(r'[0-9]+', text):
                 result['folio'].append(word)   # the page number printed at the right end of the title
@@ -268,13 +271,17 @@ class Reader(Reading):
 
         def exclude(kind, reason, page, glyphs):
             excluded.extend({'kind': kind, 'reason': reason, 'page': page, 'bbox': list(box([w]))} for w in glyphs
-                            if re.search(r'[0-9]', w.text))
+                            if re.search(r'[0-9]', compact(w.text)))
 
         for page in pages:
             frame = self.frame(page)
             if frame is None:
-                if any(re.search(r'[0-9]', w.text) for w in page.words if w.y0 < page.height * .9):
-                    report['pages without a frame (digits)'] += 1
+                text = compact(''.join(w.text for w in page.words if w.y0 < page.height * .9))
+                if re.search(r'[0-9]', text):
+                    # A divider page (`3 歳出`) prints digits but no table; any other page without a frame stops.
+                    if not re.fullmatch(self.profile['divider_text'], text):
+                        raise ValueError(f'Page {page.number}: digits on a page without a frame: {text[:40]!r}')
+                    report['divider pages'] += 1
                 continue
             top, body_top, bottom = frame
             title = self.title(page, top)
