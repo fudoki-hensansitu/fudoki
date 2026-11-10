@@ -78,10 +78,6 @@ models:
     description: シートの予算・決算（概要）の計の予算現額（円）。
   - name: settled_yen
     description: シートの予算・決算（概要）の計の決算額（円）。
-  - name: cost_previous_yen
-    description: シートの行政コスト計算書の行政費用の小計（D）の前年度の額（円）。
-  - name: cost_current_yen
-    description: シートの行政コスト計算書の行政費用の小計（D）の実施年度の額（円）。
   - name: grade_code
     description: 最終評価の区分の記号（A〜D）。
     data_tests:
@@ -107,9 +103,6 @@ models:
         arguments:
           to: ref('fiscal_expenditure_detail')
           field: detail_id
-  - name: is_new_project
-    description: 風土記の判断。実施年度に新しくできた事業の印。事業期間が実施年度から始まり、前年度の行政費用が0で、前年度までの指標の実績が無いもの。
-    data_tests: [not_null]
 - name: project_evaluation_indicator
   description: 評価シートの指標。シートに印字された順に1つが1行。
   columns:
@@ -180,14 +173,19 @@ models:
     description: 合計の行を読んだ出典の PDF の頁。
   - name: evaluated_count
     description: 評価した事業の数。
+    data_tests: [not_null]
   - name: grade_a
     description: A 評価の事業の数。
+    data_tests: [not_null]
   - name: grade_b
     description: B 評価の事業の数。
+    data_tests: [not_null]
   - name: grade_c
     description: C 評価の事業の数。
+    data_tests: [not_null]
   - name: grade_d
     description: D 評価の事業の数。
+    data_tests: [not_null]
   - name: sheets_origin_id
     description: 同じ評価の評価シートの出典（project_origin の origin_id）。読んでいなければ空。
 - name: project_budget_initiative

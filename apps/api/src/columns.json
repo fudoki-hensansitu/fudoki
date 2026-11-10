@@ -855,18 +855,6 @@
           "description": "シートの予算・決算（概要）の計の決算額（円）。"
         },
         {
-          "name": "cost_previous_yen",
-          "type": "integer",
-          "nullable": true,
-          "description": "シートの行政コスト計算書の行政費用の小計（D）の前年度の額（円）。"
-        },
-        {
-          "name": "cost_current_yen",
-          "type": "integer",
-          "nullable": true,
-          "description": "シートの行政コスト計算書の行政費用の小計（D）の実施年度の額（円）。"
-        },
-        {
           "name": "grade_code",
           "type": "string",
           "nullable": false,
@@ -895,12 +883,6 @@
           "type": "string",
           "nullable": true,
           "description": "風土記の判断。subject_id の目の下で、シートの予算科目の事業と同じ名前（内訳の末尾の【所管課】以降を除く）の内訳（分け方が事業）が1つだけあるときの、その内訳。fiscal_expenditure_detail の detail_id。1つの内訳に複数の小事業（シート）が入ることがあり、そのときシートの決算額は内訳の額より小さい。"
-        },
-        {
-          "name": "is_new_project",
-          "type": "boolean",
-          "nullable": false,
-          "description": "風土記の判断。実施年度に新しくできた事業の印。事業期間が実施年度から始まり、前年度の行政費用が0で、前年度までの指標の実績が無いもの。"
         }
       ]
     },
@@ -1037,31 +1019,31 @@
         {
           "name": "evaluated_count",
           "type": "integer",
-          "nullable": true,
+          "nullable": false,
           "description": "評価した事業の数。"
         },
         {
           "name": "grade_a",
           "type": "integer",
-          "nullable": true,
+          "nullable": false,
           "description": "A 評価の事業の数。"
         },
         {
           "name": "grade_b",
           "type": "integer",
-          "nullable": true,
+          "nullable": false,
           "description": "B 評価の事業の数。"
         },
         {
           "name": "grade_c",
           "type": "integer",
-          "nullable": true,
+          "nullable": false,
           "description": "C 評価の事業の数。"
         },
         {
           "name": "grade_d",
           "type": "integer",
-          "nullable": true,
+          "nullable": false,
           "description": "D 評価の事業の数。"
         },
         {
