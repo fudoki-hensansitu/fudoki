@@ -17,6 +17,9 @@ spaced. They are counts, not amounts: each such line is an excluded box (本文)
 
 Above the frame each page prints the 款 and 項 it continues (`(款) 2 総務費` / `(項) 1 総務管理費`), while the
 table itself prints the 款・項 rows where they open. The heads repeat the rows, so they are not read as titles.
+
+The scan reads the 説明 header cell as `說明` on some pages, and joins the first line of the column to it on others
+(`説明／後期高齢者医療事務に従事する…`). A column whose header begins with either is the 説明 column.
 """
 import re
 from dataclasses import replace
@@ -25,6 +28,7 @@ from ingestion.generic import layout
 from ingestion.generic.layout import Glyph, is_amount, lines, normalize, runs, text
 
 NARROW = 20  # wider than a code column, narrower than the name column
+EXPLANATION = ('説明', '說明')
 HEAD = re.compile(r'^[(（](款|項)[)）][0-9]+')
 
 
@@ -51,8 +55,8 @@ def wrapped_names(logical: layout.Logical, band: layout.Band) -> None:
     band.words = [moved.get(id(w), w) for w in band.words]
 
 
-COUNT = re.compile(r'[0-9][0-9,]*\)?\s*(?:人|世帯|件|校|学級|園|か所|現在)')
-REASON = '説明の文の中の事業の数字（登録人口・学校数など）。件数・人数で、金額ではない。'
+COUNT = re.compile(r'[0-9][0-9,]*\)?\s*(?:人|世帯|戸籍|件|校|学級|園|か所|現在)')
+REASON = '説明の文の中の事業の数字（登録人口・戸籍数・学校数など）。件数・人数で、金額ではない。'
 
 
 def counts(band: layout.Band) -> list[layout.Band]:
@@ -103,6 +107,9 @@ def read(pages, **options):
     logicals = spreads(layout.logical_pages(pages, **options))
     for logical in logicals:
         for band in logical.bands:
+            if band.header and band.header[0] in EXPLANATION:
+                band.header = ('説明',)
+                band.spans = [(a, b, '説明') for a, b, _ in band.spans[-1:]]
             if band.header and set(normalize(band.header[-1])) <= set('款項目') and band.x1 - band.x0 < NARROW:
                 band.words = [Glyph(w.text, band.x0, w.y0, w.x1, w.y1, w.page, w.offset)
                               if normalize(w.text).isdigit() and w.x0 > band.x0 else w for w in band.words]
