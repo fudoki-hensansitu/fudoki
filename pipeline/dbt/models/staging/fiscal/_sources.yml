@@ -10660,6 +10660,22 @@ sources:
       direction: expenditure
       table_id: nhi-expenditure-detail
       kind: nodes
+  - name: j133612_2024_initial_general_expenditure_amounts
+    meta:
+      jurisdiction: '133612'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j133612_2024_initial_general_expenditure_nodes
+    meta:
+      jurisdiction: '133612'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
   - name: j133612_2024_settlement_general_expenditure_amounts
     meta:
       jurisdiction: '133612'
@@ -10915,6 +10931,38 @@ sources:
       document_kind: initial
       direction: expenditure
       table_id: elderly-medical-initial
+      kind: nodes
+  - name: j133639_2024_initial_general_expenditure_amounts
+    meta:
+      jurisdiction: '133639'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j133639_2024_initial_general_expenditure_nodes
+    meta:
+      jurisdiction: '133639'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
+  - name: j133639_2025_initial_general_expenditure_amounts
+    meta:
+      jurisdiction: '133639'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j133639_2025_initial_general_expenditure_nodes
+    meta:
+      jurisdiction: '133639'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-expenditure
       kind: nodes
   - name: j133817_2024_settlement_general_expenditure_amounts
     meta:
