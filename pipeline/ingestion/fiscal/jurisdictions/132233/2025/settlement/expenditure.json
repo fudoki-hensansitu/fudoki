@@ -37,6 +37,9 @@
                 },
                 "区分": {
                   "heading": "款"
+                },
+                "対前年度比較／増減額": {
+                  "heading": "比較"
                 }
               }
             }
@@ -88,6 +91,9 @@
                 },
                 "区分": {
                   "heading": "款"
+                },
+                "対前年度比較／増減額": {
+                  "heading": "比較"
                 }
               }
             }
@@ -157,6 +163,9 @@
                 },
                 "区分": {
                   "heading": "款"
+                },
+                "対前年度比較／増減額": {
+                  "heading": "比較"
                 }
               }
             }
@@ -226,6 +235,9 @@
                 },
                 "区分": {
                   "heading": "款"
+                },
+                "対前年度比較／増減額": {
+                  "heading": "比較"
                 }
               }
             }
@@ -277,6 +289,9 @@
                 },
                 "区分": {
                   "heading": "款"
+                },
+                "対前年度比較／増減額": {
+                  "heading": "比較"
                 }
               }
             }
@@ -303,7 +318,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general",
-      "input_fingerprint": "be865cf10eff62e1b244fa09e2ac46a04170c535b9de858b2fc22f0fe4f6cbb9",
+      "input_fingerprint": "8eabf6e5deb5d5d1e6188cbc2ae0e5c813c5534944637a4f8ee1649de450e27b",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {}。",
@@ -323,8 +338,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132233/2025/settlement/expenditure/general-expenditure-amounts.parquet",
-          "sha256": "64069fa2729c922a3957d7d83df1fff74a34af33d065e35b1283c5e401428153",
-          "bytes": 2694
+          "sha256": "1ea83b3ef93e0453915fa2a881326859fe7e0b597b10d708e9c6c103fc879acc",
+          "bytes": 2684
         },
         "row_count": 33
       }
@@ -332,7 +347,7 @@
     {
       "table_id": "kokuho-expenditure",
       "conversion_id": "kokuho",
-      "input_fingerprint": "fe534bcbf01ecffe74a75721ccfe84dae139ec9e69dc6fbb9fe1cbfccc806099",
+      "input_fingerprint": "7b3b4334e96f936e40e72e375d8788c45fc722467629d8dedf64cb95bbf1211f",
       "account": "国民健康保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {}。",
@@ -353,8 +368,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132233/2025/settlement/expenditure/kokuho-expenditure-amounts.parquet",
-          "sha256": "aa3f7f5e951412b8ba5e54b351937591b091501dd83f26aaaf0ddcde2d18ff6d",
-          "bytes": 2442
+          "sha256": "81f4d937018775b4bf620d3218d819667534eab94b5b3f8e0826e1f27e5fa62a",
+          "bytes": 2432
         },
         "row_count": 24
       }
@@ -362,7 +377,7 @@
     {
       "table_id": "kaigo-expenditure",
       "conversion_id": "kaigo",
-      "input_fingerprint": "1f3598063c5ce429bc07348d48a8f267eb0f269eb422d2033834b71f8f06b654",
+      "input_fingerprint": "f8f543df1d2e7a89d32f0ee8adaf40b4652cde0000bbade16e67cff9b56cfc8a",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {}。",
@@ -383,8 +398,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132233/2025/settlement/expenditure/kaigo-expenditure-amounts.parquet",
-          "sha256": "aa628dff81b7ac9de66f4b2ec6cfbba4a7f23ebb36935c99f332259d07120baa",
-          "bytes": 2421
+          "sha256": "009f5f172334cd0f17782cd74032341267068dffc0ee17fe3dcbfead8d263513",
+          "bytes": 2411
         },
         "row_count": 24
       }
@@ -392,7 +407,7 @@
     {
       "table_id": "toshikaku-expenditure",
       "conversion_id": "toshikaku",
-      "input_fingerprint": "50420011a4c5e70244663f2ddb6c51bc1ec4e2da56de33231549e3f643520f37",
+      "input_fingerprint": "7559d7318a7f494f53b98ac14bab8d6000ccb0738ee350da29c3acc08d28d202",
       "account": "都市核地区土地区画整理事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {}。",
@@ -412,8 +427,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132233/2025/settlement/expenditure/toshikaku-expenditure-amounts.parquet",
-          "sha256": "7b5b993c1185ada96dc11045eebcc77f403d235e539f13a3b19484861382593f",
-          "bytes": 2148
+          "sha256": "ae3844fb9d6169a98d07daa84e09e7487132ebb8009f1f449a95241bcefe3b17",
+          "bytes": 2138
         },
         "row_count": 12
       }
@@ -421,7 +436,7 @@
     {
       "table_id": "kouki-expenditure",
       "conversion_id": "kouki",
-      "input_fingerprint": "0aeaa6d4682f6d4d3090da2014c9e630c0ce04ea5963fd5a4d1344b8d7c1af3a",
+      "input_fingerprint": "b677c5bfbdecc678324ff52ae5eab47b3b30a8a09a1ddf6e9f5e4281582a76f7",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {}。",
@@ -441,8 +456,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132233/2025/settlement/expenditure/kouki-expenditure-amounts.parquet",
-          "sha256": "e202e428d45b23c070b1ed07b812ebeb33b5c4b23c9568f837e6e651d03d4c53",
-          "bytes": 2291
+          "sha256": "5e2a767f0661c61c6443a8bfeb2f7ed616f09e66c0ed66521f7dc2ab9e3ccb46",
+          "bytes": 2281
         },
         "row_count": 18
       }
