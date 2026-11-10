@@ -44,7 +44,7 @@ async function resolveOrigin(db: Db, origin: string): Promise<Origin | null> {
   return row?.sha256 && SHA256.test(row.sha256) ? { sha256: row.sha256, title: row.title, url: row.url } : null
 }
 
-/** 出典を風土記の出典の記録（D1 の fiscal_origin・評価資料の catalog）に照らしてから、R2 の key を sha256 から組み立てて読む。
+/** 出典を風土記の出典の記録（D1 の expenditure_origin・評価資料の catalog）に照らしてから、R2 の key を sha256 から組み立てて読む。
  * 利用者や AI から R2 の key は受け取らない（取り込み表など他の object を読ませない）。 */
 export async function readSourcePage(db: Db, bucket: SourceTextBucket | undefined, raw: unknown): Promise<SourcePageResult> {
   const parsed = sourcePageInput.safeParse(raw)
